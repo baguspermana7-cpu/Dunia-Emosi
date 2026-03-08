@@ -1,0 +1,5 @@
+/* App-level overrides — minimal, most styling in components */
+#root {
+  max-width: 100%;
+  margin: 0 auto;
+}
