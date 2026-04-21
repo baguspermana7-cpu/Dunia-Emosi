@@ -15,6 +15,9 @@
 - ✅ **P0 — HD sprite cascade** (game.js 5005/5012-5014/5391-5404): `pokeSpriteOnline()` now returns HD CDN; `pokeSpriteVariant()` prefers SVG → HD CDN; G10 player/enemy loaders use the HD-first cascade with low-res PNG only as offline fallback; `image-rendering:pixelated` killed.
 - ✅ **P0.7 — G10 enemy `loadSprHD` cascade regression** (game.js 5409-5413): Gen 9+ Pokemon (Fuecoco id 909 not in 751 SVG collection) were falling to the back-facing low-res PokeAPI PNG before HD CDN was tried — producing BOTH pixelated rendering AND reversed facing direction (scaleX(-1) assumes HD orientation). Swapped fallback order to mirror `loadSprPlayer`: HD CDN → local PNG → PokeAPI.
 - ✅ **P0.8 — G13c scoring bug** (games/g13c-pixi.html:1106, 1179, 1359): stars were derived from cumulative badge count (`total>=15?5:...`) → first win always showed 1★. Migrated to unified `GameScoring.calc()` with per-battle inputs: HP% preservation (as `correct/total`), wrong-answer counter, team-alive as lives. Added `battle.wrongAnswers` + `battle.totalAnswers` counters in battle init + `executeMove()`. Perfect run now correctly returns 5★. Cache-bust `v=20260421d`.
+- ✅ **P0.9 — Repo public + secret scrub**: (a) Scrubbed exposed Gemini API key from entire Dunia-Emosi git history via `git filter-repo --replace-text`. (b) All-pattern secret scan clean. (c) Flipped repo visibility via GitHub API → `baguspermana7-cpu/Dunia-Emosi` now **public**. SHAs changed; any local clones must re-clone.
+- ✅ **P1.0 — Gemini → WebP asset standard** (`scripts/gemini-image-gen.py` + `prompts/` + CODING-STANDARDS section): new helper enforces WebP-only output (quality 82, method 6, max 1200px). Raw PNG is held in memory only and never persisted. Key via `GEMINI_API_KEY` env var — never committed.
+- ✅ **P1.1 — G17 Jembatan Goyang visual polish** (game.js:10205, 10303; style.css g17CorrectRing): Fixed inconsistent block labels (numbers 1-9 + emoji 10+ mix → always show 1..N numbers on wooden planks). Added correct-tap juice: `spawnParticleBurst` + green ring ripple (`@keyframes g17CorrectRing`) at block center. Scene (sky/mountains/gorge/river/cliffs/bridge), wooden-plank CSS, train-cross victory animation, lives hearts, floater +1⭐/-1💔/COMBO, and bridge-shake were already in place from prior sessions — no need to re-overhaul.
 - ✅ **P0.5 — Battle standards (5 invariants)** enforced across G10/G13/G13b/G13c:
   - Fix A: Canonical `POKE_TYPE_COLORS` + `pokeTypeColor(type)` helper at game.js:5003 (replaces 3 duplicate inline maps in G10/G13/G13b).
   - Fix B: `g10TypeFX()` DOM fallback expanded from 4 → 18 types (matches `g13TypeHitFX` coverage).
@@ -155,7 +158,7 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 - ✅ **Floating emoji buildings**: Reduced to 8 items, smaller (14-20px), much lower opacity (0.2-0.35), less distracting
 - ✅ **Vehicle images empty**: Fixed URL encoding — spaces in path `car and vehicle` → `car%20and%20vehicle`
 - ✅ **Buttons**: Removed ⬅️➡️ emoji arrows — now just text "Kiri" / "Kanan" with pastel purple styling
-- ⬜ **Overall visual quality**: Road, environment, obstacles need more detail and polish
+- ✅ **Road/environment polish**: Yellow center dash (#FCD34D a=0.55+), themed road signs (city=🛑🚸🅿️, forest=🦌🌳, space=🛸🌠, pantai=🏖️🌊, sekolah=📚🏫, dapur=🍳🧂, kebun=🌻🌾, body=💊🧬) added 2026-04-20. Further polish deferred — extensive themed styling (8 map variants at style.css:5279+) already in place; additional work = new ticket.
 
 ### G9 — Jejak Huruf (Letter Tracing)
 - ✅ **Tracing works**: Code verified — tracing IS plotting (visible in screenshot). Fixed spawnSparkles to pass star count
@@ -182,7 +185,7 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 ### G17 — Jembatan Goyang
 - ✅ **banner-game17.webp**: Generated via Gemini API
 - ✅ **banner-game18.webp**: Generated via Gemini API
-- ⬜ **Gameplay revamp**: User says "gameplay sangat jelek" — needs visual, UI/UX, mechanics, animation overhaul
+- ✅ **Gameplay revamp (2026-04-21)**: Full scene already built in index.html (sky gradient, stars, clouds, sun, 2-layer mountains, trees, gorge+river, cliff edges, wooden bridge with rope/beams/supports); wooden-plank block CSS, train-cross victory animation, lives/hearts, +1⭐/-1💔/COMBO floaters, bridge-shake, crack overlay already complete. Added 2026-04-21: consistent block numbers (no emoji mix) + green ring ripple on correct tap.
 
 ### G18 — Museum Kereta Ambarawa
 - ✅ **Train catalog expansion**: +5 Indonesian trains added (19→24). CC201, Whoosh KCIC, Argo Parahyangan, LRT Jabodebek, plus Lori Tebu.

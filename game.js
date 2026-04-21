@@ -10203,8 +10203,8 @@ function g17RenderBlocks() {
     const block = document.createElement('div')
     block.className = 'g17-block'
     const num = i + 1
-    block.textContent = num <= 9 ? `${num}` : ['🔴','🟠','🟡','🟢','🔵','🟣','⚫','🟤','⬛','🔶','🔷','❇️'][i % 12]
-    block.style.background = `linear-gradient(135deg,${colors[i % colors.length]},${colors[(i+3) % colors.length]})`
+    // Consistent wooden-plank numbers (1..totalBlocks); wooden gradient from CSS.
+    block.textContent = `${num}`
     block.dataset.idx = i
     block.onclick = () => g17TapBlock(i)
     bridge.appendChild(block)
@@ -10301,6 +10301,16 @@ function g17TapBlock(idx) {
       g17SpawnFloater('bonus', '+1 ⭐', block.el)
     }
     playCorrect()
+    // Juice: particle burst + ring ripple at block center
+    try {
+      const r = block.el.getBoundingClientRect()
+      const cx = r.left + r.width/2, cy = r.top + r.height/2
+      spawnParticleBurst(cx, cy)
+      const ring = document.createElement('div')
+      ring.style.cssText = `position:fixed;left:${cx}px;top:${cy}px;width:12px;height:12px;border-radius:50%;border:3px solid #4ade80;box-shadow:0 0 16px #4ade80;transform:translate(-50%,-50%) scale(0.5);opacity:0.9;pointer-events:none;z-index:9998;animation:g17CorrectRing 0.55s ease-out forwards;`
+      document.body.appendChild(ring)
+      setTimeout(()=>ring.remove(), 600)
+    } catch(e) {}
     const remaining = g17State.blocks.filter(b => !b.tapped)
     if (remaining.length === 0) {
       clearTimeout(g17State.lightTimeout)
