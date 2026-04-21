@@ -308,7 +308,7 @@ const GAME_META = {
   12:{icon:'🌑',name:'Tebak Bayangan'},
   13:{icon:'🔥',name:'Evolusi Math'},
   14:{icon:'🏁',name:'Balapan Kereta'},
-  15:{icon:'🚂',name:'Lokomotif Pemberani',iconImg:'assets/train/lokomotif-front-red.svg'},
+  15:{icon:'🚂',name:'Lokomotif Pemberani',iconImg:'assets/train/linus-casey.webp'},
   16:{icon:'🚂',name:'Selamatkan Kereta!',iconImg:'assets/train/lokomotif-front-blue.svg'},
   17:{icon:'🌉',name:'Jembatan Goyang'},
   18:{icon:'🏛️',name:'Museum Ambarawa'},

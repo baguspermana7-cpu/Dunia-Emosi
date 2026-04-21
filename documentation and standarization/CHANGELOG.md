@@ -1,5 +1,37 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-22 — RDE Step 5: G2/G5/G7/G9 migrated
+
+### Changed
+- **RDE Step 5 G2** (`style.css:290-300`) — `.breathe-circle-wrap`/`.breathe-animal`/`.breathe-instruction`/`.breathe-sub`/`.breathe-timer-wrap`/`.breathe-timer`/`.breathe-cycles` consume `--rz-font-*`/`--rz-gap-*` + `clamp()` for circle/timer diameters. Removed 10 lines from `@media` blocks (480/320 breakpoints).
+- **RDE Step 5 G5** (`style.css:364-381`) — `.g5-score-row`/`.g5-player-score`/`.ps-name`/`.ps-val`/`.g5-turn-text`/`.g5-grid` gap+padding+radius+font tokens; `.card-emoji`/`.card-label` switched to `clamp()`. Card aspect-ratio/`transform-style: preserve-3d`/grid-template-columns preserved (gameplay-critical). Removed 8 lines from `@media` blocks (480/400/360/320).
+- **RDE Step 5 G7** (`style.css:524-536`) — `.g7-mode-badge`/`.g7-display`/`.g7-question`/`.g7-choices`/`.g7-choice-btn`/`.g7-choice-img`/`.g7-choice-text`/`.g7-suku`/`.g7-progress` consume tokens for radius/gap/font/padding. Dark-theme `!important` overrides at 1620+ preserved. Removed 6 lines from `@media` blocks (480/320); viewport-based display width/height retained.
+- **RDE Step 5 G9** (`style.css:559-570`) — `.g9-letter-display`/`.g9-instruction`/`.g9-canvas-wrap`/`.g9-result`/`.g9-stars`/`.g9-progress` consume font/gap/radius tokens + `clamp()` for canvas wrap. Canvas wrap @media sizes retained (canvas pixel math critical). Removed 2 letter-display @media overrides.
+- **Token count**: `var(--rz-` references grew 62 → 112 (+50). Brace balance verified 2767/2767.
+
+### Cache
+- `index.html` → `v=20260422f`.
+
+### Notes
+- G5 cardback/card-front gameplay rules untouched — only outer scoreboard + grid/gap sizing.
+- G7 `.g7-display` global enhancement at line 583 (viewport-anchored) left intact.
+
+---
+
+## 2026-04-22 — G15 landing tile polish
+
+### Changed
+- **G15 landing tile (`index.html:630-631`)** — icon enlarged 50px → 75px (1.5x) so the Linus+Casey character art reads at tile size. Tile background switched from deep-blue gradient (`#0D47A1→#42A5F5`) to soft peach (`#FEF3C7→#FDBA74`) so the blue Linus locomotive contrasts instead of blending into a same-hue backdrop. Emoji fallback via `onerror` preserved.
+- **G15 level-select `iconImg` (`game.js:311`)** — swapped `assets/train/lokomotif-front-red.svg` → `assets/train/linus-casey.webp` so level-select hero matches the landing tile (was showing red programmatic locomotive).
+
+### Cache
+- `index.html` → `v=20260422e`.
+
+### Notes
+- G14 and G16 tiles left unchanged — G14 uses emoji on red gradient (already high-contrast), G16 uses blue `lokomotif-front-blue.svg` on orange gradient (already high-contrast). No clear improvement from adopting character trains at landing-tile size.
+
+---
+
 ## 2026-04-22 — Character trains + RDE Steps 5+6
 
 ### Added

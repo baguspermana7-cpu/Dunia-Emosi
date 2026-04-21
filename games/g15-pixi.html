@@ -1710,7 +1710,10 @@ function buildTrainGrid() {
       const img = document.createElement('img');
       img.src = entry.spriteUrl;
       img.alt = entry.name;
-      img.style.cssText = 'width:100px;height:36px;object-fit:contain;display:block;';
+      // Sprites vary widely in aspect (1.37 .. 7.21). Use max-width with auto height
+      // so tall trains (Casey JR, Linus) stay chunky and wide trains (JZ 711, Malivlak)
+      // render at readable height instead of being squished into a 36px band.
+      img.style.cssText = 'width:auto;height:auto;max-width:120px;max-height:48px;object-fit:contain;display:block;margin:0 auto;';
       card.appendChild(img);
     } else {
       const canvas = document.createElement('canvas');

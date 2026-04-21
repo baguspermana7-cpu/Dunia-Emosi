@@ -2,6 +2,36 @@
 > This file tracks ALL pending game issues. Claude reads this at session start.
 > Mark items ✅ when done. Add new issues at the bottom.
 
+## 🔥 OPEN 2026-04-22 (session ongoing)
+
+### Task #44 — Result Modal Engine Contradicts Stars (P0 BUG)
+- ⬜ **Symptom**: Modal shows "Selesai!" + 1★ + "Sempurna! Tidak ada kesalahan!" + "Matematika Benar: 0" + enabled "Level Berikutnya" button — WITH ZERO CORRECT ANSWERS. Screenshot 2026-04-22.
+- **Root cause hypotheses**:
+  - `GameScoring.calc({correct:0, total:N})` may return stars≥1 (bug — should be 0).
+  - Modal title hardcoded "Selesai!" regardless of stars. Should branch: 0★="Gagal!", 1-2★="Coba Lagi", 3★="Bagus!", 4★="Hebat!", 5★="Sempurna!".
+  - Sub-message "Sempurna! Tidak ada kesalahan!" hardcoded instead of derived from stars.
+  - "Level Berikutnya" should only appear when stars≥3 (passing grade).
+- **Touches**: `games/game-modal.js` `GameModal.show()` + `game.js` showResult/showGameResult wrappers.
+- **Scope**: affects ALL games that use the shared modal.
+
+### Task #45 — Character Train Sprite Re-processed (cumulative feedback)
+- ⬜ **JZ 711 Dragutin**: first pass 512×71 may have white edges / uncropped. Re-processed 2026-04-22 06:53 via `isnet-general-use` + `alpha_matting=True` → now 512×128. Needs visual verification.
+- ⬜ **Malivlak (JZ 62)**: white around edges not fully removed. Re-processed → 512×256. Verify cleanly transparent.
+- ⬜ **Casey JR**: re-processed → 272×199 (negligible change).
+- ⬜ **Linus Brave**: re-processed → 130×101 (BIG CHANGE from 264×173!). All `wheelPositions` in trains-db.js + G16_CHAR_CONFIGS need recalibration against new 130-wide sprite.
+- ⬜ **Wheel positions proportional to actual wheels in sprite** — user flagged Malivlak wheels too big + misaligned. Need to trace actual wheel pixel coordinates in the sprite and map via spriteHeight scale.
+- ⬜ **Train placement clipped at screen edge** — character trains (especially wide ones like Dragutin 512→~270px rendered, Malivlak 512→~285px rendered) overflow viewport. Increase TRAIN_SCREEN_X in g15-pixi.html/g16-pixi.html OR add container bounds check. Add safe margin.
+- **Touches**: `games/trains-db.js`, `games/g15-pixi.html`, `games/g16-pixi.html` (G16_CHAR_CONFIGS).
+
+### Plan order
+1. Fix #44 modal engine first (P0, visible bug with wrong success message).
+2. Recalibrate Linus wheel positions for new 130×101 sprite.
+3. Verify + recalibrate Malivlak wheels against new 512×256 sprite.
+4. Increase train safe margin from screen edge.
+5. Visual check JZ 711 Dragutin cleanliness.
+
+---
+
 ## Status Legend
 - ⬜ = Not started
 - 🔧 = In progress
@@ -189,7 +219,11 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 ### RDE Steps 5+6 (Task #29, progress 2026-04-22) 🔧
 - ✅ **Step 5 G1** — `.g1-animal-display`/`.g1-question`/`.g1-choice-btn`/`.choice-emoji/label`/`.g1-progress` consume `--rz-font-*`/`--rz-gap-*`/`--rz-radius-md`. Removed 9 @media override lines.
 - ✅ **Step 5 G4** — `.g4-timer-text`/`.g4-question`/`.g4-choice-btn`/`.g4-progress`/`.g4-mode-btn` tokenized. Removed 4 @media override lines.
-- ⬜ **Step 5 G2/G5/G7/G9** — deferred (state complexity, needs careful audit).
+- ✅ **Step 5 G2** (2026-04-22) — `.breathe-circle-wrap/animal/instruction/sub/timer-wrap/timer/cycles` consume `--rz-font-*`/`--rz-gap-*` + `clamp()` for circle/timer diameters. Removed 10 @media override lines (480/320).
+- ✅ **Step 5 G5** (2026-04-22) — `.g5-score-row`/`.g5-player-score`/`.ps-name/ps-val`/`.g5-turn-text`/`.g5-grid`/`.card-emoji`/`.card-label` tokenized (gap/radius/padding/font + clamp). Gameplay rules (aspect-ratio, preserve-3d, grid-template-columns) preserved. Removed 8 @media override lines.
+- ✅ **Step 5 G7** (2026-04-22) — `.g7-mode-badge`/`.g7-display`/`.g7-question`/`.g7-choices`/`.g7-choice-btn/img/text`/`.g7-suku`/`.g7-progress` tokenized. Dark-theme `!important` overrides at 1620+ preserved. Removed 6 @media override lines (viewport-sized display retained for 480/320).
+- ✅ **Step 5 G9** (2026-04-22) — `.g9-letter-display`/`.g9-instruction`/`.g9-canvas-wrap`/`.g9-result`/`.g9-stars`/`.g9-progress` tokenized + clamp. Canvas pixel-math wrap sizes retained for 480/360/320. Removed 2 @media letter-display overrides.
+- 🧮 **Token count**: `var(--rz-` references grew 62 → 112 (+50). Brace balance verified 2767/2767.
 - ✅ **Step 6** — `shared/rz-responsive.js` shipped with `window.RZ` API mirroring CSS `--rz-scale` formula. PixiJS games opt-in per Step 7.
 - ⬜ **Step 7** — Pixi migration (G14/G15/G16/G19/G20/G22) — wire `RZ.btn(kind)`/`RZ.fontScale(base)` into sprite/text sizing. Deferred, low priority.
 
