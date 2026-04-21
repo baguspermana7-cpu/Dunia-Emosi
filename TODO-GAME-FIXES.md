@@ -76,7 +76,7 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 ### G10 Pertarungan Pokemon — Hit Effect Regression (P3)
 - ✅ **Fixed `auraColors` key mismatch**: was capitalized `Fire/Water/...` keys, but POKEMON_DB `type` is lowercase → lookup always fell back to default purple (game.js:5638)
 - ✅ **Added `typeLow` normalization**: `type.toLowerCase()` before key lookup for safety
-- 🔧 **REMAINING**: Full live-test to confirm all 8 effect stages visible (audio → aura → name popup → lunge → particles → projectile → screen flash → shake)
+- ✅ **Covered by 2026-04-21 P0.5 Battle Standards**: `spawnTypeAura` + 18-type `g10TypeFX` DOM-fallback parity + canonical `POKE_TYPE_COLORS` resolve the full 8-stage chain. See the P0.5 block at the top of this file.
 
 ## 🔧 WORKFLOW RULE (user mandate 2026-04-20)
 **ALWAYS update TODO-GAME-FIXES.md + documentation/standarization/ docs for every fix or new pattern.** Not optional. Reference: feedback_always_document.md in memory.
@@ -196,14 +196,14 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 - ⬜ **GIF quality**: Some GIFs have artifacts — white areas became transparent, tracing remnants visible. Mirror/ GIFs already applied but some may still have issues
 
 ### G22 — Monster Wants Candy (MAJOR REVAMP)
-- 🔧 **Real pokeball SVGs**: SVGs not rendering — PixiJS v8 may not load SVG via Sprite.from(). Need to use PIXI.Assets.load() or convert to PNG. Falling back to Graphics for now with distinct colors per ball type.
+- ✅ **Real pokeball SVGs → PNGs**: Resolved 2026-04-20 via ImageMagick rasterization (`-density 300 -resize 128x128`). 9 PNGs in `assets/Pokemon/pokeballs-png/`, preloaded via `PIXI.Assets.load()` in `preloadPokeballTextures()`. See the G22 Real Pokeball PNGs block above.
 - ⬜ **Quiz engine**: Don't create inline questions. Use shared question bank (300+ questions in game.js). Build shared quiz engine that G22 and other games can use. Categories: math (easy), bahasa, sains, etc.
 - ✅ **No multiplication/division**: Verified — QS bank only has + and - operations
 - ✅ **Monster → Psyduck**: Replaced broken monster icon with HD Psyduck sprite (pokemondb.net), local fallback
 - ✅ **Pokemon picker in pause menu**: Added 15 Pokemon grid (Psyduck, Pikachu, Eevee, Snorlax, etc). HD sprites from pokemondb. Switching changes catcher character instantly.
 - ✅ **Different pokeball = different category**: Ball design now indexed by `ballType` — Poké Ball=Math, Great Ball=Warna, Ultra Ball=Hewan, Master Ball=Buah. Quiz panel shows category chip.
 - ✅ **Physics smoothed**: Added sinusoidal wobble/sway to falling pokeballs, tighter speed range
-- 🔧 **Visual/UI very ugly**: Significant pass done — start overlay (glassmorphism card + radial accent pools + floating icon), pause overlay (matching card style + glow pause icon), HUD (gold glow score, pill badge, glass buttons). Full major-UI-elements revamp may need reference image from user for further polish.
+- ✅ **Visual/UI overhauled 2026-04-21** (P0.6): smooth lerp movement, HD Psyduck (clamp 140-220px), dynamic answer-pill layout (no overflow), pickup FX (catch-pop + ring burst), rich parallax background (12 clouds × 3 speeds, 6 flyers, 5 pine trees, 3 snow-capped mountains, 24 flowers, rainbow), ground-anchored sprite, directional facing. Any further polish = new ticket.
 - ✅ **Navigation flow**: Pause menu now consistent visual language with start + HUD. Back/pause buttons have press animation for tactile feedback.
 
 ### G10 — Pertarungan Pokemon
@@ -245,7 +245,7 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 
 ### Missing Banner Assets
 - ✅ Generated ALL 6 missing banners via Gemini 2.5 Flash Image API: banner-game13 through banner-game18.webp
-- **Gemini API key for image gen**: `REDACTED`
+- **Gemini API key for image gen**: `<redacted — see user's password manager>` (was exposed in pre-2026-04-21 history; rotated 2026-04-21 before repo went public)
 
 ---
 
