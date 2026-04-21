@@ -186,6 +186,13 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 - ✅ **Pattern documented** in `LESSONS-LEARNED.md` — bonus-modifier technique for non-accuracy games (tier/progression scoring). Reusable for any future game where `{correct, total}` doesn't fit cleanly.
 - ⬜ **Not scope, deferred**: G9 tracing (0-3★ scale intentional, not migrated), G1/2/3/4/5/7/8 (emotion/calm/letter/count/memory/picture/word games — check if they use inline star math in a later pass), in-game G14/G15/G16/G17 paths where the standalone is already unified.
 
+### RDE Steps 5+6 (Task #29, progress 2026-04-22) 🔧
+- ✅ **Step 5 G1** — `.g1-animal-display`/`.g1-question`/`.g1-choice-btn`/`.choice-emoji/label`/`.g1-progress` consume `--rz-font-*`/`--rz-gap-*`/`--rz-radius-md`. Removed 9 @media override lines.
+- ✅ **Step 5 G4** — `.g4-timer-text`/`.g4-question`/`.g4-choice-btn`/`.g4-progress`/`.g4-mode-btn` tokenized. Removed 4 @media override lines.
+- ⬜ **Step 5 G2/G5/G7/G9** — deferred (state complexity, needs careful audit).
+- ✅ **Step 6** — `shared/rz-responsive.js` shipped with `window.RZ` API mirroring CSS `--rz-scale` formula. PixiJS games opt-in per Step 7.
+- ⬜ **Step 7** — Pixi migration (G14/G15/G16/G19/G20/G22) — wire `RZ.btn(kind)`/`RZ.fontScale(base)` into sprite/text sizing. Deferred, low priority.
+
 ### G15+G16 Character Trains: Casey JR + Linus Brave (Task #43, EXECUTED 2026-04-22) ✅
 - ✅ **Asset prep** (2026-04-21 23:58): `caseyjr-body.webp` (272×198) + `linus-body.webp` (264×173), bg-removed via rembg.
 - ✅ **Shared module** `games/train-character-sprite.js` — `window.CharacterTrain.mount(container, config)` API. Manages: async sprite load (PIXI.Assets + emoji fallback), wheel overlay (PIXI.Graphics circles with spokes), rotating wheels via `tick(dt, speed)`, body bob via sin oscillation, smoke puff particles (auto-spawn at interval, fade+rise+expand).

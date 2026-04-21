@@ -1,5 +1,25 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-22 — Character trains + RDE Steps 5+6
+
+### Added
+- **`games/train-character-sprite.js`** — shared `window.CharacterTrain` with `mount(container, config)`, `tick(dt, speed)`, `setSmokeParent`, `spawnSmoke`, `dispose`. Async PIXI.Assets sprite load + emoji fallback, wheel overlay with 4 spokes per tire (rotation visibility), body bob via sin, smoke puffs fade+rise+expand over 2s.
+- **`games/trains-db.js` — "Karakter ⭐" category** prepended at index 0: Casey JR (0-4-0 Circus, 4 drivers r=11) + Linus Brave (2-4-0 Sumatera, 2 pilot r=7 + 4 drivers r=11). `isCharacter:true` gates alternate rendering.
+- **`assets/train/caseyjr-body.webp`** (272×198, 22KB) + **`linus-body.webp`** (264×173, 18KB) — bg-removed via rembg.
+- **`shared/rz-responsive.js`** — RDE Layer 3 runtime. `window.RZ.scale()/bp()/orient()/fontScale(base)/gap(kind)/btn(kind)/onResize(fn)`. Mirrors CSS `--rz-scale` clamp formula so PixiJS layouts match DOM neighbor scaling on resize.
+
+### Changed
+- **G15 `buildTrain()`** branches on `selectedTrain.isCharacter` → `CharacterTrain.mount()`. Tick wired in app.ticker loop. `trainContainer.scale.x=1` for character trains (sprites face right natively).
+- **G16 `buildTrain()`** defaults to Casey JR via `G16_CHARACTER_CONFIG`. Tick wired in gameLoop with speed by trainState (STOPPED=0, MOVING=2, BOOSTING=4).
+- **RDE Step 5 G1** (`style.css:267-281`): `.g1-animal-display`/`.g1-question`/`.g1-choice-btn`/`.choice-emoji`/`.choice-label`/`.g1-progress` consume `--rz-font-*`/`--rz-gap-*`/`--rz-radius-md`. Removed 9 lines from `@media` blocks (480/400/320 breakpoints).
+- **RDE Step 5 G4** (`style.css:337-351`): `.g4-timer-text`/`.g4-question`/`.g4-choice-btn`/`.g4-progress`/`.g4-mode-btn` consume tokens. Removed 4 lines from `@media` blocks.
+- **Deferred** G5/G7/G9 base-rule token migration to next pass (state complexity needs careful audit).
+
+### Cache
+- `index.html` → `v=20260422a` (character trains) → `v=20260422b` (RDE 5+6).
+
+---
+
 ## 2026-04-21 (Evening) — BSE, G22 v2/v2.5, G16 fixes, RDE design, G6 sprite, train audio
 
 ### Added
