@@ -125,7 +125,8 @@
     state.setSmokeParent = function(stage) { state.smokeParent = stage }
 
     state.spawnSmoke = function() {
-      if (!state.smokeParent || !config.smokePos) return
+      // No smoke for trains without a chimney (electric/tram) — skip silently
+      if (!state.smokeParent || !config.smokePos || !Array.isArray(config.smokePos)) return
       // Smoke position = container world coord + local smokePos offset
       const [sx, sy] = config.smokePos
       const worldX = (container.x || 0) + sx

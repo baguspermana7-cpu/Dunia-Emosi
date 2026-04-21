@@ -18,20 +18,29 @@ const TRAIN_CATS = [
        smokePos:[-30,-45], spriteHeight:88,
        bodyColor:'#1a3a5c', accColor:'#d4aa58', kmh:42, baseSpeed:1.70, boostMult:1.52, boostDur:1520,
        desc:'Linus Brave — Lokomotif Sumatera yang gagah.'},
-      {key:'jz711_dragutin', name:'JZ 711 Dragutin', sub:'Diesel Shunter Yugoslav', emoji:'🚆',
+      {key:'jz711_dragutin', name:'JZ 711 Dragutin', sub:'Articulated Tram Yugoslav', emoji:'🚆',
        isCharacter:true, spriteUrl:'../assets/train/jz711-body.webp',
-       wheelLayout:'diesel-6', spriteHeight:60,
-       wheelPositions:[[-90,12,8],[-60,12,8],[-30,12,8],[10,12,8],[40,12,8],[70,12,8]],
-       smokePos:[-60,-35],
-       bodyColor:'#2d3748', accColor:'#e53e3e', kmh:55, baseSpeed:1.85, boostMult:1.55, boostDur:1600,
-       desc:'JZ 711 Dragutin — Lokomotif diesel shunter Yugoslavia!'},
-      {key:'jz62_malivlak', name:'Malivlak', sub:'JZ 62 Steam Passenger', emoji:'🚂',
+       wheelLayout:'articulated-tram', spriteHeight:52,
+       // 3-section articulated tram — 4 wheels total at the two ends (front + rear bogies)
+       wheelPositions:[[-160,20,7],[-130,20,7],[130,20,7],[160,20,7]],
+       smokePos:null, // electric tram, no smoke
+       bodyColor:'#0d7377', accColor:'#14b8a6', kmh:60, baseSpeed:1.95, boostMult:1.55, boostDur:1600,
+       desc:'JZ 711 Dragutin — Tram listrik artikulasi Yugoslavia!'},
+      {key:'jz62_malivlak', name:'Malivlak', sub:'JZ 62 Steam + 3 Cars', emoji:'🚂',
        isCharacter:true, spriteUrl:'../assets/train/malivlak-body.webp',
-       wheelLayout:'passenger', spriteHeight:85,
-       wheelPositions:[[-80,20,10],[-50,20,10],[-15,20,10],[20,20,10],[55,20,10],[85,20,10]],
-       smokePos:[-65,-55],
-       bodyColor:'#4a2817', accColor:'#d4a574', kmh:48, baseSpeed:1.75, boostMult:1.50, boostDur:1550,
-       desc:'Malivlak — Kereta uap penumpang Yugoslavia klasik!'},
+       wheelLayout:'passenger-train', spriteHeight:95,
+       // Full train with locomotive on RIGHT + 3 passenger cars trailing left. 10 wheels total.
+       // Scaled sprite ~264px wide; positions normalized to that.
+       wheelPositions:[
+         [-128,32,10],[-102,32,10],  // blue car (far left)
+         [-72,32,10],[-46,32,10],    // brown car
+         [-16,32,10],[10,32,10],     // gray car with pantograph
+         [42,36,7],[56,36,7],        // small pilot wheels of loco
+         [82,28,14],[112,28,14]      // large driving wheels of loco
+       ],
+       smokePos:[118,-56], // chimney at top-right of locomotive (right side of sprite)
+       bodyColor:'#4a2040', accColor:'#c0392b', kmh:48, baseSpeed:1.75, boostMult:1.50, boostDur:1550,
+       desc:'Malivlak — Kereta uap dengan 3 gerbong, klasik Yugoslavia!'},
     ]
   },
   {
