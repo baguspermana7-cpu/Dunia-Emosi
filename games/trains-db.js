@@ -4,41 +4,37 @@ const TRAIN_CATS = [
     key:'character', name:'Karakter ⭐', emoji:'🌟',
     color:'#7c3aed', desc:'Lokomotif karakter spesial dengan animasi penuh!',
     trains:[
+      // NOTE: wheelPositions Y negative = ABOVE baseline (attached to sprite bottom).
+      // smokePos Y < -spriteHeight = ABOVE sprite top (not overlapping body).
       {key:'caseyjr_character', name:'Casey JR', sub:'0-4-0 Circus', emoji:'🚂',
        isCharacter:true, spriteUrl:'../assets/train/caseyjr-body.webp',
-       wheelLayout:'0-4-0',
-       wheelPositions:[[-35,18,11],[-10,18,11],[15,18,11],[40,18,11]],
-       smokePos:[-40,-48], spriteHeight:90,
+       wheelLayout:'0-4-0', spriteHeight:90,
+       wheelPositions:[[-35,-8,11],[-10,-8,11],[15,-8,11],[40,-8,11]],
+       smokePos:[-40,-110],
        bodyColor:'#1e2a4a', accColor:'#c0392b', kmh:40, baseSpeed:1.65, boostMult:1.50, boostDur:1500,
        desc:'Lokomotif sirkus Casey JR! Si kecil yang berani.'},
       {key:'linus_brave', name:'Linus Brave', sub:'2-4-0 Sumatera', emoji:'🚂',
        isCharacter:true, spriteUrl:'../assets/train/linus-body.webp',
-       wheelLayout:'2-4-0',
-       wheelPositions:[[-48,20,7],[-22,18,11],[4,18,11],[30,18,11],[56,18,11]],
-       smokePos:[-30,-45], spriteHeight:88,
+       wheelLayout:'2-4-0', spriteHeight:88,
+       wheelPositions:[[-48,-5,7],[-22,-8,11],[4,-8,11],[30,-8,11],[56,-8,11]],
+       smokePos:[-30,-108],
        bodyColor:'#1a3a5c', accColor:'#d4aa58', kmh:42, baseSpeed:1.70, boostMult:1.52, boostDur:1520,
        desc:'Linus Brave — Lokomotif Sumatera yang gagah.'},
       {key:'jz711_dragutin', name:'JZ 711 Dragutin', sub:'Articulated Tram Yugoslav', emoji:'🚆',
        isCharacter:true, spriteUrl:'../assets/train/jz711-body.webp',
        wheelLayout:'articulated-tram', spriteHeight:52,
-       // 3-section articulated tram — 4 wheels total at the two ends (front + rear bogies)
-       wheelPositions:[[-160,20,7],[-130,20,7],[130,20,7],[160,20,7]],
-       smokePos:null, // electric tram, no smoke
+       wheelPositions:[[-160,-3,7],[-130,-3,7],[130,-3,7],[160,-3,7]],
+       smokePos:null,
        bodyColor:'#0d7377', accColor:'#14b8a6', kmh:60, baseSpeed:1.95, boostMult:1.55, boostDur:1600,
        desc:'JZ 711 Dragutin — Tram listrik artikulasi Yugoslavia!'},
       {key:'jz62_malivlak', name:'Malivlak', sub:'JZ 62 Steam + 3 Cars', emoji:'🚂',
        isCharacter:true, spriteUrl:'../assets/train/malivlak-body.webp',
        wheelLayout:'passenger-train', spriteHeight:95,
-       // Full train with locomotive on RIGHT + 3 passenger cars trailing left. 10 wheels total.
-       // Scaled sprite ~264px wide; positions normalized to that.
        wheelPositions:[
-         [-128,32,10],[-102,32,10],  // blue car (far left)
-         [-72,32,10],[-46,32,10],    // brown car
-         [-16,32,10],[10,32,10],     // gray car with pantograph
-         [42,36,7],[56,36,7],        // small pilot wheels of loco
-         [82,28,14],[112,28,14]      // large driving wheels of loco
+         [-128,-6,10],[-102,-6,10],[-72,-6,10],[-46,-6,10],
+         [-16,-6,10],[10,-6,10],[42,-4,7],[56,-4,7],[82,-8,14],[112,-8,14]
        ],
-       smokePos:[118,-56], // chimney at top-right of locomotive (right side of sprite)
+       smokePos:[118,-118],
        bodyColor:'#4a2040', accColor:'#c0392b', kmh:48, baseSpeed:1.75, boostMult:1.50, boostDur:1550,
        desc:'Malivlak — Kereta uap dengan 3 gerbong, klasik Yugoslavia!'},
     ]

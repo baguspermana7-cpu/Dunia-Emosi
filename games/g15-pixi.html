@@ -217,7 +217,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
 <script src="trains-db.js"></script>
-<script src="train-character-sprite.js?v=20260422c"></script>
+<script src="train-character-sprite.js?v=20260422d"></script>
 <script>
 'use strict';
 // Polyfill ctx.roundRect for older Android WebViews (Chrome < 99)
@@ -320,11 +320,21 @@ function getCurrentStation(){ return JAVA_STATIONS[Math.min(LEVEL-1,JAVA_STATION
 const TRAIN_MODELS = typeof TRAIN_CATS !== 'undefined'
   ? TRAIN_CATS.flatMap((cat, ci) => cat.trains.map((t, ti) => {
       const hexToInt = s => parseInt((s||'#000').replace('#',''), 16)
-      const typeMap = {steam_id:'steam',steam_world:'steam',diesel_id:'diesel',diesel_world:'diesel',emu:'electric',hsr:'highspeed',maglev:'highspeed'}
-      const subMap = {steam_id:'classic',steam_world:'pacific',diesel_id:'hood',diesel_world:'boxcab',emu:'krl',hsr:'bullet',maglev:'maglev'}
-      return {id:t.key, name:t.name, type:typeMap[cat.key]||'heritage', sub:subMap[cat.key]||'royal',
+      const typeMap = {steam_id:'steam',steam_world:'steam',diesel_id:'diesel',diesel_world:'diesel',emu:'electric',hsr:'highspeed',maglev:'highspeed',character:'character'}
+      const subMap = {steam_id:'classic',steam_world:'pacific',diesel_id:'hood',diesel_world:'boxcab',emu:'krl',hsr:'bullet',maglev:'maglev',character:'featured'}
+      const base = {id:t.key, name:t.name, type:typeMap[cat.key]||'heritage', sub:subMap[cat.key]||'royal',
         v:(ti%5)+1, b:hexToInt(t.bodyColor), r:hexToInt(t.accColor), s:hexToInt(t.accColor),
         w:0xdbeafe, k:0x111827 }
+      // Preserve character sprite fields so buildTrain + preview can render real image
+      if (t.isCharacter) {
+        base.isCharacter = true
+        base.spriteUrl = t.spriteUrl
+        base.spriteHeight = t.spriteHeight
+        base.wheelPositions = t.wheelPositions
+        base.smokePos = t.smokePos
+        base.wheelLayout = t.wheelLayout
+      }
+      return base
     }))
   : [
   // ── STEAM / CLASSIC ── v1:3-wheel single chimney, v2:4-wheel, v3:tall chimney, v4:double chimney, v5:4-wheel compact
@@ -1684,33 +1694,42 @@ function buildTrainGrid() {
   filtered.forEach(entry => {
     const card = document.createElement('div');
     card.className = 'tcard' + (selectedTrain && selectedTrain.id === entry.id ? ' selected' : '');
-    const canvas = document.createElement('canvas');
-    canvas.width = 100; canvas.height = 36;
     const info = document.createElement('div');
     info.className = 'tcard-info';
     const name = document.createElement('span');
     name.className = 'tname';
-    name.textContent = entry.name;
+    name.textContent = (entry.isCharacter ? '⭐ ' : '') + entry.name;
     const sub = document.createElement('span');
     sub.className = 'tsub';
     sub.textContent = (TYPE_LABEL[entry.type] || entry.type) + (entry.sub ? ' · ' + entry.sub : '');
     info.appendChild(name);
     info.appendChild(sub);
-    card.appendChild(canvas);
+
+    // Character train → use real sprite IMG (not generated canvas)
+    if (entry.isCharacter && entry.spriteUrl) {
+      const img = document.createElement('img');
+      img.src = entry.spriteUrl;
+      img.alt = entry.name;
+      img.style.cssText = 'width:100px;height:36px;object-fit:contain;display:block;';
+      card.appendChild(img);
+    } else {
+      const canvas = document.createElement('canvas');
+      canvas.width = 100; canvas.height = 36;
+      card.appendChild(canvas);
+      try {
+        drawTrainPreview2d(canvas, entry);
+      } catch(e) {
+        try {
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.fillStyle = '#' + entry.b.toString(16).padStart(6, '0');
+            ctx.fillRect(0, 0, 120, 48);
+          }
+        } catch(_) {}
+      }
+    }
     card.appendChild(info);
     grid.appendChild(card);
-    // Draw after append so a throw doesn't prevent card from showing
-    try {
-      drawTrainPreview2d(canvas, entry);
-    } catch(e) {
-      try {
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          ctx.fillStyle = '#' + entry.b.toString(16).padStart(6, '0');
-          ctx.fillRect(0, 0, 120, 48);
-        }
-      } catch(_) {}
-    }
     card.addEventListener('click', () => {
       selectedTrain = entry;
       document.getElementById('train-select').style.display = 'none';

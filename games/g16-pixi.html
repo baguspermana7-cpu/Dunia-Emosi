@@ -107,35 +107,40 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 
 <div id="train-select">
   <div id="ts-title">🚂 Pilih Keretamu!</div>
-  <div id="ts-subtitle">6 LIVERY KERETA TERSEDIA</div>
+  <div id="ts-subtitle">7 LIVERY KERETA TERSEDIA</div>
   <div id="ts-trains">
     <div class="ts-card selected" onclick="selectTrain(0)" id="ts-0">
       <canvas class="ts-preview" width="116" height="52" id="prev-0"></canvas>
-      <div class="ts-card-name">Linus — Brave Loco</div>
-      <div class="ts-card-desc">Si pemberani rel</div>
+      <div class="ts-card-name">⭐ Casey JR</div>
+      <div class="ts-card-desc">Si sirkus berani</div>
     </div>
     <div class="ts-card" onclick="selectTrain(1)" id="ts-1">
       <canvas class="ts-preview" width="116" height="52" id="prev-1"></canvas>
-      <div class="ts-card-name">Dragutin JZ 62</div>
-      <div class="ts-card-desc">Legenda jalur hijau</div>
+      <div class="ts-card-name">⭐ Linus Brave</div>
+      <div class="ts-card-desc">Si pemberani rel</div>
     </div>
     <div class="ts-card" onclick="selectTrain(2)" id="ts-2">
       <canvas class="ts-preview" width="116" height="52" id="prev-2"></canvas>
-      <div class="ts-card-name">Malivlak</div>
-      <div class="ts-card-desc">Mesin api tua</div>
+      <div class="ts-card-name">⭐ Dragutin JZ 711</div>
+      <div class="ts-card-desc">Tram legenda hijau</div>
     </div>
     <div class="ts-card" onclick="selectTrain(3)" id="ts-3">
       <canvas class="ts-preview" width="116" height="52" id="prev-3"></canvas>
-      <div class="ts-card-name">Sakura Special</div>
-      <div class="ts-card-desc">Sang pelari cepat</div>
+      <div class="ts-card-name">⭐ Malivlak</div>
+      <div class="ts-card-desc">Mesin api tua</div>
     </div>
     <div class="ts-card" onclick="selectTrain(4)" id="ts-4">
       <canvas class="ts-preview" width="116" height="52" id="prev-4"></canvas>
-      <div class="ts-card-name">Nocturne</div>
-      <div class="ts-card-desc">Raja kereta malam</div>
+      <div class="ts-card-name">Sakura Special</div>
+      <div class="ts-card-desc">Sang pelari cepat</div>
     </div>
     <div class="ts-card" onclick="selectTrain(5)" id="ts-5">
       <canvas class="ts-preview" width="116" height="52" id="prev-5"></canvas>
+      <div class="ts-card-name">Nocturne</div>
+      <div class="ts-card-desc">Raja kereta malam</div>
+    </div>
+    <div class="ts-card" onclick="selectTrain(6)" id="ts-6">
+      <canvas class="ts-preview" width="116" height="52" id="prev-6"></canvas>
       <div class="ts-card-name">Bima Express</div>
       <div class="ts-card-desc">Kebanggaan nusantara</div>
     </div>
@@ -145,7 +150,7 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 </div>
 
 <script src="game-modal.js"></script>
-<script src="train-character-sprite.js?v=20260422c"></script>
+<script src="train-character-sprite.js?v=20260422d"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
 <script>
@@ -154,27 +159,55 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 const cfg = { level: 1 }
 try { const s = sessionStorage.getItem('g16Config'); if (s) Object.assign(cfg, JSON.parse(s)) } catch(_){}
 
-// ── 6 Train Styles ─────────────────────────────────────────────────────────────
+// ── 10 Train Styles — indices 0-3 CHARACTER (sprite+wheels+smoke), 4-9 PROGRAMMATIC (original) ──
 const TRAIN_STYLES = [
-  { // 0: Linus — Brave Locomotive (Cobalt Blue)
+  { // 0: ⭐ Casey JR (character sprite, 0-4-0)
+    character:true, characterKey:'caseyjr_character',
+    locoBody:0x1e2a4a, locoCab:0x3b82f6, locoAccent:0xc0392b,
+    carBody:0x1d4ed8, carWindow:0xbae6fd, carStripe:0x93c5fd,
+    cabColor:0x1e3a8a, chimney:0x1c1917, wheelRim:0xdbeafe,
+    caboose:0x1e40af, cabooseLight:0xef4444, smokeCol:0xbbbbbb,
+  },
+  { // 1: ⭐ Linus Brave (character sprite, 2-4-0)
+    character:true, characterKey:'linus_brave',
+    locoBody:0x1a3a5c, locoCab:0x3b82f6, locoAccent:0xd4aa58,
+    carBody:0x1d4ed8, carWindow:0xbae6fd, carStripe:0x93c5fd,
+    cabColor:0x1e3a8a, chimney:0x1c1917, wheelRim:0xdbeafe,
+    caboose:0x1e40af, cabooseLight:0xef4444, smokeCol:0x99aacc,
+  },
+  { // 2: ⭐ Dragutin JZ 711 (character sprite, articulated electric tram)
+    character:true, characterKey:'jz711_dragutin',
+    locoBody:0x0d7377, locoCab:0x14b8a6, locoAccent:0x5eead4,
+    carBody:0x0d7377, carWindow:0xccfbf1, carStripe:0x5eead4,
+    cabColor:0x134e4a, chimney:0x1c1917, wheelRim:0xa7f3d0,
+    caboose:0x0d7377, cabooseLight:0xfbbf24, smokeCol:null,
+  },
+  { // 3: ⭐ Malivlak JZ 62 (character sprite, steam + 3 cars)
+    character:true, characterKey:'jz62_malivlak',
+    locoBody:0x4a2040, locoCab:0xef4444, locoAccent:0xc0392b,
+    carBody:0x991b1b, carWindow:0xfecaca, carStripe:0xfca5a5,
+    cabColor:0x7f1d1d, chimney:0x292524, wheelRim:0xfbbf24,
+    caboose:0x7f1d1d, cabooseLight:0xfbbf24, smokeCol:0x888888,
+  },
+  { // 4: Linus — Brave Loco (PROGRAMMATIC original, Cobalt Blue) — RESTORED
     locoBody:0x1e40af, locoCab:0x3b82f6, locoAccent:0x60a5fa,
     carBody:0x1d4ed8, carWindow:0xbae6fd, carStripe:0x93c5fd,
     cabColor:0x1e3a8a, chimney:0x1c1917, wheelRim:0xdbeafe,
     caboose:0x1e40af, cabooseLight:0xef4444, smokeCol:0x99aacc,
   },
-  { // 1: Dragutin JZ 62 (Forest Green)
+  { // 5: Dragutin JZ 62 (PROGRAMMATIC original, Forest Green) — RESTORED
     locoBody:0x14532d, locoCab:0x16a34a, locoAccent:0x4ade80,
     carBody:0x166534, carWindow:0xbbf7d0, carStripe:0x86efac,
     cabColor:0x14532d, chimney:0x1c1917, wheelRim:0x86efac,
     caboose:0x14532d, cabooseLight:0xfbbf24, smokeCol:0x888888,
   },
-  { // 2: Malivlak (Crimson Red, steam)
+  { // 6: Malivlak (PROGRAMMATIC original, Crimson Red steam) — RESTORED
     locoBody:0xb91c1c, locoCab:0xef4444, locoAccent:0xfca5a5,
     carBody:0x991b1b, carWindow:0xfecaca, carStripe:0xfca5a5,
     cabColor:0x7f1d1d, chimney:0x292524, wheelRim:0xfbbf24,
     caboose:0x7f1d1d, cabooseLight:0xfbbf24, smokeCol:0x444444,
   },
-  { // 3: Sakura Special (Pink/White, high-speed)
+  { // 7: Sakura Special (Pink/White, high-speed)
     locoBody:0xfce7f3, locoCab:0xfdf2f8, locoAccent:0xf9a8d4,
     carBody:0xfdf4ff, carWindow:0x7c3aed, carStripe:0xec4899,
     cabColor:0xdb2777, chimney:0xf0abcc, wheelRim:0xf9a8d4,
@@ -807,13 +840,33 @@ function buildAmbient(W,H){
   }
 }
 
-// ── Character train instance (Casey JR / Linus Brave) — G16 always uses Casey JR by default ──
+// ── Character train config lookup — keyed by characterKey in TRAIN_STYLES ──
+// Wheel y negative = above baseline (attached to sprite bottom). Smoke y < -spriteHeight (above sprite top).
 let g16CharacterTrain = null;
-const G16_CHARACTER_CONFIG = {
-  spriteUrl:'../assets/train/caseyjr-body.webp',
-  wheelPositions:[[-35,18,11],[-10,18,11],[15,18,11],[40,18,11]],
-  smokePos:[-40,-48], spriteHeight:90,
-  bodyBobFreq:0.08, bodyBobAmp:1.5, smokeInterval:10
+const G16_CHAR_CONFIGS = {
+  caseyjr_character: {
+    spriteUrl:'../assets/train/caseyjr-body.webp', spriteHeight:90,
+    wheelPositions:[[-35,-8,11],[-10,-8,11],[15,-8,11],[40,-8,11]],
+    smokePos:[-40,-110], bodyBobFreq:0.08, bodyBobAmp:1.5, smokeInterval:10
+  },
+  linus_brave: {
+    spriteUrl:'../assets/train/linus-body.webp', spriteHeight:88,
+    wheelPositions:[[-48,-5,7],[-22,-8,11],[4,-8,11],[30,-8,11],[56,-8,11]],
+    smokePos:[-30,-108], bodyBobFreq:0.08, bodyBobAmp:1.5, smokeInterval:10
+  },
+  jz711_dragutin: {
+    spriteUrl:'../assets/train/jz711-body.webp', spriteHeight:52,
+    wheelPositions:[[-160,-3,7],[-130,-3,7],[130,-3,7],[160,-3,7]],
+    smokePos:null, bodyBobFreq:0.10, bodyBobAmp:1.0, smokeInterval:10
+  },
+  jz62_malivlak: {
+    spriteUrl:'../assets/train/malivlak-body.webp', spriteHeight:95,
+    wheelPositions:[
+      [-128,-6,10],[-102,-6,10],[-72,-6,10],[-46,-6,10],
+      [-16,-6,10],[10,-6,10],[42,-4,7],[56,-4,7],[82,-8,14],[112,-8,14]
+    ],
+    smokePos:[118,-118], bodyBobFreq:0.08, bodyBobAmp:1.5, smokeInterval:12
+  }
 };
 
 // ── Train (detailed) ──────────────────────────────────────────────────────────
@@ -822,10 +875,12 @@ function buildTrain(W,H){
   trainContainer=new PIXI.Container()
   trainContainer.x=TRAIN_SCREEN_X; trainContainer.y=tY-18
 
-  // Character train branch — if module loaded, render Casey JR sprite with animated wheels + smoke
-  if (window.CharacterTrain) {
+  // Character train branch — look up config by selected style's characterKey
+  const TS_sel = TRAIN_STYLES[selectedTrainIdx]
+  if (window.CharacterTrain && TS_sel && TS_sel.character && TS_sel.characterKey && G16_CHAR_CONFIGS[TS_sel.characterKey]) {
     trainContainer.scale.x = 1; // sprite already faces right
-    g16CharacterTrain = CharacterTrain.mount(trainContainer, G16_CHARACTER_CONFIG);
+    const charConfig = G16_CHAR_CONFIGS[TS_sel.characterKey]
+    g16CharacterTrain = CharacterTrain.mount(trainContainer, charConfig);
     if (g16CharacterTrain) g16CharacterTrain.setSmokeParent(stage);
     stage.addChild(trainContainer);
     return;
