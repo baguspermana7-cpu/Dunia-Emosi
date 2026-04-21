@@ -96,6 +96,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 <body>
 <canvas id="pixi-canvas"></canvas>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
+<audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
 <!-- HUD Top -->
 <div id="hud-top">
@@ -1866,6 +1867,7 @@ function startRace() {
   lastObsTime = performance.now() + 2500
   S.running = true
   try{const bgm=document.getElementById('game-bgm');bgm.volume=0.2;bgm.play().catch(()=>{})}catch(_){}
+  try{const sfx=document.getElementById('train-sfx');if(sfx){sfx.currentTime=0;sfx.volume=0.7;sfx.play().catch(()=>{})}}catch(_){}
 }
 
 function endRace() {

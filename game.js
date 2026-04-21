@@ -5000,6 +5000,43 @@ function pokeTierScale(slug){
   return ({1:1.0, 2:1.2, 3:1.3, 4:1.3})[t] || 1.0
 }
 
+// ─── Pokemon facing + visual-size mapping (data-driven) ─────────────────────
+// Sparse maps for per-Pokemon overrides. Grow over time as user flags offenders.
+// Default: sprite naturally faces viewer's right ('R'), visual scale 1.0×.
+// Natural facing of source sprite. DEFAULT 'L' — Pokemondb HOME 3D renders face viewer with slight LEFT bias.
+// Add 'R' override here for Pokemon whose natural HD art faces RIGHT.
+const POKE_FACING = {
+  // User-reported 'R' natural-facing exceptions
+}
+function pokeFacing(slug){ return POKE_FACING[slug] || 'L' }
+// role: 'player' → bottom-left, faces right toward enemy; 'enemy' → top-right, faces left toward player.
+// Always returns an explicit scaleX — never empty — so CSS base transforms can't leak in.
+function pokeFlipForRole(slug, role){
+  const natural = pokeFacing(slug)
+  const want = role === 'enemy' ? 'L' : 'R'
+  return natural !== want ? 'scaleX(-1)' : 'scaleX(1)'
+}
+// Visual canvas-fill override — compensate for sprites that fill much more
+// or less of their 475×475 home PNG than the roster average. Default = 1.0.
+const POKE_VISUAL = {
+  // 2026-04-21 user-reported
+  meowth: 0.85,
+  oddish: 0.80,
+}
+function pokeVisualScale(slug){ return POKE_VISUAL[slug] || 1.0 }
+// Combined render scale = tier × visual. Replaces bare pokeTierScale in battle scenes.
+function pokeFinalScale(slug){ return pokeTierScale(slug) * pokeVisualScale(slug) }
+
+// Expose to window.BSE for external games (g13c-pixi.html uses this bridge).
+// See games/battle-sprite-engine.js for the standalone variant used when game.js is not loaded.
+if (typeof window !== 'undefined') {
+  window.BSE = window.BSE || {
+    init: (_t)=>{}, facing: pokeFacing, flipForRole: pokeFlipForRole,
+    visualScale: pokeVisualScale, tierScale: pokeTierScale, finalScale: pokeFinalScale,
+    POKE_FACING, POKE_VISUAL,
+  }
+}
+
 // Canonical type-color palette for auras / projectiles / UI accents.
 // Lowercase keys; pokeTypeColor() handles capitalized input via toLowerCase().
 const POKE_TYPE_COLORS = {
@@ -5033,9 +5070,15 @@ function pokeSpriteBackup(id){return `https://raw.githubusercontent.com/PokeAPI/
 function pokeSpriteBack(id){return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/${id}.png`}
 // SVG variant — 751 vector Pokemon sprites for visual variety
 function pokeSpriteSVG(slug){const id=POKE_IDS[slug];return id?`assets/Pokemon/svg/${id}.svg`:null}
-// HD priority: local SVG (751 covered) → HD CDN raster. Low-res only as offline fallback.
+// Alt2 HD WebP variant — 1025 Pokemon 630×630 RGBA, covers full Gen 1-9.
+// Filename pattern: {NNNN}_{slug}.webp (4-digit zero-padded ID). See TODO Task #37.
+function pokeSpriteAlt2(slug){
+  const id = POKE_IDS[slug]
+  return id ? `assets/Pokemon/pokemondb_hd_alt2/${String(id).padStart(4,'0')}_${slug}.webp` : null
+}
+// HD priority: alt2 WebP (1025 covered) → local SVG (751 covered) → HD CDN raster. Low-res only as offline fallback.
 function pokeSpriteVariant(slug){
-  return pokeSpriteSVG(slug) || pokeSpriteCDN(slug)
+  return pokeSpriteAlt2(slug) || pokeSpriteSVG(slug) || pokeSpriteCDN(slug)
 }
 
 // ── TRAINER PARTIES ──
@@ -5432,19 +5475,17 @@ function g10NewBattle(){
   loadSprHD('g10-espr', s.enemyPoke.slug, s.enemyPoke.id)
   loadSprPlayer('g10-pspr', s.playerPoke.id, s.playerPoke.slug)
 
-  // Force correct facing direction via inline style (overrides any stale animation fill)
-  // Enemy: top-right quadrant, must face LEFT toward player → scaleX(-1)
-  // Player: bottom-left quadrant, must face RIGHT toward enemy → default (no flip)
+  // Data-driven facing + final scale. POKE_FACING handles Pokemon whose
+  // home sprite faces viewer-left (blanket scaleX(-1) broke them). POKE_VISUAL
+  // normalizes sprites that fill more/less of their 475×475 canvas than average.
   const eEl=document.getElementById('g10-espr')
   const pEl=document.getElementById('g10-pspr')
-  if(eEl) eEl.style.transform='scaleX(-1)'
-  if(pEl) pEl.style.transform=''
-  // Tier-based sprite sizing: basic=1x, mid=1.2x, final=1.3x, legendary=1.3x
-  const _g10TierSz = t => ({1:1.0, 2:1.2, 3:1.3, 4:1.3}[t||1] || 1.0)
-  const eTierSc = _g10TierSz(s.enemyPoke.tier)
-  const pTierSc = _g10TierSz(s.playerPoke.tier)
-  if(eEl) eEl.style.width = eEl.style.height = eTierSc !== 1.0 ? `calc(min(44vw,22vh) * ${eTierSc})` : ''
-  if(pEl) pEl.style.width = pEl.style.height = pTierSc !== 1.0 ? `calc(min(44vw,22vh) * ${pTierSc})` : ''
+  if(eEl) eEl.style.transform = pokeFlipForRole(s.enemyPoke.slug, 'enemy')
+  if(pEl) pEl.style.transform = pokeFlipForRole(s.playerPoke.slug, 'player')
+  const eSc = pokeFinalScale(s.enemyPoke.slug)
+  const pSc = pokeFinalScale(s.playerPoke.slug)
+  if(eEl) eEl.style.width = eEl.style.height = eSc !== 1.0 ? `calc(min(44vw,22vh) * ${eSc})` : ''
+  if(pEl) pEl.style.width = pEl.style.height = pSc !== 1.0 ? `calc(min(44vw,22vh) * ${pSc})` : ''
   // Reset wrapper entrance animations so they replay cleanly each battle
   const eWrap=document.getElementById('g10-espr-wrap')
   const pWrap=document.getElementById('g10-pspr-wrap')
@@ -7157,11 +7198,12 @@ function _initGame13Impl() {
     slakoth:287,vigoroth:288,slaking:289,
     umbreon:197,espeon:196,leafeon:470,glaceon:471,sylveon:700,
     togekiss:468,roserade:407,lopunny:428,honchkrow:430,porygon:137,porygon2:233,porygonz:474}
-  // Same HD HOME sprites as G10 — pokemondb allows hotlinking these
-  // Try local sprite first, then remote
-  // Sprite variant: SVG or HD raster randomly per session
-  const pokeUrl = slug => { const sv=pokeSpriteSVG(slug); return (sv&&Math.random()<0.5)?sv:`assets/Pokemon/sprites/${slug}.png` }
-  const pokeUrlRemote = slug => POKE_IDS[slug] ? `https://img.pokemondb.net/sprites/home/normal/${slug}.png` : null
+  // HD CDN first for consistent canvas sizing + predictable orientation.
+  // SVG variant is secondary (visual variety for the 751 covered slugs).
+  // Local low-res PNG is dropped from this cascade — it produced inconsistent
+  // sizes and wrong-facing artwork (2026-04-21 user report).
+  const pokeUrl = slug => pokeSpriteCDN(slug)
+  const pokeUrlRemote = slug => pokeSpriteSVG(slug)
   const pokeFallbackUrl = slug => { const id = POKE_IDS[slug]; return id ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png` : null }
   const sprFbStyle = 'font-size:min(18vw,11vh);line-height:1;display:flex;align-items:center;justify-content:center;width:min(40vw,20vh);height:min(40vw,20vh);position:relative;z-index:2;'
 
@@ -7204,13 +7246,19 @@ function _initGame13Impl() {
 
   loadSpr('g13-wspr', 'g13-wspr-wrap', chain.wild.slug, chain.icon || '❓')
   loadSpr('g13-pspr', 'g13-pspr-wrap', chain.player.slug, chain.icon || '❓')
-  // Apply tier-based size to BOTH wild and player sprites
-  const wScale = pokeTierScale(chain.wild.slug)
+  // Apply facing + final scale (tier × visual) to BOTH sprites
   const wImg = document.getElementById('g13-wspr')
-  if (wImg && wScale !== 1.0) wImg.style.width = wImg.style.height = `calc(min(40vw,20vh) * ${wScale})`
-  const pScale = pokeTierScale(chain.player.slug)
   const pImg = document.getElementById('g13-pspr')
-  if (pImg && pScale !== 1.0) pImg.style.width = pImg.style.height = `calc(min(40vw,20vh) * ${pScale})`
+  if (wImg) {
+    wImg.style.transform = pokeFlipForRole(chain.wild.slug, 'enemy')
+    const wScale = pokeFinalScale(chain.wild.slug)
+    if (wScale !== 1.0) wImg.style.width = wImg.style.height = `calc(min(40vw,20vh) * ${wScale})`
+  }
+  if (pImg) {
+    pImg.style.transform = pokeFlipForRole(chain.player.slug, 'player')
+    const pScale = pokeFinalScale(chain.player.slug)
+    if (pScale !== 1.0) pImg.style.width = pImg.style.height = `calc(min(40vw,20vh) * ${pScale})`
+  }
 
   // Wild name/type
   const wnEl = document.getElementById('g13-wname'); if(wnEl) wnEl.textContent = chain.wild.name
@@ -7692,7 +7740,8 @@ function g13TriggerEvolution() {
     if (pspr) {
       pspr.src = `https://img.pokemondb.net/sprites/home/normal/${nowForm.slug}.png`
       pspr.onerror = () => { const eid=POKE_IDS2[nowForm.slug]; if(eid) pspr.src=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${eid}.png`; pspr.onerror=null }
-      pspr.style.width = pspr.style.height = `calc(min(40vw,20vh) * ${pokeTierScale(nowForm.slug)})`
+      pspr.style.width = pspr.style.height = `calc(min(40vw,20vh) * ${pokeFinalScale(nowForm.slug)})`
+      pspr.style.transform = pokeFlipForRole(nowForm.slug, 'player')
       pspr.style.animation = 'none'; void pspr.offsetWidth
       pspr.style.animation = 'g13EnterFlip 0.6s cubic-bezier(0.34,1.56,0.64,1)'
     }
@@ -7942,11 +7991,12 @@ function initGame13b() {
   const pspr = document.getElementById('g13b-pspr')
   if (pspr) {
     const saved = g13bSavedPoke
-    pspr.src = saved ? pokeSpriteOnline(saved.slug) : 'https://img.pokemondb.net/sprites/home/normal/pikachu.png'
+    const pSlug = saved ? saved.slug : 'pikachu'
+    pspr.src = pokeSpriteOnline(pSlug)
     pspr.onerror = function(){ this.src = 'https://img.pokemondb.net/sprites/home/normal/pikachu.png'; this.onerror = null }
-    const pTier = saved?.tier || 2  // Pikachu default = tier 2
-    const pScale = {1:1.0, 2:1.2, 3:1.3, 4:1.3}[pTier] || 1.0
+    const pScale = pokeFinalScale(pSlug)
     pspr.style.width = pspr.style.height = pScale === 1.0 ? '' : `calc(min(20vw,12vh) * ${pScale})`
+    pspr.style.transform = pokeFlipForRole(pSlug, 'player')
   }
   const pnameEl = document.getElementById('g13b-pname')
   if (pnameEl) pnameEl.textContent = g13bSavedPoke ? g13bSavedPoke.name : 'Pikachu'
@@ -7987,9 +8037,10 @@ function g13bSpawnWild() {
     wspr.style.opacity = '1'
     wspr.src = pokeSpriteOnline(wild.slug)
     wspr.onerror = function(){ this.src=pokeSpriteCDN(wild.slug); this.onerror=()=>{ this.alt = wild.icon || '?' } }
-    // Apply tier-based size scaling
-    const tierScale = {1:1.0, 2:1.2, 3:1.3, 4:1.3}[wild.tier||1] || 1.0
+    // Final scale (tier × visual) + data-driven facing
+    const tierScale = pokeFinalScale(wild.slug)
     wspr.style.width = wspr.style.height = tierScale === 1.0 ? '' : `calc(min(44vw,26vh) * ${tierScale})`
+    wspr.style.transform = pokeFlipForRole(wild.slug, 'enemy')
     void wspr.offsetWidth
     wspr.classList.add('wild-enter')
     wspr.addEventListener('animationend', () => wspr.classList.remove('wild-enter'), {once:true})

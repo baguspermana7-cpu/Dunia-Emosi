@@ -121,6 +121,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <body>
 <canvas id="pixi-canvas"></canvas>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
+<audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
 <!-- HUD Top -->
 <div id="hud-top">
@@ -661,6 +662,7 @@ async function initPixi() {
 
   gameRunning = true;
   try{const bgm=document.getElementById('game-bgm');bgm.volume=0.2;bgm.play().catch(()=>{})}catch(_){}
+  try{const sfx=document.getElementById('train-sfx');if(sfx){sfx.currentTime=0;sfx.volume=0.7;sfx.play().catch(()=>{})}}catch(_){}
   startTime = Date.now();
   let spawnTimer = 0;
   const spawnInterval = () => Math.max(45, 90 - LEVEL * 2);

@@ -140,6 +140,217 @@ screen-result
 
 ---
 
+## Responsive Display Engine (RDE)
+
+> **Status**: DESIGN SPEC — implementation pending. Replaces per-game `@media` breakpoints.
+> **Problem solved**: Inconsistent UI scaling across 22 games, duplicated narrow-screen CSS, letter-input & navbar going vertical on small devices.
+
+### 3-Layer Architecture
+
+**Layer 1 — CSS Design Tokens (`:root`)**
+Fluid scaling via `clamp()` + viewport units. Single source of truth.
+
+```css
+:root {
+  /* ── Fluid master scale (320px=0.7×, 480px+=1.0×) ── */
+  --rz-scale: clamp(0.7, calc(0.44 + 0.175vw), 1);
+
+  /* ── Button sizes (auto-scale) ── */
+  --rz-btn-xs: calc(36px * var(--rz-scale));
+  --rz-btn-sm: calc(44px * var(--rz-scale));  /* letter/choice */
+  --rz-btn-md: calc(58px * var(--rz-scale));
+  --rz-btn-lg: calc(76px * var(--rz-scale));  /* primary CTA */
+
+  /* ── Typography (independent fluid) ── */
+  --rz-font-xs:    clamp(11px, 2vw,  13px);
+  --rz-font-sm:    clamp(13px, 2.3vw,15px);
+  --rz-font-body:  clamp(14px, 2.5vw,17px);
+  --rz-font-title: clamp(17px, 3.5vw,22px);
+  --rz-font-h1:    clamp(22px, 5vw,  32px);
+  --rz-font-hero:  clamp(28px, 7vw,  48px);
+
+  /* ── Spacing ── */
+  --rz-gap-xs: clamp(4px, 1vw, 8px);
+  --rz-gap-sm: clamp(8px, 2vw, 12px);
+  --rz-gap-md: clamp(12px, 3vw, 20px);
+  --rz-gap-lg: clamp(20px, 4vw, 32px);
+
+  /* ── Radii ── */
+  --rz-radius-sm: clamp(8px, 1.5vw, 14px);
+  --rz-radius-md: clamp(14px, 3vw, 22px);
+  --rz-radius-lg: clamp(22px, 4vw, 32px);
+}
+```
+
+**Layer 2 — Component Classes (consume tokens)**
+
+```css
+/* Reusable UI primitives — prefix rz- */
+.rz-navbar      { display:flex;flex-wrap:nowrap;align-items:center;
+                  gap:var(--rz-gap-sm);overflow:hidden;
+                  padding:var(--rz-gap-sm) var(--rz-gap-md); }
+.rz-navbar__title { flex:1;min-width:0;overflow:hidden;
+                    text-overflow:ellipsis;white-space:nowrap;
+                    font-size:var(--rz-font-title);font-weight:900; }
+
+.rz-letter-row  { display:flex;flex-wrap:wrap;justify-content:center;
+                  gap:var(--rz-gap-sm);max-width:100%; }
+.rz-letter-btn  { width:var(--rz-btn-sm);height:var(--rz-btn-sm);
+                  min-width:var(--rz-btn-sm); /* prevent <1 per row */
+                  font-size:calc(var(--rz-font-title)*0.9);
+                  border-radius:var(--rz-radius-sm); }
+
+.rz-choice-grid { display:grid;gap:var(--rz-gap-sm);
+                  grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+                  max-width:100%; }
+```
+
+**Layer 3 — JS Runtime (`shared/rz-responsive.js`)**
+
+For PixiJS/Canvas games that need scale factor at runtime.
+
+```js
+window.RZ = {
+  scale() { return Math.min(1, Math.max(0.7, 0.44 + innerWidth * 0.00175)) },
+  bp()    { const w=innerWidth; return w<360?'xs':w<480?'sm':w<768?'md':'lg' },
+  orient(){ return innerWidth > innerHeight ? 'landscape' : 'portrait' },
+  onResize(fn){ const h=()=>fn(this); addEventListener('resize',h,{passive:true}); h(); return ()=>removeEventListener('resize',h) }
+}
+```
+
+### Migration Plan (Sequential)
+
+| Step | Target | Result |
+|------|--------|--------|
+| 1 | Add tokens to `style.css` `:root` | 0 visual change; tokens available |
+| 2 | Build `rz-navbar` + `rz-letter-row` classes | Opt-in by game |
+| 3 | Migrate G8 Susun Kata (highest pain) | Delete G8-specific `@media` rules |
+| 4 | Migrate G3 Huruf Hutan | Delete G3-specific `@media` rules |
+| 5 | Migrate remaining DOM games (G1,2,4,5,7,9) | Delete 60+ lines of `@media` |
+| 6 | Ship `rz-responsive.js` + wire G14/G15/G16/G19/G20/G22 | Pixi games share scale factor |
+| 7 | Document per-game overrides in CHANGELOG | Traceable |
+
+### Non-Goals
+
+- Do NOT replace existing per-game art-direction (G6 road perspective, G14 parallax — game-specific, not UI)
+- Do NOT enforce for PixiJS world coordinates (Pixi has own resolution system)
+- Do NOT break standalone games already deployed
+
+### Naming Convention
+
+- Prefix all shared tokens: `--rz-*`
+- Prefix all shared classes: `rz-*`
+- Per-game overrides stay in their existing `.g<N>-*` namespace
+- Never inline arbitrary `px` for spacing/font — always token
+
+### Example: Before vs After
+
+**Before** (G8, 3 separate media queries — lines 516, 726, 827):
+```css
+.g8-letter-btn { width:52px;height:52px;font-size:24px; }
+@media(max-width:480px) { .g8-letter-btn { width:46px;height:46px;font-size:21px; } }
+@media(max-width:400px) { .g8-letter-btn { width:42px;height:42px;font-size:19px; } }
+@media(max-width:360px) { .g8-letter-btn { width:38px;height:38px;font-size:17px; } }
+```
+
+**After**:
+```css
+.g8-letter-btn { /* uses .rz-letter-btn + .g8 accent */ }
+```
+
+Delete 4 lines, fluid scaling automatic.
+
+---
+
+## Battle Sprite Engine (BSE)
+
+> **Status**: DESIGN SPEC — implementation pending (Task #30).
+> **Problem solved**: Pokemon battle sprites in G10/G13/G13b/G13c have inconsistent facing direction (e.g., Staryu as enemy faces right instead of left toward player), duplicated sprite-loading cascades, ad-hoc tier scaling, manual scaleX(-1) sprinkled in CSS/JS.
+
+### Goal: Single API for Battle Sprites
+
+```js
+BattleSprite.mount(document.getElementById('poke-enemy'), 'staryu', {
+  role: 'enemy',      // 'player' | 'enemy' | 'wild'
+  type: 'water',      // from POKEMON_DB
+  anchor: 'top-right',// 'bottom-left' | 'top-right' | center
+  animate: 'enter'    // 'enter' | 'faint' | null
+})
+```
+
+### Responsibilities (5)
+
+1. **Sprite source cascade — HD ONLY** *(mandate 2026-04-21, updated Task #37)*:
+   - Order: **alt2 HD WebP (1025-set, local) → local SVG (751-set) → HD CDN raster (pokemondb official artwork, ~475×475)**.
+   - **Primary source is now `assets/Pokemon/pokemondb_hd_alt2/{NNNN}_{slug}.webp`** — 1025 Pokemon 630×630 RGBA, full Gen 1-9 coverage, all face RIGHT user-POV (= LEFT monitor-POV, matches BSE default `'L'`). Resolved by `pokeSpriteAlt2(slug)` in game.js.
+   - **NEVER** use `/sprites/{slug}.png` (our local 96×96) or PokeAPI default 96×96 as primary — only as last-ditch offline fallback, and when used the engine MUST NOT add `image-rendering:pixelated` (killed in 2026-04-21 P0 fix).
+   - Rationale: user explicitly mandated HD sprites across all battle games. Low-res 96px sprite is visually jarring against the HD gym backgrounds. alt2 fully covers Gen 8/9 previously fallback-only.
+   - **Enforcement**: BSE constructor throws console warning if `<img>` `naturalWidth < 200` and falls back to next source in cascade.
+   - Existing helper `pokeSpriteVariant()` (game.js ~5075) encodes the cascade: `pokeSpriteAlt2(slug) || pokeSpriteSVG(slug) || pokeSpriteCDN(slug)`. BSE wraps it, doesn't re-implement.
+
+2. **Tier scale** — Uses `pokeTierScale(slug)` — 1.0× basic / 1.2× stage-1 / 1.3× stage-2 / 1.3× legendary. Already global (game.js:4993).
+
+3. **Facing / orientation** *(new — solves Staryu bug)*:
+   - Canonical table `POKE_FACING` (in `games/battle-sprite-engine.js` + mirrored in `game.js`):
+     ```js
+     POKE_FACING = {
+       // Overrides for Pokemon whose natural HD art faces RIGHT (exceptions)
+     }
+     function facing(slug) { return POKE_FACING[slug] || 'L' }  // DEFAULT 'L'
+     ```
+   - **Default facing = 'L'** — empirically verified 2026-04-21 that Pokemondb HOME 3D renders face the viewer with slight LEFT bias. Pikachu, Staryu, most Gen 1-9 Pokemon are 'L' natural.
+   - Desired facing per role: `player='R'`, `enemy='L'`, `wild='L'`.
+   - Engine: `flipForRole(slug, role)` returns `'scaleX(-1)'` if `natural !== want`, else `'scaleX(1)'`.
+   - Applied as inline `img.style.transform` — overrides any CSS `transform` on `#poke-player` / `#poke-enemy`.
+
+4. **Type aura ring** — Uses `spawnTypeAura(el, type, dur)` (2026-04-21 P0.5 Fix C). Keep.
+
+5. **Animation primitives** — `enter` (spawn fade+scale), `hit` (shake), `faint` (fade+sink). Reuse existing `pokeHitShakeFlip` keyframe. Engine auto-wraps to preserve `scaleX` sign.
+
+### CSS Rewrite
+
+Remove hardcoded `transform:scaleX(-1)` from `#poke-player` / `#poke-enemy` CSS. Engine sets it via inline style based on `role` + `source_facing`.
+
+```css
+/* Before (g13c line 34-35): ad-hoc */
+#poke-player{transform:scaleX(-1)}
+#poke-enemy{/* no transform */}
+
+/* After: engine-managed */
+.bse-sprite{--bse-flip:1;transform:scaleX(var(--bse-flip))}
+/* keyframes consume var(--bse-flip) so hit-shake preserves facing */
+```
+
+### Dimension — Integrate with RDE
+
+Sprite size = `base * pokeTierScale(slug) * clamp(0.7, rz-scale, 1)`.
+
+Single formula; no more `width:min(140px,30vw)` sprinkled per-game.
+
+### Migration Steps
+
+1. Add `SPRITE_FACING` + `SPRITE_FACING_OVERRIDES` constants to `game.js` near `POKE_TIERS`.
+2. Ship `games/battle-sprite.js` with `BattleSprite.mount()`.
+3. Migrate G13c (acute Staryu bug) as pilot.
+4. Migrate G13 → G13b → G10.
+5. Delete duplicated sprite-load + facing code in each game.
+6. Document per-Pokemon facing overrides as discovered.
+
+### Acute Fix (Interim)
+
+Before full migration, add to G13c inline CSS:
+```css
+#poke-enemy{transform:scaleX(-1)}  /* force enemy to face left */
+```
+…but this breaks Pokemon whose HD sprite is actually left-facing. **Proper fix requires engine.**
+
+### Non-Goals
+
+- Not for G22 catcher sprite (different mechanic — player-controlled catcher, not battle pair)
+- Not for G19 flying birds (roster has manually-curated per-entry facing in `g19/*.gif`)
+
+---
+
 ## Accessibility Checklist
 
 - [ ] All icon-only buttons have `aria-label`

@@ -151,14 +151,138 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 
 ---
 
+## 🆕 REOPENED 2026-04-21 (Evening session — from user screenshot + BGM feedback)
+
+> User flagged these as PLAN MODE required — analyze deeply before coding.
+
+### G6 — Petualangan Mobil (REOPENED, not solved)
+- ⬜ **Objects melayang di luar jalan/circuit** — buildings/emojis escape road bounds
+- ⬜ **Vehicle/character images FAIL TO DISPLAY** — URL-encoded path fix from 2026-04-20 not enough, still broken
+- ⬜ **Gameplay + animasi + UIUX need deep improvement**
+- **Plan mode**: inspect tile spawn logic, sprite path resolution (check DRIVE_VEHICLES + actual asset files), circuit boundaries CSS, object z-index/positioning
+
+### G19 — Pidgeot Icon Landing Page
+- ✅ **Icon 🐦 → Pidgeot HD SVG** (index.html:470): `<img src="assets/Pokemon/svg/18.svg">` 44×44px, emoji fallback via onerror. Cache-bust `v=20260421f`.
+- 🔄 **Other tile audit**: Most tiles use emoji `<span class="wn-icon">` appropriately (🎭 emosi, 🌬️ napas, 🃏 memory, 🔤 huruf, 🔡 susun, ✍️ jejak, 🦁 hitung, 🖼️ tebak, 🏐 volley). G6 already uses img (racecar.svg). G21 uses psyduck.png (placeholder). Consider if others deserve custom sprites — deferred as separate ticket.
+
+### G20 — Ducky Volley (controls + physics)
+- ⬜ **Controls & physics tidak smooth** — ball movement jerky, player response laggy
+- ⬜ **JANGAN auto-jump** — user says no auto-jump mechanic
+- ⬜ **Revamp controls** jadi lebih responsif + tactile
+- **Plan mode**: analyze requestAnimationFrame loop, input latency, gravity tuning (was 0.5), lerp factors, touch/keyboard handler
+
+### G20 + CROSS-GAME — Unified Scoring Engine (HIGH PRIORITY)
+- ⬜ **Scoring harus UNIFIED** — user wants ONE shared engine used by ALL games
+- ⬜ Per-game hanya 1-3 pengaturan/menu kecil, core scoring = 1 engine
+- **Current state**: `GameScoring.calc()` already exists in `game-modal.js` and 7 games migrated (G6, G14, G15, G16, G19, G20, G22). Remaining: G10, G13, G13b, G13c, G17, G18 still have per-game logic inline.
+- **Plan mode**:
+  1. Audit all 22 games: which use `GameScoring.calc()` vs inline scoring
+  2. Define SCORING_STANDARD config shape — `{maxStars, accuracyWeight, livesWeight, timeWeight, bonusRules}`
+  3. Replace remaining inline scoring with `GameScoring.calc(config)`
+  4. Surface per-game config as single-line call — e.g., `GameScoring.configure('g13', {lives:3, accuracyWeight:0.7})`
+
+### G16 Correct-Answer Celebration FX (Task #38, EXECUTED 2026-04-21 Evening) ✅
+- ✅ **Meledak/petasan effect** saat player jawab benar di quiz box + kereta mulai jalan lagi — IMPLEMENTED.
+- **Shipped**: (1) `spawnQuizCelebrationFX(screenX, screenY, streak)` added in `games/g16-pixi.html` (~line 1509). (2) 3 FX variants by streak: 14-confetti burst + white ring (baseline) → +6 firework bursts of 10 sparks (streak≥3) → +8 ⭐✨🌟💫 floating emoji + gold ring (streak≥5). (3) Sync timing: FX fires in `onChoiceTap` BEFORE 380/500ms `clearObstacle` delay — overlaps with train STOPPED→MOVING transition. (4) Stage punch via new `updateStagePunch(dt)` in gameLoop — sine bell-curve scale 1→1.04→1 over 0.5s, center-pivoted via `stage.x/y` compensation. (5) Streak tracked on `S.correctStreak` (reset on wrong). (6) `updateSparks` extended with `_ring` (expand+fade, no motion) and `_noGravity` (emoji slow-drift upward) branches — particles culled through existing pipeline. Audio chime cascade deferred (no SFX assets sourced — covered by Task #35).
+
+### Alt2 HD Sprites Integration (Task #37, EXECUTED 2026-04-21 Evening) ✅
+- ✅ **1025 Pokemon HD WebP** at `/assets/Pokemon/pokemondb_hd_alt2/` — filename `{NNNN}_{slug}.webp` (e.g., `0025_pikachu.webp`), 630×630 RGBA, ~50KB each, 49MB total. Covers ALL Gen 1-9 (vs previous ~751 SVG).
+- ✅ **Orientation**: All face RIGHT user-POV = LEFT monitor-POV → matches BSE default `'L'` facing. Zero per-Pokemon overrides needed.
+- ✅ **Database**: `pokemondb_hd_alt2/pokemon_database.md` available — 28k lines, full metadata (types Indonesian "Daun, Racun", evolution chain, abilities, base stats, moves).
+- **Applied**:
+  1. ✅ `pokeSpriteAlt2(slug)` helper added to `game.js` (~line 5074) — returns `assets/Pokemon/pokemondb_hd_alt2/{padStart(id,4,'0')}_{slug}.webp`, null when id missing.
+  2. ✅ `pokeSpriteVariant()` cascade is now **alt2 → SVG (751) → HD CDN**. Primary is alt2.
+  3. ✅ BSE engine (`games/battle-sprite-engine.js`) unchanged — `mount()` accepts explicit `hdSrc`/`fallbackSrc`; callers pass `pokeSpriteVariant()` result and the new cascade flows through.
+  4. ✅ `POKE_IDS` (global slug→id map built from POKEMON_DB, game.js:4993) used directly with `String(id).padStart(4,'0')` for zero-padding.
+  5. ⏭️ Compression skipped — 50MB acceptable per user mandate.
+  6. ⏭️ Mega evolution expansion out of scope (alt2 folder has no mega files).
+  7. ✅ BSE.mount() unchanged — `hdSrc` param already supported.
+- ✅ **Docs updated**: CODING-STANDARDS.md BSE §1 (cascade order + 1025 rationale), CHANGELOG.md (Added + Changed entries), LESSONS-LEARNED.md (Source data inventory entry).
+- ✅ **Cache-bust**: `v=20260421h` → `v=20260421i` in `index.html`.
+- **Mandate**: HD primary, no regression to 96px PNG. `image-rendering:pixelated` stays banned.
+
+### G13c — Gym Badge Icons (Task #31, deferred)
+- ⬜ **Real gym badge icons** — user wants TRAINERS[].badge to show actual Pokemon gym badge PNG/SVG (Boulder/Cascade/Thunder/Rainbow/Soul/Marsh/Volcano/Earth for Kanto, + Johto/Hoenn/Sinnoh/Unova/Kalos/Alola/Galar badges). Currently uses emoji (🪨💧⚡🌿🔮 etc).
+- ⬜ **Team Rocket exception** — Giovanni's Team Rocket is NOT a gym → emoji OK for him.
+- **Plan**: (1) Source 50+ gym badge assets (Bulbapedia CC-licensed) or user supplies. (2) Drop to `assets/Pokemon/gym-badges/{badge-slug}.png`. (3) Refactor TRAINERS[] to use `badgeIcon` field, update #badge-emoji overlay + trainer cards to render `<img>`. (4) Fallback to generic stone badge image if specific unavailable. **Blocked until assets provided.**
+
+### G16 — Selamatkan Kereta (Tasks #34, #35, #36, plan mode 2026-04-21)
+
+**Task #34 — Freeze di akhir + bablas stasiun** ✅
+- ✅ **End-game freeze safeguard** (g16-pixi.html:1455-1467): `triggerArrival()` sekarang arm 8-second setTimeout fallback. Jika `showWin()` tidak fire dalam 8s (race/exception), safety net force `S.winShown=true`, stops game loop, dan try `showWin()` atau fallback ke `finishGame()`.
+- ✅ **Bablas-recovery safeguard** (g16-pixi.html:1186-1200): Di `updateTrain` branch `STOPPED`/`CLEARING`, tambahkan `S._stoppedNoQuizTime` accumulator. Jika STOPPED tapi `quizActive===false` selama >1.2s (race condition saat clearObstacle→MOVING→STOPPED sementara quiz panel mid-transition), re-trigger `showQuizPanel(nextObs)`. Jika no obstacle to stop for, force state→MOVING untuk unstick.
+
+**Task #35 — Collision SFX** ⬜ (blocked — menunggu audio)
+- ⬜ **Nabrak box/rintangan audio**: Perlu real crash SFX, bukan synth tone. Memperkaya audio layer overall.
+- **Plan**: (1) source freesound.com impact MP3 (wooden crunch + metallic clang), (2) `<audio id="sfx-crash">` preloaded, (3) trigger pada obstacle collision, (4) variasi per jenis obstacle.
+
+**Task #36 — Quiz answer text overflow** ✅
+- ✅ **CSS refactor** (g16-pixi.html:38): `.choice-btn` sekarang `max-width:none` (removed 120px cap), `padding:clamp(10px,3.5vh,18px) clamp(10px,3vw,18px)` (increased horizontal padding), added `overflow:hidden; overflow-wrap:break-word; word-break:break-word; white-space:normal; line-height:1.2`, reduced default fontSize from `clamp(16px,5.5vw,26px)` to `clamp(14px,4.5vw,22px)`.
+- ✅ **Compact variant** (g16-pixi.html:39): New `.choice-btn.long-text` reduces fontSize further to `clamp(12px,3.5vw,17px)` for answers with >5 chars.
+- ✅ **Auto-apply logic** (g16-pixi.html:1363): `showQuizPanel()` measures `Math.max(...choices.map(c => String(c).length))` and adds `long-text` class to all buttons when any answer >5 chars.
+
+### G22 — Monster Wants Candy (POLISH v2.5 — per-type FX + smoother movement)
+- ✅ **Per-category FX** (g22-candy.html:628-689): New `spawnCategoryFX(x, y, ballType, catName)` dispatches to 4 signature effects:
+  - **Math** (`fxNumberBurst`): digits 1/2/3/+/×/=/✓/9/5/7 radiating outward, red-white palette
+  - **Warna** (`fxRainbowSpiral`): 18 colored rectangles in spiral pattern, 7-color rainbow
+  - **Hewan** (`fxGoldPaws`): 9 🐾⭐✨🌟 particles + gold expanding ring
+  - **Buah** (`fxPurpleLeaves`): 10 🍃🌿✨💫 particles + purple mist glow
+- ✅ **Smoother monster movement** (g22-candy.html:843-849, 885-891):
+  - Adaptive lerp: 0.28 when distance>120px, 0.22 when 40-120px, 0.15 close — snappy-far, glide-near
+  - Idle y-bob: `Math.sin(frame*0.05)*4` when stationary — adds life
+  - Directional squash: scaleX/Y 1.06/0.92 on fast move — anticipation/follow-through animation principle
+  - CSS `@keyframes monsterIdleBob` + `.idle-bob` class available for future use
+
+### G20 + G22 — Movement SFX (Task #33, plan mode)
+- ⬜ **Whoosh/swoosh audio** — user wants real audio for: (G22) pokeball throw whoosh, monster movement swoosh; (G20) volley hit swoosh, jump whoosh.
+- **Plan**: (1) Source short MP3s (freesound.com) — 30-50ms for hits, 200-400ms for swipes. (2) Add `<audio id="sfx-whoosh">` preloaded tags. (3) Throttle triggers — only fire on direction change or discrete event, not every frame. (4) Volume 0.4-0.6 master.
+
+### G22 — Monster Wants Candy (POLISH v2)
+- ✅ **Quiz panel → bottom grass** (g22-candy.html:607-609): Panel sekarang anchored at `panel.x=W/2, panel.y=H-130` — always bottom-center, tidak ikut candy.y. Tidak lagi menutupi view monster.
+- ✅ **Bubble pop FX on correct** (g22-candy.html:628-652): New `spawnBubblePop(x,y)` — 12 light-blue bubble rings expanding outward + center white sparkle flash with scaleGrow. Wired in correct-answer branch alongside existing `spawnCatchFX`.
+- ✅ **Laser absorb FX on wrong** (g22-candy.html:654-698): New `laserAbsorbSwap(candy)` — draws dual-layer red laser beam from pokeball position to monster (using `getBoundingClientRect` to resolve screen coords), white absorb flash at impact, monster CSS filter `brightness(6) contrast(0)` with opacity fade.
+- ✅ **Mandatory Pokemon swap** (same function): After 800ms absorb animation, picks random different slug from `G22_POKEMON` roster (15 entries), swaps `monster-img.src`, fades out → fades in with `catch-pop` animation. `g22SelectedPoke` state synced.
+- **Cache**: G22 has no `?v=` cache-bust — user needs hard refresh (Ctrl+Shift+R) to load changes.
+
+### Battle Sprite Engine (BSE) — Task #30
+- ✅ **Shared engine created**: `games/battle-sprite-engine.js` (~60 lines) exposes `window.BSE` with `init/facing/flipForRole/visualScale/tierScale/finalScale/mount` + mutable `POKE_FACING` + `POKE_VISUAL` tables.
+- ✅ **game.js bridge**: Appended `window.BSE` export after `pokeFinalScale` definition — internal functions accessible externally, single source of truth for inline G10/G13/G13b.
+- ✅ **G13c migrated**: Removed inline duplicate `POKE_FACING`/`POKE_VISUAL`/`pokeFacing`/`pokeFlipForRole`/`pokeVisualScale`/`pokeFinalScale`. Now delegates to `window.BSE.*` via thin wrappers. `BSE.init(POKE_TIER)` passes tier map from host.
+- ✅ **Acute Staryu fix** (first attempt): Added `staryu:'L'` override. User still reported facing issue — root cause was Pikachu.
+- ✅ **Default facing flipped to 'L'** (2026-04-21 user feedback): Engine default was 'R', but Pokemondb HOME 3D renders face viewer with slight LEFT bias. Pikachu natural = LEFT; previous default='R' → want='R' → no flip → rendered LEFT (wrong). New default='L' → player want='R' → flip scaleX(-1) → RIGHT ✓. Same logic makes Staryu enemy render correctly without explicit override. Removed redundant staryu+sobble overrides. Cache-bust `v=20260421h`.
+- 🔄 **Remaining migration**: G10/G13/G13b don't need code changes (they already consume game.js helpers directly via bridge). Only need: (1) add more facing overrides as user flags offenders, (2) unify `loadSprHD` variants in game.js to use `BSE.mount()` consistently.
+- **HD enforcement** (user mandate 2026-04-21): `pokeSpriteVariant()` still SVG-first → HD CDN. Low-res 96px only fallback. No regressions.
+
+### Navbar + Vertical Letter Input
+- ✅ **Navbar fix** (`style.css:196,201`): `.game-header` now `flex-wrap:nowrap; overflow:hidden`; `.gh-title` gets `min-width:0; text-overflow:ellipsis; white-space:nowrap`. Prevents 6 header children from wrapping to multi-row on narrow screens. Cache-bust `v=20260421f`.
+- 🔄 **Responsive Display Engine (RDE)** — designed in CODING-STANDARDS.md. 3-layer architecture: (1) CSS tokens `--rz-*` with `clamp()` fluid scaling, (2) reusable classes `.rz-navbar` / `.rz-letter-row` / `.rz-letter-btn`, (3) `shared/rz-responsive.js` runtime helper for Pixi games. Migration in 7 sequenced steps — see CODING-STANDARDS.md "Responsive Display Engine (RDE)" section.
+- ✅ **RDE Step 1** (`style.css:17-49`, 2026-04-21 Evening): fluid `:root` tokens added — `--rz-scale`, `--rz-btn-xs/sm/md/lg`, `--rz-font-xs/sm/body/title/h1/hero`, `--rz-gap-xs/sm/md/lg`, `--rz-radius-sm/md/lg`. Zero existing rules modified; tokens available for opt-in consumption.
+- ✅ **RDE Step 2** (`style.css:893-947`, 2026-04-21 Evening): reusable classes added — `.rz-navbar`, `.rz-navbar__title`, `.rz-letter-row`, `.rz-letter-btn`, `.rz-choice-grid`. Consume Step 1 tokens; opt-in per game.
+- ⬜ **RDE Step 3** — migrate G8 Susun Kata (highest pain point, 3 media queries). Delete G8-specific `@media` rules after adopting `.rz-letter-btn`.
+- ⬜ **RDE Step 4** — migrate G3 Huruf Hutan. Delete G3-specific `@media` rules.
+- ⬜ **RDE Step 5** — migrate remaining DOM games (G1, G2, G4, G5, G7, G9). Delete 60+ lines of `@media`.
+- ⬜ **RDE Step 6** — ship `shared/rz-responsive.js` + wire G14/G15/G16/G19/G20/G22 (Pixi games get runtime scale factor via `window.RZ`).
+- ⬜ **RDE Step 7** — document per-game overrides in CHANGELOG for traceability.
+
+### Train BGM/SFX — ALL Train Games (G14, G15, G16)
+- ✅ **BGM FIXED**: `Sounds/train-bgm.mp3` replaced with real train BGM (`kauasilbershlachparodes-train-493986.mp3` — 214KB, 256kbps stereo). MD5 `afe88377...` now ≠ battle-bgm.mp3.
+- ✅ **SFX added**: `Sounds/train-crossing-sfx.mp3` (436KB, freesound steam-train-at-crossing) wired as `<audio id="train-sfx">` in G14/G15/G16.
+- ✅ **Trigger**: Plays at game start (volume 0.7) right after BGM.play() in `startRace()` (G14 line 1869), `gameRunning=true` block (G15 line 664), `S.running=true` block (G16 line 480).
+- 🔄 **Synth tones kept**: `playTone()` WebAudio calls for UI click / lane switch / collision beep remain — real MP3 has latency unfit for instant feedback. Major events use the new SFX file.
+- **Deferred enhancement**: Add victory-moment whistle trigger in each game's win handler — low priority, user can request later.
+
+---
+
 ## ⬜ PENDING FIXES — BY GAME
 
 ### G6 — Petualangan Mobil (Car Letter Collection)
 - ✅ **BGM**: Code already reverted to `battle-bgm.mp3` — user needs cache clear
 - ✅ **Floating emoji buildings**: Reduced to 8 items, smaller (14-20px), much lower opacity (0.2-0.35), less distracting
-- ✅ **Vehicle images empty**: Fixed URL encoding — spaces in path `car and vehicle` → `car%20and%20vehicle`
+- ✅ **Vehicle images empty (SYNC bug, 2026-04-21)**: `PIXI.Texture.from()` is async in PIXI v8 — sprite wasn't loading because the `try/catch` couldn't catch async failures. Rewrote to `PIXI.Assets.load(url).then(tex => swap)` with emoji placeholder up-front + proper fallback on error (g6.html:568-585). 12 top-view car PNGs (verified accessible via curl) now load correctly.
 - ✅ **Buttons**: Removed ⬅️➡️ emoji arrows — now just text "Kiri" / "Kanan" with pastel purple styling
-- ✅ **Road/environment polish**: Yellow center dash (#FCD34D a=0.55+), themed road signs (city=🛑🚸🅿️, forest=🦌🌳, space=🛸🌠, pantai=🏖️🌊, sekolah=📚🏫, dapur=🍳🧂, kebun=🌻🌾, body=💊🧬) added 2026-04-20. Further polish deferred — extensive themed styling (8 map variants at style.css:5279+) already in place; additional work = new ticket.
+- ✅ **Road signs overflow off-screen (2026-04-21)**: Signs were positioned at `roadLeft - 28` or `roadRight + 28` — on narrow screens (320-375px), `roadLeft ≈ 26-30px` meant signs went to negative x (off-canvas left). Added clamp to `leftBandMin=10, leftBandMax=max(12, roadLeft-18)` + skip spawn if band <15px (g6.html:430-438).
+- ✅ **Road/environment polish**: Yellow center dash (#FCD34D a=0.55+), themed road signs (city=🛑🚸🅿️, forest=🦌🌳, space=🛸🌠, pantai=🏖️🌊, sekolah=📚🏫, dapur=🍳🧂, kebun=🌻🌾, body=💊🧬) added 2026-04-20.
+- **Scenery on shoulder** (emojis like 🌳⛱️ in `buildBg` sceneryL/R) is by DESIGN — decorations belong on road shoulder. Low alpha (0.2-0.35) so non-distracting. Not a bug.
 
 ### G9 — Jejak Huruf (Letter Tracing)
 - ✅ **Tracing works**: Code verified — tracing IS plotting (visible in screenshot). Fixed spawnSparkles to pass star count

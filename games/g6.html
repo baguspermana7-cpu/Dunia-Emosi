@@ -426,7 +426,15 @@ function spawnRoadSign(signsContainer) {
   const txt = new PIXI.Text({ text: icon, style: { fontSize: 14 } })
   txt.anchor.set(0.5); txt.y = -7
   post.addChild(txt)
-  post.x = side === 'L' ? roadLeft - 28 - Math.random() * 14 : roadRight + 28 + Math.random() * 14
+  // Clamp sign position to stay on-canvas even on narrow screens
+  const W = app.screen.width
+  const leftBandMin = 10, leftBandMax = Math.max(12, roadLeft - 18)
+  const rightBandMin = Math.min(W - 12, roadRight + 18), rightBandMax = W - 10
+  post.x = side === 'L'
+    ? leftBandMin + Math.random() * Math.max(1, leftBandMax - leftBandMin)
+    : rightBandMin + Math.random() * Math.max(1, rightBandMax - rightBandMin)
+  // If band too narrow (<15px e.g. phone screens), skip spawn
+  if ((side === 'L' && leftBandMax - leftBandMin < 15) || (side === 'R' && rightBandMax - rightBandMin < 15)) { return }
   post.y = -40
   signsContainer.addChild(post)
   signsContainer._signList.push(post)
@@ -565,20 +573,26 @@ function buildCar() {
   carGlow.alpha = 0.38
   carContainer.addChild(carGlow)
 
-  // Car sprite — selected vehicle emoji (top-down game)
-  // Top-view car image (fallback to emoji if image fails)
+  // Car sprite — load top-view PNG async via PIXI.Assets, emoji as placeholder + fallback
   const carIdx = cfg.carIdx || Math.floor(Math.random() * 12)
   const carFiles = ['top_car_white_gt_01.png','top_car_yellow_sport_02.png','top_car_white_track_03.png','top_car_blue_red_racer_04.png','top_car_cyan_sedan_05.png','top_car_white_stripe_gt_06.png','top_car_red_formula_07.png','top_car_yellow_rally_08.png','top_car_white_coupe_09.png','top_car_white_roadster_10.png','top_car_blue_compact_11.png','top_car_silver_sedan_12.png']
-  try {
-    const tex = PIXI.Texture.from(`../assets/car%20and%20vehicle/top-view/${carFiles[carIdx % carFiles.length]}`)
-    carSprite = new PIXI.Sprite(tex)
-    carSprite.anchor.set(0.5, 1)
-    carSprite.width = 48; carSprite.height = 84
-  } catch(_) {
-    carSprite = new PIXI.Text({ text: cfg.playerIcon || '🚗', style: { fontSize: 52, fontFamily: 'Arial' } })
-    carSprite.anchor.set(0.5, 1)
-  }
+  const carUrl = `../assets/car%20and%20vehicle/top-view/${carFiles[carIdx % carFiles.length]}`
+  // Show emoji placeholder immediately (no flash of empty sprite)
+  carSprite = new PIXI.Text({ text: cfg.playerIcon || '🚗', style: { fontSize: 52, fontFamily: 'Arial' } })
+  carSprite.anchor.set(0.5, 1)
   carContainer.addChild(carSprite)
+  // Swap in PNG once loaded
+  PIXI.Assets.load(carUrl).then(tex => {
+    if (!carContainer || !tex) return
+    const s = new PIXI.Sprite(tex)
+    s.anchor.set(0.5, 1)
+    s.width = 48; s.height = 84
+    if (carSprite && carSprite.parent) carContainer.removeChild(carSprite)
+    carSprite = s
+    carContainer.addChild(carSprite)
+    // Re-order: keep headlights in front (hlL, hlR)
+    carContainer.children.forEach(ch => { if (ch._hl) carContainer.setChildIndex(ch, carContainer.children.length - 1) })
+  }).catch(err => console.warn('G6 car image failed, staying with emoji', err))
 
   // Headlight left
   const hlL = new PIXI.Graphics()

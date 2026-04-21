@@ -1,5 +1,51 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-21 (Evening) — BSE, G22 v2/v2.5, G16 fixes, RDE design, G6 sprite, train audio
+
+### Added
+- **`games/battle-sprite-engine.js`** — shared Battle Sprite Engine (BSE). `window.BSE` API: `init(tiersMap)`, `facing(slug)`, `flipForRole(slug, role)`, `visualScale(slug)`, `tierScale(slug)`, `finalScale(slug)`, `mount(el, slug, opts)`. Mutable `POKE_FACING` + `POKE_VISUAL` tables, single source for 4 battle games.
+- **`game.js:5030`** — bridge export `window.BSE` so inline G10/G13/G13b consume same engine.
+- **`games/g22-candy.html`** — 4 per-category signature FX: `fxNumberBurst` (Math, red-white digits), `fxRainbowSpiral` (Warna, 7-color spiral), `fxGoldPaws` (Hewan, gold paws/star ring), `fxPurpleLeaves` (Buah, purple leaves/mist). Dispatcher `spawnCategoryFX(x, y, ballType, catName)`.
+- **G22 `spawnBubblePop(x,y)`** — 12 blue bubble rings + white sparkle flash on correct answer.
+- **G22 `laserAbsorbSwap(candy)`** — red laser beam from pokeball to monster, white absorb flash, CSS filter `brightness(6) contrast(0)`, auto-swap to random Pokemon from G22_POKEMON roster after 800ms.
+- **G22 `@keyframes monsterIdleBob`** + adaptive lerp (0.28/0.22/0.15 by distance) + squash/stretch on fast direction change.
+- **G16 `.choice-btn.long-text`** — compact font variant; auto-applied when `longestLen > 5`.
+- **G16 `triggerArrival` 8s safety net** — force `showWin()` if normal flow fails (end-game freeze prevention).
+- **G16 bablas-recovery safeguard** — `S._stoppedNoQuizTime` accumulator; re-trigger quiz if STOPPED without quiz visible >1.2s.
+- **`Sounds/train-crossing-sfx.mp3`** — 436KB steam-train-at-crossing SFX wired to G14/G15/G16 game-start.
+- **`assets/pikachu-icon.webp`** + **`assets/Pokemon/svg/18.svg`** — G5 tab + G19 landing tile assets.
+- **CODING-STANDARDS.md — Responsive Display Engine (RDE)** section — 3-layer architecture spec, 7-step migration plan.
+- **CODING-STANDARDS.md — Battle Sprite Engine (BSE)** section — 5 responsibilities, default facing 'L' rationale.
+- **`assets/Pokemon/pokemondb_hd_alt2/`** (user-provided, integration planned in Task #37) — 1025 Pokemon HD WebP 630×630, full Gen 1-9 coverage, all face RIGHT user-POV (= LEFT monitor-POV, matches BSE default).
+- **`game.js` — `pokeSpriteAlt2(slug)`** helper (Task #37): returns `assets/Pokemon/pokemondb_hd_alt2/{NNNN}_{slug}.webp` using `POKE_IDS` + `String(id).padStart(4,'0')`. Null-safe when id missing.
+- **`style.css:17-49`** — RDE Step 1 (Task #29): `:root` fluid design tokens. Added `--rz-scale` (master clamp 0.7–1.0 from 320px–480px), `--rz-btn-xs/sm/md/lg` (derived button sizes), `--rz-font-xs/sm/body/title/h1/hero` (clamp typography), `--rz-gap-xs/sm/md/lg` (fluid spacing), `--rz-radius-sm/md/lg` (fluid corners). Zero existing rules modified.
+- **`style.css:893-947`** — RDE Step 2 (Task #29): reusable UI primitive classes `.rz-navbar`, `.rz-navbar__title`, `.rz-letter-row`, `.rz-letter-btn`, `.rz-choice-grid`. Opt-in per game; Steps 3–7 migrate existing `.g<N>-*` rules in later commits.
+- **G16 correct-answer juice** (`games/g16-pixi.html`, Task #38): new `spawnQuizCelebrationFX(screenX, screenY, streak)` — 3 variants by streak. Baseline: 14 confetti rectangles (6-color palette) radiating outward with upward bias + gravity, plus white ring pulse. Combo (streak≥3): adds 6 secondary firework bursts of 10 tiny sparks each at random offsets. Super (streak≥5): adds 8 floating ⭐✨🌟💫 emoji (PIXI.Text, `_noGravity` float-up) + gold ring pulse. Tracked via `S.correctStreak` (reset on wrong). Stage punch: `S.stagePunch=0.5` → new `updateStagePunch(dt)` in gameLoop runs sine bell-curve scale 1→1.04→1 over 0.5s (pivots centered). `updateSparks` extended to handle `_ring` (expand+fade) and `_noGravity` (reduced gravity for floating emoji). Fires within the existing 380/500ms `clearObstacle` delay so it overlaps with train resume visually.
+
+### Changed
+- **Sprite cascade reorder** (Task #37, `game.js` ~5075): `pokeSpriteVariant()` now resolves **alt2 HD WebP → local SVG → HD CDN** (previously: SVG → HD CDN). Alt2 becomes primary source; Gen 8/9 Pokemon no longer fallback to CDN. BSE consumes via existing `hdSrc` param — no engine change needed.
+- **CODING-STANDARDS.md — BSE §1** updated to reflect new cascade order and 1025-coverage rationale.
+
+### Bug Fixes
+- **P0 — G16 freeze at end + bablas stasiun** (`games/g16-pixi.html:1455-1467, 1186-1200`): end-game race + station-collision race both guarded.
+- **P0 — G6 vehicle image not rendering** (`games/g6.html:568-585`): `PIXI.Texture.from()` is async in PIXI v8; synchronous `try/catch` can't catch async failures. Rewrote to `PIXI.Assets.load(url).then(tex => swap)` with emoji placeholder + proper fallback.
+- **P1 — Staryu/Pikachu not facing each other** (`games/battle-sprite-engine.js:15`, `game.js:5010`): engine default facing was `'R'`, but Pokemondb HOME 3D renders face viewer with slight LEFT bias. Flipped default to `'L'`. Player flips correctly, enemy stays natural. Zero per-Pokemon overrides needed for common cases.
+- **P1 — G19 Pidgeot emoji on landing** (`index.html:470`): replaced `<span class="wn-icon">🐦</span>` with HD SVG `<img src="assets/Pokemon/svg/18.svg">`.
+- **P1 — Train BGM = battle BGM** (`Sounds/train-bgm.mp3`): byte-identical to Pokemon theme. Replaced with real train BGM (MD5 afe88377…).
+- **P1 — G16 quiz answer text overflow** (`games/g16-pixi.html:38-39, 1363`): `.choice-btn` `max-width:none`, `overflow-wrap:break-word`, `.long-text` compact variant.
+- **P2 — Navbar wrap to multi-row on narrow screens** (`style.css:196, 201`): `flex-wrap:nowrap; overflow:hidden` + ellipsis on title.
+- **P2 — G6 road signs off-screen** (`games/g6.html:430-438`): clamp to canvas bounds + skip-spawn if band <15px.
+
+### Deferred (blocked on user assets)
+- #31 G13c gym badge icons — need badge PNGs.
+- #33 G20/G22 movement whoosh SFX — need freesound MP3.
+- #35 G16 collision crash SFX — same.
+
+### Cache
+- `index.html` → `?v=20260421f` → `?v=20260421g` → `?v=20260421h` → `?v=20260421i`.
+
+---
+
 ## 2026-04-21 — Battle Standards + HD Sprites + G22 + Repo Migration
 
 ### Added

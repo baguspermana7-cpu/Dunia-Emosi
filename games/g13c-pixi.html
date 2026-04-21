@@ -349,6 +349,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 </div>
 
 <script src="game-modal.js"></script>
+<script src="battle-sprite-engine.js?v=20260421h"></script>
 
 <script>
 // ─── DATA ───────────────────────────────────────────────────────────────────
@@ -632,9 +633,13 @@ const POKE_TIER = {
   gardevoir:3, kirlia:2, blaziken:3, combusken:2, swampert:3, marshtomp:2, sceptile:3,
   grovyle:2, delphox:3, braixen:2, chesnaught:3, quilladin:2, greninja:3, frogadier:2
 };
-function pokeTierScale(s){
-  return ({1:1.0, 2:1.2, 3:1.3, 4:1.3})[POKE_TIER[s] || 1] || 1.0;
-}
+// Handoff POKE_TIER to BSE so tierScale works; BSE is single source for facing + visual + scale.
+if (window.BSE) BSE.init(POKE_TIER);
+function pokeTierScale(s){ return window.BSE ? BSE.tierScale(s) : 1.0; }
+function pokeFacing(s){ return window.BSE ? BSE.facing(s) : 'R'; }
+function pokeFlipForRole(s, role){ return window.BSE ? BSE.flipForRole(s, role) : 'scaleX(1)'; }
+function pokeVisualScale(s){ return window.BSE ? BSE.visualScale(s) : 1.0; }
+function pokeFinalScale(s){ return window.BSE ? BSE.finalScale(s) : 1.0; }
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
 let badges = JSON.parse(localStorage.getItem('g13c_badges')||'{}');
@@ -870,13 +875,16 @@ function setPokeSpriteEnemy(slug){
   const img = document.getElementById('poke-enemy');
   img.src = SPRITE_HD(slug);
   img.onerror = ()=>{ img.src = SPRITE_LOCAL(slug); };
-  img.style.transform = 'scale(' + pokeTierScale(slug) + ')';
+  // Data-driven facing + final scale (tier × visual)
+  const flip = pokeFlipForRole(slug, 'enemy');
+  img.style.transform = (flip ? flip + ' ' : '') + 'scale(' + pokeFinalScale(slug) + ')';
 }
 function setPokeSpritePlayer(slug){
   const img = document.getElementById('poke-player');
   img.src = SPRITE_HD(slug);
   img.onerror = ()=>{ img.src = SPRITE_LOCAL(slug); };
-  img.style.transform = 'scaleX(-1) scale(' + pokeTierScale(slug) + ')';
+  const flip = pokeFlipForRole(slug, 'player');
+  img.style.transform = (flip ? flip + ' ' : '') + 'scale(' + pokeFinalScale(slug) + ')';
 }
 
 // ─── MATH QUIZ ───────────────────────────────────────────────────────────────

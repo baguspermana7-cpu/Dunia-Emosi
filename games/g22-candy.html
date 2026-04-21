@@ -44,6 +44,9 @@ canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
 /* Turn-flip micro-glow when direction changes */
 @keyframes turnFlip{0%{filter:brightness(1.25) drop-shadow(0 0 14px rgba(253,224,71,0.7)) drop-shadow(0 8px 18px rgba(0,0,0,0.45))}100%{filter:brightness(1) drop-shadow(0 8px 18px rgba(0,0,0,0.45))}}
 #monster-img.turn-flip{animation:turnFlip 0.22s ease-out}
+/* Smooth idle bob — gentle y-float when monster is not actively moving */
+@keyframes monsterIdleBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+#monster-img.idle-bob{animation:monsterIdleBob 1.6s ease-in-out infinite}
 
 #monster-img{transition:none;will-change:transform}
 </style>
@@ -563,6 +566,8 @@ function showCandyQuiz(candy) {
         S.totalCaught++
         sfxCorrect()
         spawnCatchFX(candy.x, candy.y, candy.color)
+        spawnBubblePop(candy.x, candy.y)
+        spawnCategoryFX(candy.x, candy.y, candy.ballType, candy.catName)
         // Flash button green briefly
         bg.tint = 0x22c55e
         // Combo feedback text
@@ -591,6 +596,8 @@ function showCandyQuiz(candy) {
         wrongText.anchor.set(0.5); wrongText.x = candy.x; wrongText.y = candy.y - 50
         fxLayer.addChild(wrongText)
         S.particles.push({ g: wrongText, vx: 0, vy: -1, grav: 0, life: 1, decay: 0.02 })
+        // Laser absorb + force Pokemon swap (wrong answer penalty)
+        laserAbsorbSwap(candy)
       }
       setTimeout(() => {
         fxLayer.removeChild(panel)
@@ -604,9 +611,9 @@ function showCandyQuiz(candy) {
     panel.addChild(btn)
   })
 
-  const halfW = panelW / 2 + 8
-  panel.x = Math.max(halfW, Math.min(W - halfW, candy.x))
-  panel.y = Math.max(80, candy.y - 60)
+  // Quiz panel anchored at BOTTOM center (grass area) — 2026-04-21 polish v2
+  panel.x = W / 2
+  panel.y = H - 130
   fxLayer.addChild(panel)
 }
 
@@ -623,6 +630,160 @@ function spawnCatchFX(x, y, color) {
   st.anchor.set(0.5); st.x = x; st.y = y - 20
   fxLayer.addChild(st)
   S.particles.push({ g: st, vx: 0, vy: -2, grav: 0, life: 1, decay: 0.025 })
+}
+
+// ═══════════════════════════════════════════════════════════
+//  CATEGORY-SPECIFIC FX — Math/Warna/Hewan/Buah each has signature effect
+//  2026-04-21: user wants differentiated effects per pokeball category
+// ═══════════════════════════════════════════════════════════
+function spawnCategoryFX(x, y, ballType, catName) {
+  const cat = (BALL_CAT_KEYS && BALL_CAT_KEYS[ballType]) || 'math'
+  if (cat === 'warna') fxRainbowSpiral(x, y)
+  else if (cat === 'hewan') fxGoldPaws(x, y)
+  else if (cat === 'buah') fxPurpleLeaves(x, y)
+  else fxNumberBurst(x, y) // math default
+}
+
+// Math: digit particles burst outward — red-white palette
+function fxNumberBurst(x, y) {
+  const digits = ['1','2','3','+','×','=','✓','9','5','7']
+  for (let i = 0; i < 10; i++) {
+    const ang = (i / 10) * Math.PI * 2
+    const t = new PIXI.Text({ text: digits[i], style: { fontSize: 20 + Math.random()*10, fontWeight:'900', fill: i%2 ? 0xef4444 : 0xffffff, fontFamily:'Fredoka One' } })
+    t.anchor.set(0.5); t.x = x; t.y = y
+    fxLayer.addChild(t)
+    S.particles.push({ g:t, vx: Math.cos(ang)*(4+Math.random()*4), vy: Math.sin(ang)*(4+Math.random()*4)-1, grav:0.15, life:1, decay:0.025 })
+  }
+}
+
+// Warna: rainbow confetti spiral — each particle a different bright color
+function fxRainbowSpiral(x, y) {
+  const colors = [0xef4444, 0xf97316, 0xfbbf24, 0x22c55e, 0x3b82f6, 0x7c3aed, 0xec4899]
+  for (let i = 0; i < 18; i++) {
+    const ang = (i / 18) * Math.PI * 2 * 1.3 // spiral
+    const rad = 8 + i * 2
+    const g = new PIXI.Graphics()
+    g.rect(-4, -7, 8, 14).fill(colors[i % colors.length])
+    g.rotation = ang
+    g.x = x + Math.cos(ang) * rad
+    g.y = y + Math.sin(ang) * rad
+    fxLayer.addChild(g)
+    S.particles.push({ g, vx: Math.cos(ang)*(2+i*0.15), vy: Math.sin(ang)*(2+i*0.15)-0.5, grav:0.1, life:1, decay:0.028 })
+  }
+}
+
+// Hewan: gold paw-print stamps + star sparkles
+function fxGoldPaws(x, y) {
+  const pawIcons = ['🐾','⭐','✨','🌟']
+  for (let i = 0; i < 9; i++) {
+    const ang = (i / 9) * Math.PI * 2
+    const t = new PIXI.Text({ text: pawIcons[i % 4], style: { fontSize: 22+Math.random()*8, fill: 0xfbbf24, fontFamily:'Arial' } })
+    t.anchor.set(0.5); t.x = x; t.y = y
+    fxLayer.addChild(t)
+    S.particles.push({ g:t, vx: Math.cos(ang)*(3+Math.random()*3), vy: Math.sin(ang)*(3+Math.random()*3)-2, grav:0.18, life:1, decay:0.025 })
+  }
+  // Gold ring
+  const ring = new PIXI.Graphics()
+  ring.circle(0, 0, 16).stroke({ color: 0xfbbf24, width: 4, alpha: 0.85 })
+  ring.x = x; ring.y = y
+  fxLayer.addChild(ring)
+  S.particles.push({ g: ring, vx:0, vy:0, grav:0, life:1, decay:0.04, scaleGrow:0.25 })
+}
+
+// Buah: purple leaf swirls + magic sparkles
+function fxPurpleLeaves(x, y) {
+  const leafIcons = ['🍃','🌿','✨','💫']
+  for (let i = 0; i < 10; i++) {
+    const ang = (i / 10) * Math.PI * 2
+    const t = new PIXI.Text({ text: leafIcons[i % 4], style: { fontSize: 22+Math.random()*6, fill: 0xa855f7, fontFamily:'Arial' } })
+    t.anchor.set(0.5); t.x = x; t.y = y
+    fxLayer.addChild(t)
+    S.particles.push({ g:t, vx: Math.cos(ang)*(3+Math.random()*3), vy: Math.sin(ang)*(3+Math.random()*3)-1.5, grav:0.1, life:1, decay:0.025 })
+  }
+  // Purple mist
+  const mist = new PIXI.Graphics()
+  mist.circle(0, 0, 22).fill({ color: 0xa855f7, alpha: 0.35 })
+  mist.x = x; mist.y = y
+  fxLayer.addChild(mist)
+  S.particles.push({ g: mist, vx:0, vy:0, grav:0, life:1, decay:0.03, scaleGrow:0.3 })
+}
+
+// Bubble pop burst — blue-tinted rings + white sparkle. Used on correct answer.
+function spawnBubblePop(x, y) {
+  // 12 bubble rings expanding outward, light blue
+  for (let i = 0; i < 12; i++) {
+    const ang = (i / 12) * Math.PI * 2
+    const size = 6 + Math.random() * 8
+    const g = new PIXI.Graphics()
+    g.circle(0, 0, size).stroke({ color: 0x7dd3fc, width: 2, alpha: 0.85 })
+    g.circle(0, 0, size * 0.5).fill({ color: 0xe0f2fe, alpha: 0.5 })
+    g.x = x + Math.cos(ang) * 15
+    g.y = y + Math.sin(ang) * 15
+    fxLayer.addChild(g)
+    S.particles.push({
+      g, vx: Math.cos(ang) * (3 + Math.random() * 3),
+      vy: Math.sin(ang) * (3 + Math.random() * 3) - 1,
+      grav: 0.08, life: 1, decay: 0.035, scaleGrow: 0.1
+    })
+  }
+  // Center white sparkle flash
+  const flash = new PIXI.Graphics()
+  flash.circle(0, 0, 18).fill({ color: 0xffffff, alpha: 0.9 })
+  flash.x = x; flash.y = y
+  fxLayer.addChild(flash)
+  S.particles.push({ g: flash, vx: 0, vy: 0, grav: 0, life: 1, decay: 0.07, scaleGrow: 0.35 })
+}
+
+// Laser absorb FX + pokemon swap — used on wrong answer.
+// Laser beam from pokeball (candy.x,candy.y) shoots to the monster, monster fades to white, then swaps.
+function laserAbsorbSwap(candy) {
+  const monsterEl = document.getElementById('monster-img')
+  if (!monsterEl) return
+  // Monster screen position (approx) — uses translate3d(monsterX - halfW, 0)
+  const rect = monsterEl.getBoundingClientRect()
+  const mx = rect.left + rect.width / 2
+  const my = rect.top + rect.height / 2
+  // Draw laser in fxLayer — canvas-space coords, matches PIXI view
+  const canvasRect = app.canvas.getBoundingClientRect()
+  const targetX = mx - canvasRect.left
+  const targetY = my - canvasRect.top
+  const startX = candy.x, startY = candy.y
+  // Red laser beam (thick + thin glow layers)
+  const laser = new PIXI.Graphics()
+  laser.moveTo(startX, startY).lineTo(targetX, targetY).stroke({ color: 0xef4444, width: 8, alpha: 0.55 })
+  laser.moveTo(startX, startY).lineTo(targetX, targetY).stroke({ color: 0xfca5a5, width: 3, alpha: 0.95 })
+  fxLayer.addChild(laser)
+  S.particles.push({ g: laser, vx: 0, vy: 0, grav: 0, life: 1, decay: 0.025 })
+  // White absorb flash at monster
+  const absorb = new PIXI.Graphics()
+  absorb.circle(0, 0, 40).fill({ color: 0xffffff, alpha: 0.85 })
+  absorb.x = targetX; absorb.y = targetY
+  fxLayer.addChild(absorb)
+  S.particles.push({ g: absorb, vx: 0, vy: 0, grav: 0, life: 1, decay: 0.03, scaleGrow: 0.15 })
+  // Monster turns white (absorbed) via CSS filter
+  monsterEl.style.transition = 'filter 0.3s ease-out, opacity 0.4s ease-out'
+  monsterEl.style.filter = 'brightness(6) contrast(0) drop-shadow(0 0 20px #fff)'
+  monsterEl.style.opacity = '0.4'
+  // After absorb animation, swap to next Pokemon in roster
+  setTimeout(() => {
+    const curIdx = G22_POKEMON.findIndex(p => p.slug === g22SelectedPoke)
+    const nextIdx = (curIdx + 1 + Math.floor(Math.random() * (G22_POKEMON.length - 1))) % G22_POKEMON.length
+    const next = G22_POKEMON[nextIdx]
+    g22SelectedPoke = next.slug
+    monsterEl.src = `https://img.pokemondb.net/sprites/home/normal/${next.slug}.png`
+    monsterEl.onerror = () => { monsterEl.src = `../assets/Pokemon/sprites/${next.slug}.png`; monsterEl.onerror = null }
+    monsterEl.style.opacity = '0'
+    // Fade new monster in
+    setTimeout(() => {
+      monsterEl.style.filter = 'drop-shadow(0 8px 18px rgba(0,0,0,0.45))'
+      monsterEl.style.opacity = '1'
+      // Swap-in pop
+      monsterEl.classList.remove('catch-pop')
+      void monsterEl.offsetWidth
+      monsterEl.classList.add('catch-pop')
+      setTimeout(() => monsterEl.classList.remove('catch-pop'), 380)
+    }, 120)
+  }, 800)
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -702,9 +863,13 @@ function gameLoop(ticker) {
   // Parallax drift (clouds + birds + mountains)
   updateParallax(dt)
 
-  // Smooth monster follow — lerp toward target, GPU-composited translate3d
-  S.monsterXLerp += (S.monsterXTarget - S.monsterXLerp) * Math.min(1, 0.22 * dt)
+  // Smooth monster follow — adaptive lerp (snappier when far, glide when close) + y-bob idle
+  const distX = Math.abs(S.monsterXTarget - S.monsterXLerp)
+  const lerpF = distX > 120 ? 0.28 : distX > 40 ? 0.22 : 0.15
+  S.monsterXLerp += (S.monsterXTarget - S.monsterXLerp) * Math.min(1, lerpF * dt)
   S.monsterX = S.monsterXLerp
+  // Gentle idle bob — adds y-oscillation via sin(frame)
+  const bobY = distX < 4 ? Math.sin(S.frame * 0.05) * 4 : 0
   const monster = document.getElementById('monster-img')
   if (monster && monster.style.display !== 'none') {
     // Directional facing: right when past screen midpoint, left otherwise
@@ -717,7 +882,10 @@ function gameLoop(ticker) {
     }
     const flip = facingRight ? 1 : -1
     const halfW = monster.offsetWidth / 2
-    monster.style.transform = `translate3d(${Math.round(S.monsterXLerp - halfW)}px, 0, 0) scaleX(${flip})`
+    // Subtle y-bob when idle (distance<4px) + squash on fast direction change
+    const squashY = distX > 180 ? 0.92 : 1
+    const squashX = distX > 180 ? 1.06 : 1
+    monster.style.transform = `translate3d(${Math.round(S.monsterXLerp - halfW)}px, ${Math.round(bobY)}px, 0) scaleX(${flip * squashX}) scaleY(${squashY})`
   }
 }
 

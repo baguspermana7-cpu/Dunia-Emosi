@@ -35,7 +35,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0d102
 #quiz-title{color:#ef4444;font-size:10px;font-weight:700;letter-spacing:3px;margin-bottom:4px;animation:dangerPulse 0.8s ease-in-out infinite}
 #quiz-question{color:#fff;font-size:clamp(18px,5.5vw,28px);font-weight:900;text-align:center;margin-bottom:clamp(10px,3vh,16px);text-shadow:0 0 20px rgba(251,191,36,0.6);max-width:90vw;overflow:hidden;word-break:break-word}
 #quiz-choices{display:flex;gap:clamp(6px,2vw,12px);justify-content:center;width:100%;flex-wrap:wrap}
-.choice-btn{flex:1;min-width:clamp(52px,15vw,80px);max-width:clamp(68px,24vw,120px);padding:clamp(10px,3.5vh,18px) 4px;border:2.5px solid rgba(255,255,255,0.35);border-radius:16px;background:linear-gradient(160deg,#7C3AED,#6D28D9);color:#fff;font-size:clamp(16px,5.5vw,26px);font-weight:900;cursor:pointer;transition:all .12s;font-family:inherit;-webkit-tap-highlight-color:transparent;box-shadow:0 5px 0 #4C1D95}
+.choice-btn{flex:1 1 auto;min-width:clamp(64px,18vw,96px);max-width:none;padding:clamp(10px,3.5vh,18px) clamp(10px,3vw,18px);border:2.5px solid rgba(255,255,255,0.35);border-radius:16px;background:linear-gradient(160deg,#7C3AED,#6D28D9);color:#fff;font-size:clamp(14px,4.5vw,22px);font-weight:900;cursor:pointer;transition:all .12s;font-family:inherit;-webkit-tap-highlight-color:transparent;box-shadow:0 5px 0 #4C1D95;overflow:hidden;overflow-wrap:break-word;word-break:break-word;white-space:normal;line-height:1.2;box-sizing:border-box}
+.choice-btn.long-text{font-size:clamp(12px,3.5vw,17px)}
 .choice-btn:nth-child(2){background:linear-gradient(160deg,#E85A32,#C84020);border-color:#F07050;box-shadow:0 5px 0 #9A2A10}
 .choice-btn:nth-child(3){background:linear-gradient(160deg,#2DBF7E,#1A9E66);border-color:#50E0A0;box-shadow:0 5px 0 #0A7A48}
 .choice-btn:nth-child(4){background:linear-gradient(160deg,#F59E0B,#D97706);border-color:#FCD34D;box-shadow:0 5px 0 #92400E}
@@ -76,6 +77,7 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 <body>
 <canvas id="pixi-canvas"></canvas>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
+<audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
 <div id="hud-top">
   <button id="btn-back" onclick="confirmBack()">⌂</button>
@@ -435,7 +437,7 @@ const S={
   trainState:'MOVING',trainBobT:0,currentObstacleIdx:-1,
   cleared:0,wrongTaps:0,totalObstacles:0,startTime:0,gameOver:false,
   trackLength:0,boostTimer:0,deadTimer:0,noWrongAnswers:true,cameraShake:0,
-  arrivedFlag:false,winShown:false,
+  arrivedFlag:false,winShown:false,correctStreak:0,stagePunch:0,
 }
 let app, stage
 let bgContainer, hillContainer, worldContainer
@@ -477,6 +479,7 @@ async function initPixi(){
   app.ticker.add(gameLoop)
   S.startTime=performance.now(); S.running=true
   try{const bgm=document.getElementById('game-bgm');bgm.volume=0.25;bgm.play().catch(()=>{})}catch(_){}
+  try{const sfx=document.getElementById('train-sfx');if(sfx){sfx.currentTime=0;sfx.volume=0.7;sfx.play().catch(()=>{})}}catch(_){}
   updateHUD()
 }
 
@@ -1104,7 +1107,26 @@ function gameLoop(ticker){
   updateTrain(dt); updateObstacles(dt)
   updateSmoke(dt); updateSparks(dt)
   updateAmbient(dt); updateCelebration(dt); updateFX(dt)
+  updateStagePunch(dt)
   updateHUDFrame()
+}
+
+// Task #38 — one-shot stage zoom bump 1 → 1.04 → 1 over ~0.5s on correct answer
+function updateStagePunch(dt){
+  if(!stage) return
+  if(S.stagePunch>0){
+    S.stagePunch=Math.max(0,S.stagePunch-dt)
+    // Bell curve: peaks at mid (0.25s), zero at start/end
+    const t = 1 - (S.stagePunch/0.5) // 0..1
+    const bump = Math.sin(t*Math.PI) * 0.04
+    const sc = 1 + bump
+    stage.scale.set(sc)
+    // Keep centered — pivot is (0,0), compensate via negative offset
+    stage.x = -app.screen.width*0.5*bump
+    stage.y = -app.screen.height*0.5*bump
+  } else if(stage.scale.x !== 1) {
+    stage.scale.set(1); stage.x=0; stage.y=0
+  }
 }
 
 function updateAmbient(dt){
@@ -1181,7 +1203,20 @@ function updateTrain(dt){
       else if(dist<=brakeDist){speed=baseSpeed*Math.max((dist-stopDist)/(brakeDist-stopDist)*0.5,0.04);showBrakeSparks()}
       else speed=baseSpeed
     } else speed=baseSpeed
-  } else if(S.trainState==='STOPPED'||S.trainState==='CLEARING') speed=0
+  } else if(S.trainState==='STOPPED'||S.trainState==='CLEARING'){
+    speed=0
+    // Bablas-recovery safeguard: if STOPPED but no quiz visible for >1.2s, re-trigger quiz on current obstacle.
+    // Catches race where clearObstacle→MOVING→next-frame STOPPED but quiz panel was mid-transition.
+    if(S.trainState==='STOPPED' && !quizActive){
+      S._stoppedNoQuizTime = (S._stoppedNoQuizTime||0) + dt
+      if(S._stoppedNoQuizTime > 1.2){
+        S._stoppedNoQuizTime = 0
+        const recoverObs = nextObs || S.obstacles[S.currentObstacleIdx]
+        if(recoverObs && !recoverObs.cleared) showQuizPanel(recoverObs)
+        else S.trainState='MOVING' // no obstacle to stop for — unstick
+      }
+    } else { S._stoppedNoQuizTime = 0 }
+  }
   else if(S.trainState==='ARRIVING'){
     const dist=STATION_X-S.worldX
     if(dist>18){speed=Math.max(10,baseSpeed*0.28*Math.min(dist/200,1)+8)}
@@ -1329,7 +1364,15 @@ function showBrakeSparks(){
 function updateSparks(dt){
   sparkParticles=sparkParticles.filter(s=>{
     s._life-=dt*(s._decay||3.2); if(s._life<=0){if(s.parent)s.parent.removeChild(s);return false}
-    s.x+=s._vx*dt; s.y+=s._vy*dt; s._vy+=200*dt
+    // Rings expand outward, fade, no motion
+    if(s._ring){
+      const sc = 1 + (1 - Math.max(s._life,0)) * 2.2
+      s.scale.set(sc); s.alpha=Math.max(s._life*1.2,0); return true
+    }
+    s.x+=(s._vx||0)*dt; s.y+=(s._vy||0)*dt
+    // Gravity unless floating emoji
+    if(!s._noGravity) s._vy=(s._vy||0)+200*dt
+    else s._vy=(s._vy||0)+30*dt // slight drift
     s.alpha=Math.min(s._life*1.5,1); s.rotation+=5*dt; return true
   })
   dustParticles=dustParticles.filter(d=>{
@@ -1355,8 +1398,11 @@ function showQuizPanel(obs){
   const choicesEl=document.getElementById('quiz-choices'); choicesEl.innerHTML=''
   const choices=[obs.question.ans,...obs.question.wrong]
   for(let i=choices.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[choices[i],choices[j]]=[choices[j],choices[i]];}
+  // Detect longest choice — apply compact font class if any answer >5 chars (prevents overflow)
+  const longestLen = Math.max(...choices.map(c => String(c).length))
   choices.forEach(c=>{
     const btn=document.createElement('button'); btn.className='choice-btn'; btn.textContent=c
+    if (longestLen > 5) btn.classList.add('long-text')
     btn.onclick=()=>onChoiceTap(btn,c,obs); choicesEl.appendChild(btn)
   })
   const mercyEl=document.getElementById('mercy-bar'); mercyEl.innerHTML=''
@@ -1370,6 +1416,16 @@ function onChoiceTap(btn,choice,obs){
   if(quizLocked)return; quizLocked=true
   if(choice===obs.question.ans){
     btn.classList.add('correct'); flashScreen('#00ff44',0.35)
+    // Juice layer — Task #38: celebration FX + streak + stage punch
+    S.correctStreak = (S.correctStreak||0) + 1
+    try {
+      const fxX = obs._mini ? (obs._miniRef && obs._miniRef.container ? obs._miniRef.container.x : app.screen.width*0.55)
+                            : (obs.worldX + worldContainer.x)
+      const fxY = obs._mini ? (obs._miniRef && obs._miniRef.container ? obs._miniRef.container.y : app.screen.height*0.5)
+                            : (obs.container ? obs.container.y : app.screen.height*0.5)
+      spawnQuizCelebrationFX(fxX, fxY, S.correctStreak)
+      S.stagePunch = 0.5 // 0.5s stage-scale punch animation
+    } catch(e){ console.warn('celebration FX failed',e) }
     if(obs._mini){
       // Mini obstacle — just clear and resume
       setTimeout(()=>clearMiniObstacle(obs._miniRef),380)
@@ -1384,6 +1440,7 @@ function onChoiceTap(btn,choice,obs){
     }
   } else {
     S.wrongTaps++; S.noWrongAnswers=false; obs.wrongCount++
+    S.correctStreak = 0 // reset streak on wrong
     btn.classList.add('wrong'); S.cameraShake=1.0; flashScreen('#ff8800',0.28)
     document.querySelectorAll('.mercy-dot').forEach((d,i)=>{if(i<obs.wrongCount)d.classList.add('used')})
     if(obs._mini){
@@ -1447,6 +1504,75 @@ function explodeObstacle(obs){
   },30)
 }
 
+// Task #38 — Correct-answer celebration FX (variants by streak)
+// Baseline: 14 confetti rectangles with gravity. 3+ streak: +6 firework bursts + sparks. 5+: +star emoji rain + gold ring pulse.
+function spawnQuizCelebrationFX(screenX, screenY, streak){
+  const cy = screenY - 40
+  const CONFETTI_COLORS = [0xfacc15, 0x4ade80, 0xf472b6, 0x22d3ee, 0xa855f7, 0xfb923c]
+  // Baseline — confetti rectangles radiating outward + gravity
+  for(let i=0;i<14;i++){
+    const p=new PIXI.Graphics()
+    const w=4+Math.random()*6, h=7+Math.random()*5
+    const col = CONFETTI_COLORS[i % CONFETTI_COLORS.length]
+    p.rect(-w/2,-h/2,w,h).fill({color:col})
+    p.rotation = Math.random()*Math.PI*2
+    p.x = screenX; p.y = cy
+    const angle = (i/14)*Math.PI*2 + (Math.random()-0.5)*0.4
+    const spd = 180+Math.random()*140
+    p._vx = Math.cos(angle)*spd
+    p._vy = Math.sin(angle)*spd - 120 // upward bias
+    p._life = 0.9+Math.random()*0.4
+    p._decay = 1.1
+    stage.addChild(p); sparkParticles.push(p)
+  }
+  // White flash ring (always)
+  const ring0 = new PIXI.Graphics()
+  ring0.circle(0,0,26).stroke({color:0xffffff,width:4,alpha:0.85})
+  ring0.x=screenX; ring0.y=cy; ring0._life=0.35; ring0._ring=true; ring0._decay=2.5
+  stage.addChild(ring0); sparkParticles.push(ring0)
+
+  // Combo streak (3+) — secondary firework bursts + tiny sparks
+  if(streak>=3){
+    for(let b=0;b<6;b++){
+      const bx = screenX + (Math.random()-0.5)*140
+      const by = cy + (Math.random()-0.5)*80 - 20
+      const baseAngle = Math.random()*Math.PI*2
+      for(let i=0;i<10;i++){
+        const sp = new PIXI.Graphics()
+        const col = CONFETTI_COLORS[(b+i) % CONFETTI_COLORS.length]
+        sp.circle(0,0,2+Math.random()*2).fill({color:col})
+        sp.x=bx; sp.y=by
+        const a = baseAngle + (i/10)*Math.PI*2
+        const s = 90+Math.random()*80
+        sp._vx=Math.cos(a)*s; sp._vy=Math.sin(a)*s
+        sp._life=0.55+Math.random()*0.3; sp._decay=1.8
+        stage.addChild(sp); sparkParticles.push(sp)
+      }
+    }
+  }
+
+  // Super streak (5+) — star/sparkle emoji rain + gold ring pulse
+  if(streak>=5){
+    const EMOJI = ['⭐','✨','🌟','💫']
+    for(let i=0;i<8;i++){
+      const t = new PIXI.Text({text: EMOJI[i % EMOJI.length], style:{fontSize:18+Math.random()*10, fontFamily:'Arial'}})
+      t.anchor.set(0.5)
+      t.x = screenX + (Math.random()-0.5)*80
+      t.y = cy + (Math.random()-0.5)*30
+      t._vx = (Math.random()-0.5)*80
+      t._vy = -120 - Math.random()*80 // float UP
+      t._life = 1.1+Math.random()*0.4; t._decay = 0.9
+      t._noGravity = true // overridden in updater
+      stage.addChild(t); sparkParticles.push(t)
+    }
+    // Gold ring pulse
+    const gring = new PIXI.Graphics()
+    gring.circle(0,0,18).stroke({color:0xfbbf24,width:5,alpha:0.95})
+    gring.x=screenX; gring.y=cy; gring._life=0.5; gring._ring=true; gring._decay=1.6
+    stage.addChild(gring); sparkParticles.push(gring)
+  }
+}
+
 function hideQuizPanel(){quizActive=false;quizLocked=false;document.getElementById('quiz-panel').classList.remove('show')}
 
 function triggerDeath(){S.trainState='DEAD';S.deadTimer=1.2;S.gameOver=true;hideQuizPanel();flashScreen('#ff0000',0.55)}
@@ -1454,6 +1580,13 @@ function triggerArrival(){
   if(S.trainState==='ARRIVING'||S.trainState==='ARRIVED'||S.gameOver)return
   S.trainState='ARRIVING'; hideQuizPanel()
   document.getElementById('speed-lines').style.opacity='0'
+  // Safety net: if ARRIVED/showWin doesn't fire within 8s, force it — prevents end-game freeze
+  setTimeout(()=>{
+    if(!S.winShown && !S.gameOver){
+      S.winShown=true; S.gameOver=true; S.running=false
+      try{showWin()}catch(e){console.error('showWin failsafe',e);try{finishGame()}catch(_){}}
+    }
+  }, 8000)
 }
 
 function updateHUD(){
