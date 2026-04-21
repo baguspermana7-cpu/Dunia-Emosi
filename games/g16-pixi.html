@@ -145,6 +145,7 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 </div>
 
 <script src="game-modal.js"></script>
+<script src="train-character-sprite.js?v=20260422a"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
 <script>
@@ -806,11 +807,31 @@ function buildAmbient(W,H){
   }
 }
 
+// ── Character train instance (Casey JR / Linus Brave) — G16 always uses Casey JR by default ──
+let g16CharacterTrain = null;
+const G16_CHARACTER_CONFIG = {
+  spriteUrl:'../assets/train/caseyjr-body.webp',
+  wheelPositions:[[-35,18,11],[-10,18,11],[15,18,11],[40,18,11]],
+  smokePos:[-40,-48], spriteHeight:90,
+  bodyBobFreq:0.08, bodyBobAmp:1.5, smokeInterval:10
+};
+
 // ── Train (detailed) ──────────────────────────────────────────────────────────
 function buildTrain(W,H){
   const tY=getTrackY(H)
   trainContainer=new PIXI.Container()
   trainContainer.x=TRAIN_SCREEN_X; trainContainer.y=tY-18
+
+  // Character train branch — if module loaded, render Casey JR sprite with animated wheels + smoke
+  if (window.CharacterTrain) {
+    trainContainer.scale.x = 1; // sprite already faces right
+    g16CharacterTrain = CharacterTrain.mount(trainContainer, G16_CHARACTER_CONFIG);
+    if (g16CharacterTrain) g16CharacterTrain.setSmokeParent(stage);
+    stage.addChild(trainContainer);
+    return;
+  }
+
+  // Legacy programmatic fallback
   const TS=TRAIN_STYLES[selectedTrainIdx]
   const g=new PIXI.Graphics()
 
@@ -1111,6 +1132,11 @@ function buildObstacleGraphic(ox,tY,idx){
 function gameLoop(ticker){
   if(!S.running||S.paused)return
   const dt=ticker.deltaMS/1000; _ticker_t+=dt
+  // Character train animation — wheels spin, body bob, smoke puff
+  if(g16CharacterTrain){
+    const trainSpeed = S.trainState==='BOOSTING' ? 4 : (S.trainState==='MOVING' ? 2 : 0)
+    g16CharacterTrain.tick(ticker.deltaTime, trainSpeed)
+  }
   if(S.gameOver && S.trainState!=='ARRIVED')return
   // Task #40 Part 4 — overshoot recovery: if train is somehow past an uncleared
   // obstacle (dt spike, tab-switch teleport, whatever), rewind & force STOPPED+quiz.

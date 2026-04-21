@@ -217,6 +217,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
 <script src="trains-db.js"></script>
+<script src="train-character-sprite.js?v=20260422a"></script>
 <script>
 'use strict';
 // Polyfill ctx.roundRect for older Android WebViews (Chrome < 99)
@@ -671,6 +672,9 @@ async function initPixi() {
     if (!gameRunning || gamePaused || mathQuizActive) return;
     const dt = ticker.deltaTime;
 
+    // Character train animation — wheel spin, body bob, smoke
+    if (characterTrainInstance) { characterTrainInstance.tick(dt, gameSpeed); }
+
     // Scroll sleepers
     for (const s of sleepers) { s.x -= gameSpeed * dt; if (s.x < -20) s.x += W + 40; }
 
@@ -1019,12 +1023,28 @@ function buildTracks() {
 }
 
 // ── Train: Parametric from selectedTrain ──────────────────────────────────────
+// Character train instance (Casey JR / Linus Brave) — managed by CharacterTrain module.
+let characterTrainInstance = null;
+
 function buildTrain() {
   if (!selectedTrain) selectedTrain = TRAIN_CATALOG[0];
   trainContainer.x = TRAIN_X;
   trainContainer.y = LANE_Y[1];
   trainContainer._bounceT = 0;
-  // Flip so locomotive faces RIGHT (direction of travel)
+
+  // Dispose previous character instance if switching
+  if (characterTrainInstance) { characterTrainInstance.dispose(); characterTrainInstance = null; }
+
+  // Character train branch — mount bg-removed WebP sprite with animated wheels + smoke
+  if (selectedTrain.isCharacter && window.CharacterTrain) {
+    // Sprite faces RIGHT naturally (was flipped in source) — don't mirror container
+    trainContainer.scale.x = 1;
+    characterTrainInstance = CharacterTrain.mount(trainContainer, selectedTrain);
+    if (characterTrainInstance) characterTrainInstance.setSmokeParent(stage);
+    return;
+  }
+
+  // Flip so locomotive faces RIGHT (direction of travel) — programmatic trains
   trainContainer.scale.x = -1;
 
   const g = new PIXI.Graphics();

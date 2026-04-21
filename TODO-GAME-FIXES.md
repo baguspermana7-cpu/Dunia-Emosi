@@ -186,11 +186,13 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 - ✅ **Pattern documented** in `LESSONS-LEARNED.md` — bonus-modifier technique for non-accuracy games (tier/progression scoring). Reusable for any future game where `{correct, total}` doesn't fit cleanly.
 - ⬜ **Not scope, deferred**: G9 tracing (0-3★ scale intentional, not migrated), G1/2/3/4/5/7/8 (emotion/calm/letter/count/memory/picture/word games — check if they use inline star math in a later pass), in-game G14/G15/G16/G17 paths where the standalone is already unified.
 
-### G15+G16 Character Trains: Casey JR + Linus Brave (Task #43, plan mode 2026-04-21 late)
-- ⬜ **Featured character trains** — Casey JR 0-4-0 + Linus Brave 2-4-0 at TOP of G15 + G16 train selection.
-- ✅ **Asset prep DONE** (2026-04-21 23:58):
-  - `assets/train/caseyjr-body.webp` (22KB, 272×198) — bg removed via rembg
-  - `assets/train/linus-body.webp` (18KB, 264×173) — bg removed via rembg
+### G15+G16 Character Trains: Casey JR + Linus Brave (Task #43, EXECUTED 2026-04-22) ✅
+- ✅ **Asset prep** (2026-04-21 23:58): `caseyjr-body.webp` (272×198) + `linus-body.webp` (264×173), bg-removed via rembg.
+- ✅ **Shared module** `games/train-character-sprite.js` — `window.CharacterTrain.mount(container, config)` API. Manages: async sprite load (PIXI.Assets + emoji fallback), wheel overlay (PIXI.Graphics circles with spokes), rotating wheels via `tick(dt, speed)`, body bob via sin oscillation, smoke puff particles (auto-spawn at interval, fade+rise+expand).
+- ✅ **G15 integration** (games/g15-pixi.html): script include line 220, new `characterTrainInstance` state, `buildTrain()` branches on `selectedTrain.isCharacter`, tick wired in main app.ticker loop line 674.
+- ✅ **G16 integration** (games/g16-pixi.html): script include line 148, `G16_CHARACTER_CONFIG` defaults to Casey JR, `buildTrain()` branches to CharacterTrain when module loaded, tick wired in gameLoop line 1137 with speed based on trainState (STOPPED=0, MOVING=2, BOOSTING=4).
+- ✅ **Roster** (trains-db.js): new "Karakter ⭐" category at index 0 with 2 entries. `caseyjr_character` (0-4-0, 4 wheels) + `linus_brave` (2-4-0, 2 pilot + 4 drivers). Each with `isCharacter:true`, `spriteUrl`, `wheelPositions`, `smokePos`, legacy speed/boost fields.
+- **Cache**: `v=20260421m` → `v=20260422a`.
 - **Plan** — shared `games/train-character-sprite.js` module:
   - API: `mountCharacterTrain(container, config)` where config has `{spriteUrl, wheelLayout, wheelPositions, smokePos, steamInterval}`
   - Wheel overlay: PIXI.Graphics circles drawn ON TOP of sprite, each a container so rotation works. Updated every frame with `wheel.rotation += speed * dt`.

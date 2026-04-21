@@ -1,6 +1,26 @@
 // Shared train catalog — used by g14.html and g15-pixi.html
 const TRAIN_CATS = [
   {
+    key:'character', name:'Karakter ⭐', emoji:'🌟',
+    color:'#7c3aed', desc:'Lokomotif karakter spesial dengan animasi penuh!',
+    trains:[
+      {key:'caseyjr_character', name:'Casey JR', sub:'0-4-0 Circus', emoji:'🚂',
+       isCharacter:true, spriteUrl:'../assets/train/caseyjr-body.webp',
+       wheelLayout:'0-4-0',
+       wheelPositions:[[-35,18,11],[-10,18,11],[15,18,11],[40,18,11]],
+       smokePos:[-40,-48], spriteHeight:90,
+       bodyColor:'#1e2a4a', accColor:'#c0392b', kmh:40, baseSpeed:1.65, boostMult:1.50, boostDur:1500,
+       desc:'Lokomotif sirkus Casey JR! Si kecil yang berani.'},
+      {key:'linus_brave', name:'Linus Brave', sub:'2-4-0 Sumatera', emoji:'🚂',
+       isCharacter:true, spriteUrl:'../assets/train/linus-body.webp',
+       wheelLayout:'2-4-0',
+       wheelPositions:[[-48,20,7],[-22,18,11],[4,18,11],[30,18,11],[56,18,11]],
+       smokePos:[-30,-45], spriteHeight:88,
+       bodyColor:'#1a3a5c', accColor:'#d4aa58', kmh:42, baseSpeed:1.70, boostMult:1.52, boostDur:1520,
+       desc:'Linus Brave — Lokomotif Sumatera yang gagah.'},
+    ]
+  },
+  {
     key:'steam_id', name:'Uap Indonesia 🇮🇩', emoji:'🚂',
     color:'#92400e', desc:'Lokomotif uap klasik koleksi Indonesia',
     trains:[
