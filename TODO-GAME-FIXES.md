@@ -238,7 +238,7 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 - ✅ **Inline games**: addStars() now passes star count to spawnSparkles() for grading. showResult() already has graded confetti. Feedback overlay confetti only fires for 3+ stars.
 
 ### BGM Audit
-- ⬜ **Find/identify train BGM**: User says they provided train-specific BGM previously. Check `Sounds/` directory and conversation history. The `WhatsApp Audio` file in Sounds/ might be it.
+- 🔧 **Train BGM is a duplicate of battle BGM** (confirmed 2026-04-21): `Sounds/battle-bgm.mp3`, `Sounds/train-bgm.mp3`, and `Sounds/WhatsApp Audio 2026-04-12 at 6.34.32 AM(1).mp3` are all byte-identical (each 235180 bytes). Code wires G14/G15/G16 to `train-bgm.mp3` but they're really still playing the Pokemon battle theme. **User action needed**: provide a genuinely different train-themed MP3 to replace `Sounds/train-bgm.mp3`.
 - ⬜ **Assign correct BGM per game type**:
   - Pokemon battle games (G10, G13, G13b, G13c): Pokemon themes ✅
   - Train games (G14, G15, G16): Train BGM (TBD)
