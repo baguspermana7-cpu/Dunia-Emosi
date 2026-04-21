@@ -201,7 +201,7 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 
 ### G22 — Monster Wants Candy (MAJOR REVAMP)
 - ✅ **Real pokeball SVGs → PNGs**: Resolved 2026-04-20 via ImageMagick rasterization (`-density 300 -resize 128x128`). 9 PNGs in `assets/Pokemon/pokeballs-png/`, preloaded via `PIXI.Assets.load()` in `preloadPokeballTextures()`. See the G22 Real Pokeball PNGs block above.
-- ⬜ **Quiz engine**: Don't create inline questions. Use shared question bank (300+ questions in game.js). Build shared quiz engine that G22 and other games can use. Categories: math (easy), bahasa, sains, etc.
+- ✅ **Shared quiz engine (2026-04-21)**: Extracted inline Q_MATH/Q_WARNA/Q_HEWAN/Q_BUAH into `games/question-bank.js` — exports `QuestionBank` with `pick(cat)`, `get(cat, count)`, `wrongAnswers(cat, correct, count)`, `extend(cat, items)`, `categories`. G22 now consumes the shared bank via `<script src="question-bank.js">`. Backward-compat aliases (`Q_MATH`, `BALL_CATEGORIES`, `pickQ`) preserved. Future games (bahasa, sains) can extend at runtime.
 - ✅ **No multiplication/division**: Verified — QS bank only has + and - operations
 - ✅ **Monster → Psyduck**: Replaced broken monster icon with HD Psyduck sprite (pokemondb.net), local fallback
 - ✅ **Pokemon picker in pause menu**: Added 15 Pokemon grid (Psyduck, Pikachu, Eevee, Snorlax, etc). HD sprites from pokemondb. Switching changes catcher character instantly.
