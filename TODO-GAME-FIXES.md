@@ -14,6 +14,7 @@
 
 - ✅ **P0 — HD sprite cascade** (game.js 5005/5012-5014/5391-5404): `pokeSpriteOnline()` now returns HD CDN; `pokeSpriteVariant()` prefers SVG → HD CDN; G10 player/enemy loaders use the HD-first cascade with low-res PNG only as offline fallback; `image-rendering:pixelated` killed.
 - ✅ **P0.7 — G10 enemy `loadSprHD` cascade regression** (game.js 5409-5413): Gen 9+ Pokemon (Fuecoco id 909 not in 751 SVG collection) were falling to the back-facing low-res PokeAPI PNG before HD CDN was tried — producing BOTH pixelated rendering AND reversed facing direction (scaleX(-1) assumes HD orientation). Swapped fallback order to mirror `loadSprPlayer`: HD CDN → local PNG → PokeAPI.
+- ✅ **P0.8 — G13c scoring bug** (games/g13c-pixi.html:1106, 1179, 1359): stars were derived from cumulative badge count (`total>=15?5:...`) → first win always showed 1★. Migrated to unified `GameScoring.calc()` with per-battle inputs: HP% preservation (as `correct/total`), wrong-answer counter, team-alive as lives. Added `battle.wrongAnswers` + `battle.totalAnswers` counters in battle init + `executeMove()`. Perfect run now correctly returns 5★. Cache-bust `v=20260421d`.
 - ✅ **P0.5 — Battle standards (5 invariants)** enforced across G10/G13/G13b/G13c:
   - Fix A: Canonical `POKE_TYPE_COLORS` + `pokeTypeColor(type)` helper at game.js:5003 (replaces 3 duplicate inline maps in G10/G13/G13b).
   - Fix B: `g10TypeFX()` DOM fallback expanded from 4 → 18 types (matches `g13TypeHitFX` coverage).

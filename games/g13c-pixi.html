@@ -1110,6 +1110,8 @@ function startBattle(trainerId){
     enemyIdx: 0,
     playerIdx: 0,
     ended: false,
+    wrongAnswers: 0,
+    totalAnswers: 0,
   };
 
   updateHpUI();
@@ -1178,6 +1180,9 @@ function useMove(moveIdx){
 // ─── EXECUTE MOVE (after math answer) ────────────────────────────────────────
 function executeMove(moveIdx, mathCorrect){
   if(!battle||battle.ended) return;
+  // Per-battle scoring counters (consumed by endBattleWin → GameScoring.calc)
+  battle.totalAnswers++;
+  if (!mathCorrect) battle.wrongAnswers++;
   const pp = battle.playerTeam[battle.playerIdx];
   const ep = battle.enemyTeam[battle.enemyIdx];
   const move = pp.moves[moveIdx];
@@ -1357,7 +1362,22 @@ function endBattleWin(){
   localStorage.setItem('g13c_badges', JSON.stringify(badges));
   updateBadgeCount(); buildGymSelect();
   const total = Object.keys(badges).length;
-  const stars = total>=15?5:total>=10?4:total>=5?3:total>=2?2:1;
+  // Per-battle scoring — 5★ = perfect (no wrong answers, full team, full HP).
+  // Prior bug: stars were derived from cumulative badge count, so first win = 1★.
+  const teamAlive = battle.playerTeam.filter(p => p.hp > 0).length;
+  const teamSize  = battle.playerTeam.length;
+  const totalHp   = battle.playerTeam.reduce((s, p) => s + Math.max(0, p.hp), 0);
+  const maxHp     = battle.playerTeam.reduce((s, p) => s + p.maxHp, 0);
+  const hpPct     = maxHp > 0 ? totalHp / maxHp : 1;
+  const stars = (typeof GameScoring !== 'undefined' && GameScoring.calc)
+    ? GameScoring.calc({
+        correct: Math.round(hpPct * 100),
+        total: 100,
+        wrong: battle.wrongAnswers || 0,
+        lives: teamAlive,
+        maxLives: teamSize,
+      })
+    : 3;
   flashColor('yellow');
   sessionStorage.setItem('g13cResult', JSON.stringify({stars, badges: total}));
   bgmStop()
