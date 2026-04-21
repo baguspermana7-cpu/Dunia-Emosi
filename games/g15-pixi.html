@@ -1613,10 +1613,13 @@ function showWin() {
   });
   sessionStorage.setItem('g15Result', JSON.stringify({ stars: finalStars }));
   saveG15Progress(finalStars);
-  const msg = wrongTaps === 0
-    ? `Sempurna! Tidak ada kesalahan! Matematika Benar: ${mathCorrect}`
-    : `${wrongTaps} kesalahan. Matematika benar: ${mathCorrect}. Terus berlatih!`;
-  const title = finalStars >= 5 ? 'Sempurna!' : finalStars >= 4 ? 'Hebat Sekali!' : finalStars >= 3 ? 'Bagus!' : 'Selesai!';
+  // Msg + title must align with stars — zero correct = fail, not "Sempurna"
+  const msg = mathCorrect === 0
+    ? `Belum ada jawaban benar. Ayo coba lagi!`
+    : wrongTaps === 0
+      ? `Sempurna! Tidak ada kesalahan! Matematika Benar: ${mathCorrect}`
+      : `${wrongTaps} kesalahan. Matematika benar: ${mathCorrect}. Terus berlatih!`;
+  const title = finalStars >= 5 ? 'Sempurna!' : finalStars >= 4 ? 'Hebat Sekali!' : finalStars >= 3 ? 'Bagus!' : finalStars >= 1 ? 'Coba Lagi' : 'Gagal!';
   const nextLevel = LEVEL < 30 ? () => { sessionStorage.setItem('g15Config', JSON.stringify({level: LEVEL + 1})); location.reload(); } : null;
   GameModal.show({
     emoji: finalStars >= 4 ? '🏆' : '⭐', title, stars: finalStars, msg,

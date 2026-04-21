@@ -40,16 +40,33 @@ const GameModal = (() => {
 
   function show({ emoji = '🏆', title = '', stars = 0, msg = '', onNext, onAgain, onBack, onExtra }) {
     init();
-    document.getElementById('gm-emoji').textContent = emoji;
-    document.getElementById('gm-title').textContent = title;
-    document.getElementById('gm-stars').textContent = '⭐'.repeat(Math.min(stars,5)) + '☆'.repeat(Math.max(0,5-stars));
-    document.getElementById('gm-msg').textContent = msg;
+    // Coerce contradictory caller inputs: 0-star can never be "Sempurna"/"Hebat"/"Bagus"
+    // or show a "Level Berikutnya" button. Standardize fail-state messaging.
+    const normalizedStars = Math.max(0, Math.min(5, stars|0));
+    let finalEmoji = emoji, finalTitle = title, finalMsg = msg, allowNext = !!onNext;
+    if (normalizedStars === 0) {
+      finalEmoji = '😞';
+      finalTitle = 'Gagal! Coba Lagi';
+      // Only override msg if caller provided a success-tone message
+      if (/sempurna|hebat|bagus|luar biasa|keren/i.test(finalMsg) || !finalMsg) {
+        finalMsg = 'Belum ada jawaban benar. Jangan menyerah, ayo coba lagi!';
+      }
+      allowNext = false; // no level advance on fail
+    } else if (normalizedStars <= 2 && /sempurna/i.test(finalTitle)) {
+      // Guard: low stars but title claims "Sempurna" — downgrade
+      finalTitle = 'Coba Lagi';
+    }
+
+    document.getElementById('gm-emoji').textContent = finalEmoji;
+    document.getElementById('gm-title').textContent = finalTitle;
+    document.getElementById('gm-stars').textContent = '⭐'.repeat(Math.min(normalizedStars,5)) + '☆'.repeat(Math.max(0,5-normalizedStars));
+    document.getElementById('gm-msg').textContent = finalMsg;
 
     const btns = document.getElementById('gm-btns');
     btns.innerHTML = '';
 
-    // Level Berikutnya — green, top priority
-    if (onNext) {
+    // Level Berikutnya — green, top priority. Requires stars >= 3 (passing grade) AND caller approval.
+    if (allowNext && normalizedStars >= 3) {
       const b = document.createElement('button');
       b.className = 'gm-btn gm-btn-green';
       b.textContent = 'Level Berikutnya ➡️';
@@ -82,15 +99,16 @@ const GameModal = (() => {
     overlay.classList.add('show');
 
     // Graded celebration effects based on star count
-    if (stars >= 5) {
+    const stars_fx = normalizedStars;
+    if (stars_fx >= 5) {
       _gmConfetti(60, ['#FCD34D','#FBBF24','#FFD700','#F43F5E','#8B5CF6','#14B8A6','#38BDF8','#A3E635'], 0.4, 25)
       setTimeout(() => _gmConfetti(40, ['#FCD34D','#FBBF24','#FFD700','#FDE68A'], 0.5, 30), 300)
-    } else if (stars >= 4) {
+    } else if (stars_fx >= 4) {
       _gmConfetti(30, ['#F43F5E','#FCD34D','#14B8A6','#38BDF8','#8B5CF6','#A3E635'], 0.2, 35)
-    } else if (stars >= 3) {
+    } else if (stars_fx >= 3) {
       _gmConfetti(12, ['#94A3B8','#CBD5E1','#A3E635','#38BDF8'], 0, 45)
     }
-    // 1-2 stars: no celebration — just show modal
+    // 0-2 stars: no celebration — just show modal
   }
 
   function _gmConfetti(count, colors, starChance, delay) {
@@ -141,6 +159,8 @@ const GameModal = (() => {
 const GameScoring = {
   calc({ correct = 0, total = 1, wrong = 0, lives, maxLives, time, maxTime, bonus = 0 }) {
     if (total <= 0) return 3
+    // Zero-correct = FAIL. Always 0 stars regardless of bonus/time.
+    if (correct <= 0) return 0
     const accuracy = correct / total
 
     // Base stars from accuracy
@@ -166,8 +186,8 @@ const GameScoring = {
       if (time < maxTime * 0.5 && stars < 5) stars = Math.min(5, stars + 1)
     }
 
-    // Custom bonus
-    stars = Math.min(5, Math.max(1, stars + bonus))
+    // Custom bonus — allow 0 minimum so non-accuracy games can return fail
+    stars = Math.min(5, Math.max(0, stars + bonus))
 
     return stars
   }
