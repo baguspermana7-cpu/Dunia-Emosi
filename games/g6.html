@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Petualangan Mobil 🚗</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a0a1e;font-family:'Fredoka One',sans-serif;touch-action:none}
+
+/* ── Canvas ── */
+#pixi-canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
+
+/* ── HUD ── */
+#hud{position:fixed;inset:0;pointer-events:none;z-index:50;display:flex;flex-direction:column}
+
+/* Top bar */
+#hud-top{display:flex;align-items:center;gap:8px;padding:max(14px,env(safe-area-inset-top)) 16px 0;background:linear-gradient(180deg,rgba(0,0,0,0.65) 0%,transparent 100%);pointer-events:all}
+#btn-back{background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.25);border-radius:12px;color:#fff;padding:7px 13px;font-size:15px;cursor:pointer;backdrop-filter:blur(6px);font-family:inherit;flex-shrink:0}
+#hud-center{flex:1;min-width:0;text-align:center}
+#target-label{font-size:10px;color:rgba(255,255,255,0.45);letter-spacing:2px;text-transform:uppercase;margin-bottom:2px}
+#target-word{font-size:22px;font-weight:700;letter-spacing:7px;text-shadow:0 0 18px rgba(167,139,250,0.9);color:#c4b5fd;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#lives-row{display:flex;align-items:center;gap:4px;font-size:18px;flex-shrink:0}
+#score-badge{background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.18);border-radius:10px;padding:5px 10px;color:#fff;font-size:13px;font-weight:700;flex-shrink:0;white-space:nowrap}
+
+/* Word slots */
+#slots-row{display:flex;justify-content:center;gap:5px;padding:6px 14px 0;flex-wrap:nowrap}
+.wslot{width:30px;height:30px;border-radius:8px;border:2px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff;transition:all .18s cubic-bezier(.34,1.56,.64,1)}
+.wslot.hit{background:rgba(139,92,246,.55);border-color:#a78bfa;box-shadow:0 0 12px rgba(139,92,246,.8);transform:scale(1.18)}
+
+/* Progress */
+#prog-wrap{height:3px;background:rgba(255,255,255,0.08);margin:6px 0 2px}
+#prog-bar{height:100%;background:linear-gradient(90deg,#8b5cf6,#c084fc);transition:width .3s;width:0%}
+#round-txt{text-align:center;color:rgba(255,255,255,.35);font-size:10px;letter-spacing:1px;padding-bottom:0}
+
+/* Controls */
+#ctrl-wrap{position:fixed;bottom:0;left:0;right:0;z-index:51;padding:12px 16px 16px;display:flex;gap:14px;background:linear-gradient(0deg,rgba(0,0,0,.75) 0%,transparent 100%);pointer-events:all}
+.ctrl-btn{flex:1;padding:20px 0;border-radius:22px;border:2.5px solid rgba(196,181,253,0.5);background:linear-gradient(160deg,rgba(139,92,246,0.3),rgba(167,139,250,0.2));color:#e9d5ff;font-size:22px;font-weight:900;cursor:pointer;backdrop-filter:blur(10px);user-select:none;-webkit-user-select:none;transition:transform .08s,background .08s;font-family:inherit;-webkit-tap-highlight-color:transparent;box-shadow:0 4px 0 rgba(91,33,182,0.25)}
+.ctrl-btn:active{transform:scale(.93) translateY(3px);background:linear-gradient(160deg,rgba(139,92,246,0.5),rgba(167,139,250,0.4));box-shadow:0 1px 0 rgba(91,33,182,0.2)}
+
+/* Overlay screens */
+.ovl{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.72);backdrop-filter:blur(10px)}
+.ovl.show{display:flex}
+.ovl-card{background:linear-gradient(145deg,#1c1030,#2d1b69);border:1px solid rgba(167,139,250,.4);border-radius:28px;padding:30px 26px;text-align:center;max-width:300px;width:90%;box-shadow:0 0 60px rgba(139,92,246,.35),0 24px 48px rgba(0,0,0,.6);color:#fff;animation:popIn .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popIn{from{transform:scale(.75);opacity:0}to{transform:scale(1);opacity:1}}
+.ovl-emoji{font-size:58px;margin-bottom:6px;display:block}
+.ovl-title{font-size:22px;font-weight:900;margin-bottom:6px}
+.ovl-word{font-size:26px;font-weight:900;letter-spacing:6px;color:#a78bfa;margin:8px 0}
+.ovl-msg{color:rgba(255,255,255,.65);font-size:13px;margin-bottom:18px}
+.ovl-stars{font-size:26px;letter-spacing:4px;margin:10px 0 16px}
+.ovl-btn{background:linear-gradient(135deg,#8b5cf6,#6d28d9);border:none;border-radius:16px;color:#fff;padding:14px 0;font-size:15px;font-weight:900;cursor:pointer;width:100%;margin-top:8px;box-shadow:0 5px 0 #4c1d95;transition:transform .1s,box-shadow .1s;font-family:inherit;-webkit-tap-highlight-color:transparent}
+.ovl-btn:active{transform:translateY(3px);box-shadow:0 2px 0 #4c1d95}
+.ovl-btn.sec{background:rgba(255,255,255,.1);box-shadow:none;border:1.5px solid rgba(255,255,255,.2);margin-top:8px}
+.ovl-btn.sec:active{transform:scale(.96)}
+
+/* Flash overlay */
+#flash{position:fixed;inset:0;z-index:99;pointer-events:none;opacity:0;transition:opacity .05s}
+
+/* Vehicle selector overlay */
+#ovl-start .ovl-card{max-height:90svh;overflow-y:auto;max-width:340px}
+.v-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:8px 0 12px}
+.v-btn{font-size:26px;padding:6px 2px;border-radius:12px;border:2px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);cursor:pointer;transition:all .12s;-webkit-tap-highlight-color:transparent}
+.v-btn:active{transform:scale(.88)}
+.v-btn.sel{border-color:#a78bfa;background:rgba(139,92,246,0.35);box-shadow:0 0 12px rgba(139,92,246,.55)}
+.diff-row{display:flex;gap:8px;justify-content:center;margin:8px 0 14px}
+.diff-btn{flex:1;padding:9px 6px;border-radius:14px;border:2px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:#fff;font-size:12px;font-weight:900;cursor:pointer;font-family:inherit;transition:all .12s;-webkit-tap-highlight-color:transparent}
+.diff-btn.sel{border-color:#a78bfa;background:rgba(139,92,246,.35)}
+.sec-lbl{font-size:10px;font-weight:900;color:rgba(255,255,255,.4);letter-spacing:2px;text-align:center;margin-bottom:6px;text-transform:uppercase}
+</style>
+</head>
+<body>
+
+<canvas id="pixi-canvas"></canvas>
+<audio id="game-bgm" src="../Sounds/battle-bgm.mp3" loop preload="auto" style="display:none"></audio>
+
+<div id="hud">
+  <div id="hud-top">
+    <button id="btn-back" onclick="confirmBack()">⌂</button>
+    <button id="btn-pause" onclick="togglePause()" style="pointer-events:all;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.25);border-radius:10px;color:#fff;padding:5px 8px;font-size:14px;cursor:pointer;font-family:inherit;flex-shrink:0">⏸</button>
+    <div id="hud-center">
+      <div id="target-label">Kumpulkan huruf</div>
+      <div id="target-word">—</div>
+    </div>
+    <div id="lives-row"></div>
+    <div id="score-badge">⭐ 0</div>
+  </div>
+  <div id="slots-row"></div>
+  <div id="prog-wrap"><div id="prog-bar"></div></div>
+  <div id="round-txt">Kata 1 / 5</div>
+</div>
+
+<div id="ctrl-wrap">
+  <button class="ctrl-btn" id="btn-left"
+    ontouchstart="onLeft();event.preventDefault()"
+    onclick="onLeft()">Kiri</button>
+  <button class="ctrl-btn" id="btn-right"
+    ontouchstart="onRight();event.preventDefault()"
+    onclick="onRight()">Kanan</button>
+</div>
+
+<!-- Vehicle selector — shown before game starts -->
+<div class="ovl show" id="ovl-start">
+  <div class="ovl-card">
+    <div class="sec-lbl">PILIH KENDARAAN</div>
+    <div class="v-grid" id="v-grid"></div>
+    <div id="v-preview" style="font-size:42px;text-align:center;margin:4px 0 10px">🚗</div>
+    <div class="sec-lbl">KESULITAN</div>
+    <div class="diff-row">
+      <button class="diff-btn sel" id="diff-easy" onclick="setDiff('easy')">😊 Mudah<br><span style="font-size:10px;opacity:.7">Nabrak = ½❤️</span></button>
+      <button class="diff-btn" id="diff-med" onclick="setDiff('medium')">😤 Sedang<br><span style="font-size:10px;opacity:.7">Nabrak = 1❤️</span></button>
+    </div>
+    <button class="ovl-btn" onclick="startFromSelect()">Mulai! 🚦</button>
+  </div>
+</div>
+
+<!-- Word complete -->
+<div class="ovl" id="ovl-wc">
+  <div class="ovl-card">
+    <span class="ovl-emoji" id="wc-emoji">✨</span>
+    <div class="ovl-title" id="wc-title">Hebat!</div>
+    <div class="ovl-word" id="wc-word"></div>
+    <div class="ovl-msg" id="wc-msg">Lanjutkan!</div>
+    <button class="ovl-btn" onclick="nextWord()">Lanjut ➡️</button>
+  </div>
+</div>
+
+<script src="game-modal.js"></script>
+
+<div id="flash"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
+<script>
+'use strict';
+// ═══════════════════════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════════════════════
+const WORD_BANKS = {
+  city:   ['BOLA','KUDA','APEL','MEJA','TOKO','BUS','JALAN','MOBIL','LAMPU','JEMBATAN','KANTOR','PASAR'],
+  forest: ['POHON','DAUN','BUNGA','HUTAN','SUNGAI','BATU','LUMUT','RUSA','BERUANG','RUBAH','KATAK','LEBAH'],
+  space:  ['BUMI','MARS','BULAN','BINTANG','ROKET','ORBIT','KOMET','GALAKSI','NEBULA','VENUS','ASTRONOT'],
+  body:   ['MATA','KAKI','HATI','GIGI','JANTUNG','OTAK','TULANG','OTOT','KULIT','TANGAN','HIDUNG'],
+  pantai: ['OMBAK','PASIR','KARANG','IKAN','PERAHU','LAUT','CUMI','UDANG','SIPUT','KERANG','NELAYAN'],
+  sekolah:['BUKU','PAPAN','GURU','MURID','KELAS','NILAI','PENSIL','MEJA','KURSI','PELAJARAN'],
+  dapur:  ['PANCI','PISAU','MINYAK','GARAM','TEPUNG','TELUR','SENDOK','KOMPOR','GELAS','PIRING'],
+  kebun:  ['CANGKUL','BENIH','PUPUK','TANAH','BUAH','SAYUR','BUNGA','POHON','AIR','DAUN'],
+}
+
+const THEMES = {
+  city:   {skyTop:0x0d0d2e,skyBot:0x1a1040,road:0x1e1e2e,roadBright:0x252538,edge:0x38bdf8,acc:0x38bdf8,markAlpha:0.3},
+  forest: {skyTop:0x071a10,skyBot:0x0f2e1a,road:0x1a2e1a,roadBright:0x223323,edge:0x4ade80,acc:0x4ade80,markAlpha:0.25},
+  space:  {skyTop:0x020210,skyBot:0x05051a,road:0x0a0a2e,roadBright:0x10103e,edge:0xa78bfa,acc:0xa78bfa,markAlpha:0.25},
+  body:   {skyTop:0x1a0626,skyBot:0x2d0f3e,road:0x1e0a2a,roadBright:0x2a1238,edge:0xe879f9,acc:0xe879f9,markAlpha:0.3},
+  pantai: {skyTop:0x062240,skyBot:0x0a3a5e,road:0x8b7355,roadBright:0xa08060,edge:0x38bdf8,acc:0xfbbf24,markAlpha:0.35},
+  sekolah:{skyTop:0x1a1a0a,skyBot:0x2a2a14,road:0x2a2a1e,roadBright:0x363626,edge:0xfbbf24,acc:0xfbbf24,markAlpha:0.3},
+  dapur:  {skyTop:0x2a1008,skyBot:0x3d1a0f,road:0x2e1a10,roadBright:0x3d2418,edge:0xfb923c,acc:0xfb923c,markAlpha:0.3},
+  kebun:  {skyTop:0x081a08,skyBot:0x123018,road:0x182e10,roadBright:0x22401a,edge:0x86efac,acc:0x86efac,markAlpha:0.25},
+}
+
+const THEME_EMOJI = {
+  city:'🌆',forest:'🌲',space:'🚀',body:'🔬',pantai:'🏖️',sekolah:'🏫',dapur:'🍳',kebun:'🌱'
+}
+
+let cfg = {
+  mapTheme: 'city',
+  level: 5,
+  playerIcon: '🚗',
+  totalWords: 5,
+  wordBank: null,
+}
+try {
+  const s = sessionStorage.getItem('g6Config')
+  if (s) Object.assign(cfg, JSON.parse(s))
+} catch(_) {}
+if (!cfg.wordBank) cfg.wordBank = WORD_BANKS[cfg.mapTheme] || WORD_BANKS.city
+
+const THEME = THEMES[cfg.mapTheme] || THEMES.city
+const LANES = 4
+const LIVES_MAX = 3
+const BASE_SPEED = 3.2 + Math.min(cfg.level, 18) * 0.22
+const MAX_SPEED  = 9.5
+const SPAWN_MS   = Math.max(700, 1400 - cfg.level * 45)
+const TILE_SZ    = 54
+
+// ═══════════════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════════════
+// Vehicle catalog
+const VEHICLES = [
+  {e:'🚗',n:'Sedan'},{e:'🏎️',n:'Sport'},{e:'🚙',n:'Jeep'},
+  {e:'🚚',n:'Truk'},{e:'🚐',n:'Bemo'},{e:'🚓',n:'Polisi'},
+  {e:'🚕',n:'Taksi'},{e:'🚌',n:'Bis'},{e:'🚒',n:'Pemadam'},
+  {e:'🚑',n:'Ambulan'},{e:'🚜',n:'Traktor'},{e:'🛵',n:'Skuter'},
+  {e:'🚲',n:'Sepeda'},{e:'🛺',n:'Becak'},{e:'🚀',n:'Roket'},
+  {e:'🚢',n:'Kapal'},{e:'🚁',n:'Heli'},{e:'🚂',n:'Kereta'},
+  {e:'🛸',n:'UFO'},{e:'🚤',n:'Speedboat'},
+]
+let selectedVehicle = cfg.playerIcon || '🚗'
+let selectedDiff = 'easy'
+
+function buildVehicleGrid() {
+  const grid = document.getElementById('v-grid')
+  if (!grid) return
+  grid.innerHTML = ''
+  VEHICLES.forEach((v) => {
+    const btn = document.createElement('button')
+    btn.className = 'v-btn' + (v.e === selectedVehicle ? ' sel' : '')
+    btn.title = v.n
+    btn.textContent = v.e
+    btn.onclick = () => {
+      selectedVehicle = v.e
+      document.querySelectorAll('.v-btn').forEach(b => b.classList.remove('sel'))
+      btn.classList.add('sel')
+      const p = document.getElementById('v-preview'); if(p) p.textContent = v.e
+    }
+    grid.appendChild(btn)
+  })
+}
+
+function setDiff(d) {
+  selectedDiff = d
+  document.getElementById('diff-easy').classList.toggle('sel', d==='easy')
+  document.getElementById('diff-med').classList.toggle('sel', d==='medium')
+}
+
+function startFromSelect() {
+  cfg.playerIcon = selectedVehicle
+  S.difficulty = selectedDiff
+  if (carSprite) carSprite.text = selectedVehicle
+  document.getElementById('ovl-start').classList.remove('show')
+  startWord()
+}
+
+const S = {
+  running: false, paused: false,
+  lives: LIVES_MAX,
+  difficulty: 'easy',
+  score: 0,
+  wordIdx: 0,
+  wordList: [],
+  currentWord: '',
+  letterIdx: 0,
+  wordsDone: 0,
+  totalWords: cfg.totalWords,
+  carLane: 1,
+  carTargetLane: 1,
+  speed: BASE_SPEED,
+  shakeTimer: 0,
+  tiles: [],
+  exhaust: [],
+  fx: [],
+  invincible: 0,  // frames of invincibility after hit
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  PIXI
+// ═══════════════════════════════════════════════════════════════════
+let app, stage
+let layers = {}        // bg, road, marks, tiles, car, exhaust, fx
+let carContainer, carGlow, carSprite
+let markDashes = []
+let laneXs = []        // pixel X center of each lane
+let roadLeft, roadRight, roadW, laneW
+
+async function initPixi() {
+  const W = window.innerWidth
+  const H = window.innerHeight
+
+  app = new PIXI.Application()
+  await app.init({
+    canvas: document.getElementById('pixi-canvas'),
+    width: W, height: H,
+    backgroundColor: THEME.skyTop,
+    antialias: true,
+    resolution: Math.min(window.devicePixelRatio || 1, 2),
+    autoDensity: true,
+  })
+  stage = app.stage
+
+  roadLeft  = W * 0.08
+  roadRight = W * 0.92
+  roadW     = roadRight - roadLeft
+  laneW     = roadW / LANES
+  laneXs    = Array.from({length: LANES}, (_, i) => roadLeft + laneW * i + laneW / 2)
+
+  buildBg()
+  buildRoad()
+  buildMarkings()
+
+  layers.tiles = new PIXI.Container()
+  stage.addChild(layers.tiles)
+
+  buildCar()
+
+  layers.exhaust = new PIXI.Container()
+  stage.addChild(layers.exhaust)
+
+  layers.fx = new PIXI.Container()
+  stage.addChild(layers.fx)
+
+  app.ticker.add(loop)
+
+  // Wire shared pause menu (game-modal.js GamePause)
+  try {
+    if (typeof GamePause !== 'undefined') {
+      GamePause.init({
+        bgmEl: document.getElementById('game-bgm'),
+        onResume: () => { S.paused = false; document.getElementById('btn-pause').textContent = '⏸' },
+        onRetry:  () => { location.reload() },
+        onHome:   () => { S.running = false; history.back() }
+      })
+    }
+  } catch(_){}
+}
+
+// ── Background ────────────────────────────────────────────────────
+function buildBg() {
+  const c = new PIXI.Container()
+  layers.bg = c
+  stage.addChild(c)
+
+  const W = app.screen.width, H = app.screen.height
+
+  // Sky gradient simulation (top→bottom quads)
+  const steps = 8
+  for (let i = 0; i < steps; i++) {
+    const t = i / steps
+    const color = lerpColor(THEME.skyTop, THEME.skyBot, t)
+    const rect = new PIXI.Graphics()
+    rect.rect(0, H * t / steps * steps, W, H / steps + 1).fill(color)
+    rect.y = H * i / steps
+    c.addChild(rect)
+  }
+
+  // Stars
+  const starCount = ['space','city','body','forest'].includes(cfg.mapTheme) ? 120 : 50
+  for (let i = 0; i < starCount; i++) {
+    const r = 0.6 + Math.random() * 1.4
+    const g = new PIXI.Graphics()
+    g.circle(0, 0, r).fill(0xffffff)
+    g.x = Math.random() * W
+    g.y = Math.random() * H * 0.55
+    g.alpha = 0.2 + Math.random() * 0.65
+    g._twinkleOffset = Math.random() * Math.PI * 2
+    c.addChild(g)
+  }
+  c._stars = c.children.slice(-starCount)
+
+  // Side scenery
+  buildScenery(c, W, H)
+}
+
+function buildScenery(c, W, H) {
+  // Left and right side elements
+  const icons = {
+    city:   ['🏢','🏬','🏪','💡','🚦'],
+    forest: ['🌲','🌳','🌿','🍄','🦋'],
+    space:  ['🌙','⭐','🪐','🛸','💫'],
+    body:   ['💊','🔬','🩺','❤️','🧬'],
+    pantai: ['🌴','⛱️','🐚','🦀','🌊'],
+    sekolah:['📚','✏️','🎒','📐','🖊️'],
+    dapur:  ['🍳','🥄','🧅','🍅','🫙'],
+    kebun:  ['🌻','🌸','🍀','🌿','🌾'],
+  }[cfg.mapTheme] || ['⭐']
+
+  const sceneryL = new PIXI.Container()
+  const sceneryR = new PIXI.Container()
+  sceneryL._scroll = 0.55
+  sceneryR._scroll = 0.55
+
+  for (let i = 0; i < 8; i++) {
+    // Left — subtle, small decorations near road edge
+    const tL = new PIXI.Text({ text: icons[i % icons.length], style: { fontSize: 14 + Math.random() * 6 } })
+    tL.alpha = 0.2 + Math.random() * 0.15
+    tL.x = roadLeft * (0.3 + Math.random() * 0.5)
+    tL.y = i * (H / 6) + Math.random() * 40
+    sceneryL.addChild(tL)
+
+    // Right
+    const tR = new PIXI.Text({ text: icons[(i + 2) % icons.length], style: { fontSize: 14 + Math.random() * 6 } })
+    tR.alpha = 0.2 + Math.random() * 0.15
+    tR.x = roadRight + (W - roadRight) * (0.3 + Math.random() * 0.5)
+    tR.y = i * (H / 6) + Math.random() * 40
+    sceneryR.addChild(tR)
+  }
+  c.addChild(sceneryL)
+  c.addChild(sceneryR)
+  c._sceneryL = sceneryL
+  c._sceneryR = sceneryR
+
+  // Road signs container — spawned periodically, scroll with road
+  const signs = new PIXI.Container()
+  signs._signList = []
+  signs._spawnTimer = 0
+  c.addChild(signs)
+  c._signs = signs
+}
+
+const ROAD_SIGN_EMOJIS = {
+  city:   ['🛑','🚸','🚦','⛽','🅿️'],
+  forest: ['🛑','🦌','⚠️','🌳','📍'],
+  space:  ['🛑','🛸','⚠️','🌠','📡'],
+  body:   ['🛑','💊','⚠️','🧬','📍'],
+  pantai: ['🛑','🏖️','⚠️','🌊','⛱️'],
+  sekolah:['🛑','🚸','⚠️','📚','🏫'],
+  dapur:  ['🛑','🍳','⚠️','🧂','📍'],
+  kebun:  ['🛑','🌻','⚠️','🌾','📍']
+}
+
+function spawnRoadSign(signsContainer) {
+  const H = app.screen.height
+  const side = Math.random() < 0.5 ? 'L' : 'R'
+  const emojiSet = ROAD_SIGN_EMOJIS[cfg.mapTheme] || ROAD_SIGN_EMOJIS.city
+  const icon = emojiSet[Math.floor(Math.random() * emojiSet.length)]
+  // Sign post: vertical line + icon box
+  const post = new PIXI.Container()
+  const postBar = new PIXI.Graphics()
+  postBar.rect(-1.5, 0, 3, 28).fill(0x78716c)
+  post.addChild(postBar)
+  const signBox = new PIXI.Graphics()
+  signBox.roundRect(-16, -18, 32, 22, 4).fill(0xffffff)
+  signBox.roundRect(-16, -18, 32, 22, 4).stroke({ color: 0x1c1917, width: 2 })
+  post.addChild(signBox)
+  const txt = new PIXI.Text({ text: icon, style: { fontSize: 14 } })
+  txt.anchor.set(0.5); txt.y = -7
+  post.addChild(txt)
+  post.x = side === 'L' ? roadLeft - 28 - Math.random() * 14 : roadRight + 28 + Math.random() * 14
+  post.y = -40
+  signsContainer.addChild(post)
+  signsContainer._signList.push(post)
+}
+
+function tickRoadSigns(delta) {
+  const bg = layers.bg
+  if (!bg || !bg._signs) return
+  const signs = bg._signs
+  const H = app.screen.height
+  // Spawn every 3-5 seconds (at 60fps ≈ 180-300 frames)
+  signs._spawnTimer += delta
+  const nextSpawn = 180 + Math.random() * 120
+  if (signs._spawnTimer > nextSpawn) {
+    signs._spawnTimer = 0
+    spawnRoadSign(signs)
+  }
+  // Scroll & cull
+  const px = S.speed * delta * 1.1
+  for (let i = signs._signList.length - 1; i >= 0; i--) {
+    const s = signs._signList[i]
+    s.y += px
+    if (s.y > H + 60) {
+      signs.removeChild(s)
+      s.destroy({ children: true })
+      signs._signList.splice(i, 1)
+    }
+  }
+}
+
+// ── Road ─────────────────────────────────────────────────────────
+function buildRoad() {
+  const c = new PIXI.Container()
+  layers.road = c
+  stage.addChild(c)
+
+  const H = app.screen.height
+
+  // Road surface
+  const road = new PIXI.Graphics()
+  road.rect(roadLeft, 0, roadW, H).fill(THEME.road)
+  c.addChild(road)
+
+  // Subtle road gradient stripes (depth illusion)
+  for (let i = 0; i < 5; i++) {
+    const stripe = new PIXI.Graphics()
+    const y = H * i / 5
+    const h = H / 5
+    stripe.rect(roadLeft, y, roadW, h).fill(i % 2 === 0 ? THEME.road : THEME.roadBright)
+    stripe.alpha = 0.35
+    c.addChild(stripe)
+  }
+
+  // Lane separators
+  for (let i = 1; i < LANES; i++) {
+    const x = roadLeft + laneW * i
+    const sep = new PIXI.Graphics()
+    sep.rect(x - 1, 0, 2, H).fill(0xffffff)
+    sep.alpha = 0.08
+    c.addChild(sep)
+  }
+
+  // Glowing road edges
+  const le = new PIXI.Graphics()
+  le.rect(roadLeft - 4, 0, 8, H).fill(THEME.edge)
+  le.alpha = 0.55
+  c.addChild(le)
+
+  const re = new PIXI.Graphics()
+  re.rect(roadRight - 4, 0, 8, H).fill(THEME.edge)
+  re.alpha = 0.55
+  c.addChild(re)
+
+  // Edge glow outer (soft)
+  const leOuter = new PIXI.Graphics()
+  leOuter.rect(roadLeft - 12, 0, 20, H).fill(THEME.edge)
+  leOuter.alpha = 0.12
+  c.addChild(leOuter)
+
+  const reOuter = new PIXI.Graphics()
+  reOuter.rect(roadRight - 8, 0, 20, H).fill(THEME.edge)
+  reOuter.alpha = 0.12
+  c.addChild(reOuter)
+}
+
+// ── Road markings ─────────────────────────────────────────────────
+const DASH_H = 38, DASH_GAP = 55, DASH_W = 5
+
+function buildMarkings() {
+  const c = new PIXI.Container()
+  layers.marks = c
+  stage.addChild(c)
+
+  const H = app.screen.height
+  const total = Math.ceil(H / (DASH_H + DASH_GAP)) + 3
+
+  for (let lane = 0; lane < LANES - 1; lane++) {
+    const x = roadLeft + laneW * (lane + 1)
+    // Center divider (between 2 center lanes for 3-lane / middle divider for 4-lane) uses warm yellow for classic road look
+    const isCenter = (lane === Math.floor((LANES - 1) / 2))
+    const dashColor = isCenter ? 0xFCD34D : 0xffffff
+    const dashAlpha = isCenter ? Math.max(0.55, THEME.markAlpha * 2) : THEME.markAlpha
+    for (let j = 0; j < total; j++) {
+      const d = new PIXI.Graphics()
+      d.rect(-DASH_W / 2, 0, DASH_W, DASH_H).fill(dashColor)
+      d.alpha = dashAlpha
+      d.x = x
+      d.y = j * (DASH_H + DASH_GAP)
+      c.addChild(d)
+      markDashes.push({ g: d, laneIdx: lane })
+    }
+  }
+}
+
+function tickMarkings(delta) {
+  const H = app.screen.height
+  const step = (DASH_H + DASH_GAP)
+  const period = step * (Math.ceil(H / step) + 3)
+  for (const d of markDashes) {
+    d.g.y += S.speed * delta * 1.05
+    if (d.g.y > H + DASH_H) d.g.y -= period
+  }
+}
+
+// ── Car ───────────────────────────────────────────────────────────
+function buildCar() {
+  carContainer = new PIXI.Container()
+  stage.addChild(carContainer)
+  layers.car = carContainer
+
+  const H = app.screen.height
+
+  // Glow ellipse under car
+  carGlow = new PIXI.Graphics()
+  carGlow.ellipse(0, 6, 26, 9).fill(THEME.acc)
+  carGlow.alpha = 0.38
+  carContainer.addChild(carGlow)
+
+  // Car sprite — selected vehicle emoji (top-down game)
+  // Top-view car image (fallback to emoji if image fails)
+  const carIdx = cfg.carIdx || Math.floor(Math.random() * 12)
+  const carFiles = ['top_car_white_gt_01.png','top_car_yellow_sport_02.png','top_car_white_track_03.png','top_car_blue_red_racer_04.png','top_car_cyan_sedan_05.png','top_car_white_stripe_gt_06.png','top_car_red_formula_07.png','top_car_yellow_rally_08.png','top_car_white_coupe_09.png','top_car_white_roadster_10.png','top_car_blue_compact_11.png','top_car_silver_sedan_12.png']
+  try {
+    const tex = PIXI.Texture.from(`../assets/car%20and%20vehicle/top-view/${carFiles[carIdx % carFiles.length]}`)
+    carSprite = new PIXI.Sprite(tex)
+    carSprite.anchor.set(0.5, 1)
+    carSprite.width = 48; carSprite.height = 84
+  } catch(_) {
+    carSprite = new PIXI.Text({ text: cfg.playerIcon || '🚗', style: { fontSize: 52, fontFamily: 'Arial' } })
+    carSprite.anchor.set(0.5, 1)
+  }
+  carContainer.addChild(carSprite)
+
+  // Headlight left
+  const hlL = new PIXI.Graphics()
+  hlL.ellipse(-12, 2, 5, 12).fill(0xffffcc)
+  hlL.alpha = 0.6
+  hlL._hl = true
+  carContainer.addChild(hlL)
+
+  // Headlight right
+  const hlR = new PIXI.Graphics()
+  hlR.ellipse(12, 2, 5, 12).fill(0xffffcc)
+  hlR.alpha = 0.6
+  hlR._hl = true
+  carContainer.addChild(hlR)
+
+  carContainer.x = laneXs[S.carLane]
+  carContainer.y = H - 95
+}
+
+function tickCar(delta) {
+  if (!carContainer) return
+
+  const targetX = laneXs[S.carTargetLane]
+  const dx = targetX - carContainer.x
+  carContainer.x += dx * 0.20 * delta
+
+  // Tilt
+  if (carSprite) {
+    const targetRot = dx * 0.007
+    carSprite.rotation += (targetRot - carSprite.rotation) * 0.25 * delta
+  }
+
+  // Glow pulse
+  if (carGlow) {
+    carGlow.alpha = 0.3 + Math.sin(performance.now() * 0.003) * 0.12
+  }
+
+  // Screen shake
+  if (S.shakeTimer > 0) {
+    S.shakeTimer -= delta
+    const t = S.shakeTimer / 22
+    stage.x = Math.sin(S.shakeTimer * 1.4) * 9 * t
+    stage.y = Math.cos(S.shakeTimer * 1.1) * 5 * t
+  } else {
+    stage.x *= 0.85
+    stage.y *= 0.85
+  }
+
+  // Invincibility
+  if (S.invincible > 0) {
+    S.invincible -= delta
+    carContainer.alpha = Math.sin(S.invincible * 0.6) > 0 ? 1 : 0.35
+  } else {
+    carContainer.alpha = 1
+  }
+}
+
+// ── Exhaust particles ─────────────────────────────────────────────
+let exhaustTimer = 0
+function tickExhaust(delta) {
+  exhaustTimer += delta
+  if (exhaustTimer > 2.5) {
+    exhaustTimer = 0
+    spawnExhaust()
+    spawnExhaust()
+  }
+  for (let i = S.exhaust.length - 1; i >= 0; i--) {
+    const p = S.exhaust[i]
+    p.g.x += p.vx * delta
+    p.g.y += p.vy * delta
+    p.life -= p.decay * delta
+    p.g.alpha = p.life * 0.5
+    p.g.scale.set(0.5 + p.life * 0.8)
+    if (p.life <= 0) {
+      layers.exhaust.removeChild(p.g)
+      S.exhaust.splice(i, 1)
+    }
+  }
+}
+
+function spawnExhaust() {
+  if (!carContainer) return
+  const g = new PIXI.Graphics()
+  const r = 3 + Math.random() * 4
+  g.circle(0, 0, r).fill(0x888899)
+  g.x = carContainer.x + (Math.random() - 0.5) * 18
+  g.y = carContainer.y + 4
+  g.alpha = 0.5
+  layers.exhaust.addChild(g)
+  S.exhaust.push({
+    g, vx: (Math.random() - 0.5) * 1.2,
+    vy: S.speed * 0.25 + 1 + Math.random() * 2,
+    life: 1, decay: 0.045 + Math.random() * 0.03
+  })
+}
+
+// ── FX particles ──────────────────────────────────────────────────
+function spawnBurst(x, y, color, count = 18) {
+  for (let i = 0; i < count; i++) {
+    const g = new PIXI.Graphics()
+    const r = 2.5 + Math.random() * 4
+    g.circle(0, 0, r).fill(color)
+    g.x = x; g.y = y
+    const angle = (i / count) * Math.PI * 2 + Math.random() * 0.4
+    const speed = 3 + Math.random() * 5
+    layers.fx.addChild(g)
+    S.fx.push({ g, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed - 1.5,
+                 gravity: 0.18, life: 1, decay: 0.028 + Math.random()*0.022 })
+  }
+}
+
+function spawnCrash(x, y) {
+  for (let i = 0; i < 14; i++) {
+    const g = new PIXI.Graphics()
+    const r = 2 + Math.random() * 5
+    g.circle(0, 0, r).fill(i % 2 === 0 ? 0xff4444 : 0xffaa44)
+    g.x = x; g.y = y
+    layers.fx.addChild(g)
+    S.fx.push({ g, vx: (Math.random()-0.5)*9, vy: -Math.random()*6-1,
+                 gravity: 0.28, life: 1, decay: 0.022 + Math.random()*0.018 })
+  }
+}
+
+function tickFx(delta) {
+  for (let i = S.fx.length - 1; i >= 0; i--) {
+    const p = S.fx[i]
+    p.g.x += p.vx * delta
+    p.g.y += p.vy * delta
+    p.vy += p.gravity * delta
+    p.life -= p.decay * delta
+    p.g.alpha = p.life
+    if (p.life <= 0) {
+      layers.fx.removeChild(p.g)
+      S.fx.splice(i, 1)
+    }
+  }
+}
+
+// ── Tiles ─────────────────────────────────────────────────────────
+let lastSpawn = 0
+
+function spawnWave() {
+  const word = S.currentWord
+  if (!word) return
+
+  // Occasionally spawn road obstacles instead of letters (20% chance)
+  if (Math.random() < 0.2 && S.letterIdx > 0) {
+    spawnRoadObstacle()
+    return
+  }
+
+  const nextLetter = word[S.letterIdx]
+  const numTiles = 2 + Math.floor(Math.random() * (LANES - 2))
+  const playerL = S.carTargetLane ?? S.carLane ?? 1
+  let lanePool = Array.from({length:LANES},(_,i)=>i)
+  if (numTiles >= LANES - 1) lanePool = lanePool.filter(l => l !== playerL)
+  const lanes = shuffle(lanePool).slice(0, numTiles)
+
+  const putCorrect = Math.random() < 0.62
+  lanes.forEach((lane, i) => {
+    const isCorrect = putCorrect && i === 0
+    const letter = isCorrect ? nextLetter : wrongLetter(word, nextLetter)
+    spawnTile(lane, letter, isCorrect)
+  })
+}
+
+// Road obstacles — decorative hazards (cones, trees, boxes)
+const ROAD_OBS = ['🚧','🦺','📦','🌲','🪨','🚶','🛑','🏗️','🚜','🐕','🚗','🐄','🐔','🚶‍♂️','🏍️','🚲','🪵','🧱','💧','⚠️']
+function spawnRoadObstacle() {
+  const numObs = 1 + Math.floor(Math.random() * 2)
+  const playerL = S.carTargetLane ?? S.carLane ?? 1
+  const lanes = shuffle(Array.from({length:LANES},(_,i)=>i).filter(l=>l!==playerL)).slice(0,numObs)
+  lanes.forEach(lane => {
+    const tc = new PIXI.Container()
+    tc.x = laneXs[lane]; tc.y = -TILE_SZ - 6
+    tc._lane = lane; tc._alive = true; tc._correct = false; tc._isObstacle = true
+    const txt = new PIXI.Text({text:ROAD_OBS[Math.floor(Math.random()*ROAD_OBS.length)], style:{fontSize:34}})
+    txt.anchor.set(0.5); tc.addChild(txt)
+    layers.tiles.addChild(tc); S.tiles.push(tc)
+  })
+}
+
+function spawnTile(lane, letter, isCorrect) {
+  const tc = new PIXI.Container()
+  tc.x = laneXs[lane]
+  tc.y = -TILE_SZ - 6
+  tc._lane = lane
+  tc._letter = letter
+  tc._correct = isCorrect
+  tc._alive = true
+  tc._glowT = Math.random() * Math.PI * 2
+
+  const bg = new PIXI.Graphics()
+  if (isCorrect) {
+    // BRIGHT green pastel — clearly "collect me!"
+    bg.roundRect(-TILE_SZ/2, -TILE_SZ/2, TILE_SZ, TILE_SZ, 14).fill(0x22c55e)
+    bg.roundRect(-TILE_SZ/2, -TILE_SZ/2, TILE_SZ, TILE_SZ, 14).stroke({color: 0x86efac, width: 3})
+    const shine = new PIXI.Graphics()
+    shine.roundRect(-TILE_SZ/2+4, -TILE_SZ/2+4, TILE_SZ-8, 14, 6).fill(0xffffff)
+    shine.alpha = 0.2
+    tc.addChild(bg)
+    tc.addChild(shine)
+  } else {
+    // DARK red/danger — clearly "avoid me!"
+    bg.roundRect(-TILE_SZ/2, -TILE_SZ/2, TILE_SZ, TILE_SZ, 14).fill(0x7f1d1d)
+    bg.roundRect(-TILE_SZ/2, -TILE_SZ/2, TILE_SZ, TILE_SZ, 14).stroke({color: 0xef4444, width: 2})
+    tc.addChild(bg)
+  }
+  tc._bg = bg
+
+  const txt = new PIXI.Text({
+    text: letter,
+    style: {
+      fontSize: isCorrect ? 27 : 23,
+      fontWeight: '900',
+      fontFamily: 'Fredoka One, Arial',
+      fill: isCorrect ? 0xffffff : 0xfca5a5,
+    }
+  })
+  txt.anchor.set(0.5)
+  tc.addChild(txt)
+
+  layers.tiles.addChild(tc)
+  S.tiles.push(tc)
+}
+
+function wrongLetter(word, correct) {
+  const alpha = 'ABCDEFGHIJKLMNOPRSTUVWYZ'
+  const pool = [...word.split('').filter(l => l !== correct), ...alpha.split('')]
+  let l
+  do { l = pool[Math.floor(Math.random() * pool.length)] } while (l === correct)
+  return l
+}
+
+function tickTiles(delta) {
+  const H = app.screen.height
+  for (let i = S.tiles.length - 1; i >= 0; i--) {
+    const t = S.tiles[i]
+    if (!t._alive) { layers.tiles.removeChild(t); S.tiles.splice(i,1); continue }
+
+    t.y += S.speed * delta * 1.12
+    t._glowT += delta * 0.07
+
+    if (t._correct) {
+      t.alpha = 0.82 + Math.sin(t._glowT * Math.PI * 2) * 0.18
+      t.scale.set(0.96 + Math.sin(t._glowT * Math.PI * 1.5) * 0.04)
+    }
+
+    if (t.y > H + TILE_SZ) { t._alive = false; continue }
+
+    // Collision with car
+    if (S.running && S.invincible <= 0) {
+      const dx = Math.abs(t.x - carContainer.x)
+      const dy = Math.abs(t.y - (carContainer.y - 22))
+      if (dx < TILE_SZ * 0.52 && dy < TILE_SZ * 0.58) {
+        hitTile(t)
+      }
+    }
+  }
+}
+
+function hitTile(t) {
+  t._alive = false
+  if (t._correct) {
+    // Correct collect
+    spawnBurst(t.x, t.y, THEME.acc)
+    playTone(660 + S.letterIdx * 55, 0.12, 'sine')
+    playTone(880 + S.letterIdx * 55, 0.08, 'sine')
+    S.letterIdx++
+    S.score += 15
+    screenFlash('rgba(139,92,246,0.22)')
+    updateHUD()
+    updateSlots()
+    if (S.letterIdx >= S.currentWord.length) setTimeout(wordComplete, 320)
+  } else {
+    // Wrong tile — penalty
+    if (S.invincible > 0) return
+    S.invincible = 55
+    S.shakeTimer = 22
+    spawnCrash(t.x, t.y)
+    playTone(200, 0.2, 'square')
+    screenFlash('rgba(255,60,60,0.3)')
+    const dmg = S.difficulty === 'easy' ? 0.5 : 1
+    S.lives = Math.max(0, S.lives - dmg)
+    updateHUD()
+    if (S.lives <= 0) setTimeout(showGameOver, 500)
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  MAIN LOOP
+// ═══════════════════════════════════════════════════════════════════
+function loop(ticker) {
+  if (!S.running || S.paused) return
+  const delta = ticker.deltaTime
+  const now = performance.now()
+
+  // Spawn wave
+  if (now - lastSpawn > SPAWN_MS) {
+    spawnWave()
+    lastSpawn = now
+  }
+
+  tickMarkings(delta)
+  tickCar(delta)
+  tickTiles(delta)
+  tickExhaust(delta)
+  tickFx(delta)
+
+  // Speed ramp
+  S.speed = Math.min(MAX_SPEED, S.speed + 0.0004 * delta)
+
+  // Road signs tick
+  tickRoadSigns(delta)
+
+  // Scenery scroll
+  const bg = layers.bg
+  if (bg && bg._sceneryL) {
+    const scrollAmt = (bg._sceneryL._scroll || 0.5) * S.speed * delta * 0.35
+    bg._sceneryL.y += scrollAmt
+    bg._sceneryR.y += scrollAmt
+    const H = app.screen.height
+    if (bg._sceneryL.y > H * 0.5) {
+      bg._sceneryL.y = -H * 0.5
+      bg._sceneryR.y = -H * 0.5
+    }
+  }
+
+  // Star twinkle
+  if (bg && bg._stars) {
+    const t = performance.now() * 0.001
+    bg._stars.forEach((s, i) => {
+      s.alpha = 0.25 + Math.sin(t * 1.2 + s._twinkleOffset) * 0.3 + 0.15
+    })
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  GAME FLOW
+// ═══════════════════════════════════════════════════════════════════
+function startWord() {
+  if (S.wordIdx >= S.wordList.length) { showFinish(); return }
+  const word = S.wordList[S.wordIdx++]
+  S.currentWord = word
+  S.letterIdx = 0
+  S.speed = BASE_SPEED
+  S.tiles.forEach(t => { t._alive = false })
+  S.running = true
+  try{const bgm=document.getElementById('game-bgm');bgm.volume=0.2;bgm.play().catch(()=>{})}catch(_){}
+  lastSpawn = performance.now() - SPAWN_MS + 200
+
+  document.getElementById('target-word').textContent = word.split('').join(' ')
+  buildSlots(word)
+  updateHUD()
+}
+
+function wordComplete() {
+  S.running = false
+  S.wordsDone++
+  playTone(523, 0.1); playTone(659, 0.1); setTimeout(()=>playTone(784, 0.15), 80)
+  screenFlash('rgba(139,92,246,0.35)')
+
+  const o = document.getElementById('ovl-wc')
+  document.getElementById('wc-word').textContent = S.currentWord
+  const done = S.wordsDone
+  document.getElementById('wc-emoji').textContent = done===1?'✨':done<=2?'🌟':done<=3?'💫':done<=4?'🔥':'🏆'
+  document.getElementById('wc-title').textContent = done<=1?'Hebat!':done<=2?'Luar Biasa!':done<=3?'Keren Banget!':'SEMPURNA! 🔥'
+  document.getElementById('wc-msg').textContent = S.wordsDone >= S.totalWords ? 'Semua kata selesai!' : `${S.totalWords - S.wordsDone} kata lagi!`
+  o.classList.add('show')
+}
+
+function nextWord() {
+  document.getElementById('ovl-wc').classList.remove('show')
+  if (S.wordsDone >= S.totalWords) { showFinish(); return }
+  startWord()
+}
+
+function showGameOver() {
+  S.running = false
+  GameModal.show({
+    emoji: '💔',
+    title: 'Game Over!',
+    stars: 1,
+    msg: 'Kehabisan nyawa. Coba lagi?',
+    onAgain: () => restartGame(),
+    onBack: () => goBack()
+  })
+}
+
+function restartGame() {
+  S.lives = LIVES_MAX
+  S.score = 0
+  S.wordIdx = 0
+  S.wordsDone = 0
+  S.wordList = shuffle([...cfg.wordBank]).slice(0, cfg.totalWords)
+  S.totalWords = S.wordList.length
+  S.tiles.forEach(t => { t._alive = false })
+  S.fx = []; S.exhaust = []
+  updateHUD()
+  document.getElementById('ovl-start').classList.add('show')
+}
+
+function showFinish() {
+  S.running = false
+  const stars = GameScoring.calc({correct:S.wordsDone, total:S.totalWords, wrong:S.wrongCount||0, lives:S.lives, maxLives:3})
+  const msg = stars >= 5 ? 'Sempurna! Kamu bintang!' :
+    stars >= 3 ? 'Bagus sekali! Terus berlatih!' : 'Coba lagi untuk nilai lebih baik!'
+  const curLevel = cfg.level || 1;
+  const nextLevel = curLevel < 30 ? () => { sessionStorage.setItem('g6Config', JSON.stringify({...cfg, level:curLevel+1})); location.reload(); } : null;
+  const title = stars >= 5 ? 'Sempurna!' : stars >= 4 ? 'Hebat!' : stars >= 3 ? 'Bagus!' : 'Selesai!';
+  GameModal.show({
+    emoji: stars >= 4 ? '🏆' : '⭐',
+    title,
+    stars,
+    msg,
+    onNext: nextLevel,
+    onAgain: () => restartGame(),
+    onBack: () => goBack()
+  })
+  try {
+    sessionStorage.setItem('g6Result', JSON.stringify({ stars, score: S.score, wordsDone: S.wordsDone }))
+  } catch(_) {}
+  saveG6Progress(stars)
+}
+
+function togglePause() {
+  S.paused = !S.paused
+  document.getElementById('btn-pause').textContent = S.paused ? '▶' : '⏸'
+  if (typeof GamePause !== 'undefined') {
+    if (S.paused) GamePause.show(); else GamePause.hide()
+  } else {
+    try{const bgm=document.getElementById('game-bgm');S.paused?bgm.pause():bgm.play().catch(()=>{})}catch(_){}
+  }
+}
+
+function finishGame() { try{document.getElementById('game-bgm').pause()}catch(_){}; goBack() }
+
+// Save level progress directly to localStorage
+function saveG6Progress(stars) {
+  try {
+    const key = 'dunia-0-progress'
+    const prog = JSON.parse(localStorage.getItem(key) || '{}')
+    if (!prog.g6) prog.g6 = { completed: [], stars: {} }
+    const lv = (typeof cfg !== 'undefined' ? cfg.level : (typeof S !== 'undefined' ? S.level : 1)) || 1
+    const mapped = stars >= 4 ? 3 : stars >= 2 ? 2 : 1
+    if (!prog.g6.completed.includes(lv)) prog.g6.completed.push(lv)
+    if ((prog.g6.stars[lv] || 0) < mapped) prog.g6.stars[lv] = mapped
+    localStorage.setItem(key, JSON.stringify(prog))
+  } catch(_) {}
+}
+function goBack() {
+  S.running = false
+  try{document.getElementById('game-bgm').pause()}catch(_){}
+  history.back()
+}
+
+function confirmBack() {
+  goBack()
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  HUD
+// ═══════════════════════════════════════════════════════════════════
+function buildSlots(word) {
+  const row = document.getElementById('slots-row')
+  row.innerHTML = ''
+  for (const l of word) {
+    const s = document.createElement('div')
+    s.className = 'wslot'
+    s.textContent = l
+    row.appendChild(s)
+  }
+}
+
+function updateSlots() {
+  const slots = document.querySelectorAll('.wslot')
+  slots.forEach((s, i) => {
+    if (i < S.letterIdx) s.classList.add('hit')
+    else s.classList.remove('hit')
+  })
+}
+
+function updateHUD() {
+  document.getElementById('score-badge').textContent = `⭐ ${S.score}`
+  // Lives
+  const livesEl = document.getElementById('lives-row')
+  const fullH = Math.floor(S.lives), hasHalf = S.lives % 1 >= 0.5
+  livesEl.textContent = '❤️'.repeat(fullH) + (hasHalf ? '🩶' : '') + '🖤'.repeat(Math.max(0, LIVES_MAX - Math.ceil(S.lives)))
+  // Progress
+  const pct = S.wordsDone / S.totalWords
+  document.getElementById('prog-bar').style.width = `${pct * 100}%`
+  document.getElementById('round-txt').textContent = `Kata ${Math.min(S.wordsDone + 1, S.totalWords)} / ${S.totalWords}`
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  INPUT
+// ═══════════════════════════════════════════════════════════════════
+function onLeft()  { if (S.running && S.carTargetLane > 0)         S.carTargetLane-- }
+function onRight() { if (S.running && S.carTargetLane < LANES - 1) S.carTargetLane++ }
+
+window.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft')  { onLeft();  e.preventDefault() }
+  if (e.key === 'ArrowRight') { onRight(); e.preventDefault() }
+})
+
+// Swipe detection
+let touchX0 = null
+window.addEventListener('touchstart', e => { touchX0 = e.touches[0].clientX }, {passive:true})
+window.addEventListener('touchend', e => {
+  if (touchX0 === null) return
+  const dx = e.changedTouches[0].clientX - touchX0
+  if (Math.abs(dx) > 35) { dx < 0 ? onLeft() : onRight() }
+  touchX0 = null
+}, {passive:true})
+
+// ═══════════════════════════════════════════════════════════════════
+//  AUDIO
+// ═══════════════════════════════════════════════════════════════════
+let audioCtx
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+  if (audioCtx.state === 'suspended') audioCtx.resume()
+  return audioCtx
+}
+
+function playTone(freq, dur = 0.12, type = 'sine') {
+  try {
+    const ctx = ensureAudio()
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.connect(gain); gain.connect(ctx.destination)
+    osc.frequency.value = freq
+    osc.type = type
+    gain.gain.setValueAtTime(0.12, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur)
+    osc.start(); osc.stop(ctx.currentTime + dur)
+  } catch(_) {}
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════════════════════
+function lerpColor(a, b, t) {
+  const ar = (a >> 16) & 0xff, ag = (a >> 8) & 0xff, ab = a & 0xff
+  const br = (b >> 16) & 0xff, bg = (b >> 8) & 0xff, bb = b & 0xff
+  const r = Math.round(ar + (br-ar)*t)
+  const g = Math.round(ag + (bg-ag)*t)
+  const bv = Math.round(ab + (bb-ab)*t)
+  return (r << 16) | (g << 8) | bv
+}
+
+function shuffle(arr) {
+  for (let i = arr.length-1; i>0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]]
+  }
+  return arr
+}
+
+let flashTimer = null
+function screenFlash(color) {
+  const f = document.getElementById('flash')
+  f.style.background = color
+  f.style.opacity = '1'
+  clearTimeout(flashTimer)
+  flashTimer = setTimeout(() => { f.style.opacity = '0' }, 80)
+}
+
+// Handle resize
+window.addEventListener('resize', () => {
+  // Lightweight resize: recompute lane Xs
+  if (!app) return
+  roadLeft  = window.innerWidth * 0.08
+  roadRight = window.innerWidth * 0.92
+  roadW = roadRight - roadLeft
+  laneW = roadW / LANES
+  laneXs = Array.from({length:LANES}, (_,i) => roadLeft + laneW * i + laneW / 2)
+})
+
+// ═══════════════════════════════════════════════════════════════════
+//  BOOT
+// ═══════════════════════════════════════════════════════════════════
+;(async function boot() {
+  // Unlock audio on first touch
+  document.addEventListener('touchstart', ensureAudio, {once:true})
+  document.addEventListener('click', ensureAudio, {once:true})
+
+  await initPixi()
+
+  S.wordList = shuffle([...cfg.wordBank]).slice(0, cfg.totalWords)
+  S.totalWords = S.wordList.length
+
+  updateHUD()
+  buildVehicleGrid()
+  // Vehicle selector overlay already shown (has 'show' class in HTML)
+})()
+</script>
+</body>
+</html>

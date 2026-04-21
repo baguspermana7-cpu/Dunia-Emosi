@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <rect x="18" y="50" width="148" height="36" rx="7" fill="#111"/>
+  <rect x="24" y="56" width="100" height="24" rx="7" fill="#1e1e1e"/>
+  <rect x="15" y="52" width="8" height="30" rx="2" fill="#1a1a1a" stroke="#555" stroke-width="1"/>
+  <rect x="36" y="52" width="8" height="30" rx="2" fill="#1a1a1a" stroke="#555" stroke-width="1"/>
+  <circle cx="26" cy="67" r="15" fill="#0d0d0d"/>
+  <rect x="30" y="16" width="13" height="36" rx="3" fill="#0d0d0d"/>
+  <rect x="26" y="12" width="21" height="8" rx="2" fill="#333"/>
+  <ellipse cx="105" cy="53" rx="13" ry="9" fill="#0d0d0d"/>
+  <rect x="24" y="80" width="120" height="4" fill="#CC4400"/>
+  <rect x="148" y="44" width="36" height="42" rx="4" fill="#0d0d0d"/>
+  <rect x="151" y="48" width="14" height="14" rx="2" fill="#87CEEB" opacity="0.6"/>
+  <circle cx="36" cy="101" r="8" fill="#111" stroke="#CC4400" stroke-width="2"/>
+<line x1="44.0" y1="101.0" x2="28.0" y2="101.0" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="41.7" y1="106.7" x2="30.3" y2="95.3" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="36.0" y1="109.0" x2="36.0" y2="93.0" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="30.3" y1="106.7" x2="41.7" y2="95.3" stroke="#CC4400" stroke-width="1.2"/>
+<circle cx="36" cy="101" r="1.8" fill="#CC4400"/>
+
+  <circle cx="56" cy="101" r="8" fill="#111" stroke="#CC4400" stroke-width="2"/>
+<line x1="64.0" y1="101.0" x2="48.0" y2="101.0" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="61.7" y1="106.7" x2="50.3" y2="95.3" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="56.0" y1="109.0" x2="56.0" y2="93.0" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="50.3" y1="106.7" x2="61.7" y2="95.3" stroke="#CC4400" stroke-width="1.2"/>
+<circle cx="56" cy="101" r="1.8" fill="#CC4400"/>
+
+  <circle cx="80" cy="101" r="13" fill="#111" stroke="#CC4400" stroke-width="2"/>
+<line x1="93.0" y1="101.0" x2="67.0" y2="101.0" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="91.3" y1="107.5" x2="68.7" y2="94.5" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="86.5" y1="112.3" x2="73.5" y2="89.7" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="80.0" y1="114.0" x2="80.0" y2="88.0" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="73.5" y1="112.3" x2="86.5" y2="89.7" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="68.7" y1="107.5" x2="91.3" y2="94.5" stroke="#CC4400" stroke-width="1.2"/>
+<circle cx="80" cy="101" r="2.9" fill="#CC4400"/>
+
+  <circle cx="103" cy="101" r="13" fill="#111" stroke="#CC4400" stroke-width="2"/>
+<line x1="116.0" y1="101.0" x2="90.0" y2="101.0" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="114.3" y1="107.5" x2="91.7" y2="94.5" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="109.5" y1="112.3" x2="96.5" y2="89.7" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="103.0" y1="114.0" x2="103.0" y2="88.0" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="96.5" y1="112.3" x2="109.5" y2="89.7" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="91.7" y1="107.5" x2="114.3" y2="94.5" stroke="#CC4400" stroke-width="1.2"/>
+<circle cx="103" cy="101" r="2.9" fill="#CC4400"/>
+
+  <circle cx="126" cy="101" r="13" fill="#111" stroke="#CC4400" stroke-width="2"/>
+<line x1="139.0" y1="101.0" x2="113.0" y2="101.0" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="137.3" y1="107.5" x2="114.7" y2="94.5" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="132.5" y1="112.3" x2="119.5" y2="89.7" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="126.0" y1="114.0" x2="126.0" y2="88.0" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="119.5" y1="112.3" x2="132.5" y2="89.7" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="114.7" y1="107.5" x2="137.3" y2="94.5" stroke="#CC4400" stroke-width="1.2"/>
+<circle cx="126" cy="101" r="2.9" fill="#CC4400"/>
+
+  <circle cx="155" cy="101" r="9" fill="#111" stroke="#CC4400" stroke-width="2"/>
+<line x1="164.0" y1="101.0" x2="146.0" y2="101.0" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="161.4" y1="107.4" x2="148.6" y2="94.6" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="155.0" y1="110.0" x2="155.0" y2="92.0" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="148.6" y1="107.4" x2="161.4" y2="94.6" stroke="#CC4400" stroke-width="1.2"/>
+<circle cx="155" cy="101" r="2.0" fill="#CC4400"/>
+
+  <rect x="80" y="99" width="46" height="4" rx="2" fill="#CC4400" opacity="0.7"/>
+  <line x1="10" y1="112" x2="195" y2="112" stroke="#888" stroke-width="2.5"/>
+
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">Britannia Class BR · 1951</text>
+</svg>

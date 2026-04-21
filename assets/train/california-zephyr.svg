@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <!-- diesel loco front -->
+  <rect x="8" y="48" width="65" height="55" rx="5" fill="#C8C8C8"/>
+  <path d="M8,75 Q8,48 20,46 L73,46 L73,103 L8,103 Z" fill="#DCDCDC"/>
+  <!-- diesel nose stripes -->
+  <rect x="8" y="72" width="65" height="8" fill="#CC0000"/>
+  <!-- diesel windows -->
+  <rect x="14" y="52" width="20" height="14" rx="2" fill="#87CEEB" opacity="0.7"/>
+  <!-- stainless passenger cars -->
+  <rect x="76" y="52" width="55" height="51" rx="3" fill="#C8C8C8"/>
+  <rect x="134" y="52" width="55" height="51" rx="3" fill="#C8C8C8"/>
+  <!-- VISTA-DOME car - raised dome, key feature -->
+  <rect x="76" y="38" width="50" height="20" rx="4" fill="#D8D8D8"/>
+  <rect x="80" y="34" width="42" height="10" rx="3" fill="#e8e8e8"/>
+  <!-- dome windows -->
+  <rect x="82" y="36" width="8" height="6" rx="1" fill="#87CEEB" opacity="0.8"/>
+  <rect x="94" y="36" width="8" height="6" rx="1" fill="#87CEEB" opacity="0.8"/>
+  <rect x="106" y="36" width="8" height="6" rx="1" fill="#87CEEB" opacity="0.8"/>
+  <!-- car windows -->
+  <rect x="80" y="60" width="10" height="8" rx="1" fill="#87CEEB" opacity="0.6"/>
+  <rect x="95" y="60" width="10" height="8" rx="1" fill="#87CEEB" opacity="0.6"/>
+  <rect x="110" y="60" width="10" height="8" rx="1" fill="#87CEEB" opacity="0.6"/>
+  <rect x="138" y="60" width="10" height="8" rx="1" fill="#87CEEB" opacity="0.6"/>
+  <rect x="153" y="60" width="10" height="8" rx="1" fill="#87CEEB" opacity="0.6"/>
+  <rect x="168" y="60" width="10" height="8" rx="1" fill="#87CEEB" opacity="0.6"/>
+  <!-- silver stripe -->
+  <rect x="76" y="72" width="113" height="6" fill="#999"/>
+  <!-- bogies -->
+  <circle cx="24" cy="111" r="7" fill="#aaa" stroke="#888" stroke-width="2"/>
+<line x1="31.0" y1="111.0" x2="17.0" y2="111.0" stroke="#888" stroke-width="1.2"/>
+<line x1="28.9" y1="115.9" x2="19.1" y2="106.1" stroke="#888" stroke-width="1.2"/>
+<line x1="24.0" y1="118.0" x2="24.0" y2="104.0" stroke="#888" stroke-width="1.2"/>
+<line x1="19.1" y1="115.9" x2="28.9" y2="106.1" stroke="#888" stroke-width="1.2"/>
+<circle cx="24" cy="111" r="1.5" fill="#888"/>
+
+  <circle cx="48" cy="111" r="7" fill="#aaa" stroke="#888" stroke-width="2"/>
+<line x1="55.0" y1="111.0" x2="41.0" y2="111.0" stroke="#888" stroke-width="1.2"/>
+<line x1="52.9" y1="115.9" x2="43.1" y2="106.1" stroke="#888" stroke-width="1.2"/>
+<line x1="48.0" y1="118.0" x2="48.0" y2="104.0" stroke="#888" stroke-width="1.2"/>
+<line x1="43.1" y1="115.9" x2="52.9" y2="106.1" stroke="#888" stroke-width="1.2"/>
+<circle cx="48" cy="111" r="1.5" fill="#888"/>
+
+  <circle cx="90" cy="111" r="7" fill="#bbb" stroke="#aaa" stroke-width="2"/>
+<line x1="97.0" y1="111.0" x2="83.0" y2="111.0" stroke="#aaa" stroke-width="1.2"/>
+<line x1="94.9" y1="115.9" x2="85.1" y2="106.1" stroke="#aaa" stroke-width="1.2"/>
+<line x1="90.0" y1="118.0" x2="90.0" y2="104.0" stroke="#aaa" stroke-width="1.2"/>
+<line x1="85.1" y1="115.9" x2="94.9" y2="106.1" stroke="#aaa" stroke-width="1.2"/>
+<circle cx="90" cy="111" r="1.5" fill="#aaa"/>
+
+  <circle cx="110" cy="111" r="7" fill="#bbb" stroke="#aaa" stroke-width="2"/>
+<line x1="117.0" y1="111.0" x2="103.0" y2="111.0" stroke="#aaa" stroke-width="1.2"/>
+<line x1="114.9" y1="115.9" x2="105.1" y2="106.1" stroke="#aaa" stroke-width="1.2"/>
+<line x1="110.0" y1="118.0" x2="110.0" y2="104.0" stroke="#aaa" stroke-width="1.2"/>
+<line x1="105.1" y1="115.9" x2="114.9" y2="106.1" stroke="#aaa" stroke-width="1.2"/>
+<circle cx="110" cy="111" r="1.5" fill="#aaa"/>
+
+  <circle cx="148" cy="111" r="7" fill="#bbb" stroke="#aaa" stroke-width="2"/>
+<line x1="155.0" y1="111.0" x2="141.0" y2="111.0" stroke="#aaa" stroke-width="1.2"/>
+<line x1="152.9" y1="115.9" x2="143.1" y2="106.1" stroke="#aaa" stroke-width="1.2"/>
+<line x1="148.0" y1="118.0" x2="148.0" y2="104.0" stroke="#aaa" stroke-width="1.2"/>
+<line x1="143.1" y1="115.9" x2="152.9" y2="106.1" stroke="#aaa" stroke-width="1.2"/>
+<circle cx="148" cy="111" r="1.5" fill="#aaa"/>
+
+  <circle cx="168" cy="111" r="7" fill="#bbb" stroke="#aaa" stroke-width="2"/>
+<line x1="175.0" y1="111.0" x2="161.0" y2="111.0" stroke="#aaa" stroke-width="1.2"/>
+<line x1="172.9" y1="115.9" x2="163.1" y2="106.1" stroke="#aaa" stroke-width="1.2"/>
+<line x1="168.0" y1="118.0" x2="168.0" y2="104.0" stroke="#aaa" stroke-width="1.2"/>
+<line x1="163.1" y1="115.9" x2="172.9" y2="106.1" stroke="#aaa" stroke-width="1.2"/>
+<circle cx="168" cy="111" r="1.5" fill="#aaa"/>
+
+  <line x1="5" y1="112" x2="198" y2="112" stroke="#888" stroke-width="2.5"/>
+
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">California Zephyr · 1949</text>
+</svg>

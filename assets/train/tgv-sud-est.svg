@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 215 100">
+  <defs>
+    <linearGradient id="tgvG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#888"/>
+      <stop offset="100%" stop-color="#555"/>
+    </linearGradient>
+  </defs>
+  <!-- SHARPLY pointed nose — delta shape -->
+  <path d="M2,50 L38,24 L206,24 L206,76 L38,76 Z" fill="url(#tgvG)"/>
+  <!-- orange/red lower band (iconic TGV Sud-Est) -->
+  <path d="M2,50 L38,56 L206,56 L206,76 L38,76 Z" fill="#E85020" opacity=".75"/>
+  <!-- nose highlight -->
+  <path d="M2,50 L38,36 L56,36 L56,64 L38,64 Z" fill="#AAAAAA" opacity=".3"/>
+  <!-- windows -->
+  <rect x="46"  y="28" width="14" height="12" rx="2" fill="#87CEEB" opacity=".65"/>
+  <rect x="66"  y="28" width="14" height="12" rx="2" fill="#87CEEB" opacity=".65"/>
+  <rect x="86"  y="28" width="14" height="12" rx="2" fill="#87CEEB" opacity=".65"/>
+  <rect x="106" y="28" width="14" height="12" rx="2" fill="#87CEEB" opacity=".65"/>
+  <rect x="126" y="28" width="14" height="12" rx="2" fill="#87CEEB" opacity=".65"/>
+  <rect x="146" y="28" width="14" height="12" rx="2" fill="#87CEEB" opacity=".65"/>
+  <rect x="168" y="28" width="14" height="12" rx="2" fill="#87CEEB" opacity=".65"/>
+  <rect x="188" y="28" width="12" height="12" rx="2" fill="#87CEEB" opacity=".6"/>
+  <!-- pantograph -->
+  <line x1="110" y1="24" x2="105" y2="12" stroke="#aaa" stroke-width="1.5"/>
+  <line x1="122" y1="24" x2="127" y2="12" stroke="#aaa" stroke-width="1.5"/>
+  <line x1="98"  y1="12" x2="134" y2="12" stroke="#aaa" stroke-width="2"/>
+  <circle cx="4" cy="50" r="4" fill="#FFD700" opacity=".9"/>
+  <!-- wheels -->
+  <circle cx="56"  cy="87" r="10" fill="#444" stroke="#888" stroke-width="2"/>
+  <circle cx="86"  cy="87" r="10" fill="#444" stroke="#888" stroke-width="2"/>
+  <circle cx="130" cy="87" r="10" fill="#444" stroke="#888" stroke-width="2"/>
+  <circle cx="164" cy="87" r="10" fill="#444" stroke="#888" stroke-width="2"/>
+  <text x="108" y="100" font-family="Arial" font-size="7" fill="#888" text-anchor="middle">TGV Sud-Est · SNCF · 1981 · 270 km/h</text>
+</svg>

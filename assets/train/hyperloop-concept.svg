@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <!-- Hyperloop: elongated capsule pod inside clear vacuum tube -->
+  <!-- transparent tube -->
+  <rect x="5" y="46" width="188" height="60" rx="30" fill="none" stroke="#87CEEB" stroke-width="3" opacity="0.5"/>
+  <rect x="5" y="46" width="188" height="60" rx="30" fill="#e8f4ff" opacity="0.15"/>
+  <!-- vacuum tube wall details -->
+  <line x1="5" y1="58" x2="193" y2="58" stroke="#87CEEB" stroke-width="1" opacity="0.3"/>
+  <line x1="5" y1="94" x2="193" y2="94" stroke="#87CEEB" stroke-width="1" opacity="0.3"/>
+  <!-- elongated capsule pod -->
+  <path d="M15,68 Q26,55 42,52 L165,52 L174,68 L165,84 L42,84 Q26,81 15,68 Z" fill="#C8C8C8"/>
+  <!-- pod gradient/metallic sheen -->
+  <path d="M42,52 L165,52 L165,62 L42,62 Q32,60 26,56 Z" fill="#E0E0E0"/>
+  <!-- aerodynamic ribbing -->
+  <line x1="65" y1="52" x2="65" y2="84" stroke="#aaa" stroke-width="1"/>
+  <line x1="95" y1="52" x2="95" y2="84" stroke="#aaa" stroke-width="1"/>
+  <line x1="125" y1="52" x2="125" y2="84" stroke="#aaa" stroke-width="1"/>
+  <line x1="155" y1="52" x2="155" y2="84" stroke="#aaa" stroke-width="1"/>
+  <!-- passenger window strip -->
+  <rect x="50" y="58" width="108" height="14" rx="3" fill="#87CEEB" opacity="0.5"/>
+  <!-- no wheels -->
+  <circle cx="18" cy="68" r="4" fill="#4a9cff" opacity="0.8"/>
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">Hyperloop Concept · 2030</text>
+</svg>

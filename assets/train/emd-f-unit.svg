@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <!-- shorter than E-unit, same width cab -->
+  <path d="M12,68 C14,46 30,38 50,36 L180,36 L180,100 L50,100 C30,98 14,90 12,68 Z" fill="#E8B800"/>
+  <!-- black nose top -->
+  <path d="M12,68 C14,50 26,44 44,42 L44,54 Q28,54 18,62 Z" fill="#1a1a1a"/>
+  <path d="M12,68 C14,86 26,92 44,94 L44,82 Q28,82 18,74 Z" fill="#1a1a1a"/>
+  <!-- black upper stripe -->
+  <rect x="50" y="36" width="130" height="14" fill="#1a1a1a"/>
+  <!-- cab window -->
+  <rect x="148" y="42" width="20" height="16" rx="2" fill="#87CEEB" opacity="0.7"/>
+  <!-- headlight -->
+  <circle cx="15" cy="68" r="6" fill="#FFE040" opacity="0.9"/>
+  <!-- number boards on nose -->
+  <rect x="32" y="58" width="14" height="18" rx="2" fill="#fff" opacity="0.5"/>
+  <!-- 4-axle (2 bogies) -->
+  <circle cx="42" cy="108" r="8" fill="#333" stroke="#C8A800" stroke-width="2"/>
+<line x1="50.0" y1="108.0" x2="34.0" y2="108.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="47.7" y1="113.7" x2="36.3" y2="102.3" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="42.0" y1="116.0" x2="42.0" y2="100.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="36.3" y1="113.7" x2="47.7" y2="102.3" stroke="#C8A800" stroke-width="1.2"/>
+<circle cx="42" cy="108" r="1.8" fill="#C8A800"/>
+
+  <circle cx="70" cy="108" r="8" fill="#333" stroke="#C8A800" stroke-width="2"/>
+<line x1="78.0" y1="108.0" x2="62.0" y2="108.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="75.7" y1="113.7" x2="64.3" y2="102.3" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="70.0" y1="116.0" x2="70.0" y2="100.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="64.3" y1="113.7" x2="75.7" y2="102.3" stroke="#C8A800" stroke-width="1.2"/>
+<circle cx="70" cy="108" r="1.8" fill="#C8A800"/>
+
+  <circle cx="112" cy="108" r="8" fill="#333" stroke="#C8A800" stroke-width="2"/>
+<line x1="120.0" y1="108.0" x2="104.0" y2="108.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="117.7" y1="113.7" x2="106.3" y2="102.3" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="112.0" y1="116.0" x2="112.0" y2="100.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="106.3" y1="113.7" x2="117.7" y2="102.3" stroke="#C8A800" stroke-width="1.2"/>
+<circle cx="112" cy="108" r="1.8" fill="#C8A800"/>
+
+  <circle cx="140" cy="108" r="8" fill="#333" stroke="#C8A800" stroke-width="2"/>
+<line x1="148.0" y1="108.0" x2="132.0" y2="108.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="145.7" y1="113.7" x2="134.3" y2="102.3" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="140.0" y1="116.0" x2="140.0" y2="100.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="134.3" y1="113.7" x2="145.7" y2="102.3" stroke="#C8A800" stroke-width="1.2"/>
+<circle cx="140" cy="108" r="1.8" fill="#C8A800"/>
+
+  <line x1="10" y1="112" x2="195" y2="112" stroke="#888" stroke-width="2.5"/>
+
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">EMD F-Unit · 1939</text>
+</svg>

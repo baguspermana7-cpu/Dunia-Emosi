@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+  <!-- Casey Jr. — Disney's Dumbo circus train (cheerful, small, colourful) -->
+  <defs>
+    <linearGradient id="cjBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E63030"/>
+      <stop offset="100%" stop-color="#B01010"/>
+    </linearGradient>
+    <linearGradient id="cjGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFD700"/>
+      <stop offset="100%" stop-color="#E6A800"/>
+    </linearGradient>
+  </defs>
+
+  <!-- smoke puffs -->
+  <circle cx="32" cy="14" r="9"  fill="#DDDDDD" opacity="0.7"/>
+  <circle cx="44" cy="7"  r="7"  fill="#CCCCCC" opacity="0.5"/>
+  <circle cx="54" cy="12" r="5"  fill="#BBBBBB" opacity="0.4"/>
+
+  <!-- smokestack — tall funnel shape -->
+  <path d="M28,22 L34,22 L32,48 L30,48 Z" fill="#B01010"/>
+  <rect x="24" y="18" width="16" height="7" rx="2" fill="#B01010"/>
+
+  <!-- bell -->
+  <ellipse cx="55" cy="34" rx="6" ry="5" fill="url(#cjGold)"/>
+  <rect x="53" y="30" width="4" height="5" rx="1" fill="#B8860B"/>
+
+  <!-- boiler — rounded, chubby -->
+  <ellipse cx="90" cy="52" rx="55" ry="20" fill="url(#cjBody)"/>
+  <rect x="36" y="32" width="110" height="40" rx="12" fill="url(#cjBody)"/>
+
+  <!-- boiler gold band stripes -->
+  <rect x="60"  y="32" width="5" height="40" rx="1" fill="url(#cjGold)" opacity="0.7"/>
+  <rect x="80"  y="32" width="5" height="40" rx="1" fill="url(#cjGold)" opacity="0.7"/>
+  <rect x="100" y="32" width="5" height="40" rx="1" fill="url(#cjGold)" opacity="0.7"/>
+  <rect x="120" y="32" width="5" height="40" rx="1" fill="url(#cjGold)" opacity="0.7"/>
+
+  <!-- face on boiler (Casey Jr. has a face!) -->
+  <!-- Eyes -->
+  <circle cx="75" cy="46" r="7" fill="white"/>
+  <circle cx="95" cy="46" r="7" fill="white"/>
+  <circle cx="77" cy="46" r="4" fill="#1A1A1A"/>
+  <circle cx="97" cy="46" r="4" fill="#1A1A1A"/>
+  <circle cx="78" cy="44" r="1.5" fill="white"/>
+  <circle cx="98" cy="44" r="1.5" fill="white"/>
+  <!-- Smile -->
+  <path d="M72,58 Q85,65 98,58" stroke="#1A1A1A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Eyebrows (determined look) -->
+  <path d="M69,39 Q76,36 82,39" stroke="#1A1A1A" stroke-width="2" fill="none"/>
+  <path d="M89,39 Q96,36 103,39" stroke="#1A1A1A" stroke-width="2" fill="none"/>
+
+  <!-- cab -->
+  <rect x="140" y="20" width="48" height="52" rx="5" fill="#B01010"/>
+  <rect x="148" y="26" width="14" height="12" rx="3" fill="#87CEEB" opacity="0.85"/>
+  <rect x="167" y="26" width="14" height="12" rx="3" fill="#87CEEB" opacity="0.85"/>
+  <!-- cab roof scallop (circus style) -->
+  <path d="M135,18 Q158,10 190,18" fill="url(#cjGold)" stroke="#E6A800" stroke-width="1"/>
+
+  <!-- running board -->
+  <rect x="28" y="70" width="162" height="7" rx="2" fill="#8B0000"/>
+
+  <!-- wheels — red with gold rims -->
+  <circle cx="55"  cy="92" r="17" fill="#8B0000" stroke="url(#cjGold)" stroke-width="4"/>
+  <circle cx="95"  cy="92" r="17" fill="#8B0000" stroke="url(#cjGold)" stroke-width="4"/>
+  <circle cx="135" cy="92" r="17" fill="#8B0000" stroke="url(#cjGold)" stroke-width="4"/>
+  <circle cx="172" cy="95" r="12" fill="#8B0000" stroke="url(#cjGold)" stroke-width="3"/>
+  <!-- spokes -->
+  <line x1="55" y1="75" x2="55"  y2="109" stroke="#FFD700" stroke-width="2"/>
+  <line x1="38" y1="92" x2="72"  y2="92"  stroke="#FFD700" stroke-width="2"/>
+  <line x1="43" y1="80" x2="67"  y2="104" stroke="#FFD700" stroke-width="2"/>
+  <line x1="67" y1="80" x2="43"  y2="104" stroke="#FFD700" stroke-width="2"/>
+  <line x1="95" y1="75" x2="95"  y2="109" stroke="#FFD700" stroke-width="2"/>
+  <line x1="78" y1="92" x2="112" y2="92"  stroke="#FFD700" stroke-width="2"/>
+  <line x1="83" y1="80" x2="107" y2="104" stroke="#FFD700" stroke-width="2"/>
+  <line x1="107" y1="80" x2="83" y2="104" stroke="#FFD700" stroke-width="2"/>
+  <line x1="135" y1="75" x2="135" y2="109" stroke="#FFD700" stroke-width="2"/>
+  <line x1="118" y1="92" x2="152" y2="92"  stroke="#FFD700" stroke-width="2"/>
+  <line x1="123" y1="80" x2="147" y2="104" stroke="#FFD700" stroke-width="2"/>
+  <line x1="147" y1="80" x2="123" y2="104" stroke="#FFD700" stroke-width="2"/>
+  <!-- hub centres -->
+  <circle cx="55"  cy="92" r="4" fill="url(#cjGold)"/>
+  <circle cx="95"  cy="92" r="4" fill="url(#cjGold)"/>
+  <circle cx="135" cy="92" r="4" fill="url(#cjGold)"/>
+  <circle cx="172" cy="95" r="3" fill="url(#cjGold)"/>
+
+  <!-- headlight -->
+  <circle cx="30" cy="52" r="6" fill="#FFE040" opacity="0.95"/>
+  <circle cx="30" cy="52" r="3" fill="white"/>
+
+  <!-- cow-catcher (front grid) -->
+  <path d="M28,72 L8,80 L8,84 L28,80 Z" fill="#8B0000"/>
+  <line x1="11" y1="76" x2="28" y2="72" stroke="#FFD700" stroke-width="1"/>
+  <line x1="15" y1="79" x2="28" y2="75" stroke="#FFD700" stroke-width="1"/>
+  <line x1="19" y1="82" x2="28" y2="78" stroke="#FFD700" stroke-width="1"/>
+
+  <!-- label -->
+  <text x="100" y="118" font-family="Arial,sans-serif" font-size="9" font-weight="bold"
+        fill="#B01010" text-anchor="middle">Casey Jr.</text>
+  <text x="100" y="127" font-family="Arial,sans-serif" font-size="6"
+        fill="#888" text-anchor="middle">Dumbo (Disney) · Character</text>
+</svg>

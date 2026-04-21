@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <!-- updated model different front treatment more angular -->
+  <rect x="8" y="40" width="180" height="62" rx="5" fill="#1a5cab"/>
+  <rect x="8" y="40" width="32" height="62" rx="5" fill="#1448a0"/>
+  <rect x="14" y="44" width="18" height="18" rx="3" fill="#87CEEB" opacity="0.7"/>
+  <rect x="8" y="64" width="180" height="10" fill="#CC4400"/>
+  <rect x="148" y="40" width="40" height="62" rx="4" fill="#1448a0"/>
+  <rect x="152" y="44" width="18" height="16" rx="2" fill="#87CEEB" opacity="0.7"/>
+  <!-- more angular front than BB301/302 -->
+  <polygon points="8,40 8,102 28,92 28,50" fill="#2050a0"/>
+  <circle cx="14" cy="71" r="5" fill="#FFE040" opacity="0.9"/>
+  <circle cx="30" cy="110" r="8" fill="#143a8a" stroke="#CC4400" stroke-width="2"/>
+<line x1="38.0" y1="110.0" x2="22.0" y2="110.0" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="35.7" y1="115.7" x2="24.3" y2="104.3" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="30.0" y1="118.0" x2="30.0" y2="102.0" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="24.3" y1="115.7" x2="35.7" y2="104.3" stroke="#CC4400" stroke-width="1.2"/>
+<circle cx="30" cy="110" r="1.8" fill="#CC4400"/>
+
+  <circle cx="58" cy="110" r="8" fill="#143a8a" stroke="#CC4400" stroke-width="2"/>
+<line x1="66.0" y1="110.0" x2="50.0" y2="110.0" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="63.7" y1="115.7" x2="52.3" y2="104.3" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="58.0" y1="118.0" x2="58.0" y2="102.0" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="52.3" y1="115.7" x2="63.7" y2="104.3" stroke="#CC4400" stroke-width="1.2"/>
+<circle cx="58" cy="110" r="1.8" fill="#CC4400"/>
+
+  <circle cx="100" cy="110" r="8" fill="#143a8a" stroke="#CC4400" stroke-width="2"/>
+<line x1="108.0" y1="110.0" x2="92.0" y2="110.0" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="105.7" y1="115.7" x2="94.3" y2="104.3" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="100.0" y1="118.0" x2="100.0" y2="102.0" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="94.3" y1="115.7" x2="105.7" y2="104.3" stroke="#CC4400" stroke-width="1.2"/>
+<circle cx="100" cy="110" r="1.8" fill="#CC4400"/>
+
+  <circle cx="140" cy="110" r="8" fill="#143a8a" stroke="#CC4400" stroke-width="2"/>
+<line x1="148.0" y1="110.0" x2="132.0" y2="110.0" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="145.7" y1="115.7" x2="134.3" y2="104.3" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="140.0" y1="118.0" x2="140.0" y2="102.0" stroke="#CC4400" stroke-width="1.2"/>
+<line x1="134.3" y1="115.7" x2="145.7" y2="104.3" stroke="#CC4400" stroke-width="1.2"/>
+<circle cx="140" cy="110" r="1.8" fill="#CC4400"/>
+
+  <line x1="10" y1="112" x2="195" y2="112" stroke="#888" stroke-width="2.5"/>
+
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">BB303 Indonesia · 1986</text>
+</svg>

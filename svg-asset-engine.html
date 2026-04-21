@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SVG Asset Engine — Dunia Emosi</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0f0f1a;color:#e2e8f0;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+h1{font-size:22px;font-weight:900;background:linear-gradient(135deg,#a78bfa,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:16px 20px 8px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.subtitle{font-size:12px;color:rgba(255,255,255,0.4);padding:0 20px 12px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.layout{display:flex;flex:1;overflow:hidden;height:calc(100vh - 70px)}
+.sidebar{width:320px;flex-shrink:0;background:#12121f;overflow-y:auto;padding:14px;border-right:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;gap:10px}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.preview-area{flex:1;background:#0a0a14;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;min-height:200px}
+.preview-bg{position:absolute;inset:0;background:repeating-conic-gradient(rgba(255,255,255,0.03) 0% 25%,transparent 0% 50%) 0 0 / 20px 20px;pointer-events:none}
+#preview-mount{position:relative;z-index:2;filter:drop-shadow(0 8px 32px rgba(0,0,0,0.8))}
+.output-area{height:220px;flex-shrink:0;background:#0d0d1c;border-top:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column}
+.output-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,0.07)}
+.tab-btn{padding:7px 16px;font-size:12px;font-weight:700;background:none;border:none;color:rgba(255,255,255,0.4);cursor:pointer;border-bottom:2px solid transparent}
+.tab-btn.active{color:#a78bfa;border-color:#a78bfa}
+.code-area{flex:1;overflow:auto;position:relative}
+#code-out{display:block;width:100%;height:100%;padding:10px 14px;font-size:11px;font-family:'Courier New',monospace;background:transparent;color:#7dd3fc;border:none;outline:none;resize:none;line-height:1.5}
+.copy-btn{position:absolute;top:6px;right:10px;background:linear-gradient(135deg,#6d28d9,#4c1d95);color:white;border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer}
+.copy-btn:hover{opacity:0.85}
+
+/* Sidebar controls */
+.section-hdr{font-size:10px;font-weight:900;color:rgba(255,255,255,0.35);letter-spacing:2px;text-transform:uppercase;padding:4px 0 6px;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:6px}
+.ctrl-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.ctrl-row label{font-size:11px;font-weight:700;color:rgba(255,255,255,0.55);min-width:80px;flex-shrink:0}
+.ctrl-row input[type=range]{flex:1;accent-color:#a78bfa;height:3px}
+.ctrl-row input[type=color]{width:32px;height:28px;border:none;border-radius:6px;cursor:pointer;background:none;padding:0}
+.ctrl-row select{flex:1;background:#1a1a2e;color:white;border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:4px 6px;font-size:11px}
+.ctrl-row input[type=text]{flex:1;background:#1a1a2e;color:white;border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:4px 8px;font-size:11px}
+.ctrl-val{font-size:11px;color:rgba(255,255,255,0.4);min-width:32px;text-align:right}
+.checkbox-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.checkbox-row label{font-size:11px;color:rgba(255,255,255,0.55)}
+.checkbox-row input[type=checkbox]{accent-color:#a78bfa;width:14px;height:14px}
+
+.gen-btn{width:100%;padding:10px;background:linear-gradient(135deg,#7c3aed,#4c1d95);color:white;border:none;border-radius:10px;font-size:14px;font-weight:900;cursor:pointer;letter-spacing:0.5px;box-shadow:0 4px 0 #2d1667}
+.gen-btn:hover{opacity:0.9}
+.gen-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #2d1667}
+.preset-row{display:flex;gap:6px;flex-wrap:wrap}
+.preset-btn{padding:5px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:rgba(255,255,255,0.7);font-size:10px;font-weight:700;cursor:pointer}
+.preset-btn:hover{background:rgba(167,139,250,0.18);border-color:#a78bfa;color:#a78bfa}
+.size-info{font-size:10px;color:rgba(255,255,255,0.3);text-align:center;margin-top:4px}
+</style>
+</head>
+<body>
+<h1>SVG Asset Engine</h1>
+<div class="subtitle">Procedural ultra-detail SVG generator — trains, objects, characters</div>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="section-hdr">Type</div>
+    <div class="ctrl-row">
+      <label>Object</label>
+      <select id="obj-type" onchange="onTypeChange()">
+        <optgroup label="Trains">
+          <option value="steam">Steam Locomotive</option>
+          <option value="diesel">Diesel Locomotive</option>
+          <option value="electric">Electric Train</option>
+          <option value="maglev">Maglev</option>
+        </optgroup>
+        <optgroup label="Vehicles">
+          <option value="car">Classic Car</option>
+          <option value="truck">Truck</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="section-hdr" style="margin-top:4px">Presets</div>
+    <div class="preset-row" id="preset-row">
+      <button class="preset-btn" onclick="applyPreset('b2507')">B2507 Rack</button>
+      <button class="preset-btn" onclick="applyPreset('c28')">C28 Dutch</button>
+      <button class="preset-btn" onclick="applyPreset('c5107')">C5107 Black</button>
+      <button class="preset-btn" onclick="applyPreset('d1415')">D1415 Hanomag</button>
+      <button class="preset-btn" onclick="applyPreset('bb202')">BB202 Diesel</button>
+      <button class="preset-btn" onclick="applyPreset('cc204')">CC204</button>
+      <button class="preset-btn" onclick="applyPreset('maglev_jr')">SCMaglev JR</button>
+      <button class="preset-btn" onclick="applyPreset('shinkansen')">Shinkansen</button>
+    </div>
+
+    <div class="section-hdr" style="margin-top:6px">Body</div>
+    <div class="ctrl-row">
+      <label>Body Color</label>
+      <input type="color" id="body-color" value="#1a1a2e" oninput="rerender()">
+      <input type="text" id="body-color-hex" value="#1a1a2e" oninput="syncColorFromHex('body-color','body-color-hex')" style="max-width:72px">
+    </div>
+    <div class="ctrl-row">
+      <label>Accent</label>
+      <input type="color" id="accent-color" value="#c0392b" oninput="rerender()">
+    </div>
+    <div class="ctrl-row">
+      <label>Trim Color</label>
+      <input type="color" id="trim-color" value="#f0c040" oninput="rerender()">
+    </div>
+    <div class="ctrl-row">
+      <label>Wheel Color</label>
+      <input type="color" id="wheel-color" value="#222233" oninput="rerender()">
+    </div>
+    <div class="ctrl-row">
+      <label>Paint Wear</label>
+      <input type="range" id="wear" min="0" max="100" value="25" oninput="syncVal(this,'wear-val');rerender()">
+      <span class="ctrl-val" id="wear-val">25%</span>
+    </div>
+
+    <div class="section-hdr" style="margin-top:4px">Proportions</div>
+    <div class="ctrl-row">
+      <label>Width</label>
+      <input type="range" id="loco-w" min="120" max="400" value="240" oninput="syncVal(this,'loco-w-val');rerender()">
+      <span class="ctrl-val" id="loco-w-val">240</span>
+    </div>
+    <div class="ctrl-row">
+      <label>Height</label>
+      <input type="range" id="loco-h" min="60" max="180" value="100" oninput="syncVal(this,'loco-h-val');rerender()">
+      <span class="ctrl-val" id="loco-h-val">100</span>
+    </div>
+    <div class="ctrl-row">
+      <label>Boiler H</label>
+      <input type="range" id="boiler-h" min="12" max="56" value="32" oninput="syncVal(this,'boiler-h-val');rerender()">
+      <span class="ctrl-val" id="boiler-h-val">32</span>
+    </div>
+
+    <div class="section-hdr" style="margin-top:4px">Features</div>
+    <div class="checkbox-row"><input type="checkbox" id="has-tender" checked onchange="rerender()"><label for="has-tender">Tender car</label></div>
+    <div class="checkbox-row"><input type="checkbox" id="has-rack" onchange="rerender()"><label for="has-rack">Rack gear (bergigi)</label></div>
+    <div class="checkbox-row"><input type="checkbox" id="has-dome" checked onchange="rerender()"><label for="has-dome">Steam dome</label></div>
+    <div class="checkbox-row"><input type="checkbox" id="has-sandbox" checked onchange="rerender()"><label for="has-sandbox">Sand dome</label></div>
+    <div class="checkbox-row"><input type="checkbox" id="has-headlight" checked onchange="rerender()"><label for="has-headlight">Headlight</label></div>
+    <div class="checkbox-row"><input type="checkbox" id="has-cowcatcher" onchange="rerender()"><label for="has-cowcatcher">Cowcatcher/pilot</label></div>
+    <div class="checkbox-row"><input type="checkbox" id="has-rivets" checked onchange="rerender()"><label for="has-rivets">Rivets</label></div>
+    <div class="checkbox-row"><input type="checkbox" id="has-smoke" checked onchange="rerender()"><label for="has-smoke">Smoke animation</label></div>
+    <div class="checkbox-row"><input type="checkbox" id="has-number" checked onchange="rerender()"><label for="has-number">Number plate</label></div>
+
+    <div class="ctrl-row" style="margin-top:2px">
+      <label>Number</label>
+      <input type="text" id="loco-number" value="B2507" oninput="rerender()">
+    </div>
+
+    <div class="section-hdr" style="margin-top:4px">Wheels</div>
+    <div class="ctrl-row">
+      <label>Drive wheels</label>
+      <select id="drive-wheels" onchange="rerender()">
+        <option value="2">2 (1-1-0)</option>
+        <option value="3" selected>3 (2-3-0)</option>
+        <option value="4">4 (2-4-0)</option>
+      </select>
+    </div>
+    <div class="ctrl-row">
+      <label>Lead wheels</label>
+      <select id="lead-wheels" onchange="rerender()">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2" selected>2</option>
+      </select>
+    </div>
+    <div class="ctrl-row">
+      <label>Wheel size</label>
+      <input type="range" id="wheel-size" min="10" max="28" value="18" oninput="syncVal(this,'wheel-size-val');rerender()">
+      <span class="ctrl-val" id="wheel-size-val">18</span>
+    </div>
+    <div class="ctrl-row">
+      <label>Spokes</label>
+      <input type="range" id="spokes" min="6" max="18" value="10" oninput="syncVal(this,'spokes-val');rerender()">
+      <span class="ctrl-val" id="spokes-val">10</span>
+    </div>
+
+    <div class="section-hdr" style="margin-top:4px">Lighting & FX</div>
+    <div class="ctrl-row">
+      <label>Shadow</label>
+      <input type="range" id="shadow-str" min="0" max="100" value="60" oninput="syncVal(this,'shadow-str-val');rerender()">
+      <span class="ctrl-val" id="shadow-str-val">60%</span>
+    </div>
+    <div class="ctrl-row">
+      <label>Sheen</label>
+      <input type="range" id="sheen" min="0" max="100" value="40" oninput="syncVal(this,'sheen-val');rerender()">
+      <span class="ctrl-val" id="sheen-val">40%</span>
+    </div>
+    <div class="ctrl-row">
+      <label>Rust</label>
+      <input type="range" id="rust" min="0" max="100" value="0" oninput="syncVal(this,'rust-val');rerender()">
+      <span class="ctrl-val" id="rust-val">0%</span>
+    </div>
+
+    <button class="gen-btn" onclick="rerender()">⚡ Generate SVG</button>
+    <div class="size-info" id="size-info">—</div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="preview-area">
+      <div class="preview-bg"></div>
+      <div id="preview-mount"></div>
+    </div>
+    <div class="output-area">
+      <div class="output-tabs">
+        <button class="tab-btn active" onclick="showTab('svg')">SVG Code</button>
+        <button class="tab-btn" onclick="showTab('css')">CSS Classes</button>
+        <button class="tab-btn" onclick="showTab('inline')">Inline (game)</button>
+      </div>
+      <div class="code-area">
+        <textarea id="code-out" readonly spellcheck="false"></textarea>
+        <button class="copy-btn" onclick="copyCode()">Copy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// UTILITY
+// ═══════════════════════════════════════════════════════════
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16)
+  return {r,g,b}
+}
+function lighten(hex, amt) {
+  const {r,g,b} = hexToRgb(hex)
+  return `rgb(${Math.min(255,r+amt)},${Math.min(255,g+amt)},${Math.min(255,b+amt)})`
+}
+function darken(hex, amt) {
+  const {r,g,b} = hexToRgb(hex)
+  return `rgb(${Math.max(0,r-amt)},${Math.max(0,g-amt)},${Math.max(0,b-amt)})`
+}
+function hexAlpha(hex, a) {
+  const {r,g,b} = hexToRgb(hex)
+  return `rgba(${r},${g},${b},${a})`
+}
+function mix(hex1, hex2, t) {
+  const a = hexToRgb(hex1), b = hexToRgb(hex2)
+  return `rgb(${Math.round(a.r*(1-t)+b.r*t)},${Math.round(a.g*(1-t)+b.g*t)},${Math.round(a.b*(1-t)+b.b*t)})`
+}
+function spoked(cx, cy, r, spokes, strokeW, color, hubR=4) {
+  const lines = []
+  for (let i=0;i<spokes;i++) {
+    const ang = (i/spokes)*Math.PI*2
+    const x2 = cx + Math.cos(ang)*r*0.9
+    const y2 = cy + Math.sin(ang)*r*0.9
+    lines.push(`<line x1="${cx}" y1="${cy}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${color}" stroke-width="${strokeW}"/>`)
+  }
+  return lines.join('') + `<circle cx="${cx}" cy="${cy}" r="${hubR}" fill="${color}"/>`
+}
+function uid() { return 'e'+Math.random().toString(36).slice(2,8) }
+
+// ═══════════════════════════════════════════════════════════
+// MATERIAL DEFS
+// ═══════════════════════════════════════════════════════════
+function buildDefs(id, cfg) {
+  const bc = cfg.bodyColor
+  const wc = cfg.wheelColor
+  const sheen = cfg.sheen / 100
+  const shadowStr = cfg.shadowStr / 100
+  const rust = cfg.rust / 100
+
+  return `<defs>
+  <!-- Body gradient — cylindrical boiler shading -->
+  <radialGradient id="${id}bg" cx="28%" cy="28%" r="72%" gradientUnits="objectBoundingBox">
+    <stop offset="0%" stop-color="${lighten(bc,60)}"/>
+    <stop offset="18%" stop-color="${lighten(bc,22)}"/>
+    <stop offset="45%" stop-color="${bc}"/>
+    <stop offset="78%" stop-color="${darken(bc,30)}"/>
+    <stop offset="100%" stop-color="${darken(bc,55)}"/>
+  </radialGradient>
+  <!-- Side panel gradient -->
+  <linearGradient id="${id}sg" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="${lighten(bc,35)}"/>
+    <stop offset="40%" stop-color="${bc}"/>
+    <stop offset="100%" stop-color="${darken(bc,45)}"/>
+  </linearGradient>
+  <!-- Wheel gradient -->
+  <radialGradient id="${id}wg" cx="35%" cy="30%" r="65%" gradientUnits="objectBoundingBox">
+    <stop offset="0%" stop-color="${lighten(wc,70)}"/>
+    <stop offset="30%" stop-color="${lighten(wc,20)}"/>
+    <stop offset="70%" stop-color="${wc}"/>
+    <stop offset="100%" stop-color="${darken(wc,40)}"/>
+  </radialGradient>
+  <!-- Chrome/metal sheen -->
+  <linearGradient id="${id}ch" x1="0" y1="0" x2="0.3" y2="1">
+    <stop offset="0%" stop-color="rgba(255,255,255,${(sheen*0.65).toFixed(2)})"/>
+    <stop offset="25%" stop-color="rgba(255,255,255,${(sheen*0.2).toFixed(2)})"/>
+    <stop offset="60%" stop-color="rgba(0,0,0,${(sheen*0.18).toFixed(2)})"/>
+    <stop offset="100%" stop-color="rgba(0,0,0,${(sheen*0.4).toFixed(2)})"/>
+  </linearGradient>
+  <!-- Cab window glass -->
+  <linearGradient id="${id}gl" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="rgba(160,220,255,0.55)"/>
+    <stop offset="50%" stop-color="rgba(100,180,255,0.35)"/>
+    <stop offset="100%" stop-color="rgba(60,120,200,0.2)"/>
+  </linearGradient>
+  <!-- Drop shadow filter -->
+  <filter id="${id}fs" x="-10%" y="-10%" width="120%" height="130%">
+    <feDropShadow dx="0" dy="${(4*shadowStr).toFixed(1)}" stdDeviation="${(6*shadowStr).toFixed(1)}" flood-color="rgba(0,0,0,${(0.6*shadowStr).toFixed(2)})"/>
+  </filter>
+  <!-- Glow filter for headlight -->
+  <filter id="${id}gl2" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur stdDeviation="2.5" result="blur"/>
+    <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+  </filter>
+  <!-- Rust texture overlay -->
+  ${rust > 0.05 ? `<filter id="${id}rust">
+    <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" result="noise"/>
+    <feColorMatrix type="matrix" values="0 0 0 0 0.6  0 0 0 0 0.2  0 0 0 0 0  0 0 0 ${(rust*0.7).toFixed(2)} 0" in="noise" result="rustColor"/>
+    <feComposite in="rustColor" in2="SourceGraphic" operator="in" result="maskedRust"/>
+    <feBlend in="SourceGraphic" in2="maskedRust" mode="multiply"/>
+  </filter>` : ''}
+  <!-- Smoke animation -->
+  <style>
+    @keyframes ${id}sw{0%{transform:translateX(0) translateY(0) scaleX(0.4);opacity:0}15%{opacity:0.7}100%{transform:translateX(-8px) translateY(-28px) scaleX(1.8);opacity:0}}
+    @keyframes ${id}wr{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    .${id}wh{transform-box:fill-box;transform-origin:center;animation:${id}wr ${cfg.animate?'0.5s':'9999s'} linear infinite}
+    .${id}sm{transform-box:fill-box;transform-origin:center;animation:${id}sw 1.4s ease-out infinite}
+  </style>
+</defs>`
+}
+
+// ═══════════════════════════════════════════════════════════
+// STEAM LOCOMOTIVE BUILDER
+// ═══════════════════════════════════════════════════════════
+function buildSteamLoco(cfg) {
+  const {
+    bodyColor: bc, accentColor: ac, trimColor: tc, wheelColor: wc,
+    hasTender, hasRack, hasDome, hasSandbox, hasHeadlight, hasCowcatcher,
+    hasRivets, hasSmoke, hasNumber, locoNumber,
+    driveWheels: dw, leadWheels: lw, wheelSize: ws, spokes: sp,
+    wear, rust, boilerH,
+    width: W, height: H
+  } = cfg
+
+  const id = cfg._id
+  const totalW = hasTender ? W + Math.round(W * 0.38) : W
+  // Layout constants
+  const groundY = H - 10             // ground baseline
+  const wheelY = groundY - ws        // wheel center Y
+  const runPlateY = wheelY - ws - 4  // running plate top
+  const boilerY = runPlateY - boilerH // boiler top
+  const boilerCY = boilerY + boilerH/2
+  const boilerX = hasCowcatcher ? 26 : 14
+  const boilerW = W - boilerX - (hasTender ? 12 : 16)
+
+  // Wheel X positions
+  const smokeboxEnd = boilerX + Math.round(boilerW * 0.18)
+  const driveSpan = boilerW * 0.62
+  const driveStart = smokeboxEnd + ws + 4
+  const drives = []
+  for (let i=0;i<dw;i++) drives.push(driveStart + i * (driveSpan / Math.max(dw-1,1)))
+  const leads = []
+  for (let i=0;i<lw;i++) leads.push(boilerX + (hasCowcatcher ? 10:4) + i * (ws * 2 + 2))
+
+  // Colors
+  const bodyDark = darken(bc, 45)
+  const bodyLight = lighten(bc, 45)
+  const smokeboxColor = darken(bc, 25)
+  const bufferBeamColor = ac
+  const trimGold = tc
+
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalW} ${H}" width="${totalW}" height="${H}" filter="url(#${id}fs)">`
+  svg += buildDefs(id, cfg)
+
+  // ── TENDER ──────────────────────────────────────────────
+  if (hasTender) {
+    const tx = W + 4
+    const tw = totalW - tx - 4
+    const th = H * 0.46
+    const ty = runPlateY
+    const tBodyH = th * 0.55
+    svg += `<g id="${id}-tender">`
+    // Coal load top
+    svg += `<path d="M${tx+4},${ty} Q${tx+tw/2},${ty - th*0.25} ${tx+tw-4},${ty} L${tx+tw-4},${ty+6} Q${tx+tw/2},${ty+2} ${tx+4},${ty+6} Z" fill="${darken(bc,60)}" opacity="0.9"/>`
+    // Tender body
+    svg += `<rect x="${tx}" y="${ty}" width="${tw}" height="${tBodyH}" rx="4" fill="url(#${id}sg)"/>`
+    svg += `<rect x="${tx}" y="${ty}" width="${tw}" height="${tBodyH}" rx="4" fill="url(#${id}ch)" opacity="0.5"/>`
+    // Side panel detail
+    svg += `<rect x="${tx+4}" y="${ty+4}" width="${tw-8}" height="${tBodyH-10}" rx="2" fill="none" stroke="${hexAlpha(tc,0.35)}" stroke-width="1"/>`
+    // Coupling
+    svg += `<rect x="${tx-4}" y="${wheelY-2}" width="8" height="4" rx="2" fill="${darken(bc,20)}"/>`
+    // Tender wheels (smaller)
+    const tws = Math.round(ws * 0.7)
+    const tWheelY = groundY - tws
+    const tw2 = tw - tws * 2
+    for (let i=0;i<2;i++) {
+      const twx = tx + tws + i * tw2
+      svg += `<circle cx="${twx}" cy="${tWheelY}" r="${tws}" fill="url(#${id}wg)"/>`
+      svg += `<circle cx="${twx}" cy="${tWheelY}" r="${tws-2}" fill="none" stroke="${hexAlpha(tc,0.4)}" stroke-width="1"/>`
+      svg += `<g class="${id}wh">${spoked(twx,tWheelY,tws,8,0.8,lighten(wc,30),3)}</g>`
+      svg += `<circle cx="${twx}" cy="${tWheelY}" r="${tws}" fill="none" stroke="${darken(wc,20)}" stroke-width="1.2"/>`
+    }
+    // Footboard
+    svg += `<rect x="${tx}" y="${groundY-5}" width="${tw}" height="5" rx="0" fill="${darken(bc,30)}"/>`
+    svg += `</g>`
+  }
+
+  // ── FRAME / FOOTPLATE ───────────────────────────────────
+  svg += `<rect x="${boilerX-2}" y="${runPlateY}" width="${W - boilerX + 2}" height="${H - runPlateY}" rx="0" fill="${darken(bc,35)}"/>`
+  // Running board
+  svg += `<rect x="${boilerX}" y="${runPlateY}" width="${W - boilerX - (hasTender?2:14)}" height="5" rx="2" fill="${darken(bc,20)}" opacity="0.9"/>`
+
+  // ── RACK GEAR ───────────────────────────────────────────
+  if (hasRack) {
+    const ry = groundY - 4
+    const rl = W - boilerX - 10
+    const teeth = Math.round(rl / 6)
+    let path = `M${boilerX},${ry}`
+    for (let i=0;i<teeth;i++) {
+      const x = boilerX + i*(rl/teeth)
+      path += ` L${x},${ry-5} L${x+rl/teeth*0.4},${ry-5} L${x+rl/teeth*0.6},${ry}`
+    }
+    path += ` L${boilerX+rl},${ry} Z`
+    svg += `<path d="${path}" fill="${darken(bc,50)}" stroke="${darken(bc,60)}" stroke-width="0.5"/>`
+  }
+
+  // ── BOILER BODY ─────────────────────────────────────────
+  const bR = boilerH / 2
+  // Main boiler cylinder
+  svg += `<rect x="${boilerX}" y="${boilerY}" width="${boilerW}" height="${boilerH}" rx="${bR}" fill="url(#${id}bg)"/>`
+  // Sheen overlay
+  svg += `<rect x="${boilerX}" y="${boilerY}" width="${boilerW}" height="${boilerH}" rx="${bR}" fill="url(#${id}ch)" opacity="0.6"/>`
+
+  // ── SMOKE BOX ──────────────────────────────────────────
+  const sbW = Math.round(boilerW * 0.2)
+  svg += `<rect x="${boilerX}" y="${boilerY}" width="${sbW}" height="${boilerH}" fill="${smokeboxColor}"/>`
+  svg += `<circle cx="${boilerX+sbW}" cy="${boilerCY}" r="${bR}" fill="${smokeboxColor}"/>`
+  // Smokebox door (circle)
+  const sdR = bR - 3
+  svg += `<circle cx="${boilerX+sbW-2}" cy="${boilerCY}" r="${sdR}" fill="${darken(smokeboxColor,20)}" stroke="${lighten(smokeboxColor,20)}" stroke-width="1.5"/>`
+  svg += `<circle cx="${boilerX+sbW-2}" cy="${boilerCY}" r="${sdR-4}" fill="${darken(smokeboxColor,35)}" stroke="${lighten(smokeboxColor,10)}" stroke-width="0.5"/>`
+  // Door handle
+  svg += `<line x1="${boilerX+sbW-2}" y1="${boilerCY-sdR+5}" x2="${boilerX+sbW-2}" y2="${boilerCY+sdR-5}" stroke="${lighten(bc,60)}" stroke-width="1.5" stroke-linecap="round"/>`
+
+  // ── CHIMNEY / FUNNEL ───────────────────────────────────
+  const chimneyX = boilerX + Math.round(sbW * 0.5)
+  const chimneyW = Math.max(8, Math.round(bR * 0.55))
+  const chimneyH = Math.round(boilerH * 0.55)
+  const chimneyTop = boilerY - chimneyH
+  // Flared top
+  svg += `<rect x="${chimneyX - chimneyW/2 - 2}" y="${chimneyTop}" width="${chimneyW+4}" height="5" rx="3" fill="${darken(bc,50)}"/>`
+  // Shaft with taper
+  svg += `<path d="M${chimneyX-chimneyW/2-1},${chimneyTop+5} L${chimneyX-chimneyW/2},${boilerY} L${chimneyX+chimneyW/2},${boilerY} L${chimneyX+chimneyW/2+1},${chimneyTop+5} Z" fill="${darken(bc,40)}"/>`
+  svg += `<rect x="${chimneyX-chimneyW/2-1}" y="${chimneyTop+4}" width="${chimneyW+2}" height="3" rx="1.5" fill="${darken(bc,30)}"/>`
+
+  // ── SMOKE PARTICLES ─────────────────────────────────────
+  if (hasSmoke) {
+    const smokeOffsets = [[0,0.5],[90,0.3],[180,0.7],[270,0.4]]
+    smokeOffsets.forEach(([delay,op]) => {
+      svg += `<ellipse class="${id}sm" cx="${chimneyX}" cy="${chimneyTop-3}" rx="5" ry="4" fill="rgba(120,120,120,${op})" style="animation-delay:${delay/360*1.4}s"/>`
+    })
+  }
+
+  // ── STEAM DOME ──────────────────────────────────────────
+  if (hasDome) {
+    const domeX = boilerX + Math.round(boilerW * 0.38)
+    const domeW = Math.round(boilerH * 0.55)
+    const domeH = Math.round(boilerH * 0.4)
+    svg += `<ellipse cx="${domeX}" cy="${boilerY - domeH*0.3}" rx="${domeW/2}" ry="${domeH*0.8}" fill="url(#${id}bg)"/>`
+    svg += `<ellipse cx="${domeX}" cy="${boilerY - domeH*0.3}" rx="${domeW/2}" ry="${domeH*0.8}" fill="url(#${id}ch)" opacity="0.5"/>`
+    // Safety valve
+    svg += `<rect x="${domeX-1.5}" y="${boilerY-domeH*1.2-3}" width="3" height="7" rx="1.5" fill="${lighten(bc,40)}"/>`
+  }
+
+  // ── SAND DOME ───────────────────────────────────────────
+  if (hasSandbox) {
+    const sandX = boilerX + Math.round(boilerW * 0.58)
+    const sandW = Math.round(boilerH * 0.38)
+    const sandH = Math.round(boilerH * 0.26)
+    svg += `<ellipse cx="${sandX}" cy="${boilerY - sandH*0.2}" rx="${sandW/2}" ry="${sandH}" fill="${darken(bc,10)}"/>`
+    svg += `<ellipse cx="${sandX}" cy="${boilerY - sandH*0.2}" rx="${sandW/2}" ry="${sandH}" fill="url(#${id}ch)" opacity="0.4"/>`
+  }
+
+  // ── CAB ─────────────────────────────────────────────────
+  const cabX = W - (hasTender ? 28 : 30)
+  const cabW = hasTender ? 28 : 30
+  const cabH = Math.round(boilerH * 1.7)
+  const cabY = groundY - cabH - 5
+  // Rear cab wall
+  svg += `<rect x="${cabX}" y="${cabY}" width="${cabW}" height="${cabH}" rx="3" fill="url(#${id}sg)"/>`
+  svg += `<rect x="${cabX}" y="${cabY}" width="${cabW}" height="${cabH}" rx="3" fill="url(#${id}ch)" opacity="0.4"/>`
+  // Cab roof
+  svg += `<rect x="${cabX-3}" y="${cabY-4}" width="${cabW+6}" height="7" rx="3.5" fill="${darken(bc,25)}"/>`
+  svg += `<rect x="${cabX-5}" y="${cabY-6}" width="${cabW+10}" height="4" rx="2" fill="${darken(bc,35)}"/>`
+  // Windows
+  const winW = Math.round(cabW * 0.52)
+  const winH = Math.round(cabH * 0.35)
+  svg += `<rect x="${cabX+5}" y="${cabY+7}" width="${winW}" height="${winH}" rx="3" fill="url(#${id}gl)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>`
+  // Window highlight
+  svg += `<line x1="${cabX+7}" y1="${cabY+9}" x2="${cabX+7}" y2="${cabY+9+winH*0.5}" stroke="rgba(255,255,255,0.5)" stroke-width="1" stroke-linecap="round"/>`
+  // Cab side connection
+  svg += `<rect x="${cabX}" y="${boilerY}" width="${cabW}" height="${runPlateY-boilerY}" fill="${darken(bc,20)}"/>`
+  // Trim stripe
+  svg += `<line x1="${cabX}" y1="${cabY + cabH*0.65}" x2="${cabX+cabW}" y2="${cabY + cabH*0.65}" stroke="${hexAlpha(trimGold,0.5)}" stroke-width="1.5"/>`
+
+  // ── BOILER BANDS / SEAMS ────────────────────────────────
+  const bands = 3
+  for (let i=1;i<=bands;i++) {
+    const bx = boilerX + sbW + i * ((boilerW - sbW) / (bands+1))
+    svg += `<line x1="${bx}" y1="${boilerY+2}" x2="${bx}" y2="${boilerY+boilerH-2}" stroke="${hexAlpha(tc,0.22)}" stroke-width="1.5"/>`
+  }
+
+  // ── RIVETS ──────────────────────────────────────────────
+  if (hasRivets) {
+    const rivetY = boilerY + 4
+    const rivetSpacing = 14
+    for (let rx = boilerX + 8; rx < boilerX + boilerW - 6; rx += rivetSpacing) {
+      svg += `<circle cx="${rx}" cy="${rivetY}" r="1.8" fill="${lighten(bc,50)}" stroke="${darken(bc,30)}" stroke-width="0.5"/>`
+      svg += `<circle cx="${rx}" cy="${boilerY+boilerH-4}" r="1.8" fill="${lighten(bc,50)}" stroke="${darken(bc,30)}" stroke-width="0.5"/>`
+    }
+    // Smokebox door rivets
+    for (let i=0;i<8;i++) {
+      const ang = (i/8)*Math.PI*2
+      const rr = sdR - 1.5
+      const rrx = boilerX + sbW - 2 + Math.cos(ang)*rr
+      const rry = boilerCY + Math.sin(ang)*rr
+      svg += `<circle cx="${rrx.toFixed(1)}" cy="${rry.toFixed(1)}" r="1.5" fill="${lighten(bc,60)}" stroke="${darken(bc,20)}" stroke-width="0.4"/>`
+    }
+  }
+
+  // ── BUFFER BEAM & BUFFERS (front) ───────────────────────
+  const bufY = runPlateY
+  svg += `<rect x="${boilerX - 2}" y="${bufY}" width="${hasCowcatcher ? 20 : 12}" height="${groundY - bufY}" fill="${bufferBeamColor}" rx="1"/>`
+  // Buffers
+  svg += `<circle cx="${boilerX + (hasCowcatcher?6:2)}" cy="${bufY + 8}" r="5" fill="${darken(bufferBeamColor,20)}"/>`
+  svg += `<circle cx="${boilerX + (hasCowcatcher?6:2)}" cy="${bufY + 8}" r="3.5" fill="${lighten(bufferBeamColor,30)}"/>`
+
+  // ── COWCATCHER / PILOT ──────────────────────────────────
+  if (hasCowcatcher) {
+    const cx0 = boilerX - 18
+    svg += `<path d="M${cx0},${groundY} L${boilerX},${runPlateY+10} L${boilerX},${groundY} Z" fill="${darken(bc,30)}" opacity="0.9"/>`
+    // V-bars
+    for (let i=1;i<4;i++) {
+      const t = i/4
+      svg += `<line x1="${cx0 + (boilerX-cx0)*t}" y1="${groundY-(groundY-runPlateY-10)*t}" x2="${cx0 + (boilerX-cx0)*(t+0.04)}" y2="${groundY}" stroke="${darken(bc,10)}" stroke-width="1.5"/>`
+    }
+  }
+
+  // ── HEADLIGHT ───────────────────────────────────────────
+  if (hasHeadlight) {
+    const hlX = boilerX + sbW - 2
+    const hlY = boilerY - 5
+    svg += `<circle cx="${hlX}" cy="${hlY}" r="6" fill="${lighten(bc,20)}" stroke="${tc}" stroke-width="1.2"/>`
+    svg += `<circle cx="${hlX}" cy="${hlY}" r="4" fill="rgba(255,240,180,0.9)" filter="url(#${id}gl2)"/>`
+    svg += `<circle cx="${hlX-1}" cy="${hlY-1}" r="1.5" fill="rgba(255,255,255,0.9)"/>`
+    // Light beams
+    svg += `<path d="M${hlX-8},${hlY-2} L${hlX-18},${hlY-6} M${hlX-8},${hlY} L${hlX-18},${hlY} M${hlX-8},${hlY+2} L${hlX-18},${hlY+4}" stroke="rgba(255,240,120,0.25)" stroke-width="2" stroke-linecap="round"/>`
+  }
+
+  // ── CONNECTING RODS ─────────────────────────────────────
+  if (drives.length >= 2) {
+    const rodY = wheelY
+    // Main connecting rod (piston → first drive wheel)
+    const pistonX = boilerX + sbW + 4
+    svg += `<rect x="${pistonX}" y="${rodY - 2}" width="${drives[0]-pistonX+ws*0.8}" height="4" rx="2" fill="${darken(bc,10)}" stroke="${lighten(bc,30)}" stroke-width="0.5" opacity="0.9"/>`
+    // Coupling rods between drive wheels
+    svg += `<rect x="${drives[0]}" y="${rodY - 2.5}" width="${drives[drives.length-1]-drives[0]}" height="5" rx="2.5" fill="${darken(bc,5)}" stroke="${lighten(bc,25)}" stroke-width="0.7" opacity="0.85"/>`
+    // Crosshead
+    svg += `<rect x="${pistonX-2}" y="${rodY-5}" width="8" height="10" rx="2" fill="${lighten(bc,20)}" stroke="${lighten(bc,50)}" stroke-width="0.5"/>`
+  }
+
+  // ── DRIVE WHEELS ────────────────────────────────────────
+  drives.forEach(wx => {
+    // Wheel tire (outer ring)
+    svg += `<circle cx="${wx}" cy="${wheelY}" r="${ws}" fill="${darken(wc,10)}" stroke="${lighten(wc,15)}" stroke-width="1.5"/>`
+    // Inner hub area
+    svg += `<circle cx="${wx}" cy="${wheelY}" r="${ws-2}" fill="url(#${id}wg)"/>`
+    // Counterweight (imbalance weight)
+    const cwAng = Math.PI * 1.25
+    const cw = { x: wx + Math.cos(cwAng)*(ws-5), y: wheelY + Math.sin(cwAng)*(ws-5) }
+    svg += `<ellipse cx="${cw.x.toFixed(1)}" cy="${cw.y.toFixed(1)}" rx="5" ry="3" fill="${darken(wc,40)}" transform="rotate(${cwAng*180/Math.PI},${cw.x.toFixed(1)},${cw.y.toFixed(1)})"/>`
+    // Spokes
+    svg += `<g class="${id}wh">${spoked(wx,wheelY,ws-2,sp,1,lighten(wc,35),Math.max(3,ws*0.2))}</g>`
+    // Outer tire ring
+    svg += `<circle cx="${wx}" cy="${wheelY}" r="${ws}" fill="none" stroke="${darken(wc,30)}" stroke-width="2.5"/>`
+    // Crank pin
+    const cpAng = Math.PI * 0.6
+    svg += `<circle cx="${(wx + Math.cos(cpAng)*(ws-6)).toFixed(1)}" cy="${(wheelY + Math.sin(cpAng)*(ws-6)).toFixed(1)}" r="2.5" fill="${lighten(bc,60)}" stroke="${darken(bc,10)}" stroke-width="0.5"/>`
+  })
+
+  // ── LEAD / BOGIE WHEELS ─────────────────────────────────
+  const lws = Math.round(ws * 0.65)
+  leads.forEach(lx => {
+    svg += `<circle cx="${lx}" cy="${wheelY + ws - lws}" r="${lws}" fill="${darken(wc,10)}" stroke="${lighten(wc,10)}" stroke-width="1.2"/>`
+    svg += `<circle cx="${lx}" cy="${wheelY + ws - lws}" r="${lws-2}" fill="url(#${id}wg)"/>`
+    svg += `<g class="${id}wh" style="animation-duration:0.38s">${spoked(lx,wheelY+ws-lws,lws-2,8,0.7,lighten(wc,30),Math.max(2,lws*0.18))}</g>`
+    svg += `<circle cx="${lx}" cy="${wheelY+ws-lws}" r="${lws}" fill="none" stroke="${darken(wc,25)}" stroke-width="1.5"/>`
+  })
+
+  // ── TRIM STRIPE ─────────────────────────────────────────
+  svg += `<rect x="${boilerX+sbW}" y="${boilerY+2}" width="${boilerW - sbW}" height="2.5" rx="1" fill="${hexAlpha(trimGold,0.45)}"/>`
+  svg += `<rect x="${boilerX+sbW}" y="${boilerY+boilerH-4}" width="${boilerW - sbW}" height="2.5" rx="1" fill="${hexAlpha(trimGold,0.45)}"/>`
+
+  // ── NUMBER PLATE ────────────────────────────────────────
+  if (hasNumber && locoNumber) {
+    const npX = boilerX + sbW + 8
+    const npW = Math.min(50, boilerW - sbW - 16)
+    const npY = boilerCY - 7
+    svg += `<rect x="${npX}" y="${npY}" width="${npW}" height="14" rx="3" fill="${darken(bc,50)}" stroke="${hexAlpha(tc,0.7)}" stroke-width="1.2"/>`
+    svg += `<text x="${npX+npW/2}" y="${npY+10}" text-anchor="middle" font-family="monospace" font-size="8" font-weight="bold" fill="${tc}" letter-spacing="0.5">${locoNumber}</text>`
+  }
+
+  // ── RUST OVERLAY ────────────────────────────────────────
+  if (rust > 0.05) {
+    svg += `<rect x="${boilerX}" y="${boilerY}" width="${boilerW}" height="${boilerH}" rx="${bR}" filter="url(#${id}rust)" opacity="${(rust*0.6).toFixed(2)}"/>`
+  }
+
+  // ── GROUND SHADOW ───────────────────────────────────────
+  svg += `<ellipse cx="${W/2}" cy="${groundY+6}" rx="${W*0.42}" ry="5" fill="rgba(0,0,0,0.35)"/>`
+  if (hasTender) svg += `<ellipse cx="${W + totalW*0.1}" cy="${groundY+6}" rx="${totalW*0.15}" ry="4" fill="rgba(0,0,0,0.25)"/>`
+
+  svg += `</svg>`
+  return svg
+}
+
+// ═══════════════════════════════════════════════════════════
+// DIESEL LOCOMOTIVE BUILDER
+// ═══════════════════════════════════════════════════════════
+function buildDieselLoco(cfg) {
+  const { bodyColor:bc, accentColor:ac, trimColor:tc, wheelColor:wc,
+    width:W, height:H, boilerH, locoNumber, hasNumber,
+    hasDome, hasHeadlight, wear, rust, driveWheels:dw, wheelSize:ws, spokes:sp } = cfg
+  const id = cfg._id
+  const groundY = H - 10
+  const wheelY = groundY - ws
+  const runPlateY = wheelY - ws - 2
+  const noseH = Math.round(H * 0.55)
+  const noseY = groundY - noseH
+  const bodyW = W - 8
+
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" filter="url(#${id}fs)">`
+  svg += buildDefs(id, cfg)
+
+  // Ground shadow
+  svg += `<ellipse cx="${W/2}" cy="${groundY+6}" rx="${W*0.42}" ry="5" fill="rgba(0,0,0,0.35)"/>`
+
+  // Underframe
+  svg += `<rect x="4" y="${runPlateY}" width="${bodyW}" height="${groundY-runPlateY}" rx="0" fill="${darken(bc,35)}"/>`
+
+  // Angled nose (hood front)
+  svg += `<path d="M4,${groundY} L4,${noseY+12} Q6,${noseY} 20,${noseY} L${bodyW*0.22},${noseY} L${bodyW*0.22},${noseY+noseH} L4,${groundY} Z" fill="url(#${id}sg)"/>`
+  svg += `<path d="M4,${groundY} L4,${noseY+12} Q6,${noseY} 20,${noseY} L${bodyW*0.22},${noseY} L${bodyW*0.22},${noseY+noseH} L4,${groundY} Z" fill="url(#${id}ch)" opacity="0.5"/>`
+
+  // Hood / engine compartment
+  svg += `<rect x="${bodyW*0.22}" y="${noseY}" width="${bodyW*0.5}" height="${noseH*0.85}" rx="3" fill="url(#${id}sg)"/>`
+  svg += `<rect x="${bodyW*0.22}" y="${noseY}" width="${bodyW*0.5}" height="${noseH*0.85}" rx="3" fill="url(#${id}ch)" opacity="0.5"/>`
+  // Louvers on hood
+  for (let i=0;i<5;i++) {
+    const ly = noseY + 8 + i * 10
+    svg += `<rect x="${bodyW*0.28}" y="${ly}" width="${bodyW*0.38}" height="4" rx="2" fill="${darken(bc,30)}" opacity="0.85"/>`
+    svg += `<rect x="${bodyW*0.28}" y="${ly}" width="${bodyW*0.38}" height="1.5" rx="0.75" fill="${lighten(bc,15)}" opacity="0.4"/>`
+  }
+
+  // Exhaust stacks
+  if (hasDome) {
+    for (let i=0;i<2;i++) {
+      const ex = bodyW*0.32 + i*14
+      svg += `<rect x="${ex}" y="${noseY-12}" width="8" height="14" rx="4" fill="${darken(bc,40)}"/>`
+      svg += `<rect x="${ex-1}" y="${noseY-14}" width="10" height="4" rx="2" fill="${darken(bc,50)}"/>`
+      if (cfg.hasSmoke) {
+        svg += `<ellipse class="${id}sm" cx="${ex+4}" cy="${noseY-15}" rx="4" ry="3" fill="rgba(100,100,100,0.6)" style="animation-delay:${i*0.6}s"/>`
+      }
+    }
+  }
+
+  // Cab
+  const cabX = bodyW * 0.72
+  const cabW = bodyW * 0.26
+  const cabH = noseH * 1.12
+  const cabY = groundY - cabH - 2
+  svg += `<rect x="${cabX}" y="${cabY}" width="${cabW}" height="${cabH}" rx="4" fill="url(#${id}sg)"/>`
+  svg += `<rect x="${cabX}" y="${cabY}" width="${cabW}" height="${cabH}" rx="4" fill="url(#${id}ch)" opacity="0.5"/>`
+  // Cab roof
+  svg += `<rect x="${cabX-4}" y="${cabY-5}" width="${cabW+8}" height="7" rx="3.5" fill="${darken(bc,25)}"/>`
+  // Large cab windows (panoramic)
+  const winH = Math.round(cabH * 0.38)
+  const winW = Math.round(cabW * 0.68)
+  svg += `<rect x="${cabX+5}" y="${cabY+8}" width="${winW}" height="${winH}" rx="3" fill="url(#${id}gl)" stroke="rgba(255,255,255,0.35)" stroke-width="1.2"/>`
+  svg += `<line x1="${cabX+7}" y1="${cabY+10}" x2="${cabX+7}" y2="${cabY+10+winH*0.45}" stroke="rgba(255,255,255,0.55)" stroke-width="1.2" stroke-linecap="round"/>`
+  // Mirror
+  svg += `<rect x="${cabX-4}" y="${cabY+12}" width="4" height="6" rx="1" fill="${lighten(bc,30)}"/>`
+
+  // Buffer beam
+  svg += `<rect x="4" y="${runPlateY}" width="12" height="${groundY-runPlateY}" fill="${ac}" rx="1"/>`
+  svg += `<circle cx="9" cy="${runPlateY+8}" r="5" fill="${darken(ac,25)}"/>`
+  svg += `<circle cx="9" cy="${runPlateY+8}" r="3.5" fill="${lighten(ac,30)}"/>`
+
+  // Headlights (front)
+  if (hasHeadlight) {
+    svg += `<rect x="5" y="${noseY+8}" width="10" height="8" rx="2" fill="rgba(255,240,180,0.8)" filter="url(#${id}gl2)"/>`
+    svg += `<path d="M5,${noseY+9} L-6,${noseY+5} M5,${noseY+12} L-6,${noseY+12} M5,${noseY+15} L-6,${noseY+17}" stroke="rgba(255,240,120,0.2)" stroke-width="2.5" stroke-linecap="round"/>`
+    // Cab rear headlight
+    svg += `<rect x="${cabX+cabW-8}" y="${cabY+18}" width="8" height="5" rx="2" fill="rgba(255,40,40,0.7)"/>`
+  }
+
+  // Accent stripe
+  const stripeY = runPlateY + 6
+  svg += `<rect x="4" y="${stripeY}" width="${bodyW}" height="3" rx="1.5" fill="${hexAlpha(tc,0.5)}"/>`
+
+  // Number plate
+  if (hasNumber && locoNumber) {
+    svg += `<rect x="${cabX+6}" y="${cabY+winH+16}" width="${cabW-12}" height="12" rx="2.5" fill="${darken(bc,50)}" stroke="${hexAlpha(tc,0.7)}" stroke-width="1.1"/>`
+    svg += `<text x="${cabX+cabW/2}" y="${cabY+winH+25}" text-anchor="middle" font-family="monospace" font-size="7" font-weight="bold" fill="${tc}">${locoNumber}</text>`
+  }
+
+  // Wheels — diesel bogies
+  const bogieW = (bodyW - 20) / 2
+  const bogiePositions = [ws + 6, bodyW - bogieW - ws]
+  bogiePositions.forEach(bx => {
+    // Bogie frame
+    svg += `<rect x="${bx-4}" y="${runPlateY+2}" width="${bogieW}" height="8" rx="2" fill="${darken(bc,20)}" stroke="${darken(bc,40)}" stroke-width="0.5"/>`
+    // Wheels
+    const numW = Math.min(dw, 3)
+    for (let i=0;i<numW;i++) {
+      const wx = bx + i * (bogieW / (numW))
+      svg += `<circle cx="${wx}" cy="${wheelY}" r="${ws}" fill="${darken(wc,10)}" stroke="${lighten(wc,15)}" stroke-width="1.5"/>`
+      svg += `<circle cx="${wx}" cy="${wheelY}" r="${ws-2}" fill="url(#${id}wg)"/>`
+      svg += `<g class="${id}wh" style="animation-duration:0.42s">${spoked(wx,wheelY,ws-2,sp,0.9,lighten(wc,30),Math.max(3,ws*0.19))}</g>`
+      svg += `<circle cx="${wx}" cy="${wheelY}" r="${ws}" fill="none" stroke="${darken(wc,30)}" stroke-width="2"/>`
+    }
+  })
+
+  // Rust
+  if (rust > 0.05) {
+    svg += `<rect x="4" y="${noseY}" width="${bodyW}" height="${groundY-noseY}" rx="3" filter="url(#${id}rust)" opacity="${(rust*0.5).toFixed(2)}"/>`
+  }
+
+  svg += `</svg>`
+  return svg
+}
+
+// ═══════════════════════════════════════════════════════════
+// ELECTRIC / HIGH-SPEED TRAIN
+// ═══════════════════════════════════════════════════════════
+function buildElectricTrain(cfg) {
+  const { bodyColor:bc, accentColor:ac, trimColor:tc, wheelColor:wc,
+    width:W, height:H, locoNumber, hasNumber, hasHeadlight, rust, wheelSize:ws } = cfg
+  const id = cfg._id
+  const groundY = H - 10
+  const wheelY = groundY - ws
+  const carH = Math.round(H * 0.45)
+  const carY = groundY - carH - ws * 2 - 4
+
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" filter="url(#${id}fs)">`
+  svg += buildDefs(id, cfg)
+
+  // Ground shadow
+  svg += `<ellipse cx="${W/2}" cy="${groundY+5}" rx="${W*0.44}" ry="5" fill="rgba(0,0,0,0.3)"/>`
+
+  // Aerodynamic nose (bullet shape)
+  const noseLen = Math.round(W * 0.22)
+  svg += `<path d="M0,${groundY-ws*2} Q0,${carY+4} ${noseLen},${carY} L${W-6},${carY} Q${W},${carY} ${W},${carY+carH*0.5} Q${W},${carY+carH} ${W-6},${carY+carH} L${noseLen},${carY+carH} Q0,${carY+carH-2} 0,${groundY-ws*2} Z" fill="url(#${id}sg)"/>`
+  svg += `<path d="M0,${groundY-ws*2} Q0,${carY+4} ${noseLen},${carY} L${W-6},${carY} Q${W},${carY} ${W},${carY+carH*0.5} Q${W},${carY+carH} ${W-6},${carY+carH} L${noseLen},${carY+carH} Q0,${carY+carH-2} 0,${groundY-ws*2} Z" fill="url(#${id}ch)" opacity="0.6"/>`
+
+  // Pantograph (overhead pickup)
+  if (cfg.hasDome) {
+    const px = W * 0.55
+    svg += `<line x1="${px-8}" y1="${carY}" x2="${px}" y2="${carY-22}" stroke="${lighten(bc,40)}" stroke-width="1.5"/>`
+    svg += `<line x1="${px+8}" y1="${carY}" x2="${px}" y2="${carY-22}" stroke="${lighten(bc,40)}" stroke-width="1.5"/>`
+    svg += `<line x1="${px-14}" y1="${carY-22}" x2="${px+14}" y2="${carY-22}" stroke="${lighten(bc,60)}" stroke-width="2"/>`
+    svg += `<line x1="${px-5}" y1="${carY}" x2="${px-8}" y2="${carY-22}" stroke="${lighten(bc,35)}" stroke-width="1.2"/>`
+    svg += `<line x1="${px+5}" y1="${carY}" x2="${px+8}" y2="${carY-22}" stroke="${lighten(bc,35)}" stroke-width="1.2"/>`
+  }
+
+  // Windows strip
+  const wStartX = noseLen + 8
+  const wEndX = W - 10
+  const winH2 = Math.round(carH * 0.38)
+  const winY = carY + carH * 0.15
+  // Window continuous band
+  svg += `<rect x="${wStartX}" y="${winY}" width="${wEndX - wStartX}" height="${winH2}" rx="3" fill="${lighten(bc,8)}" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>`
+  // Individual window panes
+  const numPanes = Math.round((wEndX-wStartX) / 24)
+  for (let i=0;i<numPanes;i++) {
+    const wx = wStartX + i * ((wEndX-wStartX)/numPanes)
+    const pw = (wEndX-wStartX)/numPanes - 3
+    svg += `<rect x="${wx+1}" y="${winY+2}" width="${pw}" height="${winH2-4}" rx="2" fill="url(#${id}gl)" stroke="rgba(200,230,255,0.25)" stroke-width="0.5"/>`
+    svg += `<line x1="${wx+3}" y1="${winY+4}" x2="${wx+3}" y2="${winY+winH2*0.6}" stroke="rgba(255,255,255,0.4)" stroke-width="0.8" stroke-linecap="round"/>`
+  }
+
+  // Nose headlight cluster
+  if (hasHeadlight) {
+    svg += `<ellipse cx="5" cy="${carY + carH*0.35}" rx="6" ry="8" fill="rgba(255,245,180,0.85)" filter="url(#${id}gl2)"/>`
+    svg += `<ellipse cx="5" cy="${carY + carH*0.65}" rx="5" ry="5" fill="rgba(255,40,40,0.7)"/>`
+    svg += `<path d="M0,${carY+carH*0.35-6} L-14,${carY+carH*0.3} M0,${carY+carH*0.35} L-14,${carY+carH*0.35} M0,${carY+carH*0.35+6} L-14,${carY+carH*0.4}" stroke="rgba(255,245,120,0.2)" stroke-width="3" stroke-linecap="round"/>`
+  }
+
+  // Accent stripe (speed line)
+  svg += `<rect x="0" y="${carY + carH*0.62}" width="${W}" height="4" rx="0" fill="${hexAlpha(ac,0.8)}"/>`
+  svg += `<rect x="0" y="${carY + carH*0.67}" width="${W}" height="2" rx="0" fill="${hexAlpha(tc,0.5)}"/>`
+
+  // Skirt / underbody fairing
+  svg += `<path d="M${noseLen*0.3},${carY+carH} L0,${groundY-ws*2+4} L0,${groundY-5} L${W},${groundY-5} L${W},${carY+carH} Z" fill="${darken(bc,30)}" opacity="0.9"/>`
+
+  // Bogie wheels (hidden under skirt — barely visible)
+  const bg1X = W * 0.22, bg2X = W * 0.7
+  ;[bg1X, bg2X].forEach(bx => {
+    for (let i=0;i<2;i++) {
+      const wx = bx + i * ws * 2.2
+      svg += `<circle cx="${wx}" cy="${wheelY}" r="${ws}" fill="${darken(wc,15)}" stroke="${lighten(wc,10)}" stroke-width="1.5"/>`
+      svg += `<circle cx="${wx}" cy="${wheelY}" r="${ws-3}" fill="url(#${id}wg)"/>`
+      svg += `<circle cx="${wx}" cy="${wheelY}" r="${ws}" fill="none" stroke="${darken(wc,35)}" stroke-width="2"/>`
+    }
+  })
+
+  // Number
+  if (hasNumber && locoNumber) {
+    const npX = noseLen + 10
+    svg += `<text x="${npX}" y="${carY+carH-8}" font-family="sans-serif" font-size="9" font-weight="bold" fill="${tc}" opacity="0.85">${locoNumber}</text>`
+  }
+
+  svg += `</svg>`
+  return svg
+}
+
+// ═══════════════════════════════════════════════════════════
+// MAGLEV BUILDER
+// ═══════════════════════════════════════════════════════════
+function buildMaglev(cfg) {
+  const { bodyColor:bc, accentColor:ac, trimColor:tc,
+    width:W, height:H, locoNumber, hasNumber, hasHeadlight } = cfg
+  const id = cfg._id
+  const groundY = H - 14
+  const carH = Math.round(H * 0.48)
+  const carY = groundY - carH - 8
+  const noseLen = Math.round(W * 0.3)
+
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" filter="url(#${id}fs)">`
+  svg += buildDefs(id, cfg)
+
+  // Magnetic levitation glow
+  svg += `<ellipse cx="${W/2}" cy="${groundY+4}" rx="${W*0.45}" ry="4" fill="rgba(100,180,255,0.25)" filter="url(#${id}gl2)"/>`
+  svg += `<ellipse cx="${W/2}" cy="${groundY+6}" rx="${W*0.38}" ry="3" fill="rgba(0,0,0,0.3)"/>`
+
+  // Guideway / rail
+  svg += `<rect x="0" y="${groundY+2}" width="${W}" height="6" rx="0" fill="${darken(bc,50)}"/>`
+  svg += `<rect x="0" y="${groundY}" width="${W}" height="3" rx="0" fill="${darken(bc,40)}"/>`
+
+  // Main body — ultra-aerodynamic
+  const botY = groundY - 6
+  svg += `<path d="M0,${(carY+carH)*0.5} Q0,${carY} ${noseLen},${carY} L${W-8},${carY} Q${W},${carY} ${W},${carY+carH/2} Q${W},${carY+carH} ${W-8},${carY+carH} L${noseLen},${carY+carH} Q0,${carY+carH} 0,${botY} Z" fill="url(#${id}sg)"/>`
+  svg += `<path d="M0,${(carY+carH)*0.5} Q0,${carY} ${noseLen},${carY} L${W-8},${carY} Q${W},${carY} ${W},${carY+carH/2} Q${W},${carY+carH} ${W-8},${carY+carH} L${noseLen},${carY+carH} Q0,${carY+carH} 0,${botY} Z" fill="url(#${id}ch)" opacity="0.65"/>`
+
+  // Flush windows (no protruding frames)
+  const wStart = noseLen + 5
+  const wEnd = W - 12
+  const wH = Math.round(carH * 0.35)
+  const wY = carY + carH * 0.18
+  svg += `<rect x="${wStart}" y="${wY}" width="${wEnd-wStart}" height="${wH}" rx="2" fill="rgba(20,40,80,0.5)"/>`
+  const nP = Math.round((wEnd-wStart)/20)
+  for (let i=0;i<nP;i++) {
+    const wx = wStart + i*((wEnd-wStart)/nP)
+    svg += `<rect x="${wx+0.5}" y="${wY+1}" width="${(wEnd-wStart)/nP-2}" height="${wH-2}" rx="1.5" fill="url(#${id}gl)"/>`
+  }
+
+  // Speed stripe
+  svg += `<rect x="0" y="${carY+carH*0.7}" width="${W}" height="3" rx="0" fill="${hexAlpha(ac,0.85)}"/>`
+  svg += `<rect x="0" y="${carY+carH*0.74}" width="${W}" height="1.5" rx="0" fill="${hexAlpha(tc,0.5)}"/>`
+
+  // Nose headlight
+  if (hasHeadlight) {
+    svg += `<ellipse cx="4" cy="${carY+carH*0.38}" rx="5" ry="7" fill="rgba(255,250,200,0.9)" filter="url(#${id}gl2)"/>`
+    svg += `<path d="M0,${carY+carH*0.32} L-12,${carY+carH*0.28} M0,${carY+carH*0.38} L-12,${carY+carH*0.38} M0,${carY+carH*0.44} L-12,${carY+carH*0.48}" stroke="rgba(255,250,150,0.22)" stroke-width="3" stroke-linecap="round"/>`
+  }
+
+  // Magnetic skirt
+  svg += `<path d="M${noseLen*0.4},${carY+carH} L${noseLen*0.2},${groundY} L${W*0.98},${groundY} L${W-8},${carY+carH} Z" fill="${darken(bc,20)}" opacity="0.85"/>`
+  // Magnetic coil details
+  for (let i=0;i<6;i++) {
+    const cx2 = (noseLen*0.4) + i * (W / 6.5)
+    svg += `<rect x="${cx2}" y="${groundY-3}" width="${W/8}" height="3" rx="1.5" fill="${darken(bc,40)}" opacity="0.8"/>`
+  }
+  // Levitation glow
+  svg += `<rect x="${noseLen*0.4}" y="${groundY-2}" width="${W - noseLen*0.4 - 2}" height="2" rx="1" fill="rgba(100,180,255,0.4)" filter="url(#${id}gl2)"/>`
+
+  if (hasNumber && locoNumber) {
+    svg += `<text x="${noseLen+8}" y="${carY+carH-6}" font-family="sans-serif" font-size="9" font-weight="bold" fill="${tc}" opacity="0.9">${locoNumber}</text>`
+  }
+
+  svg += `</svg>`
+  return svg
+}
+
+// ═══════════════════════════════════════════════════════════
+// MAIN GENERATOR
+// ═══════════════════════════════════════════════════════════
+function getConfig() {
+  return {
+    _id: 'eng' + Math.random().toString(36).slice(2,6),
+    bodyColor: document.getElementById('body-color').value,
+    accentColor: document.getElementById('accent-color').value,
+    trimColor: document.getElementById('trim-color').value,
+    wheelColor: document.getElementById('wheel-color').value,
+    hasTender: document.getElementById('has-tender').checked,
+    hasRack: document.getElementById('has-rack').checked,
+    hasDome: document.getElementById('has-dome').checked,
+    hasSandbox: document.getElementById('has-sandbox').checked,
+    hasHeadlight: document.getElementById('has-headlight').checked,
+    hasCowcatcher: document.getElementById('has-cowcatcher').checked,
+    hasRivets: document.getElementById('has-rivets').checked,
+    hasSmoke: document.getElementById('has-smoke').checked,
+    hasNumber: document.getElementById('has-number').checked,
+    locoNumber: document.getElementById('loco-number').value,
+    driveWheels: parseInt(document.getElementById('drive-wheels').value),
+    leadWheels: parseInt(document.getElementById('lead-wheels').value),
+    wheelSize: parseInt(document.getElementById('wheel-size').value),
+    spokes: parseInt(document.getElementById('spokes').value),
+    wear: parseInt(document.getElementById('wear').value),
+    rust: parseInt(document.getElementById('rust').value) / 100,
+    sheen: parseInt(document.getElementById('sheen').value),
+    shadowStr: parseInt(document.getElementById('shadow-str').value),
+    boilerH: parseInt(document.getElementById('boiler-h').value),
+    width: parseInt(document.getElementById('loco-w').value),
+    height: parseInt(document.getElementById('loco-h').value),
+    animate: document.getElementById('has-smoke').checked,
+    type: document.getElementById('obj-type').value,
+  }
+}
+
+let lastSVG = ''
+let activeTab = 'svg'
+
+function rerender() {
+  const cfg = getConfig()
+  let svg
+  switch (cfg.type) {
+    case 'steam': svg = buildSteamLoco(cfg); break
+    case 'diesel': svg = buildDieselLoco(cfg); break
+    case 'electric': svg = buildElectricTrain(cfg); break
+    case 'maglev': svg = buildMaglev(cfg); break
+    default: svg = buildSteamLoco(cfg)
+  }
+  lastSVG = svg
+  document.getElementById('preview-mount').innerHTML = svg
+  const bytes = new TextEncoder().encode(svg).length
+  document.getElementById('size-info').textContent = `${svg.length} chars · ~${(bytes/1024).toFixed(1)} KB`
+  updateCodeOut()
+}
+
+function updateCodeOut() {
+  const ta = document.getElementById('code-out')
+  if (activeTab === 'svg') {
+    ta.value = lastSVG
+  } else if (activeTab === 'css') {
+    const id = lastSVG.match(/id="(eng\w+)fs"/)?.[1]?.replace('fs','') || 'eng'
+    ta.value = `/* Wheel animation */\n.${id}wh {\n  transform-box: fill-box;\n  transform-origin: center;\n  animation: ${id}wr 0.5s linear infinite;\n}\n/* Smoke animation */\n.${id}sm {\n  transform-box: fill-box;\n  transform-origin: center;\n  animation: ${id}sw 1.4s ease-out infinite;\n}`
+  } else {
+    // Inline version for game (minified)
+    const mini = lastSVG
+      .replace(/\n\s+/g, ' ')
+      .replace(/> </g,'><')
+      .replace(/\s{2,}/g,' ')
+    ta.value = `// In buildSteamLocoSVG() or similar:\nreturn \`${mini}\``
+  }
+}
+
+function showTab(tab) {
+  activeTab = tab
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
+  event.target.classList.add('active')
+  updateCodeOut()
+}
+
+function copyCode() {
+  const ta = document.getElementById('code-out')
+  ta.select()
+  navigator.clipboard.writeText(ta.value).then(() => {
+    const btn = document.querySelector('.copy-btn')
+    btn.textContent = 'Copied!'
+    setTimeout(() => btn.textContent = 'Copy', 1500)
+  })
+}
+
+function syncVal(el, valId) {
+  const v = el.value
+  const label = document.getElementById(valId)
+  if (label) label.textContent = v + (valId.includes('val') && (valId.includes('wear') || valId.includes('sheen') || valId.includes('rust') || valId.includes('shadow')) ? '%' : '')
+}
+function syncColorFromHex(colorId, hexId) {
+  const hex = document.getElementById(hexId).value
+  if (/^#[0-9a-fA-F]{6}$/.test(hex)) {
+    document.getElementById(colorId).value = hex
+    rerender()
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// PRESETS
+// ═══════════════════════════════════════════════════════════
+const PRESETS = {
+  b2507: { type:'steam', bodyColor:'#1a1a2e', accentColor:'#c0392b', trimColor:'#f0c040', wheelColor:'#111130', hasRack:true, hasTender:true, hasDome:true, hasSandbox:true, hasHeadlight:true, hasNumber:true, locoNumber:'B 2507', driveWheels:3, leadWheels:2, wheelSize:18, spokes:10, boilerH:32, width:240, height:100, wear:30, rust:15, sheen:35 },
+  c28:   { type:'steam', bodyColor:'#0f1540', accentColor:'#d4380d', trimColor:'#ffd700', wheelColor:'#0a0a20', hasRack:false, hasTender:true, hasDome:true, hasSandbox:true, hasHeadlight:true, hasNumber:true, locoNumber:'C 28 16', driveWheels:4, leadWheels:2, wheelSize:20, spokes:12, boilerH:34, width:260, height:105, wear:20, rust:8, sheen:40 },
+  c5107: { type:'steam', bodyColor:'#0f0f0f', accentColor:'#cc2200', trimColor:'#c8a000', wheelColor:'#080808', hasRack:false, hasTender:true, hasDome:true, hasSandbox:false, hasHeadlight:true, hasNumber:true, locoNumber:'C 51 07', driveWheels:4, leadWheels:2, wheelSize:22, spokes:14, boilerH:36, width:280, height:108, wear:40, rust:20, sheen:25 },
+  d1415: { type:'steam', bodyColor:'#2a1a0a', accentColor:'#8b3a00', trimColor:'#d4a017', wheelColor:'#1a0f00', hasRack:false, hasTender:false, hasDome:true, hasSandbox:true, hasHeadlight:true, hasNumber:true, locoNumber:'D 14 15', driveWheels:2, leadWheels:1, wheelSize:15, spokes:8, boilerH:28, width:200, height:90, wear:55, rust:30, sheen:20 },
+  bb202: { type:'diesel', bodyColor:'#0a3a0a', accentColor:'#e8b400', trimColor:'#ffffff', wheelColor:'#111', hasRack:false, hasTender:false, hasDome:true, hasSandbox:false, hasHeadlight:true, hasNumber:true, locoNumber:'BB 202', driveWheels:3, leadWheels:0, wheelSize:14, spokes:8, boilerH:30, width:260, height:100, wear:25, rust:10, sheen:50 },
+  cc204: { type:'diesel', bodyColor:'#003366', accentColor:'#cc0000', trimColor:'#ffcc00', wheelColor:'#111', hasRack:false, hasTender:false, hasDome:true, hasSandbox:false, hasHeadlight:true, hasNumber:true, locoNumber:'CC 204', driveWheels:3, leadWheels:0, wheelSize:15, spokes:8, boilerH:32, width:280, height:105, wear:15, rust:5, sheen:55 },
+  shinkansen: { type:'electric', bodyColor:'#f0f2f5', accentColor:'#003399', trimColor:'#0066cc', wheelColor:'#222', hasRack:false, hasTender:false, hasDome:true, hasSandbox:false, hasHeadlight:true, hasNumber:true, locoNumber:'N700S', driveWheels:2, leadWheels:0, wheelSize:12, spokes:6, boilerH:28, width:300, height:95, wear:2, rust:0, sheen:70 },
+  maglev_jr: { type:'maglev', bodyColor:'#e8edf5', accentColor:'#cc0000', trimColor:'#004499', wheelColor:'#444', hasRack:false, hasTender:false, hasDome:true, hasSandbox:false, hasHeadlight:true, hasNumber:true, locoNumber:'SCMaglev', driveWheels:2, leadWheels:0, wheelSize:10, spokes:0, boilerH:30, width:320, height:95, wear:0, rust:0, sheen:80 },
+}
+
+function applyPreset(name) {
+  const p = PRESETS[name]
+  if (!p) return
+  document.getElementById('obj-type').value = p.type
+  document.getElementById('body-color').value = p.bodyColor
+  document.getElementById('body-color-hex').value = p.bodyColor
+  document.getElementById('accent-color').value = p.accentColor
+  document.getElementById('trim-color').value = p.trimColor
+  document.getElementById('wheel-color').value = p.wheelColor
+  document.getElementById('has-tender').checked = p.hasTender
+  document.getElementById('has-rack').checked = p.hasRack
+  document.getElementById('has-dome').checked = p.hasDome
+  document.getElementById('has-sandbox').checked = p.hasSandbox
+  document.getElementById('has-headlight').checked = p.hasHeadlight
+  document.getElementById('has-cowcatcher').checked = !!(p.hasCowcatcher)
+  document.getElementById('has-rivets').checked = true
+  document.getElementById('has-smoke').checked = true
+  document.getElementById('has-number').checked = p.hasNumber
+  document.getElementById('loco-number').value = p.locoNumber
+  document.getElementById('drive-wheels').value = p.driveWheels
+  document.getElementById('lead-wheels').value = p.leadWheels
+  document.getElementById('wheel-size').value = p.wheelSize
+  document.getElementById('wheel-size-val').textContent = p.wheelSize
+  document.getElementById('spokes').value = p.spokes
+  document.getElementById('spokes-val').textContent = p.spokes
+  document.getElementById('wear').value = p.wear
+  document.getElementById('wear-val').textContent = p.wear + '%'
+  document.getElementById('rust').value = p.rust
+  document.getElementById('rust-val').textContent = p.rust + '%'
+  document.getElementById('sheen').value = p.sheen
+  document.getElementById('sheen-val').textContent = p.sheen + '%'
+  document.getElementById('boiler-h').value = p.boilerH
+  document.getElementById('boiler-h-val').textContent = p.boilerH
+  document.getElementById('loco-w').value = p.width
+  document.getElementById('loco-w-val').textContent = p.width
+  document.getElementById('loco-h').value = p.height
+  document.getElementById('loco-h-val').textContent = p.height
+  document.getElementById('shadow-str').value = 60
+  onTypeChange()
+  rerender()
+}
+
+function onTypeChange() {
+  const t = document.getElementById('obj-type').value
+  const presetRow = document.getElementById('preset-row')
+  // Update preset buttons based on type
+  rerender()
+}
+
+// Init
+window.addEventListener('DOMContentLoaded', () => {
+  applyPreset('b2507')
+})
+</script>
+</body>
+</html>

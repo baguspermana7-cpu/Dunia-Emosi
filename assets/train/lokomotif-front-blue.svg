@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 110" width="100" height="110">
+  <!-- Front-view electric locomotive — blue/silver/orange (CC 203 style) -->
+  <defs>
+    <linearGradient id="lbBlue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2e5ea8"/>
+      <stop offset="100%" stop-color="#1e4080"/>
+    </linearGradient>
+    <linearGradient id="lbSilver" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c8c8c8"/>
+      <stop offset="50%" stop-color="#a8a8a8"/>
+      <stop offset="100%" stop-color="#909090"/>
+    </linearGradient>
+    <linearGradient id="lbWin" x1="0.3" y1="0" x2="0.7" y2="1">
+      <stop offset="0%" stop-color="#a0c4e0"/>
+      <stop offset="40%" stop-color="#7aa8c8"/>
+      <stop offset="100%" stop-color="#6090b0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Roof — dark with vent grille -->
+  <rect x="28" y="4" width="44" height="10" rx="4" fill="#444"/>
+  <rect x="34" y="2" width="32" height="6" rx="2" fill="#333"/>
+  <!-- Roof grille -->
+  <rect x="36" y="3" width="28" height="4" rx="1" fill="#555"/>
+  <line x1="40" y1="3" x2="40" y2="7" stroke="#444" stroke-width="1"/>
+  <line x1="44" y1="3" x2="44" y2="7" stroke="#444" stroke-width="1"/>
+  <line x1="48" y1="3" x2="48" y2="7" stroke="#444" stroke-width="1"/>
+  <line x1="52" y1="3" x2="52" y2="7" stroke="#444" stroke-width="1"/>
+  <line x1="56" y1="3" x2="56" y2="7" stroke="#444" stroke-width="1"/>
+  <line x1="60" y1="3" x2="60" y2="7" stroke="#444" stroke-width="1"/>
+
+  <!-- Blue cab top section -->
+  <path d="M20,14 L80,14 L84,20 L84,38 L16,38 L16,20 Z" fill="url(#lbBlue)"/>
+
+  <!-- Windshield frames — dark blue -->
+  <rect x="22" y="16" width="24" height="20" rx="2" fill="#162e58"/>
+  <rect x="54" y="16" width="24" height="20" rx="2" fill="#162e58"/>
+  <!-- Windows -->
+  <rect x="24" y="18" width="20" height="16" rx="1.5" fill="url(#lbWin)"/>
+  <rect x="56" y="18" width="20" height="16" rx="1.5" fill="url(#lbWin)"/>
+  <!-- Window shine -->
+  <path d="M26,19 L32,19 L26,28 Z" fill="rgba(255,255,255,0.2)"/>
+  <path d="M58,19 L64,19 L58,28 Z" fill="rgba(255,255,255,0.2)"/>
+  <!-- Wipers -->
+  <path d="M34,33 Q30,22 28,20" fill="none" stroke="#222" stroke-width="1" stroke-linecap="round"/>
+  <path d="M66,33 Q70,22 72,20" fill="none" stroke="#222" stroke-width="1" stroke-linecap="round"/>
+
+  <!-- Silver nose section -->
+  <path d="M16,38 L84,38 L86,42 L86,72 L14,72 L14,42 Z" fill="url(#lbSilver)"/>
+
+  <!-- Blue stripe across nose -->
+  <rect x="14" y="38" width="72" height="3" fill="#2656a0"/>
+
+  <!-- V-shaped blue/orange nose stripe -->
+  <path d="M50,44 L20,62 L20,58 L50,40 L80,58 L80,62 Z" fill="#2656a0"/>
+  <!-- Orange accent inside V -->
+  <path d="M50,47 L24,62 L24,60 L50,46 L76,60 L76,62 Z" fill="#e8960a"/>
+  <path d="M50,49 L28,62 L28,60.5 L50,48 L72,60.5 L72,62 Z" fill="#d48008"/>
+
+  <!-- Red signal lights -->
+  <circle cx="50" cy="48" r="4" fill="#cc2222" stroke="#222" stroke-width="1"/>
+  <circle cx="50" cy="48" r="2.5" fill="#ee3333"/>
+  <circle cx="50" cy="48" r="1.2" fill="#ff6666"/>
+
+  <circle cx="28" cy="62" r="4" fill="#cc2222" stroke="#222" stroke-width="1"/>
+  <circle cx="28" cy="62" r="2.5" fill="#ee3333"/>
+  <circle cx="28" cy="62" r="1.2" fill="#ff6666"/>
+
+  <circle cx="72" cy="62" r="4" fill="#cc2222" stroke="#222" stroke-width="1"/>
+  <circle cx="72" cy="62" r="2.5" fill="#ee3333"/>
+  <circle cx="72" cy="62" r="1.2" fill="#ff6666"/>
+
+  <!-- Side handrails -->
+  <rect x="8" y="26" width="2" height="42" rx="1" fill="#ddd"/>
+  <rect x="6" y="28" width="2" height="8" rx="1" fill="#ddd"/>
+  <rect x="6" y="40" width="2" height="8" rx="1" fill="#ddd"/>
+  <rect x="6" y="52" width="2" height="8" rx="1" fill="#ddd"/>
+  <rect x="90" y="26" width="2" height="42" rx="1" fill="#ddd"/>
+  <rect x="92" y="28" width="2" height="8" rx="1" fill="#ddd"/>
+  <rect x="92" y="40" width="2" height="8" rx="1" fill="#ddd"/>
+  <rect x="92" y="52" width="2" height="8" rx="1" fill="#ddd"/>
+
+  <!-- Mouth/smile details -->
+  <path d="M34,68 Q36,70 38,68" fill="none" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M62,68 Q64,70 66,68" fill="none" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Lower blue band -->
+  <path d="M14,72 L86,72 L88,78 L88,88 Q88,92 84,92 L16,92 Q12,92 12,88 L12,78 Z" fill="url(#lbBlue)"/>
+
+  <!-- Bottom black section -->
+  <rect x="16" y="92" width="68" height="12" fill="#1a1a1a"/>
+  <!-- Black grille boxes -->
+  <rect x="18" y="76" width="20" height="12" rx="1.5" fill="#111"/>
+  <line x1="22" y1="76" x2="22" y2="88" stroke="#2a2a2a" stroke-width="1"/>
+  <line x1="26" y1="76" x2="26" y2="88" stroke="#2a2a2a" stroke-width="1"/>
+  <line x1="30" y1="76" x2="30" y2="88" stroke="#2a2a2a" stroke-width="1"/>
+  <line x1="34" y1="76" x2="34" y2="88" stroke="#2a2a2a" stroke-width="1"/>
+  <rect x="62" y="76" width="20" height="12" rx="1.5" fill="#111"/>
+  <line x1="66" y1="76" x2="66" y2="88" stroke="#2a2a2a" stroke-width="1"/>
+  <line x1="70" y1="76" x2="70" y2="88" stroke="#2a2a2a" stroke-width="1"/>
+  <line x1="74" y1="76" x2="74" y2="88" stroke="#2a2a2a" stroke-width="1"/>
+  <line x1="78" y1="76" x2="78" y2="88" stroke="#2a2a2a" stroke-width="1"/>
+
+  <!-- Center coupler area -->
+  <rect x="42" y="92" width="16" height="6" rx="1" fill="#555"/>
+  <rect x="44" y="98" width="3" height="6" fill="#444"/>
+  <rect x="47" y="98" width="6" height="4" rx="1" fill="#777"/>
+  <rect x="53" y="98" width="3" height="6" fill="#444"/>
+
+  <!-- Hose connectors -->
+  <path d="M45,98 Q44,104 43,106" fill="none" stroke="#333" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M55,98 Q56,104 57,106" fill="none" stroke="#333" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

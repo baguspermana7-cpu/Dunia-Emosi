@@ -1,0 +1,13 @@
+# Source files (already converted to WebP)
+assets/Pokemon/g19/mirror/
+assets/Pokemon/g19/*.gif
+assets/Pokemon/birds/*.gif
+assets/Pokemon/trainer/*.gif
+assets/Pokemon/trainer/pokemontrainer*.webp
+
+# Build artifacts
+.playwright-cli/
+
+# Original large audio (renamed copies already committed)
+assets/Pokemon/sound/Pokemon*
+assets/Pokemon/sound/Voicy*

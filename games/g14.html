@@ -1,0 +1,2193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Balapan Kereta 🚂</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c02;font-family:'Fredoka One',sans-serif;touch-action:none}
+#pixi-canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
+
+/* ── HUD ── */
+#hud-top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:8px;padding:max(14px,env(safe-area-inset-top)) 16px 8px;background:linear-gradient(180deg,rgba(0,0,0,0.72) 0%,transparent 100%);pointer-events:none}
+#btn-back{background:#fff3c4;border:2.5px solid #f59e0b;border-radius:8px;color:#3f2a08;padding:8px 12px;font-size:14px;cursor:pointer;font-family:inherit;pointer-events:all;flex-shrink:0;box-shadow:0 3px 0 #b45309;font-weight:900;min-width:96px;text-align:center}
+#btn-back:active{transform:translateY(2px);box-shadow:0 1px 0 #b45309}
+#train-name-badge{background:rgba(0,0,0,0.5);border:1.5px solid rgba(255,255,255,0.18);border-radius:10px;padding:5px 10px;color:#fbbf24;font-size:13px;font-weight:700;flex-shrink:0;white-space:nowrap}
+#race-info{flex:1;text-align:center;min-width:0}
+#distance-text{font-size:13px;color:#86efac;font-weight:700}
+#position-badge{font-size:17px;font-weight:900;color:#fff}
+#lives-hud{font-size:20px;letter-spacing:1px;flex-shrink:0}
+#speed-hud{background:rgba(0,0,0,0.5);border:1.5px solid rgba(255,255,255,0.18);border-radius:10px;padding:5px 10px;color:#38bdf8;font-size:12px;font-weight:700;flex-shrink:0;white-space:nowrap;min-width:56px;text-align:center}
+
+/* Progress strip */
+#prog-strip{position:fixed;top:56px;left:0;right:0;z-index:49;height:4px;background:rgba(255,255,255,0.08)}
+#prog-fill{height:100%;background:linear-gradient(90deg,#86efac,#22d3ee);transition:width .2s;width:0%}
+
+/* Checkpoints */
+#cp-row{position:fixed;top:60px;left:0;right:0;z-index:48;display:flex;justify-content:space-around;pointer-events:none;padding:0 10%}
+.cp-dot{font-size:14px;opacity:0.35;transition:opacity .3s,transform .3s}
+.cp-dot.reached{opacity:1;transform:scale(1.4)}
+
+/* Bottom controls */
+#ctrl-area{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:10px 14px 14px;background:linear-gradient(0deg,rgba(0,0,0,0.78) 0%,transparent 100%)}
+#ctrl-row{display:flex;gap:10px;align-items:stretch}
+.ctrl-btn{flex:1;padding:16px 0;border-radius:20px;border:2.5px solid rgba(196,181,253,0.4);background:rgba(139,92,246,0.25);color:#e9d5ff;font-size:22px;cursor:pointer;backdrop-filter:blur(6px);user-select:none;-webkit-user-select:none;transition:transform .08s,background .08s;font-family:inherit;-webkit-tap-highlight-color:transparent;box-shadow:0 3px 0 rgba(91,33,182,0.3)}
+.ctrl-btn:active{transform:scale(.91) translateY(2px);background:rgba(139,92,246,.45);box-shadow:0 1px 0 rgba(91,33,182,0.3)}
+#btn-boost{background:linear-gradient(135deg,rgba(251,191,36,0.35),rgba(249,115,22,0.35));border-color:rgba(251,191,36,0.6);flex:1.4;font-size:14px;padding:14px 6px;line-height:1.2;color:#fef3c7;box-shadow:0 3px 0 rgba(146,64,14,0.3)}
+#btn-boost.cooldown{opacity:0.45;pointer-events:none}
+#btn-boost.boosting{background:linear-gradient(135deg,rgba(239,68,68,0.6),rgba(251,146,60,0.6));animation:boostGlow .25s ease-in-out infinite alternate}
+@keyframes boostGlow{to{box-shadow:0 0 18px rgba(251,146,60,0.7)}}
+
+/* Pressure gauge */
+#pressure-row{display:flex;align-items:center;gap:8px;margin-top:8px}
+#pressure-label{font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1px;flex-shrink:0}
+#pressure-track{flex:1;height:6px;background:rgba(255,255,255,0.1);border-radius:3px}
+#pressure-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#22d3ee,#86efac);transition:width .3s}
+#pressure-pct{font-size:10px;color:rgba(255,255,255,0.5);flex-shrink:0;min-width:28px;text-align:right}
+
+/* ── Math Quiz overlay ── */
+#quiz-ovl{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(5,12,2,0.97);backdrop-filter:blur(10px);border-top:3px solid #ef4444;padding:14px 16px 20px;display:none}
+#quiz-label{text-align:center;color:rgba(251,191,36,0.8);font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:6px}
+#quiz-q{text-align:center;color:white;font-size:26px;font-weight:900;margin-bottom:12px}
+#quiz-choices{display:flex;gap:10px;justify-content:center}
+.quiz-btn{flex:1;max-width:88px;padding:14px 4px;border:2px solid rgba(255,255,255,.22);border-radius:14px;background:rgba(255,255,255,.08);color:#fff;font-size:20px;font-weight:900;cursor:pointer;transition:all .12s;font-family:inherit;-webkit-tap-highlight-color:transparent}
+.quiz-btn:active{transform:scale(.9);background:rgba(239,68,68,.4)}
+
+/* Overlays handled by game-modal.js */
+
+/* ── Train Select — soft palette ── */
+#select-ovl{position:fixed;inset:0;z-index:400;background:linear-gradient(180deg,#1a1028 0%,#2a1848 40%,#1e1230 70%,#140e22 100%);display:flex;flex-direction:column;overflow:hidden}
+#select-header{padding:14px 16px 8px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+#sel-back{background:rgba(248,240,255,0.9);border:2px solid rgba(180,160,220,0.5);border-radius:12px;color:#3b2066;padding:8px 14px;font-size:14px;cursor:pointer;font-family:inherit;box-shadow:0 3px 0 rgba(100,60,160,0.2);font-weight:900;min-width:100px;text-align:center}
+#sel-back:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(100,60,160,0.2)}
+#sel-title{font-size:16px;font-weight:900;color:#c4b5fd;flex:1;text-align:center}
+#select-body{flex:1;overflow-y:auto;padding:8px 14px 20px;-webkit-overflow-scrolling:touch}
+.cat-btn{width:100%;display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:16px;cursor:pointer;margin-bottom:10px;text-align:left;border:2px solid rgba(180,160,220,0.2);transition:all .15s;background:rgba(248,240,255,0.06);color:#e9d5ff;font-family:inherit}
+.cat-btn:active{transform:scale(.97);background:rgba(139,92,246,0.15)}
+.cat-emoji{font-size:32px;flex-shrink:0}
+.cat-info{flex:1;min-width:0}
+.cat-name{font-size:14px;font-weight:900;color:#e9d5ff}
+.cat-desc{font-size:11px;color:rgba(200,180,230,.5);margin-top:2px}
+.cat-arr{font-size:18px;color:rgba(200,180,230,.3)}
+.train-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+@media(min-width:480px){.train-grid{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:700px){.train-grid{grid-template-columns:repeat(5,1fr)}}
+.train-card{background:rgba(248,240,255,0.06);border:2px solid rgba(180,160,220,0.2);border-radius:12px;padding:8px 6px;cursor:pointer;text-align:center;transition:all .15s;font-family:inherit;color:#e9d5ff;overflow:hidden}
+.train-card:active,.train-card.sel{border-color:#a78bfa;background:rgba(139,92,246,0.18)}
+.train-emoji{font-size:28px;display:block;margin-bottom:4px}
+.train-nm{font-size:11px;font-weight:900;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.train-sub{font-size:9px;color:rgba(200,180,230,.45);margin-top:1px}
+.train-spd{font-size:10px;color:#fbbf24;font-weight:700;margin-top:2px}
+#go-btn-wrap{padding:12px 16px 20px;flex-shrink:0}
+#go-btn{width:100%;padding:16px 0;border-radius:18px;background:linear-gradient(160deg,#4ade80,#22c55e);border:none;color:#fff;font-size:17px;font-weight:900;cursor:pointer;box-shadow:0 4px 0 #15803d;font-family:inherit;display:none}
+#go-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #15803d}
+
+/* Back crumb */
+#sel-crumb{display:none;align-items:center;gap:6px;padding:0 16px 8px;cursor:pointer;color:rgba(200,180,230,.5);font-size:13px}
+#sel-crumb:active{color:#e9d5ff}
+
+/* Flash */
+#flash{position:fixed;inset:0;z-index:99;pointer-events:none;opacity:0;transition:opacity .05s}
+</style>
+</head>
+<body>
+<canvas id="pixi-canvas"></canvas>
+<audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
+
+<!-- HUD Top -->
+<div id="hud-top">
+  <button id="btn-back" type="button" onclick="confirmBack()">← Kembali</button>
+  <div id="train-name-badge">🚂 —</div>
+  <div id="race-info">
+    <div id="distance-text">0 m</div>
+    <div id="position-badge">🏁 Mulai!</div>
+  </div>
+  <button id="btn-pause" onclick="togglePause()" style="pointer-events:all;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.25);border-radius:10px;color:#fff;padding:5px 8px;font-size:14px;cursor:pointer;font-family:inherit;flex-shrink:0">⏸</button>
+  <div id="lives-hud">❤️❤️❤️</div>
+  <div id="speed-hud">0 km/h</div>
+</div>
+<div id="prog-strip"><div id="prog-fill"></div></div>
+<div id="cp-row">
+  <span class="cp-dot" id="cp0">🚉</span>
+  <span class="cp-dot" id="cp1">🚉</span>
+  <span class="cp-dot" id="cp2">🚉</span>
+  <span class="cp-dot" id="cp3">🏁</span>
+</div>
+
+<!-- Controls -->
+<div id="ctrl-area">
+  <div id="ctrl-row">
+    <button class="ctrl-btn" id="btn-up"
+      ontouchstart="laneUp();event.preventDefault()" onclick="laneUp()">Atas</button>
+    <button class="ctrl-btn" id="btn-boost" onclick="triggerBoost()">BOOST!</button>
+    <button class="ctrl-btn" id="btn-dn"
+      ontouchstart="laneDn();event.preventDefault()" onclick="laneDn()">Bawah</button>
+  </div>
+  <div id="pressure-row">
+    <span id="pressure-label">TEKANAN</span>
+    <div id="pressure-track"><div id="pressure-fill" style="width:70%"></div></div>
+    <span id="pressure-pct">70%</span>
+  </div>
+</div>
+
+<!-- Math Quiz -->
+<div id="quiz-ovl">
+  <div id="quiz-label">🔥 JAWAB UNTUK BOOST!</div>
+  <div id="quiz-q">? + ? = ?</div>
+  <div id="quiz-choices"></div>
+</div>
+
+<!-- Train Select -->
+<div id="select-ovl">
+  <div id="select-header">
+    <button id="sel-back" type="button" onclick="selBack()">← Kembali</button>
+    <div id="sel-title">Pilih Kereta 🚂</div>
+  </div>
+  <div id="sel-crumb" onclick="showCategories()">← Semua Kategori</div>
+  <div id="select-body"></div>
+  <div id="go-btn-wrap"><button id="go-btn" onclick="startRace()">🚦 Mulai Balapan!</button></div>
+</div>
+
+<script src="game-modal.js"></script>
+
+<div id="flash"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
+<script>
+'use strict'
+// ═══════════════════════════════════════════════════════════
+//  TRAIN CATALOG
+// ═══════════════════════════════════════════════════════════
+const TRAIN_CATS = [
+  {
+    key:'steam_id', name:'Uap Indonesia 🇮🇩', emoji:'🚂',
+    color:'#92400e', desc:'Lokomotif uap klasik koleksi Indonesia',
+    trains:[
+      {key:'b2507',  name:'B 25 07',  sub:'Ambarawa 1902',  emoji:'🚂', bodyColor:'#1a1a2e', accColor:'#e11d48', kmh:30,  baseSpeed:1.55, boostMult:1.55, boostDur:1600, desc:'Pendaki gunung Ambarawa! Masih beroperasi sebagai wisata.'},
+      {key:'c2801',  name:'C 28 01',  sub:'Jawa 1921',       emoji:'🚂', bodyColor:'#451a03', accColor:'#f59e0b', kmh:45,  baseSpeed:1.75, boostMult:1.50, boostDur:1500, desc:'Lokomotif ekspres Jawa era kolonial.'},
+      {key:'b1304',  name:'B 13 04',  sub:'Bandung 1914',    emoji:'🚂', bodyColor:'#0c0a09', accColor:'#78716c', kmh:40,  baseSpeed:1.65, boostMult:1.48, boostDur:1500, desc:'Hitam legam penakluk jalur Priangan.'},
+      {key:'d1408',  name:'D 14 08',  sub:'Malang 1930',     emoji:'🚂', bodyColor:'#431407', accColor:'#dc2626', kmh:55,  baseSpeed:1.90, boostMult:1.52, boostDur:1600, desc:'Si Api Merah kebanggaan Malang!'},
+      {key:'e1060',  name:'E 10 60',  sub:'Sumatera 1925',   emoji:'🚂', bodyColor:'#1c1917', accColor:'#a16207', kmh:35,  baseSpeed:1.60, boostMult:1.45, boostDur:1400, desc:'Raja jalur Sumatera Barat.'},
+      {key:'c5130',  name:'C 51 30',  sub:'Solo 1928',       emoji:'🚂', bodyColor:'#422006', accColor:'#f97316', kmh:60,  baseSpeed:2.00, boostMult:1.55, boostDur:1700, desc:'Ekspres Solo–Yogya, andalan Pakubuwono!'},
+      {key:'b5002',  name:'B 50 02',  sub:'Jawa 1900',       emoji:'🚂', bodyColor:'#292524', accColor:'#84cc16', kmh:38,  baseSpeed:1.62, boostMult:1.46, boostDur:1450, desc:'Veteran perintis rel Jawa pertama.'},
+      {key:'c3004',  name:'C 30 04',  sub:'Surabaya 1922',   emoji:'🚂', bodyColor:'#3b0764', accColor:'#c084fc', kmh:50,  baseSpeed:1.82, boostMult:1.50, boostDur:1550, desc:'Unggulan jalur pantai utara Jawa.'},
+      {key:'d5201',  name:'D 52 01',  sub:'Pasundan 1943',   emoji:'🚂', bodyColor:'#1e293b', accColor:'#38bdf8', kmh:65,  baseSpeed:2.10, boostMult:1.58, boostDur:1700, desc:'Lokomotif angkutan batu bara tercepat!'},
+      {key:'c2401',  name:'C 24 01',  sub:'Sumbar 1918',     emoji:'🚂', bodyColor:'#44403c', accColor:'#fbbf24', kmh:42,  baseSpeed:1.68, boostMult:1.47, boostDur:1480, desc:'Pendaki bukit Padang Panjang.'},
+      {key:'b2002',  name:'B 20 02',  sub:'Ambarawa 1891',   emoji:'🚂', bodyColor:'#0f172a', accColor:'#64748b', kmh:28,  baseSpeed:1.48, boostMult:1.44, boostDur:1350, desc:'Lokomotif tua paling tua koleksi museum.'},
+      {key:'c1901',  name:'C 19 01',  sub:'Jawa 1905',       emoji:'🚂', bodyColor:'#422006', accColor:'#fb923c', kmh:32,  baseSpeed:1.52, boostMult:1.46, boostDur:1400, desc:'Kuda beban jalur perkebunan.'},
+      {key:'d1601',  name:'D 16 01',  sub:'Jawa 1932',       emoji:'🚂', bodyColor:'#1c1917', accColor:'#4ade80', kmh:58,  baseSpeed:1.95, boostMult:1.53, boostDur:1600, desc:'Lokomotif angkutan barang era Depresi Besar.'},
+      {key:'e2202',  name:'E 22 02',  sub:'Aceh 1930',       emoji:'🚂', bodyColor:'#172554', accColor:'#60a5fa', kmh:36,  baseSpeed:1.58, boostMult:1.44, boostDur:1380, desc:'Penguasa jalur Aceh–Medan.'},
+      {key:'f1001',  name:'F 10 01',  sub:'Kalimantan 1940', emoji:'🚂', bodyColor:'#14532d', accColor:'#86efac', kmh:33,  baseSpeed:1.53, boostMult:1.45, boostDur:1400, desc:'Angkutan kayu hutan Borneo.'},
+      {key:'caseyjr', name:'Casey Jr',  sub:'B 2-4-0',        emoji:'🚂', bodyColor:'#1e2a4a', accColor:'#c0392b', kmh:40,  baseSpeed:1.65, boostMult:1.50, boostDur:1500, desc:'Lokomotif sirkus legendaris! Si kecil yang berani.'},
+      {key:'c1205',  name:'C 12 05',  sub:'Jawa 1911',       emoji:'🚂', bodyColor:'#1c1917', accColor:'#ef4444', kmh:35,  baseSpeed:1.58, boostMult:1.46, boostDur:1420, desc:'Lokomotif tank ringan jalur cabang Jawa.'},
+      {key:'b2502',  name:'B 25 02',  sub:'Ambarawa 1902',   emoji:'🚂', bodyColor:'#292524', accColor:'#f97316', kmh:28,  baseSpeed:1.46, boostMult:1.44, boostDur:1350, desc:'Saudara B 25 07, rak gigi Ambarawa!'},
+      {key:'c2701',  name:'C 27 01',  sub:'Jawa 1919',       emoji:'🚂', bodyColor:'#3b0764', accColor:'#d946ef', kmh:48,  baseSpeed:1.78, boostMult:1.49, boostDur:1520, desc:'Lokomotif ekspres era Hindia Belanda.'},
+      {key:'d1901',  name:'D 19 01',  sub:'Jawa 1935',       emoji:'🚂', bodyColor:'#0f172a', accColor:'#38bdf8', kmh:62,  baseSpeed:2.05, boostMult:1.56, boostDur:1680, desc:'Ekspres malam Bandung–Jakarta.'},
+      {key:'e1002',  name:'E 10 02',  sub:'Sumatera 1920',   emoji:'🚂', bodyColor:'#422006', accColor:'#fbbf24', kmh:30,  baseSpeed:1.50, boostMult:1.43, boostDur:1380, desc:'Angkutan batu bara Ombilin.'},
+      {key:'b5101',  name:'B 51 01',  sub:'Jawa 1902',       emoji:'🚂', bodyColor:'#1e293b', accColor:'#94a3b8', kmh:32,  baseSpeed:1.52, boostMult:1.45, boostDur:1400, desc:'Pionir jalur Semarang–Tanggung.'},
+      {key:'c5301',  name:'C 53 01',  sub:'Solo 1930',       emoji:'🚂', bodyColor:'#451a03', accColor:'#dc2626', kmh:55,  baseSpeed:1.88, boostMult:1.51, boostDur:1580, desc:'Kebanggaan Mangkunegaran Solo.'},
+      {key:'d5301',  name:'D 53 01',  sub:'Jawa 1944',       emoji:'🚂', bodyColor:'#0c0a09', accColor:'#84cc16', kmh:60,  baseSpeed:1.98, boostMult:1.54, boostDur:1650, desc:'Lokomotif militer Jepang di Jawa.'},
+      {key:'b1109',  name:'B 11 09',  sub:'Jawa 1888',       emoji:'🚂', bodyColor:'#44403c', accColor:'#d97706', kmh:25,  baseSpeed:1.42, boostMult:1.40, boostDur:1320, desc:'Salah satu kereta tertua koleksi museum!'},
+      {key:'c3001',  name:'C 30 01',  sub:'Surabaya 1920',   emoji:'🚂', bodyColor:'#14532d', accColor:'#22c55e', kmh:50,  baseSpeed:1.80, boostMult:1.50, boostDur:1540, desc:'Pelopor jalur Surabaya–Pasuruan.'},
+      {key:'d1001',  name:'D 10 01',  sub:'Bandung 1928',    emoji:'🚂', bodyColor:'#172554', accColor:'#818cf8', kmh:52,  baseSpeed:1.84, boostMult:1.50, boostDur:1560, desc:'Penguasa tanjakan Cimahi–Padalarang.'},
+      {key:'e2001',  name:'E 20 01',  sub:'Sumatera 1928',   emoji:'🚂', bodyColor:'#7f1d1d', accColor:'#fca5a5', kmh:38,  baseSpeed:1.62, boostMult:1.47, boostDur:1450, desc:'Jalur sempit Padang–Bukittinggi.'},
+      {key:'c1801',  name:'C 18 01',  sub:'Jawa 1908',       emoji:'🚂', bodyColor:'#1e1b4b', accColor:'#c084fc', kmh:42,  baseSpeed:1.68, boostMult:1.48, boostDur:1480, desc:'Lokomotif angkutan gula perkebunan.'},
+      {key:'b2201',  name:'B 22 01',  sub:'Madura 1898',     emoji:'🚂', bodyColor:'#0f172a', accColor:'#67e8f9', kmh:30,  baseSpeed:1.50, boostMult:1.43, boostDur:1380, desc:'Satu-satunya lokomotif dari Madura!'},
+      {key:'d1501',  name:'D 15 01',  sub:'Jawa 1931',       emoji:'🚂', bodyColor:'#422006', accColor:'#e11d48', kmh:56,  baseSpeed:1.92, boostMult:1.52, boostDur:1600, desc:'Ekspres Semarang–Solo era Depresi.'},
+    ]
+  },
+  {
+    key:'steam_world', name:'Uap Dunia 🌍', emoji:'🚂',
+    color:'#78350f', desc:'Lokomotif uap legendaris dari seluruh dunia',
+    trains:[
+      {key:'mallard',  name:'LNER Mallard',  sub:'Inggris 1938',   emoji:'🚂', bodyColor:'#1d4ed8', accColor:'#93c5fd', kmh:203, baseSpeed:3.50, boostMult:1.60, boostDur:1800, desc:'Uap tercepat sepanjang masa: 203 km/h! 🏆'},
+      {key:'big_boy',  name:'UP Big Boy',    sub:'USA 1941',        emoji:'🚂', bodyColor:'#292524', accColor:'#fbbf24', kmh:128, baseSpeed:2.80, boostMult:1.55, boostDur:1700, desc:'Lokomotif terbesar & terberat dunia!'},
+      {key:'flying_s', name:'Flying Scotsman',sub:'Inggris 1923',  emoji:'🚂', bodyColor:'#14532d', accColor:'#4ade80', kmh:160, baseSpeed:3.10, boostMult:1.58, boostDur:1750, desc:'Bintang jalur London–Edinburgh!'},
+      {key:'mikado',   name:'JNR D51',       sub:'Jepang 1936',    emoji:'🚂', bodyColor:'#1c1917', accColor:'#e11d48', kmh:100, baseSpeed:2.50, boostMult:1.50, boostDur:1600, desc:'D51 — lokomotif paling populer Jepang!'},
+      {key:'br_stan',  name:'BR Standard 5', sub:'Inggris 1951',   emoji:'🚂', bodyColor:'#1e1b4b', accColor:'#818cf8', kmh:145, baseSpeed:2.90, boostMult:1.52, boostDur:1650, desc:'Andalan British Railways pasca-perang.'},
+      {key:'garratt',  name:'Garratt GBE',   sub:'Afrika 1928',    emoji:'🚂', bodyColor:'#292524', accColor:'#f97316', kmh:80,  baseSpeed:2.20, boostMult:1.48, boostDur:1550, desc:'Raksasa berkend uap gunung Afrika!'},
+      {key:'p36',      name:'P36',            sub:'USSR 1950',      emoji:'🚂', bodyColor:'#0f4c32', accColor:'#34d399', kmh:170, baseSpeed:3.20, boostMult:1.55, boostDur:1700, desc:'Keanggunan Soviet era stalinisme!'},
+      {key:'cr_jf',    name:'CR JF',          sub:'China 1918',     emoji:'🚂', bodyColor:'#451a03', accColor:'#dc2626', kmh:110, baseSpeed:2.65, boostMult:1.50, boostDur:1600, desc:'Kuda beban jalur manchurian.'},
+      {key:'sam_class',name:'SAR Class 25',   sub:'S.Afrika 1953', emoji:'🚂', bodyColor:'#1c1917', accColor:'#fcd34d', kmh:120, baseSpeed:2.75, boostMult:1.52, boostDur:1650, desc:'Condensing loco Gurun Karoo!'},
+      {key:'c62_jnr',  name:'JNR C62',        sub:'Jepang 1948',   emoji:'🚂', bodyColor:'#1e293b', accColor:'#7dd3fc', kmh:130, baseSpeed:2.85, boostMult:1.54, boostDur:1680, desc:'Ekspres Hokkaido tercepat!'},
+      {key:'sncf_141', name:'SNCF 141R',      sub:'Prancis 1945',  emoji:'🚂', bodyColor:'#172554', accColor:'#93c5fd', kmh:130, baseSpeed:2.85, boostMult:1.52, boostDur:1650, desc:'Lokomotif rekonstruksi Prancis pascaperang.'},
+      {key:'selkirk',  name:'CPR Selkirk',    sub:'Kanada 1929',   emoji:'🚂', bodyColor:'#292524', accColor:'#a3e635', kmh:112, baseSpeed:2.68, boostMult:1.50, boostDur:1600, desc:'Penakluk Rocky Mountains Canada!'},
+      {key:'duchess',  name:'Duchess LMS',    sub:'Inggris 1937',  emoji:'🚂', bodyColor:'#7f1d1d', accColor:'#fca5a5', kmh:183, baseSpeed:3.30, boostMult:1.58, boostDur:1780, desc:'Coronation Scot — streamlined beauty!'},
+      {key:'a4_bittern',name:'LNER A4 Bittern',sub:'Inggris 1937', emoji:'🚂', bodyColor:'#14532d', accColor:'#86efac', kmh:180, baseSpeed:3.25, boostMult:1.57, boostDur:1760, desc:'Saudara Mallard, masih jalan hari ini!'},
+      {key:'gwr_king', name:'GWR King Class', sub:'Inggris 1927',  emoji:'🚂', bodyColor:'#14532d', accColor:'#fbbf24', kmh:150, baseSpeed:3.00, boostMult:1.54, boostDur:1700, desc:'Raja rel Great Western Railway!'},
+      {key:'up_844',   name:'UP 844',          sub:'USA 1944',      emoji:'🚂', bodyColor:'#1c1917', accColor:'#94a3b8', kmh:160, baseSpeed:3.10, boostMult:1.56, boostDur:1730, desc:'Satu-satunya lokomotif UP yg tidak pensiun!'},
+      {key:'nswgr_38', name:'NSWGR 38 Class', sub:'Australia 1943',emoji:'🚂', bodyColor:'#14532d', accColor:'#f97316', kmh:130, baseSpeed:2.85, boostMult:1.52, boostDur:1660, desc:'Pacific streamliner Australia!'},
+      {key:'dr_br52',  name:'DR BR 52',        sub:'Jerman 1942',   emoji:'🚂', bodyColor:'#292524', accColor:'#78716c', kmh:80,  baseSpeed:2.20, boostMult:1.48, boostDur:1550, desc:'Kriegslok — produksi massal WWII!'},
+      {key:'sncb_12',  name:'SNCB Type 12',   sub:'Belgia 1939',   emoji:'🚂', bodyColor:'#1e3a8a', accColor:'#93c5fd', kmh:165, baseSpeed:3.15, boostMult:1.55, boostDur:1720, desc:'Streamliner aerodinamis Belgia!'},
+      {key:'sar_15f',  name:'SAR Class 15F',  sub:'S.Afrika 1938', emoji:'🚂', bodyColor:'#1c1917', accColor:'#dc2626', kmh:90,  baseSpeed:2.30, boostMult:1.48, boostDur:1550, desc:'4-8-2 Mountain pekerja keras!'},
+      {key:'prr_t1',   name:'PRR T1',          sub:'USA 1942',      emoji:'🚂', bodyColor:'#0f172a', accColor:'#fbbf24', kmh:160, baseSpeed:3.10, boostMult:1.56, boostDur:1730, desc:'4-4-4-4 Duplex paling cantik!'},
+      {key:'renfe_242',name:'RENFE 242F',      sub:'Spanyol 1956',  emoji:'🚂', bodyColor:'#14532d', accColor:'#4ade80', kmh:120, baseSpeed:2.70, boostMult:1.50, boostDur:1620, desc:'Santa Fe Spanyol, Confederación!'},
+    ]
+  },
+  {
+    key:'diesel_id', name:'Diesel Indonesia 🇮🇩', emoji:'🚃',
+    color:'#1e40af', desc:'Lokomotif diesel era modern KAI',
+    trains:[
+      {key:'cc201',  name:'CC 201',    sub:'GE 1977',        emoji:'🚃', bodyColor:'#1e3a8a', accColor:'#3b82f6', kmh:120, baseSpeed:3.20, boostMult:1.45, boostDur:1500, desc:'Workhorse sejati KAI, 300+ unit!'},
+      {key:'cc203',  name:'CC 203',    sub:'GE/INKA 1994',   emoji:'🚃', bodyColor:'#14532d', accColor:'#4ade80', kmh:130, baseSpeed:3.50, boostMult:1.42, boostDur:1480, desc:'Si Hijau Roket jalur Jawa!'},
+      {key:'cc204',  name:'CC 204',    sub:'Bombardier 2004',emoji:'🚃', bodyColor:'#0f172a', accColor:'#38bdf8', kmh:120, baseSpeed:3.30, boostMult:1.43, boostDur:1490, desc:'Bombardier biru kebanggaan KAI.'},
+      {key:'cc206',  name:'CC 206',    sub:'GE 2012',        emoji:'🚃', bodyColor:'#312e81', accColor:'#818cf8', kmh:140, baseSpeed:3.80, boostMult:1.40, boostDur:1470, desc:'GE terbaru & paling modern KAI.'},
+      {key:'cc300',  name:'CC 300',    sub:'INKA 2016',      emoji:'🚃', bodyColor:'#1e1b4b', accColor:'#7c3aed', kmh:160, baseSpeed:4.20, boostMult:1.38, boostDur:1450, desc:'Masa depan traksi diesel KAI!'},
+      {key:'bb200',  name:'BB 200',    sub:'INKA 1953',      emoji:'🚃', bodyColor:'#451a03', accColor:'#f59e0b', kmh:80,  baseSpeed:2.60, boostMult:1.48, boostDur:1520, desc:'Diesel pertama Indonesia, veteran!'},
+      {key:'bb301',  name:'BB 301',    sub:'Krupp 1958',     emoji:'🚃', bodyColor:'#14532d', accColor:'#84cc16', kmh:90,  baseSpeed:2.75, boostMult:1.46, boostDur:1510, desc:'Krupp Jerman andalkan KAI 60-an.'},
+      {key:'cc201r', name:'CC 201 Siliwangi',sub:'Modif 1990',emoji:'🚃',bodyColor:'#1e3a8a',accColor:'#fcd34d',kmh:120,  baseSpeed:3.25, boostMult:1.45, boostDur:1500, desc:'CC201 livery Siliwangi khas Jawa Barat!'},
+      {key:'cc206lo',name:'CC 206 Logawa',sub:'GE 2013',     emoji:'🚃', bodyColor:'#422006', accColor:'#fb923c', kmh:140, baseSpeed:3.82, boostMult:1.40, boostDur:1470, desc:'Livery khusus Logawa Express.'},
+      {key:'dh200',  name:'DH 200',    sub:'INKA 2004',      emoji:'🚃', bodyColor:'#1c1917', accColor:'#94a3b8', kmh:100, baseSpeed:3.00, boostMult:1.44, boostDur:1490, desc:'Diesel hidraulik jalur non-elektrik.'},
+      {key:'cc201_argo',name:'CC 201 Argo',sub:'Modif 1995',  emoji:'🚃', bodyColor:'#172554', accColor:'#f43f5e', kmh:125, baseSpeed:3.30, boostMult:1.44, boostDur:1500, desc:'Livery Argo ekspres premium!'},
+      {key:'cc203_jkt',name:'CC 203 Jakarta',sub:'GE 1998',   emoji:'🚃', bodyColor:'#0f4c32', accColor:'#22c55e', kmh:130, baseSpeed:3.50, boostMult:1.42, boostDur:1480, desc:'CC 203 livery Jayakarta hijau tua!'},
+      {key:'cc206_taks',name:'CC 206 Taksaka',sub:'GE 2014',  emoji:'🚃', bodyColor:'#1e3a8a', accColor:'#fbbf24', kmh:145, baseSpeed:3.85, boostMult:1.40, boostDur:1470, desc:'Livery Taksaka Yogya–Jakarta!'},
+      {key:'bb302',  name:'BB 302',    sub:'GE 1965',         emoji:'🚃', bodyColor:'#451a03', accColor:'#dc2626', kmh:90,  baseSpeed:2.75, boostMult:1.46, boostDur:1510, desc:'GE klasik angkutan barang 60-an!'},
+      {key:'bb303',  name:'BB 303',    sub:'Alsthom 1971',    emoji:'🚃', bodyColor:'#172554', accColor:'#93c5fd', kmh:95,  baseSpeed:2.85, boostMult:1.46, boostDur:1510, desc:'Alsthom Prancis untuk KAI!'},
+      {key:'cc201_sby',name:'CC 201 Surabaya',sub:'Modif 2000',emoji:'🚃',bodyColor:'#0f172a', accColor:'#60a5fa', kmh:120, baseSpeed:3.20, boostMult:1.45, boostDur:1500, desc:'CC 201 livery Mutiara Timur!'},
+      {key:'cc204_smg',name:'CC 204 Semarang',sub:'Bombardier',emoji:'🚃',bodyColor:'#1e1b4b', accColor:'#c084fc', kmh:120, baseSpeed:3.30, boostMult:1.43, boostDur:1490, desc:'Bombardier livery Bengawan Semarang!'},
+      {key:'cc206_gbk',name:'CC 206 Gajayana',sub:'GE 2015',  emoji:'🚃', bodyColor:'#14532d', accColor:'#86efac', kmh:140, baseSpeed:3.80, boostMult:1.40, boostDur:1470, desc:'Livery Gajayana Malang–Jakarta!'},
+      {key:'dh350',  name:'DH 350',    sub:'INKA 2010',       emoji:'🚃', bodyColor:'#292524', accColor:'#f97316', kmh:110, baseSpeed:3.10, boostMult:1.44, boostDur:1490, desc:'Diesel hidraulik generasi baru!'},
+      {key:'cc201_srb',name:'CC 201 Sriwijaya',sub:'Modif 1988',emoji:'🚃',bodyColor:'#7f1d1d',accColor:'#fca5a5', kmh:120, baseSpeed:3.20, boostMult:1.45, boostDur:1500, desc:'Livery Sriwijaya Sumatera Selatan!'},
+      {key:'cc203_cpt',name:'CC 203 Ciremai',sub:'GE 1996',   emoji:'🚃', bodyColor:'#422006', accColor:'#fb923c', kmh:130, baseSpeed:3.50, boostMult:1.42, boostDur:1480, desc:'Livery Ciremai Bandung ekspres!'},
+      {key:'bb304',  name:'BB 304',    sub:'INKA 1980',       emoji:'🚃', bodyColor:'#0c4a6e', accColor:'#67e8f9', kmh:85,  baseSpeed:2.65, boostMult:1.47, boostDur:1515, desc:'INKA diesel ringan era 80-an!'},
+      {key:'cc201_bgs',name:'CC 201 Bogowonto',sub:'Modif 1992',emoji:'🚃',bodyColor:'#14532d',accColor:'#4ade80', kmh:120, baseSpeed:3.20, boostMult:1.45, boostDur:1500, desc:'Livery Bogowonto Purwokerto!'},
+      {key:'mct_kai', name:'MCW Railbus KAI',sub:'INKA 2013', emoji:'🚃', bodyColor:'#dc2626', accColor:'#fef3c7', kmh:60,  baseSpeed:2.20, boostMult:1.50, boostDur:1550, desc:'Railbus merah Batara Kresna Solo!'},
+    ]
+  },
+  {
+    key:'diesel_world', name:'Diesel Dunia 🌍', emoji:'🚃',
+    color:'#1d4ed8', desc:'Lokomotif diesel top dari seluruh dunia',
+    trains:[
+      {key:'sd40',    name:'EMD SD40-2',  sub:'USA 1972',      emoji:'🚃', bodyColor:'#292524', accColor:'#f97316', kmh:120, baseSpeed:3.20, boostMult:1.45, boostDur:1500, desc:'Legenda rel Amerika! 4.000+ unit!'},
+      {key:'class66', name:'Class 66',    sub:'Inggris 1998',  emoji:'🚃', bodyColor:'#0f172a', accColor:'#38bdf8', kmh:120, baseSpeed:3.20, boostMult:1.44, boostDur:1490, desc:'Pekerja keras jalur Inggris modern.'},
+      {key:'br218',   name:'BR 218',      sub:'Jerman 1968',   emoji:'🚃', bodyColor:'#172554', accColor:'#93c5fd', kmh:140, baseSpeed:3.70, boostMult:1.42, boostDur:1480, desc:'V160 — andalan DB sekian dekade.'},
+      {key:'di8',     name:'NSB Di 8',    sub:'Norwegia 1996', emoji:'🚃', bodyColor:'#1e3a8a', accColor:'#bfdbfe', kmh:160, baseSpeed:4.00, boostMult:1.40, boostDur:1460, desc:'Raja gunung Scandinavia!'},
+      {key:'gt42ac',  name:'GT42ACU',     sub:'GE Africa',     emoji:'🚃', bodyColor:'#14532d', accColor:'#86efac', kmh:120, baseSpeed:3.20, boostMult:1.44, boostDur:1490, desc:'Ekspor GE untuk Afrika & Asia.'},
+      {key:'em7',     name:'Amtrak AEM-7',sub:'USA 1980',      emoji:'🚃', bodyColor:'#172554', accColor:'#f43f5e', kmh:200, baseSpeed:4.20, boostMult:1.42, boostDur:1500, desc:'Kecepatan interstate Amtrak!'},
+      {key:'df11',    name:'CR DF11',     sub:'China 1990',    emoji:'🚃', bodyColor:'#1c1917', accColor:'#fbbf24', kmh:170, baseSpeed:4.00, boostMult:1.40, boostDur:1460, desc:'Ekspres penumpang China diesel.'},
+      {key:'te33',    name:'2TE33A',      sub:'Rusia 2007',    emoji:'🚃', bodyColor:'#1e293b', accColor:'#64748b', kmh:120, baseSpeed:3.20, boostMult:1.43, boostDur:1480, desc:'Raksasa angkutan batu bara Siberia!'},
+      {key:'f125',    name:'Siemens F125',sub:'USA 2016',      emoji:'🚃', bodyColor:'#0c4a6e', accColor:'#38bdf8', kmh:200, baseSpeed:4.30, boostMult:1.40, boostDur:1450, desc:'Diesel bi-level super-modern!'},
+      {key:'g12',     name:'EMD G12',     sub:'Ekspor 1955',   emoji:'🚃', bodyColor:'#451a03', accColor:'#f59e0b', kmh:100, baseSpeed:2.90, boostMult:1.46, boostDur:1510, desc:'Lokomotif ekspor EMD paling ikonik!'},
+      {key:'class37', name:'Class 37',    sub:'Inggris 1960',  emoji:'🚃', bodyColor:'#14532d', accColor:'#34d399', kmh:145, baseSpeed:3.70, boostMult:1.42, boostDur:1480, desc:'Bull-nose hijau British rail!'},
+      {key:'pa_alco', name:'Alco PA-1',   sub:'USA 1946',      emoji:'🚃', bodyColor:'#3b0764', accColor:'#c084fc', kmh:161, baseSpeed:4.00, boostMult:1.43, boostDur:1490, desc:'Streamliner silver termegah!'},
+      {key:'gp40',    name:'EMD GP40',    sub:'USA 1965',      emoji:'🚃', bodyColor:'#1e3a8a', accColor:'#fbbf24', kmh:120, baseSpeed:3.15, boostMult:1.44, boostDur:1490, desc:'Geep series — favorit freight USA!'},
+      {key:'ge_c36',  name:'GE C36-7',    sub:'USA 1978',      emoji:'🚃', bodyColor:'#172554', accColor:'#60a5fa', kmh:115, baseSpeed:3.10, boostMult:1.44, boostDur:1490, desc:'Dash-7 GE — workhorse angkutan!'},
+      {key:'sd70',    name:'EMD SD70ACe',  sub:'USA 2004',      emoji:'🚃', bodyColor:'#292524', accColor:'#f97316', kmh:130, baseSpeed:3.40, boostMult:1.43, boostDur:1485, desc:'Diesel terbaru EMD, 4.300 HP!'},
+      {key:'cc206_kai',name:'CC 206 KAI GE',sub:'Indonesia 2012',emoji:'🚃',bodyColor:'#1e3a8a', accColor:'#818cf8', kmh:140, baseSpeed:3.80, boostMult:1.40, boostDur:1470, desc:'GE Evolution terkuat di KAI!'},
+      {key:'f7_emd',  name:'EMD F7 A-unit',sub:'USA 1949',      emoji:'🚃', bodyColor:'#14532d', accColor:'#fcd34d', kmh:165, baseSpeed:3.95, boostMult:1.42, boostDur:1485, desc:'Streamliner ikonik era keemasan!'},
+      {key:'alco_pa1s',name:'Alco PA-1 Silver',sub:'USA 1948',  emoji:'🚃', bodyColor:'#94a3b8', accColor:'#dc2626', kmh:161, baseSpeed:4.00, boostMult:1.43, boostDur:1490, desc:'Santa Fe Warbonnet super cantik!'},
+      {key:'ge_e9',   name:'GE E9 Passenger',sub:'USA 1954',    emoji:'🚃', bodyColor:'#1c1917', accColor:'#ef4444', kmh:175, baseSpeed:4.10, boostMult:1.42, boostDur:1485, desc:'E-unit streamliner passenger!'},
+      {key:'fb2',     name:'Alco FB-2 B-unit',sub:'USA 1950',   emoji:'🚃', bodyColor:'#14532d', accColor:'#86efac', kmh:130, baseSpeed:3.40, boostMult:1.44, boostDur:1490, desc:'B-unit booster tanpa kabin!'},
+      {key:'emd_dl3', name:'EMD DL-3',    sub:'Australia 1960', emoji:'🚃', bodyColor:'#1e293b', accColor:'#94a3b8', kmh:120, baseSpeed:3.20, boostMult:1.44, boostDur:1490, desc:'Ekspor EMD ke Australia!'},
+      {key:'alco_pa1a',name:'Alco PA-1 ATSF',sub:'USA 1946',   emoji:'🚃', bodyColor:'#fbbf24', accColor:'#dc2626', kmh:161, baseSpeed:4.00, boostMult:1.43, boostDur:1490, desc:'Warbonnet livery ATSF klasik!'},
+      {key:'f40ph',   name:'EMD F40PH Amtrak',sub:'USA 1976',   emoji:'🚃', bodyColor:'#1e293b', accColor:'#60a5fa', kmh:160, baseSpeed:3.90, boostMult:1.42, boostDur:1485, desc:'Amtrak Superliner hauler!'},
+      {key:'ge_p42',  name:'GE P42DC Genesis',sub:'USA 1996',   emoji:'🚃', bodyColor:'#1e293b', accColor:'#7c3aed', kmh:175, baseSpeed:4.05, boostMult:1.42, boostDur:1485, desc:'Amtrak Genesis modern!'},
+      {key:'f59phi',  name:'EMD F59PHi Surfliner',sub:'USA 1998',emoji:'🚃',bodyColor:'#172554', accColor:'#38bdf8', kmh:145, baseSpeed:3.75, boostMult:1.42, boostDur:1480, desc:'Pacific Surfliner California!'},
+      {key:'cc300inka',name:'CC 300 INKA',sub:'Indonesia 2016', emoji:'🚃', bodyColor:'#312e81', accColor:'#a78bfa', kmh:160, baseSpeed:4.20, boostMult:1.38, boostDur:1450, desc:'Masa depan traksi KAI!'},
+      {key:'emd_sw1000',name:'EMD SW1000',sub:'USA 1966',       emoji:'🚃', bodyColor:'#451a03', accColor:'#f59e0b', kmh:75,  baseSpeed:2.40, boostMult:1.48, boostDur:1530, desc:'Switcher shunting yard!'},
+      {key:'br_class08',name:'BR Class 08',sub:'Inggris 1953',  emoji:'🚃', bodyColor:'#14532d', accColor:'#22c55e', kmh:25,  baseSpeed:1.50, boostMult:1.50, boostDur:1550, desc:'Shunter paling banyak di Inggris!'},
+      {key:'emd_nw2', name:'EMD NW2',     sub:'USA 1939',       emoji:'🚃', bodyColor:'#1c1917', accColor:'#fbbf24', kmh:95,  baseSpeed:2.80, boostMult:1.46, boostDur:1510, desc:'Switcher perang dunia!'},
+      {key:'alco_s4', name:'Alco S4',     sub:'USA 1950',       emoji:'🚃', bodyColor:'#172554', accColor:'#dc2626', kmh:100, baseSpeed:2.90, boostMult:1.45, boostDur:1500, desc:'Light switcher Alco!'},
+      {key:'bb201inka',name:'BB 201 INKA', sub:'Indonesia 1987', emoji:'🚃', bodyColor:'#14532d', accColor:'#4ade80', kmh:80,  baseSpeed:2.50, boostMult:1.48, boostDur:1530, desc:'Diesel ringan buatan INKA!'},
+      {key:'schi_vt98',name:'Schienenbus VT98',sub:'Jerman 1953',emoji:'🚃',bodyColor:'#7f1d1d', accColor:'#fca5a5', kmh:90,  baseSpeed:2.70, boostMult:1.46, boostDur:1510, desc:'Railbus kecil pedesaan Jerman!'},
+      {key:'br_class103',name:'BR Class 103',sub:'Jerman 1970', emoji:'🚃', bodyColor:'#dc2626', accColor:'#fef3c7', kmh:200, baseSpeed:4.20, boostMult:1.40, boostDur:1460, desc:'Elektrik tercepat DB era 70-an!'},
+      {key:'db_vt98', name:'DB VT98 Uerdingen',sub:'Jerman 1955',emoji:'🚃',bodyColor:'#dc2626', accColor:'#fbbf24', kmh:90,  baseSpeed:2.70, boostMult:1.46, boostDur:1510, desc:'Schienenbus merah klasik!'},
+      {key:'fiat_aln',name:'Fiat ALn668', sub:'Italia 1956',    emoji:'🚃', bodyColor:'#14532d', accColor:'#86efac', kmh:130, baseSpeed:3.40, boostMult:1.43, boostDur:1485, desc:'DMU Italia paling sukses!'},
+      {key:'krd_kai', name:'KRD PT KAI',  sub:'Indonesia 2008', emoji:'🚃', bodyColor:'#0c4a6e', accColor:'#38bdf8', kmh:100, baseSpeed:3.00, boostMult:1.45, boostDur:1500, desc:'Kereta Rel Diesel lokal KAI!'},
+    ]
+  },
+  {
+    key:'emu', name:'KRL & EMU ⚡', emoji:'🚆',
+    color:'#0e7490', desc:'Kereta listrik commuter & regional',
+    trains:[
+      {key:'krl205',  name:'KRL 205',    sub:'JR East 1985',  emoji:'🚆', bodyColor:'#0c4a6e', accColor:'#38bdf8', kmh:100, baseSpeed:3.00, boostMult:1.50, boostDur:1550, desc:'Veteran Tokyo ke Jabodetabek!'},
+      {key:'krl1000', name:'KRL 1000',   sub:'Tokyu 1990',    emoji:'🚆', bodyColor:'#064e3b', accColor:'#34d399', kmh:110, baseSpeed:3.30, boostMult:1.48, boostDur:1530, desc:'Armada hijau Commuter Line.'},
+      {key:'krlie',   name:'KRL i-e',    sub:'INKA 2019',     emoji:'🚆', bodyColor:'#1e3a8a', accColor:'#bfdbfe', kmh:120, baseSpeed:3.60, boostMult:1.45, boostDur:1510, desc:'Commuter Line produksi INKA!'},
+      {key:'kci2000', name:'KCI 2000',   sub:'J-TREC 2023',   emoji:'🚆', bodyColor:'#0f172a', accColor:'#e0f2fe', kmh:120, baseSpeed:3.70, boostMult:1.44, boostDur:1500, desc:'Terbaru & ter-modern Commuter!'},
+      {key:'class380',name:'Class 380',  sub:'Skotlandia 2010',emoji:'🚆',bodyColor:'#172554',accColor:'#93c5fd', kmh:200, baseSpeed:4.20, boostMult:1.42, boostDur:1480, desc:'Desiro UK kecepatan tinggi!'},
+      {key:'rer_a',   name:'MI 2N RER A',sub:'Paris 1996',    emoji:'🚆', bodyColor:'#1e293b', accColor:'#818cf8', kmh:140, baseSpeed:3.80, boostMult:1.44, boostDur:1500, desc:'Tersibuk di Eropa: RER A Paris!'},
+      {key:'sbahn_et',name:'DB ET 423',  sub:'München 2000',  emoji:'🚆', bodyColor:'#1e3a8a', accColor:'#fbbf24', kmh:140, baseSpeed:3.80, boostMult:1.44, boostDur:1500, desc:'S-Bahn Munich super modern!'},
+      {key:'mtr_m',   name:'MTR M Train',sub:'HongKong 2002', emoji:'🚆', bodyColor:'#0f172a', accColor:'#f43f5e', kmh:130, baseSpeed:3.60, boostMult:1.45, boostDur:1510, desc:'Metro paling tepat waktu di dunia!'},
+      {key:'toei',    name:'Toei 5300',  sub:'Tokyo 1991',    emoji:'🚆', bodyColor:'#0c4a6e', accColor:'#60a5fa', kmh:110, baseSpeed:3.30, boostMult:1.47, boostDur:1520, desc:'Andalan Toei Asakusa Line!'},
+      {key:'class442',name:'Class 442',  sub:'Inggris 1988',  emoji:'🚆', bodyColor:'#172554', accColor:'#c084fc', kmh:160, baseSpeed:4.00, boostMult:1.43, boostDur:1490, desc:'Express electrique South Western!'},
+      {key:'dt1',     name:'KTM ETS DT1',sub:'Malaysia 2010', emoji:'🚆', bodyColor:'#14532d', accColor:'#86efac', kmh:140, baseSpeed:3.80, boostMult:1.44, boostDur:1500, desc:'Electric Train Service KL-Ipoh!'},
+      {key:'jrliner', name:'JR 313',     sub:'Jepang 2006',   emoji:'🚆', bodyColor:'#1e293b', accColor:'#7dd3fc', kmh:130, baseSpeed:3.60, boostMult:1.45, boostDur:1510, desc:'EMU serbaguna JR Central!'},
+      {key:'mtr_m_hk',name:'MTR M-Train HK',sub:'HongKong 1979',emoji:'🚆',bodyColor:'#1e293b', accColor:'#f43f5e', kmh:130, baseSpeed:3.60, boostMult:1.44, boostDur:1500, desc:'Metro HK — paling tepat waktu!'},
+      {key:'mrt_ns',  name:'MRT NS Singapore',sub:'Singapore 2017',emoji:'🚆',bodyColor:'#14532d',accColor:'#22c55e',kmh:90,  baseSpeed:2.80, boostMult:1.48, boostDur:1530, desc:'MRT North-South Line SG!'},
+      {key:'bts_siam', name:'BTS Siemens Bangkok',sub:'Thailand 1999',emoji:'🚆',bodyColor:'#0c4a6e',accColor:'#38bdf8',kmh:80, baseSpeed:2.60, boostMult:1.48, boostDur:1530, desc:'Skytrain Bangkok BTS!'},
+      {key:'metro_sh', name:'Metro Shanghai CRRC',sub:'China 2020',emoji:'🚆',bodyColor:'#1e3a8a',accColor:'#fbbf24',kmh:120, baseSpeed:3.30, boostMult:1.45, boostDur:1510, desc:'Metro terpanjang di dunia!'},
+      {key:'cap_urb3', name:'CAF Urbos 3',  sub:'Spanyol 2010',  emoji:'🚆', bodyColor:'#f8fafc', accColor:'#22c55e', kmh:70,  baseSpeed:2.40, boostMult:1.50, boostDur:1550, desc:'Tram modern CAF Spanyol!'},
+      {key:'lrt_manila',name:'LRT Manila Line 1',sub:'Filipina 1984',emoji:'🚆',bodyColor:'#fbbf24',accColor:'#1e3a8a',kmh:60, baseSpeed:2.20, boostMult:1.50, boostDur:1550, desc:'LRT tertua di Asia Tenggara!'},
+      {key:'lrt_jkt',  name:'LRT Jabodebek INKA',sub:'Indonesia 2023',emoji:'🚆',bodyColor:'#1e3a8a',accColor:'#c084fc',kmh:80, baseSpeed:2.60, boostMult:1.48, boostDur:1530, desc:'LRT baru Jabodebek!'},
+      {key:'lrt_plg',  name:'LRT Palembang CRRC',sub:'Indonesia 2018',emoji:'🚆',bodyColor:'#dc2626',accColor:'#fef3c7',kmh:80, baseSpeed:2.60, boostMult:1.48, boostDur:1530, desc:'LRT Asian Games Palembang!'},
+      {key:'tokyo_8000',name:'Tokyo 8000 Series',sub:'Jepang 1969',emoji:'🚆',bodyColor:'#f8fafc',accColor:'#dc2626',kmh:110, baseSpeed:3.30, boostMult:1.46, boostDur:1520, desc:'Tokyu Den-en-toshi legendaris!'},
+    ]
+  },
+  {
+    key:'hsr', name:'Kereta Cepat 🚄', emoji:'🚄',
+    color:'#7c3aed', desc:'HSR, Shinkansen & ekspres mewah dunia',
+    trains:[
+      {key:'kcic',    name:'CR400AF',      sub:'KCIC Whoosh 2023',  emoji:'🚄', bodyColor:'#fafafa', accColor:'#dc2626', kmh:350, baseSpeed:5.50, boostMult:1.35, boostDur:1400, desc:'WHOOSH! Jakarta–Bandung 46 menit!'},
+      {key:'n700s',   name:'N700S',         sub:'Shinkansen 2020',   emoji:'🚄', bodyColor:'#f8fafc', accColor:'#1e40af', kmh:320, baseSpeed:5.20, boostMult:1.38, boostDur:1430, desc:'Shinkansen generasi terbaru!'},
+      {key:'tgv',     name:'TGV Duplex',    sub:'SNCF Prancis',      emoji:'🚄', bodyColor:'#172554', accColor:'#ef4444', kmh:320, baseSpeed:5.00, boostMult:1.40, boostDur:1450, desc:'TGV — penguasa jalur blistre Paris!'},
+      {key:'ice3',    name:'ICE 3',         sub:'DB Jerman 2000',    emoji:'🚄', bodyColor:'#f1f5f9', accColor:'#dc2626', kmh:330, baseSpeed:5.30, boostMult:1.37, boostDur:1420, desc:'ICE 3 — ikon rel tinggi Eropa!'},
+      {key:'ave_s350',name:'AVE S-350',     sub:'Renfe Spanyol',     emoji:'🚄', bodyColor:'#fafafa', accColor:'#ef4444', kmh:365, baseSpeed:5.60, boostMult:1.35, boostDur:1400, desc:'Jalur HSR terpanjang Eropa!'},
+      {key:'cr400bf', name:'CR400BF-G',     sub:'China 2018',        emoji:'🚄', bodyColor:'#f8fafc', accColor:'#fbbf24', kmh:400, baseSpeed:5.90, boostMult:1.33, boostDur:1380, desc:'17 gerbong — kereta panjang tercepat!'},
+      {key:'afrosini',name:'Frecciarossa',  sub:'Trenitalia Italia', emoji:'🚄', bodyColor:'#fafafa', accColor:'#dc2626', kmh:360, baseSpeed:5.55, boostMult:1.35, boostDur:1400, desc:'ETR 1000 — Italia berkecepatan tinggi!'},
+      {key:'e5_hayab',name:'E5 Hayabusa',   sub:'JR East 2011',      emoji:'🚄', bodyColor:'#f0f9ff', accColor:'#7c3aed', kmh:320, baseSpeed:5.20, boostMult:1.38, boostDur:1430, desc:'Shinkansen falcon — Tokyo–Sapporo!'},
+      {key:'alfa_s',  name:'Alfa Pendular', sub:'CP Portugal',       emoji:'🚄', bodyColor:'#fafafa', accColor:'#f97316', kmh:220, baseSpeed:4.50, boostMult:1.40, boostDur:1450, desc:'Tilting express Lisbon–Porto!'},
+      {key:'x2000',   name:'X 2000',        sub:'SJ Swedia 1990',    emoji:'🚄', bodyColor:'#f8fafc', accColor:'#3b82f6', kmh:210, baseSpeed:4.40, boostMult:1.41, boostDur:1460, desc:'Tilting train pionir Scandinavia!'},
+      {key:'hst_ic',  name:'HST 125',       sub:'BR Inggris 1976',   emoji:'🚄', bodyColor:'#172554', accColor:'#f59e0b', kmh:200, baseSpeed:4.30, boostMult:1.42, boostDur:1470, desc:'Inter-City 125 — diesel terkencang!'},
+      {key:'acela',   name:'Acela Express',  sub:'Amtrak USA 2000',  emoji:'🚄', bodyColor:'#1e293b', accColor:'#f43f5e', kmh:240, baseSpeed:4.70, boostMult:1.39, boostDur:1440, desc:'Kereta cepat satu-satunya di Amerika!'},
+      {key:'sapsan',  name:'Velaro Sapsan',  sub:'Rusia 2009',       emoji:'🚄', bodyColor:'#f8fafc', accColor:'#dc2626', kmh:250, baseSpeed:4.80, boostMult:1.38, boostDur:1430, desc:'Siemens Velaro Moskow–Petersburg!'},
+      {key:'iore',    name:'IORE LKAB',      sub:'Swedia 2000',      emoji:'🚄', bodyColor:'#1c1917', accColor:'#a3e635', kmh:60,  baseSpeed:2.00, boostMult:1.55, boostDur:1700, desc:'Pengangkut bijih besi arktik raksasa!'},
+      {key:'e6_koma', name:'E6 Komachi',     sub:'JR East 2013',     emoji:'🚄', bodyColor:'#fafafa', accColor:'#e11d48', kmh:320, baseSpeed:5.20, boostMult:1.38, boostDur:1430, desc:'Bullet merah Akita Shinkansen!'},
+      {key:'eurostar', name:'Eurostar e320', sub:'Siemens 2015',    emoji:'🚄', bodyColor:'#1e293b', accColor:'#fbbf24', kmh:320, baseSpeed:5.20, boostMult:1.38, boostDur:1430, desc:'London–Paris bawah laut!'},
+      {key:'ktx_sancheon',name:'KTX-Sancheon',sub:'Korea 2010',    emoji:'🚄', bodyColor:'#f8fafc', accColor:'#3b82f6', kmh:305, baseSpeed:5.10, boostMult:1.38, boostDur:1430, desc:'HSR Korea Selatan TGV-turunan!'},
+      {key:'talgo350',name:'Talgo 350',      sub:'Renfe Spanyol',   emoji:'🚄', bodyColor:'#f8fafc', accColor:'#dc2626', kmh:350, baseSpeed:5.50, boostMult:1.35, boostDur:1400, desc:'Pato — bebek tercepat Spanyol!'},
+      {key:'haramain',name:'Haramain HSR',   sub:'Saudi 2018',      emoji:'🚄', bodyColor:'#f8fafc', accColor:'#22c55e', kmh:300, baseSpeed:5.00, boostMult:1.39, boostDur:1440, desc:'Mekkah–Madinah express suci!'},
+      {key:'tgv_pos', name:'TGV POS',        sub:'SNCF 2006',       emoji:'🚄', bodyColor:'#1e293b', accColor:'#60a5fa', kmh:320, baseSpeed:5.20, boostMult:1.38, boostDur:1430, desc:'TGV rekord 574.8 km/h (2007)!'},
+      {key:'n700a',   name:'N700A',           sub:'Shinkansen 2013', emoji:'🚄', bodyColor:'#f8fafc', accColor:'#172554', kmh:285, baseSpeed:4.90, boostMult:1.39, boostDur:1440, desc:'Tokaido Shinkansen andalan!'},
+      {key:'italo_ntv',name:'Italo NTV',     sub:'Italia 2012',     emoji:'🚄', bodyColor:'#451a03', accColor:'#dc2626', kmh:360, baseSpeed:5.55, boostMult:1.35, boostDur:1400, desc:'Swasta HSR pertama Eropa!'},
+      {key:'thalys',  name:'Thalys PBKA',    sub:'Belgia 1996',     emoji:'🚄', bodyColor:'#7f1d1d', accColor:'#94a3b8', kmh:300, baseSpeed:5.00, boostMult:1.39, boostDur:1440, desc:'Paris–Brussels–Amsterdam!'},
+      {key:'emu250',  name:'CRRC EMU250',    sub:'China 2021',      emoji:'🚄', bodyColor:'#14532d', accColor:'#4ade80', kmh:250, baseSpeed:4.80, boostMult:1.39, boostDur:1440, desc:'Fuxing hijau 250 km/h!'},
+    ]
+  },
+  {
+    key:'maglev', name:'Maglev & Masa Depan 🛸', emoji:'🛸',
+    color:'#6d28d9', desc:'Teknologi rel mutakhir & futuristik',
+    trains:[
+      {key:'l0',      name:'JR SCMaglev L0', sub:'Jepang 2015',    emoji:'🛸', bodyColor:'#f0f9ff', accColor:'#7c3aed', kmh:603, baseSpeed:6.50, boostMult:1.30, boostDur:1300, desc:'Tercepat di dunia: 603 km/h! ⚡'},
+      {key:'tr09',    name:'Transrapid TR09',sub:'Jerman 2002',    emoji:'🛸', bodyColor:'#f8fafc', accColor:'#38bdf8', kmh:501, baseSpeed:6.00, boostMult:1.32, boostDur:1330, desc:'Maglev Jerman rekordbreaker!'},
+      {key:'maglev_s',name:'Shanghai Maglev',sub:'China 2004',     emoji:'🛸', bodyColor:'#f1f5f9', accColor:'#fbbf24', kmh:431, baseSpeed:5.80, boostMult:1.33, boostDur:1350, desc:'Maglev komersial pertama dunia!'},
+      {key:'hyperl',  name:'Hyperloop',      sub:'Konsep 2020+',  emoji:'🛸', bodyColor:'#0f172a', accColor:'#c084fc', kmh:1200,baseSpeed:8.00, boostMult:1.20, boostDur:1200, desc:'Kapsul vakum masa depan! 🚀'},
+      {key:'chuo',    name:'Chuo Maglev',    sub:'Jepang 2027',   emoji:'🛸', bodyColor:'#fafafa', accColor:'#818cf8', kmh:505, baseSpeed:6.10, boostMult:1.31, boostDur:1320, desc:'Tokyo–Osaka 67 menit! Coming soon!'},
+      {key:'aerotrain',name:'Aerotrain',     sub:'Prancis 1965',  emoji:'🛸', bodyColor:'#1e3a8a', accColor:'#93c5fd', kmh:345, baseSpeed:5.40, boostMult:1.36, boostDur:1400, desc:'Prototipe hoverkraft rel Prancis!'},
+      {key:'kr_utm',  name:'UTM-02 Korea',  sub:'Korea 2020',    emoji:'🛸', bodyColor:'#f8fafc', accColor:'#3b82f6', kmh:550, baseSpeed:6.20, boostMult:1.31, boostDur:1310, desc:'Urban transit maglev Korea!'},
+      {key:'incheon',  name:'Incheon Maglev',sub:'Korea 2016',    emoji:'🛸', bodyColor:'#f0f9ff', accColor:'#22c55e', kmh:110, baseSpeed:3.30, boostMult:1.45, boostDur:1500, desc:'Maglev urban bandara Incheon!'},
+      {key:'ecobee',   name:'EcoBee KIMM',   sub:'Korea 2014',    emoji:'🛸', bodyColor:'#fafafa', accColor:'#f59e0b', kmh:110, baseSpeed:3.30, boostMult:1.45, boostDur:1500, desc:'Maglev ramah lingkungan!'},
+      {key:'virgin_hl',name:'Virgin Hyperloop',sub:'USA 2020',    emoji:'🛸', bodyColor:'#f8fafc', accColor:'#dc2626', kmh:1000,baseSpeed:7.50, boostMult:1.22, boostDur:1220, desc:'Pod hyperloop pertama berpenumpang!'},
+      {key:'crrc_600', name:'CRRC 600 Maglev',sub:'China 2021',   emoji:'🛸', bodyColor:'#f8fafc', accColor:'#1d4ed8', kmh:600, baseSpeed:6.50, boostMult:1.30, boostDur:1300, desc:'Maglev 600 km/h buatan CRRC!'},
+      {key:'swissmetro',name:'Swissmetro',    sub:'Swiss Konsep', emoji:'🛸', bodyColor:'#dc2626', accColor:'#fef3c7', kmh:500, baseSpeed:6.00, boostMult:1.32, boostDur:1330, desc:'Vakum tunnel bawah Alpen Swiss!'},
+      {key:'boring_lv',name:'Boring Loop LV', sub:'USA 2021',     emoji:'🛸', bodyColor:'#0f172a', accColor:'#c084fc', kmh:250, baseSpeed:4.80, boostMult:1.38, boostDur:1430, desc:'Elon Musk tunnel Las Vegas!'},
+      {key:'transpod', name:'TransPod FluxJet',sub:'Kanada 2025', emoji:'🛸', bodyColor:'#1e293b', accColor:'#38bdf8', kmh:1000,baseSpeed:7.50, boostMult:1.22, boostDur:1220, desc:'Hyperloop Kanada Calgary–Edmonton!'},
+    ]
+  },
+]
+
+// Build flat lookup
+const TRAIN_MAP = {}
+TRAIN_CATS.forEach(cat => cat.trains.forEach(t => { TRAIN_MAP[t.key] = {...t, category: cat.key} }))
+const ALL_TRAINS = Object.values(TRAIN_MAP)
+
+// ═══════════════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════════════
+let cfg = { level: 5 }
+try { const s = sessionStorage.getItem('g14Config'); if(s) Object.assign(cfg, JSON.parse(s)) } catch(_){}
+const FINISH_M = 800 + cfg.level * 30
+const LANE_COUNT = 3
+const LIVES_MAX = 3
+const OBS_INTERVAL_MS = Math.max(900, 2800 - cfg.level * 60)
+const AI_COUNT = 2
+
+// ── LEVEL THEMES (6 backgrounds, cycle every 5 levels) ──
+const THEMES = [
+  { name:'forest',  skyTop:0x071a0d, skyBot:0x0d3318, mountain:0x0d2510, tree:'🌲', ground1:0x0d2008, ground2:0x071005, rail:0x6b7280, stars:true },
+  { name:'desert',  skyTop:0xf97316, skyBot:0xfbbf24, mountain:0x92400e, tree:'🌵', ground1:0x92400e, ground2:0x78350f, rail:0xd97706, stars:false },
+  { name:'snow',    skyTop:0x1e3a5f, skyBot:0x7dd3fc, mountain:0xbfdbfe, tree:'🌲', ground1:0xbfdbfe, ground2:0x94a3b8, rail:0x94a3b8, stars:false },
+  { name:'coastal', skyTop:0x0891b2, skyBot:0x38bdf8, mountain:0x0d7a34, tree:'🌴', ground1:0x0d7a34, ground2:0x065f46, rail:0xfbbf24, stars:false },
+  { name:'urban',   skyTop:0x0f172a, skyBot:0x1e293b, mountain:0x374151, tree:'🏢', ground1:0x1f2937, ground2:0x111827, rail:0x9ca3af, stars:true },
+  { name:'volcano', skyTop:0x1c0000, skyBot:0x4a0000, mountain:0x7f1d1d, tree:'🔥', ground1:0x451a03, ground2:0x2d0800, rail:0xf97316, stars:false },
+]
+const TH = THEMES[((cfg.level || 1) - 1) % THEMES.length]
+
+// ═══════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════
+const S = {
+  running: false, paused: false,
+  lane: 1, targetLane: 1,
+  trainCfg: null,
+  distance: 0, finishLine: FINISH_M,
+  speed: 3.0, baseSpeed: 3.0, maxSpeed: 10,
+  hp: LIVES_MAX,
+  boosting: false, boostCooldown: false,
+  pressure: 70,
+  boostQ: null,
+  quizOpen: false,
+  aiTrains: [],
+  obstacles: [], steam: [], sparks: [], speedLines: [],
+  invincible: 0,
+  frame: 0,
+  position: 1, // 1st/2nd/3rd
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PIXI
+// ═══════════════════════════════════════════════════════════
+let app, stage
+let L = {}   // named layers
+let playerSprite, playerGlow
+let laneYs = []  // pixel Y center of each lane (in game area)
+let gameTop, gameH, laneH
+let lastObsTime = 0, lastSteamTime = 0
+
+async function initPixi() {
+  const W = window.innerWidth, H = window.innerHeight
+  app = new PIXI.Application()
+  await app.init({
+    canvas: document.getElementById('pixi-canvas'),
+    width: W, height: H,
+    backgroundColor: 0x050c02,
+    antialias: true,
+    resolution: Math.min(window.devicePixelRatio || 1, 2),
+    autoDensity: true,
+  })
+  stage = app.stage
+
+  // Game area between top HUD (~70px) and controls (~120px)
+  gameTop = 74
+  const gameBot = H - 122
+  gameH = gameBot - gameTop
+  laneH = gameH / LANE_COUNT
+  laneYs = Array.from({length: LANE_COUNT}, (_, i) => gameTop + laneH * i + laneH / 2)
+
+  buildSky()
+  buildClouds()
+  buildFarScenery()
+  buildBirds()
+  buildMidScenery()
+  buildSignalPosts()
+  buildTracks()
+
+  L.obstacles = new PIXI.Container(); stage.addChild(L.obstacles)
+  L.ai = new PIXI.Container(); stage.addChild(L.ai)
+
+  buildPlayer()
+
+  L.fx = new PIXI.Container(); stage.addChild(L.fx)
+  L.speedlines = new PIXI.Container(); stage.addChild(L.speedlines)
+
+  app.ticker.add(loop)
+
+  // Wire shared GamePause (game-modal.js)
+  try {
+    if (typeof GamePause !== 'undefined') {
+      GamePause.init({
+        bgmEl: document.getElementById('game-bgm'),
+        onResume: () => {
+          S.paused = false; S.running = true
+          document.getElementById('btn-pause').textContent = '⏸'
+          const pb = document.getElementById('position-badge'); if (pb) pb.textContent = '🏁 Lanjut!'
+        },
+        onRetry: () => { location.reload() },
+        onHome:  () => { S.running = false; history.back() }
+      })
+    }
+  } catch(_){}
+}
+
+// ── Sky ───────────────────────────────────────────────────
+function buildSky() {
+  const c = new PIXI.Container(); L.sky = c; stage.addChild(c)
+  const W = app.screen.width, H = app.screen.height
+
+  // Gradient sky
+  const steps = 10
+  for (let i = 0; i < steps; i++) {
+    const t = i / steps
+    const g = new PIXI.Graphics()
+    g.rect(0, 0, W, H / steps + 2).fill(lerpColor(TH.skyTop, TH.skyBot, t))
+    g.y = H * i / steps
+    c.addChild(g)
+  }
+
+  // Stars (only for night/dark themes)
+  if (!TH.stars) return
+  for (let i = 0; i < 60; i++) {
+    const r = 0.5 + Math.random() * 1.5
+    const s = new PIXI.Graphics()
+    s.circle(0, 0, r).fill(0xffffff)
+    s.x = Math.random() * W
+    s.y = Math.random() * gameTop + Math.random() * 10
+    s.alpha = 0.3 + Math.random() * 0.5
+    c.addChild(s)
+  }
+}
+
+// ── Clouds ────────────────────────────────────────────────
+let clouds = []
+function buildClouds() {
+  const c = new PIXI.Container(); L.clouds = c; stage.addChild(c)
+  const W = app.screen.width
+  for (let i = 0; i < 6; i++) {
+    const cloud = makeCloud()
+    cloud.x = Math.random() * W
+    cloud.y = gameTop + Math.random() * 40
+    cloud._speed = 0.2 + Math.random() * 0.3
+    c.addChild(cloud)
+    clouds.push(cloud)
+  }
+}
+function makeCloud() {
+  const g = new PIXI.Graphics()
+  const w = 60 + Math.random() * 80, h = 18 + Math.random() * 18
+  g.ellipse(0, 0, w, h).fill(0x1a3a1a)
+  g.ellipse(-w * 0.25, -h * 0.3, w * 0.55, h * 0.7).fill(0x1a3a1a)
+  g.ellipse(w * 0.2, -h * 0.25, w * 0.45, h * 0.65).fill(0x1a3a1a)
+  g.alpha = 0.4
+  return g
+}
+function tickClouds(delta) {
+  const W = app.screen.width
+  for (const c of clouds) {
+    c.x -= c._speed * delta
+    if (c.x < -150) { c.x = W + 50; c.y = gameTop + Math.random() * 40 }
+  }
+}
+
+// ── Birds (flock of 3 flying) ─────────────────────────────
+let birds = []
+function buildBirds() {
+  if (!['forest','coastal','snow'].includes(TH.name)) return
+  const c = new PIXI.Container(); L.birds = c; stage.addChild(c)
+  const W = app.screen.width
+  for (let i = 0; i < 3; i++) {
+    const b = new PIXI.Graphics()
+    b.moveTo(-6,0).lineTo(-3,-3).lineTo(0,0).lineTo(3,-3).lineTo(6,0).stroke({ color: 0x111827, width: 1.4 })
+    b.alpha = 0.55
+    b.x = W + i * 40
+    b.y = gameTop + 20 + Math.random() * 50
+    b._speed = 0.35 + Math.random() * 0.15
+    b._phase = Math.random() * Math.PI * 2
+    b._baseY = b.y
+    c.addChild(b)
+    birds.push(b)
+  }
+}
+function tickBirds(delta) {
+  const W = app.screen.width
+  const t = performance.now() * 0.004
+  for (const b of birds) {
+    b.x -= b._speed * delta
+    b.y = b._baseY + Math.sin(t + b._phase) * 5
+    // Wing flap: alternate shape via scaleY toggle
+    b.scale.y = 0.7 + Math.sin(t * 4 + b._phase) * 0.3
+    if (b.x < -30) { b.x = W + 30; b._baseY = gameTop + 20 + Math.random() * 50 }
+  }
+}
+
+// ── Signal posts (alternating red/green beside track) ─────
+let signalPosts = []
+function buildSignalPosts() {
+  const c = new PIXI.Container(); L.signals = c; stage.addChild(c)
+  const W = app.screen.width
+  const spacing = W * 0.75
+  for (let i = 0; i < 4; i++) {
+    const post = new PIXI.Container()
+    const pole = new PIXI.Graphics()
+    pole.rect(-1.5, 0, 3, 28).fill(0x4b5563)
+    post.addChild(pole)
+    const lamp = new PIXI.Graphics()
+    const isRed = i % 2 === 0
+    const color = isRed ? 0xef4444 : 0x22c55e
+    lamp.circle(0, -4, 5).fill(color)
+    lamp.circle(0, -4, 7).stroke({ color: 0x1f2937, width: 1.5 })
+    post.addChild(lamp)
+    // Soft glow
+    const glow = new PIXI.Graphics()
+    glow.circle(0, -4, 10).fill({ color, alpha: 0.35 })
+    post.addChildAt(glow, 0)
+    post.x = i * spacing + Math.random() * 80
+    post.y = laneYs[0] - laneH * 0.55
+    post._speed = 0.8
+    c.addChild(post)
+    signalPosts.push(post)
+  }
+}
+function tickSignalPosts(delta) {
+  const W = app.screen.width
+  const px = S.speed * delta * 0.6
+  for (const p of signalPosts) {
+    p.x -= px
+    if (p.x < -40) p.x = W + 40 + Math.random() * 60
+  }
+}
+
+// ── Far scenery ───────────────────────────────────────────
+function buildFarScenery() {
+  const c = new PIXI.Container(); L.far = c; stage.addChild(c)
+  const W = app.screen.width
+  // Mountain silhouettes
+  for (let i = 0; i < 12; i++) {
+    const g = new PIXI.Graphics()
+    const mW = 80 + Math.random() * 100
+    const mH = 50 + Math.random() * 80
+    g.moveTo(0, 0).lineTo(mW / 2, -mH).lineTo(mW, 0).fill(TH.mountain)
+    g.x = i * (W / 6) - 20 + Math.random() * 40
+    g.y = gameTop + 30 + Math.random() * 20
+    g._speed = 0.15
+    c.addChild(g)
+  }
+  c._speed = 0.15
+}
+
+// ── Mid scenery ───────────────────────────────────────────
+let midItems = []
+function buildMidScenery() {
+  const c = new PIXI.Container(); L.mid = c; stage.addChild(c)
+  const W = app.screen.width, H = app.screen.height
+  const treeMap = {
+    forest:['🌲','🌳','🎋','🍂','🐿️','🦌','🍄','🌻'],
+    desert:['🌵','🏜️','☀️','🦎','🐪','🏺','💀','🪨'],
+    snow:['🌲','❄️','⛄','🏔️','🎿','🦌','🧊','☃️'],
+    coastal:['🌴','🌊','🐚','🦀','⛵','🏖️','🐬','🦩'],
+    urban:['🏢','🏗️','🏠','🏪','🚦','🏫','🏥','🏛️'],
+    volcano:['🔥','🌋','💨','🪨','🦇','💎','⚡','☄️']
+  }
+  const treeEmojis = treeMap[TH.name] || ['🌲','🌳','🌴']
+  for (let i = 0; i < 20; i++) {
+    const lane = i % LANE_COUNT
+    const yt = laneYs[lane] + laneH * 0.38 + (i % 2) * 8
+    // Top of lane (above rail)
+    const t = new PIXI.Text({ text: treeEmojis[i % treeEmojis.length], style: { fontSize: 20 + Math.random() * 10 } })
+    t.alpha = 0.55
+    t.x = (i * W / 8) + Math.random() * 30
+    t.y = yt - laneH * 0.3
+    t._speed = 0.4
+    t._laneY = yt - laneH * 0.3
+    c.addChild(t)
+    midItems.push(t)
+  }
+}
+
+// ── Tracks ────────────────────────────────────────────────
+let trackTies = []
+const TIE_W = 28, TIE_H = 6, TIE_GAP = 38
+
+function buildTracks() {
+  const c = new PIXI.Container(); L.tracks = c; stage.addChild(c)
+  const W = app.screen.width
+
+  // Per-lane track
+  for (let ln = 0; ln < LANE_COUNT; ln++) {
+    const cy = laneYs[ln]
+    const railOffset = laneH * 0.28
+
+    // Ground fill for lane
+    const ground = new PIXI.Graphics()
+    ground.rect(0, cy - laneH * 0.5, W, laneH).fill(ln === 1 ? TH.ground1 : TH.ground2)
+    ground.alpha = 0.6
+    c.addChild(ground)
+
+    // Lane separator
+    if (ln < LANE_COUNT - 1) {
+      const sep = new PIXI.Graphics()
+      sep.rect(0, cy + laneH * 0.5 - 1, W, 2).fill(0x1a3a1a)
+      sep.alpha = 0.6
+      c.addChild(sep)
+    }
+
+    // Rail lines (top + bottom of lane, inset)
+    for (const sign of [-1, 1]) {
+      const rail = new PIXI.Graphics()
+      rail.rect(0, cy + sign * railOffset - 2, W, 4).fill(0x4b5563)
+      c.addChild(rail)
+
+      // Glow strip
+      const glow = new PIXI.Graphics()
+      glow.rect(0, cy + sign * railOffset - 3, W, 6).fill(0x86efac)
+      glow.alpha = 0.12
+      c.addChild(glow)
+    }
+
+    // Ties (sleepers) — scrolling
+    const numTies = Math.ceil(W / (TIE_W + TIE_GAP)) + 3
+    for (let j = 0; j < numTies; j++) {
+      const tie = new PIXI.Graphics()
+      tie.rect(-TIE_W / 2, cy - railOffset - 2, TIE_W, railOffset * 2 + 4).fill(0x292524)
+      tie.x = j * (TIE_W + TIE_GAP)
+      c.addChild(tie)
+      trackTies.push({ g: tie, ln })
+    }
+  }
+}
+
+function tickTracks(delta) {
+  const W = app.screen.width
+  const px = S.speed * delta * 1.0
+  const period = (TIE_W + TIE_GAP) * (Math.ceil(W / (TIE_W + TIE_GAP)) + 3)
+  for (const t of trackTies) {
+    t.g.x -= px
+    if (t.g.x < -(TIE_W + 10)) t.g.x += period
+  }
+}
+
+// ── Mid items scroll ─────────────────────────────────────
+function tickMid(delta) {
+  const W = app.screen.width
+  for (const t of midItems) {
+    t.x -= t._speed * S.speed * delta * 0.4
+    if (t.x < -60) t.x = W + 20
+  }
+  // Far
+  if (L.far) {
+    L.far.children.forEach(c => {
+      c.x -= 0.15 * delta
+      if (c.x < -200) c.x = W + 50
+    })
+  }
+}
+
+// ── Player train ──────────────────────────────────────────
+const PLAYER_X = 0.15  // fraction of screen width
+
+// Convert CSS hex string to PIXI integer color
+function hexN(h) { return parseInt(h.replace('#',''), 16) }
+
+// Draw train silhouette on a 2D canvas — 5 distinct shapes per category
+function drawTrainCard2d(canvas, bodyC, accC, catKey, v) {
+  const ctx = canvas.getContext('2d');
+  const CW = canvas.width, CH = canvas.height;
+  ctx.clearRect(0, 0, CW, CH);
+  const vi = ((v||1) - 1) % 5;
+  const tY = CH - 4;           // ground line
+  const bodyB = tY - 2;        // body bottom
+
+  function rr(x,y,w,h,r=0){ctx.beginPath();if(r>0)ctx.roundRect(x,y,w,h,r);else ctx.rect(x,y,w,h);ctx.fill();}
+  function whl(cx,cy,r,rim,spoke){
+    ctx.fillStyle=rim;ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle=spoke;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(cx-r,cy);ctx.lineTo(cx+r,cy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx,cy-r);ctx.lineTo(cx,cy+r);ctx.stroke();
+    ctx.fillStyle='#555';ctx.beginPath();ctx.arc(cx,cy,r*0.35,0,Math.PI*2);ctx.fill();
+  }
+  function bwhl(cx,cy,r){
+    ctx.fillStyle='#333';rr(cx-r*2.5,cy-r*0.6,r*5,r*1.2);
+    ctx.fillStyle='#666';ctx.beginPath();ctx.arc(cx-r*1.5,cy+r*0.6,r,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(cx+r*1.5,cy+r*0.6,r,0,Math.PI*2);ctx.fill();
+  }
+  function panto(px,roofY){
+    ctx.strokeStyle='#aaa';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(px-5,roofY);ctx.lineTo(px,roofY-9);ctx.lineTo(px+5,roofY);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(px-7,roofY-9);ctx.lineTo(px+7,roofY-9);ctx.stroke();
+    // Cross-arm detail
+    ctx.lineWidth=0.6;
+    ctx.beginPath();ctx.moveTo(px-3,roofY-3);ctx.lineTo(px+3,roofY-6);ctx.stroke();
+  }
+  // Handrail helper
+  function handrail(x,y,len,color='rgba(251,191,36,.35)'){
+    ctx.fillStyle=color;rr(x,y,len,1);
+    rr(x,y-2,1,3);rr(x+len-1,y-2,1,3);
+  }
+  // Coupling hook helper
+  function coupling(x,y,dir=1){
+    ctx.fillStyle='#6b7280';rr(x,y,dir*4,3);rr(x+dir*3,y-1,dir*2,5,1);
+  }
+  // Number board helper
+  function numBoard(x,y,w=10,h=5){
+    ctx.fillStyle='rgba(0,0,0,.35)';rr(x,y,w,h,1);
+    ctx.fillStyle='rgba(255,255,255,.15)';rr(x+1,y+1,w-2,h-2,1);
+  }
+  // Rivet line helper
+  function rivets(x,y,count,gap=4){
+    ctx.fillStyle='rgba(255,255,255,.2)';
+    for(let i=0;i<count;i++){ctx.beginPath();ctx.arc(x+i*gap,y,0.7,0,Math.PI*2);ctx.fill();}
+  }
+  // Headlight pair helper
+  function headlights(x,y,r=3){
+    ctx.fillStyle='#fef08a';ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(x,y,r*0.5,0,Math.PI*2);ctx.fill();
+  }
+  // Tail light pair helper
+  function taillights(x,y,r=2){
+    ctx.fillStyle='#ef4444';ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#fca5a5';ctx.beginPath();ctx.arc(x,y,r*0.5,0,Math.PI*2);ctx.fill();
+  }
+
+  // ── MAGLEV ────────────────────────────────────────────────────────────────
+  if(catKey&&catKey.includes('maglev')){
+    [
+      ()=>{ // v1: Low streamlined capsule
+        ctx.fillStyle=bodyC;rr(4,CH*.32,CW-10,CH*.42,8);
+        ctx.fillStyle=accC;rr(4,CH*.5,CW-14,CH*.08);
+        ctx.fillStyle='#93c5fd';rr(7,CH*.36,CW-20,CH*.18,3);
+        // Window pillars
+        for(let i=0;i<3;i++){ctx.fillStyle='rgba(0,0,0,.15)';rr(15+i*16,CH*.36,2,CH*.18);}
+        ctx.fillStyle=accC;rr(CW-10,CH*.32,10,CH*.42,4);
+        headlights(CW-4,CH*.48,2.5);
+        // LED strip under body
+        ctx.fillStyle='rgba(56,189,248,.5)';rr(8,CH*.72,CW-20,2);
+        ctx.fillStyle='rgba(56,189,248,.4)';rr(8,bodyB,CW-20,4);
+        // Door markings
+        ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=0.6;ctx.strokeRect(22,CH*.34,8,CH*.38);
+        numBoard(6,CH*.7,12,4);
+      },
+      ()=>{ // v2: Transrapid tall profile + visible undercarriage skirt
+        ctx.fillStyle=bodyC;rr(4,CH*.22,CW-10,CH*.52,6);
+        ctx.fillStyle=accC;rr(4,CH*.38,CW-14,CH*.12);
+        ctx.fillStyle='#bfdbfe';rr(7,CH*.26,CW-20,CH*.16,3);
+        ctx.fillStyle=accC;rr(CW-12,CH*.22,12,CH*.52,4);
+        ctx.fillStyle='rgba(0,0,0,.4)';rr(6,CH*.74,CW-14,CH*.1,2);
+        ctx.fillStyle='rgba(56,189,248,.35)';rr(8,bodyB-1,CW-20,5);
+      },
+      ()=>{ // v3: Hyperloop tube (circular cross-section feel)
+        ctx.fillStyle=bodyC;rr(12,CH*.18,CW-24,CH*.64,CH*.32);
+        ctx.fillStyle=accC;rr(12,CH*.44,CW-24,CH*.16);
+        ctx.fillStyle='rgba(192,132,252,.3)';rr(16,CH*.22,CW-32,CH*.22,4);
+        ctx.strokeStyle=accC;ctx.lineWidth=1.5;
+        ctx.beginPath();ctx.arc(12+CH*.32,CH*.5,CH*.3,0,Math.PI*2);ctx.stroke();
+        ctx.beginPath();ctx.arc(CW-12-CH*.32,CH*.5,CH*.3,0,Math.PI*2);ctx.stroke();
+      },
+      ()=>{ // v4: Aerotrain wide skirt with visible fans
+        ctx.fillStyle=bodyC;rr(4,CH*.26,CW-10,CH*.44,5);
+        ctx.fillStyle=accC;rr(4,CH*.44,CW-14,CH*.1);
+        ctx.fillStyle='#93c5fd';rr(7,CH*.3,CW-20,CH*.18,3);
+        ctx.fillStyle='rgba(147,197,253,.25)';rr(2,CH*.7,CW-6,CH*.12,4);
+        ctx.fillStyle='rgba(56,189,248,.35)';
+        for(let i=0;i<4;i++){ctx.beginPath();ctx.ellipse(10+i*17,CH*.76,4,3,0,0,Math.PI*2);ctx.fill();}
+        ctx.fillStyle='rgba(56,189,248,.5)';rr(8,bodyB,CW-20,3);
+      },
+      ()=>{ // v5: Futuristic wedge (angular)
+        ctx.fillStyle=bodyC;
+        ctx.beginPath();ctx.moveTo(4,CH*.3);ctx.lineTo(CW-4,CH*.34);ctx.lineTo(CW-4,CH*.7);ctx.lineTo(4,CH*.66);ctx.closePath();ctx.fill();
+        ctx.fillStyle=accC;rr(4,CH*.46,CW-10,CH*.1);
+        ctx.fillStyle='#a78bfa';rr(7,CH*.34,CW-22,CH*.16,2);
+        ctx.fillStyle=accC;ctx.beginPath();ctx.moveTo(CW-6,CH*.34);ctx.lineTo(CW+2,CH*.5);ctx.lineTo(CW-6,CH*.7);ctx.closePath();ctx.fill();
+        ctx.fillStyle='rgba(167,139,250,.4)';rr(8,bodyB,CW-20,4);
+      },
+    ][vi]();
+    return;
+  }
+
+  // ── HSR ───────────────────────────────────────────────────────────────────
+  if(catKey&&catKey.includes('hsr')){
+    [
+      ()=>{ // v1: Sharp conical bullet
+        ctx.fillStyle=bodyC;rr(4,CH*.28,CW-18,CH*.46,3);
+        ctx.fillStyle=bodyC;ctx.beginPath();ctx.moveTo(CW-14,CH*.28);ctx.lineTo(CW+2,CH*.51);ctx.lineTo(CW-14,CH*.74);ctx.closePath();ctx.fill();
+        ctx.fillStyle=accC;rr(4,CH*.44,CW-14,CH*.12);
+        ctx.fillStyle='#bfdbfe';rr(6,CH*.32,CW-26,CH*.22,2);
+        // Window pillars
+        for(let i=0;i<3;i++){ctx.fillStyle='rgba(0,0,0,.12)';rr(12+i*14,CH*.32,1.5,CH*.22);}
+        headlights(CW-2,CH*.42,2.5);taillights(6,CH*.5,2);
+        // Door marking
+        ctx.strokeStyle='rgba(255,255,255,.12)';ctx.lineWidth=0.5;ctx.strokeRect(20,CH*.3,7,CH*.42);
+        // Skirt
+        ctx.fillStyle='rgba(0,0,0,.15)';rr(4,CH*.7,CW-18,3);
+        panto(CW*.4,CH*.28);
+        for(const f of[.22,.46,.7]){ctx.fillStyle='#1f2937';ctx.beginPath();ctx.arc(4+CW*f*.9,tY-2,3,0,Math.PI*2);ctx.fill();}
+        numBoard(6,CH*.3,10,5);
+      },
+      ()=>{ // v2: Long extended Shinkansen bullet
+        const n=20;ctx.fillStyle=bodyC;rr(4,CH*.3,CW-4-n,CH*.42,3);
+        ctx.fillStyle=bodyC;ctx.beginPath();ctx.moveTo(CW-n,CH*.3);ctx.lineTo(CW+4,CH*.51);ctx.lineTo(CW-n,CH*.72);ctx.closePath();ctx.fill();
+        ctx.fillStyle=accC;rr(4,CH*.46,CW-6,CH*.08);
+        ctx.fillStyle='#e0f2fe';rr(6,CH*.34,CW-28,CH*.18,2);
+        for(let i=0;i<4;i++){ctx.fillStyle='rgba(0,0,0,.1)';rr(12+i*12,CH*.34,1.5,CH*.18);}
+        headlights(CW,CH*.44,2.5);taillights(5,CH*.5,1.5);
+        panto(CW*.35,CH*.3);
+        ctx.fillStyle='rgba(0,0,0,.12)';rr(4,CH*.68,CW-26,3); // skirt
+        ctx.strokeStyle='rgba(255,255,255,.1)';ctx.lineWidth=0.5;ctx.strokeRect(18,CH*.32,6,CH*.38);
+        numBoard(5,CH*.32,9,4);
+        for(const f of[.18,.4,.62]){ctx.fillStyle='#1f2937';ctx.beginPath();ctx.arc(4+CW*f*.92,tY-2,3,0,Math.PI*2);ctx.fill();}
+      },
+      ()=>{ // v3: N700 duck-bill / platypus flat wide nose
+        ctx.fillStyle=bodyC;rr(4,CH*.28,CW-20,CH*.46,3);
+        ctx.fillStyle=bodyC;ctx.beginPath();ctx.moveTo(CW-20,CH*.28);ctx.lineTo(CW-20,CH*.4);ctx.lineTo(CW+2,CH*.51);ctx.lineTo(CW-20,CH*.62);ctx.lineTo(CW-20,CH*.74);ctx.closePath();ctx.fill();
+        ctx.fillStyle=accC;rr(4,CH*.44,CW-12,CH*.1);
+        ctx.fillStyle='#cffafe';rr(6,CH*.32,CW-28,CH*.22,2);
+        for(const f of[.22,.46,.7]){ctx.fillStyle='#1f2937';ctx.beginPath();ctx.arc(4+CW*f*.88,tY-2,3,0,Math.PI*2);ctx.fill();}
+      },
+      ()=>{ // v4: TGV rounded oval nose
+        ctx.fillStyle=bodyC;rr(4,CH*.3,CW-14,CH*.44,3);
+        ctx.fillStyle=bodyC;ctx.beginPath();ctx.ellipse(CW-10,CH*.52,12,CH*.22,0,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle=accC;rr(4,CH*.45,CW-12,CH*.1);
+        ctx.fillStyle='#bfdbfe';rr(6,CH*.34,CW-24,CH*.2,2);
+        for(const f of[.22,.46,.7]){ctx.fillStyle='#1f2937';ctx.beginPath();ctx.arc(4+CW*f*.88,tY-2,3,0,Math.PI*2);ctx.fill();}
+      },
+      ()=>{ // v5: ICE flat angular wedge
+        ctx.fillStyle=bodyC;rr(4,CH*.27,CW-16,CH*.48,3);
+        ctx.fillStyle=bodyC;ctx.beginPath();ctx.moveTo(CW-16,CH*.27);ctx.lineTo(CW-2,CH*.38);ctx.lineTo(CW-2,CH*.64);ctx.lineTo(CW-16,CH*.75);ctx.closePath();ctx.fill();
+        ctx.fillStyle=accC;rr(4,CH*.43,CW-10,CH*.13);
+        ctx.fillStyle='#dbeafe';rr(6,CH*.31,CW-24,CH*.22,2);
+        for(const f of[.2,.44,.68]){ctx.fillStyle='#1f2937';ctx.beginPath();ctx.arc(4+CW*f*.88,tY-2,3,0,Math.PI*2);ctx.fill();}
+      },
+    ][vi]();
+    return;
+  }
+
+  // ── EMU / KRL ─────────────────────────────────────────────────────────────
+  if(catKey&&catKey.includes('emu')){
+    [
+      ()=>{ // v1: Standard commuter box + pantograph
+        ctx.fillStyle=bodyC;rr(4,CH*.22,CW-10,CH*.55,3);
+        ctx.fillStyle=accC;rr(4,CH*.3,CW-10,CH*.12);
+        ctx.fillStyle='#e0f2fe';
+        for(let i=0;i<4;i++)rr(7+i*16,CH*.28,12,CH*.26,2);
+        ctx.fillStyle=accC;rr(CW-12,CH*.22,12,CH*.55,2);
+        headlights(CW-6,CH*.36,2);taillights(6,CH*.46,1.5);
+        // Door markings
+        ctx.strokeStyle='rgba(255,255,255,.12)';ctx.lineWidth=0.5;ctx.strokeRect(28,CH*.24,6,CH*.5);
+        // Destination LED board
+        ctx.fillStyle='#000';rr(7,CH*.58,14,4,1);
+        ctx.fillStyle='rgba(251,191,36,.5)';rr(8,CH*.59,12,2,0.5);
+        // AC unit on roof
+        ctx.fillStyle='rgba(0,0,0,.1)';rr(20,CH*.18,18,3,1);
+        panto(CW-18,CH*.22);
+        numBoard(6,CH*.24);
+        bwhl(20,bodyB,4);bwhl(CW-20,bodyB,4);
+      },
+      ()=>{ // v2: Metro/subway rounded ends, no panto, dark windows
+        ctx.fillStyle=bodyC;rr(4,CH*.2,CW-8,CH*.58,10);
+        ctx.fillStyle=accC;rr(4,CH*.34,CW-8,CH*.1);
+        ctx.fillStyle='rgba(10,15,30,.85)';
+        for(let i=0;i<3;i++)rr(10+i*19,CH*.25,14,CH*.22,4);
+        bwhl(18,bodyB,4);bwhl(CW-18,bodyB,4);
+      },
+      ()=>{ // v3: Regional EMU — 5 windows, 2 pantographs
+        ctx.fillStyle=bodyC;rr(4,CH*.24,CW-10,CH*.5,3);
+        ctx.fillStyle=accC;rr(4,CH*.36,CW-10,CH*.1);
+        ctx.fillStyle='#cffafe';
+        for(let i=0;i<5;i++)rr(5+i*13,CH*.28,10,CH*.22,2);
+        ctx.fillStyle=accC;rr(CW-12,CH*.24,12,CH*.5,2);
+        panto(CW*0.3,CH*.24);panto(CW*0.65,CH*.24);
+        bwhl(18,bodyB,3.5);bwhl(CW*.5,bodyB,3.5);bwhl(CW-18,bodyB,3.5);
+      },
+      ()=>{ // v4: Modern low-floor — wide windows, flush design
+        ctx.fillStyle=bodyC;rr(4,CH*.26,CW-10,CH*.52,5);
+        ctx.fillStyle=accC;rr(4,CH*.44,CW-10,CH*.08);
+        ctx.fillStyle='rgba(255,255,255,.1)';rr(4,CH*.34,CW-10,CH*.08);
+        ctx.fillStyle='#e0f2fe';
+        for(let i=0;i<3;i++)rr(8+i*21,CH*.3,17,CH*.24,3);
+        panto(CW*.55,CH*.26);
+        bwhl(18,bodyB,4);bwhl(CW-18,bodyB,4);
+      },
+      ()=>{ // v5: Double-deck — two rows of windows
+        ctx.fillStyle=bodyC;rr(4,CH*.14,CW-10,CH*.64,3);
+        ctx.fillStyle=accC;rr(4,CH*.44,CW-10,CH*.05);
+        ctx.fillStyle='#bfdbfe';
+        for(let i=0;i<4;i++)rr(6+i*16,CH*.18,12,CH*.2,2);
+        ctx.fillStyle='#dbeafe';
+        for(let i=0;i<4;i++)rr(6+i*16,CH*.5,12,CH*.18,2);
+        // Door markings
+        ctx.strokeStyle='rgba(255,255,255,.1)';ctx.lineWidth=0.5;
+        ctx.strokeRect(28,CH*.16,6,CH*.6);ctx.strokeRect(50,CH*.16,6,CH*.6);
+        // Inter-car connector (left end)
+        ctx.fillStyle='rgba(55,65,81,.4)';rr(1,CH*.22,3,CH*.5,1);
+        headlights(CW-5,CH*.38,2.5);taillights(3,CH*.44,1.5);
+        // Destination LED
+        ctx.fillStyle='#000';rr(6,CH*.68,12,3,1);
+        ctx.fillStyle='rgba(251,191,36,.5)';rr(7,CH*.69,10,2);
+        // AC unit
+        ctx.fillStyle='rgba(0,0,0,.08)';rr(14,CH*.1,20,3,1);
+        panto(CW*.45,CH*.14);
+        numBoard(6,CH*.18,8,5);
+        bwhl(18,bodyB,4.5);bwhl(CW-18,bodyB,4.5);
+      },
+    ][vi]();
+    return;
+  }
+
+  // ── DIESEL ────────────────────────────────────────────────────────────────
+  if(catKey&&catKey.includes('diesel')){
+    [
+      ()=>{ // v1: Hood unit (North American long-hood)
+        ctx.fillStyle=bodyC;rr(4,CH*.28,CW-22,CH*.44,3);
+        ctx.fillStyle=bodyC;rr(CW-22,CH*.38,18,CH*.28,2); // short nose
+        ctx.fillStyle='#dbeafe';rr(CW-22,CH*.3,16,CH*.2,2); // cab window
+        ctx.fillStyle=accC;rr(4,CH*.37,CW-22,CH*.12);
+        ctx.fillStyle='#292524';rr(12,CH*.16,6,CH*.12);rr(10,CH*.14,10,CH*.06,2); // stack
+        // Radiator fan
+        ctx.fillStyle='rgba(0,0,0,.2)';ctx.beginPath();ctx.arc(24,CH*.2,4,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='rgba(156,163,175,.3)';ctx.beginPath();ctx.arc(24,CH*.2,1.5,0,Math.PI*2);ctx.fill();
+        // Horn
+        ctx.fillStyle='#d97706';rr(CW-28,CH*.24,3,CH*.08,1);
+        ctx.fillStyle='rgba(219,234,254,.6)';
+        for(let i=0;i<3;i++)rr(6+i*16,CH*.32,12,CH*.16,2);
+        headlights(CW-6,CH*.42,2.5);taillights(6,CH*.5,1.5);
+        handrail(CW-8,CH*.58,10);
+        coupling(0,CH*.52,-1);
+        rivets(6,CH*.28,8,6);
+        numBoard(6,CH*.3);
+        bwhl(22,bodyB,4.5);bwhl(CW-22,bodyB,4.5);
+      },
+      ()=>{ // v2: Cab unit (streamlined, rounded nose like Alco PA)
+        ctx.fillStyle=bodyC;rr(4,CH*.26,CW-16,CH*.48,5);
+        ctx.fillStyle=bodyC;ctx.beginPath();ctx.ellipse(CW-12,CH*.5,14,CH*.24,0,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle=accC;rr(4,CH*.41,CW-12,CH*.12);
+        // Nose highlight
+        ctx.fillStyle='rgba(255,255,255,.06)';rr(CW-22,CH*.28,10,CH*.12,3);
+        ctx.fillStyle='#bfdbfe';rr(CW-26,CH*.3,14,CH*.22,3);
+        ctx.fillStyle='rgba(219,234,254,.5)';
+        for(let i=0;i<2;i++)rr(8+i*20,CH*.3,16,CH*.22,3);
+        headlights(CW-2,CH*.42,3);taillights(6,CH*.48,2);
+        handrail(CW-6,CH*.58,8);
+        rivets(6,CH*.27,6,7);
+        numBoard(7,CH*.28,8,5);
+        coupling(0,CH*.52,-1);
+        bwhl(20,bodyB,4.5);bwhl(CW-20,bodyB,4.5);
+      },
+      ()=>{ // v3: Boxcab — cabs at both ends
+        ctx.fillStyle=bodyC;rr(4,CH*.24,CW-8,CH*.5,3);
+        ctx.fillStyle=accC;rr(4,CH*.38,CW-8,CH*.12);
+        ctx.fillStyle='#bfdbfe';rr(5,CH*.28,14,CH*.24,2);  // front cab window
+        ctx.fillStyle='#dbeafe';rr(CW-19,CH*.28,14,CH*.24,2); // rear cab window
+        ctx.fillStyle='rgba(219,234,254,.45)';
+        for(let i=0;i<2;i++)rr(22+i*18,CH*.3,14,CH*.2,2);
+        bwhl(20,bodyB,4.5);bwhl(CW-20,bodyB,4.5);
+      },
+      ()=>{ // v4: Old bonnet shunter (tall cab, high bonnet at front)
+        ctx.fillStyle=bodyC;rr(4,CH*.34,CW*.48,CH*.38,3); // bonnet
+        ctx.fillStyle=accC;rr(CW*.48,CH*.22,CW*.47,CH*.5,3); // tall cab
+        ctx.fillStyle='#dbeafe';rr(CW*.5,CH*.26,CW*.4,CH*.22,2);
+        ctx.fillStyle='rgba(0,0,0,.2)';rr(6,CH*.38,CW*.4,CH*.2,2);
+        ctx.fillStyle='#6b7280';rr(4,CH*.56,5,CH*.14,2); // buffer
+        bwhl(18,bodyB,4);bwhl(CW-18,bodyB,4);
+      },
+      ()=>{ // v5: Modern angled-nose (Siemens / Vossloh style)
+        ctx.fillStyle=bodyC;rr(4,CH*.25,CW-16,CH*.52,4);
+        ctx.fillStyle=bodyC;ctx.beginPath();ctx.moveTo(CW-12,CH*.25);ctx.lineTo(CW+2,CH*.38);ctx.lineTo(CW+2,CH*.63);ctx.lineTo(CW-12,CH*.77);ctx.closePath();ctx.fill();
+        ctx.fillStyle=accC;rr(4,CH*.42,CW-10,CH*.12);
+        ctx.fillStyle='#bfdbfe';rr(CW-26,CH*.29,16,CH*.2,2);
+        ctx.fillStyle='rgba(219,234,254,.5)';
+        for(let i=0;i<3;i++)rr(6+i*18,CH*.3,14,CH*.2,3);
+        headlights(CW-1,CH*.44,3);headlights(CW-1,CH*.56,2);
+        taillights(6,CH*.5,2);
+        // Dynamic brake blister
+        ctx.fillStyle='rgba(0,0,0,.12)';rr(20,CH*.21,16,3,1);
+        // Horn + bell
+        ctx.fillStyle='#d97706';rr(CW-20,CH*.22,3,CH*.06,1);
+        handrail(CW-4,CH*.6,6);
+        rivets(6,CH*.25,10,5);
+        numBoard(7,CH*.27);
+        coupling(0,CH*.52,-1);
+        bwhl(20,bodyB,4.5);bwhl(CW-20,bodyB,4.5);
+      },
+    ][vi]();
+    return;
+  }
+
+  // ── STEAM (default) ───────────────────────────────────────────────────────
+  [
+    ()=>{ // v1: Small classic shunter (3 wheels, single chimney, short)
+      const bW=CW*.62,bX=CW*.14;
+      ctx.fillStyle=bodyC;rr(bX,CH*.28,bW,CH*.44,3);
+      // Boiler bands
+      for(let i=0;i<2;i++){ctx.fillStyle='rgba(255,255,255,.1)';rr(bX+bW*.3+i*bW*.25,CH*.28,2,CH*.44);}
+      ctx.fillStyle='#6b7280';ctx.beginPath();ctx.arc(bX+bW*.55,CH*.28,CH*.11,Math.PI,0);ctx.fill(); // dome
+      ctx.fillStyle='#1c1917';rr(bX+bW*.24,CH*.1,6,CH*.18);rr(bX+bW*.18,CH*.08,12,CH*.07,2); // chimney
+      // Whistle
+      ctx.fillStyle='#d97706';rr(bX+bW*.45,CH*.2,2,CH*.08);
+      ctx.fillStyle=accC;rr(bX+bW,CH*.2,CW*.16,CH*.54,2); // cab
+      ctx.fillStyle='#dbeafe';rr(bX+bW+2,CH*.26,CW*.11,CH*.22,2);
+      // Running board
+      ctx.fillStyle=accC;rr(bX-2,CH*.68,bW+4,2);
+      // Firebox glow
+      ctx.fillStyle='rgba(249,115,22,.15)';rr(bX+bW*.5,CH*.64,bW*.2,3);
+      headlights(bX+2,CH*.42,2);
+      // Cowcatcher
+      ctx.fillStyle='#374151';ctx.beginPath();ctx.moveTo(bX,CH*.62);ctx.lineTo(bX-6,CH*.72);ctx.lineTo(bX,CH*.72);ctx.closePath();ctx.fill();
+      // Connecting rod
+      ctx.fillStyle='rgba(156,163,175,.4)';rr(bX+bW*.28,tY-4,bW*.4,1.5);
+      for(const f of[.28,.47,.66]) whl(bX+bW*f,tY-2,CH*.15,'#374151','#6b7280');
+    },
+    ()=>{ // v2: Express 4-coupled + small pilot wheel
+      const bX=6,bW=CW-22;
+      ctx.fillStyle=bodyC;rr(bX,CH*.26,bW,CH*.44,3);
+      ctx.beginPath();ctx.ellipse(bX,CH*.48,5,CH*.22,0,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle=accC;rr(bX,CH*.28,bW,CH*.09);
+      // Boiler bands
+      for(let i=0;i<3;i++){ctx.fillStyle='rgba(255,255,255,.08)';rr(bX+bW*.25+i*bW*.2,CH*.26,1.5,CH*.44);}
+      ctx.fillStyle='#9ca3af';ctx.beginPath();ctx.arc(bX+bW*.5,CH*.26,CH*.09,Math.PI,0);ctx.fill(); // dome
+      ctx.fillStyle='#111';rr(bX+bW*.2,CH*.08,6,CH*.18);rr(bX+bW*.15,CH*.06,10,CH*.07,2);
+      ctx.fillStyle='#6b7280';rr(bX+bW*.62,CH*.2,5,CH*.1,1);rr(bX+bW*.69,CH*.2,5,CH*.1,1); // safety valves
+      // Whistle + bell
+      ctx.fillStyle='#d97706';rr(bX+bW*.56,CH*.18,2,CH*.08);
+      ctx.fillStyle=accC;rr(bX+bW-2,CH*.18,13,CH*.54,2);
+      ctx.fillStyle='#e0f2fe';rr(bX+bW,CH*.24,10,CH*.24,2);
+      // Running board
+      ctx.fillStyle=accC;rr(bX-2,CH*.68,bW+4,2);
+      // Headlight
+      headlights(bX+2,CH*.38,2.5);
+      // Firebox glow
+      ctx.fillStyle='rgba(249,115,22,.12)';rr(bX+bW*.6,CH*.64,bW*.15,3);
+      // Connecting rods
+      ctx.fillStyle='rgba(156,163,175,.4)';rr(bX+bW*.28,tY-4,bW*.5,1.5);
+      // Cowcatcher
+      ctx.fillStyle='#374151';ctx.beginPath();ctx.moveTo(bX,CH*.62);ctx.lineTo(bX-5,tY);ctx.lineTo(bX,tY);ctx.closePath();ctx.fill();
+      for(const f of[.28,.44,.6,.76]) whl(bX+bW*f,tY-2,CH*.17,'#292524',accC);
+      whl(bX+bW*.1,tY,5,'#374151','#6b7280'); // pilot
+    },
+    ()=>{ // v3: Pacific streamlined (deflectors, pilot+trailer, tapered nose)
+      const bX=5,bW=CW-13;
+      ctx.fillStyle=bodyC;
+      ctx.beginPath();ctx.moveTo(bX,CH*.36);ctx.quadraticCurveTo(bX+10,CH*.24,bX+bW*.14,CH*.24);ctx.lineTo(bX+bW,CH*.24);ctx.lineTo(bX+bW,CH*.72);ctx.lineTo(bX,CH*.65);ctx.closePath();ctx.fill();
+      ctx.fillStyle=accC;rr(bX,CH*.38,bW,CH*.1);
+      // Deflectors
+      ctx.fillStyle=accC;rr(bX+bW*.2,CH*.24,3,CH*.48);rr(bX+bW*.36,CH*.24,3,CH*.48);
+      ctx.fillStyle='#1c1917';rr(bX+bW*.22,CH*.1,5,CH*.14);rr(bX+bW*.18,CH*.08,9,CH*.06,2); // chimney
+      ctx.fillStyle='#9ca3af';ctx.beginPath();ctx.arc(bX+bW*.46,CH*.24,7,Math.PI,0);ctx.fill(); // dome
+      ctx.fillStyle=accC;rr(bX+bW-10,CH*.2,10,CH*.52,2);
+      ctx.fillStyle='#e0f2fe';rr(bX+bW-9,CH*.26,8,CH*.2,2);
+      for(const f of[.32,.48,.64]) whl(bX+bW*f,tY-2,CH*.18,accC,'#fde68a');
+      whl(bX+bW*.1,tY,4,'#374151','#888'); // pilot
+      whl(bX+bW*.82,tY,4,'#374151','#888'); // trailer
+    },
+    ()=>{ // v4: Garratt articulated — two bogies, central tank, very long
+      ctx.fillStyle=bodyC;rr(CW*.19,CH*.22,CW*.62,CH*.38,3); // central boiler
+      ctx.fillStyle=bodyC;rr(3,CH*.32,CW*.22,CH*.28,2);      // front bogie frame
+      ctx.fillStyle=bodyC;rr(CW*.79,CH*.32,CW*.19,CH*.26,2); // rear bogie frame
+      ctx.fillStyle=accC;rr(CW*.19,CH*.33,CW*.62,CH*.09);    // band
+      ctx.fillStyle='#111';
+      rr(CW*.24,CH*.08,5,CH*.14);rr(CW*.21,CH*.06,9,CH*.06,2); // chimney 1
+      rr(CW*.34,CH*.08,5,CH*.14);rr(CW*.31,CH*.06,9,CH*.06,2); // chimney 2
+      ctx.fillStyle=accC;rr(CW*.8,CH*.24,CW*.19,CH*.36,2);   // cab
+      ctx.fillStyle='#dbeafe';rr(CW*.82,CH*.28,CW*.14,CH*.2,2);
+      for(const f of[.06,.15]) whl(CW*f,tY-2,5,'#292524','#6b7280');
+      for(const f of[.26,.34]) whl(CW*f,tY-2,CH*.13,accC,'#fde68a');
+      for(const f of[.64,.72]) whl(CW*f,tY-2,CH*.13,accC,'#fde68a');
+      for(const f of[.84,.93]) whl(CW*f,tY-2,5,'#292524','#6b7280');
+    },
+    ()=>{ // v5: Tank locomotive — side tanks, wide, no tender
+      const bX=4,bW=CW-10;
+      ctx.fillStyle=bodyC;rr(bX,CH*.22,bW,CH*.5,3);
+      ctx.fillStyle=accC; // side tanks (darker panels)
+      rr(bX,CH*.24,bW*.3,CH*.28);rr(bX+bW-bW*.3,CH*.24,bW*.3,CH*.28);
+      ctx.fillStyle=bodyC;rr(bX+bW*.28,CH*.24,bW*.44,CH*.3,2); // central boiler
+      ctx.fillStyle='#1c1917';rr(bX+bW*.1,CH*.08,6,CH*.14);rr(bX+bW*.06,CH*.06,10,CH*.06,2); // chimney
+      ctx.fillStyle='#6b7280';ctx.beginPath();ctx.arc(bX+bW*.56,CH*.24,7,Math.PI,0);ctx.fill(); // dome
+      ctx.fillStyle=accC;rr(bX+bW-10,CH*.18,12,CH*.54,2);
+      ctx.fillStyle='#dbeafe';rr(bX+bW-9,CH*.24,10,CH*.22,2);
+      for(const f of[.22,.44,.66]) whl(bX+bW*f,tY-2,CH*.16,'#374151',accC);
+    },
+  ][vi]();
+}
+
+// Draw a train silhouette on a PIXI.Graphics object (center-anchored, W≈70, H≈26)
+function drawTrainG(g, bodyC, accC, catKey, trainKey, variant) {
+  g.clear()
+  const bC = hexN(bodyC), aC = hexN(accC)
+  const W = 70, hW = 35, H = 26, hH = 13
+
+  // ── White glow helper: draw an outline glow ─────────────────────────────
+  function glowOutline(x, y, w, h, r) {
+    // Outer glow layer (widest, most transparent)
+    g.roundRect(x - 3, y - 3, w + 6, h + 6, r + 2).fill({ color: 0xffffff, alpha: 0.08 })
+    // Inner glow layer
+    g.roundRect(x - 1.5, y - 1.5, w + 3, h + 3, r + 1).fill({ color: 0xffffff, alpha: 0.18 })
+    // Hard white stroke
+    g.roundRect(x, y, w, h, r).stroke({ color: 0xffffff, width: 1.8, alpha: 0.75 })
+  }
+
+  if (catKey === 'maglev') {
+    // ── Maglev streamlined capsule ──────────────────────────────────────
+    g.roundRect(-hW - 3, -hH - 3, W + 6, H + 6, 12).fill({ color: 0xffffff, alpha: 0.08 })
+    g.roundRect(-hW - 1, -hH - 1, W + 2, H + 2, 10).fill({ color: 0xffffff, alpha: 0.18 })
+    g.roundRect(-hW, -hH, W, H, 9).fill(bC)
+    glowOutline(-hW, -hH, W, H, 9)
+    // Upper body highlight
+    g.roundRect(-hW + 2, -hH + 1, W - 4, 5, 4).fill({ color: 0xffffff, alpha: 0.08 })
+    // Speed stripe (double)
+    g.rect(-hW + 2, -3, W - 4, 6).fill(aC)
+    g.rect(-hW + 2, -1, W - 4, 2).fill({ color: 0xffffff, alpha: 0.15 })
+    // Visor windshield
+    g.roundRect(-hW + 5, -hH + 3, W - 10, 9, 3).fill(0x0f172a)
+    g.roundRect(-hW + 5, -hH + 3, W - 10, 4, 3).fill({ color: 0x93c5fd, alpha: 0.5 })
+    // Window pillars
+    for (let wp = 0; wp < 4; wp++) g.rect(-hW + 14 + wp * 12, -hH + 3, 1.5, 9).fill({ color: bC, alpha: 0.6 })
+    // Nose cone
+    g.poly([hW - 8, -hH, hW + 8, 0, hW - 8, hH]).fill(bC)
+    g.poly([hW - 8, -hH, hW + 8, 0, hW - 8, hH]).stroke({ color: 0xffffff, width: 1, alpha: 0.5 })
+    g.roundRect(hW - 10, -hH, 4, H, 2).fill(aC)
+    // Headlights
+    g.circle(hW + 2, -3, 3).fill(0xfef08a); g.circle(hW + 2, -3, 1.5).fill(0xffffff)
+    g.circle(hW + 2, 3, 3).fill(0xfef08a); g.circle(hW + 2, 3, 1.5).fill(0xffffff)
+    // Panel lines
+    for (let pl = 0; pl < 5; pl++) g.rect(-hW + 4 + pl * 12, -hH + 1, 0.8, H - 2).fill({ color: 0x000000, alpha: 0.12 })
+    // Door markers
+    g.rect(-hW + 16, -hH + 2, 8, H - 4).stroke({ color: 0xffffff, width: 0.6, alpha: 0.2 })
+    g.rect(-hW + 40, -hH + 2, 8, H - 4).stroke({ color: 0xffffff, width: 0.6, alpha: 0.2 })
+    // Levitation rail + glow
+    g.rect(-hW + 6, hH, W - 12, 2).fill(0x1e3a8a)
+    g.rect(-hW + 6, hH + 2, W - 12, 4).fill(0x38bdf8)
+    g.rect(-hW + 6, hH + 2, W - 12, 2).fill({ color: 0x7dd3fc, alpha: 0.7 })
+    // Pulsing LED strip under body
+    g.rect(-hW + 4, hH - 1, W - 8, 1.5).fill({ color: aC, alpha: 0.45 })
+    g.rect(-hW + 8, hH - 1, 6, 1.5).fill({ color: 0xffffff, alpha: 0.3 })
+    // Undercarriage sensors
+    for (let si = 0; si < 6; si++) {
+      g.circle(-hW + 12 + si * 10, hH + 1, 1.5).fill({ color: 0x38bdf8, alpha: 0.5 })
+      g.circle(-hW + 12 + si * 10, hH + 1, 0.8).fill({ color: 0xffffff, alpha: 0.7 })
+    }
+    // Ventilation grilles (roof)
+    for (let vi = 0; vi < 3; vi++) g.roundRect(-hW + 8 + vi * 16, -hH - 2, 10, 2, 1).fill({ color: 0x000000, alpha: 0.15 })
+    // Aerodynamic fairing covers
+    g.poly([-hW, hH, -hW - 4, hH + 3, -hW, hH + 3]).fill({ color: bC, alpha: 0.5 })
+    // Number plate
+    g.roundRect(-hW + 2, hH - 5, 14, 4, 1).fill({ color: 0x000000, alpha: 0.3 })
+    // Tail light
+    g.circle(-hW - 1, 0, 2.5).fill(0xef4444); g.circle(-hW - 1, 0, 1.2).fill(0xfca5a5)
+    return
+  }
+
+  if (catKey === 'hsr') {
+    // ── Bullet-nose high-speed train ────────────────────────────────────
+    g.roundRect(-hW - 2, -hH - 2, W - 8, H + 4, 5).fill({ color: 0xffffff, alpha: 0.1 })
+    // Main body
+    g.roundRect(-hW, -hH, W - 12, H, 4).fill(bC)
+    // Nose cone (elongated triangle)
+    g.poly([hW - 12, -hH, hW + 8, -2, hW + 8, 2, hW - 12, hH]).fill(bC)
+    g.poly([hW - 12, -hH, hW + 8, -2, hW + 8, 2, hW - 12, hH]).stroke({ color: 0xffffff, width: 1, alpha: 0.5 })
+    g.roundRect(-hW, -hH, W - 12, H, 4).stroke({ color: 0xffffff, width: 1.5, alpha: 0.7 })
+    // Upper highlight
+    g.roundRect(-hW + 2, -hH + 1, W - 16, 4, 2).fill({ color: 0xffffff, alpha: 0.08 })
+    // Speed stripe (accent band)
+    g.rect(-hW, -2, W - 6, 5).fill(aC)
+    g.rect(-hW, -1, W - 6, 1.5).fill({ color: 0xffffff, alpha: 0.12 })
+    // Windshield visor
+    g.roundRect(-hW + 4, -hH + 3, W - 22, 9, 2).fill(0x0f172a)
+    g.roundRect(-hW + 4, -hH + 3, W - 22, 4, 2).fill({ color: 0xbfdbfe, alpha: 0.5 })
+    // Window pillars
+    for (let wp = 0; wp < 3; wp++) g.rect(-hW + 14 + wp * 11, -hH + 3, 1, 9).fill({ color: bC, alpha: 0.5 })
+    // Headlights (dual)
+    g.circle(hW + 4, -2, 3.5).fill(0xfef08a); g.circle(hW + 4, -2, 2).fill(0xffffff)
+    g.circle(hW + 4, 2, 2.5).fill(0xfca5a5); g.circle(hW + 4, 2, 1.5).fill(0xfecdd3)
+    // Pantograph (detailed diamond shape)
+    const px = -hW + 12
+    g.rect(px, -hH - 7, 2, 7).fill({ color: 0xd1d5db, alpha: 0.8 })
+    g.rect(px + 16, -hH - 7, 2, 7).fill({ color: 0xd1d5db, alpha: 0.8 })
+    g.rect(px - 2, -hH - 8, 22, 1.5).fill({ color: 0xd1d5db, alpha: 0.8 })
+    // Cross-arm
+    g.moveTo(px + 1, -hH).lineTo(px + 9, -hH - 7).stroke({ color: 0xd1d5db, width: 1, alpha: 0.6 })
+    g.moveTo(px + 17, -hH).lineTo(px + 9, -hH - 7).stroke({ color: 0xd1d5db, width: 1, alpha: 0.6 })
+    // Contact wire
+    g.rect(px - 4, -hH - 10, 28, 1).fill({ color: 0xfbbf24, alpha: 0.4 })
+    // Bogies/Wheels with suspension detail
+    for (const bx of [-24, 10]) {
+      // Bogie frame
+      g.roundRect(bx - 4, hH - 1, 18, 4, 1.5).fill({ color: 0x1f2937, alpha: 0.6 })
+      // Wheels (paired)
+      g.circle(bx, hH + 3, 4.5).fill(0x1f2937).stroke({ color: 0x6b7280, width: 1.2 })
+      g.circle(bx, hH + 3, 2).fill(0x9ca3af)
+      g.circle(bx + 10, hH + 3, 4.5).fill(0x1f2937).stroke({ color: 0x6b7280, width: 1.2 })
+      g.circle(bx + 10, hH + 3, 2).fill(0x9ca3af)
+      // Suspension springs
+      g.rect(bx + 2, hH - 2, 6, 2).fill({ color: 0x6b7280, alpha: 0.4 })
+    }
+    // Door markings (double doors)
+    g.rect(-hW + 18, -hH + 2, 7, H - 4).stroke({ color: 0xffffff, width: 0.6, alpha: 0.2 })
+    g.rect(-hW + 38, -hH + 2, 7, H - 4).stroke({ color: 0xffffff, width: 0.5, alpha: 0.15 })
+    // Skirt (lower body panel / aerodynamic fairing)
+    g.rect(-hW, hH - 3, W - 12, 3).fill({ color: 0x000000, alpha: 0.2 })
+    g.rect(-hW, hH - 5, W - 12, 2).fill({ color: bC, alpha: 0.3 })
+    // Brake disc indicators (between bogies)
+    for (let bi = 0; bi < 3; bi++) g.circle(-10 + bi * 8, hH + 1, 1).fill({ color: 0xd97706, alpha: 0.3 })
+    // Ventilation grilles (roof)
+    for (let vi = 0; vi < 2; vi++) g.roundRect(-hW + 6 + vi * 18, -hH - 3, 12, 2.5, 1).fill({ color: 0x000000, alpha: 0.12 })
+    // Destination LED board
+    g.roundRect(-hW + 3, -hH + 13, 16, 5, 1).fill(0x000000)
+    g.roundRect(-hW + 4, -hH + 14, 14, 3, 0.5).fill({ color: 0xfbbf24, alpha: 0.6 })
+    // Tail light
+    g.circle(-hW - 1, -4, 2).fill(0xef4444); g.circle(-hW - 1, -4, 1).fill(0xfca5a5)
+    g.circle(-hW - 1, 4, 2).fill(0xef4444); g.circle(-hW - 1, 4, 1).fill(0xfca5a5)
+    // Number plate
+    g.roundRect(-hW + 2, -hH + 2, 14, 6, 1).fill({ color: 0x000000, alpha: 0.3 })
+    // Coupler cover (nose)
+    g.roundRect(hW + 6, -3, 4, 6, 1).fill({ color: bC, alpha: 0.6 })
+    return
+  }
+
+  // ── General body: steam / diesel / emu ──────────────────────────────────
+  const isSteam = catKey && catKey.includes('steam')
+  const isEmu = catKey && catKey.includes('emu')
+  // Glow shell
+  g.roundRect(-hW - 3, -hH - 3, W + 6, H + 6, 7).fill({ color: 0xffffff, alpha: 0.08 })
+  g.roundRect(-hW - 1.5, -hH - 1.5, W + 3, H + 3, 6).fill({ color: 0xffffff, alpha: 0.15 })
+  // Body
+  g.roundRect(-hW, -hH, W, H, 4).fill(bC)
+  g.roundRect(-hW, -hH, W, H, 4).stroke({ color: 0xffffff, width: 1.5, alpha: 0.7 })
+  // Upper body highlight
+  g.roundRect(-hW + 2, -hH + 1, W - 4, 3, 2).fill({ color: 0xffffff, alpha: 0.06 })
+  // Accent stripe (double band)
+  g.rect(-hW, -hH + 3, W, 4).fill(aC)
+  g.rect(-hW, -hH + 4, W, 1.5).fill({ color: 0xffffff, alpha: 0.1 })
+  g.rect(-hW, -hH + 7, W, 1).fill({ color: 0x000000, alpha: 0.2 })
+  // Windows
+  const winCount = isSteam ? 1 : isEmu ? 5 : 3
+  const winW = isEmu ? 8 : 11
+  const winGap = isEmu ? 11 : 16
+  for (let i = 0; i < winCount; i++) {
+    const wx = -hW + 6 + i * winGap
+    g.roundRect(wx, -hH + 6, winW, 9, 2).fill(0x0f172a)
+    g.roundRect(wx, -hH + 6, winW, 3.5, 2).fill({ color: 0xbfdbfe, alpha: 0.4 })
+    g.roundRect(wx, -hH + 6, winW, 9, 2).stroke({ color: 0x93c5fd, width: 0.8, alpha: 0.5 })
+  }
+  if (!isSteam) {
+    // ── Diesel/EMU nose (integrated, no protruding block) ──
+    // Sloped nose end
+    g.poly([hW, -hH, hW + 6, -hH + 4, hW + 6, hH - 4, hW, hH]).fill(aC)
+    g.poly([hW, -hH, hW + 6, -hH + 4, hW + 6, hH - 4, hW, hH]).stroke({ color: 0xffffff, width: 0.8, alpha: 0.4 })
+    // Nose highlight
+    g.poly([hW, -hH, hW + 4, -hH + 3, hW + 4, -hH + 6, hW, -hH + 4]).fill({ color: 0xffffff, alpha: 0.08 })
+    // Front windshield (on nose) — split pane
+    g.roundRect(hW - 12, -hH + 2, 12, 9, 2).fill(0x0f172a)
+    g.roundRect(hW - 12, -hH + 2, 12, 4, 2).fill({ color: 0x87ceeb, alpha: 0.35 })
+    g.rect(hW - 6, -hH + 2, 1, 9).fill({ color: bC, alpha: 0.4 }) // center pillar
+    // Headlights (dual top + marker bottom)
+    g.circle(hW + 3, -hH + 5, 3).fill(0xfef08a); g.circle(hW + 3, -hH + 5, 1.8).fill(0xffffff)
+    g.circle(hW + 3, -hH + 10, 2).fill(0xfef08a); g.circle(hW + 3, -hH + 10, 1).fill(0xffffff)
+    g.circle(hW + 3, hH - 5, 2.5).fill(0xfca5a5); g.circle(hW + 3, hH - 5, 1.2).fill(0xfecdd3)
+    // Ditch lights (low-mounted, widely spaced)
+    g.circle(hW + 1, hH - 10, 1.5).fill({ color: 0xfef08a, alpha: 0.6 })
+    // Exhaust + radiator (diesel hood)
+    if (!isEmu) {
+      // Exhaust stack
+      g.roundRect(-hW + 2, -hH - 4, 8, 4, 1).fill({ color: 0x1f2937, alpha: 0.5 })
+      g.roundRect(-hW + 3, -hH - 5, 6, 2, 1).fill({ color: 0x374151, alpha: 0.4 })
+      // Radiator grilles (long hood detail)
+      for (let gi = 0; gi < 6; gi++) g.rect(-hW + 3 + gi * 2, -hH - 3, 1, 2.5).fill({ color: 0x6b7280, alpha: 0.3 })
+      // Radiator fan (round on top)
+      g.circle(-hW + 18, -hH - 2, 4).fill({ color: 0x1f2937, alpha: 0.3 })
+      g.circle(-hW + 18, -hH - 2, 4).stroke({ color: 0x6b7280, width: 0.8, alpha: 0.3 })
+      g.circle(-hW + 18, -hH - 2, 1.5).fill({ color: 0x9ca3af, alpha: 0.3 })
+      // Horn (on roof)
+      g.rect(hW - 16, -hH - 5, 3, 5).fill({ color: 0xd1d5db, alpha: 0.5 })
+      g.roundRect(hW - 17, -hH - 7, 5, 3, 1).fill({ color: 0xfbbf24, alpha: 0.4 })
+      // Bell
+      g.circle(hW - 8, -hH - 3, 2.5).fill({ color: 0xd97706, alpha: 0.5 })
+      g.rect(hW - 8, -hH - 6, 1, 3).fill({ color: 0xd1d5db, alpha: 0.4 })
+      // Handrails (nose)
+      g.rect(hW - 2, -hH + 12, 8, 1).fill({ color: 0xfbbf24, alpha: 0.3 })
+      g.rect(hW + 5, -hH + 8, 1, 5).fill({ color: 0xfbbf24, alpha: 0.3 })
+      // Dynamic brake blister (roof hump)
+      g.roundRect(-hW + 28, -hH - 3, 14, 3, 1.5).fill({ color: 0x000000, alpha: 0.15 })
+    }
+    // Pantograph (EMU — detailed diamond)
+    if (isEmu) {
+      const px = -hW + 10
+      g.rect(px, -hH - 8, 2, 8).fill({ color: 0xd1d5db, alpha: 0.7 })
+      g.rect(px + 18, -hH - 8, 2, 8).fill({ color: 0xd1d5db, alpha: 0.7 })
+      g.rect(px - 2, -hH - 9, 24, 1.5).fill({ color: 0xd1d5db, alpha: 0.7 })
+      // Cross arms
+      g.moveTo(px + 1, -hH).lineTo(px + 10, -hH - 8).stroke({ color: 0xd1d5db, width: 1, alpha: 0.5 })
+      g.moveTo(px + 19, -hH).lineTo(px + 10, -hH - 8).stroke({ color: 0xd1d5db, width: 1, alpha: 0.5 })
+      // Contact wire
+      g.rect(px - 4, -hH - 11, 30, 1).fill({ color: 0xfbbf24, alpha: 0.35 })
+      // Destination LED board
+      g.roundRect(-hW + 4, -hH + 14, 14, 4, 1).fill(0x000000)
+      g.roundRect(-hW + 5, -hH + 15, 12, 2, 0.5).fill({ color: 0xfbbf24, alpha: 0.5 })
+      // Inter-car connector (rear)
+      g.roundRect(-hW - 3, -hH + 3, 3, H - 6, 1).fill({ color: 0x374151, alpha: 0.4 })
+      // AC unit (roof)
+      g.roundRect(-hW + 32, -hH - 3, 12, 3, 1).fill({ color: 0xd1d5db, alpha: 0.2 })
+    }
+    // Door markings (double door)
+    g.rect(-hW + 22, -hH + 2, 6, H - 4).stroke({ color: 0xffffff, width: 0.5, alpha: 0.18 })
+    g.rect(-hW + 40, -hH + 2, 6, H - 4).stroke({ color: 0xffffff, width: 0.4, alpha: 0.12 })
+    // Grab irons (side handrails)
+    g.rect(-hW + 1, -hH + 8, 1, 10).fill({ color: 0xfbbf24, alpha: 0.25 })
+    g.rect(hW - 2, -hH + 8, 1, 10).fill({ color: 0xfbbf24, alpha: 0.25 })
+  }
+  // Rivet dots
+  for (const ry of [-hH + 1, hH - 2]) {
+    for (let rx = -hW + 4; rx < hW - 14; rx += 8) {
+      g.circle(rx, ry, 0.8).fill({ color: 0xffffff, alpha: 0.2 })
+    }
+  }
+  // Number board
+  g.roundRect(-hW + 2, -hH + 1, 14, 6, 1).fill({ color: 0x000000, alpha: 0.3 })
+  // Bogies + Wheels
+  for (const bx of [-24, isSteam ? -4 : 8]) {
+    // Bogie frame
+    if (!isSteam) g.roundRect(bx - 3, hH - 1, 16, 3, 1).fill({ color: 0x1f2937, alpha: 0.5 })
+    // Wheels
+    g.circle(bx, hH + 3, 6).fill(0x1f2937).stroke({ color: 0x6b7280, width: 1.2 })
+    g.circle(bx, hH + 3, 3.5).fill(0x374151)
+    g.circle(bx, hH + 3, 1.5).fill(0x9ca3af)
+    g.circle(bx + 10, hH + 3, 6).fill(0x1f2937).stroke({ color: 0x6b7280, width: 1.2 })
+    g.circle(bx + 10, hH + 3, 3.5).fill(0x374151)
+    g.circle(bx + 10, hH + 3, 1.5).fill(0x9ca3af)
+    // Axle
+    g.rect(bx, hH + 2.5, 10, 1).fill({ color: 0x6b7280, alpha: 0.4 })
+  }
+  // Undercarriage
+  g.rect(-hW, hH - 1, W, 2.5).fill({ color: 0x000000, alpha: 0.35 })
+  // Coupling hooks
+  g.rect(-hW - 4, hH - 2, 4, 3).fill({ color: 0x6b7280, alpha: 0.4 })
+  if (!isSteam) g.rect(hW, hH - 2, 4, 3).fill({ color: 0x6b7280, alpha: 0.4 })
+  if (catKey && catKey.includes('steam')) {
+    const v = variant ? (variant-1) : (trainKey||'').split('').reduce((a,c)=>a+c.charCodeAt(0),0) % 5
+    // ── Boiler bands (3 rings around cylindrical boiler) ──
+    for (let bi = 0; bi < 3; bi++) {
+      const bx = -hW + 12 + bi * 18
+      g.rect(bx, -hH, 2, H).fill({ color: 0xffffff, alpha: 0.12 })
+    }
+    // ── Running board / footplate (long horizontal bar) ──
+    g.rect(-hW - 2, hH - 4, W + 8, 2.5).fill(aC)
+    g.rect(-hW - 2, hH - 4, W + 8, 1).fill({ color: 0xffffff, alpha: 0.2 })
+    // ── Smokestack / Chimney ──
+    const chX = hW - 16 - v * 2
+    const chW = 5 + v % 2
+    g.rect(chX, -hH - 12 - v, chW, 12 + v).fill(bC)
+    g.rect(chX, -hH - 12 - v, chW, 12 + v).stroke({ color: 0xffffff, width: 0.8, alpha: 0.4 })
+    // Chimney cap (wider flared top)
+    g.roundRect(chX - 3, -hH - 14 - v, chW + 6, 4, 2).fill(0x1f2937)
+    g.roundRect(chX - 3, -hH - 14 - v, chW + 6, 1.5, 1).fill({ color: 0xffffff, alpha: 0.15 })
+    // ── Steam dome (brass, raised) ──
+    const dX = hW - 30 - v * 2
+    g.ellipse(dX, -hH - 3, 6, 7).fill(aC)
+    g.ellipse(dX, -hH - 3, 6, 7).stroke({ color: 0xffffff, width: 0.8, alpha: 0.4 })
+    g.ellipse(dX, -hH - 6, 4, 3).fill({ color: 0xffffff, alpha: 0.15 }) // highlight
+    // ── Safety valve (small between dome and chimney) ──
+    g.rect(dX + 8, -hH - 6, 3, 6).fill(0x9ca3af)
+    g.circle(dX + 9.5, -hH - 7, 2).fill(0xb8b8b8)
+    // ── Sandbox (second smaller dome) ──
+    if (v < 3) {
+      g.ellipse(dX - 12, -hH - 1, 4, 5).fill(0x6b7280)
+      g.ellipse(dX - 12, -hH - 1, 4, 5).stroke({ color: 0xffffff, width: 0.6, alpha: 0.3 })
+    }
+    // ── Headlight (on smokebox front) ──
+    g.circle(hW - 2, -hH + 4, 4).fill(0xfef08a)
+    g.circle(hW - 2, -hH + 4, 2.5).fill(0xffffff)
+    g.circle(hW - 2, -hH + 4, 4).stroke({ color: 0x9ca3af, width: 1 })
+    // ── Smokebox door (circular front face) ──
+    g.circle(hW - 1, 0, hH - 2).fill({ color: 0x000000, alpha: 0.15 })
+    g.circle(hW - 1, 0, hH - 4).stroke({ color: 0xffffff, width: 0.6, alpha: 0.2 })
+    // ── Cowcatcher / pilot ──
+    g.poly([hW + 1, -hH + 5, hW + 8, hH - 3, hW + 1, hH - 3]).fill(0x1f2937)
+    for (let ci = 0; ci < 3; ci++) {
+      g.rect(hW + 1, hH - 6 + ci * 2.5, 6, 1).fill({ color: 0x9ca3af, alpha: 0.4 })
+    }
+    // ── Cab (rear, taller with window) ──
+    g.roundRect(-hW - 2, -hH - 6, 14, H + 6, 2).fill(aC)
+    g.roundRect(-hW - 2, -hH - 6, 14, H + 6, 2).stroke({ color: 0xffffff, width: 0.8, alpha: 0.4 })
+    // Cab window
+    g.roundRect(-hW + 1, -hH - 3, 8, 8, 1.5).fill(0x0f172a)
+    g.roundRect(-hW + 1, -hH - 3, 8, 4, 1.5).fill({ color: 0x87ceeb, alpha: 0.4 })
+    // Cab roof
+    g.roundRect(-hW - 4, -hH - 8, 18, 3, 1).fill({ color: 0x000000, alpha: 0.3 })
+    // ── Tender car (coal wagon behind cab) ──
+    g.roundRect(-hW - 24, -hH + 1, 20, H - 2, 3).fill(bC)
+    g.roundRect(-hW - 24, -hH + 1, 20, H - 2, 3).stroke({ color: 0xffffff, width: 0.8, alpha: 0.35 })
+    // Coal load
+    g.poly([-hW-22,-hH+1, -hW-18,-hH-3, -hW-12,-hH-2, -hW-6,-hH+1]).fill({ color: 0x111111 })
+    // Tender wheels
+    g.circle(-hW - 18, hH + 3, 5).fill(0x1f2937).stroke({ color: 0x6b7280, width: 1 })
+    g.circle(-hW - 18, hH + 3, 2).fill(0x9ca3af)
+    g.circle(-hW - 8, hH + 3, 5).fill(0x1f2937).stroke({ color: 0x6b7280, width: 1 })
+    g.circle(-hW - 8, hH + 3, 2).fill(0x9ca3af)
+    // ── Connecting rods (detailed, multiple) ──
+    g.rect(-22, hH + 1, 40, 2).fill({ color: 0x9ca3af, alpha: 0.5 })
+    g.rect(-18, hH + 0, 34, 1).fill({ color: 0x6b7280, alpha: 0.3 })
+    // ── Valve gear (Walschaerts motion) ──
+    g.rect(-10, hH - 2, 18, 1.5).fill({ color: 0x9ca3af, alpha: 0.35 })
+    g.circle(6, hH - 1, 2).fill({ color: 0x9ca3af, alpha: 0.4 })
+    // ── Piston cross-head (front) ──
+    g.roundRect(hW - 6, hH - 3, 6, 5, 1).fill({ color: 0x9ca3af, alpha: 0.4 })
+    g.rect(hW - 4, hH + 0, 8, 1.5).fill({ color: 0x6b7280, alpha: 0.35 })
+    // ── Steam pipes (on side of boiler) ──
+    g.rect(dX + 2, -hH + 2, hW - dX - 4, 1.5).fill({ color: 0x9ca3af, alpha: 0.3 })
+    // ── Firebox glow (under boiler, orange) ──
+    g.rect(-hW + 14, hH - 2, 12, 3).fill({ color: 0xf97316, alpha: 0.2 })
+    g.rect(-hW + 16, hH - 1, 8, 2).fill({ color: 0xfbbf24, alpha: 0.15 })
+    // ── Whistle (on boiler top) ──
+    g.rect(dX - 4, -hH - 5, 2, 5).fill({ color: 0xd97706, alpha: 0.5 })
+    g.circle(dX - 3, -hH - 6, 1.5).fill({ color: 0xf59e0b, alpha: 0.6 })
+    // ── Bell (front of boiler) ──
+    g.circle(hW - 10, -hH - 3, 2.5).fill({ color: 0xd97706, alpha: 0.45 })
+    g.rect(hW - 10, -hH - 6, 1, 3).fill({ color: 0xd1d5db, alpha: 0.35 })
+    // ── Handrails (running along boiler) ──
+    g.rect(-hW + 12, -hH + 2, hW * 2 - 26, 0.8).fill({ color: 0xfbbf24, alpha: 0.2 })
+    // ── Water gauge (cab side) ──
+    g.rect(-hW + 2, -hH + 8, 2, 8).fill({ color: 0x0891b2, alpha: 0.3 })
+    g.rect(-hW + 2, -hH + 12, 2, 4).fill({ color: 0x22d3ee, alpha: 0.4 })
+    // ── Splasher / wheel guard ──
+    g.poly([-16, hH - 2, -4, hH - 2, -4, hH + 1, -16, hH + 1]).fill({ color: bC, alpha: 0.3 })
+    g.arc(-10, hH + 3, 8, Math.PI, 0).stroke({ color: aC, width: 1.5, alpha: 0.3 })
+  }
+}
+
+function buildPlayer() {
+  const c = new PIXI.Container(); L.player = c; stage.addChild(c)
+  c.x = app.screen.width * PLAYER_X
+
+  // Glow ellipse
+  playerGlow = new PIXI.Graphics()
+  playerGlow.ellipse(0, 8, 38, 12).fill(0x86efac)
+  playerGlow.alpha = 0.25
+  c.addChild(playerGlow)
+
+  // Train graphic (replaces emoji Text for cross-device compatibility)
+  playerSprite = new PIXI.Graphics()
+  drawTrainG(playerSprite, '#1e3a8a', '#3b82f6', 'diesel_id')  // default until train selected
+  c.addChild(playerSprite)
+
+  c.y = laneYs[S.lane]
+
+  // Steam container
+  L.steam = new PIXI.Container(); stage.addChild(L.steam)
+}
+
+function updatePlayerEmoji() {
+  if (!playerSprite || !S.trainCfg) return
+  const cat = S.trainCfg.category || ''
+  const drawKey = cat.includes('maglev') ? 'maglev' : cat.includes('hsr') ? 'hsr' : cat.includes('steam') ? 'steam' : cat.includes('emu') ? 'emu' : 'diesel'
+  drawTrainG(playerSprite, S.trainCfg.bodyColor, S.trainCfg.accColor, drawKey, S.trainCfg.key, S.trainCfg.variant||1)
+}
+
+function tickPlayer(delta) {
+  if (!L.player) return
+  const targetY = laneYs[S.targetLane]
+  const dy = targetY - L.player.y
+  L.player.y += dy * 0.22 * delta
+
+  // Bob
+  L.player.y += Math.sin(S.frame * 0.12) * 0.4
+
+  // Glow pulse
+  if (playerGlow) playerGlow.alpha = 0.18 + Math.sin(S.frame * 0.08) * 0.1
+
+  // Invincibility flash
+  if (S.invincible > 0) {
+    S.invincible -= delta
+    L.player.alpha = Math.sin(S.invincible * 0.7) > 0 ? 1 : 0.3
+    if (S.invincible <= 0) L.player.alpha = 1
+  }
+
+  // Screen shake on crash
+  if (S.shakeTimer > 0) {
+    S.shakeTimer -= delta
+    const t = S.shakeTimer / 22
+    stage.x = Math.sin(S.shakeTimer * 1.5) * 7 * t
+    stage.y = Math.cos(S.shakeTimer * 1.2) * 4 * t
+  } else {
+    stage.x *= 0.8
+    stage.y *= 0.8
+  }
+}
+
+// ── Steam ─────────────────────────────────────────────────
+function tickSteam(delta) {
+  S.frame++
+  // Only spawn smoke for steam trains
+  const cat = S.trainCfg?.category || ''
+  const isSteamTrain = cat.includes('steam')
+  if (S.frame % 3 === 0 && isSteamTrain) spawnSteam()
+  // Diesel gets small exhaust puffs (less visible)
+  if (S.frame % 8 === 0 && !isSteamTrain && cat.includes('diesel')) spawnSteam()
+  for (let i = S.steam.length - 1; i >= 0; i--) {
+    const p = S.steam[i]
+    p.g.x -= (S.speed * 0.6 + p.vx) * delta
+    p.g.y += p.vy * delta
+    p.life -= p.decay * delta
+    p.g.alpha = p.life * 0.5
+    p.g.scale.set(1 + (1 - p.life) * 1.5)
+    if (p.life <= 0) { L.steam.removeChild(p.g); S.steam.splice(i, 1) }
+  }
+}
+function spawnSteam() {
+  if (!L.player) return
+  const px = L.player.x - 24  // top of boiler
+  const py = L.player.y - 22
+  const g = new PIXI.Graphics()
+  const r = 4 + Math.random() * 5
+  g.circle(0, 0, r).fill(S.boosting ? 0xff6622 : 0xaaaaaa)
+  g.x = px + (Math.random() - 0.5) * 8
+  g.y = py
+  g.alpha = 0.5
+  L.steam.addChild(g)
+  S.steam.push({ g, vx: 0.3 + Math.random() * 0.5, vy: -(0.8 + Math.random() * 1.2), life: 1, decay: 0.038 + Math.random() * 0.025 })
+}
+
+// ── AI Trains ─────────────────────────────────────────────
+function buildAI() {
+  L.ai.removeChildren()
+  S.aiTrains = []
+  const pool = shuffle([...ALL_TRAINS]).slice(0, AI_COUNT)
+  pool.forEach((cfg, i) => {
+    const c = new PIXI.Container()
+    const spr = new PIXI.Graphics()
+    drawTrainG(spr, cfg.bodyColor || '#374151', cfg.accColor || '#9ca3af', cfg.category)
+    c.addChild(spr)
+
+    // Glow
+    const glow = new PIXI.Graphics()
+    glow.ellipse(0, 8, 28, 9).fill(0x86efac)
+    glow.alpha = 0.18
+    c.addChild(glow)
+
+    const aiLane = [0, 1, 2].filter(l => l !== S.lane)[i % 2]
+    c.y = laneYs[aiLane]
+    c.x = app.screen.width * (0.55 + i * 0.15)
+    L.ai.addChild(c)
+
+    const variation = 0.96 + Math.random() * 0.08
+    S.aiTrains.push({
+      cfg, container: c,
+      lane: aiLane,
+      speed: S.baseSpeed * variation,
+      distance: 0,
+    })
+  })
+}
+
+function tickAI(delta) {
+  const W = app.screen.width
+  const playerX = W * PLAYER_X
+
+  S.aiTrains.forEach(ai => {
+    ai.distance += ai.speed * delta * 0.12
+    // Screen position based on relative distance
+    const relDist = ai.distance - S.distance
+    const screenX = playerX + relDist * 1.8
+    ai.container.x = screenX
+    ai.container.visible = screenX > -80 && screenX < W + 80
+    // Bob
+    ai.container.y = laneYs[ai.lane] + Math.sin(S.frame * 0.1 + ai.lane) * 0.5
+  })
+
+  // Update race position
+  const aiAhead = S.aiTrains.filter(a => a.distance > S.distance).length
+  S.position = aiAhead + 1
+  const posText = S.position === 1 ? '🥇 Posisi 1!' : S.position === 2 ? '🥈 Posisi 2' : '🥉 Posisi 3'
+  document.getElementById('position-badge').textContent = posText
+}
+
+// ── Obstacles ─────────────────────────────────────────────
+const OBS_EMOJIS = ['🪨','🐄','🐔','🌵','⚠️','🛑','🪵','🧱']
+const OBS_SIZE = 44
+
+function spawnObstacle() {
+  // Only spawn on lanes NOT occupied by AI trains
+  // Spawn on any lane EXCEPT player's current lane (player should dodge to avoid)
+  const otherLanes = [0, 1, 2].filter(l => l !== S.lane)
+  const lane = otherLanes[Math.floor(Math.random() * otherLanes.length)]
+  const W = app.screen.width
+  const emoji = OBS_EMOJIS[Math.floor(Math.random() * OBS_EMOJIS.length)]
+
+  const c = new PIXI.Container()
+  const txt = new PIXI.Text({ text: emoji, style: { fontSize: OBS_SIZE, fontFamily: 'Arial' } })
+  txt.anchor.set(0.5)
+  c.addChild(txt)
+
+  // Warning glow
+  const wg = new PIXI.Graphics()
+  wg.circle(0, 0, OBS_SIZE * 0.65).fill(0xef4444)
+  wg.alpha = 0.15
+  c.addChild(wg)
+
+  c.x = W + OBS_SIZE
+  c.y = laneYs[lane]
+  c._lane = lane
+  c._alive = true
+  c._warned = false
+
+  L.obstacles.addChild(c)
+  S.obstacles.push(c)
+
+  // Lane warning
+  const warnBtns = ['btn-up','btn-boost','btn-dn']
+  // Flash the lane change button
+  const btnId = lane === 0 ? 'btn-dn' : lane === 2 ? 'btn-up' : null
+  if (btnId) {
+    const btn = document.getElementById(btnId)
+    if (btn) { btn.style.borderColor = '#ef4444'; btn.style.boxShadow = '0 0 12px rgba(239,68,68,0.6)'; setTimeout(() => { btn.style.borderColor = ''; btn.style.boxShadow = '' }, 600) }
+  }
+}
+
+function tickObstacles(delta) {
+  const W = app.screen.width
+  const playerX = W * PLAYER_X
+  const hitZoneX = playerX + 10
+
+  for (let i = S.obstacles.length - 1; i >= 0; i--) {
+    const o = S.obstacles[i]
+    if (!o._alive) { L.obstacles.removeChild(o); S.obstacles.splice(i, 1); continue }
+
+    o.x -= S.speed * delta * 1.0
+    // Pulse warning
+    o.children[1].alpha = 0.1 + Math.sin(S.frame * 0.2) * 0.1
+
+    if (o.x < -OBS_SIZE * 2) { o._alive = false; continue }
+
+    // Collision
+    if (S.invincible <= 0 && o._lane === S.lane &&
+        o.x > hitZoneX - OBS_SIZE && o.x < hitZoneX + OBS_SIZE) {
+      o._alive = false
+      crashHit()
+    }
+  }
+}
+
+function crashHit() {
+  if (S.invincible > 0) return
+  S.invincible = 60
+  S.shakeTimer = 24
+  S.hp--
+  spawnCrashFX(L.player.x, L.player.y)
+  playTone(200, 0.2, 'square')
+  screenFlash('rgba(255,60,60,0.35)')
+  updateHUD()
+  if (S.hp <= 0) setTimeout(endRace, 500)
+}
+
+// ── FX ────────────────────────────────────────────────────
+function spawnCrashFX(x, y) {
+  for (let i = 0; i < 18; i++) {
+    const g = new PIXI.Graphics()
+    const r = 2 + Math.random() * 5
+    g.circle(0, 0, r).fill(i % 2 === 0 ? 0xff4444 : 0xffaa44)
+    g.x = x; g.y = y
+    L.fx.addChild(g)
+    S.sparks.push({ g, vx: (Math.random() - 0.5) * 9, vy: -Math.random() * 7 - 1, gravity: 0.3, life: 1, decay: 0.022 + Math.random() * 0.02 })
+  }
+}
+
+function spawnBoostFX() {
+  for (let i = 0; i < 24; i++) {
+    const g = new PIXI.Graphics()
+    g.circle(0, 0, 3 + Math.random() * 4).fill(0xfbbf24)
+    g.x = L.player.x + (Math.random() - 0.5) * 40
+    g.y = L.player.y + (Math.random() - 0.5) * 20
+    L.fx.addChild(g)
+    S.sparks.push({ g, vx: -(3 + Math.random() * 5), vy: (Math.random() - 0.5) * 3, gravity: 0.05, life: 1, decay: 0.03 + Math.random() * 0.02 })
+  }
+}
+
+function tickFX(delta) {
+  for (let i = S.sparks.length - 1; i >= 0; i--) {
+    const p = S.sparks[i]
+    p.g.x += p.vx * delta; p.g.y += p.vy * delta
+    p.vy += p.gravity * delta
+    p.life -= p.decay * delta
+    p.g.alpha = p.life
+    if (p.life <= 0) { L.fx.removeChild(p.g); S.sparks.splice(i, 1) }
+  }
+}
+
+// ── Speed Lines ───────────────────────────────────────────
+let spdLines = []
+function tickSpeedLines(delta) {
+  if (!S.boosting) { L.speedlines.alpha *= 0.9; return }
+  L.speedlines.alpha = Math.min(1, L.speedlines.alpha + 0.1 * delta)
+
+  if (S.frame % 4 === 0) {
+    const W = app.screen.width
+    const g = new PIXI.Graphics()
+    const y = gameTop + Math.random() * gameH
+    const len = 60 + Math.random() * 120
+    g.rect(0, 0, len, 1.5).fill(0xffffff)
+    g.x = W; g.y = y; g.alpha = 0.4 + Math.random() * 0.4
+    g._vx = -(25 + Math.random() * 15)
+    L.speedlines.addChild(g)
+    spdLines.push(g)
+  }
+  for (let i = spdLines.length - 1; i >= 0; i--) {
+    const l = spdLines[i]
+    l.x += l._vx * delta
+    l.alpha -= 0.04 * delta
+    if (l.alpha <= 0 || l.x < -200) { L.speedlines.removeChild(l); spdLines.splice(i, 1) }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  MAIN LOOP
+// ═══════════════════════════════════════════════════════════
+function loop(ticker) {
+  if (!S.running || S.paused) return
+  const delta = ticker.deltaTime
+  const now = performance.now()
+
+  // Spawn obstacle
+  if (now - lastObsTime > OBS_INTERVAL_MS) {
+    spawnObstacle()
+    lastObsTime = now
+  }
+
+  tickClouds(delta)
+  tickBirds(delta)
+  tickMid(delta)
+  tickSignalPosts(delta)
+  tickTracks(delta)
+  tickSteam(delta)
+  tickPlayer(delta)
+  tickAI(delta)
+  tickObstacles(delta)
+  tickFX(delta)
+  tickSpeedLines(delta)
+
+  // Advance distance
+  const speedFactor = S.boosting ? S.trainCfg.boostMult : 1.0
+  S.distance += S.speed * delta * 0.12 * speedFactor
+  S.speed = Math.min(S.maxSpeed, S.speed + 0.0003 * delta)
+
+  // Pressure recovery
+  S.pressure = Math.min(100, S.pressure + 0.05 * delta)
+  updatePressure()
+
+  updateHUD()
+
+  // Checkpoints
+  const frac = S.distance / S.finishLine
+  ;[['cp0',0.25],['cp1',0.5],['cp2',0.75]].forEach(([id,th]) => {
+    const el = document.getElementById(id)
+    if (frac >= th && !el.classList.contains('reached')) el.classList.add('reached')
+  })
+  if (frac >= 1) {
+    document.getElementById('cp3').classList.add('reached')
+    endRace()
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  GAME FLOW
+// ═══════════════════════════════════════════════════════════
+function startRace() {
+  if (!S.trainCfg) return
+  document.getElementById('select-ovl').style.display = 'none'
+  document.getElementById('go-btn').style.display = 'none'
+
+  S.distance = 0; S.hp = LIVES_MAX; S.pressure = 70
+  S.obstacles = []; S.steam = []; S.sparks = []; spdLines = []; S.frame = 0
+  S.boosting = false; S.boostCooldown = false; S.invincible = 0
+  S.lane = 1; S.targetLane = 1
+  S.speed = S.baseSpeed = S.trainCfg.baseSpeed
+  S.maxSpeed = S.trainCfg.baseSpeed * 2.5
+  L.obstacles.removeChildren(); L.ai.removeChildren()
+
+  updatePlayerEmoji()
+  buildAI()
+  updateHUD()
+  lastObsTime = performance.now() + 2500
+  S.running = true
+  try{const bgm=document.getElementById('game-bgm');bgm.volume=0.2;bgm.play().catch(()=>{})}catch(_){}
+}
+
+function endRace() {
+  if (!S.running) return
+  S.running = false
+  document.getElementById('quiz-ovl').style.display = 'none'
+
+  const stars = GameScoring.calc({correct:S.correctAnswers||0, total:(S.correctAnswers||0)+(S.wrongAnswers||0)||1, wrong:S.wrongAnswers||0, lives:S.hp, maxLives:LIVES_MAX, bonus:S.position===1?1:0})
+  const emoji = stars >= 4 ? '🏆' : stars >= 2 ? '🥈' : '😤'
+  const title = S.position === 1 ? 'Juara 1!' : S.position === 2 ? 'Posisi 2' : 'Posisi 3'
+  const msg = stars >= 4 ? 'Luar biasa! Kamu juaranya!' :
+    stars >= 2 ? `${Math.floor(S.distance)}m ditempuh, bagus!` :
+    'Coba pilih kereta lebih cepat!'
+
+  const nextLevel = (cfg.level||5) < 30 ? () => { sessionStorage.setItem('g14Config', JSON.stringify({...cfg, level:(cfg.level||5)+1})); location.reload(); } : null;
+  GameModal.show({
+    emoji, title, stars, msg,
+    onNext: nextLevel,
+    onAgain: () => startRace(),
+    onBack: () => goBack(),
+    onExtra: { label: 'Ganti Kereta 🚂', action: () => showSelectScreen() }
+  })
+
+  try {
+    sessionStorage.setItem('g14Result', JSON.stringify({ stars, distance: Math.floor(S.distance), position: S.position }))
+  } catch(_) {}
+  saveG14Progress(stars)
+}
+
+function showSelectScreen() {
+  S.running = false
+  document.getElementById('quiz-ovl').style.display = 'none'
+  const so = document.getElementById('select-ovl')
+  so.style.display = 'flex'
+  showCategories()
+}
+
+function finishGame() { try{document.getElementById('game-bgm').pause()}catch(_){}; goBack() }
+function togglePause() {
+  if (!S.running && !S.paused) return
+  S.paused = !S.paused
+  S.running = !S.paused
+  document.getElementById('btn-pause').textContent = S.paused ? '▶' : '⏸'
+  document.getElementById('position-badge').textContent = S.paused ? '⏸ PAUSE' : '🏁 Lanjut!'
+  if (typeof GamePause !== 'undefined') {
+    if (S.paused) GamePause.show(); else GamePause.hide()
+  } else {
+    try{const bgm=document.getElementById('game-bgm');S.paused?bgm.pause():bgm.play().catch(()=>{})}catch(_){}
+  }
+}
+
+// Save level progress directly to localStorage
+function saveG14Progress(stars) {
+  try {
+    const key = 'dunia-0-progress'
+    const prog = JSON.parse(localStorage.getItem(key) || '{}')
+    if (!prog.g14) prog.g14 = { completed: [], stars: {} }
+    const lv = (typeof cfg !== 'undefined' ? cfg.level : (typeof S !== 'undefined' ? S.level : 1)) || 1
+    const mapped = stars >= 4 ? 3 : stars >= 2 ? 2 : 1
+    if (!prog.g14.completed.includes(lv)) prog.g14.completed.push(lv)
+    if ((prog.g14.stars[lv] || 0) < mapped) prog.g14.stars[lv] = mapped
+    localStorage.setItem(key, JSON.stringify(prog))
+  } catch(_) {}
+}
+function goBack() {
+  S.running = false
+  try{document.getElementById('game-bgm').pause()}catch(_){}
+  history.back()
+}
+function confirmBack() {
+  goBack()
+}
+
+// Recalculate lane positions on orientation change
+window.addEventListener('resize', () => {
+  if (!app) return
+  app.renderer.resize(window.innerWidth, window.innerHeight)
+  const H = app.screen.height
+  const laneH = (H - gameTop) / LANE_COUNT
+  laneYs = Array.from({length: LANE_COUNT}, (_, i) => gameTop + laneH * i + laneH / 2)
+  if (L.player) L.player.y = laneYs[S.lane]
+})
+
+// ═══════════════════════════════════════════════════════════
+//  BOOST + QUIZ
+// ═══════════════════════════════════════════════════════════
+function triggerBoost() {
+  if (!S.running || S.boostCooldown || S.boosting || S.pressure < 20) return
+  if (S.quizOpen) return
+  S.quizOpen = true
+  buildQuiz()
+  document.getElementById('quiz-ovl').style.display = 'block'
+  playTone(440, 0.08)
+}
+
+function buildQuiz() {
+  const lv = cfg.level || 5
+  let a, b, answer, op
+  const ops = lv <= 6 ? ['+'] : lv <= 12 ? ['+', '-'] : ['+', '-', '*']
+  op = ops[Math.floor(Math.random() * ops.length)]
+  if (op === '+') {
+    const max = 10 + lv * 3
+    a = Math.floor(Math.random() * max) + 1
+    b = Math.floor(Math.random() * max) + 1
+    answer = a + b
+  } else if (op === '-') {
+    a = Math.floor(Math.random() * 20) + 10
+    b = Math.floor(Math.random() * a) + 1
+    answer = a - b
+  } else {
+    a = Math.floor(Math.random() * 6) + 2
+    b = Math.floor(Math.random() * 6) + 2
+    answer = a * b
+  }
+  const symbol = op === '*' ? '×' : op
+  document.getElementById('quiz-q').textContent = `${a} ${symbol} ${b} = ?`
+  const wrong = new Set()
+  while (wrong.size < 3) {
+    const d = Math.floor(Math.random() * 8) + 1
+    const w = answer + (Math.random() < 0.5 ? d : -d)
+    if (w !== answer && w > 0) wrong.add(w)
+  }
+  const choices = [answer, ...[...wrong]].slice(0, 4).sort(() => Math.random() - 0.5)
+  const el = document.getElementById('quiz-choices')
+  el.innerHTML = ''
+  choices.forEach(c => {
+    const btn = document.createElement('button')
+    btn.className = 'quiz-btn'
+    btn.textContent = c
+    btn.onclick = () => answerQuiz(c, answer)
+    el.appendChild(btn)
+  })
+  S.boostQ = { answer }
+}
+
+function answerQuiz(val, correct) {
+  document.getElementById('quiz-ovl').style.display = 'none'
+  S.quizOpen = false
+  if (val === correct) {
+    executeBoost()
+  } else {
+    playTone(200, 0.15, 'square')
+    screenFlash('rgba(255,60,60,0.2)')
+  }
+}
+
+function executeBoost() {
+  if (!S.trainCfg) return
+  S.boosting = true
+  S.boostCooldown = true
+  S.pressure = Math.max(10, S.pressure - 30)
+  updatePressure()
+  document.getElementById('btn-boost').classList.add('boosting')
+  document.getElementById('btn-boost').textContent = ''
+  document.getElementById('btn-boost').innerHTML = '🔥<br><span style="font-size:12px">BOOSTING!</span>'
+  spawnBoostFX()
+  playTone(660, 0.12); playTone(880, 0.08)
+  screenFlash('rgba(251,191,36,0.2)')
+
+  setTimeout(() => {
+    S.boosting = false
+    S.speed = S.baseSpeed
+    document.getElementById('btn-boost').classList.remove('boosting')
+    document.getElementById('btn-boost').innerHTML = '🔥<br><span style="font-size:12px;font-weight:900">BOOST!</span>'
+    setTimeout(() => {
+      S.boostCooldown = false
+      document.getElementById('btn-boost').classList.remove('cooldown')
+    }, 3000)
+  }, (S.trainCfg.boostDur || 2000))
+  document.getElementById('btn-boost').classList.add('cooldown')
+}
+
+// ═══════════════════════════════════════════════════════════
+//  INPUT
+// ═══════════════════════════════════════════════════════════
+function laneUp() { if (S.running && S.targetLane > 0) { S.targetLane--; playTone(500, 0.05) } }
+function laneDn() { if (S.running && S.targetLane < LANE_COUNT - 1) { S.targetLane++; playTone(400, 0.05) } }
+window.addEventListener('keydown', e => {
+  if (e.key === 'ArrowUp') { laneUp(); e.preventDefault() }
+  if (e.key === 'ArrowDown') { laneDn(); e.preventDefault() }
+  if (e.key === ' ') { triggerBoost(); e.preventDefault() }
+})
+let touchY0 = null
+window.addEventListener('touchstart', e => { touchY0 = e.touches[0].clientY }, {passive:true})
+window.addEventListener('touchend', e => {
+  if (touchY0 === null) return
+  const dy = e.changedTouches[0].clientY - touchY0
+  if (Math.abs(dy) > 40) { dy < 0 ? laneUp() : laneDn() }
+  touchY0 = null
+}, {passive:true})
+
+// ═══════════════════════════════════════════════════════════
+//  HUD
+// ═══════════════════════════════════════════════════════════
+function updateHUD() {
+  const frac = Math.min(1, S.distance / S.finishLine)
+  document.getElementById('prog-fill').style.width = (frac * 100).toFixed(1) + '%'
+  document.getElementById('distance-text').textContent = `${Math.floor(S.distance)} / ${S.finishLine}m`
+  document.getElementById('lives-hud').textContent = '❤️'.repeat(S.hp) + '🖤'.repeat(LIVES_MAX - S.hp)
+  if (S.trainCfg) {
+    const displayKmh = Math.round(S.trainCfg.kmh * (S.speed / S.baseSpeed) * (S.boosting ? S.trainCfg.boostMult : 1))
+    document.getElementById('speed-hud').textContent = displayKmh + ' km/h'
+  }
+}
+function updatePressure() {
+  const pct = Math.round(S.pressure)
+  document.getElementById('pressure-fill').style.width = pct + '%'
+  document.getElementById('pressure-pct').textContent = pct + '%'
+  document.getElementById('pressure-fill').style.background =
+    pct < 20 ? 'linear-gradient(90deg,#ef4444,#f97316)' :
+    pct < 50 ? 'linear-gradient(90deg,#f97316,#fbbf24)' :
+    'linear-gradient(90deg,#22d3ee,#86efac)'
+}
+
+// ═══════════════════════════════════════════════════════════
+//  TRAIN SELECTOR UI
+// ═══════════════════════════════════════════════════════════
+function showCategories() {
+  document.getElementById('sel-crumb').style.display = 'none'
+  document.getElementById('sel-title').textContent = 'Pilih Kereta 🚂'
+  document.getElementById('go-btn').style.display = 'none'
+  const body = document.getElementById('select-body')
+  body.innerHTML = ''
+  TRAIN_CATS.forEach(cat => {
+    const btn = document.createElement('button')
+    btn.className = 'cat-btn'
+    btn.style.borderColor = cat.color
+    btn.innerHTML = `<span class="cat-emoji">${cat.emoji}</span><div class="cat-info"><div class="cat-name">${cat.name}</div><div class="cat-desc">${cat.desc}</div></div><span class="cat-arr">›</span>`
+    btn.onclick = () => showTrainsForCat(cat)
+    body.appendChild(btn)
+  })
+}
+
+function showTrainsForCat(cat) {
+  document.getElementById('sel-crumb').style.display = 'flex'
+  document.getElementById('sel-title').textContent = cat.name
+  const body = document.getElementById('select-body')
+  body.innerHTML = ''
+  const grid = document.createElement('div')
+  grid.className = 'train-grid'
+  cat.trains.forEach((t, idx) => {
+    const card = document.createElement('button')
+    card.className = 'train-card'
+    const cv = document.createElement('canvas')
+    cv.width = 96; cv.height = 48
+    cv.className = 'train-emoji'  // reuse sizing slot
+    cv.style.cssText = 'display:block;margin:0 auto 4px;width:84px;height:42px'
+    card.appendChild(cv)
+    const info = document.createElement('div')
+    info.innerHTML = `<div class="train-nm">${t.name}</div><div class="train-sub">${t.sub}</div><div class="train-spd">${t.kmh} km/h</div>`
+    card.appendChild(info)
+    const trainV = (idx % 5) + 1
+    drawTrainCard2d(cv, t.bodyColor, t.accColor, cat.key, trainV)
+    card.onclick = () => {
+      grid.querySelectorAll('.train-card').forEach(c => c.classList.remove('sel'))
+      card.classList.add('sel')
+      S.trainCfg = { ...t, category: cat.key, variant: trainV }
+      document.getElementById('train-name-badge').textContent = t.name
+      document.getElementById('go-btn').style.display = 'block'
+    }
+    grid.appendChild(card)
+  })
+  body.appendChild(grid)
+}
+
+function selBack() {
+  if (document.getElementById('sel-crumb').style.display !== 'none') {
+    showCategories()
+  } else {
+    goBack()
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  AUDIO
+// ═══════════════════════════════════════════════════════════
+let audioCtx
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+  if (audioCtx.state === 'suspended') audioCtx.resume()
+  return audioCtx
+}
+function playTone(freq, dur = 0.1, type = 'sine') {
+  try {
+    const ctx = ensureAudio()
+    const osc = ctx.createOscillator(), gain = ctx.createGain()
+    osc.connect(gain); gain.connect(ctx.destination)
+    osc.frequency.value = freq; osc.type = type
+    gain.gain.setValueAtTime(0.1, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur)
+    osc.start(); osc.stop(ctx.currentTime + dur)
+  } catch(_) {}
+}
+
+// ═══════════════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════════════
+function lerpColor(a, b, t) {
+  const ar = (a>>16)&0xff, ag = (a>>8)&0xff, ab = a&0xff
+  const br = (b>>16)&0xff, bg = (b>>8)&0xff, bb = b&0xff
+  return ((Math.round(ar+(br-ar)*t)<<16)|(Math.round(ag+(bg-ag)*t)<<8)|Math.round(ab+(bb-ab)*t))
+}
+function shuffle(arr) {
+  for (let i = arr.length-1; i>0; i--) { const j = Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]] }
+  return arr
+}
+let flashTimer = null
+function screenFlash(color) {
+  const f = document.getElementById('flash')
+  f.style.background = color; f.style.opacity = '1'
+  clearTimeout(flashTimer); flashTimer = setTimeout(() => { f.style.opacity = '0' }, 80)
+}
+
+// ═══════════════════════════════════════════════════════════
+//  BOOT
+// ═══════════════════════════════════════════════════════════
+;(async function boot() {
+  document.addEventListener('touchstart', ensureAudio, {once:true})
+  document.addEventListener('click', ensureAudio, {once:true})
+  await initPixi()
+  showCategories()
+})()
+</script>
+</body>
+</html>

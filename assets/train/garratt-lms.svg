@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 270 110">
+  <!-- FRONT WATER TANK (left) -->
+  <rect x="2" y="34" width="56" height="32" rx="5" fill="#1A1A6B"/>
+  <rect x="2" y="26" width="56" height="10" rx="3" fill="#0A0A4A"/>
+  <!-- front bogie wheels (2 axles) -->
+  <circle cx="18"  cy="84" r="12" fill="#0A0A2A" stroke="#4A4AAA" stroke-width="2.5"/>
+  <circle cx="44"  cy="84" r="12" fill="#0A0A2A" stroke="#4A4AAA" stroke-width="2.5"/>
+  <circle cx="18"  cy="84" r="3.5" fill="#4A4AAA"/>
+  <circle cx="44"  cy="84" r="3.5" fill="#4A4AAA"/>
+  <!-- CENTRAL BOILER on pivoting cradle -->
+  <rect x="54" y="22" width="160" height="36" rx="10" fill="#0A0A3A"/>
+  <!-- chimney at front of boiler -->
+  <rect x="58" y="8"  width="14" height="16" rx="3" fill="#222"/>
+  <rect x="55" y="5"  width="20" height="6"  rx="2" fill="#111"/>
+  <ellipse cx="65" cy="6" rx="9" ry="4" fill="#aaa" opacity=".4"/>
+  <!-- steam dome -->
+  <ellipse cx="110" cy="20" rx="14" ry="10" fill="#0A0A2A"/>
+  <ellipse cx="145" cy="22" rx="9"  ry="7"  fill="#0A0A2A"/>
+  <!-- cab on boiler (middle-ish) -->
+  <rect x="180" y="12" width="40" height="46" rx="3" fill="#0A0A4A"/>
+  <rect x="185" y="18" width="12" height="10" rx="2" fill="#87CEEB" opacity=".7"/>
+  <rect x="202" y="18" width="12" height="10" rx="2" fill="#87CEEB" opacity=".7"/>
+  <!-- REAR COAL BUNKER (right) -->
+  <rect x="212" y="34" width="56" height="32" rx="5" fill="#1A1A6B"/>
+  <rect x="212" y="26" width="56" height="10" rx="3" fill="#0A0A4A"/>
+  <!-- coal visible in bunker -->
+  <ellipse cx="240" cy="30" rx="22" ry="6" fill="#1A1A1A"/>
+  <!-- rear bogie wheels -->
+  <circle cx="224" cy="84" r="12" fill="#0A0A2A" stroke="#4A4AAA" stroke-width="2.5"/>
+  <circle cx="250" cy="84" r="12" fill="#0A0A2A" stroke="#4A4AAA" stroke-width="2.5"/>
+  <circle cx="224" cy="84" r="3.5" fill="#4A4AAA"/>
+  <circle cx="250" cy="84" r="3.5" fill="#4A4AAA"/>
+  <!-- 4 main driving wheels per side (visible below boiler) -->
+  <circle cx="76"  cy="84" r="14" fill="#0A0A2A" stroke="#4A4AAA" stroke-width="3"/>
+  <circle cx="104" cy="84" r="14" fill="#0A0A2A" stroke="#4A4AAA" stroke-width="3"/>
+  <circle cx="132" cy="84" r="14" fill="#0A0A2A" stroke="#4A4AAA" stroke-width="3"/>
+  <circle cx="160" cy="84" r="14" fill="#0A0A2A" stroke="#4A4AAA" stroke-width="3"/>
+  <circle cx="76"  cy="84" r="4"  fill="#4A4AAA"/>
+  <circle cx="104" cy="84" r="4"  fill="#4A4AAA"/>
+  <circle cx="132" cy="84" r="4"  fill="#4A4AAA"/>
+  <circle cx="160" cy="84" r="4"  fill="#4A4AAA"/>
+  <!-- coupling rods -->
+  <rect x="64" y="81" width="104" height="5" rx="2" fill="#4A4AAA" opacity=".5"/>
+  <!-- headlamp -->
+  <circle cx="6" cy="50" r="5" fill="#FFD700" opacity=".9"/>
+  <text x="135" y="106" font-family="Arial" font-size="7" fill="#888" text-anchor="middle">Beyer-Garratt · LMS · 1927</text>
+</svg>

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 115">
+  <!-- smoke -->
+  <ellipse cx="36" cy="8" rx="10" ry="7" fill="#bbb" opacity=".5"/>
+  <ellipse cx="48" cy="3" rx="7" ry="5" fill="#aaa" opacity=".35"/>
+  <!-- BALLOON chimney (wide top) -->
+  <rect x="26" y="16" width="16" height="26" rx="2" fill="#333"/>
+  <ellipse cx="34" cy="16" rx="14" ry="7" fill="#222"/>
+  <rect x="22" y="10" width="24" height="8" rx="3" fill="#111"/>
+  <!-- long boiler -->
+  <rect x="38" y="34" width="120" height="32" rx="9" fill="#8B2000"/>
+  <!-- steam dome -->
+  <ellipse cx="88" cy="32" rx="14" ry="10" fill="#6B1800"/>
+  <!-- sandbox dome -->
+  <ellipse cx="115" cy="34" rx="9" ry="7" fill="#6B1800"/>
+  <!-- headlamp big -->
+  <circle cx="28" cy="50" r="7" fill="#2A1808"/>
+  <circle cx="28" cy="50" r="5" fill="#FFD700" opacity=".9"/>
+  <!-- wooden cab (arched roof, ornate) -->
+  <rect x="148" y="22" width="48" height="44" rx="3" fill="#5A3010"/>
+  <path d="M144,22 Q168,12 200,22" fill="#4A2808" stroke="#CD853F" stroke-width="1.5"/>
+  <rect x="154" y="28" width="14" height="12" rx="2" fill="#87CEEB" opacity=".75"/>
+  <rect x="174" y="28" width="14" height="12" rx="2" fill="#87CEEB" opacity=".75"/>
+  <!-- cab window arch decoration -->
+  <path d="M152,28 Q161,24 170,28" fill="none" stroke="#CD853F" stroke-width="1.5"/>
+  <path d="M172,28 Q181,24 190,28" fill="none" stroke="#CD853F" stroke-width="1.5"/>
+  <!-- running board -->
+  <rect x="28" y="64" width="170" height="7" rx="2" fill="#6B1800"/>
+  <!-- cowcatcher (triangle grid) -->
+  <path d="M28,66 L4,78 L4,83 L28,73Z" fill="#4A0A00"/>
+  <line x1="6"  y1="75" x2="28" y2="67" stroke="#CD853F" stroke-width="1.2"/>
+  <line x1="10" y1="78" x2="28" y2="70" stroke="#CD853F" stroke-width="1.2"/>
+  <line x1="14" y1="81" x2="28" y2="73" stroke="#CD853F" stroke-width="1.2"/>
+  <!-- 2 small front (pony) wheels -->
+  <circle cx="40"  cy="86" r="10" fill="#2C1A0E" stroke="#CD853F" stroke-width="2.5"/>
+  <circle cx="40"  cy="86" r="3"  fill="#CD853F"/>
+  <!-- 2 pairs large driving wheels -->
+  <circle cx="72"  cy="86" r="18" fill="#2C1A0E" stroke="#CD853F" stroke-width="3.5"/>
+  <circle cx="108" cy="86" r="18" fill="#2C1A0E" stroke="#CD853F" stroke-width="3.5"/>
+  <circle cx="72"  cy="86" r="4.5" fill="#CD853F"/>
+  <circle cx="108" cy="86" r="4.5" fill="#CD853F"/>
+  <line x1="72" y1="68" x2="72"  y2="104" stroke="#CD853F" stroke-width="1.8"/>
+  <line x1="54" y1="86" x2="90"  y2="86"  stroke="#CD853F" stroke-width="1.8"/>
+  <line x1="59" y1="71" x2="85"  y2="101" stroke="#CD853F" stroke-width="1.4"/>
+  <line x1="85" y1="71" x2="59"  y2="101" stroke="#CD853F" stroke-width="1.4"/>
+  <line x1="108" y1="68" x2="108" y2="104" stroke="#CD853F" stroke-width="1.8"/>
+  <line x1="90"  y1="86" x2="126" y2="86"  stroke="#CD853F" stroke-width="1.8"/>
+  <line x1="95"  y1="71" x2="121" y2="101" stroke="#CD853F" stroke-width="1.4"/>
+  <line x1="121" y1="71" x2="95"  y2="101" stroke="#CD853F" stroke-width="1.4"/>
+  <!-- trailing wheel -->
+  <circle cx="166" cy="88" r="12" fill="#2C1A0E" stroke="#CD853F" stroke-width="2.5"/>
+  <circle cx="166" cy="88" r="3"  fill="#CD853F"/>
+  <!-- coupling rod -->
+  <rect x="52" y="83" width="72" height="5" rx="2" fill="#CD853F" opacity=".6"/>
+  <text x="105" y="112" font-family="Arial" font-size="7" fill="#888" text-anchor="middle">American Standard 4-4-0 · 1845</text>
+</svg>

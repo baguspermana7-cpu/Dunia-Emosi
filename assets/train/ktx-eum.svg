@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <!-- KTX-Eum EMU-250: white/blue, very different from KTX-I/II -->
+  <path d="M8,68 Q20,46 44,38 L185,38 L188,68 L185,98 L44,98 Q20,90 8,68 Z" fill="#F8F8F8"/>
+  <!-- distinctive KTX-Eum nose: more rectangular with angled cut -->
+  <rect x="8" y="50" width="38" height="36" rx="3" fill="#F0F0F0"/>
+  <!-- blue nose front panel -->
+  <rect x="8" y="50" width="16" height="36" fill="#003082"/>
+  <!-- large angled windshield -->
+  <polygon points="24,50 44,44 44,56 24,60" fill="#87CEEB" opacity="0.8"/>
+  <!-- blue stripe KTX-Eum style -->
+  <rect x="44" y="72" width="144" height="14" fill="#003082"/>
+  <rect x="24" y="72" width="22" height="14" fill="#003082"/>
+  <!-- EMU pantograph -->
+  <line x1="90" y1="38" x2="86" y2="20" stroke="#888" stroke-width="1.5"/>
+  <line x1="110" y1="38" x2="114" y2="20" stroke="#888" stroke-width="1.5"/>
+  <line x1="84" y1="20" x2="116" y2="20" stroke="#aaa" stroke-width="2.5"/>
+  <circle cx="22" cy="106" r="8" fill="#ddd" stroke="#003082" stroke-width="2"/>
+<line x1="30.0" y1="106.0" x2="14.0" y2="106.0" stroke="#003082" stroke-width="1.2"/>
+<line x1="27.7" y1="111.7" x2="16.3" y2="100.3" stroke="#003082" stroke-width="1.2"/>
+<line x1="22.0" y1="114.0" x2="22.0" y2="98.0" stroke="#003082" stroke-width="1.2"/>
+<line x1="16.3" y1="111.7" x2="27.7" y2="100.3" stroke="#003082" stroke-width="1.2"/>
+<circle cx="22" cy="106" r="1.8" fill="#003082"/>
+
+  <circle cx="46" cy="106" r="8" fill="#ddd" stroke="#003082" stroke-width="2"/>
+<line x1="54.0" y1="106.0" x2="38.0" y2="106.0" stroke="#003082" stroke-width="1.2"/>
+<line x1="51.7" y1="111.7" x2="40.3" y2="100.3" stroke="#003082" stroke-width="1.2"/>
+<line x1="46.0" y1="114.0" x2="46.0" y2="98.0" stroke="#003082" stroke-width="1.2"/>
+<line x1="40.3" y1="111.7" x2="51.7" y2="100.3" stroke="#003082" stroke-width="1.2"/>
+<circle cx="46" cy="106" r="1.8" fill="#003082"/>
+
+  <circle cx="95" cy="106" r="8" fill="#ddd" stroke="#003082" stroke-width="2"/>
+<line x1="103.0" y1="106.0" x2="87.0" y2="106.0" stroke="#003082" stroke-width="1.2"/>
+<line x1="100.7" y1="111.7" x2="89.3" y2="100.3" stroke="#003082" stroke-width="1.2"/>
+<line x1="95.0" y1="114.0" x2="95.0" y2="98.0" stroke="#003082" stroke-width="1.2"/>
+<line x1="89.3" y1="111.7" x2="100.7" y2="100.3" stroke="#003082" stroke-width="1.2"/>
+<circle cx="95" cy="106" r="1.8" fill="#003082"/>
+
+  <circle cx="140" cy="106" r="8" fill="#ddd" stroke="#003082" stroke-width="2"/>
+<line x1="148.0" y1="106.0" x2="132.0" y2="106.0" stroke="#003082" stroke-width="1.2"/>
+<line x1="145.7" y1="111.7" x2="134.3" y2="100.3" stroke="#003082" stroke-width="1.2"/>
+<line x1="140.0" y1="114.0" x2="140.0" y2="98.0" stroke="#003082" stroke-width="1.2"/>
+<line x1="134.3" y1="111.7" x2="145.7" y2="100.3" stroke="#003082" stroke-width="1.2"/>
+<circle cx="140" cy="106" r="1.8" fill="#003082"/>
+
+  <circle cx="170" cy="106" r="8" fill="#ddd" stroke="#003082" stroke-width="2"/>
+<line x1="178.0" y1="106.0" x2="162.0" y2="106.0" stroke="#003082" stroke-width="1.2"/>
+<line x1="175.7" y1="111.7" x2="164.3" y2="100.3" stroke="#003082" stroke-width="1.2"/>
+<line x1="170.0" y1="114.0" x2="170.0" y2="98.0" stroke="#003082" stroke-width="1.2"/>
+<line x1="164.3" y1="111.7" x2="175.7" y2="100.3" stroke="#003082" stroke-width="1.2"/>
+<circle cx="170" cy="106" r="1.8" fill="#003082"/>
+
+  <line x1="5" y1="112" x2="198" y2="112" stroke="#888" stroke-width="2.5"/>
+
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">KTX-Eum · 2021</text>
+</svg>

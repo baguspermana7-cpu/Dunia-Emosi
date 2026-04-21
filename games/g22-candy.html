@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta http-equiv="Cache-Control" content="no-cache">
+<title>Monster Wants Candy 🍬</title>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#B4D9E7;font-family:'Fredoka One',Arial,sans-serif;touch-action:none}
+canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
+
+#hud{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:8px;padding:max(14px,env(safe-area-inset-top)) 14px 8px;background:linear-gradient(180deg,rgba(0,20,50,0.65) 0%,transparent 100%);pointer-events:none;backdrop-filter:blur(2px)}
+#btn-back,#btn-pause{background:rgba(255,255,255,0.12);border:1.5px solid rgba(186,230,253,0.3);border-radius:12px;color:#e0f2fe;padding:6px 10px;font-size:14px;cursor:pointer;font-family:inherit;pointer-events:all;flex-shrink:0;backdrop-filter:blur(6px);transition:transform .1s,background .1s}
+#btn-back:active,#btn-pause:active{transform:scale(0.92);background:rgba(255,255,255,0.2)}
+#game-badge{background:linear-gradient(135deg,rgba(251,191,36,0.22),rgba(245,158,11,0.12));border:1.5px solid rgba(251,191,36,0.5);border-radius:100px;padding:4px 10px;color:#fde68a;font-size:12px;font-weight:800;flex-shrink:0;text-shadow:0 1px 3px rgba(0,0,0,0.4)}
+#hud-center{flex:1;text-align:center}
+#score-display{font-size:clamp(20px,6vw,32px);font-weight:900;color:#fde68a;text-shadow:0 2px 8px rgba(0,0,0,0.6),0 0 14px rgba(251,191,36,0.35);letter-spacing:1px}
+#level-text{font-size:10px;color:#bae6fd;font-weight:700;letter-spacing:0.5px}
+#lives-display{font-size:18px;flex-shrink:0;filter:drop-shadow(0 0 6px rgba(239,68,68,0.45))}
+
+#pause-overlay{position:fixed;inset:0;z-index:350;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:radial-gradient(ellipse at 50% 30%,rgba(24,70,130,0.95) 0%,rgba(0,20,60,0.97) 70%);backdrop-filter:blur(10px)}
+#pause-overlay.show{display:flex}
+#pause-overlay::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 15% 25%,rgba(251,191,36,0.15),transparent 30%),radial-gradient(circle at 85% 70%,rgba(236,72,153,0.12),transparent 32%);pointer-events:none}
+.pause-card{position:relative;z-index:1;background:linear-gradient(160deg,rgba(255,255,255,0.07),rgba(255,255,255,0.02));border:2px solid rgba(251,191,36,0.4);border-radius:24px;padding:24px 28px;display:flex;flex-direction:column;align-items:center;gap:12px;box-shadow:0 10px 32px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.12);max-width:88vw}
+
+#start-overlay{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:radial-gradient(ellipse at 50% 30%,rgba(24,70,130,0.95) 0%,rgba(0,20,60,0.97) 70%);backdrop-filter:blur(10px)}
+#start-overlay.hidden{display:none}
+#start-overlay::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 15% 25%,rgba(251,191,36,0.18),transparent 30%),radial-gradient(circle at 85% 70%,rgba(236,72,153,0.15),transparent 32%),radial-gradient(circle at 50% 90%,rgba(34,211,238,0.12),transparent 40%);pointer-events:none}
+.start-card{position:relative;z-index:1;background:linear-gradient(160deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02));border:2px solid rgba(251,191,36,0.45);border-radius:28px;padding:32px 36px;display:flex;flex-direction:column;align-items:center;gap:14px;box-shadow:0 12px 40px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.15);max-width:88vw}
+.start-icon{font-size:84px;filter:drop-shadow(0 6px 14px rgba(251,191,36,0.5));animation:floatY 2.4s ease-in-out infinite}
+@keyframes floatY{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-12px) rotate(4deg)}}
+.start-title{font-size:clamp(26px,8vw,40px);font-weight:900;color:#fde68a;text-shadow:0 2px 12px rgba(251,191,36,0.45),0 0 24px rgba(236,72,153,0.25);letter-spacing:0.5px;text-align:center}
+.start-sub{font-size:14px;color:#bae6fd;background:rgba(14,116,144,0.3);border:1px solid rgba(186,230,253,0.25);border-radius:100px;padding:6px 16px;font-weight:700}
+.start-hint{font-size:16px;color:#86efac;font-weight:800;animation:pulse 1.5s ease-in-out infinite;margin-top:4px}
+@keyframes pulse{50%{opacity:.5;transform:scale(.96)}}
+
+/* Monster catch pop — golden flash + scale bounce on pokéball collision */
+@keyframes catchPop{0%{filter:brightness(1) drop-shadow(0 8px 18px rgba(0,0,0,0.45))}40%{filter:brightness(1.7) drop-shadow(0 0 22px gold) drop-shadow(0 8px 18px rgba(0,0,0,0.45))}100%{filter:brightness(1) drop-shadow(0 8px 18px rgba(0,0,0,0.45))}}
+#monster-img.catch-pop{animation:catchPop 0.36s cubic-bezier(0.34,1.56,0.64,1)}
+
+/* Turn-flip micro-glow when direction changes */
+@keyframes turnFlip{0%{filter:brightness(1.25) drop-shadow(0 0 14px rgba(253,224,71,0.7)) drop-shadow(0 8px 18px rgba(0,0,0,0.45))}100%{filter:brightness(1) drop-shadow(0 8px 18px rgba(0,0,0,0.45))}}
+#monster-img.turn-flip{animation:turnFlip 0.22s ease-out}
+
+#monster-img{transition:none;will-change:transform}
+</style>
+</head>
+<body>
+
+<canvas id="pixi-canvas"></canvas>
+<audio id="game-bgm" src="../Sounds/battle-bgm.mp3" loop preload="auto" style="display:none"></audio>
+
+<div id="hud">
+  <button id="btn-back" onclick="goBack()">◀</button>
+  <button id="btn-pause" onclick="togglePause()">⏸</button>
+  <div id="game-badge">🍬 Monster Candy</div>
+  <div id="hud-center">
+    <div id="level-text"></div>
+    <div id="score-display">🍬 0</div>
+  </div>
+  <div id="lives-display">❤️❤️❤️</div>
+</div>
+
+<div id="pause-overlay">
+  <div class="pause-card">
+    <div style="font-size:44px;filter:drop-shadow(0 4px 10px rgba(251,191,36,0.5))">⏸</div>
+    <div style="font-size:26px;font-weight:900;color:#fde68a;letter-spacing:2px;text-shadow:0 2px 10px rgba(251,191,36,0.4)">PAUSE</div>
+    <div id="poke-picker" style="display:none;width:85%;max-width:340px;max-height:28vh;overflow-y:auto;margin:8px 0">
+      <div style="font-size:11px;color:#fbbf24;font-weight:700;margin-bottom:6px">🎒 Ganti Pokemon:</div>
+      <div id="poke-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px"></div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+      <button onclick="togglePause()" style="padding:12px 24px;border-radius:14px;border:2px solid #4ade80;background:rgba(34,197,94,0.3);color:#4ade80;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit">▶ Lanjut</button>
+      <button onclick="togglePokePicker()" style="padding:12px 24px;border-radius:14px;border:2px solid #fbbf24;background:rgba(251,191,36,0.2);color:#fbbf24;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit">🎒 Pokemon</button>
+      <button onclick="goBack()" style="padding:12px 24px;border-radius:14px;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#bfdbfe;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit">🏠 Keluar</button>
+    </div>
+  </div>
+</div>
+
+<div id="start-overlay">
+  <div class="start-card">
+    <div class="start-icon">🍬</div>
+    <div class="start-title" style="font-size:clamp(22px,7vw,36px)">Monster Wants Candy</div>
+    <div class="start-sub" id="start-level"></div>
+    <div class="start-hint">👆 Tap untuk Mulai!</div>
+  </div>
+</div>
+
+<!-- Monster character (DOM overlay) — HD sprite, ground-anchored via JS -->
+<img id="monster-img" src="https://img.pokemondb.net/sprites/home/normal/psyduck.png" onerror="this.src='../assets/Pokemon/sprites/psyduck.png';this.onerror=null" style="position:fixed;z-index:40;pointer-events:none;width:clamp(140px,26vw,220px);height:auto;bottom:25%;left:0;transform:translate3d(0,0,0);display:none;image-rendering:auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,0.45))">
+
+<script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
+<script src="game-modal.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════════════
+const cfg = { level: 1 }
+try { const s = sessionStorage.getItem('g22Config'); if (s) Object.assign(cfg, JSON.parse(s)) } catch(_){}
+document.getElementById('level-text').textContent = `Level ${cfg.level}`
+document.getElementById('start-level').textContent = `Level ${cfg.level}`
+
+// Multi-category question bank — each pokeball type pulls from different category
+const Q_MATH = [
+  {q:'1+1',a:2},{q:'2+1',a:3},{q:'1+3',a:4},{q:'2+2',a:4},{q:'3+1',a:4},
+  {q:'2+3',a:5},{q:'4+1',a:5},{q:'3+2',a:5},{q:'5-2',a:3},{q:'4-1',a:3},
+  {q:'3+3',a:6},{q:'5+1',a:6},{q:'4+2',a:6},{q:'6-3',a:3},{q:'5-3',a:2},
+  {q:'4+3',a:7},{q:'5+2',a:7},{q:'6+1',a:7},{q:'7-2',a:5},{q:'6-2',a:4},
+  {q:'4+4',a:8},{q:'5+3',a:8},{q:'6+2',a:8},{q:'8-3',a:5},{q:'7-3',a:4},
+  {q:'5+4',a:9},{q:'6+3',a:9},{q:'7+2',a:9},{q:'9-4',a:5},{q:'8-5',a:3},
+  {q:'5+5',a:10},{q:'6+4',a:10},{q:'7+3',a:10},{q:'10-3',a:7},{q:'10-4',a:6},
+  {q:'7+4',a:11},{q:'8+3',a:11},{q:'9+2',a:11},{q:'11-5',a:6},{q:'11-3',a:8},
+  {q:'7+5',a:12},{q:'8+4',a:12},{q:'6+6',a:12},{q:'12-5',a:7},{q:'12-4',a:8},
+  {q:'8+5',a:13},{q:'9+4',a:13},{q:'7+6',a:13},{q:'13-6',a:7},{q:'13-5',a:8},
+]
+const Q_WARNA = [
+  {q:'Warna langit?',a:'Biru'},{q:'Warna daun?',a:'Hijau'},{q:'Warna matahari?',a:'Kuning'},
+  {q:'Warna darah?',a:'Merah'},{q:'Warna awan?',a:'Putih'},{q:'Warna batu bara?',a:'Hitam'},
+  {q:'Warna jeruk?',a:'Oranye'},{q:'Warna terong?',a:'Ungu'},{q:'Warna cokelat?',a:'Cokelat'},
+]
+const Q_HEWAN = [
+  {q:'Suara kucing?',a:'Meong'},{q:'Suara anjing?',a:'Guk-guk'},{q:'Suara sapi?',a:'Moo'},
+  {q:'Suara ayam?',a:'Kukuruyuk'},{q:'Suara bebek?',a:'Kwek'},{q:'Suara kambing?',a:'Mbee'},
+  {q:'Hewan terbesar?',a:'Paus Biru'},{q:'Burung tak bisa terbang?',a:'Penguin'},{q:'Raja hutan?',a:'Singa'},
+]
+const Q_BUAH = [
+  {q:'Buah kuning panjang?',a:'Pisang'},{q:'Buah merah kecil?',a:'Ceri'},{q:'Buah hijau besar?',a:'Semangka'},
+  {q:'Buah oranye bulat?',a:'Jeruk'},{q:'Buah ungu kecil?',a:'Anggur'},{q:'Buah merah hati?',a:'Stroberi'},
+]
+// Pokeball index → category mapping
+const BALL_CATEGORIES = [Q_MATH,Q_WARNA,Q_HEWAN,Q_BUAH,Q_MATH,Q_WARNA,Q_HEWAN,Q_BUAH,Q_MATH]
+const BALL_CAT_NAMES = ['Matematika','Warna','Hewan','Buah','Matematika','Warna','Hewan','Buah','Matematika']
+
+function pickQ(ballIdx){
+  const pool = BALL_CATEGORIES[ballIdx || 0] || Q_MATH
+  return pool[Math.floor(Math.random()*pool.length)]
+}
+
+// ═══════════════════════════════════════════════════════════
+//  GAME STATE
+// ═══════════════════════════════════════════════════════════
+let W, H, app
+// Pokemon IDs for ball sprites (popular Pokemon)
+const POKE_BALL_IDS = [25,1,4,7,133,143,39,54,129,63,92,104,37,58,77,120,147,152,155,158,172,175,183,196,252,255,258,280,300,333,387,390,393,403,447,495,498,501,570,613,650,653,656,722,725,728]
+const BALL_COLORS = [0xef4444,0xf97316,0xfbbf24,0x22c55e,0x3b82f6,0xa855f7,0xec4899,0x14b8a6,0x6366f1,0xf43f5e]
+// Real pokeball PNGs (pre-rasterized from SVG 128px) — ballType index matches POKEBALL_PNGS, BALL_DESIGNS, and BALL_CATEGORIES
+const POKEBALL_PNGS = [
+  '../assets/Pokemon/pokeballs-png/pokeball-pokemon-svgrepo-com.png', // 0 Math
+  '../assets/Pokemon/pokeballs-png/great-ball.png',                   // 1 Warna
+  '../assets/Pokemon/pokeballs-png/ultra-ball.png',                   // 2 Hewan
+  '../assets/Pokemon/pokeballs-png/master-ball.png',                  // 3 Buah
+  '../assets/Pokemon/pokeballs-png/fast-ball.png',                    // 4 Math
+  '../assets/Pokemon/pokeballs-png/heal-ball.png',                    // 5 Warna
+  '../assets/Pokemon/pokeballs-png/luxury-ball.png',                  // 6 Hewan
+  '../assets/Pokemon/pokeballs-png/quick-ball.png',                   // 7 Buah
+  '../assets/Pokemon/pokeballs-png/pokeball.png',                     // 8 Math
+]
+const _pokeballTexCache = {}
+async function preloadPokeballTextures(){
+  try {
+    const loads = POKEBALL_PNGS.map((url,i) =>
+      PIXI.Assets.load(url).then(tex => { _pokeballTexCache[i] = tex }).catch(() => { _pokeballTexCache[i] = null })
+    )
+    await Promise.all(loads)
+  } catch(_){}
+}
+
+const S = {
+  running:false, paused:false, started:false, gameOver:false,
+  score:0, lives:3, maxLives:3,
+  combo:0, maxCombo:0, // streak of correct answers
+  candies:[], particles:[],
+  spawnTimer:0, spawnInterval:1.5,
+  fallSpeed:1.5,
+  level: cfg.level,
+  quizActive:false, currentCandy:null,
+  totalCaught:0, totalMissed:0,
+  frame:0,
+  monsterX:0, monsterXTarget:0, monsterXLerp:0,
+  lastFacing:true,
+}
+
+// ═══════════════════════════════════════════════════════════
+//  AUDIO
+// ═══════════════════════════════════════════════════════════
+let ac
+function ea(){if(!ac)try{ac=new(window.AudioContext||window.webkitAudioContext)()}catch(_){}}
+function tone(f,d,t='sine',v=0.12){if(!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.type=t;o.frequency.value=f;g.gain.value=v;g.gain.linearRampToValueAtTime(0,ac.currentTime+d/1000);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d/1000)}
+function sfxCatch(){tone(800,100);setTimeout(()=>tone(1000,80),50)}
+function sfxMiss(){tone(200,200,'square',0.1)}
+function sfxCorrect(){tone(900,100);setTimeout(()=>tone(1100,120),80)}
+function sfxWrong(){tone(150,300,'sawtooth',0.08)}
+
+// ═══════════════════════════════════════════════════════════
+//  PIXI INIT
+// ═══════════════════════════════════════════════════════════
+let bgLayer, gameLayer, fxLayer
+
+;(async function init(){
+  app = new PIXI.Application()
+  await app.init({
+    canvas: document.getElementById('pixi-canvas'),
+    width: window.innerWidth, height: window.innerHeight,
+    backgroundAlpha: 1, backgroundColor: 0xB4D9E7,
+    antialias: true, resolution: Math.min(window.devicePixelRatio, 2),
+    preference: 'webgl', preferWebGLVersion: 1
+  })
+  W = app.screen.width; H = app.screen.height
+
+  bgLayer = new PIXI.Container(); app.stage.addChild(bgLayer)
+  gameLayer = new PIXI.Container(); app.stage.addChild(gameLayer)
+  fxLayer = new PIXI.Container(); app.stage.addChild(fxLayer)
+
+  drawBackground()
+  S.monsterX = S.monsterXTarget = S.monsterXLerp = W / 2
+  placeMonsterOnGround()
+
+  // Preload pokeball textures before gameplay starts (fire-and-forget — spawnCandy falls back to Graphics until ready)
+  preloadPokeballTextures()
+
+  // Difficulty scaling
+  S.spawnInterval = Math.max(0.6, 1.5 - cfg.level * 0.04)
+  S.fallSpeed = 1.5 + cfg.level * 0.08
+
+  app.ticker.add(gameLoop)
+  document.querySelector('.start-hint').textContent = 'Tap untuk Mulai!'
+})().catch(e=>{
+  console.error('G22 init failed:', e)
+  document.querySelector('.start-hint').textContent = 'Gagal memuat. Muat ulang.'
+})
+
+// ═══════════════════════════════════════════════════════════
+//  BACKGROUND
+// ═══════════════════════════════════════════════════════════
+// Parallax NPCs — updated each frame for drift
+let _bgParallax = { clouds: [], birds: [], mountains: [] }
+
+function drawBackground() {
+  _bgParallax = { clouds: [], birds: [], mountains: [] }
+
+  // Sky gradient
+  const sky = new PIXI.Graphics()
+  sky.rect(0, 0, W, H * 0.7).fill(0xB4D9E7)
+  sky.rect(0, H * 0.5, W, H * 0.2).fill({ color: 0x87CEEB, alpha: 0.3 })
+  bgLayer.addChild(sky)
+
+  // Distant mountains (slowest parallax layer, 0.05 px/frame)
+  for (let i = 0; i < 3; i++) {
+    const mt = new PIXI.Graphics()
+    const mx = i * W * 0.4 - W * 0.1
+    const my = H * 0.58
+    const mw = W * 0.5, mh = H * 0.18
+    mt.moveTo(mx, my + mh)
+    mt.lineTo(mx + mw * 0.3, my)
+    mt.lineTo(mx + mw * 0.55, my + mh * 0.35)
+    mt.lineTo(mx + mw * 0.75, my + mh * 0.1)
+    mt.lineTo(mx + mw, my + mh)
+    mt.closePath().fill({ color: 0x6b9a7a, alpha: 0.55 })
+    // Snow cap
+    mt.moveTo(mx + mw * 0.25, my + mh * 0.12)
+    mt.lineTo(mx + mw * 0.3, my)
+    mt.lineTo(mx + mw * 0.35, my + mh * 0.12)
+    mt.closePath().fill({ color: 0xf1f5f9, alpha: 0.75 })
+    bgLayer.addChild(mt)
+    _bgParallax.mountains.push({ g: mt, speed: 0.05, baseX: mt.x })
+  }
+
+  // Rainbow (static, behind clouds)
+  const rainbow = new PIXI.Graphics()
+  const rcx = W * 0.78, rcy = H * 0.28
+  const rcolors = [0xef4444, 0xf97316, 0xfbbf24, 0x22c55e, 0x3b82f6, 0x8b5cf6]
+  for (let i = rcolors.length - 1; i >= 0; i--) {
+    rainbow.arc(rcx, rcy, 130 + i * 9, Math.PI, 0).stroke({ color: rcolors[i], width: 7, alpha: 0.28 })
+  }
+  bgLayer.addChild(rainbow)
+
+  // Clouds — 12 across 3 parallax speeds
+  for (let i = 0; i < 12; i++) {
+    const cl = new PIXI.Graphics()
+    const cw = 34 + Math.random() * 60
+    cl.ellipse(0, 0, cw, cw * 0.35).fill({ color: 0xffffff, alpha: 0.7 })
+    cl.ellipse(cw * 0.4, -cw * 0.1, cw * 0.55, cw * 0.28).fill({ color: 0xffffff, alpha: 0.55 })
+    cl.ellipse(-cw * 0.35, -cw * 0.05, cw * 0.45, cw * 0.22).fill({ color: 0xffffff, alpha: 0.5 })
+    cl.x = Math.random() * W * 1.2 - W * 0.1
+    cl.y = H * 0.04 + Math.random() * H * 0.28
+    const speed = [0.15, 0.25, 0.4][i % 3]
+    bgLayer.addChild(cl)
+    _bgParallax.clouds.push({ g: cl, speed, w: cw })
+  }
+
+  // Flying NPCs — 6 birds/Pokémon drifting (emoji-based for universal support)
+  const flyers = ['🦅', '🕊️', '🦋', '🐦', '🦜', '🦆']
+  for (let i = 0; i < 6; i++) {
+    const bird = new PIXI.Text({
+      text: flyers[i % flyers.length],
+      style: { fontSize: 22 + Math.random() * 14 }
+    })
+    bird.anchor.set(0.5)
+    bird.x = Math.random() * W
+    bird.y = H * 0.1 + Math.random() * H * 0.3
+    bird.alpha = 0.65
+    bgLayer.addChild(bird)
+    _bgParallax.birds.push({
+      g: bird,
+      speed: 0.3 + Math.random() * 0.4,
+      dir: Math.random() < 0.5 ? 1 : -1,
+      bobPhase: Math.random() * Math.PI * 2,
+      baseY: bird.y
+    })
+  }
+
+  // Hills (mid-ground)
+  const hills = new PIXI.Graphics()
+  hills.moveTo(0, H * 0.7)
+  for (let x = 0; x <= W; x += 10) {
+    const y = H * 0.65 + Math.sin(x * 0.008) * 25 + Math.sin(x * 0.02) * 12
+    hills.lineTo(x, y)
+  }
+  hills.lineTo(W, H).lineTo(0, H).closePath().fill(0x86efac)
+  bgLayer.addChild(hills)
+
+  // Trees — 5 pine trees along ground edge (static foreground)
+  const treeXs = [W * 0.08, W * 0.22, W * 0.48, W * 0.72, W * 0.92]
+  treeXs.forEach((tx, idx) => {
+    const t = new PIXI.Graphics()
+    const trunkH = 28 + (idx % 2) * 6
+    const baseY = H * 0.72 - (idx % 3) * 4
+    // Trunk
+    t.rect(tx - 5, baseY, 10, trunkH).fill(0x7c3a1a)
+    // 3-layer triangular foliage
+    const f1 = 38, f2 = 30, f3 = 22
+    t.moveTo(tx - f1, baseY + 4).lineTo(tx, baseY - 18).lineTo(tx + f1, baseY + 4).closePath().fill(0x15803d)
+    t.moveTo(tx - f2, baseY - 12).lineTo(tx, baseY - 34).lineTo(tx + f2, baseY - 12).closePath().fill(0x16a34a)
+    t.moveTo(tx - f3, baseY - 28).lineTo(tx, baseY - 50).lineTo(tx + f3, baseY - 28).closePath().fill(0x22c55e)
+    bgLayer.addChild(t)
+  })
+
+  // Ground
+  const ground = new PIXI.Graphics()
+  ground.rect(0, H * 0.75, W, H * 0.25).fill(0x22c55e)
+  ground.rect(0, H * 0.75, W, 4).fill({ color: 0x16a34a, alpha: 0.5 })
+  bgLayer.addChild(ground)
+
+  // Flowers on ground — 24 varied
+  for (let i = 0; i < 24; i++) {
+    const fl = new PIXI.Text({ text: ['🌸', '🌼', '🌺', '🌻', '🌷', '🍄'][i % 6], style: { fontSize: 12 + Math.random() * 12 } })
+    fl.x = Math.random() * W; fl.y = H * 0.76 + Math.random() * H * 0.08
+    fl.alpha = 0.55 + Math.random() * 0.35
+    bgLayer.addChild(fl)
+  }
+}
+
+// Parallax tick — called each frame from gameLoop
+function updateParallax(dt) {
+  const W2 = W
+  // Clouds drift left
+  _bgParallax.clouds.forEach(c => {
+    c.g.x -= c.speed * dt
+    if (c.g.x + c.w < -20) c.g.x = W2 + 20
+  })
+  // Birds drift in both directions + bob
+  _bgParallax.birds.forEach(b => {
+    b.g.x += b.speed * b.dir * dt
+    b.bobPhase += 0.05 * dt
+    b.g.y = b.baseY + Math.sin(b.bobPhase) * 6
+    if (b.dir > 0 && b.g.x > W2 + 30) b.g.x = -30
+    if (b.dir < 0 && b.g.x < -30) b.g.x = W2 + 30
+  })
+  // Mountains — very slow drift
+  _bgParallax.mountains.forEach(m => {
+    m.g.x -= m.speed * dt
+    if (m.g.x < -W2) m.g.x = 0
+  })
+}
+
+// ═══════════════════════════════════════════════════════════
+//  CANDY SYSTEM
+// ═══════════════════════════════════════════════════════════
+function spawnCandy() {
+  const ballType = Math.floor(Math.random() * 9)
+  const q = pickQ(ballType)
+  const color = BALL_COLORS[Math.floor(Math.random() * BALL_COLORS.length)]
+  const ballR = 30
+
+  const container = new PIXI.Container()
+  container.x = 30 + Math.random() * (W - 60)
+  container.y = -60
+
+  // Pokeball designs — each type has distinct top color + accent
+  const BALL_DESIGNS = [
+    {top:0xef4444,bot:0xf8fafc,accent:0x1c1917,name:'Poké Ball'},      // red classic
+    {top:0x3b82f6,bot:0xf8fafc,accent:0xef4444,name:'Great Ball'},     // blue
+    {top:0x1c1917,bot:0xfbbf24,accent:0xfbbf24,name:'Ultra Ball'},     // black+gold
+    {top:0x8b5cf6,bot:0xf8fafc,accent:0xec4899,name:'Master Ball'},    // purple+pink
+    {top:0xf97316,bot:0xfef3c7,accent:0xf97316,name:'Fast Ball'},      // orange
+    {top:0xec4899,bot:0xfbcfe8,accent:0xf9a8d4,name:'Heal Ball'},      // pink
+    {top:0x1c1917,bot:0xfbbf24,accent:0xef4444,name:'Luxury Ball'},    // black+gold+red
+    {top:0x38bdf8,bot:0xf0f9ff,accent:0xfbbf24,name:'Quick Ball'},     // light blue
+    {top:0x22c55e,bot:0xf8fafc,accent:0x15803d,name:'Safari Ball'},    // green
+  ]
+  const bd = BALL_DESIGNS[ballType] || BALL_DESIGNS[0]
+  // Prefer real pokeball texture (preloaded). Fallback to Graphics if texture missing.
+  const tex = _pokeballTexCache[ballType]
+  let ball
+  if (tex) {
+    ball = new PIXI.Sprite(tex)
+    ball.anchor.set(0.5)
+    ball.width = ballR * 2
+    ball.height = ballR * 2
+  } else {
+    ball = new PIXI.Graphics()
+    // Top half
+    ball.arc(0, 0, ballR, Math.PI, 0).fill(bd.top)
+    // Bottom half
+    ball.arc(0, 0, ballR, 0, Math.PI).fill(bd.bot)
+    // Center band
+    ball.rect(-ballR, -2.5, ballR * 2, 5).fill(0x1c1917)
+    // Center button
+    ball.circle(0, 0, 7).fill(bd.bot)
+    ball.circle(0, 0, 7).stroke({ color: 0x1c1917, width: 2.5 })
+    ball.circle(0, 0, 3.5).fill(bd.accent)
+    // Outer ring
+    ball.circle(0, 0, ballR).stroke({ color: 0x1c1917, width: 2.5 })
+    // Shine
+    ball.ellipse(-ballR * 0.3, -ballR * 0.35, ballR * 0.22, ballR * 0.1).fill({ color: 0xffffff, alpha: 0.45 })
+  }
+  container.addChild(ball)
+
+  // Math question floating below ball
+  const qLabel = typeof q.a === 'number' ? q.q + '=?' : q.q
+  const qText = new PIXI.Text({ text: qLabel, style: { fontSize: 13, fontWeight: '900', fill: 0x1c1917, fontFamily: 'Fredoka One, Arial', align: 'center' } })
+  qText.anchor.set(0.5)
+  qText.y = ballR + 14
+  // Question background pill
+  const qBg = new PIXI.Graphics()
+  qBg.roundRect(-qText.width / 2 - 6, ballR + 4, qText.width + 12, 22, 8).fill({ color: 0xffffff, alpha: 0.85 })
+  container.addChild(qBg)
+  container.addChild(qText)
+
+  container.eventMode = 'static'
+  container.cursor = 'pointer'
+  container.on('pointerdown', () => catchCandy(candy))
+
+  gameLayer.addChild(container)
+
+  const candy = {
+    container, q, color, ballType, ballName: bd.name, catName: BALL_CAT_NAMES[ballType] || 'Quiz',
+    x: container.x, y: container.y,
+    speed: S.fallSpeed * (0.85 + Math.random() * 0.3),
+    rotation: (Math.random() - 0.5) * 0.02,
+    wobble: Math.random() * Math.PI * 2, // phase for side-to-side sway
+    wobbleAmp: 0.3 + Math.random() * 0.4, // sway amplitude
+    alive: true, caught: false
+  }
+  S.candies.push(candy)
+}
+
+function catchCandy(candy) {
+  if (!candy.alive || S.quizActive || !S.running || S.paused) return
+  candy.alive = false
+  candy.caught = true
+  sfxCatch()
+
+  // Instant visual feedback — particle burst at impact point + monster pop
+  spawnCatchRing(candy.x, candy.y, candy.color)
+  const monster = document.getElementById('monster-img')
+  if (monster) {
+    monster.classList.remove('catch-pop')
+    void monster.offsetWidth
+    monster.classList.add('catch-pop')
+    setTimeout(() => monster.classList.remove('catch-pop'), 380)
+  }
+  // Hide the ball immediately so it doesn't hover during quiz
+  candy.container.visible = false
+
+  // Show answer choices
+  showCandyQuiz(candy)
+}
+
+// Ring burst — 8 particles radiating outward, type-colored
+function spawnCatchRing(x, y, color) {
+  for (let i = 0; i < 8; i++) {
+    const ang = (i / 8) * Math.PI * 2
+    const g = new PIXI.Graphics()
+    g.circle(0, 0, 4).fill(color)
+    g.x = x; g.y = y
+    fxLayer.addChild(g)
+    S.particles.push({
+      g,
+      vx: Math.cos(ang) * 5,
+      vy: Math.sin(ang) * 5 - 1,
+      grav: 0.15,
+      life: 1,
+      decay: 0.04
+    })
+  }
+  // Center flash ring
+  const ring = new PIXI.Graphics()
+  ring.circle(0, 0, 10).stroke({ color, width: 4, alpha: 0.9 })
+  ring.x = x; ring.y = y
+  fxLayer.addChild(ring)
+  S.particles.push({ g: ring, vx: 0, vy: 0, grav: 0, life: 1, decay: 0.05, scaleGrow: 0.18 })
+}
+
+function showCandyQuiz(candy) {
+  S.quizActive = true
+  S.currentCandy = candy
+
+  // Generate choices — works for both numeric and text answers
+  const correct = candy.q.a
+  const choices = [correct]
+  if (typeof correct === 'number') {
+    while (choices.length < 4) {
+      const wrong = correct + Math.floor(Math.random() * 10) - 5
+      if (wrong !== correct && wrong >= 0 && !choices.includes(wrong)) choices.push(wrong)
+    }
+  } else {
+    // Text answer — pick wrong answers from same category
+    const pool = [...Q_WARNA, ...Q_HEWAN, ...Q_BUAH].map(q => q.a).filter(a => a !== correct)
+    const shuffled = pool.sort(() => Math.random() - 0.5)
+    for (const w of shuffled) { if (!choices.includes(w) && choices.length < 4) choices.push(w) }
+    while (choices.length < 4) choices.push(['???','---','...'][choices.length - 1])
+  }
+  choices.sort(() => Math.random() - 0.5)
+
+  // Create choice buttons as PIXI — uniform colors, bigger for mobile
+  const panel = new PIXI.Container()
+  panel.name = 'quiz-panel'
+
+  // Question label on top of panel — format based on answer type
+  const isNumeric = typeof candy.q.a === 'number'
+  const labelText = isNumeric ? candy.q.q + ' = ?' : candy.q.q
+  const qLabel = new PIXI.Text({ text: labelText, style: { fontSize: 17, fontWeight: '900', fill: 0xfbbf24, fontFamily: 'Fredoka One, Arial', wordWrap: true, wordWrapWidth: 260, align: 'center' } })
+  qLabel.anchor.set(0.5); qLabel.y = -38
+  // Category chip above question
+  const catChip = new PIXI.Text({ text: `🎯 ${candy.catName}`, style: { fontSize: 11, fontWeight: '700', fill: 0xffffff, fontFamily: 'Fredoka One, Arial' } })
+  catChip.anchor.set(0.5); catChip.y = -60
+
+  const btnColors = [0x7c3aed, 0x6366f1, 0x8b5cf6, 0xa855f7] // uniform pastel purples
+
+  // Dynamic pill sizing — measure each text first, size each button to fit, layout horizontally centered
+  const padX = 14, padY = 11, gap = 8, btnH = 44
+  const textStyle = { fontSize: 16, fontWeight: '900', fill: 0xffffff, fontFamily: 'Fredoka One, Arial', wordWrap: true, wordWrapWidth: 110, align: 'center' }
+  const textObjs = choices.map(c => new PIXI.Text({ text: String(c), style: textStyle }))
+  textObjs.forEach(t => t.anchor.set(0.5))
+  const btnWidths = textObjs.map(t => Math.max(60, Math.ceil(t.width) + padX * 2))
+  const totalW = btnWidths.reduce((a, b) => a + b, 0) + gap * (choices.length - 1)
+  const panelW = Math.max(270, totalW + 32)
+
+  const panelBg = new PIXI.Graphics()
+  panelBg.roundRect(-panelW / 2, -78, panelW, 126, 14).fill({ color: 0x1e0845, alpha: 0.92 })
+  panelBg.roundRect(-panelW / 2, -78, panelW, 126, 14).stroke({ color: 0x7c3aed, width: 2, alpha: 0.5 })
+  panel.addChild(panelBg)
+  panel.addChild(catChip)
+  panel.addChild(qLabel)
+
+  let cursor = -totalW / 2
+  choices.forEach((c, i) => {
+    const btn = new PIXI.Container()
+    const w = btnWidths[i]
+    btn.x = cursor + w / 2
+    btn.y = 12
+    const bg = new PIXI.Graphics()
+    bg.roundRect(-w / 2, -btnH / 2, w, btnH, 12).fill(btnColors[i])
+    bg.roundRect(-w / 2, -btnH / 2, w, btnH, 12).stroke({ color: 0xffffff, width: 1.5, alpha: 0.3 })
+    btn.addChild(bg)
+    const txt = textObjs[i]
+    btn.addChild(txt)
+    cursor += w + gap
+    btn.eventMode = 'static'; btn.cursor = 'pointer'
+    btn.on('pointerdown', () => {
+      if (c === correct) {
+        S.combo++
+        if (S.combo > S.maxCombo) S.maxCombo = S.combo
+        const comboBonus = S.combo >= 5 ? 3 : S.combo >= 3 ? 2 : 1
+        S.score += comboBonus
+        S.totalCaught++
+        sfxCorrect()
+        spawnCatchFX(candy.x, candy.y, candy.color)
+        // Flash button green briefly
+        bg.tint = 0x22c55e
+        // Combo feedback text
+        const catchText = S.combo >= 5 ? '🔥 SUPER x' + S.combo + '!' : S.combo >= 3 ? '⚡ COMBO x' + S.combo + '!' : 'Dapat!'
+        const ct = new PIXI.Text({ text: catchText, style: { fontSize: S.combo >= 3 ? 24 : 18, fontWeight: '900', fill: S.combo >= 5 ? 0xfbbf24 : S.combo >= 3 ? 0x3b82f6 : 0x22c55e, fontFamily: 'Fredoka One' } })
+        ct.anchor.set(0.5); ct.x = candy.x; ct.y = candy.y - 50
+        fxLayer.addChild(ct)
+        S.particles.push({ g: ct, vx: 0, vy: -1.5, grav: 0, life: 1, decay: 0.02 })
+        // Screen shake on combo 5+
+        if (S.combo >= 5) {
+          const origX = app.stage.x, origY = app.stage.y
+          let shakeFrames = 6
+          const shakeInterval = setInterval(() => {
+            app.stage.x = origX + (Math.random() - 0.5) * 8
+            app.stage.y = origY + (Math.random() - 0.5) * 8
+            if (--shakeFrames <= 0) { clearInterval(shakeInterval); app.stage.x = origX; app.stage.y = origY }
+          }, 30)
+        }
+        // Extra life at combo 10
+        if (S.combo === 10 && S.lives < S.maxLives) { S.lives++; spawnCatchFX(W/2, H*0.4, 0xef4444) }
+      } else {
+        S.combo = 0
+        sfxWrong()
+        bg.tint = 0xef4444
+        const wrongText = new PIXI.Text({ text: '❌ = ' + correct, style: { fontSize: 16, fontWeight: '700', fill: 0xef4444, fontFamily: 'Fredoka One' } })
+        wrongText.anchor.set(0.5); wrongText.x = candy.x; wrongText.y = candy.y - 50
+        fxLayer.addChild(wrongText)
+        S.particles.push({ g: wrongText, vx: 0, vy: -1, grav: 0, life: 1, decay: 0.02 })
+      }
+      setTimeout(() => {
+        fxLayer.removeChild(panel)
+        candy.container.visible = false
+        gameLayer.removeChild(candy.container)
+        S.quizActive = false
+        S.currentCandy = null
+        updateHUD()
+      }, 150)
+    })
+    panel.addChild(btn)
+  })
+
+  const halfW = panelW / 2 + 8
+  panel.x = Math.max(halfW, Math.min(W - halfW, candy.x))
+  panel.y = Math.max(80, candy.y - 60)
+  fxLayer.addChild(panel)
+}
+
+function spawnCatchFX(x, y, color) {
+  for (let i = 0; i < 10; i++) {
+    const g = new PIXI.Graphics()
+    g.circle(0, 0, 3 + Math.random() * 4).fill(color)
+    g.x = x; g.y = y
+    fxLayer.addChild(g)
+    S.particles.push({ g, vx: (Math.random() - 0.5) * 8, vy: -Math.random() * 6 - 2, grav: 0.2, life: 1, decay: 0.03 })
+  }
+  // Score text
+  const st = new PIXI.Text({ text: '+1 🍬', style: { fontSize: 20, fontWeight: '900', fill: 0xfbbf24, fontFamily: 'Fredoka One' } })
+  st.anchor.set(0.5); st.x = x; st.y = y - 20
+  fxLayer.addChild(st)
+  S.particles.push({ g: st, vx: 0, vy: -2, grav: 0, life: 1, decay: 0.025 })
+}
+
+// ═══════════════════════════════════════════════════════════
+//  GAME LOOP
+// ═══════════════════════════════════════════════════════════
+function gameLoop(ticker) {
+  S.frame++
+  if (!S.running || S.paused || S.gameOver) return
+  const dt = ticker.deltaTime
+
+  // Spawn candies (pause spawning during quiz)
+  if (!S.quizActive) {
+    S.spawnTimer += dt / 60
+    if (S.spawnTimer >= S.spawnInterval) {
+      S.spawnTimer = 0
+      spawnCandy()
+    }
+  }
+
+  // Update candies — pause falling when quiz is active
+  for (let i = S.candies.length - 1; i >= 0; i--) {
+    const c = S.candies[i]
+    if (!c.alive && !c.caught) { S.candies.splice(i, 1); continue }
+    if (c.caught) continue // waiting for quiz
+
+    // Freeze other candies while quiz is open
+    if (S.quizActive) continue
+
+    c.y += c.speed * dt
+    c.wobble += 0.04 * dt
+    c.container.x += Math.sin(c.wobble) * c.wobbleAmp * dt // gentle sway
+    c.x = c.container.x
+    c.container.y = c.y
+    c.container.rotation += c.rotation * dt
+
+    // Warning glow when candy near bottom (last 30%)
+    const dangerZone = H * 0.7
+    if (c.y > dangerZone) {
+      const urgency = (c.y - dangerZone) / (H - dangerZone)
+      c.container.alpha = 0.5 + 0.5 * Math.abs(Math.sin(S.frame * 0.15))
+      c.container.scale.set(1 + urgency * 0.1 * Math.abs(Math.sin(S.frame * 0.12)))
+    }
+
+    // Monster auto-catch: candy reaches monster zone and is close enough
+    const monsterY = H * 0.75
+    if (c.y >= monsterY - 30 && c.y <= monsterY + 10 && Math.abs(c.x - S.monsterX) < 55) {
+      catchCandy(c)
+      continue
+    }
+
+    // Candy reached bottom — miss!
+    if (c.y > H + 30) {
+      c.alive = false
+      gameLayer.removeChild(c.container)
+      S.candies.splice(i, 1)
+      S.totalMissed++
+      S.combo = 0
+      S.lives--
+      sfxMiss()
+      updateHUD()
+      if (S.lives <= 0) { endGame(); return }
+    }
+  }
+
+  // Update particles
+  for (let i = S.particles.length - 1; i >= 0; i--) {
+    const p = S.particles[i]
+    p.vy += (p.grav || 0) * dt
+    p.g.x += (p.vx || 0) * dt
+    p.g.y += (p.vy || 0) * dt
+    p.life -= p.decay * dt
+    p.g.alpha = Math.max(0, p.life)
+    if (p.scaleGrow) { p.g.scale.x += p.scaleGrow * dt; p.g.scale.y += p.scaleGrow * dt }
+    if (p.life <= 0) { fxLayer.removeChild(p.g); S.particles.splice(i, 1) }
+  }
+
+  // Parallax drift (clouds + birds + mountains)
+  updateParallax(dt)
+
+  // Smooth monster follow — lerp toward target, GPU-composited translate3d
+  S.monsterXLerp += (S.monsterXTarget - S.monsterXLerp) * Math.min(1, 0.22 * dt)
+  S.monsterX = S.monsterXLerp
+  const monster = document.getElementById('monster-img')
+  if (monster && monster.style.display !== 'none') {
+    // Directional facing: right when past screen midpoint, left otherwise
+    const facingRight = S.monsterXLerp > W / 2
+    if (facingRight !== S.lastFacing) {
+      monster.classList.remove('turn-flip')
+      void monster.offsetWidth
+      monster.classList.add('turn-flip')
+      S.lastFacing = facingRight
+    }
+    const flip = facingRight ? 1 : -1
+    const halfW = monster.offsetWidth / 2
+    monster.style.transform = `translate3d(${Math.round(S.monsterXLerp - halfW)}px, 0, 0) scaleX(${flip})`
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  HUD
+// ═══════════════════════════════════════════════════════════
+function updateHUD() {
+  const comboText = S.combo >= 3 ? ` 🔥${S.combo}` : ''
+  document.getElementById('score-display').textContent = `🍬 ${S.score}${comboText}`
+  const hearts = '❤️'.repeat(Math.max(0, S.lives)) + '🖤'.repeat(Math.max(0, S.maxLives - S.lives))
+  document.getElementById('lives-display').textContent = hearts
+}
+
+// ═══════════════════════════════════════════════════════════
+//  START / END / PAUSE
+// ═══════════════════════════════════════════════════════════
+function startGame() {
+  if (S.started) return; ea()
+  S.started = true; S.running = true
+  document.getElementById('start-overlay').classList.add('hidden')
+  const monster = document.getElementById('monster-img')
+  monster.style.display = 'block'
+  // Force layout so offsetWidth is non-zero for transform math
+  void monster.offsetWidth
+  placeMonsterOnGround()
+  try{const bgm=document.getElementById('game-bgm');bgm.volume=0.2;bgm.play().catch(()=>{})}catch(_){}
+  updateHUD()
+}
+
+function endGame() {
+  S.running = false; S.gameOver = true
+  try{document.getElementById('game-bgm').pause()}catch(_){}
+  const stars = GameScoring.calc({correct:S.totalCaught, total:S.totalCaught+S.totalMissed, wrong:S.totalMissed, lives:S.lives, maxLives:S.maxLives})
+
+  // Save progress
+  try { sessionStorage.setItem('g22Result', JSON.stringify({ stars, level: cfg.level })) } catch(_){}
+  try {
+    const key = 'dunia-0-progress'
+    const prog = JSON.parse(localStorage.getItem(key) || '{}')
+    if (!prog.g22) prog.g22 = { completed: [], stars: {} }
+    const mapped = stars >= 4 ? 3 : stars >= 2 ? 2 : 1
+    if (!prog.g22.completed.includes(cfg.level)) prog.g22.completed.push(cfg.level)
+    if ((prog.g22.stars[cfg.level] || 0) < mapped) prog.g22.stars[cfg.level] = mapped
+    localStorage.setItem(key, JSON.stringify(prog))
+  } catch(_){}
+
+  setTimeout(() => {
+    const nextLevel = cfg.level < 30 ? () => {
+      try { sessionStorage.setItem('g22Config', JSON.stringify({ level: cfg.level + 1 })) } catch(_){}
+      location.reload()
+    } : null
+    GameModal.show({
+      emoji: stars >= 4 ? '🏆' : '🍬',
+      title: stars >= 3 ? 'Hebat!' : 'Coba Lagi!',
+      stars,
+      msg: `🍬 ${S.score} poin | 🔥 Combo max: ${S.maxCombo} | Tangkap: ${S.totalCaught} | Lepas: ${S.totalMissed}`,
+      onNext: nextLevel,
+      onAgain: () => location.reload(),
+      onBack: () => goBack()
+    })
+  }, 500)
+}
+
+function togglePause() {
+  if (!S.started || S.gameOver) return
+  S.paused = !S.paused
+  document.getElementById('btn-pause').textContent = S.paused ? '▶' : '⏸'
+  document.getElementById('pause-overlay').style.display = S.paused ? 'flex' : 'none'
+  try{const bgm=document.getElementById('game-bgm');S.paused?bgm.pause():bgm.play().catch(()=>{})}catch(_){}
+}
+
+function goBack() {
+  try{document.getElementById('game-bgm').pause()}catch(_){}
+  S.running = false
+  history.back()
+}
+
+// Pokemon picker — favorite Pokemon for catcher character
+const G22_POKEMON = [
+  {slug:'psyduck',name:'Psyduck'},{slug:'pikachu',name:'Pikachu'},{slug:'eevee',name:'Eevee'},
+  {slug:'snorlax',name:'Snorlax'},{slug:'jigglypuff',name:'Jigglypuff'},{slug:'togepi',name:'Togepi'},
+  {slug:'mew',name:'Mew'},{slug:'gengar',name:'Gengar'},{slug:'bulbasaur',name:'Bulbasaur'},
+  {slug:'charmander',name:'Charmander'},{slug:'squirtle',name:'Squirtle'},{slug:'meowth',name:'Meowth'},
+  {slug:'marill',name:'Marill'},{slug:'teddiursa',name:'Teddiursa'},{slug:'piplup',name:'Piplup'},
+]
+let g22SelectedPoke = 'psyduck'
+
+function togglePokePicker() {
+  const picker = document.getElementById('poke-picker')
+  if (picker.style.display === 'none') {
+    picker.style.display = 'block'
+    renderPokePicker()
+  } else {
+    picker.style.display = 'none'
+  }
+}
+
+function renderPokePicker() {
+  const grid = document.getElementById('poke-grid')
+  grid.innerHTML = ''
+  G22_POKEMON.forEach(p => {
+    const card = document.createElement('div')
+    card.style.cssText = `background:${p.slug===g22SelectedPoke?'rgba(139,92,246,0.4)':'rgba(255,255,255,0.08)'};border:2px solid ${p.slug===g22SelectedPoke?'#a78bfa':'rgba(255,255,255,0.15)'};border-radius:10px;padding:4px;text-align:center;cursor:pointer;transition:all .12s`
+    card.innerHTML = `<img src="https://img.pokemondb.net/sprites/home/normal/${p.slug}.png" style="width:40px;height:40px;image-rendering:auto" onerror="this.src='../assets/Pokemon/sprites/${p.slug}.png';this.onerror=null"><div style="font-size:8px;color:#e9d5ff;font-weight:700;margin-top:2px">${p.name}</div>`
+    card.onclick = () => {
+      g22SelectedPoke = p.slug
+      const img = document.getElementById('monster-img')
+      img.src = `https://img.pokemondb.net/sprites/home/normal/${p.slug}.png`
+      img.onerror = () => { img.src = `../assets/Pokemon/sprites/${p.slug}.png`; img.onerror = null }
+      renderPokePicker()
+    }
+    grid.appendChild(card)
+  })
+}
+
+// ═══════════════════════════════════════════════════════════
+//  INPUT + GROUND ANCHOR
+// ═══════════════════════════════════════════════════════════
+document.getElementById('start-overlay').addEventListener('pointerdown', startGame)
+
+// Track touch/mouse position for monster — sets TARGET only; gameLoop lerps actual position
+document.addEventListener('pointermove', e => {
+  S.monsterXTarget = e.clientX
+})
+document.addEventListener('pointerdown', e => {
+  // Instant snap-to-target on tap so first frame isn't far off
+  if (!S.started) return
+  S.monsterXTarget = e.clientX
+})
+
+// Anchor Psyduck to canvas ground line (H * 0.75) regardless of viewport
+function placeMonsterOnGround() {
+  const monster = document.getElementById('monster-img')
+  if (!monster || !app) return
+  const groundY = H * 0.75
+  // Sprite's bottom edge should sit at groundY; compute `bottom` (distance from viewport bottom to sprite bottom)
+  const offsetFromBottom = Math.max(0, window.innerHeight - groundY - 8)
+  monster.style.bottom = offsetFromBottom + 'px'
+}
+
+// Resize — recompute dimensions + rebuild parallax (mountains/trees scale with W,H)
+window.addEventListener('resize', () => {
+  if (!app) return
+  app.renderer.resize(window.innerWidth, window.innerHeight)
+  W = app.screen.width; H = app.screen.height
+  // Rebuild background to match new dimensions
+  bgLayer.removeChildren()
+  drawBackground()
+  placeMonsterOnGround()
+  // Re-clamp target X so pointer cache doesn't stick off-screen
+  S.monsterXTarget = Math.min(S.monsterXTarget, W)
+})
+
+</script>
+</body>
+</html>

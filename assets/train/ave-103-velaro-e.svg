@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <!-- AVE 103 Velaro: all RED, silver stripe, Siemens nose profile -->
+  <path d="M8,68 Q20,44 44,38 L185,38 L188,68 L185,98 L44,98 Q20,92 8,68 Z" fill="#CC0000"/>
+  <!-- silver Velaro stripe -->
+  <rect x="44" y="58" width="144" height="20" fill="#C0C0C0"/>
+  <path d="M8,68 Q14,62 30,58 L44,58 L44,78 L30,76 Q14,74 8,68 Z" fill="#C0C0C0"/>
+  <!-- Velaro nose profile - key diff from AVE100 -->
+  <path d="M8,68 Q16,52 34,46 L40,48 Q22,54 14,68 Z" fill="#AA0000"/>
+  <path d="M8,68 Q16,84 34,90 L40,88 Q22,82 14,68 Z" fill="#AA0000"/>
+  <rect x="26" y="46" width="22" height="16" rx="2" fill="#87CEEB" opacity="0.7"/>
+  <circle cx="11" cy="68" r="5" fill="#FFE040" opacity="0.9"/>
+  <circle cx="38" cy="106" r="9" fill="#AA0000" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="47.0" y1="106.0" x2="29.0" y2="106.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="44.4" y1="112.4" x2="31.6" y2="99.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="38.0" y1="115.0" x2="38.0" y2="97.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="31.6" y1="112.4" x2="44.4" y2="99.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="38" cy="106" r="2.0" fill="#C0C0C0"/>
+
+  <circle cx="62" cy="106" r="9" fill="#AA0000" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="71.0" y1="106.0" x2="53.0" y2="106.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="68.4" y1="112.4" x2="55.6" y2="99.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="62.0" y1="115.0" x2="62.0" y2="97.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="55.6" y1="112.4" x2="68.4" y2="99.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="62" cy="106" r="2.0" fill="#C0C0C0"/>
+
+  <circle cx="108" cy="106" r="9" fill="#AA0000" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="117.0" y1="106.0" x2="99.0" y2="106.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="114.4" y1="112.4" x2="101.6" y2="99.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="108.0" y1="115.0" x2="108.0" y2="97.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="101.6" y1="112.4" x2="114.4" y2="99.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="108" cy="106" r="2.0" fill="#C0C0C0"/>
+
+  <circle cx="148" cy="106" r="9" fill="#AA0000" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="157.0" y1="106.0" x2="139.0" y2="106.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="154.4" y1="112.4" x2="141.6" y2="99.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="148.0" y1="115.0" x2="148.0" y2="97.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="141.6" y1="112.4" x2="154.4" y2="99.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="148" cy="106" r="2.0" fill="#C0C0C0"/>
+
+  <circle cx="172" cy="106" r="9" fill="#AA0000" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="181.0" y1="106.0" x2="163.0" y2="106.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="178.4" y1="112.4" x2="165.6" y2="99.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="172.0" y1="115.0" x2="172.0" y2="97.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="165.6" y1="112.4" x2="178.4" y2="99.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="172" cy="106" r="2.0" fill="#C0C0C0"/>
+
+  <line x1="5" y1="112" x2="198" y2="112" stroke="#888" stroke-width="2.5"/>
+
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">AVE 103 Velaro E · 2006</text>
+</svg>

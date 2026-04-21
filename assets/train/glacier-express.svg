@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <!-- Glacier Express: RED, very large panoramic windows -->
+  <rect x="8" y="44" width="180" height="62" rx="6" fill="#CC0000"/>
+  <!-- extra-large panoramic windows, taller than Bernina -->
+  <rect x="14" y="48" width="22" height="36" rx="3" fill="#87CEEB" opacity="0.85"/>
+  <rect x="42" y="48" width="30" height="36" rx="3" fill="#87CEEB" opacity="0.85"/>
+  <rect x="78" y="48" width="30" height="36" rx="3" fill="#87CEEB" opacity="0.85"/>
+  <rect x="114" y="48" width="30" height="36" rx="3" fill="#87CEEB" opacity="0.85"/>
+  <rect x="150" y="48" width="30" height="36" rx="3" fill="#87CEEB" opacity="0.85"/>
+  <!-- white strip base -->
+  <rect x="8" y="90" width="180" height="12" fill="#fff"/>
+  <!-- snow-capped mountains hint -->
+  <polygon points="60,44 70,32 80,44" fill="#fff" opacity="0.3"/>
+  <polygon points="100,44 112,28 124,44" fill="#fff" opacity="0.3"/>
+  <circle cx="26" cy="114" r="7" fill="#880000" stroke="#fff" stroke-width="2"/>
+<line x1="33.0" y1="114.0" x2="19.0" y2="114.0" stroke="#fff" stroke-width="1.2"/>
+<line x1="30.9" y1="118.9" x2="21.1" y2="109.1" stroke="#fff" stroke-width="1.2"/>
+<line x1="26.0" y1="121.0" x2="26.0" y2="107.0" stroke="#fff" stroke-width="1.2"/>
+<line x1="21.1" y1="118.9" x2="30.9" y2="109.1" stroke="#fff" stroke-width="1.2"/>
+<circle cx="26" cy="114" r="1.5" fill="#fff"/>
+
+  <circle cx="50" cy="114" r="7" fill="#880000" stroke="#fff" stroke-width="2"/>
+<line x1="57.0" y1="114.0" x2="43.0" y2="114.0" stroke="#fff" stroke-width="1.2"/>
+<line x1="54.9" y1="118.9" x2="45.1" y2="109.1" stroke="#fff" stroke-width="1.2"/>
+<line x1="50.0" y1="121.0" x2="50.0" y2="107.0" stroke="#fff" stroke-width="1.2"/>
+<line x1="45.1" y1="118.9" x2="54.9" y2="109.1" stroke="#fff" stroke-width="1.2"/>
+<circle cx="50" cy="114" r="1.5" fill="#fff"/>
+
+  <circle cx="90" cy="114" r="7" fill="#880000" stroke="#fff" stroke-width="2"/>
+<line x1="97.0" y1="114.0" x2="83.0" y2="114.0" stroke="#fff" stroke-width="1.2"/>
+<line x1="94.9" y1="118.9" x2="85.1" y2="109.1" stroke="#fff" stroke-width="1.2"/>
+<line x1="90.0" y1="121.0" x2="90.0" y2="107.0" stroke="#fff" stroke-width="1.2"/>
+<line x1="85.1" y1="118.9" x2="94.9" y2="109.1" stroke="#fff" stroke-width="1.2"/>
+<circle cx="90" cy="114" r="1.5" fill="#fff"/>
+
+  <circle cx="114" cy="114" r="7" fill="#880000" stroke="#fff" stroke-width="2"/>
+<line x1="121.0" y1="114.0" x2="107.0" y2="114.0" stroke="#fff" stroke-width="1.2"/>
+<line x1="118.9" y1="118.9" x2="109.1" y2="109.1" stroke="#fff" stroke-width="1.2"/>
+<line x1="114.0" y1="121.0" x2="114.0" y2="107.0" stroke="#fff" stroke-width="1.2"/>
+<line x1="109.1" y1="118.9" x2="118.9" y2="109.1" stroke="#fff" stroke-width="1.2"/>
+<circle cx="114" cy="114" r="1.5" fill="#fff"/>
+
+  <circle cx="152" cy="114" r="7" fill="#880000" stroke="#fff" stroke-width="2"/>
+<line x1="159.0" y1="114.0" x2="145.0" y2="114.0" stroke="#fff" stroke-width="1.2"/>
+<line x1="156.9" y1="118.9" x2="147.1" y2="109.1" stroke="#fff" stroke-width="1.2"/>
+<line x1="152.0" y1="121.0" x2="152.0" y2="107.0" stroke="#fff" stroke-width="1.2"/>
+<line x1="147.1" y1="118.9" x2="156.9" y2="109.1" stroke="#fff" stroke-width="1.2"/>
+<circle cx="152" cy="114" r="1.5" fill="#fff"/>
+
+  <circle cx="176" cy="114" r="7" fill="#880000" stroke="#fff" stroke-width="2"/>
+<line x1="183.0" y1="114.0" x2="169.0" y2="114.0" stroke="#fff" stroke-width="1.2"/>
+<line x1="180.9" y1="118.9" x2="171.1" y2="109.1" stroke="#fff" stroke-width="1.2"/>
+<line x1="176.0" y1="121.0" x2="176.0" y2="107.0" stroke="#fff" stroke-width="1.2"/>
+<line x1="171.1" y1="118.9" x2="180.9" y2="109.1" stroke="#fff" stroke-width="1.2"/>
+<circle cx="176" cy="114" r="1.5" fill="#fff"/>
+
+  <line x1="5" y1="112" x2="198" y2="112" stroke="#888" stroke-width="2.5"/>
+
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">Glacier Express · 1930</text>
+</svg>

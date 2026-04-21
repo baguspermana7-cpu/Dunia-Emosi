@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Pokemon Birds 🐦</title>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear-gradient(180deg,#87CEEB 0%,#c8e8f8 40%,#22c55e 80%,#15803d 100%);font-family:'Fredoka One',Arial,sans-serif;touch-action:none}
+#pixi-canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
+
+/* ── HUD Top ── */
+#hud-top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:clamp(4px,1.5vw,10px);padding:max(14px,env(safe-area-inset-top)) clamp(14px,3vw,18px) 8px;background:linear-gradient(180deg,rgba(0,0,0,0.82) 0%,transparent 100%);pointer-events:none}
+#btn-back{background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.22);border-radius:12px;color:#fff;padding:7px 12px;font-size:15px;cursor:pointer;font-family:inherit;pointer-events:all;flex-shrink:0}
+#game-badge{background:rgba(0,0,0,0.5);border:1.5px solid rgba(139,92,246,0.5);border-radius:10px;padding:5px 10px;color:#c4b5fd;font-size:clamp(10px,3vw,13px);font-weight:700;flex-shrink:0;white-space:nowrap}
+#hud-center{flex:1;text-align:center;min-width:0}
+#level-text{font-size:12px;color:#c4b5fd;font-weight:700}
+#status-text{font-size:clamp(13px,4vw,18px);font-weight:900;color:#fff}
+#hud-lives{font-size:clamp(14px,4vw,20px);flex-shrink:0}
+#pipe-progress{font-size:clamp(11px,3vw,14px);color:#86efac;font-weight:700;flex-shrink:0}
+
+/* ── Quiz Panel ── */
+#quiz-panel{position:fixed;bottom:0;left:0;right:0;z-index:200;display:none;flex-direction:column;align-items:center;padding:clamp(10px,3vh,16px) clamp(12px,4vw,20px) clamp(16px,5vh,26px);background:linear-gradient(0deg,rgba(10,2,25,0.98) 0%,rgba(26,5,53,0.96) 100%);border-top:3px solid #ef4444;backdrop-filter:blur(14px)}
+#quiz-panel.show{display:flex}
+#quiz-title{color:#ef4444;font-size:10px;font-weight:700;letter-spacing:3px;margin-bottom:4px;animation:dangerPulse 0.8s ease-in-out infinite}
+@keyframes dangerPulse{50%{opacity:0.4}}
+#quiz-question{color:#fff;font-size:clamp(22px,6.5vw,34px);font-weight:900;text-align:center;margin-bottom:clamp(10px,3vh,16px);text-shadow:0 0 20px rgba(251,191,36,0.6)}
+#quiz-choices{display:flex;gap:clamp(6px,2vw,12px);justify-content:center;width:100%;flex-wrap:wrap}
+.choice-btn{flex:1;min-width:clamp(52px,15vw,80px);max-width:clamp(68px,24vw,120px);padding:clamp(10px,3.5vh,18px) 4px;border:2.5px solid rgba(255,255,255,0.35);border-radius:16px;background:linear-gradient(160deg,#7C3AED,#6D28D9);color:#fff;font-size:clamp(16px,5.5vw,26px);font-weight:900;cursor:pointer;transition:all .12s;font-family:inherit;-webkit-tap-highlight-color:transparent;box-shadow:0 5px 0 #4C1D95}
+.choice-btn:nth-child(2){background:linear-gradient(160deg,#E85A32,#C84020);border-color:#F07050;box-shadow:0 5px 0 #9A2A10}
+.choice-btn:nth-child(3){background:linear-gradient(160deg,#2DBF7E,#1A9E66);border-color:#50E0A0;box-shadow:0 5px 0 #0A7A48}
+.choice-btn:nth-child(4){background:linear-gradient(160deg,#F59E0B,#D97706);border-color:#FCD34D;box-shadow:0 5px 0 #92400E}
+.choice-btn:active{transform:scale(.91) translateY(4px);box-shadow:0 1px 0 #4C1D95}
+.choice-btn.correct{border-color:#4ade80;background:rgba(74,222,128,0.3);animation:correctFlash .4s ease}
+.choice-btn.wrong{border-color:#ef4444;background:rgba(239,68,68,0.3);animation:wrongShake .35s ease}
+@keyframes correctFlash{0%{transform:scale(1.1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+@keyframes wrongShake{0%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}100%{transform:translateX(0)}}
+
+/* ── Flash ── */
+#flash{position:fixed;inset:0;z-index:99;pointer-events:none;opacity:0;transition:opacity .08s}
+
+/* ── Start Overlay ── */
+#start-overlay{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:rgba(10,2,25,0.92);backdrop-filter:blur(8px)}
+#start-overlay.hidden{display:none}
+#start-icon{font-size:64px}
+#start-title{font-size:clamp(24px,7vw,36px);font-weight:900;color:#c4b5fd}
+#start-level{font-size:18px;color:#a78bfa}
+#start-hint{font-size:16px;color:#86efac;animation:hintPulse 1.5s ease-in-out infinite}
+@keyframes hintPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.96)}}
+</style>
+</head>
+<body>
+
+<canvas id="pixi-canvas"></canvas>
+
+<!-- HUD -->
+<div id="hud-top">
+  <button id="btn-back" onclick="goBack()" style="pointer-events:all">◀</button>
+  <div id="game-badge"><img src="../assets/Pokemon/sprites/pidgeot.png" style="width:18px;height:18px;vertical-align:middle;image-rendering:pixelated"> Pokemon Birds</div>
+  <div id="hud-center">
+    <div id="level-text"></div>
+    <div id="status-text">Bersiap...</div>
+  </div>
+  <button id="btn-pause" onclick="togglePause()" style="pointer-events:all;background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.22);border-radius:12px;color:#fff;padding:6px 10px;font-size:15px;cursor:pointer;font-family:inherit;flex-shrink:0">⏸</button>
+  <div id="hud-lives">⭐ 0</div>
+  <div id="pipe-progress">🟢 0/0</div>
+</div>
+
+<!-- Quiz Panel -->
+<div id="quiz-panel">
+  <div id="quiz-title">⚠️ RINTANGAN ⚠️</div>
+  <div id="quiz-question"></div>
+  <div id="quiz-choices"></div>
+</div>
+
+<!-- Flash overlay -->
+<div id="flash"></div>
+
+<!-- Start Overlay -->
+<!-- Ash + Pikachu running at ground level -->
+<img id="ash-runner" src="../assets/Pokemon/trainer/ash-running.webp"
+  style="position:fixed;z-index:39;pointer-events:none;height:10vh;width:auto;left:8%;image-rendering:auto;display:none;">
+<img id="pika-runner" src="../assets/Pokemon/trainer/pikachu-run.webp"
+  style="position:fixed;z-index:39;pointer-events:none;height:6vh;width:auto;left:1%;image-rendering:auto;display:none;">
+<audio id="wing-flap-sfx" src="../assets/Pokemon/sound/wing-flap.mp3" preload="auto" style="display:none"></audio>
+<audio id="game-bgm" preload="auto" loop style="display:none"></audio>
+
+<!-- Pause Overlay -->
+<div id="pause-overlay" style="position:fixed;inset:0;z-index:350;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(10,2,25,0.92);backdrop-filter:blur(8px)">
+  <div style="font-size:36px">⏸</div>
+  <div style="font-size:24px;font-weight:900;color:#fbbf24">PAUSE</div>
+  <div style="width:80%;max-width:300px;display:flex;flex-direction:column;gap:12px;margin:12px 0">
+    <label style="color:#e9d5ff;font-size:13px;display:flex;align-items:center;gap:8px">🔊 Master<input type="range" id="vol-master" min="0" max="100" value="80" style="flex:1;accent-color:#8b5cf6" oninput="updateVolumes()"></label>
+    <label style="color:#e9d5ff;font-size:13px;display:flex;align-items:center;gap:8px">🐦 Sayap<input type="range" id="vol-flap" min="0" max="100" value="80" style="flex:1;accent-color:#fbbf24" oninput="updateVolumes()"></label>
+    <label style="color:#e9d5ff;font-size:13px;display:flex;align-items:center;gap:8px">🎵 BGM<input type="range" id="vol-bgm" min="0" max="100" value="50" style="flex:1;accent-color:#22c55e" oninput="updateVolumes()"></label>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+    <button onclick="togglePause()" style="padding:12px 24px;border-radius:14px;border:2px solid #4ade80;background:rgba(34,197,94,0.3);color:#4ade80;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit">▶ Lanjut</button>
+    <button onclick="document.getElementById('pause-overlay').style.display='none';openBag()" style="padding:12px 24px;border-radius:14px;border:2px solid #fbbf24;background:rgba(251,191,36,0.2);color:#fbbf24;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit">🎒 Ganti Pokemon</button>
+    <button onclick="goBack()" style="padding:12px 24px;border-radius:14px;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#e9d5ff;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit">🏠 Keluar</button>
+  </div>
+</div>
+
+<!-- Pokemon Bag Selector -->
+<div id="bag-overlay" style="position:fixed;inset:0;z-index:400;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(10,2,25,0.95);backdrop-filter:blur(10px)">
+  <div style="font-size:24px;font-weight:900;color:#fbbf24">🎒 Pilih Pokemon</div>
+  <div id="bag-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;width:90%;max-width:400px;max-height:60vh;overflow-y:auto;padding:10px"></div>
+  <button onclick="closeBag()" style="padding:10px 24px;border-radius:14px;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#e9d5ff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Tutup</button>
+</div>
+
+<div id="start-overlay">
+  <div id="start-icon"><img src="../assets/Pokemon/g19/pidgeot.webp" style="width:80px;height:auto;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.4))"></div>
+  <div id="start-title">Pokemon Birds</div>
+  <div id="start-level"></div>
+  <div id="start-hint">Memuat game... ⏳</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
+<script src="game-modal.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════════════
+const cfg = { level: 1, pokemon: 0 }
+try { const s = sessionStorage.getItem('g19Config'); if (s) Object.assign(cfg, JSON.parse(s)) } catch(_){}
+document.getElementById('level-text').textContent = `Level ${cfg.level}`
+
+// ── POKEMON ROSTER ──
+const G19_POKEMON = [
+  // 2-stage evolution (Pidgeotto → Pidgeot)
+  { name:'Pidgeotto', evo:[
+    {name:'Pidgeotto',src:'../assets/Pokemon/g19/pidgeotto.webp',mirror:false,scale:0.8},
+    {name:'Pidgeot',src:'../assets/Pokemon/g19/pidgeot.webp',mirror:false,scale:1.3}
+  ]},
+  // 3-stage evolution (Zubat → Golbat → Crobat) — new Crobat sprite
+  { name:'Zubat', evo:[
+    {name:'Zubat',src:'../assets/Pokemon/g19/zubat2.webp',mirror:false,scale:0.7},
+    {name:'Golbat',src:'../assets/Pokemon/g19/golbat-flying.webp',mirror:false,scale:1.0},
+    {name:'Crobat',src:'../assets/Pokemon/g19/crobat.webp',mirror:false,scale:1.2}
+  ]},
+  // 2-stage: Gastly → Haunter
+  { name:'Gastly', evo:[
+    {name:'Gastly',src:'../assets/Pokemon/g19/gastly.webp',mirror:false,scale:0.7},
+    {name:'Haunter',src:'../assets/Pokemon/g19/haunter.webp',mirror:false,scale:1.0}
+  ]},
+  // 2-stage: Beedrill → Mega Beedrill
+  { name:'Beedrill', evo:[
+    {name:'Beedrill',src:'../assets/Pokemon/g19/beedrill.webp',mirror:false,scale:1.0},
+    {name:'Mega Beedrill',src:'../assets/Pokemon/g19/mega-beedrill.webp',mirror:false,scale:1.3}
+  ]},
+  // 2-stage: Wingull → Pelipper
+  { name:'Wingull', evo:[
+    {name:'Wingull',src:'../assets/Pokemon/g19/wingull.webp',mirror:false,scale:0.7},
+    {name:'Pelipper',src:'../assets/Pokemon/g19/pelipper.webp',mirror:false,scale:1.1}
+  ]},
+  // 2-stage: Woobat → Swoobat
+  { name:'Woobat', evo:[
+    {name:'Woobat',src:'../assets/Pokemon/g19/woobat.webp',mirror:false,scale:0.7},
+    {name:'Swoobat',src:'../assets/Pokemon/g19/swoobat.webp',mirror:false,scale:1.1}
+  ]},
+  // No evolution — 1x Pokemon
+  { name:'Fearow', evo:[{name:'Fearow',src:'../assets/Pokemon/g19/fearow.webp',mirror:false,scale:1.1}]},
+  { name:'Venomoth', evo:[{name:'Venomoth',src:'../assets/Pokemon/g19/venomoth.webp',mirror:false,scale:0.9}]},
+  { name:'Articuno', evo:[{name:'Articuno',src:'../assets/Pokemon/g19/articuno.webp',mirror:false,scale:1.2}]},
+  { name:'Zapdos', evo:[{name:'Zapdos',src:'../assets/Pokemon/g19/zapdos.webp',mirror:false,scale:1.2}]},
+  { name:'Lugia', evo:[{name:'Lugia',src:'../assets/Pokemon/g19/lugia.webp',mirror:false,scale:1.3}]},
+  { name:'Ho-Oh', evo:[{name:'Ho-Oh',src:'../assets/Pokemon/g19/ho-oh.webp',mirror:false,scale:1.2}]},
+  { name:'Beautifly', evo:[{name:'Beautifly',src:'../assets/Pokemon/g19/beautifly.webp',mirror:false,scale:0.9}]},
+  { name:'Dustox', evo:[{name:'Dustox',src:'../assets/Pokemon/g19/dustox.webp',mirror:false,scale:0.9}]},
+  { name:'Mandibuzz', evo:[{name:'Mandibuzz',src:'../assets/Pokemon/g19/mandibuzz.webp',mirror:false,scale:1.1}]},
+  // Braviary moved to 2-stage evolution chain above
+  // 2-stage: Tranquill → Unfezant
+  { name:'Tranquill', evo:[
+    {name:'Tranquill',src:'../assets/Pokemon/g19/tranquil.webp',mirror:false,scale:0.9},
+    {name:'Unfezant',src:'../assets/Pokemon/g19/unfezant.webp',mirror:false,scale:1.1}
+  ]},
+  // 3-stage: Swablu → Altaria → Mega Altaria
+  { name:'Swablu', evo:[
+    {name:'Swablu',src:'../assets/Pokemon/g19/swablu.webp',mirror:false,scale:0.7},
+    {name:'Altaria',src:'../assets/Pokemon/g19/altaria.webp',mirror:false,scale:1.1},
+    {name:'Mega Altaria',src:'../assets/Pokemon/g19/mega-altaria.webp',mirror:false,scale:1.3}
+  ]},
+  // 2-stage: Braviary → Mega Braviary
+  { name:'Braviary', evo:[
+    {name:'Braviary',src:'../assets/Pokemon/g19/braviary.webp',mirror:false,scale:1.0},
+    {name:'Mega Braviary',src:'../assets/Pokemon/g19/mega-braviary.webp',mirror:false,scale:1.3}
+  ]},
+  // 1x no evolution
+  { name:'Sigilyph', evo:[{name:'Sigilyph',src:'../assets/Pokemon/g19/sigilyph.webp',mirror:false,scale:1.0}]},
+  // Existing
+  { name:'Aerodactyl', evo:[{name:'Aerodactyl',src:'../assets/Pokemon/g19/aerodactyl.webp',mirror:false,scale:1.1}]},
+  { name:'Charizard', evo:[{name:'Charizard',src:'../assets/Pokemon/g19/charizard-flying.webp',mirror:false,scale:1.3}]},
+  { name:'Dragonite', evo:[{name:'Dragonite',src:'../assets/Pokemon/g19/dragonite.webp',mirror:false,scale:1.0}]},
+  { name:'Flygon', evo:[{name:'Flygon',src:'../assets/Pokemon/g19/flygon-pokemon.webp',mirror:false,scale:1.1}]},
+  { name:'Gyarados', evo:[{name:'Gyarados',src:'../assets/Pokemon/g19/gyarados.webp',mirror:false,scale:1.2}]},
+  { name:'Noivern', evo:[{name:'Noivern',src:'../assets/Pokemon/g19/noivern-flying.webp',mirror:false,scale:1.1}]},
+  { name:'Hawlucha', evo:[{name:'Hawlucha',src:'../assets/Pokemon/g19/hawlucha.webp',mirror:false,scale:1.0}]},
+  { name:'Butterfree', evo:[{name:'Butterfree',src:'../assets/Pokemon/g19/butterfree-cute.webp',mirror:false,scale:0.9}]},
+  // 2-stage: Taillow → Swellow
+  { name:'Taillow', evo:[
+    {name:'Taillow',src:'../assets/Pokemon/g19/tailow.webp',mirror:false,scale:0.8},
+    {name:'Swellow',src:'../assets/Pokemon/g19/swellow.webp',mirror:false,scale:1.2}
+  ]},
+  // 2-stage: Fletchinder → Talonflame
+  { name:'Fletchinder', evo:[
+    {name:'Fletchinder',src:'../assets/Pokemon/g19/fletchinder.webp',mirror:false,scale:0.8},
+    {name:'Talonflame',src:'../assets/Pokemon/g19/talonflame.webp',mirror:false,scale:1.2}
+  ]},
+]
+let selectedPokemon = cfg.pokemon || 0
+document.getElementById('start-level').textContent = `Level ${cfg.level}`
+
+// ═══════════════════════════════════════════════════════════
+//  QUESTIONS (same as G16)
+// ═══════════════════════════════════════════════════════════
+const QUESTIONS = {
+  easy:[
+    {q:'🐱 Huruf awal?',ans:'K',wrong:['A','M','B']},{q:'🍎 Huruf awal?',ans:'A',wrong:['I','U','E']},
+    {q:'🐶 Huruf awal?',ans:'A',wrong:['K','M','B']},{q:'🦋 Huruf awal?',ans:'K',wrong:['L','S','P']},
+    {q:'🐟 Huruf awal?',ans:'I',wrong:['U','A','O']},{q:'🌸 Huruf awal?',ans:'B',wrong:['K','S','T']},
+    {q:'🐘 Huruf awal?',ans:'G',wrong:['A','K','L']},{q:'🦒 Huruf awal?',ans:'J',wrong:['G','K','L']},
+    {q:'🍌 Huruf awal?',ans:'P',wrong:['B','M','K']},{q:'🐸 Huruf awal?',ans:'K',wrong:['B','S','L']},
+    {q:'1+1=?',ans:'2',wrong:['3','4','1']},{q:'2+1=?',ans:'3',wrong:['2','4','5']},
+    {q:'3+2=?',ans:'5',wrong:['4','6','7']},{q:'5-2=?',ans:'3',wrong:['2','4','1']},
+    {q:'Warna 🔴?',ans:'MERAH',wrong:['BIRU','HIJAU','KUNING']},
+    {q:'Warna 🔵?',ans:'BIRU',wrong:['MERAH','HIJAU','UNGU']},
+    {q:'Warna 🟡?',ans:'KUNING',wrong:['ORANYE','PUTIH','MERAH']},
+    {q:'Warna 🟢?',ans:'HIJAU',wrong:['BIRU','KUNING','HITAM']},
+    {q:'3-2=?',ans:'1',wrong:['2','3','4']},{q:'1+2=?',ans:'3',wrong:['2','4','5']},
+    {q:'🐮 Suaranya?',ans:'MOO',wrong:['BAA','OINK','QUACK']},
+    {q:'🐕 Suaranya?',ans:'GUKGUK',wrong:['MEONG','KWEK','EMBEK']},
+    {q:'🐓 Suaranya?',ans:'KUKURUYUK',wrong:['KWEK','MOO','BAA']},
+    {q:'4-1=?',ans:'3',wrong:['2','5','4']},{q:'2+2=?',ans:'4',wrong:['3','5','6']},
+    {q:'🍊 Buah apa?',ans:'JERUK',wrong:['APEL','PISANG','MANGGA']},
+  ],
+  medium:[
+    {q:'2+3=?',ans:'5',wrong:['4','6','7']},{q:'4+4=?',ans:'8',wrong:['7','9','6']},
+    {q:'5+5=?',ans:'10',wrong:['9','8','11']},{q:'6+3=?',ans:'9',wrong:['8','7','10']},
+    {q:'10-3=?',ans:'7',wrong:['6','8','4']},{q:'8-2=?',ans:'6',wrong:['5','7','4']},
+    {q:'7+5=?',ans:'12',wrong:['11','13','10']},{q:'9+4=?',ans:'13',wrong:['12','14','11']},
+    {q:'15-6=?',ans:'9',wrong:['8','10','7']},{q:'12-5=?',ans:'7',wrong:['6','8','5']},
+    {q:'🐘 ada di...?',ans:'HUTAN',wrong:['LAUT','UDARA','KOTA']},
+    {q:'🐟 ada di...?',ans:'LAUT',wrong:['HUTAN','UDARA','TANAH']},
+    {q:'🦅 ada di...?',ans:'UDARA',wrong:['LAUT','HUTAN','TANAH']},
+    {q:'8+7=?',ans:'15',wrong:['14','16','13']},{q:'11-4=?',ans:'7',wrong:['6','8','5']},
+    {q:'6+8=?',ans:'14',wrong:['13','15','12']},{q:'13-6=?',ans:'7',wrong:['6','8','5']},
+    {q:'Ibukota Jawa Barat?',ans:'BANDUNG',wrong:['JAKARTA','SURABAYA','BOGOR']},
+    {q:'Pulau terbesar RI?',ans:'KALIMANTAN',wrong:['JAWA','SUMATRA','SULAWESI']},
+    {q:'Warna bendera RI?',ans:'MERAH PUTIH',wrong:['BIRU PUTIH','HIJAU KUNING','MERAH BIRU']},
+    {q:'9+6=?',ans:'15',wrong:['14','16','13']},{q:'11+8=?',ans:'19',wrong:['17','21','18']},
+  ],
+  hard:[
+    {q:'12+5=?',ans:'17',wrong:['16','18','15']},{q:'15-8=?',ans:'7',wrong:['6','8','9']},
+    {q:'18+4=?',ans:'22',wrong:['20','24','21']},{q:'20-7=?',ans:'13',wrong:['12','14','11']},
+    {q:'14+9=?',ans:'23',wrong:['22','25','21']},{q:'2,4,?,8',ans:'6',wrong:['5','7','9']},
+    {q:'Ibukota RI?',ans:'JAKARTA',wrong:['BANDUNG','SURABAYA','MEDAN']},
+    {q:'17+8=?',ans:'25',wrong:['24','26','23']},{q:'25-9=?',ans:'16',wrong:['14','18','15']},
+    {q:'19-7=?',ans:'12',wrong:['11','13','10']},{q:'16+6=?',ans:'22',wrong:['20','24','21']},
+    {q:'Presiden pertama RI?',ans:'SOEKARNO',wrong:['SOEHARTO','HABIBIE','WAHID']},
+    {q:'Planet terbesar?',ans:'YUPITER',wrong:['SATURNUS','MARS','URANUS']},
+    {q:'H₂O adalah...?',ans:'AIR',wrong:['OKSIGEN','GULA','GARAM']},
+  ],
+  expert:[
+    {q:'15x3=?',ans:'45',wrong:['40','50','42']},{q:'8x8=?',ans:'64',wrong:['54','72','56']},
+    {q:'100÷4=?',ans:'25',wrong:['20','30','24']},{q:'7x9=?',ans:'63',wrong:['54','72','56']},
+    {q:'Proklamasi RI tahun?',ans:'1945',wrong:['1928','1908','1949']},
+    {q:'Mata uang RI?',ans:'RUPIAH',wrong:['RINGGIT','BAHT','PESO']},
+    {q:'½ × 80 = ?',ans:'40',wrong:['20','60','45']},
+    {q:'Bilangan prima 10-20?',ans:'11',wrong:['12','14','16']},
+    {q:'Proses daun hijau?',ans:'FOTOSINTESIS',wrong:['RESPIRASI','EVAPORASI','OSMOSIS']},
+    {q:'Tulang manusia ada...?',ans:'206',wrong:['150','300','180']},
+  ]
+}
+function getDifficulty(l){return l<=8?'easy':l<=16?'medium':l<=24?'hard':'expert'}
+function pickQuestions(level){
+  const pool=[...QUESTIONS[getDifficulty(level)]]
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}
+  return pool.slice(0,Math.min(6+Math.min(level-1,6),pool.length,16))
+}
+
+// ═══════════════════════════════════════════════════════════
+//  LEVEL THEMES
+// ═══════════════════════════════════════════════════════════
+const LEVEL_THEMES = [
+  { name:'meadow', sky:0x87CEEB, skyMid:0xc8e8f8, hill1:0x22c55e, hill2:0x16a34a, hill3:0x0d7a34, ground:0x15803d, pipeColor:0xf59e0b, hasMoon:false, hasStars:false, sunX:0.8 },
+  { name:'sunset', sky:0xff7c00, skyMid:0xffd6a0, hill1:0x9a5a2a, hill2:0x6b3a1a, hill3:0x3d2010, ground:0x4a2e1a, pipeColor:0xc084fc, hasMoon:false, hasStars:false, sunX:0.15 },
+  { name:'night',  sky:0x03050f, skyMid:0x070a1f, hill1:0x1a0535, hill2:0x0f1a08, hill3:0x050d04, ground:0x0a1510, pipeColor:0x6366f1, hasMoon:true,  hasStars:true,  sunX:null },
+  { name:'sakura', sky:0xfce7f3, skyMid:0xfbcfe8, hill1:0xc084fc, hill2:0x86405a, hill3:0x5a2a40, ground:0x6b2f50, pipeColor:0xfb7185, hasMoon:false, hasStars:false, sunX:0.6 },
+  { name:'storm',  sky:0x0e0820, skyMid:0x1a0f38, hill1:0x1a0f38, hill2:0x0d0820, hill3:0x050410, ground:0x0c0618, pipeColor:0xa78bfa, hasMoon:false, hasStars:true,  sunX:null },
+  { name:'aurora', sky:0x011a0a, skyMid:0x012412, hill1:0x012812, hill2:0x011a0c, hill3:0x010d06, ground:0x021a0e, pipeColor:0xf97316, hasMoon:true,  hasStars:true,  sunX:null },
+]
+const BG = LEVEL_THEMES[(cfg.level - 1) % LEVEL_THEMES.length]
+
+// ═══════════════════════════════════════════════════════════
+//  GAME STATE
+// ═══════════════════════════════════════════════════════════
+const S = {
+  running: false, paused: false, gameOver: false, started: false,
+  level: cfg.level,
+  lives: 3, maxLives: 3,
+  score: 0, wrongAnswers: 0, correctAnswers: 0,
+  pipesCleared: 0, totalPipes: 0,
+  frame: 0,
+  birdY: 0, birdVY: 0,
+  pipes: [], questions: [],
+  qIdx: 0, currentPipe: null,
+  evolved: false, evolveTriggered: false,
+}
+
+// Physics
+const GRAVITY = 0.38
+const FLAP_POWER = -7.2
+const MAX_FALL = 9
+const BIRD_SIZE = 104 // pidgeot initial size (1.3x of 80)
+const PIPE_WIDTH = 68
+const PIPE_COUNT = 14 + Math.min(Math.floor((cfg.level - 1) / 5), 6) // ~20-30s longer
+const GAP_SIZE = Math.max(150, 250 - (cfg.level - 1) * 3) // 20% wider gaps
+const GAP_SIZE_EVO = Math.min(GAP_SIZE * 1.4, 280)
+let PIPE_SPEED = 2.1 + (cfg.level - 1) * 0.14
+const PIPE_SPACING = Math.max(340, 450 - (cfg.level - 1) * 3) // 20% wider spacing
+
+let W, H, GROUND_Y, BIRD_X
+let app, birdContainer, birdSprite, birdGlow, worldContainer, bgContainer, groundContainer
+
+// ═══════════════════════════════════════════════════════════
+//  AUDIO
+// ═══════════════════════════════════════════════════════════
+let audioCtx
+function ensureAudio() { if (!audioCtx) try { audioCtx = new (window.AudioContext || window.webkitAudioContext)() } catch(_){} }
+function playTone(freq, dur, type='sine', vol=0.15) {
+  if (!audioCtx) return
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain()
+  o.type = type; o.frequency.value = freq
+  g.gain.value = vol; g.gain.linearRampToValueAtTime(0, audioCtx.currentTime + dur/1000)
+  o.connect(g); g.connect(audioCtx.destination)
+  o.start(); o.stop(audioCtx.currentTime + dur/1000)
+}
+function sfxFlap() { playTone(400, 80); setTimeout(() => playTone(600, 60), 30) }
+function sfxScore() { playTone(600, 80); setTimeout(() => playTone(900, 100), 50) }
+function sfxHit() { playTone(150, 150, 'square', 0.12) }
+function sfxCorrect() { playTone(800, 200); setTimeout(() => playTone(1000, 150), 100) }
+function sfxWrong() { playTone(400, 120, 'sawtooth', 0.1); setTimeout(() => playTone(200, 200, 'sawtooth', 0.1), 80) }
+
+// ═══════════════════════════════════════════════════════════
+//  PIXI INIT
+// ═══════════════════════════════════════════════════════════
+;(async function initPixi() {
+  app = new PIXI.Application()
+  await app.init({
+    canvas: document.getElementById('pixi-canvas'),
+    width: window.innerWidth, height: window.innerHeight,
+    backgroundAlpha: 1, backgroundColor: BG.sky,
+    antialias: true,
+    resolution: Math.min(window.devicePixelRatio, 2),
+    preference: 'webgl',
+    preferWebGLVersion: 1 // WebGL 1 is more widely supported
+  })
+  W = app.screen.width; H = app.screen.height
+  GROUND_Y = H * 0.88; BIRD_X = W * 0.22
+  S.birdY = H * 0.45
+  S.totalPipes = PIPE_COUNT
+  S.questions = pickQuestions(cfg.level)
+
+  // Layers
+  bgContainer = new PIXI.Container(); app.stage.addChild(bgContainer)
+  worldContainer = new PIXI.Container(); app.stage.addChild(worldContainer)
+  groundContainer = new PIXI.Container(); app.stage.addChild(groundContainer)
+
+  try { drawBackground() } catch(e) { console.error('drawBackground failed:', e) }
+  try { drawGround() } catch(e) { console.error('drawGround failed:', e) }
+  try { buildPipes() } catch(e) { console.error('buildPipes failed:', e) }
+  try { await createBird() } catch(e) { console.error('createBird failed:', e) }
+  updateHUD()
+
+  app.ticker.add(gameLoop)
+  document.getElementById('start-hint').textContent='Tap untuk Terbang!'
+  // Check if WebGL actually rendered (detect black canvas)
+  setTimeout(() => {
+    try {
+      const gl = document.getElementById('pixi-canvas').getContext('webgl') || document.getElementById('pixi-canvas').getContext('webgl2')
+      if (!gl) throw new Error('No WebGL')
+    } catch(_) {
+      console.warn('WebGL may have failed — using CSS fallback background')
+      document.getElementById('pixi-canvas').style.opacity = '0'
+    }
+  }, 500)
+})().catch(e=>{
+  console.error('G19 init failed:',e)
+  // PixiJS failed — hide canvas, show body gradient, use Canvas2D for pipes
+  document.getElementById('pixi-canvas').style.display = 'none'
+  document.getElementById('start-hint').textContent='Tap untuk Terbang!'
+  // Create Canvas2D fallback
+  const c2d = document.createElement('canvas')
+  c2d.id = 'fallback-canvas'
+  c2d.style.cssText = 'position:fixed;inset:0;width:100vw;height:100svh;z-index:1'
+  c2d.width = window.innerWidth; c2d.height = window.innerHeight
+  document.body.insertBefore(c2d, document.body.firstChild)
+  W = c2d.width; H = c2d.height; GROUND_Y = H * 0.88; BIRD_X = W * 0.22
+  S.birdY = H * 0.45; S.totalPipes = PIPE_COUNT; S.questions = pickQuestions(cfg.level)
+  window._useFallback = true
+  // Draw static scene with Canvas2D
+  const ctx = c2d.getContext('2d')
+  // Sky
+  const skyGrad = ctx.createLinearGradient(0, 0, 0, H)
+  skyGrad.addColorStop(0, '#87CEEB'); skyGrad.addColorStop(0.5, '#c8e8f8')
+  skyGrad.addColorStop(0.75, '#22c55e'); skyGrad.addColorStop(1, '#15803d')
+  ctx.fillStyle = skyGrad; ctx.fillRect(0, 0, W, H)
+  // Hills
+  ctx.fillStyle = '#16a34a'
+  ctx.beginPath(); ctx.moveTo(0, H * 0.6)
+  for (let x = 0; x <= W; x += 20) ctx.lineTo(x, H * 0.55 + Math.sin(x * 0.01) * 30)
+  ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.fill()
+  ctx.fillStyle = '#0d7a34'
+  ctx.beginPath(); ctx.moveTo(0, H * 0.65)
+  for (let x = 0; x <= W; x += 20) ctx.lineTo(x, H * 0.62 + Math.sin(x * 0.015) * 25)
+  ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.fill()
+  // Ground
+  ctx.fillStyle = '#15803d'; ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y)
+  ctx.fillStyle = '#22c55e'; ctx.fillRect(0, GROUND_Y, W, 4)
+  // Pipes (static)
+  const pipeColor = '#f59e0b'
+  for (let i = 0; i < PIPE_COUNT; i++) {
+    const px = W + 100 + i * PIPE_SPACING
+    const gy = 100 + Math.random() * (GROUND_Y - 250)
+    ctx.fillStyle = pipeColor
+    ctx.fillRect(px, 0, PIPE_WIDTH, gy - GAP_SIZE / 2) // top
+    ctx.fillRect(px, gy + GAP_SIZE / 2, PIPE_WIDTH, GROUND_Y - gy - GAP_SIZE / 2) // bottom
+  }
+  // Fallback game loop using requestAnimationFrame
+  let fallbackFrame = 0
+  function fallbackLoop() {
+    if (!S.running) { requestAnimationFrame(fallbackLoop); return }
+    fallbackFrame++
+    S.birdVY += GRAVITY; S.birdVY = Math.min(S.birdVY, MAX_FALL)
+    S.birdY += S.birdVY; S.birdY = Math.max(S.birdY, 20)
+    if (S.birdY > GROUND_Y - 10) { S.birdY = GROUND_Y - 10; S.birdVY = FLAP_POWER * 0.6 }
+    // Scroll pipes (shift canvas)
+    ctx.save(); ctx.translate(-fallbackFrame * PIPE_SPEED * 0.3, 0)
+    // Redraw... (simplified)
+    ctx.restore()
+    requestAnimationFrame(fallbackLoop)
+  }
+  requestAnimationFrame(fallbackLoop)
+})
+
+// ═══════════════════════════════════════════════════════════
+//  BACKGROUND
+// ═══════════════════════════════════════════════════════════
+let cloudGfx = [], starGfx = []
+function drawBackground() {
+  // Sky gradient
+  const sky = new PIXI.Graphics()
+  sky.rect(0, 0, W, H).fill(BG.sky)
+  sky.rect(0, H * 0.4, W, H * 0.6).fill({ color: BG.skyMid, alpha: 0.5 })
+  bgContainer.addChild(sky)
+
+  // Sun or Moon
+  if (BG.sunX !== null) {
+    const sun = new PIXI.Graphics()
+    const sx = W * BG.sunX, sy = H * 0.15
+    sun.circle(sx, sy, 30).fill({ color: 0xfef08a, alpha: 0.9 })
+    sun.circle(sx, sy, 36).fill({ color: 0xfef08a, alpha: 0.2 })
+    bgContainer.addChild(sun)
+  }
+  if (BG.hasMoon) {
+    const moon = new PIXI.Graphics()
+    const mx = W * 0.78, my = H * 0.12
+    moon.circle(mx, my, 22).fill({ color: 0xf1f5f9, alpha: 0.9 })
+    moon.circle(mx - 8, my - 4, 18).fill(BG.sky)
+    bgContainer.addChild(moon)
+  }
+  // Stars
+  if (BG.hasStars) {
+    for (let i = 0; i < 40; i++) {
+      const st = new PIXI.Graphics()
+      const r = 0.5 + Math.random() * 1.5
+      st.circle(0, 0, r).fill({ color: 0xffffff, alpha: 0.3 + Math.random() * 0.5 })
+      st.x = Math.random() * W; st.y = Math.random() * H * 0.6
+      bgContainer.addChild(st)
+      starGfx.push(st)
+    }
+  }
+  // Clouds
+  for (let i = 0; i < 5; i++) {
+    const cl = new PIXI.Graphics()
+    const cx = Math.random() * W * 1.5, cy = H * 0.08 + Math.random() * H * 0.25
+    const cw = 30 + Math.random() * 50
+    cl.ellipse(0, 0, cw, cw * 0.4).fill({ color: BG.hasStars ? 0x334155 : 0xffffff, alpha: BG.hasStars ? 0.2 : 0.5 })
+    cl.x = cx; cl.y = cy
+    bgContainer.addChild(cl)
+    cloudGfx.push(cl)
+  }
+  // Hills (3 layers)
+  for (const [color, yOff, amp] of [[BG.hill1, 0.55, 40], [BG.hill2, 0.62, 30], [BG.hill3, 0.7, 20]]) {
+    const h = new PIXI.Graphics()
+    h.moveTo(0, H)
+    for (let x = 0; x <= W; x += 20) {
+      const y = H * yOff + Math.sin(x * 0.008 + yOff * 10) * amp + Math.sin(x * 0.02) * amp * 0.5
+      h.lineTo(x, y)
+    }
+    h.lineTo(W, H).closePath().fill(color)
+    bgContainer.addChild(h)
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  GROUND
+// ═══════════════════════════════════════════════════════════
+let groundTiles = []
+function drawGround() {
+  // Ground strip
+  const g = new PIXI.Graphics()
+  g.rect(0, GROUND_Y, W, H - GROUND_Y).fill(BG.ground)
+  // Grass line
+  g.rect(0, GROUND_Y, W, 4).fill({ color: 0x22c55e, alpha: 0.5 })
+  g.rect(0, GROUND_Y, W, 2).fill({ color: 0x4ade80, alpha: 0.3 })
+  groundContainer.addChild(g)
+  // Grass tufts
+  for (let x = 0; x < W * 2; x += 12 + Math.random() * 8) {
+    const t = new PIXI.Graphics()
+    t.poly([0, 0, 3, -6 - Math.random() * 4, 6, 0]).fill({ color: 0x22c55e, alpha: 0.4 })
+    t.x = x; t.y = GROUND_Y
+    groundContainer.addChild(t)
+    groundTiles.push(t)
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PIPES
+// ═══════════════════════════════════════════════════════════
+function buildPipes() {
+  const startX = W + 100
+  let prevGapY = H * 0.4 // start at center
+  const maxShift = H * 0.18 // max vertical shift between pipes (gentle)
+  for (let i = 0; i < PIPE_COUNT; i++) {
+    const x = startX + i * PIPE_SPACING
+    const minGapY = 100 + GAP_SIZE / 2
+    const maxGapY = GROUND_Y - 60 - GAP_SIZE / 2
+    // Limit vertical shift from previous pipe for smoother gameplay
+    let gapY = prevGapY + (Math.random() - 0.5) * maxShift * 2
+    gapY = Math.max(minGapY, Math.min(maxGapY, gapY))
+    prevGapY = gapY
+
+    const pipe = {
+      x, gapY, passed: false, hit: false, quizShown: false,
+      topGfx: new PIXI.Graphics(),
+      bottomGfx: new PIXI.Graphics(),
+      removing: false, alpha: 1
+    }
+
+    // Draw top pipe
+    drawPipe(pipe.topGfx, 0, gapY - GAP_SIZE / 2, true)
+    // Draw bottom pipe
+    drawPipe(pipe.bottomGfx, gapY + GAP_SIZE / 2, GROUND_Y, false)
+
+    pipe.topGfx.x = x; pipe.bottomGfx.x = x
+    worldContainer.addChild(pipe.topGfx)
+    worldContainer.addChild(pipe.bottomGfx)
+
+    // Pokeball collectible in the gap center
+    const ball = new PIXI.Text({ text: i % 3 === 0 ? '⭐' : '🔴', style: { fontSize: 22 } })
+    ball.anchor.set(0.5)
+    ball.x = x + PIPE_WIDTH / 2
+    ball.y = gapY
+    worldContainer.addChild(ball)
+    pipe.ball = ball
+    pipe.ballCollected = false
+
+    S.pipes.push(pipe)
+  }
+}
+
+function drawPipe(g, top, bottom, isTop) {
+  const h = bottom - top
+  const pC = BG.pipeColor
+  // Shadow
+  g.roundRect(3, top + 2, PIPE_WIDTH, h, 4).fill({ color: 0x000000, alpha: 0.15 })
+  // Main pipe body
+  g.roundRect(0, top, PIPE_WIDTH, h, 4).fill(pC)
+  // Gradient highlight (left side lighter)
+  g.rect(3, top, 8, h).fill({ color: 0xffffff, alpha: 0.1 })
+  g.rect(6, top, 3, h).fill({ color: 0xffffff, alpha: 0.05 })
+  // Dark edge (right side)
+  g.rect(PIPE_WIDTH - 8, top, 8, h).fill({ color: 0x000000, alpha: 0.15 })
+  // Horizontal bands (wood/bamboo texture)
+  for (let by = top + 20; by < bottom - 10; by += 30) {
+    g.rect(0, by, PIPE_WIDTH, 1.5).fill({ color: 0x000000, alpha: 0.08 })
+  }
+  // Lip (wider section at opening)
+  const lipY = isTop ? bottom - 14 : top
+  g.roundRect(-8, lipY, PIPE_WIDTH + 16, 16, 5).fill(pC)
+  g.roundRect(-8, lipY, PIPE_WIDTH + 16, 16, 5).stroke({ color: 0xffffff, width: 1.2, alpha: 0.25 })
+  // Lip highlight
+  g.roundRect(-6, lipY + 1, PIPE_WIDTH + 12, 4, 3).fill({ color: 0xffffff, alpha: 0.1 })
+  // Vine/leaf decorations
+  const leafColor = { color: 0x4ade80, alpha: 0.45 }
+  if (isTop) {
+    g.circle(PIPE_WIDTH / 2 - 10, bottom - 4, 6).fill(leafColor)
+    g.circle(PIPE_WIDTH / 2 + 12, bottom - 6, 5).fill(leafColor)
+    g.circle(PIPE_WIDTH / 2, bottom - 2, 4).fill({ color: 0x86efac, alpha: 0.3 })
+    // Hanging vine
+    g.rect(PIPE_WIDTH / 2 - 1, bottom, 2, 8).fill({ color: 0x22c55e, alpha: 0.3 })
+  } else {
+    g.circle(PIPE_WIDTH / 2 - 8, top + 4, 6).fill(leafColor)
+    g.circle(PIPE_WIDTH / 2 + 10, top + 6, 5).fill(leafColor)
+    g.circle(PIPE_WIDTH / 2 + 2, top + 2, 4).fill({ color: 0x86efac, alpha: 0.3 })
+    // Growing vine
+    g.rect(PIPE_WIDTH / 2 - 1, top - 6, 2, 6).fill({ color: 0x22c55e, alpha: 0.3 })
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  BIRD
+// ═══════════════════════════════════════════════════════════
+// Load image as PIXI texture (works with GIF/PNG/JPG)
+function loadImageTexture(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas')
+        canvas.width = img.naturalWidth; canvas.height = img.naturalHeight
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(img, 0, 0)
+        resolve(PIXI.Texture.from(canvas))
+      } catch(e) { reject(e) }
+    }
+    img.onerror = reject
+    img.src = src
+  })
+}
+
+async function createBird() {
+  birdContainer = new PIXI.Container()
+  birdContainer.x = BIRD_X; birdContainer.y = S.birdY
+
+  // Use DOM <img> for animated GIF with transparency (PixiJS can't do animated GIF)
+  const birdImg = document.createElement('img')
+  birdImg.id = 'bird-gif'
+  const initPoke = G19_POKEMON[selectedPokemon].evo[0]
+  birdImg.src = initPoke.src
+  const initSize = Math.round(BIRD_SIZE * initPoke.scale)
+  birdImg.style.cssText = 'position:fixed;z-index:40;pointer-events:none;width:min('+initSize+'px,'+Math.round(initPoke.scale*15)+'vw);height:auto;filter:drop-shadow(0 0 10px rgba(196,181,253,0.6));image-rendering:auto;transition:top 0.05s linear;transform:translate(-50%,-50%);'
+  if(initPoke.mirror) birdImg.dataset.mirror = '1'
+  birdImg.onerror = () => { birdImg.src = '../assets/Pokemon/sprites/pidgeot.png' }
+  document.body.appendChild(birdImg)
+  window._birdImg = birdImg
+
+  // PixiJS placeholder (invisible, just for position tracking)
+  birdSprite = new PIXI.Graphics()
+  birdSprite.circle(0, 0, 2).fill({ color: 0xffffff, alpha: 0 })
+  birdContainer.addChild(birdSprite)
+
+  // Pastel outline ring
+  const ring = new PIXI.Graphics()
+  ring.circle(0, 0, BIRD_SIZE / 2 + 4).stroke({ color: 0xC4B5FD, width: 2, alpha: 0.3 })
+  birdContainer.addChildAt(ring, 0)
+
+  worldContainer.addChild(birdContainer)
+}
+
+// ═══════════════════════════════════════════════════════════
+//  GAME LOOP
+// ═══════════════════════════════════════════════════════════
+function gameLoop(ticker) {
+  S.frame++
+  if (!S.running || S.paused || S.gameOver) {
+    // Idle bob before start
+    if (!S.started && birdContainer) {
+      const bobY = S.birdY + Math.sin(S.frame * 0.05) * 8
+      birdContainer.y = bobY
+      if (window._birdImg) {
+        window._birdImg.style.left = (BIRD_X - BIRD_SIZE/2) + 'px'
+        window._birdImg.style.top = (bobY - BIRD_SIZE/2) + 'px'
+        // no mirror — GIFs already face right
+      }
+    }
+    return
+  }
+
+  const dt = ticker.deltaTime
+
+  // Bird physics
+  S.birdVY += GRAVITY * dt
+  S.birdVY = Math.min(S.birdVY, MAX_FALL)
+  S.birdY += S.birdVY * dt
+  S.birdY = Math.max(S.birdY, 20)
+
+  // Bird position (no rotation — just up/down movement)
+  if (birdContainer) {
+    birdContainer.y = S.birdY
+  }
+
+  // Glow pulse
+  if (birdGlow) birdGlow.alpha = 0.25 + Math.sin(S.frame * 0.08) * 0.1
+
+  // Scroll pipes
+  for (const p of S.pipes) {
+    if (p.removing) {
+      p.alpha -= 0.03 * dt
+      p.topGfx.alpha = p.alpha; p.bottomGfx.alpha = p.alpha
+      if (p.alpha <= 0) { p.topGfx.visible = false; p.bottomGfx.visible = false }
+      continue
+    }
+    p.x -= PIPE_SPEED * dt
+    p.topGfx.x = p.x; p.bottomGfx.x = p.x
+  }
+
+  // Scroll clouds
+  for (const cl of cloudGfx) {
+    cl.x -= PIPE_SPEED * 0.3 * dt
+    if (cl.x < -80) cl.x = W + 80
+  }
+
+  // Scroll ground tufts
+  for (const t of groundTiles) {
+    t.x -= PIPE_SPEED * dt
+    if (t.x < -20) t.x += W * 2
+  }
+
+  // Twinkle stars
+  if (BG.hasStars) {
+    for (const st of starGfx) {
+      st.alpha = 0.2 + Math.sin(S.frame * 0.03 + st.x) * 0.4
+    }
+  }
+
+  // Collision detection
+  checkCollisions()
+
+  // Floor bounce (no death — kid-friendly)
+  if (S.birdY > GROUND_Y - 10) {
+    S.birdY = GROUND_Y - 10
+    S.birdVY = FLAP_POWER * 0.6 // gentle bounce back up
+    flashScreen('#fbbf24')
+  }
+
+  // Evolution at 50% progress
+  // Evolution triggers at 33% and 66% for 3-stage, 50% for 2-stage, never for 1-stage
+  const poke = G19_POKEMON[selectedPokemon]
+  const maxEvo = poke.evo.length - 1
+  const currentEvo = S.evoStage || 0
+  const progress = S.pipesCleared / S.totalPipes
+  const nextEvoAt = maxEvo >= 2 ? (currentEvo === 0 ? 0.33 : 0.66) : 0.5
+  if (currentEvo < maxEvo && progress >= nextEvoAt && !S.evolveTriggered && S.totalPipes > 2) {
+    S.evolveTriggered = true
+    triggerEvolution()
+  }
+
+  // Check level completion
+  // Win check: all pipes passed/removed/off-screen OR pipesCleared reached total
+  const allDone = S.pipes.every(p => p.passed || p.removing || !p.topGfx.visible || p.x < -200)
+  if (allDone || S.pipesCleared >= S.totalPipes) showWin()
+
+  updateHUD()
+
+  // Ash + Pikachu pinned to ground level (GROUND_Y) — always on grass
+  const ashEl = document.getElementById('ash-runner')
+  const pikaEl = document.getElementById('pika-runner')
+  if (ashEl && ashEl.style.display !== 'none') {
+    ashEl.style.top = (GROUND_Y - ashEl.offsetHeight) + 'px'
+  }
+  if (pikaEl && pikaEl.style.display !== 'none') {
+    pikaEl.style.top = (GROUND_Y - pikaEl.offsetHeight) + 'px'
+  }
+
+  // Sync DOM bird image position — centered via transform
+  if (window._birdImg) {
+    const bi = window._birdImg
+    bi.style.left = BIRD_X + 'px'
+    bi.style.top = S.birdY + 'px'
+    bi.style.transform = 'translate(-50%,-50%)' + (bi.dataset.mirror === '1' ? ' scaleX(-1)' : '')
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  COLLISION
+// ═══════════════════════════════════════════════════════════
+function checkCollisions() {
+  const bx = BIRD_X, by = S.birdY, br = BIRD_SIZE / 2 - 6
+
+  for (const p of S.pipes) {
+    if (p.passed || p.hit || p.removing || !p.topGfx.visible) continue
+
+    // Check if bird passed the pipe cleanly (no collision)
+    if (bx - br > p.x + PIPE_WIDTH && !p.passed) {
+      p.passed = true
+      S.pipesCleared++
+      S.score++
+      sfxScore()
+      spawnFloatingText('+1', p.x + PIPE_WIDTH / 2, p.gapY, 0x4ade80)
+      // Collect pokeball
+      if (p.ball && !p.ballCollected) {
+        p.ballCollected = true
+        S.correctAnswers++ // bonus for clean pass
+        p.ball.visible = false
+        spawnFloatingText('⭐', p.x + PIPE_WIDTH / 2, p.gapY - 20, 0xfbbf24)
+      }
+      continue
+    }
+
+    // Collect ball when bird overlaps it
+    if (p.ball && !p.ballCollected && !p.hit) {
+      const bdx = Math.abs(bx - p.ball.x), bdy = Math.abs(by - p.ball.y)
+      if (bdx < 20 && bdy < 20) {
+        p.ballCollected = true
+        S.correctAnswers++
+        p.ball.visible = false
+        sfxScore()
+      }
+    }
+
+    // Check horizontal overlap
+    if (bx + br > p.x && bx - br < p.x + PIPE_WIDTH) {
+      // Check vertical collision (outside gap)
+      const activeGap = S.evolved ? GAP_SIZE_EVO : GAP_SIZE
+      const gapTop = p.gapY - activeGap / 2
+      const gapBottom = p.gapY + activeGap / 2
+      if (by - br < gapTop || by + br > gapBottom) {
+        // HIT!
+        p.hit = true
+        S.paused = true
+        sfxHit()
+        flashScreen('#ef4444')
+        S.currentPipe = p
+        showQuiz(p)
+        return
+      }
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  QUIZ
+// ═══════════════════════════════════════════════════════════
+function showQuiz(pipe) {
+  const q = S.questions[S.qIdx % S.questions.length]
+  S.qIdx++
+
+  document.getElementById('quiz-question').textContent = q.q
+  const choicesEl = document.getElementById('quiz-choices')
+  choicesEl.innerHTML = ''
+  const choices = [q.ans, ...q.wrong]
+  // Shuffle
+  for (let i = choices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [choices[i], choices[j]] = [choices[j], choices[i]]
+  }
+
+  let answered = false
+  choices.forEach(c => {
+    const btn = document.createElement('button')
+    btn.className = 'choice-btn'
+    btn.textContent = c
+    btn.onclick = () => {
+      if (answered) return
+      answered = true
+      if (c === q.ans) {
+        btn.classList.add('correct')
+        sfxCorrect()
+        S.correctAnswers++
+        S.score++
+        // Correct — pipe fades away
+        pipe.removing = true
+        pipe.passed = true
+        S.pipesCleared++
+        setTimeout(() => {
+          document.getElementById('quiz-panel').classList.remove('show')
+          S.paused = false
+          S.birdY = pipe.gapY
+          S.birdVY = 0
+          if (birdContainer) { birdContainer.y = S.birdY; birdContainer.rotation = 0 }
+          spawnFloatingText('Benar! ⭐', BIRD_X, S.birdY - 30, 0x4ade80)
+          updateHUD()
+        }, 600)
+      } else {
+        btn.classList.add('wrong')
+        sfxWrong()
+        S.wrongAnswers++
+        // No life loss — just show correct answer and move on
+        // Highlight correct answer
+        choicesEl.querySelectorAll('.choice-btn').forEach(b => {
+          if (b.textContent === q.ans) b.classList.add('correct')
+        })
+        setTimeout(() => {
+          document.getElementById('quiz-panel').classList.remove('show')
+          S.paused = false
+          // Reposition bird to gap center, pipe removed anyway
+          S.birdY = pipe.gapY
+          S.birdVY = 0
+          if (birdContainer) { birdContainer.y = S.birdY; birdContainer.rotation = 0 }
+          pipe.removing = true
+          pipe.passed = true
+          S.pipesCleared++
+          spawnFloatingText('Coba lagi!', BIRD_X, S.birdY - 30, 0xfbbf24)
+          updateHUD()
+        }, 1200)
+      }
+    }
+    choicesEl.appendChild(btn)
+  })
+
+  document.getElementById('quiz-panel').classList.add('show')
+  document.getElementById('status-text').textContent = 'Jawab Soal!'
+}
+
+// ═══════════════════════════════════════════════════════════
+//  FLOATING TEXT
+// ═══════════════════════════════════════════════════════════
+function spawnFloatingText(text, x, y, color) {
+  const t = new PIXI.Text({ text, style: { fontSize: 22, fontWeight: '900', fontFamily: 'Fredoka One', fill: color } })
+  t.anchor.set(0.5); t.x = x; t.y = y
+  worldContainer.addChild(t)
+  let life = 40
+  const tick = () => {
+    life--; t.y -= 1.5; t.alpha = life / 40
+    if (life <= 0) { worldContainer.removeChild(t); app.ticker.remove(tick) }
+  }
+  app.ticker.add(tick)
+}
+
+// ═══════════════════════════════════════════════════════════
+//  FLASH
+// ═══════════════════════════════════════════════════════════
+function flashScreen(color) {
+  const f = document.getElementById('flash')
+  f.style.background = color; f.style.opacity = '0.4'
+  setTimeout(() => f.style.opacity = '0', 150)
+}
+
+// ═══════════════════════════════════════════════════════════
+//  HUD
+// ═══════════════════════════════════════════════════════════
+function updateHUD() {
+  document.getElementById('hud-lives').textContent = `⭐ ${S.correctAnswers}`
+  document.getElementById('pipe-progress').textContent = `🟢 ${S.pipesCleared}/${S.totalPipes}`
+  if (S.running && !S.paused) {
+    const evoName = G19_POKEMON[selectedPokemon]?.evo[S.evoStage||0]?.name || 'Pokemon'
+  document.getElementById('status-text').textContent = S.evolved ? evoName + ' Berevolusi!' : 'Terbang!'
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  WIN / LOSE
+// ═══════════════════════════════════════════════════════════
+function calcStars() {
+  return GameScoring.calc({
+    correct: S.correctAnswers,
+    total: S.correctAnswers + S.wrongAnswers,
+    wrong: S.wrongAnswers,
+    lives: S.lives,
+    maxLives: 3
+  })
+}
+
+function showWin() {
+  if (S.gameOver) return // prevent double-call
+  S.running = false; S.gameOver = true
+  // stop all audio
+  try { const bgm=document.getElementById('game-bgm'); bgm.pause(); bgm.currentTime=0 } catch(_){}
+  const stars = calcStars()
+  try { sessionStorage.setItem('g19Result', JSON.stringify({ stars, level: S.level })) } catch(_){}
+  // Save progress DIRECTLY to localStorage (reliable, no pageshow dependency)
+  try {
+    const key = 'dunia-0-progress'
+    const prog = JSON.parse(localStorage.getItem(key) || '{}')
+    if (!prog.g19) prog.g19 = { completed: [], stars: {} }
+    const mapped = stars >= 4 ? 3 : stars >= 2 ? 2 : 1
+    if (!prog.g19.completed.includes(S.level)) prog.g19.completed.push(S.level)
+    if ((prog.g19.stars[S.level] || 0) < mapped) prog.g19.stars[S.level] = mapped
+    localStorage.setItem(key, JSON.stringify(prog))
+  } catch(_) {}
+  document.getElementById('status-text').textContent = 'Level Selesai!'
+  sfxCorrect(); setTimeout(() => sfxCorrect(), 200)
+
+  setTimeout(() => {
+    const nextLevel = S.level < 30 ? () => {
+      try { sessionStorage.setItem('g19Config', JSON.stringify({ level: S.level + 1 })) } catch(_){}
+      location.reload()
+    } : null
+    GameModal.show({
+      emoji: stars >= 4 ? '🏆' : '⭐',
+      title: stars >= 5 ? 'SEMPURNA!' : stars >= 4 ? 'Hebat Sekali!' : 'Level Selesai!',
+      stars,
+      msg: `${S.pipesCleared}/${S.totalPipes} pipa | ⭐ ${S.correctAnswers} benar`,
+      onNext: nextLevel,
+      onAgain: () => location.reload(),
+      onBack: () => goBack()
+    })
+  }, 800)
+}
+
+// No showLose — game always completes. Kids can't lose, only get fewer stars.
+
+// ═══════════════════════════════════════════════════════════
+//  EVOLUTION (at 50% progress)
+// ═══════════════════════════════════════════════════════════
+async function triggerEvolution() {
+  S.paused = true
+  S.evolved = true
+
+  // Flash white glow
+  flashScreen('#C4B5FD')
+  document.getElementById('status-text').textContent = 'Berevolusi...!'
+  sfxCorrect(); setTimeout(sfxCorrect, 200); setTimeout(sfxCorrect, 400)
+
+  // Glow animation on bird
+  if (birdGlow) {
+    birdGlow.alpha = 0.9
+    birdGlow.tint = 0xffffff
+  }
+
+  // After 1.5s, evolve to next stage using roster
+  S.evoStage = (S.evoStage || 0) + 1
+  setTimeout(async () => {
+    applyPokemon(S.evoStage)
+
+    spawnFloatingText('EVOLUSI!', BIRD_X, S.birdY - 40, 0xfbbf24)
+    flashScreen('#fbbf24')
+
+    setTimeout(() => {
+      S.paused = false
+      S.evolveTriggered = false // allow next evolution for 3-stage Pokemon
+      // Post-evolution: slightly slower speed
+      PIPE_SPEED = PIPE_SPEED * 0.85
+      const eName = G19_POKEMON[selectedPokemon]?.evo[S.evoStage||0]?.name || 'Pokemon'
+      document.getElementById('status-text').textContent = eName + ' Berevolusi!'
+    }, 800)
+  }, 1500)
+}
+
+// ═══════════════════════════════════════════════════════════
+//  INPUT
+// ═══════════════════════════════════════════════════════════
+function flap() {
+  if (S.gameOver) return
+  ensureAudio()
+
+  if (!S.started) {
+    S.started = true
+    S.running = true
+    document.getElementById('start-overlay').classList.add('hidden')
+    document.getElementById('status-text').textContent = 'Terbang!'
+    // Start BGM only (wing flap plays on each tap)
+    try {
+      const bgm=document.getElementById('game-bgm')
+      bgm.src = cfg.level % 2 === 1 ? '../assets/Pokemon/sound/bgm-odd.mp3' : '../assets/Pokemon/sound/bgm-even.mp3'
+      bgm.volume=window._volBGM||0.5; bgm.play().catch(()=>{})
+    } catch(_){}
+    // Show Ash + Pikachu runners
+    const ash = document.getElementById('ash-runner')
+    const pika = document.getElementById('pika-runner')
+    if (ash) ash.style.display = 'block'
+    if (pika) pika.style.display = 'block'
+  }
+
+  if (S.paused) return
+
+  S.birdVY = FLAP_POWER
+  // Play wing flap sound on each tap
+  try { const wf=document.getElementById('wing-flap-sfx'); wf.currentTime=0; wf.volume=window._volFlap||0.8; wf.play().catch(()=>{}) } catch(_){}
+
+  // Wing flap visual (brief scale pulse)
+  if (birdSprite) {
+    const origSY = birdSprite.scale.y
+    birdSprite.scale.y = origSY * 0.85
+    setTimeout(() => { if (birdSprite) birdSprite.scale.y = origSY }, 100)
+  }
+}
+
+// Touch/click anywhere to flap (mobile-first)
+document.addEventListener('pointerdown', e => {
+  if (e.target.closest('#quiz-panel') || e.target.closest('#hud-top') || e.target.closest('#btn-back')) return
+  flap()
+})
+window.addEventListener('keydown', e => {
+  if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); flap() }
+})
+
+// ═══════════════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════════════
+// ── BAG SYSTEM ──
+function openBag() {
+  // Always pause when opening bag (don't toggle)
+  if (S.started && !S.paused) {
+    S.paused = true; S.running = false
+    document.getElementById('btn-pause').textContent = '▶'
+  }
+  const grid = document.getElementById('bag-grid')
+  grid.innerHTML = ''
+  G19_POKEMON.forEach((p, i) => {
+    const card = document.createElement('div')
+    card.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:12px;border:2px solid '+(i===selectedPokemon?'#fbbf24':'rgba(255,255,255,0.15)')+';background:'+(i===selectedPokemon?'rgba(251,191,36,0.15)':'rgba(255,255,255,0.05)')+';cursor:pointer'
+    const img = document.createElement('img')
+    img.src = p.evo[0].src
+    img.style.cssText = 'width:60px;height:60px;object-fit:contain;'+(p.evo[0].mirror?'transform:scaleX(-1);':'')
+    card.appendChild(img)
+    const name = document.createElement('div')
+    name.style.cssText = 'font-size:10px;color:#e9d5ff;font-weight:700;text-align:center'
+    name.textContent = p.name
+    card.appendChild(name)
+    const evoLabel = document.createElement('div')
+    evoLabel.style.cssText = 'font-size:8px;color:#a78bfa'
+    evoLabel.textContent = p.evo.length > 2 ? '3x Evolusi' : p.evo.length > 1 ? '2x Evolusi' : 'Tetap'
+    card.appendChild(evoLabel)
+    card.onclick = () => { selectedPokemon = i; applyPokemon(0); closeBag() }
+    grid.appendChild(card)
+  })
+  document.getElementById('bag-overlay').style.display = 'flex'
+}
+function closeBag() { document.getElementById('bag-overlay').style.display = 'none' }
+
+function applyPokemon(evoStage) {
+  const p = G19_POKEMON[selectedPokemon]
+  const stage = Math.min(evoStage, p.evo.length - 1)
+  const evo = p.evo[stage]
+  if (window._birdImg) {
+    window._birdImg.src = evo.src
+    const sz = Math.round(BIRD_SIZE * evo.scale)
+    window._birdImg.style.width = 'min(' + sz + 'px,' + Math.round(evo.scale * 15) + 'vw)'
+    window._birdImg.style.transform = evo.mirror ? 'scaleX(-1)' : ''
+    window._birdImg.style.filter = evoStage > 0 ? 'drop-shadow(0 0 12px rgba(251,191,36,0.7))' : 'drop-shadow(0 0 10px rgba(196,181,253,0.6))'
+  }
+  document.getElementById('status-text').textContent = evoStage > 0 ? evo.name + ' Berevolusi!' : 'Terbang!'
+}
+
+function togglePause() {
+  if (!S.started || S.gameOver) return
+  S.paused = !S.paused
+  S.running = !S.paused
+  document.getElementById('btn-pause').textContent = S.paused ? '▶' : '⏸'
+  document.getElementById('status-text').textContent = S.paused ? 'PAUSE' : 'Terbang!'
+  document.getElementById('pause-overlay').style.display = S.paused ? 'flex' : 'none'
+  try { const bgm=document.getElementById('game-bgm'); S.paused?bgm.pause():bgm.play().catch(()=>{}) } catch(_){}
+}
+
+// Volume controls
+window._volFlap = 1.0  // 1.5x from 0.8 ≈ 1.0 (capped)
+window._volBGM = 0.25  // 50% from 0.5
+function updateVolumes() {
+  const master = document.getElementById('vol-master').value / 100
+  const flap = document.getElementById('vol-flap').value / 100
+  const bgm = document.getElementById('vol-bgm').value / 100
+  window._volFlap = flap * master
+  window._volBGM = bgm * master
+  try { document.getElementById('game-bgm').volume = window._volBGM } catch(_){}
+}
+
+function goBack() {
+  S.running = false
+  // stop all audio
+  try { const bgm=document.getElementById('game-bgm'); bgm.pause(); bgm.currentTime=0 } catch(_){}
+  // Save progress directly to localStorage (don't rely on pageshow handler)
+  if (S.gameOver && S.pipesCleared > 0) {
+    try {
+      const key = 'dunia-0-progress'
+      const prog = JSON.parse(localStorage.getItem(key) || '{}')
+      if (!prog.g19) prog.g19 = { completed: [], stars: {} }
+      const lv = S.level
+      const stars = calcStars()
+      const mapped = stars >= 4 ? 3 : stars >= 2 ? 2 : 1
+      if (!prog.g19.completed.includes(lv)) prog.g19.completed.push(lv)
+      if ((prog.g19.stars[lv] || 0) < mapped) prog.g19.stars[lv] = mapped
+      localStorage.setItem(key, JSON.stringify(prog))
+    } catch(_) {}
+  }
+  history.back()
+}
+
+// Resize
+window.addEventListener('resize', () => {
+  if (app) app.renderer.resize(window.innerWidth, window.innerHeight)
+})
+</script>
+</body>
+</html>
+<!-- v20260418d -->

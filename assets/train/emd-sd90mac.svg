@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <!-- very long hood, massive -->
+  <rect x="140" y="34" width="48" height="62" rx="5" fill="#E8B800"/>
+  <rect x="143" y="38" width="22" height="18" rx="3" fill="#87CEEB" opacity="0.7"/>
+  <rect x="8" y="46" width="136" height="42" rx="4" fill="#E8B800"/>
+  <rect x="12" y="40" width="126" height="16" rx="3" fill="#C8A000"/>
+  <!-- very large radiator section -->
+  <rect x="96" y="34" width="40" height="66" rx="3" fill="#B89000"/>
+  <!-- massive grille pattern -->
+  <line x1="100" y1="40" x2="100" y2="96" stroke="#C8A000" stroke-width="1.5"/>
+  <line x1="106" y1="40" x2="106" y2="96" stroke="#C8A000" stroke-width="1.5"/>
+  <line x1="112" y1="40" x2="112" y2="96" stroke="#C8A000" stroke-width="1.5"/>
+  <line x1="118" y1="40" x2="118" y2="96" stroke="#C8A000" stroke-width="1.5"/>
+  <rect x="28" y="26" width="10" height="16" rx="3" fill="#1a1a1a"/>
+  <rect x="55" y="28" width="10" height="14" rx="3" fill="#1a1a1a"/>
+  <rect x="78" y="28" width="10" height="14" rx="3" fill="#1a1a1a"/>
+  <rect x="140" y="58" width="48" height="8" fill="#1a1a1a"/>
+  <circle cx="24" cy="106" r="9" fill="#333" stroke="#C8A800" stroke-width="2"/>
+<line x1="33.0" y1="106.0" x2="15.0" y2="106.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="30.4" y1="112.4" x2="17.6" y2="99.6" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="24.0" y1="115.0" x2="24.0" y2="97.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="17.6" y1="112.4" x2="30.4" y2="99.6" stroke="#C8A800" stroke-width="1.2"/>
+<circle cx="24" cy="106" r="2.0" fill="#C8A800"/>
+
+  <circle cx="48" cy="106" r="9" fill="#333" stroke="#C8A800" stroke-width="2"/>
+<line x1="57.0" y1="106.0" x2="39.0" y2="106.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="54.4" y1="112.4" x2="41.6" y2="99.6" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="48.0" y1="115.0" x2="48.0" y2="97.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="41.6" y1="112.4" x2="54.4" y2="99.6" stroke="#C8A800" stroke-width="1.2"/>
+<circle cx="48" cy="106" r="2.0" fill="#C8A800"/>
+
+  <circle cx="72" cy="106" r="9" fill="#333" stroke="#C8A800" stroke-width="2"/>
+<line x1="81.0" y1="106.0" x2="63.0" y2="106.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="78.4" y1="112.4" x2="65.6" y2="99.6" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="72.0" y1="115.0" x2="72.0" y2="97.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="65.6" y1="112.4" x2="78.4" y2="99.6" stroke="#C8A800" stroke-width="1.2"/>
+<circle cx="72" cy="106" r="2.0" fill="#C8A800"/>
+
+  <circle cx="104" cy="106" r="9" fill="#333" stroke="#C8A800" stroke-width="2"/>
+<line x1="113.0" y1="106.0" x2="95.0" y2="106.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="110.4" y1="112.4" x2="97.6" y2="99.6" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="104.0" y1="115.0" x2="104.0" y2="97.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="97.6" y1="112.4" x2="110.4" y2="99.6" stroke="#C8A800" stroke-width="1.2"/>
+<circle cx="104" cy="106" r="2.0" fill="#C8A800"/>
+
+  <circle cx="140" cy="106" r="9" fill="#333" stroke="#C8A800" stroke-width="2"/>
+<line x1="149.0" y1="106.0" x2="131.0" y2="106.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="146.4" y1="112.4" x2="133.6" y2="99.6" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="140.0" y1="115.0" x2="140.0" y2="97.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="133.6" y1="112.4" x2="146.4" y2="99.6" stroke="#C8A800" stroke-width="1.2"/>
+<circle cx="140" cy="106" r="2.0" fill="#C8A800"/>
+
+  <circle cx="166" cy="106" r="9" fill="#333" stroke="#C8A800" stroke-width="2"/>
+<line x1="175.0" y1="106.0" x2="157.0" y2="106.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="172.4" y1="112.4" x2="159.6" y2="99.6" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="166.0" y1="115.0" x2="166.0" y2="97.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="159.6" y1="112.4" x2="172.4" y2="99.6" stroke="#C8A800" stroke-width="1.2"/>
+<circle cx="166" cy="106" r="2.0" fill="#C8A800"/>
+
+  <line x1="5" y1="112" x2="198" y2="112" stroke="#888" stroke-width="2.5"/>
+
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">EMD SD90MAC · 1995</text>
+</svg>

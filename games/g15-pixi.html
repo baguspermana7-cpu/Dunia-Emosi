@@ -1,0 +1,2726 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Lokomotif Pemberani 🚂</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fredoka One',sans-serif;touch-action:none}
+#pixi-canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
+
+/* ── HUD Top ── */
+#hud-top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:8px;padding:max(14px,env(safe-area-inset-top)) 16px 8px;background:linear-gradient(180deg,rgba(0,0,0,0.72) 0%,transparent 100%);pointer-events:none}
+#btn-back{background:#fff3c4;border:2.5px solid #f59e0b;border-radius:8px;color:#3f2a08;padding:8px 12px;font-size:14px;cursor:pointer;font-family:inherit;pointer-events:all;flex-shrink:0;box-shadow:0 3px 0 #b45309;font-weight:900;min-width:96px;text-align:center}
+#btn-back:active{transform:translateY(2px);box-shadow:0 1px 0 #D4956A}
+#word-display{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;min-width:0}
+#word-emoji{font-size:24px;flex-shrink:0}
+#word-slots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center}
+.slot{display:inline-flex;align-items:center;justify-content:center;width:28px;height:32px;border-radius:8px;border:2px solid rgba(255,255,255,0.35);background:rgba(0,0,0,0.35);color:#fff;font-size:15px;font-weight:900;transition:all .2s}
+.slot.filled{border-color:#fbbf24;background:rgba(251,191,36,0.28);color:#fde68a}
+.slot.done{border-color:#4ade80;background:rgba(74,222,128,0.28);color:#bbf7d0;animation:slotPop .3s cubic-bezier(.34,1.56,.64,1)}
+@keyframes slotPop{from{transform:scale(0.7)}to{transform:scale(1)}}
+#lives-hud{display:flex;gap:3px;flex-shrink:0}
+.life-heart{font-size:20px;transition:all .3s;display:inline-block}
+.life-heart.lost{opacity:0.18;transform:scale(0.65);filter:grayscale(1)}
+
+/* ── Next letter hint ── */
+#next-letter{position:fixed;top:66px;left:50%;transform:translateX(-50%);z-index:49;background:rgba(255,248,231,0.92);border:2px solid #FFD6A0;border-radius:14px;padding:5px 16px;display:flex;align-items:center;gap:6px;pointer-events:none;box-shadow:0 3px 0 #D4956A}
+#next-label{font-size:10px;color:#92400e;letter-spacing:1.2px;font-weight:700}
+#next-char{font-size:24px;font-weight:900;color:#dc2626;text-shadow:0 0 10px rgba(220,38,38,0.35)}
+
+/* ── Flash ── */
+#flash{position:fixed;inset:0;z-index:99;pointer-events:none;opacity:0;transition:opacity .05s}
+
+/* ── HUD Bottom ── */
+#hud-bottom{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:8px 14px calc(env(safe-area-inset-bottom,0px)+12px)}
+#ctrl-row{display:flex;gap:10px;align-items:stretch}
+#btn-up{flex:1;padding:15px 0;border-radius:18px;border:3px solid #50E0A0;background:linear-gradient(160deg,#2DBF7E,#1A9E66);color:#fff;font-size:22px;cursor:pointer;user-select:none;-webkit-user-select:none;transition:transform .08s,box-shadow .08s;font-family:inherit;-webkit-tap-highlight-color:transparent;line-height:1.2;box-shadow:0 5px 0 #0A7A48,0 8px 20px rgba(45,191,126,0.3);font-weight:900}
+#btn-up:active{transform:scale(.91) translateY(4px);box-shadow:0 1px 0 #0A7A48}
+#btn-dn{flex:1;padding:15px 0;border-radius:18px;border:3px solid #F07050;background:linear-gradient(160deg,#E85A32,#C84020);color:#fff;font-size:22px;cursor:pointer;user-select:none;-webkit-user-select:none;transition:transform .08s,box-shadow .08s;font-family:inherit;-webkit-tap-highlight-color:transparent;line-height:1.2;box-shadow:0 5px 0 #9A2A10,0 8px 20px rgba(232,90,50,0.3);font-weight:900}
+#btn-dn:active{transform:scale(.91) translateY(4px);box-shadow:0 1px 0 #9A2A10}
+#lane-indicator{flex:1.2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:10px 6px;border-radius:18px;border:3px solid #B8D4FF;background:linear-gradient(160deg,#E8F4FF,#C8E8FF);box-shadow:0 5px 0 #7AADDD}
+#lane-dots{display:flex;flex-direction:column;gap:6px;align-items:center}
+.lane-dot{width:12px;height:12px;border-radius:50%;background:rgba(100,160,220,0.3);border:2px solid rgba(100,160,220,0.4);transition:all .2s}
+.lane-dot.active{background:#3B82F6;box-shadow:0 0 10px #3B82F6;border-color:#93C5FD;transform:scale(1.4)}
+#lane-label{font-size:10px;color:#1e40af;letter-spacing:1px;margin-top:2px;font-weight:700}
+
+/* ── Math Quiz Overlay ── */
+#math-quiz{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;background:rgba(10,5,25,0.82);backdrop-filter:blur(14px)}
+#math-quiz.show{display:flex}
+#math-card{background:linear-gradient(145deg,#1e1b4b,#312e81);border:3px solid #818cf8;border-radius:28px;padding:24px 20px;max-width:300px;width:88%;text-align:center;animation:popIn .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 60px rgba(129,140,248,0.4),0 20px 40px rgba(0,0,0,.6)}
+#math-question{font-size:34px;font-weight:900;color:#e0e7ff;margin-bottom:4px}
+#math-timer-bar{height:6px;background:rgba(255,255,255,0.12);border-radius:4px;margin:8px 0 16px;overflow:hidden}
+#math-timer-fill{height:100%;background:linear-gradient(90deg,#4ade80,#22c55e);border-radius:4px;transition:width 0.1s linear}
+#math-choices{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.math-btn{padding:14px 8px;border-radius:16px;border:2px solid;color:#fff;font-size:20px;font-weight:900;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;transition:transform .08s}
+.math-btn:active{transform:scale(.91)}
+.math-btn:nth-child(1){background:linear-gradient(160deg,#6D28D9,#7C3AED);border-color:#A78BFA;box-shadow:0 4px 0 #4C1D95}
+.math-btn:nth-child(2){background:linear-gradient(160deg,#C2410C,#EA580C);border-color:#FB923C;box-shadow:0 4px 0 #9A3412}
+.math-btn:nth-child(3){background:linear-gradient(160deg,#0D9488,#14B8A6);border-color:#2DD4BF;box-shadow:0 4px 0 #0F766E}
+.math-btn:nth-child(4){background:linear-gradient(160deg,#D97706,#F59E0B);border-color:#FCD34D;box-shadow:0 4px 0 #B45309}
+#math-label{font-size:12px;color:#a5b4fc;letter-spacing:1.5px;margin-bottom:8px;font-weight:700}
+
+/* Overlays handled by game-modal.js */
+
+/* ── Screen shake ── */
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.shaking{animation:shake .3s ease}
+
+/* ── Train Select Screen ── */
+#train-select{position:fixed;inset:0;z-index:900;background:linear-gradient(180deg,#1a1028 0%,#2a1848 40%,#1e1230 70%,#140e22 100%);display:flex;flex-direction:column;overflow:hidden}
+#ts-header{padding:12px 16px 6px;flex-shrink:0;display:flex;align-items:center;gap:10px;position:relative;z-index:2}
+#ts-back{background:#fff3c4;border:2.5px solid #f59e0b;border-radius:8px;color:#3f2a08;padding:8px 12px;font-size:14px;cursor:pointer;font-family:inherit;flex-shrink:0;box-shadow:0 3px 0 #b45309;font-weight:900;min-width:112px;text-align:center}
+#ts-back:active{transform:translateY(2px);box-shadow:0 1px 0 #b45309}
+#ts-title-wrap{flex:1;text-align:center}
+#ts-title{font-size:16px;font-weight:900;color:#e9d5ff;text-shadow:0 0 20px rgba(139,92,246,0.7);line-height:1}
+#ts-subtitle{font-size:10px;color:rgba(233,213,255,0.4);letter-spacing:1.5px;margin-top:1px}
+#station-intro{display:flex;align-items:center;gap:10px;background:rgba(139,92,246,0.14);border:1.5px solid rgba(139,92,246,0.4);border-radius:14px;margin:8px 12px 0;padding:8px 14px;flex-shrink:0}
+.si-icon{font-size:28px;flex-shrink:0}
+.si-text{text-align:left}
+.si-label{font-size:8px;color:rgba(233,213,255,0.45);letter-spacing:1.8px;font-weight:700;display:block}
+.si-name{font-size:15px;font-weight:900;color:#e9d5ff;display:block;line-height:1.2}
+.si-landmark{font-size:10px;color:rgba(233,213,255,0.55);display:block;margin-top:1px}
+/* Filter tabs */
+#type-filter{display:flex;gap:6px;overflow-x:auto;padding:10px 12px 2px;flex-shrink:0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+#type-filter::-webkit-scrollbar{display:none}
+.tfbtn{flex-shrink:0;padding:6px 14px;border-radius:20px;border:2px solid rgba(139,92,246,0.3);background:rgba(139,92,246,0.08);color:rgba(196,181,253,0.7);font-size:11px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;font-family:inherit;transition:all .12s;letter-spacing:0.3px}
+.tfbtn.active{background:rgba(139,92,246,0.45);border-color:#a78bfa;color:#fff;box-shadow:0 0 14px rgba(139,92,246,0.5)}
+/* Train count badge */
+#ts-count{font-size:9px;color:rgba(196,181,253,0.5);text-align:center;padding:4px 0 2px;letter-spacing:0.8px;flex-shrink:0}
+#ts-grid-wrap{flex:1;overflow-y:auto;padding:10px 16px 24px;-webkit-overflow-scrolling:touch}
+#train-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+@media(min-width:500px){#train-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}}
+@media(min-width:900px){#train-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
+.tcard{border-radius:12px;border:1.5px solid rgba(180,160,220,0.2);background:rgba(248,240,255,0.08);cursor:pointer;-webkit-tap-highlight-color:transparent;overflow:hidden;display:flex;flex-direction:column;transition:all .14s;box-shadow:0 2px 6px rgba(0,0,0,0.15)}
+.tcard:hover{border-color:rgba(167,139,250,0.4);background:rgba(139,92,246,0.1)}
+.tcard.selected{border-color:#a78bfa;background:rgba(139,92,246,0.22);box-shadow:0 0 14px rgba(139,92,246,0.4)}
+.tcard:active{transform:scale(0.95)}
+.tcard canvas{width:100%;aspect-ratio:2.5/1;display:block;image-rendering:pixelated;image-rendering:crisp-edges;padding:4px}
+.tcard-info{padding:4px 6px 5px}
+.tname{font-size:10px;font-weight:700;color:#e9d5ff;display:block;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tsub{font-size:7px;color:rgba(167,139,250,0.5);display:block;margin-top:1px;letter-spacing:0.3px;text-transform:uppercase}
+
+/* ── Station Banner (shown at game start) ── */
+#station-banner{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:200;display:none;flex-direction:column;align-items:center;gap:3px;background:rgba(0,0,0,0.88);border:2.5px solid rgba(139,92,246,0.7);border-radius:24px;padding:20px 32px;backdrop-filter:blur(18px);pointer-events:none;opacity:1;transition:opacity .5s,transform .5s}
+#station-banner.visible{display:flex}
+#station-banner.fade-out{opacity:0;transform:translate(-50%,-55%)}
+#sb-label{font-size:10px;color:rgba(233,213,255,0.5);letter-spacing:2.5px;font-weight:700}
+#sb-icon{font-size:40px;line-height:1;margin:4px 0}
+#sb-name{font-size:22px;font-weight:900;color:#e9d5ff;text-align:center;text-shadow:0 0 16px rgba(139,92,246,0.8)}
+#sb-landmark{font-size:13px;color:rgba(233,213,255,0.65);text-align:center}
+
+/* ── Station chip in HUD ── */
+#station-chip{position:fixed;top:66px;right:10px;z-index:49;background:rgba(0,0,0,0.68);border:1.5px solid rgba(139,92,246,0.45);border-radius:10px;padding:3px 9px;pointer-events:none}
+.sc-label{font-size:8px;color:rgba(233,213,255,0.45);letter-spacing:1.2px;display:block}
+.sc-name{font-size:10px;font-weight:700;color:#e9d5ff;white-space:nowrap;display:block}
+</style>
+</head>
+<body>
+<canvas id="pixi-canvas"></canvas>
+<audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
+
+<!-- HUD Top -->
+<div id="hud-top">
+  <button id="btn-back" type="button" onclick="goBack()">← Kembali</button>
+  <button id="btn-pause" onclick="togglePause()" style="pointer-events:all;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.25);border-radius:10px;color:#fff;padding:5px 8px;font-size:14px;cursor:pointer;font-family:inherit;flex-shrink:0">⏸</button>
+  <div id="word-display">
+    <span id="word-emoji">❓</span>
+    <div id="word-slots"></div>
+  </div>
+  <div id="lives-hud"></div>
+</div>
+
+<!-- Next letter hint -->
+<div id="next-letter">
+  <span id="next-label">KUMPULKAN</span>
+  <span id="next-char">?</span>
+</div>
+
+<!-- HUD Bottom -->
+<div id="hud-bottom">
+  <div id="ctrl-row">
+    <button id="btn-up" ontouchstart="switchLane(-1);event.preventDefault()" onclick="switchLane(-1)">▲<br><span style="font-size:11px">ATAS</span></button>
+    <div id="lane-indicator">
+      <div id="lane-dots">
+        <div class="lane-dot" id="ld0"></div>
+        <div class="lane-dot" id="ld1"></div>
+        <div class="lane-dot" id="ld2"></div>
+      </div>
+      <div id="lane-label">JALUR</div>
+    </div>
+    <button id="btn-dn" ontouchstart="switchLane(1);event.preventDefault()" onclick="switchLane(1)">▼<br><span style="font-size:11px">BAWAH</span></button>
+  </div>
+</div>
+
+<!-- Flash -->
+<div id="flash"></div>
+
+<!-- Math Quiz -->
+<div id="math-quiz">
+  <div id="math-card">
+    <div id="math-label">❓ SOAL MATEMATIKA</div>
+    <div id="math-question">5 + 3 = ?</div>
+    <div id="math-timer-bar"><div id="math-timer-fill" style="width:100%"></div></div>
+    <div id="math-choices"></div>
+  </div>
+</div>
+
+<script src="game-modal.js"></script>
+
+<!-- Train Select Screen -->
+<div id="train-select">
+  <div id="ts-header">
+    <button id="ts-back" type="button" onclick="goBack()">← Kembali</button>
+    <div id="ts-title-wrap">
+      <div id="ts-title">🚂 Pilih Keretamu!</div>
+      <div id="ts-subtitle">PILIH KERETA UNTUK MEMULAI</div>
+    </div>
+  </div>
+  <div id="station-intro">
+    <span class="si-icon" id="si-icon">🏛️</span>
+    <div class="si-text">
+      <span class="si-label">STASIUN BERANGKAT</span>
+      <span class="si-name" id="si-name">Surabaya Kota</span>
+      <span class="si-landmark" id="si-landmark">Tugu Pahlawan</span>
+    </div>
+  </div>
+  <div id="type-filter">
+    <button class="tfbtn active" data-filter="all" onclick="setTrainFilter(this)">🚆 Semua</button>
+    <button class="tfbtn" data-filter="steam" onclick="setTrainFilter(this)">♨️ Steam</button>
+    <button class="tfbtn" data-filter="diesel" onclick="setTrainFilter(this)">🛢️ Diesel</button>
+    <button class="tfbtn" data-filter="electric" onclick="setTrainFilter(this)">⚡ Elektrik</button>
+    <button class="tfbtn" data-filter="highspeed" onclick="setTrainFilter(this)">💨 Highspeed</button>
+    <button class="tfbtn" data-filter="tram" onclick="setTrainFilter(this)">🚃 Tram</button>
+    <button class="tfbtn" data-filter="heritage" onclick="setTrainFilter(this)">👑 Heritage</button>
+  </div>
+  <div id="ts-count">100 KERETA TERSEDIA</div>
+  <div id="ts-grid-wrap"><div id="train-grid"></div></div>
+</div>
+
+<!-- Station Banner -->
+<div id="station-banner">
+  <div id="sb-label">TIBA DI STASIUN</div>
+  <div id="sb-icon">🏛️</div>
+  <div id="sb-name">Surabaya Kota</div>
+  <div id="sb-landmark">Tugu Pahlawan</div>
+</div>
+
+<!-- Station chip -->
+<div id="station-chip" style="display:none">
+  <span class="sc-label">📍 STASIUN</span>
+  <span class="sc-name" id="sc-name">Surabaya Kota</span>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
+<script src="trains-db.js"></script>
+<script>
+'use strict';
+// Polyfill ctx.roundRect for older Android WebViews (Chrome < 99)
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+  CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+    const radius = Math.min(+r || 0, w / 2, h / 2);
+    this.beginPath();
+    this.moveTo(x + radius, y);
+    this.lineTo(x + w - radius, y);
+    this.arcTo(x + w, y, x + w, y + radius, radius);
+    this.lineTo(x + w, y + h - radius);
+    this.arcTo(x + w, y + h, x + w - radius, y + h, radius);
+    this.lineTo(x + radius, y + h);
+    this.arcTo(x, y + h, x, y + h - radius, radius);
+    this.lineTo(x, y + radius);
+    this.arcTo(x, y, x + radius, y, radius);
+    this.closePath();
+    return this;
+  };
+}
+
+// ── Config ───────────────────────────────────────────────────────────────────
+const cfg = (() => { try { return JSON.parse(sessionStorage.getItem('g15Config') || '{}'); } catch { return {}; } })();
+const LEVEL = Math.max(1, Math.min(30, cfg.level || 1));
+
+// Save level progress directly to localStorage
+function saveG15Progress(stars) {
+  try {
+    const key = 'dunia-0-progress'
+    const prog = JSON.parse(localStorage.getItem(key) || '{}')
+    if (!prog.g15) prog.g15 = { completed: [], stars: {} }
+    const lv = (typeof cfg !== 'undefined' ? cfg.level : (typeof S !== 'undefined' ? S.level : 1)) || 1
+    const mapped = stars >= 4 ? 3 : stars >= 2 ? 2 : 1
+    if (!prog.g15.completed.includes(lv)) prog.g15.completed.push(lv)
+    if ((prog.g15.stars[lv] || 0) < mapped) prog.g15.stars[lv] = mapped
+    localStorage.setItem(key, JSON.stringify(prog))
+  } catch(_) {}
+}
+function goBack() { try{document.getElementById('game-bgm').pause()}catch(_){}; history.back(); }
+window.addEventListener('resize',()=>{if(typeof app!=='undefined'&&app)app.renderer.resize(window.innerWidth,window.innerHeight)})
+function togglePause() {
+  gamePaused = !gamePaused;
+  document.getElementById('btn-pause').textContent = gamePaused ? '▶' : '⏸';
+  if (typeof GamePause !== 'undefined') {
+    if (gamePaused) GamePause.show(); else GamePause.hide();
+  } else {
+    try{const bgm=document.getElementById('game-bgm');gamePaused?bgm.pause():bgm.play().catch(()=>{})}catch(_){}
+  }
+}
+
+// Initialize shared pause overlay once game-modal.js loads
+(function setupG15Pause(){
+  if (typeof GamePause === 'undefined') { setTimeout(setupG15Pause, 60); return; }
+  GamePause.init({
+    bgmEl: document.getElementById('game-bgm'),
+    onResume: () => { gamePaused = false; document.getElementById('btn-pause').textContent = '⏸'; },
+    onRetry:  () => { location.reload(); },
+    onHome:   () => { try{document.getElementById('game-bgm').pause()}catch(_){}; history.back(); }
+  });
+})();
+
+// ── Java Station Route: Surabaya → Banten ────────────────────────────────────
+const JAVA_STATIONS = [
+  {name:'Surabaya Kota',      icon:'🏛️', landmark:'Tugu Pahlawan'},
+  {name:'Surabaya Gubeng',    icon:'🏢', landmark:'Gedung Gubernuran'},
+  {name:'Sidoarjo',           icon:'🌊', landmark:'Lumpur Lapindo'},
+  {name:'Mojokerto',          icon:'🏯', landmark:'Candi Trowulan'},
+  {name:'Jombang',            icon:'🕌', landmark:'Pondok Pesantren Tebuireng'},
+  {name:'Kertosono',          icon:'🛤️', landmark:'Persimpangan KA Kertosono'},
+  {name:'Nganjuk',            icon:'⛰️', landmark:'Lereng Gunung Wilis'},
+  {name:'Madiun',             icon:'🍛', landmark:'Pusat Wisata Pecel'},
+  {name:'Solo Balapan',       icon:'👑', landmark:'Keraton Kasunanan Solo'},
+  {name:'Klaten',             icon:'🏛️', landmark:'Candi Prambanan'},
+  {name:'Yogyakarta Tugu',    icon:'🎭', landmark:'Kraton Ngayogyakarta'},
+  {name:'Wates',              icon:'🏖️', landmark:'Pantai Glagah'},
+  {name:'Kebumen',            icon:'🕳️', landmark:'Goa Jatijajar'},
+  {name:'Kroya',              icon:'🛤️', landmark:'Simpang Besar KA Kroya'},
+  {name:'Purwokerto',         icon:'🌄', landmark:'Baturaden'},
+  {name:'Bumiayu',            icon:'💧', landmark:'Waduk Malahayu'},
+  {name:'Cirebon',            icon:'👑', landmark:'Keraton Kasepuhan Cirebon'},
+  {name:'Jatibarang',         icon:'🌾', landmark:'Sawah Indramayu'},
+  {name:'Cikampek',           icon:'🏭', landmark:'Pabrik Kereta INKA'},
+  {name:'Bekasi',             icon:'🏙️', landmark:'Kota Metropolitan Bekasi'},
+  {name:'Jakarta Kota',       icon:'🏛️', landmark:'Kawasan Kota Tua Jakarta'},
+  {name:'Gambir',             icon:'🗺️', landmark:'Monumen Nasional (Monas)'},
+  {name:'Tangerang',          icon:'🕌', landmark:'Masjid Agung Al-Ittihad'},
+  {name:'Serpong',            icon:'🏢', landmark:'Kawasan BSD City'},
+  {name:'Rangkasbitung',      icon:'🌿', landmark:'Kebun Teh Cianten'},
+  {name:'Serang',             icon:'🏛️', landmark:'Banten Lama & Mesjid Agung'},
+  {name:'Cilegon',            icon:'🏭', landmark:'Krakatau Steel'},
+  {name:'Anyer',              icon:'🏖️', landmark:'Pantai Anyer'},
+  {name:'Merak',              icon:'⛴️', landmark:'Pelabuhan Merak'},
+  {name:'TUJUAN AKHIR! 🎉',  icon:'🏆', landmark:'Selat Sunda — Selamat Tiba!'},
+];
+function getCurrentStation(){ return JAVA_STATIONS[Math.min(LEVEL-1,JAVA_STATIONS.length-1)]; }
+
+// ── Train Catalog: 100 unique named trains ─────────────────────────────────────
+// b=body, r=roof, s=stripe, w=window, k=dark  v=variant(1-5 within sub-type)
+// Build TRAIN_MODELS from shared TRAIN_CATS (trains-db.js)
+const TRAIN_MODELS = typeof TRAIN_CATS !== 'undefined'
+  ? TRAIN_CATS.flatMap((cat, ci) => cat.trains.map((t, ti) => {
+      const hexToInt = s => parseInt((s||'#000').replace('#',''), 16)
+      const typeMap = {steam_id:'steam',steam_world:'steam',diesel_id:'diesel',diesel_world:'diesel',emu:'electric',hsr:'highspeed',maglev:'highspeed'}
+      const subMap = {steam_id:'classic',steam_world:'pacific',diesel_id:'hood',diesel_world:'boxcab',emu:'krl',hsr:'bullet',maglev:'maglev'}
+      return {id:t.key, name:t.name, type:typeMap[cat.key]||'heritage', sub:subMap[cat.key]||'royal',
+        v:(ti%5)+1, b:hexToInt(t.bodyColor), r:hexToInt(t.accColor), s:hexToInt(t.accColor),
+        w:0xdbeafe, k:0x111827 }
+    }))
+  : [
+  // ── STEAM / CLASSIC ── v1:3-wheel single chimney, v2:4-wheel, v3:tall chimney, v4:double chimney, v5:4-wheel compact
+  {id:'sc1',name:'D51 Mikado JNR',      type:'steam',sub:'classic',  v:1,b:0x1c1917,r:0xe11d48,s:0xfbbf24,w:0xdbeafe,k:0x111827},
+  {id:'sc2',name:'C62 Tokkyu JNR',      type:'steam',sub:'classic',  v:2,b:0x172554,r:0x1d4ed8,s:0x93c5fd,w:0xdbeafe,k:0x111827},
+  {id:'sc3',name:'Mallard LNER A4',     type:'steam',sub:'classic',  v:3,b:0x1d4ed8,r:0x1e3a8a,s:0x38bdf8,w:0xe0f2fe,k:0x0c4a6e},
+  {id:'sc4',name:'Flying Scotsman GNR', type:'steam',sub:'classic',  v:4,b:0x14532d,r:0x052e16,s:0x86efac,w:0xd1fae5,k:0x111827},
+  {id:'sc5',name:'BR Standard 5MT',     type:'steam',sub:'classic',  v:5,b:0x1e1b4b,r:0x3730a3,s:0x818cf8,w:0xede9fe,k:0x111827},
+  {id:'scj',name:'Casey Jr B 2-4-0',   type:'steam',sub:'classic',  v:1,b:0x1e2a4a,r:0xc0392b,s:0xe0e0e0,w:0x87ceeb,k:0x111827},
+  // ── STEAM / PACIFIC ── v1:3-wheel deflectors, v2:4-wheel narrow def, v3:3-wheel no def, v4:4-wheel dbl chimney, v5:2-wheel wide
+  {id:'sp1',name:'Duchess of Hamilton', type:'steam',sub:'pacific',  v:1,b:0x9d174d,r:0x881337,s:0xfda4af,w:0xfce7f3,k:0x111827},
+  {id:'sp2',name:'A1 Class Tornado',    type:'steam',sub:'pacific',  v:2,b:0x14532d,r:0x052e16,s:0xfbbf24,w:0xd1fae5,k:0x111827},
+  {id:'sp3',name:'P36 Soviet Pacific',  type:'steam',sub:'pacific',  v:3,b:0x0f4c32,r:0xdc2626,s:0xfde68a,w:0xfef3c7,k:0x111827},
+  {id:'sp4',name:'SNCF 231E Pacific',   type:'steam',sub:'pacific',  v:4,b:0x1c1917,r:0xdc2626,s:0xfbbf24,w:0xfef3c7,k:0x0c0a09},
+  {id:'sp5',name:'NYC J3a Dreyfuss',    type:'steam',sub:'pacific',  v:5,b:0x374151,r:0x1f2937,s:0xd1d5db,w:0xf3f4f6,k:0x111827},
+  // ── STEAM / MOUNTAIN ── v1:r=10 big wheels, v2:r=9 3-drive, v3:r=11 biggest, v4:r=9 3+trailer, v5:r=10 dbl chimney
+  {id:'sm1',name:'Big Boy UP 4000',     type:'steam',sub:'mountain', v:1,b:0x1c1917,r:0xfbbf24,s:0xef4444,w:0xfef3c7,k:0x0c0a09},
+  {id:'sm2',name:'Challenger UP 3900',  type:'steam',sub:'mountain', v:2,b:0x0f172a,r:0xfbbf24,s:0xfde68a,w:0xfef9c3,k:0x0c0a09},
+  {id:'sm3',name:'AC12 Cab-Forward SP', type:'steam',sub:'mountain', v:3,b:0xdc2626,r:0x991b1b,s:0xfef3c7,w:0xfef9c3,k:0x450a0a},
+  {id:'sm4',name:'Garratt GBE 4-8-8-4',type:'steam',sub:'mountain', v:4,b:0x292524,r:0xf97316,s:0xfde68a,w:0xfef3c7,k:0x1c1917},
+  {id:'sm5',name:'SAR Class 25NC',      type:'steam',sub:'mountain', v:5,b:0x374151,r:0x4b5563,s:0xfcd34d,w:0xfef9c3,k:0x1f2937},
+  // ── STEAM / TANK ── v1:3 wheel standard, v2:4 wheel, v3:3 wheel extended tanks, v4:5 small wheel, v5:3 wheel+pilot
+  {id:'st1',name:'GWR 5700 Pannier',    type:'steam',sub:'tank',     v:1,b:0x14532d,r:0x166534,s:0xfef9c3,w:0xd1fae5,k:0x052e16},
+  {id:'st2',name:'LNER J72 0-6-0T',    type:'steam',sub:'tank',     v:2,b:0x1c1917,r:0x292524,s:0x94a3b8,w:0xe2e8f0,k:0x0c0a09},
+  {id:'st3',name:'BR 64xx Pannier',     type:'steam',sub:'tank',     v:3,b:0x1e3a8a,r:0x1d4ed8,s:0x93c5fd,w:0xdbeafe,k:0x0f172a},
+  {id:'st4',name:'Beyer-Garrat NGG16',  type:'steam',sub:'tank',     v:4,b:0x365314,r:0x3f6212,s:0xa3e635,w:0xd9f99d,k:0x1a2e05},
+  {id:'st5',name:'Jinty LMS 3F',        type:'steam',sub:'tank',     v:5,b:0x881337,r:0x9f1239,s:0xfecdd3,w:0xfce7f3,k:0x450a0a},
+  // ── STEAM / PRAIRIE ── v1:2-wheel body=60, v2:3-wheel body=70, v3:2-wheel body=55, v4:2-wheel body=65, v5:3-wheel no pilot
+  {id:'sr1',name:'GWR Prairie 4500',    type:'steam',sub:'prairie',  v:1,b:0x14532d,r:0x052e16,s:0xfbbf24,w:0xd1fae5,k:0x052e16},
+  {id:'sr2',name:'LNER N2 0-6-2T',     type:'steam',sub:'prairie',  v:2,b:0x1c1917,r:0x292524,s:0xa3a3a3,w:0xe5e7eb,k:0x0c0a09},
+  {id:'sr3',name:'LSWR M7 Tank',        type:'steam',sub:'prairie',  v:3,b:0x78350f,r:0x92400e,s:0xfde68a,w:0xfef3c7,k:0x451a03},
+  {id:'sr4',name:'Stroudley Terrier',   type:'steam',sub:'prairie',  v:4,b:0x155e75,r:0x164e63,s:0xa5f3fc,w:0xcffafe,k:0x083344},
+  {id:'sr5',name:'LMS 4P Compound',     type:'steam',sub:'prairie',  v:5,b:0x4a1d96,r:0x3b0764,s:0xddd6fe,w:0xede9fe,k:0x2e1065},
+  // ── DIESEL / HOOD ── v1:2 stack 3-win, v2:3 stack 4-win, v3:1 stack 3-win, v4:3 stack wide cab, v5:2 stack narrow
+  {id:'dh1',name:'EMD GP40',            type:'diesel',sub:'hood',    v:1,b:0xea580c,r:0xc2410c,s:0x1c1917,w:0xffedd5,k:0x1c1917},
+  {id:'dh2',name:'EMD SD40-2',          type:'diesel',sub:'hood',    v:2,b:0x1d4ed8,r:0x1e3a8a,s:0xfef9c3,w:0xbae6fd,k:0x0f172a},
+  {id:'dh3',name:'GE C36-7',            type:'diesel',sub:'hood',    v:3,b:0xdc2626,r:0x991b1b,s:0xf8fafc,w:0xfecaca,k:0x450a0a},
+  {id:'dh4',name:'EMD SD70ACe',         type:'diesel',sub:'hood',    v:4,b:0xfbbf24,r:0xf59e0b,s:0x1c1917,w:0xfef9c3,k:0x1c1917},
+  {id:'dh5',name:'CC 206 KAI GE',       type:'diesel',sub:'hood',    v:5,b:0x312e81,r:0x1e1b4b,s:0x818cf8,w:0xe0e7ff,k:0x0f0a2e},
+  // ── DIESEL / BOXCAB ── v1:wide hump, v2:narrow hump, v3:low hump+wide cab, v4:tall hump, v5:asymmetric
+  {id:'db1',name:'EMD F7 A-unit',       type:'diesel',sub:'boxcab',  v:1,b:0x1e3a8a,r:0x172554,s:0xe2e8f0,w:0xbae6fd,k:0x0f172a},
+  {id:'db2',name:'Alco PA-1 Silver',    type:'diesel',sub:'boxcab',  v:2,b:0x4a1d96,r:0x3b0764,s:0xfbbf24,w:0xede9fe,k:0x2e1065},
+  {id:'db3',name:'GE E8 Passenger',     type:'diesel',sub:'boxcab',  v:3,b:0xdc2626,r:0x991b1b,s:0xf8fafc,w:0xfecaca,k:0x450a0a},
+  {id:'db4',name:'Alco FB-2 B-unit',    type:'diesel',sub:'boxcab',  v:4,b:0x14532d,r:0x052e16,s:0xfbbf24,w:0xd1fae5,k:0x052e16},
+  {id:'db5',name:'EMD BL2',             type:'diesel',sub:'boxcab',  v:5,b:0x374151,r:0x1f2937,s:0xe2e8f0,w:0xf1f5f9,k:0x111827},
+  // ── DIESEL / STREAMLINE ── v1:std nose 4-win, v2:long nose 4-win, v3:short nose 5-win, v4:dbl stripe 4-win, v5:curved 5-win
+  {id:'ds1',name:'Alco PA-1 ATSF',      type:'diesel',sub:'streamline',v:1,b:0x374151,r:0x4b5563,s:0xf8fafc,w:0xf1f5f9,k:0x1f2937},
+  {id:'ds2',name:'EMD F40PH Amtrak',    type:'diesel',sub:'streamline',v:2,b:0x172554,r:0x0f172a,s:0xfbbf24,w:0xbae6fd,k:0x0f172a},
+  {id:'ds3',name:'GE P42DC Genesis',    type:'diesel',sub:'streamline',v:3,b:0x1c1917,r:0x44403c,s:0xef4444,w:0xfecaca,k:0x0c0a09},
+  {id:'ds4',name:'EMD F59PHI Surfliner',type:'diesel',sub:'streamline',v:4,b:0xdc2626,r:0x991b1b,s:0xf8fafc,w:0xfecaca,k:0x450a0a},
+  {id:'ds5',name:'CC 300 INKA',         type:'diesel',sub:'streamline',v:5,b:0x1e1b4b,r:0x312e81,s:0x38bdf8,w:0xe0f2fe,k:0x0f0a2e},
+  // ── DIESEL / SHUNTER ── v1:medium, v2:short no footstep, v3:medium large buffer, v4:long 2-bogie, v5:short asymmetric cab
+  {id:'dsh1',name:'EMD SW1500',         type:'diesel',sub:'shunter',  v:1,b:0xfbbf24,r:0xf59e0b,s:0x1c1917,w:0xfef9c3,k:0x1c1917},
+  {id:'dsh2',name:'BR Class 08',        type:'diesel',sub:'shunter',  v:2,b:0x14532d,r:0x052e16,s:0xfbbf24,w:0xd1fae5,k:0x052e16},
+  {id:'dsh3',name:'EMD NW2',            type:'diesel',sub:'shunter',  v:3,b:0xdc2626,r:0x991b1b,s:0xfef9c3,w:0xfecaca,k:0x450a0a},
+  {id:'dsh4',name:'Alco S4',            type:'diesel',sub:'shunter',  v:4,b:0x1e3a8a,r:0x172554,s:0x93c5fd,w:0xdbeafe,k:0x0f172a},
+  {id:'dsh5',name:'BB 301 INKA',        type:'diesel',sub:'shunter',  v:5,b:0x374151,r:0x1f2937,s:0xa3e635,w:0xd9f99d,k:0x111827},
+  // ── DIESEL / RAILBUS ── v1:6-win center face, v2:7-win wider, v3:5-win rounded, v4:6-win stripe, v5:7-win destination board
+  {id:'drb1',name:'Schienenbus VT95',   type:'diesel',sub:'railbus',  v:1,b:0xdc2626,r:0x991b1b,s:0xf8fafc,w:0xfecaca,k:0x450a0a},
+  {id:'drb2',name:'BR Class 153',       type:'diesel',sub:'railbus',  v:2,b:0x14532d,r:0x052e16,s:0xfbbf24,w:0xd1fae5,k:0x052e16},
+  {id:'drb3',name:'DB VT98 Uerdingen',  type:'diesel',sub:'railbus',  v:3,b:0x1d4ed8,r:0x1e3a8a,s:0xf8fafc,w:0xbae6fd,k:0x0f172a},
+  {id:'drb4',name:'Fiat ALn668',        type:'diesel',sub:'railbus',  v:4,b:0xca8a04,r:0x92400e,s:0x1c1917,w:0xfef9c3,k:0x1c1917},
+  {id:'drb5',name:'KRD PT KAI',         type:'diesel',sub:'railbus',  v:5,b:0x0c4a6e,r:0x0e7490,s:0x38bdf8,w:0xcffafe,k:0x083344},
+  // ── ELECTRIC / KRL ── v1:5-win panto center, v2:4-win panto left, v3:5-win panto right, v4:6-win 2-panto, v5:5-win panto center dbl stripe
+  {id:'ek1',name:'KRL 205 JR East',     type:'electric',sub:'krl',   v:1,b:0x0c4a6e,r:0x0e7490,s:0x38bdf8,w:0xcffafe,k:0x083344},
+  {id:'ek2',name:'KRL 1000 Tokyu',      type:'electric',sub:'krl',   v:2,b:0x064e3b,r:0x065f46,s:0x34d399,w:0xa7f3d0,k:0x022c22},
+  {id:'ek3',name:'KRL i-e INKA',        type:'electric',sub:'krl',   v:3,b:0x1e3a8a,r:0x172554,s:0xbfdbfe,w:0xdbeafe,k:0x0f172a},
+  {id:'ek4',name:'KCI 2000 J-TREC',     type:'electric',sub:'krl',   v:4,b:0x0f172a,r:0x1e293b,s:0xe0f2fe,w:0xf0f9ff,k:0x020617},
+  {id:'ek5',name:'Tokyu 8500 Series',   type:'electric',sub:'krl',   v:5,b:0xdc2626,r:0x991b1b,s:0xf8fafc,w:0xfecaca,k:0x450a0a},
+  // ── ELECTRIC / MRT ── v1:4-win medium arc, v2:4-win large arc, v3:4-win small arc 3-stripe, v4:4-win medium 1-stripe, v5:4-win large dbl stripe
+  {id:'em1',name:'MTR M-Train HK',      type:'electric',sub:'mrt',   v:1,b:0x0f172a,r:0x1e293b,s:0xef4444,w:0xfecaca,k:0x020617},
+  {id:'em2',name:'MRT NS Singapore',    type:'electric',sub:'mrt',   v:2,b:0xdc2626,r:0x991b1b,s:0xfef9c3,w:0xfecaca,k:0x450a0a},
+  {id:'em3',name:'BTS Siemens Bangkok', type:'electric',sub:'mrt',   v:3,b:0x1e3a8a,r:0x172554,s:0xfbbf24,w:0xdbeafe,k:0x0f172a},
+  {id:'em4',name:'Metro Shanghai CRRC', type:'electric',sub:'mrt',   v:4,b:0x374151,r:0x1f2937,s:0x38bdf8,w:0xe0f2fe,k:0x111827},
+  {id:'em5',name:'CAF Urbos 3',         type:'electric',sub:'mrt',   v:5,b:0x155e75,r:0x164e63,s:0xfbbf24,w:0xcffafe,k:0x083344},
+  // ── ELECTRIC / LRT ── v1:5-win flat roof, v2:4-win angled roof, v3:5-win flat+stripe, v4:6-win flat curved end, v5:5-win arched roof
+  {id:'el1',name:'LRT Manila Line 1',   type:'electric',sub:'lrt',   v:1,b:0xca8a04,r:0x92400e,s:0xfef9c3,w:0xfef3c7,k:0x1c1917},
+  {id:'el2',name:'LRT Jabodebek INKA',  type:'electric',sub:'lrt',   v:2,b:0x1e3a8a,r:0x172554,s:0x38bdf8,w:0xdbeafe,k:0x0f172a},
+  {id:'el3',name:'LRT Palembang CRRC',  type:'electric',sub:'lrt',   v:3,b:0xdc2626,r:0x991b1b,s:0xfef9c3,w:0xfecaca,k:0x450a0a},
+  {id:'el4',name:'MRT Jakarta North',   type:'electric',sub:'lrt',   v:4,b:0x14532d,r:0x052e16,s:0xfbbf24,w:0xd1fae5,k:0x052e16},
+  {id:'el5',name:'LRT KL Kelana Jaya',  type:'electric',sub:'lrt',   v:5,b:0x4a1d96,r:0x3b0764,s:0xddd6fe,w:0xede9fe,k:0x2e1065},
+  // ── HIGHSPEED / BULLET ── v1:medium wedge 5-win, v2:steep 4-win, v3:shallow 5-win, v4:medium 4-win fat, v5:shallow 5-win thin
+  {id:'hb1',name:'N700S Shinkansen',    type:'highspeed',sub:'bullet',v:1,b:0xf8fafc,r:0x1d4ed8,s:0x1d4ed8,w:0x0369a1,k:0x1e293b},
+  {id:'hb2',name:'ICE 3 Siemens DB',   type:'highspeed',sub:'bullet',v:2,b:0xf8fafc,r:0xdc2626,s:0xdc2626,w:0xfecaca,k:0x1e293b},
+  {id:'hb3',name:'TGV Duplex SNCF',    type:'highspeed',sub:'bullet',v:3,b:0x374151,r:0xdc2626,s:0xdc2626,w:0xd1d5db,k:0x1f2937},
+  {id:'hb4',name:'CR400BF CRRC China', type:'highspeed',sub:'bullet',v:4,b:0xfef9c3,r:0xfbbf24,s:0x14532d,w:0x86efac,k:0x1c1917},
+  {id:'hb5',name:'Eurostar Class 374', type:'highspeed',sub:'bullet',v:5,b:0xf8fafc,r:0xfbbf24,s:0x155e75,w:0xcffafe,k:0x1e293b},
+  // ── HIGHSPEED / MAGLEV ── v1:std visor, v2:wide visor, v3:narrow visor blue body, v4:flat visor, v5:full-face dark visor
+  {id:'hm1',name:'Transrapid TR09',    type:'highspeed',sub:'maglev',v:1,b:0xf8fafc,r:0x38bdf8,s:0x38bdf8,w:0x0ea5e9,k:0x1e293b},
+  {id:'hm2',name:'Shanghai Maglev',    type:'highspeed',sub:'maglev',v:2,b:0xf1f5f9,r:0xfbbf24,s:0xfbbf24,w:0xfef9c3,k:0x1e293b},
+  {id:'hm3',name:'Chuo SCMaglev L0',   type:'highspeed',sub:'maglev',v:3,b:0x1d4ed8,r:0x38bdf8,s:0x38bdf8,w:0xbae6fd,k:0x0f172a},
+  {id:'hm4',name:'Linimo HSST Aichi',  type:'highspeed',sub:'maglev',v:4,b:0x374151,r:0x22d3ee,s:0x22d3ee,w:0xcffafe,k:0x1f2937},
+  {id:'hm5',name:'Hyperloop Capsule',  type:'highspeed',sub:'maglev',v:5,b:0x0f172a,r:0xc084fc,s:0xc084fc,w:0xf3e8ff,k:0x020617},
+  // ── TRAM / CLASSIC ── v1:4-win panto center, v2:5-win panto left, v3:6-win panto center, v4:4-win panto right, v5:5-win panto left dbl stripe
+  {id:'tc1',name:'Blackpool Heritage',  type:'tram',sub:'classic',   v:1,b:0xfbbf24,r:0xf59e0b,s:0x1c1917,w:0xfef9c3,k:0x1c1917},
+  {id:'tc2',name:'Melbourne W-Class',   type:'tram',sub:'classic',   v:2,b:0xdc2626,r:0x991b1b,s:0xf8fafc,w:0xfecaca,k:0x450a0a},
+  {id:'tc3',name:'San Francisco PCC',   type:'tram',sub:'classic',   v:3,b:0x1e3a8a,r:0x172554,s:0xf8fafc,w:0xbae6fd,k:0x0f172a},
+  {id:'tc4',name:'Lisbon Electrico 28', type:'tram',sub:'classic',   v:4,b:0xca8a04,r:0x92400e,s:0x1c1917,w:0xfef9c3,k:0x1c1917},
+  {id:'tc5',name:'Trem Batavia 1920',   type:'tram',sub:'classic',   v:5,b:0x14532d,r:0x052e16,s:0xfbbf24,w:0xd1fae5,k:0x052e16},
+  // ── HERITAGE / ROYAL ── v1:5-arch high, v2:4-arch medium, v3:5-arch very-high, v4:5-arch high 3-gold-band, v5:4-arch medium ornate pillars
+  {id:'hr1',name:'Royal Train BR',      type:'heritage',sub:'royal',  v:1,b:0x312e81,r:0x1e1b4b,s:0xfbbf24,w:0xc7d2fe,k:0x0f0a2e},
+  {id:'hr2',name:'Orient Express CIWL', type:'heritage',sub:'royal',  v:2,b:0x1c1917,r:0x292524,s:0xfcd34d,w:0xfef3c7,k:0x0c0a09},
+  {id:'hr3',name:'Maharaja Express',    type:'heritage',sub:'royal',  v:3,b:0x78350f,r:0x451a03,s:0xfbbf24,w:0xfef3c7,k:0x1c1917},
+  {id:'hr4',name:'Blue Train SA',       type:'heritage',sub:'royal',  v:4,b:0x1e3a8a,r:0x172554,s:0x93c5fd,w:0xdbeafe,k:0x0f172a},
+  {id:'hr5',name:'The Ghan Gold',       type:'heritage',sub:'royal',  v:5,b:0x92400e,r:0x78350f,s:0xfef08a,w:0xfef3c7,k:0x451a03},
+  // ── HERITAGE / HERITAGE ── v1:5-win 5-pillar, v2:4-win 4-pillar, v3:5-win 6-pillar, v4:4-win ornate top, v5:5-win slim pillars
+  {id:'hh1',name:'Flying Scotsman GNR', type:'heritage',sub:'heritage',v:1,b:0x14532d,r:0x052e16,s:0xfef9c3,w:0xd1fae5,k:0x052e16},
+  {id:'hh2',name:'Jacobite WCRC 45212',type:'heritage',sub:'heritage',v:2,b:0x1c1917,r:0x292524,s:0xf97316,w:0xffedd5,k:0x0c0a09},
+  {id:'hh3',name:'Hogwarts Express GWR',type:'heritage',sub:'heritage',v:3,b:0x9d174d,r:0x881337,s:0xfef9c3,w:0xfce7f3,k:0x450a0a},
+  {id:'hh4',name:'Durango & Silverton', type:'heritage',sub:'heritage',v:4,b:0x1e3a8a,r:0x172554,s:0xfef9c3,w:0xbae6fd,k:0x0f172a},
+  {id:'hh5',name:'Puffing Billy VR',    type:'heritage',sub:'heritage',v:5,b:0x374151,r:0x1f2937,s:0xfbbf24,w:0xd1d5db,k:0x111827},
+  // ── HERITAGE / NARROW ── v1:body=100 6-win plank, v2:body=110 7-win plank, v3:body=90 5-win plank, v4:body=100 6-win no-plank, v5:body=110 7-win ornate
+  {id:'hn1',name:'Ffestiniog Railway',  type:'heritage',sub:'narrow',  v:1,b:0x1c1917,r:0xfbbf24,s:0xfcd34d,w:0xfef3c7,k:0x111827},
+  {id:'hn2',name:'Darjeeling DHR B-cl', type:'heritage',sub:'narrow',  v:2,b:0x14532d,r:0x052e16,s:0xfef9c3,w:0xd1fae5,k:0x052e16},
+  {id:'hn3',name:'Nilgiri Mountain Rly',type:'heritage',sub:'narrow',  v:3,b:0x1d4ed8,r:0x1e3a8a,s:0xfef9c3,w:0xbae6fd,k:0x0f172a},
+  {id:'hn4',name:'Ambarawa B2502',      type:'heritage',sub:'narrow',  v:4,b:0x292524,r:0xf97316,s:0xfbbf24,w:0xffedd5,k:0x1c1917},
+  {id:'hn5',name:'Welsh Highland WHR',  type:'heritage',sub:'narrow',  v:5,b:0xdc2626,r:0x991b1b,s:0xfbbf24,w:0xfecaca,k:0x450a0a},
+  // ── HERITAGE / DOUBLEDECK ── v1:equal decks 5-win, v2:tall-top deck, v3:tall-bottom deck, v4:equal 6-win narrow pillar, v5:equal 5-win wide pillar
+  {id:'hd1',name:'TGV Duplex R SNCF',  type:'heritage',sub:'doubledeck',v:1,b:0x374151,r:0xdc2626,s:0xdc2626,w:0xd1d5db,k:0x1f2937},
+  {id:'hd2',name:'VIRM NS Holland',    type:'heritage',sub:'doubledeck',v:2,b:0xf8fafc,r:0xfef9c3,s:0x1d4ed8,w:0xdbeafe,k:0x1e293b},
+  {id:'hd3',name:'IC2 DB Germany',     type:'heritage',sub:'doubledeck',v:3,b:0xf8fafc,r:0xdc2626,s:0xdc2626,w:0xdbeafe,k:0x1e293b},
+  {id:'hd4',name:'KAI DD KfW Coach',   type:'heritage',sub:'doubledeck',v:4,b:0x0c4a6e,r:0x38bdf8,s:0x38bdf8,w:0xcffafe,k:0x083344},
+  {id:'hd5',name:'V251 Intercity NS',  type:'heritage',sub:'doubledeck',v:5,b:0x1e3a8a,r:0x172554,s:0xf8fafc,w:0xdbeafe,k:0x0f172a},
+  // ── CHARACTER TRAINS ──
+  {id:'chr1',name:'Linus (Brave Locomotive)',type:'heritage',sub:'royal',v:1,b:0x1c1917,r:0xdc2626,s:0xfbbf24,w:0xfef3c7,k:0x0c0a09},
+  {id:'chr2',name:'Malivlak',               type:'heritage',sub:'royal',v:2,b:0x14532d,r:0x166534,s:0x86efac,w:0xd1fae5,k:0x052e16},
+  {id:'chr3',name:'Dragutin (Croatia)',      type:'heritage',sub:'royal',v:3,b:0x1d4ed8,r:0xf8fafc,s:0xdc2626,w:0xdbeafe,k:0x0f172a},
+];
+const TRAIN_CATALOG = TRAIN_MODELS; // 100 unique trains, no livery system
+
+let selectedTrain = null; // set by train select screen
+
+// ── Background Themes (0=night, 1=sunrise, 2=forest, 3=mountain, 4=tropical) ─
+// 30 level-specific background themes — one dramatic look per level
+const THEMES = [
+  // Lv1  Deep night, stars, blue rails
+  { sky:0x03050f, skyMid:0x070a1f, ground:0x07090e, hill:0x0a0e1e, railColor:0x38bdf8, railShadow:0x0ea5e9, sleeperColor:0x92400e, variant:0 },
+  // Lv2  Purple dusk, violet sky
+  { sky:0x120420, skyMid:0x2d0a4e, ground:0x0e061a, hill:0x1a0630, railColor:0xa78bfa, railShadow:0x7c3aed, sleeperColor:0x4c1d95, variant:0 },
+  // Lv3  Sunrise orange
+  { sky:0xff7c00, skyMid:0xffd6a0, ground:0x3d2b1f, hill:0x9a5a2a, railColor:0xfbbf24, railShadow:0xf59e0b, sleeperColor:0x6b3a1f, variant:1 },
+  // Lv4  Early morning pink
+  { sky:0xffb3c6, skyMid:0xff85a1, ground:0x4a2030, hill:0x8a3050, railColor:0xfecdd3, railShadow:0xfb7185, sleeperColor:0x7f1d1d, variant:1 },
+  // Lv5  Tropical bright day
+  { sky:0x1ea6ff, skyMid:0x7dd3fc, ground:0x1a5c1a, hill:0x246824, railColor:0xfcd34d, railShadow:0xf59e0b, sleeperColor:0x3d2b00, variant:4 },
+  // Lv6  Forest green night
+  { sky:0x0c1f10, skyMid:0x143520, ground:0x071209, hill:0x0a1e0d, railColor:0x4ade80, railShadow:0x22c55e, sleeperColor:0x1a3a10, variant:2 },
+  // Lv7  Snowy mountain
+  { sky:0x0d1b2e, skyMid:0x1a2f4a, ground:0xdbeafe, hill:0xe0f2fe, railColor:0x94a3b8, railShadow:0x64748b, sleeperColor:0x1e2a40, variant:3 },
+  // Lv8  Desert noon
+  { sky:0xfef3c7, skyMid:0xfde68a, ground:0xd97706, hill:0xf59e0b, railColor:0xef4444, railShadow:0xb91c1c, sleeperColor:0x78350f, variant:5 },
+  // Lv9  Cyberpunk neon city
+  { sky:0x050014, skyMid:0x0d002a, ground:0x0a0018, hill:0x160030, railColor:0x22d3ee, railShadow:0x06b6d4, sleeperColor:0x500090, variant:6 },
+  // Lv10 Volcanic red
+  { sky:0x1c0200, skyMid:0x3d0800, ground:0x2d0600, hill:0x5c1200, railColor:0xff4500, railShadow:0xdc2626, sleeperColor:0x450a0a, variant:7 },
+  // Lv11 Arctic aurora
+  { sky:0x010c12, skyMid:0x012c22, ground:0x010e18, hill:0x013020, railColor:0x6ee7b7, railShadow:0x34d399, sleeperColor:0x1e3a2a, variant:8 },
+  // Lv12 Autumn golden
+  { sky:0x7c2d12, skyMid:0xc2410c, ground:0x431407, hill:0x9a3412, railColor:0xfbbf24, railShadow:0xf59e0b, sleeperColor:0x5c2010, variant:1 },
+  // Lv13 Ocean coast blue
+  { sky:0x0369a1, skyMid:0x0ea5e9, ground:0x0c4a6e, hill:0x0284c7, railColor:0x7dd3fc, railShadow:0x38bdf8, sleeperColor:0x0f172a, variant:4 },
+  // Lv14 Sunset purple gold
+  { sky:0x4c0519, skyMid:0x881337, ground:0x2d0614, hill:0x5c1020, railColor:0xfbbf24, railShadow:0xf59e0b, sleeperColor:0x7f1d1d, variant:1 },
+  // Lv15 Crystal cave glowing
+  { sky:0x0a0520, skyMid:0x150a38, ground:0x060312, hill:0x100828, railColor:0xe879f9, railShadow:0xd946ef, sleeperColor:0x4a044e, variant:9 },
+  // Lv16 Cherry blossom spring
+  { sky:0xfdf2f8, skyMid:0xfce7f3, ground:0xfcf7ff, hill:0xf3e8ff, railColor:0xf472b6, railShadow:0xec4899, sleeperColor:0x831843, variant:10 },
+  // Lv17 Monsoon rain dark
+  { sky:0x1e2937, skyMid:0x2a3a4a, ground:0x0f1a22, hill:0x1a2a36, railColor:0x7dd3fc, railShadow:0x38bdf8, sleeperColor:0x1e3a50, variant:11 },
+  // Lv18 Golden savanna
+  { sky:0xfbbf24, skyMid:0xfde68a, ground:0x78350f, hill:0x92400e, railColor:0xdc2626, railShadow:0x991b1b, sleeperColor:0x451a03, variant:5 },
+  // Lv19 Midnight jungle
+  { sky:0x042010, skyMid:0x063018, ground:0x021208, hill:0x042814, railColor:0x86efac, railShadow:0x4ade80, sleeperColor:0x14532d, variant:2 },
+  // Lv20 Space galaxy deep
+  { sky:0x02000a, skyMid:0x06001a, ground:0x030008, hill:0x08001c, railColor:0x818cf8, railShadow:0x6366f1, sleeperColor:0x1e1b4b, variant:12 },
+  // Lv21 Arctic blizzard white
+  { sky:0xdbeafe, skyMid:0xbfdbfe, ground:0xe0f2fe, hill:0xf0f9ff, railColor:0x475569, railShadow:0x334155, sleeperColor:0x1e293b, variant:3 },
+  // Lv22 Lava field molten
+  { sky:0x3d0800, skyMid:0x7c1200, ground:0x5c0a00, hill:0x9a1800, railColor:0xf97316, railShadow:0xea580c, sleeperColor:0x450a0a, variant:7 },
+  // Lv23 Crystal blue day
+  { sky:0x2563eb, skyMid:0x60a5fa, ground:0x1d4ed8, hill:0x2563eb, railColor:0xfef9c3, railShadow:0xfde68a, sleeperColor:0x1e3a8a, variant:4 },
+  // Lv24 Deep forest mist
+  { sky:0x071a0a, skyMid:0x0d2c10, ground:0x040e06, hill:0x082412, railColor:0xa3e635, railShadow:0x84cc16, sleeperColor:0x1a3a05, variant:2 },
+  // Lv25 Electric storm
+  { sky:0x0f172a, skyMid:0x1e293b, ground:0x0a1020, hill:0x142030, railColor:0xfde68a, railShadow:0xfbbf24, sleeperColor:0x1e2a50, variant:13 },
+  // Lv26 Rose gold sunset
+  { sky:0xfecdd3, skyMid:0xfda4af, ground:0xfce7f3, hill:0xfbcfe8, railColor:0xe11d48, railShadow:0x9f1239, sleeperColor:0x881337, variant:10 },
+  // Lv27 Emerald city
+  { sky:0x064e3b, skyMid:0x065f46, ground:0x022c22, hill:0x044838, railColor:0x34d399, railShadow:0x10b981, sleeperColor:0x064e3b, variant:2 },
+  // Lv28 Twilight indigo
+  { sky:0x1e1b4b, skyMid:0x312e81, ground:0x0f0d2e, hill:0x1e1b4b, railColor:0xc4b5fd, railShadow:0xa78bfa, sleeperColor:0x2e1065, variant:9 },
+  // Lv29 Crimson battlefield
+  { sky:0x1c0a0a, skyMid:0x450a0a, ground:0x3d0606, hill:0x7f1d1d, railColor:0xfca5a5, railShadow:0xf87171, sleeperColor:0x450a0a, variant:7 },
+  // Lv30 Final: cosmic rainbow
+  { sky:0x000000, skyMid:0x030014, ground:0x010010, hill:0x020020, railColor:0xe879f9, railShadow:0xa855f7, sleeperColor:0x4a044e, variant:14 },
+];
+const BG_THEME = Math.min(THEMES.length - 1, LEVEL - 1);
+const T = THEMES[BG_THEME];
+
+// ── Word Banks ───────────────────────────────────────────────────────────────
+const WORDS = {
+  easy: [
+    {word:'AYAM',emoji:'🐔'},{word:'IKAN',emoji:'🐟'},{word:'BUKU',emoji:'📚'},
+    {word:'BUAH',emoji:'🍎'},{word:'BOLA',emoji:'⚽'},{word:'MEJA',emoji:'🪑'},
+    {word:'PENA',emoji:'🖊️'},{word:'TOPI',emoji:'🎩'},{word:'SAPI',emoji:'🐮'},
+    {word:'KUDA',emoji:'🐴'},{word:'BEBEK',emoji:'🦆'},{word:'GAJAH',emoji:'🐘'},
+    {word:'HARIMAU',emoji:'🐯'},{word:'KAMBING',emoji:'🐐'},{word:'KUCING',emoji:'🐱'}
+  ],
+  medium: [
+    {word:'SEKOLAH',emoji:'🏫'},{word:'JENDELA',emoji:'🪟'},{word:'KELINCI',emoji:'🐰'},
+    {word:'BERUANG',emoji:'🐻'},{word:'PISANG',emoji:'🍌'},{word:'WORTEL',emoji:'🥕'},
+    {word:'JERUK',emoji:'🍊'},{word:'SEMANGKA',emoji:'🍉'},{word:'PEPAYA',emoji:'🌺'},
+    {word:'MANGGA',emoji:'🥭'},{word:'MAWAR',emoji:'🌹'},{word:'BUNGA',emoji:'🌸'},
+    {word:'POHON',emoji:'🌳'},{word:'LUMBA',emoji:'🐬'},{word:'KUPU',emoji:'🦋'}
+  ],
+  hard: [
+    {word:'KEMENANGAN',emoji:'🏆'},{word:'PEMBERANI',emoji:'🦸'},{word:'KEHIDUPAN',emoji:'🌱'},
+    {word:'PERJALANAN',emoji:'🗺️'},{word:'PETUALANGAN',emoji:'⚔️'},{word:'KESELAMATAN',emoji:'🛡️'},
+    {word:'KEBAIKAN',emoji:'💝'},{word:'SEMANGAT',emoji:'🔥'},{word:'KEBERANIAN',emoji:'💎'},
+    {word:'PENGETAHUAN',emoji:'📖'},{word:'KEINDAHAN',emoji:'🌟'},{word:'PERSAHABATAN',emoji:'🤝'}
+  ]
+};
+function getDifficulty() { return LEVEL <= 7 ? 'easy' : LEVEL <= 14 ? 'medium' : 'hard'; }
+function pickWords(count) {
+  const pool = [...WORDS[getDifficulty()]];
+  const result = [];
+  for (let i = 0; i < count && pool.length; i++) {
+    const idx = Math.floor(Math.random() * pool.length);
+    result.push(pool.splice(idx, 1)[0]);
+  }
+  return result;
+}
+const WORD_COUNT = Math.min(3 + Math.floor(LEVEL / 5), 6);
+let WORDS_LIST = pickWords(WORD_COUNT);
+
+// ── Lives System ─────────────────────────────────────────────────────────────
+const MAX_LIVES = getDifficulty() === 'easy' ? 4 : 3;
+let lives = MAX_LIVES;
+
+// ── Game State ───────────────────────────────────────────────────────────────
+let app, stage;
+let playerLane = 1;
+let currentWordIdx = 0;
+let currentLetterIdx = 0;
+let wrongTaps = 0;
+let mathCorrect = 0;
+let invincible = false;
+let gameRunning = false;
+let gamePaused = false;
+let mathQuizActive = false;
+let startTime = 0;
+let gameSpeed = 2 + LEVEL * 0.15;
+
+let bgLayer, trackLayer, trainContainer, boxLayer, particleLayer;
+let wheels = [];
+let steamPuffs = [];
+let letterBoxes = [];
+let bgStars = [];
+let sleepers = [];
+let bgClouds = [];
+let bgFireflies = [];
+let bgSignalPosts = [];
+let bgBirds = [];
+let rainbow = null;
+let LANE_Y = [];
+let W = 0, H = 0;
+const TRAIN_X = 120;
+let mathBoxTimer = 0;
+const MATH_BOX_INTERVAL = () => 200 + Math.floor(Math.random() * 160);
+let nextMathAt = MATH_BOX_INTERVAL();
+let heartBoxTimer = 0;
+const HEART_BOX_INTERVAL = () => 350 + Math.floor(Math.random() * 200);
+let nextHeartAt = HEART_BOX_INTERVAL();
+let totalBoxSpawned = 0;
+
+// ── Math Questions ────────────────────────────────────────────────────────────
+function genMathQuestion() {
+  const maxN = LEVEL <= 4 ? 5 : LEVEL <= 9 ? 10 : 15;
+  const useSubtract = LEVEL > 4;
+  const op = useSubtract && Math.random() < 0.4 ? '-' : '+';
+  let a, b, ans;
+  if (op === '+') {
+    a = Math.floor(Math.random() * (maxN + 1));
+    b = Math.floor(Math.random() * (maxN - a + 1));
+    ans = a + b;
+  } else {
+    a = Math.floor(Math.random() * (maxN + 1));
+    b = Math.floor(Math.random() * (a + 1));
+    ans = a - b;
+  }
+  return { text: `${a} ${op} ${b} = ?`, answer: ans };
+}
+
+function genWrongOptions(correct, count) {
+  const opts = new Set([correct]);
+  while (opts.size < count + 1) {
+    const delta = Math.floor(Math.random() * 5) + 1;
+    const wrong = Math.max(0, correct + (Math.random() < 0.5 ? delta : -delta));
+    if (wrong !== correct && wrong >= 0 && wrong <= 20) opts.add(wrong);
+  }
+  return shuffle([...opts]).slice(0, count + 1);
+}
+
+// ── PixiJS Init ───────────────────────────────────────────────────────────────
+async function initPixi() {
+  app = new PIXI.Application();
+  await app.init({
+    canvas: document.getElementById('pixi-canvas'),
+    width: window.innerWidth, height: window.innerHeight,
+    backgroundColor: T.sky, antialias: true,
+    resolution: window.devicePixelRatio || 1, autoDensity: true
+  });
+  W = app.screen.width; H = app.screen.height;
+  const topHUD = 120, botHUD = 115;
+  const available = H - topHUD - botHUD;
+  LANE_Y = [
+    topHUD + available * 0.18,
+    topHUD + available * 0.50,
+    topHUD + available * 0.82
+  ];
+  stage = app.stage;
+  bgLayer       = new PIXI.Container(); stage.addChild(bgLayer);
+  trackLayer    = new PIXI.Container(); stage.addChild(trackLayer);
+  trainContainer= new PIXI.Container(); stage.addChild(trainContainer);
+  boxLayer      = new PIXI.Container(); stage.addChild(boxLayer);
+  particleLayer = new PIXI.Container(); stage.addChild(particleLayer);
+
+  buildBackground();
+  buildTracks();
+  buildTrain();
+  updateLivesHUD();
+  updateLaneDots();
+  refreshHUD();
+  updateStationChip();
+  showStationBanner(getCurrentStation());
+
+  gameRunning = true;
+  try{const bgm=document.getElementById('game-bgm');bgm.volume=0.2;bgm.play().catch(()=>{})}catch(_){}
+  startTime = Date.now();
+  let spawnTimer = 0;
+  const spawnInterval = () => Math.max(45, 90 - LEVEL * 2);
+
+  app.ticker.add((ticker) => {
+    if (!gameRunning || gamePaused || mathQuizActive) return;
+    const dt = ticker.deltaTime;
+
+    // Scroll sleepers
+    for (const s of sleepers) { s.x -= gameSpeed * dt; if (s.x < -20) s.x += W + 40; }
+
+    // Stars (night/space theme)
+    if (BG_THEME === 0 || BG_THEME === 3) {
+      for (const st of bgStars) {
+        st.x -= st._speed * dt;
+        if (st.x < 0) { st.x = W; st.y = Math.random() * H * 0.65; }
+      }
+    }
+
+    // Clouds move
+    for (const c of bgClouds) {
+      c.x -= c._speed * dt;
+      if (c.x < -200) c.x = W + 150;
+    }
+
+    // Signal posts scroll with track
+    for (const p of bgSignalPosts) {
+      p.x -= gameSpeed * dt * 0.6;
+      if (p.x < -40) p.x = W + 40 + Math.random() * 50;
+    }
+
+    // Birds drift left
+    if (bgBirds.length) {
+      const t = performance.now() * 0.004;
+      for (const b of bgBirds) {
+        b.x -= b._speed * dt;
+        b.y = b._baseY + Math.sin(t + b._phase) * 5;
+        b.scale.y = 0.7 + Math.sin(t * 4 + b._phase) * 0.3;
+        if (b.x < -30) { b.x = W + 30; b._baseY = H * (0.1 + Math.random() * 0.18); }
+      }
+    }
+
+    // Fireflies (forest theme)
+    if (BG_THEME === 2) {
+      for (const ff of bgFireflies) {
+        ff._phase += 0.04 * dt;
+        ff.alpha = 0.3 + Math.sin(ff._phase) * 0.6;
+        ff.x += ff._vx * dt;
+        ff.y += Math.sin(ff._phase * 0.7) * 0.3 * dt;
+        if (ff.x < 0) ff.x = W; if (ff.x > W) ff.x = 0;
+      }
+    }
+
+    // Rainbow fade
+    if (rainbow) {
+      rainbow.alpha -= 0.008 * dt;
+      if (rainbow.alpha <= 0) { bgLayer.removeChild(rainbow); rainbow = null; }
+    }
+
+    // Steam puffs
+    for (let i = steamPuffs.length - 1; i >= 0; i--) {
+      const p = steamPuffs[i];
+      p.x += p._vx * dt; p.y += p._vy * dt;
+      p.alpha -= 0.018 * dt;
+      p.scale.x += 0.025 * dt; p.scale.y += 0.025 * dt;
+      if (p.alpha <= 0) { particleLayer.removeChild(p); steamPuffs.splice(i, 1); }
+    }
+
+    // Wheel spin
+    for (const w of wheels) w.rotation += 0.09 * dt * (gameSpeed / 2);
+
+    // Spawn
+    spawnTimer += dt;
+    totalBoxSpawned += dt;
+    mathBoxTimer += dt;
+    heartBoxTimer += dt;
+
+    if (spawnTimer >= spawnInterval()) {
+      spawnTimer = 0;
+      spawnLetterBox();
+    }
+
+    // Math box
+    if (mathBoxTimer >= nextMathAt) {
+      mathBoxTimer = 0; nextMathAt = MATH_BOX_INTERVAL();
+      spawnSpecialBox('math');
+    }
+
+    // Heart box (only if lives < MAX)
+    if (heartBoxTimer >= nextHeartAt && lives < MAX_LIVES) {
+      heartBoxTimer = 0; nextHeartAt = HEART_BOX_INTERVAL();
+      spawnSpecialBox('heart');
+    }
+
+    // Move + check boxes
+    for (let i = letterBoxes.length - 1; i >= 0; i--) {
+      const b = letterBoxes[i];
+      b.container.x -= gameSpeed * dt;
+
+      // Glow pulse
+      if (b.glowGfx) {
+        b._glowPhase = (b._glowPhase || 0) + 0.1 * dt;
+        b.glowGfx.alpha = 0.45 + Math.sin(b._glowPhase) * 0.4;
+      }
+
+      // Collision: must match lane AND be within Y proximity (fix phantom hit)
+      if (!invincible && b.container.x < TRAIN_X + 52 && b.container.x > TRAIN_X - 52) {
+        if (b.lane === playerLane && Math.abs(b.container.y - trainContainer.y) < 42) {
+          collectBox(b, i);
+          continue;
+        }
+      }
+
+      if (b.container.x < -90) { boxLayer.removeChild(b.container); letterBoxes.splice(i, 1); }
+    }
+
+    // Train bounce
+    if (trainContainer._bounceT > 0) {
+      trainContainer._bounceT -= 0.1 * dt;
+      trainContainer.y = LANE_Y[playerLane] - Math.sin(trainContainer._bounceT * Math.PI) * 6;
+    } else {
+      trainContainer._bounceT = 0;
+      trainContainer.y = LANE_Y[playerLane];
+    }
+
+    // Steam emit
+    if (Math.random() < 0.05 * dt) emitSteam();
+  });
+}
+
+// ── Background ────────────────────────────────────────────────────────────────
+function buildBackground() {
+  // Sky base
+  const sky = new PIXI.Graphics();
+  sky.rect(0, 0, W, H).fill({ color: T.sky });
+  bgLayer.addChild(sky);
+
+  // Gradient overlay for sky depth
+  const skyGrad = new PIXI.Graphics();
+  skyGrad.rect(0, 0, W, H * 0.5).fill({ color: T.skyMid });
+  skyGrad.alpha = 0.4;
+  bgLayer.addChild(skyGrad);
+
+  if (BG_THEME === 0) {
+    // Night: moon + stars
+    const moon = new PIXI.Graphics();
+    moon.circle(0, 0, 30).fill({ color: 0xfef9c3 });
+    moon.circle(-9, -9, 22).fill({ color: T.sky });
+    moon.x = W * 0.84; moon.y = H * 0.09;
+    bgLayer.addChild(moon);
+    for (let i = 0; i < 90; i++) {
+      const g = new PIXI.Graphics();
+      const r = Math.random() * 1.6 + 0.4;
+      g.circle(0, 0, r).fill({ color: 0xffffff });
+      g.x = Math.random() * W; g.y = Math.random() * H * 0.62;
+      g.alpha = Math.random() * 0.6 + 0.2;
+      g._speed = Math.random() * 0.2 + 0.05;
+      bgLayer.addChild(g); bgStars.push(g);
+    }
+  } else if (BG_THEME === 1) {
+    // Sunrise: orange sky, sun
+    const sun = new PIXI.Graphics();
+    sun.circle(0, 0, 38).fill({ color: 0xfbbf24 });
+    sun.circle(0, 0, 28).fill({ color: 0xfde68a });
+    sun.x = W * 0.8; sun.y = H * 0.22;
+    bgLayer.addChild(sun);
+    // Sun rays
+    for (let i = 0; i < 8; i++) {
+      const angle = (i / 8) * Math.PI * 2;
+      const ray = new PIXI.Graphics();
+      ray.rect(-3, 0, 6, 22).fill({ color: 0xfde68a });
+      ray.x = W * 0.8; ray.y = H * 0.22;
+      ray.rotation = angle; ray.alpha = 0.5;
+      ray.pivot.set(0, -44);
+      bgLayer.addChild(ray);
+    }
+  } else if (BG_THEME === 2) {
+    // Forest: fireflies
+    for (let i = 0; i < 20; i++) {
+      const ff = new PIXI.Graphics();
+      ff.circle(0, 0, 2.5).fill({ color: 0xfef08a });
+      ff.x = Math.random() * W; ff.y = Math.random() * H * 0.7;
+      ff._phase = Math.random() * Math.PI * 2;
+      ff._vx = (Math.random() - 0.5) * 0.4;
+      bgLayer.addChild(ff); bgFireflies.push(ff);
+    }
+  } else if (BG_THEME === 3) {
+    // Mountain: stars
+    for (let i = 0; i < 60; i++) {
+      const g = new PIXI.Graphics();
+      const r = Math.random() * 1.4 + 0.4;
+      g.circle(0, 0, r).fill({ color: 0xcfe8ff });
+      g.x = Math.random() * W; g.y = Math.random() * H * 0.55;
+      g.alpha = Math.random() * 0.5 + 0.2;
+      g._speed = Math.random() * 0.15 + 0.05;
+      bgLayer.addChild(g); bgStars.push(g);
+    }
+    // Snow peaks
+    const peaks = [[0.2, 0.55], [0.45, 0.45], [0.65, 0.52], [0.85, 0.42]];
+    for (const [px, py] of peaks) {
+      const p = new PIXI.Graphics();
+      const pw = 120 + Math.random() * 80;
+      p.poly([0, 0, -pw/2, pw*0.6, pw/2, pw*0.6]).fill({ color: 0x2a3f6a });
+      p.poly([0, 0, -pw*0.22, pw*0.22, pw*0.22, pw*0.22]).fill({ color: 0xe0f2fe });
+      p.x = W * px; p.y = H * py;
+      bgLayer.addChild(p);
+    }
+  } else if (BG_THEME === 4) {
+    // Tropical: sun + ocean shimmer
+    const sun = new PIXI.Graphics();
+    sun.circle(0, 0, 44).fill({ color: 0xfbbf24 });
+    sun.x = W * 0.7; sun.y = H * 0.15;
+    bgLayer.addChild(sun);
+    // Ocean band
+    const ocean = new PIXI.Graphics();
+    ocean.rect(0, H * 0.58, W, H * 0.14).fill({ color: 0x0ea5e9 });
+    ocean.alpha = 0.35;
+    bgLayer.addChild(ocean);
+  }
+
+  // Clouds (all themes)
+  const cloudCount = BG_THEME === 1 ? 5 : BG_THEME === 4 ? 4 : 3;
+  const cloudColors = BG_THEME === 0 ? [0x1e293b] : BG_THEME === 2 ? [0x1a3a20] : BG_THEME === 3 ? [0x2a4a70] : [0xffffff, 0xe0f2fe];
+  for (let i = 0; i < cloudCount; i++) {
+    const c = buildCloud(cloudColors[i % cloudColors.length], 0.6 + i * 0.1);
+    c.x = Math.random() * W; c.y = H * (0.06 + Math.random() * 0.20);
+    c._speed = 0.18 + Math.random() * 0.18;
+    bgLayer.addChild(c); bgClouds.push(c);
+  }
+
+  // Background silhouettes (trees/buildings)
+  if (BG_THEME === 2) {
+    // Tree line
+    for (let x = 0; x < W + 80; x += 55) {
+      const tree = new PIXI.Graphics();
+      tree.poly([0, 0, -18, 38, 18, 38]).fill({ color: 0x14532d });
+      tree.poly([0, -10, -14, 24, 14, 24]).fill({ color: 0x166534 });
+      tree.rect(-4, 38, 8, 16).fill({ color: 0x78350f });
+      tree.x = x + Math.random() * 20; tree.y = H * 0.65;
+      bgLayer.addChild(tree);
+    }
+  } else if (BG_THEME === 4) {
+    // Palm trees
+    for (let x = 0; x < W; x += 200) {
+      const palm = new PIXI.Graphics();
+      palm.rect(-5, 0, 10, 55).fill({ color: 0x92400e });
+      for (let a = 0; a < 6; a++) {
+        const angle = (a / 6) * Math.PI * 2;
+        palm.ellipse(Math.cos(angle) * 28, Math.sin(angle) * 14 - 8, 28, 9).fill({ color: 0x15803d });
+      }
+      palm.x = x + Math.random() * 80; palm.y = H * 0.6;
+      bgLayer.addChild(palm);
+    }
+  } else if (BG_THEME === 3) {
+    // Pine trees
+    for (let x = 0; x < W; x += 60) {
+      const pine = new PIXI.Graphics();
+      pine.poly([0, 0, -12, 30, 12, 30]).fill({ color: 0x1e3a5f });
+      pine.poly([0, -8, -9, 18, 9, 18]).fill({ color: 0x1e4060 });
+      pine.rect(-3, 30, 6, 12).fill({ color: 0x3b1f0a });
+      pine.x = x + Math.random() * 20; pine.y = H * 0.63;
+      bgLayer.addChild(pine);
+    }
+  }
+
+  // Ground
+  const ground = new PIXI.Graphics();
+  ground.rect(0, H * 0.72, W, H * 0.28).fill({ color: T.ground });
+  bgLayer.addChild(ground);
+
+  // Hills
+  for (let i = 0; i < 5; i++) {
+    const hill = new PIXI.Graphics();
+    const bw = 180 + Math.random() * 130; const bh = 55 + Math.random() * 55;
+    hill.ellipse(0, 0, bw, bh).fill({ color: T.hill });
+    hill.x = Math.random() * W; hill.y = H * 0.72;
+    bgLayer.addChild(hill);
+  }
+
+  // Signal posts — alternating red/green along track, above ground
+  const spacing = W * 0.6;
+  for (let i = 0; i < 4; i++) {
+    const post = new PIXI.Container();
+    const pole = new PIXI.Graphics();
+    pole.rect(-1.5, 0, 3, 26).fill({ color: 0x4b5563 });
+    post.addChild(pole);
+    const isRed = i % 2 === 0;
+    const color = isRed ? 0xef4444 : 0x22c55e;
+    const glow = new PIXI.Graphics();
+    glow.circle(0, -4, 9).fill({ color, alpha: 0.4 });
+    post.addChild(glow);
+    const lamp = new PIXI.Graphics();
+    lamp.circle(0, -4, 4.5).fill({ color });
+    lamp.circle(0, -4, 6).stroke({ color: 0x1f2937, width: 1.5 });
+    post.addChild(lamp);
+    post.x = i * spacing + Math.random() * 60;
+    post.y = H * 0.72 - 26;
+    bgLayer.addChild(post);
+    bgSignalPosts.push(post);
+  }
+
+  // Birds (night/mountain themes skip — too dark)
+  if ([1, 2, 4].includes(BG_THEME)) {
+    for (let i = 0; i < 3; i++) {
+      const b = new PIXI.Graphics();
+      b.moveTo(-6,0).lineTo(-3,-3).lineTo(0,0).lineTo(3,-3).lineTo(6,0).stroke({ color: 0x1f2937, width: 1.4 });
+      b.alpha = 0.6;
+      b.x = W + i * 50;
+      b.y = H * (0.1 + Math.random() * 0.18);
+      b._speed = 0.4 + Math.random() * 0.2;
+      b._baseY = b.y;
+      b._phase = Math.random() * Math.PI * 2;
+      bgLayer.addChild(b);
+      bgBirds.push(b);
+    }
+  }
+}
+
+function buildCloud(color, alpha) {
+  const c = new PIXI.Container();
+  const g = new PIXI.Graphics();
+  g.circle(0, 0, 22).fill({ color });
+  g.circle(26, 4, 18).fill({ color });
+  g.circle(-24, 5, 16).fill({ color });
+  g.circle(12, -10, 16).fill({ color });
+  g.rect(-28, 5, 72, 18).fill({ color }); // base fill
+  c.addChild(g);
+  c.alpha = alpha;
+  return c;
+}
+
+// ── Tracks ────────────────────────────────────────────────────────────────────
+function buildTracks() {
+  for (let lane = 0; lane < 3; lane++) {
+    const lY = LANE_Y[lane];
+    const rail1 = new PIXI.Graphics();
+    rail1.rect(0, lY + 14, W, 5).fill({ color: T.railColor });
+    trackLayer.addChild(rail1);
+    const rail2 = new PIXI.Graphics();
+    rail2.rect(0, lY + 25, W, 5).fill({ color: T.railColor });
+    trackLayer.addChild(rail2);
+    // Rail glow
+    const glow = new PIXI.Graphics();
+    glow.rect(0, lY + 10, W, 24).fill({ color: T.railShadow });
+    glow.alpha = 0.18; trackLayer.addChild(glow);
+    // Sleepers
+    for (let x = 0; x < W + 40; x += 40) {
+      const sl = new PIXI.Graphics();
+      sl.rect(-7, lY + 10, 14, 24).fill({ color: T.sleeperColor });
+      sl.rect(-7, lY + 10, 14, 24).stroke({ width: 1, color: 0x000000, alpha: 0.3 });
+      sl.x = x; trackLayer.addChild(sl); sleepers.push(sl);
+    }
+  }
+}
+
+// ── Train: Parametric from selectedTrain ──────────────────────────────────────
+function buildTrain() {
+  if (!selectedTrain) selectedTrain = TRAIN_CATALOG[0];
+  trainContainer.x = TRAIN_X;
+  trainContainer.y = LANE_Y[1];
+  trainContainer._bounceT = 0;
+  // Flip so locomotive faces RIGHT (direction of travel)
+  trainContainer.scale.x = -1;
+
+  const g = new PIXI.Graphics();
+  const c = selectedTrain;
+
+  // Dispatch to type-specific builder
+  if (c.type === 'steam') drawSteamBody(g, c);
+  else if (c.type === 'diesel') drawDieselBody(g, c);
+  else if (c.type === 'electric' || c.type === 'tram') drawElectricBody(g, c);
+  else if (c.type === 'highspeed') drawHighSpeedBody(g, c);
+  else if (c.type === 'heritage') drawHeritageBody(g, c);
+  else drawSteamBody(g, c); // fallback
+
+  trainContainer.addChild(g);
+  addWheels(c);
+}
+
+function drawSteamBody(g, c) {
+  const b=c.b,r=c.r,s=c.s,w=c.w,k=c.k;
+  const LL = r; // use roof color as cab color for steam
+  const boilerLight = blendColor(b, 0xffffff, 0.25);
+  // Boiler
+  g.roundRect(-78,-18,55,26,12).fill({color:boilerLight});
+  g.rect(-76,-18,51,6).fill({color:w});
+  // Chimney (centered at ~x=-50)
+  g.roundRect(-57,-38,14,22,4).fill({color:k});
+  g.roundRect(-61,-42,22,7,3).fill({color:k});
+  g.circle(-50,-44,5).fill({color:0x374151});
+  // Dome
+  g.circle(-40,-18,9).fill({color:b});
+  g.circle(-40,-18,6).fill({color:s});
+  // Headlamp
+  g.circle(-79,-10,6).fill({color:0xfef9c3});
+  g.circle(-79,-10,4).fill({color:0xfde68a});
+  // Cab
+  g.roundRect(-25,-24,42,32,7).fill({color:LL});
+  g.roundRect(-27,-30,46,10,5).fill({color:b});
+  g.roundRect(-21,-22,14,14,3).fill({color:w});
+  g.roundRect(0,-22,14,14,3).fill({color:w});
+  // Gold stripe
+  g.rect(-78,-3,100,4).fill({color:s});
+  g.roundRect(-78,8,100,6,2).fill({color:b});
+  // Cowcatcher
+  g.poly([-78,8,-92,16,-78,16]).fill({color:0x6b7280});
+  // Tender
+  const TS=22;
+  g.roundRect(TS,-14,38,22,5).fill({color:b});
+  g.roundRect(TS,-14,38,22,5).stroke({width:1.5,color:boilerLight});
+  g.ellipse(TS+19,-16,17,8).fill({color:k});
+  for(let ci=0;ci<4;ci++) g.circle(TS+8+ci*6,-17,2).fill({color:0x374151});
+  // Passenger car
+  const PC=64;
+  g.roundRect(PC,-18,52,28,6).fill({color:LL});
+  g.roundRect(PC,-18,52,28,6).stroke({width:1.5,color:b});
+  g.roundRect(PC,-18,52,8,6).fill({color:b});
+  for(let wi=0;wi<3;wi++) g.roundRect(PC+6+wi*15,-14,9,12,2).fill({color:w});
+  g.rect(PC,-4,52,3).fill({color:s});
+  g.rect(PC+22,-10,2,18).fill({color:b});
+  // Caboose
+  const CC=120;
+  g.roundRect(CC,-16,30,24,6).fill({color:r});
+  g.roundRect(CC,-16,30,24,6).stroke({width:1.5,color:b});
+  g.roundRect(CC,-16,30,8,6).fill({color:b});
+  g.roundRect(CC+8,-26,14,12,4).fill({color:b});
+  g.roundRect(CC+10,-24,5,8,2).fill({color:w});
+  g.circle(CC+28,-6,4).fill({color:0xef4444});
+  // Couplers
+  for(const cx of [TS-2,PC-2,CC-2]) g.roundRect(cx,-2,4,6,1).fill({color:0x6b7280});
+}
+
+function drawDieselBody(g, c) {
+  const b=c.b,r=c.r,s=c.s,w=c.w,k=c.k;
+  // Locomotive (hood type)
+  g.roundRect(-80,-20,60,28,8).fill({color:b}); // long hood
+  g.roundRect(-80,-20,60,8,8).fill({color:r});   // roof stripe
+  g.roundRect(-22,-24,44,32,7).fill({color:b});  // cab
+  g.roundRect(-24,-30,48,10,5).fill({color:r});  // cab roof
+  g.roundRect(-20,-22,12,14,3).fill({color:w});
+  g.roundRect(-4,-22,12,14,3).fill({color:w});
+  g.roundRect(12,-22,8,14,3).fill({color:w});
+  g.rect(-80,-3,106,4).fill({color:s});
+  // Grilles on hood
+  for(let xi=0;xi<4;xi++) g.rect(-72+xi*12,-14,4,16).fill({color:k}).stroke({width:0.5,color:0x6b7280,alpha:0.5});
+  // Headlamps
+  g.circle(-80,-10,5).fill({color:0xfef9c3});
+  g.circle(-80,-10,3).fill({color:0xfde68a});
+  // Underframe
+  g.roundRect(-80,8,106,6,2).fill({color:k});
+  g.poly([-80,8,-94,16,-80,16]).fill({color:0x6b7280});
+  // 2 coaches
+  const P1=30,P2=90;
+  for(const px of [P1,P2]) {
+    g.roundRect(px,-18,52,28,6).fill({color:blendColor(b,0xffffff,0.15)});
+    g.roundRect(px,-18,52,8,6).fill({color:r});
+    for(let wi=0;wi<4;wi++) g.roundRect(px+4+wi*11,-14,8,12,2).fill({color:w});
+    g.rect(px,-4,52,3).fill({color:s});
+    g.rect(px+22,-10,2,18).fill({color:b});
+  }
+  for(const cx of [P1-2,P2-2]) g.roundRect(cx,-2,4,6,1).fill({color:0x6b7280});
+}
+
+function drawElectricBody(g, c) {
+  const b=c.b,r=c.r,s=c.s,w=c.w,k=c.k;
+  // Electric has flat face + pantograph
+  g.roundRect(-80,-20,170,28,10).fill({color:b});
+  g.roundRect(-80,-20,170,8,10).fill({color:r});
+  g.rect(-80,-3,170,4).fill({color:s});
+  // Front face
+  g.roundRect(-80,-20,24,28,10).fill({color:blendColor(b,0x000000,0.2)});
+  g.roundRect(-76,-18,18,14,4).fill({color:w});
+  g.circle(-80,-10,5).fill({color:0xfef9c3});
+  // Windows along body
+  for(let wi=0;wi<7;wi++) g.roundRect(-48+wi*20,-16,14,12,3).fill({color:w});
+  // Doors
+  for(const dx of [-30,10,50]) { g.rect(dx,-18,3,26).fill({color:blendColor(b,0x000000,0.3)}); }
+  // Pantograph (on top)
+  g.rect(-20,-32,4,12).fill({color:k});  // support arm
+  g.rect(0,-32,4,12).fill({color:k});
+  g.rect(-20,-32,24,2).fill({color:0x94a3b8}); // top wire contact
+  g.rect(-26,-30,36,2).fill({color:0x6b7280});  // cross arm
+  // Underframe
+  g.roundRect(-80,8,170,5,2).fill({color:k});
+}
+
+function drawHighSpeedBody(g, c) {
+  const b=c.b,r=c.r,s=c.s,w=c.w,k=c.k;
+  // Aerodynamic nose
+  g.poly([-90,-8,-70,-20,-50,-20,-50,8,-70,8,-90,8]).fill({color:blendColor(b,0x000000,0.25)});
+  g.roundRect(-50,-20,170,28,6).fill({color:b});
+  g.roundRect(-50,-20,170,7,6).fill({color:r});
+  g.rect(-50,-4,170,4).fill({color:s});
+  // Nose window
+  g.poly([-85,-6,-70,-16,-55,-16,-55,4,-70,4,-85,4]).fill({color:w}).stroke({width:1,color:r,alpha:0.5});
+  // Windows along body
+  for(let wi=0;wi<6;wi++) g.roundRect(-35+wi*22,-16,16,11,4).fill({color:w});
+  // Pantograph
+  g.rect(20,-30,3,10).fill({color:k});
+  g.rect(36,-30,3,10).fill({color:k});
+  g.rect(18,-30,24,2).fill({color:0x94a3b8});
+  // Underframe (sleek)
+  g.roundRect(-90,8,210,6,3).fill({color:blendColor(b,0x000000,0.35)});
+}
+
+function drawHeritageBody(g, c) {
+  const b=c.b,r=c.r,s=c.s,w=c.w,k=c.k;
+  // Heritage: ornate, 4-car, old style
+  g.roundRect(-78,-18,50,26,10).fill({color:b});
+  g.roundRect(-78,-18,50,8,10).fill({color:r});
+  // Chimney (tall and fancy)
+  g.roundRect(-60,-42,16,26,3).fill({color:k});
+  g.roundRect(-65,-46,26,8,4).fill({color:k});
+  g.circle(-52,-48,7).fill({color:0x374151});
+  // Dome (golden)
+  g.circle(-38,-18,10).fill({color:s});
+  g.circle(-38,-18,6).fill({color:0xfef9c3});
+  // Ornate cab with gold trim
+  g.roundRect(-28,-26,48,34,8).fill({color:b});
+  g.roundRect(-30,-32,52,10,5).fill({color:r});
+  g.roundRect(-26,-24,14,14,4).fill({color:w});
+  g.roundRect(-6,-24,14,14,4).fill({color:w});
+  g.roundRect(12,-24,8,14,4).fill({color:w});
+  // Gold trim lines
+  g.rect(-78,-4,106,3).fill({color:s});
+  g.rect(-78,3,106,2).fill({color:s});
+  g.roundRect(-78,8,106,6,2).fill({color:b});
+  g.poly([-78,8,-93,16,-78,16]).fill({color:0x6b7280});
+  // 2 vintage coaches
+  const V1=32,V2=94;
+  for(const px of [V1,V2]) {
+    g.roundRect(px,-18,54,28,8).fill({color:blendColor(b,0xffffff,0.12)});
+    g.roundRect(px,-18,54,9,8).fill({color:r});
+    for(let wi=0;wi<3;wi++) g.roundRect(px+6+wi*16,-14,10,13,3).fill({color:w});
+    g.rect(px,-3,54,3).fill({color:s});
+    g.rect(px,-1,54,1).fill({color:s});
+    g.rect(px+24,-12,2,20).fill({color:blendColor(b,0x000000,0.3)});
+  }
+  for(const cx of [V1-2,V2-2]) g.roundRect(cx,-2,4,6,1).fill({color:0x6b7280});
+}
+
+// blend two hex colors (t=0 → a, t=1 → b)
+function blendColor(a,b,t){
+  const ar=(a>>16)&0xff,ag=(a>>8)&0xff,ab=a&0xff;
+  const br=(b>>16)&0xff,bg=(b>>8)&0xff,bb=b&0xff;
+  const nr=Math.round(ar+(br-ar)*t),ng=Math.round(ag+(bg-ag)*t),nb=Math.round(ab+(bb-ab)*t);
+  return (nr<<16)|(ng<<8)|nb;
+}
+
+function addWheels(c) {
+  const isSmall = (c.type==='tram'||c.sub==='shunter'||c.sub==='narrow'||c.sub==='prairie');
+  const isSteam = (c.type==='steam');
+  const wheelColor = c.k;
+
+  let wheelDefs;
+  if (isSteam) {
+    wheelDefs=[
+      {x:-64,r:11},{x:-47,r:11},{x:-30,r:11}, // driving
+      {x:-73,r:7},{x:8,r:7},                    // small loco
+      {x:30,r:7},{x:54,r:7},                    // tender
+      {x:70,r:7},{x:102,r:7},                   // passenger
+      {x:126,r:7},{x:142,r:7},                  // caboose
+    ];
+  } else if (c.type==='tram'||isSmall) {
+    wheelDefs=[{x:-30,r:8},{x:-10,r:8},{x:10,r:8},{x:30,r:8}];
+  } else if (c.type==='highspeed') {
+    wheelDefs=[{x:-70,r:9},{x:-40,r:9},{x:10,r:9},{x:60,r:9},{x:100,r:9},{x:140,r:9}];
+  } else {
+    wheelDefs=[
+      {x:-65,r:9},{x:-40,r:9},{x:-15,r:9}, // loco
+      {x:38,r:8},{x:68,r:8},                 // coach 1
+      {x:98,r:8},{x:128,r:8},                // coach 2
+    ];
+  }
+
+  for(const{x,r} of wheelDefs){
+    const wc=new PIXI.Container(); wc.x=x; wc.y=14;
+    const wg=new PIXI.Graphics();
+    wg.circle(0,0,r).fill({color:wheelColor});
+    wg.circle(0,0,r).stroke({width:2,color:c.b});
+    wg.rect(-1.5,-r+2,3,r*2-4).fill({color:c.w});
+    wg.rect(-r+2,-1.5,r*2-4,3).fill({color:c.w});
+    wg.circle(0,0,2.5).fill({color:c.b});
+    wc.addChild(wg);
+    trainContainer.addChild(wc);
+    wheels.push(wc);
+  }
+}
+
+// ── Steam ─────────────────────────────────────────────────────────────────────
+function emitSteam() {
+  for (let j = 0; j < 2; j++) {
+    const puff = new PIXI.Graphics();
+    const r = 5 + Math.random() * 5;
+    puff.circle(0, 0, r).fill({ color: 0xdbeafe });
+    // Chimney is now on the LEFT side after flip (trainContainer.scale.x=-1 mirrors it)
+    puff.x = TRAIN_X - 62 + (Math.random() - 0.5) * 8;
+    puff.y = trainContainer.y - 42;
+    puff.alpha = 0.55;
+    puff._vx = -(0.4 + Math.random() * 0.5);
+    puff._vy = -(0.5 + Math.random() * 0.7);
+    particleLayer.addChild(puff);
+    steamPuffs.push(puff);
+  }
+}
+
+// ── Letter / Special Boxes ────────────────────────────────────────────────────
+const BOX_COLORS = [0xe11d48, 0x7c3aed, 0x0284c7, 0x059669, 0xd97706, 0xbe123c, 0x0d9488, 0x6d28d9];
+
+function spawnLetterBox() {
+  if (!gameRunning) return;
+  const word = WORDS_LIST[currentWordIdx];
+  if (!word) return;
+  const targetLetter = word.word[currentLetterIdx];
+  const allLetters = 'ABCDEFGHIJKLMNOPRSTUVWY';
+  const lanesToFill = shuffle([0, 1, 2]);
+  const isEasy = getDifficulty() === 'easy';
+  const numBoxes = isEasy ? 1 : 1 + Math.floor(Math.random() * 2);
+  for (let i = 0; i < Math.min(numBoxes, 3); i++) {
+    const lane = lanesToFill[i];
+    const isTarget = (i === 0);
+    const letter = isTarget ? targetLetter : randomDistractor(targetLetter, allLetters);
+    const color = BOX_COLORS[Math.floor(Math.random() * BOX_COLORS.length)];
+    letterBoxes.push(createBox({ type: 'letter', lane, letter, isTarget, color }));
+  }
+}
+
+function spawnSpecialBox(type) {
+  if (!gameRunning) return;
+  const lane = Math.floor(Math.random() * 3);
+  const color = type === 'math' ? 0xd97706 : 0x16a34a;
+  letterBoxes.push(createBox({ type, lane, letter: type === 'math' ? '?' : '❤', isTarget: false, color }));
+}
+
+function randomDistractor(avoid, pool) {
+  let c; do { c = pool[Math.floor(Math.random() * pool.length)]; } while (c === avoid); return c;
+}
+
+function createBox({ type, lane, letter, isTarget, color }) {
+  const container = new PIXI.Container();
+  const lY = LANE_Y[lane];
+  container.x = W + 55; container.y = lY - 8;
+  const BW = 44, BH = 44;
+
+  // Glow
+  let glowGfx = null;
+  const glowColor = type === 'math' ? 0xfbbf24 : type === 'heart' ? 0x4ade80 : isTarget ? 0xfbbf24 : null;
+  if (glowColor) {
+    glowGfx = new PIXI.Graphics();
+    glowGfx.roundRect(-BW/2 - 7, -BH/2 - 7, BW + 14, BH + 14, 11).fill({ color: glowColor });
+    glowGfx.alpha = 0.55;
+    container.addChild(glowGfx);
+  }
+
+  // Box body
+  const bg = new PIXI.Graphics();
+  bg.roundRect(-BW/2, -BH/2, BW, BH, 10).fill({ color });
+  bg.roundRect(-BW/2, -BH/2, BW, BH, 10).stroke({
+    width: isTarget || type !== 'letter' ? 3 : 1.5,
+    color: glowColor || 0xffffff,
+    alpha: glowColor ? 1 : 0.4
+  });
+  container.addChild(bg);
+
+  // Top shine
+  const shine = new PIXI.Graphics();
+  shine.roundRect(-BW/2 + 2, -BH/2 + 2, BW - 4, 10, 6).fill({ color: 0xffffff });
+  shine.alpha = 0.18; container.addChild(shine);
+
+  // Label
+  const isEmoji = type !== 'letter';
+  const txt = new PIXI.Text({
+    text: isEmoji ? (type === 'math' ? '?' : '♥') : letter,
+    style: {
+      fontFamily: 'Fredoka One, sans-serif',
+      fontSize: isEmoji ? 26 : 22,
+      fontWeight: '900',
+      fill: 0xffffff,
+      dropShadow: true, dropShadowBlur: 4, dropShadowDistance: 2, dropShadowColor: 0x000000
+    }
+  });
+  txt.anchor.set(0.5);
+  container.addChild(txt);
+
+  boxLayer.addChild(container);
+  return { container, lane, letter, isTarget, type, glowGfx, _glowPhase: 0 };
+}
+
+// ── Box Collection ────────────────────────────────────────────────────────────
+function collectBox(box, idx) {
+  if (box.type === 'heart') {
+    lives = Math.min(MAX_LIVES, lives + 1);
+    spawnCollectParticles(box.container.x, box.container.y, 0x4ade80);
+    updateLivesHUD();
+    flashScreen('green');
+    boxLayer.removeChild(box.container);
+    letterBoxes.splice(idx, 1);
+    return;
+  }
+
+  if (box.type === 'math') {
+    boxLayer.removeChild(box.container);
+    letterBoxes.splice(idx, 1);
+    showMathQuiz();
+    return;
+  }
+
+  // Letter box
+  const word = WORDS_LIST[currentWordIdx];
+  if (!word) return;
+  if (box.isTarget) {
+    spawnCollectParticles(box.container.x, box.container.y, 0xfbbf24);
+    boxLayer.removeChild(box.container);
+    letterBoxes.splice(idx, 1);
+    currentLetterIdx++;
+    if (currentLetterIdx >= word.word.length) onWordComplete();
+    else refreshHUD();
+  } else {
+    if (!invincible) { wrongTaps++; triggerWrong(); }
+    boxLayer.removeChild(box.container);
+    letterBoxes.splice(idx, 1);
+  }
+}
+
+// ── Math Quiz ─────────────────────────────────────────────────────────────────
+let mathTimerRaf = null;
+function showMathQuiz() {
+  if (!gameRunning) return;
+  mathQuizActive = true;
+  const q = genMathQuestion();
+  const allAnswers = genWrongOptions(q.answer, 3);
+  document.getElementById('math-question').textContent = q.text;
+  const choicesEl = document.getElementById('math-choices');
+  choicesEl.innerHTML = '';
+  allAnswers.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'math-btn'; btn.textContent = opt;
+    btn.onclick = () => answerMath(opt === q.answer, btn);
+    choicesEl.appendChild(btn);
+  });
+  document.getElementById('math-quiz').classList.add('show');
+
+  // Timer bar
+  const fill = document.getElementById('math-timer-fill');
+  fill.style.transition = 'none'; fill.style.width = '100%';
+  requestAnimationFrame(() => {
+    fill.style.transition = 'width 8s linear';
+    requestAnimationFrame(() => { fill.style.width = '0%'; });
+  });
+
+  // Auto-fail after 8s
+  let timedOut = false;
+  mathTimerRaf = setTimeout(() => {
+    if (mathQuizActive) { timedOut = true; answerMath(false, null, true); }
+  }, 8000);
+}
+
+function answerMath(correct, btnEl, timeout = false) {
+  if (!mathQuizActive) return;
+  clearTimeout(mathTimerRaf);
+  mathQuizActive = false;
+  document.getElementById('math-quiz').classList.remove('show');
+
+  if (correct) {
+    mathCorrect++;
+    spawnCollectParticles(W / 2, H / 2, 0x4ade80);
+    flashScreen('green');
+  } else if (!timeout) {
+    triggerWrong();
+  } else {
+    flashScreen('red');
+    lives--; if (lives < 0) lives = 0;
+    updateLivesHUD();
+    if (lives <= 0) { setTimeout(showLose, 600); return; }
+  }
+}
+
+// ── Rainbow effect ────────────────────────────────────────────────────────────
+function spawnRainbow() {
+  if (rainbow) { bgLayer.removeChild(rainbow); rainbow = null; }
+  const rb = new PIXI.Graphics();
+  const colors = [0xff6b6b, 0xffa500, 0xffd700, 0x4ade80, 0x38bdf8, 0x818cf8, 0xf472b6];
+  const cx = W * 0.5, cy = H * 0.85;
+  for (let i = 0; i < colors.length; i++) {
+    const r = 180 + i * 22;
+    rb.arc(cx, cy, r, Math.PI, 0, false).stroke({ width: 16, color: colors[i], alpha: 0.55 });
+  }
+  rb.alpha = 0.7;
+  bgLayer.addChild(rb);
+  rainbow = rb;
+}
+
+// ── Word Complete / Game Logic ─────────────────────────────────────────────────
+function onWordComplete() {
+  document.querySelectorAll('.slot').forEach(s => { s.classList.remove('filled'); s.classList.add('done'); });
+  trainContainer._bounceT = Math.PI;
+  spawnRainbow();
+  spawnCollectParticles(TRAIN_X, trainContainer.y, 0xfbbf24);
+  flashScreen('green');
+  gameSpeed = Math.min(gameSpeed * 1.12, 8);
+  currentWordIdx++;
+  if (currentWordIdx >= WORDS_LIST.length) { setTimeout(showWin, 700); return; }
+  currentLetterIdx = 0;
+  setTimeout(refreshHUD, 500);
+}
+
+function triggerWrong() {
+  if (invincible) return;
+  invincible = true;
+  // Easy mode: 50% chance to survive (shield)
+  if (getDifficulty() === 'easy' && Math.random() < 0.5) {
+    flashScreen('yellow');
+    setTimeout(() => { invincible = false; }, 800);
+    return;
+  }
+  lives--; if (lives < 0) lives = 0;
+  updateLivesHUD();
+  document.body.classList.add('shaking');
+  setTimeout(() => document.body.classList.remove('shaking'), 320);
+  flashScreen('red');
+  if (lives <= 0) { setTimeout(showLose, 600); return; }
+  setTimeout(() => { invincible = false; }, 900);
+}
+
+function flashScreen(type) {
+  const flash = document.getElementById('flash');
+  flash.style.background = type === 'green' ? 'rgba(74,222,128,0.28)' : 'rgba(239,68,68,0.38)';
+  flash.style.opacity = '1';
+  setTimeout(() => { flash.style.opacity = '0'; }, 200);
+}
+
+// ── Particles ─────────────────────────────────────────────────────────────────
+function spawnCollectParticles(x, y, mainColor) {
+  const colors = [mainColor, 0xfbbf24, 0x38bdf8, 0xf472b6, 0xc084fc, 0x4ade80];
+  for (let i = 0; i < 16; i++) {
+    const p = new PIXI.Graphics();
+    const r = 3 + Math.random() * 3.5;
+    p.circle(0, 0, r).fill({ color: colors[i % colors.length] });
+    p.x = x; p.y = y;
+    const angle = (Math.PI * 2 * i) / 16 + Math.random() * 0.5;
+    const spd = 2.5 + Math.random() * 4;
+    p._vx = Math.cos(angle) * spd; p._vy = Math.sin(angle) * spd - 1.5;
+    p.alpha = 1;
+    particleLayer.addChild(p);
+    const tick = app.ticker.add((t) => {
+      p.x += p._vx * t.deltaTime; p.y += p._vy * t.deltaTime;
+      p._vy += 0.18 * t.deltaTime;
+      p.alpha -= 0.035 * t.deltaTime;
+      if (p.alpha <= 0) { particleLayer.removeChild(p); app.ticker.remove(tick); }
+    });
+  }
+}
+
+// ── HUD ────────────────────────────────────────────────────────────────────────
+function updateLivesHUD() {
+  const el = document.getElementById('lives-hud');
+  el.innerHTML = '';
+  for (let i = 0; i < MAX_LIVES; i++) {
+    const s = document.createElement('span');
+    s.className = 'life-heart' + (i >= lives ? ' lost' : '');
+    s.textContent = '❤️';
+    el.appendChild(s);
+  }
+}
+
+function refreshHUD() {
+  const word = WORDS_LIST[currentWordIdx]; if (!word) return;
+  document.getElementById('word-emoji').textContent = word.emoji;
+  const slotsEl = document.getElementById('word-slots');
+  slotsEl.innerHTML = '';
+  for (let i = 0; i < word.word.length; i++) {
+    const s = document.createElement('span');
+    s.className = 'slot' + (i < currentLetterIdx ? ' filled' : '');
+    s.textContent = i < currentLetterIdx ? word.word[i] : '_';
+    slotsEl.appendChild(s);
+  }
+  document.getElementById('next-char').textContent = word.word[currentLetterIdx] || '✓';
+}
+
+function updateLaneDots() {
+  for (let i = 0; i < 3; i++) {
+    const d = document.getElementById('ld' + i);
+    if (d) d.classList.toggle('active', i === playerLane);
+  }
+}
+
+// ── Controls ───────────────────────────────────────────────────────────────────
+function switchLane(dir) {
+  if (!gameRunning || mathQuizActive) return;
+  const n = Math.max(0, Math.min(2, playerLane + dir));
+  if (n === playerLane) return;
+  playerLane = n; updateLaneDots();
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowUp') switchLane(-1);
+  if (e.key === 'ArrowDown') switchLane(1);
+});
+document.getElementById('pixi-canvas').addEventListener('click', e => {
+  if (!gameRunning || mathQuizActive) return;
+  const y = e.clientY;
+  for (let i = 0; i < 3; i++) {
+    if (Math.abs(y - LANE_Y[i]) < 55) { playerLane = i; updateLaneDots(); return; }
+  }
+});
+
+// ── Win / Lose ─────────────────────────────────────────────────────────────────
+function showWin() {
+  gameRunning = false;
+  const elapsed = (Date.now() - startTime) / 1000;
+  const totalQ = mathCorrect + wrongTaps;
+  try{document.getElementById('game-bgm').pause()}catch(_){}
+  const finalStars = GameScoring.calc({
+    correct: mathCorrect,
+    total: Math.max(totalQ, 1),
+    wrong: wrongTaps,
+    time: elapsed,
+    maxTime: WORDS_LIST.length * 15
+  });
+  sessionStorage.setItem('g15Result', JSON.stringify({ stars: finalStars }));
+  saveG15Progress(finalStars);
+  const msg = wrongTaps === 0
+    ? `Sempurna! Tidak ada kesalahan! Matematika Benar: ${mathCorrect}`
+    : `${wrongTaps} kesalahan. Matematika benar: ${mathCorrect}. Terus berlatih!`;
+  const title = finalStars >= 5 ? 'Sempurna!' : finalStars >= 4 ? 'Hebat Sekali!' : finalStars >= 3 ? 'Bagus!' : 'Selesai!';
+  const nextLevel = LEVEL < 30 ? () => { sessionStorage.setItem('g15Config', JSON.stringify({level: LEVEL + 1})); location.reload(); } : null;
+  GameModal.show({
+    emoji: finalStars >= 4 ? '🏆' : '⭐', title, stars: finalStars, msg,
+    onNext: nextLevel, onAgain: () => restartGame(), onBack: () => goBack()
+  });
+}
+
+function showLose() {
+  gameRunning = false;
+  sessionStorage.setItem('g15Result', JSON.stringify({ stars: 1 }));
+  GameModal.show({
+    emoji: '💔', title: 'Habis Nyawa!', stars: 1, msg: 'Jangan menyerah, coba lagi!',
+    onAgain: () => restartGame(), onBack: () => goBack()
+  });
+}
+
+function restartGame() {
+  document.getElementById('math-quiz').classList.remove('show');
+  clearTimeout(mathTimerRaf);
+  app.destroy(false, { children: true });
+  playerLane = 1; currentWordIdx = 0; currentLetterIdx = 0;
+  wrongTaps = 0; mathCorrect = 0; invincible = false; mathQuizActive = false;
+  gameRunning = false; gameSpeed = 2 + LEVEL * 0.15;
+  lives = MAX_LIVES;
+  wheels = []; steamPuffs = []; letterBoxes = []; bgStars = []; sleepers = [];
+  bgClouds = []; bgFireflies = []; rainbow = null; LANE_Y = [];
+  mathBoxTimer = 0; heartBoxTimer = 0; totalBoxSpawned = 0;
+  nextMathAt = MATH_BOX_INTERVAL(); nextHeartAt = HEART_BOX_INTERVAL();
+  WORDS_LIST = pickWords(WORD_COUNT);
+  initPixi();
+}
+
+// ── Utils ──────────────────────────────────────────────────────────────────────
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// ── Train Select Screen ──────────────────────────────────────────────────────
+function showTrainSelect() {
+  const station = getCurrentStation();
+  document.getElementById('si-icon').textContent = station.icon;
+  document.getElementById('si-name').textContent = station.name;
+  document.getElementById('si-landmark').textContent = station.landmark;
+  document.getElementById('train-select').style.display = 'flex';
+  document.getElementById('station-chip').style.display = 'none';
+  buildTrainGrid();
+}
+
+let activeTrainFilter = 'all';
+
+function setTrainFilter(btn) {
+  activeTrainFilter = btn.dataset.filter;
+  document.querySelectorAll('.tfbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildTrainGrid();
+}
+
+const TYPE_LABEL = {
+  'steam':'Steam','diesel':'Diesel','electric':'Elektrik',
+  'highspeed':'Highspeed','tram':'Tram','heritage':'Heritage'
+};
+
+function buildTrainGrid() {
+  const grid = document.getElementById('train-grid');
+  grid.innerHTML = '';
+  const filtered = activeTrainFilter === 'all'
+    ? TRAIN_CATALOG
+    : TRAIN_CATALOG.filter(e => e.type === activeTrainFilter);
+  const countEl = document.getElementById('ts-count');
+  if (countEl) countEl.textContent = filtered.length + ' KERETA ' + (activeTrainFilter === 'all' ? 'TERSEDIA' : (TYPE_LABEL[activeTrainFilter]||'').toUpperCase());
+  filtered.forEach(entry => {
+    const card = document.createElement('div');
+    card.className = 'tcard' + (selectedTrain && selectedTrain.id === entry.id ? ' selected' : '');
+    const canvas = document.createElement('canvas');
+    canvas.width = 100; canvas.height = 36;
+    const info = document.createElement('div');
+    info.className = 'tcard-info';
+    const name = document.createElement('span');
+    name.className = 'tname';
+    name.textContent = entry.name;
+    const sub = document.createElement('span');
+    sub.className = 'tsub';
+    sub.textContent = (TYPE_LABEL[entry.type] || entry.type) + (entry.sub ? ' · ' + entry.sub : '');
+    info.appendChild(name);
+    info.appendChild(sub);
+    card.appendChild(canvas);
+    card.appendChild(info);
+    grid.appendChild(card);
+    // Draw after append so a throw doesn't prevent card from showing
+    try {
+      drawTrainPreview2d(canvas, entry);
+    } catch(e) {
+      try {
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.fillStyle = '#' + entry.b.toString(16).padStart(6, '0');
+          ctx.fillRect(0, 0, 120, 48);
+        }
+      } catch(_) {}
+    }
+    card.addEventListener('click', () => {
+      selectedTrain = entry;
+      document.getElementById('train-select').style.display = 'none';
+      initPixi().catch(e => console.error('g15 pixi init error:', e));
+    });
+  });
+}
+
+function _hex(n) {
+  return `rgb(${(n>>16)&0xff},${(n>>8)&0xff},${n&0xff})`;
+}
+
+function drawTrainPreview2d(canvas, c) {
+  const ctx = canvas.getContext('2d');
+  const CW = canvas.width, CH = canvas.height;
+  ctx.clearRect(0, 0, CW, CH);
+  const type = c.type, sub = c.sub;
+  const B=_hex(c.b),R=_hex(c.r),S=_hex(c.s),W=_hex(c.w),K=_hex(c.k);
+  const V=c.v||1; const vi=V-1;
+
+  // ── Track (all types) ───────────────────────────────────────────────────
+  ctx.fillStyle='#3b2a14'; ctx.fillRect(0,CH-7,CW,7);
+  for(let i=0;i<CW;i+=10){ctx.fillStyle='#5a3a1a';ctx.fillRect(i,CH-6,7,5);}
+  ctx.fillStyle='#999'; ctx.fillRect(0,CH-7,CW,2);
+  ctx.fillStyle='#999'; ctx.fillRect(0,CH-4,CW,2);
+  const tY=CH-7; // top of track
+
+  // ── Helper: draw spoked wheel ────────────────────────────────────────────
+  function wheel(cx,cy,r,rimC,spokeC,hubC,spokes){
+    ctx.fillStyle=rimC; ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle=spokeC; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
+    const n=spokes||6;
+    for(let i=0;i<n;i++){const a=(i/n)*Math.PI*2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(a)*(r-1),cy+Math.sin(a)*(r-1));ctx.stroke();}
+    ctx.fillStyle=hubC; ctx.beginPath(); ctx.arc(cx,cy,2.2,0,Math.PI*2); ctx.fill();
+  }
+  function bogie(cx,cy,rimC,spokeC){
+    ctx.fillStyle='#555'; ctx.fillRect(cx-14,cy-3,28,5);
+    ctx.beginPath(); ctx.arc(cx-9,cy+1,5,0,Math.PI*2); ctx.fillStyle=rimC; ctx.fill();
+    ctx.beginPath(); ctx.arc(cx+9,cy+1,5,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle=spokeC; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.arc(cx-9,cy+1,5,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx+9,cy+1,5,0,Math.PI*2); ctx.stroke();
+  }
+  function pantoV(cx,roofY,w,col){
+    ctx.strokeStyle=col||'#ccc'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(cx-w/2,roofY+1); ctx.lineTo(cx,roofY-9); ctx.lineTo(cx+w/2,roofY+1); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx-w/4,roofY-4); ctx.lineTo(cx+w/4,roofY-4); ctx.stroke();
+    ctx.fillStyle=col||'#ccc'; ctx.fillRect(cx-w/2-1,roofY,3,5); ctx.fillRect(cx+w/2-1,roofY,3,5);
+  }
+  function catWire(col){
+    ctx.strokeStyle=col||'rgba(180,180,180,0.6)'; ctx.lineWidth=1;
+    ctx.setLineDash([4,3]); ctx.beginPath(); ctx.moveTo(0,4); ctx.lineTo(CW,4); ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // STEAM  — each vi is a structurally different locomotive type
+  // ══════════════════════════════════════════════════════════════════════════
+  if(type==='steam'){
+    const wY=tY;
+
+    if(sub==='classic'){
+      if(vi===0){ // 0-4-0T saddle tank shunter – tiny, no tender
+        ctx.fillStyle=B; ctx.fillRect(28,10,50,20);
+        ctx.fillStyle=R; ctx.beginPath(); ctx.arc(53,10,13,Math.PI,0); ctx.fill(); // saddle tank
+        ctx.fillStyle=W; ctx.fillRect(60,13,10,9);
+        ctx.fillStyle='#111'; ctx.fillRect(32,0,8,12); ctx.fillRect(29,0,14,4);
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(48,10,5,Math.PI,0); ctx.fill();
+        wheel(40,wY,9,K,S,R,6); wheel(60,wY,9,K,S,R,6);
+        ctx.strokeStyle=R; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(40,wY); ctx.lineTo(60,wY); ctx.stroke();
+      } else if(vi===1){ // 2-6-0 Mogul + tender
+        ctx.fillStyle=B; ctx.fillRect(16,11,68,17);
+        ctx.beginPath(); ctx.ellipse(16,19,4,8,0,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(86,7,26,21); ctx.fillStyle=W; ctx.fillRect(89,10,8,8); ctx.fillRect(99,10,8,8);
+        ctx.fillStyle='#111'; ctx.fillRect(20,1,8,11); ctx.fillRect(17,1,14,4);
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(68,11,5,Math.PI,0); ctx.fill();
+        wheel(10,wY+3,5,K,S,R,4);
+        [34,52,70].forEach(x=>wheel(x,wY,8,K,S,R,6));
+        ctx.strokeStyle=R; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(34,wY); ctx.lineTo(70,wY); ctx.stroke();
+        ctx.fillStyle=S; ctx.fillRect(82,21,4,7); ctx.fillRect(112,21,4,7);
+      } else if(vi===2){ // 4-6-2 Pacific + long tender
+        ctx.fillStyle=B; ctx.fillRect(10,11,78,16);
+        ctx.beginPath(); ctx.ellipse(10,19,4,8,0,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(90,6,26,22); ctx.fillStyle=W; ctx.fillRect(93,9,8,8); ctx.fillRect(104,9,7,8);
+        ctx.fillStyle='#111'; ctx.fillRect(16,2,7,10); ctx.fillRect(13,2,13,4);
+        ctx.fillStyle=R; ctx.fillRect(12,4,6,13); ctx.fillRect(24,4,6,13); // deflectors
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(76,11,5,Math.PI,0); ctx.fill();
+        wheel(5,wY+3,4,K,S,R,4);
+        [28,46,64].forEach(x=>wheel(x,wY,9,K,S,R,6));
+        wheel(82,wY+3,5,K,S,R,4);
+        ctx.strokeStyle=R; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(28,wY); ctx.lineTo(64,wY); ctx.stroke();
+        ctx.fillStyle=S; ctx.fillRect(86,21,4,7); ctx.fillRect(116,21,4,7);
+      } else if(vi===3){ // 2-8-0 Consolidation – 4 big drives + double chimney
+        ctx.fillStyle=B; ctx.fillRect(12,10,78,18);
+        ctx.beginPath(); ctx.ellipse(12,19,4,9,0,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(92,6,24,22); ctx.fillStyle=W; ctx.fillRect(95,9,8,8); ctx.fillRect(106,9,7,8);
+        ctx.fillStyle='#111'; ctx.fillRect(18,0,7,13); ctx.fillRect(15,0,13,4);
+        ctx.fillStyle='#111'; ctx.fillRect(28,0,7,13); ctx.fillRect(25,0,13,4);
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(78,10,5,Math.PI,0); ctx.fill();
+        wheel(7,wY+3,4,K,S,R,4);
+        [26,42,58,74].forEach(x=>wheel(x,wY,8,K,S,R,6));
+        ctx.strokeStyle=R; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(26,wY); ctx.lineTo(74,wY); ctx.stroke();
+        ctx.fillStyle=S; ctx.fillRect(88,21,4,7); ctx.fillRect(116,21,4,7);
+      } else { // vi=4: Beyer-Garratt articulated
+        ctx.fillStyle=B; ctx.fillRect(0,13,34,15); // left engine
+        ctx.fillStyle='#111'; ctx.fillRect(4,2,7,13); ctx.fillRect(1,2,13,4);
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(26,13,4,Math.PI,0); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(34,8,52,20); // central tank
+        ctx.fillStyle=W; ctx.fillRect(52,11,10,10); ctx.fillRect(64,11,10,10);
+        ctx.fillStyle=B; ctx.fillRect(86,13,34,15); // right engine
+        ctx.fillStyle='#111'; ctx.fillRect(109,2,7,13); ctx.fillRect(106,2,13,4);
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(94,13,4,Math.PI,0); ctx.fill();
+        [10,22].forEach(x=>wheel(x,wY,7,K,S,R,6));
+        [98,110].forEach(x=>wheel(x,wY,7,K,S,R,6));
+        bogie(60,tY-1,K,S);
+      }
+
+    } else if(sub==='pacific'){
+      if(vi===0){ // Standard exposed-motion Pacific
+        ctx.fillStyle=B; ctx.fillRect(16,11,76,16);
+        ctx.beginPath(); ctx.ellipse(16,19,5,8,0,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(94,6,22,22); ctx.fillStyle=W; ctx.fillRect(97,9,8,7); ctx.fillRect(107,9,7,7);
+        ctx.fillStyle='#1a1a1a'; ctx.fillRect(20,2,7,10); ctx.fillRect(17,2,13,4);
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(80,11,5,Math.PI,0); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(14,4,7,14); ctx.fillRect(26,4,7,14);
+        wheel(10,wY+3,5,K,S,R,4);
+        [36,54,72].forEach(x=>wheel(x,wY,9,K,S,R,6));
+        wheel(90,wY+3,5,K,S,R,4);
+        ctx.strokeStyle=R; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(36,wY); ctx.lineTo(72,wY); ctx.stroke();
+        ctx.fillStyle=S; ctx.fillRect(90,21,4,7); ctx.fillRect(116,21,4,7);
+      } else if(vi===1){ // Streamlined casing (smooth shell, no exposed boiler)
+        ctx.fillStyle=B;
+        ctx.beginPath(); ctx.moveTo(6,28); ctx.quadraticCurveTo(6,10,20,10); ctx.lineTo(94,10); ctx.lineTo(94,28); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(20,12,74,4); // speed stripe
+        ctx.fillStyle=R; ctx.fillRect(94,8,22,20); ctx.fillStyle=W; ctx.fillRect(97,11,8,8); ctx.fillRect(107,11,7,8);
+        ctx.fillStyle='#38bdf8'; ctx.beginPath(); ctx.arc(7,20,5,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=W; [30,50,70].forEach(x=>ctx.fillRect(x,12,12,7));
+        wheel(6,wY+3,4,K,S,R,4);
+        [26,44,62].forEach(x=>wheel(x,wY,9,K,S,R,6));
+        wheel(84,wY+3,5,K,S,R,4);
+        ctx.strokeStyle=R; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(26,wY); ctx.lineTo(62,wY); ctx.stroke();
+        ctx.fillStyle=S; ctx.fillRect(90,21,4,7); ctx.fillRect(116,21,4,7);
+      } else if(vi===2){ // Cab-forward (cab at FRONT, firebox at back)
+        ctx.fillStyle=R; ctx.fillRect(0,7,26,21); // cab first
+        ctx.fillStyle=W; ctx.fillRect(3,10,10,9); ctx.fillRect(14,10,9,9);
+        ctx.fillStyle=B; ctx.fillRect(26,11,72,16);
+        ctx.beginPath(); ctx.ellipse(98,19,5,8,0,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle='#111'; ctx.fillRect(88,1,7,11); ctx.fillRect(85,1,13,4); // rear chimney
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(38,11,5,Math.PI,0); ctx.fill();
+        [36,54,72].forEach(x=>wheel(x,wY,9,K,S,R,6));
+        wheel(24,wY+3,5,K,S,R,4); wheel(92,wY+3,5,K,S,R,4);
+        ctx.strokeStyle=R; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(36,wY); ctx.lineTo(72,wY); ctx.stroke();
+        ctx.fillStyle=S; ctx.fillRect(2,28,22,2); // footplate
+      } else if(vi===3){ // Double-chimney wide Pacific
+        ctx.fillStyle=B; ctx.fillRect(14,10,80,18);
+        ctx.beginPath(); ctx.ellipse(14,19,5,9,0,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(96,6,20,22); ctx.fillStyle=W; ctx.fillRect(99,9,7,8); ctx.fillRect(108,9,6,8);
+        ctx.fillStyle='#1a1a1a'; ctx.fillRect(18,0,8,13); ctx.fillRect(15,0,14,4);
+        ctx.fillStyle='#1a1a1a'; ctx.fillRect(29,0,8,13); ctx.fillRect(26,0,14,4); // 2nd chimney
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(82,10,5,Math.PI,0); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(12,4,7,14); ctx.fillRect(26,4,7,14);
+        wheel(8,wY+3,5,K,S,R,4);
+        [30,48,66,84].forEach(x=>wheel(x,wY,8,K,S,R,6));
+        wheel(96,wY+3,5,K,S,R,4);
+        ctx.strokeStyle=R; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(30,wY); ctx.lineTo(84,wY); ctx.stroke();
+        ctx.fillStyle=S; ctx.fillRect(92,21,4,7); ctx.fillRect(116,21,4,7);
+      } else { // vi=4: Double-headed (two cabs, mirrored)
+        // Left cab+boiler
+        ctx.fillStyle=R; ctx.fillRect(0,7,20,21); ctx.fillStyle=W; ctx.fillRect(3,10,7,8); ctx.fillRect(11,10,7,8);
+        ctx.fillStyle=B; ctx.fillRect(20,12,80,14);
+        // Right cab+boiler
+        ctx.fillStyle=R; ctx.fillRect(100,7,20,21); ctx.fillStyle=W; ctx.fillRect(103,10,7,8); ctx.fillRect(112,10,6,8);
+        ctx.fillStyle='#111'; ctx.fillRect(52,1,8,13); ctx.fillRect(49,1,14,4); // center chimney
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(40,12,4,Math.PI,0); ctx.fill();
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(80,12,4,Math.PI,0); ctx.fill();
+        [22,40,58,76,94].forEach(x=>wheel(x,wY,8,K,S,R,6));
+        ctx.strokeStyle=R; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(22,wY); ctx.lineTo(94,wY); ctx.stroke();
+      }
+
+    } else if(sub==='mountain'){
+      if(vi===0){ // 2-6-2 Prairie – medium, 3 drivers
+        ctx.fillStyle=B; ctx.fillRect(20,11,68,17); ctx.beginPath(); ctx.ellipse(20,19,4,8,0,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(90,5,26,23); ctx.fillStyle=W; ctx.fillRect(93,8,9,9); ctx.fillRect(104,8,8,9);
+        ctx.fillStyle='#111'; ctx.fillRect(26,0,10,13); ctx.fillRect(22,0,18,5);
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(70,11,5,Math.PI,0); ctx.fill();
+        wheel(14,wY+3,5,K,S,R,4); [36,54,72].forEach(x=>wheel(x,wY,9,K,S,R,8)); wheel(86,wY+3,5,K,S,R,4);
+        ctx.strokeStyle=S; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(36,wY); ctx.lineTo(72,wY); ctx.stroke();
+      } else if(vi===1){ // 2-8-0 Consolidation – 4 large drivers
+        ctx.fillStyle=B; ctx.fillRect(14,10,76,18); ctx.beginPath(); ctx.ellipse(14,19,4,9,0,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(92,5,24,23); ctx.fillStyle=W; ctx.fillRect(95,8,9,9); ctx.fillRect(106,8,7,9);
+        ctx.fillStyle='#111'; ctx.fillRect(20,0,10,14); ctx.fillRect(16,0,18,5);
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(76,10,5,Math.PI,0); ctx.fill();
+        wheel(8,wY+3,5,K,S,R,4); [26,42,58,74].forEach(x=>wheel(x,wY,9,K,S,R,8));
+        ctx.strokeStyle=S; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(26,wY); ctx.lineTo(74,wY); ctx.stroke();
+      } else if(vi===2){ // 2-8-2 Mikado – 4 drivers + rear trailer + tallest chimney
+        ctx.fillStyle=B; ctx.fillRect(12,10,80,18); ctx.beginPath(); ctx.ellipse(12,19,4,9,0,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(94,5,22,23); ctx.fillStyle=W; ctx.fillRect(97,8,8,9); ctx.fillRect(107,8,7,9);
+        ctx.fillStyle='#111'; ctx.fillRect(18,0,10,16); ctx.fillRect(14,0,18,5); // taller chimney
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(80,10,6,Math.PI,0); ctx.fill();
+        wheel(6,wY+3,4,K,S,R,4); [24,40,56,72].forEach(x=>wheel(x,wY,10,K,S,R,8)); wheel(88,wY+3,6,K,S,R,4);
+        ctx.strokeStyle=S; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(24,wY); ctx.lineTo(72,wY); ctx.stroke();
+      } else if(vi===3){ // 4-8-4 Northern – 5 axles, very long
+        ctx.fillStyle=B; ctx.fillRect(8,10,86,18); ctx.beginPath(); ctx.ellipse(8,19,4,9,0,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(96,5,22,23); ctx.fillStyle=W; ctx.fillRect(99,8,8,9); ctx.fillRect(109,8,7,9);
+        ctx.fillStyle='#111'; ctx.fillRect(16,0,10,14); ctx.fillRect(12,0,18,5);
+        ctx.fillStyle='#111'; ctx.fillRect(30,0,10,14); ctx.fillRect(26,0,18,5); // 2nd chimney
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(82,10,6,Math.PI,0); ctx.fill();
+        wheel(4,wY+3,4,K,S,R,4); [20,36,52,68,84].forEach(x=>wheel(x,wY,8,K,S,R,8)); wheel(96,wY+3,6,K,S,R,4);
+        ctx.strokeStyle=S; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(20,wY); ctx.lineTo(84,wY); ctx.stroke();
+      } else { // vi=4: Mallet articulated – two engine sets
+        ctx.fillStyle=B; ctx.fillRect(0,12,48,15); // rear engine
+        ctx.fillStyle='#111'; ctx.fillRect(6,0,10,14); ctx.fillRect(2,0,18,5);
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(38,12,5,Math.PI,0); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(48,6,30,22); // cab in center
+        ctx.fillStyle=W; ctx.fillRect(52,9,10,10); ctx.fillRect(64,9,8,10);
+        ctx.fillStyle=B; ctx.fillRect(78,12,42,15); // front engine (smaller)
+        ctx.fillStyle='#111'; ctx.fillRect(82,0,9,12); ctx.fillRect(79,0,15,4);
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(106,12,4,Math.PI,0); ctx.fill();
+        [8,22,36].forEach(x=>wheel(x,wY,8,K,S,R,8)); [82,96,110].forEach(x=>wheel(x,wY,8,K,S,R,8));
+        ctx.strokeStyle=S; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(8,wY); ctx.lineTo(36,wY); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(82,wY); ctx.lineTo(110,wY); ctx.stroke();
+      }
+
+    } else if(sub==='tank'){
+      if(vi===0){ // 0-4-0T tiny shunter – 2 wheels, very compact
+        ctx.fillStyle=B; ctx.fillRect(30,10,46,20);
+        ctx.fillStyle=R; ctx.fillRect(30,9,46,5); ctx.fillRect(30,27,46,4); // side tanks
+        ctx.fillStyle=W; ctx.fillRect(56,13,12,9);
+        ctx.fillStyle='#111'; ctx.fillRect(36,0,8,12); ctx.fillRect(33,0,14,4);
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(50,10,4,Math.PI,0); ctx.fill();
+        wheel(42,wY,9,K,S,R,6); wheel(64,wY,9,K,S,R,6);
+        ctx.strokeStyle=R; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(42,wY); ctx.lineTo(64,wY); ctx.stroke();
+      } else if(vi===1){ // 0-6-0T standard pannier – 3 wheels
+        ctx.fillStyle=B; ctx.fillRect(14,11,76,17);
+        ctx.fillStyle=R; ctx.fillRect(14,10,40,6); ctx.fillRect(14,26,40,4); // left pannier
+        ctx.fillStyle=R; ctx.fillRect(56,10,34,6); ctx.fillRect(56,26,34,4); // right pannier
+        ctx.fillStyle=R; ctx.fillRect(90,8,24,20); ctx.fillStyle=W; ctx.fillRect(93,11,8,8);
+        ctx.fillStyle='#111'; ctx.fillRect(18,2,8,10); ctx.fillRect(15,2,14,4);
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(60,11,5,Math.PI,0); ctx.fill();
+        [34,54,74].forEach(x=>wheel(x,wY,8,K,S,R,6));
+        ctx.strokeStyle=R; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(34,wY); ctx.lineTo(74,wY); ctx.stroke();
+      } else if(vi===2){ // 2-6-2T prairie tank – 3 drive + 2 small
+        ctx.fillStyle=B; ctx.fillRect(10,12,86,16);
+        ctx.fillStyle=R; ctx.fillRect(10,11,52,5); ctx.fillRect(10,26,52,4);
+        ctx.fillStyle=R; ctx.fillRect(62,11,34,5); ctx.fillRect(62,26,34,4);
+        ctx.fillStyle=R; ctx.fillRect(96,8,18,20); ctx.fillStyle=W; ctx.fillRect(99,11,7,8);
+        ctx.fillStyle='#111'; ctx.fillRect(16,2,8,11); ctx.fillRect(13,2,14,4);
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(66,12,5,Math.PI,0); ctx.fill();
+        wheel(6,wY+3,5,K,S,R,4); [30,50,70].forEach(x=>wheel(x,wY,8,K,S,R,6)); wheel(92,wY+3,5,K,S,R,4);
+        ctx.strokeStyle=R; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(30,wY); ctx.lineTo(70,wY); ctx.stroke();
+      } else if(vi===3){ // 4-6-4T large Baltic tank
+        ctx.fillStyle=B; ctx.fillRect(6,11,96,17);
+        ctx.fillStyle=R; ctx.fillRect(6,10,58,6); ctx.fillRect(6,26,58,5);
+        ctx.fillStyle=R; ctx.fillRect(64,10,38,6); ctx.fillRect(64,26,38,5);
+        ctx.fillStyle=R; ctx.fillRect(102,7,14,21); ctx.fillStyle=W; ctx.fillRect(104,10,8,9);
+        ctx.fillStyle='#111'; ctx.fillRect(14,1,9,12); ctx.fillRect(10,1,17,4);
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(74,11,6,Math.PI,0); ctx.fill();
+        [4,20].forEach(x=>wheel(x,wY+3,5,K,S,R,4)); [36,54,72,90].forEach(x=>wheel(x,wY,8,K,S,R,6));
+        ctx.strokeStyle=R; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(36,wY); ctx.lineTo(90,wY); ctx.stroke();
+      } else { // vi=4: Articulated tank (Garratt-style, all tank)
+        ctx.fillStyle=B; ctx.fillRect(0,12,32,16); // front boiler
+        ctx.fillStyle='#111'; ctx.fillRect(4,1,8,13); ctx.fillRect(1,1,14,4);
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(24,12,4,Math.PI,0); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(32,7,56,21); // central water tank
+        ctx.fillStyle=W; ctx.fillRect(48,10,12,10); ctx.fillRect(62,10,10,10);
+        ctx.fillStyle=B; ctx.fillRect(88,12,32,16); // rear boiler
+        ctx.fillStyle='#111'; ctx.fillRect(108,1,8,13); ctx.fillRect(105,1,14,4);
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(96,12,4,Math.PI,0); ctx.fill();
+        [8,20].forEach(x=>wheel(x,wY,7,K,S,R,6)); [100,112].forEach(x=>wheel(x,wY,7,K,S,R,6));
+        bogie(60,tY-1,K,S);
+      }
+
+    } else { // prairie
+      if(vi===0){ // Tiny 0-4-0 – 2 wheels, short body
+        ctx.fillStyle=B; ctx.fillRect(24,13,44,14); ctx.beginPath(); ctx.ellipse(24,20,3,7,0,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(68,10,18,17); ctx.fillStyle=W; ctx.fillRect(71,13,6,7);
+        ctx.fillStyle='#111'; ctx.fillRect(28,3,7,11); ctx.fillRect(25,3,13,4);
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(54,13,4,Math.PI,0); ctx.fill();
+        [38,56].forEach(x=>wheel(x,wY,7,K,S,R,5));
+        ctx.strokeStyle=R; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(38,wY); ctx.lineTo(56,wY); ctx.stroke();
+      } else if(vi===1){ // 0-6-0 short freight – 3 wheels
+        ctx.fillStyle=B; ctx.fillRect(18,12,62,16); ctx.beginPath(); ctx.ellipse(18,20,4,8,0,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(82,8,24,20); ctx.fillStyle=W; ctx.fillRect(85,11,8,8); ctx.fillRect(95,11,7,8);
+        ctx.fillStyle='#111'; ctx.fillRect(22,2,8,11); ctx.fillRect(19,2,14,4);
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(64,12,4,Math.PI,0); ctx.fill();
+        [32,50,68].forEach(x=>wheel(x,wY,7,K,S,R,5));
+        ctx.strokeStyle=R; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(32,wY); ctx.lineTo(68,wY); ctx.stroke();
+      } else if(vi===2){ // 4-4-0 American – cow-catcher + 2 drive
+        ctx.fillStyle=B; ctx.fillRect(16,12,68,15); ctx.beginPath(); ctx.ellipse(16,19,4,7,0,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(86,7,26,21); ctx.fillStyle=W; ctx.fillRect(89,10,8,8); ctx.fillRect(99,10,7,8);
+        ctx.fillStyle='#111'; ctx.fillRect(22,2,7,10); ctx.fillRect(19,2,13,4);
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(68,12,5,Math.PI,0); ctx.fill();
+        // cow-catcher
+        ctx.fillStyle=S; ctx.beginPath(); ctx.moveTo(4,28); ctx.lineTo(14,13); ctx.lineTo(16,13); ctx.lineTo(16,28); ctx.closePath(); ctx.fill();
+        wheel(6,wY+3,4,K,S,R,4); wheel(18,wY+3,4,K,S,R,4);
+        [52,70].forEach(x=>wheel(x,wY,8,K,S,R,5));
+        ctx.strokeStyle=R; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(52,wY); ctx.lineTo(70,wY); ctx.stroke();
+        ctx.fillStyle=S; ctx.fillRect(82,21,4,7); ctx.fillRect(112,21,4,7);
+      } else if(vi===3){ // 4-6-0 Ten-wheeler – 3 drives
+        ctx.fillStyle=B; ctx.fillRect(10,12,76,16); ctx.beginPath(); ctx.ellipse(10,20,4,8,0,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(88,6,26,22); ctx.fillStyle=W; ctx.fillRect(91,9,8,8); ctx.fillRect(101,9,7,8);
+        ctx.fillStyle='#111'; ctx.fillRect(16,2,8,11); ctx.fillRect(12,2,16,4);
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(74,12,5,Math.PI,0); ctx.fill();
+        wheel(4,wY+3,4,K,S,R,4); wheel(14,wY+3,4,K,S,R,4);
+        [38,56,74].forEach(x=>wheel(x,wY,8,K,S,R,6));
+        ctx.strokeStyle=R; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(38,wY); ctx.lineTo(74,wY); ctx.stroke();
+        ctx.fillStyle=S; ctx.fillRect(84,21,4,7); ctx.fillRect(114,21,4,7);
+      } else { // vi=4: 2-8-0 Consolidation freight
+        ctx.fillStyle=B; ctx.fillRect(12,10,82,18); ctx.beginPath(); ctx.ellipse(12,19,4,9,0,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(96,6,22,22); ctx.fillStyle=W; ctx.fillRect(99,9,7,8); ctx.fillRect(109,9,6,8);
+        ctx.fillStyle='#111'; ctx.fillRect(18,0,9,13); ctx.fillRect(14,0,17,4);
+        ctx.fillStyle=S; ctx.beginPath(); ctx.arc(82,10,5,Math.PI,0); ctx.fill();
+        wheel(6,wY+3,4,K,S,R,4); [24,40,56,72].forEach(x=>wheel(x,wY,8,K,S,R,6));
+        ctx.strokeStyle=R; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(24,wY); ctx.lineTo(72,wY); ctx.stroke();
+        ctx.fillStyle=S; ctx.fillRect(92,21,4,7); ctx.fillRect(118,21,4,7);
+      }
+    }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // DIESEL  — each vi is a structurally different locomotive type
+  // ══════════════════════════════════════════════════════════════════════════
+  } else if(type==='diesel'){
+
+    if(sub==='hood'){
+      if(vi===0){ // Short switcher – tiny hood, big cab
+        ctx.fillStyle=B; ctx.fillRect(2,12,48,18); // short hood
+        ctx.fillStyle='#444'; ctx.fillRect(14,4,7,9); ctx.fillRect(11,4,13,4); // stack
+        ctx.fillStyle=R; ctx.fillRect(50,8,48,22); // large cab
+        ctx.fillStyle=W; [54,68,82,94].forEach(x=>ctx.fillRect(x,11,10,9));
+        ctx.fillStyle=S; ctx.fillRect(2,12,3,18); ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(5,20,4,0,Math.PI*2); ctx.fill();
+        bogie(22,tY-1,K,S); bogie(80,tY-1,K,S);
+      } else if(vi===1){ // Medium B-unit hood – 2 stacks, 3 windows
+        ctx.fillStyle=B; ctx.fillRect(0,12,74,18);
+        ctx.fillStyle=S; [8,22].forEach(x=>{ ctx.fillRect(x,4,7,9); ctx.fillRect(x-2,2,11,4); });
+        ctx.fillStyle=R; ctx.fillRect(74,8,42,22);
+        ctx.fillStyle=W; [78,92,106].forEach(x=>ctx.fillRect(x,11,10,9));
+        bogie(22,tY-1,K,S); bogie(88,tY-1,K,S);
+      } else if(vi===2){ // Long C-C hood – 3 stacks, long hood
+        ctx.fillStyle=B; ctx.fillRect(0,12,88,18);
+        ctx.fillStyle='#444'; [14,30,46].forEach(x=>{ ctx.fillRect(x,3,7,10); ctx.fillRect(x-2,2,11,4); });
+        ctx.fillStyle=R; ctx.fillRect(88,7,30,21);
+        ctx.fillStyle=W; [92,104,112].forEach(x=>ctx.fillRect(x,10,9,9));
+        bogie(20,tY-1,K,S); bogie(56,tY-1,K,S); bogie(100,tY-1,K,S);
+      } else if(vi===3){ // Double-unit – two short hoods joined
+        ctx.fillStyle=B; ctx.fillRect(0,12,44,18); // unit 1 hood
+        ctx.fillStyle='#444'; ctx.fillRect(12,4,6,9); ctx.fillRect(10,2,10,4);
+        ctx.fillStyle=R; ctx.fillRect(44,8,28,22); ctx.fillStyle=W; [48,60].forEach(x=>ctx.fillRect(x,11,9,9));
+        ctx.fillStyle=S; ctx.fillRect(72,14,4,8); // coupler between units
+        ctx.fillStyle=B; ctx.fillRect(76,12,44,18); // unit 2 hood
+        ctx.fillStyle='#444'; ctx.fillRect(80,4,6,9); ctx.fillRect(78,2,10,4);
+        ctx.fillStyle=R; ctx.fillRect(88,8,32,22); ctx.fillStyle=W; [92,106].forEach(x=>ctx.fillRect(x,11,9,9));
+        bogie(18,tY-1,K,S); bogie(60,tY-1,K,S); bogie(100,tY-1,K,S);
+      } else { // vi=4: Full-width cab unit – no hood, all cab
+        ctx.fillStyle=B; ctx.beginPath(); ctx.moveTo(0,28); ctx.lineTo(8,10); ctx.lineTo(112,10); ctx.lineTo(120,28); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(8,12,104,3); // speed stripe
+        ctx.fillStyle=W; [20,38,56,74,92].forEach(x=>ctx.fillRect(x,13,14,8));
+        ctx.fillStyle='#444'; [32,70].forEach(x=>{ ctx.fillRect(x,4,6,7); ctx.fillRect(x-2,2,10,4); }); // dorsal stacks
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(8,18,4,0,Math.PI*2); ctx.fill();
+        bogie(26,tY-1,K,S); bogie(90,tY-1,K,S);
+      }
+
+    } else if(sub==='boxcab'){
+      if(vi===0){ // Short symmetric boxcab – equal cab/body
+        ctx.fillStyle=R; ctx.fillRect(0,8,24,22); ctx.fillStyle=R; ctx.fillRect(96,8,24,22);
+        ctx.fillStyle=B; ctx.fillRect(24,12,72,18);
+        ctx.fillStyle=W; ctx.fillRect(4,12,16,10); ctx.fillRect(100,12,16,10);
+        ctx.fillStyle='#555'; [42,58].forEach(x=>{ ctx.fillRect(x,3,5,10); ctx.fillRect(x-1,2,7,4); });
+        ctx.fillStyle=S; ctx.fillRect(24,18,72,3); ctx.fillRect(24,27,72,3);
+        bogie(30,tY-1,K,S); bogie(90,tY-1,K,S);
+      } else if(vi===1){ // Cab-unit EMD F-type – rounded nose, small hump
+        ctx.fillStyle=B;
+        ctx.beginPath(); ctx.moveTo(0,28); ctx.quadraticCurveTo(6,28,14,14); ctx.lineTo(14,10); ctx.lineTo(116,10); ctx.lineTo(116,28); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(14,14,102,4); // nose stripe continues
+        ctx.fillStyle=B; ctx.fillRect(60,6,30,5); // top hump
+        ctx.fillStyle=W; [28,46,64,82,100].forEach(x=>ctx.fillRect(x,12,14,9));
+        ctx.fillStyle='#555'; [62,78].forEach(x=>ctx.fillRect(x,1,4,6));
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(4,20,5,0,Math.PI*2); ctx.fill();
+        bogie(28,tY-1,K,S); bogie(90,tY-1,K,S);
+      } else if(vi===2){ // Wide-cab with tall hump (road slug)
+        ctx.fillStyle=R; ctx.fillRect(0,7,30,23); ctx.fillStyle=R; ctx.fillRect(90,7,30,23);
+        ctx.fillStyle=B; ctx.fillRect(30,12,60,18);
+        ctx.fillStyle=B; ctx.fillRect(42,3,36,10); // tall hump
+        ctx.fillStyle='#555'; [46,66].forEach(x=>{ ctx.fillRect(x,0,5,4); });
+        ctx.fillStyle=W; ctx.fillRect(4,11,22,11); ctx.fillRect(94,11,22,11);
+        ctx.fillStyle=S; ctx.fillRect(30,19,60,4);
+        bogie(24,tY-1,K,S); bogie(96,tY-1,K,S);
+      } else if(vi===3){ // Asymmetric – one large cab + long hood
+        ctx.fillStyle=R; ctx.fillRect(0,7,38,23); // big cab
+        ctx.fillStyle=W; ctx.fillRect(4,11,14,10); ctx.fillRect(20,11,12,10); ctx.fillRect(34,11,0,0);
+        ctx.fillStyle=B; ctx.fillRect(38,12,82,18); // long hood
+        ctx.fillStyle='#444'; [50,66,82].forEach(x=>{ ctx.fillRect(x,4,6,9); ctx.fillRect(x-1,3,8,4); });
+        ctx.fillStyle=S; ctx.fillRect(38,14,82,4);
+        bogie(20,tY-1,K,S); bogie(90,tY-1,K,S);
+      } else { // vi=4: Full-length double-cab (no hood at all)
+        ctx.fillStyle=R; ctx.fillRect(0,7,26,23); ctx.fillStyle=R; ctx.fillRect(94,7,26,23);
+        ctx.fillStyle=B; ctx.fillRect(26,9,68,21);
+        ctx.fillStyle=W; ctx.fillRect(4,11,18,11); ctx.fillRect(98,11,18,11);
+        ctx.fillStyle='#555'; [44,60,76].forEach(x=>{ ctx.fillRect(x,3,5,7); ctx.fillRect(x-1,2,7,4); });
+        ctx.fillStyle=S; ctx.fillRect(26,15,68,4); ctx.fillRect(26,25,68,3);
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(6,16,3,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(6,24,3,0,Math.PI*2); ctx.fill();
+        bogie(28,tY-1,K,S); bogie(92,tY-1,K,S);
+      }
+
+    } else if(sub==='streamline'){
+      if(vi===0){ // Short streamliner – compact nose
+        ctx.fillStyle=B; ctx.beginPath(); ctx.moveTo(0,28); ctx.quadraticCurveTo(8,28,14,14); ctx.lineTo(14,10); ctx.lineTo(80,10); ctx.lineTo(80,28); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.beginPath(); ctx.moveTo(6,22); ctx.quadraticCurveTo(16,22,20,14); ctx.lineTo(80,14); ctx.lineTo(80,18); ctx.lineTo(20,18); ctx.quadraticCurveTo(16,26,6,26); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=W; [22,38,54,68].forEach(x=>ctx.fillRect(x,12,11,8));
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(3,20,4,0,Math.PI*2); ctx.fill();
+        bogie(22,tY-1,K,S); bogie(66,tY-1,K,S);
+      } else if(vi===1){ // Medium streamliner – standard
+        ctx.fillStyle=B; ctx.beginPath(); ctx.moveTo(0,28); ctx.quadraticCurveTo(12,28,18,14); ctx.lineTo(18,10); ctx.lineTo(100,10); ctx.lineTo(100,28); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.beginPath(); ctx.moveTo(5,22); ctx.quadraticCurveTo(18,22,22,14); ctx.lineTo(100,14); ctx.lineTo(100,18); ctx.lineTo(22,18); ctx.quadraticCurveTo(20,26,5,26); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=W; [26,44,62,80,96].forEach(x=>ctx.fillRect(x,12,12,8));
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(4,20,4,0,Math.PI*2); ctx.fill();
+        bogie(26,tY-1,K,S); bogie(82,tY-1,K,S);
+      } else if(vi===2){ // Long streamliner – pointed nose, wide
+        ctx.fillStyle=B; ctx.beginPath(); ctx.moveTo(0,28); ctx.lineTo(16,10); ctx.lineTo(116,10); ctx.lineTo(116,28); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(16,12,100,4);
+        ctx.fillStyle=W; [22,40,58,76,94,108].forEach(x=>ctx.fillRect(x,12,11,8));
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(4,20,4,0,Math.PI*2); ctx.fill();
+        bogie(24,tY-1,K,S); bogie(92,tY-1,K,S);
+      } else if(vi===3){ // Double-unit streamliner
+        // Unit 1
+        ctx.fillStyle=B; ctx.beginPath(); ctx.moveTo(0,28); ctx.quadraticCurveTo(10,28,16,14); ctx.lineTo(16,10); ctx.lineTo(62,10); ctx.lineTo(62,28); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(16,13,46,4);
+        ctx.fillStyle=W; [22,36,50].forEach(x=>ctx.fillRect(x,12,10,8));
+        // Unit 2
+        ctx.fillStyle=B; ctx.fillRect(64,10,56,18);
+        ctx.fillStyle=S; ctx.fillRect(64,13,56,4);
+        ctx.fillStyle=W; [68,82,96,108].forEach(x=>ctx.fillRect(x,12,10,8));
+        ctx.fillStyle=S; ctx.fillRect(60,18,4,8); // inter-unit coupler
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(4,20,4,0,Math.PI*2); ctx.fill();
+        bogie(22,tY-1,K,S); bogie(52,tY-1,K,S); bogie(96,tY-1,K,S);
+      } else { // vi=4: Full-length modern streamliner + skirt
+        ctx.fillStyle=B; ctx.beginPath(); ctx.moveTo(0,30); ctx.quadraticCurveTo(12,30,20,12); ctx.lineTo(20,10); ctx.lineTo(116,10); ctx.lineTo(120,30); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(20,12,96,3); ctx.fillRect(20,17,96,3); // double stripe
+        ctx.fillStyle=R; ctx.fillRect(0,28,120,5); // skirt
+        ctx.fillStyle=W; [26,44,62,80,98,110].forEach(x=>ctx.fillRect(x,12,12,8));
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(5,20,4,0,Math.PI*2); ctx.fill();
+        bogie(26,tY-1,K,S); bogie(92,tY-1,K,S);
+      }
+
+    } else if(sub==='shunter'){
+      if(vi===0){ // Tiny 4-wheel shunter (no bogie)
+        ctx.fillStyle=B; ctx.fillRect(26,11,48,19);
+        ctx.fillStyle=R; ctx.fillRect(26,10,48,4);
+        ctx.fillStyle=W; ctx.fillRect(42,14,10,9); ctx.fillRect(54,14,10,9);
+        ctx.fillStyle='#333'; ctx.fillRect(36,2,8,10); ctx.fillRect(34,2,12,4);
+        ctx.fillStyle=S; ctx.fillRect(14,19,12,8); ctx.fillRect(74,19,12,8); // buffers
+        wheel(34,wY,8,K,S,R,5); wheel(54,wY,8,K,S,R,5); wheel(66,wY,8,K,S,R,5); wheel(86,wY,8,K,S,R,5);
+      } else if(vi===1){ // Short bonnet shunter
+        ctx.fillStyle=B; ctx.fillRect(10,10,62,20);
+        ctx.fillStyle=R; ctx.fillRect(10,9,62,4);
+        ctx.fillStyle=W; ctx.fillRect(20,13,10,9); ctx.fillRect(32,13,10,9); ctx.fillRect(44,13,10,9);
+        ctx.fillStyle='#333'; ctx.fillRect(18,2,8,9); ctx.fillRect(16,2,12,4);
+        ctx.fillStyle=S; ctx.fillRect(2,19,8,7); ctx.fillRect(72,19,8,7);
+        ctx.fillStyle='#555'; ctx.fillRect(4,25,8,4); ctx.fillRect(74,25,8,4); // footsteps
+        bogie(40,tY-1,K,S);
+      } else if(vi===2){ // Medium shunter + large buffers
+        ctx.fillStyle=B; ctx.fillRect(8,10,72,20);
+        ctx.fillStyle=R; ctx.fillRect(8,9,72,5);
+        ctx.fillStyle=W; ctx.fillRect(18,13,10,9); ctx.fillRect(30,13,10,9); ctx.fillRect(52,13,10,9);
+        ctx.fillStyle='#333'; ctx.fillRect(20,1,9,10); ctx.fillRect(17,1,15,4);
+        ctx.fillStyle=S; ctx.fillRect(0,17,8,11); ctx.fillRect(80,17,8,11); // large buffers
+        ctx.fillStyle='#555'; ctx.fillRect(2,26,8,3); ctx.fillRect(82,26,8,3);
+        bogie(42,tY-1,K,S);
+      } else if(vi===3){ // Long hood shunter, 2 bogies
+        ctx.fillStyle=B; ctx.fillRect(4,10,88,20);
+        ctx.fillStyle=R; ctx.fillRect(4,9,88,5);
+        ctx.fillStyle=W; ctx.fillRect(14,13,10,9); ctx.fillRect(26,13,10,9); ctx.fillRect(66,13,10,9); ctx.fillRect(80,13,10,9);
+        ctx.fillStyle='#333'; [20,56].forEach(x=>{ ctx.fillRect(x,1,8,10); ctx.fillRect(x-2,1,12,4); });
+        ctx.fillStyle=S; ctx.fillRect(0,18,4,10); ctx.fillRect(92,18,4,10);
+        ctx.fillStyle='#555'; ctx.fillRect(2,26,4,3); ctx.fillRect(94,26,4,3);
+        bogie(24,tY-1,K,S); bogie(72,tY-1,K,S);
+      } else { // vi=4: Long boxcab shunter (full-width)
+        ctx.fillStyle=R; ctx.fillRect(0,7,22,23); ctx.fillStyle=R; ctx.fillRect(98,7,22,23);
+        ctx.fillStyle=B; ctx.fillRect(22,11,76,19);
+        ctx.fillStyle=W; ctx.fillRect(4,11,14,11); ctx.fillRect(102,11,14,11);
+        ctx.fillStyle='#333'; [34,52,70].forEach(x=>{ ctx.fillRect(x,4,6,8); ctx.fillRect(x-1,3,8,4); });
+        ctx.fillStyle=S; ctx.fillRect(22,18,76,4);
+        bogie(28,tY-1,K,S); bogie(92,tY-1,K,S);
+      }
+
+    } else { // railbus
+      if(vi===0){ // Short railcar – 2 axles, 4 windows
+        ctx.fillStyle=B; ctx.fillRect(8,8,70,22);
+        ctx.fillStyle=R; ctx.fillRect(8,8,70,5); ctx.fillRect(8,27,70,3);
+        ctx.fillStyle=W; [14,28,44,58].forEach(x=>ctx.fillRect(x,11,11,12));
+        ctx.fillStyle=R; ctx.fillRect(4,8,6,22);
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(5,16,4,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(5,23,3,0,Math.PI*2); ctx.fill();
+        wheel(22,wY,7,K,S,R,5); wheel(54,wY,7,K,S,R,5);
+      } else if(vi===1){ // Standard railbus – bogie, 5 windows
+        ctx.fillStyle=B; ctx.fillRect(4,7,90,23);
+        ctx.fillStyle=R; ctx.fillRect(4,7,90,4); ctx.fillRect(4,27,90,3);
+        ctx.fillStyle=W; [12,26,42,58,74].forEach(x=>ctx.fillRect(x,10,12,12));
+        ctx.fillStyle=R; ctx.fillRect(0,7,6,23);
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(3,14,4,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(3,22,3,0,Math.PI*2); ctx.fill();
+        bogie(26,tY-1,K,S); bogie(72,tY-1,K,S);
+      } else if(vi===2){ // Long railcar – 3 bogies, 7 windows
+        ctx.fillStyle=B; ctx.fillRect(4,7,112,23);
+        ctx.fillStyle=R; ctx.fillRect(4,7,112,4); ctx.fillRect(4,27,112,3);
+        ctx.fillStyle=W; [10,24,38,54,68,84,100].forEach(x=>ctx.fillRect(x,10,11,12));
+        ctx.fillStyle=R; ctx.fillRect(0,7,6,23);
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(3,14,4,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(3,22,3,0,Math.PI*2); ctx.fill();
+        bogie(22,tY-1,K,S); bogie(60,tY-1,K,S); bogie(98,tY-1,K,S);
+      } else if(vi===3){ // Double-unit railbus
+        // Unit 1
+        ctx.fillStyle=B; ctx.fillRect(0,8,56,22); ctx.fillStyle=R; ctx.fillRect(0,8,56,4); ctx.fillRect(0,27,56,3);
+        ctx.fillStyle=W; [6,20,34,46].forEach(x=>ctx.fillRect(x,11,11,12));
+        // Unit 2
+        ctx.fillStyle=B; ctx.fillRect(60,8,60,22); ctx.fillStyle=R; ctx.fillRect(60,8,60,4); ctx.fillRect(60,27,60,3);
+        ctx.fillStyle=W; [64,78,92,106].forEach(x=>ctx.fillRect(x,11,11,12));
+        ctx.fillStyle=S; ctx.fillRect(54,18,6,8); // coupling
+        bogie(16,tY-1,K,S); bogie(48,tY-1,K,S); bogie(88,tY-1,K,S);
+      } else { // vi=4: Rounded modern railcar, destination board
+        ctx.fillStyle=B; ctx.fillRect(4,7,112,23);
+        ctx.beginPath(); ctx.arc(10,18,7,Math.PI*0.5,Math.PI*1.5); ctx.fillStyle=B; ctx.fill();
+        ctx.beginPath(); ctx.arc(110,18,7,-Math.PI*0.5,Math.PI*0.5); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(4,7,112,4); ctx.fillRect(4,27,112,3);
+        ctx.fillStyle=S; ctx.fillRect(4,20,112,2); // centre stripe
+        ctx.fillStyle=W; [14,30,46,62,78,94].forEach(x=>ctx.fillRect(x,10,12,12));
+        ctx.fillStyle='#001133'; ctx.fillRect(6,7,28,5); // dest board
+        ctx.fillStyle='#fff'; ctx.font='4px sans-serif'; ctx.fillText('EKSPRES',7,11);
+        bogie(26,tY-1,K,S); bogie(90,tY-1,K,S);
+      }
+    }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // HIGHSPEED / MAGLEV  — each vi = structurally different HSR/maglev type
+  // ══════════════════════════════════════════════════════════════════════════
+  } else if(type==='highspeed'){
+
+    if(sub==='maglev'){
+      if(vi===0){ // Low streamlined capsule
+        ctx.fillStyle='rgba(56,189,248,0.2)'; ctx.fillRect(8,tY-6,104,6);
+        ctx.fillStyle='rgba(56,189,248,0.5)'; ctx.fillRect(8,tY-4,104,2);
+        ctx.fillStyle=B;
+        ctx.beginPath(); ctx.moveTo(0,24); ctx.lineTo(12,12); ctx.lineTo(108,12); ctx.quadraticCurveTo(120,12,120,22); ctx.lineTo(120,30); ctx.lineTo(0,30); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(12,14,106,3);
+        ctx.fillStyle=W; [20,38,58,78,96].forEach(x=>ctx.fillRect(x,15,14,8));
+        ctx.fillStyle='#0a1a3a'; ctx.fillRect(0,17,14,7); // visor
+        ctx.fillStyle='#38bdf8'; ctx.beginPath(); ctx.arc(4,21,4,0,Math.PI*2); ctx.fill();
+        ctx.strokeStyle='rgba(56,189,248,0.8)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(8,tY-3); ctx.lineTo(112,tY-3); ctx.stroke();
+      } else if(vi===1){ // Transrapid tall with wraparound skirt
+        ctx.fillStyle='rgba(56,189,248,0.15)'; ctx.fillRect(6,tY-8,108,8);
+        ctx.fillStyle=B;
+        ctx.beginPath(); ctx.moveTo(0,20); ctx.lineTo(10,8); ctx.lineTo(110,8); ctx.quadraticCurveTo(120,8,120,18); ctx.lineTo(120,32); ctx.lineTo(0,32); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(10,10,108,3); ctx.fillRect(10,28,108,3); // top+bottom stripe
+        ctx.fillStyle=W; [18,36,56,76,96,110].forEach(x=>ctx.fillRect(x,12,12,10));
+        ctx.fillStyle='#0a1a3a'; ctx.fillRect(0,13,12,10); // dark visor
+        ctx.fillStyle='#38bdf8'; ctx.beginPath(); ctx.arc(4,18,5,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#e0f2fe'; ctx.beginPath(); ctx.arc(4,18,2,0,Math.PI*2); ctx.fill();
+        ctx.strokeStyle='rgba(56,189,248,0.8)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(6,tY-4); ctx.lineTo(114,tY-4); ctx.stroke();
+      } else if(vi===2){ // Hyperloop tube (circular section ends)
+        ctx.fillStyle=B; ctx.fillRect(10,10,100,22);
+        ctx.beginPath(); ctx.arc(10,21,11,Math.PI*0.5,Math.PI*1.5); ctx.fill(); // left cap
+        ctx.beginPath(); ctx.arc(110,21,11,-Math.PI*0.5,Math.PI*0.5); ctx.fill(); // right cap
+        ctx.fillStyle=S; ctx.fillRect(10,12,100,4);
+        ctx.fillStyle=W; [16,34,54,74,94].forEach(x=>ctx.fillRect(x,15,14,8));
+        ctx.fillStyle='rgba(56,189,248,0.3)'; ctx.fillRect(10,tY-8,100,8); // guide tube
+        ctx.strokeStyle='rgba(56,189,248,0.8)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(4,tY-2); ctx.lineTo(116,tY-2); ctx.stroke();
+      } else if(vi===3){ // Wide aero-train with large skirt
+        ctx.fillStyle='rgba(56,189,248,0.2)'; ctx.fillRect(4,tY-10,112,10);
+        ctx.fillStyle=B;
+        ctx.beginPath(); ctx.moveTo(0,22); ctx.lineTo(6,9); ctx.lineTo(114,9); ctx.lineTo(120,22); ctx.lineTo(120,31); ctx.lineTo(0,31); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(6,11,108,4);
+        ctx.fillStyle=W; [14,32,52,72,92,108].forEach(x=>ctx.fillRect(x,14,12,9));
+        ctx.fillStyle='#0a1a3a'; ctx.fillRect(0,16,8,14); // visor
+        ctx.fillStyle='rgba(56,189,248,0.6)'; ctx.fillRect(0,tY-6,120,6); // magnetic skirt
+        ctx.strokeStyle='rgba(56,189,248,0.9)'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(0,tY-6); ctx.lineTo(120,tY-6); ctx.stroke();
+      } else { // vi=4: Futuristic pointed wedge, full-width
+        ctx.fillStyle='rgba(56,189,248,0.1)'; ctx.fillRect(0,tY-10,120,10);
+        ctx.fillStyle=B;
+        ctx.beginPath(); ctx.moveTo(0,32); ctx.lineTo(0,20); ctx.lineTo(20,9); ctx.lineTo(120,9); ctx.lineTo(120,32); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(20,11,100,3); ctx.fillRect(20,24,100,3); // twin stripes
+        ctx.fillStyle=W; [28,46,66,86,106].forEach(x=>ctx.fillRect(x,13,14,10));
+        ctx.fillStyle='#0a1a3a'; ctx.fillRect(0,18,22,12); // full dark visor
+        ctx.fillStyle='#38bdf8'; ctx.beginPath(); ctx.arc(6,22,5,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#e0f2fe'; ctx.beginPath(); ctx.arc(6,22,2,0,Math.PI*2); ctx.fill();
+        ctx.strokeStyle='rgba(56,189,248,0.8)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(4,tY-4); ctx.lineTo(116,tY-4); ctx.stroke();
+      }
+
+    } else { // bullet
+      if(vi===0){ // Classic conical bullet (Shinkansen 0-series)
+        const bT=12;
+        ctx.fillStyle=B; ctx.beginPath(); ctx.moveTo(0,26); ctx.lineTo(24,bT); ctx.lineTo(112,bT); ctx.lineTo(116,bT+6); ctx.lineTo(116,28); ctx.lineTo(0,28); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(24,bT+2,92,4);
+        ctx.fillStyle=W; [32,52,72,92,108].forEach(x=>ctx.fillRect(x,bT+3,13,7));
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(2,24,3,0,Math.PI*2); ctx.fill();
+        bogie(30,tY-1,K,S); bogie(96,tY-1,K,S);
+      } else if(vi===1){ // Extended long nose (Shinkansen 500-series)
+        ctx.fillStyle=B; ctx.beginPath(); ctx.moveTo(0,27); ctx.lineTo(36,10); ctx.lineTo(112,10); ctx.lineTo(116,16); ctx.lineTo(116,28); ctx.lineTo(0,28); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(36,12,80,3);
+        ctx.fillStyle=W; [44,60,76,94,108].forEach(x=>ctx.fillRect(x,13,11,7));
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(2,25,3,0,Math.PI*2); ctx.fill();
+        bogie(44,tY-1,K,S); bogie(96,tY-1,K,S);
+      } else if(vi===2){ // Duck-bill / platypus nose (N700)
+        ctx.fillStyle=B; ctx.beginPath(); ctx.moveTo(0,28); ctx.lineTo(0,22); ctx.quadraticCurveTo(6,22,14,14); ctx.quadraticCurveTo(18,10,30,10); ctx.lineTo(114,10); ctx.lineTo(118,16); ctx.lineTo(118,28); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(30,12,88,3);
+        ctx.fillStyle=W; [36,54,72,90,108].forEach(x=>ctx.fillRect(x,13,12,7));
+        ctx.fillStyle='#888'; ctx.fillRect(102,8,2,3); ctx.fillRect(112,8,2,3); ctx.fillRect(102,8,12,2);
+        bogie(32,tY-1,K,S); bogie(96,tY-1,K,S);
+      } else if(vi===3){ // Oval rounded TGV nose
+        const bT=10;
+        ctx.fillStyle=B; ctx.beginPath(); ctx.moveTo(0,29); ctx.quadraticCurveTo(0,bT,16,bT); ctx.lineTo(112,bT); ctx.quadraticCurveTo(120,bT,120,20); ctx.lineTo(120,29); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(16,bT+2,104,4);
+        ctx.fillStyle=W; [24,44,64,84,104].forEach(x=>ctx.fillRect(x,bT+3,14,8));
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(4,22,4,0,Math.PI*2); ctx.fill();
+        bogie(30,tY-1,K,S); bogie(96,tY-1,K,S);
+      } else { // vi=4: ICE flat angular wedge
+        ctx.fillStyle=B; ctx.beginPath(); ctx.moveTo(0,29); ctx.lineTo(0,14); ctx.lineTo(18,10); ctx.lineTo(116,10); ctx.lineTo(120,14); ctx.lineTo(120,29); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(18,12,98,3); ctx.fillRect(18,20,98,3);
+        ctx.fillStyle=W; [26,46,66,86,106].forEach(x=>ctx.fillRect(x,13,14,8));
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(5,20,4,0,Math.PI*2); ctx.fill();
+        bogie(30,tY-1,K,S); bogie(96,tY-1,K,S);
+      }
+    }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // ELECTRIC  — each vi = different EMU type/length
+  // ══════════════════════════════════════════════════════════════════════════
+  } else if(type==='electric'){
+    catWire(S);
+
+    if(sub==='krl'){
+      if(vi===0){ // Short 4-car suburban, flat face, panto center
+        ctx.fillStyle=B; ctx.fillRect(2,12,96,20);
+        ctx.fillStyle=R; ctx.fillRect(2,12,96,5);
+        ctx.fillStyle='#111'; ctx.fillRect(2,12,4,20);
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(4,15,3,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(4,25,3,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=W; [12,28,46,64,80].forEach(x=>ctx.fillRect(x,15,14,10));
+        pantoV(50,12,20,S);
+        bogie(22,tY-1,K,S); bogie(78,tY-1,K,S);
+      } else if(vi===1){ // Medium 6-car, rounded nose, panto left
+        ctx.fillStyle=B; ctx.fillRect(2,12,116,20);
+        ctx.fillStyle=R; ctx.fillRect(2,12,116,5);
+        ctx.beginPath(); ctx.arc(8,22,6,Math.PI*0.5,Math.PI*1.5); ctx.fillStyle=B; ctx.fill();
+        ctx.fillStyle='#0a0a2a'; ctx.fillRect(2,14,10,14);
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(4,18,3,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(4,26,3,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=W; [18,34,52,70,90,106].forEach(x=>ctx.fillRect(x,15,14,10));
+        pantoV(38,12,22,S);
+        bogie(24,tY-1,K,S); bogie(92,tY-1,K,S);
+      } else if(vi===2){ // Standard 6-car, pointed nose, panto right
+        ctx.fillStyle=B; ctx.fillRect(2,12,116,20); ctx.beginPath(); ctx.moveTo(0,32); ctx.lineTo(0,22); ctx.lineTo(10,12); ctx.lineTo(2,12); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(2,12,116,5);
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(2,16,3,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(2,26,3,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=W; [14,30,50,70,90,106].forEach(x=>ctx.fillRect(x,15,14,10));
+        pantoV(84,12,22,S);
+        bogie(26,tY-1,K,S); bogie(92,tY-1,K,S);
+      } else if(vi===3){ // 8-car long, flat, two pantos
+        ctx.fillStyle=B; ctx.fillRect(0,12,120,20);
+        ctx.fillStyle=R; ctx.fillRect(0,12,120,5); ctx.fillStyle=S; ctx.fillRect(0,29,120,3);
+        ctx.fillStyle='#111'; ctx.fillRect(0,12,4,20);
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(3,16,3,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(3,26,3,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=W; [8,22,38,54,68,82,96,108].forEach(x=>ctx.fillRect(x,15,10,10));
+        pantoV(34,12,18,S); pantoV(86,12,18,S);
+        bogie(18,tY-1,K,S); bogie(58,tY-1,K,S); bogie(100,tY-1,K,S);
+      } else { // vi=4: Double-deck EMU
+        ctx.fillStyle=B; ctx.fillRect(2,6,116,26);
+        ctx.fillStyle=R; ctx.fillRect(2,6,116,4); // top stripe
+        ctx.fillStyle=S; ctx.fillRect(2,17,116,3); // deck divider
+        ctx.fillStyle=R; ctx.fillRect(2,29,116,3); // bottom stripe
+        ctx.fillStyle='#111'; ctx.fillRect(2,6,4,26);
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(4,10,2,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(4,28,2,0,Math.PI*2); ctx.fill();
+        // Upper deck windows
+        ctx.fillStyle=W; [12,28,46,64,82,100].forEach(x=>ctx.fillRect(x,8,13,7));
+        // Lower deck windows
+        ctx.fillStyle=W; [12,28,46,64,82,100].forEach(x=>ctx.fillRect(x,21,13,7));
+        pantoV(60,6,22,S);
+        bogie(26,tY-1,K,S); bogie(92,tY-1,K,S);
+      }
+
+    } else if(sub==='mrt'){
+      if(vi===0){ // Short 4-car metro, small nose arc
+        ctx.fillStyle=B; ctx.fillRect(10,10,98,22);
+        ctx.beginPath(); ctx.arc(20,21,10,Math.PI*0.5,Math.PI*1.5); ctx.fillStyle=B; ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(10,13,98,4); ctx.fillRect(10,27,98,3);
+        ctx.fillStyle='#0a1a3a'; ctx.fillRect(2,15,14,12);
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(6,18,3,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(6,26,3,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=W; [26,46,66,86].forEach(x=>ctx.fillRect(x,15,16,12));
+        pantoV(70,10,22,S);
+        bogie(28,tY-1,K,S); bogie(84,tY-1,K,S);
+      } else if(vi===1){ // Standard 6-car, large arc nose
+        ctx.fillStyle=B; ctx.fillRect(8,10,108,22);
+        ctx.beginPath(); ctx.arc(22,21,14,Math.PI*0.5,Math.PI*1.5); ctx.fillStyle=B; ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(8,13,108,5); // thick centre stripe
+        ctx.fillStyle='#0a1a3a'; ctx.fillRect(0,15,12,12);
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(4,18,3,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(4,26,3,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=W; [26,48,68,88,104].forEach(x=>ctx.fillRect(x,15,16,12));
+        pantoV(78,10,22,S);
+        bogie(28,tY-1,K,S); bogie(90,tY-1,K,S);
+      } else if(vi===2){ // Wide-body 3-stripe, flat nose
+        ctx.fillStyle=B; ctx.fillRect(4,10,112,22);
+        ctx.fillStyle=S; ctx.fillRect(4,13,112,2); ctx.fillRect(4,17,112,2); ctx.fillRect(4,21,112,2); // 3 thin stripes
+        ctx.fillStyle='#0a1a3a'; ctx.fillRect(0,14,6,14);
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(3,18,3,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(3,26,3,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=W; [12,32,52,72,92,108].forEach(x=>ctx.fillRect(x,14,16,12));
+        pantoV(60,10,22,S);
+        bogie(26,tY-1,K,S); bogie(90,tY-1,K,S);
+      } else if(vi===3){ // Streamlined nose metro
+        ctx.fillStyle=B;
+        ctx.beginPath(); ctx.moveTo(0,28); ctx.lineTo(0,22); ctx.quadraticCurveTo(4,22,12,14); ctx.lineTo(12,10); ctx.lineTo(112,10); ctx.lineTo(116,16); ctx.lineTo(116,28); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(12,12,104,4);
+        ctx.fillStyle=W; [20,40,60,80,100].forEach(x=>ctx.fillRect(x,14,16,10));
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(4,24,4,0,Math.PI*2); ctx.fill();
+        pantoV(72,10,22,S);
+        bogie(26,tY-1,K,S); bogie(92,tY-1,K,S);
+      } else { // vi=4: Double-deck metro
+        ctx.fillStyle=B; ctx.fillRect(4,6,112,26);
+        ctx.beginPath(); ctx.arc(10,19,8,Math.PI*0.5,Math.PI*1.5); ctx.fillStyle=B; ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(4,8,112,3); ctx.fillRect(4,18,112,3); ctx.fillRect(4,29,112,3);
+        ctx.fillStyle='#0a1a3a'; ctx.fillRect(0,10,10,18);
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(3,14,2,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(3,28,2,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=W; [14,32,52,72,92,108].forEach(x=>ctx.fillRect(x,8,14,8));
+        ctx.fillStyle=W; [14,32,52,72,92,108].forEach(x=>ctx.fillRect(x,20,14,8));
+        pantoV(64,6,22,S);
+        bogie(26,tY-1,K,S); bogie(92,tY-1,K,S);
+      }
+
+    } else { // lrt
+      if(vi===0){ // Tiny 2-axle LRT, flat roof, 4 windows
+        ctx.fillStyle=B; ctx.fillRect(8,10,72,20); ctx.fillStyle=R; ctx.fillRect(8,10,72,4); ctx.fillRect(8,28,72,2);
+        ctx.fillStyle=R; ctx.fillRect(4,10,6,20); ctx.fillStyle=W; ctx.fillRect(5,14,4,8);
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(5,13,2,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=W; [16,30,46,60].forEach(x=>ctx.fillRect(x,13,12,11));
+        pantoV(40,10,18,S);
+        wheel(24,wY,6,K,S,R,5); wheel(64,wY,6,K,S,R,5);
+      } else if(vi===1){ // Short bogie LRT, angled roof, 5 windows
+        ctx.fillStyle=B; ctx.fillRect(6,10,90,20);
+        ctx.fillStyle=R; ctx.beginPath(); ctx.moveTo(6,10); ctx.lineTo(96,13); ctx.lineTo(96,10); ctx.lineTo(6,10); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(6,28,90,2);
+        ctx.fillStyle=R; ctx.fillRect(2,10,6,20); ctx.fillStyle=W; ctx.fillRect(3,14,5,8);
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(4,13,2,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=W; [14,28,44,60,76].forEach(x=>ctx.fillRect(x,13,12,11));
+        pantoV(48,10,18,S);
+        bogie(26,tY-1,K,S); bogie(72,tY-1,K,S);
+      } else if(vi===2){ // Standard LRT, arched roof, 5 windows
+        ctx.fillStyle=B; ctx.fillRect(6,10,108,20);
+        ctx.fillStyle=R;
+        ctx.beginPath(); ctx.moveTo(6,10); ctx.quadraticCurveTo(60,4,114,10); ctx.lineTo(114,10); ctx.lineTo(6,10); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(6,28,108,2);
+        ctx.fillStyle=R; ctx.fillRect(2,10,6,20); ctx.fillStyle=W; ctx.fillRect(3,14,4,8);
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(4,13,2,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=W; [14,30,50,70,90].forEach(x=>ctx.fillRect(x,13,16,11));
+        pantoV(60,10,18,S);
+        bogie(26,tY-1,K,S); bogie(88,tY-1,K,S);
+      } else if(vi===3){ // Long 3-bogie LRT, 7 windows
+        ctx.fillStyle=B; ctx.fillRect(4,10,112,20); ctx.fillStyle=R; ctx.fillRect(4,10,112,4); ctx.fillRect(4,28,112,2);
+        ctx.fillStyle=R; ctx.fillRect(0,10,6,20); ctx.fillStyle=W; ctx.fillRect(1,14,5,8);
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(2,13,2,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(4,19,112,2); // mid stripe
+        ctx.fillStyle=W; [10,24,40,56,72,88,104].forEach(x=>ctx.fillRect(x,13,12,11));
+        pantoV(44,10,18,S); pantoV(88,10,18,S);
+        bogie(20,tY-1,K,S); bogie(60,tY-1,K,S); bogie(100,tY-1,K,S);
+      } else { // vi=4: Modern articulated low-floor, curved ends
+        ctx.fillStyle=B; ctx.fillRect(4,10,112,22);
+        ctx.beginPath(); ctx.arc(12,21,9,Math.PI*0.5,Math.PI*1.5); ctx.fillStyle=B; ctx.fill();
+        ctx.beginPath(); ctx.arc(108,21,9,-Math.PI*0.5,Math.PI*0.5); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(4,10,112,4); ctx.fillRect(4,28,112,4);
+        ctx.fillStyle=S; ctx.fillRect(4,19,112,3);
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(4,14,3,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(4,26,3,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=W; [16,32,50,68,86,104].forEach(x=>ctx.fillRect(x,13,14,11));
+        pantoV(52,10,22,S); pantoV(86,10,22,S);
+        bogie(24,tY-1,K,S); bogie(60,tY-1,K,S); bogie(100,tY-1,K,S);
+      }
+    }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // TRAM  — each vi = different tram type
+  // ══════════════════════════════════════════════════════════════════════════
+  } else if(type==='tram'){
+    catWire(S);
+    if(vi===0){ // Tiny heritage 2-axle tram, 4 windows
+      ctx.fillStyle=B; ctx.fillRect(10,9,68,23); ctx.fillStyle=R; ctx.fillRect(10,9,68,4); ctx.fillRect(10,30,68,2);
+      ctx.fillStyle=W; ctx.fillRect(10,12,8,16); ctx.fillRect(70,12,8,16);
+      ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(12,15,3,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(12,26,3,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(76,15,3,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(76,26,3,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle=W; [22,36,52,64].forEach(x=>ctx.fillRect(x,12,10,16));
+      pantoV(42,9,22,S);
+      wheel(22,wY,6,K,S,R,5); wheel(66,wY,6,K,S,R,5);
+    } else if(vi===1){ // Short modern tram, bogie, 4 windows, centre panto
+      ctx.fillStyle=B; ctx.fillRect(4,8,80,24); ctx.fillStyle=R; ctx.fillRect(4,8,80,4); ctx.fillRect(4,30,80,2);
+      ctx.fillStyle=W; ctx.fillRect(4,11,9,16); ctx.fillRect(75,11,9,16);
+      ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(7,14,3,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(7,25,3,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(80,14,3,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(80,25,3,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle=W; [18,32,48,62].forEach(x=>ctx.fillRect(x,11,11,14));
+      pantoV(42,8,24,S);
+      bogie(20,tY-1,K,S); bogie(68,tY-1,K,S);
+    } else if(vi===2){ // Standard tram, 5 windows, panto right
+      ctx.fillStyle=B; ctx.fillRect(4,8,112,24); ctx.fillStyle=R; ctx.fillRect(4,8,112,4); ctx.fillRect(4,30,112,2);
+      ctx.fillStyle=W; ctx.fillRect(4,11,9,16); ctx.fillRect(107,11,9,16);
+      ctx.fillStyle='#ffee88'; [6,113].forEach(cx=>{ ctx.beginPath(); ctx.arc(cx,14,3,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(cx,25,3,0,Math.PI*2); ctx.fill(); });
+      ctx.fillStyle=W; [20,36,54,72,92].forEach(x=>ctx.fillRect(x,11,13,14));
+      pantoV(80,8,24,S);
+      bogie(26,tY-1,K,S); bogie(90,tY-1,K,S);
+    } else if(vi===3){ // Long 3-bogie articulated tram, 7 windows
+      ctx.fillStyle=B; ctx.fillRect(2,8,116,24); ctx.fillStyle=R; ctx.fillRect(2,8,116,4); ctx.fillRect(2,30,116,2);
+      ctx.fillStyle=S; ctx.fillRect(2,24,116,2); // second stripe
+      ctx.fillStyle=W; ctx.fillRect(2,11,9,16); ctx.fillRect(109,11,9,16);
+      ctx.fillStyle='#ffee88'; [4,115].forEach(cx=>{ ctx.beginPath(); ctx.arc(cx,14,3,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(cx,25,3,0,Math.PI*2); ctx.fill(); });
+      ctx.fillStyle=W; [16,30,46,62,78,94,108].forEach(x=>ctx.fillRect(x,11,11,14));
+      pantoV(38,8,24,S); pantoV(80,8,24,S);
+      bogie(18,tY-1,K,S); bogie(60,tY-1,K,S); bogie(100,tY-1,K,S);
+    } else { // vi=4: Low-floor bidirectional, rounded both ends
+      ctx.fillStyle=B; ctx.fillRect(4,9,112,23);
+      ctx.beginPath(); ctx.arc(10,20,8,Math.PI*0.5,Math.PI*1.5); ctx.fillStyle=B; ctx.fill();
+      ctx.beginPath(); ctx.arc(110,20,8,-Math.PI*0.5,Math.PI*0.5); ctx.fill();
+      ctx.fillStyle=R; ctx.fillRect(4,9,112,4); ctx.fillRect(4,28,112,4);
+      ctx.fillStyle=S; ctx.fillRect(4,20,112,2);
+      ctx.fillStyle='#ffee88'; [4,116].forEach(cx=>{ ctx.beginPath(); ctx.arc(cx,14,3,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(cx,26,3,0,Math.PI*2); ctx.fill(); });
+      ctx.fillStyle=W; [16,32,52,72,90,106].forEach(x=>ctx.fillRect(x,12,13,13));
+      pantoV(44,9,24,S); pantoV(76,9,24,S);
+      bogie(26,tY-1,K,S); bogie(90,tY-1,K,S);
+    }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // HERITAGE  — each vi = different carriage type/era
+  // ══════════════════════════════════════════════════════════════════════════
+  } else if(type==='heritage'){
+
+    if(sub==='royal'){
+      if(vi===0){ // Small saloon – short royal carriage
+        ctx.fillStyle=B; ctx.beginPath(); ctx.moveTo(16,30); ctx.lineTo(16,18); ctx.bezierCurveTo(16,6,80,6,80,18); ctx.lineTo(80,30); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.beginPath(); ctx.moveTo(16,20); ctx.quadraticCurveTo(48,14,80,20); ctx.lineTo(80,23); ctx.quadraticCurveTo(48,17,16,23); ctx.closePath(); ctx.fill();
+        [24,44,64].forEach(x=>{ ctx.fillStyle='#001133'; ctx.fillRect(x,18,12,13); ctx.fillStyle=W; ctx.beginPath(); ctx.arc(x+6,18,6,Math.PI,0); ctx.fill(); ctx.fillRect(x,18,12,7); ctx.strokeStyle=S; ctx.lineWidth=1; ctx.strokeRect(x,18,12,13); });
+        ctx.fillStyle=S; ctx.fillRect(16,28,64,3);
+        [30,55].forEach(x=>wheel(x,tY,7,K,S,'#8B6914',8));
+        wheel(10,tY+2,4,K,S,'#8B6914',6); wheel(76,tY+2,4,K,S,'#8B6914',6);
+      } else if(vi===1){ // Medium royal – 4 arched windows
+        ctx.fillStyle=B; ctx.beginPath(); ctx.moveTo(8,30); ctx.lineTo(8,16); ctx.bezierCurveTo(8,0,96,0,96,16); ctx.lineTo(96,30); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.beginPath(); ctx.moveTo(8,18); ctx.quadraticCurveTo(52,10,96,18); ctx.lineTo(96,22); ctx.quadraticCurveTo(52,14,8,22); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(8,8,88,2); // gold band
+        [16,34,58,76].forEach(x=>{ ctx.fillStyle='#001133'; ctx.fillRect(x,18,14,13); ctx.fillStyle=W; ctx.beginPath(); ctx.arc(x+7,18,7,Math.PI,0); ctx.fill(); ctx.fillRect(x,18,14,8); ctx.strokeStyle=S; ctx.lineWidth=1; ctx.strokeRect(x,18,14,13); });
+        ctx.fillStyle=S; ctx.fillRect(8,28,88,3); [8,42,76].forEach(x=>{ ctx.fillStyle=S; ctx.fillRect(x,12,3,18); });
+        [34,60].forEach(x=>wheel(x,tY,7,K,S,'#8B6914',8));
+        wheel(6,tY+2,5,K,S,'#8B6914',6); wheel(92,tY+2,5,K,S,'#8B6914',6);
+      } else if(vi===2){ // Long clerestory roof royal
+        ctx.fillStyle=B; ctx.fillRect(4,14,112,18);
+        ctx.fillStyle=B; ctx.beginPath(); ctx.moveTo(4,14); ctx.quadraticCurveTo(60,6,116,14); ctx.lineTo(116,14); ctx.lineTo(4,14); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=R; ctx.fillRect(20,6,80,8); // clerestory
+        ctx.fillStyle=S; ctx.fillRect(4,14,112,3); ctx.fillRect(4,28,112,3);
+        ctx.fillStyle=S; [14,34,54,74,94].forEach(x=>ctx.fillRect(x,14,3,18));
+        [18,38,58,78,98].forEach(x=>{ ctx.fillStyle='#001133'; ctx.fillRect(x,16,12,13); ctx.fillStyle=W; ctx.beginPath(); ctx.arc(x+6,16,6,Math.PI,0); ctx.fill(); ctx.fillRect(x,16,12,7); });
+        [34,60,86].forEach(x=>wheel(x,tY,7,K,S,'#8B6914',8));
+        wheel(8,tY+2,5,K,S,'#8B6914',6); wheel(108,tY+2,5,K,S,'#8B6914',6);
+      } else if(vi===3){ // Ornate Victorian – 3 gold bands, 5 windows
+        ctx.fillStyle=B; ctx.beginPath(); ctx.moveTo(4,30); ctx.lineTo(4,16); ctx.bezierCurveTo(4,0,116,0,116,16); ctx.lineTo(116,30); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(4,8,112,2); ctx.fillRect(4,12,112,2); ctx.fillRect(4,16,112,2); // 3 gold bands
+        ctx.beginPath(); ctx.moveTo(4,18); ctx.quadraticCurveTo(60,14,116,18); ctx.lineTo(116,22); ctx.quadraticCurveTo(60,18,4,22); ctx.closePath(); ctx.fill();
+        [14,32,52,72,92].forEach(x=>{ ctx.fillStyle='#001133'; ctx.fillRect(x,18,14,13); ctx.fillStyle=W; ctx.beginPath(); ctx.arc(x+7,18,7,Math.PI,0); ctx.fill(); ctx.fillRect(x,18,14,8); });
+        ctx.fillStyle=S; [8,30,50,70,90,108].forEach(x=>{ ctx.fillRect(x,12,3,18); ctx.fillRect(x-1,12,5,3); ctx.fillRect(x-1,27,5,3); });
+        ctx.fillStyle=S; ctx.fillRect(4,28,112,3);
+        [40,60,80].forEach(x=>wheel(x,tY,8,K,S,'#8B6914',8));
+        wheel(10,tY+2,5,K,S,'#8B6914',6); wheel(106,tY+2,5,K,S,'#8B6914',6);
+      } else { // vi=4: Royal inspection saloon, open veranda rear
+        ctx.fillStyle=B; ctx.fillRect(4,12,96,20);
+        ctx.fillStyle=R; ctx.beginPath(); ctx.moveTo(4,12); ctx.quadraticCurveTo(52,4,100,12); ctx.lineTo(100,12); ctx.lineTo(4,12); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(4,20,96,3); ctx.fillRect(4,28,96,3);
+        [14,32,52,72].forEach(x=>{ ctx.fillStyle='#001133'; ctx.fillRect(x,15,14,14); ctx.fillStyle=W; ctx.beginPath(); ctx.arc(x+7,15,7,Math.PI,0); ctx.fill(); ctx.fillRect(x,15,14,8); ctx.strokeStyle=S; ctx.lineWidth=1; ctx.strokeRect(x,15,14,14); });
+        // Open veranda at rear
+        ctx.fillStyle='#555'; ctx.fillRect(100,14,18,18);
+        ctx.fillStyle=S; [102,108,114].forEach(x=>ctx.fillRect(x,14,2,18));
+        [34,60].forEach(x=>wheel(x,tY,7,K,S,'#8B6914',8));
+        wheel(8,tY+2,5,K,S,'#8B6914',6); wheel(96,tY+2,5,K,S,'#8B6914',6);
+      }
+
+    } else if(sub==='heritage'){
+      if(vi===0){ // Short wooden carriage – 4 windows, heavy planks
+        const bX=10; const bW=72;
+        ctx.fillStyle=B; ctx.fillRect(bX,12,bW,20);
+        ctx.fillStyle=R; ctx.beginPath(); ctx.moveTo(bX,12); ctx.quadraticCurveTo(bX+bW/2,5,bX+bW,12); ctx.lineTo(bX+bW,12); ctx.lineTo(bX,12); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(bX,20,bW,3);
+        ctx.strokeStyle=R; ctx.lineWidth=0.8; ctx.globalAlpha=0.4;
+        for(let y=13;y<32;y+=4){ctx.beginPath();ctx.moveTo(bX,y);ctx.lineTo(bX+bW,y);ctx.stroke();} ctx.globalAlpha=1;
+        ctx.fillStyle=S; [bX,bX+24,bX+48,bX+bW-4].forEach(x=>ctx.fillRect(x,12,3,20));
+        [bX+6,bX+28,bX+50,bX+68].forEach(x=>{ ctx.fillStyle='#1a3a1a'; ctx.fillRect(x,15,14,14); ctx.fillStyle=W; ctx.beginPath(); ctx.arc(x+7,15,7,Math.PI,0); ctx.fill(); ctx.fillRect(x,15,14,8); });
+        [bX+20,bX+52].forEach(x=>wheel(x,tY,6,K,S,R,8)); wheel(bX+4,tY+2,4,K,S,R,6); wheel(bX+bW-4,tY+2,4,K,S,R,6);
+      } else if(vi===1){ // Medium clerestory, 5 windows
+        ctx.fillStyle=B; ctx.fillRect(4,13,96,19);
+        ctx.fillStyle=R; ctx.fillRect(20,7,64,7); // clerestory
+        ctx.fillStyle=R; ctx.beginPath(); ctx.moveTo(4,13); ctx.quadraticCurveTo(52,6,100,13); ctx.lineTo(100,13); ctx.lineTo(4,13); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(4,21,96,3);
+        [14,30,50,68,84].forEach(x=>{ ctx.fillStyle='#1a3a1a'; ctx.fillRect(x,16,12,14); ctx.fillStyle=W; ctx.beginPath(); ctx.arc(x+6,16,6,Math.PI,0); ctx.fill(); ctx.fillRect(x,16,12,8); });
+        ctx.fillStyle=S; [4,26,48,70,92].forEach(x=>ctx.fillRect(x,13,3,19));
+        [28,58].forEach(x=>wheel(x,tY,7,K,S,R,8)); wheel(4,tY+2,5,K,S,R,6); wheel(96,tY+2,5,K,S,R,6);
+      } else if(vi===2){ // Long corridor coach, 6 windows, corridor strip
+        ctx.fillStyle=B; ctx.fillRect(4,12,112,20);
+        ctx.fillStyle=R; ctx.beginPath(); ctx.moveTo(4,12); ctx.quadraticCurveTo(60,5,116,12); ctx.lineTo(116,12); ctx.lineTo(4,12); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(4,20,112,3); ctx.fillRect(4,28,112,3);
+        [14,30,48,68,84,100].forEach(x=>{ ctx.fillStyle='#1a3a1a'; ctx.fillRect(x,15,12,14); ctx.fillStyle=W; ctx.beginPath(); ctx.arc(x+6,15,6,Math.PI,0); ctx.fill(); ctx.fillRect(x,15,12,8); });
+        ctx.fillStyle=S; [4,26,46,66,86,108].forEach(x=>ctx.fillRect(x,12,3,19));
+        [38,60,82].forEach(x=>wheel(x,tY,7,K,S,R,8)); wheel(8,tY+2,5,K,S,R,6); wheel(108,tY+2,5,K,S,R,6);
+      } else if(vi===3){ // Ornate Pullman, arched windows, 4 big windows
+        ctx.fillStyle=B; ctx.fillRect(4,12,112,20);
+        ctx.fillStyle=R; ctx.beginPath(); ctx.moveTo(4,12); ctx.quadraticCurveTo(60,3,116,12); ctx.lineTo(116,12); ctx.lineTo(4,12); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(4,20,112,2); ctx.fillRect(4,10,112,2);
+        [14,40,68,92].forEach(x=>{ ctx.fillStyle='#1a3a1a'; ctx.fillRect(x,14,18,17); ctx.fillStyle=W; ctx.beginPath(); ctx.arc(x+9,14,9,Math.PI,0); ctx.fill(); ctx.fillRect(x,14,18,10); ctx.strokeStyle=S; ctx.lineWidth=1.5; ctx.strokeRect(x,14,18,17); });
+        ctx.fillStyle=S; [4,36,66,92,112].forEach(x=>{ ctx.fillRect(x,10,4,22); ctx.fillRect(x-1,10,6,3); ctx.fillRect(x-1,29,6,3); });
+        [38,60,82].forEach(x=>wheel(x,tY,8,K,S,R,8)); wheel(8,tY+2,5,K,S,R,6); wheel(108,tY+2,5,K,S,R,6);
+      } else { // vi=4: Open observation car, large windows, rear deck
+        ctx.fillStyle=B; ctx.fillRect(4,12,90,20);
+        ctx.fillStyle=R; ctx.beginPath(); ctx.moveTo(4,12); ctx.quadraticCurveTo(50,5,94,12); ctx.lineTo(94,12); ctx.lineTo(4,12); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(4,20,90,3); ctx.fillRect(4,28,90,3);
+        [14,34,56,74].forEach(x=>{ ctx.fillStyle='#1a3a1a'; ctx.fillRect(x,14,16,15); ctx.fillStyle=W; ctx.beginPath(); ctx.arc(x+8,14,8,Math.PI,0); ctx.fill(); ctx.fillRect(x,14,16,9); });
+        ctx.fillStyle='#333'; ctx.fillRect(94,12,22,20); // open veranda
+        ctx.fillStyle=S; [96,102,108,114].forEach(x=>ctx.fillRect(x,12,2,20));
+        [30,60].forEach(x=>wheel(x,tY,7,K,S,R,8)); wheel(6,tY+2,5,K,S,R,6); wheel(90,tY+2,5,K,S,R,6);
+      }
+
+    } else if(sub==='narrow'){
+      if(vi===0){ // Tiny narrow-gauge, 2-axle, 3 windows
+        ctx.fillStyle=B; ctx.fillRect(20,14,56,18);
+        ctx.fillStyle=R; ctx.fillRect(20,14,56,4);
+        ctx.fillStyle=W; [26,38,54,64].forEach(x=>ctx.fillRect(x,17,10,9));
+        ctx.fillStyle=S; ctx.fillRect(20,22,56,2);
+        ctx.fillStyle=R; [20,50,72].forEach(x=>ctx.fillRect(x,14,3,18));
+        ctx.strokeStyle=R; ctx.lineWidth=0.7; ctx.globalAlpha=0.3;
+        for(let y=14;y<32;y+=4){ctx.beginPath();ctx.moveTo(20,y);ctx.lineTo(76,y);ctx.stroke();} ctx.globalAlpha=1;
+        ctx.fillStyle='#5a3a1a'; ctx.fillRect(14,26,8,6); ctx.fillRect(74,26,8,6);
+        wheel(32,tY,5,K,S,R,6); wheel(60,tY,5,K,S,R,6); wheel(10,tY+2,3,K,S,R,4); wheel(80,tY+2,3,K,S,R,4);
+      } else if(vi===1){ // Short NG, bogie, 4 windows
+        ctx.fillStyle=B; ctx.fillRect(10,13,72,19);
+        ctx.fillStyle=R; ctx.fillRect(10,13,72,4);
+        ctx.fillStyle=W; [16,28,44,58,70].forEach(x=>ctx.fillRect(x,16,10,10));
+        ctx.fillStyle=S; ctx.fillRect(10,22,72,2);
+        ctx.fillStyle=R; [10,36,60,78].forEach(x=>ctx.fillRect(x,13,3,19));
+        ctx.strokeStyle=R; ctx.lineWidth=0.8; ctx.globalAlpha=0.4;
+        for(let y=13;y<32;y+=4){ctx.beginPath();ctx.moveTo(10,y);ctx.lineTo(82,y);ctx.stroke();} ctx.globalAlpha=1;
+        ctx.fillStyle='#5a3a1a'; ctx.fillRect(0,26,12,6); ctx.fillRect(80,26,12,6);
+        bogie(26,tY-1,K,S); bogie(66,tY-1,K,S);
+      } else if(vi===2){ // Medium NG, 5 windows
+        ctx.fillStyle=B; ctx.fillRect(8,13,90,19);
+        ctx.fillStyle=R; ctx.fillRect(8,13,90,4);
+        ctx.fillStyle=W; [14,28,44,60,76,88].forEach(x=>ctx.fillRect(x,16,11,10));
+        ctx.fillStyle=S; ctx.fillRect(8,22,90,2);
+        ctx.fillStyle=R; [8,32,56,80,94].forEach(x=>ctx.fillRect(x,13,3,19));
+        ctx.strokeStyle=R; ctx.lineWidth=0.8; ctx.globalAlpha=0.35;
+        for(let y=13;y<32;y+=4){ctx.beginPath();ctx.moveTo(8,y);ctx.lineTo(98,y);ctx.stroke();} ctx.globalAlpha=1;
+        ctx.fillStyle='#5a3a1a'; ctx.fillRect(0,26,10,6); ctx.fillRect(96,26,10,6);
+        [28,56].forEach(x=>wheel(x,tY,5,K,S,R,6)); wheel(4,tY+2,3,K,S,R,4); wheel(96,tY+2,3,K,S,R,4);
+      } else if(vi===3){ // Long NG, 2 bogies, 6 windows
+        ctx.fillStyle=B; ctx.fillRect(4,13,112,19);
+        ctx.fillStyle=R; ctx.fillRect(4,13,112,4);
+        ctx.fillStyle=W; [10,24,40,56,72,88,104].forEach(x=>ctx.fillRect(x,16,10,10));
+        ctx.fillStyle=S; ctx.fillRect(4,22,112,2);
+        ctx.fillStyle=R; [4,28,52,76,100,112].forEach(x=>ctx.fillRect(x,13,3,19));
+        ctx.strokeStyle=R; ctx.lineWidth=0.8; ctx.globalAlpha=0.35;
+        for(let y=13;y<32;y+=4){ctx.beginPath();ctx.moveTo(4,y);ctx.lineTo(116,y);ctx.stroke();} ctx.globalAlpha=1;
+        bogie(22,tY-1,K,S); bogie(90,tY-1,K,S);
+      } else { // vi=4: Rack railway (Zahnradbahn) – toothed center rail visible
+        ctx.fillStyle=B; ctx.fillRect(10,10,80,22);
+        ctx.fillStyle=R; ctx.fillRect(10,10,80,4);
+        ctx.fillStyle=W; [18,32,50,66,78].forEach(x=>ctx.fillRect(x,13,10,11));
+        ctx.fillStyle=S; ctx.fillRect(10,19,80,2);
+        ctx.fillStyle=R; [10,36,62,86].forEach(x=>ctx.fillRect(x,10,3,22));
+        // Rack rail (toothed track)
+        ctx.fillStyle='#888'; ctx.fillRect(10,tY-4,80,4);
+        ctx.fillStyle='#555'; for(let rx=14;rx<90;rx+=4){ctx.fillRect(rx,tY-4,2,5);}
+        wheel(28,wY,6,K,S,R,6); wheel(72,wY,6,K,S,R,6); wheel(10,tY+2,4,K,S,R,4); wheel(90,tY+2,4,K,S,R,4);
+      }
+
+    } else { // doubledeck
+      if(vi===0){ // Short double-deck, 4+4 windows, small
+        const bT=4;
+        ctx.fillStyle=B; ctx.fillRect(4,bT,72,34-bT);
+        ctx.fillStyle=R; ctx.fillRect(4,bT,72,4); ctx.fillStyle=S; ctx.fillRect(4,18,72,3);
+        ctx.fillStyle=W; [10,24,40,54,66].forEach(x=>ctx.fillRect(x,bT+4,11,11)); // upper
+        ctx.fillStyle=W; [10,24,40,54,66].forEach(x=>ctx.fillRect(x,21,11,10)); // lower
+        ctx.fillStyle=R; ctx.fillRect(4,bT,6,34-bT); ctx.fillRect(70,bT,6,34-bT);
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(6,bT+6,2,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(6,bT+24,2,0,Math.PI*2); ctx.fill();
+        bogie(20,tY-1,K,S); bogie(58,tY-1,K,S);
+      } else if(vi===1){ // Standard UK double-deck, 5+5 wide
+        const bT=2;
+        ctx.fillStyle=B; ctx.fillRect(2,bT,96,34-bT);
+        ctx.fillStyle=R; ctx.fillRect(2,bT,96,4); ctx.fillStyle=S; ctx.fillRect(2,17,96,3);
+        ctx.fillStyle=W; [10,24,40,56,72,86].forEach(x=>ctx.fillRect(x,bT+4,12,10)); // upper
+        ctx.fillStyle=W; [10,24,40,56,72,86].forEach(x=>ctx.fillRect(x,20,12,10)); // lower
+        ctx.fillStyle=R; ctx.fillRect(2,bT,8,34-bT); ctx.fillRect(90,bT,8,34-bT);
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(5,bT+6,3,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(5,bT+25,3,0,Math.PI*2); ctx.fill();
+        bogie(22,tY-1,K,S); bogie(76,tY-1,K,S);
+      } else if(vi===2){ // Long double-deck, 6+6 windows
+        const bT=2;
+        ctx.fillStyle=B; ctx.fillRect(2,bT,116,34-bT);
+        ctx.fillStyle=R; ctx.fillRect(2,bT,116,4); ctx.fillStyle=S; ctx.fillRect(2,17,116,3);
+        ctx.fillStyle=W; [10,24,40,56,72,86,100,110].forEach(x=>ctx.fillRect(x,bT+4,11,10));
+        ctx.fillStyle=W; [10,24,40,56,72,86,100,110].forEach(x=>ctx.fillRect(x,20,11,10));
+        ctx.fillStyle=R; ctx.fillRect(2,bT,8,34-bT); ctx.fillRect(110,bT,8,34-bT);
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(5,bT+6,3,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(5,bT+25,3,0,Math.PI*2); ctx.fill();
+        bogie(20,tY-1,K,S); bogie(60,tY-1,K,S); bogie(100,tY-1,K,S);
+      } else if(vi===3){ // Tall upper deck (+4px more), dramatic height
+        const bT=0;
+        ctx.fillStyle=B; ctx.fillRect(4,bT,112,36);
+        ctx.fillStyle=R; ctx.fillRect(4,bT,112,4); ctx.fillStyle=S; ctx.fillRect(4,18,112,3);
+        ctx.fillStyle=W; [10,26,44,62,80,96,108].forEach(x=>ctx.fillRect(x,bT+4,13,12)); // tall upper
+        ctx.fillStyle=W; [10,26,44,62,80,96,108].forEach(x=>ctx.fillRect(x,21,13,10));
+        ctx.fillStyle=R; ctx.fillRect(4,bT,8,36); ctx.fillRect(108,bT,8,36);
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(7,bT+7,3,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(7,bT+27,3,0,Math.PI*2); ctx.fill();
+        bogie(22,tY-1,K,S); bogie(90,tY-1,K,S);
+      } else { // vi=4: Modern articulated double-deck (TGV duplex style)
+        ctx.fillStyle=B;
+        ctx.beginPath(); ctx.moveTo(0,36); ctx.lineTo(0,20); ctx.lineTo(12,2); ctx.lineTo(108,2); ctx.lineTo(120,20); ctx.lineTo(120,36); ctx.closePath(); ctx.fill();
+        ctx.fillStyle=S; ctx.fillRect(12,4,96,3); ctx.fillRect(12,18,96,3);
+        ctx.fillStyle=W; [18,34,52,70,88,104].forEach(x=>ctx.fillRect(x,5,12,11));
+        ctx.fillStyle=W; [18,34,52,70,88,104].forEach(x=>ctx.fillRect(x,20,12,11));
+        ctx.fillStyle='#ffee88'; ctx.beginPath(); ctx.arc(6,22,4,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#e0f2fe'; ctx.beginPath(); ctx.arc(6,22,2,0,Math.PI*2); ctx.fill();
+        bogie(26,tY-1,K,S); bogie(92,tY-1,K,S);
+      }
+    }
+  }
+}
+
+
+function showStationBanner(station) {
+  const el = document.getElementById('station-banner');
+  document.getElementById('sb-icon').textContent = station.icon;
+  document.getElementById('sb-name').textContent = station.name;
+  document.getElementById('sb-landmark').textContent = station.landmark;
+  el.classList.remove('fade-out');
+  el.classList.add('visible');
+  setTimeout(() => {
+    el.classList.add('fade-out');
+    setTimeout(() => el.classList.remove('visible', 'fade-out'), 600);
+  }, 3000);
+}
+
+function updateStationChip() {
+  const station = getCurrentStation();
+  document.getElementById('sc-name').textContent = station.name;
+  document.getElementById('station-chip').style.display = 'block';
+}
+
+// ── Boot ───────────────────────────────────────────────────────────────────────
+showTrainSelect();
+</script>
+</body>
+</html>

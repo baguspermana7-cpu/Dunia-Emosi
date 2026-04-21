@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80" width="120" height="80">
+  <!-- Racing GT car — red with flame livery, #11, rear wing, smoke -->
+  <defs>
+    <linearGradient id="rcBody" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#cc2222"/>
+      <stop offset="60%" stop-color="#b81c1c"/>
+      <stop offset="100%" stop-color="#991515"/>
+    </linearGradient>
+    <linearGradient id="rcFlame" x1="0" y1="1" x2="0.5" y2="0">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="50%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#ef4444"/>
+    </linearGradient>
+    <linearGradient id="rcWin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#b8d8f0"/>
+      <stop offset="100%" stop-color="#7ab0d4"/>
+    </linearGradient>
+    <linearGradient id="rcSmoke" x1="0" y1="0.5" x2="1" y2="0.5">
+      <stop offset="0%" stop-color="#e8e8e8" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#d0d0d0" stop-opacity="0.3"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ═══ SMOKE/DUST CLOUD (behind car) ═══ -->
+  <circle cx="102" cy="38" r="14" fill="#e0e0e0" opacity="0.7"/>
+  <circle cx="110" cy="32" r="11" fill="#d8d8d8" opacity="0.6"/>
+  <circle cx="108" cy="44" r="10" fill="#ddd" opacity="0.5"/>
+  <circle cx="116" cy="38" r="8" fill="#ccc" opacity="0.4"/>
+  <circle cx="114" cy="28" r="7" fill="#d4d4d4" opacity="0.35"/>
+
+  <!-- ═══ REAR WING ═══ -->
+  <!-- Wing supports -->
+  <rect x="82" y="22" width="2" height="16" rx="0.5" fill="#222"/>
+  <rect x="90" y="24" width="2" height="14" rx="0.5" fill="#222"/>
+  <!-- Wing plate -->
+  <rect x="78" y="18" width="18" height="5" rx="1.5" fill="#1a1a1a"/>
+  <rect x="78" y="19" width="18" height="1.5" fill="#333"/>
+  <!-- Wing endplates -->
+  <rect x="77" y="17" width="2" height="7" rx="0.5" fill="#111"/>
+  <rect x="95" y="17" width="2" height="7" rx="0.5" fill="#111"/>
+
+  <!-- ═══ MAIN BODY ═══ -->
+  <!-- Lower body / side skirt -->
+  <path d="M10,52 L12,48 L92,42 L96,48 L96,56 L10,56 Z" fill="#8b1515"/>
+
+  <!-- Main body panel -->
+  <path d="M8,48 Q6,42 10,38 L28,30 L72,28 L90,32 L94,42 L94,52 L8,52 Z" fill="url(#rcBody)"/>
+
+  <!-- Roof / top line -->
+  <path d="M32,30 L40,24 L62,22 L72,24 L76,28 L72,28 L32,30 Z" fill="#aa1818"/>
+
+  <!-- ═══ FLAME LIVERY ═══ -->
+  <!-- Flame tongues on side -->
+  <path d="M14,50 Q18,42 22,46 Q26,38 32,44 Q36,36 40,42 Q42,38 44,44 L44,52 L14,52 Z" fill="url(#rcFlame)" opacity="0.9"/>
+  <!-- Upper flame accent -->
+  <path d="M18,46 Q22,40 26,44 Q30,37 34,42 Q36,38 38,41 L38,46 L18,48 Z" fill="#f59e0b" opacity="0.7"/>
+
+  <!-- ═══ WINDOWS ═══ -->
+  <!-- Side window -->
+  <path d="M38,29 L42,24 L60,23 L68,25 L72,28 L70,30 L38,32 Z" fill="url(#rcWin)"/>
+  <!-- Window frame -->
+  <path d="M38,29 L42,24 L60,23 L68,25 L72,28 L70,30 L38,32 Z" fill="none" stroke="#222" stroke-width="1.2"/>
+  <!-- Window shine -->
+  <path d="M42,25 L48,24 L46,28 L40,29 Z" fill="rgba(255,255,255,0.3)"/>
+  <!-- A-pillar -->
+  <line x1="38" y1="32" x2="42" y2="24" stroke="#222" stroke-width="1.5"/>
+  <!-- B-pillar -->
+  <line x1="56" y1="30" x2="58" y2="23" stroke="#222" stroke-width="1"/>
+
+  <!-- ═══ NUMBER 11 ═══ -->
+  <rect x="48" y="38" width="16" height="10" rx="2" fill="rgba(255,255,255,0.85)"/>
+  <text x="56" y="46.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="900" fill="#111">11</text>
+
+  <!-- ═══ HEADLIGHTS ═══ -->
+  <rect x="8" y="40" width="4" height="6" rx="1.5" fill="#fef3c7"/>
+  <rect x="8" y="41" width="3" height="4" rx="1" fill="#fde68a"/>
+
+  <!-- ═══ TAIL LIGHTS ═══ -->
+  <rect x="92" y="42" width="3" height="4" rx="1" fill="#ef4444"/>
+  <rect x="92" y="42" width="2" height="3" rx="0.5" fill="#fca5a5"/>
+
+  <!-- ═══ FRONT SPLITTER ═══ -->
+  <rect x="4" y="52" width="22" height="3" rx="1" fill="#111"/>
+  <rect x="4" y="52" width="22" height="1" fill="#333"/>
+
+  <!-- ═══ SIDE VENT ═══ -->
+  <path d="M72,34 L80,32 L82,36 L74,38 Z" fill="#222"/>
+  <line x1="74" y1="34" x2="80" y2="33" stroke="#333" stroke-width="0.7"/>
+  <line x1="74" y1="36" x2="81" y2="34.5" stroke="#333" stroke-width="0.7"/>
+
+  <!-- ═══ DIFFUSER ═══ -->
+  <rect x="80" y="52" width="16" height="3" rx="1" fill="#111"/>
+  <line x1="84" y1="52" x2="84" y2="55" stroke="#333" stroke-width="0.8"/>
+  <line x1="88" y1="52" x2="88" y2="55" stroke="#333" stroke-width="0.8"/>
+  <line x1="92" y1="52" x2="92" y2="55" stroke="#333" stroke-width="0.8"/>
+
+  <!-- ═══ WHEELS ═══ -->
+  <!-- Front wheel -->
+  <circle cx="22" cy="58" r="9" fill="#1a1a1a"/>
+  <circle cx="22" cy="58" r="7.5" fill="#333"/>
+  <circle cx="22" cy="58" r="6" fill="#2a2a2a"/>
+  <!-- Spokes -->
+  <line x1="22" y1="51" x2="22" y2="65" stroke="#444" stroke-width="1.2"/>
+  <line x1="15" y1="58" x2="29" y2="58" stroke="#444" stroke-width="1.2"/>
+  <line x1="17" y1="53" x2="27" y2="63" stroke="#444" stroke-width="1"/>
+  <line x1="27" y1="53" x2="17" y2="63" stroke="#444" stroke-width="1"/>
+  <!-- Hub -->
+  <circle cx="22" cy="58" r="2.5" fill="#555"/>
+  <circle cx="22" cy="58" r="1.2" fill="#888"/>
+  <!-- Tire rim highlight -->
+  <circle cx="22" cy="58" r="8.5" fill="none" stroke="#444" stroke-width="0.5"/>
+
+  <!-- Rear wheel -->
+  <circle cx="78" cy="56" r="10" fill="#1a1a1a"/>
+  <circle cx="78" cy="56" r="8.5" fill="#333"/>
+  <circle cx="78" cy="56" r="6.5" fill="#2a2a2a"/>
+  <!-- Spokes -->
+  <line x1="78" y1="47" x2="78" y2="65" stroke="#444" stroke-width="1.2"/>
+  <line x1="69" y1="56" x2="87" y2="56" stroke="#444" stroke-width="1.2"/>
+  <line x1="71" y1="49.5" x2="85" y2="62.5" stroke="#444" stroke-width="1"/>
+  <line x1="85" y1="49.5" x2="71" y2="62.5" stroke="#444" stroke-width="1"/>
+  <!-- Hub -->
+  <circle cx="78" cy="56" r="2.8" fill="#555"/>
+  <circle cx="78" cy="56" r="1.3" fill="#888"/>
+  <!-- Tire rim highlight -->
+  <circle cx="78" cy="56" r="9.5" fill="none" stroke="#444" stroke-width="0.5"/>
+
+  <!-- ═══ GROUND LINE ═══ -->
+  <rect x="0" y="66" width="100" height="2" rx="1" fill="#555" opacity="0.4"/>
+
+  <!-- ═══ SPEED LINES ═══ -->
+  <line x1="100" y1="40" x2="112" y2="40" stroke="#bbb" stroke-width="0.8" opacity="0.5"/>
+  <line x1="98" y1="46" x2="108" y2="46" stroke="#bbb" stroke-width="0.6" opacity="0.4"/>
+  <line x1="100" y1="52" x2="110" y2="52" stroke="#bbb" stroke-width="0.7" opacity="0.45"/>
+</svg>

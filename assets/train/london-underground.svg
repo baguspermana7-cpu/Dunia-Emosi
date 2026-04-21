@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 215 115">
+  <!-- body — boxy, wide, flat roof -->
+  <rect x="4"  y="20" width="208" height="72" rx="6" fill="#1C1C1C"/>
+  <!-- red band (iconic London Underground red) -->
+  <rect x="4"  y="36" width="208" height="8" rx="2" fill="#CC1414"/>
+  <!-- blue band below red -->
+  <rect x="4"  y="44" width="208" height="8" rx="2" fill="#003399"/>
+  <!-- large windows (sub-surface style) -->
+  <rect x="14"  y="24" width="28" height="22" rx="3" fill="#87CEEB" opacity=".7"/>
+  <rect x="48"  y="24" width="28" height="22" rx="3" fill="#87CEEB" opacity=".7"/>
+  <rect x="82"  y="24" width="28" height="22" rx="3" fill="#87CEEB" opacity=".7"/>
+  <rect x="116" y="24" width="28" height="22" rx="3" fill="#87CEEB" opacity=".7"/>
+  <rect x="150" y="24" width="28" height="22" rx="3" fill="#87CEEB" opacity=".7"/>
+  <rect x="184" y="24" width="22" height="22" rx="3" fill="#87CEEB" opacity=".65"/>
+  <!-- doors -->
+  <rect x="40"  y="52" width="8" height="32" rx="2" fill="#444"/>
+  <rect x="76"  y="52" width="8" height="32" rx="2" fill="#444"/>
+  <rect x="112" y="52" width="8" height="32" rx="2" fill="#444"/>
+  <rect x="148" y="52" width="8" height="32" rx="2" fill="#444"/>
+  <rect x="184" y="52" width="8" height="32" rx="2" fill="#444"/>
+  <!-- roundel on front -->
+  <circle cx="14" cy="59" r="10" fill="#CC1414"/>
+  <rect x="5"   cy="57" width="18" height="4" rx="1" fill="#003399" x="5" y="57"/>
+  <!-- headlamp -->
+  <circle cx="8" cy="52" r="4" fill="#FFE040" opacity=".9"/>
+  <!-- rail -->
+  <rect x="0" y="96" width="215" height="4" rx="1" fill="#888"/>
+  <!-- wheels -->
+  <circle cx="30"  cy="96" r="12" fill="#111" stroke="#555" stroke-width="2.5"/>
+  <circle cx="64"  cy="96" r="12" fill="#111" stroke="#555" stroke-width="2.5"/>
+  <circle cx="150" cy="96" r="12" fill="#111" stroke="#555" stroke-width="2.5"/>
+  <circle cx="184" cy="96" r="12" fill="#111" stroke="#555" stroke-width="2.5"/>
+  <text x="108" y="112" font-family="Arial" font-size="7" fill="#888" text-anchor="middle">London Underground · 1863</text>
+</svg>

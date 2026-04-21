@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <!-- DB Schenker maroon, more streamlined than 66 -->
+  <path d="M10,71 Q18,42 38,38 L185,38 L188,71 L185,104 L38,104 Q18,100 10,71 Z" fill="#5a1a2a"/>
+  <!-- silver lower band -->
+  <path d="M38,78 L185,78 L185,88 L38,88 Q22,84 14,76 Z" fill="#888"/>
+  <!-- DB red stripe -->
+  <rect x="38" y="56" width="147" height="8" fill="#CC0000"/>
+  <!-- streamlined cab -->
+  <rect x="152" y="38" width="36" height="66" rx="4" fill="#4a0a1a"/>
+  <rect x="156" y="42" width="18" height="16" rx="2" fill="#87CEEB" opacity="0.7"/>
+  <circle cx="13" cy="71" r="6" fill="#FFE040" opacity="0.9"/>
+  <circle cx="36" cy="112" r="8" fill="#3a0a15" stroke="#888" stroke-width="2"/>
+<line x1="44.0" y1="112.0" x2="28.0" y2="112.0" stroke="#888" stroke-width="1.2"/>
+<line x1="41.7" y1="117.7" x2="30.3" y2="106.3" stroke="#888" stroke-width="1.2"/>
+<line x1="36.0" y1="120.0" x2="36.0" y2="104.0" stroke="#888" stroke-width="1.2"/>
+<line x1="30.3" y1="117.7" x2="41.7" y2="106.3" stroke="#888" stroke-width="1.2"/>
+<circle cx="36" cy="112" r="1.8" fill="#888"/>
+
+  <circle cx="62" cy="112" r="8" fill="#3a0a15" stroke="#888" stroke-width="2"/>
+<line x1="70.0" y1="112.0" x2="54.0" y2="112.0" stroke="#888" stroke-width="1.2"/>
+<line x1="67.7" y1="117.7" x2="56.3" y2="106.3" stroke="#888" stroke-width="1.2"/>
+<line x1="62.0" y1="120.0" x2="62.0" y2="104.0" stroke="#888" stroke-width="1.2"/>
+<line x1="56.3" y1="117.7" x2="67.7" y2="106.3" stroke="#888" stroke-width="1.2"/>
+<circle cx="62" cy="112" r="1.8" fill="#888"/>
+
+  <circle cx="100" cy="112" r="8" fill="#3a0a15" stroke="#888" stroke-width="2"/>
+<line x1="108.0" y1="112.0" x2="92.0" y2="112.0" stroke="#888" stroke-width="1.2"/>
+<line x1="105.7" y1="117.7" x2="94.3" y2="106.3" stroke="#888" stroke-width="1.2"/>
+<line x1="100.0" y1="120.0" x2="100.0" y2="104.0" stroke="#888" stroke-width="1.2"/>
+<line x1="94.3" y1="117.7" x2="105.7" y2="106.3" stroke="#888" stroke-width="1.2"/>
+<circle cx="100" cy="112" r="1.8" fill="#888"/>
+
+  <circle cx="138" cy="112" r="8" fill="#3a0a15" stroke="#888" stroke-width="2"/>
+<line x1="146.0" y1="112.0" x2="130.0" y2="112.0" stroke="#888" stroke-width="1.2"/>
+<line x1="143.7" y1="117.7" x2="132.3" y2="106.3" stroke="#888" stroke-width="1.2"/>
+<line x1="138.0" y1="120.0" x2="138.0" y2="104.0" stroke="#888" stroke-width="1.2"/>
+<line x1="132.3" y1="117.7" x2="143.7" y2="106.3" stroke="#888" stroke-width="1.2"/>
+<circle cx="138" cy="112" r="1.8" fill="#888"/>
+
+  <circle cx="162" cy="112" r="8" fill="#3a0a15" stroke="#888" stroke-width="2"/>
+<line x1="170.0" y1="112.0" x2="154.0" y2="112.0" stroke="#888" stroke-width="1.2"/>
+<line x1="167.7" y1="117.7" x2="156.3" y2="106.3" stroke="#888" stroke-width="1.2"/>
+<line x1="162.0" y1="120.0" x2="162.0" y2="104.0" stroke="#888" stroke-width="1.2"/>
+<line x1="156.3" y1="117.7" x2="167.7" y2="106.3" stroke="#888" stroke-width="1.2"/>
+<circle cx="162" cy="112" r="1.8" fill="#888"/>
+
+  <circle cx="182" cy="112" r="8" fill="#3a0a15" stroke="#888" stroke-width="2"/>
+<line x1="190.0" y1="112.0" x2="174.0" y2="112.0" stroke="#888" stroke-width="1.2"/>
+<line x1="187.7" y1="117.7" x2="176.3" y2="106.3" stroke="#888" stroke-width="1.2"/>
+<line x1="182.0" y1="120.0" x2="182.0" y2="104.0" stroke="#888" stroke-width="1.2"/>
+<line x1="176.3" y1="117.7" x2="187.7" y2="106.3" stroke="#888" stroke-width="1.2"/>
+<circle cx="182" cy="112" r="1.8" fill="#888"/>
+
+  <line x1="5" y1="112" x2="198" y2="112" stroke="#888" stroke-width="2.5"/>
+
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">Class 67 UK · 1999</text>
+</svg>

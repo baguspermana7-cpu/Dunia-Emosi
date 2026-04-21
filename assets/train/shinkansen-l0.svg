@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <!-- L0 SCMaglev: no wheels, ultra-pointed 80px snout, gray/black -->
+  <path d="M8,68 Q28,50 80,40 L185,40 L188,68 L185,96 L80,96 Q28,86 8,68 Z" fill="#555"/>
+  <!-- ultra-pointed 80px snout -->
+  <path d="M8,68 Q40,56 78,42 L80,42 L80,40 Q44,56 10,68 Z" fill="#333"/>
+  <path d="M8,68 Q40,80 78,94 L80,94 L80,96 Q44,80 10,68 Z" fill="#333"/>
+  <!-- black lower section -->
+  <rect x="80" y="76" width="108" height="18" fill="#222"/>
+  <!-- guide rails visible below - maglev feature -->
+  <rect x="8" y="96" width="180" height="5" rx="2" fill="#1a64cc"/>
+  <rect x="8" y="103" width="180" height="4" rx="2" fill="#1a64cc"/>
+  <!-- NO WHEELS - key feature -->
+  <!-- headlight cluster -->
+  <circle cx="12" cy="64" r="4" fill="#87CEEB" opacity="0.9"/>
+  <circle cx="12" cy="72" r="4" fill="#87CEEB" opacity="0.9"/>
+  <rect x="28" y="46" width="18" height="14" rx="2" fill="#87CEEB" opacity="0.6"/>
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">Shinkansen L0 SCMaglev · 2027</text>
+</svg>

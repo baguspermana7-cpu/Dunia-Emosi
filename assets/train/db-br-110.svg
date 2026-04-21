@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <path d="M10,68 Q16,44 32,40 L185,40 L188,68 L185,96 L32,96 Q16,92 10,68 Z" fill="#1a3a8c"/>
+  <!-- cream stripe old DB -->
+  <rect x="32" y="64" width="156" height="10" fill="#F5F5DC"/>
+  <path d="M10,68 Q14,60 26,58 L26,66 Q16,66 12,68 Z" fill="#F5F5DC"/>
+  <!-- rounded nose older style -->
+  <path d="M10,68 Q12,54 24,50 L24,62 Q16,62 12,66 Z" fill="#2244A0"/>
+  <rect x="18" y="48" width="18" height="14" rx="2" fill="#87CEEB" opacity="0.7"/>
+  <rect x="152" y="40" width="36" height="56" rx="4" fill="#152e78"/>
+  <rect x="155" y="44" width="18" height="14" rx="2" fill="#87CEEB" opacity="0.7"/>
+  <circle cx="13" cy="68" r="5" fill="#FFE040" opacity="0.9"/>
+  <!-- pantograph -->
+  <line x1="70" y1="40" x2="66" y2="22" stroke="#888" stroke-width="1.5"/>
+  <line x1="90" y1="40" x2="94" y2="22" stroke="#888" stroke-width="1.5"/>
+  <line x1="64" y1="22" x2="96" y2="22" stroke="#aaa" stroke-width="2"/>
+  <circle cx="28" cy="104" r="9" fill="#1a3a8c" stroke="#F5F5DC" stroke-width="2"/>
+<line x1="37.0" y1="104.0" x2="19.0" y2="104.0" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="34.4" y1="110.4" x2="21.6" y2="97.6" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="28.0" y1="113.0" x2="28.0" y2="95.0" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="21.6" y1="110.4" x2="34.4" y2="97.6" stroke="#F5F5DC" stroke-width="1.2"/>
+<circle cx="28" cy="104" r="2.0" fill="#F5F5DC"/>
+
+  <circle cx="54" cy="104" r="9" fill="#1a3a8c" stroke="#F5F5DC" stroke-width="2"/>
+<line x1="63.0" y1="104.0" x2="45.0" y2="104.0" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="60.4" y1="110.4" x2="47.6" y2="97.6" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="54.0" y1="113.0" x2="54.0" y2="95.0" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="47.6" y1="110.4" x2="60.4" y2="97.6" stroke="#F5F5DC" stroke-width="1.2"/>
+<circle cx="54" cy="104" r="2.0" fill="#F5F5DC"/>
+
+  <circle cx="130" cy="104" r="9" fill="#1a3a8c" stroke="#F5F5DC" stroke-width="2"/>
+<line x1="139.0" y1="104.0" x2="121.0" y2="104.0" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="136.4" y1="110.4" x2="123.6" y2="97.6" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="130.0" y1="113.0" x2="130.0" y2="95.0" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="123.6" y1="110.4" x2="136.4" y2="97.6" stroke="#F5F5DC" stroke-width="1.2"/>
+<circle cx="130" cy="104" r="2.0" fill="#F5F5DC"/>
+
+  <circle cx="156" cy="104" r="9" fill="#1a3a8c" stroke="#F5F5DC" stroke-width="2"/>
+<line x1="165.0" y1="104.0" x2="147.0" y2="104.0" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="162.4" y1="110.4" x2="149.6" y2="97.6" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="156.0" y1="113.0" x2="156.0" y2="95.0" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="149.6" y1="110.4" x2="162.4" y2="97.6" stroke="#F5F5DC" stroke-width="1.2"/>
+<circle cx="156" cy="104" r="2.0" fill="#F5F5DC"/>
+
+  <line x1="5" y1="112" x2="198" y2="112" stroke="#888" stroke-width="2.5"/>
+
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">DB BR 110 · 1956</text>
+</svg>

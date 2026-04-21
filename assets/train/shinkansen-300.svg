@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <!-- Series 300: sharper more pointed nose than 100/0 -->
+  <path d="M8,68 Q24,44 54,36 L185,36 L188,68 L185,100 L54,100 Q24,92 8,68 Z" fill="#F0F0F0"/>
+  <!-- sharper pointed nose 300-series - key difference -->
+  <path d="M8,68 Q22,50 48,42 L54,42 L54,36 Q30,44 14,62 Z" fill="#ddd"/>
+  <!-- gray/blue stripe -->
+  <rect x="54" y="82" width="134" height="10" fill="#4a6a9c"/>
+  <path d="M8,68 Q14,78 30,84 L54,86 L54,92 Q28,90 12,82 Z" fill="#4a6a9c"/>
+  <rect x="32" y="44" width="24" height="16" rx="2" fill="#87CEEB" opacity="0.7"/>
+  <circle cx="11" cy="68" r="5" fill="#FFE040" opacity="0.9"/>
+  <circle cx="46" cy="108" r="9" fill="#ddd" stroke="#4a6a9c" stroke-width="2"/>
+<line x1="55.0" y1="108.0" x2="37.0" y2="108.0" stroke="#4a6a9c" stroke-width="1.2"/>
+<line x1="52.4" y1="114.4" x2="39.6" y2="101.6" stroke="#4a6a9c" stroke-width="1.2"/>
+<line x1="46.0" y1="117.0" x2="46.0" y2="99.0" stroke="#4a6a9c" stroke-width="1.2"/>
+<line x1="39.6" y1="114.4" x2="52.4" y2="101.6" stroke="#4a6a9c" stroke-width="1.2"/>
+<circle cx="46" cy="108" r="2.0" fill="#4a6a9c"/>
+
+  <circle cx="70" cy="108" r="9" fill="#ddd" stroke="#4a6a9c" stroke-width="2"/>
+<line x1="79.0" y1="108.0" x2="61.0" y2="108.0" stroke="#4a6a9c" stroke-width="1.2"/>
+<line x1="76.4" y1="114.4" x2="63.6" y2="101.6" stroke="#4a6a9c" stroke-width="1.2"/>
+<line x1="70.0" y1="117.0" x2="70.0" y2="99.0" stroke="#4a6a9c" stroke-width="1.2"/>
+<line x1="63.6" y1="114.4" x2="76.4" y2="101.6" stroke="#4a6a9c" stroke-width="1.2"/>
+<circle cx="70" cy="108" r="2.0" fill="#4a6a9c"/>
+
+  <circle cx="116" cy="108" r="9" fill="#ddd" stroke="#4a6a9c" stroke-width="2"/>
+<line x1="125.0" y1="108.0" x2="107.0" y2="108.0" stroke="#4a6a9c" stroke-width="1.2"/>
+<line x1="122.4" y1="114.4" x2="109.6" y2="101.6" stroke="#4a6a9c" stroke-width="1.2"/>
+<line x1="116.0" y1="117.0" x2="116.0" y2="99.0" stroke="#4a6a9c" stroke-width="1.2"/>
+<line x1="109.6" y1="114.4" x2="122.4" y2="101.6" stroke="#4a6a9c" stroke-width="1.2"/>
+<circle cx="116" cy="108" r="2.0" fill="#4a6a9c"/>
+
+  <circle cx="155" cy="108" r="9" fill="#ddd" stroke="#4a6a9c" stroke-width="2"/>
+<line x1="164.0" y1="108.0" x2="146.0" y2="108.0" stroke="#4a6a9c" stroke-width="1.2"/>
+<line x1="161.4" y1="114.4" x2="148.6" y2="101.6" stroke="#4a6a9c" stroke-width="1.2"/>
+<line x1="155.0" y1="117.0" x2="155.0" y2="99.0" stroke="#4a6a9c" stroke-width="1.2"/>
+<line x1="148.6" y1="114.4" x2="161.4" y2="101.6" stroke="#4a6a9c" stroke-width="1.2"/>
+<circle cx="155" cy="108" r="2.0" fill="#4a6a9c"/>
+
+  <circle cx="178" cy="108" r="9" fill="#ddd" stroke="#4a6a9c" stroke-width="2"/>
+<line x1="187.0" y1="108.0" x2="169.0" y2="108.0" stroke="#4a6a9c" stroke-width="1.2"/>
+<line x1="184.4" y1="114.4" x2="171.6" y2="101.6" stroke="#4a6a9c" stroke-width="1.2"/>
+<line x1="178.0" y1="117.0" x2="178.0" y2="99.0" stroke="#4a6a9c" stroke-width="1.2"/>
+<line x1="171.6" y1="114.4" x2="184.4" y2="101.6" stroke="#4a6a9c" stroke-width="1.2"/>
+<circle cx="178" cy="108" r="2.0" fill="#4a6a9c"/>
+
+  <line x1="5" y1="112" x2="198" y2="112" stroke="#888" stroke-width="2.5"/>
+
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">Shinkansen 300 · 1992</text>
+</svg>

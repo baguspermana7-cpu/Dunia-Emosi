@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <!-- Euroduplex: darker navy + updated nose profile -->
+  <path d="M8,65 Q20,36 48,30 L185,30 L188,65 L185,100 L48,100 Q20,94 8,65 Z" fill="#003082"/>
+  <!-- silver nose tip -->
+  <path d="M8,65 Q16,48 36,44 L42,46 Q24,50 14,65 Z" fill="#C0C0C0"/>
+  <path d="M8,65 Q16,82 36,86 L42,84 Q24,80 14,65 Z" fill="#C0C0C0"/>
+  <!-- silver stripe -->
+  <rect x="48" y="56" width="140" height="18" fill="#C0C0C0"/>
+  <path d="M8,65 Q12,60 26,58 L42,58 L42,74 L26,72 Q12,70 8,65 Z" fill="#C0C0C0"/>
+  <!-- double deck indicator -->
+  <rect x="48" y="64" width="140" height="3" fill="#002060"/>
+  <!-- windows upper/lower -->
+  <rect x="55" y="34" width="10" height="12" rx="1" fill="#87CEEB" opacity="0.5"/>
+  <rect x="71" y="34" width="10" height="12" rx="1" fill="#87CEEB" opacity="0.5"/>
+  <rect x="55" y="68" width="10" height="12" rx="1" fill="#87CEEB" opacity="0.5"/>
+  <rect x="71" y="68" width="10" height="12" rx="1" fill="#87CEEB" opacity="0.5"/>
+  <rect x="26" y="38" width="22" height="18" rx="2" fill="#87CEEB" opacity="0.7"/>
+  <circle cx="12" cy="65" r="5" fill="#FFE040" opacity="0.9"/>
+  <circle cx="40" cy="108" r="8" fill="#002060" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="48.0" y1="108.0" x2="32.0" y2="108.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="45.7" y1="113.7" x2="34.3" y2="102.3" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="40.0" y1="116.0" x2="40.0" y2="100.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="34.3" y1="113.7" x2="45.7" y2="102.3" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="40" cy="108" r="1.8" fill="#C0C0C0"/>
+
+  <circle cx="64" cy="108" r="8" fill="#002060" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="72.0" y1="108.0" x2="56.0" y2="108.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="69.7" y1="113.7" x2="58.3" y2="102.3" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="64.0" y1="116.0" x2="64.0" y2="100.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="58.3" y1="113.7" x2="69.7" y2="102.3" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="64" cy="108" r="1.8" fill="#C0C0C0"/>
+
+  <circle cx="112" cy="108" r="8" fill="#002060" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="120.0" y1="108.0" x2="104.0" y2="108.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="117.7" y1="113.7" x2="106.3" y2="102.3" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="112.0" y1="116.0" x2="112.0" y2="100.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="106.3" y1="113.7" x2="117.7" y2="102.3" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="112" cy="108" r="1.8" fill="#C0C0C0"/>
+
+  <circle cx="152" cy="108" r="8" fill="#002060" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="160.0" y1="108.0" x2="144.0" y2="108.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="157.7" y1="113.7" x2="146.3" y2="102.3" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="152.0" y1="116.0" x2="152.0" y2="100.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="146.3" y1="113.7" x2="157.7" y2="102.3" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="152" cy="108" r="1.8" fill="#C0C0C0"/>
+
+  <circle cx="176" cy="108" r="8" fill="#002060" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="184.0" y1="108.0" x2="168.0" y2="108.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="181.7" y1="113.7" x2="170.3" y2="102.3" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="176.0" y1="116.0" x2="176.0" y2="100.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="170.3" y1="113.7" x2="181.7" y2="102.3" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="176" cy="108" r="1.8" fill="#C0C0C0"/>
+
+  <line x1="5" y1="112" x2="198" y2="112" stroke="#888" stroke-width="2.5"/>
+
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">TGV Euroduplex · 2011</text>
+</svg>

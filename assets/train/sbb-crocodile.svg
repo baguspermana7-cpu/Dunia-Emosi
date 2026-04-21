@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 215 110">
+  <!-- LEFT hood (sloped downward like croc snout) -->
+  <path d="M4,50 Q10,28 36,26 L82,26 L82,82 Q52,80 28,76 Q10,68 4,50Z" fill="#2A5A10"/>
+  <!-- RIGHT hood (mirror) -->
+  <path d="M212,50 Q206,28 180,26 L134,26 L134,82 Q164,80 186,76 Q204,68 212,50Z" fill="#2A5A10"/>
+  <!-- CENTRAL cab box (raised above hoods) -->
+  <rect x="82" y="14" width="52" height="68" rx="4" fill="#1A4A08"/>
+  <!-- cab windows -->
+  <rect x="88" y="20" width="16" height="14" rx="2" fill="#87CEEB" opacity=".75"/>
+  <rect x="110" y="20" width="16" height="14" rx="2" fill="#87CEEB" opacity=".75"/>
+  <!-- double pantograph (one per hood) -->
+  <line x1="44"  y1="26" x2="40"  y2="14" stroke="#C8A020" stroke-width="1.5"/>
+  <line x1="54"  y1="26" x2="58"  y2="14" stroke="#C8A020" stroke-width="1.5"/>
+  <line x1="34"  y1="14" x2="64"  y2="14" stroke="#C8A020" stroke-width="2"/>
+  <line x1="160" y1="26" x2="156" y2="14" stroke="#C8A020" stroke-width="1.5"/>
+  <line x1="170" y1="26" x2="174" y2="14" stroke="#C8A020" stroke-width="1.5"/>
+  <line x1="150" y1="14" x2="180" y2="14" stroke="#C8A020" stroke-width="2"/>
+  <!-- brass detail strips on hoods -->
+  <rect x="8"   y="50" width="72" height="4" rx="1" fill="#C8A020" opacity=".6"/>
+  <rect x="136" y="50" width="72" height="4" rx="1" fill="#C8A020" opacity=".6"/>
+  <!-- headlamps both ends -->
+  <circle cx="6"   cy="50" r="6" fill="#FFD700" opacity=".9"/>
+  <circle cx="210" cy="50" r="6" fill="#FFD700" opacity=".9"/>
+  <!-- wheels (3 axles each bogie) -->
+  <circle cx="16"  cy="90" r="12" fill="#0A2A04" stroke="#C8A020" stroke-width="2.5"/>
+  <circle cx="42"  cy="90" r="12" fill="#0A2A04" stroke="#C8A020" stroke-width="2.5"/>
+  <circle cx="68"  cy="90" r="12" fill="#0A2A04" stroke="#C8A020" stroke-width="2.5"/>
+  <circle cx="148" cy="90" r="12" fill="#0A2A04" stroke="#C8A020" stroke-width="2.5"/>
+  <circle cx="174" cy="90" r="12" fill="#0A2A04" stroke="#C8A020" stroke-width="2.5"/>
+  <circle cx="200" cy="90" r="12" fill="#0A2A04" stroke="#C8A020" stroke-width="2.5"/>
+  <circle cx="16"  cy="90" r="3.5" fill="#C8A020"/>
+  <circle cx="42"  cy="90" r="3.5" fill="#C8A020"/>
+  <circle cx="68"  cy="90" r="3.5" fill="#C8A020"/>
+  <circle cx="148" cy="90" r="3.5" fill="#C8A020"/>
+  <circle cx="174" cy="90" r="3.5" fill="#C8A020"/>
+  <circle cx="200" cy="90" r="3.5" fill="#C8A020"/>
+  <text x="108" y="108" font-family="Arial" font-size="7" fill="#888" text-anchor="middle">SBB Ce 6/8 Crocodile · Switzerland · 1919</text>
+</svg>

@@ -1,0 +1,86 @@
+[
+  {
+    "id": "car_01",
+    "name": "White GT",
+    "file": "top_car_white_gt_01.png",
+    "width": 96,
+    "height": 168
+  },
+  {
+    "id": "car_02",
+    "name": "Yellow Sport",
+    "file": "top_car_yellow_sport_02.png",
+    "width": 89,
+    "height": 168
+  },
+  {
+    "id": "car_03",
+    "name": "White Track",
+    "file": "top_car_white_track_03.png",
+    "width": 88,
+    "height": 168
+  },
+  {
+    "id": "car_04",
+    "name": "Blue Red Racer",
+    "file": "top_car_blue_red_racer_04.png",
+    "width": 87,
+    "height": 168
+  },
+  {
+    "id": "car_05",
+    "name": "Cyan Sedan",
+    "file": "top_car_cyan_sedan_05.png",
+    "width": 88,
+    "height": 168
+  },
+  {
+    "id": "car_06",
+    "name": "White Stripe GT",
+    "file": "top_car_white_stripe_gt_06.png",
+    "width": 87,
+    "height": 168
+  },
+  {
+    "id": "car_07",
+    "name": "Red Formula",
+    "file": "top_car_red_formula_07.png",
+    "width": 83,
+    "height": 168
+  },
+  {
+    "id": "car_08",
+    "name": "Yellow Rally",
+    "file": "top_car_yellow_rally_08.png",
+    "width": 86,
+    "height": 168
+  },
+  {
+    "id": "car_09",
+    "name": "White Coupe",
+    "file": "top_car_white_coupe_09.png",
+    "width": 88,
+    "height": 168
+  },
+  {
+    "id": "car_10",
+    "name": "White Roadster",
+    "file": "top_car_white_roadster_10.png",
+    "width": 92,
+    "height": 168
+  },
+  {
+    "id": "car_11",
+    "name": "Blue Compact",
+    "file": "top_car_blue_compact_11.png",
+    "width": 84,
+    "height": 168
+  },
+  {
+    "id": "car_12",
+    "name": "Silver Sedan",
+    "file": "top_car_silver_sedan_12.png",
+    "width": 87,
+    "height": 168
+  }
+]

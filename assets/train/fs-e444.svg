@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <!-- Italian Tartaruga distinctive box cab -->
+  <rect x="10" y="36" width="178" height="66" rx="4" fill="#003366"/>
+  <!-- turtle-shell body panels - distinctive -->
+  <rect x="10" y="36" width="45" height="66" rx="4" fill="#002244"/>
+  <rect x="15" y="40" width="20" height="20" rx="3" fill="#87CEEB" opacity="0.7"/>
+  <!-- turtle shell panel lines -->
+  <line x1="55" y1="36" x2="55" y2="102" stroke="#002244" stroke-width="3"/>
+  <line x1="90" y1="36" x2="90" y2="102" stroke="#002244" stroke-width="3"/>
+  <line x1="125" y1="36" x2="125" y2="102" stroke="#002244" stroke-width="3"/>
+  <line x1="148" y1="36" x2="148" y2="102" stroke="#002244" stroke-width="3"/>
+  <rect x="148" y="36" width="40" height="66" rx="4" fill="#002244"/>
+  <rect x="152" y="40" width="20" height="20" rx="3" fill="#87CEEB" opacity="0.7"/>
+  <!-- silver stripe -->
+  <rect x="10" y="68" width="178" height="8" fill="#C0C0C0"/>
+  <!-- pantograph -->
+  <line x1="85" y1="36" x2="81" y2="18" stroke="#888" stroke-width="1.5"/>
+  <line x1="100" y1="36" x2="104" y2="18" stroke="#888" stroke-width="1.5"/>
+  <line x1="79" y1="18" x2="106" y2="18" stroke="#aaa" stroke-width="2"/>
+  <circle cx="24" cy="110" r="9" fill="#002244" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="33.0" y1="110.0" x2="15.0" y2="110.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="30.4" y1="116.4" x2="17.6" y2="103.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="24.0" y1="119.0" x2="24.0" y2="101.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="17.6" y1="116.4" x2="30.4" y2="103.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="24" cy="110" r="2.0" fill="#C0C0C0"/>
+
+  <circle cx="50" cy="110" r="9" fill="#002244" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="59.0" y1="110.0" x2="41.0" y2="110.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="56.4" y1="116.4" x2="43.6" y2="103.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="50.0" y1="119.0" x2="50.0" y2="101.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="43.6" y1="116.4" x2="56.4" y2="103.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="50" cy="110" r="2.0" fill="#C0C0C0"/>
+
+  <circle cx="130" cy="110" r="9" fill="#002244" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="139.0" y1="110.0" x2="121.0" y2="110.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="136.4" y1="116.4" x2="123.6" y2="103.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="130.0" y1="119.0" x2="130.0" y2="101.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="123.6" y1="116.4" x2="136.4" y2="103.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="130" cy="110" r="2.0" fill="#C0C0C0"/>
+
+  <circle cx="158" cy="110" r="9" fill="#002244" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="167.0" y1="110.0" x2="149.0" y2="110.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="164.4" y1="116.4" x2="151.6" y2="103.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="158.0" y1="119.0" x2="158.0" y2="101.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="151.6" y1="116.4" x2="164.4" y2="103.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="158" cy="110" r="2.0" fill="#C0C0C0"/>
+
+  <line x1="5" y1="112" x2="198" y2="112" stroke="#888" stroke-width="2.5"/>
+
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">FS E444 Tartaruga · 1967</text>
+</svg>

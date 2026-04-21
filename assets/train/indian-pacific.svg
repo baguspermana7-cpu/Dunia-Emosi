@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <!-- two-tone blue Australian transcontinental -->
+  <rect x="8" y="42" width="75" height="60" rx="5" fill="#1a2a6c"/>
+  <path d="M8,72 Q10,42 22,40 L83,40 L83,42 L8,42 Z" fill="#2a3a7c"/>
+  <rect x="14" y="46" width="32" height="20" rx="3" fill="#87CEEB" opacity="0.7"/>
+  <!-- silver mid stripe -->
+  <rect x="8" y="66" width="75" height="8" fill="#C0C0C0"/>
+  <!-- lighter blue lower -->
+  <rect x="8" y="74" width="75" height="28" rx="5" fill="#2a4a9c"/>
+  <!-- passenger cars -->
+  <rect x="86" y="42" width="52" height="60" rx="3" fill="#1a2a6c"/>
+  <rect x="141" y="42" width="52" height="60" rx="3" fill="#1a2a6c"/>
+  <rect x="86" y="64" width="52" height="8" fill="#C0C0C0"/>
+  <rect x="141" y="64" width="52" height="8" fill="#C0C0C0"/>
+  <rect x="86" y="72" width="52" height="30" rx="3" fill="#2a4a9c"/>
+  <rect x="141" y="72" width="52" height="30" rx="3" fill="#2a4a9c"/>
+  <circle cx="12" cy="72" r="6" fill="#FFE040" opacity="0.9"/>
+  <circle cx="24" cy="110" r="8" fill="#1a2a6c" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="32.0" y1="110.0" x2="16.0" y2="110.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="29.7" y1="115.7" x2="18.3" y2="104.3" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="24.0" y1="118.0" x2="24.0" y2="102.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="18.3" y1="115.7" x2="29.7" y2="104.3" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="24" cy="110" r="1.8" fill="#C0C0C0"/>
+
+  <circle cx="54" cy="110" r="8" fill="#1a2a6c" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="62.0" y1="110.0" x2="46.0" y2="110.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="59.7" y1="115.7" x2="48.3" y2="104.3" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="54.0" y1="118.0" x2="54.0" y2="102.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="48.3" y1="115.7" x2="59.7" y2="104.3" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="54" cy="110" r="1.8" fill="#C0C0C0"/>
+
+  <circle cx="100" cy="110" r="8" fill="#1a2a6c" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="108.0" y1="110.0" x2="92.0" y2="110.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="105.7" y1="115.7" x2="94.3" y2="104.3" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="100.0" y1="118.0" x2="100.0" y2="102.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="94.3" y1="115.7" x2="105.7" y2="104.3" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="100" cy="110" r="1.8" fill="#C0C0C0"/>
+
+  <circle cx="127" cy="110" r="8" fill="#1a2a6c" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="135.0" y1="110.0" x2="119.0" y2="110.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="132.7" y1="115.7" x2="121.3" y2="104.3" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="127.0" y1="118.0" x2="127.0" y2="102.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="121.3" y1="115.7" x2="132.7" y2="104.3" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="127" cy="110" r="1.8" fill="#C0C0C0"/>
+
+  <circle cx="158" cy="110" r="8" fill="#1a2a6c" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="166.0" y1="110.0" x2="150.0" y2="110.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="163.7" y1="115.7" x2="152.3" y2="104.3" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="158.0" y1="118.0" x2="158.0" y2="102.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="152.3" y1="115.7" x2="163.7" y2="104.3" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="158" cy="110" r="1.8" fill="#C0C0C0"/>
+
+  <circle cx="180" cy="110" r="8" fill="#1a2a6c" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="188.0" y1="110.0" x2="172.0" y2="110.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="185.7" y1="115.7" x2="174.3" y2="104.3" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="180.0" y1="118.0" x2="180.0" y2="102.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="174.3" y1="115.7" x2="185.7" y2="104.3" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="180" cy="110" r="1.8" fill="#C0C0C0"/>
+
+  <line x1="5" y1="112" x2="198" y2="112" stroke="#888" stroke-width="2.5"/>
+
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">Indian Pacific · 1970</text>
+</svg>

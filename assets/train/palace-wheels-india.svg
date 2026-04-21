@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <!-- royal gold/maroon ornate heritage -->
+  <rect x="8" y="44" width="60" height="58" rx="6" fill="#8B1a00"/>
+  <rect x="12" y="48" width="22" height="16" rx="2" fill="#87CEEB" opacity="0.7"/>
+  <!-- gold ornate bands -->
+  <rect x="8" y="58" width="60" height="6" fill="#C8A800"/>
+  <rect x="8" y="84" width="60" height="6" fill="#C8A800"/>
+  <!-- ornate pattern on loco -->
+  <circle cx="28" cy="71" r="8" fill="none" stroke="#C8A800" stroke-width="2"/>
+  <polygon points="28,63 30,69 36,69 31,73 33,79 28,75 23,79 25,73 20,69 26,69" fill="#C8A800" opacity="0.8"/>
+  <!-- Maharaja carriage 1 -->
+  <rect x="71" y="40" width="58" height="62" rx="4" fill="#6a1000"/>
+  <rect x="71" y="52" width="58" height="8" fill="#C8A800"/>
+  <rect x="71" y="80" width="58" height="8" fill="#C8A800"/>
+  <rect x="76" y="60" width="10" height="14" rx="2" fill="#87CEEB" opacity="0.6"/>
+  <rect x="92" y="60" width="10" height="14" rx="2" fill="#87CEEB" opacity="0.6"/>
+  <rect x="108" y="60" width="10" height="14" rx="2" fill="#87CEEB" opacity="0.6"/>
+  <!-- ornate carriage trim -->
+  <line x1="71" y1="44" x2="129" y2="44" stroke="#C8A800" stroke-width="1.5"/>
+  <!-- Maharaja carriage 2 -->
+  <rect x="132" y="40" width="58" height="62" rx="4" fill="#6a1000"/>
+  <rect x="132" y="52" width="58" height="8" fill="#C8A800"/>
+  <rect x="132" y="80" width="58" height="8" fill="#C8A800"/>
+  <rect x="137" y="60" width="10" height="14" rx="2" fill="#87CEEB" opacity="0.6"/>
+  <rect x="153" y="60" width="10" height="14" rx="2" fill="#87CEEB" opacity="0.6"/>
+  <rect x="169" y="60" width="10" height="14" rx="2" fill="#87CEEB" opacity="0.6"/>
+  <line x1="132" y1="44" x2="190" y2="44" stroke="#C8A800" stroke-width="1.5"/>
+  <circle cx="12" cy="73" r="5" fill="#FFE040" opacity="0.9"/>
+  <circle cx="22" cy="110" r="7" fill="#5a0e00" stroke="#C8A800" stroke-width="2"/>
+<line x1="29.0" y1="110.0" x2="15.0" y2="110.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="26.9" y1="114.9" x2="17.1" y2="105.1" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="22.0" y1="117.0" x2="22.0" y2="103.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="17.1" y1="114.9" x2="26.9" y2="105.1" stroke="#C8A800" stroke-width="1.2"/>
+<circle cx="22" cy="110" r="1.5" fill="#C8A800"/>
+
+  <circle cx="48" cy="110" r="7" fill="#5a0e00" stroke="#C8A800" stroke-width="2"/>
+<line x1="55.0" y1="110.0" x2="41.0" y2="110.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="52.9" y1="114.9" x2="43.1" y2="105.1" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="48.0" y1="117.0" x2="48.0" y2="103.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="43.1" y1="114.9" x2="52.9" y2="105.1" stroke="#C8A800" stroke-width="1.2"/>
+<circle cx="48" cy="110" r="1.5" fill="#C8A800"/>
+
+  <circle cx="86" cy="110" r="7" fill="#5a0e00" stroke="#C8A800" stroke-width="2"/>
+<line x1="93.0" y1="110.0" x2="79.0" y2="110.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="90.9" y1="114.9" x2="81.1" y2="105.1" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="86.0" y1="117.0" x2="86.0" y2="103.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="81.1" y1="114.9" x2="90.9" y2="105.1" stroke="#C8A800" stroke-width="1.2"/>
+<circle cx="86" cy="110" r="1.5" fill="#C8A800"/>
+
+  <circle cx="108" cy="110" r="7" fill="#5a0e00" stroke="#C8A800" stroke-width="2"/>
+<line x1="115.0" y1="110.0" x2="101.0" y2="110.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="112.9" y1="114.9" x2="103.1" y2="105.1" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="108.0" y1="117.0" x2="108.0" y2="103.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="103.1" y1="114.9" x2="112.9" y2="105.1" stroke="#C8A800" stroke-width="1.2"/>
+<circle cx="108" cy="110" r="1.5" fill="#C8A800"/>
+
+  <circle cx="148" cy="110" r="7" fill="#5a0e00" stroke="#C8A800" stroke-width="2"/>
+<line x1="155.0" y1="110.0" x2="141.0" y2="110.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="152.9" y1="114.9" x2="143.1" y2="105.1" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="148.0" y1="117.0" x2="148.0" y2="103.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="143.1" y1="114.9" x2="152.9" y2="105.1" stroke="#C8A800" stroke-width="1.2"/>
+<circle cx="148" cy="110" r="1.5" fill="#C8A800"/>
+
+  <circle cx="174" cy="110" r="7" fill="#5a0e00" stroke="#C8A800" stroke-width="2"/>
+<line x1="181.0" y1="110.0" x2="167.0" y2="110.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="178.9" y1="114.9" x2="169.1" y2="105.1" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="174.0" y1="117.0" x2="174.0" y2="103.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="169.1" y1="114.9" x2="178.9" y2="105.1" stroke="#C8A800" stroke-width="1.2"/>
+<circle cx="174" cy="110" r="1.5" fill="#C8A800"/>
+
+  <line x1="5" y1="112" x2="198" y2="112" stroke="#888" stroke-width="2.5"/>
+
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">Palace on Wheels India · 1982</text>
+</svg>

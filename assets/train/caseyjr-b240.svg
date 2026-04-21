@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 140" width="280" height="140">
+  <!-- Casey Jr B 2-4-0 — Dark navy body, red cab, coal tender -->
+  <defs>
+    <linearGradient id="cjNavy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a3a5c"/>
+      <stop offset="100%" stop-color="#1a2744"/>
+    </linearGradient>
+    <linearGradient id="cjRed" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d42b2b"/>
+      <stop offset="100%" stop-color="#a11e1e"/>
+    </linearGradient>
+    <linearGradient id="cjWheel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a3a5c"/>
+      <stop offset="100%" stop-color="#182040"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ═══ COWCATCHER (front/left) ═══ -->
+  <polygon points="8,120 24,120 28,105 4,105" fill="#111"/>
+  <line x1="8" y1="108" x2="24" y2="108" stroke="#333" stroke-width="1.5"/>
+  <line x1="6" y1="111" x2="26" y2="111" stroke="#333" stroke-width="1.5"/>
+  <line x1="5" y1="114" x2="27" y2="114" stroke="#333" stroke-width="1.5"/>
+  <line x1="4" y1="117" x2="28" y2="117" stroke="#333" stroke-width="1.5"/>
+  <!-- Cowcatcher red accent -->
+  <rect x="6" y="104" width="20" height="2" rx="1" fill="#a11e1e"/>
+
+  <!-- ═══ FRONT PIPE (curved) ═══ -->
+  <path d="M28,90 Q18,85 16,75 Q14,65 22,62" fill="none" stroke="#1a2744" stroke-width="6" stroke-linecap="round"/>
+  <path d="M22,60 L18,58 Q14,56 18,52 L24,50" fill="none" stroke="#1a2744" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- ═══ FRONT BOX (small, below boiler) ═══ -->
+  <rect x="18" y="86" width="18" height="18" rx="2" fill="url(#cjNavy)"/>
+  <rect x="20" y="88" width="14" height="2" fill="#3a4e78"/>
+
+  <!-- ═══ BOILER (main body) ═══ -->
+  <rect x="30" y="60" width="100" height="44" rx="3" fill="url(#cjNavy)"/>
+  <!-- Boiler top highlight -->
+  <rect x="30" y="60" width="100" height="3" rx="1.5" fill="#3a4e78"/>
+  <!-- Boiler bottom band -->
+  <rect x="30" y="100" width="100" height="4" fill="#141e36"/>
+
+  <!-- ═══ RUNNING BOARD (white/silver bar) ═══ -->
+  <rect x="26" y="96" width="110" height="4" rx="2" fill="#e0e0e0"/>
+  <rect x="26" y="96" width="110" height="1.5" rx="0.75" fill="#f5f5f5"/>
+
+  <!-- ═══ CHIMNEY/SMOKESTACK ═══ -->
+  <rect x="42" y="32" width="14" height="28" rx="2" fill="#1a2744"/>
+  <!-- Chimney top (diamond cap) -->
+  <polygon points="49,24 42,32 56,32" fill="#141e36"/>
+  <rect x="40" y="30" width="18" height="4" rx="2" fill="#141e36"/>
+
+  <!-- ═══ DOME (golden/brass) ═══ -->
+  <ellipse cx="78" cy="58" rx="7" ry="6" fill="#b8860b"/>
+  <ellipse cx="78" cy="56" rx="5" ry="3" fill="#daa520"/>
+  <rect x="74" y="57" width="8" height="4" rx="1" fill="#1a2744"/>
+
+  <!-- ═══ RED CAB/CABIN ═══ -->
+  <rect x="115" y="42" width="38" height="62" rx="2" fill="url(#cjRed)"/>
+  <!-- Cab roof -->
+  <rect x="112" y="38" width="44" height="6" rx="2" fill="#8b1515"/>
+  <!-- Cab window -->
+  <rect x="121" y="50" width="14" height="16" rx="2" fill="#87ceeb"/>
+  <rect x="121" y="50" width="14" height="16" rx="2" fill="none" stroke="#7a1414" stroke-width="2"/>
+  <!-- Cab door panel -->
+  <rect x="121" y="72" width="14" height="12" rx="1" fill="#8b1515"/>
+  <rect x="123" y="74" width="10" height="8" rx="1" fill="none" stroke="#6b0f0f" stroke-width="1.5"/>
+  <!-- Red accent box on left of cab -->
+  <rect x="108" y="72" width="8" height="14" rx="1" fill="#d42b2b"/>
+
+  <!-- ═══ DARK AREA UNDER CAB ═══ -->
+  <rect x="115" y="96" width="38" height="8" rx="1" fill="#0f1628"/>
+
+  <!-- ═══ COUPLING BAR (between loco and tender) ═══ -->
+  <rect x="153" y="95" width="14" height="4" rx="1" fill="#6b6b6b"/>
+  <circle cx="158" cy="97" r="2" fill="#444"/>
+
+  <!-- ═══ TENDER (coal car) ═══ -->
+  <rect x="167" y="68" width="52" height="36" rx="3" fill="url(#cjNavy)"/>
+  <!-- Tender top rim -->
+  <rect x="167" y="66" width="52" height="3" rx="1.5" fill="#3a4e78"/>
+  <!-- Coal pile (irregular black mound) -->
+  <path d="M170,68 Q175,52 182,54 Q188,50 195,53 Q202,48 210,54 Q216,52 219,58 L219,68 Z" fill="#111"/>
+  <path d="M174,65 Q180,58 188,60 Q195,55 205,60 Q212,57 216,62 L216,68 L174,68 Z" fill="#1a1a1a"/>
+  <!-- Tender side panel detail -->
+  <rect x="175" y="80" width="12" height="10" rx="1" fill="none" stroke="#3a4e78" stroke-width="1.5"/>
+  <rect x="195" y="80" width="12" height="10" rx="1" fill="none" stroke="#3a4e78" stroke-width="1.5"/>
+
+  <!-- ═══ WHEELS ═══ -->
+  <!-- Front pilot wheel (small) -->
+  <circle cx="30" cy="118" r="10" fill="url(#cjWheel)" stroke="#111" stroke-width="2"/>
+  <circle cx="30" cy="118" r="5" fill="#0d1526"/>
+  <circle cx="30" cy="118" r="2" fill="#333"/>
+  <!-- Spokes -->
+  <line x1="30" y1="108" x2="30" y2="128" stroke="#111" stroke-width="1.5"/>
+  <line x1="20" y1="118" x2="40" y2="118" stroke="#111" stroke-width="1.5"/>
+
+  <!-- Drive wheel 1 (large) -->
+  <circle cx="72" cy="118" r="16" fill="url(#cjWheel)" stroke="#111" stroke-width="2.5"/>
+  <circle cx="72" cy="118" r="9" fill="#0d1526"/>
+  <circle cx="72" cy="118" r="3" fill="#444"/>
+  <!-- Spokes -->
+  <line x1="72" y1="102" x2="72" y2="134" stroke="#111" stroke-width="2"/>
+  <line x1="56" y1="118" x2="88" y2="118" stroke="#111" stroke-width="2"/>
+  <line x1="60.7" y1="106.7" x2="83.3" y2="129.3" stroke="#111" stroke-width="1.5"/>
+  <line x1="83.3" y1="106.7" x2="60.7" y2="129.3" stroke="#111" stroke-width="1.5"/>
+
+  <!-- Drive wheel 2 (large) -->
+  <circle cx="112" cy="118" r="16" fill="url(#cjWheel)" stroke="#111" stroke-width="2.5"/>
+  <circle cx="112" cy="118" r="9" fill="#0d1526"/>
+  <circle cx="112" cy="118" r="3" fill="#444"/>
+  <!-- Spokes -->
+  <line x1="112" y1="102" x2="112" y2="134" stroke="#111" stroke-width="2"/>
+  <line x1="96" y1="118" x2="128" y2="118" stroke="#111" stroke-width="2"/>
+  <line x1="100.7" y1="106.7" x2="123.3" y2="129.3" stroke="#111" stroke-width="1.5"/>
+  <line x1="123.3" y1="106.7" x2="100.7" y2="129.3" stroke="#111" stroke-width="1.5"/>
+
+  <!-- Coupling rod between drive wheels -->
+  <rect x="72" y="124" width="40" height="3" rx="1.5" fill="#6b6b6b"/>
+  <circle cx="72" cy="125.5" r="2.5" fill="#888"/>
+  <circle cx="112" cy="125.5" r="2.5" fill="#888"/>
+
+  <!-- Tender wheel 1 -->
+  <circle cx="180" cy="118" r="10" fill="url(#cjWheel)" stroke="#111" stroke-width="2"/>
+  <circle cx="180" cy="118" r="5" fill="#0d1526"/>
+  <circle cx="180" cy="118" r="2" fill="#333"/>
+  <line x1="180" y1="108" x2="180" y2="128" stroke="#111" stroke-width="1.5"/>
+  <line x1="170" y1="118" x2="190" y2="118" stroke="#111" stroke-width="1.5"/>
+
+  <!-- Tender wheel 2 -->
+  <circle cx="208" cy="118" r="10" fill="url(#cjWheel)" stroke="#111" stroke-width="2"/>
+  <circle cx="208" cy="118" r="5" fill="#0d1526"/>
+  <circle cx="208" cy="118" r="2" fill="#333"/>
+  <line x1="208" y1="108" x2="208" y2="128" stroke="#111" stroke-width="1.5"/>
+  <line x1="198" y1="118" x2="218" y2="118" stroke="#111" stroke-width="1.5"/>
+
+  <!-- Tender coupling rod -->
+  <rect x="180" y="124" width="28" height="2.5" rx="1.25" fill="#888"/>
+
+  <!-- ═══ RAIL LINE ═══ -->
+  <rect x="0" y="132" width="280" height="3" rx="1" fill="#666"/>
+  <rect x="0" y="136" width="280" height="4" rx="1" fill="#444"/>
+</svg>

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 215 110">
+  <!-- body -->
+  <rect x="4" y="20" width="208" height="70" rx="7" fill="#F0F0F0"/>
+  <!-- blue nose end -->
+  <rect x="4" y="20" width="36" height="70" rx="7" fill="#1A3A8A"/>
+  <rect x="200" y="20" width="16" height="70" rx="7" fill="#1A3A8A"/>
+  <!-- yellow/orange diagonal stripe (distinctive KRL marking) -->
+  <path d="M38,20 L70,20 L38,90 Z" fill="#E8A020" opacity=".7"/>
+  <path d="M68,20 L90,20 L68,90 L46,90 Z" fill="#E8A020" opacity=".4"/>
+  <!-- blue upper band -->
+  <rect x="38" y="20" width="170" height="16" rx="2" fill="#1A3A8A" opacity=".6"/>
+  <!-- windows -->
+  <rect x="10"  y="25" width="20" height="15" rx="2" fill="#87CEEB" opacity=".75"/>
+  <rect x="40"  y="25" width="18" height="15" rx="2" fill="#87CEEB" opacity=".65"/>
+  <rect x="64"  y="25" width="30" height="15" rx="2" fill="#87CEEB" opacity=".7"/>
+  <rect x="100" y="25" width="30" height="15" rx="2" fill="#87CEEB" opacity=".7"/>
+  <rect x="136" y="25" width="30" height="15" rx="2" fill="#87CEEB" opacity=".7"/>
+  <rect x="172" y="25" width="30" height="15" rx="2" fill="#87CEEB" opacity=".7"/>
+  <!-- KRL text on side -->
+  <text x="108" y="60" font-family="Arial" font-size="11" font-weight="bold" fill="#1A3A8A" text-anchor="middle">KRL COMMUTER LINE</text>
+  <!-- doors -->
+  <rect x="56"  y="44" width="6" height="38" rx="2" fill="#CCC"/>
+  <rect x="106" y="44" width="6" height="38" rx="2" fill="#CCC"/>
+  <rect x="156" y="44" width="6" height="38" rx="2" fill="#CCC"/>
+  <rect x="192" y="44" width="6" height="38" rx="2" fill="#CCC"/>
+  <!-- pantograph -->
+  <line x1="100" y1="20" x2="96"  y2="9"  stroke="#888" stroke-width="1.5"/>
+  <line x1="112" y1="20" x2="116" y2="9"  stroke="#888" stroke-width="1.5"/>
+  <line x1="88"  y1="9"  x2="124" y2="9"  stroke="#888" stroke-width="2"/>
+  <!-- headlights LED -->
+  <rect x="6"  y="28" width="8" height="3" rx="1" fill="#FFE040" opacity=".9"/>
+  <rect x="6"  y="36" width="8" height="3" rx="1" fill="#FFE040" opacity=".9"/>
+  <!-- rail -->
+  <rect x="0" y="98" width="215" height="4" rx="1" fill="#888"/>
+  <!-- wheels -->
+  <circle cx="28"  cy="98" r="11" fill="#CCC" stroke="#999" stroke-width="2"/>
+  <circle cx="58"  cy="98" r="11" fill="#CCC" stroke="#999" stroke-width="2"/>
+  <circle cx="150" cy="98" r="11" fill="#CCC" stroke="#999" stroke-width="2"/>
+  <circle cx="180" cy="98" r="11" fill="#CCC" stroke="#999" stroke-width="2"/>
+  <text x="108" y="110" font-family="Arial" font-size="7" fill="#888" text-anchor="middle">KRL Commuter Line · Indonesia · 2011</text>
+</svg>

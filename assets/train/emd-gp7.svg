@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <!-- hood unit: narrow hood, walkways visible on sides -->
+  <!-- cab at one end -->
+  <rect x="130" y="38" width="55" height="58" rx="4" fill="#E8B800"/>
+  <rect x="133" y="42" width="20" height="16" rx="2" fill="#87CEEB" opacity="0.7"/>
+  <!-- narrow engine hood -->
+  <rect x="20" y="48" width="115" height="38" rx="4" fill="#E8B800"/>
+  <!-- hood top narrower -->
+  <rect x="24" y="42" width="105" height="14" rx="3" fill="#C8A000"/>
+  <!-- exhaust stack on hood -->
+  <rect x="38" y="28" width="8" height="16" rx="3" fill="#1a1a1a"/>
+  <rect x="60" y="30" width="8" height="14" rx="3" fill="#1a1a1a"/>
+  <!-- black stripes on cab -->
+  <rect x="130" y="58" width="55" height="8" fill="#1a1a1a"/>
+  <!-- walkway visible -->
+  <rect x="18" y="84" width="118" height="6" rx="2" fill="#C8A000"/>
+  <!-- dynamic brake blister on hood -->
+  <rect x="55" y="42" width="35" height="10" rx="3" fill="#C8A000"/>
+  <!-- 4-axle -->
+  <circle cx="38" cy="104" r="8" fill="#333" stroke="#C8A800" stroke-width="2"/>
+<line x1="46.0" y1="104.0" x2="30.0" y2="104.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="43.7" y1="109.7" x2="32.3" y2="98.3" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="38.0" y1="112.0" x2="38.0" y2="96.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="32.3" y1="109.7" x2="43.7" y2="98.3" stroke="#C8A800" stroke-width="1.2"/>
+<circle cx="38" cy="104" r="1.8" fill="#C8A800"/>
+
+  <circle cx="62" cy="104" r="8" fill="#333" stroke="#C8A800" stroke-width="2"/>
+<line x1="70.0" y1="104.0" x2="54.0" y2="104.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="67.7" y1="109.7" x2="56.3" y2="98.3" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="62.0" y1="112.0" x2="62.0" y2="96.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="56.3" y1="109.7" x2="67.7" y2="98.3" stroke="#C8A800" stroke-width="1.2"/>
+<circle cx="62" cy="104" r="1.8" fill="#C8A800"/>
+
+  <circle cx="108" cy="104" r="8" fill="#333" stroke="#C8A800" stroke-width="2"/>
+<line x1="116.0" y1="104.0" x2="100.0" y2="104.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="113.7" y1="109.7" x2="102.3" y2="98.3" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="108.0" y1="112.0" x2="108.0" y2="96.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="102.3" y1="109.7" x2="113.7" y2="98.3" stroke="#C8A800" stroke-width="1.2"/>
+<circle cx="108" cy="104" r="1.8" fill="#C8A800"/>
+
+  <circle cx="148" cy="104" r="8" fill="#333" stroke="#C8A800" stroke-width="2"/>
+<line x1="156.0" y1="104.0" x2="140.0" y2="104.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="153.7" y1="109.7" x2="142.3" y2="98.3" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="148.0" y1="112.0" x2="148.0" y2="96.0" stroke="#C8A800" stroke-width="1.2"/>
+<line x1="142.3" y1="109.7" x2="153.7" y2="98.3" stroke="#C8A800" stroke-width="1.2"/>
+<circle cx="148" cy="104" r="1.8" fill="#C8A800"/>
+
+  <line x1="10" y1="112" x2="195" y2="112" stroke="#888" stroke-width="2.5"/>
+
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">EMD GP7 · 1949</text>
+</svg>

@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <!-- Italo NTV: very distinctive RED teardrop nose -->
+  <path d="M8,68 Q22,38 52,30 L185,30 L188,68 L185,106 L52,106 Q22,98 8,68 Z" fill="#CC0000"/>
+  <!-- teardrop nose shape - very round wide -->
+  <path d="M8,68 Q20,44 48,36 L52,36 L52,30 Q26,38 12,56 Z" fill="#AA0000"/>
+  <!-- white teardrop highlight -->
+  <ellipse cx="30" cy="52" rx="10" ry="14" fill="#FF2222" opacity="0.5"/>
+  <!-- silver lower -->
+  <rect x="52" y="84" width="136" height="14" rx="0" fill="#C0C0C0"/>
+  <path d="M8,68 Q18,84 42,90 L52,90 L52,106 Q26,100 10,86 Z" fill="#C0C0C0"/>
+  <!-- windows -->
+  <rect x="60" y="36" width="12" height="16" rx="2" fill="#87CEEB" opacity="0.6"/>
+  <rect x="78" y="36" width="12" height="16" rx="2" fill="#87CEEB" opacity="0.6"/>
+  <rect x="96" y="36" width="12" height="16" rx="2" fill="#87CEEB" opacity="0.6"/>
+  <!-- cab -->
+  <rect x="28" y="38" width="26" height="20" rx="3" fill="#87CEEB" opacity="0.7"/>
+  <circle cx="11" cy="68" r="6" fill="#FFE040" opacity="0.9"/>
+  <circle cx="44" cy="114" r="9" fill="#AA0000" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="53.0" y1="114.0" x2="35.0" y2="114.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="50.4" y1="120.4" x2="37.6" y2="107.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="44.0" y1="123.0" x2="44.0" y2="105.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="37.6" y1="120.4" x2="50.4" y2="107.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="44" cy="114" r="2.0" fill="#C0C0C0"/>
+
+  <circle cx="70" cy="114" r="9" fill="#AA0000" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="79.0" y1="114.0" x2="61.0" y2="114.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="76.4" y1="120.4" x2="63.6" y2="107.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="70.0" y1="123.0" x2="70.0" y2="105.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="63.6" y1="120.4" x2="76.4" y2="107.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="70" cy="114" r="2.0" fill="#C0C0C0"/>
+
+  <circle cx="116" cy="114" r="9" fill="#AA0000" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="125.0" y1="114.0" x2="107.0" y2="114.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="122.4" y1="120.4" x2="109.6" y2="107.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="116.0" y1="123.0" x2="116.0" y2="105.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="109.6" y1="120.4" x2="122.4" y2="107.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="116" cy="114" r="2.0" fill="#C0C0C0"/>
+
+  <circle cx="156" cy="114" r="9" fill="#AA0000" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="165.0" y1="114.0" x2="147.0" y2="114.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="162.4" y1="120.4" x2="149.6" y2="107.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="156.0" y1="123.0" x2="156.0" y2="105.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="149.6" y1="120.4" x2="162.4" y2="107.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="156" cy="114" r="2.0" fill="#C0C0C0"/>
+
+  <circle cx="180" cy="114" r="9" fill="#AA0000" stroke="#C0C0C0" stroke-width="2"/>
+<line x1="189.0" y1="114.0" x2="171.0" y2="114.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="186.4" y1="120.4" x2="173.6" y2="107.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="180.0" y1="123.0" x2="180.0" y2="105.0" stroke="#C0C0C0" stroke-width="1.2"/>
+<line x1="173.6" y1="120.4" x2="186.4" y2="107.6" stroke="#C0C0C0" stroke-width="1.2"/>
+<circle cx="180" cy="114" r="2.0" fill="#C0C0C0"/>
+
+  <line x1="5" y1="112" x2="198" y2="112" stroke="#888" stroke-width="2.5"/>
+
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">Trenitalia Italo NTV · 2012</text>
+</svg>

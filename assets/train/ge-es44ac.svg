@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <!-- Evolution Series - squarer cab, different hood profile -->
+  <rect x="136" y="34" width="52" height="62" rx="5" fill="#FF6600"/>
+  <rect x="139" y="38" width="22" height="18" rx="3" fill="#87CEEB" opacity="0.7"/>
+  <!-- BNSF orange/black -->
+  <rect x="8" y="46" width="132" height="42" rx="4" fill="#FF6600"/>
+  <rect x="12" y="40" width="122" height="14" rx="3" fill="#E05500"/>
+  <!-- Evolution Series larger hood top -->
+  <!-- black nose -->
+  <rect x="8" y="46" width="20" height="42" rx="3" fill="#333"/>
+  <circle cx="15" cy="68" r="5" fill="#FFE040" opacity="0.9"/>
+  <!-- large radiators evolution style -->
+  <rect x="98" y="34" width="34" height="68" rx="3" fill="#CC4400"/>
+  <!-- hood exhausts -->
+  <rect x="26" y="28" width="10" height="14" rx="3" fill="#1a1a1a"/>
+  <rect x="50" y="30" width="10" height="12" rx="3" fill="#1a1a1a"/>
+  <!-- BNSF swoosh -->
+  <path d="M8,70 Q60,62 136,68" stroke="#FFD700" stroke-width="3" fill="none"/>
+  <circle cx="26" cy="106" r="9" fill="#333" stroke="#E05500" stroke-width="2"/>
+<line x1="35.0" y1="106.0" x2="17.0" y2="106.0" stroke="#E05500" stroke-width="1.2"/>
+<line x1="32.4" y1="112.4" x2="19.6" y2="99.6" stroke="#E05500" stroke-width="1.2"/>
+<line x1="26.0" y1="115.0" x2="26.0" y2="97.0" stroke="#E05500" stroke-width="1.2"/>
+<line x1="19.6" y1="112.4" x2="32.4" y2="99.6" stroke="#E05500" stroke-width="1.2"/>
+<circle cx="26" cy="106" r="2.0" fill="#E05500"/>
+
+  <circle cx="50" cy="106" r="9" fill="#333" stroke="#E05500" stroke-width="2"/>
+<line x1="59.0" y1="106.0" x2="41.0" y2="106.0" stroke="#E05500" stroke-width="1.2"/>
+<line x1="56.4" y1="112.4" x2="43.6" y2="99.6" stroke="#E05500" stroke-width="1.2"/>
+<line x1="50.0" y1="115.0" x2="50.0" y2="97.0" stroke="#E05500" stroke-width="1.2"/>
+<line x1="43.6" y1="112.4" x2="56.4" y2="99.6" stroke="#E05500" stroke-width="1.2"/>
+<circle cx="50" cy="106" r="2.0" fill="#E05500"/>
+
+  <circle cx="76" cy="106" r="9" fill="#333" stroke="#E05500" stroke-width="2"/>
+<line x1="85.0" y1="106.0" x2="67.0" y2="106.0" stroke="#E05500" stroke-width="1.2"/>
+<line x1="82.4" y1="112.4" x2="69.6" y2="99.6" stroke="#E05500" stroke-width="1.2"/>
+<line x1="76.0" y1="115.0" x2="76.0" y2="97.0" stroke="#E05500" stroke-width="1.2"/>
+<line x1="69.6" y1="112.4" x2="82.4" y2="99.6" stroke="#E05500" stroke-width="1.2"/>
+<circle cx="76" cy="106" r="2.0" fill="#E05500"/>
+
+  <circle cx="106" cy="106" r="9" fill="#333" stroke="#E05500" stroke-width="2"/>
+<line x1="115.0" y1="106.0" x2="97.0" y2="106.0" stroke="#E05500" stroke-width="1.2"/>
+<line x1="112.4" y1="112.4" x2="99.6" y2="99.6" stroke="#E05500" stroke-width="1.2"/>
+<line x1="106.0" y1="115.0" x2="106.0" y2="97.0" stroke="#E05500" stroke-width="1.2"/>
+<line x1="99.6" y1="112.4" x2="112.4" y2="99.6" stroke="#E05500" stroke-width="1.2"/>
+<circle cx="106" cy="106" r="2.0" fill="#E05500"/>
+
+  <circle cx="140" cy="106" r="9" fill="#333" stroke="#E05500" stroke-width="2"/>
+<line x1="149.0" y1="106.0" x2="131.0" y2="106.0" stroke="#E05500" stroke-width="1.2"/>
+<line x1="146.4" y1="112.4" x2="133.6" y2="99.6" stroke="#E05500" stroke-width="1.2"/>
+<line x1="140.0" y1="115.0" x2="140.0" y2="97.0" stroke="#E05500" stroke-width="1.2"/>
+<line x1="133.6" y1="112.4" x2="146.4" y2="99.6" stroke="#E05500" stroke-width="1.2"/>
+<circle cx="140" cy="106" r="2.0" fill="#E05500"/>
+
+  <circle cx="166" cy="106" r="9" fill="#333" stroke="#E05500" stroke-width="2"/>
+<line x1="175.0" y1="106.0" x2="157.0" y2="106.0" stroke="#E05500" stroke-width="1.2"/>
+<line x1="172.4" y1="112.4" x2="159.6" y2="99.6" stroke="#E05500" stroke-width="1.2"/>
+<line x1="166.0" y1="115.0" x2="166.0" y2="97.0" stroke="#E05500" stroke-width="1.2"/>
+<line x1="159.6" y1="112.4" x2="172.4" y2="99.6" stroke="#E05500" stroke-width="1.2"/>
+<circle cx="166" cy="106" r="2.0" fill="#E05500"/>
+
+  <line x1="5" y1="112" x2="198" y2="112" stroke="#888" stroke-width="2.5"/>
+
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">GE ES44AC · 2004</text>
+</svg>

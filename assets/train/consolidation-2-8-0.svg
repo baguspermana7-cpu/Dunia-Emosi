@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <rect x="20" y="52" width="140" height="34" rx="7" fill="#111"/>
+  <rect x="25" y="58" width="95" height="22" rx="7" fill="#1e1e1e"/>
+  <!-- boxy cab -->
+  <rect x="148" y="44" width="35" height="42" rx="3" fill="#111"/>
+  <rect x="151" y="48" width="14" height="14" rx="2" fill="#87CEEB" opacity="0.6"/>
+  <!-- chimney straight -->
+  <rect x="32" y="18" width="14" height="36" rx="3" fill="#0d0d0d"/>
+  <rect x="28" y="14" width="22" height="8" rx="2" fill="#222"/>
+  <!-- smokebox -->
+  <circle cx="26" cy="67" r="16" fill="#0d0d0d"/>
+  <!-- dome -->
+  <ellipse cx="105" cy="54" rx="14" ry="9" fill="#0d0d0d"/>
+  <!-- 1 small pony + 4 large drivers, 2-8-0 -->
+  <circle cx="38" cy="102" r="7" fill="#111" stroke="#666" stroke-width="2"/>
+<line x1="45.0" y1="102.0" x2="31.0" y2="102.0" stroke="#666" stroke-width="1.2"/>
+<line x1="42.9" y1="106.9" x2="33.1" y2="97.1" stroke="#666" stroke-width="1.2"/>
+<line x1="38.0" y1="109.0" x2="38.0" y2="95.0" stroke="#666" stroke-width="1.2"/>
+<line x1="33.1" y1="106.9" x2="42.9" y2="97.1" stroke="#666" stroke-width="1.2"/>
+<circle cx="38" cy="102" r="1.5" fill="#666"/>
+
+  <circle cx="65" cy="102" r="12" fill="#111" stroke="#666" stroke-width="2"/>
+<line x1="77.0" y1="102.0" x2="53.0" y2="102.0" stroke="#666" stroke-width="1.2"/>
+<line x1="75.4" y1="108.0" x2="54.6" y2="96.0" stroke="#666" stroke-width="1.2"/>
+<line x1="71.0" y1="112.4" x2="59.0" y2="91.6" stroke="#666" stroke-width="1.2"/>
+<line x1="65.0" y1="114.0" x2="65.0" y2="90.0" stroke="#666" stroke-width="1.2"/>
+<line x1="59.0" y1="112.4" x2="71.0" y2="91.6" stroke="#666" stroke-width="1.2"/>
+<line x1="54.6" y1="108.0" x2="75.4" y2="96.0" stroke="#666" stroke-width="1.2"/>
+<circle cx="65" cy="102" r="2.6" fill="#666"/>
+
+  <circle cx="88" cy="102" r="12" fill="#111" stroke="#666" stroke-width="2"/>
+<line x1="100.0" y1="102.0" x2="76.0" y2="102.0" stroke="#666" stroke-width="1.2"/>
+<line x1="98.4" y1="108.0" x2="77.6" y2="96.0" stroke="#666" stroke-width="1.2"/>
+<line x1="94.0" y1="112.4" x2="82.0" y2="91.6" stroke="#666" stroke-width="1.2"/>
+<line x1="88.0" y1="114.0" x2="88.0" y2="90.0" stroke="#666" stroke-width="1.2"/>
+<line x1="82.0" y1="112.4" x2="94.0" y2="91.6" stroke="#666" stroke-width="1.2"/>
+<line x1="77.6" y1="108.0" x2="98.4" y2="96.0" stroke="#666" stroke-width="1.2"/>
+<circle cx="88" cy="102" r="2.6" fill="#666"/>
+
+  <circle cx="111" cy="102" r="12" fill="#111" stroke="#666" stroke-width="2"/>
+<line x1="123.0" y1="102.0" x2="99.0" y2="102.0" stroke="#666" stroke-width="1.2"/>
+<line x1="121.4" y1="108.0" x2="100.6" y2="96.0" stroke="#666" stroke-width="1.2"/>
+<line x1="117.0" y1="112.4" x2="105.0" y2="91.6" stroke="#666" stroke-width="1.2"/>
+<line x1="111.0" y1="114.0" x2="111.0" y2="90.0" stroke="#666" stroke-width="1.2"/>
+<line x1="105.0" y1="112.4" x2="117.0" y2="91.6" stroke="#666" stroke-width="1.2"/>
+<line x1="100.6" y1="108.0" x2="121.4" y2="96.0" stroke="#666" stroke-width="1.2"/>
+<circle cx="111" cy="102" r="2.6" fill="#666"/>
+
+  <circle cx="134" cy="102" r="12" fill="#111" stroke="#666" stroke-width="2"/>
+<line x1="146.0" y1="102.0" x2="122.0" y2="102.0" stroke="#666" stroke-width="1.2"/>
+<line x1="144.4" y1="108.0" x2="123.6" y2="96.0" stroke="#666" stroke-width="1.2"/>
+<line x1="140.0" y1="112.4" x2="128.0" y2="91.6" stroke="#666" stroke-width="1.2"/>
+<line x1="134.0" y1="114.0" x2="134.0" y2="90.0" stroke="#666" stroke-width="1.2"/>
+<line x1="128.0" y1="112.4" x2="140.0" y2="91.6" stroke="#666" stroke-width="1.2"/>
+<line x1="123.6" y1="108.0" x2="144.4" y2="96.0" stroke="#666" stroke-width="1.2"/>
+<circle cx="134" cy="102" r="2.6" fill="#666"/>
+
+  <!-- coupling rod -->
+  <rect x="65" y="100" width="69" height="4" rx="2" fill="#555" opacity="0.8"/>
+  <line x1="10" y1="112" x2="190" y2="112" stroke="#888" stroke-width="2.5"/>
+
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">Consolidation 2-8-0 · 1866</text>
+</svg>

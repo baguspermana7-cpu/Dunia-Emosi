@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <!-- 2-car articulated diesel railcar -->
+  <!-- car 1 -->
+  <path d="M10,65 Q20,45 35,42 L100,42 L100,88 L35,88 Q20,85 10,65 Z" fill="#6B2D8B"/>
+  <!-- car 2 -->
+  <rect x="100" y="42" width="85" height="46" rx="4" fill="#6B2D8B"/>
+  <!-- cream lower stripe -->
+  <path d="M35,72 L100,72 L100,80 L35,80 Q22,78 14,70 Z" fill="#F5F5DC"/>
+  <rect x="100" y="72" width="85" height="8" fill="#F5F5DC"/>
+  <!-- Art Deco nose -->
+  <path d="M10,65 Q14,55 28,52 L28,58 Q18,60 14,65 Z" fill="#F5F5DC"/>
+  <!-- windows car1 -->
+  <rect x="38" y="48" width="12" height="10" rx="2" fill="#87CEEB" opacity="0.7"/>
+  <rect x="55" y="48" width="12" height="10" rx="2" fill="#87CEEB" opacity="0.7"/>
+  <rect x="72" y="48" width="12" height="10" rx="2" fill="#87CEEB" opacity="0.7"/>
+  <!-- windows car2 -->
+  <rect x="108" y="48" width="12" height="10" rx="2" fill="#87CEEB" opacity="0.7"/>
+  <rect x="125" y="48" width="12" height="10" rx="2" fill="#87CEEB" opacity="0.7"/>
+  <rect x="142" y="48" width="12" height="10" rx="2" fill="#87CEEB" opacity="0.7"/>
+  <rect x="160" y="48" width="12" height="10" rx="2" fill="#87CEEB" opacity="0.7"/>
+  <!-- articulation joint -->
+  <rect x="97" y="46" width="6" height="40" rx="2" fill="#4a1a60"/>
+  <!-- headlight -->
+  <circle cx="13" cy="65" r="5" fill="#FFE040" opacity="0.9"/>
+  <circle cx="38" cy="100" r="8" fill="#4a1a60" stroke="#F5F5DC" stroke-width="2"/>
+<line x1="46.0" y1="100.0" x2="30.0" y2="100.0" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="43.7" y1="105.7" x2="32.3" y2="94.3" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="38.0" y1="108.0" x2="38.0" y2="92.0" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="32.3" y1="105.7" x2="43.7" y2="94.3" stroke="#F5F5DC" stroke-width="1.2"/>
+<circle cx="38" cy="100" r="1.8" fill="#F5F5DC"/>
+
+  <circle cx="76" cy="100" r="8" fill="#4a1a60" stroke="#F5F5DC" stroke-width="2"/>
+<line x1="84.0" y1="100.0" x2="68.0" y2="100.0" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="81.7" y1="105.7" x2="70.3" y2="94.3" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="76.0" y1="108.0" x2="76.0" y2="92.0" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="70.3" y1="105.7" x2="81.7" y2="94.3" stroke="#F5F5DC" stroke-width="1.2"/>
+<circle cx="76" cy="100" r="1.8" fill="#F5F5DC"/>
+
+  <circle cx="113" cy="100" r="8" fill="#4a1a60" stroke="#F5F5DC" stroke-width="2"/>
+<line x1="121.0" y1="100.0" x2="105.0" y2="100.0" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="118.7" y1="105.7" x2="107.3" y2="94.3" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="113.0" y1="108.0" x2="113.0" y2="92.0" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="107.3" y1="105.7" x2="118.7" y2="94.3" stroke="#F5F5DC" stroke-width="1.2"/>
+<circle cx="113" cy="100" r="1.8" fill="#F5F5DC"/>
+
+  <circle cx="155" cy="100" r="8" fill="#4a1a60" stroke="#F5F5DC" stroke-width="2"/>
+<line x1="163.0" y1="100.0" x2="147.0" y2="100.0" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="160.7" y1="105.7" x2="149.3" y2="94.3" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="155.0" y1="108.0" x2="155.0" y2="92.0" stroke="#F5F5DC" stroke-width="1.2"/>
+<line x1="149.3" y1="105.7" x2="160.7" y2="94.3" stroke="#F5F5DC" stroke-width="1.2"/>
+<circle cx="155" cy="100" r="1.8" fill="#F5F5DC"/>
+
+  <line x1="5" y1="112" x2="198" y2="112" stroke="#888" stroke-width="2.5"/>
+
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">Flying Hamburger · 1932</text>
+</svg>

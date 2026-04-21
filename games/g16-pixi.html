@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Selamatkan Kereta 🚂</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0d1020;font-family:'Fredoka One',sans-serif;touch-action:none}
+#pixi-canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
+
+/* ── HUD Top ── */
+#hud-top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:clamp(4px,1.5vw,10px);padding:max(14px,env(safe-area-inset-top)) clamp(14px,3vw,18px) 8px;background:linear-gradient(180deg,rgba(0,0,0,0.82) 0%,transparent 100%);pointer-events:none}
+#btn-back{background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.22);border-radius:12px;color:#fff;padding:7px 12px;font-size:15px;cursor:pointer;font-family:inherit;pointer-events:all;flex-shrink:0}
+#game-badge{background:rgba(0,0,0,0.5);border:1.5px solid rgba(255,200,0,0.35);border-radius:10px;padding:5px 10px;color:#fbbf24;font-size:clamp(10px,3vw,13px);font-weight:700;flex-shrink:0;white-space:nowrap}
+#hud-center{flex:1;text-align:center;min-width:0}
+#level-text{font-size:12px;color:#c4b5fd;font-weight:700}
+#status-text{font-size:clamp(13px,4vw,18px);font-weight:900;color:#fff}
+#obstacle-count{font-size:clamp(11px,3vw,14px);color:#86efac;font-weight:700;flex-shrink:0}
+
+/* ── Danger Bar ── */
+#danger-wrap{position:fixed;top:56px;left:0;right:0;z-index:49;padding:4px 14px 2px;background:rgba(0,0,0,0.45)}
+#danger-inner{display:flex;align-items:center;gap:8px}
+#danger-label{font-size:9px;color:#ef4444;letter-spacing:2px;font-weight:700;flex-shrink:0;animation:dangerPulse 1s ease-in-out infinite}
+@keyframes dangerPulse{50%{opacity:0.4}}
+#danger-track{flex:1;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden}
+#danger-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#86efac,#fbbf24,#ef4444);transition:width .15s linear;width:0%}
+#cliff-icon{font-size:16px;flex-shrink:0}
+
+/* ── Quiz Panel ── */
+#quiz-panel{position:fixed;bottom:0;left:0;right:0;z-index:200;display:none;flex-direction:column;align-items:center;padding:clamp(10px,3vh,16px) clamp(12px,4vw,20px) clamp(16px,5vh,26px);background:linear-gradient(0deg,rgba(10,2,25,0.98) 0%,rgba(26,5,53,0.96) 100%);border-top:3px solid #ef4444;backdrop-filter:blur(14px)}
+#quiz-panel.show{display:flex}
+#quiz-title{color:#ef4444;font-size:10px;font-weight:700;letter-spacing:3px;margin-bottom:4px;animation:dangerPulse 0.8s ease-in-out infinite}
+#quiz-question{color:#fff;font-size:clamp(18px,5.5vw,28px);font-weight:900;text-align:center;margin-bottom:clamp(10px,3vh,16px);text-shadow:0 0 20px rgba(251,191,36,0.6);max-width:90vw;overflow:hidden;word-break:break-word}
+#quiz-choices{display:flex;gap:clamp(6px,2vw,12px);justify-content:center;width:100%;flex-wrap:wrap}
+.choice-btn{flex:1;min-width:clamp(52px,15vw,80px);max-width:clamp(68px,24vw,120px);padding:clamp(10px,3.5vh,18px) 4px;border:2.5px solid rgba(255,255,255,0.35);border-radius:16px;background:linear-gradient(160deg,#7C3AED,#6D28D9);color:#fff;font-size:clamp(16px,5.5vw,26px);font-weight:900;cursor:pointer;transition:all .12s;font-family:inherit;-webkit-tap-highlight-color:transparent;box-shadow:0 5px 0 #4C1D95}
+.choice-btn:nth-child(2){background:linear-gradient(160deg,#E85A32,#C84020);border-color:#F07050;box-shadow:0 5px 0 #9A2A10}
+.choice-btn:nth-child(3){background:linear-gradient(160deg,#2DBF7E,#1A9E66);border-color:#50E0A0;box-shadow:0 5px 0 #0A7A48}
+.choice-btn:nth-child(4){background:linear-gradient(160deg,#F59E0B,#D97706);border-color:#FCD34D;box-shadow:0 5px 0 #92400E}
+.choice-btn:active{transform:scale(.91) translateY(4px);box-shadow:0 1px 0 #4C1D95}
+.choice-btn:nth-child(2):active{box-shadow:0 1px 0 #9A2A10}
+.choice-btn:nth-child(3):active{box-shadow:0 1px 0 #0A7A48}
+.choice-btn:nth-child(4):active{box-shadow:0 2px 0 #92400E}
+.choice-btn.correct{border-color:#4ade80;background:rgba(74,222,128,0.3);animation:correctFlash .4s ease}
+.choice-btn.wrong{border-color:#ef4444;background:rgba(239,68,68,0.3);animation:wrongShake .35s ease}
+@keyframes correctFlash{0%{transform:scale(1.1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+@keyframes wrongShake{0%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}100%{transform:translateX(0)}}
+#mercy-bar{margin-top:10px;display:flex;gap:5px;align-items:center}
+.mercy-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.2);transition:all .2s}
+.mercy-dot.used{background:#ef4444;border-color:#ef4444}
+
+/* ── Speed Lines / Flash ── */
+#speed-lines{position:fixed;inset:0;z-index:45;pointer-events:none;opacity:0;transition:opacity .15s;background:repeating-linear-gradient(90deg,transparent,transparent 38px,rgba(255,255,255,0.035) 38px,rgba(255,255,255,0.035) 40px)}
+#flash{position:fixed;inset:0;z-index:99;pointer-events:none;opacity:0;transition:opacity .08s}
+
+/* ── Train Select ── */
+#train-select{position:fixed;inset:0;z-index:500;background:linear-gradient(180deg,#080c20 0%,#13163d 55%,#080c20 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(8px,2vh,16px);padding:clamp(12px,3vw,24px);overflow-y:auto}
+#ts-title{font-size:clamp(20px,5.5vw,28px);font-weight:900;color:#e0e7ff;text-align:center}
+#ts-subtitle{font-size:clamp(9px,2.5vw,12px);color:rgba(196,181,253,0.65);letter-spacing:1.5px;text-align:center}
+#ts-trains{display:flex;gap:clamp(6px,2vw,10px);justify-content:center;flex-wrap:wrap;max-width:min(480px,98vw)}
+.ts-card{background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.13);border-radius:18px;padding:clamp(8px,2vh,13px) clamp(6px,1.5vw,12px);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s;width:min(116px,30vw);text-align:center;display:flex;flex-direction:column;align-items:center;gap:5px}
+.ts-card:active{transform:scale(.93)}
+.ts-card:hover,.ts-card.selected{border-color:#818cf8;background:rgba(129,140,248,0.14);box-shadow:0 0 18px rgba(129,140,248,0.25)}
+.ts-card-name{font-size:clamp(9px,2.8vw,12px);font-weight:700;color:#e0e7ff;line-height:1.2}
+.ts-card-desc{font-size:clamp(7px,2vw,9px);color:rgba(196,181,253,0.6)}
+canvas.ts-preview{border-radius:8px;max-width:100%}
+#btn-start{background:linear-gradient(135deg,#6366f1,#4f46e5);border:none;border-radius:18px;color:#fff;padding:clamp(11px,3vh,16px) clamp(24px,8vw,52px);font-size:clamp(15px,4.5vw,20px);font-weight:900;cursor:pointer;box-shadow:0 6px 0 #3730a3;font-family:inherit;-webkit-tap-highlight-color:transparent;transition:transform .1s,box-shadow .1s}
+#btn-start:active{transform:translateY(4px);box-shadow:0 2px 0 #3730a3}
+#ts-back{background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.18);border-radius:12px;color:#fff;padding:8px 16px;font-size:clamp(12px,3.5vw,14px);cursor:pointer;font-family:inherit}
+
+/* Overlays handled by game-modal.js */
+</style>
+</head>
+<body>
+<canvas id="pixi-canvas"></canvas>
+<audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
+
+<div id="hud-top">
+  <button id="btn-back" onclick="confirmBack()">⌂</button>
+  <button id="btn-pause" onclick="togglePause()" style="pointer-events:all;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.25);border-radius:10px;color:#fff;padding:5px 8px;font-size:14px;cursor:pointer;font-family:inherit;flex-shrink:0">⏸</button>
+  <div id="game-badge">🚂 Signal Rush</div>
+  <div id="hud-center">
+    <div id="level-text">Level 1</div>
+    <div id="status-text">Bersiap...</div>
+  </div>
+  <div id="obstacle-count">🚧 0/0</div>
+</div>
+<div id="danger-wrap">
+  <div id="danger-inner">
+    <span id="danger-label">⚠ Bahaya</span>
+    <div id="danger-track"><div id="danger-fill"></div></div>
+    <span id="cliff-icon">🌋</span>
+  </div>
+</div>
+<div id="quiz-panel">
+  <div id="quiz-title">🚨 HAPUS RINTANGAN!</div>
+  <div id="quiz-question">?</div>
+  <div id="quiz-choices"></div>
+  <div id="mercy-bar"></div>
+</div>
+<div id="speed-lines"></div>
+<div id="flash"></div>
+
+<div id="train-select">
+  <div id="ts-title">🚂 Pilih Keretamu!</div>
+  <div id="ts-subtitle">6 LIVERY KERETA TERSEDIA</div>
+  <div id="ts-trains">
+    <div class="ts-card selected" onclick="selectTrain(0)" id="ts-0">
+      <canvas class="ts-preview" width="116" height="52" id="prev-0"></canvas>
+      <div class="ts-card-name">Linus — Brave Loco</div>
+      <div class="ts-card-desc">Si pemberani rel</div>
+    </div>
+    <div class="ts-card" onclick="selectTrain(1)" id="ts-1">
+      <canvas class="ts-preview" width="116" height="52" id="prev-1"></canvas>
+      <div class="ts-card-name">Dragutin JZ 62</div>
+      <div class="ts-card-desc">Legenda jalur hijau</div>
+    </div>
+    <div class="ts-card" onclick="selectTrain(2)" id="ts-2">
+      <canvas class="ts-preview" width="116" height="52" id="prev-2"></canvas>
+      <div class="ts-card-name">Malivlak</div>
+      <div class="ts-card-desc">Mesin api tua</div>
+    </div>
+    <div class="ts-card" onclick="selectTrain(3)" id="ts-3">
+      <canvas class="ts-preview" width="116" height="52" id="prev-3"></canvas>
+      <div class="ts-card-name">Sakura Special</div>
+      <div class="ts-card-desc">Sang pelari cepat</div>
+    </div>
+    <div class="ts-card" onclick="selectTrain(4)" id="ts-4">
+      <canvas class="ts-preview" width="116" height="52" id="prev-4"></canvas>
+      <div class="ts-card-name">Nocturne</div>
+      <div class="ts-card-desc">Raja kereta malam</div>
+    </div>
+    <div class="ts-card" onclick="selectTrain(5)" id="ts-5">
+      <canvas class="ts-preview" width="116" height="52" id="prev-5"></canvas>
+      <div class="ts-card-name">Bima Express</div>
+      <div class="ts-card-desc">Kebanggaan nusantara</div>
+    </div>
+  </div>
+  <button id="btn-start" onclick="startGame()">🚦 Mulai!</button>
+  <button id="ts-back" onclick="goBack()">◀ Kembali</button>
+</div>
+
+<script src="game-modal.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
+<script>
+'use strict'
+
+const cfg = { level: 1 }
+try { const s = sessionStorage.getItem('g16Config'); if (s) Object.assign(cfg, JSON.parse(s)) } catch(_){}
+
+// ── 6 Train Styles ─────────────────────────────────────────────────────────────
+const TRAIN_STYLES = [
+  { // 0: Linus — Brave Locomotive (Cobalt Blue)
+    locoBody:0x1e40af, locoCab:0x3b82f6, locoAccent:0x60a5fa,
+    carBody:0x1d4ed8, carWindow:0xbae6fd, carStripe:0x93c5fd,
+    cabColor:0x1e3a8a, chimney:0x1c1917, wheelRim:0xdbeafe,
+    caboose:0x1e40af, cabooseLight:0xef4444, smokeCol:0x99aacc,
+  },
+  { // 1: Dragutin JZ 62 (Forest Green)
+    locoBody:0x14532d, locoCab:0x16a34a, locoAccent:0x4ade80,
+    carBody:0x166534, carWindow:0xbbf7d0, carStripe:0x86efac,
+    cabColor:0x14532d, chimney:0x1c1917, wheelRim:0x86efac,
+    caboose:0x14532d, cabooseLight:0xfbbf24, smokeCol:0x888888,
+  },
+  { // 2: Malivlak (Crimson Red, steam)
+    locoBody:0xb91c1c, locoCab:0xef4444, locoAccent:0xfca5a5,
+    carBody:0x991b1b, carWindow:0xfecaca, carStripe:0xfca5a5,
+    cabColor:0x7f1d1d, chimney:0x292524, wheelRim:0xfbbf24,
+    caboose:0x7f1d1d, cabooseLight:0xfbbf24, smokeCol:0x444444,
+  },
+  { // 3: Sakura Special (Pink/White, high-speed)
+    locoBody:0xfce7f3, locoCab:0xfdf2f8, locoAccent:0xf9a8d4,
+    carBody:0xfdf4ff, carWindow:0x7c3aed, carStripe:0xec4899,
+    cabColor:0xdb2777, chimney:0xf0abcc, wheelRim:0xf9a8d4,
+    caboose:0xfce7f3, cabooseLight:0x7c3aed, smokeCol:0xffe4f5,
+  },
+  { // 4: Nocturne (Black/Gold, luxury night)
+    locoBody:0x1c1917, locoCab:0x292524, locoAccent:0xd97706,
+    carBody:0x0c0a09, carWindow:0xfbbf24, carStripe:0xd97706,
+    cabColor:0x000000, chimney:0x1c1917, wheelRim:0xd97706,
+    caboose:0x1c1917, cabooseLight:0xfbbf24, smokeCol:0x555555,
+  },
+  { // 5: Bima Express (Orange/Silver, Indonesia)
+    locoBody:0xea580c, locoCab:0xfed7aa, locoAccent:0xfb923c,
+    carBody:0xc2410c, carWindow:0xfff7ed, carStripe:0xfbbf24,
+    cabColor:0x9a3412, chimney:0x292524, wheelRim:0xe2e8f0,
+    caboose:0x9a3412, cabooseLight:0xfbbf24, smokeCol:0x999999,
+  },
+];
+
+const LEVEL_THEMES = [
+  // 0: Night City
+  { name:'night',    sky:0x03050f, skyMid:0x070a1f, hill1:0x1a0535, hill2:0x0f1a08, hill3:0x050d04, railColor:0xDAA520, tieColor:0x5d3a1a, cliffBase:0x0a0015, groundColor:0x080808, hasMoon:true,  hasStars:true,  sunX:null },
+  // 1: Sunrise
+  { name:'sunrise',  sky:0xff7c00, skyMid:0xffd6a0, hill1:0x9a5a2a, hill2:0x3d2010, hill3:0x2a1508, railColor:0xfbbf24, tieColor:0x5d2a00, cliffBase:0x200a00, groundColor:0x2a1a0a, hasMoon:false, hasStars:false, sunX:0.8  },
+  // 2: Deep Forest
+  { name:'forest',   sky:0x0c2010, skyMid:0x143520, hill1:0x0d2a0a, hill2:0x071609, hill3:0x030e02, railColor:0x4ade80, tieColor:0x1a3a10, cliffBase:0x040c04, groundColor:0x060e04, hasMoon:false, hasStars:false, sunX:null },
+  // 3: Mountain
+  { name:'mountain', sky:0x0d1b2e, skyMid:0x1a2f4a, hill1:0x1a2f4a, hill2:0x0f1e30, hill3:0x080f18, railColor:0x94a3b8, tieColor:0x1e2a40, cliffBase:0x040810, groundColor:0x050810, hasMoon:true,  hasStars:true,  sunX:null },
+  // 4: Coastal Bright
+  { name:'coastal',  sky:0x1ea6ff, skyMid:0x7dd3fc, hill1:0x0e8a3e, hill2:0x0a5c28, hill3:0x063d1a, railColor:0xfcd34d, tieColor:0x3d2b00, cliffBase:0x0a2800, groundColor:0x0e4a14, hasMoon:false, hasStars:false, sunX:0.75 },
+  // 5: Stormy Purple
+  { name:'storm',    sky:0x0e0820, skyMid:0x1a0f38, hill1:0x1a0f38, hill2:0x0d0820, hill3:0x050410, railColor:0xc084fc, tieColor:0x2d1a4a, cliffBase:0x06020f, groundColor:0x070212, hasMoon:false, hasStars:true,  sunX:null },
+  // 6: Desert Dusk
+  { name:'desert',   sky:0xd97706, skyMid:0xfbbf24, hill1:0x92400e, hill2:0x78350f, hill3:0x451a03, railColor:0xf59e0b, tieColor:0x4a2000, cliffBase:0x2d1000, groundColor:0x3b1a06, hasMoon:false, hasStars:false, sunX:0.65 },
+  // 7: Snowy Tundra
+  { name:'snow',     sky:0x0f1f2e, skyMid:0x1e3045, hill1:0x1e3a50, hill2:0x152a3a, hill3:0x0c1e2a, railColor:0xe0f2fe, tieColor:0x2a4060, cliffBase:0x080e18, groundColor:0x0a1520, hasMoon:true,  hasStars:true,  sunX:null },
+  // 8: Volcanic Red
+  { name:'volcano',  sky:0x1c0000, skyMid:0x3d0a00, hill1:0x4a1000, hill2:0x2d0800, hill3:0x1a0500, railColor:0xff6b00, tieColor:0x3a0800, cliffBase:0x100200, groundColor:0x140300, hasMoon:false, hasStars:false, sunX:0.5  },
+  // 9: Aurora Night
+  { name:'aurora',   sky:0x011a0a, skyMid:0x012412, hill1:0x012812, hill2:0x011a0c, hill3:0x010d06, railColor:0x6ee7b7, tieColor:0x064428, cliffBase:0x010804, groundColor:0x010c05, hasMoon:true,  hasStars:true,  sunX:null },
+  // 10: Golden Hour
+  { name:'golden',   sky:0xf59e0b, skyMid:0xfcd34d, hill1:0x6b4226, hill2:0x4a2e1a, hill3:0x2d1a0c, railColor:0xfbbf24, tieColor:0x5d3a1a, cliffBase:0x2d1800, groundColor:0x3b2010, hasMoon:false, hasStars:false, sunX:0.3  },
+  // 11: Misty Dawn
+  { name:'mist',     sky:0x8baab8, skyMid:0xb0c8d4, hill1:0x4a6a6a, hill2:0x384a50, hill3:0x2a3a40, railColor:0x94a3b8, tieColor:0x3a4a50, cliffBase:0x1a2a30, groundColor:0x2a3838, hasMoon:false, hasStars:false, sunX:0.9  },
+  // 12: Midnight Blue
+  { name:'midnight', sky:0x020818, skyMid:0x040e28, hill1:0x0a1830, hill2:0x061020, hill3:0x030810, railColor:0x60a5fa, tieColor:0x1a2a48, cliffBase:0x020610, groundColor:0x030810, hasMoon:true,  hasStars:true,  sunX:null },
+  // 13: Cherry Blossom
+  { name:'sakura',   sky:0xfce7f3, skyMid:0xfbcfe8, hill1:0x86405a, hill2:0x5a2a40, hill3:0x3a1a28, railColor:0xf472b6, tieColor:0x6a3050, cliffBase:0x2a0c1a, groundColor:0x1a0a12, hasMoon:false, hasStars:false, sunX:0.6  },
+  // 14: Autumn Warm
+  { name:'autumn',   sky:0xb45309, skyMid:0xf59e0b, hill1:0x7c2d12, hill2:0x5a2010, hill3:0x3a1408, railColor:0xfbbf24, tieColor:0x4a2008, cliffBase:0x200a04, groundColor:0x2a1206, hasMoon:false, hasStars:false, sunX:0.4  },
+  // 15: Tropical Night
+  { name:'tropical', sky:0x042028, skyMid:0x083848, hill1:0x0a4020, hill2:0x062a14, hill3:0x041a0c, railColor:0x2dd4bf, tieColor:0x0a3a28, cliffBase:0x020e08, groundColor:0x031208, hasMoon:true,  hasStars:true,  sunX:null },
+  // 16: Arctic Blue
+  { name:'arctic',   sky:0xc0dce8, skyMid:0xe0f0f8, hill1:0x8aa8c0, hill2:0x6a8aa8, hill3:0x4a6a88, railColor:0xbae6fd, tieColor:0x4a6a88, cliffBase:0x2a4060, groundColor:0x3a5068, hasMoon:false, hasStars:false, sunX:0.2  },
+  // 17: Lavender Dusk
+  { name:'lavender', sky:0x2d1b69, skyMid:0x4c1d95, hill1:0x3b0764, hill2:0x2a0548, hill3:0x1a0330, railColor:0xa78bfa, tieColor:0x3a1a60, cliffBase:0x100520, groundColor:0x140828, hasMoon:true,  hasStars:true,  sunX:null },
+  // 18: Rainy Grey
+  { name:'rain',     sky:0x374151, skyMid:0x4b5563, hill1:0x2a3a3a, hill2:0x1e2a30, hill3:0x141e24, railColor:0x9ca3af, tieColor:0x2a3040, cliffBase:0x0e1418, groundColor:0x141a20, hasMoon:false, hasStars:false, sunX:null },
+  // 19: Neon City
+  { name:'neon',     sky:0x0a0020, skyMid:0x140030, hill1:0x1a0040, hill2:0x0e0028, hill3:0x060014, railColor:0xe879f9, tieColor:0x2a0050, cliffBase:0x06000e, groundColor:0x080012, hasMoon:false, hasStars:true,  sunX:null },
+  // 20: Warm Prairie
+  { name:'prairie',  sky:0x87CEEB, skyMid:0xc8e8f8, hill1:0x4a7820, hill2:0x3a6010, hill3:0x2a4808, railColor:0x86efac, tieColor:0x2a4008, cliffBase:0x142004, groundColor:0x1a2808, hasMoon:false, hasStars:false, sunX:0.85 },
+  // 21: Blood Moon
+  { name:'bloodmoon',sky:0x1a0000, skyMid:0x2d0505, hill1:0x2a0808, hill2:0x1a0404, hill3:0x0e0202, railColor:0xfca5a5, tieColor:0x3a0808, cliffBase:0x0a0101, groundColor:0x0e0303, hasMoon:true,  hasStars:true,  sunX:null },
+  // 22: Emerald Green
+  { name:'emerald',  sky:0x064e3b, skyMid:0x0a8060, hill1:0x0d6040, hill2:0x084a30, hill3:0x043820, railColor:0x34d399, tieColor:0x043818, cliffBase:0x022010, groundColor:0x032a14, hasMoon:false, hasStars:false, sunX:null },
+  // 23: Pink Sunset
+  { name:'pinkset',  sky:0xf43f5e, skyMid:0xfda4af, hill1:0x8a2040, hill2:0x5a1428, hill3:0x3a0c18, railColor:0xfda4af, tieColor:0x5a1830, cliffBase:0x2a0810, groundColor:0x1a0608, hasMoon:false, hasStars:false, sunX:0.15 },
+  // 24: Deep Space
+  { name:'space',    sky:0x000008, skyMid:0x000418, hill1:0x0a0830, hill2:0x060420, hill3:0x030210, railColor:0x818cf8, tieColor:0x1a1040, cliffBase:0x020108, groundColor:0x030210, hasMoon:false, hasStars:true,  sunX:null },
+  // 25: Harvest Orange
+  { name:'harvest',  sky:0xea580c, skyMid:0xfb923c, hill1:0x784020, hill2:0x582a10, hill3:0x3a1a08, railColor:0xfb923c, tieColor:0x4a2008, cliffBase:0x1a0a04, groundColor:0x2a1408, hasMoon:false, hasStars:false, sunX:0.5  },
+  // 26: Icy Blue
+  { name:'icy',      sky:0x0891b2, skyMid:0x22d3ee, hill1:0x1a5a6a, hill2:0x104048, hill3:0x082a30, railColor:0x67e8f9, tieColor:0x0a3040, cliffBase:0x04161a, groundColor:0x081e24, hasMoon:false, hasStars:false, sunX:0.7  },
+  // 27: Twilight Purple
+  { name:'twilight', sky:0x1e0845, skyMid:0x2d1b69, hill1:0x2d0a50, hill2:0x1e0838, hill3:0x0f0420, railColor:0xc084fc, tieColor:0x2a0a50, cliffBase:0x0a0318, groundColor:0x0c0420, hasMoon:true,  hasStars:true,  sunX:null },
+  // 28: Sunny Meadow
+  { name:'meadow',   sky:0x38bdf8, skyMid:0x7dd3fc, hill1:0x22c55e, hill2:0x16a34a, hill3:0x0d7a34, railColor:0x86efac, tieColor:0x1a5a20, cliffBase:0x082a10, groundColor:0x0a3414, hasMoon:false, hasStars:false, sunX:0.8  },
+  // 29: Crimson Night
+  { name:'crimson',  sky:0x1a0008, skyMid:0x2d0010, hill1:0x3a0018, hill2:0x260010, hill3:0x140008, railColor:0xf43f5e, tieColor:0x3a0010, cliffBase:0x0a0004, groundColor:0x0e0006, hasMoon:true,  hasStars:true,  sunX:null },
+];
+const BG_THEME_IDX = Math.min(LEVEL_THEMES.length-1, (cfg.level - 1) % LEVEL_THEMES.length);
+const BG = LEVEL_THEMES[BG_THEME_IDX];
+
+let selectedTrainIdx = 0;
+function selectTrain(idx) {
+  selectedTrainIdx = idx;
+  document.querySelectorAll('.ts-card').forEach((c, i) => c.classList.toggle('selected', i === idx));
+}
+
+// ── Train Select Preview Canvas ───────────────────────────────────────────────
+function drawPreview(canvasId, styleIdx) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const TS = TRAIN_STYLES[styleIdx];
+  ctx.clearRect(0, 0, 116, 52);
+  const hex = c => '#' + c.toString(16).padStart(6, '0');
+
+  const spokeWheel = (cx, cy, r, spokes) => {
+    ctx.fillStyle = '#1c1917';
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = hex(TS.wheelRim); ctx.lineWidth = 1.1;
+    for (let i = 0; i < spokes; i++) {
+      const a = (i / spokes) * Math.PI * 2;
+      ctx.beginPath(); ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(a) * (r - 1.5), cy + Math.sin(a) * (r - 1.5));
+      ctx.stroke();
+    }
+    ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
+    ctx.fillStyle = hex(TS.wheelRim);
+    ctx.beginPath(); ctx.arc(cx, cy, 2, 0, Math.PI*2); ctx.fill();
+  };
+
+  const ty = 34; // track y
+
+  // Caboose
+  ctx.fillStyle = hex(TS.caboose); ctx.fillRect(2, ty-11, 20, 17);
+  ctx.fillStyle = hex(TS.carWindow); ctx.fillRect(7, ty-8, 7, 7);
+
+  // Passenger cars
+  for (let ci = 0; ci < 2; ci++) {
+    const cx = 26 + ci*26;
+    ctx.fillStyle = hex(TS.carBody); ctx.fillRect(cx, ty-13, 22, 19);
+    ctx.fillStyle = hex(TS.carStripe); ctx.fillRect(cx, ty-5, 22, 2);
+    ctx.fillStyle = hex(TS.carWindow);
+    ctx.fillRect(cx+2, ty-10, 7, 8); ctx.fillRect(cx+12, ty-10, 7, 8);
+  }
+
+  // Locomotive
+  ctx.fillStyle = hex(TS.locoBody); ctx.fillRect(78, ty-15, 30, 21);
+  ctx.fillStyle = hex(TS.locoCab); ctx.fillRect(78, ty-21, 14, 27);
+  ctx.fillStyle = hex(TS.chimney);
+  ctx.fillRect(96, ty-24, 6, 12); ctx.fillRect(94, ty-26, 10, 4); // stack
+  ctx.fillStyle = hex(TS.locoAccent);
+  ctx.beginPath(); ctx.ellipse(89, ty-15, 5, 4, 0, Math.PI, 0); ctx.fill(); // dome
+  ctx.fillStyle = hex(TS.carWindow); ctx.fillRect(80, ty-18, 9, 9); // cab window
+  ctx.fillStyle = '#fef9c3';
+  ctx.beginPath(); ctx.arc(107, ty-9, 3, 0, Math.PI*2); ctx.fill(); // headlight
+  ctx.fillStyle = '#fbbf24'; ctx.fillRect(78, ty-4, 30, 2); // stripe
+
+  // Connecting rod
+  ctx.fillStyle = hex(TS.locoAccent); ctx.fillRect(80, ty+3, 22, 2);
+
+  // Wheels
+  const wy = ty + 7;
+  spokeWheel(6, wy, 5, 4); spokeWheel(18, wy, 5, 4); // caboose
+  spokeWheel(30, wy, 5, 4); spokeWheel(44, wy, 5, 4); // car1
+  spokeWheel(56, wy, 5, 4); spokeWheel(70, wy, 5, 4); // car2
+  spokeWheel(83, wy, 6, 6); spokeWheel(96, wy, 6, 6); spokeWheel(107, wy, 5, 4); // loco
+
+  // Rail
+  ctx.fillStyle = '#4ade80'; ctx.fillRect(0, ty+13, 116, 2);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  for (let i = 0; i < 6; i++) drawPreview('prev-' + i, i);
+});
+
+function startGame() {
+  document.getElementById('train-select').style.display = 'none';
+  initPixi().catch(e => console.error('g16 init error:', e));
+}
+
+// ── Questions ─────────────────────────────────────────────────────────────────
+const QUESTIONS = {
+  easy:[
+    {q:'🐱 Huruf awal?',ans:'K',wrong:['A','M','B']},{q:'🍎 Huruf awal?',ans:'A',wrong:['I','U','E']},
+    {q:'🐶 Huruf awal?',ans:'A',wrong:['K','M','B']},{q:'🦋 Huruf awal?',ans:'K',wrong:['L','S','P']},
+    {q:'🐟 Huruf awal?',ans:'I',wrong:['U','A','O']},{q:'🌸 Huruf awal?',ans:'B',wrong:['K','S','T']},
+    {q:'🐘 Huruf awal?',ans:'G',wrong:['A','K','L']},{q:'🦒 Huruf awal?',ans:'J',wrong:['G','K','L']},
+    {q:'🍌 Huruf awal?',ans:'P',wrong:['B','M','K']},{q:'🐸 Huruf awal?',ans:'K',wrong:['B','S','L']},
+    {q:'1+1=?',ans:'2',wrong:['3','4','1']},{q:'2+1=?',ans:'3',wrong:['2','4','5']},
+    {q:'3+2=?',ans:'5',wrong:['4','6','7']},{q:'5-2=?',ans:'3',wrong:['2','4','1']},
+    {q:'Warna 🔴?',ans:'MERAH',wrong:['BIRU','HIJAU','KUNING']},
+    {q:'Warna 🔵?',ans:'BIRU',wrong:['MERAH','HIJAU','UNGU']},
+    {q:'Warna 🟡?',ans:'KUNING',wrong:['ORANYE','PUTIH','MERAH']},
+    {q:'Warna 🟢?',ans:'HIJAU',wrong:['BIRU','KUNING','HITAM']},
+    {q:'3-2=?',ans:'1',wrong:['2','3','4']},{q:'1+2=?',ans:'3',wrong:['2','4','5']},
+    {q:'🐮 Suaranya?',ans:'MOO',wrong:['BAA','OINK','QUACK']},
+    {q:'🐏 Suaranya?',ans:'BAA',wrong:['MOO','BARK','MEW']},
+    {q:'🐕 Suaranya?',ans:'GUKGUK',wrong:['MEONG','KWEK','EMBEK']},
+    {q:'🐓 Suaranya?',ans:'KUKURUYUK',wrong:['KWEK','MOO','BAA']},
+    {q:'4-1=?',ans:'3',wrong:['2','5','4']},{q:'2+2=?',ans:'4',wrong:['3','5','6']},
+    {q:'Warna 🟠?',ans:'ORANYE',wrong:['MERAH','KUNING','UNGU']},
+    {q:'🍊 Buah apa?',ans:'JERUK',wrong:['APEL','PISANG','MANGGA']},
+    {q:'🍇 Buah apa?',ans:'ANGGUR',wrong:['APEL','JERUK','SEMANGKA']},
+    {q:'Hari setelah Senin?',ans:'SELASA',wrong:['RABU','KAMIS','JUMAT']},
+    {q:'🐰 Huruf awal?',ans:'K',wrong:['L','M','N']},
+  ],
+  medium:[
+    {q:'2+3=?',ans:'5',wrong:['4','6','7']},{q:'4+4=?',ans:'8',wrong:['7','9','6']},
+    {q:'5+5=?',ans:'10',wrong:['9','8','11']},{q:'6+3=?',ans:'9',wrong:['8','7','10']},
+    {q:'10-3=?',ans:'7',wrong:['6','8','4']},{q:'8-2=?',ans:'6',wrong:['5','7','4']},
+    {q:'4x2=?',ans:'8',wrong:['6','10','7']},{q:'3x3=?',ans:'9',wrong:['6','12','8']},
+    {q:'2x5=?',ans:'10',wrong:['8','12','9']},
+    {q:'BUKU huruf ke-2?',ans:'U',wrong:['B','K','A']},
+    {q:'MEJA huruf ke-3?',ans:'J',wrong:['M','E','A']},
+    {q:'🐘 ada di...?',ans:'HUTAN',wrong:['LAUT','UDARA','KOTA']},
+    {q:'🐟 ada di...?',ans:'LAUT',wrong:['HUTAN','UDARA','TANAH']},
+    {q:'🦅 ada di...?',ans:'UDARA',wrong:['LAUT','HUTAN','TANAH']},
+    {q:'7x2=?',ans:'14',wrong:['12','16','13']},{q:'5x3=?',ans:'15',wrong:['12','18','10']},
+    {q:'18÷2=?',ans:'9',wrong:['8','7','10']},{q:'12÷3=?',ans:'4',wrong:['3','5','6']},
+    {q:'Ibukota Jawa Barat?',ans:'BANDUNG',wrong:['JAKARTA','SURABAYA','BOGOR']},
+    {q:'Pulau terbesar RI?',ans:'KALIMANTAN',wrong:['JAWA','SUMATRA','SULAWESI']},
+    {q:'Warna bendera RI?',ans:'MERAH PUTIH',wrong:['BIRU PUTIH','HIJAU KUNING','MERAH BIRU']},
+    {q:'Hari kemerdekaan RI?',ans:'17 AGUSTUS',wrong:['1 JUNI','28 OKTOBER','20 MEI']},
+    {q:'KUDA huruf ke-3?',ans:'D',wrong:['K','U','A']},
+    {q:'9+6=?',ans:'15',wrong:['14','16','13']},{q:'11+8=?',ans:'19',wrong:['17','21','18']},
+    {q:'Hewan berkantung?',ans:'KANGURU',wrong:['KOALA','SINGA','PANDA']},
+  ],
+  hard:[
+    {q:'K-U-C-I-...?',ans:'N',wrong:['A','G','S']},
+    {q:'B-U-K-...?',ans:'U',wrong:['A','O','E']},
+    {q:'12+5=?',ans:'17',wrong:['16','18','15']},
+    {q:'15-8=?',ans:'7',wrong:['6','8','9']},
+    {q:'3x4=?',ans:'12',wrong:['9','15','10']},
+    {q:'20-7=?',ans:'13',wrong:['12','14','11']},
+    {q:'6x2=?',ans:'12',wrong:['10','14','8']},
+    {q:'2,4,?,8',ans:'6',wrong:['5','7','9']},
+    {q:'Ibukota RI?',ans:'JAKARTA',wrong:['BANDUNG','SURABAYA','MEDAN']},
+    {q:'Bahasa nasional?',ans:'INDONESIA',wrong:['JAWA','MELAYU','SUNDA']},
+    {q:'4x5=?',ans:'20',wrong:['16','24','18']},{q:'7x3=?',ans:'21',wrong:['18','24','14']},
+    {q:'25÷5=?',ans:'5',wrong:['4','6','7']},{q:'36÷6=?',ans:'6',wrong:['5','7','8']},
+    {q:'Presiden pertama RI?',ans:'SOEKARNO',wrong:['SOEHARTO','HABIBIE','WAHID']},
+    {q:'Gunung tertinggi RI?',ans:'PUNCAK JAYA',wrong:['SEMERU','RINJANI','KERINCI']},
+    {q:'Sumpah Pemuda tahun?',ans:'1928',wrong:['1945','1908','1998']},
+    {q:'Planet terbesar?',ans:'YUPITER',wrong:['SATURNUS','MARS','URANUS']},
+    {q:'Hewan berdarah dingin?',ans:'BUAYA',wrong:['SINGA','PAUS','GAJAH']},
+    {q:'H₂O adalah...?',ans:'AIR',wrong:['OKSIGEN','GULA','GARAM']},
+  ],
+  expert:[
+    {q:'15x3=?',ans:'45',wrong:['40','50','42']},{q:'8x8=?',ans:'64',wrong:['54','72','56']},
+    {q:'100÷4=?',ans:'25',wrong:['20','30','24']},{q:'7x9=?',ans:'63',wrong:['54','72','56']},
+    {q:'Proklamasi RI tahun?',ans:'1945',wrong:['1928','1908','1949']},
+    {q:'Ibukota Sulawesi Selatan?',ans:'MAKASSAR',wrong:['MANADO','PALU','KENDARI']},
+    {q:'Mata uang RI?',ans:'RUPIAH',wrong:['RINGGIT','BAHT','PESO']},
+    {q:'Laut terdalam dunia?',ans:'PASIFIK',wrong:['ATLANTIK','HINDIA','ARKTIK']},
+    {q:'Bapak Proklamator?',ans:'SOEKARNO',wrong:['SUDIRMAN','HATTA','SJAHRIR']},
+    {q:'Nama lain Betawi?',ans:'JAKARTA',wrong:['BANDUNG','BOGOR','TANGERANG']},
+    {q:'½ × 80 = ?',ans:'40',wrong:['20','60','45']},
+    {q:'Bilangan prima antara 10-20?',ans:'11',wrong:['12','14','16']},
+    {q:'CO₂ adalah gas...?',ans:'KARBON DIOKSIDA',wrong:['OKSIGEN','NITROGEN','HIDROGEN']},
+    {q:'Proses daun hijau?',ans:'FOTOSINTESIS',wrong:['RESPIRASI','EVAPORASI','OSMOSIS']},
+    {q:'Garis khatulistiwa =...?',ans:'EKUATOR',wrong:['MERIDIAN','LINTANG','BUJUR']},
+    {q:'Jarak Bumi-Matahari?',ans:'150 JUTA KM',wrong:['15 JUTA KM','1 JUTA KM','100 KM']},
+    {q:'Tulang manusia ada...?',ans:'206',wrong:['150','300','180']},
+  ]
+};
+function getDifficulty(l){return l<=8?'easy':l<=16?'medium':l<=24?'hard':'expert'}
+function pickQuestions(level){
+  const pool=[...QUESTIONS[getDifficulty(level)]];
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  return pool.slice(0,Math.min(6+Math.min(level-1,8),pool.length,18));
+}
+
+// ── State & Globals ────────────────────────────────────────────────────────────
+const S={
+  running:false,paused:false,level:cfg.level,obstacles:[],worldX:0,
+  trainState:'MOVING',trainBobT:0,currentObstacleIdx:-1,
+  cleared:0,wrongTaps:0,totalObstacles:0,startTime:0,gameOver:false,
+  trackLength:0,boostTimer:0,deadTimer:0,noWrongAnswers:true,cameraShake:0,
+  arrivedFlag:false,winShown:false,
+}
+let app, stage
+let bgContainer, hillContainer, worldContainer
+let trainContainer, trainWheels=[]
+let smokePuffs=[], sparkParticles=[], dustParticles=[], emberParticles=[]
+let railTies=[], obstacleContainers=[]
+let ambientBirds=[], ambientClouds=[], twinkleStars=[]
+let headlightBeam=null, fireGlow=null
+let _ticker_t=0
+let TRAIN_SCREEN_X=0, WORLD_LENGTH=0, STATION_X=0
+let npcArmsUp=null, npcArmsDown=null, arrivalConfetti=false, npcWaveT=0
+const TIE_SPACING=44
+
+async function initPixi(){
+  const W=window.innerWidth, H=window.innerHeight
+  TRAIN_SCREEN_X=W*0.15; WORLD_LENGTH=W*5.5; STATION_X=WORLD_LENGTH*0.88
+  app=new PIXI.Application()
+  await app.init({
+    canvas:document.getElementById('pixi-canvas'),
+    width:W,height:H,backgroundAlpha:0,antialias:true,
+    resolution:Math.min(window.devicePixelRatio||1,2),autoDensity:true,
+  })
+  stage=app.stage; S.trackLength=WORLD_LENGTH; S.worldX=0
+  bgContainer=new PIXI.Container()
+  hillContainer=new PIXI.Container()
+  worldContainer=new PIXI.Container()
+  stage.addChild(bgContainer); stage.addChild(hillContainer); stage.addChild(worldContainer)
+  drawSky(W,H)
+  drawHills(W,H)
+  drawTrack(W,H)
+  buildTrackDecorations(W,H)
+  drawCliff(W,H)
+  buildAmbient(W,H)
+  buildObstaclesOnTrack(W,H)
+  buildArrivalStation(W,H)
+  buildTrain(W,H)
+  buildHeadlightBeam(W,H)
+  buildFireGlow(W,H)
+  app.ticker.add(gameLoop)
+  S.startTime=performance.now(); S.running=true
+  try{const bgm=document.getElementById('game-bgm');bgm.volume=0.25;bgm.play().catch(()=>{})}catch(_){}
+  updateHUD()
+}
+
+// ── Sky ────────────────────────────────────────────────────────────────────────
+function drawSky(W,H){
+  const g=new PIXI.Graphics()
+  const skyW=W*12, skyH=H*0.70
+  // Multi-strip sky gradient (5 horizontal rects)
+  const skyColors=[BG.sky,BG.sky,BG.skyMid,BG.skyMid,BG.sky]
+  for(let i=0;i<skyColors.length;i++){
+    const stripH=skyH/skyColors.length
+    g.rect(-W*2, i*stripH, skyW, stripH+1).fill({color:skyColors[i],alpha:i===2?0.5:1})
+  }
+  // Horizon glow
+  const horizY=skyH*0.85
+  g.rect(-W*2, horizY, skyW, skyH-horizY).fill({color:BG.hasMoon?0x1a0f30:BG.sunX?0xff8c00:0x0a1a0a, alpha:0.4})
+
+  if(BG.hasMoon){
+    // Moon with shadow crescent
+    g.circle(W*0.78, H*0.10, 30).fill({color:0xfff8dc})
+    g.circle(W*0.78+10, H*0.10-8, 25).fill({color:BG.sky})
+    // Moon glow halo
+    g.circle(W*0.78, H*0.10, 44).fill({color:0xfff8dc,alpha:0.06})
+    g.circle(W*0.78, H*0.10, 38).fill({color:0xfff8dc,alpha:0.08})
+  }
+  if(BG.hasStars){
+    // Static star field
+    for(let i=0;i<180;i++){
+      const r=Math.random()*1.4+0.3
+      g.circle(-W*2+Math.random()*skyW, Math.random()*skyH*0.78, r)
+        .fill({color:0xffffff,alpha:Math.random()*0.5+0.15})
+    }
+  }
+  if(BG.sunX){
+    const sx=W*BG.sunX, sy=H*0.16
+    // Sun rays burst
+    for(let i=0;i<16;i++){
+      const a=(i/16)*Math.PI*2, len=55+Math.random()*30
+      g.moveTo(sx+Math.cos(a)*44, sy+Math.sin(a)*44)
+        .lineTo(sx+Math.cos(a)*(44+len), sy+Math.sin(a)*(44+len))
+      g.stroke({width:2+Math.random()*3,color:0xfde68a,alpha:0.12})
+    }
+    g.circle(sx,sy,48).fill({color:0xfbbf24,alpha:0.3})
+    g.circle(sx,sy,42).fill({color:0xfbbf24})
+    g.circle(sx,sy,30).fill({color:0xfde68a})
+    g.circle(sx,sy,16).fill({color:0xfffde6})
+  }
+  bgContainer.addChild(g)
+  // Twinkling stars (animated, separate objects)
+  if(BG.hasStars){
+    const skyH2=H*0.65
+    for(let i=0;i<45;i++){
+      const star=new PIXI.Graphics()
+      const r=Math.random()*2+0.6
+      star.circle(0,0,r).fill({color:0xffffff})
+      star.x=-W*2+Math.random()*skyW; star.y=Math.random()*skyH2*0.75
+      star._speed=Math.random()*3+1.5; star._phase=Math.random()*Math.PI*2
+      star._base=Math.random()*0.5+0.2
+      bgContainer.addChild(star); twinkleStars.push(star)
+    }
+  }
+}
+
+// ── Hills — 3 parallax layers ─────────────────────────────────────────────────
+function drawHills(W,H){
+  const g=new PIXI.Graphics()
+  const tY=getTrackY(H)
+  for(let tile=-1;tile<9;tile++){
+    const ox=tile*W
+    // Layer 1 — far hills
+    g.moveTo(ox,tY+10).bezierCurveTo(ox+W*0.12,tY-72,ox+W*0.22,tY-98,ox+W*0.38,tY-24)
+      .bezierCurveTo(ox+W*0.55,tY+10,ox+W*0.68,tY-104,ox+W*0.82,tY-38)
+      .bezierCurveTo(ox+W*0.92,tY-8,ox+W,tY+10,ox+W,tY+10)
+      .lineTo(ox+W,H).lineTo(ox,H).closePath().fill({color:BG.hill1})
+    // Layer 2 — mid hills
+    g.moveTo(ox-10,tY+20).bezierCurveTo(ox+W*0.08,tY+6,ox+W*0.2,tY-46,ox+W*0.32,tY-14)
+      .bezierCurveTo(ox+W*0.46,tY+14,ox+W*0.60,tY-58,ox+W*0.74,tY-10)
+      .bezierCurveTo(ox+W*0.87,tY+8,ox+W*0.97,tY+4,ox+W+10,tY+20)
+      .lineTo(ox+W+10,H).lineTo(ox-10,H).closePath().fill({color:BG.hill2})
+    // Layer 3 — near ground ridge
+    g.moveTo(ox,tY+8).bezierCurveTo(ox+W*0.18,tY+2,ox+W*0.36,tY-18,ox+W*0.5,tY-8)
+      .bezierCurveTo(ox+W*0.66,tY+2,ox+W*0.80,tY-22,ox+W,tY+8)
+      .lineTo(ox+W,H).lineTo(ox,H).closePath().fill({color:BG.hill3})
+
+    // Theme decorations
+    if(BG_THEME_IDX===2){ // forest trees
+      for(let x=ox;x<ox+W+60;x+=50){
+        g.poly([x,tY,x-15,tY-46,x+15,tY-46]).fill({color:0x14532d})
+        g.poly([x,tY-22,x-10,tY-58,x+10,tY-58]).fill({color:0x166534})
+        g.rect(x-3,tY-4,6,8).fill({color:0x78350f})
+      }
+    } else if(BG_THEME_IDX===3){ // mountain peaks
+      const peaks=[[ox+W*0.15,tY-32],[ox+W*0.4,tY-74],[ox+W*0.62,tY-48],[ox+W*0.85,tY-62]]
+      for(const[px,py]of peaks){
+        const pw=110+(Math.abs(px*0.33)%55)
+        g.poly([px,py,px-pw*0.5,py+pw*0.55,px+pw*0.5,py+pw*0.55]).fill({color:0x2a3f6a})
+        g.poly([px,py,px-pw*0.22,py+pw*0.22,px+pw*0.22,py+pw*0.22]).fill({color:0xdbeafe})
+      }
+    } else if(BG_THEME_IDX===4){ // palms
+      for(let x=ox+60;x<ox+W;x+=230){
+        g.rect(x-4,tY-58,8,58).fill({color:0x92400e})
+        for(let a=0;a<6;a++){
+          const ang=(a/6)*Math.PI*2
+          g.ellipse(x+Math.cos(ang)*28,tY-58+Math.sin(ang)*14,25,9).fill({color:0x15803d})
+        }
+      }
+    }
+    // Animal silhouettes on hills (sparse, random)
+    const animalSeed = (tile * 7 + 13) % 31
+    if (animalSeed < 8) {
+      const ax = ox + W * (0.2 + (animalSeed % 5) * 0.15)
+      const ay = tY - 4
+      const ac = 0x0a0e1e
+      if (animalSeed < 3) {
+        // Wolf silhouette
+        g.poly([ax,ay, ax+4,ay-8, ax+8,ay-10, ax+14,ay-9, ax+18,ay-6, ax+20,ay-8, ax+22,ay-6, ax+20,ay, ax+14,ay-1, ax+8,ay]).fill({color:ac})
+        g.circle(ax+20,ay-7,1.5).fill({color:ac}) // head
+      } else if (animalSeed < 5) {
+        // Deer silhouette
+        g.poly([ax,ay, ax+3,ay-12, ax+6,ay-14, ax+9,ay-12, ax+12,ay, ax+8,ay, ax+8,ay-4, ax+5,ay-4, ax+5,ay]).fill({color:ac})
+        g.rect(ax+5,ay-17,1,5).fill({color:ac}) // antler
+        g.rect(ax+7,ay-17,1,5).fill({color:ac})
+      } else {
+        // Bear silhouette
+        g.roundRect(ax,ay-8,16,8,3).fill({color:ac})
+        g.circle(ax+14,ay-10,4).fill({color:ac}) // head
+        g.circle(ax+12,ay-12,2).fill({color:ac}) // ear
+        g.circle(ax+16,ay-12,2).fill({color:ac})
+      }
+    }
+  }
+  hillContainer.addChild(g)
+}
+
+// ── Track ─────────────────────────────────────────────────────────────────────
+function drawTrack(W,H){
+  const tY=getTrackY(H)
+  // Ground fill — fixed stage
+  const ground=new PIXI.Graphics()
+  ground.rect(0,tY+6,W,H-tY-6).fill({color:BG.groundColor||0x07090e})
+  // Ground texture strips
+  for(let i=0;i<4;i++) ground.rect(0,tY+6+i*8,W,3).fill({color:0xffffff,alpha:0.015})
+  stage.addChild(ground)
+  // Rail lines — fixed (look continuous)
+  const rails=new PIXI.Graphics()
+  rails.rect(0,tY-5,W,5).fill({color:BG.railColor})
+  rails.rect(0,tY+10,W,5).fill({color:BG.railColor})
+  rails.rect(0,tY-5,W,2).fill({color:0xfffbe6,alpha:0.4})
+  rails.rect(0,tY+10,W,2).fill({color:0xfffbe6,alpha:0.2})
+  stage.addChild(rails)
+  // Rail ties — in worldContainer
+  const tieCount=Math.ceil((WORLD_LENGTH+W*2)/TIE_SPACING)
+  for(let i=0;i<tieCount;i++){
+    const tie=new PIXI.Graphics()
+    tie.rect(-6,-5,12,20).fill({color:BG.tieColor})
+    tie.rect(-6,-5,12,20).stroke({width:1,color:0x000000,alpha:0.25})
+    tie.rect(-5,-5,10,3).fill({color:0xffffff,alpha:0.06})  // top highlight
+    tie.x=i*TIE_SPACING; tie.y=tY
+    worldContainer.addChild(tie); railTies.push(tie)
+  }
+}
+
+// ── Track Decorations ─────────────────────────────────────────────────────────
+function buildTrackDecorations(W,H){
+  const tY=getTrackY(H)
+  const g=new PIXI.Graphics()
+
+  // Fence posts along track (below rail)
+  for(let wx=0;wx<WORLD_LENGTH+W;wx+=38){
+    g.rect(wx-1.5,tY+16,3,18).fill({color:0x5d3a1a,alpha:0.55})
+    g.rect(wx-3,tY+16,6,2).fill({color:0x78350f,alpha:0.45}) // top cap
+  }
+  // Fence rails (2 horizontal boards)
+  g.rect(0,tY+18,WORLD_LENGTH+W,1.5).fill({color:0x78350f,alpha:0.3})
+  g.rect(0,tY+27,WORLD_LENGTH+W,1.5).fill({color:0x78350f,alpha:0.25})
+
+  // Grass tufts at track edge
+  for(let wx=0;wx<WORLD_LENGTH+W;wx+=22+(Math.sin(wx*0.07)*10)|0){
+    const h=3+Math.floor(Math.abs(Math.sin(wx*0.13))*5)
+    g.rect(wx-1,tY-1,2,h).fill({color:0x22c55e,alpha:0.35})
+    g.rect(wx+4,tY-1,1.5,h-1).fill({color:0x16a34a,alpha:0.3})
+  }
+
+  // Ground rocks/pebbles
+  for(let wx=20;wx<WORLD_LENGTH+W;wx+=55){
+    const ry=tY+22+Math.floor(Math.sin(wx*0.17)*10)
+    g.ellipse(wx,ry,6+Math.floor(Math.abs(Math.sin(wx*0.09))*8),4).fill({color:0x44403c,alpha:0.4})
+  }
+
+  // Telegraph poles (every 190px, offset from track)
+  for(let wx=120;wx<WORLD_LENGTH+W;wx+=190){
+    const px=wx+35
+    // Pole
+    g.rect(px-2,tY-95,4,95).fill({color:0x92400e})
+    // Crossbars (2 levels)
+    g.rect(px-20,tY-84,40,4).fill({color:0x78350f})
+    g.rect(px-14,tY-70,28,3).fill({color:0x78350f})
+    // Insulators
+    for(const ix of[-18,18]){
+      g.circle(px+ix,tY-83,3.5).fill({color:0xcbd5e1})
+      g.circle(px+ix,tY-83,3.5).stroke({width:1,color:0x64748b})
+    }
+    for(const ix of[-12,12]){
+      g.circle(px+ix,tY-69,3).fill({color:0xcbd5e1})
+    }
+    // Wire lines (thin)
+    if(wx>120){
+      const prevPx=px-190+35
+      g.moveTo(prevPx-18,tY-80).lineTo(px-18,tY-80).stroke({width:0.8,color:0x475569,alpha:0.6})
+      g.moveTo(prevPx+18,tY-80).lineTo(px+18,tY-80).stroke({width:0.8,color:0x475569,alpha:0.6})
+    }
+  }
+
+  worldContainer.addChild(g)
+
+  // Railway signal masts (every 380px, farther apart than telegraph) — red/green alternating
+  for (let wx = 260; wx < WORLD_LENGTH + W; wx += 380) {
+    const sg = new PIXI.Graphics()
+    const isRed = Math.round(wx / 380) % 2 === 0
+    const color = isRed ? 0xef4444 : 0x22c55e
+    // Mast
+    sg.rect(-2.5, -75, 5, 75).fill({ color: 0x374151 })
+    // Arm
+    sg.rect(-2.5, -70, 22, 3).fill({ color: 0x1f2937 })
+    // Lamp housing
+    sg.circle(22, -69, 7).fill({ color: 0x0f172a })
+    sg.circle(22, -69, 7).stroke({ color: 0x6b7280, width: 1.5 })
+    // Lamp core + glow
+    sg.circle(22, -69, 13).fill({ color, alpha: 0.28 })
+    sg.circle(22, -69, 4.5).fill({ color })
+    sg.x = wx
+    sg.y = tY + 16
+    worldContainer.addChild(sg)
+  }
+
+  // Forest/mountain silhouettes
+  if(BG_THEME_IDX===2||BG_THEME_IDX===3){
+    const sg=new PIXI.Graphics()
+    for(let i=0;i<10;i++){
+      sg.ellipse(WORLD_LENGTH*(0.04+i*0.09),tY-5,10,6).fill({color:0x0a0a0a})
+      sg.ellipse(WORLD_LENGTH*(0.04+i*0.09)+8,tY-7,5,4).fill({color:0x0a0a0a})
+      sg.rect(WORLD_LENGTH*(0.04+i*0.09)+5,-3,2,8).fill({color:0x0a0a0a})
+      sg.rect(WORLD_LENGTH*(0.04+i*0.09)+9,-3,2,8).fill({color:0x0a0a0a})
+      sg.rect(WORLD_LENGTH*(0.04+i*0.09)-5,-1,2,8).fill({color:0x0a0a0a})
+      sg.y=tY; sg.alpha=0.5
+    }
+    worldContainer.addChild(sg)
+  }
+}
+
+function getTrackY(H){return H*0.58}
+
+// ── Cliff ─────────────────────────────────────────────────────────────────────
+function drawCliff(W,H){
+  const tY=getTrackY(H)
+  const g=new PIXI.Graphics()
+  const cliffX=WORLD_LENGTH
+  // Warning zone
+  g.rect(cliffX-25,tY-68,65,85).fill({color:0xff0000,alpha:0.14})
+  // Striped barrier poles
+  for(let i=0;i<7;i++) g.rect(cliffX+i*6,tY-55+i*6,4,62-i*6).fill({color:i%2===0?0xff0000:0xffffff,alpha:0.75})
+  // Warning triangle sign
+  const sign=new PIXI.Graphics()
+  sign.poly([0,-28,26,12,-26,12]).fill({color:0xff0000})
+  sign.poly([0,-20,17,8,-17,8]).fill({color:0xffd700})
+  sign.rect(-2,-16,4,16).fill({color:0xff0000})
+  sign.circle(0,11,3).fill({color:0xff0000})
+  sign.x=cliffX+14; sign.y=tY-58
+  g.addChild(sign)
+  // Cliff edge rock face
+  g.rect(cliffX,tY+15,W+20,H-tY).fill({color:0xff4400})
+  g.rect(cliffX,tY+5,W+20,13).fill({color:0xff8800,alpha:0.85})
+  // Rock texture
+  for(let i=0;i<6;i++) g.rect(cliffX+i*14,tY+18,10,20+i*4).fill({color:0xcc3300,alpha:0.5})
+  worldContainer.addChild(g)
+}
+
+// ── Headlight Beam / Fire Glow ────────────────────────────────────────────────
+function buildHeadlightBeam(W,H){
+  const tY=getTrackY(H)
+  headlightBeam=new PIXI.Container()
+  const b=new PIXI.Graphics()
+  // Wide cone
+  b.poly([0,0,140,-32,140,32]).fill({color:0xfef9c3,alpha:0.09})
+  // Bright inner cone
+  b.poly([0,0,90,-16,90,16]).fill({color:0xffffff,alpha:0.06})
+  headlightBeam.addChild(b)
+  headlightBeam.x=TRAIN_SCREEN_X+66; headlightBeam.y=tY-32
+  stage.addChild(headlightBeam)
+}
+
+function buildFireGlow(W,H){
+  const tY=getTrackY(H)
+  fireGlow=new PIXI.Graphics()
+  fireGlow.ellipse(0,0,22,14).fill({color:0xff6600,alpha:0.6})
+  fireGlow.ellipse(0,2,14,8).fill({color:0xff9900,alpha:0.5})
+  fireGlow.x=TRAIN_SCREEN_X+2; fireGlow.y=tY-18
+  stage.addChild(fireGlow)
+}
+
+// ── Ambient ───────────────────────────────────────────────────────────────────
+function buildAmbient(W,H){
+  for(let i=0;i<7;i++){
+    const c=new PIXI.Container()
+    const g=new PIXI.Graphics()
+    const col=BG_THEME_IDX===0?0x1e293b:BG_THEME_IDX===3?0x334155:0xffffff
+    g.ellipse(0,0,38+Math.random()*24,16).fill({color:col})
+    g.ellipse(24,-8,24,15).fill({color:col})
+    g.ellipse(-22,-6,20,13).fill({color:col})
+    c.addChild(g); c.x=Math.random()*W; c.y=H*(0.04+Math.random()*0.22)
+    c.alpha=BG_THEME_IDX===0?0.28:0.58; c._speed=0.2+Math.random()*0.38
+    stage.addChild(c); ambientClouds.push(c)
+  }
+  for(let gi=0;gi<4;gi++){
+    const group=new PIXI.Container()
+    group.x=Math.random()*W; group.y=H*(0.06+Math.random()*0.20); group._speed=0.45+Math.random()*0.55
+    for(let b=0;b<5;b++){
+      const bird=new PIXI.Graphics()
+      bird.moveTo(-5,0).lineTo(0,-3).lineTo(5,0)
+      bird.stroke({width:1.5,color:BG_THEME_IDX===0?0x94a3b8:0x1c1917})
+      bird.x=(b-2)*12; bird.y=Math.abs(b-2)*5; group.addChild(bird)
+    }
+    stage.addChild(group); ambientBirds.push(group)
+  }
+}
+
+// ── Train (detailed) ──────────────────────────────────────────────────────────
+function buildTrain(W,H){
+  const tY=getTrackY(H)
+  trainContainer=new PIXI.Container()
+  trainContainer.x=TRAIN_SCREEN_X; trainContainer.y=tY-18
+  const TS=TRAIN_STYLES[selectedTrainIdx]
+  const g=new PIXI.Graphics()
+
+  // Deep shadow
+  g.ellipse(0,22,105,7).fill({color:0x000000,alpha:0.28})
+  g.ellipse(0,24,90,4).fill({color:0x000000,alpha:0.12})
+
+  // ── LOCOMOTIVE ──
+  // Running board (shelf along boiler bottom)
+  g.rect(-12,-4,82,4).fill({color:TS.locoAccent})
+
+  // Pilot / cowcatcher (angled wedge)
+  g.poly([68,4,82,16,68,16]).fill({color:0x6b7280})
+  g.poly([68,4,82,16,68,16]).stroke({width:1,color:0x000000,alpha:0.4})
+  // Pilot buffer beam
+  g.rect(68,12,6,8).fill({color:0x374151})
+
+  // Firebox (rear box, thicker)
+  g.roundRect(-12,-26,18,32,4).fill({color:TS.cabColor})
+  // Firebox door
+  g.roundRect(-10,-20,14,20,2).fill({color:0x1c1917})
+  g.circle(-3,-10,5).fill({color:TS.locoAccent,alpha:0.8}) // firebox glow
+
+  // Main boiler cylinder
+  g.roundRect(4,-28,50,34,12).fill({color:TS.locoBody})
+  // Boiler top highlight
+  g.roundRect(4,-28,50,8,8).fill({color:TS.locoAccent,alpha:0.6})
+
+  // Smokebox (front section, darker)
+  g.roundRect(52,-26,16,32,5).fill({color:TS.chimney})
+  g.roundRect(52,-26,16,8,5).fill({color:0x000000,alpha:0.2})
+
+  // Smoke stack — detailed flared bell
+  g.rect(56,-46,8,22).fill({color:TS.chimney})
+  g.roundRect(52,-50,16,7,2).fill({color:TS.chimney})
+  g.roundRect(50,-52,20,5,3).fill({color:TS.chimney})
+  // Stack rim highlight
+  g.rect(50,-52,20,1.5).fill({color:0xffffff,alpha:0.15})
+
+  // Steam dome (large)
+  g.ellipse(22,-28,10,8).fill({color:TS.locoAccent})
+  g.ellipse(22,-30,7,5).fill({color:TS.locoCab})
+  g.ellipse(22,-32,4,3).fill({color:0xffffff,alpha:0.2})
+
+  // Sand dome (smaller, forward)
+  g.ellipse(35,-27,7,5).fill({color:TS.locoBody})
+  g.ellipse(35,-28,5,3.5).fill({color:TS.locoCab,alpha:0.7})
+
+  // Safety valve (small pipe on boiler)
+  g.rect(28,-34,3,8).fill({color:0x9ca3af})
+  g.rect(26,-36,7,4).fill({color:0xd1d5db})
+
+  // Bell
+  g.ellipse(44,-26,4.5,3.5).fill({color:0xfbbf24})
+  g.ellipse(44,-26,4.5,3.5).stroke({width:1,color:0x92400e})
+  g.rect(44,-27,1,4).fill({color:0x92400e})
+
+  // Boiler bands (decorative rings)
+  for(const bx of[5,16,28,40,50]){
+    g.rect(bx,-28,2,34).fill({color:TS.chimney,alpha:0.2})
+  }
+  // Gold accent stripe along boiler
+  g.rect(4,-7,78,3).fill({color:0xfbbf24})
+  g.rect(4,-5,78,1).fill({color:0xfde68a,alpha:0.6})
+
+  // ── CAB ──
+  g.roundRect(42,-34,26,42,5).fill({color:TS.locoCab})
+  // Cab roof overhang
+  g.roundRect(40,-38,30,8,3).fill({color:TS.cabColor})
+  g.rect(40,-36,30,2).fill({color:0xffffff,alpha:0.06})
+  // Cab rear wall
+  g.rect(64,-34,4,42).fill({color:TS.cabColor})
+  // Front cab window (framed)
+  g.roundRect(45,-31,16,15,3).fill({color:0x0f172a})
+  g.roundRect(46,-30,14,13,2.5).fill({color:TS.carWindow})
+  g.roundRect(45,-31,16,15,3).stroke({width:1.5,color:TS.cabColor})
+  // Cross bar on window
+  g.rect(52,-31,1.5,15).fill({color:TS.cabColor,alpha:0.5})
+  // Cab number plate
+  g.roundRect(46,-22,10,6,1).fill({color:0xfef9c3})
+  g.roundRect(46,-22,10,6,1).stroke({width:0.8,color:0x92400e})
+  // Footplate steps
+  g.rect(62,0,6,3).fill({color:0x6b7280}); g.rect(62,5,6,3).fill({color:0x6b7280})
+  // Grab irons on cab
+  g.moveTo(64,-30).lineTo(64,-14).stroke({width:1.5,color:0x6b7280})
+
+  // Headlight assembly
+  g.circle(67,-18,7).fill({color:0x374151})
+  g.circle(67,-18,5.5).fill({color:0xfef9c3})
+  g.circle(67,-18,3).fill({color:0xffffff})
+  g.circle(67,-18,7).stroke({width:1.5,color:0x6b7280})
+  // Headlight glow ring
+  g.circle(67,-18,10).fill({color:0xfef9c3,alpha:0.06})
+
+  // ── PASSENGER CAR 1 ──
+  const p1x=-84
+  g.roundRect(p1x,-22,70,30,8).fill({color:TS.carBody})
+  g.roundRect(p1x,-22,70,9,8).fill({color:TS.cabColor})
+  g.rect(p1x,-18,70,1.5).fill({color:0xffffff,alpha:0.08})
+  for(let w=0;w<4;w++){
+    g.roundRect(p1x+5+w*16,-19,12,14,2.5).fill({color:0x0f172a})
+    g.roundRect(p1x+6+w*16,-18,10,12,2).fill({color:TS.carWindow})
+    // Window frame cross
+    g.rect(p1x+10+w*16,-18,1,12).fill({color:TS.cabColor,alpha:0.4})
+  }
+  g.rect(p1x,-7,70,3).fill({color:TS.carStripe})
+  g.rect(p1x,-5,70,1).fill({color:0xffffff,alpha:0.2})
+  // Door
+  g.rect(p1x+32,-14,3,20).fill({color:TS.cabColor,alpha:0.6})
+  // End vents
+  g.rect(p1x+2,p1x<0?-14:-14,4,6).fill({color:TS.chimney,alpha:0.4})
+
+  // ── PASSENGER CAR 2 ──
+  const p2x=-162
+  g.roundRect(p2x,-22,70,30,8).fill({color:TS.carBody})
+  g.roundRect(p2x,-22,70,9,8).fill({color:TS.cabColor})
+  g.rect(p2x,-18,70,1.5).fill({color:0xffffff,alpha:0.08})
+  for(let w=0;w<4;w++){
+    g.roundRect(p2x+5+w*16,-19,12,14,2.5).fill({color:0x0f172a})
+    g.roundRect(p2x+6+w*16,-18,10,12,2).fill({color:TS.carWindow})
+    g.rect(p2x+10+w*16,-18,1,12).fill({color:TS.cabColor,alpha:0.4})
+  }
+  g.rect(p2x,-7,70,3).fill({color:TS.carStripe})
+  g.rect(p2x,-5,70,1).fill({color:0xffffff,alpha:0.2})
+  g.rect(p2x+32,-14,3,20).fill({color:TS.cabColor,alpha:0.6})
+
+  // ── CABOOSE ──
+  const cbx=-240
+  g.roundRect(cbx,-24,56,32,8).fill({color:TS.caboose})
+  g.roundRect(cbx,-24,56,9,8).fill({color:TS.cabColor})
+  g.rect(cbx,-20,56,1.5).fill({color:0xffffff,alpha:0.08})
+  // Cupola
+  g.roundRect(cbx+14,-38,22,18,4).fill({color:TS.locoBody})
+  g.roundRect(cbx+14,-38,22,6,4).fill({color:TS.cabColor})
+  g.roundRect(cbx+17,-35,8,11,2).fill({color:0x0f172a})
+  g.roundRect(cbx+18,-34,6,9,1.5).fill({color:TS.carWindow})
+  // End light
+  g.circle(cbx,-8,6).fill({color:TS.cabooseLight,alpha:0.3})
+  g.circle(cbx,-8,4).fill({color:TS.cabooseLight})
+  g.circle(cbx,-8,4).stroke({width:1,color:0xffffff,alpha:0.4})
+
+  // ── COUPLERS ──
+  for(const cx of[-12,cbx+54,p1x+68,p2x+68]){
+    g.roundRect(cx-2,-2,4,7,1).fill({color:0x6b7280})
+    g.roundRect(cx-2,-2,4,7,1).stroke({width:0.8,color:0x000000,alpha:0.3})
+  }
+
+  trainContainer.addChild(g)
+
+  // ── SPOKED WHEELS ──
+  const addWheel=(x,y,r)=>{
+    const wc=new PIXI.Container(); wc.x=x; wc.y=y
+    const wg=new PIXI.Graphics()
+    const spokes=r>=10?6:4
+    // Tire
+    wg.circle(0,0,r).fill({color:0x1c1917})
+    // Spokes
+    for(let i=0;i<spokes;i++){
+      const a=(i/spokes)*Math.PI*2
+      wg.moveTo(0,0).lineTo(Math.cos(a)*(r-2),Math.sin(a)*(r-2))
+      wg.stroke({width:r>=10?2.2:1.6,color:TS.wheelRim,alpha:0.9})
+    }
+    // Rim ring
+    wg.circle(0,0,r).stroke({width:r>=10?3:2.2,color:TS.wheelRim})
+    // Inner flange
+    wg.circle(0,0,r-3.5).stroke({width:1,color:TS.wheelRim,alpha:0.3})
+    // Hub
+    wg.circle(0,0,4).fill({color:TS.wheelRim})
+    wg.circle(0,0,2.5).fill({color:0x1c1917})
+    wg.circle(0,0,1.2).fill({color:TS.wheelRim,alpha:0.7})
+    wc.addChild(wg); trainContainer.addChild(wc); trainWheels.push(wc)
+  }
+  // Loco: 3 large drive + 1 small rear
+  addWheel(-2,12,11); addWheel(18,12,11); addWheel(38,12,11)
+  addWheel(56,10,7)
+  // Cars
+  addWheel(p1x+8,10,8); addWheel(p1x+56,10,8)
+  addWheel(p2x+8,10,8); addWheel(p2x+56,10,8)
+  addWheel(cbx+6,10,8); addWheel(cbx+44,10,8)
+
+  // ── CONNECTING ROD + PISTON ──
+  const rod=new PIXI.Graphics()
+  // Main coupling rod (3 drive wheels)
+  rod.roundRect(-2,6,40,4,2).fill({color:TS.locoAccent})
+  rod.roundRect(-2,6,40,4,2).stroke({width:0.8,color:0x000000,alpha:0.3})
+  // Side rod (lower offset)
+  rod.roundRect(2,11,32,2.5,1).fill({color:TS.locoAccent,alpha:0.6})
+  // Piston rod
+  rod.rect(38,7,26,3).fill({color:0xd1d5db})
+  rod.rect(38,7,26,3).stroke({width:0.5,color:0x6b7280})
+  // Crosshead
+  rod.roundRect(61,4,7,9,2).fill({color:0x6b7280})
+  // Crank pins on drive wheels
+  for(const wx of[-2,18,38]){
+    rod.circle(wx,8,3.5).fill({color:TS.wheelRim})
+    rod.circle(wx,8,3.5).stroke({width:0.8,color:0x000000,alpha:0.3})
+  }
+  trainContainer.addChild(rod)
+  stage.addChild(trainContainer)
+}
+
+// ── Obstacles ─────────────────────────────────────────────────────────────────
+function buildObstaclesOnTrack(W,H){
+  const tY=getTrackY(H)
+  const allQ=pickQuestions(S.level)
+  // Each station gets 3-5 questions (distribute evenly)
+  const stationCount = Math.max(4, Math.min(Math.ceil(allQ.length/2), 8))
+  const qPerStation = Math.max(2, Math.ceil(allQ.length/stationCount))
+  S.totalObstacles=stationCount; S.obstacles=[]
+  const startWX=WORLD_LENGTH*0.12, endWX=WORLD_LENGTH*0.78
+  const spacing=(endWX-startWX)/Math.max(stationCount-1,1)
+  for(let i=0;i<stationCount;i++){
+    const wx=stationCount===1?(startWX+endWX)/2:startWX+i*spacing
+    const stationQs=allQ.splice(0,qPerStation)
+    if(!stationQs.length) break
+    const obs={worldX:wx,questions:stationQs,qIdx:0,question:stationQs[0],cleared:false,wrongCount:0,container:null,flashTimer:0}
+    obs.container=buildObstacleGraphic(wx,tY,i)
+    worldContainer.addChild(obs.container)
+    S.obstacles.push(obs); obstacleContainers.push(obs.container)
+  }
+  document.getElementById('obstacle-count').textContent=`🚧 0/${S.totalObstacles}`
+
+  // Mini quiz objects between stations
+  S.miniObs = S.miniObs || []
+  const miniEmojis = ['🪨','📦','🌳','🐄','🚧','🧱','🪵','🐔','🏗️','⚠️']
+  const miniSpacing = 225 + Math.random() * 150
+  for (let mwx = startWX + miniSpacing/2; mwx < endWX; mwx += miniSpacing) {
+    if (S.obstacles.some(o => Math.abs(o.worldX - mwx) < 200)) continue
+    const emoji = miniEmojis[Math.floor(Math.random() * miniEmojis.length)]
+    const a = Math.floor(Math.random() * 10) + 1
+    const b = Math.floor(Math.random() * (14 - a)) + 1
+    const isAdd = Math.random() < 0.5
+    const ans = isAdd ? a + b : Math.max(a, b) - Math.min(a, b)
+    const q = isAdd ? `${a}+${b}=?` : `${Math.max(a,b)}-${Math.min(a,b)}=?`
+    const mc = new PIXI.Container(); mc.x = mwx; mc.y = tY
+    const bg = new PIXI.Graphics()
+    bg.roundRect(-22,-40,44,36,8).fill({color:0xfbbf24,alpha:0.9})
+    bg.roundRect(-22,-40,44,36,8).stroke({color:0x92400e,width:2})
+    mc.addChild(bg)
+    const txt = new PIXI.Text({text: emoji, style:{fontSize:24}})
+    txt.anchor.set(0.5); txt.y = -22; mc.addChild(txt)
+    worldContainer.addChild(mc)
+    S.miniObs.push({worldX:mwx, container:mc, emoji, q, ans, cleared:false})
+  }
+}
+
+function buildObstacleGraphic(ox,tY,idx){
+  const c=new PIXI.Container(); c.x=ox; c.y=tY
+  // Posts (improved)
+  const lp=new PIXI.Graphics()
+  lp.rect(-4,-60,8,60).fill({color:0x292524})
+  lp.rect(-4,-60,8,60).stroke({width:1,color:0x000000,alpha:0.3})
+  lp.rect(-3,-60,6,2).fill({color:0x6b7280})
+  lp.x=-24; c.addChild(lp)
+  const rp=new PIXI.Graphics()
+  rp.rect(-4,-60,8,60).fill({color:0x292524})
+  rp.rect(-4,-60,8,60).stroke({width:1,color:0x000000,alpha:0.3})
+  rp.rect(-3,-60,6,2).fill({color:0x6b7280})
+  rp.x=24; c.addChild(rp)
+  // Barrier arm (striped, thicker)
+  const barrier=new PIXI.Graphics()
+  for(let b=0;b<6;b++) barrier.roundRect(b*8-24,-35,7,18,1).fill({color:b%2===0?0xef4444:0xffffff})
+  barrier.rect(-24,-36,48,2).fill({color:0x374151})  // top rail
+  barrier.name='barrier'; c.addChild(barrier)
+  // Sign box
+  const sb=new PIXI.Graphics()
+  sb.roundRect(-36,-88,72,46,12).fill({color:0x1e0845})
+  sb.roundRect(-36,-88,72,46,12).stroke({color:0xef4444,width:3})
+  sb.roundRect(-36,-88,72,14,12).fill({color:0xef4444,alpha:0.2})
+  sb.name='signBg'; c.addChild(sb)
+  const badge=new PIXI.Graphics()
+  badge.circle(0,-100,12).fill({color:0xef4444})
+  badge.circle(0,-100,12).stroke({width:1.5,color:0xff6b6b})
+  badge.name='badge'; c.addChild(badge)
+  // Signal lights (improved)
+  const lightRed=new PIXI.Graphics()
+  lightRed.circle(0,0,6).fill({color:0xef4444})
+  lightRed.circle(0,0,4).fill({color:0xff6b6b})
+  lightRed.circle(0,0,6).fill({color:0xef4444,alpha:0.3})
+  lightRed.x=-24; lightRed.y=-62; lightRed.name='lightRed'; c.addChild(lightRed)
+  const lightGrn=new PIXI.Graphics()
+  lightGrn.circle(0,0,6).fill({color:0x22c55e})
+  lightGrn.circle(0,0,4).fill({color:0x4ade80})
+  lightGrn.circle(0,0,6).fill({color:0x22c55e,alpha:0.3})
+  lightGrn.x=24; lightGrn.y=-62; lightGrn.name='lightGrn'; c.addChild(lightGrn)
+  return c
+}
+
+// ── Game Loop ──────────────────────────────────────────────────────────────────
+function gameLoop(ticker){
+  if(!S.running||S.paused)return
+  const dt=ticker.deltaMS/1000; _ticker_t+=dt
+  if(S.gameOver && S.trainState!=='ARRIVED')return
+  updateTrain(dt); updateObstacles(dt)
+  updateSmoke(dt); updateSparks(dt)
+  updateAmbient(dt); updateCelebration(dt); updateFX(dt)
+  updateHUDFrame()
+}
+
+function updateAmbient(dt){
+  const W=app.screen.width
+  for(const b of ambientBirds){
+    b.x-=b._speed*dt*60
+    if(b.x<-100)b.x=W+80
+    b.children.forEach((bird,i)=>{bird.y=Math.abs(i-2)*5+Math.sin(_ticker_t*4+i)*3})
+  }
+  for(const c of ambientClouds){c.x-=c._speed*dt*60; if(c.x<-150)c.x=W+120}
+  // Twinkling stars
+  for(const s of twinkleStars) s.alpha=s._base+Math.sin(_ticker_t*s._speed+s._phase)*0.28
+  // Telegraph wire sparks — flash ⚡ every ~3 seconds at random poles
+  if(Math.random()<dt*0.5){
+    const tY=getTrackY(app.screen.height)
+    const poleX=120+Math.floor(Math.random()*((WORLD_LENGTH-120)/190))*190+35
+    const sparkX=poleX+(Math.random()-0.5)*30
+    const sparkY=tY-80
+    const sp=new PIXI.Text({text:'⚡',style:{fontSize:14,fontFamily:'Arial'}})
+    sp.x=sparkX; sp.y=sparkY; sp.alpha=1; sp._life=0.6; sp._vx=0; sp._vy=-15; sp._decay=1.8
+    worldContainer.addChild(sp)
+    sparkParticles.push(sp)
+  }
+}
+
+function updateFX(dt){
+  // Headlight beam
+  if(headlightBeam){
+    const target=S.trainState==='BOOSTING'?0.85:S.trainState==='STOPPED'?0.4:0.7
+    headlightBeam.alpha+=(target-headlightBeam.alpha)*0.08+Math.sin(_ticker_t*18)*0.03
+    headlightBeam.y=trainContainer.y-14
+  }
+  // Fire glow
+  if(fireGlow){
+    const intensity=S.trainState==='BOOSTING'?0.9:S.trainState==='STOPPED'?0.25:0.55
+    fireGlow.alpha=intensity+Math.sin(_ticker_t*9)*0.12
+    const sc=1+Math.sin(_ticker_t*13)*0.08
+    fireGlow.scale.set(sc,sc*0.9)
+    fireGlow.y=trainContainer.y-18
+  }
+  // Safety valve steam jets when stopped
+  if(S.trainState==='STOPPED'&&Math.random()<0.18) spawnSteamJet()
+}
+
+// ── Train Update ──────────────────────────────────────────────────────────────
+function updateTrain(dt){
+  const W=app.screen.width, H=app.screen.height
+  const tY=getTrackY(H)
+  let speed=0
+  const baseSpeed=(80+S.level*12)*1.8, boostSpeed=baseSpeed*2.0
+  const nextObs=S.obstacles.find(o=>!o.cleared&&o.worldX>S.worldX-10)
+  const stopDist=100, brakeDist=220
+
+  if(S.trainState==='DEAD'){
+    S.deadTimer-=dt
+    trainContainer.y+=90*dt; trainContainer.rotation+=1.5*dt
+    if(fireGlow)fireGlow.alpha=0; if(headlightBeam)headlightBeam.alpha=0
+    if(S.deadTimer<=0){S.running=false;showLose()}
+    return
+  }
+  if(S.trainState==='BOOSTING'){
+    S.boostTimer-=dt; speed=boostSpeed
+    // Must still check for obstacles during boost — prevent overshoot
+    if(nextObs){
+      const dist=nextObs.worldX-S.worldX
+      if(dist<=stopDist+20){S.trainState='STOPPED';S.boostTimer=0;S.currentObstacleIdx=S.obstacles.indexOf(nextObs);showQuizPanel(nextObs);speed=0;document.getElementById('speed-lines').style.opacity='0'}
+      else if(dist<=brakeDist+100){speed=baseSpeed*0.4;S.boostTimer=0;S.trainState='MOVING';document.getElementById('speed-lines').style.opacity='0'}
+    }
+    if(S.boostTimer<=0&&S.trainState==='BOOSTING'){S.trainState='MOVING';document.getElementById('speed-lines').style.opacity='0'}
+  } else if(S.trainState==='MOVING'){
+    if(nextObs){
+      const dist=nextObs.worldX-S.worldX
+      if(dist<=stopDist){S.trainState='STOPPED';S.currentObstacleIdx=S.obstacles.indexOf(nextObs);showQuizPanel(nextObs);speed=0}
+      else if(dist<=brakeDist){speed=baseSpeed*Math.max((dist-stopDist)/(brakeDist-stopDist)*0.5,0.04);showBrakeSparks()}
+      else speed=baseSpeed
+    } else speed=baseSpeed
+  } else if(S.trainState==='STOPPED'||S.trainState==='CLEARING') speed=0
+  else if(S.trainState==='ARRIVING'){
+    const dist=STATION_X-S.worldX
+    if(dist>18){speed=Math.max(10,baseSpeed*0.28*Math.min(dist/200,1)+8)}
+    else{
+      speed=0
+      if(!S.arrivedFlag){
+        S.arrivedFlag=true; S.trainState='ARRIVED'
+        startArrivalCelebration(W,H)
+        setTimeout(()=>{if(!S.winShown){S.winShown=true;S.gameOver=true;S.running=false;showWin()}},2600)
+      }
+    }
+  } else if(S.trainState==='ARRIVED') speed=0
+
+  // Clamp max movement per frame to prevent overshooting obstacles
+  const maxStep = nextObs && !nextObs.cleared ? Math.min(speed*dt, Math.max((nextObs.worldX-S.worldX)*0.8, 2)) : speed*dt
+  S.worldX+=maxStep
+  if(S.worldX>WORLD_LENGTH+200&&S.trainState!=='DEAD'&&S.trainState!=='ARRIVING'&&S.trainState!=='ARRIVED'){triggerDeath();return}
+  // Check mini-obstacles (quick math questions)
+  if(S.miniObs && S.trainState==='MOVING'){
+    const nextMini = S.miniObs.find(m=>!m.cleared && m.worldX > S.worldX && m.worldX - S.worldX < 80)
+    if(nextMini && !S.miniQuizActive){
+      S.miniQuizActive = true
+      S.trainState = 'STOPPED'; speed = 0
+      // Show quick quiz inline
+      const qEl = document.getElementById('quiz-label')
+      if(qEl) qEl.textContent = '🚧 Singkirkan rintangan!'
+      const _mc=generateMiniChoices(nextMini.ans), _mw=_mc.filter(c=>c!==String(nextMini.ans))
+      showQuizPanel({questions:[{q:nextMini.q,ans:String(nextMini.ans),wrong:_mw}],qIdx:0,question:{q:nextMini.q,ans:String(nextMini.ans),wrong:_mw},cleared:false,wrongCount:0,_mini:true,_miniRef:nextMini})
+    }
+  }
+
+  if(S.cleared===S.totalObstacles&&S.trainState!=='DEAD'&&S.trainState!=='ARRIVING'&&S.trainState!=='ARRIVED'){
+    if(S.trainState!=='BOOSTING'&&S.trainState!=='MOVING'){S.trainState='BOOSTING';S.boostTimer=2}
+    if(S.worldX>STATION_X-W*0.8){triggerArrival();return}
+  }
+
+  const cameraX=Math.max(0,S.worldX-TRAIN_SCREEN_X)
+  worldContainer.x=-cameraX
+  hillContainer.x=-cameraX*0.18
+  bgContainer.x=-cameraX*0.04
+
+  S.trainBobT+=dt*(S.trainState==='BOOSTING'?7:4)
+  const bob=Math.sin(S.trainBobT)*(S.trainState==='BOOSTING'?3.5:1.2)
+  const targetLean=S.trainState==='BOOSTING'?-0.048:0
+  trainContainer.rotation+=(targetLean-trainContainer.rotation)*0.1
+
+  if(S.cameraShake>0){
+    S.cameraShake-=dt*6
+    const shk=S.cameraShake*8
+    trainContainer.x=TRAIN_SCREEN_X+(Math.random()-0.5)*shk
+    trainContainer.y=tY-18+bob+(Math.random()-0.5)*shk*0.4
+  } else {
+    trainContainer.x=TRAIN_SCREEN_X; trainContainer.y=tY-18+bob; S.cameraShake=Math.max(0,S.cameraShake)
+  }
+  if(headlightBeam){headlightBeam.x=trainContainer.x+66}
+  if(fireGlow){fireGlow.x=trainContainer.x+2}
+
+  if(speed>15&&Math.random()<0.32)spawnDust(H)
+  const spinSpeed=speed*0.04
+  for(const w of trainWheels)w.rotation+=spinSpeed*dt*10
+}
+
+function updateObstacles(dt){
+  S.obstacles.forEach(obs=>{
+    if(!obs.container)return
+    obs.flashTimer=(obs.flashTimer||0)+dt
+    const lr=obs.container.getChildByName('lightRed'), lg=obs.container.getChildByName('lightGrn')
+    if(lr&&lg){
+      const phase=Math.sin(obs.flashTimer*6)>0
+      lr.alpha=phase?1.0:0.15; lg.alpha=phase?0.15:1.0
+      // Glow spread
+      if(phase){lr.scale.set(1+Math.sin(obs.flashTimer*6)*0.08)}
+      else{lg.scale.set(1+Math.sin(obs.flashTimer*6)*0.08)}
+    }
+    if(!obs.cleared&&obs===S.obstacles[S.currentObstacleIdx]){
+      const barrier=obs.container.getChildByName('barrier')
+      if(barrier)barrier.rotation=Math.sin(obs.flashTimer*12)*0.06
+    }
+  })
+}
+
+// ── Smoke / Dust / Embers / Steam ─────────────────────────────────────────────
+function updateSmoke(dt){
+  const TS=TRAIN_STYLES[selectedTrainIdx]
+  const rate=S.trainState==='BOOSTING'?0.85:S.trainState==='STOPPED'?0.08:0.45
+  if(Math.random()<rate){
+    const p=new PIXI.Graphics()
+    const r=5+Math.random()*(S.trainState==='BOOSTING'?14:9)
+    p.circle(0,0,r).fill({color:TS.smokeCol||0x888888,alpha:0.55})
+    p.x=trainContainer.x+17; p.y=trainContainer.y-46
+    p._vx=(Math.random()-0.5)*22-18; p._vy=-32-Math.random()*22; p._life=1.0
+    stage.addChild(p); smokePuffs.push(p)
+  }
+  if(S.trainState==='BOOSTING'&&Math.random()<0.6)spawnEmber()
+  smokePuffs=smokePuffs.filter(p=>{
+    p._life-=dt*0.7; if(p._life<=0){stage.removeChild(p);return false}
+    p.x+=p._vx*dt; p.y+=p._vy*dt
+    p.alpha=p._life*0.45; p.scale.set(1+(1-p._life)*2.5); return true
+  })
+}
+
+function spawnDust(H){
+  const tY=getTrackY(H)
+  const d=new PIXI.Graphics()
+  d.circle(0,0,2+Math.random()*4).fill({color:BG.tieColor,alpha:0.7})
+  d.x=trainContainer.x-85-Math.random()*120; d.y=tY+16
+  d._vx=-(16+Math.random()*32); d._vy=-(3+Math.random()*13); d._life=0.55+Math.random()*0.4
+  stage.addChild(d); dustParticles.push(d)
+}
+
+function spawnEmber(){
+  const e=new PIXI.Graphics()
+  const col=Math.random()<0.5?0xff6600:0xfbbf24
+  e.circle(0,0,1.5+Math.random()*2.5).fill({color:col})
+  e.x=trainContainer.x+17; e.y=trainContainer.y-44
+  e._vx=(Math.random()-0.3)*55+18; e._vy=-68-Math.random()*45; e._life=0.7+Math.random()*0.4
+  stage.addChild(e); emberParticles.push(e)
+}
+
+function spawnSteamJet(){
+  const p=new PIXI.Graphics()
+  p.circle(0,0,2.5+Math.random()*3).fill({color:0xffffff,alpha:0.55})
+  p.x=trainContainer.x+26+(Math.random()-0.5)*6; p.y=trainContainer.y-44
+  p._vx=(Math.random()-0.5)*18; p._vy=-52-Math.random()*28; p._life=0.35+Math.random()*0.25
+  stage.addChild(p); smokePuffs.push(p)
+}
+
+function showBrakeSparks(){
+  if(Math.random()>0.15)return
+  const s=new PIXI.Graphics()
+  s.rect(-1,-2,2,4).fill({color:0xfbbf24})
+  s.x=trainContainer.x+70; s.y=trainContainer.y+8
+  s._vx=(Math.random()+0.5)*65; s._vy=(Math.random()-0.5)*40; s._life=0.3
+  stage.addChild(s); sparkParticles.push(s)
+  // Extra sparks at other wheel positions
+  if(Math.random()<0.3){
+    const s2=new PIXI.Graphics()
+    s2.circle(0,0,2).fill({color:0xff8800})
+    s2.x=trainContainer.x+22+(Math.random()*40); s2.y=trainContainer.y+12
+    s2._vx=(Math.random()-0.5)*80; s2._vy=-(Math.random()*40)
+    s2._life=0.25; stage.addChild(s2); sparkParticles.push(s2)
+  }
+}
+
+function updateSparks(dt){
+  sparkParticles=sparkParticles.filter(s=>{
+    s._life-=dt*(s._decay||3.2); if(s._life<=0){if(s.parent)s.parent.removeChild(s);return false}
+    s.x+=s._vx*dt; s.y+=s._vy*dt; s._vy+=200*dt
+    s.alpha=Math.min(s._life*1.5,1); s.rotation+=5*dt; return true
+  })
+  dustParticles=dustParticles.filter(d=>{
+    d._life-=dt*2; if(d._life<=0){stage.removeChild(d);return false}
+    d.x+=d._vx*dt; d.y+=d._vy*dt; d._vy+=55*dt
+    d.alpha=d._life*0.72; d.scale.set(1+(1-d._life)*0.9); return true
+  })
+  emberParticles=emberParticles.filter(e=>{
+    e._life-=dt*2.2; if(e._life<=0){stage.removeChild(e);return false}
+    e.x+=e._vx*dt; e.y+=e._vy*dt; e._vy+=130*dt
+    e.alpha=e._life; e.rotation+=8*dt; return true
+  })
+}
+
+// ── Quiz ──────────────────────────────────────────────────────────────────────
+let quizActive=false, quizLocked=false
+function showQuizPanel(obs){
+  if(quizActive)return; quizActive=true; quizLocked=false
+  const qNum = (obs.qIdx||0)+1
+  const qTotal = obs.questions ? obs.questions.length : 1
+  document.getElementById('quiz-question').textContent = obs.question.q
+  // No (1/2) counter — mercy dots serve as indicator
+  const choicesEl=document.getElementById('quiz-choices'); choicesEl.innerHTML=''
+  const choices=[obs.question.ans,...obs.question.wrong]
+  for(let i=choices.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[choices[i],choices[j]]=[choices[j],choices[i]];}
+  choices.forEach(c=>{
+    const btn=document.createElement('button'); btn.className='choice-btn'; btn.textContent=c
+    btn.onclick=()=>onChoiceTap(btn,c,obs); choicesEl.appendChild(btn)
+  })
+  const mercyEl=document.getElementById('mercy-bar'); mercyEl.innerHTML=''
+  for(let m=0;m<3;m++){
+    const dot=document.createElement('div'); dot.className='mercy-dot'+(m<obs.wrongCount?' used':''); mercyEl.appendChild(dot)
+  }
+  document.getElementById('quiz-panel').classList.add('show')
+}
+
+function onChoiceTap(btn,choice,obs){
+  if(quizLocked)return; quizLocked=true
+  if(choice===obs.question.ans){
+    btn.classList.add('correct'); flashScreen('#00ff44',0.35)
+    if(obs._mini){
+      // Mini obstacle — just clear and resume
+      setTimeout(()=>clearMiniObstacle(obs._miniRef),380)
+    } else {
+      obs.qIdx = (obs.qIdx||0)+1
+      if(obs.questions && obs.qIdx < obs.questions.length){
+        obs.question = obs.questions[obs.qIdx]
+        setTimeout(()=>{hideQuizPanel(); quizActive=false; showQuizPanel(obs)},500)
+      } else {
+        setTimeout(()=>clearObstacle(obs),380)
+      }
+    }
+  } else {
+    S.wrongTaps++; S.noWrongAnswers=false; obs.wrongCount++
+    btn.classList.add('wrong'); S.cameraShake=1.0; flashScreen('#ff8800',0.28)
+    document.querySelectorAll('.mercy-dot').forEach((d,i)=>{if(i<obs.wrongCount)d.classList.add('used')})
+    if(obs._mini){
+      // Mini obstacle — wrong answer, just resume after delay
+      setTimeout(()=>{clearMiniObstacle(obs._miniRef)},600)
+    } else if(obs.wrongCount>=3) setTimeout(()=>clearObstacle(obs),450)
+    else setTimeout(()=>{quizLocked=false},500)
+  }
+}
+
+function generateMiniChoices(ans){
+  const choices = [String(ans)]
+  while(choices.length<4){
+    const w = ans + Math.floor(Math.random()*8)-4
+    if(w>=0 && w!==ans && !choices.includes(String(w))) choices.push(String(w))
+  }
+  return choices.sort(()=>Math.random()-0.5)
+}
+
+function clearMiniObstacle(mini){
+  mini.cleared = true
+  S.miniQuizActive = false
+  if(mini.container){mini.container.visible=false; try{worldContainer.removeChild(mini.container)}catch(_){}}
+  hideQuizPanel()
+  // Resume moving (no boost — just continue)
+  if(S.trainState!=='ARRIVING'&&S.trainState!=='ARRIVED') S.trainState='MOVING'
+}
+
+function clearObstacle(obs){
+  hideQuizPanel(); obs.cleared=true; S.cleared++; S.currentObstacleIdx=-1
+  explodeObstacle(obs)
+  // Resume moving — no boost effect (just continue at normal speed)
+  if(S.trainState!=='ARRIVING'&&S.trainState!=='ARRIVED'){
+    S.trainState='MOVING'
+  }
+  document.getElementById('obstacle-count').textContent=`🚧 ${S.cleared}/${S.totalObstacles}`
+}
+
+function explodeObstacle(obs){
+  if(!obs.container)return
+  const screenX=obs.worldX+worldContainer.x, screenY=obs.container.y
+  // Radial burst
+  for(let i=0;i<28;i++){
+    const p=new PIXI.Graphics()
+    const col=i%3===0?0x4ade80:i%3===1?0xfbbf24:0x60a5fa
+    p.circle(0,0,3+Math.random()*5).fill({color:col})
+    p.x=screenX; p.y=screenY-40
+    const angle=(i/28)*Math.PI*2, spd=140+Math.random()*120
+    p._vx=Math.cos(angle)*spd; p._vy=Math.sin(angle)*spd-60; p._life=0.65+Math.random()*0.35
+    stage.addChild(p); sparkParticles.push(p)
+  }
+  // Flash ring
+  const ring=new PIXI.Graphics()
+  ring.circle(0,0,30).fill({color:0xffffff,alpha:0.5})
+  ring.x=screenX; ring.y=screenY-40; ring._life=0.25; ring._ring=true
+  stage.addChild(ring); sparkParticles.push(ring)
+  let alpha=1
+  const iv=setInterval(()=>{
+    alpha-=0.15; if(obs.container)obs.container.alpha=Math.max(alpha,0)
+    if(alpha<=0){clearInterval(iv);if(obs.container)worldContainer.removeChild(obs.container)}
+  },30)
+}
+
+function hideQuizPanel(){quizActive=false;quizLocked=false;document.getElementById('quiz-panel').classList.remove('show')}
+
+function triggerDeath(){S.trainState='DEAD';S.deadTimer=1.2;S.gameOver=true;hideQuizPanel();flashScreen('#ff0000',0.55)}
+function triggerArrival(){
+  if(S.trainState==='ARRIVING'||S.trainState==='ARRIVED'||S.gameOver)return
+  S.trainState='ARRIVING'; hideQuizPanel()
+  document.getElementById('speed-lines').style.opacity='0'
+}
+
+function updateHUD(){
+  document.getElementById('level-text').textContent=`Level ${S.level}`
+  document.getElementById('status-text').textContent='Selamatkan Kereta!'
+  document.getElementById('obstacle-count').textContent=`🚧 0/${S.totalObstacles}`
+}
+function updateHUDFrame(){
+  const pct=Math.min(Math.max(S.worldX/WORLD_LENGTH*100,0),100)
+  document.getElementById('danger-fill').style.width=pct+'%'
+  const fill=document.getElementById('danger-fill')
+  if(pct>75)fill.style.background='linear-gradient(90deg,#ef4444,#dc2626)'
+  else if(pct>50)fill.style.background='linear-gradient(90deg,#fbbf24,#ef4444)'
+  else fill.style.background='linear-gradient(90deg,#86efac,#fbbf24,#ef4444)'
+  if(S.trainState==='BOOSTING')document.getElementById('status-text').textContent='💨 TURBO!'
+  else if(S.trainState==='STOPPED')document.getElementById('status-text').textContent='🚨 Jawab!'
+  else if(pct>70)document.getElementById('status-text').textContent='⚠️ Bahaya!'
+  else document.getElementById('status-text').textContent='🚂 Melaju...'
+}
+
+function calcStars(){
+  const elapsed=(performance.now()-S.startTime)/1000
+  const est=(S.trackLength/(80+S.level*12))*1.4
+  return GameScoring.calc({
+    correct: S.cleared,
+    total: S.totalObstacles,
+    wrong: S.wrongTaps || 0,
+    time: elapsed,
+    maxTime: est
+  })
+}
+function showWin(){
+  try{document.getElementById('game-bgm').pause()}catch(_){}
+  const stars=calcStars()
+  const msgs=['','','','Bagus sekali!','Luar biasa cepat!','SEMPURNA!']
+  const title=stars>=5?'SEMPURNA!':stars>=4?'Hebat Sekali!':'Kereta Selamat!'
+  try{sessionStorage.setItem('g16Result',JSON.stringify({stars,level:S.level,cleared:S.cleared,total:S.totalObstacles}))}catch(_){}
+  saveG16Progress(stars)
+  const nextLevel = S.level < 30 ? () => { sessionStorage.setItem('g16Config', JSON.stringify({level: S.level + 1})); location.reload(); } : null;
+  GameModal.show({
+    emoji:stars>=4?'🏆':'⭐', title, stars, msg:msgs[stars]||'Terus berlatih!',
+    onNext:nextLevel, onAgain:()=>restartGame(), onBack:()=>finishGame()
+  })
+}
+function showLose(){
+  try{document.getElementById('game-bgm').pause()}catch(_){}
+  try{sessionStorage.setItem('g16Result',JSON.stringify({stars:0,level:S.level}))}catch(_){}
+  GameModal.show({
+    emoji:'💥', title:'Kereta Jatuh!', stars:0,
+    msg:`Kereta jatuh ke tebing! (${S.cleared}/${S.totalObstacles} rintangan bersih)`,
+    onAgain:()=>restartGame(), onBack:()=>finishGame()
+  })
+}
+
+// ── Arrival Station ───────────────────────────────────────────────────────────
+function buildArrivalStation(W,H){
+  const tY=getTrackY(H)
+  const pX=STATION_X-W*0.06, pW=W*1.05, pH=34
+  const bCX=STATION_X+W*0.42, bW=138, bH=92
+
+  const g=new PIXI.Graphics()
+
+  // ── Platform ──
+  g.rect(pX,tY-pH,pW,pH).fill({color:0xd4c5a9})
+  g.rect(pX,tY-pH,pW,4).fill({color:0xfbbf24})
+  g.rect(pX,tY-pH+4,pW,3).fill({color:0xbdaf90})
+  g.rect(pX,tY,pW,9).fill({color:0xa89870})
+  for(let cx=pX+40;cx<pX+pW;cx+=90){
+    g.rect(cx-5,tY,10,18).fill({color:0x94a3b8})
+    g.rect(cx-7,tY+16,14,3).fill({color:0x64748b})
+  }
+
+  // ── Station Building ──
+  const bX=bCX-bW/2, bY=tY-pH
+  g.rect(bX,bY-bH,bW,bH).fill({color:0xfef3c7})
+  // Windows
+  for(const wx of[bX+20,bX+80]){
+    g.rect(wx,bY-bH+16,24,30).fill({color:0x7dd3fc,alpha:0.8})
+    g.rect(wx,bY-bH+16,24,30).stroke({width:2,color:0x475569})
+    g.rect(wx+11,bY-bH+16,2,30).fill({color:0x475569})
+    g.rect(wx,bY-bH+30,24,2).fill({color:0x475569})
+  }
+  // Door
+  g.roundRect(bX+bW/2-12,bY-30,24,30,3).fill({color:0x7c3aed})
+  g.roundRect(bX+bW/2-12,bY-30,24,30,3).stroke({width:1.5,color:0x5b21b6})
+  g.circle(bX+bW/2+6,bY-17,2.5).fill({color:0xfbbf24})
+  // Pillars
+  for(const px of[bX+8,bX+bW-16]){
+    g.rect(px,bY-bH,8,bH).fill({color:0xfde68a})
+    g.rect(px-3,bY-bH,14,6).fill({color:0xfcd34d})
+    g.rect(px-3,bY-2,14,5).fill({color:0xfcd34d})
+  }
+  // Roof (hip roof shape)
+  g.poly([bX-12,bY-bH,bX+bW+12,bY-bH,bX+bW+18,bY-bH-14,bX-18,bY-bH-14]).fill({color:0xe11d48})
+  g.rect(bX-18,bY-bH-22,bW+36,10).fill({color:0xfef9c3})
+  g.rect(bX-18,bY-bH-14,bW+36,4).fill({color:0xdc2626})
+  for(let rx=bX-12;rx<bX+bW+12;rx+=14)
+    g.moveTo(rx,bY-bH).lineTo(rx,bY-bH-14).stroke({width:0.8,color:0x991b1b,alpha:0.5})
+  // Sign board "SELAMAT TIBA"
+  g.rect(bX+14,bY-bH+56,bW-28,22).fill({color:0x1e3a8a})
+  g.rect(bX+14,bY-bH+56,bW-28,22).stroke({width:1.5,color:0x60a5fa,alpha:0.6})
+  // Draw text as PIXI Text
+  const signTxt=new PIXI.Text({text:'SELAMAT TIBA!',style:{fontFamily:'Fredoka One,sans-serif',fontSize:11,fill:0xfef9c3,fontWeight:'900',letterSpacing:1}})
+  signTxt.anchor.set(0.5,0.5); signTxt.x=bCX; signTxt.y=bY-bH+67
+  worldContainer.addChild(signTxt)
+
+  // ── Platform lamp posts ──
+  for(const lx of[pX+55,pX+200,pX+370,pX+550]){
+    if(lx>pX+pW)continue
+    g.rect(lx-2,tY-pH-58,4,58).fill({color:0x5d3a1a})
+    g.rect(lx-15,tY-pH-62,30,7).fill({color:0xfcd34d})
+    g.circle(lx,tY-pH-58,10).fill({color:0xfefce8,alpha:0.92})
+    g.circle(lx,tY-pH-58,18).fill({color:0xfefce8,alpha:0.05})
+  }
+
+  // ── Bunting flags ──
+  const flagCols=[0xef4444,0xfbbf24,0x22c55e,0x3b82f6,0xa855f7,0xf97316]
+  g.moveTo(pX+55,tY-pH-55).lineTo(bX+bW+20,tY-pH-55).stroke({width:0.9,color:0x9ca3af,alpha:0.55})
+  for(let i=0;i<16;i++){
+    const fx=pX+55+i*36, fy=tY-pH-55+Math.sin(i*0.72)*5
+    if(fx+28>bX+bW+20)break
+    g.poly([fx,fy,fx+14,fy+13,fx+28,fy]).fill({color:flagCols[i%6],alpha:0.88})
+  }
+  worldContainer.addChild(g)
+
+  // ── NPCs — two arm-state layers ──
+  npcArmsDown=new PIXI.Graphics()
+  npcArmsUp=new PIXI.Graphics()
+  const npcCols=[
+    {s:0xfde68a,c:0xef4444},{s:0xd4a574,c:0x3b82f6},{s:0xf4a460,c:0x22c55e},
+    {s:0xfbbf24,c:0xa855f7},{s:0xcd853f,c:0xf97316},{s:0xdeb887,c:0x06b6d4},
+    {s:0xfde68a,c:0xdc2626},{s:0xd4a574,c:0x1d4ed8},{s:0xf4a460,c:0x16a34a},
+  ]
+  for(let i=0;i<9;i++){
+    const nx=pX+68+i*40+((i%2)*10), ny=tY-pH
+    const col=npcCols[i%npcCols.length]
+    _drawNPC(npcArmsDown,nx,ny,col.s,col.c,false)
+    _drawNPC(npcArmsUp,nx,ny,col.s,col.c,true)
+  }
+  // Marching band (4 members, to the right)
+  const band=[{c:0xef4444,inst:'drum'},{c:0x3b82f6,inst:'trumpet'},{c:0x22c55e,inst:'flag'},{c:0xfbbf24,inst:'drum'}]
+  band.forEach((b,i)=>{
+    const bx=pX+440+i*44, by=tY-pH
+    if(bx>pX+pW)return
+    _drawBandMember(npcArmsDown,bx,by,b.c,b.inst,false)
+    _drawBandMember(npcArmsUp,bx,by,b.c,b.inst,true)
+  })
+  npcArmsUp.visible=false
+  worldContainer.addChild(npcArmsDown)
+  worldContainer.addChild(npcArmsUp)
+}
+
+function _drawNPC(g,x,y,skinC,clothC,armsUp){
+  g.circle(x,y-32,5.5).fill({color:skinC})
+  g.rect(x-4,y-26,8,17).fill({color:clothC})
+  if(armsUp){
+    g.rect(x-12,y-32,5,13).fill({color:clothC})
+    g.rect(x+7,y-32,5,13).fill({color:clothC})
+    g.circle(x-10,y-32,3).fill({color:skinC})
+    g.circle(x+12,y-32,3).fill({color:skinC})
+  }else{
+    g.rect(x-12,y-24,5,12).fill({color:clothC})
+    g.rect(x+7,y-24,5,12).fill({color:clothC})
+    g.circle(x-10,y-13,3).fill({color:skinC})
+    g.circle(x+12,y-13,3).fill({color:skinC})
+  }
+  g.rect(x-5,y-9,4,12).fill({color:0x1e293b})
+  g.rect(x+1,y-9,4,12).fill({color:0x1e293b})
+}
+
+function _drawBandMember(g,x,y,clothC,inst,armsUp){
+  _drawNPC(g,x,y,0xf5deb3,clothC,armsUp)
+  if(inst==='drum'&&!armsUp){
+    g.circle(x,y-14,7).fill({color:0x7c3aed})
+    g.circle(x,y-14,7).stroke({width:1.5,color:0xfbbf24})
+    g.rect(x-7,y-14,14,1.5).fill({color:0xfbbf24})
+  }else if(inst==='trumpet'&&!armsUp){
+    g.rect(x+5,y-22,15,4).fill({color:0xfbbf24})
+    g.circle(x+22,y-20,5).fill({color:0xfbbf24,alpha:0.55})
+  }else if(inst==='flag'){
+    g.rect(x+7,y-46,2.5,20).fill({color:0x5d3a1a})
+    g.poly([x+9.5,y-46,x+26,y-38,x+9.5,y-30]).fill({color:0xef4444})
+  }
+}
+
+function startArrivalCelebration(W,H){
+  arrivalConfetti=true
+  flashScreen('#22c55e',0.45)
+  // Show train name greeting
+  const trainName = S.trainCfg ? S.trainCfg.name || S.trainCfg.key : 'Kereta'
+  document.getElementById('status-text').textContent=`🎉 Selamat datang, ${trainName}!`
+  document.getElementById('danger-fill').style.background='linear-gradient(90deg,#4ade80,#22c55e)'
+  if(npcArmsUp)npcArmsUp.visible=true
+  if(npcArmsDown)npcArmsDown.visible=false
+  // Fireworks — burst emojis in sky
+  spawnFireworks(W, H)
+}
+
+function spawnFireworks(W, H) {
+  const emojis = ['🎆','🎇','✨','🌟','💫','🎉','🎊']
+  for (let burst = 0; burst < 5; burst++) {
+    setTimeout(() => {
+      const cx = W * 0.15 + Math.random() * W * 0.7
+      const cy = H * 0.05 + Math.random() * H * 0.2
+      for (let i = 0; i < 6; i++) {
+        const fw = new PIXI.Text({text: emojis[Math.floor(Math.random()*emojis.length)], style:{fontSize:16+Math.random()*12}})
+        fw.anchor.set(0.5)
+        fw.x = cx; fw.y = cy
+        const angle = (i / 6) * Math.PI * 2
+        fw._vx = Math.cos(angle) * (40 + Math.random() * 30)
+        fw._vy = Math.sin(angle) * (40 + Math.random() * 30)
+        fw._life = 1.0; fw._decay = 0.6 + Math.random() * 0.3
+        stage.addChild(fw); sparkParticles.push(fw)
+      }
+    }, burst * 500)
+  }
+}
+
+function spawnConfetti(){
+  const W=app.screen.width
+  const cols=[0xef4444,0xfbbf24,0x22c55e,0x3b82f6,0xa855f7,0xf97316,0xe879f9,0x38bdf8]
+  const p=new PIXI.Graphics()
+  const w=4+Math.random()*6, h=3+Math.random()*4
+  p.rect(-w/2,-h/2,w,h).fill({color:cols[Math.floor(Math.random()*cols.length)]})
+  p.rotation=Math.random()*Math.PI*2
+  p.x=Math.random()*W; p.y=-8
+  p._vx=(Math.random()-0.5)*55; p._vy=70+Math.random()*110
+  p._rot=(Math.random()-0.5)*5; p._life=1.0; p._decay=0.42
+  stage.addChild(p); sparkParticles.push(p)
+}
+
+function updateCelebration(dt){
+  if(S.trainState!=='ARRIVED')return
+  npcWaveT+=dt
+  if(npcWaveT>=0.42){
+    npcWaveT=0
+    if(npcArmsUp&&npcArmsDown){
+      const u=npcArmsUp.visible
+      npcArmsUp.visible=!u; npcArmsDown.visible=u
+    }
+  }
+  if(arrivalConfetti&&Math.random()<0.48)spawnConfetti()
+}
+
+function flashScreen(color,alpha){
+  const el=document.getElementById('flash'); el.style.background=color; el.style.opacity=alpha
+  setTimeout(()=>{el.style.opacity='0'},130)
+}
+// Save level progress directly to localStorage
+function saveG16Progress(stars) {
+  try {
+    const key = 'dunia-0-progress'
+    const prog = JSON.parse(localStorage.getItem(key) || '{}')
+    if (!prog.g16) prog.g16 = { completed: [], stars: {} }
+    const lv = (typeof cfg !== 'undefined' ? cfg.level : (typeof S !== 'undefined' ? S.level : 1)) || 1
+    const mapped = stars >= 4 ? 3 : stars >= 2 ? 2 : 1
+    if (!prog.g16.completed.includes(lv)) prog.g16.completed.push(lv)
+    if ((prog.g16.stars[lv] || 0) < mapped) prog.g16.stars[lv] = mapped
+    localStorage.setItem(key, JSON.stringify(prog))
+  } catch(_) {}
+}
+function goBack(){S.running=false;history.back()}
+function confirmBack(){goBack()}
+function togglePause(){
+  S.paused=!S.paused
+  document.getElementById('btn-pause').textContent=S.paused?'▶':'⏸'
+  if (typeof GamePause !== 'undefined') {
+    if (S.paused) GamePause.show(); else GamePause.hide()
+  } else {
+    try{const bgm=document.getElementById('game-bgm');S.paused?bgm.pause():bgm.play().catch(()=>{})}catch(_){}
+  }
+}
+;(function setupG16Pause(){
+  if (typeof GamePause === 'undefined') { setTimeout(setupG16Pause, 60); return; }
+  GamePause.init({
+    bgmEl: document.getElementById('game-bgm'),
+    onResume: () => { S.paused = false; document.getElementById('btn-pause').textContent = '⏸' },
+    onRetry:  () => { location.reload() },
+    onHome:   () => { try{document.getElementById('game-bgm').pause()}catch(_){}; history.back() }
+  });
+})();
+function finishGame(){try{document.getElementById('game-bgm').pause()}catch(_){};goBack()}
+function restartGame(){location.reload()}
+window.addEventListener('resize',()=>{
+  if(!app)return
+  app.renderer.resize(window.innerWidth,window.innerHeight)
+  // Recalculate track position for new viewport
+  const newH=app.screen.height
+  const newTY=getTrackY(newH)
+  if(trainContainer) trainContainer.y=newTY-14
+  // Reposition obstacles and NPC to new track Y
+  if(S.obstacles) S.obstacles.forEach(o=>{if(o.container) o.container.y=newTY})
+  // Reposition headlight and fire glow
+  if(headlightBeam) headlightBeam.y=newTY-14
+  if(fireGlow) fireGlow.y=newTY-18
+})
+</script>
+</body>
+</html>

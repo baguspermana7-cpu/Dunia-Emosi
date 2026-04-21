@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 215 110">
+  <defs>
+    <linearGradient id="ggG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2A2A5A"/>
+      <stop offset="100%" stop-color="#1A1A3A"/>
+    </linearGradient>
+  </defs>
+  <!-- double-ended V body — same nose both ends -->
+  <path d="M4,54 Q14,22 44,20 L172,20 Q198,22 212,54 L210,82 Q198,88 172,88 L44,88 Q18,88 4,82 Z" fill="url(#ggG)"/>
+  <!-- PRR gold pinstriping (5 stripes) -->
+  <path d="M4,54 Q14,32 40,28 L176,28 Q200,32 212,54" fill="none" stroke="#C8A020" stroke-width="1.2"/>
+  <path d="M4,54 Q14,38 40,36 L176,36 Q200,38 212,54" fill="none" stroke="#C8A020" stroke-width="1.2"/>
+  <path d="M4,54 Q14,44 40,44 L176,44 Q200,44 212,54" fill="none" stroke="#C8A020" stroke-width="1.2"/>
+  <path d="M4,54 Q14,66 40,68 L176,68 Q200,66 212,54" fill="none" stroke="#C8A020" stroke-width="1.2"/>
+  <path d="M4,54 Q14,74 40,76 L176,76 Q200,74 212,54" fill="none" stroke="#C8A020" stroke-width="1.2"/>
+  <!-- windows (both cabs) -->
+  <rect x="18" y="28" width="14" height="10" rx="2" fill="#87CEEB" opacity=".7"/>
+  <rect x="36" y="28" width="14" height="10" rx="2" fill="#87CEEB" opacity=".7"/>
+  <rect x="168" y="28" width="14" height="10" rx="2" fill="#87CEEB" opacity=".7"/>
+  <rect x="186" y="28" width="14" height="10" rx="2" fill="#87CEEB" opacity=".7"/>
+  <!-- double pantograph (GG1 had 2 pantographs) -->
+  <line x1="82"  y1="20" x2="78"  y2="8"  stroke="#888" stroke-width="1.5"/>
+  <line x1="94"  y1="20" x2="98"  y2="8"  stroke="#888" stroke-width="1.5"/>
+  <line x1="72"  y1="8"  x2="104" y2="8"  stroke="#888" stroke-width="2"/>
+  <line x1="128" y1="20" x2="124" y2="8"  stroke="#888" stroke-width="1.5"/>
+  <line x1="140" y1="20" x2="144" y2="8"  stroke="#888" stroke-width="1.5"/>
+  <line x1="118" y1="8"  x2="150" y2="8"  stroke="#888" stroke-width="2"/>
+  <!-- PRR Keystone badge center -->
+  <path d="M100,48 L108,40 L116,48 L116,60 L108,68 L100,60 Z" fill="#C8A020"/>
+  <text x="108" y="57" font-family="Arial" font-size="6" font-weight="bold" fill="#1A1A3A" text-anchor="middle">PRR</text>
+  <!-- headlamps both ends -->
+  <circle cx="6"   cy="54" r="6" fill="#FFD700" opacity=".9"/>
+  <circle cx="210" cy="54" r="6" fill="#FFD700" opacity=".9"/>
+  <!-- wheels (2-C+C-2 arrangement) -->
+  <circle cx="18"  cy="96" r="10" fill="#111" stroke="#888" stroke-width="2"/>
+  <circle cx="40"  cy="96" r="10" fill="#111" stroke="#888" stroke-width="2"/>
+  <circle cx="62"  cy="96" r="13" fill="#111" stroke="#C8A020" stroke-width="3"/>
+  <circle cx="86"  cy="96" r="13" fill="#111" stroke="#C8A020" stroke-width="3"/>
+  <circle cx="110" cy="96" r="13" fill="#111" stroke="#C8A020" stroke-width="3"/>
+  <circle cx="134" cy="96" r="13" fill="#111" stroke="#C8A020" stroke-width="3"/>
+  <circle cx="158" cy="96" r="13" fill="#111" stroke="#C8A020" stroke-width="3"/>
+  <circle cx="182" cy="96" r="13" fill="#111" stroke="#C8A020" stroke-width="3"/>
+  <circle cx="196" cy="96" r="10" fill="#111" stroke="#888" stroke-width="2"/>
+  <text x="108" y="110" font-family="Arial" font-size="7" fill="#888" text-anchor="middle">Pennsylvania Railroad GG1 · 1934</text>
+</svg>

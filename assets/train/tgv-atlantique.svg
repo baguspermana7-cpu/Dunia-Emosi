@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130">
+
+  <!-- TGV Atlantique: silver + navy, orange lower stripe -->
+  <path d="M8,68 Q18,44 44,38 L185,38 L188,68 L185,98 L44,98 Q18,92 8,68 Z" fill="#C0C0C0"/>
+  <!-- navy top section -->
+  <rect x="44" y="38" width="144" height="22" rx="0" fill="#003082"/>
+  <path d="M8,68 Q16,52 36,46 L44,46 L44,38 Q24,44 14,58 Z" fill="#003082"/>
+  <!-- orange lower stripe - key difference from TGV Sud-Est -->
+  <rect x="44" y="82" width="144" height="10" fill="#FF6600"/>
+  <path d="M8,68 Q14,78 32,84 L44,84 L44,92 Q24,88 12,76 Z" fill="#FF6600"/>
+  <!-- power car nose -->
+  <path d="M8,68 Q14,54 30,50 L34,52 Q18,56 12,68 Z" fill="#aaa"/>
+  <path d="M8,68 Q14,82 30,86 L34,84 Q18,80 12,68 Z" fill="#aaa"/>
+  <!-- cab window -->
+  <rect x="26" y="46" width="20" height="16" rx="2" fill="#87CEEB" opacity="0.7"/>
+  <circle cx="12" cy="68" r="5" fill="#FFE040" opacity="0.9"/>
+  <circle cx="38" cy="106" r="8" fill="#aaa" stroke="#003082" stroke-width="2"/>
+<line x1="46.0" y1="106.0" x2="30.0" y2="106.0" stroke="#003082" stroke-width="1.2"/>
+<line x1="43.7" y1="111.7" x2="32.3" y2="100.3" stroke="#003082" stroke-width="1.2"/>
+<line x1="38.0" y1="114.0" x2="38.0" y2="98.0" stroke="#003082" stroke-width="1.2"/>
+<line x1="32.3" y1="111.7" x2="43.7" y2="100.3" stroke="#003082" stroke-width="1.2"/>
+<circle cx="38" cy="106" r="1.8" fill="#003082"/>
+
+  <circle cx="62" cy="106" r="8" fill="#aaa" stroke="#003082" stroke-width="2"/>
+<line x1="70.0" y1="106.0" x2="54.0" y2="106.0" stroke="#003082" stroke-width="1.2"/>
+<line x1="67.7" y1="111.7" x2="56.3" y2="100.3" stroke="#003082" stroke-width="1.2"/>
+<line x1="62.0" y1="114.0" x2="62.0" y2="98.0" stroke="#003082" stroke-width="1.2"/>
+<line x1="56.3" y1="111.7" x2="67.7" y2="100.3" stroke="#003082" stroke-width="1.2"/>
+<circle cx="62" cy="106" r="1.8" fill="#003082"/>
+
+  <circle cx="110" cy="106" r="8" fill="#aaa" stroke="#003082" stroke-width="2"/>
+<line x1="118.0" y1="106.0" x2="102.0" y2="106.0" stroke="#003082" stroke-width="1.2"/>
+<line x1="115.7" y1="111.7" x2="104.3" y2="100.3" stroke="#003082" stroke-width="1.2"/>
+<line x1="110.0" y1="114.0" x2="110.0" y2="98.0" stroke="#003082" stroke-width="1.2"/>
+<line x1="104.3" y1="111.7" x2="115.7" y2="100.3" stroke="#003082" stroke-width="1.2"/>
+<circle cx="110" cy="106" r="1.8" fill="#003082"/>
+
+  <circle cx="150" cy="106" r="8" fill="#aaa" stroke="#003082" stroke-width="2"/>
+<line x1="158.0" y1="106.0" x2="142.0" y2="106.0" stroke="#003082" stroke-width="1.2"/>
+<line x1="155.7" y1="111.7" x2="144.3" y2="100.3" stroke="#003082" stroke-width="1.2"/>
+<line x1="150.0" y1="114.0" x2="150.0" y2="98.0" stroke="#003082" stroke-width="1.2"/>
+<line x1="144.3" y1="111.7" x2="155.7" y2="100.3" stroke="#003082" stroke-width="1.2"/>
+<circle cx="150" cy="106" r="1.8" fill="#003082"/>
+
+  <circle cx="174" cy="106" r="8" fill="#aaa" stroke="#003082" stroke-width="2"/>
+<line x1="182.0" y1="106.0" x2="166.0" y2="106.0" stroke="#003082" stroke-width="1.2"/>
+<line x1="179.7" y1="111.7" x2="168.3" y2="100.3" stroke="#003082" stroke-width="1.2"/>
+<line x1="174.0" y1="114.0" x2="174.0" y2="98.0" stroke="#003082" stroke-width="1.2"/>
+<line x1="168.3" y1="111.7" x2="179.7" y2="100.3" stroke="#003082" stroke-width="1.2"/>
+<circle cx="174" cy="106" r="1.8" fill="#003082"/>
+
+  <line x1="5" y1="112" x2="198" y2="112" stroke="#888" stroke-width="2.5"/>
+
+
+  <text x="100" y="126" font-family="Arial,sans-serif" font-size="7" fill="#555" text-anchor="middle">TGV Atlantique · 1989</text>
+</svg>
