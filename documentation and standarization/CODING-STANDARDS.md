@@ -254,6 +254,36 @@ All Pokemon battle games (**G10, G13, G13b, G13c**) MUST guarantee these five in
 - Use `image-rendering: pixelated` on HD raster sprites (kills perceived resolution).
 - Assign `.evolved` / `.evolved2` CSS classes with `transform: scale(...)` — tier scaling is JS-driven via `pokeTierScale(slug)` inline style.
 
+## Image Asset Standard — Gemini → WebP (added 2026-04-21)
+
+Any image produced by the Gemini API MUST land on disk as a compressed WebP. **Never commit the raw PNG** output from Gemini — it blows up asset size and slows page loads. Enforced via the helper `scripts/gemini-image-gen.py`.
+
+### Rules
+
+- **Format**: WebP, quality 82, method 6 (max compression effort), max width 1200px.
+- **API key**: `GEMINI_API_KEY` env var at runtime. NEVER commit a key to the repo — the 2026-04-21 public-flip required a `git filter-repo` history rewrite because an older session had committed one.
+- **Prompts**: stored under `prompts/<asset-name>.txt`. Long prompts stay reviewable + diff-able; invocation stays short.
+- **Invocation**:
+  ```bash
+  cd /home/baguspermana7/rz-work/Dunia-Emosi
+  export GEMINI_API_KEY='<paste at runtime; never commit>'
+  python3 scripts/gemini-image-gen.py \
+    --prompt-file prompts/banner-game17.txt \
+    --out assets/banner-game17.webp
+  ```
+- **Script guarantees**: raw PNG is held in memory only; only the WebP is written. Exit code non-zero on any failure.
+
+### Where this applies
+
+- Banners (`assets/banner-game{1..22}.webp`) — all regenerated this way going forward.
+- Character sprites (`assets/leo-*.webp`, `assets/poke-*.webp`, etc.).
+- Backgrounds (`assets/bg-*.webp`) — though for these, the existing `process-images.py` drop-and-process flow still applies when assets are sourced manually.
+
+### History
+
+- Rule added after the user observed PNG commits bloating the repo and slowing Vercel first-paint.
+- The existing `process-images.py` already enforces WebP for the drop-and-process workflow; this new standard extends the same rule to direct Gemini API calls.
+
 ## Documentation Workflow — MANDATORY (added 2026-04-20)
 
 **Every fix, new pattern, or convention MUST be documented in BOTH places:**

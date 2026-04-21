@@ -1,0 +1,20 @@
+Children's educational game banner for 'Jembatan Goyang' (Shaky Bridge) — a
+kid-friendly whack-a-mole style game. 16:9 landscape illustration, vibrant
+cartoon style for ages 5-10.
+
+Scene: a wooden rope-suspended bridge spanning a deep valley with a
+shimmering blue river below. On the bridge: 12 colorful wooden plank
+stepping-stones in a row, each with a soft gradient (red, orange, yellow,
+green, blue, purple rainbow). One plank glows with a golden yellow halo
+(the 'active' one). A friendly cartoon steam locomotive (Pokemon-style
+cute, with a happy face) is waiting at the LEFT side of the bridge ready
+to cross.
+
+Background: rolling green hills in the distance, 5-6 fluffy white clouds
+at 3 different depths, soft blue sky gradient from pale sky-blue at top
+to peachy dawn glow near horizon, 2 distant mountain silhouettes, a few
+birds silhouetted. Subtle sun rays. Soft dreamy lighting.
+
+Art style: modern children's book illustration, soft rounded shapes,
+saturated joyful colors, no text, no UI overlays, clean composition
+suitable as a 1024x512 hero banner. Very kid-friendly, safe, cheerful mood.
