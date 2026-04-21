@@ -166,20 +166,74 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 - 🔄 **Other tile audit**: Most tiles use emoji `<span class="wn-icon">` appropriately (🎭 emosi, 🌬️ napas, 🃏 memory, 🔤 huruf, 🔡 susun, ✍️ jejak, 🦁 hitung, 🖼️ tebak, 🏐 volley). G6 already uses img (racecar.svg). G21 uses psyduck.png (placeholder). Consider if others deserve custom sprites — deferred as separate ticket.
 
 ### G20 — Ducky Volley (controls + physics)
-- ⬜ **Controls & physics tidak smooth** — ball movement jerky, player response laggy
-- ⬜ **JANGAN auto-jump** — user says no auto-jump mechanic
-- ⬜ **Revamp controls** jadi lebih responsif + tactile
-- **Plan mode**: analyze requestAnimationFrame loop, input latency, gravity tuning (was 0.5), lerp factors, touch/keyboard handler
+- ✅ **Controls & physics tidak smooth** — ball movement jerky, player response laggy (EXECUTED 2026-04-21 Evening, Task #25 controls portion)
+- ✅ **JANGAN auto-jump** — user says no auto-jump mechanic (EXECUTED: removed both auto-jump-assist line and tap-auto-jump on touchstart)
+- ✅ **Revamp controls** jadi lebih responsif + tactile (EXECUTED: lerp horizontal `pvx=pvx*0.78+target*0.22`, rise-damping `pvy*=0.985`, ball air-drag `0.995^dt`/`0.998^dt`, gravity mult `0.65→0.60`, added visible jump button 72×72 + swipe-up gesture threshold 40px)
+- **Changes landed**: `games/g20-pixi.html` lines 76-89 (btn-jump HTML), 699-744 (physics), 1097-1135 (touch handlers). No edits to `game.js`/`style.css`/`g16-pixi.html`. Tested mentally: player serves from reset pos, ball still triggers checkHit path, BGM/pause/scoring untouched.
 
-### G20 + CROSS-GAME — Unified Scoring Engine (HIGH PRIORITY)
-- ⬜ **Scoring harus UNIFIED** — user wants ONE shared engine used by ALL games
-- ⬜ Per-game hanya 1-3 pengaturan/menu kecil, core scoring = 1 engine
-- **Current state**: `GameScoring.calc()` already exists in `game-modal.js` and 7 games migrated (G6, G14, G15, G16, G19, G20, G22). Remaining: G10, G13, G13b, G13c, G17, G18 still have per-game logic inline.
-- **Plan mode**:
-  1. Audit all 22 games: which use `GameScoring.calc()` vs inline scoring
-  2. Define SCORING_STANDARD config shape — `{maxStars, accuracyWeight, livesWeight, timeWeight, bonusRules}`
-  3. Replace remaining inline scoring with `GameScoring.calc(config)`
-  4. Surface per-game config as single-line call — e.g., `GameScoring.configure('g13', {lives:3, accuracyWeight:0.7})`
+### G20 + CROSS-GAME — Unified Scoring Engine (HIGH PRIORITY) ✅
+- ✅ **Scoring UNIFIED** — Task #25 scoring portion EXECUTED 2026-04-21 Evening.
+- ✅ **Migrated this pass**: G10 (via central `endGame()` — covers G10/G11/G12), G13 (evolution bonus pattern), G13b (kill-threshold bonus pattern — both `g13bGameOver` defeated/complete paths AND `g13bLevelComplete` final path), G17 (accuracy + lives), G18 (pure quiz accuracy).
+- ✅ **Already migrated** (previous sessions): G6, G14 (standalone), G15, G16, G19, G20, G22, G13c.
+- ✅ **Shipped**:
+  - `game.js:1864-1867` — `endGame()` now routes through `GameScoring.calc({correct: stars, total: maxRounds})`. Single change covers G10/G11/G12.
+  - `game.js:7824-7827` — G13 evolution uses bonus-modifier pattern: `calc({correct:1, total:1, bonus: evoPenalty})` where penalty = 0/-1/-2 for evolved2/evolved/none. Legacy 5/4/3★ distribution preserved exactly.
+  - `game.js:8518-8529` — G13b `g13bGameOver` threshold bonus: `calc({correct:1, total:1, bonus: tier-5})`. Defeated path caps at 2★, survival path at 3★ via `_g13bTier` intermediate. All legacy thresholds (`kills≥15→2`, `≥5→1`, `≥30→3`) preserved.
+  - `game.js:8559-8561` — G13b `g13bLevelComplete` same bonus pattern with `_g13bLcTier` covering 1-5★ range.
+  - `game.js:10451-10465` — G17 accuracy-based: `calc({correct: g17State.correct, total: g17State.totalBlocks, lives: maxDamage-damage, maxLives: 3})`. Damage re-cast as lives-lost so the engine's `livesLost >= 2` demote modifier applies.
+  - `game.js:11113-11116` — G18 quiz: `calc({correct: score, total})` — pure accuracy mapping replaces the 4-tier ternary.
+- ✅ **Verification**: `grep -c GameScoring.calc game.js` = 9 (up from 0 inline), residual `perfStars =` lines at 9841/9985/10211/10465 are **G14/G15/G16 in-game legacy paths** (standalone versions already migrated — in-game out of scope for this pass) and my new migrated `perfStars = GameScoring.calc(...)` assignments.
+- ✅ **Pattern documented** in `LESSONS-LEARNED.md` — bonus-modifier technique for non-accuracy games (tier/progression scoring). Reusable for any future game where `{correct, total}` doesn't fit cleanly.
+- ⬜ **Not scope, deferred**: G9 tracing (0-3★ scale intentional, not migrated), G1/2/3/4/5/7/8 (emotion/calm/letter/count/memory/picture/word games — check if they use inline star math in a later pass), in-game G14/G15/G16/G17 paths where the standalone is already unified.
+
+### G15+G16 Character Trains: Casey JR + Linus Brave (Task #43, plan mode 2026-04-21 late)
+- ⬜ **Featured character trains** — Casey JR 0-4-0 + Linus Brave 2-4-0 at TOP of G15 + G16 train selection.
+- ✅ **Asset prep DONE** (2026-04-21 23:58):
+  - `assets/train/caseyjr-body.webp` (22KB, 272×198) — bg removed via rembg
+  - `assets/train/linus-body.webp` (18KB, 264×173) — bg removed via rembg
+- **Plan** — shared `games/train-character-sprite.js` module:
+  - API: `mountCharacterTrain(container, config)` where config has `{spriteUrl, wheelLayout, wheelPositions, smokePos, steamInterval}`
+  - Wheel overlay: PIXI.Graphics circles drawn ON TOP of sprite, each a container so rotation works. Updated every frame with `wheel.rotation += speed * dt`.
+  - Steam FX: spawn gray ellipse particles at `smokePos` every `steamInterval` ms, fade + rise + expand, lifetime ~2s.
+  - Body bob: `container.y = baseY + Math.sin(frame * 0.08) * 1.5`
+  - Headlight glow: subtle pulse via alpha oscillation.
+- **G15 integration** (games/g15-pixi.html):
+  - Insert 2 entries at index 0 of TRAIN_CATS (or separate "Character" category): `{key:'caseyjr', isCharacter:true, spriteUrl:'../assets/train/caseyjr-body.webp', wheelLayout:'0-4-0', wheelPositions:[[-30,20],[0,20],[30,20],[60,20]], smokePos:[-50,-60], name:'Casey JR', sub:'0-4-0 Circus', kmh:40, baseSpeed:1.65, boostMult:1.50}` + similar for Linus 2-4-0.
+  - In buildTrain (~L1022), branch: `if (selectedTrain.isCharacter) buildCharacterTrain(selectedTrain)` else existing Graphics build.
+- **G16 integration** (games/g16-pixi.html):
+  - G16 currently has fixed programmatic train (buildTrain L810). Add train picker dropdown in pre-game overlay OR default to Casey JR + add pause-menu switcher.
+  - Use same `mountCharacterTrain()` helper.
+- **Live-feel detail checklist**: smoke trail, spinning wheels, body bob, headlight pulse, boost → faster smoke+wheels, stopped → slow smoke. Plan before execute.
+
+### G6 BGM → racecar.mp3 + crop to gameplay (Task #41, EXECUTED 2026-04-21 late evening) ✅
+- ✅ **BGM swapped** — `games/g6.html:77` now `<audio id="game-bgm" src="../Sounds/racecar.mp3" loop preload="auto">`.
+- ✅ **Volume 0.2 → 0.5** at `games/g6.html:920` (was line 944 pre-scenery-cleanup).
+- ✅ **Play/pause flow verified**: (a) BGM does NOT autoplay on start-overlay — the `bgm.play()` call lives inside `startWord()` which runs after difficulty pick, not on overlay mount. (b) `togglePause` (~1003) pauses/resumes correctly. (c) `finishGame` (~1007) pauses on end. (d) `confirmBack` (~1024) pauses on exit. `loop` attribute handles auto-repeat without JS cropping.
+- **Applied-summary**: `src=battle-bgm.mp3 → racecar.mp3`, `volume=0.2 → 0.5`. No JS flow changes needed — play/pause wired through `startWord` / `togglePause` / `finishGame` / `confirmBack` from the original overhaul.
+
+### G6 Floating Objects Outside Road (Task #42, EXECUTED 2026-04-21 late evening) ✅
+- ✅ **Shoulder scenery removed** — deleted the 8-iteration emoji spawn loop in `buildScenery()` (`games/g6.html:355-367` post-edit). User complaint "melayang-layang di luar jalan kesannya acak" fixed at the source.
+- ✅ **Safe stubs kept**: empty `sceneryL`/`sceneryR` containers with `_scroll` props retained so the game-loop scroll tick at `~889` (`bg._sceneryL.y += scrollAmt`) stays functional without null-check retrofits.
+- ✅ **Dead code swept**: removed the per-theme `icons` map (city/forest/space/body/pantai/sekolah/dapur/kebun) that was only consumed by the now-deleted loop.
+- ✅ **Preserved**: road signs (spawn inside canvas bounds after earlier P2 fix), road surface, lane markings, car sprite.
+- **Applied-summary**: Decision was Option A (full removal, not reposition). Road signs remain the sole ambient road furniture. Dark mode now shows clean road — no low-alpha specks outside the lanes.
+
+### G16 Train STILL Bablas — Overshoot Bug (Task #40, EXECUTED 2026-04-21 late evening) ✅
+- ✅ **Bablas fixed** — 4-part hard-guard applied in `games/g16-pixi.html`.
+- **Shipped**:
+  1. ✅ **Floor reduced** 2px → 0.2px (line ~1256): `Math.max((nextObs.worldX-S.worldX)*0.8, 0.2)`.
+  2. ✅ **Hard clamp** (lines ~1259-1266): if `S.worldX + maxStep > nextObs.worldX + 5` → snap to `nextObs.worldX - 1`, force `trainState='STOPPED'`, set `currentObstacleIdx`, call `showQuizPanel(nextObs)` (guarded on `!quizActive`). Normal `+=` is skipped.
+  3. ✅ **Per-frame cap** (line ~1253): `rawStep = Math.min(speed*dt, baseSpeed/2)` — dt spikes / tab-switch can't teleport.
+  4. ✅ **Overshoot recovery** (lines ~1115-1124, game-loop prologue): scans `S.obstacles` for any uncleared with `worldX < S.worldX - 20`, rewinds `S.worldX = missed.worldX - 5`, forces STOPPED, shows quiz. Last-ditch guarantee.
+- **Applied-summary**: 4 layers of defense (soft clamp → crossing-snap → per-frame cap → post-hoc rewind). STATE-based bablas-recovery (Task #34) remains as 5th layer.
+
+### G16 Mini-Obstacle Density (Task #39, EXECUTED 2026-04-21 late evening) ✅
+- ✅ **Density fixed** — deterministic per-gap placement in `games/g16-pixi.html:1036-1069`.
+- **Shipped** (Option B applied):
+  - ✅ `maxMinisPerGap = {1:1, 2:2, 3:2, 4:2, 5:3}[S.level] || 2`.
+  - ✅ Iterates adjacent station pairs: `for s in obstacles[:-1]` → skips gaps `<400px` → places N minis evenly at `worldX + gap * m / (N+1)`.
+  - ✅ Random emoji from ROAD_OBS preserved, quiz mechanism preserved, visual style preserved.
+- **Applied-summary**: Level 1 = 1 mini per gap (easy), Level 2-4 = 2 minis per gap (normal), Level 5 = 3 minis per gap (hard). Random-rate formula retired in favor of deterministic placement.
 
 ### G16 Correct-Answer Celebration FX (Task #38, EXECUTED 2026-04-21 Evening) ✅
 - ✅ **Meledak/petasan effect** saat player jawab benar di quiz box + kereta mulai jalan lagi — IMPLEMENTED.
@@ -258,8 +312,8 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 - 🔄 **Responsive Display Engine (RDE)** — designed in CODING-STANDARDS.md. 3-layer architecture: (1) CSS tokens `--rz-*` with `clamp()` fluid scaling, (2) reusable classes `.rz-navbar` / `.rz-letter-row` / `.rz-letter-btn`, (3) `shared/rz-responsive.js` runtime helper for Pixi games. Migration in 7 sequenced steps — see CODING-STANDARDS.md "Responsive Display Engine (RDE)" section.
 - ✅ **RDE Step 1** (`style.css:17-49`, 2026-04-21 Evening): fluid `:root` tokens added — `--rz-scale`, `--rz-btn-xs/sm/md/lg`, `--rz-font-xs/sm/body/title/h1/hero`, `--rz-gap-xs/sm/md/lg`, `--rz-radius-sm/md/lg`. Zero existing rules modified; tokens available for opt-in consumption.
 - ✅ **RDE Step 2** (`style.css:893-947`, 2026-04-21 Evening): reusable classes added — `.rz-navbar`, `.rz-navbar__title`, `.rz-letter-row`, `.rz-letter-btn`, `.rz-choice-grid`. Consume Step 1 tokens; opt-in per game.
-- ⬜ **RDE Step 3** — migrate G8 Susun Kata (highest pain point, 3 media queries). Delete G8-specific `@media` rules after adopting `.rz-letter-btn`.
-- ⬜ **RDE Step 4** — migrate G3 Huruf Hutan. Delete G3-specific `@media` rules.
+- ✅ **RDE Step 3** (`style.css:544-554, 585, 753-754, 849, 882`, 2026-04-21 Evening): G8 Susun Kata migrated via **token composition** (kept `.g8-letter-btn`/`.g8-slot` class names; replaced hard-coded px/em with `var(--rz-btn-sm)` / `var(--rz-radius-sm)` / `var(--rz-font-title)` / `var(--rz-gap-sm/md)` + `min-width:var(--rz-btn-sm)` to prevent sub-1-per-row collapse). Deleted enhancement bumps at former line 587-588 (now a removal comment), plus 6 G8 override lines across 480px/360px/320px `@media` breakpoints. Dark-theme Scrabble wooden-tile overrides at 1691–1756 preserved (selector specificity + `!important` intact). Zero HTML/JS changes. Cache-bust `v=20260421k`.
+- ✅ **RDE Step 4** (`style.css:315-318, 583, 717, 872`, 2026-04-21 Evening): G3 Huruf Hutan migrated via **token composition** (kept `.g3-choice-btn` / `.g3-word` / `.g3-hint` / `.g3-choices` class names; replaced hard-coded px with `var(--rz-font-h1/body/hero)` / `var(--rz-gap-sm/md)` / `var(--rz-radius-md)` / `var(--rz-btn-md)`). Choice-btn padding = `calc(--rz-btn-md * 0.38) var(--rz-gap-sm)` + `min-height:var(--rz-btn-md)` preserves tap target across widths; letter font = `calc(--rz-font-hero * 0.9)` preserves the 42px peak. Deleted enhancement bump at former line 584, removed 4 G3 overrides from `@media(max-width:480px)` and 1 from `@media(max-width:360px)`. AAA dark overhaul at lines 1465–1566 (wooden-plank `.g3-word`, speech-bubble `.g3-hint`, carved-wood-log `.g3-choice-btn`, letter-burst animation, `.g3-letter.highlight` keyframes) preserved — `!important` specificity intact. Zero HTML/JS changes. Same "token composition over class rename" pattern as Step 3.
 - ⬜ **RDE Step 5** — migrate remaining DOM games (G1, G2, G4, G5, G7, G9). Delete 60+ lines of `@media`.
 - ⬜ **RDE Step 6** — ship `shared/rz-responsive.js` + wire G14/G15/G16/G19/G20/G22 (Pixi games get runtime scale factor via `window.RZ`).
 - ⬜ **RDE Step 7** — document per-game overrides in CHANGELOG for traceability.

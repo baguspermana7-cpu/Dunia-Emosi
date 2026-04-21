@@ -1033,12 +1033,12 @@ function buildObstaclesOnTrack(W,H){
   }
   document.getElementById('obstacle-count').textContent=`🚧 0/${S.totalObstacles}`
 
-  // Mini quiz objects between stations
+  // Mini quiz objects between stations — Task #39: deterministic, level-capped (1-2 per gap typical)
   S.miniObs = S.miniObs || []
   const miniEmojis = ['🪨','📦','🌳','🐄','🚧','🧱','🪵','🐔','🏗️','⚠️']
-  const miniSpacing = 225 + Math.random() * 150
-  for (let mwx = startWX + miniSpacing/2; mwx < endWX; mwx += miniSpacing) {
-    if (S.obstacles.some(o => Math.abs(o.worldX - mwx) < 200)) continue
+  const maxMinisPerGap = ({1:1, 2:2, 3:2, 4:2, 5:3}[S.level]) || 2
+  const spawnMini = (mwx) => {
+    if (S.obstacles.some(o => Math.abs(o.worldX - mwx) < 200)) return
     const emoji = miniEmojis[Math.floor(Math.random() * miniEmojis.length)]
     const a = Math.floor(Math.random() * 10) + 1
     const b = Math.floor(Math.random() * (14 - a)) + 1
@@ -1054,6 +1054,14 @@ function buildObstaclesOnTrack(W,H){
     txt.anchor.set(0.5); txt.y = -22; mc.addChild(txt)
     worldContainer.addChild(mc)
     S.miniObs.push({worldX:mwx, container:mc, emoji, q, ans, cleared:false})
+  }
+  for (let s = 0; s < S.obstacles.length - 1; s++) {
+    const gap = S.obstacles[s+1].worldX - S.obstacles[s].worldX
+    if (gap < 400) continue  // too close, skip minis
+    for (let m = 1; m <= maxMinisPerGap; m++) {
+      const mwx = S.obstacles[s].worldX + (gap * m / (maxMinisPerGap + 1))
+      spawnMini(mwx)
+    }
   }
 }
 
@@ -1104,6 +1112,17 @@ function gameLoop(ticker){
   if(!S.running||S.paused)return
   const dt=ticker.deltaMS/1000; _ticker_t+=dt
   if(S.gameOver && S.trainState!=='ARRIVED')return
+  // Task #40 Part 4 — overshoot recovery: if train is somehow past an uncleared
+  // obstacle (dt spike, tab-switch teleport, whatever), rewind & force STOPPED+quiz.
+  if(S.obstacles && S.trainState!=='DEAD' && S.trainState!=='ARRIVING' && S.trainState!=='ARRIVED'){
+    const missed = S.obstacles.find(o => !o.cleared && o.worldX < S.worldX - 20)
+    if(missed){
+      S.worldX = missed.worldX - 5
+      S.trainState = 'STOPPED'
+      S.currentObstacleIdx = S.obstacles.indexOf(missed)
+      if(!quizActive) showQuizPanel(missed)
+    }
+  }
   updateTrain(dt); updateObstacles(dt)
   updateSmoke(dt); updateSparks(dt)
   updateAmbient(dt); updateCelebration(dt); updateFX(dt)
@@ -1230,9 +1249,22 @@ function updateTrain(dt){
     }
   } else if(S.trainState==='ARRIVED') speed=0
 
-  // Clamp max movement per frame to prevent overshooting obstacles
-  const maxStep = nextObs && !nextObs.cleared ? Math.min(speed*dt, Math.max((nextObs.worldX-S.worldX)*0.8, 2)) : speed*dt
-  S.worldX+=maxStep
+  // Task #40 — 4-part overshoot hard-guard
+  // Part 3: absolute per-frame cap (~70px at level 1) — dt-spike / tab-switch can't teleport train.
+  let rawStep = Math.min(speed*dt, baseSpeed/2)
+  // Part 1: near-zero creep floor (was 2px, now 0.2px) when approaching uncleared obstacle.
+  let maxStep = nextObs && !nextObs.cleared
+    ? Math.min(rawStep, Math.max((nextObs.worldX-S.worldX)*0.8, 0.2))
+    : rawStep
+  // Part 2: hard clamp — if this step would cross the obstacle, snap just before it and force quiz.
+  if(nextObs && !nextObs.cleared && S.worldX + maxStep > nextObs.worldX + 5){
+    S.worldX = nextObs.worldX - 1
+    S.trainState = 'STOPPED'
+    S.currentObstacleIdx = S.obstacles.indexOf(nextObs)
+    if(!quizActive) showQuizPanel(nextObs)
+  } else {
+    S.worldX += maxStep
+  }
   if(S.worldX>WORLD_LENGTH+200&&S.trainState!=='DEAD'&&S.trainState!=='ARRIVING'&&S.trainState!=='ARRIVED'){triggerDeath();return}
   // Check mini-obstacles (quick math questions)
   if(S.miniObs && S.trainState==='MOVING'){

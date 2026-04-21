@@ -73,14 +73,16 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#38bdf
   <div id="round-text">Round 1/3</div>
 </div>
 
-<!-- Screen zone controls — tap left/right half to move + jump -->
+<!-- Screen zone controls — drag to move, swipe up or tap button to jump -->
 <div id="controls" style="position:fixed;bottom:8px;left:0;right:0;z-index:45;display:flex;justify-content:center;pointer-events:none;opacity:0.5">
-  <div style="font-size:11px;color:#bfdbfe;background:rgba(0,0,0,0.3);padding:4px 16px;border-radius:20px;backdrop-filter:blur(4px)">⬅️ Tap kiri layar = gerak kiri | Tap kanan layar = gerak kanan ➡️</div>
+  <div style="font-size:11px;color:#bfdbfe;background:rgba(0,0,0,0.3);padding:4px 16px;border-radius:20px;backdrop-filter:blur(4px)">Geser = Gerak | Swipe ⬆ atau Tombol = Lompat</div>
 </div>
+<!-- Jump button — visible on touch devices for explicit jump input -->
+<button id="btn-jump" aria-label="Lompat" style="position:fixed;right:18px;bottom:54px;z-index:46;width:72px;height:72px;border-radius:50%;background:rgba(251,191,36,0.35);border:2px solid rgba(251,191,36,0.7);color:#fff;font-size:28px;font-weight:900;font-family:inherit;cursor:pointer;backdrop-filter:blur(4px);display:none;touch-action:manipulation">⬆</button>
 <!-- Hidden buttons for keyboard/fallback -->
 <button id="btn-left" style="display:none"></button>
 <button id="btn-right" style="display:none"></button>
-<button id="btn-jump" style="display:none"></button>
+<script>if('ontouchstart' in window){var _bj=document.getElementById('btn-jump');if(_bj)_bj.style.display='block'}</script>
 
 <div id="quiz-panel">
   <div id="quiz-question"></div>
@@ -696,33 +698,39 @@ function gameLoop(ticker){
   // Clouds scroll
   for(const cl of clouds){cl.x-=cl._speed*dt; if(cl.x<-80)cl.x=W+80}
 
-  // Player movement
+  // Player movement — lerp-smoothed horizontal with damping
   const spd = MOVE_SPD * (S.powerup==='speed'?1.5:1)
-  // Touch-drag drive: if finger is tracking, ease toward target X
+  // Touch-drag drive: if finger is tracking, ease toward target X (lerp)
   if(S.pTargetX!=null){
     const diff=S.pTargetX-S.px
-    if(Math.abs(diff)>2){ const tv=Math.max(-spd,Math.min(spd,diff*0.22)); S.pvx=S.pvx*0.7+tv*0.3 }
+    if(Math.abs(diff)>2){ const tv=Math.max(-spd,Math.min(spd,diff*0.22)); S.pvx=S.pvx*0.78+tv*0.22 }
     else { S.pvx*=0.82; S.pTargetX=null }
-  } else if(S.moveL) S.pvx=-spd; else if(S.moveR) S.pvx=spd; else S.pvx*=0.88
-  // Auto-jump assist — if ball is close and heading toward player, auto-jump
-  if(S.pGnd && S.bx<NET_X && S.bvy>0 && Math.abs(S.bx-S.px)<60 && S.by<GROUND_Y-40) S.jump=true
+  } else if(S.moveL){ S.pvx=S.pvx*0.78 + (-spd)*0.22 }
+    else if(S.moveR){ S.pvx=S.pvx*0.78 + (spd)*0.22 }
+    else S.pvx*=0.86
+  // Jump — explicit user input ONLY (no auto-jump assist). Spacebar/tap/jump-btn.
   if(S.jump&&S.pGnd){
     S.pvy=JUMP_POWER*(S.powerup==='jump'?1.4:1); S.pGnd=false
     spawnSand(S.px,GROUND_Y,4)
   }
   S.jump=false
 
-  // Player physics
-  S.pvy+=GRAVITY*S.gravMod*dt; S.px+=S.pvx*dt; S.py+=S.pvy*dt
+  // Player physics — soft rise damping for smoother arc
+  S.pvy+=GRAVITY*S.gravMod*dt
+  if(S.pvy<0) S.pvy*=0.985 // light damping on rise → gentler apex
+  S.px+=S.pvx*dt; S.py+=S.pvy*dt
   S.px=Math.max(DUCK_R,Math.min(NET_X-DUCK_R-6,S.px))
   if(S.py>=GROUND_Y){S.py=GROUND_Y;if(S.pvy>2)spawnSand(S.px,GROUND_Y,3);S.pvy=0;S.pGnd=true}
 
   // CPU AI
   updateCPU(dt)
 
-  // Ball physics
+  // Ball physics — smoother arc w/ light air resistance
   const ballSpd=S.powerup==='slow'?0.6:1
-  S.bvy+=GRAVITY*S.gravMod*0.65*dt*ballSpd // heavier ball — shorter rallies, less waiting
+  S.bvy+=GRAVITY*S.gravMod*0.60*dt*ballSpd // slightly lighter gravity for more float
+  // Air resistance (drag) — gentle, feels natural vs arcade-jank
+  S.bvx*=Math.pow(0.995, dt)
+  S.bvy*=Math.pow(0.998, dt)
   S.bx+=S.bvx*dt*ballSpd; S.by+=S.bvy*dt*ballSpd
   // Cap max ball speed — very slow for kids
   const MAX_BALL_V = 3.8
@@ -1094,30 +1102,41 @@ function startGame(){
   document.getElementById('round-text').textContent=`Round 1/${TOTAL_ROUNDS}`
 }
 
-// Touch — delta drag control: finger slide moves the duck smoothly
-// Tap also auto-jumps (existing feature). Left/right buttons still work.
-let _touchActive = false, _touchX = 0
+// Touch — delta drag control: finger slide moves the duck smoothly.
+// Jump requires EXPLICIT input: swipe up (>40px upward) OR the jump button.
+// No more auto-jump on tap.
+let _touchActive = false, _touchX = 0, _touchY = 0, _touchStartY = 0, _swipeJumped = false
 document.addEventListener('touchstart', e => {
   if (!S.started || S.paused || S.gameOver || S.quizActive) return
   if (e.target.closest('#hud') || e.target.closest('#pause-overlay') || e.target.closest('#quiz-panel') || e.target.closest('#start-overlay') || e.target.closest('#poke-selector')) return
   e.preventDefault()
   _touchActive = true
   _touchX = e.touches[0].clientX
+  _touchY = e.touches[0].clientY
+  _touchStartY = _touchY
+  _swipeJumped = false
   S.pTargetX = S.px // anchor drag origin to current player X
-  S.jump = true // tap = jump
 }, {passive:false})
 document.addEventListener('touchmove', e => {
   if (!_touchActive) return
   e.preventDefault()
   const cur = e.touches[0].clientX
+  const curY = e.touches[0].clientY
   const dx = cur - _touchX
   _touchX = cur
+  _touchY = curY
   const scale = W / window.innerWidth
   S.pTargetX = (S.pTargetX ?? S.px) + dx * scale * 1.1
   S.pTargetX = Math.max(DUCK_R, Math.min(NET_X - DUCK_R - 6, S.pTargetX))
+  // Swipe-up gesture = jump (one-shot per touch)
+  if(!_swipeJumped && (_touchStartY - curY) > 40 && S.pGnd){
+    S.jump = true
+    _swipeJumped = true
+  }
 }, {passive:false})
 document.addEventListener('touchend', e => {
   _touchActive = false
+  _swipeJumped = false
 })
 
 // Button fallback (still works if visible)

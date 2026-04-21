@@ -74,7 +74,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a0a1
 <body>
 
 <canvas id="pixi-canvas"></canvas>
-<audio id="game-bgm" src="../Sounds/battle-bgm.mp3" loop preload="auto" style="display:none"></audio>
+<audio id="game-bgm" src="../Sounds/racecar.mp3" loop preload="auto" style="display:none"></audio>
 
 <div id="hud">
   <div id="hud-top">
@@ -353,38 +353,14 @@ function buildBg() {
 }
 
 function buildScenery(c, W, H) {
-  // Left and right side elements
-  const icons = {
-    city:   ['🏢','🏬','🏪','💡','🚦'],
-    forest: ['🌲','🌳','🌿','🍄','🦋'],
-    space:  ['🌙','⭐','🪐','🛸','💫'],
-    body:   ['💊','🔬','🩺','❤️','🧬'],
-    pantai: ['🌴','⛱️','🐚','🦀','🌊'],
-    sekolah:['📚','✏️','🎒','📐','🖊️'],
-    dapur:  ['🍳','🥄','🧅','🍅','🫙'],
-    kebun:  ['🌻','🌸','🍀','🌿','🌾'],
-  }[cfg.mapTheme] || ['⭐']
-
+  // Shoulder scenery removed (2026-04-21): low-alpha emoji decorations outside
+  // the road read as "melayang-layang di luar jalan" / random clutter in dark
+  // mode. Keeping empty containers so the scroll tick in the game loop stays
+  // safe without extra null checks.
   const sceneryL = new PIXI.Container()
   const sceneryR = new PIXI.Container()
   sceneryL._scroll = 0.55
   sceneryR._scroll = 0.55
-
-  for (let i = 0; i < 8; i++) {
-    // Left — subtle, small decorations near road edge
-    const tL = new PIXI.Text({ text: icons[i % icons.length], style: { fontSize: 14 + Math.random() * 6 } })
-    tL.alpha = 0.2 + Math.random() * 0.15
-    tL.x = roadLeft * (0.3 + Math.random() * 0.5)
-    tL.y = i * (H / 6) + Math.random() * 40
-    sceneryL.addChild(tL)
-
-    // Right
-    const tR = new PIXI.Text({ text: icons[(i + 2) % icons.length], style: { fontSize: 14 + Math.random() * 6 } })
-    tR.alpha = 0.2 + Math.random() * 0.15
-    tR.x = roadRight + (W - roadRight) * (0.3 + Math.random() * 0.5)
-    tR.y = i * (H / 6) + Math.random() * 40
-    sceneryR.addChild(tR)
-  }
   c.addChild(sceneryL)
   c.addChild(sceneryR)
   c._sceneryL = sceneryL
@@ -941,7 +917,7 @@ function startWord() {
   S.speed = BASE_SPEED
   S.tiles.forEach(t => { t._alive = false })
   S.running = true
-  try{const bgm=document.getElementById('game-bgm');bgm.volume=0.2;bgm.play().catch(()=>{})}catch(_){}
+  try{const bgm=document.getElementById('game-bgm');bgm.volume=0.5;bgm.play().catch(()=>{})}catch(_){}
   lastSpawn = performance.now() - SPAWN_MS + 200
 
   document.getElementById('target-word').textContent = word.split('').join(' ')

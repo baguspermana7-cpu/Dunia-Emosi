@@ -1862,9 +1862,9 @@ function showResult(mascot, title, msg) {
 }
 // endGame — called by G10/G11/G12 with raw star count
 function endGame(stars) {
-  // Normalize raw stars to 5-star scale based on totalRounds for this level
+  // Normalize raw stars to 5-star scale via unified GameScoring engine
   const maxRounds = g10State?.totalRounds || g11State?.total || g12State?.total || 5
-  const normalizedStars = Math.min(5, Math.round((stars||0) / maxRounds * 5))
+  const normalizedStars = GameScoring.calc({ correct: stars || 0, total: maxRounds })
   // Pass the already-normalized value; tell showResult NOT to re-normalize.
   state.maxPossibleStars = 5
   state.gameStars[state.currentPlayer] = normalizedStars
@@ -7822,7 +7822,9 @@ function g13Victory() {
   if (wspr) { wspr.classList.add('spr-defeat') }
 
   // Victory stars: evolved2 = 5★, evolved once = 4★, no evo = 3★
-  const perfStars = s.evolved2 ? 5 : s.evolved ? 4 : 3
+  // Unified scoring via bonus modifier (perfect win base = 5, deduct per missed evolution)
+  const _g13EvoPenalty = s.evolved2 ? 0 : s.evolved ? -1 : -2
+  const perfStars = GameScoring.calc({ correct: 1, total: 1, bonus: _g13EvoPenalty })
   const _g13lv = s.lv || 1
   const _g13stars = perfStars >= 5 ? 3 : perfStars >= 4 ? 2 : 1
   setLevelComplete(13, _g13lv, _g13stars)
@@ -8516,9 +8518,16 @@ function g13bGameOver(reason) {
   battleBgmStop()
 
   const defeated = reason === 'defeated'
-  const stars = defeated
+  // Unified scoring via bonus modifier: survival is threshold-based (not accuracy),
+  // so we derive a target-tier bonus and feed it to GameScoring.calc as a perfect-run
+  // baseline (correct=1, total=1 → 5★) minus the shortfall.
+  // Legacy thresholds preserved for parity:
+  //   defeated:   kills≥15→2, kills≥5→1, else 0
+  //   complete:   kills≥30→3, kills≥15→2, kills≥1→1
+  const _g13bTier = defeated
     ? (s.kills >= 15 ? 2 : s.kills >= 5 ? 1 : 0)
     : (s.kills >= 30 ? 3 : s.kills >= 15 ? 2 : s.kills >= 1 ? 1 : 0)
+  const stars = _g13bTier === 0 ? 0 : GameScoring.calc({ correct: 1, total: 1, bonus: _g13bTier - 5 })
   vibrate([30, 20, 50])
   try { if (stars >= 2) playCorrect() } catch(e) {}
 
@@ -8552,7 +8561,10 @@ function g13bLevelComplete() {
   s.phase = 'done'
   battleBgmStop()
 
-  const stars = s.kills >= 50 ? 5 : s.kills >= 30 ? 4 : s.kills >= 15 ? 3 : s.kills >= 5 ? 2 : 1
+  // Unified scoring: kill-count tier mapped through GameScoring.calc
+  // Legacy: kills≥50→5, ≥30→4, ≥15→3, ≥5→2, else 1
+  const _g13bLcTier = s.kills >= 50 ? 5 : s.kills >= 30 ? 4 : s.kills >= 15 ? 3 : s.kills >= 5 ? 2 : 1
+  const stars = GameScoring.calc({ correct: 1, total: 1, bonus: _g13bLcTier - 5 })
   vibrate([50, 30, 80, 30, 120])
   try { playCorrect() } catch(e) {}
 
@@ -10448,10 +10460,19 @@ function g17EndGame(won) {
     trainEl.classList.add('g17-train-cross')
     playCorrect()
   }
-  const pct = g17State.correct / g17State.totalBlocks
+  // Unified scoring: accuracy-based with damage as lives-lost proxy
+  const _g17MaxDamage = 3
   const perfStars = won
-    ? (g17State.damage === 0 ? 5 : g17State.damage <= 1 ? 4 : 3)
-    : (pct >= 0.6 ? 2 : 1)
+    ? GameScoring.calc({
+        correct: g17State.correct,
+        total: g17State.totalBlocks,
+        lives: Math.max(0, _g17MaxDamage - g17State.damage),
+        maxLives: _g17MaxDamage
+      })
+    : GameScoring.calc({
+        correct: g17State.correct,
+        total: g17State.totalBlocks
+      })
   state.gameStars[state.currentPlayer] = perfStars
   setTimeout(() => {
     const facts = [
@@ -11100,7 +11121,8 @@ function g18NextQuestion() {
 function g18FinishQuiz() {
   const score = g18State.quizScore
   const total = G18_QUIZ_SESSION.length
-  const perfStars = score === total ? 5 : score >= Math.round(total*0.75) ? 4 : score >= Math.round(total*0.5) ? 3 : score >= 2 ? 2 : 1
+  // Unified scoring: pure quiz accuracy
+  const perfStars = GameScoring.calc({ correct: score, total })
   state.gameStars[state.currentPlayer] = perfStars
   const gradeEmoji = score === 5 ? '🏆' : score >= 3 ? '⭐' : '📚'
   const gradeMsg = score === 5 ? 'SEMPURNA! Kamu ahli kereta!' : score >= 3 ? 'Bagus! Terus belajar!' : 'Jangan lupa baca kartu museumnya ya!'
