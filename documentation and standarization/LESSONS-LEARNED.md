@@ -4,6 +4,24 @@
 
 ---
 
+## 2026-04-22
+
+### Hybrid rendering: character sprites vs programmatic Graphics
+
+- **Symptom**: G15 had a full parametric `PIXI.Graphics` locomotive builder (5 type-specific `drawBody()` functions). User wanted cartoon character trains that can't be expressed geometrically.
+- **Root cause**: Mixing raster sprites + Graphics in the same container requires branching BEFORE existing type-dispatch, because container flip conventions differ (sprites face right natively after rembg; Graphics locomotives drawn facing left then mirrored via `scale.x=-1`).
+- **Fix**: `buildTrain()` checks `selectedTrain.isCharacter` FIRST. Character: `scale.x=1` + `CharacterTrain.mount()`. Programmatic: `scale.x=-1` + existing dispatch. Instance tracked for tick + dispose on train swap.
+- **Lesson**: When adding a new render paradigm to a dispatch-based system, encode it as a LEAF branch at the top of the dispatcher, not interleaved with existing cases. Document the invariants each paradigm assumes (anchor, flip, coordinate system).
+
+### Mirror CSS clamp formula in JS runtime
+
+- **Symptom**: CSS `--rz-scale` tokens give DOM games fluid scaling, but PixiJS games compute sizing independently → DOM navbar + Pixi sprite coexist at mismatched scales on resize.
+- **Root cause**: No shared source of truth between CSS `clamp()` and JS sizing.
+- **Fix**: `shared/rz-responsive.js` exposes `window.RZ.scale()` with the SAME formula: `Math.min(1, Math.max(0.7, 0.44 + innerWidth * 0.00175))`. PixiJS games call `RZ.btn('md')` / `RZ.fontScale(22)` for coherent sizing.
+- **Lesson**: When a system has CSS-controlled AND JS-controlled visual elements on the same viewport, ship the JS variant as a direct mirror of the CSS formula (or vice versa). One source of truth prevents visual desync on resize/orientation-change.
+
+---
+
 ## 2026-04-21 (Evening Session)
 
 ### Unified Scoring Engine — bonus-modifier pattern for non-accuracy games (Task #25)
