@@ -10,7 +10,25 @@
 
 ---
 
-## ✅ COMPLETED THIS SESSION (2026-04-19)
+## ✅ COMPLETED 2026-04-21 — Battle Standards + HD Sprites + G22 + Repo Migration
+
+- ✅ **P0 — HD sprite cascade** (game.js 5005/5012-5014/5391-5404): `pokeSpriteOnline()` now returns HD CDN; `pokeSpriteVariant()` prefers SVG → HD CDN; G10 player/enemy loaders use the HD-first cascade with low-res PNG only as offline fallback; `image-rendering:pixelated` killed.
+- ✅ **P0.5 — Battle standards (5 invariants)** enforced across G10/G13/G13b/G13c:
+  - Fix A: Canonical `POKE_TYPE_COLORS` + `pokeTypeColor(type)` helper at game.js:5003 (replaces 3 duplicate inline maps in G10/G13/G13b).
+  - Fix B: `g10TypeFX()` DOM fallback expanded from 4 → 18 types (matches `g13TypeHitFX` coverage).
+  - Fix C: `spawnTypeAura(el, type, dur)` helper + `@keyframes pokeAuraRing` in style.css. G10 + G13 + G13b DOM aura rings now route through it.
+  - Fix D: `pokeTierScale()` now applied to G13 initial player sprite + G13 evolved forms (was `scale(1.2)` / `scale(1.3)` hardcoded). G13b player already had tier scaling.
+  - Fix E: G13c inline `POKE_TIER` map + `pokeTierScale()` + applied via `scale()` transform to `#poke-player`/`#poke-enemy` sprite loaders.
+  - Fix F: G13c `addAura(el, type)` now type-colored (CSS var `--aura-color`); both player + enemy call-sites pass attacker type.
+  - Fix G: G13c TYPE_PROJ + TYPE_HIT_FX audit — 18-type coverage confirmed (no gaps).
+- ✅ **P0.6 — G22 Monster Candy overhaul** (games/g22-candy.html): smooth lerp-driven movement, HD Psyduck (clamp 140-220px), dynamic answer-pill layout (no overflow), pickup FX (catch-pop + ring burst), rich background (12 clouds/3 parallax speeds, 6 flyers, 5 pine trees, 3 mountains, 24 flowers, rainbow), ground-anchored sprite via window.innerHeight calc, directional facing (scaleX + turn-flip animation).
+- ✅ **Repo migration** — `Apps/dunia-emosi/` content now lives at `github.com/baguspermana7-cpu/Dunia-Emosi` (fresh-init workaround after `git subtree split` produced wrong tree). Vercel auto-redeploys `dunia-emosi.vercel.app` + `dunia-emosi-z2ss.vercel.app` on push.
+
+Cache-bust: `index.html` v=20260421b (style + game.js).
+
+---
+
+## ✅ COMPLETED 2026-04-19
 
 - ✅ G10/G13/G13b/G13c: `POKE_IDS is not defined` crash — added global lookup from POKEMON_DB
 - ✅ G10: Sprite loading changed to local-first → REVERTED to HD-online-first (local was 96px, too small)

@@ -2484,6 +2484,12 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
   opacity:0; pointer-events:none; z-index:10;
   animation:g13bAura 0.52s ease-out forwards;
 }
+/* Canonical attacker aura ring — used by spawnTypeAura() across G10/G13/G13b */
+@keyframes pokeAuraRing {
+  0%  { opacity:0; transform:scale(0.7) }
+  30% { opacity:1; transform:scale(1) }
+  100%{ opacity:0; transform:scale(1.35) }
+}
 /* Defeat burst FX */
 .g10-burst-fx{
   position:fixed;z-index:200;pointer-events:none;inset:0;opacity:0;

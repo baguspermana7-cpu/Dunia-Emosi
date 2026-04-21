@@ -1,5 +1,27 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-21 — Battle Standards + HD Sprites + G22 + Repo Migration
+
+### Added
+- `POKE_TYPE_COLORS` canonical lowercase type-color map + `pokeTypeColor(type)` helper (`game.js:5014`).
+- `spawnTypeAura(el, type, dur)` DOM aura-ring helper (`game.js:5024`) + `@keyframes pokeAuraRing` in `style.css`.
+- G13c inline `POKE_TIER` sparse map + `pokeTierScale(slug)` (matches `game.js` logic) with transform applied to `#poke-player`/`#poke-enemy`.
+- G13c `addAura(el, type)` upgrade: CSS var `--aura-color` drives type-colored attacker glow; both player + enemy callsites pass attacker type.
+- CODING-STANDARDS.md section **Battle Standards — 5 Invariants** (contract for G10/G13/G13b/G13c).
+
+### Bug Fixes
+- **P0 — HD sprite regression** (`game.js`): `pokeSpriteOnline()` was mis-named and returned local low-res; now correctly returns HD CDN. `pokeSpriteVariant()` prefers SVG → HD CDN (dropped 50/50 coin-flip). G10 `loadSprHD`/`loadSprPlayer` rewritten with HD-first cascade; `image-rendering:pixelated` killed on player sprite.
+- **Battle standards (Fix A–G)**: consolidated 3 duplicate type-color maps, unified DOM aura helper, expanded `g10TypeFX` from 4→18 types, applied `pokeTierScale()` to G13 initial player + evolved forms, G13b already had tier scaling.
+- **G22 Monster Candy — 7 UX fixes** (`games/g22-candy.html`): lerp-smoothed cursor follow via `translate3d` (no layout thrash), HD Psyduck `clamp(140px,26vw,220px)`, dynamic answer-pill layout (no overflow), pickup FX (catch-pop + 8-particle ring burst + center flash), background richness (12 clouds × 3 parallax speeds, 6 flyers, 5 pine trees, 3 snow-capped mountains, 24 flowers, rainbow), ground-anchored via `window.innerHeight - H*0.75` on resize, directional facing (scaleX + turn-flip animation).
+
+### Repo Migration
+- `Apps/dunia-emosi/` content now lives at `github.com/baguspermana7-cpu/Dunia-Emosi` (fresh-init workaround — `git subtree split --prefix=Apps/dunia-emosi` produced wrong tree containing sibling apps; remediated via rsync + force-push). Vercel `dunia-emosi.vercel.app` + `dunia-emosi-z2ss.vercel.app` auto-redeploy on push.
+
+### Cache
+- Bumped `index.html` script + style tags: `?v=20260421a` → `?v=20260421b`.
+
+---
+
 ## 2026-04-20 — Evening Session
 
 ### Bug Fixes

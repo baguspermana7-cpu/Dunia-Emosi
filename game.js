@@ -5000,6 +5000,31 @@ function pokeTierScale(slug){
   return ({1:1.0, 2:1.2, 3:1.3, 4:1.3})[t] || 1.0
 }
 
+// Canonical type-color palette for auras / projectiles / UI accents.
+// Lowercase keys; pokeTypeColor() handles capitalized input via toLowerCase().
+const POKE_TYPE_COLORS = {
+  fire:'#f97316',water:'#38bdf8',grass:'#4ade80',electric:'#facc15',
+  psychic:'#e879f9',ice:'#67e8f9',dragon:'#818cf8',dark:'#6b7280',
+  fighting:'#f87171',ghost:'#c084fc',steel:'#94a3b8',fairy:'#f9a8d4',
+  rock:'#a8a29e',ground:'#d97706',flying:'#7dd3fc',bug:'#a3e635',
+  poison:'#a855f7',normal:'#d1d5db'
+}
+function pokeTypeColor(type){
+  return POKE_TYPE_COLORS[(type || '').toLowerCase()] || '#a78bfa'
+}
+// Unified attacker aura ring — DOM fallback when Pixi isn't active.
+// Caller passes the sprite wrap element; ring is removed after dur ms.
+function spawnTypeAura(el, type, dur){
+  if (!el) return
+  const d = dur || 540
+  const color = pokeTypeColor(type)
+  const r = document.createElement('div')
+  r.className = 'poke-aura-ring'
+  r.style.cssText = 'position:absolute;inset:-6px;border:3px solid '+color+';border-radius:50%;box-shadow:0 0 24px '+color+',inset 0 0 16px '+color+';pointer-events:none;z-index:6;animation:pokeAuraRing '+d+'ms ease-out forwards;'
+  el.appendChild(r)
+  setTimeout(function(){ r.remove() }, d)
+}
+
 function pokeSprite(slug){return `assets/Pokemon/sprites/${slug}.png`}
 function pokeSpriteArtwork(slug){return `https://img.pokemondb.net/artwork/large/${slug}.jpg`}
 function pokeSpriteOnline(slug){return `https://img.pokemondb.net/sprites/home/normal/${slug}.png`}
@@ -5598,7 +5623,8 @@ function g10Answer(val, btn){
   }
 }
 
-// Type-specific particle FX on battle field — GPU via Pixi, DOM fallback
+// Type-specific particle FX on battle field — GPU via Pixi, DOM fallback.
+// Canonical 18-type coverage (lowercase keys); aligned with g13TypeHitFX.
 function g10TypeFX(type, targetSide){
   const pixiApp = PixiManager.get('g10-pixi-canvas')
   if (pixiApp) {
@@ -5609,13 +5635,27 @@ function g10TypeFX(type, targetSide){
   const field=document.getElementById('g10-field')
   if(!field) return
   const CFG={
-    fire:{emojis:['🔥','✨'],anim:'fxRise',color:'#FF6B35',count:8},
-    water:{emojis:['💧','🌊'],anim:'fxRain',color:'#4FC3F7',count:7},
-    electric:{emojis:['⚡','✨'],anim:'fxZap',color:'#FFCB05',count:10},
-    grass:{emojis:['🍃','🌿'],anim:'fxSwirl',color:'#4CAF50',count:8},
-    default:{emojis:['💥','✨'],anim:'fxBurst',color:'#a8a878',count:5},
+    fire:    {emojis:['🔥','✨'],anim:'fxRise',  color:'#FF6B35',count:8},
+    water:   {emojis:['💧','🌊'],anim:'fxRain',  color:'#4FC3F7',count:7},
+    electric:{emojis:['⚡','✨'],anim:'fxZap',   color:'#FFCB05',count:10},
+    grass:   {emojis:['🍃','🌿'],anim:'fxSwirl', color:'#4CAF50',count:8},
+    dark:    {emojis:['🌑','💢'],anim:'fxShadow',color:'#3a0a5a',count:5},
+    psychic: {emojis:['🔮','💫'],anim:'fxSpiral',color:'#F95587',count:7},
+    ice:     {emojis:['❄️','💎'],anim:'fxSnow',  color:'#98D8D8',count:7},
+    ghost:   {emojis:['👻','💜'],anim:'fxFloat', color:'#705898',count:5},
+    flying:  {emojis:['🌪️','💨'],anim:'fxWind',  color:'#A890F0',count:6},
+    dragon:  {emojis:['💫','🐉'],anim:'fxSpin',  color:'#7038F8',count:6},
+    fighting:{emojis:['💥','👊'],anim:'fxBurst', color:'#C03028',count:7},
+    rock:    {emojis:['🪨','💥'],anim:'fxDrop',  color:'#B8A038',count:5},
+    poison:  {emojis:['☠️','💜'],anim:'fxFloat', color:'#A040A0',count:5},
+    ground:  {emojis:['💥','🌍'],anim:'fxBurst', color:'#E0C068',count:6},
+    bug:     {emojis:['✨','🌿'],anim:'fxSwirl', color:'#A8B820',count:6},
+    steel:   {emojis:['⚔️','✨'],anim:'fxSpark', color:'#B8B8D0',count:5},
+    normal:  {emojis:['💢','✨'],anim:'fxBurst', color:'#A8A878',count:5},
+    fairy:   {emojis:['✨','💖'],anim:'fxSwirl', color:'#EE99AC',count:7},
+    default: {emojis:['💥','✨'],anim:'fxBurst', color:'#a8a878',count:5},
   }
-  const cfg=CFG[type]||CFG.default
+  const cfg=CFG[(type||'').toLowerCase()]||CFG.default
   const isEnemy=targetSide==='enemy'
   const xBase=isEnemy?52:5, yBase=isEnemy?2:40
   for(let i=0;i<cfg.count;i++){
@@ -5635,25 +5675,17 @@ function g10DoAttack(type, fromSide, toSide, onDone){
   const atkEl = document.getElementById('g10-atk-fx')
   const emojiEl = document.getElementById('g10-atk-emoji')
 
-  // Aura ring on attacker — type keys lowercase to match POKEMON_DB.type values
-  const auraColors = {fire:'#f97316',water:'#38bdf8',grass:'#4ade80',electric:'#facc15',
-    psychic:'#e879f9',ice:'#67e8f9',dragon:'#818cf8',dark:'#6b7280',fighting:'#f87171',
-    ghost:'#c084fc',steel:'#94a3b8',fairy:'#f9a8d4',rock:'#a8a29e',ground:'#d97706',
-    flying:'#7dd3fc',bug:'#a3e635',poison:'#a855f7',normal:'#d1d5db'}
+  // Aura ring on attacker — canonical palette via POKE_TYPE_COLORS
   const typeLow = (type || '').toLowerCase()
-  const auraColor = auraColors[typeLow] || '#a78bfa'
+  const auraColor = pokeTypeColor(typeLow)
   const fromWrapId = fromSide === 'player' ? 'g10-pspr-wrap' : 'g10-espr-wrap'
   const fromWrapEl = document.getElementById(fromWrapId)
-  // Aura ring — Pixi primary, DOM fallback
+  // Aura ring — Pixi primary, DOM fallback (spawnTypeAura helper)
   const _pixiApp = PixiManager.get('g10-pixi-canvas') || PixiManager.get('g13b-pixi-canvas')
   if (_pixiApp) {
     pixiAuraRing(_pixiApp, fromSide, parseInt(auraColor.replace('#',''), 16))
-  } else if (fromWrapEl) {
-    const aura = document.createElement('div')
-    aura.className = 'g10-aura-ring'
-    aura.style.setProperty('--aura-color', auraColor)
-    fromWrapEl.appendChild(aura)
-    setTimeout(() => aura.remove(), 540)
+  } else {
+    spawnTypeAura(fromWrapEl, typeLow)
   }
 
   // Move name popup
@@ -7170,12 +7202,13 @@ function _initGame13Impl() {
 
   loadSpr('g13-wspr', 'g13-wspr-wrap', chain.wild.slug, chain.icon || '❓')
   loadSpr('g13-pspr', 'g13-pspr-wrap', chain.player.slug, chain.icon || '❓')
-  // Apply tier-based size to wild sprite (player scaling done via evolution CSS/inline)
-  const wEntry = POKEMON_DB.find(p => p.slug === chain.wild.slug)
-  const wTier = wEntry?.tier || 1
-  const wScale = {1:1.0, 2:1.2, 3:1.3, 4:1.3}[wTier] || 1.0
+  // Apply tier-based size to BOTH wild and player sprites
+  const wScale = pokeTierScale(chain.wild.slug)
   const wImg = document.getElementById('g13-wspr')
   if (wImg && wScale !== 1.0) wImg.style.width = wImg.style.height = `calc(min(40vw,20vh) * ${wScale})`
+  const pScale = pokeTierScale(chain.player.slug)
+  const pImg = document.getElementById('g13-pspr')
+  if (pImg && pScale !== 1.0) pImg.style.width = pImg.style.height = `calc(min(40vw,20vh) * ${pScale})`
 
   // Wild name/type
   const wnEl = document.getElementById('g13-wname'); if(wnEl) wnEl.textContent = chain.wild.name
@@ -7408,7 +7441,9 @@ function g13Answer(val, btn) {
     playAttackSound(atkType)
     g13SpawnAttackEffect(atkType, true)
     const playerSlugG13 = s.evolved2 ? s.chain.evolved2.slug : (s.evolved ? s.chain.evolved.slug : s.chain.player.slug)
-    showMovePopup(document.getElementById('g13-pspr-wrap'), getPokeMove(playerSlugG13, atkType), ({'Fire':'#f97316','Water':'#38bdf8','Grass':'#4ade80','Electric':'#facc15','Psychic':'#e879f9','Ice':'#67e8f9','Dragon':'#818cf8','Dark':'#6b7280','Fighting':'#f87171','Ghost':'#c084fc','Steel':'#94a3b8','Fairy':'#f9a8d4','Rock':'#a8a29e','Ground':'#d97706','Flying':'#7dd3fc','Bug':'#a3e635','Poison':'#a855f7','Normal':'#d1d5db'})[atkType] || '#7C3AED')
+    showMovePopup(document.getElementById('g13-pspr-wrap'), getPokeMove(playerSlugG13, atkType), pokeTypeColor(atkType))
+    // Attacker aura (DOM) — Pixi path reserved for g13b-pixi-canvas
+    spawnTypeAura(document.getElementById('g13-pspr-wrap'), atkType)
     const pspr = document.getElementById('g13-pspr')
     if (pspr) { pspr.classList.remove('spr-atk'); void pspr.offsetWidth; pspr.classList.add('spr-atk'); setTimeout(()=>pspr.classList.remove('spr-atk'),350) }
     // Wild hit animation + type hit FX
@@ -7655,7 +7690,7 @@ function g13TriggerEvolution() {
     if (pspr) {
       pspr.src = `https://img.pokemondb.net/sprites/home/normal/${nowForm.slug}.png`
       pspr.onerror = () => { const eid=POKE_IDS2[nowForm.slug]; if(eid) pspr.src=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${eid}.png`; pspr.onerror=null }
-      pspr.style.width = pspr.style.height = wasStage2 ? 'calc(min(40vw,20vh) * 1.3)' : 'calc(min(40vw,20vh) * 1.2)'
+      pspr.style.width = pspr.style.height = `calc(min(40vw,20vh) * ${pokeTierScale(nowForm.slug)})`
       pspr.style.animation = 'none'; void pspr.offsetWidth
       pspr.style.animation = 'g13EnterFlip 0.6s cubic-bezier(0.34,1.56,0.64,1)'
     }
@@ -8092,25 +8127,10 @@ function g13bAnswer(val, btn) {
     // Particle burst
     try { spawnParticleBurst(btn.getBoundingClientRect().left + btn.offsetWidth/2, btn.getBoundingClientRect().top) } catch(e) {}
 
-    // Aura ring around player Pokémon before attack
+    // Aura ring around player Pokémon before attack — canonical spawnTypeAura helper
     try {
       const playerType = g13bSavedPoke ? g13bSavedPoke.type : 'Electric'
-      const auraColors = {
-        Fire:'#f97316',Water:'#38bdf8',Grass:'#4ade80',Electric:'#facc15',
-        Psychic:'#e879f9',Ice:'#67e8f9',Dragon:'#818cf8',Dark:'#6b7280',
-        Fighting:'#f87171',Ghost:'#c084fc',Steel:'#94a3b8',Fairy:'#f9a8d4',
-        Rock:'#a8a29e',Ground:'#d97706',Flying:'#7dd3fc',Bug:'#a3e635',
-        Poison:'#c084fc',Normal:'#d1d5db'
-      }
-      const auraColor = auraColors[playerType] || '#a78bfa'
-      const pWrap = document.querySelector('.g13b-pspr-wrap')
-      if (pWrap) {
-        const ring = document.createElement('div')
-        ring.className = 'g13b-aura-ring'
-        ring.style.setProperty('--aura-color', auraColor)
-        pWrap.appendChild(ring)
-        setTimeout(() => ring.remove(), 520)
-      }
+      spawnTypeAura(document.querySelector('.g13b-pspr-wrap'), playerType, 520)
     } catch(e) {}
 
     // Spawn attack projectile — type based on player's chosen Pokémon
@@ -8118,8 +8138,7 @@ function g13bAnswer(val, btn) {
       const playerType = g13bSavedPoke ? g13bSavedPoke.type : 'Electric'
       playAttackSound(playerType)
       g13SpawnAttackEffect(playerType, true, 'g13b-field')
-      const auraColsG13b = {Fire:'#f97316',Water:'#38bdf8',Grass:'#4ade80',Electric:'#facc15',Psychic:'#e879f9',Ice:'#67e8f9',Dragon:'#818cf8',Dark:'#6b7280',Fighting:'#f87171',Ghost:'#c084fc',Steel:'#94a3b8',Fairy:'#f9a8d4',Rock:'#a8a29e',Ground:'#d97706',Flying:'#7dd3fc',Bug:'#a3e635',Poison:'#a855f7',Normal:'#d1d5db'}
-      showMovePopup(document.getElementById('g13b-pspr-wrap'), getPokeMove(g13bSavedPoke ? g13bSavedPoke.slug : '', playerType), auraColsG13b[playerType] || '#7C3AED')
+      showMovePopup(document.getElementById('g13b-pspr-wrap'), getPokeMove(g13bSavedPoke ? g13bSavedPoke.slug : '', playerType), pokeTypeColor(playerType))
     } catch(e) {}
 
     // COMBO FX at streak >= 3

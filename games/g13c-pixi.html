@@ -63,7 +63,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 #vfx-layer{position:fixed;inset:0;z-index:25;pointer-events:none}
 
 /* ── Battle effects ── */
-@keyframes pokeAura{0%,100%{filter:drop-shadow(0 0 7px rgba(251,191,36,0.75))}50%{filter:drop-shadow(0 0 22px rgba(251,191,36,1)) drop-shadow(0 0 10px #fff)}}
+@keyframes pokeAura{0%,100%{filter:drop-shadow(0 0 7px var(--aura-color,rgba(251,191,36,0.75)))}50%{filter:drop-shadow(0 0 22px var(--aura-color,rgba(251,191,36,1))) drop-shadow(0 0 10px #fff)}}
 .poke-aura{animation:pokeAura 0.32s ease-in-out 2}
 
 @keyframes pokeHitShake{0%{transform:translateX(0)}15%{transform:translateX(-12px)}35%{transform:translateX(12px)}55%{transform:translateX(-9px)}75%{transform:translateX(9px)}100%{transform:translateX(0)}}
@@ -596,6 +596,46 @@ const TYPE_COLOR = {
 };
 function getTypeColor(t){ return TYPE_COLOR[t]||'#fbbf24'; }
 
+// Tier-based sprite scale — matches game.js pokeTierScale().
+// 1=basic 1.0x, 2=1st evo 1.2x, 3=2nd evo 1.3x, 4=legendary 1.3x.
+// Sparse map: only non-1 tiers need explicit entries.
+const POKE_TIER = {
+  ivysaur:2, venusaur:3, charmeleon:2, charizard:3, wartortle:2, blastoise:3,
+  metapod:2, butterfree:3, kakuna:2, beedrill:3, pidgeotto:2, pidgeot:3,
+  raticate:2, fearow:2, arbok:2, raichu:2, sandslash:2, nidorina:2, nidoqueen:3,
+  nidorino:2, nidoking:3, clefable:2, ninetales:2, wigglytuff:2, golbat:2,
+  crobat:3, gloom:2, vileplume:3, bellossom:3, parasect:2, venomoth:2, dugtrio:2,
+  persian:2, golduck:2, primeape:2, arcanine:2, poliwhirl:2, poliwrath:3, politoed:3,
+  kadabra:2, alakazam:3, machoke:2, machamp:3, weepinbell:2, victreebel:3,
+  tentacruel:2, graveler:2, golem:3, rapidash:2, slowbro:2, slowking:3, magneton:2,
+  magnezone:3, dodrio:2, dewgong:2, muk:2, cloyster:2, haunter:2, gengar:3,
+  hypno:2, kingler:2, electrode:2, exeggutor:2, marowak:2, hitmonlee:2, hitmonchan:2,
+  weezing:2, rhydon:2, rhyperior:3, seadra:2, kingdra:3, seaking:2, starmie:2,
+  gyarados:2, vaporeon:2, jolteon:2, flareon:2, espeon:2, umbreon:2, leafeon:2,
+  glaceon:2, sylveon:2, omastar:2, kabutops:2,
+  dragonair:2, dragonite:3, mewtwo:4, mew:4, moltres:4, articuno:4, zapdos:4,
+  bayleef:2, meganium:3, quilava:2, typhlosion:3, croconaw:2, feraligatr:3,
+  furret:2, noctowl:2, ledian:2, ariados:2, lanturn:2, xatu:2, flaaffy:2, ampharos:3,
+  jumpluff:3, skiploom:2, sunflora:2, quagsire:2, murkrow:2, honchkrow:3, misdreavus:2,
+  mismagius:3, forretress:2, dunsparce:2, gligar:2, gliscor:3, steelix:3, granbull:2,
+  qwilfish:2, shuckle:2, heracross:2, magcargo:2, piloswine:2, mamoswine:3,
+  corsola:2, octillery:2, delibird:2, mantine:2, skarmory:2, houndoom:3, phanpy:2,
+  donphan:2, porygon2:2, porygon_z:3, stantler:2, tyrogue:2, hitmontop:2, smoochum:1,
+  elekid:1, magby:1, miltank:2, blissey:3, ursaluna:3, ursaring:2, lugia:4, hooh:4,
+  celebi:4, groudon:4, kyogre:4, rayquaza:4, dialga:4, palkia:4, giratina:4,
+  darkrai:4, arceus:4, reshiram:4, zekrom:4, kyurem:4, xerneas:4, yveltal:4,
+  solgaleo:4, lunala:4, necrozma:4, zacian:4, zamazenta:4, eternatus:4, calyrex:4,
+  salamence:3, shelgon:2, metagross:3, metang:2, beldum:1, hydreigon:3, zweilous:2,
+  haxorus:3, fraxure:2, goodra:3, sliggoo:2, chandelure:3, lampent:2, garchomp:3,
+  gabite:2, lucario:2, infernape:3, monferno:2, empoleon:3, prinplup:2, torterra:3,
+  grotle:2, serperior:3, servine:2, emboar:3, pignite:2, samurott:3, dewott:2,
+  gardevoir:3, kirlia:2, blaziken:3, combusken:2, swampert:3, marshtomp:2, sceptile:3,
+  grovyle:2, delphox:3, braixen:2, chesnaught:3, quilladin:2, greninja:3, frogadier:2
+};
+function pokeTierScale(s){
+  return ({1:1.0, 2:1.2, 3:1.3, 4:1.3})[POKE_TIER[s] || 1] || 1.0;
+}
+
 // ─── STATE ────────────────────────────────────────────────────────────────────
 let badges = JSON.parse(localStorage.getItem('g13c_badges')||'{}');
 let battle = null;
@@ -760,9 +800,14 @@ function spawnTypeHitFX(targetEl, type){
   }
 }
 
-// Aura glow on attacker
-function addAura(el){ el.classList.add('poke-aura'); }
-function removeAura(el){ el.classList.remove('poke-aura'); }
+// Aura glow on attacker — type-colored via CSS var
+function addAura(el, type){
+  if(!el) return;
+  const color = type ? getTypeColor(type) : '#fbbf24';
+  el.style.setProperty('--aura-color', color);
+  el.classList.add('poke-aura');
+}
+function removeAura(el){ if(el) el.classList.remove('poke-aura'); }
 
 // Hit shake+flash on defender
 function addHitEffect(el, isFlipped){
@@ -825,11 +870,13 @@ function setPokeSpriteEnemy(slug){
   const img = document.getElementById('poke-enemy');
   img.src = SPRITE_HD(slug);
   img.onerror = ()=>{ img.src = SPRITE_LOCAL(slug); };
+  img.style.transform = 'scale(' + pokeTierScale(slug) + ')';
 }
 function setPokeSpritePlayer(slug){
   const img = document.getElementById('poke-player');
   img.src = SPRITE_HD(slug);
   img.onerror = ()=>{ img.src = SPRITE_LOCAL(slug); };
+  img.style.transform = 'scaleX(-1) scale(' + pokeTierScale(slug) + ')';
 }
 
 // ─── MATH QUIZ ───────────────────────────────────────────────────────────────
@@ -1174,7 +1221,7 @@ function executeMove(moveIdx, mathCorrect){
   const dmg = calcDmg(move.type, pp, ep);
   const eff = getEff(move.type, ep.type);
 
-  addAura(ppEl);
+  addAura(ppEl, move.type);
   spawnRipple(portraitPlayer);
 
   setTimeout(()=>{
@@ -1230,7 +1277,7 @@ function enemyTurn(){
   const portraitEnemy = document.getElementById('portrait-enemy');
 
   // Aura on enemy attacker + ripple
-  addAura(epEl);
+  addAura(epEl, ep.type);
   spawnRipple(portraitEnemy);
 
   setTimeout(()=>{
