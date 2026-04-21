@@ -5407,9 +5407,11 @@ function g10NewBattle(){
     const testVar = new Image()
     testVar.onload = () => { el.src = variantSrc }
     testVar.onerror = () => {
-      // Fallback: local PNG → online HD → PokeAPI
-      el.src = `assets/Pokemon/sprites/${slug}.png`
-      el.onerror = () => { el.src = pokeSpriteCDN(slug); el.onerror = () => { el.src = pokeSpriteBackup(pokeId); el.onerror = null } }
+      // HD CDN first → local low-res only as offline fallback → PokeAPI last.
+      // Gen 9+ Pokemon have no SVG entry; without this order they rendered the
+      // back-facing low-res PokeAPI sprite, breaking both HD quality and scaleX(-1).
+      el.src = pokeSpriteCDN(slug)
+      el.onerror = () => { el.src = pokeSprite(slug); el.onerror = () => { el.src = pokeSpriteBackup(pokeId); el.onerror = null } }
     }
     testVar.src = variantSrc
   }

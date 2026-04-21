@@ -13,6 +13,7 @@
 ## ✅ COMPLETED 2026-04-21 — Battle Standards + HD Sprites + G22 + Repo Migration
 
 - ✅ **P0 — HD sprite cascade** (game.js 5005/5012-5014/5391-5404): `pokeSpriteOnline()` now returns HD CDN; `pokeSpriteVariant()` prefers SVG → HD CDN; G10 player/enemy loaders use the HD-first cascade with low-res PNG only as offline fallback; `image-rendering:pixelated` killed.
+- ✅ **P0.7 — G10 enemy `loadSprHD` cascade regression** (game.js 5409-5413): Gen 9+ Pokemon (Fuecoco id 909 not in 751 SVG collection) were falling to the back-facing low-res PokeAPI PNG before HD CDN was tried — producing BOTH pixelated rendering AND reversed facing direction (scaleX(-1) assumes HD orientation). Swapped fallback order to mirror `loadSprPlayer`: HD CDN → local PNG → PokeAPI.
 - ✅ **P0.5 — Battle standards (5 invariants)** enforced across G10/G13/G13b/G13c:
   - Fix A: Canonical `POKE_TYPE_COLORS` + `pokeTypeColor(type)` helper at game.js:5003 (replaces 3 duplicate inline maps in G10/G13/G13b).
   - Fix B: `g10TypeFX()` DOM fallback expanded from 4 → 18 types (matches `g13TypeHitFX` coverage).

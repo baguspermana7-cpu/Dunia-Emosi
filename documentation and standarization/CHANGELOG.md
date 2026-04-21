@@ -11,6 +11,7 @@
 
 ### Bug Fixes
 - **P0 — HD sprite regression** (`game.js`): `pokeSpriteOnline()` was mis-named and returned local low-res; now correctly returns HD CDN. `pokeSpriteVariant()` prefers SVG → HD CDN (dropped 50/50 coin-flip). G10 `loadSprHD`/`loadSprPlayer` rewritten with HD-first cascade; `image-rendering:pixelated` killed on player sprite.
+- **P0.7 — G10 enemy cascade regression** (`game.js:5409-5413`): `loadSprHD` `onerror` branch tried `assets/Pokemon/sprites/{slug}.png` BEFORE `pokeSpriteCDN()` — so Gen 9+ Pokemon without a local SVG entry (Fuecoco id 909) rendered the back-facing low-res PokeAPI sprite. Symptom: pixelated **and** wrong facing direction (CSS `scaleX(-1)` assumes HD orientation; low-res PokeAPI sprites face the opposite way). Swapped order to mirror `loadSprPlayer`. Cache-bust `v=20260421c`.
 - **Battle standards (Fix A–G)**: consolidated 3 duplicate type-color maps, unified DOM aura helper, expanded `g10TypeFX` from 4→18 types, applied `pokeTierScale()` to G13 initial player + evolved forms, G13b already had tier scaling.
 - **G22 Monster Candy — 7 UX fixes** (`games/g22-candy.html`): lerp-smoothed cursor follow via `translate3d` (no layout thrash), HD Psyduck `clamp(140px,26vw,220px)`, dynamic answer-pill layout (no overflow), pickup FX (catch-pop + 8-particle ring burst + center flash), background richness (12 clouds × 3 parallax speeds, 6 flyers, 5 pine trees, 3 snow-capped mountains, 24 flowers, rainbow), ground-anchored via `window.innerHeight - H*0.75` on resize, directional facing (scaleX + turn-flip animation).
 
