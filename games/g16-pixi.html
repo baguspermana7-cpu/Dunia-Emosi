@@ -866,12 +866,10 @@ const G16_CHAR_CONFIGS = {
   },
   jz62_malivlak: {
     spriteUrl:'../assets/train/malivlak-body.webp', spriteHeight:172,
-    // Sprite 700×393 (rails stripped). spriteHeight 172 (user 1.2x from 143).
-    wheelPositions:[
-      [-120,-13,7],[-98,-13,7],[-75,-13,7],[-55,-13,7],
-      [-32,-13,7],[-12,-13,7],[20,-9,5],[32,-9,5],[55,-13,9],[88,-13,9]
-    ],
-    smokePos:[95,-188], bodyBobFreq:0.08, bodyBobAmp:1.5, smokeInterval:12
+    // Wheels drawn in artwork — no overlay wheels to avoid clutter.
+    wheelPositions:[],
+    smokePos:[95,-188], bodyBobFreq:0.08, bodyBobAmp:1.5, smokeInterval:12,
+    bottomPaddingOffset:24
   }
 };
 
@@ -885,7 +883,8 @@ function buildTrain(W,H){
   const TS_sel = TRAIN_STYLES[selectedTrainIdx]
   if (window.CharacterTrain && TS_sel && TS_sel.character && TS_sel.characterKey && G16_CHAR_CONFIGS[TS_sel.characterKey]) {
     // Character sprites are bottom-anchored — place baseline ON the rail (sprite wheels drawn in artwork touch rail)
-    trainContainer.y = tY + 6
+    const padOff = (G16_CHAR_CONFIGS[TS_sel.characterKey].bottomPaddingOffset) || 0
+    trainContainer.y = tY + 6 + padOff
     trainContainer.scale.x = 1; // sprite already faces right
     const charConfig = G16_CHAR_CONFIGS[TS_sel.characterKey]
     g16CharacterTrain = CharacterTrain.mount(trainContainer, charConfig);

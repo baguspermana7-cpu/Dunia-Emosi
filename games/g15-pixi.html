@@ -1048,8 +1048,11 @@ function buildTrain() {
 
   // Character train branch — mount bg-removed WebP sprite with animated wheels + smoke
   if (selectedTrain.isCharacter && window.CharacterTrain) {
-    // Character sprites are bottom-anchored — shift so sprite baseline rests ON rail (not center of lane)
-    trainContainer.y = LANE_Y[1] + (selectedTrain.spriteHeight ? selectedTrain.spriteHeight / 2 - 4 : 40);
+    // Character sprites are bottom-anchored — shift so sprite baseline rests ON rail.
+    // bottomPaddingOffset compensates for transparent padding at the bottom of cartoon art.
+    const sh = selectedTrain.spriteHeight || 90;
+    const padOff = selectedTrain.bottomPaddingOffset || 0;
+    trainContainer.y = LANE_Y[1] + (sh / 2 - 4) + padOff;
     // Sprite faces RIGHT naturally (was flipped in source) — don't mirror container
     trainContainer.scale.x = 1;
     characterTrainInstance = CharacterTrain.mount(trainContainer, selectedTrain);
