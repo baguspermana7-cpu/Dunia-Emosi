@@ -8,9 +8,10 @@ const TRAIN_CATS = [
       // smokePos Y < -spriteHeight = ABOVE sprite top (not overlapping body).
       {key:'caseyjr_character', name:'Casey JR', sub:'0-4-0 Circus', emoji:'🚂',
        isCharacter:true, spriteUrl:'../assets/train/caseyjr-body.webp',
-       wheelLayout:'0-4-0', spriteHeight:90,
-       wheelPositions:[[-40,-8,10],[-14,-8,10],[13,-8,10],[40,-8,10]],
-       smokePos:[-40,-110],
+       wheelLayout:'0-4-0', spriteHeight:117,
+       // Sprite 267×193 (rails cleaned). spriteHeight 90→117 (1.3x). Wheels r 10→8 (0.8x).
+       wheelPositions:[[-40,-10,8],[-14,-10,8],[13,-10,8],[40,-10,8]],
+       smokePos:[-40,-130],
        bodyColor:'#1e2a4a', accColor:'#c0392b', kmh:40, baseSpeed:1.65, boostMult:1.50, boostDur:1500,
        desc:'Lokomotif sirkus Casey JR! Si kecil yang berani.'},
       {key:'linus_brave', name:'Linus Brave', sub:'2-4-0 Sumatera', emoji:'🚂',
@@ -31,13 +32,13 @@ const TRAIN_CATS = [
        desc:'JZ 711 Dragutin — Tram listrik artikulasi Yugoslavia!'},
       {key:'jz62_malivlak', name:'Malivlak', sub:'JZ 62 Steam + 3 Cars', emoji:'🚂',
        isCharacter:true, spriteUrl:'../assets/train/malivlak-body.webp',
-       wheelLayout:'passenger-train', spriteHeight:110,
-       // Sprite 600×336 (re-cropped 2026-04-22 via manual threshold), rendered ~196×110. 10 wheels.
+       wheelLayout:'passenger-train', spriteHeight:143,
+       // Sprite 600×298 (rails cleaned). spriteHeight 110→143 (1.3x). Wheels r reduced 0.8x.
        wheelPositions:[
-         [-76,-9,8],[-56,-9,8],[-42,-9,8],[-23,-9,8],
-         [-9,-9,8],[12,-9,8],[32,-5,5],[43,-5,5],[56,-9,10],[80,-9,10]
+         [-76,-11,6],[-56,-11,6],[-42,-11,6],[-23,-11,6],
+         [-9,-11,6],[12,-11,6],[32,-7,4],[43,-7,4],[56,-11,8],[80,-11,8]
        ],
-       smokePos:[82,-125],
+       smokePos:[82,-160],
        bodyColor:'#4a2040', accColor:'#c0392b', kmh:48, baseSpeed:1.75, boostMult:1.50, boostDur:1550,
        desc:'Malivlak — Kereta uap dengan 3 gerbong, klasik Yugoslavia!'},
     ]
