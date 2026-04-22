@@ -1814,20 +1814,34 @@ function showResult(mascot, title, msg) {
   const fb = document.getElementById('overlay-feedback'); if(fb) fb.classList.remove('show')
   const gr = document.getElementById('game-result-overlay'); if(gr) gr.classList.remove('show')
   const totalStars=state.gameStars[0]+state.gameStars[1]
-  document.getElementById('result-mascot').textContent=mascot||state.players[state.currentPlayer].animal
-  document.getElementById('result-title').textContent=title||'Bagus sekali!'
   // Normalize to 5-star scale using maxPossibleStars if set by game
   const maxPossible = state.maxPossibleStars || 5
   const earned = Math.min(5, Math.round(totalStars / maxPossible * 5)) || 0
   const maxStars=5;
+  // Guard against contradictory titles — if player got 0 stars, override success-tone titles/msgs.
+  // Callers often pass "Selesai!" / "Bagus!" unconditionally; this enforces fail-state UI.
+  let finalTitle = title || 'Bagus sekali!'
+  let finalMsg = msg || `Kamu dapat ${totalStars} bintang! 🌟`
+  if (earned === 0) {
+    if (/sempurna|hebat|bagus|luar biasa|keren|selesai|berhasil|master|menang/i.test(finalTitle)) {
+      finalTitle = 'Coba Lagi!'
+    }
+    if (/sempurna|hebat|bagus|luar biasa|keren/i.test(finalMsg) || /!$/.test(finalMsg)) {
+      finalMsg = 'Belum ada bintang. Jangan menyerah, ayo coba lagi!'
+    }
+  } else if (earned <= 2 && /sempurna/i.test(finalTitle)) {
+    finalTitle = 'Coba Lagi'
+  }
+  document.getElementById('result-mascot').textContent=mascot||state.players[state.currentPlayer].animal
+  document.getElementById('result-title').textContent=finalTitle
   document.getElementById('result-stars').innerHTML='<span class="rstar filled">★</span>'.repeat(earned)+'<span class="rstar empty">★</span>'.repeat(maxStars-earned);
-  // Show Next Level button if not at max level
+  // Show Next Level button only if not at max level AND passing grade (earned >= 3).
   const nextBtn = document.getElementById('result-next-btn')
   if(nextBtn) {
     const curLv = state.selectedLevelNum || 1
-    nextBtn.style.display = (curLv < 20 && state.mode !== 'duo') ? 'block' : 'none'
+    nextBtn.style.display = (curLv < 20 && state.mode !== 'duo' && earned >= 3) ? 'block' : 'none'
   }
-  document.getElementById('result-msg').textContent=msg||`Kamu dapat ${totalStars} bintang! 🌟`
+  document.getElementById('result-msg').textContent=finalMsg
   const scoresEl=document.getElementById('result-scores')
   if(state.mode==='duo'){scoresEl.style.display='flex';scoresEl.innerHTML=[0,1].map(i=>`<div class="rs-card"><div class="rs-animal">${state.players[i].animal}</div><div class="rs-name">${state.players[i].name}</div><div class="rs-stars">⭐ ${state.gameStars[i]}</div></div>`).join('')}
   else scoresEl.style.display='none'
