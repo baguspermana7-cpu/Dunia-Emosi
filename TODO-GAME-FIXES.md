@@ -10,18 +10,21 @@
 - ✅ **Fix 1**: `collectBox` letter branch validates `box.letter === liveTarget` (word.word[currentLetterIdx]) at COLLECT time, not stale flag.
 - ✅ **Fix 2**: `onWordComplete` purges leftover letter boxes (keeps hearts/math specials) so new-word HUD isn't contradicted by old-word letters floating on screen.
 
-### Task #49 — G16 Bablas Past Station + No Win Modal ✅ DONE 2026-04-22
+### Task #49 — G16 Bablas Past Station + No Win Modal ✅ DONE 2026-04-22 (v2 refactor same day)
 - **Symptom**: User reported "kereta masih melewati kerumunan dan bablas dan stuck tidak keluar modal berhasil". The #40 overshoot fix only clamped uncleared obstacles, not the station itself.
 - **Root causes (4 compounding)**:
   1. No clamp at STATION_X — train slid past platform on dt spikes
   2. ARRIVING creep speed ~54 px/s → ~28s to cover 0.8W = felt frozen
   3. triggerArrival only fired when `S.cleared===S.totalObstacles` (off-by-one race could skip)
   4. 8s failsafe way longer than perceived stuck time
-- ✅ **Station overshoot clamp** in updateTrain: in ARRIVING/ARRIVED phase, clamp `worldX + step > STATION_X + 4` → snap to STATION_X and force ARRIVED + showWin.
-- ✅ **Force-arrival proximity**: `worldX > STATION_X - 40` in any non-DEAD/non-arrival state → `triggerArrival()` regardless of cleared count.
-- ✅ **Faster ARRIVING creep**: `speed = max(baseSpeed*0.25, baseSpeed * min(dist/300, 1))` — reaches station in 3-5s (was ~28s).
-- ✅ **Safety net 8s → 3s**: if showWin doesn't fire organically within 3s of triggerArrival, force it.
-- ✅ **Arrival celebration 2600 → 2200ms**: tighter pacing.
+- ✅ **v1 (morning)**: Station overshoot clamp, force-arrival proximity, faster creep, 3s safety-net setTimeout, 2200ms celebration setTimeout.
+- ✅ **v2 REFACTOR (same day)**: User mandate — "Arrival jangan coba2 pkai time, saya mau bener2 dihitung positioning, checkpoint secara accurate." ALL `setTimeout` calls in the arrival path removed. Replaced with:
+  - **Deterministic positional brake** in ARRIVING: `speed = max(ARRIVAL_MIN_CREEP=35, baseSpeed * min(dist/ARRIVAL_BRAKE_DIST=300, 1))`. When `dist ≤ ARRIVAL_SNAP_DIST=1`, snap `worldX=STATION_X` and flip to ARRIVED.
+  - **Frame-counter celebration** in ARRIVED: `S.celebrationFrame += dt*60` per frame; `showWin` fires exactly when `celebrationFrame ≥ CELEBRATION_FRAMES=120` (~2s @ 60fps, pauses with ticker).
+  - **No safety-net timer** in `triggerArrival` — the positional brake + frame counter guarantee deterministic arrival on any device / any framerate / any pause state.
+- ✅ **Cache**: `v=20260422ad → v=20260422ae`.
+- ✅ **Verification**: `node --check` clean, grep `setTimeout.*(showWin|arrivedFlag|ARRIVED|ARRIVING)` returns only the two "No setTimeout" documentation comments (intentional).
+- **Touched**: `games/g16-pixi.html` (constants + S.celebrationFrame + ARRIVING/ARRIVED branches + overshoot clamp + triggerArrival), `index.html` cache, CHANGELOG.
 
 ### Task #31 — G13c Real Gym Badge Icons ✅ DONE 2026-04-22
 - **Ask**: "Badge, extract dari website page ini. https://bulbapedia.bulbagarden.net/wiki/Badge" + "Dan bisa dari sini. Saling melengkapi jika ada yg tdak ada https://pokemon.fandom.com/wiki/Gym_Badge"

@@ -473,6 +473,7 @@ const S={
   cleared:0,wrongTaps:0,totalObstacles:0,startTime:0,gameOver:false,
   trackLength:0,boostTimer:0,deadTimer:0,noWrongAnswers:true,cameraShake:0,
   arrivedFlag:false,winShown:false,correctStreak:0,stagePunch:0,
+  celebrationFrame:0,
 }
 let app, stage
 let bgContainer, hillContainer, worldContainer
@@ -483,6 +484,14 @@ let ambientBirds=[], ambientClouds=[], twinkleStars=[]
 let headlightBeam=null, fireGlow=null
 let _ticker_t=0
 let TRAIN_SCREEN_X=0, WORLD_LENGTH=0, STATION_X=0
+// Task #49-v2 — deterministic arrival constants. NO setTimeout allowed in the
+// arrival path; everything is keyed off worldX (position) or celebrationFrame
+// (frame counter). Identical behavior on slow/fast devices, pauses with game.
+const ARRIVAL_BRAKE_DIST = 300     // px — where ARRIVING brake starts relative to STATION_X
+const ARRIVAL_SNAP_DIST = 1        // px — when within this of STATION_X, snap and ARRIVE
+const ARRIVAL_MIN_CREEP = 35       // px/s floor speed in ARRIVING (guarantees progress)
+const CELEBRATION_FRAMES = 120     // frames (~2s @ 60fps) of celebration before showWin
+const STATION_PROXIMITY_FORCE = 40 // px — force-trigger arrival even if cleared count off
 let npcArmsUp=null, npcArmsDown=null, arrivalConfetti=false, npcWaveT=0
 const TIE_SPACING=44
 
@@ -1339,20 +1348,36 @@ function updateTrain(dt){
     } else { S._stoppedNoQuizTime = 0 }
   }
   else if(S.trainState==='ARRIVING'){
+    // Task #49-v2 — deterministic positional brake. No setTimeout.
+    // Speed curve: min(baseSpeed, baseSpeed*(dist/ARRIVAL_BRAKE_DIST)), floored
+    // at ARRIVAL_MIN_CREEP so the train always progresses (no stalled arrival).
     const dist=STATION_X-S.worldX
-    // Task #49 — faster creep-in so arrival feels snappy (prev: ~54 px/s → 28s to
-    // cover 0.8W). New: full baseSpeed ramp-down from ~baseSpeed at 200px out to
-    // floor=baseSpeed*0.25 at the doorstep — reaches station in 3-5s.
-    if(dist>14){speed=Math.max(baseSpeed*0.25, baseSpeed*Math.min(dist/300,1))}
-    else{
-      speed=0
+    if(dist > ARRIVAL_SNAP_DIST){
+      speed = Math.max(ARRIVAL_MIN_CREEP, baseSpeed * Math.min(dist/ARRIVAL_BRAKE_DIST, 1))
+    } else {
+      // Position checkpoint reached — snap to STATION_X and enter ARRIVED.
+      S.worldX = STATION_X
+      speed = 0
       if(!S.arrivedFlag){
-        S.arrivedFlag=true; S.trainState='ARRIVED'
+        S.arrivedFlag = true
+        S.trainState = 'ARRIVED'
+        S.celebrationFrame = 0
         startArrivalCelebration(W,H)
-        setTimeout(()=>{if(!S.winShown){S.winShown=true;S.gameOver=true;S.running=false;showWin()}},2200)
       }
     }
-  } else if(S.trainState==='ARRIVED') speed=0
+  } else if(S.trainState==='ARRIVED'){
+    speed = 0
+    // Task #49-v2 — frame-counter celebration (not wall clock).
+    // dt = ticker.deltaMS/1000 (seconds), so dt*60 ≈ frames @ 60fps.
+    // Deterministic: pauses with game pause; identical on slow/fast devices.
+    S.celebrationFrame += (typeof dt !== 'undefined' ? dt*60 : 1)
+    if(S.celebrationFrame >= CELEBRATION_FRAMES && !S.winShown){
+      S.winShown = true
+      S.gameOver = true
+      S.running = false
+      try{ showWin() } catch(e){ console.error('showWin',e); try{ finishGame() }catch(_){}}
+    }
+  }
 
   // Task #40 — 4-part overshoot hard-guard
   // Part 3: absolute per-frame cap (~70px at level 1) — dt-spike / tab-switch can't teleport train.
@@ -1369,9 +1394,12 @@ function updateTrain(dt){
   if(arrivalPhase && S.worldX + maxStep > STATION_X + 4){
     S.worldX = STATION_X
     if(S.trainState==='ARRIVING' && !S.arrivedFlag){
-      S.arrivedFlag=true; S.trainState='ARRIVED'
+      S.arrivedFlag = true
+      S.trainState = 'ARRIVED'
+      S.celebrationFrame = 0
       startArrivalCelebration(W,H)
-      setTimeout(()=>{if(!S.winShown){S.winShown=true;S.gameOver=true;S.running=false;showWin()}},2200)
+      // No setTimeout — showWin fires deterministically via ARRIVED-state
+      // celebrationFrame counter in this function.
     }
   } else if(nextObs && !nextObs.cleared && S.worldX + maxStep > nextObs.worldX + 5){
     // Part 2: hard clamp — if this step would cross the obstacle, snap just before it and force quiz.
@@ -1382,11 +1410,11 @@ function updateTrain(dt){
   } else {
     S.worldX += maxStep
   }
-  // Task #49 — force-arrival proximity: once worldX is within 40px of STATION_X,
-  // regardless of cleared count OR trainState, force triggerArrival. Prevents the
-  // bablas-through-platform bug when cleared==totalObstacles check fails because
+  // Task #49 — force-arrival proximity: once worldX is within STATION_PROXIMITY_FORCE
+  // of STATION_X, regardless of cleared count OR trainState, force triggerArrival.
+  // Prevents bablas-through-platform when cleared==totalObstacles check fails because
   // the last obstacle's quiz flow didn't increment cleared (off-by-one / mini-quiz race).
-  if(!arrivalPhase && S.trainState!=='DEAD' && S.worldX > STATION_X - 40){
+  if(!arrivalPhase && S.trainState!=='DEAD' && S.worldX > STATION_X - STATION_PROXIMITY_FORCE){
     triggerArrival()
   }
   if(S.worldX>WORLD_LENGTH+200&&S.trainState!=='DEAD'&&S.trainState!=='ARRIVING'&&S.trainState!=='ARRIVED'){triggerDeath();return}
@@ -1734,17 +1762,13 @@ function hideQuizPanel(){quizActive=false;quizLocked=false;document.getElementBy
 function triggerDeath(){S.trainState='DEAD';S.deadTimer=1.2;S.gameOver=true;hideQuizPanel();flashScreen('#ff0000',0.55)}
 function triggerArrival(){
   if(S.trainState==='ARRIVING'||S.trainState==='ARRIVED'||S.gameOver)return
-  S.trainState='ARRIVING'; hideQuizPanel()
+  S.trainState='ARRIVING'
+  S.celebrationFrame = 0
+  hideQuizPanel()
   document.getElementById('speed-lines').style.opacity='0'
-  // Task #49 — safety net: if ARRIVED/showWin doesn't fire within 3s, force it.
-  // Lowered from 8s because arrival creep is now ~3-5s (was ~28s) so 3s post-trigger
-  // is plenty and cuts the stuck feel short.
-  setTimeout(()=>{
-    if(!S.winShown && !S.gameOver){
-      S.winShown=true; S.gameOver=true; S.running=false
-      try{showWin()}catch(e){console.error('showWin failsafe',e);try{finishGame()}catch(_){}}
-    }
-  }, 3000)
+  // Task #49-v2 — no setTimeout safety net. showWin fires deterministically via
+  // the ARRIVED-state celebrationFrame counter in updateTrain. Brake (positional)
+  // + celebration (frame counter) are both replay-safe and pause-safe.
 }
 
 function updateHUD(){

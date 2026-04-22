@@ -1,5 +1,37 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-22 — G16 arrival: positional checkpoints, no timers (Task #49-v2)
+
+### Why this refactor
+User mandate: "Arrival jangan coba2 pkai time, saya mau bener2 dihitung positioning, checkpoint secara accurate." The Task #49 fix still relied on two wall-clock `setTimeout` calls (2200ms celebration, 3000ms failsafe). Wall clocks drift with tab throttling, device perf, and pause state — unacceptable for a deterministic arrival flow.
+
+### What changed (`games/g16-pixi.html`)
+- **Removed all `setTimeout` in the arrival path**: the 2200ms showWin after ARRIVED (2 sites in `updateTrain` — main ARRIVING branch + station overshoot clamp) AND the 3000ms safety net in `triggerArrival`. Zero timers now between `ARRIVING` and `showWin`.
+- **New constants** (near `TRAIN_SCREEN_X` at ~line 490):
+  - `ARRIVAL_BRAKE_DIST = 300` — brake ramp starts at dist=300 from STATION_X
+  - `ARRIVAL_SNAP_DIST = 1` — snap to STATION_X and enter ARRIVED when dist ≤ 1px
+  - `ARRIVAL_MIN_CREEP = 35` px/s — speed floor during ARRIVING (guarantees progress)
+  - `CELEBRATION_FRAMES = 120` — ~2s @ 60fps of celebration before `showWin` (frame-counted, not clock-timed)
+  - `STATION_PROXIMITY_FORCE = 40` — replaces magic `40` in force-arrival proximity check
+- **New state field**: `S.celebrationFrame` (reset on ARRIVING entry and on ARRIVED entry).
+- **`ARRIVING` branch**: deterministic brake — `speed = max(ARRIVAL_MIN_CREEP, baseSpeed * min(dist/ARRIVAL_BRAKE_DIST, 1))`. When `dist ≤ ARRIVAL_SNAP_DIST` snap `worldX = STATION_X` and flip to ARRIVED.
+- **`ARRIVED` branch**: `S.celebrationFrame += dt*60` each frame; `showWin` fires exactly when `celebrationFrame ≥ CELEBRATION_FRAMES`. Pauses with the game (ticker stops), identical on slow/fast devices.
+- **Station overshoot clamp**: same celebrationFrame path, no setTimeout.
+- **`triggerArrival`**: resets `celebrationFrame=0`, no safety-net timer. The positional brake + frame counter guarantee `showWin` fires deterministically.
+
+### Cache
+`index.html` v=20260422ad → v=20260422ae (styles.css + game.js both bumped).
+
+### Verification
+- `node --check` on extracted inline scripts → clean.
+- Grep `setTimeout.*show(Win|Lose)|arrivedFlag|ARRIVED|ARRIVING` → only the two "No setTimeout" comments match (intentional documentation).
+- Grep for new constants → all 5 defined and referenced.
+
+### Note on the prior #49 entry
+The 2200ms celebration and 3s safety-net claims in the original Task #49 entry below are now stale — those setTimeouts have been removed. The arrival flow is fully position/frame deterministic.
+
+---
+
 ## 2026-04-22 — G15 letter validation + G16 station overshoot (Tasks #48, #49)
 
 ### G15 — wrong letter accepted as correct (Task #48)
@@ -20,12 +52,11 @@
 3. `triggerArrival` only fired when `S.cleared === S.totalObstacles` — off-by-one or mini-quiz races could leave count short and the train would sail past.
 4. 8s failsafe for `showWin` was much longer than perceived stuck time.
 
-**Fix** (`games/g16-pixi.html`):
-- **Station overshoot clamp** (~line 1360): in `updateTrain`, when in ARRIVING/ARRIVED phase and `worldX + step > STATION_X + 4`, snap to `STATION_X` and force ARRIVED + `showWin(+2200ms)`.
-- **Force-arrival proximity trigger** (~line 1382): once `worldX > STATION_X - 40` in any non-DEAD/non-arrival state, call `triggerArrival()` regardless of cleared count.
-- **Faster ARRIVING creep** (~line 1343): `speed = max(baseSpeed*0.25, baseSpeed * min(dist/300, 1))` — reaches station in 3–5s (was ~28s).
-- **Safety net lowered to 3s** (~line 1722): `triggerArrival` → `showWin` guaranteed within 3s if state logic doesn't fire.
-- **Arrival celebration timer 2600 → 2200ms**: cleaner pacing with faster creep.
+**Fix** (`games/g16-pixi.html`) — *Note: superseded by Task #49-v2 (see entry above). Timer-based claims below are stale; arrival is now position+frame deterministic.*
+- **Station overshoot clamp** (~line 1360): in `updateTrain`, when in ARRIVING/ARRIVED phase and `worldX + step > STATION_X + 4`, snap to `STATION_X` and force ARRIVED.
+- **Force-arrival proximity trigger** (~line 1382): once `worldX > STATION_X - STATION_PROXIMITY_FORCE` in any non-DEAD/non-arrival state, call `triggerArrival()` regardless of cleared count.
+- **Deterministic ARRIVING brake** (v2): `speed = max(ARRIVAL_MIN_CREEP, baseSpeed * min(dist/ARRIVAL_BRAKE_DIST, 1))`.
+- **Celebration**: frame-counted (CELEBRATION_FRAMES=120) instead of wall-clock, no setTimeout.
 
 ### Cache
 `index.html` v=20260422ac → v=20260422ad.
