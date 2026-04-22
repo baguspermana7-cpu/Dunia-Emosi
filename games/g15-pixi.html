@@ -650,8 +650,9 @@ async function initPixi() {
     resolution: window.devicePixelRatio || 1, autoDensity: true
   });
   W = app.screen.width; H = app.screen.height;
-  // Responsive TRAIN_X: 5% of viewport width, clamped 40-180. Mobile phones get tight margin, desktop gets larger.
-  TRAIN_X = Math.max(40, Math.min(180, Math.round(W * 0.05)));
+  // Responsive TRAIN_X: 10% viewport clamped [150,180]. Min 150 accommodates widest character
+  // train overlay (Dragutin wheel at x=-125 + safety buffer). Prevents sprite clipping left edge.
+  TRAIN_X = Math.max(150, Math.min(180, Math.round(W * 0.10)));
   const topHUD = 120, botHUD = 115;
   const available = H - topHUD - botHUD;
   LANE_Y = [

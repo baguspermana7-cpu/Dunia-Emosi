@@ -489,8 +489,8 @@ const TIE_SPACING=44
 async function initPixi(){
   const W=window.innerWidth, H=window.innerHeight
   // Safety margin: wide character trains (rendered >200px) must not clip screen edge.
-  // Responsive: 5% of viewport width clamped [40,180]. Was max(15%,180) — too wide on mobile.
-  TRAIN_SCREEN_X=Math.max(40, Math.min(180, Math.round(W*0.05))); WORLD_LENGTH=W*5.5; STATION_X=WORLD_LENGTH*0.88
+  // Responsive: 10% viewport clamped [150,180]. Min 150 = safety buffer for widest character wheel (-125) + 25.
+  TRAIN_SCREEN_X=Math.max(150, Math.min(180, Math.round(W*0.10))); WORLD_LENGTH=W*5.5; STATION_X=WORLD_LENGTH*0.88
   app=new PIXI.Application()
   await app.init({
     canvas:document.getElementById('pixi-canvas'),
