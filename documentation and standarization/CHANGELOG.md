@@ -1,5 +1,110 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-22 — G16 collision SFX (Task #35)
+
+### Summary
+Added crash/impact SFX to G16 (Selamatkan Kereta). Previously train hitting obstacles (wrong answer) or slamming into them (hard-clamp overshoot) had visual flash + camera shake but no audio. Now plays a short wood-hit sound, layered over the existing orange flash + cameraShake=1.0 cue.
+
+### Source & attribution
+- Mixkit CDN (royalty-free, no attribution required per Mixkit License):
+  - `assets/sfx/crash.mp3` — https://assets.mixkit.co/active_storage/sfx/2182/2182-preview.mp3 — "Wood hard hit"
+- 12,213 bytes, 0.44s, 44.1kHz stereo 220kbps. Well under 50KB budget — no recompression needed. Copied as-is from mixkit preview.
+
+### SFX helper pattern (`games/g16-pixi.html`)
+```js
+let lastCrashMs = 0
+function playSfxCrash(){
+  const now = performance.now()
+  if(now - lastCrashMs < 150) return
+  lastCrashMs = now
+  try{
+    const a = document.getElementById('sfx-crash')
+    if(!a) return
+    a.currentTime = 0
+    a.volume = 0.6
+    a.play().catch(()=>{})
+  }catch(_){}
+}
+```
+Rate-limit window 150ms prevents overlapping plays across back-to-back wrong answers or camera-shake frames. Helper located right before `hideQuizPanel()` (line 1767).
+
+### Integration hook sites (`games/g16-pixi.html`)
+- **Line 81** — `<audio id="sfx-crash" src="../assets/sfx/crash.mp3?v=20260422a" preload="auto">` (added after `#train-sfx`)
+- **Line 1411** — obstacle hard-clamp (Task #40 Part 2 branch). Fires `playSfxCrash()` only when `wasMoving` (S.trainState !== 'STOPPED' at entry), so we don't re-play on every frame the clamp re-asserts while STOPPED.
+- **Line 1632** — wrong-answer branch in `onChoiceTap`. Fires on each incorrect quiz choice (3 mercy dots = max 3 crashes per obstacle).
+- `triggerDeath` (line ~1779) intentionally NOT hooked — deathflash already has the dramatic red flash; adding crash there would double-fire with the hard-clamp that immediately precedes it.
+
+### Volume conventions
+0.6 — stronger than `whoosh 0.5` in G20/G22 (collision is a focal feedback event, not ambient motion). Matches `train-sfx` convention (0.7) while staying slightly softer since it fires repeatedly.
+
+### Verification
+```sh
+python3 -c "
+import re, subprocess
+s = open('games/g16-pixi.html').read()
+blocks = re.findall(r'<script(?![^>]*\\bsrc=)[^>]*>(.*?)</script>', s, re.DOTALL)
+for i, b in enumerate(blocks):
+  if not b.strip(): continue
+  open('/tmp/_c.js','w').write(b)
+  r = subprocess.run(['node','--check','/tmp/_c.js'], capture_output=True, text=True)
+  print(f'block[{i}] rc={r.returncode}')
+"
+# → block[0] rc=0
+```
+
+### Cache
+No `index.html` bump needed — crash.mp3 is only referenced from g16-pixi.html, and the `?v=20260422a` query string on the audio tag forces a fresh fetch.
+
+---
+
+## 2026-04-22 — G20/G22 movement SFX (Task #33)
+
+### Summary
+Added whoosh + swoosh motion SFX to G20 (Ducky Volley) and G22 (Monster Candy). Neither game previously had motion audio — only tonal synth SFX (`tone()` helper via WebAudio) and BGM. New SFX layer over existing tones, does not replace them.
+
+### Source & attribution
+- Mixkit CDN (royalty-free SFX, no attribution required per Mixkit License):
+  - `whoosh.mp3` — https://assets.mixkit.co/active_storage/sfx/2570/2570-preview.mp3 (40,265 bytes, 1.54s, 128kbps)
+  - `swoosh.mp3` — https://assets.mixkit.co/active_storage/sfx/212/212-preview.mp3 (27,236 bytes, 1.52s, 128kbps)
+- Total: 67.5 KB (under 100 KB combined budget).
+- Saved to `assets/sfx/` (new folder contents — was empty).
+
+### SFX helper pattern (both games)
+```js
+let _lastWhoosh=0, _lastSwoosh=0
+function playSfx(id, vol){ try{ const a=document.getElementById(id); if(!a)return; a.currentTime=0; a.volume=vol!=null?vol:0.5; a.play().catch(()=>{}) }catch(_){} }
+function sfxWhoosh(vol){ const n=Date.now(); if(n-_lastWhoosh<120)return; _lastWhoosh=n; playSfx('sfx-whoosh', vol!=null?vol:0.5) }
+function sfxSwoosh(vol){ const n=Date.now(); if(n-_lastSwoosh<140)return; _lastSwoosh=n; playSfx('sfx-swoosh', vol!=null?vol:0.4) }
+```
+Rate-limit windows (120ms whoosh, 140ms swoosh) prevent audio-element clipping when events fire in quick succession (e.g. consecutive hits/spawns).
+
+### G20 Ducky Volley (`games/g20-pixi.html`)
+Audio tags: line 64-65 (after `#game-bgm`). Helpers: line 218-231 (after `sfxThud`). Hooks:
+- Line 733 — `sfxSwoosh(0.4)` on player jump (duck flap) inside `gameLoop` jump block
+- Line 875 — `sfxWhoosh(0.6)` on smash/spike, layered over existing `sfxSmash()`
+- Line 886 — `sfxWhoosh(0.45)` on `shot` hit type, layered over `sfxHit()`
+Note: wall `bounce` events and `set` hit intentionally left whoosh-free — they are high-frequency/light events and BGM masks them; adding whoosh there would feel spammy.
+
+### G22 Monster Candy (`games/g22-candy.html`)
+Audio tags: line 58-59 (after `#game-bgm`). Helpers: line 184-197 (after `sfxWrong`). Hooks:
+- Line 385 — `sfxSwoosh(0.28)` at top of `spawnCandy()` — pokeball swoop entry. Low volume + rate-limit avoids spam at high spawn rates (`spawnInterval` drops to 0.6s at high levels).
+- Line 469 — `sfxWhoosh(0.5)` in `catchCandy()` — ball-throw/capture impact
+- Line 737 — `sfxSwoosh(0.4)` in `spawnBubblePop()` — candy pop on correct answer
+- Line 767 — `sfxWhoosh(0.55)` in `laserAbsorbSwap()` — laser-absorb capture start on wrong answer
+
+### Volume conventions
+Matches existing `bgm.volume=0.2` + tone `v=0.08–0.15` conventions. Whoosh 0.45-0.6 (stronger presence for key hits), swoosh 0.28-0.4 (softer background motion).
+
+### Cache
+Audio tag `?v=20260422a` query string for cache-busting. `index.html` cache not affected (SFX referenced from game HTMLs only).
+
+### Verification
+- `file` confirms both MP3s are valid MPEG ADTS layer III, 44.1kHz.
+- All hook sites Grep'd: 5 call sites in g20, 4 call sites in g22.
+- Rate-limit guarantees no more than ~8 whooshes/sec or ~7 swooshes/sec.
+
+---
+
 ## 2026-04-22 — G16 arrival: positional checkpoints, no timers (Task #49-v2)
 
 ### Why this refactor

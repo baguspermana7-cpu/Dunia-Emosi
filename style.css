@@ -2776,7 +2776,6 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 /* ===== WORLD ZONE 5 — Dunia Kereta ===== */
 #zone-kereta .world-zone-header {
   background:linear-gradient(135deg,#0d1a2e 0%,#1a3a5c 50%,#2c1a0a 100%);
-  background-image:url('assets/train/zone-kereta-banner.webp'),linear-gradient(135deg,#0d1a2e,#1a3a5c);
   background-size:cover;background-position:center 60%;
   min-height:100px;position:relative;overflow:hidden;
 }

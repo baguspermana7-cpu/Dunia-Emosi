@@ -55,6 +55,8 @@ canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
 
 <canvas id="pixi-canvas"></canvas>
 <audio id="game-bgm" src="../Sounds/battle-bgm.mp3" loop preload="auto" style="display:none"></audio>
+<audio id="sfx-whoosh" src="../assets/sfx/whoosh.mp3?v=20260422a" preload="auto"></audio>
+<audio id="sfx-swoosh" src="../assets/sfx/swoosh.mp3?v=20260422a" preload="auto"></audio>
 
 <div id="hud">
   <button id="btn-back" onclick="goBack()">◀</button>
@@ -180,6 +182,19 @@ function sfxCatch(){tone(800,100);setTimeout(()=>tone(1000,80),50)}
 function sfxMiss(){tone(200,200,'square',0.1)}
 function sfxCorrect(){tone(900,100);setTimeout(()=>tone(1100,120),80)}
 function sfxWrong(){tone(150,300,'sawtooth',0.08)}
+// Motion SFX (Task #33): whoosh for ball-throw/capture, swoosh for pokemon-swoop/pop. Rate-limited.
+let _lastWhoosh=0, _lastSwoosh=0
+function playSfx(id, vol){
+  try{
+    const a=document.getElementById(id)
+    if(!a)return
+    a.currentTime=0
+    a.volume=vol!=null?vol:0.5
+    a.play().catch(()=>{})
+  }catch(_){}
+}
+function sfxWhoosh(vol){const n=Date.now();if(n-_lastWhoosh<120)return;_lastWhoosh=n;playSfx('sfx-whoosh',vol!=null?vol:0.5)}
+function sfxSwoosh(vol){const n=Date.now();if(n-_lastSwoosh<140)return;_lastSwoosh=n;playSfx('sfx-swoosh',vol!=null?vol:0.4)}
 
 // ═══════════════════════════════════════════════════════════
 //  PIXI INIT
@@ -367,6 +382,7 @@ function updateParallax(dt) {
 //  CANDY SYSTEM
 // ═══════════════════════════════════════════════════════════
 function spawnCandy() {
+  sfxSwoosh(0.28) // Task #33: pokeball swoop entry (rate-limited to avoid spam on dense spawns)
   const ballType = Math.floor(Math.random() * 9)
   const q = pickQ(ballType)
   const color = BALL_COLORS[Math.floor(Math.random() * BALL_COLORS.length)]
@@ -450,6 +466,7 @@ function catchCandy(candy) {
   candy.alive = false
   candy.caught = true
   sfxCatch()
+  sfxWhoosh(0.5) // Task #33: ball throw/capture impact whoosh
 
   // Instant visual feedback — particle burst at impact point + monster pop
   spawnCatchRing(candy.x, candy.y, candy.color)
@@ -717,6 +734,7 @@ function fxPurpleLeaves(x, y) {
 
 // Bubble pop burst — blue-tinted rings + white sparkle. Used on correct answer.
 function spawnBubblePop(x, y) {
+  sfxSwoosh(0.4) // Task #33: candy-pop swoosh on correct answer
   // 12 bubble rings expanding outward, light blue
   for (let i = 0; i < 12; i++) {
     const ang = (i / 12) * Math.PI * 2
@@ -746,6 +764,7 @@ function spawnBubblePop(x, y) {
 function laserAbsorbSwap(candy) {
   const monsterEl = document.getElementById('monster-img')
   if (!monsterEl) return
+  sfxWhoosh(0.55) // Task #33: laser-absorb capture start whoosh
   // Monster screen position (approx) — uses translate3d(monsterX - halfW, 0)
   const rect = monsterEl.getBoundingClientRect()
   const mx = rect.left + rect.width / 2

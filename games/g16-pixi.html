@@ -78,6 +78,7 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 <canvas id="pixi-canvas"></canvas>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
+<audio id="sfx-crash" src="../assets/sfx/crash.mp3?v=20260422a" preload="auto" style="display:none"></audio>
 
 <div id="hud-top">
   <button id="btn-back" onclick="confirmBack()">⌂</button>
@@ -1403,9 +1404,11 @@ function updateTrain(dt){
     }
   } else if(nextObs && !nextObs.cleared && S.worldX + maxStep > nextObs.worldX + 5){
     // Part 2: hard clamp — if this step would cross the obstacle, snap just before it and force quiz.
+    const wasMoving = S.trainState !== 'STOPPED'
     S.worldX = nextObs.worldX - 1
     S.trainState = 'STOPPED'
     S.currentObstacleIdx = S.obstacles.indexOf(nextObs)
+    if(wasMoving) playSfxCrash() // Task #35 — crash SFX on train slam (rate-limited internally)
     if(!quizActive) showQuizPanel(nextObs)
   } else {
     S.worldX += maxStep
@@ -1626,6 +1629,7 @@ function onChoiceTap(btn,choice,obs){
     S.wrongTaps++; S.noWrongAnswers=false; obs.wrongCount++
     S.correctStreak = 0 // reset streak on wrong
     btn.classList.add('wrong'); S.cameraShake=1.0; flashScreen('#ff8800',0.28)
+    playSfxCrash() // Task #35 — crash SFX on wrong answer (obstacle impact)
     document.querySelectorAll('.mercy-dot').forEach((d,i)=>{if(i<obs.wrongCount)d.classList.add('used')})
     if(obs._mini){
       // Mini obstacle — wrong answer, just resume after delay
@@ -1755,6 +1759,22 @@ function spawnQuizCelebrationFX(screenX, screenY, streak){
     gring.x=screenX; gring.y=cy; gring._life=0.5; gring._ring=true; gring._decay=1.6
     stage.addChild(gring); sparkParticles.push(gring)
   }
+}
+
+// Task #35 — collision SFX (mixkit "Wood hard hit" #2182, CC0). Rate-limited 150ms
+// to avoid overlapping plays during camera-shake frames / back-to-back wrong answers.
+let lastCrashMs = 0
+function playSfxCrash(){
+  const now = performance.now()
+  if(now - lastCrashMs < 150) return
+  lastCrashMs = now
+  try{
+    const a = document.getElementById('sfx-crash')
+    if(!a) return
+    a.currentTime = 0
+    a.volume = 0.6
+    a.play().catch(()=>{})
+  }catch(_){}
 }
 
 function hideQuizPanel(){quizActive=false;quizLocked=false;document.getElementById('quiz-panel').classList.remove('show')}

@@ -976,7 +976,11 @@ function badgeHtml(trainer, size, extraStyle){
   const s = size || 24
   const es = extraStyle || ''
   if (hasBadgeImg(trainer.id)) {
-    return `<img src="${badgeImgUrl(trainer.id)}" alt="${trainer.badge}" style="width:${s}px;height:${s}px;object-fit:contain;display:inline-block;vertical-align:middle;${es}">`
+    // onerror fallback: if the WebP 404s or fails to decode, swap the <img> for
+    // the emoji span so the user never sees a broken-image icon. Matches the
+    // onerror pattern used by other <img> tags in this file.
+    const onerr = `this.outerHTML=&quot;<span style=\\&quot;font-size:${Math.round(s*0.8)}px;line-height:${s}px;${es}\\&quot;>${trainer.badge}</span>&quot;`
+    return `<img src="${badgeImgUrl(trainer.id)}" alt="${trainer.badge}" onerror="${onerr}" style="width:${s}px;height:${s}px;object-fit:contain;display:inline-block;vertical-align:middle;${es}">`
   }
   return `<span style="font-size:${Math.round(s*0.8)}px;line-height:${s}px;${es}">${trainer.badge}</span>`
 }

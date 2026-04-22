@@ -61,6 +61,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#38bdf
 
 <canvas id="pixi-canvas"></canvas>
 <audio id="game-bgm" src="../assets/Pokemon/sound/01 ~Opening~（１９９７－１９９８｜Ｍ０１） - Satoshi Sakai No Masta - SoundLoadMate.com.mp3" loop preload="auto" style="display:none"></audio>
+<audio id="sfx-whoosh" src="../assets/sfx/whoosh.mp3?v=20260422a" preload="auto"></audio>
+<audio id="sfx-swoosh" src="../assets/sfx/swoosh.mp3?v=20260422a" preload="auto"></audio>
 
 <div id="hud">
   <button id="btn-back" onclick="goBack()">◀</button>
@@ -214,6 +216,19 @@ function sfxBounce(){tone(350,40,'triangle',0.08)}
 function sfxWhistle(){tone(1200,200);setTimeout(()=>tone(1000,150),120)}
 function sfxPowerup(){tone(600,80);setTimeout(()=>tone(900,100),60);setTimeout(()=>tone(1200,120),120)}
 function sfxThud(){tone(100,150,'triangle',0.15);setTimeout(()=>tone(60,100,'sine',0.1),40)}
+// Motion SFX (Task #33): whoosh for ball-leaves-player, swoosh for jump/flap. Rate-limited.
+let _lastWhoosh=0, _lastSwoosh=0
+function playSfx(id, vol){
+  try{
+    const a=document.getElementById(id)
+    if(!a)return
+    a.currentTime=0
+    a.volume=vol!=null?vol:0.5
+    a.play().catch(()=>{})
+  }catch(_){}
+}
+function sfxWhoosh(vol){const n=Date.now();if(n-_lastWhoosh<120)return;_lastWhoosh=n;playSfx('sfx-whoosh',vol!=null?vol:0.5)}
+function sfxSwoosh(vol){const n=Date.now();if(n-_lastSwoosh<140)return;_lastSwoosh=n;playSfx('sfx-swoosh',vol!=null?vol:0.4)}
 
 // ═══════════════════════════════════════════════════════════
 //  PIXI INIT
@@ -715,6 +730,7 @@ function gameLoop(ticker){
   if(S.jump&&S.pGnd){
     S.pvy=JUMP_POWER*(S.powerup==='jump'?1.4:1); S.pGnd=false
     spawnSand(S.px,GROUND_Y,4)
+    sfxSwoosh(0.4) // Task #33: duck flap/jump swoosh
   }
   S.jump=false
 
@@ -856,6 +872,7 @@ function checkHit(dx,dy,dvx,dvy,onGnd,who){
     S.pSet=false
     S.shakeTimer=10
     sfxSmash()
+    sfxWhoosh(0.6) // Task #33: spike/smash = powerful whoosh
   } else {
     // SHOT: jump first-touch
     power=4.4; hitType='shot'
@@ -866,7 +883,7 @@ function checkHit(dx,dy,dvx,dvy,onGnd,who){
   S.bvy=Math.min(S.bvy,-1.4)
 
   if(hitType==='set') sfxHit()
-  else if(hitType==='shot') sfxHit()
+  else if(hitType==='shot'){ sfxHit(); sfxWhoosh(0.45) } // Task #33: shot = medium whoosh
 
   // Hit effect — spawn colored particles at ball position
   const hitColors = {set:0x4ade80, shot:0x3b82f6, smash:0xfbbf24}

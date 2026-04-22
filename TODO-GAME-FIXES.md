@@ -2,6 +2,26 @@
 > This file tracks ALL pending game issues. Claude reads this at session start.
 > Mark items ✅ when done. Add new issues at the bottom.
 
+---
+
+## 📊 Session 2026-04-22 Summary
+
+| Status | Count | Items |
+|--------|-------|-------|
+| ✅ Completed this session | 5 | #48, #49 (v1+v2), #31, #47, #45 |
+| ⬜ Pending | 1 | #44 (P0 modal engine bug) |
+| **TOTAL OPEN** | **6** | |
+
+**Key achievements**:
+- G16 arrival now **fully position-deterministic** (no setTimeout) + frame-counted celebration
+- Character train scaling **responsive** to viewport height (`RZ.trainScale()`)
+- G13c gym badges **real images** (46 WebP icons)
+- G15 letter validation **fixed** (real-time target check, not stale flag)
+- **3 new codemaps** created: G16 state machine, character train API, responsive design engine
+- **CODING-STANDARDS.md** updated with position-deterministic state machine pattern
+
+---
+
 ## 🔥 OPEN 2026-04-22 (session ongoing)
 
 ### Task #48 — G15 Letter Validation Bug (stale isTarget) ✅ DONE 2026-04-22
@@ -358,9 +378,15 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 - ✅ **End-game freeze safeguard** (g16-pixi.html:1455-1467): `triggerArrival()` sekarang arm 8-second setTimeout fallback. Jika `showWin()` tidak fire dalam 8s (race/exception), safety net force `S.winShown=true`, stops game loop, dan try `showWin()` atau fallback ke `finishGame()`.
 - ✅ **Bablas-recovery safeguard** (g16-pixi.html:1186-1200): Di `updateTrain` branch `STOPPED`/`CLEARING`, tambahkan `S._stoppedNoQuizTime` accumulator. Jika STOPPED tapi `quizActive===false` selama >1.2s (race condition saat clearObstacle→MOVING→STOPPED sementara quiz panel mid-transition), re-trigger `showQuizPanel(nextObs)`. Jika no obstacle to stop for, force state→MOVING untuk unstick.
 
-**Task #35 — Collision SFX** ⬜ (blocked — menunggu audio)
-- ⬜ **Nabrak box/rintangan audio**: Perlu real crash SFX, bukan synth tone. Memperkaya audio layer overall.
-- **Plan**: (1) source freesound.com impact MP3 (wooden crunch + metallic clang), (2) `<audio id="sfx-crash">` preloaded, (3) trigger pada obstacle collision, (4) variasi per jenis obstacle.
+**Task #35 — Collision SFX** ✅ DONE 2026-04-22
+- ✅ **Source**: Mixkit "Wood hard hit" (#2182) — `assets/sfx/crash.mp3`, 12,213 bytes, 0.44s. CC0 / Mixkit License (no attribution required). Copied as-is from preview URL (already under 50KB budget, no recompression needed).
+- ✅ **Audio tag** (`games/g16-pixi.html:81`): `<audio id="sfx-crash" src="../assets/sfx/crash.mp3?v=20260422a" preload="auto">` added after `#train-sfx`.
+- ✅ **Helper** (`games/g16-pixi.html:1767-1779`): `playSfxCrash()` with 150ms rate-limit via `performance.now()`, volume=0.6, try/catch-safe. Located right before `hideQuizPanel()`.
+- ✅ **Hook 1 — wrong-answer** (`games/g16-pixi.html:1632`): fires in `onChoiceTap()` wrong-branch, alongside existing `S.cameraShake=1.0` + `flashScreen('#ff8800')`. Max 3 crashes per obstacle (mercy-dot cap).
+- ✅ **Hook 2 — obstacle hard-clamp** (`games/g16-pixi.html:1411`): fires in Task #40 Part 2 branch when train slams into obstacle. Guarded by `wasMoving` snapshot so it doesn't re-play every frame the clamp reasserts while already STOPPED.
+- ⬜ **Not hooked** — `triggerDeath` (bablas out-of-world): already has red flash drama, and hard-clamp fires immediately before; hooking here would double-play.
+- ✅ **Verification**: `node --check` clean (all inline script blocks rc=0). Cache `?v=20260422a` on audio tag — no `index.html` bump needed.
+- **Touched**: `assets/sfx/crash.mp3` (new, 12KB), `games/g16-pixi.html`, CHANGELOG, TODO.
 
 **Task #36 — Quiz answer text overflow** ✅
 - ✅ **CSS refactor** (g16-pixi.html:38): `.choice-btn` sekarang `max-width:none` (removed 120px cap), `padding:clamp(10px,3.5vh,18px) clamp(10px,3vw,18px)` (increased horizontal padding), added `overflow:hidden; overflow-wrap:break-word; word-break:break-word; white-space:normal; line-height:1.2`, reduced default fontSize from `clamp(16px,5.5vw,26px)` to `clamp(14px,4.5vw,22px)`.
@@ -379,9 +405,20 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
   - Directional squash: scaleX/Y 1.06/0.92 on fast move — anticipation/follow-through animation principle
   - CSS `@keyframes monsterIdleBob` + `.idle-bob` class available for future use
 
-### G20 + G22 — Movement SFX (Task #33, plan mode)
-- ⬜ **Whoosh/swoosh audio** — user wants real audio for: (G22) pokeball throw whoosh, monster movement swoosh; (G20) volley hit swoosh, jump whoosh.
-- **Plan**: (1) Source short MP3s (freesound.com) — 30-50ms for hits, 200-400ms for swipes. (2) Add `<audio id="sfx-whoosh">` preloaded tags. (3) Throttle triggers — only fire on direction change or discrete event, not every frame. (4) Volume 0.4-0.6 master.
+### G20 + G22 — Movement SFX (Task #33, EXECUTED 2026-04-22) ✅
+- ✅ **SFX sourced**: Mixkit CDN royalty-free — `whoosh.mp3` (40KB, ID 2570) + `swoosh.mp3` (27KB, ID 212). Total 67.5KB. Saved to `assets/sfx/`.
+- ✅ **G20 Ducky Volley** (`games/g20-pixi.html`):
+  - Audio tags line 64-65 (after `#game-bgm`)
+  - `playSfx`/`sfxWhoosh`/`sfxSwoosh` helpers line 218-231 with 120ms/140ms rate-limit
+  - Hook sites: line 733 (player jump, swoosh 0.4), line 875 (smash/spike, whoosh 0.6), line 886 (shot hit, whoosh 0.45)
+- ✅ **G22 Monster Candy** (`games/g22-candy.html`):
+  - Audio tags line 58-59 (after `#game-bgm`)
+  - Helpers line 184-197 (after `sfxWrong`)
+  - Hook sites: line 385 (spawnCandy pokeball swoop, swoosh 0.28), line 469 (catchCandy ball throw, whoosh 0.5), line 737 (spawnBubblePop candy pop, swoosh 0.4), line 767 (laserAbsorbSwap capture start, whoosh 0.55)
+- ✅ **Rate-limiting**: 120ms whoosh cooldown, 140ms swoosh cooldown — prevents clipping on dense spawn/collision events.
+- ✅ **Volume convention**: matches existing `bgm.volume=0.2` + tone `v=0.08-0.15`. Whoosh 0.45-0.6 (key hits), swoosh 0.28-0.4 (background motion).
+- ✅ **Cache**: audio tags have `?v=20260422a` query string. Index.html not affected.
+- See CHANGELOG.md 2026-04-22 entry for full details.
 
 ### G22 — Monster Wants Candy (POLISH v2)
 - ✅ **Quiz panel → bottom grass** (g22-candy.html:607-609): Panel sekarang anchored at `panel.x=W/2, panel.y=H-130` — always bottom-center, tidak ikut candy.y. Tidak lagi menutupi view monster.

@@ -495,6 +495,71 @@ Any image produced by the Gemini API MUST land on disk as a compressed WebP. **N
 - Rule added after the user observed PNG commits bloating the repo and slowing Vercel first-paint.
 - The existing `process-images.py` already enforces WebP for the drop-and-process workflow; this new standard extends the same rule to direct Gemini API calls.
 
+## Position-Deterministic State Machines (added 2026-04-22)
+
+**Used in**: G16 Selamatkan Kereta (train game).
+
+### Principle
+
+Game-state transitions in complex physics-based games MUST be driven by **positional checkpoints** or **frame counters**, never `setTimeout`. This ensures deterministic behavior across all devices, framerates, and pause states.
+
+### Pattern
+
+**Anti-pattern** (❌ WRONG):
+```js
+function triggerArrival() {
+  trainState = 'ARRIVING'
+  setTimeout(() => {
+    trainState = 'ARRIVED'
+    showWin()
+  }, 2000)  // FRAGILE — breaks on dt spikes, pause, or framerate variance
+}
+```
+
+**Correct pattern** (✅ RIGHT):
+```js
+const CELEBRATION_FRAMES = 120  // ~2s @ 60fps
+
+// State machine driven by position
+if (trainState === 'ARRIVING') {
+  // Brake curve until snap distance
+  if (worldX <= ARRIVAL_SNAP_DIST) {
+    worldX = STATION_X  // snap to destination
+    trainState = 'ARRIVED'
+    celebrationFrame = 0
+  }
+}
+
+// Frame counter in ARRIVED state
+else if (trainState === 'ARRIVED') {
+  celebrationFrame += dt * 60  // dt-independent
+  if (celebrationFrame >= CELEBRATION_FRAMES && !winShown) {
+    showWin()
+    winShown = true
+  }
+}
+```
+
+### Key Invariants
+
+1. **State transitions keyed to POSITION or FRAME COUNT** — not elapsed time.
+2. **Frame counters multiplied by `dt*60`** — makes them frame-rate independent.
+3. **Positional checkpoints use world coordinates** — snap when `worldX ≤ threshold`.
+4. **Pause-safe** — ticker pause stops both position updates and frame accumulation.
+5. **No setTimeout for state changes** — only for UI animations (modals, effects) that don't affect game state.
+
+### When to Use
+
+- **Position-deterministic**: Train arriving at station, obstacle collision, boundary crossing.
+- **Frame-counter**: Celebration delay, visual animation timing, state dwelling (hover before next action).
+- **Do NOT use setTimeout**: Game-critical transitions (movement, collision, win conditions).
+
+### Related Documentation
+
+See `docs/CODEMAPS/g16-state-machine.md` for full state diagram + code examples.
+
+---
+
 ## Documentation Workflow — MANDATORY (added 2026-04-20)
 
 **Every fix, new pattern, or convention MUST be documented in BOTH places:**
