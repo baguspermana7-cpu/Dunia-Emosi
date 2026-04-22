@@ -1021,9 +1021,16 @@ function endMatch(){
       try{sessionStorage.setItem('g20Config',JSON.stringify({level:cfg.level+1}))}catch(_){}
       location.reload()
     }:null
+    const roundInfo = `Rounds: ${S.pRounds}—${S.cRounds} | Quiz: ${S.correctQ}✅`
+    const emoji = stars >= 5 ? '🏆' : stars >= 4 ? '🌟' : stars >= 3 ? '⭐' : stars >= 1 ? '💪' : '😞'
+    const title = stars >= 5 ? 'Sempurna!' : stars >= 4 ? 'Hebat!' : stars >= 3 ? 'Bagus!' : stars >= 1 ? 'Coba Lagi' : 'Gagal! Coba Lagi'
+    const msg = stars >= 5 ? `Wow, kamu hebat! ${roundInfo}` :
+      stars >= 4 ? `Kerja bagus! ${roundInfo}` :
+      stars >= 3 ? `Lumayan, terus berlatih! ${roundInfo}` :
+      stars >= 1 ? `Kamu bisa lebih baik lagi! ${roundInfo}` :
+      `Jangan menyerah, ayo coba lagi! ${roundInfo}`
     GameModal.show({
-      emoji:won?'🏆':'🦆', title:won?'Kamu Menang!':'Coba Lagi!', stars,
-      msg:`Rounds: ${S.pRounds}—${S.cRounds} | Quiz: ${S.correctQ}✅`,
+      emoji, title, stars, msg,
       onNext:next, onAgain:()=>location.reload(), onBack:()=>goBack()
     })
   },800)

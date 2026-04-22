@@ -949,10 +949,10 @@ function nextWord() {
 function showGameOver() {
   S.running = false
   GameModal.show({
-    emoji: '💔',
-    title: 'Game Over!',
-    stars: 1,
-    msg: 'Kehabisan nyawa. Coba lagi?',
+    emoji: '😞',
+    title: 'Gagal! Coba Lagi',
+    stars: 0,
+    msg: 'Jangan menyerah, ayo coba lagi!',
     onAgain: () => restartGame(),
     onBack: () => goBack()
   })
@@ -974,13 +974,17 @@ function restartGame() {
 function showFinish() {
   S.running = false
   const stars = GameScoring.calc({correct:S.wordsDone, total:S.totalWords, wrong:S.wrongCount||0, lives:S.lives, maxLives:3})
-  const msg = stars >= 5 ? 'Sempurna! Kamu bintang!' :
-    stars >= 3 ? 'Bagus sekali! Terus berlatih!' : 'Coba lagi untuk nilai lebih baik!'
+  const msg = stars >= 5 ? 'Wow, kamu hebat!' :
+    stars >= 4 ? 'Kerja bagus!' :
+    stars >= 3 ? 'Lumayan, terus berlatih!' :
+    stars >= 1 ? 'Kamu bisa lebih baik lagi!' :
+    'Jangan menyerah, ayo coba lagi!'
   const curLevel = cfg.level || 1;
   const nextLevel = curLevel < 30 ? () => { sessionStorage.setItem('g6Config', JSON.stringify({...cfg, level:curLevel+1})); location.reload(); } : null;
-  const title = stars >= 5 ? 'Sempurna!' : stars >= 4 ? 'Hebat!' : stars >= 3 ? 'Bagus!' : 'Selesai!';
+  const title = stars >= 5 ? 'Sempurna!' : stars >= 4 ? 'Hebat!' : stars >= 3 ? 'Bagus!' : stars >= 1 ? 'Coba Lagi' : 'Gagal! Coba Lagi';
+  const emoji = stars >= 5 ? '🏆' : stars >= 4 ? '🌟' : stars >= 3 ? '⭐' : stars >= 1 ? '💪' : '😞';
   GameModal.show({
-    emoji: stars >= 4 ? '🏆' : '⭐',
+    emoji,
     title,
     stars,
     msg,

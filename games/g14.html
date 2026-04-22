@@ -1876,11 +1876,14 @@ function endRace() {
   document.getElementById('quiz-ovl').style.display = 'none'
 
   const stars = GameScoring.calc({correct:S.correctAnswers||0, total:(S.correctAnswers||0)+(S.wrongAnswers||0)||1, wrong:S.wrongAnswers||0, lives:S.hp, maxLives:LIVES_MAX, bonus:S.position===1?1:0})
-  const emoji = stars >= 4 ? '🏆' : stars >= 2 ? '🥈' : '😤'
-  const title = S.position === 1 ? 'Juara 1!' : S.position === 2 ? 'Posisi 2' : 'Posisi 3'
-  const msg = stars >= 4 ? 'Luar biasa! Kamu juaranya!' :
-    stars >= 2 ? `${Math.floor(S.distance)}m ditempuh, bagus!` :
-    'Coba pilih kereta lebih cepat!'
+  const emoji = stars >= 5 ? '🏆' : stars >= 4 ? '🌟' : stars >= 3 ? '⭐' : stars >= 1 ? '💪' : '😞'
+  const posLabel = S.position === 1 ? `Juara 1! (${Math.floor(S.distance)}m)` : S.position === 2 ? `Posisi 2 (${Math.floor(S.distance)}m)` : `Posisi 3 (${Math.floor(S.distance)}m)`
+  const title = stars >= 5 ? 'Sempurna!' : stars >= 4 ? 'Hebat!' : stars >= 3 ? 'Bagus!' : stars >= 1 ? 'Coba Lagi' : 'Gagal! Coba Lagi'
+  const msg = stars >= 5 ? `Wow, kamu hebat! ${posLabel}` :
+    stars >= 4 ? `Kerja bagus! ${posLabel}` :
+    stars >= 3 ? `Lumayan, terus berlatih! ${posLabel}` :
+    stars >= 1 ? `Kamu bisa lebih baik lagi! ${posLabel}` :
+    'Jangan menyerah, ayo coba lagi!'
 
   const nextLevel = (cfg.level||5) < 30 ? () => { sessionStorage.setItem('g14Config', JSON.stringify({...cfg, level:(cfg.level||5)+1})); location.reload(); } : null;
   GameModal.show({

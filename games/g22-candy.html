@@ -96,6 +96,7 @@ canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
 <img id="monster-img" src="https://img.pokemondb.net/sprites/home/normal/psyduck.png" onerror="this.src='../assets/Pokemon/sprites/psyduck.png';this.onerror=null" style="position:fixed;z-index:40;pointer-events:none;width:clamp(140px,26vw,220px);height:auto;bottom:25%;left:0;transform:translate3d(0,0,0);display:none;image-rendering:auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,0.45))">
 
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
+<script src="../shared/rz-responsive.js?v=20260422h"></script>
 <script src="game-modal.js"></script>
 <script src="question-bank.js"></script>
 <script>
@@ -519,20 +520,26 @@ function showCandyQuiz(candy) {
   // Question label on top of panel — format based on answer type
   const isNumeric = typeof candy.q.a === 'number'
   const labelText = isNumeric ? candy.q.q + ' = ?' : candy.q.q
-  const qLabel = new PIXI.Text({ text: labelText, style: { fontSize: 17, fontWeight: '900', fill: 0xfbbf24, fontFamily: 'Fredoka One, Arial', wordWrap: true, wordWrapWidth: 260, align: 'center' } })
+  // RDE Layer 3 — responsive scaling (fall back to hardcoded if runtime missing)
+  const _rz = window.RZ
+  const fsLabel = _rz ? _rz.fontScale(17) : 17
+  const fsChip = _rz ? _rz.fontScale(11) : 11
+  const fsBtn = _rz ? _rz.fontScale(16) : 16
+  const btnMinW = _rz ? _rz.btn('sm') : 60
+  const qLabel = new PIXI.Text({ text: labelText, style: { fontSize: fsLabel, fontWeight: '900', fill: 0xfbbf24, fontFamily: 'Fredoka One, Arial', wordWrap: true, wordWrapWidth: 260, align: 'center' } })
   qLabel.anchor.set(0.5); qLabel.y = -38
   // Category chip above question
-  const catChip = new PIXI.Text({ text: `🎯 ${candy.catName}`, style: { fontSize: 11, fontWeight: '700', fill: 0xffffff, fontFamily: 'Fredoka One, Arial' } })
+  const catChip = new PIXI.Text({ text: `🎯 ${candy.catName}`, style: { fontSize: fsChip, fontWeight: '700', fill: 0xffffff, fontFamily: 'Fredoka One, Arial' } })
   catChip.anchor.set(0.5); catChip.y = -60
 
   const btnColors = [0x7c3aed, 0x6366f1, 0x8b5cf6, 0xa855f7] // uniform pastel purples
 
   // Dynamic pill sizing — measure each text first, size each button to fit, layout horizontally centered
   const padX = 14, padY = 11, gap = 8, btnH = 44
-  const textStyle = { fontSize: 16, fontWeight: '900', fill: 0xffffff, fontFamily: 'Fredoka One, Arial', wordWrap: true, wordWrapWidth: 110, align: 'center' }
+  const textStyle = { fontSize: fsBtn, fontWeight: '900', fill: 0xffffff, fontFamily: 'Fredoka One, Arial', wordWrap: true, wordWrapWidth: 110, align: 'center' }
   const textObjs = choices.map(c => new PIXI.Text({ text: String(c), style: textStyle }))
   textObjs.forEach(t => t.anchor.set(0.5))
-  const btnWidths = textObjs.map(t => Math.max(60, Math.ceil(t.width) + padX * 2))
+  const btnWidths = textObjs.map(t => Math.max(btnMinW, Math.ceil(t.width) + padX * 2))
   const totalW = btnWidths.reduce((a, b) => a + b, 0) + gap * (choices.length - 1)
   const panelW = Math.max(270, totalW + 32)
 
@@ -572,7 +579,7 @@ function showCandyQuiz(candy) {
         bg.tint = 0x22c55e
         // Combo feedback text
         const catchText = S.combo >= 5 ? '🔥 SUPER x' + S.combo + '!' : S.combo >= 3 ? '⚡ COMBO x' + S.combo + '!' : 'Dapat!'
-        const ct = new PIXI.Text({ text: catchText, style: { fontSize: S.combo >= 3 ? 24 : 18, fontWeight: '900', fill: S.combo >= 5 ? 0xfbbf24 : S.combo >= 3 ? 0x3b82f6 : 0x22c55e, fontFamily: 'Fredoka One' } })
+        const ct = new PIXI.Text({ text: catchText, style: { fontSize: _rz ? _rz.fontScale(S.combo >= 3 ? 24 : 18) : (S.combo >= 3 ? 24 : 18), fontWeight: '900', fill: S.combo >= 5 ? 0xfbbf24 : S.combo >= 3 ? 0x3b82f6 : 0x22c55e, fontFamily: 'Fredoka One' } })
         ct.anchor.set(0.5); ct.x = candy.x; ct.y = candy.y - 50
         fxLayer.addChild(ct)
         S.particles.push({ g: ct, vx: 0, vy: -1.5, grav: 0, life: 1, decay: 0.02 })
@@ -592,7 +599,7 @@ function showCandyQuiz(candy) {
         S.combo = 0
         sfxWrong()
         bg.tint = 0xef4444
-        const wrongText = new PIXI.Text({ text: '❌ = ' + correct, style: { fontSize: 16, fontWeight: '700', fill: 0xef4444, fontFamily: 'Fredoka One' } })
+        const wrongText = new PIXI.Text({ text: '❌ = ' + correct, style: { fontSize: _rz ? _rz.fontScale(16) : 16, fontWeight: '700', fill: 0xef4444, fontFamily: 'Fredoka One' } })
         wrongText.anchor.set(0.5); wrongText.x = candy.x; wrongText.y = candy.y - 50
         fxLayer.addChild(wrongText)
         S.particles.push({ g: wrongText, vx: 0, vy: -1, grav: 0, life: 1, decay: 0.02 })
@@ -937,11 +944,16 @@ function endGame() {
       try { sessionStorage.setItem('g22Config', JSON.stringify({ level: cfg.level + 1 })) } catch(_){}
       location.reload()
     } : null
+    const info = `🍬 ${S.score} poin | 🔥 Combo max: ${S.maxCombo} | Tangkap: ${S.totalCaught} | Lepas: ${S.totalMissed}`
+    const title = stars >= 5 ? 'Sempurna!' : stars >= 4 ? 'Hebat!' : stars >= 3 ? 'Bagus!' : stars >= 1 ? 'Coba Lagi' : 'Gagal! Coba Lagi'
+    const emoji = stars >= 5 ? '🏆' : stars >= 4 ? '🌟' : stars >= 3 ? '⭐' : stars >= 1 ? '💪' : '😞'
+    const msg = stars >= 5 ? `Wow, kamu hebat! ${info}` :
+      stars >= 4 ? `Kerja bagus! ${info}` :
+      stars >= 3 ? `Lumayan, terus berlatih! ${info}` :
+      stars >= 1 ? `Kamu bisa lebih baik lagi! ${info}` :
+      `Jangan menyerah, ayo coba lagi! ${info}`
     GameModal.show({
-      emoji: stars >= 4 ? '🏆' : '🍬',
-      title: stars >= 3 ? 'Hebat!' : 'Coba Lagi!',
-      stars,
-      msg: `🍬 ${S.score} poin | 🔥 Combo max: ${S.maxCombo} | Tangkap: ${S.totalCaught} | Lepas: ${S.totalMissed}`,
+      emoji, title, stars, msg,
       onNext: nextLevel,
       onAgain: () => location.reload(),
       onBack: () => goBack()

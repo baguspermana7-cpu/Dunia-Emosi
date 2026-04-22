@@ -1392,11 +1392,18 @@ function endBattleWin(){
   const tid = battle.trainer.id;
   // Show badge zoom animation, then modal
   showBadgeZoom(trainer.badge, trainer.name, trainer.gym).then(() => {
+    const info = `Lencana ${trainer.name} diraih! Total: ${total} badges`
+    const title = stars >= 5 ? 'Sempurna!' : stars >= 4 ? 'Hebat!' : stars >= 3 ? 'Bagus!' : stars >= 1 ? 'Coba Lagi' : 'Gagal! Coba Lagi'
+    const msg = stars >= 5 ? `Wow, kamu hebat! ${info}` :
+      stars >= 4 ? `Kerja bagus! ${info}` :
+      stars >= 3 ? `Lumayan, terus berlatih! ${info}` :
+      stars >= 1 ? `Kamu bisa lebih baik lagi! ${info}` :
+      'Jangan menyerah, ayo coba lagi!'
     GameModal.show({
-      emoji: trainer.badge,
-      title: 'Kamu Menang!',
+      emoji: stars >= 3 ? trainer.badge : (stars >= 1 ? '💪' : '😞'),
+      title,
       stars,
-      msg: `Lencana ${trainer.name} diraih! Total: ${total} badges`,
+      msg,
       onAgain: ()=>{ battle=null; msgQueue=[]; waitingForTap=false; document.getElementById('gym-select').style.display='flex'; startBattle(tid); },
       onBack: ()=>{ battle=null; msgQueue=[]; waitingForTap=false; document.getElementById('gym-select').style.display='flex'; }
     });
@@ -1410,10 +1417,10 @@ function endBattleLose(){
   bgmStop()
   const tid = battle?.trainer?.id;
   GameModal.show({
-    emoji: '💔',
-    title: 'Kalah...',
-    stars: 1,
-    msg: 'Jangan menyerah! Coba lagi!',
+    emoji: '😞',
+    title: 'Gagal! Coba Lagi',
+    stars: 0,
+    msg: 'Jangan menyerah, ayo coba lagi!',
     onAgain: ()=>{ battle=null; msgQueue=[]; waitingForTap=false; document.getElementById('gym-select').style.display='flex'; if(tid) startBattle(tid); },
     onBack: ()=>{ battle=null; msgQueue=[]; waitingForTap=false; document.getElementById('gym-select').style.display='flex'; }
   });

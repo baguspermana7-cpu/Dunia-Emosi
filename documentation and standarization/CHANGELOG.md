@@ -1,5 +1,45 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-22 — Character train wheel recalibration + screen-edge safety (Task #45)
+
+### Fixed
+- **Character sprites re-processed via rembg v2** with new dimensions:
+  - `caseyjr-body.webp`: 272×199 (was 272×198 — negligible)
+  - `linus-body.webp`: **130×101** (was 264×173 — 50% smaller, near 1:1 aspect)
+  - `jz711-body.webp`: 512×128 (was 512×71 — taller)
+  - `malivlak-body.webp`: 512×256 (was 512×171 — taller)
+- **Recalibrated wheel positions + spriteHeight** in both `games/trains-db.js` (TRAIN_CATS[0].trains) and `games/g16-pixi.html` (G16_CHAR_CONFIGS):
+  - **Casey JR** — kept `spriteHeight:90`; wheels re-spaced evenly: `[[-40,-8,10],[-14,-8,10],[13,-8,10],[40,-8,10]]` (radius 10, uniform).
+  - **Linus Brave** — `spriteHeight` 88 → **85** (source 130×101 is near square, rendered 109×85). Wheels compacted: `[[-40,-5,6],[-22,-8,9],[-7,-8,9],[8,-8,9],[23,-8,9]]`. Smoke y −108 → −105.
+  - **Dragutin JZ 711** — `spriteHeight` 52 → **75** (rendered 300×75, tram now proportional). Wheels narrowed into sprite bounds: `[[-120,-3,7],[-95,-3,7],[95,-3,7],[120,-3,7]]`.
+  - **Malivlak** — `spriteHeight` 95 → **110** (rendered 220×110). Wheels re-fit to narrower 220px: `[-85..90]` range with pilot pair (r=5) + driver pair (r=11) on right. Smoke moved up y −118 → −130 and left x 118 → 90 to match taller sprite.
+- **Screen-edge safety margin** — wide character trains were clipping at viewport edges:
+  - `games/g16-pixi.html:491` — `TRAIN_SCREEN_X = Math.max(W*0.15, 180)` (was `W*0.15`). Guarantees ≥180px from left edge on small screens while still honoring viewport-relative on wide screens.
+  - `games/g15-pixi.html:604` — `TRAIN_X = 180` (was `120`). Hardcoded bump; harmless to programmatic trains.
+
+### Cache
+- `index.html` → `v=20260422h` (was `v=20260422g`). style.css + game.js both bumped.
+
+### Notes
+- Sprites are anchored bottom-center in train-character-sprite.js — wheel y negative = inside bottom edge. All positions verified against new render widths: Casey 123px, Linus 109px, Dragutin 300px, Malivlak 220px.
+- `smokePos` for Casey kept at y=−110 (spriteHeight unchanged). Dragutin smoke stays null (electric tram — no steam).
+- Programmatic trains in G16 `TRAIN_STYLES[4-9]` unaffected — no changes to their build paths.
+
+---
+
+## 2026-04-22 — RDE Step 7: G22 Pixi fontSize/btn integrates RZ runtime
+
+### Changed
+- **G22 Monster Candy** (`games/g22-candy.html`) — Included `shared/rz-responsive.js?v=20260422h` (line 99). Quiz panel `showCandyQuiz()` now consumes `RZ.fontScale()` for question label (17), category chip (11), answer button text (16), wrong-answer text (16), combo catch text (18/24); answer button min-width floor uses `RZ.btn('sm')` in place of hardcoded `60`.
+- **Fallback pattern** — Each RZ call guarded with `_rz ? _rz.fontScale(N) : N` so the game degrades gracefully if the runtime script fails to load (offline, CDN block, etc.).
+- **Integration points**: 6 `_rz.*` references (4 named consts + 2 inline ternary) in the quiz panel render path.
+
+### Notes
+- Only quiz panel render path touched. Background flower/particle fontSize values left hardcoded — they're decorative spawns, not UI legibility critical.
+- No CSS changes in this step; Layer 3 JS runtime only.
+
+---
+
 ## 2026-04-22 — RDE Step 5: G2/G5/G7/G9 migrated
 
 ### Changed

@@ -14,14 +14,15 @@
 - **Touches**: `games/game-modal.js` `GameModal.show()` + `game.js` showResult/showGameResult wrappers.
 - **Scope**: affects ALL games that use the shared modal.
 
-### Task #45 — Character Train Sprite Re-processed (cumulative feedback)
-- ⬜ **JZ 711 Dragutin**: first pass 512×71 may have white edges / uncropped. Re-processed 2026-04-22 06:53 via `isnet-general-use` + `alpha_matting=True` → now 512×128. Needs visual verification.
-- ⬜ **Malivlak (JZ 62)**: white around edges not fully removed. Re-processed → 512×256. Verify cleanly transparent.
-- ⬜ **Casey JR**: re-processed → 272×199 (negligible change).
-- ⬜ **Linus Brave**: re-processed → 130×101 (BIG CHANGE from 264×173!). All `wheelPositions` in trains-db.js + G16_CHAR_CONFIGS need recalibration against new 130-wide sprite.
-- ⬜ **Wheel positions proportional to actual wheels in sprite** — user flagged Malivlak wheels too big + misaligned. Need to trace actual wheel pixel coordinates in the sprite and map via spriteHeight scale.
-- ⬜ **Train placement clipped at screen edge** — character trains (especially wide ones like Dragutin 512→~270px rendered, Malivlak 512→~285px rendered) overflow viewport. Increase TRAIN_SCREEN_X in g15-pixi.html/g16-pixi.html OR add container bounds check. Add safe margin.
-- **Touches**: `games/trains-db.js`, `games/g15-pixi.html`, `games/g16-pixi.html` (G16_CHAR_CONFIGS).
+### Task #45 — Character Train Sprite Re-processed (cumulative feedback) ✅ DONE 2026-04-22
+- ✅ **JZ 711 Dragutin**: re-processed 2026-04-22 06:53 via `isnet-general-use` + `alpha_matting=True` → 512×128. spriteHeight 52 → **75**, wheels narrowed to `[-120..-95, 95..120]` within sprite bounds.
+- ✅ **Malivlak (JZ 62)**: re-processed → 512×256. spriteHeight 95 → **110** (rendered 220×110). Wheels re-fit 220px range: `[-85..90]` with pilot pair (r=5) + driver pair (r=11). Smoke moved y=-118→-130, x=118→90.
+- ✅ **Casey JR**: source 272×199; kept spriteHeight:90; wheels re-spaced `[-40,-14,13,40]` radius=10 uniform.
+- ✅ **Linus Brave**: new source 130×101 (50% smaller). spriteHeight 88 → **85** (rendered 109×85). Wheels compacted to `[-40..23]` with pilot r=6 + drivers r=9. Smoke y=-108→-105.
+- ✅ **Wheel positions proportional** — all 4 trains now mapped against new render widths: Casey 123px, Linus 109px, Dragutin 300px, Malivlak 220px. Wheels stay inside sprite bottom edge.
+- ✅ **Screen-edge safety margin**: `g16-pixi.html:491` → `TRAIN_SCREEN_X=Math.max(W*0.15, 180)`. `g15-pixi.html:604` → `TRAIN_X=180` (was 120).
+- ✅ **Cache bump**: `index.html` → `v=20260422h`.
+- **Touched**: `games/trains-db.js`, `games/g15-pixi.html`, `games/g16-pixi.html`, `index.html`. See CHANGELOG 2026-04-22 section.
 
 ### Plan order
 1. Fix #44 modal engine first (P0, visible bug with wrong success message).
@@ -225,7 +226,7 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 - ✅ **Step 5 G9** (2026-04-22) — `.g9-letter-display`/`.g9-instruction`/`.g9-canvas-wrap`/`.g9-result`/`.g9-stars`/`.g9-progress` tokenized + clamp. Canvas pixel-math wrap sizes retained for 480/360/320. Removed 2 @media letter-display overrides.
 - 🧮 **Token count**: `var(--rz-` references grew 62 → 112 (+50). Brace balance verified 2767/2767.
 - ✅ **Step 6** — `shared/rz-responsive.js` shipped with `window.RZ` API mirroring CSS `--rz-scale` formula. PixiJS games opt-in per Step 7.
-- ⬜ **Step 7** — Pixi migration (G14/G15/G16/G19/G20/G22) — wire `RZ.btn(kind)`/`RZ.fontScale(base)` into sprite/text sizing. Deferred, low priority.
+- 🔧 **Step 7 (partial, 2026-04-22)** — G22 Monster Candy (`games/g22-candy.html`) integrated: script include line 99; quiz panel `showCandyQuiz()` consumes `RZ.fontScale(17/11/16/18/24)` + `RZ.btn('sm')` button floor via `_rz ? ... : fallback` guards (6 call sites at lines 525-528, 582, 602). Remaining Pixi games: G14/G15/G16/G19/G20.
 
 ### G15+G16 Character Trains: Casey JR + Linus Brave (Task #43, EXECUTED 2026-04-22) ✅
 - ✅ **Asset prep** (2026-04-21 23:58): `caseyjr-body.webp` (272×198) + `linus-body.webp` (264×173), bg-removed via rembg.

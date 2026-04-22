@@ -601,7 +601,7 @@ let bgBirds = [];
 let rainbow = null;
 let LANE_Y = [];
 let W = 0, H = 0;
-const TRAIN_X = 120;
+const TRAIN_X = 180; // Safety margin for wide character trains (rendered >200px)
 let mathBoxTimer = 0;
 const MATH_BOX_INTERVAL = () => 200 + Math.floor(Math.random() * 160);
 let nextMathAt = MATH_BOX_INTERVAL();
@@ -1619,19 +1619,20 @@ function showWin() {
     : wrongTaps === 0
       ? `Sempurna! Tidak ada kesalahan! Matematika Benar: ${mathCorrect}`
       : `${wrongTaps} kesalahan. Matematika benar: ${mathCorrect}. Terus berlatih!`;
-  const title = finalStars >= 5 ? 'Sempurna!' : finalStars >= 4 ? 'Hebat Sekali!' : finalStars >= 3 ? 'Bagus!' : finalStars >= 1 ? 'Coba Lagi' : 'Gagal!';
+  const title = finalStars >= 5 ? 'Sempurna!' : finalStars >= 4 ? 'Hebat!' : finalStars >= 3 ? 'Bagus!' : finalStars >= 1 ? 'Coba Lagi' : 'Gagal! Coba Lagi';
+  const emoji = finalStars >= 5 ? '🏆' : finalStars >= 4 ? '🌟' : finalStars >= 3 ? '⭐' : finalStars >= 1 ? '💪' : '😞';
   const nextLevel = LEVEL < 30 ? () => { sessionStorage.setItem('g15Config', JSON.stringify({level: LEVEL + 1})); location.reload(); } : null;
   GameModal.show({
-    emoji: finalStars >= 4 ? '🏆' : '⭐', title, stars: finalStars, msg,
+    emoji, title, stars: finalStars, msg,
     onNext: nextLevel, onAgain: () => restartGame(), onBack: () => goBack()
   });
 }
 
 function showLose() {
   gameRunning = false;
-  sessionStorage.setItem('g15Result', JSON.stringify({ stars: 1 }));
+  sessionStorage.setItem('g15Result', JSON.stringify({ stars: 0 }));
   GameModal.show({
-    emoji: '💔', title: 'Habis Nyawa!', stars: 1, msg: 'Jangan menyerah, coba lagi!',
+    emoji: '😞', title: 'Gagal! Coba Lagi', stars: 0, msg: 'Jangan menyerah, ayo coba lagi!',
     onAgain: () => restartGame(), onBack: () => goBack()
   });
 }

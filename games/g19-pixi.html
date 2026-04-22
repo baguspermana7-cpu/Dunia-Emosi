@@ -981,11 +981,16 @@ function showWin() {
       try { sessionStorage.setItem('g19Config', JSON.stringify({ level: S.level + 1 })) } catch(_){}
       location.reload()
     } : null
+    const info = `${S.pipesCleared}/${S.totalPipes} pipa | ⭐ ${S.correctAnswers} benar`
+    const title = stars >= 5 ? 'Sempurna!' : stars >= 4 ? 'Hebat!' : stars >= 3 ? 'Bagus!' : stars >= 1 ? 'Coba Lagi' : 'Gagal! Coba Lagi'
+    const emoji = stars >= 5 ? '🏆' : stars >= 4 ? '🌟' : stars >= 3 ? '⭐' : stars >= 1 ? '💪' : '😞'
+    const msg = stars >= 5 ? `Wow, kamu hebat! ${info}` :
+      stars >= 4 ? `Kerja bagus! ${info}` :
+      stars >= 3 ? `Lumayan, terus berlatih! ${info}` :
+      stars >= 1 ? `Kamu bisa lebih baik lagi! ${info}` :
+      `Jangan menyerah, ayo coba lagi! ${info}`
     GameModal.show({
-      emoji: stars >= 4 ? '🏆' : '⭐',
-      title: stars >= 5 ? 'SEMPURNA!' : stars >= 4 ? 'Hebat Sekali!' : 'Level Selesai!',
-      stars,
-      msg: `${S.pipesCleared}/${S.totalPipes} pipa | ⭐ ${S.correctAnswers} benar`,
+      emoji, title, stars, msg,
       onNext: nextLevel,
       onAgain: () => location.reload(),
       onBack: () => goBack()
