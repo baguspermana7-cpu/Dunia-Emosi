@@ -32,13 +32,14 @@ const TRAIN_CATS = [
        desc:'JZ 711 Dragutin — Tram listrik artikulasi Yugoslavia!'},
       {key:'jz62_malivlak', name:'Malivlak', sub:'JZ 62 Steam + 3 Cars', emoji:'🚂',
        isCharacter:true, spriteUrl:'../assets/train/malivlak-body.webp',
-       wheelLayout:'passenger-train', spriteHeight:143,
-       // Sprite 600×298 (rails cleaned). spriteHeight 110→143 (1.3x). Wheels r reduced 0.8x.
+       wheelLayout:'passenger-train', spriteHeight:172,
+       // Sprite 700×393 (rails stripped). spriteHeight 143→172 (user 1.2x). Render ~307×172.
+       // Wheels scaled to new render width across 3 cars + loco on right.
        wheelPositions:[
-         [-76,-11,6],[-56,-11,6],[-42,-11,6],[-23,-11,6],
-         [-9,-11,6],[12,-11,6],[32,-7,4],[43,-7,4],[56,-11,8],[80,-11,8]
+         [-120,-13,7],[-98,-13,7],[-75,-13,7],[-55,-13,7],
+         [-32,-13,7],[-12,-13,7],[20,-9,5],[32,-9,5],[55,-13,9],[88,-13,9]
        ],
-       smokePos:[82,-160],
+       smokePos:[95,-188],
        bodyColor:'#4a2040', accColor:'#c0392b', kmh:48, baseSpeed:1.75, boostMult:1.50, boostDur:1550,
        desc:'Malivlak — Kereta uap dengan 3 gerbong, klasik Yugoslavia!'},
     ]
