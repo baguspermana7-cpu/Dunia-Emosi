@@ -7492,49 +7492,67 @@ function g13Answer(val, btn) {
   const choicesEl = document.getElementById('g13-choices')
   if (choicesEl) choicesEl.querySelectorAll('.g13-choice-btn').forEach(b => b.disabled = true)
 
-  if (correct) {
-    playCorrect()
-    vibrate(12)
-    s.wildHp = Math.max(0, s.wildHp - s.cfg.damage)
-    s.evoPoints = Math.min(s.evoNeeded, s.evoPoints + 1)
-    s.correctThisExchange++
-    s.stars++
-    const starDisp = document.getElementById('g13-stars'); if(starDisp) starDisp.textContent = `⭐ ${s.stars}`
-    // Player lunge + attack sound
-    const atkType = s.evolved ? s.chain.evolved.type : s.chain.player.type
-    playAttackSound(atkType)
-    g13SpawnAttackEffect(atkType, true)
-    const playerSlugG13 = s.evolved2 ? s.chain.evolved2.slug : (s.evolved ? s.chain.evolved.slug : s.chain.player.slug)
-    showMovePopup(document.getElementById('g13-pspr-wrap'), getPokeMove(playerSlugG13, atkType), pokeTypeColor(atkType))
-    // Attacker aura (DOM) — Pixi path reserved for g13b-pixi-canvas
-    spawnTypeAura(document.getElementById('g13-pspr-wrap'), atkType)
-    const pspr = document.getElementById('g13-pspr')
-    if (pspr) { pspr.classList.remove('spr-atk'); void pspr.offsetWidth; pspr.classList.add('spr-atk'); setTimeout(()=>pspr.classList.remove('spr-atk'),350) }
-    // Wild hit animation + type hit FX
-    const wspr = document.getElementById('g13-wspr')
-    setTimeout(() => {
-      if (wspr) {
-        wspr.classList.remove('spr-hit','spr-flash'); void wspr.offsetWidth
-        wspr.classList.add('spr-hit','spr-flash')
-        setTimeout(()=>wspr.classList.remove('spr-hit','spr-flash'),450)
-      }
-      g13TypeHitFX(atkType, true)
-    }, 300)
-    // Flash
-    g13TriggerFlash()
-    // Particle burst
-    try { spawnParticleBurst(btn.getBoundingClientRect().left + btn.offsetWidth/2, btn.getBoundingClientRect().top) } catch(e) {}
-  } else {
-    playWrong()
-    vibrate(30)
-    // Player cringe
-    const pspr = document.getElementById('g13-pspr')
-    if (pspr) { pspr.classList.remove('spr-hit'); void pspr.offsetWidth; pspr.classList.add('spr-hit'); setTimeout(()=>pspr.classList.remove('spr-hit'),400) }
-  }
+  // Wrap FX/audio in try so an exception never blocks the transition scheduler below.
+  // Task #57 — stuck state "enemy disappears but no modal" was traceable to an
+  // exception in the sync FX path preventing the setTimeout() from being scheduled.
+  try {
+    if (correct) {
+      playCorrect()
+      vibrate(12)
+      s.wildHp = Math.max(0, s.wildHp - s.cfg.damage)
+      s.evoPoints = Math.min(s.evoNeeded, s.evoPoints + 1)
+      s.correctThisExchange++
+      s.stars++
+      const starDisp = document.getElementById('g13-stars'); if(starDisp) starDisp.textContent = `⭐ ${s.stars}`
+      // Player lunge + attack sound
+      const atkType = s.evolved ? s.chain.evolved.type : s.chain.player.type
+      playAttackSound(atkType)
+      g13SpawnAttackEffect(atkType, true)
+      const playerSlugG13 = s.evolved2 ? s.chain.evolved2.slug : (s.evolved ? s.chain.evolved.slug : s.chain.player.slug)
+      showMovePopup(document.getElementById('g13-pspr-wrap'), getPokeMove(playerSlugG13, atkType), pokeTypeColor(atkType))
+      // Attacker aura (DOM) — Pixi path reserved for g13b-pixi-canvas
+      spawnTypeAura(document.getElementById('g13-pspr-wrap'), atkType)
+      const pspr = document.getElementById('g13-pspr')
+      if (pspr) { pspr.classList.remove('spr-atk'); void pspr.offsetWidth; pspr.classList.add('spr-atk'); setTimeout(()=>pspr.classList.remove('spr-atk'),350) }
+      // Wild hit animation + type hit FX
+      const wspr = document.getElementById('g13-wspr')
+      setTimeout(() => {
+        if (wspr) {
+          wspr.classList.remove('spr-hit','spr-flash'); void wspr.offsetWidth
+          wspr.classList.add('spr-hit','spr-flash')
+          setTimeout(()=>wspr.classList.remove('spr-hit','spr-flash'),450)
+        }
+        g13TypeHitFX(atkType, true)
+      }, 300)
+      // Flash
+      g13TriggerFlash()
+      // Particle burst
+      try { spawnParticleBurst(btn.getBoundingClientRect().left + btn.offsetWidth/2, btn.getBoundingClientRect().top) } catch(e) {}
+    } else {
+      playWrong()
+      vibrate(30)
+      // Player cringe
+      const pspr = document.getElementById('g13-pspr')
+      if (pspr) { pspr.classList.remove('spr-hit'); void pspr.offsetWidth; pspr.classList.add('spr-hit'); setTimeout(()=>pspr.classList.remove('spr-hit'),400) }
+    }
+  } catch(e) { console.error('[G13] FX path crashed:', e) }
 
-  g13UpdateHpBars()
-  g13UpdateEvoBar()
+  try { g13UpdateHpBars() } catch(e) {}
+  try { g13UpdateEvoBar() } catch(e) {}
   s.attackIdx++
+
+  // Task #57 failsafe — if wildHp hit 0, schedule an independent watchdog that
+  // force-calls g13Victory if the primary transition below hasn't fired within
+  // 1800ms (covers any throw / blocked-event-loop case). g13Victory is idempotent.
+  if (s.wildHp <= 0 && s.phase !== 'victory') {
+    if (g13ResultTimeout) { clearTimeout(g13ResultTimeout); g13ResultTimeout = null }
+    setTimeout(() => {
+      if (g13State === s && s.wildHp <= 0 && s.phase !== 'victory' && s.phase !== 'defeat') {
+        console.warn('[G13] victory watchdog fired — forcing modal')
+        g13Victory()
+      }
+    }, 1800)
+  }
 
   setTimeout(() => {
     if (s.wildHp <= 0) {
@@ -7826,10 +7844,12 @@ function _g13PlayEvoSfxFallback() {
 
 function g13Victory() {
   const s = g13State
+  // Idempotency guard — Task #57 watchdog + primary path may both reach this.
+  if (s.phase === 'victory' || s.phase === 'defeat') return
   s.phase = 'victory'
   battleBgmStop()
-  playCorrect()
-  vibrate([30, 20, 40])
+  try { playCorrect() } catch(_){}
+  try { vibrate([30, 20, 40]) } catch(_){}
 
   // Wild defeat animation
   const wspr = document.getElementById('g13-wspr')
@@ -7837,38 +7857,53 @@ function g13Victory() {
 
   // Victory stars: evolved2 = 5★, evolved once = 4★, no evo = 3★
   // Unified scoring via bonus modifier (perfect win base = 5, deduct per missed evolution)
-  const _g13EvoPenalty = s.evolved2 ? 0 : s.evolved ? -1 : -2
-  const perfStars = GameScoring.calc({ correct: 1, total: 1, bonus: _g13EvoPenalty })
-  const _g13lv = s.lv || 1
-  const _g13stars = perfStars >= 5 ? 3 : perfStars >= 4 ? 2 : 1
-  setLevelComplete(13, _g13lv, _g13stars)
-  saveStars()
-  updateGameStarDisplay()
+  let perfStars = 3
+  let _g13lv = 1
+  try {
+    const _g13EvoPenalty = s.evolved2 ? 0 : s.evolved ? -1 : -2
+    perfStars = GameScoring.calc({ correct: 1, total: 1, bonus: _g13EvoPenalty })
+    _g13lv = s.lv || 1
+    const _g13stars = perfStars >= 5 ? 3 : perfStars >= 4 ? 2 : 1
+    setLevelComplete(13, _g13lv, _g13stars)
+    saveStars()
+    updateGameStarDisplay()
+  } catch(e) { console.error('[G13] victory scoring crashed:', e) }
 
   if (g13ResultTimeout) { clearTimeout(g13ResultTimeout); g13ResultTimeout = null }
   g13ResultTimeout = setTimeout(() => {
     g13ResultTimeout = null
-    const finalForm = s.evolved2 ? s.chain.evolved2 : s.evolved ? s.chain.evolved : null
-    const msg = s.evolved2
-      ? `${s.chain.player.name}→${s.chain.evolved.name}→${s.chain.evolved2.name}! Evolusi sempurna!`
-      : s.evolved
-        ? `${s.chain.player.name} berhasil berevolusi menjadi ${s.chain.evolved.name}!`
-        : `${s.chain.wild.name} dikalahkan — tapi ${s.chain.player.name} belum berevolusi!`
-    const btns = [
-      {label:'Main Lagi 🔄', action:()=>initGame13()},
-    ]
-    if((_g13lv||1) < 55) btns.unshift({label:'Level Berikutnya ➡️', action:()=>startGameWithLevel((_g13lv||1)+1)})
-    btns.push({label:'Kembali ⌂', action:()=>exitGame()})
-    showGameResult({ emoji:'🏆', title: finalForm ? `${finalForm.name} Menang!` : 'Kamu Menang!', stars:perfStars, msg, buttons:btns })
+    try {
+      const finalForm = s.evolved2 ? s.chain.evolved2 : s.evolved ? s.chain.evolved : null
+      const msg = s.evolved2
+        ? `${s.chain.player.name}→${s.chain.evolved.name}→${s.chain.evolved2.name}! Evolusi sempurna!`
+        : s.evolved
+          ? `${s.chain.player.name} berhasil berevolusi menjadi ${s.chain.evolved.name}!`
+          : `${s.chain.wild.name} dikalahkan — tapi ${s.chain.player.name} belum berevolusi!`
+      const btns = [
+        {label:'Main Lagi 🔄', action:()=>initGame13()},
+      ]
+      if((_g13lv||1) < 55) btns.unshift({label:'Level Berikutnya ➡️', action:()=>startGameWithLevel((_g13lv||1)+1)})
+      btns.push({label:'Kembali ⌂', action:()=>exitGame()})
+      showGameResult({ emoji:'🏆', title: finalForm ? `${finalForm.name} Menang!` : 'Kamu Menang!', stars:perfStars, msg, buttons:btns })
+    } catch(e) {
+      console.error('[G13] victory modal crashed — using minimal fallback:', e)
+      try {
+        showGameResult({ emoji:'🏆', title:'Kamu Menang!', stars:perfStars, msg:'', buttons:[
+          {label:'Main Lagi 🔄', action:()=>initGame13()},
+          {label:'Kembali ⌂', action:()=>exitGame()}
+        ]})
+      } catch(_){}
+    }
   }, 1000)
 }
 
 function g13Defeat() {
   const s = g13State
+  if (s.phase === 'victory' || s.phase === 'defeat') return
   s.phase = 'defeat'
   battleBgmStop()
-  playWrong()
-  vibrate([50, 30, 50])
+  try { playWrong() } catch(_){}
+  try { vibrate([50, 30, 50]) } catch(_){}
 
   const pspr = document.getElementById('g13-pspr')
   if (pspr) { pspr.classList.add('spr-defeat') }
@@ -8247,18 +8282,25 @@ function g13bKillWild() {
   const wasLegendary = s.isLegendary
   s.kills += earnedKills
   if (s.isLegendary) { s.legendaryIdx++; s.isLegendary = false }
-  g13bUpdateKills()
+  try { g13bUpdateKills() } catch(_){}
 
   // Wild sprite: flash white then shrink (absorbed)
   const wspr = document.getElementById('g13b-wspr')
   if (wspr) { wspr.classList.remove('wild-die'); void wspr.offsetWidth; wspr.classList.add('wild-die') }
 
   // Show Pokéball catch animation (legendary gets heavyball, others random)
-  g13bShowCatch(wasLegendary)
+  try { g13bShowCatch(wasLegendary) } catch(_){}
 
   // Legendary defeated → level complete; otherwise check for next legendary threshold
   if (wasLegendary) {
     setTimeout(() => g13bLevelComplete(), 1900)
+    // Task #57 failsafe — if primary transition throws/doesn't fire, force-call within 3.5s
+    setTimeout(() => {
+      if (g13bState === s && s.phase !== 'done') {
+        console.warn('[G13B] level-complete watchdog fired — forcing overlay')
+        g13bLevelComplete()
+      }
+    }, 3500)
   } else {
     const prevKills = s.kills - earnedKills
     const newKills = s.kills
@@ -8578,8 +8620,9 @@ function g13bLevelComplete() {
   // Unified scoring: kill-count tier mapped through GameScoring.calc
   // Legacy: kills≥50→5, ≥30→4, ≥15→3, ≥5→2, else 1
   const _g13bLcTier = s.kills >= 50 ? 5 : s.kills >= 30 ? 4 : s.kills >= 15 ? 3 : s.kills >= 5 ? 2 : 1
-  const stars = GameScoring.calc({ correct: 1, total: 1, bonus: _g13bLcTier - 5 })
-  vibrate([50, 30, 80, 30, 120])
+  let stars = 3
+  try { stars = GameScoring.calc({ correct: 1, total: 1, bonus: _g13bLcTier - 5 }) } catch(_){}
+  try { vibrate([50, 30, 80, 30, 120]) } catch(_){}
   try { playCorrect() } catch(e) {}
 
   // Fireworks burst on the field
@@ -8597,20 +8640,34 @@ function g13bLevelComplete() {
   }
 
   setTimeout(() => {
-    const overlay = document.getElementById('g13b-level-complete')
-    const legName = s.currentWild ? s.currentWild.name : 'Legendary'
-    const icon  = document.getElementById('g13b-lc-icon')
-    const poke  = document.getElementById('g13b-lc-pokemon')
-    const kills = document.getElementById('g13b-lc-kills')
-    const sub   = document.getElementById('g13b-lc-sub')
-    const starsEl = document.getElementById('g13b-lc-stars')
-    if (icon)    icon.textContent   = stars >= 5 ? '🏆' : stars >= 3 ? '🌟' : '⭐'
-    if (poke)    poke.textContent   = `${legName} berhasil ditaklukkan!`
-    if (kills)   kills.textContent  = s.kills
-    if (sub)     sub.textContent    = `Combo terbaik: x${s.bestCombo}  |  Pokémon: ${s.kills}`
-    if (starsEl) starsEl.textContent = '⭐'.repeat(stars) + '☆'.repeat(5 - stars)
-    if (overlay) overlay.style.display = 'flex'
+    try {
+      const overlay = document.getElementById('g13b-level-complete')
+      const legName = s.currentWild ? s.currentWild.name : 'Legendary'
+      const icon  = document.getElementById('g13b-lc-icon')
+      const poke  = document.getElementById('g13b-lc-pokemon')
+      const kills = document.getElementById('g13b-lc-kills')
+      const sub   = document.getElementById('g13b-lc-sub')
+      const starsEl = document.getElementById('g13b-lc-stars')
+      if (icon)    icon.textContent   = stars >= 5 ? '🏆' : stars >= 3 ? '🌟' : '⭐'
+      if (poke)    poke.textContent   = `${legName} berhasil ditaklukkan!`
+      if (kills)   kills.textContent  = s.kills
+      if (sub)     sub.textContent    = `Combo terbaik: x${s.bestCombo}  |  Pokémon: ${s.kills}`
+      if (starsEl) starsEl.textContent = '⭐'.repeat(stars) + '☆'.repeat(5 - stars)
+      if (overlay) overlay.style.display = 'flex'
+    } catch(e) {
+      console.error('[G13B] level-complete overlay crashed — force-display:', e)
+      const overlay = document.getElementById('g13b-level-complete')
+      if (overlay) overlay.style.display = 'flex'
+    }
   }, 800)
+  // Task #57 failsafe — force overlay visible at 2.2s regardless of inner setTimeout outcome
+  setTimeout(() => {
+    const overlay = document.getElementById('g13b-level-complete')
+    if (overlay && getComputedStyle(overlay).display === 'none') {
+      console.warn('[G13B] level-complete overlay watchdog — forcing display:flex')
+      overlay.style.display = 'flex'
+    }
+  }, 2200)
 }
 
 // ============================================================

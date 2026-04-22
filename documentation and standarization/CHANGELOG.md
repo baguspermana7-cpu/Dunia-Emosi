@@ -1,5 +1,234 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-22 — G15/G16 rail-anchor + 5% TRAIN_X (Tasks #60, #59)
+
+### User mandate
+Screenshot: Casey JR wheels floating above rail in G16. User: "ini masih posisinya terlalu ke atas. Jadi terlihat terbang tidak berjalan di rail" + "jarak 5% dari total lebar layar".
+
+### New engine helpers (`games/train-character-sprite.js`)
+- `CharacterTrain.wheelAnchor(cfg)` — returns Y offset of LOWEST wheel bottom, from `wheelPositions`. Replaces per-train magic `bottomPaddingOffset` with a self-reporting derivation.
+- `CharacterTrain.computeTrainX(cfg, viewportWidth, pct)` — returns TRAIN_X targeting `pct` of viewport (default 5%), clamped to the train's leftmost wheel safe-min.
+
+### Algorithm
+```
+railSurfaceY (G15) = LANE_Y[playerLane] + 14  // top of upper rail line in lane
+railSurfaceY (G16) = getTrackY(H) - 5          // top of rail tie strip
+trainContainer.y = railSurfaceY - wheelAnchor(scaledCfg)
+trainContainer.x = computeTrainX(scaledCfg, W, 0.05)
+```
+Wheel bottom LANDS EXACTLY on drawn rail surface for Casey / Linus / Dragutin / Malivlak, any viewport, any RZ.trainScale().
+
+### Changed
+- **`games/g15-pixi.html`** — buildTrain character branch rewritten. initPixi + resize handlers use `max(40, W*0.05)`. Cache `train-character-sprite.js` v=e → v=f.
+- **`games/g16-pixi.html`** — buildTrain character branch rewritten. `S.trainBaseY` stored in state and reused in per-frame bob update (updateTrain ~line 1466) so character train doesn't snap to legacy `tY-18`. initPixi + resize handlers use `max(40, W*0.05)`.
+- **`index.html`** — v=ad → v=af.
+
+### Verification
+- `node --check` clean on all modified files.
+- Algorithm math per train (scale=1): Casey anchor=-2 → wheel bottom on rail. Linus=0, Dragutin=3, Malivlak=4 — all land on railSurfaceY exactly.
+
+### `bottomPaddingOffset` deprecation
+Kept for backward-compat but no longer used for rail alignment. New optional `visualOffset` field replaces it as a pure artistic nudge (default 0).
+
+---
+
+## 2026-04-22 — G13 stuck-no-modal fix (Task #57)
+
+### Summary
+Fixed G13 Evolusi Pokemon, G13b Quick Fire, and G13c Gym Badges battle flows where the enemy could faint but the victory/defeat modal never appeared. User reported: "di tengah sesi atau sudah akhir ini tiba2 berhenti stuck pokemon lawan hilang tapi nggak ada modal keluar". All three games relied on single-point `setTimeout()` chains to transition from `hp<=0` → fainting animation → result modal; any mid-sequence exception or race condition could leave the state permanently stuck at `wildHp=0, phase='player_attack', locked=true`.
+
+### Root causes (5 compounding)
+1. **`g13Answer` sync FX block** (`game.js:~7485`): long synchronous audio + DOM writes (`showMovePopup`, `spawnTypeAura`, sprite class toggles) executed **before** the 600ms transition `setTimeout`. Any throw in that block (e.g., `btn.getBoundingClientRect()` on a stale button, or `playAttackSound` on a blocked autoplay context) short-circuited the scheduler → no victory call.
+2. **`g13Victory` non-idempotent**: no entry guard — if both the primary path AND a future watchdog called it, `setLevelComplete` / `saveStars` ran twice and modal would conflict.
+3. **`g13bKillWild` single timer**: `setTimeout(() => g13bLevelComplete(), 1900)` was the only trigger for the legendary victory overlay. Background-tab throttling (Chrome clamps to 1s min for inactive tabs) or a thrown callback meant the overlay never showed.
+4. **`g13bLevelComplete` unguarded inner setTimeout**: the 800ms-delayed `overlay.style.display='flex'` block had no try/catch. A `GameScoring.calc` throw (seen once with malformed state) blocked the display call silently.
+5. **`g13c-pixi.html queueMsgs` race**: `queueMsg` auto-advances every 1200ms via `setTimeout(advanceMsg)`. A user tap during the tail of the auto-advance window drained the queue before the `finalCb` (`endBattleWin` / `endBattleLose`) fired → battle never ended.
+
+### Fix pattern — deterministic failsafe watchdogs
+Same pattern as Task #49 G16 arrival (position-deterministic state machine). The primary setTimeout path stays as the happy path; each terminal state additionally gets an independent watchdog. End-of-battle functions are now idempotent.
+
+### Fix details
+
+**`game.js` g13Answer (~L7485)**
+- Wrapped entire FX block (correct + wrong branches) in try/catch so an FX exception never blocks the scheduler below.
+- Wrapped `g13UpdateHpBars()` / `g13UpdateEvoBar()` in try/catch.
+- NEW: **victory watchdog** — if `s.wildHp <= 0 && s.phase !== 'victory'` after answer, schedule `setTimeout(() => g13Victory(), 1800)` alongside the primary 600ms transition.
+
+**`game.js` g13Victory (~L7846)**
+- NEW: idempotency guard `if (s.phase === 'victory' || s.phase === 'defeat') return`.
+- Wrapped `playCorrect` / `vibrate` / scoring / modal setTimeout body in try/catch.
+- NEW: minimal-fallback modal (stars-only) if the full modal construction throws.
+
+**`game.js` g13Defeat (~L7888)**
+- NEW: same idempotency guard + try/catch on `playWrong`/`vibrate`.
+
+**`game.js` g13bKillWild (~L8264)**
+- NEW: after legendary branch `setTimeout(() => g13bLevelComplete(), 1900)`, schedule an **independent watchdog** at 3500ms that force-calls `g13bLevelComplete()` if `phase !== 'done'`. (The function's own idempotency guard makes the double-call safe.)
+- Wrapped `g13bUpdateKills()` and `g13bShowCatch()` in try/catch.
+
+**`game.js` g13bLevelComplete (~L8614)**
+- Wrapped `GameScoring.calc` + `vibrate` in try/catch with safe defaults.
+- Wrapped the 800ms-delayed overlay-setup block in try/catch with fallback `overlay.style.display='flex'`.
+- NEW: **2200ms overlay watchdog** that force-sets `display:flex` if `getComputedStyle(overlay).display === 'none'` at that point.
+
+**`games/g13c-pixi.html` playerTurn + enemyTurn**
+- After every `queueMsgs(..., () => endBattleWin())` / `queueMsgs(..., () => endBattleLose())` call, schedule a **6000ms `battle.ended` watchdog** that force-calls the end function if the msg queue chain has broken. `endBattleWin` and `endBattleLose` already guard with `if(!battle||battle.ended) return`, so the race is safe.
+
+### Constraints honored
+- No rewrite of the battle loop — fix is additive (guards + watchdogs).
+- Primary happy path is unchanged — all correct-answer battles still flow through the existing setTimeout chain. The failsafe only fires if the stuck state is actually reached.
+- Watchdog durations are longer than the longest expected primary transition: 1800ms > 600ms (g13), 3500ms > 1900ms (g13b kill), 2200ms > 800ms (g13b overlay), 6000ms > ~5s max queueMsgs chain (g13c).
+
+### Touched
+- `game.js` — g13Answer, g13Victory, g13Defeat, g13bKillWild, g13bLevelComplete
+- `games/g13c-pixi.html` — playerTurn (correct-answer + wrong-answer branches), enemyTurn
+- `TODO-GAME-FIXES.md` — Task #57 entry
+- `documentation and standarization/CHANGELOG.md` — this entry
+
+### Verification
+- `node --check game.js` → clean (rc=0).
+- `g13c-pixi.html` — all 3 inline `<script>` blocks syntax-validated via `new Function(body)` → clean.
+
+### Edge case (logged, low risk)
+If user exits to menu/level select DURING the 1800ms/6000ms watchdog window, `showGameResult`'s existing guard (`game.js:8627` — `!activeScreen.id.startsWith('screen-game')` returns silently) correctly suppresses the modal. This is the desired behaviour — no rogue modal after exit.
+
+---
+
+## 2026-04-22 — G19 quiz bypass fix + pause-state audit (Task #55)
+
+### Summary
+Fixed a G19 (Pokemon Birds) bug where a user could bypass the collision math quiz by tapping the pause button (or opening the Ganti Pokemon bag) after hitting a pipe. Naive `togglePause()` just flipped `S.paused`, so the bird resumed flying mid-air without answering the quiz that had just blocked it. `closeBag()` had the same blind spot — closing the bag after a Pokemon swap didn't re-surface the pending quiz panel.
+
+### Fixes (games/g19-pixi.html)
+1. **`_g19HasPendingQuiz()` helper** — centralized check for `S.currentPipe && S.currentPipe.hit && !S.currentPipe.passed`.
+2. **`togglePause()` guard** (~L1139) — if pending quiz, refuse to unpause. Hide pause-overlay + bag-overlay, re-show `#quiz-panel.show`, set status text to "Jawab Soal!", keep `S.paused=true`. User must answer before resuming.
+3. **`closeBag()` guard** (~L1123) — after hiding bag, if pending quiz, re-surface quiz panel and keep S.paused=true. Swap is allowed; quiz still next.
+4. **`openBag()` cleanup** (~L1095) — hide quiz panel while bag is open so UI is clean; closeBag re-surfaces.
+
+### Audit — other games scanned for similar pause-bypass patterns
+- **G16** (`games/g16-pixi.html:2056`): GOOD. `quizActive` + `trainState==='STOPPED'` gate in ticker; pause overlay z-index 8000 covers quiz-panel z-index 200; quiz re-appears on resume.
+- **G14** (`games/g14.html:1913`): GOOD. Boost quiz is opt-in player action, not a blocking gate. `S.quizOpen` prevents re-entry.
+- **G22** (`games/g22-candy.html:983`): GOOD. `S.quizActive` gates loop; quiz panel is PIXI fxLayer overlay that persists through pause.
+- **G13c** (`games/g13c-pixi.html`): N/A. No pause button; turn-based cannot be bypassed.
+- **G13/G13b** (`game.js:1586-1610`): AMBIGUOUS — turn-based quiz is safe but `_g13bLegAutoAtk` setInterval (L8106, 14 s legendary auto-attack) ignores `state.paused` and keeps hitting the player while "paused". Filed **Task #62**.
+- **G15** (`games/g15-pixi.html:281`): AMBIGUOUS — main ticker gates correctly on `gamePaused||mathQuizActive`, BUT the 8 s math-quiz `setTimeout` (L1493) is wall-clock and auto-fails the question during pause. Filed **Task #63**.
+
+### Touched
+- `games/g19-pixi.html` — `togglePause()`, `closeBag()`, `openBag()`, new `_g19HasPendingQuiz()` helper
+- `TODO-GAME-FIXES.md` — Task #55 DONE, Tasks #62 and #63 OPEN
+- `documentation and standarization/CHANGELOG.md` (this entry)
+
+### Verification
+`node --check` clean (rc=0) on extracted inline script block from g19-pixi.html.
+
+---
+
+## 2026-04-22 — G20 controls + physics + AI (Task #56)
+
+### Summary
+G20 Ducky Volley had three user-reported defects: no mobile control hint in the start overlay, a post-jump "auto-slide" where the duck drifted backward on its own, and an AI opponent so passive that "cukup lempar ke area musuh, pasti musuhnya g bisa balikin." All three shipped in a single pass. Physics constants (GRAVITY, JUMP_POWER, MOVE_SPD), hit-type mechanics (set / shot / smash), Task #33 whoosh/swoosh SFX, BGM, pause overlay, Pokemon picker, and scoring are all untouched.
+
+### Fix 1 — Mobile control hint
+`games/g20-pixi.html` lines 123-131. A new `#mobile-hint` div lives inside `#start-overlay` alongside the existing `#pc-hint`. The single init script now branches on `'ontouchstart' in window`: touch devices see the mobile hint (drag = gerak, swipe-up or tombol kuning = lompat, tap angka = jawab), desktop sees the keyboard hint. Matches the pattern used elsewhere in the game for `#btn-jump` visibility.
+
+### Fix 2 — Auto-slide after jump
+Root cause was `S.pTargetX` persistence across touch release. When the player dragged and then lifted the finger, `_touchActive` flipped to false but `pTargetX` retained the last drag destination; the game loop's drag-lerp (`S.pvx = S.pvx*0.78 + tv*0.22`) kept easing `pvx` toward that stale target, so a drag + jump produced residual horizontal motion that read as "duck slides on its own."
+
+Changes:
+- `touchend` (line ~1173) and new `touchcancel` handler both null `S.pTargetX`.
+- Idle friction branch (line ~728) split by ground state: `S.pvx *= S.pGnd ? 0.80 : 0.94`. Stronger friction on ground kills drift on landing; lighter in-air preserves intentional jump-arc momentum.
+- `if (Math.abs(S.pvx) < 0.08) S.pvx = 0` — snap-to-rest kills sub-pixel micro-drift that would otherwise ooze the duck one-two pixels over several seconds.
+
+### Fix 3 — Smarter AI
+Previous `updateCPU` (line ~908) only predicted ball landing when `S.bx > NET_X`. While the ball was on the player's side, the CPU camped at a fixed `W*0.75`, ignoring any lob aimed at the open corner of its own half. This is exactly what the user exploited.
+
+New AI:
+- New helper `predictBallLandingX()` forward-integrates ball physics (gravity × 0.60 factor, 0.995/0.998 drag per frame, `powerup==='slow'` speed multiplier) up to 180 frames and returns projected landing X. Mirrors the main-loop ball update exactly so predictions stay in sync.
+- Target selection: if ball is on CPU side OR traveling toward CPU (`S.bvx > 0.3`), target the predicted landing. Otherwise blend predicted landing with `W*0.75` (neutral court center). Level 4+ CPUs use prediction even for ball on player side; Lv1-3 stay neutral — keeps low levels beatable.
+- Level scaling:
+  - `accuracy = min(0.55 + level*0.040, 0.92)` — cap so even Lv10 can misread occasionally.
+  - `spd = MOVE_SPD * (0.88 + level*0.012)` — CPU can't outrun player's base speed at low levels.
+  - `reactJitter = max(0.08, 0.30 - level*0.025)` — Lv1 hesitates ~30% of frames, Lv10 ~8%.
+- Misread: when the accuracy roll fails, aim is offset by `±60px * (1 - level*0.08)`. Lower levels whiff more wildly, high levels only slightly.
+- Jump: fires when ball is on CPU side, within 100px horizontal, and between NET_TOP and GROUND_Y-50. Accepts both descending balls AND fast-rising-but-high lobs (previous `bvy > 0` gate ignored the latter). Slight power variation `JUMP_POWER * (0.88 + rand*0.08)` + level-scaled commit probability `0.55 + level*0.04` so jumps don't look scripted.
+
+### Touched
+- `games/g20-pixi.html` — lines 123-131 (mobile hint), lines 722-737 (drag/friction), lines 908-985 (updateCPU rewrite + new `predictBallLandingX`), lines 1173-1183 (touchend/touchcancel target clear).
+- `TODO-GAME-FIXES.md` — Task #56 entry marked DONE, session summary count 7 → 8.
+- `documentation and standarization/CHANGELOG.md` — this entry.
+
+### Verification
+`node --check` clean on all three extracted inline `<script>` blocks (rc=0). No new external files or assets required. Task #33 SFX audio elements remain at lines 64-65 and all three hook sites (jump, smash, shot) are untouched.
+
+### Edge cases
+- Keyboard users: unchanged — `S.pTargetX` is only set by touch input, so the fix for "auto-slide" is a no-op on desktop. Keyboard left/right still drives `S.moveL` / `S.moveR` through the same lerp branch.
+- Touch users: holding a drag works identically (pTargetX tracks live). Lifting the finger now commits to a clean stop instead of carrying momentum toward the last target.
+- AI rebalance: Lv1 is still winnable — hesitation + misreads + slower movement combine to ~40-50% CPU pickup rate on typical lobs. Lv5 reads landings consistently. Lv10 should feel like a skilled opponent but never impossible (accuracy capped at 0.92, jitter never zero).
+
+---
+
+## 2026-04-22 — G16 scoring + force-arrival guard (Task #61)
+
+### Summary
+Fixed G16 (`games/g16-pixi.html`) scoring bug where a perfect run showed "Bagus! 3/5 stars" even though every station quiz was answered correctly. Root cause was a mix of `S.wrongTaps` being polluted by mini-obstacle wrong taps (minor math-quiz slips) and an edge case where the Task #49 proximity force-arrival could trigger before the final station quiz completed, under-counting `S.cleared`. Perfect play now deterministically returns 5 stars.
+
+### Fixes
+1. **`calcStars()` perfect-play guarantee** (line ~1824)
+   - If `S.cleared === S.totalObstacles` and station wrongs === 0, return 5 immediately — short-circuits `GameScoring.calc` and any downstream penalty (wrong>3 cap, time-bonus path, etc.).
+2. **Separate station vs mini wrong-tap counters** (line ~1629, `onChoiceTap`)
+   - New `S.wrongTaps_station` drives `calcStars`. `S.wrongTaps_mini` is tracked for telemetry only. Legacy `S.wrongTaps` still increments for station wrongs to keep any UI/debug code working.
+   - Mini-obstacle wrong taps are a minor slip (quick math question) and no longer demote the main star rating.
+3. **Force-arrival guard** (line ~1420, `updateTrain`)
+   - Proximity-based `triggerArrival()` now skipped if any uncleared station obstacle still lies ahead or at the train's current position. Prevents the ARRIVE state firing before the last quiz increments `S.cleared`.
+
+### Touched
+- `games/g16-pixi.html` — `calcStars()`, `onChoiceTap()` wrong-branch, `updateTrain()` force-arrival block
+- `documentation and standarization/CHANGELOG.md` (this entry)
+- `TODO-GAME-FIXES.md` (Task #61 marked DONE)
+
+### Verification
+`node --check` on the extracted inline script block returned rc=0.
+
+---
+
+## 2026-04-22 — G6 vehicle sprite mapping (Task #54)
+
+### Summary
+Fixed G6 Petualangan Mobil so the in-game top-view sprite actually matches the vehicle the player picked in the picker. Previously `buildCar()` used `cfg.carIdx || Math.floor(Math.random() * 12)` to index into a hardcoded list of 12 sport/race-car PNGs, completely ignoring `cfg.playerIcon` / `selectedVehicle`. Pick a bajaj 🛺 → still race as a random sport car. Mapping is now deterministic by emoji, with a sensible PNG for the 10 car-type emojis and an emoji-only render for the 10 non-car vehicles (bajaj, sepeda, heli, roket, etc.) that have no matching PNG.
+
+### Mapping rationale (`games/g6.html:552-571`)
+```js
+const EMOJI_TO_CAR_PNG = {
+  '🚗': 'top_car_cyan_sedan_05.png',       // Sedan — generic sedan
+  '🏎️': 'top_car_red_formula_07.png',      // Sport — red formula (iconic racer)
+  '🚙': 'top_car_white_gt_01.png',         // Jeep — white GT (closest SUV silhouette)
+  '🚚': 'top_car_white_coupe_09.png',      // Truk — fallback
+  '🚐': 'top_car_white_roadster_10.png',   // Bemo/Van — fallback
+  '🚓': 'top_car_blue_compact_11.png',     // Polisi — blue matches police blue
+  '🚕': 'top_car_yellow_sport_02.png',     // Taksi — yellow matches taxi yellow
+  '🚌': 'top_car_silver_sedan_12.png',     // Bis — fallback
+  '🚒': 'top_car_red_formula_07.png',      // Pemadam — red fire-engine
+  '🚑': 'top_car_white_track_03.png',      // Ambulan — white
+  // No PNG for: 🚜🛵🚲🛺🚀🚢🚁🚂🛸🚤 → emoji fallback
+}
+```
+
+### Why non-cars fall through to emoji
+Our only top-view PNGs are sport/race/sedan cars. Rendering a random sport car for a 🚀 rocket or 🛺 bajaj is exactly the bug we're fixing. The PIXI.Text emoji sprite is always created as a placeholder; when `carPngName == null` we skip the PNG load entirely and the emoji stays as the final sprite. This is also why the emoji placeholder needs to render immediately (not after PNG load) — prevents flash of empty sprite for non-car selections.
+
+### Guard structure
+`PIXI.Assets.load()` is now wrapped in `if (carUrl) { ... }`. If the emoji isn't in `EMOJI_TO_CAR_PNG`, no fetch, no network 404 spam. Previously every vehicle selection triggered a load attempt regardless of whether it had any chance of matching.
+
+### Touched
+- `games/g6.html` lines 552-587 (buildCar PNG selection block)
+- `documentation and standarization/CHANGELOG.md` (this entry)
+- `TODO-GAME-FIXES.md` (Task #54 marked DONE)
+
+### Verification
+`node --check` clean on the IIFE script block (rc=0).
+
+---
+
 ## 2026-04-22 — G16 collision SFX (Task #35)
 
 ### Summary

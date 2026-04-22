@@ -121,8 +121,15 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#38bdf
   <div class="start-sub" id="start-level"></div>
   <div class="start-hint">Memuat game... ⏳</div>
   <div id="pc-hint" style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:8px;display:none">Arrow Keys = Gerak | Space = Lompat | 1-4 = Jawab Quiz</div>
+  <div id="mobile-hint" style="font-size:12px;color:rgba(255,255,255,0.65);margin-top:8px;display:none;text-align:center;line-height:1.5;max-width:320px;padding:0 12px">👆 Geser kiri/kanan = Gerak<br>⬆ Tombol kuning atau Swipe ke atas = Lompat<br>🔢 Tap angka = Jawab Quiz</div>
 </div>
-<script>if(!('ontouchstart' in window))document.getElementById('pc-hint').style.display='block'</script>
+<script>
+if(!('ontouchstart' in window)){
+  document.getElementById('pc-hint').style.display='block'
+} else {
+  var _mh=document.getElementById('mobile-hint'); if(_mh) _mh.style.display='block'
+}
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
 <script src="game-modal.js"></script>
@@ -718,14 +725,20 @@ function gameLoop(ticker){
 
   // Player movement — lerp-smoothed horizontal with damping
   const spd = MOVE_SPD * (S.powerup==='speed'?1.5:1)
-  // Touch-drag drive: if finger is tracking, ease toward target X (lerp)
+  // Task #56 fix: drag target only applies while finger is actively tracking.
+  // When _touchActive goes false on touchend, pTargetX is nulled by the handler
+  // so the duck does NOT keep drifting (previously caused auto-slide after jump).
   if(S.pTargetX!=null){
     const diff=S.pTargetX-S.px
     if(Math.abs(diff)>2){ const tv=Math.max(-spd,Math.min(spd,diff*0.22)); S.pvx=S.pvx*0.78+tv*0.22 }
     else { S.pvx*=0.82; S.pTargetX=null }
   } else if(S.moveL){ S.pvx=S.pvx*0.78 + (-spd)*0.22 }
     else if(S.moveR){ S.pvx=S.pvx*0.78 + (spd)*0.22 }
-    else S.pvx*=0.86
+    else {
+      // Stronger friction on ground, lighter in-air (preserves jump arc feel).
+      S.pvx *= S.pGnd ? 0.80 : 0.94
+      if(Math.abs(S.pvx) < 0.08) S.pvx = 0 // snap to rest, kills micro-drift
+    }
   // Jump — explicit user input ONLY (no auto-jump assist). Spacebar/tap/jump-btn.
   if(S.jump&&S.pGnd){
     S.pvy=JUMP_POWER*(S.powerup==='jump'?1.4:1); S.pGnd=false
@@ -904,31 +917,88 @@ function checkHit(dx,dy,dvx,dvy,onGnd,who){
 }
 
 // ═══════════════════════════════════════════════════════════
-//  CPU AI
+//  CPU AI — Task #56 rewrite (2026-04-22)
+//  Previous AI: reactive-only, chased current ball X, never predicted landing
+//  when ball was on player's side. User reported: "cukup lempar ke area musuh,
+//  pasti musuhnya g bisa balikin, menang mudah" — lobs to open side were never
+//  defended because CPU camped at W*0.75 until ball crossed the net.
+//
+//  New AI:
+//    1. Always predicts ball-landing X using physics integration (gravity + drag).
+//    2. Proactively moves to landing spot BEFORE ball crosses net.
+//    3. Reaction-quality scales with level: lv1=coarse/laggy, lv5+=crisp.
+//    4. Randomized jump timing (not every frame deterministic).
+//    5. Missed-read frequency gives player a fair chance even at high levels.
 // ═══════════════════════════════════════════════════════════
+function predictBallLandingX(){
+  // Simulate ball flight forward until it hits ground or the right wall.
+  // Approximation: use current pos/vel + gravity w/ ball-scaling used in main loop.
+  let bx=S.bx, by=S.by, bvx=S.bvx, bvy=S.bvy
+  const gAccel=GRAVITY*S.gravMod*0.60 // matches line ~749 ball-gravity factor
+  const ballSpd=S.powerup==='slow'?0.6:1
+  const maxSteps=180 // ~3s at 60fps; enough for any lob
+  const br=BALL_R*(S.powerup==='big'?1.5:1)
+  for(let i=0;i<maxSteps;i++){
+    bvy+=gAccel*ballSpd
+    bvx*=0.995; bvy*=0.998
+    bx+=bvx*ballSpd; by+=bvy*ballSpd
+    if(by>=GROUND_Y-br) return bx
+    if(bx<br||bx>W-br) return bx // wall bounce — good enough proxy
+  }
+  return bx
+}
 function updateCPU(dt){
-  const diff=Math.min(0.68+cfg.level*0.028,0.95)
-  const spd=MOVE_SPD*(0.92+cfg.level*0.008)
-  const react=Math.random()<diff
+  // Level scaling: lv1 → 0.55 accuracy/0.28 idle drift, lv5 → 0.90/0.10, lv10 → cap.
+  const accuracy=Math.min(0.55+cfg.level*0.040, 0.92)
+  const spd=MOVE_SPD*(0.88+cfg.level*0.012)
+  const reactJitter=Math.max(0.08, 0.30-cfg.level*0.025) // % of frames CPU freezes
+  // Reaction delay: higher levels commit sooner. Misreads scale down with level.
+  const misread=Math.random()>accuracy
 
-  if(react){
-    // Predict ball landing instead of chasing current X
-    const landFrames=S.bvy>0.1?Math.max(1,(GROUND_Y-S.by)/Math.max(0.1,Math.abs(S.bvy))):0
-    const predX=S.bx+S.bvx*landFrames*0.6
-    const target=S.bx>NET_X?predX-8:W*0.75
-    if(S.cx<target-10)S.cvx=spd
-    else if(S.cx>target+10)S.cvx=-spd
-    else S.cvx*=0.8
+  // Predict where ball will land — works even when ball is on player's side.
+  let target
+  if(S.bx>NET_X || S.bvx>0.3){
+    // Ball on CPU side OR moving toward CPU — predict landing.
+    const predX=predictBallLandingX()
+    // Clamp to CPU half so CPU doesn't teleport across net.
+    const clampedPredX=Math.max(NET_X+DUCK_R+10, Math.min(W-DUCK_R-4, predX))
+    // Low-level CPU adds a "misread" offset, higher-level aims cleaner.
+    const aimJitter=misread ? (Math.random()-0.5)*120*(1-cfg.level*0.08) : 0
+    target=clampedPredX+aimJitter
+  } else {
+    // Ball on player side, not incoming — take anticipatory position.
+    // Level 1-3: camp at safe center. Level 4+: shade toward expected landing.
+    const anticipate=cfg.level>=4 ? predictBallLandingX() : W*0.75
+    const clamped=Math.max(NET_X+DUCK_R+10, Math.min(W-DUCK_R-4, anticipate))
+    target=clamped*0.5 + W*0.75*0.5 // blend between prediction and neutral court center
+  }
 
-    // Earlier, wider jump window
-    if(S.cGnd&&S.bx>NET_X&&S.by<GROUND_Y-40&&Math.abs(S.bx-S.cx)<90&&S.bvy>0){
-      S.cvy=JUMP_POWER*0.92; S.cGnd=false
+  // Reaction idle — occasional "hesitation" so CPU isn't robotic.
+  const hesitating=Math.random()<reactJitter
+  if(!hesitating){
+    if(S.cx<target-12)S.cvx=S.cvx*0.6 + spd*0.4
+    else if(S.cx>target+12)S.cvx=S.cvx*0.6 + (-spd)*0.4
+    else S.cvx*=0.78
+  } else {
+    S.cvx*=0.88 // glide briefly
+  }
+
+  // Jump logic:
+  //   - Only when ball is on CPU side and close.
+  //   - Ball descending AND within strike range → jump-hit.
+  //   - Ball rising toward CPU but high enough to clear duck → also jump (block).
+  //   - Slight random timing variation so jumps don't feel scripted.
+  const ballOnCpuSide=S.bx>NET_X
+  const ballClose=Math.abs(S.bx-S.cx)<100
+  const ballHigh=S.by<GROUND_Y-50 && S.by>NET_TOP-10
+  const jumpRoll=Math.random()<(0.55+cfg.level*0.04) // higher level = more committed jumps
+  if(S.cGnd && ballOnCpuSide && ballClose && ballHigh && jumpRoll){
+    // Require either descending ball (spike chance) OR fast incoming lob.
+    if(S.bvy>0 || (S.bvy<0 && S.by<GROUND_Y-90)){
+      S.cvy=JUMP_POWER*(0.88+Math.random()*0.08) // slight power variation
+      S.cGnd=false
       spawnSand(S.cx,GROUND_Y,3)
     }
-  } else {
-    // Drift to court center instead of flat stop — looks less idle
-    S.cvx+=(W*0.75-S.cx)*0.002
-    S.cvx*=0.92
   }
 
   S.cvy+=GRAVITY*S.gravMod*dt; S.cx+=S.cvx*dt; S.cy+=S.cvy*dt
@@ -1164,6 +1234,15 @@ document.addEventListener('touchmove', e => {
 document.addEventListener('touchend', e => {
   _touchActive = false
   _swipeJumped = false
+  // Task #56 fix: clear drag target so duck stops drifting after finger lift.
+  // Without this, pTargetX from the last drag frame kept pulling pvx even mid-air,
+  // producing a "backward slide" after jump (user feedback 2026-04-22).
+  S.pTargetX = null
+})
+document.addEventListener('touchcancel', e => {
+  _touchActive = false
+  _swipeJumped = false
+  S.pTargetX = null
 })
 
 // Button fallback (still works if visible)

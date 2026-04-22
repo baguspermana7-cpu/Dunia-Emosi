@@ -217,7 +217,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
 <script src="trains-db.js"></script>
-<script src="train-character-sprite.js?v=20260422e"></script>
+<script src="train-character-sprite.js?v=20260422f"></script>
 <script src="../shared/rz-responsive.js?v=20260422i"></script>
 <script>
 'use strict';
@@ -261,10 +261,9 @@ function goBack() { try{document.getElementById('game-bgm').pause()}catch(_){}; 
 window.addEventListener('resize',()=>{
   if(typeof app==='undefined' || !app) return;
   app.renderer.resize(window.innerWidth,window.innerHeight);
-  // Recompute responsive layout: track lanes, train X, and rebuild character train so its
-  // sprite + wheels + smoke rescale proportionally on device rotation / window resize.
+  // Recompute responsive layout on device rotation / window resize.
   W = app.screen.width; H = app.screen.height;
-  TRAIN_X = Math.max(150, Math.min(180, Math.round(W * 0.10)));
+  TRAIN_X = Math.max(40, Math.round(W * 0.05));  // Task #59 — 5% base (per-train clamp in buildTrain)
   const topHUD = 120, botHUD = 115;
   const available = H - topHUD - botHUD;
   LANE_Y = [
@@ -273,7 +272,7 @@ window.addEventListener('resize',()=>{
     topHUD + available * 0.82
   ];
   if (selectedTrain && selectedTrain.isCharacter && typeof buildTrain === 'function') {
-    try { buildTrain(); } catch(_) {}
+    try { buildTrain(); } catch(_) {}  // rebuild re-applies RZ.trainScale + rail-anchor + 5% clamp
   } else if (trainContainer) {
     trainContainer.x = TRAIN_X; trainContainer.y = LANE_Y[1];
   }
@@ -669,9 +668,9 @@ async function initPixi() {
     resolution: window.devicePixelRatio || 1, autoDensity: true
   });
   W = app.screen.width; H = app.screen.height;
-  // Responsive TRAIN_X: 10% viewport clamped [150,180]. Min 150 accommodates widest character
-  // train overlay (Dragutin wheel at x=-125 + safety buffer). Prevents sprite clipping left edge.
-  TRAIN_X = Math.max(150, Math.min(180, Math.round(W * 0.10)));
+  // Task #59 — TRAIN_X defaults to 5% of viewport (per-train clamp happens inside
+  // buildTrain via CharacterTrain.computeTrainX for character trains).
+  TRAIN_X = Math.max(40, Math.round(W * 0.05));
   const topHUD = 120, botHUD = 115;
   const available = H - topHUD - botHUD;
   LANE_Y = [
@@ -1069,19 +1068,25 @@ function buildTrain() {
   // Dispose previous character instance if switching
   if (characterTrainInstance) { characterTrainInstance.dispose(); characterTrainInstance = null; }
 
-  // Character train branch — mount bg-removed WebP sprite with animated wheels + smoke
+  // Character train branch — mount bg-removed WebP sprite with animated wheels + smoke.
+  // Task #60 — derived rail-anchor algorithm: wheel-bottom lands EXACTLY on rail surface.
+  // Task #59 — per-train TRAIN_X = 5% of W (clamped to train's leftmost wheel safe-min).
   if (selectedTrain.isCharacter && window.CharacterTrain) {
-    // Scale all geometry by RZ.trainScale() — makes sprite + wheels + smoke
-    // proportional across mobile portrait / landscape / tablet / PC. Viewport-height
-    // based (reference H=800), clamped [0.55, 1.0]. Base config = PC (scale 1).
     const rzScale = (window.RZ && typeof RZ.trainScale === 'function') ? RZ.trainScale() : 1;
     const scaledCfg = CharacterTrain.scaleConfig(selectedTrain, rzScale);
-    // Character sprites are bottom-anchored — shift so sprite baseline rests ON rail.
-    // bottomPaddingOffset compensates for transparent padding at the bottom of cartoon art.
-    const sh = scaledCfg.spriteHeight || 90;
-    const padOff = scaledCfg.bottomPaddingOffset || 0;
-    trainContainer.y = LANE_Y[1] + (sh / 2 - 4) + padOff;
-    // Sprite faces RIGHT naturally (was flipped in source) — don't mirror container
+    // G15 rail surface — top of upper rail line drawn in buildTracks() at lY+14.
+    // Wheel bottom must land here; engine.wheelAnchor(scaledCfg) returns the lowest
+    // wheel-bottom Y in sprite-local coords (already scale-corrected).
+    const railSurfaceY = LANE_Y[1] + 14;
+    const anchor = CharacterTrain.wheelAnchor(scaledCfg);
+    trainContainer.y = railSurfaceY - anchor;
+    // Optional per-train fine-tune (was bottomPaddingOffset; now a pure visual nudge,
+    // default 0 — rail anchoring no longer needs to compensate for sprite padding).
+    if (typeof scaledCfg.visualOffset === 'number') trainContainer.y += scaledCfg.visualOffset;
+    // Per-train TRAIN_X (5% rule + wheel-safe clamp).
+    TRAIN_X = CharacterTrain.computeTrainX(scaledCfg, W, 0.05);
+    trainContainer.x = TRAIN_X;
+    // Sprite faces RIGHT naturally — don't mirror container
     trainContainer.scale.x = 1;
     characterTrainInstance = CharacterTrain.mount(trainContainer, scaledCfg);
     if (characterTrainInstance) characterTrainInstance.setSmokeParent(stage);

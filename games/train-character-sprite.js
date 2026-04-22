@@ -166,5 +166,34 @@
     return out
   }
 
-  window.CharacterTrain = { mount, createSmokePuff, scaleConfig }
+  // Compute the "wheel anchor" of a train config — the Y offset (in sprite-local
+  // coords) of the LOWEST wheel bottom. Used to precisely position the train so
+  // wheels rest on a given rail surface Y. Derived from wheelPositions so each
+  // train self-reports where its wheels sit; no magic per-train constants needed.
+  //
+  // Formula: trainContainer.y = railSurfaceY - wheelAnchor(scaledCfg)
+  // Since wheelPositions are already scaled via scaleConfig(), the anchor value
+  // returned is already scale-correct; just subtract directly.
+  //
+  // Returns 0 when no wheels (defensive).
+  function wheelAnchor(cfg) {
+    if (!cfg || !Array.isArray(cfg.wheelPositions) || !cfg.wheelPositions.length) return 0
+    return cfg.wheelPositions.reduce((m, w) => Math.max(m, (w[1] || 0) + (w[2] || 0)), -Infinity)
+  }
+
+  // Compute TRAIN_X (horizontal container position) for a train + viewport width.
+  // Targets 5% of viewport width per user mandate, but clamps up to the train's
+  // widest-left-wheel extent so the sprite never clips off the left edge.
+  // Pass the *scaled* cfg (post scaleConfig) so the wheel extents match the
+  // rendered size.
+  function computeTrainX(cfg, viewportWidth, pct) {
+    const w = viewportWidth || 0
+    const targetPct = (typeof pct === 'number' && pct > 0) ? pct : 0.05
+    const wheels = cfg && cfg.wheelPositions
+    const leftmost = (wheels && wheels.length) ? Math.min(...wheels.map(p => p[0] || 0)) : 0
+    const safeMin = Math.ceil(-leftmost) + 4
+    return Math.max(Math.round(w * targetPct), safeMin)
+  }
+
+  window.CharacterTrain = { mount, createSmokePuff, scaleConfig, wheelAnchor, computeTrainX }
 })()

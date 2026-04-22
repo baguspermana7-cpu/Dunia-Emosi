@@ -549,26 +549,43 @@ function buildCar() {
   carGlow.alpha = 0.38
   carContainer.addChild(carGlow)
 
-  // Car sprite — load top-view PNG async via PIXI.Assets, emoji as placeholder + fallback
-  const carIdx = cfg.carIdx || Math.floor(Math.random() * 12)
-  const carFiles = ['top_car_white_gt_01.png','top_car_yellow_sport_02.png','top_car_white_track_03.png','top_car_blue_red_racer_04.png','top_car_cyan_sedan_05.png','top_car_white_stripe_gt_06.png','top_car_red_formula_07.png','top_car_yellow_rally_08.png','top_car_white_coupe_09.png','top_car_white_roadster_10.png','top_car_blue_compact_11.png','top_car_silver_sedan_12.png']
-  const carUrl = `../assets/car%20and%20vehicle/top-view/${carFiles[carIdx % carFiles.length]}`
+  // Car sprite — Task #54: pick PNG based on selected vehicle emoji; null = use emoji as sprite.
+  // Only car-type emojis get a PNG match. Non-car vehicles (bajaj, motor, sepeda, roket, kapal,
+  // heli, kereta, UFO, speedboat, traktor) fall through to emoji since we have no top-view PNG.
+  const EMOJI_TO_CAR_PNG = {
+    '🚗': 'top_car_cyan_sedan_05.png',       // Sedan — generic sedan
+    '🏎️': 'top_car_red_formula_07.png',      // Sport — red formula (iconic racer)
+    '🚙': 'top_car_white_gt_01.png',         // Jeep — white GT (closest SUV-ish silhouette)
+    '🚚': 'top_car_white_coupe_09.png',      // Truk — fallback (no truck PNG; white coupe)
+    '🚐': 'top_car_white_roadster_10.png',   // Bemo/Van — fallback (no van PNG)
+    '🚓': 'top_car_blue_compact_11.png',     // Polisi — blue compact matches police blue
+    '🚕': 'top_car_yellow_sport_02.png',     // Taksi — yellow sport matches taxi yellow
+    '🚌': 'top_car_silver_sedan_12.png',     // Bis — fallback (silver sedan, no bus PNG)
+    '🚒': 'top_car_red_formula_07.png',      // Pemadam — red (fire engine red)
+    '🚑': 'top_car_white_track_03.png',      // Ambulan — white (ambulance white)
+    // No PNG for: 🚜🛵🚲🛺🚀🚢🚁🚂🛸🚤 → emoji fallback (skip PNG load)
+  }
+  const selectedEmoji = cfg.playerIcon || '🚗'
+  const carPngName = EMOJI_TO_CAR_PNG[selectedEmoji] || null
+  const carUrl = carPngName ? `../assets/car%20and%20vehicle/top-view/${carPngName}` : null
   // Show emoji placeholder immediately (no flash of empty sprite)
-  carSprite = new PIXI.Text({ text: cfg.playerIcon || '🚗', style: { fontSize: 52, fontFamily: 'Arial' } })
+  carSprite = new PIXI.Text({ text: selectedEmoji, style: { fontSize: 52, fontFamily: 'Arial' } })
   carSprite.anchor.set(0.5, 1)
   carContainer.addChild(carSprite)
-  // Swap in PNG once loaded
-  PIXI.Assets.load(carUrl).then(tex => {
-    if (!carContainer || !tex) return
-    const s = new PIXI.Sprite(tex)
-    s.anchor.set(0.5, 1)
-    s.width = 48; s.height = 84
-    if (carSprite && carSprite.parent) carContainer.removeChild(carSprite)
-    carSprite = s
-    carContainer.addChild(carSprite)
-    // Re-order: keep headlights in front (hlL, hlR)
-    carContainer.children.forEach(ch => { if (ch._hl) carContainer.setChildIndex(ch, carContainer.children.length - 1) })
-  }).catch(err => console.warn('G6 car image failed, staying with emoji', err))
+  // Only attempt PNG load if we have a car-type mapping for this emoji
+  if (carUrl) {
+    PIXI.Assets.load(carUrl).then(tex => {
+      if (!carContainer || !tex) return
+      const s = new PIXI.Sprite(tex)
+      s.anchor.set(0.5, 1)
+      s.width = 48; s.height = 84
+      if (carSprite && carSprite.parent) carContainer.removeChild(carSprite)
+      carSprite = s
+      carContainer.addChild(carSprite)
+      // Re-order: keep headlights in front (hlL, hlR)
+      carContainer.children.forEach(ch => { if (ch._hl) carContainer.setChildIndex(ch, carContainer.children.length - 1) })
+    }).catch(err => console.warn('G6 car image failed, staying with emoji', err))
+  }
 
   // Headlight left
   const hlL = new PIXI.Graphics()

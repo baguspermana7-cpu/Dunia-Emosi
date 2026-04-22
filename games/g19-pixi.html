@@ -1098,6 +1098,12 @@ function openBag() {
     S.paused = true; S.running = false
     document.getElementById('btn-pause').textContent = '▶'
   }
+  // Task #55 guard: while bag is open the quiz panel would otherwise still
+  // render behind it; hide it so the UI is clean. closeBag() will re-surface
+  // the quiz when there's a pending collision.
+  if (_g19HasPendingQuiz()) {
+    document.getElementById('quiz-panel').classList.remove('show')
+  }
   const grid = document.getElementById('bag-grid')
   grid.innerHTML = ''
   G19_POKEMON.forEach((p, i) => {
@@ -1120,7 +1126,19 @@ function openBag() {
   })
   document.getElementById('bag-overlay').style.display = 'flex'
 }
-function closeBag() { document.getElementById('bag-overlay').style.display = 'none' }
+function closeBag() {
+  document.getElementById('bag-overlay').style.display = 'none'
+  // Task #55 guard: if a collision quiz is still pending when user closes
+  // the bag (e.g. after swapping Pokemon), re-surface the quiz panel instead
+  // of silently resuming the bird. Keep S.paused=true until answered.
+  if (_g19HasPendingQuiz()) {
+    document.getElementById('pause-overlay').style.display = 'none'
+    document.getElementById('quiz-panel').classList.add('show')
+    document.getElementById('status-text').textContent = 'Jawab Soal!'
+    S.paused = true; S.running = false
+    document.getElementById('btn-pause').textContent = '▶'
+  }
+}
 
 function applyPokemon(evoStage) {
   const p = G19_POKEMON[selectedPokemon]
@@ -1136,8 +1154,26 @@ function applyPokemon(evoStage) {
   document.getElementById('status-text').textContent = evoStage > 0 ? evo.name + ' Berevolusi!' : 'Terbang!'
 }
 
+// Task #55 (2026-04-22): detect a pending collision quiz so pause/bag flows
+// cannot bypass the quiz and resume the bird mid-air.
+function _g19HasPendingQuiz(){
+  return !!(S.currentPipe && S.currentPipe.hit && !S.currentPipe.passed)
+}
+
 function togglePause() {
   if (!S.started || S.gameOver) return
+  // Task #55 guard: if a collision quiz is pending, never unpause.
+  // Instead re-surface the quiz panel and keep S.paused=true.
+  if (_g19HasPendingQuiz()) {
+    document.getElementById('pause-overlay').style.display = 'none'
+    document.getElementById('bag-overlay').style.display = 'none'
+    document.getElementById('quiz-panel').classList.add('show')
+    document.getElementById('btn-pause').textContent = '▶'
+    document.getElementById('status-text').textContent = 'Jawab Soal!'
+    S.paused = true; S.running = false
+    try { const bgm=document.getElementById('game-bgm'); bgm.pause() } catch(_){}
+    return
+  }
   S.paused = !S.paused
   S.running = !S.paused
   document.getElementById('btn-pause').textContent = S.paused ? '▶' : '⏸'

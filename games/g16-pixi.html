@@ -152,7 +152,7 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 
 <script src="../shared/rz-responsive.js?v=20260422i"></script>
 <script src="game-modal.js"></script>
-<script src="train-character-sprite.js?v=20260422e"></script>
+<script src="train-character-sprite.js?v=20260422f"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
 <script>
@@ -498,9 +498,9 @@ const TIE_SPACING=44
 
 async function initPixi(){
   const W=window.innerWidth, H=window.innerHeight
-  // Safety margin: wide character trains (rendered >200px) must not clip screen edge.
-  // Responsive: 10% viewport clamped [150,180]. Min 150 = safety buffer for widest character wheel (-125) + 25.
-  TRAIN_SCREEN_X=Math.max(150, Math.min(180, Math.round(W*0.10))); WORLD_LENGTH=W*5.5; STATION_X=WORLD_LENGTH*0.88
+  // Task #59 — 5% base TRAIN_SCREEN_X. Per-train clamp happens in buildTrain via
+  // CharacterTrain.computeTrainX(cfg, W, 0.05) which bumps X up if wheels would clip.
+  TRAIN_SCREEN_X=Math.max(40, Math.round(W*0.05)); WORLD_LENGTH=W*5.5; STATION_X=WORLD_LENGTH*0.88
   app=new PIXI.Application()
   await app.init({
     canvas:document.getElementById('pixi-canvas'),
@@ -899,15 +899,21 @@ function buildTrain(W,H){
   // Character train branch — look up config by selected style's characterKey
   const TS_sel = TRAIN_STYLES[selectedTrainIdx]
   if (window.CharacterTrain && TS_sel && TS_sel.character && TS_sel.characterKey && G16_CHAR_CONFIGS[TS_sel.characterKey]) {
-    // Character sprites are bottom-anchored — place baseline on visible rail stripe.
-    // Scale geometry by RZ.trainScale() (viewport-height-based, [0.55, 1.0]) so
-    // sprite + wheels + smoke proportionally shrink on mobile / tablet and stay at
-    // designed size on PC. Base config = scale 1 (PC reference, H≥800).
+    // Task #60 — derived rail-anchor algorithm: wheel-bottom lands EXACTLY on tie top.
+    // Task #59 — TRAIN_SCREEN_X = 5% of W (clamped to train's leftmost wheel safe-min).
+    // No more empirical +22 offset — rail geometry drives placement.
     const rzScale = (window.RZ && typeof RZ.trainScale === 'function') ? RZ.trainScale() : 1
     const scaledCfg = CharacterTrain.scaleConfig(G16_CHAR_CONFIGS[TS_sel.characterKey], rzScale)
-    const padOff = scaledCfg.bottomPaddingOffset || 0
-    trainContainer.y = tY + 22 + padOff
-    trainContainer.scale.x = 1; // sprite already faces right
+    // G16 rail surface — top of tie at tY-5 (ties span tY-5 to tY+15; rails drawn at tY-5 and tY+10).
+    const railSurfaceY = tY - 5
+    const anchor = CharacterTrain.wheelAnchor(scaledCfg)
+    const baseY = railSurfaceY - anchor + (typeof scaledCfg.visualOffset === 'number' ? scaledCfg.visualOffset : 0)
+    trainContainer.y = baseY
+    S.trainBaseY = baseY // Task #60 — remembered for per-frame bob update in updateTrain
+    // Per-train TRAIN_SCREEN_X (5% rule + wheel-safe clamp)
+    TRAIN_SCREEN_X = CharacterTrain.computeTrainX(scaledCfg, W, 0.05)
+    trainContainer.x = TRAIN_SCREEN_X
+    trainContainer.scale.x = 1 // sprite already faces right
     g16CharacterTrain = CharacterTrain.mount(trainContainer, scaledCfg);
     if (g16CharacterTrain) g16CharacterTrain.setSmokeParent(stage);
     stage.addChild(trainContainer);
@@ -1417,8 +1423,12 @@ function updateTrain(dt){
   // of STATION_X, regardless of cleared count OR trainState, force triggerArrival.
   // Prevents bablas-through-platform when cleared==totalObstacles check fails because
   // the last obstacle's quiz flow didn't increment cleared (off-by-one / mini-quiz race).
+  // Task #61 — guard: do NOT force-arrival if an uncleared station obstacle still lies
+  // ahead (or at) the train's current position. Prevents arrival from firing before the
+  // last station quiz completes, which would under-count S.cleared and drop stars.
   if(!arrivalPhase && S.trainState!=='DEAD' && S.worldX > STATION_X - STATION_PROXIMITY_FORCE){
-    triggerArrival()
+    const stillHasUncleared = S.obstacles && S.obstacles.some(o => !o.cleared && o.worldX >= S.worldX - 10)
+    if (!stillHasUncleared) triggerArrival()
   }
   if(S.worldX>WORLD_LENGTH+200&&S.trainState!=='DEAD'&&S.trainState!=='ARRIVING'&&S.trainState!=='ARRIVED'){triggerDeath();return}
   // Check mini-obstacles (quick math questions)
@@ -1450,13 +1460,16 @@ function updateTrain(dt){
   const targetLean=S.trainState==='BOOSTING'?-0.048:0
   trainContainer.rotation+=(targetLean-trainContainer.rotation)*0.1
 
+  // Task #60 — character trains use rail-anchored baseY stored at mount; programmatic
+  // trains keep legacy tY-18 (wheels drawn in PIXI.Graphics below anchor).
+  const baseY = (typeof S.trainBaseY === 'number') ? S.trainBaseY : (tY - 18)
   if(S.cameraShake>0){
     S.cameraShake-=dt*6
     const shk=S.cameraShake*8
     trainContainer.x=TRAIN_SCREEN_X+(Math.random()-0.5)*shk
-    trainContainer.y=tY-18+bob+(Math.random()-0.5)*shk*0.4
+    trainContainer.y=baseY+bob+(Math.random()-0.5)*shk*0.4
   } else {
-    trainContainer.x=TRAIN_SCREEN_X; trainContainer.y=tY-18+bob; S.cameraShake=Math.max(0,S.cameraShake)
+    trainContainer.x=TRAIN_SCREEN_X; trainContainer.y=baseY+bob; S.cameraShake=Math.max(0,S.cameraShake)
   }
   if(headlightBeam){headlightBeam.x=trainContainer.x+66}
   if(fireGlow){fireGlow.x=trainContainer.x+2}
@@ -1626,7 +1639,15 @@ function onChoiceTap(btn,choice,obs){
       }
     }
   } else {
-    S.wrongTaps++; S.noWrongAnswers=false; obs.wrongCount++
+    // Task #61 — separate station-wrongs (main scoring) from mini-wrongs (minor slip).
+    // Only station wrongs should affect star rating in calcStars.
+    if (obs._mini) {
+      S.wrongTaps_mini = (S.wrongTaps_mini || 0) + 1
+    } else {
+      S.wrongTaps_station = (S.wrongTaps_station || 0) + 1
+      S.wrongTaps++ // legacy field — keep for any UI or debug reading it
+    }
+    S.noWrongAnswers=false; obs.wrongCount++
     S.correctStreak = 0 // reset streak on wrong
     btn.classList.add('wrong'); S.cameraShake=1.0; flashScreen('#ff8800',0.28)
     playSfxCrash() // Task #35 — crash SFX on wrong answer (obstacle impact)
@@ -1812,10 +1833,17 @@ function updateHUDFrame(){
 function calcStars(){
   const elapsed=(performance.now()-S.startTime)/1000
   const est=(S.trackLength/(80+S.level*12))*1.4
+  // Task #61 — Defensive guarantee: perfect play = 5 stars.
+  // Fix for "sudah benar semua tapi 3 stars" report. If every station was
+  // cleared with zero station-wrong answers, always return 5 regardless of
+  // mini-obstacle slips or timing. Mini wrongs are minor and should not
+  // drop the star rating.
+  const stationWrongs = (S.wrongTaps_station != null) ? S.wrongTaps_station : (S.wrongTaps || 0)
+  if (S.cleared === S.totalObstacles && stationWrongs === 0) return 5
   return GameScoring.calc({
     correct: S.cleared,
     total: S.totalObstacles,
-    wrong: S.wrongTaps || 0,
+    wrong: stationWrongs,
     time: elapsed,
     maxTime: est
   })
@@ -2078,7 +2106,8 @@ window.addEventListener('resize',()=>{
   app.renderer.resize(window.innerWidth,window.innerHeight)
   // Recalculate responsive layout for new viewport — TRAIN_SCREEN_X + track Y.
   const newW=app.screen.width, newH=app.screen.height
-  TRAIN_SCREEN_X=Math.max(150, Math.min(180, Math.round(newW*0.10)))
+  // Task #59 — 5% base; per-train clamp happens inside buildTrain via CharacterTrain.computeTrainX
+  TRAIN_SCREEN_X=Math.max(40, Math.round(newW*0.05))
   const newTY=getTrackY(newH)
   // Rebuild character train so geometry (sprite + wheels + smoke) rescales with RZ.scale()
   const TS_sel = TRAIN_STYLES[selectedTrainIdx]

@@ -1265,6 +1265,13 @@ function executeMove(moveIdx, mathCorrect){
       if(anyAlive===-1){
         msgs.push(`Semua Pokémonmu pingsan! Kamu kalah...`);
         queueMsgs(msgs, ()=>endBattleLose());
+        // Task #57 failsafe — if msg chain breaks, force lose modal
+        setTimeout(()=>{
+          if(battle && !battle.ended){
+            console.warn('[G13C] lose watchdog fired (wrong answer path)');
+            endBattleLose();
+          }
+        }, 6000);
       } else {
         queueMsgs(msgs, ()=>{
           buildSwitchPanel(true);
@@ -1307,6 +1314,15 @@ function executeMove(moveIdx, mathCorrect){
         if(nextIdx===-1){
           msgs.push(`Kamu mengalahkan ${battle.trainer.name}!`);
           queueMsgs(msgs, ()=>endBattleWin());
+          // Task #57 failsafe — if queueMsgs/advanceMsg chain breaks (race condition
+          // on tap while auto-advance scheduled), force end-battle within 6s. Guard
+          // ensures we only fire if battle still not ended.
+          setTimeout(()=>{
+            if(battle && !battle.ended){
+              console.warn('[G13C] win watchdog fired — forcing endBattleWin');
+              endBattleWin();
+            }
+          }, 6000);
         } else {
           queueMsgs(msgs, ()=>{
             battle.enemyIdx = nextIdx;
@@ -1363,6 +1379,13 @@ function enemyTurn(){
         if(anyAlive===-1){
           msgs.push(`Semua Pokémonmu pingsan! Kamu kalah...`);
           queueMsgs(msgs, ()=>endBattleLose());
+          // Task #57 failsafe — if msg chain breaks, force lose modal
+          setTimeout(()=>{
+            if(battle && !battle.ended){
+              console.warn('[G13C] lose watchdog fired (enemy turn path)');
+              endBattleLose();
+            }
+          }, 6000);
         } else {
           queueMsgs(msgs, ()=>{
             buildSwitchPanel(true);
