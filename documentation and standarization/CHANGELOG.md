@@ -1,5 +1,20 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-22 — Pause-bypass fixes in G13b + G15 (Tasks #62, #63)
+
+Follow-ups from Task #55 audit which identified pause-state leaks in two other games.
+
+### #62 — G13b legendary auto-attack (game.js:8106)
+`_g13bLegAutoAtk` setInterval (14s cadence) invoked `g13bWildHitsPlayer()` without checking pause state — legendary Pokemon could damage the player while game was paused. Added `if (st.paused) return;` guard inside the interval callback. Timer tick still fires on wall clock but the damage-application is gated.
+
+### #63 — G15 math-quiz wall-clock timer (games/g15-pixi.html:1493)
+8-second math quiz setTimeout continued counting during pause → quiz could auto-fail while the user was paused. `togglePause()` now halts + resumes the timer: on pause, `clearTimeout` + record remaining (`performance.now() - _mathTimerStart`); on resume, restart setTimeout with the remaining duration. Timer fill CSS animation frozen with `transition:none` during pause and re-started with remaining-width interpolation on resume.
+
+### Verification
+- `node --check game.js` + inline-script check on `games/g15-pixi.html` → clean.
+
+---
+
 ## 2026-04-22 — G15/G16 rail-anchor + 5% TRAIN_X (Tasks #60, #59)
 
 ### User mandate

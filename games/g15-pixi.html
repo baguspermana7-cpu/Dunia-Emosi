@@ -280,12 +280,42 @@ window.addEventListener('resize',()=>{
 function togglePause() {
   gamePaused = !gamePaused;
   document.getElementById('btn-pause').textContent = gamePaused ? '▶' : '⏸';
+  // Task #63 — pause the math-quiz wall-clock timer so it doesn't auto-fail while
+  // user is paused. On pause: clearTimeout + record remaining. On resume: restart
+  // with remaining time. Timer fill CSS is also frozen/resumed.
+  if (mathQuizActive && typeof _mathTimerStart === 'number') {
+    const fill = document.getElementById('math-timer-fill');
+    if (gamePaused) {
+      if (mathTimerRaf) { clearTimeout(mathTimerRaf); mathTimerRaf = null; }
+      const elapsed = performance.now() - _mathTimerStart;
+      _mathTimerRemaining = Math.max(0, 8000 - elapsed);
+      if (fill) {
+        // Freeze fill width at current interpolated value (style.width reflects target; use computed)
+        const cs = getComputedStyle(fill);
+        fill.style.transition = 'none';
+        fill.style.width = cs.width;
+      }
+    } else {
+      _mathTimerStart = performance.now() - (8000 - (_mathTimerRemaining || 8000));
+      mathTimerRaf = setTimeout(() => {
+        if (mathQuizActive) answerMath(false, null, true);
+      }, _mathTimerRemaining || 8000);
+      if (fill) {
+        requestAnimationFrame(() => {
+          fill.style.transition = `width ${(_mathTimerRemaining || 8000)}ms linear`;
+          requestAnimationFrame(() => { fill.style.width = '0%'; });
+        });
+      }
+    }
+  }
   if (typeof GamePause !== 'undefined') {
     if (gamePaused) GamePause.show(); else GamePause.hide();
   } else {
     try{const bgm=document.getElementById('game-bgm');gamePaused?bgm.pause():bgm.play().catch(()=>{})}catch(_){}
   }
 }
+let _mathTimerStart = null;
+let _mathTimerRemaining = 8000;
 
 // Initialize shared pause overlay once game-modal.js loads
 (function setupG15Pause(){
@@ -1487,7 +1517,9 @@ function showMathQuiz() {
     requestAnimationFrame(() => { fill.style.width = '0%'; });
   });
 
-  // Auto-fail after 8s
+  // Auto-fail after 8s — Task #63: track start + remaining so pause can halt + resume
+  _mathTimerStart = performance.now();
+  _mathTimerRemaining = 8000;
   let timedOut = false;
   mathTimerRaf = setTimeout(() => {
     if (mathQuizActive) { timedOut = true; answerMath(false, null, true); }

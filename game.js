@@ -8108,6 +8108,10 @@ function g13bSpawnWild() {
       if (st.phase !== 'playing' || st.locked || st.playerHp <= 0 || !st.isLegendary) {
         clearInterval(_g13bLegAutoAtk); _g13bLegAutoAtk = null; return
       }
+      // Task #62 — skip attack while paused. setInterval tick still fires on wall
+      // clock (can't easily gate the timer itself), but the callback is a no-op so
+      // player is never damaged while the game is paused.
+      if (st.paused) return
       // Legendary fires an autonomous strike between questions
       st.locked = true
       g13bWildHitsPlayer(() => { st.locked = false })
