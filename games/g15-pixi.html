@@ -218,6 +218,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
 <script src="trains-db.js"></script>
 <script src="train-character-sprite.js?v=20260422d"></script>
+<script src="../shared/rz-responsive.js?v=20260422h"></script>
 <script>
 'use strict';
 // Polyfill ctx.roundRect for older Android WebViews (Chrome < 99)
@@ -2767,8 +2768,33 @@ function updateStationChip() {
   document.getElementById('station-chip').style.display = 'block';
 }
 
+// ── RDE Layer 3 — Responsive Display Engine wiring ─────────────────────────────
+// Mirrors DOM HUD + math quiz font-sizes to window.RZ.fontScale() so they track
+// the same fluid clamp as PixiJS games. Safe no-op if the runtime is absent.
+function applyRdeScaling() {
+  if (!window.RZ) return;
+  const q = (sel) => document.querySelector(sel);
+  const set = (el, prop, val) => { if (el) el.style[prop] = (typeof val === 'number' ? val + 'px' : val); };
+  // Math quiz panel
+  set(q('#math-label'), 'fontSize', window.RZ.fontScale(12));
+  set(q('#math-question'), 'fontSize', window.RZ.fontScale(34));
+  document.querySelectorAll('.math-btn').forEach(b => {
+    b.style.fontSize = window.RZ.fontScale(20) + 'px';
+    b.style.minWidth = window.RZ.btn('sm') + 'px';
+  });
+  // HUD — word emoji, next char chip, station banner, life hearts
+  set(q('#word-emoji'), 'fontSize', window.RZ.fontScale(24));
+  set(q('#next-char'), 'fontSize', window.RZ.fontScale(24));
+  set(q('#sb-name'), 'fontSize', window.RZ.fontScale(22));
+  set(q('#sb-landmark'), 'fontSize', window.RZ.fontScale(13));
+  document.querySelectorAll('.life-heart').forEach(h => {
+    h.style.fontSize = window.RZ.fontScale(20) + 'px';
+  });
+}
+
 // ── Boot ───────────────────────────────────────────────────────────────────────
 showTrainSelect();
+if (window.RZ) window.RZ.onResize(applyRdeScaling);
 </script>
 </body>
 </html>

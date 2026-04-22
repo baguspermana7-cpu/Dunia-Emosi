@@ -1,5 +1,74 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-22 — RDE Step 7: G14 + G15 Pixi text sizing wired to RZ runtime
+
+### Changed
+- **G14 Balapan Kereta** (`games/g14.html`) — Included `shared/rz-responsive.js?v=20260422h` after `pixi.min.js` (line 160). Added `applyRdeScaling()` helper in the IIFE boot block (inline in `<script>`). Wires `window.RZ.fontScale()` / `window.RZ.btn('sm')` to DOM HUD + math-quiz panel on first boot and on every viewport change (registered via `window.RZ.onResize(applyRdeScaling)` inside the async boot tail):
+  - `#distance-text` (HUD distance badge, base 13px)
+  - `#position-badge` (race position chip, base 17px)
+  - `#speed-hud` (speed chip, base 12px)
+  - `#lives-hud` (lives row, base 20px)
+  - `#train-name-badge` (train name chip, base 13px)
+  - `#quiz-label` (quiz header, base 11px) + `#quiz-q` (math question, base 26px)
+  - `.quiz-btn` (answer buttons, base 20px fontSize + `RZ.btn('sm')` min-width)
+- **G15 Lokomotif Pemberani** (`games/g15-pixi.html`) — Included `shared/rz-responsive.js?v=20260422h` after `train-character-sprite.js` (line 221). Added `applyRdeScaling()` helper at end of inline script + `window.RZ.onResize(applyRdeScaling)` at boot tail. Wires DOM HUD + math quiz sizing:
+  - `#math-label` (quiz header, base 12px) + `#math-question` (problem text, base 34px)
+  - `.math-btn` (answer buttons, base 20px + `RZ.btn('sm')` min-width)
+  - `#word-emoji` (HUD word emoji, base 24px) + `#next-char` (next char chip, base 24px)
+  - `#sb-name` (station banner name, base 22px) + `#sb-landmark` (landmark line, base 13px)
+  - `.life-heart` (heart row, base 20px)
+- **Fallback pattern**: `applyRdeScaling()` early-returns when `window.RZ` is absent; each property write is further guarded by a null `querySelector` check. Ensures games still render correct pixel sizes if the runtime script fails to load (offline, CDN block).
+- **Untouched**: world-space `PIXI.Text` (G14 tree decorations, G14 obstacle emojis, G15 letter/math/heart box labels — all move with world coords and their sizes are coupled to hitboxes/art), PIXI background scenery, `game.js`, `style.css`, `index.html`, `trains-db.js`, `game-modal.js`, G16/G19/G20/G22.
+
+### Verification
+- `grep -c "RZ\." games/g14.html` → 10 lines.
+- `grep -c "RZ\." games/g15-pixi.html` → 11 lines.
+- `grep -c "rz-responsive" games/g14.html games/g15-pixi.html` → 1 each (script tag only).
+
+---
+
+## 2026-04-22 — RDE Step 7: G16 + G19 Pixi text sizing wired to RZ runtime
+
+### Changed
+- **G16 Selamatkan Kereta** (`games/g16-pixi.html`) — Included `shared/rz-responsive.js?v=20260422h` before `game-modal.js` (line 152). Five `PIXI.Text` render sites now consume `window.RZ.fontScale()` with `window.RZ ? ... : fallback` guards:
+  - Line ~1131 (mini-obstacle emoji label, base 24px) — between-station quiz prompts.
+  - Line ~1250 (⚡ spark particle on overhead pole, base 14px) — rail-line spark FX.
+  - Line ~1673 (super-streak ⭐✨🌟💫 rain, base 18px + random) — 5+ correct-streak celebration.
+  - Line ~1808 ("SELAMAT TIBA!" platform sign, base 11px) — arrival station signage.
+  - Line ~1911 (fireworks finale emojis, base 16px + random) — end-of-run celebration.
+- **G19 Pokemon Birds** (`games/g19-pixi.html`) — Included `shared/rz-responsive.js?v=20260422h` before `pixi.min.js` (line 120). Two `PIXI.Text` render sites now scaled:
+  - Line ~566 (pokeball/⭐ pipe-gap collectible, base 22px) — per-pipe reward token.
+  - Line ~917 (`spawnFloatingText` helper, base 22px) — all floating +1/⭐/EVOLUSI feedback texts.
+  - Line ~380 — `window.RZ.onResize(...)` registered as reserved hook for future layout recompute on viewport change.
+- **Fallback pattern**: each RZ call guarded so the game still renders correct pixel sizes if the runtime script fails to load (offline, CDN block).
+- **Untouched**: world coordinate math, background scenery sizing, `game.js`, `style.css`, `index.html`, `trains-db.js`, `game-modal.js`, G14, G15, G20, G22, G16 character train config.
+
+### Verification
+- `grep -c "RZ\." games/g16-pixi.html` → 5 lines.
+- `grep -c "RZ\." games/g19-pixi.html` → 4 lines.
+- `grep -c "rz-responsive" games/g{16,19}-pixi.html` → 1 each.
+
+---
+
+## 2026-04-22 — RDE Step 7: G20 Pixi text sizing wired. All 6 PixiJS games now consume shared RZ runtime.
+
+### Changed
+- **G20 Ducky Volley** (`games/g20-pixi.html`) — Included `shared/rz-responsive.js?v=20260422h` (line 127). Top-of-script `const _rz = window.RZ` hoist at line 129. Three `PIXI.Text` render sites now consume `RZ.fontScale()` with `_rz ? ... : fallback` fallback guards:
+  - Line ~506 (beach decoration emoji, random 10-18px base) — `_bfs` intermediate so the same random value flows to both branches.
+  - Line ~881 (type-emoji hit burst FX, base 20px) — set/shot/smash hit feedback.
+  - Line ~976 (crab `?` hint glyph, base 11px) — scene-level quest-mark.
+- **Integration points**: 4 `_rz`/`RZ.*` references (1 const hoist + 3 ternary call sites) — enough to fluidly scale all font-rendered Pixi text in the match scene.
+- **Fallback pattern** — Each RZ call guarded so the game still renders correct pixel sizes if the runtime script fails to load (offline, CDN block).
+
+### Cache
+- `index.html` → `v=20260422i` (was `v=20260422h`). style.css + game.js both bumped.
+
+### RDE Step 7 completion
+- **All 6 PixiJS games migrated**: G14, G15, G16, G19, G20, G22. Task #29 Step 7 complete — full 7-step RDE migration now shipped.
+- Physics coordinates, gravity, bounce coefficients, ball/player speeds, background scenery draw params — all left untouched per Step 7 scope guard.
+
+---
+
 ## 2026-04-21 — Unified GameModal messaging aligned with star count
 
 Audited all `GameModal.show()` callers in standalone games and applied

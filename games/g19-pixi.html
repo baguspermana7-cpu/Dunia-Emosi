@@ -117,6 +117,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
   <div id="start-hint">Memuat game... ⏳</div>
 </div>
 
+<script src="../shared/rz-responsive.js?v=20260422h"></script>
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
 <script src="game-modal.js"></script>
 <script>
@@ -375,6 +376,8 @@ function sfxWrong() { playTone(400, 120, 'sawtooth', 0.1); setTimeout(() => play
   updateHUD()
 
   app.ticker.add(gameLoop)
+  // RDE Layer 3: register resize listener so future layout recompute can use RZ.scale()/RZ.bp()
+  if (window.RZ) { window.RZ.onResize((r) => { /* reserved for re-layout: r.scale(), r.bp() */ }) }
   document.getElementById('start-hint').textContent='Tap untuk Terbang!'
   // Check if WebGL actually rendered (detect black canvas)
   setTimeout(() => {
@@ -560,7 +563,7 @@ function buildPipes() {
     worldContainer.addChild(pipe.bottomGfx)
 
     // Pokeball collectible in the gap center
-    const ball = new PIXI.Text({ text: i % 3 === 0 ? '⭐' : '🔴', style: { fontSize: 22 } })
+    const ball = new PIXI.Text({ text: i % 3 === 0 ? '⭐' : '🔴', style: { fontSize: window.RZ ? window.RZ.fontScale(22) : 22 } })
     ball.anchor.set(0.5)
     ball.x = x + PIPE_WIDTH / 2
     ball.y = gapY
@@ -911,7 +914,7 @@ function showQuiz(pipe) {
 //  FLOATING TEXT
 // ═══════════════════════════════════════════════════════════
 function spawnFloatingText(text, x, y, color) {
-  const t = new PIXI.Text({ text, style: { fontSize: 22, fontWeight: '900', fontFamily: 'Fredoka One', fill: color } })
+  const t = new PIXI.Text({ text, style: { fontSize: window.RZ ? window.RZ.fontScale(22) : 22, fontWeight: '900', fontFamily: 'Fredoka One', fill: color } })
   t.anchor.set(0.5); t.x = x; t.y = y
   worldContainer.addChild(t)
   let life = 40

@@ -157,6 +157,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 <div id="flash"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
+<script src="../shared/rz-responsive.js?v=20260422h"></script>
 <script>
 'use strict'
 // ═══════════════════════════════════════════════════════════
@@ -2185,6 +2186,31 @@ function screenFlash(color) {
 }
 
 // ═══════════════════════════════════════════════════════════
+//  RDE Layer 3 — Responsive Display Engine for DOM HUD & Quiz
+// ═══════════════════════════════════════════════════════════
+// Wires window.RZ runtime into the DOM-based HUD + math quiz overlay so
+// their fontSize/min-width track viewport scale. Falls back silently if
+// the runtime script failed to load.
+function applyRdeScaling() {
+  if (!window.RZ) return
+  const q = (sel) => document.querySelector(sel)
+  const set = (el, prop, val) => { if (el) el.style[prop] = (typeof val === 'number' ? val + 'px' : val) }
+  // HUD top — distance, position badge, speed, lives, train name
+  set(q('#distance-text'), 'fontSize', window.RZ.fontScale(13))
+  set(q('#position-badge'), 'fontSize', window.RZ.fontScale(17))
+  set(q('#speed-hud'), 'fontSize', window.RZ.fontScale(12))
+  set(q('#lives-hud'), 'fontSize', window.RZ.fontScale(20))
+  set(q('#train-name-badge'), 'fontSize', window.RZ.fontScale(13))
+  // Math quiz overlay — label, question, buttons
+  set(q('#quiz-label'), 'fontSize', window.RZ.fontScale(11))
+  set(q('#quiz-q'), 'fontSize', window.RZ.fontScale(26))
+  document.querySelectorAll('.quiz-btn').forEach(b => {
+    b.style.fontSize = window.RZ.fontScale(20) + 'px'
+    b.style.minWidth = window.RZ.btn('sm') + 'px'
+  })
+}
+
+// ═══════════════════════════════════════════════════════════
 //  BOOT
 // ═══════════════════════════════════════════════════════════
 ;(async function boot() {
@@ -2192,6 +2218,7 @@ function screenFlash(color) {
   document.addEventListener('click', ensureAudio, {once:true})
   await initPixi()
   showCategories()
+  if (window.RZ) window.RZ.onResize(applyRdeScaling)
 })()
 </script>
 </body>

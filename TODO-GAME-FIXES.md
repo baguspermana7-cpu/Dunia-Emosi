@@ -226,7 +226,14 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 - ✅ **Step 5 G9** (2026-04-22) — `.g9-letter-display`/`.g9-instruction`/`.g9-canvas-wrap`/`.g9-result`/`.g9-stars`/`.g9-progress` tokenized + clamp. Canvas pixel-math wrap sizes retained for 480/360/320. Removed 2 @media letter-display overrides.
 - 🧮 **Token count**: `var(--rz-` references grew 62 → 112 (+50). Brace balance verified 2767/2767.
 - ✅ **Step 6** — `shared/rz-responsive.js` shipped with `window.RZ` API mirroring CSS `--rz-scale` formula. PixiJS games opt-in per Step 7.
-- 🔧 **Step 7 (partial, 2026-04-22)** — G22 Monster Candy (`games/g22-candy.html`) integrated: script include line 99; quiz panel `showCandyQuiz()` consumes `RZ.fontScale(17/11/16/18/24)` + `RZ.btn('sm')` button floor via `_rz ? ... : fallback` guards (6 call sites at lines 525-528, 582, 602). Remaining Pixi games: G14/G15/G16/G19/G20.
+- ✅ **Step 7 (complete, 2026-04-22)** — All 6 PixiJS games migrated to consume `shared/rz-responsive.js`:
+  - **G22 Monster Candy** (`games/g22-candy.html`) — quiz panel `showCandyQuiz()` consumes `RZ.fontScale(17/11/16/18/24)` + `RZ.btn('sm')` (6 call sites at lines 525-528, 582, 602).
+  - **G14** — integrated by parallel agent.
+  - **G15** — integrated by parallel agent.
+  - **G16** — integrated by parallel agent.
+  - **G19** — integrated by parallel agent.
+  - **G20 Ducky Volley** (`games/g20-pixi.html`) — script include line 127, `const _rz = window.RZ` hoist at line 129. 3 `PIXI.Text` sites wrapped: beach decoration emoji (line ~506, random 10-18), type-hit emoji burst (line ~881, 20), crab `?` hint glyph (line ~976, 11). 4 `_rz`/`RZ.*` references total (1 const + 3 ternaries). Physics/gravity/ball speeds untouched per Step 7 scope guard.
+- ✅ **Task #29 RDE — ALL 7 STEPS COMPLETE (2026-04-22)**: tokens (1), reusable classes (2), G8 (3), G3 (4), G1/G2/G4/G5/G7/G9 (5), runtime shipped (6), all 6 PixiJS games wired (7). 60+ `@media` lines deleted. CHANGELOG documents per-game overrides.
 
 ### G15+G16 Character Trains: Casey JR + Linus Brave (Task #43, EXECUTED 2026-04-22) ✅
 - ✅ **Asset prep** (2026-04-21 23:58): `caseyjr-body.webp` (272×198) + `linus-body.webp` (264×173), bg-removed via rembg.

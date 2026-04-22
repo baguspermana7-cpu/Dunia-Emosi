@@ -149,6 +149,7 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
   <button id="ts-back" onclick="goBack()">◀ Kembali</button>
 </div>
 
+<script src="../shared/rz-responsive.js?v=20260422h"></script>
 <script src="game-modal.js"></script>
 <script src="train-character-sprite.js?v=20260422d"></script>
 
@@ -874,11 +875,13 @@ const G16_CHAR_CONFIGS = {
 function buildTrain(W,H){
   const tY=getTrackY(H)
   trainContainer=new PIXI.Container()
-  trainContainer.x=TRAIN_SCREEN_X; trainContainer.y=tY-18
+  trainContainer.x=TRAIN_SCREEN_X
 
   // Character train branch — look up config by selected style's characterKey
   const TS_sel = TRAIN_STYLES[selectedTrainIdx]
   if (window.CharacterTrain && TS_sel && TS_sel.character && TS_sel.characterKey && G16_CHAR_CONFIGS[TS_sel.characterKey]) {
+    // Character sprites are bottom-anchored — place baseline ON the rail (sprite wheels drawn in artwork touch rail)
+    trainContainer.y = tY + 6
     trainContainer.scale.x = 1; // sprite already faces right
     const charConfig = G16_CHAR_CONFIGS[TS_sel.characterKey]
     g16CharacterTrain = CharacterTrain.mount(trainContainer, charConfig);
@@ -886,6 +889,9 @@ function buildTrain(W,H){
     stage.addChild(trainContainer);
     return;
   }
+
+  // Programmatic train — legacy -18 offset (wheels drawn in Graphics below baseline)
+  trainContainer.y=tY-18
 
   // Legacy programmatic fallback
   const TS=TRAIN_STYLES[selectedTrainIdx]
@@ -1127,7 +1133,7 @@ function buildObstaclesOnTrack(W,H){
     bg.roundRect(-22,-40,44,36,8).fill({color:0xfbbf24,alpha:0.9})
     bg.roundRect(-22,-40,44,36,8).stroke({color:0x92400e,width:2})
     mc.addChild(bg)
-    const txt = new PIXI.Text({text: emoji, style:{fontSize:24}})
+    const txt = new PIXI.Text({text: emoji, style:{fontSize: window.RZ ? window.RZ.fontScale(24) : 24}})
     txt.anchor.set(0.5); txt.y = -22; mc.addChild(txt)
     worldContainer.addChild(mc)
     S.miniObs.push({worldX:mwx, container:mc, emoji, q, ans, cleared:false})
@@ -1246,7 +1252,7 @@ function updateAmbient(dt){
     const poleX=120+Math.floor(Math.random()*((WORLD_LENGTH-120)/190))*190+35
     const sparkX=poleX+(Math.random()-0.5)*30
     const sparkY=tY-80
-    const sp=new PIXI.Text({text:'⚡',style:{fontSize:14,fontFamily:'Arial'}})
+    const sp=new PIXI.Text({text:'⚡',style:{fontSize: window.RZ ? window.RZ.fontScale(14) : 14,fontFamily:'Arial'}})
     sp.x=sparkX; sp.y=sparkY; sp.alpha=1; sp._life=0.6; sp._vx=0; sp._vy=-15; sp._decay=1.8
     worldContainer.addChild(sp)
     sparkParticles.push(sp)
@@ -1669,7 +1675,7 @@ function spawnQuizCelebrationFX(screenX, screenY, streak){
   if(streak>=5){
     const EMOJI = ['⭐','✨','🌟','💫']
     for(let i=0;i<8;i++){
-      const t = new PIXI.Text({text: EMOJI[i % EMOJI.length], style:{fontSize:18+Math.random()*10, fontFamily:'Arial'}})
+      const t = new PIXI.Text({text: EMOJI[i % EMOJI.length], style:{fontSize: window.RZ ? window.RZ.fontScale(18+Math.random()*10) : (18+Math.random()*10), fontFamily:'Arial'}})
       t.anchor.set(0.5)
       t.x = screenX + (Math.random()-0.5)*80
       t.y = cy + (Math.random()-0.5)*30
@@ -1804,7 +1810,7 @@ function buildArrivalStation(W,H){
   g.rect(bX+14,bY-bH+56,bW-28,22).fill({color:0x1e3a8a})
   g.rect(bX+14,bY-bH+56,bW-28,22).stroke({width:1.5,color:0x60a5fa,alpha:0.6})
   // Draw text as PIXI Text
-  const signTxt=new PIXI.Text({text:'SELAMAT TIBA!',style:{fontFamily:'Fredoka One,sans-serif',fontSize:11,fill:0xfef9c3,fontWeight:'900',letterSpacing:1}})
+  const signTxt=new PIXI.Text({text:'SELAMAT TIBA!',style:{fontFamily:'Fredoka One,sans-serif',fontSize: window.RZ ? window.RZ.fontScale(11) : 11,fill:0xfef9c3,fontWeight:'900',letterSpacing:1}})
   signTxt.anchor.set(0.5,0.5); signTxt.x=bCX; signTxt.y=bY-bH+67
   worldContainer.addChild(signTxt)
 
@@ -1907,7 +1913,7 @@ function spawnFireworks(W, H) {
       const cx = W * 0.15 + Math.random() * W * 0.7
       const cy = H * 0.05 + Math.random() * H * 0.2
       for (let i = 0; i < 6; i++) {
-        const fw = new PIXI.Text({text: emojis[Math.floor(Math.random()*emojis.length)], style:{fontSize:16+Math.random()*12}})
+        const fw = new PIXI.Text({text: emojis[Math.floor(Math.random()*emojis.length)], style:{fontSize: window.RZ ? window.RZ.fontScale(16+Math.random()*12) : (16+Math.random()*12)}})
         fw.anchor.set(0.5)
         fw.x = cx; fw.y = cy
         const angle = (i / 6) * Math.PI * 2
