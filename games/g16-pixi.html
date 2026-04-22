@@ -1340,13 +1340,16 @@ function updateTrain(dt){
   }
   else if(S.trainState==='ARRIVING'){
     const dist=STATION_X-S.worldX
-    if(dist>18){speed=Math.max(10,baseSpeed*0.28*Math.min(dist/200,1)+8)}
+    // Task #49 — faster creep-in so arrival feels snappy (prev: ~54 px/s → 28s to
+    // cover 0.8W). New: full baseSpeed ramp-down from ~baseSpeed at 200px out to
+    // floor=baseSpeed*0.25 at the doorstep — reaches station in 3-5s.
+    if(dist>14){speed=Math.max(baseSpeed*0.25, baseSpeed*Math.min(dist/300,1))}
     else{
       speed=0
       if(!S.arrivedFlag){
         S.arrivedFlag=true; S.trainState='ARRIVED'
         startArrivalCelebration(W,H)
-        setTimeout(()=>{if(!S.winShown){S.winShown=true;S.gameOver=true;S.running=false;showWin()}},2600)
+        setTimeout(()=>{if(!S.winShown){S.winShown=true;S.gameOver=true;S.running=false;showWin()}},2200)
       }
     }
   } else if(S.trainState==='ARRIVED') speed=0
@@ -1358,14 +1361,33 @@ function updateTrain(dt){
   let maxStep = nextObs && !nextObs.cleared
     ? Math.min(rawStep, Math.max((nextObs.worldX-S.worldX)*0.8, 0.2))
     : rawStep
-  // Part 2: hard clamp — if this step would cross the obstacle, snap just before it and force quiz.
-  if(nextObs && !nextObs.cleared && S.worldX + maxStep > nextObs.worldX + 5){
+  // Task #49 — station overshoot clamp: once in ARRIVING/ARRIVED (or about to enter
+  // either) don't let the train cross STATION_X + 4. Without this the train can slide
+  // past the station platform when dt spikes, leaving dist permanently negative and
+  // the "kerumunan"/crowd behind.
+  const arrivalPhase = S.trainState==='ARRIVING' || S.trainState==='ARRIVED'
+  if(arrivalPhase && S.worldX + maxStep > STATION_X + 4){
+    S.worldX = STATION_X
+    if(S.trainState==='ARRIVING' && !S.arrivedFlag){
+      S.arrivedFlag=true; S.trainState='ARRIVED'
+      startArrivalCelebration(W,H)
+      setTimeout(()=>{if(!S.winShown){S.winShown=true;S.gameOver=true;S.running=false;showWin()}},2200)
+    }
+  } else if(nextObs && !nextObs.cleared && S.worldX + maxStep > nextObs.worldX + 5){
+    // Part 2: hard clamp — if this step would cross the obstacle, snap just before it and force quiz.
     S.worldX = nextObs.worldX - 1
     S.trainState = 'STOPPED'
     S.currentObstacleIdx = S.obstacles.indexOf(nextObs)
     if(!quizActive) showQuizPanel(nextObs)
   } else {
     S.worldX += maxStep
+  }
+  // Task #49 — force-arrival proximity: once worldX is within 40px of STATION_X,
+  // regardless of cleared count OR trainState, force triggerArrival. Prevents the
+  // bablas-through-platform bug when cleared==totalObstacles check fails because
+  // the last obstacle's quiz flow didn't increment cleared (off-by-one / mini-quiz race).
+  if(!arrivalPhase && S.trainState!=='DEAD' && S.worldX > STATION_X - 40){
+    triggerArrival()
   }
   if(S.worldX>WORLD_LENGTH+200&&S.trainState!=='DEAD'&&S.trainState!=='ARRIVING'&&S.trainState!=='ARRIVED'){triggerDeath();return}
   // Check mini-obstacles (quick math questions)
@@ -1714,13 +1736,15 @@ function triggerArrival(){
   if(S.trainState==='ARRIVING'||S.trainState==='ARRIVED'||S.gameOver)return
   S.trainState='ARRIVING'; hideQuizPanel()
   document.getElementById('speed-lines').style.opacity='0'
-  // Safety net: if ARRIVED/showWin doesn't fire within 8s, force it — prevents end-game freeze
+  // Task #49 — safety net: if ARRIVED/showWin doesn't fire within 3s, force it.
+  // Lowered from 8s because arrival creep is now ~3-5s (was ~28s) so 3s post-trigger
+  // is plenty and cuts the stuck feel short.
   setTimeout(()=>{
     if(!S.winShown && !S.gameOver){
       S.winShown=true; S.gameOver=true; S.running=false
       try{showWin()}catch(e){console.error('showWin failsafe',e);try{finishGame()}catch(_){}}
     }
-  }, 8000)
+  }, 3000)
 }
 
 function updateHUD(){

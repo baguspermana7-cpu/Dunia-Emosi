@@ -1434,10 +1434,15 @@ function collectBox(box, idx) {
     return;
   }
 
-  // Letter box
+  // Letter box — validate at COLLECT time against live target letter.
+  // Don't trust box.isTarget (set at spawn time, becomes stale after
+  // onWordComplete resets currentLetterIdx or after currentLetterIdx advances
+  // while old boxes remain on-screen).
   const word = WORDS_LIST[currentWordIdx];
   if (!word) return;
-  if (box.isTarget) {
+  const liveTarget = word.word[currentLetterIdx];
+  const isCorrect = box.letter === liveTarget;
+  if (isCorrect) {
     spawnCollectParticles(box.container.x, box.container.y, 0xfbbf24);
     boxLayer.removeChild(box.container);
     letterBoxes.splice(idx, 1);
@@ -1530,6 +1535,13 @@ function onWordComplete() {
   currentWordIdx++;
   if (currentWordIdx >= WORDS_LIST.length) { setTimeout(showWin, 700); return; }
   currentLetterIdx = 0;
+  // Purge stale letter boxes — they were spawned for the prior word; keeping them
+  // would confuse the player (e.g., boxes showing old-word letters while HUD prompts new word).
+  // Keep non-letter specials (hearts, math) since they're word-independent.
+  for (let i = letterBoxes.length - 1; i >= 0; i--) {
+    const b = letterBoxes[i];
+    if (b.type === 'letter') { try { boxLayer.removeChild(b.container); } catch(_){}; letterBoxes.splice(i, 1); }
+  }
   setTimeout(refreshHUD, 500);
 }
 

@@ -1,5 +1,41 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-22 — G15 letter validation + G16 station overshoot (Tasks #48, #49)
+
+### G15 — wrong letter accepted as correct (Task #48)
+**Symptom**: Target letter 'A' required but collecting any letter was accepted as "benar A". Wrong answers counted as right.
+
+**Root cause**: `collectBox` checked `box.isTarget` — a boolean set at spawn time (`const isTarget = (i === 0)` in the spawn batch). When `currentLetterIdx` advanced or `onWordComplete` reset it, old boxes retained stale `isTarget=true` flags. A box spawned when target was 'A' would still register as correct even after the target became 'R'.
+
+**Fix** (`games/g15-pixi.html`):
+- `collectBox` letter branch (~line 1448): validate `box.letter === WORDS_LIST[currentWordIdx].word[currentLetterIdx]` at collect time, not the stale flag.
+- `onWordComplete` (~line 1534): purge leftover letter boxes (keep hearts/math specials) so players don't see old-word letters while the HUD prompts the new word.
+
+### G16 — train bablas past station, no win modal (Task #49)
+**Symptoms**: Train passes the station crowd/platform ("kerumunan") and gets stuck without the success modal appearing. Previous #40 fix (obstacle overshoot clamp) only guarded uncleared obstacles, not the station itself.
+
+**Root causes identified**:
+1. No clamp at `STATION_X` — train could slide past the platform on dt spikes.
+2. `ARRIVING` creep speed (~54 px/s) took ~28s to cover the 0.8W triggerArrival distance — felt frozen.
+3. `triggerArrival` only fired when `S.cleared === S.totalObstacles` — off-by-one or mini-quiz races could leave count short and the train would sail past.
+4. 8s failsafe for `showWin` was much longer than perceived stuck time.
+
+**Fix** (`games/g16-pixi.html`):
+- **Station overshoot clamp** (~line 1360): in `updateTrain`, when in ARRIVING/ARRIVED phase and `worldX + step > STATION_X + 4`, snap to `STATION_X` and force ARRIVED + `showWin(+2200ms)`.
+- **Force-arrival proximity trigger** (~line 1382): once `worldX > STATION_X - 40` in any non-DEAD/non-arrival state, call `triggerArrival()` regardless of cleared count.
+- **Faster ARRIVING creep** (~line 1343): `speed = max(baseSpeed*0.25, baseSpeed * min(dist/300, 1))` — reaches station in 3–5s (was ~28s).
+- **Safety net lowered to 3s** (~line 1722): `triggerArrival` → `showWin` guaranteed within 3s if state logic doesn't fire.
+- **Arrival celebration timer 2600 → 2200ms**: cleaner pacing with faster creep.
+
+### Cache
+`index.html` v=20260422ac → v=20260422ad.
+
+### Verification
+- `node --check` on extracted inline scripts → clean.
+- Math: at baseSpeed=165 (lvl 1), new ARRIVING max speed = 165 * min(1,1) = 165 px/s; min = 41 px/s. Covers 0.8W (1536px at 1920w) in ~12s at average; with short safety net arrives reliably in 3-5s for typical viewports.
+
+---
+
 ## 2026-04-22 — G13c real gym badge icons (Task #31)
 
 ### Problem

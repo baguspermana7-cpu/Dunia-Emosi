@@ -4,6 +4,25 @@
 
 ## 🔥 OPEN 2026-04-22 (session ongoing)
 
+### Task #48 — G15 Letter Validation Bug (stale isTarget) ✅ DONE 2026-04-22
+- **Symptom**: User reported "padahal huruf yang dibutuhkan misal A, tapi ambil huruf lain itu dianggap benar A, aneh. dan jawaban salah dianggap benar."
+- **Root cause**: `collectBox` used `box.isTarget` flag set at spawn time. When target letter advanced or word completed, old boxes retained stale `isTarget=true`.
+- ✅ **Fix 1**: `collectBox` letter branch validates `box.letter === liveTarget` (word.word[currentLetterIdx]) at COLLECT time, not stale flag.
+- ✅ **Fix 2**: `onWordComplete` purges leftover letter boxes (keeps hearts/math specials) so new-word HUD isn't contradicted by old-word letters floating on screen.
+
+### Task #49 — G16 Bablas Past Station + No Win Modal ✅ DONE 2026-04-22
+- **Symptom**: User reported "kereta masih melewati kerumunan dan bablas dan stuck tidak keluar modal berhasil". The #40 overshoot fix only clamped uncleared obstacles, not the station itself.
+- **Root causes (4 compounding)**:
+  1. No clamp at STATION_X — train slid past platform on dt spikes
+  2. ARRIVING creep speed ~54 px/s → ~28s to cover 0.8W = felt frozen
+  3. triggerArrival only fired when `S.cleared===S.totalObstacles` (off-by-one race could skip)
+  4. 8s failsafe way longer than perceived stuck time
+- ✅ **Station overshoot clamp** in updateTrain: in ARRIVING/ARRIVED phase, clamp `worldX + step > STATION_X + 4` → snap to STATION_X and force ARRIVED + showWin.
+- ✅ **Force-arrival proximity**: `worldX > STATION_X - 40` in any non-DEAD/non-arrival state → `triggerArrival()` regardless of cleared count.
+- ✅ **Faster ARRIVING creep**: `speed = max(baseSpeed*0.25, baseSpeed * min(dist/300, 1))` — reaches station in 3-5s (was ~28s).
+- ✅ **Safety net 8s → 3s**: if showWin doesn't fire organically within 3s of triggerArrival, force it.
+- ✅ **Arrival celebration 2600 → 2200ms**: tighter pacing.
+
 ### Task #31 — G13c Real Gym Badge Icons ✅ DONE 2026-04-22
 - **Ask**: "Badge, extract dari website page ini. https://bulbapedia.bulbagarden.net/wiki/Badge" + "Dan bisa dari sini. Saling melengkapi jika ada yg tdak ada https://pokemon.fandom.com/wiki/Gym_Badge"
 - ✅ **46 badges downloaded** from Bulbapedia (Kanto 8 + Johto 7 + Hoenn 7 + Sinnoh 6 + Unova 6 + Kalos 6 + Galar 6). Saved to `assets/gym-badges/{trainer-id}.webp` at 128px, quality 90. Total 256KB (from 7MB PNG).
