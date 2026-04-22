@@ -602,7 +602,8 @@ let bgBirds = [];
 let rainbow = null;
 let LANE_Y = [];
 let W = 0, H = 0;
-const TRAIN_X = 180; // Safety margin for wide character trains (rendered >200px)
+// Responsive: 5% of viewport width, clamped 40-180. On 400px phone → 40, on 1200px desktop → 180.
+let TRAIN_X = 40;
 let mathBoxTimer = 0;
 const MATH_BOX_INTERVAL = () => 200 + Math.floor(Math.random() * 160);
 let nextMathAt = MATH_BOX_INTERVAL();
@@ -649,6 +650,8 @@ async function initPixi() {
     resolution: window.devicePixelRatio || 1, autoDensity: true
   });
   W = app.screen.width; H = app.screen.height;
+  // Responsive TRAIN_X: 5% of viewport width, clamped 40-180. Mobile phones get tight margin, desktop gets larger.
+  TRAIN_X = Math.max(40, Math.min(180, Math.round(W * 0.05)));
   const topHUD = 120, botHUD = 115;
   const available = H - topHUD - botHUD;
   LANE_Y = [
