@@ -949,6 +949,38 @@ function answerMath(chosen, correct){
   }, isCorrect ? 420 : 720);
 }
 
+// ─── CANONICAL GYM BADGE IMAGES (from Bulbapedia) ───────────────────────────
+// Trainer IDs that have a real gym badge PNG in assets/gym-badges/.
+// Others (Elite Four, Champions, rivals, rockets, anime) fall back to emoji.
+const BADGE_IMG_SET = new Set([
+  // Kanto (8) — Boulder/Cascade/Thunder/Rainbow/Soul/Marsh/Volcano/Earth
+  'brock','misty','surge','erika','koga','sabrina','blaine','giovanni',
+  // Johto (7) — Zephyr/Hive/Plain/Fog/Mineral/Glacier/Rising
+  'falkner','bugsy','whitney','morty','jasmine','pryce','clair',
+  // Hoenn (7) — Stone/Knuckle/Dynamo/Heat/Balance/Feather/Rain
+  'roxanne','brawly','wattson','flannery','norman','winona','wallace',
+  // Sinnoh (6) — Coal/Cobble/Fen/Mine/Icicle/Beacon
+  'roark','maylene','wake','byron','candice','volkner',
+  // Unova (6) — Basic/Insect/Bolt/Quake/Jet/Legend
+  'lenora','burgh','elesa','clay','skyla','drayden',
+  // Kalos (6) — Bug/Cliff/Rumble/Plant/Fairy/Voltage
+  'viola','grant','korrina','ramos','valerie','clemont',
+  // Galar (6) — Grass/Water/Fire/Fighting/Rock/Dragon
+  'milo','nessa','kabu','bea','gordie','raihan'
+])
+function hasBadgeImg(id){ return BADGE_IMG_SET.has(id) }
+function badgeImgUrl(id){ return `../assets/gym-badges/${id}.webp` }
+// Render a badge as inline HTML — image for canonical gym leaders, emoji otherwise.
+// `size` is the pixel size (width=height). `extraStyle` appended to the element style.
+function badgeHtml(trainer, size, extraStyle){
+  const s = size || 24
+  const es = extraStyle || ''
+  if (hasBadgeImg(trainer.id)) {
+    return `<img src="${badgeImgUrl(trainer.id)}" alt="${trainer.badge}" style="width:${s}px;height:${s}px;object-fit:contain;display:inline-block;vertical-align:middle;${es}">`
+  }
+  return `<span style="font-size:${Math.round(s*0.8)}px;line-height:${s}px;${es}">${trainer.badge}</span>`
+}
+
 // Replace broken trainer img with badge-emoji avatar
 function trainerFallback(img, badge) {
   // Try remote CDN before falling back to emoji
@@ -998,7 +1030,7 @@ function buildGymSelect(){
           <div class="tc-name">${t.name}</div>
           <div class="tc-gym">${t.gym}</div>
         </div>
-        <div class="tc-status">${beaten?t.badge:unlocked?'⚔️':'🔒'}</div>
+        <div class="tc-status">${beaten?badgeHtml(t,22):unlocked?'⚔️':'🔒'}</div>
       </div>`;
     });
     html += '</div>';
@@ -1027,7 +1059,7 @@ function showBadgeCollection() {
     html += '<div style="display:flex;flex-wrap:wrap;gap:6px">'
     gTrainers.forEach(t => {
       const earned = !!badges[t.id]
-      html += `<div style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:20px;border-radius:10px;border:2px solid ${earned?'#fbbf24':'rgba(255,255,255,0.1)'};background:${earned?'rgba(251,191,36,0.15)':'rgba(255,255,255,0.03)'};${earned?'':'opacity:0.3;filter:grayscale(1)'}" title="${t.name} — ${t.gym}">${t.badge}</div>`
+      html += `<div style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:20px;border-radius:10px;border:2px solid ${earned?'#fbbf24':'rgba(255,255,255,0.1)'};background:${earned?'rgba(251,191,36,0.15)':'rgba(255,255,255,0.03)'};${earned?'':'opacity:0.3;filter:grayscale(1)'}" title="${t.name} — ${t.gym}">${badgeHtml(t,26)}</div>`
     })
     html += '</div>'
   })
@@ -1045,7 +1077,10 @@ function updateBadgeCount(){
 function showGymWelcome(trainerId) {
   const trainer = TRAINERS.find(t => t.id === trainerId)
   if (!trainer) return
-  document.getElementById('gw-badge').textContent = trainer.badge
+  // Welcome banner badge — big image for real gym leaders, emoji otherwise (CSS font-size min(80px,20vw))
+  document.getElementById('gw-badge').innerHTML = hasBadgeImg(trainer.id)
+    ? `<img src="${badgeImgUrl(trainer.id)}" alt="${trainer.badge}" style="width:min(80px,20vw);height:min(80px,20vw);object-fit:contain;filter:drop-shadow(0 0 16px rgba(251,191,36,0.6))">`
+    : trainer.badge
   document.getElementById('gw-gym').textContent = trainer.gym
   const grp = TRAINER_GROUPS.find(g => g.id === trainer.group)
   document.getElementById('gw-city').textContent = grp ? grp.label.replace(/^[^\s]+\s/, '') + ' Region' : ''
@@ -1062,10 +1097,19 @@ function showGymWelcome(trainerId) {
 function closeWelcome() { document.getElementById('gym-welcome').classList.remove('show') }
 
 // ─── BADGE ZOOM ANIMATION ───────────────────────────────────────────────────
-function showBadgeZoom(badge, trainerName, gymName) {
+// trainerOrBadge may be a trainer object (preferred — enables image badge) OR a
+// plain emoji string (legacy). String path falls back to emoji rendering.
+function showBadgeZoom(trainerOrBadge, trainerName, gymName) {
   return new Promise(resolve => {
     const overlay = document.getElementById('badge-overlay')
-    document.getElementById('badge-emoji').textContent = badge
+    const el = document.getElementById('badge-emoji')
+    if (trainerOrBadge && typeof trainerOrBadge === 'object' && trainerOrBadge.id && hasBadgeImg(trainerOrBadge.id)) {
+      // Inline <img> scaled via CSS transform on #badge-emoji (scale 0 → 1 on .show)
+      el.innerHTML = `<img src="${badgeImgUrl(trainerOrBadge.id)}" alt="${trainerOrBadge.badge}" style="width:min(120px,30vw);height:min(120px,30vw);object-fit:contain">`
+    } else {
+      const emoji = (trainerOrBadge && trainerOrBadge.badge) || trainerOrBadge
+      el.textContent = emoji
+    }
     document.getElementById('badge-text').textContent = `${trainerName} Badge diraih!`
     document.getElementById('badge-gym-text').textContent = gymName
     overlay.classList.add('show')
@@ -1391,7 +1435,7 @@ function endBattleWin(){
   bgmStop()
   const tid = battle.trainer.id;
   // Show badge zoom animation, then modal
-  showBadgeZoom(trainer.badge, trainer.name, trainer.gym).then(() => {
+  showBadgeZoom(trainer, trainer.name, trainer.gym).then(() => {
     const info = `Lencana ${trainer.name} diraih! Total: ${total} badges`
     const title = stars >= 5 ? 'Sempurna!' : stars >= 4 ? 'Hebat!' : stars >= 3 ? 'Bagus!' : stars >= 1 ? 'Coba Lagi' : 'Gagal! Coba Lagi'
     const msg = stars >= 5 ? `Wow, kamu hebat! ${info}` :

@@ -4,6 +4,15 @@
 
 ## 🔥 OPEN 2026-04-22 (session ongoing)
 
+### Task #31 — G13c Real Gym Badge Icons ✅ DONE 2026-04-22
+- **Ask**: "Badge, extract dari website page ini. https://bulbapedia.bulbagarden.net/wiki/Badge" + "Dan bisa dari sini. Saling melengkapi jika ada yg tdak ada https://pokemon.fandom.com/wiki/Gym_Badge"
+- ✅ **46 badges downloaded** from Bulbapedia (Kanto 8 + Johto 7 + Hoenn 7 + Sinnoh 6 + Unova 6 + Kalos 6 + Galar 6). Saved to `assets/gym-badges/{trainer-id}.webp` at 128px, quality 90. Total 256KB (from 7MB PNG).
+- ✅ **G13c helpers added** (`games/g13c-pixi.html` ~line 953): `BADGE_IMG_SET`, `hasBadgeImg`, `badgeImgUrl`, `badgeHtml(trainer, size, style)`.
+- ✅ **5 render sites switched** to image-or-emoji: trainer card `.tc-status`, badge collection grid, gym welcome `#gw-badge`, badge zoom `#badge-emoji`, `showResult` → `showBadgeZoom(trainer,…)` signature.
+- ✅ **Non-gym-leaders** (Elite Four, Champions, rivals, rockets, anime) keep emoji — no canonical single badge.
+- ✅ **Sanity**: `node --check` clean, dev server serves `brock.webp` 200 OK.
+- **Touched**: `assets/gym-badges/*.webp` (46 new), `games/g13c-pixi.html`, CHANGELOG, TODO.
+
 ### Task #47 — Character Train Dimensions Static on Mobile ✅ DONE 2026-04-22
 - **Symptom**: Character trains (Casey/Linus/Dragutin/Malivlak) rendered at identical pixel size on mobile as on PC. `spriteHeight`, `wheelPositions`, `smokePos`, `bottomPaddingOffset` were hardcoded pixel constants. User report: "Game ini di PC sudah bagus dan proporsional. Namun di mobile, dimensinya masih statis."
 - ✅ **Added `RZ.trainScale()`** in `shared/rz-responsive.js` — viewport-height-based multiplier `clamp(0.55, H/800, 1.0)` (distinct from CSS-oriented `RZ.scale()` which caps at 1.0 for any viewport ≥ 320w and therefore never shrinks trains on actual mobile devices).

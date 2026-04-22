@@ -1,5 +1,40 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-22 — G13c real gym badge icons (Task #31)
+
+### Problem
+G13c Gym Pokémon displayed generic emoji (💧🪨⚡🌿) as "badges" instead of the canonical in-game gym badge artwork. User request: extract badges from Bulbapedia (`/wiki/Badge`) complemented with pokemon.fandom.com for Galar.
+
+### Added
+- **`assets/gym-badges/`** — 46 WebP badge icons, 128px longest edge, quality 90. Total ~256KB. Sourced from Bulbapedia archives (downsized from originals 500–1280px PNG → 116–128px WebP). Naming: `{trainer-id}.webp` (brock.webp, misty.webp, …, raihan.webp).
+  - Kanto 8 (Boulder/Cascade/Thunder/Rainbow/Soul/Marsh/Volcano/Earth)
+  - Johto 7 (Zephyr/Hive/Plain/Fog/Mineral/Glacier/Rising)
+  - Hoenn 7 (Stone/Knuckle/Dynamo/Heat/Balance/Feather/Rain)
+  - Sinnoh 6 (Coal/Cobble/Fen/Mine/Icicle/Beacon)
+  - Unova 6 (Basic/Insect/Bolt/Quake/Jet/Legend)
+  - Kalos 6 (Bug/Cliff/Rumble/Plant/Fairy/Voltage)
+  - Galar 6 (Grass/Water/Fire/Fighting/Rock/Dragon)
+- **G13c helpers** (`games/g13c-pixi.html` ~line 953): `BADGE_IMG_SET` (46 trainer ids), `hasBadgeImg(id)`, `badgeImgUrl(id)`, `badgeHtml(trainer, size, extraStyle)`. Elite Four / Champions / rivals / rockets / anime still render emoji.
+
+### Changed
+- **5 badge render sites in `games/g13c-pixi.html`**:
+  1. `buildGymSelect` trainer card `.tc-status` (~line 1035) — shows badge image when beaten, `⚔️` when unlocked, `🔒` when locked.
+  2. `showBadgeCollection` grid (~line 1064) — 26px badge image per trainer (grayscale when un-earned).
+  3. `showGymWelcome` `#gw-badge` banner (~line 1082) — big badge image (min(80px, 20vw)) with gold drop-shadow, fallback to emoji for non-gym-leaders.
+  4. `showBadgeZoom` `#badge-emoji` (~line 1103) — signature accepts trainer object OR legacy emoji string; renders image with CSS zoom scale animation for real gym leaders.
+  5. `showResult` call site (~line 1438) — now passes full trainer object to `showBadgeZoom`.
+
+### Not changed
+- `GameModal` emoji field (~line 1447) still uses `trainer.badge` (emoji) since modal's emoji slot is a text string; the dedicated `#badge-emoji` zoom animation already showcases the image.
+- `trainerFallback` avatar (~line 993) still falls back to emoji — image would require a different container sizing and the avatar slot is for sprites not badges.
+
+### Tested
+- `python3 -m http.server` + curl on `/Dunia-Emosi/assets/gym-badges/brock.webp` → 200.
+- `node --check` on extracted inline script → clean.
+- Grep of render sites → 8 references across `hasBadgeImg`, `badgeHtml`, `badgeImgUrl`, `BADGE_IMG_SET`.
+
+---
+
 ## 2026-04-22 — Character train dimensions responsive to viewport (Task #47)
 
 ### Problem
