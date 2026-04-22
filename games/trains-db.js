@@ -25,9 +25,9 @@ const TRAIN_CATS = [
       {key:'jz711_dragutin', name:'JZ 711 Dragutin', sub:'Articulated Tram Yugoslav', emoji:'🚆',
        isCharacter:true, spriteUrl:'../assets/train/jz711-body.webp',
        wheelLayout:'articulated-tram', spriteHeight:72,
-       // Sprite 600×127, rendered ~340×72. 4 wheels at ends of articulated tram.
-       wheelPositions:[[-145,-4,7],[-115,-4,7],[115,-4,7],[145,-4,7]],
-       smokePos:null,
+       // Sprite 600×149 (simple threshold), body ±137 rendered. Wheels inside end bogies.
+       wheelPositions:[[-125,-4,7],[-108,-4,7],[106,-4,7],[123,-4,7]],
+       smokePos:null, bottomPaddingOffset:12,
        bodyColor:'#0d7377', accColor:'#14b8a6', kmh:60, baseSpeed:1.95, boostMult:1.55, boostDur:1600,
        desc:'JZ 711 Dragutin — Tram listrik artikulasi Yugoslavia!'},
       {key:'jz62_malivlak', name:'Malivlak', sub:'JZ 62 Steam + 3 Cars', emoji:'🚂',
