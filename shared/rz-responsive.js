@@ -56,6 +56,22 @@
     return Math.round(base * s)
   }
 
+  // Train / game-world sprite scale — tracks viewport HEIGHT since sprites are
+  // calibrated to a reference laptop viewport (H ≈ 800). Differs from `scale()`
+  // (which is CSS-UI-oriented and saturates at 1.0 for viewports ≥ 320w): trains
+  // need to shrink on mobile portrait (H ~ 667) and landscape (H ~ 375) and stay
+  // at their designed PC size on laptop/desktop (H ≥ 800).
+  //
+  // Returns a multiplier clamped to [0.55, 1.0]:
+  //   - 800+ px height     → 1.0  (PC/laptop baseline — no scaling)
+  //   - 667px (iPhone-P)   → 0.83
+  //   - 480px              → 0.60
+  //   - ≤436px             → 0.55 (clamped floor, prevents sprite dissolving)
+  function trainScale() {
+    const h = window.innerHeight || 800
+    return Math.min(1, Math.max(0.55, h / 800))
+  }
+
   // Resize listener helper — passes the RZ object to the callback so consumer
   // can call `r.scale()`, `r.btn('md')` etc without re-importing.
   function onResize(fn) {
@@ -65,5 +81,5 @@
     return () => window.removeEventListener('resize', handler)
   }
 
-  window.RZ = { scale, bp, orient, fontScale, gap, btn, onResize }
+  window.RZ = { scale, bp, orient, fontScale, gap, btn, trainScale, onResize }
 })()

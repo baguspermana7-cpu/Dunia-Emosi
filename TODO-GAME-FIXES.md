@@ -4,6 +4,16 @@
 
 ## 🔥 OPEN 2026-04-22 (session ongoing)
 
+### Task #47 — Character Train Dimensions Static on Mobile ✅ DONE 2026-04-22
+- **Symptom**: Character trains (Casey/Linus/Dragutin/Malivlak) rendered at identical pixel size on mobile as on PC. `spriteHeight`, `wheelPositions`, `smokePos`, `bottomPaddingOffset` were hardcoded pixel constants. User report: "Game ini di PC sudah bagus dan proporsional. Namun di mobile, dimensinya masih statis."
+- ✅ **Added `RZ.trainScale()`** in `shared/rz-responsive.js` — viewport-height-based multiplier `clamp(0.55, H/800, 1.0)` (distinct from CSS-oriented `RZ.scale()` which caps at 1.0 for any viewport ≥ 320w and therefore never shrinks trains on actual mobile devices).
+- ✅ **Added `CharacterTrain.scaleConfig(cfg, s)`** — returns new config with `spriteHeight`, `bottomPaddingOffset`, `bodyBobAmp`, every `wheelPositions[i] = [x,y,r]`, and `smokePos = [x,y]` multiplied by `s`.
+- ✅ **G15 + G16 buildTrain**: compute `rzScale = RZ.trainScale()`, pass `scaleConfig(cfg, rzScale)` to mount. Rail placement uses the scaled spriteHeight + bottomPaddingOffset.
+- ✅ **G15 + G16 resize handlers**: recompute TRAIN_X / TRAIN_SCREEN_X + track Y, dispose old character train, call buildTrain() to rebuild with fresh scale. Programmatic trains just reposition.
+- ✅ **Cache**: `train-character-sprite.js` v=d→e, `rz-responsive.js` v=h→i (across all 6 games), `index.html` v=ab→ac.
+- ✅ **Docs**: `documentation and standarization/CHARACTER-TRAIN-SPEC.md` — "Responsive Scaling (RZ.trainScale())" section with formula + scaling table.
+- **Touched**: `shared/rz-responsive.js`, `games/train-character-sprite.js`, `games/g15-pixi.html`, `games/g16-pixi.html`, `games/g14.html`, `games/g19-pixi.html`, `games/g20-pixi.html`, `games/g22-candy.html`, `index.html`, CHANGELOG, CHARACTER-TRAIN-SPEC.
+
 ### Task #44 — Result Modal Engine Contradicts Stars (P0 BUG)
 - ⬜ **Symptom**: Modal shows "Selesai!" + 1★ + "Sempurna! Tidak ada kesalahan!" + "Matematika Benar: 0" + enabled "Level Berikutnya" button — WITH ZERO CORRECT ANSWERS. Screenshot 2026-04-22.
 - **Root cause hypotheses**:

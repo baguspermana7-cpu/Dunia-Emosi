@@ -217,8 +217,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
 <script src="trains-db.js"></script>
-<script src="train-character-sprite.js?v=20260422d"></script>
-<script src="../shared/rz-responsive.js?v=20260422h"></script>
+<script src="train-character-sprite.js?v=20260422e"></script>
+<script src="../shared/rz-responsive.js?v=20260422i"></script>
 <script>
 'use strict';
 // Polyfill ctx.roundRect for older Android WebViews (Chrome < 99)
@@ -258,7 +258,26 @@ function saveG15Progress(stars) {
   } catch(_) {}
 }
 function goBack() { try{document.getElementById('game-bgm').pause()}catch(_){}; history.back(); }
-window.addEventListener('resize',()=>{if(typeof app!=='undefined'&&app)app.renderer.resize(window.innerWidth,window.innerHeight)})
+window.addEventListener('resize',()=>{
+  if(typeof app==='undefined' || !app) return;
+  app.renderer.resize(window.innerWidth,window.innerHeight);
+  // Recompute responsive layout: track lanes, train X, and rebuild character train so its
+  // sprite + wheels + smoke rescale proportionally on device rotation / window resize.
+  W = app.screen.width; H = app.screen.height;
+  TRAIN_X = Math.max(150, Math.min(180, Math.round(W * 0.10)));
+  const topHUD = 120, botHUD = 115;
+  const available = H - topHUD - botHUD;
+  LANE_Y = [
+    topHUD + available * 0.18,
+    topHUD + available * 0.50,
+    topHUD + available * 0.82
+  ];
+  if (selectedTrain && selectedTrain.isCharacter && typeof buildTrain === 'function') {
+    try { buildTrain(); } catch(_) {}
+  } else if (trainContainer) {
+    trainContainer.x = TRAIN_X; trainContainer.y = LANE_Y[1];
+  }
+});
 function togglePause() {
   gamePaused = !gamePaused;
   document.getElementById('btn-pause').textContent = gamePaused ? '▶' : '⏸';
@@ -1052,14 +1071,19 @@ function buildTrain() {
 
   // Character train branch — mount bg-removed WebP sprite with animated wheels + smoke
   if (selectedTrain.isCharacter && window.CharacterTrain) {
+    // Scale all geometry by RZ.trainScale() — makes sprite + wheels + smoke
+    // proportional across mobile portrait / landscape / tablet / PC. Viewport-height
+    // based (reference H=800), clamped [0.55, 1.0]. Base config = PC (scale 1).
+    const rzScale = (window.RZ && typeof RZ.trainScale === 'function') ? RZ.trainScale() : 1;
+    const scaledCfg = CharacterTrain.scaleConfig(selectedTrain, rzScale);
     // Character sprites are bottom-anchored — shift so sprite baseline rests ON rail.
     // bottomPaddingOffset compensates for transparent padding at the bottom of cartoon art.
-    const sh = selectedTrain.spriteHeight || 90;
-    const padOff = selectedTrain.bottomPaddingOffset || 0;
+    const sh = scaledCfg.spriteHeight || 90;
+    const padOff = scaledCfg.bottomPaddingOffset || 0;
     trainContainer.y = LANE_Y[1] + (sh / 2 - 4) + padOff;
     // Sprite faces RIGHT naturally (was flipped in source) — don't mirror container
     trainContainer.scale.x = 1;
-    characterTrainInstance = CharacterTrain.mount(trainContainer, selectedTrain);
+    characterTrainInstance = CharacterTrain.mount(trainContainer, scaledCfg);
     if (characterTrainInstance) characterTrainInstance.setSmokeParent(stage);
     return;
   }

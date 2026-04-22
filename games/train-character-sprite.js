@@ -149,5 +149,22 @@
     return state
   }
 
-  window.CharacterTrain = { mount, createSmokePuff }
+  // Produce a new config with all geometry multiplied by `s`.
+  // Used by G15+G16 buildTrain to scale character trains responsively —
+  // base values in trains-db.js represent PC (scale=1) dimensions.
+  function scaleConfig(cfg, s) {
+    if (!cfg) return cfg
+    if (!(s > 0) || s === 1) return cfg
+    const out = Object.assign({}, cfg)
+    if (typeof cfg.spriteHeight === 'number') out.spriteHeight = cfg.spriteHeight * s
+    if (typeof cfg.bottomPaddingOffset === 'number') out.bottomPaddingOffset = cfg.bottomPaddingOffset * s
+    if (typeof cfg.bodyBobAmp === 'number') out.bodyBobAmp = cfg.bodyBobAmp * s
+    if (Array.isArray(cfg.wheelPositions)) {
+      out.wheelPositions = cfg.wheelPositions.map(p => [p[0] * s, p[1] * s, p[2] * s])
+    }
+    if (Array.isArray(cfg.smokePos)) out.smokePos = [cfg.smokePos[0] * s, cfg.smokePos[1] * s]
+    return out
+  }
+
+  window.CharacterTrain = { mount, createSmokePuff, scaleConfig }
 })()

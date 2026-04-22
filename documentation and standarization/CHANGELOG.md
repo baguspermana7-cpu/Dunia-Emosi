@@ -1,5 +1,45 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-22 — Character train dimensions responsive to viewport (Task #47)
+
+### Problem
+Character train `spriteHeight`, `wheelPositions`, `smokePos`, and `bottomPaddingOffset` in `trains-db.js` + G16_CHAR_CONFIGS were hardcoded pixel values calibrated for PC (H≈800–1080). On mobile portrait (H≈667) and landscape (H≈375) they rendered at full desktop size — sprite + wheels + smoke disproportionately large vs viewport. User report: "Game ini di PC sudah bagus dan proporsional. Namun di mobile, dimensinya masih statis."
+
+### Why viewport-height instead of `RZ.scale()`
+`RZ.scale()` uses the CSS `clamp(0.7, 0.44 + 0.175vw, 1)` formula which saturates at 1.0 for any viewport ≥ 320w — the scale intended for CSS UI sizing never shrinks trains on real mobile devices. Train sprites are vertical objects anchored to a rail at a fraction of viewport height, so a dedicated height-driven scale is more natural.
+
+### Added
+- **`shared/rz-responsive.js` → `RZ.trainScale()`** — New viewport-height-based multiplier: `Math.min(1, Math.max(0.55, innerHeight / 800))`.
+  - H ≥ 800 (laptop/desktop) → 1.0 (PC baseline, no scaling)
+  - H = 667 (mobile portrait iPhone) → 0.83
+  - H = 480 → 0.60
+  - H ≤ 436 → 0.55 (clamped floor)
+- **`games/train-character-sprite.js` → `CharacterTrain.scaleConfig(cfg, s)`** — Returns a new config with `spriteHeight`, `bottomPaddingOffset`, `bodyBobAmp`, every `wheelPositions[i] = [x, y, r]`, and `smokePos = [x, y]` multiplied by `s`. Base config = PC reference (scale 1); all viewports apply this transform at mount.
+
+### Changed
+- **`games/g15-pixi.html` buildTrain (~line 1073)** — Reads `const rzScale = RZ.trainScale()`, calls `CharacterTrain.scaleConfig(selectedTrain, rzScale)` before mounting. Rail-baseline placement uses the scaled `spriteHeight` + `bottomPaddingOffset`.
+- **`games/g15-pixi.html` resize handler (line 261)** — Extended from renderer-only resize to: recompute `TRAIN_X` + `LANE_Y`, then rebuild character train via `buildTrain()` so dispose + re-mount picks up the fresh `RZ.trainScale()`. Programmatic trains just reposition.
+- **`games/g16-pixi.html` buildTrain (~line 891)** — Same pattern: `CharacterTrain.scaleConfig(G16_CHAR_CONFIGS[key], rzScale)` before mount.
+- **`games/g16-pixi.html` resize handler (line 2006)** — Recompute `TRAIN_SCREEN_X`, dispose `g16CharacterTrain`, remove old `trainContainer` from stage, call `buildTrain(newW, newH)` to rebuild with current scale. Headlight + fireGlow x also re-tracked to new TRAIN_SCREEN_X.
+- **`documentation and standarization/CHARACTER-TRAIN-SPEC.md`** — Added "Responsive Scaling" section documenting the `scaleConfig` helper + resize rebuild contract.
+
+### Cache bump
+`index.html` v=20260422ab → v=20260422ac. `train-character-sprite.js` v=20260422d → v=20260422e. `rz-responsive.js` v=20260422h → v=20260422i (bumped across all 6 games that include it so every game picks up the new `RZ.trainScale` export).
+
+### Verification matrix
+| Device | W × H | rzScale | Casey spriteHeight (base 117) |
+|--------|-------|---------|-------------------------------|
+| iPhone SE portrait | 375×667 | 0.83 | 97 |
+| iPhone SE landscape | 667×375 | 0.55 (clamped) | 64 |
+| iPhone 14 portrait | 390×844 | 1.0 | 117 |
+| iPad portrait | 768×1024 | 1.0 | 117 |
+| Laptop | 1440×900 | 1.0 | 117 |
+| 4K desktop | 3840×2160 | 1.0 | 117 |
+
+Resize / orientation change: both games dispose + rebuild the character train, rail alignment preserved via `bottomPaddingOffset * rzScale`. Smoke + wheel overlays re-render at the new geometry; particle trails from the old instance are disposed.
+
+---
+
 ## 2026-04-22 — RDE Step 7: G14 + G15 Pixi text sizing wired to RZ runtime
 
 ### Changed

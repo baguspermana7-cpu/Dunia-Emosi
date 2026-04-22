@@ -149,9 +149,9 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
   <button id="ts-back" onclick="goBack()">◀ Kembali</button>
 </div>
 
-<script src="../shared/rz-responsive.js?v=20260422h"></script>
+<script src="../shared/rz-responsive.js?v=20260422i"></script>
 <script src="game-modal.js"></script>
-<script src="train-character-sprite.js?v=20260422d"></script>
+<script src="train-character-sprite.js?v=20260422e"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
 <script>
@@ -889,14 +889,16 @@ function buildTrain(W,H){
   // Character train branch — look up config by selected style's characterKey
   const TS_sel = TRAIN_STYLES[selectedTrainIdx]
   if (window.CharacterTrain && TS_sel && TS_sel.character && TS_sel.characterKey && G16_CHAR_CONFIGS[TS_sel.characterKey]) {
-    // Character sprites are bottom-anchored — place baseline on visible rail stripe
-    // (NOT track top tY, which is ~18px above the visible rail; programmatic trains draw
-    // wheels below baseline so they use tY-18, but bottom-anchored sprites need tY+~22).
-    const padOff = (G16_CHAR_CONFIGS[TS_sel.characterKey].bottomPaddingOffset) || 0
+    // Character sprites are bottom-anchored — place baseline on visible rail stripe.
+    // Scale geometry by RZ.trainScale() (viewport-height-based, [0.55, 1.0]) so
+    // sprite + wheels + smoke proportionally shrink on mobile / tablet and stay at
+    // designed size on PC. Base config = scale 1 (PC reference, H≥800).
+    const rzScale = (window.RZ && typeof RZ.trainScale === 'function') ? RZ.trainScale() : 1
+    const scaledCfg = CharacterTrain.scaleConfig(G16_CHAR_CONFIGS[TS_sel.characterKey], rzScale)
+    const padOff = scaledCfg.bottomPaddingOffset || 0
     trainContainer.y = tY + 22 + padOff
     trainContainer.scale.x = 1; // sprite already faces right
-    const charConfig = G16_CHAR_CONFIGS[TS_sel.characterKey]
-    g16CharacterTrain = CharacterTrain.mount(trainContainer, charConfig);
+    g16CharacterTrain = CharacterTrain.mount(trainContainer, scaledCfg);
     if (g16CharacterTrain) g16CharacterTrain.setSmokeParent(stage);
     stage.addChild(trainContainer);
     return;
@@ -2006,15 +2008,28 @@ function restartGame(){location.reload()}
 window.addEventListener('resize',()=>{
   if(!app)return
   app.renderer.resize(window.innerWidth,window.innerHeight)
-  // Recalculate track position for new viewport
-  const newH=app.screen.height
+  // Recalculate responsive layout for new viewport — TRAIN_SCREEN_X + track Y.
+  const newW=app.screen.width, newH=app.screen.height
+  TRAIN_SCREEN_X=Math.max(150, Math.min(180, Math.round(newW*0.10)))
   const newTY=getTrackY(newH)
-  if(trainContainer) trainContainer.y=newTY-14
+  // Rebuild character train so geometry (sprite + wheels + smoke) rescales with RZ.scale()
+  const TS_sel = TRAIN_STYLES[selectedTrainIdx]
+  const isCharacter = TS_sel && TS_sel.character && TS_sel.characterKey && G16_CHAR_CONFIGS[TS_sel.characterKey]
+  if (isCharacter && window.CharacterTrain && trainContainer) {
+    try {
+      if (g16CharacterTrain) { g16CharacterTrain.dispose(); g16CharacterTrain = null }
+      if (trainContainer.parent) trainContainer.parent.removeChild(trainContainer)
+      buildTrain(newW, newH)
+    } catch(_) {}
+  } else if (trainContainer) {
+    trainContainer.x=TRAIN_SCREEN_X
+    trainContainer.y=newTY-14
+  }
   // Reposition obstacles and NPC to new track Y
   if(S.obstacles) S.obstacles.forEach(o=>{if(o.container) o.container.y=newTY})
   // Reposition headlight and fire glow
-  if(headlightBeam) headlightBeam.y=newTY-14
-  if(fireGlow) fireGlow.y=newTY-18
+  if(headlightBeam){ headlightBeam.x=TRAIN_SCREEN_X+66; headlightBeam.y=newTY-14 }
+  if(fireGlow){ fireGlow.x=TRAIN_SCREEN_X+2; fireGlow.y=newTY-18 }
 })
 </script>
 </body>

@@ -90,6 +90,43 @@ Base offsets (`-4` G15 / `+22` G16) derived empirically from the rail-stripe pos
 
 ---
 
+## Responsive Scaling (RZ.trainScale())
+
+All geometry in `trains-db.js` + `G16_CHAR_CONFIGS` represents **PC reference (scale = 1)**, calibrated for viewport height ≥ 800. At buildTrain time both games multiply by `window.RZ.trainScale()` before mounting:
+
+```js
+const rzScale = (window.RZ && RZ.trainScale()) || 1
+const scaledCfg = CharacterTrain.scaleConfig(baseCfg, rzScale)
+// scaledCfg.spriteHeight, wheelPositions[i], smokePos, bottomPaddingOffset, bodyBobAmp all * rzScale
+CharacterTrain.mount(container, scaledCfg)
+```
+
+`CharacterTrain.scaleConfig(cfg, s)` returns a new config with the following fields multiplied by `s`:
+- `spriteHeight`
+- `bottomPaddingOffset`
+- `bodyBobAmp`
+- every `[x, y, r]` in `wheelPositions`
+- `smokePos = [x, y]`
+
+`RZ.trainScale()` is a **viewport-height-driven** multiplier (distinct from the CSS-oriented `RZ.scale()` which caps at 1.0 for any viewport ≥ 320w):
+
+```js
+Math.min(1, Math.max(0.55, window.innerHeight / 800))
+```
+
+| Viewport H | Scale |
+|------------|-------|
+| ≥ 800 (PC / laptop) | 1.00 |
+| 667 (iPhone portrait) | 0.83 |
+| 480 | 0.60 |
+| ≤ 436 | 0.55 (floor) |
+
+Train sprites are vertical, rail-anchored objects — height is the natural axis to scale against. The CSS `RZ.scale()` stays unchanged and keeps driving DOM HUD + PIXI.Text sizing.
+
+**On resize**: both games recompute `TRAIN_X` / `TRAIN_SCREEN_X`, track Y, and rebuild the character train (dispose + re-mount) so the rescaled sprite + wheels + smoke re-anchor to the new rail position. Programmatic trains only reposition (no rescale — they're drawn in PIXI.Graphics at fixed coords).
+
+---
+
 ## Responsive TRAIN_X
 
 Both games use:
