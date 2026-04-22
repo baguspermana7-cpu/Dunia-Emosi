@@ -851,19 +851,22 @@ const G16_CHAR_CONFIGS = {
     spriteUrl:'../assets/train/caseyjr-body.webp', spriteHeight:117,
     // spriteHeight 1.3x, wheel radius 0.8x (was r=10, now r=8)
     wheelPositions:[[-40,-10,8],[-14,-10,8],[13,-10,8],[40,-10,8]],
-    smokePos:[-40,-130], bodyBobFreq:0.08, bodyBobAmp:1.5, smokeInterval:10
+    smokePos:[-40,-130], bodyBobFreq:0.08, bodyBobAmp:1.5, smokeInterval:10,
+    bottomPaddingOffset:8
   },
   linus_brave: {
     spriteUrl:'../assets/train/linus-body.webp', spriteHeight:108,
     // spriteHeight 1.2x (was 90). Wheels scaled 1.2x span.
     wheelPositions:[[-66,-8,8],[-38,-12,12],[-14,-12,12],[10,-12,12],[34,-12,12]],
-    smokePos:[-42,-132], bodyBobFreq:0.08, bodyBobAmp:1.5, smokeInterval:10
+    smokePos:[-42,-132], bodyBobFreq:0.08, bodyBobAmp:1.5, smokeInterval:10,
+    bottomPaddingOffset:8
   },
   jz711_dragutin: {
     spriteUrl:'../assets/train/jz711-body.webp', spriteHeight:72,
     // Sprite 600×149 (restored simple-threshold), body ±137 rendered. Wheels inside end bogies.
     wheelPositions:[[-125,-4,7],[-108,-4,7],[106,-4,7],[123,-4,7]],
-    smokePos:null, bodyBobFreq:0.10, bodyBobAmp:1.0, smokeInterval:10
+    smokePos:null, bodyBobFreq:0.10, bodyBobAmp:1.0, smokeInterval:10,
+    bottomPaddingOffset:12
   },
   jz62_malivlak: {
     spriteUrl:'../assets/train/malivlak-body.webp', spriteHeight:172,
@@ -886,9 +889,11 @@ function buildTrain(W,H){
   // Character train branch — look up config by selected style's characterKey
   const TS_sel = TRAIN_STYLES[selectedTrainIdx]
   if (window.CharacterTrain && TS_sel && TS_sel.character && TS_sel.characterKey && G16_CHAR_CONFIGS[TS_sel.characterKey]) {
-    // Character sprites are bottom-anchored — place baseline ON the rail (sprite wheels drawn in artwork touch rail)
+    // Character sprites are bottom-anchored — place baseline on visible rail stripe
+    // (NOT track top tY, which is ~18px above the visible rail; programmatic trains draw
+    // wheels below baseline so they use tY-18, but bottom-anchored sprites need tY+~22).
     const padOff = (G16_CHAR_CONFIGS[TS_sel.characterKey].bottomPaddingOffset) || 0
-    trainContainer.y = tY + 6 + padOff
+    trainContainer.y = tY + 22 + padOff
     trainContainer.scale.x = 1; // sprite already faces right
     const charConfig = G16_CHAR_CONFIGS[TS_sel.characterKey]
     g16CharacterTrain = CharacterTrain.mount(trainContainer, charConfig);
