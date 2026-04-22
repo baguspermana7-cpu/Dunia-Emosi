@@ -32,11 +32,12 @@ const TRAIN_CATS = [
       {key:'jz62_malivlak', name:'Malivlak', sub:'JZ 62 Steam + 3 Cars', emoji:'🚂',
        isCharacter:true, spriteUrl:'../assets/train/malivlak-body.webp',
        wheelLayout:'passenger-train', spriteHeight:110,
+       // Sprite 600×336 (re-cropped 2026-04-22 via manual threshold), rendered ~196×110. 10 wheels.
        wheelPositions:[
-         [-85,-10,9],[-63,-10,9],[-48,-10,9],[-26,-10,9],
-         [-10,-10,9],[14,-10,9],[36,-6,5],[48,-6,5],[62,-10,11],[90,-10,11]
+         [-76,-9,8],[-56,-9,8],[-42,-9,8],[-23,-9,8],
+         [-9,-9,8],[12,-9,8],[32,-5,5],[43,-5,5],[56,-9,10],[80,-9,10]
        ],
-       smokePos:[90,-130],
+       smokePos:[82,-125],
        bodyColor:'#4a2040', accColor:'#c0392b', kmh:48, baseSpeed:1.75, boostMult:1.50, boostDur:1550,
        desc:'Malivlak — Kereta uap dengan 3 gerbong, klasik Yugoslavia!'},
     ]

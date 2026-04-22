@@ -6,6 +6,20 @@
 
 ## 2026-04-22
 
+### Manual threshold beats AI rembg for cartoon art on white backgrounds
+
+- **Symptom**: Linus Brave character train rendered as a shattered/pecah fragment in G15 + G16 — inner body regions missing, only wheels + partial cab visible.
+- **Root cause**: rembg with `u2net` (and even `isnet-general-use` + alpha matting) was trained on photographs. On flat cartoon art, the AI model sees uniform colored regions as "background-like" and erroneously alphas them out. First pass removed 77% of Linus sprite; even gentler pass left inner body holes.
+- **Fix**: Deterministic Pillow+numpy threshold. `RGB ≥235 → alpha 0`, `RGB ≥200 → alpha 180` (soft edge). No AI involvement. ~50ms per sprite.
+- **Lesson**: For CLEAN cartoon/illustration input with white backgrounds, manual luminance threshold beats AI matting. AI models trained on photos misread flat regions. Rule of thumb: if input is solid-color fills (not photograph textures), use threshold first; reach for AI rembg only when the background is textured/noisy.
+
+### Result modal engine — 3-layer defense against contradictory success messages
+
+- **Symptom**: User screenshot — result modal showed "Selesai!" + 1★ + "Sempurna! Tidak ada kesalahan!" + "Matematika Benar: 0" + enabled Level Berikutnya button — with zero correct answers.
+- **Root causes** (compound): (1) `GameScoring.calc` returned 1 star even for zero correct (`else stars = 1`); (2) Caller G15 checked `wrongTaps === 0` but not `mathCorrect === 0` so zero-answers path took success branch; (3) `GameModal.show` forwarded caller-supplied title/msg verbatim with no sanity check.
+- **Fix**: 3-layer defense. Layer 1: `GameScoring.calc` returns 0 when `correct <= 0`, allows 0★ through bonus path. Layer 2: `GameModal.show` normalizes 0-star state (force emoji 😞, title "Gagal! Coba Lagi", msg override if it contains success words). Layer 3: per-caller fix — 13 callers audited across 9 games, each now branches title/emoji/msg on actual star count.
+- **Lesson**: Shared result modals need DEFENSE-IN-DEPTH. Any single layer can fail (engine bug, caller bug, ambiguous success criteria) — the visible UI should be the last-line guardrail that refuses to display contradictory state (e.g., "Sempurna" text with 0 stars). Add explicit sanity-check assertions at the UI boundary; when they fire, override to a safe fail-state rather than letting garbage render.
+
 ### Hybrid rendering: character sprites vs programmatic Graphics
 
 - **Symptom**: G15 had a full parametric `PIXI.Graphics` locomotive builder (5 type-specific `drawBody()` functions). User wanted cartoon character trains that can't be expressed geometrically.
