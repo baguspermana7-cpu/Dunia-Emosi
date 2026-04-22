@@ -16,10 +16,10 @@ const TRAIN_CATS = [
        desc:'Lokomotif sirkus Casey JR! Si kecil yang berani.'},
       {key:'linus_brave', name:'Linus Brave', sub:'2-4-0 Sumatera', emoji:'🚂',
        isCharacter:true, spriteUrl:'../assets/train/linus-body.webp',
-       wheelLayout:'2-4-0', spriteHeight:90,
-       // Sprite 244×158, rendered ~139×90. Locomotive body + 2 pilot + 4 drivers.
-       wheelPositions:[[-55,-6,7],[-32,-10,10],[-12,-10,10],[8,-10,10],[28,-10,10]],
-       smokePos:[-35,-110],
+       wheelLayout:'2-4-0', spriteHeight:108,
+       // Sprite 600×446 (Linus.png HD). spriteHeight 90→108 (user 1.2x). Wheels scaled 1.2x.
+       wheelPositions:[[-66,-8,8],[-38,-12,12],[-14,-12,12],[10,-12,12],[34,-12,12]],
+       smokePos:[-42,-132],
        bodyColor:'#1a3a5c', accColor:'#d4aa58', kmh:42, baseSpeed:1.70, boostMult:1.52, boostDur:1520,
        desc:'Linus Brave — Lokomotif Sumatera yang gagah.'},
       {key:'jz711_dragutin', name:'JZ 711 Dragutin', sub:'Articulated Tram Yugoslav', emoji:'🚆',
