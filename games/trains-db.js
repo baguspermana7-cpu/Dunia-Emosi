@@ -33,11 +33,14 @@ const TRAIN_CATS = [
       {key:'jz62_malivlak', name:'Malivlak', sub:'JZ 62 Steam + 3 Cars', emoji:'🚂',
        isCharacter:true, spriteUrl:'../assets/train/malivlak-body.webp',
        wheelLayout:'passenger-train', spriteHeight:172,
-       // Sprite 700×393. Wheels are drawn IN the artwork (3 cars + loco drivers) —
-       // overlay wheels hidden to avoid double-wheel clutter + misalignment.
-       wheelPositions:[],
+       // Sprite 700×393 (horizontal lines stripped aggressively). Overlay wheels restored per user.
+       // Render ~307×172. 10 wheels: 3 cars × 2 + 2 pilot (r=5) + 2 drivers (r=9).
+       wheelPositions:[
+         [-120,-13,7],[-98,-13,7],[-75,-13,7],[-55,-13,7],
+         [-32,-13,7],[-12,-13,7],[20,-9,5],[32,-9,5],[55,-13,9],[88,-13,9]
+       ],
        smokePos:[95,-188],
-       bottomPaddingOffset:24, // push sprite down by 24px to sit on rail (source has bottom transparent padding)
+       bottomPaddingOffset:70, // large offset — cartoon source has significant bottom padding
        bodyColor:'#4a2040', accColor:'#c0392b', kmh:48, baseSpeed:1.75, boostMult:1.50, boostDur:1550,
        desc:'Malivlak — Kereta uap dengan 3 gerbong, klasik Yugoslavia!'},
     ]

@@ -866,10 +866,13 @@ const G16_CHAR_CONFIGS = {
   },
   jz62_malivlak: {
     spriteUrl:'../assets/train/malivlak-body.webp', spriteHeight:172,
-    // Wheels drawn in artwork — no overlay wheels to avoid clutter.
-    wheelPositions:[],
+    // Overlay wheels restored per user. 10 wheels.
+    wheelPositions:[
+      [-120,-13,7],[-98,-13,7],[-75,-13,7],[-55,-13,7],
+      [-32,-13,7],[-12,-13,7],[20,-9,5],[32,-9,5],[55,-13,9],[88,-13,9]
+    ],
     smokePos:[95,-188], bodyBobFreq:0.08, bodyBobAmp:1.5, smokeInterval:12,
-    bottomPaddingOffset:24
+    bottomPaddingOffset:70
   }
 };
 
