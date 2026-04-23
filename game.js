@@ -1186,6 +1186,7 @@ function g13cAnswer(isCorrect, btn, choices, correct) {
   const fb = document.getElementById('g13c-feedback')
   if (isCorrect) {
     btn.classList.add('correct')
+    spawnCorrectCardJuice(btn)
     s.correct++
     playCorrect()
     spawnSparkles(btn)
@@ -1193,10 +1194,11 @@ function g13cAnswer(isCorrect, btn, choices, correct) {
     fb.textContent = '✅ Benar! ' + correct.n + ' mulai dengan ' + s.letter
   } else {
     btn.classList.add('wrong')
+    spawnWrongShake(btn)
     // Reveal correct
     document.querySelectorAll('.g13c-choice-btn').forEach(b => {
       const name = b.querySelector('span:last-child')?.textContent
-      if (name === correct.n) b.classList.add('correct')
+      if (name === correct.n) { b.classList.add('correct'); spawnCorrectCardJuice(b, { burst:false }) }
     })
     playWrong()
     fb.style.color = '#f43f5e'
