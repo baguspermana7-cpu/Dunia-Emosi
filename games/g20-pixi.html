@@ -764,8 +764,8 @@ function gameLoop(ticker){
   S.bvx*=Math.pow(0.995, dt)
   S.bvy*=Math.pow(0.998, dt)
   S.bx+=S.bvx*dt*ballSpd; S.by+=S.bvy*dt*ballSpd
-  // Cap max ball speed — very slow for kids
-  const MAX_BALL_V = 3.8
+  // Cap max ball speed — very slow for kids (raised 3.8→5.0 to match 1.5× hit impulse)
+  const MAX_BALL_V = 5.0
   if(Math.abs(S.bvx)>MAX_BALL_V) S.bvx=Math.sign(S.bvx)*MAX_BALL_V
   if(Math.abs(S.bvy)>MAX_BALL_V) S.bvy=Math.sign(S.bvy)*MAX_BALL_V
   S.bSpin+=S.bvx*0.04*dt // faster visible spin
@@ -891,9 +891,11 @@ function checkHit(dx,dy,dvx,dvy,onGnd,who){
     power=4.4; hitType='shot'
   }
 
+  // Boost upward impulse by 1.5× — previously one jump couldn't reliably clear the net.
+  // Bumped -1.8 → -2.7 (base) and -1.4 → -2.1 (minimum) so jump+hit arc comfortably sails over.
   S.bvx=Math.cos(angle)*power+dvx*0.22
-  S.bvy=Math.sin(angle)*power-1.8
-  S.bvy=Math.min(S.bvy,-1.4)
+  S.bvy=Math.sin(angle)*power-2.7
+  S.bvy=Math.min(S.bvy,-2.1)
 
   if(hitType==='set') sfxHit()
   else if(hitType==='shot'){ sfxHit(); sfxWhoosh(0.45) } // Task #33: shot = medium whoosh
@@ -1333,7 +1335,7 @@ function updateG20Vol(){
   // Apply to any future audio elements
   window._g20MasterVol=m
 }
-window.addEventListener('resize',()=>{if(app)app.renderer.resize(window.innerWidth,window.innerHeight)})
+window.addEventListener('resize',()=>{if(app)app.renderer.resize(Math.min(window.innerWidth,1400),Math.min(window.innerHeight,1000))})
 </script>
 </body>
 </html>

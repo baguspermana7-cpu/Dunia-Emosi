@@ -310,7 +310,7 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 @keyframes fireflyBlink { 0%,100%{opacity:0;box-shadow:none} 50%{opacity:1;box-shadow:0 0 8px #FCD34D,0 0 14px #F59E0B} }
 .tree-left,.tree-right { position:absolute;bottom:0;width:80px;height:120px;background:#0F766E;clip-path:polygon(50% 0%,100% 100%,0% 100%);pointer-events:none;opacity:0.4; }
 .tree-left { left:-10px; } .tree-right { right:-10px; }
-.g3-animal { font-size:100px;text-align:center;display:block;margin:0 auto 6px;animation:g3Pop 0.5s cubic-bezier(0.34,1.56,0.64,1);filter:drop-shadow(0 8px 16px rgba(20,184,166,0.3));position:relative;z-index:1; }
+.g3-animal { font-size:clamp(64px, 16vw, 110px);text-align:center;display:block;margin:0 auto 6px;animation:g3Pop 0.5s cubic-bezier(0.34,1.56,0.64,1);filter:drop-shadow(0 8px 16px rgba(20,184,166,0.3));position:relative;z-index:1; }
 @keyframes g3Pop { from{transform:scale(0.3)rotate(-20deg);opacity:0} to{transform:scale(1)rotate(0);opacity:1} }
 .g3-word { font-size:var(--rz-font-h1);font-weight:900;text-align:center;letter-spacing:6px;background:linear-gradient(135deg,#14B8A6,#0F766E);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;position:relative;z-index:1; }
 .g3-hint { font-size:var(--rz-font-body);text-align:center;color:#0F766E;margin-bottom:var(--rz-gap-md);font-weight:700;position:relative;z-index:1; }
@@ -537,7 +537,7 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 
 /* G8 */
 #screen-game8 { background:linear-gradient(160deg,#FFF1F3 0%,#F3E8FF 50%,#FFF0F5 100%); }
-.g8-hint-img { width:240px;height:240px;border-radius:32px;background:white;box-shadow:var(--shadow-lg);display:flex;align-items:center;justify-content:center;font-size:140px;margin:16px auto 12px;border:4px solid #FDA4AF;animation:g3Pop 0.5s cubic-bezier(0.34,1.56,0.64,1);align-self:center; }
+.g8-hint-img { width:clamp(160px, 48vw, 260px);height:clamp(160px, 48vw, 260px);border-radius:32px;background:white;box-shadow:var(--shadow-lg);display:flex;align-items:center;justify-content:center;font-size:clamp(90px, 28vw, 150px);margin:16px auto 12px;border:4px solid #FDA4AF;animation:g3Pop 0.5s cubic-bezier(0.34,1.56,0.64,1);align-self:center; }
 .g8-hint-text { font-size:17px;color:var(--text-light);font-weight:700;margin-bottom:20px;text-align:center; }
 .game-header .gh-level { font-size:11px;font-weight:800;background:rgba(255,255,255,0.22);border-radius:20px;padding:3px 9px;color:rgba(255,255,255,0.95);letter-spacing:0.3px;white-space:nowrap;flex-shrink:0; }
 /* G8 slots/letters — RDE Step 3 migration (2026-04-21): fluid via --rz-* tokens */
@@ -598,7 +598,7 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 
 /* RESULT */
 #screen-result { background:radial-gradient(ellipse at center top,#F3E8FF,#FFF1F3,#CCFBF1);justify-content:center;gap:4px; }
-.result-mascot { font-size:100px;text-align:center;display:block;animation:mascotBounce 1.8s cubic-bezier(0.36,0.07,0.19,0.97) infinite;filter:drop-shadow(0 12px 20px rgba(139,92,246,0.3));margin-bottom:8px; }
+.result-mascot { font-size:clamp(60px, 14vw, 110px);text-align:center;display:block;animation:mascotBounce 1.8s cubic-bezier(0.36,0.07,0.19,0.97) infinite;filter:drop-shadow(0 12px 20px rgba(139,92,246,0.3));margin-bottom:8px; }
 .result-title  { font-size:34px;font-weight:900;font-family:var(--font-display);text-align:center;background:linear-gradient(135deg,#8B5CF6,#F43F5E);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
 .result-stars  { font-size:48px;text-align:center;margin:10px 0;animation:starsWave 0.6s 0.3s ease backwards; }
 .result-msg    { font-size:20px;font-weight:700;text-align:center;color:var(--text-light);margin-bottom:24px;line-height:1.5; }
@@ -1396,7 +1396,7 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
   animation: none !important; /* animation moved to .g1-char */
 }
 .g1-char {
-  font-size: 108px;
+  font-size: clamp(64px, 18vw, 120px);
   filter: drop-shadow(0 8px 16px rgba(244,63,94,0.3));
   animation: g1Wobble 0.6s cubic-bezier(0.36,0.07,0.19,0.97), g1AnimalIdle 3.5s ease-in-out 0.7s infinite;
   display: block;
@@ -1440,7 +1440,7 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 #screen-game3 .g3-animal {
   animation: g3AnimalHover 3s ease-in-out infinite !important;
   filter: drop-shadow(0 10px 24px rgba(0,0,0,0.45)) !important;
-  font-size: 112px !important;
+  font-size: clamp(72px, 17vw, 120px) !important;
 }
 @keyframes g3AnimalHover {
   0%,100% { transform:translateY(0) rotate(-3deg); }
@@ -2369,44 +2369,43 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
  */
 .g10-espr{
   width:min(44vw, 22vh);height:min(44vw, 22vh);
-  transform:scaleX(-1);
+  /* --flip:-1 because HD CDN sprites face screen-right natively and enemy must face screen-left toward player */
+  --flip:-1;
+  transform:scaleX(var(--flip));
   filter:drop-shadow(0 6px 18px rgba(0,0,0,0.7)) drop-shadow(0 0 10px rgba(255,220,50,0.45));
 }
 .g10-pspr{
   width:min(44vw, 22vh);height:min(44vw, 22vh);
-  transform:scaleX(-1);
+  /* --flip:1 because HD CDN sprites face screen-right and player must face screen-right toward enemy (no flip) */
+  --flip:1;
+  transform:scaleX(var(--flip));
   filter:drop-shadow(0 4px 12px rgba(0,0,0,0.7)) drop-shadow(0 0 8px rgba(100,180,255,0.45));
 }
-/* Sprite action animations */
-/* Enemy (top-right, scaleX(-1) → faces left toward player at lower-left) lunges left */
+/* Sprite action animations — use var(--flip) so JS-driven per-Pokemon facing is preserved */
 .g10-espr.spr-atk{animation:g10EAtk 0.35s ease;}
-@keyframes g10EAtk{0%{transform:scaleX(-1)}35%{transform:scaleX(-1) translateX(26px) translateY(7px) scale(1.12)}100%{transform:scaleX(-1)}}
-/* Player (bottom-left, scaleX(-1) → faces right toward enemy at upper-right) lunges right */
+@keyframes g10EAtk{0%{transform:scaleX(var(--flip))}35%{transform:scaleX(var(--flip)) translateX(-26px) translateY(7px) scale(1.12)}100%{transform:scaleX(var(--flip))}}
 .g10-pspr.spr-atk{animation:g10PAtk 0.35s ease;}
-@keyframes g10PAtk{0%{transform:scaleX(-1)}35%{transform:scaleX(-1) translateX(-26px) translateY(-7px) scale(1.12)}100%{transform:scaleX(-1)}}
-/* Enemy hit — preserve scaleX(-1) */
+@keyframes g10PAtk{0%{transform:scaleX(var(--flip))}35%{transform:scaleX(var(--flip)) translateX(-26px) translateY(-7px) scale(1.12)}100%{transform:scaleX(var(--flip))}}
 .g10-espr.spr-hit{animation:g10EHitFlip 0.45s ease;}
-@keyframes g10EHitFlip{0%,100%{transform:scaleX(-1)}15%{transform:scaleX(-1) translateX(10px) rotate(-3deg)}30%{transform:scaleX(-1) translateX(-12px) rotate(2deg)}50%{transform:scaleX(-1) translateX(7px)}70%{transform:scaleX(-1) translateX(-8px)}85%{transform:scaleX(-1) translateX(3px)}}
-/* Player hit — preserve scaleX(-1) */
+@keyframes g10EHitFlip{0%,100%{transform:scaleX(var(--flip))}15%{transform:scaleX(var(--flip)) translateX(10px) rotate(-3deg)}30%{transform:scaleX(var(--flip)) translateX(-12px) rotate(2deg)}50%{transform:scaleX(var(--flip)) translateX(7px)}70%{transform:scaleX(var(--flip)) translateX(-8px)}85%{transform:scaleX(var(--flip)) translateX(3px)}}
 .g10-pspr.spr-hit{animation:g10PHit 0.45s ease;}
-@keyframes g10PHit{0%,100%{transform:scaleX(-1)}15%{transform:scaleX(-1) translateX(10px) rotate(-3deg)}30%{transform:scaleX(-1) translateX(-12px) rotate(2deg)}50%{transform:scaleX(-1) translateX(-7px)}70%{transform:scaleX(-1) translateX(8px)}85%{transform:scaleX(-1) translateX(-3px)}}
+@keyframes g10PHit{0%,100%{transform:scaleX(var(--flip))}15%{transform:scaleX(var(--flip)) translateX(10px) rotate(-3deg)}30%{transform:scaleX(var(--flip)) translateX(-12px) rotate(2deg)}50%{transform:scaleX(var(--flip)) translateX(-7px)}70%{transform:scaleX(var(--flip)) translateX(8px)}85%{transform:scaleX(var(--flip)) translateX(-3px)}}
 .g10-spr.spr-flash{animation:g10Flash 0.45s ease;}
 @keyframes g10Flash{0%,100%{filter:drop-shadow(0 6px 24px rgba(0,0,0,0.65)) brightness(1)}20%,60%{filter:brightness(8) saturate(0)}40%,80%{filter:drop-shadow(0 6px 24px rgba(0,0,0,0.65)) brightness(1)}}
-/* Defeat — enemy (scaleX(-1) preserved) */
+/* Defeat — uses var(--flip) so JS-driven per-Pokemon facing is preserved */
 .g10-espr.spr-defeat{animation:g10EDefeatFlip 0.85s ease forwards;}
 @keyframes g10EDefeatFlip{
-  0%{transform:scaleX(-1);filter:drop-shadow(2px 4px 8px rgba(0,0,0,0.4));opacity:1}
-  25%{transform:scaleX(-1) translateY(-18px) scale(1.18);filter:brightness(7) saturate(0);opacity:1}
-  60%{transform:scaleX(-1) translateY(-40px) scale(0.75);filter:brightness(9) saturate(0);opacity:0.6}
-  100%{transform:scaleX(-1) translateY(-70px) scale(0.2);filter:brightness(12) saturate(0);opacity:0}
+  0%{transform:scaleX(var(--flip));filter:drop-shadow(2px 4px 8px rgba(0,0,0,0.4));opacity:1}
+  25%{transform:scaleX(var(--flip)) translateY(-18px) scale(1.18);filter:brightness(7) saturate(0);opacity:1}
+  60%{transform:scaleX(var(--flip)) translateY(-40px) scale(0.75);filter:brightness(9) saturate(0);opacity:0.6}
+  100%{transform:scaleX(var(--flip)) translateY(-70px) scale(0.2);filter:brightness(12) saturate(0);opacity:0}
 }
-/* Player defeat — preserve scaleX(-1) */
 .g10-pspr.spr-defeat{animation:g10PDefeat 0.85s ease forwards;}
 @keyframes g10PDefeat{
-  0%{transform:scaleX(-1);opacity:1}
-  25%{transform:scaleX(-1) translateY(-18px) scale(1.18);filter:brightness(7) saturate(0);opacity:1}
-  60%{transform:scaleX(-1) translateY(-40px) scale(0.75);opacity:0.6}
-  100%{transform:scaleX(-1) translateY(-70px) scale(0.2);opacity:0}
+  0%{transform:scaleX(var(--flip));opacity:1}
+  25%{transform:scaleX(var(--flip)) translateY(-18px) scale(1.18);filter:brightness(7) saturate(0);opacity:1}
+  60%{transform:scaleX(var(--flip)) translateY(-40px) scale(0.75);opacity:0.6}
+  100%{transform:scaleX(var(--flip)) translateY(-70px) scale(0.2);opacity:0}
 }
 /* ── Type particle FX keyframes ── */
 @keyframes fxRise{0%{transform:scale(0) translateY(0);opacity:0.9}50%{transform:scale(1.3) translateY(-45px);opacity:0.8}100%{transform:scale(0.4) translateY(-90px);opacity:0}}
@@ -2745,8 +2744,8 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 /* Swap animation on player sprite — preserve scaleX(-1) */
 .g10-pspr.spr-swap-out { animation: g10SwapOut 0.25s ease forwards; }
 .g10-pspr.spr-swap-in  { animation: g10SwapIn  0.3s cubic-bezier(0.34,1.56,0.64,1) forwards; }
-@keyframes g10SwapOut { 0%{transform:scaleX(-1);opacity:1} 100%{transform:scaleX(-1) translateX(80px) scale(0.6);opacity:0} }
-@keyframes g10SwapIn  { 0%{transform:scaleX(-1) translateX(80px) scale(0.4);opacity:0} 100%{transform:scaleX(-1);opacity:1} }
+@keyframes g10SwapOut { 0%{transform:scaleX(var(--flip));opacity:1} 100%{transform:scaleX(var(--flip)) translateX(80px) scale(0.6);opacity:0} }
+@keyframes g10SwapIn  { 0%{transform:scaleX(var(--flip)) translateX(80px) scale(0.4);opacity:0} 100%{transform:scaleX(var(--flip));opacity:1} }
 /* Sprite battle entrance animations */
 @keyframes pokeEnter { 0%{transform:scaleX(-1) scale(0.5) translateY(20px);opacity:0} 60%{transform:scaleX(-1) scale(1.08) translateY(-4px);opacity:1} 100%{transform:scaleX(-1) scale(1) translateY(0);opacity:1} }
 @keyframes pokeEnterFlip { 0%{transform:scaleX(-1) scale(0.5) translateY(20px);opacity:0} 60%{transform:scaleX(-1) scale(1.08) translateY(-4px);opacity:1} 100%{transform:scaleX(-1);opacity:1} }
@@ -3570,18 +3569,18 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 .g13-spr.spr-hit{animation:g13HitAnim 0.4s ease;}
 .g13-pspr.spr-hit{animation:g13PHitAnim 0.4s ease;}
 .g13-spr.spr-defeat{animation:g13DefeatAnim 0.8s ease forwards;opacity:0;}
-/* Hit flash — brightness burst on impact (preserves scaleX for player) */
+/* Hit flash — brightness burst on impact. Use var(--flip) so per-Pokemon facing is preserved. */
 .g13-spr.spr-flash{animation:g13WFlash 0.45s ease;}
-@keyframes g13WFlash{0%,100%{filter:drop-shadow(0 6px 16px rgba(0,0,0,0.7)) brightness(1)}30%,70%{filter:brightness(8) saturate(0) drop-shadow(0 0 18px white)}55%{filter:drop-shadow(0 6px 16px rgba(0,0,0,0.7)) brightness(1)}}
+@keyframes g13WFlash{0%,100%{transform:scaleX(var(--flip,1));filter:drop-shadow(0 6px 16px rgba(0,0,0,0.7)) brightness(1)}30%,70%{transform:scaleX(var(--flip,1));filter:brightness(8) saturate(0) drop-shadow(0 0 18px white)}55%{transform:scaleX(var(--flip,1));filter:drop-shadow(0 6px 16px rgba(0,0,0,0.7)) brightness(1)}}
 .g13-pspr.spr-flash{animation:g13PFlash 0.45s ease;}
-@keyframes g13PFlash{0%,100%{transform:scaleX(-1);filter:drop-shadow(0 6px 16px rgba(0,0,0,0.7)) brightness(1)}30%,70%{transform:scaleX(-1);filter:brightness(8) saturate(0) drop-shadow(0 0 18px white)}55%{transform:scaleX(-1);filter:drop-shadow(0 6px 16px rgba(0,0,0,0.7)) brightness(1)}}
-@keyframes g13WAtkAnim{0%{transform:none}40%{transform:translateX(-22px) scale(1.1)}100%{transform:none}}
-@keyframes g13PAtkAnim{0%{transform:scaleX(-1)}40%{transform:scaleX(-1) translateX(22px) scale(1.1)}100%{transform:scaleX(-1)}}
-@keyframes g13HitAnim{0%,100%{transform:none}20%{transform:translateX(10px) rotate(3deg)}50%{transform:translateX(-8px) rotate(-2deg)}}
-@keyframes g13PHitAnim{0%,100%{transform:scaleX(-1)}20%{transform:scaleX(-1) translateX(-10px) rotate(-3deg)}50%{transform:scaleX(-1) translateX(8px) rotate(2deg)}}
-@keyframes g13DefeatAnim{0%{transform:none;opacity:1}100%{transform:translateY(30px) scale(0.5);opacity:0}}
-@keyframes g13Enter{0%{transform:scale(0.5) translateY(20px);opacity:0}60%{transform:scale(1.08) translateY(-4px);opacity:1}100%{transform:scale(1);opacity:1}}
-@keyframes g13EnterFlip{0%{transform:scaleX(-1) scale(0.5) translateY(20px);opacity:0}60%{transform:scaleX(-1) scale(1.08) translateY(-4px);opacity:1}100%{transform:scaleX(-1);opacity:1}}
+@keyframes g13PFlash{0%,100%{transform:scaleX(var(--flip,-1));filter:drop-shadow(0 6px 16px rgba(0,0,0,0.7)) brightness(1)}30%,70%{transform:scaleX(var(--flip,-1));filter:brightness(8) saturate(0) drop-shadow(0 0 18px white)}55%{transform:scaleX(var(--flip,-1));filter:drop-shadow(0 6px 16px rgba(0,0,0,0.7)) brightness(1)}}
+@keyframes g13WAtkAnim{0%{transform:scaleX(var(--flip,1))}40%{transform:scaleX(var(--flip,1)) translateX(-22px) scale(1.1)}100%{transform:scaleX(var(--flip,1))}}
+@keyframes g13PAtkAnim{0%{transform:scaleX(var(--flip,-1))}40%{transform:scaleX(var(--flip,-1)) translateX(-22px) scale(1.1)}100%{transform:scaleX(var(--flip,-1))}}
+@keyframes g13HitAnim{0%,100%{transform:scaleX(var(--flip,1))}20%{transform:scaleX(var(--flip,1)) translateX(10px) rotate(3deg)}50%{transform:scaleX(var(--flip,1)) translateX(-8px) rotate(-2deg)}}
+@keyframes g13PHitAnim{0%,100%{transform:scaleX(var(--flip,-1))}20%{transform:scaleX(var(--flip,-1)) translateX(-10px) rotate(-3deg)}50%{transform:scaleX(var(--flip,-1)) translateX(8px) rotate(2deg)}}
+@keyframes g13DefeatAnim{0%{transform:scaleX(var(--flip,1));opacity:1}100%{transform:scaleX(var(--flip,1)) translateY(30px) scale(0.5);opacity:0}}
+@keyframes g13Enter{0%{transform:scaleX(var(--flip,1)) scale(0.5) translateY(20px);opacity:0}60%{transform:scaleX(var(--flip,1)) scale(1.08) translateY(-4px);opacity:1}100%{transform:scaleX(var(--flip,1)) scale(1);opacity:1}}
+@keyframes g13EnterFlip{0%{transform:scaleX(var(--flip,-1)) scale(0.5) translateY(20px);opacity:0}60%{transform:scaleX(var(--flip,-1)) scale(1.08) translateY(-4px);opacity:1}100%{transform:scaleX(var(--flip,-1));opacity:1}}
 
 /* Field status */
 .g13-field-status{
@@ -4091,10 +4090,10 @@ body { background: #0a0a1a !important; }
 .g13c-move-btn.correct{background:rgba(34,197,94,0.45);border-color:#22c55e;box-shadow:0 0 16px rgba(34,197,94,0.55)}
 .g13c-move-btn.wrong{background:rgba(244,63,94,0.38);border-color:#f43f5e;animation:wrongShake 0.4s ease}
 /* Battle animations */
-@keyframes g13cPlayerAtk{0%{transform:scaleX(-1) translateX(0)} 40%{transform:scaleX(-1) translateX(-40px)} 100%{transform:scaleX(-1) translateX(0)}}
-@keyframes g13cEnemyFlinch{0%,100%{transform:translateX(0)} 25%{transform:translateX(-18px)} 50%{transform:translateX(12px)} 75%{transform:translateX(-8px)}}
-@keyframes g13cEnemyAtk{0%{transform:translateX(0)} 40%{transform:translateX(30px)} 100%{transform:translateX(0)}}
-@keyframes g13cPlayerFlinch{0%,100%{transform:scaleX(-1) translateX(0)} 25%{transform:scaleX(-1) translateX(14px)} 50%{transform:scaleX(-1) translateX(-9px)} 75%{transform:scaleX(-1) translateX(6px)}}
+@keyframes g13cPlayerAtk{0%{transform:scaleX(var(--flip,-1)) translateX(0)} 40%{transform:scaleX(var(--flip,-1)) translateX(-40px)} 100%{transform:scaleX(var(--flip,-1)) translateX(0)}}
+@keyframes g13cEnemyFlinch{0%,100%{transform:scaleX(var(--flip,1)) translateX(0)} 25%{transform:scaleX(var(--flip,1)) translateX(-18px)} 50%{transform:scaleX(var(--flip,1)) translateX(12px)} 75%{transform:scaleX(var(--flip,1)) translateX(-8px)}}
+@keyframes g13cEnemyAtk{0%{transform:scaleX(var(--flip,1)) translateX(0)} 40%{transform:scaleX(var(--flip,1)) translateX(-30px)} 100%{transform:scaleX(var(--flip,1)) translateX(0)}}
+@keyframes g13cPlayerFlinch{0%,100%{transform:scaleX(var(--flip,-1)) translateX(0)} 25%{transform:scaleX(var(--flip,-1)) translateX(14px)} 50%{transform:scaleX(var(--flip,-1)) translateX(-9px)} 75%{transform:scaleX(var(--flip,-1)) translateX(6px)}}
 @keyframes g13cHitFlash{0%,100%{filter:drop-shadow(0 6px 14px rgba(0,0,0,0.5))} 50%{filter:brightness(10) saturate(0) drop-shadow(0 6px 14px rgba(0,0,0,0.5))}}
 /* HP number */
 .g13c-hp-num{font-size:9px;color:rgba(255,255,255,0.55);flex-shrink:0}
@@ -5786,5 +5785,36 @@ body { background: #0a0a1a !important; }
   background:#FBBF24;border:3px solid #92400E;
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
 }
+
+/* ─────────────────────────────────────────────────────────────
+   RESPONSIVE TIER EXTENSIONS (2026-04-23) — fill gaps between
+   mobile (≤480), tablet (768+), desktop (1200+), landscape-phone.
+   Keeps clamp()-based character sizing consistent across viewports.
+   ───────────────────────────────────────────────────────────── */
+
+/* Tablet portrait (768px+) — scale containers up, raise base scale slightly */
+@media (min-width: 768px) {
+  :root { --rz-scale: clamp(0.95, calc(0.7 + 0.175vw), 1.1); }
+  .card, .game-header, .page-header, .landing-card { max-width: 640px; }
+  .g1-choices, .g4-animals-grid, .g5-grid, .g6-road, .g8-slots, .g8-letters { max-width: 580px; }
+}
+
+/* Desktop (1200px+) — further scale up, center content */
+@media (min-width: 1200px) {
+  :root { --rz-scale: clamp(1.0, calc(0.8 + 0.1vw), 1.2); }
+  .card, .game-header, .page-header, .landing-card { max-width: 720px; }
+  .g1-choices, .g4-animals-grid, .g5-grid, .g6-road, .g8-slots, .g8-letters { max-width: 640px; }
+}
+
+/* Landscape phone (short viewport) — reduce character + mascot sizes so UI fits */
+@media (orientation: landscape) and (max-height: 500px) {
+  .g1-char { font-size: clamp(48px, 12vh, 80px) !important; }
+  #screen-game3 .g3-animal { font-size: clamp(56px, 14vh, 90px) !important; }
+  .result-mascot { font-size: clamp(48px, 12vh, 80px) !important; }
+  .g8-hint-img { width: clamp(120px, 28vh, 180px); height: clamp(120px, 28vh, 180px); font-size: clamp(70px, 18vh, 110px); }
+  .mascot-guide .mg-char { font-size: clamp(40px, 10vh, 60px); }
+  .round-dots { transform: scale(0.85); }
+}
+
 
 @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}

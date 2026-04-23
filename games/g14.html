@@ -393,7 +393,11 @@ try { const s = sessionStorage.getItem('g14Config'); if(s) Object.assign(cfg, JS
 const FINISH_M = 800 + cfg.level * 30
 const LANE_COUNT = 3
 const LIVES_MAX = 3
-const OBS_INTERVAL_MS = Math.max(900, 2800 - cfg.level * 60)
+// Difficulty-scaled obstacle interval. Previously only level-scaled → "easy"
+// level 1 spawned every 2.7s which is too dense for a 5-10yo on their first play.
+// Easy adds +60% spacing + raises floor from 900ms→1300ms + halves wave count.
+const DIFF_MULT = cfg.difficulty === 'easy' ? 1.6 : cfg.difficulty === 'hard' ? 0.85 : 1.0
+const OBS_INTERVAL_MS = Math.max(cfg.difficulty === 'easy' ? 1300 : 900, (2800 - cfg.level * 60) * DIFF_MULT)
 const AI_COUNT = 2
 
 // ── LEVEL THEMES (6 backgrounds, cycle every 5 levels) ──
@@ -1516,6 +1520,9 @@ function drawTrainG(g, bodyC, accC, catKey, trainKey, variant) {
 
 function buildPlayer() {
   const c = new PIXI.Container(); L.player = c; stage.addChild(c)
+  // Lock scale.x=1 — drawTrainG authors the sprite right-facing (nose at +X).
+  // Any stray negative scale would render the train "backward". Defensive.
+  c.scale.x = 1
   c.x = app.screen.width * PLAYER_X
 
   // Glow ellipse
@@ -1529,7 +1536,12 @@ function buildPlayer() {
   drawTrainG(playerSprite, '#1e3a8a', '#3b82f6', 'diesel_id')  // default until train selected
   c.addChild(playerSprite)
 
-  c.y = laneYs[S.lane]
+  // Wheel-to-rail offset: drawTrainG renders wheels at sprite-local y=+19 (bogie+radius).
+  // Rails sit at laneH*0.28 from lane center. Shift container down so wheels visually
+  // sit on the bottom rail instead of floating mid-lane.
+  const wheelOffset = Math.max(0, laneH * 0.22 - 19)
+  c.y = laneYs[S.lane] + wheelOffset
+  c._wheelOffset = wheelOffset
 
   // Steam container
   L.steam = new PIXI.Container(); stage.addChild(L.steam)
@@ -1544,7 +1556,7 @@ function updatePlayerEmoji() {
 
 function tickPlayer(delta) {
   if (!L.player) return
-  const targetY = laneYs[S.targetLane]
+  const targetY = laneYs[S.targetLane] + (L.player._wheelOffset || 0)
   const dy = targetY - L.player.y
   L.player.y += dy * 0.22 * delta
 
@@ -1948,11 +1960,15 @@ function confirmBack() {
 // Recalculate lane positions on orientation change
 window.addEventListener('resize', () => {
   if (!app) return
-  app.renderer.resize(window.innerWidth, window.innerHeight)
+  app.renderer.resize(Math.min(window.innerWidth, 1400), Math.min(window.innerHeight, 1000))
   const H = app.screen.height
   const laneH = (H - gameTop) / LANE_COUNT
   laneYs = Array.from({length: LANE_COUNT}, (_, i) => gameTop + laneH * i + laneH / 2)
-  if (L.player) L.player.y = laneYs[S.lane]
+  if (L.player) {
+    const wheelOffset = Math.max(0, laneH * 0.22 - 19)
+    L.player._wheelOffset = wheelOffset
+    L.player.y = laneYs[S.lane] + wheelOffset
+  }
 })
 
 // ═══════════════════════════════════════════════════════════

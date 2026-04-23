@@ -228,9 +228,48 @@ function setDiff(d) {
 function startFromSelect() {
   cfg.playerIcon = selectedVehicle
   S.difficulty = selectedDiff
-  if (carSprite) carSprite.text = selectedVehicle
+  // Rebuild the car sprite from scratch. Setting carSprite.text only works if carSprite is a
+  // PIXI.Text; but if buildCar loaded a PNG (e.g. default 🚗 → sedan.png), carSprite is a
+  // PIXI.Sprite with no .text prop, and the user's new emoji selection would be ignored.
+  rebuildCarSprite(selectedVehicle)
   document.getElementById('ovl-start').classList.remove('show')
   startWord()
+}
+
+// Rebuild car sprite for a new vehicle emoji. Swap PIXI.Text ↔ PIXI.Sprite as needed.
+function rebuildCarSprite(emoji) {
+  if (!carContainer) return
+  const EMOJI_TO_CAR_PNG = {
+    '🚗':'top_car_cyan_sedan_05.png','🏎️':'top_car_red_formula_07.png','🚙':'top_car_white_gt_01.png',
+    '🚚':'top_car_white_coupe_09.png','🚐':'top_car_white_roadster_10.png','🚓':'top_car_blue_compact_11.png',
+    '🚕':'top_car_yellow_sport_02.png','🚌':'top_car_silver_sedan_12.png','🚒':'top_car_red_formula_07.png',
+    '🚑':'top_car_white_track_03.png',
+  }
+  const png = EMOJI_TO_CAR_PNG[emoji] || null
+  if (carSprite && carSprite.parent) carContainer.removeChild(carSprite)
+  if (png) {
+    // Show emoji immediately, swap to PNG async
+    const placeholder = new PIXI.Text({ text: emoji, style: { fontSize: 52, fontFamily: 'Arial' } })
+    placeholder.anchor.set(0.5, 1)
+    carContainer.addChild(placeholder)
+    carSprite = placeholder
+    PIXI.Assets.load(`../assets/car%20and%20vehicle/top-view/${png}`).then(tex => {
+      if (!carContainer || !tex) return
+      // Check the vehicle selection is still the same (user didn't pick another one)
+      if (cfg.playerIcon !== emoji) return
+      if (carSprite && carSprite.parent) carContainer.removeChild(carSprite)
+      const s = new PIXI.Sprite(tex)
+      s.anchor.set(0.5, 1); s.width = 48; s.height = 84
+      carSprite = s
+      carContainer.addChild(carSprite)
+    }).catch(() => {})
+  } else {
+    // Non-car emoji (🚂🚀🛸🚁🚜🚢 etc.) — render as emoji, no PNG
+    const t = new PIXI.Text({ text: emoji, style: { fontSize: 52, fontFamily: 'Arial' } })
+    t.anchor.set(0.5, 1)
+    carContainer.addChild(t)
+    carSprite = t
+  }
 }
 
 const S = {
@@ -849,7 +888,12 @@ function tickTiles(delta) {
 
 function hitTile(t) {
   t._alive = false
-  if (t._correct) {
+  // Re-verify at hit time. The _correct flag was captured at SPAWN time — by the time the
+  // tile reaches the car, the word progress may have advanced (e.g. another wave already
+  // provided the letter). Trust the live letter match, not the stale flag.
+  const liveNextLetter = S.currentWord && S.currentWord[S.letterIdx]
+  const isLiveCorrect = t._letter === liveNextLetter
+  if (isLiveCorrect) {
     // Correct collect
     spawnBurst(t.x, t.y, THEME.acc)
     playTone(660 + S.letterIdx * 55, 0.12, 'sine')
@@ -997,7 +1041,17 @@ function showFinish() {
     stars >= 1 ? 'Kamu bisa lebih baik lagi!' :
     'Jangan menyerah, ayo coba lagi!'
   const curLevel = cfg.level || 1;
-  const nextLevel = curLevel < 30 ? () => { sessionStorage.setItem('g6Config', JSON.stringify({...cfg, level:curLevel+1})); location.reload(); } : null;
+  // Cleanly stop PIXI + audio before reload — avoids "frozen page" perception where the
+  // ticker / BGM keeps running mid-transition and hits the pagehide/reload race.
+  const cleanupBeforeReload = () => {
+    try { if (app && app.ticker) app.ticker.stop() } catch(_) {}
+    try { if (window._bgmEl) { window._bgmEl.pause(); window._bgmEl.currentTime = 0 } } catch(_) {}
+  }
+  const nextLevel = curLevel < 30 ? () => {
+    sessionStorage.setItem('g6Config', JSON.stringify({...cfg, level:curLevel+1}))
+    cleanupBeforeReload()
+    setTimeout(() => location.reload(), 30)
+  } : null;
   const title = stars >= 5 ? 'Sempurna!' : stars >= 4 ? 'Hebat!' : stars >= 3 ? 'Bagus!' : stars >= 1 ? 'Coba Lagi' : 'Gagal! Coba Lagi';
   const emoji = stars >= 5 ? '🏆' : stars >= 4 ? '🌟' : stars >= 3 ? '⭐' : stars >= 1 ? '💪' : '😞';
   GameModal.show({

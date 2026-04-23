@@ -217,8 +217,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
 <script src="trains-db.js"></script>
-<script src="train-character-sprite.js?v=20260422f"></script>
-<script src="../shared/rz-responsive.js?v=20260422i"></script>
+<script src="train-character-sprite.js?v=20260423c"></script>
+<script src="../shared/rz-responsive.js?v=20260423c"></script>
 <script>
 'use strict';
 // Polyfill ctx.roundRect for older Android WebViews (Chrome < 99)
@@ -260,7 +260,7 @@ function saveG15Progress(stars) {
 function goBack() { try{document.getElementById('game-bgm').pause()}catch(_){}; history.back(); }
 window.addEventListener('resize',()=>{
   if(typeof app==='undefined' || !app) return;
-  app.renderer.resize(window.innerWidth,window.innerHeight);
+  app.renderer.resize(Math.min(window.innerWidth,1400),Math.min(window.innerHeight,1000));
   // Recompute responsive layout on device rotation / window resize.
   W = app.screen.width; H = app.screen.height;
   TRAIN_X = Math.max(40, Math.round(W * 0.05));  // Task #59 — 5% base (per-train clamp in buildTrain)

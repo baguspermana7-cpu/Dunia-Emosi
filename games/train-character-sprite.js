@@ -54,12 +54,22 @@
       PIXI.Assets.load(config.spriteUrl).then(tex => {
         if (state.disposed || !tex) return
         if (placeholder && placeholder.parent) container.removeChild(placeholder)
-        const s = new PIXI.Sprite(tex)
-        s.anchor.set(0.5, 1) // bottom-center anchor so wheels line up at baseline
-        // Scale to a reasonable size — target height ~80-100px
         const targetH = config.spriteHeight || 90
-        s.scale.set(targetH / tex.height)
-        container.addChildAt(s, 0) // behind wheels
+        const baseScale = targetH / tex.height
+        // White-outline underlay: a slightly-larger white-tinted clone rendered behind the main sprite.
+        // Gives a crisp silhouette edge against dark backgrounds (G16 night theme, etc.).
+        const outline = new PIXI.Sprite(tex)
+        outline.anchor.set(0.5, 1)
+        outline.scale.set(baseScale * 1.06) // ~6% larger
+        outline.tint = 0xffffff
+        outline.alpha = 0.85
+        container.addChildAt(outline, 0) // lowest layer
+        state.outline = outline
+        // Main sprite
+        const s = new PIXI.Sprite(tex)
+        s.anchor.set(0.5, 1)
+        s.scale.set(baseScale)
+        container.addChildAt(s, 1) // above outline, below wheels
         state.sprite = s
       }).catch(err => console.warn('[CTSE] sprite load failed', config.spriteUrl, err))
     }
@@ -127,10 +137,12 @@
     state.spawnSmoke = function() {
       // No smoke for trains without a chimney (electric/tram) — skip silently
       if (!state.smokeParent || !config.smokePos || !Array.isArray(config.smokePos)) return
-      // Smoke position = container world coord + local smokePos offset
+      // Smoke position = LIVE container world coord + local smokePos offset.
+      // Previously used state.baseY (mount-time) which decoupled smoke from train when
+      // container.y changed via lane switch, resize, or body-bob → smoke trailed in wrong lane.
       const [sx, sy] = config.smokePos
       const worldX = (container.x || 0) + sx
-      const worldY = state.baseY + sy
+      const worldY = (container.y || 0) + sy
       const puff = createSmokePuff(state.smokeParent, worldX, worldY)
       if (puff) state.smokeParticles.push(puff)
     }
@@ -144,6 +156,7 @@
       state.wheels = []
       state.smokeParticles = []
       if (state.sprite && state.sprite.parent) state.sprite.parent.removeChild(state.sprite)
+      if (state.outline && state.outline.parent) state.outline.parent.removeChild(state.outline)
     }
 
     return state

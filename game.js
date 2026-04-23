@@ -1809,10 +1809,18 @@ function flyStarToCounter(srcEl) {
 // RESULT
 // ================================================================
 function showResult(mascot, title, msg) {
+  // Double-invocation guard: rapid callers (G5 setTimeout chains, user double-taps)
+  // can trigger showResult twice, causing double XP / toast stacking / modal freeze.
+  if (state._showingResult) return
+  state._showingResult = true
+  setTimeout(() => { state._showingResult = false }, 1500)
   clearTimers(); stopAmbient()
-  // Ensure no overlays block result screen
-  const fb = document.getElementById('overlay-feedback'); if(fb) fb.classList.remove('show')
-  const gr = document.getElementById('game-result-overlay'); if(gr) gr.classList.remove('show')
+  // Hard-clear any overlay that might be blocking the result screen. classList.remove
+  // alone leaves inline display:block that some G13 paths set directly.
+  const fb = document.getElementById('overlay-feedback')
+  if(fb){ fb.classList.remove('show'); fb.style.display = 'none' }
+  const gr = document.getElementById('game-result-overlay')
+  if(gr){ gr.classList.remove('show'); gr.style.display = 'none' }
   const totalStars=state.gameStars[0]+state.gameStars[1]
   // Normalize to 5-star scale using maxPossibleStars if set by game
   const maxPossible = state.maxPossibleStars || 5
@@ -1860,13 +1868,15 @@ function showResult(mascot, title, msg) {
   const lvlUp=document.getElementById('result-level-up')
   if(xpResult.leveled){const newTier=getLevelTier(xpResult.next);document.getElementById('level-up-icon').textContent=newTier.icon;lvlUp.style.display='flex'}
   else lvlUp.style.display='none'
-  // Game completion achievements
+  // Defer achievement checks so toasts appear AFTER the result screen is interactive.
+  // Firing them synchronously can overlap the modal and eat button taps (freeze feel).
   const gameAchMap={1:'perfect_emotion',2:'calm_breath',3:'letter_master',4:'count_master',5:'memory_master',6:'driver_master',7:'picture_master',8:'word_master',9:'trace_master'}
-  if(gameAchMap[state.currentGame]) checkAchievement(gameAchMap[state.currentGame])
-  // Check all-games achievement
-  const played=JSON.parse(localStorage.getItem('dunia-emosi-played-games')||'{}')
-  played[state.currentGame]=true; localStorage.setItem('dunia-emosi-played-games',JSON.stringify(played))
-  if(Object.keys(played).length>=12) checkAchievement('all_games')
+  setTimeout(() => {
+    if(gameAchMap[state.currentGame]) checkAchievement(gameAchMap[state.currentGame])
+    const played=JSON.parse(localStorage.getItem('dunia-emosi-played-games')||'{}')
+    played[state.currentGame]=true; localStorage.setItem('dunia-emosi-played-games',JSON.stringify(played))
+    if(Object.keys(played).length>=12) checkAchievement('all_games')
+  }, 450)
   buildMenuHeader(); showScreen('screen-result')
   // Graded celebration based on stars earned
   if(earned>=5){launchConfetti(3);launchConfetti(3)}
@@ -1891,9 +1901,9 @@ function endGame(stars) {
   const p = state.players[state.currentPlayer]
   showResult(p.animal, normalizedStars>=4?'Luar Biasa! 🏆':normalizedStars>=2?'Bagus Sekali! ⭐':'Terus Berlatih! 💪', `Kamu dapat ${normalizedStars} bintang di level ${lv}!`)
 }
-function playAgain() { state.maxPossibleStars = null; startGameWithLevel(state.selectedLevelNum || 1) }
-function nextLevel()  { state.maxPossibleStars = null; startGameWithLevel((state.selectedLevelNum||1) + 1) }
-function goToMenu()   { state.maxPossibleStars = null; buildMenuHeader(); showScreen('screen-menu') }
+function playAgain() { state._showingResult = false; state.maxPossibleStars = null; startGameWithLevel(state.selectedLevelNum || 1) }
+function nextLevel()  { state._showingResult = false; state.maxPossibleStars = null; startGameWithLevel((state.selectedLevelNum||1) + 1) }
+function goToMenu()   { state._showingResult = false; state.maxPossibleStars = null; buildMenuHeader(); showScreen('screen-menu') }
 
 // ================================================================
 // CONFETTI + SPARKLES
@@ -5019,16 +5029,31 @@ function pokeTierScale(slug){
 // Default: sprite naturally faces viewer's right ('R'), visual scale 1.0×.
 // Natural facing of source sprite. DEFAULT 'L' — Pokemondb HOME 3D renders face viewer with slight LEFT bias.
 // Add 'R' override here for Pokemon whose natural HD art faces RIGHT.
+// Natural facing of HOME CDN sprites (pokemondb.net/sprites/home/normal).
+// DEFAULT is 'R' — empirically most sprites face viewer's right (body angled rightward).
+// Override with 'L' here for species whose natural HD art faces viewer-left (user-reported).
 const POKE_FACING = {
-  // User-reported 'R' natural-facing exceptions
+  // Add species here if their enemy rendering looks wrong:
+  // fidough: 'L',
 }
-function pokeFacing(slug){ return POKE_FACING[slug] || 'L' }
+function pokeFacing(slug){ return POKE_FACING[slug] || 'R' }
 // role: 'player' → bottom-left, faces right toward enemy; 'enemy' → top-right, faces left toward player.
 // Always returns an explicit scaleX — never empty — so CSS base transforms can't leak in.
 function pokeFlipForRole(slug, role){
   const natural = pokeFacing(slug)
   const want = role === 'enemy' ? 'L' : 'R'
   return natural !== want ? 'scaleX(-1)' : 'scaleX(1)'
+}
+// Apply facing to an element by setting BOTH the --flip custom property (read by
+// CSS @keyframes for atk/hit/defeat/swap) and the inline transform (used when no
+// animation is running). Single source of truth for G10/G13/G13b/G13c sprite facing.
+function applyPokeFlip(el, slug, role){
+  if(!el) return
+  const natural = pokeFacing(slug)
+  const want = role === 'enemy' ? 'L' : 'R'
+  const sign = natural !== want ? -1 : 1
+  el.style.setProperty('--flip', sign)
+  el.style.transform = 'scaleX(' + sign + ')'
 }
 // Visual canvas-fill override — compensate for sprites that fill much more
 // or less of their 475×475 home PNG than the roster average. Default = 1.0.
@@ -5308,8 +5333,16 @@ function switchPlayerPoke(poke){
       pSpr.src = pokeSpriteBack(poke.id)
       pSpr.onerror = () => { pSpr.src = pokeSpriteBackup(poke.id); pSpr.onerror = null }
     }
+    // Apply new Pokemon's facing BEFORE swap-in animation starts so keyframe
+    // transform:scaleX(var(--flip)) uses the correct sign during the anim.
+    applyPokeFlip(pSpr, slug, 'player')
     pSpr.classList.add('spr-swap-in')
-    setTimeout(()=>pSpr.classList.remove('spr-swap-in'),350)
+    setTimeout(()=>{
+      pSpr.classList.remove('spr-swap-in')
+      // Re-apply after animation: guards against animation-fill-mode:forwards
+      // locking a stale scaleX if the Pokemon has a non-default natural facing.
+      applyPokeFlip(pSpr, slug, 'player')
+    },350)
     // Apply tier sizing for new player Pokemon
     const _g10swTierSz = t => ({1:1.0, 2:1.2, 3:1.3, 4:1.3}[t||1] || 1.0)
     const swPTierSc = _g10swTierSz(poke.tier)
@@ -5494,8 +5527,8 @@ function g10NewBattle(){
   // normalizes sprites that fill more/less of their 475×475 canvas than average.
   const eEl=document.getElementById('g10-espr')
   const pEl=document.getElementById('g10-pspr')
-  if(eEl) eEl.style.transform = pokeFlipForRole(s.enemyPoke.slug, 'enemy')
-  if(pEl) pEl.style.transform = pokeFlipForRole(s.playerPoke.slug, 'player')
+  applyPokeFlip(eEl, s.enemyPoke.slug, 'enemy')
+  applyPokeFlip(pEl, s.playerPoke.slug, 'player')
   const eSc = pokeFinalScale(s.enemyPoke.slug)
   const pSc = pokeFinalScale(s.playerPoke.slug)
   if(eEl) eEl.style.width = eEl.style.height = eSc !== 1.0 ? `calc(min(44vw,22vh) * ${eSc})` : ''
@@ -7264,12 +7297,12 @@ function _initGame13Impl() {
   const wImg = document.getElementById('g13-wspr')
   const pImg = document.getElementById('g13-pspr')
   if (wImg) {
-    wImg.style.transform = pokeFlipForRole(chain.wild.slug, 'enemy')
+    applyPokeFlip(wImg, chain.wild.slug, 'enemy')
     const wScale = pokeFinalScale(chain.wild.slug)
     if (wScale !== 1.0) wImg.style.width = wImg.style.height = `calc(min(40vw,20vh) * ${wScale})`
   }
   if (pImg) {
-    pImg.style.transform = pokeFlipForRole(chain.player.slug, 'player')
+    applyPokeFlip(pImg, chain.player.slug, 'player')
     const pScale = pokeFinalScale(chain.player.slug)
     if (pScale !== 1.0) pImg.style.width = pImg.style.height = `calc(min(40vw,20vh) * ${pScale})`
   }
@@ -7773,7 +7806,7 @@ function g13TriggerEvolution() {
       pspr.src = `https://img.pokemondb.net/sprites/home/normal/${nowForm.slug}.png`
       pspr.onerror = () => { const eid=POKE_IDS2[nowForm.slug]; if(eid) pspr.src=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${eid}.png`; pspr.onerror=null }
       pspr.style.width = pspr.style.height = `calc(min(40vw,20vh) * ${pokeFinalScale(nowForm.slug)})`
-      pspr.style.transform = pokeFlipForRole(nowForm.slug, 'player')
+      applyPokeFlip(pspr, nowForm.slug, 'player')
       pspr.style.animation = 'none'; void pspr.offsetWidth
       pspr.style.animation = 'g13EnterFlip 0.6s cubic-bezier(0.34,1.56,0.64,1)'
     }
@@ -7863,8 +7896,10 @@ function g13Victory() {
     const _g13EvoPenalty = s.evolved2 ? 0 : s.evolved ? -1 : -2
     perfStars = GameScoring.calc({ correct: 1, total: 1, bonus: _g13EvoPenalty })
     _g13lv = s.lv || 1
-    const _g13stars = perfStars >= 5 ? 3 : perfStars >= 4 ? 2 : 1
-    setLevelComplete(13, _g13lv, _g13stars)
+    // setLevelComplete uses 0-3 star scale for progress persistence; map perfStars (5/4/3 scale) to 3/2/1.
+    // Prior code had this mapping INVERTED (>=5→3 but wrote the 0-3 value, causing display to show 3★ for a 5★ run).
+    const _g13starsSaved = perfStars >= 5 ? 3 : perfStars >= 4 ? 2 : perfStars >= 3 ? 1 : 0
+    setLevelComplete(13, _g13lv, _g13starsSaved)
     saveStars()
     updateGameStarDisplay()
   } catch(e) { console.error('[G13] victory scoring crashed:', e) }
@@ -8047,7 +8082,7 @@ function initGame13b() {
     pspr.onerror = function(){ this.src = 'https://img.pokemondb.net/sprites/home/normal/pikachu.png'; this.onerror = null }
     const pScale = pokeFinalScale(pSlug)
     pspr.style.width = pspr.style.height = pScale === 1.0 ? '' : `calc(min(20vw,12vh) * ${pScale})`
-    pspr.style.transform = pokeFlipForRole(pSlug, 'player')
+    applyPokeFlip(pspr, pSlug, 'player')
   }
   const pnameEl = document.getElementById('g13b-pname')
   if (pnameEl) pnameEl.textContent = g13bSavedPoke ? g13bSavedPoke.name : 'Pikachu'
@@ -8091,7 +8126,7 @@ function g13bSpawnWild() {
     // Final scale (tier × visual) + data-driven facing
     const tierScale = pokeFinalScale(wild.slug)
     wspr.style.width = wspr.style.height = tierScale === 1.0 ? '' : `calc(min(44vw,26vh) * ${tierScale})`
-    wspr.style.transform = pokeFlipForRole(wild.slug, 'enemy')
+    applyPokeFlip(wspr, wild.slug, 'enemy')
     void wspr.offsetWidth
     wspr.classList.add('wild-enter')
     wspr.addEventListener('animationend', () => wspr.classList.remove('wild-enter'), {once:true})
@@ -8687,6 +8722,14 @@ function showGameResult({ emoji, title, stars, msg, buttons }) {
   // Guard: don't show if user already exited to menu/level select
   const activeScreen = document.querySelector('.screen.active')
   if (!activeScreen || !activeScreen.id.startsWith('screen-game')) return
+  // Double-invocation guard — rapid re-entry from G13 victory setTimeout chains or
+  // user double-taps can stack modals, leaving button handlers bound to stale closures.
+  if (state._showingGameResult) return
+  state._showingGameResult = true
+  // Clear the G13 evolution overlay (z-index 600, above modal z-500). If its display:none
+  // cleanup was skipped, it silently eats clicks on the modal buttons below.
+  const evo = document.getElementById('g13-evo-overlay')
+  if (evo) { evo.classList.remove('show'); evo.style.display = 'none'; evo.style.pointerEvents = 'none' }
   document.getElementById('gr-emoji').textContent = emoji || '🏆'
   document.getElementById('gr-title').textContent = title || 'Selesai!'
   document.getElementById('gr-stars').textContent = '⭐'.repeat(Math.min(stars||0,5)) + '☆'.repeat(Math.max(0,5-(stars||0)))
@@ -8697,12 +8740,15 @@ function showGameResult({ emoji, title, stars, msg, buttons }) {
     const el = document.createElement('button')
     el.className = 'gr-btn ' + (i === 0 ? 'gr-btn-primary' : 'gr-btn-secondary')
     el.textContent = b.label
-    el.onclick = () => { playClick(); hideGameResult(); requestAnimationFrame(() => b.action()) }
+    // setTimeout(0) is more reliable than requestAnimationFrame for touch event ordering
+    // (RAF can queue behind unresolved paint, delaying or dropping the action under throttling).
+    el.onclick = () => { playClick(); hideGameResult(); setTimeout(() => b.action(), 0) }
     btns.appendChild(el)
   })
   document.getElementById('game-result-overlay').classList.add('show')
 }
 function hideGameResult() {
+  state._showingGameResult = false
   document.getElementById('game-result-overlay').classList.remove('show')
 }
 
@@ -9352,7 +9398,8 @@ function g14ScheduleHorn() {
 function initGame14() {
   battleBgmStop()
   const lv = state.selectedLevelNum || state.selectedLevel || 5
-  try { sessionStorage.setItem('g14Config', JSON.stringify({ level: lv })) } catch(_) {}
+  const diff = state.selectedLevel || 'easy'
+  try { sessionStorage.setItem('g14Config', JSON.stringify({ level: lv, difficulty: diff })) } catch(_) {}
   window.location.href = 'games/g14.html'
 }
 function _initGame14_legacy() {

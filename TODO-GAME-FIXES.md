@@ -4,6 +4,130 @@
 
 ---
 
+## 📊 Session 2026-04-23 Night Patch (character train polish)
+
+Cache bump: `rz-responsive.js` + `train-character-sprite.js` → `v=20260423c`.
+
+### ✅ T-char-1 — Malivlak/Casey Jr too big on portrait mobile (ratio-driven scale)
+- **Symptom**: Character train dominates screen, fills ~50% height on mobile portrait.
+- **Root cause**: `trainScale()` in `shared/rz-responsive.js` clamped to `[0.55, 1.0]` based on `h/800`. On mobile ~700px height → 0.875×, still too big.
+- **Fix**: New ratio-based formula `h * 0.00078` clamped to `[0.32, 0.55]`. Targets character height ≈ 7% of viewport height across all devices. Replaces hard PC-baseline with true viewport-ratio scaling.
+- **Files**: `shared/rz-responsive.js:65-80`.
+
+### ✅ T-char-2 — White outline around character sprite
+- **Fix**: White-tinted sprite clone (6% larger) added as underlay behind main sprite in `train-character-sprite.js` mount(). Alpha 0.85. Makes character pop against dark/colorful backgrounds. Dispose path cleans up outline.
+- **Files**: `games/train-character-sprite.js:53-72, 145-150`.
+
+### ✅ T-char-4 — Smoke trailed in wrong lane / decoupled from train
+- **Root cause**: `spawnSmoke` at `train-character-sprite.js:133` used `state.baseY` (captured at MOUNT time) as the Y anchor. When container.y changed due to bob, lane switch, or resize, smoke spawned at stale coordinates.
+- **Fix**: Use live `container.y` instead of `state.baseY`.
+- **Files**: `games/train-character-sprite.js:127-140`.
+
+### ⬜ T-char-3 — visualOffset per-train (deferred to post-user-verify)
+After F1 shrink, wheel alignment may need per-train `visualOffset` tuning in `G16_CHAR_CONFIGS`. User will verify and flag if still misaligned.
+
+---
+
+## 📊 Session 2026-04-23 Evening Patch (7 bugs + 2 bonuses)
+
+Cache bump: `v=20260423a` → `v=20260423b`.
+
+### ✅ T1 — G13 scoring inverted star mapping
+- **Symptom**: Perfect evolved run (Machop→Machoke) shows 3★ in modal.
+- **Root cause**: `game.js:7895` had inverted progress-star map: `perfStars >= 5 ? 3 : perfStars >= 4 ? 2 : 1` — this overwrote the display value with the 0-3 progress scale, showing 3★ for what should be 4-5★.
+- **Fix**: Renamed local to `_g13starsSaved`, formula is `perfStars >= 5 ? 3 : >= 4 ? 2 : >= 3 ? 1 : 0` (only used for `setLevelComplete`); the modal continues to receive `perfStars` (5-scale).
+- **Files**: `game.js:7893-7897`.
+
+### ✅ T2 — G13 result modal freeze/stuck
+- **Root cause**: `showGameResult()` at `game.js:8715` had no double-invocation guard. Also the G13 evolution overlay (z-index 600, CSS:3655) could linger over the result modal (z-index 500) blocking clicks. RAF-wrapped button actions were flaky under throttling.
+- **Fix**: Added `state._showingGameResult` entry guard (cleared in `hideGameResult`). Hard-clears `#g13-evo-overlay` via `display:none + pointerEvents:none` on entry. Swapped `requestAnimationFrame(b.action)` → `setTimeout(b.action, 0)`.
+- **Files**: `game.js:8715-8738`.
+
+### ✅ T3 — G10 Charmander faces wrong direction
+- **Root cause**: Previous refactor assumed `pokeFacing` default `'L'` meant HD CDN sprites face screen-left. Evidence (user screenshot): Charmander's natural HD art faces screen-RIGHT.
+- **Fix**: Flipped default `'L'` → `'R'` in `pokeFacing()`. Updated CSS base `--flip`: `.g10-espr` 1 → −1, `.g10-pspr` −1 → 1. `POKE_FACING` map seeded empty — user can add `{slug: 'L'}` for any species that looks wrong after the new default.
+- **Files**: `game.js:5022-5028`, `style.css:2370-2381`.
+
+### ✅ T4 — Ducky Volley ball couldn't clear net on one jump
+- **Root cause**: Hit upward impulse `-1.8` too weak + velocity cap `MAX_BALL_V=3.8` clipped the trajectory.
+- **Fix**: Hit impulse 1.5×: `-1.8 → -2.7`, minimum `-1.4 → -2.1`. Raised `MAX_BALL_V` 3.8→5.0.
+- **Files**: `games/g20-pixi.html:768, 894-896`.
+
+### ✅ T5 — Monster Candy catch triggered at feet, not neck
+- **Root cause**: Collision threshold `monsterY - 30` (ground-relative) rather than anchored to the sprite's top 1/3.
+- **Fix**: Reads `document.getElementById('monster-img').offsetHeight` live, triggers when candy crosses `monsterY - spriteH*0.67` (neck region).
+- **Files**: `games/g22-candy.html:857-865`.
+
+### ✅ T6 — Monster Candy pop animation rough
+- **Fix**: Replaced brightness-only keyframe with scale-squash (0.9 → 1.12 → 1) + golden glow, 0.48s cubic-bezier-overshoot. Timeout bumped 380 → 500ms.
+- **Files**: `games/g22-candy.html:40-48, 483, 815`.
+
+### ✅ T7 — G6 picks train 🚂 but renders blue sport car
+- **Root cause**: On startFromSelect, `carSprite.text = selectedVehicle` only works if carSprite is a PIXI.Text; but if buildCar had already loaded a PNG for the default 🚗, carSprite became a PIXI.Sprite and `.text` is silently ignored.
+- **Fix**: New `rebuildCarSprite(emoji)` function swaps PIXI.Text ↔ PIXI.Sprite based on emoji. Non-car emojis (🚂🚀🛸🚁 etc.) always render as PIXI.Text (emoji glyph).
+- **Files**: `games/g6.html:228-280`.
+
+### ✅ Bonus B1 — G6 duplicate letter counted as next letter
+- **Symptom**: Target LAMPU, user already collected L, another L tile in next wave → treated as "LA" (advances letterIdx).
+- **Root cause**: `hitTile` trusted the stale `_correct` flag captured at tile SPAWN time. After the user progressed past L, the in-flight L tile still carried `_correct=true` from when nextLetter was L.
+- **Fix**: Re-verify live at hit time: `const isLiveCorrect = t._letter === S.currentWord[S.letterIdx]`.
+- **Files**: `games/g6.html:850-864`.
+
+### ✅ Bonus B2 — G6 freeze on "Level Berikutnya"
+- **Root cause**: `location.reload()` fired while PIXI ticker + BGM audio were still running — race causes perceived freeze on mobile browsers.
+- **Fix**: `cleanupBeforeReload()` stops `app.ticker` + pauses BGM, then `setTimeout(30)` before `location.reload()`.
+- **Files**: `games/g6.html:1000-1010`.
+
+---
+
+## 📊 Session 2026-04-23 Summary (omnibus: 5 issues)
+
+| Status | Count | Items |
+|--------|-------|-------|
+| ✅ Completed | 10 | G10 facing refactor (CSS var), showResult guard, overlay hard-clear, achievement defer, G14 train facing + wheel offset + difficulty, responsive tier breakpoints, clamp() chars, PIXI canvas cap, G13C 10-package system, package selector UI |
+| ⬜ Pending | — | Phase B regression QA at 6 viewport widths; Phase C sprite gap verification for Mega forms |
+
+### ✅ Task A1 — G10 facing bug (root-cause fix, not patch)
+- **Symptom**: Pokemon sprite faces wrong direction mid-battle ("kadang tidak berhadapan"). Reported dozens of times; every prior patch failed.
+- **Root cause**: `style.css:2383-2408` keyframes for atk/hit/defeat hardcoded `transform:scaleX(-1)` (from OLD right-facing sprite convention) but current JS `pokeFlipForRole()` returns `scaleX(1)` for enemy (natural L-facing HD sprites). During every animation, enemy visibly flips away. `animation-fill-mode:forwards` on defeat locks it.
+- **Fix**: Migrated all 12 keyframes (player+enemy × atk/hit/defeat/swap) to `scaleX(var(--flip))`. New `applyPokeFlip(el,slug,role)` helper sets both the CSS custom property AND the inline transform. All 7 callsites across G10/G13/G13b migrated. `switchPlayerPoke` reapplies flip both BEFORE and AFTER swap animation (guards against `forwards`).
+- **Files**: `style.css:2370-2408, 2746-2749`; `game.js:5028-5042` (new helper), 5497-5498, 5288-5326, 7283-7291, 7776, 8050, 8094.
+
+### ✅ Task A2 — End-game modal freeze
+- **Symptom**: Result modal sometimes stuck/freeze, cannot advance level.
+- **Root cause**: (1) No double-invocation guard — G5 setTimeout chains + user rapid-taps fire showResult twice, stacking achievement toasts that eat button clicks. (2) Overlays cleared only via `classList.remove('show')` leaving inline `display:block` from G13 paths.
+- **Fix**: `state._showingResult` entry guard (auto-released after 1500ms or on `playAgain`/`nextLevel`/`goToMenu`). Overlays now set `display:none` inline. Achievement checks deferred 450ms so modal renders first.
+- **Files**: `game.js:1811-1876, 1902-1904`.
+
+### ✅ Task A3 — G14 Lokomotif Pemberani (3 bugs)
+- **3a facing**: `c.scale.x = 1` lock on player container (defensive) — `games/g14.html:1519`.
+- **3b wheels-on-rail**: Offset `c.y` by `max(0, laneH*0.22 - 19)` so wheels visually sit on bottom rail across lanes. Applied in buildPlayer, tickPlayer target tween, and resize handler. `_wheelOffset` stored on container for consistency.
+- **3c difficulty**: New `DIFF_MULT`: easy=1.6, hard=0.85, medium=1.0. Floor raised 900ms→1300ms on easy. `cfg.difficulty` now passed via sessionStorage from `game.js:9384`.
+- **Files**: `games/g14.html:396, 1517-1537, 1557-1561, 1961-1971`; `game.js:9384`.
+
+### ✅ Task B1 — Responsive overhaul
+- Converted fixed ≥60px character/emoji sizes to `clamp(minPx, preferredVw, maxPx)`: `.g1-char`, `.g3-animal`, `.g8-hint-img`, `.result-mascot`.
+- New breakpoints: `@media (min-width:768px)` tablet, `@media (min-width:1200px)` desktop, `@media (orientation:landscape) and (max-height:500px)` landscape-phone.
+- `--rz-scale` raised to 1.2× on desktop (was capped at 1.0×).
+- All 7 PIXI canvas resize handlers (g14/g13c/g15/g16/g19/g20/g22) capped at 1400×1000.
+- **Files**: `style.css:313, 540, 601, 1399, 1443, 5786-5820`; 7 files in `games/`.
+
+### ✅ Task C1 — G13C: 10 rotating Pokémon packages
+- `PLAYER_PACKAGES` array (`games/g13c-pixi.html:357-546`): 10 themed teams, 60 Pokémon, 240 move entries.
+  - Tim Ash Kanto Awal/Final · Tim Ash XY Awal/Final · Tim Horizons · Starter Hoenn · Tim Evoli · Bintang Mega · Burung Legendaris · Klub Pseudo-Legend
+- HP tiers: `base`=90 / `final`=105-115 / `mega`=120-130.
+- `getCurrentPackage()` reads `localStorage.g13c_lastPackage`; battle init uses `deepCloneTeam(getCurrentPackage().team)`.
+- Package selector UI: new `🎒 Tim` button in HUD opens overlay with 10 theme-colored cards (6 sprite thumbs + tier badge each). Selection auto-persists.
+- Mega/Horizons sprites (sprigatito, fuecoco, quaxly, terapagos, hatenna, charizard-mega-x, venusaur-mega, etc.) use 3-level cascade: HD CDN → local PNG → base-species fallback (e.g. `charizard-mega-x` → `charizard` if Mega URL 404s).
+- **Files**: `games/g13c-pixi.html:241-270, 19-50 (CSS), 357-546 (data), 998-1026 (sprite cascade), 1185-1187 (battle), 1626-1685 (JS)`.
+
+### ✅ Task C2 — Sprite gap audit for 10 packages
+- **Audit**: 55 unique slugs. 49 present locally in `/assets/Pokemon/sprites/`. 6 missing (all Mega forms: charizard-mega-x, venusaur-mega, blastoise-mega, gardevoir-mega, lucario-mega, gengar-mega).
+- **Mitigation**: Added `baseSpeciesSlug()` helper + 3-level cascade in `setPokeSpriteWithCascade`. Missing Mega slugs degrade gracefully to regular base forms.
+- **Gen 9/Horizons slugs present locally**: sprigatito, fuecoco, quaxly, terapagos, hatenna all confirmed in sprites/. Zero gaps in non-Mega packages.
+
+---
+
 ## 📊 Session 2026-04-22 Summary
 
 | Status | Count | Items |

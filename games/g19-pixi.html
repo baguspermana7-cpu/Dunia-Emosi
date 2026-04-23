@@ -1217,7 +1217,7 @@ function goBack() {
 
 // Resize
 window.addEventListener('resize', () => {
-  if (app) app.renderer.resize(window.innerWidth, window.innerHeight)
+  if (app) app.renderer.resize(Math.min(window.innerWidth, 1400), Math.min(window.innerHeight, 1000))
 })
 </script>
 </body>

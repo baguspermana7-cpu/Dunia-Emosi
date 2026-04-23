@@ -1,5 +1,55 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-23 Night — Character train polish (ratio scale + outline + smoke follow)
+
+Cache bump: `rz-responsive.js` + `train-character-sprite.js` → `v=20260423c`.
+
+- **Character train ratio-driven scale**: Replaced PC-reference `trainScale()` clamp with viewport-ratio formula `h * 0.00078` bounded `[0.32, 0.55]`. Character height now ≈ 7% of viewport across all devices (was ~11% on PC baseline, ~13% on mobile).
+- **White outline underlay**: White-tinted sprite clone 6% larger, alpha 0.85, rendered behind the main sprite — gives crisp silhouette edge against dark G16 night theme.
+- **Smoke follows train live**: `spawnSmoke()` now reads `container.y` (live) instead of `state.baseY` (mount-time snapshot). Smoke stays with train across bobs, lane switches, and resizes.
+
+---
+
+## 2026-04-23 Evening — 7 bugs + 2 bonuses (scoring, modal freeze, sprite facing, physics, collision, vehicle render, letter collection, reload freeze)
+
+Cache bump: `v=20260423a` → `v=20260423b`.
+
+- **G13 scoring**: Fixed inverted star mapping at `game.js:7895` — perfect evolved runs now show correct 4-5★ instead of 3★.
+- **G13 modal freeze**: Added `_showingGameResult` guard + hard-clear of evo overlay (z-index 600 trap) + `setTimeout` instead of RAF on button actions.
+- **G10 Charmander facing**: Flipped `pokeFacing` default `'L'` → `'R'` (HD CDN sprites naturally face screen-right). Swapped `.g10-espr/--flip` and `.g10-pspr/--flip` CSS defaults accordingly.
+- **Ducky Volley**: Hit upward impulse 1.5× (`-1.8 → -2.7`, min `-1.4 → -2.1`). `MAX_BALL_V` raised 3.8 → 5.0 so boosted arc isn't clipped.
+- **Monster Candy collision**: Trigger at neck area (`monsterY - spriteH*0.67`) instead of foot line. Live sprite height from `offsetHeight`.
+- **Monster Candy pop**: Scale-squash keyframe (0.9 → 1.12 → 1) + golden glow, 0.48s cubic-bezier-overshoot. 
+- **G6 vehicle render**: New `rebuildCarSprite()` swaps PIXI.Text ↔ PIXI.Sprite on start. Non-car emojis (🚂🚀🛸) now correctly render as glyph, not blue sport car.
+- **G6 duplicate letter**: `hitTile` re-verifies `t._letter === S.currentWord[S.letterIdx]` at hit time instead of trusting stale `_correct` spawn flag.
+- **G6 reload freeze**: `cleanupBeforeReload()` stops PIXI ticker + BGM before `location.reload()`, wrapped in `setTimeout(30)` to let hide-transition finish.
+
+---
+
+## 2026-04-23 — Omnibus: G10 facing root-cause, modal guard, G14 fixes, responsive, G13C packages
+
+Cache bump: `v=20260423a`.
+
+### Bugs
+- **G10 Pokémon facing** — Complete refactor. All 12 atk/hit/defeat/swap keyframes migrated from hardcoded `scaleX(-1)` to `scaleX(var(--flip))`. New `applyPokeFlip(el,slug,role)` helper writes both the CSS custom property and inline transform. `switchPlayerPoke` reapplies flip before AND after swap animation (guards `animation-fill-mode:forwards`). Fixes dozens of repeat-reported facing bugs across every combat animation.
+- **End-game modal freeze** — Added `state._showingResult` double-invocation guard (auto-released 1.5s or on playAgain/nextLevel/goToMenu). Overlays now hard-cleared with inline `display:none`. Achievement toast cascade deferred 450ms so modal renders responsive first.
+- **G14 train — 3 bugs** — (a) `c.scale.x=1` lock on player container (defensive against backward-facing). (b) Wheel-to-rail offset `max(0, laneH*0.22 − 19)` shifts container so wheels visually sit on bottom rail. (c) Difficulty multiplier added: easy=1.6×, hard=0.85× obstacle interval. `cfg.difficulty` now piped through sessionStorage. Easy floor raised 900ms→1300ms.
+
+### Responsive overhaul
+- Fixed-px character/emoji sizes (`.g1-char`, `.g3-animal`, `.g8-hint-img`, `.result-mascot`) converted to `clamp()` with mobile-first min values.
+- New breakpoints: 768px (tablet), 1200px (desktop), landscape-phone (orientation:landscape + max-height:500px).
+- `--rz-scale` now scales up to 1.2× on desktop (was capped 1.0×).
+- All 7 PIXI canvas resize handlers capped at 1400×1000 (g14, g13c, g15-pixi, g16-pixi, g19-pixi, g20-pixi, g22-candy).
+
+### Feature — G13C 10 Pokémon team packages
+- Replaced single `PLAYER_TEAM` with `PLAYER_PACKAGES` array: 10 themed teams, 60 Pokémon, 240 moves.
+  - Tim Ash Kanto Awal (base) · Final · Tim Ash XY Awal (base) · Final · Tim Horizons · Starter Hoenn · Tim Evoli · Bintang Mega · Burung Legendaris · Klub Pseudo-Legend
+- HP tiers: base=90, final=105–115, mega=120–130 (balance across packages).
+- New `🎒 Tim` HUD button opens a fullscreen selector (theme-colored cards, 6 sprite thumbs, tier badge). Selection persists in `localStorage.g13c_lastPackage`; battle init reads the current package.
+- Mega / Horizons sprites (sprigatito, fuecoco, quaxly, terapagos, hatenna, charizard-mega-x, venusaur-mega, etc.) fall back to HD CDN via existing `SPRITE_HD` helper.
+
+---
+
 ## 2026-04-22 — Pause-bypass fixes in G13b + G15 (Tasks #62, #63)
 
 Follow-ups from Task #55 audit which identified pause-state leaks in two other games.

@@ -150,9 +150,9 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
   <button id="ts-back" onclick="goBack()">◀ Kembali</button>
 </div>
 
-<script src="../shared/rz-responsive.js?v=20260422i"></script>
+<script src="../shared/rz-responsive.js?v=20260423c"></script>
 <script src="game-modal.js"></script>
-<script src="train-character-sprite.js?v=20260422f"></script>
+<script src="train-character-sprite.js?v=20260423c"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
 <script>
@@ -2103,7 +2103,7 @@ function finishGame(){try{document.getElementById('game-bgm').pause()}catch(_){}
 function restartGame(){location.reload()}
 window.addEventListener('resize',()=>{
   if(!app)return
-  app.renderer.resize(window.innerWidth,window.innerHeight)
+  app.renderer.resize(Math.min(window.innerWidth,1400),Math.min(window.innerHeight,1000))
   // Recalculate responsive layout for new viewport — TRAIN_SCREEN_X + track Y.
   const newW=app.screen.width, newH=app.screen.height
   // Task #59 — 5% base; per-train clamp happens inside buildTrain via CharacterTrain.computeTrainX

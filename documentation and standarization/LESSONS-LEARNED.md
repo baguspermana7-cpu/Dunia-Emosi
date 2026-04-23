@@ -4,6 +4,78 @@
 
 ---
 
+## 2026-04-23 Evening
+
+### L7 — Inverted downmap bug: use distinct variable names for display-scale vs persistence-scale
+- **Symptom**: G13 perfect evolved run saved 3★ to progress AND displayed 3★ in modal, when should have been 4-5★.
+- **Root cause**: Single variable `_g13stars` was used both for `setLevelComplete` (0-3 scale) AND assumed to propagate to `perfStars` (5-scale) display. The formula `perfStars >= 5 ? 3 : perfStars >= 4 ? 2 : 1` did the correct 5→3 downmap but the variable name was ambiguous, and nothing was preventing the downmap result from leaking into display.
+- **Fix**: Split the variables. `perfStars` (5-scale) is shown to user; `_g13starsSaved` (0-3 scale) is persisted.
+- **Lesson**: When a game has two star scales (display 5-star vs progress 0-3-star), use clearly distinct variable names (`starsDisplay` / `starsSaved`). Never reuse one variable across scales.
+
+### L8 — Z-index overlay traps: always clear stale overlays in show-modal functions
+- **Symptom**: G13 result modal appears but buttons don't respond.
+- **Root cause**: `.g13-evo-overlay` (z-index 600) sometimes lingered over `.gr-overlay` (z-index 500), silently consuming all clicks on the modal below.
+- **Fix**: At the top of `showGameResult()`, hard-clear any overlay that could possibly be above: `el.classList.remove('show'); el.style.display = 'none'; el.style.pointerEvents = 'none'`.
+- **Lesson**: If a modal "appears frozen but is visible", the first suspicion should be z-index overlay trap, not the modal code. Show-modal functions should enumerate and clear every overlay class in the game that could float above them.
+
+### L9 — Default facing assumption: distinguish local sprite pack vs CDN
+- **Symptom**: G10 Charmander faced wrong direction after my refactor.
+- **Root cause**: Assumed `pokeFacing` default `'L'` based on claim in TODO that "HD sprites face left natively". This was true for `/assets/Pokemon/pokemondb_hd_alt2/` WebP pack but NOT for `img.pokemondb.net/sprites/home/normal/` CDN PNGs that G10's `loadSprHD` uses.
+- **Fix**: Change default to `'R'` (matches CDN) and update CSS `--flip` base values accordingly.
+- **Lesson**: When multiple sprite sources exist in the codebase, document their natural facing orientations explicitly. A sprite-facing default can't be universal — it depends on WHICH source is actually being fetched at runtime. Default assumption should match the MOST-USED source.
+
+### L10 — Stale flags captured at spawn fail after game state advances
+- **Symptom**: G6 LAMPU — user already collected L, another L tile treated as "LA".
+- **Root cause**: Tile's `_correct` flag captured at SPAWN time. In-flight tile still carries `_correct=true` after the game state advanced past that letter.
+- **Fix**: Re-verify at HIT time: `t._letter === S.currentWord[S.letterIdx]`. Ignore stale spawn-time flag.
+- **Lesson**: Any boolean flag that reflects game state at a PAST moment is suspect when there's a time delay between capture and use (spawn → collision = ~2-3 seconds). Prefer live lookups over cached flags whenever cheap. Rule of thumb: if state could have changed in the time between flag-set and flag-read, re-derive at read time.
+
+### L11 — PIXI + location.reload race: clean up before reload
+- **Symptom**: G6 "Level Berikutnya" click → frozen screen.
+- **Root cause**: `location.reload()` fired while PIXI ticker + BGM audio element were still active. Mobile browsers can race the pagehide/reload with the pending ticker callbacks, leaving the transition appearing frozen.
+- **Fix**: Before `location.reload()`, call `app.ticker.stop()` + `_bgmEl.pause()`, then `setTimeout(30)` to let the hide-transition settle.
+- **Lesson**: Never call `location.reload()` directly from inside a running PIXI game. Pattern: `cleanup() → setTimeout(30) → reload()`. Works on any game engine that has async loops.
+
+### L12 — Sprite swap requires type check, not just property set
+- **Symptom**: G6 user picks 🚂 train, game renders blue sport car PNG.
+- **Root cause**: Code did `carSprite.text = selectedVehicle` to update the emoji. That works only if `carSprite` is a PIXI.Text. If a PNG had previously loaded, carSprite was replaced with PIXI.Sprite; setting `.text` on a Sprite silently does nothing.
+- **Fix**: New `rebuildCarSprite(emoji)` helper explicitly removes the old sprite, creates a new PIXI.Text or PIXI.Sprite based on whether the emoji maps to a PNG, and adds it to the container.
+- **Lesson**: When a visual element can be represented by two different PIXI types (Text vs Sprite), never update it via type-specific properties (`.text`, `.texture`). Always provide a `rebuild(stateKey)` helper that recreates the right type from scratch.
+
+---
+
+## 2026-04-23
+- **Symptom**: G10 Pokémon facing bug "failed puluhan kali" — every prior patch (adding `style.transform = pokeFlipForRole(...)` after sprite swap) silently reverted.
+- **Root cause**: Keyframes hardcoded `transform:scaleX(-1)` at every step. During animation, keyframe value wins over inline style. After `animation-fill-mode:forwards` locks the sprite's final computed value, removing the class doesn't revert — the locked value persists.
+- **Fix**: Make keyframes read `scaleX(var(--flip))`. JS sets both `el.style.setProperty('--flip', sign)` AND `el.style.transform = 'scaleX(...)'` for belt-and-suspenders safety. Variable-driven keyframes mean ONE source of truth regardless of animation state.
+- **Lesson**: When a per-element visual state needs to survive CSS animations, use a CSS custom property the keyframe reads. Never assume inline `style.transform` wins over keyframes — it doesn't while the animation is active, and `forwards` extends that to permanent.
+
+### L2 — Guard every modal/terminal-state function against double-invocation
+- **Symptom**: End-game modal freeze, double XP, stacked achievement toasts.
+- **Root cause**: `showResult()` had no entry guard. G5 memory games wrap it in 700–1200ms `setTimeout`; user rapid-taps during delay queue a second call; both execute fully, toasts stack above buttons.
+- **Fix**: Entry-guard pattern: `if (state._showingResult) return; state._showingResult = true; setTimeout(()=>{state._showingResult=false}, 1500)`. Cleared on legitimate re-entry hooks (`playAgain`/`nextLevel`/`goToMenu`).
+- **Lesson**: Any function that shows a modal or triggers a game-over transition needs a re-entrancy guard. Never assume it's called once — setTimeout chains, click handlers on transitional buttons, and background game-loop checks can all fire overlapping calls.
+
+### L3 — CSS keyframes + custom properties = per-instance animation variants
+- **Problem**: G10 has 12 keyframes covering player vs enemy × atk/hit/defeat/swap. Supporting per-Pokemon natural facing used to require duplicating each keyframe.
+- **Solution**: Single keyframe using `transform: scaleX(var(--flip)) translateX(-26px) ...`. `--flip` is set per-element in JS. One keyframe, N variants.
+- **Lesson**: CSS custom properties inside keyframe `transform` expressions make a keyframe effectively parameterized. Works for scale, rotation, translation. Cuts duplicate keyframe code massively.
+
+### L4 — Scale-dependent positions need per-viewport recomputation on resize
+- **G14 wheel offset**: `laneH*0.22 - 19` depends on `laneH`, which changes on orientation. Storing the computed offset as `_wheelOffset` on the PIXI container + re-setting it in the resize handler keeps wheels aligned when user rotates device mid-game.
+- **Lesson**: Any derived geometry needs to be recomputed when viewport dimensions change. Cache the derived value on the live object (not as a const) so the resize handler can recalc.
+
+### L5 — Fixed-px character sizes break responsive design; `clamp()` is the pattern
+- Old pattern: `font-size: 108px` + 3 media-query overrides (480/360/320).
+- New pattern: `font-size: clamp(64px, 18vw, 120px)` + one override for landscape-phone (short viewport).
+- **Lesson**: For any emoji/character that must scale proportionally with viewport, `clamp(minPx, preferredVw, maxPx)` beats discrete breakpoint overrides. Four breakpoints become one formula. Landscape-phone (short viewport) still needs its own override because `vw` doesn't capture viewport height.
+
+### L6 — Config data belongs in sessionStorage as a blob, not URL params or globals
+- G14 needed `difficulty` passed from `game.js` → standalone `games/g14.html`. Already using sessionStorage for level — extended the same blob.
+- **Lesson**: Cross-page config transfer pattern: `sessionStorage.setItem('${gameId}Config', JSON.stringify({level, difficulty, ...}))` on send-side; `try{...JSON.parse(sessionStorage.getItem(...))}catch(_){}` with sane defaults on receive-side. Add fields freely; old receivers ignore unknown keys.
+
+---
+
 ## 2026-04-22
 
 ### Manual threshold beats AI rembg for cartoon art on white backgrounds

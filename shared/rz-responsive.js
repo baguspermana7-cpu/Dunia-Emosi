@@ -62,14 +62,18 @@
   // need to shrink on mobile portrait (H ~ 667) and landscape (H ~ 375) and stay
   // at their designed PC size on laptop/desktop (H ≥ 800).
   //
-  // Returns a multiplier clamped to [0.55, 1.0]:
-  //   - 800+ px height     → 1.0  (PC/laptop baseline — no scaling)
-  //   - 667px (iPhone-P)   → 0.83
-  //   - 480px              → 0.60
-  //   - ≤436px             → 0.55 (clamped floor, prevents sprite dissolving)
+  // Returns a viewport-ratio-driven multiplier. Targets character train height
+  // at ~7% of viewport height across all devices (was ~11% pre-2026-04-23).
+  // Formula derivation: spriteHeight in configs = 90px PC-reference, want desired_h
+  // to be viewport_h × 0.07, so scale = (viewport_h × 0.07) / 90 = viewport_h × 0.000778.
+  // Clamp to [0.32, 0.55] so small phones stay readable, large displays don't oversize.
+  //   - 320px      → 0.32 (floor)
+  //   - 480px      → 0.374
+  //   - 700px      → 0.547
+  //   - 800+ px    → 0.55 (ceiling)
   function trainScale() {
     const h = window.innerHeight || 800
-    return Math.min(1, Math.max(0.55, h / 800))
+    return Math.min(0.55, Math.max(0.32, h * 0.00078))
   }
 
   // Resize listener helper — passes the RZ object to the callback so consumer
