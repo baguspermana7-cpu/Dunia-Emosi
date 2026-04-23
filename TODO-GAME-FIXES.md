@@ -4,40 +4,44 @@
 
 ---
 
-## 📋 Pending (2026-04-23 night, awaiting action)
-
-User flagged these during the night-2 session but fixes not yet applied. Preserving full context here for the next session.
-
-### ⬜ P1 — G18 "Kuis" checkmark animation placement (screenshot 019dbaea)
-- **Symptom**: Question "Kita tidur saat kapan?" with choices Pagi / Siang / Malam / Sore. User answered correctly (Malam for night/sleep). The green ✓ checkmark animation appeared in empty space BETWEEN "Pagi" and "Siang" buttons instead of on the selected/correct answer card.
-- **User verbatim**: "Tanda centang effect benar jawaban sangat tidak akurat penempatannya, dan efek animasi dll sangat kurang — game ini perlu enhancement."
-- **Investigation needed**: Find G18 correct-answer animation — likely computed via static X/Y coords that don't re-read the element's rect on each render.
-- **Scope**: G18 only — but similar anchor-math bug may exist in other games.
-
-### ⬜ P2 — G17 "Tebak Hewan" missing correct-answer effects + misplaced burst (screenshot 019dbaeb)
-- **Symptom**: Question "Hewan yang punya cangkang dan berjalan lambat" with 4 image cards (kura-kura, landak, siput, kepiting). A burst/sparkle effect appears on the stage floor BELOW the cards (center stage lion + dolphin area), NOT on the tapped card.
-- **User verbatim**: "effek ledakan/cahaya positioning dan effect-nya sangat jelek. Dan efek di area jawaban yang benar juga tidak ada."
-- **Ask**: Re-anchor burst to the correct-card's bounding rect. Add: sparkle particles ON the card + card pulse animation + tick mark overlay.
-
-### ⬜ P3 — Museum Ambarawa expansion (screenshot 019dbaed)
-- **Symptom**: Current train detail modal shows only 1 train (B2507). Detail modal narrow.
-- **User verbatim**: "Museum ini perlu pengembangan. Agar lebih lebar, lebih bagus dan lebih keren. Dan pilihan kereta masih kurang banyak tambahkan kereta lainnya di indonesia dan ceritanya kurang banyak dan kurang menarik. Ambil kereta dari tahun 1400-2026 saat ini."
-- **Needs**:
-  - Add many more Indonesian trains spanning 1400s (early wooden wagon era — if any historical refs) through present-day (KRL, MRT, LRT, Whoosh HSR etc.)
-  - Widen the detail modal (current ~360px → ~520px or full-width on mobile)
-  - Longer/richer stories per train — historical context, who built it, what it hauled, interesting facts, why it matters
-  - Visual polish: background variance per era, more sprite detail
+## 📋 Pending (2026-04-24, awaiting user QA)
 
 ### ⬜ P4 — Character train wheel-on-rail final tuning (deferred from night patch)
 - After viewport-ratio scale shipped, user may still find wheels don't visually touch rail. If so: add `visualOffset: N` per-train in `G16_CHAR_CONFIGS` (`games/g16-pixi.html`).
 - Outline + smoke-follow already shipped; awaiting visual QA.
 
-### ⬜ P5 — Generic "enhancement" / "pengembangan" request
-- **User verbatim**: "game ini perlu enhancement. Dan perlu pengembangan. Lakukan pengembangan game ini menjadi lebih seru lebih punya nilai dan tidak membosankan."
-- **Open-ended directive**: more/better animations, sound variety, more content depth, cross-game coherence, difficulty curves tuning. Break down into concrete sub-tasks in next session.
-
 ### ⬜ P6 — G13 perfect run still shows 3★ (potentially — awaits user re-test after today's fix)
 - Today's fix was the inverted progress-star mapping at `game.js:7895`. Display path was already using `perfStars` (5-scale). If user STILL sees 3★ for evolved, it means `s.evolved` flag isn't being set at the right moment during Machop→Machoke evolution. Separate investigation.
+
+---
+
+## 📊 Session 2026-04-24 Batch (P1 + P2 + P3 + P5)
+
+Cache bump: `v=20260423d` → `v=20260424a`.
+
+### ✅ P1 — G18 "Kuis" checkmark placement fixed
+- **Root cause**: `g18AnswerQuestion` (game.js:11220) only added `.correct` CSS class + text feedback. No visual burst/tick on the button itself.
+- **Fix**: New `spawnCorrectCardJuice(btn)` helper anchors ring + tick + pulse directly to the button via `position:absolute` children. Called for both picked correct button and fallback correct-highlight when user picks wrong.
+- **File**: `game.js:11220` + new helper at `game.js:1946`.
+
+### ✅ P2 — G12 Tebak Bayangan card effects fixed
+- **Root cause actually G12, not G17**: User's "Tebak Hewan" screenshot matched SHADOW_ITEMS at `game.js:6075` (G12). `spawnSparkles` used `position:fixed` which misbehaves under transformed ancestors — sparkles landed below cards.
+- **Fix**: Swapped to card-anchored `spawnCorrectCardJuice` helper (ring + tick + pulse stays on card regardless of ancestor transforms). Also added `spawnWrongShake(btn)` shake animation for wrong answers.
+- **File**: `game.js:6164-6177`.
+
+### ✅ P3 — Museum Ambarawa expansion
+- **Modal widened**: `.g18-modal-box` max-width 340px → **560px**, padding bumped, vertical scroll cap `max-height:88vh`, richer scrollbar styling. `#g18-modal-details` grid now `auto-fit minmax(110px, 1fr)` for better responsive layout.
+- **New history field**: `#g18-modal-history` section appears when train has `history` field — 300-400 char historical narrative with gold left-border.
+- **Rendering**: `g18ShowDetail` dynamically inserts history block between details grid and fact block. Also added `RODA` (axles) cell.
+- **Catalog expanded**: G18_TRAINS 27 → **36 entries** (+9 new), covering era 1867 Semarang–Tanggung rail through 2023 LRT Jabodebek. New entries: SS 1867, SS 500 Mogul, C51 Dwipanggo, D52 Djojobojo (Soekarno era), BB200 Diesel Pertama, BB301 Bulu Sikat (Ganefo), Taksaka, CC202 Rajawali, LRT Palembang Asian Games 2018, KA Bandara Soetta Railink, KRL JR 205.
+- **Existing entries enriched**: B2507, C1218, CC200 Setan Ijo, KRL Commuter, Whoosh, MRT Jakarta all got `history` field narratives (SLM Winterthur, Staats Spoorwegen era, Sukarno diesel revolution, JR East retrofit, KCIC Indonesia-China, JICA consultant history).
+- **Files**: `game.js` (G18_TRAINS + g18ShowDetail), `style.css:3438` (modal width + scrollbar).
+
+### ✅ P5 — Generic enhancement pass (shared juice helper)
+- Extracted correct-answer effect pattern into reusable `spawnCorrectCardJuice(btn, opts)` + `spawnWrongShake(btn)` — card-anchored children that survive ancestor transforms.
+- Wired into G11 (science quiz), G12 (shadow guessing), G18 (Museum quiz) for consistency across all quiz-style games.
+- CSS keyframes: `correctPopAnim` (0.58s), `correctRingAnim` (0.85s green ring ripple), `correctTickAnim` (1.25s ✓ bounce), `wrongShakeAnim` (0.5s horizontal shake).
+- **Files**: `game.js:1946` (helper), `style.css:634` (keyframes).
 
 ---
 

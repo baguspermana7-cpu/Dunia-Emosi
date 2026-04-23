@@ -631,6 +631,16 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 .confetti-piece { position:fixed;border-radius:4px;animation:confettiFall ease-in forwards;pointer-events:none;z-index:200;top:-30px; }
 @keyframes confettiFall { 0%{transform:translateY(0)translateX(0)rotate(0deg)scale(1);opacity:1} 80%{opacity:1} 100%{transform:translateY(110vh)translateX(var(--dx))rotate(var(--rot))scale(0.5);opacity:0} }
 
+/* CORRECT-ANSWER JUICE (shared: G11/G12/G17/G18 quiz cards) */
+.correct-pop { animation: correctPopAnim 0.58s cubic-bezier(0.34,1.56,0.64,1) both; }
+@keyframes correctPopAnim { 0%{transform:scale(1)} 30%{transform:scale(1.08)} 60%{transform:scale(0.97)} 100%{transform:scale(1)} }
+.correct-ring-overlay { position:absolute; inset:-4px; border:4px solid #10B981; border-radius:inherit; pointer-events:none; opacity:0; animation:correctRingAnim 0.85s ease-out forwards; z-index:50; box-shadow:0 0 18px rgba(16,185,129,0.55); }
+@keyframes correctRingAnim { 0%{transform:scale(0.8);opacity:0} 20%{opacity:1} 100%{transform:scale(1.35);opacity:0} }
+.correct-tick-overlay { position:absolute; top:50%; left:50%; font-size:clamp(40px, 12vw, 64px); color:#10B981; font-weight:900; pointer-events:none; text-shadow:0 0 14px rgba(16,185,129,0.7), 0 4px 10px rgba(0,0,0,0.28); animation:correctTickAnim 1.25s cubic-bezier(0.34,1.56,0.64,1) forwards; z-index:60; }
+@keyframes correctTickAnim { 0%{transform:translate(-50%,-50%) scale(0) rotate(-35deg);opacity:0} 30%{transform:translate(-50%,-50%) scale(1.35) rotate(0deg);opacity:1} 72%{transform:translate(-50%,-50%) scale(1) rotate(0deg);opacity:1} 100%{transform:translate(-50%,-50%) scale(0.9) rotate(0deg);opacity:0} }
+.wrong-shake { animation: wrongShakeAnim 0.5s ease-out both; }
+@keyframes wrongShakeAnim { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(5px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(3px)} }
+
 /* ACHIEVEMENT TOAST */
 .achievement-toast { position:fixed;bottom:-120px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#FCD34D,#F59E0B);border-radius:20px;padding:14px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,0.2);z-index:300;transition:bottom 0.4s cubic-bezier(0.34,1.56,0.64,1);min-width:280px;max-width:360px;font-family:var(--font); }
 .achievement-toast.show { bottom:24px; }
@@ -3428,8 +3438,19 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 .g18-modal-box {
   background:linear-gradient(135deg,#3E2723,#4E342E);
   border:2px solid rgba(255,193,100,0.3);border-radius:20px;
-  padding:20px;max-width:340px;width:100%;text-align:center;
+  padding:22px 22px 18px;max-width:560px;width:100%;text-align:center;
+  max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.6);
 }
+.g18-modal-box::-webkit-scrollbar { width:8px; }
+.g18-modal-box::-webkit-scrollbar-thumb { background:rgba(255,193,100,0.35);border-radius:4px; }
+.g18-modal-box::-webkit-scrollbar-track { background:rgba(0,0,0,0.2);border-radius:4px; }
+@media (min-width:720px) {
+  .g18-modal-box { padding:28px 30px 24px; }
+}
+#g18-modal-details { grid-template-columns:repeat(auto-fit, minmax(110px, 1fr)) !important; }
+#g18-modal-fact { text-align:left !important; font-size:13px !important; line-height:1.6 !important; padding:12px 14px !important; }
+#g18-modal-history { background:rgba(255,193,100,0.08); border-radius:10px; padding:10px 14px; color:rgba(255,255,255,0.85); font-size:12px; font-weight:600; line-height:1.6; text-align:left; margin-bottom:10px; border-left:3px solid rgba(255,193,100,0.5); }
+#g18-modal-history-title { color:#FFD700; font-size:11px; font-weight:900; letter-spacing:0.6px; margin-bottom:4px; display:block; }
 .g18-quiz-option {
   width:100%;background:#3E2723;
   border:3px solid #6D4C41;border-radius:16px;padding:14px 16px;

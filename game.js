@@ -1941,6 +1941,46 @@ function spawnSparkles(btn,starCount) {
   for(let i=0;i<n;i++){const s=document.createElement('div');s.className='sparkle';const angle=(i/n)*Math.PI*2,dist=50+Math.random()*maxDist;s.style.cssText=`left:${cx};top:${cy};--tx:${Math.cos(angle)*dist}px;--ty:${Math.sin(angle)*dist}px;--rot:${Math.random()*360}deg;animation-duration:${0.5+Math.random()*0.5}s;animation-delay:${Math.random()*0.2}s;font-size:${fs+Math.random()*10}px;`;s.textContent=icons[Math.floor(Math.random()*icons.length)];document.body.appendChild(s);setTimeout(()=>s.remove(),1200)}
 }
 
+// Card-anchored correct-answer juice: pulse + ring + tick mark + particle burst.
+// Overlays are children of the button (position:absolute), so transformed ancestors
+// do not misplace them. Particle burst is viewport-level best-effort.
+function spawnCorrectCardJuice(btn, opts) {
+  if (!btn) return
+  const o = opts || {}
+  try {
+    if (getComputedStyle(btn).position === 'static') btn.style.position = 'relative'
+    btn.style.overflow = 'visible'
+    btn.classList.remove('correct-pop')
+    void btn.offsetWidth
+    btn.classList.add('correct-pop')
+    setTimeout(() => btn.classList.remove('correct-pop'), 650)
+    const ring = document.createElement('div')
+    ring.className = 'correct-ring-overlay'
+    btn.appendChild(ring)
+    setTimeout(() => { try{ring.remove()}catch(_){} }, 950)
+    if (o.tick !== false) {
+      const tick = document.createElement('div')
+      tick.className = 'correct-tick-overlay'
+      tick.textContent = '✓'
+      btn.appendChild(tick)
+      setTimeout(() => { try{tick.remove()}catch(_){} }, 1400)
+    }
+    if (o.burst !== false) {
+      const r = btn.getBoundingClientRect()
+      if (typeof spawnParticleBurst === 'function') spawnParticleBurst(r.left + r.width/2, r.top + r.height/2)
+    }
+  } catch(_) {}
+}
+
+function spawnWrongShake(btn) {
+  if (!btn) return
+  try {
+    btn.classList.remove('wrong-shake'); void btn.offsetWidth
+    btn.classList.add('wrong-shake')
+    setTimeout(() => btn.classList.remove('wrong-shake'), 550)
+  } catch(_) {}
+}
+
 // ================================================================
 // AUDIO
 // ================================================================
@@ -6012,11 +6052,14 @@ function g11Answer(idx,btn){
   document.getElementById('g11-choices').querySelectorAll('.sci-choice').forEach(b=>b.setAttribute('disabled',''))
   btn.classList.add(correct?'correct':'wrong')
   if(!correct){
+    spawnWrongShake(btn)
     const btns=document.getElementById('g11-choices').querySelectorAll('.sci-choice')
     btns[q.ans].classList.add('correct')
+    spawnCorrectCardJuice(btns[q.ans], { burst:false })
   }
   correct ? playCorrect() : playWrong()
   if(correct){
+    spawnCorrectCardJuice(btn)
     // Flash sci-correct image briefly
     const sciCorrectEl = document.getElementById('g11-correct-flash')
     if(sciCorrectEl) { sciCorrectEl.style.opacity='1'; setTimeout(()=>sciCorrectEl.style.opacity='0', 800) }
@@ -6121,15 +6164,20 @@ function g12Answer(correct,btn,grid){
     const icon=b.querySelector('.shadow-icon')
     if((icon?icon.textContent:b.textContent)===q.ans) b.classList.add('correct')
   })
-  if(!correct) btn.classList.add('wrong')
+  if(!correct) { btn.classList.add('wrong'); spawnWrongShake(btn) }
   correct ? playCorrect() : playWrong()
   if(correct){
+    // Card-anchored juice (ring + tick + pulse) on the tapped card — stays on card even with transformed ancestors
+    spawnCorrectCardJuice(btn)
     spawnSparkles(btn); flashScreen('green')
     const rfx = document.getElementById('g12-reveal-fx')
     if(rfx) { rfx.style.opacity='1'; setTimeout(()=>rfx.style.opacity='0', 700) }
     s.stars++; state.players[state.currentPlayer].stars++
     document.getElementById('g12-stars').textContent=`⭐ ${s.stars}`
   } else {
+    // Highlight correct answer with card juice (no burst — less celebratory for wrong case)
+    const correctBtn = Array.from(grid.querySelectorAll('.shadow-btn.correct'))[0]
+    if (correctBtn && correctBtn !== btn) spawnCorrectCardJuice(correctBtn, { burst:false })
     // Show clue hint in question area
     const qEl=document.getElementById('g12-question')
     if(qEl) qEl.innerHTML=`${q.desc}<br><span style="color:#FBBF24;font-size:12px;font-weight:700">💡 Jawaban: ${q.ans}</span>`
@@ -10634,6 +10682,7 @@ const G18_TRAINS = [
     isSteam:true, rack:true, tender:false, bodyColor:'#1a1a2e', wheelColor:'#0d0d1a',
     fact:'Bintang utama Museum Ambarawa! B2507 dibuat di Swiss oleh SLM tahun 1902. Punya roda BERGERIGI (cogwheel) khusus untuk mendaki gunung terjal — salah satu dari sedikit kereta rack yang masih ada di dunia! ⛰️',
     funFact:'🏔️ Jalur B2507 punya tanjakan 65‰ — artinya naik 65 meter setiap 1 km! Sangat curam!',
+    history:'B2507 dibuat pabrik SLM Winterthur di Swiss tahun 1902 🇨🇭. Memakai sistem gigi ABT — rel tengah bergerigi yang dicengkeram roda gigi lokomotif agar tidak tergelincir di tanjakan ekstrem. Jalur Ambarawa–Bedono resmi dibuka tahun 1905 untuk menghubungkan perkebunan kopi di lereng Gunung Merbabu. Kini B2507 jadi simbol Museum Ambarawa dan kebanggaan Indonesia 🚂🌄🇮🇩',
     route:'Ambarawa ↔ Bedono via Jambu',
     quizHint:'kereta bergerigi pendaki gunung di Ambarawa'
   },
@@ -10670,6 +10719,7 @@ const G18_TRAINS = [
     isSteam:true, rack:false, tender:false, bodyColor:'#4a1515', wheelColor:'#2a0808',
     fact:'C1218 adalah salah satu lokomotif TERTUA di Indonesia! Buatan Beyer Peacock, Inggris 1891 — sudah 130+ tahun! Masih terawat baik di Museum Ambarawa. Luar biasa! 🎩👑',
     funFact:'📅 C1218 dibuat saat Indonesia masih bernama Hindia Belanda dan Presiden Soekarno belum lahir!',
+    history:'C1218 dioperasikan oleh Staats Spoorwegen (SS), perusahaan kereta pemerintah Hindia Belanda di masa kolonial. Lokomotif ini mengangkut penumpang dan hasil bumi di Pulau Jawa sejak 1891 🚂. C1218 SELAMAT dari dua Perang Dunia dan revolusi kemerdekaan RI — banyak lokomotif lain rusak atau dijarah. Kini jadi saksi bisu sejarah panjang perkeretaapian Indonesia 🇮🇩🎖️',
     route:'Berbagai jalur Jawa era kolonial',
     quizHint:'lokomotif tertua 1891 di Indonesia'
   },
@@ -10706,6 +10756,7 @@ const G18_TRAINS = [
     isDiesel:true, bodyColor:'#1a3a1a', accentColor:'#22c55e',
     fact:'CC200 adalah lokomotif diesel PERTAMA Indonesia! General Electric, Amerika 1953. Masinis menjuluki "Setan Ijo" karena cat hijau dan tenaganya dahsyat! Revolusi kereta Indonesia! 🦾🇺🇸',
     funFact:'🟢 "Setan Ijo" artinya Setan Hijau — para masinis takjub dengan kekuatan mesin GE yang luar biasa!',
+    history:'Di era Presiden Sukarno, pemerintah Indonesia memesan 27 unit CC200 dari General Electric Amerika tahun 1953 🇺🇸. Ini adalah langkah BESAR memodernisasi perkeretaapian RI — dari lokomotif uap berasap ke diesel bersih dan bertenaga. CC200 menjadi tulang punggung kereta ekspres Jakarta–Surabaya dan membuka era baru transportasi Indonesia. Satu unit masih terawat di Museum Ambarawa 🚆🎖️',
     route:'Jakarta ↔ Surabaya (ekspres awal)',
     quizHint:'diesel pertama Indonesia Setan Ijo GE'
   },
@@ -10761,6 +10812,7 @@ const G18_TRAINS = [
     isElectric:true, bodyColor:'#0D47A1', accentColor:'#e53935',
     fact:'KRL mengangkut lebih dari 1 JUTA penumpang SETIAP HARI! Tanpa asap dan ramah lingkungan. Beda sekali dengan B2507 Ambarawa yang butuh batubara berkeranjang-keranjang! 🌿💙',
     funFact:'♻️ KRL yang beroperasi di Jakarta dulunya adalah kereta bekas Jepang yang direkondisi ulang!',
+    history:'Modernisasi KRL Jabodetabek dimulai serius sejak 2013 ⚡. PT KAI Commuter mengimpor kereta bekas dari Jepang (seri JR 203, 205, 8000, dan Tokyu) lalu merekondisinya di Balai Yasa Manggarai. Jalur Jabodetabek dielektrifikasi penuh dengan listrik aliran atas 1500 VDC. Kini KRL jadi transportasi massal andalan ibu kota — ramah lingkungan dan bebas macet 🚆🌿🇮🇩',
     route:'Bogor/Bekasi/Tangerang ↔ Jakarta',
     quizHint:'kereta listrik 1 juta penumpang sehari Jabodetabek'
   },
@@ -10779,6 +10831,7 @@ const G18_TRAINS = [
     isElectric:true, bodyColor:'#37474f', accentColor:'#26c6da',
     fact:'MRT Jakarta adalah kereta bawah tanah PERTAMA Indonesia! 16 stasiun, dibangun 10+ tahun. Beda dengan B2507 mendaki gunung, MRT justru menyelam ke bawah tanah kota! 🏙️🚇',
     funFact:'🔭 Stasiun MRT terdalam di Jakarta sampai 26 meter di bawah tanah — sedalam gedung 8 lantai!',
+    history:'Ide MRT Jakarta sudah ada sejak awal 1990-an, tapi terus tertunda karena krisis ekonomi 1998 dan banyaknya pergantian pemerintahan 🏙️. Konstruksi akhirnya dimulai 2013 dengan pendanaan dari JICA (Japan International Cooperation Agency) dan teknologi kereta Sumitomo-Nippon Sharyo Jepang 🇯🇵. Setelah 20+ tahun menunggu, MRT Fase 1 resmi beroperasi Maret 2019 — jadi lompatan besar transportasi ibu kota 🚇🇮🇩',
     route:'Lebak Bulus ↔ Bundaran HI (16 km)',
     quizHint:'kereta bawah tanah pertama Indonesia MRT'
   },
@@ -10825,6 +10878,7 @@ const G18_TRAINS = [
     isElectric:true, bodyColor:'#C8102E', accentColor:'#FFFFFF',
     fact:'Whoosh adalah kereta cepat PERTAMA di Asia Tenggara! 🎉 Dari Jakarta ke Bandung cuma 45 menit (biasanya 3 jam naik mobil). Diresmikan Presiden Jokowi Oktober 2023! 🇮🇩⚡',
     funFact:'💨 Nama "Whoosh" dipilih dari sayembara nasional — singkatan Waktu Hemat Operasi Optimal Sistem Hebat!',
+    history:'Proyek kereta cepat ini hasil kerjasama Indonesia–China (KCIC) senilai Rp 108 triliun. Awalnya bersaing dengan Shinkansen Jepang, pemerintah memilih teknologi CRH400 China karena skema pembiayaan lebih fleksibel 🇨🇳🇮🇩. Sempat terkendala pandemi COVID-19 dan pembebasan lahan, akhirnya Whoosh beroperasi Oktober 2023. Jadi simbol kemajuan teknologi Indonesia — tercepat di Asia Tenggara 🚄🏆',
     route:'Halim (Jakarta) ↔ Tegalluar (Bandung) • 142 km',
     quizHint:'kereta cepat pertama Asia Tenggara Jakarta Bandung'
   },
@@ -10845,6 +10899,127 @@ const G18_TRAINS = [
     funFact:'🤖 Meski tanpa masinis, ada petugas di stasiun yang memantau via komputer pusat!',
     route:'Dukuh Atas ↔ Harjamukti / Jatimulya • 44 km',
     quizHint:'kereta tanpa masinis otomatis Jakarta LRT Jabodebek'
+  },
+  // ── SEJARAH PANJANG KERETA INDONESIA 1867–2025 ──
+  {
+    emoji:'🚂', name:'SS 1867 — Kereta Pertama Indonesia', country:'🇮🇩 Semarang, Jawa Tengah', year:1867,
+    fuel:'Batubara (Uap)', speed:40, type:'Lokomotif Uap Tender Pionir', builder:'Beyer Peacock, Inggris',
+    isSteam:true, rack:false, tender:true, bodyColor:'#3a1f0a', wheelColor:'#1a0f05',
+    fact:'Inilah kereta PERTAMA yang pernah berjalan di tanah Indonesia! 🎖️ Tanggal 10 Agustus 1867, lokomotif buatan Beyer Peacock Inggris melintas di rute Semarang–Tanggung sejauh 25 km. Penduduk takjub melihat "kuda besi" berasap untuk pertama kalinya! 🚂💨',
+    funFact:'🎉 Peresmiannya dihadiri Gubernur Jenderal Pieter Mijer dan disambut ribuan warga yang belum pernah melihat kereta!',
+    history:'Di era Hindia Belanda, perusahaan swasta Nederlandsch-Indische Spoorweg Maatschappij (NISM) membangun jalur kereta pertama Indonesia 🇳🇱. Rute Semarang–Tanggung dibuka 10 Agustus 1867 memakai lebar rel 1435mm (standar Eropa). Tujuan awal: mengangkut hasil bumi dan gula dari pedalaman Jawa ke pelabuhan Semarang. Jadi titik awal sejarah panjang perkeretaapian Indonesia 🚂🌏',
+    route:'Semarang ↔ Tanggung (25 km, rute pertama RI)',
+    quizHint:'kereta pertama Indonesia 1867 Semarang Tanggung'
+  },
+  {
+    emoji:'🚂', name:'SS 500 — Mogul Kolonial', country:'🇮🇩 Jawa', year:1896,
+    fuel:'Batubara (Uap)', speed:65, type:'Lokomotif Uap Mogul (2-6-0)', builder:'Werkspoor, Belanda',
+    isSteam:true, rack:false, tender:true, bodyColor:'#1a3a1a', wheelColor:'#0a1f0a',
+    fact:'SS 500 adalah lokomotif Mogul 2-6-0 buatan Werkspoor Belanda tahun 1896! Tiga pasang roda penggerak besar membuatnya kuat menarik gerbong panjang. Cat hijau tuanya khas kereta kolonial Hindia Belanda! 🟢🚂',
+    funFact:'🍬 SS 500 spesialis mengangkut gula — 1 kereta bisa tarik 20 gerbong gula dari pabrik ke pelabuhan!',
+    history:'SS 500 dipesan Staats Spoorwegen dari pabrik Werkspoor Amsterdam, Belanda 🇳🇱 di tahun 1896. Era itu Jawa dikenal sebagai "Gudang Gula Dunia" — 1/3 gula dunia datang dari Indonesia! SS 500 memainkan peran kunci mengangkut tebu dari perkebunan ke pabrik, lalu gula jadi ke pelabuhan untuk diekspor ke Eropa. Menjadi mesin penggerak ekonomi kolonial Hindia Belanda 🏭🍬',
+    route:'Jalur Jawa pengangkut gula',
+    quizHint:'lokomotif mogul SS500 pengangkut gula kolonial'
+  },
+  {
+    emoji:'🚂', name:'C51 — Dwipanggo Kepresidenan', country:'🇮🇩 Jawa', year:1917,
+    fuel:'Batubara (Uap)', speed:75, type:'Lokomotif Uap Ekspres Pacific', builder:'Hanomag, Jerman',
+    isSteam:true, rack:false, tender:true, bodyColor:'#4a1515', wheelColor:'#2a0808',
+    fact:'C51 "Dwipanggo" adalah lokomotif EKSPRES elegan buatan Hanomag Jerman 1917! Cat merah marunnya berkilau. Biasa menarik kereta kepresidenan dan pejabat tinggi — tampil mewah di zamannya! 👑🚂',
+    funFact:'🎩 "Dwipanggo" artinya "Dua Penguasa" — simbol kekuasaan yang diangkut kereta ini!',
+    history:'C51 dibuat oleh pabrik Hanomag di Hannover, Jerman tahun 1917 🇩🇪. Hindia Belanda mengimpor lokomotif ini khusus untuk kereta ekspres kelas satu yang mengangkut Gubernur Jenderal, pejabat kolonial, dan tamu penting. Setelah kemerdekaan 1945, C51 sempat dipakai sebagai kereta kepresidenan awal RI 🇮🇩. Kini jadi koleksi berharga pengingat kemewahan perkeretaapian era kolonial 👑',
+    route:'Jalur kelas satu Jawa (Jakarta–Surabaya)',
+    quizHint:'kereta kepresidenan awal C51 Dwipanggo maroon'
+  },
+  {
+    emoji:'🚂', name:'D52 — Djojobojo Pembangun', country:'🇮🇩 Indonesia', year:1954,
+    fuel:'Batubara (Uap)', speed:70, type:'Lokomotif Uap Tender Terakhir', builder:'Krupp, Jerman',
+    isSteam:true, rack:false, tender:true, bodyColor:'#0f1a40', wheelColor:'#070e25',
+    fact:'D52 "Djojobojo" adalah lokomotif UAP TERAKHIR yang dibeli Indonesia! Dibuat Krupp Jerman tahun 1954 atas pesanan Presiden Sukarno. Cat biru tua gagahnya jadi simbol ambisi pembangunan RI merdeka! 🇮🇩💪',
+    funFact:'📜 Nama "Djojobojo" diambil dari ramalan Raja Jayabaya — simbol kemakmuran yang dicita-citakan Sukarno!',
+    history:'Pasca-kemerdekaan, Presiden Sukarno ingin membangun kembali ekonomi RI yang hancur akibat perang 🏗️. Beliau memesan 100 unit D52 dari pabrik Krupp Essen, Jerman tahun 1954 — terbesar di dunia saat itu. D52 menjadi kelas lokomotif UAP TERAKHIR yang dibuat untuk Indonesia sebelum era diesel dimulai. Jadi simbol optimisme era Orde Lama dalam membangun bangsa 🇮🇩🎖️',
+    route:'Jalur utama Jawa era Orde Lama',
+    quizHint:'lokomotif uap terakhir Indonesia D52 Sukarno Krupp'
+  },
+  {
+    emoji:'🚃', name:'BB200 — Diesel Hidraulik Pertama', country:'🇮🇩 Indonesia', year:1957,
+    fuel:'Solar (Diesel Hidraulik)', speed:80, type:'Lokomotif Diesel Hidraulik', builder:'Esslingen, Jerman',
+    isDiesel:true, bodyColor:'#1a1a1a', accentColor:'#FFD600',
+    fact:'BB200 adalah lokomotif DIESEL HIDRAULIK pertama Indonesia! Dibuat pabrik Esslingen Jerman tahun 1957. Cat kuning-hitamnya mencolok — jadi primadona baru era Sukarno! 🟡⚫',
+    funFact:'⚙️ Beda dengan CC200 yang diesel-elektrik, BB200 pakai transmisi HIDRAULIK — mesinnya lebih ringkas!',
+    history:'Di tahun 1957, Presiden Sukarno melanjutkan modernisasi KAI dengan membeli BB200 dari pabrik Esslingen, Jerman 🇩🇪. Ini adalah lokomotif diesel hidraulik pertama di Indonesia — pelengkap CC200 yang diesel-elektrik. Keduanya menandai berakhirnya dominasi lokomotif uap di jalur utama. BB200 bertugas di jalur sekunder dan menarik kereta penumpang jarak menengah 🚂➡️🚃',
+    route:'Jalur sekunder Jawa (Cirebon, Madiun)',
+    quizHint:'diesel hidraulik pertama Indonesia BB200 kuning'
+  },
+  {
+    emoji:'🚃', name:'BB301 — Si Bulu Sikat', country:'🇮🇩 Indonesia', year:1964,
+    fuel:'Solar (Diesel Hidraulik)', speed:100, type:'Lokomotif Diesel Hidraulik', builder:'Krauss-Maffei, Jerman',
+    isDiesel:true, bodyColor:'#E65100', accentColor:'#FFFFFF',
+    fact:'BB301 dijuluki "Si Bulu Sikat" karena bentuk hidung kotaknya mirip sikat! 🪥 Buatan Krauss-Maffei Jerman tahun 1964, di era Ganefo. Cat oranye terangnya jadi ciri khas di jalur Sumatera dan Jawa! 🟠',
+    funFact:'🏆 Dipesan Sukarno untuk menyambut Ganefo 1963 — olimpiade tandingan yang digelar Indonesia!',
+    history:'BB301 dipesan dari pabrik Krauss-Maffei Munich, Jerman 🇩🇪 pada era Ganefo (Games of the New Emerging Forces) 1963–1964. Sukarno ingin menunjukkan kemajuan Indonesia ke negara-negara Non-Blok. Masinis menjuluki BB301 "Si Bulu Sikat" karena bentuk bagian depannya kotak seperti kepala sikat. Unit ini melayani jalur Jawa dan Sumatera selama puluhan tahun 🚃🇮🇩',
+    route:'Jalur Sumatera & Jawa Selatan',
+    quizHint:'kereta bulu sikat BB301 oranye Ganefo'
+  },
+  {
+    emoji:'🚃', name:'D301 — Pak Pos Pembawa Surat', country:'🇮🇩 Jawa', year:1962,
+    fuel:'Solar (Diesel Hidraulik)', speed:100, type:'Lokomotif Diesel Ringan', builder:'Krupp, Jerman',
+    isDiesel:true, bodyColor:'#B71C1C', accentColor:'#1a1a1a',
+    fact:'D301 dijuluki "Pak Pos" karena sering mengangkut surat dan paket ke pelosok Jawa! ✉️📦 Dibuat Krupp Jerman 1962, warna merah-hitamnya jadi pemandangan akrab di stasiun desa!',
+    funFact:'📮 1 gerbong pos bisa bawa 10.000+ surat dan paket sekaligus — jadi kurir cepat era 1960-an!',
+    history:'D301 diimpor dari pabrik Krupp, Jerman 🇩🇪 tahun 1962. Di era itu, kereta adalah tulang punggung pengiriman pos Indonesia — Kantor Pos bekerjasama erat dengan KAI. D301 menarik gerbong bagasi khusus berisi surat, paket, dan dokumen ke kota-kota kecil yang belum terjangkau mobil pos. Unit ini jadi penghubung penting sebelum era modernisasi pos dan kargo darat 🚃📬',
+    route:'Jalur Jawa (kereta pos & paket)',
+    quizHint:'kereta pos D301 merah pengangkut surat'
+  },
+  {
+    emoji:'🚃', name:'CC202 — Rajawali Pengangkut Berat', country:'🇮🇩 Sumatera & Jawa', year:1986,
+    fuel:'Solar (Diesel Elektrik)', speed:120, type:'Lokomotif Diesel Berat', builder:'General Electric, USA',
+    isDiesel:true, bodyColor:'#1565C0', accentColor:'#FFFFFF',
+    fact:'CC202 dijuluki "Rajawali" karena kekuatannya yang luar biasa! 🦅 Dibuat GE Amerika 1986, khusus menarik kereta barang BERAT di Sumatera dan Jawa. Satu CC202 bisa tarik 40+ gerbong batubara sekaligus! 💪',
+    funFact:'⛏️ CC202 adalah penarik utama kereta batubara Babaranjang Sumatera — 60 gerbong sepanjang 1 km!',
+    history:'CC202 diimpor dari General Electric Amerika 🇺🇸 mulai tahun 1986 untuk memperkuat armada kereta barang Indonesia. Keunggulannya: traksi sangat besar, cocok untuk jalur pegunungan dan muatan super berat. CC202 menjadi andalan PT KAI mengangkut batubara Bukit Asam di Sumatera Selatan dan kargo industri di Jawa. Jasanya menopang ekonomi energi dan logistik nasional 🚆⛏️',
+    route:'Tanjung Enim ↔ Tarahan (batubara Sumatera)',
+    quizHint:'kereta barang berat CC202 Rajawali GE biru'
+  },
+  {
+    emoji:'🚃', name:'Argo Bromo 1997 — Eksekutif Perdana', country:'🇮🇩 Jakarta–Surabaya', year:1997,
+    fuel:'Solar (Diesel)', speed:120, type:'Kereta Eksekutif Perintis', builder:'INKA Madiun',
+    isDiesel:true, bodyColor:'#0D47A1', accentColor:'#FF6F00',
+    fact:'Argo Bromo 1997 adalah kereta EKSEKUTIF perdana yang memulai era "Argo" di Indonesia! 🏆 Nama diambil dari Gunung Bromo. Gerbongnya buatan INKA Madiun — produk kebanggaan Indonesia! 🌋',
+    funFact:'✨ Gerbong kelas eksekutif ini punya AC, kursi reclining, dan TV — mewah di zamannya!',
+    history:'Argo Bromo diluncurkan 31 Juli 1997 di era Presiden Soeharto sebagai kereta eksekutif pertama kelas "Argo" 🇮🇩. Nama "Argo" jadi simbol prestise — setiap kereta Argo dinamai gunung di Indonesia (Bromo, Lawu, Muria, dll). Gerbongnya dirancang dan dibuat INKA Madiun, menandai kemandirian industri kereta nasional. Argo Bromo menjadi pionir rute premium Jakarta–Surabaya sebelum digantikan Argo Bromo Anggrek 🚄',
+    route:'Jakarta Gambir ↔ Surabaya Pasar Turi',
+    quizHint:'kereta argo pertama Indonesia Argo Bromo 1997'
+  },
+  {
+    emoji:'🚃', name:'Taksaka — Nagatatha Yogyakarta', country:'🇮🇩 Jakarta–Yogyakarta', year:1999,
+    fuel:'Solar (Diesel)', speed:110, type:'Kereta Eksekutif Malam', builder:'INKA Madiun',
+    isDiesel:true, bodyColor:'#1B5E20', accentColor:'#FDD835',
+    fact:'Taksaka adalah kereta eksekutif favorit rute Jakarta–Yogyakarta! 🏯 Nama "Taksaka" diambil dari senjata Arjuna dalam kisah Mahabharata — senjata ampuh sang pahlawan! Warna hijau-kuningnya khas! 🟢🟡',
+    funFact:'🏹 Dalam Mahabharata, Nagatatha/Taksaka adalah panah sakti Arjuna yang tidak pernah meleset!',
+    history:'Taksaka diluncurkan PT KAI tahun 1999 untuk melayani penumpang eksekutif rute Jakarta Gambir ↔ Yogyakarta Tugu 🏯. Gerbongnya diproduksi INKA di Madiun dengan desain elegan dan nyaman untuk perjalanan malam. Nama "Taksaka" dipilih dari khazanah wayang Jawa — merujuk senjata panah Arjuna — mencerminkan identitas budaya kota tujuan Yogyakarta sebagai pusat budaya Jawa 🇮🇩🎭',
+    route:'Jakarta Gambir ↔ Yogyakarta Tugu',
+    quizHint:'kereta eksekutif Taksaka Jakarta Yogyakarta'
+  },
+  {
+    emoji:'🚇', name:'KRL JR 205 — Hibah Jepang', country:'🇮🇩 Jabodetabek', year:2013,
+    fuel:'Listrik (1500 VDC)', speed:100, type:'Kereta Rel Listrik Retrofit', builder:'JR East Jepang (retrofit Indonesia)',
+    isElectric:true, bodyColor:'#FFC107', accentColor:'#D32F2F',
+    fact:'KRL JR 205 adalah kereta BEKAS dari Jepang yang jadi tulang punggung KRL Jabodetabek! ⚡ Awalnya beroperasi di jalur Yamanote Tokyo, kini setelah direkondisi jadi andalan pulang-pergi kerja warga Jakarta! 🇯🇵➡️🇮🇩',
+    funFact:'🗾 Dulu keretanya bertuliskan huruf Kanji Jepang — setelah direkondisi diganti huruf Latin Indonesia!',
+    history:'Sejak 2013, PT KAI Commuter mengimpor seri JR 205 bekas dari JR East Jepang 🇯🇵. Kereta ini sudah dipensiunkan di Tokyo, lalu direkondisi di Balai Yasa Manggarai — cat ulang, AC baru, sistem pintu diperbaiki. Hasilnya: armada KRL bertambah banyak dengan biaya jauh lebih murah dari beli baru. JR 205 jadi tulang punggung KRL Jabodetabek yang mengangkut 1 juta+ penumpang per hari 🚆⚡',
+    route:'Bogor/Bekasi/Tangerang ↔ Jakarta',
+    quizHint:'kereta bekas Jepang JR205 KRL Jabodetabek'
+  },
+  {
+    emoji:'🚋', name:'LRT Palembang — Asian Games 2018', country:'🇮🇩 Palembang, Sumatera Selatan', year:2018,
+    fuel:'Listrik', speed:85, type:'Light Rail Transit', builder:'INKA + LEN Indonesia',
+    isElectric:true, bodyColor:'#2E7D32', accentColor:'#FBC02D',
+    fact:'LRT Palembang adalah kereta LRT pertama di Sumatera! 🏆 Dibangun khusus untuk Asian Games 2018. Seluruh keretanya buatan anak bangsa — INKA Madiun dan LEN Bandung! 🇮🇩🏭',
+    funFact:'🏅 Di Asian Games 2018, LRT ini mengangkut ribuan atlet dan penonton ke Stadion Jakabaring!',
+    history:'LRT Palembang dibangun khusus menyambut Asian Games 2018 yang diselenggarakan di Jakarta dan Palembang 🏅. Proyek ini membanggakan karena dikerjakan sepenuhnya oleh BUMN Indonesia: gerbong dari PT INKA Madiun, sistem sinyal dari PT LEN Bandung, dan konstruksi oleh PT Waskita Karya. Diresmikan Presiden Jokowi Juli 2018, LRT ini jadi LRT pertama di Sumatera dan simbol kemandirian teknologi transportasi Indonesia 🇮🇩🚆',
+    route:'Bandara SMB II ↔ DJKA Jakabaring (23 km)',
+    quizHint:'LRT pertama Sumatera Palembang Asian Games'
   }
 ]
 
@@ -11140,8 +11315,27 @@ function g18ShowDetail(idx) {
     cell('BAHAN BAKAR', train.fuel, '⛽ ') +
     cell('TIPE', train.type, '') +
     (train.builder ? cell('PEMBUAT', train.builder, '🏭 ') : '') +
-    (train.route ? cell('RUTE', train.route, '🗺️ ') : '')
-  document.getElementById('g18-modal-fact').innerHTML =
+    (train.route ? cell('RUTE', train.route, '🗺️ ') : '') +
+    (train.axles ? cell('RODA', train.axles, '⚙️ ') : '')
+  // Insert rich history block (after details, before fact) — only if train.history present
+  let histEl = document.getElementById('g18-modal-history')
+  const factEl = document.getElementById('g18-modal-fact')
+  if (!histEl && train.history) {
+    histEl = document.createElement('div')
+    histEl.id = 'g18-modal-history'
+    histEl.innerHTML = '<span id="g18-modal-history-title">📜 SEJARAH & MAKNA</span><div id="g18-modal-history-text"></div>'
+    factEl.parentNode.insertBefore(histEl, factEl)
+  }
+  if (histEl) {
+    if (train.history) {
+      histEl.style.display = 'block'
+      const txt = document.getElementById('g18-modal-history-text')
+      if (txt) txt.textContent = train.history
+    } else {
+      histEl.style.display = 'none'
+    }
+  }
+  factEl.innerHTML =
     `<div style="margin-bottom:6px;">💡 ${train.fact}</div>` +
     (train.funFact ? `<div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.12);">${train.funFact}</div>` : '')
   document.getElementById('g18-modal').classList.add('open')
@@ -11213,15 +11407,20 @@ function g18AnswerQuestion(picked, correct, btn) {
   const q = G18_QUIZ_SESSION[g18State.quizIdx]
   if (picked === correct) {
     btn.classList.add('correct')
+    spawnCorrectCardJuice(btn)
     g18State.quizScore++
     document.getElementById('g18-q-feedback').textContent = '✅ Benar! Kamu pintar!'
     document.getElementById('g18-q-feedback').style.color = '#A5D6A7'
     playCorrect()
   } else {
     btn.classList.add('wrong')
+    spawnWrongShake(btn)
     // Highlight correct answer
     opts.querySelectorAll('.g18-quiz-option').forEach(b => {
-      if (parseInt(b.dataset.ansIdx) === correct) b.classList.add('correct')
+      if (parseInt(b.dataset.ansIdx) === correct) {
+        b.classList.add('correct')
+        spawnCorrectCardJuice(b, { burst:false })
+      }
     })
     document.getElementById('g18-q-feedback').textContent = `❌ Jawaban: ${q.answers[correct]}`
     document.getElementById('g18-q-feedback').style.color = '#FFCDD2'
