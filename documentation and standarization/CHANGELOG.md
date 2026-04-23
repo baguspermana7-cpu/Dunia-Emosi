@@ -1,5 +1,34 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-24 — G13 family selector + G13C mid-battle button hide + card juice across quiz games + Museum Ambarawa expansion
+
+Cache bump: `v=20260423d` → `v=20260424c` (3 patch cycles: a/b/c).
+
+### G13 (Evolusi Math) — curated evolution-chain selector
+- New `G13_FAMILIES` array (`game.js:7205`): **15 curated** evolution chains — 10 popular (Bulbasaur, Charmander, Squirtle, Pichu, Caterpie, Abra, Gastly, Machop, Geodude, Eevee) + 5 cool pseudo-legendary (Dratini, Larvitar, Beldum, Bagon, Gible). Each card shows full 3-stage evolution preview.
+- New `openG13FamilySelector()` UI: grid overlay with card thumbnails from `pokemondb_hd_alt2/` WebP pack. "Random" pseudo-family prepended as first option — picks from existing 142-entry `G13_CHAINS` pool per level.
+- `g13PickChain(lv)` now honors `localStorage.g13_lastFamily`. Synthetic chain uses family's Pokémon refs + level-tier difficulty metadata. evolved2 gated behind medium+ tiers.
+- New `🎒` button in `#g13` header opens the selector; picking restarts current level with new family.
+
+### G13C (Gym Pokémon) — hide 🎒 Tim button during active battle
+- `startBattle()` sets `#btn-pkg.style.display = 'none'`. Button re-appears on gym-select via all 3 modal callbacks (`onAgain`/`onBack` for both win and loss paths).
+- Root cause: `battle.playerTeam` was cloned at battle-init, so mid-battle team swaps had no effect — user saw old roster despite updating localStorage. Hiding the button prevents confusion entirely.
+
+### P1/P2/P5 — Card-anchored correct-answer juice (all quiz games)
+- New `spawnCorrectCardJuice(btn, opts)` + `spawnWrongShake(btn)` helpers (`game.js:1946`): ring overlay + ✓ tick + pulse attached as `position:absolute` *children* of the button — survives transformed ancestors (where `position:fixed` sparkles got misplaced).
+- CSS keyframes: `correctPopAnim` 0.58s, `correctRingAnim` 0.85s green ring ripple, `correctTickAnim` 1.25s ✓ bounce, `wrongShakeAnim` 0.5s horizontal shake.
+- Wired into G1, G3, G4, G7, G11, G12, G18. When user picks wrong, correct card also gets juice (no burst — less celebratory).
+- **P1 G18 fixed**: ✓ lands ON the selected button, not empty space between buttons.
+- **P2 G12 fixed**: Burst on tapped card, not stage floor below. (User reported as "G17 Tebak Hewan" but actual game was G12 with animal-shadow cards.)
+
+### P3 — Museum Ambarawa expansion
+- Modal widened `.g18-modal-box` max-width 340px → **560px** with scroll cap `max-height:88vh`. `#g18-modal-details` grid now `auto-fit minmax(110px, 1fr)`.
+- New `#g18-modal-history` section with gold left-border + 300-400 char narrative. Rendered when train has `history` field.
+- **9 new Indonesian trains** in `G18_TRAINS` (27 → 36): SS 1867 Semarang–Tanggung pioneer, C51 Dwipanggo kepresidenan, D52 Djojobojo Soekarno era, BB200 diesel pertama, BB301 Bulu Sikat Ganefo, CC202 Rajawali Sumatera, Taksaka, LRT Palembang Asian Games 2018, KA Bandara Soetta Railink, KRL JR 205 retrofit.
+- **6 existing entries enriched** with `history`: B2507 (SLM Winterthur rack), C1218 (Staats Spoorwegen), CC200 Setan Ijo (Sukarno diesel revolution), KRL Commuter, Whoosh KCIC, MRT Jakarta.
+
+---
+
 ## 2026-04-23 Night — Character train polish (ratio scale + outline + smoke follow)
 
 Cache bump: `rz-responsive.js` + `train-character-sprite.js` → `v=20260423c`.

@@ -4,6 +4,27 @@
 
 ---
 
+## 2026-04-24
+
+### L13 — `position:fixed` children are NOT viewport-anchored if any ancestor has `transform/filter/perspective`
+- **Symptom**: G12 Tebak Bayangan correct-answer sparkles appeared on stage floor BELOW the cards, not on the tapped card. G18 ✓ animation landed in empty space BETWEEN buttons.
+- **Root cause**: Both games used `spawnSparkles` / custom effects that create elements with `position:fixed; left:{Xpx}; top:{Ypx}` at the tapped button's `getBoundingClientRect()`. CSS spec: if ANY ancestor has `transform`, `filter`, `perspective`, `will-change: transform`, or `contain: paint`, that ancestor becomes the containing block for descendant `position:fixed` — breaking viewport-anchor assumption. Dunia Emosi has `--rz-scale` transforms on game screens → sparkles rendered relative to screen instead of viewport.
+- **Fix**: Created `spawnCorrectCardJuice(btn)` that attaches ring + tick + pulse as `position:absolute` CHILDREN of the button (with `btn.style.position = 'relative'` if static). Children are anchored to the button itself, so ancestor transforms don't matter.
+- **Lesson**: For click/tap feedback effects, prefer `position:absolute` children of the interactive element over `position:fixed` siblings at viewport coords. The child-of-button pattern is invariant under ancestor transforms, scroll, zoom, and viewport changes. Only use `position:fixed` for global overlays (toasts, confetti falling from top) where the behavior is desired.
+
+### L14 — Cached battle state makes mid-battle config changes invisible
+- **Symptom**: User changed G13C Pokémon package mid-battle. localStorage updated, UI confirmed selection, but the battle's HP dots + sprite stayed unchanged.
+- **Root cause**: `battle.playerTeam = deepCloneTeam(getCurrentPackage().team)` clones ONCE at `startBattle()`. After that, `battle.playerTeam` is the source of truth for UI; localStorage mutations don't propagate.
+- **Fix**: Hide the package-switcher button during active battle. Only re-show when battle ends (via all 3 modal callbacks: `onAgain` for both win and loss paths + `onBack`).
+- **Lesson**: When a game clones config into ephemeral battle state, either (a) make the config source accessible only between battles, or (b) add an explicit "refresh active state from config" path. Hiding the entry point is the simplest UX fix; re-cloning mid-battle invites state desync bugs.
+
+### L15 — Domain-specific picker overlays should mirror existing patterns (G13C → G13 family)
+- **Symptom**: Building G13's evolution-family selector from scratch vs matching G13C's package selector style.
+- **Fix**: G13's `#g13-fam-overlay` + `#g13-fam-grid` + `.g13-fam-card` mirror G13C's `#pkg-overlay` + `#pkg-grid` + `.pkg-card` — same visual language, same tier-badge pattern, same auto-close timing (280-300ms). Thumbnail rendering uses the existing `pokemondb_hd_alt2/` WebP pack with CDN fallback.
+- **Lesson**: When adding a new selector/picker to the app, copy the closest existing pattern rather than inventing a new one. Users already know how G13C's selector works — G13's should feel identical. Cross-game UX consistency > per-game cleverness.
+
+---
+
 ## 2026-04-23 Evening
 
 ### L7 — Inverted downmap bug: use distinct variable names for display-scale vs persistence-scale
