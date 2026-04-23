@@ -337,7 +337,8 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 .g4-timer-text { font-size:var(--rz-font-sm);font-weight:700;color:#92400E;text-align:right;width:100%;max-width:480px;margin-bottom:var(--rz-gap-sm);position:relative;z-index:1; }
 .g4-question { font-size:var(--rz-font-h1);font-weight:900;text-align:center;margin-bottom:var(--rz-gap-md);background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;position:relative;z-index:1; }
 .g4-choices { display:flex;gap:14px;width:100%;max-width:460px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1;margin-top:12px;padding-bottom:24px; }
-.g4-choice-btn { flex:0 0 auto;min-width:var(--rz-btn-md);background:#FF6B6B;border:3px solid #e84444;border-radius:var(--rz-radius-md);padding:var(--rz-gap-md) var(--rz-gap-sm);font-family:var(--font);font-size:calc(var(--rz-font-hero) * 0.75);font-weight:900;cursor:pointer;text-align:center;color:white;box-shadow:0 5px 0 #b02020;transition:transform 0.18s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.18s,background 0.15s; }
+/* Widened choice buttons — flex:1 + min-width 90px fills horizontal space instead of hugging content */
+.g4-choice-btn { flex:1 1 90px;min-width:90px;max-width:160px;background:#FF6B6B;border:3px solid #e84444;border-radius:var(--rz-radius-md);padding:var(--rz-gap-md) var(--rz-gap-md);font-family:var(--font);font-size:calc(var(--rz-font-hero) * 0.75);font-weight:900;cursor:pointer;text-align:center;color:white;box-shadow:0 5px 0 #b02020;transition:transform 0.18s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.18s,background 0.15s; }
 .g4-choice-btn:nth-child(1) { background:#FF6B6B;border-color:#e84444;box-shadow:0 5px 0 #b02020; }
 .g4-choice-btn:nth-child(2) { background:#4ECDC4;border-color:#2ab8af;box-shadow:0 5px 0 #0d8a82; }
 .g4-choice-btn:nth-child(3) { background:#FFD93D;border-color:#f5c300;color:#5a4000;box-shadow:0 5px 0 #b89200; }
@@ -541,15 +542,15 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 .g8-hint-text { font-size:17px;color:var(--text-light);font-weight:700;margin-bottom:20px;text-align:center; }
 .game-header .gh-level { font-size:11px;font-weight:800;background:rgba(255,255,255,0.22);border-radius:20px;padding:3px 9px;color:rgba(255,255,255,0.95);letter-spacing:0.3px;white-space:nowrap;flex-shrink:0; }
 /* G8 slots/letters — RDE Step 3 migration (2026-04-21): fluid via --rz-* tokens */
-.g8-slots { display:flex;gap:var(--rz-gap-sm);justify-content:center;flex-wrap:wrap;margin-bottom:var(--rz-gap-md);width:100%;max-width:440px; }
-.g8-slot { min-width:var(--rz-btn-sm);height:calc(var(--rz-btn-sm) * 1.18);border-radius:var(--rz-radius-sm);border:3px solid #FDA4AF;background:white;display:flex;align-items:center;justify-content:center;font-size:var(--rz-font-title);font-weight:900;font-family:var(--font-display);box-shadow:0 3px 0 #BE123C;transition:all 0.2s cubic-bezier(0.34,1.56,0.64,1);color:#F43F5E; }
+.g8-slots { display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:18px;width:100%;max-width:500px; }
+.g8-slot { min-width:clamp(52px, 13vw, 72px);height:clamp(62px, 15vw, 84px);border-radius:14px;border:3px solid #FDA4AF;background:white;display:flex;align-items:center;justify-content:center;font-size:clamp(28px, 7vw, 38px);font-weight:900;font-family:var(--font-display);box-shadow:0 3px 0 #BE123C;transition:all 0.2s cubic-bezier(0.34,1.56,0.64,1);color:#F43F5E; }
 .g8-slot.filled { background:linear-gradient(135deg,#FFF1F3,white);border-color:#F43F5E; }
 .g8-slot.correct-flash { background:linear-gradient(135deg,#CCFBF1,white);border-color:#14B8A6;color:#14B8A6;animation:correctPulse 0.4s ease; }
 .g8-slot.wrong-flash { animation:wrongShake 0.4s ease;border-color:#F43F5E; }
 .g8-slot.active { border-color:#8B5CF6;box-shadow:0 0 0 3px rgba(139,92,246,0.35),0 3px 0 #5B21B6;animation:g8SlotPulse 1s ease-in-out infinite; }
 @keyframes g8SlotPulse{0%,100%{box-shadow:0 0 0 3px rgba(139,92,246,0.35),0 3px 0 #5B21B6}50%{box-shadow:0 0 0 6px rgba(139,92,246,0.25),0 3px 0 #5B21B6}}
 .g8-letters { display:flex;gap:var(--rz-gap-sm);flex-wrap:wrap;justify-content:center;width:100%;max-width:440px; }
-.g8-letter-btn { width:var(--rz-btn-sm);height:var(--rz-btn-sm);min-width:var(--rz-btn-sm);border-radius:var(--rz-radius-sm);border:3px solid #DDD6FE;background:white;font-family:var(--font-display);font-size:calc(var(--rz-font-title) * 1.05);font-weight:900;cursor:pointer;color:var(--brand);box-shadow:0 4px 0 #7C3AED;transition:transform 0.15s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.15s; }
+.g8-letter-btn { width:clamp(56px, 14vw, 76px);height:clamp(56px, 14vw, 76px);min-width:clamp(56px, 14vw, 76px);border-radius:16px;border:3px solid #DDD6FE;background:white;font-family:var(--font-display);font-size:clamp(26px, 6.5vw, 36px);font-weight:900;cursor:pointer;color:var(--brand);box-shadow:0 4px 0 #7C3AED;transition:transform 0.15s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.15s; }
 .g8-letter-btn:active { transform:scale(0.88)translateY(3px);box-shadow:0 1px 0 #7C3AED; }
 .g8-letter-btn.used { opacity:0.3;pointer-events:none; }
 .g8-progress { font-size:15px;color:var(--text-light);font-weight:700;text-align:center;margin-top:10px; }
@@ -5784,6 +5785,13 @@ body { background: #0a0a1a !important; }
   content:'';width:11px;height:11px;border-radius:50%;
   background:#FBBF24;border:3px solid #92400E;
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+}
+
+/* Browser-chrome safe area for mobile — 15vh bottom padding ensures action buttons
+   and result modals stay above the address bar/nav bar that eats ~10-15% of viewport
+   on mobile browsers. Uses env(safe-area-inset-bottom) for iOS home-bar too. */
+[id^="screen-game"] {
+  padding-bottom: max(15vh, 60px, env(safe-area-inset-bottom, 15vh)) !important;
 }
 
 /* ─────────────────────────────────────────────────────────────

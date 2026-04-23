@@ -484,7 +484,7 @@ const WORD_IMAGES = [
   {id:'zebra',  emoji:'🦓',word:'ZEBRA',  file:null,suku:'ZEB-RA'},
   {id:'kuda-nil',emoji:'🦛',word:'BADAK', file:null,suku:'BA-DAK'},
   {id:'pinguin',emoji:'🐧',word:'PINGUIN',file:null,suku:'PIN-GUIN'},
-  {id:'flamingo',emoji:'🦩',word:'BANGAU',file:null,suku:'BA-NGAU'},
+  {id:'flamingo',emoji:'🦩',word:'FLAMINGO',file:null,suku:'FLA-MIN-GO'},
   {id:'merak',  emoji:'🦚',word:'MERAK',  file:null,suku:'ME-RAK'},
   {id:'buaya',  emoji:'🐊',word:'BUAYA',  file:null,suku:'BU-A-YA'},
   {id:'kura2',  emoji:'🐢',word:'KURA-KURA',file:null,suku:'KU-RA KU-RA'},
@@ -567,7 +567,6 @@ const WORD_IMAGES = [
   {id:'sekolah2',emoji:'🏫',word:'SEKOLAH',file:null,suku:'SE-KO-LAH'},
   {id:'pasar',  emoji:'🏪',word:'PASAR',  file:null,suku:'PA-SAR'},
   {id:'masjid', emoji:'🕌',word:'MASJID', file:null,suku:'MAS-JID'},
-  {id:'gereja', emoji:'⛪',word:'GEREJA', file:null,suku:'GE-RE-JA'},
   {id:'bank',   emoji:'🏦',word:'BANK',   file:null,suku:'BANK'},
   // --- Colors & shapes ---
   {id:'merah',  emoji:'🔴',word:'MERAH',  file:null,suku:'ME-RAH'},
@@ -2305,6 +2304,7 @@ function nextG4Round(){
   g4State.currentCount=1+Math.floor(Math.random()*maxCount)
   // Rotate category every 3 rounds for variety: hewan → buah → benda → ...
   const catIdx=Math.floor((g4State.round-1)/3)%3
+  g4State.catIdx=catIdx
   const catPool=[ANIMALS_G4,FRUITS_G4,OBJECTS_G4][catIdx]
   g4State.currentAnimal=catPool[Math.floor(Math.random()*catPool.length)]
   // Pokemon mode: pick target + 2 distractor types, each 1-2 copies
@@ -2347,7 +2347,10 @@ function renderG4Content(){
     document.getElementById('g4-question').textContent=`Ada berapa "${currentPoke.name}"? ⚡`
   } else {
     for(let i=0;i<count;i++){const s=document.createElement('span');s.className='g4-animal-item';s.textContent=currentAnimal;s.style.animationDelay=(i*55)+'ms';grid.appendChild(s)}
-    document.getElementById('g4-question').textContent='Ada berapa binatang? 🤔'
+    // Category-aware label matches the rotating catPool (hewan → buah → benda)
+    const _g4CatLabels=['binatang','buah','benda']
+    const _g4CatLabel=_g4CatLabels[g4State.catIdx]||'barang'
+    document.getElementById('g4-question').textContent=`Ada berapa ${_g4CatLabel}? 🤔`
   }
   // Render choices
   const choicesEl=document.getElementById('g4-choices'); choicesEl.innerHTML=''
