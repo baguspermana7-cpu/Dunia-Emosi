@@ -337,9 +337,13 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
   <div id="gs-header">
     <button id="gs-back">◀ Kembali</button>
     <div id="gs-title">Gym Ladder</div>
-    <button id="btn-badges" onclick="showBadgeCollection()" style="background:rgba(251,191,36,0.2);border:1.5px solid rgba(251,191,36,0.4);border-radius:10px;color:#fbbf24;padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🏅 Lencana</button>
+    <button id="btn-pkg-gs" title="Ganti Tim Pokémon" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:1.5px solid rgba(255,255,255,0.4);border-radius:10px;padding:5px 10px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 2px 0 #78350f;flex-shrink:0;">🎒 Tim</button>
+    <button id="btn-badges" onclick="showBadgeCollection()" style="background:rgba(251,191,36,0.2);border:1.5px solid rgba(251,191,36,0.4);border-radius:10px;color:#fbbf24;padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0;">🏅 Lencana</button>
   </div>
-  <div id="gs-subtitle">🏅 <span id="badge-num">0</span>/<span id="total-trainers">87</span> BADGE DIRAIH</div>
+  <div id="gs-subtitle" style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;">
+    <span>🏅 <span id="badge-num">0</span>/<span id="total-trainers">87</span> BADGE DIRAIH</span>
+    <span id="active-pkg-label" style="background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.35);border-radius:100px;padding:2px 10px;font-size:11px;font-weight:800;color:#fbbf24;"></span>
+  </div>
   <div id="gs-body">
     <div id="trainer-grid"></div>
   </div>
@@ -1681,7 +1685,25 @@ function openPackageSelector() {
   document.getElementById('pkg-overlay').style.display = 'block';
 }
 document.getElementById('btn-pkg').onclick = openPackageSelector;
+// NEW: second entry point on gym-select header (the main hud-top is covered by gym-select z-index)
+const _btnPkgGs = document.getElementById('btn-pkg-gs');
+if (_btnPkgGs) _btnPkgGs.onclick = openPackageSelector;
 document.getElementById('pkg-close').onclick = () => { document.getElementById('pkg-overlay').style.display = 'none'; };
+
+// Update visible "active package" label on gym-select so user sees which team is armed
+function refreshActivePkgLabel(){
+  const lbl = document.getElementById('active-pkg-label');
+  if (!lbl) return;
+  const cur = getCurrentPackage();
+  lbl.textContent = `🎒 ${cur.label}`;
+}
+refreshActivePkgLabel();
+// Refresh label after package selector click (augment existing handler by re-calling on overlay close)
+const _pkgOv = document.getElementById('pkg-overlay');
+if (_pkgOv) {
+  const _mo = new MutationObserver(() => { if (_pkgOv.style.display === 'none') refreshActivePkgLabel(); });
+  _mo.observe(_pkgOv, { attributes: true, attributeFilter: ['style'] });
+}
 // ─── BATTLE BGM ──────────────────────────────────────────────────────────────
 let _bgmEl = null
 function bgmPlay(){
