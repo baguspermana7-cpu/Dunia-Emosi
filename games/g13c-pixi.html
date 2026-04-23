@@ -1284,6 +1284,9 @@ function startBattle(trainerId){
   if(!trainer) return;
   bgmPlay()
   document.getElementById('gym-select').style.display='none';
+  // Hide package selector button during active battle — user can only switch team between battles
+  const pkgBtn = document.getElementById('btn-pkg')
+  if (pkgBtn) pkgBtn.style.display = 'none'
   document.getElementById('battle-bg').style.backgroundImage = `url('${BG_BASE}${trainer.bg}')`;
 
   const ep = document.getElementById('portrait-enemy');
@@ -1618,8 +1621,8 @@ function endBattleWin(){
       title,
       stars,
       msg,
-      onAgain: ()=>{ battle=null; msgQueue=[]; waitingForTap=false; document.getElementById('gym-select').style.display='flex'; startBattle(tid); },
-      onBack: ()=>{ battle=null; msgQueue=[]; waitingForTap=false; document.getElementById('gym-select').style.display='flex'; }
+      onAgain: ()=>{ battle=null; msgQueue=[]; waitingForTap=false; document.getElementById('gym-select').style.display='flex'; const pb=document.getElementById('btn-pkg'); if(pb)pb.style.display=''; startBattle(tid); },
+      onBack: ()=>{ battle=null; msgQueue=[]; waitingForTap=false; document.getElementById('gym-select').style.display='flex'; const pb=document.getElementById('btn-pkg'); if(pb)pb.style.display='' }
     });
   });
 }
@@ -1635,8 +1638,8 @@ function endBattleLose(){
     title: 'Gagal! Coba Lagi',
     stars: 0,
     msg: 'Jangan menyerah, ayo coba lagi!',
-    onAgain: ()=>{ battle=null; msgQueue=[]; waitingForTap=false; document.getElementById('gym-select').style.display='flex'; if(tid) startBattle(tid); },
-    onBack: ()=>{ battle=null; msgQueue=[]; waitingForTap=false; document.getElementById('gym-select').style.display='flex'; }
+    onAgain: ()=>{ battle=null; msgQueue=[]; waitingForTap=false; document.getElementById('gym-select').style.display='flex'; const pb=document.getElementById('btn-pkg'); if(pb)pb.style.display=''; if(tid) startBattle(tid); },
+    onBack: ()=>{ battle=null; msgQueue=[]; waitingForTap=false; document.getElementById('gym-select').style.display='flex'; const pb=document.getElementById('btn-pkg'); if(pb)pb.style.display='' }
   });
 }
 

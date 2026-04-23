@@ -6,7 +6,7 @@
 <title>Dunia Emosi 🐾</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="style.css?v=20260424b">
+<link rel="stylesheet" href="style.css?v=20260424c">
 </head>
 <body>
 <!-- Loading indicator — hidden by JS after page loads -->
@@ -836,6 +836,7 @@
     <span class="gh-title" style="flex:1;font-size:15px;font-weight:900;font-family:'Fredoka One',cursive;color:white;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;">🔥 Evolusi Math</span>
     <span class="gh-level" id="g13-level" style="color:rgba(255,255,255,0.9);flex-shrink:0;">Lv.1</span>
     <span id="g13-chain-badge" style="font-size:11px;font-weight:800;background:rgba(249,115,22,0.25);border:1px solid rgba(249,115,22,0.4);color:#FBBF24;border-radius:8px;padding:2px 7px;flex-shrink:0;"></span>
+    <button id="g13-fam-btn" onclick="openG13FamilySelector()" title="Pilih Keluarga Pokémon" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:1.5px solid rgba(255,255,255,0.4);border-radius:10px;padding:4px 9px;font-size:12px;font-weight:800;cursor:pointer;flex-shrink:0;box-shadow:0 2px 0 #78350f;">🎒</button>
     <button class="gh-pause" onclick="pauseGame()" style="flex-shrink:0;">⏸</button>
     <span class="gh-stars" id="g13-stars" style="background:linear-gradient(135deg,#F97316,#FBBF24);border-radius:100px;padding:4px 10px;font-size:14px;font-weight:900;box-shadow:0 3px 0 #C2410C;color:#1a1a1a;flex-shrink:0;">⭐ 0</span>
   </div>
@@ -934,6 +935,18 @@
   <div class="g10-burst-fx" id="g13-burst-fx"></div>
   <!-- Debug error display (hidden unless crash) -->
   <div id="g13-debug-err" style="display:none;position:fixed;top:60px;left:0;right:0;z-index:9999;background:#B91C1C;color:white;font-size:13px;font-weight:700;padding:8px 16px;text-align:center;"></div>
+
+  <!-- G13 Family selector overlay (opens via 🎒 button in header; apply = restart level with chosen family) -->
+  <div id="g13-fam-overlay" style="display:none;position:fixed;inset:0;background:rgba(5,5,20,0.95);z-index:9999;overflow-y:auto;padding:20px;">
+    <div style="max-width:720px;margin:0 auto;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <h2 style="color:#fbbf24;margin:0;font-size:clamp(18px,4vw,24px);font-family:'Fredoka One',cursive;">Pilih Keluarga Pokémon</h2>
+        <button onclick="document.getElementById('g13-fam-overlay').style.display='none'" style="background:rgba(255,255,255,0.1);color:#fff;border:2px solid rgba(255,255,255,0.3);border-radius:12px;padding:8px 14px;font-size:16px;cursor:pointer;font-weight:700;font-family:inherit;">✕ Tutup</button>
+      </div>
+      <div style="color:rgba(255,255,255,0.7);font-size:13px;margin-bottom:14px;line-height:1.5;">Pilih keluarga Pokémon favoritmu untuk level ini! Level menentukan tingkat matematikanya 📐, keluarga menentukan Pokémonmu 🎯.</div>
+      <div id="g13-fam-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;"></div>
+    </div>
+  </div>
 </div>
 
 <!-- GAME 13B — Quick Fire ⚡ -->
@@ -2056,6 +2069,6 @@ function loadPixiJS(cb) {
   document.head.appendChild(s)
 }
 </script>
-<script src="game.js?v=20260424b" defer></script>
+<script src="game.js?v=20260424c" defer></script>
 </body>
 </html>

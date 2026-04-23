@@ -7205,9 +7205,126 @@ const G13_TYPE_COLORS = {
 let g13State = {}
 let g13ResultTimeout = null
 
+// ════════════════════════════════════════════════════════════════════
+// G13 FAMILIES — curated evolution chain selector (2026-04-24)
+// User can pick a favorite Pokémon line; difficulty still scales by level.
+// 10 popular + 5 cool + 1 "random" special = 16 options.
+// ════════════════════════════════════════════════════════════════════
+const G13_FAMILIES = [
+  // ── POPULER (10) — iconic 3-stage chains kids know ──
+  {id:'bulbasaur-line', label:'Bulbasaur', series:'Kanto Grass Starter', category:'popular', color:'#22C55E', icon:'🌿',
+   player:{name:'Bulbasaur',slug:'bulbasaur',type:'Grass',tc:'#22C55E'},
+   evolved:{name:'Ivysaur',slug:'ivysaur',type:'Grass',tc:'#22C55E'},
+   evolved2:{name:'Venusaur',slug:'venusaur',type:'Grass',tc:'#22C55E'},
+   wild:{name:'Oddish',slug:'oddish',type:'Grass',tc:'#22C55E'}},
+  {id:'charmander-line', label:'Charmander', series:'Kanto Fire Starter', category:'popular', color:'#F97316', icon:'🔥',
+   player:{name:'Charmander',slug:'charmander',type:'Fire',tc:'#F97316'},
+   evolved:{name:'Charmeleon',slug:'charmeleon',type:'Fire',tc:'#F97316'},
+   evolved2:{name:'Charizard',slug:'charizard',type:'Fire',tc:'#F97316'},
+   wild:{name:'Growlithe',slug:'growlithe',type:'Fire',tc:'#F97316'}},
+  {id:'squirtle-line', label:'Squirtle', series:'Kanto Water Starter', category:'popular', color:'#38BDF8', icon:'💧',
+   player:{name:'Squirtle',slug:'squirtle',type:'Water',tc:'#38BDF8'},
+   evolved:{name:'Wartortle',slug:'wartortle',type:'Water',tc:'#38BDF8'},
+   evolved2:{name:'Blastoise',slug:'blastoise',type:'Water',tc:'#38BDF8'},
+   wild:{name:'Psyduck',slug:'psyduck',type:'Water',tc:'#38BDF8'}},
+  {id:'pichu-line', label:'Pichu', series:'Electric Mouse Line', category:'popular', color:'#FBBF24', icon:'⚡',
+   player:{name:'Pichu',slug:'pichu',type:'Electric',tc:'#FBBF24'},
+   evolved:{name:'Pikachu',slug:'pikachu',type:'Electric',tc:'#FBBF24'},
+   evolved2:{name:'Raichu',slug:'raichu',type:'Electric',tc:'#FBBF24'},
+   wild:{name:'Magnemite',slug:'magnemite',type:'Electric',tc:'#FBBF24'}},
+  {id:'caterpie-line', label:'Caterpie', series:'Butterfly Bug', category:'popular', color:'#84CC16', icon:'🦋',
+   player:{name:'Caterpie',slug:'caterpie',type:'Bug',tc:'#84CC16'},
+   evolved:{name:'Metapod',slug:'metapod',type:'Bug',tc:'#84CC16'},
+   evolved2:{name:'Butterfree',slug:'butterfree',type:'Bug',tc:'#84CC16'},
+   wild:{name:'Weedle',slug:'weedle',type:'Bug',tc:'#84CC16'}},
+  {id:'abra-line', label:'Abra', series:'Psychic Legend', category:'popular', color:'#EC4899', icon:'🔮',
+   player:{name:'Abra',slug:'abra',type:'Psychic',tc:'#EC4899'},
+   evolved:{name:'Kadabra',slug:'kadabra',type:'Psychic',tc:'#EC4899'},
+   evolved2:{name:'Alakazam',slug:'alakazam',type:'Psychic',tc:'#EC4899'},
+   wild:{name:'Drowzee',slug:'drowzee',type:'Psychic',tc:'#EC4899'}},
+  {id:'gastly-line', label:'Gastly', series:'Ghost Trio', category:'popular', color:'#7C3AED', icon:'👻',
+   player:{name:'Gastly',slug:'gastly',type:'Ghost',tc:'#7C3AED'},
+   evolved:{name:'Haunter',slug:'haunter',type:'Ghost',tc:'#7C3AED'},
+   evolved2:{name:'Gengar',slug:'gengar',type:'Ghost',tc:'#7C3AED'},
+   wild:{name:'Misdreavus',slug:'misdreavus',type:'Ghost',tc:'#7C3AED'}},
+  {id:'machop-line', label:'Machop', series:'Fighting Brawler', category:'popular', color:'#EF4444', icon:'💪',
+   player:{name:'Machop',slug:'machop',type:'Fighting',tc:'#EF4444'},
+   evolved:{name:'Machoke',slug:'machoke',type:'Fighting',tc:'#EF4444'},
+   evolved2:{name:'Machamp',slug:'machamp',type:'Fighting',tc:'#EF4444'},
+   wild:{name:'Mankey',slug:'mankey',type:'Fighting',tc:'#EF4444'}},
+  {id:'geodude-line', label:'Geodude', series:'Rock Heavyweight', category:'popular', color:'#A16207', icon:'🪨',
+   player:{name:'Geodude',slug:'geodude',type:'Rock',tc:'#A16207'},
+   evolved:{name:'Graveler',slug:'graveler',type:'Rock',tc:'#A16207'},
+   evolved2:{name:'Golem',slug:'golem',type:'Rock',tc:'#A16207'},
+   wild:{name:'Onix',slug:'onix',type:'Rock',tc:'#A16207'}},
+  {id:'eevee-line', label:'Eevee → Vaporeon', series:'Evolution Rainbow', category:'popular', color:'#38BDF8', icon:'🌊',
+   player:{name:'Eevee',slug:'eevee',type:'Normal',tc:'#A3A3A3'},
+   evolved:{name:'Vaporeon',slug:'vaporeon',type:'Water',tc:'#38BDF8'},
+   evolved2:{name:'Jolteon',slug:'jolteon',type:'Electric',tc:'#FBBF24'},
+   wild:{name:'Flareon',slug:'flareon',type:'Fire',tc:'#F97316'}},
+
+  // ── KEREN (5) — powerful/cool late-game evolutions ──
+  {id:'dratini-line', label:'Dratini', series:'Dragon of Legends', category:'cool', color:'#6366F1', icon:'🐉',
+   player:{name:'Dratini',slug:'dratini',type:'Dragon',tc:'#6366F1'},
+   evolved:{name:'Dragonair',slug:'dragonair',type:'Dragon',tc:'#6366F1'},
+   evolved2:{name:'Dragonite',slug:'dragonite',type:'Dragon',tc:'#6366F1'},
+   wild:{name:'Gyarados',slug:'gyarados',type:'Water',tc:'#38BDF8'}},
+  {id:'larvitar-line', label:'Larvitar', series:'Pseudo-Legend Rock', category:'cool', color:'#166534', icon:'🪨',
+   player:{name:'Larvitar',slug:'larvitar',type:'Rock',tc:'#166534'},
+   evolved:{name:'Pupitar',slug:'pupitar',type:'Rock',tc:'#166534'},
+   evolved2:{name:'Tyranitar',slug:'tyranitar',type:'Rock',tc:'#166534'},
+   wild:{name:'Aggron',slug:'aggron',type:'Steel',tc:'#94A3B8'}},
+  {id:'beldum-line', label:'Beldum', series:'Steel Champion', category:'cool', color:'#94A3B8', icon:'🔩',
+   player:{name:'Beldum',slug:'beldum',type:'Steel',tc:'#94A3B8'},
+   evolved:{name:'Metang',slug:'metang',type:'Steel',tc:'#94A3B8'},
+   evolved2:{name:'Metagross',slug:'metagross',type:'Steel',tc:'#94A3B8'},
+   wild:{name:'Scizor',slug:'scizor',type:'Steel',tc:'#94A3B8'}},
+  {id:'bagon-line', label:'Bagon', series:'Dragon Ace Hoenn', category:'cool', color:'#0E7490', icon:'🐲',
+   player:{name:'Bagon',slug:'bagon',type:'Dragon',tc:'#0E7490'},
+   evolved:{name:'Shelgon',slug:'shelgon',type:'Dragon',tc:'#0E7490'},
+   evolved2:{name:'Salamence',slug:'salamence',type:'Dragon',tc:'#0E7490'},
+   wild:{name:'Flygon',slug:'flygon',type:'Dragon',tc:'#6366F1'}},
+  {id:'gible-line', label:'Gible', series:'Land Shark Sinnoh', category:'cool', color:'#1E40AF', icon:'🦈',
+   player:{name:'Gible',slug:'gible',type:'Dragon',tc:'#1E40AF'},
+   evolved:{name:'Gabite',slug:'gabite',type:'Dragon',tc:'#1E40AF'},
+   evolved2:{name:'Garchomp',slug:'garchomp',type:'Dragon',tc:'#1E40AF'},
+   wild:{name:'Hydreigon',slug:'hydreigon',type:'Dragon',tc:'#6366F1'}},
+]
+
+// Get currently selected family (persisted). Returns null if "random" or unset.
+function getG13Family() {
+  try {
+    const id = localStorage.getItem('g13_lastFamily')
+    if (!id || id === 'random') return null
+    const fam = G13_FAMILIES.find(f => f.id === id)
+    if (fam) return fam
+  } catch(_) {}
+  return null
+}
+
 let g13LastChainId = -1
 function g13PickChain(lv) {
   const tier = lv <= 8 ? 'easy' : lv <= 14 ? 'medium' : lv <= 17 ? 'hard' : lv <= 32 ? '2stage' : lv <= 44 ? 'epic' : 'legendary'
+
+  // If user picked a specific family, use it — but use difficulty metadata from tier
+  const fam = getG13Family()
+  if (fam) {
+    // Build a synthetic chain from family + tier's difficulty settings
+    const tierProto = G13_CHAINS.find(c => c.diff === tier) || G13_CHAINS[0]
+    return {
+      id: 'fam_' + fam.id,
+      icon: fam.icon,
+      diff: tier,
+      maxNum: tierProto.maxNum,
+      ops: tierProto.ops,
+      player: fam.player,
+      evolved: fam.evolved,
+      evolved2: (tier === 'easy' || tier === 'medium') ? null : fam.evolved2,
+      wild: fam.wild,
+    }
+  }
+
+  // Random / default — existing behavior
   let pool = G13_CHAINS.filter(c => c.diff === tier)
   if (!pool.length) pool = [...G13_CHAINS]
   // Prevent immediate repeat — filter out last chain if pool is large enough
@@ -7216,6 +7333,56 @@ function g13PickChain(lv) {
   g13LastChainId = pick.id
   return pick
 }
+
+// G13 family selector UI — opens from header 🎒 button
+function openG13FamilySelector() {
+  const grid = document.getElementById('g13-fam-grid')
+  if (!grid) return
+  const currentId = (function(){ try { return localStorage.getItem('g13_lastFamily') || 'random' } catch(_) { return 'random' } })()
+  const pokeImg = (slug) => `assets/Pokemon/pokemondb_hd_alt2/${slug}.webp`
+  const cardHtml = (fam) => {
+    const selCls = fam.id === currentId ? ' g13-fam-selected' : ''
+    const catBadge = fam.category === 'popular' ? '⭐ POPULER' : fam.category === 'cool' ? '💎 KEREN' : '🎲 ACAK'
+    const catColor = fam.category === 'popular' ? '#fbbf24' : fam.category === 'cool' ? '#c084fc' : '#38bdf8'
+    const thumbsHtml = fam.id === 'random'
+      ? '<div style="color:rgba(255,255,255,0.6);font-size:13px;font-weight:700;padding:8px 0;">🎲 Acak dari semua evolusi yang ada — tiap level beda Pokémon!</div>'
+      : `<div style="display:flex;gap:6px;align-items:center;justify-content:flex-start;flex-wrap:wrap;margin-top:8px;">
+          <img src="${pokeImg(fam.player.slug)}" alt="${fam.player.name}" style="width:42px;height:42px;background:rgba(0,0,0,0.25);border-radius:8px;padding:2px;object-fit:contain;" onerror="this.src='https://img.pokemondb.net/sprites/home/normal/${fam.player.slug}.png';this.onerror=null">
+          <span style="color:rgba(255,255,255,0.5);font-size:12px;">→</span>
+          <img src="${pokeImg(fam.evolved.slug)}" alt="${fam.evolved.name}" style="width:42px;height:42px;background:rgba(0,0,0,0.25);border-radius:8px;padding:2px;object-fit:contain;" onerror="this.src='https://img.pokemondb.net/sprites/home/normal/${fam.evolved.slug}.png';this.onerror=null">
+          ${fam.evolved2 ? `<span style="color:rgba(255,255,255,0.5);font-size:12px;">→</span>
+          <img src="${pokeImg(fam.evolved2.slug)}" alt="${fam.evolved2.name}" style="width:42px;height:42px;background:rgba(0,0,0,0.25);border-radius:8px;padding:2px;object-fit:contain;" onerror="this.src='https://img.pokemondb.net/sprites/home/normal/${fam.evolved2.slug}.png';this.onerror=null">` : ''}
+        </div>`
+    return `<div class="g13-fam-card${selCls}" data-fam="${fam.id}" style="background:linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02));border:2px solid ${fam.id === currentId ? '#fbbf24' : 'rgba(255,255,255,0.2)'};border-radius:16px;padding:14px;cursor:pointer;transition:transform 0.15s,border-color 0.15s;color:#fff;border-left:6px solid ${fam.color};${fam.id === currentId ? 'box-shadow:0 0 24px rgba(251,191,36,0.5);' : ''}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+        <div style="font-size:16px;font-weight:900;">${fam.icon} ${fam.label}</div>
+        <span style="font-size:9px;font-weight:900;color:${catColor};background:${catColor}22;border:1px solid ${catColor}55;padding:2px 6px;border-radius:8px;letter-spacing:0.5px;">${catBadge}</span>
+      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:4px;">${fam.series}</div>
+      ${thumbsHtml}
+    </div>`
+  }
+  // Prepend "Random" pseudo-family as first card
+  const randomFam = {id:'random', label:'Acak / Kejutan', series:'Pokémon beda tiap level!', category:'random', color:'#38bdf8', icon:'🎲'}
+  grid.innerHTML = [randomFam, ...G13_FAMILIES].map(cardHtml).join('')
+  grid.querySelectorAll('.g13-fam-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const id = card.getAttribute('data-fam')
+      try { localStorage.setItem('g13_lastFamily', id) } catch(_) {}
+      grid.querySelectorAll('.g13-fam-card').forEach(c => { c.style.borderColor = 'rgba(255,255,255,0.2)'; c.style.boxShadow = 'none' })
+      card.style.borderColor = '#fbbf24'
+      card.style.boxShadow = '0 0 24px rgba(251,191,36,0.5)'
+      // Auto-close + restart level with new family
+      setTimeout(() => {
+        document.getElementById('g13-fam-overlay').style.display = 'none'
+        // Restart current level with the newly-selected family
+        try { initGame13() } catch(_) {}
+      }, 300)
+    })
+  })
+  document.getElementById('g13-fam-overlay').style.display = 'block'
+}
+window.openG13FamilySelector = openG13FamilySelector
 
 function initGame13() {
   if (g13ResultTimeout) { clearTimeout(g13ResultTimeout); g13ResultTimeout = null }
