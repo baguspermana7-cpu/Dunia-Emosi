@@ -4,6 +4,67 @@
 
 ---
 
+## 📋 Pending (2026-04-23 night, awaiting action)
+
+User flagged these during the night-2 session but fixes not yet applied. Preserving full context here for the next session.
+
+### ⬜ P1 — G18 "Kuis" checkmark animation placement (screenshot 019dbaea)
+- **Symptom**: Question "Kita tidur saat kapan?" with choices Pagi / Siang / Malam / Sore. User answered correctly (Malam for night/sleep). The green ✓ checkmark animation appeared in empty space BETWEEN "Pagi" and "Siang" buttons instead of on the selected/correct answer card.
+- **User verbatim**: "Tanda centang effect benar jawaban sangat tidak akurat penempatannya, dan efek animasi dll sangat kurang — game ini perlu enhancement."
+- **Investigation needed**: Find G18 correct-answer animation — likely computed via static X/Y coords that don't re-read the element's rect on each render.
+- **Scope**: G18 only — but similar anchor-math bug may exist in other games.
+
+### ⬜ P2 — G17 "Tebak Hewan" missing correct-answer effects + misplaced burst (screenshot 019dbaeb)
+- **Symptom**: Question "Hewan yang punya cangkang dan berjalan lambat" with 4 image cards (kura-kura, landak, siput, kepiting). A burst/sparkle effect appears on the stage floor BELOW the cards (center stage lion + dolphin area), NOT on the tapped card.
+- **User verbatim**: "effek ledakan/cahaya positioning dan effect-nya sangat jelek. Dan efek di area jawaban yang benar juga tidak ada."
+- **Ask**: Re-anchor burst to the correct-card's bounding rect. Add: sparkle particles ON the card + card pulse animation + tick mark overlay.
+
+### ⬜ P3 — Museum Ambarawa expansion (screenshot 019dbaed)
+- **Symptom**: Current train detail modal shows only 1 train (B2507). Detail modal narrow.
+- **User verbatim**: "Museum ini perlu pengembangan. Agar lebih lebar, lebih bagus dan lebih keren. Dan pilihan kereta masih kurang banyak tambahkan kereta lainnya di indonesia dan ceritanya kurang banyak dan kurang menarik. Ambil kereta dari tahun 1400-2026 saat ini."
+- **Needs**:
+  - Add many more Indonesian trains spanning 1400s (early wooden wagon era — if any historical refs) through present-day (KRL, MRT, LRT, Whoosh HSR etc.)
+  - Widen the detail modal (current ~360px → ~520px or full-width on mobile)
+  - Longer/richer stories per train — historical context, who built it, what it hauled, interesting facts, why it matters
+  - Visual polish: background variance per era, more sprite detail
+
+### ⬜ P4 — Character train wheel-on-rail final tuning (deferred from night patch)
+- After viewport-ratio scale shipped, user may still find wheels don't visually touch rail. If so: add `visualOffset: N` per-train in `G16_CHAR_CONFIGS` (`games/g16-pixi.html`).
+- Outline + smoke-follow already shipped; awaiting visual QA.
+
+### ⬜ P5 — Generic "enhancement" / "pengembangan" request
+- **User verbatim**: "game ini perlu enhancement. Dan perlu pengembangan. Lakukan pengembangan game ini menjadi lebih seru lebih punya nilai dan tidak membosankan."
+- **Open-ended directive**: more/better animations, sound variety, more content depth, cross-game coherence, difficulty curves tuning. Break down into concrete sub-tasks in next session.
+
+### ⬜ P6 — G13 perfect run still shows 3★ (potentially — awaits user re-test after today's fix)
+- Today's fix was the inverted progress-star mapping at `game.js:7895`. Display path was already using `perfStars` (5-scale). If user STILL sees 3★ for evolved, it means `s.evolved` flag isn't being set at the right moment during Machop→Machoke evolution. Separate investigation.
+
+---
+
+## 📊 Session 2026-04-23 Night-2 Patch (G4 + G7 + G8 + 15vh)
+
+Cache bump: `v=20260423b` → `v=20260423d`.
+
+### ✅ G4 dynamic category label
+Question text now matches rotating category (binatang / buah / benda) via `g4State.catIdx`. File: `game.js:2307-2353`.
+
+### ✅ G4 choice buttons widened
+`.g4-choice-btn`: `flex:1 1 90px + min-width:90px + max-width:160px` — fills horizontal space. File: `style.css:339-340`.
+
+### ✅ G7 flamingo data fix
+Line 487: `{emoji:'🦩', word:'BANGAU'}` was incorrect — flamingo labelled as stork. Changed to `word:'FLAMINGO', suku:'FLA-MIN-GO'`.
+
+### ✅ G7 religious content cleanup
+Removed `gereja` (⛪) entry per user directive (Islamic-only content). `masjid` (🕌) entry at line 569 remains.
+
+### ✅ G8 letter slots + tiles bigger
+`.g8-slot` → `min-width:clamp(52px, 13vw, 72px)`. `.g8-letter-btn` → `width:clamp(56px, 14vw, 76px)`. Hand-friendly on large phones.
+
+### ✅ Global 15vh bottom padding on game screens
+`[id^='screen-game'] { padding-bottom: max(15vh, 60px, env(safe-area-inset-bottom, 15vh)) !important }` — prevents browser address bar from clipping action buttons / result modals.
+
+---
+
 ## 📊 Session 2026-04-23 Night Patch (character train polish)
 
 Cache bump: `rz-responsive.js` + `train-character-sprite.js` → `v=20260423c`.
