@@ -640,6 +640,7 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 @keyframes correctTickAnim { 0%{transform:translate(-50%,-50%) scale(0) rotate(-35deg);opacity:0} 30%{transform:translate(-50%,-50%) scale(1.35) rotate(0deg);opacity:1} 72%{transform:translate(-50%,-50%) scale(1) rotate(0deg);opacity:1} 100%{transform:translate(-50%,-50%) scale(0.9) rotate(0deg);opacity:0} }
 .wrong-shake { animation: wrongShakeAnim 0.5s ease-out both; }
 @keyframes wrongShakeAnim { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(5px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(3px)} }
+@keyframes comboFloat { 0%{transform:translate(-50%,-50%) scale(0.5) rotate(-8deg); opacity:0} 18%{transform:translate(-50%,-70%) scale(1.25) rotate(3deg); opacity:1} 45%{transform:translate(-50%,-85%) scale(1.05) rotate(-2deg); opacity:1} 100%{transform:translate(-50%,-140%) scale(1) rotate(0deg); opacity:0} }
 
 /* ACHIEVEMENT TOAST */
 .achievement-toast { position:fixed;bottom:-120px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#FCD34D,#F59E0B);border-radius:20px;padding:14px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,0.2);z-index:300;transition:bottom 0.4s cubic-bezier(0.34,1.56,0.64,1);min-width:280px;max-width:360px;font-family:var(--font); }

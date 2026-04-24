@@ -1187,6 +1187,7 @@ function g13cAnswer(isCorrect, btn, choices, correct) {
   if (isCorrect) {
     btn.classList.add('correct')
     spawnCorrectCardJuice(btn)
+    quizStreakHit(btn)
     s.correct++
     playCorrect()
     spawnSparkles(btn)
@@ -1195,6 +1196,7 @@ function g13cAnswer(isCorrect, btn, choices, correct) {
   } else {
     btn.classList.add('wrong')
     spawnWrongShake(btn)
+    quizStreakReset()
     // Reveal correct
     document.querySelectorAll('.g13c-choice-btn').forEach(b => {
       const name = b.querySelector('span:last-child')?.textContent
@@ -1983,6 +1985,34 @@ function spawnWrongShake(btn) {
   } catch(_) {}
 }
 
+// ── Quiz combo streak tracker ──
+// Call quizStreakHit(btn) on every correct answer, quizStreakReset() on wrong.
+// Streak >= 3 shows escalating floater "COMBO x3!" near the button + excited tone.
+let _quizStreak = 0
+function quizStreakReset() { _quizStreak = 0 }
+function quizStreakHit(btn) {
+  _quizStreak++
+  if (_quizStreak >= 3 && btn) {
+    try {
+      const r = btn.getBoundingClientRect()
+      const floater = document.createElement('div')
+      const tier = _quizStreak >= 7 ? 'LEGEND' : _quizStreak >= 5 ? 'HEBAT' : 'COMBO'
+      const color = _quizStreak >= 7 ? '#a855f7' : _quizStreak >= 5 ? '#f43f5e' : '#f59e0b'
+      floater.textContent = `${tier} ×${_quizStreak}!`
+      floater.style.cssText = `position:fixed; left:${r.left + r.width/2}px; top:${r.top - 16}px; transform:translate(-50%, -50%); font-size:clamp(18px, 5vw, 28px); font-weight:900; color:${color}; text-shadow:0 2px 6px rgba(0,0,0,0.4), 0 0 12px ${color}aa; z-index:9998; pointer-events:none; font-family:var(--font-display,'Fredoka One',sans-serif); letter-spacing:1px; animation:comboFloat 1.1s cubic-bezier(0.34,1.56,0.64,1) forwards;`
+      document.body.appendChild(floater)
+      setTimeout(() => { try{floater.remove()}catch(_){} }, 1200)
+      // Pitched-up chime for combo tier
+      try {
+        const base = 523 + _quizStreak * 35
+        playTone(base, 0.08, 'sine', 0.22)
+        setTimeout(() => playTone(base * 1.25, 0.1, 'sine', 0.22), 80)
+        setTimeout(() => playTone(base * 1.5, 0.14, 'sine', 0.22), 180)
+      } catch(_) {}
+    } catch(_) {}
+  }
+}
+
 // ================================================================
 // AUDIO
 // ================================================================
@@ -2167,12 +2197,12 @@ function nextG1Round(){
       const isCorrect=em.name===correct.name
       choicesEl.querySelectorAll('.g1-choice-btn').forEach(b=>{b.style.pointerEvents='none';if(b.querySelector('.choice-label').textContent===correct.name){b.classList.add('correct');if(!isCorrect)spawnCorrectCardJuice(b,{burst:false})}})
       if(!isCorrect){
-        btn.classList.add('wrong');spawnWrongShake(btn);playWrong();flashScreen('red')
+        btn.classList.add('wrong');spawnWrongShake(btn);quizStreakReset();playWrong();flashScreen('red')
         const tipEl=document.getElementById('g1-tip'); tipEl.style.display='block'
         tipEl.innerHTML=`<span class="tip-icon">${correct.emoji}</span><div class="tip-text"><b>${correct.name}:</b> ${correct.scenario||correct.tip}<br><span style="font-size:12px;opacity:0.75">Tubuh: ${correct.bodyCue||''}</span></div>`
         g1State.round++; setTimeout(nextG1Round,3000)
       } else {
-        playCorrect();spawnCorrectCardJuice(btn);addStars(1,btn);flashScreen('green');g1State.correct++
+        playCorrect();spawnCorrectCardJuice(btn);quizStreakHit(btn);addStars(1,btn);flashScreen('green');g1State.correct++
         const tipEl=document.getElementById('g1-tip'); tipEl.style.display='block'
         tipEl.innerHTML=`<span class="tip-icon">${correct.animal}</span><div class="tip-text">${correct.tip}<br><span style="font-size:12px;opacity:0.75">👍 Aksi: ${correct.safeAction||''}</span></div>`
         g1State.round++; setTimeout(nextG1Round,2400)
@@ -2290,7 +2320,7 @@ function renderG3Choices(choices,correctVal,isNum,numChoices){
       el.querySelectorAll('.g3-choice-btn').forEach(b=>{b.style.pointerEvents='none';if(b.textContent===correctVal){b.classList.add('correct');if(!correct)spawnCorrectCardJuice(b,{burst:false})}})
       const hintEl=document.getElementById('g3-hint')
       if(!correct){
-        btn.classList.add('wrong');spawnWrongShake(btn);playWrong();flashScreen('red')
+        btn.classList.add('wrong');spawnWrongShake(btn);quizStreakReset();playWrong();flashScreen('red')
         const it=g3State.currentItem
         if(g3State.isLetterMode && it){
           hintEl.innerHTML=`💡 <b>${correctVal}</b>... seperti <b>${it.animal} ${it.word}</b>. Kata ini mulai dengan huruf <b>${correctVal}</b>!`
@@ -2300,7 +2330,7 @@ function renderG3Choices(choices,correctVal,isNum,numChoices){
         setTimeout(nextG3Round,2000)
       }else{
         if(g3State.isLetterMode){const ltr=document.getElementById('g3-ltr-0');if(ltr){ltr.classList.remove('g3-blank');ltr.textContent=g3State.currentItem.word[0];ltr.classList.add('highlight')}}
-        playCorrect();spawnCorrectCardJuice(btn);addStars(1,btn);flashScreen('green');g3State.correct++
+        playCorrect();spawnCorrectCardJuice(btn);quizStreakHit(btn);addStars(1,btn);flashScreen('green');g3State.correct++
         setTimeout(nextG3Round,1300)
       }
     }
@@ -2399,7 +2429,7 @@ function renderG4Content(){
   g4State.currentChoices.forEach(ch=>{
     const btn=document.createElement('button'); btn.className='g4-choice-btn'; btn.textContent=ch
     if(numChoices>4)btn.style.fontSize='26px'
-    btn.onclick=()=>{if(g4State.answered)return;g4State.answered=true;clearInterval(state.g4Timer);const correct=ch===count;choicesEl.querySelectorAll('.g4-choice-btn').forEach(b=>{b.style.pointerEvents='none';if(parseInt(b.textContent)===count){b.classList.add('correct');if(!correct)spawnCorrectCardJuice(b,{burst:false})}});if(!correct){btn.classList.add('wrong');spawnWrongShake(btn);playWrong();flashScreen('red')}else{playCorrect();spawnCorrectCardJuice(btn);addStars(1,btn);flashScreen('green');g4State.correct++};setTimeout(nextG4Round,1300)}
+    btn.onclick=()=>{if(g4State.answered)return;g4State.answered=true;clearInterval(state.g4Timer);const correct=ch===count;choicesEl.querySelectorAll('.g4-choice-btn').forEach(b=>{b.style.pointerEvents='none';if(parseInt(b.textContent)===count){b.classList.add('correct');if(!correct)spawnCorrectCardJuice(b,{burst:false})}});if(!correct){btn.classList.add('wrong');spawnWrongShake(btn);quizStreakReset();playWrong();flashScreen('red')}else{playCorrect();spawnCorrectCardJuice(btn);quizStreakHit(btn);addStars(1,btn);flashScreen('green');g4State.correct++};setTimeout(nextG4Round,1300)}
     choicesEl.appendChild(btn)
   })
 }
@@ -3196,7 +3226,7 @@ function answerG7(isCorrect,btn,correct){
   const qEl=document.getElementById('g7-question')
   if(isCorrect){
     btn.classList.add('correct'); playCorrect(); addStars(1)
-    spawnCorrectCardJuice(btn); spawnSparkles(btn); flashScreen('green')
+    spawnCorrectCardJuice(btn); quizStreakHit(btn); spawnSparkles(btn); flashScreen('green')
     // Pop the display image
     const dispEl=document.getElementById('g7-display')
     if(dispEl){dispEl.classList.remove('anim-correct');void dispEl.offsetWidth;dispEl.classList.add('anim-correct')}
@@ -3208,7 +3238,7 @@ function answerG7(isCorrect,btn,correct){
     }
     setTimeout(nextG7Round,1600)
   } else {
-    btn.classList.add('wrong'); spawnWrongShake(btn)
+    btn.classList.add('wrong'); spawnWrongShake(btn); quizStreakReset()
     document.querySelectorAll('.g7-choice-btn').forEach(b=>{
       const txt=b.querySelector('.g7-choice-text')
       if(txt&&(txt.textContent===correct.word)){b.classList.add('correct');spawnCorrectCardJuice(b,{burst:false})}
@@ -6057,14 +6087,14 @@ function g11Answer(idx,btn){
   document.getElementById('g11-choices').querySelectorAll('.sci-choice').forEach(b=>b.setAttribute('disabled',''))
   btn.classList.add(correct?'correct':'wrong')
   if(!correct){
-    spawnWrongShake(btn)
+    spawnWrongShake(btn); quizStreakReset()
     const btns=document.getElementById('g11-choices').querySelectorAll('.sci-choice')
     btns[q.ans].classList.add('correct')
     spawnCorrectCardJuice(btns[q.ans], { burst:false })
   }
   correct ? playCorrect() : playWrong()
   if(correct){
-    spawnCorrectCardJuice(btn)
+    spawnCorrectCardJuice(btn); quizStreakHit(btn)
     // Flash sci-correct image briefly
     const sciCorrectEl = document.getElementById('g11-correct-flash')
     if(sciCorrectEl) { sciCorrectEl.style.opacity='1'; setTimeout(()=>sciCorrectEl.style.opacity='0', 800) }
@@ -6169,11 +6199,12 @@ function g12Answer(correct,btn,grid){
     const icon=b.querySelector('.shadow-icon')
     if((icon?icon.textContent:b.textContent)===q.ans) b.classList.add('correct')
   })
-  if(!correct) { btn.classList.add('wrong'); spawnWrongShake(btn) }
+  if(!correct) { btn.classList.add('wrong'); spawnWrongShake(btn); quizStreakReset() }
   correct ? playCorrect() : playWrong()
   if(correct){
     // Card-anchored juice (ring + tick + pulse) on the tapped card — stays on card even with transformed ancestors
     spawnCorrectCardJuice(btn)
+    quizStreakHit(btn)
     spawnSparkles(btn); flashScreen('green')
     const rfx = document.getElementById('g12-reveal-fx')
     if(rfx) { rfx.style.opacity='1'; setTimeout(()=>rfx.style.opacity='0', 700) }
@@ -11587,6 +11618,7 @@ function g18AnswerQuestion(picked, correct, btn) {
   if (picked === correct) {
     btn.classList.add('correct')
     spawnCorrectCardJuice(btn)
+    quizStreakHit(btn)
     g18State.quizScore++
     document.getElementById('g18-q-feedback').textContent = '✅ Benar! Kamu pintar!'
     document.getElementById('g18-q-feedback').style.color = '#A5D6A7'
@@ -11594,6 +11626,7 @@ function g18AnswerQuestion(picked, correct, btn) {
   } else {
     btn.classList.add('wrong')
     spawnWrongShake(btn)
+    quizStreakReset()
     // Highlight correct answer
     opts.querySelectorAll('.g18-quiz-option').forEach(b => {
       if (parseInt(b.dataset.ansIdx) === correct) {
