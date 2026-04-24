@@ -1288,9 +1288,9 @@ function startBattle(trainerId){
   if(!trainer) return;
   bgmPlay()
   document.getElementById('gym-select').style.display='none';
-  // Hide package selector button during active battle — user can only switch team between battles
+  // Keep #btn-pkg visible during battle — user can swap teams mid-fight
   const pkgBtn = document.getElementById('btn-pkg')
-  if (pkgBtn) pkgBtn.style.display = 'none'
+  if (pkgBtn) pkgBtn.style.display = ''
   document.getElementById('battle-bg').style.backgroundImage = `url('${BG_BASE}${trainer.bg}')`;
 
   const ep = document.getElementById('portrait-enemy');
@@ -1678,6 +1678,17 @@ function openPackageSelector() {
       PLAYER_TEAM = getCurrentPackage().team;
       grid.querySelectorAll('.pkg-card').forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
+      // Live-refresh active battle if user switched mid-fight (Option B: kid-friendly experimentation).
+      // Replace playerTeam with fresh full-HP clone, reset playerIdx, update UI + sprite.
+      if (typeof battle !== 'undefined' && battle && !battle.ended) {
+        try {
+          battle.playerTeam = deepCloneTeam(getCurrentPackage().team);
+          battle.playerIdx = 0;
+          if (typeof updateHpUI === 'function') updateHpUI();
+          if (typeof setPokeSpritePlayer === 'function') setPokeSpritePlayer(battle.playerTeam[0].slug);
+          if (typeof queueMsg === 'function') queueMsg(`Tim diganti! ${battle.playerTeam[0].name}, maju!`);
+        } catch(_) {}
+      }
       // Auto-close after short delay for satisfying feedback
       setTimeout(() => { document.getElementById('pkg-overlay').style.display = 'none'; }, 280);
     });
@@ -1770,6 +1781,16 @@ window.addEventListener('resize',()=>{if(app)app.renderer.resize(Math.min(window
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 buildGymSelect();
 document.getElementById('gym-select').style.display='flex';
+// Auto-open team selector on first visit (no package saved yet)
+(function autoOpenOnFirstVisit(){
+  try {
+    const saved = localStorage.getItem('g13c_lastPackage');
+    if (!saved) {
+      // Delay slightly so the gym-select DOM renders underneath first
+      setTimeout(() => { try { openPackageSelector(); } catch(_){} }, 250);
+    }
+  } catch(_) {}
+})();
 </script>
 </body>
 </html>

@@ -1104,7 +1104,7 @@ try { const s=localStorage.getItem('g13c_badges'); if(s) g13cState.badges=JSON.p
 
 function openGymGame() {
   playClick()
-  window.location.href = 'games/g13c-pixi.html?v=20260424d'
+  window.location.href = 'games/g13c-pixi.html?v=20260424e'
 }
 
 function g13cBuildLetterSelect() {
