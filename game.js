@@ -7392,6 +7392,13 @@ window.openG13FamilySelector = openG13FamilySelector
 function initGame13() {
   if (g13ResultTimeout) { clearTimeout(g13ResultTimeout); g13ResultTimeout = null }
   hideGameResult()
+  // Auto-open family selector on first visit (no family saved yet)
+  try {
+    const saved = localStorage.getItem('g13_lastFamily')
+    if (!saved) {
+      setTimeout(() => { try { openG13FamilySelector() } catch(_){} }, 400)
+    }
+  } catch(_) {}
   const dbg = document.getElementById('g13-debug-err')
   if (dbg) dbg.style.display = 'none'
   // Init Pixi GPU canvas for evolution FX
