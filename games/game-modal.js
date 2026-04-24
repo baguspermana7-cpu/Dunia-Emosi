@@ -52,9 +52,15 @@ const GameModal = (() => {
         finalMsg = 'Belum ada jawaban benar. Jangan menyerah, ayo coba lagi!';
       }
       allowNext = false; // no level advance on fail
-    } else if (normalizedStars <= 2 && /sempurna/i.test(finalTitle)) {
-      // Guard: low stars but title claims "Sempurna" — downgrade
-      finalTitle = 'Coba Lagi';
+    } else if (normalizedStars <= 2) {
+      // Guard: low stars but caller passed success-tone title OR message — downgrade both.
+      // Fixes Task #44 P0: "Selesai!" + 1★ + "Sempurna! Tidak ada kesalahan!" contradiction.
+      if (/sempurna|hebat|luar biasa|keren/i.test(finalTitle)) finalTitle = 'Coba Lagi';
+      if (/sempurna|tidak ada kesalahan|100%|benar semua|all correct/i.test(finalMsg)) {
+        finalMsg = normalizedStars === 1 ? 'Kamu hampir dapat bintang lebih banyak — coba lagi!' : 'Sudah bagus, tapi masih bisa lebih baik!'
+      }
+    } else if (normalizedStars === 3 && /sempurna|luar biasa/i.test(finalTitle)) {
+      finalTitle = 'Bagus!'
     }
 
     document.getElementById('gm-emoji').textContent = finalEmoji;

@@ -278,15 +278,15 @@ Cache bump: `v=20260423a` → `v=20260423b`.
 - ✅ **Docs**: `documentation and standarization/CHARACTER-TRAIN-SPEC.md` — "Responsive Scaling (RZ.trainScale())" section with formula + scaling table.
 - **Touched**: `shared/rz-responsive.js`, `games/train-character-sprite.js`, `games/g15-pixi.html`, `games/g16-pixi.html`, `games/g14.html`, `games/g19-pixi.html`, `games/g20-pixi.html`, `games/g22-candy.html`, `index.html`, CHANGELOG, CHARACTER-TRAIN-SPEC.
 
-### Task #44 — Result Modal Engine Contradicts Stars (P0 BUG)
-- ⬜ **Symptom**: Modal shows "Selesai!" + 1★ + "Sempurna! Tidak ada kesalahan!" + "Matematika Benar: 0" + enabled "Level Berikutnya" button — WITH ZERO CORRECT ANSWERS. Screenshot 2026-04-22.
-- **Root cause hypotheses**:
-  - `GameScoring.calc({correct:0, total:N})` may return stars≥1 (bug — should be 0).
-  - Modal title hardcoded "Selesai!" regardless of stars. Should branch: 0★="Gagal!", 1-2★="Coba Lagi", 3★="Bagus!", 4★="Hebat!", 5★="Sempurna!".
-  - Sub-message "Sempurna! Tidak ada kesalahan!" hardcoded instead of derived from stars.
-  - "Level Berikutnya" should only appear when stars≥3 (passing grade).
-- **Touches**: `games/game-modal.js` `GameModal.show()` + `game.js` showResult/showGameResult wrappers.
-- **Scope**: affects ALL games that use the shared modal.
+### Task #44 — Result Modal Engine Contradicts Stars (P0 BUG) ✅ DONE 2026-04-24
+- **Was-Symptom**: Modal shows "Selesai!" + 1★ + "Sempurna! Tidak ada kesalahan!" + "Matematika Benar: 0" + enabled "Level Berikutnya" button — WITH ZERO CORRECT ANSWERS. Screenshot 2026-04-22.
+- **Fix** (games/game-modal.js:41 `show()`):
+  - ✅ `GameScoring.calc({correct:0, total:N})` returns 0 (line 163, already fixed in earlier session).
+  - ✅ 0★ normalized to emoji '😞' + title 'Gagal! Coba Lagi' + failure-tone msg + no "Level Berikutnya".
+  - ✅ 1-2★ now downgrades both title AND msg if they contain success-tone keywords (sempurna, hebat, luar biasa, tidak ada kesalahan, 100%, benar semua).
+  - ✅ 3★ downgrades title if "Sempurna" → "Bagus!"
+  - ✅ "Level Berikutnya" button only appears when `normalizedStars >= 3` (passing grade).
+- **Impact**: Every game using shared GameModal now has consistent, truthful result feedback.
 
 ### Task #54 — G6 Vehicle Picker Disconnected From Sprite ✅ DONE 2026-04-22
 - **Symptom**: User picks vehicle emoji in picker (e.g. bajaj 🛺, ambulan 🚑, taksi 🚕). In-game sprite is always a RANDOM sport car. Picker selection → sprite mapping broken.
