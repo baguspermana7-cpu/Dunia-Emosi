@@ -2761,6 +2761,9 @@ function checkG5Match(){
   const[i1,i2]=g5State.flipped,c1=g5State.cards[i1],c2=g5State.cards[i2]
   if(c1.id===c2.id){
     c1.matched=c2.matched=true; c1.el.classList.add('matched'); c2.el.classList.add('matched')
+    // Card-anchored juice on both matched cards (no tick — cards already show match visually)
+    spawnCorrectCardJuice(c1.el, { tick:false })
+    spawnCorrectCardJuice(c2.el, { tick:false, burst:false })
     playCorrect(); spawnSparkles(); flashScreen('green')
     const cp=g5State.currentPlayer; g5State.scores[cp]++
     state.players[cp].stars++; state.gameStars[cp]++; saveStars()

@@ -15,6 +15,30 @@
 
 ---
 
+## 📊 Session 2026-04-24 Late Patch (G13C auto-popup + G5 match juice)
+
+Cache bump: `v=20260424c` → `v=20260424e` (d skipped — used for interim G13C hud fix).
+
+### ✅ G13C auto-popup team selector on first visit
+- Auto-opens package selector 250ms after gym-select renders, only if no `g13c_lastPackage` saved.
+- First-time users must pick a team before starting any gym battle. Returning users skip the popup.
+
+### ✅ G13C mid-battle team swap now actually swaps
+- Reverted earlier "hide button during battle" approach per user request ("tetap bisa ganti pokemon di tengah2 permainan").
+- Package-selector click handler now detects active battle and live-refreshes `battle.playerTeam` with fresh full-HP clone, resets `playerIdx`, updates HP UI + sprite, announces new lead via `queueMsg`.
+- Kid-friendly Option B: trades strict difficulty for experimentation freedom (appropriate for ages 5-10).
+
+### ✅ G13C team button on gym-select header (hud-top was covered)
+- Added `#btn-pkg-gs` inside `#gs-header` since `#hud-top` (z-index 50) was covered by `#gym-select` (z-index 800, inset:0).
+- Added `#active-pkg-label` badge on gs-subtitle strip — shows which team is armed (e.g. "🎒 Ash Kanto").
+- MutationObserver auto-refreshes label when package overlay closes.
+
+### ✅ G5 card-match celebration juice
+- Matched pair of cards now gets `spawnCorrectCardJuice` (no tick — cards already show match visually). Both cards pulse + ring; first gets burst.
+- File: `game.js:2762-2767`.
+
+---
+
 ## 📊 Session 2026-04-24 Batch (P1 + P2 + P3 + P5)
 
 Cache bump: `v=20260423d` → `v=20260424a`.
