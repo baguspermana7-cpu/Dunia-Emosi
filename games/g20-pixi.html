@@ -132,7 +132,7 @@ if(!('ontouchstart' in window)){
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
-<script src="game-modal.js?v=20260424g"></script>
+<script src="game-modal.js?v=20260424h"></script>
 <script src="../shared/rz-responsive.js?v=20260422i"></script>
 <script>
 // ═══════════════════════════════════════════════════════════
@@ -759,13 +759,13 @@ function gameLoop(ticker){
 
   // Ball physics — smoother arc w/ light air resistance
   const ballSpd=S.powerup==='slow'?0.6:1
-  S.bvy+=GRAVITY*S.gravMod*0.60*dt*ballSpd // slightly lighter gravity for more float
+  S.bvy+=GRAVITY*S.gravMod*0.50*dt*ballSpd // lighter gravity for more hang time (0.60 → 0.50 on 2026-04-24)
   // Air resistance (drag) — gentle, feels natural vs arcade-jank
   S.bvx*=Math.pow(0.995, dt)
   S.bvy*=Math.pow(0.998, dt)
   S.bx+=S.bvx*dt*ballSpd; S.by+=S.bvy*dt*ballSpd
   // Cap max ball speed — very slow for kids (raised 3.8→5.0 to match 1.5× hit impulse)
-  const MAX_BALL_V = 5.0
+  const MAX_BALL_V = 6.5 // 5.0 → 6.5 on 2026-04-24 to allow higher arcs without clipping impulse
   if(Math.abs(S.bvx)>MAX_BALL_V) S.bvx=Math.sign(S.bvx)*MAX_BALL_V
   if(Math.abs(S.bvy)>MAX_BALL_V) S.bvy=Math.sign(S.bvy)*MAX_BALL_V
   S.bSpin+=S.bvx*0.04*dt // faster visible spin
@@ -876,26 +876,28 @@ function checkHit(dx,dy,dvx,dvy,onGnd,who){
   const angle=Math.atan2(ddy,ddx)
   let power, hitType
   if(onGnd){
-    // SET: gentle lob upward
-    power=3.2; hitType='set'
+    // SET: gentle lob upward — bumped 3.2 → 4.0 for easier net clearance on first touch
+    power=4.0; hitType='set'
     if(who==='player')S.pSet=true
   } else if(who==='player'&&S.pSet){
-    // SMASH: powerful spike after set
-    power=5; hitType='smash'
+    // SMASH: powerful spike after set — bumped 5 → 6.2
+    power=6.2; hitType='smash'
     S.pSet=false
     S.shakeTimer=10
     sfxSmash()
-    sfxWhoosh(0.6) // Task #33: spike/smash = powerful whoosh
+    sfxWhoosh(0.6)
   } else {
-    // SHOT: jump first-touch
-    power=4.4; hitType='shot'
+    // SHOT: jump first-touch — bumped 4.4 → 5.4
+    power=5.4; hitType='shot'
   }
 
-  // Boost upward impulse by 1.5× — previously one jump couldn't reliably clear the net.
-  // Bumped -1.8 → -2.7 (base) and -1.4 → -2.1 (minimum) so jump+hit arc comfortably sails over.
+  // Upward impulse tuning (2026-04-24 P2 — user: "masih sangat sulit bounce ke atasnya"):
+  // Base: -2.7 → -3.8 (41% stronger up-kick). Min: -2.1 → -3.2 (easier sailing).
+  // Combined with higher power values + lighter gravity (see ball update), ball now
+  // clears net comfortably even on weak upward hits.
   S.bvx=Math.cos(angle)*power+dvx*0.22
-  S.bvy=Math.sin(angle)*power-2.7
-  S.bvy=Math.min(S.bvy,-2.1)
+  S.bvy=Math.sin(angle)*power-3.8
+  S.bvy=Math.min(S.bvy,-3.2)
 
   if(hitType==='set') sfxHit()
   else if(hitType==='shot'){ sfxHit(); sfxWhoosh(0.45) } // Task #33: shot = medium whoosh
@@ -936,7 +938,7 @@ function predictBallLandingX(){
   // Simulate ball flight forward until it hits ground or the right wall.
   // Approximation: use current pos/vel + gravity w/ ball-scaling used in main loop.
   let bx=S.bx, by=S.by, bvx=S.bvx, bvy=S.bvy
-  const gAccel=GRAVITY*S.gravMod*0.60 // matches line ~749 ball-gravity factor
+  const gAccel=GRAVITY*S.gravMod*0.50 // matches line ~762 ball-gravity factor (kept in sync)
   const ballSpd=S.powerup==='slow'?0.6:1
   const maxSteps=180 // ~3s at 60fps; enough for any lob
   const br=BALL_R*(S.powerup==='big'?1.5:1)

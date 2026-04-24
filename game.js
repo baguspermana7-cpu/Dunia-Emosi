@@ -11410,7 +11410,7 @@ function initGame20() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g20Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g20-pixi.html'
+  window.location.href = 'games/g20-pixi.html?v=20260424h'
 }
 
 function initGame22() {
