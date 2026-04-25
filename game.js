@@ -1139,7 +1139,10 @@ function g13cStartGym(letter) {
   ga.style.display = 'flex'
   const slug = G13C_GYM_POKEMON[letter] || 'pikachu'
   const pImg = document.getElementById('g13c-pokemon-img')
-  pImg.src = `https://img.pokemondb.net/sprites/home/normal/${slug}.png`
+  // Task #77 (P0-3): local-first per L16 — was remote-only
+  const _localG13c = (typeof pokeSpriteAlt2 === 'function') ? pokeSpriteAlt2(slug) : null
+  pImg.src = _localG13c || `https://img.pokemondb.net/sprites/home/normal/${slug}.png`
+  pImg.onerror = function(){ if(this.dataset.fallback==='1'){this.onerror=null;return} this.dataset.fallback='1'; this.src=`https://img.pokemondb.net/sprites/home/normal/${slug}.png` }
   pImg.style.display = 'block'
   g13cShowRound()
 }
@@ -2272,7 +2275,7 @@ function g2Speak(text){
 }
 function startBreathing(){document.getElementById('g2-start-btn').style.display='none';g2Cycle=0;g2PhaseIdx=0;runBreathePhase()}
 function runBreathePhase(){
-  if(g2Cycle>=g2MaxCycles){addStars(3);setCircleScale(1.0,'#14B8A6');document.getElementById('g2-instruction').textContent='Luar biasa! 🌟';document.getElementById('g2-sub').textContent='Napasmu sangat bagus!';document.getElementById('g2-timer').textContent='😊';checkAchievements('done_g2');const doneMsg=state.mode==='duo'?'Kalian bernapas bersama dengan indah! 🌈':'Kamu lebih tenang sekarang! 🌈';showFeedback(true,3,doneMsg,()=>showResult('🌬️','Napas Pelangi!',doneMsg));return}
+  if(g2Cycle>=g2MaxCycles){try{playCorrect()}catch(_){}addStars(3);setCircleScale(1.0,'#14B8A6');document.getElementById('g2-instruction').textContent='Luar biasa! 🌟';document.getElementById('g2-sub').textContent='Napasmu sangat bagus!';document.getElementById('g2-timer').textContent='😊';checkAchievements('done_g2');const doneMsg=state.mode==='duo'?'Kalian bernapas bersama dengan indah! 🌈':'Kamu lebih tenang sekarang! 🌈';showFeedback(true,3,doneMsg,()=>showResult('🌬️','Napas Pelangi!',doneMsg));return}
   const phases=state.selectedLevel==='hard'?BREATHE_ADVANCED:BREATHE_BOX,ph=phases[g2PhaseIdx]
   const startScale=g2PhaseIdx===2?1.55:(g2PhaseIdx===1?1.55:1.0)
   document.getElementById('g2-instruction').textContent=ph.name; document.getElementById('g2-sub').textContent=ph.sub

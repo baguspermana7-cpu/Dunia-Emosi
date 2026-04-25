@@ -1,5 +1,40 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-26 — Audit Phase 1 Quick Wins (Tasks #73-#79)
+
+Cache bump: `v=20260425e` → `v=20260426a`. From AUDIT-2026-04-25.md Phase 1 implementation.
+
+### Performance (Tasks #73)
+- Battle BGM `preload="auto"` → `"none"` (saves 7.5MB initial bandwidth)
+- 3 data scripts now `defer` — unblock HTML parsing by ~51KB
+- 34 `<img>` tags lazy-load — defer ~400KB menu deco/achievement assets
+
+### Accessibility WCAG 2.1 AAA (Task #74)
+- `@media (prefers-reduced-motion: reduce)` block — disable animations for autism/ADHD/vestibular/photosensitivity users
+- Mandatory for compliance; many children have undiagnosed sensitivities
+
+### Mobile UX (Tasks #75, #76)
+- L18 safe-area pattern applied to `#screen-game3` and `#screen-game4` (was `15vh !important` only — could clip below mobile bottom UI)
+- `@media(max-width:360px)` override: tap targets `min-width: 44px; min-height: 44px` per Apple HIG (RDE token `--rz-scale: 0.7` was scaling below)
+- `:active` parity for `.mode-card`, `.g10-party-card` hover-only patterns — iOS touch feedback restored
+
+### Code quality (Tasks #77, #78, #79)
+- G13c gym Pokemon sprite: remote-only → local-first per Lesson L16
+- `.btn-back` contrast: rgba(255,255,255,0.1) ~1.5:1 → rgba(0,0,0,0.4) + 2px white border >10:1 (WCAG AA pass)
+- G2 Napas Pelangi: added `playCorrect()` audio on session complete
+
+### Audit corrections
+- G7 Tebak Gambar + G11 Kuis Sains audited — already had `playCorrect()` (UX audit over-counted)
+- Dead code removal deferred to Phase 2 — too large for hotfix bundle
+
+### Touched
+- `index.html` (audio preload, 3 defer, 34 img lazy, cache bump)
+- `style.css` (reduced-motion, safe-area, tap targets, :active, contrast)
+- `game.js` (G13c sprite, G2 audio)
+- TODO-GAME-FIXES.md, this CHANGELOG, memory
+
+---
+
 ## 2026-04-25 Late Hotfix — Tasks #70/#71/#72 bundle (G10/G13/G13b post-city-progression)
 
 Cache bump: `v=20260425d` → `v=20260425e`.

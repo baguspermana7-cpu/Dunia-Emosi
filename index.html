@@ -6,7 +6,7 @@
 <title>Dunia Emosi 🐾</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="style.css?v=20260425e">
+<link rel="stylesheet" href="style.css?v=20260426a">
 </head>
 <body>
 <!-- Loading indicator — hidden by JS after page loads -->
@@ -17,7 +17,8 @@
 </div>
 <script>window.addEventListener('load',function(){var l=document.getElementById('page-loader');if(l)l.style.display='none'})</script>
 <audio id="bg-music" src="assets/bg-music.mp3" loop preload="none" style="display:none"></audio>
-<audio id="battle-bgm" src="assets/Pokemon/sound/06 Battle (VS Wild Pokémon)（１９９７－１９９８｜Ｍ１３） - Satoshi Sakai No Masta - SoundLoadMate.com.mp3" loop preload="auto" style="display:none"></audio>
+<!-- Task #73 (P0-1): preload=none — was auto, wasted 7.5MB bandwidth before user reaches battle -->
+<audio id="battle-bgm" src="assets/Pokemon/sound/06 Battle (VS Wild Pokémon)（１９９７－１９９８｜Ｍ１３） - Satoshi Sakai No Masta - SoundLoadMate.com.mp3" loop preload="none" style="display:none"></audio>
 
 <!-- BG BLOBS -->
 <div class="bg-blobs">
@@ -36,7 +37,7 @@
   <div class="wlc-bg" id="wlc-bg">
     <picture id="wlc-bg-picture">
       <source id="wlc-src-desktop" media="(orientation:landscape) and (min-width:600px)" srcset="assets/bg-landing-desktop.webp">
-      <img id="wlc-bg-img" src="assets/bg-landing-mobile.webp" alt=""
+      <img loading="lazy" decoding="async" id="wlc-bg-img" src="assets/bg-landing-mobile.webp" alt=""
         onerror="this.src='assets/bg-menu.webp'; this.onerror=null;">
     </picture>
     <div class="wlc-bg-overlay" id="wlc-bg-overlay"></div>
@@ -81,7 +82,7 @@
       <div class="home-title-sub">✦ GAME BELAJAR SERU ✦</div>
     </div>
     <div class="home-leo-float">
-      <img src="assets/leo-excited.webp" alt="Leo"
+      <img loading="lazy" decoding="async" src="assets/leo-excited.webp" alt="Leo"
         onerror="this.outerHTML='<span>🦁</span>'">
     </div>
   </div>
@@ -250,14 +251,14 @@
 <div id="screen-menu" class="screen">
   <!-- Floating deco layer -->
   <div class="menu-deco-layer" aria-hidden="true">
-    <img class="menu-deco d1" src="assets/deco-star-burst.webp" alt="">
-    <img class="menu-deco d2" src="assets/deco-cloud-white.webp" alt="">
-    <img class="menu-deco d3" src="assets/deco-heart-pink.webp" alt="">
-    <img class="menu-deco d4" src="assets/deco-lightning-yellow.webp" alt="">
-    <img class="menu-deco d5" src="assets/deco-leaf-green.webp" alt="">
-    <img class="menu-deco d6" src="assets/deco-bubble.webp" alt="">
-    <img class="menu-deco d7" src="assets/deco-flower-small.webp" alt="">
-    <img class="menu-deco d8" src="assets/deco-mushroom.webp" alt="">
+    <img loading="lazy" decoding="async" class="menu-deco d1" src="assets/deco-star-burst.webp" alt="">
+    <img loading="lazy" decoding="async" class="menu-deco d2" src="assets/deco-cloud-white.webp" alt="">
+    <img loading="lazy" decoding="async" class="menu-deco d3" src="assets/deco-heart-pink.webp" alt="">
+    <img loading="lazy" decoding="async" class="menu-deco d4" src="assets/deco-lightning-yellow.webp" alt="">
+    <img loading="lazy" decoding="async" class="menu-deco d5" src="assets/deco-leaf-green.webp" alt="">
+    <img loading="lazy" decoding="async" class="menu-deco d6" src="assets/deco-bubble.webp" alt="">
+    <img loading="lazy" decoding="async" class="menu-deco d7" src="assets/deco-flower-small.webp" alt="">
+    <img loading="lazy" decoding="async" class="menu-deco d8" src="assets/deco-mushroom.webp" alt="">
   </div>
   <div style="display:flex;justify-content:flex-end;padding:4px 4px 0;width:100%">
     <button onclick="playClick(); showScreen('screen-welcome')" style="background:rgba(139,92,246,0.15);border:none;border-radius:14px;padding:8px 16px;font-size:18px;cursor:pointer;color:#8B5CF6;font-weight:700" title="Kembali ke Beranda">⌂ Beranda</button>
@@ -459,7 +460,7 @@
           <!-- G6: Petualangan Mobil -->
           <div class="wmap-node" id="gtile-6" onclick="playClick();openLevelSelect(6)" title="Petualangan Mobil">
             <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#0C4A6E,#38BDF8);">
-              <img class="wn-icon" src="assets/car and vehicle/racecar-icon.svg" alt="🏎️" style="width:44px;height:30px;filter:drop-shadow(0 3px 8px rgba(0,0,0,0.75));">
+              <img loading="lazy" decoding="async" class="wn-icon" src="assets/car and vehicle/racecar-icon.svg" alt="🏎️" style="width:44px;height:30px;filter:drop-shadow(0 3px 8px rgba(0,0,0,0.75));">
             </div>
             <div class="wmap-node-name">Petualangan Mobil</div>
             <div class="wmap-node-stars" id="gstars-6-lbl"></div>
@@ -467,7 +468,7 @@
           <!-- G19: Pokemon Birds -->
           <div class="wmap-node" id="gtile-19" onclick="playClick();openLevelSelect(19)" title="Pokemon Birds">
             <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#5B21B6,#8B5CF6);">
-              <img class="wn-icon" src="assets/Pokemon/svg/18.svg" alt="Pidgeot" style="width:44px;height:44px;filter:drop-shadow(0 3px 8px rgba(0,0,0,0.75));" onerror="this.outerHTML='<span class=\'wn-icon\'>🐦</span>'">
+              <img loading="lazy" decoding="async" class="wn-icon" src="assets/Pokemon/svg/18.svg" alt="Pidgeot" style="width:44px;height:44px;filter:drop-shadow(0 3px 8px rgba(0,0,0,0.75));" onerror="this.outerHTML='<span class=\'wn-icon\'>🐦</span>'">
             </div>
             <div class="wmap-node-name">Pokemon Birds</div>
             <div class="wmap-node-stars" id="gstars-19-lbl"></div>
@@ -483,7 +484,7 @@
           <!-- G21: Tux Racer (placeholder — user building separately) -->
           <div class="wmap-node locked" id="gtile-21" title="Tux Racer">
             <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#ffffff,#e2e8f0);">
-              <span class="wn-icon"><img src="assets/Pokemon/sprites/psyduck.png" style="width:44px;height:44px;image-rendering:pixelated;display:block;" onerror="this.outerHTML='🐧'"></span>
+              <span class="wn-icon"><img loading="lazy" decoding="async" src="assets/Pokemon/sprites/psyduck.png" style="width:44px;height:44px;image-rendering:pixelated;display:block;" onerror="this.outerHTML='🐧'"></span>
             </div>
             <div class="wmap-node-name">Tux Racer</div>
             <div class="wmap-node-stars"></div>
@@ -491,7 +492,7 @@
           <!-- G22: Monster Wants Candy -->
           <div class="wmap-node" id="gtile-22" onclick="playClick();openLevelSelect(22)" title="Monster Wants Candy">
             <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#7C3AED,#A78BFA);">
-              <span class="wn-icon"><img src="assets/wants candy/icon.png" style="width:44px;height:44px;object-fit:contain;display:block;" onerror="this.outerHTML='🍬'"></span>
+              <span class="wn-icon"><img loading="lazy" decoding="async" src="assets/wants candy/icon.png" style="width:44px;height:44px;object-fit:contain;display:block;" onerror="this.outerHTML='🍬'"></span>
             </div>
             <div class="wmap-node-name">Monster Candy</div>
             <div class="wmap-node-stars" id="gstars-22-lbl"></div>
@@ -534,7 +535,7 @@
           <!-- G13: Evolusi Math -->
           <div class="wmap-node" id="gtile-13" onclick="playClick();openRegionOverlay(13)" title="Evolusi Math">
             <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#78350F,#F59E0B);">
-              <span class="wn-icon"><img src="assets/Pokemon/sprites/raichu.png" style="width:44px;height:44px;image-rendering:pixelated;display:block;" onerror="this.outerHTML='⚡'"></span>
+              <span class="wn-icon"><img loading="lazy" decoding="async" src="assets/Pokemon/sprites/raichu.png" style="width:44px;height:44px;image-rendering:pixelated;display:block;" onerror="this.outerHTML='⚡'"></span>
             </div>
             <div class="wmap-node-name">Evolusi Math</div>
             <div class="wmap-node-stars" id="gstars-13-lbl"></div>
@@ -542,7 +543,7 @@
           <!-- G13c: Gym Pokémon -->
           <div class="wmap-node" id="gtile-13c" onclick="playClick();openGymGame()" title="Gym Pokémon">
             <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#1A3A1A,#2E7D32);">
-              <span class="wn-icon"><img src="assets/Pokemon/sprites/eevee.png" style="width:44px;height:44px;image-rendering:pixelated;display:block;" onerror="this.outerHTML='🏅'"></span>
+              <span class="wn-icon"><img loading="lazy" decoding="async" src="assets/Pokemon/sprites/eevee.png" style="width:44px;height:44px;image-rendering:pixelated;display:block;" onerror="this.outerHTML='🏅'"></span>
             </div>
             <div class="wmap-node-name">Gym Pokémon</div>
             <div class="wmap-node-stars" id="gstars-13c-lbl"></div>
@@ -628,7 +629,7 @@
           <!-- G15: Lokomotif Pemberani -->
           <div class="wmap-node" id="gtile-15" onclick="playClick();openLevelSelect(15)" title="Lokomotif Pemberani">
             <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#FEF3C7,#FDBA74);">
-              <img class="wn-icon" src="assets/train/linus-casey.webp" alt="Linus Casey" style="width:75px;height:75px;object-fit:contain;filter:drop-shadow(0 3px 8px rgba(0,0,0,0.75));" onerror="this.src='assets/train/lokomotif-front-red.svg'">
+              <img loading="lazy" decoding="async" class="wn-icon" src="assets/train/linus-casey.webp" alt="Linus Casey" style="width:75px;height:75px;object-fit:contain;filter:drop-shadow(0 3px 8px rgba(0,0,0,0.75));" onerror="this.src='assets/train/lokomotif-front-red.svg'">
             </div>
             <div class="wmap-node-name">Lokomotif Pemberani</div>
             <div class="wmap-node-stars" id="gstars-15-lbl"></div>
@@ -636,7 +637,7 @@
           <!-- G16: Selamatkan Kereta! -->
           <div class="wmap-node" id="gtile-16" onclick="playClick();openLevelSelect(16)" title="Selamatkan Kereta!">
             <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#BF360C,#FF9800);">
-              <img class="wn-icon" src="assets/train/lokomotif-front-blue.svg" alt="🚂" style="width:40px;height:44px;filter:drop-shadow(0 3px 8px rgba(0,0,0,0.75));">
+              <img loading="lazy" decoding="async" class="wn-icon" src="assets/train/lokomotif-front-blue.svg" alt="🚂" style="width:40px;height:44px;filter:drop-shadow(0 3px 8px rgba(0,0,0,0.75));">
             </div>
             <div class="wmap-node-name">Selamatkan Kereta!</div>
             <div class="wmap-node-stars" id="gstars-16-lbl"></div>
@@ -728,13 +729,13 @@
     </div>
     <!-- Enemy sprite: top-right -->
     <div class="g10-espr-wrap" id="g10-espr-wrap">
-      <img class="g10-spr g10-espr" id="g10-espr" src="" alt="">
+      <img loading="lazy" decoding="async" class="g10-spr g10-espr" id="g10-espr" src="" alt="">
       <div class="g10-oval"></div>
     </div>
     <!-- Player sprite: bottom-left (back view) -->
     <div class="g10-pspr-wrap" id="g10-pspr-wrap">
       <div class="g10-oval"></div>
-      <img class="g10-spr g10-pspr" id="g10-pspr" src="" alt="">
+      <img loading="lazy" decoding="async" class="g10-spr g10-pspr" id="g10-pspr" src="" alt="">
     </div>
     <!-- Player info box: bottom-right -->
     <div class="g10-infobox g10-player-info" id="g10-player-info">
@@ -804,7 +805,7 @@
   <span class="sci-question-img" id="g11-emoji">🦁</span>
   <div class="sci-question-text" id="g11-question">Memuat soal...</div>
   <div class="sci-choices" id="g11-choices"></div>
-  <img id="g11-correct-flash" src="assets/sci-correct.webp" alt="" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100px;height:100px;object-fit:contain;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:10;">
+  <img loading="lazy" decoding="async" id="g11-correct-flash" src="assets/sci-correct.webp" alt="" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100px;height:100px;object-fit:contain;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:10;">
   <div id="g11-explain" style="display:none;margin:10px 16px 0;padding:12px 14px;background:rgba(255,255,255,0.08);border-radius:14px;border-left:4px solid #22D3EE;font-size:13px;line-height:1.5;color:rgba(255,255,255,0.9);"></div>
   <button id="g11-lanjut" style="display:none;margin:10px auto 0;padding:10px 32px;background:linear-gradient(135deg,#06B6D4,#0EA5E9);color:#fff;border:none;border-radius:100px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #0369A1;" onclick="g11Next()">Lanjut ▶</button>
 </div>
@@ -824,7 +825,7 @@
   <p style="font-size:13px;color:rgba(255,255,255,0.55);text-align:center;margin-top:12px;font-weight:700;" id="g12-progress">Soal 1/10</p>
   <div class="shadow-desc" id="g12-question">Hewan apa ini?</div>
   <div class="shadow-grid" id="g12-choices"></div>
-  <img id="g12-reveal-fx" src="assets/shadow-reveal-fx.webp" alt="" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:120px;height:120px;object-fit:contain;opacity:0;transition:opacity 0.15s;pointer-events:none;z-index:10;">
+  <img loading="lazy" decoding="async" id="g12-reveal-fx" src="assets/shadow-reveal-fx.webp" alt="" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:120px;height:120px;object-fit:contain;opacity:0;transition:opacity 0.15s;pointer-events:none;z-index:10;">
 </div>
 
 <!-- GAME 13 — Evolusi Math Adventure -->
@@ -859,13 +860,13 @@
     </div>
     <!-- Wild sprite: top-right -->
     <div class="g13-wspr-wrap" id="g13-wspr-wrap">
-      <img class="g13-spr g13-wspr" id="g13-wspr" src="" alt="">
-      <img class="g13-oval" src="assets/battle-platform-enemy.webp" alt="" onerror="this.style.display='none'">
+      <img loading="lazy" decoding="async" class="g13-spr g13-wspr" id="g13-wspr" src="" alt="">
+      <img loading="lazy" decoding="async" class="g13-oval" src="assets/battle-platform-enemy.webp" alt="" onerror="this.style.display='none'">
     </div>
     <!-- Player sprite: bottom-left -->
     <div class="g13-pspr-wrap" id="g13-pspr-wrap">
-      <img class="g13-spr g13-pspr" id="g13-pspr" src="" alt="">
-      <img class="g13-oval" src="assets/battle-platform-player.webp" alt="" onerror="this.style.display='none'">
+      <img loading="lazy" decoding="async" class="g13-spr g13-pspr" id="g13-pspr" src="" alt="">
+      <img loading="lazy" decoding="async" class="g13-oval" src="assets/battle-platform-player.webp" alt="" onerror="this.style.display='none'">
     </div>
     <!-- Player info: bottom-right -->
     <div class="g13-infobox g13-player-info" id="g13-player-info">
@@ -920,8 +921,8 @@
     </div>
     <div class="g13-evo-sprite-zone">
       <div style="position:relative;">
-        <img class="g13-evo-base-img" id="g13-evo-base-img" src="" alt="">
-        <img class="g13-evo-evolved-img" id="g13-evo-evolved-img" src="" alt="">
+        <img loading="lazy" decoding="async" class="g13-evo-base-img" id="g13-evo-base-img" src="" alt="">
+        <img loading="lazy" decoding="async" class="g13-evo-evolved-img" id="g13-evo-evolved-img" src="" alt="">
       </div>
       <div class="g13-evo-text" id="g13-evo-text">Sedang berevolusi...</div>
       <div class="g13-evo-newname" id="g13-evo-newname"></div>
@@ -977,10 +978,10 @@
     <!-- Legendary badge (below hp bar) -->
     <div class="g13b-legendary-badge" id="g13b-leg-badge">🌟 LEGENDARY!</div>
     <!-- Catch ball (shown on kill) -->
-    <img class="g13b-catch-ball" id="g13b-catch-ball" src="" alt="">
+    <img loading="lazy" decoding="async" class="g13b-catch-ball" id="g13b-catch-ball" src="" alt="">
     <!-- Wild sprite center -->
     <div class="g13b-wspr-wrap" id="g13b-wspr-wrap">
-      <img class="g13b-wspr" id="g13b-wspr" src="" alt="?" style="display:block;">
+      <img loading="lazy" decoding="async" class="g13b-wspr" id="g13b-wspr" src="" alt="?" style="display:block;">
       <div class="g13b-wname-badge" id="g13b-wname">—</div>
       <svg viewBox="0 0 100 22" width="90" height="18" style="margin-top:-2px;overflow:visible;flex-shrink:0;">
         <ellipse cx="50" cy="16" rx="48" ry="13" fill="#3B1F0A" opacity="0.85"/>
@@ -990,7 +991,7 @@
     </div>
     <!-- Player sprite bottom-left -->
     <div class="g13b-pspr-wrap" id="g13b-pspr-wrap">
-      <img class="g13b-pspr" id="g13b-pspr" src="" alt="⚡" style="display:block;">
+      <img loading="lazy" decoding="async" class="g13b-pspr" id="g13b-pspr" src="" alt="⚡" style="display:block;">
       <svg viewBox="0 0 80 18" width="70" height="14" style="margin-top:-2px;overflow:visible;flex-shrink:0;">
         <ellipse cx="40" cy="13" rx="38" ry="11" fill="#3B1F0A" opacity="0.85"/>
         <ellipse cx="40" cy="9" rx="30" ry="7" fill="#6B3A1F"/>
@@ -1011,7 +1012,7 @@
     </div>
     <!-- Legendary entrance banner -->
     <div class="g13b-legendary-banner hide" id="g13b-leg-banner">
-      <img class="g13b-leg-spr" id="g13b-leg-spr" src="" alt="🌟">
+      <img loading="lazy" decoding="async" class="g13b-leg-spr" id="g13b-leg-spr" src="" alt="🌟">
       <div class="g13b-leg-banner-txt">🌟 LEGENDARY! 🌟</div>
       <div class="g13b-leg-banner-sub" id="g13b-leg-sub">Kalahkan dengan 3 serangan!</div>
     </div>
@@ -1090,7 +1091,7 @@
     <!-- Question label -->
     <div style="font-size:14px;font-weight:900;color:rgba(255,255,255,0.7);text-align:center;" id="g13c-question-lbl">Pilih benda yang mulai dengan huruf ini!</div>
     <!-- Pokemon mascot -->
-    <img id="g13c-pokemon-img" src="" alt="" style="width:80px;height:80px;object-fit:contain;image-rendering:auto;animation:g13cBounce 1.2s ease-in-out infinite;" onerror="this.style.display='none'">
+    <img loading="lazy" decoding="async" id="g13c-pokemon-img" src="" alt="" style="width:80px;height:80px;object-fit:contain;image-rendering:auto;animation:g13cBounce 1.2s ease-in-out infinite;" onerror="this.style.display='none'">
     <!-- Choices grid -->
     <div id="g13c-choices" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;width:100%;max-width:380px;margin-top:4px;"></div>
     <!-- Feedback -->
@@ -2045,7 +2046,7 @@
 <!-- FEEDBACK OVERLAY -->
 <div id="overlay-feedback">
   <div class="feedback-card">
-    <img id="fb-leo" src="assets/leo-celebrating.webp" alt="" style="width:80px;height:80px;object-fit:contain;display:block;margin:0 auto 4px;animation:tileIconFloat 2s ease-in-out infinite;" onerror="this.style.display='none'">
+    <img loading="lazy" decoding="async" id="fb-leo" src="assets/leo-celebrating.webp" alt="" style="width:80px;height:80px;object-fit:contain;display:block;margin:0 auto 4px;animation:tileIconFloat 2s ease-in-out infinite;" onerror="this.style.display='none'">
     <span class="feedback-emoji" id="fb-emoji">🎉</span>
     <div class="feedback-title" id="fb-title">Benar!</div>
     <div class="feedback-sub" id="fb-sub">Hebat sekali!</div>
@@ -2093,9 +2094,10 @@ function loadPixiJS(cb) {
   </div>
 </div>
 
-<script src="games/data/region-meta.js?v=20260425e"></script>
-<script src="games/data/city-progression.js?v=20260425e"></script>
-<script src="games/data/city-pokemon-pack.js?v=20260425e"></script>
-<script src="game.js?v=20260425e" defer></script>
+<!-- Task #73 (P0-2): defer data scripts — unblock HTML parsing by ~51KB -->
+<script src="games/data/region-meta.js?v=20260426a" defer></script>
+<script src="games/data/city-progression.js?v=20260426a" defer></script>
+<script src="games/data/city-pokemon-pack.js?v=20260426a" defer></script>
+<script src="game.js?v=20260426a" defer></script>
 </body>
 </html>

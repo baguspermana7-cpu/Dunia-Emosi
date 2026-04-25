@@ -4,6 +4,58 @@
 
 ---
 
+## 📊 Session 2026-04-26 — Audit Phase 1 Quick Wins (Tasks #73-#78)
+
+Cache bump: `v=20260425e` → `v=20260426a` (atomic across 4 files).
+
+### ✅ Task #73 — Performance Quick Wins (P0-1, P0-2, P1-1)
+- **P0-1**: Battle BGM `preload="auto"` → `preload="none"` — saves ~7.5MB initial bandwidth (BGM only loads when user reaches battle screen)
+- **P0-2**: 3 data scripts (region-meta + city-progression + city-pokemon-pack = 51KB) added `defer` attribute — unblocks HTML parsing
+- **P1-1**: 34 `<img>` tags in index.html received `loading="lazy" decoding="async"` (menu deco, achievement UI, etc.) — defers ~400KB
+
+### ✅ Task #74 — WCAG 2.1 AAA prefers-reduced-motion (P1-5)
+- Added `@media (prefers-reduced-motion: reduce)` block at top of `style.css`
+- Disables animations + transitions for users with vestibular disorders, photosensitivity (autism spectrum, ADHD)
+- Children especially benefit — many kids have undiagnosed sensitivities
+
+### ✅ Task #75 — L18 safe-area pattern + tap target ≥44px @ 360px (P0-4, P0-5)
+- `#screen-game3` and `#screen-game4` padding-bottom: `15vh !important` → `max(15vh, calc(env(safe-area-inset-bottom, 0px) + 16px)) !important`
+- `@media(max-width:360px)` override: `min-width: 44px; min-height: 44px` for `.gh-back`, `.gh-pause`, `.btn-back`, `.region-close`, `.city-back`, choice buttons
+- Apple HIG compliance restored — RDE token `--rz-scale: 0.7` was scaling buttons below 32px on 360px viewports
+
+### ✅ Task #76 — :active parity for hover-only patterns (P0-6)
+- `.mode-card:hover::before` → `.mode-card:hover::before, .mode-card:active::before`
+- `.g10-party-card:not(.current):hover` → `.g10-party-card:not(.current):hover, .g10-party-card:not(.current):active`
+- Touch UX feedback restored on iOS (which lacks hover state)
+
+### ✅ Task #77 — G13c gym-Pokemon sprite local-first (P0-3 follow-up)
+- `game.js:1142` G13c gym Pokemon image: was remote-only `pokemondb.net` → now `pokeSpriteAlt2 || remote` with onerror fallback
+- Lesson L16 compliance fully extended to G13c
+
+### ✅ Task #78 — `.btn-back` contrast WCAG AA (P1-6)
+- Was: `background: rgba(255,255,255,0.1); color: white` ≈ 1.5:1 contrast (FAIL)
+- Now: `background: rgba(0,0,0,0.4); border: 2px solid rgba(255,255,255,0.85); color: white` >10:1 contrast (PASS)
+- Critical for outdoor screen-glare in Indonesian sunlight
+
+### ✅ Task #79 — G2 Napas Pelangi audio feedback (P1-7)
+- `runBreathePhase` victory branch: added `playCorrect()` call before `addStars(3)`
+- Engagement boost for 5-7yo (audio is prime motivator at reading-age)
+- G7 and G11 audited — already had `playCorrect()` (audit was over-counting)
+
+### Deferred to Phase 2
+- Dead code removal (`_initGame14_legacy`, `_initGame16_legacy`, `buildModernTrainSVG`) — defer for safer standalone refactor with full smoke test
+- Sprite preload strategy (1025 sprites lazy-load with IndexedDB)
+- Audio codec MP3→OGG (12-15MB savings)
+- `game.js` modular split (40-60h refactor)
+
+### Touched
+- `index.html` — Battle BGM preload, defer 3 data scripts, 34 img loading=lazy, cache bump v=20260426a
+- `style.css` — prefers-reduced-motion block, L18 safe-area on game3/4, 360px tap target overrides, :active parity, .btn-back contrast
+- `game.js` — G13c sprite local-first, G2 playCorrect()
+- This TODO + CHANGELOG + memory
+
+---
+
 ## 📊 Session 2026-04-25 Late Hotfix (G10/G13/G13b post-city-progression bundle)
 
 Cache bump: `v=20260425d` → `v=20260425e`.

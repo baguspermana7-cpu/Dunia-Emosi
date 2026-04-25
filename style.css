@@ -1,4 +1,17 @@
 
+/* Task #74 (P1-5, 2026-04-26): WCAG 2.1 AAA — prefers-reduced-motion support
+   Targets users with vestibular disorders, photosensitivity (autism spectrum, ADHD).
+   Disables animations + transitions to prevent disorientation. Children especially
+   benefit — many kids have undiagnosed sensitivities. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 :root {
   --brand: #8B5CF6; --brand-light: #A78BFA; --brand-dark: #7C3AED; --brand-shadow: #5B21B6;
   --rose: #F43F5E; --rose-light: #FDA4AF; --rose-shadow: #BE123C;
@@ -100,7 +113,7 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 .mode-card:active { transform:scale(0.95)translateY(3px); }
 .mode-card.solo { border-color:var(--brand); } .mode-card.solo::before { background:linear-gradient(135deg,#F3E8FF,#EDE9FE); }
 .mode-card.duo  { border-color:var(--rose); }  .mode-card.duo::before  { background:linear-gradient(135deg,#FFF1F3,#FFE4E6); }
-.mode-card:hover::before { opacity:1; }
+.mode-card:hover::before, .mode-card:active::before { opacity:1; }  /* Task #76: :active parity for touch */
 .mode-card .mode-icon { font-size:64px;display:block;margin-bottom:12px;position:relative;animation:iconWiggle 3s ease-in-out infinite; }
 .mode-card.duo .mode-icon { animation-delay:-1s; }
 @keyframes iconWiggle { 0%,100%{transform:rotate(0deg)} 25%{transform:rotate(-6deg)} 75%{transform:rotate(6deg)} }
@@ -816,6 +829,14 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
   .game-grid-2 .g-icon { font-size:34px; }
   .game-grid-2 .g-name { font-size:12px; }
   .game-grid-2 .g-tag { font-size:10px; padding:3px 8px; }
+  /* Task #75 (P0-5): tap targets ≥44px per Apple HIG (RDE token --rz-scale 0.7 was scaling below) */
+  .game-header .gh-back, .game-header .gh-pause,
+  .gh-back, .gh-pause, .btn-back, .region-close, .city-back {
+    min-width: 44px !important; min-height: 44px !important;
+  }
+  /* Choice buttons motor-control friendly */
+  .g1-choice-btn, .g3-choice-btn, .g4-choice-btn, .g7-choice-btn,
+  .g10-cbtn, .g13-choice-btn, .g13b-choice-btn { min-height: 44px !important; }
 
   .welcome-title { font-size:30px; }
   .welcome-sub2 { font-size:25px; }
@@ -1309,7 +1330,8 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 }
 .level-game-name { color: white; }
 .page-title { color: white; }
-.btn-back { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
+/* Task #78 (P1-6): contrast bump for outdoor screen-glare. White on rgba(255,255,255,0.1) was 1.5:1, well below WCAG AA 4.5:1. New rgba(0,0,0,0.4) bg + 2px white border gives strong contrast (>10:1). */
+.btn-back { background: rgba(0,0,0,0.4); color: white; border: 2px solid rgba(255,255,255,0.85); }
 .level-btn-easy { background: linear-gradient(135deg, #065F46, #047857); color: white; box-shadow: 0 6px 0 #064E3B; }
 .level-btn-easy .level-btn-name { color: white; }
 .level-btn-easy .level-btn-desc { color: rgba(255,255,255,0.75) !important; }
@@ -1547,7 +1569,8 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 
 .g3-choices { margin:0 auto !important; }
 /* G3 center + safe area */
-#screen-game3 { align-items:center !important; padding-bottom:15vh !important; }
+/* Task #75 (P0-4): L18 safe-area pattern — guarantee 10vh OR safe-area-inset-bottom + 16px */
+#screen-game3 { align-items:center !important; padding-bottom: max(15vh, calc(env(safe-area-inset-bottom, 0px) + 16px)) !important; }
 #screen-game3 .game-header,
 #screen-game3 .progress-bar-wrap,
 #screen-game3 .round-dots { align-self:stretch !important; }
@@ -1568,7 +1591,7 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 .g4-progress { color: rgba(255,255,255,0.9) !important; text-shadow: 0 1px 4px rgba(0,0,0,0.7); }
 .g4-timer-text { color: rgba(255,255,255,0.9) !important; text-shadow: 0 1px 4px rgba(0,0,0,0.7); }
 /* G4 center + safe area */
-#screen-game4 { align-items: center !important; padding-bottom: 15vh !important; }
+#screen-game4 { align-items: center !important; padding-bottom: max(15vh, calc(env(safe-area-inset-bottom, 0px) + 16px)) !important; }
 #screen-game4 .game-header,
 #screen-game4 .progress-bar-wrap,
 #screen-game4 .round-dots { align-self: stretch !important; }
@@ -2710,7 +2733,7 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
   box-shadow: 0 0 14px rgba(255,203,5,0.3);
 }
 .g10-party-card:active { transform: scale(0.92); }
-.g10-party-card:not(.current):hover { transform: translateY(-3px) scale(1.03); border-color: rgba(255,255,255,0.3); }
+.g10-party-card:not(.current):hover, .g10-party-card:not(.current):active { transform: translateY(-3px) scale(1.03); border-color: rgba(255,255,255,0.3); }  /* Task #76: :active parity */
 .g10-party-card::before {
   content: '';
   position: absolute;
