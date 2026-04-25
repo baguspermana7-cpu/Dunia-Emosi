@@ -4,6 +4,33 @@
 
 ---
 
+## 📊 Session 2026-04-26 — Audit Phase 2 (Tasks #80-#82)
+
+Cache bump: `v=20260426a` → `v=20260426b`.
+
+### ✅ Task #80 — Shared helpers (Phase 2.1)
+- `animateClass(el, className, durationMs)` (`game.js:~2050`) — replaces 50+ inline `el.classList.add('x'); setTimeout(()=>el.classList.remove('x'), N)` patterns. Null-safe + force-restart animation by reflow.
+- `addTrackedListener(el, type, fn, opts)` + `clearTrackedListeners(el)` — WeakMap-tracked listener registry to prevent leaked event handlers (audit found 27 add vs 12 remove imbalance).
+- Both exposed on `window` for cross-module use.
+- Per Lesson L22 (centralized helper pattern). Future migration of existing callsites = incremental.
+
+### ✅ Task #81 — Dead code removal (Phase 2.2)
+- Removed `_initGame14_legacy` (game.js:10168-10225, 58 lines) — replaced by `initGame14()` opening standalone `games/g14.html`
+- Removed `_initGame16_legacy` (game.js:10897-10928, 32 lines) — replaced by `initGame16()` opening standalone `games/g16-pixi.html`
+- Removed `buildModernTrainSVG` (game.js:9617-9640, 24 lines) — never invoked, replaced by `buildDieselLocoSVG`
+- **Total: 114 lines removed**, no function references remaining (only 1 comment marker per task #81)
+
+### ✅ Task #82 — Audit corrections (Phases 2.3 + 2.4)
+- **Bahasa Indonesia consistency**: spot-checked 15+ title attributes, all already in Indonesian or game proper-nouns ("Pokemon Birds", "Tux Racer" — kept English). Audit over-flagged.
+- **Pause integration**: G15-pixi audit found 6 tickers but main ticker DOES check `gamePaused` (line 735); other 5 are particle FX (cosmetic, OK to run during pause). G14/G16/G20 also have paused-checks. Audit incorrectly flagged Lesson L17 violation.
+
+### Touched
+- `game.js` — Phase 2.1 helpers added, Phase 2.2 dead code removed (114 lines)
+- `index.html` — cache bump v=20260426b
+- TODO-GAME-FIXES.md, CHANGELOG.md, memory
+
+---
+
 ## 📊 Session 2026-04-26 — Audit Phase 1 Quick Wins (Tasks #73-#78)
 
 Cache bump: `v=20260425e` → `v=20260426a` (atomic across 4 files).

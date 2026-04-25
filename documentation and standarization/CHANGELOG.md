@@ -1,5 +1,26 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-26 — Audit Phase 2 (Tasks #80-#82)
+
+Cache bump: `v=20260426a` → `v=20260426b`.
+
+### Shared helpers (Task #80)
+- `animateClass(el, className, durationMs)` — replaces 50+ inline class-add+setTimeout patterns
+- `addTrackedListener` + `clearTrackedListeners` — WeakMap registry to prevent leaked listeners (audit found 27 add vs 12 remove imbalance)
+- Per Lesson L22 (centralized helper pattern). Migration to existing callsites is incremental.
+
+### Dead code removal (Task #81)
+- `_initGame14_legacy` (58 lines) — replaced by standalone `games/g14.html`
+- `_initGame16_legacy` (32 lines) — replaced by `games/g16-pixi.html`
+- `buildModernTrainSVG` (24 lines) — replaced by `buildDieselLocoSVG`
+- **114 lines removed**, no function references remaining
+
+### Audit corrections (Task #82)
+- Bahasa Indonesia spot-check: already mostly Indonesian; audit over-flagged
+- Pause integration: G15/G14/G16/G20 already have `gamePaused` checks in main tickers; audit incorrectly flagged L17 violation
+
+---
+
 ## 2026-04-26 — Audit Phase 1 Quick Wins (Tasks #73-#79)
 
 Cache bump: `v=20260425e` → `v=20260426a`. From AUDIT-2026-04-25.md Phase 1 implementation.

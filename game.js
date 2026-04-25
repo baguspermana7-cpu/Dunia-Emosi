@@ -2042,6 +2042,60 @@ function playTone(freq,dur,type='sine',vol=0.2){if(!isSoundOn())return;try{const
 function playCorrect(){playTone(523,0.1,'sine',0.2);setTimeout(()=>playTone(659,0.1,'sine',0.2),100);setTimeout(()=>playTone(784,0.2,'sine',0.25),200);setTimeout(()=>playTone(1047,0.3,'sine',0.2),340)}
 let _wrongAudio=null;function playWrong(){if(!isSoundOn())return;try{if(!_wrongAudio){_wrongAudio=new Audio('assets/wrong-buzzer.mp3');_wrongAudio.volume=0.7}const a=_wrongAudio.cloneNode();a.volume=0.7;a.play().catch(()=>{playTone(280,0.35,'sawtooth',0.1);setTimeout(()=>playTone(220,0.3,'sawtooth',0.08),150)})}catch(e){playTone(280,0.35,'sawtooth',0.1);setTimeout(()=>playTone(220,0.3,'sawtooth',0.08),150)}}
 function playClick(){playTone(440,0.06,'sine',0.1)}
+
+// ════════════════════════════════════════════════════════════════════
+// Task #80 (2026-04-26): Shared animation + listener helpers per AUDIT-2026-04-25
+// Phase 2.1 — Lesson L22 centralized helper pattern
+// ════════════════════════════════════════════════════════════════════
+
+/**
+ * animateClass — add a CSS class for a given duration, then remove.
+ * Replaces 50+ inline `el.classList.add('x'); setTimeout(()=>el.classList.remove('x'), N)` patterns.
+ * Null-safe. Force-restart animation by removing class first + reflow.
+ * @param {HTMLElement|null} el
+ * @param {string} className
+ * @param {number} durationMs
+ */
+function animateClass(el, className, durationMs) {
+  if (!el || !className) return
+  el.classList.remove(className)
+  void el.offsetWidth   // force reflow so re-add restarts animation
+  el.classList.add(className)
+  setTimeout(() => { try { el.classList.remove(className) } catch(_) {} }, durationMs)
+}
+
+/**
+ * addTrackedListener — add event listener that's tracked for later cleanup.
+ * Replaces ad-hoc addEventListener calls with no removeEventListener counterpart.
+ * Use clearTrackedListeners(el) on game exit/swap to prevent memory leaks.
+ * @param {HTMLElement|Window|Document} el
+ * @param {string} type
+ * @param {Function} fn
+ * @param {boolean|object} [opts]
+ */
+const _trackedListeners = new WeakMap()  // el → [{type, fn, opts}]
+function addTrackedListener(el, type, fn, opts) {
+  if (!el || !type || !fn) return
+  el.addEventListener(type, fn, opts)
+  let list = _trackedListeners.get(el)
+  if (!list) { list = []; _trackedListeners.set(el, list) }
+  list.push({type, fn, opts})
+}
+function clearTrackedListeners(el) {
+  if (!el) return
+  const list = _trackedListeners.get(el)
+  if (!list) return
+  for (const {type, fn, opts} of list) {
+    try { el.removeEventListener(type, fn, opts) } catch(_) {}
+  }
+  _trackedListeners.delete(el)
+}
+
+if (typeof window !== 'undefined') {
+  window.animateClass = animateClass
+  window.addTrackedListener = addTrackedListener
+  window.clearTrackedListeners = clearTrackedListeners
+}
 function playBreathIn(){playTone(392,4.0,'sine',0.06)}
 function playBreathOut(){playTone(330,4.0,'sine',0.06)}
 // Compatibility adapter for legacy playSound() calls
@@ -9560,30 +9614,8 @@ function buildSteamLocoSVG(cfg, opts = {}) {
 }
 
 // Modern/electric train inline SVG (for header icon display)
-function buildModernTrainSVG(cfg, opts = {}) {
-  const { width = 148, height = 64 } = opts
-  const col = cfg.color || '#1a4a8a'
-  return `<svg viewBox="0 0 200 60" width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-  <ellipse cx="100" cy="58" rx="88" ry="4" fill="rgba(0,0,0,0.2)"/>
-  <rect x="8"   y="14" width="172" height="34" rx="8" fill="${col}"/>
-  <rect x="8"   y="14" width="172" height="11" rx="8" fill="rgba(255,255,255,0.12)"/>
-  <rect x="180" y="14" width="18"  height="34" rx="8" fill="${col}"/>
-  <polygon points="8,48 2,38 2,24 8,14" fill="${col}"/>
-  <circle cx="6"  cy="24" r="5" fill="#FFD166" opacity="0.9"/>
-  <rect x="22"  y="20" width="28" height="16" rx="4" fill="rgba(135,206,235,0.85)"/>
-  <rect x="64"  y="20" width="28" height="16" rx="4" fill="rgba(135,206,235,0.85)"/>
-  <rect x="110" y="20" width="28" height="16" rx="4" fill="rgba(135,206,235,0.85)"/>
-  <rect x="155" y="20" width="22" height="16" rx="4" fill="rgba(135,206,235,0.85)"/>
-  <circle cx="40"  cy="52" r="8" fill="#333" stroke="#999" stroke-width="1.5"/>
-  <circle cx="40"  cy="52" r="3" fill="#aaa"/>
-  <circle cx="80"  cy="52" r="8" fill="#333" stroke="#999" stroke-width="1.5"/>
-  <circle cx="80"  cy="52" r="3" fill="#aaa"/>
-  <circle cx="122" cy="52" r="8" fill="#333" stroke="#999" stroke-width="1.5"/>
-  <circle cx="122" cy="52" r="3" fill="#aaa"/>
-  <circle cx="162" cy="52" r="8" fill="#333" stroke="#999" stroke-width="1.5"/>
-  <circle cx="162" cy="52" r="3" fill="#aaa"/>
-</svg>`
-}
+// Task #81 (2026-04-26): Removed buildModernTrainSVG (dead code, never invoked).
+// Replaced by `buildDieselLocoSVG` for all train rendering paths.
 
 // Inline SVG diesel locomotive builder
 function buildDieselLocoSVG(cfg, opts = {}) {
@@ -10132,64 +10164,6 @@ function initGame14() {
   const diff = state.selectedLevel || 'easy'
   try { sessionStorage.setItem('g14Config', JSON.stringify({ level: lv, difficulty: diff })) } catch(_) {}
   window.location.href = 'games/g14.html'
-}
-function _initGame14_legacy() {
-  const lv = state.selectedLevelNum || 1
-  const diff = lv <= 7 ? 'easy' : lv <= 14 ? 'medium' : 'hard'
-  // Clean up any leftover DOM elements from previous race
-  if (g14State.aiTrains) g14State.aiTrains.forEach(a => { if(a.el && a.el.parentNode) a.el.remove() })
-  if (g14State.obstacles) g14State.obstacles.forEach(o => { if(o.el && o.el.parentNode) o.el.remove() })
-  if (g14State.animFrame) cancelAnimationFrame(g14State.animFrame)
-
-  g14State = {
-    lane: 1,
-    trainType: null,
-    trainCfg: null,
-    speed: 0, pressure: 70,
-    boosting: false, boostCooldown: false, boostTimer: null, slowMode: false,
-    hp: 3, frame: 0, distance: 0,
-    finishLine: diff === 'easy' ? 400 : diff === 'medium' ? 700 : 1000,
-    running: false, animFrame: null,
-    invincible: 0,
-    aiTrains: [], obstacles: [],
-    obstacleInterval: diff === 'easy' ? 220 : diff === 'medium' ? 150 : 90,
-    // Lane top% positions — center of each of 3 equal rows
-    laneTopPct: [16.7, 50, 83.3],
-    diff, lv, stars: 0,
-    trackW: 0,  // set when race starts
-  }
-  document.getElementById('g14-level').textContent = `Lv.${lv}`
-  document.getElementById('g14-start-msg').textContent = ''
-  document.getElementById('g14-go-btn-wrap').style.display = 'none'
-  hideGameResult()
-  document.getElementById('g14-start-overlay').style.display = 'flex'
-  document.getElementById('g14-dist-bar').textContent = '0m'
-  document.getElementById('g14-dist-fill').style.width = '0%'
-  document.getElementById('g14-lives').innerHTML = '❤️❤️❤️'
-  document.getElementById('g14-stars').textContent = '🏁 0m'
-  document.getElementById('g14-position').style.display = 'none'
-  document.getElementById('g14-speedometer').textContent = '0 km/h'
-  document.getElementById('g14-math-popup').style.display = 'none'
-  document.getElementById('g14-speed-lines').style.display = 'none'
-  const _wl = document.getElementById('g14-wind-lines'); if (_wl) _wl.style.display = 'none'
-  const _bw = document.getElementById('g14-boiler-wrap'); if (_bw) _bw.classList.remove('danger')
-  // Touch swipe for lane switching
-  const track = document.getElementById('g14-track')
-  if (!track._g14SwipeAttached) {
-    track._g14SwipeAttached = true
-    let _swipeY = 0
-    track.addEventListener('touchstart', e => { _swipeY = e.touches[0].clientY }, {passive:true})
-    track.addEventListener('touchend', e => {
-      const dy = e.changedTouches[0].clientY - _swipeY
-      if (dy < -38) g14LaneUp()
-      else if (dy > 38) g14LaneDown()
-    }, {passive:true})
-  }
-  // Play station ambient during train selection
-  g14StopAllAudio()
-  g14StationAudio.currentTime = 0
-  g14StationAudio.play().catch(()=>{})
-  g14RenderTrainSelect()
 }
 
 function g14RenderTrainSelect() {
@@ -10861,38 +10835,6 @@ function initGame16() {
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g16Config', JSON.stringify({ level: lv })) } catch(_) {}
   window.location.href = 'games/g16-pixi.html'
-}
-function _initGame16_legacy() {
-  const lv = state.selectedLevelNum || 1
-  const diff = lv <= 7 ? 'easy' : lv <= 14 ? 'medium' : 'hard'
-  g16State = {
-    diff, lv, running: false,
-    words: [...G16_WORDS[diff]].sort(() => Math.random() - 0.5),
-    wordIdx: 0, wordsNeeded: diff === 'easy' ? 3 : diff === 'medium' ? 4 : 5,
-    wordsComplete: 0,
-    currentWord: '', currentEmoji: '', collectedIdx: 0,
-    phase: 0,
-    needlePos: 0, needleDir: 1, needleSpeed: diff === 'easy' ? 0.8 : diff === 'medium' ? 1.2 : 1.8,
-    needleInterval: null,
-    hookTries: 0, maxHookTries: diff === 'easy' ? 5 : diff === 'medium' ? 4 : 3,
-    hookSuccess: false,
-    danger: 0, dangerInterval: null,
-    pullProgress: 0
-  }
-  document.getElementById('g16-level').textContent = `Lv.${lv}`
-  document.getElementById('g16-stars-badge').textContent = '🆘 0'
-  hideGameResult()
-  document.getElementById('g16-phase1').style.display = 'none'
-  document.getElementById('g16-phase2').style.display = 'none'
-  document.getElementById('g16-start-overlay').style.display = 'flex'
-  document.getElementById('g16-victim-train').style.right = '14%'
-  document.getElementById('g16-danger-fill').style.width = '0%'
-  document.getElementById('g16-victim-train').className = ''
-  // Render SVG trains using G14 builders
-  const heroCfg = TRAIN_TYPES_14['malivlakb250'] || TRAIN_TYPES_14['b2507'] || G14_CATEGORIES[0].trains[0]
-  const victimCfg = TRAIN_TYPES_14['caseyjr'] || TRAIN_TYPES_14['c1218'] || G14_CATEGORIES[0].trains[2]
-  document.getElementById('g16-hero-train').innerHTML = buildSteamLocoSVG(heroCfg, {width:130, height:58, animate:true})
-  document.getElementById('g16-victim-train').innerHTML = buildSteamLocoSVG(victimCfg, {width:130, height:58, animate:true})
 }
 
 function g16BeginGame() {
