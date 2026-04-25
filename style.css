@@ -2427,6 +2427,10 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 @keyframes g10PHit{0%,100%{transform:scaleX(var(--flip))}15%{transform:scaleX(var(--flip)) translateX(10px) rotate(-3deg)}30%{transform:scaleX(var(--flip)) translateX(-12px) rotate(2deg)}50%{transform:scaleX(var(--flip)) translateX(-7px)}70%{transform:scaleX(var(--flip)) translateX(8px)}85%{transform:scaleX(var(--flip)) translateX(-3px)}}
 .g10-spr.spr-flash{animation:g10Flash 0.45s ease;}
 @keyframes g10Flash{0%,100%{filter:drop-shadow(0 6px 24px rgba(0,0,0,0.65)) brightness(1)}20%,60%{filter:brightness(8) saturate(0)}40%,80%{filter:drop-shadow(0 6px 24px rgba(0,0,0,0.65)) brightness(1)}}
+/* Task #83 (2026-04-26): when sprite has BOTH .spr-hit AND .spr-flash, run both animations.
+   Single `animation:` declaration overrides — must merge with comma-separated values. */
+.g10-espr.spr-hit.spr-flash{animation:g10EHitFlip 0.45s ease, g10Flash 0.45s ease;}
+.g10-pspr.spr-hit.spr-flash{animation:g10PHit 0.45s ease, g10Flash 0.45s ease;}
 /* Defeat — uses var(--flip) so JS-driven per-Pokemon facing is preserved */
 .g10-espr.spr-defeat{animation:g10EDefeatFlip 0.85s ease forwards;}
 @keyframes g10EDefeatFlip{
@@ -3621,6 +3625,9 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 @keyframes g13WFlash{0%,100%{transform:scaleX(var(--flip,1));filter:drop-shadow(0 6px 16px rgba(0,0,0,0.7)) brightness(1)}30%,70%{transform:scaleX(var(--flip,1));filter:brightness(8) saturate(0) drop-shadow(0 0 18px white)}55%{transform:scaleX(var(--flip,1));filter:drop-shadow(0 6px 16px rgba(0,0,0,0.7)) brightness(1)}}
 .g13-pspr.spr-flash{animation:g13PFlash 0.45s ease;}
 @keyframes g13PFlash{0%,100%{transform:scaleX(var(--flip,-1));filter:drop-shadow(0 6px 16px rgba(0,0,0,0.7)) brightness(1)}30%,70%{transform:scaleX(var(--flip,-1));filter:brightness(8) saturate(0) drop-shadow(0 0 18px white)}55%{transform:scaleX(var(--flip,-1));filter:drop-shadow(0 6px 16px rgba(0,0,0,0.7)) brightness(1)}}
+/* Task #83: combined hit+flash for G13 — same root cause as G10 fix above */
+.g13-spr.spr-hit.spr-flash{animation:g13HitAnim 0.4s ease, g13WFlash 0.45s ease;}
+.g13-pspr.spr-hit.spr-flash{animation:g13PHitAnim 0.4s ease, g13PFlash 0.45s ease;}
 @keyframes g13WAtkAnim{0%{transform:scaleX(var(--flip,1))}40%{transform:scaleX(var(--flip,1)) translateX(-22px) scale(1.1)}100%{transform:scaleX(var(--flip,1))}}
 @keyframes g13PAtkAnim{0%{transform:scaleX(var(--flip,-1))}40%{transform:scaleX(var(--flip,-1)) translateX(-22px) scale(1.1)}100%{transform:scaleX(var(--flip,-1))}}
 @keyframes g13HitAnim{0%,100%{transform:scaleX(var(--flip,1))}20%{transform:scaleX(var(--flip,1)) translateX(10px) rotate(3deg)}50%{transform:scaleX(var(--flip,1)) translateX(-8px) rotate(-2deg)}}
