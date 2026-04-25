@@ -2268,22 +2268,22 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 @media(max-width:480px) {
   .g10-field { flex:0 0 44vh !important; min-height:220px !important; }
   .g10-math { font-size:44px; }
-  .g10-cbtn { font-size:28px !important; padding:18px 10px !important; border-radius:18px; }
-  .g10-choices { gap:10px; }
+  .g10-cbtn { font-size:20px !important; padding:12px 4px !important; min-height:52px !important; border-radius:12px; }
+  .g10-choices { gap:6px; }
 }
 @media(max-width:400px) {
   .g10-field { flex:0 0 42vh !important; min-height:200px !important; }
   .g10-math { font-size:38px; }
-  .g10-cbtn { font-size:26px !important; padding:16px 8px !important; }
-  .g10-qpanel { padding:10px 12px 14px; gap:8px; }
-  .g10-choices { max-width:100%; }
+  .g10-cbtn { font-size:18px !important; padding:10px 3px !important; min-height:48px !important; }
+  .g10-qpanel { padding:10px 10px max(10vh, calc(env(safe-area-inset-bottom, 0px) + 14px)); gap:6px; }
+  .g10-choices { max-width:100%; gap:5px; }
   .g10-oval { width:70px !important; height:14px !important; }
 }
 @media(max-width:360px) {
   .g10-field { flex:0 0 40vh !important; min-height:180px !important; }
   .g10-math { font-size:34px; }
-  .g10-cbtn { font-size:24px !important; padding:14px 6px !important; }
-  .g10-choices { max-width:100%; gap:8px; }
+  .g10-cbtn { font-size:16px !important; padding:8px 2px !important; min-height:44px !important; }
+  .g10-choices { max-width:100%; gap:4px; }
   .g10-oval { width:60px !important; height:12px !important; }
 }
 
@@ -2463,7 +2463,7 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 /* Question panel — DS bottom screen, stacks tightly from top */
 .g10-qpanel{
   flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
-  padding:10px 16px 16px;gap:6px;
+  padding:10px 16px max(10vh, calc(env(safe-area-inset-bottom, 0px) + 16px));gap:6px;
   background:rgba(14,14,30,0.99);
   border-top:2px solid rgba(255,255,255,0.07);overflow-y:visible;
 }
@@ -2482,7 +2482,7 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 }
 .g10-math.pop{animation:g10MathPop 0.3s cubic-bezier(0.34,1.56,0.64,1);}
 @keyframes g10MathPop{from{transform:scale(0.6);opacity:0}to{transform:scale(1);opacity:1}}
-.g10-choices{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:460px;}
+.g10-choices{display:grid;grid-template-columns:repeat(4, 1fr);gap:8px;width:100%;max-width:480px;}
 .g10-hint{min-height:0;text-align:center;font-size:13px;font-weight:800;color:#FCD34D;padding:0;transition:all 0.3s;}
 .g10-hint:empty{display:none;}
 .g10-model{min-height:0;display:flex;justify-content:center;align-items:center;gap:4px;flex-wrap:wrap;padding:0;}
@@ -2499,12 +2499,13 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
   position:relative;overflow:hidden;
   background:linear-gradient(180deg,#3B6FD4 0%,#2855B0 50%,#1A3D8A 100%);
   border:2px solid rgba(120,160,255,0.5);
-  border-radius:20px;padding:20px 12px;
-  font-size:32px;font-weight:900;color:#fff;cursor:pointer;
+  border-radius:14px;padding:14px 6px;
+  min-height:60px;
+  font-size:24px;font-weight:900;color:#fff;cursor:pointer;
   font-family:'Fredoka One',cursive;
   transition:transform 0.1s cubic-bezier(0.34,1.56,0.64,1),
              background 0.15s ease,border-color 0.15s ease,box-shadow 0.15s ease;
-  box-shadow:0 5px 0 #0F2460, inset 0 1px 0 rgba(255,255,255,0.22);
+  box-shadow:0 4px 0 #0F2460, inset 0 1px 0 rgba(255,255,255,0.22);
   text-shadow:0 2px 6px rgba(0,0,0,0.5);
 }
 .g10-cbtn:active{transform:scale(0.88);}
@@ -5848,3 +5849,248 @@ body { background: #0a0a1a !important; }
 
 
 @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+/* ════════════════════════════════════════════════════════════════════
+ * Task #67 (2026-04-25): G13 Mega Evolution visual overlay
+ * Sprite stage 2 reused; aura ring + badge layered above for "Mega Form" feel
+ * Local sprites only (no Mega-specific image asset). See G13-EVOLUTION-CHAIN-SPEC.md
+ * ════════════════════════════════════════════════════════════════════ */
+.poke-mega-aura {
+  filter: drop-shadow(0 0 14px var(--aura-color, #FBBF24)) drop-shadow(0 0 28px var(--aura-color2, rgba(251,191,36,0.5)));
+  animation: megaPulse 1.4s ease-in-out infinite;
+}
+.poke-mega-aura.aura-gold     { --aura-color: #FBBF24; --aura-color2: rgba(251,191,36,0.55); }
+.poke-mega-aura.aura-blue     { --aura-color: #3B82F6; --aura-color2: rgba(59,130,246,0.55); }
+.poke-mega-aura.aura-red      { --aura-color: #EF4444; --aura-color2: rgba(239,68,68,0.6); }
+.poke-mega-aura.aura-rainbow  { animation: megaPulseRainbow 2.4s linear infinite; }
+
+@keyframes megaPulse {
+  0%,100% { filter: drop-shadow(0 0 12px var(--aura-color)) drop-shadow(0 0 22px var(--aura-color2)); transform: scale(1); }
+  50%     { filter: drop-shadow(0 0 22px var(--aura-color)) drop-shadow(0 0 38px var(--aura-color2)); transform: scale(1.04); }
+}
+@keyframes megaPulseRainbow {
+  0%   { filter: drop-shadow(0 0 16px #EF4444) drop-shadow(0 0 28px rgba(239,68,68,0.5)); }
+  20%  { filter: drop-shadow(0 0 16px #FBBF24) drop-shadow(0 0 28px rgba(251,191,36,0.5)); }
+  40%  { filter: drop-shadow(0 0 16px #22C55E) drop-shadow(0 0 28px rgba(34,197,94,0.5)); }
+  60%  { filter: drop-shadow(0 0 16px #3B82F6) drop-shadow(0 0 28px rgba(59,130,246,0.5)); }
+  80%  { filter: drop-shadow(0 0 16px #A855F7) drop-shadow(0 0 28px rgba(168,85,247,0.5)); }
+  100% { filter: drop-shadow(0 0 16px #EF4444) drop-shadow(0 0 28px rgba(239,68,68,0.5)); }
+}
+
+.poke-mega-badge {
+  position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+  font-family: 'Fredoka One', cursive; font-weight: 900; font-size: 13px;
+  color: white; text-shadow: 0 1px 4px rgba(0,0,0,0.85);
+  background: linear-gradient(135deg, var(--badge-color, #FBBF24), rgba(255,255,255,0.92));
+  padding: 4px 12px; border-radius: 20px;
+  border: 2px solid rgba(255,255,255,0.92);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+  white-space: nowrap; pointer-events: none;
+  z-index: 12;
+}
+.poke-mega-badge.aura-gold    { --badge-color: #FBBF24; }
+.poke-mega-badge.aura-blue    { --badge-color: #3B82F6; color: white; }
+.poke-mega-badge.aura-red     { --badge-color: #EF4444; color: white; }
+.poke-mega-badge.aura-rainbow { --badge-color: #A855F7; color: white; }
+
+@keyframes megaBadgeBounce {
+  0%   { transform: translateX(-50%) scale(0) rotate(-10deg); opacity: 0; }
+  60%  { transform: translateX(-50%) scale(1.18) rotate(2deg); opacity: 1; }
+  100% { transform: translateX(-50%) scale(1) rotate(0); opacity: 1; }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+ * Task #67: G13 Family Selector — category tabs (POPULER / ASH / KEREN)
+ * ════════════════════════════════════════════════════════════════════ */
+.g13-fam-tabs {
+  display: flex; gap: 6px; padding: 8px 12px 4px; overflow-x: auto;
+  scrollbar-width: none; position: sticky; top: 0;
+  background: rgba(8,4,24,0.95); backdrop-filter: blur(6px);
+  z-index: 5;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.g13-fam-tabs::-webkit-scrollbar { display: none; }
+.g13-fam-tab {
+  flex-shrink: 0; padding: 8px 14px; border-radius: 14px;
+  border: 2px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.65); cursor: pointer;
+  font-family: 'Fredoka One', cursive; font-weight: 900; font-size: 13px;
+  letter-spacing: 0.3px; white-space: nowrap;
+  transition: all 0.18s ease;
+}
+.g13-fam-tab:active { transform: scale(0.94); }
+.g13-fam-tab.active {
+  background: linear-gradient(135deg, var(--tab-color, #FBBF24), rgba(255,255,255,0.18));
+  border-color: var(--tab-color, #FBBF24);
+  color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  box-shadow: 0 0 16px var(--tab-glow, rgba(251,191,36,0.45));
+}
+.g13-fam-tab.tab-popular { --tab-color: #FBBF24; --tab-glow: rgba(251,191,36,0.45); }
+.g13-fam-tab.tab-ash     { --tab-color: #EF4444; --tab-glow: rgba(239,68,68,0.5); }
+.g13-fam-tab.tab-cool    { --tab-color: #C084FC; --tab-glow: rgba(192,132,252,0.5); }
+.g13-fam-tab.tab-random  { --tab-color: #38BDF8; --tab-glow: rgba(56,189,248,0.5); }
+
+/* Mega indicator on family card (shows when chain has `mega` field) */
+.g13-fam-mega-indicator {
+  position: absolute; top: 8px; right: 8px;
+  font-size: 11px; font-weight: 900; font-family: 'Fredoka One', cursive;
+  background: linear-gradient(135deg, #FBBF24, #F59E0B);
+  color: #1a1a1a; padding: 2px 7px; border-radius: 10px;
+  border: 1.5px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  letter-spacing: 0.5px;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+ * Task #66 (2026-04-25): Region & City Selector Overlays
+ * Stage A (region) + Stage B (city) — bottom-sheet pattern, slide-up animation
+ * ════════════════════════════════════════════════════════════════════ */
+.region-overlay, .city-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(5, 5, 20, 0.92); backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 320;
+  align-items: flex-end; justify-content: center;
+}
+.region-overlay.open, .city-overlay.open { display: flex; }
+.region-sheet, .city-sheet {
+  width: 100%; max-width: 720px;
+  background: linear-gradient(180deg, #1C1030 0%, #0A0820 100%);
+  border-top: 1.5px solid rgba(167, 139, 250, 0.3);
+  border-radius: 24px 24px 0 0;
+  padding: 0 0 max(10vh, calc(env(safe-area-inset-bottom, 0px) + 24px));
+  animation: regionSlideUp 0.32s cubic-bezier(0.34, 1.2, 0.64, 1);
+  max-height: 88vh; overflow-y: auto;
+}
+@keyframes regionSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+.region-hdr, .city-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  position: sticky; top: 0; z-index: 1;
+  background: linear-gradient(180deg, #1C1030, #1a0d2a);
+}
+.region-hdr-title, .city-hdr-title {
+  flex: 1; text-align: center;
+  font-family: 'Fredoka One', cursive; font-weight: 900; font-size: 16px;
+  color: white; letter-spacing: 0.4px;
+}
+.city-hdr-title { font-size: 18px; }
+.region-close, .city-back {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%; width: 36px; height: 36px;
+  color: white; padding: 0; cursor: pointer;
+  font-size: 16px; font-weight: 700; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.region-close:active, .city-back:active { transform: scale(0.92); }
+
+/* ── Region grid ── */
+.region-grid {
+  display: grid; gap: 10px; padding: 12px 14px;
+  grid-template-columns: repeat(2, 1fr);
+}
+@media (min-width: 720px) { .region-grid { grid-template-columns: repeat(5, 1fr); } }
+
+.region-card {
+  position: relative; cursor: pointer; overflow: hidden;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.07), rgba(0, 0, 0, 0.25));
+  border: 2px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px; padding: 12px 10px;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.15s, box-shadow 0.15s;
+  min-height: 130px;
+}
+.region-card:active { transform: scale(0.94); }
+.region-card-icon {
+  width: 64px; height: 64px; object-fit: contain;
+  filter: var(--region-filter, none);
+  transition: transform 0.18s ease;
+}
+.region-card:active .region-card-icon { transform: rotate(-6deg) scale(1.05); }
+.region-card-name {
+  font-family: 'Fredoka One', cursive; font-weight: 900; font-size: 14px;
+  color: white; text-align: center; line-height: 1.05;
+}
+.region-card-gen {
+  font-size: 10px; color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.08); padding: 2px 8px; border-radius: 10px;
+}
+.region-card-progress {
+  font-size: 11px; font-weight: 900; color: #FBBF24;
+  font-family: 'Fredoka One', cursive;
+}
+
+/* ── City grid ── */
+.city-grid {
+  display: grid; gap: 8px; padding: 10px 14px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 720px) { .city-grid { grid-template-columns: repeat(3, 1fr); } }
+
+.city-card {
+  position: relative; cursor: pointer; overflow: hidden;
+  display: grid; grid-template-columns: 60px 1fr auto;
+  gap: 10px; align-items: center; padding: 10px 12px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.3));
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.15s, box-shadow 0.15s;
+  min-height: 70px;
+}
+.city-card:active { transform: scale(0.96); }
+.city-card-icon {
+  width: 48px; height: 48px; object-fit: contain;
+  filter: var(--region-filter, none);
+}
+.city-card-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.city-card-name {
+  font-family: 'Fredoka One', cursive; font-weight: 900; font-size: 14px;
+  color: white; line-height: 1.1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.city-card-meta {
+  font-size: 11px; color: rgba(255, 255, 255, 0.55);
+  display: flex; gap: 6px; align-items: center;
+}
+.city-card-tier { display: inline-flex; gap: 1px; }
+.city-card-tier .dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--region-color, #FBBF24); opacity: 0.4;
+}
+.city-card-tier .dot.active { opacity: 1; }
+.city-card-status { font-size: 12px; font-weight: 900; flex-shrink: 0; }
+
+/* ── State variants ── */
+.city-card.completed {
+  border-color: rgba(34, 197, 94, 0.55);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(0, 0, 0, 0.35));
+}
+.city-card.completed .city-card-status { color: #FBBF24; letter-spacing: 1px; }
+.city-card.available {
+  border-color: var(--region-color, #FBBF24);
+  box-shadow: 0 0 14px rgba(251, 191, 36, 0.18);
+}
+.city-card.available .city-card-status { color: #FBBF24; }
+.city-card.locked {
+  cursor: not-allowed; opacity: 0.45;
+  background: linear-gradient(135deg, rgba(50, 50, 70, 0.4), rgba(0, 0, 0, 0.5));
+}
+.city-card.locked .city-card-status { color: rgba(255, 255, 255, 0.4); }
+.city-card.locked .city-card-icon { filter: grayscale(0.8) opacity(0.6); }
+.city-card.locked .city-card-name { color: rgba(255, 255, 255, 0.5); }
+
+/* New unlock pulse */
+@keyframes cityNewlyUnlocked {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 14px rgba(251, 191, 36, 0.18); }
+  50%      { transform: scale(1.02); box-shadow: 0 0 22px rgba(251, 191, 36, 0.5); }
+}
+.city-card.newly-unlocked { animation: cityNewlyUnlocked 1.6s ease-in-out 2; }
+
+@media (max-width: 400px) {
+  .region-card { padding: 10px 6px; min-height: 120px; }
+  .region-card-icon { width: 56px; height: 56px; }
+  .region-card-name { font-size: 13px; }
+  .city-card { padding: 8px 10px; }
+  .city-card-icon { width: 44px; height: 44px; }
+}

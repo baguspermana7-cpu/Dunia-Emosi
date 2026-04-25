@@ -1,0 +1,18 @@
+# Geosenge Town (Kalos)
+
+- Section: Core series locations
+- Source list: https://bulbapedia.bulbagarden.net/wiki/List_of_cities_and_towns
+- City page: https://bulbapedia.bulbagarden.net/wiki/Geosenge_Town
+- Bulbapedia summary: Geosenge Town is a rural town located in the western part of the Kalos region. It is well known for its unusual rock structures which are rumored to have mysterious powers.
+- Reference image: https://archives.bulbagarden.net/media/upload/7/70/Geosenge_Town_XY.png
+- Expected PC output: ../pc/kalos__geosenge-town__pc.webp
+- Expected mobile output: ../mobile/kalos__geosenge-town__mobile.webp
+- Final format target: WebP under 60 KB when possible while keeping HD readability.
+
+## PC Prompt
+
+Pokemon-inspired stylized environment background for Geosenge Town, Kalos. Visual identity: elegant French-inspired boulevards, refined stonework, stylish gardens, and polished civic design. Lore cue: This place is a rural town located in the western part of the Kalos region. It is well known for its unusual rock structures which are rumored to have mysterious powers. Design one dominant landmark: electric generator tower. Composition: wide landscape game background, strong horizon readability, landmark placed in the upper 70% of the frame, suitable for a PC ratio scene. Important layout rule: reserve the bottom 30% of the image as a calm low-detail foreground for gameplay or UI overlay, using only paved utility plaza, with no major landmark, characters, props, or visual clutter inside that lower band. Lighting and mood: electric blue-hour glow. Style: polished anime game background, layered parallax depth, readable silhouettes, crisp midground, rich atmosphere. Rendering style: vibrant anime colouring, modern Pokemon XYZ-inspired TV-anime background polish, clean cel shading, luminous particles, subtle magical spark effects, rich gradient skies, crisp outlines, readable layered depth, cinematic light shafts, and a polished game-ready environment look. Avoid photorealism. No characters, no Pokemon, no readable text, no logo, no watermark.
+
+## Mobile Prompt
+
+Pokemon-inspired stylized environment background for Geosenge Town, Kalos. Visual identity: elegant French-inspired boulevards, refined stonework, stylish gardens, and polished civic design. Lore cue: This place is a rural town located in the western part of the Kalos region. It is well known for its unusual rock structures which are rumored to have mysterious powers. Design one dominant landmark: electric generator tower. Composition: tall mobile game background, vertical depth, landmark rising through the upper 70% of the frame, suitable for a mobile ratio scene. Important layout rule: reserve the bottom 30% of the image as a calm low-detail foreground for gameplay or UI overlay, using only paved utility plaza, with no major landmark, characters, props, or visual clutter inside that lower band. Lighting and mood: electric blue-hour glow. Style: polished anime game background, layered parallax depth, readable silhouettes, crisp midground, rich atmosphere. Rendering style: vibrant anime colouring, modern Pokemon XYZ-inspired TV-anime background polish, clean cel shading, luminous particles, subtle magical spark effects, rich gradient skies, crisp outlines, readable layered depth, cinematic light shafts, and a polished game-ready environment look. Avoid photorealism. No characters, no Pokemon, no readable text, no logo, no watermark.

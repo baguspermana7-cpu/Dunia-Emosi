@@ -6,7 +6,7 @@
 <title>Dunia Emosi 🐾</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="style.css?v=20260424i">
+<link rel="stylesheet" href="style.css?v=20260425c">
 </head>
 <body>
 <!-- Loading indicator — hidden by JS after page loads -->
@@ -516,7 +516,7 @@
         </div>
         <div class="wmap-nodes">
           <!-- G10: Pertarungan Pokemon -->
-          <div class="wmap-node" id="gtile-10" onclick="playClick();openLevelSelect(10)" title="Pertarungan Pokemon">
+          <div class="wmap-node" id="gtile-10" onclick="playClick();openRegionOverlay(10)" title="Pertarungan Pokemon">
             <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#7F1D1D,#EF4444);">
               <span class="wn-icon"><span class="map-pokeball" style="width:40px;height:40px;border-width:3px;"></span></span>
             </div>
@@ -524,7 +524,7 @@
             <div class="wmap-node-stars" id="gstars-10-lbl"></div>
           </div>
           <!-- G13b: Quick Fire -->
-          <div class="wmap-node" id="gtile-13b" onclick="playClick();startQuickFire()" title="Quick Fire">
+          <div class="wmap-node" id="gtile-13b" onclick="playClick();openRegionOverlay('13b')" title="Quick Fire">
             <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#0C0A09,#44403C);">
               <span class="wn-icon"><span class="map-ultraball" style="width:40px;height:40px;border-width:3px;"></span></span>
             </div>
@@ -532,7 +532,7 @@
             <div class="wmap-node-stars" id="gstars-13b-lbl"></div>
           </div>
           <!-- G13: Evolusi Math -->
-          <div class="wmap-node" id="gtile-13" onclick="playClick();openLevelSelect(13)" title="Evolusi Math">
+          <div class="wmap-node" id="gtile-13" onclick="playClick();openRegionOverlay(13)" title="Evolusi Math">
             <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#78350F,#F59E0B);">
               <span class="wn-icon"><img src="assets/Pokemon/sprites/raichu.png" style="width:44px;height:44px;image-rendering:pixelated;display:block;" onerror="this.outerHTML='⚡'"></span>
             </div>
@@ -943,8 +943,10 @@
         <h2 style="color:#fbbf24;margin:0;font-size:clamp(18px,4vw,24px);font-family:'Fredoka One',cursive;">Pilih Keluarga Pokémon</h2>
         <button onclick="document.getElementById('g13-fam-overlay').style.display='none'" style="background:rgba(255,255,255,0.1);color:#fff;border:2px solid rgba(255,255,255,0.3);border-radius:12px;padding:8px 14px;font-size:16px;cursor:pointer;font-weight:700;font-family:inherit;">✕ Tutup</button>
       </div>
-      <div style="color:rgba(255,255,255,0.7);font-size:13px;margin-bottom:14px;line-height:1.5;">Pilih keluarga Pokémon favoritmu untuk level ini! Level menentukan tingkat matematikanya 📐, keluarga menentukan Pokémonmu 🎯.</div>
-      <div id="g13-fam-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;"></div>
+      <div style="color:rgba(255,255,255,0.7);font-size:13px;margin-bottom:10px;line-height:1.5;">Pilih keluarga Pokémon favoritmu! Level 36+ unlock Mega Evolution ⭐</div>
+      <!-- Task #67: category tabs -->
+      <div id="g13-fam-tabs" class="g13-fam-tabs"></div>
+      <div id="g13-fam-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;padding:10px 0 4px;"></div>
     </div>
   </div>
 </div>
@@ -2069,6 +2071,30 @@ function loadPixiJS(cb) {
   document.head.appendChild(s)
 }
 </script>
-<script src="game.js?v=20260424i" defer></script>
+<!-- Task #66: Region & City Selector Overlays -->
+<div class="region-overlay" id="region-overlay" onclick="if(event.target===this)closeRegionOverlay()">
+  <div class="region-sheet">
+    <div class="region-hdr">
+      <span class="region-hdr-title" id="region-hdr-title">🗺️ Pilih Region</span>
+      <button class="region-close" onclick="closeRegionOverlay()" aria-label="Tutup">✕</button>
+    </div>
+    <div class="region-grid" id="region-grid"></div>
+  </div>
+</div>
+
+<div class="city-overlay" id="city-overlay" onclick="if(event.target===this)closeCityOverlay()">
+  <div class="city-sheet">
+    <div class="city-hdr" id="city-hdr">
+      <button class="city-back" onclick="backToRegionOverlay()" aria-label="Kembali">←</button>
+      <span class="city-hdr-title" id="city-hdr-title">Kanto</span>
+      <button class="region-close" onclick="closeCityOverlay()" aria-label="Tutup">✕</button>
+    </div>
+    <div class="city-grid" id="city-grid"></div>
+  </div>
+</div>
+
+<script src="games/data/region-meta.js?v=20260425b"></script>
+<script src="games/data/city-progression.js?v=20260425b"></script>
+<script src="game.js?v=20260425c" defer></script>
 </body>
 </html>

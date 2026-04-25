@@ -4,6 +4,70 @@
 
 ---
 
+## 2026-04-25 Evening (continued)
+
+### L23 — Sliding frontier unlock pattern for child-friendly progression
+- **Symptom**: Linear "complete level N to unlock N+1" feels rigid for kids age 5-10. But "unlock all" loses sense of journey.
+- **Fix**: `unlockedCount = min(2 + completedCount, total)` per region. Two cities always playable (frontier window), each completion opens one more. Replay doesn't add count.
+- **Lesson**: For child-targeted progression, use **sliding window of 2** (not 1, not all). Two visible options give choice (kid agency) without overwhelm. One completion → one new option preserves cause-effect connection. Apply to any level-select/world-map pattern: sliding-frontier gives forward momentum + agency. Pure linear (1-at-a-time) frustrates fast learners; pure unlock-all loses progression rhythm.
+
+### L24 — Filter-tinted single asset for color variation across categories
+- **Symptom**: Need 10 region cards with distinct colors. Generating 10 colored variants of same icon = 10× asset weight + maintenance burden.
+- **Fix**: Single `region.webp` (256×256, 14.7KB) shared across all 10 region cards. Per-region color via CSS `filter: hue-rotate({deg}) saturate({factor}) drop-shadow(0 0 8px {color})`. Region color comes from data (`REGION_META.kanto.hueRotate=0`, `johto=25`, etc.).
+- **Lesson**: Single-asset + filter tinting beats per-category asset variants when (a) icon is monochromatic-ish (Pokeball red base), (b) category count >5, (c) variations only need color (not shape). Trade-off: color subtle vs. per-asset wins on dramatic style. Apply to: badge collections, tag colors, category icons, status indicators. Avoid for: complex multi-color illustrations, brand assets, photographic icons.
+
+---
+
+## 2026-04-25 Evening
+
+### L20 — Visual-overlay strategy for missing-asset progression
+- **Symptom**: G13 wanted 3-stage evolution sampai Mega Evolution. Sprite Mega forms TIDAK ADA di local pack (hanya 1025 base sprites). Remote fetch melanggar Lesson L16.
+- **Root cause**: Game design ingin "Mega" rasa special, tapi assets tidak tersedia. False dichotomy: "fetch remote (lambat)" vs "skip Mega (kurang puas)".
+- **Fix**: Visual-overlay only — sprite stage 2 reused + CSS aura ring rotating + crown badge + 1.3× scale + audio cue. Anak-anak 5-10 tahun tidak peduli sprite "asli" Mega — mereka melihat dramatic visual = perceived power.
+- **Lesson**: Saat asset progression tidak tersedia, **layer effects in CSS/JS** (aura, glow, particle, scale, badge text). Jangan compromise gameplay rasa karena asset gap. Especially powerful untuk children's games where perception > literal accuracy. Apply pattern: "asset-light progression" = same sprite + escalating visual flair per stage.
+
+### L21 — Tier-stage gating: separate progression dimensions
+- **Symptom**: G13 sebelumnya hanya 2-stage hardcoded. Adding 3-stage broke existing chain data (tidak semua chain punya Mega).
+- **Root cause**: Single `evolved2` boolean was tying together both "does this chain have stage 2?" AND "do we render stage 2 at this level?". Mixing data-shape concern with progression concern.
+- **Fix**: New explicit `stages: 1|2|3` flag in `G13_DIFF` (per tier). Chain data shape stays stable. Render logic checks BOTH `chain.evolved2` (data) AND `tier.stages >= 2` (gate). Same for stage 3 with `chain.mega` AND `tier.stages >= 3`.
+- **Lesson**: Saat extending stage progression, separate "data exists" from "progression allows". Two boolean gates are ALWAYS clearer than one combined check. Apply to any RPG-style "does X unlock here" logic — keep DATA shape and PROGRESSION rules independent.
+
+### L22 — Centralized helpers for cross-game settings
+- **Symptom**: Multiple games (G10/G13/G13b) had INCONSISTENT enforcement of "easy mode" math rules. G13b stripped × in easy but always capped max at 20. G10 didn't gate by mode at all. Each had its own ad-hoc filter.
+- **Root cause**: Settings-driven rules were copy-pasted into each game's question generator. Updates required hunting all callsites.
+- **Fix**: Single `getMathLimits()` helper next to `isMathAdvanced()`. Returns `{advanced, maxNum, allowedOps}`. Every math game generator now calls it as first line.
+- **Lesson**: Any cross-game user setting needs ONE helper. Pattern: `getXxxLimits()` returns canonical config object derived from `localStorage`. Every game's question/difficulty logic consumes that. Audit table in `XXX-STANDARD.md` documents which games comply. New math game added without calling helper = bug. This pattern scales: same approach should apply to player age tier, audio volume, accessibility flags, etc.
+
+---
+
+## 2026-04-25
+
+### L16 — Local-first sprite policy: never call remote fetcher in grid renderers
+- **Symptom**: G13B party picker (🎒) became unresponsive when opened. UI froze 5-15s, then tab crashed. Reproducible only on G13B (G10 picker worked fine despite using same overlay).
+- **Root cause**: `renderPartyGrid` (`game.js:5378`) used `pokeSpriteOnline(slug)` which returns `https://img.pokemondb.net/sprites/home/normal/${slug}.png`. Trainer Ash has 41 Pokémon → 41 simultaneous remote PNG fetches + up to 41 GitHub-raw fallbacks via `img.onerror`. On slow mobile networks the connection pool maxed out, main thread blocked on image decode, and pressure built until OS killed the tab. The repo already had **1025 local HD WebP** sprites at `assets/Pokemon/pokemondb_hd_alt2/{NNNN}_{slug}.webp` and a helper `pokeSpriteAlt2(slug)` (`game.js:5192`) that returned the local path. The renderer just wasn't using it.
+- **Fix**: Local-first chain — try `pokeSpriteAlt2(slug)` first, fall back to `pokeSpriteOnline` only if `null`. Onerror chain gated by `dataset.fallback` to prevent loops. Added `loading="lazy"` + `decoding="async"` for browser-managed off-viewport deferral.
+- **Lesson**: Any grid renderer that creates ≥10 images at once MUST use a local source by default. Remote URLs are acceptable only as fallback for missing assets. When auditing UI code, grep for `pokeSpriteOnline\|pokeSpriteCDN\|pokeSpriteBackup` in any `.forEach`/`map` over a list — if found, that's a latent multi-fetch bug. The local-first rule applies to all asset types, not just sprites: use local audio, local fonts, local backgrounds whenever the project has them.
+
+### L17 — Modal/picker overlays must pause game-side timers (especially intervals)
+- **Symptom**: User stuck in G13B party picker. Even after closing, sometimes HP was lower than before opening. During legendary battle, the wild Pokemon kept attacking while picker was up.
+- **Root cause**: `openG13bPartyPicker` only added `.open` class to overlay. `_g13bLegAutoAtk` setInterval (`game.js:8402`, 14s tick during legendary fight) kept firing, calling `g13bWildHitsPlayer` which animated DOM, decremented HP, and could trigger `g13bGameOver` — all while the user thought game was paused because they were on a different "screen". The interval already had a `if (st.paused) return` guard (game.js:8410), but `paused` was never set.
+- **Fix**: Set `g13bState.paused = true` in `openG13bPartyPicker` (when phase='playing') and reset to `false` in `closePartyPicker` (when ctx='g13b'). The existing flag-based guard pattern means no clearInterval/setTimeout coordination is needed — just toggle the bit.
+- **Lesson**: Every picker/modal/overlay in a game with active timers must have a clear pause-on-open + resume-on-close contract. Audit checklist: opening any overlay should (a) set paused flag, (b) NOT clear pending intervals (keeps cadence), (c) gate every interval/timeout body with the flag. The same audit was done for Task #55 (G19) and Task #62 (G13B legendary) — Task #64 closes that loop for the picker entry path.
+
+### L18 — Mobile bottom safe-area: 10vh + env(safe-area-inset-bottom) for tappable bottom UI
+- **Symptom**: User reports G10 answer choices clipped by browser bottom UI bar on mobile. The 2×2 grid put the bottom row in the area where Chrome's URL bar / iOS Safari's tab strip overlapped.
+- **Root cause**: `.g10-qpanel` (`style.css:2464`) used `padding:10px 16px 16px` — only 16px bottom clearance. Chrome mobile's auto-hiding URL bar can reclaim 50-60px when scrolling stops; iOS Safari's tab strip is 50px. PWA mode + viewport-fit=cover pushes content into the safe-area-inset-bottom region.
+- **Fix**: Bottom padding now `max(10vh, calc(env(safe-area-inset-bottom, 0px) + 16px))`. The `max()` ensures: (a) ≥10% viewport height regardless of CSS env support, (b) safe-area + 16px when env is supported and ≥10vh fallback isn't enough. iPhone SE (667px) → 67px; iPhone 14 (844px) → 89px; both exceed worst-case bottom UI.
+- **Lesson**: Any tappable UI in the bottom 100px of the screen needs `padding-bottom: max(10vh, calc(env(safe-area-inset-bottom, 0px) + 16px))` (or larger) to survive Chrome auto-hide URL bar, iOS Safari tab strip, Android nav gesture bar, and PWA notch / home indicator. Don't rely on `env(safe-area-inset-bottom)` alone — many Android browsers don't set it. The 10vh fallback handles them. Apply this to G10/G11/G13/G13B qpanels and any other "bottom-anchored interactive panel" layout.
+
+### L19 — Multi-choice quiz layout: prefer single-row inline over multi-row grid for ≤4 choices
+- **Symptom**: G10's 2×2 answer grid felt cramped on mobile and clipped against bottom UI. User wanted G13c-style layout.
+- **Root cause**: 2×2 grid uses 2× the vertical space of a 1×4 inline row, putting the bottom row of choices into the danger zone (browser UI overlap). G13c (`#g13c-choices`) uses `grid-template-columns:1fr 1fr 1fr` because it has 4 move buttons + spare slot — visually compact, single tap zone.
+- **Fix**: G10 changed to `grid-template-columns:repeat(4, 1fr)` with smaller per-button padding (14px 6px → was 20px 12px), font-size 24px → was 32px, min-height 60px (Apple HIG min 44pt comfortably exceeded). Responsive scaling for narrow phones (480px/400px/360px breakpoints).
+- **Lesson**: For ≤4 multiple-choice answers in a kid-friendly mobile-first game, prefer single-row inline (`repeat(N, 1fr)`) over multi-row grid. Trade-offs: inline is harder for tiny tap targets — guard with `min-height: 60px` desktop / `44px` minimum mobile per Apple HIG. Save vertical space for game field + safe-area buffer. If choices are >4 or are long-form text, multi-row is fine — but reserve bottom 10vh regardless.
+
+---
+
 ## 2026-04-24
 
 ### L13 — `position:fixed` children are NOT viewport-anchored if any ancestor has `transform/filter/perspective`

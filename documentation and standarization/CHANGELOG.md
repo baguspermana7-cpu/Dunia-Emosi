@@ -1,5 +1,114 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-25 Late — City Progression System (127 cities, 10 regions)
+
+Cache bump: `v=20260425b` → `v=20260425c`.
+
+### Region → City progression replaces "Level 1-N" selector [Task #66]
+- **Goal**: G10/G13/G13b — replace random level selector dengan journey ala anime/game Pokémon. 127 cities across 10 main regions (Kanto-Paldea+Hisui).
+- **Unlock rule**: Sliding frontier — `unlockedCount = min(2 + completedCount, totalCities)` per region. Always 2 cities playable per region; each completion opens 1 more. Replay tidak menambah unlock count. All regions terbuka dari awal.
+- **Data layer**:
+  - `games/data/region-meta.js` — 10 region meta (color, icon, gen badge, hue-rotate filter for icon tinting)
+  - `games/data/city-progression.js` — unlock helpers (`getUnlockedCount`, `isCityUnlocked`, `isCityCompleted`, `setCityComplete`, `getCityStates`, `migrateLegacyLevelsToCity`)
+  - `games/data/city-pokemon-pack.js` — 127 cities × 5-7 Pokemon each = ~700 Pokemon entries with canonical packs (gym leader teams, route encounters, anime episodes)
+- **UI**:
+  - Stage A `#region-overlay` — 10 region cards (mobile 2-col, PC 5-col), tinted shared `region.webp` icon (14.7KB compressed dari Region.png 32KB)
+  - Stage B `#city-overlay` — N city cards (mobile 1-col, PC 3-col), tinted shared `cities.webp` icon (7.5KB compressed dari Cities.png 36KB)
+  - 3 visual states: 🔒 locked / ▶ available / ⭐⭐⭐ completed
+- **Game wire-up**:
+  - Game tiles `gtile-10/13/13b` onclick → `openRegionOverlay(N)` instead of legacy `openLevelSelect(N)`
+  - `pickPokeForLevel()` (game.js:5500) — checks `state.selectedCity`, prefers city pack
+  - `loadCityBackground(fieldEl)` helper — loads city bg via `background-size:cover` (no stretch)
+  - G10/G13/G13b `initGame*` calls `loadCityBackground` first
+  - G13b `g13bSpawnWild()` uses city pack as wild pool when city selected
+  - Victory paths: G10/G13/G13b call `setCityComplete(gameNum, region, citySlug, stars)`
+- **Migration**: legacy `prog.gN.completed=[1,2,3...]` → first N cities of Kanto/Johto/etc. via `migrateLegacyLevelsToCity()`. Idempotent via `cityMigrationDone:'20260425'` flag.
+- **Asset coverage**: 127 PC + 127 mobile background WebP (manifest-verified). 498 unique Pokemon slugs (audit-clean against local 1025 sprite pack).
+- **Slug normalization**: `_slugToAlt2File()` helper handles `mr-mime → mr_mime`, `nidoran-f → nidoranf` (local files use underscore, pokeapi uses dash)
+- **Spec**: `documentation and standarization/CITY-PROGRESSION-SPEC.md`
+
+### Touched
+- `game.js` (loadCityBackground helper, pickPokeForLevel city-aware, _slugToAlt2File slug normalizer, openRegionOverlay/openCityOverlay/closeRegionOverlay/closeCityOverlay/backToRegionOverlay/renderRegionGrid/renderCityGrid, initGame10/13/13b bg load, g13bSpawnWild city pool, victory paths setCityComplete)
+- `style.css` — `.region-overlay`, `.city-overlay`, `.region-card`, `.city-card` (with locked/available/completed states), `@keyframes regionSlideUp`/`cityNewlyUnlocked`
+- `index.html` — `#region-overlay`+`#city-overlay` structures, gtile-10/13/13b onclick redirects, script imports for region-meta + city-progression + city-pokemon-pack, cache bump `v=20260425c`
+- `assets/Pokemon/others/region.webp`+`cities.webp` — compressed from PNG (44%+21% size reduction)
+- New files: `games/data/{region-meta,city-progression,city-pokemon-pack}.js`
+- New doc: `documentation and standarization/CITY-PROGRESSION-SPEC.md`
+- Updated: `LESSONS-LEARNED.md` (L23 sliding-frontier unlock, L24 filter-tinted single asset)
+- `TODO-GAME-FIXES.md` Task #66 ✅
+
+---
+
+## 2026-04-25 Evening — G13 Evolution Expansion (44 chains, Mega) + Math Difficulty Rule
+
+Cache bump: `v=20260425a` → `v=20260425b`.
+
+### G13 Evolusi Math — 44 evolution chains with 3-stage Mega Evolution [Task #67]
+- **Goal**: 15+ popular + 20+ Ash + scenario evolusi 1x/2x/3x bertahap by level. Mega di level tengah dst.
+- **Data**: `G13_FAMILIES` expanded 16 → 44 chains
+  - 17 popular: kid-iconic generic (Bulbasaur, Charmander, Squirtle, Pichu, Caterpie, Abra, Gastly, Machop, Geodude, 3 Eeveelutions, Mudkip, Snivy, Fennekin, Sobble, Munchlax)
+  - **21 Ash**: Pikachu, Charizard X, Bulbasaur, Squirtle, Butterfree (Gmax), Pidgeot (Mega), Snorlax (Gmax), Heracross (Mega), Meganium, Sceptile (Mega), Glalie (Mega), Infernape, Staraptor, Garchomp (Mega), Pignite, Krookodile, **Greninja (Ash-Greninja)**, Talonflame, Incineroar, **Lucario (Mega)**, Dragonite
+  - 5 cool/pseudo: Dratini, Larvitar (Mega Tyranitar), Beldum (Mega Metagross), Bagon (Mega Salamence), Gible (Mega Garchomp)
+  - 1 random pseudo
+- **Tier expansion** (`G13_DIFF`): added `stages: 1|2|3` flag per tier
+  - 1-4 easy / 5-9 medium: stages=1 (1 evolution only)
+  - 10-16 hard / 17-25 2stage / 26-35 epic: stages=2 (2 evolutions)
+  - **36-45 3stage / 46-55 legendary: stages=3 (Mega Evolution)** ⭐
+- **3rd-stage flow**: new `canEvo3` gate + `s.megaForm` flag + `synthMaxBoostForm()` helper untuk chains tanpa canonical Mega
+- **Visual-overlay strategy** (per Lesson L20): Mega forms reuse stage 2 sprite + CSS aura ring (gold/blue/red/rainbow) + crown badge + 1.3× scale. No Mega-specific sprites needed (1025 local base sprites cukup). See `applyMegaOverlay()` / `clearMegaOverlay()` helpers.
+- **Sprite localization** (per Lesson L16): evolution sprite swap di `g13EvolveComplete` (game.js:8300) sekarang `pokeSpriteAlt2()` first, fallback remote — fixes pre-existing remote-only crash potential di evolve animation
+- **Selector UI**: category tabs (🎒 ASH default / ⭐ POPULER / ⭐ KEREN / 🎲 ACAK) sticky di overlay header. Mega indicator pill on family cards. `lazy` + `decoding=async` on grid thumbnails.
+- **Default selection**: `'ash-pikachu'` (most kid-recognized) saat first open
+- **Spec**: `G13-EVOLUTION-CHAIN-SPEC.md`
+
+### Math Difficulty Rule — Easy default, Hard opt-in [Task #68]
+- **Rule**: Easy (default) = + and − only, max 20. Hard (opt-in via Settings) = + − × ÷, max 50.
+- **Centralized helper**: `getMathLimits()` (game.js:1640+) returns `{advanced, maxNum, allowedOps}` — single source of truth
+- **Patched generators**:
+  - G10 `g10GenQuestion` (game.js:5670)
+  - G13 `g13GenQuestion` (game.js:7892) + megaForm boost +15
+  - G13b `g13bGenQuestion` (game.js:8710) + base max raised 20→30 at kills 30+
+- **Audit**: G1/G3/G4/G5/G7/G10/G11/G12/G13/G13b all reviewed, all compliant
+- **Default state**: `localStorage['dunia-emosi-mathadv']` undefined → easy mode → ✓ child-safe
+- **Spec**: `MATH-DIFFICULTY-STANDARD.md`
+
+### Touched
+- `game.js` — G13_DIFF (stages flag), G13_FAMILIES (44 entries), g13PickChain, g13GenQuestion, g13Answer (canEvo3), g13EvolveComplete (sprite localize + Mega overlay), openG13FamilySelector (tabs), getMathLimits, g10GenQuestion, g13bGenQuestion, synthMaxBoostForm, applyMegaOverlay, clearMegaOverlay
+- `style.css` — `.poke-mega-aura`, `.aura-{gold,blue,red,rainbow}`, `@keyframes megaPulse(Rainbow)`, `.poke-mega-badge`, `@keyframes megaBadgeBounce`, `.g13-fam-tabs`, `.g13-fam-tab`, `.g13-fam-mega-indicator`
+- `index.html` — `#g13-fam-tabs` strip + cache bump `v=20260425b`
+- `TODO-GAME-FIXES.md` — Task #67 + #68 ✅
+- `documentation and standarization/`:
+  - **NEW**: `G13-EVOLUTION-CHAIN-SPEC.md` (formal spec)
+  - **NEW**: `MATH-DIFFICULTY-STANDARD.md` (formal spec)
+  - **UPDATE**: `LESSONS-LEARNED.md` (L20-L22)
+
+---
+
+## 2026-04-25 — G13B picker crash fix + G10 choices layout
+
+Cache bump: `v=20260424i` → `v=20260425a`.
+
+### G13B (Quick Fire) — party picker stuck + tab crash fix [Task #64]
+- **Symptom**: User reported picker (🎒) opens but ✕ doesn't work, then tab crashes after a few seconds. Stuck at pokemon selection screen.
+- **Fix 1 — local-first sprite** (`game.js:5377-5388` renderPartyGrid): switched from `pokeSpriteOnline` (remote pokemondb.net) to `pokeSpriteAlt2` (local `assets/Pokemon/pokemondb_hd_alt2/...webp`). Trainer Ash has 41 Pokémon → previously triggered 41+ remote fetches simultaneously, blocking the main thread on slow mobile networks until OOM-tab-kill. Added `loading="lazy"` + `decoding="async"`. Two-stage onerror chain (local → remote → github raw) gated by `dataset.fallback` to prevent loops.
+- **Fix 2 — pause game while picker is open** (`game.js:5333-5341` closePartyPicker, `game.js:5440-5451` openG13bPartyPicker): set `g13bState.paused = true` on open and `false` on close (only when ctx=g13b and phase='playing'). Reuses existing `_g13bLegAutoAtk` interval guard at `game.js:8410` — no clearInterval/restart logic needed. Prevents legendary auto-attack from damaging player while picker is up.
+- **Fix 3 — current-Pokemon detection** (`game.js:5363-5365`): `currentId` now reads `g13bSavedPoke.id` when `partyPickerCtx === 'g13b'`. Previously always read `g10State.playerPoke.id` even in G13B context, so the "✔ Aktif" badge never appeared in G13B.
+
+### G10 (Math Battle) — answer choices 4-inline + 10vh bottom safe-area [Task #65]
+- **Symptom**: User reported 2×2 choices grid getting clipped by mobile browser bottom UI (Chrome auto-hide URL bar, iOS Safari tab strip). Wanted G13c-style horizontal compact layout.
+- **Fix 1 — 4-inline grid** (`style.css:2485` `.g10-choices`): `grid-template-columns:1fr 1fr` → `repeat(4, 1fr)`. Gap 12px → 8px. Max-width 460px → 480px. All 4 choices on a single row.
+- **Fix 2 — smaller buttons** (`style.css:2498-2509` `.g10-cbtn`): padding 20px 12px → 14px 6px, font-size 32px → 24px, border-radius 20px → 14px, added `min-height:60px` (Apple HIG min 44pt). Box-shadow drop adjusted 5px → 4px for tighter visual.
+- **Fix 3 — bottom safe-area** (`style.css:2466` `.g10-qpanel`): `padding-bottom:16px` → `max(10vh, calc(env(safe-area-inset-bottom, 0px) + 16px))`. iPhone SE → 67px; iPhone 14 → 89px clearance — exceeds worst-case mobile bottom UI overlap.
+- **Fix 4 — responsive media queries** (`style.css:2268-2288`): scaled `.g10-cbtn` for narrow viewports — 480px: 20px font + 52px min-height; 400px: 18px + 48px (also bumped qpanel padding to use the safe-area max-formula); 360px: 16px + 44px (still meets Apple HIG).
+
+### Touched
+- `game.js` (renderPartyGrid, openG13bPartyPicker, closePartyPicker)
+- `style.css` (.g10-choices, .g10-cbtn, .g10-qpanel + 3 media queries)
+- `TODO-GAME-FIXES.md` (Task #64 + #65 ✅)
+- `documentation and standarization/LESSONS-LEARNED.md` (L16-L19)
+
+---
+
 ## 2026-04-24 — G13 family selector + G13C mid-battle button hide + card juice across quiz games + Museum Ambarawa expansion
 
 Cache bump: `v=20260423d` → `v=20260424c` (3 patch cycles: a/b/c).

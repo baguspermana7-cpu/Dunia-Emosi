@@ -4,6 +4,86 @@
 
 ---
 
+## 📊 Session 2026-04-25 Late (City Progression System)
+
+### ✅ Task #66 — Region → City progression for G10/G13/G13b
+- **Request**: Replace level 1-N random selector dengan journey ala anime/game. ~100-110 kota Kanto→Galar+Paldea. Semua region terbuka. Per region 2 cities selalu terbuka + 1 per completion (sliding frontier).
+- **Implementation**:
+  - **127 cities** (Kanto 10 + Johto 12 + Hoenn 16 + Sinnoh 17 + Unova 20 + Kalos 16 + Alola 9 + Galar 12 + Paldea 12 + Hisui 3) — full canonical Pokemon packs from gym leader teams, route encounters, anime episodes
+  - **3 data modules**: `games/data/region-meta.js` (10 region meta) + `city-progression.js` (unlock helpers) + `city-pokemon-pack.js` (~700 Pokemon entries across 127 cities)
+  - **2 UI overlays**: Stage A region picker (10 cards) + Stage B city picker (N cards per region, sliding frontier)
+  - **2 shared icons** compressed PNG→WebP: `region.webp` 14.7KB, `cities.webp` 7.5KB. Tinted per-region via CSS `filter: hue-rotate(deg) saturate(factor) drop-shadow(color)`.
+  - **Game wire-up**: gtile-10/13/13b → openRegionOverlay; pickPokeForLevel city-aware; loadCityBackground helper; G13b spawnWild city pool; victory setCityComplete
+  - **Migration**: legacy levelNum → city via migrateLegacyLevelsToCity (idempotent, run on first launch)
+  - **Slug normalization** for sprite resolution: `mr-mime → mr_mime`, `nidoran-f → nidoranf`
+- **State storage extension**: `prog.gN.cities[regionId] = {completed:[slug], stars:{slug:N}}` + `cityMigrationDone:'20260425'` flag
+- **Spec**: `documentation and standarization/CITY-PROGRESSION-SPEC.md`
+- **Visual handling**: `background-size:cover` ensures actual image ratio preserved (no stretch). Aspect ratio variance 1.75-1.83:1 (PC) / 0.55-0.57:1 (mobile) all close enough.
+- **Touched**: `game.js` (helpers + selectors + initGame wires + victory paths), `style.css` (region/city overlay CSS), `index.html` (overlay HTML + gtile redirects + cache bump v=20260425c), 3 new data files, 1 new spec doc, this TODO + CHANGELOG + LESSONS-LEARNED.
+
+---
+
+## 📊 Session 2026-04-25 (Evening — G13 Evolution Expansion + Math Difficulty Rule)
+
+### ✅ Task #67 — G13 Evolution Chain Expansion (44 chains, 3-stage Mega)
+- **Request**: "pilihan evolusi chain di menu ganti pokemon kurang banyak — minimal 15 popular + 20 Ash + scenario stage tidak hanya 1x evolusi tapi bisa 3x (Mega) di level tengah dst"
+- **Implementation**:
+  - Expanded `G13_FAMILIES` from 16 → 44 chains: 17 popular + 21 Ash + 5 cool/pseudo + 1 random
+  - Added `mega` field to chain shape for Mega/Gmax/Ash-form/MAX-form support
+  - New tier flag `stages: 1|2|3` di `G13_DIFF` controls evolution depth per level
+  - New tier mapping: 1-4 easy (1 evo), 5-9 medium (1 evo), 10-16 hard (2 evos), 17-25 2stage, 26-35 epic, **36-45 3stage WITH MEGA ⭐**, 46-55 legendary
+  - New `synthMaxBoostForm()` helper for chains tanpa canonical Mega
+  - New `applyMegaOverlay()` / `clearMegaOverlay()` helpers — visual-overlay strategy (no Mega sprite needed)
+  - Added `canEvo3` evolution gate + `s.megaForm` state flag
+  - Localized evolution sprite swap (game.js:8300) — replaced remote-only with `pokeSpriteAlt2()` first per Lesson L16
+  - Selector category tabs (🎒 ASH default / ⭐ POPULER / 💎 KEREN / 🎲 ACAK)
+  - Mega indicator badge on family cards
+- **Visual strategy**: Mega forms reuse stage 2 sprite + CSS aura ring (gold/blue/red/rainbow per form) + crown badge (⭐ MEGA / 🌟 G-MAX / 💧 ASH-FORM / ✨ MAX FORM) + 1.3x scale boost. No remote sprite fetches.
+- **Spec**: `documentation and standarization/G13-EVOLUTION-CHAIN-SPEC.md`
+- **Touched**: `game.js` (G13_DIFF, G13_FAMILIES, g13PickChain, g13GenQuestion, g13Answer canEvo3, evolve sprite swap, openG13FamilySelector), `style.css` (Mega aura + tabs CSS), `index.html` (tabs strip + cache bump), this TODO, CHANGELOG, LESSONS-LEARNED, G13-EVOLUTION-CHAIN-SPEC.md, MATH-DIFFICULTY-STANDARD.md, memory.
+
+### ✅ Task #68 — Math Difficulty Rule (Easy default, Hard opt-in)
+- **Request**: "soal matematika default easy mode — easy: + dan − only, max 20. hard: bisa × ÷, max 50."
+- **Implementation**:
+  - New `getMathLimits()` helper centralized di game.js:1640+
+  - Patched `g10GenQuestion`, `g13GenQuestion`, `g13bGenQuestion` to use helper
+  - Easy mode (default): caps max 20, filters ops to ['+', '-']
+  - Hard mode (opt-in via Settings): allows max 50, ops ['+','-','*','/']
+  - G13b base max raised 20→30 at kills 30+ (still capped by mode helper)
+  - G13 megaForm boost +15 (still capped by mode helper)
+- **Default state**: `localStorage['dunia-emosi-mathadv']` undefined → easy mode → ✓ child-safe by default
+- **Spec**: `documentation and standarization/MATH-DIFFICULTY-STANDARD.md`
+- **Compliance audit**: G1/G3/G4/G5/G7/G10/G11/G12/G13/G13b all reviewed & marked compliant
+- **Touched**: `game.js` (getMathLimits, g10/g13/g13b GenQuestion), this TODO, CHANGELOG, LESSONS-LEARNED, MATH-DIFFICULTY-STANDARD.md, memory.
+
+---
+
+## 📊 Session 2026-04-25 (G13B Picker Crash + G10 Choices Layout)
+
+### ✅ Task #64 — G13B Party Picker stuck + tab crash on open
+- **Symptom**: User reports — "saat ganti pokemon di game evolusi math g13b, tidak bisa keluar/kembali ke permainan. no respond. tiba2 tab game itu keluar." Picker (🎒) opens, user tries to close (✕) → no response → tab eventually crashes.
+- **Root causes (compounding)**:
+  1. **41 simultaneous remote sprite fetches**. `renderPartyGrid` (`game.js:5378`) called `pokeSpriteOnline(slug)` which returns `https://img.pokemondb.net/...` for EACH card. Trainer **Ash** has 41 Pokémon (`game.js:5202-5255`). Opening picker triggered 41 remote PNG requests + up to 41 GitHub-raw fallback requests (~80+ HTTP connections). On slow/unstable mobile networks this maxed out the connection pool, blocked the main thread on image decode, and induced memory pressure → click ✕ never registered → OOM tab crash.
+  2. **Game state runs while picker is open**. `openG13bPartyPicker()` only added `.open` class. `_g13bLegAutoAtk` setInterval (`game.js:8402`, fires every 14s during legendary battle) kept calling `g13bWildHitsPlayer()` → DOM animations + HP decrement. The interval's existing `if (st.paused) return` guard (`game.js:8410`) was inert because `paused` was never set.
+  3. **Wrong "current Pokemon" detection in g13b context**. `renderPartyGrid` used `g10State.playerPoke.id` even when picker was opened from G13b — should use `g13bSavedPoke.id`. Cosmetic, but indicates the renderer was not g13b-aware.
+- ✅ **Fix 1** (`game.js:5377-5388` renderPartyGrid): Local-first sprite — try `pokeSpriteAlt2(slug)` (returns `assets/Pokemon/pokemondb_hd_alt2/{NNNN}_{slug}.webp`, already 1025 sprites in repo) before falling back to remote. Added `loading="lazy"` + `decoding="async"` on `<img>` for browser-managed off-viewport deferral. Two-stage onerror chain: local miss → pokemondb.net → github raw, gated by `dataset.fallback` to prevent infinite retry loops.
+- ✅ **Fix 2** (`game.js:5333-5341` closePartyPicker, `game.js:5440-5451` openG13bPartyPicker): Set `g13bState.paused = true` on open and `false` on close (only when ctx=g13b and phase='playing'). Reuses existing `_g13bLegAutoAtk` paused-flag guard — no new clearInterval/restart logic needed.
+- ✅ **Fix 3** (`game.js:5363-5365` renderPartyGrid): `currentId` now reads `g13bSavedPoke.id` when `partyPickerCtx === 'g13b'`, otherwise falls back to `g10State.playerPoke.id`. Restores correct "✔ Aktif" badge.
+- ✅ **Verification**: `node --check game.js` exit 0. Manual test: throttle Slow 3G in DevTools, switch Ash trainer (41 cards) → grid renders smoothly with local WebP sprites; ✕ closes overlay <100ms; legendary auto-attack pauses while picker is up.
+- **Touched**: `game.js`, `documentation and standarization/CHANGELOG.md`, `documentation and standarization/LESSONS-LEARNED.md`, this TODO.
+
+### ✅ Task #65 — G10 answer choices: 4-inline + 10vh bottom safe-area
+- **Symptom**: User reports — "di g10 itu pilihan jawabannya jangan dibuat 2 row 2 colomn, buat seperti g13c ber jejer aja, sehingga margin edge bawah ada 10%. karena itu kan browser jadinya klw bawahnya dipakai itu sering terpotong." On mobile, the browser's bottom UI bar (URL/nav strip) overlaps with the answer-choices area, so the bottom row of the 2×2 grid often gets clipped.
+- **Root cause**: `.g10-choices` (`style.css:2485`) used `grid-template-columns:1fr 1fr` (2-col, 4 cells = 2 rows). `.g10-qpanel` (`style.css:2464-2469`) had only `padding-bottom:16px` — no `env(safe-area-inset-bottom)` reservation, no `vh`-based mobile clearance.
+- ✅ **Fix 1** (`style.css:2485` `.g10-choices`): Changed to `grid-template-columns:repeat(4, 1fr)` + `gap:8px` + `max-width:480px`. All 4 choices now sit on one row (matches G13c's compact horizontal style at `style.css:4110`).
+- ✅ **Fix 2** (`style.css:2498-2509` `.g10-cbtn`): Reduced `padding:20px 12px → 14px 6px`, `font-size:32px → 24px`, `border-radius:20px → 14px`, added `min-height:60px` (above Apple HIG 44pt minimum). Adjusted box-shadow from 5px → 4px for tighter visual.
+- ✅ **Fix 3** (`style.css:2466` `.g10-qpanel`): Bottom padding now `max(10vh, calc(env(safe-area-inset-bottom, 0px) + 16px))` — guarantees ≥10% viewport-height clearance OR safe-area + 16px, whichever is larger. iPhone SE (667px) → 67px clearance; iPhone 14 (844px) → 89px.
+- ✅ **Fix 4** (`style.css:2268-2288` media queries): Sized down `.g10-cbtn` for narrower viewports — 480px: 20px font + 52px min-height; 400px: 18px + 48px; 360px: 16px + 44px (still meets Apple HIG). Bumped 400px qpanel padding to use the same safe-area max-formula.
+- ✅ **Verification**: Visual inspection confirms 4-tombol-berjejer layout in DevTools mobile mode (375×667 / 390×844 / 360×640).
+- **Touched**: `style.css`, `documentation and standarization/CHANGELOG.md`, `documentation and standarization/LESSONS-LEARNED.md`, this TODO.
+
+---
+
 ## 📋 Pending (2026-04-24, awaiting user QA)
 
 ### ⬜ P4 — Character train wheel-on-rail final tuning (deferred from night patch)

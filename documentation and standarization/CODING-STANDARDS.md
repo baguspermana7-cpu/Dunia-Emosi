@@ -2,6 +2,37 @@
 
 ---
 
+## Math Generation Rules (since 2026-04-25)
+
+ALL math question generators MUST use centralized `getMathLimits()` helper.
+
+| Mode | Default | Operations | Max |
+|------|---------|-----------|-----|
+| Easy | YES | + and − only | 20 |
+| Hard | Opt-in | + − × ÷ | 50 |
+
+**Pattern** (every math game):
+```js
+function gXxxGenQuestion(){
+  const _ml = getMathLimits()
+  const max = Math.min(rawMax, _ml.maxNum)
+  const ops = (rawOps || ['+']).filter(o => _ml.allowedOps.includes(o))
+  if (!ops.length) ops.push('+')
+  // ... use max + ops below
+}
+```
+
+**Full spec**: see `MATH-DIFFICULTY-STANDARD.md`
+
+## Asset Loading Rules
+
+- **Sprite/image**: ALWAYS local-first via `pokeSpriteAlt2(slug)` → fallback remote (per Lesson L16)
+- **Background**: local WebP from `assets/Pokemon/background/{folder}/...`, `background-size:cover`, NEVER stretch (per Lesson L18)
+- **Lazy loading**: `loading="lazy" decoding="async"` on grid renders with ≥10 images
+- **Mega/special forms**: visual-overlay only (CSS aura + badge), no separate sprite (per Lesson L20)
+
+---
+
 ## CSS Conventions
 
 ### Variables (always use, never hardcode)

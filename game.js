@@ -1638,6 +1638,12 @@ function toggleSoundSetting() {
   bgMusicToggle(next!=='off' && active && MUSIC_SCREENS.has(active.id))
 }
 function isMathAdvanced(){return localStorage.getItem('dunia-emosi-mathadv')==='on'}
+// Task #68 (2026-04-25): centralized math difficulty bounds — see MATH-DIFFICULTY-STANDARD.md
+// Default Easy: + and − only, max 20.  Hard (opt-in): + − × ÷, max 50.
+function getMathLimits(){
+  const adv=isMathAdvanced()
+  return {advanced:adv, maxNum:adv?50:20, allowedOps:adv?['+','-','*','/']:['+','-']}
+}
 function toggleMathAdvanced(){
   const next=isMathAdvanced()?'off':'on'
   localStorage.setItem('dunia-emosi-mathadv',next)
@@ -1900,6 +1906,10 @@ function endGame(stars) {
   const lv = state.selectedLevelNum || 1
   const starsEarned = normalizedStars >= 4 ? 3 : normalizedStars >= 2 ? 2 : normalizedStars >= 1 ? 1 : 0
   setLevelComplete(state.currentGame, lv, starsEarned)
+  // Task #66: mark city as completed for region/city progression
+  if (state.selectedRegion && state.selectedCity && typeof setCityComplete === 'function') {
+    setCityComplete(state.currentGame, state.selectedRegion, state.selectedCity, starsEarned)
+  }
   saveStars()
   const p = state.players[state.currentPlayer]
   showResult(p.animal, normalizedStars>=4?'Luar Biasa! 🏆':normalizedStars>=2?'Bagus Sekali! ⭐':'Terus Berlatih! 💪', `Kamu dapat ${normalizedStars} bintang di level ${lv}!`)
@@ -5189,9 +5199,15 @@ function pokeSpriteBack(id){return `https://raw.githubusercontent.com/PokeAPI/sp
 function pokeSpriteSVG(slug){const id=POKE_IDS[slug];return id?`assets/Pokemon/svg/${id}.svg`:null}
 // Alt2 HD WebP variant — 1025 Pokemon 630×630 RGBA, covers full Gen 1-9.
 // Filename pattern: {NNNN}_{slug}.webp (4-digit zero-padded ID). See TODO Task #37.
+// Task #66 fix (2026-04-25): local files use underscore separator + special nidoran case.
+function _slugToAlt2File(slug) {
+  if (slug === 'nidoran-f') return 'nidoranf'
+  if (slug === 'nidoran-m') return 'nidoranm'
+  return slug.replace(/-/g, '_')
+}
 function pokeSpriteAlt2(slug){
   const id = POKE_IDS[slug]
-  return id ? `assets/Pokemon/pokemondb_hd_alt2/${String(id).padStart(4,'0')}_${slug}.webp` : null
+  return id ? `assets/Pokemon/pokemondb_hd_alt2/${String(id).padStart(4,'0')}_${_slugToAlt2File(slug)}.webp` : null
 }
 // HD priority: alt2 WebP (1025 covered) → local SVG (751 covered) → HD CDN raster. Low-res only as offline fallback.
 function pokeSpriteVariant(slug){
@@ -5333,6 +5349,10 @@ function openPartyPicker(){
 function closePartyPicker(){
   const overlay = document.getElementById('g10-party-overlay')
   if(overlay) overlay.classList.remove('open')
+  // Resume G13b game-state timers if we paused it on open (Task #64)
+  if (partyPickerCtx === 'g13b' && g13bState && g13bState.phase === 'playing') {
+    g13bState.paused = false
+  }
 }
 function renderTrainerTabs(){
   const tabsEl = document.getElementById('g10-trainer-tabs')
@@ -5359,7 +5379,9 @@ function renderPartyGrid(trainerId){
   const trainer = TRAINER_PARTIES.find(t=>t.id===trainerId)
   if(!trainer) return
   gridEl.innerHTML = ''
-  const currentId = g10State.playerPoke ? g10State.playerPoke.id : -1
+  const currentId = (partyPickerCtx === 'g13b' && g13bSavedPoke)
+    ? g13bSavedPoke.id
+    : (g10State.playerPoke ? g10State.playerPoke.id : -1)
   trainer.party.forEach(poke => {
     const isCurrent = poke.id === currentId
     const card = document.createElement('div')
@@ -5368,15 +5390,20 @@ function renderPartyGrid(trainerId){
     card.style.setProperty('--ptc', typeColor)
     card.innerHTML = `
       ${isCurrent?'<div class="g10-pcard-curr-badge">✔ Aktif</div>':''}
-      <img class="g10-pcard-spr" alt="${poke.name}">
+      <img class="g10-pcard-spr" alt="${poke.name}" loading="lazy" decoding="async">
       <div class="g10-pcard-name">${poke.name}</div>
       <div class="g10-pcard-type" style="background:${typeColor}">${poke.type.charAt(0).toUpperCase()+poke.type.slice(1)}</div>
     `
-    // Use HOME sprite (transparent PNG) — artwork JPG has white background
+    // Local-first sprite: HD WebP from project assets, fallback to remote PNG
     const slug = poke.name.toLowerCase().replace(/\s/g,'-')
     const img = card.querySelector('.g10-pcard-spr')
-    img.src = pokeSpriteOnline(slug)
-    img.onerror = () => { img.src = pokeSpriteBackup(poke.id); img.onerror = null }
+    const localSrc = pokeSpriteAlt2(slug)
+    img.src = localSrc || pokeSpriteOnline(slug)
+    img.onerror = () => {
+      if (img.dataset.fallback === '1') { img.src = pokeSpriteBackup(poke.id); img.onerror = null; return }
+      img.dataset.fallback = '1'
+      img.src = pokeSpriteOnline(slug)
+    }
     if(!isCurrent){
       card.onclick = () => {
         playClick()
@@ -5439,6 +5466,9 @@ function switchPlayerPoke(poke){
 
 function openG13bPartyPicker() {
   partyPickerCtx = 'g13b'
+  // Pause game-side timers (legendary auto-attack uses paused-flag guard at game.js:8410)
+  // Prevents wild-attack while picker is open and avoids race conditions on close (Task #64)
+  if (g13bState && g13bState.phase === 'playing') g13bState.paused = true
   const overlay = document.getElementById('g10-party-overlay')
   if (!overlay) return
   overlay.classList.add('open')
@@ -5472,11 +5502,42 @@ const G10_POOL = {
 }
 
 function pickPokeForLevel(lv){
+  // Task #66 (2026-04-25): if city is selected, pick from city.pack instead
+  try {
+    if (state && state.selectedRegion && state.selectedCity && typeof CITY_PACK !== 'undefined') {
+      const region = CITY_PACK[state.selectedRegion]
+      const city = region && region.cities && region.cities.find(c => c.slug === state.selectedCity)
+      if (city && city.pack && city.pack.length) {
+        const slugIds = city.pack.map(p => p.id)
+        const found = POKEMON_DB.filter(p => slugIds.includes(p.id))
+        if (found.length >= 2) return found[Math.floor(Math.random() * found.length)]
+      }
+    }
+  } catch(_) {}
+  // Fallback to legacy level-based pool
   const poolKey = lv<=5?'favorite': lv<=15?'mid':'boss'
   const ids = G10_POOL[poolKey]
   const found = POKEMON_DB.filter(p=>ids.includes(p.id))
   const pool = found.length>=3 ? found : POKEMON_DB  // fallback
   return pool[Math.floor(Math.random()*pool.length)]
+}
+
+// Task #66: load city background for game-N field if state has selectedCity
+function loadCityBackground(fieldEl) {
+  if (!fieldEl) return false
+  try {
+    if (!state || !state.selectedRegion || !state.selectedCity || typeof CITY_PACK === 'undefined') return false
+    const region = CITY_PACK[state.selectedRegion]
+    const city = region && region.cities && region.cities.find(c => c.slug === state.selectedCity)
+    if (!city || !city.bg) return false
+    const isMobile = window.innerWidth < 768
+    const bgFile = isMobile ? city.bg.mobile : city.bg.pc
+    const folder = isMobile ? 'mobile' : 'pc'
+    fieldEl.style.backgroundImage = `url('assets/Pokemon/background/${folder}/${encodeURIComponent(bgFile)}')`
+    fieldEl.style.backgroundSize = 'cover'
+    fieldEl.style.backgroundPosition = 'center 22%'
+    return true
+  } catch(_) { return false }
 }
 
 // Level Matrix — tiap level punya config presisi untuk pedagogical scaffolding
@@ -5543,6 +5604,8 @@ function initGame10(){
   document.getElementById('g10-stars').textContent='⭐ 0'
   const lv = Math.max(1, Math.min(20, state.selectedLevelNum || 1))
   const cfg = G10_LEVELS[lv] || G10_LEVELS[10]
+  // Task #66: load city background if selected
+  loadCityBackground(document.getElementById('g10-field'))
 
   let pp=pickPokeForLevel(lv), ep=pickPokeForLevel(lv)
   while(ep.id===pp.id) ep=pickPokeForLevel(lv)
@@ -5655,8 +5718,11 @@ function g10RenderHp(fillId, numsId, hp, maxHp){
 
 function g10GenQuestion(){
   const s=g10State
-  const maxN=s.maxNum||10
-  const ops=s.ops||['+']
+  // Task #68: enforce easy-default math rules
+  const _ml = getMathLimits()
+  const maxN = Math.min(s.maxNum||10, _ml.maxNum)
+  const ops = (s.ops||['+']).filter(o => _ml.allowedOps.includes(o))
+  if (!ops.length) ops.push('+')
   // Pick operation: if only one op available, use it; else random
   const useAdd = ops.length===1 ? ops[0]==='+' : Math.random()<0.5
   let a,b,ans,qText,lbl
@@ -7220,14 +7286,18 @@ const G13_CHAINS = [
 ]
 
 // HP config by difficulty
+// Task #67 (2026-04-25): added `stages` flag for 1|2|3-stage evolution support.
+// stages=1: player→evolved only (early levels)
+// stages=2: player→evolved→evolved2 (mid levels)
+// stages=3: player→evolved→evolved2→mega (late levels — MEGA EVOLUTION)
 const G13_DIFF = {
-  easy:      { playerHp:5, wildHp:8,  attacksToEvo:3, damage:1, wildDamage:1 },
-  medium:    { playerHp:6, wildHp:10, attacksToEvo:4, damage:1, wildDamage:1 },
-  hard:      { playerHp:7, wildHp:12, attacksToEvo:5, damage:1, wildDamage:1 },
-  '2stage':  { playerHp:7, wildHp:13, attacksToEvo:5, damage:1, wildDamage:1 },
-  epic:      { playerHp:8, wildHp:15, attacksToEvo:4, damage:1, wildDamage:1 },
-  legendary: { playerHp:9, wildHp:18, attacksToEvo:4, damage:1, wildDamage:1 },
-  '3stage':  { playerHp:8, wildHp:24, attacksToEvo:5, damage:1, wildDamage:1 },
+  easy:      { playerHp:5, wildHp:8,  attacksToEvo:3, damage:1, wildDamage:1, stages:1 },
+  medium:    { playerHp:6, wildHp:10, attacksToEvo:4, damage:1, wildDamage:1, stages:1 },
+  hard:      { playerHp:7, wildHp:12, attacksToEvo:5, damage:1, wildDamage:1, stages:2 },
+  '2stage':  { playerHp:7, wildHp:13, attacksToEvo:5, damage:1, wildDamage:1, stages:2 },
+  epic:      { playerHp:8, wildHp:18, attacksToEvo:4, damage:1, wildDamage:1, stages:2 },
+  '3stage':  { playerHp:8, wildHp:24, attacksToEvo:5, damage:1, wildDamage:1, stages:3 },
+  legendary: { playerHp:9, wildHp:30, attacksToEvo:5, damage:1, wildDamage:1, stages:3 },
 }
 
 // Type color map for badge
@@ -7242,26 +7312,88 @@ let g13State = {}
 let g13ResultTimeout = null
 
 // ════════════════════════════════════════════════════════════════════
-// G13 FAMILIES — curated evolution chain selector (2026-04-24)
-// User can pick a favorite Pokémon line; difficulty still scales by level.
-// 10 popular + 5 cool + 1 "random" special = 16 options.
+// G13 FAMILIES — curated evolution chain selector
+// Built 2026-04-24 (16 chains), expanded 2026-04-25 to 44 chains (Task #67)
+// 17 popular + 21 Ash + 5 cool + 1 random = 44 options
+// 3-stage support: families with `mega` field show Mega/Gmax/special-form at 3stage+legendary tiers
+// Sprite strategy: stage 0/1/2 use unique local WebP; stage 3 (mega) reuses stage 2 sprite + visual aura overlay
 // ════════════════════════════════════════════════════════════════════
+
+// Task #67: synthetic MAX FORM for chains without canonical Mega/Gmax/special form.
+// Reuses stage 2 sprite + gold aura + "MAX FORM" badge so all 3-stage tiers feel equally rewarding.
+function synthMaxBoostForm(stage) {
+  if (!stage) return null
+  return {
+    name: 'MAX ' + stage.name,
+    slug: stage.slug,
+    type: stage.type,
+    tc: stage.tc,
+    form: 'max-boost',
+    aura: 'gold',
+    badge: '✨ MAX FORM',
+  }
+}
+
+// Task #67: Mega/Gmax/Ash-form visual overlay — sprite sama, hanya aura + badge + scale.
+// Tidak butuh sprite Mega lokal; gradien CSS + animasi keyframe membuat efek dramatic.
+function applyMegaOverlay(pspr, megaForm) {
+  if (!pspr || !megaForm) return
+  // Apply aura class (rotating glow ring)
+  pspr.classList.add('poke-mega-aura', 'aura-' + (megaForm.aura || 'gold'))
+  // Floating badge above sprite
+  try {
+    const wrap = pspr.parentElement
+    if (wrap) {
+      let badge = wrap.querySelector('.poke-mega-badge')
+      if (!badge) {
+        badge = document.createElement('div')
+        badge.className = 'poke-mega-badge aura-' + (megaForm.aura || 'gold')
+        wrap.appendChild(badge)
+      } else {
+        badge.className = 'poke-mega-badge aura-' + (megaForm.aura || 'gold')
+      }
+      badge.textContent = megaForm.badge || '⭐ MEGA'
+      // Animate-in
+      badge.style.animation = 'none'; void badge.offsetWidth
+      badge.style.animation = 'megaBadgeBounce 0.5s cubic-bezier(0.34,1.56,0.64,1)'
+    }
+  } catch(_) {}
+}
+
+function clearMegaOverlay(pspr) {
+  if (!pspr) return
+  pspr.classList.remove('poke-mega-aura', 'aura-gold', 'aura-blue', 'aura-red', 'aura-rainbow')
+  try {
+    const wrap = pspr.parentElement
+    const badge = wrap && wrap.querySelector('.poke-mega-badge')
+    if (badge) badge.remove()
+  } catch(_) {}
+}
+
+// Mega/Gmax/Ash-form helper (Task #67) — sprite reuses stage 2; visual aura overlay only
+const _mega = (name, baseSlug, type, tc, form, aura, badge) => ({name, slug: baseSlug, type, tc, form, aura, badge})
+
 const G13_FAMILIES = [
-  // ── POPULER (10) — iconic 3-stage chains kids know ──
+  // ══════════════════════════════════════════════════════════════════
+  // ⭐ POPULER (17) — kid-iconic 3-stage chains, generic versions
+  // ══════════════════════════════════════════════════════════════════
   {id:'bulbasaur-line', label:'Bulbasaur', series:'Kanto Grass Starter', category:'popular', color:'#22C55E', icon:'🌿',
    player:{name:'Bulbasaur',slug:'bulbasaur',type:'Grass',tc:'#22C55E'},
    evolved:{name:'Ivysaur',slug:'ivysaur',type:'Grass',tc:'#22C55E'},
    evolved2:{name:'Venusaur',slug:'venusaur',type:'Grass',tc:'#22C55E'},
+   mega:_mega('Mega Venusaur','venusaur','Grass','#16A34A','mega','rainbow','⭐ MEGA'),
    wild:{name:'Oddish',slug:'oddish',type:'Grass',tc:'#22C55E'}},
   {id:'charmander-line', label:'Charmander', series:'Kanto Fire Starter', category:'popular', color:'#F97316', icon:'🔥',
    player:{name:'Charmander',slug:'charmander',type:'Fire',tc:'#F97316'},
    evolved:{name:'Charmeleon',slug:'charmeleon',type:'Fire',tc:'#F97316'},
    evolved2:{name:'Charizard',slug:'charizard',type:'Fire',tc:'#F97316'},
+   mega:_mega('Mega Charizard Y','charizard','Fire','#EAB308','mega-y','gold','⭐ MEGA Y'),
    wild:{name:'Growlithe',slug:'growlithe',type:'Fire',tc:'#F97316'}},
   {id:'squirtle-line', label:'Squirtle', series:'Kanto Water Starter', category:'popular', color:'#38BDF8', icon:'💧',
    player:{name:'Squirtle',slug:'squirtle',type:'Water',tc:'#38BDF8'},
    evolved:{name:'Wartortle',slug:'wartortle',type:'Water',tc:'#38BDF8'},
    evolved2:{name:'Blastoise',slug:'blastoise',type:'Water',tc:'#38BDF8'},
+   mega:_mega('Mega Blastoise','blastoise','Water','#0EA5E9','mega','blue','⭐ MEGA'),
    wild:{name:'Psyduck',slug:'psyduck',type:'Water',tc:'#38BDF8'}},
   {id:'pichu-line', label:'Pichu', series:'Electric Mouse Line', category:'popular', color:'#FBBF24', icon:'⚡',
    player:{name:'Pichu',slug:'pichu',type:'Electric',tc:'#FBBF24'},
@@ -7272,58 +7404,228 @@ const G13_FAMILIES = [
    player:{name:'Caterpie',slug:'caterpie',type:'Bug',tc:'#84CC16'},
    evolved:{name:'Metapod',slug:'metapod',type:'Bug',tc:'#84CC16'},
    evolved2:{name:'Butterfree',slug:'butterfree',type:'Bug',tc:'#84CC16'},
+   mega:_mega('Gmax Butterfree','butterfree','Bug','#65A30D','gmax','red','🌟 G-MAX'),
    wild:{name:'Weedle',slug:'weedle',type:'Bug',tc:'#84CC16'}},
   {id:'abra-line', label:'Abra', series:'Psychic Legend', category:'popular', color:'#EC4899', icon:'🔮',
    player:{name:'Abra',slug:'abra',type:'Psychic',tc:'#EC4899'},
    evolved:{name:'Kadabra',slug:'kadabra',type:'Psychic',tc:'#EC4899'},
    evolved2:{name:'Alakazam',slug:'alakazam',type:'Psychic',tc:'#EC4899'},
+   mega:_mega('Mega Alakazam','alakazam','Psychic','#DB2777','mega','rainbow','⭐ MEGA'),
    wild:{name:'Drowzee',slug:'drowzee',type:'Psychic',tc:'#EC4899'}},
   {id:'gastly-line', label:'Gastly', series:'Ghost Trio', category:'popular', color:'#7C3AED', icon:'👻',
    player:{name:'Gastly',slug:'gastly',type:'Ghost',tc:'#7C3AED'},
    evolved:{name:'Haunter',slug:'haunter',type:'Ghost',tc:'#7C3AED'},
    evolved2:{name:'Gengar',slug:'gengar',type:'Ghost',tc:'#7C3AED'},
+   mega:_mega('Mega Gengar','gengar','Ghost','#6D28D9','mega','rainbow','⭐ MEGA'),
    wild:{name:'Misdreavus',slug:'misdreavus',type:'Ghost',tc:'#7C3AED'}},
   {id:'machop-line', label:'Machop', series:'Fighting Brawler', category:'popular', color:'#EF4444', icon:'💪',
    player:{name:'Machop',slug:'machop',type:'Fighting',tc:'#EF4444'},
    evolved:{name:'Machoke',slug:'machoke',type:'Fighting',tc:'#EF4444'},
    evolved2:{name:'Machamp',slug:'machamp',type:'Fighting',tc:'#EF4444'},
+   mega:_mega('Gmax Machamp','machamp','Fighting','#DC2626','gmax','red','🌟 G-MAX'),
    wild:{name:'Mankey',slug:'mankey',type:'Fighting',tc:'#EF4444'}},
   {id:'geodude-line', label:'Geodude', series:'Rock Heavyweight', category:'popular', color:'#A16207', icon:'🪨',
    player:{name:'Geodude',slug:'geodude',type:'Rock',tc:'#A16207'},
    evolved:{name:'Graveler',slug:'graveler',type:'Rock',tc:'#A16207'},
    evolved2:{name:'Golem',slug:'golem',type:'Rock',tc:'#A16207'},
    wild:{name:'Onix',slug:'onix',type:'Rock',tc:'#A16207'}},
-  {id:'eevee-line', label:'Eevee → Vaporeon', series:'Evolution Rainbow', category:'popular', color:'#38BDF8', icon:'🌊',
+  {id:'eevee-vaporeon', label:'Eevee → Vaporeon', series:'Eeveelution Water', category:'popular', color:'#38BDF8', icon:'🌊',
    player:{name:'Eevee',slug:'eevee',type:'Normal',tc:'#A3A3A3'},
    evolved:{name:'Vaporeon',slug:'vaporeon',type:'Water',tc:'#38BDF8'},
-   evolved2:{name:'Jolteon',slug:'jolteon',type:'Electric',tc:'#FBBF24'},
+   evolved2:{name:'Vaporeon',slug:'vaporeon',type:'Water',tc:'#0EA5E9'},
    wild:{name:'Flareon',slug:'flareon',type:'Fire',tc:'#F97316'}},
+  {id:'eevee-espeon', label:'Eevee → Espeon', series:'Eeveelution Psychic', category:'popular', color:'#EC4899', icon:'✨',
+   player:{name:'Eevee',slug:'eevee',type:'Normal',tc:'#A3A3A3'},
+   evolved:{name:'Espeon',slug:'espeon',type:'Psychic',tc:'#EC4899'},
+   evolved2:{name:'Espeon',slug:'espeon',type:'Psychic',tc:'#DB2777'},
+   wild:{name:'Umbreon',slug:'umbreon',type:'Dark',tc:'#4B5563'}},
+  {id:'eevee-sylveon', label:'Eevee → Sylveon', series:'Eeveelution Fairy', category:'popular', color:'#FB7185', icon:'🎀',
+   player:{name:'Eevee',slug:'eevee',type:'Normal',tc:'#A3A3A3'},
+   evolved:{name:'Sylveon',slug:'sylveon',type:'Fairy',tc:'#FB7185'},
+   evolved2:{name:'Sylveon',slug:'sylveon',type:'Fairy',tc:'#F472B6'},
+   wild:{name:'Glaceon',slug:'glaceon',type:'Ice',tc:'#BAE6FD'}},
+  {id:'mudkip-line', label:'Mudkip', series:'Hoenn Water Starter', category:'popular', color:'#06B6D4', icon:'💦',
+   player:{name:'Mudkip',slug:'mudkip',type:'Water',tc:'#06B6D4'},
+   evolved:{name:'Marshtomp',slug:'marshtomp',type:'Water',tc:'#06B6D4'},
+   evolved2:{name:'Swampert',slug:'swampert',type:'Water',tc:'#0891B2'},
+   mega:_mega('Mega Swampert','swampert','Water','#155E75','mega','blue','⭐ MEGA'),
+   wild:{name:'Lotad',slug:'lotad',type:'Water',tc:'#65A30D'}},
+  {id:'snivy-line', label:'Snivy', series:'Unova Grass Starter', category:'popular', color:'#65A30D', icon:'🌱',
+   player:{name:'Snivy',slug:'snivy',type:'Grass',tc:'#65A30D'},
+   evolved:{name:'Servine',slug:'servine',type:'Grass',tc:'#65A30D'},
+   evolved2:{name:'Serperior',slug:'serperior',type:'Grass',tc:'#15803D'},
+   wild:{name:'Tepig',slug:'tepig',type:'Fire',tc:'#F97316'}},
+  {id:'fennekin-line', label:'Fennekin', series:'Kalos Fire Starter', category:'popular', color:'#F59E0B', icon:'🦊',
+   player:{name:'Fennekin',slug:'fennekin',type:'Fire',tc:'#F59E0B'},
+   evolved:{name:'Braixen',slug:'braixen',type:'Fire',tc:'#F59E0B'},
+   evolved2:{name:'Delphox',slug:'delphox',type:'Fire',tc:'#D97706'},
+   wild:{name:'Vulpix',slug:'vulpix',type:'Fire',tc:'#F97316'}},
+  {id:'sobble-line', label:'Sobble', series:'Galar Water Starter', category:'popular', color:'#0EA5E9', icon:'💧',
+   player:{name:'Sobble',slug:'sobble',type:'Water',tc:'#0EA5E9'},
+   evolved:{name:'Drizzile',slug:'drizzile',type:'Water',tc:'#0EA5E9'},
+   evolved2:{name:'Inteleon',slug:'inteleon',type:'Water',tc:'#0284C7'},
+   mega:_mega('Gmax Inteleon','inteleon','Water','#0369A1','gmax','blue','🌟 G-MAX'),
+   wild:{name:'Magikarp',slug:'magikarp',type:'Water',tc:'#EF4444'}},
+  {id:'munchlax-line', label:'Munchlax', series:'Big Eater', category:'popular', color:'#A78BFA', icon:'🍙',
+   player:{name:'Munchlax',slug:'munchlax',type:'Normal',tc:'#A78BFA'},
+   evolved:{name:'Snorlax',slug:'snorlax',type:'Normal',tc:'#7C3AED'},
+   evolved2:{name:'Snorlax',slug:'snorlax',type:'Normal',tc:'#6D28D9'},
+   mega:_mega('Gmax Snorlax','snorlax','Normal','#581C87','gmax','rainbow','🌟 G-MAX'),
+   wild:{name:'Slakoth',slug:'slakoth',type:'Normal',tc:'#A3A3A3'}},
 
-  // ── KEREN (5) — powerful/cool late-game evolutions ──
+  // ══════════════════════════════════════════════════════════════════
+  // 🎒 ASH (21) — Ash Ketchum's signature roster across all regions
+  // ══════════════════════════════════════════════════════════════════
+  {id:'ash-pikachu', label:'Pikachu (Ash)', series:'Ash\'s Partner — Kanto', category:'ash', color:'#FBBF24', icon:'⚡',
+   player:{name:'Pichu',slug:'pichu',type:'Electric',tc:'#FBBF24'},
+   evolved:{name:'Pikachu',slug:'pikachu',type:'Electric',tc:'#FBBF24'},
+   evolved2:{name:'Pikachu',slug:'pikachu',type:'Electric',tc:'#EAB308'},
+   mega:_mega('Gmax Pikachu','pikachu','Electric','#DC2626','gmax','red','🌟 G-MAX'),
+   wild:{name:'Spearow',slug:'spearow',type:'Flying',tc:'#A3A3A3'}},
+  {id:'ash-charizard', label:'Charizard (Ash)', series:'Ash\'s Charizard — Kanto', category:'ash', color:'#F97316', icon:'🔥',
+   player:{name:'Charmander',slug:'charmander',type:'Fire',tc:'#F97316'},
+   evolved:{name:'Charmeleon',slug:'charmeleon',type:'Fire',tc:'#F97316'},
+   evolved2:{name:'Charizard',slug:'charizard',type:'Fire',tc:'#EA580C'},
+   mega:_mega('Mega Charizard X','charizard','Fire','#3B82F6','mega-x','blue','⭐ MEGA X'),
+   wild:{name:'Damian-Charmander',slug:'charmander',type:'Fire',tc:'#A3A3A3'}},
+  {id:'ash-bulbasaur', label:'Bulbasaur (Ash)', series:'Ash\'s Bulbasaur — Kanto', category:'ash', color:'#22C55E', icon:'🌿',
+   player:{name:'Bulbasaur',slug:'bulbasaur',type:'Grass',tc:'#22C55E'},
+   evolved:{name:'Ivysaur',slug:'ivysaur',type:'Grass',tc:'#22C55E'},
+   evolved2:{name:'Venusaur',slug:'venusaur',type:'Grass',tc:'#16A34A'},
+   mega:_mega('Mega Venusaur','venusaur','Grass','#15803D','mega','rainbow','⭐ MEGA'),
+   wild:{name:'Oddish',slug:'oddish',type:'Grass',tc:'#65A30D'}},
+  {id:'ash-squirtle', label:'Squirtle (Ash)', series:'Ash\'s Squirtle Squad — Kanto', category:'ash', color:'#38BDF8', icon:'🐢',
+   player:{name:'Squirtle',slug:'squirtle',type:'Water',tc:'#38BDF8'},
+   evolved:{name:'Wartortle',slug:'wartortle',type:'Water',tc:'#38BDF8'},
+   evolved2:{name:'Blastoise',slug:'blastoise',type:'Water',tc:'#0EA5E9'},
+   mega:_mega('Mega Blastoise','blastoise','Water','#0284C7','mega','blue','⭐ MEGA'),
+   wild:{name:'Krabby',slug:'krabby',type:'Water',tc:'#EF4444'}},
+  {id:'ash-butterfree', label:'Butterfree (Ash)', series:'Caterpie → Butterfree', category:'ash', color:'#84CC16', icon:'🦋',
+   player:{name:'Caterpie',slug:'caterpie',type:'Bug',tc:'#84CC16'},
+   evolved:{name:'Metapod',slug:'metapod',type:'Bug',tc:'#84CC16'},
+   evolved2:{name:'Butterfree',slug:'butterfree',type:'Bug',tc:'#65A30D'},
+   mega:_mega('Gmax Butterfree','butterfree','Bug','#15803D','gmax','rainbow','🌟 G-MAX'),
+   wild:{name:'Weedle',slug:'weedle',type:'Bug',tc:'#A3A3A3'}},
+  {id:'ash-pidgeot', label:'Pidgeot (Ash)', series:'Pidgey → Pidgeot — Kanto', category:'ash', color:'#A78BFA', icon:'🦅',
+   player:{name:'Pidgey',slug:'pidgey',type:'Flying',tc:'#A78BFA'},
+   evolved:{name:'Pidgeotto',slug:'pidgeotto',type:'Flying',tc:'#A78BFA'},
+   evolved2:{name:'Pidgeot',slug:'pidgeot',type:'Flying',tc:'#7C3AED'},
+   mega:_mega('Mega Pidgeot','pidgeot','Flying','#6D28D9','mega','rainbow','⭐ MEGA'),
+   wild:{name:'Spearow',slug:'spearow',type:'Flying',tc:'#A3A3A3'}},
+  {id:'ash-snorlax', label:'Snorlax (Ash)', series:'Munchlax → Snorlax', category:'ash', color:'#A78BFA', icon:'😴',
+   player:{name:'Munchlax',slug:'munchlax',type:'Normal',tc:'#A78BFA'},
+   evolved:{name:'Snorlax',slug:'snorlax',type:'Normal',tc:'#7C3AED'},
+   evolved2:{name:'Snorlax',slug:'snorlax',type:'Normal',tc:'#6D28D9'},
+   mega:_mega('Gmax Snorlax','snorlax','Normal','#581C87','gmax','rainbow','🌟 G-MAX'),
+   wild:{name:'Lickitung',slug:'lickitung',type:'Normal',tc:'#FB7185'}},
+  {id:'ash-heracross', label:'Heracross (Ash)', series:'Johto Bug Power', category:'ash', color:'#1E40AF', icon:'🐞',
+   player:{name:'Heracross',slug:'heracross',type:'Bug',tc:'#1E40AF'},
+   evolved:{name:'Heracross',slug:'heracross',type:'Bug',tc:'#1E40AF'},
+   evolved2:{name:'Heracross',slug:'heracross',type:'Bug',tc:'#1E3A8A'},
+   mega:_mega('Mega Heracross','heracross','Bug','#172554','mega','rainbow','⭐ MEGA'),
+   wild:{name:'Pinsir',slug:'pinsir',type:'Bug',tc:'#A16207'}},
+  {id:'ash-meganium', label:'Meganium (Ash)', series:'Chikorita → Meganium', category:'ash', color:'#22C55E', icon:'🌷',
+   player:{name:'Chikorita',slug:'chikorita',type:'Grass',tc:'#22C55E'},
+   evolved:{name:'Bayleef',slug:'bayleef',type:'Grass',tc:'#22C55E'},
+   evolved2:{name:'Meganium',slug:'meganium',type:'Grass',tc:'#16A34A'},
+   wild:{name:'Sunkern',slug:'sunkern',type:'Grass',tc:'#FBBF24'}},
+  {id:'ash-sceptile', label:'Sceptile (Ash)', series:'Treecko → Sceptile — Hoenn', category:'ash', color:'#22C55E', icon:'🦎',
+   player:{name:'Treecko',slug:'treecko',type:'Grass',tc:'#22C55E'},
+   evolved:{name:'Grovyle',slug:'grovyle',type:'Grass',tc:'#22C55E'},
+   evolved2:{name:'Sceptile',slug:'sceptile',type:'Grass',tc:'#15803D'},
+   mega:_mega('Mega Sceptile','sceptile','Grass','#14532D','mega','rainbow','⭐ MEGA'),
+   wild:{name:'Seedot',slug:'seedot',type:'Grass',tc:'#A16207'}},
+  {id:'ash-glalie', label:'Glalie (Ash)', series:'Snorunt → Glalie — Hoenn', category:'ash', color:'#BAE6FD', icon:'❄️',
+   player:{name:'Snorunt',slug:'snorunt',type:'Ice',tc:'#BAE6FD'},
+   evolved:{name:'Glalie',slug:'glalie',type:'Ice',tc:'#0EA5E9'},
+   evolved2:{name:'Glalie',slug:'glalie',type:'Ice',tc:'#0284C7'},
+   mega:_mega('Mega Glalie','glalie','Ice','#0369A1','mega','blue','⭐ MEGA'),
+   wild:{name:'Spheal',slug:'spheal',type:'Ice',tc:'#A78BFA'}},
+  {id:'ash-infernape', label:'Infernape (Ash)', series:'Chimchar → Infernape — Sinnoh', category:'ash', color:'#EF4444', icon:'🐒',
+   player:{name:'Chimchar',slug:'chimchar',type:'Fire',tc:'#F97316'},
+   evolved:{name:'Monferno',slug:'monferno',type:'Fire',tc:'#EA580C'},
+   evolved2:{name:'Infernape',slug:'infernape',type:'Fire',tc:'#DC2626'},
+   wild:{name:'Buizel',slug:'buizel',type:'Water',tc:'#FB923C'}},
+  {id:'ash-staraptor', label:'Staraptor (Ash)', series:'Starly → Staraptor — Sinnoh', category:'ash', color:'#A78BFA', icon:'🦅',
+   player:{name:'Starly',slug:'starly',type:'Flying',tc:'#A78BFA'},
+   evolved:{name:'Staravia',slug:'staravia',type:'Flying',tc:'#7C3AED'},
+   evolved2:{name:'Staraptor',slug:'staraptor',type:'Flying',tc:'#6D28D9'},
+   wild:{name:'Bidoof',slug:'bidoof',type:'Normal',tc:'#A16207'}},
+  {id:'ash-garchomp', label:'Garchomp (Ash)', series:'Gible → Garchomp — Sinnoh/JN', category:'ash', color:'#1E40AF', icon:'🦈',
+   player:{name:'Gible',slug:'gible',type:'Dragon',tc:'#1E40AF'},
+   evolved:{name:'Gabite',slug:'gabite',type:'Dragon',tc:'#1E40AF'},
+   evolved2:{name:'Garchomp',slug:'garchomp',type:'Dragon',tc:'#1E3A8A'},
+   mega:_mega('Mega Garchomp','garchomp','Dragon','#172554','mega','rainbow','⭐ MEGA'),
+   wild:{name:'Carnivine',slug:'carnivine',type:'Grass',tc:'#65A30D'}},
+  {id:'ash-pignite', label:'Pignite (Ash)', series:'Tepig → Emboar — Unova', category:'ash', color:'#F97316', icon:'🐗',
+   player:{name:'Tepig',slug:'tepig',type:'Fire',tc:'#F97316'},
+   evolved:{name:'Pignite',slug:'pignite',type:'Fire',tc:'#EA580C'},
+   evolved2:{name:'Emboar',slug:'emboar',type:'Fire',tc:'#DC2626'},
+   wild:{name:'Oshawott',slug:'oshawott',type:'Water',tc:'#0EA5E9'}},
+  {id:'ash-krookodile', label:'Krookodile (Ash)', series:'Sandile → Krookodile — Unova', category:'ash', color:'#A16207', icon:'🐊',
+   player:{name:'Sandile',slug:'sandile',type:'Ground',tc:'#A16207'},
+   evolved:{name:'Krokorok',slug:'krokorok',type:'Ground',tc:'#A16207'},
+   evolved2:{name:'Krookodile',slug:'krookodile',type:'Ground',tc:'#78350F'},
+   wild:{name:'Scraggy',slug:'scraggy',type:'Dark',tc:'#FBBF24'}},
+  {id:'ash-greninja', label:'Greninja (Ash)', series:'Froakie → Ash-Greninja — Kalos', category:'ash', color:'#0EA5E9', icon:'🥷',
+   player:{name:'Froakie',slug:'froakie',type:'Water',tc:'#0EA5E9'},
+   evolved:{name:'Frogadier',slug:'frogadier',type:'Water',tc:'#0EA5E9'},
+   evolved2:{name:'Greninja',slug:'greninja',type:'Water',tc:'#0284C7'},
+   mega:_mega('Ash-Greninja','greninja','Water','#1E3A8A','ash-form','blue','💧 ASH-FORM'),
+   wild:{name:'Bunnelby',slug:'bunnelby',type:'Normal',tc:'#A78BFA'}},
+  {id:'ash-talonflame', label:'Talonflame (Ash)', series:'Fletchling → Talonflame — Kalos', category:'ash', color:'#EF4444', icon:'🔥',
+   player:{name:'Fletchling',slug:'fletchling',type:'Flying',tc:'#EF4444'},
+   evolved:{name:'Fletchinder',slug:'fletchinder',type:'Fire',tc:'#F97316'},
+   evolved2:{name:'Talonflame',slug:'talonflame',type:'Fire',tc:'#DC2626'},
+   wild:{name:'Pancham',slug:'pancham',type:'Fighting',tc:'#A3A3A3'}},
+  {id:'ash-incineroar', label:'Incineroar (Ash)', series:'Litten → Incineroar — Alola', category:'ash', color:'#EF4444', icon:'🐅',
+   player:{name:'Litten',slug:'litten',type:'Fire',tc:'#EF4444'},
+   evolved:{name:'Torracat',slug:'torracat',type:'Fire',tc:'#EF4444'},
+   evolved2:{name:'Incineroar',slug:'incineroar',type:'Fire',tc:'#B91C1C'},
+   wild:{name:'Rowlet',slug:'rowlet',type:'Grass',tc:'#84CC16'}},
+  {id:'ash-lucario', label:'Lucario (Ash)', series:'Riolu → Lucario — JN', category:'ash', color:'#3B82F6', icon:'🥋',
+   player:{name:'Riolu',slug:'riolu',type:'Fighting',tc:'#3B82F6'},
+   evolved:{name:'Lucario',slug:'lucario',type:'Fighting',tc:'#1E40AF'},
+   evolved2:{name:'Lucario',slug:'lucario',type:'Fighting',tc:'#1E3A8A'},
+   mega:_mega('Mega Lucario','lucario','Fighting','#172554','mega','blue','⭐ MEGA'),
+   wild:{name:'Mienfoo',slug:'mienfoo',type:'Fighting',tc:'#FBBF24'}},
+  {id:'ash-dragonite', label:'Dragonite (Ash)', series:'Dratini → Dragonite — JN', category:'ash', color:'#F97316', icon:'🐉',
+   player:{name:'Dratini',slug:'dratini',type:'Dragon',tc:'#F97316'},
+   evolved:{name:'Dragonair',slug:'dragonair',type:'Dragon',tc:'#F97316'},
+   evolved2:{name:'Dragonite',slug:'dragonite',type:'Dragon',tc:'#EA580C'},
+   wild:{name:'Charmeleon',slug:'charmeleon',type:'Fire',tc:'#EF4444'}},
+
+  // ══════════════════════════════════════════════════════════════════
+  // 💎 KEREN (5) — pseudo-legendary 3-stage chains
+  // ══════════════════════════════════════════════════════════════════
   {id:'dratini-line', label:'Dratini', series:'Dragon of Legends', category:'cool', color:'#6366F1', icon:'🐉',
    player:{name:'Dratini',slug:'dratini',type:'Dragon',tc:'#6366F1'},
    evolved:{name:'Dragonair',slug:'dragonair',type:'Dragon',tc:'#6366F1'},
-   evolved2:{name:'Dragonite',slug:'dragonite',type:'Dragon',tc:'#6366F1'},
+   evolved2:{name:'Dragonite',slug:'dragonite',type:'Dragon',tc:'#4338CA'},
    wild:{name:'Gyarados',slug:'gyarados',type:'Water',tc:'#38BDF8'}},
   {id:'larvitar-line', label:'Larvitar', series:'Pseudo-Legend Rock', category:'cool', color:'#166534', icon:'🪨',
    player:{name:'Larvitar',slug:'larvitar',type:'Rock',tc:'#166534'},
    evolved:{name:'Pupitar',slug:'pupitar',type:'Rock',tc:'#166534'},
-   evolved2:{name:'Tyranitar',slug:'tyranitar',type:'Rock',tc:'#166534'},
+   evolved2:{name:'Tyranitar',slug:'tyranitar',type:'Rock',tc:'#14532D'},
+   mega:_mega('Mega Tyranitar','tyranitar','Rock','#052E16','mega','rainbow','⭐ MEGA'),
    wild:{name:'Aggron',slug:'aggron',type:'Steel',tc:'#94A3B8'}},
   {id:'beldum-line', label:'Beldum', series:'Steel Champion', category:'cool', color:'#94A3B8', icon:'🔩',
    player:{name:'Beldum',slug:'beldum',type:'Steel',tc:'#94A3B8'},
    evolved:{name:'Metang',slug:'metang',type:'Steel',tc:'#94A3B8'},
-   evolved2:{name:'Metagross',slug:'metagross',type:'Steel',tc:'#94A3B8'},
+   evolved2:{name:'Metagross',slug:'metagross',type:'Steel',tc:'#64748B'},
+   mega:_mega('Mega Metagross','metagross','Steel','#475569','mega','blue','⭐ MEGA'),
    wild:{name:'Scizor',slug:'scizor',type:'Steel',tc:'#94A3B8'}},
   {id:'bagon-line', label:'Bagon', series:'Dragon Ace Hoenn', category:'cool', color:'#0E7490', icon:'🐲',
    player:{name:'Bagon',slug:'bagon',type:'Dragon',tc:'#0E7490'},
    evolved:{name:'Shelgon',slug:'shelgon',type:'Dragon',tc:'#0E7490'},
-   evolved2:{name:'Salamence',slug:'salamence',type:'Dragon',tc:'#0E7490'},
+   evolved2:{name:'Salamence',slug:'salamence',type:'Dragon',tc:'#155E75'},
+   mega:_mega('Mega Salamence','salamence','Dragon','#164E63','mega','rainbow','⭐ MEGA'),
    wild:{name:'Flygon',slug:'flygon',type:'Dragon',tc:'#6366F1'}},
   {id:'gible-line', label:'Gible', series:'Land Shark Sinnoh', category:'cool', color:'#1E40AF', icon:'🦈',
    player:{name:'Gible',slug:'gible',type:'Dragon',tc:'#1E40AF'},
    evolved:{name:'Gabite',slug:'gabite',type:'Dragon',tc:'#1E40AF'},
-   evolved2:{name:'Garchomp',slug:'garchomp',type:'Dragon',tc:'#1E40AF'},
+   evolved2:{name:'Garchomp',slug:'garchomp',type:'Dragon',tc:'#1E3A8A'},
+   mega:_mega('Mega Garchomp','garchomp','Dragon','#172554','mega','rainbow','⭐ MEGA'),
    wild:{name:'Hydreigon',slug:'hydreigon',type:'Dragon',tc:'#6366F1'}},
 ]
 
@@ -7340,13 +7642,29 @@ function getG13Family() {
 
 let g13LastChainId = -1
 function g13PickChain(lv) {
-  const tier = lv <= 8 ? 'easy' : lv <= 14 ? 'medium' : lv <= 17 ? 'hard' : lv <= 32 ? '2stage' : lv <= 44 ? 'epic' : 'legendary'
+  // Task #67 (2026-04-25): rebalanced for 3-stage Mega Evolution at high levels
+  // 1-4 easy (1 evo) | 5-9 medium (1 evo) | 10-16 hard (2 evos) | 17-25 2stage (2 evos)
+  // 26-35 epic (2 evos harder) | 36-45 3stage (3 evos WITH MEGA) | 46-55 legendary (3 evos hardest)
+  const tier = lv <= 4 ? 'easy'
+             : lv <= 9 ? 'medium'
+             : lv <= 16 ? 'hard'
+             : lv <= 25 ? '2stage'
+             : lv <= 35 ? 'epic'
+             : lv <= 45 ? '3stage'
+             : 'legendary'
 
   // If user picked a specific family, use it — but use difficulty metadata from tier
   const fam = getG13Family()
   if (fam) {
     // Build a synthetic chain from family + tier's difficulty settings
     const tierProto = G13_CHAINS.find(c => c.diff === tier) || G13_CHAINS[0]
+    // Task #67: stages-based reveal — 1=evolved only, 2=evolved+evolved2, 3=evolved+evolved2+mega
+    const stages = (G13_DIFF[tier] || {}).stages || 2
+    let megaForm = null
+    if (stages >= 3) {
+      // If family has canonical Mega/Gmax/Ash-form, use it; otherwise synthesize MAX FORM
+      megaForm = fam.mega || synthMaxBoostForm(fam.evolved2 || fam.evolved || fam.player)
+    }
     return {
       id: 'fam_' + fam.id,
       icon: fam.icon,
@@ -7354,8 +7672,9 @@ function g13PickChain(lv) {
       maxNum: tierProto.maxNum,
       ops: tierProto.ops,
       player: fam.player,
-      evolved: fam.evolved,
-      evolved2: (tier === 'easy' || tier === 'medium') ? null : fam.evolved2,
+      evolved: stages >= 1 ? fam.evolved : null,
+      evolved2: stages >= 2 ? fam.evolved2 : null,
+      mega: megaForm,
       wild: fam.wild,
     }
   }
@@ -7371,36 +7690,74 @@ function g13PickChain(lv) {
 }
 
 // G13 family selector UI — opens from header 🎒 button
+// Task #67 (2026-04-25): expanded to 44 chains across 4 categories with tab filter
+let g13FamActiveTab = 'ash'  // default Ash (most kid-recognized)
 function openG13FamilySelector() {
   const grid = document.getElementById('g13-fam-grid')
+  const tabsEl = document.getElementById('g13-fam-tabs')
   if (!grid) return
-  const currentId = (function(){ try { return localStorage.getItem('g13_lastFamily') || 'random' } catch(_) { return 'random' } })()
+  const currentId = (function(){ try { return localStorage.getItem('g13_lastFamily') || 'ash-pikachu' } catch(_) { return 'ash-pikachu' } })()
   const pokeImg = (slug) => `assets/Pokemon/pokemondb_hd_alt2/${slug}.webp`
+
+  // Determine initial tab from currentId
+  if (currentId === 'random') g13FamActiveTab = 'random'
+  else {
+    const fam = G13_FAMILIES.find(f => f.id === currentId)
+    if (fam) g13FamActiveTab = fam.category
+  }
+
   const cardHtml = (fam) => {
     const selCls = fam.id === currentId ? ' g13-fam-selected' : ''
-    const catBadge = fam.category === 'popular' ? '⭐ POPULER' : fam.category === 'cool' ? '💎 KEREN' : '🎲 ACAK'
-    const catColor = fam.category === 'popular' ? '#fbbf24' : fam.category === 'cool' ? '#c084fc' : '#38bdf8'
+    const catBadge = fam.category === 'popular' ? '⭐ POPULER' : fam.category === 'ash' ? '🎒 ASH' : fam.category === 'cool' ? '💎 KEREN' : '🎲 ACAK'
+    const catColor = fam.category === 'popular' ? '#fbbf24' : fam.category === 'ash' ? '#ef4444' : fam.category === 'cool' ? '#c084fc' : '#38bdf8'
     const thumbsHtml = fam.id === 'random'
       ? '<div style="color:rgba(255,255,255,0.6);font-size:13px;font-weight:700;padding:8px 0;">🎲 Acak dari semua evolusi yang ada — tiap level beda Pokémon!</div>'
       : `<div style="display:flex;gap:6px;align-items:center;justify-content:flex-start;flex-wrap:wrap;margin-top:8px;">
-          <img src="${pokeImg(fam.player.slug)}" alt="${fam.player.name}" style="width:42px;height:42px;background:rgba(0,0,0,0.25);border-radius:8px;padding:2px;object-fit:contain;" onerror="this.src='https://img.pokemondb.net/sprites/home/normal/${fam.player.slug}.png';this.onerror=null">
-          <span style="color:rgba(255,255,255,0.5);font-size:12px;">→</span>
-          <img src="${pokeImg(fam.evolved.slug)}" alt="${fam.evolved.name}" style="width:42px;height:42px;background:rgba(0,0,0,0.25);border-radius:8px;padding:2px;object-fit:contain;" onerror="this.src='https://img.pokemondb.net/sprites/home/normal/${fam.evolved.slug}.png';this.onerror=null">
-          ${fam.evolved2 ? `<span style="color:rgba(255,255,255,0.5);font-size:12px;">→</span>
-          <img src="${pokeImg(fam.evolved2.slug)}" alt="${fam.evolved2.name}" style="width:42px;height:42px;background:rgba(0,0,0,0.25);border-radius:8px;padding:2px;object-fit:contain;" onerror="this.src='https://img.pokemondb.net/sprites/home/normal/${fam.evolved2.slug}.png';this.onerror=null">` : ''}
+          <img src="${pokeImg(fam.player.slug)}" alt="${fam.player.name}" loading="lazy" decoding="async" style="width:38px;height:38px;background:rgba(0,0,0,0.25);border-radius:8px;padding:2px;object-fit:contain;" onerror="this.src='https://img.pokemondb.net/sprites/home/normal/${fam.player.slug}.png';this.onerror=null">
+          <span style="color:rgba(255,255,255,0.5);font-size:11px;">→</span>
+          <img src="${pokeImg(fam.evolved.slug)}" alt="${fam.evolved.name}" loading="lazy" decoding="async" style="width:38px;height:38px;background:rgba(0,0,0,0.25);border-radius:8px;padding:2px;object-fit:contain;" onerror="this.src='https://img.pokemondb.net/sprites/home/normal/${fam.evolved.slug}.png';this.onerror=null">
+          ${fam.evolved2 ? `<span style="color:rgba(255,255,255,0.5);font-size:11px;">→</span>
+          <img src="${pokeImg(fam.evolved2.slug)}" alt="${fam.evolved2.name}" loading="lazy" decoding="async" style="width:38px;height:38px;background:rgba(0,0,0,0.25);border-radius:8px;padding:2px;object-fit:contain;" onerror="this.src='https://img.pokemondb.net/sprites/home/normal/${fam.evolved2.slug}.png';this.onerror=null">` : ''}
         </div>`
-    return `<div class="g13-fam-card${selCls}" data-fam="${fam.id}" style="background:linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02));border:2px solid ${fam.id === currentId ? '#fbbf24' : 'rgba(255,255,255,0.2)'};border-radius:16px;padding:14px;cursor:pointer;transition:transform 0.15s,border-color 0.15s;color:#fff;border-left:6px solid ${fam.color};${fam.id === currentId ? 'box-shadow:0 0 24px rgba(251,191,36,0.5);' : ''}">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-        <div style="font-size:16px;font-weight:900;">${fam.icon} ${fam.label}</div>
-        <span style="font-size:9px;font-weight:900;color:${catColor};background:${catColor}22;border:1px solid ${catColor}55;padding:2px 6px;border-radius:8px;letter-spacing:0.5px;">${catBadge}</span>
+    const megaIndicator = fam.mega ? '<span class="g13-fam-mega-indicator">⭐ MEGA</span>' : ''
+    return `<div class="g13-fam-card${selCls}" data-fam="${fam.id}" style="position:relative;background:linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02));border:2px solid ${fam.id === currentId ? '#fbbf24' : 'rgba(255,255,255,0.2)'};border-radius:14px;padding:12px;cursor:pointer;transition:transform 0.15s,border-color 0.15s;color:#fff;border-left:5px solid ${fam.color};${fam.id === currentId ? 'box-shadow:0 0 22px rgba(251,191,36,0.5);' : ''}">
+      ${megaIndicator}
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;padding-right:${fam.mega ? '70px' : '0'};">
+        <div style="font-size:15px;font-weight:900;">${fam.icon} ${fam.label}</div>
+        ${fam.mega ? '' : `<span style="font-size:9px;font-weight:900;color:${catColor};background:${catColor}22;border:1px solid ${catColor}55;padding:2px 6px;border-radius:8px;letter-spacing:0.5px;">${catBadge}</span>`}
       </div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:4px;">${fam.series}</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-bottom:2px;">${fam.series}</div>
       ${thumbsHtml}
     </div>`
   }
-  // Prepend "Random" pseudo-family as first card
+
+  // Render category tabs
   const randomFam = {id:'random', label:'Acak / Kejutan', series:'Pokémon beda tiap level!', category:'random', color:'#38bdf8', icon:'🎲'}
-  grid.innerHTML = [randomFam, ...G13_FAMILIES].map(cardHtml).join('')
+  const tabSpec = [
+    {id:'ash',     label:'🎒 ASH',     count:G13_FAMILIES.filter(f=>f.category==='ash').length},
+    {id:'popular', label:'⭐ POPULER', count:G13_FAMILIES.filter(f=>f.category==='popular').length},
+    {id:'cool',    label:'💎 KEREN',   count:G13_FAMILIES.filter(f=>f.category==='cool').length},
+    {id:'random',  label:'🎲 ACAK',    count:1},
+  ]
+  if (tabsEl) {
+    tabsEl.innerHTML = tabSpec.map(t =>
+      `<button class="g13-fam-tab tab-${t.id}${t.id===g13FamActiveTab?' active':''}" data-tab="${t.id}">${t.label} (${t.count})</button>`
+    ).join('')
+    tabsEl.querySelectorAll('.g13-fam-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        g13FamActiveTab = btn.getAttribute('data-tab')
+        try { playClick && playClick() } catch(_) {}
+        openG13FamilySelector()  // re-render with new tab
+      })
+    })
+  }
+
+  // Filter families by active tab
+  const filteredFams = g13FamActiveTab === 'random'
+    ? [randomFam]
+    : G13_FAMILIES.filter(f => f.category === g13FamActiveTab)
+  grid.innerHTML = filteredFams.map(cardHtml).join('')
+
   grid.querySelectorAll('.g13-fam-card').forEach(card => {
     card.addEventListener('click', () => {
       const id = card.getAttribute('data-fam')
@@ -7445,6 +7802,8 @@ window.initGame13 = initGame13
 
 function _initGame13Impl() {
   battleBgmPlay()
+  // Task #66: load city background if selected
+  loadCityBackground(document.getElementById('g13-field'))
   const lv = Math.max(1, Math.min(55, state.selectedLevelNum || 1))
   const _FALLBACK = {id:0,icon:'🔥',diff:'easy',maxNum:10,ops:['+'],
     player:{name:'Charmander',slug:'charmander',type:'Fire',tc:'#F97316'},
@@ -7464,7 +7823,7 @@ function _initGame13Impl() {
     playerHp: cfg.playerHp, playerMaxHp: cfg.playerHp,
     wildHp: cfg.wildHp, wildMaxHp: cfg.wildHp,
     evoPoints: 0, evoNeeded: cfg.attacksToEvo,
-    evolved: false, evolved2: false, locked: false,
+    evolved: false, evolved2: false, megaForm: false, locked: false,
     attackIdx: 0,
     phase: 'player_attack',
     correctThisExchange: 0,
@@ -7481,7 +7840,7 @@ function _initGame13Impl() {
   const evoOv = document.getElementById('g13-evo-overlay'); if(evoOv) evoOv.style.display = 'none'
   hideGameResult()
   // Reset sprite state from previous level (defeat/hit/atk animations)
-  const pspr0 = document.getElementById('g13-pspr'); if (pspr0) pspr0.classList.remove('spr-defeat','spr-hit','spr-flash','spr-atk','wild-die','wild-enter')
+  const pspr0 = document.getElementById('g13-pspr'); if (pspr0) { pspr0.classList.remove('spr-defeat','spr-hit','spr-flash','spr-atk','wild-die','wild-enter'); if (typeof clearMegaOverlay === 'function') clearMegaOverlay(pspr0) }
   const wspr0 = document.getElementById('g13-wspr'); if (wspr0) wspr0.classList.remove('spr-defeat','spr-hit','spr-flash','spr-atk','wild-die','wild-enter')
   const qp = document.getElementById('g13-qpanel')
   if (qp) { qp.style.opacity = '1'; qp.style.pointerEvents = ''; qp.style.display = 'flex' }
@@ -7624,10 +7983,13 @@ function g13UpdateEvoBar() {
 
 function g13GenQuestion() {
   const s = g13State
+  // Task #68: enforce easy-default math rules; Task #67: megaForm boost +15
+  const _ml = getMathLimits()
   const baseMax = s.chain.maxNum || 10
-  const max = Math.min(s.evolved2 ? baseMax + 10 : s.evolved ? baseMax + 5 : baseMax, 20)
-  const allowedOps = isMathAdvanced() ? s.chain.ops : s.chain.ops.filter(o => o !== '*' && o !== '/')
-  const filteredOps = allowedOps.length > 0 ? allowedOps : ['+']
+  const stageBoost = s.megaForm ? 15 : s.evolved2 ? 10 : s.evolved ? 5 : 0
+  const max = Math.min(baseMax + stageBoost, _ml.maxNum)
+  const filteredOps = (s.chain.ops || ['+']).filter(o => _ml.allowedOps.includes(o))
+  if (!filteredOps.length) filteredOps.push('+')
   const op = filteredOps[Math.floor(Math.random() * filteredOps.length)]
   let a, b, ans
   if (op === '+') {
@@ -7882,7 +8244,9 @@ function g13WildCounterPhase() {
       if (s.playerHp <= 0) { g13Defeat(); return }
       const canEvo1 = !s.evolved && s.evoPoints >= s.evoNeeded
       const canEvo2 = s.evolved && !s.evolved2 && s.chain.evolved2 && s.evoPoints >= s.evoNeeded
-      if (canEvo1 || canEvo2) {
+      // Task #67: 3rd-stage evolution to Mega/Gmax/Ash-form (only when chain has `mega` field)
+      const canEvo3 = s.evolved2 && !s.megaForm && s.chain.mega && s.evoPoints >= s.evoNeeded
+      if (canEvo1 || canEvo2 || canEvo3) {
         s.phase = 'evo_ready'
         setTimeout(() => g13ShowEvoButton(), 300)
       } else {
@@ -8047,29 +8411,49 @@ function g13TriggerEvolution() {
   setTimeout(() => {
     overlay.style.display = 'none'
 
-    // Determine which stage just evolved
-    const wasStage2 = s.evolved && s.chain.evolved2 && !s.evolved2
-    const nowForm = wasStage2 ? s.chain.evolved2 : s.chain.evolved
+    // Task #67: determine which stage just evolved (1, 2, or 3-Mega)
+    const wasStage3 = s.evolved2 && s.chain.mega && !s.megaForm
+    const wasStage2 = !wasStage3 && s.evolved && s.chain.evolved2 && !s.evolved2
+    const nowForm = wasStage3 ? s.chain.mega : (wasStage2 ? s.chain.evolved2 : s.chain.evolved)
 
-    if (wasStage2) {
+    if (wasStage3) {
+      s.megaForm = true
+    } else if (wasStage2) {
       s.evolved2 = true
     } else {
       s.evolved = true
     }
 
-    // Reset evo bar for potential stage 2
+    // Reset evo bar for potential next stage
     s.evoPoints = 0
     g13UpdateEvoBar()
 
-    // Update player sprite to new form
+    // Update player sprite to new form (Task #67: local-first per Lesson L16)
     const pspr = document.getElementById('g13-pspr')
     if (pspr) {
-      pspr.src = `https://img.pokemondb.net/sprites/home/normal/${nowForm.slug}.png`
-      pspr.onerror = () => { const eid=POKE_IDS2[nowForm.slug]; if(eid) pspr.src=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${eid}.png`; pspr.onerror=null }
-      pspr.style.width = pspr.style.height = `calc(min(40vw,20vh) * ${pokeFinalScale(nowForm.slug)})`
+      const localSrc = (typeof pokeSpriteAlt2 === 'function') ? pokeSpriteAlt2(nowForm.slug) : null
+      pspr.src = localSrc || `https://img.pokemondb.net/sprites/home/normal/${nowForm.slug}.png`
+      pspr.onerror = () => {
+        if (pspr.dataset.evolveFallback === '1') {
+          const eid = POKE_IDS2[nowForm.slug]
+          if (eid) pspr.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${eid}.png`
+          pspr.onerror = null; return
+        }
+        pspr.dataset.evolveFallback = '1'
+        pspr.src = `https://img.pokemondb.net/sprites/home/normal/${nowForm.slug}.png`
+      }
+      // Mega form: 1.3x scale boost on top of normal final scale
+      const megaScale = wasStage3 ? 1.3 : 1.0
+      pspr.style.width = pspr.style.height = `calc(min(40vw,20vh) * ${pokeFinalScale(nowForm.slug) * megaScale})`
       applyPokeFlip(pspr, nowForm.slug, 'player')
       pspr.style.animation = 'none'; void pspr.offsetWidth
       pspr.style.animation = 'g13EnterFlip 0.6s cubic-bezier(0.34,1.56,0.64,1)'
+      // Apply Mega aura overlay if stage 3
+      if (wasStage3 && nowForm.aura) {
+        applyMegaOverlay(pspr, nowForm)
+      } else {
+        clearMegaOverlay(pspr)
+      }
     }
     // Update player info box
     document.getElementById('g13-pname').textContent = nowForm.name
@@ -8161,6 +8545,10 @@ function g13Victory() {
     // Prior code had this mapping INVERTED (>=5→3 but wrote the 0-3 value, causing display to show 3★ for a 5★ run).
     const _g13starsSaved = perfStars >= 5 ? 3 : perfStars >= 4 ? 2 : perfStars >= 3 ? 1 : 0
     setLevelComplete(13, _g13lv, _g13starsSaved)
+    // Task #66: mark city as completed if region+city were selected
+    if (state.selectedRegion && state.selectedCity && typeof setCityComplete === 'function') {
+      setCityComplete(13, state.selectedRegion, state.selectedCity, _g13starsSaved)
+    }
     saveStars()
     updateGameStarDisplay()
   } catch(e) { console.error('[G13] victory scoring crashed:', e) }
@@ -8302,16 +8690,19 @@ function initGame13b() {
   // Init Pixi GPU canvas for aura rings + combo text
   loadPixiJS(function(){ PixiManager.init('g13b-pixi-canvas').catch(()=>{}) })
 
-  // Random background: mobile vs pc based on viewport width
-  const isMobile = window.innerWidth < 768
-  const pool = isMobile ? G13B_MOBILE_BG : G13B_PC_BG
-  const folder = isMobile ? 'mobile' : 'pc'
-  const pick = pool[Math.floor(Math.random() * pool.length)]
+  // Task #66: prefer city-specific background if selected; else random pool
   const field = document.getElementById('g13b-field')
-  if (field) {
-    field.style.backgroundImage = `url('assets/Pokemon/g13b/background/${folder}/${encodeURIComponent(pick)}')`
-    field.style.backgroundSize = 'cover'
-    field.style.backgroundPosition = 'center 22%'
+  const cityBgLoaded = loadCityBackground(field)
+  if (!cityBgLoaded) {
+    const isMobile = window.innerWidth < 768
+    const pool = isMobile ? G13B_MOBILE_BG : G13B_PC_BG
+    const folder = isMobile ? 'mobile' : 'pc'
+    const pick = pool[Math.floor(Math.random() * pool.length)]
+    if (field) {
+      field.style.backgroundImage = `url('assets/Pokemon/g13b/background/${folder}/${encodeURIComponent(pick)}')`
+      field.style.backgroundSize = 'cover'
+      field.style.backgroundPosition = 'center 22%'
+    }
   }
 
   // Clear any leftover legendary auto-attack timer from previous session
@@ -8365,11 +8756,31 @@ function g13bSpawnWild() {
     const lb = document.getElementById('g13b-leg-badge')
     if (lb) lb.style.display = 'block'
   } else {
+    // Task #66: prefer city pack pool if selected
+    let pool = G13B_WILDS
+    try {
+      if (state && state.selectedRegion && state.selectedCity && typeof CITY_PACK !== 'undefined') {
+        const region = CITY_PACK[state.selectedRegion]
+        const city = region && region.cities && region.cities.find(c => c.slug === state.selectedCity)
+        if (city && city.pack && city.pack.length >= 2) {
+          // Map city pack to G13B_WILDS shape (id+slug+type+tier)
+          const cityPool = []
+          for (const cp of city.pack) {
+            const dbEntry = POKEMON_DB.find(p => p.id === cp.id)
+            if (dbEntry) {
+              const t = dbEntry.type ? dbEntry.type.charAt(0).toUpperCase() + dbEntry.type.slice(1) : 'Normal'
+              cityPool.push({ name: dbEntry.name, slug: dbEntry.slug, type: t, hp: 1, tier: dbEntry.tier || 1 })
+            }
+          }
+          if (cityPool.length >= 2) pool = cityPool
+        }
+      }
+    } catch(_) {}
     // Avoid immediate repeat
     let idx
-    do { idx = Math.floor(Math.random() * G13B_WILDS.length) } while (idx === g13bLastWildIdx && G13B_WILDS.length > 1)
+    do { idx = Math.floor(Math.random() * pool.length) } while (idx === g13bLastWildIdx && pool.length > 1)
     g13bLastWildIdx = idx
-    wild = G13B_WILDS[idx]
+    wild = pool[idx]
     s.wildHp = 1; s.wildMaxHp = 1
     const lb = document.getElementById('g13b-leg-badge')
     if (lb) lb.style.display = 'none'
@@ -8421,13 +8832,16 @@ function g13bNextQuestion() {
   const s = g13bState
   if (s.phase !== 'playing') return
 
-  // Difficulty scales with kills
-  let maxNum, ops
-  const adv = isMathAdvanced()
-  if      (s.kills < 10) { maxNum = 10; ops = ['+'] }
-  else if (s.kills < 20) { maxNum = 15; ops = ['+','-'] }
-  else if (s.kills < 30) { maxNum = 20; ops = ['+','-'] }
-  else                   { maxNum = 20; ops = adv ? ['+','-','*'] : ['+','-'] }
+  // Difficulty scales with kills. Task #68: enforce easy-default math rules.
+  const _ml = getMathLimits()
+  let maxNum, opsRaw
+  if      (s.kills < 10) { maxNum = 10; opsRaw = ['+'] }
+  else if (s.kills < 20) { maxNum = 15; opsRaw = ['+','-'] }
+  else if (s.kills < 30) { maxNum = 20; opsRaw = ['+','-'] }
+  else                   { maxNum = 30; opsRaw = ['+','-','*'] }
+  maxNum = Math.min(maxNum, _ml.maxNum)
+  let ops = opsRaw.filter(o => _ml.allowedOps.includes(o))
+  if (!ops.length) ops = ['+']
 
   const op = ops[Math.floor(Math.random() * ops.length)]
   let a, b, ans
@@ -8884,6 +9298,13 @@ function g13bGameOver(reason) {
     ? (s.kills >= 15 ? 2 : s.kills >= 5 ? 1 : 0)
     : (s.kills >= 30 ? 3 : s.kills >= 15 ? 2 : s.kills >= 1 ? 1 : 0)
   const stars = _g13bTier === 0 ? 0 : GameScoring.calc({ correct: 1, total: 1, bonus: _g13bTier - 5 })
+  // Task #66: mark city as completed for region/city progression (only if not defeated)
+  try {
+    if (!defeated && stars > 0 && state.selectedRegion && state.selectedCity && typeof setCityComplete === 'function') {
+      const _saved = stars >= 4 ? 3 : stars >= 2 ? 2 : 1
+      setCityComplete('13b', state.selectedRegion, state.selectedCity, _saved)
+    }
+  } catch(_) {}
   vibrate([30, 20, 50])
   try { if (stars >= 2) playCorrect() } catch(e) {}
 
@@ -11744,4 +12165,162 @@ if (_origShowScreen) {
     if (id !== 'screen-welcome') g14StopZoneMusic()
     _origShowScreen(id)
   }
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Task #66 (2026-04-25): Region & City Selector
+// Stage A — Region Picker → Stage B — City Picker → game start
+// Reference: documentation and standarization/CITY-PROGRESSION-SPEC.md
+// Data: games/data/region-meta.js + city-progression.js + city-pokemon-pack.js (TBD)
+// ════════════════════════════════════════════════════════════════════
+
+// State: which game (10/13/13b) is using the selector right now
+let _citySelectorGame = 10  // default G10
+let _citySelectorRegion = null
+
+const REGION_ICON_PATH = 'assets/Pokemon/others/region.webp'
+const CITY_ICON_PATH = 'assets/Pokemon/others/cities.webp'
+
+/** Open Stage A — Region Picker. Caller passes which game (10/13/13b). */
+function openRegionOverlay(gameNum) {
+  _citySelectorGame = gameNum || 10
+  if (typeof migrateLegacyLevelsToCity === 'function') {
+    try { migrateLegacyLevelsToCity(_citySelectorGame) } catch(_) {}
+  }
+  renderRegionGrid()
+  const ov = document.getElementById('region-overlay')
+  if (ov) ov.classList.add('open')
+}
+function closeRegionOverlay() {
+  const ov = document.getElementById('region-overlay')
+  if (ov) ov.classList.remove('open')
+}
+function renderRegionGrid() {
+  const grid = document.getElementById('region-grid')
+  if (!grid || typeof getAllRegions !== 'function') return
+  const regions = getAllRegions()
+  grid.innerHTML = regions.map(r => {
+    const cp = (typeof getCityProgress === 'function') ? getCityProgress(_citySelectorGame, r.id) : { completed: [] }
+    const completed = cp.completed.length
+    const total = (typeof CITY_PACK !== 'undefined' && CITY_PACK[r.id]) ? CITY_PACK[r.id].cities.length : r.totalCities
+    const filter = `hue-rotate(${r.hueRotate}deg) saturate(${r.saturate}) drop-shadow(0 0 8px ${r.color})`
+    return `
+      <div class="region-card" data-region="${r.id}" style="--region-color:${r.color};--region-filter:${filter};border-color:${completed===total?'#22C55E':'rgba(255,255,255,0.14)'};">
+        <img class="region-card-icon" src="${REGION_ICON_PATH}" alt="${r.name}" loading="lazy" decoding="async">
+        <div class="region-card-name">${r.icon} ${r.name}</div>
+        <div class="region-card-gen">${r.gen}</div>
+        <div class="region-card-progress">${completed}/${total} ⭐</div>
+      </div>`
+  }).join('')
+  grid.querySelectorAll('.region-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const id = card.getAttribute('data-region')
+      try { playClick && playClick() } catch(_) {}
+      openCityOverlay(id)
+    })
+  })
+}
+
+/** Open Stage B — City Picker for a region */
+function openCityOverlay(regionId) {
+  _citySelectorRegion = regionId
+  closeRegionOverlay()
+  renderCityGrid(regionId)
+  const ov = document.getElementById('city-overlay')
+  if (ov) ov.classList.add('open')
+}
+function closeCityOverlay() {
+  const ov = document.getElementById('city-overlay')
+  if (ov) ov.classList.remove('open')
+  _citySelectorRegion = null
+}
+function backToRegionOverlay() {
+  closeCityOverlay()
+  renderRegionGrid()
+  const ov = document.getElementById('region-overlay')
+  if (ov) ov.classList.add('open')
+}
+function renderCityGrid(regionId) {
+  const grid = document.getElementById('city-grid')
+  const titleEl = document.getElementById('city-hdr-title')
+  if (!grid || typeof REGION_META === 'undefined' || !REGION_META[regionId]) return
+  const meta = REGION_META[regionId]
+  if (titleEl) titleEl.textContent = `${meta.icon} ${meta.name}`
+  const pack = (typeof CITY_PACK !== 'undefined' && CITY_PACK[regionId]) ? CITY_PACK[regionId] : null
+  if (!pack || !pack.cities || pack.cities.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1;padding:30px;text-align:center;color:rgba(255,255,255,0.6);font-family:'Fredoka One',cursive;">🚧 Kota ${meta.name} sedang disiapkan!<br><span style="font-size:13px;color:rgba(255,255,255,0.4);">Coming soon — kembali lagi nanti ya 😊</span></div>`
+    return
+  }
+  const states = (typeof getCityStates === 'function')
+    ? getCityStates(_citySelectorGame, regionId, pack.cities)
+    : pack.cities.map(c => ({...c, state: 'available', stars: 0}))
+  const filter = `hue-rotate(${meta.hueRotate}deg) saturate(${meta.saturate}) drop-shadow(0 0 6px ${meta.color})`
+
+  grid.innerHTML = states.map((c, i) => {
+    const tier = c.tier || 1
+    const dots = Array.from({length: 5}, (_, n) =>
+      `<span class="dot${n < tier ? ' active' : ''}"></span>`
+    ).join('')
+    let statusText = ''
+    if (c.state === 'completed') {
+      statusText = '⭐'.repeat(Math.max(1, c.stars || 1))
+    } else if (c.state === 'available') {
+      statusText = '▶'
+    } else {
+      statusText = '🔒'
+    }
+    const displayName = c.state === 'locked' ? '???' : (c.name || c.slug)
+    return `
+      <div class="city-card ${c.state}" data-slug="${c.slug}" data-idx="${i+1}"
+           style="--region-color:${meta.color};--region-filter:${filter};">
+        <img class="city-card-icon" src="${CITY_ICON_PATH}" alt="${displayName}" loading="lazy" decoding="async">
+        <div class="city-card-info">
+          <div class="city-card-name">${displayName}</div>
+          <div class="city-card-meta">
+            <span class="city-card-tier">${dots}</span>
+            ${c.gym ? `<span style="opacity:0.7;">🏆 ${c.gym}</span>` : ''}
+          </div>
+        </div>
+        <div class="city-card-status">${statusText}</div>
+      </div>`
+  }).join('')
+
+  grid.querySelectorAll('.city-card').forEach((card, i) => {
+    card.addEventListener('click', () => {
+      const slug = card.getAttribute('data-slug')
+      const stateClass = card.classList.contains('locked') ? 'locked'
+                       : card.classList.contains('completed') ? 'completed' : 'available'
+      if (stateClass === 'locked') {
+        try { playClick && playClick() } catch(_) {}
+        // shake hint
+        card.style.animation = 'none'; void card.offsetWidth
+        card.style.animation = 'wrongShake 0.4s ease'
+        return
+      }
+      try { playClick && playClick() } catch(_) {}
+      // Persist selection + start game
+      try {
+        state.selectedRegion = regionId
+        state.selectedCity = slug
+        state.selectedCityIdx = i + 1
+        // Map city index to legacy levelNum for backward-compat with initGame10/13/13b
+        state.selectedLevelNum = i + 1
+      } catch(_) {}
+      closeCityOverlay()
+      const g = _citySelectorGame
+      try {
+        if (g === 10 && typeof initGame10 === 'function') { showScreen('screen-game10'); setTimeout(initGame10, 80) }
+        else if (g === 13 && typeof initGame13 === 'function') { showScreen('screen-game13'); setTimeout(initGame13, 80) }
+        else if (g === '13b' && typeof startQuickFire === 'function') { startQuickFire() }
+      } catch(e) { console.warn('[city-selector] start failed:', e) }
+    })
+  })
+}
+
+if (typeof window !== 'undefined') {
+  window.openRegionOverlay = openRegionOverlay
+  window.closeRegionOverlay = closeRegionOverlay
+  window.openCityOverlay = openCityOverlay
+  window.closeCityOverlay = closeCityOverlay
+  window.backToRegionOverlay = backToRegionOverlay
 }
