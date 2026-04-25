@@ -1,5 +1,19 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-25 Hotfix — Task #69: CITY_PACK script load fix
+
+Cache bump: `v=20260425c` → `v=20260425d` (atomic across all 4 files).
+
+- **Bug**: City overlay showed "🚧 Coming soon" for ALL regions on Vercel deploy.
+- **Root cause**: `games/data/city-pokemon-pack.js` (created in commit `4cddc31`) was not registered as `<script>` in `index.html` → `CITY_PACK` undefined globally.
+- **Fix** (`index.html`):
+  - Added `<script src="games/data/city-pokemon-pack.js?v=20260425d">`
+  - Bumped 4 cache versions atomically (style.css, region-meta, city-progression, game.js → all `v=20260425d`)
+- **Hardening**: explicit `console.error` guard in `renderCityGrid` if `CITY_PACK` undefined, surfaces future regressions immediately.
+- **Process**: new internal mandate — every plan with new module file MUST include Cross-File Integration Checklist (script tag registration, cache versioning, browser smoke test).
+
+---
+
 ## 2026-04-25 Late — City Progression System (127 cities, 10 regions)
 
 Cache bump: `v=20260425b` → `v=20260425c`.

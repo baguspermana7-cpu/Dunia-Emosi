@@ -12246,6 +12246,12 @@ function renderCityGrid(regionId) {
   if (!grid || typeof REGION_META === 'undefined' || !REGION_META[regionId]) return
   const meta = REGION_META[regionId]
   if (titleEl) titleEl.textContent = `${meta.icon} ${meta.name}`
+  // Task #69 hotfix: explicit guard — if CITY_PACK global is missing, surface to console
+  // so future regressions (forgotten <script> tag) are caught immediately, not silently
+  // hidden behind the "Coming soon" placeholder.
+  if (typeof CITY_PACK === 'undefined') {
+    console.error('[city-selector] CITY_PACK is not loaded. Check <script src="games/data/city-pokemon-pack.js"> in index.html.')
+  }
   const pack = (typeof CITY_PACK !== 'undefined' && CITY_PACK[regionId]) ? CITY_PACK[regionId] : null
   if (!pack || !pack.cities || pack.cities.length === 0) {
     grid.innerHTML = `<div style="grid-column:1/-1;padding:30px;text-align:center;color:rgba(255,255,255,0.6);font-family:'Fredoka One',cursive;">🚧 Kota ${meta.name} sedang disiapkan!<br><span style="font-size:13px;color:rgba(255,255,255,0.4);">Coming soon — kembali lagi nanti ya 😊</span></div>`

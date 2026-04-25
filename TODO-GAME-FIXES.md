@@ -4,6 +4,20 @@
 
 ---
 
+## 📊 Session 2026-04-25 Hotfix (City picker "Coming Soon" bug)
+
+### ✅ Task #69 — CITY_PACK script not registered in index.html (production hotfix)
+- **Symptom (Vercel deploy)**: Tap any region (Kanto/Johto/etc.) → city overlay shows "🚧 Kota X sedang disiapkan! Coming soon" instead of the 10+ cities. All 10 regions affected.
+- **Root cause**: `games/data/city-pokemon-pack.js` was created (commit `4cddc31`, all 127 cities populated) but never registered as `<script>` in `index.html` → `CITY_PACK` global undefined at runtime → `renderCityGrid()` hits empty-pack fallback.
+- **Fix** (`index.html`):
+  1. Added `<script src="games/data/city-pokemon-pack.js?v=20260425d">` between progression and game.js
+  2. Bumped ALL 4 cache versions atomically: `style.css?v=20260425c → d`, `region-meta.js?v=b → d`, `city-progression.js?v=b → d`, `game.js?v=c → d`
+- **Defensive guard added** (`game.js:renderCityGrid`): explicit `console.error` if `CITY_PACK` undefined — surfaces future regressions immediately instead of hiding behind "Coming soon" placeholder.
+- **Process gap fix**: New mandate — every plan touching new modules MUST include "Cross-File Integration Checklist" covering script registration, cache versioning, and browser smoke test (not just `node --check`). Saved to memory as feedback constraint.
+- **Touched**: `index.html` (5 lines: 1 added, 4 cache bumps), `game.js` (3-line guard at renderCityGrid), this TODO, CHANGELOG, memory.
+
+---
+
 ## 📊 Session 2026-04-25 Late (City Progression System)
 
 ### ✅ Task #66 — Region → City progression for G10/G13/G13b
