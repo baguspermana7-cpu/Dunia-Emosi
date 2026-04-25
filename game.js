@@ -1895,6 +1895,10 @@ function showResult(mascot, title, msg) {
 }
 // endGame — called by G10/G11/G12 with raw star count
 function endGame(stars) {
+  // Task #70: defensive guard — surface state.currentGame regression instead of silent corruption
+  if (typeof state.currentGame !== 'number') {
+    console.error('[endGame] state.currentGame missing — progress may not save. Check city-picker entry path.')
+  }
   // Normalize raw stars to 5-star scale via unified GameScoring engine
   const maxRounds = g10State?.totalRounds || g11State?.total || g12State?.total || 5
   const normalizedStars = GameScoring.calc({ correct: stars || 0, total: maxRounds })
@@ -5480,8 +5484,16 @@ function switchG13bPlayerPoke(poke) {
   g13bSavedPoke = { ...poke, slug: poke.name.toLowerCase().replace(/\s/g, '-') }
   const pspr = document.getElementById('g13b-pspr')
   if (!pspr) return
-  pspr.src = pokeSpriteOnline(g13bSavedPoke.slug)
-  pspr.onerror = function() { this.src = pokeSpriteBackup(poke.id); this.onerror = null }
+  // Task #71: local-first per L16
+  const _pLocal = (typeof pokeSpriteAlt2 === 'function') ? pokeSpriteAlt2(g13bSavedPoke.slug) : null
+  pspr.src = _pLocal || pokeSpriteOnline(g13bSavedPoke.slug)
+  pspr.onerror = function() {
+    if (this.dataset.fallback === '1') { this.src = pokeSpriteBackup(poke.id); this.onerror = null; return }
+    this.dataset.fallback = '1'
+    this.src = pokeSpriteOnline(g13bSavedPoke.slug)
+  }
+  // Apply facing to player sprite (was missing — caused wrong-facing post-switch)
+  if (typeof applyPokeFlip === 'function') applyPokeFlip(pspr, g13bSavedPoke.slug, 'player')
   const pTier = poke.tier || 1
   const pScale = {1:1.0, 2:1.2, 3:1.3, 4:1.3}[pTier] || 1.0
   pspr.style.width = pspr.style.height = pScale === 1.0 ? '' : `calc(min(20vw,12vh) * ${pScale})`
@@ -7869,8 +7881,9 @@ function _initGame13Impl() {
   // SVG variant is secondary (visual variety for the 751 covered slugs).
   // Local low-res PNG is dropped from this cascade — it produced inconsistent
   // sizes and wrong-facing artwork (2026-04-21 user report).
-  const pokeUrl = slug => pokeSpriteCDN(slug)
-  const pokeUrlRemote = slug => pokeSpriteSVG(slug)
+  // Task #71: local-first sprite per Lesson L16 — was CDN-primary causing wrong facing
+  const pokeUrl = slug => pokeSpriteAlt2(slug) || pokeSpriteCDN(slug)
+  const pokeUrlRemote = slug => pokeSpriteCDN(slug)
   const pokeFallbackUrl = slug => { const id = POKE_IDS[slug]; return id ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png` : null }
   const sprFbStyle = 'font-size:min(18vw,11vh);line-height:1;display:flex;align-items:center;justify-content:center;width:min(40vw,20vh);height:min(40vw,20vh);position:relative;z-index:2;'
 
@@ -8339,7 +8352,8 @@ function g13TriggerEvolution() {
     electrike:309,manectric:310,swablu:333,altaria:334,shroomish:285,breloom:286,wailmer:320,wailord:321,meditite:307,medicham:308,skitty:300,delcatty:301,snorunt:361,glalie:362,
     bagon:371,shelgon:372,salamence:373,roggenrola:524,boldore:525,gigalith:526,litwick:607,lampent:608,chandelure:609,gible:443,gabite:444,garchomp:445,timburr:532,gurdurr:533,conkeldurr:534,elekid:239,electabuzz:125,electivire:466,magby:240,magmar:126,magmortar:467,sandile:551,krokorok:552,krookodile:553,
     riolu:447,lucario:448,deino:633,zweilous:634,hydreigon:635,trapinch:328,vibrava:329,flygon:330,axew:610,fraxure:611,haxorus:612,feebas:349,milotic:350,goomy:704,sliggoo:705,goodra:706}
-  const pokeUrl = slug => `https://img.pokemondb.net/sprites/home/normal/${slug}.png`
+  // Task #71: local-first per Lesson L16 (was remote-only causing wrong facing on evolve)
+  const pokeUrl = slug => (typeof pokeSpriteAlt2 === 'function' && pokeSpriteAlt2(slug)) || `https://img.pokemondb.net/sprites/home/normal/${slug}.png`
 
   // Determine which evolution stage is triggering
   const isStage2 = s.evolved && s.chain.evolved2 && !s.evolved2
@@ -8671,6 +8685,24 @@ function startQuickFire() {
 }
 window.startQuickFire = startQuickFire
 
+// Task #72: G13b result "Main Lagi"/"Lanjut" — return to City picker if launched via city,
+// else fallback to legacy startQuickFire random behavior.
+function g13bResultMainLagi() {
+  const r = document.getElementById('g13b-result'); if (r) r.style.display = 'none'
+  const lc = document.getElementById('g13b-level-complete'); if (lc) lc.style.display = 'none'
+  if (state.selectedRegion && state.selectedCity && typeof openRegionOverlay === 'function') {
+    // Cleanup G13b state then return to selector
+    if (_g13bLegAutoAtk) { clearInterval(_g13bLegAutoAtk); _g13bLegAutoAtk = null }
+    try { battleBgmStop && battleBgmStop() } catch(_) {}
+    try { PixiManager.destroy('g13b-pixi-canvas') } catch(_) {}
+    showScreen('screen-welcome')
+    setTimeout(() => openRegionOverlay('13b'), 60)
+  } else {
+    startQuickFire()
+  }
+}
+window.g13bResultMainLagi = g13bResultMainLagi
+
 function exitGame13b() {
   if (_g13bLegAutoAtk) { clearInterval(_g13bLegAutoAtk); _g13bLegAutoAtk = null }
   battleBgmStop()
@@ -8730,8 +8762,14 @@ function initGame13b() {
   if (pspr) {
     const saved = g13bSavedPoke
     const pSlug = saved ? saved.slug : 'pikachu'
-    pspr.src = pokeSpriteOnline(pSlug)
-    pspr.onerror = function(){ this.src = 'https://img.pokemondb.net/sprites/home/normal/pikachu.png'; this.onerror = null }
+    // Task #71: local-first sprite per Lesson L16 (was remote-primary causing facing wrong + 404 invisible)
+    const localSrc = (typeof pokeSpriteAlt2 === 'function') ? pokeSpriteAlt2(pSlug) : null
+    pspr.src = localSrc || pokeSpriteOnline(pSlug)
+    pspr.onerror = function(){
+      if (this.dataset.fallback === '1') { this.src = pokeSpriteOnline('pikachu'); this.onerror = null; return }
+      this.dataset.fallback = '1'
+      this.src = pokeSpriteOnline(pSlug)
+    }
     const pScale = pokeFinalScale(pSlug)
     pspr.style.width = pspr.style.height = pScale === 1.0 ? '' : `calc(min(20vw,12vh) * ${pScale})`
     applyPokeFlip(pspr, pSlug, 'player')
@@ -8793,8 +8831,14 @@ function g13bSpawnWild() {
   if (wspr) {
     wspr.classList.remove('wild-enter','wild-die','wspr-hit')
     wspr.style.opacity = '1'
-    wspr.src = pokeSpriteOnline(wild.slug)
-    wspr.onerror = function(){ this.src=pokeSpriteCDN(wild.slug); this.onerror=()=>{ this.alt = wild.icon || '?' } }
+    // Task #71: local-first per Lesson L16 (was remote-only — caused legendary sprite invisible)
+    const _wLocal = (typeof pokeSpriteAlt2 === 'function') ? pokeSpriteAlt2(wild.slug) : null
+    wspr.src = _wLocal || pokeSpriteOnline(wild.slug)
+    wspr.onerror = function(){
+      if (this.dataset.fallback === '1') { this.alt = wild.icon || '?'; this.onerror = null; return }
+      this.dataset.fallback = '1'
+      this.src = pokeSpriteOnline(wild.slug)
+    }
     // Final scale (tier × visual) + data-driven facing
     const tierScale = pokeFinalScale(wild.slug)
     wspr.style.width = wspr.style.height = tierScale === 1.0 ? '' : `calc(min(44vw,26vh) * ${tierScale})`
@@ -9052,8 +9096,10 @@ function g13bWildEscape() {
     s.wildHp = Math.max(2, Math.round((s.wildMaxHp || 3) * 0.6))
     const wspr = document.getElementById('g13b-wspr')
     if (wspr) {
-      wspr.src = pokeSpriteOnline(wild.slug)
-      wspr.onerror = function(){ this.src=pokeSpriteCDN(wild.slug); this.onerror=null }
+      // Task #71: local-first per L16
+      const _wLocal2 = (typeof pokeSpriteAlt2 === 'function') ? pokeSpriteAlt2(wild.slug) : null
+      wspr.src = _wLocal2 || pokeSpriteOnline(wild.slug)
+      wspr.onerror = function(){ if(this.dataset.fallback==='1'){this.onerror=null;return} this.dataset.fallback='1'; this.src=pokeSpriteOnline(wild.slug) }
       wspr.classList.remove('wild-enter', 'wild-die', 'wspr-hit')
       void wspr.offsetWidth
       wspr.classList.add('wild-enter')
@@ -12311,6 +12357,11 @@ function renderCityGrid(regionId) {
         state.selectedCityIdx = i + 1
         // Map city index to legacy levelNum for backward-compat with initGame10/13/13b
         state.selectedLevelNum = i + 1
+        // Task #70: ensure state.currentGame is set so endGame/setLevelComplete + showResult work
+        // Previously openLevelSelect(N) set this; the new city-picker path bypassed it.
+        const _g = _citySelectorGame
+        const _gameNumNum = (_g === '13b') ? 13 : (typeof _g === 'number' ? _g : parseInt(_g, 10))
+        if (Number.isFinite(_gameNumNum)) state.currentGame = _gameNumNum
       } catch(_) {}
       closeCityOverlay()
       const g = _citySelectorGame

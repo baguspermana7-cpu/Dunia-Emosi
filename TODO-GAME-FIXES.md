@@ -4,6 +4,46 @@
 
 ---
 
+## 📊 Session 2026-04-25 Late Hotfix (G10/G13/G13b post-city-progression bundle)
+
+Cache bump: `v=20260425d` → `v=20260425e`.
+
+### ✅ Task #70 — G10 stuck after winning final round (state.currentGame missing)
+- **Symptom**: Tap Pallet Town → play to Round 3/3 → defeat enemy → UI freezes (math + answer highlighted, no transition to result modal)
+- **Root cause**: City selector path (`renderCityGrid`, game.js) sets `state.selectedRegion/City/LevelNum` but did NOT set `state.currentGame`. Legacy `openLevelSelect(N)` set it; the new path bypassed. `endGame()` calls `setLevelComplete(state.currentGame, ...)` with undefined → silent corruption + downstream UI not transitioning.
+- **Fix** (`game.js:12309-12317`): Added derivation `state.currentGame = (g === '13b') ? 13 : parseInt(g)` before launching initGame.
+- **Hardening**: defensive `console.error` in `endGame()` if `state.currentGame` missing.
+
+### ✅ Task #71 — G13/G13b player+wild sprites: wrong facing + invisible (remote-primary)
+- **Symptom #1**: G13b Pikachu player faces LEFT, away from enemy on right (should face RIGHT toward enemy).
+- **Symptom #2**: G13b Legendary battle (vs Mew) — BOTH player + wild sprites invisible (white blank field). Likely 404 on remote sprite for legendary slugs.
+- **Root cause**: 5 callsites in G13/G13b still using `pokeSpriteOnline` / `pokeSpriteCDN` as PRIMARY source instead of `pokeSpriteAlt2` (local 1025 HD WebP). Lesson L16 violation that was fixed for party picker (Task #64) but not propagated to player/wild sprite init paths. Compounded by `pokeFacing()` default `'R'` (CDN-aligned) — when remote sprite has subtle LEFT-3/4 face natural, applyPokeFlip produces wrong orientation.
+- **Fix**: Local-first cascade applied to:
+  - `game.js:5487` `switchG13bPlayerPoke` (party picker → player) + added missing `applyPokeFlip` call
+  - `game.js:7877` G13 `loadSpr` helper (`pokeUrl` now local-first)
+  - `game.js:8347` G13 evolve sprite swap
+  - `game.js:8741` G13b player init
+  - `game.js:8810` G13b regular wild spawn
+  - `game.js:9075` G13b wild re-spawn (60% HP escape)
+- All callsites now: `pokeSpriteAlt2(slug) || pokeSpriteOnline(slug)` with 2-stage onerror fallback chain.
+
+### ✅ Task #72 — G13b modal "Main Lagi/Lanjut" stuck (no return to City picker)
+- **Symptom**: After legendary defeated, "Lanjut ▶" or "Main Lagi ⚡" calls `startQuickFire()` → re-inits G13b directly. User cannot return to City picker to choose next city. Feels stuck.
+- **Fix**: Added `g13bResultMainLagi()` helper (`game.js:8690`) — checks `state.selectedRegion && state.selectedCity` → if launched via city picker, return to `openRegionOverlay('13b')`. Else fallback to `startQuickFire()` for legacy random mode.
+- Updated both `g13b-result` and `g13b-level-complete` modals (`index.html:1041, 1056`) to call new helper.
+- **Note**: Modal style unification with global `screen-result` is **deferred to Phase 2** (G13b's kills/combo scoring is unique).
+
+### Process improvements (per Task #69 mandate)
+- Reinforced `feedback_structured_verification.md`: every plan with NEW state property MUST include downstream propagation audit (state.currentGame slipped through Task #66).
+- Cross-File Integration Checklist now includes "grep audit for primary asset source changes" — Task #67 evolve sprite localized but didn't audit other G13/G13b callsites at the time.
+
+### Touched
+- `game.js` (renderCityGrid state.currentGame, endGame guard, 6 sprite local-first fixes, g13bResultMainLagi helper)
+- `index.html` (2 modal button onclick redirects + 4 cache bumps to v=20260425e)
+- `TODO-GAME-FIXES.md`, `documentation and standarization/CHANGELOG.md`, memory.
+
+---
+
 ## 📊 Session 2026-04-25 Hotfix (City picker "Coming Soon" bug)
 
 ### ✅ Task #69 — CITY_PACK script not registered in index.html (production hotfix)

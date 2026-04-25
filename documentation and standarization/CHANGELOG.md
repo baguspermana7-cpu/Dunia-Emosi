@@ -1,5 +1,37 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-25 Late Hotfix — Tasks #70/#71/#72 bundle (G10/G13/G13b post-city-progression)
+
+Cache bump: `v=20260425d` → `v=20260425e`.
+
+### Task #70 — G10 stuck after winning final round (state.currentGame missing)
+- City selector launched games without setting `state.currentGame` → `endGame()` silently corrupted + UI didn't transition
+- Fix: derive `state.currentGame` from `_citySelectorGame` in `renderCityGrid` (number for G10/G13, parsed 13 for G13b)
+- Added defensive console.error guard in `endGame()` for future regressions
+
+### Task #71 — Sprite remote-primary regression (Lesson L16 incomplete)
+- 5 callsites in G13/G13b still loaded sprites from REMOTE pokemondb.net as PRIMARY → caused wrong-facing player + invisible legendary sprites
+- Switched to local-first cascade across:
+  - `switchG13bPlayerPoke` (party picker → player)
+  - G13 `loadSpr` helper
+  - G13 evolve sprite swap
+  - G13b player init + wild spawn + wild re-spawn
+- All now use `pokeSpriteAlt2(slug) || pokeSpriteOnline(slug)` with 2-stage onerror fallback
+
+### Task #72 — G13b modal "Main Lagi/Lanjut" returns to City picker
+- Added `g13bResultMainLagi()` helper — routes to `openRegionOverlay('13b')` if launched via city picker; falls back to `startQuickFire()` for legacy random mode
+- Both `g13b-result` and `g13b-level-complete` modal buttons now call new helper
+
+### Process
+- Reinforced `feedback_structured_verification.md` mandate: state-property propagation audit + grep audit for asset-source changes
+
+### Touched
+- `game.js` (renderCityGrid, endGame, 6 sprite local-first fixes, g13bResultMainLagi)
+- `index.html` (2 modal redirects + 4 cache bumps)
+- `TODO-GAME-FIXES.md`, this CHANGELOG, memory
+
+---
+
 ## 2026-04-25 Hotfix — Task #69: CITY_PACK script load fix
 
 Cache bump: `v=20260425c` → `v=20260425d` (atomic across all 4 files).
