@@ -4,6 +4,30 @@
 
 ---
 
+## 📊 Session 2026-04-27 — Hotfix #100 (G10 hit-chain freeze guard)
+
+Cache bump: `v=20260427a` → `v=20260427b`.
+
+### ✅ Task #100 — Section-isolate `g10DoAttack` (game.js:6195)
+TODO had `g10` hit effect marked 🔧 ("REGRESSION 2026-04-20… needs live verification — particles, projectile, flash, defender shake"). Audit found 8+ unguarded DOM accesses in `g10DoAttack`: `atkEl`, `emojiEl`, `atkSpr`, `defSpr`, `flash`, plus an unguarded `getElementById(toWrapId).getBoundingClientRect()`. If ANY of those nodes was missing mid-round (screen swap, WebGL context lost, partial DOM rebuild), the throw halted the round → defender shake never fires → next round never schedules → user sees freeze.
+
+**Fix**: Section-isolate visual phases; route ALL exit paths through an idempotent `_safeDone` plus a 1500ms watchdog so the round ALWAYS progresses even if every visual section fails:
+
+- Aura, move popup, attacker lunge, type FX, projectile geometry, projectile animation, flash, defender shake — each in its own try-catch
+- All target lookups null-checked before `.getBoundingClientRect()` / `.classList` / `.style`
+- `onDone` wrapped in `_safeDone` (idempotent + try-catch around the callback itself)
+- 1500ms watchdog `setTimeout` calls `_safeDone` if the inner setTimeout chain never fires
+- Inner timeouts use `try`-wrapped class manipulation so a stale node ref doesn't break cleanup
+
+This is the same section-isolation pattern Hotfix #99 applied to `showResult` / `showGameResult`. Visual gloss is optional, round progression is not.
+
+### Touched
+- `game.js` (g10DoAttack section-isolation + watchdog)
+- `index.html` (cache bump v=20260427b × 5 markers)
+- `TODO-GAME-FIXES.md`, `CHANGELOG.md`, `LESSONS-LEARNED.md`
+
+---
+
 ## 📊 Session 2026-04-27 — Hotfix #99 (root cause: showResult + showGameResult main paths throw)
 
 Cache bump: `v=20260426i` → `v=20260427a`.
@@ -1313,7 +1337,7 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 ### G10 — Pertarungan Pokemon
 - ✅ **Platform/pedestal**: Made CSS `.g10-oval` more visible — brown color, border, larger size (110x22px)
 - ✅ **HD sprites restored**: Reverted from local-first (96px) back to HD-online-first (pokemondb 200-300px) with local fallback
-- 🔧 **Hit effect (REGRESSION 2026-04-20)**: auraColors keys fixed (lowercase). Full chain needs live verification — particles, projectile, flash, defender shake
+- ✅ **Hit effect (REGRESSION 2026-04-20)**: auraColors keys fixed (lowercase) + Hotfix #100 (2026-04-27) section-isolated `g10DoAttack` so partial DOM failures cannot freeze the round (8+ unguarded accesses → all guarded; idempotent `_safeDone` + 1500ms watchdog)
 - ✅ **WebGL context lost freeze**: Fixed — `backToLevelSelect()` now calls `PixiManager.destroyAll()` to free WebGL context before returning to level select.
 - ✅ **Scoring fixed**: Double-normalization bug — `endGame()` normalized to 5-star, then `showResult()` re-normalized using raw `maxRounds`. Fixed by setting `state.maxPossibleStars=5` so showResult passes through.
 - ✅ **CRITICAL: Result modal frozen**: Fixed — `showResult()` now closes overlay-feedback and game-result-overlay before showing screen-result. Overlays were blocking button clicks.

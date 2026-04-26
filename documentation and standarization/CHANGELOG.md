@@ -1,5 +1,22 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-27 — Hotfix #100 (G10 hit-chain freeze guard)
+
+Cache bump: `v=20260427a` → `v=20260427b`.
+
+### Critical fix
+- **#100** `g10DoAttack` (game.js:6195) — TODO had G10 hit effect marked 🔧 ("REGRESSION 2026-04-20… needs live verification — particles, projectile, flash, defender shake"). Audit found 8+ unguarded DOM accesses (`atkEl`, `emojiEl`, `atkSpr`, `defSpr`, `flash`, plus an unguarded `getElementById(toWrapId).getBoundingClientRect()`). Any missing node mid-round (screen swap, WebGL context lost, partial DOM rebuild) caused a throw that halted the round → defender shake never fired → next round never scheduled → **freeze**. Section-isolated each visual phase (aura, move popup, attacker lunge, type FX, projectile geom, projectile anim, flash, defender shake) and routed all exits through an idempotent `_safeDone` + 1500ms watchdog so the round ALWAYS progresses.
+
+### Pattern
+Same section-isolation pattern as Hotfix #99 (`showResult` / `showGameResult`). Visual gloss is optional, round progression is not. Confirms the broader rule: any code path the user sees as a single "tick" (game-end, hit-resolve, level-up) must guarantee progression even when its DOM substrate has been partially torn down.
+
+### Touched
+- `game.js` — g10DoAttack
+- `index.html` — atomic cache bump v=20260427b (5 markers)
+- `TODO-GAME-FIXES.md`, `LESSONS-LEARNED.md`
+
+---
+
 ## 2026-04-27 — Hotfix #99 (root cause: showResult + showGameResult main paths throw)
 
 Cache bump: `v=20260426i` → `v=20260427a`.

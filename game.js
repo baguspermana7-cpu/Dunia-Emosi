@@ -6193,7 +6193,16 @@ function g10TypeFX(type, targetSide){
 }
 
 function g10DoAttack(type, fromSide, toSide, onDone){
-  playAttackSound(type)
+  // Hit chain has 8+ DOM accesses; if any node disappears mid-round, throwing
+  // would freeze the round. Always call onDone() — visual gloss is optional,
+  // round progression is not. Guard each visual section so partial failures
+  // (e.g. missing flash el) don't cancel later sections (e.g. defender shake).
+  let _doneCalled = false
+  const _safeDone = () => { if (_doneCalled) return; _doneCalled = true; try { onDone && onDone() } catch(e){ console.error('[g10DoAttack] onDone threw:', e, e && e.stack) } }
+  // Watchdog — if the inner setTimeout chain fails to fire, still progress.
+  const _wd = setTimeout(_safeDone, 1500)
+
+  try { playAttackSound(type) } catch(_){}
   const emoji = TYPE_EMOJI[type] || '💥'
   const atkEl = document.getElementById('g10-atk-fx')
   const emojiEl = document.getElementById('g10-atk-emoji')
@@ -6203,74 +6212,92 @@ function g10DoAttack(type, fromSide, toSide, onDone){
   const auraColor = pokeTypeColor(typeLow)
   const fromWrapId = fromSide === 'player' ? 'g10-pspr-wrap' : 'g10-espr-wrap'
   const fromWrapEl = document.getElementById(fromWrapId)
-  // Aura ring — Pixi primary, DOM fallback (spawnTypeAura helper)
-  const _pixiApp = PixiManager.get('g10-pixi-canvas') || PixiManager.get('g13b-pixi-canvas')
-  if (_pixiApp) {
-    pixiAuraRing(_pixiApp, fromSide, parseInt(auraColor.replace('#',''), 16))
-  } else {
-    spawnTypeAura(fromWrapEl, typeLow)
-  }
+  try {
+    const _pixiApp = PixiManager.get('g10-pixi-canvas') || PixiManager.get('g13b-pixi-canvas')
+    if (_pixiApp) pixiAuraRing(_pixiApp, fromSide, parseInt(auraColor.replace('#',''), 16))
+    else spawnTypeAura(fromWrapEl, typeLow)
+  } catch(e){ console.warn('[g10DoAttack] aura:', e) }
 
-  // Move name popup
-  const atkSlug = fromSide === 'player' ? (g10State.playerPoke ? g10State.playerPoke.slug : '') : (g10State.enemyPoke ? g10State.enemyPoke.slug : '')
-  const atkType = fromSide === 'player' ? (g10State.playerPoke ? g10State.playerPoke.type : type) : (g10State.enemyPoke ? g10State.enemyPoke.type : type)
-  showMovePopup(fromWrapEl, getPokeMove(atkSlug, atkType), auraColor)
+  try {
+    const atkSlug = fromSide === 'player' ? (g10State.playerPoke ? g10State.playerPoke.slug : '') : (g10State.enemyPoke ? g10State.enemyPoke.slug : '')
+    const atkType = fromSide === 'player' ? (g10State.playerPoke ? g10State.playerPoke.type : type) : (g10State.enemyPoke ? g10State.enemyPoke.type : type)
+    showMovePopup(fromWrapEl, getPokeMove(atkSlug, atkType), auraColor)
+  } catch(e){ console.warn('[g10DoAttack] movePopup:', e) }
 
-  // Attacker lunges
-  const atkSprId = fromSide === 'player' ? 'g10-pspr' : 'g10-espr'
-  const atkSpr = document.getElementById(atkSprId)
-  atkSpr.classList.remove('spr-atk'); void atkSpr.offsetWidth
-  atkSpr.classList.add('spr-atk')
-  setTimeout(() => atkSpr.classList.remove('spr-atk'), 400)
+  try {
+    const atkSprId = fromSide === 'player' ? 'g10-pspr' : 'g10-espr'
+    const atkSpr = document.getElementById(atkSprId)
+    if (atkSpr) {
+      atkSpr.classList.remove('spr-atk'); void atkSpr.offsetWidth
+      atkSpr.classList.add('spr-atk')
+      setTimeout(() => { try { atkSpr.classList.remove('spr-atk') } catch(_){} }, 400)
+    }
+  } catch(e){ console.warn('[g10DoAttack] attacker lunge:', e) }
 
-  // Type-specific particle effects on the field
-  g10TypeFX(type, toSide)
+  try { g10TypeFX(type, toSide) } catch(e){ console.warn('[g10DoAttack] typeFX:', e) }
 
-  // Fly projectile FROM attacker TO target
-  const fromRect = fromWrapEl ? fromWrapEl.getBoundingClientRect() : {left:0,top:0,width:80,height:80}
-  const toWrapId = toSide === 'enemy' ? 'g10-espr-wrap' : 'g10-pspr-wrap'
-  const toRect = document.getElementById(toWrapId).getBoundingClientRect()
-  const startX = fromRect.left + fromRect.width / 2
-  const startY = fromRect.top + fromRect.height / 2
-  const endX = toRect.left + toRect.width / 2
-  const endY = toRect.top + toRect.height / 2
-  const dx = endX - startX
-  const dy = endY - startY
+  // Projectile geometry — null-guard target wrap
+  let dx = 0, dy = 0, startX = 0, startY = 0
+  try {
+    const fromRect = fromWrapEl ? fromWrapEl.getBoundingClientRect() : {left:0,top:0,width:80,height:80}
+    const toWrapId = toSide === 'enemy' ? 'g10-espr-wrap' : 'g10-pspr-wrap'
+    const toWrap = document.getElementById(toWrapId)
+    const toRect = toWrap ? toWrap.getBoundingClientRect() : {left:fromRect.left+200,top:fromRect.top,width:80,height:80}
+    startX = fromRect.left + fromRect.width / 2
+    startY = fromRect.top + fromRect.height / 2
+    dx = (toRect.left + toRect.width / 2) - startX
+    dy = (toRect.top + toRect.height / 2) - startY
+  } catch(e){ console.warn('[g10DoAttack] geom:', e) }
 
-  emojiEl.textContent = emoji
-  emojiEl.style.animation = 'none'
-  void emojiEl.offsetWidth
+  try {
+    if (emojiEl) {
+      emojiEl.textContent = emoji
+      emojiEl.style.animation = 'none'
+      void emojiEl.offsetWidth
+    }
+    if (atkEl) {
+      atkEl.style.left = startX + 'px'
+      atkEl.style.top = startY + 'px'
+      atkEl.style.opacity = '1'
+      atkEl.style.transition = 'none'
+      atkEl.animate([
+        {transform:`translate(-50%,-50%) scale(0.7)`, opacity:1},
+        {transform:`translate(calc(-50% + ${dx * 0.5}px), calc(-50% + ${dy * 0.5}px)) scale(1.3)`, opacity:1, offset:0.6},
+        {transform:`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(1.8)`, opacity:0}
+      ], {duration:360, easing:'ease-in', fill:'forwards'})
+    }
+  } catch(e){ console.warn('[g10DoAttack] projectile:', e) }
 
-  atkEl.style.left = startX + 'px'
-  atkEl.style.top = startY + 'px'
-  atkEl.style.opacity = '1'
-  atkEl.style.transition = 'none'
+  try {
+    const _flashPixi = PixiManager.get('g10-pixi-canvas') || PixiManager.get('g13b-pixi-canvas')
+    if (_flashPixi) {
+      pixiTypeFlash(_flashPixi, type)
+    } else {
+      const flash = document.getElementById('poke-flash')
+      if (flash) {
+        flash.className = 'poke-flash ' + type
+        setTimeout(() => { try { flash.className = 'poke-flash' } catch(_){} }, 700)
+      }
+    }
+  } catch(e){ console.warn('[g10DoAttack] flash:', e) }
 
-  // Animate projectile flying from attacker to target
-  atkEl.animate([
-    {transform:`translate(-50%,-50%) scale(0.7)`, opacity:1},
-    {transform:`translate(calc(-50% + ${dx * 0.5}px), calc(-50% + ${dy * 0.5}px)) scale(1.3)`, opacity:1, offset:0.6},
-    {transform:`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(1.8)`, opacity:0}
-  ], {duration:360, easing:'ease-in', fill:'forwards'})
-
-  // Screen flash — Pixi primary, CSS fallback
-  const _flashPixi = PixiManager.get('g10-pixi-canvas') || PixiManager.get('g13b-pixi-canvas')
-  if (_flashPixi) {
-    pixiTypeFlash(_flashPixi, type)
-  } else {
-    const flash = document.getElementById('poke-flash')
-    flash.className = 'poke-flash ' + type
-    setTimeout(() => flash.className = 'poke-flash', 700)
-  }
-
-  // Defender shakes + flashes after projectile arrives
+  // Defender shakes + flashes after projectile arrives — schedule onDone unconditionally
   setTimeout(() => {
-    atkEl.style.opacity = '0'
-    const defSprId = toSide === 'enemy' ? 'g10-espr' : 'g10-pspr'
-    const defSpr = document.getElementById(defSprId)
-    defSpr.classList.remove('spr-hit','spr-flash'); void defSpr.offsetWidth
-    defSpr.classList.add('spr-hit','spr-flash')
-    setTimeout(() => { defSpr.classList.remove('spr-hit','spr-flash'); onDone() }, 480)
+    try {
+      if (atkEl) atkEl.style.opacity = '0'
+      const defSprId = toSide === 'enemy' ? 'g10-espr' : 'g10-pspr'
+      const defSpr = document.getElementById(defSprId)
+      if (defSpr) {
+        defSpr.classList.remove('spr-hit','spr-flash'); void defSpr.offsetWidth
+        defSpr.classList.add('spr-hit','spr-flash')
+        setTimeout(() => {
+          try { defSpr.classList.remove('spr-hit','spr-flash') } catch(_){}
+          clearTimeout(_wd); _safeDone()
+        }, 480)
+        return
+      }
+    } catch(e){ console.warn('[g10DoAttack] defender shake:', e) }
+    clearTimeout(_wd); _safeDone()
   }, 340)
 }
 

@@ -6,6 +6,12 @@
 
 ## 2026-04-27
 
+### L27 — `onDone`-style continuation callbacks need idempotent wrapper + watchdog
+- **Symptom**: G10 hit-effect chain marked 🔧 in TODO since 2026-04-20 — "needs live verification: particles, projectile, flash, defender shake". User reported intermittent G10 freeze after one round.
+- **Root cause**: `g10DoAttack` had 8+ unguarded `getElementById(...).classList/.style/.getBoundingClientRect()` calls. If ANY node disappeared mid-round (screen swap, WebGL context lost, transient DOM rebuild) the throw halted the synchronous body — defender shake setTimeout never scheduled → `onDone()` never called → next round never started. Round froze. Fallback (Task #94) doesn't help because it's at game-end level, not hit level.
+- **Fix**: Section-isolate each visual phase + idempotent `_safeDone` wrapper around `onDone` + 1500ms watchdog `setTimeout(_safeDone, 1500)`. Both inner timeouts route through `_safeDone`; if either fails to fire (or DOM lookup nulls out), watchdog fires anyway. Round always progresses.
+- **Lesson**: Any function that takes a continuation callback (`onDone`, `onComplete`, `onFinish`) and chains setTimeouts must guarantee the callback fires exactly once, even if the body throws partway through. Pattern: `let _called = false; const safe = () => { if (_called) return; _called = true; try { onDone() } catch(e){...} }; setTimeout(safe, MAX_DURATION)` — the watchdog timeout catches everything else. Visual gloss is optional, callback firing is not. Apply to: hit chains, animation completion, transition end handlers, any "do A then call B" flow where A involves DOM that might be torn down.
+
 ### L25 — Section-level try-catch for "must always show" UI flows
 - **Symptom**: After 4 sessions of patches (Tasks #84/#94/#98), G10/G13/G13b game-end STILL fell into emergency fallback modal on every win. User: "Sama sekali tidak fix issue kamu itu". Defensive fallbacks (Task #94/#98) caught the throw but the daily UX still showed the fallback, never the real modal.
 - **Root cause**: `showResult` and `showGameResult` were monolithic — 70+ lines of unguarded DOM access (`document.getElementById('x').textContent = ...`) and unguarded operations (`addXP` localStorage quota, `getLevelTier(undefined)`). A SINGLE bad sub-section threw and aborted the entire modal flow, including the critical "show screen" step. The wrapping try-catch then fell to fallback. So the fallback fired because ANY of 15+ unguarded operations could fail — not because of one specific bug.
