@@ -1104,7 +1104,7 @@ try { const s=localStorage.getItem('g13c_badges'); if(s) g13cState.badges=JSON.p
 
 function openGymGame() {
   playClick()
-  window.location.href = 'games/g13c-pixi.html?v=20260424g'
+  window.location.href = 'games/g13c-pixi.html?v=20260426e'
 }
 
 function g13cBuildLetterSelect() {
@@ -1790,8 +1790,13 @@ function closeFeedback() {
   if(feedbackCallback){feedbackCallback();feedbackCallback=null}
 }
 function addStars(n, answerEl) {
-  state.players[state.currentPlayer].stars+=n
-  state.gameStars[state.currentPlayer]+=n
+  // Task #84 verify: defensive guards to prevent freeze if state.gameStars or currentPlayer not init
+  if (!Array.isArray(state.gameStars)) state.gameStars = [0, 0]
+  if (typeof state.currentPlayer !== 'number') state.currentPlayer = 0
+  if (state.players && state.players[state.currentPlayer]) {
+    state.players[state.currentPlayer].stars = (state.players[state.currentPlayer].stars || 0) + n
+  }
+  state.gameStars[state.currentPlayer] = (state.gameStars[state.currentPlayer] || 0) + n
   saveStars(); updateGameStarDisplay(); spawnSparkles(answerEl, n)
   if(answerEl) flyStarToCounter(answerEl)
   checkAchievements(null)
