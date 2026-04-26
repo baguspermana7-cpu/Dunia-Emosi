@@ -4,6 +4,43 @@
 
 ---
 
+## 📊 Session 2026-04-26 — Phase 3 Polish (Tasks #87-#89)
+
+Cache bump: `v=20260426e` → `v=20260426f`.
+
+### ✅ Task #87 — Haptic feedback parity (P2-6)
+- Added `vibrate([20, 40, 20])` to `playCorrect()` (game.js:2049)
+- Previously only `playWrong()` triggered haptic
+- Double-tap pattern signals success; gated by `isVibrateOn()` setting
+- Engagement boost for 5-7yo who rely on tactile cues alongside audio
+
+### ✅ Task #88 — Region-aware bg lazy preload (P2-1)
+- New `prefetchRegionBackgrounds(regionId)` (game.js:12251) called from `openCityOverlay`
+- Preloads ONLY current region's bgs (10-20 files), defers other 9 regions (~127 cities total = 20MB)
+- Stagger 80ms between requests (avoid connection pool saturation)
+- Idempotent via `_bgPrefetchedRegions` Set
+- Browser caches `Image.src` → game launch instant after preview
+- Bandwidth saved: ~18MB on first session (only ~2MB preloaded vs full ~21MB)
+
+### ✅ Task #89 — ASSET-PIPELINE.md (P2-9)
+- Comprehensive doc (~250 lines) di `documentation and standarization/`
+- Asset folder map (sprites, backgrounds, audio, others, game-specific)
+- Sprite loader cascade (4-level fallback chain per Lesson L16)
+- Background pipeline (manifest CSV → Imagen → PC/mobile WebP → loader)
+- Audio pipeline (preload="none", future MP3→OGG)
+- "Adding a new {sprite, city bg, region, game asset}" guides
+- Cache-bust versioning protocol (atomic across 5 files)
+- Vercel deploy workflow
+- Known gotchas (slug normalization, WebP support, Mega sprites, dimension variance, localStorage quota)
+
+### Touched
+- `game.js` (playCorrect haptic + prefetchRegionBackgrounds + openCityOverlay)
+- `index.html` (cache bump v=20260426f)
+- `documentation and standarization/ASSET-PIPELINE.md` (NEW, ~250 lines)
+- TODO-GAME-FIXES.md, CHANGELOG.md
+
+---
+
 ## 📊 Session 2026-04-26 — Documentation Phase 3 (Tasks #85-#86)
 
 ### ✅ Task #85 — CODE-REVIEW-CHECKLIST.md (mencegah regression future)

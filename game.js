@@ -2046,7 +2046,7 @@ function isVibrateOn(){return localStorage.getItem('dunia-emosi-vibrate')!=='off
 function vibrate(pattern){if(isVibrateOn()&&navigator.vibrate)navigator.vibrate(pattern)}
 function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx}
 function playTone(freq,dur,type='sine',vol=0.2){if(!isSoundOn())return;try{const ctx=getAudio(),osc=ctx.createOscillator(),gain=ctx.createGain();osc.connect(gain);gain.connect(ctx.destination);osc.type=type;osc.frequency.value=freq;gain.gain.setValueAtTime(vol,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);osc.start();osc.stop(ctx.currentTime+dur)}catch(e){}}
-function playCorrect(){playTone(523,0.1,'sine',0.2);setTimeout(()=>playTone(659,0.1,'sine',0.2),100);setTimeout(()=>playTone(784,0.2,'sine',0.25),200);setTimeout(()=>playTone(1047,0.3,'sine',0.2),340)}
+function playCorrect(){playTone(523,0.1,'sine',0.2);setTimeout(()=>playTone(659,0.1,'sine',0.2),100);setTimeout(()=>playTone(784,0.2,'sine',0.25),200);setTimeout(()=>playTone(1047,0.3,'sine',0.2),340);vibrate([20,40,20])/* Task #87: haptic parity per AUDIT-2026-04-25 P2-6 — double-tap pattern for correct answer engagement */}
 let _wrongAudio=null;function playWrong(){if(!isSoundOn())return;try{if(!_wrongAudio){_wrongAudio=new Audio('assets/wrong-buzzer.mp3');_wrongAudio.volume=0.7}const a=_wrongAudio.cloneNode();a.volume=0.7;a.play().catch(()=>{playTone(280,0.35,'sawtooth',0.1);setTimeout(()=>playTone(220,0.3,'sawtooth',0.08),150)})}catch(e){playTone(280,0.35,'sawtooth',0.1);setTimeout(()=>playTone(220,0.3,'sawtooth',0.08),150)}}
 function playClick(){playTone(440,0.06,'sine',0.1)}
 
@@ -12241,6 +12241,32 @@ function openCityOverlay(regionId) {
   renderCityGrid(regionId)
   const ov = document.getElementById('city-overlay')
   if (ov) ov.classList.add('open')
+  // Task #88 (P2-1): preload only THIS region's bgs, defer ~20MB across other 9 regions
+  // Browser caches WebPs after Image.src, so subsequent game launch is instant.
+  prefetchRegionBackgrounds(regionId)
+}
+
+// Task #88: prefetch backgrounds for selected region only — saves bandwidth on
+// other 9 regions that user doesn't visit yet. Idempotent (browser caches Image()).
+const _bgPrefetchedRegions = new Set()
+function prefetchRegionBackgrounds(regionId) {
+  if (_bgPrefetchedRegions.has(regionId)) return
+  _bgPrefetchedRegions.add(regionId)
+  if (typeof CITY_PACK === 'undefined' || !CITY_PACK[regionId]) return
+  const isMobile = window.innerWidth < 768
+  const folder = isMobile ? 'mobile' : 'pc'
+  // Stagger requests so we don't saturate the connection pool (max 6 parallel)
+  CITY_PACK[regionId].cities.forEach((city, idx) => {
+    if (!city.bg) return
+    const file = isMobile ? city.bg.mobile : city.bg.pc
+    if (!file) return
+    setTimeout(() => {
+      const img = new Image()
+      img.loading = 'lazy'
+      img.decoding = 'async'
+      img.src = `assets/Pokemon/background/${folder}/${encodeURIComponent(file)}`
+    }, idx * 80)  // 80ms apart → spread 1280ms for 16-city region (Hoenn/Kalos)
+  })
 }
 function closeCityOverlay() {
   const ov = document.getElementById('city-overlay')

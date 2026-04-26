@@ -1,5 +1,27 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-26 — Phase 3 Polish (Tasks #87-#89)
+
+Cache bump: `v=20260426e` → `v=20260426f`.
+
+### Haptic feedback parity (Task #87)
+- `playCorrect()` now triggers `vibrate([20, 40, 20])` — double-tap pattern
+- Previously only `playWrong()` had haptic — engagement gap for 5-7yo
+- Gated by `isVibrateOn()` user setting
+
+### Region-aware bg lazy preload (Task #88)
+- `prefetchRegionBackgrounds(regionId)` called from `openCityOverlay`
+- Preloads only current region's bgs (~2MB) instead of all 178 (~21MB)
+- Stagger 80ms apart, idempotent, browser-cached
+- Saves ~18MB bandwidth on first session
+
+### ASSET-PIPELINE.md (Task #89)
+- New ~250-line doc covering folder map, sprite cascade, bg pipeline, audio pipeline, deployment workflow
+- "Adding a new sprite/bg/region/asset" step-by-step guides
+- Documents slug normalization gotcha (mr-mime → mr_mime), WebP browser support, Mega sprite strategy
+
+---
+
 ## 2026-04-26 — Documentation Phase 3 (Tasks #85-#86)
 
 ### Task #85 — CODE-REVIEW-CHECKLIST.md
