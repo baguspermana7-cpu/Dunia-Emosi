@@ -1104,7 +1104,7 @@ try { const s=localStorage.getItem('g13c_badges'); if(s) g13cState.badges=JSON.p
 
 function openGymGame() {
   playClick()
-  window.location.href = 'games/g13c-pixi.html?v=20260426e'
+  window.location.href = 'games/g13c-pixi.html?v=20260426i'
 }
 
 function g13cBuildLetterSelect() {
@@ -1952,26 +1952,87 @@ function _endGameMain(stars) {
 }
 
 function _endGameFallback(stars, errMsg) {
+  // Task #98 (2026-04-26): feature-parity with main modal + diagnostic display
   // Force-clear stuck flags so future tries work
   state._showingResult = false
   state._showingGameResult = false
-  // Direct DOM modal — does NOT depend on showResult/screen-result wiring
+  state.maxPossibleStars = null
+  // Normalize raw stars to 5-star scale (same as main showResult path)
+  let normalizedStars = stars
+  try {
+    const maxRounds = (typeof g10State !== 'undefined' && g10State?.totalRounds)
+                   || (typeof g11State !== 'undefined' && g11State?.total)
+                   || (typeof g12State !== 'undefined' && g12State?.total) || 5
+    if (typeof GameScoring !== 'undefined') {
+      normalizedStars = GameScoring.calc({ correct: stars || 0, total: maxRounds })
+    } else {
+      normalizedStars = Math.min(5, Math.round((stars || 0) / maxRounds * 5))
+    }
+  } catch(_) {}
+  const safeStars = Math.max(0, Math.min(5, parseInt(normalizedStars) || 0))
+  // Save progress (in case main path failed before saveStars)
+  try {
+    const lv = state.selectedLevelNum || 1
+    const starsEarned = safeStars >= 4 ? 3 : safeStars >= 2 ? 2 : safeStars >= 1 ? 1 : 0
+    if (typeof setLevelComplete === 'function' && typeof state.currentGame === 'number') {
+      setLevelComplete(state.currentGame, lv, starsEarned)
+    }
+    if (state.selectedRegion && state.selectedCity && typeof setCityComplete === 'function') {
+      setCityComplete(state.currentGame, state.selectedRegion, state.selectedCity, starsEarned)
+    }
+    if (typeof saveStars === 'function') saveStars()
+  } catch(_) {}
+
+  // Build feature-parity buttons
+  const curLv = state.selectedLevelNum || 1
+  const showNext = curLv < 20 && state.mode !== 'duo' && safeStars >= 3
   const existing = document.getElementById('endgame-fallback')
   if (existing) existing.remove()
   const ov = document.createElement('div')
   ov.id = 'endgame-fallback'
-  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:99999;font-family:"Fredoka One",cursive'
-  const safeStars = Math.max(0, Math.min(5, parseInt(stars) || 0))
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:99999;font-family:"Fredoka One",cursive;padding:16px;backdrop-filter:blur(8px)'
+  const titleText = safeStars >= 4 ? 'Luar Biasa! 🏆' : safeStars >= 2 ? 'Bagus Sekali! ⭐' : 'Terus Berlatih! 💪'
+  const emoji = safeStars >= 4 ? '🏆' : safeStars >= 2 ? '⭐' : '💪'
+  // Build buttons
+  let btnsHtml = ''
+  if (showNext) btnsHtml += `<button id="egfb-next" style="background:linear-gradient(160deg,#a78bfa,#8b5cf6);color:#fff;border:none;border-radius:18px;padding:14px;font-size:16px;font-weight:900;cursor:pointer;font-family:inherit;box-shadow:0 4px 0 #6d28d9">▶ Lanjut Level</button>`
+  btnsHtml += `<button id="egfb-again" style="background:linear-gradient(160deg,#4ade80,#22c55e);color:#fff;border:none;border-radius:18px;padding:14px;font-size:16px;font-weight:900;cursor:pointer;font-family:inherit;box-shadow:0 4px 0 #15803d">🔄 Main Lagi</button>`
+  btnsHtml += `<button id="egfb-back" style="background:rgba(139,92,246,0.06);color:#6b5080;border:1.5px solid rgba(139,92,246,0.22);border-radius:18px;padding:14px;font-size:16px;font-weight:900;cursor:pointer;font-family:inherit">⌂ Beranda</button>`
+  // Optional diagnostic toggle (small subtle link)
+  const diagLink = errMsg
+    ? `<details style="margin-top:12px;text-align:left;color:#9b8bb0;font-size:11px"><summary style="cursor:pointer">🐛 Detail diagnostik</summary><pre style="white-space:pre-wrap;background:#fff;padding:8px;border-radius:8px;margin-top:6px;overflow-x:auto">${errMsg}</pre></details>`
+    : ''
   ov.innerHTML = `
-    <div style="background:linear-gradient(160deg,#f8f0ff,#ede2f6);border-radius:24px;padding:28px 24px;max-width:340px;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,0.5)">
-      <div style="font-size:56px">🏆</div>
-      <h2 style="font-family:'Fredoka One',cursive;color:#3b2066;margin:8px 0">Selesai!</h2>
+    <div style="background:linear-gradient(160deg,#f8f0ff,#ede2f6);border-radius:24px;padding:28px 24px;max-width:340px;width:100%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,0.5)">
+      <div style="font-size:56px">${emoji}</div>
+      <h2 style="font-family:'Fredoka One',cursive;color:#3b2066;margin:8px 0;font-size:24px">${titleText}</h2>
       <div style="font-size:34px;letter-spacing:4px;margin:8px 0">${'⭐'.repeat(safeStars)}${'☆'.repeat(5-safeStars)}</div>
-      <p style="color:#6b5080;margin-bottom:20px">Kamu dapat ${safeStars} bintang!</p>
-      <button onclick="document.getElementById('endgame-fallback').remove();exitGame()"
-              style="background:#8B5CF6;color:#fff;border:none;border-radius:18px;padding:14px 24px;font-size:16px;font-weight:900;cursor:pointer;font-family:inherit;width:100%">⌂ Beranda</button>
+      <p style="color:#6b5080;margin:0 0 20px 0;font-size:14px">Kamu dapat ${safeStars} bintang di Level ${curLv}!</p>
+      <div style="display:flex;flex-direction:column;gap:8px">${btnsHtml}</div>
+      ${diagLink}
     </div>`
   document.body.appendChild(ov)
+  // Wire buttons (after DOM insert)
+  const closeAndDo = (fn) => () => { try { ov.remove() } catch(_){}; try { fn() } catch(_){} }
+  const nextBtn = document.getElementById('egfb-next')
+  if (nextBtn) nextBtn.onclick = closeAndDo(() => {
+    if (state.selectedRegion && state.selectedCity && typeof openRegionOverlay === 'function') {
+      // City-picker path: re-open picker so user picks next unlocked city
+      try { exitGame && exitGame() } catch(_){}
+      setTimeout(() => openRegionOverlay(state.currentGame), 80)
+    } else if (typeof startGameWithLevel === 'function') {
+      startGameWithLevel((curLv || 1) + 1)
+    }
+  })
+  document.getElementById('egfb-again').onclick = closeAndDo(() => {
+    if (state.selectedRegion && state.selectedCity && typeof openRegionOverlay === 'function') {
+      try { exitGame && exitGame() } catch(_){}
+      setTimeout(() => openRegionOverlay(state.currentGame), 80)
+    } else if (typeof startGameWithLevel === 'function') {
+      startGameWithLevel(curLv)
+    }
+  })
+  document.getElementById('egfb-back').onclick = closeAndDo(() => { if (typeof exitGame === 'function') exitGame() })
 }
 function playAgain() { state._showingResult = false; state.maxPossibleStars = null; startGameWithLevel(state.selectedLevelNum || 1) }
 function nextLevel()  { state._showingResult = false; state.maxPossibleStars = null; startGameWithLevel((state.selectedLevelNum||1) + 1) }

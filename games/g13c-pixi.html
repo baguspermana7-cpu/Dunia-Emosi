@@ -1007,14 +1007,17 @@ function baseSpeciesSlug(slug){
 }
 function setPokeSpriteWithCascade(img, slug){
   const base = baseSpeciesSlug(slug);
-  img.src = SPRITE_HD(slug);
+  // Task #97 (2026-04-26): local-first cascade per Lesson L16
+  // Was: REMOTE → local → fallback (slow on 3G, broken when offline)
+  // Now: LOCAL → REMOTE → base-form fallbacks (fast + offline-resilient)
+  img.src = SPRITE_LOCAL(slug);
   img.onerror = () => {
-    img.src = SPRITE_LOCAL(slug);
+    img.src = SPRITE_HD(slug);
     img.onerror = () => {
       // Form slug exhausted — try base species (e.g. mega-charizard → charizard)
       if (base !== slug) {
-        img.src = SPRITE_HD(base);
-        img.onerror = () => { img.src = SPRITE_LOCAL(base); img.onerror = null; };
+        img.src = SPRITE_LOCAL(base);
+        img.onerror = () => { img.src = SPRITE_HD(base); img.onerror = null; };
       } else {
         img.onerror = null;
       }
