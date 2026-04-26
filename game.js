@@ -6094,8 +6094,8 @@ function g10EnemyDefeated(){
   state.players[state.currentPlayer].stars++
   const starsEl=document.getElementById('g10-stars')
   starsEl.textContent=`⭐ ${s.stars}`
-  starsEl.classList.add('pop')
-  setTimeout(()=>starsEl.classList.remove('pop'),400)
+  // Task #90 (Phase 4.2): use shared animateClass helper (Task #80)
+  animateClass(starsEl, 'pop', 400)
 
   const fs=document.getElementById('g10-field-status')
   fs.textContent=`🏆 ${s.enemyPoke.name} kalah!`
@@ -6248,8 +6248,7 @@ function g11Answer(idx,btn){
     s.stars++
     state.players[state.currentPlayer].stars++
     document.getElementById('g11-stars').textContent=`⭐ ${s.stars}`
-    document.getElementById('g11-stars').classList.add('pop')
-    setTimeout(()=>document.getElementById('g11-stars').classList.remove('pop'),400)
+    animateClass(document.getElementById('g11-stars'), 'pop', 400) /* Task #90 */
     s.idx++
     setTimeout(()=>g11ShowQuestion(),900)
   } else {

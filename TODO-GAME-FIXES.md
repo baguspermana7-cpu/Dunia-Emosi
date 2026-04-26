@@ -4,6 +4,25 @@
 
 ---
 
+## 📊 Session 2026-04-26 — Phase 4 incremental (Task #90)
+
+Cache bump: `v=20260426f` → `v=20260426g`.
+
+### ✅ Task #90 — Apply animateClass helper to G10/G11 stars-pop callsites
+- **Audit finding**: `spawnCorrectCardJuice` already present in G1/G3/G4/G5/G7/G11/G12/G13c — original audit (P2-4) was over-counting. Skipped that task.
+- **Migrated** to shared `animateClass(el, 'pop', 400)` helper (Task #80):
+  - G10 stars (game.js:6097): `starsEl.classList.add('pop'); setTimeout(remove, 400)` → `animateClass(starsEl, 'pop', 400)`
+  - G11 stars (game.js:6251): same pattern, single-line replacement
+- Validates Task #80 helper utility — pattern is reusable across 50+ callsites for incremental cleanup
+- Future migrations are non-breaking and can be done piecemeal
+
+### Touched
+- `game.js` (2 callsites migrated to `animateClass`)
+- `index.html` (cache bump v=20260426g)
+- TODO-GAME-FIXES.md, CHANGELOG.md
+
+---
+
 ## 📊 Session 2026-04-26 — Phase 3 Polish (Tasks #87-#89)
 
 Cache bump: `v=20260426e` → `v=20260426f`.
