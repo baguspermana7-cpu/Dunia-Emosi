@@ -100,11 +100,13 @@ canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
 </div>
 
 <!-- Monster character (DOM overlay) — HD sprite, ground-anchored via JS -->
-<img id="monster-img" src="https://img.pokemondb.net/sprites/home/normal/psyduck.png" onerror="this.src='../assets/Pokemon/sprites/psyduck.png';this.onerror=null" style="position:fixed;z-index:40;pointer-events:none;width:clamp(140px,26vw,220px);height:auto;bottom:25%;left:0;transform:translate3d(0,0,0);display:none;image-rendering:auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,0.45))">
+<!-- Hotfix #101-K: HD WebP first (was 96px CDN — non-HD complaint); JS upgrades to pokeSpriteAlt2 on init -->
+<img id="monster-img" src="../assets/Pokemon/pokemondb_hd_alt2/0054_psyduck.webp" onerror="this.src='../assets/Pokemon/sprites/psyduck.png';this.onerror=function(){this.src='https://img.pokemondb.net/sprites/home/normal/psyduck.png';this.onerror=null}" style="position:fixed;z-index:40;pointer-events:none;width:clamp(140px,26vw,220px);height:auto;bottom:25%;left:0;transform:translate3d(0,0,0);display:none;image-rendering:auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,0.45))">
 
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
 <script src="../shared/rz-responsive.js?v=20260422i"></script>
 <script src="game-modal.js?v=20260424g"></script>
+<script src="data/poke-sprite-cdn.js?v=20260427c"></script>
 <script src="question-bank.js"></script>
 <script>
 // ═══════════════════════════════════════════════════════════
@@ -801,8 +803,11 @@ function laserAbsorbSwap(candy) {
     const nextIdx = (curIdx + 1 + Math.floor(Math.random() * (G22_POKEMON.length - 1))) % G22_POKEMON.length
     const next = G22_POKEMON[nextIdx]
     g22SelectedPoke = next.slug
-    monsterEl.src = `https://img.pokemondb.net/sprites/home/normal/${next.slug}.png`
-    monsterEl.onerror = () => { monsterEl.src = `../assets/Pokemon/sprites/${next.slug}.png`; monsterEl.onerror = null }
+    // Hotfix #101-K: HD WebP first (was 96px CDN — non-HD complaint)
+    const _hdNext = (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(next.slug) : null)
+    const _cdnNext = `https://img.pokemondb.net/sprites/home/normal/${next.slug}.png`
+    monsterEl.src = _hdNext || _cdnNext
+    monsterEl.onerror = () => { monsterEl.src = `../assets/Pokemon/sprites/${next.slug}.png`; monsterEl.onerror = () => { monsterEl.src = _cdnNext; monsterEl.onerror = null } }
     monsterEl.style.opacity = '0'
     // Fade new monster in
     setTimeout(() => {
@@ -1029,12 +1034,19 @@ function renderPokePicker() {
   G22_POKEMON.forEach(p => {
     const card = document.createElement('div')
     card.style.cssText = `background:${p.slug===g22SelectedPoke?'rgba(139,92,246,0.4)':'rgba(255,255,255,0.08)'};border:2px solid ${p.slug===g22SelectedPoke?'#a78bfa':'rgba(255,255,255,0.15)'};border-radius:10px;padding:4px;text-align:center;cursor:pointer;transition:all .12s`
-    card.innerHTML = `<img src="https://img.pokemondb.net/sprites/home/normal/${p.slug}.png" style="width:40px;height:40px;image-rendering:auto" onerror="this.src='../assets/Pokemon/sprites/${p.slug}.png';this.onerror=null"><div style="font-size:8px;color:#e9d5ff;font-weight:700;margin-top:2px">${p.name}</div>`
+    // Hotfix #101-K: HD WebP first (was 96px CDN — non-HD complaint)
+    const _hdCard = (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(p.slug) : null)
+    const _cdnCard = `https://img.pokemondb.net/sprites/home/normal/${p.slug}.png`
+    const _cardSrc = _hdCard || _cdnCard
+    card.innerHTML = `<img src="${_cardSrc}" style="width:40px;height:40px;image-rendering:auto" onerror="this.src='../assets/Pokemon/sprites/${p.slug}.png';this.onerror=function(){this.src='${_cdnCard}';this.onerror=null}"><div style="font-size:8px;color:#e9d5ff;font-weight:700;margin-top:2px">${p.name}</div>`
     card.onclick = () => {
       g22SelectedPoke = p.slug
       const img = document.getElementById('monster-img')
-      img.src = `https://img.pokemondb.net/sprites/home/normal/${p.slug}.png`
-      img.onerror = () => { img.src = `../assets/Pokemon/sprites/${p.slug}.png`; img.onerror = null }
+      // Hotfix #101-K: HD WebP first (was 96px CDN — non-HD complaint)
+      const _hdPick = (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(p.slug) : null)
+      const _cdnPick = `https://img.pokemondb.net/sprites/home/normal/${p.slug}.png`
+      img.src = _hdPick || _cdnPick
+      img.onerror = () => { img.src = `../assets/Pokemon/sprites/${p.slug}.png`; img.onerror = () => { img.src = _cdnPick; img.onerror = null } }
       renderPokePicker()
     }
     grid.appendChild(card)

@@ -5767,7 +5767,13 @@ const G10_POOL = {
   boss:     POKEMON_DB.filter(p => _LEGENDARY_IDS.has(p.id) || _PSEUDO_IDS.has(p.id)).map(p => p.id),
 }
 
-let _g10LastEnemyId = -1
+// Hotfix #101-G: ring buffer of last 4 enemy ids (was: single _g10LastEnemyId).
+// User reported "Variasi per city belum banyak masih Pokemon itu2 aja" — 5-7 species
+// in a city pool kept repeating because we only suppressed the most recent pick.
+// Tracking last 4 forces fresh picks across rounds while still falling back to
+// the full pool when 4 distinct species aren't available.
+let _g10RecentEnemies = []
+const _G10_RECENT_MAX = 4
 function pickPokeForLevel(lv){
   // Task #66 (2026-04-25): if city is selected, pick from city.pack
   // Task #91 (2026-04-26): EXPAND with region pool — current city Pokemon get 3x weight
@@ -5786,21 +5792,34 @@ function pickPokeForLevel(lv){
         const ids = [...new Set(pool)]  // dedupe; weighting is via duplication in `pool` for next ratio adjustment
         const found = POKEMON_DB.filter(p => ids.includes(p.id))
         if (found.length >= 2) {
-          const candidates = found.filter(p => p.id !== _g10LastEnemyId)
-          const picks = candidates.length >= 1 ? candidates : found
-          const pick = picks[Math.floor(Math.random() * picks.length)]
-          _g10LastEnemyId = pick.id
+          // Hotfix #101-G: filter against last-4 ring buffer; fall back to pool
+          // minus the most-recent if all 4 would be excluded (small pool case).
+          let candidates = found.filter(p => !_g10RecentEnemies.includes(p.id))
+          if (candidates.length === 0) {
+            const lastId = _g10RecentEnemies.length ? _g10RecentEnemies[_g10RecentEnemies.length - 1] : -1
+            candidates = found.filter(p => p.id !== lastId)
+            if (candidates.length === 0) candidates = found
+          }
+          const pick = candidates[Math.floor(Math.random() * candidates.length)]
+          _g10RecentEnemies.push(pick.id)
+          if (_g10RecentEnemies.length > _G10_RECENT_MAX) _g10RecentEnemies.shift()
           return pick
         }
       }
     }
   } catch(_) {}
-  // Fallback to legacy level-based pool
+  // Fallback to legacy level-based pool — also tracked in ring buffer for variety.
   const poolKey = lv<=5?'favorite': lv<=15?'mid':'boss'
   const ids = G10_POOL[poolKey]
   const found = POKEMON_DB.filter(p=>ids.includes(p.id))
   const pool = found.length>=3 ? found : POKEMON_DB  // fallback
-  return pool[Math.floor(Math.random()*pool.length)]
+  // Apply ring-buffer to legacy fallback so dedupe also works when city pool unavailable.
+  let candidates = pool.filter(p => !_g10RecentEnemies.includes(p.id))
+  if (candidates.length === 0) candidates = pool
+  const pick = candidates[Math.floor(Math.random() * candidates.length)]
+  _g10RecentEnemies.push(pick.id)
+  if (_g10RecentEnemies.length > _G10_RECENT_MAX) _g10RecentEnemies.shift()
+  return pick
 }
 
 // Task #66: load city background for game-N field if state has selectedCity
@@ -5814,9 +5833,26 @@ function loadCityBackground(fieldEl) {
     const isMobile = window.innerWidth < 768
     const bgFile = isMobile ? city.bg.mobile : city.bg.pc
     const folder = isMobile ? 'mobile' : 'pc'
-    fieldEl.style.backgroundImage = `url('assets/Pokemon/background/${folder}/${encodeURIComponent(bgFile)}')`
-    fieldEl.style.backgroundSize = 'cover'
-    fieldEl.style.backgroundPosition = 'center 22%'
+    const url = `assets/Pokemon/background/${folder}/${encodeURIComponent(bgFile)}`
+    // Hotfix #101-F2: probe before applying. Setting style.backgroundImage on
+    // a 404 URL strips the CSS gradient fallback → field goes WHITE
+    // (user-reported "round 3 white blank field"). Probe ensures the bg only
+    // gets applied if the asset actually loads; on failure, keep CSS gradient.
+    const probe = new Image()
+    probe.onload = () => {
+      probe.onload = probe.onerror = null
+      try {
+        fieldEl.style.backgroundImage = `url('${url}')`
+        fieldEl.style.backgroundSize = 'cover'
+        fieldEl.style.backgroundPosition = 'center 22%'
+      } catch(_){}
+    }
+    probe.onerror = () => {
+      probe.onload = probe.onerror = null
+      // Leave inline backgroundImage empty so CSS class gradient remains visible.
+      try { fieldEl.style.backgroundImage = '' } catch(_){}
+    }
+    probe.src = url
     return true
   } catch(_) { return false }
 }
@@ -5883,7 +5919,11 @@ function initGame10(){
   if (!Array.isArray(state.gameStars)) state.gameStars = [0, 0]   // CRITICAL: avoid undefined[0] in endGame
   if (typeof state.currentPlayer !== 'number') state.currentPlayer = 0
   battleBgmPlay()
-  // Load PixiJS if not ready, then init GPU canvas
+  // Hotfix #101-H: free any leftover Pixi context from a previous game/level
+  // before init. Mobile browsers cap WebGL contexts at ~16; without cleanup,
+  // each transition leaks a context until the next init triggers context-loss
+  // or a tab crash. destroyAll is idempotent (no-op if nothing to destroy).
+  try { if (typeof PixiManager !== 'undefined') PixiManager.destroyAll() } catch(_){}
   loadPixiJS(function(){ PixiManager.init('g10-pixi-canvas').catch(()=>{}) })
   const p=state.players[state.currentPlayer]
   const _icon=document.getElementById('g10-player-icon'); if(_icon) _icon.textContent=p.animal
@@ -5894,7 +5934,14 @@ function initGame10(){
   loadCityBackground(document.getElementById('g10-field'))
 
   let pp=pickPokeForLevel(lv), ep=pickPokeForLevel(lv)
-  while(ep.id===pp.id) ep=pickPokeForLevel(lv)
+  // Hotfix #101-B: bounded retry — if pool is misconfigured (e.g. city pack
+  // with 1 species) the unbounded while pegged CPU at 100% → tab freeze.
+  let _retries = 0
+  while(ep.id===pp.id && _retries < 10){ ep=pickPokeForLevel(lv); _retries++ }
+  if(ep.id===pp.id){
+    const fb = POKEMON_DB.filter(p => p.id !== pp.id)
+    if(fb.length) ep = fb[Math.floor(Math.random()*fb.length)]
+  }
 
   g10State={
     playerPoke:pp, enemyPoke:ep,
@@ -5924,13 +5971,18 @@ function g10NewBattle(){
   // Load sprites: HD online first, local 96px as fallback
   function loadSprHD(imgId, slug, pokeId){
     const el=document.getElementById(imgId)
+    if(!el) return
     el.className=el.className.replace(/\bspr-\w+/g,'').trim()
     el.style.opacity='1'; el.style.imageRendering='auto'
     el.style.animation=''
     const variantSrc = pokeSpriteVariant(slug)
     const testVar = new Image()
-    testVar.onload = () => { el.src = variantSrc }
+    // Hotfix #101-F1: null handlers post-fire so JS engine can GC the probe Image.
+    // Without this, every round leaks 2 Image objects retained by the closure
+    // (verified leak per round in DevTools heap snapshot).
+    testVar.onload = () => { testVar.onload = testVar.onerror = null; el.src = variantSrc }
     testVar.onerror = () => {
+      testVar.onload = testVar.onerror = null
       el.src = pokeSpriteCDN(slug)
       el.onerror = () => { el.src = pokeSprite(slug); el.onerror = () => { el.src = pokeSpriteBackup(pokeId); el.onerror = () => { el.src = _emojiSpriteDataURL('👹'); el.onerror = null } } }
     }
@@ -5938,12 +5990,14 @@ function g10NewBattle(){
   }
   function loadSprPlayer(imgId, pokeId, slug){
     const el=document.getElementById(imgId)
+    if(!el) return
     el.className=el.className.replace(/\bspr-\w+/g,'').trim()
     el.style.opacity='1'; el.style.imageRendering='auto'
     const variantSrc = pokeSpriteVariant(slug)
     const test = new Image()
-    test.onload = () => { el.src = variantSrc }
+    test.onload = () => { test.onload = test.onerror = null; el.src = variantSrc }
     test.onerror = () => {
+      test.onload = test.onerror = null
       el.src = pokeSpriteCDN(slug)
       el.onerror = () => { el.src = pokeSprite(slug); el.onerror = () => { el.src = pokeSpriteBackup(pokeId); el.onerror = () => { el.src = _emojiSpriteDataURL('🦊'); el.onerror = null } } }
     }
@@ -6345,7 +6399,13 @@ function g10EnemyDefeated(){
   setTimeout(()=>{
     fs.textContent='Musuh baru datang!'
     let next=pickPokeForLevel(s.levelNum)
-    while(next.id===s.playerPoke.id) next=pickPokeForLevel(s.levelNum)
+    // Hotfix #101-B: bounded retry — see initGame10 for rationale.
+    let _retries = 0
+    while(next.id===s.playerPoke.id && _retries < 10){ next=pickPokeForLevel(s.levelNum); _retries++ }
+    if(next.id===s.playerPoke.id){
+      const fb = POKEMON_DB.filter(p => p.id !== s.playerPoke.id)
+      if(fb.length) next = fb[Math.floor(Math.random()*fb.length)]
+    }
     s.enemyPoke=next
     s.enemyHp=s.enemyMaxHp
     setTimeout(()=>g10NewBattle(),300)
@@ -8108,7 +8168,8 @@ function initGame13() {
   } catch(_) {}
   const dbg = document.getElementById('g13-debug-err')
   if (dbg) dbg.style.display = 'none'
-  // Init Pixi GPU canvas for evolution FX
+  // Hotfix #101-H: free any leftover Pixi context (see initGame10 for rationale)
+  try { if (typeof PixiManager !== 'undefined') PixiManager.destroyAll() } catch(_){}
   loadPixiJS(function(){ PixiManager.init('g13-pixi-canvas').catch(()=>{}) })
   try {
     _initGame13Impl()
@@ -9037,7 +9098,8 @@ function initGame13b() {
   if(!_battleBgmEl) _battleBgmEl = document.getElementById('battle-bgm')
   if(_battleBgmEl) _battleBgmEl.src = 'assets/Pokemon/sound/29 ~Ending~（１９９７－１９９８｜Ｍ２１） - Satoshi Sakai No Masta - SoundLoadMate.com.mp3'
   battleBgmPlay()
-  // Init Pixi GPU canvas for aura rings + combo text
+  // Hotfix #101-H: free any leftover Pixi context (see initGame10 for rationale)
+  try { if (typeof PixiManager !== 'undefined') PixiManager.destroyAll() } catch(_){}
   loadPixiJS(function(){ PixiManager.init('g13b-pixi-canvas').catch(()=>{}) })
 
   // Task #66: prefer city-specific background if selected; else random pool
@@ -9143,29 +9205,61 @@ function g13bSpawnWild() {
   }
   s.currentWild = wild
 
-  // Load wild sprite with entrance animation
+  // Hotfix #101-C: probe-then-swap so sprite + name + status are atomic.
+  // Previously `wspr.src = ...` (async load) and `wname.textContent = ...` (sync)
+  // ran back-to-back. Browser keeps showing the previous sprite (e.g. Pikachu)
+  // until network finishes, while the label flips immediately to "Bulbasaur".
+  // User sees wrong sprite + correct label for 200-2000ms — looks like a bug.
   const wspr = document.getElementById('g13b-wspr')
   const wname = document.getElementById('g13b-wname')
-  if (wspr) {
+  const _setNameAndPanel = () => {
+    if (wname) wname.textContent = s.isLegendary ? `★ ${wild.name}` : wild.name
+  }
+  const _applyWildVisuals = (finalSrc) => {
+    if (!wspr) return
     wspr.classList.remove('wild-enter','wild-die','wspr-hit')
     wspr.style.opacity = '1'
-    // Task #71: local-first per Lesson L16 (was remote-only — caused legendary sprite invisible)
-    const _wLocal = (typeof pokeSpriteAlt2 === 'function') ? pokeSpriteAlt2(wild.slug) : null
-    wspr.src = _wLocal || pokeSpriteOnline(wild.slug)
-    wspr.onerror = function(){
-      if (this.dataset.fallback === '1') { this.alt = wild.icon || '?'; this.onerror = null; return }
-      this.dataset.fallback = '1'
-      this.src = pokeSpriteOnline(wild.slug)
-    }
-    // Final scale (tier × visual) + data-driven facing
+    wspr.src = finalSrc
     const tierScale = pokeFinalScale(wild.slug)
     wspr.style.width = wspr.style.height = tierScale === 1.0 ? '' : `calc(min(44vw,26vh) * ${tierScale})`
     applyPokeFlip(wspr, wild.slug, 'enemy')
     void wspr.offsetWidth
     wspr.classList.add('wild-enter')
-    wspr.addEventListener('animationend', () => wspr.classList.remove('wild-enter'), {once:true})
+    wspr.addEventListener('animationend', () => { try { wspr.classList.remove('wild-enter') } catch(_){} }, {once:true})
+    _setNameAndPanel()
   }
-  if (wname) wname.textContent = s.isLegendary ? `★ ${wild.name}` : wild.name
+  if (wspr) {
+    const _wLocal = (typeof pokeSpriteAlt2 === 'function') ? pokeSpriteAlt2(wild.slug) : null
+    const _wRemote = pokeSpriteOnline(wild.slug)
+    const _wPrimary = _wLocal || _wRemote
+    const _wSecondary = _wLocal ? _wRemote : null
+    // Watchdog — if probe never fires in 1500ms (slow CDN, DNS hang), still update DOM
+    let _settled = false
+    const _settle = (src) => { if (_settled) return; _settled = true; _applyWildVisuals(src) }
+    setTimeout(() => _settle(_wPrimary), 1500)
+    const probe = new Image()
+    probe.onload = function(){ probe.onload = probe.onerror = null; _settle(_wPrimary) }
+    probe.onerror = function(){
+      probe.onerror = probe.onload = null
+      if (_wSecondary) {
+        const probe2 = new Image()
+        probe2.onload = function(){ probe2.onload = probe2.onerror = null; _settle(_wSecondary) }
+        probe2.onerror = function(){
+          probe2.onload = probe2.onerror = null
+          // Last resort — show name + use whatever the browser-default broken-image is.
+          // CSS sprite img max-width cap (Hotfix #101-F2) prevents it from stretching.
+          _settle(_wSecondary)
+        }
+        probe2.src = _wSecondary
+      } else {
+        _settle(_wPrimary)
+      }
+    }
+    probe.src = _wPrimary
+  } else {
+    // Sprite element missing — at least update name so UI text isn't stale.
+    _setNameAndPanel()
+  }
 
   g13bUpdateHpBar()
 
@@ -9704,11 +9798,24 @@ function g13bLevelComplete() {
   s.phase = 'done'
   battleBgmStop()
 
-  // Task #99 (2026-04-27): direct threshold scoring with 3★ floor (legendary defeated
-  // = always a win). Previous bonus-modifier produced 1★ for low-kill wins which the
-  // user correctly called "absurd" — defeating a legendary IS the win condition.
-  //   kills≥50→5★, kills≥30→4★, else 3★ (floor — you defeated a legendary)
-  const stars = s.kills >= 50 ? 5 : s.kills >= 30 ? 4 : 3
+  // Hotfix #101-D (2026-04-27): legendary defeat = 5★ floor. User feedback on
+  // Hotfix #99-C "Perfect harusnya score sempurna tapi ini 3 of 5" — they defeated
+  // Terrakion with combo x15, 13 kills, and got 3★. The kill-count thresholds
+  // (50/30) were arbitrary; defeating a legendary IS the win condition. Combo and
+  // kills are pride bonuses, not gates. Drop to 4★ ONLY if very minimal effort.
+  const stars = (s.bestCombo >= 5 || s.kills >= 5) ? 5 : 4
+  // Hotfix #101 (D-supplement): persist city completion. g13bGameOver had this
+  // but the legendary-victory path (this function) didn't — so users who won by
+  // defeating the legendary saw their progress vanish.
+  try {
+    if (state.selectedRegion && state.selectedCity && typeof setCityComplete === 'function') {
+      const _saved = stars >= 5 ? 3 : 2
+      setCityComplete('13b', state.selectedRegion, state.selectedCity, _saved)
+    }
+    if (typeof setLevelComplete === 'function') {
+      setLevelComplete('13b', state.selectedLevelNum || 1, stars >= 5 ? 3 : 2)
+    }
+  } catch(e) { console.warn('[g13bLevelComplete] save:', e, e && e.stack) }
   try { vibrate([50, 30, 80, 30, 120]) } catch(_){}
   try { playCorrect() } catch(e) {}
 
@@ -12496,13 +12603,21 @@ function renderRegionGrid() {
         <div class="region-card-progress">${completed}/${total} ⭐</div>
       </div>`
   }).join('')
-  grid.querySelectorAll('.region-card').forEach(card => {
-    card.addEventListener('click', () => {
+  // Hotfix #101-A: event delegation. Per-card addEventListener leaked closures
+  // every render (innerHTML drops nodes but listener closures persist in heap),
+  // accumulating hundreds of orphaned listeners across picker open/close cycles
+  // → mobile OOM crash. One delegated listener bound ONCE survives all renders.
+  if (!grid.dataset.bound) {
+    grid.addEventListener('click', (ev) => {
+      const card = ev.target && ev.target.closest && ev.target.closest('.region-card')
+      if (!card || !grid.contains(card)) return
       const id = card.getAttribute('data-region')
+      if (!id) return
       try { playClick && playClick() } catch(_) {}
       openCityOverlay(id)
     })
-  })
+    grid.dataset.bound = '1'
+  }
 }
 
 /** Open Stage B — City Picker for a region */
@@ -12601,34 +12716,43 @@ function renderCityGrid(regionId) {
       </div>`
   }).join('')
 
-  grid.querySelectorAll('.city-card').forEach((card, i) => {
-    card.addEventListener('click', () => {
+  // Hotfix #101-A: event delegation on city grid (single listener bound once;
+  // see renderRegionGrid for full rationale — closures from per-card listeners
+  // were leaking and crashing mobile after a few picker open/close cycles).
+  if (!grid.dataset.bound) {
+    grid.addEventListener('click', (ev) => {
+      const card = ev.target && ev.target.closest && ev.target.closest('.city-card')
+      if (!card || !grid.contains(card)) return
       const slug = card.getAttribute('data-slug')
+      const idx1 = parseInt(card.getAttribute('data-idx') || '0', 10)
+      if (!slug || !idx1) return
       const stateClass = card.classList.contains('locked') ? 'locked'
                        : card.classList.contains('completed') ? 'completed' : 'available'
       if (stateClass === 'locked') {
         try { playClick && playClick() } catch(_) {}
-        // shake hint
         card.style.animation = 'none'; void card.offsetWidth
         card.style.animation = 'wrongShake 0.4s ease'
         return
       }
       try { playClick && playClick() } catch(_) {}
-      // Persist selection + start game
+      // Persist selection + start game. Use _citySelectorRegion (set by openCityOverlay)
+      // since regionId param closure is gone with delegation.
       try {
-        state.selectedRegion = regionId
+        const _region = _citySelectorRegion
+        state.selectedRegion = _region
         state.selectedCity = slug
-        state.selectedCityIdx = i + 1
-        // Map city index to legacy levelNum for backward-compat with initGame10/13/13b
-        state.selectedLevelNum = i + 1
-        state.selectedLevel = (i + 1) <= 13 ? 'easy' : (i + 1) <= 26 ? 'medium' : 'hard'
-        // Task #70: ensure state.currentGame is set so endGame/setLevelComplete + showResult work
-        // Previously openLevelSelect(N) set this; the new city-picker path bypassed it.
+        state.selectedCityIdx = idx1
+        state.selectedLevelNum = idx1
+        state.selectedLevel = idx1 <= 13 ? 'easy' : idx1 <= 26 ? 'medium' : 'hard'
+        // Hotfix #101-E: preserve string '13b' so endGame's setCityComplete writes
+        // to prog.g13b bucket (matches g13bLevelComplete's own writer). Previously
+        // normalized to 13 → writes split across prog.g13 / prog.g13b → progress invisible.
         const _g = _citySelectorGame
-        const _gameNumNum = (_g === '13b') ? 13 : (typeof _g === 'number' ? _g : parseInt(_g, 10))
-        if (Number.isFinite(_gameNumNum)) state.currentGame = _gameNumNum
-        // Task #84 (CRITICAL): match startGameWithLevel state init — without these, showResult
-        // throws TypeError on `state.gameStars[0]` (undefined) → ALL games freeze post-victory
+        if (_g === '13b') state.currentGame = '13b'
+        else {
+          const _n = (typeof _g === 'number') ? _g : parseInt(_g, 10)
+          if (Number.isFinite(_n)) state.currentGame = _n
+        }
         state.gameStars = [0, 0]
         state.maxPossibleStars = null
         state.currentPlayer = 0
@@ -12644,7 +12768,8 @@ function renderCityGrid(regionId) {
         else if (g === '13b' && typeof startQuickFire === 'function') { startQuickFire() }
       } catch(e) { console.warn('[city-selector] start failed:', e) }
     })
-  })
+    grid.dataset.bound = '1'
+  }
 }
 
 if (typeof window !== 'undefined') {

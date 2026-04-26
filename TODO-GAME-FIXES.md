@@ -4,6 +4,85 @@
 
 ---
 
+## 📊 Session 2026-04-27 (evening) — Hotfix #101 (browser crash + sprite mismatch + scoring + progress + HD sprites)
+
+Cache bump: `v=20260427b` → `v=20260427c`. Branch: `main`.
+
+User feedback verbatim:
+- "Browser crash. Selalu kle next game/next cities" — browser crashes on level/city transition
+- "G10 Lv.1 Round 3 white blank field" + "G13b Legendary white field with broken-image icon"
+- "G13b sprite/name mismatch" — wild label says Bulbasaur but sprite is Pikachu
+- "Perfect harusnya score sempurna tapi ini 3 of 5" — defeated Legendary Terrakion + 13 kills + Combo x15 = 3★ (should be 5★)
+- "Variasi per city belum banyak masih Pokemon itu2 aja" — Pokemon variety per city limited
+- Region picker shows 0/N for ALL regions despite wins — progress not saving
+- "Saya sudah bilang jangan pakai sprite/asset non HD. Di game g13c yg gym itu masih ada pakai Non HD" — G13c gym still uses 96px sprites
+- User mandate: "Pastikan issue ini fix di g10, g13, dan g13b. Plan mode, to do list."
+
+### ✅ Task #101-A — Event delegation in `renderRegionGrid` + `renderCityGrid` (game.js:12482, 12553)
+Single delegated listener per grid (idempotent via `data-bound` flag) replaces per-card `addEventListener`. Per-card listeners were leaking closures every render → mobile OOM crash on 3-4 picker round-trips. Browser-crash root cause #1.
+
+### ✅ Task #101-B — Bounded retry on `pickPokeForLevel` while-loops (game.js:5917, 6373)
+Added `retries < 10` cap + `POKEMON_DB.filter(p=>p.id!==pp.id)` fallback so a misconfigured 1-species pool can't peg CPU.
+
+### ✅ Task #101-C — Probe-then-swap in `g13bSpawnWild` (game.js:9135)
+New wild's sprite now loaded via `new Image()` probe; `wspr.src` + `wname.textContent` updated atomically inside `probe.onload`. Plus 1500ms watchdog — eliminates the stale-Pikachu-with-Bulbasaur-label window. Matches G10's `loadSprHD` pattern.
+
+### ✅ Task #101-D — G13b legendary defeat scoring rework (game.js:9775)
+`stars = (s.bestCombo >= 5 || s.kills >= 5) ? 5 : 4`. Defeating legendary IS the win condition; prior thresholds (kills ≥ 50/30) were arbitrary. Plus added `setCityComplete('13b', ...)` + `setLevelComplete('13b', ...)` to legendary path (was missing — only the timer-survived path persisted). Addresses "Perfect tapi 3 of 5" + missing-progress complaint.
+
+### ✅ Task #101-E — Preserve `state.currentGame = '13b'` string in city picker (game.js:12628-12643)
+Was normalizing to number `13` → `endGame`'s `setCityComplete(state.currentGame, ...)` wrote to wrong bucket (`prog.g13.cities` instead of `prog.g13b.cities`). Now writes consistent. Region picker 0/N bug root cause.
+
+### ✅ Task #101-F1 — Null `testVar.onload`/`onerror` after callback in `loadSprHD`/`loadSprPlayer` (game.js:5957-5979)
+Image probe was retained per round → leak. Now GC'd. Browser-crash root cause #2.
+
+### ✅ Task #101-F2 — Sprite `<img>` size cap + bg URL probe (style.css:.g10-espr/.g10-pspr; game.js:5807)
+Added `object-fit:contain; max-width:100%; max-height:100%` so a broken image cannot stretch beyond its width/height box. Plus `loadCityBackground` (game.js:5807) now probes the bg URL via `new Image()` before setting; on failure, leaves inline `backgroundImage` empty so CSS gradient fallback remains visible. Fixes G10 white-blank-field + G13b broken-image-icon reports.
+
+### ✅ Task #101-G — Anti-repeat ring buffer (game.js:5770, 5793-5812)
+Replaced `_g10LastEnemyId` (single id) with `_g10RecentEnemies` array (last 4). Filter candidates against ring buffer for variety; fall back to full pool if too restrictive. Addresses "Pokemon itu2 aja" variety complaint.
+
+### ✅ Task #101-H — `PixiManager.destroyAll()` at start of `initGame10` / `initGame13` / `initGame13b` (game.js:5923, 8174, 9101)
+Frees WebGL contexts before re-init — mobile browsers cap ~16 contexts; without cleanup, transitions leak contexts → crash. Browser-crash root cause #3.
+
+### ✅ Task #101-I — Created `games/data/poke-sprite-cdn.js` shared module
+Exports `POKE_IDS` (1025 Pokemon slug→id map), `_slugToAlt2File`, `pokeSpriteAlt2`, `pokeSpriteSVG`, `pokeSpriteCDN`, `pokeSpriteVariant`. Wrapped as `window.*` for classic-script consumers. Standalone pages can now compute the HD WebP filename without loading game.js.
+
+### ✅ Task #101-J — g13c-pixi.html updated to HD-first sprite cascade (4 callsites)
+Loads new shared module. Gym Pokemon now render 630×630 HD WebPs instead of 96px CDN PNGs. Closes user feedback "g13c masih pakai Non HD".
+
+### ✅ Task #101-K — g20-pixi.html (1 callsite) + g22-candy.html (4 callsites) updated to HD-first cascade
+Same pattern as #101-J — uses shared module from #101-I.
+
+### Cross-File Integration (per user mandate)
+| Concern | File | Status |
+|---------|------|--------|
+| Event delegation (region+city grids) | game.js:12482, 12553 | ✅ |
+| Bounded retry pickPokeForLevel | game.js:5917, 6373 | ✅ |
+| Probe-then-swap g13bSpawnWild | game.js:9135 | ✅ |
+| G13b legendary 5★ + persistence | game.js:9775 | ✅ |
+| Preserve `'13b'` key string | game.js:12628-12643 | ✅ |
+| Image probe handlers nulled | game.js:5957-5979 | ✅ |
+| Sprite size cap + bg probe | style.css, game.js:5807 | ✅ |
+| Anti-repeat ring buffer | game.js:5770, 5793-5812 | ✅ |
+| PixiManager.destroyAll() before init | game.js:5923, 8174, 9101 | ✅ |
+| Shared HD sprite helper | games/data/poke-sprite-cdn.js | ✅ |
+| g13c HD cascade (4 sites) | games/g13c-pixi.html | ✅ |
+| g20 + g22 HD cascade | games/g20-pixi.html, g22-candy.html | ✅ |
+| Cache bump | index.html v=20260427c | ✅ |
+
+### Touched
+- `game.js` (12 edits across event delegation, bounded retry, probe-then-swap, scoring, persistence, key normalization, GC nulling, bg probe, ring buffer, Pixi destroy)
+- `style.css` (sprite img size caps for `.g10-espr`/`.g10-pspr`)
+- `index.html` (cache bump v=20260427c)
+- `games/data/poke-sprite-cdn.js` (NEW shared module — 1025-id map + 5 helpers)
+- `games/g13c-pixi.html` (4 callsites → HD-first)
+- `games/g20-pixi.html` (1 callsite → HD-first)
+- `games/g22-candy.html` (4 callsites → HD-first)
+- `TODO-GAME-FIXES.md`, `CHANGELOG.md`, `LESSONS-LEARNED.md`
+
+---
+
 ## 📊 Session 2026-04-27 — Hotfix #100 (G10 hit-chain freeze guard)
 
 Cache bump: `v=20260427a` → `v=20260427b`.
@@ -1337,6 +1416,9 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 ### G10 — Pertarungan Pokemon
 - ✅ **Platform/pedestal**: Made CSS `.g10-oval` more visible — brown color, border, larger size (110x22px)
 - ✅ **HD sprites restored**: Reverted from local-first (96px) back to HD-online-first (pokemondb 200-300px) with local fallback
+- ✅ **White blank field (Lv.1 Round 3)**: Fixed in Hotfix #101 (2026-04-27 evening) — `loadCityBackground` (game.js:5807) now probes URL via `new Image()` before assigning inline `backgroundImage`; on failure, leaves inline empty so CSS gradient fallback wins. Plus sprite `<img>` size caps (`object-fit:contain; max-width:100%; max-height:100%`) prevent broken-image stretch.
+- ✅ **Pokemon variety per city**: Fixed in Hotfix #101 — replaced single-id `_g10LastEnemyId` with `_g10RecentEnemies` ring buffer (last 4) so the same enemy can't recur within 4 rounds.
+- ✅ **Browser crash on next-game/next-city**: Fixed in Hotfix #101 — three root causes: (1) per-card listener leak in region/city grids → event delegation; (2) WebGL context leak across init cycles → `PixiManager.destroyAll()` at start of `initGame10/13/13b`; (3) image-probe handlers retained → null after fire.
 - ✅ **Hit effect (REGRESSION 2026-04-20)**: auraColors keys fixed (lowercase) + Hotfix #100 (2026-04-27) section-isolated `g10DoAttack` so partial DOM failures cannot freeze the round (8+ unguarded accesses → all guarded; idempotent `_safeDone` + 1500ms watchdog)
 - ✅ **WebGL context lost freeze**: Fixed — `backToLevelSelect()` now calls `PixiManager.destroyAll()` to free WebGL context before returning to level select.
 - ✅ **Scoring fixed**: Double-normalization bug — `endGame()` normalized to 5-star, then `showResult()` re-normalized using raw `maxRounds`. Fixed by setting `state.maxPossibleStars=5` so showResult passes through.
@@ -1382,3 +1464,18 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 - G14/G15/G16 also already reverted in code — cache issue
 - Train BGM: user mentioned providing it before but only `battle-bgm.mp3` and `WhatsApp Audio` exist in `Sounds/`
 - G13c trainer image 404s are expected (fallback chain: local → remote CDN → emoji initial)
+
+---
+
+## ⏳ Pending Hotfix #102 — User feedback 2026-04-27 evening
+
+User-reported issues NOT yet fixed (queued for next session). Source: same evening session as Hotfix #101.
+
+### G15 — Train Letter Game
+- ⬜ **End-of-game error/hang**: "game ini juga error saat permainan usai. No respond hang" — game freezes / no response after victory or game-over screen. Likely missing modal swap / hung `showGameResult` / leftover Pixi tickers.
+- ⬜ **Character/UI overlap**: "Karakter seperti ada bertumpuk" — character train sprite stacks on top of UI elements (HUD, score, life bar). Z-index / layout review needed.
+- ⬜ **Too many filler letters**: "jangan terlalu banyak huruf filler" — letter spawn pool has too many distractor letters; signal-to-noise too low for kids 5-10.
+- ⬜ **Easy-mode life reduction too steep**: "ini easy nabrak huruf 1 bukan kurangi 1 life tapi 1/4 or 1/2" — colliding with one wrong letter on easy should subtract a fraction of life (1/4 or 1/2), not a full life. Difficulty scaling needs tuning.
+
+### Cross-game audit
+- ⬜ **All 22 games — crash/hang on game-end transitions**: User mandate "Check semua g1 sampai g22, pastikan g crash hang" — verify every game end-of-round/end-of-game/transition path; confirm `PixiManager.destroyAll()` is called where needed; confirm no monolithic try-catch hiding throws (apply Hotfix #99/#100 section-isolation pattern broadly).

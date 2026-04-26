@@ -377,6 +377,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
   <div id="badge-gym-text"></div>
 </div>
 
+<script src="data/poke-sprite-cdn.js?v=20260427c"></script>
 <script src="game-modal.js?v=20260424g"></script>
 <script src="battle-sprite-engine.js?v=20260421h"></script>
 
@@ -688,8 +689,10 @@ const TRAINER_GROUPS = [
 
 
 const BG_BASE      = '../assets/background/Gym pokemon/';
-const SPRITE_HD    = s => `https://img.pokemondb.net/sprites/home/normal/${s}.png`;
-const SPRITE_LOCAL = s => `../assets/Pokemon/sprites/${s}.png`;
+// Hotfix #101-J: SPRITE_HD now returns true HD WebP (was 96px CDN — non-HD complaint)
+const SPRITE_LOCAL     = s => `../assets/Pokemon/sprites/${s}.png`;
+const SPRITE_HD_REMOTE = s => `https://img.pokemondb.net/sprites/home/normal/${s}.png`; // 96px CDN, last resort
+const SPRITE_HD        = s => (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(s) : null) || SPRITE_HD_REMOTE(s); // true HD WebP
 const TRAINER_SPRITE_LOCAL = s => `../assets/Pokemon/trainer/${s}.webp`;
 const TRAINER_SPRITE_REMOTE = s => `https://play.pokemonshowdown.com/sprites/trainers/${s}.png`;
 const TRAINER_SPRITE = s => TRAINER_SPRITE_LOCAL(s); // try local first
@@ -1007,20 +1010,30 @@ function baseSpeciesSlug(slug){
 }
 function setPokeSpriteWithCascade(img, slug){
   const base = baseSpeciesSlug(slug);
-  // Task #97 (2026-04-26): local-first cascade per Lesson L16
-  // Was: REMOTE → local → fallback (slow on 3G, broken when offline)
-  // Now: LOCAL → REMOTE → base-form fallbacks (fast + offline-resilient)
-  img.src = SPRITE_LOCAL(slug);
+  // Hotfix #101-J (2026-04-27): HD-first cascade per "jangan pakai sprite/asset non HD" mandate
+  // Cascade: pokeSpriteAlt2 (630x630 HD WebP) → pokeSpriteSVG → SPRITE_HD_REMOTE (96px CDN) → SPRITE_LOCAL → base-form fallbacks
+  const alt2     = (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(slug) : null);
+  const svg      = (typeof pokeSpriteSVG  === 'function' ? pokeSpriteSVG(slug)  : null);
+  const altBase  = (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(base) : null);
+  const svgBase  = (typeof pokeSpriteSVG  === 'function' ? pokeSpriteSVG(base)  : null);
+  img.src = alt2 || svg || SPRITE_HD_REMOTE(slug);
   img.onerror = () => {
-    img.src = SPRITE_HD(slug);
+    if (svg && img.src !== svg) { img.src = svg; return; }
+    img.src = SPRITE_HD_REMOTE(slug);
     img.onerror = () => {
-      // Form slug exhausted — try base species (e.g. mega-charizard → charizard)
-      if (base !== slug) {
-        img.src = SPRITE_LOCAL(base);
-        img.onerror = () => { img.src = SPRITE_HD(base); img.onerror = null; };
-      } else {
-        img.onerror = null;
-      }
+      img.src = SPRITE_LOCAL(slug);
+      img.onerror = () => {
+        // Form slug exhausted — try base species (e.g. mega-charizard → charizard)
+        if (base !== slug) {
+          img.src = altBase || svgBase || SPRITE_HD_REMOTE(base);
+          img.onerror = () => {
+            img.src = SPRITE_LOCAL(base);
+            img.onerror = null;
+          };
+        } else {
+          img.onerror = null;
+        }
+      };
     };
   };
 }
@@ -1560,7 +1573,7 @@ function buildSwitchPanel(forced){
     const isActive = i===battle.playerIdx;
     const fainted = p.hp<=0;
     return `<button class="sw-btn ${fainted?'fainted':''} ${isActive?'active-poke':''}" onclick="switchPoke(${i})">
-      <img src="${SPRITE_HD(p.slug)}" onerror="this.src='${SPRITE_LOCAL(p.slug)}'" alt="${p.name}">
+      <img src="${SPRITE_HD(p.slug)}" onerror="this.onerror=()=>{this.onerror=null;this.src='${SPRITE_LOCAL(p.slug)}'};this.src='${SPRITE_HD_REMOTE(p.slug)}'" alt="${p.name}">
       <span>${p.name}<br><small style="font-size:11px;opacity:0.7">${p.hp}/${p.maxHp}</small></span>
     </button>`;
   }).join('');
@@ -1661,8 +1674,9 @@ function openPackageSelector() {
   grid.innerHTML = PLAYER_PACKAGES.map(pkg => {
     const thumbs = pkg.team.map(p => {
       const base = baseSpeciesSlug(p.slug);
+      // Hotfix #101-J: HD WebP first via SPRITE_HD (alt2), then 96px CDN, then local PNG, then base-form fallbacks
       const fallback = base !== p.slug ? `this.src='${SPRITE_HD(base)}';this.onerror=()=>{this.src='${SPRITE_LOCAL(base)}';this.onerror=null};` : 'this.onerror=null';
-      return `<img src="${SPRITE_LOCAL(p.slug)}" onerror="this.src='${SPRITE_HD(p.slug)}';this.onerror=()=>{${fallback}}" alt="${p.name}">`;
+      return `<img src="${SPRITE_HD(p.slug)}" onerror="this.src='${SPRITE_HD_REMOTE(p.slug)}';this.onerror=()=>{this.src='${SPRITE_LOCAL(p.slug)}';this.onerror=()=>{${fallback}}}" alt="${p.name}">`;
     }).join('');
     const tierLabel = pkg.tier === 'base' ? 'EVO 1' : pkg.tier === 'final' ? 'FINAL' : 'MEGA';
     const selCls = pkg.id === current.id ? ' selected' : '';

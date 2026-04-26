@@ -4,6 +4,40 @@
 
 ---
 
+## 2026-04-27 (evening) — Hotfix #101
+
+### L28 — Event delegation > per-card `addEventListener` for re-rendered grids
+- **Symptom**: User reported "browser crash. Selalu kle next game/next cities" — entire mobile browser crashed after 3-4 round-trips through region picker → city picker → back. Tab killed by OS, not just the page hung.
+- **Root cause**: `renderRegionGrid` (game.js:12482) and `renderCityGrid` (game.js:12553) called `card.addEventListener('click', handler)` for every card on every render. `innerHTML = ...` later dropped the DOM nodes, but the closure each handler captured (city object, parent container reference, callback chain) survived in the listener registry. Each picker re-render added N new closures; nothing released the old ones. After 10 round-trips × ~30 cards × multi-KB closure footprint, mobile heap pressure tripped OOM.
+- **Fix**: Single delegated listener per grid container, attached once and gated by `if (grid.dataset.bound === '1') return;` then `grid.dataset.bound = '1'`. The listener uses `e.target.closest('.region-card')` (or `.city-card`) to identify which card was tapped. Idempotent — re-renderable any number of times without re-attaching.
+- **Lesson**: Any grid/list renderer that gets called more than once (re-render, navigation, language toggle) MUST use event delegation. Per-element listeners + `innerHTML` rewrite = silent heap leak: the DOM nodes go but the closure refs (and any state they captured) stay in the listener table. The `data-bound` flag pattern makes the delegated listener safely idempotent across re-renders. Audit rule: grep for `\.forEach\(.*addEventListener` over rendered cards — every match is a latent leak.
+
+### L29 — Probe-then-swap for sprite/name atomicity
+- **Symptom**: G13b user reported "label says Bulbasaur but sprite shows Pikachu" — the wild Pokemon name flipped instantly when a new wild spawned, but the sprite kept rendering the previous species for 200-1500ms while the new image downloaded.
+- **Root cause**: `g13bSpawnWild` set `wspr.src = newUrl` and `wname.textContent = newName` synchronously. Browser keeps painting the old image until the new `src` finishes decoding (CSS rule: `<img>` retains last successful raster until next decode). Meanwhile `textContent` updates immediately. Net effect: stale-sprite + new-name window during every spawn.
+- **Fix**: `new Image()` probe — `probe.src = newUrl; probe.onload = () => { wspr.src = newUrl; wname.textContent = newName; }`. Both DOM properties update inside `onload`, so they swap atomically once the network has the bytes. Plus 1500ms watchdog `setTimeout` so a slow/failed network never strands the spawn entirely.
+- **Lesson**: Whenever you update a paired (image, label) — or any (slow-side, fast-side) DOM property pair — probe the slow side first and update both inside its `onload`. The G10 `loadSprHD` pattern (game.js:5957) is the canonical example. Same rule applies to (background-image, caption), (audio, transcript), (video poster, title). The naive `el.src = X; lbl.text = Y` pattern always creates a stale-render window proportional to network latency.
+
+### L30 — Type-consistent gameNum keys for multi-namespace persistence
+- **Symptom**: Region picker showed 0/N completed for ALL regions despite the user defeating multiple legendaries in G13b. Progress simply never appeared on the picker.
+- **Root cause**: G13b is registered with `gameNum = '13b'` (string) in some code paths and `gameNum = 13` (number) in others. The city picker normalized to number `13` when calling `endGame`, so `setCityComplete(state.currentGame, ...)` wrote to `prog.g13.cities` instead of `prog.g13b.cities`. The picker reads from `prog.g13b.cities` → always empty. Two writers, two namespaces, one reader = silent data loss.
+- **Fix**: Preserve the `'13b'` string at the city-picker entry point (game.js:12628-12643) so every downstream call to `setCityComplete` / `setLevelComplete` uses the same key. Also added the missing `setCityComplete('13b', ...)` + `setLevelComplete('13b', ...)` calls to the G13b legendary-defeat path, which previously only persisted on timer-survived wins.
+- **Lesson**: When a key namespace has heterogeneous types (numbers `1..22` plus suffixed strings `'13b'`, `'13c'`), pick ONE canonical form at the entry boundary and propagate it untouched. Any normalization (`Number(x)`, `String(x)`, `parseInt`) inside the call chain risks aliasing siblings into the wrong bucket. Especially insidious because (a) JS lets you index objects by either, (b) silent writes to wrong key produce no error, just absent reads. Audit rule: if a `gameNum` flows through multiple modules, type it (TypeScript-style mental model) and verify every assignment.
+
+### L31 — Probe before applying inline `style.backgroundImage`
+- **Symptom**: G10 Lv.1 Round 3 rendered a "white blank field" instead of the city background. G13b reported a broken-image icon. CSS gradient fallbacks were defined on the parent class but never showed.
+- **Root cause**: `loadCityBackground` set `el.style.backgroundImage = "url(" + maybe404Url + ")"`. Inline styles override CSS class rules, so a 404 URL strips the gradient fallback — the element renders the inline rule (which paints nothing for a failed URL) and ignores the class's gradient.
+- **Fix**: Probe with `new Image()` before assigning. On `probe.onload`, set `el.style.backgroundImage = url`. On `probe.onerror`, leave `el.style.backgroundImage = ''` so the CSS class's gradient fallback wins via cascade. Same pattern as L29 applied to a different DOM property.
+- **Lesson**: Any inline style that overrides a class fallback must be conditional on the asset actually existing. The "set inline first, hope for cascade fallback" pattern silently breaks fallbacks. For background-image specifically, probe the URL or use CSS-only declarations (`background: var(--bg-fallback) url(...)` shorthand) where the fallback co-exists in the same declaration. Also applies to `<source>` `src`, `<video>` `poster`, custom-property `--bg-image` overrides — anywhere inline trumps class.
+
+### L32 — Standalone HTML pages need shared sprite helpers
+- **Symptom**: G13c gym Pokemon were rendering 96px CDN PNGs even though the project has 1025 HD WebP sprites at 630×630. User: "Saya sudah bilang jangan pakai sprite/asset non HD." G13c is a standalone Pixi page (its own HTML file), so it can't access game.js's `pokeSpriteAlt2` helper without loading the entire 700KB+ engine.
+- **Root cause**: HD sprite path computation (`POKE_IDS[slug]` + zero-pad + slug normalization) lived only inside game.js. Standalone pages either (a) loaded game.js wholesale (bloated), (b) re-implemented the helper inline (drift risk), or (c) fell back to remote CDN (96px). G13c had picked option (c).
+- **Fix**: Extracted `POKE_IDS` (1025-entry slug→id map) + 5 helper fns (`pokeSpriteAlt2`, `pokeSpriteSVG`, `pokeSpriteCDN`, `pokeSpriteVariant`, `_slugToAlt2File`) into `games/data/poke-sprite-cdn.js`. ~17KB total. Wrapped as `window.*` for classic-script consumers. Standalone pages now load the small shared module via `<script src="data/poke-sprite-cdn.js"></script>` and get the exact same HD-first cascade as game.js.
+- **Lesson**: When the same data table or computation is needed by both the main app and standalone pages, extract it into a small shared module (single file, no build step, classic script with `window.*` exports). Don't (a) duplicate, (b) bloat standalones with the full engine, or (c) silently degrade to a worse fallback. Audit rule: every standalone HTML page that computes asset paths should reuse the same helpers as game.js. Future standalone pages should follow this pattern by default.
+
+---
+
 ## 2026-04-27
 
 ### L27 — `onDone`-style continuation callbacks need idempotent wrapper + watchdog

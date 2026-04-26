@@ -134,6 +134,7 @@ if(!('ontouchstart' in window)){
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
 <script src="game-modal.js?v=20260424h"></script>
 <script src="../shared/rz-responsive.js?v=20260422i"></script>
+<script src="data/poke-sprite-cdn.js?v=20260427c"></script>
 <script>
 // ═══════════════════════════════════════════════════════════
 //  CONFIG
@@ -1176,13 +1177,15 @@ function updateHUD(){
 function loadPokeSprite(imgId, slug, mirror) {
   const el = document.getElementById(imgId)
   if (!el) return
-  // Try SVG first, then local PNG, then remote HD
+  // Try HD WebP first, then SVG, then local PNG, then remote CDN
   const id = {pikachu:25,machamp:68,snorlax:143,eevee:133,jigglypuff:39,lucario:448,hitmonchan:107,primeape:57,psyduck:54,mewtwo:150}[slug]
   const svgUrl = id ? `../assets/Pokemon/svg/${id}.svg` : null
   const pngUrl = `../assets/Pokemon/sprites/${slug}.png`
-  const hdUrl = `https://img.pokemondb.net/sprites/home/normal/${slug}.png`
-  el.src = svgUrl || pngUrl
-  el.onerror = () => { el.src = pngUrl; el.onerror = () => { el.src = hdUrl; el.onerror = null } }
+  const cdnUrl = `https://img.pokemondb.net/sprites/home/normal/${slug}.png`
+  // Hotfix #101-K: HD WebP first (was 96px CDN — non-HD complaint)
+  const hdUrl = (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(slug) : null)
+  el.src = hdUrl || svgUrl || pngUrl
+  el.onerror = () => { el.src = svgUrl || pngUrl; el.onerror = () => { el.src = pngUrl; el.onerror = () => { el.src = cdnUrl; el.onerror = null } } }
   el.style.display = 'block'
   if (mirror) el.style.transform = 'scaleX(-1)'
 }
