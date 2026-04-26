@@ -1,5 +1,21 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-26 Night — Phase 5 Proactive Audit (Task #96)
+
+Cache bump: `v=20260426h` → `v=20260426i`.
+
+Comprehensive sprite-path audit after recent freeze patterns (Task #64, #71, #95). Found and fixed 2 remaining remote-primary callsites in game.js. Verified 6 correct fallback usages. Documented 1 deferred standalone-page case (g13c-pixi.html SPRITE_HD).
+
+### Fixed
+- `game.js:1276` — `openLevelSelect` G10 icon hardcoded pokemondb.net Pikachu → local-first
+- `game.js:5546` — `switchPlayerPoke` player sprite swap remote-primary → local-first with 2-stage onerror
+
+### Metrics
+- Remote-primary callsites in main game.js: 8 → **0**
+- All audited fallback chains correct (per Lesson L16)
+
+---
+
 ## 2026-04-26 Night — Hotfix Bundle #91-#95 (game-end + variety + unification)
 
 Cache bump: `v=20260426g` → `v=20260426h`.

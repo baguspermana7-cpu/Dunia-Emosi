@@ -4,6 +4,43 @@
 
 ---
 
+## 📊 Session 2026-04-26 Night — Phase 5 Proactive audit (Task #96)
+
+Cache bump: `v=20260426h` → `v=20260426i`.
+
+### ✅ Task #96 — Proactive sprite path audit (cleanup remaining remote-primary)
+After Task #95 fix (G13 family selector), audited ALL remaining sprite-load callsites:
+
+**Fixed**:
+- `game.js:1276` — Hardcoded pokemondb.net Pikachu URL in `openLevelSelect` for G10 icon → now `pokeSpriteAlt2('pikachu') || remote`
+- `game.js:5546` `switchPlayerPoke` — Player sprite swap was remote-primary → now `pokeSpriteAlt2(slug) || pokeSpriteOnline(slug)` with 2-stage onerror chain
+
+**Verified safe** (already local-first or correct fallback usage):
+- 5546-5555: switchPlayerPoke onerror chain (correct)
+- 5516-5518: renderPartyGrid onerror chain (correct, from Task #64)
+- 8908-8911: G13b player sprite onerror (Task #71)
+- 8978-8980: G13b legendary spawn onerror (Task #71)
+- 9240-9242: G13b wild re-spawn onerror (Task #71)
+- 7858-7862: G13 family selector card thumb onerror (Task #95)
+
+**Deferred (separate-page constraint)**:
+- `games/g13c-pixi.html:691` — `SPRITE_HD = s => 'https://img.pokemondb.net/...'` (no local fallback)
+  - Standalone page; would need helper extraction to shared module
+  - Phase 6+ task: extract `_slugToAlt2File` helper to shared sprite module
+
+### Audit metrics
+- 2 callsites moved to local-first (game.js)
+- 6 callsites verified correct fallback usage
+- 1 standalone-page callsite documented for Phase 6
+- Total remote-primary callsites in main game.js: **0** (down from 8 at start of session)
+
+### Touched
+- `game.js` (2 sprite-path migrations)
+- `index.html` (cache bump v=20260426i)
+- TODO-GAME-FIXES.md, CHANGELOG.md
+
+---
+
 ## 📊 Session 2026-04-26 Night — Hotfix bundle #91-#95 (game-end + variety + unification)
 
 Cache bump: `v=20260426g` → `v=20260426h`.

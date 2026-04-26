@@ -1273,7 +1273,9 @@ function openLevelSelect(gameNum) {
   // Icon
   const iconEl = document.getElementById('level-game-icon')
   if (gameNum === 10) {
-    iconEl.innerHTML = '<img src="https://img.pokemondb.net/sprites/home/normal/pikachu.png" style="width:60px;height:60px;image-rendering:auto;display:block;" onerror="this.outerHTML=\'⚡\'">'
+    // Task #96: local-first per L16 (was remote-primary)
+    const _pikaSrc = (typeof pokeSpriteAlt2 === 'function') ? pokeSpriteAlt2('pikachu') : 'https://img.pokemondb.net/sprites/home/normal/pikachu.png'
+    iconEl.innerHTML = `<img src="${_pikaSrc}" style="width:60px;height:60px;image-rendering:auto;display:block;" onerror="this.src='https://img.pokemondb.net/sprites/home/normal/pikachu.png';this.onerror=function(){this.outerHTML='⚡'}">`
   } else if (meta.iconImg) {
     iconEl.innerHTML = `<img src="${meta.iconImg}" style="width:64px;height:70px;display:block;" alt="${meta.icon}">`
   } else {
@@ -5543,11 +5545,14 @@ function switchPlayerPoke(poke){
     pSpr.classList.remove('spr-swap-out')
     pSpr.style.imageRendering = 'auto'
     const slug = poke.name.toLowerCase().replace(/\s/g,'-')
-    pSpr.src = pokeSpriteOnline(slug)
+    // Task #96 (2026-04-26): local-first per L16 (was remote-primary causing slow swap on 3G)
+    const _localSwap = (typeof pokeSpriteAlt2 === 'function') ? pokeSpriteAlt2(slug) : null
+    pSpr.src = _localSwap || pokeSpriteOnline(slug)
     pSpr.onerror = () => {
+      if (pSpr.dataset.fallback === '1') { pSpr.src = pokeSpriteBackup(poke.id); pSpr.onerror = null; return }
+      pSpr.dataset.fallback = '1'
       pSpr.style.imageRendering = 'pixelated'
-      pSpr.src = pokeSpriteBack(poke.id)
-      pSpr.onerror = () => { pSpr.src = pokeSpriteBackup(poke.id); pSpr.onerror = null }
+      pSpr.src = pokeSpriteOnline(slug)
     }
     // Apply new Pokemon's facing BEFORE swap-in animation starts so keyframe
     // transform:scaleX(var(--flip)) uses the correct sign during the anim.
