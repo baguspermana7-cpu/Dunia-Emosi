@@ -4,6 +4,69 @@
 
 ---
 
+## 📊 Session 2026-04-27 (late) — Hotfix #102 (G15 polish + cross-game ticker leak)
+
+Cache bump: `v=20260427c` → `v=20260427d`. Branch: `main`.
+
+User feedback (verbatim, Indonesian + English):
+- "Karakter seperti ada bertumpuk" — KUMPULKAN HUD label overlapping mascot character
+- "Jangan terlalu banyak huruf filler" — too many distractor/special boxes on easy
+- "Easy nabrak huruf 1 bukan kurangi 1 life tapi 1/4 or 1/2" — 1 wrong = 1 full life loss feels too steep
+- "Game ini juga error saat permainan usai. No respond hang" — G15 hang at game-end
+- "Check semua g1 sampai g22, pastikan g crash hang" — audit all 22 games for crash/hang
+
+### ✅ Task #102-A — G15 easy mode life fraction (g15-pixi.html:623)
+`MAX_LIVES = getDifficulty() === 'easy' ? 8 : 3` (was 4 on easy). Each hit now feels like 1/2 of the prior life unit. Combined with existing 50% shield on easy → effectively 16 hits average before lose state. User perceives fractional damage without the rendering complexity of true partial hearts.
+
+### ✅ Task #102-B — G15 reduce filler density on easy (g15-pixi.html:823)
+Math box spawn gated on `getDifficulty() !== 'easy'`. Easy mode now has ZERO math/filler boxes — only target letters + (when needed) heart pickups. Fixes 34% filler ratio reported in audit. User can focus on letter-collection without being distracted by special boxes.
+
+### ✅ Task #102-C — G15 stop Pixi ticker on game-end (g15-pixi.html:1697 + 1726)
+Added `try { if (app && app.ticker) app.ticker.stop() } catch(_){}` at the top of `showWin()` and `showLose()`. Previously the `app.ticker.add()` callback at line 734 kept firing 60fps after `gameRunning = false` set — early-returning every frame but compounding CPU. Over multiple plays → mobile browser hang.
+
+### ✅ Task #102-D — Audit + fix g14/g16/g19/g20/g22 ticker leaks (cross-game systemic)
+Same ticker-leak pattern existed in 5 other standalone Pixi pages. Fixed all:
+- `games/g14.html` — endRace + goBack
+- `games/g16-pixi.html` — showWin + showLose + goBack (3 sites; showLose was an extra path beyond the audit)
+- `games/g19-pixi.html` — showWin + goBack
+- `games/g20-pixi.html` — endMatch + goBack
+- `games/g22-candy.html` — endGame + goBack
+
+For games where `GameModal.show()` is wrapped in `setTimeout(..., 500-800ms)`, the `app.ticker.stop()` is placed BEFORE the setTimeout so the loop halts immediately at game-end, not after the modal-show delay. G6 was already correct (line 1047) — no change needed. G13c uses pure JS/DOM (no Pixi ticker) — safe.
+
+### ✅ Task #102-E — G15 KUMPULKAN HUD overlap (g15-pixi.html:30-32)
+CSS fix: explicit `flex-direction:row; flex-wrap:nowrap; gap:10px` on `#next-letter` (was `gap:6px` only with implicit row). Added `white-space:nowrap; flex-shrink:0` on `#next-label` and `flex-shrink:0; line-height:1` on `#next-char`. Eliminates wrapping/stacking when 24px char and 10px label sit side-by-side.
+
+### Cross-File Integration
+| Concern | File | Status |
+|---------|------|--------|
+| G15 lives ×2 on easy | games/g15-pixi.html:623 | ✅ |
+| G15 skip math box on easy | games/g15-pixi.html:823 | ✅ |
+| G15 ticker stop in showWin/showLose | games/g15-pixi.html:1697, 1726 | ✅ |
+| G15 KUMPULKAN HUD CSS | games/g15-pixi.html:30-32 | ✅ |
+| G14 ticker stop in endRace + goBack | games/g14.html | ✅ |
+| G16 ticker stop in showWin + showLose + goBack | games/g16-pixi.html | ✅ |
+| G19 ticker stop in showWin + goBack | games/g19-pixi.html | ✅ |
+| G20 ticker stop in endMatch + goBack | games/g20-pixi.html | ✅ |
+| G22 ticker stop in endGame + goBack | games/g22-candy.html | ✅ |
+| Cache bump | index.html + g13c/g20/g22 | ✅ v=20260427d |
+| Documentation | TODO + CHANGELOG + LESSONS-LEARNED | ✅ |
+
+### Touched
+- `games/g15-pixi.html` (4 fixes: lives, filler, ticker, HUD CSS)
+- `games/g14.html` (ticker stop ×2)
+- `games/g16-pixi.html` (ticker stop ×3)
+- `games/g19-pixi.html` (ticker stop ×2)
+- `games/g20-pixi.html` (ticker stop ×2)
+- `games/g22-candy.html` (ticker stop ×2)
+- `index.html` + standalone HTMLs (cache bump v=20260427d)
+- `TODO-GAME-FIXES.md`, `CHANGELOG.md`, `LESSONS-LEARNED.md`
+
+### Process Reflection
+G15 ticker leak was the same systemic failure as Hotfix #101's event listener leak in pickers, just in a different layer (Pixi ticker instead of DOM listeners). Both classes share the same root: "I set a flag that says stop, but I never actually unsubscribed." Both fixed via the same principle: explicitly tear down the subscription, don't rely on the consumer to early-return forever. Audit caught 5 more games with the identical pattern — bulk-fixed in parallel.
+
+---
+
 ## 📊 Session 2026-04-27 (evening) — Hotfix #101 (browser crash + sprite mismatch + scoring + progress + HD sprites)
 
 Cache bump: `v=20260427b` → `v=20260427c`. Branch: `main`.

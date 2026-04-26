@@ -27,9 +27,13 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 .life-heart.lost{opacity:0.18;transform:scale(0.65);filter:grayscale(1)}
 
 /* ── Next letter hint ── */
-#next-letter{position:fixed;top:66px;left:50%;transform:translateX(-50%);z-index:49;background:rgba(255,248,231,0.92);border:2px solid #FFD6A0;border-radius:14px;padding:5px 16px;display:flex;align-items:center;gap:6px;pointer-events:none;box-shadow:0 3px 0 #D4956A}
-#next-label{font-size:10px;color:#92400e;letter-spacing:1.2px;font-weight:700}
-#next-char{font-size:24px;font-weight:900;color:#dc2626;text-shadow:0 0 10px rgba(220,38,38,0.35)}
+/* Hotfix #102-E (2026-04-27): "Karakter seperti ada bertumpuk" — KUMPULKAN
+   label and the next-char digit were stacking visually. Added flex-direction:row
+   explicit + flex-shrink:0 + white-space:nowrap on label + larger gap so the
+   24px char and 10px label sit side-by-side cleanly without one wrapping under. */
+#next-letter{position:fixed;top:66px;left:50%;transform:translateX(-50%);z-index:49;background:rgba(255,248,231,0.92);border:2px solid #FFD6A0;border-radius:14px;padding:5px 16px;display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;gap:10px;pointer-events:none;box-shadow:0 3px 0 #D4956A}
+#next-label{font-size:10px;color:#92400e;letter-spacing:1.2px;font-weight:700;white-space:nowrap;flex-shrink:0}
+#next-char{font-size:24px;font-weight:900;color:#dc2626;text-shadow:0 0 10px rgba(220,38,38,0.35);flex-shrink:0;line-height:1}
 
 /* ── Flash ── */
 #flash{position:fixed;inset:0;z-index:99;pointer-events:none;opacity:0;transition:opacity .05s}
@@ -620,7 +624,11 @@ const WORD_COUNT = Math.min(3 + Math.floor(LEVEL / 5), 6);
 let WORDS_LIST = pickWords(WORD_COUNT);
 
 // ── Lives System ─────────────────────────────────────────────────────────────
-const MAX_LIVES = getDifficulty() === 'easy' ? 4 : 3;
+// Hotfix #102-A (2026-04-27): user reported easy mode 1-letter-hit = -1 full life
+// felt too steep ("kurangi 1 life tapi 1/4 or 1/2"). Doubling lives on easy makes
+// each hit feel like 1/2 of the prior life (perceptual fix without changing the
+// damage-per-hit formula or invincibility shield mechanic).
+const MAX_LIVES = getDifficulty() === 'easy' ? 8 : 3;
 let lives = MAX_LIVES;
 
 // ── Game State ───────────────────────────────────────────────────────────────
@@ -812,8 +820,9 @@ async function initPixi() {
       spawnLetterBox();
     }
 
-    // Math box
-    if (mathBoxTimer >= nextMathAt) {
+    // Math box — Hotfix #102-B: skip on easy mode (user "jangan terlalu banyak
+    // huruf filler" — math/heart boxes felt like distractor noise on easy).
+    if (mathBoxTimer >= nextMathAt && getDifficulty() !== 'easy') {
       mathBoxTimer = 0; nextMathAt = MATH_BOX_INTERVAL();
       spawnSpecialBox('math');
     }
@@ -1684,6 +1693,11 @@ document.getElementById('pixi-canvas').addEventListener('click', e => {
 // ── Win / Lose ─────────────────────────────────────────────────────────────────
 function showWin() {
   gameRunning = false;
+  // Hotfix #102-C (2026-04-27): stop the Pixi ticker so it doesn't keep firing
+  // 60fps callbacks (with early-return on !gameRunning) after game-end. User
+  // reported "no respond hang" — every frame the loop checked the flag, doing
+  // nothing useful but eating CPU. Stop here AND in showLose to guarantee halt.
+  try { if (app && app.ticker) app.ticker.stop() } catch(_){}
   const elapsed = (Date.now() - startTime) / 1000;
   const totalQ = mathCorrect + wrongTaps;
   try{document.getElementById('game-bgm').pause()}catch(_){}
@@ -1713,6 +1727,8 @@ function showWin() {
 
 function showLose() {
   gameRunning = false;
+  // Hotfix #102-C: see showWin — same ticker.stop to prevent post-game hang.
+  try { if (app && app.ticker) app.ticker.stop() } catch(_){}
   sessionStorage.setItem('g15Result', JSON.stringify({ stars: 0 }));
   GameModal.show({
     emoji: '😞', title: 'Gagal! Coba Lagi', stars: 0, msg: 'Jangan menyerah, ayo coba lagi!',

@@ -1,5 +1,29 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-27 (late) — Hotfix #102 (G15 polish + cross-game ticker leak)
+
+Cache bump: `v=20260427c` → `v=20260427d`. Branch: `main`.
+
+User feedback this session focused on G15 (Train letter game) UX bugs plus a system-wide audit request: "Check semua g1 sampai g22, pastikan g crash hang." Audit found the same Pixi-ticker-not-stopped pattern in 6 standalone Pixi games (G14/G15/G16/G19/G20/G22) — bulk-fixed in parallel.
+
+### Critical fixes
+- **#102-A** G15 easy mode: `MAX_LIVES` 4 → 8. User: "kurangi 1 life tapi 1/4 or 1/2" — doubling lives makes each hit feel like 1/2 of the prior life unit (perceptual fix, no formula change).
+- **#102-B** G15 easy mode: skip math/filler boxes entirely. Audit found 34% filler ratio on easy. User wanted target-only on easy, math/heart only on medium+.
+- **#102-C** G15 `app.ticker.stop()` in `showWin`/`showLose`. Pixi ticker callback was firing 60fps after `gameRunning = false`, early-returning every frame but spinning CPU → "no respond hang" reported.
+- **#102-D** Same ticker fix applied to **G14, G16, G19, G20, G22** — 6 standalone Pixi games total. For games where `GameModal.show` is wrapped in setTimeout, the `ticker.stop()` is placed BEFORE the setTimeout so the loop halts immediately, not after the delay. G6 was already correct (already had ticker.stop). G13c uses pure DOM (no ticker — safe).
+- **#102-E** G15 KUMPULKAN HUD CSS: explicit `flex-direction:row; flex-wrap:nowrap; gap:10px`, `white-space:nowrap`, `flex-shrink:0`. Eliminates the visual stacking of label and char that the user reported.
+
+### Process Reflection
+Hotfix #101 fixed event listener leak in pickers (DOM layer). Hotfix #102 fixed Pixi ticker leak in 6 games (Pixi layer). Same principle: don't rely on a flag check inside a forever-running subscription — explicitly unsubscribe at end-of-life. The pattern matters across DOM events, Pixi tickers, intervals, and any other long-lived callback. Audit rule: every `addEventListener`, `setInterval`, `app.ticker.add` should have a matching tear-down call on the page-leave / game-end path.
+
+### Touched
+- `games/g15-pixi.html` (lives, filler, ticker, HUD CSS)
+- `games/g14.html` + `games/g16-pixi.html` + `games/g19-pixi.html` + `games/g20-pixi.html` + `games/g22-candy.html` (ticker stop)
+- `index.html` + standalone HTMLs (cache bump v=20260427d)
+- `TODO-GAME-FIXES.md`, `LESSONS-LEARNED.md`
+
+---
+
 ## 2026-04-27 (evening) — Hotfix #101 (browser crash + sprite mismatch + scoring + progress + HD sprites)
 
 Cache bump: `v=20260427b` → `v=20260427c`. Branch: `main`.

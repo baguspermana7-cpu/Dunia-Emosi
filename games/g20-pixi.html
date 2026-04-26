@@ -134,7 +134,7 @@ if(!('ontouchstart' in window)){
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
 <script src="game-modal.js?v=20260424h"></script>
 <script src="../shared/rz-responsive.js?v=20260422i"></script>
-<script src="data/poke-sprite-cdn.js?v=20260427c"></script>
+<script src="data/poke-sprite-cdn.js?v=20260427d"></script>
 <script>
 // ═══════════════════════════════════════════════════════════
 //  CONFIG
@@ -1111,6 +1111,10 @@ function endMatch(){
   try{sessionStorage.setItem('g20Result',JSON.stringify({stars,level:cfg.level}))}catch(_){}
   saveG20Progress(stars)
 
+  // Hotfix #102-C (2026-04-27): stop Pixi ticker so 60fps callback doesn't keep
+  // firing after game-end. See games/g15-pixi.html for canonical pattern.
+  try { if (app && app.ticker) app.ticker.stop() } catch(_){}
+
   setTimeout(()=>{
     const next=won&&cfg.level<30?()=>{
       try{sessionStorage.setItem('g20Config',JSON.stringify({level:cfg.level+1}))}catch(_){}
@@ -1297,7 +1301,13 @@ function saveG20Progress(stars) {
     localStorage.setItem(key, JSON.stringify(prog))
   } catch(_) {}
 }
-function goBack(){try{document.getElementById('game-bgm').pause()}catch(_){};history.back()}
+function goBack(){
+  try{document.getElementById('game-bgm').pause()}catch(_){}
+  // Hotfix #102-C (2026-04-27): stop Pixi ticker so 60fps callback doesn't keep
+  // firing after game-end. See games/g15-pixi.html for canonical pattern.
+  try { if (app && app.ticker) app.ticker.stop() } catch(_){}
+  history.back()
+}
 function togglePause(){
   S.paused=!S.paused
   document.getElementById('btn-pause').textContent=S.paused?'▶':'⏸'

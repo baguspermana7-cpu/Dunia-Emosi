@@ -4,6 +4,34 @@
 
 ---
 
+## 2026-04-27 (late) — Hotfix #102
+
+### L33 — Pixi ticker.stop() must be called explicitly on game-end (flag check inside ticker is not enough)
+- **Symptom**: G15 user reported "ini juga error saat permainan usai. No respond hang" — the page became unresponsive after game-end. Audit found the same pattern in 5 other Pixi games (G14/G16/G19/G20/G22).
+- **Root cause**: Standalone Pixi pages register their main loop with `app.ticker.add(callback)`. The callback's first line is typically `if (!gameRunning) return`. After game-end (`gameRunning = false` set in `showWin`/`showLose`), the callback keeps firing 60fps and early-returning. CPU usage compounds across plays. Mobile Chrome eventually OOMs or kills the tab.
+- **Fix**: Explicitly `app.ticker.stop()` at the top of every game-end function (`showWin`, `showLose`, `endRace`, `endMatch`, `endGame`, etc.) AND in every leave-the-page handler (`goBack`, `exitGame`). When `GameModal.show` is wrapped in `setTimeout(..., N)`, the `ticker.stop` goes BEFORE the setTimeout call so the loop halts immediately, not N ms later.
+- **Lesson**: Long-lived subscriptions (`addEventListener`, `setInterval`, `requestAnimationFrame`, `app.ticker.add`) must have a matching explicit unsubscribe on the lifecycle event that ends them. A flag check (`if (!running) return`) inside the callback is not enough — the callback is still being invoked. The browser pays full call-stack cost per invocation. For Pixi specifically, `ticker.stop()` halts the loop entirely; `ticker.remove(callback)` removes one listener; `app.destroy(...)` is the heaviest cleanup. Use the lightest tool that ends the leak. Audit rule: every `app.ticker.add` should have a matching `app.ticker.stop()` (or `.remove()`) on the same lifecycle boundary as the parent component.
+
+### L34 — Difficulty mode should gate features, not just numbers
+- **Symptom**: User on G15 easy reported "jangan terlalu banyak huruf filler" — too many distractor/special boxes appearing despite playing on the easiest difficulty.
+- **Root cause**: G15 spawned math boxes (every ~3-6 sec) and heart boxes (every ~5-9 sec) at all difficulties. Easy mode only varied the number of distractor LETTERS (1 vs 1-2). Math and heart "filler" boxes still spawned at the same rate, contributing 34% of total box density on easy.
+- **Fix**: Gated math box spawning on `getDifficulty() !== 'easy'`. On easy mode now: only target letters + (when needed) heart pickups. No math distractors. Player can focus on letter collection without parsing emoji clutter.
+- **Lesson**: Difficulty modes should switch what FEATURES appear, not just tune numerical knobs. Easy mode users want fewer types of stimuli, not just lower magnitude. When designing difficulty curves, classify each mechanic as "core" (always present) vs "advanced" (gate behind difficulty). The wrong instinct is to keep all mechanics on at all difficulties and just tune their rate. Apply to: G3 letter distractors, G7 picture clutter, G8 word complexity, future difficulty designs.
+
+### L35 — Perceptual life-loss tuning: double the count, halve the perceived cost
+- **Symptom**: User on G15 easy reported "easy nabrak huruf 1 bukan kurangi 1 life tapi 1/4 or 1/2" — losing 1 full life per wrong tap on easy mode felt too steep for kids.
+- **Root cause**: Easy mode had 4 lives (3 on harder). With existing 50% shield mechanic, ~8 hits before lose state. Per-hit subjective cost was still 1/4 of remaining lives (visual: full heart vanishes per hit). Kids perceive "I lost a heart" as a big setback.
+- **Fix**: Doubled MAX_LIVES on easy (4 → 8). Each hit now feels like 1/2 of the prior life unit (visually: 8 hearts → 7 hearts is less alarming than 4 → 3). Combined with shield: ~16 hits before lose. The damage formula didn't change — only the denominator did.
+- **Lesson**: When players complain about "punishment too steep," consider tuning the visual life count BEFORE the underlying damage formula. A heart bar of 8 vs 4 feels like very different forgiveness, even if both reach lose state in similar number of hits given a 50% shield. Apply to any health/life HUD: the visible ratio drives perception, not the absolute count. Avoid implementing fractional hearts (complex render code, kids confused by partial fills) — just multiply the count.
+
+### L36 — `flex-direction:row` + `flex-wrap:nowrap` should be EXPLICIT for inline HUD badges
+- **Symptom**: G15 KUMPULKAN HUD label and the 24px char visually stacked instead of sitting side-by-side. User: "Karakter seperti ada bertumpuk."
+- **Root cause**: `#next-letter` was `display:flex; align-items:center; gap:6px` without explicit `flex-direction` or `flex-wrap`. Defaults SHOULD be row+nowrap, but on narrow viewports + 24px char height vs 10px label height, the browser sometimes wrapped the badge content (rare but reproducible). Plus 6px gap was insufficient cushion between them.
+- **Fix**: Added explicit `flex-direction:row; flex-wrap:nowrap` + `gap:10px` on the parent + `white-space:nowrap; flex-shrink:0` on the label + `flex-shrink:0; line-height:1` on the char. Defensive against any narrow-viewport reflow.
+- **Lesson**: For badge/chip/pill UI components that contain heterogeneous content (label + value, icon + text), set EXPLICIT flex direction, wrap, and shrink rules on both parent and children. Don't rely on defaults — they vary by viewport and content. Audit rule: any `display:flex` for inline HUD with `font-size` mismatch ≥ 2x should have explicit flex-shrink + white-space declarations.
+
+---
+
 ## 2026-04-27 (evening) — Hotfix #101
 
 ### L28 — Event delegation > per-card `addEventListener` for re-rendered grids

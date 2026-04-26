@@ -1899,6 +1899,10 @@ function endRace() {
     'Jangan menyerah, ayo coba lagi!'
 
   const nextLevel = (cfg.level||5) < 30 ? () => { sessionStorage.setItem('g14Config', JSON.stringify({...cfg, level:(cfg.level||5)+1})); location.reload(); } : null;
+  // Hotfix #102-C (2026-04-27): stop Pixi ticker so 60fps callback doesn't keep
+  // firing after game-end (early-returns on !S.running but loop still spins,
+  // accumulating CPU → mobile hang). See games/g15-pixi.html for canonical pattern.
+  try { if (app && app.ticker) app.ticker.stop() } catch(_){}
   GameModal.show({
     emoji, title, stars, msg,
     onNext: nextLevel,
@@ -1950,6 +1954,7 @@ function saveG14Progress(stars) {
 }
 function goBack() {
   S.running = false
+  try { if (app && app.ticker) app.ticker.stop() } catch(_){}
   try{document.getElementById('game-bgm').pause()}catch(_){}
   history.back()
 }

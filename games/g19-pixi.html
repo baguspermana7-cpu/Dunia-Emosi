@@ -979,6 +979,10 @@ function showWin() {
   document.getElementById('status-text').textContent = 'Level Selesai!'
   sfxCorrect(); setTimeout(() => sfxCorrect(), 200)
 
+  // Hotfix #102-C (2026-04-27): stop Pixi ticker so 60fps callback doesn't keep
+  // firing after game-end. See games/g15-pixi.html for canonical pattern.
+  try { if (app && app.ticker) app.ticker.stop() } catch(_){}
+
   setTimeout(() => {
     const nextLevel = S.level < 30 ? () => {
       try { sessionStorage.setItem('g19Config', JSON.stringify({ level: S.level + 1 })) } catch(_){}
@@ -1196,6 +1200,9 @@ function updateVolumes() {
 
 function goBack() {
   S.running = false
+  // Hotfix #102-C (2026-04-27): stop Pixi ticker so 60fps callback doesn't keep
+  // firing after game-end. See games/g15-pixi.html for canonical pattern.
+  try { if (app && app.ticker) app.ticker.stop() } catch(_){}
   // stop all audio
   try { const bgm=document.getElementById('game-bgm'); bgm.pause(); bgm.currentTime=0 } catch(_){}
   // Save progress directly to localStorage (don't rely on pageshow handler)

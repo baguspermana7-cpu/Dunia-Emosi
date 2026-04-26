@@ -106,7 +106,7 @@ canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
 <script src="../shared/rz-responsive.js?v=20260422i"></script>
 <script src="game-modal.js?v=20260424g"></script>
-<script src="data/poke-sprite-cdn.js?v=20260427c"></script>
+<script src="data/poke-sprite-cdn.js?v=20260427d"></script>
 <script src="question-bank.js"></script>
 <script>
 // ═══════════════════════════════════════════════════════════
@@ -972,6 +972,10 @@ function endGame() {
     localStorage.setItem(key, JSON.stringify(prog))
   } catch(_){}
 
+  // Hotfix #102-C (2026-04-27): stop Pixi ticker so 60fps callback doesn't keep
+  // firing after game-end. See games/g15-pixi.html for canonical pattern.
+  try { if (app && app.ticker) app.ticker.stop() } catch(_){}
+
   setTimeout(() => {
     const nextLevel = cfg.level < 30 ? () => {
       try { sessionStorage.setItem('g22Config', JSON.stringify({ level: cfg.level + 1 })) } catch(_){}
@@ -1005,6 +1009,9 @@ function togglePause() {
 function goBack() {
   try{document.getElementById('game-bgm').pause()}catch(_){}
   S.running = false
+  // Hotfix #102-C (2026-04-27): stop Pixi ticker so 60fps callback doesn't keep
+  // firing after game-end. See games/g15-pixi.html for canonical pattern.
+  try { if (app && app.ticker) app.ticker.stop() } catch(_){}
   history.back()
 }
 

@@ -1857,6 +1857,9 @@ function showWin(){
   try{sessionStorage.setItem('g16Result',JSON.stringify({stars,level:S.level,cleared:S.cleared,total:S.totalObstacles}))}catch(_){}
   saveG16Progress(stars)
   const nextLevel = S.level < 30 ? () => { sessionStorage.setItem('g16Config', JSON.stringify({level: S.level + 1})); location.reload(); } : null;
+  // Hotfix #102-C (2026-04-27): stop Pixi ticker so 60fps callback doesn't keep
+  // firing after game-end. See games/g15-pixi.html for canonical pattern.
+  try { if (app && app.ticker) app.ticker.stop() } catch(_){}
   GameModal.show({
     emoji, title, stars, msg,
     onNext:nextLevel, onAgain:()=>restartGame(), onBack:()=>finishGame()
@@ -1865,6 +1868,9 @@ function showWin(){
 function showLose(){
   try{document.getElementById('game-bgm').pause()}catch(_){}
   try{sessionStorage.setItem('g16Result',JSON.stringify({stars:0,level:S.level}))}catch(_){}
+  // Hotfix #102-C (2026-04-27): stop Pixi ticker so 60fps callback doesn't keep
+  // firing after game-end. See games/g15-pixi.html for canonical pattern.
+  try { if (app && app.ticker) app.ticker.stop() } catch(_){}
   GameModal.show({
     emoji:'😞', title:'Gagal! Coba Lagi', stars:0,
     msg:`Jangan menyerah, ayo coba lagi! (${S.cleared}/${S.totalObstacles} rintangan bersih)`,
@@ -2079,7 +2085,13 @@ function saveG16Progress(stars) {
     localStorage.setItem(key, JSON.stringify(prog))
   } catch(_) {}
 }
-function goBack(){S.running=false;history.back()}
+function goBack(){
+  S.running=false
+  // Hotfix #102-C (2026-04-27): stop Pixi ticker so 60fps callback doesn't keep
+  // firing after game-end. See games/g15-pixi.html for canonical pattern.
+  try { if (app && app.ticker) app.ticker.stop() } catch(_){}
+  history.back()
+}
 function confirmBack(){goBack()}
 function togglePause(){
   S.paused=!S.paused
