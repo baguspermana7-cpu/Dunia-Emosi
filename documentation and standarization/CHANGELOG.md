@@ -1,5 +1,32 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-26 — Documentation Phase 3 (Tasks #85-#86)
+
+### Task #85 — CODE-REVIEW-CHECKLIST.md
+- Comprehensive ~280-line checklist enforcing 4 tiers (BLOCKING/HIGH-PRIORITY/NICE-TO-HAVE) of pre-commit verification
+- Each item references specific past bug (#69-#84) and Lesson Learned (L16-L24)
+- Operationalizes `feedback_structured_verification.md` mandate
+- Pre-commit verification bash script included
+
+### Task #86 — ARCHITECTURE-INDEX.md
+- Master codebase entry point document (~330 lines)
+- Documentation map, code architecture tree, state lifecycle ASCII diagram
+- "Adding a new {feature,region,math game}" step-by-step guides
+- Key conventions, project stats, known tech debt, decision tree
+- Cross-references all 12 docs in `documentation and standarization/`
+
+### Why
+- Task #84 root cause was procedural gap (state property propagation missed in city picker plan)
+- These docs codify procedural safeguards to prevent recurrence
+- AUDIT-2026-04-25.md Phase 3 P2-8 + P2-10 satisfied
+
+### Touched
+- `documentation and standarization/CODE-REVIEW-CHECKLIST.md` (NEW)
+- `documentation and standarization/ARCHITECTURE-INDEX.md` (NEW)
+- TODO-GAME-FIXES.md, this CHANGELOG
+
+---
+
 ## 2026-04-26 CRITICAL Hotfix — Task #84: post-victory freeze (G10/G13/G13b/G13c)
 
 Cache bump: `v=20260426c` → `v=20260426d`.

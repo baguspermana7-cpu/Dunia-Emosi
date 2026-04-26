@@ -4,6 +4,30 @@
 
 ---
 
+## 📊 Session 2026-04-26 — Documentation Phase 3 (Tasks #85-#86)
+
+### ✅ Task #85 — CODE-REVIEW-CHECKLIST.md (mencegah regression future)
+- Comprehensive PR/feature review checklist (~280 lines) di `documentation and standarization/`
+- 4 sections: BLOCKING (syntax + integration + state + cache), HIGH-PRIORITY (assets, pause, touch, math, a11y, docs), NICE-TO-HAVE (code quality, animation helpers, listener hygiene, perf), Pre-Commit Verification Script
+- Each item tied to specific past bug (#69-#84) + Lesson Learned (L16-L24)
+- "Why This Checklist Exists" section explicitly maps every Phase 1-2 production bug to its prevention rule
+- Designed to enforce `feedback_structured_verification.md` mandate operationally
+
+### ✅ Task #86 — ARCHITECTURE-INDEX.md (single entry point untuk navigate codebase)
+- Master index doc (~330 lines) di `documentation and standarization/`
+- Documentation Map: required reading order + domain specs + operational docs
+- Code Architecture: file structure tree + module boundaries diagram + state lifecycle ASCII flow
+- "Adding a New Feature" / "Adding a New Region" / "Adding a New Math Game" guides
+- Key conventions: cache versioning, naming, state properties, asset loading, pause contract
+- Project stats + tech debt tracker
+- Quick Decision Tree for common questions
+
+### Touched
+- `documentation and standarization/CODE-REVIEW-CHECKLIST.md` (NEW, ~280 lines)
+- `documentation and standarization/ARCHITECTURE-INDEX.md` (NEW, ~330 lines)
+
+---
+
 ## 📊 Session 2026-04-26 — Hotfix #84 CRITICAL: state.gameStars undefined freeze
 
 Cache bump: `v=20260426c` → `v=20260426d`.
