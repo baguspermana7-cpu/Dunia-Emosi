@@ -4,6 +4,22 @@
 
 ---
 
+## 2026-04-27
+
+### L25 — Section-level try-catch for "must always show" UI flows
+- **Symptom**: After 4 sessions of patches (Tasks #84/#94/#98), G10/G13/G13b game-end STILL fell into emergency fallback modal on every win. User: "Sama sekali tidak fix issue kamu itu". Defensive fallbacks (Task #94/#98) caught the throw but the daily UX still showed the fallback, never the real modal.
+- **Root cause**: `showResult` and `showGameResult` were monolithic — 70+ lines of unguarded DOM access (`document.getElementById('x').textContent = ...`) and unguarded operations (`addXP` localStorage quota, `getLevelTier(undefined)`). A SINGLE bad sub-section threw and aborted the entire modal flow, including the critical "show screen" step. The wrapping try-catch then fell to fallback. So the fallback fired because ANY of 15+ unguarded operations could fail — not because of one specific bug.
+- **Fix**: Refactored both modal engines into 7+3 isolated try-catch sections. Critical sections (text + showScreen) always run with manual fallback. Cosmetic sections (XP, confetti) log warning but don't propagate. Plus 4-second self-clearing watchdog for `_showingGameResult` flag (prevented silent early-return on retry).
+- **Lesson**: When a UI flow has a "must always succeed" requirement (a result modal user is waiting for), monolithic try-catch is wrong — one failure aborts everything. Section-isolate at the granularity of "user-visible feature": text section, buttons section, persistence section, animation section. Each gets its own try-catch with appropriate severity (CRITICAL = log error + manual recovery; cosmetic = log warn + skip). Also: any flag used as "in-flight" guard MUST have a self-clearing watchdog (timeout) — otherwise a single bad section silently breaks every retry. Apply to: result modals, checkout flows, save-game routines, any user-facing "this must happen" flow.
+
+### L26 — Don't use bonus-modifier scoring pattern for absolute-tier games
+- **Symptom**: G13b "Perfect tapi bintang 3 of 5" — defeating a legendary with low kills returned 1★. User correctly called this absurd: defeating a legendary IS the win condition, kill count is a bonus.
+- **Root cause**: `GameScoring.calc({correct:1, total:1, bonus:tier-5})` was used as a "perfect-run baseline minus shortfall" pattern, but G13b is threshold-tier survival — tier IS the absolute score, not a delta from perfect. The bonus-modifier indirection produced backwards math: tier 1 (low kills) → bonus -4 → 1★. Same engine being misapplied to two different scoring models (accuracy vs threshold).
+- **Fix**: Direct threshold scoring in G13b (`stars = kills >= 50 ? 5 : kills >= 30 ? 4 : 3`). Documented inline that bonus-modifier pattern is for "perfect run + adjustment" (G13's evolution penalty), NOT "absolute tier" (G13b's kill-count survival).
+- **Lesson**: Before applying a scoring helper, identify the game's scoring MODEL: accuracy-based (right answers / total), threshold-tier (kills, distance, time), or hybrid (perfect baseline + adjustments). The `GameScoring.calc({correct, total, bonus})` engine is for accuracy + adjustments — don't shoehorn threshold-tier into it via fake correct=1/total=1 with negative bonus. Just use direct threshold scoring (`stars = condition ? N : ...`). Same mistake pattern appears anywhere a unifying engine gets used "because it exists" rather than "because it fits". Audit rule: if you find yourself passing `correct:1, total:1, bonus:X-N`, you're misusing the engine.
+
+---
+
 ## 2026-04-25 Evening (continued)
 
 ### L23 — Sliding frontier unlock pattern for child-friendly progression

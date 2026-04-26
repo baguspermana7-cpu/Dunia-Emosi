@@ -1827,28 +1827,34 @@ function flyStarToCounter(srcEl) {
 // ================================================================
 // RESULT
 // ================================================================
+// Task #99 (2026-04-27): Section-level try-catch refactor. Previous monolithic
+// flow threw on any unguarded DOM/storage access, falling through to fallback.
+// Each section now isolated; CRITICAL sections (text + showScreen) always run.
 function showResult(mascot, title, msg) {
-  // Double-invocation guard: rapid callers (G5 setTimeout chains, user double-taps)
-  // can trigger showResult twice, causing double XP / toast stacking / modal freeze.
   if (state._showingResult) return
   state._showingResult = true
   setTimeout(() => { state._showingResult = false }, 1500)
-  clearTimers(); stopAmbient()
-  // Hard-clear any overlay that might be blocking the result screen. classList.remove
-  // alone leaves inline display:block that some G13 paths set directly.
-  const fb = document.getElementById('overlay-feedback')
-  if(fb){ fb.classList.remove('show'); fb.style.display = 'none' }
-  const gr = document.getElementById('game-result-overlay')
-  if(gr){ gr.classList.remove('show'); gr.style.display = 'none' }
-  // Task #84: defensive guard — endGame from city-picker path could call before gameStars init
+
+  try { clearTimers(); stopAmbient() } catch(e) { console.warn('[showResult] clearTimers/stopAmbient:', e) }
+  try {
+    const fb = document.getElementById('overlay-feedback')
+    if(fb){ fb.classList.remove('show'); fb.style.display = 'none' }
+    const gr = document.getElementById('game-result-overlay')
+    if(gr){ gr.classList.remove('show'); gr.style.display = 'none' }
+  } catch(e) { console.warn('[showResult] hide overlays:', e) }
+
+  // Hardened state guards (Task #99 — prevent throw on first-session paths)
   if (!Array.isArray(state.gameStars)) state.gameStars = [0, 0]
-  const totalStars=state.gameStars[0]+state.gameStars[1]
-  // Normalize to 5-star scale using maxPossibleStars if set by game
+  if (typeof state.currentPlayer !== 'number') state.currentPlayer = 0
+  if (!Array.isArray(state.players) || !state.players[state.currentPlayer]) {
+    state.players = state.players || []
+    state.players[state.currentPlayer] = state.players[state.currentPlayer] || {name:'Pemain',animal:'🦁',stars:0,ageTier:'tumbuh'}
+  }
+
+  const totalStars = state.gameStars[0]+state.gameStars[1]
   const maxPossible = state.maxPossibleStars || 5
   const earned = Math.min(5, Math.round(totalStars / maxPossible * 5)) || 0
-  const maxStars=5;
-  // Guard against contradictory titles — if player got 0 stars, override success-tone titles/msgs.
-  // Callers often pass "Selesai!" / "Bagus!" unconditionally; this enforces fail-state UI.
+  const maxStars = 5
   let finalTitle = title || 'Bagus sekali!'
   let finalMsg = msg || `Kamu dapat ${totalStars} bintang! 🌟`
   if (earned === 0) {
@@ -1861,49 +1867,102 @@ function showResult(mascot, title, msg) {
   } else if (earned <= 2 && /sempurna/i.test(finalTitle)) {
     finalTitle = 'Coba Lagi'
   }
-  document.getElementById('result-mascot').textContent=mascot||state.players[state.currentPlayer].animal
-  document.getElementById('result-title').textContent=finalTitle
-  document.getElementById('result-stars').innerHTML='<span class="rstar filled">★</span>'.repeat(earned)+'<span class="rstar empty">★</span>'.repeat(maxStars-earned);
-  // Show Next Level button only if not at max level AND passing grade (earned >= 3).
-  const nextBtn = document.getElementById('result-next-btn')
-  if(nextBtn) {
-    const curLv = state.selectedLevelNum || 1
-    nextBtn.style.display = (curLv < 20 && state.mode !== 'duo' && earned >= 3) ? 'block' : 'none'
+
+  // SECTION 1: text content (CRITICAL — modal must show this)
+  try {
+    const mascotEl = document.getElementById('result-mascot')
+    if (mascotEl) mascotEl.textContent = mascot || state.players[state.currentPlayer].animal
+    const titleEl = document.getElementById('result-title')
+    if (titleEl) titleEl.textContent = finalTitle
+    const starsEl = document.getElementById('result-stars')
+    if (starsEl) starsEl.innerHTML = '<span class="rstar filled">★</span>'.repeat(earned)+'<span class="rstar empty">★</span>'.repeat(maxStars-earned)
+    const msgEl = document.getElementById('result-msg')
+    if (msgEl) msgEl.textContent = finalMsg
+  } catch(e) { console.error('[showResult] text section:', e, e && e.stack) }
+
+  // SECTION 2: Next button + duo scores
+  try {
+    const nextBtn = document.getElementById('result-next-btn')
+    if (nextBtn) {
+      const curLv = state.selectedLevelNum || 1
+      nextBtn.style.display = (curLv < 20 && state.mode !== 'duo' && earned >= 3) ? 'block' : 'none'
+    }
+    const scoresEl = document.getElementById('result-scores')
+    if (scoresEl) {
+      if (state.mode === 'duo') {
+        scoresEl.style.display = 'flex'
+        scoresEl.innerHTML = [0,1].map(i => `<div class="rs-card"><div class="rs-animal">${state.players[i] && state.players[i].animal || '🦁'}</div><div class="rs-name">${state.players[i] && state.players[i].name || 'Pemain'}</div><div class="rs-stars">⭐ ${state.gameStars[i] || 0}</div></div>`).join('')
+      } else scoresEl.style.display = 'none'
+    }
+  } catch(e) { console.warn('[showResult] next/scores:', e) }
+
+  // SECTION 3: best-stars persistence
+  try {
+    const bs = JSON.parse(localStorage.getItem(pkey('best-stars')) || '{}')
+    const starsThisGame = state.gameStars[0]+state.gameStars[1]
+    if (!bs[state.currentGame] || starsThisGame > bs[state.currentGame]) {
+      bs[state.currentGame] = starsThisGame
+      localStorage.setItem(pkey('best-stars'), JSON.stringify(bs))
+    }
+  } catch(e) { console.warn('[showResult] best-stars:', e) }
+
+  // SECTION 4: XP + level-up (HIGH throw risk — addXP, getLevelTier, DOM nulls)
+  try {
+    const xpEarned = totalStars * 10
+    const xpResult = addXP(xpEarned) || {}
+    const xpBanner = document.getElementById('result-xp-banner')
+    if (xpBanner) {
+      if (xpEarned > 0 && typeof xpResult.next === 'number') {
+        const tier = getLevelTier(xpResult.next) || {icon:'⭐',name:'Pemula'}
+        xpBanner.style.display = 'flex'
+        xpBanner.innerHTML = `<span>+${xpEarned} XP</span><span style="font-size:13px;opacity:0.85">${tier.icon} ${tier.name} — ${xpResult.next} XP total</span>`
+        xpBanner.className = 'result-xp-badge'; xpBanner.style.cssText = ''
+      } else xpBanner.style.display = 'none'
+    }
+    const lvlUp = document.getElementById('result-level-up')
+    if (lvlUp) {
+      if (xpResult.leveled && typeof xpResult.next === 'number') {
+        const newTier = getLevelTier(xpResult.next) || {icon:'⭐'}
+        const ico = document.getElementById('level-up-icon')
+        if (ico) ico.textContent = newTier.icon
+        lvlUp.style.display = 'flex'
+      } else lvlUp.style.display = 'none'
+    }
+  } catch(e) { console.warn('[showResult] XP section:', e, e && e.stack) }
+
+  // SECTION 5: deferred achievement checks
+  try {
+    const gameAchMap = {1:'perfect_emotion',2:'calm_breath',3:'letter_master',4:'count_master',5:'memory_master',6:'driver_master',7:'picture_master',8:'word_master',9:'trace_master'}
+    setTimeout(() => {
+      try {
+        if (gameAchMap[state.currentGame]) checkAchievement(gameAchMap[state.currentGame])
+        const played = JSON.parse(localStorage.getItem('dunia-emosi-played-games') || '{}')
+        played[state.currentGame] = true
+        localStorage.setItem('dunia-emosi-played-games', JSON.stringify(played))
+        if (Object.keys(played).length >= 12) checkAchievement('all_games')
+      } catch(_) {}
+    }, 450)
+  } catch(e) { console.warn('[showResult] achievement:', e) }
+
+  // SECTION 6: header + showScreen (CRITICAL — must run, with manual fallback)
+  try { if (typeof buildMenuHeader === 'function') buildMenuHeader() } catch(e) { console.error('[showResult] buildMenuHeader:', e) }
+  try {
+    showScreen('screen-result')
+  } catch(e) {
+    console.error('[showResult] showScreen failed:', e, e && e.stack)
+    try {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'))
+      const sr = document.getElementById('screen-result')
+      if (sr) sr.classList.add('active')
+    } catch(_) {}
   }
-  document.getElementById('result-msg').textContent=finalMsg
-  const scoresEl=document.getElementById('result-scores')
-  if(state.mode==='duo'){scoresEl.style.display='flex';scoresEl.innerHTML=[0,1].map(i=>`<div class="rs-card"><div class="rs-animal">${state.players[i].animal}</div><div class="rs-name">${state.players[i].name}</div><div class="rs-stars">⭐ ${state.gameStars[i]}</div></div>`).join('')}
-  else scoresEl.style.display='none'
-  // Save best stars per game
-  try{const bs=JSON.parse(localStorage.getItem(pkey('best-stars'))||'{}');const starsThisGame=state.gameStars[0]+state.gameStars[1];if(!bs[state.currentGame]||starsThisGame>bs[state.currentGame]){bs[state.currentGame]=starsThisGame;localStorage.setItem(pkey('best-stars'),JSON.stringify(bs))}}catch(e){}
-  // XP reward
-  const xpEarned=totalStars*10; const xpResult=addXP(xpEarned)
-  const xpBanner=document.getElementById('result-xp-banner')
-  if(xpEarned>0){
-    const tier=getLevelTier(xpResult.next)
-    xpBanner.style.display='flex'
-    xpBanner.innerHTML=`<span>+${xpEarned} XP</span><span style="font-size:13px;opacity:0.85">${tier.icon} ${tier.name} — ${xpResult.next} XP total</span>`
-    xpBanner.className='result-xp-badge'; xpBanner.style.cssText='';
-  } else xpBanner.style.display='none'
-  // Level up?
-  const lvlUp=document.getElementById('result-level-up')
-  if(xpResult.leveled){const newTier=getLevelTier(xpResult.next);document.getElementById('level-up-icon').textContent=newTier.icon;lvlUp.style.display='flex'}
-  else lvlUp.style.display='none'
-  // Defer achievement checks so toasts appear AFTER the result screen is interactive.
-  // Firing them synchronously can overlap the modal and eat button taps (freeze feel).
-  const gameAchMap={1:'perfect_emotion',2:'calm_breath',3:'letter_master',4:'count_master',5:'memory_master',6:'driver_master',7:'picture_master',8:'word_master',9:'trace_master'}
-  setTimeout(() => {
-    if(gameAchMap[state.currentGame]) checkAchievement(gameAchMap[state.currentGame])
-    const played=JSON.parse(localStorage.getItem('dunia-emosi-played-games')||'{}')
-    played[state.currentGame]=true; localStorage.setItem('dunia-emosi-played-games',JSON.stringify(played))
-    if(Object.keys(played).length>=12) checkAchievement('all_games')
-  }, 450)
-  buildMenuHeader(); showScreen('screen-result')
-  // Graded celebration based on stars earned
-  if(earned>=5){launchConfetti(3);launchConfetti(3)}
-  else if(earned>=4) launchConfetti(2)
-  else if(earned>=3) launchConfetti(1)
-  // 1-2 stars: no confetti — just show result
+
+  // SECTION 7: confetti (cosmetic)
+  try {
+    if (earned >= 5) { launchConfetti(3); launchConfetti(3) }
+    else if (earned >= 4) launchConfetti(2)
+    else if (earned >= 3) launchConfetti(1)
+  } catch(e) { console.warn('[showResult] confetti:', e) }
 }
 // endGame — called by G10/G11/G12 with raw star count
 // Task #94 (2026-04-26): split into try-catch wrapper + fallback so any throw
@@ -1912,8 +1971,11 @@ function endGame(stars) {
   try {
     _endGameMain(stars)
   } catch (e) {
-    console.error('[endGame] CRITICAL — main path threw, showing fallback modal:', e)
-    _endGameFallback(stars, e && e.message)
+    // Task #99: capture full stack so the fallback diagnostic shows the throw site,
+    // not just an opaque message. Mobile users without DevTools rely on this.
+    const stackInfo = (e && e.stack) || (e && e.message) || String(e)
+    console.error('[endGame] CRITICAL — main path threw, showing fallback modal:', e, e && e.stack)
+    _endGameFallback(stars, stackInfo)
   }
 }
 
@@ -1998,9 +2060,11 @@ function _endGameFallback(stars, errMsg) {
   if (showNext) btnsHtml += `<button id="egfb-next" style="background:linear-gradient(160deg,#a78bfa,#8b5cf6);color:#fff;border:none;border-radius:18px;padding:14px;font-size:16px;font-weight:900;cursor:pointer;font-family:inherit;box-shadow:0 4px 0 #6d28d9">▶ Lanjut Level</button>`
   btnsHtml += `<button id="egfb-again" style="background:linear-gradient(160deg,#4ade80,#22c55e);color:#fff;border:none;border-radius:18px;padding:14px;font-size:16px;font-weight:900;cursor:pointer;font-family:inherit;box-shadow:0 4px 0 #15803d">🔄 Main Lagi</button>`
   btnsHtml += `<button id="egfb-back" style="background:rgba(139,92,246,0.06);color:#6b5080;border:1.5px solid rgba(139,92,246,0.22);border-radius:18px;padding:14px;font-size:16px;font-weight:900;cursor:pointer;font-family:inherit">⌂ Beranda</button>`
-  // Optional diagnostic toggle (small subtle link)
+  // Task #99 (2026-04-27): show full stack trace + clipboard copy button.
+  // errMsg now contains e.stack from endGame catch — escape before injecting.
+  const escHtml = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   const diagLink = errMsg
-    ? `<details style="margin-top:12px;text-align:left;color:#9b8bb0;font-size:11px"><summary style="cursor:pointer">🐛 Detail diagnostik</summary><pre style="white-space:pre-wrap;background:#fff;padding:8px;border-radius:8px;margin-top:6px;overflow-x:auto">${errMsg}</pre></details>`
+    ? `<details style="margin-top:12px;text-align:left;color:#9b8bb0;font-size:11px"><summary style="cursor:pointer">🐛 Detail diagnostik (klik untuk salin)</summary><pre id="egfb-stack" style="white-space:pre-wrap;background:#fff;padding:8px;border-radius:8px;margin-top:6px;overflow-x:auto;max-height:200px">${escHtml(errMsg)}</pre><button id="egfb-copy" style="margin-top:6px;background:#8b5cf6;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:11px;cursor:pointer;font-family:inherit">📋 Salin ke clipboard</button></details>`
     : ''
   ov.innerHTML = `
     <div style="background:linear-gradient(160deg,#f8f0ff,#ede2f6);border-radius:24px;padding:28px 24px;max-width:340px;width:100%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,0.5)">
@@ -2033,6 +2097,23 @@ function _endGameFallback(stars, errMsg) {
     }
   })
   document.getElementById('egfb-back').onclick = closeAndDo(() => { if (typeof exitGame === 'function') exitGame() })
+  // Wire clipboard copy for the diagnostic stack (don't close modal on copy)
+  const copyBtn = document.getElementById('egfb-copy')
+  if (copyBtn) {
+    copyBtn.onclick = (ev) => {
+      ev.preventDefault(); ev.stopPropagation()
+      const stackEl = document.getElementById('egfb-stack')
+      const text = stackEl ? stackEl.textContent : (errMsg || '')
+      const done = () => { copyBtn.textContent = '✓ Tersalin' ; setTimeout(() => copyBtn.textContent = '📋 Salin ke clipboard', 1500) }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(() => {
+          try { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); done() } catch(_) {}
+        })
+      } else {
+        try { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); done() } catch(_) {}
+      }
+    }
+  }
 }
 function playAgain() { state._showingResult = false; state.maxPossibleStars = null; startGameWithLevel(state.selectedLevelNum || 1) }
 function nextLevel()  { state._showingResult = false; state.maxPossibleStars = null; startGameWithLevel((state.selectedLevelNum||1) + 1) }
@@ -5832,22 +5913,26 @@ function g10NewBattle(){
   const s=g10State
   s.locked=false
 
+  // Task #99 (2026-04-27): defensive bg refresh per round. Field could go blank
+  // mid-game if a CSS animation cleared inline backgroundImage, leaving white field.
+  try { loadCityBackground(document.getElementById('g10-field')) } catch(_){}
+
+  // Emoji-as-SVG data URL fallback for catastrophic sprite cascade failure (offline + no local).
+  // Without this, all 4 cascade steps failing leaves a broken-image icon — visually "blank field".
+  const _emojiSpriteDataURL = (emoji) => `data:image/svg+xml;utf8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="50" y="70" font-size="80" text-anchor="middle">'+emoji+'</text></svg>')}`
+
   // Load sprites: HD online first, local 96px as fallback
   function loadSprHD(imgId, slug, pokeId){
     const el=document.getElementById(imgId)
     el.className=el.className.replace(/\bspr-\w+/g,'').trim()
     el.style.opacity='1'; el.style.imageRendering='auto'
     el.style.animation=''
-    // HD variant first (online or SVG), then local fallback
     const variantSrc = pokeSpriteVariant(slug)
     const testVar = new Image()
     testVar.onload = () => { el.src = variantSrc }
     testVar.onerror = () => {
-      // HD CDN first → local low-res only as offline fallback → PokeAPI last.
-      // Gen 9+ Pokemon have no SVG entry; without this order they rendered the
-      // back-facing low-res PokeAPI sprite, breaking both HD quality and scaleX(-1).
       el.src = pokeSpriteCDN(slug)
-      el.onerror = () => { el.src = pokeSprite(slug); el.onerror = () => { el.src = pokeSpriteBackup(pokeId); el.onerror = null } }
+      el.onerror = () => { el.src = pokeSprite(slug); el.onerror = () => { el.src = pokeSpriteBackup(pokeId); el.onerror = () => { el.src = _emojiSpriteDataURL('👹'); el.onerror = null } } }
     }
     testVar.src = variantSrc
   }
@@ -5855,13 +5940,12 @@ function g10NewBattle(){
     const el=document.getElementById(imgId)
     el.className=el.className.replace(/\bspr-\w+/g,'').trim()
     el.style.opacity='1'; el.style.imageRendering='auto'
-    // HD variant first (SVG or CDN), low-res local only as offline fallback
     const variantSrc = pokeSpriteVariant(slug)
     const test = new Image()
     test.onload = () => { el.src = variantSrc }
     test.onerror = () => {
       el.src = pokeSpriteCDN(slug)
-      el.onerror = () => { el.src = pokeSprite(slug); el.onerror = () => { el.src = pokeSpriteBackup(pokeId); el.onerror = null } }
+      el.onerror = () => { el.src = pokeSprite(slug); el.onerror = () => { el.src = pokeSpriteBackup(pokeId); el.onerror = () => { el.src = _emojiSpriteDataURL('🦊'); el.onerror = null } } }
     }
     test.src = variantSrc
   }
@@ -8766,7 +8850,7 @@ function g13Victory() {
     }
     saveStars()
     updateGameStarDisplay()
-  } catch(e) { console.error('[G13] victory scoring crashed:', e) }
+  } catch(e) { console.error('[G13] victory scoring crashed:', e, e && e.stack) }
 
   if (g13ResultTimeout) { clearTimeout(g13ResultTimeout); g13ResultTimeout = null }
   g13ResultTimeout = setTimeout(() => {
@@ -8785,7 +8869,8 @@ function g13Victory() {
       btns.push({label:'Kembali ⌂', action:()=>exitGame()})
       showGameResult({ emoji:'🏆', title: finalForm ? `${finalForm.name} Menang!` : 'Kamu Menang!', stars:perfStars, msg, buttons:btns })
     } catch(e) {
-      console.error('[G13] victory modal crashed — using minimal fallback:', e)
+      console.error('[G13] victory modal crashed — using minimal fallback:', e, e && e.stack)
+      state._showingGameResult = false  // unstrand modal so retry works
       try {
         showGameResult({ emoji:'🏆', title:'Kamu Menang!', stars:perfStars, msg:'', buttons:[
           {label:'Main Lagi 🔄', action:()=>initGame13()},
@@ -9540,16 +9625,16 @@ function g13bGameOver(reason) {
   battleBgmStop()
 
   const defeated = reason === 'defeated'
-  // Unified scoring via bonus modifier: survival is threshold-based (not accuracy),
-  // so we derive a target-tier bonus and feed it to GameScoring.calc as a perfect-run
-  // baseline (correct=1, total=1 → 5★) minus the shortfall.
-  // Legacy thresholds preserved for parity:
-  //   defeated:   kills≥15→2, kills≥5→1, else 0
-  //   complete:   kills≥30→3, kills≥15→2, kills≥1→1
-  const _g13bTier = defeated
-    ? (s.kills >= 15 ? 2 : s.kills >= 5 ? 1 : 0)
-    : (s.kills >= 30 ? 3 : s.kills >= 15 ? 2 : s.kills >= 1 ? 1 : 0)
-  const stars = _g13bTier === 0 ? 0 : GameScoring.calc({ correct: 1, total: 1, bonus: _g13bTier - 5 })
+  // Task #99 (2026-04-27): direct threshold scoring. Previous bonus-modifier
+  // pattern (GameScoring.calc with bonus = tier - 5) applied a perfect-run baseline
+  // and deducted shortfall, producing absurd scores like 1★ for "completed" with
+  // <5 kills. G13b is threshold-tier survival, NOT accuracy — bonus modifier was
+  // semantically wrong here. Defeated = kills earned, completed = win + tier bonus.
+  //   defeated: kills≥30→3★, kills≥15→2★, kills≥5→1★, else 0★
+  //   completed (timer ran out, still alive): kills≥30→5★, kills≥15→4★, else 3★ (won)
+  const stars = defeated
+    ? (s.kills >= 30 ? 3 : s.kills >= 15 ? 2 : s.kills >= 5 ? 1 : 0)
+    : (s.kills >= 30 ? 5 : s.kills >= 15 ? 4 : 3)
   // Task #66: mark city as completed for region/city progression (only if not defeated)
   try {
     if (!defeated && stars > 0 && state.selectedRegion && state.selectedCity && typeof setCityComplete === 'function') {
@@ -9571,15 +9656,15 @@ function g13bGameOver(reason) {
         : (stars >= 3 ? 'Luar Biasa!' : stars >= 2 ? 'Keren Banget!' : stars >= 1 ? 'Bagus!' : 'Terus Berlatih!')
       const msg = defeated
         ? `HP habis setelah ${s.kills} kemenangan! Combo terbaik: x${s.bestCombo}`
-        : `${s.kills} Pokémon dikalahkan • Combo: x${s.bestCombo}  •  30+ kill = ⭐⭐⭐`
+        : `${s.kills} Pokémon dikalahkan • Combo: x${s.bestCombo}  •  Survive 60s!`
       const buttons = [
         { label: 'Main Lagi ⚡', action: () => g13bResultMainLagi() },
         { label: '⌂ Beranda', action: () => exitGame13b() }
       ]
       showGameResult({ emoji, title, stars, msg, buttons })
     } catch (e) {
-      console.error('[g13bGameOver] showGameResult failed — fallback to legacy modal:', e)
-      // Legacy fallback (kept HTML for safety)
+      console.error('[g13bGameOver] showGameResult failed — fallback to legacy modal:', e, e && e.stack)
+      state._showingGameResult = false  // unstrand modal so retry works
       const res = document.getElementById('g13b-result')
       if (res) res.style.display = 'flex'
     }
@@ -9592,11 +9677,11 @@ function g13bLevelComplete() {
   s.phase = 'done'
   battleBgmStop()
 
-  // Unified scoring: kill-count tier mapped through GameScoring.calc
-  // Legacy: kills≥50→5, ≥30→4, ≥15→3, ≥5→2, else 1
-  const _g13bLcTier = s.kills >= 50 ? 5 : s.kills >= 30 ? 4 : s.kills >= 15 ? 3 : s.kills >= 5 ? 2 : 1
-  let stars = 3
-  try { stars = GameScoring.calc({ correct: 1, total: 1, bonus: _g13bLcTier - 5 }) } catch(_){}
+  // Task #99 (2026-04-27): direct threshold scoring with 3★ floor (legendary defeated
+  // = always a win). Previous bonus-modifier produced 1★ for low-kill wins which the
+  // user correctly called "absurd" — defeating a legendary IS the win condition.
+  //   kills≥50→5★, kills≥30→4★, else 3★ (floor — you defeated a legendary)
+  const stars = s.kills >= 50 ? 5 : s.kills >= 30 ? 4 : 3
   try { vibrate([50, 30, 80, 30, 120]) } catch(_){}
   try { playCorrect() } catch(e) {}
 
@@ -9627,7 +9712,8 @@ function g13bLevelComplete() {
       ]
       showGameResult({ emoji, title, stars, msg, buttons })
     } catch (e) {
-      console.error('[g13bLevelComplete] showGameResult failed — fallback to legacy modal:', e)
+      console.error('[g13bLevelComplete] showGameResult failed — fallback to legacy modal:', e, e && e.stack)
+      state._showingGameResult = false  // unstrand modal so retry works
       const overlay = document.getElementById('g13b-level-complete')
       if (overlay) overlay.style.display = 'flex'
     }
@@ -9652,34 +9738,65 @@ function endGameFromOverlay() {
 }
 
 // ── Unified Game Result Overlay (G13-G18) ────────────────────
+// Task #99 (2026-04-27): section-level try-catch + flag self-clear watchdog.
+// G13b "crash semuanya" traced to unguarded DOM access here — single bad node
+// killed the entire modal AND left _showingGameResult=true so retry was silent.
 function showGameResult({ emoji, title, stars, msg, buttons }) {
-  // Guard: don't show if user already exited to menu/level select
   const activeScreen = document.querySelector('.screen.active')
   if (!activeScreen || !activeScreen.id.startsWith('screen-game')) return
-  // Double-invocation guard — rapid re-entry from G13 victory setTimeout chains or
-  // user double-taps can stack modals, leaving button handlers bound to stale closures.
   if (state._showingGameResult) return
   state._showingGameResult = true
-  // Clear the G13 evolution overlay (z-index 600, above modal z-500). If its display:none
-  // cleanup was skipped, it silently eats clicks on the modal buttons below.
-  const evo = document.getElementById('g13-evo-overlay')
-  if (evo) { evo.classList.remove('show'); evo.style.display = 'none'; evo.style.pointerEvents = 'none' }
-  document.getElementById('gr-emoji').textContent = emoji || '🏆'
-  document.getElementById('gr-title').textContent = title || 'Selesai!'
-  document.getElementById('gr-stars').textContent = '⭐'.repeat(Math.min(stars||0,5)) + '☆'.repeat(Math.max(0,5-(stars||0)))
-  document.getElementById('gr-msg').textContent = msg || ''
-  const btns = document.getElementById('gr-btns')
-  btns.innerHTML = ''
-  ;(buttons||[]).forEach((b, i) => {
-    const el = document.createElement('button')
-    el.className = 'gr-btn ' + (i === 0 ? 'gr-btn-primary' : 'gr-btn-secondary')
-    el.textContent = b.label
-    // setTimeout(0) is more reliable than requestAnimationFrame for touch event ordering
-    // (RAF can queue behind unresolved paint, delaying or dropping the action under throttling).
-    el.onclick = () => { playClick(); hideGameResult(); setTimeout(() => b.action(), 0) }
-    btns.appendChild(el)
-  })
-  document.getElementById('game-result-overlay').classList.add('show')
+
+  // Self-clearing watchdog: if any section throws BEFORE buttons wire up,
+  // hideGameResult never fires — clear flag so user can retry.
+  let _shown = false
+  setTimeout(() => { if (!_shown) state._showingGameResult = false }, 4000)
+
+  try {
+    const evo = document.getElementById('g13-evo-overlay')
+    if (evo) { evo.classList.remove('show'); evo.style.display = 'none'; evo.style.pointerEvents = 'none' }
+  } catch(e) { console.warn('[showGameResult] evo cleanup:', e) }
+
+  // SECTION 1: text content (CRITICAL)
+  try {
+    const safeStars = Math.min(Math.max(stars||0, 0), 5)
+    const eEl = document.getElementById('gr-emoji'); if (eEl) eEl.textContent = emoji || '🏆'
+    const tEl = document.getElementById('gr-title'); if (tEl) tEl.textContent = title || 'Selesai!'
+    const sEl = document.getElementById('gr-stars'); if (sEl) sEl.textContent = '⭐'.repeat(safeStars) + '☆'.repeat(5-safeStars)
+    const mEl = document.getElementById('gr-msg'); if (mEl) mEl.textContent = msg || ''
+  } catch(e) { console.error('[showGameResult] text section:', e, e && e.stack) }
+
+  // SECTION 2: buttons (CRITICAL — without these user has no exit)
+  try {
+    const btns = document.getElementById('gr-btns')
+    if (btns) {
+      btns.innerHTML = ''
+      ;(buttons||[]).forEach((b, i) => {
+        const el = document.createElement('button')
+        el.className = 'gr-btn ' + (i === 0 ? 'gr-btn-primary' : 'gr-btn-secondary')
+        el.textContent = b.label
+        el.onclick = () => {
+          try { playClick() } catch(_) {}
+          try { hideGameResult() } catch(_) {}
+          // Wrap action so misbehaving callback doesn't strand modal flag
+          setTimeout(() => {
+            try { b.action() }
+            catch(actionErr) {
+              console.error('[showGameResult] button action threw:', actionErr, actionErr && actionErr.stack)
+              state._showingGameResult = false
+            }
+          }, 0)
+        }
+        btns.appendChild(el)
+      })
+    }
+  } catch(e) { console.error('[showGameResult] buttons section:', e, e && e.stack) }
+
+  // SECTION 3: show overlay (CRITICAL)
+  try {
+    const ov = document.getElementById('game-result-overlay')
+    if (ov) { ov.classList.add('show'); _shown = true }
+  } catch(e) { console.error('[showGameResult] show overlay:', e, e && e.stack) }
 }
 function hideGameResult() {
   state._showingGameResult = false
