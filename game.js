@@ -1833,6 +1833,8 @@ function showResult(mascot, title, msg) {
   if(fb){ fb.classList.remove('show'); fb.style.display = 'none' }
   const gr = document.getElementById('game-result-overlay')
   if(gr){ gr.classList.remove('show'); gr.style.display = 'none' }
+  // Task #84: defensive guard — endGame from city-picker path could call before gameStars init
+  if (!Array.isArray(state.gameStars)) state.gameStars = [0, 0]
   const totalStars=state.gameStars[0]+state.gameStars[1]
   // Normalize to 5-star scale using maxPossibleStars if set by game
   const maxPossible = state.maxPossibleStars || 5
@@ -5665,6 +5667,11 @@ function getDiagnosticDistractors(a, b, op, ans){
 let g10State={}
 
 function initGame10(){
+  // Task #84: defensive resets — prevents dangling flags from previous session crash
+  state._showingResult = false
+  state._showingGameResult = false
+  if (!Array.isArray(state.gameStars)) state.gameStars = [0, 0]   // CRITICAL: avoid undefined[0] in endGame
+  if (typeof state.currentPlayer !== 'number') state.currentPlayer = 0
   battleBgmPlay()
   // Load PixiJS if not ready, then init GPU canvas
   loadPixiJS(function(){ PixiManager.init('g10-pixi-canvas').catch(()=>{}) })
@@ -7870,6 +7877,11 @@ function initGame13() {
 window.initGame13 = initGame13
 
 function _initGame13Impl() {
+  // Task #84: defensive resets — match startGameWithLevel state init
+  state._showingResult = false
+  state._showingGameResult = false
+  if (!Array.isArray(state.gameStars)) state.gameStars = [0, 0]
+  if (typeof state.currentPlayer !== 'number') state.currentPlayer = 0
   battleBgmPlay()
   // Task #66: load city background if selected
   loadCityBackground(document.getElementById('g13-field'))
@@ -8772,6 +8784,11 @@ function exitGame13b() {
 window.exitGame13b = exitGame13b
 
 function initGame13b() {
+  // Task #84: defensive resets
+  state._showingResult = false
+  state._showingGameResult = false
+  if (!Array.isArray(state.gameStars)) state.gameStars = [0, 0]
+  if (typeof state.currentPlayer !== 'number') state.currentPlayer = 0
   // G13b uses Ending theme instead of battle BGM
   if(!_battleBgmEl) _battleBgmEl = document.getElementById('battle-bgm')
   if(_battleBgmEl) _battleBgmEl.src = 'assets/Pokemon/sound/29 ~Ending~（１９９７－１９９８｜Ｍ２１） - Satoshi Sakai No Masta - SoundLoadMate.com.mp3'
@@ -12302,11 +12319,20 @@ function renderCityGrid(regionId) {
         state.selectedCityIdx = i + 1
         // Map city index to legacy levelNum for backward-compat with initGame10/13/13b
         state.selectedLevelNum = i + 1
+        state.selectedLevel = (i + 1) <= 13 ? 'easy' : (i + 1) <= 26 ? 'medium' : 'hard'
         // Task #70: ensure state.currentGame is set so endGame/setLevelComplete + showResult work
         // Previously openLevelSelect(N) set this; the new city-picker path bypassed it.
         const _g = _citySelectorGame
         const _gameNumNum = (_g === '13b') ? 13 : (typeof _g === 'number' ? _g : parseInt(_g, 10))
         if (Number.isFinite(_gameNumNum)) state.currentGame = _gameNumNum
+        // Task #84 (CRITICAL): match startGameWithLevel state init — without these, showResult
+        // throws TypeError on `state.gameStars[0]` (undefined) → ALL games freeze post-victory
+        state.gameStars = [0, 0]
+        state.maxPossibleStars = null
+        state.currentPlayer = 0
+        state.paused = false
+        state._showingResult = false
+        state._showingGameResult = false
       } catch(_) {}
       closeCityOverlay()
       const g = _citySelectorGame

@@ -1,5 +1,22 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-26 CRITICAL Hotfix — Task #84: post-victory freeze (G10/G13/G13b/G13c)
+
+Cache bump: `v=20260426c` → `v=20260426d`.
+
+**Bug**: All 4 games (G10/G13/G13b/G13c) freeze/error after game-end (win OR lose). Modal never appears, user stuck.
+
+**Root cause**: Task #66 city selector bypassed `startGameWithLevel()` → didn't init `state.gameStars`/`currentPlayer`/`maxPossibleStars` → `showResult` throws TypeError on `state.gameStars[0]` (undefined) → silent crash.
+
+**Fix**: 5 init points + 1 defensive guard in `showResult`:
+- `renderCityGrid` city tap — full state init matching `startGameWithLevel`
+- `initGame10`, `_initGame13Impl`, `initGame13b` — defensive resets
+- `showResult` line 1836 — guard before reading `state.gameStars[0]`
+
+**Process**: per `feedback_structured_verification.md` — comprehensive state-property audit mandatory when bypassing legacy entry points.
+
+---
+
 ## 2026-04-26 — Audit Phase 2 (Tasks #80-#82)
 
 Cache bump: `v=20260426a` → `v=20260426b`.

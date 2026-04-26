@@ -4,6 +4,30 @@
 
 ---
 
+## 📊 Session 2026-04-26 — Hotfix #84 CRITICAL: state.gameStars undefined freeze
+
+Cache bump: `v=20260426c` → `v=20260426d`.
+
+### 🚨 Task #84 — Game freeze after victory (G10/G13/G13b/G13c) — CRITICAL
+- **Symptom**: User reports — "freeze, error setelah game selesai (kalah atau menang)" di G10, G13, G13b, G13c
+- **Root cause**: `state.gameStars`, `state.currentPlayer`, `state.maxPossibleStars` are initialized in `startGameWithLevel()` (`game.js:1381-1383`), the LEGACY entry point. The new city selector path (Task #66 `renderCityGrid`) bypasses this init. When game ends → `endGame(stars)` → `showResult()` → reads `state.gameStars[0]+state.gameStars[1]` → **TypeError "Cannot read properties of undefined (reading '0')"** → showResult aborts mid-execution → modal `screen-result` never shows → user stuck.
+- **Why all 4 games affected**: All share `endGame`/`showResult`/`showGameResult` paths, all depend on `state.gameStars`.
+- **Fix** (`game.js`):
+  - `renderCityGrid` city tap (lines 12317-12330): added missing init for `state.gameStars`, `state.currentPlayer`, `state.maxPossibleStars`, `state.paused`, `state.selectedLevel`, plus reset of `state._showingResult`, `state._showingGameResult` flags
+  - `initGame10` (line 5670): defensive guard `if (!Array.isArray(state.gameStars)) state.gameStars = [0,0]` + reset `_showingResult`/`_showingGameResult` flags
+  - `_initGame13Impl` (line 7878): same defensive resets
+  - `initGame13b` (line 8786): same defensive resets
+  - `showResult` (line 1836): defensive guard before reading `state.gameStars[0]`
+- **Why slipped through**: Task #66 plan included `state.selectedRegion/City/LevelNum` propagation but missed `state.gameStars` (which lives in `startGameWithLevel`). Task #70 added `state.currentGame` but not the rest.
+- **Process**: per `feedback_structured_verification.md` mandate — comprehensive state-property audit needed when bypassing legacy entry points. Added explicit "match startGameWithLevel state init" comment in city selector for future-proofing.
+
+### Touched
+- `game.js` (5 init points + 1 defensive guard in showResult)
+- `index.html` (cache bump v=20260426d)
+- TODO-GAME-FIXES.md, CHANGELOG.md
+
+---
+
 ## 📊 Session 2026-04-26 — Audit Phase 2 (Tasks #80-#82)
 
 Cache bump: `v=20260426a` → `v=20260426b`.
