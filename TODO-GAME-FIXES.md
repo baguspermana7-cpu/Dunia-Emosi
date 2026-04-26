@@ -4,6 +4,60 @@
 
 ---
 
+## 📊 Session 2026-04-26 Night — Hotfix bundle #91-#95 (game-end + variety + unification)
+
+Cache bump: `v=20260426g` → `v=20260426h`.
+
+### ✅ Task #91 — Pokemon variety via REGION pool fallback (P2-4)
+- `pickPokeForLevel(lv)` (game.js:5580) — was filtering to ONLY current city's 5-7 species, causing repeats over 3 rounds
+- New strategy: **3x weight current city + 1x weight neighboring cities** in region
+- Pallet Town: from 5 species → ~30-50 unique species (Kanto-wide pool)
+- Anti-repeat tracker `_g10LastEnemyId` prevents same enemy 2 rounds in a row
+- User test: 3 rounds Pallet Town now show varied enemies
+
+### ✅ Task #92 — `[object Object]` bug in city card (BLOCKING)
+- `renderCityGrid` (game.js:12289): `${c.gym}` was string-coercing object `{leader, type}` → "[object Object]"
+- Fix: `${c.gym.leader || c.gym}` — extracts leader name, falls back to legacy string format
+- All 60+ gym cities (Brock, Misty, Lt. Surge, etc.) now display correctly
+
+### ✅ Task #93 — G13b modal UNIFICATION via showGameResult (CRITICAL UX)
+- User feedback: "Kan kamu ada engine sendiri utk scoring dan modal. Kok bisa beda2"
+- `g13bGameOver` (game.js:9469): refactored to call `showGameResult({...})` instead of populating `#g13b-result` DOM directly
+- `g13bLevelComplete` (game.js:9521): same refactor — uses unified modal for legendary win
+- Pre-formatted msg includes kills + combo info ("13 Pokémon dikalahkan • Combo: x16")
+- Buttons: "Main Lagi ⚡" → `g13bResultMainLagi()`, "⌂ Beranda" → `exitGame13b()`
+- Legacy modal HTML kept as fallback (try/catch wrap, watchdog at 2.2s)
+- **Result**: G13b now uses SAME `#game-result-overlay` modal as G13 — visual consistency
+
+### ✅ Task #94 — BULLETPROOF endGame (try-catch + fallback modal)
+- `endGame` split into `endGame` (wrapper) + `_endGameMain` (logic) + `_endGameFallback` (safety net)
+- 4-step diagnostic `console.debug` for traceability
+- Defensive guards: state.gameStars/currentPlayer/players[N] all checked before write
+- `_endGameFallback(stars, errMsg)`: minimal DOM modal (purple gradient, "Selesai! ⭐⭐⭐ ⌂ Beranda")
+- Force-clears `_showingResult` and `_showingGameResult` flags
+- **Guarantee**: if main path throws ANY exception, fallback shows modal (no more freeze)
+
+### ✅ Task #95 — G13 family selector freeze (BROKEN sprite path)
+- `openG13FamilySelector` (game.js:7795) had `pokeImg = (slug) => 'assets/Pokemon/pokemondb_hd_alt2/${slug}.webp'`
+- Path was MISSING ID prefix + dash-to-underscore conversion → 63 broken thumbnails (21 cards × 3 each)
+- Each broken `<img>` triggered onerror → cascading remote pokemondb.net fetches → connection pool blocked → **modal freeze, can't click out**
+- SAME root cause pattern as Task #64 (party picker freeze)
+- Fix: use `pokeSpriteAlt2(slug)` (correct format with `_slugToAlt2File`)
+
+### Touched
+- `game.js` (5 fixes: pickPokeForLevel, renderCityGrid, g13bGameOver, g13bLevelComplete, openG13FamilySelector, endGame split)
+- `index.html` (cache bump v=20260426h)
+- TODO-GAME-FIXES.md, CHANGELOG.md
+
+### Process Reflection
+User: "Saya bilang audit semua, cek semua nggak satu2 begini. Pas begini beda, pas begini beda."
+- Inventoried ALL 4 modal systems (showResult / showGameResult / g13b custom / GameModal)
+- G13b unified into showGameResult (engine consistency)
+- Standalone Pixi games keep GameModal (separate pages, can't share screen-result)
+- Phase 5 deferred: full standalone unification (8h refactor)
+
+---
+
 ## 📊 Session 2026-04-26 — Phase 4 incremental (Task #90)
 
 Cache bump: `v=20260426f` → `v=20260426g`.

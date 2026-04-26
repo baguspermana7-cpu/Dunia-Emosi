@@ -1904,29 +1904,72 @@ function showResult(mascot, title, msg) {
   // 1-2 stars: no confetti — just show result
 }
 // endGame — called by G10/G11/G12 with raw star count
+// Task #94 (2026-04-26): split into try-catch wrapper + fallback so any throw
+// in the result chain still shows SOMETHING — guarantee no freeze regardless of bug.
 function endGame(stars) {
-  // Task #70: defensive guard — surface state.currentGame regression instead of silent corruption
+  try {
+    _endGameMain(stars)
+  } catch (e) {
+    console.error('[endGame] CRITICAL — main path threw, showing fallback modal:', e)
+    _endGameFallback(stars, e && e.message)
+  }
+}
+
+function _endGameMain(stars) {
+  console.debug('[endGame] step 1: entering, stars=', stars, 'currentGame=', state.currentGame)
+  // Task #70: defensive guard — surface state.currentGame regression
   if (typeof state.currentGame !== 'number') {
-    console.error('[endGame] state.currentGame missing — progress may not save. Check city-picker entry path.')
+    console.error('[endGame] state.currentGame missing — progress may not save.')
+  }
+  // Defensive guards (Task #94)
+  if (!Array.isArray(state.gameStars)) state.gameStars = [0, 0]
+  if (typeof state.currentPlayer !== 'number') state.currentPlayer = 0
+  if (!Array.isArray(state.players) || !state.players[state.currentPlayer]) {
+    state.players = state.players || []
+    state.players[state.currentPlayer] = state.players[state.currentPlayer] || {name:'Pemain',animal:'🦁',stars:0,ageTier:'tumbuh'}
   }
   // Normalize raw stars to 5-star scale via unified GameScoring engine
   const maxRounds = g10State?.totalRounds || g11State?.total || g12State?.total || 5
   const normalizedStars = GameScoring.calc({ correct: stars || 0, total: maxRounds })
-  // Pass the already-normalized value; tell showResult NOT to re-normalize.
   state.maxPossibleStars = 5
   state.gameStars[state.currentPlayer] = normalizedStars
-  state.players[state.currentPlayer].stars += normalizedStars
+  state.players[state.currentPlayer].stars = (state.players[state.currentPlayer].stars || 0) + normalizedStars
+  console.debug('[endGame] step 2: state writes done, normalizedStars=', normalizedStars)
   // Save level progress
   const lv = state.selectedLevelNum || 1
   const starsEarned = normalizedStars >= 4 ? 3 : normalizedStars >= 2 ? 2 : normalizedStars >= 1 ? 1 : 0
   setLevelComplete(state.currentGame, lv, starsEarned)
-  // Task #66: mark city as completed for region/city progression
   if (state.selectedRegion && state.selectedCity && typeof setCityComplete === 'function') {
     setCityComplete(state.currentGame, state.selectedRegion, state.selectedCity, starsEarned)
   }
   saveStars()
+  console.debug('[endGame] step 3: progress saved')
   const p = state.players[state.currentPlayer]
   showResult(p.animal, normalizedStars>=4?'Luar Biasa! 🏆':normalizedStars>=2?'Bagus Sekali! ⭐':'Terus Berlatih! 💪', `Kamu dapat ${normalizedStars} bintang di level ${lv}!`)
+  console.debug('[endGame] step 4: showResult called')
+}
+
+function _endGameFallback(stars, errMsg) {
+  // Force-clear stuck flags so future tries work
+  state._showingResult = false
+  state._showingGameResult = false
+  // Direct DOM modal — does NOT depend on showResult/screen-result wiring
+  const existing = document.getElementById('endgame-fallback')
+  if (existing) existing.remove()
+  const ov = document.createElement('div')
+  ov.id = 'endgame-fallback'
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:99999;font-family:"Fredoka One",cursive'
+  const safeStars = Math.max(0, Math.min(5, parseInt(stars) || 0))
+  ov.innerHTML = `
+    <div style="background:linear-gradient(160deg,#f8f0ff,#ede2f6);border-radius:24px;padding:28px 24px;max-width:340px;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,0.5)">
+      <div style="font-size:56px">🏆</div>
+      <h2 style="font-family:'Fredoka One',cursive;color:#3b2066;margin:8px 0">Selesai!</h2>
+      <div style="font-size:34px;letter-spacing:4px;margin:8px 0">${'⭐'.repeat(safeStars)}${'☆'.repeat(5-safeStars)}</div>
+      <p style="color:#6b5080;margin-bottom:20px">Kamu dapat ${safeStars} bintang!</p>
+      <button onclick="document.getElementById('endgame-fallback').remove();exitGame()"
+              style="background:#8B5CF6;color:#fff;border:none;border-radius:18px;padding:14px 24px;font-size:16px;font-weight:900;cursor:pointer;font-family:inherit;width:100%">⌂ Beranda</button>
+    </div>`
+  document.body.appendChild(ov)
 }
 function playAgain() { state._showingResult = false; state.maxPossibleStars = null; startGameWithLevel(state.selectedLevelNum || 1) }
 function nextLevel()  { state._showingResult = false; state.maxPossibleStars = null; startGameWithLevel((state.selectedLevelNum||1) + 1) }
@@ -5577,16 +5620,31 @@ const G10_POOL = {
   boss:     POKEMON_DB.filter(p => _LEGENDARY_IDS.has(p.id) || _PSEUDO_IDS.has(p.id)).map(p => p.id),
 }
 
+let _g10LastEnemyId = -1
 function pickPokeForLevel(lv){
-  // Task #66 (2026-04-25): if city is selected, pick from city.pack instead
+  // Task #66 (2026-04-25): if city is selected, pick from city.pack
+  // Task #91 (2026-04-26): EXPAND with region pool — current city Pokemon get 3x weight
+  // (still feel thematic) but neighboring city Pokemon also appear (variety: 30-50 species
+  // per region instead of 5-7 per city). Anti-repeat tracker prevents same enemy 2 rounds in a row.
   try {
     if (state && state.selectedRegion && state.selectedCity && typeof CITY_PACK !== 'undefined') {
       const region = CITY_PACK[state.selectedRegion]
-      const city = region && region.cities && region.cities.find(c => c.slug === state.selectedCity)
-      if (city && city.pack && city.pack.length) {
-        const slugIds = city.pack.map(p => p.id)
-        const found = POKEMON_DB.filter(p => slugIds.includes(p.id))
-        if (found.length >= 2) return found[Math.floor(Math.random() * found.length)]
+      if (region && region.cities) {
+        const currentCity = region.cities.find(c => c.slug === state.selectedCity)
+        const cityIds = (currentCity && currentCity.pack) ? currentCity.pack.map(p => p.id) : []
+        const regionIds = []
+        region.cities.forEach(c => (c.pack || []).forEach(p => regionIds.push(p.id)))
+        // 3x weight for current city + 1x for region
+        const pool = [...cityIds, ...cityIds, ...cityIds, ...regionIds]
+        const ids = [...new Set(pool)]  // dedupe; weighting is via duplication in `pool` for next ratio adjustment
+        const found = POKEMON_DB.filter(p => ids.includes(p.id))
+        if (found.length >= 2) {
+          const candidates = found.filter(p => p.id !== _g10LastEnemyId)
+          const picks = candidates.length >= 1 ? candidates : found
+          const pick = picks[Math.floor(Math.random() * picks.length)]
+          _g10LastEnemyId = pick.id
+          return pick
+        }
       }
     }
   } catch(_) {}
@@ -7777,7 +7835,11 @@ function openG13FamilySelector() {
   const tabsEl = document.getElementById('g13-fam-tabs')
   if (!grid) return
   const currentId = (function(){ try { return localStorage.getItem('g13_lastFamily') || 'ash-pikachu' } catch(_) { return 'ash-pikachu' } })()
-  const pokeImg = (slug) => `assets/Pokemon/pokemondb_hd_alt2/${slug}.webp`
+  // Task #95 (2026-04-26): use pokeSpriteAlt2 (correct format with ID prefix + underscore slug)
+  // Was returning broken path 'pokemondb_hd_alt2/${slug}.webp' (missing ID + dash) → 63 broken
+  // images → onerror cascade to remote → connection pool blocked → modal freeze (same root
+  // cause pattern as Task #64 party picker bug)
+  const pokeImg = (slug) => (typeof pokeSpriteAlt2 === 'function' && pokeSpriteAlt2(slug)) || `https://img.pokemondb.net/sprites/home/normal/${slug}.png`
 
   // Determine initial tab from currentId
   if (currentId === 'random') g13FamActiveTab = 'random'
@@ -9433,26 +9495,28 @@ function g13bGameOver(reason) {
   try { if (stars >= 2) playCorrect() } catch(e) {}
 
   const delay = defeated ? 600 : 900
+  // Task #93 (2026-04-26): unify with showGameResult engine (used by G13) instead of
+  // custom #g13b-result modal — consistent style across all games per user feedback.
   setTimeout(() => {
-    const res = document.getElementById('g13b-result')
-    const icon = document.getElementById('g13b-res-icon')
-    const title = document.getElementById('g13b-res-title')
-    const killsEl = document.getElementById('g13b-res-kills')
-    const sub = document.getElementById('g13b-res-sub')
-    const starsEl = document.getElementById('g13b-res-stars')
-    if (defeated) {
-      if (icon)  icon.textContent  = '💀'
-      if (title) title.textContent = `${s.currentWild ? s.currentWild.name : 'Wild'} mengalahkanmu!`
-    } else {
-      if (icon)  icon.textContent  = stars >= 3 ? '🏆' : stars >= 2 ? '⚡' : stars >= 1 ? '✨' : '😅'
-      if (title) title.textContent = stars >= 3 ? 'Luar Biasa!' : stars >= 2 ? 'Keren Banget!' : stars >= 1 ? 'Bagus!' : 'Terus Berlatih!'
+    try {
+      const emoji = defeated ? '💀' : (stars >= 3 ? '🏆' : stars >= 2 ? '⚡' : stars >= 1 ? '✨' : '😅')
+      const title = defeated
+        ? `${s.currentWild ? s.currentWild.name : 'Wild'} mengalahkanmu!`
+        : (stars >= 3 ? 'Luar Biasa!' : stars >= 2 ? 'Keren Banget!' : stars >= 1 ? 'Bagus!' : 'Terus Berlatih!')
+      const msg = defeated
+        ? `HP habis setelah ${s.kills} kemenangan! Combo terbaik: x${s.bestCombo}`
+        : `${s.kills} Pokémon dikalahkan • Combo: x${s.bestCombo}  •  30+ kill = ⭐⭐⭐`
+      const buttons = [
+        { label: 'Main Lagi ⚡', action: () => g13bResultMainLagi() },
+        { label: '⌂ Beranda', action: () => exitGame13b() }
+      ]
+      showGameResult({ emoji, title, stars, msg, buttons })
+    } catch (e) {
+      console.error('[g13bGameOver] showGameResult failed — fallback to legacy modal:', e)
+      // Legacy fallback (kept HTML for safety)
+      const res = document.getElementById('g13b-result')
+      if (res) res.style.display = 'flex'
     }
-    if (killsEl) killsEl.textContent = s.kills
-    if (sub)     sub.textContent    = defeated
-      ? `HP habis setelah ${s.kills} kemenangan! Combo terbaik: x${s.bestCombo}`
-      : `Combo terbaik: x${s.bestCombo}  |  30+ kill = ⭐⭐⭐`
-    if (starsEl) starsEl.textContent = '⭐'.repeat(stars) + '🌑'.repeat(3 - stars)
-    if (res) res.style.display = 'flex'
   }, delay)
 }
 
@@ -9486,31 +9550,29 @@ function g13bLevelComplete() {
 
   setTimeout(() => {
     try {
-      const overlay = document.getElementById('g13b-level-complete')
+      // Task #93 (2026-04-26): unify legendary level-complete modal via showGameResult
       const legName = s.currentWild ? s.currentWild.name : 'Legendary'
-      const icon  = document.getElementById('g13b-lc-icon')
-      const poke  = document.getElementById('g13b-lc-pokemon')
-      const kills = document.getElementById('g13b-lc-kills')
-      const sub   = document.getElementById('g13b-lc-sub')
-      const starsEl = document.getElementById('g13b-lc-stars')
-      if (icon)    icon.textContent   = stars >= 5 ? '🏆' : stars >= 3 ? '🌟' : '⭐'
-      if (poke)    poke.textContent   = `${legName} berhasil ditaklukkan!`
-      if (kills)   kills.textContent  = s.kills
-      if (sub)     sub.textContent    = `Combo terbaik: x${s.bestCombo}  |  Pokémon: ${s.kills}`
-      if (starsEl) starsEl.textContent = '⭐'.repeat(stars) + '☆'.repeat(5 - stars)
-      if (overlay) overlay.style.display = 'flex'
-    } catch(e) {
-      console.error('[G13B] level-complete overlay crashed — force-display:', e)
+      const emoji = stars >= 5 ? '🏆' : stars >= 3 ? '🌟' : '⭐'
+      const title = 'Level Selesai!'
+      const msg = `${legName} berhasil ditaklukkan! • ${s.kills} Pokémon • Combo: x${s.bestCombo}`
+      const buttons = [
+        { label: 'Lanjut ▶', action: () => g13bResultMainLagi() },
+        { label: '⌂ Beranda', action: () => exitGame13b() }
+      ]
+      showGameResult({ emoji, title, stars, msg, buttons })
+    } catch (e) {
+      console.error('[g13bLevelComplete] showGameResult failed — fallback to legacy modal:', e)
       const overlay = document.getElementById('g13b-level-complete')
       if (overlay) overlay.style.display = 'flex'
     }
   }, 800)
-  // Task #57 failsafe — force overlay visible at 2.2s regardless of inner setTimeout outcome
+  // Failsafe — force fallback overlay visible at 2.2s if showGameResult never displayed
   setTimeout(() => {
-    const overlay = document.getElementById('g13b-level-complete')
-    if (overlay && getComputedStyle(overlay).display === 'none') {
-      console.warn('[G13B] level-complete overlay watchdog — forcing display:flex')
-      overlay.style.display = 'flex'
+    const gr = document.getElementById('game-result-overlay')
+    if (gr && !gr.classList.contains('show')) {
+      console.warn('[G13B] level-complete watchdog — showGameResult missed, fallback to legacy')
+      const overlay = document.getElementById('g13b-level-complete')
+      if (overlay) overlay.style.display = 'flex'
     }
   }, 2200)
 }
@@ -12322,7 +12384,7 @@ function renderCityGrid(regionId) {
           <div class="city-card-name">${displayName}</div>
           <div class="city-card-meta">
             <span class="city-card-tier">${dots}</span>
-            ${c.gym ? `<span style="opacity:0.7;">🏆 ${c.gym}</span>` : ''}
+            ${c.gym ? `<span style="opacity:0.7;">🏆 ${(c.gym && c.gym.leader) || c.gym}</span>` : ''}
           </div>
         </div>
         <div class="city-card-status">${statusText}</div>

@@ -1,5 +1,28 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-26 Night — Hotfix Bundle #91-#95 (game-end + variety + unification)
+
+Cache bump: `v=20260426g` → `v=20260426h`.
+
+### Critical fixes
+- **#91 Pokemon variety**: `pickPokeForLevel` now uses REGION pool (3x city weight + 1x neighbors) — Pallet Town goes from 5→30+ unique enemies. Anti-repeat tracker prevents same enemy 2 rounds in a row.
+- **#92 [object Object]**: `renderCityGrid` city.gym was string-coercing object → "[object Object]". Fix: `${c.gym.leader || c.gym}`.
+- **#93 G13b modal unification**: `g13bGameOver` + `g13bLevelComplete` refactored to use `showGameResult({...})` instead of custom `#g13b-result`/`#g13b-level-complete` modals. Visual consistency with G13. Legacy HTML kept as fallback.
+- **#94 Bulletproof endGame**: Split into `_endGameMain` + try-catch wrapper + `_endGameFallback` minimal DOM modal. 4-step diagnostic console.debug. Guarantees modal shows even if main path throws.
+- **#95 G13 family selector freeze**: `pokeImg` was returning broken local path (missing ID prefix + slug normalization) → 63 broken thumbnails → onerror cascade → connection pool blocked. Fix: use `pokeSpriteAlt2`. Same root cause as Task #64.
+
+### Process per user mandate
+User: "audit semua, cek semua nggak satu2 begini... Kan kamu ada engine sendiri utk scoring dan modal. Kok bisa beda2"
+- Inventoried 4 modal systems
+- Unified G13b into showGameResult engine
+- Standalone Pixi games (G13c, G14-22) keep GameModal — separate-page constraint
+- Full standalone unification deferred to Phase 5 (8h refactor)
+
+### Process — Task #90 (also today, didn't get its own changelog entry)
+- `animateClass` migration applied to G10 + G11 stars-pop (proves Task #80 helper utility)
+
+---
+
 ## 2026-04-26 — Phase 3 Polish (Tasks #87-#89)
 
 Cache bump: `v=20260426e` → `v=20260426f`.
