@@ -1879,8 +1879,27 @@ function showAchievement(key) {
   if(badgeFile){iconEl.innerHTML=`<img src="assets/${badgeFile}" style="width:36px;height:36px;object-fit:contain" onerror="this.outerHTML='${ach.icon}'">`}
   else{iconEl.textContent=ach.icon}
   document.getElementById('at-name').textContent=ach.name
+  // Save title in case showComingSoonToast swapped it; restore here.
+  const titleEl=toast.querySelector('.at-title')
+  if(titleEl)titleEl.textContent='Pencapaian Baru!'
   toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),3500)
 }
+
+// Hotfix #105 (2026-04-28): "Segera Hadir" toast for landing tiles whose
+// game isn't built yet. Reuses #achievement-toast DOM (single shared toast).
+function showComingSoonToast(name, icon) {
+  const toast=document.getElementById('achievement-toast')
+  if(!toast)return
+  const iconEl=document.getElementById('at-icon')
+  const nameEl=document.getElementById('at-name')
+  const titleEl=toast.querySelector('.at-title')
+  if(iconEl)iconEl.textContent=icon||'🚧'
+  if(titleEl)titleEl.textContent='Segera Hadir!'
+  if(nameEl)nameEl.textContent=name||'Game baru sedang dibuat'
+  toast.classList.add('show')
+  setTimeout(()=>toast.classList.remove('show'),3000)
+}
+window.showComingSoonToast = showComingSoonToast
 
 // ================================================================
 // FEEDBACK

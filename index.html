@@ -481,13 +481,13 @@
             <div class="wmap-node-name">Ducky Volley</div>
             <div class="wmap-node-stars" id="gstars-20-lbl"></div>
           </div>
-          <!-- G21: Tux Racer (placeholder — user building separately) -->
-          <div class="wmap-node locked" id="gtile-21" title="Tux Racer">
-            <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#ffffff,#e2e8f0);">
-              <span class="wn-icon"><img loading="lazy" decoding="async" src="assets/Pokemon/sprites/psyduck.png" style="width:44px;height:44px;image-rendering:pixelated;display:block;" onerror="this.outerHTML='🐧'"></span>
+          <!-- G21: Mario Pokemon (landing tile only — game implementation pending) -->
+          <div class="wmap-node" id="gtile-21" onclick="playClick();showComingSoonToast('Mario Pokemon','🍄')" title="Mario Pokemon">
+            <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#E8262A,#FBBF24);box-shadow:0 4px 0 #B91C1C,0 8px 16px rgba(232,38,42,0.35);">
+              <img loading="lazy" decoding="async" class="wn-icon" src="assets/mario-pokemon/icon.png" alt="Mario Pokemon" style="width:44px;height:44px;object-fit:contain;display:block;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.5));" onerror="this.outerHTML='<span class=&quot;wn-icon&quot; style=&quot;font-size:32px;line-height:1;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.5));&quot;>🍄</span>'">
             </div>
-            <div class="wmap-node-name">Tux Racer</div>
-            <div class="wmap-node-stars"></div>
+            <div class="wmap-node-name">Mario Pokemon</div>
+            <div class="wmap-node-stars" id="gstars-21-lbl"><span style="font-size:9px;color:#FBBF24;font-weight:900;letter-spacing:0.5px;">🚧 Segera Hadir</span></div>
           </div>
           <!-- G22: Monster Wants Candy -->
           <div class="wmap-node" id="gtile-22" onclick="playClick();openLevelSelect(22)" title="Monster Wants Candy">
