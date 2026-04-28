@@ -4,6 +4,34 @@
 
 ---
 
+## 2026-04-28 — Hotfix #103
+
+### L37 — `<img>` onerror cascade must dedupe URLs and terminate explicitly
+- **Symptom**: Game 10 + Game 13B "tiba2 freeze, sampai tidak bisa di refresh, hanya bisa close browser/tab". Sad-face broken-image placeholder appeared where Pokemon sprite should render.
+- **Root cause**: `pokeSpriteOnline(slug)` and `pokeSpriteCDN(slug)` returned identical URLs. Inline onerror cascades in `switchG13bPlayerPoke`, `g13bResetState`, `loadSprHD`, `loadSprPlayer`, and `g13c-pixi.html` re-set `img.src` to a URL that had just failed. Even when each cascade eventually terminated, the redundant retries hammered the network and accumulated `Image()` objects (closure-retained) — Chrome mobile OOMed before reaching final fallback.
+- **Fix**: New `games/data/poke-sprite-loader.js` exports `attachSpriteCascade(imgEl, sources, fallbackEmoji)`. URLs are dedup'd via a `Set` so each is attempted at most once; on final failure `imgEl.onerror = null` and src is set to a tiny SVG-data-URL emoji. All call sites refactored.
+- **Lesson**: For any chained-onerror image fallback: (a) dedupe URLs, (b) explicitly null `onerror` on the final attempt, (c) end with a synthetic data-URL (NOT another network request — even one byte over a flaky network re-triggers the loop). When two helper functions return the same URL, that's a code smell that the cascade has hidden duplicate retries.
+
+### L38 — Defense-in-depth: log before the freeze, not after
+- **Symptom**: User reported the freeze but couldn't say what triggered it; `console.log` evidence is unrecoverable once the tab is killed.
+- **Root cause**: No persistent error sink. Errors went to the live console and disappeared with the tab.
+- **Fix**: New `games/data/freeze-watchdog.js` writes `window.error` and `unhandledrejection` events into `localStorage.__freezeLog` (max 20, FIFO). Survives tab close. DevTools recovery: `JSON.parse(localStorage.__freezeLog || '[]')`.
+- **Lesson**: For any "freeze, can't recover" symptom, instrument BEFORE chasing the root cause. The next reproduction is then evidence-driven, not speculative. localStorage is a serviceable error sink because it survives the freeze.
+
+### L39 — Star count display must agree with saved progress, end-to-end
+- **Symptom**: User: "modal game finish itu sangat tidak akurat sudah benar tapi bintang 3 of 5". Several games showed perfect-game modal at 5★ but world-map level bubble showed 3★ ceiling.
+- **Root cause**: `GameScoring.calc()` returns 1-5, but every `dunia-0-progress` writer applied a legacy `mapped = stars >= 4 ? 3 : stars >= 2 ? 2 : 1` cap before saving. World-map renderer also hardcoded `'☆'.repeat(3-starsGot)` — assumed 3-star scale. Result: modal shows 5, saved value is 3, world-map renders 3.
+- **Fix**: Removed `mapped` cap at all 9 sites. Updated world-map renderer to `'☆'.repeat(Math.max(0, 5-starsGot))`. Modal and world-map now agree.
+- **Lesson**: When introducing a shared scoring engine (`GameScoring.calc()`), grep the entire repo for any callers that re-map its output — those are leftover from the pre-shared implementation and silently break the contract. Migration of a shared API has TWO halves: route everyone through it AND remove every post-processing layer that was put in place for the old API.
+
+### L40 — Save-key scheme: prefer "what the user selected" over "where they selected it"
+- **Symptom**: User: "Dipastikan save progress itu ada di 8 karakter itu... klw saya sedng pakai singa maka siapapun dg account itu/slot itu juga punya progress yang sama". Slot-keyed save meant two players who both picked lion in different slots had separate progress.
+- **Root cause**: `pkey(key)` produced `dunia-{slot}-{key}` from `window._pSlot[0]` (slot index 0-6). The unique identity of "this player's progress" was tied to slot position, not to the avatar identity the user actually picks.
+- **Fix**: `pkey()` resolves the active slot's `animal` emoji (e.g. `🦁`) to a stable slug (`lion`) and returns `dunia-avatar-{slug}-{key}`. One-time `migrateSlotToAvatar()` copies/merges existing slot data into the avatar bucket; old keys retained for rollback.
+- **Lesson**: Save keys should encode the user's mental model of "who am I in this app", not the implementation detail of "which UI slot did they click". When the user says "I'm playing as the lion", they expect lion-progress to follow them across slots/devices/sessions. The migration must be idempotent (`localStorage.dunia-migrated-v2` flag) and merge-aware (`Math.max` for stars, set-union for completed lists).
+
+---
+
 ## 2026-04-27 (late) — Hotfix #102
 
 ### L33 — Pixi ticker.stop() must be called explicitly on game-end (flag check inside ticker is not enough)

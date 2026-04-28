@@ -326,8 +326,27 @@ const LEVEL_TIERS = [
   {min:150, max:249, icon:'🦅', name:'Pintar'},
   {min:250, max:9999,icon:'👑', name:'Jagoan'}
 ]
-// Per-player localStorage key prefix
+// Per-player localStorage key prefix.
+// Hotfix 2026-04-28: progress is now keyed by AVATAR (lion/rabbit/...),
+// not by slot. Two slots that pick the same animal share progress, per
+// user mandate "save progress itu ada di 8 karakter itu". Slot fallback
+// is kept for boot-time reads before slot row is rendered.
+const AVATAR_SLUGS = {
+  '🦁':'lion','🐰':'rabbit','🐘':'elephant','🦊':'fox',
+  '🐸':'frog','🐯':'tiger','🐼':'panda','🐨':'koala'
+}
+function _avatarSlug() {
+  try {
+    const slot = (window._pSlot && window._pSlot[0]) || 0
+    const slots = (typeof getPlayerSlots === 'function') ? getPlayerSlots() : []
+    const animal = slots && slots[slot] && slots[slot].animal
+    return animal ? (AVATAR_SLUGS[animal] || String(animal)) : null
+  } catch (_) { return null }
+}
 function pkey(key) {
+  const av = _avatarSlug()
+  if (av) return `dunia-avatar-${av}-${key}`
+  // Pre-slot-pick boot, or no animal selected yet — fall back to slot key.
   const slot = (window._pSlot && window._pSlot[0]) || 0
   return `dunia-${slot}-${key}`
 }
@@ -346,6 +365,76 @@ function migrateGlobalKeys() {
   localStorage.setItem('dunia-migrated-v1','1')
 }
 migrateGlobalKeys()
+
+// Hotfix 2026-04-28: migrate slot-keyed progress to avatar-keyed. Per user
+// mandate, two slots that pick the same animal must share progress. Old
+// dunia-{slot}-* keys are LEFT in place for one release as a rollback safety.
+function migrateSlotToAvatar() {
+  if (localStorage.getItem('dunia-migrated-v2')) return
+  const _slugMap = {
+    '🦁':'lion','🐰':'rabbit','🐘':'elephant','🦊':'fox',
+    '🐸':'frog','🐯':'tiger','🐼':'panda','🐨':'koala'
+  }
+  let slots = []
+  try { slots = JSON.parse(localStorage.getItem('dunia-players')) || [] } catch (_) {}
+  const subkeys = ['progress','xp','achievements','streak','best-stars']
+  for (let s = 0; s < slots.length; s++) {
+    const slot = slots[s]
+    if (!slot || !slot.animal) continue
+    const av = _slugMap[slot.animal] || String(slot.animal)
+    for (const k of subkeys) {
+      const oldKey = `dunia-${s}-${k}`
+      const newKey = `dunia-avatar-${av}-${k}`
+      const oldVal = localStorage.getItem(oldKey)
+      if (oldVal === null) continue
+      const newVal = localStorage.getItem(newKey)
+      if (newVal === null) {
+        localStorage.setItem(newKey, oldVal)
+        continue
+      }
+      // Merge: take the higher star count per game/level; sum xp; union completed.
+      try {
+        const a = JSON.parse(oldVal)
+        const b = JSON.parse(newVal)
+        const merged = _mergeProgress(a, b, k)
+        localStorage.setItem(newKey, JSON.stringify(merged))
+      } catch (_) { /* keep newer if either side malformed */ }
+    }
+  }
+  localStorage.setItem('dunia-migrated-v2','1')
+}
+function _mergeProgress(a, b, kind) {
+  if (kind === 'xp') {
+    const av = typeof a === 'number' ? a : parseInt(a) || 0
+    const bv = typeof b === 'number' ? b : parseInt(b) || 0
+    return Math.max(av, bv)
+  }
+  if (kind === 'progress' && a && b && typeof a === 'object' && typeof b === 'object') {
+    const out = Object.assign({}, b)
+    for (const gk of Object.keys(a)) {
+      const ag = a[gk]; const bg = out[gk] || { completed: [], stars: {} }
+      if (!ag || typeof ag !== 'object') continue
+      bg.completed = Array.from(new Set([...(bg.completed || []), ...(ag.completed || [])]))
+      bg.stars = Object.assign({}, bg.stars || {})
+      const ast = ag.stars || {}
+      for (const lv of Object.keys(ast)) {
+        bg.stars[lv] = Math.max(bg.stars[lv] || 0, ast[lv] || 0)
+      }
+      out[gk] = bg
+    }
+    return out
+  }
+  // achievements / streak / best-stars: shallow-take per-key max if numeric, else prefer "newer" (b).
+  if (a && b && typeof a === 'object' && typeof b === 'object') {
+    const out = Object.assign({}, a, b)
+    for (const k of Object.keys(a)) {
+      if (typeof a[k] === 'number' && typeof b[k] === 'number') out[k] = Math.max(a[k], b[k])
+    }
+    return out
+  }
+  return b !== undefined ? b : a
+}
+migrateSlotToAvatar()
 
 function getXP() {
   try { return parseInt(localStorage.getItem(pkey('xp'))||'0') } catch(e){return 0}
@@ -1344,10 +1433,12 @@ function openLevelSelect(gameNum) {
       const lvNum = (tier-1)*5 + i
       const isCompleted = gp.completed.includes(lvNum)
       const isUnlocked = lvNum === 1 || gp.completed.includes(lvNum-1)
-      const starsGot = gp.stars[lvNum] || 0
+      const starsGot = Math.max(0, Math.min(5, gp.stars[lvNum] || 0))
       if (isCompleted) tierStars += starsGot
       const cls = 'lvl-bubble' + (isCompleted?' completed':isUnlocked?' unlocked':' locked')
-      const starsStr = isCompleted ? '<span class="lvl-star-filled">'+'★'.repeat(starsGot)+'</span><span class="lvl-star-empty">'+'☆'.repeat(3-starsGot)+'</span>' : ''
+      // Hotfix 2026-04-28: render up to 5 stars (was hard-coded 3) so saved
+      // raw GameScoring.calc() values render faithfully.
+      const starsStr = isCompleted ? '<span class="lvl-star-filled">'+'★'.repeat(starsGot)+'</span><span class="lvl-star-empty">'+'☆'.repeat(Math.max(0,5-starsGot))+'</span>' : ''
       const dot = document.createElement('div')
       dot.className = cls
       dot.style.setProperty('--bdelay', (((lvNum-1)%5)*0.06)+'s')
@@ -1411,8 +1502,27 @@ function getPlayerSlots() {
   catch(e) { return Array(7).fill(null) }
 }
 function setPlayerSlots(slots) { try { localStorage.setItem(PLAYER_SLOTS_KEY, JSON.stringify(slots)) } catch(e){} }
-// Which slot is active per player-index (0=P1, 1=P2)
-if(!window._pSlot) window._pSlot = [0, 1]
+// Which slot is active per player-index (0=P1, 1=P2).
+// Hotfix 2026-04-28: persisted to localStorage so navigating to a standalone
+// game and back preserves the avatar-keyed save context. Without this,
+// `_avatarSlug()` always reads slot 0's animal after page reload.
+const ACTIVE_SLOT_KEY = 'dunia-active-slot'
+function _loadActiveSlot() {
+  try {
+    const raw = localStorage.getItem(ACTIVE_SLOT_KEY)
+    if (!raw) return [0, 1]
+    const parsed = JSON.parse(raw)
+    if (!Array.isArray(parsed) || parsed.length < 2) return [0, 1]
+    return [
+      Math.max(0, Math.min(6, parseInt(parsed[0]) || 0)),
+      Math.max(0, Math.min(6, parseInt(parsed[1]) || 1)),
+    ]
+  } catch (_) { return [0, 1] }
+}
+function _saveActiveSlot() {
+  try { localStorage.setItem(ACTIVE_SLOT_KEY, JSON.stringify(window._pSlot)) } catch (_) {}
+}
+if(!window._pSlot) window._pSlot = _loadActiveSlot()
 function renderPlayerSlotRow(playerIdx) {
   const slots = getPlayerSlots()
   const rowId = 'pslot-row-'+playerIdx
@@ -1426,7 +1536,7 @@ function renderPlayerSlotRow(playerIdx) {
     chip.innerHTML = `<span class="psc-av">${s?s.animal:'➕'}</span>
       <span class="psc-name">${s?s.name.slice(0,5):'Slot '+(i+1)}</span>
       <span class="psc-stars">${s?'⭐'+s.stars:''}</span>`
-    chip.onclick = () => { window._pSlot[playerIdx]=i; loadSlotIntoForm(playerIdx,i); renderPlayerSlotRow(playerIdx); playClick() }
+    chip.onclick = () => { window._pSlot[playerIdx]=i; _saveActiveSlot(); loadSlotIntoForm(playerIdx,i); renderPlayerSlotRow(playerIdx); playClick() }
     row.appendChild(chip)
   }
 }
@@ -5446,8 +5556,11 @@ function spawnTypeAura(el, type, dur){
 
 function pokeSprite(slug){return `assets/Pokemon/sprites/${slug}.png`}
 function pokeSpriteArtwork(slug){return `https://img.pokemondb.net/artwork/large/${slug}.jpg`}
+// Both legacy names map to identical pokemondb HD raster. Kept as separate
+// functions because many call-sites reference each name directly. Cascade
+// helpers de-dup URLs at runtime so duplicate calls cost nothing.
 function pokeSpriteOnline(slug){return `https://img.pokemondb.net/sprites/home/normal/${slug}.png`}
-function pokeSpriteCDN(slug){return `https://img.pokemondb.net/sprites/home/normal/${slug}.png`}
+function pokeSpriteCDN(slug){return pokeSpriteOnline(slug)}
 function pokeSpriteBackup(id){return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`}
 function pokeSpriteBack(id){return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/${id}.png`}
 // SVG variant — 751 vector Pokemon sprites for visual variety
@@ -5738,13 +5851,12 @@ function switchG13bPlayerPoke(poke) {
   g13bSavedPoke = { ...poke, slug: poke.name.toLowerCase().replace(/\s/g, '-') }
   const pspr = document.getElementById('g13b-pspr')
   if (!pspr) return
-  // Task #71: local-first per L16
-  const _pLocal = (typeof pokeSpriteAlt2 === 'function') ? pokeSpriteAlt2(g13bSavedPoke.slug) : null
-  pspr.src = _pLocal || pokeSpriteOnline(g13bSavedPoke.slug)
-  pspr.onerror = function() {
-    if (this.dataset.fallback === '1') { this.src = pokeSpriteBackup(poke.id); this.onerror = null; return }
-    this.dataset.fallback = '1'
-    this.src = pokeSpriteOnline(g13bSavedPoke.slug)
+  // Task #71: local-first per L16. Hotfix 2026-04-28: cascade now goes
+  // through attachSpriteCascade (dedup + terminating) to kill freeze loop.
+  if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
+    attachSpriteCascade(pspr, buildPokeSources(g13bSavedPoke.slug, poke.id), '🦊')
+  } else {
+    pspr.src = (typeof pokeSpriteAlt2 === 'function' && pokeSpriteAlt2(g13bSavedPoke.slug)) || pokeSpriteOnline(g13bSavedPoke.slug)
   }
   // Apply facing to player sprite (was missing — caused wrong-facing post-switch)
   if (typeof applyPokeFlip === 'function') applyPokeFlip(pspr, g13bSavedPoke.slug, 'player')
@@ -5968,40 +6080,31 @@ function g10NewBattle(){
   // Without this, all 4 cascade steps failing leaves a broken-image icon — visually "blank field".
   const _emojiSpriteDataURL = (emoji) => `data:image/svg+xml;utf8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="50" y="70" font-size="80" text-anchor="middle">'+emoji+'</text></svg>')}`
 
-  // Load sprites: HD online first, local 96px as fallback
+  // Load sprites via shared cascade helper (dedup + terminating).
+  // Hotfix 2026-04-28: replaces ad-hoc onerror chain that previously could
+  // re-set src to a URL that just failed. See plan purring-brewing-flurry.md.
   function loadSprHD(imgId, slug, pokeId){
     const el=document.getElementById(imgId)
     if(!el) return
     el.className=el.className.replace(/\bspr-\w+/g,'').trim()
     el.style.opacity='1'; el.style.imageRendering='auto'
     el.style.animation=''
-    const variantSrc = pokeSpriteVariant(slug)
-    const testVar = new Image()
-    // Hotfix #101-F1: null handlers post-fire so JS engine can GC the probe Image.
-    // Without this, every round leaks 2 Image objects retained by the closure
-    // (verified leak per round in DevTools heap snapshot).
-    testVar.onload = () => { testVar.onload = testVar.onerror = null; el.src = variantSrc }
-    testVar.onerror = () => {
-      testVar.onload = testVar.onerror = null
-      el.src = pokeSpriteCDN(slug)
-      el.onerror = () => { el.src = pokeSprite(slug); el.onerror = () => { el.src = pokeSpriteBackup(pokeId); el.onerror = () => { el.src = _emojiSpriteDataURL('👹'); el.onerror = null } } }
+    if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
+      attachSpriteCascade(el, buildPokeSources(slug, pokeId), '👹')
+    } else {
+      el.src = pokeSpriteVariant(slug)
     }
-    testVar.src = variantSrc
   }
   function loadSprPlayer(imgId, pokeId, slug){
     const el=document.getElementById(imgId)
     if(!el) return
     el.className=el.className.replace(/\bspr-\w+/g,'').trim()
     el.style.opacity='1'; el.style.imageRendering='auto'
-    const variantSrc = pokeSpriteVariant(slug)
-    const test = new Image()
-    test.onload = () => { test.onload = test.onerror = null; el.src = variantSrc }
-    test.onerror = () => {
-      test.onload = test.onerror = null
-      el.src = pokeSpriteCDN(slug)
-      el.onerror = () => { el.src = pokeSprite(slug); el.onerror = () => { el.src = pokeSpriteBackup(pokeId); el.onerror = () => { el.src = _emojiSpriteDataURL('🦊'); el.onerror = null } } }
+    if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
+      attachSpriteCascade(el, buildPokeSources(slug, pokeId), '🦊')
+    } else {
+      el.src = pokeSpriteVariant(slug)
     }
-    test.src = variantSrc
   }
   loadSprHD('g10-espr', s.enemyPoke.slug, s.enemyPoke.id)
   loadSprPlayer('g10-pspr', s.playerPoke.id, s.playerPoke.slug)
@@ -6684,9 +6787,10 @@ window.addEventListener('pageshow', function(e) {
         const cfgRaw = sessionStorage.getItem(`g${gn}Config`)
         if (cfgRaw) { try { const c = JSON.parse(cfgRaw); lv = c.level || lv } catch(_){} }
         sessionStorage.removeItem(`g${gn}Result`); sessionStorage.removeItem(`g${gn}Config`)
+        // Hotfix 2026-04-28: removed legacy 5★→3★ capping. setLevelComplete
+        // accepts the raw 1-5 value; world-map renderer also updated to scale 5.
         const stars = Math.min(5, r.stars || 0)
-        const mapped = stars >= 4 ? 3 : stars >= 2 ? 2 : stars >= 1 ? 1 : 0
-        setLevelComplete(gn, lv, mapped)
+        setLevelComplete(gn, lv, stars)
         saveStars()
       } catch(_) {}
     }
@@ -9119,6 +9223,29 @@ function initGame13b() {
 
   // Clear any leftover legendary auto-attack timer from previous session
   if (_g13bLegAutoAtk) { clearInterval(_g13bLegAutoAtk); _g13bLegAutoAtk = null }
+  // Hotfix 2026-04-28: clear transient overlay nodes that leaked across
+  // sessions (combo bolts, catch stars, leg sprites) — caused freeze after
+  // playing many rounds.
+  try {
+    const fld = document.getElementById('g13b-field')
+    if (fld) {
+      fld.querySelectorAll('.g13b-bolt, .g13b-catch-star').forEach(n => n.remove())
+    }
+    if (typeof _g13bEvoAudio !== 'undefined' && _g13bEvoAudio) {
+      try { _g13bEvoAudio.pause(); _g13bEvoAudio.currentTime = 0 } catch(_){}
+      _g13bEvoAudio = null
+    }
+  } catch(_){}
+  // Register a one-time cleanup hook so visibilitychange (tab hidden) clears
+  // running timers and audio. registerCleanupHook is provided by
+  // games/data/freeze-watchdog.js.
+  if (typeof window.registerCleanupHook === 'function' && !window.__g13bCleanupRegistered) {
+    window.__g13bCleanupRegistered = true
+    window.registerCleanupHook(function () {
+      try { if (_g13bLegAutoAtk) { clearInterval(_g13bLegAutoAtk); _g13bLegAutoAtk = null } } catch(_){}
+      try { if (_g13bEvoAudio) { _g13bEvoAudio.pause(); _g13bEvoAudio = null } } catch(_){}
+    })
+  }
 
   // Init state
   g13bState = {
@@ -9142,13 +9269,14 @@ function initGame13b() {
   if (pspr) {
     const saved = g13bSavedPoke
     const pSlug = saved ? saved.slug : 'pikachu'
-    // Task #71: local-first sprite per Lesson L16 (was remote-primary causing facing wrong + 404 invisible)
-    const localSrc = (typeof pokeSpriteAlt2 === 'function') ? pokeSpriteAlt2(pSlug) : null
-    pspr.src = localSrc || pokeSpriteOnline(pSlug)
-    pspr.onerror = function(){
-      if (this.dataset.fallback === '1') { this.src = pokeSpriteOnline('pikachu'); this.onerror = null; return }
-      this.dataset.fallback = '1'
-      this.src = pokeSpriteOnline(pSlug)
+    const pId = saved && saved.id ? saved.id : (window.POKE_IDS ? window.POKE_IDS[pSlug] : null)
+    // Task #71: local-first sprite. Hotfix 2026-04-28: cascade via shared
+    // helper terminates after final fallback (no more onerror loop).
+    if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
+      attachSpriteCascade(pspr, buildPokeSources(pSlug, pId), '⚡')
+    } else {
+      const localSrc = (typeof pokeSpriteAlt2 === 'function') ? pokeSpriteAlt2(pSlug) : null
+      pspr.src = localSrc || pokeSpriteOnline(pSlug)
     }
     const pScale = pokeFinalScale(pSlug)
     pspr.style.width = pspr.style.height = pScale === 1.0 ? '' : `calc(min(20vw,12vh) * ${pScale})`
@@ -9759,8 +9887,8 @@ function g13bGameOver(reason) {
   // Task #66: mark city as completed for region/city progression (only if not defeated)
   try {
     if (!defeated && stars > 0 && state.selectedRegion && state.selectedCity && typeof setCityComplete === 'function') {
-      const _saved = stars >= 4 ? 3 : stars >= 2 ? 2 : 1
-      setCityComplete('13b', state.selectedRegion, state.selectedCity, _saved)
+      // Hotfix 2026-04-28: removed legacy 5★→3★ capping. Save raw 1-5.
+      setCityComplete('13b', state.selectedRegion, state.selectedCity, stars)
     }
   } catch(_) {}
   vibrate([30, 20, 50])

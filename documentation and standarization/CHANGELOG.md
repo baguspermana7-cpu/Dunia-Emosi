@@ -1,5 +1,30 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-28 — Hotfix #103 (Freeze + Scoring Cap + Avatar-Keyed Save)
+
+Cache bump: `v=20260427d` → `v=20260428a`. Branch: `main`.
+
+Three independent user reports merged into one session: (1) Game 10 + Game 13B freeze on Chrome mobile — must close tab to recover, (2) Game finish modal showing 3 of 5 stars even with all answers correct (cross-game), (3) save progress should be keyed to avatar (8 characters: 🦁🐰🐘🦊🐸🐯🐼🐨), not to player slot.
+
+### Critical fixes
+- **#103-A** NEW `games/data/poke-sprite-loader.js` — shared `attachSpriteCascade(imgEl, sources, fallbackEmoji)`. URLs deduped via `Set`, terminates on final source by clearing onerror + setting emoji data-URL. Used by g10, g13b, g13c-pixi, and `battle-sprite-engine.js`. Replaces ad-hoc onerror chains that previously could re-set `img.src` to a URL that just failed.
+- **#103-B** NEW `games/data/freeze-watchdog.js` — captures `error` + `unhandledrejection` into `localStorage.__freezeLog` (max 20 FIFO). Adds `registerCleanupHook()` for visibilitychange-based interval/audio cleanup. Future freeze reproductions will leave evidence even if user has to close the tab.
+- **#103-C** `g13bResetState` hard cleanup — removes leftover `.g13b-bolt`/`.g13b-catch-star` overlay nodes before each round, nulls `_g13bEvoAudio` after pause. Prevents transient-element accumulation across many rounds.
+- **#103-D** `index.html` loads `poke-sprite-loader.js` + `freeze-watchdog.js` before `game.js`. NOT `poke-sprite-cdn.js` — `game.js` declares its own top-level `const POKE_IDS` and would collide; standalone games still load it.
+- **#103-E** `pokeSpriteOnline` / `pokeSpriteCDN` duplicate URL — `pokeSpriteCDN` now delegates to `pokeSpriteOnline`. Cascade helper de-dups so duplicate calls cost nothing.
+- **#103-F** Removed legacy `5★→3★` capping at 9 sites: `g6.html:1091`, `g14.html:1949`, `g15-pixi.html:258`, `g16-pixi.html:2082`, `g19-pixi.html:974+1217`, `g20-pixi.html:1298`, `g22-candy.html:969`, `game.js:6681` (pageshow handler), `game.js:9779` (g13b city completion). `GameScoring.calc()` already returns 1-5; saved progress now matches modal display. World-map renderer `game.js:1350` updated from `'☆'.repeat(3-starsGot)` to `'☆'.repeat(Math.max(0, 5-starsGot))`.
+- **#103-G** Avatar-keyed save — `pkey()` (`game.js:330`) resolves the active slot's animal emoji to a slug and returns `dunia-avatar-{slug}-{key}`. New `migrateSlotToAvatar()` runs once on load: copies/merges each slot's keys into the corresponding avatar bucket. Two slots that pick the same animal now share progress (per-user mandate). Old keys retained for rollback safety; flag: `dunia-migrated-v2`.
+- **#103-H** Defense-in-depth: refactored `g20-pixi.html setPokeSprite` (~line 1192) and `g22-candy.html monsterEl` swap (~line 810) cascades to use `attachSpriteCascade`. Both pages also now load `poke-sprite-loader.js` + `freeze-watchdog.js`. Third g22 inline cascade (line ~1049 picker grid via `onerror=` attribute) kept — terminates in 2 steps with `onerror=null`, cannot loop.
+- **#103-I** All 8 standalone games now load `freeze-watchdog.js` (g6, g13c-pixi, g14, g15-pixi, g16-pixi, g19-pixi, g20-pixi, g22-candy). Future freeze on any game leaves a `localStorage.__freezeLog` trace.
+- **#103-J** Persisted active slot to localStorage (`dunia-active-slot`). `window._pSlot` is now restored from storage on page boot and saved on every chip click. Without this, navigating to a standalone game and back reset `_pSlot` to `[0, 1]` and the avatar-keyed save scheme silently switched buckets. `_loadActiveSlot()` clamps values to `[0..6]` for safety.
+
+### Test plan
+- Block `pokemondb.net/*` in DevTools Network tab → Game 13B should fall back to emoji sprite, no freeze.
+- Game any of g6/g14/g15/g16/g19/g20/g22/g13c with all answers correct → modal AND world-map should both show 5 stars.
+- Slot 1 + lion → play one round → Slot 5 + lion → progress matches.
+
+---
+
 ## 2026-04-27 (late) — Hotfix #102 (G15 polish + cross-game ticker leak)
 
 Cache bump: `v=20260427c` → `v=20260427d`. Branch: `main`.

@@ -378,6 +378,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 </div>
 
 <script src="data/poke-sprite-cdn.js?v=20260427d"></script>
+<script src="data/poke-sprite-loader.js?v=20260428a"></script>
+<script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="game-modal.js?v=20260424g"></script>
 <script src="battle-sprite-engine.js?v=20260421h"></script>
 
@@ -1010,32 +1012,31 @@ function baseSpeciesSlug(slug){
 }
 function setPokeSpriteWithCascade(img, slug){
   const base = baseSpeciesSlug(slug);
-  // Hotfix #101-J (2026-04-27): HD-first cascade per "jangan pakai sprite/asset non HD" mandate
-  // Cascade: pokeSpriteAlt2 (630x630 HD WebP) → pokeSpriteSVG → SPRITE_HD_REMOTE (96px CDN) → SPRITE_LOCAL → base-form fallbacks
-  const alt2     = (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(slug) : null);
-  const svg      = (typeof pokeSpriteSVG  === 'function' ? pokeSpriteSVG(slug)  : null);
-  const altBase  = (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(base) : null);
-  const svgBase  = (typeof pokeSpriteSVG  === 'function' ? pokeSpriteSVG(base)  : null);
-  img.src = alt2 || svg || SPRITE_HD_REMOTE(slug);
-  img.onerror = () => {
-    if (svg && img.src !== svg) { img.src = svg; return; }
-    img.src = SPRITE_HD_REMOTE(slug);
-    img.onerror = () => {
-      img.src = SPRITE_LOCAL(slug);
-      img.onerror = () => {
-        // Form slug exhausted — try base species (e.g. mega-charizard → charizard)
-        if (base !== slug) {
-          img.src = altBase || svgBase || SPRITE_HD_REMOTE(base);
-          img.onerror = () => {
-            img.src = SPRITE_LOCAL(base);
-            img.onerror = null;
-          };
-        } else {
-          img.onerror = null;
-        }
-      };
-    };
-  };
+  // Hotfix 2026-04-28: replaced ad-hoc cascade with shared
+  // attachSpriteCascade (dedup + terminating) — old chain could re-set
+  // img.src to SPRITE_HD_REMOTE twice in a row when alt2/svg were null,
+  // suspected freeze cause on Chrome mobile. See plan
+  // /home/baguspermana7/.claude/plans/purring-brewing-flurry.md.
+  const sources = [
+    (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(slug) : null),
+    (typeof pokeSpriteSVG  === 'function' ? pokeSpriteSVG(slug)  : null),
+    SPRITE_HD_REMOTE(slug),
+    SPRITE_LOCAL(slug),
+  ];
+  if (base !== slug) {
+    sources.push(
+      (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(base) : null),
+      (typeof pokeSpriteSVG  === 'function' ? pokeSpriteSVG(base)  : null),
+      SPRITE_HD_REMOTE(base),
+      SPRITE_LOCAL(base)
+    );
+  }
+  if (typeof attachSpriteCascade === 'function') {
+    attachSpriteCascade(img, sources, '👾');
+  } else {
+    img.src = sources.find(Boolean) || SPRITE_HD_REMOTE(slug);
+    img.onerror = null;
+  }
 }
 function setPokeSpriteEnemy(slug){
   const img = document.getElementById('poke-enemy');

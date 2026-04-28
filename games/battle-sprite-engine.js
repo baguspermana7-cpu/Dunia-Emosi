@@ -34,13 +34,20 @@
   function finalScale(slug){ return tierScale(slug) * visualScale(slug) }
 
   // One-call sprite mount: applies HD-first src cascade + facing + scale inline style.
-  // opts: { role:'player'|'enemy'|'wild', hdSrc, fallbackSrc }
+  // opts: { role:'player'|'enemy'|'wild', hdSrc, fallbackSrc, sources?, emoji? }
+  // Hotfix 2026-04-28: prefer attachSpriteCascade when available — terminating
+  // dedup loader replaces previous 1-step onerror chain.
   function mount(imgEl, slug, opts){
     if (!imgEl) return
     const role = opts && opts.role ? opts.role : 'player'
     const hd = opts && opts.hdSrc
     const fb = opts && opts.fallbackSrc
-    if (hd) {
+    const extra = (opts && Array.isArray(opts.sources)) ? opts.sources : []
+    const emoji = (opts && opts.emoji) || (role === 'enemy' || role === 'wild' ? '👹' : '⚡')
+    const sources = [hd, fb].concat(extra).filter(Boolean)
+    if (typeof window.attachSpriteCascade === 'function' && sources.length) {
+      window.attachSpriteCascade(imgEl, sources, emoji)
+    } else if (hd) {
       imgEl.src = hd
       if (fb) imgEl.onerror = function(){ imgEl.src = fb; imgEl.onerror = null }
     }

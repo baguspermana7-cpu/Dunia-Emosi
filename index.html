@@ -2098,6 +2098,11 @@ function loadPixiJS(cb) {
 <script src="games/data/region-meta.js?v=20260427d" defer></script>
 <script src="games/data/city-progression.js?v=20260427d" defer></script>
 <script src="games/data/city-pokemon-pack.js?v=20260427d" defer></script>
-<script src="game.js?v=20260427d" defer></script>
+<!-- Hotfix 2026-04-28 — sprite cascade + freeze watchdog (must load before game.js).
+     poke-sprite-cdn.js is NOT loaded here — game.js declares its own POKE_IDS
+     and would collide. Standalone /games/*.html pages still load it. -->
+<script src="games/data/poke-sprite-loader.js?v=20260428a" defer></script>
+<script src="games/data/freeze-watchdog.js?v=20260428a" defer></script>
+<script src="game.js?v=20260428a" defer></script>
 </body>
 </html>

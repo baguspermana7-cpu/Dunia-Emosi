@@ -1542,3 +1542,64 @@ User-reported issues NOT yet fixed (queued for next session). Source: same eveni
 
 ### Cross-game audit
 - ⬜ **All 22 games — crash/hang on game-end transitions**: User mandate "Check semua g1 sampai g22, pastikan g crash hang" — verify every game end-of-round/end-of-game/transition path; confirm `PixiManager.destroyAll()` is called where needed; confirm no monolithic try-catch hiding throws (apply Hotfix #99/#100 section-isolation pattern broadly).
+
+---
+
+## 📊 Session 2026-04-28 — Hotfix #103 (Freeze + Scoring Cap + Avatar-Keyed Save)
+
+Cache bump: `v=20260427d` → `v=20260428a`. Branch: `main`.
+Plan file: `/home/baguspermana7/.claude/plans/purring-brewing-flurry.md`.
+
+User feedback (verbatim, Indonesian):
+- Game 10 + g13b: "tiba2 error, freeze sampai tidak bisa di refresh hanya bisa close browser/tab baru bisa"
+- "Modal game finish itu sangat tidak akurat sudah benar tapi bintang 3 of 5"
+- "Coba cek juga apakah ada codingan lama yg terembedd jadi tidak menggunakan share engine scoring"
+- "Dipastikan save progress itu ada di 8 karakter itu... klw saya sedng pakai singa maka siapapun dg account itu/slot itu juga punya progress yang sama"
+
+### ✅ Task #103-A — Shared sprite cascade loader (kill freeze loop)
+NEW `games/data/poke-sprite-loader.js` exposes `attachSpriteCascade(imgEl, sources, fallbackEmoji)` and `buildPokeSources(slug, pokeId, opts)`. Cascade dedup'd with `Set`, terminates after final source by setting `imgEl.onerror = null` + emoji data-URL. No URL is ever retried. Replaces ad-hoc onerror chains in g10/g13b/g13c that previously could re-set `img.src` to the same failing URL. Helper used in:
+- `game.js` `switchG13bPlayerPoke` (line ~5740)
+- `game.js` `g13bResetState` sprite block (line ~9140)
+- `game.js` `loadSprHD` + `loadSprPlayer` (line ~5972)
+- `games/g13c-pixi.html` `setPokeSpriteWithCascade` (line ~1019)
+- `games/battle-sprite-engine.js` `mount()` — picks up helper if available
+
+### ✅ Task #103-B — Freeze watchdog
+NEW `games/data/freeze-watchdog.js`. Captures `error` + `unhandledrejection` into `localStorage.__freezeLog` (max 20 FIFO). Adds `window.registerCleanupHook()` — `g13bResetState` registers a hook that clears `_g13bLegAutoAtk` interval + `_g13bEvoAudio` on `visibilitychange:hidden`. Future freezes leave evidence: read `JSON.parse(localStorage.__freezeLog || '[]')` from DevTools.
+
+### ✅ Task #103-C — Hard cleanup in `g13bResetState`
+Added cleanup of transient overlay nodes (`.g13b-bolt`, `.g13b-catch-star`) before each round, plus `_g13bEvoAudio = null` after pause. Prevents accumulation across many rounds.
+
+### ✅ Task #103-D — Wire helpers into `index.html`
+`<script>` for `poke-sprite-loader.js` + `freeze-watchdog.js` added before `game.js`. `poke-sprite-cdn.js` is NOT loaded here (game.js declares its own `POKE_IDS`; loading it would collide). Standalone `/games/*.html` pages still load it themselves.
+
+### ✅ Task #103-E — Resolve `pokeSpriteOnline` / `pokeSpriteCDN` duplicate
+`game.js:5447` — both functions returned identical URL. Now `pokeSpriteCDN` delegates to `pokeSpriteOnline`. Cascade helper de-dups so duplicate calls cost nothing.
+
+### ✅ Task #103-F — Remove legacy 5★→3★ capping (8 sites)
+Pattern `const mapped = stars >= 4 ? 3 : stars >= 2 ? 2 : 1` removed from:
+- `games/g6.html:1091`
+- `games/g14.html:1949`
+- `games/g15-pixi.html:258`
+- `games/g16-pixi.html:2082`
+- `games/g19-pixi.html:974` + `:1217`
+- `games/g20-pixi.html:1298`
+- `games/g22-candy.html:969`
+- `game.js:6681` (pageshow handler) + `game.js:9779` (g13b city completion)
+
+`GameScoring.calc()` already returns 1-5 — modal and progress now agree. World-map renderer `game.js:1350` updated from 3-star scale to 5-star scale (`☆.repeat(5-starsGot)`).
+
+### ✅ Task #103-G — Avatar-keyed save (`pkey` → avatar lookup)
+`game.js:330` — `pkey()` now resolves the active slot's animal emoji to a slug (`🦁`→`lion`, etc.) and returns `dunia-avatar-{slug}-{key}`. Falls back to `dunia-{slot}-{key}` if no avatar selected (boot state).
+
+NEW `migrateSlotToAvatar()` (`game.js:367`) runs once on load:
+- Reads `dunia-players` slots, copies each slot's `dunia-{i}-{progress|xp|achievements|streak|best-stars}` into `dunia-avatar-{animal-slug}-...`
+- Merges per-game `stars` via `Math.max`, unions `completed` arrays, takes max `xp`
+- Old keys preserved for rollback safety
+- Gated by `dunia-migrated-v2` flag (one-time)
+
+Per-user-mandate: two slots that pick the same animal share progress.
+
+### Verification (Test plan)
+- See plan file `purring-brewing-flurry.md` "Verification" section. Local test via `python3 -m http.server 8081`.
+

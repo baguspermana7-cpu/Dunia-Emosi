@@ -135,6 +135,8 @@ if(!('ontouchstart' in window)){
 <script src="game-modal.js?v=20260424h"></script>
 <script src="../shared/rz-responsive.js?v=20260422i"></script>
 <script src="data/poke-sprite-cdn.js?v=20260427d"></script>
+<script src="data/poke-sprite-loader.js?v=20260428a"></script>
+<script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script>
 // ═══════════════════════════════════════════════════════════
 //  CONFIG
@@ -1181,15 +1183,19 @@ function updateHUD(){
 function loadPokeSprite(imgId, slug, mirror) {
   const el = document.getElementById(imgId)
   if (!el) return
-  // Try HD WebP first, then SVG, then local PNG, then remote CDN
+  // Hotfix 2026-04-28: route through shared attachSpriteCascade — terminating
+  // dedup loader replaces 3-step inline onerror chain.
   const id = {pikachu:25,machamp:68,snorlax:143,eevee:133,jigglypuff:39,lucario:448,hitmonchan:107,primeape:57,psyduck:54,mewtwo:150}[slug]
   const svgUrl = id ? `../assets/Pokemon/svg/${id}.svg` : null
   const pngUrl = `../assets/Pokemon/sprites/${slug}.png`
   const cdnUrl = `https://img.pokemondb.net/sprites/home/normal/${slug}.png`
-  // Hotfix #101-K: HD WebP first (was 96px CDN — non-HD complaint)
   const hdUrl = (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(slug) : null)
-  el.src = hdUrl || svgUrl || pngUrl
-  el.onerror = () => { el.src = svgUrl || pngUrl; el.onerror = () => { el.src = pngUrl; el.onerror = () => { el.src = cdnUrl; el.onerror = null } } }
+  if (typeof attachSpriteCascade === 'function') {
+    attachSpriteCascade(el, [hdUrl, svgUrl, pngUrl, cdnUrl], '⚡')
+  } else {
+    el.src = hdUrl || svgUrl || pngUrl || cdnUrl
+    el.onerror = null
+  }
   el.style.display = 'block'
   if (mirror) el.style.transform = 'scaleX(-1)'
 }
@@ -1295,9 +1301,9 @@ function saveG20Progress(stars) {
     const prog = JSON.parse(localStorage.getItem(key) || '{}')
     if (!prog.g20) prog.g20 = { completed: [], stars: {} }
     const lv = (typeof cfg !== 'undefined' ? cfg.level : (typeof S !== 'undefined' ? S.level : 1)) || 1
-    const mapped = stars >= 4 ? 3 : stars >= 2 ? 2 : 1
+    // Hotfix 2026-04-28: removed legacy 5★→3★ capping. Save raw stars 1-5.
     if (!prog.g20.completed.includes(lv)) prog.g20.completed.push(lv)
-    if ((prog.g20.stars[lv] || 0) < mapped) prog.g20.stars[lv] = mapped
+    if ((prog.g20.stars[lv] || 0) < stars) prog.g20.stars[lv] = stars
     localStorage.setItem(key, JSON.stringify(prog))
   } catch(_) {}
 }
