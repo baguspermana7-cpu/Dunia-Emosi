@@ -49,7 +49,28 @@
     return urls;
   }
 
-  function attachSpriteCascade(imgEl, sources, fallbackEmoji) {
+  // Hotfix #104 (2026-04-28): bounded concurrency queue. Picker grid spawns
+  // 30+ images at once; without a cap, browser connection pool saturates and
+  // onerror chains pile up on the main thread (suspected freeze cause).
+  const MAX_CONCURRENT = 4;
+  let _inFlight = 0;
+  const _waitQueue = [];
+  function _drain() {
+    while (_inFlight < MAX_CONCURRENT && _waitQueue.length) {
+      const fn = _waitQueue.shift();
+      try { fn(); } catch (_) { _inFlight = Math.max(0, _inFlight - 1); _drain(); }
+    }
+  }
+  function _slot(fn) {
+    if (_inFlight < MAX_CONCURRENT) { _inFlight++; fn(); }
+    else _waitQueue.push(() => { _inFlight++; fn(); });
+  }
+  function _release() {
+    _inFlight = Math.max(0, _inFlight - 1);
+    _drain();
+  }
+
+  function attachSpriteCascade(imgEl, sources, fallbackEmoji, onLoadCb) {
     if (!imgEl) return;
     const tried = new Set();
     const queue = (sources || []).filter(u => {
@@ -59,21 +80,38 @@
       return true;
     });
     let i = 0;
+    let released = false;
+    function done() {
+      if (released) return;
+      released = true;
+      _release();
+      if (typeof onLoadCb === 'function') {
+        try { onLoadCb(imgEl); } catch (_) {}
+      }
+    }
     function attempt() {
+      imgEl.onload = null;
       imgEl.onerror = null;
       if (i >= queue.length) {
         imgEl.src = _emojiDataURL(fallbackEmoji);
+        done();
         return;
       }
       const url = queue[i++];
+      imgEl.onload = function () {
+        imgEl.onload = null;
+        imgEl.onerror = null;
+        done();
+      };
       imgEl.onerror = function () {
         imgEl.onerror = null;
+        imgEl.onload = null;
         if (_IS_DEV) console.warn('[sprite] failed:', url);
         attempt();
       };
       imgEl.src = url;
     }
-    attempt();
+    _slot(attempt);
   }
 
   if (typeof window !== 'undefined') {

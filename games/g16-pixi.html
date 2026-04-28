@@ -373,6 +373,22 @@ window.addEventListener('DOMContentLoaded', () => {
 
 function startGame() {
   document.getElementById('train-select').style.display = 'none';
+  // Hotfix #104 (2026-04-28): explicit state reset BEFORE initPixi.
+  // Previously S was a top-level const initialized once; replaying or
+  // advancing to next level inherited stale S.cleared and
+  // S.wrongTaps_station, which broke the perfect-play 5★ shortcut at
+  // calcStars(). Now every startGame returns the score-relevant fields
+  // to their level-start defaults.
+  Object.assign(S, {
+    running: false, paused: false, level: cfg.level,
+    obstacles: [], worldX: 0,
+    trainState: 'MOVING', trainBobT: 0, currentObstacleIdx: -1,
+    cleared: 0, wrongTaps: 0, wrongTaps_station: 0, totalObstacles: 0,
+    startTime: 0, gameOver: false,
+    trackLength: 0, boostTimer: 0, deadTimer: 0, noWrongAnswers: true,
+    cameraShake: 0, arrivedFlag: false, winShown: false,
+    correctStreak: 0, stagePunch: 0, celebrationFrame: 0,
+  })
   initPixi().catch(e => console.error('g16 init error:', e));
 }
 

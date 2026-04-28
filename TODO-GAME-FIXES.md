@@ -1603,3 +1603,44 @@ Per-user-mandate: two slots that pick the same animal share progress.
 ### Verification (Test plan)
 - See plan file `purring-brewing-flurry.md` "Verification" section. Local test via `python3 -m http.server 8081`.
 
+
+---
+
+## 📊 Session 2026-04-28 (evening) — Hotfix #104 (Picker Freeze + Layout + Effects)
+
+Cache bump: `v=20260428a` → `v=20260428b`. Plan: `/home/baguspermana7/.claude/plans/purring-brewing-flurry.md` (Hotfix #104).
+
+User feedback (verbatim):
+- "Saat pemilihan pokemon di g13b itu masih stuck tidak bisa keluar atau pilih dari populer ke keren atau tab2 lainnya, freeze, harus tutup browser"
+- "Placementnya sangat static dibuat fullscreen lgsung kacau semua placementnya" (G15)
+- "Karakter g22 tidak tepat menapak tanah. Pastikan menapak tanah secara responsif"
+- "G16 scoring masih issue"
+- "G10 effect2 pada pokemon yg terkena serangan juga gak ada. Samakan aja dg g13c"
+- "Audit total, ensure no legacy/old code yang mengacaukan"
+
+### ✅ Task #104-A — Picker grid render storm + cascade leak (CRITICAL)
+`renderPartyGrid` + `renderTrainerTabs` (game.js ~5725-5805) overhauled. Root causes: (1) every tab click rebuilt 39 cards × 5-URL cascade = network storm, (2) per-card onclick closure × 8 tabs × 39 cards = 312 listeners accumulating, (3) no debounce. Fixes:
+- Tab content cache (`_partyTabCache: Map<trainerId, HTMLElement>`) — render once, swap on tab click.
+- Event delegation on grid container — single click handler reads `data-poke-id` + `data-trainer-id`.
+- Debounce 150ms on tab.onclick.
+- IntersectionObserver lazy-load (rootMargin 200px) — cascade only fires when card visible.
+- DocumentFragment batch insert — single reflow.
+
+### ✅ Task #104-B — Concurrency cap on attachSpriteCascade
+`games/data/poke-sprite-loader.js` — added `MAX_CONCURRENT=4` queue. 30 cards no longer hammer connection pool simultaneously. Plus `onLoadCb` parameter for caller-side success hooks.
+
+### ✅ Task #104-C — Legacy cascade audit (per user mandate "no legacy code")
+Found and fixed 4 legacy duplicate-URL cascades in `game.js` (1234, 2788, 9038, 9753) — all migrated to `attachSpriteCascade`. Remaining onerror handlers across repo are terminating-safe (no infinite-loop risk).
+
+### ✅ Task #104-D — G15 fullscreen layout
+`games/g15-pixi.html:42-46` — added `max-height: clamp(80px, 18vh, 140px)` on `#hud-bottom`, `padding: clamp(8px, 2vh, 15px)` + `font-size: clamp(14px, 3.5vmin, 22px)` on btn-up/btn-dn, `@media (orientation:landscape) and (min-aspect-ratio:16/10)` rule. Tablet landscape no longer stretches buttons to half viewport.
+
+### ✅ Task #104-E — G22 ground anchor
+`games/g22-candy.html:106` — removed inline `bottom:25%` (was overriding JS pixel anchor via CSS specificity). `placeMonsterOnGround()` (line ~1095) now uses `monster.offsetHeight` × 0.04 overlap factor for responsive ground anchoring across all Pokemon sprite heights. Added `image.load` listener for re-anchor on swap.
+
+### ✅ Task #104-F — G16 stale state across levels
+`games/g16-pixi.html:374` — `S` was a top-level const initialized once; replaying or advancing levels inherited stale `S.cleared` and `S.wrongTaps_station`, breaking the perfect-play 5★ shortcut at line 1843. `startGame()` now does explicit `Object.assign(S, {...defaults})` resetting all score-relevant fields.
+
+### ✅ Task #104-G — G10 hit effects (port g13c)
+`game.js` — new `G10_TYPE_HIT_FX` map (18 types) + `g10SpawnTypeHitFX(targetEl, type)` + `g10EnsureHitFXStyles()` (injects 13 keyframes once). Wired into `g10DoAttack` defender hit block (~line 6633) so every successful hit spawns g13c-quality sprite-tight emoji burst.
+

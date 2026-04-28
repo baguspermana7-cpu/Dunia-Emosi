@@ -1,5 +1,29 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-28 (evening) — Hotfix #104 (Picker Freeze + Layout + Effects)
+
+Cache bump: `v=20260428a` → `v=20260428b`.
+
+User reported the G13B Pokemon picker still froze when switching tabs ("populer" → "keren") despite Hotfix #103 — must close browser to recover. Plus: G15 fullscreen layout broken on tablet, G22 Pokemon floating above grass, G16 scoring still off, G10 missing visible hit effects. Plus mandate: "audit total, ensure no legacy/old code yang mengacaukan".
+
+### Critical fixes
+- **#104-A** Picker overhaul (`game.js:5725-5805`). Root cause was NOT individual sprite cascades (those were #103) but the *render storm + listener leak* on tab switch — 39 cards × per-card onclick × 5-URL cascade × 8 tabs. Now: tab content cache (no rebuild), event delegation (1 grid handler vs 39 card handlers), 150ms debounce on tab clicks, `IntersectionObserver` lazy-load (rootMargin 200px), DocumentFragment batch insert. Tab switch now O(1) DOM ops.
+- **#104-B** `attachSpriteCascade` gained a `MAX_CONCURRENT=4` queue + optional `onLoadCb`. Picker no longer saturates the browser's 6-connection pool with 39 simultaneous image loads.
+- **#104-C** Legacy cascade audit: 4 more duplicate-URL `dataset.fallback`-pattern cascades in `game.js` (1234, 2788, 9038, 9753) migrated to `attachSpriteCascade`. Repo now free of the freeze-loop pattern.
+- **#104-D** `games/g15-pixi.html` `#hud-bottom` got `max-height: clamp(80px, 18vh, 140px)` + responsive padding/font-size + `@media (orientation:landscape) and (min-aspect-ratio:16/10)`. Tablet fullscreen buttons no longer expand to half-viewport.
+- **#104-E** `games/g22-candy.html` removed inline `bottom:25%` (was overriding JS anchor via CSS specificity). `placeMonsterOnGround()` now subtracts `offsetHeight * 0.04` for responsive feet-on-grass across all Pokemon sprite heights. Added `image.load` listener so swap-mid-game re-anchors.
+- **#104-F** `games/g16-pixi.html` — `S` was a top-level const initialized once; replaying/advancing levels inherited stale `cleared`/`wrongTaps_station` and broke the perfect-play 5★ shortcut. `startGame()` now does explicit `Object.assign(S, {...defaults})`.
+- **#104-G** `game.js` — ported g13c-style type-themed hit particles to G10 (`G10_TYPE_HIT_FX` 18-type map + `g10SpawnTypeHitFX(targetEl, type)` + `g10EnsureHitFXStyles()` keyframes). Wired into `g10DoAttack` defender hit block.
+
+### Test plan
+- G13B picker: tab switch populer→keren→kuat→back rapid 5x → no freeze, instant tab swap.
+- G15 fullscreen on tablet/desktop: bottom buttons cap at ~90-140px, playfield dominant.
+- G22: every Pokemon (Psyduck, Bulbasaur, etc.) has feet on grass line.
+- G16: clear lv 1 with 5★ → next level → clear lv 2 with 5★ (no carry-over from prior).
+- G10: correct answer → enemy Pokemon shows shake + flash + type-emoji burst on its sprite.
+
+---
+
 ## 2026-04-28 — Hotfix #103 (Freeze + Scoring Cap + Avatar-Keyed Save)
 
 Cache bump: `v=20260427d` → `v=20260428a`. Branch: `main`.

@@ -101,9 +101,10 @@ canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
 
 <!-- Monster character (DOM overlay) — HD sprite, ground-anchored via JS -->
 <!-- Hotfix #101-K: HD WebP first (was 96px CDN — non-HD complaint); JS upgrades to pokeSpriteAlt2 on init -->
-<!-- Hotfix 2026-04-28: inline cascade kept (terminates in 2 steps + null). For
-     freeze repro safety, JS init upgrades this img through attachSpriteCascade. -->
-<img id="monster-img" src="../assets/Pokemon/pokemondb_hd_alt2/0054_psyduck.webp" onerror="this.src='../assets/Pokemon/sprites/psyduck.png';this.onerror=function(){this.src='https://img.pokemondb.net/sprites/home/normal/psyduck.png';this.onerror=null}" style="position:fixed;z-index:40;pointer-events:none;width:clamp(140px,26vw,220px);height:auto;bottom:25%;left:0;transform:translate3d(0,0,0);display:none;image-rendering:auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,0.45))">
+<!-- Hotfix #104 (2026-04-28): removed inline `bottom:25%` — was overriding
+     placeMonsterOnGround() pixel anchoring, causing Bulbasaur/etc to float
+     above grass. JS now anchors based on actual sprite height. -->
+<img id="monster-img" src="../assets/Pokemon/pokemondb_hd_alt2/0054_psyduck.webp" onerror="this.src='../assets/Pokemon/sprites/psyduck.png';this.onerror=function(){this.src='https://img.pokemondb.net/sprites/home/normal/psyduck.png';this.onerror=null}" style="position:fixed;z-index:40;pointer-events:none;width:clamp(140px,26vw,220px);height:auto;bottom:0;left:0;transform:translate3d(0,0,0);display:none;image-rendering:auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,0.45))">
 
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
 <script src="../shared/rz-responsive.js?v=20260422i"></script>
@@ -1085,15 +1086,27 @@ document.addEventListener('pointerdown', e => {
   S.monsterXTarget = e.clientX
 })
 
-// Anchor Psyduck to canvas ground line (H * 0.75) regardless of viewport
+// Anchor Pokemon's feet to canvas ground line (H * 0.75) regardless of
+// viewport size or sprite height. Hotfix #104 (2026-04-28): previously the
+// inline `bottom:25%` won CSS specificity → Bulbasaur (taller sprite)
+// floated above grass. Now subtracts a small fraction of the actual sprite
+// height so feet sit on grass, while keeping the whole sprite visible.
 function placeMonsterOnGround() {
   const monster = document.getElementById('monster-img')
   if (!monster || !app) return
   const groundY = H * 0.75
-  // Sprite's bottom edge should sit at groundY; compute `bottom` (distance from viewport bottom to sprite bottom)
-  const offsetFromBottom = Math.max(0, window.innerHeight - groundY - 8)
+  // window.innerHeight - groundY = distance from grass top to viewport bottom.
+  // Subtract a small fraction of sprite height so feet overlap grass slightly.
+  const spriteH = monster.offsetHeight || 160
+  const overlap = Math.max(8, Math.round(spriteH * 0.04))
+  const offsetFromBottom = Math.max(0, window.innerHeight - groundY - overlap)
   monster.style.bottom = offsetFromBottom + 'px'
 }
+// Re-anchor when sprite finishes loading (height becomes known) — image swap
+// path in onAbsorb sets new src but doesn't always trigger onload (cached img).
+document.getElementById('monster-img').addEventListener('load', () => {
+  try { placeMonsterOnGround() } catch (_) {}
+})
 
 // Resize — recompute dimensions + rebuild parallax (mountains/trees scale with W,H)
 window.addEventListener('resize', () => {

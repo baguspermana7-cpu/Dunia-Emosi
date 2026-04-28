@@ -1228,10 +1228,12 @@ function g13cStartGym(letter) {
   ga.style.display = 'flex'
   const slug = G13C_GYM_POKEMON[letter] || 'pikachu'
   const pImg = document.getElementById('g13c-pokemon-img')
-  // Task #77 (P0-3): local-first per L16 — was remote-only
-  const _localG13c = (typeof pokeSpriteAlt2 === 'function') ? pokeSpriteAlt2(slug) : null
-  pImg.src = _localG13c || `https://img.pokemondb.net/sprites/home/normal/${slug}.png`
-  pImg.onerror = function(){ if(this.dataset.fallback==='1'){this.onerror=null;return} this.dataset.fallback='1'; this.src=`https://img.pokemondb.net/sprites/home/normal/${slug}.png` }
+  // Hotfix #104 (2026-04-28): use shared cascade — was duplicate-URL pattern.
+  if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
+    attachSpriteCascade(pImg, buildPokeSources(slug, null), '🎮')
+  } else {
+    pImg.src = (typeof pokeSpriteAlt2 === 'function' && pokeSpriteAlt2(slug)) || `https://img.pokemondb.net/sprites/home/normal/${slug}.png`
+  }
   pImg.style.display = 'block'
   g13cShowRound()
 }
@@ -2782,10 +2784,13 @@ function renderG4Content(){
       const img=document.createElement('img')
       img.className='g4-animal-item g4-poke-img'
       img.style.width=sprSize; img.style.height=sprSize
-      // Local sprite first, remote fallback
+      // Hotfix #104 (2026-04-28): shared cascade.
       const slug = poke.name.toLowerCase().replace(/[^a-z0-9-]/g,'')
-      img.src=`assets/Pokemon/sprites/${slug}.png`
-      img.onerror=()=>{img.src=`https://img.pokemondb.net/sprites/home/normal/${slug}.png`;img.onerror=()=>{img.src=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${poke.id}.png`;img.onerror=null}}
+      if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
+        attachSpriteCascade(img, buildPokeSources(slug, poke.id), '🐾')
+      } else {
+        img.src = `assets/Pokemon/sprites/${slug}.png`
+      }
       img.alt=poke.name
       img.style.animationDelay=(i*55)+'ms'
       if(poke.id!==currentPoke.id) img.style.opacity='0.75'
@@ -5541,6 +5546,74 @@ const POKE_TYPE_COLORS = {
 function pokeTypeColor(type){
   return POKE_TYPE_COLORS[(type || '').toLowerCase()] || '#a78bfa'
 }
+
+// Hotfix #104 (2026-04-28) — port G13C type-themed hit particles to G10.
+// User: "G10 effect2 pada pokemon yg terkena serangan juga gak ada. Kan
+// simple samakan aja dg g13c". Self-contained: keyframes injected once.
+const G10_TYPE_HIT_FX = {
+  fire:    {emojis:['🔥','✨'],anim:'g10fxRise',  color:'#FF6B35',count:7},
+  water:   {emojis:['💧','🌊'],anim:'g10fxRain',  color:'#4FC3F7',count:6},
+  electric:{emojis:['⚡','✨'],anim:'g10fxZap',   color:'#FFCB05',count:9},
+  grass:   {emojis:['🍃','🌿'],anim:'g10fxSwirl', color:'#4CAF50',count:7},
+  dark:    {emojis:['🌑','💢'],anim:'g10fxShadow',color:'#3a0a5a',count:5},
+  psychic: {emojis:['🔮','💫'],anim:'g10fxSpiral',color:'#F95587',count:7},
+  ice:     {emojis:['❄️','💎'],anim:'g10fxSnow',  color:'#98D8D8',count:7},
+  ghost:   {emojis:['👻','💜'],anim:'g10fxFloat', color:'#705898',count:5},
+  flying:  {emojis:['🌪️','💨'],anim:'g10fxWind',  color:'#A890F0',count:6},
+  dragon:  {emojis:['💫','🐉'],anim:'g10fxSpin',  color:'#7038F8',count:6},
+  fighting:{emojis:['💥','👊'],anim:'g10fxBurst', color:'#C03028',count:7},
+  rock:    {emojis:['🪨','💥'],anim:'g10fxDrop',  color:'#B8A038',count:5},
+  poison:  {emojis:['☠️','💜'],anim:'g10fxFloat', color:'#A040A0',count:5},
+  ground:  {emojis:['💥','🌍'],anim:'g10fxBurst', color:'#E0C068',count:6},
+  bug:     {emojis:['✨','🌿'],anim:'g10fxSwirl', color:'#A8B820',count:6},
+  steel:   {emojis:['⚔️','✨'],anim:'g10fxSpark', color:'#B8B8D0',count:5},
+  normal:  {emojis:['💢','✨'],anim:'g10fxBurst', color:'#A8A878',count:5},
+  fairy:   {emojis:['✨','💖'],anim:'g10fxSwirl', color:'#EE99AC',count:7},
+}
+let _g10HitFXStyleInjected = false
+function g10EnsureHitFXStyles() {
+  if (_g10HitFXStyleInjected) return
+  _g10HitFXStyleInjected = true
+  const css = `
+@keyframes g10fxRise{0%{transform:scale(0) translateY(0);opacity:0.9}50%{transform:scale(1.3) translateY(-45px);opacity:0.8}100%{transform:scale(0.4) translateY(-90px);opacity:0}}
+@keyframes g10fxRain{0%{transform:scale(1.2) translateY(-15px);opacity:0.9}100%{transform:scale(0.7) translateY(70px);opacity:0}}
+@keyframes g10fxZap{0%{transform:scale(0) rotate(0deg);opacity:1}30%{transform:scale(1.6) rotate(45deg);opacity:1}100%{transform:scale(0.1) rotate(200deg) translateX(70px);opacity:0}}
+@keyframes g10fxSwirl{0%{transform:scale(0) rotate(0deg);opacity:1}55%{transform:scale(1.3) rotate(200deg) translateX(35px);opacity:0.7}100%{transform:scale(0.2) rotate(400deg) translateX(70px);opacity:0}}
+@keyframes g10fxShadow{0%{transform:scale(0.3);opacity:0.95;filter:brightness(0.1)}40%{transform:scale(2.2);opacity:0.6}100%{transform:scale(4);opacity:0}}
+@keyframes g10fxSpiral{0%{transform:scale(0) rotate(0deg) translateY(0);opacity:1}100%{transform:scale(1.6) rotate(720deg) translateY(-55px);opacity:0}}
+@keyframes g10fxSnow{0%{transform:scale(1.1) translateY(0) rotate(0deg);opacity:0.9}100%{transform:scale(0.5) translateY(55px) rotate(360deg);opacity:0}}
+@keyframes g10fxFloat{0%{transform:scale(0.6) translateY(0);opacity:0.8}50%{transform:scale(1.1) translateY(-35px);opacity:0.5}100%{transform:scale(0) translateY(-65px);opacity:0}}
+@keyframes g10fxWind{0%{transform:scale(1) translateX(0);opacity:0.8}100%{transform:scale(1.6) translateX(-90px) translateY(-25px);opacity:0}}
+@keyframes g10fxSpin{0%{transform:scale(0) rotate(0deg);opacity:1}100%{transform:scale(2.2) rotate(720deg);opacity:0}}
+@keyframes g10fxBurst{0%{transform:scale(0);opacity:1}40%{transform:scale(1.6);opacity:0.9}100%{transform:scale(3.5);opacity:0}}
+@keyframes g10fxDrop{0%{transform:scale(1.3) translateY(-25px);opacity:0.9}65%{transform:scale(1) translateY(35px);opacity:0.7}100%{transform:scale(0.7) translateY(55px);opacity:0}}
+@keyframes g10fxSpark{0%{transform:scale(0) rotate(0deg);opacity:1}30%{transform:scale(1.6) rotate(-35deg);opacity:1}100%{transform:scale(0.1) rotate(70deg) translateX(60px);opacity:0}}
+`
+  const styleEl = document.createElement('style')
+  styleEl.textContent = css
+  document.head.appendChild(styleEl)
+}
+function g10SpawnTypeHitFX(targetEl, type) {
+  g10EnsureHitFXStyles()
+  if (!targetEl) return
+  const r = targetEl.getBoundingClientRect()
+  if (!r.width) return
+  const cx = r.left + r.width / 2, cy = r.top + r.height / 2
+  const cfg = G10_TYPE_HIT_FX[(type || '').toLowerCase()] || G10_TYPE_HIT_FX.normal
+  for (let i = 0; i < cfg.count; i++) {
+    const p = document.createElement('span')
+    const px = cx + (Math.random() - 0.5) * r.width
+    const py = cy + (Math.random() - 0.5) * r.height
+    const sz = 18 + Math.random() * 14
+    const dur = 0.55 + Math.random() * 0.45
+    const del = i * 0.055
+    p.style.cssText = `position:fixed;font-size:${sz}px;left:${px}px;top:${py}px;z-index:401;pointer-events:none;animation:${cfg.anim} ${dur}s ${del}s ease-out both;filter:drop-shadow(0 0 6px ${cfg.color});`
+    p.textContent = cfg.emojis[i % cfg.emojis.length]
+    document.body.appendChild(p)
+    setTimeout(() => p.remove(), (dur + del) * 1000 + 100)
+  }
+}
+
 // Unified attacker aura ring — DOM fallback when Pixi isn't active.
 // Caller passes the sprite wrap element; ring is removed after dur ms.
 function spawnTypeAura(el, type, dur){
@@ -5706,6 +5779,101 @@ let g10ActiveTrainer = 'ash'
 let partyPickerCtx = 'g10' // 'g10' | 'g13b'
 let g13bSavedPoke = null   // persists chosen pokemon across G13B rounds
 
+// Hotfix #104 (2026-04-28) — Picker performance overhaul to fix tab-switch
+// freeze. Strategy: tab content cache (no rebuild on switch), event
+// delegation (1 handler vs 39), debounced tab clicks, IntersectionObserver
+// lazy-load (cascade only fires when card enters viewport),
+// DocumentFragment batch insert. See plan purring-brewing-flurry.md.
+const _partyTabCache = new Map() // trainerId -> HTMLElement (tab pane)
+let _partyGridDelegated = false
+let _partyTabIO = null
+let _partyTabClickT = 0
+
+function _partyGetCurrentId() {
+  return (partyPickerCtx === 'g13b' && g13bSavedPoke)
+    ? g13bSavedPoke.id
+    : (g10State.playerPoke ? g10State.playerPoke.id : -1)
+}
+
+function _partyEnsureDelegation(gridEl) {
+  if (_partyGridDelegated) return
+  _partyGridDelegated = true
+  gridEl.addEventListener('click', (ev) => {
+    const card = ev.target.closest && ev.target.closest('.g10-party-card')
+    if (!card || card.classList.contains('current')) return
+    const pokeId = parseInt(card.dataset.pokeId)
+    const trainerId = card.dataset.trainerId
+    if (!pokeId || !trainerId) return
+    const trainer = TRAINER_PARTIES.find(t => t.id === trainerId)
+    if (!trainer) return
+    const poke = trainer.party.find(p => p.id === pokeId)
+    if (!poke) return
+    playClick()
+    if (partyPickerCtx === 'g13b') { switchG13bPlayerPoke(poke) }
+    else { switchPlayerPoke(poke) }
+    closePartyPicker()
+  })
+}
+
+function _partyEnsureIO() {
+  if (_partyTabIO || typeof IntersectionObserver === 'undefined') return
+  _partyTabIO = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue
+      const img = e.target
+      _partyTabIO.unobserve(img)
+      const slug = img.dataset.slug
+      const pokeId = parseInt(img.dataset.pokeId)
+      if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
+        attachSpriteCascade(img, buildPokeSources(slug, pokeId), '🎴')
+      } else {
+        img.src = (typeof pokeSpriteAlt2 === 'function' && pokeSpriteAlt2(slug)) || (typeof pokeSpriteOnline === 'function' ? pokeSpriteOnline(slug) : '')
+      }
+    }
+  }, { rootMargin: '200px 0px' })
+}
+
+function _partyBuildTabPane(trainer) {
+  const pane = document.createElement('div')
+  pane.className = 'g10-tab-pane'
+  pane.dataset.trainerId = trainer.id
+  const frag = document.createDocumentFragment()
+  trainer.party.forEach(poke => {
+    const card = document.createElement('div')
+    card.className = 'g10-party-card'
+    card.dataset.pokeId = poke.id
+    card.dataset.trainerId = trainer.id
+    const typeColor = TYPE_COLORS[poke.type] || '#888'
+    card.style.setProperty('--ptc', typeColor)
+    const slug = poke.name.toLowerCase().replace(/\s/g, '-')
+    card.innerHTML = `
+      <img class="g10-pcard-spr" alt="${poke.name}" loading="lazy" decoding="async" data-slug="${slug}" data-poke-id="${poke.id}">
+      <div class="g10-pcard-name">${poke.name}</div>
+      <div class="g10-pcard-type" style="background:${typeColor}">${poke.type.charAt(0).toUpperCase() + poke.type.slice(1)}</div>
+    `
+    frag.appendChild(card)
+  })
+  pane.appendChild(frag)
+  return pane
+}
+
+function _partyMarkCurrent(pane) {
+  const currentId = _partyGetCurrentId()
+  pane.querySelectorAll('.g10-party-card').forEach(card => {
+    const isCurrent = parseInt(card.dataset.pokeId) === currentId
+    card.classList.toggle('current', isCurrent)
+    let badge = card.querySelector('.g10-pcard-curr-badge')
+    if (isCurrent && !badge) {
+      badge = document.createElement('div')
+      badge.className = 'g10-pcard-curr-badge'
+      badge.textContent = '✔ Aktif'
+      card.insertBefore(badge, card.firstChild)
+    } else if (!isCurrent && badge) {
+      badge.remove()
+    }
+  })
+}
+
 function openPartyPicker(){
   partyPickerCtx = 'g10'
   const overlay = document.getElementById('g10-party-overlay')
@@ -5721,67 +5889,86 @@ function closePartyPicker(){
   if (partyPickerCtx === 'g13b' && g13bState && g13bState.phase === 'playing') {
     g13bState.paused = false
   }
+  // Hotfix #104: tab cache lives across opens for perf, but reset IO so we
+  // re-trigger lazy-load on next open (offscreen images may have cleared).
+  if (_partyTabIO) { try { _partyTabIO.disconnect() } catch (_) {} _partyTabIO = null }
 }
 function renderTrainerTabs(){
   const tabsEl = document.getElementById('g10-trainer-tabs')
   if(!tabsEl) return
   tabsEl.innerHTML = ''
+  const frag = document.createDocumentFragment()
   TRAINER_PARTIES.forEach(tr => {
     const tab = document.createElement('button')
     tab.className = 'g10-trainer-tab' + (tr.id===g10ActiveTrainer?' active':'')
+    tab.dataset.trainerId = tr.id
     tab.style.setProperty('--tc', tr.color)
     tab.style.setProperty('--tc-glow', tr.glow)
     tab.innerHTML = `<span class="g10-tab-emoji">${tr.emoji}</span><span class="g10-tab-name">${tr.name}</span>`
     tab.onclick = () => {
+      // Hotfix #104: debounce — 150ms guard against rapid double-click
+      const now = Date.now()
+      if (now - _partyTabClickT < 150) return
+      _partyTabClickT = now
+      if (g10ActiveTrainer === tr.id) return
       g10ActiveTrainer = tr.id
-      renderTrainerTabs()
+      // Just toggle active class instead of full rebuild (closures cleared
+      // since we use dataset+delegation now).
+      tabsEl.querySelectorAll('.g10-trainer-tab').forEach(b => {
+        b.classList.toggle('active', b.dataset.trainerId === tr.id)
+      })
       renderPartyGrid(tr.id)
       playClick()
     }
-    tabsEl.appendChild(tab)
+    frag.appendChild(tab)
   })
+  tabsEl.appendChild(frag)
 }
 function renderPartyGrid(trainerId){
   const gridEl = document.getElementById('g10-party-grid')
   if(!gridEl) return
   const trainer = TRAINER_PARTIES.find(t=>t.id===trainerId)
   if(!trainer) return
+  _partyEnsureDelegation(gridEl)
+  _partyEnsureIO()
+  // Move current grid's cards back into their cached pane (so tab swap
+  // preserves loaded images + listeners + scroll state).
+  const prevTrainerId = gridEl.dataset.activeTrainer
+  if (prevTrainerId && prevTrainerId !== trainerId) {
+    const prevPane = _partyTabCache.get(prevTrainerId)
+    if (prevPane) {
+      while (gridEl.firstChild) prevPane.appendChild(gridEl.firstChild)
+    }
+  }
+  // Build (or reuse) target pane.
+  let pane = _partyTabCache.get(trainerId)
+  if (!pane) {
+    pane = _partyBuildTabPane(trainer)
+    _partyTabCache.set(trainerId, pane)
+  }
+  _partyMarkCurrent(pane)
+  // Swap pane contents into gridEl (single reflow).
   gridEl.innerHTML = ''
-  const currentId = (partyPickerCtx === 'g13b' && g13bSavedPoke)
-    ? g13bSavedPoke.id
-    : (g10State.playerPoke ? g10State.playerPoke.id : -1)
-  trainer.party.forEach(poke => {
-    const isCurrent = poke.id === currentId
-    const card = document.createElement('div')
-    card.className = 'g10-party-card' + (isCurrent?' current':'')
-    const typeColor = TYPE_COLORS[poke.type]||'#888'
-    card.style.setProperty('--ptc', typeColor)
-    card.innerHTML = `
-      ${isCurrent?'<div class="g10-pcard-curr-badge">✔ Aktif</div>':''}
-      <img class="g10-pcard-spr" alt="${poke.name}" loading="lazy" decoding="async">
-      <div class="g10-pcard-name">${poke.name}</div>
-      <div class="g10-pcard-type" style="background:${typeColor}">${poke.type.charAt(0).toUpperCase()+poke.type.slice(1)}</div>
-    `
-    // Local-first sprite: HD WebP from project assets, fallback to remote PNG
-    const slug = poke.name.toLowerCase().replace(/\s/g,'-')
-    const img = card.querySelector('.g10-pcard-spr')
-    const localSrc = pokeSpriteAlt2(slug)
-    img.src = localSrc || pokeSpriteOnline(slug)
-    img.onerror = () => {
-      if (img.dataset.fallback === '1') { img.src = pokeSpriteBackup(poke.id); img.onerror = null; return }
-      img.dataset.fallback = '1'
-      img.src = pokeSpriteOnline(slug)
-    }
-    if(!isCurrent){
-      card.onclick = () => {
-        playClick()
-        if (partyPickerCtx === 'g13b') { switchG13bPlayerPoke(poke) }
-        else { switchPlayerPoke(poke) }
-        closePartyPicker()
+  while (pane.firstChild) gridEl.appendChild(pane.firstChild)
+  gridEl.dataset.activeTrainer = trainerId
+  // Lazy-observe images that haven't loaded yet.
+  if (_partyTabIO) {
+    gridEl.querySelectorAll('.g10-pcard-spr').forEach(img => {
+      if (img.src && !img.src.startsWith('data:') && img.complete) return
+      _partyTabIO.observe(img)
+    })
+  } else {
+    // No IntersectionObserver — fallback to immediate cascade load (still
+    // bounded by attachSpriteCascade's MAX_CONCURRENT queue).
+    gridEl.querySelectorAll('.g10-pcard-spr').forEach(img => {
+      if (img.src) return
+      const slug = img.dataset.slug
+      const pokeId = parseInt(img.dataset.pokeId)
+      if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
+        attachSpriteCascade(img, buildPokeSources(slug, pokeId), '🎴')
       }
-    }
-    gridEl.appendChild(card)
-  })
+    })
+  }
 }
 function switchPlayerPoke(poke){
   const s = g10State
@@ -5800,14 +5987,11 @@ function switchPlayerPoke(poke){
     pSpr.classList.remove('spr-swap-out')
     pSpr.style.imageRendering = 'auto'
     const slug = poke.name.toLowerCase().replace(/\s/g,'-')
-    // Task #96 (2026-04-26): local-first per L16 (was remote-primary causing slow swap on 3G)
-    const _localSwap = (typeof pokeSpriteAlt2 === 'function') ? pokeSpriteAlt2(slug) : null
-    pSpr.src = _localSwap || pokeSpriteOnline(slug)
-    pSpr.onerror = () => {
-      if (pSpr.dataset.fallback === '1') { pSpr.src = pokeSpriteBackup(poke.id); pSpr.onerror = null; return }
-      pSpr.dataset.fallback = '1'
-      pSpr.style.imageRendering = 'pixelated'
-      pSpr.src = pokeSpriteOnline(slug)
+    // Hotfix #104 (2026-04-28): cascade via shared helper to kill freeze loop.
+    if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
+      attachSpriteCascade(pSpr, buildPokeSources(slug, poke.id), '🦊')
+    } else {
+      pSpr.src = (typeof pokeSpriteAlt2 === 'function' && pokeSpriteAlt2(slug)) || pokeSpriteOnline(slug)
     }
     // Apply new Pokemon's facing BEFORE swap-in animation starts so keyframe
     // transform:scaleX(var(--flip)) uses the correct sign during the anim.
@@ -6447,6 +6631,11 @@ function g10DoAttack(type, fromSide, toSide, onDone){
       if (defSpr) {
         defSpr.classList.remove('spr-hit','spr-flash'); void defSpr.offsetWidth
         defSpr.classList.add('spr-hit','spr-flash')
+        // Hotfix #104 (2026-04-28): port g13c-style type-themed hit
+        // particles directly on the defender sprite bbox. User: "samakan
+        // aja dg g13c". Existing g10TypeFX renders at field-edge corners;
+        // this adds tight-on-sprite emoji burst with type emojis/anim.
+        try { g10SpawnTypeHitFX(defSpr, type) } catch(e){ console.warn('[g10DoAttack] hit fx:', e) }
         setTimeout(() => {
           try { defSpr.classList.remove('spr-hit','spr-flash') } catch(_){}
           clearTimeout(_wd); _safeDone()
@@ -8922,16 +9111,12 @@ function g13TriggerEvolution() {
     // Update player sprite to new form (Task #67: local-first per Lesson L16)
     const pspr = document.getElementById('g13-pspr')
     if (pspr) {
-      const localSrc = (typeof pokeSpriteAlt2 === 'function') ? pokeSpriteAlt2(nowForm.slug) : null
-      pspr.src = localSrc || `https://img.pokemondb.net/sprites/home/normal/${nowForm.slug}.png`
-      pspr.onerror = () => {
-        if (pspr.dataset.evolveFallback === '1') {
-          const eid = POKE_IDS2[nowForm.slug]
-          if (eid) pspr.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${eid}.png`
-          pspr.onerror = null; return
-        }
-        pspr.dataset.evolveFallback = '1'
-        pspr.src = `https://img.pokemondb.net/sprites/home/normal/${nowForm.slug}.png`
+      // Hotfix #104 (2026-04-28): shared cascade.
+      const _eid = (typeof POKE_IDS2 !== 'undefined' && POKE_IDS2) ? POKE_IDS2[nowForm.slug] : null
+      if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
+        attachSpriteCascade(pspr, buildPokeSources(nowForm.slug, _eid), '⚡')
+      } else {
+        pspr.src = (typeof pokeSpriteAlt2 === 'function' && pokeSpriteAlt2(nowForm.slug)) || `https://img.pokemondb.net/sprites/home/normal/${nowForm.slug}.png`
       }
       // Mega form: 1.3x scale boost on top of normal final scale
       const megaScale = wasStage3 ? 1.3 : 1.0
@@ -9636,10 +9821,12 @@ function g13bWildEscape() {
     s.wildHp = Math.max(2, Math.round((s.wildMaxHp || 3) * 0.6))
     const wspr = document.getElementById('g13b-wspr')
     if (wspr) {
-      // Task #71: local-first per L16
-      const _wLocal2 = (typeof pokeSpriteAlt2 === 'function') ? pokeSpriteAlt2(wild.slug) : null
-      wspr.src = _wLocal2 || pokeSpriteOnline(wild.slug)
-      wspr.onerror = function(){ if(this.dataset.fallback==='1'){this.onerror=null;return} this.dataset.fallback='1'; this.src=pokeSpriteOnline(wild.slug) }
+      // Hotfix #104 (2026-04-28): shared cascade.
+      if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
+        attachSpriteCascade(wspr, buildPokeSources(wild.slug, wild.id), '👹')
+      } else {
+        wspr.src = (typeof pokeSpriteAlt2 === 'function' && pokeSpriteAlt2(wild.slug)) || pokeSpriteOnline(wild.slug)
+      }
       wspr.classList.remove('wild-enter', 'wild-die', 'wspr-hit')
       void wspr.offsetWidth
       wspr.classList.add('wild-enter')

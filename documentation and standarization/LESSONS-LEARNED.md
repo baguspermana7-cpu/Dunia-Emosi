@@ -4,6 +4,34 @@
 
 ---
 
+## 2026-04-28 (evening) — Hotfix #104
+
+### L41 — A "fixed" symptom may have multiple root causes; users will tell you when you missed one
+- **Symptom**: After Hotfix #103 fixed individual sprite cascades, G13B picker STILL froze on tab switch. User: "saya tidak yakin anda sudah solve issue big critical itu".
+- **Root cause**: #103 addressed *per-image* freeze loops. The picker had a *separate* class of issue: render storm (39 cards × 5-URL cascade × 8 tabs), per-card `onclick` closure leak (312 listeners per session), no debounce, no concurrency cap on image loads. All compound on tab click.
+- **Fix**: Tab cache (no rebuild on swap), event delegation (1 vs 39 listeners), 150ms debounce, IntersectionObserver lazy-load, MAX_CONCURRENT=4 queue inside `attachSpriteCascade`.
+- **Lesson**: When user pushes back with "you didn't really fix it", treat skepticism as evidence — there's likely another freeze pathway you missed. Explicitly enumerate ALL classes of cause: per-element bug (cascade), per-render bug (storm), per-session bug (listener leak), per-frame bug (no debounce). Each needs its own fix. Don't assume one diagnosis closes the whole story.
+
+### L42 — Top-level `const S` is initialized once; never relies on closure for level reset
+- **Symptom**: G16 scoring sometimes returned 3★ after a perfect level, even though the perfect-play shortcut at line 1843 should fire.
+- **Root cause**: `S = {cleared:0, wrongTaps_station:0, ...}` declared at script top-level. After completing level 1 and starting level 2, `S.cleared` carried 4 from prior level; `S.wrongTaps_station` similarly. The `if (S.cleared === S.totalObstacles && stationWrongs === 0)` shortcut needed both sides of the equation to be fresh; only `S.totalObstacles` was reset.
+- **Fix**: Explicit `Object.assign(S, {...defaults})` at the top of `startGame()` resets all score-relevant fields per-level.
+- **Lesson**: Module-scope `const S = {...}` initializes once at script parse. Game state that resets per level must be EXPLICITLY assigned in the level-init function, not relied on the const initializer to fire again. When a state object holds a mix of "set-once config" and "reset-per-level counters", separate them OR explicitly clear the counters at level start.
+
+### L43 — CSS specificity of inline styles silently overrides JS DOM updates
+- **Symptom**: G22 Bulbasaur floated above grass platform even though `placeMonsterOnGround()` was setting `monster.style.bottom = ...px`.
+- **Root cause**: HTML had `<img id="monster-img" style="...bottom:25%;...">`. Inline `bottom:25%` sometimes won the specificity race against JS-set pixel `bottom`, especially before/during JS initialization. Plus `25%` was viewport-relative (assumed sprite of fixed height) — taller sprites floated above grass even when JS won.
+- **Fix**: Removed inline `bottom:25%`, set `bottom:0` as initial. `placeMonsterOnGround()` is the single source of truth and uses `offsetHeight × 0.04` for responsive overlap.
+- **Lesson**: When JS sets a style that's also pre-set inline, the runtime behavior is order-dependent and brittle. For values that JS owns, the inline initial style should be a sentinel (`0`, `auto`, or omitted) — not a meaningful value the JS will override. A `style="bottom:0"` initial + JS owner is auditable; `style="bottom:25%"` + JS owner is a race waiting to bite.
+
+### L44 — Fixed responsive units (`padding:15px; font-size:22px`) break on aspect changes
+- **Symptom**: G15 fullscreen on landscape tablet → bottom controls (ATAS/JALUR/BAWAH) take half the screen.
+- **Root cause**: `#hud-bottom` had `position:fixed; bottom:0` but no `max-height`. `#btn-up`/`#btn-dn` used `padding:15px 0; font-size:22px` (pixel-fixed). On 1024×576 landscape, the flex container had no height ceiling, so children expanded to fill remaining viewport height after the bottom-anchor.
+- **Fix**: `max-height: clamp(80px, 18vh, 140px)` + `padding: clamp(8px, 2vh, 15px)` + `font-size: clamp(14px, 3.5vmin, 22px)` + `@media (orientation:landscape) and (min-aspect-ratio:16/10) { #hud-bottom { max-height:90px } }`.
+- **Lesson**: For app-style UIs deployed across phone-portrait + tablet-landscape, every `position:fixed` panel should declare a `max-height` (or `height`) — never trust intrinsic flex sizing. Pixel-fixed paddings/fonts on touch targets break beyond ~1.5x scale; always use `clamp()` with sensible min/max bounds tied to `vmin`/`vh`. Add aspect-ratio media queries for known device classes (16:10, 16:9, 21:9 tablets).
+
+---
+
 ## 2026-04-28 — Hotfix #103
 
 ### L37 — `<img>` onerror cascade must dedupe URLs and terminate explicitly
