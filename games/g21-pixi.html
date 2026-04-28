@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Mario Pokemon ⚡</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear-gradient(180deg,#5C94FC 0%,#6BB6FF 60%,#8B6F47 100%);font-family:'Fredoka One',sans-serif;touch-action:none;-webkit-user-select:none;user-select:none}
+#pixi-canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block;image-rendering:auto}
+
+/* ── HUD Top ── */
+#hud-top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:clamp(4px,1.5vw,10px);padding:max(12px,env(safe-area-inset-top)) clamp(12px,3vw,18px) 6px;background:linear-gradient(180deg,rgba(0,0,0,0.55) 0%,transparent 100%);pointer-events:none}
+.hud-btn{background:rgba(255,255,255,0.14);border:1.5px solid rgba(255,255,255,0.28);border-radius:12px;color:#fff;padding:6px 11px;font-size:14px;cursor:pointer;font-family:inherit;pointer-events:all;flex-shrink:0;-webkit-tap-highlight-color:transparent;transition:transform .08s}
+.hud-btn:active{transform:scale(0.92)}
+#game-badge{background:rgba(0,0,0,0.55);border:1.5px solid rgba(251,191,36,0.55);border-radius:10px;padding:5px 10px;color:#fde68a;font-size:clamp(10px,3vw,13px);font-weight:700;flex-shrink:0;white-space:nowrap}
+#hud-center{flex:1;text-align:center;min-width:0}
+#level-text{font-size:11px;color:#fde68a;font-weight:700;letter-spacing:1.5px}
+#status-text{font-size:clamp(12px,3.5vw,16px);font-weight:900;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.45)}
+#hud-stats{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.hud-stat{background:rgba(0,0,0,0.5);border:1.5px solid rgba(255,255,255,0.25);border-radius:10px;padding:5px 9px;color:#fff;font-size:clamp(11px,3vw,14px);font-weight:900;display:flex;gap:4px;align-items:center;white-space:nowrap}
+.hud-stat-coins{border-color:rgba(251,191,36,0.55)}
+.hud-stat-lives{border-color:rgba(239,68,68,0.55)}
+#lives-hearts{display:flex;gap:2px;align-items:center}
+.life-heart{font-size:14px;line-height:1;transition:opacity .25s,transform .25s}
+.life-heart.empty{opacity:0.25}
+.life-heart.half{opacity:0.65;filter:hue-rotate(-30deg)}
+@keyframes heartPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
+.life-heart.pulse{animation:heartPulse 0.4s ease}
+
+/* ── Mobile Controls (transparent overlay) ── */
+#mobile-controls{position:fixed;left:0;right:0;bottom:max(16px,env(safe-area-inset-bottom));z-index:100;display:flex;justify-content:space-between;align-items:flex-end;padding:0 clamp(12px,3vw,24px);pointer-events:none}
+.mc-cluster{display:flex;gap:clamp(8px,2vw,14px);align-items:flex-end;pointer-events:none}
+.mc-btn{pointer-events:auto;width:clamp(58px,11vmin,90px);height:clamp(58px,11vmin,90px);border-radius:50%;background:rgba(255,255,255,0.17);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:2.5px solid rgba(255,255,255,0.4);color:#fff;font-size:clamp(20px,5vmin,30px);font-weight:900;cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;text-shadow:0 2px 4px rgba(0,0,0,0.5);box-shadow:0 4px 12px rgba(0,0,0,0.25);transition:transform .08s,background .12s}
+.mc-btn:active,.mc-btn.held{transform:scale(0.92);background:rgba(255,255,255,0.32)}
+.mc-jump{width:clamp(78px,14vmin,118px);height:clamp(78px,14vmin,118px);background:rgba(34,197,94,0.32);border-color:rgba(74,222,128,0.55);font-size:clamp(24px,6vmin,36px)}
+.mc-jump:active,.mc-jump.held{background:rgba(34,197,94,0.5)}
+@media (pointer:fine) and (hover:hover){#mobile-controls{display:none}}
+
+/* ── Math Quiz Modal ── */
+#math-quiz{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;background:rgba(10,5,25,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:20px}
+#math-quiz.show{display:flex;animation:mqFadeIn .25s ease}
+@keyframes mqFadeIn{from{opacity:0}to{opacity:1}}
+#math-card{background:linear-gradient(145deg,#1e1b4b,#312e81);border:3px solid #818cf8;border-radius:24px;padding:clamp(18px,4vw,28px) clamp(16px,4vw,24px);max-width:380px;width:100%;text-align:center;animation:mqPopIn .35s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 60px rgba(129,140,248,0.45),0 20px 40px rgba(0,0,0,.6)}
+@keyframes mqPopIn{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}
+#mq-title{font-size:11px;color:#fbbf24;font-weight:900;letter-spacing:3px;margin-bottom:4px}
+#mq-progress{display:flex;gap:8px;justify-content:center;margin-bottom:14px}
+.mq-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.18);transition:all .25s}
+.mq-dot.active{background:#fbbf24;box-shadow:0 0 10px #fbbf24}
+.mq-dot.done{background:#4ade80;box-shadow:0 0 8px #4ade80}
+.mq-dot.fail{background:#ef4444;box-shadow:0 0 8px #ef4444}
+#mq-question{font-size:clamp(28px,7vw,40px);font-weight:900;color:#e0e7ff;margin-bottom:18px;text-shadow:0 0 20px rgba(129,140,248,0.5)}
+#mq-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mq-btn{padding:14px 8px;border-radius:14px;border:2px solid;color:#fff;font-size:clamp(20px,5vw,26px);font-weight:900;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;transition:transform .08s;line-height:1.1}
+.mq-btn:nth-child(1){background:linear-gradient(160deg,#7C3AED,#6D28D9);border-color:#a78bfa}
+.mq-btn:nth-child(2){background:linear-gradient(160deg,#0369A1,#075985);border-color:#7dd3fc}
+.mq-btn:nth-child(3){background:linear-gradient(160deg,#15803D,#166534);border-color:#86efac}
+.mq-btn:nth-child(4){background:linear-gradient(160deg,#B45309,#92400E);border-color:#fcd34d}
+.mq-btn:active{transform:scale(0.94)}
+.mq-btn.correct{background:linear-gradient(160deg,#4ade80,#22c55e)!important;border-color:#86efac!important;animation:mqCorrect .4s ease}
+.mq-btn.wrong{background:linear-gradient(160deg,#ef4444,#dc2626)!important;border-color:#fca5a5!important;animation:mqWrong .35s ease}
+@keyframes mqCorrect{0%{transform:scale(1)}50%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes mqWrong{0%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}100%{transform:translateX(0)}}
+
+/* ── Toast ── */
+#toast{position:fixed;top:90px;left:50%;transform:translateX(-50%) translateY(-12px);z-index:500;background:rgba(0,0,0,0.85);color:#fff;padding:11px 22px;border-radius:14px;font-size:14px;font-weight:900;border:2px solid rgba(255,255,255,0.25);box-shadow:0 10px 30px rgba(0,0,0,0.4);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;text-align:center;max-width:80vw}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── Pause overlay (lite) ── */
+#pause-overlay{position:fixed;inset:0;z-index:350;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px)}
+#pause-overlay.show{display:flex}
+#pause-card{background:linear-gradient(145deg,#1e1b4b,#312e81);border:3px solid #818cf8;border-radius:22px;padding:24px 28px;text-align:center;max-width:320px;width:90%;box-shadow:0 20px 50px rgba(0,0,0,0.6)}
+#pause-card h2{color:#fff;font-size:24px;margin-bottom:18px}
+.pause-btn{display:block;width:100%;margin:8px 0;padding:13px 16px;border-radius:14px;border:2.5px solid;font-size:16px;font-weight:900;cursor:pointer;font-family:inherit;color:#fff;-webkit-tap-highlight-color:transparent;transition:transform .08s}
+.pause-btn:active{transform:scale(0.96)}
+.pause-btn-resume{background:linear-gradient(160deg,#22c55e,#16a34a);border-color:#86efac;box-shadow:0 4px 0 #14532d}
+.pause-btn-retry{background:linear-gradient(160deg,#7C3AED,#6D28D9);border-color:#a78bfa;box-shadow:0 4px 0 #4C1D95}
+.pause-btn-home{background:linear-gradient(160deg,#475569,#334155);border-color:#94a3b8;box-shadow:0 4px 0 #1e293b}
+
+/* ── Score popup (floating +N) ── */
+.score-popup{position:fixed;color:#fbbf24;font-weight:900;font-size:18px;pointer-events:none;z-index:120;text-shadow:0 2px 4px rgba(0,0,0,0.7);animation:scorePopFloat 0.9s ease-out forwards}
+.score-popup.heal{color:#4ade80}
+.score-popup.coin{color:#fbbf24}
+@keyframes scorePopFloat{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-60px) scale(1.4);opacity:0}}
+
+/* ── Loading splash ── */
+#loading{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#5C94FC 0%,#3B82F6 100%);color:#fff;font-size:20px;font-weight:900;letter-spacing:1.5px;flex-direction:column;gap:14px}
+#loading.hide{opacity:0;pointer-events:none;transition:opacity .4s}
+.loading-spinner{width:48px;height:48px;border:5px solid rgba(255,255,255,0.25);border-top-color:#fbbf24;border-radius:50%;animation:spin 0.85s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<canvas id="pixi-canvas"></canvas>
+
+<!-- HUD Top -->
+<div id="hud-top">
+  <button class="hud-btn" id="btn-back" onclick="goBack()">← Kembali</button>
+  <button class="hud-btn" id="btn-pause" onclick="togglePause()">⏸</button>
+  <div id="hud-center">
+    <div id="level-text">LEVEL 1</div>
+    <div id="status-text">Mario Pokemon ⚡</div>
+  </div>
+  <div id="hud-stats">
+    <div class="hud-stat hud-stat-coins"><span>🪙</span><span id="coin-count">0</span></div>
+    <div class="hud-stat hud-stat-lives"><span id="lives-hearts">❤️❤️❤️</span></div>
+  </div>
+</div>
+
+<!-- Mobile controls (auto-hidden on PC via @media) -->
+<div id="mobile-controls">
+  <div class="mc-cluster">
+    <button class="mc-btn" id="btn-left" aria-label="Kiri">◀</button>
+    <button class="mc-btn" id="btn-right" aria-label="Kanan">▶</button>
+  </div>
+  <div class="mc-cluster">
+    <button class="mc-btn mc-jump" id="btn-jump" aria-label="Lompat">▲</button>
+  </div>
+</div>
+
+<!-- Math quiz modal -->
+<div id="math-quiz">
+  <div id="math-card">
+    <div id="mq-title">⚡ JAWAB UNTUK PERTAHAN ⚡</div>
+    <div id="mq-progress"></div>
+    <div id="mq-question">2 + 3 = ?</div>
+    <div id="mq-choices"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Pause overlay -->
+<div id="pause-overlay">
+  <div id="pause-card">
+    <h2>Pause ⏸</h2>
+    <button class="pause-btn pause-btn-resume" onclick="togglePause()">Lanjut ▶</button>
+    <button class="pause-btn pause-btn-retry" onclick="restartLevel()">Ulang 🔄</button>
+    <button class="pause-btn pause-btn-home" onclick="goBack()">Beranda 🏠</button>
+  </div>
+</div>
+
+<!-- Loading -->
+<div id="loading">
+  <div class="loading-spinner"></div>
+  <div>Memuat Mario Pokemon...</div>
+</div>
+
+<!-- Audio elements (preload) -->
+<audio id="sfx-jump" src="../assets/mario-pokemon/audio/smb_jumpsmall.ogg" preload="auto"></audio>
+<audio id="sfx-coin" src="../assets/mario-pokemon/audio/smb_coin.ogg" preload="auto"></audio>
+<audio id="sfx-stomp" src="../assets/mario-pokemon/audio/smb_squish.ogg" preload="auto"></audio>
+<audio id="sfx-powerup" src="../assets/mario-pokemon/audio/smb_powerup.ogg" preload="auto"></audio>
+<audio id="sfx-damage" src="../assets/mario-pokemon/audio/smb_takedamage.ogg" preload="auto"></audio>
+<audio id="sfx-1up" src="../assets/mario-pokemon/audio/smb_1up.ogg" preload="auto"></audio>
+<audio id="sfx-flag" src="../assets/mario-pokemon/audio/smb_flagpole.ogg" preload="auto"></audio>
+<audio id="sfx-bump" src="../assets/mario-pokemon/audio/smb_bump.ogg" preload="auto"></audio>
+
+<!-- Pixi.js 8 -->
+<script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
+<!-- Shared modules -->
+<script src="data/freeze-watchdog.js?v=20260428a"></script>
+<script src="game-modal.js?v=20260424g"></script>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+//  MARIO POKEMON (G21) — Pixi 8 platformer for Dunia Emosi
+//  Plan: ~/.claude/plans/purring-brewing-flurry.md
+// ═══════════════════════════════════════════════════════════════════
+
+// ── Config from sessionStorage (level passed by main app) ──
+let cfg = { level: 1, difficulty: 'easy' }
+try { const raw = sessionStorage.getItem('g21Config'); if (raw) cfg = Object.assign(cfg, JSON.parse(raw)) } catch (_) {}
+
+// ── World constants ──
+const TILE = 64                  // px (rendering)
+const WORLD_W = 100 * TILE       // 100 tiles wide per level
+const WORLD_H = 12 * TILE        // 12 tiles tall (canvas-relative)
+const GRAVITY = 0.55
+const RUN_SPEED = 5.2
+const STAR_SPEED = 6.6
+const JUMP_FORCE = -11.5
+const STAR_JUMP = -13
+const JUMP_HOLD_FRAMES = 14
+const BASE_W = 1024              // logical canvas (16:9)
+const BASE_H = 576
+const MAX_LIVES = 3
+
+// ── State ──
+const S = {
+  // Player
+  x: 100, y: 0, vx: 0, vy: 0,
+  facing: 1, onGround: false, jumpFrames: 0,
+  pikachuState: 'small',       // small | big | fire
+  invincible: 0,                // frames remaining
+  starMode: 0,                  // frames remaining
+  hitFrames: 0,                 // damage iframe
+  // Game
+  lives: MAX_LIVES,
+  coins: 0,
+  score: 0,
+  startTime: 0,
+  level: cfg.level,
+  difficulty: cfg.difficulty,
+  running: false,
+  paused: false,
+  gameOver: false,
+  won: false,
+  pendingMath: false,
+  // Camera
+  camX: 0,
+  // Input
+  input: { left:false, right:false, jump:false, jumpPressed:false },
+  // Entities
+  goombas: [],
+  coins: [],
+  mushrooms: [],
+  stars: [],
+  spikes: [],
+  qBlocks: [],
+  // Math quiz tracking
+  goombaHitsThisLevel: 0,
+  perfectMath: 0,
+  // Animation timer
+  walkFrame: 0, walkT: 0,
+}
+
+// ── Pixi app ──
+let app, world, bgLayer, parallaxFar, parallaxMid, fgLayer, hudParticles
+let textures = {}
+let levelData = null
+let cleanedUp = false
+
+// ── Audio helpers ──
+function sfx(id){ try { const a = document.getElementById(id); if (!a) return; a.currentTime = 0; a.volume = 0.55; a.play().catch(()=>{}) } catch(_){} }
+function showToast(msg, durMs){
+  const t = document.getElementById('toast'); if (!t) return
+  t.textContent = msg
+  t.classList.add('show')
+  clearTimeout(window._toastT)
+  window._toastT = setTimeout(()=>t.classList.remove('show'), durMs || 1600)
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  LEVEL DATA — 5 starter levels (hand-crafted, kid-friendly)
+// ═══════════════════════════════════════════════════════════════════
+const LEVELS = [
+  // Level 1 — gentle intro: 3 goombas, 8 coins, 1 mushroom
+  {
+    width: 50,
+    spawn: { x: 2*TILE, y: 8*TILE },
+    goal: { x: 47*TILE, y: 9*TILE },
+    ground: [{x:0,len:50}],   // continuous ground
+    platforms: [
+      {x:8,y:8,len:3}, {x:14,y:7,len:2}, {x:20,y:6,len:3},
+      {x:28,y:7,len:2}, {x:35,y:8,len:4},
+    ],
+    coins:    [[8,7],[9,7],[10,7],[14,6],[15,6],[20,5],[21,5],[22,5],[35,7],[36,7]],
+    goombas:  [[12,9],[24,9],[38,9]],
+    mushrooms:[[15,5]],
+    stars:    [[30,5]],
+    spikes:   [[26,9]],
+    qBlocks:  [[6,7,'coin'],[18,5,'mushroom']],
+    pits:     [[42,2]],     // [startX, len] gap in ground
+  },
+  // Level 2 — more verticality, 4 goombas
+  {
+    width: 60,
+    spawn: { x: 2*TILE, y: 8*TILE },
+    goal: { x: 57*TILE, y: 9*TILE },
+    ground: [{x:0,len:60}],
+    platforms: [
+      {x:6,y:8,len:2},{x:10,y:6,len:2},{x:14,y:8,len:2},{x:18,y:5,len:3},
+      {x:25,y:7,len:3},{x:32,y:6,len:2},{x:36,y:8,len:2},{x:42,y:5,len:4},{x:50,y:7,len:3},
+    ],
+    coins:    [[6,7],[10,5],[14,7],[18,4],[19,4],[20,4],[25,6],[26,6],[32,5],[42,4],[43,4],[50,6],[51,6]],
+    goombas:  [[8,9],[22,9],[35,9],[48,9]],
+    mushrooms:[[18,3]],
+    stars:    [[42,3]],
+    spikes:   [[16,9],[40,9]],
+    qBlocks:  [[12,5,'coin'],[28,5,'mushroom'],[45,4,'coin']],
+    pits:     [[30,2],[54,2]],
+  },
+  // Level 3 — cave theme (darker bg), 5 goombas, math-heavy
+  {
+    width: 65,
+    spawn: { x: 2*TILE, y: 8*TILE },
+    goal: { x: 62*TILE, y: 9*TILE },
+    theme: 'cave',
+    ground: [{x:0,len:65}],
+    platforms: [
+      {x:5,y:7,len:2},{x:10,y:6,len:2},{x:15,y:5,len:2},{x:20,y:4,len:3},
+      {x:28,y:6,len:2},{x:34,y:8,len:2},{x:40,y:5,len:3},{x:48,y:7,len:2},{x:54,y:5,len:4},
+    ],
+    coins:    [[5,6],[10,5],[15,4],[20,3],[21,3],[22,3],[28,5],[34,7],[40,4],[48,6],[54,4],[55,4],[56,4]],
+    goombas:  [[8,9],[18,9],[27,9],[37,9],[46,9],[58,9]],
+    mushrooms:[[20,2]],
+    stars:    [[54,3]],
+    spikes:   [[12,9],[25,9],[44,9]],
+    qBlocks:  [[7,5,'mushroom'],[33,5,'coin'],[42,3,'coin']],
+    pits:     [[31,2],[51,2]],
+  },
+  // Level 4 — sky theme, more verticality, 6 goombas
+  {
+    width: 70,
+    spawn: { x: 2*TILE, y: 8*TILE },
+    goal: { x: 67*TILE, y: 9*TILE },
+    theme: 'sky',
+    ground: [{x:0,len:70}],
+    platforms: [
+      {x:5,y:8,len:2},{x:9,y:6,len:2},{x:13,y:4,len:2},{x:17,y:6,len:2},{x:21,y:8,len:2},
+      {x:26,y:5,len:3},{x:32,y:7,len:2},{x:37,y:5,len:2},{x:42,y:3,len:3},{x:48,y:6,len:2},
+      {x:54,y:8,len:2},{x:58,y:5,len:3},{x:64,y:7,len:2},
+    ],
+    coins:    [[9,5],[13,3],[17,5],[21,7],[26,4],[27,4],[28,4],[32,6],[37,4],[42,2],[43,2],[44,2],[48,5],[58,4],[59,4]],
+    goombas:  [[7,9],[19,9],[24,9],[35,9],[45,9],[52,9],[61,9]],
+    mushrooms:[[26,4]],
+    stars:    [[42,2]],
+    spikes:   [[15,9],[30,9],[40,9],[56,9]],
+    qBlocks:  [[11,5,'coin'],[20,5,'mushroom'],[50,5,'coin']],
+    pits:     [[22,2],[55,2],[62,2]],
+  },
+  // Level 5 — boss-like challenge, 7 goombas, lots of spikes
+  {
+    width: 80,
+    spawn: { x: 2*TILE, y: 8*TILE },
+    goal: { x: 77*TILE, y: 9*TILE },
+    theme: 'castle',
+    ground: [{x:0,len:80}],
+    platforms: [
+      {x:5,y:7,len:2},{x:10,y:5,len:2},{x:14,y:7,len:2},{x:19,y:4,len:3},{x:25,y:6,len:2},
+      {x:30,y:8,len:2},{x:34,y:5,len:3},{x:40,y:7,len:2},{x:45,y:4,len:3},{x:52,y:6,len:2},
+      {x:57,y:8,len:2},{x:61,y:5,len:3},{x:67,y:7,len:2},{x:72,y:5,len:3},
+    ],
+    coins:    [[5,6],[10,4],[14,6],[19,3],[20,3],[25,5],[34,4],[35,4],[40,6],[45,3],[46,3],[52,5],[61,4],[62,4],[72,4],[73,4],[74,4]],
+    goombas:  [[8,9],[16,9],[22,9],[28,9],[37,9],[42,9],[50,9],[55,9],[64,9],[70,9]],
+    mushrooms:[[19,3],[45,3]],
+    stars:    [[34,4],[72,4]],
+    spikes:   [[12,9],[24,9],[32,9],[38,9],[48,9],[60,9],[66,9]],
+    qBlocks:  [[7,5,'mushroom'],[27,6,'coin'],[44,3,'coin']],
+    pits:     [[17,2],[43,2],[58,2],[68,2]],
+  },
+]
+
+// ═══════════════════════════════════════════════════════════════════
+//  ASSET LOADING (Pixi 8) — LINEAR scale mode for HD Pikachu sprite
+// ═══════════════════════════════════════════════════════════════════
+async function loadAssets() {
+  const PIXI = window.PIXI
+  if (!PIXI) throw new Error('Pixi.js failed to load')
+
+  // Pixi 8: Assets API
+  const baseUrl = '../assets/mario-pokemon/sprites/'
+  const manifest = {
+    pikachu_small: baseUrl + 'pikachu-small.png',
+    pikachu_big:   baseUrl + 'pikachu-big.png',
+    pikachu_fire:  baseUrl + 'pikachu-fire.png',
+    goomba: baseUrl + 'goomba.png',
+    coin:   baseUrl + 'coin.png',
+    mushroom: baseUrl + 'mushroom.png',
+    star:   baseUrl + 'star.png',
+    brick:  baseUrl + 'brick.png',
+    block:  baseUrl + 'block.png',
+    qblock: baseUrl + 'qblock.png',
+    cloud:  baseUrl + 'cloud.png',
+    bush:   baseUrl + 'bush.png',
+  }
+  const out = {}
+  for (const [key, url] of Object.entries(manifest)) {
+    try {
+      const tex = await PIXI.Assets.load(url)
+      // Pixi 8: source.scaleMode for smoothing (LINEAR avoids the pixelated
+      // look the user reported on the HD Pikachu sprite).
+      if (tex && tex.source) tex.source.scaleMode = 'linear'
+      out[key] = tex
+    } catch (e) {
+      console.warn('[g21] sprite load fail:', key, e)
+      out[key] = PIXI.Texture.WHITE
+    }
+  }
+  return out
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  PIXI INIT
+// ═══════════════════════════════════════════════════════════════════
+async function initPixi() {
+  const PIXI = window.PIXI
+  app = new PIXI.Application()
+  await app.init({
+    canvas: document.getElementById('pixi-canvas'),
+    width: window.innerWidth,
+    height: window.innerHeight,
+    backgroundAlpha: 0,
+    antialias: true,
+    resolution: window.devicePixelRatio || 1,
+    autoDensity: true,
+  })
+  window._g21App = app
+
+  textures = await loadAssets()
+
+  // Layer setup
+  bgLayer = new PIXI.Container()
+  parallaxFar = new PIXI.Container()
+  parallaxMid = new PIXI.Container()
+  world = new PIXI.Container()
+  fgLayer = new PIXI.Container()
+  hudParticles = new PIXI.Container()
+  app.stage.addChild(bgLayer, parallaxFar, parallaxMid, world, fgLayer, hudParticles)
+
+  buildBackground()
+  loadLevel(S.level)
+  attachInput()
+
+  document.getElementById('loading').classList.add('hide')
+
+  // Ticker
+  app.ticker.add(gameLoop)
+  S.running = true
+  S.startTime = performance.now()
+
+  window.addEventListener('resize', onResize)
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  BACKGROUND (parallax: sky gradient via DOM, clouds via Pixi)
+// ═══════════════════════════════════════════════════════════════════
+function buildBackground() {
+  // Body bg already has gradient. Add Pixi clouds.
+  const PIXI = window.PIXI
+  parallaxFar.removeChildren()
+  for (let i = 0; i < 12; i++) {
+    const c = new PIXI.Sprite(textures.cloud)
+    c.anchor.set(0.5)
+    c.x = (i * 250) + 100
+    c.y = 60 + (i % 3) * 70
+    c.scale.set(2 + Math.random() * 0.7)
+    c.alpha = 0.85
+    parallaxFar.addChild(c)
+  }
+  parallaxMid.removeChildren()
+  for (let i = 0; i < 8; i++) {
+    const b = new PIXI.Sprite(textures.bush)
+    b.anchor.set(0.5, 1)
+    b.x = (i * 380) + 150
+    b.y = window.innerHeight - 80
+    b.scale.set(2.6)
+    parallaxMid.addChild(b)
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  LEVEL LOADER
+// ═══════════════════════════════════════════════════════════════════
+function loadLevel(lvNum) {
+  const PIXI = window.PIXI
+  const idx = Math.max(0, Math.min(LEVELS.length - 1, lvNum - 1))
+  levelData = LEVELS[idx]
+  S.level = lvNum
+
+  // Reset state (keep lives/coins for momentum)
+  S.x = levelData.spawn.x
+  S.y = levelData.spawn.y
+  S.vx = 0; S.vy = 0
+  S.facing = 1; S.onGround = false; S.jumpFrames = 0
+  S.invincible = 0; S.starMode = 0; S.hitFrames = 0
+  S.camX = 0; S.gameOver = false; S.won = false; S.paused = false
+  S.goombaHitsThisLevel = 0; S.perfectMath = 0
+  S.walkFrame = 0; S.walkT = 0
+
+  // Clear world
+  world.removeChildren()
+  S.goombas.length = 0; S.coins.length = 0; S.mushrooms.length = 0
+  S.stars.length = 0; S.spikes.length = 0; S.qBlocks.length = 0
+
+  // Ground tiles
+  for (const seg of levelData.ground) {
+    for (let i = 0; i < seg.len; i++) {
+      const tx = seg.x + i
+      // Skip pit columns
+      const inPit = (levelData.pits || []).some(p => tx >= p[0] && tx < p[0] + p[1])
+      if (inPit) continue
+      placeTile('block', tx, 10)
+      placeTile('block', tx, 11)
+    }
+  }
+  // Platforms (suspended)
+  for (const p of levelData.platforms) {
+    for (let i = 0; i < p.len; i++) placeTile('brick', p.x + i, p.y)
+  }
+  // Q-blocks
+  for (const q of levelData.qBlocks) {
+    const sp = placeTile('qblock', q[0], q[1])
+    sp._g21Type = 'qblock'
+    sp._g21Reward = q[2]
+    sp._g21Hit = false
+    S.qBlocks.push(sp)
+  }
+  // Coins
+  for (const c of levelData.coins) {
+    const sp = new PIXI.Sprite(textures.coin)
+    sp.anchor.set(0.5)
+    sp.x = c[0] * TILE + TILE/2; sp.y = c[1] * TILE + TILE/2
+    sp.scale.set(0.7)
+    sp._g21Bob = Math.random() * 6.28
+    world.addChild(sp)
+    S.coins.push(sp)
+  }
+  // Goombas
+  for (const g of levelData.goombas) {
+    const sp = new PIXI.Sprite(textures.goomba)
+    sp.anchor.set(0.5, 1)
+    sp.x = g[0] * TILE + TILE/2; sp.y = g[1] * TILE + TILE
+    sp.scale.set(0.85)
+    sp._g21Vx = -1.2
+    sp._g21Alive = true
+    sp._g21BaseY = sp.y
+    world.addChild(sp)
+    S.goombas.push(sp)
+  }
+  // Mushrooms
+  for (const m of levelData.mushrooms) {
+    const sp = new PIXI.Sprite(textures.mushroom)
+    sp.anchor.set(0.5, 1)
+    sp.x = m[0] * TILE + TILE/2; sp.y = m[1] * TILE + TILE
+    sp.scale.set(0.85)
+    sp._g21Bob = Math.random() * 6.28
+    world.addChild(sp)
+    S.mushrooms.push(sp)
+  }
+  // Stars
+  for (const st of levelData.stars) {
+    const sp = new PIXI.Sprite(textures.star)
+    sp.anchor.set(0.5, 1)
+    sp.x = st[0] * TILE + TILE/2; sp.y = st[1] * TILE + TILE
+    sp.scale.set(0.85)
+    sp._g21Bob = Math.random() * 6.28
+    world.addChild(sp)
+    S.stars.push(sp)
+  }
+  // Spikes (drawn as red triangles via Graphics)
+  for (const sp of levelData.spikes) {
+    const g = new PIXI.Graphics()
+    g.poly([0,0, TILE,0, TILE/2,-TILE/2])
+    g.fill(0xef4444)
+    g.stroke({ width: 3, color: 0x991b1b })
+    g.x = sp[0] * TILE; g.y = sp[1] * TILE + TILE
+    world.addChild(g)
+    S.spikes.push(g)
+  }
+  // Goal flag (as gold rectangle)
+  const flag = new PIXI.Graphics()
+  flag.rect(-8, -TILE*3, 16, TILE*3).fill(0x10b981)
+  flag.poly([8,-TILE*3, 60,-TILE*2.7, 8,-TILE*2.4]).fill(0xfbbf24).stroke({width:2,color:0xb45309})
+  flag.x = levelData.goal.x; flag.y = levelData.goal.y
+  flag._g21IsGoal = true
+  world.addChild(flag)
+  S._goalFlag = flag
+
+  // Player sprite
+  const tex = textures['pikachu_' + (S.pikachuState || 'small')]
+  if (S._player) world.removeChild(S._player)
+  S._player = new PIXI.Sprite(tex)
+  S._player.anchor.set(0.5, 1)
+  // Source 512x512 contains 48x48 frames (10x10 grid = ~480 used). Show idle (frame 0).
+  S._player._frameW = 48
+  S._player._frameH = 48
+  S._player._cols = Math.floor(512 / 48) // 10
+  // Use a texture that's a sub-rect of the sheet
+  setPlayerFrame(0)
+  S._player.x = S.x; S._player.y = S.y
+  S._player.scale.set(2.0)  // 48*2 = 96 px on canvas (HD via LINEAR filter)
+  world.addChild(S._player)
+
+  document.getElementById('level-text').textContent = `LEVEL ${lvNum}`
+  document.getElementById('status-text').textContent = 'Ayo lompat! ⚡'
+  updateHUD()
+}
+
+function placeTile(kind, tx, ty) {
+  const PIXI = window.PIXI
+  const tex = textures[kind] || textures.brick
+  const sp = new PIXI.Sprite(tex)
+  sp.x = tx * TILE; sp.y = ty * TILE
+  sp.width = TILE; sp.height = TILE
+  sp._g21Tx = tx; sp._g21Ty = ty
+  sp._g21Solid = (kind === 'block' || kind === 'brick' || kind === 'qblock')
+  world.addChild(sp)
+  return sp
+}
+
+// Set player to a sprite-sheet frame (48x48 each, 10 cols).
+function setPlayerFrame(frameIdx) {
+  if (!S._player) return
+  const PIXI = window.PIXI
+  const fw = S._player._frameW || 48
+  const cols = S._player._cols || 10
+  const col = frameIdx % cols
+  const row = Math.floor(frameIdx / cols)
+  const baseTex = textures['pikachu_' + (S.pikachuState || 'small')]
+  if (!baseTex || !baseTex.source) return
+  try {
+    const sub = new PIXI.Texture({
+      source: baseTex.source,
+      frame: new PIXI.Rectangle(col * fw, row * fw, fw, fw),
+    })
+    S._player.texture = sub
+  } catch (_) { S._player.texture = baseTex }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  INPUT
+// ═══════════════════════════════════════════════════════════════════
+function attachInput() {
+  // Keyboard
+  window.addEventListener('keydown', e => {
+    if (S.gameOver || S.paused || S.pendingMath) return
+    if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') S.input.left = true
+    if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') S.input.right = true
+    if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+      if (!S.input.jump) S.input.jumpPressed = true
+      S.input.jump = true
+    }
+    if (e.key === 'p' || e.key === 'P' || e.key === 'Escape') togglePause()
+  })
+  window.addEventListener('keyup', e => {
+    if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') S.input.left = false
+    if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') S.input.right = false
+    if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') S.input.jump = false
+  })
+  // Touch buttons
+  const wireBtn = (id, key) => {
+    const el = document.getElementById(id); if (!el) return
+    const press = e => { e.preventDefault(); el.classList.add('held'); if (key === 'jump' && !S.input.jump) S.input.jumpPressed = true; S.input[key] = true }
+    const release = e => { e.preventDefault(); el.classList.remove('held'); S.input[key] = false }
+    el.addEventListener('pointerdown', press)
+    el.addEventListener('pointerup', release)
+    el.addEventListener('pointercancel', release)
+    el.addEventListener('pointerleave', release)
+  }
+  wireBtn('btn-left', 'left')
+  wireBtn('btn-right', 'right')
+  wireBtn('btn-jump', 'jump')
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  GAME LOOP
+// ═══════════════════════════════════════════════════════════════════
+function gameLoop() {
+  if (!S.running || S.paused || S.pendingMath) return
+  if (S.gameOver) return
+
+  // Horizontal velocity from input
+  const speed = S.starMode > 0 ? STAR_SPEED : RUN_SPEED
+  if (S.input.left) { S.vx = -speed; S.facing = -1 }
+  else if (S.input.right) { S.vx = speed; S.facing = 1 }
+  else S.vx *= 0.78
+
+  // Jump
+  if (S.input.jumpPressed && S.onGround) {
+    S.vy = S.starMode > 0 ? STAR_JUMP : JUMP_FORCE
+    S.onGround = false
+    S.jumpFrames = JUMP_HOLD_FRAMES
+    sfx('sfx-jump')
+  }
+  S.input.jumpPressed = false
+  if (S.input.jump && S.jumpFrames > 0 && S.vy < 0) {
+    S.vy -= 0.7
+    S.jumpFrames--
+  } else {
+    S.jumpFrames = 0
+  }
+
+  // Gravity
+  S.vy += GRAVITY
+  if (S.vy > 18) S.vy = 18
+
+  // Apply movement w/ collision (axis-separated AABB)
+  movePlayer(S.vx, 0)
+  movePlayer(0, S.vy)
+
+  // Pit fall
+  if (S.y > WORLD_H + 200) {
+    onDeath('pit')
+  }
+
+  // Update entities
+  updateGoombas()
+  updateCoins()
+  updateMushrooms()
+  updateStars()
+  checkSpikes()
+  checkGoal()
+
+  // Counters
+  if (S.invincible > 0) S.invincible--
+  if (S.starMode > 0) S.starMode--
+  if (S.hitFrames > 0) S.hitFrames--
+
+  // Animation
+  S.walkT++
+  if (Math.abs(S.vx) > 0.5) {
+    if (S.walkT % 6 === 0) S.walkFrame = (S.walkFrame + 1) % 3
+    setPlayerFrame(S.walkFrame + 1) // frames 1,2,3 = walk cycle
+  } else {
+    setPlayerFrame(0) // idle
+  }
+  if (!S.onGround) setPlayerFrame(5) // jump frame
+  S._player.scale.x = 2.0 * S.facing
+  // Star mode tint
+  if (S.starMode > 0) S._player.tint = (Math.floor(S.starMode/4) % 2 === 0) ? 0xffffff : 0xfbbf24
+  else if (S.hitFrames > 0 && Math.floor(S.hitFrames/4) % 2 === 0) S._player.alpha = 0.4
+  else { S._player.tint = 0xffffff; S._player.alpha = 1 }
+
+  // Camera
+  const targetCamX = Math.max(0, Math.min(levelData.width * TILE - window.innerWidth, S.x - window.innerWidth/2))
+  S.camX += (targetCamX - S.camX) * 0.15
+  world.x = -S.camX
+  parallaxMid.x = -S.camX * 0.45
+  parallaxFar.x = -S.camX * 0.18
+
+  // Player sprite track
+  S._player.x = S.x
+  S._player.y = S.y
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  COLLISION (axis-separated AABB)
+// ═══════════════════════════════════════════════════════════════════
+function movePlayer(dx, dy) {
+  const w = 36, hSmall = 80, hBig = 110
+  const h = S.pikachuState === 'small' ? hSmall : hBig
+  S.x += dx
+  S.y += dy
+  // Clamp horizontal
+  S.x = Math.max(w/2, Math.min(levelData.width * TILE - w/2, S.x))
+  // Build player AABB (anchor 0.5, 1 → x = center, y = bottom)
+  const px = S.x - w/2, py = S.y - h, pw = w, ph = h
+  // Check tile collisions
+  for (const c of world.children) {
+    if (!c._g21Solid) continue
+    if (px + pw <= c.x || px >= c.x + TILE) continue
+    if (py + ph <= c.y || py >= c.y + TILE) continue
+    // Resolve based on movement axis
+    if (dy > 0) { // falling — land on top
+      S.y = c.y; S.vy = 0; S.onGround = true
+    } else if (dy < 0) { // rising — bonk head
+      S.y = c.y + TILE + ph; S.vy = 0
+      // Q-block hit
+      if (c._g21Type === 'qblock' && !c._g21Hit) {
+        c._g21Hit = true
+        c.tint = 0x666666 // darken used qblock
+        sfx('sfx-bump')
+        if (c._g21Reward === 'coin') {
+          S.coins++ ; S.score += 10
+          spawnScorePopup(c.x + TILE/2, c.y, '+10', 'coin')
+          checkLifeFromCoins()
+        } else if (c._g21Reward === 'mushroom') {
+          // spawn mushroom on top
+          const PIXI = window.PIXI
+          const m = new PIXI.Sprite(textures.mushroom)
+          m.anchor.set(0.5, 1)
+          m.x = c.x + TILE/2; m.y = c.y - 4
+          m.scale.set(0.85)
+          m._g21Bob = 0; m._g21FromBlock = true
+          world.addChild(m)
+          S.mushrooms.push(m)
+          sfx('sfx-powerup')
+        }
+      }
+    } else if (dx > 0) {
+      S.x = c.x - w/2
+    } else if (dx < 0) {
+      S.x = c.x + TILE + w/2
+    }
+  }
+  if (dy === 0) return
+  if (dy > 0 && S.vy === 0) S.onGround = true
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  ENTITIES UPDATE
+// ═══════════════════════════════════════════════════════════════════
+function updateGoombas() {
+  for (const g of S.goombas) {
+    if (!g._g21Alive) {
+      g.alpha -= 0.04
+      if (g.alpha <= 0) { world.removeChild(g); g._g21Removed = true }
+      continue
+    }
+    g.x += g._g21Vx
+    // Edge turn (simple — turn around on wall hit by checking ahead)
+    const aheadX = Math.floor((g.x + Math.sign(g._g21Vx) * 30) / TILE)
+    const groundCheckY = Math.floor((g.y + 4) / TILE)
+    let hasGroundAhead = false
+    for (const c of world.children) {
+      if (!c._g21Solid) continue
+      if (c._g21Tx === aheadX && c._g21Ty === groundCheckY) { hasGroundAhead = true; break }
+    }
+    if (!hasGroundAhead) g._g21Vx *= -1
+    // Player collision
+    if (collides(g, S, 28, 70)) onGoombaCollide(g)
+  }
+  S.goombas = S.goombas.filter(g => !g._g21Removed)
+}
+
+function updateCoins() {
+  for (let i = S.coins.length - 1; i >= 0; i--) {
+    const c = S.coins[i]
+    c._g21Bob = (c._g21Bob || 0) + 0.18
+    c.y += Math.sin(c._g21Bob) * 0.4
+    c.rotation = Math.sin(c._g21Bob * 0.5) * 0.6
+    if (collides(c, S, 36, 70)) {
+      sfx('sfx-coin')
+      S.coins++; S.score += 10
+      spawnScorePopup(c.x, c.y, '+10', 'coin')
+      world.removeChild(c)
+      S.coins.splice(i, 1)
+      checkLifeFromCoins()
+      updateHUD()
+    }
+  }
+}
+
+function updateMushrooms() {
+  for (let i = S.mushrooms.length - 1; i >= 0; i--) {
+    const m = S.mushrooms[i]
+    m._g21Bob = (m._g21Bob || 0) + 0.12
+    if (m._g21FromBlock && m._g21Bob < 1.0) m.y -= 1.5
+    if (collides(m, S, 36, 70)) {
+      sfx('sfx-powerup')
+      if (S.pikachuState === 'small') {
+        S.pikachuState = 'big'
+        spawnScorePopup(S.x, S.y - 80, 'GROW! 🌟', 'heal')
+      } else {
+        S.score += 1000
+        spawnScorePopup(m.x, m.y, '+1000', 'coin')
+      }
+      world.removeChild(m); S.mushrooms.splice(i, 1)
+      updateHUD()
+    }
+  }
+}
+
+function updateStars() {
+  for (let i = S.stars.length - 1; i >= 0; i--) {
+    const st = S.stars[i]
+    st._g21Bob = (st._g21Bob || 0) + 0.15
+    st.rotation = st._g21Bob
+    st.y += Math.sin(st._g21Bob) * 0.6
+    if (collides(st, S, 36, 70)) {
+      sfx('sfx-powerup')
+      S.starMode = 600 // 10s @ 60fps
+      S.score += 500
+      spawnScorePopup(st.x, st.y, 'STAR!', 'heal')
+      world.removeChild(st); S.stars.splice(i, 1)
+    }
+  }
+}
+
+function checkSpikes() {
+  if (S.invincible > 0 || S.starMode > 0) return
+  for (const s of S.spikes) {
+    if (collides(s, S, 28, 70, true)) {
+      // instant -1 life (not math)
+      S.lives -= 1
+      sfx('sfx-damage')
+      S.invincible = 90
+      S.hitFrames = 60
+      knockback()
+      if (S.lives <= 0) onDeath('spike')
+      updateHUD()
+    }
+  }
+}
+
+function checkGoal() {
+  if (!S._goalFlag) return
+  if (Math.abs(S._goalFlag.x - S.x) < 50 && Math.abs(S._goalFlag.y - S.y) < 200) onWin()
+}
+
+function collides(a, player, aw, ph, looseY) {
+  const ax = a.x - aw/2, ay = a.y - aw, awidth = aw, aheight = looseY ? aw : aw
+  const px = player.x - 18, py = player.y - ph, pw = 36, pheight = ph
+  return (ax + awidth > px && ax < px + pw && ay + aheight > py && ay < py + pheight)
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  GOOMBA COLLISION — Math quiz on easy
+// ═══════════════════════════════════════════════════════════════════
+function onGoombaCollide(g) {
+  if (S.invincible > 0) return
+  // Stomp from above? player.vy > 0 and player.y near goomba.y - 30
+  if (S.vy > 1 && S.y < g.y - 8) {
+    g._g21Alive = false
+    S.vy = JUMP_FORCE * 0.6
+    S.score += 100
+    sfx('sfx-stomp')
+    spawnScorePopup(g.x, g.y - 40, '+100', 'coin')
+    return
+  }
+  if (S.starMode > 0) {
+    g._g21Alive = false
+    S.score += 200
+    sfx('sfx-stomp')
+    spawnScorePopup(g.x, g.y - 40, '+200', 'heal')
+    return
+  }
+  // Side hit — damage
+  S.invincible = 90
+  S.hitFrames = 60
+  knockback()
+  sfx('sfx-damage')
+  S.goombaHitsThisLevel++
+  if (S.difficulty === 'easy') {
+    S.lives -= 0.5
+    updateHUD()
+    if (S.lives <= 0) { onDeath('goomba'); return }
+    triggerMathQuiz()
+  } else {
+    S.lives -= 1
+    updateHUD()
+    if (S.lives <= 0) onDeath('goomba')
+  }
+}
+
+function knockback() {
+  S.vy = -7
+  S.vx = -S.facing * 4
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  MATH QUIZ MODAL
+// ═══════════════════════════════════════════════════════════════════
+function makeMathQuestion(level) {
+  // Scale difficulty with level
+  const max = level <= 2 ? 10 : level <= 4 ? 15 : 20
+  const a = 1 + Math.floor(Math.random() * max)
+  const b = 1 + Math.floor(Math.random() * max)
+  const op = (level >= 3 && Math.random() < 0.4) ? '-' : '+'
+  let q, ans
+  if (op === '-') {
+    const big = Math.max(a, b), small = Math.min(a, b)
+    q = `${big} - ${small} = ?`; ans = big - small
+  } else {
+    q = `${a} + ${b} = ?`; ans = a + b
+  }
+  // 3 wrong choices near the answer
+  const wrongs = new Set()
+  while (wrongs.size < 3) {
+    const off = (Math.floor(Math.random() * 6) - 3) || (Math.random() < 0.5 ? 1 : -1)
+    const w = Math.max(0, ans + off)
+    if (w !== ans) wrongs.add(w)
+  }
+  const choices = [...wrongs, ans].sort(() => Math.random() - 0.5)
+  return { q, ans, choices }
+}
+
+let _mqState = null
+function triggerMathQuiz() {
+  S.pendingMath = true
+  _mqState = { idx: 0, total: 2, correct: 0, dots: ['', ''] }
+  showMathQuestion()
+}
+
+function showMathQuestion() {
+  const overlay = document.getElementById('math-quiz')
+  const qEl = document.getElementById('mq-question')
+  const choicesEl = document.getElementById('mq-choices')
+  const progressEl = document.getElementById('mq-progress')
+  const q = makeMathQuestion(S.level)
+  _mqState.currentAns = q.ans
+  qEl.textContent = q.q
+  // Progress dots
+  progressEl.innerHTML = ''
+  for (let i = 0; i < _mqState.total; i++) {
+    const d = document.createElement('span')
+    d.className = 'mq-dot' + (i === _mqState.idx ? ' active' : '') + (_mqState.dots[i] === 'done' ? ' done' : '') + (_mqState.dots[i] === 'fail' ? ' fail' : '')
+    progressEl.appendChild(d)
+  }
+  choicesEl.innerHTML = ''
+  q.choices.forEach(c => {
+    const b = document.createElement('button')
+    b.className = 'mq-btn'
+    b.textContent = c
+    b.onclick = () => onMathAnswer(b, c, q.ans)
+    choicesEl.appendChild(b)
+  })
+  overlay.classList.add('show')
+}
+
+function onMathAnswer(btn, picked, correct) {
+  if (btn.dataset.locked) return
+  btn.dataset.locked = '1'
+  Array.from(btn.parentElement.children).forEach(b => b.dataset.locked = '1')
+  const isCorrect = picked === correct
+  btn.classList.add(isCorrect ? 'correct' : 'wrong')
+  if (isCorrect) {
+    _mqState.correct++
+    _mqState.dots[_mqState.idx] = 'done'
+  } else {
+    _mqState.dots[_mqState.idx] = 'fail'
+    // highlight correct
+    Array.from(btn.parentElement.children).forEach(b => {
+      if (parseInt(b.textContent) === correct) b.classList.add('correct')
+    })
+  }
+  setTimeout(() => {
+    _mqState.idx++
+    if (_mqState.idx >= _mqState.total) finishMathQuiz()
+    else showMathQuestion()
+  }, isCorrect ? 700 : 1100)
+}
+
+function finishMathQuiz() {
+  document.getElementById('math-quiz').classList.remove('show')
+  S.pendingMath = false
+  const c = _mqState.correct
+  if (c === 2) {
+    S.lives = Math.min(MAX_LIVES, S.lives + 0.5)
+    S.perfectMath++
+    showToast('Sempurna! +0.5 ❤️ ⚡')
+    spawnScorePopup(S.x, S.y - 100, 'PERFECT!', 'heal')
+  } else if (c === 1) {
+    showToast('Bagus! Lanjut!')
+  } else {
+    S.lives -= 0.5
+    showToast('Coba lagi! 💪')
+    if (S.lives <= 0) { onDeath('math'); return }
+  }
+  updateHUD()
+  _mqState = null
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  HUD + UI
+// ═══════════════════════════════════════════════════════════════════
+function updateHUD() {
+  document.getElementById('coin-count').textContent = S.coins
+  const heartsEl = document.getElementById('lives-hearts')
+  const full = Math.floor(S.lives)
+  const half = (S.lives - full) >= 0.5
+  let html = ''
+  for (let i = 0; i < MAX_LIVES; i++) {
+    if (i < full) html += '<span class="life-heart">❤️</span>'
+    else if (i === full && half) html += '<span class="life-heart half">💔</span>'
+    else html += '<span class="life-heart empty">🖤</span>'
+  }
+  heartsEl.innerHTML = html
+}
+
+function checkLifeFromCoins() {
+  if (S.coins >= 100) {
+    S.coins -= 100
+    S.lives = Math.min(MAX_LIVES, S.lives + 1)
+    sfx('sfx-1up')
+    showToast('1-UP! ❤️')
+  }
+}
+
+function spawnScorePopup(x, y, txt, kind) {
+  const p = document.createElement('div')
+  p.className = 'score-popup' + (kind ? ' ' + kind : '')
+  p.textContent = txt
+  // Convert world x to screen
+  const screenX = x - S.camX + (window.innerWidth - levelData.width*TILE > 0 ? 0 : 0)
+  p.style.left = (screenX) + 'px'
+  p.style.top = y + 'px'
+  document.body.appendChild(p)
+  setTimeout(() => p.remove(), 950)
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  WIN / LOSE
+// ═══════════════════════════════════════════════════════════════════
+function onWin() {
+  if (S.won) return
+  S.won = true; S.running = false
+  sfx('sfx-flag')
+  const elapsed = (performance.now() - S.startTime) / 1000
+  const totalCoinsInLevel = (levelData.coins || []).length
+  const stars = computeStars(totalCoinsInLevel, elapsed)
+  saveProgress(stars)
+  setTimeout(() => showWinModal(stars), 800)
+}
+
+function computeStars(totalCoins, elapsed) {
+  const coinPct = totalCoins > 0 ? Math.min(1, S.coins / totalCoins) : 1
+  let stars = 1
+  if (coinPct >= 0.95 && S.goombaHitsThisLevel === 0) stars = 5
+  else if (coinPct >= 0.8 && S.goombaHitsThisLevel <= 1) stars = 4
+  else if (coinPct >= 0.6) stars = 3
+  else if (coinPct >= 0.3) stars = 2
+  // Bonus from perfect math
+  if (S.perfectMath >= 2 && stars < 5) stars = Math.min(5, stars + 1)
+  return stars
+}
+
+function showWinModal(stars) {
+  if (typeof GameModal !== 'undefined' && GameModal.show) {
+    const lv = S.level
+    const nextLv = lv < LEVELS.length ? () => {
+      try { sessionStorage.setItem('g21Config', JSON.stringify({ level: lv + 1, difficulty: S.difficulty })) } catch(_){}
+      cleanup(); setTimeout(() => location.reload(), 50)
+    } : null
+    GameModal.show({
+      emoji: stars >= 5 ? '🏆' : stars >= 4 ? '🌟' : stars >= 3 ? '⭐' : '💪',
+      title: stars >= 5 ? 'Sempurna!' : stars >= 4 ? 'Hebat!' : stars >= 3 ? 'Bagus!' : 'Selesai',
+      stars,
+      msg: stars >= 4 ? 'Kamu master Mario Pokemon!' : 'Coba kumpulkan lebih banyak koin & hindari musuh.',
+      onNext: nextLv,
+      onAgain: () => restartLevel(),
+      onBack: () => goBack(),
+    })
+  } else {
+    showToast(`Selesai! ${stars}⭐`, 4000)
+    setTimeout(goBack, 4500)
+  }
+}
+
+function onDeath(reason) {
+  if (S.gameOver) return
+  S.gameOver = true; S.running = false
+  sfx('sfx-damage')
+  setTimeout(() => {
+    if (typeof GameModal !== 'undefined' && GameModal.show) {
+      GameModal.show({
+        emoji: '💔',
+        title: reason === 'pit' ? 'Jatuh ke jurang!' : 'Game Over',
+        stars: 0,
+        msg: 'Coba lagi, kamu pasti bisa! ⚡',
+        onAgain: () => restartLevel(),
+        onBack: () => goBack(),
+      })
+    } else {
+      setTimeout(restartLevel, 1500)
+    }
+  }, 600)
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  PROGRESS SAVE (compat: dunia-0-progress, main app migrates)
+// ═══════════════════════════════════════════════════════════════════
+function saveProgress(stars) {
+  try {
+    const key = 'dunia-0-progress'
+    const prog = JSON.parse(localStorage.getItem(key) || '{}')
+    if (!prog.g21) prog.g21 = { completed: [], stars: {} }
+    if (!prog.g21.completed.includes(S.level)) prog.g21.completed.push(S.level)
+    if ((prog.g21.stars[S.level] || 0) < stars) prog.g21.stars[S.level] = stars
+    localStorage.setItem(key, JSON.stringify(prog))
+  } catch (_) {}
+  // Propagate to main app via sessionStorage (pageshow handler picks this up)
+  try { sessionStorage.setItem('g21Result', JSON.stringify({ stars, level: S.level })) } catch (_) {}
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  CONTROLS — pause / restart / back
+// ═══════════════════════════════════════════════════════════════════
+function togglePause() {
+  if (S.gameOver || S.won || S.pendingMath) return
+  S.paused = !S.paused
+  document.getElementById('pause-overlay').classList.toggle('show', S.paused)
+  document.getElementById('btn-pause').textContent = S.paused ? '▶' : '⏸'
+}
+
+function restartLevel() {
+  document.getElementById('pause-overlay').classList.remove('show')
+  S.lives = MAX_LIVES; S.coins = 0; S.score = 0
+  S.pikachuState = 'small'
+  loadLevel(S.level)
+  S.running = true
+  S.startTime = performance.now()
+  S.paused = false; S.gameOver = false; S.won = false
+  document.getElementById('btn-pause').textContent = '⏸'
+}
+window.restartLevel = restartLevel
+
+function cleanup() {
+  if (cleanedUp) return
+  cleanedUp = true
+  try { if (app && app.ticker) app.ticker.stop() } catch (_) {}
+  try { document.querySelectorAll('audio').forEach(a => { a.pause(); a.currentTime = 0 }) } catch(_) {}
+}
+
+function goBack() {
+  cleanup()
+  setTimeout(() => history.back(), 30)
+}
+window.goBack = goBack
+window.togglePause = togglePause
+
+// ═══════════════════════════════════════════════════════════════════
+//  RESIZE
+// ═══════════════════════════════════════════════════════════════════
+function onResize() {
+  if (!app) return
+  app.renderer.resize(window.innerWidth, window.innerHeight)
+  buildBackground()
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  BOOT
+// ═══════════════════════════════════════════════════════════════════
+initPixi().catch(e => {
+  console.error('[g21] init failed:', e)
+  document.getElementById('loading').innerHTML = '<div style="color:#fbbf24">Gagal memuat game.<br><small>'+e.message+'</small><br><button onclick="history.back()" style="margin-top:14px;padding:10px 18px;border-radius:10px;border:none;background:#7C3AED;color:#fff;font-weight:900;cursor:pointer">Kembali</button></div>'
+})
+</script>
+
+</body>
+</html>

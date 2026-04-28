@@ -1644,3 +1644,71 @@ Found and fixed 4 legacy duplicate-URL cascades in `game.js` (1234, 2788, 9038, 
 ### ✅ Task #104-G — G10 hit effects (port g13c)
 `game.js` — new `G10_TYPE_HIT_FX` map (18 types) + `g10SpawnTypeHitFX(targetEl, type)` + `g10EnsureHitFXStyles()` (injects 13 keyframes once). Wired into `g10DoAttack` defender hit block (~line 6633) so every successful hit spawns g13c-quality sprite-tight emoji burst.
 
+
+---
+
+## 📊 Session 2026-04-29 — Hotfix #105 (Mario Pokemon G21 — Pixi platformer)
+
+Cache bump: `v=20260428b` → `v=20260429a`. Plan: `/home/baguspermana7/.claude/plans/purring-brewing-flurry.md`.
+
+User: "ini gamenya, tapi saya mau ini bener2 di integrasikan ke pixi, bener2 totally masih sama, tapi lebih responsive untuk browser mobile, pc, dan kontrolnya kasih button transparant di layar jika sedang mobile browser dan dengan keyboard jika pakai pc... karakter nya saya ganti dengan pikachu, tapi aneh gambarnya jadi pecah... naikkan levelnya dan enhance... integrasikan ke dalam directory dunia emosi... setiap kali nabrak musuh itu easy berkurang 1/2 life dan jawab 2 pertanyaan matematika... saya mau menjadi game AAA level UIUX, dan expand it karena ini rationya kecil"
+
+Source proyek: `/home/baguspermana7/Bagus_Apps/Supermario/` (C++ + Construct 2 web, NES 256×224 ratio, Construct 2 nearest-neighbor scaling = Pikachu pecah).
+
+### ✅ Task #105-A — Asset extraction
+Copied 12 sprites + 19 OGG audio dari Supermario → `assets/mario-pokemon/sprites/` + `audio/`. Pikachu HD source 512×512 PNG, 48×48 frames per sheet (small/big/fire forms).
+
+### ✅ Task #105-B — Pixi 8 game shell (`games/g21-pixi.html`, 1217 baris)
+- Canvas 100vw × 100svh (full-bleed responsive 16:9 letterbox)
+- HUD top: back/pause buttons, level text, coin counter (🪙), 3-heart life display dengan half-heart support
+- Body bg: sky→sand gradient (Mario theme), Pixi parallax 2-layer (clouds + bushes)
+- Loading splash + spinner, fade out saat assets ready
+- Audio preload 8 SFX (jump, coin, stomp, powerup, damage, 1up, flag, bump)
+
+### ✅ Task #105-C — Pikachu sprite HD fix (root cause Pixi LINEAR vs Construct 2 NEAREST)
+Pixi 8 `texture.source.scaleMode = 'linear'` saat `Assets.load()` — bilinear filtering halus saat sprite di-scale 2× (48px→96px). Tidak lagi blocky/pecah seperti di Construct 2.
+
+### ✅ Task #105-D — Physics + tilemap + camera
+Konstanta dari C++ source (gravity 0.55, run 5.2, jump -11.5, jump-hold 14 frames). AABB axis-separated collision dengan tilemap (TILE=64 px). Camera lerp(target, 0.15) follow Pikachu, clamp ke level bounds.
+
+### ✅ Task #105-E — Entities (Goomba, Coin, Mushroom, Star, Spike, Q-Block)
+- Goomba: patrol +/- arah, edge-turn detection (cek tile depan), stomp-from-above kills, side-collision damage
+- Coin: bob/rotate anim, pickup +10 score
+- Mushroom: small→big growth (atau +1000 jika sudah big)
+- Star: 10 detik invincibility + tint flash
+- Spike: instant -1 life
+- Q-Block: hit dari bawah spawn coin/mushroom (track _g21Hit flag)
+
+### ✅ Task #105-F — Math quiz integration (Dunia Emosi mechanic)
+Easy mode: collision dengan Goomba → -0.5 life + 2 pertanyaan matematika (level-scaling: lv 1-2 max 10, lv 3-4 max 15, lv 5+ pengurangan). Skor:
+- 2/2 benar: +0.5 life kembali + bonus skor
+- 1/2 benar: tidak ada penalty
+- 0/2 benar: -0.5 life lagi (total -1)
+Modal popup dengan progress dots, choice buttons 2×2 grid, animasi correct/wrong feedback.
+
+### ✅ Task #105-G — Mobile + PC controls split
+Mobile: 3 tombol bulat transparan (◀▶▲) bawah-kiri + bawah-kanan, `backdrop-filter: blur(6px)`, multi-touch capable via pointer events. Auto-hide via `@media (pointer:fine) and (hover:hover)`.
+PC: keyboard ←→/A/D + Space/↑/W untuk lompat, P/Esc untuk pause.
+
+### ✅ Task #105-H — Win/lose + save progress
+`GameModal.show()` dengan stars 1-5 dari `computeStars()` (combine coin %, goomba hits, perfect math). Save raw stars ke `dunia-0-progress.g21.stars[level]` + sessionStorage `g21Result`. Pageshow handler (game.js:6991) sudah include 21 → migrasi ke avatar-keyed via existing flow.
+
+### ✅ Task #105-I — Wire ke Dunia Emosi
+- `index.html` gtile-21 onclick `openLevelSelect(21)`.
+- `game.js` GAME_META[21] + GAME_INFO[21] + initGame21() → `window.location.href = 'games/g21-pixi.html?v=20260429a'`.
+- `standaloneGames` array + `inits` array di startGameWithLevel updated.
+- Cache bump game.js `?v=20260429a`.
+
+### 5 Levels MVP (LEVELS array di g21-pixi.html)
+1. Lv 1 (50 tiles, 3 goombas, 8 coins, intro): basic flat ground + few platforms
+2. Lv 2 (60 tiles, 4 goombas, lebih vertikal): platform tinggi + spike
+3. Lv 3 (65 tiles, 6 goombas, theme:cave): math-heavy
+4. Lv 4 (70 tiles, 7 goombas, theme:sky): floating platforms
+5. Lv 5 (80 tiles, 10 goombas, theme:castle): boss-like challenge
+
+### Catatan untuk pengembangan lanjut
+- Aset di `assets/mario-pokemon/sprites/` boleh diganti user dengan icon.png HD untuk landing tile.
+- Untuk Pikachu lebih HD lagi: generate sprite versi 96×96 atau 144×144 via tool image upscale.
+- BGM belum ada (audio folder hanya SFX); tambahkan `mario-bgm.mp3` di audio folder + load via `<audio>` element bila perlu.
+- Difficulty toggle (medium/hard tanpa math quiz) sudah disiapkan via `cfg.difficulty` di sessionStorage.
+

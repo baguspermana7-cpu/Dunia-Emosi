@@ -1,5 +1,31 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-29 — Hotfix #105 (Mario Pokemon G21 — Pixi platformer)
+
+Cache bump: `v=20260428b` → `v=20260429a` (game.js). New file `games/g21-pixi.html` at `?v=20260429a`.
+
+User shipped a separate C++ Mario remake (`/home/baguspermana7/Bagus_Apps/Supermario/`) with Pikachu replacing Mario, but Construct 2's nearest-neighbor scaling made the HD Pikachu sprite "pecah" (pixelated). User wanted: full Pixi port, integrate into Dunia Emosi as G21, mobile transparent controls + PC keyboard split, math quiz on enemy collision (easy mode -½ life + 2 questions), expanded levels, AAA UIUX, larger aspect ratio.
+
+### What shipped
+- **NEW** `games/g21-pixi.html` (1217 lines) — Pixi 8 platformer at logical 1024×576, fills viewport via `app.renderer.resize` + `resolution: window.devicePixelRatio`.
+- **Pikachu HD fix**: `texture.source.scaleMode = 'linear'` after Pixi `Assets.load()` (Pixi 8 API). Source 512×512 sheet, 48×48 frames per state, scaled 2× to 96 px on canvas — bilinear interpolation eliminates the blocky look.
+- **Physics**: gravity 0.55, run 5.2, jump -11.5 with 14-frame variable hold, axis-separated AABB tilemap collision (TILE=64). Constants ported from C++ source (`main_char.cc`, `goomba.cc`).
+- **Entities**: Goomba (patrol + edge-turn + stomp-kill), Coin (bob + rotate + pickup), Mushroom (small→big or +1000 if big), Star (10s invincibility + tint flash), Spike (instant -1 life), Q-Block (hit-from-below spawns coin/mushroom).
+- **Math quiz mechanic**: Easy mode Goomba side-hit → game pauses, modal shows 2 sequential math questions (level-scaling difficulty), reward/penalty per correct count: 2/2 = +0.5 life, 1/2 = neutral, 0/2 = additional -0.5 life. Reuses Dunia Emosi quiz UI patterns (purple/violet card, 4-choice grid, progress dots).
+- **Mobile/PC control split**: Three transparent circular buttons (◀▶▲) overlay at bottom with `backdrop-filter: blur(6px)`, multi-touch pointer events. Auto-hidden on PC via `@media (pointer:fine) and (hover:hover)`. Keyboard ←→/A/D + Space/↑/W + P/Esc for pause.
+- **5 starter levels** (50-80 tiles wide each), themed: intro, vertical, cave, sky, castle. Hand-crafted JSON in `LEVELS` array — no Construct 2 reverse-engineering needed.
+- **Win/lose**: `GameModal.show()` with stars 1-5 from coin %, goomba hits, perfect math bonuses. Saves raw stars to `dunia-0-progress.g21.stars[level]` + sessionStorage `g21Result` for main-app pageshow migration.
+- **Dunia Emosi integration**: `index.html` gtile-21 → `openLevelSelect(21)`. `game.js` GAME_META[21] + GAME_INFO[21] + `initGame21()` route to `games/g21-pixi.html?v=20260429a`. `standaloneGames` array, `inits` array, and pageshow handler all updated to include 21.
+
+### Out of scope (deferred)
+- BGM track (audio folder has SFX only — drop `mario-bgm.mp3` later).
+- Custom landing icon (`assets/mario-pokemon/icon.png` placeholder; falls back to 🍄 emoji).
+- Higher-resolution Pikachu sprites (96×96 / 144×144 upscale via Pillow).
+- Difficulty toggle UI (logic supports `cfg.difficulty`; just needs UI).
+- Levels 6-10 + thematic variety (cave/lava/sky/snow/space).
+
+---
+
 ## 2026-04-28 (evening) — Hotfix #104 (Picker Freeze + Layout + Effects)
 
 Cache bump: `v=20260428a` → `v=20260428b`.

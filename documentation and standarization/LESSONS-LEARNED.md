@@ -4,6 +4,22 @@
 
 ---
 
+## 2026-04-29 — Hotfix #105
+
+### L45 — Pixi 8 `texture.source.scaleMode = 'linear'` is the cure for "HD sprite looks pixelated"
+- **Symptom**: User imported HD 512×512 Pikachu PNG into Construct 2 Mario clone — sprite rendered blocky/pixelated even at small scales. "Karakter gif yang saya kasih itu cukup HD tapi pecah".
+- **Root cause**: Construct 2 defaults to nearest-neighbor sampling for "pixel-perfect" retro look. When the engine's internal canvas (256×224) is CSS-scaled to fill a high-DPR display, every pixel is duplicated → blocky.
+- **Fix**: In Pixi 8 port, after `await PIXI.Assets.load(url)`, set `texture.source.scaleMode = 'linear'`. This tells the GPU to bilinear-interpolate the texture when sampled at fractional coordinates. Combined with Pixi's `resolution: window.devicePixelRatio` and `autoDensity: true`, the result on a retina screen is crisp HD rendering, not blocky.
+- **Lesson**: When porting a sprite from a "pixel art" engine to a "clean modern" engine, the texture filter mode is the most-likely culprit for "looks bad". Always verify scaleMode at asset load time. For HD sprites: LINEAR. For genuine pixel art: NEAREST. The two modes solve opposite problems and applying the wrong one ruins the asset.
+
+### L46 — Single-file standalone game vs sprawling shared module: choose based on independence
+- **Symptom**: G21 needed Pixi physics, tilemap collision, entity AI, math quiz, win/lose modal, mobile controls — could've split across many files.
+- **Root cause**: The Dunia Emosi project standard for standalone games (g15-pixi, g16-pixi, g20-pixi, g22-candy) is a single self-contained HTML file with inline `<script>`. Split files would mean either ESM imports (require build step) or many `<script src=>` tags (more HTTP, no build).
+- **Fix**: g21-pixi.html is 1217 lines with all logic inline. Asset URLs reference `../assets/mario-pokemon/sprites/*.png` (file system, no build). Shared modules (`game-modal.js`, `freeze-watchdog.js`) loaded as global script tags.
+- **Lesson**: "Single file" is the right unit when (a) the game is independent (no cross-game state), (b) no build step exists in the project, (c) shared logic is small enough to load globally. Don't split a self-contained 1200-line game across 6 modules just for "modularity" — the cost (HTTP requests, complexity) outweighs the benefit (none, since reuse is local).
+
+---
+
 ## 2026-04-28 (evening) — Hotfix #104
 
 ### L41 — A "fixed" symptom may have multiple root causes; users will tell you when you missed one

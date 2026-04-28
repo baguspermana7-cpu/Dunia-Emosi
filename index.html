@@ -481,13 +481,13 @@
             <div class="wmap-node-name">Ducky Volley</div>
             <div class="wmap-node-stars" id="gstars-20-lbl"></div>
           </div>
-          <!-- G21: Mario Pokemon (landing tile only — game implementation pending) -->
-          <div class="wmap-node" id="gtile-21" onclick="playClick();showComingSoonToast('Mario Pokemon','🍄')" title="Mario Pokemon">
+          <!-- G21: Mario Pokemon (Pixi platformer with math-quiz mechanic) -->
+          <div class="wmap-node" id="gtile-21" onclick="playClick();openLevelSelect(21)" title="Mario Pokemon">
             <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#E8262A,#FBBF24);box-shadow:0 4px 0 #B91C1C,0 8px 16px rgba(232,38,42,0.35);">
               <img loading="lazy" decoding="async" class="wn-icon" src="assets/mario-pokemon/icon.png" alt="Mario Pokemon" style="width:44px;height:44px;object-fit:contain;display:block;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.5));" onerror="this.outerHTML='<span class=&quot;wn-icon&quot; style=&quot;font-size:32px;line-height:1;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.5));&quot;>🍄</span>'">
             </div>
             <div class="wmap-node-name">Mario Pokemon</div>
-            <div class="wmap-node-stars" id="gstars-21-lbl"><span style="font-size:9px;color:#FBBF24;font-weight:900;letter-spacing:0.5px;">🚧 Segera Hadir</span></div>
+            <div class="wmap-node-stars" id="gstars-21-lbl"></div>
           </div>
           <!-- G22: Monster Wants Candy -->
           <div class="wmap-node" id="gtile-22" onclick="playClick();openLevelSelect(22)" title="Monster Wants Candy">
@@ -2104,6 +2104,6 @@ function loadPixiJS(cb) {
      Bump 20260428b: picker overhaul, legacy cascade audit, G10 hit FX. -->
 <script src="games/data/poke-sprite-loader.js?v=20260428b" defer></script>
 <script src="games/data/freeze-watchdog.js?v=20260428a" defer></script>
-<script src="game.js?v=20260428b" defer></script>
+<script src="game.js?v=20260429a" defer></script>
 </body>
 </html>
