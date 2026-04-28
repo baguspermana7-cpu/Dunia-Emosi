@@ -8,7 +8,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear-gradient(180deg,#5C94FC 0%,#6BB6FF 60%,#8B6F47 100%);font-family:'Fredoka One',sans-serif;touch-action:none;-webkit-user-select:none;user-select:none}
+html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear-gradient(180deg,var(--g21-sky-top,#5C94FC) 0%,var(--g21-sky-mid,#6BB6FF) 60%,var(--g21-sky-bot,#8B6F47) 100%);font-family:'Fredoka One',sans-serif;touch-action:none;-webkit-user-select:none;user-select:none;transition:background 0.4s ease}
+body.theme-cave{--g21-sky-top:#1f2937;--g21-sky-mid:#374151;--g21-sky-bot:#1c1917}
+body.theme-sky{--g21-sky-top:#7dd3fc;--g21-sky-mid:#bae6fd;--g21-sky-bot:#7dd3fc}
+body.theme-castle{--g21-sky-top:#4b1a72;--g21-sky-mid:#7c3aed;--g21-sky-bot:#1e1b4b}
+body.theme-desert{--g21-sky-top:#fbbf24;--g21-sky-mid:#fde68a;--g21-sky-bot:#a16207}
+body.theme-ice{--g21-sky-top:#bfdbfe;--g21-sky-mid:#dbeafe;--g21-sky-bot:#93c5fd}
+body.theme-lava{--g21-sky-top:#7f1d1d;--g21-sky-mid:#dc2626;--g21-sky-bot:#451a03}
+body.theme-final{--g21-sky-top:#1e1b4b;--g21-sky-mid:#312e81;--g21-sky-bot:#000000}
 #pixi-canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block;image-rendering:auto}
 
 /* ── HUD Top ── */
@@ -78,6 +85,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
 .pause-btn-resume{background:linear-gradient(160deg,#22c55e,#16a34a);border-color:#86efac;box-shadow:0 4px 0 #14532d}
 .pause-btn-retry{background:linear-gradient(160deg,#7C3AED,#6D28D9);border-color:#a78bfa;box-shadow:0 4px 0 #4C1D95}
 .pause-btn-home{background:linear-gradient(160deg,#475569,#334155);border-color:#94a3b8;box-shadow:0 4px 0 #1e293b}
+.diff-chip{padding:6px 12px;border-radius:18px;border:2px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.08);color:#fff;font-size:12px;font-weight:900;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;transition:all .12s}
+.diff-chip.active{background:linear-gradient(160deg,#fbbf24,#d97706);border-color:#fde68a;color:#1f2937;box-shadow:0 3px 0 #92400e}
 
 /* ── Score popup (floating +N) ── */
 .score-popup{position:fixed;color:#fbbf24;font-weight:900;font-size:18px;pointer-events:none;z-index:120;text-shadow:0 2px 4px rgba(0,0,0,0.7);animation:scorePopFloat 0.9s ease-out forwards}
@@ -105,6 +114,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
     <div id="status-text">Mario Pokemon ⚡</div>
   </div>
   <div id="hud-stats">
+    <div class="hud-stat" style="border-color:rgba(167,139,250,0.55)"><span>🏆</span><span id="score-count">0</span></div>
     <div class="hud-stat hud-stat-coins"><span>🪙</span><span id="coin-count">0</span></div>
     <div class="hud-stat hud-stat-lives"><span id="lives-hearts">❤️❤️❤️</span></div>
   </div>
@@ -138,6 +148,11 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
 <div id="pause-overlay">
   <div id="pause-card">
     <h2>Pause ⏸</h2>
+    <div style="margin:10px 0 14px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap">
+      <button class="diff-chip" data-diff="easy" onclick="setDifficulty('easy')">😊 Mudah</button>
+      <button class="diff-chip" data-diff="medium" onclick="setDifficulty('medium')">⚡ Sedang</button>
+      <button class="diff-chip" data-diff="hard" onclick="setDifficulty('hard')">🔥 Sulit</button>
+    </div>
     <button class="pause-btn pause-btn-resume" onclick="togglePause()">Lanjut ▶</button>
     <button class="pause-btn pause-btn-retry" onclick="restartLevel()">Ulang 🔄</button>
     <button class="pause-btn pause-btn-home" onclick="goBack()">Beranda 🏠</button>
@@ -343,6 +358,112 @@ const LEVELS = [
     spikes:   [[12,9],[24,9],[32,9],[38,9],[48,9],[60,9],[66,9]],
     qBlocks:  [[7,5,'mushroom'],[27,6,'coin'],[44,3,'coin']],
     pits:     [[17,2],[43,2],[58,2],[68,2]],
+  },
+  // Level 6 — desert run, wide gaps, 7 goombas
+  {
+    width: 70,
+    spawn: { x: 2*TILE, y: 8*TILE },
+    goal: { x: 67*TILE, y: 9*TILE },
+    theme: 'desert',
+    bgColor: 0xfbbf24,
+    ground: [{x:0,len:70}],
+    platforms: [
+      {x:5,y:7,len:3},{x:11,y:5,len:2},{x:16,y:7,len:2},{x:22,y:4,len:3},{x:28,y:6,len:2},
+      {x:34,y:8,len:2},{x:40,y:5,len:3},{x:48,y:7,len:2},{x:54,y:4,len:3},{x:62,y:6,len:3},
+    ],
+    coins:    [[5,6],[6,6],[7,6],[11,4],[16,6],[22,3],[23,3],[24,3],[28,5],[34,7],[40,4],[41,4],[42,4],[48,6],[54,3],[55,3],[62,5],[63,5],[64,5]],
+    goombas:  [[9,9],[15,9],[26,9],[36,9],[46,9],[56,9],[65,9]],
+    mushrooms:[[22,3]],
+    stars:    [[40,4]],
+    spikes:   [[13,9],[31,9],[51,9],[60,9]],
+    qBlocks:  [[8,5,'coin'],[26,4,'mushroom'],[58,5,'coin']],
+    pits:     [[19,3],[45,2],[58,3]],
+  },
+  // Level 7 — ice palace, slippery feel via fast goombas, 8 goombas
+  {
+    width: 75,
+    spawn: { x: 2*TILE, y: 8*TILE },
+    goal: { x: 72*TILE, y: 9*TILE },
+    theme: 'ice',
+    bgColor: 0x93c5fd,
+    ground: [{x:0,len:75}],
+    platforms: [
+      {x:5,y:7,len:2},{x:10,y:5,len:2},{x:15,y:3,len:2},{x:20,y:5,len:2},{x:25,y:7,len:2},
+      {x:30,y:5,len:3},{x:36,y:3,len:3},{x:42,y:6,len:2},{x:48,y:4,len:3},{x:55,y:7,len:2},
+      {x:60,y:5,len:3},{x:66,y:7,len:2},
+    ],
+    coins:    [[5,6],[10,4],[15,2],[16,2],[20,4],[25,6],[30,4],[31,4],[32,4],[36,2],[37,2],[38,2],[42,5],[48,3],[49,3],[55,6],[60,4],[61,4],[66,6]],
+    goombas:  [[8,9],[14,9],[19,9],[27,9],[34,9],[40,9],[46,9],[53,9],[58,9],[64,9],[70,9]],
+    mushrooms:[[15,2]],
+    stars:    [[36,2],[60,4]],
+    spikes:   [[12,9],[22,9],[33,9],[44,9],[57,9],[68,9]],
+    qBlocks:  [[7,5,'coin'],[28,5,'mushroom'],[50,4,'coin']],
+    pits:     [[24,2],[51,3],[63,2]],
+  },
+  // Level 8 — sky temple (parallax-friendly), 9 goombas
+  {
+    width: 85,
+    spawn: { x: 2*TILE, y: 8*TILE },
+    goal: { x: 82*TILE, y: 9*TILE },
+    theme: 'sky',
+    bgColor: 0x7dd3fc,
+    ground: [{x:0,len:85}],
+    platforms: [
+      {x:5,y:8,len:2},{x:9,y:6,len:2},{x:13,y:4,len:2},{x:17,y:2,len:2},{x:21,y:4,len:2},
+      {x:25,y:6,len:2},{x:29,y:8,len:2},{x:33,y:5,len:3},{x:39,y:3,len:3},{x:45,y:5,len:2},
+      {x:50,y:7,len:2},{x:54,y:4,len:3},{x:60,y:6,len:2},{x:65,y:3,len:3},{x:71,y:5,len:2},
+      {x:76,y:7,len:3},
+    ],
+    coins:    [[5,7],[9,5],[13,3],[17,1],[18,1],[21,3],[25,5],[33,4],[34,4],[39,2],[40,2],[45,4],[50,6],[54,3],[55,3],[60,5],[65,2],[66,2],[71,4],[76,6]],
+    goombas:  [[7,9],[15,9],[23,9],[31,9],[37,9],[43,9],[48,9],[58,9],[63,9],[69,9],[74,9],[79,9]],
+    mushrooms:[[17,1],[54,3]],
+    stars:    [[39,2],[65,2]],
+    spikes:   [[19,9],[27,9],[35,9],[42,9],[52,9],[62,9],[68,9],[78,9]],
+    qBlocks:  [[11,5,'coin'],[27,5,'mushroom'],[47,4,'coin'],[58,5,'coin']],
+    pits:     [[20,2],[46,2],[57,2],[72,3]],
+  },
+  // Level 9 — lava cave (red theme), 11 goombas, lots of spikes
+  {
+    width: 90,
+    spawn: { x: 2*TILE, y: 8*TILE },
+    goal: { x: 87*TILE, y: 9*TILE },
+    theme: 'lava',
+    bgColor: 0xb91c1c,
+    ground: [{x:0,len:90}],
+    platforms: [
+      {x:5,y:6,len:2},{x:10,y:4,len:2},{x:15,y:6,len:2},{x:20,y:3,len:3},{x:26,y:5,len:2},
+      {x:31,y:7,len:2},{x:36,y:4,len:3},{x:42,y:6,len:2},{x:47,y:3,len:3},{x:54,y:5,len:2},
+      {x:59,y:7,len:2},{x:64,y:4,len:3},{x:70,y:6,len:2},{x:75,y:3,len:3},{x:81,y:5,len:3},
+    ],
+    coins:    [[5,5],[10,3],[15,5],[20,2],[21,2],[22,2],[26,4],[31,6],[36,3],[37,3],[42,5],[47,2],[48,2],[49,2],[54,4],[59,6],[64,3],[65,3],[70,5],[75,2],[76,2],[81,4],[82,4],[83,4]],
+    goombas:  [[7,9],[13,9],[18,9],[24,9],[29,9],[34,9],[40,9],[45,9],[51,9],[57,9],[62,9],[68,9],[73,9],[79,9],[85,9]],
+    mushrooms:[[20,2],[47,2]],
+    stars:    [[36,3],[75,2]],
+    spikes:   [[8,9],[17,9],[25,9],[33,9],[41,9],[50,9],[56,9],[66,9],[72,9],[80,9],[86,9]],
+    qBlocks:  [[12,3,'mushroom'],[39,3,'coin'],[67,5,'coin']],
+    pits:     [[27,2],[46,2],[60,2],[74,2]],
+  },
+  // Level 10 — final boss arena, 13 goombas, balanced challenge
+  {
+    width: 100,
+    spawn: { x: 2*TILE, y: 8*TILE },
+    goal: { x: 97*TILE, y: 9*TILE },
+    theme: 'final',
+    bgColor: 0x1e1b4b,
+    ground: [{x:0,len:100}],
+    platforms: [
+      {x:5,y:7,len:2},{x:9,y:5,len:2},{x:13,y:3,len:2},{x:18,y:5,len:2},{x:22,y:7,len:2},
+      {x:27,y:4,len:3},{x:33,y:6,len:2},{x:38,y:3,len:3},{x:44,y:5,len:2},{x:48,y:7,len:2},
+      {x:52,y:4,len:3},{x:58,y:6,len:2},{x:63,y:3,len:3},{x:69,y:5,len:2},{x:73,y:7,len:2},
+      {x:78,y:4,len:3},{x:84,y:6,len:2},{x:89,y:3,len:3},{x:95,y:5,len:2},
+    ],
+    coins:    [[5,6],[9,4],[13,2],[18,4],[22,6],[27,3],[28,3],[33,5],[38,2],[39,2],[44,4],[48,6],[52,3],[53,3],[58,5],[63,2],[64,2],[69,4],[73,6],[78,3],[79,3],[84,5],[89,2],[90,2],[95,4]],
+    goombas:  [[7,9],[12,9],[16,9],[20,9],[25,9],[31,9],[36,9],[41,9],[46,9],[50,9],[55,9],[61,9],[66,9],[71,9],[76,9],[82,9],[87,9],[92,9]],
+    mushrooms:[[13,2],[38,2],[63,2]],
+    stars:    [[27,3],[52,3],[78,3],[89,2]],
+    spikes:   [[10,9],[15,9],[24,9],[32,9],[42,9],[49,9],[60,9],[67,9],[75,9],[83,9],[91,9]],
+    qBlocks:  [[8,5,'mushroom'],[31,4,'coin'],[57,4,'mushroom'],[80,4,'coin']],
+    pits:     [[14,2],[26,2],[47,2],[59,2],[74,2],[88,2]],
   },
 ]
 
@@ -577,7 +698,10 @@ function loadLevel(lvNum) {
   S._player.scale.set(2.0)  // 48*2 = 96 px on canvas (HD via LINEAR filter)
   world.addChild(S._player)
 
-  document.getElementById('level-text').textContent = `LEVEL ${lvNum}`
+  // Apply theme background
+  document.body.className = ''
+  if (levelData.theme) document.body.classList.add('theme-' + levelData.theme)
+  document.getElementById('level-text').textContent = `LEVEL ${lvNum} • ${(S.difficulty||'easy').toUpperCase()}`
   document.getElementById('status-text').textContent = 'Ayo lompat! ⚡'
   updateHUD()
 }
@@ -1042,6 +1166,8 @@ function finishMathQuiz() {
 // ═══════════════════════════════════════════════════════════════════
 function updateHUD() {
   document.getElementById('coin-count').textContent = S.coins
+  const scEl = document.getElementById('score-count')
+  if (scEl) scEl.textContent = S.score
   const heartsEl = document.getElementById('lives-hearts')
   const full = Math.floor(S.lives)
   const half = (S.lives - full) >= 0.5
@@ -1052,7 +1178,20 @@ function updateHUD() {
     else html += '<span class="life-heart empty">🖤</span>'
   }
   heartsEl.innerHTML = html
+  // Update difficulty chip active state
+  document.querySelectorAll('.diff-chip').forEach(b => {
+    b.classList.toggle('active', b.dataset.diff === S.difficulty)
+  })
 }
+
+function setDifficulty(diff) {
+  if (!['easy','medium','hard'].includes(diff)) return
+  S.difficulty = diff
+  document.getElementById('level-text').textContent = `LEVEL ${S.level} • ${diff.toUpperCase()}`
+  updateHUD()
+  showToast(`Tingkat: ${diff === 'easy' ? '😊 Mudah' : diff === 'medium' ? '⚡ Sedang' : '🔥 Sulit'}`)
+}
+window.setDifficulty = setDifficulty
 
 function checkLifeFromCoins() {
   if (S.coins >= 100) {
