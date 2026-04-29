@@ -75,6 +75,10 @@ body.theme-final{--g21-sky-top:#1e1b4b;--g21-sky-mid:#312e81;--g21-sky-bot:#0000
 @keyframes mqCorrect{0%{transform:scale(1)}50%{transform:scale(1.18)}100%{transform:scale(1)}}
 @keyframes mqWrong{0%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}100%{transform:translateX(0)}}
 
+/* ── Milestone text (big celebratory overlay) ── */
+.milestone{position:fixed;top:30%;left:50%;transform:translate(-50%,-50%) scale(0.5);z-index:200;pointer-events:none;font-size:clamp(36px,8vw,64px);font-weight:900;font-family:'Fredoka One',sans-serif;color:#fff;text-shadow:0 0 20px var(--ms-color,#fbbf24),0 0 40px var(--ms-color,#fbbf24),0 6px 0 rgba(0,0,0,0.5);letter-spacing:2px;animation:msPop 1.2s cubic-bezier(.34,1.56,.64,1) forwards;text-align:center;white-space:nowrap}
+@keyframes msPop{0%{transform:translate(-50%,-50%) scale(0.3) rotate(-8deg);opacity:0}30%{transform:translate(-50%,-50%) scale(1.25) rotate(2deg);opacity:1}60%{transform:translate(-50%,-50%) scale(1.0) rotate(-1deg);opacity:1}100%{transform:translate(-50%,-180%) scale(0.6);opacity:0}}
+
 /* ── Toast ── */
 #toast{position:fixed;top:90px;left:50%;transform:translateX(-50%) translateY(-12px);z-index:500;background:rgba(0,0,0,0.85);color:#fff;padding:11px 22px;border-radius:14px;font-size:14px;font-weight:900;border:2px solid rgba(255,255,255,0.25);box-shadow:0 10px 30px rgba(0,0,0,0.4);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;text-align:center;max-width:80vw}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -347,6 +351,16 @@ document.addEventListener('visibilitychange', () => {
     if (_bgmGain) _bgmGain.gain.value = 0.06
   }
 })
+// Big celebratory text — flies in, scales, fades up.
+function showMilestone(text, color) {
+  const el = document.createElement('div')
+  el.className = 'milestone'
+  el.textContent = text
+  if (color) el.style.setProperty('--ms-color', color)
+  document.body.appendChild(el)
+  setTimeout(() => el.remove(), 1300)
+}
+
 function showToast(msg, durMs){
   const t = document.getElementById('toast'); if (!t) return
   t.textContent = msg
@@ -1028,6 +1042,7 @@ function gameLoop() {
   updateCoins()
   updateMushrooms()
   updateStars()
+  updateQBlockBounce()
   checkSpikes()
   checkGoal()
 
@@ -1083,26 +1098,33 @@ function movePlayer(dx, dy) {
       S.y = c.y; S.vy = 0; S.onGround = true
     } else if (dy < 0) { // rising — bonk head
       S.y = c.y + TILE + ph; S.vy = 0
-      // Q-block hit
+      // Q-block hit — bounce + reward
       if (c._g21Type === 'qblock' && !c._g21Hit) {
         c._g21Hit = true
-        c.tint = 0x666666 // darken used qblock
+        c._g21Bounce = 1 // start bounce animation
         sfx('sfx-bump')
         if (c._g21Reward === 'coin') {
           S.coins++ ; S.score += 10
-          spawnScorePopup(c.x + TILE/2, c.y, '+10', 'coin')
+          spawnScorePopup(c.x + TILE/2, c.y - 30, '+10', 'coin')
+          spawnParticles(c.x + TILE/2, c.y, 'spark', 6)
           checkLifeFromCoins()
         } else if (c._g21Reward === 'mushroom') {
-          // spawn mushroom on top
+          // Spawn mushroom Graphics rising from Q-block
           const PIXI = window.PIXI
-          const m = new PIXI.Sprite(textures.mushroom)
-          m.anchor.set(0.5, 1)
+          const m = new PIXI.Graphics()
+          m.ellipse(0, -16, 22, 14).fill(0xDC2626).stroke({ width: 2, color: 0x7F1D1D })
+          m.circle(-10, -16, 4).fill(0xFFFFFF)
+          m.circle(10, -16, 4).fill(0xFFFFFF)
+          m.circle(0, -20, 4).fill(0xFFFFFF)
+          m.rect(-8, -8, 16, 14).fill(0xFEF3C7).stroke({ width: 2, color: 0x92400E })
+          m.circle(-3, -2, 2).fill(0x000000)
+          m.circle(3, -2, 2).fill(0x000000)
           m.x = c.x + TILE/2; m.y = c.y - 4
-          m.scale.set(0.85)
           m._g21Bob = 0; m._g21FromBlock = true
           world.addChild(m)
           S.mushrooms.push(m)
           sfx('sfx-powerup')
+          showMilestone('POWER UP! 🍄', '#fbbf24')
         }
       }
     } else if (dx > 0) {
@@ -1121,11 +1143,19 @@ function movePlayer(dx, dy) {
 function updateGoombas() {
   for (const g of S.goombas) {
     if (!g._g21Alive) {
+      // Squish death — flatten + fade
+      g.scale.y *= 0.85
+      g.scale.x *= 1.04
       g.alpha -= 0.04
+      g.y += 1.2
       if (g.alpha <= 0) { world.removeChild(g); g._g21Removed = true }
       continue
     }
     g.x += g._g21Vx
+    // Walk tilt — sway body slightly per step
+    g._g21WalkT = (g._g21WalkT || 0) + 0.18
+    g.rotation = Math.sin(g._g21WalkT) * 0.08
+    g.scale.y = 1 + Math.abs(Math.sin(g._g21WalkT)) * 0.06
     // Edge turn (simple — turn around on wall hit by checking ahead)
     const aheadX = Math.floor((g.x + Math.sign(g._g21Vx) * 30) / TILE)
     const groundCheckY = Math.floor((g.y + 4) / TILE)
@@ -1191,13 +1221,31 @@ function updateStars() {
       S.starMode = 600     // 10s invincibility (existing)
       S.electricMode = 600 // 10s ELECTRIC MODE — can fire bolts
       S.score += 500
-      spawnScorePopup(st.x, st.y, '⚡ STAR! ⚡', 'heal')
-      spawnParticles(st.x, st.y, 'lightning', 10)
+      showMilestone('⚡ ELECTRIC! ⚡', '#fde047')
+      spawnScorePopup(st.x, st.y, '+500', 'heal')
+      spawnParticles(st.x, st.y, 'lightning', 14)
+      spawnParticles(st.x, st.y, 'spark', 8)
       // Show bolt button on mobile
       const boltBtn = document.getElementById('btn-bolt')
       if (boltBtn) boltBtn.style.display = 'flex'
       showToast('⚡ ELECTRIC MODE 10s — Tekan ⚡ untuk tembak!', 3500)
       world.removeChild(st); S.stars.splice(i, 1)
+    }
+  }
+}
+
+// Q-block bounce animation — pop up briefly when hit, then darken to "used".
+function updateQBlockBounce() {
+  for (const q of S.qBlocks) {
+    if (!q._g21Bounce) continue
+    if (q._g21Bounce === 1) { q._g21BaseY = q._g21BaseY || q.y; q._g21Bounce = 2 }
+    q._g21BounceT = (q._g21BounceT || 0) + 0.3
+    const offset = Math.sin(q._g21BounceT) * 14
+    q.y = q._g21BaseY - Math.max(0, offset)
+    if (q._g21BounceT > Math.PI) {
+      q.y = q._g21BaseY
+      q._g21Bounce = 0
+      q.tint = 0x666666 // mark as used
     }
   }
 }
@@ -1368,8 +1416,8 @@ function finishMathQuiz() {
   if (c === 2) {
     S.lives = Math.min(MAX_LIVES, S.lives + 0.5)
     S.perfectMath++
-    showToast('Sempurna! +0.5 ❤️ ⚡')
-    spawnScorePopup(S.x, S.y - 100, 'PERFECT!', 'heal')
+    showMilestone('SEMPURNA! ⚡', '#fbbf24')
+    spawnScorePopup(S.x, S.y - 100, '+0.5 ❤️', 'heal')
   } else if (c === 1) {
     showToast('Bagus! Lanjut!')
   } else {
@@ -1418,7 +1466,8 @@ function checkLifeFromCoins() {
     S.coins -= 100
     S.lives = Math.min(MAX_LIVES, S.lives + 1)
     sfx('sfx-1up')
-    showToast('1-UP! ❤️')
+    showMilestone('1-UP! ❤️', '#4ade80')
+    spawnParticles(S.x, S.y - 60, 'heal', 10)
   }
 }
 
@@ -1545,13 +1594,14 @@ function onWin() {
   S.won = true; S.running = false
   sfx('sfx-flag')
   setPikachuAnim('happy')
-  spawnParticles(S.x, S.y - 50, 'lightning', 14)
+  spawnParticles(S.x, S.y - 50, 'lightning', 18)
   spawnParticles(S.x, S.y - 50, 'spark', 14)
+  showMilestone('LEVEL CLEAR! 🏆', '#10b981')
   const elapsed = (performance.now() - S.startTime) / 1000
   const totalCoinsInLevel = (levelData.coins || []).length
   const stars = computeStars(totalCoinsInLevel, elapsed)
   saveProgress(stars)
-  setTimeout(() => showWinModal(stars), 1100)
+  setTimeout(() => showWinModal(stars), 1500)
 }
 
 function computeStars(totalCoins, elapsed) {
@@ -1592,7 +1642,16 @@ function onDeath(reason) {
   if (S.gameOver) return
   S.gameOver = true; S.running = false
   sfx('sfx-damage')
+  showMilestone('GAME OVER 💔', '#ef4444')
+  // Pikachu spin-fall death animation
+  const wrap = document.getElementById('pikachu-wrap')
+  if (wrap) {
+    wrap.style.transition = 'transform 1.2s cubic-bezier(0.5,0,0.5,1), top 1.2s ease-in'
+    wrap.style.transform = 'rotate(720deg)'
+    wrap.style.top = (window.innerHeight + 200) + 'px'
+  }
   setTimeout(() => {
+    if (wrap) wrap.style.transition = ''
     if (typeof GameModal !== 'undefined' && GameModal.show) {
       GameModal.show({
         emoji: '💔',
@@ -1605,7 +1664,7 @@ function onDeath(reason) {
     } else {
       setTimeout(restartLevel, 1500)
     }
-  }, 600)
+  }, 1300)
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1638,6 +1697,12 @@ function restartLevel() {
   document.getElementById('pause-overlay').classList.remove('show')
   S.lives = MAX_LIVES; S.coins = 0; S.score = 0
   S.pikachuState = 'small'
+  // Reset Pikachu wrap (clear death-fall transform)
+  const wrap = document.getElementById('pikachu-wrap')
+  if (wrap) {
+    wrap.style.transition = ''
+    wrap.style.transform = ''
+  }
   loadLevel(S.level)
   S.running = true
   S.startTime = performance.now()
