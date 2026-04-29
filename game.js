@@ -12604,7 +12604,7 @@ function initGame21() {
   const lv = state.selectedLevelNum || 1
   const diff = state.selectedLevel === 'hard' ? 'hard' : state.selectedLevel === 'medium' ? 'medium' : 'easy'
   try { sessionStorage.setItem('g21Config', JSON.stringify({ level: lv, difficulty: diff })) } catch(_) {}
-  window.location.href = 'games/g21-pixi.html?v=20260429g'
+  window.location.href = 'games/g21-pixi.html?v=20260429h'
 }
 
 function initGame18() {

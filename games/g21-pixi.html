@@ -278,6 +278,10 @@ const S = {
   perfectMath: 0,
   // Animation timer
   walkFrame: 0, walkT: 0,
+  // Hotfix #109: combo + growth state
+  comboCount: 0,
+  comboTimer: 0,         // frames remaining for combo to chain
+  pikachuState: 'small', // small | big (mushroom growth)
 }
 
 // ── Pixi app ──
@@ -670,33 +674,198 @@ async function initPixi() {
 //  BACKGROUND (parallax: sky gradient via DOM, clouds via Pixi)
 // ═══════════════════════════════════════════════════════════════════
 function buildBackground() {
-  // Hotfix #107: clean Pixi Graphics clouds + hills (no sprite-sheet artifacts).
+  // Hotfix #109: theme-specific parallax (cave/sky/castle/desert/ice/lava/final).
   const PIXI = window.PIXI
   parallaxFar.removeChildren()
-  // Clouds — fluffy multi-circle blobs
-  for (let i = 0; i < 14; i++) {
+  parallaxMid.removeChildren()
+  const theme = (levelData && levelData.theme) || 'default'
+  buildFarLayer(theme, PIXI)
+  buildMidLayer(theme, PIXI)
+}
+
+function buildFarLayer(theme, PIXI) {
+  // Far layer = atmospheric (clouds/stalactites/lanterns/etc).
+  if (theme === 'cave') {
+    // Stalactites hanging from top
+    for (let i = 0; i < 16; i++) {
+      const s = new PIXI.Graphics()
+      const len = 40 + (i % 4) * 30
+      s.poly([0, 0, 24, 0, 12, len]).fill(0x4B5563).stroke({ width: 2, color: 0x1F2937 })
+      s.poly([2, 0, 22, 0, 12, len*0.85]).fill(0x6B7280).alpha = 0.6
+      s.x = i * 130 + 50; s.y = 0
+      parallaxFar.addChild(s)
+    }
+  } else if (theme === 'lava') {
+    // Falling embers / flame puffs
+    for (let i = 0; i < 18; i++) {
+      const f = new PIXI.Graphics()
+      f.circle(0, 0, 18 + (i % 3) * 8).fill(0xF97316).alpha = 0.5
+      f.circle(-3, -3, 10).fill(0xFCD34D)
+      f.x = i * 160 + 80; f.y = 80 + (i % 5) * 60
+      parallaxFar.addChild(f)
+    }
+  } else if (theme === 'ice') {
+    // Snowflakes
+    for (let i = 0; i < 24; i++) {
+      const s = new PIXI.Graphics()
+      const r = 6 + (i % 3) * 3
+      for (let a = 0; a < 6; a++) {
+        const ang = (a * Math.PI) / 3
+        s.moveTo(0, 0).lineTo(Math.cos(ang) * r, Math.sin(ang) * r)
+      }
+      s.stroke({ width: 2, color: 0xFFFFFF })
+      s.x = i * 90 + 30; s.y = 60 + (i % 6) * 50
+      s.alpha = 0.85
+      parallaxFar.addChild(s)
+    }
+  } else if (theme === 'desert') {
+    // Sun + heat haze
+    const sun = new PIXI.Graphics()
+    sun.circle(0, 0, 60).fill(0xFCD34D).stroke({ width: 4, color: 0xF59E0B })
+    for (let r = 70; r <= 120; r += 12) {
+      sun.circle(0, 0, r).stroke({ width: 2, color: 0xFCD34D })
+    }
+    sun.x = 200; sun.y = 120; sun.alpha = 0.7
+    parallaxFar.addChild(sun)
+    // Pyramid silhouettes
+    for (let i = 0; i < 8; i++) {
+      const p = new PIXI.Graphics()
+      p.poly([-80, 0, 80, 0, 0, -100]).fill(0xB45309).stroke({ width: 3, color: 0x78350F })
+      p.x = i * 280 + 350; p.y = 220
+      parallaxFar.addChild(p)
+    }
+  } else if (theme === 'castle') {
+    // Castle tower silhouettes
+    for (let i = 0; i < 6; i++) {
+      const t = new PIXI.Graphics()
+      t.rect(-30, -180, 60, 180).fill(0x1F2937).stroke({ width: 2, color: 0x4B5563 })
+      // Battlements
+      for (let b = -28; b < 30; b += 14) {
+        t.rect(b, -200, 8, 20).fill(0x1F2937).stroke({ width: 2, color: 0x4B5563 })
+      }
+      // Window
+      t.rect(-8, -120, 16, 24).fill(0xFCD34D).alpha = 0.8
+      t.x = i * 260 + 100; t.y = 280
+      parallaxFar.addChild(t)
+    }
+  } else if (theme === 'sky') {
+    // Floating islands + extra clouds
+    for (let i = 0; i < 8; i++) {
+      const isl = new PIXI.Graphics()
+      isl.ellipse(0, 0, 70, 22).fill(0x16A34A).stroke({ width: 3, color: 0x166534 })
+      isl.ellipse(0, 6, 60, 14).fill(0x854D0E)
+      isl.x = i * 320 + 150; isl.y = 100 + (i % 3) * 80
+      parallaxFar.addChild(isl)
+    }
+    drawClouds(PIXI, 18, 0xFFFFFF, 0xDBEAFE)
+  } else if (theme === 'final') {
+    // Stars + nebula
+    for (let i = 0; i < 40; i++) {
+      const s = new PIXI.Graphics()
+      s.circle(0, 0, 1 + Math.random() * 2).fill(0xFFFFFF)
+      s.x = Math.random() * 4000; s.y = Math.random() * 400
+      s.alpha = 0.5 + Math.random() * 0.5
+      parallaxFar.addChild(s)
+    }
+    // Nebula clouds (purple/pink)
+    for (let i = 0; i < 6; i++) {
+      const n = new PIXI.Graphics()
+      n.circle(0, 0, 60).fill(0x7C3AED).alpha = 0.3
+      n.circle(-30, 0, 50).fill(0xBE185D).alpha = 0.25
+      n.x = i * 500 + 200; n.y = 100 + (i % 3) * 60
+      parallaxFar.addChild(n)
+    }
+  } else {
+    // Default — clouds
+    drawClouds(PIXI, 14, 0xFFFFFF, 0xDBEAFE)
+  }
+}
+
+function drawClouds(PIXI, count, fill, stroke) {
+  for (let i = 0; i < count; i++) {
     const c = new PIXI.Graphics()
-    const baseX = (i * 220) + 80, baseY = 50 + (i % 4) * 60
-    c.circle(0, 0, 28).fill(0xFFFFFF).stroke({ width: 2, color: 0xDBEAFE })
-    c.circle(-22, 6, 22).fill(0xFFFFFF).stroke({ width: 2, color: 0xDBEAFE })
-    c.circle(22, 6, 22).fill(0xFFFFFF).stroke({ width: 2, color: 0xDBEAFE })
-    c.circle(-12, -12, 18).fill(0xFFFFFF)
-    c.circle(12, -12, 18).fill(0xFFFFFF)
-    c.x = baseX; c.y = baseY
+    c.circle(0, 0, 28).fill(fill).stroke({ width: 2, color: stroke })
+    c.circle(-22, 6, 22).fill(fill).stroke({ width: 2, color: stroke })
+    c.circle(22, 6, 22).fill(fill).stroke({ width: 2, color: stroke })
+    c.circle(-12, -12, 18).fill(fill)
+    c.circle(12, -12, 18).fill(fill)
+    c.x = i * 220 + 80; c.y = 50 + (i % 4) * 60
     c.alpha = 0.92
     parallaxFar.addChild(c)
   }
-  parallaxMid.removeChildren()
-  // Hills — green rolling shapes
-  for (let i = 0; i < 10; i++) {
-    const b = new PIXI.Graphics()
-    const w = 180 + (i % 3) * 60
-    const h = 70 + (i % 4) * 25
-    b.ellipse(0, 0, w, h).fill(0x16A34A).stroke({ width: 3, color: 0x166534 })
-    b.ellipse(-w*0.3, -h*0.3, w*0.5, h*0.4).fill(0x22C55E)
-    b.x = (i * 380) + 150
-    b.y = window.innerHeight - 30
-    parallaxMid.addChild(b)
+}
+
+function buildMidLayer(theme, PIXI) {
+  // Mid layer = ground silhouettes (hills/dunes/snow piles/lava pools).
+  const groundY = window.innerHeight - 30
+  if (theme === 'lava') {
+    for (let i = 0; i < 10; i++) {
+      const lv = new PIXI.Graphics()
+      const w = 180 + (i % 3) * 60
+      lv.ellipse(0, 0, w, 50).fill(0xDC2626).stroke({ width: 3, color: 0x7F1D1D })
+      lv.ellipse(-w*0.2, -10, w*0.4, 18).fill(0xFCD34D)
+      lv.x = i * 380 + 150; lv.y = groundY
+      parallaxMid.addChild(lv)
+    }
+  } else if (theme === 'ice') {
+    for (let i = 0; i < 10; i++) {
+      const sn = new PIXI.Graphics()
+      const w = 180 + (i % 3) * 60
+      sn.ellipse(0, 0, w, 70).fill(0xE0F2FE).stroke({ width: 3, color: 0x7DD3FC })
+      sn.ellipse(-w*0.25, -20, w*0.4, 30).fill(0xFFFFFF)
+      sn.x = i * 380 + 150; sn.y = groundY
+      parallaxMid.addChild(sn)
+    }
+  } else if (theme === 'desert') {
+    for (let i = 0; i < 10; i++) {
+      const d = new PIXI.Graphics()
+      const w = 200 + (i % 3) * 80
+      d.ellipse(0, 0, w, 60).fill(0xFBBF24).stroke({ width: 3, color: 0x92400E })
+      d.ellipse(-w*0.3, -10, w*0.4, 22).fill(0xFEF3C7)
+      d.x = i * 400 + 150; d.y = groundY
+      parallaxMid.addChild(d)
+      // Cactus
+      if (i % 2 === 0) {
+        const cact = new PIXI.Graphics()
+        cact.rect(-6, -60, 12, 60).fill(0x16A34A).stroke({ width: 2, color: 0x166534 })
+        cact.rect(-18, -40, 12, 22).fill(0x16A34A).stroke({ width: 2, color: 0x166534 })
+        cact.rect(6, -50, 12, 22).fill(0x16A34A).stroke({ width: 2, color: 0x166534 })
+        cact.x = i * 400 + 220; cact.y = groundY - 20
+        parallaxMid.addChild(cact)
+      }
+    }
+  } else if (theme === 'cave') {
+    for (let i = 0; i < 10; i++) {
+      const r = new PIXI.Graphics()
+      const w = 160 + (i % 3) * 50
+      r.ellipse(0, 0, w, 70).fill(0x44403C).stroke({ width: 3, color: 0x1C1917 })
+      r.ellipse(-w*0.2, -15, w*0.35, 20).fill(0x57534E)
+      r.x = i * 360 + 150; r.y = groundY
+      parallaxMid.addChild(r)
+    }
+  } else if (theme === 'castle' || theme === 'final') {
+    for (let i = 0; i < 8; i++) {
+      const r = new PIXI.Graphics()
+      const w = 200 + (i % 3) * 60
+      r.rect(-w/2, -50, w, 50).fill(0x1F2937).stroke({ width: 3, color: 0x111827 })
+      // Battlements top
+      for (let b = -w/2; b < w/2 - 10; b += 30) {
+        r.rect(b, -65, 16, 18).fill(0x1F2937)
+      }
+      r.x = i * 460 + 150; r.y = groundY
+      parallaxMid.addChild(r)
+    }
+  } else {
+    // Default — green hills
+    for (let i = 0; i < 10; i++) {
+      const b = new PIXI.Graphics()
+      const w = 180 + (i % 3) * 60
+      const h = 70 + (i % 4) * 25
+      b.ellipse(0, 0, w, h).fill(0x16A34A).stroke({ width: 3, color: 0x166534 })
+      b.ellipse(-w*0.3, -h*0.3, w*0.5, h*0.4).fill(0x22C55E)
+      b.x = i * 380 + 150; b.y = groundY
+      parallaxMid.addChild(b)
+    }
   }
 }
 
@@ -868,9 +1037,10 @@ function loadLevel(lvNum) {
   // didn't match the actual sprite sheet.
   setPikachuAnim('idle')
 
-  // Apply theme background
+  // Apply theme background — body gradient + Pixi parallax both swap
   document.body.className = ''
   if (levelData.theme) document.body.classList.add('theme-' + levelData.theme)
+  buildBackground()  // rebuild Pixi parallax for new theme
   document.getElementById('level-text').textContent = `LEVEL ${lvNum} • ${(S.difficulty||'easy').toUpperCase()}`
   document.getElementById('status-text').textContent = 'Ayo lompat! ⚡'
   updateHUD()
@@ -1061,6 +1231,11 @@ function gameLoop() {
       const b = document.getElementById('btn-bolt'); if (b) b.style.display = 'none'
     }
   }
+  // Combo timer countdown — reset chain if no stomp within window
+  if (S.comboTimer > 0) {
+    S.comboTimer--
+    if (S.comboTimer === 0) S.comboCount = 0
+  }
 
   // Camera
   const targetCamX = Math.max(0, Math.min(levelData.width * TILE - window.innerWidth, S.x - window.innerWidth/2))
@@ -1199,7 +1374,16 @@ function updateMushrooms() {
       sfx('sfx-powerup')
       if (S.pikachuState === 'small') {
         S.pikachuState = 'big'
-        spawnScorePopup(S.x, S.y - 80, 'GROW! 🌟', 'heal')
+        showMilestone('GROW! 🍄', '#dc2626')
+        spawnParticles(S.x, S.y - 50, 'spark', 12)
+        // Apply growth to DOM wrap (1.4× scale, 1 hit shield)
+        const wrap = document.getElementById('pikachu-wrap')
+        if (wrap) {
+          wrap.style.transition = 'transform 0.4s cubic-bezier(.34,1.56,.64,1)'
+          wrap.style.width = '118px'
+          wrap.style.height = '118px'
+          setTimeout(() => { if (wrap) wrap.style.transition = '' }, 450)
+        }
       } else {
         S.score += 1000
         spawnScorePopup(m.x, m.y, '+1000', 'coin')
@@ -1287,11 +1471,15 @@ function onGoombaCollide(g) {
   if (S.vy > 1 && S.y < g.y - 8) {
     g._g21Alive = false
     S.vy = JUMP_FORCE * 0.6
-    S.score += 100
+    // Combo system — chain stomps for bonus
+    S.comboCount++
+    S.comboTimer = 90  // 1.5s window @ 60fps
+    const bonus = 100 * S.comboCount
+    S.score += bonus
     sfx('sfx-stomp')
-    spawnScorePopup(g.x, g.y - 40, '+100', 'coin')
-    // Hotfix #106: Pikachu = electric type, swap squish → lightning
+    spawnScorePopup(g.x, g.y - 40, '+' + bonus, 'coin')
     spawnParticles(g.x, g.y - 20, 'lightning', 6)
+    if (S.comboCount >= 3) showMilestone('CHAIN x' + S.comboCount + '! ⚡', '#fbbf24')
     return
   }
   if (S.starMode > 0) {
@@ -1309,6 +1497,19 @@ function onGoombaCollide(g) {
   sfx('sfx-damage')
   screenShake()
   S.goombaHitsThisLevel++
+  // Mushroom shield — Pikachu shrinks back to small instead of losing life
+  if (S.pikachuState === 'big') {
+    S.pikachuState = 'small'
+    showMilestone('SHRINK!', '#f59e0b')
+    const wrap = document.getElementById('pikachu-wrap')
+    if (wrap) {
+      wrap.style.transition = 'transform 0.4s ease, width 0.4s ease, height 0.4s ease'
+      wrap.style.width = '84px'
+      wrap.style.height = '84px'
+      setTimeout(() => { if (wrap) wrap.style.transition = '' }, 450)
+    }
+    return
+  }
   if (S.difficulty === 'easy') {
     S.lives -= 0.5
     updateHUD()
@@ -1697,12 +1898,15 @@ function restartLevel() {
   document.getElementById('pause-overlay').classList.remove('show')
   S.lives = MAX_LIVES; S.coins = 0; S.score = 0
   S.pikachuState = 'small'
-  // Reset Pikachu wrap (clear death-fall transform)
+  // Reset Pikachu wrap (clear death-fall transform + size)
   const wrap = document.getElementById('pikachu-wrap')
   if (wrap) {
     wrap.style.transition = ''
     wrap.style.transform = ''
+    wrap.style.width = '84px'
+    wrap.style.height = '84px'
   }
+  S.comboCount = 0; S.comboTimer = 0
   loadLevel(S.level)
   S.running = true
   S.startTime = performance.now()
