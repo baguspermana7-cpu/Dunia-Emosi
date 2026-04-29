@@ -47,6 +47,7 @@ body.theme-final{--g21-sky-top:#1e1b4b;--g21-sky-mid:#312e81;--g21-sky-bot:#0000
 .mc-bolt{background:rgba(251,191,36,0.4);border-color:rgba(253,224,71,0.8);font-size:clamp(22px,5vmin,32px);animation:boltPulse 0.8s ease-in-out infinite}
 .mc-bolt:active,.mc-bolt.held{background:rgba(251,191,36,0.6)}
 @keyframes boltPulse{0%,100%{box-shadow:0 4px 12px rgba(0,0,0,0.25)}50%{box-shadow:0 4px 12px rgba(0,0,0,0.25),0 0 24px 6px rgba(253,224,71,0.6)}}
+@keyframes pikaAuraPulse{0%,100%{transform:scale(0.95);opacity:0.45}50%{transform:scale(1.18);opacity:0.85}}
 @media (pointer:fine) and (hover:hover){#mobile-controls{display:none}}
 
 /* ── Math Quiz Modal ── */
@@ -124,7 +125,10 @@ body.shake{animation:screenShake .35s ease}
 <!-- Pikachu rendered as HTML <img> overlay (preserves GIF animation natively;
      Pixi 8 doesn't decode multi-frame GIFs without extra libs). Position is
      synced from S.x / S.y - S.camX every frame. -->
-<img id="pikachu-sprite" src="../assets/mario-pokemon/sprites/pikachu-idle.gif" alt="Pikachu" style="position:fixed;width:84px;height:84px;left:-200px;top:-200px;z-index:30;pointer-events:none;image-rendering:auto;transform-origin:50% 100%;transition:transform 0.05s linear;will-change:transform,left,top;filter:drop-shadow(0 4px 6px rgba(0,0,0,0.4))">
+<div id="pikachu-wrap" style="position:fixed;left:-300px;top:-300px;z-index:30;pointer-events:none;width:84px;height:84px;will-change:transform,left,top">
+  <div id="pikachu-aura" style="position:absolute;inset:-12px;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,0.55) 0%,rgba(253,224,71,0.25) 50%,rgba(0,0,0,0) 70%);opacity:0;transition:opacity 0.3s;animation:pikaAuraPulse 1.1s ease-in-out infinite"></div>
+  <img id="pikachu-sprite" src="../assets/mario-pokemon/sprites/pikachu-idle.gif" alt="Pikachu" style="position:absolute;inset:0;width:100%;height:100%;image-rendering:auto;transform-origin:50% 100%;filter:drop-shadow(0 4px 6px rgba(0,0,0,0.4))">
+</div>
 
 <!-- HUD Top -->
 <div id="hud-top">
@@ -652,25 +656,32 @@ async function initPixi() {
 //  BACKGROUND (parallax: sky gradient via DOM, clouds via Pixi)
 // ═══════════════════════════════════════════════════════════════════
 function buildBackground() {
-  // Body bg already has gradient. Add Pixi clouds.
+  // Hotfix #107: clean Pixi Graphics clouds + hills (no sprite-sheet artifacts).
   const PIXI = window.PIXI
   parallaxFar.removeChildren()
-  for (let i = 0; i < 12; i++) {
-    const c = new PIXI.Sprite(textures.cloud)
-    c.anchor.set(0.5)
-    c.x = (i * 250) + 100
-    c.y = 60 + (i % 3) * 70
-    c.scale.set(2 + Math.random() * 0.7)
-    c.alpha = 0.85
+  // Clouds — fluffy multi-circle blobs
+  for (let i = 0; i < 14; i++) {
+    const c = new PIXI.Graphics()
+    const baseX = (i * 220) + 80, baseY = 50 + (i % 4) * 60
+    c.circle(0, 0, 28).fill(0xFFFFFF).stroke({ width: 2, color: 0xDBEAFE })
+    c.circle(-22, 6, 22).fill(0xFFFFFF).stroke({ width: 2, color: 0xDBEAFE })
+    c.circle(22, 6, 22).fill(0xFFFFFF).stroke({ width: 2, color: 0xDBEAFE })
+    c.circle(-12, -12, 18).fill(0xFFFFFF)
+    c.circle(12, -12, 18).fill(0xFFFFFF)
+    c.x = baseX; c.y = baseY
+    c.alpha = 0.92
     parallaxFar.addChild(c)
   }
   parallaxMid.removeChildren()
-  for (let i = 0; i < 8; i++) {
-    const b = new PIXI.Sprite(textures.bush)
-    b.anchor.set(0.5, 1)
+  // Hills — green rolling shapes
+  for (let i = 0; i < 10; i++) {
+    const b = new PIXI.Graphics()
+    const w = 180 + (i % 3) * 60
+    const h = 70 + (i % 4) * 25
+    b.ellipse(0, 0, w, h).fill(0x16A34A).stroke({ width: 3, color: 0x166534 })
+    b.ellipse(-w*0.3, -h*0.3, w*0.5, h*0.4).fill(0x22C55E)
     b.x = (i * 380) + 150
-    b.y = window.innerHeight - 80
-    b.scale.set(2.6)
+    b.y = window.innerHeight - 30
     parallaxMid.addChild(b)
   }
 }
@@ -722,62 +733,114 @@ function loadLevel(lvNum) {
     sp._g21Hit = false
     S.qBlocks.push(sp)
   }
-  // Coins
+  // ── Coins (Hotfix #107: clean Pixi Graphics — gold disk with shine) ──
   for (const c of levelData.coins) {
-    const sp = new PIXI.Sprite(textures.coin)
-    sp.anchor.set(0.5)
-    sp.x = c[0] * TILE + TILE/2; sp.y = c[1] * TILE + TILE/2
-    sp.scale.set(0.7)
-    sp._g21Bob = Math.random() * 6.28
-    world.addChild(sp)
-    S.coinList.push(sp)
+    const g = new PIXI.Graphics()
+    g.circle(0, 0, 18).fill(0xFCD34D).stroke({ width: 3, color: 0xB45309 })
+    g.circle(-4, -4, 4).fill(0xFEF3C7) // shine highlight
+    g.rect(-2, -10, 4, 20).fill(0xB45309) // center bar (gives 3D feel)
+    g.x = c[0] * TILE + TILE/2; g.y = c[1] * TILE + TILE/2
+    g._g21Bob = Math.random() * 6.28
+    world.addChild(g)
+    S.coinList.push(g)
   }
-  // Goombas
-  for (const g of levelData.goombas) {
-    const sp = new PIXI.Sprite(textures.goomba)
-    sp.anchor.set(0.5, 1)
-    sp.x = g[0] * TILE + TILE/2; sp.y = g[1] * TILE + TILE
-    sp.scale.set(0.85)
-    sp._g21Vx = -1.2
-    sp._g21Alive = true
-    sp._g21BaseY = sp.y
-    world.addChild(sp)
-    S.goombas.push(sp)
+  // ── Goombas (Hotfix #107: brown blob with eyes — like Mario Goomba) ──
+  for (const goom of levelData.goombas) {
+    const g = new PIXI.Graphics()
+    // Body — rounded mushroom-cap shape
+    g.ellipse(0, -14, 24, 16).fill(0x8B4513).stroke({ width: 2, color: 0x4A2C0F })
+    // Belly
+    g.ellipse(0, -4, 22, 14).fill(0xC68442).stroke({ width: 2, color: 0x4A2C0F })
+    // Feet
+    g.ellipse(-12, 4, 8, 5).fill(0x2D1A0A)
+    g.ellipse(12, 4, 8, 5).fill(0x2D1A0A)
+    // Eyes (angry)
+    g.circle(-7, -16, 4).fill(0xFFFFFF)
+    g.circle(7, -16, 4).fill(0xFFFFFF)
+    g.circle(-7, -15, 2).fill(0x000000)
+    g.circle(7, -15, 2).fill(0x000000)
+    // Eyebrows (angry)
+    g.poly([-12,-22, -2,-19, -12,-19]).fill(0x2D1A0A)
+    g.poly([12,-22, 2,-19, 12,-19]).fill(0x2D1A0A)
+    g.x = goom[0] * TILE + TILE/2; g.y = goom[1] * TILE + TILE
+    g._g21Vx = -1.5
+    g._g21Alive = true
+    g._g21BaseY = g.y
+    world.addChild(g)
+    S.goombas.push(g)
   }
-  // Mushrooms
+  // ── Mushrooms (red cap + white spots — power-up style) ──
   for (const m of levelData.mushrooms) {
-    const sp = new PIXI.Sprite(textures.mushroom)
-    sp.anchor.set(0.5, 1)
-    sp.x = m[0] * TILE + TILE/2; sp.y = m[1] * TILE + TILE
-    sp.scale.set(0.85)
-    sp._g21Bob = Math.random() * 6.28
-    world.addChild(sp)
-    S.mushrooms.push(sp)
+    const g = new PIXI.Graphics()
+    g.ellipse(0, -16, 22, 14).fill(0xDC2626).stroke({ width: 2, color: 0x7F1D1D })
+    g.circle(-10, -16, 4).fill(0xFFFFFF)
+    g.circle(10, -16, 4).fill(0xFFFFFF)
+    g.circle(0, -20, 4).fill(0xFFFFFF)
+    g.rect(-8, -8, 16, 14).fill(0xFEF3C7).stroke({ width: 2, color: 0x92400E })
+    // Eyes
+    g.circle(-3, -2, 2).fill(0x000000)
+    g.circle(3, -2, 2).fill(0x000000)
+    g.x = m[0] * TILE + TILE/2; g.y = m[1] * TILE + TILE
+    g._g21Bob = Math.random() * 6.28
+    world.addChild(g)
+    S.mushrooms.push(g)
   }
-  // Stars
+  // ── Stars (gold 5-point star — power-up special) ──
   for (const st of levelData.stars) {
-    const sp = new PIXI.Sprite(textures.star)
-    sp.anchor.set(0.5, 1)
-    sp.x = st[0] * TILE + TILE/2; sp.y = st[1] * TILE + TILE
-    sp.scale.set(0.85)
-    sp._g21Bob = Math.random() * 6.28
-    world.addChild(sp)
-    S.stars.push(sp)
+    const g = new PIXI.Graphics()
+    // 5-point star polygon
+    const pts = []
+    for (let i = 0; i < 10; i++) {
+      const r = i % 2 === 0 ? 22 : 10
+      const a = (i * Math.PI) / 5 - Math.PI/2
+      pts.push(Math.cos(a) * r, Math.sin(a) * r - 14)
+    }
+    g.poly(pts).fill(0xFCD34D).stroke({ width: 3, color: 0xD97706 })
+    // Eyes (cute)
+    g.circle(-6, -16, 3).fill(0x000000)
+    g.circle(6, -16, 3).fill(0x000000)
+    g.circle(-5, -17, 1).fill(0xFFFFFF)
+    g.circle(7, -17, 1).fill(0xFFFFFF)
+    g.x = st[0] * TILE + TILE/2; g.y = st[1] * TILE + TILE
+    g._g21Bob = Math.random() * 6.28
+    world.addChild(g)
+    S.stars.push(g)
   }
   // Spikes (drawn as red triangles via Graphics)
   for (const sp of levelData.spikes) {
     const g = new PIXI.Graphics()
-    g.poly([0,0, TILE,0, TILE/2,-TILE/2])
-    g.fill(0xef4444)
-    g.stroke({ width: 3, color: 0x991b1b })
+    // Multiple spikes in a row
+    for (let i = 0; i < 3; i++) {
+      const x = i * 22 + 8
+      g.poly([x-10,0, x+10,0, x,-26])
+      g.fill(0xEF4444)
+      g.stroke({ width: 2, color: 0x7F1D1D })
+    }
+    // Base bar
+    g.rect(0, -2, TILE, 6).fill(0x4B5563).stroke({ width: 2, color: 0x1F2937 })
     g.x = sp[0] * TILE; g.y = sp[1] * TILE + TILE
     world.addChild(g)
     S.spikes.push(g)
   }
-  // Goal flag (as gold rectangle)
+  // Goal flag — animated checkered banner with pole
   const flag = new PIXI.Graphics()
-  flag.rect(-8, -TILE*3, 16, TILE*3).fill(0x10b981)
-  flag.poly([8,-TILE*3, 60,-TILE*2.7, 8,-TILE*2.4]).fill(0xfbbf24).stroke({width:2,color:0xb45309})
+  // Pole (gradient brown → light brown)
+  flag.rect(-6, -TILE*3.5, 12, TILE*3.5).fill(0x6B7280).stroke({ width: 2, color: 0x374151 })
+  flag.rect(-6, -TILE*3.5, 4, TILE*3.5).fill(0xD1D5DB) // highlight
+  // Top ball
+  flag.circle(0, -TILE*3.5, 9).fill(0xFCD34D).stroke({ width: 2, color: 0x92400E })
+  // Banner — checkered pattern
+  flag.poly([6,-TILE*3.4, 76,-TILE*3.15, 76,-TILE*2.45, 6,-TILE*2.7]).fill(0xFEF3C7).stroke({width:2,color:0x92400E})
+  // Checker squares
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 2; j++) {
+      if ((i+j) % 2 === 0) {
+        flag.rect(10 + i*16, -TILE*3.35 + j*16, 14, 14).fill(0x4ade80)
+      }
+    }
+  }
+  // Trophy emoji on banner
+  flag.poly([28,-TILE*3.2, 56,-TILE*3.2, 56,-TILE*2.8, 42,-TILE*2.7, 28,-TILE*2.8]).fill(0xFCD34D).alpha = 0.7
   flag.x = levelData.goal.x; flag.y = levelData.goal.y
   flag._g21IsGoal = true
   world.addChild(flag)
@@ -799,16 +862,46 @@ function loadLevel(lvNum) {
   updateHUD()
 }
 
+// Hotfix #107 (2026-04-29): replaced sprite-sheet placement with clean
+// Pixi Graphics — eliminates "termutilasi" / stretched sheet artifacts.
+// Each tile kind gets a hand-drawn appearance with depth + highlights.
 function placeTile(kind, tx, ty) {
   const PIXI = window.PIXI
-  const tex = textures[kind] || textures.brick
-  const sp = new PIXI.Sprite(tex)
-  sp.x = tx * TILE; sp.y = ty * TILE
-  sp.width = TILE; sp.height = TILE
-  sp._g21Tx = tx; sp._g21Ty = ty
-  sp._g21Solid = (kind === 'block' || kind === 'brick' || kind === 'qblock')
-  world.addChild(sp)
-  return sp
+  const g = new PIXI.Graphics()
+  if (kind === 'block') {
+    // Ground tile — earthy brown with darker mortar grid
+    g.rect(0, 0, TILE, TILE).fill(0x8B6F47).stroke({ width: 2, color: 0x5C4A33 })
+    // Top highlight (grass strip on first row)
+    if (ty === 10) g.rect(0, 0, TILE, 10).fill(0x4ade80).stroke({ width: 1, color: 0x166534 })
+    // Inner texture lines
+    g.rect(8, 16, TILE-16, 4).fill(0x6E5638)
+    g.rect(8, 36, TILE-16, 4).fill(0x6E5638)
+  } else if (kind === 'brick') {
+    // Brick pattern — orange-red with mortar grid
+    g.rect(0, 0, TILE, TILE).fill(0xC53030)
+    g.stroke({ width: 2, color: 0x7B2D2D })
+    // 2 rows × 2 cols of bricks with mortar
+    g.rect(0, 0, TILE, TILE/2).stroke({ width: 2, color: 0x7B2D2D })
+    g.rect(TILE/2, TILE/2, TILE/2, TILE/2).stroke({ width: 2, color: 0x7B2D2D })
+    g.rect(0, TILE/2, TILE/2, TILE/2).stroke({ width: 2, color: 0x7B2D2D })
+    // Highlight
+    g.rect(2, 2, 8, TILE-4).fill(0xE8676B).alpha = 0.4
+  } else if (kind === 'qblock') {
+    // Question block — gold with ? symbol
+    g.rect(0, 0, TILE, TILE).fill(0xF59E0B).stroke({ width: 3, color: 0x92400E })
+    g.rect(4, 4, TILE-8, TILE-8).stroke({ width: 2, color: 0xFCD34D })
+    // ? mark — triangle approximation
+    const cx = TILE/2, cy = TILE/2
+    g.circle(cx, cy-8, 9).stroke({ width: 4, color: 0xFFFFFF })
+    g.rect(cx-3, cy-2, 6, 10).fill(0xFFFFFF)
+    g.circle(cx, cy+14, 4).fill(0xFFFFFF)
+  }
+  g.x = tx * TILE; g.y = ty * TILE
+  g._g21Tx = tx; g._g21Ty = ty
+  g._g21Solid = (kind === 'block' || kind === 'brick' || kind === 'qblock')
+  g._g21Type = kind
+  world.addChild(g)
+  return g
 }
 
 // Hotfix #106: Pikachu rendered as DOM <img> with animated GIF.
@@ -831,21 +924,20 @@ function setPikachuAnim(name) {
 }
 
 function syncPikachuSprite() {
+  const wrap = document.getElementById('pikachu-wrap')
   const el = document.getElementById('pikachu-sprite')
-  if (!el) return
-  // World coords → screen coords (Pixi world has world.x = -S.camX)
+  const aura = document.getElementById('pikachu-aura')
+  if (!wrap || !el) return
   const screenX = S.x - S.camX
   const screenY = S.y
-  // Position with anchor bottom-center
-  el.style.left = (screenX - 42) + 'px'
-  el.style.top = (screenY - 84) + 'px'
-  // Facing flip
+  wrap.style.left = (screenX - 42) + 'px'
+  wrap.style.top = (screenY - 84) + 'px'
   const flip = S.facing >= 0 ? 1 : -1
-  // Electric mode aura via filter glow
-  const glow = S.electricMode > 0 ? 'drop-shadow(0 0 12px #fbbf24) drop-shadow(0 0 18px #fde047)' : 'drop-shadow(0 4px 6px rgba(0,0,0,0.4))'
-  el.style.filter = glow + (S.hitFrames > 0 && Math.floor(S.hitFrames/4)%2 === 0 ? ' brightness(2)' : '')
+  const glow = S.electricMode > 0 ? 'drop-shadow(0 0 14px #fbbf24) drop-shadow(0 0 22px #fde047)' : 'drop-shadow(0 4px 6px rgba(0,0,0,0.4))'
+  el.style.filter = glow + (S.hitFrames > 0 && Math.floor(S.hitFrames/4)%2 === 0 ? ' brightness(2.3)' : '')
   el.style.transform = `scaleX(${flip})`
-  el.style.opacity = (S.hitFrames > 0 && Math.floor(S.hitFrames/4)%2===0) ? '0.5' : '1'
+  el.style.opacity = (S.hitFrames > 0 && Math.floor(S.hitFrames/4)%2===0) ? '0.45' : '1'
+  if (aura) aura.style.opacity = S.electricMode > 0 ? '1' : '0'
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1452,11 +1544,14 @@ function onWin() {
   if (S.won) return
   S.won = true; S.running = false
   sfx('sfx-flag')
+  setPikachuAnim('happy')
+  spawnParticles(S.x, S.y - 50, 'lightning', 14)
+  spawnParticles(S.x, S.y - 50, 'spark', 14)
   const elapsed = (performance.now() - S.startTime) / 1000
   const totalCoinsInLevel = (levelData.coins || []).length
   const stars = computeStars(totalCoinsInLevel, elapsed)
   saveProgress(stars)
-  setTimeout(() => showWinModal(stars), 800)
+  setTimeout(() => showWinModal(stars), 1100)
 }
 
 function computeStars(totalCoins, elapsed) {
