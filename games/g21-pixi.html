@@ -44,6 +44,9 @@ body.theme-final{--g21-sky-top:#1e1b4b;--g21-sky-mid:#312e81;--g21-sky-bot:#0000
 .mc-btn:active,.mc-btn.held{transform:scale(0.92);background:rgba(255,255,255,0.32)}
 .mc-jump{width:clamp(78px,14vmin,118px);height:clamp(78px,14vmin,118px);background:rgba(34,197,94,0.32);border-color:rgba(74,222,128,0.55);font-size:clamp(24px,6vmin,36px)}
 .mc-jump:active,.mc-jump.held{background:rgba(34,197,94,0.5)}
+.mc-bolt{background:rgba(251,191,36,0.4);border-color:rgba(253,224,71,0.8);font-size:clamp(22px,5vmin,32px);animation:boltPulse 0.8s ease-in-out infinite}
+.mc-bolt:active,.mc-bolt.held{background:rgba(251,191,36,0.6)}
+@keyframes boltPulse{0%,100%{box-shadow:0 4px 12px rgba(0,0,0,0.25)}50%{box-shadow:0 4px 12px rgba(0,0,0,0.25),0 0 24px 6px rgba(253,224,71,0.6)}}
 @media (pointer:fine) and (hover:hover){#mobile-controls{display:none}}
 
 /* ── Math Quiz Modal ── */
@@ -118,6 +121,11 @@ body.shake{animation:screenShake .35s ease}
 
 <canvas id="pixi-canvas"></canvas>
 
+<!-- Pikachu rendered as HTML <img> overlay (preserves GIF animation natively;
+     Pixi 8 doesn't decode multi-frame GIFs without extra libs). Position is
+     synced from S.x / S.y - S.camX every frame. -->
+<img id="pikachu-sprite" src="../assets/mario-pokemon/sprites/pikachu-idle.gif" alt="Pikachu" style="position:fixed;width:84px;height:84px;left:-200px;top:-200px;z-index:30;pointer-events:none;image-rendering:auto;transform-origin:50% 100%;transition:transform 0.05s linear;will-change:transform,left,top;filter:drop-shadow(0 4px 6px rgba(0,0,0,0.4))">
+
 <!-- HUD Top -->
 <div id="hud-top">
   <button class="hud-btn" id="btn-back" onclick="goBack()">← Kembali</button>
@@ -140,6 +148,7 @@ body.shake{animation:screenShake .35s ease}
     <button class="mc-btn" id="btn-right" aria-label="Kanan">▶</button>
   </div>
   <div class="mc-cluster">
+    <button class="mc-btn mc-bolt" id="btn-bolt" aria-label="Listrik" style="display:none">⚡</button>
     <button class="mc-btn mc-jump" id="btn-jump" aria-label="Lompat">▲</button>
   </div>
 </div>
@@ -243,13 +252,19 @@ const S = {
   camX: 0,
   // Input
   input: { left:false, right:false, jump:false, jumpPressed:false },
-  // Entities
+  // Entities — array refs to Pixi sprites for collision/cleanup.
+  // Hotfix #106: renamed `coins:[]` → `coinList:[]` to avoid shadowing the
+  // counter `coins:0` above (duplicate key made `S.coins` an array, breaking
+  // ++ math and HUD render — was showing "[object Object]").
   goombas: [],
-  coins: [],
+  coinList: [],
   mushrooms: [],
   stars: [],
   spikes: [],
   qBlocks: [],
+  bolts: [],
+  // Electric mode (star pickup → 10s mode)
+  electricMode: 0,
   // Math quiz tracking
   goombaHitsThisLevel: 0,
   perfectMath: 0,
@@ -681,7 +696,7 @@ function loadLevel(lvNum) {
 
   // Clear world
   world.removeChildren()
-  S.goombas.length = 0; S.coins.length = 0; S.mushrooms.length = 0
+  S.goombas.length = 0; S.coinList.length = 0; S.mushrooms.length = 0; S.bolts.length = 0
   S.stars.length = 0; S.spikes.length = 0; S.qBlocks.length = 0
 
   // Ground tiles
@@ -715,7 +730,7 @@ function loadLevel(lvNum) {
     sp.scale.set(0.7)
     sp._g21Bob = Math.random() * 6.28
     world.addChild(sp)
-    S.coins.push(sp)
+    S.coinList.push(sp)
   }
   // Goombas
   for (const g of levelData.goombas) {
@@ -768,19 +783,13 @@ function loadLevel(lvNum) {
   world.addChild(flag)
   S._goalFlag = flag
 
-  // Player sprite — HD upscale from 512x512 source to 1024x1024 (2× LANCZOS).
-  // Frame layout: 96x96 frames in a 10-col grid (was 48x48 originally).
-  const tex = textures['pikachu_' + (S.pikachuState || 'small')]
-  if (S._player) world.removeChild(S._player)
-  S._player = new PIXI.Sprite(tex)
-  S._player.anchor.set(0.5, 1)
-  S._player._frameW = 96
-  S._player._frameH = 96
-  S._player._cols = Math.floor(1024 / 96) // 10
-  setPlayerFrame(0)
-  S._player.x = S.x; S._player.y = S.y
-  S._player.scale.set(1.0)  // 96 px native (HD source). LINEAR filter handles any further scaling.
-  world.addChild(S._player)
+  // Player rendered as DOM <img> overlay (id=pikachu-sprite) — preserves
+  // GIF animation natively. We DON'T add to world; we sync its CSS
+  // left/top each frame in syncPikachuSprite().
+  // Hotfix #106: removed buggy Pixi sprite-sheet slicing that caused
+  // "termutilasi" (mutilated body parts) when the assumed grid layout
+  // didn't match the actual sprite sheet.
+  setPikachuAnim('idle')
 
   // Apply theme background
   document.body.className = ''
@@ -802,24 +811,41 @@ function placeTile(kind, tx, ty) {
   return sp
 }
 
-// Set player to a sprite-sheet frame. After Hotfix #105-D: 96x96 each
-// (HD upscale 2× from original 48x48), 10 cols per row.
-function setPlayerFrame(frameIdx) {
-  if (!S._player) return
-  const PIXI = window.PIXI
-  const fw = S._player._frameW || 96
-  const cols = S._player._cols || 10
-  const col = frameIdx % cols
-  const row = Math.floor(frameIdx / cols)
-  const baseTex = textures['pikachu_' + (S.pikachuState || 'small')]
-  if (!baseTex || !baseTex.source) return
-  try {
-    const sub = new PIXI.Texture({
-      source: baseTex.source,
-      frame: new PIXI.Rectangle(col * fw, row * fw, fw, fw),
-    })
-    S._player.texture = sub
-  } catch (_) { S._player.texture = baseTex }
+// Hotfix #106: Pikachu rendered as DOM <img> with animated GIF.
+// 4 anim states map to 4 GIF files in assets/mario-pokemon/sprites/.
+const PIKA_ANIMS = {
+  idle:    '../assets/mario-pokemon/sprites/pikachu-idle.gif',
+  running: '../assets/mario-pokemon/sprites/pikachu-running.gif',
+  jump:    '../assets/mario-pokemon/sprites/pikachu-jump.gif',
+  happy:   '../assets/mario-pokemon/sprites/pikachu-happy.gif',
+}
+let _pikaCurrentAnim = null
+function setPikachuAnim(name) {
+  if (_pikaCurrentAnim === name) return
+  const el = document.getElementById('pikachu-sprite')
+  if (!el) return
+  const src = PIKA_ANIMS[name] || PIKA_ANIMS.idle
+  // Only swap src if changed (force GIF reload only on transition)
+  if (!el.src.endsWith(src.split('/').pop())) el.src = src
+  _pikaCurrentAnim = name
+}
+
+function syncPikachuSprite() {
+  const el = document.getElementById('pikachu-sprite')
+  if (!el) return
+  // World coords → screen coords (Pixi world has world.x = -S.camX)
+  const screenX = S.x - S.camX
+  const screenY = S.y
+  // Position with anchor bottom-center
+  el.style.left = (screenX - 42) + 'px'
+  el.style.top = (screenY - 84) + 'px'
+  // Facing flip
+  const flip = S.facing >= 0 ? 1 : -1
+  // Electric mode aura via filter glow
+  const glow = S.electricMode > 0 ? 'drop-shadow(0 0 12px #fbbf24) drop-shadow(0 0 18px #fde047)' : 'drop-shadow(0 4px 6px rgba(0,0,0,0.4))'
+  el.style.filter = glow + (S.hitFrames > 0 && Math.floor(S.hitFrames/4)%2 === 0 ? ' brightness(2)' : '')
+  el.style.transform = `scaleX(${flip})`
+  el.style.opacity = (S.hitFrames > 0 && Math.floor(S.hitFrames/4)%2===0) ? '0.5' : '1'
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -836,6 +862,7 @@ function attachInput() {
       S.input.jump = true
     }
     if (e.key === 'p' || e.key === 'P' || e.key === 'Escape') togglePause()
+    if (e.key === 'x' || e.key === 'X' || e.key === 'j' || e.key === 'J') tryFireBolt()
   })
   window.addEventListener('keyup', e => {
     if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') S.input.left = false
@@ -855,6 +882,11 @@ function attachInput() {
   wireBtn('btn-left', 'left')
   wireBtn('btn-right', 'right')
   wireBtn('btn-jump', 'jump')
+  // Bolt button (electric mode)
+  const boltEl = document.getElementById('btn-bolt')
+  if (boltEl) {
+    boltEl.addEventListener('pointerdown', e => { e.preventDefault(); tryFireBolt() })
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -912,20 +944,16 @@ function gameLoop() {
   if (S.starMode > 0) S.starMode--
   if (S.hitFrames > 0) S.hitFrames--
 
-  // Animation
-  S.walkT++
-  if (Math.abs(S.vx) > 0.5) {
-    if (S.walkT % 6 === 0) S.walkFrame = (S.walkFrame + 1) % 3
-    setPlayerFrame(S.walkFrame + 1) // frames 1,2,3 = walk cycle
-  } else {
-    setPlayerFrame(0) // idle
+  // Animation state — drive DOM <img> GIF via setPikachuAnim()
+  if (!S.onGround) setPikachuAnim('jump')
+  else if (Math.abs(S.vx) > 0.5) setPikachuAnim('running')
+  else setPikachuAnim('idle')
+  if (S.electricMode > 0) {
+    S.electricMode--
+    if (S.electricMode === 0) {
+      const b = document.getElementById('btn-bolt'); if (b) b.style.display = 'none'
+    }
   }
-  if (!S.onGround) setPlayerFrame(5) // jump frame
-  S._player.scale.x = 2.0 * S.facing
-  // Star mode tint
-  if (S.starMode > 0) S._player.tint = (Math.floor(S.starMode/4) % 2 === 0) ? 0xffffff : 0xfbbf24
-  else if (S.hitFrames > 0 && Math.floor(S.hitFrames/4) % 2 === 0) S._player.alpha = 0.4
-  else { S._player.tint = 0xffffff; S._player.alpha = 1 }
 
   // Camera
   const targetCamX = Math.max(0, Math.min(levelData.width * TILE - window.innerWidth, S.x - window.innerWidth/2))
@@ -934,9 +962,11 @@ function gameLoop() {
   parallaxMid.x = -S.camX * 0.45
   parallaxFar.x = -S.camX * 0.18
 
-  // Player sprite track
-  S._player.x = S.x
-  S._player.y = S.y
+  // Sync DOM Pikachu position
+  syncPikachuSprite()
+
+  // Update bolts (electric projectiles)
+  updateBolts()
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1020,8 +1050,8 @@ function updateGoombas() {
 }
 
 function updateCoins() {
-  for (let i = S.coins.length - 1; i >= 0; i--) {
-    const c = S.coins[i]
+  for (let i = S.coinList.length - 1; i >= 0; i--) {
+    const c = S.coinList[i]
     c._g21Bob = (c._g21Bob || 0) + 0.18
     c.y += Math.sin(c._g21Bob) * 0.4
     c.rotation = Math.sin(c._g21Bob * 0.5) * 0.6
@@ -1031,7 +1061,7 @@ function updateCoins() {
       spawnScorePopup(c.x, c.y, '+10', 'coin')
       spawnParticles(c.x, c.y, 'spark', 5)
       world.removeChild(c)
-      S.coins.splice(i, 1)
+      S.coinList.splice(i, 1)
       checkLifeFromCoins()
       updateHUD()
     }
@@ -1066,9 +1096,15 @@ function updateStars() {
     st.y += Math.sin(st._g21Bob) * 0.6
     if (collides(st, S, 36, 70)) {
       sfx('sfx-powerup')
-      S.starMode = 600 // 10s @ 60fps
+      S.starMode = 600     // 10s invincibility (existing)
+      S.electricMode = 600 // 10s ELECTRIC MODE — can fire bolts
       S.score += 500
-      spawnScorePopup(st.x, st.y, 'STAR!', 'heal')
+      spawnScorePopup(st.x, st.y, '⚡ STAR! ⚡', 'heal')
+      spawnParticles(st.x, st.y, 'lightning', 10)
+      // Show bolt button on mobile
+      const boltBtn = document.getElementById('btn-bolt')
+      if (boltBtn) boltBtn.style.display = 'flex'
+      showToast('⚡ ELECTRIC MODE 10s — Tekan ⚡ untuk tembak!', 3500)
       world.removeChild(st); S.stars.splice(i, 1)
     }
   }
@@ -1114,7 +1150,8 @@ function onGoombaCollide(g) {
     S.score += 100
     sfx('sfx-stomp')
     spawnScorePopup(g.x, g.y - 40, '+100', 'coin')
-    spawnParticles(g.x, g.y - 20, 'squish', 6)
+    // Hotfix #106: Pikachu = electric type, swap squish → lightning
+    spawnParticles(g.x, g.y - 20, 'lightning', 6)
     return
   }
   if (S.starMode > 0) {
@@ -1122,7 +1159,7 @@ function onGoombaCollide(g) {
     S.score += 200
     sfx('sfx-stomp')
     spawnScorePopup(g.x, g.y - 40, '+200', 'heal')
-    spawnParticles(g.x, g.y - 20, 'squish', 8)
+    spawnParticles(g.x, g.y - 20, 'lightning', 8)
     return
   }
   // Side hit — damage
@@ -1316,6 +1353,7 @@ function spawnParticles(x, y, kind, count) {
                 : kind === 'spark' ? ['✨','⭐','✨']
                 : kind === 'squish' ? ['💥','✨','💢']
                 : kind === 'heal' ? ['💚','✨','💖']
+                : kind === 'lightning' ? ['⚡','✨','⚡','⚡']
                 : ['✨']
   for (let i = 0; i < count; i++) {
     const p = document.createElement('span')
@@ -1339,6 +1377,72 @@ function screenShake() {
   _shakeT = 1
   document.body.classList.add('shake')
   setTimeout(() => { document.body.classList.remove('shake'); _shakeT = 0 }, 360)
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  ELECTRIC BOLT PROJECTILE (Hotfix #106 Phase 5)
+// ═══════════════════════════════════════════════════════════════════
+function spawnBolt(x, y, dir) {
+  const PIXI = window.PIXI
+  const g = new PIXI.Graphics()
+  // Yellow lightning ball with white core + outline
+  g.circle(0, 0, 14).fill(0xfde047)
+  g.circle(0, 0, 8).fill(0xffffff)
+  g.x = x; g.y = y
+  g._g21Vx = dir * 12
+  g._g21Vy = -2
+  g._g21TTL = 70
+  world.addChild(g)
+  S.bolts.push(g)
+  sfx('sfx-jump')
+  // Trailing emoji label
+  const trail = document.createElement('span')
+  trail.textContent = '⚡'
+  trail.style.cssText = 'position:fixed;font-size:22px;z-index:118;pointer-events:none;animation:fxSparkPop 0.7s ease-out forwards'
+  trail.style.left = (x - S.camX) + 'px'
+  trail.style.top = y + 'px'
+  trail.style.setProperty('--dx', (dir * 30) + 'px')
+  trail.style.setProperty('--dy', '-10px')
+  document.body.appendChild(trail)
+  setTimeout(() => trail.remove(), 750)
+}
+
+function updateBolts() {
+  for (let i = S.bolts.length - 1; i >= 0; i--) {
+    const b = S.bolts[i]
+    b.x += b._g21Vx
+    b.y += b._g21Vy
+    b._g21Vy += 0.4
+    b._g21TTL--
+    b.rotation += 0.4
+    // Hit goomba?
+    let hit = false
+    for (const g of S.goombas) {
+      if (!g._g21Alive) continue
+      if (Math.abs(b.x - g.x) < 30 && Math.abs(b.y - g.y + 30) < 40) {
+        g._g21Alive = false
+        S.score += 200
+        sfx('sfx-stomp')
+        spawnScorePopup(g.x, g.y - 40, '+200', 'heal')
+        spawnParticles(g.x, g.y - 20, 'lightning', 8)
+        hit = true; break
+      }
+    }
+    if (hit || b._g21TTL <= 0) {
+      world.removeChild(b)
+      S.bolts.splice(i, 1)
+    }
+  }
+}
+
+// Allow X / J keys (PC) and dedicated mobile button later to fire bolt.
+function tryFireBolt() {
+  if (S.electricMode <= 0) return
+  if (!S.onGround) return
+  // Cooldown — 20-frame gate
+  if (S._lastBolt && (performance.now() - S._lastBolt) < 350) return
+  S._lastBolt = performance.now()
+  spawnBolt(S.x + S.facing * 30, S.y - 50, S.facing)
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1463,12 +1567,19 @@ window.goBack = goBack
 window.togglePause = togglePause
 
 // ═══════════════════════════════════════════════════════════════════
-//  RESIZE
+//  RESIZE — Hotfix #106: debounce 200ms + skip parallax rebuild
+//  (was rebuilding entire bg layer per resize event = main thread stall
+//  + memory pressure during orientation change → freeze).
 // ═══════════════════════════════════════════════════════════════════
+let _resizeT = 0
 function onResize() {
   if (!app) return
-  app.renderer.resize(window.innerWidth, window.innerHeight)
-  buildBackground()
+  clearTimeout(_resizeT)
+  _resizeT = setTimeout(() => {
+    try {
+      app.renderer.resize(window.innerWidth, window.innerHeight)
+    } catch (e) { console.warn('[g21] resize:', e) }
+  }, 200)
 }
 
 // ═══════════════════════════════════════════════════════════════════
