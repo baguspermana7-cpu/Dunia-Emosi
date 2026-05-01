@@ -1,5 +1,36 @@
 # Changelog — Dunia Emosi
 
+## 2026-05-01 — Hotfix #119 (#115 follow-through — save-engine sweep + g13c_badges migration)
+
+Cache bump: save-engine.js `v=20260501e` → `v=20260501h` across 8 standalone games.
+
+User feedback: "ensure those bug and other bug not emerge" (regression-prevention) + "commit and push after finish. ensure no bug".
+
+### Refactored — 6 standalone game save blocks → `window.saveLevelProgress(gameId, level, stars)`
+- `games/g14.html` `saveG14Progress`
+- `games/g15-pixi.html` `saveG15Progress`
+- `games/g16-pixi.html` `saveG16Progress`
+- `games/g19-pixi.html` (2 sites: game-end + back-button)
+- `games/g20-pixi.html` `saveG20Progress`
+- `games/g21-pixi.html` `saveProgress`
+- `games/g22-candy.html` (inline at game-end)
+
+Each refactored function now calls `window.saveLevelProgress(...)` first; legacy `dunia-0-progress` block remains as `else`-fallback when save-engine not loaded.
+
+### Added — `data/save-engine.js` script tags to g21-pixi.html and g22-candy.html
+Previously missing. Both now load the engine before save-block code runs.
+
+### Extended — `migrateSlotToAvatar()` in game.js
+Added g13c_badges migration: pre-#103 global `g13c_badges` key is copied to per-avatar buckets (`dunia-avatar-{slug}-g13c_badges`) for all 8 animals. Existing badges follow user across avatars; original global key left as backup.
+
+### Added — `documentation and standarization/SAVE_ENGINE_STANDARD.md`
+Codifies avatar-keyed save scheme: required pattern, helper inventory, forbidden patterns, audit history, CI enforcement spec.
+
+### Verification
+- `./scripts/check-regressions.sh` — ALL CHECKS PASSED (G13-LAYOUT-1/2, Z-INDEX-1, HD-SPRITE-1, PIXI-NO-GRAPHICS-FOR-TILES, SAVE-AVATAR-KEYED).
+
+---
+
 ## 2026-05-01 — Hotfix #118 (G21 Mario Pokemon authentic SMB1 sprite reskin)
 
 Cache bump: `v=20260501f` → `v=20260501h`. Commit `8502d8c`.

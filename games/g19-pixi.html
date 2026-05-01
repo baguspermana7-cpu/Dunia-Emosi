@@ -120,7 +120,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
 <script src="../shared/rz-responsive.js?v=20260422i"></script>
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
-<script src="data/save-engine.js?v=20260501e"></script>
+<script src="data/save-engine.js?v=20260501h"></script>
 <script src="game-modal.js?v=20260424g"></script>
 <script>
 // ═══════════════════════════════════════════════════════════
@@ -968,17 +968,19 @@ function showWin() {
   try { const bgm=document.getElementById('game-bgm'); bgm.pause(); bgm.currentTime=0 } catch(_){}
   const stars = calcStars()
   try { sessionStorage.setItem('g19Result', JSON.stringify({ stars, level: S.level })) } catch(_){}
-  // Save progress DIRECTLY to localStorage (reliable, no pageshow dependency)
-  try {
-    const key = 'dunia-0-progress'
-    const prog = JSON.parse(localStorage.getItem(key) || '{}')
-    if (!prog.g19) prog.g19 = { completed: [], stars: {} }
-    // Hotfix 2026-04-28: removed legacy 5★→3★ capping. GameScoring.calc()
-    // already returns 1-5; save raw value so modal and progress agree.
-    if (!prog.g19.completed.includes(S.level)) prog.g19.completed.push(S.level)
-    if ((prog.g19.stars[S.level] || 0) < stars) prog.g19.stars[S.level] = stars
-    localStorage.setItem(key, JSON.stringify(prog))
-  } catch(_) {}
+  // Save progress — Hotfix #115: prefer shared save-engine (avatar-keyed).
+  if (typeof window.saveLevelProgress === 'function') {
+    window.saveLevelProgress('g19', S.level, stars)
+  } else {
+    try {
+      const key = 'dunia-0-progress'
+      const prog = JSON.parse(localStorage.getItem(key) || '{}')
+      if (!prog.g19) prog.g19 = { completed: [], stars: {} }
+      if (!prog.g19.completed.includes(S.level)) prog.g19.completed.push(S.level)
+      if ((prog.g19.stars[S.level] || 0) < stars) prog.g19.stars[S.level] = stars
+      localStorage.setItem(key, JSON.stringify(prog))
+    } catch(_) {}
+  }
   document.getElementById('status-text').textContent = 'Level Selesai!'
   sfxCorrect(); setTimeout(() => sfxCorrect(), 200)
 
@@ -1208,19 +1210,22 @@ function goBack() {
   try { if (app && app.ticker) app.ticker.stop() } catch(_){}
   // stop all audio
   try { const bgm=document.getElementById('game-bgm'); bgm.pause(); bgm.currentTime=0 } catch(_){}
-  // Save progress directly to localStorage (don't rely on pageshow handler)
+  // Save progress — Hotfix #115: prefer shared save-engine (avatar-keyed).
   if (S.gameOver && S.pipesCleared > 0) {
-    try {
-      const key = 'dunia-0-progress'
-      const prog = JSON.parse(localStorage.getItem(key) || '{}')
-      if (!prog.g19) prog.g19 = { completed: [], stars: {} }
-      const lv = S.level
-      const stars = calcStars()
-      // Hotfix 2026-04-28: removed legacy 5★→3★ capping. Save raw stars 1-5.
-      if (!prog.g19.completed.includes(lv)) prog.g19.completed.push(lv)
-      if ((prog.g19.stars[lv] || 0) < stars) prog.g19.stars[lv] = stars
-      localStorage.setItem(key, JSON.stringify(prog))
-    } catch(_) {}
+    const lv = S.level
+    const stars = calcStars()
+    if (typeof window.saveLevelProgress === 'function') {
+      window.saveLevelProgress('g19', lv, stars)
+    } else {
+      try {
+        const key = 'dunia-0-progress'
+        const prog = JSON.parse(localStorage.getItem(key) || '{}')
+        if (!prog.g19) prog.g19 = { completed: [], stars: {} }
+        if (!prog.g19.completed.includes(lv)) prog.g19.completed.push(lv)
+        if ((prog.g19.stars[lv] || 0) < stars) prog.g19.stars[lv] = stars
+        localStorage.setItem(key, JSON.stringify(prog))
+      } catch(_) {}
+    }
   }
   history.back()
 }

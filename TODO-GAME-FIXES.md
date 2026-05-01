@@ -1978,3 +1978,27 @@ From `/Bagus_Apps/Supermario/web/game-easy/images/` to `assets/mario-pokemon/spr
 ### Lessons added (TBD when L60/L61 entries are written)
 - User-provided reference assets are mandatory — never invent custom-drawn replacements when the user supplied real sprites at session start
 - Sprite halo padding requires either cropped variant (Pillow `getbbox()`) or `wrapH` Y-offset compensation
+
+---
+
+## 📊 Session 2026-05-01 — Hotfix #119 (#115 follow-through, save-engine sweep)
+
+Cache bump: save-engine.js `v=20260501e` → `v=20260501h` across all 8 standalone games.
+
+### ✅ All 8 standalone games now route saves through `window.saveLevelProgress`
+- g6 (already done in #115 partial)
+- g14, g15-pixi, g16-pixi, g19-pixi (2 sites), g20-pixi, g21-pixi, g22-candy — all refactored
+- Legacy `dunia-0-progress` block kept as `else`-fallback only (when save-engine not loaded)
+
+### ✅ Added `data/save-engine.js` script tag to g21-pixi.html + g22-candy.html
+These two were missing the engine load. Now ALL 8 standalones import the shared engine.
+
+### ✅ `migrateSlotToAvatar()` extended for g13c_badges
+Pre-#103 global `g13c_badges` key copied to per-avatar buckets for all 8 animals on next app boot. Backward-compatible (original key preserved).
+
+### ✅ `documentation and standarization/SAVE_ENGINE_STANDARD.md` created
+Codifies the avatar-keyed save scheme. Required pattern + helper inventory + forbidden patterns.
+
+### Verification
+- `./scripts/check-regressions.sh` — ALL CHECKS PASSED (6 rules)
+- All 8 games confirmed to load `data/save-engine.js?v=20260501h`

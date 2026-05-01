@@ -152,7 +152,7 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 
 <script src="../shared/rz-responsive.js?v=20260423c"></script>
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
-<script src="data/save-engine.js?v=20260501e"></script>
+<script src="data/save-engine.js?v=20260501h"></script>
 <script src="game-modal.js?v=20260424g"></script>
 <script src="train-character-sprite.js?v=20260423c"></script>
 
@@ -2090,14 +2090,18 @@ function flashScreen(color,alpha){
   const el=document.getElementById('flash'); el.style.background=color; el.style.opacity=alpha
   setTimeout(()=>{el.style.opacity='0'},130)
 }
-// Save level progress directly to localStorage
+// Save level progress — Hotfix #115: prefer shared save-engine (avatar-keyed).
+// Fallback to legacy slot-0 path if not loaded.
 function saveG16Progress(stars) {
+  const lv = (typeof cfg !== 'undefined' ? cfg.level : (typeof S !== 'undefined' ? S.level : 1)) || 1
+  if (typeof window.saveLevelProgress === 'function') {
+    window.saveLevelProgress('g16', lv, stars)
+    return
+  }
   try {
     const key = 'dunia-0-progress'
     const prog = JSON.parse(localStorage.getItem(key) || '{}')
     if (!prog.g16) prog.g16 = { completed: [], stars: {} }
-    const lv = (typeof cfg !== 'undefined' ? cfg.level : (typeof S !== 'undefined' ? S.level : 1)) || 1
-    // Hotfix 2026-04-28: removed legacy 5★→3★ capping. Save raw stars 1-5.
     if (!prog.g16.completed.includes(lv)) prog.g16.completed.push(lv)
     if ((prog.g16.stars[lv] || 0) < stars) prog.g16.stars[lv] = stars
     localStorage.setItem(key, JSON.stringify(prog))

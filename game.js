@@ -402,6 +402,21 @@ function migrateSlotToAvatar() {
       } catch (_) { /* keep newer if either side malformed */ }
     }
   }
+  // Hotfix #115 follow-through: g13c_badges was global pre-#103. Migrate to
+  // per-avatar copies so badges follow the active avatar (no cross-avatar
+  // bleed-through). Original global key is left in place as a backup.
+  try {
+    const oldBadges = localStorage.getItem('g13c_badges')
+    if (oldBadges) {
+      for (const animalEmoji of Object.keys(_slugMap)) {
+        const av = _slugMap[animalEmoji]
+        const newKey = `dunia-avatar-${av}-g13c_badges`
+        if (!localStorage.getItem(newKey)) {
+          localStorage.setItem(newKey, oldBadges)
+        }
+      }
+    }
+  } catch (_) {}
   localStorage.setItem('dunia-migrated-v2','1')
 }
 function _mergeProgress(a, b, kind) {

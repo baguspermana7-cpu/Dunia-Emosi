@@ -137,7 +137,7 @@ if(!('ontouchstart' in window)){
 <script src="data/poke-sprite-cdn.js?v=20260427d"></script>
 <script src="data/poke-sprite-loader.js?v=20260428a"></script>
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
-<script src="data/save-engine.js?v=20260501e"></script>
+<script src="data/save-engine.js?v=20260501h"></script>
 <script>
 // ═══════════════════════════════════════════════════════════
 //  CONFIG
@@ -1302,14 +1302,18 @@ window.addEventListener('keyup',e=>{
 })
 document.getElementById('start-overlay').addEventListener('pointerdown',startGame)
 
-// Save level progress directly to localStorage
+// Save level progress — Hotfix #115: prefer shared save-engine (avatar-keyed).
+// Fallback to legacy slot-0 path if not loaded.
 function saveG20Progress(stars) {
+  const lv = (typeof cfg !== 'undefined' ? cfg.level : (typeof S !== 'undefined' ? S.level : 1)) || 1
+  if (typeof window.saveLevelProgress === 'function') {
+    window.saveLevelProgress('g20', lv, stars)
+    return
+  }
   try {
     const key = 'dunia-0-progress'
     const prog = JSON.parse(localStorage.getItem(key) || '{}')
     if (!prog.g20) prog.g20 = { completed: [], stars: {} }
-    const lv = (typeof cfg !== 'undefined' ? cfg.level : (typeof S !== 'undefined' ? S.level : 1)) || 1
-    // Hotfix 2026-04-28: removed legacy 5★→3★ capping. Save raw stars 1-5.
     if (!prog.g20.completed.includes(lv)) prog.g20.completed.push(lv)
     if ((prog.g20.stars[lv] || 0) < stars) prog.g20.stars[lv] = stars
     localStorage.setItem(key, JSON.stringify(prog))

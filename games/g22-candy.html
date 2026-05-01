@@ -112,6 +112,7 @@ canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
 <script src="data/poke-sprite-cdn.js?v=20260427d"></script>
 <script src="data/poke-sprite-loader.js?v=20260428a"></script>
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
+<script src="data/save-engine.js?v=20260501h"></script>
 <script src="question-bank.js"></script>
 <script>
 // ═══════════════════════════════════════════════════════════
@@ -970,18 +971,20 @@ function endGame() {
   try{document.getElementById('game-bgm').pause()}catch(_){}
   const stars = GameScoring.calc({correct:S.totalCaught, total:S.totalCaught+S.totalMissed, wrong:S.totalMissed, lives:S.lives, maxLives:S.maxLives})
 
-  // Save progress
+  // Save progress — Hotfix #115: prefer shared save-engine (avatar-keyed).
   try { sessionStorage.setItem('g22Result', JSON.stringify({ stars, level: cfg.level })) } catch(_){}
-  try {
-    const key = 'dunia-0-progress'
-    const prog = JSON.parse(localStorage.getItem(key) || '{}')
-    if (!prog.g22) prog.g22 = { completed: [], stars: {} }
-    // Hotfix 2026-04-28: removed legacy 5★→3★ capping. GameScoring.calc()
-    // already returns 1-5; save raw value so modal and progress agree.
-    if (!prog.g22.completed.includes(cfg.level)) prog.g22.completed.push(cfg.level)
-    if ((prog.g22.stars[cfg.level] || 0) < stars) prog.g22.stars[cfg.level] = stars
-    localStorage.setItem(key, JSON.stringify(prog))
-  } catch(_){}
+  if (typeof window.saveLevelProgress === 'function') {
+    window.saveLevelProgress('g22', cfg.level, stars)
+  } else {
+    try {
+      const key = 'dunia-0-progress'
+      const prog = JSON.parse(localStorage.getItem(key) || '{}')
+      if (!prog.g22) prog.g22 = { completed: [], stars: {} }
+      if (!prog.g22.completed.includes(cfg.level)) prog.g22.completed.push(cfg.level)
+      if ((prog.g22.stars[cfg.level] || 0) < stars) prog.g22.stars[cfg.level] = stars
+      localStorage.setItem(key, JSON.stringify(prog))
+    } catch(_){}
+  }
 
   // Hotfix #102-C (2026-04-27): stop Pixi ticker so 60fps callback doesn't keep
   // firing after game-end. See games/g15-pixi.html for canonical pattern.
