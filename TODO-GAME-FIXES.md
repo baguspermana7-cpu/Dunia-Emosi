@@ -1712,3 +1712,77 @@ PC: keyboard ←→/A/D + Space/↑/W untuk lompat, P/Esc untuk pause.
 - BGM belum ada (audio folder hanya SFX); tambahkan `mario-bgm.mp3` di audio folder + load via `<audio>` element bila perlu.
 - Difficulty toggle (medium/hard tanpa math quiz) sudah disiapkan via `cfg.difficulty` di sessionStorage.
 
+
+---
+
+## 📊 Session 2026-04-29 — Hotfix #105-B → #110 (G21 build-out + cross-game sprite race)
+
+Cumulative cache: `v=20260429a` → `v=20260429i`. Commits `f347f48` → `1107957` (10 commits).
+
+### ✅ Hotfix #105-B (`f347f48`) — G21 expand 5→10 levels + difficulty toggle + score HUD
+- Levels 6-10: desert/ice/sky/lava/final themes
+- `body.theme-{name}` CSS gradient swap
+- Score counter (🏆) in HUD top-right
+- Difficulty chips (😊/⚡/🔥) in pause menu
+
+### ✅ Hotfix #105-C (`3c88fbc`) — Particles + screen shake
+- Jump dust, coin spark, Goomba squish particles
+- 0.35s screen shake on hit (debounced)
+
+### ✅ Hotfix #105-D (`2b40acd`) — Pikachu HD upscale + procedural BGM
+- Pillow LANCZOS 2× (later rolled back in #106)
+- Procedural chiptune BGM via Web Audio API
+
+### ✅ Hotfix #106 (`5f579b0`) — Critical bugs fix + electric attack
+- `S.coins` shadowing fix (rename to `S.coinList`) → no more `[object Object]` HUD
+- Pikachu DOM `<img>` GIF overlay (4 user-provided GIFs from `rz-work/Apps/dunia-emosi/assets/Pokemon/trainer/`)
+- Resize debounce 200ms (no landscape freeze)
+- Electric attack mechanic: Star → 10s electric mode → fire bolt projectiles via X/J keys or ⚡ button
+
+### ✅ Hotfix #107 (`64813e2`) — Visual overhaul (Pixi Graphics)
+- Replaced ALL sprite sheets with hand-drawn Pixi Graphics primitives
+- Tiles: ground (brown+grass), brick (mortar pattern), Q-block (gold+?)
+- Entities: Goomba (brown+eyes+feet), coin (gold disk), mushroom, star, spike, goal flag
+- Background: clouds (5-circle blobs) + hills
+- Pikachu electric aura (radial gradient + pulse animation)
+- Win celebration: pikachu-happy GIF + 14 lightning + 14 spark particles
+
+### ✅ Hotfix #108 (`6506a3a`) — Entity animations + milestones + death FX
+- Goomba walk tilt (rotation+scale.y oscillate)
+- Q-block bounce on hit (sin wave pop)
+- `showMilestone(text, color)` overlay — neon drop-shadow + scale animation
+- Triggered: POWER UP, ELECTRIC, SEMPURNA, 1-UP, LEVEL CLEAR, GAME OVER, CHAIN x3+
+- Pikachu death animation: rotate 720° + fall below viewport
+
+### ✅ Hotfix #109 (`6da1104`) — Themed parallax + combo + growth
+- `buildFarLayer(theme)` + `buildMidLayer(theme)` per-level visual variety
+- Combo system: stomp 2 Goomba within 1.5s, score scales 100×comboCount
+- Pikachu growth state: mushroom power-up, big = damage shield (shrink instead of die)
+
+### ✅ Hotfix #110 (`44baa7d`) — Sprite re-entry race fix (CROSS-GAME)
+**User repro**: Win level → pick different city → broken sprite. Evolution → Home → re-enter → broken sprite.
+
+**Root cause**: stale `onerror` closure on `<img>` element survives scene transitions. With `MAX_CONCURRENT=4` queue saturated, new cascade waited; old closure fired first, set `imgEl.src = _emojiDataURL(fallback)` (the sad-face).
+
+**Fixes**:
+- `poke-sprite-loader.js`: new `resetSpriteEl(imgEl)` (clears handlers/dataset, `removeAttribute('src')` + force layout) + `flushSpriteQueue()` (resets module state). `attachSpriteCascade` calls reset at start. `MAX_CONCURRENT` 4→8.
+- `game.js`: `initGame10/13/13b` reset sprites + flush queue after `PixiManager.destroyAll()`. New `exitGame10()`/`exitGame13()`. City-click handler defensively resets ALL game sprites.
+
+### Vercel verified
+- `v=20260429i` count = 2 in index.html
+- `resetSpriteEl` count = 3 in poke-sprite-loader.js
+- `exitGame10` exists in game.js
+
+### Lessons added
+- L47: Object literal duplicate keys silently keep last value (S.coins shadowing)
+- L48: Never assume sprite-sheet grid layout (Pikachu mutilation)
+- L49: Pixi Graphics primitives beat sheets for stylized retro
+- L50: Milestone overlay UX vs toast for celebratory moments
+- L51: Theme-aware factories beat mega-conditionals
+- L52: Stale closure on DOM elements survives scene transitions
+
+### Open user-testable
+- Win G10 lv 1 → pick different city → sprite must render (not sad-face)
+- During G13 Evolution → Home → re-enter → sprite must render
+- During G13B → win → region overlay → different city → sprite must render
+- DevTools recovery: `JSON.parse(localStorage.__freezeLog || '[]')`
