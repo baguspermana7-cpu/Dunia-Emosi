@@ -214,6 +214,7 @@ body.shake{animation:screenShake .35s ease}
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/math-rules.js?v=20260501a"></script>
 <script src="game-modal.js?v=20260424g"></script>
+<!-- Hotfix #118: SMB1 sprite reskin — cache bust g21 only (v=20260501h) -->
 
 <script>
 // ═══════════════════════════════════════════════════════════════════
@@ -586,7 +587,14 @@ const LEVELS = [
 
 // ═══════════════════════════════════════════════════════════════════
 //  ASSET LOADING (Pixi 8) — LINEAR scale mode for HD Pikachu sprite
+//  Hotfix #118: Added authentic SMB1 ref-* sprites from
+//  /Bagus_Apps/Supermario/web/game-easy/images/
 // ═══════════════════════════════════════════════════════════════════
+
+// Global cache for Mario NES sprites — keyed by short name.
+// Populated by loadAssets(); fallback is PIXI.Texture.WHITE.
+let MARIO_TEXTURES = {}
+
 async function loadAssets() {
   const PIXI = window.PIXI
   if (!PIXI) throw new Error('Pixi.js failed to load')
@@ -594,9 +602,40 @@ async function loadAssets() {
   // Pixi 8: Assets API
   const baseUrl = '../assets/mario-pokemon/sprites/'
   const manifest = {
-    pikachu_small: baseUrl + 'pikachu-small.png',
-    pikachu_big:   baseUrl + 'pikachu-big.png',
+    // Pikachu overlays (DOM <img> but loaded so browser pre-caches)
+    pikachu_small: baseUrl + 'pikachu-small-cropped.png',
+    pikachu_big:   baseUrl + 'pikachu-big-cropped.png',
     pikachu_fire:  baseUrl + 'pikachu-fire.png',
+    // ── Hotfix #118: Authentic SMB1 NES sprites ──
+    // Tiles
+    ref_block:    baseUrl + 'ref-block.png',
+    ref_ground:   baseUrl + 'ref-ground.png',
+    ref_brick:    baseUrl + 'ref-brick.png',
+    ref_qblock:   baseUrl + 'ref-qblock.png',
+    ref_qblock0:  baseUrl + 'ref-qblock-anim0.png',
+    ref_qblock1:  baseUrl + 'ref-qblock-anim1.png',
+    // Enemies
+    ref_goomba0:  baseUrl + 'ref-goomba0.png',
+    ref_goomba1:  baseUrl + 'ref-goomba1.png',
+    // Items
+    ref_coin0:    baseUrl + 'ref-coin0.png',
+    ref_coin1:    baseUrl + 'ref-coin1.png',
+    ref_coin2:    baseUrl + 'ref-coin2.png',
+    ref_mushroom: baseUrl + 'ref-mushroom.png',
+    ref_starman:  baseUrl + 'ref-starman.png',
+    ref_1up:      baseUrl + 'ref-1up.png',
+    ref_fireflower: baseUrl + 'ref-fireflower.png',
+    // Props
+    ref_pipe:     baseUrl + 'ref-pipe.png',
+    ref_bush:     baseUrl + 'ref-bush.png',
+    ref_cloud:    baseUrl + 'ref-cloud.png',
+    ref_hill:     baseUrl + 'ref-hill.png',
+    ref_flagpole: baseUrl + 'ref-flagpole.png',
+    // Castle
+    ref_castlewall:  baseUrl + 'ref-castlewall.png',
+    ref_castlebrick: baseUrl + 'ref-castlebrick.png',
+    ref_castledoor:  baseUrl + 'ref-castledoor.png',
+    // Legacy fallbacks (existing files, kept for compat)
     goomba: baseUrl + 'goomba.png',
     coin:   baseUrl + 'coin.png',
     mushroom: baseUrl + 'mushroom.png',
@@ -613,13 +652,15 @@ async function loadAssets() {
       const tex = await PIXI.Assets.load(url)
       // Pixi 8: source.scaleMode for smoothing (LINEAR avoids the pixelated
       // look the user reported on the HD Pikachu sprite).
-      if (tex && tex.source) tex.source.scaleMode = 'linear'
+      if (tex && tex.source) tex.source.scaleMode = 'nearest'
       out[key] = tex
     } catch (e) {
       console.warn('[g21] sprite load fail:', key, e)
-      out[key] = PIXI.Texture.WHITE
+      out[key] = null  // explicit null — checked before use
     }
   }
+  // Alias MARIO_TEXTURES for convenience in placeTile / entity renderers
+  MARIO_TEXTURES = out
   return out
 }
 
@@ -797,16 +838,28 @@ function buildFarLayer(theme, PIXI) {
 }
 
 function drawClouds(PIXI, count, fill, stroke) {
+  // Hotfix #118: use SMB1 ref-cloud sprite if available, fall back to Graphics
+  const cloudTex = MARIO_TEXTURES && MARIO_TEXTURES.ref_cloud
   for (let i = 0; i < count; i++) {
-    const c = new PIXI.Graphics()
-    c.circle(0, 0, 28).fill(fill).stroke({ width: 2, color: stroke })
-    c.circle(-22, 6, 22).fill(fill).stroke({ width: 2, color: stroke })
-    c.circle(22, 6, 22).fill(fill).stroke({ width: 2, color: stroke })
-    c.circle(-12, -12, 18).fill(fill)
-    c.circle(12, -12, 18).fill(fill)
-    c.x = i * 220 + 80; c.y = 50 + (i % 4) * 60
-    c.alpha = 0.92
-    parallaxFar.addChild(c)
+    if (cloudTex) {
+      const c = new PIXI.Sprite(cloudTex)
+      // ref-cloud.png is 48×24 native → scale up for parallax bg
+      const scale = 3 + (i % 3)
+      c.width = 48 * scale; c.height = 24 * scale
+      c.x = i * 220 + 80; c.y = 35 + (i % 4) * 55
+      c.alpha = 0.92
+      parallaxFar.addChild(c)
+    } else {
+      const c = new PIXI.Graphics()
+      c.circle(0, 0, 28).fill(fill).stroke({ width: 2, color: stroke })
+      c.circle(-22, 6, 22).fill(fill).stroke({ width: 2, color: stroke })
+      c.circle(22, 6, 22).fill(fill).stroke({ width: 2, color: stroke })
+      c.circle(-12, -12, 18).fill(fill)
+      c.circle(12, -12, 18).fill(fill)
+      c.x = i * 220 + 80; c.y = 50 + (i % 4) * 60
+      c.alpha = 0.92
+      parallaxFar.addChild(c)
+    }
   }
 }
 
@@ -871,15 +924,26 @@ function buildMidLayer(theme, PIXI) {
       parallaxMid.addChild(r)
     }
   } else {
-    // Default — green hills
+    // Default — Hotfix #118: use SMB1 hill sprite if available, else Graphics
+    const hillTex = MARIO_TEXTURES && MARIO_TEXTURES.ref_hill
     for (let i = 0; i < 10; i++) {
-      const b = new PIXI.Graphics()
-      const w = 180 + (i % 3) * 60
-      const h = 70 + (i % 4) * 25
-      b.ellipse(0, 0, w, h).fill(0x16A34A).stroke({ width: 3, color: 0x166534 })
-      b.ellipse(-w*0.3, -h*0.3, w*0.5, h*0.4).fill(0x22C55E)
-      b.x = i * 380 + 150; b.y = groundY
-      parallaxMid.addChild(b)
+      if (hillTex) {
+        const h = new PIXI.Sprite(hillTex)
+        // ref-hill.png is 128×128 native — scale for mid parallax bg
+        const sc = 2 + (i % 2)
+        h.width = 128 * sc; h.height = 128 * sc
+        h.anchor.set(0.5, 1)
+        h.x = i * 380 + 150; h.y = groundY
+        parallaxMid.addChild(h)
+      } else {
+        const b = new PIXI.Graphics()
+        const w = 180 + (i % 3) * 60
+        const h = 70 + (i % 4) * 25
+        b.ellipse(0, 0, w, h).fill(0x16A34A).stroke({ width: 3, color: 0x166534 })
+        b.ellipse(-w*0.3, -h*0.3, w*0.5, h*0.4).fill(0x22C55E)
+        b.x = i * 380 + 150; b.y = groundY
+        parallaxMid.addChild(b)
+      }
     }
   }
 }
@@ -952,35 +1016,53 @@ function loadLevel(lvNum) {
     sp._g21Hit = false
     S.qBlocks.push(sp)
   }
-  // ── Coins (Hotfix #107: clean Pixi Graphics — gold disk with shine) ──
+  // ── Coins (Hotfix #118: SMB1 ref-coin sprite; Graphics fallback) ──
+  const _coinTex = MARIO_TEXTURES.ref_coin0 || MARIO_TEXTURES.coin
   for (const c of levelData.coins) {
-    const g = new PIXI.Graphics()
-    g.circle(0, 0, 18).fill(0xFCD34D).stroke({ width: 3, color: 0xB45309 })
-    g.circle(-4, -4, 4).fill(0xFEF3C7) // shine highlight
-    g.rect(-2, -10, 4, 20).fill(0xB45309) // center bar (gives 3D feel)
+    let g
+    if (_coinTex) {
+      g = new PIXI.Sprite(_coinTex)
+      g.width = TILE * 0.55; g.height = TILE * 0.55
+      g.anchor.set(0.5, 0.5)
+    } else {
+      g = new PIXI.Graphics()
+      g.circle(0, 0, 18).fill(0xFCD34D).stroke({ width: 3, color: 0xB45309 })
+      g.circle(-4, -4, 4).fill(0xFEF3C7)
+      g.rect(-2, -10, 4, 20).fill(0xB45309)
+    }
     g.x = c[0] * TILE + TILE/2; g.y = c[1] * TILE + TILE/2
     g._g21Bob = Math.random() * 6.28
+    g._g21CoinFrames = [
+      MARIO_TEXTURES.ref_coin0, MARIO_TEXTURES.ref_coin1, MARIO_TEXTURES.ref_coin2,
+    ].filter(Boolean)
+    g._g21CoinFrameT = 0
     world.addChild(g)
     S.coinList.push(g)
   }
-  // ── Goombas (Hotfix #107: brown blob with eyes — like Mario Goomba) ──
+  // ── Goombas (Hotfix #118: SMB1 ref-goomba sprite; Graphics fallback) ──
+  const _goomTex0 = MARIO_TEXTURES.ref_goomba0
+  const _goomTex1 = MARIO_TEXTURES.ref_goomba1
   for (const goom of levelData.goombas) {
-    const g = new PIXI.Graphics()
-    // Body — rounded mushroom-cap shape
-    g.ellipse(0, -14, 24, 16).fill(0x8B4513).stroke({ width: 2, color: 0x4A2C0F })
-    // Belly
-    g.ellipse(0, -4, 22, 14).fill(0xC68442).stroke({ width: 2, color: 0x4A2C0F })
-    // Feet
-    g.ellipse(-12, 4, 8, 5).fill(0x2D1A0A)
-    g.ellipse(12, 4, 8, 5).fill(0x2D1A0A)
-    // Eyes (angry)
-    g.circle(-7, -16, 4).fill(0xFFFFFF)
-    g.circle(7, -16, 4).fill(0xFFFFFF)
-    g.circle(-7, -15, 2).fill(0x000000)
-    g.circle(7, -15, 2).fill(0x000000)
-    // Eyebrows (angry)
-    g.poly([-12,-22, -2,-19, -12,-19]).fill(0x2D1A0A)
-    g.poly([12,-22, 2,-19, 12,-19]).fill(0x2D1A0A)
+    let g
+    if (_goomTex0) {
+      g = new PIXI.Sprite(_goomTex0)
+      g.width = TILE; g.height = TILE
+      g.anchor.set(0.5, 1)
+      g._g21GoomFrames = [_goomTex0, _goomTex1 || _goomTex0]
+      g._g21GoomFrameT = 0
+    } else {
+      g = new PIXI.Graphics()
+      g.ellipse(0, -14, 24, 16).fill(0x8B4513).stroke({ width: 2, color: 0x4A2C0F })
+      g.ellipse(0, -4, 22, 14).fill(0xC68442).stroke({ width: 2, color: 0x4A2C0F })
+      g.ellipse(-12, 4, 8, 5).fill(0x2D1A0A)
+      g.ellipse(12, 4, 8, 5).fill(0x2D1A0A)
+      g.circle(-7, -16, 4).fill(0xFFFFFF)
+      g.circle(7, -16, 4).fill(0xFFFFFF)
+      g.circle(-7, -15, 2).fill(0x000000)
+      g.circle(7, -15, 2).fill(0x000000)
+      g.poly([-12,-22, -2,-19, -12,-19]).fill(0x2D1A0A)
+      g.poly([12,-22, 2,-19, 12,-19]).fill(0x2D1A0A)
+    }
     g.x = goom[0] * TILE + TILE/2; g.y = goom[1] * TILE + TILE
     g._g21Vx = -1.5
     g._g21Alive = true
@@ -988,9 +1070,21 @@ function loadLevel(lvNum) {
     world.addChild(g)
     S.goombas.push(g)
   }
-  // ── Mushrooms (red cap + white spots — power-up style) ──
+  // ── Mushrooms (Hotfix #118: SMB1 ref-mushroom sprite; Graphics fallback) ──
+  const _mushroomTex = MARIO_TEXTURES.ref_mushroom || MARIO_TEXTURES.mushroom
   for (const m of levelData.mushrooms) {
-    const g = new PIXI.Graphics()
+    let g
+    if (_mushroomTex) {
+      g = new PIXI.Sprite(_mushroomTex)
+      g.width = TILE * 0.75; g.height = TILE * 0.75
+      g.anchor.set(0.5, 1)
+      g.x = m[0] * TILE + TILE/2; g.y = m[1] * TILE + TILE
+      g._g21Bob = Math.random() * 6.28
+      world.addChild(g)
+      S.mushrooms.push(g)
+      continue
+    }
+    g = new PIXI.Graphics()
     g.ellipse(0, -16, 22, 14).fill(0xDC2626).stroke({ width: 2, color: 0x7F1D1D })
     g.circle(-10, -16, 4).fill(0xFFFFFF)
     g.circle(10, -16, 4).fill(0xFFFFFF)
@@ -1004,22 +1098,28 @@ function loadLevel(lvNum) {
     world.addChild(g)
     S.mushrooms.push(g)
   }
-  // ── Stars (gold 5-point star — power-up special) ──
+  // ── Stars (Hotfix #118: SMB1 starman sprite; Graphics fallback) ──
+  const _starTex = MARIO_TEXTURES.ref_starman || MARIO_TEXTURES.star
   for (const st of levelData.stars) {
-    const g = new PIXI.Graphics()
-    // 5-point star polygon
-    const pts = []
-    for (let i = 0; i < 10; i++) {
-      const r = i % 2 === 0 ? 22 : 10
-      const a = (i * Math.PI) / 5 - Math.PI/2
-      pts.push(Math.cos(a) * r, Math.sin(a) * r - 14)
+    let g
+    if (_starTex) {
+      g = new PIXI.Sprite(_starTex)
+      g.width = TILE * 0.85; g.height = TILE * 0.85
+      g.anchor.set(0.5, 1)
+    } else {
+      g = new PIXI.Graphics()
+      const pts = []
+      for (let i = 0; i < 10; i++) {
+        const r = i % 2 === 0 ? 22 : 10
+        const a = (i * Math.PI) / 5 - Math.PI/2
+        pts.push(Math.cos(a) * r, Math.sin(a) * r - 14)
+      }
+      g.poly(pts).fill(0xFCD34D).stroke({ width: 3, color: 0xD97706 })
+      g.circle(-6, -16, 3).fill(0x000000)
+      g.circle(6, -16, 3).fill(0x000000)
+      g.circle(-5, -17, 1).fill(0xFFFFFF)
+      g.circle(7, -17, 1).fill(0xFFFFFF)
     }
-    g.poly(pts).fill(0xFCD34D).stroke({ width: 3, color: 0xD97706 })
-    // Eyes (cute)
-    g.circle(-6, -16, 3).fill(0x000000)
-    g.circle(6, -16, 3).fill(0x000000)
-    g.circle(-5, -17, 1).fill(0xFFFFFF)
-    g.circle(7, -17, 1).fill(0xFFFFFF)
     g.x = st[0] * TILE + TILE/2; g.y = st[1] * TILE + TILE
     g._g21Bob = Math.random() * 6.28
     world.addChild(g)
@@ -1168,16 +1268,25 @@ function makeDecoration(theme, PIXI, x, y, seed) {
     g.circle(-6, -6, 6).fill(0xffffff)
     g.circle(6, -6, 6).fill(0xffffff)
   } else {
-    // Default theme — alternate between bush and flower
-    if (seed % 2 === 0) {
-      // Bush
+    // Default theme — Hotfix #118: use SMB1 ref-bush sprite for even tiles,
+    // Pixi Graphics flower for odd tiles (no bush sprite for flowers).
+    const bushTex = MARIO_TEXTURES && MARIO_TEXTURES.ref_bush
+    if (seed % 2 === 0 && bushTex) {
+      // SMB1 bush sprite — ref-bush.png is 48×16 native
+      const bs = new PIXI.Sprite(bushTex)
+      bs.width = 96; bs.height = 32   // 2× native for in-world visibility
+      bs.anchor.set(0.5, 1)
+      bs.x = x; bs.y = y
+      return bs
+    } else if (seed % 2 === 0) {
+      // Bush fallback Graphics
       g.circle(0, -6, 8).fill(0x16a34a).stroke({ width: 2, color: 0x14532d })
       g.circle(-7, -4, 6).fill(0x16a34a).stroke({ width: 2, color: 0x14532d })
       g.circle(7, -4, 6).fill(0x16a34a).stroke({ width: 2, color: 0x14532d })
       g.circle(-3, -10, 5).fill(0x22c55e)
       g.circle(3, -10, 5).fill(0x22c55e)
     } else {
-      // Flower (red petals + yellow center)
+      // Flower (red petals + yellow center) — no SMB1 equivalent, keep Graphics
       const stemH = 16
       g.rect(-1, -stemH, 2, stemH).fill(0x16a34a)
       g.circle(-4, -stemH-2, 3).fill(0xef4444)
@@ -1186,7 +1295,6 @@ function makeDecoration(theme, PIXI, x, y, seed) {
       g.circle(4, -stemH+4, 3).fill(0xef4444)
       g.circle(0, -stemH-6, 3).fill(0xef4444)
       g.circle(0, -stemH+1, 3).fill(0xfbbf24)
-      // Leaf
       g.ellipse(-4, -8, 4, 2).fill(0x22c55e)
     }
   }
@@ -1203,32 +1311,108 @@ function _g21AnimateDecorations() {
   }
 }
 
-// Hotfix #107 (2026-04-29): replaced sprite-sheet placement with clean
-// Pixi Graphics — eliminates "termutilasi" / stretched sheet artifacts.
-// Each tile kind gets a hand-drawn appearance with depth + highlights.
+// Hotfix #118: placeTile uses authentic SMB1 sprites from MARIO_TEXTURES
+// when available. Falls back to Pixi Graphics if texture is null (graceful
+// degradation so game never breaks). Sprites are scaled to TILE×TILE (64px).
 function placeTile(kind, tx, ty) {
   const PIXI = window.PIXI
+  let node = null
+
+  if (kind === 'block' || kind === 'block-edge') {
+    const tex = MARIO_TEXTURES.ref_ground || MARIO_TEXTURES.ref_block
+    if (tex) {
+      // Ground: tile ref_ground.png (16×16 native → scaled to TILE×TILE)
+      // For ty===10 (top ground row) use ground sprite; ty===11 use block sprite
+      const t = (ty === 11) ? (MARIO_TEXTURES.ref_block || tex) : tex
+      if (ty === 10) {
+        // Top ground tile — use TilingSprite for perfect repeat
+        const ts = new PIXI.TilingSprite({ texture: t, width: TILE, height: TILE })
+        ts.x = tx * TILE; ts.y = ty * TILE
+        ts._g21Tx = tx; ts._g21Ty = ty
+        ts._g21Solid = true
+        ts._g21Type = kind
+        world.addChild(ts)
+        // Pit-edge visual overlay on top
+        if (kind === 'block-edge') {
+          const ov = new PIXI.Graphics()
+          ov.rect(0, 0, TILE, 8).fill({ color: 0xef4444, alpha: 0.85 })
+          ov.x = tx * TILE; ov.y = ty * TILE
+          world.addChild(ov)
+        }
+        return ts
+      } else {
+        const sp = new PIXI.Sprite(t)
+        sp.width = TILE; sp.height = TILE
+        sp.x = tx * TILE; sp.y = ty * TILE
+        sp._g21Tx = tx; sp._g21Ty = ty
+        sp._g21Solid = true
+        sp._g21Type = kind
+        world.addChild(sp)
+        return sp
+      }
+    }
+    // Fallback: legacy Graphics block
+    node = _placeTileLegacy(kind, tx, ty, PIXI)
+    world.addChild(node)
+    return node
+
+  } else if (kind === 'brick') {
+    const tex = MARIO_TEXTURES.ref_brick
+    if (tex) {
+      const sp = new PIXI.Sprite(tex)
+      sp.width = TILE; sp.height = TILE
+      sp.x = tx * TILE; sp.y = ty * TILE
+      sp._g21Tx = tx; sp._g21Ty = ty
+      sp._g21Solid = true
+      sp._g21Type = kind
+      world.addChild(sp)
+      return sp
+    }
+    node = _placeTileLegacy(kind, tx, ty, PIXI)
+    world.addChild(node)
+    return node
+
+  } else if (kind === 'qblock') {
+    const tex = MARIO_TEXTURES.ref_qblock
+    if (tex) {
+      const sp = new PIXI.Sprite(tex)
+      sp.width = TILE; sp.height = TILE
+      sp.x = tx * TILE; sp.y = ty * TILE
+      sp._g21Tx = tx; sp._g21Ty = ty
+      sp._g21Solid = true
+      sp._g21Type = kind
+      world.addChild(sp)
+      return sp
+    }
+    node = _placeTileLegacy(kind, tx, ty, PIXI)
+    world.addChild(node)
+    return node
+  }
+
+  // Unknown kind — legacy
+  node = _placeTileLegacy(kind, tx, ty, PIXI)
+  world.addChild(node)
+  return node
+}
+
+// Legacy Pixi Graphics tile renderer (Hotfix #107 original code).
+// Used as fallback when MARIO_TEXTURES are not loaded.
+function _placeTileLegacy(kind, tx, ty, PIXI) {
   const g = new PIXI.Graphics()
   if (kind === 'block' || kind === 'block-edge') {
-    // Hotfix #112: 3-band shading for Mario-style depth.
-    // Top 4px highlight (#A8835C) → middle solid (#8B6F47) → bottom 4px shadow.
     g.rect(0, 0, TILE, TILE).fill(0x8B6F47)
-    g.rect(0, 0, TILE, 5).fill(0xA8835C)        // top highlight
-    g.rect(0, TILE-5, TILE, 5).fill(0x5C4A33)   // bottom shadow
+    g.rect(0, 0, TILE, 5).fill(0xA8835C)
+    g.rect(0, TILE-5, TILE, 5).fill(0x5C4A33)
     g.rect(0, 0, TILE, TILE).stroke({ width: 2, color: 0x5C4A33 })
-    // Top highlight (grass strip on first row)
     if (ty === 10) {
       g.rect(0, 0, TILE, 10).fill(0x4ade80).stroke({ width: 1, color: 0x166534 })
-      // Grass tufts (small green dots) — Mario-style
       for (let tx2 = 8; tx2 < TILE - 8; tx2 += 16) {
         g.circle(tx2, 4, 3).fill(0x166534)
         g.rect(tx2 - 1, 1, 2, 4).fill(0x16A34A)
       }
     }
-    // Inner texture lines (mortar grid)
     g.rect(8, 18, TILE-16, 3).fill(0x6E5638).alpha = 0.6
     g.rect(8, 38, TILE-16, 3).fill(0x6E5638).alpha = 0.6
-    // Pit-edge marker — diagonal stripe pattern + brighter top
     if (kind === 'block-edge') {
       g.rect(0, 0, TILE, 8).fill(0xef4444)
       for (let s = -TILE; s < TILE * 2; s += 12) {
@@ -1236,20 +1420,15 @@ function placeTile(kind, tx, ty) {
       }
     }
   } else if (kind === 'brick') {
-    // Brick pattern — orange-red with mortar grid
     g.rect(0, 0, TILE, TILE).fill(0xC53030)
     g.stroke({ width: 2, color: 0x7B2D2D })
-    // 2 rows × 2 cols of bricks with mortar
     g.rect(0, 0, TILE, TILE/2).stroke({ width: 2, color: 0x7B2D2D })
     g.rect(TILE/2, TILE/2, TILE/2, TILE/2).stroke({ width: 2, color: 0x7B2D2D })
     g.rect(0, TILE/2, TILE/2, TILE/2).stroke({ width: 2, color: 0x7B2D2D })
-    // Highlight
     g.rect(2, 2, 8, TILE-4).fill(0xE8676B).alpha = 0.4
   } else if (kind === 'qblock') {
-    // Question block — gold with ? symbol
     g.rect(0, 0, TILE, TILE).fill(0xF59E0B).stroke({ width: 3, color: 0x92400E })
     g.rect(4, 4, TILE-8, TILE-8).stroke({ width: 2, color: 0xFCD34D })
-    // ? mark — triangle approximation
     const cx = TILE/2, cy = TILE/2
     g.circle(cx, cy-8, 9).stroke({ width: 4, color: 0xFFFFFF })
     g.rect(cx-3, cy-2, 6, 10).fill(0xFFFFFF)
@@ -1259,7 +1438,6 @@ function placeTile(kind, tx, ty) {
   g._g21Tx = tx; g._g21Ty = ty
   g._g21Solid = (kind === 'block' || kind === 'brick' || kind === 'qblock')
   g._g21Type = kind
-  world.addChild(g)
   return g
 }
 
@@ -1293,11 +1471,21 @@ function syncPikachuSprite() {
   // -84 → big sprite floated 34px into the platform). Match collision body.
   const wrapH = S.pikachuState === 'big' ? 118 : 84
   const wrapW = S.pikachuState === 'big' ? 118 : 84
+  // Hotfix #118: haloFudge compensates for remaining glow/padding in the GIF
+  // files (idle/running/jump/happy). The static PNGs are now cropped via
+  // process-mario-sprites.py, but GIFs cannot be cropped without losing
+  // animation. The glow halo in GIFs adds ~12px transparent space at bottom,
+  // making Pikachu appear to hover. We add haloFudge to move sprite DOWN by
+  // that amount, so feet visually sit on the platform.
+  // For static PNG states (pikachu-small-cropped / pikachu-big-cropped) the
+  // crop already removed the halo, so fudge = 0.
+  const _pikaGIFStates = ['idle', 'running', 'jump', 'happy']
+  const haloFudge = _pikaGIFStates.includes(_pikaCurrentAnim) ? 10 : 0
   // GPU-composited transform — single inline transform combining translate3d
   // (for position, GPU layer) and scaleX (for facing flip). Replaces left/top
   // layout reflow to keep 60fps stable.
   const flip = S.facing >= 0 ? 1 : -1
-  wrap.style.transform = `translate3d(${screenX - wrapW/2}px, ${screenY - wrapH}px, 0)`
+  wrap.style.transform = `translate3d(${screenX - wrapW/2}px, ${screenY - wrapH + haloFudge}px, 0)`
   const glow = S.electricMode > 0 ? 'drop-shadow(0 0 14px #fbbf24) drop-shadow(0 0 22px #fde047)' : 'drop-shadow(0 4px 6px rgba(0,0,0,0.4))'
   el.style.filter = glow + (S.hitFrames > 0 && Math.floor(S.hitFrames/4)%2 === 0 ? ' brightness(2.3)' : '')
   el.style.transform = `scaleX(${flip})`
@@ -1472,16 +1660,24 @@ function movePlayer(dx, dy) {
           spawnParticles(c.x + TILE/2, c.y, 'spark', 6)
           checkLifeFromCoins()
         } else if (c._g21Reward === 'mushroom') {
-          // Spawn mushroom Graphics rising from Q-block
+          // Spawn mushroom rising from Q-block (Hotfix #118: sprite or Graphics fallback)
           const PIXI = window.PIXI
-          const m = new PIXI.Graphics()
-          m.ellipse(0, -16, 22, 14).fill(0xDC2626).stroke({ width: 2, color: 0x7F1D1D })
-          m.circle(-10, -16, 4).fill(0xFFFFFF)
-          m.circle(10, -16, 4).fill(0xFFFFFF)
-          m.circle(0, -20, 4).fill(0xFFFFFF)
-          m.rect(-8, -8, 16, 14).fill(0xFEF3C7).stroke({ width: 2, color: 0x92400E })
-          m.circle(-3, -2, 2).fill(0x000000)
-          m.circle(3, -2, 2).fill(0x000000)
+          const _mTex = MARIO_TEXTURES.ref_mushroom || MARIO_TEXTURES.mushroom
+          let m
+          if (_mTex) {
+            m = new PIXI.Sprite(_mTex)
+            m.width = TILE * 0.75; m.height = TILE * 0.75
+            m.anchor.set(0.5, 1)
+          } else {
+            m = new PIXI.Graphics()
+            m.ellipse(0, -16, 22, 14).fill(0xDC2626).stroke({ width: 2, color: 0x7F1D1D })
+            m.circle(-10, -16, 4).fill(0xFFFFFF)
+            m.circle(10, -16, 4).fill(0xFFFFFF)
+            m.circle(0, -20, 4).fill(0xFFFFFF)
+            m.rect(-8, -8, 16, 14).fill(0xFEF3C7).stroke({ width: 2, color: 0x92400E })
+            m.circle(-3, -2, 2).fill(0x000000)
+            m.circle(3, -2, 2).fill(0x000000)
+          }
           m.x = c.x + TILE/2; m.y = c.y - 4
           m._g21Bob = 0; m._g21FromBlock = true
           world.addChild(m)
@@ -1519,6 +1715,14 @@ function updateGoombas() {
     g._g21WalkT = (g._g21WalkT || 0) + 0.18
     g.rotation = Math.sin(g._g21WalkT) * 0.08
     g.scale.y = 1 + Math.abs(Math.sin(g._g21WalkT)) * 0.06
+    // Sprite walk animation — alternate frames every ~10 ticks
+    if (g._g21GoomFrames && g._g21GoomFrames.length > 1) {
+      g._g21GoomFrameT = (g._g21GoomFrameT || 0) + 1
+      if (g._g21GoomFrameT % 10 === 0) {
+        const fi = Math.floor(g._g21GoomFrameT / 10) % g._g21GoomFrames.length
+        g.texture = g._g21GoomFrames[fi]
+      }
+    }
     // Edge turn (simple — turn around on wall hit by checking ahead)
     const aheadX = Math.floor((g.x + Math.sign(g._g21Vx) * 30) / TILE)
     const groundCheckY = Math.floor((g.y + 4) / TILE)
@@ -1539,7 +1743,16 @@ function updateCoins() {
     const c = S.coinList[i]
     c._g21Bob = (c._g21Bob || 0) + 0.18
     c.y += Math.sin(c._g21Bob) * 0.4
-    c.rotation = Math.sin(c._g21Bob * 0.5) * 0.6
+    // Sprite animation — rotate through coin frames for spin effect
+    if (c._g21CoinFrames && c._g21CoinFrames.length > 1) {
+      c._g21CoinFrameT = (c._g21CoinFrameT || 0) + 1
+      if (c._g21CoinFrameT % 7 === 0) {
+        const fi = Math.floor(c._g21CoinFrameT / 7) % c._g21CoinFrames.length
+        c.texture = c._g21CoinFrames[fi]
+      }
+    } else {
+      c.rotation = Math.sin(c._g21Bob * 0.5) * 0.6
+    }
     if (collides(c, S, 36, 70)) {
       sfx('sfx-coin')
       S.coins++; S.score += 10
