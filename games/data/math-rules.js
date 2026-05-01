@@ -102,14 +102,55 @@
   }
 
   // Knowledge questions for HARD mode only.
+  // Hotfix #114 (2026-05-01): expanded from 6 → 36 entries across 5 categories
+  // — geography (provinsi/ibu kota/pulau), calendar/time, basic science,
+  // language (huruf/angka), and Pokemon trivia (kid-friendly hard mode).
   const KNOWLEDGE_BANK = [
+    // ── Geography (Indonesia) ──
     { q: 'Ibu kota Jawa Barat?', ans: 'Bandung', choices: ['Bandung', 'Bogor', 'Bekasi', 'Cirebon'] },
     { q: 'Ibu kota Indonesia?', ans: 'Jakarta', choices: ['Jakarta', 'Surabaya', 'Bandung', 'Medan'] },
     { q: 'Ibu kota Jawa Timur?', ans: 'Surabaya', choices: ['Surabaya', 'Malang', 'Madiun', 'Kediri'] },
+    { q: 'Ibu kota Jawa Tengah?', ans: 'Semarang', choices: ['Semarang', 'Solo', 'Magelang', 'Salatiga'] },
+    { q: 'Ibu kota Bali?', ans: 'Denpasar', choices: ['Denpasar', 'Ubud', 'Kuta', 'Sanur'] },
+    { q: 'Ibu kota Yogyakarta?', ans: 'Yogyakarta', choices: ['Yogyakarta', 'Sleman', 'Bantul', 'Solo'] },
+    { q: 'Ibu kota Sumatera Barat?', ans: 'Padang', choices: ['Padang', 'Bukittinggi', 'Pekanbaru', 'Medan'] },
     { q: 'Pulau terbesar di Indonesia?', ans: 'Sumatera', choices: ['Sumatera', 'Jawa', 'Kalimantan', 'Papua'] },
+    { q: 'Pulau dewata Indonesia?', ans: 'Bali', choices: ['Bali', 'Lombok', 'Sumba', 'Flores'] },
+    { q: 'Gunung tertinggi di Indonesia?', ans: 'Puncak Jaya', choices: ['Puncak Jaya', 'Semeru', 'Merapi', 'Kerinci'] },
+
+    // ── Calendar / Time ──
     { q: 'Berapa hari dalam seminggu?', ans: '7', choices: ['7', '5', '6', '8'] },
     { q: 'Berapa bulan dalam setahun?', ans: '12', choices: ['12', '10', '11', '13'] },
-    // Add more here as needed
+    { q: 'Berapa jam dalam sehari?', ans: '24', choices: ['24', '12', '20', '36'] },
+    { q: 'Berapa menit dalam satu jam?', ans: '60', choices: ['60', '50', '100', '30'] },
+    { q: 'Berapa detik dalam satu menit?', ans: '60', choices: ['60', '30', '45', '100'] },
+    { q: 'Berapa hari di bulan Februari (tahun biasa)?', ans: '28', choices: ['28', '29', '30', '31'] },
+    { q: 'Bulan ke-1 dalam setahun?', ans: 'Januari', choices: ['Januari', 'Februari', 'Maret', 'Desember'] },
+    { q: 'Bulan ke-12 dalam setahun?', ans: 'Desember', choices: ['Desember', 'November', 'Oktober', 'Januari'] },
+    { q: 'Hari setelah Senin?', ans: 'Selasa', choices: ['Selasa', 'Rabu', 'Minggu', 'Sabtu'] },
+
+    // ── Basic Science ──
+    { q: 'Hewan terbesar di dunia?', ans: 'Paus Biru', choices: ['Paus Biru', 'Gajah', 'Jerapah', 'Hiu'] },
+    { q: 'Planet terdekat dengan matahari?', ans: 'Merkurius', choices: ['Merkurius', 'Venus', 'Bumi', 'Mars'] },
+    { q: 'Planet kita disebut?', ans: 'Bumi', choices: ['Bumi', 'Mars', 'Venus', 'Saturnus'] },
+    { q: 'Warna daun?', ans: 'Hijau', choices: ['Hijau', 'Biru', 'Merah', 'Kuning'] },
+    { q: 'Bintang terdekat dengan Bumi?', ans: 'Matahari', choices: ['Matahari', 'Bulan', 'Polaris', 'Mars'] },
+    { q: 'Air membeku jadi?', ans: 'Es', choices: ['Es', 'Uap', 'Awan', 'Embun'] },
+    { q: 'Hewan yang bisa terbang?', ans: 'Burung', choices: ['Burung', 'Kucing', 'Anjing', 'Ikan'] },
+
+    // ── Language / Counting ──
+    { q: 'Berapa huruf vokal dalam bahasa Indonesia?', ans: '5', choices: ['5', '4', '6', '7'] },
+    { q: 'Huruf vokal pertama?', ans: 'A', choices: ['A', 'B', 'E', 'I'] },
+    { q: '"Kucing" diawali huruf?', ans: 'K', choices: ['K', 'C', 'U', 'I'] },
+    { q: 'Lawan kata "besar"?', ans: 'Kecil', choices: ['Kecil', 'Tinggi', 'Lebar', 'Tebal'] },
+    { q: 'Lawan kata "panas"?', ans: 'Dingin', choices: ['Dingin', 'Sejuk', 'Hangat', 'Gerah'] },
+
+    // ── Pokemon trivia (kid-friendly) ──
+    { q: 'Pokemon kuning yang punya pipi merah?', ans: 'Pikachu', choices: ['Pikachu', 'Bulbasaur', 'Charmander', 'Squirtle'] },
+    { q: 'Pokemon api starter Kanto?', ans: 'Charmander', choices: ['Charmander', 'Bulbasaur', 'Squirtle', 'Pikachu'] },
+    { q: 'Pokemon air starter Kanto?', ans: 'Squirtle', choices: ['Squirtle', 'Bulbasaur', 'Charmander', 'Pikachu'] },
+    { q: 'Pokemon rumput starter Kanto?', ans: 'Bulbasaur', choices: ['Bulbasaur', 'Charmander', 'Squirtle', 'Pikachu'] },
+    { q: 'Tipe Pikachu?', ans: 'Listrik', choices: ['Listrik', 'Api', 'Air', 'Rumput'] },
   ];
 
   function makeKnowledgeQuestion() {
