@@ -8769,11 +8769,31 @@ function g13SpawnAttackEffect(type, fromPlayer, fieldId = 'g13-field') {
   const imgSrc = hasImg ? `assets/${typeImg[type]}` : null
   const emoji = typeEmoji[type] || '💥'
   const fieldRect = field.getBoundingClientRect()
-  // Positions: player bottom-left, wild top-right (field-relative %)
-  const fromX = fromPlayer ? '15%' : '75%'
-  const fromY = fromPlayer ? '70%' : '15%'
-  const toX   = fromPlayer ? '75%' : '15%'
-  const toY   = fromPlayer ? '15%' : '70%'
+  // Hotfix #112-J part 2: derive projectile origin from ACTUAL sprite bbox
+  // (was hardcoded 15%/75%). Now responsive to whatever positioning the
+  // diagonal layout uses across portrait/landscape. Falls back to fixed %
+  // if sprite wraps not present (e.g. g13 single-sprite layout).
+  const playerWrap = (fieldId === 'g13b-field') ? document.getElementById('g13b-pspr-wrap') : document.getElementById('g13-pspr-wrap')
+  const wildWrap = (fieldId === 'g13b-field') ? document.getElementById('g13b-wspr-wrap') : document.getElementById('g13-wspr-wrap')
+  let fromX, fromY, toX, toY
+  if (playerWrap && wildWrap && fieldRect.width > 0) {
+    const pr = playerWrap.getBoundingClientRect()
+    const wr = wildWrap.getBoundingClientRect()
+    const playerXPct = ((pr.left + pr.width/2) - fieldRect.left) / fieldRect.width * 100
+    const playerYPct = ((pr.top + pr.height/2) - fieldRect.top) / fieldRect.height * 100
+    const wildXPct = ((wr.left + wr.width/2) - fieldRect.left) / fieldRect.width * 100
+    const wildYPct = ((wr.top + wr.height/2) - fieldRect.top) / fieldRect.height * 100
+    fromX = (fromPlayer ? playerXPct : wildXPct).toFixed(1) + '%'
+    fromY = (fromPlayer ? playerYPct : wildYPct).toFixed(1) + '%'
+    toX   = (fromPlayer ? wildXPct : playerXPct).toFixed(1) + '%'
+    toY   = (fromPlayer ? wildYPct : playerYPct).toFixed(1) + '%'
+  } else {
+    // Fallback (legacy fixed %)
+    fromX = fromPlayer ? '15%' : '75%'
+    fromY = fromPlayer ? '70%' : '15%'
+    toX   = fromPlayer ? '75%' : '15%'
+    toY   = fromPlayer ? '15%' : '70%'
+  }
   const proj = document.createElement('div')
   proj.className = 'g13-proj'
   if (hasImg) {
