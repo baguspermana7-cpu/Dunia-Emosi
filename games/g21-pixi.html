@@ -1077,9 +1077,130 @@ function loadLevel(lvNum) {
   document.body.className = ''
   if (levelData.theme) document.body.classList.add('theme-' + levelData.theme)
   buildBackground()  // rebuild Pixi parallax for new theme
+  // Hotfix #112-#9: world-level decorations (non-collision props in world layer)
+  // for that "extra Mario detail" — bushes, signs, torches, etc.
+  try { buildWorldDecorations(levelData.theme || 'default') } catch (e) { console.warn('[g21] decorations:', e) }
   document.getElementById('level-text').textContent = `LEVEL ${lvNum} • ${(S.difficulty||'easy').toUpperCase()}`
   document.getElementById('status-text').textContent = 'Ayo lompat! ⚡'
   updateHUD()
+}
+
+// Hotfix #112-#9: theme-aware world decorations (non-collision Pixi
+// Graphics props placed on the GROUND row — bushes, flowers, signposts,
+// torches, etc). Adds Mario-feel without affecting gameplay.
+const _g21Decorations = []
+function buildWorldDecorations(theme) {
+  const PIXI = window.PIXI
+  // Clear previous decorations
+  for (const d of _g21Decorations) { try { world.removeChild(d) } catch (_) {} }
+  _g21Decorations.length = 0
+  if (!levelData) return
+  const groundTopY = 10 * TILE  // top of ground tile row
+  const widthTiles = levelData.width
+  const isPit = (tx) => (levelData.pits || []).some(p => tx >= p[0] && tx < p[0] + p[1])
+  // Place 1 decoration roughly every 4-7 tiles, skip pits + spawn area + goal
+  for (let tx = 4; tx < widthTiles - 3; tx += 4 + Math.floor(Math.random() * 3)) {
+    if (isPit(tx)) continue
+    const x = tx * TILE + TILE / 2
+    const y = groundTopY  // top of ground = decoration baseline
+    const d = makeDecoration(theme, PIXI, x, y, tx)
+    if (d) {
+      world.addChild(d)
+      _g21Decorations.push(d)
+    }
+  }
+}
+
+function makeDecoration(theme, PIXI, x, y, seed) {
+  const g = new PIXI.Graphics()
+  g.x = x; g.y = y
+  if (theme === 'cave') {
+    // Glowing crystal cluster
+    const c = (seed % 3 === 0) ? 0x60a5fa : (seed % 3 === 1) ? 0xa78bfa : 0x34d399
+    g.poly([0,-12, 6,-4, 4,8, -4,8, -6,-4]).fill(c).stroke({ width: 2, color: 0x1e293b })
+    g.poly([10,-8, 14,-2, 12,6, 6,4, 6,-4]).fill({ color: c, alpha: 0.7 })
+  } else if (theme === 'lava') {
+    // Glowing crack with embers
+    g.ellipse(0, -2, 14, 4).fill(0xfb923c).alpha = 0.7
+    g.circle(0, -2, 3).fill(0xfde047)
+    for (let i = 0; i < 3; i++) {
+      g.circle((i-1)*4, -10 - i*3, 1.5).fill(0xfca5a5)
+    }
+  } else if (theme === 'ice') {
+    // Snowman or pine tree
+    if (seed % 2 === 0) {
+      // Pine tree
+      g.poly([0,-40, 10,-20, -10,-20]).fill(0x166534).stroke({ width: 2, color: 0x14532d })
+      g.poly([0,-26, 12,-6, -12,-6]).fill(0x16a34a).stroke({ width: 2, color: 0x14532d })
+      g.rect(-3, -6, 6, 8).fill(0x6b3410)
+    } else {
+      // Snowman
+      g.circle(0, -8, 8).fill(0xffffff).stroke({ width: 1, color: 0x93c5fd })
+      g.circle(0, -22, 6).fill(0xffffff).stroke({ width: 1, color: 0x93c5fd })
+      g.circle(-2, -23, 1).fill(0x000)
+      g.circle(2, -23, 1).fill(0x000)
+      g.poly([0,-21, 4,-19, 0,-18]).fill(0xf97316)
+    }
+  } else if (theme === 'desert') {
+    // Small cactus or rock pile
+    if (seed % 2 === 0) {
+      g.rect(-3, -22, 6, 22).fill(0x16a34a).stroke({ width: 2, color: 0x166534 })
+      g.rect(-9, -16, 6, 10).fill(0x16a34a).stroke({ width: 2, color: 0x166534 })
+      // Spikes (white dots)
+      for (let i = 0; i < 4; i++) g.circle(0, -4 - i*5, 0.8).fill(0xfef3c7)
+    } else {
+      g.ellipse(0, -3, 12, 6).fill(0x78350f).stroke({ width: 2, color: 0x451a03 })
+      g.ellipse(-6, -7, 6, 4).fill(0x92400e)
+    }
+  } else if (theme === 'castle' || theme === 'final') {
+    // Wall torch with animated flame
+    g.rect(-2, -16, 4, 16).fill(0x4b5563).stroke({ width: 1, color: 0x1f2937 })  // bracket
+    const flame = new PIXI.Graphics()
+    flame.poly([0,-30, 6,-22, 4,-14, -4,-14, -6,-22]).fill(0xfbbf24)
+    flame.poly([0,-26, 3,-22, 2,-16, -2,-16, -3,-22]).fill(0xf97316)
+    flame.poly([0,-22, 1,-18, -1,-18]).fill(0xfef3c7)
+    g.addChild(flame)
+    g._g21Flame = flame  // for animation
+    g._g21Anim = 'torch'
+  } else if (theme === 'sky') {
+    // Cloud puff (small, sits on platform)
+    g.circle(0, -8, 8).fill(0xffffff)
+    g.circle(-6, -6, 6).fill(0xffffff)
+    g.circle(6, -6, 6).fill(0xffffff)
+  } else {
+    // Default theme — alternate between bush and flower
+    if (seed % 2 === 0) {
+      // Bush
+      g.circle(0, -6, 8).fill(0x16a34a).stroke({ width: 2, color: 0x14532d })
+      g.circle(-7, -4, 6).fill(0x16a34a).stroke({ width: 2, color: 0x14532d })
+      g.circle(7, -4, 6).fill(0x16a34a).stroke({ width: 2, color: 0x14532d })
+      g.circle(-3, -10, 5).fill(0x22c55e)
+      g.circle(3, -10, 5).fill(0x22c55e)
+    } else {
+      // Flower (red petals + yellow center)
+      const stemH = 16
+      g.rect(-1, -stemH, 2, stemH).fill(0x16a34a)
+      g.circle(-4, -stemH-2, 3).fill(0xef4444)
+      g.circle(4, -stemH-2, 3).fill(0xef4444)
+      g.circle(-4, -stemH+4, 3).fill(0xef4444)
+      g.circle(4, -stemH+4, 3).fill(0xef4444)
+      g.circle(0, -stemH-6, 3).fill(0xef4444)
+      g.circle(0, -stemH+1, 3).fill(0xfbbf24)
+      // Leaf
+      g.ellipse(-4, -8, 4, 2).fill(0x22c55e)
+    }
+  }
+  return g
+}
+
+// Animate torches — flame flicker each frame
+function _g21AnimateDecorations() {
+  for (const d of _g21Decorations) {
+    if (d._g21Anim === 'torch' && d._g21Flame) {
+      d._g21Flame.scale.y = 1 + Math.sin(performance.now() * 0.012 + d.x * 0.01) * 0.15
+      d._g21Flame.scale.x = 1 + Math.cos(performance.now() * 0.014 + d.x * 0.013) * 0.08
+    }
+  }
 }
 
 // Hotfix #107 (2026-04-29): replaced sprite-sheet placement with clean
@@ -1311,6 +1432,9 @@ function gameLoop() {
 
   // Update bolts (electric projectiles)
   updateBolts()
+
+  // Animate torch flames (Hotfix #112-#9)
+  if (typeof _g21AnimateDecorations === 'function') _g21AnimateDecorations()
 }
 
 // ═══════════════════════════════════════════════════════════════════
