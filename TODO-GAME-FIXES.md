@@ -1820,3 +1820,56 @@ User: "ada screen ini sebelum back to home" + "saat dari home masuk lagi g10 itu
 ### Lessons added
 - L53: Back button wiring is state navigation — banner stale unless explicitly re-set
 - L54: `resetSpriteEl` clears handlers but NOT visual CSS — need `_resetSprElCss` partner
+
+---
+
+## 📊 Session 2026-04-29 → 2026-05-01 — Hotfix #112 + #113 (G21 polish + math-rules + responsive + bot AI)
+
+Cumulative cache: `v=20260429i` → `v=20260501c`. Commits `cc653b7` → `da2f2d8` (9 commits across days).
+
+### ✅ Hotfix #112 (`36c73d4`) — G21 anchor + margin + pits + G13/G13B responsive + G15 dup train + math-rules base
+- **G21 big-Pikachu anchor**: `syncPikachuSprite` state-aware (84/118px). hBig collision 110→118.
+- **G21 GPU compositing**: `transform: translate3d` ganti left/top.
+- **G21 bottom margin**: CSS var `--g21-bottom-margin` 96px landscape, 80px portrait.
+- **G21 pit warnings**: block-edge tile dengan diagonal red stripe + Pixi overlay merah + camera lookahead +100px + lerp 0.20.
+- **G21 3-band tile shading + grass tufts** untuk Mario depth feel.
+- **G13/G13B responsive**: `.g13-spr` clamp(140px, min(34vw,32vh), 280px) + `@media landscape and 16/10` switch grid 1×2. game.js inline width 4 patterns updated to clamp().
+- **G15 duplicate train**: `trainContainer.removeChildren()` di `buildTrain` — fixes 2 train sprites stacked.
+- **Math rules base**: NEW `games/data/math-rules.js` shared module (easy/medium/hard with level constraints + knowledge bank).
+
+### ✅ Hotfix #113 (`d2ef10d`) — G13B diagonal + g13b math wire + G20 bot smarter
+- **G13B diagonal positioning**: enemy `right:8% top:14%`, player `left:8% bottom:14%` (POV pemain). Sprite clamp().
+- **g13b math-rules wired**: `g13bNextQuestion` delegates to `window.makeGameQuestion(level, 40, diff)`. Choices from q.choices. String-aware answer comparison.
+- **G20 Volley bot AI**: accuracy 0.55→0.70, reactJitter 0.30→0.18, willLandNear gate (no random idle jumps), difficulty multiplier (easy/medium/hard). Initial ball drop -80→-160 (higher).
+
+### ✅ Hotfix #113-B (`a9be5d5`) — G10 math wire
+- `g10GenQuestion` delegates to `window.makeGameQuestion(level, 20, diff)`. Removed legacy ops/distractor logic.
+- `g10Answer` string-aware comparison.
+
+### ✅ Hotfix #113-C (`40e5eb8`) — G13 math wire
+- `g13GenQuestion` delegates to shared module. Stage boost (mega+6/evolved2+4/evolved+2).
+- All 4 math-equation games now use shared rules: g10, g13, g13b, g21.
+
+### ✅ Hotfix #112-#9 (`65990d2`) — G21 detailed environment + animated torches
+- `buildWorldDecorations(theme)` adds Pixi Graphics props every 4-7 tiles (skips pits/spawn/goal).
+- Per theme: bushes/flowers (default), crystals (cave), embers (lava), pine trees+snowmen (ice), cacti+rocks (desert), torches w/ animated flame (castle/final), cloud puffs (sky).
+- `_g21AnimateDecorations()` runs in gameLoop — torch flame flicker via sin-wave on scale.
+
+### ✅ Hotfix #113-D (`da2f2d8`) — G13B/G13 projectile responsive
+- `g13SpawnAttackEffect` derives from/to coords from `getBoundingClientRect()` of sprite wraps (was hardcoded 15%/75%).
+- Falls back to legacy % if wraps missing.
+- Works for both g13 (Evolusi Math) and g13b (Quick Fire) under any viewport orientation.
+
+### Vercel verified
+- `v=20260501c` count = 3 in index.html
+- math-rules.js HTTP 200
+- buildWorldDecorations count = 2 in g21-pixi.html prod
+
+### Math difficulty rules (shared via math-rules.js)
+- **easy** (default, TK / SD kelas 1): + only at L<5, +/− at L5+, max 10/15/20 by level. NO ×, NO knowledge.
+- **medium**: +/−, × max 5 hanya di L≥15.
+- **hard**: +/−/×, knowledge questions ~30% (capital cities Bandung/Jakarta/Surabaya, dll).
+- **String-aware comparison**: numeric (math) AND string (knowledge) both work.
+
+### NEW MANDATE 2026-05-01
+- **Always check Obsidian vault** `Apps/second brain/obsidian-knowledge-vault/` BEFORE crawling rz-work. Update vault MD in same commit as page changes (Graphify Protocol). See `~/.claude/projects/-home-baguspermana7/memory/feedback_graphify_obsidian.md`.
