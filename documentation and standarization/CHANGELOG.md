@@ -1,6 +1,101 @@
 # Changelog — Dunia Emosi
 
-## 2026-04-29 — Hotfix #105 (Mario Pokemon G21 — Pixi platformer)
+## 2026-04-29 — Hotfix #110 (Sprite re-entry race fix across G10/G13/G13B)
+
+Cache bump: `v=20260429h` → `v=20260429i`. Commit `44baa7d`.
+
+User reported persistent broken Pokemon sprite (sad-face emoji + white blank) across G10 / G13 / G13B after 3 specific flows: (1) win level → pick different city → broken; (2) during Evolution → Home → re-enter → broken; (3) Round 3 of G10 vs Steelix/Gastly → blank.
+
+### Root cause
+Stale `onerror` handler race in `attachSpriteCascade()`. After previous game's cascade, `<img>` element retained the closure as its onerror handler. With MAX_CONCURRENT=4 saturated, new cascade waited; old closure fired first, set `imgEl.src = _emojiDataURL(...)` (the sad-face), broken sprite persisted.
+
+### Fixes shipped
+- `games/data/poke-sprite-loader.js`:
+  - New `resetSpriteEl(imgEl)` — clears onerror/onload, dataset flags (fallback/evolveFallback/tried/triedRemote), forces `removeAttribute('src')` + layout recalc. Idempotent.
+  - New `flushSpriteQueue()` — resets module-level `_inFlight` + `_waitQueue` so pending closures from previous scene are abandoned.
+  - `attachSpriteCascade()` now calls `resetSpriteEl()` at start.
+  - MAX_CONCURRENT bumped 4 → 8 (less saturation risk; most assets cached locally).
+- `game.js`:
+  - `initGame10`, `initGame13`/`_initGame13Impl`, `initGame13b` each now reset relevant sprite IDs + `flushSpriteQueue()` right after `PixiManager.destroyAll()`.
+  - New `exitGame10()` and `exitGame13()` (was only g13b had this) — explicit cleanup of PixiManager + sprite state + queue.
+  - City-click handler defensively resets ALL game sprite elements before routing to `initGameN`.
+- `index.html`: cache `?v=20260429i` for game.js + poke-sprite-loader.js.
+
+### Test plan
+- Win G10 lv 1 → pick different city → sprite must render (not sad-face).
+- During G13 Evolution → press Home → tile click g13 → sprite must render.
+- During G13B → win → region overlay → different city → sprite must render.
+- DevTools: `JSON.parse(localStorage.__freezeLog || '[]')` should be empty.
+
+---
+
+## 2026-04-29 — Hotfix #105-#109 (Mario Pokemon G21 build + polish)
+
+Cumulative cache: `v=20260429a` → `v=20260429h`. Commits `ccd1823` → `6da1104` (8 commits).
+
+User shipped a separate C++ + Construct 2 Mario clone with Pikachu replacing Mario, but Construct 2 nearest-neighbor scaling made the HD sprite "pecah" (mutilated). Wanted: full Pixi port, mobile transparent controls + PC keyboard, math quiz on enemy hit (easy mode -½ life + 2 questions), expanded levels, AAA UIUX, larger 16:9 aspect, electric attack mechanic.
+
+### #105 (`ccd1823`) — Initial Mario Pokemon Pixi platformer
+- New `games/g21-pixi.html` (~1217 lines) — Pixi 8 platformer at logical 1024×576, fills viewport via `app.renderer.resize` + `resolution: window.devicePixelRatio`.
+- Pikachu HD fix v1: `texture.source.scaleMode = 'linear'` after Pixi 8 `Assets.load()`. Source 512×512 sheet, 48×48 frames, scaled 2× to 96px.
+- Physics from C++ source: gravity 0.55, run 5.2, jump -11.5, 14-frame variable hold. Tilemap 64px AABB collision.
+- Entities: Goomba (patrol+stomp), Coin (bob+rotate), Mushroom (small→big), Star (10s invincibility), Spike (instant damage), Q-Block (hit-from-below reward).
+- Math quiz easy mode: Goomba side-hit → 2 questions, 2/2=+0.5 life, 1/2=neutral, 0/2=-0.5 life.
+- Mobile: 3 transparent buttons (◀▶▲) with `backdrop-filter:blur`. PC: ←→/A/D + Space/↑/W + P/Esc. Auto-hide via `@media (pointer:fine)`.
+- 5 starter levels hand-crafted. GameModal win/lose. Save to `dunia-0-progress.g21` + sessionStorage `g21Result`.
+- Wired into Dunia Emosi: `gtile-21` → `openLevelSelect(21)`, `initGame21()` routes to `games/g21-pixi.html`.
+
+### #105-B (`f347f48`) — 10 levels + difficulty + score HUD
+- Levels 6-10 with thematic backgrounds (desert/ice/sky/lava/final).
+- `body.theme-{name}` CSS vars swap gradient per level.
+- Score counter (🏆) added to HUD top-right.
+- Difficulty chips (😊/⚡/🔥) inside pause menu.
+
+### #105-C (`3c88fbc`) — Particles + screen shake
+- Jump dust 💨 (×4), coin spark ✨⭐ (×5), Goomba squish 💥 (×6, ×8 in star mode).
+- Screen shake 0.35s on hit (debounced).
+
+### #105-D (`2b40acd`) — Pikachu HD upscale + procedural BGM
+- Pillow LANCZOS 2× upscale of 512×512 → 1024×1024 (later rolled back in #106 due to inter-frame bleeding).
+- Procedural chiptune BGM via Web Audio API (28-step major-key loop, ~130 BPM, lead+bass).
+
+### #106 (`5f579b0`) — Critical bugs: sprite, coin, freeze, electric attack
+- **Bug A** `S.coins:0` + `S.coins:[]` duplicate key → array shadowing → `[object Object]` HUD render. Fix: rename array to `S.coinList`.
+- **Bug B** Pikachu sprite "termutilasi" because assumed clean grid layout but Construct 2 sheet has irregular UV coords. Fix: replaced Pixi sprite-sheet slicing with DOM `<img>` overlay using user-provided 4 GIFs (idle/running/jump/happy from `/home/baguspermana7/rz-work/Apps/dunia-emosi/assets/Pokemon/trainer/`).
+- **Bug C** Coin/Goomba/Mushroom sprite sheets stretched to TILE — visually messy.
+- **Bug E** Landscape rotate freeze due to NaN HUD render + per-resize parallax rebuild. Fix: resize debounced 200ms + skip parallax rebuild.
+- Rolled back HD LANCZOS upscale (kept `*-1x.png` backups).
+- **Electric attack mechanic**: Star pickup → S.electricMode = 600 frames (10s). Yellow glow drop-shadow. ⚡ button appears in mobile cluster. PC keys X/J fire bolt. Yellow lightning ball + lightning particle burst on Goomba kill (200 score).
+
+### #107 (`64813e2`) — Visual overhaul (Pixi Graphics)
+- Replaced ALL sprite-sheet renders with hand-drawn Pixi Graphics (no asset dependency, retina crisp).
+- Tile redesign: ground (brown + grass strip), brick (orange-red mortar pattern), Q-block (gold + ? symbol).
+- Entity redesign: Goomba (brown ellipse + angry eyes + feet), coin (gold disk + shine), mushroom (red cap + spots), star (5-point gold polygon + cute eyes), spike (3-spike row + base bar), goal flag (pole + checkered banner).
+- Background overhaul: clouds (5-circle blobs), hills (ellipse with highlight gradient).
+- Pikachu electric aura: wrap div + radial-gradient overlay + `@keyframes pikaAuraPulse`.
+- Win celebration: Pikachu switches to happy GIF + 14 lightning + 14 spark particles.
+
+### #108 (`6506a3a`) — Entity animations + milestones + death FX
+- Goomba walk tilt: `rotation = sin(t)*0.08`, scale.y oscillates ±6%. Death: flatten + fade + sink.
+- Q-block bounce: pop-up curve via sin wave (~14px peak), darken to "used" tint.
+- Milestone overlay (`showMilestone`): big celebratory text with neon drop-shadow + scale animation. Triggered on POWER UP, ELECTRIC, SEMPURNA (math), 1-UP, LEVEL CLEAR, GAME OVER.
+- Death animation: Pikachu wrap rotates 720° + falls below viewport.
+
+### #109 (`6da1104`) — Themed parallax + combo + growth
+- `buildFarLayer(theme)` + `buildMidLayer(theme)` swap on level theme:
+  - cave: stalactites + dark rocks
+  - lava: embers + lava pools
+  - ice: snowflakes + snow piles
+  - desert: sun + heat rings + pyramids + cacti
+  - castle: tower silhouettes + battlements + windows
+  - sky: floating green islands + extra clouds
+  - final: nebula + 40 stars
+- Combo system: stomp 2 Goomba within 1.5s = chain. Score scales 100×comboCount. "CHAIN x3! ⚡" milestone at chain ≥3.
+- Pikachu growth state (mushroom power-up): small→big DOM wrap scale 84→118px. Side-hit Goomba while big = shrink ("SHRINK!" milestone) instead of life loss.
+
+---
+
+## 2026-04-28 (evening) — Hotfix #104 (Picker Freeze + Layout + Effects)
 
 Cache bump: `v=20260428b` → `v=20260429a` (game.js). New file `games/g21-pixi.html` at `?v=20260429a`.
 

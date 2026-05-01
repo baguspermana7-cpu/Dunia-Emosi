@@ -4,6 +4,62 @@
 
 ---
 
+## 2026-04-29 — Hotfix #110 (Sprite re-entry race)
+
+### L52 — Stale closure on DOM elements survives game scene transitions
+- **Symptom**: Broken Pokemon sprite (sad-face emoji + white blank) on G10/G13/G13B after re-entering games via "win → different city" or "Home → re-enter".
+- **Root cause**: `attachSpriteCascade` set `imgEl.onerror` to a closure. After game exit, the closure was still attached to the DOM element. With `MAX_CONCURRENT=4` queue saturated by pending closures from the previous scene, new cascade had to wait. When slots freed, the OLD closure fired first, set `imgEl.src = _emojiDataURL(fallback)` (the sad-face), and the new cascade never overwrote it.
+- **Fix**: New `resetSpriteEl(imgEl)` clears onerror/onload/dataset + `removeAttribute('src')` + force layout. New `flushSpriteQueue()` resets module-level `_inFlight` + `_waitQueue`. `attachSpriteCascade` calls `resetSpriteEl` at start. Both wired into `initGame10/13/13b` after `PixiManager.destroyAll()` and into city-click handler defensively.
+- **Lesson**: For modules with module-level state (queues, counters, in-flight registries), provide an explicit reset API + call it on scene transitions. DOM-attached closures (onerror/onload) MUST be cleared via `el.onerror = null` + `removeAttribute('src')` to defeat stale-closure races. Setting `src=''` is NOT enough — browser may keep showing the previous decoded image.
+
+---
+
+## 2026-04-29 — Hotfix #109 (Themed parallax + combo + growth)
+
+### L51 — Theme-aware factories beat mega-conditionals
+- **Symptom**: Adding 7 different parallax themes (cave/lava/ice/desert/castle/sky/final) inside one mega-function would balloon to 200+ lines with deep nesting.
+- **Root cause**: Single `buildBackground()` switch statement.
+- **Fix**: Split into `buildFarLayer(theme, PIXI)` + `buildMidLayer(theme, PIXI)`. Each handles its own subset (atmospheric vs ground silhouettes). Easy to add new theme without touching others.
+- **Lesson**: When a function branches on an enum (theme/mode/state) with significantly different visual outputs per branch, factor by responsibility (far vs mid layer) before factoring by enum. Keeps each function focused, easier to maintain.
+
+---
+
+## 2026-04-29 — Hotfix #108 (Entity animations + milestones)
+
+### L50 — `showMilestone()` overlay beats inline toast for celebratory moments
+- **Symptom**: Toasts (`showToast`) felt small for major events like LEVEL CLEAR or 1-UP.
+- **Root cause**: 3-line toast UX is for status, not celebration.
+- **Fix**: New `.milestone` CSS class + `showMilestone(text, color)` JS — clamp(36-64px) bold text with neon drop-shadow. `@keyframes msPop` scales 0.3 → 1.25 → 1.0 → 0.6 with rotation + opacity fade up. Triggered on POWER UP, ELECTRIC, SEMPURNA, 1-UP, LEVEL CLEAR, GAME OVER, CHAIN x3+.
+- **Lesson**: UX for "important rare event" needs different treatment than "frequent status update". Loud, briefly-seen, can't-miss milestone overlays vs compact persistent toasts.
+
+---
+
+## 2026-04-29 — Hotfix #107 (Pixi Graphics overhaul)
+
+### L49 — Pixi Graphics primitives beat sprite sheets for stylized retro look
+- **Symptom**: Construct 2 sprite sheets had irregular UV coords; treated as single textures they appeared "termutilasi" (mutilated body parts) when tile-stretched.
+- **Root cause**: Tried to slice sheets without knowing exact frame coordinates.
+- **Fix**: Rebuilt all entities (Goomba, coin, mushroom, star, spike, brick, Q-block, goal flag, clouds, hills) as hand-drawn Pixi Graphics primitives. Each renders pixel-perfect with stroke + fill + highlights, no asset dependency, retina crisp at any DPR.
+- **Lesson**: For stylized/retro/cartoon games, Pixi Graphics primitives are often a better choice than asset sheets. They scale infinitely, look hand-crafted, and avoid the entire "what frame layout does this sheet use" problem. Reserved for when style is geometric — for organic art (like Pikachu), use animated GIF or proper sprite sheet.
+
+---
+
+## 2026-04-29 — Hotfix #106 (Critical bugs: sprite/coin/freeze/electric)
+
+### L47 — `S.coins:0` + `S.coins:[]` duplicate key in object literal silently breaks runtime
+- **Symptom**: HUD coin counter showed `🪙 NaN` then `[object Object],[object Object],...` in landscape mode.
+- **Root cause**: `const S = { coins: 0, ..., coins: [] }` had duplicate key. JS keeps the LAST value → `S.coins` was an array. `S.coins.push(sp)` worked (array method); `S.coins++` produced NaN; `String(S.coins)` returned the array dump `[object Object],[object Object]`.
+- **Fix**: Renamed array `S.coinList = []` to keep `S.coins` always integer counter. Updated all `.push/.length/.splice` call-sites.
+- **Lesson**: Use ESLint rule `no-dupe-keys` (default in modern setups). Object literal duplicate keys silently keep the last value, never warn at runtime. For long state objects, use a state factory function or schema validator (Zod) so duplicates fail at construction.
+
+### L48 — Sprite-sheet slicing assumes layout you don't have control over
+- **Symptom**: Pikachu DOM `<img>` showed mutilated body parts during walk animation — only tail visible, body cropped.
+- **Root cause**: Code assumed clean 10×10 grid of 48×48 frames in `pikachu-small.png`. Construct 2 sheets actually use irregular UV coords stored in `data.js` (proprietary JSON). Slicing 96×96 boxes from `(0,0)`, `(96,0)`, etc. produced random fragments.
+- **Fix**: Replaced Pixi sprite-sheet slicing with DOM `<img>` overlay using user-provided HD GIF files (idle/running/jump/happy). Native GIF decoder handles animation. Position synced from `S.x/S.y - S.camX` every frame.
+- **Lesson**: NEVER assume a sprite sheet has a regular grid layout without confirming via the engine's metadata. For Pixi 8 games that need animated character sprites, prefer DOM `<img>` GIF overlay + JS state-machine for animation switching. Pixi 8 doesn't decode multi-frame GIFs natively; sprite-sheet slicing requires KNOWING the exact frame coords.
+
+---
+
 ## 2026-04-29 — Hotfix #105
 
 ### L45 — Pixi 8 `texture.source.scaleMode = 'linear'` is the cure for "HD sprite looks pixelated"
