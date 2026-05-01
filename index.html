@@ -704,7 +704,7 @@
   <!-- Header -->
   <div class="game-header" style="display:flex;align-items:center;gap:8px;flex-shrink:0;z-index:10;position:relative;padding:8px 10px;overflow:hidden;">
     <button class="gh-back" onclick="exitGame()" style="flex-shrink:0;">⌂</button>
-    <button class="gh-back" onclick="backToLevelSelect()" title="Pilih level" style="flex-shrink:0;">←</button>
+    <button class="gh-back" onclick="exitGame10()" title="Kembali ke beranda" style="flex-shrink:0;">←</button>
     <span class="gh-title" style="flex:1;font-size:15px;font-weight:900;font-family:'Fredoka One',cursive;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;">⚡ Pertarungan Pokemon</span>
     <span class="gh-level" id="g10-level" style="color:rgba(255,255,255,0.9);flex-shrink:0;">Lv.1</span>
     <button class="g10-party-btn" onclick="openPartyPicker()" title="Ganti Pokémon" style="flex-shrink:0;">🎒</button>
@@ -833,7 +833,7 @@
   <!-- Header -->
   <div class="game-header" style="display:flex;align-items:center;gap:8px;flex-shrink:0;z-index:10;position:relative;padding:8px 10px;">
     <button class="gh-back" onclick="exitGame()" style="flex-shrink:0;">⌂</button>
-    <button class="gh-back" onclick="backToLevelSelect()" title="Pilih level" style="flex-shrink:0;">←</button>
+    <button class="gh-back" onclick="exitGame13()" title="Kembali ke beranda" style="flex-shrink:0;">←</button>
     <span class="gh-title" style="flex:1;font-size:15px;font-weight:900;font-family:'Fredoka One',cursive;color:white;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;">🔥 Evolusi Math</span>
     <span class="gh-level" id="g13-level" style="color:rgba(255,255,255,0.9);flex-shrink:0;">Lv.1</span>
     <span id="g13-chain-badge" style="font-size:11px;font-weight:800;background:rgba(249,115,22,0.25);border:1px solid rgba(249,115,22,0.4);color:#FBBF24;border-radius:8px;padding:2px 7px;flex-shrink:0;"></span>
@@ -2102,8 +2102,8 @@ function loadPixiJS(cb) {
      poke-sprite-cdn.js is NOT loaded here — game.js declares its own POKE_IDS
      and would collide. Standalone /games/*.html pages still load it.
      Bump 20260428b: picker overhaul, legacy cascade audit, G10 hit FX. -->
-<script src="games/data/poke-sprite-loader.js?v=20260429i" defer></script>
+<script src="games/data/poke-sprite-loader.js?v=20260429j" defer></script>
 <script src="games/data/freeze-watchdog.js?v=20260428a" defer></script>
-<script src="game.js?v=20260429i" defer></script>
+<script src="game.js?v=20260429j" defer></script>
 </body>
 </html>

@@ -6242,15 +6242,25 @@ function initGame10(){
   // or a tab crash. destroyAll is idempotent (no-op if nothing to destroy).
   try { if (typeof PixiManager !== 'undefined') PixiManager.destroyAll() } catch(_){}
   loadPixiJS(function(){ PixiManager.init('g10-pixi-canvas').catch(()=>{}) })
-  // Hotfix #110 (2026-04-29): reset sprite element state + flush cascade
-  // queue so stale onerror handlers from previous entry can't fire and
-  // overwrite the new sprite with emoji fallback. Defeats the "broken
-  // sprite on re-entry" bug user reported across g10/g13/g13b.
-  ;['g10-pspr', 'g10-espr', 'g10-pspr-back', 'g10-espr-back'].forEach(id => {
+  // Hotfix #110/#111: reset sprite element state + flush cascade queue
+  // + clear stuck inline CSS (display/opacity/animation/transform/classes)
+  // that could survive the previous game's win/death sequence and leave
+  // sprite invisible on re-entry. Removed non-existent *-back IDs.
+  ;['g10-pspr', 'g10-espr'].forEach(id => {
     const el = document.getElementById(id)
-    if (el && typeof resetSpriteEl === 'function') resetSpriteEl(el)
+    if (!el) return
+    if (typeof resetSpriteEl === 'function') resetSpriteEl(el)
+    if (typeof _resetSprElCss === 'function') _resetSprElCss(el)
   })
   if (typeof flushSpriteQueue === 'function') flushSpriteQueue()
+  // Force g10-field background fallback if loadCityBackground fails (no city).
+  const _g10Field = document.getElementById('g10-field')
+  if (_g10Field) {
+    _g10Field.style.display = 'flex'
+    if (!_g10Field.style.backgroundImage) {
+      _g10Field.style.background = 'linear-gradient(180deg,#5C94FC 0%,#3B82F6 60%,#166534 100%)'
+    }
+  }
   const p=state.players[state.currentPlayer]
   const _icon=document.getElementById('g10-player-icon'); if(_icon) _icon.textContent=p.animal
   document.getElementById('g10-stars').textContent='⭐ 0'
@@ -8494,12 +8504,22 @@ function initGame13() {
   // Hotfix #101-H: free any leftover Pixi context (see initGame10 for rationale)
   try { if (typeof PixiManager !== 'undefined') PixiManager.destroyAll() } catch(_){}
   loadPixiJS(function(){ PixiManager.init('g13-pixi-canvas').catch(()=>{}) })
-  // Hotfix #110: reset sprite element state + flush cascade queue.
-  ;['g13-pspr', 'g13-wspr', 'g13-pspr-back'].forEach(id => {
+  // Hotfix #110/#111: reset sprite element state + flush cascade queue
+  // + clear stuck CSS. Removed non-existent g13-pspr-back ID.
+  ;['g13-pspr', 'g13-wspr'].forEach(id => {
     const el = document.getElementById(id)
-    if (el && typeof resetSpriteEl === 'function') resetSpriteEl(el)
+    if (!el) return
+    if (typeof resetSpriteEl === 'function') resetSpriteEl(el)
+    if (typeof _resetSprElCss === 'function') _resetSprElCss(el)
   })
   if (typeof flushSpriteQueue === 'function') flushSpriteQueue()
+  const _g13Field = document.getElementById('g13-field')
+  if (_g13Field) {
+    _g13Field.style.display = 'flex'
+    if (!_g13Field.style.backgroundImage) {
+      _g13Field.style.background = 'linear-gradient(180deg,#5C94FC 0%,#3B82F6 60%,#166534 100%)'
+    }
+  }
   try {
     _initGame13Impl()
   } catch(e) {
@@ -9403,26 +9423,49 @@ function g13bResultMainLagi() {
 window.g13bResultMainLagi = g13bResultMainLagi
 
 // Hotfix #110 (2026-04-29): explicit exit cleanup for g10 + g13.
-// Previously only g13b had this, leading to sprite state leak when user
-// pressed Home → re-enter → broken sprite (sad-face emoji).
+// Hotfix #111 (2026-04-29): append showScreen('screen-welcome') so back
+// button goes HOME (matches g13b pattern). Removed non-existent IDs from
+// reset list. Now also clears stuck inline styles + class flags via
+// resetSprElCss helper that wipes display/opacity/animation/transform.
+function _resetSprElCss(el) {
+  if (!el) return
+  el.style.display = ''
+  el.style.opacity = '1'
+  el.style.animation = ''
+  el.style.transform = ''
+  el.style.visibility = 'visible'
+  el.classList.remove('spr-defeat','spr-hit','spr-flash','spr-atk','wild-die','wild-enter','spr-swap-out','spr-swap-in','wspr-hit')
+}
 function exitGame10() {
-  battleBgmStop()
+  state.paused = false
+  try { document.getElementById('pause-overlay').style.display='none' } catch(_){}
+  try { document.getElementById('settings-overlay').style.display='none' } catch(_){}
+  battleBgmStop(); stopAllGameSounds(); clearTimers()
   try { if (typeof PixiManager !== 'undefined') PixiManager.destroy('g10-pixi-canvas') } catch(_){}
-  ;['g10-pspr', 'g10-espr', 'g10-pspr-back', 'g10-espr-back'].forEach(id => {
+  ;['g10-pspr', 'g10-espr'].forEach(id => {
     const el = document.getElementById(id)
-    if (el && typeof resetSpriteEl === 'function') resetSpriteEl(el)
+    if (!el) return
+    if (typeof resetSpriteEl === 'function') resetSpriteEl(el)
+    _resetSprElCss(el)
   })
   if (typeof flushSpriteQueue === 'function') flushSpriteQueue()
+  showScreen('screen-welcome')
 }
 window.exitGame10 = exitGame10
 function exitGame13() {
-  battleBgmStop()
+  state.paused = false
+  try { document.getElementById('pause-overlay').style.display='none' } catch(_){}
+  try { document.getElementById('settings-overlay').style.display='none' } catch(_){}
+  battleBgmStop(); stopAllGameSounds(); clearTimers()
   try { if (typeof PixiManager !== 'undefined') PixiManager.destroy('g13-pixi-canvas') } catch(_){}
-  ;['g13-pspr', 'g13-wspr', 'g13-pspr-back'].forEach(id => {
+  ;['g13-pspr', 'g13-wspr'].forEach(id => {
     const el = document.getElementById(id)
-    if (el && typeof resetSpriteEl === 'function') resetSpriteEl(el)
+    if (!el) return
+    if (typeof resetSpriteEl === 'function') resetSpriteEl(el)
+    _resetSprElCss(el)
   })
   if (typeof flushSpriteQueue === 'function') flushSpriteQueue()
+  showScreen('screen-welcome')
 }
 window.exitGame13 = exitGame13
 
@@ -9450,10 +9493,12 @@ function initGame13b() {
   // Hotfix #101-H: free any leftover Pixi context (see initGame10 for rationale)
   try { if (typeof PixiManager !== 'undefined') PixiManager.destroyAll() } catch(_){}
   loadPixiJS(function(){ PixiManager.init('g13b-pixi-canvas').catch(()=>{}) })
-  // Hotfix #110: reset sprite element state + flush cascade queue.
+  // Hotfix #110/#111: reset sprite element state + flush queue + CSS reset.
   ;['g13b-pspr', 'g13b-wspr', 'g13b-leg-spr', 'g13b-catch-ball'].forEach(id => {
     const el = document.getElementById(id)
-    if (el && typeof resetSpriteEl === 'function') resetSpriteEl(el)
+    if (!el) return
+    if (typeof resetSpriteEl === 'function') resetSpriteEl(el)
+    if (typeof _resetSprElCss === 'function') _resetSprElCss(el)
   })
   if (typeof flushSpriteQueue === 'function') flushSpriteQueue()
 
