@@ -6388,32 +6388,27 @@ function g10RenderHp(fillId, numsId, hp, maxHp){
 
 function g10GenQuestion(){
   const s=g10State
-  // Task #68: enforce easy-default math rules
-  const _ml = getMathLimits()
-  const maxN = Math.min(s.maxNum||10, _ml.maxNum)
-  const ops = (s.ops||['+']).filter(o => _ml.allowedOps.includes(o))
-  if (!ops.length) ops.push('+')
-  // Pick operation: if only one op available, use it; else random
-  const useAdd = ops.length===1 ? ops[0]==='+' : Math.random()<0.5
-  let a,b,ans,qText,lbl
-
-  if(useAdd){
-    b=Math.floor(Math.random()*(Math.min(maxN-1,maxN-1)))+1
-    a=Math.floor(Math.random()*(maxN-b))+1
-    ans=a+b
-    qText=`${a} + ${b} = ?`
-    lbl=`${s.playerPoke.name} menyerang!`
+  // Hotfix #112-H: delegate to shared math-rules per user mandate.
+  // Easy = anak TK / SD kelas 1; G10 has 20 levels.
+  const _diff = state.selectedLevel || 'easy'
+  const _lv = state.selectedLevelNum || 1
+  let q, qText, lbl, ans
+  if (typeof window.makeGameQuestion === 'function') {
+    q = window.makeGameQuestion(_lv, 20, _diff)
+    ans = q.ans
+    qText = q.q
+    s._g10Choices = q.choices
+    lbl = `${s.playerPoke.name} menyerang!`
   } else {
-    a=Math.floor(Math.random()*(maxN-2))+2
-    b=Math.floor(Math.random()*(a-1))+1
-    ans=a-b
-    qText=`${a} − ${b} = ?`
-    lbl=`Hitung kekuatan ${s.playerPoke.name}!`
+    // Fallback: addition only
+    const a = Math.floor(Math.random() * 9) + 1, b = Math.floor(Math.random() * 9) + 1
+    ans = a + b; qText = `${a} + ${b} = ?`
+    s._g10Choices = [ans, ans+1, ans-1, ans+2].sort(() => Math.random() - 0.5)
+    lbl = `${s.playerPoke.name} menyerang!`
   }
-
-  s.currentAnswer=ans
-  s.currentProblem={a,b,op:useAdd?'+':'-',ans}
-  s.attempts=0
+  s.currentAnswer = ans
+  s.currentProblem = { ans }
+  s.attempts = 0
   const hint=document.getElementById('g10-hint'); if(hint) hint.innerHTML=''
   const model=document.getElementById('g10-model'); if(model) model.innerHTML=''
   document.getElementById('g10-atk-lbl').textContent=lbl
@@ -6425,10 +6420,8 @@ function g10GenQuestion(){
   mathEl.textContent=qText
   mathEl.classList.add('pop')
 
-  // 4 choices: correct + 3 diagnostic distractors
-  const distractors = getDiagnosticDistractors(a, b, useAdd?'+':'-', ans)
-  const opts = [ans, ...distractors].sort(()=>Math.random()-0.5)
-
+  // Hotfix #112-H: choices come from shared math-rules q.choices.
+  const opts = (s._g10Choices && Array.isArray(s._g10Choices)) ? s._g10Choices : [ans]
   const grid=document.getElementById('g10-choices')
   grid.innerHTML=''
   opts.forEach(v=>{
@@ -6470,7 +6463,8 @@ function g10ShowHint(mode){
 function g10Answer(val, btn){
   if(g10State.locked) return
   const s=g10State
-  const ok=(val===s.currentAnswer)
+  // Hotfix #112-H: support both numeric (math) and string (knowledge) answers
+  const ok = String(val) === String(s.currentAnswer)
 
   if(ok){
     s.locked=true
