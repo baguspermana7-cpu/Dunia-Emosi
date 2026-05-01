@@ -8712,49 +8712,25 @@ function g13UpdateEvoBar() {
 
 function g13GenQuestion() {
   const s = g13State
-  // Task #68: enforce easy-default math rules; Task #67: megaForm boost +15
-  const _ml = getMathLimits()
-  const baseMax = s.chain.maxNum || 10
-  const stageBoost = s.megaForm ? 15 : s.evolved2 ? 10 : s.evolved ? 5 : 0
-  const max = Math.min(baseMax + stageBoost, _ml.maxNum)
-  const filteredOps = (s.chain.ops || ['+']).filter(o => _ml.allowedOps.includes(o))
-  if (!filteredOps.length) filteredOps.push('+')
-  const op = filteredOps[Math.floor(Math.random() * filteredOps.length)]
-  let a, b, ans
-  if (op === '+') {
-    a = Math.floor(Math.random() * Math.max(1, max - 2)) + 1
-    b = Math.floor(Math.random() * Math.max(1, max - a)) + 1
-    ans = a + b
-  } else if (op === '-') {
-    // subtraction: ensure a > b > 0
-    b = Math.floor(Math.random() * Math.max(1, max - 2)) + 1
-    a = b + Math.floor(Math.random() * Math.max(1, max - b)) + 1
-    ans = a - b
+  // Hotfix #112-H: delegate to shared math-rules per user mandate.
+  // G13 has 20 levels max; level proxy from chain stage (mega/evolved2/evolved/base).
+  const _diff = state.selectedLevel || 'easy'
+  const _lv = state.selectedLevelNum || 1
+  // Stage boost adds difficulty progression within a level
+  const stageBoost = s.megaForm ? 6 : s.evolved2 ? 4 : s.evolved ? 2 : 0
+  const _effectiveLv = Math.min(40, _lv + stageBoost)
+  let q
+  if (typeof window.makeGameQuestion === 'function') {
+    q = window.makeGameQuestion(_effectiveLv, 40, _diff)
   } else {
-    // multiplication: keep small (1-9 * 1-9)
-    a = Math.floor(Math.random() * 9) + 1
-    b = Math.floor(Math.random() * 9) + 1
-    ans = a * b
+    // Fallback: simple addition
+    const a = Math.floor(Math.random() * 9) + 1, b = Math.floor(Math.random() * 9) + 1
+    q = { q: `${a} + ${b} = ?`, ans: a + b, choices: [a+b, a+b+1, a+b-1, a+b+2].sort(()=>Math.random()-0.5) }
   }
-  // Ensure valid integers
-  a = Math.max(1, Math.round(a))
-  b = Math.max(1, Math.round(b))
-  if (op === '+') ans = a + b
-  else if (op === '-') ans = a - b
-  else ans = a * b
-  s.currentAnswer = ans
-  // Generate 3 unique wrong options — guarded loop (max 200 tries)
-  const wrongs = new Set()
-  let tries = 0
-  while (wrongs.size < 3 && tries++ < 200) {
-    const offset = (Math.floor(Math.random() * 6) + 1) * (Math.random() < 0.5 ? 1 : -1)
-    const w = ans + offset
-    if (Number.isFinite(w) && w > 0 && w !== ans) wrongs.add(w)
-  }
-  // Fallback if wrongs still empty (should never happen now)
-  if (wrongs.size === 0) { wrongs.add(ans + 1); wrongs.add(ans + 2); wrongs.add(ans + 3) }
-  const opDisplay = op === '*' ? '×' : op
-  return { expr: `${a} ${opDisplay} ${b} = ?`, ans, wrongs: [...wrongs].slice(0, 3) }
+  s.currentAnswer = q.ans
+  // expr/wrongs format kept for backward compat with g13NextQuestion
+  const wrongs = (q.choices || []).filter(c => String(c) !== String(q.ans))
+  return { expr: q.q, ans: q.ans, wrongs: wrongs.slice(0, 3), choices: q.choices }
 }
 
 function g13NextQuestion() {
@@ -8770,7 +8746,8 @@ function g13NextQuestion() {
   if (atkLbl) atkLbl.textContent = s.evolved ? `⚡ ${s.chain.evolved.name} menyerang!` : `Serang dengan ${s.chain.player.name}!`
   g13SetStatus(`Serangan ${s.attackIdx + 1}`, s.evolved ? 'Beri pukulan terakhir!' : 'Hitung untuk menyerang!')
 
-  const choices = [q.ans, ...q.wrongs].sort(() => Math.random() - 0.5)
+  // Hotfix #112-H: prefer q.choices (already-shuffled) from shared math-rules.
+  const choices = q.choices || [q.ans, ...(q.wrongs||[])].sort(() => Math.random() - 0.5)
   const container = document.getElementById('g13-choices')
   if (!container) return
   container.innerHTML = ''
