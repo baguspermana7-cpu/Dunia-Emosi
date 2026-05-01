@@ -701,7 +701,8 @@ function tickParticles(dt){
 function resetRound(server){
   S.px=W*0.22; S.py=GROUND_Y; S.pvx=0; S.pvy=0; S.pGnd=true; S.pSet=false
   S.cx=W*0.78; S.cy=GROUND_Y; S.cvx=0; S.cvy=0; S.cGnd=true
-  S.bx=server==='player'?W*0.3:W*0.7; S.by=GROUND_Y-80
+  // Hotfix #112-I: ball drop higher (was -80, too low; user "buat agak tinggi sedikit").
+  S.bx=server==='player'?W*0.3:W*0.7; S.by=GROUND_Y-160
   S.bvx=0; S.bvy=0; S.bSpin=0; S.lastHitter='none'
   S.crabActive=false; S.crabTimer=0; S.powerup=null; S.powerupTimer=0
   randomizePhysics()
@@ -955,10 +956,13 @@ function predictBallLandingX(){
   return bx
 }
 function updateCPU(dt){
-  // Level scaling: lv1 → 0.55 accuracy/0.28 idle drift, lv5 → 0.90/0.10, lv10 → cap.
-  const accuracy=Math.min(0.55+cfg.level*0.040, 0.92)
-  const spd=MOVE_SPD*(0.88+cfg.level*0.012)
-  const reactJitter=Math.max(0.08, 0.30-cfg.level*0.025) // % of frames CPU freezes
+  // Hotfix #112-I: bot smarter — user "masih bodoh, cuma lompat2 nggak jelas".
+  // Difficulty tier (easy/medium/hard) overrides level scaling for clearer behavior.
+  const _diff = (typeof state !== 'undefined' && state.selectedLevel) || 'easy'
+  const _diffMul = _diff === 'hard' ? 1.4 : _diff === 'medium' ? 1.15 : 1.0
+  const accuracy = Math.min(0.70 + cfg.level * 0.030 * _diffMul, 0.96)
+  const spd = MOVE_SPD * (0.95 + cfg.level * 0.012 * _diffMul)
+  const reactJitter = Math.max(0.04, 0.18 - cfg.level * 0.015 * _diffMul)
   // Reaction delay: higher levels commit sooner. Misreads scale down with level.
   const misread=Math.random()>accuracy
 
@@ -998,13 +1002,16 @@ function updateCPU(dt){
   const ballOnCpuSide=S.bx>NET_X
   const ballClose=Math.abs(S.bx-S.cx)<100
   const ballHigh=S.by<GROUND_Y-50 && S.by>NET_TOP-10
-  const jumpRoll=Math.random()<(0.55+cfg.level*0.04) // higher level = more committed jumps
-  if(S.cGnd && ballOnCpuSide && ballClose && ballHigh && jumpRoll){
-    // Require either descending ball (spike chance) OR fast incoming lob.
-    if(S.bvy>0 || (S.bvy<0 && S.by<GROUND_Y-90)){
-      S.cvy=JUMP_POWER*(0.88+Math.random()*0.08) // slight power variation
-      S.cGnd=false
-      spawnSand(S.cx,GROUND_Y,3)
+  // Hotfix #112-I: jump is smarter — only when ball will land near bot AND
+  // within reachable height. No more random idle-jumps.
+  const jumpRoll = Math.random() < (0.75 + cfg.level * 0.025 * _diffMul)
+  const willLandNear = Math.abs(predictBallLandingX() - S.cx) < 80
+  if (S.cGnd && ballOnCpuSide && ballClose && ballHigh && jumpRoll && willLandNear) {
+    // Hit when descending OR rising-but-mid-court.
+    if (S.bvy > 0 || (S.bvy < 0 && S.by < GROUND_Y - 90)) {
+      S.cvy = JUMP_POWER * (0.92 + Math.random() * 0.06)
+      S.cGnd = false
+      spawnSand(S.cx, GROUND_Y, 3)
     }
   }
 

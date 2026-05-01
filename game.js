@@ -8878,7 +8878,8 @@ function g13Answer(val, btn) {
   if (s.locked || s.phase !== 'player_attack') return
   s.locked = true
 
-  const correct = val === s.currentAnswer
+  // Hotfix #112-H: support both numeric (math) + string (knowledge) answers.
+  const correct = String(val) === String(s.currentAnswer)
   btn.classList.add(correct ? 'correct' : 'wrong')
   const choicesEl = document.getElementById('g13-choices')
   if (choicesEl) choicesEl.querySelectorAll('.g13-choice-btn').forEach(b => b.disabled = true)
@@ -9712,63 +9713,36 @@ function g13bNextQuestion() {
   const s = g13bState
   if (s.phase !== 'playing') return
 
-  // Difficulty scales with kills. Task #68: enforce easy-default math rules.
-  const _ml = getMathLimits()
-  let maxNum, opsRaw
-  if      (s.kills < 10) { maxNum = 10; opsRaw = ['+'] }
-  else if (s.kills < 20) { maxNum = 15; opsRaw = ['+','-'] }
-  else if (s.kills < 30) { maxNum = 20; opsRaw = ['+','-'] }
-  else                   { maxNum = 30; opsRaw = ['+','-','*'] }
-  maxNum = Math.min(maxNum, _ml.maxNum)
-  let ops = opsRaw.filter(o => _ml.allowedOps.includes(o))
-  if (!ops.length) ops = ['+']
-
-  const op = ops[Math.floor(Math.random() * ops.length)]
-  let a, b, ans
-  if (op === '+') {
-    a = Math.floor(Math.random() * Math.max(1, maxNum - 2)) + 1
-    b = Math.floor(Math.random() * Math.max(1, maxNum - a)) + 1
-    ans = a + b
-  } else if (op === '-') {
-    b = Math.floor(Math.random() * Math.max(1, maxNum - 2)) + 1
-    a = b + Math.floor(Math.random() * Math.max(1, maxNum - b)) + 1
-    ans = a - b
+  // Hotfix #112-H: delegate to shared math-rules per user mandate.
+  // Easy = anak TK / SD kelas 1 (basic + only at L<5). G13b runs as endless
+  // mode → use kills as level proxy, max 40.
+  const _diff = state.selectedLevel || 'easy'
+  const _proxyLv = Math.min(40, Math.max(1, s.kills + 1))
+  let q
+  if (typeof window.makeGameQuestion === 'function') {
+    q = window.makeGameQuestion(_proxyLv, 40, _diff)
   } else {
-    a = Math.floor(Math.random() * 9) + 1
-    b = Math.floor(Math.random() * 9) + 1
-    ans = a * b
+    // Fallback minimal — addition only.
+    const a = Math.floor(Math.random() * 9) + 1, b = Math.floor(Math.random() * 9) + 1
+    q = { q: `${a} + ${b} = ?`, ans: a + b, choices: [a+b, a+b+1, a+b-1, a+b+2].sort(()=>Math.random()-0.5) }
   }
-  a = Math.max(1, Math.round(a)); b = Math.max(1, Math.round(b))
-  if (op === '+') ans = a + b
-  else if (op === '-') ans = a - b
-  else ans = a * b
-
-  s.currentAnswer = ans
+  s.currentAnswer = q.ans
   s.questionStartTime = Date.now()
-  const opDisp = op === '*' ? '×' : op
+  s._g13bChoices = q.choices
 
   const mathEl = document.getElementById('g13b-math')
   if (mathEl) {
-    mathEl.textContent = `${a} ${opDisp} ${b} = ?`
+    mathEl.textContent = q.q
     mathEl.classList.remove('pop'); void mathEl.offsetWidth; mathEl.classList.add('pop')
   }
   const lbl = document.getElementById('g13b-atk-lbl')
   if (lbl) lbl.textContent = s.isLegendary ? `💥 LEGENDARY! Serang ${s.currentWild.name}!` : `⚡ Serang ${s.currentWild.name}!`
 
-  // Generate choices
-  const wrongs = new Set()
-  let tries = 0
-  while (wrongs.size < 3 && tries++ < 200) {
-    const off = (Math.floor(Math.random() * 6) + 1) * (Math.random() < 0.5 ? 1 : -1)
-    const w = ans + off
-    if (Number.isFinite(w) && w > 0 && w !== ans) wrongs.add(w)
-  }
-  while (wrongs.size < 3) wrongs.add(ans + wrongs.size + 1)
-
-  const choices = [ans, ...[...wrongs].slice(0,3)].sort(() => Math.random() - 0.5)
+  // Hotfix #112-H: choices come from shared math-rules q.choices.
   const container = document.getElementById('g13b-choices')
   if (!container) return
   container.innerHTML = ''
+  const choices = (s._g13bChoices && Array.isArray(s._g13bChoices)) ? s._g13bChoices : [q.ans]
   choices.forEach(val => {
     const btn = document.createElement('button')
     btn.className = 'g13b-choice-btn'
@@ -9783,7 +9757,8 @@ function g13bAnswer(val, btn) {
   if (s.locked || s.phase !== 'playing') return
   s.locked = true
 
-  const correct = val === s.currentAnswer
+  // Hotfix #112-H: support both numeric (math) + string (knowledge) answers.
+  const correct = String(val) === String(s.currentAnswer)
   btn.classList.add(correct ? 'correct' : 'wrong')
   const container = document.getElementById('g13b-choices')
   if (container) container.querySelectorAll('.g13b-choice-btn').forEach(b => { b.disabled = true })
