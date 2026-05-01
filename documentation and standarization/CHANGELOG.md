@@ -1,5 +1,55 @@
 # Changelog — Dunia Emosi
 
+## 2026-05-01 — Hotfix #118 (G21 Mario Pokemon authentic SMB1 sprite reskin)
+
+Cache bump: `v=20260501f` → `v=20260501h`. Commit `8502d8c`.
+
+### Added
+- **Real SMB1 sprites** copied from `/Bagus_Apps/Supermario/web/game-easy/images/` into `assets/mario-pokemon/sprites/`: 29 PNGs covering blocks, ground, bricks, ?-blocks (3 frames), goombas (2 frames), coins (3 frames), mushroom, starman, 1-up, fire flower, pipe, bush, cloud, hill, flagpole, castle wall/brick/door, koopa, invisible block.
+- `scripts/process-mario-sprites.py` — Pillow `getbbox()` cropper for Pikachu glow halo. `pikachu-small-cropped.png` (476×140 from 512px halo) and `pikachu-big-cropped.png` (495×124).
+- New `documentation and standarization/MARIO_GAME_SPEC.md` — sprite naming, theme palette, Pikachu anchor formula, asset copy procedure.
+- New `Apps/second brain/obsidian-knowledge-vault/03-Apps/Dunia-Emosi/g21-mario-architecture.md` — vault mirror.
+
+### Changed (g21-pixi.html, ~130 lines)
+- `placeTile()` switches to `PIXI.Sprite` for blocks/ground/bricks/?-blocks; `_placeTileLegacy()` retains Pixi Graphics fallback.
+- Ground band: `PIXI.TilingSprite` of `ref-block.png` (was solid Graphics fill).
+- Goombas: 2-frame walk animation via texture swap.
+- Coins: 3-frame spin animation.
+- Mushroom/Star: `PIXI.Sprite` instances.
+- `drawClouds()`, `buildMidLayer` hills, `makeDecoration` bush: real sprites.
+- `loadAssets()` extended manifest with 22 ref-* entries; `MARIO_TEXTURES` global cache.
+- Pikachu anchor: GIF states use `haloFudge=10` Y-offset; static PNG states use cropped sprites.
+
+### Deferred
+- Spiky enemy (no `spiky.png` in reference — kept as red-triangle Graphics).
+- Koopa (copied but not wired; no koopa entity in current LEVELS).
+- Castle decoration refactor (torches/battlements need Pixi Graphics handles for `_g21AnimateDecorations`).
+
+---
+
+## 2026-05-01 — Hotfix #117 (HD-only Pokemon sprites in g13/g13b/g13c)
+
+Cache bump: `v=20260501f` → `v=20260501h`. Continues from #118.
+
+User feedback: "di g13, g13b dan g13c pastikan tidak akan menggunakan gambar pokemon yang non-HD. karena beberapa kali pernah ada yg non HD."
+
+### Refactored — game.js direct `.src=` non-HD assignments → `attachSpriteCascade(buildPokeSources(...))`
+- 7 attachSpriteCascade calls added across g13/g13b/g13c flows: family tree thumbnails, evolution chain (`baseImg`/`evolvedImg`), legendary spawn, post-evo player swap, evolved-form sprite update.
+- All HD-first via cascade rung 1: `assets/Pokemon/pokemondb_hd_alt2/{NNNN}_{slug}.webp` (630×630).
+- Legacy `else { legSpr.src = ... }` branch annotated `// LEGACY-FALLBACK-EXEMPT` (only fires when `attachSpriteCascade` global is unloaded).
+- `g13c-pixi.html` audited — already HD-first via `SPRITE_HD()` (no changes needed).
+
+### Added
+- `documentation and standarization/SPRITE_STANDARD.md` — required cascade pattern, helper inventory, forbidden patterns, CI enforcement spec.
+- `documentation and standarization/REGRESSION_CHECKS.md` — index of all regression rules.
+- `scripts/check-regressions.sh` — automated checks for G13-LAYOUT-1/2, Z-INDEX-1, HD-SPRITE-1, PIXI-NO-GRAPHICS-FOR-TILES, SAVE-AVATAR-KEYED. Run before commit / in CI.
+- `Apps/second brain/obsidian-knowledge-vault/03-Apps/Dunia-Emosi/sprite-cascade-architecture.md` — vault mirror.
+
+### Lessons added
+- L59 — Direct `.src = non-HD-CDN-URL` assignments are forbidden. ALL g13/g13b/g13c image rendering must flow through `attachSpriteCascade(buildPokeSources(...))` for dynamic images, or use `pokeImg(slug)` as primary `src=` for HTML template strings (HD WebP first; 96px CDN only as onerror fallback rung).
+
+---
+
 ## 2026-05-01 — Hotfix #116 (G13 landscape diagonal + G13B picker freeze)
 
 Cache bump: `v=20260501c` → `v=20260501f` (HTML, CSS, game.js, poke-sprite-loader).

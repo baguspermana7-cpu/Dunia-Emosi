@@ -1909,3 +1909,72 @@ Picker overlay `.g10-party-overlay` had z-index 300 — but `.g13-evo-overlay` (
 
 ### Obsidian vault updated
 - `Apps/second brain/obsidian-knowledge-vault/Dunia-Emosi/g13-battle-layout.md` (NEW) — mirror of standard.
+
+---
+
+## 📊 Session 2026-05-01 — Hotfix #117 (HD-only Pokemon sprites in g13/g13b/g13c)
+
+Cache bump: `v=20260501f` → `v=20260501h`.
+
+User feedback: "di g13, g13b dan g13c pastikan tidak akan menggunakan gambar pokemon yang non-HD. karena beberapa kali pernah ada yg non HD. plan mode. to do list."
+
+### ✅ game.js — 7 `attachSpriteCascade` calls added
+Refactored direct `imgEl.src = 'https://img.pokemondb.net/...'` (96px CDN, non-HD) sites in g13/g13b/g13c flows to use the HD-first cascade via `attachSpriteCascade(imgEl, buildPokeSources(slug, id), '🎴')`. Sites:
+- `renderFamilyTree` thumbnails (g13 evolution chain dialog)
+- Evolution chain `baseImg`/`evolvedImg` (g13b post-quest evo cinematic)
+- Legendary spawn (g13b legendary battle entrance)
+- Post-evo player sprite swap
+- Evolved-form sprite update
+Each remaining `else` branch (legacy fallback when cascade helpers unloaded) annotated `// LEGACY-FALLBACK-EXEMPT` to silence the regression check while preserving offline-mode fallback.
+
+### ✅ g13c-pixi.html — verified HD-first
+`SPRITE_HD()` already resolves to `pokemondb_hd_alt2/{NNNN}_{slug}.webp` (HD WebP 630×630) as primary, with 96px CDN only as onerror rung. No changes needed.
+
+### ✅ Regression infrastructure
+NEW `scripts/check-regressions.sh` enforces 6 rules (G13-LAYOUT-1/2, Z-INDEX-1, HD-SPRITE-1, PIXI-NO-GRAPHICS-FOR-TILES, SAVE-AVATAR-KEYED). Each rule maps to a hotfix + lesson. Runs in seconds; recommend wiring as pre-commit hook.
+
+### Cache bumps applied
+- `style.css?v=20260501h`
+- `poke-sprite-loader.js?v=20260501h`
+- `game.js?v=20260501h`
+
+### Lessons added
+- L59: ALL Pokemon image rendering in g13/g13b/g13c MUST flow through `attachSpriteCascade(buildPokeSources(...))` — direct `.src=CDN` is forbidden. HD WebP 630×630 must be primary; 96px CDN only as onerror cascade rung.
+
+### Standarization docs created
+- `documentation and standarization/SPRITE_STANDARD.md` (NEW)
+- `documentation and standarization/REGRESSION_CHECKS.md` (NEW)
+
+### Obsidian vault updated
+- `Apps/second brain/obsidian-knowledge-vault/03-Apps/Dunia-Emosi/sprite-cascade-architecture.md` (NEW)
+
+---
+
+## 📊 Session 2026-05-01 — Hotfix #118 (G21 Mario Pokemon authentic SMB1 sprite reskin) — committed `8502d8c`
+
+User feedback (verbatim): "ini level2nya super mario bross, pijakan, musuh, item2, dunia semuanya tapi ini malah anda membuat sendiri, saya tidak mau saya mau yang original world yang pernah saya kasih. kamu mengacaukannya."
+
+### ✅ 29 SMB1 reference sprites copied
+From `/Bagus_Apps/Supermario/web/game-easy/images/` to `assets/mario-pokemon/sprites/`: ground (16×16), block/block2 (16×16), brick (32×32), qblock + 2 anim frames (32×32), goomba 2 frames (64×64), coin 3 frames (32×32), mushroom (32×32), starman (64×64), 1up (32×32), fireflower (64×64), pipe (32×32), bush (48×16), cloud (48×24), hill (128×128), flagpole (16×32), castle wall/brick/door, koopa, invisibleblock, ground2.
+
+### ✅ g21-pixi.html — 11 entity touch points refactored (~130 lines)
+- `placeTile()` → `PIXI.Sprite` for blocks/ground/bricks/?-blocks; `_placeTileLegacy()` retains Graphics fallback
+- Ground band → `PIXI.TilingSprite` of `ref-block.png`
+- Goombas → 2-frame walk animation
+- Coins → 3-frame spin animation
+- Mushroom/Starman → real sprites (level spawn + Q-block spawn)
+- `drawClouds()`, `buildMidLayer` hills, `makeDecoration` bush → real sprites
+- Default sky theme → SMB1 light-blue `#5C94FC`
+- `loadAssets()` extended with 22 ref-* manifest entries; `MARIO_TEXTURES` global cache
+
+### ✅ Pikachu glow halo eliminated
+`scripts/process-mario-sprites.py` uses Pillow `getbbox()` to crop transparent halo padding. Original `pikachu-small.png` 512×512 with 370px halo → cropped 476×140. Original `pikachu-big.png` similarly cropped to 495×124. GIF states (idle/running/jump/happy) get `haloFudge=10` Y-offset compensation in `syncPikachuSprite()`.
+
+### Deferred (out of #118 scope)
+- Spiky enemy: no `spiky.png` in reference — kept as red-triangle Pixi Graphics
+- Koopa: sprite copied but not wired (no koopa entity in current LEVELS)
+- Castle-specific decoration refactor: torches/battlements need Graphics handles for `_g21AnimateDecorations` flame flicker
+
+### Lessons added (TBD when L60/L61 entries are written)
+- User-provided reference assets are mandatory — never invent custom-drawn replacements when the user supplied real sprites at session start
+- Sprite halo padding requires either cropped variant (Pillow `getbbox()`) or `wrapH` Y-offset compensation

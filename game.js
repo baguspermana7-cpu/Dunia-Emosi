@@ -8619,7 +8619,8 @@ function _initGame13Impl() {
   const pokeFallbackUrl = slug => { const id = POKE_IDS[slug]; return id ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png` : null }
   const sprFbStyle = 'font-size:min(18vw,11vh);line-height:1;display:flex;align-items:center;justify-content:center;width:clamp(140px, min(34vw, 28vh), 280px);height:clamp(140px, min(34vw, 28vh), 280px);position:relative;z-index:2;'
 
-  // Load sprite exactly like G10: set src directly, onerror for fallback
+  // Hotfix #117: use shared cascade (HD WebP 630x630 first) instead of custom
+  // tryLoad chain. resetSpriteEl() clears stale onerror closures (#110 pattern).
   function loadSpr(imgId, wrapId, slug, emoji) {
     const wrap = document.getElementById(wrapId)
     if (!wrap) return
@@ -8640,20 +8641,29 @@ function _initGame13Impl() {
     fb.textContent = emoji
     wrap.insertBefore(fb, img)
 
-    // Try local sprite first, then pokemondb, then PokeAPI
-    const urls = [pokeUrl(slug), pokeUrlRemote(slug), pokeFallbackUrl(slug)].filter(Boolean)
-    function tryLoad(idx) {
-      if (idx >= urls.length) return // all failed, keep emoji
-      const test = new Image()
-      test.onload = () => {
+    if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
+      // Cascade: HD WebP 630x630 → SVG → local PNG → CDN fallbacks
+      if (typeof resetSpriteEl === 'function') resetSpriteEl(img)
+      attachSpriteCascade(img, buildPokeSources(slug, null), emoji, function() {
         const existFb = wrap.querySelector('.g13-spr-fb'); if (existFb) existFb.remove()
-        img.src = urls[idx]
         img.style.display = ''
+      })
+    } else {
+      // Legacy fallback: try HD first, then CDN, then PokeAPI
+      const urls = [pokeUrl(slug), pokeUrlRemote(slug), pokeFallbackUrl(slug)].filter(Boolean)
+      function tryLoad(idx) {
+        if (idx >= urls.length) return // all failed, keep emoji
+        const test = new Image()
+        test.onload = () => {
+          const existFb = wrap.querySelector('.g13-spr-fb'); if (existFb) existFb.remove()
+          img.src = urls[idx]
+          img.style.display = ''
+        }
+        test.onerror = () => tryLoad(idx + 1)
+        test.src = urls[idx]
       }
-      test.onerror = () => tryLoad(idx + 1)
-      test.src = urls[idx]
+      tryLoad(0)
     }
-    tryLoad(0)
   }
 
   loadSpr('g13-wspr', 'g13-wspr-wrap', chain.wild.slug, chain.icon || '❓')
@@ -9082,15 +9092,23 @@ function g13TriggerEvolution() {
     electrike:309,manectric:310,swablu:333,altaria:334,shroomish:285,breloom:286,wailmer:320,wailord:321,meditite:307,medicham:308,skitty:300,delcatty:301,snorunt:361,glalie:362,
     bagon:371,shelgon:372,salamence:373,roggenrola:524,boldore:525,gigalith:526,litwick:607,lampent:608,chandelure:609,gible:443,gabite:444,garchomp:445,timburr:532,gurdurr:533,conkeldurr:534,elekid:239,electabuzz:125,electivire:466,magby:240,magmar:126,magmortar:467,sandile:551,krokorok:552,krookodile:553,
     riolu:447,lucario:448,deino:633,zweilous:634,hydreigon:635,trapinch:328,vibrava:329,flygon:330,axew:610,fraxure:611,haxorus:612,feebas:349,milotic:350,goomy:704,sliggoo:705,goodra:706}
-  // Task #71: local-first per Lesson L16 (was remote-only causing wrong facing on evolve)
+  // Hotfix #117: use shared cascade (HD WebP 630x630 first) instead of direct src.
+  // Legacy pokeUrl kept inside else for safety if helpers not loaded.
   const pokeUrl = slug => (typeof pokeSpriteAlt2 === 'function' && pokeSpriteAlt2(slug)) || `https://img.pokemondb.net/sprites/home/normal/${slug}.png`
 
   // Determine which evolution stage is triggering
   const isStage2 = s.evolved && s.chain.evolved2 && !s.evolved2
   const fromForm = isStage2 ? s.chain.evolved : s.chain.player
   const toForm   = isStage2 ? s.chain.evolved2 : s.chain.evolved
-  baseImg.src = pokeUrl(fromForm.slug)
-  evolvedImg.src = pokeUrl(toForm.slug)
+  if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
+    if (typeof resetSpriteEl === 'function') resetSpriteEl(baseImg)
+    attachSpriteCascade(baseImg, buildPokeSources(fromForm.slug, null), '✨')
+    if (typeof resetSpriteEl === 'function') resetSpriteEl(evolvedImg)
+    attachSpriteCascade(evolvedImg, buildPokeSources(toForm.slug, null), '⚡')
+  } else {
+    baseImg.src = pokeUrl(fromForm.slug)
+    evolvedImg.src = pokeUrl(toForm.slug)
+  }
   nameEl.textContent = toForm.name
   nameEl.classList.remove('show')
   textEl.textContent = 'Sedang berevolusi...'
@@ -10001,8 +10019,15 @@ function g13bTriggerLegendary() {
   const legSub = document.getElementById('g13b-leg-sub')
   if (banner) banner.classList.remove('hide')
   if (legSpr) {
-    legSpr.src = `https://img.pokemondb.net/sprites/home/normal/${leg.slug}.png`
-    legSpr.onerror = function(){ this.alt = leg.icon || '🌟' }
+    // Hotfix #117: cascade HD WebP first instead of direct 96px CDN assignment.
+    if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
+      if (typeof resetSpriteEl === 'function') resetSpriteEl(legSpr)
+      attachSpriteCascade(legSpr, buildPokeSources(leg.slug, null), leg.icon || '🌟')
+    } else {
+      // LEGACY-FALLBACK-EXEMPT: only fires when cascade helpers unloaded.
+      legSpr.src = `https://img.pokemondb.net/sprites/home/normal/${leg.slug}.png`
+      legSpr.onerror = function(){ this.alt = leg.icon || '🌟' }
+    }
   }
   if (legSub) legSub.textContent = `${leg.name} muncul! Butuh 3 serangan tepat!`
 
