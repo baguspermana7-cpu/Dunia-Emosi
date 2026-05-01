@@ -1,5 +1,25 @@
 # Changelog — Dunia Emosi
 
+## 2026-05-01 — Hotfix #116 (G13 landscape diagonal + G13B picker freeze)
+
+Cache bump: `v=20260501c` → `v=20260501f` (HTML, CSS, game.js, poke-sprite-loader).
+
+### Fixes
+- **G13 landscape grid restored**: `style.css:3618-3627` — reverted Hotfix #112's `grid-template-rows:1fr` collapse. 2×2 diagonal kept in landscape; sprites scale via `clamp(180px, min(28vw, 36vh), 340px)`. `.g13-wild-info` got explicit `grid-column:1;grid-row:1` so layout never auto-flows.
+- **G13B picker no longer freezes**: `.g10-party-overlay` z-index 300 → 750 (above evo:600, result:500, reward:500). `openG13bPartyPicker()` defensively `display:none` lingering result/evo/reward/quiz overlays before opening; `closePartyPicker()` restores them via `.g13b-picker-hidden` class marker.
+
+### Lessons added
+- L57 — Landscape media query that collapses grid rows must update ALL `grid-row` hardcodes simultaneously
+- L58 — Modal z-index hierarchy: party picker (750) > evo (600) > result/reward (500) > base (300). Defensively hide+restore lingering overlays when opening interactive picker.
+
+### Standarization
+- NEW `documentation and standarization/GAME_LAYOUT_STANDARD.md` — 2×2 diagonal grid + z-index ladder.
+
+### Obsidian vault
+- NEW `Apps/second brain/obsidian-knowledge-vault/Dunia-Emosi/g13-battle-layout.md` — mirror.
+
+---
+
 ## 2026-04-29 — Hotfix #111 (Back-button wiring + blank-white field)
 
 Cache bump: `v=20260429i` → `v=20260429j`. Commit `cc653b7`.

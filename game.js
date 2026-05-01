@@ -5913,6 +5913,11 @@ function closePartyPicker(){
   // Hotfix #104: tab cache lives across opens for perf, but reset IO so we
   // re-trigger lazy-load on next open (offscreen images may have cleared).
   if (_partyTabIO) { try { _partyTabIO.disconnect() } catch (_) {} _partyTabIO = null }
+  // Hotfix #116: restore overlays we defensively hid on open.
+  document.querySelectorAll('.g13b-picker-hidden').forEach(el => {
+    el.style.display = ''
+    el.classList.remove('g13b-picker-hidden')
+  })
 }
 function renderTrainerTabs(){
   const tabsEl = document.getElementById('g10-trainer-tabs')
@@ -6045,6 +6050,17 @@ function openG13bPartyPicker() {
   // Pause game-side timers (legendary auto-attack uses paused-flag guard at game.js:8410)
   // Prevents wild-attack while picker is open and avoids race conditions on close (Task #64)
   if (g13bState && g13bState.phase === 'playing') g13bState.paused = true
+  // Hotfix #116: defensively hide lingering result/evo/reward overlays — they sat above
+  // picker (z-indices 500/600) and absorbed close-button + tab clicks, freezing the picker.
+  const _hideStale = (sel) => {
+    document.querySelectorAll(sel).forEach(el => {
+      if (getComputedStyle(el).display !== 'none') {
+        el.style.display = 'none'
+        el.classList.add('g13b-picker-hidden')
+      }
+    })
+  }
+  _hideStale('.g13b-result-overlay, .g13-evo-overlay, .gr-overlay, .math-quiz-overlay, #math-quiz-overlay')
   const overlay = document.getElementById('g10-party-overlay')
   if (!overlay) return
   overlay.classList.add('open')

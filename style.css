@@ -2637,7 +2637,8 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
   background: rgba(0,0,0,0.65);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  z-index: 300;
+  /* Hotfix #116: raise above evo (600), result/reward (500), so picker clicks land. */
+  z-index: 750;
   align-items: flex-end;
   justify-content: center;
 }
@@ -3561,8 +3562,11 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
   background:rgba(8,12,28,0.92);border:1.5px solid rgba(255,255,255,0.12);
   backdrop-filter:blur(8px);z-index:5;
 }
+/* Hotfix #116: explicit grid placement so diagonal layout never auto-flows.
+   Enemy info top-left (col1/row1), player info bottom-right (col2/row2). */
 .g13-wild-info{
   align-self:start;justify-self:start;margin:10px 0 0 8px;
+  grid-column:1;grid-row:1;
 }
 .g13-player-info{
   align-self:end;justify-self:end;margin:0 8px 10px 0;
@@ -3615,15 +3619,15 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 .g13-pspr{transform:scaleX(-1);}/* player faces right */
 /* 1.3× bigger after evolution */
 .g13-pspr.evolved{width:clamp(180px, min(44vw, 40vh), 360px);}
+/* Hotfix #116 (2026-05-01): keep 2×2 diagonal grid in landscape too — only scale sprites larger.
+   Previous landscape collapse to 1 row caused .g13-player-info (grid-row:2) to detach.
+   See documentation and standarization/GAME_LAYOUT_STANDARD.md */
 @media (orientation:landscape) and (min-aspect-ratio:16/10){
-  .g13-spr{ width:clamp(180px, 32vh, 320px) }
-  .g13-pspr.evolved{ width:clamp(220px, 40vh, 400px) }
-  .g13-field{
-    grid-template-rows:1fr !important;
-    grid-template-columns:1fr 1fr !important;
-  }
-  .g13-pspr-wrap{ grid-row:1 !important; grid-column:1; align-self:center; padding:20px 0 30px 50px; }
-  .g13-wspr-wrap{ grid-row:1 !important; grid-column:2; align-self:center; padding:20px 50px 30px 0; }
+  .g13-spr{ width:clamp(180px, min(28vw, 36vh), 340px) }
+  .g13-pspr.evolved{ width:clamp(220px, min(36vw, 44vh), 420px) }
+  /* keep grid 2×2; just give sprites a bit more breathing room near corners */
+  .g13-wspr-wrap{ padding:14px 24px 22px 0; }
+  .g13-pspr-wrap{ padding:0 0 22px 24px; }
 }
 .g13-oval{
   position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);

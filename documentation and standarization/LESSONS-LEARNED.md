@@ -528,6 +528,20 @@
 - **Fix**: Keep `.g8-letter-btn` / `.g8-slot` class names in HTML. Instead of class composition, do **token composition**: rewrite the G8 base rule to consume `--rz-btn-sm`, `--rz-font-title`, `--rz-radius-sm`, `--rz-gap-sm` inline, while preserving every border/shadow/color/transition. Then delete G8 entries from `@media` blocks — the tokens' `clamp()` handles fluid scaling. Preserve a small aspect multiplier where needed (`height: calc(var(--rz-btn-sm) * 1.18)` keeps the 44×52 slot ratio; `font-size: calc(var(--rz-font-title) * 1.05)` keeps the 24px vs 22px title-font ratio). `min-width: var(--rz-btn-sm)` on `.g8-letter-btn` prevents flex-wrap from collapsing a button below one-per-row at 320px.
 - **Lesson**: RDE Layer 2 classes are an **opt-in primitive**, not a drop-in replacement. For games with established dark-theme selectors, state modifiers (`.active`, `.filled`, `.used`, `.celebrate`), or JS selectors, the safer migration is **token composition** (keep `.g<N>-*` class, replace hard-coded px with `var(--rz-*)`). Reserve class composition (`.rz-letter-btn .g<N>-accent`) for greenfield games. Also: when replacing a hard-coded dimension, preserve the **ratio** relative to the token's base (e.g., if the original was `52px` and the token's base is `44px`, multiply: `calc(var(--rz-btn-sm) * 1.18)`) — don't just snap to the token's base value or the visual changes uniformly across breakpoints. Finally: removing `@media` entries counts as a code-reduction win (3 breakpoints × 2 rules = 6 lines here), validating Layer 1's `clamp()` promise.
 
+### L57 — Landscape media query that collapses grid rows must update ALL grid-row hardcodes (Hotfix #116)
+
+- **Symptom**: G13 Evolusi screen in landscape — enemy at top-left, player at center, player HP info card detached at bottom-center. Diagonal layout broken.
+- **Root cause**: Hotfix #112's landscape media query at `style.css:3618-3627` set `.g13-field { grid-template-rows:1fr !important }` (1 row), but `.g13-player-info` retained `grid-row:2;grid-column:2`. With only 1 explicit row defined, browsers create an implicit row 2 and stretch it outside the field bounds → card detaches.
+- **Fix**: Revert grid override. Keep 2×2 grid in BOTH portrait and landscape — only scale sprites larger via `clamp(180px, min(28vw, 36vh), 340px)`. Add explicit `grid-column:1;grid-row:1` to `.g13-wild-info` so layout never auto-flows.
+- **Lesson**: When a media query restructures a grid, audit every child with hardcoded `grid-row` / `grid-column`. CSS Grid implicit rows look fine in DevTools but visually detach content. The simplest fix is to NOT collapse the grid — scaling cells with `clamp()` covers most landscape cases without changing structure.
+
+### L58 — Modal z-index hierarchy must order interactive overlays above passive ones (Hotfix #116)
+
+- **Symptom**: G13B "ganti pokemon" picker freeze. Tab clicks (ash-popular, etc.) and close button unresponsive. Picker visually shown but no clicks landed.
+- **Root cause**: `.g10-party-overlay` z-index was 300. Sibling overlays from prior battle states (`.g13-evo-overlay` z:600, `.g13b-result-overlay` z:500, `.gr-overlay` z:500, math-quiz overlay) lingered with `display:flex` or non-`pointer-events:none` and absorbed all clicks.
+- **Fix**: (1) Raise `.g10-party-overlay` z-index 300 → 750 (above all sibling overlays). (2) `openG13bPartyPicker()` defensively scans for those selectors and `display:none` any with non-`none` computed display, marking with `.g13b-picker-hidden` class. `closePartyPicker()` restores after close.
+- **Lesson**: For interactive overlays opened from within an active game scene, BOTH raise z-index above ALL siblings AND defensively hide lingering overlays. `pointer-events:none` on inactive overlays is cleaner long-term but requires auditing every state transition; the hide-and-restore pattern is bulletproof and reversible. Document the z-index ladder in a standardization file (party 750 > evo 600 > result/reward 500 > base modal 300) so future overlays slot in cleanly.
+
 ---
 
 ## Template for future entries

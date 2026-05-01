@@ -1873,3 +1873,39 @@ Cumulative cache: `v=20260429i` → `v=20260501c`. Commits `cc653b7` → `da2f2d
 
 ### NEW MANDATE 2026-05-01
 - **Always check Obsidian vault** `Apps/second brain/obsidian-knowledge-vault/` BEFORE crawling rz-work. Update vault MD in same commit as page changes (Graphify Protocol). See `~/.claude/projects/-home-baguspermana7/memory/feedback_graphify_obsidian.md`.
+
+---
+
+## 📊 Session 2026-05-01 — Hotfix #116 (G13 landscape diagonal + G13B picker freeze)
+
+Cache bump: `v=20260501c` → `v=20260501f` (HTML + CSS).
+
+User feedback (verbatim):
+- "bug 1 = ini positioningnya salah parah, dan ini issue lama, dan kamu claim ini solve. plan mode. fix it properly."
+- "di game g13b juga itu ada bug critical, saat klik ganti pokemon dan masuk selection itu freeze tidak bisa klik tombol keluar, dan selection ke tab ash-popular dll itu juga nggak bisa."
+
+### ✅ Bug 1 — G13 landscape grid collapse (style.css:3618-3627)
+Hotfix #112's landscape media query collapsed `.g13-field` from 2×2 → 1 row, but `.g13-player-info` still hardcoded `grid-row:2;grid-column:2` → detached HP card to bottom-center. Fix: revert grid override; keep 2×2 in landscape too. Sprites scale via `clamp(180px, min(28vw, 36vh), 340px)`.
+
+Also added explicit `grid-column:1;grid-row:1` to `.g13-wild-info` so diagonal layout never auto-flows.
+
+### ✅ Bug 2 — G13B picker freeze on "ganti pokemon" (game.js:6043-6066)
+Picker overlay `.g10-party-overlay` had z-index 300 — but `.g13-evo-overlay` (600), `.g13b-result-overlay` (500), `.gr-overlay` (500), and math-quiz overlay sat above and absorbed clicks. Fix:
+- Raise `.g10-party-overlay` z-index 300 → 750.
+- `openG13bPartyPicker()` defensively `display:none` lingering result/evo/reward/quiz overlays before opening (marked with `.g13b-picker-hidden` class).
+- `closePartyPicker()` restores them after close.
+
+### Cache bumps applied
+- `style.css?v=20260501f`
+- `poke-sprite-loader.js?v=20260501f`
+- `game.js?v=20260501f`
+
+### Lessons added
+- L57: landscape media query that collapses grid rows requires updating ALL grid-row hardcodes simultaneously
+- L58: modal z-index hierarchy — party picker (750) > evo (600) > result/reward (500) > base modal (300). Defensively hide+restore lingering overlays when opening interactive picker.
+
+### Standarization docs updated
+- `documentation and standarization/GAME_LAYOUT_STANDARD.md` (NEW) — 2×2 diagonal grid + z-index ladder.
+
+### Obsidian vault updated
+- `Apps/second brain/obsidian-knowledge-vault/Dunia-Emosi/g13-battle-layout.md` (NEW) — mirror of standard.
