@@ -6242,6 +6242,15 @@ function initGame10(){
   // or a tab crash. destroyAll is idempotent (no-op if nothing to destroy).
   try { if (typeof PixiManager !== 'undefined') PixiManager.destroyAll() } catch(_){}
   loadPixiJS(function(){ PixiManager.init('g10-pixi-canvas').catch(()=>{}) })
+  // Hotfix #110 (2026-04-29): reset sprite element state + flush cascade
+  // queue so stale onerror handlers from previous entry can't fire and
+  // overwrite the new sprite with emoji fallback. Defeats the "broken
+  // sprite on re-entry" bug user reported across g10/g13/g13b.
+  ;['g10-pspr', 'g10-espr', 'g10-pspr-back', 'g10-espr-back'].forEach(id => {
+    const el = document.getElementById(id)
+    if (el && typeof resetSpriteEl === 'function') resetSpriteEl(el)
+  })
+  if (typeof flushSpriteQueue === 'function') flushSpriteQueue()
   const p=state.players[state.currentPlayer]
   const _icon=document.getElementById('g10-player-icon'); if(_icon) _icon.textContent=p.animal
   document.getElementById('g10-stars').textContent='⭐ 0'
@@ -8485,6 +8494,12 @@ function initGame13() {
   // Hotfix #101-H: free any leftover Pixi context (see initGame10 for rationale)
   try { if (typeof PixiManager !== 'undefined') PixiManager.destroyAll() } catch(_){}
   loadPixiJS(function(){ PixiManager.init('g13-pixi-canvas').catch(()=>{}) })
+  // Hotfix #110: reset sprite element state + flush cascade queue.
+  ;['g13-pspr', 'g13-wspr', 'g13-pspr-back'].forEach(id => {
+    const el = document.getElementById(id)
+    if (el && typeof resetSpriteEl === 'function') resetSpriteEl(el)
+  })
+  if (typeof flushSpriteQueue === 'function') flushSpriteQueue()
   try {
     _initGame13Impl()
   } catch(e) {
@@ -9387,6 +9402,30 @@ function g13bResultMainLagi() {
 }
 window.g13bResultMainLagi = g13bResultMainLagi
 
+// Hotfix #110 (2026-04-29): explicit exit cleanup for g10 + g13.
+// Previously only g13b had this, leading to sprite state leak when user
+// pressed Home → re-enter → broken sprite (sad-face emoji).
+function exitGame10() {
+  battleBgmStop()
+  try { if (typeof PixiManager !== 'undefined') PixiManager.destroy('g10-pixi-canvas') } catch(_){}
+  ;['g10-pspr', 'g10-espr', 'g10-pspr-back', 'g10-espr-back'].forEach(id => {
+    const el = document.getElementById(id)
+    if (el && typeof resetSpriteEl === 'function') resetSpriteEl(el)
+  })
+  if (typeof flushSpriteQueue === 'function') flushSpriteQueue()
+}
+window.exitGame10 = exitGame10
+function exitGame13() {
+  battleBgmStop()
+  try { if (typeof PixiManager !== 'undefined') PixiManager.destroy('g13-pixi-canvas') } catch(_){}
+  ;['g13-pspr', 'g13-wspr', 'g13-pspr-back'].forEach(id => {
+    const el = document.getElementById(id)
+    if (el && typeof resetSpriteEl === 'function') resetSpriteEl(el)
+  })
+  if (typeof flushSpriteQueue === 'function') flushSpriteQueue()
+}
+window.exitGame13 = exitGame13
+
 function exitGame13b() {
   if (_g13bLegAutoAtk) { clearInterval(_g13bLegAutoAtk); _g13bLegAutoAtk = null }
   battleBgmStop()
@@ -9411,6 +9450,12 @@ function initGame13b() {
   // Hotfix #101-H: free any leftover Pixi context (see initGame10 for rationale)
   try { if (typeof PixiManager !== 'undefined') PixiManager.destroyAll() } catch(_){}
   loadPixiJS(function(){ PixiManager.init('g13b-pixi-canvas').catch(()=>{}) })
+  // Hotfix #110: reset sprite element state + flush cascade queue.
+  ;['g13b-pspr', 'g13b-wspr', 'g13b-leg-spr', 'g13b-catch-ball'].forEach(id => {
+    const el = document.getElementById(id)
+    if (el && typeof resetSpriteEl === 'function') resetSpriteEl(el)
+  })
+  if (typeof flushSpriteQueue === 'function') flushSpriteQueue()
 
   // Task #66: prefer city-specific background if selected; else random pool
   const field = document.getElementById('g13b-field')
@@ -13106,6 +13151,15 @@ function renderCityGrid(regionId) {
       } catch(_) {}
       closeCityOverlay()
       const g = _citySelectorGame
+      // Hotfix #110: defensive sprite reset before routing to any game,
+      // covers the "win → pick different city → broken sprite" repro.
+      try {
+        ;['g10-pspr','g10-espr','g13-pspr','g13-wspr','g13b-pspr','g13b-wspr','g13b-leg-spr','g13b-catch-ball'].forEach(id => {
+          const el = document.getElementById(id)
+          if (el && typeof resetSpriteEl === 'function') resetSpriteEl(el)
+        })
+        if (typeof flushSpriteQueue === 'function') flushSpriteQueue()
+      } catch(_){}
       try {
         if (g === 10 && typeof initGame10 === 'function') { showScreen('screen-game10'); setTimeout(initGame10, 80) }
         else if (g === 13 && typeof initGame13 === 'function') { showScreen('screen-game13'); setTimeout(initGame13, 80) }

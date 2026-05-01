@@ -52,7 +52,9 @@
   // Hotfix #104 (2026-04-28): bounded concurrency queue. Picker grid spawns
   // 30+ images at once; without a cap, browser connection pool saturates and
   // onerror chains pile up on the main thread (suspected freeze cause).
-  const MAX_CONCURRENT = 4;
+  // Hotfix #110 (2026-04-29): bumped 4→8 to reduce queue-saturation risk at
+  // re-entry; combined with flushSpriteQueue() for explicit reset.
+  const MAX_CONCURRENT = 8;
   let _inFlight = 0;
   const _waitQueue = [];
   function _drain() {
@@ -70,8 +72,40 @@
     _drain();
   }
 
+  // Hotfix #110 (2026-04-29): clear ALL stale state on a sprite element
+  // before starting a fresh cascade. Idempotent. Caller can also call
+  // standalone before re-entering a game scene to defeat stale-onerror
+  // race conditions that survived previous cascades.
+  function resetSpriteEl(imgEl) {
+    if (!imgEl) return;
+    imgEl.onerror = null;
+    imgEl.onload = null;
+    if (imgEl.dataset) {
+      delete imgEl.dataset.fallback;
+      delete imgEl.dataset.evolveFallback;
+      delete imgEl.dataset.tried;
+      delete imgEl.dataset.triedRemote;
+    }
+    // removeAttribute('src') forces the browser to drop the previous image
+    // (including data-URL emoji fallbacks). Setting src='' alone leaves the
+    // old image visible until a new src loads.
+    try { imgEl.removeAttribute('src'); } catch (_) {}
+    // Force layout recalc so the empty state is committed before next load.
+    void imgEl.offsetWidth;
+  }
+
+  // Reset module-level concurrency state. Caller (game init) should invoke
+  // this BEFORE starting a new scene so pending closures from a previous
+  // scene are abandoned and don't fire after the new scene loads.
+  function flushSpriteQueue() {
+    _inFlight = 0;
+    _waitQueue.length = 0;
+  }
+
   function attachSpriteCascade(imgEl, sources, fallbackEmoji, onLoadCb) {
     if (!imgEl) return;
+    // Hotfix #110: clear stale state from any previous cascade on this element.
+    resetSpriteEl(imgEl);
     const tried = new Set();
     const queue = (sources || []).filter(u => {
       if (!u || typeof u !== 'string') return false;
@@ -117,5 +151,7 @@
   if (typeof window !== 'undefined') {
     window.attachSpriteCascade = attachSpriteCascade;
     window.buildPokeSources = buildPokeSources;
+    window.resetSpriteEl = resetSpriteEl;
+    window.flushSpriteQueue = flushSpriteQueue;
   }
 })();
