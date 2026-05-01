@@ -128,6 +128,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a0a1
 </div>
 
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
+<script src="data/save-engine.js?v=20260501e"></script>
 <script src="game-modal.js?v=20260424g"></script>
 
 <div id="flash"></div>
@@ -1082,14 +1083,18 @@ function togglePause() {
 
 function finishGame() { try{document.getElementById('game-bgm').pause()}catch(_){}; goBack() }
 
-// Save level progress directly to localStorage
+// Save level progress — Hotfix #115: prefer shared save-engine
+// (avatar-keyed). Fallback to legacy slot-0 path if not loaded.
 function saveG6Progress(stars) {
+  const lv = (typeof cfg !== 'undefined' ? cfg.level : (typeof S !== 'undefined' ? S.level : 1)) || 1
+  if (typeof window.saveLevelProgress === 'function') {
+    window.saveLevelProgress('g6', lv, stars)
+    return
+  }
   try {
     const key = 'dunia-0-progress'
     const prog = JSON.parse(localStorage.getItem(key) || '{}')
     if (!prog.g6) prog.g6 = { completed: [], stars: {} }
-    const lv = (typeof cfg !== 'undefined' ? cfg.level : (typeof S !== 'undefined' ? S.level : 1)) || 1
-    // Hotfix 2026-04-28: removed legacy 5★→3★ capping. Save raw stars 1-5.
     if (!prog.g6.completed.includes(lv)) prog.g6.completed.push(lv)
     if ((prog.g6.stars[lv] || 0) < stars) prog.g6.stars[lv] = stars
     localStorage.setItem(key, JSON.stringify(prog))
