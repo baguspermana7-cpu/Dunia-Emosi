@@ -1,5 +1,39 @@
 # Changelog — Dunia Emosi
 
+## 2026-04-29 — Hotfix #111 (Back-button wiring + blank-white field)
+
+Cache bump: `v=20260429i` → `v=20260429j`. Commit `cc653b7`.
+
+User reported AFTER #110 deploy:
+1. **Back from g10/g13 flashes "Aku Merasa..." (Game 1) screen** before reaching home. g13b doesn't show this flash.
+2. **Home → re-enter g10 → field blank white** while math quiz still functional ("KOFFING MENYERANG! 6+3=?").
+
+User explicit: "cari root cause nya dont guessing".
+
+### Root cause #1 (confirmed via code inspection)
+- `index.html:707` (g10) + `:836` (g13) onclick = `backToLevelSelect()` which routes to `screen-level`, not `screen-welcome`. Level-select banner is state-driven via `openLevelSelect(gameNum)` which `backToLevelSelect()` does NOT call → stale banner stuck on "Aku Merasa..." (Game 1) info.
+- `index.html:959,960` (g13b) wired to `exitGame13b()` which calls `showScreen('screen-welcome')` → why g13b had no flash.
+
+### Root cause #2 (confirmed evidence)
+- `exitGame10/13` from #110 forgot to call `showScreen('screen-welcome')`.
+- initGame reset list referenced non-existent IDs `*-pspr-back` / `*-espr-back` (silent skip).
+- Sprite elements carry stuck inline CSS (display, opacity, animation, transform) and class flags (`.spr-defeat`, `.wild-die`, etc.) from prior game's death/win animations. `resetSpriteEl()` only clears src/onerror — not CSS.
+- `g10-field` background-image cleared by `loadCityBackground` on probe failure with no fallback → white field.
+
+### Fixes shipped
+- `index.html`: g10 + g13 back buttons → `exitGame10()` / `exitGame13()` (match g13b pattern).
+- `game.js`: New `_resetSprElCss(el)` helper wipes display/opacity/animation/transform + removes 9 stuck classes (.spr-defeat .spr-hit .spr-flash .spr-atk .wild-die .wild-enter .spr-swap-out .spr-swap-in .wspr-hit).
+- `exitGame10/exitGame13` now do full cleanup: `state.paused=false`, hide overlays, `battleBgmStop()`, `stopAllGameSounds()`, `clearTimers()`, `PixiManager.destroy`, sprite reset (CSS + handlers), `flushSpriteQueue()`, AND `showScreen('screen-welcome')`.
+- `initGame10/13/13b`: removed non-existent IDs from reset list, added `_resetSprElCss` block, force gradient fallback on field if no city.
+
+### Test plan
+- Win/back from g10 → home (no flash).
+- Win/back from g13 → home (no flash).
+- Home → re-enter g10 → Pokemon visible (or fallback gradient, never white).
+- Stress test: 5× rapid back-forward, sprites + field render correctly.
+
+---
+
 ## 2026-04-29 — Hotfix #110 (Sprite re-entry race fix across G10/G13/G13B)
 
 Cache bump: `v=20260429h` → `v=20260429i`. Commit `44baa7d`.

@@ -4,6 +4,22 @@
 
 ---
 
+## 2026-04-29 — Hotfix #111 (Back-button wiring + stuck CSS state)
+
+### L53 — Back button wiring is state navigation, not just visual
+- **Symptom**: User pressed back from g10/g13, saw "Aku Merasa..." (Game 1) flash before reaching home. g13b didn't show flash.
+- **Root cause**: g10/g13 back buttons wired to `backToLevelSelect()` which routes to `screen-level` (level-select). Level-select banner is **state-driven** by prior `openLevelSelect(gameNum)` call. Since `backToLevelSelect()` doesn't refresh the banner, it shows whatever game was last opened. User's first game was Game 1 → banner stuck on "Aku Merasa..." even after entering Game 10. Meanwhile g13b uses `exitGame13b()` → `showScreen('screen-welcome')` directly.
+- **Fix**: Wire g10/g13 back buttons to `exitGame10()` / `exitGame13()` (which match g13b's pattern of going home directly). Each `exit*()` function does full cleanup (PixiManager.destroy, sprite reset, queue flush) plus `showScreen('screen-welcome')`.
+- **Lesson**: When multiple buttons across the codebase share visual identity (`class="gh-back"` arrow ←) but route to different functions, audit all instances to ensure consistent UX. Match the pattern that works (g13b) instead of leaving each game with its own incorrect path. Banner content driven by state can show stale data — always re-set state on screen entry.
+
+### L54 — `resetSpriteEl()` clears handlers but NOT visual CSS
+- **Symptom**: After back-and-forth between home and g10, the field appeared blank white. Math quiz worked but Pokemon didn't render.
+- **Root cause**: `resetSpriteEl()` (from #110) only clears `src/onerror/onload/dataset`. It does NOT clear inline CSS (display:none, opacity:0, animation, transform) or class flags (.spr-defeat .wild-die etc.) that prior game's death/win animations leave on the element. So sprite element loaded new texture but was still display:none or opacity:0 from the previous death animation. Plus `g10-field` background-image cleared by `loadCityBackground()` on probe failure with no CSS fallback → white.
+- **Fix**: New `_resetSprElCss(el)` helper that wipes display/opacity/animation/transform + removes 9 stuck classes. Called alongside `resetSpriteEl()` in initGame and exitGame functions. Plus force gradient fallback on `g10-field` background if loadCityBackground fails.
+- **Lesson**: For any DOM element that survives across game scenes (vs being recreated each time), reset BOTH the data attributes (src, dataset) AND visual styles (display, opacity, transform, classes). Reset functions should handle BOTH layers. Also: any element that depends on async-loaded background should have a CSS fallback (gradient/color) so it never appears empty/white.
+
+---
+
 ## 2026-04-29 — Hotfix #110 (Sprite re-entry race)
 
 ### L52 — Stale closure on DOM elements survives game scene transitions

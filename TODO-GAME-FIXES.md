@@ -1786,3 +1786,37 @@ Cumulative cache: `v=20260429a` → `v=20260429i`. Commits `f347f48` → `110795
 - During G13 Evolution → Home → re-enter → sprite must render
 - During G13B → win → region overlay → different city → sprite must render
 - DevTools recovery: `JSON.parse(localStorage.__freezeLog || '[]')`
+
+---
+
+## 📊 Session 2026-04-29 (late) — Hotfix #111 (Back-button wiring + blank field)
+
+Cache: `v=20260429i` → `v=20260429j`. Commit `cc653b7`.
+
+User: "ada screen ini sebelum back to home" + "saat dari home masuk lagi g10 itu freeze error semua blank white". Explicit: "cari root cause nya dont guessing".
+
+### ✅ Root cause #1 (CONFIRMED via code audit)
+- `index.html:707` (g10) + `:836` (g13) onclick = `backToLevelSelect()` → `screen-level` (NOT home). Banner stale from prior `openLevelSelect(1)` → shows "Aku Merasa..." Game 1.
+- g13b correctly used `exitGame13b()` → `showScreen('screen-welcome')` — that's why g13b never had the flash.
+
+### ✅ Root cause #2 (CONFIRMED)
+- `exitGame10/13` (from #110) didn't call `showScreen('screen-welcome')`.
+- Reset list referenced non-existent `*-pspr-back` / `*-espr-back` IDs.
+- Sprite elements carried stuck CSS (display:none, opacity:0, animations, classes) from prior game's death/win sequences. `resetSpriteEl()` only clears src/onerror, NOT CSS.
+- `g10-field` background cleared on probe fail with no CSS fallback → white.
+
+### ✅ Fixes shipped
+- `index.html`: g10/g13 back buttons → `exitGame10()` / `exitGame13()`.
+- `game.js`: new `_resetSprElCss(el)` helper (clears display/opacity/animation/transform + 9 stuck classes).
+- `exitGame10/13` now do full cleanup + `showScreen('screen-welcome')`.
+- `initGame10/13/13b`: removed non-existent IDs, added CSS reset, force gradient fallback on field.
+
+### Vercel verified
+- `v=20260429j` count = 2 in index.html
+- `_resetSprElCss` count = 6 in game.js
+- `exitGame10` exists
+- g10 back button onclick = `exitGame10()` (was `backToLevelSelect()`)
+
+### Lessons added
+- L53: Back button wiring is state navigation — banner stale unless explicitly re-set
+- L54: `resetSpriteEl` clears handlers but NOT visual CSS — need `_resetSprElCss` partner
