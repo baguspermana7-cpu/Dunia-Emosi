@@ -9,6 +9,9 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear-gradient(180deg,var(--g21-sky-top,#5C94FC) 0%,var(--g21-sky-mid,#6BB6FF) 60%,var(--g21-sky-bot,#8B6F47) 100%);font-family:'Fredoka One',sans-serif;touch-action:none;-webkit-user-select:none;user-select:none;transition:background 0.4s ease}
+/* Hotfix #112 — bottom margin so canvas doesn't reach edge of screen */
+:root { --g21-bottom-margin: 96px }
+@media (orientation: portrait) { :root { --g21-bottom-margin: 80px } }
 body.theme-cave{--g21-sky-top:#1f2937;--g21-sky-mid:#374151;--g21-sky-bot:#1c1917}
 body.theme-sky{--g21-sky-top:#7dd3fc;--g21-sky-mid:#bae6fd;--g21-sky-bot:#7dd3fc}
 body.theme-castle{--g21-sky-top:#4b1a72;--g21-sky-mid:#7c3aed;--g21-sky-bot:#1e1b4b}
@@ -16,7 +19,7 @@ body.theme-desert{--g21-sky-top:#fbbf24;--g21-sky-mid:#fde68a;--g21-sky-bot:#a16
 body.theme-ice{--g21-sky-top:#bfdbfe;--g21-sky-mid:#dbeafe;--g21-sky-bot:#93c5fd}
 body.theme-lava{--g21-sky-top:#7f1d1d;--g21-sky-mid:#dc2626;--g21-sky-bot:#451a03}
 body.theme-final{--g21-sky-top:#1e1b4b;--g21-sky-mid:#312e81;--g21-sky-bot:#000000}
-#pixi-canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block;image-rendering:auto}
+#pixi-canvas{position:fixed;left:0;right:0;top:0;width:100vw;height:calc(100svh - var(--g21-bottom-margin,96px));display:block;image-rendering:auto;background:linear-gradient(180deg,#0d1020 0%,#1a1a3a 100%)}
 
 /* ── HUD Top ── */
 #hud-top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:clamp(4px,1.5vw,10px);padding:max(12px,env(safe-area-inset-top)) clamp(12px,3vw,18px) 6px;background:linear-gradient(180deg,rgba(0,0,0,0.55) 0%,transparent 100%);pointer-events:none}
@@ -38,7 +41,7 @@ body.theme-final{--g21-sky-top:#1e1b4b;--g21-sky-mid:#312e81;--g21-sky-bot:#0000
 .life-heart.pulse{animation:heartPulse 0.4s ease}
 
 /* ── Mobile Controls (transparent overlay) ── */
-#mobile-controls{position:fixed;left:0;right:0;bottom:max(16px,env(safe-area-inset-bottom));z-index:100;display:flex;justify-content:space-between;align-items:flex-end;padding:0 clamp(12px,3vw,24px);pointer-events:none}
+#mobile-controls{position:fixed;left:0;right:0;bottom:max(8px,env(safe-area-inset-bottom));z-index:100;display:flex;justify-content:space-between;align-items:center;padding:0 clamp(12px,3vw,24px);pointer-events:none;height:var(--g21-bottom-margin,96px);background:linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,0.75) 50%);backdrop-filter:blur(2px)}
 .mc-cluster{display:flex;gap:clamp(8px,2vw,14px);align-items:flex-end;pointer-events:none}
 .mc-btn{pointer-events:auto;width:clamp(58px,11vmin,90px);height:clamp(58px,11vmin,90px);border-radius:50%;background:rgba(255,255,255,0.17);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:2.5px solid rgba(255,255,255,0.4);color:#fff;font-size:clamp(20px,5vmin,30px);font-weight:900;cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;text-shadow:0 2px 4px rgba(0,0,0,0.5);box-shadow:0 4px 12px rgba(0,0,0,0.25);transition:transform .08s,background .12s}
 .mc-btn:active,.mc-btn.held{transform:scale(0.92);background:rgba(255,255,255,0.32)}
@@ -209,6 +212,7 @@ body.shake{animation:screenShake .35s ease}
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
 <!-- Shared modules -->
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
+<script src="data/math-rules.js?v=20260501a"></script>
 <script src="game-modal.js?v=20260424g"></script>
 
 <script>
@@ -622,13 +626,24 @@ async function loadAssets() {
 // ═══════════════════════════════════════════════════════════════════
 //  PIXI INIT
 // ═══════════════════════════════════════════════════════════════════
+// Hotfix #112: canvas height uses bottom-margin CSS var (96px footer for
+// mobile controls). _gameH() reads it from document and falls back to 96.
+function _gameMarginPx() {
+  try {
+    const v = getComputedStyle(document.documentElement).getPropertyValue('--g21-bottom-margin').trim()
+    const n = parseInt(v, 10)
+    return Number.isFinite(n) ? n : 96
+  } catch (_) { return 96 }
+}
+function _gameH() { return Math.max(120, window.innerHeight - _gameMarginPx()) }
+
 async function initPixi() {
   const PIXI = window.PIXI
   app = new PIXI.Application()
   await app.init({
     canvas: document.getElementById('pixi-canvas'),
     width: window.innerWidth,
-    height: window.innerHeight,
+    height: _gameH(),
     backgroundAlpha: 0,
     antialias: true,
     resolution: window.devicePixelRatio || 1,
@@ -797,7 +812,7 @@ function drawClouds(PIXI, count, fill, stroke) {
 
 function buildMidLayer(theme, PIXI) {
   // Mid layer = ground silhouettes (hills/dunes/snow piles/lava pools).
-  const groundY = window.innerHeight - 30
+  const groundY = _gameH() - 30
   if (theme === 'lava') {
     for (let i = 0; i < 10; i++) {
       const lv = new PIXI.Graphics()
@@ -893,16 +908,37 @@ function loadLevel(lvNum) {
   S.goombas.length = 0; S.coinList.length = 0; S.mushrooms.length = 0; S.bolts.length = 0
   S.stars.length = 0; S.spikes.length = 0; S.qBlocks.length = 0
 
-  // Ground tiles
+  // Ground tiles + pit edge warnings (Hotfix #112)
+  const _pits = levelData.pits || []
+  const _isPitCol = (tx) => _pits.some(p => tx >= p[0] && tx < p[0] + p[1])
+  const _isPitEdge = (tx) => !_isPitCol(tx) && (_isPitCol(tx-1) || _isPitCol(tx+1))
   for (const seg of levelData.ground) {
     for (let i = 0; i < seg.len; i++) {
       const tx = seg.x + i
-      // Skip pit columns
-      const inPit = (levelData.pits || []).some(p => tx >= p[0] && tx < p[0] + p[1])
-      if (inPit) continue
-      placeTile('block', tx, 10)
+      if (_isPitCol(tx)) continue
+      const kind = _isPitEdge(tx) ? 'block-edge' : 'block'
+      placeTile(kind, tx, 10)
       placeTile('block', tx, 11)
     }
+  }
+  // Pit overlay graphics — red gradient warning visible from afar so player
+  // doesn't "tiba-tiba jatuh". Pixi Graphics, GPU rendered, no per-frame cost.
+  const PIXI_ = window.PIXI
+  for (const p of _pits) {
+    const startTx = p[0], len = p[1]
+    const ov = new PIXI_.Graphics()
+    const w = len * TILE
+    // Red gradient stripes
+    ov.rect(0, 0, w, _gameH()).fill({ color: 0x991b1b, alpha: 0.15 })
+    // Top edge danger band
+    ov.rect(0, 9*TILE, w, 4).fill({ color: 0xef4444, alpha: 0.85 })
+    ov.rect(0, 9*TILE + 6, w, 2).fill({ color: 0xfca5a5, alpha: 0.6 })
+    // Diagonal hash lines
+    for (let i = 0; i < w + _gameH(); i += 28) {
+      ov.poly([i, 9*TILE+10, i+12, 9*TILE+10, i-12, _gameH(), i-24, _gameH()]).fill({ color: 0x7f1d1d, alpha: 0.18 })
+    }
+    ov.x = startTx * TILE; ov.y = 0
+    world.addChild(ov)
   }
   // Platforms (suspended)
   for (const p of levelData.platforms) {
@@ -1052,14 +1088,32 @@ function loadLevel(lvNum) {
 function placeTile(kind, tx, ty) {
   const PIXI = window.PIXI
   const g = new PIXI.Graphics()
-  if (kind === 'block') {
-    // Ground tile — earthy brown with darker mortar grid
-    g.rect(0, 0, TILE, TILE).fill(0x8B6F47).stroke({ width: 2, color: 0x5C4A33 })
+  if (kind === 'block' || kind === 'block-edge') {
+    // Hotfix #112: 3-band shading for Mario-style depth.
+    // Top 4px highlight (#A8835C) → middle solid (#8B6F47) → bottom 4px shadow.
+    g.rect(0, 0, TILE, TILE).fill(0x8B6F47)
+    g.rect(0, 0, TILE, 5).fill(0xA8835C)        // top highlight
+    g.rect(0, TILE-5, TILE, 5).fill(0x5C4A33)   // bottom shadow
+    g.rect(0, 0, TILE, TILE).stroke({ width: 2, color: 0x5C4A33 })
     // Top highlight (grass strip on first row)
-    if (ty === 10) g.rect(0, 0, TILE, 10).fill(0x4ade80).stroke({ width: 1, color: 0x166534 })
-    // Inner texture lines
-    g.rect(8, 16, TILE-16, 4).fill(0x6E5638)
-    g.rect(8, 36, TILE-16, 4).fill(0x6E5638)
+    if (ty === 10) {
+      g.rect(0, 0, TILE, 10).fill(0x4ade80).stroke({ width: 1, color: 0x166534 })
+      // Grass tufts (small green dots) — Mario-style
+      for (let tx2 = 8; tx2 < TILE - 8; tx2 += 16) {
+        g.circle(tx2, 4, 3).fill(0x166534)
+        g.rect(tx2 - 1, 1, 2, 4).fill(0x16A34A)
+      }
+    }
+    // Inner texture lines (mortar grid)
+    g.rect(8, 18, TILE-16, 3).fill(0x6E5638).alpha = 0.6
+    g.rect(8, 38, TILE-16, 3).fill(0x6E5638).alpha = 0.6
+    // Pit-edge marker — diagonal stripe pattern + brighter top
+    if (kind === 'block-edge') {
+      g.rect(0, 0, TILE, 8).fill(0xef4444)
+      for (let s = -TILE; s < TILE * 2; s += 12) {
+        g.poly([s, 0, s+8, 0, s-TILE+8, TILE, s-TILE, TILE]).fill({ color: 0x991b1b, alpha: 0.4 })
+      }
+    }
   } else if (kind === 'brick') {
     // Brick pattern — orange-red with mortar grid
     g.rect(0, 0, TILE, TILE).fill(0xC53030)
@@ -1114,9 +1168,15 @@ function syncPikachuSprite() {
   if (!wrap || !el) return
   const screenX = S.x - S.camX
   const screenY = S.y
-  wrap.style.left = (screenX - 42) + 'px'
-  wrap.style.top = (screenY - 84) + 'px'
+  // Hotfix #112: state-aware anchor — big mode wrap is 118×118 (was hardcoded
+  // -84 → big sprite floated 34px into the platform). Match collision body.
+  const wrapH = S.pikachuState === 'big' ? 118 : 84
+  const wrapW = S.pikachuState === 'big' ? 118 : 84
+  // GPU-composited transform — single inline transform combining translate3d
+  // (for position, GPU layer) and scaleX (for facing flip). Replaces left/top
+  // layout reflow to keep 60fps stable.
   const flip = S.facing >= 0 ? 1 : -1
+  wrap.style.transform = `translate3d(${screenX - wrapW/2}px, ${screenY - wrapH}px, 0)`
   const glow = S.electricMode > 0 ? 'drop-shadow(0 0 14px #fbbf24) drop-shadow(0 0 22px #fde047)' : 'drop-shadow(0 4px 6px rgba(0,0,0,0.4))'
   el.style.filter = glow + (S.hitFrames > 0 && Math.floor(S.hitFrames/4)%2 === 0 ? ' brightness(2.3)' : '')
   el.style.transform = `scaleX(${flip})`
@@ -1237,9 +1297,11 @@ function gameLoop() {
     if (S.comboTimer === 0) S.comboCount = 0
   }
 
-  // Camera
-  const targetCamX = Math.max(0, Math.min(levelData.width * TILE - window.innerWidth, S.x - window.innerWidth/2))
-  S.camX += (targetCamX - S.camX) * 0.15
+  // Camera with lookahead — Hotfix #112: see pits earlier, snappier lerp.
+  // Lookahead bias 100px to facing direction so player sees jurang ahead.
+  const lookAhead = S.facing * 100
+  const targetCamX = Math.max(0, Math.min(levelData.width * TILE - window.innerWidth, S.x - window.innerWidth/2 + lookAhead))
+  S.camX += (targetCamX - S.camX) * 0.20
   world.x = -S.camX
   parallaxMid.x = -S.camX * 0.45
   parallaxFar.x = -S.camX * 0.18
@@ -1255,7 +1317,9 @@ function gameLoop() {
 //  COLLISION (axis-separated AABB)
 // ═══════════════════════════════════════════════════════════════════
 function movePlayer(dx, dy) {
-  const w = 36, hSmall = 80, hBig = 110
+  // Hotfix #112: hBig 110 → 118 to match visual wrap height (was 8px
+  // discrepancy causing big Pikachu to clip through platform top).
+  const w = 36, hSmall = 80, hBig = 118
   const h = S.pikachuState === 'small' ? hSmall : hBig
   S.x += dx
   S.y += dy
@@ -1531,27 +1595,30 @@ function knockback() {
 //  MATH QUIZ MODAL
 // ═══════════════════════════════════════════════════════════════════
 function makeMathQuestion(level) {
-  // Scale difficulty with level
-  const max = level <= 2 ? 10 : level <= 4 ? 15 : 20
+  // Hotfix #112-H: delegate to shared math-rules.js which enforces
+  // difficulty + level constraints (no × in easy, max 5 for medium ×, etc).
+  // G21 has 10 levels max.
+  const G21_MAX_LEVEL = 10
+  if (typeof window.makeGameQuestion === 'function') {
+    return window.makeGameQuestion(level, G21_MAX_LEVEL, S.difficulty || 'easy')
+  }
+  // Fallback: simple +/− if shared module not loaded.
+  const max = level <= 2 ? 10 : 15
   const a = 1 + Math.floor(Math.random() * max)
   const b = 1 + Math.floor(Math.random() * max)
-  const op = (level >= 3 && Math.random() < 0.4) ? '-' : '+'
+  const op = (level >= 5 && Math.random() < 0.4) ? '-' : '+'
   let q, ans
   if (op === '-') {
     const big = Math.max(a, b), small = Math.min(a, b)
     q = `${big} - ${small} = ?`; ans = big - small
-  } else {
-    q = `${a} + ${b} = ?`; ans = a + b
-  }
-  // 3 wrong choices near the answer
+  } else { q = `${a} + ${b} = ?`; ans = a + b }
   const wrongs = new Set()
   while (wrongs.size < 3) {
     const off = (Math.floor(Math.random() * 6) - 3) || (Math.random() < 0.5 ? 1 : -1)
     const w = Math.max(0, ans + off)
     if (w !== ans) wrongs.add(w)
   }
-  const choices = [...wrongs, ans].sort(() => Math.random() - 0.5)
-  return { q, ans, choices }
+  return { q, ans, choices: [...wrongs, ans].sort(() => Math.random() - 0.5) }
 }
 
 let _mqState = null
@@ -1941,7 +2008,7 @@ function onResize() {
   clearTimeout(_resizeT)
   _resizeT = setTimeout(() => {
     try {
-      app.renderer.resize(window.innerWidth, window.innerHeight)
+      app.renderer.resize(window.innerWidth, _gameH())
     } catch (e) { console.warn('[g21] resize:', e) }
   }, 200)
 }

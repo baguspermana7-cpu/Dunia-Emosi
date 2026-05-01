@@ -6027,7 +6027,7 @@ function switchPlayerPoke(poke){
     // Apply tier sizing for new player Pokemon
     const _g10swTierSz = t => ({1:1.0, 2:1.2, 3:1.3, 4:1.3}[t||1] || 1.0)
     const swPTierSc = _g10swTierSz(poke.tier)
-    pSpr.style.width = pSpr.style.height = swPTierSc !== 1.0 ? `calc(min(44vw,22vh) * ${swPTierSc})` : ''
+    pSpr.style.width = pSpr.style.height = swPTierSc !== 1.0 ? `calc(clamp(140px, min(38vw, 30vh), 320px) * ${swPTierSc})` : ''
     // Update info box
     document.getElementById('g10-pname').textContent = poke.name
     document.getElementById('g10-plv').textContent = 'Lv'+(Math.floor(Math.random()*10)+s.levelNum)
@@ -6067,7 +6067,7 @@ function switchG13bPlayerPoke(poke) {
   if (typeof applyPokeFlip === 'function') applyPokeFlip(pspr, g13bSavedPoke.slug, 'player')
   const pTier = poke.tier || 1
   const pScale = {1:1.0, 2:1.2, 3:1.3, 4:1.3}[pTier] || 1.0
-  pspr.style.width = pspr.style.height = pScale === 1.0 ? '' : `calc(min(20vw,12vh) * ${pScale})`
+  pspr.style.width = pspr.style.height = pScale === 1.0 ? '' : `calc(clamp(80px, min(20vw, 18vh), 160px) * ${pScale})`
   const pnameEl = document.getElementById('g13b-pname')
   if (pnameEl) pnameEl.textContent = g13bSavedPoke.name
 }
@@ -6342,8 +6342,8 @@ function g10NewBattle(){
   applyPokeFlip(pEl, s.playerPoke.slug, 'player')
   const eSc = pokeFinalScale(s.enemyPoke.slug)
   const pSc = pokeFinalScale(s.playerPoke.slug)
-  if(eEl) eEl.style.width = eEl.style.height = eSc !== 1.0 ? `calc(min(44vw,22vh) * ${eSc})` : ''
-  if(pEl) pEl.style.width = pEl.style.height = pSc !== 1.0 ? `calc(min(44vw,22vh) * ${pSc})` : ''
+  if(eEl) eEl.style.width = eEl.style.height = eSc !== 1.0 ? `calc(clamp(140px, min(38vw, 30vh), 320px) * ${eSc})` : ''
+  if(pEl) pEl.style.width = pEl.style.height = pSc !== 1.0 ? `calc(clamp(140px, min(38vw, 30vh), 320px) * ${pSc})` : ''
   // Reset wrapper entrance animations so they replay cleanly each battle
   const eWrap=document.getElementById('g10-espr-wrap')
   const pWrap=document.getElementById('g10-pspr-wrap')
@@ -8607,7 +8607,7 @@ function _initGame13Impl() {
   const pokeUrl = slug => pokeSpriteAlt2(slug) || pokeSpriteCDN(slug)
   const pokeUrlRemote = slug => pokeSpriteCDN(slug)
   const pokeFallbackUrl = slug => { const id = POKE_IDS[slug]; return id ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png` : null }
-  const sprFbStyle = 'font-size:min(18vw,11vh);line-height:1;display:flex;align-items:center;justify-content:center;width:min(40vw,20vh);height:min(40vw,20vh);position:relative;z-index:2;'
+  const sprFbStyle = 'font-size:min(18vw,11vh);line-height:1;display:flex;align-items:center;justify-content:center;width:clamp(140px, min(34vw, 28vh), 280px);height:clamp(140px, min(34vw, 28vh), 280px);position:relative;z-index:2;'
 
   // Load sprite exactly like G10: set src directly, onerror for fallback
   function loadSpr(imgId, wrapId, slug, emoji) {
@@ -8654,12 +8654,12 @@ function _initGame13Impl() {
   if (wImg) {
     applyPokeFlip(wImg, chain.wild.slug, 'enemy')
     const wScale = pokeFinalScale(chain.wild.slug)
-    if (wScale !== 1.0) wImg.style.width = wImg.style.height = `calc(min(40vw,20vh) * ${wScale})`
+    if (wScale !== 1.0) wImg.style.width = wImg.style.height = `calc(clamp(140px, min(34vw, 28vh), 280px) * ${wScale})`
   }
   if (pImg) {
     applyPokeFlip(pImg, chain.player.slug, 'player')
     const pScale = pokeFinalScale(chain.player.slug)
-    if (pScale !== 1.0) pImg.style.width = pImg.style.height = `calc(min(40vw,20vh) * ${pScale})`
+    if (pScale !== 1.0) pImg.style.width = pImg.style.height = `calc(clamp(140px, min(34vw, 28vh), 280px) * ${pScale})`
   }
 
   // Wild name/type
@@ -9176,7 +9176,7 @@ function g13TriggerEvolution() {
       }
       // Mega form: 1.3x scale boost on top of normal final scale
       const megaScale = wasStage3 ? 1.3 : 1.0
-      pspr.style.width = pspr.style.height = `calc(min(40vw,20vh) * ${pokeFinalScale(nowForm.slug) * megaScale})`
+      pspr.style.width = pspr.style.height = `calc(clamp(140px, min(34vw, 28vh), 280px) * ${pokeFinalScale(nowForm.slug) * megaScale})`
       applyPokeFlip(pspr, nowForm.slug, 'player')
       pspr.style.animation = 'none'; void pspr.offsetWidth
       pspr.style.animation = 'g13EnterFlip 0.6s cubic-bezier(0.34,1.56,0.64,1)'
@@ -9575,7 +9575,7 @@ function initGame13b() {
       pspr.src = localSrc || pokeSpriteOnline(pSlug)
     }
     const pScale = pokeFinalScale(pSlug)
-    pspr.style.width = pspr.style.height = pScale === 1.0 ? '' : `calc(min(20vw,12vh) * ${pScale})`
+    pspr.style.width = pspr.style.height = pScale === 1.0 ? '' : `calc(clamp(80px, min(20vw, 18vh), 160px) * ${pScale})`
     applyPokeFlip(pspr, pSlug, 'player')
   }
   const pnameEl = document.getElementById('g13b-pname')
@@ -9645,7 +9645,7 @@ function g13bSpawnWild() {
     wspr.style.opacity = '1'
     wspr.src = finalSrc
     const tierScale = pokeFinalScale(wild.slug)
-    wspr.style.width = wspr.style.height = tierScale === 1.0 ? '' : `calc(min(44vw,26vh) * ${tierScale})`
+    wspr.style.width = wspr.style.height = tierScale === 1.0 ? '' : `calc(clamp(150px, min(40vw, 32vh), 320px) * ${tierScale})`
     applyPokeFlip(wspr, wild.slug, 'enemy')
     void wspr.offsetWidth
     wspr.classList.add('wild-enter')

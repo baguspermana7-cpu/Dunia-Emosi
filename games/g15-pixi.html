@@ -1109,6 +1109,16 @@ function buildTrain() {
   trainContainer.y = LANE_Y[1];
   trainContainer._bounceT = 0;
 
+  // Hotfix #112-G (2026-05-01): clear stale train children to prevent
+  // sprite stacking ("ada 2 sprite gambar kereta bertumpuk") when
+  // buildTrain runs again on level replay or character switch.
+  // Previously trainContainer.removeChildren() was NEVER called → old
+  // programmatic Graphics + new mount stacked.
+  try {
+    if (typeof wheels !== 'undefined' && Array.isArray(wheels)) wheels.length = 0
+    trainContainer.removeChildren()
+  } catch (_) {}
+
   // Dispose previous character instance if switching
   if (characterTrainInstance) { characterTrainInstance.dispose(); characterTrainInstance = null; }
 
