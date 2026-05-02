@@ -3680,7 +3680,7 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 /* Question panel */
 .g13-qpanel{
   flex:0 0 auto;display:flex;flex-direction:column;align-items:center;
-  padding:10px 16px calc(24px + env(safe-area-inset-bottom, 0px));gap:8px;
+  padding:10px 16px max(calc(env(safe-area-inset-bottom,0px) + 8px),14px);gap:8px;
   background:rgba(10,10,24,0.99);border-top:2px solid rgba(249,115,22,0.25);
 }
 .g13-atk-lbl{font-size:12px;font-weight:900;color:rgba(249,115,22,0.85);text-transform:uppercase;letter-spacing:0.5px;}
@@ -3725,6 +3725,20 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
   100%{opacity:0;transform:translateX(-50%) translateY(-34px) scale(0.9);}
 }
 @keyframes g13ChoiceWrong{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* G13 qpanel responsive — short viewport compact */
+@media (max-height:620px){
+  .g13-qpanel{padding:6px 12px max(calc(env(safe-area-inset-bottom,0px) + 4px),8px);gap:5px;}
+  .g13-math{font-size:clamp(18px,5.5vw,28px);}
+  .g13-choice-btn{padding:7px 10px;font-size:17px;}
+  .g13-atk-lbl{font-size:10px;}
+}
+@media (orientation:landscape) and (max-height:500px){
+  .g13-qpanel{padding:4px 12px max(calc(env(safe-area-inset-bottom,0px) + 2px),6px);gap:4px;}
+  .g13-math{font-size:clamp(16px,4.5vw,22px);}
+  .g13-choice-btn{padding:5px 8px;font-size:15px;}
+  .g13-field{min-height:100px;}
+}
 
 /* FX flash overlay */
 .g13-flash{position:absolute;inset:0;background:white;opacity:0;pointer-events:none;z-index:50;border-radius:inherit;}
