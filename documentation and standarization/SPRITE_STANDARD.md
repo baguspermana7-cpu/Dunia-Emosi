@@ -21,7 +21,7 @@ ALL Pokemon `<img>` elements must:
 
 Source #1 is the **only** one that's truly HD (630×630 transparent WebP, anti-aliased). Sources #3 and #4 are 96×96 — visible pixelation on retina screens. They're emergency rungs only.
 
-> **Hotfix #120 (2026-05-02)**: `assets/Pokemon/sprites/` (96×96 local PNGs) was deleted. These were dead-weight fallbacks that caused pixelated sprites when HD cascade failed. The cascade step was removed from `buildPokeSources()`.
+> **Hotfix #120 (2026-05-02)**: `assets/Pokemon/sprites/` (96×96 local PNGs, 1025 files) was **deleted**. These were dead-weight fallbacks that caused pixelated sprites when HD cascade failed. The local PNG step has been **removed** from `buildPokeSources()`. The cascade is now strictly: HD WebP → SVG → CDN pokemondb → CDN PokeAPI.
 
 ## Required pattern: dynamic JS-built images
 
@@ -83,6 +83,14 @@ window.POKE_IDS = POKE_IDS
 
 > **Rule**: Never declare a local `const POKE_IDS = {...}` subset inside a function — it shadows the global 1025-entry map with an incomplete copy. Always use `window.POKE_IDS` or `POKE_IDS` (the module-level variable).
 
+### window.POKE_IDS Global Exposure (Hotfix #120)
+
+`game.js` declares `const POKE_IDS = Object.fromEntries(POKEMON_DB.map(...))` — 1025 slug→id entries. This MUST be exposed as `window.POKE_IDS` immediately after declaration (game.js:5512).
+
+**Why:** `buildPokeSources()` in `poke-sprite-loader.js` checks `window.POKE_IDS[slug]` to generate HD WebP paths (`pokemondb_hd_alt2/{NNNN}_{slug}.webp`). Without it, all 5 call sites pass `null` as Pokemon ID → HD WebP + SVG paths SKIPPED → cascade falls to 96px CDN → if CDN fails, emoji fallback.
+
+**Standalone pages** (g6, g13c-pixi, g14, g15-pixi, g16-pixi, g19-pixi, g20-pixi, g21-pixi, g22-candy) load `poke-sprite-cdn.js` which sets its own `window.POKE_IDS`. No conflict — standalone pages set it BEFORE game.js loads.
+
 ## Helper inventory (game.js)
 
 | Helper | Purpose | Returns |
@@ -103,10 +111,13 @@ g13c is a standalone page that loads `data/poke-sprite-cdn.js` independently:
 ```javascript
 const SPRITE_HD_REMOTE = s => `https://img.pokemondb.net/sprites/home/normal/${s}.png` // 96px CDN, last resort
 const SPRITE_HD        = s => (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(s) : null) || SPRITE_HD_REMOTE(s)
-const SPRITE_LOCAL     = s => `../assets/Pokemon/sprites/${s}.png`  // REMOVED in #120 — sprites/ deleted
+// SPRITE_LOCAL removed in Hotfix #120 — assets/Pokemon/sprites/ directory deleted (1025 files)
+// const SPRITE_LOCAL  = s => `../assets/Pokemon/sprites/${s}.png`  // DO NOT RESTORE
 ```
 
 `SPRITE_HD()` returns true HD WebP first, falls to 96px CDN only if alt2 unavailable. Always use `SPRITE_HD` (not `SPRITE_HD_REMOTE`) as the primary `src=`.
+
+> **Hotfix #120 rule**: `SPRITE_LOCAL` references were removed from g13c-pixi.html. Any new onerror cascades in standalone pages must use `SPRITE_HD_REMOTE(slug)` as the last-resort fallback — never reference the deleted `assets/Pokemon/sprites/` path.
 
 ## Audit history
 

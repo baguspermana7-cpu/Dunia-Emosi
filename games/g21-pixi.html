@@ -1738,14 +1738,15 @@ function updateGoombas() {
       }
     }
     if (!hasGroundAhead || wallAhead) g._g21Vx *= -1
-    // Goomba-goomba separation — prevent stacking
+    // Goomba-goomba separation — position nudge only (no velocity override)
     for (const other of S.goombas) {
       if (other === g || !other._g21Alive) continue
       const dx = g.x - other.x
       if (Math.abs(dx) < TILE * 0.7 && Math.abs(g.y - other.y) < TILE) {
-        const push = dx > 0 ? 1.5 : -1.5
-        g.x += push
-        g._g21Vx = Math.abs(g._g21Vx) * Math.sign(push)
+        const half = (TILE * 0.7 - Math.abs(dx)) / 2
+        const sign = dx > 0 ? 1 : -1
+        g.x += half * sign
+        other.x -= half * sign
       }
     }
     // Player collision
@@ -1757,8 +1758,9 @@ function updateGoombas() {
 function updateCoins() {
   for (let i = S.coinList.length - 1; i >= 0; i--) {
     const c = S.coinList[i]
-    c._g21Bob = (c._g21Bob || 0) + 0.18
-    c.y += Math.sin(c._g21Bob) * 0.4
+    if (c._g21BaseY === undefined) c._g21BaseY = c.y
+    c._g21Bob = (c._g21Bob || 0) + 0.06
+    c.y = c._g21BaseY + Math.sin(c._g21Bob) * 3
     // Sprite animation — rotate through coin frames for spin effect
     if (c._g21CoinFrames && c._g21CoinFrames.length > 1) {
       c._g21CoinFrameT = (c._g21CoinFrameT || 0) + 1
@@ -2264,17 +2266,12 @@ function onDeath(reason) {
   S.gameOver = true; S.running = false
   sfx('sfx-damage')
   showMilestone('GAME OVER 💔', '#ef4444')
-  // Pikachu spin-fall death animation — compose translate3d + rotate so
-  // Pikachu spins from current position (not teleport to 0,0)
   const wrap = document.getElementById('pikachu-wrap')
   if (wrap) {
-    const screenX = S.x - S.camX
-    const screenY = S.y
-    const wrapH = S.pikachuState === 'big' ? 118 : 84
-    const wrapW = S.pikachuState === 'big' ? 118 : 84
+    const rect = wrap.getBoundingClientRect()
     const fallY = window.innerHeight + 200
     wrap.style.transition = 'transform 1.2s cubic-bezier(0.5,0,0.5,1)'
-    wrap.style.transform = `translate3d(${screenX - wrapW/2}px, ${fallY}px, 0) rotate(720deg)`
+    wrap.style.transform = `translate3d(${rect.left}px, ${fallY}px, 0) rotate(720deg)`
   }
   setTimeout(() => {
     if (wrap) wrap.style.transition = ''
@@ -2337,10 +2334,12 @@ function restartLevel() {
     wrap.style.height = '84px'
   }
   S.comboCount = 0; S.comboTimer = 0
-  S.pendingMath = false; S.electricMode = 0
+  S.pendingMath = false; S.electricMode = 0; S.starMode = 0
   document.getElementById('math-quiz').classList.remove('show')
   const boltEl = document.getElementById('btn-bolt')
   if (boltEl) boltEl.style.display = 'none'
+  const aura = document.getElementById('pikachu-aura')
+  if (aura) aura.style.opacity = '0'
   loadLevel(S.level)
   S.running = true
   S.startTime = performance.now()
