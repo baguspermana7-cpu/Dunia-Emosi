@@ -601,50 +601,51 @@ async function loadAssets() {
 
   // Pixi 8: Assets API
   const baseUrl = '../assets/mario-pokemon/sprites/'
+  const _v = '?v=20260502g'
   const manifest = {
     // Pikachu overlays (DOM <img> but loaded so browser pre-caches)
-    pikachu_small: baseUrl + 'pikachu-small-cropped.png',
-    pikachu_big:   baseUrl + 'pikachu-big-cropped.png',
-    pikachu_fire:  baseUrl + 'pikachu-fire.png',
-    // ── Hotfix #118: Authentic SMB1 NES sprites ──
+    pikachu_small: baseUrl + 'pikachu-small-cropped.png' + _v,
+    pikachu_big:   baseUrl + 'pikachu-big-cropped.png' + _v,
+    pikachu_fire:  baseUrl + 'pikachu-fire.png' + _v,
+    // ── Hotfix #120: Regenerated SMB1 sprites (proper pixel art) ──
     // Tiles
-    ref_block:    baseUrl + 'ref-block.png',
-    ref_ground:   baseUrl + 'ref-ground.png',
-    ref_brick:    baseUrl + 'ref-brick.png',
-    ref_qblock:   baseUrl + 'ref-qblock.png',
-    ref_qblock0:  baseUrl + 'ref-qblock-anim0.png',
-    ref_qblock1:  baseUrl + 'ref-qblock-anim1.png',
+    ref_block:    baseUrl + 'ref-block.png' + _v,
+    ref_ground:   baseUrl + 'ref-ground.png' + _v,
+    ref_brick:    baseUrl + 'ref-brick.png' + _v,
+    ref_qblock:   baseUrl + 'ref-qblock.png' + _v,
+    ref_qblock0:  baseUrl + 'ref-qblock-anim0.png' + _v,
+    ref_qblock1:  baseUrl + 'ref-qblock-anim1.png' + _v,
     // Enemies
-    ref_goomba0:  baseUrl + 'ref-goomba0.png',
-    ref_goomba1:  baseUrl + 'ref-goomba1.png',
+    ref_goomba0:  baseUrl + 'ref-goomba0.png' + _v,
+    ref_goomba1:  baseUrl + 'ref-goomba1.png' + _v,
     // Items
-    ref_coin0:    baseUrl + 'ref-coin0.png',
-    ref_coin1:    baseUrl + 'ref-coin1.png',
-    ref_coin2:    baseUrl + 'ref-coin2.png',
-    ref_mushroom: baseUrl + 'ref-mushroom.png',
-    ref_starman:  baseUrl + 'ref-starman.png',
-    ref_1up:      baseUrl + 'ref-1up.png',
-    ref_fireflower: baseUrl + 'ref-fireflower.png',
+    ref_coin0:    baseUrl + 'ref-coin0.png' + _v,
+    ref_coin1:    baseUrl + 'ref-coin1.png' + _v,
+    ref_coin2:    baseUrl + 'ref-coin2.png' + _v,
+    ref_mushroom: baseUrl + 'ref-mushroom.png' + _v,
+    ref_starman:  baseUrl + 'ref-starman.png' + _v,
+    ref_1up:      baseUrl + 'ref-1up.png' + _v,
+    ref_fireflower: baseUrl + 'ref-fireflower.png' + _v,
     // Props
-    ref_pipe:     baseUrl + 'ref-pipe.png',
-    ref_bush:     baseUrl + 'ref-bush.png',
-    ref_cloud:    baseUrl + 'ref-cloud.png',
-    ref_hill:     baseUrl + 'ref-hill.png',
-    ref_flagpole: baseUrl + 'ref-flagpole.png',
+    ref_pipe:     baseUrl + 'ref-pipe.png' + _v,
+    ref_bush:     baseUrl + 'ref-bush.png' + _v,
+    ref_cloud:    baseUrl + 'ref-cloud.png' + _v,
+    ref_hill:     baseUrl + 'ref-hill.png' + _v,
+    ref_flagpole: baseUrl + 'ref-flagpole.png' + _v,
     // Castle
-    ref_castlewall:  baseUrl + 'ref-castlewall.png',
-    ref_castlebrick: baseUrl + 'ref-castlebrick.png',
-    ref_castledoor:  baseUrl + 'ref-castledoor.png',
+    ref_castlewall:  baseUrl + 'ref-castlewall.png' + _v,
+    ref_castlebrick: baseUrl + 'ref-castlebrick.png' + _v,
+    ref_castledoor:  baseUrl + 'ref-castledoor.png' + _v,
     // Legacy fallbacks (existing files, kept for compat)
-    goomba: baseUrl + 'goomba.png',
-    coin:   baseUrl + 'coin.png',
-    mushroom: baseUrl + 'mushroom.png',
-    star:   baseUrl + 'star.png',
-    brick:  baseUrl + 'brick.png',
-    block:  baseUrl + 'block.png',
-    qblock: baseUrl + 'qblock.png',
-    cloud:  baseUrl + 'cloud.png',
-    bush:   baseUrl + 'bush.png',
+    goomba: baseUrl + 'goomba.png' + _v,
+    coin:   baseUrl + 'coin.png' + _v,
+    mushroom: baseUrl + 'mushroom.png' + _v,
+    star:   baseUrl + 'star.png' + _v,
+    brick:  baseUrl + 'brick.png' + _v,
+    block:  baseUrl + 'block.png' + _v,
+    qblock: baseUrl + 'qblock.png' + _v,
+    cloud:  baseUrl + 'cloud.png' + _v,
+    bush:   baseUrl + 'bush.png' + _v,
   }
   const out = {}
   for (const [key, url] of Object.entries(manifest)) {

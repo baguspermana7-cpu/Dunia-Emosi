@@ -4,6 +4,90 @@
 
 ---
 
+## 📊 Session 2026-05-02 — Hotfix #120 (G13 Evolution + Scoring Critical Fix)
+
+Cache bump: `v=20260502a` → `v=20260502b`. Branch: `main`.
+
+### ✅ Task #120-G13A — GameScoring ReferenceError crash (game.js)
+`GameScoring` was defined only in `game-modal.js` (standalone context) but called from `game.js` (main app context). Victory scoring always fell to the catch-block default of 3★. Fix: defined `GameScoring` inline at the top of `game.js` so it is available in both contexts.
+
+### ✅ Task #120-G13B — 9 families with duplicate evolved/evolved2 slugs (game.js G13_FAMILIES)
+9 of 43 G13_FAMILIES had `evolved` and `evolved2` with identical slugs (e.g. `lucario/lucario`, `pikachu/pikachu` instead of `pikachu/raichu`). This caused invisible "evolutions" where the sprite didn't change on stage 2. Fixed all 9 families with correct evolved-form slugs (Raichu, Machamp, Sirfetch'd, Lucario, Steelix, Togekiss, Garchomp, Snorlax, Froslass).
+
+### ✅ Task #120-G13C — Mega form unreachable for 2-stage Pokemon (game.js)
+Evolution mega path required `s.evolved2 = true` before allowing mega transition, but 2-stage Pokemon (Riolu→Lucario, Munchlax→Snorlax, Snorunt→Glalie) have no `evolved2`. Added `canEvoMega` path that detects absence of `evolved2` and goes directly from `evolved` → `mega`. Also added `megaSlug` field to affected families.
+
+### ✅ Task #120-G13D — Victory scoring always 3★ (game.js)
+Root cause: `GameScoring` crash (see #120-G13A). With inline fix in place, scoring now correctly awards 4★ / 5★ based on combo, kill count, and legendary bonus.
+
+### ✅ Task #120-G13E — Info boxes misaligned with Pokemon sprites (game.js / CSS)
+HP and type info boxes were positioned via CSS grid but offset from their respective Pokemon sprites on different screen sizes. Repositioned info boxes using `grid-column` / `grid-row` anchors matching sprite containers.
+
+### ✅ Task #120-G13F — Type badges barely visible (CSS)
+Type badge `font-size` and `opacity` were too small. Increased badge size and set `opacity: 1` so type labels are clearly legible.
+
+### ✅ Task #120-G13G — Added city name label on battle field (game.js)
+City name now appears as a styled label on the battle field background so players always know which city/region they are fighting in.
+
+### ✅ Task #120-G13H — Region progress boosts evolution stages (game.js)
+When a player has 50%+ region progress, evolution stages are boosted (higher base stage on encounter). Rewards exploration and long-play sessions.
+
+### ✅ Task #120-G13I — Added Farfetch'd → Sirfetch'd family to G13 selector (game.js)
+New family entry: `farfetchd` (base) → `sirfetchd` (evolved) added to `G13_FAMILIES` with correct slugs and type data.
+
+### ✅ Task #120-G13J — Victory message and attack type not accounting for mega form (game.js)
+Victory message and post-battle attack-type display used `s.evolved2` slug regardless of whether player reached mega. Added mega-form check so correct slug and type label are shown for mega-evolved Pokemon.
+
+### ✅ Task #120-J — Fix critical grid position bug (game.js)
+`_g13Field.style.display = 'flex'` at game.js:8627 OVERRODE CSS `display:grid`, making all grid-column/grid-row properties ignored. Elements fell back to flex row order (DOM order), placing wild at top-left and player at bottom-right instead of the correct diagonal layout. Fix: changed to `display=''` to let CSS grid take effect.
+
+### ✅ Task #120-K — Add 5 companion Pokemon families to POPULAR (game.js G13_FAMILIES)
+Added Torchic/May, Piplup/Dawn, Scorbunny/Goh, Togepi/Misty, Popplio/Lana. POPULAR now 22 families.
+
+### ✅ Task #120-L — Add 3 pseudo-legendary lines to COOL (game.js G13_FAMILIES)
+Added Deino→Hydreigon, Jangmo-o→Kommo-o, Dreepy→Dragapult. COOL now 8 families.
+
+### ✅ Task #120-F — Fix CSS info box regression (game.js / CSS)
+wild-info/player-info were in same grid cells as sprites (col2/row1 and col1/row2), causing overlap. Reverted to diagonal layout: wild-info at col1/row1 (top-left), player-info at col2/row2 (bottom-right).
+
+### ✅ Task #120-G — Fix family selector tab switching (game.js)
+Clicking POPULER/KEREN/ACAK tabs had no response because `openG13FamilySelector()` overwrote `g13FamActiveTab` with the saved family's category on every re-render. Fix: only auto-detect tab on initial open (overlay not yet visible).
+
+### ✅ Task #120-H — Add mega thumbnail to family selector cards (game.js)
+Cards with mega evolution now show a 4th thumbnail with golden "M" badge (`evolved2` was the only 3rd checked).
+
+### ✅ Task #120-I — Add 6 missing Ash Pokemon families (game.js G13_FAMILIES)
+Totodile→Feraligatr, Cyndaquil→Typhlosion, Turtwig→Torterra, Oshawott→Samurott, Goomy→Goodra, Rowlet→Decidueye. Ash category now has 27 families.
+
+### Cross-File Integration
+| Concern | File | Status |
+|---------|------|--------|
+| GameScoring inline definition | game.js | ✅ |
+| 9 family duplicate slugs fixed | game.js G13_FAMILIES | ✅ |
+| canEvoMega path for 2-stage Pokemon | game.js | ✅ |
+| Victory scoring 4★/5★ now reachable | game.js | ✅ |
+| Info box CSS grid realignment | game.js / CSS | ✅ |
+| Type badge size + opacity | CSS | ✅ |
+| City name label on field | game.js | ✅ |
+| Region progress evolution boost | game.js | ✅ |
+| Farfetch'd → Sirfetch'd family | game.js G13_FAMILIES | ✅ |
+| Victory message + attack type mega-aware | game.js | ✅ |
+| CSS info box diagonal layout regression fix | game.js / CSS | ✅ |
+| Family selector tab switching fix | game.js | ✅ |
+| Mega thumbnail with "M" badge in selector | game.js | ✅ |
+| 6 Ash families added (total 27) | game.js G13_FAMILIES | ✅ |
+| CSS grid position bug fix (display:flex → display:'') | game.js | ✅ |
+| 5 companion families added to POPULAR (total 22) | game.js G13_FAMILIES | ✅ |
+| 3 pseudo-legendary lines added to COOL (total 8) | game.js G13_FAMILIES | ✅ |
+| Documentation | TODO + CHANGELOG + LESSONS-LEARNED | ✅ |
+
+### Touched
+- `game.js` (GameScoring inline, G13_FAMILIES slug fixes, canEvoMega, city label, region boost, Farfetch'd family, victory mega-aware, CSS info box fix, tab switching fix, mega thumbnail, 6 Ash families)
+- CSS (info box grid, type badge, diagonal layout)
+- `TODO-GAME-FIXES.md`, `CHANGELOG.md`, `LESSONS-LEARNED.md`
+
+---
+
 ## 📊 Session 2026-04-27 (late) — Hotfix #102 (G15 polish + cross-game ticker leak)
 
 Cache bump: `v=20260427c` → `v=20260427d`. Branch: `main`.

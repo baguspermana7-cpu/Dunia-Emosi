@@ -4,6 +4,46 @@
 
 ---
 
+## 2026-05-02 — Hotfix #120 (G13 Evolution + Scoring Critical Fix)
+
+### L66 — Shared utility defined in standalone context is not available in main-app context
+- **Symptom**: Victory scoring always returned 3★ regardless of player performance (combo, kill count, legendary).
+- **Root cause**: `GameScoring` was defined inside `game-modal.js`, which is loaded only in standalone Pixi pages. `game.js` (main app) called `new GameScoring(...)` without it ever being defined → ReferenceError silently caught by the try-block → default 3★ fallback every time.
+- **Fix**: Defined `GameScoring` inline at the top of `game.js` so it is available in the main-app context regardless of which scripts are loaded.
+- **Lesson**: Before calling any shared utility class, verify it is defined in EVERY context it will be called from. If a utility lives in a standalone-only file, either (a) duplicate it inline in the main app, (b) move it to a truly shared module, or (c) guard the call with `typeof GameScoring !== 'undefined'`. Never assume a class is globally available because it works in one context.
+
+### L67 — Identical evolved/evolved2 slugs produce silent invisible "evolutions"
+- **Symptom**: Pokemon in G13 appeared to evolve (stage counter incremented) but the sprite didn't change and the "evolved" form had the same name as the base.
+- **Root cause**: 9 of 43 `G13_FAMILIES` entries had `evolved` and `evolved2` set to the same slug (e.g. `lucario/lucario`, `pikachu/pikachu`). The evolution logic used the slug to load a new sprite — same slug = same sprite. No error thrown.
+- **Fix**: Audited all 43 families and corrected all 9 with wrong slugs (Raichu, Machamp, Sirfetch'd, Lucario, Steelix, Togekiss, Garchomp, Snorlax, Froslass).
+- **Lesson**: When defining multi-stage entity data (evolution chains, upgrade tiers, skill trees), always validate that each stage has a DIFFERENT identifier than the prior stage. A lint-level check — `assert evolved !== base && evolved2 !== evolved` — would have caught this at data-entry time. Silent duplicates are the worst kind of bug: no error, wrong output.
+
+### L68 — Evolution gating on `evolved2` blocks mega-path for naturally 2-stage Pokemon
+- **Symptom**: Pokemon like Lucario, Snorlax, and Glalie could never reach their mega form in G13, despite `megaSlug` being defined on their family entry.
+- **Root cause**: The mega-evolution branch checked `s.evolved2 = true` as a prerequisite (meaning the Pokemon had already reached its third form). 2-stage families (base → evolved, no evolved2) never set `s.evolved2`, so the mega branch was permanently blocked.
+- **Fix**: Added `canEvoMega` flag computed as `family.megaSlug && !family.evolved2Slug`. When true, the evolution engine transitions directly from `evolved` → `mega` without requiring an intermediate `evolved2` stage.
+- **Lesson**: Evolution/progression gating conditions must account for all valid chain lengths (2-stage vs 3-stage). When adding a new terminal state (mega, prestige, ascended) check whether your prerequisite guard assumes the full chain length. Add a dedicated flag (`canEvoMega`, `isPrestigeReady`) rather than reusing an existing intermediate-stage flag as a proxy.
+
+### L69 — Tab re-render overwrite
+- **Symptom**: Clicking POPULER/KEREN/ACAK tabs in the G13 family selector had no visible effect — the selected tab immediately snapped back.
+- **Root cause**: `openG13FamilySelector()` set `g13FamActiveTab` from the persisted family's category at the top of the function, then re-rendered the tab bar. Clicking a different tab triggered a re-render, which ran the same top-of-function logic and overwrote the newly selected tab before the DOM updated.
+- **Fix**: Guard the persisted-data-based tab selection with a check for whether the overlay is already visible — if it is, this is a re-render call (tab click), not a fresh open, so skip the auto-detect.
+- **Lesson**: When a function re-renders UI including tabs, and the tab state is set from persisted data at the top of the function, clicking a different tab will be immediately undone. Guard the persisted-data-based tab selection with a check for whether the overlay is already visible (re-render) vs fresh open.
+
+### L70 — Grid cell overlap in battle layout
+- **Symptom**: Info boxes (HP/type) and Pokemon sprites visually overlapped in the G13 battle field at certain screen sizes.
+- **Root cause**: After a CSS refactor, wild-info and player-info were assigned to the same grid cells as their respective sprites (col2/row1 and col1/row2). Two elements in the same grid cell stack on top of each other.
+- **Fix**: Reverted to the classic diagonal placement: wild-info at col1/row1 (top-left), player-info at col2/row2 (bottom-right) — the opposite corner from their sprites.
+- **Lesson**: When info boxes and sprites are in the same grid cell (same grid-column/grid-row), they overlap. Classic Pokemon battle layout uses diagonal placement: info box top-LEFT / sprite top-RIGHT for wild Pokemon; info box bottom-RIGHT / sprite bottom-LEFT for player Pokemon.
+
+### L71 — Mega thumbnail needs explicit check
+- **Symptom**: The 4th thumbnail slot in family selector cards (mega evolution) showed the same sprite as the evolved form instead of the mega form.
+- **Root cause**: The `_mega` helper reused `baseSlug` (no distinct mega slug field was being checked), so mega thumbnails resolved to the same image as the regular evolved form.
+- **Fix**: Added an explicit `megaSlug` field check and rendered the mega thumbnail only when a distinct `megaSlug` exists, with a golden "M" badge overlay to visually distinguish it.
+- **Lesson**: The `_mega` helper reuses `baseSlug`, so mega thumbnails show the same sprite as evolved form unless a distinct `megaSlug` is explicitly provided and checked. Distinguish mega thumbnails with a visual "M" badge overlay.
+
+---
+
 ## 2026-04-29 — Hotfix #111 (Back-button wiring + stuck CSS state)
 
 ### L53 — Back button wiring is state navigation, not just visual
@@ -601,6 +641,14 @@ After adding new features (math quiz, electric mode), `restartLevel()` was never
 
 ### L69 — Deleted Function Reference Cascade (G13C, 2026-05-02)
 Deleting a function definition (SPRITE_LOCAL) without grepping for ALL call sites → ReferenceError at runtime. The 5 call sites in cascade arrays were fixed, but 3 inline onerror strings in HTML template literals were missed. Always grep the ENTIRE file, including template strings, before deleting a function.
+
+---
+
+### L72 — JS `display:flex` kills CSS Grid (G13, 2026-05-02)
+- **Symptom**: Battle field sprites placed in wrong positions — wild Pokemon at top-left, player Pokemon at bottom-right, regardless of CSS `grid-column`/`grid-row` values.
+- **Root cause**: `_g13Field.style.display = 'flex'` set as an inline style overrides the stylesheet `display: grid`. ALL `grid-column`, `grid-row`, and `justify-self` properties become NO-OPs. Elements fall back to DOM-order flex flow.
+- **Fix**: Changed to `_g13Field.style.display = ''` to clear the inline override and let CSS handle the layout mode.
+- **Lesson**: When a container uses CSS Grid, NEVER set `display:flex` in JS. If visibility toggling is needed, use `display=''` to clear the inline override and let CSS handle the layout mode.
 
 ---
 

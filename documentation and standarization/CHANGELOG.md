@@ -1,5 +1,36 @@
 # Changelog — Dunia Emosi
 
+## 2026-05-02 — Hotfix #120 (G13 Evolution + Scoring Critical Fix)
+
+### Fixed
+- **GameScoring ReferenceError crash**: `GameScoring` was defined only in `game-modal.js` (standalone context) — `game.js` (main app) crashed silently and always fell back to 3★. Defined `GameScoring` inline in `game.js`.
+- **9 G13 families with duplicate evolved/evolved2 slugs**: Pikachu→Pikachu, Lucario→Lucario, etc. caused invisible evolutions (sprite unchanged). All 9 families corrected (Raichu, Machamp, Sirfetch'd, Lucario, Steelix, Togekiss, Garchomp, Snorlax, Froslass).
+- **Mega form unreachable for 2-stage Pokemon**: Evolution gating on `evolved2` blocked Lucario, Snorlax, Glalie mega paths. Added `canEvoMega` flag for direct evolved→mega transition on 2-stage families.
+- **Victory scoring always 3★**: Root cause was the `GameScoring` crash above. Now correctly awards 4★/5★ on high combo/kill/legendary runs.
+- **Info boxes misaligned with Pokemon sprites**: HP/type info boxes repositioned via CSS grid anchors to match sprite containers.
+- **Type badges barely visible**: Increased badge font-size and set `opacity: 1`.
+- **Victory message + attack type ignoring mega form**: Post-battle display now checks mega stage and shows correct slug + type label.
+
+### Added
+- **City name label on battle field**: Styled label displays current city/region during battle.
+- **Region progress evolution boost**: 50%+ regional progress boosts starting evolution stage on encounter.
+- **Farfetch'd → Sirfetch'd family**: New entry in `G13_FAMILIES` with correct slugs and type data.
+- **Mega evolution thumbnail with "M" badge**: Family selector cards now show a 4th thumbnail for mega-eligible families, with a golden "M" badge to distinguish from the evolved form.
+- **6 Ash Pokemon families** (Totodile→Feraligatr, Cyndaquil→Typhlosion, Turtwig→Torterra, Oshawott→Samurott, Goomy→Goodra, Rowlet→Decidueye) — Ash category now has 27 families.
+
+### Fixed (additional)
+- **G13 family selector tab switching** (POPULER/KEREN/ACAK): tabs were silently overwritten on re-render because `openG13FamilySelector()` reset `g13FamActiveTab` from persisted data on every call. Fixed by guarding auto-detect to initial open only.
+- **G13 info box CSS overlap**: wild-info/player-info were in same grid cells as sprites — reverted to diagonal grid layout (wild-info top-left, player-info bottom-right).
+- **G13 battle field sprite positions**: `display:flex` inline style overrode CSS Grid, placing wild at top-left and player at bottom-right. Removed JS override (`display=''`) to restore correct diagonal layout.
+
+### Added (additional)
+- **5 companion Pokemon families to POPULAR** (Torchic/May, Piplup/Dawn, Scorbunny/Goh, Togepi/Misty, Popplio/Lana) — POPULAR now 22 families.
+- **3 pseudo-legendary lines to COOL** (Deino→Hydreigon, Jangmo-o→Kommo-o, Dreepy→Dragapult) — COOL now 8 families.
+
+Cache bump: v=20260502g
+
+---
+
 ## 2026-05-02 — Hotfix #120 (Critical Sprite + Picker + G21 Fixes)
 
 Cache bump: `v=20260501h` → `v=20260502a`.
