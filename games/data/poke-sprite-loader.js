@@ -101,15 +101,14 @@
     _waitQueue.length = 0;
   }
 
-  // Hotfix #120-X (2026-05-02): per-URL watchdog. Mobile browsers occasionally
-  // never fire onload/onerror when bandwidth is saturated (Pixi + audio + sprite
-  // loads competing on initial G13 load). Without timeout, cascade hangs and
-  // emoji fallback persists. Watchdog forces next-attempt after 4s/URL.
-  const URL_TIMEOUT_MS = 4000;
+  // Hotfix #120-Z (2026-05-02): PARALLEL probe cascade.
+  // Was sequential (try URL 1, on fail try URL 2, ...) — could take 16s+ on slow
+  // mobile networks where each URL hits 4s watchdog. Now: launch all probes in
+  // parallel via new Image(), first onload wins. Saves 4-12 seconds typically.
+  const TOTAL_TIMEOUT_MS = 8000;
 
   function attachSpriteCascade(imgEl, sources, fallbackEmoji, onLoadCb) {
     if (!imgEl) return;
-    // Hotfix #110: clear stale state from any previous cascade on this element.
     resetSpriteEl(imgEl);
     const tried = new Set();
     const queue = (sources || []).filter(u => {
@@ -118,53 +117,50 @@
       tried.add(u);
       return true;
     });
-    let i = 0;
+    let resolved = false;
     let released = false;
-    let watchdog = null;
-    function done() {
+    let timeoutId = null;
+    const probes = [];
+    function release() {
       if (released) return;
       released = true;
-      if (watchdog) { clearTimeout(watchdog); watchdog = null; }
       _release();
+    }
+    function cleanup() {
+      probes.forEach(p => { p.onload = null; p.onerror = null; });
+      probes.length = 0;
+      if (timeoutId) { clearTimeout(timeoutId); timeoutId = null; }
+    }
+    function finish(winningUrl) {
+      if (resolved) return;
+      resolved = true;
+      cleanup();
+      imgEl.src = winningUrl || _emojiDataURL(fallbackEmoji);
+      release();
       if (typeof onLoadCb === 'function') {
         try { onLoadCb(imgEl); } catch (_) {}
       }
     }
-    function attempt() {
-      if (watchdog) { clearTimeout(watchdog); watchdog = null; }
-      imgEl.onload = null;
-      imgEl.onerror = null;
-      if (i >= queue.length) {
-        imgEl.src = _emojiDataURL(fallbackEmoji);
-        done();
-        return;
-      }
-      const url = queue[i++];
-      imgEl.onload = function () {
-        if (watchdog) { clearTimeout(watchdog); watchdog = null; }
-        imgEl.onload = null;
-        imgEl.onerror = null;
-        done();
-      };
-      imgEl.onerror = function () {
-        if (watchdog) { clearTimeout(watchdog); watchdog = null; }
-        imgEl.onerror = null;
-        imgEl.onload = null;
-        if (_IS_DEV) console.warn('[sprite] failed:', url);
-        attempt();
-      };
-      // Watchdog: if onload/onerror never fires (mobile bandwidth saturation),
-      // treat as failure and try next URL after URL_TIMEOUT_MS.
-      watchdog = setTimeout(() => {
-        watchdog = null;
-        imgEl.onload = null;
-        imgEl.onerror = null;
-        if (_IS_DEV) console.warn('[sprite] watchdog timeout:', url);
-        attempt();
-      }, URL_TIMEOUT_MS);
-      imgEl.src = url;
+    function start() {
+      if (!queue.length) { finish(null); return; }
+      let pending = queue.length;
+      timeoutId = setTimeout(() => {
+        if (_IS_DEV) console.warn('[sprite] total timeout, fallback emoji');
+        finish(null);
+      }, TOTAL_TIMEOUT_MS);
+      queue.forEach(url => {
+        const probe = new Image();
+        probe.onload = () => { finish(url); };
+        probe.onerror = () => {
+          pending--;
+          if (_IS_DEV) console.warn('[sprite] failed:', url);
+          if (pending === 0) finish(null);
+        };
+        probes.push(probe);
+        probe.src = url;
+      });
     }
-    _slot(attempt);
+    _slot(start);
   }
 
   if (typeof window !== 'undefined') {
