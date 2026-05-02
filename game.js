@@ -5542,10 +5542,10 @@ function pokeFlipForRole(slug, role){
 // Apply facing to an element by setting BOTH the --flip custom property (read by
 // CSS @keyframes for atk/hit/defeat/swap) and the inline transform (used when no
 // animation is running). Single source of truth for G10/G13/G13b/G13c sprite facing.
-function applyPokeFlip(el, slug, role){
+function applyPokeFlip(el, slug, role, wantDir){
   if(!el) return
   const natural = pokeFacing(slug)
-  const want = role === 'enemy' ? 'L' : 'R'
+  const want = wantDir || (role === 'enemy' ? 'L' : 'R')
   const sign = natural !== want ? -1 : 1
   el.style.setProperty('--flip', sign)
   el.style.transform = 'scaleX(' + sign + ')'
@@ -8499,19 +8499,6 @@ function openG13FamilySelector() {
     ? [randomFam]
     : G13_FAMILIES.filter(f => f.category === g13FamActiveTab)
   grid.innerHTML = filteredFams.map(cardHtml).join('')
-  // Debug: check if images loaded after 2s
-  setTimeout(() => {
-    const imgs = grid.querySelectorAll('img')
-    const dbg = document.getElementById('g13-debug-err')
-    if (dbg) {
-      const results = Array.from(imgs).slice(0, 9).map(i =>
-        `${i.alt}: src=${i.src ? i.src.split('/').pop() : 'NONE'} w=${i.naturalWidth} complete=${i.complete}`
-      )
-      dbg.style.display = 'block'
-      dbg.style.background = '#1e40af'
-      dbg.textContent = 'Sprite debug: ' + results.join(' | ')
-    }
-  }, 2000)
 
   grid.querySelectorAll('.g13-fam-card').forEach(card => {
     card.addEventListener('click', () => {
@@ -8663,9 +8650,7 @@ function _initGame13Impl() {
     if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
       if (typeof resetSpriteEl === 'function') resetSpriteEl(img)
       const _srcs = buildPokeSources(slug, null)
-      console.log('[g13-loadSpr]', slug, 'sources:', _srcs)
       attachSpriteCascade(img, _srcs, emoji, function() {
-        console.log('[g13-loadSpr]', slug, 'LOADED:', img.src)
         const existFb = wrap.querySelector('.g13-spr-fb'); if (existFb) existFb.remove()
         img.style.display = ''
       })
@@ -8693,12 +8678,12 @@ function _initGame13Impl() {
   const wImg = document.getElementById('g13-wspr')
   const pImg = document.getElementById('g13-pspr')
   if (wImg) {
-    applyPokeFlip(wImg, chain.wild.slug, 'enemy')
+    applyPokeFlip(wImg, chain.wild.slug, 'enemy', 'R')
     const wScale = pokeFinalScale(chain.wild.slug)
     if (wScale !== 1.0) wImg.style.width = wImg.style.height = `calc(clamp(140px, min(34vw, 28vh), 280px) * ${wScale})`
   }
   if (pImg) {
-    applyPokeFlip(pImg, chain.player.slug, 'player')
+    applyPokeFlip(pImg, chain.player.slug, 'player', 'L')
     const pScale = pokeFinalScale(chain.player.slug)
     if (pScale !== 1.0) pImg.style.width = pImg.style.height = `calc(clamp(140px, min(34vw, 28vh), 280px) * ${pScale})`
   }
@@ -8835,10 +8820,10 @@ function g13SpawnAttackEffect(type, fromPlayer, fieldId = 'g13-field') {
     toX   = (fromPlayer ? wildXPct : playerXPct).toFixed(1) + '%'
     toY   = (fromPlayer ? wildYPct : playerYPct).toFixed(1) + '%'
   } else {
-    // Fallback (legacy fixed %)
-    fromX = fromPlayer ? '15%' : '75%'
+    // Fallback (legacy fixed %) — player bottom-right, enemy top-left
+    fromX = fromPlayer ? '75%' : '15%'
     fromY = fromPlayer ? '70%' : '15%'
-    toX   = fromPlayer ? '75%' : '15%'
+    toX   = fromPlayer ? '15%' : '75%'
     toY   = fromPlayer ? '15%' : '70%'
   }
   const proj = document.createElement('div')
@@ -9218,7 +9203,7 @@ function g13TriggerEvolution() {
       // Mega form: 1.3x scale boost on top of normal final scale
       const megaScale = wasStage3 ? 1.3 : 1.0
       pspr.style.width = pspr.style.height = `calc(clamp(140px, min(34vw, 28vh), 280px) * ${pokeFinalScale(nowForm.slug) * megaScale})`
-      applyPokeFlip(pspr, nowForm.slug, 'player')
+      applyPokeFlip(pspr, nowForm.slug, 'player', 'L')
       pspr.style.animation = 'none'; void pspr.offsetWidth
       pspr.style.animation = 'g13EnterFlip 0.6s cubic-bezier(0.34,1.56,0.64,1)'
       // Apply Mega aura overlay if stage 3
