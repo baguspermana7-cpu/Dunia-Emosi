@@ -127,7 +127,12 @@
       _release();
     }
     function cleanup() {
-      probes.forEach(p => { p.onload = null; p.onerror = null; });
+      // Abort in-flight requests (set src='' cancels pending load in modern browsers)
+      probes.forEach(p => {
+        p.onload = null;
+        p.onerror = null;
+        try { p.src = ''; } catch (_) {}
+      });
       probes.length = 0;
       if (timeoutId) { clearTimeout(timeoutId); timeoutId = null; }
     }
