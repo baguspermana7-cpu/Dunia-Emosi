@@ -8509,9 +8509,11 @@ function openG13FamilySelector() {
       card.style.boxShadow = '0 0 24px rgba(251,191,36,0.5)'
       // Auto-close + restart level with new family
       setTimeout(() => {
+        console.log('[G13-CLICK] 1: hiding overlay')
         document.getElementById('g13-fam-overlay').style.display = 'none'
-        // Restart current level with the newly-selected family
-        try { initGame13() } catch(_) {}
+        console.log('[G13-CLICK] 2: calling initGame13')
+        try { initGame13() } catch(e) { console.error('[G13-CLICK] CRASH:', e) }
+        console.log('[G13-CLICK] 3: initGame13 returned')
       }, 300)
     })
   })
@@ -8520,20 +8522,25 @@ function openG13FamilySelector() {
 window.openG13FamilySelector = openG13FamilySelector
 
 function initGame13() {
+  const _t0 = performance.now()
+  console.log('[G13-INIT] START')
   if (g13ResultTimeout) { clearTimeout(g13ResultTimeout); g13ResultTimeout = null }
   hideGameResult()
   // Auto-open family selector on first visit (no family saved yet)
   try {
     const saved = localStorage.getItem('g13_lastFamily')
+    console.log('[G13-INIT] saved family:', saved)
     if (!saved) {
       setTimeout(() => { try { openG13FamilySelector() } catch(_){} }, 400)
     }
   } catch(_) {}
   const dbg = document.getElementById('g13-debug-err')
   if (dbg) dbg.style.display = 'none'
+  console.log('[G13-INIT] A: pixi destroy')
   // Hotfix #101-H: free any leftover Pixi context (see initGame10 for rationale)
   try { if (typeof PixiManager !== 'undefined') PixiManager.destroyAll() } catch(_){}
   loadPixiJS(function(){ PixiManager.init('g13-pixi-canvas').catch(()=>{}) })
+  console.log('[G13-INIT] B: sprite reset')
   // Hotfix #110/#111: reset sprite element state + flush cascade queue
   // + clear stuck CSS. Removed non-existent g13-pspr-back ID.
   ;['g13-pspr', 'g13-wspr'].forEach(id => {
@@ -8543,6 +8550,7 @@ function initGame13() {
     if (typeof _resetSprElCss === 'function') _resetSprElCss(el)
   })
   if (typeof flushSpriteQueue === 'function') flushSpriteQueue()
+  console.log('[G13-INIT] C: field setup')
   const _g13Field = document.getElementById('g13-field')
   if (_g13Field) {
     _g13Field.style.display = 'flex'
@@ -8550,24 +8558,29 @@ function initGame13() {
       _g13Field.style.background = 'linear-gradient(180deg,#5C94FC 0%,#3B82F6 60%,#166534 100%)'
     }
   }
+  console.log('[G13-INIT] D: calling _initGame13Impl')
   try {
     _initGame13Impl()
   } catch(e) {
     console.error('[G13] crash:', e)
     if (dbg) { dbg.textContent = '⚠️ ' + e.message; dbg.style.display = 'block' }
   }
+  console.log('[G13-INIT] DONE in', (performance.now()-_t0).toFixed(1), 'ms')
 }
 window.initGame13 = initGame13
 
 function _initGame13Impl() {
+  console.log('[G13-IMPL] 1: state reset')
   // Task #84: defensive resets — match startGameWithLevel state init
   state._showingResult = false
   state._showingGameResult = false
   if (!Array.isArray(state.gameStars)) state.gameStars = [0, 0]
   if (typeof state.currentPlayer !== 'number') state.currentPlayer = 0
   battleBgmPlay()
+  console.log('[G13-IMPL] 2: loadCityBackground')
   // Task #66: load city background if selected
   loadCityBackground(document.getElementById('g13-field'))
+  console.log('[G13-IMPL] 3: pickChain')
   const lv = Math.max(1, Math.min(55, state.selectedLevelNum || 1))
   const _FALLBACK = {id:0,icon:'🔥',diff:'easy',maxNum:10,ops:['+'],
     player:{name:'Charmander',slug:'charmander',type:'Fire',tc:'#F97316'},
@@ -8595,6 +8608,7 @@ function _initGame13Impl() {
     stars: 0,
   }
 
+  console.log('[G13-IMPL] 4: DOM setup, chain:', chain?.id, chain?.player?.slug)
   // Set header
   const lvEl = document.getElementById('g13-level'); if(lvEl) lvEl.textContent = `Lv.${lv}`
   const stEl = document.getElementById('g13-stars'); if(stEl) stEl.textContent = '⭐ 0'
@@ -8672,6 +8686,7 @@ function _initGame13Impl() {
     }
   }
 
+  console.log('[G13-IMPL] 5: loadSpr')
   loadSpr('g13-wspr', 'g13-wspr-wrap', chain.wild.slug, chain.icon || '❓')
   loadSpr('g13-pspr', 'g13-pspr-wrap', chain.player.slug, chain.icon || '❓')
   // Apply facing + final scale (tier × visual) to BOTH sprites
@@ -8715,7 +8730,9 @@ function _initGame13Impl() {
       : (isMobile ? 'bg-arena-day-mobile' : 'bg-arena-day-pc')
     field.style.backgroundImage = `url('assets/${bgKey}.webp')`
   }
+  console.log('[G13-IMPL] 6: g13NextQuestion')
   g13NextQuestion()
+  console.log('[G13-IMPL] 7: DONE')
 }
 
 function g13UpdateHpBars() {
