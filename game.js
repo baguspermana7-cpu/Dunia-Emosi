@@ -8558,15 +8558,26 @@ let g13LastChainId = -1
 // This decouples player swap from wild — user can change family without wild changing.
 function _pickG13Wild(lv, fallbackFamWild) {
   try {
-    if (state && state.selectedRegion && state.selectedCity && typeof CITY_PACK !== 'undefined') {
+    if (state && state.selectedRegion && typeof CITY_PACK !== 'undefined') {
       const region = CITY_PACK[state.selectedRegion]
-      const city = region && region.cities && region.cities.find(c => c.slug === state.selectedCity)
-      if (city && city.pack && city.pack.length >= 1) {
-        const cp = city.pack[Math.floor(Math.random() * city.pack.length)]
-        const dbEntry = (typeof POKEMON_DB !== 'undefined') ? POKEMON_DB.find(p => p.id === cp.id) : null
-        if (dbEntry) {
-          const t = dbEntry.type ? dbEntry.type.charAt(0).toUpperCase() + dbEntry.type.slice(1) : 'Normal'
-          return { name: dbEntry.name, slug: dbEntry.slug, type: t, tc: '#A3A3A3' }
+      if (region && region.cities) {
+        // If specific city selected use only its pack; else pool across whole region for thematic variety
+        let cities = region.cities
+        if (state.selectedCity) {
+          const c = cities.find(c => c.slug === state.selectedCity)
+          if (c) cities = [c]
+        }
+        const pool = []
+        for (const city of cities) {
+          if (city.pack && Array.isArray(city.pack)) pool.push(...city.pack)
+        }
+        if (pool.length) {
+          const cp = pool[Math.floor(Math.random() * pool.length)]
+          const dbEntry = (typeof POKEMON_DB !== 'undefined') ? POKEMON_DB.find(p => p.id === cp.id) : null
+          if (dbEntry) {
+            const t = dbEntry.type ? dbEntry.type.charAt(0).toUpperCase() + dbEntry.type.slice(1) : 'Normal'
+            return { name: dbEntry.name, slug: dbEntry.slug, type: t, tc: '#A3A3A3' }
+          }
         }
       }
     }
