@@ -213,9 +213,9 @@ body.shake{animation:screenShake .35s ease}
 <!-- Shared modules -->
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/math-rules.js?v=20260501a"></script>
-<script src="data/save-engine.js?v=20260502a"></script>
-<script src="game-modal.js?v=20260502a"></script>
-<!-- Hotfix #120: sprite fix + picker fix (v=20260502a) -->
+<script src="data/save-engine.js?v=20260502b"></script>
+<script src="game-modal.js?v=20260502b"></script>
+<!-- Hotfix #120: sprite fix + picker fix (v=20260502b) -->
 
 <script>
 // ═══════════════════════════════════════════════════════════════════
@@ -286,8 +286,7 @@ const S = {
   walkFrame: 0, walkT: 0,
   // Hotfix #109: combo + growth state
   comboCount: 0,
-  comboTimer: 0,         // frames remaining for combo to chain
-  pikachuState: 'small', // small | big (mushroom growth)
+  comboTimer: 0,
 }
 
 // ── Pixi app ──
@@ -1065,9 +1064,10 @@ function loadLevel(lvNum) {
       g.poly([12,-22, 2,-19, 12,-19]).fill(0x2D1A0A)
     }
     g.x = goom[0] * TILE + TILE/2; g.y = goom[1] * TILE + TILE
-    g._g21Vx = -1.5
+    g._g21Vx = (Math.random() > 0.5 ? 1 : -1) * (1.2 + Math.random() * 0.6)
     g._g21Alive = true
     g._g21BaseY = g.y
+    g._g21WalkT = Math.random() * Math.PI * 2
     world.addChild(g)
     S.goombas.push(g)
   }
@@ -1712,7 +1712,7 @@ function updateGoombas() {
       continue
     }
     g.x += g._g21Vx
-    // Walk tilt — sway body slightly per step
+    g.scale.x = g._g21Vx > 0 ? -1 : 1
     g._g21WalkT = (g._g21WalkT || 0) + 0.18
     g.rotation = Math.sin(g._g21WalkT) * 0.08
     g.scale.y = 1 + Math.abs(Math.sin(g._g21WalkT)) * 0.06
@@ -1724,15 +1724,30 @@ function updateGoombas() {
         g.texture = g._g21GoomFrames[fi]
       }
     }
-    // Edge turn (simple — turn around on wall hit by checking ahead)
-    const aheadX = Math.floor((g.x + Math.sign(g._g21Vx) * 30) / TILE)
+    // Edge turn — reverse at pit edges and walls
+    const dir = Math.sign(g._g21Vx)
+    const aheadX = Math.floor((g.x + dir * 30) / TILE)
     const groundCheckY = Math.floor((g.y + 4) / TILE)
-    let hasGroundAhead = false
+    const wallCheckY = Math.floor((g.y - 16) / TILE)
+    let hasGroundAhead = false, wallAhead = false
     for (const c of world.children) {
       if (!c._g21Solid) continue
-      if (c._g21Tx === aheadX && c._g21Ty === groundCheckY) { hasGroundAhead = true; break }
+      if (c._g21Tx === aheadX) {
+        if (c._g21Ty === groundCheckY) hasGroundAhead = true
+        if (c._g21Ty === wallCheckY) wallAhead = true
+      }
     }
-    if (!hasGroundAhead) g._g21Vx *= -1
+    if (!hasGroundAhead || wallAhead) g._g21Vx *= -1
+    // Goomba-goomba separation — prevent stacking
+    for (const other of S.goombas) {
+      if (other === g || !other._g21Alive) continue
+      const dx = g.x - other.x
+      if (Math.abs(dx) < TILE * 0.7 && Math.abs(g.y - other.y) < TILE) {
+        const push = dx > 0 ? 1.5 : -1.5
+        g.x += push
+        g._g21Vx = Math.abs(g._g21Vx) * Math.sign(push)
+      }
+    }
     // Player collision
     if (collides(g, S, 28, 70)) onGoombaCollide(g)
   }
@@ -2249,12 +2264,17 @@ function onDeath(reason) {
   S.gameOver = true; S.running = false
   sfx('sfx-damage')
   showMilestone('GAME OVER 💔', '#ef4444')
-  // Pikachu spin-fall death animation
+  // Pikachu spin-fall death animation — compose translate3d + rotate so
+  // Pikachu spins from current position (not teleport to 0,0)
   const wrap = document.getElementById('pikachu-wrap')
   if (wrap) {
-    wrap.style.transition = 'transform 1.2s cubic-bezier(0.5,0,0.5,1), top 1.2s ease-in'
-    wrap.style.transform = 'rotate(720deg)'
-    wrap.style.top = (window.innerHeight + 200) + 'px'
+    const screenX = S.x - S.camX
+    const screenY = S.y
+    const wrapH = S.pikachuState === 'big' ? 118 : 84
+    const wrapW = S.pikachuState === 'big' ? 118 : 84
+    const fallY = window.innerHeight + 200
+    wrap.style.transition = 'transform 1.2s cubic-bezier(0.5,0,0.5,1)'
+    wrap.style.transform = `translate3d(${screenX - wrapW/2}px, ${fallY}px, 0) rotate(720deg)`
   }
   setTimeout(() => {
     if (wrap) wrap.style.transition = ''
@@ -2317,6 +2337,10 @@ function restartLevel() {
     wrap.style.height = '84px'
   }
   S.comboCount = 0; S.comboTimer = 0
+  S.pendingMath = false; S.electricMode = 0
+  document.getElementById('math-quiz').classList.remove('show')
+  const boltEl = document.getElementById('btn-bolt')
+  if (boltEl) boltEl.style.display = 'none'
   loadLevel(S.level)
   S.running = true
   S.startTime = performance.now()

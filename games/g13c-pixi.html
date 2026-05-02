@@ -1577,7 +1577,7 @@ function buildSwitchPanel(forced){
     const isActive = i===battle.playerIdx;
     const fainted = p.hp<=0;
     return `<button class="sw-btn ${fainted?'fainted':''} ${isActive?'active-poke':''}" onclick="switchPoke(${i})">
-      <img src="${SPRITE_HD(p.slug)}" onerror="this.onerror=()=>{this.onerror=null;this.src='${SPRITE_LOCAL(p.slug)}'};this.src='${SPRITE_HD_REMOTE(p.slug)}'" alt="${p.name}">
+      <img src="${SPRITE_HD(p.slug)}" onerror="this.src='${SPRITE_HD_REMOTE(p.slug)}';this.onerror=null" alt="${p.name}">
       <span>${p.name}<br><small style="font-size:11px;opacity:0.7">${p.hp}/${p.maxHp}</small></span>
     </button>`;
   }).join('');
@@ -1679,8 +1679,8 @@ function openPackageSelector() {
     const thumbs = pkg.team.map(p => {
       const base = baseSpeciesSlug(p.slug);
       // Hotfix #101-J: HD WebP first via SPRITE_HD (alt2), then 96px CDN, then local PNG, then base-form fallbacks
-      const fallback = base !== p.slug ? `this.src='${SPRITE_HD(base)}';this.onerror=()=>{this.src='${SPRITE_LOCAL(base)}';this.onerror=null};` : 'this.onerror=null';
-      return `<img src="${SPRITE_HD(p.slug)}" onerror="this.src='${SPRITE_HD_REMOTE(p.slug)}';this.onerror=()=>{this.src='${SPRITE_LOCAL(p.slug)}';this.onerror=()=>{${fallback}}}" alt="${p.name}">`;
+      const fallback = base !== p.slug ? `this.src='${SPRITE_HD(base)}';this.onerror=null;` : 'this.onerror=null';
+      return `<img src="${SPRITE_HD(p.slug)}" onerror="this.src='${SPRITE_HD_REMOTE(p.slug)}';this.onerror=()=>{${fallback}}" alt="${p.name}">`;
     }).join('');
     const tierLabel = pkg.tier === 'base' ? 'EVO 1' : pkg.tier === 'final' ? 'FINAL' : 'MEGA';
     const selCls = pkg.id === current.id ? ' selected' : '';
