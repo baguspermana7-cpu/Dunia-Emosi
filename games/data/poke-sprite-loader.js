@@ -101,6 +101,12 @@
     _waitQueue.length = 0;
   }
 
+  // Hotfix #120-X (2026-05-02): per-URL watchdog. Mobile browsers occasionally
+  // never fire onload/onerror when bandwidth is saturated (Pixi + audio + sprite
+  // loads competing on initial G13 load). Without timeout, cascade hangs and
+  // emoji fallback persists. Watchdog forces next-attempt after 4s/URL.
+  const URL_TIMEOUT_MS = 4000;
+
   function attachSpriteCascade(imgEl, sources, fallbackEmoji, onLoadCb) {
     if (!imgEl) return;
     // Hotfix #110: clear stale state from any previous cascade on this element.
@@ -114,15 +120,18 @@
     });
     let i = 0;
     let released = false;
+    let watchdog = null;
     function done() {
       if (released) return;
       released = true;
+      if (watchdog) { clearTimeout(watchdog); watchdog = null; }
       _release();
       if (typeof onLoadCb === 'function') {
         try { onLoadCb(imgEl); } catch (_) {}
       }
     }
     function attempt() {
+      if (watchdog) { clearTimeout(watchdog); watchdog = null; }
       imgEl.onload = null;
       imgEl.onerror = null;
       if (i >= queue.length) {
@@ -132,16 +141,27 @@
       }
       const url = queue[i++];
       imgEl.onload = function () {
+        if (watchdog) { clearTimeout(watchdog); watchdog = null; }
         imgEl.onload = null;
         imgEl.onerror = null;
         done();
       };
       imgEl.onerror = function () {
+        if (watchdog) { clearTimeout(watchdog); watchdog = null; }
         imgEl.onerror = null;
         imgEl.onload = null;
         if (_IS_DEV) console.warn('[sprite] failed:', url);
         attempt();
       };
+      // Watchdog: if onload/onerror never fires (mobile bandwidth saturation),
+      // treat as failure and try next URL after URL_TIMEOUT_MS.
+      watchdog = setTimeout(() => {
+        watchdog = null;
+        imgEl.onload = null;
+        imgEl.onerror = null;
+        if (_IS_DEV) console.warn('[sprite] watchdog timeout:', url);
+        attempt();
+      }, URL_TIMEOUT_MS);
       imgEl.src = url;
     }
     _slot(attempt);

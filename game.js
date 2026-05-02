@@ -8552,6 +8552,38 @@ function getG13Family() {
 }
 
 let g13LastChainId = -1
+// Hotfix #120-Y (2026-05-02): pick wild Pokemon INDEPENDENT of family selection.
+// Was: each family had hardcoded `wild` (e.g. Squirtle family always vs Krabby).
+// Now: wild comes from current city's pack if available, else random tier-appropriate.
+// This decouples player swap from wild — user can change family without wild changing.
+function _pickG13Wild(lv, fallbackFamWild) {
+  try {
+    if (state && state.selectedRegion && state.selectedCity && typeof CITY_PACK !== 'undefined') {
+      const region = CITY_PACK[state.selectedRegion]
+      const city = region && region.cities && region.cities.find(c => c.slug === state.selectedCity)
+      if (city && city.pack && city.pack.length >= 1) {
+        const cp = city.pack[Math.floor(Math.random() * city.pack.length)]
+        const dbEntry = (typeof POKEMON_DB !== 'undefined') ? POKEMON_DB.find(p => p.id === cp.id) : null
+        if (dbEntry) {
+          const t = dbEntry.type ? dbEntry.type.charAt(0).toUpperCase() + dbEntry.type.slice(1) : 'Normal'
+          return { name: dbEntry.name, slug: dbEntry.slug, type: t, tc: '#A3A3A3' }
+        }
+      }
+    }
+    // Fallback: random gen-1-4 Pokemon at appropriate tier
+    if (typeof POKEMON_DB !== 'undefined') {
+      const tier = lv <= 4 ? 1 : lv <= 16 ? 2 : 3
+      const candidates = POKEMON_DB.filter(p => (p.tier || 1) === tier && p.gen <= 4)
+      if (candidates.length) {
+        const pick = candidates[Math.floor(Math.random() * candidates.length)]
+        const t = pick.type ? pick.type.charAt(0).toUpperCase() + pick.type.slice(1) : 'Normal'
+        return { name: pick.name, slug: pick.slug, type: t, tc: '#A3A3A3' }
+      }
+    }
+  } catch(_) {}
+  // Final fallback to family's hardcoded wild
+  return fallbackFamWild || {name:'Pidgey', slug:'pidgey', type:'Normal', tc:'#A3A3A3'}
+}
 function g13PickChain(lv) {
   // Task #67 (2026-04-25): rebalanced for 3-stage Mega Evolution at high levels
   // 1-4 easy (1 evo) | 5-9 medium (1 evo) | 10-16 hard (2 evos) | 17-25 2stage (2 evos)
@@ -8596,7 +8628,7 @@ function g13PickChain(lv) {
       evolved: stages >= 1 ? fam.evolved : null,
       evolved2: stages >= 2 ? fam.evolved2 : null,
       mega: megaForm,
-      wild: fam.wild,
+      wild: _pickG13Wild(lv, fam.wild),
     }
   }
 

@@ -1,5 +1,14 @@
 # Changelog — Dunia Emosi
 
+## 2026-05-02 — Hotfix #120 Part 8 (Cascade Watchdog + Wild Decoupling)
+
+### Fixed
+- Sprite cascade hung indefinitely on initial G13 load when mobile bandwidth saturated → both player + wild stuck on emoji fallback. Added 4-second per-URL watchdog in `attachSpriteCascade`; auto-advances to next URL if onload/onerror don't fire
+- G13 wild Pokemon was hardcoded per family (Squirtle family always vs Krabby). New `_pickG13Wild()` helper picks from city pack (CITY_PACK) if region+city selected, else random tier-appropriate Pokemon. Player and wild now independent
+- Cache: v=20260502m → v=20260502n
+
+---
+
 ## 2026-05-02 — Hotfix #120 Part 7 (Comprehensive Legendary Facing)
 
 ### Fixed
