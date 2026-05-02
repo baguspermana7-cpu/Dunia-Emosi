@@ -58,7 +58,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
 <!-- HUD -->
 <div id="hud-top">
   <button id="btn-back" onclick="goBack()" style="pointer-events:all">◀</button>
-  <div id="game-badge"><img src="../assets/Pokemon/sprites/pidgeot.png" style="width:18px;height:18px;vertical-align:middle;image-rendering:pixelated"> Pokemon Birds</div>
+  <div id="game-badge"><img src="../assets/Pokemon/pokemondb_hd_alt2/0018_pidgeot.webp" style="width:18px;height:18px;vertical-align:middle;image-rendering:auto" onerror="this.onerror=null;this.outerHTML='🐦'"> Pokemon Birds</div>
   <div id="hud-center">
     <div id="level-text"></div>
     <div id="status-text">Bersiap...</div>
@@ -650,7 +650,7 @@ async function createBird() {
   const initSize = Math.round(BIRD_SIZE * initPoke.scale)
   birdImg.style.cssText = 'position:fixed;z-index:40;pointer-events:none;width:min('+initSize+'px,'+Math.round(initPoke.scale*15)+'vw);height:auto;filter:drop-shadow(0 0 10px rgba(196,181,253,0.6));image-rendering:auto;transition:top 0.05s linear;transform:translate(-50%,-50%);'
   if(initPoke.mirror) birdImg.dataset.mirror = '1'
-  birdImg.onerror = () => { birdImg.src = '../assets/Pokemon/sprites/pidgeot.png' }
+  birdImg.onerror = () => { birdImg.src = 'https://img.pokemondb.net/sprites/home/normal/pidgeot.png'; birdImg.onerror = null }
   document.body.appendChild(birdImg)
   window._birdImg = birdImg
 

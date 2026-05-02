@@ -16,11 +16,12 @@ ALL Pokemon `<img>` elements must:
 
 1. **HD WebP 630×630** — `assets/Pokemon/pokemondb_hd_alt2/{NNNN}_{slug}.webp` (1025 Pokemon, all gens)
 2. **SVG vector** — `assets/Pokemon/svg/{id}.svg` (751 Gen 1-6, scalable)
-3. **Local PNG** — `assets/Pokemon/sprites/{slug}.png` (battle-cropped, ~80px)
-4. **96px CDN home** — `https://img.pokemondb.net/sprites/home/normal/{slug}.png` (last-resort online)
-5. **96px PokeAPI raw** — `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{id}.png`
+3. **96px CDN home** — `https://img.pokemondb.net/sprites/home/normal/{slug}.png` (last-resort online)
+4. **96px PokeAPI raw** — `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{id}.png`
 
-Source #1 is the **only** one that's truly HD (630×630 transparent WebP, anti-aliased). Sources #4 and #5 are 96×96 — visible pixelation on retina screens. They're emergency rungs only.
+Source #1 is the **only** one that's truly HD (630×630 transparent WebP, anti-aliased). Sources #3 and #4 are 96×96 — visible pixelation on retina screens. They're emergency rungs only.
+
+> **Hotfix #120 (2026-05-02)**: `assets/Pokemon/sprites/` (96×96 local PNGs) was deleted. These were dead-weight fallbacks that caused pixelated sprites when HD cascade failed. The cascade step was removed from `buildPokeSources()`.
 
 ## Required pattern: dynamic JS-built images
 
@@ -68,17 +69,30 @@ const url = 'https://img.pokemondb.net/sprites/home/normal/' + slug + '.png'
 
 The regression script `scripts/check-regressions.sh` rule `HD-SPRITE-1` flags these. Annotate legitimate else-branch fallbacks with `// LEGACY-FALLBACK-EXEMPT`.
 
+## `window.POKE_IDS` requirement
+
+`buildPokeSources(slug, pokeId)` needs the Pokemon's national dex ID to construct HD WebP and SVG paths. When `pokeId` is null (common in evolusi/legendary/picker flows), it falls back to `window.POKE_IDS[slug]`.
+
+**game.js** exposes this at load time:
+```javascript
+const POKE_IDS = Object.fromEntries(POKEMON_DB.map(p => [p.slug, p.id]))  // 1025 entries
+window.POKE_IDS = POKE_IDS
+```
+
+**Standalone pages** that load `poke-sprite-cdn.js` get their own `window.POKE_IDS` from that module.
+
+> **Rule**: Never declare a local `const POKE_IDS = {...}` subset inside a function — it shadows the global 1025-entry map with an incomplete copy. Always use `window.POKE_IDS` or `POKE_IDS` (the module-level variable).
+
 ## Helper inventory (game.js)
 
 | Helper | Purpose | Returns |
 |---|---|---|
 | `pokeSpriteAlt2(slug)` | HD WebP path | `assets/Pokemon/pokemondb_hd_alt2/{NNNN}_{slug}.webp` or null |
 | `pokeSpriteSVG(slug)` | SVG vector path | `assets/Pokemon/svg/{id}.svg` or null |
-| `pokeSprite(slug)` | Local PNG path | `assets/Pokemon/sprites/{slug}.png` |
 | `pokeSpriteOnline(slug)` / `pokeSpriteCDN(slug)` | 96px CDN | `https://img.pokemondb.net/sprites/home/normal/{slug}.png` |
 | `pokeSpriteBackup(id)` | 96px PokeAPI front | `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{id}.png` |
 | `pokeSpriteBack(id)` | 96px PokeAPI back | `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/{id}.png` |
-| `buildPokeSources(slug, id)` | Cascade-source builder | Array `[HD_WebP, SVG, local, CDN, PokeAPI]` |
+| `buildPokeSources(slug, id)` | Cascade-source builder | Array `[HD_WebP, SVG, CDN, PokeAPI]` |
 | `attachSpriteCascade(imgEl, sources, emoji)` | Apply cascade to img | Sets `src`, attaches dedup'd onerror chain |
 | `resetSpriteEl(imgEl)` | Clear stale handlers | Nulls onerror, optionally clears src |
 
@@ -89,7 +103,7 @@ g13c is a standalone page that loads `data/poke-sprite-cdn.js` independently:
 ```javascript
 const SPRITE_HD_REMOTE = s => `https://img.pokemondb.net/sprites/home/normal/${s}.png` // 96px CDN, last resort
 const SPRITE_HD        = s => (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(s) : null) || SPRITE_HD_REMOTE(s)
-const SPRITE_LOCAL     = s => `../assets/Pokemon/sprites/${s}.png`
+const SPRITE_LOCAL     = s => `../assets/Pokemon/sprites/${s}.png`  // REMOVED in #120 — sprites/ deleted
 ```
 
 `SPRITE_HD()` returns true HD WebP first, falls to 96px CDN only if alt2 unavailable. Always use `SPRITE_HD` (not `SPRITE_HD_REMOTE`) as the primary `src=`.
@@ -100,7 +114,8 @@ const SPRITE_LOCAL     = s => `../assets/Pokemon/sprites/${s}.png`
 |---|---|---|
 | #101-J | Initial HD migration | `pokeSpriteAlt2` introduced, SPRITE_HD wired in g13c |
 | #110 | Sprite re-entry race | `resetSpriteEl` + `flushSpriteQueue` MAX_CONCURRENT 4→8 |
-| #117 (this) | game.js direct assignments | 7 cascades added; `attachSpriteCascade` wired in renderFamilyTree, evolution chain, legendary display, evolved-form swap, post-evo player sprite update; remaining `else` branches annotated `// LEGACY-FALLBACK-EXEMPT` |
+| #117 | game.js direct assignments | 7 cascades added; `attachSpriteCascade` wired in renderFamilyTree, evolution chain, legendary display, evolved-form swap, post-evo player sprite update; remaining `else` branches annotated `// LEGACY-FALLBACK-EXEMPT` |
+| #120 | window.POKE_IDS + sprites/ cleanup | Exposed `window.POKE_IDS` globally (was private const → null ID → no HD path). Deleted `assets/Pokemon/sprites/` (1025 non-HD PNGs). Removed cascade step. Deleted 2 local POKE_IDS shadow copies. |
 
 ## CI enforcement
 

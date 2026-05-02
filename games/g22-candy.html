@@ -104,7 +104,7 @@ canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
 <!-- Hotfix #104 (2026-04-28): removed inline `bottom:25%` — was overriding
      placeMonsterOnGround() pixel anchoring, causing Bulbasaur/etc to float
      above grass. JS now anchors based on actual sprite height. -->
-<img id="monster-img" src="../assets/Pokemon/pokemondb_hd_alt2/0054_psyduck.webp" onerror="this.src='../assets/Pokemon/sprites/psyduck.png';this.onerror=function(){this.src='https://img.pokemondb.net/sprites/home/normal/psyduck.png';this.onerror=null}" style="position:fixed;z-index:40;pointer-events:none;width:clamp(140px,26vw,220px);height:auto;bottom:0;left:0;transform:translate3d(0,0,0);display:none;image-rendering:auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,0.45))">
+<img id="monster-img" src="../assets/Pokemon/pokemondb_hd_alt2/0054_psyduck.webp" onerror="this.src='https://img.pokemondb.net/sprites/home/normal/psyduck.png';this.onerror=null" style="position:fixed;z-index:40;pointer-events:none;width:clamp(140px,26vw,220px);height:auto;bottom:0;left:0;transform:translate3d(0,0,0);display:none;image-rendering:auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,0.45))">
 
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
 <script src="../shared/rz-responsive.js?v=20260422i"></script>
@@ -811,12 +811,11 @@ function laserAbsorbSwap(candy) {
     g22SelectedPoke = next.slug
     // Hotfix 2026-04-28: route via attachSpriteCascade — terminating dedup loader.
     const _hdNext = (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(next.slug) : null)
-    const _localNext = `../assets/Pokemon/sprites/${next.slug}.png`
     const _cdnNext = `https://img.pokemondb.net/sprites/home/normal/${next.slug}.png`
     if (typeof attachSpriteCascade === 'function') {
-      attachSpriteCascade(monsterEl, [_hdNext, _localNext, _cdnNext], '🐾')
+      attachSpriteCascade(monsterEl, [_hdNext, _cdnNext], '🐾')
     } else {
-      monsterEl.src = _hdNext || _localNext || _cdnNext
+      monsterEl.src = _hdNext || _cdnNext
       monsterEl.onerror = null
     }
     monsterEl.style.opacity = '0'
@@ -1059,7 +1058,7 @@ function renderPokePicker() {
     const _hdCard = (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(p.slug) : null)
     const _cdnCard = `https://img.pokemondb.net/sprites/home/normal/${p.slug}.png`
     const _cardSrc = _hdCard || _cdnCard
-    card.innerHTML = `<img src="${_cardSrc}" style="width:40px;height:40px;image-rendering:auto" onerror="this.src='../assets/Pokemon/sprites/${p.slug}.png';this.onerror=function(){this.src='${_cdnCard}';this.onerror=null}"><div style="font-size:8px;color:#e9d5ff;font-weight:700;margin-top:2px">${p.name}</div>`
+    card.innerHTML = `<img src="${_cardSrc}" style="width:40px;height:40px;image-rendering:auto" onerror="this.src='${_cdnCard}';this.onerror=null"><div style="font-size:8px;color:#e9d5ff;font-weight:700;margin-top:2px">${p.name}</div>`
     card.onclick = () => {
       g22SelectedPoke = p.slug
       const img = document.getElementById('monster-img')
@@ -1067,7 +1066,7 @@ function renderPokePicker() {
       const _hdPick = (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(p.slug) : null)
       const _cdnPick = `https://img.pokemondb.net/sprites/home/normal/${p.slug}.png`
       img.src = _hdPick || _cdnPick
-      img.onerror = () => { img.src = `../assets/Pokemon/sprites/${p.slug}.png`; img.onerror = () => { img.src = _cdnPick; img.onerror = null } }
+      img.onerror = () => { img.src = _cdnPick; img.onerror = null }
       renderPokePicker()
     }
     grid.appendChild(card)

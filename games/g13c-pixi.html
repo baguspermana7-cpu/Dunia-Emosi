@@ -392,7 +392,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 // tier 'base' = 90 HP / stage-1 forms. tier 'final' = 110 HP / fully evolved.
 // tier 'mega' = 130 HP / Mega & legendary forms.
 // Each Pokemon gets 4 moves: 2 type-matched + 2 utility/normal.
-// Mega/legendary sprites fall back to HD CDN if not in local /assets/Pokemon/sprites/.
+// Mega/legendary sprites fall back to HD CDN if local HD WebP unavailable.
 // Slugs with 'mega-' prefix use PokemonDB HD CDN naming (e.g. mega-charizard-x).
 // ────────────────────────────────────────────────────────────────
 const PLAYER_PACKAGES = [
@@ -693,7 +693,6 @@ const TRAINER_GROUPS = [
 
 const BG_BASE      = '../assets/background/Gym pokemon/';
 // Hotfix #101-J: SPRITE_HD now returns true HD WebP (was 96px CDN — non-HD complaint)
-const SPRITE_LOCAL     = s => `../assets/Pokemon/sprites/${s}.png`;
 const SPRITE_HD_REMOTE = s => `https://img.pokemondb.net/sprites/home/normal/${s}.png`; // 96px CDN, last resort
 const SPRITE_HD        = s => (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(s) : null) || SPRITE_HD_REMOTE(s); // true HD WebP
 const TRAINER_SPRITE_LOCAL = s => `../assets/Pokemon/trainer/${s}.webp`;
@@ -1027,14 +1026,12 @@ function setPokeSpriteWithCascade(img, slug){
     (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(slug) : null),
     (typeof pokeSpriteSVG  === 'function' ? pokeSpriteSVG(slug)  : null),
     SPRITE_HD_REMOTE(slug),
-    SPRITE_LOCAL(slug),
   ];
   if (base !== slug) {
     sources.push(
       (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(base) : null),
       (typeof pokeSpriteSVG  === 'function' ? pokeSpriteSVG(base)  : null),
       SPRITE_HD_REMOTE(base),
-      SPRITE_LOCAL(base)
     );
   }
   if (typeof attachSpriteCascade === 'function') {

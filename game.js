@@ -312,7 +312,7 @@ const GAME_META = {
   16:{icon:'🚂',name:'Selamatkan Kereta!',iconImg:'assets/train/lokomotif-front-blue.svg'},
   17:{icon:'🌉',name:'Jembatan Goyang'},
   18:{icon:'🏛️',name:'Museum Ambarawa'},
-  19:{icon:'🐦',name:'Pokemon Birds',iconImg:'assets/Pokemon/sprites/pidgeot.png'},
+  19:{icon:'🐦',name:'Pokemon Birds',iconImg:'assets/Pokemon/pokemondb_hd_alt2/0018_pidgeot.webp'},
   20:{icon:'🏐',name:'Ducky Volley'},
   21:{icon:'🍄',name:'Mario Pokemon',iconImg:'assets/mario-pokemon/icon.png'},
   22:{icon:'🍬',name:'Monster Candy'},
@@ -2825,7 +2825,7 @@ function renderG4Content(){
       if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
         attachSpriteCascade(img, buildPokeSources(slug, poke.id), '🐾')
       } else {
-        img.src = `assets/Pokemon/sprites/${slug}.png`
+        img.src = pokeSpriteAlt2(slug) || `https://img.pokemondb.net/sprites/home/normal/${slug}.png`
       }
       img.alt=poke.name
       img.style.animationDelay=(i*55)+'ms'
@@ -5664,7 +5664,7 @@ function spawnTypeAura(el, type, dur){
   setTimeout(function(){ r.remove() }, d)
 }
 
-function pokeSprite(slug){return `assets/Pokemon/sprites/${slug}.png`}
+function pokeSprite(slug){return pokeSpriteAlt2(slug) || `https://img.pokemondb.net/sprites/home/normal/${slug}.png`}
 function pokeSpriteArtwork(slug){return `https://img.pokemondb.net/artwork/large/${slug}.jpg`}
 // Both legacy names map to identical pokemondb HD raster. Kept as separate
 // functions because many call-sites reference each name directly. Cascade
