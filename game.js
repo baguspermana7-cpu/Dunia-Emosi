@@ -8499,6 +8499,19 @@ function openG13FamilySelector() {
     ? [randomFam]
     : G13_FAMILIES.filter(f => f.category === g13FamActiveTab)
   grid.innerHTML = filteredFams.map(cardHtml).join('')
+  // Debug: check if images loaded after 2s
+  setTimeout(() => {
+    const imgs = grid.querySelectorAll('img')
+    const dbg = document.getElementById('g13-debug-err')
+    if (dbg) {
+      const results = Array.from(imgs).slice(0, 9).map(i =>
+        `${i.alt}: src=${i.src ? i.src.split('/').pop() : 'NONE'} w=${i.naturalWidth} complete=${i.complete}`
+      )
+      dbg.style.display = 'block'
+      dbg.style.background = '#1e40af'
+      dbg.textContent = 'Sprite debug: ' + results.join(' | ')
+    }
+  }, 2000)
 
   grid.querySelectorAll('.g13-fam-card').forEach(card => {
     card.addEventListener('click', () => {
@@ -8648,9 +8661,11 @@ function _initGame13Impl() {
     wrap.insertBefore(fb, img)
 
     if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
-      // Cascade: HD WebP 630x630 → SVG → local PNG → CDN fallbacks
       if (typeof resetSpriteEl === 'function') resetSpriteEl(img)
-      attachSpriteCascade(img, buildPokeSources(slug, null), emoji, function() {
+      const _srcs = buildPokeSources(slug, null)
+      console.log('[g13-loadSpr]', slug, 'sources:', _srcs)
+      attachSpriteCascade(img, _srcs, emoji, function() {
+        console.log('[g13-loadSpr]', slug, 'LOADED:', img.src)
         const existFb = wrap.querySelector('.g13-spr-fb'); if (existFb) existFb.remove()
         img.style.display = ''
       })
