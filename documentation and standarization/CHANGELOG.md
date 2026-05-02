@@ -1,5 +1,19 @@
 # Changelog — Dunia Emosi
 
+## 2026-05-02 — Hotfix #120 Part 4 (Sprite Robustness + Cloud Sync + Layout)
+
+### Fixed
+- G13B wild sprite: replaced 2-source probe with 4-source `attachSpriteCascade` (local HD → SVG → pokemondb CDN → GitHub) — emoji no longer persists on slow/Vercel networks
+- G13B player sprite after swap: slug derived from `POKEMON_DB` lookup by id, not from name string — fixes special names (Mr. Mime → `mr-mime`, Farfetch'd → `farfetchd`)
+- G13 qpanel covers battle field on landscape/short viewports: compact `@media` rules at max-height:620px and (orientation:landscape) and (max-height:500px); cache v=20260502h
+
+### Added
+- `games/data/cloud-sync.js` — shared progress via Supabase REST API; all users with same avatar share one cloud record; merge strategy: union completed, max stars; 30s debounce; offline-first (localStorage primary); configure via `window.CLOUD_SYNC_CONFIG = {url, key}`
+- `vercel.json` — 1-year immutable cache headers for assets, 1-hour revalidation for JS/CSS
+- Cloud sync hook in `confirmNames()` and `saveProgress()`; flush on `visibilitychange=hidden`
+
+---
+
 ## 2026-05-02 — Hotfix #120 (G13 Evolution + Scoring Critical Fix)
 
 ### Fixed

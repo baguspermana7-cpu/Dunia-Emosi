@@ -1108,8 +1108,31 @@ function loadProgress() {
   catch(e) { return {} }
 }
 function saveProgress(prog) {
-  try { localStorage.setItem(pkey('progress'), JSON.stringify(prog)) }
-  catch(e) {}
+  try {
+    localStorage.setItem(pkey('progress'), JSON.stringify(prog))
+    // Async cloud sync — fire-and-forget, never blocks game
+    if (typeof window !== 'undefined' && window.cloudSync) {
+      const av = _avatarSlug()
+      if (av) {
+        const xp = parseInt(localStorage.getItem(pkey('xp')) || '0')
+        window.cloudSync.save(av, prog, xp)
+      }
+    }
+  } catch(e) {}
+}
+// Pull shared progress from cloud and merge into localStorage.
+// Called once after avatar is chosen (non-blocking).
+async function _syncFromCloud() {
+  try {
+    if (typeof window === 'undefined' || !window.cloudSync) return
+    const av = _avatarSlug()
+    if (!av) return
+    const local = loadProgress()
+    const merged = await window.cloudSync.load(av, local)
+    if (merged) {
+      localStorage.setItem(pkey('progress'), JSON.stringify(merged))
+    }
+  } catch (_) {}
 }
 function getLevelProgress(gameNum) {
   const prog = loadProgress()
@@ -1651,6 +1674,7 @@ function confirmNames() {
   state.currentPlayer=0
   buildMenuHeader()
   showScreen('screen-menu')
+  _syncFromCloud() // pull shared cloud progress in background (non-blocking)
 }
 function saveStars() {
   try {
@@ -6112,7 +6136,9 @@ function openG13bPartyPicker() {
 }
 
 function switchG13bPlayerPoke(poke) {
-  g13bSavedPoke = { ...poke, slug: poke.name.toLowerCase().replace(/\s/g, '-') }
+  const _dbEntry = POKEMON_DB.find(p => p.id === poke.id)
+  const _slug = (_dbEntry && _dbEntry.slug) || poke.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-$/,'')
+  g13bSavedPoke = { ...poke, slug: _slug }
   const pspr = document.getElementById('g13b-pspr')
   if (!pspr) return
   // Task #71: local-first per L16. Hotfix 2026-04-28: cascade now goes
@@ -7127,6 +7153,13 @@ window.showScreen = function(id) {
   origShowScreen.call(this, id)
   vibrate(8)
 }
+
+// Flush pending cloud saves on page hide (mobile background tab / close)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && typeof window !== 'undefined' && window.cloudSync) {
+    window.cloudSync.flush()
+  }
+})
 
 // Button press haptic
 document.addEventListener('touchstart', e => {
@@ -9798,11 +9831,11 @@ function g13bSpawnWild() {
   const _setNameAndPanel = () => {
     if (wname) wname.textContent = s.isLegendary ? `★ ${wild.name}` : wild.name
   }
-  const _applyWildVisuals = (finalSrc) => {
+  const _applyWildVisuals = (src) => {
     if (!wspr) return
     wspr.classList.remove('wild-enter','wild-die','wspr-hit')
     wspr.style.opacity = '1'
-    wspr.src = finalSrc
+    if (src) wspr.src = src
     const tierScale = pokeFinalScale(wild.slug)
     wspr.style.width = wspr.style.height = tierScale === 1.0 ? '' : `calc(clamp(150px, min(40vw, 32vh), 320px) * ${tierScale})`
     applyPokeFlip(wspr, wild.slug, 'enemy')
@@ -9812,35 +9845,33 @@ function g13bSpawnWild() {
     _setNameAndPanel()
   }
   if (wspr) {
-    const _wLocal = (typeof pokeSpriteAlt2 === 'function') ? pokeSpriteAlt2(wild.slug) : null
-    const _wRemote = pokeSpriteOnline(wild.slug)
-    const _wPrimary = _wLocal || _wRemote
-    const _wSecondary = _wLocal ? _wRemote : null
-    // Watchdog — if probe never fires in 1500ms (slow CDN, DNS hang), still update DOM
-    let _settled = false
-    const _settle = (src) => { if (_settled) return; _settled = true; _applyWildVisuals(src) }
-    setTimeout(() => _settle(_wPrimary), 1500)
-    const probe = new Image()
-    probe.onload = function(){ probe.onload = probe.onerror = null; _settle(_wPrimary) }
-    probe.onerror = function(){
-      probe.onerror = probe.onload = null
-      if (_wSecondary) {
-        const probe2 = new Image()
-        probe2.onload = function(){ probe2.onload = probe2.onerror = null; _settle(_wSecondary) }
-        probe2.onerror = function(){
-          probe2.onload = probe2.onerror = null
-          // Last resort — show name + use whatever the browser-default broken-image is.
-          // CSS sprite img max-width cap (Hotfix #101-F2) prevents it from stretching.
-          _settle(_wSecondary)
-        }
-        probe2.src = _wSecondary
-      } else {
-        _settle(_wPrimary)
+    if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
+      if (typeof resetSpriteEl === 'function') resetSpriteEl(wspr)
+      const _wId = wild.id || (typeof POKE_IDS !== 'undefined' ? POKE_IDS[wild.slug] : null)
+      attachSpriteCascade(wspr, buildPokeSources(wild.slug, _wId || null), '❓', () => _applyWildVisuals(null))
+      _setNameAndPanel()
+    } else {
+      const _wLocal = (typeof pokeSpriteAlt2 === 'function') ? pokeSpriteAlt2(wild.slug) : null
+      const _wRemote = pokeSpriteOnline(wild.slug)
+      const _wPrimary = _wLocal || _wRemote
+      const _wSecondary = _wLocal ? _wRemote : null
+      let _settled = false
+      const _settle = (src) => { if (_settled) return; _settled = true; _applyWildVisuals(src) }
+      setTimeout(() => _settle(_wPrimary), 1500)
+      const probe = new Image()
+      probe.onload = function(){ probe.onload = probe.onerror = null; _settle(_wPrimary) }
+      probe.onerror = function(){
+        probe.onerror = probe.onload = null
+        if (_wSecondary) {
+          const probe2 = new Image()
+          probe2.onload = function(){ probe2.onload = probe2.onerror = null; _settle(_wSecondary) }
+          probe2.onerror = function(){ probe2.onload = probe2.onerror = null; _settle(_wSecondary) }
+          probe2.src = _wSecondary
+        } else { _settle(_wPrimary) }
       }
+      probe.src = _wPrimary
     }
-    probe.src = _wPrimary
   } else {
-    // Sprite element missing — at least update name so UI text isn't stale.
     _setNameAndPanel()
   }
 

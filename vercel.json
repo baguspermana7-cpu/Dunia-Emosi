@@ -1,0 +1,23 @@
+{
+  "headers": [
+    {
+      "source": "/assets/(.*\\.webp|.*\\.svg|.*\\.png|.*\\.mp3|.*\\.ogg)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
+    },
+    {
+      "source": "/games/data/(.*\\.js)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=3600, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/(game\\.js|style\\.css|index\\.html)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=3600, must-revalidate" }
+      ]
+    }
+  ]
+}
