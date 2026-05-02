@@ -132,7 +132,7 @@ body.shake{animation:screenShake .35s ease}
 <!-- Pikachu rendered as HTML <img> overlay (preserves GIF animation natively;
      Pixi 8 doesn't decode multi-frame GIFs without extra libs). Position is
      synced from S.x / S.y - S.camX every frame. -->
-<div id="pikachu-wrap" style="position:fixed;left:-300px;top:-300px;z-index:30;pointer-events:none;width:84px;height:84px;will-change:transform,left,top">
+<div id="pikachu-wrap" style="position:fixed;left:0;top:0;z-index:30;pointer-events:none;width:84px;height:84px;will-change:transform">
   <div id="pikachu-aura" style="position:absolute;inset:-12px;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,0.55) 0%,rgba(253,224,71,0.25) 50%,rgba(0,0,0,0) 70%);opacity:0;transition:opacity 0.3s;animation:pikaAuraPulse 1.1s ease-in-out infinite"></div>
   <img id="pikachu-sprite" src="../assets/mario-pokemon/sprites/pikachu-idle.gif" alt="Pikachu" style="position:absolute;inset:0;width:100%;height:100%;image-rendering:auto;transform-origin:50% 100%;filter:drop-shadow(0 4px 6px rgba(0,0,0,0.4))">
 </div>
@@ -213,9 +213,9 @@ body.shake{animation:screenShake .35s ease}
 <!-- Shared modules -->
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/math-rules.js?v=20260501a"></script>
-<script src="data/save-engine.js?v=20260501h"></script>
-<script src="game-modal.js?v=20260424g"></script>
-<!-- Hotfix #118: SMB1 sprite reskin — cache bust g21 only (v=20260501h) -->
+<script src="data/save-engine.js?v=20260502a"></script>
+<script src="game-modal.js?v=20260502a"></script>
+<!-- Hotfix #120: sprite fix + picker fix (v=20260502a) -->
 
 <script>
 // ═══════════════════════════════════════════════════════════════════
@@ -2312,6 +2312,7 @@ function restartLevel() {
   if (wrap) {
     wrap.style.transition = ''
     wrap.style.transform = ''
+    wrap.style.top = '0'
     wrap.style.width = '84px'
     wrap.style.height = '84px'
   }

@@ -43,7 +43,6 @@
       urls.push(`${basePath}/pokemondb_hd_alt2/${String(id).padStart(4,'0')}_${_slugToAlt2File(slug)}.webp`);
       urls.push(`${basePath}/svg/${id}.svg`);
     }
-    urls.push(`${basePath}/sprites/${slug}.png`);
     urls.push(`https://img.pokemondb.net/sprites/home/normal/${slug}.png`);
     if (id) urls.push(`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`);
     return urls;

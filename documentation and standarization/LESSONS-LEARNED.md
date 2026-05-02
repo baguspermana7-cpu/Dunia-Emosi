@@ -570,6 +570,26 @@
 - **Fix**: Two-pronged. (1) Static PNG states: `scripts/process-mario-sprites.py` uses `PIL.Image.getbbox()` to detect non-transparent bounding box and crop. `pikachu-small.png` 512×512 → `pikachu-small-cropped.png` 476×140. `pikachu-big.png` → `pikachu-big-cropped.png` 495×124. Reference these in g21-pixi.html. (2) GIF states (idle/running/jump/happy): can't easily crop animated GIFs without losing frames, so use `haloFudge = 10` as a Y-offset added to the existing anchor formula: `topPx = screenY - wrapH + haloFudge`.
 - **Lesson**: Sprites authored at-canvas-size (centered with padding for animation room) need either (a) automated `getbbox()` crop pipeline at build time, or (b) explicit per-sprite `haloFudge` constant in the anchor math. Never assume the sprite tightly fills its bounding box — inspect with `from PIL import Image; print(Image.open(p).getbbox(), Image.open(p).size)` before wiring. For GIFs, use the cropped first-frame PNG as a stand-in for the bbox calculation, then apply the same offset to GIFs. Document the anchor formula + halo offset in `MARIO_GAME_SPEC.md` so the next person doesn't re-discover it the hard way.
 
+## 2026-05-02 — Hotfix #120 (Sprite + Picker + G21)
+
+### L63 — Private `const` variables must be exposed to `window` when cross-module consumers exist (Hotfix #120)
+- **Symptom**: G13/G13B/G13C evolusi sprites showed leaf emoji (🍃) instead of HD Pokemon sprites. G13 Quick Fire showed pixelated 96px sprites.
+- **Root cause**: `const POKE_IDS = Object.fromEntries(POKEMON_DB.map(...))` at game.js:5511 was private — not on `window`. `buildPokeSources(slug, null)` in poke-sprite-loader.js checks `window.POKE_IDS` for ID lookup. Without it, HD WebP + SVG paths skipped, cascade fell to 96px PNG then emoji.
+- **Fix**: Added `window.POKE_IDS = POKE_IDS` after declaration. Deleted 2 redundant local POKE_IDS subsets (~200 entries) that shadowed the global 1025-entry map.
+- **Lesson**: When a module declares data that other scripts consume via `window.*`, always verify the bridge exists. Search for `window.VARIABLE_NAME` across the codebase to find consumers, then confirm the producer sets it. Redundant local copies of global data are a time bomb — they shadow the complete dataset with an incomplete subset.
+
+### L64 — DOM `appendChild()` moves nodes, it does not copy them (Hotfix #120)
+- **Symptom**: G10/G13B Pokemon picker showed tabs but zero cards on reopen. First open worked fine.
+- **Root cause**: `while (pane.firstChild) gridEl.appendChild(pane.firstChild)` moved ALL children from the cached Map pane to the live grid. The cached pane was now empty. On reopen, cached pane had zero children → empty grid.
+- **Fix**: `_partyTabCache.clear()` on every picker open. Fresh pane builds each time. Cache designed for within-session tab switching, not across opens.
+- **Lesson**: DOM `appendChild()` is a MOVE operation. Caching a DOM node and then appending its children elsewhere empties the cache. Either (a) clone with `cloneNode(true)` before appending, or (b) clear cache to force rebuild. Rule: if you cache DOM panes and move their children to a live container, the cache is destroyed — plan accordingly.
+
+### L65 — CSS `translate3d` is additive to layout position, not a replacement (Hotfix #120)
+- **Symptom**: G21 Mario Pikachu completely invisible. After first death and restart, still invisible.
+- **Root cause**: Hotfix #112 replaced `wrap.style.left/top = ...` with `wrap.style.transform = translate3d(...)` for GPU perf. But the initial inline style kept `left:-300px; top:-300px` (the pre-game hide position). CSS transform is additive: visual_position = layout_position + translate. So Pikachu was always -300px offset. Additionally, death animation set `top = innerHeight+200` which restart never cleared — making post-death Pikachu even further off-screen.
+- **Fix**: Changed initial style to `left:0;top:0`. Added `wrap.style.top = '0'` in `restartLevel()`. Removed `left,top` from `will-change` (no longer animated).
+- **Lesson**: When migrating from `style.left/top` (direct positioning) to `transform: translate3d()` (GPU layer), you MUST zero out the original left/top. translate3d does NOT override layout position — it adds to it. Also audit all code paths that set left/top (death animations, etc.) and ensure cleanup functions reset them.
+
 ---
 
 ## Template for future entries

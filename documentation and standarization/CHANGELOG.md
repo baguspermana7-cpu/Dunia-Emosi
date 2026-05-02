@@ -1,5 +1,22 @@
 # Changelog — Dunia Emosi
 
+## 2026-05-02 — Hotfix #120 (Critical Sprite + Picker + G21 Fixes)
+
+Cache bump: `v=20260501h` → `v=20260502a`.
+
+### Fixed
+- **G13/G13B/G13C sprites showing leaf emoji**: `window.POKE_IDS` not exposed from game.js → `buildPokeSources` couldn't generate HD WebP paths. Added `window.POKE_IDS = POKE_IDS`. Deleted 2 redundant local POKE_IDS subsets (~200 entries each).
+- **G10/G13B picker empty on reopen**: DOM `appendChild()` moves nodes from cached tab pane, emptying cache permanently. Added `_partyTabCache.clear()` on picker open.
+- **G21 Pikachu invisible**: Hotfix #112 migrated from `style.left/top` to `translate3d()` but kept initial `left:-300px;top:-300px` — translate3d is additive, not a replacement. Changed to `left:0;top:0`. Also fixed death animation `top` not being reset on restart.
+- **Non-HD 96px sprites removed**: Deleted all 1025 files in `assets/Pokemon/sprites/` (96×96 PNG fallbacks). Removed `sprites/${slug}.png` cascade step from poke-sprite-loader.js.
+
+### Files changed
+- `game.js` — window.POKE_IDS exposure, POKE_IDS/POKE_IDS2 block deletion, _partyTabCache.clear()
+- `games/g21-pixi.html` — pikachu-wrap left/top fix, restartLevel top reset, cache bump
+- `games/data/poke-sprite-loader.js` — removed sprites/ cascade step
+- `index.html` — cache bump v=20260502a
+- `assets/Pokemon/sprites/` — deleted (1025 files)
+
 ## 2026-05-01 — Hotfix #119 (#115 follow-through — save-engine sweep + g13c_badges migration)
 
 Cache bump: save-engine.js `v=20260501e` → `v=20260501h` across 8 standalone games.

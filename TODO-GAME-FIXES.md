@@ -2002,3 +2002,36 @@ Codifies the avatar-keyed save scheme. Required pattern + helper inventory + for
 ### Verification
 - `./scripts/check-regressions.sh` — ALL CHECKS PASSED (6 rules)
 - All 8 games confirmed to load `data/save-engine.js?v=20260501h`
+
+---
+
+## Session 2026-05-02 — Hotfix #120 (Critical Sprite + Picker + G21 Fixes)
+
+Cache bump: `v=20260501h` → `v=20260502a`. Branch: `main`.
+
+User feedback (verbatim, Indonesian):
+- "G13 gagal letakkan sprites. Itu hanya daun place holder. Ini critical bug."
+- "G13 masih ada yg letakkan sprite non-HD. Kamu berbohong bilangnya sudah solved."
+- "Yg gambar daun tidak keluar sprite pokemon itu terjadi di g10 juga. G10, g13, g13b bermasalah di pokemon selection"
+- "Apakah perlu di delete aja gambar yg Non-HD sprite agar tidak digunakan lagi"
+- "Kacau semuanya, pikachunya tidak keluar, musuhnya juga aneh 4x, dan banyak sekali yg gak proper"
+
+### ✅ Fix A — Expose `window.POKE_IDS` globally (game.js:5512)
+`const POKE_IDS` at line 5511 was private — `buildPokeSources(slug, null)` couldn't resolve HD WebP paths. Added `window.POKE_IDS = POKE_IDS` one line after declaration. Deleted two redundant local `POKE_IDS`/`POKE_IDS2` blocks (~200-entry subsets at former lines ~8614 and ~9093) that shadowed the global 1025-entry map.
+
+### ✅ Fix B — Clear picker tab cache on open (game.js:5917, 6067)
+`_partyTabCache.clear()` added at top of both `openPartyPicker()` and `openG13bPartyPicker()`. DOM `appendChild()` moves nodes from cached pane to grid, leaving cached pane empty on reopen.
+
+### ✅ Fix C — G21 Pikachu invisible + death-restart offset (g21-pixi.html:135, 2314)
+Hotfix #112 replaced `wrap.style.left/top` with `translate3d()` for GPU perf but kept initial `left:-300px;top:-300px`. CSS translate3d is additive to layout position → Pikachu permanently offset -300px on both axes. Additionally, death animation set `wrap.style.top = innerHeight+200` but restart never reset it. Fix: changed initial to `left:0;top:0`, added `wrap.style.top = '0'` to `restartLevel()`.
+
+### ✅ Fix D — Delete non-HD 96px sprites (assets/Pokemon/sprites/)
+Removed all 1025 files (96×96 PNG, 469-583 bytes each). These were dead-weight fallbacks that showed pixelated sprites when HD cascade failed. Also removed `sprites/${slug}.png` cascade step from `poke-sprite-loader.js` line 46.
+
+### ✅ Fix E — Cache bump to v=20260502a
+Updated `index.html` (style.css, poke-sprite-loader.js, game.js) and `g21-pixi.html` (save-engine.js, game-modal.js).
+
+### Verification
+- G13/G13B/G13C: HD Pokemon sprites should render (not leaf emoji, not 96px pixelated)
+- G10/G13B picker: cards must appear on reopen (not empty grid)
+- G21: Pikachu visible on ground, goombas are SMB1 sprites, restart-after-death works

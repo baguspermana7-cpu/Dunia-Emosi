@@ -5509,6 +5509,7 @@ const TYPE_TEXTCOLOR={electric:'#1a1a1a',ice:'#1a1a1a',normal:'white',rock:'whit
 
 // Global slug→id lookup built from POKEMON_DB
 const POKE_IDS = Object.fromEntries(POKEMON_DB.map(p=>[p.slug,p.id]))
+window.POKE_IDS = POKE_IDS
 // Global slug→tier lookup (1=basic, 2=1st evo, 3=2nd evo, 4=legendary)
 const POKE_TIERS = Object.fromEntries(POKEMON_DB.map(p=>[p.slug,p.tier]))
 // Tier-based size scaling for sprite consistency across games
@@ -5912,6 +5913,7 @@ function _partyMarkCurrent(pane) {
 
 function openPartyPicker(){
   partyPickerCtx = 'g10'
+  _partyTabCache.clear()
   const overlay = document.getElementById('g10-party-overlay')
   if(!overlay) return
   overlay.classList.add('open')
@@ -6076,6 +6078,7 @@ function openG13bPartyPicker() {
     })
   }
   _hideStale('.g13b-result-overlay, .g13-evo-overlay, .gr-overlay, .math-quiz-overlay, #math-quiz-overlay')
+  _partyTabCache.clear()
   const overlay = document.getElementById('g10-party-overlay')
   if (!overlay) return
   overlay.classList.add('open')
@@ -8610,20 +8613,6 @@ function _initGame13Impl() {
   const mathEl2 = document.getElementById('g13-math')
   if (mathEl2) mathEl2.style.color = ''
 
-  // Sprite loading: show emoji immediately, replace with image async
-  const POKE_IDS = {bulbasaur:1,ivysaur:2,venusaur:3,charmander:4,charmeleon:5,charizard:6,squirtle:7,wartortle:8,blastoise:9,caterpie:10,metapod:11,butterfree:12,pikachu:25,raichu:26,jolteon:135,flareon:136,vaporeon:134,arcanine:59,meowth:52,persian:53,machop:66,machoke:67,machamp:68,geodude:74,graveler:75,golem:76,gastly:92,haunter:93,gengar:94,magikarp:129,gyarados:130,lapras:131,eevee:133,snorlax:143,dratini:147,dragonair:148,dragonite:149,abra:63,kadabra:64,alakazam:65,psyduck:54,golduck:55,slowpoke:79,slowbro:80,poliwag:60,poliwhirl:61,poliwrath:62,horsea:116,seadra:117,vulpix:37,ninetales:38,oddish:43,gloom:44,vileplume:45,exeggcute:102,exeggutor:103,koffing:109,weezing:110,cubone:104,marowak:105,kabuto:140,kabutops:141,omanyte:138,omastar:139,cyndaquil:155,quilava:156,typhlosion:157,totodile:158,croconaw:159,feraligatr:160,chikorita:152,bayleef:153,meganium:154,togepi:175,togetic:176,marill:183,azumarill:184,teddiursa:216,ursaring:217,slugma:218,magcargo:219,swinub:220,piloswine:221,larvitar:246,pupitar:247,tyranitar:248,mudkip:258,marshtomp:259,swampert:260,treecko:252,grovyle:253,sceptile:254,torchic:255,combusken:256,blaziken:257,ralts:280,kirlia:281,gardevoir:282,beldum:374,metang:375,metagross:376,snubbull:209,granbull:210,clefable:36,dewgong:87,seel:86,cloyster:91,staryu:120,starmie:121,kangaskhan:115,muk:89,pichu:172,
-    pidgey:16,pidgeotto:17,pidgeot:18,rattata:19,raticate:20,spearow:21,fearow:22,ekans:23,arbok:24,sandshrew:27,sandslash:28,clefairy:35,jigglypuff:39,wigglytuff:40,paras:46,parasect:47,venonat:48,venomoth:49,mankey:56,primeape:57,growlithe:58,bellsprout:69,weepinbell:70,doduo:84,dodrio:85,magneton:82,shellder:90,diglett:50,voltorb:100,electrode:101,goldeen:118,seaking:119,tauros:128,hitmonchan:107,
-    misdreavus:200,mismagius:429,sneasel:215,weavile:461,hoppip:187,skiploom:188,stantler:234,wyrdeer:899,
-    electrike:309,manectric:310,swablu:333,altaria:334,shroomish:285,breloom:286,wailmer:320,wailord:321,meditite:307,medicham:308,skitty:300,delcatty:301,snorunt:361,glalie:362,
-    bagon:371,shelgon:372,salamence:373,roggenrola:524,boldore:525,gigalith:526,litwick:607,lampent:608,chandelure:609,gible:443,gabite:444,garchomp:445,timburr:532,gurdurr:533,conkeldurr:534,elekid:239,electabuzz:125,electivire:466,magby:240,magmar:126,magmortar:467,sandile:551,krokorok:552,krookodile:553,
-    riolu:447,lucario:448,deino:633,zweilous:634,hydreigon:635,trapinch:328,vibrava:329,flygon:330,axew:610,fraxure:611,haxorus:612,feebas:349,milotic:350,goomy:704,sliggoo:705,goodra:706,
-    onix:95,steelix:208,lairon:305,aggron:306,
-    victreebel:71,'nidoran-f':29,nidorina:30,nidoqueen:31,'nidoran-m':32,nidorino:33,nidoking:34,
-    cleffa:173,igglybuff:174,sunflora:192,jumpluff:189,
-    spheal:363,sealeo:364,walrein:365,
-    slakoth:287,vigoroth:288,slaking:289,
-    umbreon:197,espeon:196,leafeon:470,glaceon:471,sylveon:700,
-    togekiss:468,roserade:407,lopunny:428,honchkrow:430,porygon:137,porygon2:233,porygonz:474}
   // HD CDN first for consistent canvas sizing + predictable orientation.
   // SVG variant is secondary (visual variety for the 751 covered slugs).
   // Local low-res PNG is dropped from this cascade — it produced inconsistent
@@ -9101,12 +9090,6 @@ function g13TriggerEvolution() {
   const nameEl = document.getElementById('g13-evo-newname')
   const textEl = document.getElementById('g13-evo-text')
   if (!baseImg || !evolvedImg || !nameEl || !textEl) { overlay.style.display = 'none'; return }
-  const POKE_IDS2 = {bulbasaur:1,ivysaur:2,venusaur:3,charmander:4,charmeleon:5,charizard:6,squirtle:7,wartortle:8,blastoise:9,caterpie:10,metapod:11,butterfree:12,pikachu:25,raichu:26,jolteon:135,flareon:136,vaporeon:134,arcanine:59,meowth:52,persian:53,machop:66,machoke:67,machamp:68,geodude:74,graveler:75,golem:76,gastly:92,haunter:93,gengar:94,magikarp:129,gyarados:130,lapras:131,eevee:133,snorlax:143,dratini:147,dragonair:148,dragonite:149,abra:63,kadabra:64,alakazam:65,psyduck:54,golduck:55,slowpoke:79,slowbro:80,poliwag:60,poliwhirl:61,poliwrath:62,horsea:116,seadra:117,vulpix:37,ninetales:38,oddish:43,gloom:44,vileplume:45,exeggcute:102,exeggutor:103,koffing:109,weezing:110,cubone:104,marowak:105,kabuto:140,kabutops:141,omanyte:138,omastar:139,cyndaquil:155,quilava:156,typhlosion:157,totodile:158,croconaw:159,feraligatr:160,chikorita:152,bayleef:153,meganium:154,togepi:175,togetic:176,marill:183,azumarill:184,teddiursa:216,ursaring:217,slugma:218,magcargo:219,swinub:220,piloswine:221,larvitar:246,pupitar:247,tyranitar:248,mudkip:258,marshtomp:259,swampert:260,treecko:252,grovyle:253,sceptile:254,torchic:255,combusken:256,blaziken:257,ralts:280,kirlia:281,gardevoir:282,beldum:374,metang:375,metagross:376,snubbull:209,granbull:210,clefable:36,dewgong:87,seel:86,cloyster:91,staryu:120,starmie:121,kangaskhan:115,muk:89,pichu:172,
-    pidgey:16,pidgeotto:17,pidgeot:18,rattata:19,raticate:20,spearow:21,fearow:22,ekans:23,arbok:24,sandshrew:27,sandslash:28,clefairy:35,jigglypuff:39,wigglytuff:40,paras:46,parasect:47,venonat:48,venomoth:49,mankey:56,primeape:57,growlithe:58,bellsprout:69,weepinbell:70,doduo:84,dodrio:85,magneton:82,shellder:90,diglett:50,voltorb:100,electrode:101,goldeen:118,seaking:119,tauros:128,hitmonchan:107,
-    misdreavus:200,mismagius:429,sneasel:215,weavile:461,hoppip:187,skiploom:188,stantler:234,wyrdeer:899,
-    electrike:309,manectric:310,swablu:333,altaria:334,shroomish:285,breloom:286,wailmer:320,wailord:321,meditite:307,medicham:308,skitty:300,delcatty:301,snorunt:361,glalie:362,
-    bagon:371,shelgon:372,salamence:373,roggenrola:524,boldore:525,gigalith:526,litwick:607,lampent:608,chandelure:609,gible:443,gabite:444,garchomp:445,timburr:532,gurdurr:533,conkeldurr:534,elekid:239,electabuzz:125,electivire:466,magby:240,magmar:126,magmortar:467,sandile:551,krokorok:552,krookodile:553,
-    riolu:447,lucario:448,deino:633,zweilous:634,hydreigon:635,trapinch:328,vibrava:329,flygon:330,axew:610,fraxure:611,haxorus:612,feebas:349,milotic:350,goomy:704,sliggoo:705,goodra:706}
   // Hotfix #117: use shared cascade (HD WebP 630x630 first) instead of direct src.
   // Legacy pokeUrl kept inside else for safety if helpers not loaded.
   const pokeUrl = slug => (typeof pokeSpriteAlt2 === 'function' && pokeSpriteAlt2(slug)) || `https://img.pokemondb.net/sprites/home/normal/${slug}.png`
@@ -9209,7 +9192,7 @@ function g13TriggerEvolution() {
     const pspr = document.getElementById('g13-pspr')
     if (pspr) {
       // Hotfix #104 (2026-04-28): shared cascade.
-      const _eid = (typeof POKE_IDS2 !== 'undefined' && POKE_IDS2) ? POKE_IDS2[nowForm.slug] : null
+      const _eid = POKE_IDS[nowForm.slug] || null
       if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
         attachSpriteCascade(pspr, buildPokeSources(nowForm.slug, _eid), '⚡')
       } else {
