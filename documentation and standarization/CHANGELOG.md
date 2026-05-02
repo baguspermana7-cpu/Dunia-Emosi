@@ -1,5 +1,15 @@
 # Changelog — Dunia Emosi
 
+## 2026-05-02 — Hotfix #120 Part 7 (Comprehensive Legendary Facing)
+
+### Fixed
+- 40 new entries to `POKE_FACING='R'` map: Blastoise + ALL legendaries from 9 regions (Kanto/Johto/Hoenn/Sinnoh/Unova/Kalos/Alola/Galar/Paldea)
+- User confirmed wrong: Articuno, Moltres, Lugia, Rayquaza, Blastoise, Zapdos
+- Added remaining legendaries by pattern (HOME alt2 legendary art faces RIGHT in heroic poses)
+- Cache: v=20260502k → v=20260502m
+
+---
+
 ## 2026-05-02 — Hotfix #120 Part 6 (G13C Math + Facing + Region-Locked Teams)
 
 ### Fixed

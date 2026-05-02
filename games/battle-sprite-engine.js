@@ -5,10 +5,40 @@
   // Natural facing of the source sprite. DEFAULT 'L' — Pokemondb HOME 3D renders face the viewer with slight LEFT bias.
   // Add 'R' override here for Pokemon whose natural art faces RIGHT.
   const POKE_FACING = {
-    // Electric mouse line (HOME render faces R)
+    // Electric mouse line
     pichu: 'R', pikachu: 'R', raichu: 'R',
-    // Dragon line (HOME render faces R)
+    // Dragon line
     dratini: 'R', dragonair: 'R', dragonite: 'R',
+    // Kanto starter finals
+    blastoise: 'R',
+    // Kanto legendaries
+    articuno: 'R', zapdos: 'R', moltres: 'R',
+    mewtwo: 'R', mew: 'R',
+    // Johto legendaries
+    lugia: 'R', 'ho-oh': 'R',
+    raikou: 'R', entei: 'R', suicune: 'R',
+    celebi: 'R',
+    // Hoenn legendaries
+    kyogre: 'R', groudon: 'R', rayquaza: 'R',
+    latias: 'R', latios: 'R', deoxys: 'R',
+    // Sinnoh legendaries
+    dialga: 'R', palkia: 'R', giratina: 'R',
+    arceus: 'R', darkrai: 'R', cresselia: 'R',
+    // Unova legendaries
+    reshiram: 'R', zekrom: 'R', kyurem: 'R',
+    victini: 'R', keldeo: 'R', genesect: 'R',
+    // Kalos legendaries
+    xerneas: 'R', yveltal: 'R', zygarde: 'R',
+    diancie: 'R', hoopa: 'R', volcanion: 'R',
+    // Alola legendaries
+    solgaleo: 'R', lunala: 'R', necrozma: 'R',
+    'tapu-koko': 'R', magearna: 'R', marshadow: 'R',
+    // Galar legendaries
+    zacian: 'R', zamazenta: 'R', eternatus: 'R',
+    calyrex: 'R', glastrier: 'R', spectrier: 'R',
+    // Paldea legendaries
+    koraidon: 'R', miraidon: 'R',
+    'wo-chien': 'R', 'chien-pao': 'R', 'ting-lu': 'R', 'chi-yu': 'R',
   }
 
   // Visual canvas-fill override — compensates sprites that fill much more/less than the 475×475 HD average.
