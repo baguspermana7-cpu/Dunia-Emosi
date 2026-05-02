@@ -344,6 +344,18 @@ function _avatarSlug() {
     return animal ? (AVATAR_SLUGS[animal] || String(animal)) : null
   } catch (_) { return null }
 }
+// Canonical slug for a Pokemon party object. Looks up POKEMON_DB by id (always
+// correct), falls back to a regex-cleaned name. Fixes special slugs like
+// "Mr. Mime" → mr-mime, "Farfetch'd" → farfetchd, "Type: Null" → type-null.
+function _pokeSlug(poke) {
+  if (!poke) return ''
+  if (poke.slug) return poke.slug
+  if (typeof POKEMON_DB !== 'undefined' && poke.id != null) {
+    const e = POKEMON_DB.find(p => p.id === poke.id)
+    if (e && e.slug) return e.slug
+  }
+  return String(poke.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+}
 function pkey(key) {
   const av = _avatarSlug()
   if (av) return `dunia-avatar-${av}-${key}`
@@ -1134,6 +1146,34 @@ async function _syncFromCloud() {
     }
   } catch (_) {}
 }
+// Kodok (frog) avatar starter preset: ~25% of cities pre-completed in each
+// region for G13/G13B, giving frog players a head start. One-time per avatar
+// via 'dunia-frog-seeded' flag. Skipped if not frog avatar or already seeded.
+function _seedKodokProgress() {
+  try {
+    if (_avatarSlug() !== 'frog') return
+    if (localStorage.getItem('dunia-frog-seeded') === '1') return
+    if (typeof CITY_PACK === 'undefined') return
+    const prog = loadProgress()
+    for (const gameKey of ['g13b', 'g13']) {
+      if (!prog[gameKey]) prog[gameKey] = { completed: [], stars: {}, cities: {} }
+      if (!prog[gameKey].cities) prog[gameKey].cities = {}
+      for (const regionId of Object.keys(CITY_PACK)) {
+        const cities = CITY_PACK[regionId].cities || []
+        const seedCount = Math.max(1, Math.floor(cities.length * 0.25))
+        const region = prog[gameKey].cities[regionId] || { completed: [], stars: {} }
+        for (let i = 0; i < seedCount && i < cities.length; i++) {
+          const slug = cities[i].slug
+          if (!region.completed.includes(slug)) region.completed.push(slug)
+          if (!region.stars[slug] || region.stars[slug] < 3) region.stars[slug] = 3
+        }
+        prog[gameKey].cities[regionId] = region
+      }
+    }
+    saveProgress(prog)
+    localStorage.setItem('dunia-frog-seeded', '1')
+  } catch (_) {}
+}
 function getLevelProgress(gameNum) {
   const prog = loadProgress()
   return prog['g'+gameNum] || { completed: [], stars: {} }
@@ -1672,6 +1712,7 @@ function confirmNames() {
   } catch(e){}
   updateStreak()
   state.currentPlayer=0
+  _seedKodokProgress() // one-time 25% city preset for frog avatar
   buildMenuHeader()
   showScreen('screen-menu')
   _syncFromCloud() // pull shared cloud progress in background (non-blocking)
@@ -2870,7 +2911,7 @@ function renderG4Content(){
       img.className='g4-animal-item g4-poke-img'
       img.style.width=sprSize; img.style.height=sprSize
       // Hotfix #104 (2026-04-28): shared cascade.
-      const slug = poke.name.toLowerCase().replace(/[^a-z0-9-]/g,'')
+      const slug = _pokeSlug(poke)
       if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
         attachSpriteCascade(img, buildPokeSources(slug, poke.id), '🐾')
       } else {
@@ -5931,7 +5972,7 @@ function _partyBuildTabPane(trainer) {
     card.dataset.trainerId = trainer.id
     const typeColor = TYPE_COLORS[poke.type] || '#888'
     card.style.setProperty('--ptc', typeColor)
-    const slug = poke.name.toLowerCase().replace(/\s/g, '-')
+    const slug = _pokeSlug(poke)
     card.innerHTML = `
       <img class="g10-pcard-spr" alt="${poke.name}" loading="lazy" decoding="async" data-slug="${slug}" data-poke-id="${poke.id}">
       <div class="g10-pcard-name">${poke.name}</div>
@@ -6074,11 +6115,11 @@ function switchPlayerPoke(poke){
   if(fs){ fs.textContent=`Ayo, ${poke.name}!`; fs.classList.add('show'); setTimeout(()=>fs.classList.remove('show'),1200) }
   setTimeout(()=>{
     // Update state
-    s.playerPoke = { ...poke, slug: poke.name.toLowerCase().replace(/\s/g,'-'), type: poke.type }
+    s.playerPoke = { ...poke, slug: _pokeSlug(poke), type: poke.type }
     // Reload back sprite for player
     pSpr.classList.remove('spr-swap-out')
     pSpr.style.imageRendering = 'auto'
-    const slug = poke.name.toLowerCase().replace(/\s/g,'-')
+    const slug = _pokeSlug(poke)
     // Hotfix #104 (2026-04-28): cascade via shared helper to kill freeze loop.
     if (typeof attachSpriteCascade === 'function' && typeof buildPokeSources === 'function') {
       attachSpriteCascade(pSpr, buildPokeSources(slug, poke.id), '🦊')
@@ -6136,9 +6177,7 @@ function openG13bPartyPicker() {
 }
 
 function switchG13bPlayerPoke(poke) {
-  const _dbEntry = POKEMON_DB.find(p => p.id === poke.id)
-  const _slug = (_dbEntry && _dbEntry.slug) || poke.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-$/,'')
-  g13bSavedPoke = { ...poke, slug: _slug }
+  g13bSavedPoke = { ...poke, slug: _pokeSlug(poke) }
   const pspr = document.getElementById('g13b-pspr')
   if (!pspr) return
   // Task #71: local-first per L16. Hotfix 2026-04-28: cascade now goes
