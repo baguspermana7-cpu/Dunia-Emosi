@@ -590,6 +590,18 @@
 - **Fix**: Changed initial style to `left:0;top:0`. Added `wrap.style.top = '0'` in `restartLevel()`. Removed `left,top` from `will-change` (no longer animated).
 - **Lesson**: When migrating from `style.left/top` (direct positioning) to `transform: translate3d()` (GPU layer), you MUST zero out the original left/top. translate3d does NOT override layout position — it adds to it. Also audit all code paths that set left/top (death animations, etc.) and ensure cleanup functions reset them.
 
+### L66 — Goomba Lockstep Stacking (G21, 2026-05-02)
+When all enemies start with identical speed + direction, they march in lockstep and bunch up at platform edges. Fix: randomize initial speed, direction, and animation phase. Add entity-entity separation collision to push apart.
+
+### L67 — CSS Transform Composition (G21, 2026-05-02)
+`transform: rotate(720deg)` OVERWRITES any previous `translate3d()` on the same element. CSS transforms are a single property — setting one value replaces all previous. Must compose as `translate3d(...) rotate(...)` in one assignment.
+
+### L68 — restartLevel() Must Reset ALL Game State (G21, 2026-05-02)
+After adding new features (math quiz, electric mode), `restartLevel()` was never updated to reset them. Checklist: any new boolean/timer/overlay added to game state MUST have a corresponding reset in restart. Add to the restart function immediately when adding the feature, not later.
+
+### L69 — Deleted Function Reference Cascade (G13C, 2026-05-02)
+Deleting a function definition (SPRITE_LOCAL) without grepping for ALL call sites → ReferenceError at runtime. The 5 call sites in cascade arrays were fixed, but 3 inline onerror strings in HTML template literals were missed. Always grep the ENTIRE file, including template strings, before deleting a function.
+
 ---
 
 ## Template for future entries

@@ -17,6 +17,12 @@ Cache bump: `v=20260501h` → `v=20260502a`.
 - `index.html` — cache bump v=20260502a
 - `assets/Pokemon/sprites/` — deleted (1025 files)
 
+- fix(#120-B): G21 goomba anti-stacking — randomize speed/direction, separation collision, wall detection, sprite facing
+- fix(#120-C): G21 death animation regression — compose translate3d + rotate from screen position
+- fix(#120-D): G21 restartLevel() missing resets (pendingMath, electricMode, math quiz, bolt button)
+- fix(#120-E): G21 remove duplicate pikachuState key in S object
+- fix(#120-F): G13C SPRITE_LOCAL ReferenceError in switch panel + package selector (3 call sites)
+
 ## 2026-05-01 — Hotfix #119 (#115 follow-through — save-engine sweep + g13c_badges migration)
 
 Cache bump: save-engine.js `v=20260501e` → `v=20260501h` across 8 standalone games.

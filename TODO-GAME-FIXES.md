@@ -2035,3 +2035,9 @@ Updated `index.html` (style.css, poke-sprite-loader.js, game.js) and `g21-pixi.h
 - G13/G13B/G13C: HD Pokemon sprites should render (not leaf emoji, not 96px pixelated)
 - G10/G13B picker: cards must appear on reopen (not empty grid)
 - G21: Pikachu visible on ground, goombas are SMB1 sprites, restart-after-death works
+
+- **#120-B: G21 Goomba Anti-Stacking** — Goombas were walking in lockstep (all same speed -1.5, same direction left). When hitting a pit edge, they'd reverse and bunch up at the same spot. Fix: randomized initial speed (1.2-1.8), random direction (left/right), random walk-phase offset, goomba-goomba separation collision (push apart if within 0.7 tiles), wall-ahead collision detection, sprite facing flip. Commit: ca78d28.
+- **#120-C: G21 Death Animation Regression** — `onDeath()` sets `wrap.style.transform = 'rotate(720deg)'` which OVERWRITES the translate3d positioning, causing Pikachu to teleport to (0,0) before spinning. Fix: compose translate3d + rotate in single transform from current screen position. Commit: ca78d28.
+- **#120-D: G21 restartLevel() Missing Resets** — `restartLevel()` didn't reset `S.pendingMath`, `S.electricMode`, hide math quiz overlay, or hide bolt button. Could leave ghost UI after restart. Fix: added all 4 resets. Commit: ca78d28.
+- **#120-E: G21 Duplicate pikachuState Key** — S object had `pikachuState: 'small'` at both line 249 and 290. Second declaration silently shadowed first. Removed duplicate. Commit: ca78d28.
+- **#120-F: G13C SPRITE_LOCAL ReferenceError** — After deleting `sprites/` directory and SPRITE_LOCAL function, 3 call sites in switch panel (line 1580) and package selector (lines 1682-1683) still referenced it → ReferenceError crash. Fix: replaced with SPRITE_HD_REMOTE CDN fallback. Commit: ca78d28.
