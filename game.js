@@ -8450,14 +8450,16 @@ function openG13FamilySelector() {
     const selCls = fam.id === currentId ? ' g13-fam-selected' : ''
     const catBadge = fam.category === 'popular' ? '⭐ POPULER' : fam.category === 'ash' ? '🎒 ASH' : fam.category === 'cool' ? '💎 KEREN' : '🎲 ACAK'
     const catColor = fam.category === 'popular' ? '#fbbf24' : fam.category === 'ash' ? '#ef4444' : fam.category === 'cool' ? '#c084fc' : '#38bdf8'
+    const _thumbErr = (slug) => `this.onerror=null;this.src='https://img.pokemondb.net/sprites/home/normal/${slug}.png'`
+    const _thumb = (slug, name) => `<img src="${pokeImg(slug)}" alt="${name}" style="width:38px;height:38px;background:rgba(0,0,0,0.25);border-radius:8px;padding:2px;object-fit:contain;" onerror="${_thumbErr(slug)}">`
     const thumbsHtml = fam.id === 'random'
       ? '<div style="color:rgba(255,255,255,0.6);font-size:13px;font-weight:700;padding:8px 0;">🎲 Acak dari semua evolusi yang ada — tiap level beda Pokémon!</div>'
       : `<div style="display:flex;gap:6px;align-items:center;justify-content:flex-start;flex-wrap:wrap;margin-top:8px;">
-          <img src="${pokeImg(fam.player.slug)}" alt="${fam.player.name}" loading="lazy" decoding="async" style="width:38px;height:38px;background:rgba(0,0,0,0.25);border-radius:8px;padding:2px;object-fit:contain;" onerror="this.src='https://img.pokemondb.net/sprites/home/normal/${fam.player.slug}.png';this.onerror=null">
+          ${_thumb(fam.player.slug, fam.player.name)}
           <span style="color:rgba(255,255,255,0.5);font-size:11px;">→</span>
-          <img src="${pokeImg(fam.evolved.slug)}" alt="${fam.evolved.name}" loading="lazy" decoding="async" style="width:38px;height:38px;background:rgba(0,0,0,0.25);border-radius:8px;padding:2px;object-fit:contain;" onerror="this.src='https://img.pokemondb.net/sprites/home/normal/${fam.evolved.slug}.png';this.onerror=null">
+          ${_thumb(fam.evolved.slug, fam.evolved.name)}
           ${fam.evolved2 ? `<span style="color:rgba(255,255,255,0.5);font-size:11px;">→</span>
-          <img src="${pokeImg(fam.evolved2.slug)}" alt="${fam.evolved2.name}" loading="lazy" decoding="async" style="width:38px;height:38px;background:rgba(0,0,0,0.25);border-radius:8px;padding:2px;object-fit:contain;" onerror="this.src='https://img.pokemondb.net/sprites/home/normal/${fam.evolved2.slug}.png';this.onerror=null">` : ''}
+          ${_thumb(fam.evolved2.slug, fam.evolved2.name)}` : ''}
         </div>`
     const megaIndicator = fam.mega ? '<span class="g13-fam-mega-indicator">⭐ MEGA</span>' : ''
     return `<div class="g13-fam-card${selCls}" data-fam="${fam.id}" style="position:relative;background:linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02));border:2px solid ${fam.id === currentId ? '#fbbf24' : 'rgba(255,255,255,0.2)'};border-radius:14px;padding:12px;cursor:pointer;transition:transform 0.15s,border-color 0.15s;color:#fff;border-left:5px solid ${fam.color};${fam.id === currentId ? 'box-shadow:0 0 22px rgba(251,191,36,0.5);' : ''}">
