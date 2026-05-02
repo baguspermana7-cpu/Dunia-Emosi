@@ -781,6 +781,36 @@ function pokeFinalScale(s){ return window.BSE ? BSE.finalScale(s) : 1.0; }
 const _g13cBadgeKey = () => (typeof activeAvatarBadgeKey === 'function')
   ? activeAvatarBadgeKey('g13c_badges')
   : 'g13c_badges';
+
+// Kodok (frog) avatar starter preset: ~25% of trainers per region pre-beaten.
+// One-time per avatar via 'dunia-frog-g13c-seeded-v2' flag. Runs BEFORE badges
+// load below so the seeded values are picked up immediately.
+(function _seedKodokG13cBadges() {
+  try {
+    const av = (typeof _activeAvatarSlug === 'function') ? _activeAvatarSlug() : null;
+    if (av !== 'frog') return;
+    if (localStorage.getItem('dunia-frog-g13c-seeded-v2') === '1') return;
+    const key = _g13cBadgeKey();
+    const existing = JSON.parse(localStorage.getItem(key) || '{}');
+    // Group trainers by region
+    const byRegion = {};
+    for (const t of TRAINERS) {
+      if (!byRegion[t.group]) byRegion[t.group] = [];
+      byRegion[t.group].push(t);
+    }
+    // Seed first 25% per region
+    for (const region of Object.keys(byRegion)) {
+      const list = byRegion[region];
+      const seedCount = Math.max(1, Math.floor(list.length * 0.25));
+      for (let i = 0; i < seedCount; i++) {
+        existing[list[i].id] = true;
+      }
+    }
+    localStorage.setItem(key, JSON.stringify(existing));
+    localStorage.setItem('dunia-frog-g13c-seeded-v2', '1');
+  } catch (_) {}
+})();
+
 let badges = JSON.parse(localStorage.getItem(_g13cBadgeKey())||'{}');
 let battle = null;
 let msgQueue = [];

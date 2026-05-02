@@ -1,5 +1,15 @@
 # Changelog — Dunia Emosi
 
+## 2026-05-02 — Hotfix #120 Part 5 (Kodok Preset Comprehensive)
+
+### Fixed
+- Kodok 25% preset MISSED G10 cities and G13C trainer badges (only G13/G13B were seeded)
+- `_seedKodokProgress()` in game.js: added 'g10' to city loop; bumped flag `dunia-frog-seeded` → `dunia-frog-seeded-v2` so previously-seeded users re-run with new game coverage
+- `games/g13c-pixi.html`: new own-page seeder groups TRAINERS by region, marks first 25% per region as `badges[id]=true` on first kodok load (flag: `dunia-frog-g13c-seeded-v2`)
+- Cache: v=20260502i → v=20260502j
+
+---
+
 ## 2026-05-02 — Hotfix #120 Part 4 (Sprite Robustness + Cloud Sync + Layout + Kodok Preset)
 
 ### Fixed

@@ -1147,15 +1147,16 @@ async function _syncFromCloud() {
   } catch (_) {}
 }
 // Kodok (frog) avatar starter preset: ~25% of cities pre-completed in each
-// region for G13/G13B, giving frog players a head start. One-time per avatar
-// via 'dunia-frog-seeded' flag. Skipped if not frog avatar or already seeded.
+// region for G10/G13/G13B, giving frog players a head start. G13C handled
+// separately in games/g13c-pixi.html (different storage system).
+// One-time per avatar via 'dunia-frog-seeded-v2' flag.
 function _seedKodokProgress() {
   try {
     if (_avatarSlug() !== 'frog') return
-    if (localStorage.getItem('dunia-frog-seeded') === '1') return
+    if (localStorage.getItem('dunia-frog-seeded-v2') === '1') return
     if (typeof CITY_PACK === 'undefined') return
     const prog = loadProgress()
-    for (const gameKey of ['g13b', 'g13']) {
+    for (const gameKey of ['g10', 'g13', 'g13b']) {
       if (!prog[gameKey]) prog[gameKey] = { completed: [], stars: {}, cities: {} }
       if (!prog[gameKey].cities) prog[gameKey].cities = {}
       for (const regionId of Object.keys(CITY_PACK)) {
@@ -1171,7 +1172,7 @@ function _seedKodokProgress() {
       }
     }
     saveProgress(prog)
-    localStorage.setItem('dunia-frog-seeded', '1')
+    localStorage.setItem('dunia-frog-seeded-v2', '1')
   } catch (_) {}
 }
 function getLevelProgress(gameNum) {
