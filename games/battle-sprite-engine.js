@@ -5,7 +5,10 @@
   // Natural facing of the source sprite. DEFAULT 'L' — Pokemondb HOME 3D renders face the viewer with slight LEFT bias.
   // Add 'R' override here for Pokemon whose natural art faces RIGHT.
   const POKE_FACING = {
-    // User-reported 'R' natural-facing exceptions go here
+    // Electric mouse line (HOME render faces R)
+    pichu: 'R', pikachu: 'R', raichu: 'R',
+    // Dragon line (HOME render faces R)
+    dratini: 'R', dragonair: 'R', dragonite: 'R',
   }
 
   // Visual canvas-fill override — compensates sprites that fill much more/less than the 475×475 HD average.

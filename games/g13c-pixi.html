@@ -381,6 +381,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 <script src="data/poke-sprite-loader.js?v=20260428a"></script>
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/save-engine.js?v=20260501e"></script>
+<script src="data/math-rules.js?v=20260501d"></script>
 <script src="game-modal.js?v=20260424g"></script>
 <script src="battle-sprite-engine.js?v=20260421h"></script>
 
@@ -396,7 +397,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 // Slugs with 'mega-' prefix use PokemonDB HD CDN naming (e.g. mega-charizard-x).
 // ────────────────────────────────────────────────────────────────
 const PLAYER_PACKAGES = [
-  {id:'ash-kanto-base', label:'Tim Ash Kanto Awal', series:'Anime Kanto', tier:'base', color:'#f87171',
+  {id:'ash-kanto-base', label:'Tim Ash Kanto Awal', series:'Anime Kanto', tier:'base', color:'#f87171', region:'kanto',
    team:[
     {name:'Pikachu',slug:'pikachu',type:'electric',hp:90,maxHp:90,moves:[{name:'Thunder Shock',type:'electric'},{name:'Quick Attack',type:'normal'},{name:'Tail Whip',type:'normal'},{name:'Growl',type:'normal'}]},
     {name:'Bulbasaur',slug:'bulbasaur',type:'grass',hp:90,maxHp:90,moves:[{name:'Vine Whip',type:'grass'},{name:'Tackle',type:'normal'},{name:'Leech Seed',type:'grass'},{name:'Growl',type:'normal'}]},
@@ -405,7 +406,7 @@ const PLAYER_PACKAGES = [
     {name:'Pidgey',slug:'pidgey',type:'flying',hp:90,maxHp:90,moves:[{name:'Gust',type:'flying'},{name:'Quick Attack',type:'normal'},{name:'Sand Attack',type:'ground'},{name:'Tackle',type:'normal'}]},
     {name:'Caterpie',slug:'caterpie',type:'bug',hp:90,maxHp:90,moves:[{name:'Tackle',type:'normal'},{name:'String Shot',type:'bug'},{name:'Bug Bite',type:'bug'},{name:'Harden',type:'normal'}]},
    ]},
-  {id:'ash-kanto-final', label:'Tim Ash Kanto Final', series:'Anime Kanto', tier:'final', color:'#dc2626',
+  {id:'ash-kanto-final', label:'Tim Ash Kanto Final', series:'Anime Kanto', tier:'final', color:'#dc2626', region:'kanto',
    team:[
     {name:'Pikachu',slug:'pikachu',type:'electric',hp:110,maxHp:110,moves:[{name:'Thunderbolt',type:'electric'},{name:'Iron Tail',type:'steel'},{name:'Volt Tackle',type:'electric'},{name:'Quick Attack',type:'normal'}]},
     {name:'Venusaur',slug:'venusaur',type:'grass',hp:110,maxHp:110,moves:[{name:'Solar Beam',type:'grass'},{name:'Sludge Bomb',type:'poison'},{name:'Razor Leaf',type:'grass'},{name:'Sleep Powder',type:'grass'}]},
@@ -414,7 +415,7 @@ const PLAYER_PACKAGES = [
     {name:'Lapras',slug:'lapras',type:'ice',hp:110,maxHp:110,moves:[{name:'Ice Beam',type:'ice'},{name:'Surf',type:'water'},{name:'Body Slam',type:'normal'},{name:'Sing',type:'normal'}]},
     {name:'Snorlax',slug:'snorlax',type:'normal',hp:110,maxHp:110,moves:[{name:'Body Slam',type:'normal'},{name:'Hyper Beam',type:'normal'},{name:'Crunch',type:'dark'},{name:'Rest',type:'normal'}]},
    ]},
-  {id:'ash-xy-base', label:'Tim Ash XY Awal', series:'Anime XY', tier:'base', color:'#60a5fa',
+  {id:'ash-xy-base', label:'Tim Ash XY Awal', series:'Anime XY', tier:'base', color:'#60a5fa', region:'kalos',
    team:[
     {name:'Pikachu',slug:'pikachu',type:'electric',hp:90,maxHp:90,moves:[{name:'Thunder Shock',type:'electric'},{name:'Quick Attack',type:'normal'},{name:'Electro Ball',type:'electric'},{name:'Iron Tail',type:'steel'}]},
     {name:'Froakie',slug:'froakie',type:'water',hp:90,maxHp:90,moves:[{name:'Water Pulse',type:'water'},{name:'Pound',type:'normal'},{name:'Bubble',type:'water'},{name:'Quick Attack',type:'normal'}]},
@@ -423,7 +424,7 @@ const PLAYER_PACKAGES = [
     {name:'Goomy',slug:'goomy',type:'dragon',hp:90,maxHp:90,moves:[{name:'Bubble',type:'water'},{name:'Tackle',type:'normal'},{name:'Dragon Breath',type:'dragon'},{name:'Protect',type:'normal'}]},
     {name:'Noibat',slug:'noibat',type:'flying',hp:90,maxHp:90,moves:[{name:'Gust',type:'flying'},{name:'Screech',type:'normal'},{name:'Supersonic',type:'normal'},{name:'Tackle',type:'normal'}]},
    ]},
-  {id:'ash-xy-final', label:'Tim Ash XY Final', series:'Anime XY', tier:'final', color:'#2563eb',
+  {id:'ash-xy-final', label:'Tim Ash XY Final', series:'Anime XY', tier:'final', color:'#2563eb', region:'kalos',
    team:[
     {name:'Pikachu',slug:'pikachu',type:'electric',hp:110,maxHp:110,moves:[{name:'Thunderbolt',type:'electric'},{name:'Iron Tail',type:'steel'},{name:'Electro Ball',type:'electric'},{name:'Quick Attack',type:'normal'}]},
     {name:'Greninja',slug:'greninja',type:'water',hp:110,maxHp:110,moves:[{name:'Water Shuriken',type:'water'},{name:'Cut',type:'normal'},{name:'Aerial Ace',type:'flying'},{name:'Double Team',type:'normal'}]},
@@ -432,7 +433,7 @@ const PLAYER_PACKAGES = [
     {name:'Goodra',slug:'goodra',type:'dragon',hp:110,maxHp:110,moves:[{name:'Dragon Pulse',type:'dragon'},{name:'Ice Beam',type:'ice'},{name:'Bide',type:'normal'},{name:'Body Slam',type:'normal'}]},
     {name:'Noivern',slug:'noivern',type:'flying',hp:110,maxHp:110,moves:[{name:'Boomburst',type:'normal'},{name:'Dragon Pulse',type:'dragon'},{name:'Air Slash',type:'flying'},{name:'Super Sonic',type:'normal'}]},
    ]},
-  {id:'horizons-liko', label:'Tim Horizons', series:'Anime Horizons', tier:'base', color:'#a3e635',
+  {id:'horizons-liko', label:'Tim Horizons', series:'Anime Horizons', tier:'base', color:'#a3e635', region:'paldea',
    team:[
     {name:'Sprigatito',slug:'sprigatito',type:'grass',hp:95,maxHp:95,moves:[{name:'Scratch',type:'normal'},{name:'Leafage',type:'grass'},{name:'Bite',type:'dark'},{name:'Growl',type:'normal'}]},
     {name:'Fuecoco',slug:'fuecoco',type:'fire',hp:95,maxHp:95,moves:[{name:'Ember',type:'fire'},{name:'Tackle',type:'normal'},{name:'Incinerate',type:'fire'},{name:'Leer',type:'normal'}]},
@@ -441,7 +442,7 @@ const PLAYER_PACKAGES = [
     {name:'Pikachu',slug:'pikachu',type:'electric',hp:95,maxHp:95,moves:[{name:'Thunder Shock',type:'electric'},{name:'Quick Attack',type:'normal'},{name:'Volt Tackle',type:'electric'},{name:'Iron Tail',type:'steel'}]},
     {name:'Hatenna',slug:'hatenna',type:'psychic',hp:95,maxHp:95,moves:[{name:'Confusion',type:'psychic'},{name:'Disarming Voice',type:'fairy'},{name:'Tackle',type:'normal'},{name:'Play Nice',type:'normal'}]},
    ]},
-  {id:'starters-gen3', label:'Starter Hoenn', series:'Gen 3', tier:'base', color:'#34d399',
+  {id:'starters-gen3', label:'Starter Hoenn', series:'Gen 3', tier:'base', color:'#34d399', region:'hoenn',
    team:[
     {name:'Treecko',slug:'treecko',type:'grass',hp:90,maxHp:90,moves:[{name:'Pound',type:'normal'},{name:'Absorb',type:'grass'},{name:'Quick Attack',type:'normal'},{name:'Leer',type:'normal'}]},
     {name:'Torchic',slug:'torchic',type:'fire',hp:90,maxHp:90,moves:[{name:'Ember',type:'fire'},{name:'Scratch',type:'normal'},{name:'Peck',type:'flying'},{name:'Growl',type:'normal'}]},
@@ -450,7 +451,7 @@ const PLAYER_PACKAGES = [
     {name:'Zigzagoon',slug:'zigzagoon',type:'normal',hp:90,maxHp:90,moves:[{name:'Tackle',type:'normal'},{name:'Headbutt',type:'normal'},{name:'Sand Attack',type:'ground'},{name:'Growl',type:'normal'}]},
     {name:'Poochyena',slug:'poochyena',type:'dark',hp:90,maxHp:90,moves:[{name:'Bite',type:'dark'},{name:'Tackle',type:'normal'},{name:'Howl',type:'normal'},{name:'Sand Attack',type:'ground'}]},
    ]},
-  {id:'eevee-squad', label:'Tim Evoli', series:'Eeveelutions', tier:'final', color:'#fbbf24',
+  {id:'eevee-squad', label:'Tim Evoli', series:'Eeveelutions', tier:'final', color:'#fbbf24', region:'galar',
    team:[
     {name:'Eevee',slug:'eevee',type:'normal',hp:105,maxHp:105,moves:[{name:'Quick Attack',type:'normal'},{name:'Bite',type:'dark'},{name:'Last Resort',type:'normal'},{name:'Swift',type:'normal'}]},
     {name:'Vaporeon',slug:'vaporeon',type:'water',hp:105,maxHp:105,moves:[{name:'Hydro Pump',type:'water'},{name:'Ice Beam',type:'ice'},{name:'Aurora Beam',type:'ice'},{name:'Quick Attack',type:'normal'}]},
@@ -459,7 +460,7 @@ const PLAYER_PACKAGES = [
     {name:'Espeon',slug:'espeon',type:'psychic',hp:105,maxHp:105,moves:[{name:'Psychic',type:'psychic'},{name:'Confusion',type:'psychic'},{name:'Quick Attack',type:'normal'},{name:'Swift',type:'normal'}]},
     {name:'Umbreon',slug:'umbreon',type:'dark',hp:105,maxHp:105,moves:[{name:'Dark Pulse',type:'dark'},{name:'Bite',type:'dark'},{name:'Quick Attack',type:'normal'},{name:'Mean Look',type:'normal'}]},
    ]},
-  {id:'mega-stars', label:'Bintang Mega', series:'Mega Evolution', tier:'mega', color:'#a855f7',
+  {id:'mega-stars', label:'Bintang Mega', series:'Mega Evolution', tier:'mega', color:'#a855f7', region:'kalos',
    team:[
     {name:'Mega Charizard',slug:'charizard-mega-x',type:'dragon',hp:130,maxHp:130,moves:[{name:'Dragon Claw',type:'dragon'},{name:'Flamethrower',type:'fire'},{name:'Blast Burn',type:'fire'},{name:'Fly',type:'flying'}]},
     {name:'Mega Venusaur',slug:'venusaur-mega',type:'grass',hp:130,maxHp:130,moves:[{name:'Frenzy Plant',type:'grass'},{name:'Sludge Bomb',type:'poison'},{name:'Solar Beam',type:'grass'},{name:'Earthquake',type:'ground'}]},
@@ -468,7 +469,7 @@ const PLAYER_PACKAGES = [
     {name:'Mega Lucario',slug:'lucario-mega',type:'fighting',hp:130,maxHp:130,moves:[{name:'Aura Sphere',type:'fighting'},{name:'Flash Cannon',type:'steel'},{name:'Close Combat',type:'fighting'},{name:'Extreme Speed',type:'normal'}]},
     {name:'Mega Gengar',slug:'gengar-mega',type:'ghost',hp:130,maxHp:130,moves:[{name:'Shadow Ball',type:'ghost'},{name:'Sludge Bomb',type:'poison'},{name:'Hypnosis',type:'psychic'},{name:'Dream Eater',type:'psychic'}]},
    ]},
-  {id:'legend-birds', label:'Burung Legendaris', series:'Legendary', tier:'mega', color:'#eab308',
+  {id:'legend-birds', label:'Burung Legendaris', series:'Legendary', tier:'mega', color:'#eab308', region:'kanto',
    team:[
     {name:'Articuno',slug:'articuno',type:'ice',hp:120,maxHp:120,moves:[{name:'Ice Beam',type:'ice'},{name:'Blizzard',type:'ice'},{name:'Sheer Cold',type:'ice'},{name:'Gust',type:'flying'}]},
     {name:'Zapdos',slug:'zapdos',type:'electric',hp:120,maxHp:120,moves:[{name:'Thunder',type:'electric'},{name:'Thunderbolt',type:'electric'},{name:'Drill Peck',type:'flying'},{name:'Zap Cannon',type:'electric'}]},
@@ -477,7 +478,7 @@ const PLAYER_PACKAGES = [
     {name:'Ho-Oh',slug:'ho-oh',type:'fire',hp:125,maxHp:125,moves:[{name:'Sacred Fire',type:'fire'},{name:'Fire Blast',type:'fire'},{name:'Sky Attack',type:'flying'},{name:'Recover',type:'normal'}]},
     {name:'Rayquaza',slug:'rayquaza',type:'dragon',hp:130,maxHp:130,moves:[{name:'Dragon Ascent',type:'dragon'},{name:'Outrage',type:'dragon'},{name:'Hyper Beam',type:'normal'},{name:'Fly',type:'flying'}]},
    ]},
-  {id:'pseudo-legend', label:'Klub Pseudo-Legend', series:'Pseudo Legendary', tier:'final', color:'#8b5cf6',
+  {id:'pseudo-legend', label:'Klub Pseudo-Legend', series:'Pseudo Legendary', tier:'final', color:'#8b5cf6', region:'galar',
    team:[
     {name:'Dragonite',slug:'dragonite',type:'dragon',hp:115,maxHp:115,moves:[{name:'Dragon Claw',type:'dragon'},{name:'Hyper Beam',type:'normal'},{name:'Fly',type:'flying'},{name:'Outrage',type:'dragon'}]},
     {name:'Tyranitar',slug:'tyranitar',type:'dark',hp:115,maxHp:115,moves:[{name:'Crunch',type:'dark'},{name:'Rock Slide',type:'rock'},{name:'Earthquake',type:'ground'},{name:'Stone Edge',type:'rock'}]},
@@ -486,7 +487,393 @@ const PLAYER_PACKAGES = [
     {name:'Garchomp',slug:'garchomp',type:'dragon',hp:115,maxHp:115,moves:[{name:'Dragon Claw',type:'dragon'},{name:'Earthquake',type:'ground'},{name:'Crunch',type:'dark'},{name:'Dig',type:'ground'}]},
     {name:'Hydreigon',slug:'hydreigon',type:'dark',hp:115,maxHp:115,moves:[{name:'Dark Pulse',type:'dark'},{name:'Dragon Pulse',type:'dragon'},{name:'Crunch',type:'dark'},{name:'Hyper Voice',type:'normal'}]},
    ]},
+  // ─── KANTO ADDITIONS ───
+  {id:'kanto-starter-base', label:'Starter Kanto Awal', series:'Gen 1', tier:'base', color:'#22C55E', region:'kanto',
+   team:[
+    {name:'Bulbasaur',slug:'bulbasaur',type:'grass',hp:90,maxHp:90,moves:[{name:'Vine Whip',type:'grass'},{name:'Tackle',type:'normal'},{name:'Leech Seed',type:'grass'},{name:'Growl',type:'normal'}]},
+    {name:'Charmander',slug:'charmander',type:'fire',hp:90,maxHp:90,moves:[{name:'Ember',type:'fire'},{name:'Scratch',type:'normal'},{name:'Growl',type:'normal'},{name:'Leer',type:'normal'}]},
+    {name:'Squirtle',slug:'squirtle',type:'water',hp:90,maxHp:90,moves:[{name:'Water Gun',type:'water'},{name:'Tackle',type:'normal'},{name:'Withdraw',type:'water'},{name:'Tail Whip',type:'normal'}]},
+    {name:'Pikachu',slug:'pikachu',type:'electric',hp:90,maxHp:90,moves:[{name:'Thunder Shock',type:'electric'},{name:'Quick Attack',type:'normal'},{name:'Tail Whip',type:'normal'},{name:'Growl',type:'normal'}]},
+    {name:'Eevee',slug:'eevee',type:'normal',hp:90,maxHp:90,moves:[{name:'Tackle',type:'normal'},{name:'Quick Attack',type:'normal'},{name:'Bite',type:'dark'},{name:'Sand Attack',type:'ground'}]},
+    {name:'Pidgey',slug:'pidgey',type:'flying',hp:90,maxHp:90,moves:[{name:'Gust',type:'flying'},{name:'Quick Attack',type:'normal'},{name:'Sand Attack',type:'ground'},{name:'Tackle',type:'normal'}]},
+   ]},
+  {id:'kanto-starter-final', label:'Starter Kanto Final', series:'Gen 1', tier:'final', color:'#15803d', region:'kanto',
+   team:[
+    {name:'Venusaur',slug:'venusaur',type:'grass',hp:115,maxHp:115,moves:[{name:'Solar Beam',type:'grass'},{name:'Sludge Bomb',type:'poison'},{name:'Razor Leaf',type:'grass'},{name:'Sleep Powder',type:'grass'}]},
+    {name:'Charizard',slug:'charizard',type:'fire',hp:115,maxHp:115,moves:[{name:'Flamethrower',type:'fire'},{name:'Dragon Claw',type:'dragon'},{name:'Fly',type:'flying'},{name:'Slash',type:'normal'}]},
+    {name:'Blastoise',slug:'blastoise',type:'water',hp:115,maxHp:115,moves:[{name:'Hydro Pump',type:'water'},{name:'Ice Beam',type:'ice'},{name:'Skull Bash',type:'normal'},{name:'Bite',type:'dark'}]},
+    {name:'Raichu',slug:'raichu',type:'electric',hp:115,maxHp:115,moves:[{name:'Thunderbolt',type:'electric'},{name:'Thunder',type:'electric'},{name:'Quick Attack',type:'normal'},{name:'Iron Tail',type:'steel'}]},
+    {name:'Vaporeon',slug:'vaporeon',type:'water',hp:115,maxHp:115,moves:[{name:'Hydro Pump',type:'water'},{name:'Ice Beam',type:'ice'},{name:'Aurora Beam',type:'ice'},{name:'Quick Attack',type:'normal'}]},
+    {name:'Pidgeot',slug:'pidgeot',type:'flying',hp:115,maxHp:115,moves:[{name:'Hurricane',type:'flying'},{name:'Wing Attack',type:'flying'},{name:'Quick Attack',type:'normal'},{name:'Steel Wing',type:'steel'}]},
+   ]},
+  {id:'kanto-companion', label:'Teman Ash Kanto', series:'Misty + Brock', tier:'final', color:'#06b6d4', region:'kanto',
+   team:[
+    {name:'Starmie',slug:'starmie',type:'water',hp:100,maxHp:100,moves:[{name:'Water Gun',type:'water'},{name:'Psychic',type:'psychic'},{name:'Swift',type:'normal'},{name:'Rapid Spin',type:'normal'}]},
+    {name:'Psyduck',slug:'psyduck',type:'water',hp:100,maxHp:100,moves:[{name:'Water Gun',type:'water'},{name:'Confusion',type:'psychic'},{name:'Headbutt',type:'normal'},{name:'Disable',type:'normal'}]},
+    {name:'Onix',slug:'onix',type:'rock',hp:100,maxHp:100,moves:[{name:'Rock Throw',type:'rock'},{name:'Tackle',type:'normal'},{name:'Bind',type:'normal'},{name:'Harden',type:'normal'}]},
+    {name:'Geodude',slug:'geodude',type:'rock',hp:100,maxHp:100,moves:[{name:'Rock Throw',type:'rock'},{name:'Tackle',type:'normal'},{name:'Defense Curl',type:'normal'},{name:'Magnitude',type:'ground'}]},
+    {name:'Vulpix',slug:'vulpix',type:'fire',hp:100,maxHp:100,moves:[{name:'Ember',type:'fire'},{name:'Quick Attack',type:'normal'},{name:'Tail Whip',type:'normal'},{name:'Confuse Ray',type:'ghost'}]},
+    {name:'Togepi',slug:'togepi',type:'fairy',hp:100,maxHp:100,moves:[{name:'Pound',type:'normal'},{name:'Charm',type:'fairy'},{name:'Metronome',type:'normal'},{name:'Sweet Kiss',type:'fairy'}]},
+   ]},
+  // ─── JOHTO ───
+  {id:'johto-starter-base', label:'Starter Johto Awal', series:'Gen 2', tier:'base', color:'#f59e0b', region:'johto',
+   team:[
+    {name:'Chikorita',slug:'chikorita',type:'grass',hp:90,maxHp:90,moves:[{name:'Vine Whip',type:'grass'},{name:'Tackle',type:'normal'},{name:'Razor Leaf',type:'grass'},{name:'Growl',type:'normal'}]},
+    {name:'Cyndaquil',slug:'cyndaquil',type:'fire',hp:90,maxHp:90,moves:[{name:'Ember',type:'fire'},{name:'Tackle',type:'normal'},{name:'Smokescreen',type:'normal'},{name:'Leer',type:'normal'}]},
+    {name:'Totodile',slug:'totodile',type:'water',hp:90,maxHp:90,moves:[{name:'Water Gun',type:'water'},{name:'Scratch',type:'normal'},{name:'Bite',type:'dark'},{name:'Leer',type:'normal'}]},
+    {name:'Pichu',slug:'pichu',type:'electric',hp:90,maxHp:90,moves:[{name:'Thunder Shock',type:'electric'},{name:'Tackle',type:'normal'},{name:'Charm',type:'fairy'},{name:'Sweet Kiss',type:'fairy'}]},
+    {name:'Togepi',slug:'togepi',type:'fairy',hp:90,maxHp:90,moves:[{name:'Pound',type:'normal'},{name:'Charm',type:'fairy'},{name:'Metronome',type:'normal'},{name:'Sweet Kiss',type:'fairy'}]},
+    {name:'Sentret',slug:'sentret',type:'normal',hp:90,maxHp:90,moves:[{name:'Tackle',type:'normal'},{name:'Quick Attack',type:'normal'},{name:'Defense Curl',type:'normal'},{name:'Scratch',type:'normal'}]},
+   ]},
+  {id:'johto-starter-final', label:'Starter Johto Final', series:'Gen 2', tier:'final', color:'#d97706', region:'johto',
+   team:[
+    {name:'Meganium',slug:'meganium',type:'grass',hp:115,maxHp:115,moves:[{name:'Solar Beam',type:'grass'},{name:'Petal Dance',type:'grass'},{name:'Body Slam',type:'normal'},{name:'Light Screen',type:'psychic'}]},
+    {name:'Typhlosion',slug:'typhlosion',type:'fire',hp:115,maxHp:115,moves:[{name:'Flamethrower',type:'fire'},{name:'Fire Blast',type:'fire'},{name:'Quick Attack',type:'normal'},{name:'Swift',type:'normal'}]},
+    {name:'Feraligatr',slug:'feraligatr',type:'water',hp:115,maxHp:115,moves:[{name:'Hydro Pump',type:'water'},{name:'Crunch',type:'dark'},{name:'Ice Fang',type:'ice'},{name:'Slash',type:'normal'}]},
+    {name:'Ampharos',slug:'ampharos',type:'electric',hp:115,maxHp:115,moves:[{name:'Thunderbolt',type:'electric'},{name:'Thunder',type:'electric'},{name:'Cotton Spore',type:'grass'},{name:'Tackle',type:'normal'}]},
+    {name:'Togekiss',slug:'togekiss',type:'fairy',hp:115,maxHp:115,moves:[{name:'Air Slash',type:'flying'},{name:'Aura Sphere',type:'fighting'},{name:'Dazzling Gleam',type:'fairy'},{name:'Extreme Speed',type:'normal'}]},
+    {name:'Furret',slug:'furret',type:'normal',hp:115,maxHp:115,moves:[{name:'Hyper Voice',type:'normal'},{name:'Quick Attack',type:'normal'},{name:'Slam',type:'normal'},{name:'Defense Curl',type:'normal'}]},
+   ]},
+  {id:'johto-ash', label:'Tim Ash Johto', series:'Anime Johto', tier:'base', color:'#ea580c', region:'johto',
+   team:[
+    {name:'Pikachu',slug:'pikachu',type:'electric',hp:100,maxHp:100,moves:[{name:'Thunderbolt',type:'electric'},{name:'Quick Attack',type:'normal'},{name:'Iron Tail',type:'steel'},{name:'Thunder',type:'electric'}]},
+    {name:'Bayleef',slug:'bayleef',type:'grass',hp:100,maxHp:100,moves:[{name:'Razor Leaf',type:'grass'},{name:'Body Slam',type:'normal'},{name:'Vine Whip',type:'grass'},{name:'Tackle',type:'normal'}]},
+    {name:'Quilava',slug:'quilava',type:'fire',hp:100,maxHp:100,moves:[{name:'Flame Wheel',type:'fire'},{name:'Quick Attack',type:'normal'},{name:'Ember',type:'fire'},{name:'Smokescreen',type:'normal'}]},
+    {name:'Totodile',slug:'totodile',type:'water',hp:100,maxHp:100,moves:[{name:'Water Gun',type:'water'},{name:'Bite',type:'dark'},{name:'Scratch',type:'normal'},{name:'Leer',type:'normal'}]},
+    {name:'Noctowl',slug:'noctowl',type:'flying',hp:100,maxHp:100,moves:[{name:'Hypnosis',type:'psychic'},{name:'Confusion',type:'psychic'},{name:'Peck',type:'flying'},{name:'Tackle',type:'normal'}]},
+    {name:'Heracross',slug:'heracross',type:'bug',hp:100,maxHp:100,moves:[{name:'Megahorn',type:'bug'},{name:'Brick Break',type:'fighting'},{name:'Horn Attack',type:'normal'},{name:'Endure',type:'normal'}]},
+   ]},
+  {id:'johto-companion', label:'Teman Misty + Brock Johto', series:'Anime Johto', tier:'final', color:'#0284c7', region:'johto',
+   team:[
+    {name:'Politoed',slug:'politoed',type:'water',hp:100,maxHp:100,moves:[{name:'Hydro Pump',type:'water'},{name:'Hypnosis',type:'psychic'},{name:'Body Slam',type:'normal'},{name:'Bubble Beam',type:'water'}]},
+    {name:'Corsola',slug:'corsola',type:'rock',hp:100,maxHp:100,moves:[{name:'Spike Cannon',type:'normal'},{name:'Bubble Beam',type:'water'},{name:'Recover',type:'normal'},{name:'Tackle',type:'normal'}]},
+    {name:'Sudowoodo',slug:'sudowoodo',type:'rock',hp:100,maxHp:100,moves:[{name:'Rock Slide',type:'rock'},{name:'Slam',type:'normal'},{name:'Mimic',type:'normal'},{name:'Low Kick',type:'fighting'}]},
+    {name:'Crobat',slug:'crobat',type:'poison',hp:100,maxHp:100,moves:[{name:'Cross Poison',type:'poison'},{name:'Air Slash',type:'flying'},{name:'Bite',type:'dark'},{name:'Supersonic',type:'normal'}]},
+    {name:'Forretress',slug:'forretress',type:'bug',hp:100,maxHp:100,moves:[{name:'Bug Bite',type:'bug'},{name:'Rapid Spin',type:'normal'},{name:'Tackle',type:'normal'},{name:'Spikes',type:'ground'}]},
+    {name:'Marill',slug:'marill',type:'water',hp:100,maxHp:100,moves:[{name:'Water Gun',type:'water'},{name:'Tackle',type:'normal'},{name:'Defense Curl',type:'normal'},{name:'Bubble',type:'water'}]},
+   ]},
+  {id:'johto-legend', label:'Legendaris Johto', series:'Legendary', tier:'mega', color:'#fbbf24', region:'johto',
+   team:[
+    {name:'Lugia',slug:'lugia',type:'psychic',hp:125,maxHp:125,moves:[{name:'Aeroblast',type:'flying'},{name:'Psychic',type:'psychic'},{name:'Hydro Pump',type:'water'},{name:'Sky Attack',type:'flying'}]},
+    {name:'Ho-Oh',slug:'ho-oh',type:'fire',hp:125,maxHp:125,moves:[{name:'Sacred Fire',type:'fire'},{name:'Fire Blast',type:'fire'},{name:'Sky Attack',type:'flying'},{name:'Recover',type:'normal'}]},
+    {name:'Suicune',slug:'suicune',type:'water',hp:125,maxHp:125,moves:[{name:'Hydro Pump',type:'water'},{name:'Aurora Beam',type:'ice'},{name:'Bubble Beam',type:'water'},{name:'Bite',type:'dark'}]},
+    {name:'Raikou',slug:'raikou',type:'electric',hp:125,maxHp:125,moves:[{name:'Thunder',type:'electric'},{name:'Thunderbolt',type:'electric'},{name:'Quick Attack',type:'normal'},{name:'Bite',type:'dark'}]},
+    {name:'Entei',slug:'entei',type:'fire',hp:125,maxHp:125,moves:[{name:'Sacred Fire',type:'fire'},{name:'Flamethrower',type:'fire'},{name:'Stomp',type:'normal'},{name:'Bite',type:'dark'}]},
+    {name:'Celebi',slug:'celebi',type:'psychic',hp:125,maxHp:125,moves:[{name:'Leaf Storm',type:'grass'},{name:'Psychic',type:'psychic'},{name:'Heal Bell',type:'normal'},{name:'Recover',type:'normal'}]},
+   ]},
+  // ─── HOENN ───
+  {id:'hoenn-starter-final', label:'Starter Hoenn Final', series:'Gen 3', tier:'final', color:'#16a34a', region:'hoenn',
+   team:[
+    {name:'Sceptile',slug:'sceptile',type:'grass',hp:115,maxHp:115,moves:[{name:'Leaf Blade',type:'grass'},{name:'Dragon Claw',type:'dragon'},{name:'Quick Attack',type:'normal'},{name:'Slam',type:'normal'}]},
+    {name:'Blaziken',slug:'blaziken',type:'fire',hp:115,maxHp:115,moves:[{name:'Blaze Kick',type:'fire'},{name:'Sky Uppercut',type:'fighting'},{name:'Flamethrower',type:'fire'},{name:'Slash',type:'normal'}]},
+    {name:'Swampert',slug:'swampert',type:'water',hp:115,maxHp:115,moves:[{name:'Hydro Pump',type:'water'},{name:'Earthquake',type:'ground'},{name:'Ice Beam',type:'ice'},{name:'Mud Shot',type:'ground'}]},
+    {name:'Gardevoir',slug:'gardevoir',type:'fairy',hp:115,maxHp:115,moves:[{name:'Moonblast',type:'fairy'},{name:'Psychic',type:'psychic'},{name:'Disarming Voice',type:'fairy'},{name:'Calm Mind',type:'psychic'}]},
+    {name:'Linoone',slug:'linoone',type:'normal',hp:115,maxHp:115,moves:[{name:'Headbutt',type:'normal'},{name:'Slash',type:'normal'},{name:'Quick Attack',type:'normal'},{name:'Tackle',type:'normal'}]},
+    {name:'Mightyena',slug:'mightyena',type:'dark',hp:115,maxHp:115,moves:[{name:'Crunch',type:'dark'},{name:'Bite',type:'dark'},{name:'Howl',type:'normal'},{name:'Take Down',type:'normal'}]},
+   ]},
+  {id:'hoenn-ash', label:'Tim Ash Hoenn', series:'Anime AG', tier:'base', color:'#dc2626', region:'hoenn',
+   team:[
+    {name:'Pikachu',slug:'pikachu',type:'electric',hp:100,maxHp:100,moves:[{name:'Thunderbolt',type:'electric'},{name:'Quick Attack',type:'normal'},{name:'Iron Tail',type:'steel'},{name:'Thunder',type:'electric'}]},
+    {name:'Sceptile',slug:'sceptile',type:'grass',hp:100,maxHp:100,moves:[{name:'Leaf Blade',type:'grass'},{name:'Bullet Seed',type:'grass'},{name:'Quick Attack',type:'normal'},{name:'Slam',type:'normal'}]},
+    {name:'Swellow',slug:'swellow',type:'flying',hp:100,maxHp:100,moves:[{name:'Aerial Ace',type:'flying'},{name:'Quick Attack',type:'normal'},{name:'Wing Attack',type:'flying'},{name:'Peck',type:'flying'}]},
+    {name:'Corphish',slug:'corphish',type:'water',hp:100,maxHp:100,moves:[{name:'Crabhammer',type:'water'},{name:'Bubble Beam',type:'water'},{name:'Vice Grip',type:'normal'},{name:'Harden',type:'normal'}]},
+    {name:'Glalie',slug:'glalie',type:'ice',hp:100,maxHp:100,moves:[{name:'Ice Beam',type:'ice'},{name:'Headbutt',type:'normal'},{name:'Bite',type:'dark'},{name:'Powder Snow',type:'ice'}]},
+    {name:'Torkoal',slug:'torkoal',type:'fire',hp:100,maxHp:100,moves:[{name:'Flamethrower',type:'fire'},{name:'Body Slam',type:'normal'},{name:'Iron Defense',type:'steel'},{name:'Smokescreen',type:'normal'}]},
+   ]},
+  {id:'hoenn-companion', label:'Teman May + Brock Hoenn', series:'Anime AG', tier:'final', color:'#9333ea', region:'hoenn',
+   team:[
+    {name:'Blaziken',slug:'blaziken',type:'fire',hp:100,maxHp:100,moves:[{name:'Blaze Kick',type:'fire'},{name:'Sky Uppercut',type:'fighting'},{name:'Flamethrower',type:'fire'},{name:'Slash',type:'normal'}]},
+    {name:'Beautifly',slug:'beautifly',type:'bug',hp:100,maxHp:100,moves:[{name:'Silver Wind',type:'bug'},{name:'Gust',type:'flying'},{name:'Absorb',type:'grass'},{name:'String Shot',type:'bug'}]},
+    {name:'Skitty',slug:'skitty',type:'normal',hp:100,maxHp:100,moves:[{name:'Tackle',type:'normal'},{name:'Assist',type:'normal'},{name:'Charm',type:'fairy'},{name:'Sing',type:'normal'}]},
+    {name:'Munchlax',slug:'munchlax',type:'normal',hp:100,maxHp:100,moves:[{name:'Body Slam',type:'normal'},{name:'Tackle',type:'normal'},{name:'Lick',type:'ghost'},{name:'Defense Curl',type:'normal'}]},
+    {name:'Marshtomp',slug:'marshtomp',type:'water',hp:100,maxHp:100,moves:[{name:'Water Gun',type:'water'},{name:'Mud Shot',type:'ground'},{name:'Tackle',type:'normal'},{name:'Bide',type:'normal'}]},
+    {name:'Forretress',slug:'forretress',type:'bug',hp:100,maxHp:100,moves:[{name:'Bug Bite',type:'bug'},{name:'Rapid Spin',type:'normal'},{name:'Tackle',type:'normal'},{name:'Spikes',type:'ground'}]},
+   ]},
+  {id:'hoenn-legend', label:'Legendaris Hoenn', series:'Legendary', tier:'mega', color:'#0284c7', region:'hoenn',
+   team:[
+    {name:'Kyogre',slug:'kyogre',type:'water',hp:125,maxHp:125,moves:[{name:'Hydro Pump',type:'water'},{name:'Ice Beam',type:'ice'},{name:'Surf',type:'water'},{name:'Thunder',type:'electric'}]},
+    {name:'Groudon',slug:'groudon',type:'ground',hp:125,maxHp:125,moves:[{name:'Earthquake',type:'ground'},{name:'Fire Blast',type:'fire'},{name:'Solar Beam',type:'grass'},{name:'Slash',type:'normal'}]},
+    {name:'Rayquaza',slug:'rayquaza',type:'dragon',hp:130,maxHp:130,moves:[{name:'Dragon Ascent',type:'dragon'},{name:'Outrage',type:'dragon'},{name:'Hyper Beam',type:'normal'},{name:'Fly',type:'flying'}]},
+    {name:'Latias',slug:'latias',type:'dragon',hp:125,maxHp:125,moves:[{name:'Dragon Pulse',type:'dragon'},{name:'Psychic',type:'psychic'},{name:'Mist Ball',type:'psychic'},{name:'Recover',type:'normal'}]},
+    {name:'Latios',slug:'latios',type:'dragon',hp:125,maxHp:125,moves:[{name:'Dragon Pulse',type:'dragon'},{name:'Psychic',type:'psychic'},{name:'Luster Purge',type:'psychic'},{name:'Recover',type:'normal'}]},
+    {name:'Deoxys',slug:'deoxys',type:'psychic',hp:125,maxHp:125,moves:[{name:'Psycho Boost',type:'psychic'},{name:'Hyper Beam',type:'normal'},{name:'Zap Cannon',type:'electric'},{name:'Recover',type:'normal'}]},
+   ]},
+  // ─── SINNOH ───
+  {id:'sinnoh-starter-base', label:'Starter Sinnoh Awal', series:'Gen 4', tier:'base', color:'#a3e635', region:'sinnoh',
+   team:[
+    {name:'Turtwig',slug:'turtwig',type:'grass',hp:90,maxHp:90,moves:[{name:'Razor Leaf',type:'grass'},{name:'Tackle',type:'normal'},{name:'Absorb',type:'grass'},{name:'Withdraw',type:'water'}]},
+    {name:'Chimchar',slug:'chimchar',type:'fire',hp:90,maxHp:90,moves:[{name:'Ember',type:'fire'},{name:'Scratch',type:'normal'},{name:'Leer',type:'normal'},{name:'Taunt',type:'dark'}]},
+    {name:'Piplup',slug:'piplup',type:'water',hp:90,maxHp:90,moves:[{name:'Bubble',type:'water'},{name:'Pound',type:'normal'},{name:'Peck',type:'flying'},{name:'Growl',type:'normal'}]},
+    {name:'Shinx',slug:'shinx',type:'electric',hp:90,maxHp:90,moves:[{name:'Spark',type:'electric'},{name:'Tackle',type:'normal'},{name:'Bite',type:'dark'},{name:'Leer',type:'normal'}]},
+    {name:'Starly',slug:'starly',type:'flying',hp:90,maxHp:90,moves:[{name:'Wing Attack',type:'flying'},{name:'Quick Attack',type:'normal'},{name:'Tackle',type:'normal'},{name:'Growl',type:'normal'}]},
+    {name:'Bidoof',slug:'bidoof',type:'normal',hp:90,maxHp:90,moves:[{name:'Tackle',type:'normal'},{name:'Headbutt',type:'normal'},{name:'Defense Curl',type:'normal'},{name:'Quick Attack',type:'normal'}]},
+   ]},
+  {id:'sinnoh-starter-final', label:'Starter Sinnoh Final', series:'Gen 4', tier:'final', color:'#65a30d', region:'sinnoh',
+   team:[
+    {name:'Torterra',slug:'torterra',type:'grass',hp:115,maxHp:115,moves:[{name:'Wood Hammer',type:'grass'},{name:'Earthquake',type:'ground'},{name:'Crunch',type:'dark'},{name:'Leaf Storm',type:'grass'}]},
+    {name:'Infernape',slug:'infernape',type:'fire',hp:115,maxHp:115,moves:[{name:'Flare Blitz',type:'fire'},{name:'Close Combat',type:'fighting'},{name:'Flamethrower',type:'fire'},{name:'Mach Punch',type:'fighting'}]},
+    {name:'Empoleon',slug:'empoleon',type:'water',hp:115,maxHp:115,moves:[{name:'Hydro Pump',type:'water'},{name:'Flash Cannon',type:'steel'},{name:'Ice Beam',type:'ice'},{name:'Drill Peck',type:'flying'}]},
+    {name:'Luxray',slug:'luxray',type:'electric',hp:115,maxHp:115,moves:[{name:'Thunder Fang',type:'electric'},{name:'Crunch',type:'dark'},{name:'Spark',type:'electric'},{name:'Bite',type:'dark'}]},
+    {name:'Staraptor',slug:'staraptor',type:'flying',hp:115,maxHp:115,moves:[{name:'Brave Bird',type:'flying'},{name:'Close Combat',type:'fighting'},{name:'Aerial Ace',type:'flying'},{name:'Quick Attack',type:'normal'}]},
+    {name:'Bibarel',slug:'bibarel',type:'water',hp:115,maxHp:115,moves:[{name:'Water Gun',type:'water'},{name:'Headbutt',type:'normal'},{name:'Crunch',type:'dark'},{name:'Take Down',type:'normal'}]},
+   ]},
+  {id:'sinnoh-ash', label:'Tim Ash Sinnoh', series:'Anime DP', tier:'base', color:'#f97316', region:'sinnoh',
+   team:[
+    {name:'Pikachu',slug:'pikachu',type:'electric',hp:100,maxHp:100,moves:[{name:'Thunderbolt',type:'electric'},{name:'Quick Attack',type:'normal'},{name:'Iron Tail',type:'steel'},{name:'Volt Tackle',type:'electric'}]},
+    {name:'Infernape',slug:'infernape',type:'fire',hp:100,maxHp:100,moves:[{name:'Flare Blitz',type:'fire'},{name:'Mach Punch',type:'fighting'},{name:'Flamethrower',type:'fire'},{name:'Dig',type:'ground'}]},
+    {name:'Staraptor',slug:'staraptor',type:'flying',hp:100,maxHp:100,moves:[{name:'Brave Bird',type:'flying'},{name:'Close Combat',type:'fighting'},{name:'Aerial Ace',type:'flying'},{name:'Quick Attack',type:'normal'}]},
+    {name:'Torterra',slug:'torterra',type:'grass',hp:100,maxHp:100,moves:[{name:'Leaf Storm',type:'grass'},{name:'Earthquake',type:'ground'},{name:'Razor Leaf',type:'grass'},{name:'Synthesis',type:'grass'}]},
+    {name:'Buizel',slug:'buizel',type:'water',hp:100,maxHp:100,moves:[{name:'Aqua Jet',type:'water'},{name:'Water Gun',type:'water'},{name:'Quick Attack',type:'normal'},{name:'Sonic Boom',type:'normal'}]},
+    {name:'Gliscor',slug:'gliscor',type:'ground',hp:100,maxHp:100,moves:[{name:'Earthquake',type:'ground'},{name:'X-Scissor',type:'bug'},{name:'Fire Fang',type:'fire'},{name:'Ice Fang',type:'ice'}]},
+   ]},
+  {id:'sinnoh-companion', label:'Teman Dawn + Brock Sinnoh', series:'Anime DP', tier:'final', color:'#3b82f6', region:'sinnoh',
+   team:[
+    {name:'Empoleon',slug:'empoleon',type:'water',hp:100,maxHp:100,moves:[{name:'Hydro Pump',type:'water'},{name:'Ice Beam',type:'ice'},{name:'Flash Cannon',type:'steel'},{name:'Drill Peck',type:'flying'}]},
+    {name:'Buneary',slug:'buneary',type:'normal',hp:100,maxHp:100,moves:[{name:'Pound',type:'normal'},{name:'Dizzy Punch',type:'normal'},{name:'Charm',type:'fairy'},{name:'Quick Attack',type:'normal'}]},
+    {name:'Pachirisu',slug:'pachirisu',type:'electric',hp:100,maxHp:100,moves:[{name:'Spark',type:'electric'},{name:'Quick Attack',type:'normal'},{name:'Sweet Kiss',type:'fairy'},{name:'Charm',type:'fairy'}]},
+    {name:'Mamoswine',slug:'mamoswine',type:'ice',hp:100,maxHp:100,moves:[{name:'Ice Shard',type:'ice'},{name:'Earthquake',type:'ground'},{name:'Take Down',type:'normal'},{name:'Powder Snow',type:'ice'}]},
+    {name:'Croagunk',slug:'croagunk',type:'poison',hp:100,maxHp:100,moves:[{name:'Poison Jab',type:'poison'},{name:'Brick Break',type:'fighting'},{name:'Mud Slap',type:'ground'},{name:'Astonish',type:'ghost'}]},
+    {name:'Sudowoodo',slug:'sudowoodo',type:'rock',hp:100,maxHp:100,moves:[{name:'Rock Slide',type:'rock'},{name:'Slam',type:'normal'},{name:'Mimic',type:'normal'},{name:'Low Kick',type:'fighting'}]},
+   ]},
+  {id:'sinnoh-legend', label:'Legendaris Sinnoh', series:'Legendary', tier:'mega', color:'#8b5cf6', region:'sinnoh',
+   team:[
+    {name:'Dialga',slug:'dialga',type:'steel',hp:130,maxHp:130,moves:[{name:'Roar of Time',type:'dragon'},{name:'Flash Cannon',type:'steel'},{name:'Aura Sphere',type:'fighting'},{name:'Dragon Pulse',type:'dragon'}]},
+    {name:'Palkia',slug:'palkia',type:'water',hp:130,maxHp:130,moves:[{name:'Spacial Rend',type:'dragon'},{name:'Hydro Pump',type:'water'},{name:'Aura Sphere',type:'fighting'},{name:'Dragon Pulse',type:'dragon'}]},
+    {name:'Giratina',slug:'giratina',type:'ghost',hp:130,maxHp:130,moves:[{name:'Shadow Force',type:'ghost'},{name:'Dragon Pulse',type:'dragon'},{name:'Dark Pulse',type:'dark'},{name:'Aura Sphere',type:'fighting'}]},
+    {name:'Arceus',slug:'arceus',type:'normal',hp:130,maxHp:130,moves:[{name:'Judgment',type:'normal'},{name:'Hyper Beam',type:'normal'},{name:'Earth Power',type:'ground'},{name:'Recover',type:'normal'}]},
+    {name:'Darkrai',slug:'darkrai',type:'dark',hp:130,maxHp:130,moves:[{name:'Dark Void',type:'dark'},{name:'Dark Pulse',type:'dark'},{name:'Dream Eater',type:'psychic'},{name:'Nightmare',type:'ghost'}]},
+    {name:'Cresselia',slug:'cresselia',type:'psychic',hp:130,maxHp:130,moves:[{name:'Psychic',type:'psychic'},{name:'Moonblast',type:'fairy'},{name:'Aurora Beam',type:'ice'},{name:'Recover',type:'normal'}]},
+   ]},
+  // ─── UNOVA ───
+  {id:'unova-starter-base', label:'Starter Unova Awal', series:'Gen 5', tier:'base', color:'#10b981', region:'unova',
+   team:[
+    {name:'Snivy',slug:'snivy',type:'grass',hp:90,maxHp:90,moves:[{name:'Vine Whip',type:'grass'},{name:'Tackle',type:'normal'},{name:'Leaf Tornado',type:'grass'},{name:'Leer',type:'normal'}]},
+    {name:'Tepig',slug:'tepig',type:'fire',hp:90,maxHp:90,moves:[{name:'Ember',type:'fire'},{name:'Tackle',type:'normal'},{name:'Defense Curl',type:'normal'},{name:'Tail Whip',type:'normal'}]},
+    {name:'Oshawott',slug:'oshawott',type:'water',hp:90,maxHp:90,moves:[{name:'Water Gun',type:'water'},{name:'Tackle',type:'normal'},{name:'Razor Shell',type:'water'},{name:'Tail Whip',type:'normal'}]},
+    {name:'Patrat',slug:'patrat',type:'normal',hp:90,maxHp:90,moves:[{name:'Tackle',type:'normal'},{name:'Bite',type:'dark'},{name:'Bide',type:'normal'},{name:'Leer',type:'normal'}]},
+    {name:'Lillipup',slug:'lillipup',type:'normal',hp:90,maxHp:90,moves:[{name:'Tackle',type:'normal'},{name:'Bite',type:'dark'},{name:'Take Down',type:'normal'},{name:'Leer',type:'normal'}]},
+    {name:'Pansage',slug:'pansage',type:'grass',hp:90,maxHp:90,moves:[{name:'Vine Whip',type:'grass'},{name:'Scratch',type:'normal'},{name:'Bite',type:'dark'},{name:'Leer',type:'normal'}]},
+   ]},
+  {id:'unova-starter-final', label:'Starter Unova Final', series:'Gen 5', tier:'final', color:'#047857', region:'unova',
+   team:[
+    {name:'Serperior',slug:'serperior',type:'grass',hp:115,maxHp:115,moves:[{name:'Leaf Blade',type:'grass'},{name:'Leaf Storm',type:'grass'},{name:'Coil',type:'poison'},{name:'Slam',type:'normal'}]},
+    {name:'Emboar',slug:'emboar',type:'fire',hp:115,maxHp:115,moves:[{name:'Flare Blitz',type:'fire'},{name:'Hammer Arm',type:'fighting'},{name:'Flamethrower',type:'fire'},{name:'Head Smash',type:'rock'}]},
+    {name:'Samurott',slug:'samurott',type:'water',hp:115,maxHp:115,moves:[{name:'Hydro Pump',type:'water'},{name:'Razor Shell',type:'water'},{name:'Slash',type:'normal'},{name:'Aqua Jet',type:'water'}]},
+    {name:'Watchog',slug:'watchog',type:'normal',hp:115,maxHp:115,moves:[{name:'Hyper Fang',type:'normal'},{name:'Crunch',type:'dark'},{name:'Confuse Ray',type:'ghost'},{name:'Tackle',type:'normal'}]},
+    {name:'Stoutland',slug:'stoutland',type:'normal',hp:115,maxHp:115,moves:[{name:'Take Down',type:'normal'},{name:'Crunch',type:'dark'},{name:'Roar',type:'normal'},{name:'Bite',type:'dark'}]},
+    {name:'Simisage',slug:'simisage',type:'grass',hp:115,maxHp:115,moves:[{name:'Seed Bomb',type:'grass'},{name:'Crunch',type:'dark'},{name:'Vine Whip',type:'grass'},{name:'Bite',type:'dark'}]},
+   ]},
+  {id:'unova-ash', label:'Tim Ash Unova', series:'Anime BW', tier:'base', color:'#dc2626', region:'unova',
+   team:[
+    {name:'Pikachu',slug:'pikachu',type:'electric',hp:100,maxHp:100,moves:[{name:'Thunderbolt',type:'electric'},{name:'Quick Attack',type:'normal'},{name:'Iron Tail',type:'steel'},{name:'Electro Ball',type:'electric'}]},
+    {name:'Snivy',slug:'snivy',type:'grass',hp:100,maxHp:100,moves:[{name:'Leaf Blade',type:'grass'},{name:'Vine Whip',type:'grass'},{name:'Attract',type:'normal'},{name:'Leaf Tornado',type:'grass'}]},
+    {name:'Oshawott',slug:'oshawott',type:'water',hp:100,maxHp:100,moves:[{name:'Razor Shell',type:'water'},{name:'Water Gun',type:'water'},{name:'Aqua Jet',type:'water'},{name:'Tackle',type:'normal'}]},
+    {name:'Pignite',slug:'pignite',type:'fire',hp:100,maxHp:100,moves:[{name:'Flame Charge',type:'fire'},{name:'Heat Crash',type:'fire'},{name:'Arm Thrust',type:'fighting'},{name:'Tackle',type:'normal'}]},
+    {name:'Krookodile',slug:'krookodile',type:'dark',hp:100,maxHp:100,moves:[{name:'Crunch',type:'dark'},{name:'Earthquake',type:'ground'},{name:'Stone Edge',type:'rock'},{name:'Dragon Claw',type:'dragon'}]},
+    {name:'Charizard',slug:'charizard',type:'fire',hp:100,maxHp:100,moves:[{name:'Flamethrower',type:'fire'},{name:'Dragon Tail',type:'dragon'},{name:'Wing Attack',type:'flying'},{name:'Slash',type:'normal'}]},
+   ]},
+  {id:'unova-companion', label:'Teman Iris + Cilan', series:'Anime BW', tier:'final', color:'#0891b2', region:'unova',
+   team:[
+    {name:'Axew',slug:'axew',type:'dragon',hp:100,maxHp:100,moves:[{name:'Dragon Rage',type:'dragon'},{name:'Scratch',type:'normal'},{name:'Leer',type:'normal'},{name:'Bite',type:'dark'}]},
+    {name:'Excadrill',slug:'excadrill',type:'ground',hp:100,maxHp:100,moves:[{name:'Drill Run',type:'ground'},{name:'Earthquake',type:'ground'},{name:'Metal Claw',type:'steel'},{name:'Slash',type:'normal'}]},
+    {name:'Emolga',slug:'emolga',type:'electric',hp:100,maxHp:100,moves:[{name:'Discharge',type:'electric'},{name:'Volt Switch',type:'electric'},{name:'Acrobatics',type:'flying'},{name:'Quick Attack',type:'normal'}]},
+    {name:'Pansage',slug:'pansage',type:'grass',hp:100,maxHp:100,moves:[{name:'Vine Whip',type:'grass'},{name:'Bite',type:'dark'},{name:'Bullet Seed',type:'grass'},{name:'Scratch',type:'normal'}]},
+    {name:'Crustle',slug:'crustle',type:'bug',hp:100,maxHp:100,moves:[{name:'X-Scissor',type:'bug'},{name:'Rock Slide',type:'rock'},{name:'Slash',type:'normal'},{name:'Withdraw',type:'water'}]},
+    {name:'Stunfisk',slug:'stunfisk',type:'electric',hp:100,maxHp:100,moves:[{name:'Mud Bomb',type:'ground'},{name:'Discharge',type:'electric'},{name:'Bide',type:'normal'},{name:'Tackle',type:'normal'}]},
+   ]},
+  {id:'unova-legend', label:'Legendaris Unova', series:'Legendary', tier:'mega', color:'#f59e0b', region:'unova',
+   team:[
+    {name:'Reshiram',slug:'reshiram',type:'dragon',hp:130,maxHp:130,moves:[{name:'Blue Flare',type:'fire'},{name:'Dragon Pulse',type:'dragon'},{name:'Fusion Flare',type:'fire'},{name:'Hyper Voice',type:'normal'}]},
+    {name:'Zekrom',slug:'zekrom',type:'dragon',hp:130,maxHp:130,moves:[{name:'Bolt Strike',type:'electric'},{name:'Dragon Pulse',type:'dragon'},{name:'Fusion Bolt',type:'electric'},{name:'Crunch',type:'dark'}]},
+    {name:'Kyurem',slug:'kyurem',type:'dragon',hp:130,maxHp:130,moves:[{name:'Glaciate',type:'ice'},{name:'Dragon Pulse',type:'dragon'},{name:'Ice Beam',type:'ice'},{name:'Hyper Voice',type:'normal'}]},
+    {name:'Victini',slug:'victini',type:'fire',hp:130,maxHp:130,moves:[{name:'V-create',type:'fire'},{name:'Flamethrower',type:'fire'},{name:'Psychic',type:'psychic'},{name:'Searing Shot',type:'fire'}]},
+    {name:'Keldeo',slug:'keldeo',type:'water',hp:130,maxHp:130,moves:[{name:'Sacred Sword',type:'fighting'},{name:'Hydro Pump',type:'water'},{name:'Aqua Jet',type:'water'},{name:'Close Combat',type:'fighting'}]},
+    {name:'Genesect',slug:'genesect',type:'bug',hp:130,maxHp:130,moves:[{name:'Techno Blast',type:'normal'},{name:'Bug Buzz',type:'bug'},{name:'Flash Cannon',type:'steel'},{name:'X-Scissor',type:'bug'}]},
+   ]},
+  // ─── KALOS ADDITIONS ───
+  {id:'kalos-starter-base', label:'Starter Kalos Awal', series:'Gen 6', tier:'base', color:'#3b82f6', region:'kalos',
+   team:[
+    {name:'Chespin',slug:'chespin',type:'grass',hp:90,maxHp:90,moves:[{name:'Vine Whip',type:'grass'},{name:'Tackle',type:'normal'},{name:'Rollout',type:'rock'},{name:'Growl',type:'normal'}]},
+    {name:'Fennekin',slug:'fennekin',type:'fire',hp:90,maxHp:90,moves:[{name:'Ember',type:'fire'},{name:'Scratch',type:'normal'},{name:'Howl',type:'normal'},{name:'Tail Whip',type:'normal'}]},
+    {name:'Froakie',slug:'froakie',type:'water',hp:90,maxHp:90,moves:[{name:'Water Pulse',type:'water'},{name:'Pound',type:'normal'},{name:'Bubble',type:'water'},{name:'Quick Attack',type:'normal'}]},
+    {name:'Bunnelby',slug:'bunnelby',type:'normal',hp:90,maxHp:90,moves:[{name:'Tackle',type:'normal'},{name:'Dig',type:'ground'},{name:'Quick Attack',type:'normal'},{name:'Leer',type:'normal'}]},
+    {name:'Fletchling',slug:'fletchling',type:'flying',hp:90,maxHp:90,moves:[{name:'Peck',type:'flying'},{name:'Quick Attack',type:'normal'},{name:'Agility',type:'psychic'},{name:'Tackle',type:'normal'}]},
+    {name:'Litleo',slug:'litleo',type:'fire',hp:90,maxHp:90,moves:[{name:'Ember',type:'fire'},{name:'Tackle',type:'normal'},{name:'Headbutt',type:'normal'},{name:'Leer',type:'normal'}]},
+   ]},
+  {id:'kalos-starter-final', label:'Starter Kalos Final', series:'Gen 6', tier:'final', color:'#1e40af', region:'kalos',
+   team:[
+    {name:'Chesnaught',slug:'chesnaught',type:'grass',hp:115,maxHp:115,moves:[{name:'Wood Hammer',type:'grass'},{name:'Hammer Arm',type:'fighting'},{name:'Spiky Shield',type:'grass'},{name:'Body Slam',type:'normal'}]},
+    {name:'Delphox',slug:'delphox',type:'fire',hp:115,maxHp:115,moves:[{name:'Mystical Fire',type:'fire'},{name:'Psychic',type:'psychic'},{name:'Flamethrower',type:'fire'},{name:'Shadow Ball',type:'ghost'}]},
+    {name:'Greninja',slug:'greninja',type:'water',hp:115,maxHp:115,moves:[{name:'Water Shuriken',type:'water'},{name:'Cut',type:'normal'},{name:'Aerial Ace',type:'flying'},{name:'Double Team',type:'normal'}]},
+    {name:'Diggersby',slug:'diggersby',type:'normal',hp:115,maxHp:115,moves:[{name:'Earthquake',type:'ground'},{name:'Hammer Arm',type:'fighting'},{name:'Quick Attack',type:'normal'},{name:'Dig',type:'ground'}]},
+    {name:'Talonflame',slug:'talonflame',type:'fire',hp:115,maxHp:115,moves:[{name:'Brave Bird',type:'flying'},{name:'Flame Charge',type:'fire'},{name:'Steel Wing',type:'steel'},{name:'Quick Attack',type:'normal'}]},
+    {name:'Pyroar',slug:'pyroar',type:'fire',hp:115,maxHp:115,moves:[{name:'Hyper Voice',type:'normal'},{name:'Flamethrower',type:'fire'},{name:'Crunch',type:'dark'},{name:'Fire Fang',type:'fire'}]},
+   ]},
+  {id:'kalos-legend', label:'Legendaris Kalos', series:'Legendary', tier:'mega', color:'#06b6d4', region:'kalos',
+   team:[
+    {name:'Xerneas',slug:'xerneas',type:'fairy',hp:130,maxHp:130,moves:[{name:'Geomancy',type:'fairy'},{name:'Moonblast',type:'fairy'},{name:'Megahorn',type:'bug'},{name:'Aurora Beam',type:'ice'}]},
+    {name:'Yveltal',slug:'yveltal',type:'dark',hp:130,maxHp:130,moves:[{name:'Oblivion Wing',type:'flying'},{name:'Dark Pulse',type:'dark'},{name:'Hyper Beam',type:'normal'},{name:'Dragon Rush',type:'dragon'}]},
+    {name:'Zygarde',slug:'zygarde',type:'dragon',hp:130,maxHp:130,moves:[{name:'Dragon Pulse',type:'dragon'},{name:'Earthquake',type:'ground'},{name:'Crunch',type:'dark'},{name:'Land’s Wrath',type:'ground'}]},
+    {name:'Diancie',slug:'diancie',type:'rock',hp:130,maxHp:130,moves:[{name:'Diamond Storm',type:'rock'},{name:'Moonblast',type:'fairy'},{name:'Power Gem',type:'rock'},{name:'Dazzling Gleam',type:'fairy'}]},
+    {name:'Hoopa',slug:'hoopa',type:'psychic',hp:130,maxHp:130,moves:[{name:'Hyperspace Hole',type:'psychic'},{name:'Shadow Ball',type:'ghost'},{name:'Psychic',type:'psychic'},{name:'Dark Pulse',type:'dark'}]},
+    {name:'Volcanion',slug:'volcanion',type:'fire',hp:130,maxHp:130,moves:[{name:'Steam Eruption',type:'water'},{name:'Flamethrower',type:'fire'},{name:'Hydro Pump',type:'water'},{name:'Fire Blast',type:'fire'}]},
+   ]},
+  // ─── ALOLA ───
+  {id:'alola-starter-base', label:'Starter Alola Awal', series:'Gen 7', tier:'base', color:'#f97316', region:'alola',
+   team:[
+    {name:'Rowlet',slug:'rowlet',type:'grass',hp:90,maxHp:90,moves:[{name:'Leafage',type:'grass'},{name:'Peck',type:'flying'},{name:'Tackle',type:'normal'},{name:'Growl',type:'normal'}]},
+    {name:'Litten',slug:'litten',type:'fire',hp:90,maxHp:90,moves:[{name:'Ember',type:'fire'},{name:'Scratch',type:'normal'},{name:'Lick',type:'ghost'},{name:'Leer',type:'normal'}]},
+    {name:'Popplio',slug:'popplio',type:'water',hp:90,maxHp:90,moves:[{name:'Water Gun',type:'water'},{name:'Pound',type:'normal'},{name:'Aqua Jet',type:'water'},{name:'Disarming Voice',type:'fairy'}]},
+    {name:'Pikipek',slug:'pikipek',type:'flying',hp:90,maxHp:90,moves:[{name:'Peck',type:'flying'},{name:'Echoed Voice',type:'normal'},{name:'Tackle',type:'normal'},{name:'Growl',type:'normal'}]},
+    {name:'Yungoos',slug:'yungoos',type:'normal',hp:90,maxHp:90,moves:[{name:'Tackle',type:'normal'},{name:'Bite',type:'dark'},{name:'Pursuit',type:'dark'},{name:'Leer',type:'normal'}]},
+    {name:'Grubbin',slug:'grubbin',type:'bug',hp:90,maxHp:90,moves:[{name:'Bug Bite',type:'bug'},{name:'Spark',type:'electric'},{name:'String Shot',type:'bug'},{name:'Vice Grip',type:'normal'}]},
+   ]},
+  {id:'alola-starter-final', label:'Starter Alola Final', series:'Gen 7', tier:'final', color:'#c2410c', region:'alola',
+   team:[
+    {name:'Decidueye',slug:'decidueye',type:'grass',hp:115,maxHp:115,moves:[{name:'Spirit Shackle',type:'ghost'},{name:'Leaf Blade',type:'grass'},{name:'Brave Bird',type:'flying'},{name:'Shadow Sneak',type:'ghost'}]},
+    {name:'Incineroar',slug:'incineroar',type:'fire',hp:115,maxHp:115,moves:[{name:'Darkest Lariat',type:'dark'},{name:'Flare Blitz',type:'fire'},{name:'Cross Chop',type:'fighting'},{name:'Throat Chop',type:'dark'}]},
+    {name:'Primarina',slug:'primarina',type:'water',hp:115,maxHp:115,moves:[{name:'Sparkling Aria',type:'water'},{name:'Moonblast',type:'fairy'},{name:'Hyper Voice',type:'normal'},{name:'Ice Beam',type:'ice'}]},
+    {name:'Toucannon',slug:'toucannon',type:'flying',hp:115,maxHp:115,moves:[{name:'Beak Blast',type:'fire'},{name:'Drill Peck',type:'flying'},{name:'Brick Break',type:'fighting'},{name:'Roost',type:'flying'}]},
+    {name:'Gumshoos',slug:'gumshoos',type:'normal',hp:115,maxHp:115,moves:[{name:'Crunch',type:'dark'},{name:'Take Down',type:'normal'},{name:'Hyper Fang',type:'normal'},{name:'Pursuit',type:'dark'}]},
+    {name:'Vikavolt',slug:'vikavolt',type:'bug',hp:115,maxHp:115,moves:[{name:'Zap Cannon',type:'electric'},{name:'Bug Buzz',type:'bug'},{name:'Air Slash',type:'flying'},{name:'Spark',type:'electric'}]},
+   ]},
+  {id:'alola-ash', label:'Tim Ash Alola', series:'Anime SM', tier:'base', color:'#fbbf24', region:'alola',
+   team:[
+    {name:'Pikachu',slug:'pikachu',type:'electric',hp:100,maxHp:100,moves:[{name:'Thunderbolt',type:'electric'},{name:'Quick Attack',type:'normal'},{name:'Electroweb',type:'electric'},{name:'Iron Tail',type:'steel'}]},
+    {name:'Decidueye',slug:'decidueye',type:'grass',hp:100,maxHp:100,moves:[{name:'Spirit Shackle',type:'ghost'},{name:'Leaf Blade',type:'grass'},{name:'Razor Leaf',type:'grass'},{name:'Peck',type:'flying'}]},
+    {name:'Incineroar',slug:'incineroar',type:'fire',hp:100,maxHp:100,moves:[{name:'Darkest Lariat',type:'dark'},{name:'Fire Blast',type:'fire'},{name:'Cross Chop',type:'fighting'},{name:'Throat Chop',type:'dark'}]},
+    {name:'Lycanroc',slug:'lycanroc',type:'rock',hp:100,maxHp:100,moves:[{name:'Rock Throw',type:'rock'},{name:'Bite',type:'dark'},{name:'Accelerock',type:'rock'},{name:'Counter',type:'fighting'}]},
+    {name:'Naganadel',slug:'naganadel',type:'poison',hp:100,maxHp:100,moves:[{name:'Dragon Pulse',type:'dragon'},{name:'Sludge Bomb',type:'poison'},{name:'Poison Jab',type:'poison'},{name:'Air Slash',type:'flying'}]},
+    {name:'Melmetal',slug:'melmetal',type:'steel',hp:100,maxHp:100,moves:[{name:'Double Iron Bash',type:'steel'},{name:'Thunder Punch',type:'electric'},{name:'Hammer Arm',type:'fighting'},{name:'Flash Cannon',type:'steel'}]},
+   ]},
+  {id:'alola-companion', label:'Teman Mallow + Lana + Lillie', series:'Anime SM', tier:'final', color:'#06b6d4', region:'alola',
+   team:[
+    {name:'Tsareena',slug:'tsareena',type:'grass',hp:100,maxHp:100,moves:[{name:'Trop Kick',type:'grass'},{name:'High Jump Kick',type:'fighting'},{name:'Stomp',type:'normal'},{name:'Magical Leaf',type:'grass'}]},
+    {name:'Primarina',slug:'primarina',type:'water',hp:100,maxHp:100,moves:[{name:'Sparkling Aria',type:'water'},{name:'Moonblast',type:'fairy'},{name:'Hyper Voice',type:'normal'},{name:'Ice Beam',type:'ice'}]},
+    {name:'Snowy',slug:'alolan-vulpix',type:'ice',hp:100,maxHp:100,moves:[{name:'Ice Beam',type:'ice'},{name:'Aurora Beam',type:'ice'},{name:'Powder Snow',type:'ice'},{name:'Quick Attack',type:'normal'}]},
+    {name:'Turtonator',slug:'turtonator',type:'fire',hp:100,maxHp:100,moves:[{name:'Shell Trap',type:'fire'},{name:'Flamethrower',type:'fire'},{name:'Dragon Pulse',type:'dragon'},{name:'Body Slam',type:'normal'}]},
+    {name:'Togedemaru',slug:'togedemaru',type:'electric',hp:100,maxHp:100,moves:[{name:'Zing Zap',type:'electric'},{name:'Iron Head',type:'steel'},{name:'Spiky Shield',type:'grass'},{name:'Nuzzle',type:'electric'}]},
+    {name:'Steenee',slug:'steenee',type:'grass',hp:100,maxHp:100,moves:[{name:'Magical Leaf',type:'grass'},{name:'Razor Leaf',type:'grass'},{name:'Stomp',type:'normal'},{name:'Sweet Scent',type:'normal'}]},
+   ]},
+  {id:'alola-legend', label:'Legendaris Alola', series:'Legendary', tier:'mega', color:'#a855f7', region:'alola',
+   team:[
+    {name:'Solgaleo',slug:'solgaleo',type:'psychic',hp:130,maxHp:130,moves:[{name:'Sunsteel Strike',type:'steel'},{name:'Psychic',type:'psychic'},{name:'Flare Blitz',type:'fire'},{name:'Iron Head',type:'steel'}]},
+    {name:'Lunala',slug:'lunala',type:'psychic',hp:130,maxHp:130,moves:[{name:'Moongeist Beam',type:'ghost'},{name:'Psychic',type:'psychic'},{name:'Shadow Ball',type:'ghost'},{name:'Air Slash',type:'flying'}]},
+    {name:'Necrozma',slug:'necrozma',type:'psychic',hp:130,maxHp:130,moves:[{name:'Photon Geyser',type:'psychic'},{name:'Prismatic Laser',type:'psychic'},{name:'Dragon Pulse',type:'dragon'},{name:'Power Gem',type:'rock'}]},
+    {name:'Tapu Koko',slug:'tapu-koko',type:'electric',hp:130,maxHp:130,moves:[{name:'Thunder',type:'electric'},{name:'Dazzling Gleam',type:'fairy'},{name:'Wild Charge',type:'electric'},{name:'Brave Bird',type:'flying'}]},
+    {name:'Magearna',slug:'magearna',type:'steel',hp:130,maxHp:130,moves:[{name:'Fleur Cannon',type:'fairy'},{name:'Flash Cannon',type:'steel'},{name:'Aura Sphere',type:'fighting'},{name:'Thunderbolt',type:'electric'}]},
+    {name:'Marshadow',slug:'marshadow',type:'fighting',hp:130,maxHp:130,moves:[{name:'Spectral Thief',type:'ghost'},{name:'Close Combat',type:'fighting'},{name:'Shadow Sneak',type:'ghost'},{name:'Force Palm',type:'fighting'}]},
+   ]},
+  // ─── GALAR ───
+  {id:'galar-starter-base', label:'Starter Galar Awal', series:'Gen 8', tier:'base', color:'#84cc16', region:'galar',
+   team:[
+    {name:'Grookey',slug:'grookey',type:'grass',hp:90,maxHp:90,moves:[{name:'Branch Poke',type:'grass'},{name:'Scratch',type:'normal'},{name:'Tail Whip',type:'normal'},{name:'Growl',type:'normal'}]},
+    {name:'Scorbunny',slug:'scorbunny',type:'fire',hp:90,maxHp:90,moves:[{name:'Ember',type:'fire'},{name:'Tackle',type:'normal'},{name:'Quick Attack',type:'normal'},{name:'Growl',type:'normal'}]},
+    {name:'Sobble',slug:'sobble',type:'water',hp:90,maxHp:90,moves:[{name:'Pound',type:'normal'},{name:'Water Gun',type:'water'},{name:'Bind',type:'normal'},{name:'Growl',type:'normal'}]},
+    {name:'Skwovet',slug:'skwovet',type:'normal',hp:90,maxHp:90,moves:[{name:'Tackle',type:'normal'},{name:'Bite',type:'dark'},{name:'Stuff Cheeks',type:'normal'},{name:'Defense Curl',type:'normal'}]},
+    {name:'Rookidee',slug:'rookidee',type:'flying',hp:90,maxHp:90,moves:[{name:'Peck',type:'flying'},{name:'Power Trip',type:'dark'},{name:'Leer',type:'normal'},{name:'Tackle',type:'normal'}]},
+    {name:'Blipbug',slug:'blipbug',type:'bug',hp:90,maxHp:90,moves:[{name:'Struggle Bug',type:'bug'},{name:'Tackle',type:'normal'},{name:'String Shot',type:'bug'},{name:'Confusion',type:'psychic'}]},
+   ]},
+  {id:'galar-starter-final', label:'Starter Galar Final', series:'Gen 8', tier:'final', color:'#4d7c0f', region:'galar',
+   team:[
+    {name:'Rillaboom',slug:'rillaboom',type:'grass',hp:115,maxHp:115,moves:[{name:'Drum Beating',type:'grass'},{name:'Wood Hammer',type:'grass'},{name:'Hammer Arm',type:'fighting'},{name:'Knock Off',type:'dark'}]},
+    {name:'Cinderace',slug:'cinderace',type:'fire',hp:115,maxHp:115,moves:[{name:'Pyro Ball',type:'fire'},{name:'High Jump Kick',type:'fighting'},{name:'Bounce',type:'flying'},{name:'Quick Attack',type:'normal'}]},
+    {name:'Inteleon',slug:'inteleon',type:'water',hp:115,maxHp:115,moves:[{name:'Snipe Shot',type:'water'},{name:'Hydro Pump',type:'water'},{name:'Air Slash',type:'flying'},{name:'Ice Beam',type:'ice'}]},
+    {name:'Greedent',slug:'greedent',type:'normal',hp:115,maxHp:115,moves:[{name:'Body Slam',type:'normal'},{name:'Crunch',type:'dark'},{name:'Bullet Seed',type:'grass'},{name:'Stuff Cheeks',type:'normal'}]},
+    {name:'Corviknight',slug:'corviknight',type:'flying',hp:115,maxHp:115,moves:[{name:'Brave Bird',type:'flying'},{name:'Iron Head',type:'steel'},{name:'Steel Wing',type:'steel'},{name:'Drill Peck',type:'flying'}]},
+    {name:'Orbeetle',slug:'orbeetle',type:'bug',hp:115,maxHp:115,moves:[{name:'Psychic',type:'psychic'},{name:'Bug Buzz',type:'bug'},{name:'Hypnosis',type:'psychic'},{name:'Confusion',type:'psychic'}]},
+   ]},
+  {id:'galar-ash', label:'Tim Ash Journeys', series:'Anime Journeys', tier:'base', color:'#fb923c', region:'galar',
+   team:[
+    {name:'Pikachu',slug:'pikachu',type:'electric',hp:100,maxHp:100,moves:[{name:'Thunderbolt',type:'electric'},{name:'Quick Attack',type:'normal'},{name:'Iron Tail',type:'steel'},{name:'Electroweb',type:'electric'}]},
+    {name:'Lucario',slug:'lucario',type:'fighting',hp:100,maxHp:100,moves:[{name:'Aura Sphere',type:'fighting'},{name:'Bone Rush',type:'ground'},{name:'Steel Beam',type:'steel'},{name:'Close Combat',type:'fighting'}]},
+    {name:'Dragonite',slug:'dragonite',type:'dragon',hp:100,maxHp:100,moves:[{name:'Dragon Claw',type:'dragon'},{name:'Hyper Beam',type:'normal'},{name:'Fly',type:'flying'},{name:'Outrage',type:'dragon'}]},
+    {name:'Gengar',slug:'gengar',type:'ghost',hp:100,maxHp:100,moves:[{name:'Shadow Ball',type:'ghost'},{name:'Sludge Bomb',type:'poison'},{name:'Hypnosis',type:'psychic'},{name:'Dream Eater',type:'psychic'}]},
+    {name:'Sirfetch’d',slug:'sirfetchd',type:'fighting',hp:100,maxHp:100,moves:[{name:'Meteor Assault',type:'fighting'},{name:'Brave Bird',type:'flying'},{name:'Leaf Blade',type:'grass'},{name:'Slash',type:'normal'}]},
+    {name:'Dracovish',slug:'dracovish',type:'dragon',hp:100,maxHp:100,moves:[{name:'Fishious Rend',type:'water'},{name:'Crunch',type:'dark'},{name:'Dragon Rush',type:'dragon'},{name:'Ice Fang',type:'ice'}]},
+   ]},
+  {id:'galar-companion', label:'Rival Galar (Goh + Hop)', series:'Anime Journeys', tier:'final', color:'#7c3aed', region:'galar',
+   team:[
+    {name:'Cinderace',slug:'cinderace',type:'fire',hp:110,maxHp:110,moves:[{name:'Pyro Ball',type:'fire'},{name:'High Jump Kick',type:'fighting'},{name:'Bounce',type:'flying'},{name:'Quick Attack',type:'normal'}]},
+    {name:'Eternatus',slug:'eternatus',type:'dragon',hp:110,maxHp:110,moves:[{name:'Dynamax Cannon',type:'dragon'},{name:'Cross Poison',type:'poison'},{name:'Flamethrower',type:'fire'},{name:'Recover',type:'normal'}]},
+    {name:'Wooloo',slug:'wooloo',type:'normal',hp:110,maxHp:110,moves:[{name:'Tackle',type:'normal'},{name:'Headbutt',type:'normal'},{name:'Defense Curl',type:'normal'},{name:'Take Down',type:'normal'}]},
+    {name:'Zacian',slug:'zacian',type:'fairy',hp:110,maxHp:110,moves:[{name:'Behemoth Blade',type:'steel'},{name:'Play Rough',type:'fairy'},{name:'Iron Head',type:'steel'},{name:'Sacred Sword',type:'fighting'}]},
+    {name:'Sobble',slug:'sobble',type:'water',hp:110,maxHp:110,moves:[{name:'Water Gun',type:'water'},{name:'Pound',type:'normal'},{name:'Bind',type:'normal'},{name:'Growl',type:'normal'}]},
+    {name:'Heatmor',slug:'heatmor',type:'fire',hp:110,maxHp:110,moves:[{name:'Fire Lash',type:'fire'},{name:'Lick',type:'ghost'},{name:'Flamethrower',type:'fire'},{name:'Bug Bite',type:'bug'}]},
+   ]},
+  {id:'galar-legend', label:'Legendaris Galar', series:'Legendary', tier:'mega', color:'#dc2626', region:'galar',
+   team:[
+    {name:'Zacian',slug:'zacian',type:'fairy',hp:130,maxHp:130,moves:[{name:'Behemoth Blade',type:'steel'},{name:'Play Rough',type:'fairy'},{name:'Iron Head',type:'steel'},{name:'Sacred Sword',type:'fighting'}]},
+    {name:'Zamazenta',slug:'zamazenta',type:'fighting',hp:130,maxHp:130,moves:[{name:'Behemoth Bash',type:'steel'},{name:'Close Combat',type:'fighting'},{name:'Iron Head',type:'steel'},{name:'Crunch',type:'dark'}]},
+    {name:'Eternatus',slug:'eternatus',type:'dragon',hp:130,maxHp:130,moves:[{name:'Dynamax Cannon',type:'dragon'},{name:'Cross Poison',type:'poison'},{name:'Flamethrower',type:'fire'},{name:'Recover',type:'normal'}]},
+    {name:'Calyrex',slug:'calyrex',type:'psychic',hp:130,maxHp:130,moves:[{name:'Astral Barrage',type:'ghost'},{name:'Psychic',type:'psychic'},{name:'Glacial Lance',type:'ice'},{name:'Leech Seed',type:'grass'}]},
+    {name:'Glastrier',slug:'glastrier',type:'ice',hp:130,maxHp:130,moves:[{name:'Glacial Lance',type:'ice'},{name:'Ice Punch',type:'ice'},{name:'High Horsepower',type:'ground'},{name:'Take Down',type:'normal'}]},
+    {name:'Spectrier',slug:'spectrier',type:'ghost',hp:130,maxHp:130,moves:[{name:'Astral Barrage',type:'ghost'},{name:'Shadow Ball',type:'ghost'},{name:'Hex',type:'ghost'},{name:'Phantom Force',type:'ghost'}]},
+   ]},
+  // ─── PALDEA ADDITIONS ───
+  {id:'paldea-starter-base', label:'Starter Paldea Awal', series:'Gen 9', tier:'base', color:'#22c55e', region:'paldea',
+   team:[
+    {name:'Sprigatito',slug:'sprigatito',type:'grass',hp:90,maxHp:90,moves:[{name:'Scratch',type:'normal'},{name:'Leafage',type:'grass'},{name:'Bite',type:'dark'},{name:'Growl',type:'normal'}]},
+    {name:'Fuecoco',slug:'fuecoco',type:'fire',hp:90,maxHp:90,moves:[{name:'Ember',type:'fire'},{name:'Tackle',type:'normal'},{name:'Incinerate',type:'fire'},{name:'Leer',type:'normal'}]},
+    {name:'Quaxly',slug:'quaxly',type:'water',hp:90,maxHp:90,moves:[{name:'Water Gun',type:'water'},{name:'Pound',type:'normal'},{name:'Wing Attack',type:'flying'},{name:'Growl',type:'normal'}]},
+    {name:'Lechonk',slug:'lechonk',type:'normal',hp:90,maxHp:90,moves:[{name:'Tackle',type:'normal'},{name:'Tail Whip',type:'normal'},{name:'Headbutt',type:'normal'},{name:'Bite',type:'dark'}]},
+    {name:'Pawmi',slug:'pawmi',type:'electric',hp:90,maxHp:90,moves:[{name:'Spark',type:'electric'},{name:'Quick Attack',type:'normal'},{name:'Nuzzle',type:'electric'},{name:'Tail Whip',type:'normal'}]},
+    {name:'Tarountula',slug:'tarountula',type:'bug',hp:90,maxHp:90,moves:[{name:'Bug Bite',type:'bug'},{name:'String Shot',type:'bug'},{name:'Tackle',type:'normal'},{name:'Leech Life',type:'bug'}]},
+   ]},
+  {id:'paldea-starter-final', label:'Starter Paldea Final', series:'Gen 9', tier:'final', color:'#15803d', region:'paldea',
+   team:[
+    {name:'Meowscarada',slug:'meowscarada',type:'grass',hp:115,maxHp:115,moves:[{name:'Flower Trick',type:'grass'},{name:'Night Slash',type:'dark'},{name:'U-turn',type:'bug'},{name:'Magical Leaf',type:'grass'}]},
+    {name:'Skeledirge',slug:'skeledirge',type:'fire',hp:115,maxHp:115,moves:[{name:'Torch Song',type:'fire'},{name:'Shadow Ball',type:'ghost'},{name:'Hyper Voice',type:'normal'},{name:'Flamethrower',type:'fire'}]},
+    {name:'Quaquaval',slug:'quaquaval',type:'water',hp:115,maxHp:115,moves:[{name:'Aqua Step',type:'water'},{name:'Close Combat',type:'fighting'},{name:'Brick Break',type:'fighting'},{name:'Aqua Jet',type:'water'}]},
+    {name:'Oinkologne',slug:'oinkologne',type:'normal',hp:115,maxHp:115,moves:[{name:'Headlong Rush',type:'ground'},{name:'Body Slam',type:'normal'},{name:'Crunch',type:'dark'},{name:'Take Down',type:'normal'}]},
+    {name:'Pawmot',slug:'pawmot',type:'electric',hp:115,maxHp:115,moves:[{name:'Double Shock',type:'electric'},{name:'Close Combat',type:'fighting'},{name:'Thunder Punch',type:'electric'},{name:'Mach Punch',type:'fighting'}]},
+    {name:'Spidops',slug:'spidops',type:'bug',hp:115,maxHp:115,moves:[{name:'Lunge',type:'bug'},{name:'Cross Poison',type:'poison'},{name:'X-Scissor',type:'bug'},{name:'Bug Bite',type:'bug'}]},
+   ]},
+  {id:'paldea-companion', label:'Teman Roy + Liko', series:'Anime Horizons', tier:'final', color:'#06b6d4', region:'paldea',
+   team:[
+    {name:'Fuecoco',slug:'fuecoco',type:'fire',hp:100,maxHp:100,moves:[{name:'Ember',type:'fire'},{name:'Tackle',type:'normal'},{name:'Incinerate',type:'fire'},{name:'Leer',type:'normal'}]},
+    {name:'Sprigatito',slug:'sprigatito',type:'grass',hp:100,maxHp:100,moves:[{name:'Scratch',type:'normal'},{name:'Leafage',type:'grass'},{name:'Bite',type:'dark'},{name:'Growl',type:'normal'}]},
+    {name:'Quaxly',slug:'quaxly',type:'water',hp:100,maxHp:100,moves:[{name:'Water Gun',type:'water'},{name:'Pound',type:'normal'},{name:'Wing Attack',type:'flying'},{name:'Growl',type:'normal'}]},
+    {name:'Charcadet',slug:'charcadet',type:'fire',hp:100,maxHp:100,moves:[{name:'Ember',type:'fire'},{name:'Astonish',type:'ghost'},{name:'Fire Spin',type:'fire'},{name:'Leer',type:'normal'}]},
+    {name:'Floragato',slug:'floragato',type:'grass',hp:100,maxHp:100,moves:[{name:'Magical Leaf',type:'grass'},{name:'Bite',type:'dark'},{name:'U-turn',type:'bug'},{name:'Quick Attack',type:'normal'}]},
+    {name:'Crocalor',slug:'crocalor',type:'fire',hp:100,maxHp:100,moves:[{name:'Incinerate',type:'fire'},{name:'Bite',type:'dark'},{name:'Hyper Voice',type:'normal'},{name:'Ember',type:'fire'}]},
+   ]},
+  {id:'paldea-legend', label:'Legendaris Paldea', series:'Legendary', tier:'mega', color:'#dc2626', region:'paldea',
+   team:[
+    {name:'Koraidon',slug:'koraidon',type:'fighting',hp:130,maxHp:130,moves:[{name:'Collision Course',type:'fighting'},{name:'Flare Blitz',type:'fire'},{name:'Outrage',type:'dragon'},{name:'Close Combat',type:'fighting'}]},
+    {name:'Miraidon',slug:'miraidon',type:'electric',hp:130,maxHp:130,moves:[{name:'Electro Drift',type:'electric'},{name:'Dragon Pulse',type:'dragon'},{name:'Thunderbolt',type:'electric'},{name:'Hyper Beam',type:'normal'}]},
+    {name:'Wo-Chien',slug:'wo-chien',type:'dark',hp:130,maxHp:130,moves:[{name:'Ruination',type:'dark'},{name:'Foul Play',type:'dark'},{name:'Leech Seed',type:'grass'},{name:'Giga Drain',type:'grass'}]},
+    {name:'Chien-Pao',slug:'chien-pao',type:'dark',hp:130,maxHp:130,moves:[{name:'Ruination',type:'dark'},{name:'Icicle Crash',type:'ice'},{name:'Crunch',type:'dark'},{name:'Sucker Punch',type:'dark'}]},
+    {name:'Ting-Lu',slug:'ting-lu',type:'dark',hp:130,maxHp:130,moves:[{name:'Ruination',type:'dark'},{name:'Earthquake',type:'ground'},{name:'Stomping Tantrum',type:'ground'},{name:'Heavy Slam',type:'steel'}]},
+    {name:'Chi-Yu',slug:'chi-yu',type:'dark',hp:130,maxHp:130,moves:[{name:'Ruination',type:'dark'},{name:'Lava Plume',type:'fire'},{name:'Fire Blast',type:'fire'},{name:'Dark Pulse',type:'dark'}]},
+   ]},
 ];
+
+// ─── REGION-LOCK HELPERS ─────────────────────────────────────────────────────
+// Region progression order — matches TRAINER_GROUPS. Used to gate package picker.
+const REGION_ORDER = ['kanto','johto','hoenn','sinnoh','unova','kalos','alola','galar','paldea'];
+const REGION_LABEL = {
+  kanto:'🔥 Kanto', johto:'🌅 Johto', hoenn:'🌊 Hoenn', sinnoh:'❄️ Sinnoh',
+  unova:'⚡ Unova', kalos:'🌸 Kalos', alola:'🌴 Alola', galar:'⚔️ Galar', paldea:'🌟 Paldea'
+};
+function getCurrentRegionForPicker() {
+  // Return the highest region index where any trainer has been beaten.
+  // If no badges, return 'kanto' (always at least Kanto unlocked).
+  let highest = 0;
+  for (const tid of Object.keys(badges)) {
+    const t = TRAINERS.find(x => x.id === tid);
+    if (!t) continue;
+    const idx = REGION_ORDER.indexOf(t.group);
+    if (idx > highest) highest = idx;
+  }
+  return REGION_ORDER[highest] || 'kanto';
+}
+function isPackUnlocked(pack) {
+  if (!pack.region) return true; // legacy packs without region tag
+  const cur = REGION_ORDER.indexOf(getCurrentRegionForPicker());
+  const pk = REGION_ORDER.indexOf(pack.region);
+  return pk <= cur;
+}
 
 // Get currently selected package (persisted to localStorage). Default = first package.
 function getCurrentPackage() {
@@ -1091,8 +1478,19 @@ function shuffle(arr){
 }
 
 function genMathQuestion(){
+  // Hotfix #120-T (2026-05-02): delegate to shared math-rules.js engine.
+  // Previously: max = badgeCount >= 10 ? 25 : 15 → produced "23 + 0 = ?" type
+  // questions which violate the kid-friendly constraint (max 15 mid-game).
+  // Now: easy mode caps at 10 (L1-10), 15 (L11-19), 20 only at endgame (≥0.95×ml).
   const badgeCount = Object.keys(badges).length;
-  const max = badgeCount >= 10 ? 25 : 15;
+  if (typeof window.makeMathQuestion === 'function') {
+    // Map 87 trainers → level 1-20 scale (one level per ~4 trainers beaten)
+    const lv = Math.max(1, Math.floor(badgeCount / 4) + 1);
+    const q = window.makeMathQuestion(lv, 20, 'easy');
+    return { question: q.q, answer: q.ans, options: q.choices };
+  }
+  // Legacy fallback (math-rules.js not loaded)
+  const max = 15;
   const op = Math.random()<0.5?'+':'-';
   let a, b, ans;
   if(op==='+'){
@@ -1705,32 +2103,52 @@ document.getElementById('gs-back').onclick  = ()=>goBack();
 function openPackageSelector() {
   const grid = document.getElementById('pkg-grid');
   const current = getCurrentPackage();
-  grid.innerHTML = PLAYER_PACKAGES.map(pkg => {
+  const currentRegion = getCurrentRegionForPicker();
+  // Sort by region order, then keep within-region original order
+  const sorted = [...PLAYER_PACKAGES].sort((a,b) => {
+    const ai = REGION_ORDER.indexOf(a.region || 'kanto');
+    const bi = REGION_ORDER.indexOf(b.region || 'kanto');
+    return ai - bi;
+  });
+  let lastRegion = null;
+  let html = '';
+  for (const pkg of sorted) {
+    const region = pkg.region || 'kanto';
+    if (region !== lastRegion) {
+      const label = REGION_LABEL[region] || region;
+      const unlockedHere = isPackUnlocked({region});
+      html += `<div class="pkg-region-header" style="grid-column:1/-1;margin:14px 0 6px 0;font-size:14px;font-weight:900;color:${unlockedHere?'#fbbf24':'rgba(255,255,255,0.35)'};letter-spacing:0.5px;">${label}${unlockedHere?'':' 🔒'}</div>`;
+      lastRegion = region;
+    }
+    const unlocked = isPackUnlocked(pkg);
     const thumbs = pkg.team.map(p => {
       const base = baseSpeciesSlug(p.slug);
-      // Hotfix #101-J: HD WebP first via SPRITE_HD (alt2), then 96px CDN, then local PNG, then base-form fallbacks
       const fallback = base !== p.slug ? `this.src='${SPRITE_HD(base)}';this.onerror=null;` : 'this.onerror=null';
       return `<img src="${SPRITE_HD(p.slug)}" onerror="this.src='${SPRITE_HD_REMOTE(p.slug)}';this.onerror=()=>{${fallback}}" alt="${p.name}">`;
     }).join('');
     const tierLabel = pkg.tier === 'base' ? 'EVO 1' : pkg.tier === 'final' ? 'FINAL' : 'MEGA';
     const selCls = pkg.id === current.id ? ' selected' : '';
-    return `<div class="pkg-card${selCls}" data-pkg="${pkg.id}" style="border-left:6px solid ${pkg.color}">
+    const lockCls = unlocked ? '' : ' locked';
+    const lockOverlay = unlocked ? '' : `<div class="pkg-lock-overlay" style="position:absolute;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;font-size:32px;border-radius:inherit;pointer-events:none;">🔒</div>`;
+    const lockStyle = unlocked ? '' : 'filter:grayscale(0.85) opacity(0.5);cursor:not-allowed;';
+    html += `<div class="pkg-card${selCls}${lockCls}" data-pkg="${pkg.id}" data-unlocked="${unlocked?1:0}" style="position:relative;border-left:6px solid ${pkg.color};${lockStyle}">
       <div class="pkg-label">${pkg.label}</div>
       <div class="pkg-sub">${pkg.series}</div>
       <span class="pkg-tier ${pkg.tier}">${tierLabel}</span>
       <div class="pkg-thumbs">${thumbs}</div>
+      ${lockOverlay}
     </div>`;
-  }).join('');
-  // Bind click handlers
+  }
+  grid.innerHTML = html;
+  // Bind click handlers — only for unlocked packs
   grid.querySelectorAll('.pkg-card').forEach(card => {
+    if (card.dataset.unlocked !== '1') return;
     card.addEventListener('click', () => {
       const id = card.getAttribute('data-pkg');
       try { localStorage.setItem('g13c_lastPackage', id); } catch(_) {}
       PLAYER_TEAM = getCurrentPackage().team;
       grid.querySelectorAll('.pkg-card').forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
-      // Live-refresh active battle if user switched mid-fight (Option B: kid-friendly experimentation).
-      // Replace playerTeam with fresh full-HP clone, reset playerIdx, update UI + sprite.
       if (typeof battle !== 'undefined' && battle && !battle.ended) {
         try {
           battle.playerTeam = deepCloneTeam(getCurrentPackage().team);
@@ -1740,7 +2158,6 @@ function openPackageSelector() {
           if (typeof queueMsg === 'function') queueMsg(`Tim diganti! ${battle.playerTeam[0].name}, maju!`);
         } catch(_) {}
       }
-      // Auto-close after short delay for satisfying feedback
       setTimeout(() => { document.getElementById('pkg-overlay').style.display = 'none'; }, 280);
     });
   });

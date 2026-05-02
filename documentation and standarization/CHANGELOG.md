@@ -1,5 +1,21 @@
 # Changelog — Dunia Emosi
 
+## 2026-05-02 — Hotfix #120 Part 6 (G13C Math + Facing + Region-Locked Teams)
+
+### Fixed
+- G13C math used local generator that allowed numbers ≥20 mid-game ("23 + 0 = ?"). Now delegates to shared `math-rules.js` engine ('easy' difficulty, max 10-15 mid-game, 20 only at endgame)
+- Pikachu, Pichu, Raichu, Dratini, Dragonair, Dragonite faced AWAY from enemy as player. Added to `POKE_FACING` map in battle-sprite-engine.js with 'R' natural facing
+
+### Added
+- 39 new region-tagged team packs (KANTO/JOHTO/HOENN/SINNOH/UNOVA/KALOS/ALOLA/GALAR/PALDEA) — 49 total packs
+- Each region has 3-7 packs: starter basic + starter final + Ash team + companion team + legendary team
+- Progressive unlock: only player's current-region-or-below teams selectable; locked teams render greyscale + 🔒 overlay
+- Region section headers in picker UI (🔥 Kanto, 🌅 Johto, etc.)
+- `data/math-rules.js` script loaded in g13c-pixi.html
+- Cache bump: v=20260502j → v=20260502k
+
+---
+
 ## 2026-05-02 — Hotfix #120 Part 5 (Kodok Preset Comprehensive)
 
 ### Fixed
