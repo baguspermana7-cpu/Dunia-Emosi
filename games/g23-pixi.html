@@ -79,7 +79,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 .tr-btn.correct{border-color:#4ade80;background:rgba(74,222,128,.3)!important;animation:correctFlash .4s ease}
 .tr-btn.wrong  {border-color:#ef4444;background:rgba(239,68,68,.3)!important;animation:wrongShake .35s ease}
 /* TR trainer portrait */
-#tr-trainer-tag{position:absolute;top:clamp(58px,11vh,88px);right:0;z-index:16;background:rgba(0,0,0,.75);color:#fde68a;font-size:9px;font-weight:700;padding:2px 7px;border-radius:0 0 0 8px;white-space:nowrap}
+#tr-trainer-tag{display:none}
 
 /* ── Quiz Panel (runner) ── */
 #quiz-panel{position:fixed;bottom:0;left:0;right:0;z-index:120;display:none;flex-direction:column;align-items:center;padding:clamp(10px,3vh,16px) clamp(12px,4vw,20px) clamp(16px,5vh,26px);background:linear-gradient(0deg,rgba(10,2,25,0.98),rgba(26,5,53,0.96));border-top:3px solid #ef4444;backdrop-filter:blur(14px)}
@@ -100,6 +100,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 
 /* ── Flash ── */
 #flash{position:fixed;inset:0;z-index:99;pointer-events:none;opacity:0;transition:opacity .08s}
+@keyframes screenShake{0%,100%{transform:translate(0,0)}15%{transform:translate(-8px,4px)}30%{transform:translate(8px,-5px)}45%{transform:translate(-6px,6px)}60%{transform:translate(6px,-3px)}75%{transform:translate(-4px,2px)}90%{transform:translate(3px,-1px)}}
+.hit-shake{animation:screenShake 0.42s ease-out}
 
 /* ── Start Overlay ── */
 #start-overlay{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:rgba(10,2,25,0.92);backdrop-filter:blur(8px)}
@@ -524,7 +526,7 @@ function syncPlayerPos(){
   const tilt=S.isGrounded?0:Math.max(-18,Math.min(22,S.playerVY*1.4))
   img.style.left=(PLAYER_X-dw/2)+'px'; img.style.top=(S.playerY-dh)+'px'
   img.style.width=dw+'px'; img.style.height=dh+'px'
-  img.style.transform=`rotate(${tilt}deg)`
+  img.style.transform=`scaleX(-1) rotate(${-tilt}deg)`
 }
 function applyPokemon(idx){
   selectedPokemon=Math.max(0,Math.min(idx,G23_POKEMON.length-1))
@@ -539,32 +541,41 @@ function applyPokemon(idx){
 function drawObstGfx(type){
   const g=new PIXI.Graphics()
   if(type==='box'){
+    // Outer glow outline
+    g.roundRect(-29,-55,58,58,6).stroke({color:0xFF4444,width:3,alpha:0.55})
     g.roundRect(-26,-52,52,52,4).fill(0x8B4513)
     g.roundRect(-26,-52,52,6,4).fill(0xA0522D)
     g.roundRect(-22,-44,22,20,3).fill({color:0x6B3410,alpha:0.5})
-    g.roundRect(-26,-52,52,52,4).stroke({color:0x5C2E00,width:1.5,alpha:0.6})
+    g.roundRect(-26,-52,52,52,4).stroke({color:0xFF8080,width:2,alpha:0.7})
   } else if(type==='spike'){
+    g.poly([0,-46, 34,4, -34,4]).stroke({color:0xFF00FF,width:3,alpha:0.5})
     g.poly([0,-42, 30,0, -30,0]).fill(0x7C3AED)
     g.poly([0,-42, 15,0, -15,0]).fill({color:0xA78BFA,alpha:0.5})
+    g.poly([0,-42, 30,0, -30,0]).stroke({color:0xC084FC,width:2,alpha:0.8})
   } else if(type==='bush'){
+    g.ellipse(0,-26,40,30).stroke({color:0xFF4444,width:3,alpha:0.45})
     g.ellipse(0,-26,36,26).fill(0x15803D)
     g.ellipse(-18,-34,24,20).fill(0x22C55E)
     g.ellipse(18,-34,24,20).fill(0x22C55E)
     g.ellipse(0,-44,18,16).fill(0x4ADE80)
+    g.ellipse(0,-26,36,26).stroke({color:0x86EFAC,width:2,alpha:0.6})
   } else if(type==='rock'){
+    g.ellipse(0,-26,32,30).stroke({color:0xFF4444,width:3,alpha:0.45})
     g.ellipse(0,-26,28,26).fill(0x6B7280)
     g.ellipse(-8,-32,10,10).fill({color:0xffffff,alpha:0.15})
-    g.ellipse(0,-26,28,26).stroke({color:0x374151,width:1.5,alpha:0.5})
+    g.ellipse(0,-26,28,26).stroke({color:0xD1D5DB,width:2,alpha:0.7})
   } else if(type==='tall'){
+    g.roundRect(-29,-93,58,93,6).stroke({color:0xFF4444,width:3,alpha:0.55})
     g.roundRect(-26,-90,52,90,4).fill(0x8B4513)
     g.roundRect(-26,-90,52,6,4).fill(0xA0522D)
     g.roundRect(-26,-45,52,1.5,0).fill({color:0x5C2E00,alpha:0.4})
-    g.roundRect(-26,-90,52,90,4).stroke({color:0x5C2E00,width:1.5,alpha:0.6})
+    g.roundRect(-26,-90,52,90,4).stroke({color:0xFF8080,width:2,alpha:0.7})
   } else if(type==='double'){
     for(const dx of [-28,28]){
+      g.roundRect(dx-25,-55,50,58,6).stroke({color:0xFF4444,width:3,alpha:0.55})
       g.roundRect(dx-22,-52,44,52,4).fill(0x8B4513)
       g.roundRect(dx-22,-52,44,6,4).fill(0xA0522D)
-      g.roundRect(dx-22,-52,44,52,4).stroke({color:0x5C2E00,width:1.5,alpha:0.6})
+      g.roundRect(dx-22,-52,44,52,4).stroke({color:0xFF8080,width:2,alpha:0.7})
     }
   }
   return g
@@ -785,7 +796,14 @@ function checkCollisions(){
 }
 function hitPlayer(obs){
   obs.hit=true; S.lives--; S.invincible=90; sfxHit()
-  flashScreen('#ef4444'); burst(PLAYER_X,S.playerY-PLAYER_H*.6,0xEF4444,10)
+  flashScreen('#ef4444')
+  burst(PLAYER_X,S.playerY-PLAYER_H*.6,0xEF4444,22)
+  burst(PLAYER_X,S.playerY-PLAYER_H*.6,0xFCA5A5,10)
+  spawnFT('💥',PLAYER_X,S.playerY-PLAYER_H,0xEF4444)
+  const canvas=document.getElementById('pixi-canvas')
+  canvas.classList.remove('hit-shake'); void canvas.offsetWidth
+  canvas.classList.add('hit-shake')
+  setTimeout(()=>canvas.classList.remove('hit-shake'),450)
   destroyObs(obs,false); updateHUD(); if(S.lives<=0) showLose()
 }
 function destroyObs(obs,withScore){
@@ -905,10 +923,12 @@ function engageTRBattle(){
   }
   // Build UI
   document.getElementById('tr-battle-bg').style.backgroundImage=`url('${gymBg}')`
-  document.getElementById('tr-trainer-tag').textContent=trainer.tag
   document.getElementById('tr-enemy-name').textContent=trPoke.name
   document.getElementById('tr-player-name').textContent=playerPoke.name
-  document.getElementById('tr-poke-player').src=playerPoke.src
+  const playerSlug=playerPoke.name.toLowerCase().replace(/\s+/g,'-')
+  const playerPokeEl=document.getElementById('tr-poke-player')
+  playerPokeEl.src=`https://img.pokemondb.net/sprites/home/normal/${playerSlug}.png`
+  playerPokeEl.onerror=function(){ this.src=playerPoke.src; this.onerror=null }
   const pokeDbSlug=trPoke.slug.replace(/\s+/g,'-')
   document.getElementById('tr-poke-enemy').src=
     `https://img.pokemondb.net/sprites/home/normal/${pokeDbSlug}.png`
@@ -1266,4 +1286,4 @@ function gameLoop(ticker){
 </script>
 </body>
 </html>
-<!-- g23-pixi v20260503c -->
+<!-- g23-pixi v20260503d -->

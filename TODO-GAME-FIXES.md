@@ -2159,3 +2159,19 @@ Added G23 card to `index.html` after G19 card. Icon: `assets/g23-icon.png` (emoj
 
 ### ✅ #121-C: Kodok Slot-7 Unlock
 `_applyKodokSlot7Unlock()` in `game.js`. Trigger: slot index 6 + frog avatar, guarded by `dunia-kodok-slot7-v1`. Unlocks G13B all 30 levels (5★), G13C level 1 (5★), all A-Z phonics badges → gold, all Kanto CITY_PACK city presets.
+
+### ✅ #121-D: G23 sprite direction flip
+All G23 runner Pokemon face left in WebP. Fix: `syncPlayerPos()` now uses `img.style.transform=\`scaleX(-1) rotate(${-tilt}deg)\`` — mirror + negate tilt (mirrored axis inverts rotation).
+
+### ✅ #121-E: TR battle player sprite (HD pokemondb)
+`engageTRBattle()` now sets player sprite to `https://img.pokemondb.net/sprites/home/normal/${slug}.png` (same as enemy). Slug derived from `playerPoke.name.toLowerCase().replace(/\s+/g,'-')`. Fallback to animated webp on onerror.
+
+### ✅ #121-F: TR trainer tag hidden
+User: "tidak ada karakter jessie/james". `#tr-trainer-tag` CSS set to `display:none`. JS setter for `.textContent` also removed.
+
+### ✅ #121-G: Obstacle hit effects improved
+- `hitPlayer()`: double burst (22 red + 10 pink particles), 💥 floating text, CSS screen shake on `#pixi-canvas` via `.hit-shake` class + `@keyframes screenShake`.
+- `drawObstGfx()`: all 6 obstacle types now have red glow outer stroke (3px, alpha 0.45–0.55) + brighter inner stroke for clear visibility.
+
+### ✅ #121-H: Kodok Slot-7 G13C badge fix
+`_applyKodokSlot7Unlock()` was setting `{'A':'gold','B':'gold',...}` (G13B phonics format) for G13C badges. G13C uses trainer IDs, not letters. Fixed: all 87 trainer IDs set to `{id:true}` format. IDs: misty, brock, erika, sabrina, surge, koga, blaine, lorelei, agatha, giovanni, lance, blue, falkner, bugsy, whitney, morty, jasmine, pryce, clair, will, karen, roxanne, brawly, wattson, norman, flannery, winona, wallace, steven, roark, gardenia, maylene, wake, byron, candice, volkner, aaron, flint, cynthia, lenora, burgh, clay, skyla, drayden, elesa, iris, n, viola, grant, ramos, valerie, clemont, korrina, diantha, milo, nessa, kabu, bea, allister, gordie, raihan, leon, gary, red, hop, jessie, james, ash, ash_johto, ash_hoenn, ash_sinnoh, ash_unova, ash_kalos, may, dawn, serena, go. Cache v=20260503d.

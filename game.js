@@ -1202,13 +1202,23 @@ function _applyKodokSlot7Unlock() {
 
     saveProgress(prog)
 
-    // Unlock all Kanto gym badges in G13C (gold for all A-Z letters)
+    // Unlock all 87 trainer badges in G13C (trainer IDs format: {id: true})
     const av = _avatarSlug()
     const badgesKey = `dunia-avatar-${av}-g13c_badges`
     const allBadges = {}
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(l => { allBadges[l] = 'gold' })
+    const ALL_G13C_TRAINER_IDS = [
+      'misty','brock','erika','sabrina','surge','koga','blaine','lorelei','agatha','giovanni','lance','blue',
+      'falkner','bugsy','whitney','morty','jasmine','pryce','clair','will','karen',
+      'roxanne','brawly','wattson','norman','flannery','winona','wallace','steven',
+      'roark','gardenia','maylene','wake','byron','candice','volkner','aaron','flint','cynthia',
+      'lenora','burgh','clay','skyla','drayden','elesa','iris','n',
+      'viola','grant','ramos','valerie','clemont','korrina','diantha',
+      'milo','nessa','kabu','bea','allister','gordie','raihan','leon',
+      'gary','red','hop','jessie','james',
+      'ash','ash_johto','ash_hoenn','ash_sinnoh','ash_unova','ash_kalos','may','dawn','serena','go'
+    ]
+    ALL_G13C_TRAINER_IDS.forEach(id => { allBadges[id] = true })
     try { localStorage.setItem(badgesKey, JSON.stringify(allBadges)) } catch(_) {}
-    try { localStorage.setItem('g13c_badges', JSON.stringify(allBadges)) } catch(_) {}
 
     // Unlock all Kanto city presets in G13B
     if (typeof CITY_PACK !== 'undefined') {

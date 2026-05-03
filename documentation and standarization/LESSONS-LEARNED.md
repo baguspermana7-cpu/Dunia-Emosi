@@ -695,3 +695,15 @@ Deleting a function definition (SPRITE_LOCAL) without grepping for ALL call site
 - **Root cause**: Element had `display:none` which prevents CSS transitions. Adding `.open` class (which sets `transform:translateY(0)`) before the browser paints means transition fires with no start state.
 - **Fix**: Set `display:flex` first, then use `requestAnimationFrame(() => overlay.classList.add('open'))` so browser paints the initial `translateY(110%)` state before transitioning to `translateY(0)`.
 - **Lesson**: CSS transitions require the element to be visible (not `display:none`) for at least one paint cycle before the target state is applied.
+
+### L76 — G13C badge storage format is trainer IDs, not phonics letters (game.js, 2026-05-03)
+- **Symptom**: Kodok slot-7 preset shows 0/87 badges in G13C Gym Ladder despite unlock function running.
+- **Root cause**: `_applyKodokSlot7Unlock()` wrote `{'A':'gold','B':'gold',...}` (copied from G13B phonics badge format) but G13C uses trainer IDs as keys: `{'misty':true,'brock':true,...}`.
+- **Fix**: Replace A-Z loop with explicit array of all 87 trainer IDs, set each to `true`.
+- **Lesson**: When sharing an unlock function across two games (G13B + G13C), verify each game's badge storage schema independently — they can differ completely even if the key name is similar.
+
+### L77 — CSS scaleX(-1) mirror inverts rotation axis (G23, 2026-05-03)
+- **Symptom**: After applying `scaleX(-1)` to flip sprites, velocity tilt (`rotate(${tilt}deg)`) appeared inverted — jumping tilted backward instead of forward.
+- **Root cause**: `scaleX(-1)` mirrors the coordinate system, so positive degrees rotate the opposite visual direction.
+- **Fix**: Negate the tilt value when scaleX(-1) is applied: `scaleX(-1) rotate(${-tilt}deg)`.
+- **Lesson**: Always negate rotation angles when applying CSS horizontal mirror.
