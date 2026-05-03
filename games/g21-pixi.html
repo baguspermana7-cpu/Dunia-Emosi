@@ -41,19 +41,19 @@ body.theme-final{--g21-sky-top:#1e1b4b;--g21-sky-mid:#312e81;--g21-sky-bot:#0000
 .life-heart.pulse{animation:heartPulse 0.4s ease}
 
 /* ── Mobile Controls (transparent overlay) ── */
-#mobile-controls{position:fixed;left:0;right:0;bottom:max(8px,env(safe-area-inset-bottom));z-index:100;display:flex;justify-content:space-between;align-items:center;padding:0 clamp(10px,3vw,20px);pointer-events:none;height:var(--g21-bottom-margin,100px);background:linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,0.7) 50%);backdrop-filter:blur(2px)}
+#mobile-controls{position:fixed;left:0;right:0;bottom:max(8px,env(safe-area-inset-bottom));z-index:100;display:flex;justify-content:space-between;align-items:center;padding:0 clamp(10px,3vw,20px);pointer-events:none;height:var(--g21-bottom-margin,100px);background:linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,0.55) 50%)}
 .mc-cluster{display:flex;gap:clamp(10px,2.5vw,18px);align-items:flex-end;pointer-events:none}
 /* Square pastel buttons */
-.mc-btn{pointer-events:auto;width:clamp(72px,14vmin,106px);height:clamp(60px,11vmin,88px);border-radius:14px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:2.5px solid rgba(255,255,255,0.45);color:#fff;font-size:clamp(22px,5.5vmin,32px);font-weight:900;cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;text-shadow:0 2px 6px rgba(0,0,0,0.6);box-shadow:0 4px 14px rgba(0,0,0,0.3),0 2px 0 rgba(0,0,0,0.25);transition:transform .08s,background .12s}
+.mc-btn{pointer-events:auto;width:clamp(72px,14vmin,106px);height:clamp(60px,11vmin,88px);border-radius:14px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:2.5px solid rgba(255,255,255,0.45);color:#fff;font-size:clamp(22px,5.5vmin,32px);font-weight:900;cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;text-shadow:0 2px 6px rgba(0,0,0,0.6);box-shadow:0 4px 14px rgba(0,0,0,0.3),0 2px 0 rgba(0,0,0,0.25);transition:transform .08s,background .12s;touch-action:manipulation}
 .mc-btn:active,.mc-btn.held{transform:scale(0.91) translateY(3px);box-shadow:0 1px 6px rgba(0,0,0,0.2)}
 /* Pastel periwinkle for Left */
-#btn-left{background:rgba(147,197,253,0.28);border-color:rgba(147,197,253,0.72)}
+#btn-left{background:rgba(147,197,253,0.85);border-color:rgba(147,197,253,1)}
 #btn-left:active,#btn-left.held{background:rgba(147,197,253,0.5)}
 /* Pastel mint for Right */
-#btn-right{background:rgba(134,239,172,0.28);border-color:rgba(134,239,172,0.72)}
+#btn-right{background:rgba(134,239,172,0.85);border-color:rgba(134,239,172,1)}
 #btn-right:active,#btn-right.held{background:rgba(134,239,172,0.5)}
 /* Pastel peach for Jump */
-.mc-jump{width:clamp(84px,16vmin,124px);height:clamp(72px,14vmin,110px);border-radius:18px;background:rgba(252,165,165,0.32);border-color:rgba(252,165,165,0.8);font-size:clamp(26px,6.5vmin,40px);box-shadow:0 4px 14px rgba(0,0,0,0.3),0 3px 0 rgba(180,0,0,0.25)}
+.mc-jump{width:clamp(84px,16vmin,124px);height:clamp(72px,14vmin,110px);border-radius:18px;background:rgba(252,165,165,0.9);border-color:rgba(252,165,165,1);font-size:clamp(26px,6.5vmin,40px);box-shadow:0 4px 14px rgba(0,0,0,0.3),0 3px 0 rgba(180,0,0,0.25)}
 .mc-jump:active,.mc-jump.held{background:rgba(252,165,165,0.55);transform:scale(0.91) translateY(3px)}
 .mc-bolt{background:rgba(251,191,36,0.4);border-color:rgba(253,224,71,0.8);font-size:clamp(22px,5vmin,32px);animation:boltPulse 0.8s ease-in-out infinite}
 .mc-bolt:active,.mc-bolt.held{background:rgba(251,191,36,0.6)}
@@ -163,12 +163,12 @@ body.shake{animation:screenShake .35s ease}
 <!-- Mobile controls (auto-hidden on PC via @media) -->
 <div id="mobile-controls">
   <div class="mc-cluster">
-    <button class="mc-btn" id="btn-left" aria-label="Kiri">◀</button>
-    <button class="mc-btn" id="btn-right" aria-label="Kanan">▶</button>
+    <button class="mc-btn" id="btn-left" aria-label="Kiri" oncontextmenu="return false">◀</button>
+    <button class="mc-btn" id="btn-right" aria-label="Kanan" oncontextmenu="return false">▶</button>
   </div>
   <div class="mc-cluster">
-    <button class="mc-btn mc-bolt" id="btn-bolt" aria-label="Listrik" style="display:none">⚡</button>
-    <button class="mc-btn mc-jump" id="btn-jump" aria-label="Lompat">▲</button>
+    <button class="mc-btn mc-bolt" id="btn-bolt" aria-label="Listrik" style="display:none" oncontextmenu="return false">⚡</button>
+    <button class="mc-btn mc-jump" id="btn-jump" aria-label="Lompat" oncontextmenu="return false">▲</button>
   </div>
 </div>
 
@@ -1671,6 +1671,8 @@ function movePlayer(dx, dy) {
   for (const c of solidTiles) {
     if (px + pw <= c.x || px >= c.x + TILE) continue
     if (py + ph <= c.y || py >= c.y + TILE) continue
+    // Skip elevated platform bricks for lateral collision — player walks under them
+    if (dy === 0 && (c._g21Type === 'brick' || c._g21Type === 'qblock') && (c.y + TILE) <= S.y + 2) continue
     // Resolve based on movement axis
     if (dy > 0) { // falling — land on top
       S.y = c.y; S.vy = 0; S.onGround = true

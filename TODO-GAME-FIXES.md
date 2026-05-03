@@ -2334,3 +2334,14 @@ index.html (style.css + game.js script tags) bumped. G24 file at v=20260504a.
 
 ### ✅ #125-D: G24 added to star badge refresh (game.js)
 `gameIds` in `refreshWelcomeBadges()` was missing `24`. G24 stars now appear on the world map node label `gstars-24-lbl`.
+
+## #127 — G24 Animated Sprites + Magikarp Wiggle + Anglerfish NPC (2026-05-04)
+- [x] Replace all local GIF src with Pokemon Showdown CDN animated sprites (PS helper)
+- [x] Magikarp stage 0: HD WebP + CSS `rotate` micro-wiggle animation (wiggle:true flag)
+- [x] Correct flip values: directional fish flip:true, symmetric/radial flip:false
+- [x] max-height:28vh guard on swimmer img (tall Pokemon like Gyarados won't overflow)
+- [x] applyPokemon / createSwimmer toggle .swim-wiggle via classList
+- [x] Anglerfish NPC image (assets/Pokemon/g24/anglerfish.png) — 1-in-6 spawn rate all regions
+- [x] img-type NPC support in spawnNPC with mix-blend-mode:multiply (hides white BG)
+- [x] Fix Johto/Hoenn bag tab regression — only Sinnoh tab locked (cfg.level < 31)
+- [x] Cache bump: g24-pixi.html?v=20260504c

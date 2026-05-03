@@ -72,6 +72,9 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
 /* Magikarp micro-wiggle — rotate is independent of transform, no positioning conflict */
 @keyframes swimWiggle{0%,100%{rotate:-5deg}25%,75%{rotate:0deg}50%{rotate:5deg}}
 .swim-wiggle{animation:swimWiggle 0.44s ease-in-out infinite}
+/* Staryu/Starmie spinning star micro-animation */
+@keyframes starSpin{0%{rotate:0deg}100%{rotate:360deg}}
+.swim-starspin{animation:starSpin 4s linear infinite}
 </style>
 </head>
 <body>
@@ -146,6 +149,21 @@ const cfg = { level: 1, pokemon: 0 }
 try { const s = sessionStorage.getItem('g24Config'); if (s) Object.assign(cfg, JSON.parse(s)) } catch(_){}
 cfg.level = Math.max(1, Math.min(cfg.level || 1, 40))
 
+// Kodok unlock: slot 7 + frog avatar → all Pokemon unlocked
+cfg.allUnlocked = false
+try {
+  const _aSlot = JSON.parse(localStorage.getItem('dunia-active-slot') || '[0,1]')
+  const _slotIdx = (Array.isArray(_aSlot) ? parseInt(_aSlot[0]) : parseInt(_aSlot)) || 0
+  if (_slotIdx === 6) {  // slot 7 = index 6
+    const _slots = JSON.parse(localStorage.getItem('dunia-players') || '[]')
+    const _animal = _slots && _slots[6] && _slots[6].animal
+    const FROG_NAMES = ['frog','kodok','katak']
+    if (_animal && FROG_NAMES.some(f => String(_animal).toLowerCase().includes(f))) {
+      cfg.allUnlocked = true
+    }
+  }
+} catch(_){}
+
 // ── REGION THEMES ──────────────────────────────────────────────
 const REGIONS = [
   { name:'Pantai Kanto',   levels:[1,10],  unlock:1,
@@ -185,7 +203,7 @@ const PS = n => `https://play.pokemonshowdown.com/sprites/ani/${n}.gif`
 const G24_POKEMON = [
   // ── KANTO (Region 0) ──
   { name:'Magikarp', region:0, evo:[
-    {name:'Magikarp',      src:HD('0129_magikarp'),         hd:HD('0129_magikarp'),   flip:true,  scale:0.7, wiggle:true, emoji:'🐟'},
+    {name:'Magikarp',      src:HD('0129_magikarp'),         hd:HD('0129_magikarp'),   flip:false, scale:0.7, wiggle:true, emoji:'🐟'},
     {name:'Gyarados',      src:PS('gyarados'),              hd:HD('0130_gyarados'),   flip:true,  scale:1.2, emoji:'🐉'},
     {name:'Mega Gyarados', src:PS('gyarados-mega'),         hd:HD('0130_gyarados'),   flip:true,  scale:1.4, emoji:'🌊'},
   ]},
@@ -194,12 +212,12 @@ const G24_POKEMON = [
     {name:'Seadra', src:PS('seadra'), hd:HD('0117_seadra'), flip:true, scale:1.0, emoji:'🐲'},
   ]},
   { name:'Staryu', region:0, evo:[
-    {name:'Staryu',  src:PS('staryu'),  hd:HD('0120_staryu'),  flip:false, scale:0.8, emoji:'⭐'},
-    {name:'Starmie', src:PS('starmie'), hd:HD('0121_starmie'), flip:false, scale:1.1, emoji:'🌟'},
+    {name:'Staryu',  src:PS('staryu'),  hd:HD('0120_staryu'),  flip:false, scale:0.8, spin:true, emoji:'⭐'},
+    {name:'Starmie', src:PS('starmie'), hd:HD('0121_starmie'), flip:false, scale:1.1, spin:true, emoji:'🌟'},
   ]},
   { name:'Shellder', region:0, evo:[
-    {name:'Shellder', src:PS('shellder'), hd:HD('0090_shellder'), flip:false, scale:0.7, emoji:'🐚'},
-    {name:'Cloyster', src:PS('cloyster'), hd:HD('0091_cloyster'), flip:false, scale:1.0, emoji:'🔮'},
+    {name:'Shellder', src:PS('shellder'), hd:HD('0090_shellder'), flip:true,  scale:0.7, emoji:'🐚'},
+    {name:'Cloyster', src:PS('cloyster'), hd:HD('0091_cloyster'), flip:true,  scale:1.0, emoji:'🔮'},
   ]},
   { name:'Goldeen', region:0, evo:[
     {name:'Goldeen', src:PS('goldeen'), hd:HD('0118_goldeen'), flip:true, scale:0.7, emoji:'🐠'},
@@ -216,7 +234,7 @@ const G24_POKEMON = [
   ]},
   { name:'Remoraid', region:1, evo:[
     {name:'Remoraid',  src:PS('remoraid'),  hd:HD('0223_remoraid'),  flip:true,  scale:0.7, emoji:'🎯'},
-    {name:'Octillery', src:PS('octillery'), hd:HD('0224_octillery'), flip:false, scale:1.1, emoji:'🐙'},
+    {name:'Octillery', src:PS('octillery'), hd:HD('0224_octillery'), flip:true,  scale:1.1, emoji:'🐙'},
   ]},
   { name:'Horsea+', region:1, evo:[
     {name:'Horsea',  src:PS('horsea'),  hd:HD('0116_horsea'),  flip:true, scale:0.7, emoji:'🐴'},
@@ -659,20 +677,42 @@ function drawCliff(g, fromY, toY, isTop) {
   if (isTop) {
     // Main body (flat top pressing down)
     if (bodyH > 0) g.rect(0, fromY, CLIFF_W, bodyH).fill(col)
-    // Stalactite tip pointing down
-    if (spike > 0) g.poly([0, fromY+bodyH, CLIFF_W, fromY+bodyH, CLIFF_W/2, toY]).fill(col)
+    // Multiple irregular stalactite spikes pointing down
+    if (spike > 0) {
+      const numSpikes = 2 + Math.floor(Math.random()*2)  // 2 or 3 spikes
+      const tipOffsets = [0.25, 0.5, 0.75].slice(0, numSpikes)
+      const tipVariance = 0.12
+      tipOffsets.forEach((frac) => {
+        const sx = frac * CLIFF_W + (Math.random() - 0.5) * CLIFF_W * tipVariance
+        const tipLen = spike * (0.6 + Math.random() * 0.4)
+        const halfW = (CLIFF_W * 0.18) * (0.7 + Math.random() * 0.6)
+        g.poly([sx - halfW, fromY + bodyH, sx + halfW, fromY + bodyH, sx, fromY + bodyH + tipLen]).fill(col)
+      })
+    }
     // Side shading
     g.rect(2, fromY, 6, bodyH).fill({ color:0xffffff, alpha:0.09 })
     g.rect(CLIFF_W-8, fromY, 8, bodyH).fill({ color:drk, alpha:0.18 })
     // Stratification lines
     for (let ly=fromY+20; ly<fromY+bodyH-8; ly+=22) g.rect(3,ly,CLIFF_W-6,1.5).fill({ color:drk, alpha:0.09 })
-    // Moss/algae at tip
-    g.circle(CLIFF_W/2, toY-3, 4.5).fill({ color:THEME.moss, alpha:0.55 })
+    // Bubble texture on side surface
+    g.circle(2 + Math.random() * (CLIFF_W - 4), fromY + bodyH * 0.3, 3).fill({ color:0xffffff, alpha:0.08 })
+    g.circle(2 + Math.random() * (CLIFF_W - 4), fromY + bodyH * 0.7, 2).fill({ color:0xffffff, alpha:0.06 })
+    // Moss/algae at tip area
     g.ellipse(CLIFF_W/2-6, fromY+bodyH-2, 6, 3).fill({ color:THEME.moss, alpha:0.35 })
     g.ellipse(CLIFF_W/2+8, fromY+bodyH-3, 5, 2.5).fill({ color:THEME.moss, alpha:0.3 })
   } else {
-    // Stalagmite tip pointing up
-    if (spike > 0) g.poly([CLIFF_W/2, fromY, 0, fromY+spike, CLIFF_W, fromY+spike]).fill(col)
+    // Multiple irregular stalagmite spikes pointing up
+    if (spike > 0) {
+      const numSpikes = 2 + Math.floor(Math.random()*2)  // 2 or 3 spikes
+      const tipOffsets = [0.25, 0.5, 0.75].slice(0, numSpikes)
+      const tipVariance = 0.12
+      tipOffsets.forEach((frac) => {
+        const sx = frac * CLIFF_W + (Math.random() - 0.5) * CLIFF_W * tipVariance
+        const tipLen = spike * (0.6 + Math.random() * 0.4)
+        const halfW = (CLIFF_W * 0.18) * (0.7 + Math.random() * 0.6)
+        g.poly([sx - halfW, fromY + tipLen, sx + halfW, fromY + tipLen, sx, fromY]).fill(col)
+      })
+    }
     // Main body
     const bodyStart = fromY + spike
     const bH = toY - bodyStart
@@ -681,8 +721,10 @@ function drawCliff(g, fromY, toY, isTop) {
     g.rect(2, bodyStart, 6, bH).fill({ color:0xffffff, alpha:0.09 })
     g.rect(CLIFF_W-8, bodyStart, 8, bH).fill({ color:drk, alpha:0.18 })
     for (let ly=bodyStart+20; ly<toY-8; ly+=22) g.rect(3,ly,CLIFF_W-6,1.5).fill({ color:drk, alpha:0.09 })
-    // Algae at tip
-    g.circle(CLIFF_W/2, fromY+4, 5).fill({ color:THEME.moss, alpha:0.6 })
+    // Bubble texture on side surface
+    g.circle(2 + Math.random() * (CLIFF_W - 4), bodyStart + bH * 0.3, 3).fill({ color:0xffffff, alpha:0.08 })
+    g.circle(2 + Math.random() * (CLIFF_W - 4), bodyStart + bH * 0.7, 2).fill({ color:0xffffff, alpha:0.06 })
+    // Algae at tip area
     g.ellipse(CLIFF_W/2-7, fromY+spike+4, 6, 3).fill({ color:THEME.moss, alpha:0.35 })
   }
 }
@@ -700,7 +742,7 @@ function createSwimmer() {
   const initSz = Math.round(SWIMMER_SZ * initPoke.scale)
   swimImg.src = initPoke.src
   const flipPart = initPoke.flip ? ' scaleX(-1)' : ''
-  swimImg.style.cssText = `position:fixed;z-index:40;pointer-events:none;width:min(${initSz}px,${Math.round(initPoke.scale*16)}vw);height:auto;max-height:28vh;filter:drop-shadow(0 0 10px rgba(0,180,216,0.65));image-rendering:auto;transform:translate(-50%,-50%)${flipPart};`
+  swimImg.style.cssText = `position:fixed;z-index:40;pointer-events:none;width:min(${initSz}px,${Math.round(initPoke.scale*16)}vw);height:auto;aspect-ratio:1;object-fit:contain;max-height:28vh;filter:drop-shadow(0 0 10px rgba(0,180,216,0.65));image-rendering:auto;transform:translate(-50%,-50%)${flipPart};`
   swimImg.onerror = () => {
     if (initPoke.hd && swimImg.src !== initPoke.hd) { swimImg.src = initPoke.hd; return }
     const em = initPoke.emoji || '🐟'
@@ -709,6 +751,7 @@ function createSwimmer() {
   }
   document.body.appendChild(swimImg)
   if (initPoke.wiggle) swimImg.classList.add('swim-wiggle')
+  if (initPoke.spin)   swimImg.classList.add('swim-starspin')
   window._swimImg = swimImg
 
   // Invisible anchor
@@ -1052,7 +1095,8 @@ function applyPokemon(evoStage) {
   const img = document.getElementById('swimmer-gif')
   if (!img) return
   img.src = evo.src
-  img.classList.toggle('swim-wiggle', !!evo.wiggle)
+  img.classList.toggle('swim-wiggle',   !!evo.wiggle)
+  img.classList.toggle('swim-starspin', !!evo.spin)
   img.onerror = () => {
     if (evo.hd && img.src !== evo.hd) { img.src = evo.hd; return }
     const em = evo.emoji||'🐟'
@@ -1132,7 +1176,7 @@ function renderBagTabs() {
     { id:0,  lbl:'🏖 Kanto', locked:false },
     { id:1,  lbl:'🌊 Johto', locked:false },
     { id:2,  lbl:'🌊 Hoenn', locked:false },
-    { id:3,  lbl:'❄️ Sinnoh', locked:cfg.level < 31 },
+    { id:3,  lbl:'❄️ Sinnoh', locked:!cfg.allUnlocked && cfg.level < 31 },
   ]
   tabDefs.forEach(({id, lbl, locked})=>{
     const t=document.createElement('button')
@@ -1149,7 +1193,7 @@ function renderBagGrid() {
   pokes.forEach(p=>{
     const idx = G24_POKEMON.indexOf(p)
     const regionUnlock = [1,11,21,31][p.region]
-    const locked = cfg.level < regionUnlock
+    const locked = !cfg.allUnlocked && cfg.level < regionUnlock
     const evo0 = p.evo[0]
     const isSelected = idx === selectedPokemon
     const card = document.createElement('div')

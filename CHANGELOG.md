@@ -47,3 +47,14 @@
 ### Fixed: index.html
 - World picker modal: added `wpk-stars-*` spans for live star count display
 - Cache bump → `v=20260504b`
+
+## 2026-05-04 — Session #127: G24 Animated Sprites Polish
+
+### G24 Pokemon Bawah Laut
+- All Pokemon now use Pokemon Showdown animated GIFs as primary sprite source
+- Magikarp exception: HD WebP + CSS `rotate` micro-wiggle simulates swimming motion
+- Fixed facing direction for all Pokemon (flip:true for fish, flip:false for symmetric)
+- Added max-height:28vh to prevent tall evolutions (Gyarados) from overflowing screen
+- Anglerfish NPC added to all 4 regions (1-in-6 spawn) — image silhouette with mix-blend-mode
+- Fixed Johto/Hoenn bag tabs incorrectly locked (regression from #126 ALL tab commit)
+- Cache: v=20260504c
