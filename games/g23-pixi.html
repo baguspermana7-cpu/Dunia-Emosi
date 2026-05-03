@@ -19,7 +19,11 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 #bg-gym  {z-index:4;background-size:cover;background-position:center bottom;opacity:.7}
 
 #pixi-canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block;z-index:5}
-#player-img{position:fixed;z-index:40;pointer-events:none;image-rendering:auto;display:none;transition:filter .3s ease;transform:scaleX(-1);will-change:left,top}
+#player-img{position:fixed;z-index:40;pointer-events:none;image-rendering:auto;display:none;transition:filter .3s ease;transform:scaleX(-1);will-change:left,top;transform-origin:50% 100%}
+#player-img.sliding{transform:scaleX(-1) scaleY(0.47);transition:transform .08s ease-out,filter .3s ease}
+#slide-btn{position:fixed;bottom:max(24px,env(safe-area-inset-bottom));left:max(24px,env(safe-area-inset-left));z-index:100;width:clamp(62px,14vmin,92px);height:clamp(62px,14vmin,92px);border-radius:50%;background:rgba(56,189,248,0.28);border:2.5px solid rgba(56,189,248,0.7);color:#fff;font-size:clamp(24px,6vmin,36px);cursor:pointer;-webkit-tap-highlight-color:transparent;display:none;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.3);transition:transform .08s,background .1s}
+#slide-btn:active{transform:scale(0.92);background:rgba(56,189,248,0.55)}
+@media(pointer:coarse){#slide-btn{display:flex}}
 
 /* ── HUD Top ── */
 #hud-top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:clamp(4px,1.5vw,10px);padding:max(14px,env(safe-area-inset-top)) clamp(12px,3vw,18px) 8px;background:linear-gradient(180deg,rgba(0,0,0,0.82) 0%,transparent 100%);pointer-events:none}
@@ -214,6 +218,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 </div>
 
 <button id="jump-btn" onclick="handleJump()">⬆</button>
+<button id="slide-btn" onclick="handleSlide()">⬇</button>
 
 <script src="../shared/rz-responsive.js?v=20260422i"></script>
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
@@ -378,6 +383,7 @@ const DBLJ_POWER    = -10.5
 const MAX_FALL      = 16
 const PLAYER_H      = 110
 const PLAYER_W      = 132
+const SLIDE_H       = 52   // effective hitbox height while sliding
 const HIT_MARGIN    = 16
 const TOTAL_QUIZ    = Math.min(8 + Math.floor((cfg.level-1) * 0.6), 16)
 const TR_ENCOUNTERS = cfg.level >= 3 ? 2 : 1   // 1 encounter L1-2, 2 encounters L3+
@@ -421,7 +427,7 @@ const S = {
   score:0, distance:0,
   correctAnswers:0, wrongAnswers:0, quizDone:0,
   frame:0,
-  playerVY:0, playerY:0, jumpCount:0, isGrounded:true,
+  playerVY:0, playerY:0, jumpCount:0, isGrounded:true, isSliding:false, slideTimer:0,
   obstacles:[], powerUpItems:[], activepu:null, projectiles:[],
   shieldHits:0, invincible:0,
   questions:[], qIdx:0, pendingQuizGate:null,
@@ -521,6 +527,7 @@ function syncPlayerPos(){
   const img=document.getElementById('player-img'); if(!img) return
   img.style.left=(PLAYER_X-PLAYER_W/2)+'px'
   img.style.top=(S.playerY-PLAYER_H)+'px'
+  img.classList.toggle('sliding',S.isSliding)
 }
 function applyPokemon(idx){
   selectedPokemon=Math.max(0,Math.min(idx,G23_POKEMON.length-1))
@@ -571,26 +578,81 @@ function drawObstGfx(type){
       g.roundRect(dx-22,-52,44,6,4).fill(0xA0522D)
       g.roundRect(dx-22,-52,44,52,4).stroke({color:0xFF8080,width:2,alpha:0.7})
     }
+  } else if(type==='mid-bar'){
+    // Floating electric pipe — must slide under (spans y=0 to y=-50, gfx.y = GROUND_Y-55)
+    g.roundRect(-48,-53,96,56,8).stroke({color:0x38BDF8,width:3,alpha:0.65})
+    g.roundRect(-45,-50,90,50,6).fill(0x1E3A5F)
+    g.roundRect(-45,-50,90,10,0).fill(0x2563EB)
+    g.circle(-45,-25,13).fill(0x38BDF8); g.circle(45,-25,13).fill(0x38BDF8)
+    g.circle(-45,-25,7).fill(0xBAE6FD);  g.circle(45,-25,7).fill(0xBAE6FD)
+    // Warning stripes
+    for(let i=-36;i<36;i+=18){ g.rect(i,-50,9,50).fill({color:0xFBBF24,alpha:0.12}) }
+    g.roundRect(-45,-50,90,50,6).stroke({color:0x38BDF8,width:2,alpha:0.8})
+    // "DUCK" label
+    const dt=new PIXI.Text({text:'⬇ DUCK',style:{fontSize:10,fontWeight:'900',fill:0xBAE6FD}})
+    dt.anchor.set(0.5); dt.x=0; dt.y=-25; g.addChild(dt)
+  } else if(type==='mid-rock'){
+    // Floating boulder — must slide under
+    g.ellipse(0,-26,42,32).stroke({color:0x38BDF8,width:3,alpha:0.55})
+    g.ellipse(0,-26,38,28).fill(0x44403C)
+    g.ellipse(-12,-33,14,11).fill({color:0xffffff,alpha:0.18})
+    g.ellipse(0,-26,38,28).stroke({color:0x78716C,width:2,alpha:0.7})
+    // Float shadow
+    g.ellipse(0,6,32,6).fill({color:0,alpha:0.22})
+    const rt=new PIXI.Text({text:'⬇',style:{fontSize:14,fill:0xBAE6FD}})
+    rt.anchor.set(0.5); rt.x=0; rt.y=-50; g.addChild(rt)
+  } else if(type==='high-bird'){
+    // Flying bird silhouette — no action needed (passes overhead)
+    g.poly([-35,0, 0,-18, 35,0]).fill({color:0x1E293B,alpha:0.75})
+    g.poly([-22,-4, 0,-20, 22,-4]).fill({color:0x94A3B8,alpha:0.5})
+    g.circle(28,-2,5).fill({color:0xFBBF24,alpha:0.6})  // eye
+    const ht=new PIXI.Text({text:'🕊',style:{fontSize:16}})
+    ht.anchor.set(0.5); ht.x=0; ht.y=-8; g.addChild(ht)
   }
   return g
 }
-const OBS_DEFS = [
-  {type:'box',   w:52,  h:52 },
-  {type:'spike', w:60,  h:42 },
-  {type:'bush',  w:72,  h:48 },
-  {type:'rock',  w:58,  h:52 },
-  {type:'tall',  w:52,  h:90 },
-  {type:'double',w:100, h:52 },
+const GROUND_OBS = [
+  {type:'box',   w:52,  h:52,  lane:'ground'},
+  {type:'spike', w:60,  h:42,  lane:'ground'},
+  {type:'bush',  w:72,  h:48,  lane:'ground'},
+  {type:'rock',  w:58,  h:52,  lane:'ground'},
+  {type:'tall',  w:52,  h:90,  lane:'ground'},
+  {type:'double',w:100, h:52,  lane:'ground'},
+]
+const MID_OBS = [
+  {type:'mid-bar', w:90, h:50, lane:'mid'},
+  {type:'mid-rock',w:65, h:46, lane:'mid'},
+]
+const HIGH_OBS = [
+  {type:'high-bird',w:70, h:36, lane:'high'},
 ]
 function spawnObstacle(){
   S.obsSpawnedSinceQuiz++
   const isQuiz = S.quizDone<TOTAL_QUIZ && S.obsSpawnedSinceQuiz>=4
   if(isQuiz){ S.obsSpawnedSinceQuiz=0; spawnQuizGate(); return }
-  const tpl=OBS_DEFS[Math.floor(Math.random()*OBS_DEFS.length)]
+
+  const active = S.obstacles.filter(o=>!o.hit)
+  // Only one action-required obstacle at a time (rule: 1 per Y lane)
+  const hasAction = active.some(o=>o.lane==='ground'||o.lane==='mid')
+
+  // Lane weights: 58% ground, 28% mid, 14% high
+  const r = Math.random()
+  let lane = r<0.58 ? 'ground' : r<0.86 ? 'mid' : 'high'
+
+  // Enforce same-Y constraint: can't have same lane twice; two action lanes simultaneously forbidden
+  if(lane!=='high' && (hasAction || active.some(o=>o.lane===lane))) lane='high'
+
+  const pool = lane==='ground' ? GROUND_OBS : lane==='mid' ? MID_OBS : HIGH_OBS
+  const tpl  = pool[Math.floor(Math.random()*pool.length)]
+
+  const MID_Y  = GROUND_Y - 55
+  const HIGH_Y = GROUND_Y - PLAYER_H - 30
+  const gfxY   = lane==='ground' ? GROUND_Y : lane==='mid' ? MID_Y : HIGH_Y
+
   const gfx=drawObstGfx(tpl.type)
-  gfx.x=W+120; gfx.y=GROUND_Y
+  gfx.x=W+120; gfx.y=gfxY
   worldContainer.addChild(gfx)
-  S.obstacles.push({x:W+120,w:tpl.w,h:tpl.h,gfx,hit:false})
+  S.obstacles.push({x:W+120, w:tpl.w, h:tpl.h, gfx, gfxY, lane, hit:false, phase:0})
 }
 function spawnQuizGate(){
   const g=new PIXI.Graphics()
@@ -772,13 +834,17 @@ function checkCollisions(){
   if(S.invincible>0){ S.invincible--; return }
   const px_l=PLAYER_X-PLAYER_W/2+HIT_MARGIN
   const px_r=PLAYER_X+PLAYER_W/2-HIT_MARGIN
-  const py_t=S.playerY-PLAYER_H*.88+HIT_MARGIN
+  const effH=S.isSliding ? SLIDE_H : PLAYER_H
+  const py_t=S.playerY-effH+HIT_MARGIN
   const py_b=S.playerY-6
   // Obstacles
   for(const obs of S.obstacles){
     if(obs.hit) continue
-    const ox_l=obs.x-obs.w/2+4,ox_r=obs.x+obs.w/2-4,oy_t=GROUND_Y-obs.h+4
-    if(!(px_r>ox_l&&px_l<ox_r&&py_b>oy_t&&py_t<GROUND_Y)) continue
+    if(obs.lane==='high') continue  // overhead — no collision
+    const gfxY=obs.gfxY!==undefined ? obs.gfxY : GROUND_Y
+    const ox_l=obs.x-obs.w/2+4, ox_r=obs.x+obs.w/2-4
+    const oy_t=gfxY-obs.h+4, oy_b=gfxY
+    if(!(px_r>ox_l&&px_l<ox_r&&py_b>oy_t&&py_t<oy_b)) continue
     if(obs.isQuiz){ obs.hit=true; S.paused=true; S.pendingQuizGate=obs; showRunnerQuiz(obs) }
     else if(S.activepu?.type==='nature'&&S.shieldHits>0){
       S.shieldHits--; destroyObs(obs,false)
@@ -824,7 +890,7 @@ function showRunnerQuiz(gate){
         S.correctAnswers++; S.quizDone++; S.score+=10
         setTimeout(()=>{
           document.getElementById('quiz-panel').classList.remove('show')
-          document.getElementById('jump-btn').style.display=''
+          ;['jump-btn','slide-btn'].forEach(id=>{const b=document.getElementById(id);if(b)b.style.display=''})
           if(gate) destroyObs(gate,false)
           S.pendingQuizGate=null; spawnFT('Benar! +10',PLAYER_X,S.playerY-PLAYER_H-20,0x4ade80)
           S.paused=false; updateHUD()
@@ -835,7 +901,7 @@ function showRunnerQuiz(gate){
         choicesEl.querySelectorAll('.choice-btn').forEach(b=>{ if(b.textContent===q.ans) b.classList.add('correct') })
         setTimeout(()=>{
           document.getElementById('quiz-panel').classList.remove('show')
-          document.getElementById('jump-btn').style.display=''
+          ;['jump-btn','slide-btn'].forEach(id=>{const b=document.getElementById(id);if(b)b.style.display=''})
           if(gate) destroyObs(gate,false)
           S.pendingQuizGate=null; S.quizDone++
           spawnFT('Coba lagi!',PLAYER_X,S.playerY-PLAYER_H-20,0xfbbf24)
@@ -848,7 +914,7 @@ function showRunnerQuiz(gate){
     choicesEl.appendChild(btn)
   })
   document.getElementById('quiz-panel').classList.add('show')
-  document.getElementById('jump-btn').style.display='none'
+  ;['jump-btn','slide-btn'].forEach(id=>{const b=document.getElementById(id);if(b)b.style.display='none'})
   document.getElementById('status-text').textContent='Jawab Soal!'
 }
 
@@ -932,7 +998,7 @@ function engageTRBattle(){
   }
   updateTRHPDisplay()
   // Show battle (slide up)
-  document.getElementById('jump-btn').style.display='none'
+  ;['jump-btn','slide-btn'].forEach(id=>{const b=document.getElementById(id);if(b)b.style.display='none'})
   const battle=document.getElementById('tr-battle')
   battle.style.display='flex'
   requestAnimationFrame(()=>battle.classList.add('open'))
@@ -1039,7 +1105,7 @@ function closeTRBattle(){
   const battle=document.getElementById('tr-battle')
   battle.classList.remove('open')
   setTimeout(()=>{ battle.style.display='none' }, 520)
-  document.getElementById('jump-btn').style.display=''
+  ;['jump-btn','slide-btn'].forEach(id=>{const b=document.getElementById(id);if(b)b.style.display=''})
   S.trBattle=null
 }
 
@@ -1153,19 +1219,35 @@ function handleJump(){
     return
   }
   if(S.paused) return
+  if(S.isSliding) return  // can't jump while sliding
   if(S.jumpCount<2){
     S.playerVY=S.jumpCount===0?JUMP_POWER:DBLJ_POWER
     S.jumpCount++; S.isGrounded=false; sfxJump()
     burst(PLAYER_X,S.playerY,0xffffff,3)
   }
 }
+function handleSlide(){
+  ensureAudio()
+  if(!S.started){ handleJump(); return }
+  if(!S.running||S.paused||S.gameOver||S.trState==='battle') return
+  if(!S.isGrounded||S.isSliding) return
+  S.isSliding=true; S.slideTimer=55
+  playTone(200,100,'sine',0.08)
+}
 
+let _swipeStartY=0
 document.addEventListener('pointerdown',e=>{
-  if(e.target.closest('#quiz-panel')||e.target.closest('#hud-top')||e.target.closest('#btn-back')||e.target.closest('#bag-overlay')||e.target.closest('#pause-overlay')||e.target.closest('#tr-battle')) return
+  if(e.target.closest('#quiz-panel')||e.target.closest('#hud-top')||e.target.closest('#btn-back')||e.target.closest('#bag-overlay')||e.target.closest('#pause-overlay')||e.target.closest('#tr-battle')||e.target.closest('#slide-btn')) return
+  _swipeStartY=e.clientY
   handleJump()
+})
+document.addEventListener('pointermove',e=>{
+  if(e.buttons===0) return
+  if(e.clientY-_swipeStartY>55){ _swipeStartY=e.clientY; handleSlide() }
 })
 window.addEventListener('keydown',e=>{
   if(e.code==='Space'||e.code==='ArrowUp'){e.preventDefault();handleJump()}
+  if(e.code==='ArrowDown'||e.code==='KeyS'){e.preventDefault();handleSlide()}
 })
 
 function togglePause(){
@@ -1224,9 +1306,10 @@ function gameLoop(ticker){
   if(!S.isGrounded){
     S.playerVY+=GRAVITY*dt; S.playerVY=Math.min(S.playerVY,MAX_FALL)
     S.playerY+=S.playerVY*dt
-    if(S.playerY>=GROUND_Y){ S.playerY=GROUND_Y; S.playerVY=0; S.isGrounded=true; S.jumpCount=0; sfxLand() }
+    if(S.playerY>=GROUND_Y){ S.playerY=GROUND_Y; S.playerVY=0; S.isGrounded=true; S.jumpCount=0; S.isSliding=false; sfxLand() }
   } else {
     S.playerY=GROUND_Y+Math.sin(S.frame*.3)*1.6  // subtle bob while running
+    if(S.isSliding){ S.slideTimer-=dt; if(S.slideTimer<=0){ S.isSliding=false } }
   }
 
   // ── Clouds ──
@@ -1246,6 +1329,8 @@ function gameLoop(ticker){
     if(obs.hit) continue
     obs.x-=gameSpeed*dt; obs.gfx.x=obs.x
     if(obs.isQuiz&&obs.ring){ obs.ringPhase=(obs.ringPhase||0)+.06; obs.ring.alpha=.4+Math.sin(obs.ringPhase)*.35; obs.ring.scale.set(1+Math.sin(obs.ringPhase)*.06) }
+    if(obs.lane==='high'){ obs.phase+=0.05; obs.gfx.y=obs.gfxY+Math.sin(obs.phase)*9 }
+    if(obs.lane==='mid')  { obs.phase+=0.04; obs.gfx.y=obs.gfxY+Math.sin(obs.phase)*4 }
   }
   S.obstacles=S.obstacles.filter(o=>{ if(o.x<-200&&!o.hit){ worldContainer.removeChild(o.gfx); return false } return true })
 
@@ -1280,4 +1365,4 @@ function gameLoop(ticker){
 </script>
 </body>
 </html>
-<!-- g23-pixi v20260503e -->
+<!-- g23-pixi v20260503f -->
