@@ -1068,8 +1068,10 @@ function initDreamWorld() {
 // Music screens — play on landing, menu, and level select
 const MUSIC_SCREENS = new Set(['screen-welcome','screen-menu','screen-level','screen-mode','screen-names'])
 
+let _allScreensCache = null
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'))
+  if (!_allScreensCache) _allScreensCache = Array.from(document.querySelectorAll('.screen'))
+  _allScreensCache.forEach(s=>s.classList.remove('active'))
   const el = document.getElementById(id)
   if (!el) return // standalone game screens don't have a div
   el.classList.add('active')
@@ -1109,6 +1111,11 @@ const GAME_INFO = {
   11: { desc:'Uji pengetahuan sains — tumbuhan, hewan, dan alam semesta!', grad:'rgba(56,189,248,0.35)', glow:'rgba(56,189,248,0.5)' },
   12: { desc:'Tebak nama hewan dari siluet bayangannya yang tersembunyi!', grad:'rgba(139,92,246,0.35)', glow:'rgba(139,92,246,0.5)' },
   13: { desc:'Kalahkan wild Pokemon dengan menjawab soal matematika — dan evolusi!', grad:'rgba(249,115,22,0.35)', glow:'rgba(249,115,22,0.5)' },
+  14: { desc:'Balapan kereta seru! Pilih jalur yang tepat dan jawab soal untuk menang!', grad:'rgba(59,130,246,0.35)', glow:'rgba(59,130,246,0.5)' },
+  15: { desc:'Kumpulkan huruf yang beterbangan untuk melatih membaca bersama kereta!', grad:'rgba(16,185,129,0.35)', glow:'rgba(16,185,129,0.5)' },
+  16: { desc:'Selamatkan kereta dari rintangan dengan menjawab soal matematika!', grad:'rgba(245,158,11,0.35)', glow:'rgba(245,158,11,0.5)' },
+  17: { desc:'Seimbangkan kereta di jembatan goyang sambil menjawab soal!', grad:'rgba(139,92,246,0.35)', glow:'rgba(139,92,246,0.5)' },
+  18: { desc:'Jelajahi Museum Kereta Ambarawa dan pelajari sejarah kereta Indonesia!', grad:'rgba(120,113,108,0.35)', glow:'rgba(120,113,108,0.5)' },
   19: { desc:'Terbangkan Pidgeot melewati rintangan dan jawab soal untuk menang!', grad:'rgba(139,92,246,0.35)', glow:'rgba(139,92,246,0.5)' },
   20: { desc:'Main voli pantai dengan bebek lucu! Kalahkan lawan dan jawab soal!', grad:'rgba(56,189,248,0.35)', glow:'rgba(56,189,248,0.5)' },
   21: { desc:'Petualangan Pikachu ala Mario! Lompat, kumpulkan koin, kalahkan musuh, jawab matematika!', grad:'rgba(232,38,42,0.35)', glow:'rgba(251,191,36,0.55)' },

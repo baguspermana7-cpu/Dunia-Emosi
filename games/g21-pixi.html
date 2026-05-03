@@ -610,7 +610,7 @@ async function loadAssets() {
 
   // Pixi 8: Assets API
   const baseUrl = '../assets/mario-pokemon/sprites/'
-  const _v = '?v=20260503j'
+  const _v = '?v=20260503k'
   const manifest = {
     // Pikachu overlays (DOM <img> but loaded so browser pre-caches)
     pikachu_small: baseUrl + 'pikachu-small-cropped.png' + _v,
@@ -2014,7 +2014,7 @@ function showMathQuestion() {
   const choicesEl = document.getElementById('mq-choices')
   const progressEl = document.getElementById('mq-progress')
   const q = makeMathQuestion(S.level)
-  _mqState.currentAns = q.ans
+  // _mqState.currentAns removed — q.ans passed directly to onMathAnswer closure
   qEl.textContent = q.q
   // Progress dots
   progressEl.innerHTML = ''

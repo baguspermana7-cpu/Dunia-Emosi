@@ -2254,3 +2254,24 @@ Fallback path (when `saveLevelProgress` not available) wrote to `dunia-0-progres
 | saveProgress fallback key | games/g21-pixi.html:2322 | ✅ |
 | passive pointer listeners | games/g23-pixi.html:1451, 1456 | ✅ |
 | Cache bump | index.html, g21, g23 | ✅ v=20260503j |
+
+### ✅ #122-K: showScreen caches querySelectorAll (game.js)
+`querySelectorAll('.screen')` was called on every screen transition (DOM scan of entire document). Fixed: first call builds `_allScreensCache` array; subsequent calls reuse it.
+
+### ✅ #122-L: GAME_INFO missing entries 14-18 (game.js)
+Games 14 (Balapan Kereta), 15 (Lokomotif Pemberani), 16 (Selamatkan Kereta!), 17 (Jembatan Goyang), 18 (Museum Ambarawa) had no GAME_INFO entries — level select showed blank description. Added all 5 entries with descriptions, gradient, and glow colors.
+
+### ✅ #122-M: cfg variable shadow in spawnTypeHitFX (g23-pixi.html)
+Local variable `cfg` inside `spawnTypeHitFX` shadowed the module-level `cfg` config object. Renamed to `fxCfg` to eliminate ambiguity.
+
+### ✅ #122-N: playerImgEl cached (g23-pixi.html)
+`document.getElementById('player-img')` was called every frame inside `syncPlayerPos()` and on every Pokemon switch. Cached via `_getPlayerImg()` lazy getter.
+
+### ✅ #122-O: auraGfx initialized inside initPixi (g23-pixi.html)
+`const auraGfx = new PIXI.Graphics()` at module scope could throw `ReferenceError: PIXI is not defined` if CDN load order changes. Changed to `let auraGfx = null` at module scope, initialized inside `initPixi()` after `auraContainer` is created.
+
+### ✅ #122-P: _mqState.currentAns dead code removed (g21-pixi.html)
+`_mqState.currentAns = q.ans` was set but never read — `q.ans` is passed directly to the `onMathAnswer` closure. Replaced with comment.
+
+### ✅ #122-Q: QUESTIONS hard pool expanded (g23-pixi.html)
+Hard pool had 11 questions but TOTAL_QUIZ can reach up to 16 (level 13+), causing recycled questions. Added 5 more hard questions (math + general knowledge), pool now 16 entries.

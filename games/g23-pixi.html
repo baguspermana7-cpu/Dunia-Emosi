@@ -368,11 +368,11 @@ function spawnProjectile(fromEl, toEl, type, cb){
 function spawnTypeHitFX(targetEl, type){
   const r=targetEl.getBoundingClientRect()
   const cx=r.left+r.width/2, cy=r.top+r.height/2
-  const cfg=TYPE_HIT_FX[type]||TYPE_HIT_FX.normal
-  for(let i=0;i<cfg.count;i++){
+  const fxCfg=TYPE_HIT_FX[type]||TYPE_HIT_FX.normal
+  for(let i=0;i<fxCfg.count;i++){
     const p=document.createElement('span')
     const px=cx+(Math.random()-.5)*r.width, py=cy+(Math.random()-.5)*r.height
-    p.textContent=cfg.emojis[Math.floor(Math.random()*cfg.emojis.length)]
+    p.textContent=fxCfg.emojis[Math.floor(Math.random()*fxCfg.emojis.length)]
     p.style.cssText=`position:fixed;left:${px}px;top:${py}px;font-size:${20+Math.random()*16}px;pointer-events:none;z-index:410;animation:typeHitPop .7s ease forwards;animation-delay:${i*.05}s`
     document.body.appendChild(p); setTimeout(()=>p.remove(),900)
   }
@@ -413,6 +413,11 @@ const QUESTIONS = {
     {q:'17+8=?',ans:'25',wrong:['24','26','23']},{q:'25-9=?',ans:'16',wrong:['14','18','15']},
     {q:'Planet terbesar?',ans:'YUPITER',wrong:['SATURNUS','MARS','URANUS']},
     {q:'H₂O adalah...?',ans:'AIR',wrong:['OKSIGEN','GULA','GARAM']},
+    {q:'16+7=?',ans:'23',wrong:['22','24','21']},
+    {q:'30-14=?',ans:'16',wrong:['15','17','14']},
+    {q:'Berapa sisi segitiga?',ans:'3',wrong:['4','5','6']},
+    {q:'5×4=?',ans:'20',wrong:['15','18','25']},
+    {q:'Bahasa Inggris "kucing"?',ans:'CAT',wrong:['DOG','COW','BIRD']},
   ],
   expert:[
     {q:'15x3=?',ans:'45',wrong:['40','50','42']},{q:'8x8=?',ans:'64',wrong:['54','72','56']},
@@ -571,7 +576,7 @@ const S = {
   auraContainer   = new PIXI.Container(); app.stage.addChild(auraContainer)
   fxContainer     = new PIXI.Container(); app.stage.addChild(fxContainer)
   speedLineGfx    = new PIXI.Graphics();  app.stage.addChild(speedLineGfx)
-  auraContainer.addChild(auraGfx)
+  auraGfx         = new PIXI.Graphics();  auraContainer.addChild(auraGfx)
   // Pre-generate scrolling speed-line pool
   for(let i=0;i<18;i++) speedLineDeco.push({x:Math.random()*W,y:(0.08+Math.random()*0.72)*H,len:28+Math.random()*58,alpha:0.05+Math.random()*0.09})
 
@@ -623,8 +628,10 @@ function addClouds(){
 // ═══════════════════════════════════════════════════════════
 //  PLAYER SPRITE
 // ═══════════════════════════════════════════════════════════
+let _playerImgEl = null
+function _getPlayerImg(){ return _playerImgEl || (_playerImgEl = document.getElementById('player-img')) }
 function setupPlayerImg(){
-  const img=document.getElementById('player-img')
+  const img=_getPlayerImg()
   const p=G23_POKEMON[selectedPokemon]
   img.src=p.src; img.onerror=()=>{ img.src=`https://img.pokemondb.net/sprites/home/normal/${p.name.toLowerCase().replace(' ','-')}.png`; img.onerror=null }
   img.style.width=PLAYER_W+'px'; img.style.height=PLAYER_H+'px'
@@ -632,7 +639,7 @@ function setupPlayerImg(){
   syncPlayerPos()
 }
 function syncPlayerPos(){
-  const img=document.getElementById('player-img'); if(!img) return
+  const img=_getPlayerImg(); if(!img) return
   // Forward X lunge during jump: up to +55px at apex, eases back on landing
   const airFraction = S.isGrounded ? 0 : Math.max(0, (GROUND_Y - S.playerY) / (PLAYER_H * 1.1))
   const jumpXOffset = Math.min(airFraction, 1) * 55
@@ -643,7 +650,7 @@ function syncPlayerPos(){
 function applyPokemon(idx){
   selectedPokemon=Math.max(0,Math.min(idx,G23_POKEMON.length-1))
   const p=G23_POKEMON[selectedPokemon]
-  const img=document.getElementById('player-img')
+  const img=_getPlayerImg()
   img.src=p.src; img.onerror=()=>{ img.src=`https://img.pokemondb.net/sprites/home/normal/${p.name.toLowerCase().replace(' ','-')}.png`; img.onerror=null }
 }
 
@@ -825,8 +832,8 @@ function spawnPowerUp(){
   S.powerUpItems.push({type,gfx:g,x:W+80,phase:Math.random()*Math.PI*2})
 }
 
-// Power-up particles
-const auraGfx=new PIXI.Graphics()
+// Power-up particles (auraGfx initialized inside initPixi after Pixi app is ready)
+let auraGfx=null
 const blazePts=Array.from({length:14},()=>({x:0,y:0,vy:0,alpha:0,r:0,hue:0}))
 const natLeaves=Array.from({length:6},()=>({angle:Math.random()*Math.PI*2,speed:0.03+Math.random()*0.02}))
 const venBubs=Array.from({length:8},()=>({x:0,y:0,r:0,alpha:0}))
