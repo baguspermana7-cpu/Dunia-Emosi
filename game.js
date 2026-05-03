@@ -1179,12 +1179,18 @@ function _seedKodokProgress() {
 }
 // Hotfix #120-M: Slot-7 + Kodok unlock — all G13B/G13C levels + all Kanto badges
 // Trigger: active slot index === 6 (UI "Slot 7") AND avatar === frog
+// v3: reads localStorage directly (like save-engine.js) to avoid window._pSlot timing issues
 function _applyKodokSlot7Unlock() {
   try {
-    const slotIdx = window._pSlot ? window._pSlot[0] : 0
+    // Read slot/avatar directly from localStorage — avoids window._pSlot timing issues
+    const aSlot = JSON.parse(localStorage.getItem('dunia-active-slot') || '[0,1]')
+    const slotIdx = (Array.isArray(aSlot) ? parseInt(aSlot[0]) : 0) || 0
     if (slotIdx !== 6) return
-    if (_avatarSlug() !== 'frog') return
-    if (localStorage.getItem('dunia-kodok-slot7-v2') === '1') return
+    const slots = JSON.parse(localStorage.getItem('dunia-players') || '[]')
+    const animal = slots && slots[slotIdx] && slots[slotIdx].animal
+    const av = animal ? (AVATAR_SLUGS[animal] || String(animal)) : null
+    if (av !== 'frog') return
+    if (localStorage.getItem('dunia-kodok-slot7-v3') === '1') return
 
     const prog = loadProgress()
 
@@ -1203,7 +1209,6 @@ function _applyKodokSlot7Unlock() {
     saveProgress(prog)
 
     // Unlock all 87 trainer badges in G13C (trainer IDs format: {id: true})
-    const av = _avatarSlug()
     const badgesKey = `dunia-avatar-${av}-g13c_badges`
     const allBadges = {}
     const ALL_G13C_TRAINER_IDS = [
@@ -1235,7 +1240,7 @@ function _applyKodokSlot7Unlock() {
       }
     }
 
-    localStorage.setItem('dunia-kodok-slot7-v2', '1')
+    localStorage.setItem('dunia-kodok-slot7-v3', '1')
   } catch (_) {}
 }
 

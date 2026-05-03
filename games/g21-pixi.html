@@ -41,12 +41,20 @@ body.theme-final{--g21-sky-top:#1e1b4b;--g21-sky-mid:#312e81;--g21-sky-bot:#0000
 .life-heart.pulse{animation:heartPulse 0.4s ease}
 
 /* ── Mobile Controls (transparent overlay) ── */
-#mobile-controls{position:fixed;left:0;right:0;bottom:max(8px,env(safe-area-inset-bottom));z-index:100;display:flex;justify-content:space-between;align-items:center;padding:0 clamp(12px,3vw,24px);pointer-events:none;height:var(--g21-bottom-margin,96px);background:linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,0.75) 50%);backdrop-filter:blur(2px)}
-.mc-cluster{display:flex;gap:clamp(8px,2vw,14px);align-items:flex-end;pointer-events:none}
-.mc-btn{pointer-events:auto;width:clamp(58px,11vmin,90px);height:clamp(58px,11vmin,90px);border-radius:50%;background:rgba(255,255,255,0.17);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:2.5px solid rgba(255,255,255,0.4);color:#fff;font-size:clamp(20px,5vmin,30px);font-weight:900;cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;text-shadow:0 2px 4px rgba(0,0,0,0.5);box-shadow:0 4px 12px rgba(0,0,0,0.25);transition:transform .08s,background .12s}
-.mc-btn:active,.mc-btn.held{transform:scale(0.92);background:rgba(255,255,255,0.32)}
-.mc-jump{width:clamp(78px,14vmin,118px);height:clamp(78px,14vmin,118px);background:rgba(34,197,94,0.32);border-color:rgba(74,222,128,0.55);font-size:clamp(24px,6vmin,36px)}
-.mc-jump:active,.mc-jump.held{background:rgba(34,197,94,0.5)}
+#mobile-controls{position:fixed;left:0;right:0;bottom:max(8px,env(safe-area-inset-bottom));z-index:100;display:flex;justify-content:space-between;align-items:center;padding:0 clamp(10px,3vw,20px);pointer-events:none;height:var(--g21-bottom-margin,100px);background:linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,0.7) 50%);backdrop-filter:blur(2px)}
+.mc-cluster{display:flex;gap:clamp(10px,2.5vw,18px);align-items:flex-end;pointer-events:none}
+/* Square pastel buttons */
+.mc-btn{pointer-events:auto;width:clamp(72px,14vmin,106px);height:clamp(60px,11vmin,88px);border-radius:14px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:2.5px solid rgba(255,255,255,0.45);color:#fff;font-size:clamp(22px,5.5vmin,32px);font-weight:900;cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;text-shadow:0 2px 6px rgba(0,0,0,0.6);box-shadow:0 4px 14px rgba(0,0,0,0.3),0 2px 0 rgba(0,0,0,0.25);transition:transform .08s,background .12s}
+.mc-btn:active,.mc-btn.held{transform:scale(0.91) translateY(3px);box-shadow:0 1px 6px rgba(0,0,0,0.2)}
+/* Pastel periwinkle for Left */
+#btn-left{background:rgba(147,197,253,0.28);border-color:rgba(147,197,253,0.72)}
+#btn-left:active,#btn-left.held{background:rgba(147,197,253,0.5)}
+/* Pastel mint for Right */
+#btn-right{background:rgba(134,239,172,0.28);border-color:rgba(134,239,172,0.72)}
+#btn-right:active,#btn-right.held{background:rgba(134,239,172,0.5)}
+/* Pastel peach for Jump */
+.mc-jump{width:clamp(84px,16vmin,124px);height:clamp(72px,14vmin,110px);border-radius:18px;background:rgba(252,165,165,0.32);border-color:rgba(252,165,165,0.8);font-size:clamp(26px,6.5vmin,40px);box-shadow:0 4px 14px rgba(0,0,0,0.3),0 3px 0 rgba(180,0,0,0.25)}
+.mc-jump:active,.mc-jump.held{background:rgba(252,165,165,0.55);transform:scale(0.91) translateY(3px)}
 .mc-bolt{background:rgba(251,191,36,0.4);border-color:rgba(253,224,71,0.8);font-size:clamp(22px,5vmin,32px);animation:boltPulse 0.8s ease-in-out infinite}
 .mc-bolt:active,.mc-bolt.held{background:rgba(251,191,36,0.6)}
 @keyframes boltPulse{0%,100%{box-shadow:0 4px 12px rgba(0,0,0,0.25)}50%{box-shadow:0 4px 12px rgba(0,0,0,0.25),0 0 24px 6px rgba(253,224,71,0.6)}}
@@ -1529,6 +1537,17 @@ function attachInput() {
   wireBtn('btn-left', 'left')
   wireBtn('btn-right', 'right')
   wireBtn('btn-jump', 'jump')
+  // Tap-anywhere to jump (outside buttons/HUD)
+  const skipJumpTap = e => e.target.closest('#mobile-controls,#hud-top,#math-quiz,.mc-btn,#btn-bolt,button')
+  document.addEventListener('pointerdown', e => {
+    if (skipJumpTap(e)) return
+    if (!S.input.jump) S.input.jumpPressed = true
+    S.input.jump = true
+  })
+  document.addEventListener('pointerup', e => {
+    if (skipJumpTap(e)) return
+    S.input.jump = false
+  })
   // Bolt button (electric mode)
   const boltEl = document.getElementById('btn-bolt')
   if (boltEl) {

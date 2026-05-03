@@ -74,6 +74,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 /* Battle log */
 #tr-log{position:absolute;bottom:clamp(120px,22vh,180px);left:0;right:0;text-align:center;z-index:15;font-size:clamp(14px,4vw,20px);font-weight:900;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.8);padding:0 16px;animation:logFade 2s ease}
 @keyframes logFade{0%{opacity:0;transform:scale(.9)}15%{opacity:1;transform:scale(1)}80%{opacity:1}100%{opacity:0}}
+@keyframes typeHitPop{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx,0px),var(--dy,-40px)) scale(0.5)}}
 /* Attack question */
 #tr-quiz-wrap{position:absolute;bottom:0;left:0;right:0;z-index:20;padding:12px 16px max(16px,env(safe-area-inset-bottom));background:linear-gradient(0deg,rgba(10,2,25,0.97),rgba(30,12,60,.95));border-top:2.5px solid #7c3aed}
 #tr-atk-prompt{color:#c4b5fd;font-size:10px;font-weight:700;letter-spacing:3px;margin-bottom:4px;animation:dangerPulse .8s ease-in-out infinite}
@@ -88,6 +89,21 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 .tr-btn.wrong  {border-color:#ef4444;background:rgba(239,68,68,.3)!important;animation:wrongShake .35s ease}
 /* TR trainer portrait */
 #tr-trainer-tag{display:none}
+/* Trainer sprite in battle */
+#tr-trainer-sprite{position:absolute;top:clamp(50px,10vh,78px);right:clamp(18px,6vw,52px);width:clamp(42px,10vw,68px);height:auto;object-fit:contain;z-index:13;filter:drop-shadow(0 2px 8px rgba(0,0,0,.8));transform:scaleX(-1);pointer-events:none}
+/* Type projectile (ported from g13c) */
+.type-proj{position:fixed;font-size:32px;pointer-events:none;z-index:400;filter:drop-shadow(0 0 10px rgba(255,255,255,.8));transition:left .35s cubic-bezier(.35,0,.65,1.1),top .35s cubic-bezier(.35,0,.65,1.1),opacity .25s,transform .35s}
+.type-proj-trail{position:fixed;font-size:18px;pointer-events:none;z-index:399;opacity:.6}
+/* Move selector panel */
+#tr-move-wrap{position:absolute;bottom:0;left:0;right:0;z-index:20;padding:12px 16px max(16px,env(safe-area-inset-bottom));background:linear-gradient(0deg,rgba(10,2,25,.97),rgba(30,12,60,.95));border-top:2.5px solid #7c3aed;display:none;flex-direction:column;align-items:center;gap:8px}
+#tr-move-wrap.show{display:flex}
+#tr-move-title{color:#c4b5fd;font-size:10px;font-weight:700;letter-spacing:3px}
+#tr-move-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:340px}
+.tr-move-btn{padding:10px 6px;border:2px solid rgba(255,255,255,.32);border-radius:14px;background:linear-gradient(160deg,#7C3AED,#6D28D9);color:#fff;font-size:clamp(11px,3.5vw,14px);font-weight:900;cursor:pointer;font-family:inherit;transition:transform .1s;text-align:center;-webkit-tap-highlight-color:transparent;box-shadow:0 3px 0 #4C1D95}
+.tr-move-btn:active{transform:scale(.92) translateY(2px)}
+/* Attack name flash */
+#tr-atk-name{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);z-index:25;font-size:clamp(20px,6vw,34px);font-weight:900;color:#fff;text-shadow:0 0 20px rgba(196,181,253,.9),0 2px 4px rgba(0,0,0,.9);pointer-events:none;transition:transform .2s cubic-bezier(.34,1.56,.64,1),opacity .3s;opacity:0;white-space:nowrap}
+#tr-atk-name.show{transform:translate(-50%,-50%) scale(1);opacity:1}
 
 /* ── Quiz Panel (runner) ── */
 #quiz-panel{position:fixed;bottom:0;left:0;right:0;z-index:120;display:none;flex-direction:column;align-items:center;padding:clamp(10px,3vh,16px) clamp(12px,4vw,20px) clamp(16px,5vh,26px);background:linear-gradient(0deg,rgba(10,2,25,0.98),rgba(26,5,53,0.96));border-top:3px solid #ef4444;backdrop-filter:blur(14px)}
@@ -185,9 +201,17 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
       </div>
     </div>
     <div id="tr-trainer-tag">Jessie · Team Rocket</div>
+    <img id="tr-trainer-sprite" src="" alt="">
     <img id="tr-poke-enemy" src="" alt="">
     <img id="tr-poke-player" src="" alt="">
+    <div id="tr-atk-name"></div>
     <div id="tr-log"></div>
+    <!-- Move selector (shown first) -->
+    <div id="tr-move-wrap">
+      <div id="tr-move-title">⚔️ PILIH SERANGAN ⚔️</div>
+      <div id="tr-move-grid"></div>
+    </div>
+    <!-- Quiz (shown after move selected) -->
     <div id="tr-quiz-wrap">
       <div id="tr-atk-prompt">⚔️ SERANG ⚔️</div>
       <div id="tr-question"></div>
@@ -244,37 +268,37 @@ document.getElementById('quiz-total').textContent  = Math.min(8 + Math.floor((cf
 //  POKEMON ROSTER
 // ═══════════════════════════════════════════════════════════
 const G23_POKEMON = [
-  { name:'Arcanine',  src:'../assets/Pokemon/g23/arcanine.webp'  },
-  { name:'Lycanroc',  src:'../assets/Pokemon/g23/lycanroc.webp'  },
-  { name:'Cinderace', src:'../assets/Pokemon/g23/cinderace.webp' },
-  { name:'Eevee',     src:'../assets/Pokemon/g23/eevee.webp'     },
-  { name:'Pichu',     src:'../assets/Pokemon/g23/pichu.webp'     },
-  { name:'Umbreon',   src:'../assets/Pokemon/g23/umbreon.webp'   },
-  { name:'Raichu',    src:'../assets/Pokemon/g23/raichu.webp'    },
-  { name:'Sandshrew', src:'../assets/Pokemon/g23/sandshrew.webp' },
-  { name:'Mudkip',    src:'../assets/Pokemon/g23/mudkip.webp'    },
-  { name:'Pikachu',   src:'../assets/Pokemon/g23/pikachu.webp'   },
-  { name:'Jolteon',   src:'../assets/Pokemon/g23/jolteon.webp'   },
-  { name:'Emolga',    src:'../assets/Pokemon/g23/emolga.webp'    },
-  { name:'Furret',    src:'../assets/Pokemon/g23/furret.webp'    },
-  { name:'Psyduck',   src:'../assets/Pokemon/g23/psyduck.webp'   },
-  { name:'Chespin',   src:'../assets/Pokemon/g23/chespin.png'    },
-  { name:'Lucario',   src:'../assets/Pokemon/g23/lucario.png'    },
+  { name:'Arcanine',  src:'../assets/Pokemon/g23/arcanine.webp',  type:'fire',     moves:[{name:'Flamethrower',type:'fire'},{name:'Extreme Speed',type:'normal'},{name:'Crunch',type:'dark'},{name:'Flare Blitz',type:'fire'}] },
+  { name:'Lycanroc',  src:'../assets/Pokemon/g23/lycanroc.webp',  type:'rock',     moves:[{name:'Stone Edge',type:'rock'},{name:'Crunch',type:'dark'},{name:'Accelerock',type:'rock'},{name:'Iron Head',type:'steel'}] },
+  { name:'Cinderace', src:'../assets/Pokemon/g23/cinderace.webp', type:'fire',     moves:[{name:'Pyro Ball',type:'fire'},{name:'High Jump Kick',type:'fighting'},{name:'Sucker Punch',type:'dark'},{name:'Gunk Shot',type:'poison'}] },
+  { name:'Eevee',     src:'../assets/Pokemon/g23/eevee.webp',     type:'normal',   moves:[{name:'Quick Attack',type:'normal'},{name:'Bite',type:'dark'},{name:'Swift',type:'normal'},{name:'Last Resort',type:'normal'}] },
+  { name:'Pichu',     src:'../assets/Pokemon/g23/pichu.webp',     type:'electric', moves:[{name:'Thunder Shock',type:'electric'},{name:'Charm',type:'fairy'},{name:'Sweet Kiss',type:'fairy'},{name:'Thunder Wave',type:'electric'}] },
+  { name:'Umbreon',   src:'../assets/Pokemon/g23/umbreon.webp',   type:'dark',     moves:[{name:'Dark Pulse',type:'dark'},{name:'Moonlight',type:'fairy'},{name:'Foul Play',type:'dark'},{name:'Shadow Ball',type:'ghost'}] },
+  { name:'Raichu',    src:'../assets/Pokemon/g23/raichu.webp',    type:'electric', moves:[{name:'Thunderbolt',type:'electric'},{name:'Psychic',type:'psychic'},{name:'Volt Tackle',type:'electric'},{name:'Iron Tail',type:'steel'}] },
+  { name:'Sandshrew', src:'../assets/Pokemon/g23/sandshrew.webp', type:'ground',   moves:[{name:'Earthquake',type:'ground'},{name:'Slash',type:'normal'},{name:'Rock Slide',type:'rock'},{name:'Poison Jab',type:'poison'}] },
+  { name:'Mudkip',    src:'../assets/Pokemon/g23/mudkip.webp',    type:'water',    moves:[{name:'Water Gun',type:'water'},{name:'Mud Slap',type:'ground'},{name:'Tackle',type:'normal'},{name:'Whirlpool',type:'water'}] },
+  { name:'Pikachu',   src:'../assets/Pokemon/g23/pikachu.webp',   type:'electric', moves:[{name:'Thunderbolt',type:'electric'},{name:'Quick Attack',type:'normal'},{name:'Iron Tail',type:'steel'},{name:'Thunder',type:'electric'}] },
+  { name:'Jolteon',   src:'../assets/Pokemon/g23/jolteon.webp',   type:'electric', moves:[{name:'Thunderbolt',type:'electric'},{name:'Pin Missile',type:'bug'},{name:'Shadow Ball',type:'ghost'},{name:'Thunder',type:'electric'}] },
+  { name:'Emolga',    src:'../assets/Pokemon/g23/emolga.webp',    type:'electric', moves:[{name:'Thunderbolt',type:'electric'},{name:'Aerial Ace',type:'flying'},{name:'Quick Attack',type:'normal'},{name:'Acrobatics',type:'flying'}] },
+  { name:'Furret',    src:'../assets/Pokemon/g23/furret.webp',    type:'normal',   moves:[{name:'Quick Attack',type:'normal'},{name:'Slash',type:'normal'},{name:'U-turn',type:'bug'},{name:'Sucker Punch',type:'dark'}] },
+  { name:'Psyduck',   src:'../assets/Pokemon/g23/psyduck.webp',   type:'water',    moves:[{name:'Water Pulse',type:'water'},{name:'Confusion',type:'psychic'},{name:'Disable',type:'normal'},{name:'Scratch',type:'normal'}] },
+  { name:'Chespin',   src:'../assets/Pokemon/g23/chespin.png',    type:'grass',    moves:[{name:'Vine Whip',type:'grass'},{name:'Rollout',type:'rock'},{name:'Bite',type:'dark'},{name:'Seed Bomb',type:'grass'}] },
+  { name:'Lucario',   src:'../assets/Pokemon/g23/lucario.png',    type:'fighting', moves:[{name:'Aura Sphere',type:'fighting'},{name:'Close Combat',type:'fighting'},{name:'Dragon Pulse',type:'dragon'},{name:'Bullet Punch',type:'steel'}] },
 ]
 let selectedPokemon = Math.max(0, Math.min(cfg.pokemon || 0, G23_POKEMON.length - 1))
 
 // ── Team Rocket Pokemon pool ──
 const TR_POKEMON = [
-  { name:'Arbok',      slug:'arbok'      },{ name:'Weezing',    slug:'weezing'    },
-  { name:'Wobbuffet',  slug:'wobbuffet'  },{ name:'Seviper',    slug:'seviper'    },
-  { name:'Lickitung',  slug:'lickitung'  },{ name:'Cacnea',     slug:'cacnea'     },
-  { name:'Carnivine',  slug:'carnivine'  },{ name:'Victreebel', slug:'victreebel' },
-  { name:'Mime Jr',    slug:'mime-jr'    },{ name:'Yanmega',    slug:'yanmega'    },
-  { name:'Frillish',   slug:'frillish'   },{ name:'Chimecho',   slug:'chimecho'   },
+  { name:'Arbok',      slug:'arbok',      type:'poison'  },{ name:'Weezing',    slug:'weezing',    type:'poison'  },
+  { name:'Wobbuffet',  slug:'wobbuffet',  type:'psychic' },{ name:'Seviper',    slug:'seviper',    type:'poison'  },
+  { name:'Lickitung',  slug:'lickitung',  type:'normal'  },{ name:'Cacnea',     slug:'cacnea',     type:'grass'   },
+  { name:'Carnivine',  slug:'carnivine',  type:'grass'   },{ name:'Victreebel', slug:'victreebel', type:'grass'   },
+  { name:'Mime Jr',    slug:'mime-jr',    type:'psychic' },{ name:'Yanmega',    slug:'yanmega',    type:'bug'     },
+  { name:'Frillish',   slug:'frillish',   type:'water'   },{ name:'Chimecho',   slug:'chimecho',   type:'psychic' },
 ]
 const TR_TRAINERS = [
-  { name:'Jessie', tag:'Jessie · Team Rocket' },
-  { name:'James',  tag:'James · Team Rocket'  },
+  { name:'Jessie', sprite:'../assets/Pokemon/trainer/jessie.webp' },
+  { name:'James',  sprite:'../assets/Pokemon/trainer/james.webp'  },
 ]
 const GYM_BGS = [
   '../assets/background/gym/g13c-bg-forest-m.webp',
@@ -283,6 +307,73 @@ const GYM_BGS = [
   '../assets/background/gym/g13c-bg-water-m.webp',
   '../assets/background/gym/g13c-bg-volcano-m.webp',
 ]
+
+// ═══════════════════════════════════════════════════════════
+//  TYPE BATTLE SYSTEM (ported from g13c)
+// ═══════════════════════════════════════════════════════════
+const TYPE_PROJ = {
+  fire:{emoji:'🔥'},water:{emoji:'💧'},grass:{emoji:'🍃'},electric:{emoji:'⚡'},
+  psychic:{emoji:'🔮'},ghost:{emoji:'👻'},ice:{emoji:'❄️'},dragon:{emoji:'💫'},
+  dark:{emoji:'🌑'},fighting:{emoji:'👊'},rock:{emoji:'🪨'},poison:{emoji:'☠️'},
+  steel:{emoji:'⚔️'},bug:{emoji:'🐛'},fairy:{emoji:'✨'},flying:{emoji:'🌪️'},
+  ground:{emoji:'💨'},normal:{emoji:'💥'}
+}
+const TYPE_HIT_FX = {
+  fire:    {emojis:['🔥','✨'],color:'#FF6B35',count:7},
+  water:   {emojis:['💧','🌊'],color:'#4FC3F7',count:6},
+  electric:{emojis:['⚡','✨'],color:'#FFCB05',count:9},
+  grass:   {emojis:['🍃','🌿'],color:'#4CAF50',count:7},
+  dark:    {emojis:['🌑','💢'],color:'#3a0a5a',count:5},
+  psychic: {emojis:['🔮','💫'],color:'#F95587',count:7},
+  ice:     {emojis:['❄️','💎'],color:'#98D8D8',count:7},
+  ghost:   {emojis:['👻','💜'],color:'#705898',count:5},
+  flying:  {emojis:['🌪️','💨'],color:'#A890F0',count:6},
+  dragon:  {emojis:['💫','🐉'],color:'#7038F8',count:6},
+  fighting:{emojis:['💥','👊'],color:'#C03028',count:7},
+  rock:    {emojis:['🪨','💥'],color:'#B8A038',count:5},
+  poison:  {emojis:['☠️','💜'],color:'#A040A0',count:5},
+  ground:  {emojis:['💥','🌍'],color:'#E0C068',count:6},
+  bug:     {emojis:['✨','🌿'],color:'#A8B820',count:6},
+  steel:   {emojis:['⚔️','✨'],color:'#B8B8D0',count:5},
+  normal:  {emojis:['💢','✨'],color:'#A8A878',count:5},
+  fairy:   {emojis:['✨','💖'],color:'#EE99AC',count:7},
+}
+function spawnProjectile(fromEl, toEl, type, cb){
+  const fr=fromEl.getBoundingClientRect(), tr=toEl.getBoundingClientRect()
+  const sx=fr.left+fr.width/2, sy=fr.top+fr.height/2
+  const ex=tr.left+tr.width/2, ey=tr.top+tr.height/2
+  const emoji=(TYPE_PROJ[type]||TYPE_PROJ.normal).emoji
+  const proj=document.createElement('div')
+  proj.className='type-proj'; proj.textContent=emoji
+  proj.style.left=sx+'px'; proj.style.top=sy+'px'
+  proj.style.transform='translate(-50%,-50%) scale(0.5)'
+  document.body.appendChild(proj)
+  for(let i=0;i<3;i++){
+    const trail=document.createElement('div'); trail.className='type-proj-trail'; trail.textContent=emoji
+    trail.style.left=(sx+(Math.random()-.5)*20)+'px'; trail.style.top=(sy+(Math.random()-.5)*20)+'px'
+    trail.style.transition=`left ${0.3+i*.05}s ease,top ${0.3+i*.05}s ease,opacity 0.3s`
+    document.body.appendChild(trail)
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      trail.style.left=(ex+(Math.random()-.5)*30)+'px'; trail.style.top=(ey+(Math.random()-.5)*30)+'px'; trail.style.opacity='0'
+    })); setTimeout(()=>trail.remove(),500)
+  }
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    proj.style.left=ex+'px'; proj.style.top=ey+'px'; proj.style.transform='translate(-50%,-50%) scale(1.4)'
+    setTimeout(()=>{ proj.style.opacity='0'; setTimeout(()=>{ proj.remove(); if(cb) cb() },120) },300)
+  }))
+}
+function spawnTypeHitFX(targetEl, type){
+  const r=targetEl.getBoundingClientRect()
+  const cx=r.left+r.width/2, cy=r.top+r.height/2
+  const cfg=TYPE_HIT_FX[type]||TYPE_HIT_FX.normal
+  for(let i=0;i<cfg.count;i++){
+    const p=document.createElement('span')
+    const px=cx+(Math.random()-.5)*r.width, py=cy+(Math.random()-.5)*r.height
+    p.textContent=cfg.emojis[Math.floor(Math.random()*cfg.emojis.length)]
+    p.style.cssText=`position:fixed;left:${px}px;top:${py}px;font-size:${20+Math.random()*16}px;pointer-events:none;z-index:410;animation:typeHitPop .7s ease forwards;animation-delay:${i*.05}s`
+    document.body.appendChild(p); setTimeout(()=>p.remove(),900)
+  }
+}
 
 // ═══════════════════════════════════════════════════════════
 //  QUESTIONS
@@ -382,8 +473,8 @@ function scrollBgLayers(speed){
 //  PHYSICS / LAYOUT
 // ═══════════════════════════════════════════════════════════
 const GRAVITY       = 0.52
-const JUMP_POWER    = -12.5
-const DBLJ_POWER    = -10.5
+const JUMP_POWER    = -14.5
+const DBLJ_POWER    = -12.0
 const MAX_FALL      = 16
 const PLAYER_H      = 110
 const PLAYER_W      = 132
@@ -532,7 +623,10 @@ function setupPlayerImg(){
 }
 function syncPlayerPos(){
   const img=document.getElementById('player-img'); if(!img) return
-  img.style.left=(PLAYER_X-PLAYER_W/2)+'px'
+  // Forward X lunge during jump: up to +55px at apex, eases back on landing
+  const airFraction = S.isGrounded ? 0 : Math.max(0, (GROUND_Y - S.playerY) / (PLAYER_H * 1.1))
+  const jumpXOffset = Math.min(airFraction, 1) * 55
+  img.style.left=(PLAYER_X-PLAYER_W/2+jumpXOffset)+'px'
   img.style.top=(S.playerY-PLAYER_H)+'px'
   img.classList.toggle('sliding',S.isSliding)
 }
@@ -760,8 +854,16 @@ function clearAura(){
   document.getElementById('player-img').style.filter='drop-shadow(0 4px 8px rgba(0,0,0,0.4))'
 }
 function updateAura(){
-  const pu=S.activepu; if(!pu) return
   auraGfx.clear()
+  // ── Ground shadow indicator (always visible, like g19) ──
+  const airFrac = S.isGrounded ? 0 : Math.max(0, (GROUND_Y - S.playerY) / (PLAYER_H * 1.3))
+  const jumpX = Math.min(airFrac, 1) * 55  // matches syncPlayerPos forward lunge
+  const shadowAlpha = 0.28 - airFrac * 0.12
+  const shadowRx = (PLAYER_W * 0.42) * (1 - airFrac * 0.3)
+  auraGfx.ellipse(PLAYER_X + jumpX, GROUND_Y + 3, shadowRx, 7).fill({color:0x000000, alpha:shadowAlpha + 0.1})
+  auraGfx.ellipse(PLAYER_X + jumpX, GROUND_Y + 3, shadowRx, 7).stroke({width:1.5, color:0xffffff, alpha:shadowAlpha * 0.65})
+
+  const pu=S.activepu; if(!pu) return
   const cx=PLAYER_X, cy=S.playerY-PLAYER_H*.5
 
   if(pu.type==='thunder'){
@@ -1013,10 +1115,10 @@ function engageTRBattle(){
   document.getElementById('tr-battle-bg').style.backgroundImage=`url('${gymBg}')`
   document.getElementById('tr-enemy-name').textContent=trPoke.name
   document.getElementById('tr-player-name').textContent=playerPoke.name
-  const playerSlug=playerPoke.name.toLowerCase().replace(/\s+/g,'-')
-  const playerPokeEl=document.getElementById('tr-poke-player')
-  playerPokeEl.src=`https://img.pokemondb.net/sprites/home/normal/${playerSlug}.png`
-  playerPokeEl.onerror=function(){ this.src=playerPoke.src; this.onerror=null }
+  // Trainer sprite
+  const trspr=document.getElementById('tr-trainer-sprite')
+  trspr.src=trainer.sprite; trspr.style.display=''; trspr.onerror=function(){ this.style.display='none' }
+  // Enemy Pokemon
   const pokeDbSlug=trPoke.slug.replace(/\s+/g,'-')
   document.getElementById('tr-poke-enemy').src=
     `https://img.pokemondb.net/sprites/home/normal/${pokeDbSlug}.png`
@@ -1024,13 +1126,20 @@ function engageTRBattle(){
     this.src=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${Math.ceil(Math.random()*150)}.png`
     this.onerror=null
   }
+  // Player Pokemon (HD static sprite)
+  const playerSlug=playerPoke.name.toLowerCase().replace(/\s+/g,'-')
+  const playerPokeEl=document.getElementById('tr-poke-player')
+  playerPokeEl.src=`https://img.pokemondb.net/sprites/home/normal/${playerSlug}.png`
+  playerPokeEl.onerror=function(){ this.src=playerPoke.src; this.onerror=null }
   updateTRHPDisplay()
+  // Reset atk-name
+  const atkName=document.getElementById('tr-atk-name'); atkName.classList.remove('show'); atkName.textContent=''
   // Show battle (slide up)
   ;['jump-btn','slide-btn'].forEach(id=>{const b=document.getElementById(id);if(b)b.style.display='none'})
   const battle=document.getElementById('tr-battle')
   battle.style.display='flex'
   requestAnimationFrame(()=>battle.classList.add('open'))
-  setTimeout(()=>{ loadTRQuestion() }, 400)
+  setTimeout(()=>{ showMoveSelector() }, 420)
 }
 
 function updateTRHPDisplay(){
@@ -1039,10 +1148,41 @@ function updateTRHPDisplay(){
   document.getElementById('tr-player-hp').textContent='❤️'.repeat(Math.max(0,b.playerHP))+'🖤'.repeat(Math.max(0,3-b.playerHP))
 }
 
+const TYPE_MOVE_COLORS={fire:'#FF6B35',water:'#4FC3F7',grass:'#4CAF50',electric:'#FFCB05',
+  psychic:'#F95587',ghost:'#705898',ice:'#98D8D8',dragon:'#7038F8',dark:'#3a0a5a',
+  fighting:'#C03028',rock:'#B8A038',poison:'#A040A0',ground:'#E0C068',bug:'#A8B820',
+  steel:'#B8B8D0',normal:'#A8A878',fairy:'#EE99AC',flying:'#A890F0'}
+function showMoveSelector(){
+  const b=S.trBattle; if(!b) return
+  const moves=b.playerPoke.moves||[{name:'Tackle',type:'normal'},{name:'Scratch',type:'normal'},{name:'Quick Attack',type:'normal'},{name:'Swift',type:'normal'}]
+  const grid=document.getElementById('tr-move-grid'); grid.innerHTML=''
+  moves.forEach(m=>{
+    const btn=document.createElement('button'); btn.className='tr-move-btn'
+    const col=TYPE_MOVE_COLORS[m.type]||'#7C3AED'
+    btn.style.borderColor=col+'88'; btn.style.background=`linear-gradient(160deg,${col}cc,${col}99)`
+    btn.innerHTML=`<div style="font-size:clamp(13px,4vw,17px);font-weight:900">${m.name}</div><div style="font-size:10px;opacity:.8;margin-top:2px;text-transform:uppercase;letter-spacing:1px">${m.type}</div>`
+    btn.onclick=()=>{
+      b.selectedMove=m
+      document.getElementById('tr-move-wrap').classList.remove('show')
+      loadTRQuestion()
+    }
+    grid.appendChild(btn)
+  })
+  document.getElementById('tr-quiz-wrap').style.display='none'
+  document.getElementById('tr-move-wrap').classList.add('show')
+}
+
+function showAtkName(name, cb){
+  const el=document.getElementById('tr-atk-name'); el.textContent=name
+  el.classList.add('show'); setTimeout(()=>{ el.classList.remove('show'); setTimeout(cb||function(){},200) },700)
+}
+
 function loadTRQuestion(){
   const b=S.trBattle; if(b.answered) return
   const qPool=b.questions; if(!qPool.length) return
   const q=qPool[b.qIdx%qPool.length]; b.qIdx++
+  // Show quiz wrap
+  document.getElementById('tr-quiz-wrap').style.display=''
   document.getElementById('tr-question').textContent=q.q
   const wrap=document.getElementById('tr-choices'); wrap.innerHTML=''
   const choices=shuffle([q.ans,...q.wrong])
@@ -1053,29 +1193,43 @@ function loadTRQuestion(){
       if(b.answered) return; b.answered=true
       if(c===q.ans){
         btn.classList.add('correct'); sfxCorrect()
-        b.enemyHP=Math.max(0,b.enemyHP-1)
-        b.attacksDone++
-        updateTRHPDisplay()
-        showTRLog(`⚔️ ${b.playerPoke.name} menyerang! -1 HP`)
-        flashTRPoke('enemy')
-        // Check win first — enemy could die on the 2nd attack of a pair
-        if(b.enemyHP<=0){
-          b.attacksDone=0
-          setTimeout(()=>trWin(),700)
-        } else if(b.attacksDone>=2){
-          b.attacksDone=0
-          setTimeout(()=>{ trCounterAttack() }, 700)
-        } else {
-          setTimeout(()=>{ b.answered=false; loadTRQuestion() },800)
-        }
+        const move=b.selectedMove||{name:'Quick Attack',type:'normal'}
+        const atkType=move.type
+        const fromEl=document.getElementById('tr-poke-player')
+        const toEl=document.getElementById('tr-poke-enemy')
+        showAtkName(move.name, ()=>{
+          spawnProjectile(fromEl, toEl, atkType, ()=>{
+            spawnTypeHitFX(toEl, atkType)
+            flashTRPoke('enemy')
+            b.enemyHP=Math.max(0,b.enemyHP-1)
+            b.attacksDone++
+            updateTRHPDisplay()
+            showTRLog(`⚔️ ${b.playerPoke.name} pakai ${move.name}! -1 HP`)
+            if(b.enemyHP<=0){
+              b.attacksDone=0
+              setTimeout(()=>trWin(),700)
+            } else if(b.attacksDone>=2){
+              b.attacksDone=0
+              setTimeout(()=>{ trCounterAttack() },700)
+            } else {
+              setTimeout(()=>{ b.answered=false; showMoveSelector() },800)
+            }
+          })
+        })
       } else {
         btn.classList.add('wrong'); sfxWrong()
-        b.playerHP=Math.max(0,b.playerHP-1)
-        updateTRHPDisplay()
-        showTRLog(`💥 ${b.trPoke.name} menyerang balik! -1 HP`)
-        flashTRPoke('player')
-        if(b.playerHP<=0){ setTimeout(()=>trLose(),700) }
-        else { setTimeout(()=>{ b.answered=false; loadTRQuestion() },900) }
+        const atkType=b.trPoke.type||'normal'
+        const fromEl=document.getElementById('tr-poke-enemy')
+        const toEl=document.getElementById('tr-poke-player')
+        spawnProjectile(fromEl, toEl, atkType, ()=>{
+          spawnTypeHitFX(toEl, atkType)
+          flashTRPoke('player')
+          b.playerHP=Math.max(0,b.playerHP-1)
+          updateTRHPDisplay()
+          showTRLog(`💥 ${b.trPoke.name} menyerang balik! -1 HP`)
+          if(b.playerHP<=0){ setTimeout(()=>trLose(),700) }
+          else { setTimeout(()=>{ b.answered=false; showMoveSelector() },900) }
+        })
       }
     }
     wrap.appendChild(btn)
@@ -1084,13 +1238,20 @@ function loadTRQuestion(){
 
 function trCounterAttack(){
   const b=S.trBattle
-  b.playerHP=Math.max(0,b.playerHP-1)
-  updateTRHPDisplay()
-  showTRLog(`⚡ ${b.trPoke.name} menyerang! -1 HP`)
-  sfxHit(); flashScreen('#ef4444'); flashTRPoke('player')
-  if(b.playerHP<=0){ setTimeout(()=>trLose(),700) }
-  else if(b.enemyHP<=0){ setTimeout(()=>trWin(),400) }
-  else { setTimeout(()=>{ b.answered=false; loadTRQuestion() },900) }
+  const atkType=b.trPoke.type||'normal'
+  const fromEl=document.getElementById('tr-poke-enemy')
+  const toEl=document.getElementById('tr-poke-player')
+  spawnProjectile(fromEl, toEl, atkType, ()=>{
+    spawnTypeHitFX(toEl, atkType)
+    flashScreen('#ef4444'); flashTRPoke('player')
+    b.playerHP=Math.max(0,b.playerHP-1)
+    updateTRHPDisplay()
+    showTRLog(`⚡ ${b.trPoke.name} menyerang balik! -1 HP`)
+    sfxHit()
+    if(b.playerHP<=0){ setTimeout(()=>trLose(),700) }
+    else if(b.enemyHP<=0){ setTimeout(()=>trWin(),400) }
+    else { setTimeout(()=>{ b.answered=false; showMoveSelector() },900) }
+  })
 }
 
 function showTRLog(msg){
@@ -1132,6 +1293,8 @@ function trLose(){
 function closeTRBattle(){
   const battle=document.getElementById('tr-battle')
   battle.classList.remove('open')
+  document.getElementById('tr-move-wrap').classList.remove('show')
+  document.getElementById('tr-quiz-wrap').style.display=''
   setTimeout(()=>{ battle.style.display='none' }, 520)
   ;['jump-btn','slide-btn'].forEach(id=>{const b=document.getElementById(id);if(b)b.style.display=''})
   S.trBattle=null
@@ -1451,4 +1614,4 @@ function gameLoop(ticker){
 </script>
 </body>
 </html>
-<!-- g23-pixi v20260503g -->
+<!-- g23-pixi v20260503h -->

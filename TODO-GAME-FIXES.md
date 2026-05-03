@@ -2173,5 +2173,28 @@ User: "tidak ada karakter jessie/james". `#tr-trainer-tag` CSS set to `display:n
 - `hitPlayer()`: double burst (22 red + 10 pink particles), 💥 floating text, CSS screen shake on `#pixi-canvas` via `.hit-shake` class + `@keyframes screenShake`.
 - `drawObstGfx()`: all 6 obstacle types now have red glow outer stroke (3px, alpha 0.45–0.55) + brighter inner stroke for clear visibility.
 
-### ✅ #121-H: Kodok Slot-7 G13C badge fix
-`_applyKodokSlot7Unlock()` was setting `{'A':'gold','B':'gold',...}` (G13B phonics format) for G13C badges. G13C uses trainer IDs, not letters. Fixed: all 87 trainer IDs set to `{id:true}` format. IDs: misty, brock, erika, sabrina, surge, koga, blaine, lorelei, agatha, giovanni, lance, blue, falkner, bugsy, whitney, morty, jasmine, pryce, clair, will, karen, roxanne, brawly, wattson, norman, flannery, winona, wallace, steven, roark, gardenia, maylene, wake, byron, candice, volkner, aaron, flint, cynthia, lenora, burgh, clay, skyla, drayden, elesa, iris, n, viola, grant, ramos, valerie, clemont, korrina, diantha, milo, nessa, kabu, bea, allister, gordie, raihan, leon, gary, red, hop, jessie, james, ash, ash_johto, ash_hoenn, ash_sinnoh, ash_unova, ash_kalos, may, dawn, serena, go. Cache v=20260503d.
+### ✅ #121-H: Kodok Slot-7 G13C badge fix (v2)
+`_applyKodokSlot7Unlock()` was setting `{'A':'gold','B':'gold',...}` (G13B phonics format) for G13C badges. G13C uses trainer IDs, not letters. Fixed: all 77 trainer IDs set to `{id:true}` format. Cache v=20260503d.
+
+### ✅ #121-I: Kodok badge guard v3 — localStorage direct read
+Guard changed from `v2` → `v3` in `_applyKodokSlot7Unlock()`. Root cause: function read `window._pSlot` (timing-dependent) → `_avatarSlug()` could return null → wrote to `dunia-avatar-null-g13c_badges`. Fix: now reads `dunia-active-slot` + `dunia-players` from localStorage directly (mirrors save-engine.js). Guard v3 forces re-run past any stuck v2. `game.js` cache `v=20260503h`.
+
+### ✅ #121-J: G23 jump X clearance + ground hitbox indicator
+- `JUMP_POWER` increased from -12.5 → -14.5; `DBLJ_POWER` -10.5 → -12.0 (higher arc, more air time).
+- `syncPlayerPos()`: forward X lunge during jump (up to +55px at apex, scales with height).
+- `updateAura()`: restructured — always draws shadow ellipse at `(PLAYER_X+jumpX, GROUND_Y+3)` first, then powerup aura on top. Shadow shrinks as player rises (like g19 indicator).
+
+### ✅ #121-K: G23 TR battle full port from g13c
+- Trainer sprite (jessie.webp/james.webp) displayed beside enemy Pokemon via `#tr-trainer-sprite`.
+- Move selector (`#tr-move-wrap`): 4 moves per player Pokemon, type-colored buttons, shown before quiz.
+- `showAtkName()`: large move-name text flashes at center of battle before projectile fires.
+- `spawnProjectile()` + `spawnTypeHitFX()` ported from g13c: type emoji flies from attacker to defender, burst FX on hit.
+- TR Pokemon now have `type` property; G23_POKEMON now have `type` + `moves[]`.
+- Attack flow: pick move → quiz → correct → projectile → type FX → HP drop. Wrong → enemy counters with projectile.
+- After each attack pair: move selector shown again.
+
+### ✅ #121-L: G21 button redesign + tap-anywhere jump
+- Buttons changed from round (50%) to square (14–18px radius), wider (clamp 72px…106px).
+- Pastel colors: Left=periwinkle `rgba(147,197,253,0.28)`, Right=mint `rgba(134,239,172,0.28)`, Jump=peach `rgba(252,165,165,0.32)`.
+- Gap between left/right buttons increased.
+- Tap-anywhere on canvas (outside buttons/HUD) triggers jump via `document pointerdown`.
