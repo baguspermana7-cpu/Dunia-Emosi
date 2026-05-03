@@ -1120,6 +1120,7 @@ function openBag() {
     card.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:12px;border:2px solid '+(i===selectedPokemon?'#fbbf24':'rgba(255,255,255,0.15)')+';background:'+(i===selectedPokemon?'rgba(251,191,36,0.15)':'rgba(255,255,255,0.05)')+';cursor:pointer'
     const img = document.createElement('img')
     img.src = p.evo[0].src
+    img.onerror = () => { img.src = `https://img.pokemondb.net/sprites/home/normal/${p.name.toLowerCase().replace(/[^a-z0-9]+/g,'-')}.png`; img.onerror = null }
     img.style.cssText = 'width:60px;height:60px;object-fit:contain;'+(p.evo[0].mirror?'transform:scaleX(-1);':'')
     card.appendChild(img)
     const name = document.createElement('div')
@@ -1155,6 +1156,7 @@ function applyPokemon(evoStage) {
   const evo = p.evo[stage]
   if (window._birdImg) {
     window._birdImg.src = evo.src
+    window._birdImg.onerror = () => { window._birdImg.src = `https://img.pokemondb.net/sprites/home/normal/${evo.name.toLowerCase().replace(/[^a-z0-9]+/g,'-')}.png`; window._birdImg.onerror = null }
     const sz = Math.round(BIRD_SIZE * evo.scale)
     window._birdImg.style.width = 'min(' + sz + 'px,' + Math.round(evo.scale * 15) + 'vw)'
     window._birdImg.style.transform = evo.mirror ? 'scaleX(-1)' : ''

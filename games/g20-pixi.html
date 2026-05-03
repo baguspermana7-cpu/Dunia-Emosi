@@ -1340,8 +1340,11 @@ function showPokeSelector(){
       const card=document.createElement('div')
       card.style.cssText='display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px;border-radius:10px;cursor:pointer;border:2px solid '+(i===playerPokeIdx?'#fbbf24':'rgba(255,255,255,0.1)')+';background:'+(i===playerPokeIdx?'rgba(251,191,36,0.15)':'rgba(255,255,255,0.05)')
       const img=document.createElement('img')
-      img.src=(typeof pokeSpriteAlt2==='function'&&pokeSpriteAlt2(p.slug))||`https://img.pokemondb.net/sprites/home/normal/${p.slug}.png`
       img.style.cssText='width:40px;height:40px;object-fit:contain'
+      const _hdT=(typeof pokeSpriteAlt2==='function'?pokeSpriteAlt2(p.slug):null)
+      const _cdnT=`https://img.pokemondb.net/sprites/home/normal/${p.slug}.png`
+      if(typeof attachSpriteCascade==='function'){attachSpriteCascade(img,[_hdT,_cdnT],'⚡')}
+      else{img.src=_hdT||_cdnT;img.onerror=()=>{img.src=_cdnT;img.onerror=null}}
       card.appendChild(img)
       const nm=document.createElement('div')
       nm.style.cssText='font-size:8px;color:#bfdbfe;font-weight:700'

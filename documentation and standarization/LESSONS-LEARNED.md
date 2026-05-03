@@ -4,6 +4,16 @@
 
 ---
 
+## 2026-05-03 — Polish Session (G19/G20/G22 sprite fallback)
+
+### L73 — Picker card img needs cascade same as battle sprites
+- **Symptom**: G20 picker cards showed broken image icon when HD WebP failed; G22 picker thumbnails degraded to emoji but lost the cascaded 4-source fallback chain.
+- **Root cause**: `img.src = hdUrl || cdnUrl` was used in picker card rendering — only 1-2 sources, no timeout guard, no parallel probe. Picker cards are lower-priority so were not updated when cascade was introduced for battle sprites.
+- **Fix**: Route picker card img elements through `attachSpriteCascade` (with cascade guard `typeof attachSpriteCascade === 'function'`) in G20, G22.
+- **Lesson**: Every `img.src = ...` in a Pokemon game picker/selector/card should route through `attachSpriteCascade`. Apply the pattern uniformly — if you add cascade to battle sprites, audit all other img elements in the same file.
+
+---
+
 ## 2026-05-02 — Hotfix #120 (G13 Evolution + Scoring Critical Fix)
 
 ### L66 — Shared utility defined in standalone context is not available in main-app context

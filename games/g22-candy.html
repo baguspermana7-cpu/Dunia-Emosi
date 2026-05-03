@@ -1054,19 +1054,32 @@ function renderPokePicker() {
   G22_POKEMON.forEach(p => {
     const card = document.createElement('div')
     card.style.cssText = `background:${p.slug===g22SelectedPoke?'rgba(139,92,246,0.4)':'rgba(255,255,255,0.08)'};border:2px solid ${p.slug===g22SelectedPoke?'#a78bfa':'rgba(255,255,255,0.15)'};border-radius:10px;padding:4px;text-align:center;cursor:pointer;transition:all .12s`
-    // Hotfix #101-K: HD WebP first (was 96px CDN — non-HD complaint)
     const _hdCard = (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(p.slug) : null)
     const _cdnCard = `https://img.pokemondb.net/sprites/home/normal/${p.slug}.png`
-    const _cardSrc = _hdCard || _cdnCard
-    card.innerHTML = `<img src="${_cardSrc}" style="width:40px;height:40px;image-rendering:auto" onerror="this.src='${_cdnCard}';this.onerror=null"><div style="font-size:8px;color:#e9d5ff;font-weight:700;margin-top:2px">${p.name}</div>`
+    const thumb = document.createElement('img')
+    thumb.style.cssText = 'width:40px;height:40px;image-rendering:auto'
+    if (typeof attachSpriteCascade === 'function') {
+      attachSpriteCascade(thumb, [_hdCard, _cdnCard], '🐾')
+    } else {
+      thumb.src = _hdCard || _cdnCard
+      thumb.onerror = () => { thumb.src = _cdnCard; thumb.onerror = null }
+    }
+    const nm = document.createElement('div')
+    nm.style.cssText = 'font-size:8px;color:#e9d5ff;font-weight:700;margin-top:2px'
+    nm.textContent = p.name
+    card.appendChild(thumb)
+    card.appendChild(nm)
     card.onclick = () => {
       g22SelectedPoke = p.slug
       const img = document.getElementById('monster-img')
-      // Hotfix #101-K: HD WebP first (was 96px CDN — non-HD complaint)
       const _hdPick = (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(p.slug) : null)
       const _cdnPick = `https://img.pokemondb.net/sprites/home/normal/${p.slug}.png`
-      img.src = _hdPick || _cdnPick
-      img.onerror = () => { img.src = _cdnPick; img.onerror = null }
+      if (typeof attachSpriteCascade === 'function') {
+        attachSpriteCascade(img, [_hdPick, _cdnPick], '🐾')
+      } else {
+        img.src = _hdPick || _cdnPick
+        img.onerror = () => { img.src = _cdnPick; img.onerror = null }
+      }
       renderPokePicker()
     }
     grid.appendChild(card)

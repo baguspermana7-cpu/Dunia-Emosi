@@ -1,5 +1,20 @@
 # Changelog — Dunia Emosi
 
+## 2026-05-03 — Polish: G19/G20/G22 Sprite Fallback Hardening
+
+### Fixed
+- **G22 picker cards**: Converted inline `innerHTML` with onerror to proper `createElement`+`attachSpriteCascade` approach — picker thumbnails now use 4-source parallel cascade instead of 2-step fallback
+- **G22 picker onclick**: Monster image swap now routes through `attachSpriteCascade` instead of direct `.src` with manual onerror
+- **G20 picker cards**: Player selection grid thumbnails now use `attachSpriteCascade` — were direct `.src` with no fallback at all (broken image on load failure)
+- **G19 picker cards**: Added CDN onerror fallback to bird selection grid — was no fallback (broken image if local g19 WebP fails)
+- **G19 applyPokemon**: Added onerror to bird src swap on evolution — was bare `.src` assignment with no fallback
+
+### User Confirmed
+- All Hotfix #120 issues resolved (user: "all resolved")
+- Sprite emoji issue on tablet resolved with parallel cascade (Hotfix #120 Part 8)
+
+---
+
 ## 2026-05-02 — Hotfix #120 Part 8 (Cascade Watchdog + Wild Decoupling)
 
 ### Fixed
