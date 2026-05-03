@@ -144,6 +144,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
   <button id="btn-pause" onclick="togglePause()">⏸</button>
   <div id="hud-lives">❤️❤️❤️</div>
   <div id="score-display">0m</div>
+  <div id="quiz-progress" style="font-size:clamp(10px,2.5vw,12px);color:#fbbf24;font-weight:700;flex-shrink:0;white-space:nowrap">✅ 0/<span id="quiz-total"></span></div>
 </div>
 
 <!-- Power-up HUD -->
@@ -226,6 +227,7 @@ const cfg = { level: 1, pokemon: 0 }
 try { const s = sessionStorage.getItem('g23Config'); if (s) Object.assign(cfg, JSON.parse(s)) } catch(_) {}
 document.getElementById('level-text').textContent  = `Level ${cfg.level}`
 document.getElementById('start-level').textContent = `Level ${cfg.level}`
+document.getElementById('quiz-total').textContent  = Math.min(8 + Math.floor((cfg.level-1) * 0.6), 16)
 
 // ═══════════════════════════════════════════════════════════
 //  POKEMON ROSTER
@@ -359,6 +361,7 @@ function initBgLayers(){
 }
 function scrollBgLayers(speed){
   bgScrollX -= speed
+  if(bgScrollX < -200000) bgScrollX += 200000   // prevent float precision drift
   bgLayers.forEach(l => {
     if(l.el) l.el.style.backgroundPositionX = (bgScrollX * l.factor) + 'px'
   })
@@ -420,7 +423,7 @@ const S = {
   obstacles:[], powerUpItems:[], activepu:null, projectiles:[],
   shieldHits:0, invincible:0,
   questions:[], qIdx:0, pendingQuizGate:null,
-  obstacleCooldown:200, puCooldown:900,
+  obstacleCooldown:200, puCooldown:900, obsSpawnedSinceQuiz:0,
   // TR balloon
   trState:'idle',   // idle | warning | approach | battle | exiting
   trEncountersDone:0, trEncounterTriggerDist:0, trBalloonX:0, trBalloonY:0,
@@ -517,8 +520,11 @@ function syncPlayerPos(){
   const squish=S.isGrounded?Math.max(0.85,1-Math.abs(S.playerVY)*0.018):1
   const stretch=S.isGrounded?1:Math.min(1.15,1+Math.abs(S.playerVY)*0.014)
   const dw=PLAYER_W*squish, dh=PLAYER_H*stretch
+  // Velocity tilt: lean back on jump, forward on fall
+  const tilt=S.isGrounded?0:Math.max(-18,Math.min(22,S.playerVY*1.4))
   img.style.left=(PLAYER_X-dw/2)+'px'; img.style.top=(S.playerY-dh)+'px'
   img.style.width=dw+'px'; img.style.height=dh+'px'
+  img.style.transform=`rotate(${tilt}deg)`
 }
 function applyPokemon(idx){
   selectedPokemon=Math.max(0,Math.min(idx,G23_POKEMON.length-1))
@@ -572,8 +578,9 @@ const OBS_DEFS = [
   {type:'double',w:100, h:52 },
 ]
 function spawnObstacle(){
-  const isQuiz = S.quizDone<TOTAL_QUIZ && S.obstacles.length>0 && (S.obstacles.length%4===3)
-  if(isQuiz){ spawnQuizGate(); return }
+  S.obsSpawnedSinceQuiz++
+  const isQuiz = S.quizDone<TOTAL_QUIZ && S.obsSpawnedSinceQuiz>=4
+  if(isQuiz){ S.obsSpawnedSinceQuiz=0; spawnQuizGate(); return }
   const tpl=OBS_DEFS[Math.floor(Math.random()*OBS_DEFS.length)]
   const gfx=drawObstGfx(tpl.type)
   gfx.x=W+120; gfx.y=GROUND_Y
@@ -748,12 +755,7 @@ function destroyProj(p){ p.dead=true; worldContainer.removeChild(p.gfx); burst(p
 //  COLLISION
 // ═══════════════════════════════════════════════════════════
 function checkCollisions(){
-  if(S.invincible>0){ S.invincible--; return }
-  const px_l=PLAYER_X-PLAYER_W/2+HIT_MARGIN
-  const px_r=PLAYER_X+PLAYER_W/2-HIT_MARGIN
-  const py_t=S.playerY-PLAYER_H*.88+HIT_MARGIN
-  const py_b=S.playerY-6
-  // Power-ups
+  // Power-ups — collected regardless of invincible state
   for(const pu of S.powerUpItems){
     if(pu.collected) continue
     if(Math.abs(pu.x-PLAYER_X)<PLAYER_W/2+22&&Math.abs(pu.gfx.y-S.playerY+PLAYER_H*.5)<PLAYER_H/2+22){
@@ -762,6 +764,11 @@ function checkCollisions(){
     }
   }
   S.powerUpItems=S.powerUpItems.filter(p=>!p.collected)
+  if(S.invincible>0){ S.invincible--; return }
+  const px_l=PLAYER_X-PLAYER_W/2+HIT_MARGIN
+  const px_r=PLAYER_X+PLAYER_W/2-HIT_MARGIN
+  const py_t=S.playerY-PLAYER_H*.88+HIT_MARGIN
+  const py_b=S.playerY-6
   // Obstacles
   for(const obs of S.obstacles){
     if(obs.hit) continue
@@ -805,6 +812,7 @@ function showRunnerQuiz(gate){
         S.correctAnswers++; S.quizDone++; S.score+=10
         setTimeout(()=>{
           document.getElementById('quiz-panel').classList.remove('show')
+          document.getElementById('jump-btn').style.display=''
           if(gate) destroyObs(gate,false)
           S.pendingQuizGate=null; spawnFT('Benar! +10',PLAYER_X,S.playerY-PLAYER_H-20,0x4ade80)
           S.paused=false; updateHUD()
@@ -815,6 +823,7 @@ function showRunnerQuiz(gate){
         choicesEl.querySelectorAll('.choice-btn').forEach(b=>{ if(b.textContent===q.ans) b.classList.add('correct') })
         setTimeout(()=>{
           document.getElementById('quiz-panel').classList.remove('show')
+          document.getElementById('jump-btn').style.display=''
           if(gate) destroyObs(gate,false)
           S.pendingQuizGate=null; S.quizDone++
           spawnFT('Coba lagi!',PLAYER_X,S.playerY-PLAYER_H-20,0xfbbf24)
@@ -827,14 +836,13 @@ function showRunnerQuiz(gate){
     choicesEl.appendChild(btn)
   })
   document.getElementById('quiz-panel').classList.add('show')
+  document.getElementById('jump-btn').style.display='none'
   document.getElementById('status-text').textContent='Jawab Soal!'
 }
 
 // ═══════════════════════════════════════════════════════════
 //  TEAM ROCKET BALLOON
 // ═══════════════════════════════════════════════════════════
-let trBalloonObj = null
-
 function spawnTRBalloon(){
   const balloonEl=document.getElementById('tr-balloon')
   const bw=parseFloat(getComputedStyle(balloonEl).width)||130
@@ -910,6 +918,7 @@ function engageTRBattle(){
   }
   updateTRHPDisplay()
   // Show battle (slide up)
+  document.getElementById('jump-btn').style.display='none'
   const battle=document.getElementById('tr-battle')
   battle.style.display='flex'
   requestAnimationFrame(()=>battle.classList.add('open'))
@@ -941,12 +950,13 @@ function loadTRQuestion(){
         updateTRHPDisplay()
         showTRLog(`⚔️ ${b.playerPoke.name} menyerang! -1 HP`)
         flashTRPoke('enemy')
-        // After 2 correct → TR counter-attacks
-        if(b.attacksDone===2){
+        // Check win first — enemy could die on the 2nd attack of a pair
+        if(b.enemyHP<=0){
+          b.attacksDone=0
+          setTimeout(()=>trWin(),700)
+        } else if(b.attacksDone>=2){
           b.attacksDone=0
           setTimeout(()=>{ trCounterAttack() }, 700)
-        } else if(b.enemyHP<=0){
-          setTimeout(()=>trWin(),700)
         } else {
           setTimeout(()=>{ b.answered=false; loadTRQuestion() },800)
         }
@@ -984,10 +994,8 @@ function showTRLog(msg){
 function flashTRPoke(side){
   const id=side==='enemy'?'tr-poke-enemy':'tr-poke-player'
   const el=document.getElementById(id)
-  el.style.filter=side==='enemy'
-    ?'drop-shadow(0 0 16px #ef4444) brightness(2.5)'
-    :'drop-shadow(0 0 16px #ef4444) brightness(2.5) scaleX(-1)'
-  setTimeout(()=>{ el.style.filter=side==='player'?'drop-shadow(0 8px 20px rgba(0,0,0,0.6)) scaleX(-1)':'drop-shadow(0 8px 20px rgba(0,0,0,0.6))' },250)
+  el.style.filter='drop-shadow(0 0 16px #ef4444) brightness(2.5)'
+  setTimeout(()=>{ el.style.filter='drop-shadow(0 8px 20px rgba(0,0,0,0.6))' },250)
 }
 
 function trWin(){
@@ -1001,9 +1009,15 @@ function trWin(){
 
 function trLose(){
   sfxHit(); sfxHit()
-  showTRLog('😢 Kamu kalah... tapi terus berlari!')
   flashScreen('#ef4444')
   S.lives=Math.max(0,S.lives-1)
+  updateHUD()
+  if(S.lives<=0){
+    showTRLog('😢 Kamu kalah... Game Over!')
+    setTimeout(()=>{ closeTRBattle(); S.trState='idle'; showLose() }, 1200)
+    return
+  }
+  showTRLog('😢 Kamu kalah... tapi terus berlari!')
   setTimeout(()=>{ closeTRBattle(); trBalloonExit() }, 1200)
 }
 
@@ -1011,6 +1025,7 @@ function closeTRBattle(){
   const battle=document.getElementById('tr-battle')
   battle.classList.remove('open')
   setTimeout(()=>{ battle.style.display='none' }, 520)
+  document.getElementById('jump-btn').style.display=''
   S.trBattle=null
 }
 
@@ -1035,7 +1050,8 @@ function trBalloonExit(){
     const levelDist=500+(cfg.level-1)*300
     const spacing=levelDist/(TR_ENCOUNTERS+1)
     S.trEncounterTriggerDist=S.distance+spacing
-    // Resume runner
+    // Safety guard — should not reach here at 0 lives (trLose handles it), but just in case
+    if(S.lives<=0){ showLose(); return }
     S.paused=false
     updateHUD()
   }, 1800)
@@ -1067,6 +1083,7 @@ function flashScreen(color){
 function updateHUD(){
   document.getElementById('hud-lives').textContent='❤️'.repeat(Math.max(0,S.lives))+'🖤'.repeat(Math.max(0,3-S.lives))
   document.getElementById('score-display').textContent=Math.floor(S.distance)+'m'
+  document.getElementById('quiz-progress').firstChild.textContent='✅ '+S.quizDone+'/'
   if(S.running&&!S.paused) document.getElementById('status-text').textContent=G23_POKEMON[selectedPokemon].name+' Berlari!'
 }
 
@@ -1080,6 +1097,7 @@ function calcStars(){
 }
 function showWin(){
   if(S.gameOver) return
+  if(S.trState==='battle'||S.trState==='approach') return
   S.running=false; S.gameOver=true
   try{ if(app&&app.ticker) app.ticker.stop() }catch(_){}
   const stars=calcStars()
@@ -1167,7 +1185,13 @@ function closeBag(){
 function goBack(){
   S.running=false; try{ if(app&&app.ticker) app.ticker.stop() }catch(_){} history.back()
 }
-window.addEventListener('resize',()=>{ if(app) app.renderer.resize(Math.min(window.innerWidth,1400),Math.min(window.innerHeight,1000)) })
+window.addEventListener('resize',()=>{
+  if(!app) return
+  app.renderer.resize(window.innerWidth,window.innerHeight)
+  W=app.screen.width; H=app.screen.height
+  GROUND_Y=H*0.82; PLAYER_X=W*0.2
+  S.playerY=Math.min(S.playerY,GROUND_Y)
+})
 
 // ═══════════════════════════════════════════════════════════
 //  MAIN GAME LOOP
@@ -1200,7 +1224,7 @@ function gameLoop(ticker){
   // ── Spawn obstacles ──
   S.obstacleCooldown-=dt
   if(S.obstacleCooldown<=0&&S.obstacles.filter(o=>!o.hit).length<4){
-    S.obstacleCooldown=100+Math.random()*80-(cfg.level-1)*2
+    S.obstacleCooldown=Math.max(42,100+Math.random()*80-(cfg.level-1)*2)
     spawnObstacle()
   }
   // ── Scroll obstacles ──
@@ -1242,4 +1266,4 @@ function gameLoop(ticker){
 </script>
 </body>
 </html>
-<!-- g23-pixi v20260503b -->
+<!-- g23-pixi v20260503c -->
