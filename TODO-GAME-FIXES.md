@@ -2399,3 +2399,12 @@ Neither went through `openLevelSelect` where `_applyKodokSlot7Unlock` was placed
 - [x] Particle motion: vx/vy/gravity/rotation + floor bounce
 - [x] Pickup gold aura + sparkle + chevron (visually distinct from obstacles)
 - [x] Cache bump g23-pixi v=20260505g
+
+## #134 — G23 Jump + Hitbox (2026-05-04)
+- [x] Replace onclick → pointerdown on jump/slide buttons (kills 300ms debounce)
+- [x] Add `touch-action:manipulation` for safety
+- [x] Visual cue: gold "2x" badge on jump button while in air (S.jumpCount===1)
+- [x] Add `object-fit:contain` to #player-img — preserves Pokemon aspect ratio
+- [x] HIT_MARGIN 20 → 12 (close crown gap)
+- [x] Obstacle hitbox: removed +4 inset → matches visual fill exactly
+- [x] Cache bump g23-pixi v=20260505h

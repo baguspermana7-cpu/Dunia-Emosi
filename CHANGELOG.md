@@ -132,3 +132,25 @@
 - `spawnPowerUp` now uses unified GOLD aura (0xFCD34D outer halo + 0xFBBF24 mid glow) + 4 sparkle dots + upward chevron above the orb — clearly "collect me". Body keeps per-type tint (⚡🔥🍃💜) for variety. Obstacles keep RED outline glow (0xFF4444) — clearly "avoid me".
 
 - Cache: g23-pixi v=20260505g
+
+## 2026-05-04 — #134 G23 Jump + Hitbox Fixes
+
+**Double jump unreachable**
+- Root: `<button onclick="handleJump()">` — `onclick` on mobile has 300ms debounce, blocking rapid double-tap. The double-jump code (`S.jumpCount<2`, `DBLJ_POWER=-12.0`) was already implemented but never reached.
+- Fix: replaced `onclick` with `pointerdown` listener on jump and slide buttons. `e.preventDefault()` blocks emulated click. Added `touch-action:manipulation` to disable touch debounce.
+- Visual cue: jump button glows GOLD with "2x" badge while a second jump is still available. Cleared on landing or when 2nd jump consumed.
+
+**Pokemon size non-uniform / distorted**
+- Root: `#player-img` had no `object-fit` — `width:132px;height:110px` stretched square sprites to 132×110.
+- Fix: added `object-fit:contain` to `#player-img` CSS — preserves source aspect ratio, all Pokemon now render proportionally inside the uniform 132×110 hitbox box.
+
+**Hitbox crown gap (player took hits to invisible head zone)**
+- Root: `HIT_MARGIN=20` made player hitbox top sit 20px below visual top, so obstacles passing through "above" the visual head still triggered hits.
+- Fix: HIT_MARGIN 20 → 12 (more symmetric, closer to visual silhouette).
+
+**Obstacle hitbox didn't match visual**
+- Root: collision used `+4` inset on all sides — visually-touching obstacle edges didn't trigger collision; player clipped through edges.
+- Fix: removed inset; hitbox = visual fill rect exactly. Obstacles now feel solid.
+
+- Cache: g23-pixi v=20260505h
+- Lesson L93: mobile `onclick` has 300ms debounce — use `pointerdown` for game action buttons

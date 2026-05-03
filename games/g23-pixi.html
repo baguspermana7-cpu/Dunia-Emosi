@@ -19,13 +19,13 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 #bg-gym  {z-index:4;background-size:cover;background-position:center bottom;opacity:.7}
 
 #pixi-canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block;z-index:5}
-#player-img{position:fixed;z-index:40;pointer-events:none;image-rendering:auto;display:none;transition:filter .3s ease;transform:scaleX(-1);will-change:left,top;transform-origin:50% 100%}
+#player-img{position:fixed;z-index:40;pointer-events:none;image-rendering:auto;display:none;transition:filter .3s ease;transform:scaleX(-1);will-change:left,top;transform-origin:50% 100%;object-fit:contain}
 #player-img.sliding{transform:scaleX(-1) scaleY(0.47);transition:transform .08s ease-out,filter .3s ease}
 @keyframes jumpSquash{0%{transform:scaleX(-1) scaleY(1)}25%{transform:scaleX(-1) scaleY(0.75)}65%{transform:scaleX(-1) scaleY(1.1)}100%{transform:scaleX(-1) scaleY(1)}}
 @keyframes landBounce{0%{transform:scaleX(-1) scaleY(0.68)}40%{transform:scaleX(-1) scaleY(1.12)}70%{transform:scaleX(-1) scaleY(0.94)}100%{transform:scaleX(-1) scaleY(1)}}
 #player-img.jump-anim{animation:jumpSquash 0.16s ease-out}
 #player-img.land-anim{animation:landBounce 0.2s ease-out}
-#slide-btn{position:fixed;bottom:max(20px,env(safe-area-inset-bottom));left:max(20px,env(safe-area-inset-left));z-index:100;width:clamp(72px,16vmin,104px);height:clamp(60px,13vmin,88px);border-radius:18px;background:linear-gradient(160deg,#34d399,#10b981);border:2.5px solid #6ee7b7;color:#fff;font-size:clamp(26px,6.5vmin,36px);font-weight:900;cursor:pointer;-webkit-tap-highlight-color:transparent;display:none;align-items:center;justify-content:center;box-shadow:0 4px 0 rgba(0,80,50,0.3),0 6px 16px rgba(0,0,0,.35);transition:transform .08s,filter .1s;text-shadow:0 1px 3px rgba(0,0,0,0.4)}
+#slide-btn{position:fixed;bottom:max(20px,env(safe-area-inset-bottom));left:max(20px,env(safe-area-inset-left));z-index:100;width:clamp(72px,16vmin,104px);height:clamp(60px,13vmin,88px);border-radius:18px;background:linear-gradient(160deg,#34d399,#10b981);border:2.5px solid #6ee7b7;color:#fff;font-size:clamp(26px,6.5vmin,36px);font-weight:900;cursor:pointer;-webkit-tap-highlight-color:transparent;display:none;align-items:center;justify-content:center;box-shadow:0 4px 0 rgba(0,80,50,0.3),0 6px 16px rgba(0,0,0,.35);transition:transform .08s,filter .1s;text-shadow:0 1px 3px rgba(0,0,0,0.4);touch-action:manipulation}
 #slide-btn:active{transform:scale(0.91) translateY(3px);filter:brightness(1.1);box-shadow:0 1px 6px rgba(0,0,0,0.2)}
 @media(pointer:coarse){#slide-btn{display:flex}}
 
@@ -138,8 +138,11 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 /* ── Bag Overlay ── */
 #bag-overlay{position:fixed;inset:0;z-index:400;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(10,2,25,0.95);backdrop-filter:blur(10px)}
 /* ── Jump button (touch) ── */
-#jump-btn{position:fixed;bottom:max(20px,env(safe-area-inset-bottom));right:max(20px,env(safe-area-inset-right));z-index:100;width:clamp(72px,16vmin,104px);height:clamp(60px,13vmin,88px);border-radius:18px;background:linear-gradient(160deg,#f87171,#ef4444);border:2.5px solid #fca5a5;color:#fff;font-size:clamp(26px,6.5vmin,36px);font-weight:900;cursor:pointer;-webkit-tap-highlight-color:transparent;display:none;align-items:center;justify-content:center;box-shadow:0 4px 0 rgba(127,0,0,0.3),0 6px 16px rgba(0,0,0,.35);transition:transform .08s,filter .1s;text-shadow:0 1px 3px rgba(0,0,0,0.4)}
+#jump-btn{position:fixed;bottom:max(20px,env(safe-area-inset-bottom));right:max(20px,env(safe-area-inset-right));z-index:100;width:clamp(72px,16vmin,104px);height:clamp(60px,13vmin,88px);border-radius:18px;background:linear-gradient(160deg,#f87171,#ef4444);border:2.5px solid #fca5a5;color:#fff;font-size:clamp(26px,6.5vmin,36px);font-weight:900;cursor:pointer;-webkit-tap-highlight-color:transparent;display:none;align-items:center;justify-content:center;box-shadow:0 4px 0 rgba(127,0,0,0.3),0 6px 16px rgba(0,0,0,.35);transition:transform .08s,filter .1s,background .2s;text-shadow:0 1px 3px rgba(0,0,0,0.4);touch-action:manipulation}
 #jump-btn:active{transform:scale(0.91) translateY(3px);filter:brightness(1.1);box-shadow:0 1px 6px rgba(0,0,0,0.2)}
+#jump-btn.in-air{background:linear-gradient(160deg,#fbbf24,#f59e0b);border-color:#fef3c7}
+#jump-x2{position:absolute;top:4px;right:6px;font-size:11px;font-weight:900;color:#fef3c7;background:rgba(0,0,0,0.45);border-radius:8px;padding:1px 5px;display:none;text-shadow:none}
+#jump-btn.in-air #jump-x2{display:block}
 @media (pointer:coarse){#jump-btn{display:flex}}
 </style>
 </head>
@@ -247,8 +250,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
   <button onclick="closeBag()" style="padding:10px 24px;border-radius:14px;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#e9d5ff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Tutup</button>
 </div>
 
-<button id="jump-btn" aria-label="Lompat" onclick="handleJump()">⬆</button>
-<button id="slide-btn" aria-label="Merosot" onclick="handleSlide()">⬇</button>
+<button id="jump-btn" aria-label="Lompat"><span id="jump-x2" aria-hidden="true">2x</span><span class="jbicon">⬆</span></button>
+<button id="slide-btn" aria-label="Merosot">⬇</button>
 
 <script src="../shared/rz-responsive.js?v=20260422i"></script>
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
@@ -499,7 +502,7 @@ const MAX_FALL      = 16
 const PLAYER_H      = 110
 const PLAYER_W      = 132
 const SLIDE_H       = 52   // effective hitbox height while sliding
-const HIT_MARGIN    = 20
+const HIT_MARGIN    = 12   // X+Y inset for player hitbox; was 20 (crown gap too generous)
 const TOTAL_QUIZ    = Math.min(8 + Math.floor((cfg.level-1) * 0.6), 16)
 const TR_ENCOUNTERS = cfg.level >= 3 ? 2 : 1   // 1 encounter L1-2, 2 encounters L3+
 
@@ -1078,8 +1081,10 @@ function checkCollisions(){
     if(obs.hit) continue
     if(obs.lane==='high') continue  // overhead — no collision
     const gfxY=obs.gfxY!==undefined ? obs.gfxY : GROUND_Y
-    const ox_l=obs.x-obs.w/2+4, ox_r=obs.x+obs.w/2-4
-    const oy_t=gfxY-obs.h+4, oy_b=gfxY
+    // Obstacle hitbox = visual fill rect (no inset). Was +4 inset which made
+    // the visual outline NOT count as solid — player could clip through edges.
+    const ox_l=obs.x-obs.w/2, ox_r=obs.x+obs.w/2
+    const oy_t=gfxY-obs.h, oy_b=gfxY
     if(!(px_r>ox_l&&px_l<ox_r&&py_b>oy_t&&py_t<oy_b)) continue
     if(obs.isQuiz){ obs.hit=true; S.paused=true; S.pendingQuizGate=obs; showRunnerQuiz(obs) }
     else if(S.activepu?.type==='nature'&&S.shieldHits>0){
@@ -1713,6 +1718,9 @@ function handleJump(){
     const isDouble=S.jumpCount===1
     S.playerVY=isDouble?DBLJ_POWER:JUMP_POWER
     S.jumpCount++; S.isGrounded=false; sfxJump()
+    // Visual cue: button shows "2x" badge while a second jump is still available
+    const _jb = document.getElementById('jump-btn')
+    if(_jb) _jb.classList.toggle('in-air', S.jumpCount === 1)
     // Jump squash animation
     const img=document.getElementById('player-img')
     if(img){ img.classList.remove('jump-anim','land-anim'); void img.offsetWidth; img.classList.add('jump-anim'); setTimeout(()=>img.classList.remove('jump-anim'),180) }
@@ -1743,6 +1751,15 @@ window.addEventListener('keydown',e=>{
   if(e.code==='Space'||e.code==='ArrowUp'){e.preventDefault();handleJump()}
   if(e.code==='ArrowDown'||e.code==='KeyS'){e.preventDefault();handleSlide()}
 })
+// Bind jump/slide buttons via pointerdown — kills the 300ms onclick debounce
+// on mobile and lets rapid double-tap fire two distinct handleJump() calls
+// (enabling the existing double-jump path at S.jumpCount<2).
+;(function _bindActionBtns(){
+  const jb = document.getElementById('jump-btn')
+  const sb = document.getElementById('slide-btn')
+  if(jb) jb.addEventListener('pointerdown', e=>{ e.preventDefault(); handleJump() })
+  if(sb) sb.addEventListener('pointerdown', e=>{ e.preventDefault(); handleSlide() })
+})()
 
 function togglePause(){
   if(!S.started||S.gameOver||S.trState==='battle') return
@@ -1877,6 +1894,7 @@ function gameLoop(ticker){
     S.playerY+=S.playerVY*dt
     if(S.playerY>=GROUND_Y){
       S.playerY=GROUND_Y; S.playerVY=0; S.isGrounded=true; S.jumpCount=0; S.isSliding=false; sfxLand()
+      const _jb=document.getElementById('jump-btn'); if(_jb) _jb.classList.remove('in-air')
       burst(PLAYER_X,GROUND_Y-6,0xD4A574,7); burst(PLAYER_X,GROUND_Y-6,0xffffff,3)
       const img=document.getElementById('player-img')
       if(img){ img.classList.remove('jump-anim','land-anim'); void img.offsetWidth; img.classList.add('land-anim'); setTimeout(()=>img.classList.remove('land-anim'),220) }
@@ -1944,4 +1962,4 @@ function gameLoop(ticker){
 </script>
 </body>
 </html>
-<!-- g23-pixi v20260505g -->
+<!-- g23-pixi v20260505h -->

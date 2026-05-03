@@ -114,3 +114,23 @@ fields (`vx, vy, ay, vr, life, maxLife`) once, then write small spawn helpers pe
 bounce (clamp y to GROUND_Y - 4, reverse vy *= -0.4) adds the "things land on the ground"
 realism that makes destruction feel grounded. Helpers are pure spawn-only — they don't
 update; one shared `updateObsParticles` handles motion + fade for all particle types.
+
+## L93 — Mobile `onclick` has 300ms debounce; use `pointerdown` for game buttons
+G23 had double-jump code (`S.jumpCount<2`, `DBLJ_POWER`) but the user couldn't trigger
+the second jump because the jump button used `<button onclick="handleJump()">`. On mobile
+browsers, `onclick` waits ~300ms after `pointerup` to disambiguate single-tap vs
+double-tap-to-zoom — and during that window, additional taps are debounced/dropped.
+For action games where rapid taps matter, bind via `pointerdown` instead, call
+`e.preventDefault()` to suppress the synthesized click, and add CSS `touch-action:
+manipulation` to disable browser touch heuristics. Pattern applies to ANY action button
+where every tap matters (jump, fire, attack, dash). Keep `onclick` only for non-time-
+critical UI like menu buttons.
+
+## L94 — Without object-fit:contain, fixed width+height stretches sprites
+G23 set `#player-img { width:132px; height:110px }` but had no `object-fit`. Default
+behavior is to stretch the source image to fill those dimensions, distorting square
+sprites to non-square. One-line fix: `object-fit:contain` preserves source aspect
+ratio and letterboxes inside the box. Pattern applies whenever you constrain an
+img/video to specific width AND height. If you only set one dimension and `auto` the
+other, aspect ratio is preserved naturally — but for game sprites where layout
+needs uniform box dimensions, `object-fit:contain` is the clean answer.
