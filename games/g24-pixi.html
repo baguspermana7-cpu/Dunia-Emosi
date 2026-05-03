@@ -72,6 +72,12 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
 /* Magikarp micro-wiggle — rotate is independent of transform, no positioning conflict */
 @keyframes swimWiggle{0%,100%{rotate:-5deg}25%,75%{rotate:0deg}50%{rotate:5deg}}
 .swim-wiggle{animation:swimWiggle 0.44s ease-in-out infinite}
+/* Upright-pose Pokemon (Floatzel, Lugia, Eternatus): rotate -90deg so they
+   appear horizontal, head pointing right (matches scaleX flip = swim direction).
+   When combined with .swim-wiggle the keyframes adjust for the -90 base offset. */
+.swim-rotate{rotate:-90deg}
+@keyframes swimWiggleRot{0%,100%{rotate:-95deg}25%,75%{rotate:-90deg}50%{rotate:-85deg}}
+.swim-rotate.swim-wiggle{animation:swimWiggleRot 0.44s ease-in-out infinite}
 /* Staryu/Starmie spinning star micro-animation */
 @keyframes starSpin{0%{rotate:0deg}100%{rotate:360deg}}
 .swim-starspin{animation:starSpin 4s linear infinite}
@@ -245,7 +251,7 @@ const G24_POKEMON = [
     {name:'Qwilfish', src:PS('qwilfish'), hd:HD('0211_qwilfish'), flip:true, scale:0.8, emoji:'🐡'},
   ]},
   { name:'Mantine', region:1, evo:[
-    {name:'Mantine', src:PS('mantine'), hd:HD('0226_mantine'), flip:false, scale:1.0, emoji:'🦅'},
+    {name:'Mantine', src:PS('mantine'), hd:HD('0226_mantine'), flip:true, scale:1.0, emoji:'🦅'},
   ]},
   // ── HOENN (Region 2) ──
   { name:'Carvanha', region:2, evo:[
@@ -254,8 +260,8 @@ const G24_POKEMON = [
     {name:'Mega Sharpedo', src:PS('sharpedo-mega'), hd:HD('0319_sharpedo'), flip:true, scale:1.4, emoji:'💥'},
   ]},
   { name:'Wailmer', region:2, evo:[
-    {name:'Wailmer', src:PS('wailmer'), hd:HD('0320_wailmer'), flip:false, scale:0.9, emoji:'🐋'},
-    {name:'Wailord', src:PS('wailord'), hd:HD('0321_wailord'), flip:true,  scale:1.5, emoji:'🌊'},
+    {name:'Wailmer', src:PS('wailmer'), hd:HD('0320_wailmer'), flip:true, scale:0.9, emoji:'🐋'},
+    {name:'Wailord', src:PS('wailord'), hd:HD('0321_wailord'), flip:true, scale:1.5, emoji:'🌊'},
   ]},
   { name:'Feebas', region:2, evo:[
     {name:'Feebas',  src:PS('feebas'),  hd:HD('0349_feebas'),  flip:true, scale:0.7, emoji:'🐟'},
@@ -275,19 +281,19 @@ const G24_POKEMON = [
     {name:'Lumineon', src:PS('lumineon'), hd:HD('0457_lumineon'), flip:true, scale:1.0, emoji:'✨'},
   ]},
   { name:'Buizel', region:3, evo:[
-    {name:'Buizel',   src:PS('buizel'),   hd:HD('0418_buizel'),   flip:true, scale:0.7, emoji:'🦦'},
-    {name:'Floatzel', src:PS('floatzel'), hd:HD('0419_floatzel'), flip:true, scale:1.1, emoji:'🌊'},
+    {name:'Buizel',   src:PS('buizel'),   hd:HD('0418_buizel'),   flip:true, scale:0.7, rotate:true, wiggle:true, emoji:'🦦'},
+    {name:'Floatzel', src:PS('floatzel'), hd:HD('0419_floatzel'), flip:true, scale:1.1, rotate:true, wiggle:true, emoji:'🌊'},
   ]},
   { name:'Mantyke', region:3, evo:[
-    {name:'Mantyke', src:PS('mantyke'), hd:HD('0458_mantyke'), flip:false, scale:0.7, emoji:'🐟'},
-    {name:'Mantine', src:PS('mantine'), hd:HD('0226_mantine'), flip:false, scale:1.1, emoji:'🦅'},
+    {name:'Mantyke', src:PS('mantyke'), hd:HD('0458_mantyke'), flip:true, scale:0.7, emoji:'🐟'},
+    {name:'Mantine', src:PS('mantine'), hd:HD('0226_mantine'), flip:true, scale:1.1, emoji:'🦅'},
   ]},
   { name:'Lugia', region:3, evo:[
-    {name:'Lugia', src:PS('lugia'), hd:'../assets/Pokemon/g19/lugia.gif', flip:false, scale:1.3, emoji:'🕊️'},
+    {name:'Lugia', src:PS('lugia'), hd:'../assets/Pokemon/g19/lugia.webp', flip:true, scale:1.3, rotate:true, wiggle:true, emoji:'🕊️'},
   ]},
   { name:'Eternatus', region:3, evo:[
-    {name:'Eternatus',           src:PS('eternatus'),            hd:HD('0890_eternatus'), flip:false, scale:1.3, emoji:'🐉'},
-    {name:'Eternamax Eternatus', src:PS('eternatus-eternamax'),  hd:HD('0890_eternatus'), flip:false, scale:1.7, emoji:'🌌'},
+    {name:'Eternatus',           src:PS('eternatus'),            hd:HD('0890_eternatus'), flip:true, scale:1.3, rotate:true, wiggle:true, emoji:'🐉'},
+    {name:'Eternamax Eternatus', src:PS('eternatus-eternamax'),  hd:HD('0890_eternatus'), flip:true, scale:1.7, rotate:true, wiggle:true, emoji:'🌌'},
   ]},
 ]
 let selectedPokemon = Math.max(0, Math.min(cfg.pokemon || 0, G24_POKEMON.length - 1))
@@ -853,6 +859,7 @@ function createSwimmer() {
   document.body.appendChild(swimImg)
   if (initPoke.wiggle) swimImg.classList.add('swim-wiggle')
   if (initPoke.spin)   swimImg.classList.add('swim-starspin')
+  if (initPoke.rotate) swimImg.classList.add('swim-rotate')
   window._swimImg = swimImg
 
   // Invisible anchor
@@ -1188,7 +1195,10 @@ function refreshStartIcon() {
   si.innerHTML = ''
   const img = document.createElement('img')
   img.src = sp.hd || sp.src   // HD WebP always available; GIF only if hd missing
-  img.style.cssText = `width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 4px 24px rgba(0,180,216,0.7));${sp.flip?'transform:scaleX(-1)':''}`
+  // Upright-pose Pokemon (Floatzel, Lugia, Eternatus): rotate -90deg via CSS
+  // rotate property; flip via transform — combined makes head point right.
+  const _rot = sp.rotate ? 'rotate:-90deg;' : ''
+  img.style.cssText = `width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 4px 24px rgba(0,180,216,0.7));${_rot}${sp.flip?'transform:scaleX(-1)':''}`
   img.onerror = () => { si.textContent = '🌊' }
   si.appendChild(img)
 }
@@ -1202,6 +1212,7 @@ function applyPokemon(evoStage) {
   img.src = evo.src
   img.classList.toggle('swim-wiggle',   !!evo.wiggle)
   img.classList.toggle('swim-starspin', !!evo.spin)
+  img.classList.toggle('swim-rotate',   !!evo.rotate)
   img.onerror = () => {
     if (evo.hd && img.src !== evo.hd) { img.src = evo.hd; return }
     const em = evo.emoji||'🐟'
@@ -1307,8 +1318,16 @@ function renderBagGrid() {
     const img = document.createElement('img')
     // Always use HD WebP for bag display — looks great, always available
     img.src = evo0.hd || evo0.src
-    img.style.cssText = `width:60px;height:60px;object-fit:contain;transform:${evo0.flip?'scaleX(-1)':'none'}`
-    img.onerror = () => { img.outerHTML=`<div style="font-size:36px;width:60px;height:60px;display:flex;align-items:center;justify-content:center">${evo0.emoji}</div>` }
+    // For rotate-pose Pokemon (Floatzel, Lugia, Eternatus): apply -90deg via `rotate`
+    // CSS property + scaleX(-1) via transform — head ends up pointing right.
+    const _rot = evo0.rotate ? 'rotate:-90deg;' : ''
+    const _flip = evo0.flip ? 'scaleX(-1)' : 'none'
+    img.style.cssText = `width:60px;height:60px;object-fit:contain;${_rot}transform:${_flip}`
+    // Cascade fallback chain: hd → src (Showdown URL) → emoji
+    img.onerror = () => {
+      if (evo0.src && img.src !== evo0.src) { img.src = evo0.src; return }
+      img.outerHTML = `<div style="font-size:36px;width:60px;height:60px;display:flex;align-items:center;justify-content:center">${evo0.emoji}</div>`
+    }
 
     const nm = document.createElement('div')
     nm.style.cssText = 'font-size:10px;color:#e9d5ff;font-weight:700;text-align:center;word-break:break-word'
@@ -1366,4 +1385,4 @@ document.getElementById('level-text').textContent=`Level ${cfg.level}`
 </script>
 </body>
 </html>
-<!-- g24-pixi v20260505f -->
+<!-- g24-pixi v20260505g -->

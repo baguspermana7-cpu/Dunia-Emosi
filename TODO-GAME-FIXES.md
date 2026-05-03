@@ -2381,3 +2381,21 @@ Neither went through `openLevelSelect` where `_applyKodokSlot7Unlock` was placed
 - [x] Anglerfish: drop PNG, use Pokemon Showdown lanturn (real anglerfish Pokemon)
 - [x] Scuba diver: 🤿 (mask) → 🏊‍♂️ (full-body swimmer), faces left
 - [x] Cache bump g24-pixi v=20260505f
+
+## #132 — G24 Flip+Rotate + G13C Badge Counter (2026-05-04)
+- [x] G13C Gym Ladder badge counter "0/87" → updates correctly to "X/77" via duplicate-ID fix
+- [x] G24 flip:true on Mantine×2, Wailmer, Mantyke (was facing wrong way)
+- [x] G24 rotate:true + wiggle:true on Buizel, Floatzel, Lugia, Eternatus×2 (upright pose → horizontal swim)
+- [x] G24 Lugia bag card uses lugia.webp instead of failing lugia.gif
+- [x] G24 cascade fallback chain for bag card: hd → src → emoji
+- [x] G24 refreshStartIcon handles rotate prop (start screen icon)
+- [x] CSS .swim-rotate + swimWiggleRot keyframes
+- [x] Cache bump g24-pixi v=20260505g, g13c-pixi v=20260505g
+
+## #133 — G23 Pokemon Run — GIF + DUCK + FX (2026-05-04)
+- [x] GIF retry mechanism (1s/3s/9s exponential backoff, max 3 retries)
+- [x] Removed "⬇ DUCK" PIXI.Text labels from mid-bar/mid-rock
+- [x] Per-type destruction FX: wood splinters (box/tall/double), shards (spike), leaves (bush), rubble (rock/mid-rock), sparks+flash (mid-bar), feathers (high-bird)
+- [x] Particle motion: vx/vy/gravity/rotation + floor bounce
+- [x] Pickup gold aura + sparkle + chevron (visually distinct from obstacles)
+- [x] Cache bump g23-pixi v=20260505g

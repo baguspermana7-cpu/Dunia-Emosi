@@ -87,3 +87,30 @@ rendered into the adjacent tile (no clipping). Pattern: when drawing repeating s
 a Pixi `Graphics` overlay that should be visually bounded, cap the loop at `bound - maxOffset`
 where `maxOffset` is the largest positive vertex offset, OR explicitly clamp each vertex with
 `Math.min`. Same fix at left: start at the largest negative vertex offset (`i = 24` here).
+
+## L90 — Duplicate HTML id breaks getElementById updates silently
+G13C Gym Ladder badge counter showed "0/87" forever despite the Kodok preset writing 77 trainer
+badges to localStorage. Root cause: TWO elements had `id="badge-num"` (line 259 in HUD top + line
+344 in Gym Ladder subtitle). `document.getElementById` returns the FIRST match in document order
+— so `updateBadgeCount()` updated the hidden HUD counter, never the visible one. Pattern: if
+two screens need the same counter, give each its own unique id (e.g., `badge-num` and
+`gs-badge-num`) and update BOTH in the setter. Add an HTML lint that grepps for duplicate `id="..."`
+attributes per file as part of doc updates.
+
+## L91 — Compose CSS rotate keyframes for static-rotated sprites
+G24 needs upright Pokemon (Floatzel etc.) rotated -90° in the swim game. The existing
+`swimWiggle` keyframe sets `rotate:-5deg → 0deg → 5deg` for Magikarp wiggle. If you also set
+`rotate:-90deg` on the same element, the keyframe wipes out the static rotation each frame.
+Fix: define a SECOND keyframe set `swimWiggleRot{rotate:-95deg → -90deg → -85deg}` and use
+CSS specificity (`.swim-rotate.swim-wiggle{animation:swimWiggleRot ...}`) so rotated sprites
+get the offset-aware wiggle. The CSS `rotate` property is independent from `transform`, so
+combining `rotate:-90deg` + `transform:scaleX(-1)` is safe and well-supported.
+
+## L92 — Per-type destruction FX make obstacles feel "solid"
+G23 obstacles previously just faded out on hit (uniform UX, didn't feel impactful). Per-type
+particle bursts (wood splinters scatter, leaves flutter, sparks flash) make each obstacle type
+feel distinct and physically real to kids. Pattern: extend the particle structure with motion
+fields (`vx, vy, ay, vr, life, maxLife`) once, then write small spawn helpers per type. Floor
+bounce (clamp y to GROUND_Y - 4, reverse vy *= -0.4) adds the "things land on the ground"
+realism that makes destruction feel grounded. Helpers are pure spawn-only — they don't
+update; one shared `updateObsParticles` handles motion + fade for all particle types.

@@ -1359,7 +1359,7 @@ function openGymGame() {
   playClick()
   // MUST remain synchronous — page redirects on next line, no time for async work.
   _applyKodokSlot7Unlock()   // runs once, guard inside; slot-7+frog preset
-  window.location.href = 'games/g13c-pixi.html?v=20260426i'
+  window.location.href = 'games/g13c-pixi.html?v=20260505g'
 }
 
 function g13cBuildLetterSelect() {
@@ -13047,14 +13047,14 @@ function initGame23() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g23Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g23-pixi.html?v=20260505e'
+  window.location.href = 'games/g23-pixi.html?v=20260505g'
 }
 
 function initGame24() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g24Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g24-pixi.html?v=20260505f'
+  window.location.href = 'games/g24-pixi.html?v=20260505g'
 }
 
 function openWorldPicker() {

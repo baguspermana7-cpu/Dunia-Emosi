@@ -92,3 +92,43 @@
 - **Anglerfish PNG dropped** in favor of Pokemon Showdown `lanturn` GIF — real anglerfish Pokemon with glowing lure, transparent BG, no mix-blend-mode hack needed.
 - **Scuba diver fixed**: `🤿` (mask only) → `🏊‍♂️` (person swimming, full body). Faces left to match motion.
 - Cache bump: g24-pixi.html v=20260505f
+
+## 2026-05-04 — #132 G24 Flip+Rotate + G13C Badge Counter
+
+**G13C — "0/87 BADGE DIRAIH" never updated despite Kodok preset working**
+- Root cause: `games/g13c-pixi.html` had TWO HTML elements with `id="badge-num"` and `id="total-trainers"` (lines 259 + 344). `getElementById` returned the FIRST match (hidden HUD top counter), never updating the visible Gym Ladder subtitle counter (stuck on hardcoded default `87`).
+- Renamed Gym Ladder IDs to `gs-badge-num` / `gs-total-trainers`; default 87 → 77 (TRAINERS.length).
+- `updateBadgeCount()` now updates BOTH counters atomically. L90.
+
+**G24 — Pokemon facing wrong direction (7 entries) + 5 upright Pokemon**
+- Set `flip:true` on Mantine×2, Wailmer, Mantyke (Showdown sprites face LEFT, need flip to face RIGHT = swim direction).
+- Added `rotate:true, wiggle:true` on Buizel, Floatzel, Lugia, Eternatus, Eternamax Eternatus (upright-pose Pokemon now lie horizontal in swim game).
+- New CSS class `.swim-rotate{rotate:-90deg}` + `@keyframes swimWiggleRot` composes wiggle on rotated sprites. L91.
+- Lugia bag card 🕊️ dove emoji → real Lugia (HD source `lugia.gif` → `lugia.webp`; gif failed silently). Cascade fallback: `hd → src (Showdown URL) → emoji`.
+- Renderer paths updated (createSwimmer, applyPokemon, renderBagGrid, refreshStartIcon) all handle the rotate prop.
+- Cache: g24-pixi v=20260505g, g13c-pixi v=20260505g
+
+## 2026-05-04 — #133 G23 Pokemon Run — GIF + DUCK + FX
+
+**Player Pokemon GIF disappeared (showed static HD)**
+- `setupPlayerImg` previously cascaded `gif → hd` permanently on first error. Added self-healing retry: probes the GIF URL with cache-bust at 1s/3s/9s exponential backoff (max 3 attempts) and swaps back to GIF when it loads.
+- Same retry attached to `applyPokemon` swap path.
+
+**"⬇ DUCK" text label rode along with mid-bar/mid-rock obstacles**
+- Removed both `PIXI.Text` labels at lines 768-769 and 778-779. Visual was cluttered and read like "duct" on small screens. The large green slide button (#slide-btn) remains as the obvious slide cue.
+
+**Obstacles lacked solid-hit feel and per-type destruction effects**
+- Rewrote `destroyObs` with type dispatch:
+  - `box`/`tall`/`double` → 6 wood splinters fly up + outward, gravity pulls to floor, bounce
+  - `spike` → 5 purple triangle shards scatter
+  - `bush` → 7 green leaves flutter down with rotation
+  - `rock`/`mid-rock` → 4 gray rubble chunks bounce on floor
+  - `mid-bar` → 8 blue spark particles radial + screen flash
+  - `high-bird` → 5 white feathers float down
+- Extended `_obsParticles` shape with `vx, vy, ay, vr, life, maxLife` for motion; `updateObsParticles` handles both motion shards and legacy whole-obstacle fade. L92.
+- `gfx._g23Type` now tagged on creation for dispatch.
+
+**Pickup vs obstacle ambiguity**
+- `spawnPowerUp` now uses unified GOLD aura (0xFCD34D outer halo + 0xFBBF24 mid glow) + 4 sparkle dots + upward chevron above the orb — clearly "collect me". Body keeps per-type tint (⚡🔥🍃💜) for variety. Obstacles keep RED outline glow (0xFF4444) — clearly "avoid me".
+
+- Cache: g23-pixi v=20260505g

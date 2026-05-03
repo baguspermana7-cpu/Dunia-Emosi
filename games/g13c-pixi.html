@@ -341,7 +341,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
     <button id="btn-badges" onclick="showBadgeCollection()" style="background:rgba(251,191,36,0.2);border:1.5px solid rgba(251,191,36,0.4);border-radius:10px;color:#fbbf24;padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0;">🏅 Lencana</button>
   </div>
   <div id="gs-subtitle" style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;">
-    <span>🏅 <span id="badge-num">0</span>/<span id="total-trainers">87</span> BADGE DIRAIH</span>
+    <span>🏅 <span id="gs-badge-num">0</span>/<span id="gs-total-trainers">77</span> BADGE DIRAIH</span>
     <span id="active-pkg-label" style="background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.35);border-radius:100px;padding:2px 10px;font-size:11px;font-weight:800;color:#fbbf24;"></span>
   </div>
   <div id="gs-body">
@@ -1676,9 +1676,17 @@ function showBadgeCollection() {
 }
 
 function updateBadgeCount(){
-  document.getElementById('badge-num').textContent = Object.keys(badges).length;
-  const tot = document.getElementById('total-trainers');
-  if(tot) tot.textContent = TRAINERS.length;
+  // HUD top counter (shown on letter-select screen)
+  const earned = Object.keys(badges).length
+  const top = document.getElementById('badge-num')
+  if(top) top.textContent = earned
+  const tot = document.getElementById('total-trainers')
+  if(tot) tot.textContent = TRAINERS.length
+  // Gym Ladder subtitle counter (was using same IDs → never updated)
+  const gsNum = document.getElementById('gs-badge-num')
+  if(gsNum) gsNum.textContent = earned
+  const gsTot = document.getElementById('gs-total-trainers')
+  if(gsTot) gsTot.textContent = TRAINERS.length
 }
 
 // ─── GYM WELCOME SCREEN ──────────────────────────────────────────────────────
@@ -2271,3 +2279,4 @@ document.getElementById('gym-select').style.display='flex';
 </script>
 </body>
 </html>
+<!-- g13c-pixi v20260505g -->
