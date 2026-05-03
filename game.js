@@ -13044,14 +13044,14 @@ function initGame23() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g23Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g23-pixi.html?v=20260505a'
+  window.location.href = 'games/g23-pixi.html?v=20260505b'
 }
 
 function initGame24() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g24Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g24-pixi.html?v=20260505a'
+  window.location.href = 'games/g24-pixi.html?v=20260505b'
 }
 
 function openWorldPicker() {
@@ -13081,7 +13081,7 @@ function initGame21() {
   const lv = state.selectedLevelNum || 1
   const diff = state.selectedLevel === 'hard' ? 'hard' : state.selectedLevel === 'medium' ? 'medium' : 'easy'
   try { sessionStorage.setItem('g21Config', JSON.stringify({ level: lv, difficulty: diff })) } catch(_) {}
-  window.location.href = 'games/g21-pixi.html?v=20260505a'
+  window.location.href = 'games/g21-pixi.html?v=20260505b'
 }
 
 function initGame18() {

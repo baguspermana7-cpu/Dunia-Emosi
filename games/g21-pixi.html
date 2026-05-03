@@ -140,7 +140,7 @@ body.shake{animation:screenShake .35s ease}
 <!-- Pikachu rendered as HTML <img> overlay (preserves GIF animation natively;
      Pixi 8 doesn't decode multi-frame GIFs without extra libs). Position is
      synced from S.x / S.y - S.camX every frame. -->
-<div id="pikachu-wrap" style="position:fixed;left:0;top:0;z-index:30;pointer-events:none;width:84px;height:84px;will-change:transform">
+<div id="pikachu-wrap" style="position:fixed;left:0;top:0;z-index:30;pointer-events:none;width:60px;height:84px;will-change:transform">
   <div id="pikachu-aura" style="position:absolute;inset:-12px;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,0.55) 0%,rgba(253,224,71,0.25) 50%,rgba(0,0,0,0) 70%);opacity:0;transition:opacity 0.3s;animation:pikaAuraPulse 1.1s ease-in-out infinite"></div>
   <img id="pikachu-sprite" src="../assets/mario-pokemon/sprites/pikachu-idle.gif" alt="Pikachu" style="position:absolute;inset:0;width:100%;height:100%;image-rendering:auto;transform-origin:50% 100%;filter:drop-shadow(0 4px 6px rgba(0,0,0,0.4))">
 </div>
@@ -1487,7 +1487,7 @@ function syncPikachuSprite() {
   // Hotfix #112: state-aware anchor — big mode wrap is 118×118 (was hardcoded
   // -84 → big sprite floated 34px into the platform). Match collision body.
   const wrapH = S.pikachuState === 'big' ? 118 : 84
-  const wrapW = S.pikachuState === 'big' ? 118 : 84
+  const wrapW = S.pikachuState === 'big' ? 80 : 60
   // Hotfix #118: haloFudge compensates for remaining glow/padding in the GIF
   // files (idle/running/jump/happy). The static PNGs are now cropped via
   // process-mario-sprites.py, but GIFs cannot be cropped without losing
@@ -1659,7 +1659,7 @@ function gameLoop() {
 function movePlayer(dx, dy) {
   // Hotfix #112: hBig 110 → 118 to match visual wrap height (was 8px
   // discrepancy causing big Pikachu to clip through platform top).
-  const w = 36, hSmall = 80, hBig = 118
+  const w = 52, hSmall = 80, hBig = 118
   const h = S.pikachuState === 'small' ? hSmall : hBig
   S.x += dx
   S.y += dy

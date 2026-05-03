@@ -588,7 +588,7 @@ function spawnNPC() {
   if (t.img) {
     const imgEl = document.createElement('img')
     imgEl.src = t.img
-    imgEl.style.cssText = `width:${t.sz}px;height:auto;display:block;pointer-events:none;mix-blend-mode:multiply;opacity:0.82`
+    imgEl.style.cssText = `width:${t.sz}px;height:auto;display:block;pointer-events:none;opacity:0.88`
     imgEl.onerror = () => { inner.textContent='🐟'; inner.style.fontSize=t.sz+'px' }
     inner.appendChild(imgEl)
   } else {
