@@ -21,6 +21,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 #pixi-canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block;z-index:5}
 #player-img{position:fixed;z-index:40;pointer-events:none;image-rendering:auto;display:none;transition:filter .3s ease;transform:scaleX(-1);will-change:left,top;transform-origin:50% 100%}
 #player-img.sliding{transform:scaleX(-1) scaleY(0.47);transition:transform .08s ease-out,filter .3s ease}
+@keyframes jumpSquash{0%{transform:scaleX(-1) scaleY(1)}25%{transform:scaleX(-1) scaleY(0.75)}65%{transform:scaleX(-1) scaleY(1.1)}100%{transform:scaleX(-1) scaleY(1)}}
+@keyframes landBounce{0%{transform:scaleX(-1) scaleY(0.68)}40%{transform:scaleX(-1) scaleY(1.12)}70%{transform:scaleX(-1) scaleY(0.94)}100%{transform:scaleX(-1) scaleY(1)}}
+#player-img.jump-anim{animation:jumpSquash 0.16s ease-out}
+#player-img.land-anim{animation:landBounce 0.2s ease-out}
 #slide-btn{position:fixed;bottom:max(24px,env(safe-area-inset-bottom));left:max(24px,env(safe-area-inset-left));z-index:100;width:clamp(62px,14vmin,92px);height:clamp(62px,14vmin,92px);border-radius:50%;background:rgba(56,189,248,0.28);border:2.5px solid rgba(56,189,248,0.7);color:#fff;font-size:clamp(24px,6vmin,36px);cursor:pointer;-webkit-tap-highlight-color:transparent;display:none;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.3);transition:transform .08s,background .1s}
 #slide-btn:active{transform:scale(0.92);background:rgba(56,189,248,0.55)}
 @media(pointer:coarse){#slide-btn{display:flex}}
@@ -392,10 +396,10 @@ let BASE_SPEED = 2.8 + (cfg.level-1) * 0.12
 let gameSpeed  = BASE_SPEED
 
 let W, H, GROUND_Y, PLAYER_X
-let app, worldContainer, groundContainer, auraContainer, fxContainer
+let app, worldContainer, groundContainer, auraContainer, fxContainer, speedLineGfx
 
-// Parallax clouds
-let cloudGfx = [], groundDeco = []
+// Parallax clouds / deco / speed lines
+let cloudGfx = [], groundDeco = [], speedLineDeco = []
 
 // ═══════════════════════════════════════════════════════════
 //  AUDIO
@@ -465,7 +469,10 @@ const S = {
   groundContainer = new PIXI.Container(); app.stage.addChild(groundContainer)
   auraContainer   = new PIXI.Container(); app.stage.addChild(auraContainer)
   fxContainer     = new PIXI.Container(); app.stage.addChild(fxContainer)
+  speedLineGfx    = new PIXI.Graphics();  app.stage.addChild(speedLineGfx)
   auraContainer.addChild(auraGfx)
+  // Pre-generate scrolling speed-line pool
+  for(let i=0;i<18;i++) speedLineDeco.push({x:Math.random()*W,y:(0.08+Math.random()*0.72)*H,len:28+Math.random()*58,alpha:0.05+Math.random()*0.09})
 
   initBgLayers()
   try { drawGround()     } catch(e){}
@@ -542,6 +549,7 @@ function applyPokemon(idx){
 function drawObstGfx(type){
   const g=new PIXI.Graphics()
   if(type==='box'){
+    g.ellipse(0,2,30,6).fill({color:0,alpha:0.22})  // ground shadow
     // Outer glow outline
     g.roundRect(-29,-55,58,58,6).stroke({color:0xFF4444,width:3,alpha:0.55})
     g.roundRect(-26,-52,52,52,4).fill(0x8B4513)
@@ -549,11 +557,13 @@ function drawObstGfx(type){
     g.roundRect(-22,-44,22,20,3).fill({color:0x6B3410,alpha:0.5})
     g.roundRect(-26,-52,52,52,4).stroke({color:0xFF8080,width:2,alpha:0.7})
   } else if(type==='spike'){
+    g.ellipse(0,2,32,6).fill({color:0,alpha:0.22})
     g.poly([0,-46, 34,4, -34,4]).stroke({color:0xFF00FF,width:3,alpha:0.5})
     g.poly([0,-42, 30,0, -30,0]).fill(0x7C3AED)
     g.poly([0,-42, 15,0, -15,0]).fill({color:0xA78BFA,alpha:0.5})
     g.poly([0,-42, 30,0, -30,0]).stroke({color:0xC084FC,width:2,alpha:0.8})
   } else if(type==='bush'){
+    g.ellipse(0,2,38,7).fill({color:0,alpha:0.2})
     g.ellipse(0,-26,40,30).stroke({color:0xFF4444,width:3,alpha:0.45})
     g.ellipse(0,-26,36,26).fill(0x15803D)
     g.ellipse(-18,-34,24,20).fill(0x22C55E)
@@ -561,17 +571,20 @@ function drawObstGfx(type){
     g.ellipse(0,-44,18,16).fill(0x4ADE80)
     g.ellipse(0,-26,36,26).stroke({color:0x86EFAC,width:2,alpha:0.6})
   } else if(type==='rock'){
+    g.ellipse(0,2,30,6).fill({color:0,alpha:0.22})
     g.ellipse(0,-26,32,30).stroke({color:0xFF4444,width:3,alpha:0.45})
     g.ellipse(0,-26,28,26).fill(0x6B7280)
     g.ellipse(-8,-32,10,10).fill({color:0xffffff,alpha:0.15})
     g.ellipse(0,-26,28,26).stroke({color:0xD1D5DB,width:2,alpha:0.7})
   } else if(type==='tall'){
+    g.ellipse(0,2,30,6).fill({color:0,alpha:0.22})
     g.roundRect(-29,-93,58,93,6).stroke({color:0xFF4444,width:3,alpha:0.55})
     g.roundRect(-26,-90,52,90,4).fill(0x8B4513)
     g.roundRect(-26,-90,52,6,4).fill(0xA0522D)
     g.roundRect(-26,-45,52,1.5,0).fill({color:0x5C2E00,alpha:0.4})
     g.roundRect(-26,-90,52,90,4).stroke({color:0xFF8080,width:2,alpha:0.7})
   } else if(type==='double'){
+    g.ellipse(0,2,56,7).fill({color:0,alpha:0.22})
     for(const dx of [-28,28]){
       g.roundRect(dx-25,-55,50,58,6).stroke({color:0xFF4444,width:3,alpha:0.55})
       g.roundRect(dx-22,-52,44,52,4).fill(0x8B4513)
@@ -651,8 +664,23 @@ function spawnObstacle(){
 
   const gfx=drawObstGfx(tpl.type)
   gfx.x=W+120; gfx.y=gfxY
+  // Pulsing glow ring (added as child of gfx)
+  const glowColor=lane==='mid'?0x38BDF8:lane==='high'?0x94A3B8:0xFF4444
+  const glowRing=new PIXI.Graphics()
+  glowRing.roundRect(-tpl.w/2-10,-tpl.h-10,tpl.w+20,tpl.h+10,14).stroke({color:glowColor,width:5,alpha:0.45})
+  gfx.addChild(glowRing)
+  // Electric sparks on mid-bar
+  let sparks=null
+  if(tpl.type==='mid-bar'){
+    sparks=[]
+    for(let i=0;i<3;i++){
+      const sg=new PIXI.Graphics(); sg.circle(0,0,4).fill(0xE0F2FE)
+      sg.x=-36+i*36; sg.y=-25; gfx.addChild(sg)
+      sparks.push({gfx:sg,x:-36+i*36,spd:1.4+Math.random()*0.8})
+    }
+  }
   worldContainer.addChild(gfx)
-  S.obstacles.push({x:W+120, w:tpl.w, h:tpl.h, gfx, gfxY, lane, hit:false, phase:0})
+  S.obstacles.push({x:W+120, w:tpl.w, h:tpl.h, gfx, gfxY, lane, hit:false, phase:0, glowRing, sparks})
 }
 function spawnQuizGate(){
   const g=new PIXI.Graphics()
@@ -1221,9 +1249,14 @@ function handleJump(){
   if(S.paused) return
   if(S.isSliding) return  // can't jump while sliding
   if(S.jumpCount<2){
-    S.playerVY=S.jumpCount===0?JUMP_POWER:DBLJ_POWER
+    const isDouble=S.jumpCount===1
+    S.playerVY=isDouble?DBLJ_POWER:JUMP_POWER
     S.jumpCount++; S.isGrounded=false; sfxJump()
-    burst(PLAYER_X,S.playerY,0xffffff,3)
+    // Jump squash animation
+    const img=document.getElementById('player-img')
+    if(img){ img.classList.remove('jump-anim','land-anim'); void img.offsetWidth; img.classList.add('jump-anim'); setTimeout(()=>img.classList.remove('jump-anim'),180) }
+    burst(PLAYER_X,S.playerY,isDouble?0xFBBF24:0xffffff,isDouble?10:3)
+    if(isDouble){ burst(PLAYER_X,S.playerY,0xF472B6,6) }
   }
 }
 function handleSlide(){
@@ -1292,6 +1325,49 @@ window.addEventListener('resize',()=>{
 // ═══════════════════════════════════════════════════════════
 //  MAIN GAME LOOP
 // ═══════════════════════════════════════════════════════════
+//  OBSTACLE EFFECTS
+// ═══════════════════════════════════════════════════════════
+function updateObstacleEffects(){
+  for(const obs of S.obstacles){
+    if(obs.hit) continue
+    if(obs.glowRing){
+      const pulse=0.22+Math.sin(obs.phase*2.6)*0.18
+      const dist=obs.x-PLAYER_X
+      if(dist<340&&dist>-60){
+        const urgency=1-Math.max(0,dist)/340
+        obs.glowRing.alpha=pulse+urgency*0.55
+        obs.gfx.tint=dist<120?0xFF9898:dist<220?0xFFCCCC:0xFFEEEE
+      } else {
+        obs.glowRing.alpha=pulse
+        obs.gfx.tint=0xFFFFFF
+      }
+    }
+    if(obs.sparks){
+      for(const sp of obs.sparks){
+        sp.x+=sp.spd; if(sp.x>44) sp.x=-44
+        sp.gfx.x=sp.x
+        sp.gfx.alpha=0.45+Math.sin(obs.phase*5+sp.x*0.18)*0.55
+        sp.gfx.scale.set(0.6+Math.abs(Math.sin(obs.phase*4+sp.x*0.1))*0.8)
+      }
+    }
+  }
+}
+// ═══════════════════════════════════════════════════════════
+//  SPEED LINES
+// ═══════════════════════════════════════════════════════════
+function updateSpeedLines(dt){
+  if(!speedLineGfx) return
+  speedLineGfx.clear()
+  const ratio=gameSpeed/BASE_SPEED
+  if(ratio<1.12) return
+  const intensity=Math.min(1,(ratio-1.12)/0.45)
+  for(const l of speedLineDeco){
+    l.x-=gameSpeed*dt*2.2; if(l.x<-l.len) l.x=W+l.len
+    speedLineGfx.moveTo(l.x,l.y).lineTo(l.x-l.len*intensity,l.y)
+    speedLineGfx.stroke({color:0xffffff,width:1.5,alpha:l.alpha*intensity})
+  }
+}
+// ═══════════════════════════════════════════════════════════
 function gameLoop(ticker){
   S.frame++
   if(!S.running||S.paused||S.gameOver) return
@@ -1306,7 +1382,12 @@ function gameLoop(ticker){
   if(!S.isGrounded){
     S.playerVY+=GRAVITY*dt; S.playerVY=Math.min(S.playerVY,MAX_FALL)
     S.playerY+=S.playerVY*dt
-    if(S.playerY>=GROUND_Y){ S.playerY=GROUND_Y; S.playerVY=0; S.isGrounded=true; S.jumpCount=0; S.isSliding=false; sfxLand() }
+    if(S.playerY>=GROUND_Y){
+      S.playerY=GROUND_Y; S.playerVY=0; S.isGrounded=true; S.jumpCount=0; S.isSliding=false; sfxLand()
+      burst(PLAYER_X,GROUND_Y-6,0xD4A574,7); burst(PLAYER_X,GROUND_Y-6,0xffffff,3)
+      const img=document.getElementById('player-img')
+      if(img){ img.classList.remove('jump-anim','land-anim'); void img.offsetWidth; img.classList.add('land-anim'); setTimeout(()=>img.classList.remove('land-anim'),220) }
+    }
   } else {
     S.playerY=GROUND_Y+Math.sin(S.frame*.3)*1.6  // subtle bob while running
     if(S.isSliding){ S.slideTimer-=dt; if(S.slideTimer<=0){ S.isSliding=false } }
@@ -1331,7 +1412,9 @@ function gameLoop(ticker){
     if(obs.isQuiz&&obs.ring){ obs.ringPhase=(obs.ringPhase||0)+.06; obs.ring.alpha=.4+Math.sin(obs.ringPhase)*.35; obs.ring.scale.set(1+Math.sin(obs.ringPhase)*.06) }
     if(obs.lane==='high'){ obs.phase+=0.05; obs.gfx.y=obs.gfxY+Math.sin(obs.phase)*9 }
     if(obs.lane==='mid')  { obs.phase+=0.04; obs.gfx.y=obs.gfxY+Math.sin(obs.phase)*4 }
+    else { obs.phase+=0.03 }
   }
+  updateObstacleEffects()
   S.obstacles=S.obstacles.filter(o=>{ if(o.x<-200&&!o.hit){ worldContainer.removeChild(o.gfx); return false } return true })
 
   // ── Spawn power-ups ──
@@ -1359,10 +1442,13 @@ function gameLoop(ticker){
   // ── HUD ──
   if(S.frame%30===0) updateHUD()
 
+  // ── Speed lines ──
+  updateSpeedLines(dt)
+
   // ── Level end ──
   if(S.distance>=500+(cfg.level-1)*300&&S.quizDone>=TOTAL_QUIZ) showWin()
 }
 </script>
 </body>
 </html>
-<!-- g23-pixi v20260503f -->
+<!-- g23-pixi v20260503g -->
