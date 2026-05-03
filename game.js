@@ -1583,17 +1583,17 @@ function openLevelSelect(gameNum) {
   // Progress bar
   const completed = gp.completed.length
   const totalStars = Object.values(gp.stars||{}).reduce((a,b)=>a+b,0)
-  const totalLevels = (state.currentGame === 13 || state.currentGame === 16) ? 40 : (state.currentGame === 19 || state.currentGame === 20 || state.currentGame === 22) ? 30 : 20
+  const totalLevels = (state.currentGame === 13 || state.currentGame === 16 || state.currentGame === 24) ? 40 : (state.currentGame === 19 || state.currentGame === 20 || state.currentGame === 22) ? 30 : 20
   document.getElementById('level-prog-txt').textContent = `${completed} / ${totalLevels} level selesai`
   document.getElementById('level-prog-fill').style.width = (completed/totalLevels*100) + '%'
   document.getElementById('level-total-stars').textContent = '⭐ ' + totalStars
 
   // Per-tier dot colors + star count
-  const numTiers = (state.currentGame === 13 || state.currentGame === 16) ? 8 : (state.currentGame === 19 || state.currentGame === 20) ? 6 : 4
+  const numTiers = (state.currentGame === 13 || state.currentGame === 16 || state.currentGame === 24) ? 8 : (state.currentGame === 19 || state.currentGame === 20) ? 6 : 4
   // Show/hide extended tiers
   for (let t = 5; t <= 8; t++) {
     const tc2 = document.getElementById('level-tier-'+t)
-    if (tc2) tc2.style.display = (state.currentGame === 13 || state.currentGame === 16 || state.currentGame === 19 || state.currentGame === 20) ? '' : 'none'
+    if (tc2) tc2.style.display = (state.currentGame === 13 || state.currentGame === 16 || state.currentGame === 19 || state.currentGame === 20 || state.currentGame === 24) ? '' : 'none'
   }
   for (let tier = 1; tier <= numTiers; tier++) {
     const dotsEl = document.getElementById('level-dots-'+tier)
@@ -1650,11 +1650,11 @@ function startGameWithLevel(levelNum) {
   document.querySelectorAll('.gh-level').forEach(el => { el.textContent = lvLabel })
   if(state.selectedLevel==='hard') checkAchievement('hard_mode')
   // Standalone games navigate to separate HTML — skip showScreen (no screen-gameN div exists)
-  const standaloneGames = [6, 14, 15, 16, 19, 20, 21, 22, 23]
+  const standaloneGames = [6, 14, 15, 16, 19, 20, 21, 22, 23, 24]
   if (!standaloneGames.includes(state.currentGame)) {
     showScreen('screen-game' + state.currentGame)
   }
-  const inits = [null,initGame1,initGame2,initGame3,initGame4,initGame5,initGame6,initGame7,initGame8,initGame9,initGame10,initGame11,initGame12,initGame13,initGame14,initGame15,initGame16,initGame17,initGame18,initGame19,initGame20,initGame21,initGame22,initGame23]
+  const inits = [null,initGame1,initGame2,initGame3,initGame4,initGame5,initGame6,initGame7,initGame8,initGame9,initGame10,initGame11,initGame12,initGame13,initGame14,initGame15,initGame16,initGame17,initGame18,initGame19,initGame20,initGame21,initGame22,initGame23,initGame24]
   if (inits[state.currentGame]) inits[state.currentGame]()
 }
 
@@ -1868,7 +1868,7 @@ function buildMenuHeader() {
   // Update per-game best stars display on world map nodes
   try {
     const bestStars=JSON.parse(localStorage.getItem(pkey('best-stars'))||'{}')
-    const gameIds=[1,2,3,4,5,6,7,8,9,10,11,12,13,'13b','13c',14,15,16,17,18,19,20,22,23]
+    const gameIds=[1,2,3,4,5,6,7,8,9,10,11,12,13,'13b','13c',14,15,16,17,18,19,20,22,23,24]
     gameIds.forEach(g=>{
       const best=bestStars[g]||0
       const stars=best>0?'⭐'.repeat(Math.min(best,5)):''
@@ -13056,7 +13056,20 @@ function initGame24() {
 
 function openWorldPicker() {
   const el = document.getElementById('world-picker-modal')
-  if (el) el.style.display = 'flex'
+  if (!el) return
+  el.style.display = 'flex'
+  // Inject live star progress into each mode button
+  try {
+    const gp24 = getLevelProgress(24), gp23 = getLevelProgress(23), gp19 = getLevelProgress(19)
+    const stars24 = Object.values(gp24.stars||{}).reduce((a,b)=>a+b,0)
+    const stars23 = Object.values(gp23.stars||{}).reduce((a,b)=>a+b,0)
+    const stars19 = Object.values(gp19.stars||{}).reduce((a,b)=>a+b,0)
+    const done24 = gp24.completed.length, done23 = gp23.completed.length, done19 = gp19.completed.length
+    const _st = (done, total, stars) => done > 0 ? `${done}/${total} level · ⭐${stars}` : ''
+    const si24 = document.getElementById('wpk-stars-24'); if (si24) si24.textContent = _st(done24, 40, stars24)
+    const si23 = document.getElementById('wpk-stars-23'); if (si23) si23.textContent = _st(done23, 30, stars23)
+    const si19 = document.getElementById('wpk-stars-19'); if (si19) si19.textContent = _st(done19, 30, stars19)
+  } catch(_) {}
 }
 function closeWorldPicker() {
   const el = document.getElementById('world-picker-modal')

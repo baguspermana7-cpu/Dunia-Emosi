@@ -2315,3 +2315,22 @@ Added gtile-24 🌊 water gradient node. GAME_META[24] + GAME_INFO[24] added to 
 
 ### ✅ #124-D: Cache bump v=20260503l → v=20260504a
 index.html (style.css + game.js script tags) bumped. G24 file at v=20260504a.
+
+### ✅ #125-A: G24 navigation freeze — standaloneGames + inits missing entry (game.js)
+`startGameWithLevel()` had `standaloneGames=[6,14,15,16,19,20,21,22,23]` and `inits=[...initGame23]` — both missing index 24. Result: `showScreen('screen-game24')` fired → found no element → removed `.active` from ALL screens → blank dark page. `initGame24()` never called so navigation never happened. Fixed: added `24` to standaloneGames and `initGame24` to inits array. Also fixed totalLevels/numTiers/extended-tier display conditions to treat G24 as 40-level game.
+
+### ✅ #125-B: G24 polish — 8 fixes (g24-pixi.html + game.js + index.html)
+(B1) NPC bob: CSS `seaNpcBob` hardcoded -30px removed — JS updateNPCs already uses per-NPC bAmp correctly.
+(B2) Start overlay: shows selected Pokemon GIF (with flip + fallback) instead of 🌊 emoji. Updates if player picks a different Pokemon before first tap.
+(B3) `_g24HasPendingQuiz()` guard: prevents togglePause() and openBag() from interrupting active quiz.
+(B4) closeBag resume: was leaving game paused with no overlay after bag closed without pending quiz. Now resumes game correctly.
+(B5) Evolution flash color: matches region THEME.lightColor instead of hardcoded teal `#7dd3fc`.
+(B6) BGM volume: reads slider DOM values directly instead of undefined `window._volMaster`.
+(B7) Sinnoh bag tab: unlocks at level ≥31 instead of permanently locked.
+(B8) HUD badge: shows `🌊 Pantai Kanto` / region name instead of plain "Bawah Laut".
+
+### ✅ #125-C: World picker live star counts (index.html + game.js)
+`openWorldPicker()` now reads `getLevelProgress` for G19/G23/G24 and injects `Xdone/totalLevel · ⭐Y` into `wpk-stars-*` spans inside each mode button. Shows empty when no progress yet.
+
+### ✅ #125-D: G24 added to star badge refresh (game.js)
+`gameIds` in `refreshWelcomeBadges()` was missing `24`. G24 stars now appear on the world map node label `gstars-24-lbl`.

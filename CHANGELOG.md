@@ -23,3 +23,27 @@
 - Added `GAME_META[24]`, `GAME_INFO[24]`, `PEMOJIS[24]`
 - Added `initGame24()`, `openWorldPicker()`, `closeWorldPicker()`
 - Cache bump → `v=20260504a`
+
+## Session 2026-05-04 (Part 2) — G24 Navigation Fix + Polish
+
+### Fixed: game.js
+- `standaloneGames` array: added `24` (was causing blank page freeze)
+- `inits[]` array: added `initGame24` at index 24 (navigation was never triggering)
+- `totalLevels` / `numTiers` / extended-tier display: added `=== 24` to 40-level conditions
+- `openWorldPicker()`: now injects live G19/G23/G24 star progress into modal buttons
+- `gameIds` in `refreshWelcomeBadges()`: added `24` so G24 stars display on world map
+- Cache bump → `v=20260504b`
+
+### Fixed: games/g24-pixi.html
+- NPC bob: removed hardcoded CSS `seaNpcBob` animation, JS per-NPC bAmp now used correctly
+- Start overlay: shows selected Pokemon GIF with flip support + emoji fallback
+- `_g24HasPendingQuiz()` guard added to `togglePause()` and `openBag()`
+- `closeBag()`: resumes game when no quiz pending (was leaving stuck-paused)
+- Evolution flash: matches region `THEME.lightColor` hex instead of hardcoded `#7dd3fc`
+- BGM volume: reads slider DOM values directly (no `window._volMaster` dependency)
+- Sinnoh bag tab: unlocks at `cfg.level >= 31` instead of permanently locked
+- HUD badge: shows `🌊 [Region Name]` dynamically
+
+### Fixed: index.html
+- World picker modal: added `wpk-stars-*` spans for live star count display
+- Cache bump → `v=20260504b`

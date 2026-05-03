@@ -417,6 +417,10 @@ function updateVolumes() {
   document.getElementById('start-hint').textContent = 'Tap untuk Berenang!'
   document.getElementById('start-level').textContent = `Level ${cfg.level}`
   document.getElementById('start-region').textContent = `🗺️ ${THEME.name}`
+  document.getElementById('game-badge').textContent = '🌊 ' + THEME.name
+
+  // Show selected Pokemon sprite on start overlay
+  refreshStartIcon()
 
   // Start NPC spawner
   spawnNPCLoop()
@@ -567,14 +571,6 @@ function spawnNPC() {
   const startY = 60 + Math.random()*(FLOOR_Y-130)
   wrap.style.cssText = `position:fixed;z-index:38;pointer-events:none;left:${W+50}px;top:${startY}px`
   document.body.appendChild(wrap)
-  // Animate inner element vertically (outer handles horizontal)
-  inner.style.animation = `seaNpcBob ${(1/(t.bFq*60)).toFixed(1)}s ease-in-out infinite alternate`
-  // Add style if not present
-  if (!document.getElementById('sea-npc-style')) {
-    const st = document.createElement('style'); st.id='sea-npc-style'
-    st.textContent = `@keyframes seaNpcBob{from{transform:translateY(0)}to{transform:translateY(${-30}px)}}`
-    document.head.appendChild(st)
-  }
   activeNPCs.push({
     el: wrap, x: W+50, baseY: startY,
     phase: Math.random()*Math.PI*2,
@@ -915,14 +911,15 @@ function updateHUD() {
 // ══════════════════════════════════════════════════════════════
 function triggerEvolution() {
   S.paused=true; S.evolved=true
-  flashScreen('#7dd3fc')
+  const themeHex = '#'+THEME.lightColor.toString(16).padStart(6,'0')
+  flashScreen(themeHex)
   document.getElementById('status-text').textContent='Berevolusi...!'
   sfxCorrect(); setTimeout(sfxCorrect,200); setTimeout(sfxCorrect,400)
 
   S.evoStage = (S.evoStage||0) + 1
   setTimeout(()=>{
     applyPokemon(S.evoStage)
-    spawnFloatingText('EVOLUSI! 🌊', SWIM_X, S.swimY-44, 0x7dd3fc)
+    spawnFloatingText('EVOLUSI! 🌊', SWIM_X, S.swimY-44, THEME.lightColor)
     flashScreen('#fbbf24')
     setTimeout(()=>{
       S.paused=false; S.evolveTriggered=false
@@ -981,6 +978,21 @@ function showWin() {
 // ══════════════════════════════════════════════════════════════
 //  APPLY POKEMON (evo stage change)
 // ══════════════════════════════════════════════════════════════
+function refreshStartIcon() {
+  const sp = G24_POKEMON[selectedPokemon].evo[0]
+  const si = document.getElementById('start-icon')
+  si.style.fontSize = ''
+  si.innerHTML = ''
+  const img = document.createElement('img')
+  img.src = sp.src
+  img.style.cssText = `width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 4px 24px rgba(0,180,216,0.7));${sp.flip?'transform:scaleX(-1)':''}`
+  img.onerror = () => {
+    if (sp.fallback && img.src !== sp.fallback) { img.src = sp.fallback; return }
+    si.textContent = '🌊'
+  }
+  si.appendChild(img)
+}
+
 function applyPokemon(evoStage) {
   const p = G24_POKEMON[selectedPokemon]
   const stage = Math.min(evoStage, p.evo.length-1)
@@ -1013,7 +1025,7 @@ function swim() {
     try {
       const bgm=document.getElementById('game-bgm')
       bgm.src = cfg.level%2===1 ? '../assets/Pokemon/sound/bgm-odd.mp3' : '../assets/Pokemon/sound/bgm-even.mp3'
-      bgm.volume = (window._volBGM||0.5)*((window._volMaster||80)/100)
+      bgm.volume = ((document.getElementById('vol-master')?.value||80)/100) * ((document.getElementById('vol-bgm')?.value||50)/100)
       bgm.play().catch(()=>{})
     } catch(_){}
   }
@@ -1036,7 +1048,10 @@ window.addEventListener('keydown', e=>{
 let _bagTabActive = Math.min(regionIdx, 2) // default to current region (max Hoenn)
 const REGION_LABELS = ['🌊 Kanto','🌊 Johto','🌊 Hoenn','❄️ Sinnoh']
 
+function _g24HasPendingQuiz() { return !!(S.currentCliff && !S.currentCliff.passed) }
+
 function openBag() {
+  if (S.gameOver || _g24HasPendingQuiz()) return
   if (S.started && !S.paused) {
     S.paused=true; S.running=false
     document.getElementById('btn-pause').textContent='▶'
@@ -1047,18 +1062,22 @@ function openBag() {
 }
 function closeBag() {
   document.getElementById('bag-overlay').style.display='none'
-  if (S.currentCliff && !S.currentCliff.passed) {
+  if (_g24HasPendingQuiz()) {
     document.getElementById('quiz-panel').classList.add('show')
     document.getElementById('status-text').textContent='Jawab Soal!'
     S.paused=true; S.running=false
+  } else if (S.started && !S.gameOver) {
+    S.paused=false; S.running=true
+    document.getElementById('btn-pause').textContent='⏸'
   }
 }
 function renderBagTabs() {
   const bar=document.getElementById('bag-region-tabs'); bar.innerHTML=''
   REGION_LABELS.forEach((lbl,i)=>{
-    const t=document.createElement('button'); t.className='bag-tab'+(i===_bagTabActive?' active':'')+(i>2?' locked':'')
-    t.textContent = i>2 ? '🔒 Sinnoh' : lbl
-    if (i<=2) t.onclick=()=>{ _bagTabActive=i; renderBagTabs(); renderBagGrid() }
+    const sinnohLocked = i===3 && cfg.level < 31
+    const t=document.createElement('button'); t.className='bag-tab'+(i===_bagTabActive?' active':'')+(sinnohLocked?' locked':'')
+    t.textContent = sinnohLocked ? '🔒 Sinnoh' : lbl
+    if (!sinnohLocked) t.onclick=()=>{ _bagTabActive=i; renderBagTabs(); renderBagGrid() }
     bar.appendChild(t)
   })
 }
@@ -1093,6 +1112,7 @@ function renderBagGrid() {
       card.onclick=()=>{
         selectedPokemon=idx; S.evoStage=0; S.evolveTriggered=false; S.evolved=false
         applyPokemon(0)
+        if (!S.started) refreshStartIcon()
         try { sessionStorage.setItem('g24Config', JSON.stringify({ level:cfg.level, pokemon:idx })) } catch(_){}
         closeBag()
       }
@@ -1105,7 +1125,7 @@ function renderBagGrid() {
 //  PAUSE / NAVIGATION
 // ══════════════════════════════════════════════════════════════
 function togglePause() {
-  if (S.gameOver) return
+  if (S.gameOver || _g24HasPendingQuiz()) return
   if (S.paused) {
     S.paused=false; S.running=true
     document.getElementById('pause-overlay').style.display='none'
