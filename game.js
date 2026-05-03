@@ -317,6 +317,7 @@ const GAME_META = {
   21:{icon:'🍄',name:'Mario Pokemon',iconImg:'assets/mario-pokemon/icon.png'},
   22:{icon:'🍬',name:'Monster Candy'},
   23:{icon:'🏃',name:'Pokemon Run',iconImg:'assets/g23-icon.png'},
+  24:{icon:'🌊',name:'Bawah Laut'},
   '13c':{icon:'🏅',name:'Gym Huruf & Suara'}
 }
 
@@ -1122,7 +1123,8 @@ const GAME_INFO = {
   20: { desc:'Main voli pantai dengan bebek lucu! Kalahkan lawan dan jawab soal!', grad:'rgba(56,189,248,0.35)', glow:'rgba(56,189,248,0.5)' },
   21: { desc:'Petualangan Pikachu ala Mario! Lompat, kumpulkan koin, kalahkan musuh, jawab matematika!', grad:'rgba(232,38,42,0.35)', glow:'rgba(251,191,36,0.55)' },
   22: { desc:'Tangkap permen jatuh dan jawab soal untuk skor tinggi!', grad:'rgba(139,92,246,0.35)', glow:'rgba(139,92,246,0.5)' },
-  23: { desc:'Lari, lompat, hindari rintangan, dan jawab soal bersama Pokemon favoritmu!', grad:'rgba(239,68,68,0.35)', glow:'rgba(239,68,68,0.5)' }
+  23: { desc:'Lari, lompat, hindari rintangan, dan jawab soal bersama Pokemon favoritmu!', grad:'rgba(239,68,68,0.35)', glow:'rgba(239,68,68,0.5)' },
+  24: { desc:'Selami lautan bersama Pokemon air! Hindari stalaktit dan stalagmit gua laut.', grad:'rgba(0,119,182,0.35)', glow:'rgba(0,180,216,0.5)' }
 }
 
 // Progress storage
@@ -1552,7 +1554,8 @@ function openLevelSelect(gameNum) {
       5:['🃏','🎴','⭐','✨'],6:['🚗','💨','🏎️','🌆'],
       7:['🖼️','🎨','👁️','🌟'],8:['💬','📖','✨','🔤'],
       9:['✍️','✏️','📝','⭐'],10:['⚡','🔥','💧','🍃'],
-      11:['🔬','🌿','⭐','🪐'],12:['👁️','🌑','🌟','❓']
+      11:['🔬','🌿','⭐','🪐'],12:['👁️','🌑','🌟','❓'],
+      19:['🐦','🌿','☁️','✨'],23:['🏃','💨','🌿','⭐'],24:['🌊','🐠','🐡','💧']
     }
     const emjs = PEMOJIS[gameNum] || ['⭐','✨','💫']
     for (let i = 0; i < 7; i++) {
@@ -13042,6 +13045,22 @@ function initGame23() {
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g23Config', JSON.stringify({ level: lv })) } catch(_) {}
   window.location.href = 'games/g23-pixi.html'
+}
+
+function initGame24() {
+  battleBgmStop()
+  const lv = state.selectedLevelNum || 1
+  try { sessionStorage.setItem('g24Config', JSON.stringify({ level: lv })) } catch(_) {}
+  window.location.href = 'games/g24-pixi.html'
+}
+
+function openWorldPicker() {
+  const el = document.getElementById('world-picker-modal')
+  if (el) el.style.display = 'flex'
+}
+function closeWorldPicker() {
+  const el = document.getElementById('world-picker-modal')
+  if (el) el.style.display = 'none'
 }
 
 function initGame21() {

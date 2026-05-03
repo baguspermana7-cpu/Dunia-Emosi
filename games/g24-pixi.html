@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Pokemon Bawah Laut 🌊</title>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear-gradient(180deg,#0077B6 0%,#00B4D8 60%,#023E8A 100%);font-family:'Fredoka One',Arial,sans-serif;touch-action:none}
+#pixi-canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
+
+/* HUD */
+#hud-top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:clamp(4px,1.5vw,10px);padding:max(14px,env(safe-area-inset-top)) clamp(14px,3vw,18px) 8px;background:linear-gradient(180deg,rgba(0,10,40,0.85) 0%,transparent 100%);pointer-events:none}
+#btn-back{background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.22);border-radius:12px;color:#fff;padding:7px 12px;font-size:15px;cursor:pointer;font-family:inherit;pointer-events:all;flex-shrink:0}
+#game-badge{background:rgba(0,0,0,0.45);border:1.5px solid rgba(0,180,216,0.55);border-radius:10px;padding:5px 10px;color:#7dd3fc;font-size:clamp(10px,3vw,13px);font-weight:700;flex-shrink:0;white-space:nowrap}
+#hud-center{flex:1;text-align:center;min-width:0}
+#level-text{font-size:12px;color:#7dd3fc;font-weight:700}
+#status-text{font-size:clamp(13px,4vw,18px);font-weight:900;color:#fff}
+#hud-lives{font-size:clamp(14px,4vw,20px);flex-shrink:0}
+#pipe-progress{font-size:clamp(11px,3vw,14px);color:#86efac;font-weight:700;flex-shrink:0}
+
+/* Quiz Panel */
+#quiz-panel{position:fixed;bottom:0;left:0;right:0;z-index:200;display:none;flex-direction:column;align-items:center;padding:clamp(10px,3vh,16px) clamp(12px,4vw,20px) clamp(16px,5vh,26px);background:linear-gradient(0deg,rgba(0,5,30,0.98) 0%,rgba(0,15,55,0.96) 100%);border-top:3px solid #0ea5e9;backdrop-filter:blur(14px)}
+#quiz-panel.show{display:flex}
+#quiz-title{color:#0ea5e9;font-size:10px;font-weight:700;letter-spacing:3px;margin-bottom:4px;animation:dangerPulse .8s ease-in-out infinite}
+@keyframes dangerPulse{50%{opacity:.4}}
+#quiz-question{color:#fff;font-size:clamp(22px,6.5vw,34px);font-weight:900;text-align:center;margin-bottom:clamp(10px,3vh,16px);text-shadow:0 0 20px rgba(14,165,233,0.6)}
+#quiz-choices{display:flex;gap:clamp(6px,2vw,12px);justify-content:center;width:100%;flex-wrap:wrap}
+.choice-btn{flex:1;min-width:clamp(52px,15vw,80px);max-width:clamp(68px,24vw,120px);padding:clamp(10px,3.5vh,18px) 4px;border:2.5px solid rgba(255,255,255,0.35);border-radius:16px;background:linear-gradient(160deg,#0369A1,#0284C7);color:#fff;font-size:clamp(16px,5.5vw,26px);font-weight:900;cursor:pointer;transition:all .12s;font-family:inherit;-webkit-tap-highlight-color:transparent;box-shadow:0 5px 0 #075985}
+.choice-btn:nth-child(2){background:linear-gradient(160deg,#E85A32,#C84020);border-color:#F07050;box-shadow:0 5px 0 #9A2A10}
+.choice-btn:nth-child(3){background:linear-gradient(160deg,#2DBF7E,#1A9E66);border-color:#50E0A0;box-shadow:0 5px 0 #0A7A48}
+.choice-btn:nth-child(4){background:linear-gradient(160deg,#F59E0B,#D97706);border-color:#FCD34D;box-shadow:0 5px 0 #92400E}
+.choice-btn:active{transform:scale(.91) translateY(4px);box-shadow:0 1px 0 #075985}
+.choice-btn.correct{border-color:#4ade80;background:rgba(74,222,128,0.3);animation:correctFlash .4s ease}
+.choice-btn.wrong{border-color:#ef4444;background:rgba(239,68,68,0.3);animation:wrongShake .35s ease}
+@keyframes correctFlash{0%{transform:scale(1.1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+@keyframes wrongShake{0%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}100%{transform:translateX(0)}}
+
+/* Flash */
+#flash{position:fixed;inset:0;z-index:99;pointer-events:none;opacity:0;transition:opacity .08s}
+
+/* Start Overlay */
+#start-overlay{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(0,5,30,0.92);backdrop-filter:blur(8px)}
+#start-overlay.hidden{display:none}
+#start-icon{font-size:64px;filter:drop-shadow(0 4px 16px rgba(0,180,216,0.5))}
+#start-title{font-size:clamp(22px,6.5vw,34px);font-weight:900;color:#7dd3fc}
+#start-level{font-size:16px;color:#38bdf8}
+#start-region{font-size:13px;color:#0ea5e9;background:rgba(14,165,233,0.15);border-radius:10px;padding:4px 12px}
+#start-hint{font-size:16px;color:#86efac;animation:hintPulse 1.5s ease-in-out infinite}
+@keyframes hintPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.96)}}
+
+/* Pause Overlay */
+#pause-overlay{position:fixed;inset:0;z-index:350;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(0,5,30,0.93);backdrop-filter:blur(8px)}
+
+/* Bag Overlay */
+#bag-overlay{position:fixed;inset:0;z-index:400;display:none;flex-direction:column;align-items:stretch;background:rgba(0,5,30,0.97);backdrop-filter:blur(12px)}
+#bag-header{padding:max(18px,env(safe-area-inset-top)) 16px 0;text-align:center;font-size:20px;font-weight:900;color:#fbbf24;flex-shrink:0}
+#bag-region-tabs{display:flex;gap:6px;padding:10px 12px;overflow-x:auto;flex-shrink:0;scrollbar-width:none}
+#bag-region-tabs::-webkit-scrollbar{display:none}
+.bag-tab{padding:7px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:#9ca3af;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;transition:all .15s}
+.bag-tab.active{background:rgba(0,180,216,0.25);border-color:rgba(0,180,216,0.6);color:#7dd3fc}
+.bag-tab.locked{opacity:.45;cursor:default}
+#bag-grid{flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;padding:10px 12px;overflow-y:auto;align-content:start}
+#bag-footer{padding:12px 16px max(16px,env(safe-area-inset-bottom));flex-shrink:0}
+
+/* NPC sea creatures */
+.sea-npc-wrap{position:fixed;z-index:38;pointer-events:none}
+.sea-npc-inner{display:inline-block}
+</style>
+</head>
+<body>
+<canvas id="pixi-canvas"></canvas>
+
+<div id="hud-top">
+  <button id="btn-back" onclick="goBack()">◀</button>
+  <div id="game-badge">🌊 Bawah Laut</div>
+  <div id="hud-center">
+    <div id="level-text"></div>
+    <div id="status-text">Bersiap...</div>
+  </div>
+  <button id="btn-pause" onclick="togglePause()" style="pointer-events:all;background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.22);border-radius:12px;color:#fff;padding:6px 10px;font-size:15px;cursor:pointer;font-family:inherit;flex-shrink:0">⏸</button>
+  <div id="hud-lives">⭐ 0</div>
+  <div id="pipe-progress">🟢 0/0</div>
+</div>
+
+<div id="quiz-panel">
+  <div id="quiz-title">🌊 RINTANGAN 🌊</div>
+  <div id="quiz-question"></div>
+  <div id="quiz-choices"></div>
+</div>
+
+<div id="flash"></div>
+
+<audio id="game-bgm" preload="auto" loop style="display:none"></audio>
+
+<!-- Pause -->
+<div id="pause-overlay">
+  <div style="font-size:34px">⏸</div>
+  <div style="font-size:22px;font-weight:900;color:#7dd3fc">PAUSE</div>
+  <div style="width:80%;max-width:300px;display:flex;flex-direction:column;gap:12px;margin:10px 0">
+    <label style="color:#e9d5ff;font-size:13px;display:flex;align-items:center;gap:8px">🔊 Master<input type="range" id="vol-master" min="0" max="100" value="80" style="flex:1;accent-color:#0ea5e9" oninput="updateVolumes()"></label>
+    <label style="color:#e9d5ff;font-size:13px;display:flex;align-items:center;gap:8px">🎵 BGM<input type="range" id="vol-bgm" min="0" max="100" value="50" style="flex:1;accent-color:#22c55e" oninput="updateVolumes()"></label>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+    <button onclick="togglePause()" style="padding:12px 24px;border-radius:14px;border:2px solid #4ade80;background:rgba(34,197,94,0.25);color:#4ade80;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit">▶ Lanjut</button>
+    <button onclick="document.getElementById('pause-overlay').style.display='none';openBag()" style="padding:12px 24px;border-radius:14px;border:2px solid #fbbf24;background:rgba(251,191,36,0.15);color:#fbbf24;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit">🎒 Ganti Pokemon</button>
+    <button onclick="goBack()" style="padding:12px 24px;border-radius:14px;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:#e9d5ff;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit">🏠 Keluar</button>
+  </div>
+</div>
+
+<!-- Pokemon Bag — region tabs -->
+<div id="bag-overlay">
+  <div id="bag-header">🎒 Pilih Pokemon</div>
+  <div id="bag-region-tabs"></div>
+  <div id="bag-grid"></div>
+  <div id="bag-footer">
+    <button onclick="closeBag()" style="width:100%;padding:12px;border-radius:14px;border:2px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#e9d5ff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">Tutup ✕</button>
+  </div>
+</div>
+
+<!-- Start -->
+<div id="start-overlay">
+  <div id="start-icon">🌊</div>
+  <div id="start-title">Pokemon Bawah Laut</div>
+  <div id="start-level"></div>
+  <div id="start-region"></div>
+  <div id="start-hint">Memuat... ⏳</div>
+</div>
+
+<script src="../shared/rz-responsive.js?v=20260422i"></script>
+<script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
+<script src="data/freeze-watchdog.js?v=20260428a"></script>
+<script src="data/save-engine.js?v=20260501h"></script>
+<script src="game-modal.js?v=20260424g"></script>
+<script>
+// ══════════════════════════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════════════════════════
+const cfg = { level: 1, pokemon: 0 }
+try { const s = sessionStorage.getItem('g24Config'); if (s) Object.assign(cfg, JSON.parse(s)) } catch(_){}
+cfg.level = Math.max(1, Math.min(cfg.level || 1, 40))
+
+// ── REGION THEMES ──────────────────────────────────────────────
+const REGIONS = [
+  { name:'Pantai Kanto',   levels:[1,10],  unlock:1,
+    skyTop:0x023E8A, skyMid:0x0077B6, skyBot:0x0096C7,
+    rock:0x52858B, shadow:0x1A2E35, drip:0xADE8F4, moss:0x52B788,
+    floor:0xC4A45A, floorSand:0xD4B06A, seaweed:0x52B788,
+    lightColor:0x90E0EF, lightAlpha:0.07,
+    npcs:['🐠','🐟','🐡','🦐','🦀'], ambientBubble:0x90E0EF },
+  { name:'Jurang Johto',   levels:[11,20], unlock:11,
+    skyTop:0x03071E, skyMid:0x0A1628, skyBot:0x0D2444,
+    rock:0x1E1E2E, shadow:0x050508, drip:0x00F5FF, moss:0x7B2FBE,
+    floor:0x0D0D1E, floorSand:0x181826, seaweed:0x7B2FBE,
+    lightColor:0x00F5FF, lightAlpha:0.04,
+    npcs:['🪼','🦑','💫','🌙','✨'], ambientBubble:0x00F5FF },
+  { name:'Terumbu Hoenn',  levels:[21,30], unlock:21,
+    skyTop:0x004E89, skyMid:0x1A6FB0, skyBot:0x48CAE4,
+    rock:0xA84462, shadow:0x5A1A30, drip:0xFFB3A7, moss:0xFF6B9D,
+    floor:0xF4A261, floorSand:0xF9C784, seaweed:0xFF6B9D,
+    lightColor:0xFFF0C0, lightAlpha:0.09,
+    npcs:['🐡','🦈','🐢','🌺','🐙'], ambientBubble:0xFFCCAA },
+  { name:'Gua Es Sinnoh',  levels:[31,40], unlock:31,
+    skyTop:0x8ECAE6, skyMid:0xA8D8EA, skyBot:0xCAE9F5,
+    rock:0xAAD0E6, shadow:0x6A98AB, drip:0xE0F4FF, moss:0xB8DBF0,
+    floor:0xD0ECF8, floorSand:0xE0F4FC, seaweed:0xB8DBF0,
+    lightColor:0xFFFFFF, lightAlpha:0.1,
+    npcs:['❄️','🐋','🦭','🌊','⛄'], ambientBubble:0xDDEEFF },
+]
+function getRegion(lv) { return REGIONS[Math.min(Math.floor((lv-1)/10), 3)] }
+const THEME = getRegion(cfg.level)
+
+// ── POKEMON ROSTER ─────────────────────────────────────────────
+// flip:true → CSS scaleX(-1) so Pokemon faces right (swimming direction)
+// Filenames in assets/Pokemon/g24/ — use onerror fallback emoji if missing
+const G24_POKEMON = [
+  // ── KANTO (Region 0) ──
+  { name:'Magikarp', region:0, evo:[
+    {name:'Magikarp',      src:'../assets/Pokemon/g24/magikarpswim.gif', flip:false, scale:0.7, emoji:'🐟'},
+    {name:'Gyarados',      src:'../assets/Pokemon/g24/gyarados.gif',     flip:false, scale:1.2, emoji:'🐉'},
+    {name:'Mega Gyarados', src:'../assets/Pokemon/g24/mega-gyarados.gif',flip:false, scale:1.4, emoji:'🌊'},
+  ]},
+  { name:'Horsea', region:0, evo:[
+    {name:'Horsea', src:'../assets/Pokemon/g24/horsea.gif', flip:false, scale:0.7, emoji:'🐴'},
+    {name:'Seadra',  src:'../assets/Pokemon/g24/seadra.gif', flip:false, scale:1.0, emoji:'🐲'},
+  ]},
+  { name:'Staryu', region:0, evo:[
+    {name:'Staryu',  src:'../assets/Pokemon/g24/staryu.gif',  flip:false, scale:0.8, emoji:'⭐'},
+    {name:'Starmie', src:'../assets/Pokemon/g24/starmie.gif', flip:false, scale:1.1, emoji:'🌟'},
+  ]},
+  { name:'Shellder', region:0, evo:[
+    {name:'Shellder', src:'../assets/Pokemon/g24/shellder.gif', flip:true, scale:0.7, emoji:'🐚'},
+    {name:'Cloyster',  src:'../assets/Pokemon/g24/cloyster.gif', flip:true, scale:1.0, emoji:'🔮'},
+  ]},
+  { name:'Goldeen', region:0, evo:[
+    {name:'Goldeen', src:'../assets/Pokemon/g24/goldeen.gif', flip:false, scale:0.7, emoji:'🐠'},
+    {name:'Seaking', src:'../assets/Pokemon/g24/seaking.gif', flip:false, scale:1.0, emoji:'👑'},
+  ]},
+  { name:'Tentacool', region:0, evo:[
+    {name:'Tentacool',  src:'../assets/Pokemon/g24/tentacool.gif',  flip:false, scale:0.8, emoji:'🪼'},
+    {name:'Tentacruel', src:'../assets/Pokemon/g24/tentacruel.gif', flip:false, scale:1.2, emoji:'🔴'},
+  ]},
+  // ── JOHTO (Region 1) ──
+  { name:'Chinchou', region:1, evo:[
+    {name:'Chinchou', src:'../assets/Pokemon/g24/chinchou.gif', flip:false, scale:0.7, emoji:'💡'},
+    {name:'Lanturn',  src:'../assets/Pokemon/g24/lanturn.gif',  flip:false, scale:1.1, emoji:'🏮'},
+  ]},
+  { name:'Remoraid', region:1, evo:[
+    {name:'Remoraid',  src:'../assets/Pokemon/g24/remoraid.gif',  flip:false, scale:0.7, emoji:'🎯'},
+    {name:'Octillery', src:'../assets/Pokemon/g24/octillery.gif', flip:false, scale:1.1, emoji:'🐙'},
+  ]},
+  { name:'Horsea+', region:1, evo:[
+    {name:'Horsea',  src:'../assets/Pokemon/g24/horsea.gif',  flip:false, scale:0.7, emoji:'🐴'},
+    {name:'Seadra',  src:'../assets/Pokemon/g24/seadra.gif',  flip:false, scale:1.0, emoji:'🐲'},
+    {name:'Kingdra', src:'../assets/Pokemon/g24/kingdra.gif', flip:false, scale:1.3, emoji:'👸'},
+  ]},
+  { name:'Qwilfish', region:1, evo:[
+    {name:'Qwilfish', src:'../assets/Pokemon/g24/qwilfish.gif', flip:false, scale:0.8, emoji:'🐡'},
+  ]},
+  { name:'Mantine', region:1, evo:[
+    {name:'Mantine', src:'../assets/Pokemon/g24/mantine.gif', flip:false, scale:1.0, emoji:'🦅'},
+  ]},
+  // ── HOENN (Region 2) ──
+  { name:'Carvanha', region:2, evo:[
+    {name:'Carvanha',      src:'../assets/Pokemon/g24/carvanha.gif',      flip:false, scale:0.8, emoji:'🦈'},
+    {name:'Sharpedo',      src:'../assets/Pokemon/g24/sharpedo.gif',      flip:false, scale:1.2, emoji:'⚡'},
+    {name:'Mega Sharpedo', src:'../assets/Pokemon/g24/mega-sharpedo.gif', flip:false, scale:1.4, emoji:'💥'},
+  ]},
+  { name:'Wailmer', region:2, evo:[
+    {name:'Wailmer', src:'../assets/Pokemon/g24/wailmer.gif', flip:false, scale:0.9, emoji:'🐋'},
+    {name:'Wailord', src:'../assets/Pokemon/g24/wailord.gif', flip:false, scale:1.5, emoji:'🌊'},
+  ]},
+  { name:'Feebas', region:2, evo:[
+    {name:'Feebas',  src:'../assets/Pokemon/g24/feebas.gif',  flip:true, scale:0.7, emoji:'🐟'},
+    {name:'Milotic', src:'../assets/Pokemon/g24/milotic.gif', flip:true, scale:1.2, emoji:'🌈'},
+  ]},
+  { name:'Barboach', region:2, evo:[
+    {name:'Barboach', src:'../assets/Pokemon/g24/barboach.gif', flip:false, scale:0.7, emoji:'🐍'},
+    {name:'Whiscash', src:'../assets/Pokemon/g24/whiscash.gif', flip:false, scale:1.1, emoji:'🐠'},
+  ]},
+  { name:'Huntail',  region:2, evo:[{name:'Huntail',  src:'../assets/Pokemon/g24/huntail.gif',  flip:false, scale:1.0, emoji:'🐍'}]},
+  { name:'Gorebyss', region:2, evo:[{name:'Gorebyss', src:'../assets/Pokemon/g24/gorebyss.gif', flip:false, scale:1.0, emoji:'💗'}]},
+  { name:'Luvdisc',  region:2, evo:[{name:'Luvdisc',  src:'../assets/Pokemon/g24/luvdisc.gif',  flip:true,  scale:0.7, emoji:'💖'}]},
+  { name:'Relicanth',region:2, evo:[{name:'Relicanth',src:'../assets/Pokemon/g24/relicanth.gif',flip:false, scale:1.0, emoji:'🦕'}]},
+  // ── SINNOH (Region 3) — locked until lv 31 ──
+  { name:'Finneon', region:3, evo:[
+    {name:'Finneon',  src:'../assets/Pokemon/g24/finneon.gif',  flip:false, scale:0.7, emoji:'🐟'},
+    {name:'Lumineon', src:'../assets/Pokemon/g24/lumineon.gif', flip:false, scale:1.0, emoji:'✨'},
+  ]},
+  { name:'Buizel', region:3, evo:[
+    {name:'Buizel',   src:'../assets/Pokemon/g24/buizel.gif',   flip:false, scale:0.7, emoji:'🦦'},
+    {name:'Floatzel', src:'../assets/Pokemon/g24/floatzel.gif', flip:false, scale:1.1, emoji:'🌊'},
+  ]},
+  { name:'Mantyke', region:3, evo:[
+    {name:'Mantyke',  src:'../assets/Pokemon/g24/mantyke.gif',  flip:false, scale:0.7, emoji:'🐟'},
+    {name:'Mantine',  src:'../assets/Pokemon/g24/mantine.gif',  flip:false, scale:1.1, emoji:'🦅'},
+  ]},
+]
+let selectedPokemon = Math.max(0, Math.min(cfg.pokemon || 0, G24_POKEMON.length - 1))
+
+// ── QUESTIONS ─────────────────────────────────────────────────
+const QUESTIONS = {
+  easy:[
+    {q:'🐱 Huruf awal?',ans:'K',wrong:['A','M','B']},{q:'🍎 Huruf awal?',ans:'A',wrong:['I','U','E']},
+    {q:'🐶 Huruf awal?',ans:'A',wrong:['K','M','B']},{q:'🦋 Huruf awal?',ans:'K',wrong:['L','S','P']},
+    {q:'🐟 Huruf awal?',ans:'I',wrong:['U','A','O']},{q:'🐠 Huruf awal?',ans:'I',wrong:['U','A','O']},
+    {q:'🐘 Huruf awal?',ans:'G',wrong:['A','K','L']},{q:'🦒 Huruf awal?',ans:'J',wrong:['G','K','L']},
+    {q:'🍌 Huruf awal?',ans:'P',wrong:['B','M','K']},{q:'🐸 Huruf awal?',ans:'K',wrong:['B','S','L']},
+    {q:'1+1=?',ans:'2',wrong:['3','4','1']},{q:'2+1=?',ans:'3',wrong:['2','4','5']},
+    {q:'3+2=?',ans:'5',wrong:['4','6','7']},{q:'5-2=?',ans:'3',wrong:['2','4','1']},
+    {q:'Warna 🔴?',ans:'MERAH',wrong:['BIRU','HIJAU','KUNING']},
+    {q:'Warna 🔵?',ans:'BIRU',wrong:['MERAH','HIJAU','UNGU']},
+    {q:'Warna 🟡?',ans:'KUNING',wrong:['ORANYE','PUTIH','MERAH']},
+    {q:'Warna 🟢?',ans:'HIJAU',wrong:['BIRU','KUNING','HITAM']},
+    {q:'3-2=?',ans:'1',wrong:['2','3','4']},{q:'1+2=?',ans:'3',wrong:['2','4','5']},
+    {q:'🐮 Suaranya?',ans:'MOO',wrong:['BAA','OINK','KWEK']},
+    {q:'🐕 Suaranya?',ans:'GUKGUK',wrong:['MEONG','KWEK','EMBEK']},
+    {q:'4-1=?',ans:'3',wrong:['2','5','4']},{q:'2+2=?',ans:'4',wrong:['3','5','6']},
+    {q:'🍊 Buah apa?',ans:'JERUK',wrong:['APEL','PISANG','MANGGA']},
+    {q:'🍇 Buah apa?',ans:'ANGGUR',wrong:['MELON','NANAS','TOMAT']},
+    {q:'4+1=?',ans:'5',wrong:['4','6','3']},{q:'6-3=?',ans:'3',wrong:['2','4','1']},
+  ],
+  medium:[
+    {q:'12÷4=?',ans:'3',wrong:['2','4','6']},{q:'5×2=?',ans:'10',wrong:['8','12','7']},
+    {q:'3×3=?',ans:'9',wrong:['6','12','8']},{q:'8÷2=?',ans:'4',wrong:['2','6','3']},
+    {q:'7+6=?',ans:'13',wrong:['12','14','11']},{q:'15-7=?',ans:'8',wrong:['7','9','6']},
+    {q:'Ibu kota Indonesia?',ans:'JAKARTA',wrong:['BALI','BANDUNG','SURABAYA']},
+    {q:'Ikan bernapas dengan?',ans:'INSANG',wrong:['PARU-PARU','KULIT','HIDUNG']},
+    {q:'Air mendidih pada suhu?',ans:'100°C',wrong:['80°C','90°C','120°C']},
+    {q:'Planet terbesar?',ans:'JUPITER',wrong:['SATURNUS','URANUS','MARS']},
+    {q:'4×4=?',ans:'16',wrong:['12','20','14']},{q:'18÷3=?',ans:'6',wrong:['4','9','5']},
+    {q:'🌊 Air asin ada di?',ans:'LAUT',wrong:['SUNGAI','DANAU','KOLAM']},
+    {q:'🐳 Paus bernapas dengan?',ans:'PARU-PARU',wrong:['INSANG','KULIT','SIRIP']},
+    {q:'🦑 Cumi-cumi punya berapa kaki?',ans:'10',wrong:['8','6','12']},
+    {q:'5×3=?',ans:'15',wrong:['12','18','20']},{q:'20-8=?',ans:'12',wrong:['10','14','11']},
+  ],
+  hard:[
+    {q:'7×8=?',ans:'56',wrong:['48','54','63']},{q:'9×9=?',ans:'81',wrong:['72','90','78']},
+    {q:'100÷5=?',ans:'20',wrong:['15','25','10']},{q:'6×7=?',ans:'42',wrong:['36','48','40']},
+    {q:'🌊 Laut terluas?',ans:'PASIFIK',wrong:['ATLANTIK','HINDIA','ARKTIK']},
+    {q:'Karang dibuat oleh?',ans:'HEWAN KORAL',wrong:['BATU','TANAMAN','PASIR']},
+    {q:'Lumba-lumba termasuk?',ans:'MAMALIA',wrong:['IKAN','REPTIL','AMFIBI']},
+    {q:'64÷8=?',ans:'8',wrong:['6','9','7']},{q:'11×4=?',ans:'44',wrong:['40','48','36']},
+    {q:'🐙 Gurita punya berapa kaki?',ans:'8',wrong:['6','10','12']},
+    {q:'Fotosintesis butuh?',ans:'CAHAYA',wrong:['AIR SAJA','ANGIN','TANAH SAJA']},
+    {q:'Oksigen terbesar dari?',ans:'FITOPLANKTON LAUT',wrong:['POHON','HEWAN','GUNUNG']},
+  ],
+  expert:[
+    {q:'12×12=?',ans:'144',wrong:['121','132','168']},{q:'7×9=?',ans:'63',wrong:['54','72','56']},
+    {q:'Zona terdalam laut?',ans:'ZONA HADAL',wrong:['ZONA ABISAL','ZONA BATIAL','ZONA LITORAL']},
+    {q:'Terumbu karang terbesar?',ans:'GREAT BARRIER REEF',wrong:['RAJA AMPAT','FLORIDA REEF','MALDIVES']},
+    {q:'Kecepatan cahaya?',ans:'300.000 km/s',wrong:['150.000 km/s','200.000 km/s','500.000 km/s']},
+    {q:'144÷12=?',ans:'12',wrong:['10','14','11']},{q:'8×9=?',ans:'72',wrong:['63','81','56']},
+    {q:'Hiu termasuk kelompok?',ans:'IKAN BERTULANG RAWAN',wrong:['MAMALIA','IKAN BERTULANG KERAS','REPTIL']},
+    {q:'Gerakan arus laut akibat?',ans:'ANGIN & ROTASI BUMI',wrong:['HANYA ANGIN','HANYA BULAN','GEMPA SAJA']},
+  ]
+}
+function pickQuestions(lv) {
+  const pool = lv <= 8 ? QUESTIONS.easy : lv <= 20 ? QUESTIONS.medium : lv <= 32 ? QUESTIONS.hard : QUESTIONS.expert
+  return [...pool].sort(() => Math.random() - 0.5)
+}
+
+// ══════════════════════════════════════════════════════════════
+//  GAME STATE + PHYSICS
+// ══════════════════════════════════════════════════════════════
+const S = {
+  running:false, paused:false, gameOver:false, started:false,
+  level: cfg.level, lives:3, score:0, correctAnswers:0, wrongAnswers:0,
+  cliffsPassed:0, totalCliffs:0, frame:0,
+  swimY:0, swimVY:0,
+  cliffs:[], questions:[], qIdx:0, currentCliff:null,
+  evolved:false, evolveTriggered:false, evoStage:0
+}
+const GRAVITY     = 0.38
+const FLAP_POWER  = -7.2
+const MAX_FALL    = 9
+const SWIMMER_SZ  = 96
+const CLIFF_W     = 70
+const CLIFF_COUNT = 14 + Math.min(Math.floor((cfg.level-1)/5), 6)
+const GAP_SIZE    = Math.max(155, 260 - (cfg.level-1) * 3)
+const GAP_EVO     = Math.min(GAP_SIZE * 1.4, 290)
+let   CLIFF_SPEED = 2.0 + (cfg.level-1) * 0.13
+const CLIFF_SPACE = Math.max(340, 460 - (cfg.level-1) * 3)
+
+let W, H, FLOOR_Y, SWIM_X
+let app, swimContainer, swimGfx, worldContainer, bgContainer, floorContainer
+
+// ══════════════════════════════════════════════════════════════
+//  AUDIO
+// ══════════════════════════════════════════════════════════════
+let audioCtx
+function ensureAudio() { if (!audioCtx) try { audioCtx = new (window.AudioContext||window.webkitAudioContext)() } catch(_){} }
+function playTone(freq, dur, type='sine', vol=0.12) {
+  if (!audioCtx) return
+  const o=audioCtx.createOscillator(), g=audioCtx.createGain()
+  o.type=type; o.frequency.value=freq; g.gain.value=vol
+  g.gain.linearRampToValueAtTime(0, audioCtx.currentTime+dur/1000)
+  o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+dur/1000)
+}
+function sfxSwim()    { playTone(350,60,'sine',0.08); setTimeout(()=>playTone(500,50,'sine',0.06),25) }
+function sfxScore()   { playTone(600,80); setTimeout(()=>playTone(900,100),50) }
+function sfxHit()     { playTone(180,180,'sawtooth',0.1) }
+function sfxCorrect() { playTone(800,200); setTimeout(()=>playTone(1000,150),100) }
+function sfxWrong()   { playTone(350,120,'sawtooth',0.09); setTimeout(()=>playTone(180,200,'sawtooth',0.09),80) }
+function updateVolumes() {
+  const m=(document.getElementById('vol-master')?.value||80)/100
+  const b=(document.getElementById('vol-bgm')?.value||50)/100
+  try { document.getElementById('game-bgm').volume=m*b } catch(_){}
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PIXI INIT
+// ══════════════════════════════════════════════════════════════
+;(async function initPixi() {
+  app = new PIXI.Application()
+  await app.init({
+    canvas: document.getElementById('pixi-canvas'),
+    width: window.innerWidth, height: window.innerHeight,
+    backgroundAlpha: 1, backgroundColor: THEME.skyTop,
+    antialias: true,
+    resolution: Math.min(window.devicePixelRatio, 2),
+    preference:'webgl', preferWebGLVersion:1
+  })
+  W = app.screen.width; H = app.screen.height
+  FLOOR_Y = H * 0.87; SWIM_X = W * 0.22
+  S.swimY = H * 0.45
+  S.totalCliffs = CLIFF_COUNT
+  S.questions = pickQuestions(cfg.level)
+
+  bgContainer    = new PIXI.Container(); app.stage.addChild(bgContainer)
+  worldContainer = new PIXI.Container(); app.stage.addChild(worldContainer)
+  floorContainer = new PIXI.Container(); app.stage.addChild(floorContainer)
+
+  try { drawBackground() } catch(e) { console.error('BG fail',e) }
+  try { drawFloor() }      catch(e) { console.error('Floor fail',e) }
+  try { initBubbles() }    catch(e) { console.error('Bubble fail',e) }
+  try { initSeaweed() }    catch(e) { console.error('Seaweed fail',e) }
+  try { buildCliffs() }    catch(e) { console.error('Cliff fail',e) }
+  try { createSwimmer() }  catch(e) { console.error('Swimmer fail',e) }
+
+  updateHUD()
+  app.ticker.add(gameLoop)
+  if (window.RZ) window.RZ.onResize(()=>{})
+
+  document.getElementById('start-hint').textContent = 'Tap untuk Berenang!'
+  document.getElementById('start-level').textContent = `Level ${cfg.level}`
+  document.getElementById('start-region').textContent = `🗺️ ${THEME.name}`
+
+  // Start NPC spawner
+  spawnNPCLoop()
+
+  setTimeout(()=>{
+    try {
+      const gl = document.getElementById('pixi-canvas').getContext('webgl')||document.getElementById('pixi-canvas').getContext('webgl2')
+      if (!gl) throw new Error('No WebGL')
+    } catch(_){ document.getElementById('pixi-canvas').style.opacity='0' }
+  }, 500)
+})().catch(e=>{
+  console.error('G24 init failed:',e)
+  document.getElementById('pixi-canvas').style.display='none'
+  document.getElementById('start-hint').textContent='Tap untuk Berenang!'
+})
+
+// ══════════════════════════════════════════════════════════════
+//  BACKGROUND — underwater gradient + light rays
+// ══════════════════════════════════════════════════════════════
+let lightRayGfx = null
+function drawBackground() {
+  // Gradient layers
+  const sky = new PIXI.Graphics()
+  sky.rect(0,0,W,H).fill(THEME.skyTop)
+  sky.rect(0,H*0.3,W,H*0.7).fill({ color:THEME.skyMid, alpha:0.6 })
+  sky.rect(0,H*0.6,W,H*0.4).fill({ color:THEME.skyBot, alpha:0.5 })
+  bgContainer.addChild(sky)
+
+  // Subtle light rays from top
+  lightRayGfx = new PIXI.Graphics()
+  const numRays = 6
+  for (let i=0; i<numRays; i++) {
+    const rx = (W/(numRays+1)) * (i+1) + (Math.random()-0.5)*60
+    const rw = 24 + Math.random()*36
+    const slant = (Math.random()-0.5)*0.22
+    lightRayGfx.poly([
+      rx-rw/2, 0,
+      rx+rw/2, 0,
+      rx+rw/2+H*slant, H*0.7,
+      rx-rw/2+H*slant, H*0.7
+    ]).fill({ color:THEME.lightColor, alpha:THEME.lightAlpha })
+  }
+  bgContainer.addChild(lightRayGfx)
+}
+
+// ══════════════════════════════════════════════════════════════
+//  FLOOR — sandy ocean bottom with pebbles
+// ══════════════════════════════════════════════════════════════
+let floorTiles = []
+function drawFloor() {
+  const f = new PIXI.Graphics()
+  f.rect(0, FLOOR_Y, W, H-FLOOR_Y).fill(THEME.floor)
+  f.rect(0, FLOOR_Y, W, 5).fill({ color:THEME.floorSand, alpha:0.8 })
+  f.rect(0, FLOOR_Y, W, 2).fill({ color:0xffffff, alpha:0.12 })
+  floorContainer.addChild(f)
+  // Pebbles / ripple marks
+  for (let x=0; x<W*2; x+=18+Math.random()*14) {
+    const p = new PIXI.Graphics()
+    const pr = 2+Math.random()*4
+    p.ellipse(x, FLOOR_Y+pr, pr*1.6, pr*0.7).fill({ color:THEME.floorSand, alpha:0.45 })
+    floorContainer.addChild(p)
+    floorTiles.push(p)
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  BUBBLES — rising from floor, gentle sway
+// ══════════════════════════════════════════════════════════════
+const bubbles = []
+function initBubbles() {
+  for (let i=0; i<22; i++) {
+    const r = 1.5 + Math.random()*4
+    const b = {
+      x: Math.random()*W,
+      y: FLOOR_Y - Math.random()*H*0.8, // pre-scatter
+      r, vy: 0.45 + Math.random()*1.1,
+      swayPhase: Math.random()*Math.PI*2,
+      swayAmp: 4 + Math.random()*9,
+      alpha: 0.18 + Math.random()*0.35,
+      gfx: new PIXI.Graphics()
+    }
+    b.gfx.circle(0,0,b.r).fill({ color:THEME.ambientBubble, alpha:b.alpha })
+    b.gfx.circle(-b.r*0.3,-b.r*0.4,b.r*0.28).fill({ color:0xffffff, alpha:b.alpha*0.5 })
+    bgContainer.addChild(b.gfx)
+    bubbles.push(b)
+  }
+}
+function updateBubbles(dt) {
+  for (const b of bubbles) {
+    b.y -= b.vy * dt
+    b.swayPhase += 0.028
+    b.x += Math.sin(b.swayPhase) * b.swayAmp * 0.08
+    if (b.y < -20) { b.y = FLOOR_Y + 8; b.x = Math.random()*W }
+    b.gfx.x = b.x; b.gfx.y = b.y
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  SEAWEED — gently swaying plants at floor
+// ══════════════════════════════════════════════════════════════
+const seaweeds = []
+function initSeaweed() {
+  const numPlants = 14
+  const col = THEME.seaweed
+  for (let i=0; i<numPlants; i++) {
+    const x = (W/numPlants)*i + Math.random()*20 - 8
+    const h = 28 + Math.random()*55
+    const sg = new PIXI.Graphics()
+    for (let s=0; s<h; s+=7) {
+      const sideOff = Math.sin(s*0.45)*3
+      sg.rect(x+sideOff, FLOOR_Y-h+s, 3.5, 7).fill({ color:col, alpha:0.45+Math.sin(s*0.4)*0.08 })
+    }
+    // Leaf tip
+    sg.ellipse(x+1, FLOOR_Y-h, 5, 3).fill({ color:col, alpha:0.55 })
+    sg._phase = Math.random()*Math.PI*2
+    sg._amp   = 0.07 + Math.random()*0.07
+    bgContainer.addChild(sg)
+    seaweeds.push(sg)
+  }
+}
+function updateSeaweed() {
+  for (const sw of seaweeds) {
+    sw._phase += 0.022
+    sw.skew.x = Math.sin(sw._phase) * sw._amp
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  NPC SEA CREATURES — CSS animated, swim right-to-left
+// ══════════════════════════════════════════════════════════════
+const NPC_TYPES_BY_REGION = [
+  [{e:'🐠',sp:1.1,bAmp:18,bFq:0.04,sz:22},{e:'🐟',sp:0.85,bAmp:14,bFq:0.05,sz:20},{e:'🦐',sp:0.5,bAmp:10,bFq:0.06,sz:18},{e:'🐡',sp:0.75,bAmp:20,bFq:0.03,sz:22},{e:'🦀',sp:0.35,bAmp:5,bFq:0.08,sz:20}],
+  [{e:'🪼',sp:0.4,bAmp:30,bFq:0.035,sz:28},{e:'🦑',sp:0.7,bAmp:22,bFq:0.05,sz:24},{e:'💫',sp:0.3,bAmp:40,bFq:0.02,sz:20},{e:'🐙',sp:0.55,bAmp:18,bFq:0.04,sz:26}],
+  [{e:'🐡',sp:0.9,bAmp:20,bFq:0.04,sz:24},{e:'🦈',sp:1.4,bAmp:8,bFq:0.025,sz:26},{e:'🐢',sp:0.3,bAmp:6,bFq:0.02,sz:24},{e:'🐠',sp:1.0,bAmp:18,bFq:0.04,sz:20},{e:'🌸',sp:0.2,bAmp:12,bFq:0.05,sz:18}],
+  [{e:'❄️',sp:0.5,bAmp:14,bFq:0.03,sz:20},{e:'🐋',sp:0.8,bAmp:10,bFq:0.02,sz:30},{e:'🦭',sp:0.6,bAmp:16,bFq:0.04,sz:24},{e:'🌊',sp:0.4,bAmp:20,bFq:0.035,sz:22}],
+]
+const regionIdx = Math.min(Math.floor((cfg.level-1)/10), 3)
+const NPC_TYPES = NPC_TYPES_BY_REGION[regionIdx]
+const activeNPCs = []
+
+function spawnNPC() {
+  const t = NPC_TYPES[Math.floor(Math.random()*NPC_TYPES.length)]
+  const wrap = document.createElement('div'); wrap.className='sea-npc-wrap'
+  const inner = document.createElement('div'); inner.className='sea-npc-inner'
+  inner.textContent = t.e
+  inner.style.cssText = `font-size:${t.sz}px;line-height:1`
+  wrap.appendChild(inner)
+  const startY = 60 + Math.random()*(FLOOR_Y-130)
+  wrap.style.cssText = `position:fixed;z-index:38;pointer-events:none;left:${W+50}px;top:${startY}px`
+  document.body.appendChild(wrap)
+  // Animate inner element vertically (outer handles horizontal)
+  inner.style.animation = `seaNpcBob ${(1/(t.bFq*60)).toFixed(1)}s ease-in-out infinite alternate`
+  // Add style if not present
+  if (!document.getElementById('sea-npc-style')) {
+    const st = document.createElement('style'); st.id='sea-npc-style'
+    st.textContent = `@keyframes seaNpcBob{from{transform:translateY(0)}to{transform:translateY(${-30}px)}}`
+    document.head.appendChild(st)
+  }
+  activeNPCs.push({
+    el: wrap, x: W+50, baseY: startY,
+    phase: Math.random()*Math.PI*2,
+    speed: t.sp * (0.65+Math.random()*0.7),
+    bobAmp: t.bAmp, bobFreq: t.bFq, type:t
+  })
+}
+
+function updateNPCs(dt) {
+  for (let i=activeNPCs.length-1; i>=0; i--) {
+    const n=activeNPCs[i]
+    n.x -= n.speed * dt
+    n.phase += n.bobFreq
+    const y = n.baseY + Math.sin(n.phase)*n.bobAmp
+    n.el.style.left = n.x+'px'
+    n.el.style.top  = y+'px'
+    if (n.x < -70) { document.body.removeChild(n.el); activeNPCs.splice(i,1) }
+  }
+}
+
+let _npcTimer=0
+function spawnNPCLoop() {
+  if (S.gameOver) return
+  spawnNPC()
+  const delay = 2200 + Math.random()*3500
+  _npcTimer = setTimeout(spawnNPCLoop, delay)
+}
+function clearNPCs() {
+  clearTimeout(_npcTimer)
+  for (const n of activeNPCs) { try { document.body.removeChild(n.el) } catch(_){} }
+  activeNPCs.length = 0
+}
+
+// ══════════════════════════════════════════════════════════════
+//  CLIFFS — stalactite (top) + stalagmite (bottom)
+// ══════════════════════════════════════════════════════════════
+function buildCliffs() {
+  const startX = W + 100
+  let prevGapY = H * 0.42
+  const maxShift = H * 0.17
+  for (let i=0; i<CLIFF_COUNT; i++) {
+    const x = startX + i*CLIFF_SPACE
+    const minGY = 100 + GAP_SIZE/2
+    const maxGY = FLOOR_Y - 60 - GAP_SIZE/2
+    let gapY = prevGapY + (Math.random()-0.5)*maxShift*2
+    gapY = Math.max(minGY, Math.min(maxGY, gapY))
+    prevGapY = gapY
+
+    const cliff = {
+      x, gapY, passed:false, hit:false, removing:false, alpha:1,
+      topGfx: new PIXI.Graphics(),
+      botGfx: new PIXI.Graphics(),
+    }
+    drawCliff(cliff.topGfx, 0, gapY - GAP_SIZE/2, true)
+    drawCliff(cliff.botGfx, gapY + GAP_SIZE/2, FLOOR_Y, false)
+    cliff.topGfx.x = x; cliff.botGfx.x = x
+    worldContainer.addChild(cliff.topGfx)
+    worldContainer.addChild(cliff.botGfx)
+
+    // Collectible star in gap
+    const star = new PIXI.Text({ text: i%3===0 ? '⭐' : '🔵', style:{ fontSize: window.RZ ? window.RZ.fontScale(22) : 22 } })
+    star.anchor.set(0.5); star.x = x+CLIFF_W/2; star.y = gapY
+    worldContainer.addChild(star)
+    cliff.star = star; cliff.starCollected = false
+
+    S.cliffs.push(cliff)
+  }
+}
+
+function drawCliff(g, fromY, toY, isTop) {
+  const col = THEME.rock
+  const drk = THEME.shadow
+  const spike = Math.min(52, (toY-fromY)*0.42)
+  const bodyH = (toY-fromY) - spike
+
+  if (isTop) {
+    // Main body (flat top pressing down)
+    if (bodyH > 0) g.rect(0, fromY, CLIFF_W, bodyH).fill(col)
+    // Stalactite tip pointing down
+    if (spike > 0) g.poly([0, fromY+bodyH, CLIFF_W, fromY+bodyH, CLIFF_W/2, toY]).fill(col)
+    // Side shading
+    g.rect(2, fromY, 6, bodyH).fill({ color:0xffffff, alpha:0.09 })
+    g.rect(CLIFF_W-8, fromY, 8, bodyH).fill({ color:drk, alpha:0.18 })
+    // Stratification lines
+    for (let ly=fromY+20; ly<fromY+bodyH-8; ly+=22) g.rect(3,ly,CLIFF_W-6,1.5).fill({ color:drk, alpha:0.09 })
+    // Moss/algae at tip
+    g.circle(CLIFF_W/2, toY-3, 4.5).fill({ color:THEME.moss, alpha:0.55 })
+    g.ellipse(CLIFF_W/2-6, fromY+bodyH-2, 6, 3).fill({ color:THEME.moss, alpha:0.35 })
+    g.ellipse(CLIFF_W/2+8, fromY+bodyH-3, 5, 2.5).fill({ color:THEME.moss, alpha:0.3 })
+  } else {
+    // Stalagmite tip pointing up
+    if (spike > 0) g.poly([CLIFF_W/2, fromY, 0, fromY+spike, CLIFF_W, fromY+spike]).fill(col)
+    // Main body
+    const bodyStart = fromY + spike
+    const bH = toY - bodyStart
+    if (bH > 0) g.rect(0, bodyStart, CLIFF_W, bH).fill(col)
+    // Side shading
+    g.rect(2, bodyStart, 6, bH).fill({ color:0xffffff, alpha:0.09 })
+    g.rect(CLIFF_W-8, bodyStart, 8, bH).fill({ color:drk, alpha:0.18 })
+    for (let ly=bodyStart+20; ly<toY-8; ly+=22) g.rect(3,ly,CLIFF_W-6,1.5).fill({ color:drk, alpha:0.09 })
+    // Algae at tip
+    g.circle(CLIFF_W/2, fromY+4, 5).fill({ color:THEME.moss, alpha:0.6 })
+    g.ellipse(CLIFF_W/2-7, fromY+spike+4, 6, 3).fill({ color:THEME.moss, alpha:0.35 })
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  SWIMMER (player pokemon — DOM img for animated GIF)
+// ══════════════════════════════════════════════════════════════
+function createSwimmer() {
+  swimContainer = new PIXI.Container()
+  swimContainer.x = SWIM_X; swimContainer.y = S.swimY
+
+  const initPoke = G24_POKEMON[selectedPokemon].evo[0]
+  const swimImg = document.createElement('img')
+  swimImg.id = 'swimmer-gif'
+  const initSz = Math.round(SWIMMER_SZ * initPoke.scale)
+  swimImg.src = initPoke.src
+  const flipPart = initPoke.flip ? ' scaleX(-1)' : ''
+  swimImg.style.cssText = `position:fixed;z-index:40;pointer-events:none;width:min(${initSz}px,${Math.round(initPoke.scale*16)}vw);height:auto;filter:drop-shadow(0 0 10px rgba(0,180,216,0.65));image-rendering:auto;transform:translate(-50%,-50%)${flipPart};`
+  swimImg.onerror = () => {
+    const em = initPoke.emoji || '🐟'
+    swimImg.outerHTML = `<div id="swimmer-gif" style="position:fixed;z-index:40;pointer-events:none;font-size:${initSz}px;transform:translate(-50%,-50%);filter:drop-shadow(0 0 12px rgba(0,180,216,0.7))">${em}</div>`
+  }
+  document.body.appendChild(swimImg)
+  window._swimImg = swimImg
+
+  // Invisible anchor + glow ring
+  swimGfx = new PIXI.Graphics()
+  swimGfx.circle(0,0,2).fill({ color:0xffffff, alpha:0 })
+  const ring = new PIXI.Graphics()
+  ring.circle(0,0,SWIMMER_SZ/2+6).stroke({ color:0x7dd3fc, width:2, alpha:0.28 })
+  swimContainer.addChild(ring); swimContainer.addChild(swimGfx)
+  worldContainer.addChild(swimContainer)
+}
+
+// ══════════════════════════════════════════════════════════════
+//  GAME LOOP
+// ══════════════════════════════════════════════════════════════
+function gameLoop(ticker) {
+  S.frame++
+  if (!S.running || S.paused || S.gameOver) {
+    // Idle bob on start screen
+    if (!S.started && swimContainer) {
+      const bobY = S.swimY + Math.sin(S.frame*0.055)*9
+      swimContainer.y = bobY
+      syncSwimmerPos(bobY)
+    }
+    return
+  }
+
+  const dt = ticker.deltaTime
+
+  // Physics
+  S.swimVY += GRAVITY * dt
+  S.swimVY  = Math.min(S.swimVY, MAX_FALL)
+  S.swimY  += S.swimVY * dt
+  S.swimY   = Math.max(S.swimY, 22)
+
+  if (swimContainer) swimContainer.y = S.swimY
+
+  // Sync DOM image
+  syncSwimmerPos(S.swimY)
+
+  // Light ray pulse
+  if (lightRayGfx) lightRayGfx.alpha = 0.75 + Math.sin(S.frame*0.012)*0.25
+
+  // Scroll cliffs + floor pebbles
+  for (const c of S.cliffs) {
+    if (c.removing) {
+      c.alpha -= 0.035*dt
+      c.topGfx.alpha = c.botGfx.alpha = c.alpha
+      if (c.alpha <= 0) { c.topGfx.visible = false; c.botGfx.visible = false }
+      continue
+    }
+    c.x -= CLIFF_SPEED*dt
+    c.topGfx.x = c.botGfx.x = c.x
+    if (c.star && !c.starCollected) c.star.x = c.x + CLIFF_W/2
+  }
+  for (const t of floorTiles) {
+    t.x -= CLIFF_SPEED*dt
+    if (t.x < -30) t.x += W*2
+  }
+
+  // Animate background
+  updateBubbles(dt)
+  updateSeaweed()
+  updateNPCs(dt)
+
+  // Floor collision (gentle bounce — kid-friendly)
+  if (S.swimY > FLOOR_Y - 14) {
+    S.swimY = FLOOR_Y - 14
+    S.swimVY = FLAP_POWER * 0.55
+    flashScreen('#fbbf24')
+  }
+
+  // Evolution check
+  const poke = G24_POKEMON[selectedPokemon]
+  const maxEvo = poke.evo.length - 1
+  const progress = S.cliffsPassed / S.totalCliffs
+  const nextEvoAt = maxEvo >= 2 ? (S.evoStage===0 ? 0.33 : 0.66) : 0.5
+  if (S.evoStage < maxEvo && progress >= nextEvoAt && !S.evolveTriggered && S.totalCliffs > 2) {
+    S.evolveTriggered = true
+    triggerEvolution()
+  }
+
+  checkCollisions()
+
+  // Win check
+  const allDone = S.cliffs.every(c => c.passed || c.removing || !c.topGfx.visible || c.x < -200)
+  if (allDone || S.cliffsPassed >= S.totalCliffs) showWin()
+
+  updateHUD()
+}
+
+function syncSwimmerPos(y) {
+  const img = window._swimImg
+  if (!img) return
+  const poke = G24_POKEMON[selectedPokemon]
+  const stage = Math.min(S.evoStage||0, poke.evo.length-1)
+  const flip = poke.evo[stage].flip
+  img.style.left = SWIM_X + 'px'
+  img.style.top  = y + 'px'
+  img.style.transform = `translate(-50%,-50%)${flip?' scaleX(-1)':''}`
+}
+
+// ══════════════════════════════════════════════════════════════
+//  COLLISION
+// ══════════════════════════════════════════════════════════════
+function checkCollisions() {
+  const bx=SWIM_X, by=S.swimY, br=SWIMMER_SZ/2-8
+  for (const c of S.cliffs) {
+    if (c.passed || c.hit || c.removing || !c.topGfx.visible) continue
+
+    // Collect star when swimmer overlaps
+    if (c.star && !c.starCollected) {
+      if (Math.abs(bx-c.star.x)<22 && Math.abs(by-c.star.y)<22) {
+        c.starCollected=true; S.correctAnswers++; c.star.visible=false; sfxScore()
+        spawnFloatingText('⭐',c.x+CLIFF_W/2,c.gapY-20,0xfbbf24)
+      }
+    }
+
+    // Clean pass
+    if (bx-br > c.x+CLIFF_W && !c.passed) {
+      c.passed=true; S.cliffsPassed++; S.score++; sfxScore()
+      spawnFloatingText('+1', c.x+CLIFF_W/2, c.gapY, 0x4ade80)
+      continue
+    }
+
+    // Hit check
+    if (bx+br > c.x && bx-br < c.x+CLIFF_W) {
+      const activeGap = S.evolved ? GAP_EVO : GAP_SIZE
+      const gapTop = c.gapY - activeGap/2
+      const gapBot = c.gapY + activeGap/2
+      if (by-br < gapTop || by+br > gapBot) {
+        c.hit=true; S.paused=true; sfxHit(); flashScreen('#ef4444')
+        S.currentCliff=c; showQuiz(c); return
+      }
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  QUIZ
+// ══════════════════════════════════════════════════════════════
+function showQuiz(cliff) {
+  const q = S.questions[S.qIdx % S.questions.length]; S.qIdx++
+  document.getElementById('quiz-question').textContent = q.q
+  const ch = [q.ans, ...q.wrong].sort(()=>Math.random()-0.5)
+  const el = document.getElementById('quiz-choices'); el.innerHTML=''
+  let answered=false
+  ch.forEach(c=>{
+    const btn=document.createElement('button'); btn.className='choice-btn'; btn.textContent=c
+    btn.onclick=()=>{
+      if(answered) return; answered=true
+      if(c===q.ans) {
+        btn.classList.add('correct'); sfxCorrect(); S.correctAnswers++; S.score++
+        cliff.removing=true; cliff.passed=true; S.cliffsPassed++
+        setTimeout(()=>{
+          document.getElementById('quiz-panel').classList.remove('show')
+          S.paused=false; S.swimY=cliff.gapY; S.swimVY=0
+          if(swimContainer) swimContainer.y=S.swimY
+          spawnFloatingText('Benar! ⭐', SWIM_X, S.swimY-30, 0x4ade80)
+          updateHUD()
+        }, 600)
+      } else {
+        btn.classList.add('wrong'); sfxWrong(); S.wrongAnswers++
+        el.querySelectorAll('.choice-btn').forEach(b=>{ if(b.textContent===q.ans) b.classList.add('correct') })
+        setTimeout(()=>{
+          document.getElementById('quiz-panel').classList.remove('show')
+          S.paused=false; S.swimY=cliff.gapY; S.swimVY=0
+          if(swimContainer) swimContainer.y=S.swimY
+          cliff.removing=true; cliff.passed=true; S.cliffsPassed++
+          spawnFloatingText('Coba lagi!', SWIM_X, S.swimY-30, 0xfbbf24)
+          updateHUD()
+        }, 1200)
+      }
+    }
+    el.appendChild(btn)
+  })
+  document.getElementById('quiz-panel').classList.add('show')
+  document.getElementById('status-text').textContent='Jawab Soal!'
+}
+
+// ══════════════════════════════════════════════════════════════
+//  FLOATING TEXT
+// ══════════════════════════════════════════════════════════════
+function spawnFloatingText(text, x, y, color) {
+  const t=new PIXI.Text({ text, style:{ fontSize:window.RZ?window.RZ.fontScale(22):22, fontWeight:'900', fontFamily:'Fredoka One', fill:color } })
+  t.anchor.set(0.5); t.x=x; t.y=y; worldContainer.addChild(t)
+  let life=42
+  const tick=()=>{ life--; t.y-=1.4; t.alpha=life/42; if(life<=0){ worldContainer.removeChild(t); app.ticker.remove(tick) } }
+  app.ticker.add(tick)
+}
+
+// ══════════════════════════════════════════════════════════════
+//  FLASH + HUD
+// ══════════════════════════════════════════════════════════════
+function flashScreen(color) {
+  const f=document.getElementById('flash')
+  f.style.background=color; f.style.opacity='0.4'
+  setTimeout(()=>f.style.opacity='0',150)
+}
+function updateHUD() {
+  document.getElementById('hud-lives').textContent=`⭐ ${S.correctAnswers}`
+  document.getElementById('pipe-progress').textContent=`🟢 ${S.cliffsPassed}/${S.totalCliffs}`
+  if (S.running&&!S.paused) {
+    const evoName = G24_POKEMON[selectedPokemon]?.evo[S.evoStage||0]?.name||'Pokemon'
+    document.getElementById('status-text').textContent = S.evolved ? evoName+' Berevolusi!' : 'Berenang!'
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  EVOLUTION
+// ══════════════════════════════════════════════════════════════
+function triggerEvolution() {
+  S.paused=true; S.evolved=true
+  flashScreen('#7dd3fc')
+  document.getElementById('status-text').textContent='Berevolusi...!'
+  sfxCorrect(); setTimeout(sfxCorrect,200); setTimeout(sfxCorrect,400)
+
+  S.evoStage = (S.evoStage||0) + 1
+  setTimeout(()=>{
+    applyPokemon(S.evoStage)
+    spawnFloatingText('EVOLUSI! 🌊', SWIM_X, S.swimY-44, 0x7dd3fc)
+    flashScreen('#fbbf24')
+    setTimeout(()=>{
+      S.paused=false; S.evolveTriggered=false
+      CLIFF_SPEED = CLIFF_SPEED * 0.87
+      const eName = G24_POKEMON[selectedPokemon]?.evo[S.evoStage||0]?.name||'Pokemon'
+      document.getElementById('status-text').textContent=eName+' Berevolusi!'
+    }, 800)
+  }, 1500)
+}
+
+// ══════════════════════════════════════════════════════════════
+//  WIN
+// ══════════════════════════════════════════════════════════════
+function calcStars() {
+  return GameScoring.calc({ correct:S.correctAnswers, total:S.correctAnswers+S.wrongAnswers, wrong:S.wrongAnswers, lives:S.lives, maxLives:3 })
+}
+function showWin() {
+  if (S.gameOver) return
+  S.running=false; S.gameOver=true; clearNPCs()
+  try { const bgm=document.getElementById('game-bgm'); bgm.pause(); bgm.currentTime=0 } catch(_){}
+  const stars=calcStars()
+  try { sessionStorage.setItem('g24Result', JSON.stringify({ stars, level:S.level })) } catch(_){}
+  if (typeof window.saveLevelProgress==='function') {
+    window.saveLevelProgress('g24', S.level, stars)
+  } else {
+    try {
+      const key='dunia-0-progress'
+      const prog=JSON.parse(localStorage.getItem(key)||'{}')
+      if (!prog.g24) prog.g24={ completed:[], stars:{} }
+      if (!prog.g24.completed.includes(S.level)) prog.g24.completed.push(S.level)
+      if ((prog.g24.stars[S.level]||0)<stars) prog.g24.stars[S.level]=stars
+      localStorage.setItem(key,JSON.stringify(prog))
+    } catch(_){}
+  }
+  document.getElementById('status-text').textContent='Level Selesai!'
+  sfxCorrect(); setTimeout(()=>sfxCorrect(),200)
+  try { if(app&&app.ticker) app.ticker.stop() } catch(_){}
+
+  setTimeout(()=>{
+    const maxLevel = 40
+    const nextLevel = S.level < maxLevel ? ()=>{
+      try { sessionStorage.setItem('g24Config', JSON.stringify({ level:S.level+1 })) } catch(_){}
+      location.reload()
+    } : null
+    const info = `${S.cliffsPassed}/${S.totalCliffs} rintangan | ⭐ ${S.correctAnswers} benar`
+    const title = stars>=5?'Sempurna!':stars>=4?'Hebat!':stars>=3?'Bagus!':stars>=1?'Coba Lagi':'Gagal!'
+    const emoji = stars>=5?'🏆':stars>=4?'🌟':stars>=3?'⭐':stars>=1?'💪':'😞'
+    const msg = (stars>=5?`Luar biasa! Kamu penyelam terbaik! ${info}`:
+                 stars>=4?`Kerja bagus! ${info}`:
+                 stars>=3?`Lumayan, terus berlatih! ${info}`:
+                 `Jangan menyerah, ayo coba lagi! ${info}`)
+    GameModal.show({ emoji, title, stars, msg, onNext:nextLevel, onAgain:()=>location.reload(), onBack:()=>goBack() })
+  }, 850)
+}
+
+// ══════════════════════════════════════════════════════════════
+//  APPLY POKEMON (evo stage change)
+// ══════════════════════════════════════════════════════════════
+function applyPokemon(evoStage) {
+  const p = G24_POKEMON[selectedPokemon]
+  const stage = Math.min(evoStage, p.evo.length-1)
+  const evo = p.evo[stage]
+  const img = document.getElementById('swimmer-gif')
+  if (!img) return
+  img.src = evo.src
+  img.onerror = () => {
+    const em = evo.emoji||'🐟'
+    img.outerHTML = `<div id="swimmer-gif" style="position:fixed;z-index:40;pointer-events:none;font-size:${Math.round(SWIMMER_SZ*evo.scale)}px;transform:translate(-50%,-50%)${evo.flip?' scaleX(-1)':''};filter:drop-shadow(0 0 12px rgba(0,180,216,0.7))">${em}</div>`
+    window._swimImg = document.getElementById('swimmer-gif')
+  }
+  const sz = Math.round(SWIMMER_SZ*evo.scale)
+  img.style.width = `min(${sz}px,${Math.round(evo.scale*16)}vw)`
+  img.style.filter = evoStage>0 ? 'drop-shadow(0 0 14px rgba(0,220,255,0.8))' : 'drop-shadow(0 0 10px rgba(0,180,216,0.65))'
+  window._swimImg = img
+}
+
+// ══════════════════════════════════════════════════════════════
+//  INPUT — tap to swim
+// ══════════════════════════════════════════════════════════════
+function swim() {
+  if (S.gameOver) return
+  ensureAudio()
+  if (!S.started) {
+    S.started=true; S.running=true
+    document.getElementById('start-overlay').classList.add('hidden')
+    document.getElementById('status-text').textContent='Berenang!'
+    try {
+      const bgm=document.getElementById('game-bgm')
+      bgm.src = cfg.level%2===1 ? '../assets/Pokemon/sound/bgm-odd.mp3' : '../assets/Pokemon/sound/bgm-even.mp3'
+      bgm.volume = (window._volBGM||0.5)*((window._volMaster||80)/100)
+      bgm.play().catch(()=>{})
+    } catch(_){}
+  }
+  if (S.paused) return
+  S.swimVY = FLAP_POWER
+  sfxSwim()
+}
+
+document.addEventListener('pointerdown', e=>{
+  if (e.target.closest('#quiz-panel')||e.target.closest('#hud-top')||e.target.closest('#btn-back')) return
+  swim()
+}, { passive:true })
+window.addEventListener('keydown', e=>{
+  if (e.code==='Space'||e.code==='ArrowUp') { e.preventDefault(); swim() }
+})
+
+// ══════════════════════════════════════════════════════════════
+//  BAG — region tabs + grid
+// ══════════════════════════════════════════════════════════════
+let _bagTabActive = Math.min(regionIdx, 2) // default to current region (max Hoenn)
+const REGION_LABELS = ['🌊 Kanto','🌊 Johto','🌊 Hoenn','❄️ Sinnoh']
+
+function openBag() {
+  if (S.started && !S.paused) {
+    S.paused=true; S.running=false
+    document.getElementById('btn-pause').textContent='▶'
+  }
+  renderBagTabs()
+  renderBagGrid()
+  document.getElementById('bag-overlay').style.display='flex'
+}
+function closeBag() {
+  document.getElementById('bag-overlay').style.display='none'
+  if (S.currentCliff && !S.currentCliff.passed) {
+    document.getElementById('quiz-panel').classList.add('show')
+    document.getElementById('status-text').textContent='Jawab Soal!'
+    S.paused=true; S.running=false
+  }
+}
+function renderBagTabs() {
+  const bar=document.getElementById('bag-region-tabs'); bar.innerHTML=''
+  REGION_LABELS.forEach((lbl,i)=>{
+    const t=document.createElement('button'); t.className='bag-tab'+(i===_bagTabActive?' active':'')+(i>2?' locked':'')
+    t.textContent = i>2 ? '🔒 Sinnoh' : lbl
+    if (i<=2) t.onclick=()=>{ _bagTabActive=i; renderBagTabs(); renderBagGrid() }
+    bar.appendChild(t)
+  })
+}
+function renderBagGrid() {
+  const grid=document.getElementById('bag-grid'); grid.innerHTML=''
+  const regionPokes = G24_POKEMON.filter(p=>p.region===_bagTabActive)
+  const playerLevel = cfg.level
+  const regionUnlock = [1,11,21,31][_bagTabActive]
+  regionPokes.forEach(p=>{
+    const idx = G24_POKEMON.indexOf(p)
+    const locked = playerLevel < regionUnlock
+    const card=document.createElement('div')
+    card.style.cssText=`display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 6px;border-radius:14px;border:2px solid ${idx===selectedPokemon?'#fbbf24':'rgba(255,255,255,0.12)'};background:${idx===selectedPokemon?'rgba(251,191,36,0.12)':locked?'rgba(0,0,0,0.3)':'rgba(255,255,255,0.04)'};cursor:${locked?'default':'pointer'};opacity:${locked?'.5':'1'}`
+    if (locked) {
+      const lk=document.createElement('div'); lk.style.cssText='font-size:30px;text-align:center'; lk.textContent='🔒'
+      const lkn=document.createElement('div'); lkn.style.cssText='font-size:9px;color:#6b7280;text-align:center'; lkn.textContent=`Lv${regionUnlock}+`
+      card.append(lk,lkn)
+    } else {
+      const img=document.createElement('img')
+      img.src = p.evo[0].src
+      const fl = p.evo[0].flip
+      img.style.cssText=`width:60px;height:60px;object-fit:contain;transform:${fl?'scaleX(-1)':'none'}`
+      img.onerror=()=>{ img.outerHTML=`<div style="font-size:36px;width:60px;height:60px;display:flex;align-items:center;justify-content:center">${p.evo[0].emoji}</div>` }
+      const nm=document.createElement('div'); nm.style.cssText='font-size:10px;color:#e9d5ff;font-weight:700;text-align:center;word-break:break-word'; nm.textContent=p.name
+      const el=document.createElement('div'); el.style.cssText='font-size:8px;color:#7dd3fc'
+      el.textContent=p.evo.length>2?'3x Evo':p.evo.length>1?'2x Evo':'Tetap'
+      card.append(img,nm,el)
+      card.onclick=()=>{
+        selectedPokemon=idx; S.evoStage=0; S.evolveTriggered=false; S.evolved=false
+        applyPokemon(0)
+        try { sessionStorage.setItem('g24Config', JSON.stringify({ level:cfg.level, pokemon:idx })) } catch(_){}
+        closeBag()
+      }
+    }
+    grid.appendChild(card)
+  })
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PAUSE / NAVIGATION
+// ══════════════════════════════════════════════════════════════
+function togglePause() {
+  if (S.gameOver) return
+  if (S.paused) {
+    S.paused=false; S.running=true
+    document.getElementById('pause-overlay').style.display='none'
+    document.getElementById('btn-pause').textContent='⏸'
+  } else {
+    S.paused=true; S.running=false
+    document.getElementById('pause-overlay').style.display='flex'
+    document.getElementById('btn-pause').textContent='▶'
+  }
+}
+function goBack() {
+  clearNPCs()
+  try { if(app&&app.ticker) app.ticker.stop() } catch(_){}
+  history.back()
+}
+
+// HUD level + start text
+document.getElementById('level-text').textContent=`Level ${cfg.level}`
+</script>
+</body>
+</html>

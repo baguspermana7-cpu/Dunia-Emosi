@@ -6,7 +6,7 @@
 <title>Dunia Emosi 🐾</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="style.css?v=20260503l">
+<link rel="stylesheet" href="style.css?v=20260504a">
 </head>
 <body>
 <!-- Loading indicator — hidden by JS after page loads -->
@@ -465,13 +465,21 @@
             <div class="wmap-node-name">Petualangan Mobil</div>
             <div class="wmap-node-stars" id="gstars-6-lbl"></div>
           </div>
-          <!-- G19: Pokemon Birds -->
-          <div class="wmap-node" id="gtile-19" onclick="playClick();openLevelSelect(19)" title="Pokemon Birds">
+          <!-- G19: Pokemon Birds (→ world picker) -->
+          <div class="wmap-node" id="gtile-19" onclick="playClick();openWorldPicker()" title="Pokemon Birds">
             <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#5B21B6,#8B5CF6);">
               <img loading="lazy" decoding="async" class="wn-icon" src="assets/Pokemon/svg/18.svg" alt="Pidgeot" style="width:44px;height:44px;filter:drop-shadow(0 3px 8px rgba(0,0,0,0.75));" onerror="this.outerHTML='<span class=\'wn-icon\'>🐦</span>'">
             </div>
             <div class="wmap-node-name">Pokemon Birds</div>
             <div class="wmap-node-stars" id="gstars-19-lbl"></div>
+          </div>
+          <!-- G24: Pokemon Bawah Laut -->
+          <div class="wmap-node" id="gtile-24" onclick="playClick();openLevelSelect(24)" title="Pokemon Bawah Laut">
+            <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#0077B6,#00B4D8);">
+              <span class="wn-icon" style="font-size:36px">🌊</span>
+            </div>
+            <div class="wmap-node-name">Bawah Laut</div>
+            <div class="wmap-node-stars" id="gstars-24-lbl"></div>
           </div>
           <!-- G23: Pokemon Run -->
           <div class="wmap-node" id="gtile-23" onclick="playClick();openLevelSelect(23)" title="Pokemon Run">
@@ -2102,6 +2110,37 @@ function loadPixiJS(cb) {
   </div>
 </div>
 
+<!-- World Picker Modal — Pokemon universe selector (G19/G23/G24) -->
+<div id="world-picker-modal" style="position:fixed;inset:0;z-index:1200;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:rgba(4,1,20,0.96);backdrop-filter:blur(14px)">
+  <div style="font-size:11px;color:#7dd3fc;font-weight:700;letter-spacing:3px;margin-bottom:8px;text-transform:uppercase">Pilih Dunia Pokemon</div>
+  <div style="font-size:clamp(20px,5.5vw,28px);font-weight:900;color:#e0f2fe;margin-bottom:24px;text-align:center">Mau Pergi ke Mana? 🗺️</div>
+  <div style="display:flex;flex-direction:column;gap:12px;width:100%;max-width:380px">
+    <button onclick="closeWorldPicker();openLevelSelect(24)" style="display:flex;align-items:center;gap:14px;padding:15px 18px;border:2px solid rgba(0,180,216,0.55);border-radius:20px;background:linear-gradient(135deg,rgba(0,77,112,0.55),rgba(0,180,216,0.12));color:#fff;cursor:pointer;font-family:inherit;text-align:left;transition:border-color .15s">
+      <span style="font-size:38px;line-height:1">🌊</span>
+      <div style="flex:1">
+        <div style="font-size:17px;font-weight:900;color:#bae6fd">Bawah Laut</div>
+        <div style="font-size:11px;color:#7dd3fc;margin-top:2px">40 Level &bull; Kanto → Sinnoh</div>
+      </div>
+      <div style="font-size:10px;background:rgba(0,180,216,0.3);border-radius:8px;padding:3px 8px;color:#38bdf8;font-weight:700;white-space:nowrap">✨ BARU</div>
+    </button>
+    <button onclick="closeWorldPicker();openLevelSelect(23)" style="display:flex;align-items:center;gap:14px;padding:15px 18px;border:2px solid rgba(239,68,68,0.45);border-radius:20px;background:linear-gradient(135deg,rgba(120,10,10,0.5),rgba(239,68,68,0.08));color:#fff;cursor:pointer;font-family:inherit;text-align:left">
+      <span style="font-size:38px;line-height:1">🌿</span>
+      <div>
+        <div style="font-size:17px;font-weight:900;color:#fca5a5">Tanah</div>
+        <div style="font-size:11px;color:#f87171;margin-top:2px">30 Level &bull; Lari &amp; Lompat</div>
+      </div>
+    </button>
+    <button onclick="closeWorldPicker();openLevelSelect(19)" style="display:flex;align-items:center;gap:14px;padding:15px 18px;border:2px solid rgba(139,92,246,0.45);border-radius:20px;background:linear-gradient(135deg,rgba(60,20,140,0.5),rgba(139,92,246,0.08));color:#fff;cursor:pointer;font-family:inherit;text-align:left">
+      <span style="font-size:38px;line-height:1">🦅</span>
+      <div>
+        <div style="font-size:17px;font-weight:900;color:#c4b5fd">Udara</div>
+        <div style="font-size:11px;color:#a78bfa;margin-top:2px">30 Level &bull; Terbang Tinggi</div>
+      </div>
+    </button>
+  </div>
+  <button onclick="closeWorldPicker()" style="margin-top:22px;padding:10px 22px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:#6b7280;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">← Kembali</button>
+</div>
+
 <!-- Task #73 (P0-2): defer data scripts — unblock HTML parsing by ~51KB -->
 <script src="games/data/region-meta.js?v=20260427d" defer></script>
 <script src="games/data/city-progression.js?v=20260427d" defer></script>
@@ -2114,6 +2153,6 @@ function loadPixiJS(cb) {
 <script src="games/data/freeze-watchdog.js?v=20260428a" defer></script>
 <script src="games/data/cloud-sync.js?v=20260502p" defer></script>
 <script src="games/data/math-rules.js?v=20260501d" defer></script>
-<script src="game.js?v=20260503l" defer></script>
+<script src="game.js?v=20260504a" defer></script>
 </body>
 </html>

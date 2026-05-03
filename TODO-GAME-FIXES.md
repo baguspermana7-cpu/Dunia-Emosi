@@ -2299,3 +2299,19 @@ TR battle question pool was independent `pickQ(cfg.level)` — could show the sa
 
 ### ✅ #122-Y: renderAsset onerror uses data attributes (game.js)
 Inline onerror string used fragile backslash-escaped nested quotes. Any future apostrophe in asset path or emoji would break. Replaced with `data-png`, `data-emoji`, `data-sz` attributes — fallback chain reads from these, eliminating quoting fragility.
+
+---
+
+## Session 2026-05-04 — G24 Bawah Laut + Mode Picker
+
+### ✅ #124-A: G24 Bawah Laut game (games/g24-pixi.html) — NEW
+New Flappy Bird underwater variant. Stalactite/stalagmite cliff obstacles replacing green pipes. 40 levels × 4 regions (Kanto/Johto/Hoenn/Sinnoh). Water Pokemon roster with evo chains (6 Kanto, 5 Johto, 8 Hoenn, 3 Sinnoh locked). Player IS the selected Pokemon GIF (no Ash/Pikachu). CSS scaleX(-1) flip for Pokemon that face wrong direction. Smooth Pixi bubble particles, seaweed animation, CSS NPC sea creatures. Per-region visual themes (calm ocean colors). Assets: assets/Pokemon/g24/ (GIF format).
+
+### ✅ #124-B: World Picker Modal (index.html + game.js)
+G19 world map node onclick now opens openWorldPicker() → 3-way mode picker modal: 🌊 Bawah Laut (G24), 🌿 Tanah (G23), 🦅 Udara (G19). G23 world node untouched as direct access. closeWorldPicker() + openWorldPicker() added to game.js.
+
+### ✅ #124-C: G24 world map node (index.html)
+Added gtile-24 🌊 water gradient node. GAME_META[24] + GAME_INFO[24] added to game.js. initGame24() added. PEMOJIS[24] = ['🌊','🐠','🐡','💧'].
+
+### ✅ #124-D: Cache bump v=20260503l → v=20260504a
+index.html (style.css + game.js script tags) bumped. G24 file at v=20260504a.
