@@ -83,3 +83,12 @@
 - **MED** G23 `closeBag` BGM resume — `openBag` now calls `bgmPause()`, `closeBag` calls `bgmResume()` and resets pause state when no quiz is pending
 - **LOW** G24 trailing version comment added (`<!-- g24-pixi v20260505e -->`) for cache-bust tracing parity with G23
 - Cache bumps: g21-pixi v=20260505e, g23-pixi v=20260505e, g24-pixi v=20260505e
+
+## 2026-05-05 — #131 G24 NPC Direction + Spawn Polish (g24-pixi.html)
+- **NPC sprites flipped to face left** (movement direction). All NPCs use `transform:scaleX(-1)` so they no longer appear to swim "mundur" (backward). Player Pokemon faces RIGHT (forward); NPCs must face LEFT to look like correct motion.
+- **Whale direction reversed** L→R → R→L (`spawn at W+120, move LEFT`). Now consistent with all other NPCs (right-to-left flow, opposite to player swimmer's left-to-right swim).
+- **Spawn cadence reduced**: delay 2.2-5.7s → **5-9.5s**; concurrent NPC cap at 5; whale max 1 in flight; diver max 1 in flight. Mutually exclusive spawn (one type per cycle, not three).
+- **Crab is now benthic**: spawns at `FLOOR_Y - sz*0.7` (seafloor), bobAmp=0 (no floating bounce), speed 0.22 (slower walking pace).
+- **Anglerfish PNG dropped** in favor of Pokemon Showdown `lanturn` GIF — real anglerfish Pokemon with glowing lure, transparent BG, no mix-blend-mode hack needed.
+- **Scuba diver fixed**: `🤿` (mask only) → `🏊‍♂️` (person swimming, full body). Faces left to match motion.
+- Cache bump: g24-pixi.html v=20260505f

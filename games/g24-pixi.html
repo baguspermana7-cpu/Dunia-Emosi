@@ -571,11 +571,14 @@ function updateSeaweed() {
 }
 
 // ══════════════════════════════════════════════════════════════
-//  NPC SEA CREATURES — CSS animated, swim right-to-left
+//  NPC SEA CREATURES — CSS animated, ALL swim right→left
+//  (opposite direction from player Pokemon swimmer who faces right)
 // ══════════════════════════════════════════════════════════════
-const _angler = {img:'../assets/Pokemon/g24/anglerfish.png',sp:0.5,bAmp:6,bFq:0.022,sz:34}
+// Anglerfish: Pokemon Lanturn (real anglerfish Pokemon, glowing lure).
+// Showdown sprites face LEFT by default — matches our movement direction.
+const _angler = {img:'https://play.pokemonshowdown.com/sprites/ani/lanturn.gif',sp:0.45,bAmp:8,bFq:0.022,sz:46}
 const NPC_TYPES_BY_REGION = [
-  [{e:'🐠',sp:1.1,bAmp:18,bFq:0.04,sz:22},{e:'🐟',sp:0.85,bAmp:14,bFq:0.05,sz:20},{e:'🦐',sp:0.5,bAmp:10,bFq:0.06,sz:18},{e:'🐡',sp:0.75,bAmp:20,bFq:0.03,sz:22},{e:'🦀',sp:0.35,bAmp:5,bFq:0.08,sz:20},_angler],
+  [{e:'🐠',sp:1.1,bAmp:18,bFq:0.04,sz:22},{e:'🐟',sp:0.85,bAmp:14,bFq:0.05,sz:20},{e:'🦐',sp:0.5,bAmp:10,bFq:0.06,sz:18},{e:'🐡',sp:0.75,bAmp:20,bFq:0.03,sz:22},{e:'🦀',sp:0.22,bAmp:0,bFq:0,sz:22,benthic:true},_angler],
   [{e:'🪼',sp:0.4,bAmp:30,bFq:0.035,sz:28},{e:'🦑',sp:0.7,bAmp:22,bFq:0.05,sz:24},{e:'💫',sp:0.3,bAmp:40,bFq:0.02,sz:20},{e:'🐙',sp:0.55,bAmp:18,bFq:0.04,sz:26},_angler],
   [{e:'🐡',sp:0.9,bAmp:20,bFq:0.04,sz:24},{e:'🦈',sp:1.4,bAmp:8,bFq:0.025,sz:26},{e:'🐢',sp:0.3,bAmp:6,bFq:0.02,sz:24},{e:'🐠',sp:1.0,bAmp:18,bFq:0.04,sz:20},{e:'🌸',sp:0.2,bAmp:12,bFq:0.05,sz:18},_angler],
   [{e:'❄️',sp:0.5,bAmp:14,bFq:0.03,sz:20},{e:'🐋',sp:0.8,bAmp:10,bFq:0.02,sz:30},{e:'🦭',sp:0.6,bAmp:16,bFq:0.04,sz:24},{e:'🌊',sp:0.4,bAmp:20,bFq:0.035,sz:22},_angler],
@@ -584,25 +587,36 @@ const regionIdx = Math.min(Math.floor((cfg.level-1)/10), 3)
 const NPC_TYPES = NPC_TYPES_BY_REGION[regionIdx]
 const activeNPCs = []
 const activeMegaNPCs = []
+const NPC_CAP = 5            // max concurrent ambient NPCs (was unbounded)
+const WHALE_INFLIGHT_MAX = 1 // max one whale on screen at once
+const DIVER_INFLIGHT_MAX = 1 // max one diver on screen at once
 let _whaleSpawnCount = 0
+let _diverSpawnCount = 0
 
 function spawnNPC() {
+  if (activeNPCs.length >= NPC_CAP) return
   const t = NPC_TYPES[Math.floor(Math.random()*NPC_TYPES.length)]
   const wrap = document.createElement('div'); wrap.className='sea-npc-wrap'
   const inner = document.createElement('div'); inner.className='sea-npc-inner'
+  // Face direction: NPCs move LEFT, so flip default-right-facing emoji/sprite
+  // to face LEFT via scaleX(-1). Showdown sprites already face LEFT — only flip emoji.
   if (t.img) {
     const imgEl = document.createElement('img')
     imgEl.src = t.img
-    // mix-blend-mode:multiply hides white-PNG background on blue ocean backdrop (L83)
-    imgEl.style.cssText = `width:${t.sz}px;height:auto;display:block;pointer-events:none;opacity:0.88;mix-blend-mode:multiply`
-    imgEl.onerror = () => { inner.textContent='🐟'; inner.style.fontSize=t.sz+'px'; inner.style.mixBlendMode='' }
+    // No mix-blend-mode for transparent PNG/GIF (Showdown sprites have alpha)
+    imgEl.style.cssText = `width:${t.sz}px;height:auto;display:block;pointer-events:none;opacity:0.92`
+    imgEl.onerror = () => { inner.textContent='🐟'; inner.style.fontSize=t.sz+'px'; inner.style.transform='scaleX(-1)' }
     inner.appendChild(imgEl)
   } else {
     inner.textContent = t.e
-    inner.style.cssText = `font-size:${t.sz}px;line-height:1`
+    // Emojis face right by default — flip to face left (movement direction)
+    inner.style.cssText = `font-size:${t.sz}px;line-height:1;transform:scaleX(-1);display:inline-block`
   }
   wrap.appendChild(inner)
-  const startY = 60 + Math.random()*(FLOOR_Y-130)
+  // Benthic creatures (crab) sit on the seafloor; others scatter mid-water
+  const startY = t.benthic
+    ? FLOOR_Y - t.sz * 0.7
+    : 60 + Math.random()*(FLOOR_Y-130)
   wrap.style.cssText = `position:fixed;z-index:38;pointer-events:none;left:${W+50}px;top:${startY}px`
   document.body.appendChild(wrap)
   activeNPCs.push({
@@ -625,22 +639,25 @@ function updateNPCs(dt) {
   }
 }
 
+function _whalesInFlight(){ return activeMegaNPCs.filter(n=>n.type==='whale').length }
+function _diversInFlight(){ return activeMegaNPCs.filter(n=>n.type==='diver').length }
+
 function spawnWhale() {
-  if (_whaleSpawnCount >= 3) return
+  if (_whalesInFlight() >= WHALE_INFLIGHT_MAX) return
   _whaleSpawnCount++
   const wrap = document.createElement('div')
   wrap.className = 'sea-npc-wrap'
   const inner = document.createElement('div')
   inner.className = 'sea-npc-inner'
-  inner.style.cssText = 'font-size:72px;line-height:1;display:inline-block'
+  // Whale moves LEFT (matching all other NPCs), flip emoji to face left
+  inner.style.cssText = 'font-size:72px;line-height:1;display:inline-block;transform:scaleX(-1)'
   inner.textContent = '🐋'
   wrap.appendChild(inner)
-  // Whale starts from LEFT side, travels RIGHT (opposite of normal NPCs)
   const startY = H * 0.2 + Math.random() * (FLOOR_Y * 0.4)
-  wrap.style.cssText = `position:fixed;z-index:37;pointer-events:none;left:-100px;top:${startY}px`
+  wrap.style.cssText = `position:fixed;z-index:37;pointer-events:none;left:${W+120}px;top:${startY}px`
   document.body.appendChild(wrap)
   activeMegaNPCs.push({
-    el: wrap, inner, x: -100, baseY: startY,
+    el: wrap, inner, x: W+120, baseY: startY,
     phase: Math.random()*Math.PI*2,
     speed: 1.2,
     bobAmp: 12, bobFreq: 0.015, type:'whale',
@@ -648,15 +665,16 @@ function spawnWhale() {
   })
 }
 
-let _diverSpawnCount = 0
 function spawnDiver() {
-  if (_diverSpawnCount >= 2) return
+  if (_diversInFlight() >= DIVER_INFLIGHT_MAX) return
   _diverSpawnCount++
   const wrap = document.createElement('div')
   wrap.className = 'sea-npc-wrap'
   const inner = document.createElement('div')
-  inner.style.cssText = 'font-size:36px;line-height:1'
-  inner.textContent = '🤿'
+  // Use 🏊‍♂️ (person swimming) — has a full body, not just a mask.
+  // Faces left (movement direction) via scaleX(-1).
+  inner.style.cssText = 'font-size:42px;line-height:1;display:inline-block;transform:scaleX(-1)'
+  inner.textContent = '🏊‍♂️'
   wrap.appendChild(inner)
   const startY = H * 0.25 + Math.random() * (FLOOR_Y * 0.35)
   wrap.style.cssText = `position:fixed;z-index:39;pointer-events:none;left:${W+60}px;top:${startY}px`
@@ -665,34 +683,35 @@ function spawnDiver() {
     el: wrap, x: W+60, baseY: startY,
     phase: Math.random()*Math.PI*2,
     speed: 0.8 + Math.random()*0.5,
-    bobAmp: 22, bobFreq: 0.025, type:'diver'
+    bobAmp: 18, bobFreq: 0.025, type:'diver'
   })
 }
 
 function updateMegaNPCs(dt) {
   for (let i=activeMegaNPCs.length-1; i>=0; i--) {
     const n=activeMegaNPCs[i]
-    if (n.type === 'whale') {
-      n.x += n.speed * dt  // moves RIGHT
-    } else {
-      n.x -= n.speed * dt  // diver moves LEFT
-    }
+    n.x -= n.speed * dt   // ALL mega-NPCs now move LEFT (right-to-left)
     n.phase += n.bobFreq
     const y = n.baseY + Math.sin(n.phase)*n.bobAmp
     n.el.style.left = n.x+'px'
     n.el.style.top  = y+'px'
-    if (n.type === 'whale' && n.x > W+120) { document.body.removeChild(n.el); activeMegaNPCs.splice(i,1) }
-    else if (n.type !== 'whale' && n.x < -70) { document.body.removeChild(n.el); activeMegaNPCs.splice(i,1) }
+    // Whale needs more clearance on left exit (sz=72)
+    const exitX = n.type === 'whale' ? -160 : -70
+    if (n.x < exitX) { document.body.removeChild(n.el); activeMegaNPCs.splice(i,1) }
   }
 }
 
 let _npcTimer=0
 function spawnNPCLoop() {
   if (S.gameOver) return
-  spawnNPC()
-  if (Math.random() < 0.15 && _whaleSpawnCount < 3) spawnWhale()
-  if (Math.random() < 0.1 && _diverSpawnCount < 2) spawnDiver()
-  const delay = 2200 + Math.random()*3500
+  // Mutually exclusive spawn (one per cycle) keeps screen calm.
+  // Probabilities: whale 6%, diver 5%, ambient ~89%.
+  const r = Math.random()
+  if (r < 0.06) spawnWhale()
+  else if (r < 0.11) spawnDiver()
+  else spawnNPC()
+  // Slower cadence — 5-9.5s between spawns (was 2.2-5.7s)
+  const delay = 5000 + Math.random()*4500
   _npcTimer = setTimeout(spawnNPCLoop, delay)
 }
 function clearNPCs() {
@@ -1347,4 +1366,4 @@ document.getElementById('level-text').textContent=`Level ${cfg.level}`
 </script>
 </body>
 </html>
-<!-- g24-pixi v20260505e -->
+<!-- g24-pixi v20260505f -->

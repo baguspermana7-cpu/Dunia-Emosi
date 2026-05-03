@@ -2372,3 +2372,12 @@ Neither went through `openLevelSelect` where `_applyKodokSlot7Unlock` was placed
 - [x] MED: G23 openBag/closeBag now bgmPause/bgmResume + restore pause state
 - [x] LOW: G24 trailing version comment added
 - [x] Cache bumps to v=20260505e (g21/g23/g24 + game.js URLs)
+
+## #131 — G24 NPC Direction + Spawn Polish (2026-05-05)
+- [x] Flip all NPC inner divs with scaleX(-1) (face left = movement direction)
+- [x] Reverse whale direction L→R → R→L; spawn at W+120
+- [x] Reduce spawn cadence: 2.2-5.7s → 5-9.5s; concurrent cap 5; mutually-exclusive spawn type
+- [x] Crab benthic: spawn at FLOOR_Y - sz*0.7, bobAmp=0, speed 0.22
+- [x] Anglerfish: drop PNG, use Pokemon Showdown lanturn (real anglerfish Pokemon)
+- [x] Scuba diver: 🤿 (mask) → 🏊‍♂️ (full-body swimmer), faces left
+- [x] Cache bump g24-pixi v=20260505f
