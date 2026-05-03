@@ -1184,7 +1184,7 @@ function _applyKodokSlot7Unlock() {
     const slotIdx = window._pSlot ? window._pSlot[0] : 0
     if (slotIdx !== 6) return
     if (_avatarSlug() !== 'frog') return
-    if (localStorage.getItem('dunia-kodok-slot7-v1') === '1') return
+    if (localStorage.getItem('dunia-kodok-slot7-v2') === '1') return
 
     const prog = loadProgress()
 
@@ -1235,7 +1235,7 @@ function _applyKodokSlot7Unlock() {
       }
     }
 
-    localStorage.setItem('dunia-kodok-slot7-v1', '1')
+    localStorage.setItem('dunia-kodok-slot7-v2', '1')
   } catch (_) {}
 }
 
