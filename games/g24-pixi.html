@@ -174,98 +174,94 @@ const THEME = getRegion(cfg.level)
 
 // ── POKEMON ROSTER ─────────────────────────────────────────────
 // flip:true → CSS scaleX(-1) so Pokemon faces right (swimming direction)
-// Filenames in assets/Pokemon/g24/ — use onerror fallback emoji if missing
+// hd  → pokemondb_hd_alt2 WebP (always exists, used in bag + start overlay + swimmer fallback)
+// src → GIF for live swimming animation (may not exist yet → falls back to hd)
+const HD = p => `../assets/Pokemon/pokemondb_hd_alt2/${p}.webp`
 const G24_POKEMON = [
   // ── KANTO (Region 0) ──
   { name:'Magikarp', region:0, evo:[
-    {name:'Magikarp',      src:'../assets/Pokemon/g24/magikarpswim.gif', flip:false, scale:0.7, emoji:'🐟'},
-    {name:'Gyarados',      src:'../assets/Pokemon/g24/gyarados.gif',     flip:false, scale:1.2, emoji:'🐉'},
-    {name:'Mega Gyarados', src:'../assets/Pokemon/g24/mega-gyarados.gif',flip:false, scale:1.4, emoji:'🌊'},
+    {name:'Magikarp',      src:'../assets/Pokemon/g24/magikarpswim.gif', hd:HD('0129_magikarp'),   flip:false, scale:0.7, emoji:'🐟'},
+    {name:'Gyarados',      src:'../assets/Pokemon/g24/gyarados.gif',     hd:HD('0130_gyarados'),   flip:false, scale:1.2, emoji:'🐉'},
+    {name:'Mega Gyarados', src:'../assets/Pokemon/g24/mega-gyarados.gif',hd:HD('0130_gyarados'),   flip:false, scale:1.4, emoji:'🌊'},
   ]},
   { name:'Horsea', region:0, evo:[
-    {name:'Horsea', src:'../assets/Pokemon/g24/horsea.gif', flip:false, scale:0.7, emoji:'🐴'},
-    {name:'Seadra',  src:'../assets/Pokemon/g24/seadra.gif', flip:false, scale:1.0, emoji:'🐲'},
+    {name:'Horsea', src:'../assets/Pokemon/g24/horsea.gif', hd:HD('0116_horsea'), flip:false, scale:0.7, emoji:'🐴'},
+    {name:'Seadra',  src:'../assets/Pokemon/g24/seadra.gif', hd:HD('0117_seadra'), flip:false, scale:1.0, emoji:'🐲'},
   ]},
   { name:'Staryu', region:0, evo:[
-    {name:'Staryu',  src:'../assets/Pokemon/g24/staryu.gif',  flip:false, scale:0.8, emoji:'⭐'},
-    {name:'Starmie', src:'../assets/Pokemon/g24/starmie.gif', flip:false, scale:1.1, emoji:'🌟'},
+    {name:'Staryu',  src:'../assets/Pokemon/g24/staryu.gif',  hd:HD('0120_staryu'),  flip:false, scale:0.8, emoji:'⭐'},
+    {name:'Starmie', src:'../assets/Pokemon/g24/starmie.gif', hd:HD('0121_starmie'), flip:false, scale:1.1, emoji:'🌟'},
   ]},
   { name:'Shellder', region:0, evo:[
-    {name:'Shellder', src:'../assets/Pokemon/g24/shellder.gif', flip:true, scale:0.7, emoji:'🐚'},
-    {name:'Cloyster',  src:'../assets/Pokemon/g24/cloyster.gif', flip:true, scale:1.0, emoji:'🔮'},
+    {name:'Shellder', src:'../assets/Pokemon/g24/shellder.gif', hd:HD('0090_shellder'), flip:true, scale:0.7, emoji:'🐚'},
+    {name:'Cloyster',  src:'../assets/Pokemon/g24/cloyster.gif', hd:HD('0091_cloyster'), flip:true, scale:1.0, emoji:'🔮'},
   ]},
   { name:'Goldeen', region:0, evo:[
-    {name:'Goldeen', src:'../assets/Pokemon/g24/goldeen.gif', flip:false, scale:0.7, emoji:'🐠'},
-    {name:'Seaking', src:'../assets/Pokemon/g24/seaking.gif', flip:false, scale:1.0, emoji:'👑'},
+    {name:'Goldeen', src:'../assets/Pokemon/g24/goldeen.gif', hd:HD('0118_goldeen'), flip:false, scale:0.7, emoji:'🐠'},
+    {name:'Seaking', src:'../assets/Pokemon/g24/seaking.gif', hd:HD('0119_seaking'), flip:false, scale:1.0, emoji:'👑'},
   ]},
   { name:'Tentacool', region:0, evo:[
-    {name:'Tentacool',  src:'../assets/Pokemon/g24/tentacool.gif',  flip:false, scale:0.8, emoji:'🪼'},
-    {name:'Tentacruel', src:'../assets/Pokemon/g24/tentacruel.gif', flip:false, scale:1.2, emoji:'🔴'},
+    {name:'Tentacool',  src:'../assets/Pokemon/g24/tentacool.gif',  hd:HD('0072_tentacool'),  flip:false, scale:0.8, emoji:'🪼'},
+    {name:'Tentacruel', src:'../assets/Pokemon/g24/tentacruel.gif', hd:HD('0073_tentacruel'), flip:false, scale:1.2, emoji:'🔴'},
   ]},
   // ── JOHTO (Region 1) ──
   { name:'Chinchou', region:1, evo:[
-    {name:'Chinchou', src:'../assets/Pokemon/g24/chinchou.gif', flip:false, scale:0.7, emoji:'💡'},
-    {name:'Lanturn',  src:'../assets/Pokemon/g24/lanturn.gif',  flip:false, scale:1.1, emoji:'🏮'},
+    {name:'Chinchou', src:'../assets/Pokemon/g24/chinchou.gif', hd:HD('0170_chinchou'), flip:false, scale:0.7, emoji:'💡'},
+    {name:'Lanturn',  src:'../assets/Pokemon/g24/lanturn.gif',  hd:HD('0171_lanturn'),  flip:false, scale:1.1, emoji:'🏮'},
   ]},
   { name:'Remoraid', region:1, evo:[
-    {name:'Remoraid',  src:'../assets/Pokemon/g24/remoraid.gif',  flip:false, scale:0.7, emoji:'🎯'},
-    {name:'Octillery', src:'../assets/Pokemon/g24/octillery.gif', flip:false, scale:1.1, emoji:'🐙'},
+    {name:'Remoraid',  src:'../assets/Pokemon/g24/remoraid.gif',  hd:HD('0223_remoraid'),  flip:false, scale:0.7, emoji:'🎯'},
+    {name:'Octillery', src:'../assets/Pokemon/g24/octillery.gif', hd:HD('0224_octillery'), flip:false, scale:1.1, emoji:'🐙'},
   ]},
   { name:'Horsea+', region:1, evo:[
-    {name:'Horsea',  src:'../assets/Pokemon/g24/horsea.gif',  flip:false, scale:0.7, emoji:'🐴'},
-    {name:'Seadra',  src:'../assets/Pokemon/g24/seadra.gif',  flip:false, scale:1.0, emoji:'🐲'},
-    {name:'Kingdra', src:'../assets/Pokemon/g24/kingdra.gif', flip:false, scale:1.3, emoji:'👸'},
+    {name:'Horsea',  src:'../assets/Pokemon/g24/horsea.gif',  hd:HD('0116_horsea'),  flip:false, scale:0.7, emoji:'🐴'},
+    {name:'Seadra',  src:'../assets/Pokemon/g24/seadra.gif',  hd:HD('0117_seadra'),  flip:false, scale:1.0, emoji:'🐲'},
+    {name:'Kingdra', src:'../assets/Pokemon/g24/kingdra.gif', hd:HD('0230_kingdra'), flip:false, scale:1.3, emoji:'👸'},
   ]},
   { name:'Qwilfish', region:1, evo:[
-    {name:'Qwilfish', src:'../assets/Pokemon/g24/qwilfish.gif', flip:false, scale:0.8, emoji:'🐡'},
+    {name:'Qwilfish', src:'../assets/Pokemon/g24/qwilfish.gif', hd:HD('0211_qwilfish'), flip:false, scale:0.8, emoji:'🐡'},
   ]},
   { name:'Mantine', region:1, evo:[
-    {name:'Mantine', src:'../assets/Pokemon/g24/mantine.gif', flip:false, scale:1.0, emoji:'🦅'},
+    {name:'Mantine', src:'../assets/Pokemon/g24/mantine.gif', hd:HD('0226_mantine'), flip:false, scale:1.0, emoji:'🦅'},
   ]},
   // ── HOENN (Region 2) ──
   { name:'Carvanha', region:2, evo:[
-    {name:'Carvanha',      src:'../assets/Pokemon/g24/carvanha.gif',      flip:false, scale:0.8, emoji:'🦈'},
-    {name:'Sharpedo',      src:'../assets/Pokemon/g24/sharpedo.gif',      flip:false, scale:1.2, emoji:'⚡'},
-    {name:'Mega Sharpedo', src:'../assets/Pokemon/g24/mega-sharpedo.gif', flip:false, scale:1.4, emoji:'💥'},
+    {name:'Carvanha',      src:'../assets/Pokemon/g24/carvanha.gif',      hd:HD('0318_carvanha'), flip:false, scale:0.8, emoji:'🦈'},
+    {name:'Sharpedo',      src:'../assets/Pokemon/g24/sharpedo.gif',      hd:HD('0319_sharpedo'), flip:false, scale:1.2, emoji:'⚡'},
+    {name:'Mega Sharpedo', src:'../assets/Pokemon/g24/mega-sharpedo.gif', hd:HD('0319_sharpedo'), flip:false, scale:1.4, emoji:'💥'},
   ]},
   { name:'Wailmer', region:2, evo:[
-    {name:'Wailmer', src:'../assets/Pokemon/g24/wailmer.gif', flip:false, scale:0.9, emoji:'🐋'},
-    {name:'Wailord', src:'../assets/Pokemon/g24/wailord.gif', flip:false, scale:1.5, emoji:'🌊'},
+    {name:'Wailmer', src:'../assets/Pokemon/g24/wailmer.gif', hd:HD('0320_wailmer'), flip:false, scale:0.9, emoji:'🐋'},
+    {name:'Wailord', src:'../assets/Pokemon/g24/wailord.gif', hd:HD('0321_wailord'), flip:false, scale:1.5, emoji:'🌊'},
   ]},
   { name:'Feebas', region:2, evo:[
-    {name:'Feebas',  src:'../assets/Pokemon/g24/feebas.gif',  flip:true, scale:0.7, emoji:'🐟'},
-    {name:'Milotic', src:'../assets/Pokemon/g24/milotic.gif', flip:true, scale:1.2, emoji:'🌈'},
+    {name:'Feebas',  src:'../assets/Pokemon/g24/feebas.gif',  hd:HD('0349_feebas'),  flip:true, scale:0.7, emoji:'🐟'},
+    {name:'Milotic', src:'../assets/Pokemon/g24/milotic.gif', hd:HD('0350_milotic'), flip:true, scale:1.2, emoji:'🌈'},
   ]},
   { name:'Barboach', region:2, evo:[
-    {name:'Barboach', src:'../assets/Pokemon/g24/barboach.gif', flip:false, scale:0.7, emoji:'🐍'},
-    {name:'Whiscash', src:'../assets/Pokemon/g24/whiscash.gif', flip:false, scale:1.1, emoji:'🐠'},
+    {name:'Barboach', src:'../assets/Pokemon/g24/barboach.gif', hd:HD('0339_barboach'), flip:false, scale:0.7, emoji:'🐍'},
+    {name:'Whiscash', src:'../assets/Pokemon/g24/whiscash.gif', hd:HD('0340_whiscash'), flip:false, scale:1.1, emoji:'🐠'},
   ]},
-  { name:'Huntail',  region:2, evo:[{name:'Huntail',  src:'../assets/Pokemon/g24/huntail.gif',  flip:false, scale:1.0, emoji:'🐍'}]},
-  { name:'Gorebyss', region:2, evo:[{name:'Gorebyss', src:'../assets/Pokemon/g24/gorebyss.gif', flip:false, scale:1.0, emoji:'💗'}]},
-  { name:'Luvdisc',  region:2, evo:[{name:'Luvdisc',  src:'../assets/Pokemon/g24/luvdisc.gif',  flip:true,  scale:0.7, emoji:'💖'}]},
-  { name:'Relicanth',region:2, evo:[{name:'Relicanth',src:'../assets/Pokemon/g24/relicanth.gif',flip:false, scale:1.0, emoji:'🦕'}]},
+  { name:'Huntail',   region:2, evo:[{name:'Huntail',   src:'../assets/Pokemon/g24/huntail.gif',   hd:HD('0367_huntail'),   flip:false, scale:1.0, emoji:'🐍'}]},
+  { name:'Gorebyss',  region:2, evo:[{name:'Gorebyss',  src:'../assets/Pokemon/g24/gorebyss.gif',  hd:HD('0368_gorebyss'),  flip:false, scale:1.0, emoji:'💗'}]},
+  { name:'Luvdisc',   region:2, evo:[{name:'Luvdisc',   src:'../assets/Pokemon/g24/luvdisc.gif',   hd:HD('0370_luvdisc'),   flip:true,  scale:0.7, emoji:'💖'}]},
+  { name:'Relicanth', region:2, evo:[{name:'Relicanth', src:'../assets/Pokemon/g24/relicanth.gif', hd:HD('0369_relicanth'), flip:false, scale:1.0, emoji:'🦕'}]},
   // ── SINNOH (Region 3) — locked until lv 31 ──
   { name:'Finneon', region:3, evo:[
-    {name:'Finneon',  src:'../assets/Pokemon/g24/finneon.gif',  flip:false, scale:0.7, emoji:'🐟'},
-    {name:'Lumineon', src:'../assets/Pokemon/g24/lumineon.gif', flip:false, scale:1.0, emoji:'✨'},
+    {name:'Finneon',  src:'../assets/Pokemon/g24/finneon.gif',  hd:HD('0456_finneon'),  flip:false, scale:0.7, emoji:'🐟'},
+    {name:'Lumineon', src:'../assets/Pokemon/g24/lumineon.gif', hd:HD('0457_lumineon'), flip:false, scale:1.0, emoji:'✨'},
   ]},
   { name:'Buizel', region:3, evo:[
-    {name:'Buizel',   src:'../assets/Pokemon/g24/buizel.gif',   flip:false, scale:0.7, emoji:'🦦'},
-    {name:'Floatzel', src:'../assets/Pokemon/g24/floatzel.gif', flip:false, scale:1.1, emoji:'🌊'},
+    {name:'Buizel',   src:'../assets/Pokemon/g24/buizel.gif',   hd:HD('0418_buizel'),   flip:false, scale:0.7, emoji:'🦦'},
+    {name:'Floatzel', src:'../assets/Pokemon/g24/floatzel.gif', hd:HD('0419_floatzel'), flip:false, scale:1.1, emoji:'🌊'},
   ]},
   { name:'Mantyke', region:3, evo:[
-    {name:'Mantyke',  src:'../assets/Pokemon/g24/mantyke.gif',  flip:false, scale:0.7, emoji:'🐟'},
-    {name:'Mantine',  src:'../assets/Pokemon/g24/mantine.gif',  flip:false, scale:1.1, emoji:'🦅'},
+    {name:'Mantyke',  src:'../assets/Pokemon/g24/mantyke.gif',  hd:HD('0458_mantyke'), flip:false, scale:0.7, emoji:'🐟'},
+    {name:'Mantine',  src:'../assets/Pokemon/g24/mantine.gif',  hd:HD('0226_mantine'), flip:false, scale:1.1, emoji:'🦅'},
   ]},
-  // Eternatus — Legendary Dragon/Poison (Galar). Eternamax form as mega-equivalent.
-  // GIF: assets/Pokemon/g24/eternatus.gif | fallback: pokemondb_hd_alt2 WebP
   { name:'Eternatus', region:3, evo:[
-    {name:'Eternatus',        src:'../assets/Pokemon/g24/eternatus.gif',
-     fallback:'../assets/Pokemon/pokemondb_hd_alt2/0890_eternatus.webp',
-     flip:false, scale:1.3, emoji:'🐉'},
-    {name:'Eternamax Eternatus', src:'../assets/Pokemon/g24/eternamax.gif',
-     fallback:'../assets/Pokemon/pokemondb_hd_alt2/0890_eternatus.webp',
-     flip:false, scale:1.7, emoji:'🌌'},
+    {name:'Eternatus',          src:'../assets/Pokemon/g24/eternatus.gif', hd:HD('0890_eternatus'), flip:false, scale:1.3, emoji:'🐉'},
+    {name:'Eternamax Eternatus', src:'../assets/Pokemon/g24/eternamax.gif', hd:HD('0890_eternatus'), flip:false, scale:1.7, emoji:'🌌'},
   ]},
 ]
 let selectedPokemon = Math.max(0, Math.min(cfg.pokemon || 0, G24_POKEMON.length - 1))
@@ -692,9 +688,8 @@ function createSwimmer() {
   const flipPart = initPoke.flip ? ' scaleX(-1)' : ''
   swimImg.style.cssText = `position:fixed;z-index:40;pointer-events:none;width:min(${initSz}px,${Math.round(initPoke.scale*16)}vw);height:auto;filter:drop-shadow(0 0 10px rgba(0,180,216,0.65));image-rendering:auto;transform:translate(-50%,-50%)${flipPart};`
   swimImg.onerror = () => {
-    if (initPoke.fallback && swimImg.src !== initPoke.fallback) {
-      swimImg.src = initPoke.fallback; return
-    }
+    // GIF missing → try HD WebP → emoji last resort
+    if (initPoke.hd && swimImg.src !== initPoke.hd) { swimImg.src = initPoke.hd; return }
     const em = initPoke.emoji || '🐟'
     swimImg.outerHTML = `<div id="swimmer-gif" style="position:fixed;z-index:40;pointer-events:none;font-size:${initSz}px;transform:translate(-50%,-50%);filter:drop-shadow(0 0 12px rgba(0,180,216,0.7))">${em}</div>`
     window._swimImg = document.getElementById('swimmer-gif')
@@ -702,12 +697,35 @@ function createSwimmer() {
   document.body.appendChild(swimImg)
   window._swimImg = swimImg
 
-  // Invisible anchor + glow ring
+  // Invisible anchor
   swimGfx = new PIXI.Graphics()
   swimGfx.circle(0,0,2).fill({ color:0xffffff, alpha:0 })
+
+  // Glow ring (steady)
   const ring = new PIXI.Graphics()
-  ring.circle(0,0,SWIMMER_SZ/2+6).stroke({ color:0x7dd3fc, width:2, alpha:0.28 })
-  swimContainer.addChild(ring); swimContainer.addChild(swimGfx)
+  ring.circle(0,0,SWIMMER_SZ/2+4).stroke({ color:0x7dd3fc, width:1.5, alpha:0.22 })
+  swimContainer.addChild(ring)
+
+  // Ripple rings — 3 concentric expanding rings (underwater current effect)
+  window._ripples = [
+    { g: new PIXI.Graphics(), phase: 0 },
+    { g: new PIXI.Graphics(), phase: Math.PI*0.66 },
+    { g: new PIXI.Graphics(), phase: Math.PI*1.33 },
+  ]
+  for (const r of window._ripples) { swimContainer.addChild(r.g) }
+
+  // Wake trail — 4 small bubble puffs trailing behind swimmer
+  window._wakeParticles = Array.from({length:6}, ()=>({
+    g: new PIXI.Graphics(), phase: Math.random()*Math.PI*2, life:0, maxLife:40+Math.random()*30
+  }))
+  for (const w of window._wakeParticles) {
+    const sz = 1.5 + Math.random()*3
+    w.sz = sz; w.offX = -(SWIMMER_SZ/3 + Math.random()*20); w.offY = (Math.random()-0.5)*14
+    w.g.circle(0,0,sz).fill({ color:0xbfefff, alpha:0.5 })
+    swimContainer.addChild(w.g)
+  }
+
+  swimContainer.addChild(swimGfx)
   worldContainer.addChild(swimContainer)
 }
 
@@ -779,6 +797,28 @@ function gameLoop(ticker) {
   if (S.evoStage < maxEvo && progress >= nextEvoAt && !S.evolveTriggered && S.totalCliffs > 2) {
     S.evolveTriggered = true
     triggerEvolution()
+  }
+
+  // Ripple rings — expand outward, fade, reset
+  if (window._ripples) {
+    for (const r of window._ripples) {
+      r.phase = (r.phase + 0.045) % (Math.PI * 2)
+      const t = (Math.sin(r.phase) * 0.5 + 0.5) // 0→1 cycle
+      const radius = (SWIMMER_SZ / 2 + 6) + t * 28
+      const alpha = (1 - t) * 0.32
+      r.g.clear()
+      if (alpha > 0.01) r.g.circle(0, 0, radius).stroke({ color: THEME.lightColor, width: 1.5, alpha })
+    }
+  }
+  // Wake trail particles — small bubbles drifting behind swimmer
+  if (window._wakeParticles && S.running) {
+    for (const w of window._wakeParticles) {
+      w.life = (w.life + 1) % w.maxLife
+      const t = w.life / w.maxLife
+      w.g.x = w.offX - t * 18 + Math.sin(w.phase + t * Math.PI * 2) * 5
+      w.g.y = w.offY - t * 8
+      w.g.alpha = Math.sin(t * Math.PI) * 0.55
+    }
   }
 
   checkCollisions()
@@ -985,12 +1025,9 @@ function refreshStartIcon() {
   si.style.fontSize = ''
   si.innerHTML = ''
   const img = document.createElement('img')
-  img.src = sp.src
+  img.src = sp.hd || sp.src   // HD WebP always available; GIF only if hd missing
   img.style.cssText = `width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 4px 24px rgba(0,180,216,0.7));${sp.flip?'transform:scaleX(-1)':''}`
-  img.onerror = () => {
-    if (sp.fallback && img.src !== sp.fallback) { img.src = sp.fallback; return }
-    si.textContent = '🌊'
-  }
+  img.onerror = () => { si.textContent = '🌊' }
   si.appendChild(img)
 }
 
@@ -1002,7 +1039,7 @@ function applyPokemon(evoStage) {
   if (!img) return
   img.src = evo.src
   img.onerror = () => {
-    if (evo.fallback && img.src !== evo.fallback) { img.src = evo.fallback; return }
+    if (evo.hd && img.src !== evo.hd) { img.src = evo.hd; return }
     const em = evo.emoji||'🐟'
     img.outerHTML = `<div id="swimmer-gif" style="position:fixed;z-index:40;pointer-events:none;font-size:${Math.round(SWIMMER_SZ*evo.scale)}px;transform:translate(-50%,-50%)${evo.flip?' scaleX(-1)':''};filter:drop-shadow(0 0 12px rgba(0,180,216,0.7))">${em}</div>`
     window._swimImg = document.getElementById('swimmer-gif')
@@ -1046,8 +1083,8 @@ window.addEventListener('keydown', e=>{
 // ══════════════════════════════════════════════════════════════
 //  BAG — region tabs + grid
 // ══════════════════════════════════════════════════════════════
-let _bagTabActive = Math.min(regionIdx, 2) // default to current region (max Hoenn)
-const REGION_LABELS = ['🌊 Kanto','🌊 Johto','🌊 Hoenn','❄️ Sinnoh']
+let _bagTabActive = -1 // -1 = ALL tab; 0-3 = region tabs. Default: ALL
+const REGION_LABELS = ['🌊 Semua','🏖 Kanto','🌊 Johto','🌊 Hoenn','❄️ Sinnoh']
 
 function _g24HasPendingQuiz() { return !!(S.currentCliff && !S.currentCliff.passed) }
 
@@ -1074,43 +1111,59 @@ function closeBag() {
 }
 function renderBagTabs() {
   const bar=document.getElementById('bag-region-tabs'); bar.innerHTML=''
-  REGION_LABELS.forEach((lbl,i)=>{
-    const sinnohLocked = i===3 && cfg.level < 31
-    const t=document.createElement('button'); t.className='bag-tab'+(i===_bagTabActive?' active':'')+(sinnohLocked?' locked':'')
-    t.textContent = sinnohLocked ? '🔒 Sinnoh' : lbl
-    if (!sinnohLocked) t.onclick=()=>{ _bagTabActive=i; renderBagTabs(); renderBagGrid() }
+  // Tab indices: -1=ALL, 0=Kanto, 1=Johto, 2=Hoenn, 3=Sinnoh
+  const tabDefs = [
+    { id:-1, lbl:'🌊 Semua', locked:false },
+    { id:0,  lbl:'🏖 Kanto', locked:false },
+    { id:1,  lbl:'🌊 Johto', locked:cfg.level < 11 },
+    { id:2,  lbl:'🌊 Hoenn', locked:cfg.level < 21 },
+    { id:3,  lbl:'❄️ Sinnoh', locked:cfg.level < 31 },
+  ]
+  tabDefs.forEach(({id, lbl, locked})=>{
+    const t=document.createElement('button')
+    t.className='bag-tab'+(id===_bagTabActive?' active':'')+(locked?' locked':'')
+    t.textContent = locked ? '🔒 '+(lbl.split(' ')[1]||lbl) : lbl
+    if (!locked) t.onclick=()=>{ _bagTabActive=id; renderBagTabs(); renderBagGrid() }
     bar.appendChild(t)
   })
 }
 function renderBagGrid() {
   const grid=document.getElementById('bag-grid'); grid.innerHTML=''
-  const regionPokes = G24_POKEMON.filter(p=>p.region===_bagTabActive)
-  const playerLevel = cfg.level
-  const regionUnlock = [1,11,21,31][_bagTabActive]
-  regionPokes.forEach(p=>{
+  const showAll = _bagTabActive === -1
+  const pokes = showAll ? G24_POKEMON : G24_POKEMON.filter(p=>p.region===_bagTabActive)
+  pokes.forEach(p=>{
     const idx = G24_POKEMON.indexOf(p)
-    const locked = playerLevel < regionUnlock
-    const card=document.createElement('div')
-    card.style.cssText=`display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 6px;border-radius:14px;border:2px solid ${idx===selectedPokemon?'#fbbf24':'rgba(255,255,255,0.12)'};background:${idx===selectedPokemon?'rgba(251,191,36,0.12)':locked?'rgba(0,0,0,0.3)':'rgba(255,255,255,0.04)'};cursor:${locked?'default':'pointer'};opacity:${locked?'.5':'1'}`
+    const regionUnlock = [1,11,21,31][p.region]
+    const locked = cfg.level < regionUnlock
+    const evo0 = p.evo[0]
+    const isSelected = idx === selectedPokemon
+    const card = document.createElement('div')
+    card.style.cssText = `position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 6px;border-radius:14px;border:2px solid ${isSelected?'#fbbf24':'rgba(255,255,255,0.12)'};background:${isSelected?'rgba(251,191,36,0.12)':locked?'rgba(0,0,0,0.3)':'rgba(255,255,255,0.04)'};cursor:${locked?'default':'pointer'};opacity:${locked?'.55':'1'}`
+
+    const img = document.createElement('img')
+    // Always use HD WebP for bag display — looks great, always available
+    img.src = evo0.hd || evo0.src
+    img.style.cssText = `width:60px;height:60px;object-fit:contain;transform:${evo0.flip?'scaleX(-1)':'none'}`
+    img.onerror = () => { img.outerHTML=`<div style="font-size:36px;width:60px;height:60px;display:flex;align-items:center;justify-content:center">${evo0.emoji}</div>` }
+
+    const nm = document.createElement('div')
+    nm.style.cssText = 'font-size:10px;color:#e9d5ff;font-weight:700;text-align:center;word-break:break-word'
+    nm.textContent = p.name
+
+    const ev = document.createElement('div')
+    ev.style.cssText = 'font-size:8px;color:#7dd3fc'
+    ev.textContent = p.evo.length>2?'3x Evo':p.evo.length>1?'2x Evo':'Tetap'
+
+    card.append(img, nm, ev)
+
     if (locked) {
-      const lk=document.createElement('div'); lk.style.cssText='font-size:30px;text-align:center'; lk.textContent='🔒'
-      const lkn=document.createElement('div'); lkn.style.cssText='font-size:9px;color:#6b7280;text-align:center'; lkn.textContent=`Lv${regionUnlock}+`
-      card.append(lk,lkn)
+      // Overlay lock badge — still show the Pokemon image
+      const lkBadge = document.createElement('div')
+      lkBadge.style.cssText = 'position:absolute;inset:0;border-radius:12px;background:rgba(0,0,0,0.55);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px'
+      lkBadge.innerHTML = `<span style="font-size:22px">🔒</span><span style="font-size:8px;color:#9ca3af">Lv${regionUnlock}+</span>`
+      card.appendChild(lkBadge)
     } else {
-      const img=document.createElement('img')
-      img.src = p.evo[0].src
-      const fl = p.evo[0].flip
-      img.style.cssText=`width:60px;height:60px;object-fit:contain;transform:${fl?'scaleX(-1)':'none'}`
-      img.onerror=()=>{
-        const fb = p.evo[0].fallback
-        if (fb && img.src !== fb) { img.src = fb; return }
-        img.outerHTML=`<div style="font-size:36px;width:60px;height:60px;display:flex;align-items:center;justify-content:center">${p.evo[0].emoji}</div>`
-      }
-      const nm=document.createElement('div'); nm.style.cssText='font-size:10px;color:#e9d5ff;font-weight:700;text-align:center;word-break:break-word'; nm.textContent=p.name
-      const el=document.createElement('div'); el.style.cssText='font-size:8px;color:#7dd3fc'
-      el.textContent=p.evo.length>2?'3x Evo':p.evo.length>1?'2x Evo':'Tetap'
-      card.append(img,nm,el)
-      card.onclick=()=>{
+      card.onclick = () => {
         selectedPokemon=idx; S.evoStage=0; S.evolveTriggered=false; S.evolved=false
         applyPokemon(0)
         if (!S.started) refreshStartIcon()
