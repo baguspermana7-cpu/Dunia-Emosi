@@ -221,6 +221,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 </div>
 
 <div id="flash"></div>
+<audio id="game-bgm" preload="auto" loop style="display:none"></audio>
 
 <div id="start-overlay">
   <div id="start-icon" style="font-size:64px">🏃</div>
@@ -232,7 +233,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <div id="pause-overlay">
   <div style="font-size:36px">⏸</div>
   <div style="font-size:24px;font-weight:900;color:#fbbf24">PAUSE</div>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:8px">
+  <label style="color:#e9d5ff;font-size:13px;display:flex;align-items:center;gap:8px;width:clamp(180px,60vw,260px)">🎵 BGM<input type="range" id="vol-bgm" min="0" max="100" value="50" style="flex:1;accent-color:#22c55e" oninput="updateVolBGM()"></label>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:4px">
     <button onclick="togglePause()" style="padding:12px 24px;border-radius:14px;border:2px solid #4ade80;background:rgba(34,197,94,.3);color:#4ade80;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit">▶ Lanjut</button>
     <button onclick="document.getElementById('pause-overlay').style.display='none';openBag()" style="padding:12px 24px;border-radius:14px;border:2px solid #fbbf24;background:rgba(251,191,36,.2);color:#fbbf24;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit">🎒 Ganti Pokemon</button>
     <button onclick="goBack()" style="padding:12px 24px;border-radius:14px;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#e9d5ff;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit">🏠 Keluar</button>
@@ -497,6 +499,13 @@ let cloudGfx = [], groundDeco = [], speedLineDeco = []
 // ═══════════════════════════════════════════════════════════
 let audioCtx
 function ensureAudio(){ if(!audioCtx) try{ audioCtx=new (window.AudioContext||window.webkitAudioContext)() }catch(_){} }
+// ── BGM (same system as G19) ──────────────────────────────
+window._volBGM = 0.25
+function updateVolBGM(){ window._volBGM=document.getElementById('vol-bgm').value/100*0.5; try{document.getElementById('game-bgm').volume=window._volBGM}catch(_){} }
+function bgmStart(){ try{ const b=document.getElementById('game-bgm'); b.src=cfg.level%2===1?'../assets/Pokemon/sound/bgm-odd.mp3':'../assets/Pokemon/sound/bgm-even.mp3'; b.volume=window._volBGM; b.play().catch(()=>{}) }catch(_){} }
+function bgmPause(){ try{document.getElementById('game-bgm').pause()}catch(_){} }
+function bgmResume(){ try{document.getElementById('game-bgm').play().catch(()=>{})}catch(_){} }
+function bgmStop(){ try{const b=document.getElementById('game-bgm');b.pause();b.currentTime=0}catch(_){} }
 function playTone(freq,dur,type='sine',vol=0.12){
   if(!audioCtx) return
   const o=audioCtx.createOscillator(),g=audioCtx.createGain()
@@ -1098,6 +1107,7 @@ function engageTRBattle(){
   if(S.trState==='battle') return
   S.trState='battle'
   S.paused=true
+  bgmPause()
   // Pick random TR Pokemon + trainer
   const trPoke=TR_POKEMON[Math.floor(Math.random()*TR_POKEMON.length)]
   const trainer=TR_TRAINERS[Math.floor(Math.random()*TR_TRAINERS.length)]
@@ -1298,6 +1308,7 @@ function closeTRBattle(){
   setTimeout(()=>{ battle.style.display='none' }, 520)
   ;['jump-btn','slide-btn'].forEach(id=>{const b=document.getElementById(id);if(b)b.style.display=''})
   S.trBattle=null
+  if(!S.gameOver) bgmResume()
 }
 
 function trBalloonExit(){
@@ -1371,6 +1382,7 @@ function showWin(){
   if(S.trState==='battle'||S.trState==='approach') return
   S.running=false; S.gameOver=true
   try{ if(app&&app.ticker) app.ticker.stop() }catch(_){}
+  bgmStop()
   const stars=calcStars()
   if(typeof window.saveLevelProgress==='function') window.saveLevelProgress('g23',S.level,stars)
   sfxFanfare()
@@ -1388,6 +1400,7 @@ function showLose(){
   S.running=false; S.gameOver=true; S.paused=true
   document.getElementById('quiz-panel').classList.remove('show')
   try{ if(app&&app.ticker) app.ticker.stop() }catch(_){}
+  bgmStop()
   flashScreen('#ef4444')
   document.getElementById('status-text').textContent='Game Over!'
   setTimeout(()=>{
@@ -1407,6 +1420,7 @@ function handleJump(){
     S.started=true; S.running=true
     document.getElementById('start-overlay').classList.add('hidden')
     document.getElementById('status-text').textContent=G23_POKEMON[selectedPokemon].name+' Berlari!'
+    bgmStart()
     return
   }
   if(S.paused) return
@@ -1453,6 +1467,7 @@ function togglePause(){
   document.getElementById('btn-pause').textContent=S.paused?'▶':'⏸'
   document.getElementById('status-text').textContent=S.paused?'PAUSE':G23_POKEMON[selectedPokemon].name+' Berlari!'
   document.getElementById('pause-overlay').style.display=S.paused?'flex':'none'
+  S.paused ? bgmPause() : bgmResume()
 }
 
 function openBag(){
@@ -1475,7 +1490,7 @@ function closeBag(){
   if(S.pendingQuizGate){ document.getElementById('quiz-panel').classList.add('show'); S.paused=true }
 }
 function goBack(){
-  S.running=false; try{ if(app&&app.ticker) app.ticker.stop() }catch(_){} history.back()
+  S.running=false; bgmStop(); try{ if(app&&app.ticker) app.ticker.stop() }catch(_){} history.back()
 }
 window.addEventListener('resize',()=>{
   if(!app) return
@@ -1614,4 +1629,4 @@ function gameLoop(ticker){
 </script>
 </body>
 </html>
-<!-- g23-pixi v20260503h -->
+<!-- g23-pixi v20260503i -->

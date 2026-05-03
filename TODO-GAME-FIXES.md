@@ -2193,6 +2193,9 @@ Guard changed from `v2` → `v3` in `_applyKodokSlot7Unlock()`. Root cause: func
 - Attack flow: pick move → quiz → correct → projectile → type FX → HP drop. Wrong → enemy counters with projectile.
 - After each attack pair: move selector shown again.
 
+### ✅ #121-M: G23 BGM (same as G19)
+`<audio id="game-bgm" loop>` added. Tracks: `bgm-odd.mp3` (odd levels) / `bgm-even.mp3` (even levels). `bgmStart()` fires on first jump/tap. `bgmPause()`/`bgmResume()` on pause toggle and TR battle open/close. `bgmStop()` on win, lose, goBack. Volume slider (🎵 BGM) added to pause overlay. `window._volBGM=0.25` default. Cache `v=20260503i`.
+
 ### ✅ #121-L: G21 button redesign + tap-anywhere jump
 - Buttons changed from round (50%) to square (14–18px radius), wider (clamp 72px…106px).
 - Pastel colors: Left=periwinkle `rgba(147,197,253,0.28)`, Right=mint `rgba(134,239,172,0.28)`, Jump=peach `rgba(252,165,165,0.32)`.
