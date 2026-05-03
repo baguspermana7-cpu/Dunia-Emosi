@@ -13054,7 +13054,7 @@ function initGame24() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g24Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g24-pixi.html?v=20260505g'
+  window.location.href = 'games/g24-pixi.html?v=20260505i'
 }
 
 function openWorldPicker() {
