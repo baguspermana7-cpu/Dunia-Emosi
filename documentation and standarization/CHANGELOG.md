@@ -1841,3 +1841,31 @@ still use 1.6× for legendaries.
 - Name + animal avatar selection
 - Basic CSS animations + emoji characters
 - Star reward system
+
+---
+
+## 2026-05-03 — Session: G23 Pokemon Run (Hotfix #121)
+
+### Added
+- **G23 Pokemon Run** (`games/g23-pixi.html`) — full infinite runner game:
+  - Pixi 8 + hybrid CSS parallax backgrounds (5 layers, 6 BG themes cycling by level)
+  - HTML `<img>` animated WebP runner sprite (16 sprite variants)
+  - 4 power-up types: Thunder ⚡ (speed 1.2x), Blaze 🔥 (fireballs), Nature 🍃 (shield leaves), Venom 💜 (poison orbs) with smooth per-frame Pixi Graphics aura effects
+  - Team Rocket Meowth balloon encounter: 1-2x per level, 1v1 HP battle with counter-attack after every 2 correct answers; balloon bob + sparkle exit animation
+  - TOTAL_QUIZ `min(8+floor((level-1)*0.6),16)` matching G19 ~45-75s duration
+  - 16 Pokemon quiz roster, 12 TR Pokemon battle roster
+  - `g23Config` sessionStorage handoff from `game.js` `openLevelSelect(23)`
+- **G23 card** in `index.html` (after G19 card; `g23-icon.png` used, emoji fallback 🏃)
+- **`assets/Pokemon/g23/`** — TR balloon GIF + runner sprite assets
+- **`_applyKodokSlot7Unlock()`** in `game.js`:
+  - Trigger: slot index 6 (UI slot 7) + frog avatar, one-time guard `dunia-kodok-slot7-v1`
+  - Unlocks: all G13B levels 1-30 (5★), G13C level 1 (5★), all A-Z phonics badges → gold, all Kanto CITY_PACK presets
+  - Hooked into `openLevelSelect()` for g13b/g13c
+
+### Changed
+- Cache bump `v=20260502g` → `v=20260503a` in `index.html` (style.css + game.js refs)
+
+### Lessons
+- L73: Pixi canvas `backgroundAlpha:0` required for CSS parallax layers to show through
+- L74: Animated WebP player sprite must use HTML `<img>`, not Pixi Sprite (browser handles frames; Pixi freezes at frame 1)
+- L75: CSS slide-up transition requires `display:flex` set one frame before `.open` class added

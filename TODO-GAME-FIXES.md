@@ -2140,3 +2140,22 @@ Updated `index.html` (style.css, poke-sprite-loader.js, game.js) and `g21-pixi.h
 - **#120-W: Sprite facing — comprehensive legendary fixes** — User reports multiple legendaries facing AWAY from enemy in G13C. Added 40 entries to POKE_FACING with 'R' natural: Blastoise, all Kanto legendaries (Articuno/Zapdos/Moltres/Mewtwo/Mew), Johto (Lugia/Ho-Oh/Raikou/Entei/Suicune/Celebi), Hoenn (Kyogre/Groudon/Rayquaza/Latias/Latios/Deoxys), Sinnoh (Dialga/Palkia/Giratina/Arceus/Darkrai/Cresselia), Unova (Reshiram/Zekrom/Kyurem/Victini/Keldeo/Genesect), Kalos (Xerneas/Yveltal/Zygarde/Diancie/Hoopa/Volcanion), Alola (Solgaleo/Lunala/Necrozma/Tapu-Koko/Magearna/Marshadow), Galar (Zacian/Zamazenta/Eternatus/Calyrex/Glastrier/Spectrier), Paldea (Koraidon/Miraidon/Wo-Chien/Chien-Pao/Ting-Lu/Chi-Yu). Pattern: HOME alt2 legendary art typically faces RIGHT in heroic poses. Cache v=20260502m. Commit: pending.
 - **#120-X: Cascade watchdog for sprite loading** — Mobile browsers occasionally don't fire onload/onerror when bandwidth is saturated (Pixi + audio + sprites compete on initial G13 load). Cascade was hanging indefinitely → emoji fallback persisted. Fix: per-URL 4-second watchdog timeout in `attachSpriteCascade`. If load doesn't complete in 4s, treat as failure and try next URL. After all 4 URLs timeout → emoji-data-url displayed gracefully. Commit: pending.
 - **#120-Y: G13 wild Pokemon independent of family** — User reported "ganti pokemon, pokemon 2 ikut berubah" (Pokemon 1=player, Pokemon 2=wild/NPC). Root: `g13PickChain` returned `wild: fam.wild` from family's hardcoded `wild` field, so picking Squirtle family always meant Krabby wild. Fix: new `_pickG13Wild(lv, fallback)` helper picks wild from current city's `CITY_PACK` if region+city selected, else random tier-appropriate Pokemon (gen 1-4). Player and wild now decoupled. Cache v=20260502n. Commit: pending.
+
+---
+
+## Session 2026-05-03: G23 Pokemon Run (#121)
+
+### ✅ #121-A: G23 Pokemon Run — New Game
+Full infinite runner game at `games/g23-pixi.html`.
+- Pixi 8 hybrid: transparent canvas (`backgroundAlpha:0`) + CSS parallax BG layers
+- 5 bg-layer divs with `background-repeat:repeat-x`, scrolled at 0.01–0.55x speed per frame
+- HTML `<img>` animated WebP player (browser handles frame cycling, Pixi cannot)
+- 4 power-ups (Thunder/Blaze/Nature/Venom) with per-frame Pixi Graphics aura redraw
+- TR Meowth balloon 1v1 HP battle: counter-attack every 2 correct, slide-up overlay transition
+- TOTAL_QUIZ formula: `min(8+floor((level-1)*0.6),16)` → 8-16 range, ~45-75s per level
+
+### ✅ #121-B: G23 Landing Card
+Added G23 card to `index.html` after G19 card. Icon: `assets/g23-icon.png` (emoji fallback 🏃). Cache bumped to `v=20260503a`.
+
+### ✅ #121-C: Kodok Slot-7 Unlock
+`_applyKodokSlot7Unlock()` in `game.js`. Trigger: slot index 6 + frog avatar, guarded by `dunia-kodok-slot7-v1`. Unlocks G13B all 30 levels (5★), G13C level 1 (5★), all A-Z phonics badges → gold, all Kanto CITY_PACK city presets.

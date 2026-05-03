@@ -316,6 +316,7 @@ const GAME_META = {
   20:{icon:'🏐',name:'Ducky Volley'},
   21:{icon:'🍄',name:'Mario Pokemon',iconImg:'assets/mario-pokemon/icon.png'},
   22:{icon:'🍬',name:'Monster Candy'},
+  23:{icon:'🏃',name:'Pokemon Run',iconImg:'assets/g23-icon.png'},
   '13c':{icon:'🏅',name:'Gym Huruf & Suara'}
 }
 
@@ -1111,7 +1112,8 @@ const GAME_INFO = {
   19: { desc:'Terbangkan Pidgeot melewati rintangan dan jawab soal untuk menang!', grad:'rgba(139,92,246,0.35)', glow:'rgba(139,92,246,0.5)' },
   20: { desc:'Main voli pantai dengan bebek lucu! Kalahkan lawan dan jawab soal!', grad:'rgba(56,189,248,0.35)', glow:'rgba(56,189,248,0.5)' },
   21: { desc:'Petualangan Pikachu ala Mario! Lompat, kumpulkan koin, kalahkan musuh, jawab matematika!', grad:'rgba(232,38,42,0.35)', glow:'rgba(251,191,36,0.55)' },
-  22: { desc:'Tangkap permen jatuh dan jawab soal untuk skor tinggi!', grad:'rgba(139,92,246,0.35)', glow:'rgba(139,92,246,0.5)' }
+  22: { desc:'Tangkap permen jatuh dan jawab soal untuk skor tinggi!', grad:'rgba(139,92,246,0.35)', glow:'rgba(139,92,246,0.5)' },
+  23: { desc:'Lari, lompat, hindari rintangan, dan jawab soal bersama Pokemon favoritmu!', grad:'rgba(239,68,68,0.35)', glow:'rgba(239,68,68,0.5)' }
 }
 
 // Progress storage
@@ -1175,6 +1177,58 @@ function _seedKodokProgress() {
     localStorage.setItem('dunia-frog-seeded-v2', '1')
   } catch (_) {}
 }
+// Hotfix #120-M: Slot-7 + Kodok unlock — all G13B/G13C levels + all Kanto badges
+// Trigger: active slot index === 6 (UI "Slot 7") AND avatar === frog
+function _applyKodokSlot7Unlock() {
+  try {
+    const slotIdx = window._pSlot ? window._pSlot[0] : 0
+    if (slotIdx !== 6) return
+    if (_avatarSlug() !== 'frog') return
+    if (localStorage.getItem('dunia-kodok-slot7-v1') === '1') return
+
+    const prog = loadProgress()
+
+    // Unlock all G13B levels (1-30, 5 stars each)
+    if (!prog['g13b']) prog['g13b'] = { completed: [], stars: {}, cities: {} }
+    for (let lv = 1; lv <= 30; lv++) {
+      if (!prog['g13b'].completed.includes(lv)) prog['g13b'].completed.push(lv)
+      prog['g13b'].stars[lv] = 5
+    }
+
+    // Unlock all G13C levels (phonics gym — treated as 1 level)
+    if (!prog['g13c']) prog['g13c'] = { completed: [], stars: {} }
+    if (!prog['g13c'].completed.includes(1)) prog['g13c'].completed.push(1)
+    prog['g13c'].stars[1] = 5
+
+    saveProgress(prog)
+
+    // Unlock all Kanto gym badges in G13C (gold for all A-Z letters)
+    const av = _avatarSlug()
+    const badgesKey = `dunia-avatar-${av}-g13c_badges`
+    const allBadges = {}
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(l => { allBadges[l] = 'gold' })
+    try { localStorage.setItem(badgesKey, JSON.stringify(allBadges)) } catch(_) {}
+    try { localStorage.setItem('g13c_badges', JSON.stringify(allBadges)) } catch(_) {}
+
+    // Unlock all Kanto city presets in G13B
+    if (typeof CITY_PACK !== 'undefined') {
+      const kantoRegion = CITY_PACK['kanto']
+      if (kantoRegion && kantoRegion.cities) {
+        if (!prog['g13b'].cities) prog['g13b'].cities = {}
+        const kantoProgress = { completed: [], stars: {} }
+        kantoRegion.cities.forEach(c => {
+          kantoProgress.completed.push(c.slug)
+          kantoProgress.stars[c.slug] = 5
+        })
+        prog['g13b'].cities['kanto'] = kantoProgress
+        saveProgress(prog)
+      }
+    }
+
+    localStorage.setItem('dunia-kodok-slot7-v1', '1')
+  } catch (_) {}
+}
+
 function getLevelProgress(gameNum) {
   const prog = loadProgress()
   return prog['g'+gameNum] || { completed: [], stars: {} }
@@ -1422,6 +1476,8 @@ function g13cNextLetter() {
 }
 
 function openLevelSelect(gameNum) {
+  // Kodok slot-7 special unlock (runs once, guard inside)
+  if (gameNum === '13b' || gameNum === '13c') _applyKodokSlot7Unlock()
   state.currentGame = gameNum
   const meta = GAME_META[gameNum]
   const info = GAME_INFO[gameNum] || {}
@@ -1562,12 +1618,12 @@ function startGameWithLevel(levelNum) {
   document.querySelectorAll('.gh-level').forEach(el => { el.textContent = lvLabel })
   if(state.selectedLevel==='hard') checkAchievement('hard_mode')
   // Standalone games navigate to separate HTML — skip showScreen (no screen-gameN div exists)
-  const standaloneGames = [6, 14, 15, 16, 19, 20, 21, 22]
+  const standaloneGames = [6, 14, 15, 16, 19, 20, 21, 22, 23]
   if (!standaloneGames.includes(state.currentGame)) {
     showScreen('screen-game' + state.currentGame)
   }
-  const inits = [null,initGame1,initGame2,initGame3,initGame4,initGame5,initGame6,initGame7,initGame8,initGame9,initGame10,initGame11,initGame12,initGame13,initGame14,initGame15,initGame16,initGame17,initGame18,initGame19,initGame20,initGame21,initGame22]
-  inits[state.currentGame]()
+  const inits = [null,initGame1,initGame2,initGame3,initGame4,initGame5,initGame6,initGame7,initGame8,initGame9,initGame10,initGame11,initGame12,initGame13,initGame14,initGame15,initGame16,initGame17,initGame18,initGame19,initGame20,initGame21,initGame22,initGame23]
+  if (inits[state.currentGame]) inits[state.currentGame]()
 }
 
 // Legacy compat — old 3-level buttons still work via level mapping
@@ -1771,7 +1827,7 @@ function buildMenuHeader() {
   // Update per-game best stars display on world map nodes
   try {
     const bestStars=JSON.parse(localStorage.getItem(pkey('best-stars'))||'{}')
-    const gameIds=[1,2,3,4,5,6,7,8,9,10,11,12,13,'13b','13c',14,15,16,17,18,19,20,22]
+    const gameIds=[1,2,3,4,5,6,7,8,9,10,11,12,13,'13b','13c',14,15,16,17,18,19,20,22,23]
     gameIds.forEach(g=>{
       const best=bestStars[g]||0
       const stars=best>0?'⭐'.repeat(Math.min(best,5)):''
@@ -12941,6 +12997,13 @@ function initGame22() {
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g22Config', JSON.stringify({ level: lv })) } catch(_) {}
   window.location.href = 'games/g22-candy.html'
+}
+
+function initGame23() {
+  battleBgmStop()
+  const lv = state.selectedLevelNum || 1
+  try { sessionStorage.setItem('g23Config', JSON.stringify({ level: lv })) } catch(_) {}
+  window.location.href = 'games/g23-pixi.html'
 }
 
 function initGame21() {

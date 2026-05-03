@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Pokemon Run 🏃</title>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fredoka One',Arial,sans-serif;touch-action:none;-webkit-user-select:none;user-select:none;background:#111}
+
+/* ── Parallax BG layers ── */
+.bg-layer{position:fixed;inset:0;background-size:cover;background-position:center bottom;background-repeat:no-repeat;z-index:0;will-change:background-position-x}
+#bg-sky  {z-index:0}
+#bg-far  {z-index:1;opacity:.85}
+#bg-mid  {z-index:2;opacity:.9}
+#bg-near {z-index:3;opacity:.95}
+#bg-gym  {z-index:4;background-size:cover;background-position:center bottom;opacity:.7}
+
+#pixi-canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block;z-index:5}
+#player-img{position:fixed;z-index:40;pointer-events:none;image-rendering:auto;display:none;transition:filter .3s ease}
+
+/* ── HUD Top ── */
+#hud-top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:clamp(4px,1.5vw,10px);padding:max(14px,env(safe-area-inset-top)) clamp(12px,3vw,18px) 8px;background:linear-gradient(180deg,rgba(0,0,0,0.82) 0%,transparent 100%);pointer-events:none}
+#btn-back{background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.22);border-radius:12px;color:#fff;padding:7px 12px;font-size:15px;cursor:pointer;font-family:inherit;pointer-events:all;flex-shrink:0}
+#game-badge{background:rgba(0,0,0,0.5);border:1.5px solid rgba(239,68,68,0.5);border-radius:10px;padding:5px 10px;color:#fca5a5;font-size:clamp(10px,3vw,13px);font-weight:700;flex-shrink:0;white-space:nowrap}
+#hud-center{flex:1;text-align:center;min-width:0}
+#level-text{font-size:12px;color:#fca5a5;font-weight:700}
+#status-text{font-size:clamp(13px,4vw,18px);font-weight:900;color:#fff}
+#hud-lives{font-size:clamp(14px,4vw,20px);flex-shrink:0}
+#score-display{font-size:clamp(11px,3vw,14px);color:#86efac;font-weight:700;flex-shrink:0}
+#btn-pause{background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.22);border-radius:12px;color:#fff;padding:6px 10px;font-size:15px;cursor:pointer;font-family:inherit;pointer-events:all;flex-shrink:0}
+
+/* ── Power-up HUD ── */
+#pu-hud{position:fixed;bottom:clamp(10px,3vh,18px);right:clamp(12px,3vw,20px);z-index:60;display:none;align-items:center;gap:8px;background:rgba(0,0,0,0.65);border-radius:16px;padding:8px 12px;border:2px solid rgba(255,255,255,0.2);backdrop-filter:blur(8px)}
+#pu-icon{font-size:28px;line-height:1}
+#pu-bar-bg{width:80px;height:8px;background:rgba(255,255,255,0.15);border-radius:4px;overflow:hidden}
+#pu-bar{height:100%;width:100%;border-radius:4px;transition:width .1s linear}
+
+/* ── Team Rocket Balloon ── */
+#tr-balloon{position:fixed;pointer-events:none;z-index:45;display:none;width:clamp(90px,18vw,160px);image-rendering:auto;transition:filter .2s}
+@keyframes balloonBob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-14px) rotate(2deg)}}
+#tr-balloon.bobbing{animation:balloonBob 1.8s ease-in-out infinite}
+@keyframes balloonExit{to{transform:translate(150%,-180%) scale(0.06);opacity:0;filter:brightness(5) saturate(0)}}
+#tr-balloon.exiting{animation:balloonExit 1.6s cubic-bezier(.4,0,.6,1) forwards}
+
+/* ── TR Warning banner ── */
+#tr-warning{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-120px);z-index:80;background:linear-gradient(135deg,rgba(220,38,38,.95),rgba(185,28,28,.98));border:2.5px solid #fca5a5;border-radius:18px;padding:10px 20px;color:#fff;font-size:clamp(13px,3.5vw,18px);font-weight:900;white-space:nowrap;transition:transform .4s cubic-bezier(.34,1.56,.64,1);pointer-events:none;box-shadow:0 8px 24px rgba(220,38,38,.5)}
+#tr-warning.show{transform:translateX(-50%) translateY(0)}
+
+/* ── TR Battle Overlay ── */
+#tr-battle{position:fixed;inset:0;z-index:200;display:none;flex-direction:column;background:#0a0212;transform:translateY(110%);transition:transform .5s cubic-bezier(.4,0,.2,1)}
+#tr-battle.open{display:flex;transform:translateY(0)}
+#tr-battle-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.55) saturate(.8)}
+#tr-battle-content{position:relative;z-index:10;display:flex;flex-direction:column;height:100%;padding:max(14px,env(safe-area-inset-top)) 16px 16px}
+/* HP bars */
+.tr-hp-card{background:rgba(0,0,0,0.82);border:1.5px solid rgba(255,255,255,0.18);border-radius:14px;padding:8px 12px;backdrop-filter:blur(8px);min-width:140px}
+.tr-hp-name{font-size:clamp(11px,3vw,14px);font-weight:900;color:#e9d5ff;margin-bottom:4px}
+.tr-hp-hearts{font-size:22px;letter-spacing:2px;line-height:1}
+/* Pokemon sprites */
+#tr-poke-enemy{position:absolute;top:clamp(60px,12vh,100px);right:clamp(24px,8vw,60px);width:clamp(100px,22vw,160px);height:auto;object-fit:contain;filter:drop-shadow(0 8px 20px rgba(0,0,0,0.6));transition:opacity .3s,transform .3s;image-rendering:auto;z-index:12}
+#tr-poke-player{position:absolute;bottom:clamp(160px,28vh,220px);left:clamp(24px,8vw,60px);width:clamp(110px,24vw,170px);height:auto;object-fit:contain;filter:drop-shadow(0 8px 20px rgba(0,0,0,0.6));z-index:12;transform:scaleX(-1)}
+/* HP bars row */
+#tr-hp-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;z-index:15}
+/* Battle log */
+#tr-log{position:absolute;bottom:clamp(120px,22vh,180px);left:0;right:0;text-align:center;z-index:15;font-size:clamp(14px,4vw,20px);font-weight:900;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.8);padding:0 16px;animation:logFade 2s ease}
+@keyframes logFade{0%{opacity:0;transform:scale(.9)}15%{opacity:1;transform:scale(1)}80%{opacity:1}100%{opacity:0}}
+/* Attack question */
+#tr-quiz-wrap{position:absolute;bottom:0;left:0;right:0;z-index:20;padding:12px 16px max(16px,env(safe-area-inset-bottom));background:linear-gradient(0deg,rgba(10,2,25,0.97),rgba(30,12,60,.95));border-top:2.5px solid #7c3aed}
+#tr-atk-prompt{color:#c4b5fd;font-size:10px;font-weight:700;letter-spacing:3px;margin-bottom:4px;animation:dangerPulse .8s ease-in-out infinite}
+#tr-question{color:#fff;font-size:clamp(20px,6vw,32px);font-weight:900;text-align:center;margin-bottom:10px;text-shadow:0 0 20px rgba(196,181,253,.6)}
+#tr-choices{display:flex;gap:clamp(5px,2vw,10px);justify-content:center;width:100%;flex-wrap:wrap}
+.tr-btn{flex:1;min-width:clamp(50px,14vw,76px);max-width:clamp(64px,22vw,116px);padding:clamp(9px,3vh,16px) 4px;border:2.5px solid rgba(255,255,255,.35);border-radius:14px;background:linear-gradient(160deg,#7C3AED,#6D28D9);color:#fff;font-size:clamp(15px,5vw,24px);font-weight:900;cursor:pointer;font-family:inherit;transition:transform .1s;-webkit-tap-highlight-color:transparent;box-shadow:0 4px 0 #4C1D95}
+.tr-btn:nth-child(2){background:linear-gradient(160deg,#E85A32,#C84020);box-shadow:0 4px 0 #9A2A10}
+.tr-btn:nth-child(3){background:linear-gradient(160deg,#2DBF7E,#1A9E66);box-shadow:0 4px 0 #0A7A48}
+.tr-btn:nth-child(4){background:linear-gradient(160deg,#F59E0B,#D97706);box-shadow:0 4px 0 #92400E}
+.tr-btn:active{transform:scale(.91) translateY(3px)}
+.tr-btn.correct{border-color:#4ade80;background:rgba(74,222,128,.3)!important;animation:correctFlash .4s ease}
+.tr-btn.wrong  {border-color:#ef4444;background:rgba(239,68,68,.3)!important;animation:wrongShake .35s ease}
+/* TR trainer portrait */
+#tr-trainer-tag{position:absolute;top:clamp(58px,11vh,88px);right:0;z-index:16;background:rgba(0,0,0,.75);color:#fde68a;font-size:9px;font-weight:700;padding:2px 7px;border-radius:0 0 0 8px;white-space:nowrap}
+
+/* ── Quiz Panel (runner) ── */
+#quiz-panel{position:fixed;bottom:0;left:0;right:0;z-index:120;display:none;flex-direction:column;align-items:center;padding:clamp(10px,3vh,16px) clamp(12px,4vw,20px) clamp(16px,5vh,26px);background:linear-gradient(0deg,rgba(10,2,25,0.98),rgba(26,5,53,0.96));border-top:3px solid #ef4444;backdrop-filter:blur(14px)}
+#quiz-panel.show{display:flex}
+#quiz-title{color:#ef4444;font-size:10px;font-weight:700;letter-spacing:3px;margin-bottom:4px;animation:dangerPulse .8s ease-in-out infinite}
+@keyframes dangerPulse{50%{opacity:.4}}
+#quiz-question{color:#fff;font-size:clamp(22px,6.5vw,34px);font-weight:900;text-align:center;margin-bottom:clamp(10px,3vh,16px);text-shadow:0 0 20px rgba(251,191,36,.6)}
+#quiz-choices{display:flex;gap:clamp(6px,2vw,12px);justify-content:center;width:100%;flex-wrap:wrap}
+.choice-btn{flex:1;min-width:clamp(52px,15vw,80px);max-width:clamp(68px,24vw,120px);padding:clamp(10px,3.5vh,18px) 4px;border:2.5px solid rgba(255,255,255,.35);border-radius:16px;background:linear-gradient(160deg,#7C3AED,#6D28D9);color:#fff;font-size:clamp(16px,5.5vw,26px);font-weight:900;cursor:pointer;font-family:inherit;transition:all .12s;-webkit-tap-highlight-color:transparent;box-shadow:0 5px 0 #4C1D95}
+.choice-btn:nth-child(2){background:linear-gradient(160deg,#E85A32,#C84020);border-color:#F07050;box-shadow:0 5px 0 #9A2A10}
+.choice-btn:nth-child(3){background:linear-gradient(160deg,#2DBF7E,#1A9E66);border-color:#50E0A0;box-shadow:0 5px 0 #0A7A48}
+.choice-btn:nth-child(4){background:linear-gradient(160deg,#F59E0B,#D97706);border-color:#FCD34D;box-shadow:0 5px 0 #92400E}
+.choice-btn:active{transform:scale(.91) translateY(4px)}
+.choice-btn.correct{border-color:#4ade80;background:rgba(74,222,128,.3);animation:correctFlash .4s ease}
+.choice-btn.wrong{border-color:#ef4444;background:rgba(239,68,68,.3);animation:wrongShake .35s ease}
+@keyframes correctFlash{50%{transform:scale(1.12)}}
+@keyframes wrongShake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+/* ── Flash ── */
+#flash{position:fixed;inset:0;z-index:99;pointer-events:none;opacity:0;transition:opacity .08s}
+
+/* ── Start Overlay ── */
+#start-overlay{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:rgba(10,2,25,0.92);backdrop-filter:blur(8px)}
+#start-overlay.hidden{display:none}
+#start-hint{font-size:16px;color:#86efac;animation:hintPulse 1.5s ease-in-out infinite}
+@keyframes hintPulse{50%{opacity:.5;transform:scale(.96)}}
+
+/* ── Pause Overlay ── */
+#pause-overlay{position:fixed;inset:0;z-index:350;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(10,2,25,0.92);backdrop-filter:blur(8px)}
+/* ── Bag Overlay ── */
+#bag-overlay{position:fixed;inset:0;z-index:400;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(10,2,25,0.95);backdrop-filter:blur(10px)}
+/* ── Jump button (touch) ── */
+#jump-btn{position:fixed;bottom:max(24px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:100;width:clamp(72px,16vmin,110px);height:clamp(72px,16vmin,110px);border-radius:50%;background:rgba(239,68,68,0.32);border:2.5px solid rgba(239,68,68,0.7);color:#fff;font-size:clamp(28px,7vmin,42px);cursor:pointer;-webkit-tap-highlight-color:transparent;display:none;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.3);transition:transform .08s,background .1s}
+#jump-btn:active{transform:translateX(-50%) scale(0.92);background:rgba(239,68,68,0.55)}
+@media (pointer:coarse){#jump-btn{display:flex}}
+</style>
+</head>
+<body>
+
+<!-- Parallax BG layers (behind Pixi) -->
+<div class="bg-layer" id="bg-sky"></div>
+<div class="bg-layer" id="bg-far"></div>
+<div class="bg-layer" id="bg-mid"></div>
+<div class="bg-layer" id="bg-near"></div>
+<div class="bg-layer" id="bg-gym"></div>
+
+<canvas id="pixi-canvas"></canvas>
+<img id="player-img" src="" alt="Pokemon">
+
+<!-- TR Balloon -->
+<img id="tr-balloon" src="../assets/Pokemon/g23/tr-balloon.gif" alt="Team Rocket">
+<div id="tr-warning">⚠️ Team Rocket Muncul!</div>
+
+<!-- HUD -->
+<div id="hud-top">
+  <button id="btn-back" onclick="goBack()">◀</button>
+  <div id="game-badge">🏃 Pokemon Run</div>
+  <div id="hud-center">
+    <div id="level-text"></div>
+    <div id="status-text">Bersiap...</div>
+  </div>
+  <button id="btn-pause" onclick="togglePause()">⏸</button>
+  <div id="hud-lives">❤️❤️❤️</div>
+  <div id="score-display">0m</div>
+</div>
+
+<!-- Power-up HUD -->
+<div id="pu-hud">
+  <span id="pu-icon">⚡</span>
+  <div id="pu-bar-bg"><div id="pu-bar"></div></div>
+</div>
+
+<!-- Runner Quiz Panel -->
+<div id="quiz-panel">
+  <div id="quiz-title">⚠️ RINTANGAN ⚠️</div>
+  <div id="quiz-question"></div>
+  <div id="quiz-choices"></div>
+</div>
+
+<!-- TR Battle Overlay -->
+<div id="tr-battle">
+  <div id="tr-battle-bg"></div>
+  <div id="tr-battle-content">
+    <div id="tr-hp-row">
+      <div class="tr-hp-card">
+        <div class="tr-hp-name" id="tr-enemy-name">Arbok</div>
+        <div class="tr-hp-hearts" id="tr-enemy-hp">❤️❤️❤️</div>
+      </div>
+      <div class="tr-hp-card" style="text-align:right">
+        <div class="tr-hp-name" id="tr-player-name">Pikachu</div>
+        <div class="tr-hp-hearts" id="tr-player-hp">❤️❤️❤️</div>
+      </div>
+    </div>
+    <div id="tr-trainer-tag">Jessie · Team Rocket</div>
+    <img id="tr-poke-enemy" src="" alt="">
+    <img id="tr-poke-player" src="" alt="">
+    <div id="tr-log"></div>
+    <div id="tr-quiz-wrap">
+      <div id="tr-atk-prompt">⚔️ SERANG ⚔️</div>
+      <div id="tr-question"></div>
+      <div id="tr-choices"></div>
+    </div>
+  </div>
+</div>
+
+<div id="flash"></div>
+
+<div id="start-overlay">
+  <div id="start-icon" style="font-size:64px">🏃</div>
+  <div style="font-size:clamp(24px,7vw,36px);font-weight:900;color:#fca5a5">Pokemon Run</div>
+  <div id="start-level" style="font-size:18px;color:#f87171"></div>
+  <div id="start-hint">Tap untuk Berlari!</div>
+</div>
+
+<div id="pause-overlay">
+  <div style="font-size:36px">⏸</div>
+  <div style="font-size:24px;font-weight:900;color:#fbbf24">PAUSE</div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:8px">
+    <button onclick="togglePause()" style="padding:12px 24px;border-radius:14px;border:2px solid #4ade80;background:rgba(34,197,94,.3);color:#4ade80;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit">▶ Lanjut</button>
+    <button onclick="document.getElementById('pause-overlay').style.display='none';openBag()" style="padding:12px 24px;border-radius:14px;border:2px solid #fbbf24;background:rgba(251,191,36,.2);color:#fbbf24;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit">🎒 Ganti Pokemon</button>
+    <button onclick="goBack()" style="padding:12px 24px;border-radius:14px;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#e9d5ff;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit">🏠 Keluar</button>
+  </div>
+</div>
+
+<div id="bag-overlay">
+  <div style="font-size:24px;font-weight:900;color:#fbbf24">🎒 Pilih Pokemon</div>
+  <div id="bag-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px;width:90%;max-width:440px;max-height:62vh;overflow-y:auto;padding:10px"></div>
+  <button onclick="closeBag()" style="padding:10px 24px;border-radius:14px;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#e9d5ff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Tutup</button>
+</div>
+
+<button id="jump-btn" onclick="handleJump()">⬆</button>
+
+<script src="../shared/rz-responsive.js?v=20260422i"></script>
+<script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
+<script src="data/freeze-watchdog.js?v=20260428a"></script>
+<script src="data/save-engine.js?v=20260501h"></script>
+<script src="game-modal.js?v=20260424g"></script>
+<script>
+'use strict'
+// ═══════════════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════════════
+const cfg = { level: 1, pokemon: 0 }
+try { const s = sessionStorage.getItem('g23Config'); if (s) Object.assign(cfg, JSON.parse(s)) } catch(_) {}
+document.getElementById('level-text').textContent  = `Level ${cfg.level}`
+document.getElementById('start-level').textContent = `Level ${cfg.level}`
+
+// ═══════════════════════════════════════════════════════════
+//  POKEMON ROSTER
+// ═══════════════════════════════════════════════════════════
+const G23_POKEMON = [
+  { name:'Arcanine',  src:'../assets/Pokemon/g23/arcanine.webp'  },
+  { name:'Lycanroc',  src:'../assets/Pokemon/g23/lycanroc.webp'  },
+  { name:'Cinderace', src:'../assets/Pokemon/g23/cinderace.webp' },
+  { name:'Eevee',     src:'../assets/Pokemon/g23/eevee.webp'     },
+  { name:'Pichu',     src:'../assets/Pokemon/g23/pichu.webp'     },
+  { name:'Umbreon',   src:'../assets/Pokemon/g23/umbreon.webp'   },
+  { name:'Raichu',    src:'../assets/Pokemon/g23/raichu.webp'    },
+  { name:'Sandshrew', src:'../assets/Pokemon/g23/sandshrew.webp' },
+  { name:'Mudkip',    src:'../assets/Pokemon/g23/mudkip.webp'    },
+  { name:'Pikachu',   src:'../assets/Pokemon/g23/pikachu.webp'   },
+  { name:'Jolteon',   src:'../assets/Pokemon/g23/jolteon.webp'   },
+  { name:'Emolga',    src:'../assets/Pokemon/g23/emolga.webp'    },
+  { name:'Furret',    src:'../assets/Pokemon/g23/furret.webp'    },
+  { name:'Psyduck',   src:'../assets/Pokemon/g23/psyduck.webp'   },
+  { name:'Chespin',   src:'../assets/Pokemon/g23/chespin.png'    },
+  { name:'Lucario',   src:'../assets/Pokemon/g23/lucario.png'    },
+]
+let selectedPokemon = Math.max(0, Math.min(cfg.pokemon || 0, G23_POKEMON.length - 1))
+
+// ── Team Rocket Pokemon pool ──
+const TR_POKEMON = [
+  { name:'Arbok',      slug:'arbok'      },{ name:'Weezing',    slug:'weezing'    },
+  { name:'Wobbuffet',  slug:'wobbuffet'  },{ name:'Seviper',    slug:'seviper'    },
+  { name:'Lickitung',  slug:'lickitung'  },{ name:'Cacnea',     slug:'cacnea'     },
+  { name:'Carnivine',  slug:'carnivine'  },{ name:'Victreebel', slug:'victreebel' },
+  { name:'Mime Jr',    slug:'mime-jr'    },{ name:'Yanmega',    slug:'yanmega'    },
+  { name:'Frillish',   slug:'frillish'   },{ name:'Chimecho',   slug:'chimecho'   },
+]
+const TR_TRAINERS = [
+  { name:'Jessie', tag:'Jessie · Team Rocket' },
+  { name:'James',  tag:'James · Team Rocket'  },
+]
+const GYM_BGS = [
+  '../assets/background/gym/g13c-bg-forest-m.webp',
+  '../assets/background/gym/g13c-bg-gym-m.webp',
+  '../assets/background/gym/g13c-bg-gym2-m.webp',
+  '../assets/background/gym/g13c-bg-water-m.webp',
+  '../assets/background/gym/g13c-bg-volcano-m.webp',
+]
+
+// ═══════════════════════════════════════════════════════════
+//  QUESTIONS
+// ═══════════════════════════════════════════════════════════
+const QUESTIONS = {
+  easy:[
+    {q:'🐱 Huruf awal?',ans:'K',wrong:['A','M','B']},{q:'🍎 Huruf awal?',ans:'A',wrong:['I','U','E']},
+    {q:'1+1=?',ans:'2',wrong:['3','4','1']},{q:'2+1=?',ans:'3',wrong:['2','4','5']},
+    {q:'3+2=?',ans:'5',wrong:['4','6','7']},{q:'5-2=?',ans:'3',wrong:['2','4','1']},
+    {q:'Warna 🔴?',ans:'MERAH',wrong:['BIRU','HIJAU','KUNING']},
+    {q:'Warna 🔵?',ans:'BIRU',wrong:['MERAH','HIJAU','UNGU']},
+    {q:'2+2=?',ans:'4',wrong:['3','5','6']},{q:'3-2=?',ans:'1',wrong:['2','3','4']},
+    {q:'🐮 Suaranya?',ans:'MOO',wrong:['BAA','OINK','QUACK']},
+    {q:'🐕 Suaranya?',ans:'GUKGUK',wrong:['MEONG','KWEK','EMBEK']},
+    {q:'4-1=?',ans:'3',wrong:['2','5','4']},{q:'1+2=?',ans:'3',wrong:['2','4','5']},
+    {q:'🍌 Buah apa?',ans:'PISANG',wrong:['APEL','JERUK','MANGGA']},
+  ],
+  medium:[
+    {q:'2+3=?',ans:'5',wrong:['4','6','7']},{q:'4+4=?',ans:'8',wrong:['7','9','6']},
+    {q:'5+5=?',ans:'10',wrong:['9','8','11']},{q:'6+3=?',ans:'9',wrong:['8','7','10']},
+    {q:'10-3=?',ans:'7',wrong:['6','8','4']},{q:'8-2=?',ans:'6',wrong:['5','7','4']},
+    {q:'7+5=?',ans:'12',wrong:['11','13','10']},{q:'9+4=?',ans:'13',wrong:['12','14','11']},
+    {q:'15-6=?',ans:'9',wrong:['8','10','7']},{q:'12-5=?',ans:'7',wrong:['6','8','5']},
+    {q:'Ibukota Jawa Barat?',ans:'BANDUNG',wrong:['JAKARTA','SURABAYA','BOGOR']},
+    {q:'Pulau terbesar RI?',ans:'KALIMANTAN',wrong:['JAWA','SUMATRA','SULAWESI']},
+    {q:'8+7=?',ans:'15',wrong:['14','16','13']},{q:'6+8=?',ans:'14',wrong:['13','15','12']},
+    {q:'Warna bendera RI?',ans:'MERAH PUTIH',wrong:['BIRU PUTIH','HIJAU KUNING','MERAH BIRU']},
+  ],
+  hard:[
+    {q:'12+5=?',ans:'17',wrong:['16','18','15']},{q:'15-8=?',ans:'7',wrong:['6','8','9']},
+    {q:'18+4=?',ans:'22',wrong:['20','24','21']},{q:'20-7=?',ans:'13',wrong:['12','14','11']},
+    {q:'14+9=?',ans:'23',wrong:['22','25','21']},{q:'2,4,?,8',ans:'6',wrong:['5','7','9']},
+    {q:'Ibukota RI?',ans:'JAKARTA',wrong:['BANDUNG','SURABAYA','MEDAN']},
+    {q:'17+8=?',ans:'25',wrong:['24','26','23']},{q:'25-9=?',ans:'16',wrong:['14','18','15']},
+    {q:'Planet terbesar?',ans:'YUPITER',wrong:['SATURNUS','MARS','URANUS']},
+    {q:'H₂O adalah...?',ans:'AIR',wrong:['OKSIGEN','GULA','GARAM']},
+  ],
+  expert:[
+    {q:'15x3=?',ans:'45',wrong:['40','50','42']},{q:'8x8=?',ans:'64',wrong:['54','72','56']},
+    {q:'100÷4=?',ans:'25',wrong:['20','30','24']},{q:'7x9=?',ans:'63',wrong:['54','72','56']},
+    {q:'Proklamasi RI tahun?',ans:'1945',wrong:['1928','1908','1949']},
+    {q:'½ × 80 = ?',ans:'40',wrong:['20','60','45']},
+    {q:'Proses daun hijau?',ans:'FOTOSINTESIS',wrong:['RESPIRASI','EVAPORASI','OSMOSIS']},
+  ]
+}
+function getDiff(l){ return l<=8?'easy':l<=16?'medium':l<=24?'hard':'expert' }
+function pickQ(level){
+  const pool=[...QUESTIONS[getDiff(level)]]
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}
+  return pool.slice(0, Math.min(8 + Math.floor((level-1)*0.6), 16, pool.length))
+}
+function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} return a }
+
+// ═══════════════════════════════════════════════════════════
+//  BG THEMES  (parallax image sets)
+// ═══════════════════════════════════════════════════════════
+const BG_PATH = '../assets/background/MountainDuskGodot/MountainDuskGodot/MountainsLayers/'
+const BG_THEMES = [
+  { gym:'g13c-bg-forest-m.webp',  tint:'rgba(135,206,235,1)',  ground:0x15803d, groundTop:0x22c55e },
+  { gym:'g13c-bg-water-m.webp',   tint:'rgba(255,140,0,0.7)', ground:0x4a2e1a, groundTop:0x8B4513 },
+  { gym:'g13c-bg-gym-m.webp',     tint:'rgba(5,5,25,1)',       ground:0x0a1510, groundTop:0x16a34a },
+  { gym:'g13c-bg-gym2-m.webp',    tint:'rgba(252,231,243,1)', ground:0x6b2f50, groundTop:0xa855f7 },
+  { gym:'g13c-bg-volcano-m.webp', tint:'rgba(14,8,32,1)',      ground:0x0c0618, groundTop:0x7c3aed },
+  { gym:'g13c-bg-water2-m.webp',  tint:'rgba(1,26,10,1)',      ground:0x021a0e, groundTop:0x22c55e },
+]
+const BG = BG_THEMES[(cfg.level - 1) % BG_THEMES.length]
+const BG_GYM_URL = `../assets/background/gym/${BG.gym}`
+
+// Parallax bg layer scroll state
+const bgLayers = [
+  { el: null, id:'bg-sky',  factor:0.01, src: BG_PATH+'sky.png'        },
+  { el: null, id:'bg-far',  factor:0.08, src: BG_PATH+'far-mountains.png' },
+  { el: null, id:'bg-mid',  factor:0.18, src: BG_PATH+'mountains.png'  },
+  { el: null, id:'bg-near', factor:0.35, src: BG_PATH+'trees.png'      },
+  { el: null, id:'bg-gym',  factor:0.55, src: BG_GYM_URL               },
+]
+let bgScrollX = 0
+
+function initBgLayers(){
+  bgLayers.forEach(l => {
+    l.el = document.getElementById(l.id)
+    l.el.style.backgroundImage = `url('${l.src}')`
+    l.el.style.backgroundRepeat = 'repeat-x'
+    l.el.style.backgroundSize   = 'auto 100%'
+  })
+  document.getElementById('bg-sky').style.backgroundColor = BG.tint
+}
+function scrollBgLayers(speed){
+  bgScrollX -= speed
+  bgLayers.forEach(l => {
+    if(l.el) l.el.style.backgroundPositionX = (bgScrollX * l.factor) + 'px'
+  })
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PHYSICS / LAYOUT
+// ═══════════════════════════════════════════════════════════
+const GRAVITY       = 0.52
+const JUMP_POWER    = -12.5
+const DBLJ_POWER    = -10.5
+const MAX_FALL      = 16
+const PLAYER_H      = 110
+const PLAYER_W      = 132
+const HIT_MARGIN    = 16
+const TOTAL_QUIZ    = Math.min(8 + Math.floor((cfg.level-1) * 0.6), 16)
+const TR_ENCOUNTERS = cfg.level >= 3 ? 2 : 1   // 1 encounter L1-2, 2 encounters L3+
+
+let BASE_SPEED = 2.8 + (cfg.level-1) * 0.12
+let gameSpeed  = BASE_SPEED
+
+let W, H, GROUND_Y, PLAYER_X
+let app, worldContainer, groundContainer, auraContainer, fxContainer
+
+// Parallax clouds
+let cloudGfx = [], groundDeco = []
+
+// ═══════════════════════════════════════════════════════════
+//  AUDIO
+// ═══════════════════════════════════════════════════════════
+let audioCtx
+function ensureAudio(){ if(!audioCtx) try{ audioCtx=new (window.AudioContext||window.webkitAudioContext)() }catch(_){} }
+function playTone(freq,dur,type='sine',vol=0.12){
+  if(!audioCtx) return
+  const o=audioCtx.createOscillator(),g=audioCtx.createGain()
+  o.type=type;o.frequency.value=freq
+  g.gain.value=vol;g.gain.linearRampToValueAtTime(0,audioCtx.currentTime+dur/1000)
+  o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+dur/1000)
+}
+function sfxJump(){ playTone(520,80);setTimeout(()=>playTone(720,60),40) }
+function sfxLand(){ playTone(200,60,'triangle',0.07) }
+function sfxHit(){  playTone(150,180,'square',0.12) }
+function sfxCorrect(){ playTone(800,180);setTimeout(()=>playTone(1050,140),100) }
+function sfxWrong(){ playTone(320,120,'sawtooth',0.1);setTimeout(()=>playTone(180,180,'sawtooth',0.1),80) }
+function sfxCollect(){ playTone(900,60);setTimeout(()=>playTone(1200,80),40);setTimeout(()=>playTone(1500,100),80) }
+function sfxFanfare(){ [600,700,900,1200].forEach((f,i)=>setTimeout(()=>playTone(f,120),i*80)) }
+function sfxDanger(){ playTone(280,200,'sawtooth',0.1);setTimeout(()=>playTone(220,300,'sawtooth',0.1),150) }
+
+// ═══════════════════════════════════════════════════════════
+//  GAME STATE
+// ═══════════════════════════════════════════════════════════
+const S = {
+  running:false, paused:false, gameOver:false, started:false,
+  level:cfg.level, lives:3,
+  score:0, distance:0,
+  correctAnswers:0, wrongAnswers:0, quizDone:0,
+  frame:0,
+  playerVY:0, playerY:0, jumpCount:0, isGrounded:true,
+  obstacles:[], powerUpItems:[], activepu:null, projectiles:[],
+  shieldHits:0, invincible:0,
+  questions:[], qIdx:0, pendingQuizGate:null,
+  obstacleCooldown:200, puCooldown:900,
+  // TR balloon
+  trState:'idle',   // idle | warning | approach | battle | exiting
+  trEncountersDone:0, trEncounterTriggerDist:0, trBalloonX:0, trBalloonY:0,
+  trBattle:null,    // active battle state
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PIXI INIT
+// ═══════════════════════════════════════════════════════════
+;(async function initPixi(){
+  app = new PIXI.Application()
+  await app.init({
+    canvas: document.getElementById('pixi-canvas'),
+    width: window.innerWidth, height: window.innerHeight,
+    backgroundAlpha: 0,           // transparent — real BG is CSS layers
+    antialias: true,
+    resolution: Math.min(window.devicePixelRatio, 2),
+    preference:'webgl', preferWebGLVersion:1,
+  })
+  W = app.screen.width; H = app.screen.height
+  GROUND_Y = H * 0.82; PLAYER_X = W * 0.2
+  S.playerY = GROUND_Y
+  S.questions = pickQ(cfg.level)
+
+  // Set TR encounter distance triggers (evenly spaced through level)
+  const levelDist = 500 + (cfg.level-1) * 300
+  const spacing = levelDist / (TR_ENCOUNTERS + 1)
+  S.trEncounterTriggerDist = spacing   // first trigger
+
+  worldContainer  = new PIXI.Container(); app.stage.addChild(worldContainer)
+  groundContainer = new PIXI.Container(); app.stage.addChild(groundContainer)
+  auraContainer   = new PIXI.Container(); app.stage.addChild(auraContainer)
+  fxContainer     = new PIXI.Container(); app.stage.addChild(fxContainer)
+  auraContainer.addChild(auraGfx)
+
+  initBgLayers()
+  try { drawGround()     } catch(e){}
+  try { addClouds()      } catch(e){}
+  setupPlayerImg()
+  updateHUD()
+
+  app.ticker.add(gameLoop)
+  document.getElementById('start-hint').textContent = 'Tap untuk Berlari!'
+})().catch(e=>{
+  console.error('G23 init failed:',e)
+  document.getElementById('start-hint').textContent = 'Tap untuk Berlari!'
+})
+
+// ═══════════════════════════════════════════════════════════
+//  GROUND
+// ═══════════════════════════════════════════════════════════
+function drawGround(){
+  const g=new PIXI.Graphics()
+  g.rect(0,GROUND_Y,W,H-GROUND_Y).fill(BG.ground)
+  g.rect(0,GROUND_Y,W,5).fill(BG.groundTop)
+  g.rect(0,GROUND_Y,W,2).fill({color:0xffffff,alpha:0.12})
+  groundContainer.addChild(g)
+  for(let x=0;x<W*2.5;x+=14+Math.random()*14){
+    const gfx=new PIXI.Graphics()
+    if(Math.random()<0.7){
+      const h2=5+Math.random()*5
+      gfx.poly([0,0,3,-h2,6,0]).fill({color:BG.groundTop,alpha:0.45})
+    } else {
+      gfx.circle(3,0,2+Math.random()*2.5).fill({color:0x888888,alpha:0.28})
+    }
+    gfx.x=x; gfx.y=GROUND_Y
+    groundContainer.addChild(gfx); groundDeco.push(gfx)
+  }
+}
+
+function addClouds(){
+  for(let i=0;i<5;i++){
+    const cl=new PIXI.Graphics()
+    const cw=28+Math.random()*52
+    cl.ellipse(0,0,cw,cw*0.38).fill({color:0xffffff,alpha:0.3})
+    cl.x=Math.random()*W*1.5; cl.y=H*0.06+Math.random()*H*0.2
+    worldContainer.addChild(cl); cloudGfx.push(cl)
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PLAYER SPRITE
+// ═══════════════════════════════════════════════════════════
+function setupPlayerImg(){
+  const img=document.getElementById('player-img')
+  const p=G23_POKEMON[selectedPokemon]
+  img.src=p.src; img.onerror=()=>{ img.src=`https://img.pokemondb.net/sprites/home/normal/${p.name.toLowerCase().replace(' ','-')}.png`; img.onerror=null }
+  img.style.width=PLAYER_W+'px'; img.style.height=PLAYER_H+'px'
+  img.style.display='block'; img.style.filter='drop-shadow(0 4px 8px rgba(0,0,0,0.4))'
+  syncPlayerPos()
+}
+function syncPlayerPos(){
+  const img=document.getElementById('player-img'); if(!img) return
+  const squish=S.isGrounded?Math.max(0.85,1-Math.abs(S.playerVY)*0.018):1
+  const stretch=S.isGrounded?1:Math.min(1.15,1+Math.abs(S.playerVY)*0.014)
+  const dw=PLAYER_W*squish, dh=PLAYER_H*stretch
+  img.style.left=(PLAYER_X-dw/2)+'px'; img.style.top=(S.playerY-dh)+'px'
+  img.style.width=dw+'px'; img.style.height=dh+'px'
+}
+function applyPokemon(idx){
+  selectedPokemon=Math.max(0,Math.min(idx,G23_POKEMON.length-1))
+  const p=G23_POKEMON[selectedPokemon]
+  const img=document.getElementById('player-img')
+  img.src=p.src; img.onerror=()=>{ img.src=`https://img.pokemondb.net/sprites/home/normal/${p.name.toLowerCase().replace(' ','-')}.png`; img.onerror=null }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  OBSTACLES
+// ═══════════════════════════════════════════════════════════
+function drawObstGfx(type){
+  const g=new PIXI.Graphics()
+  if(type==='box'){
+    g.roundRect(-26,-52,52,52,4).fill(0x8B4513)
+    g.roundRect(-26,-52,52,6,4).fill(0xA0522D)
+    g.roundRect(-22,-44,22,20,3).fill({color:0x6B3410,alpha:0.5})
+    g.roundRect(-26,-52,52,52,4).stroke({color:0x5C2E00,width:1.5,alpha:0.6})
+  } else if(type==='spike'){
+    g.poly([0,-42, 30,0, -30,0]).fill(0x7C3AED)
+    g.poly([0,-42, 15,0, -15,0]).fill({color:0xA78BFA,alpha:0.5})
+  } else if(type==='bush'){
+    g.ellipse(0,-26,36,26).fill(0x15803D)
+    g.ellipse(-18,-34,24,20).fill(0x22C55E)
+    g.ellipse(18,-34,24,20).fill(0x22C55E)
+    g.ellipse(0,-44,18,16).fill(0x4ADE80)
+  } else if(type==='rock'){
+    g.ellipse(0,-26,28,26).fill(0x6B7280)
+    g.ellipse(-8,-32,10,10).fill({color:0xffffff,alpha:0.15})
+    g.ellipse(0,-26,28,26).stroke({color:0x374151,width:1.5,alpha:0.5})
+  } else if(type==='tall'){
+    g.roundRect(-26,-90,52,90,4).fill(0x8B4513)
+    g.roundRect(-26,-90,52,6,4).fill(0xA0522D)
+    g.roundRect(-26,-45,52,1.5,0).fill({color:0x5C2E00,alpha:0.4})
+    g.roundRect(-26,-90,52,90,4).stroke({color:0x5C2E00,width:1.5,alpha:0.6})
+  } else if(type==='double'){
+    for(const dx of [-28,28]){
+      g.roundRect(dx-22,-52,44,52,4).fill(0x8B4513)
+      g.roundRect(dx-22,-52,44,6,4).fill(0xA0522D)
+      g.roundRect(dx-22,-52,44,52,4).stroke({color:0x5C2E00,width:1.5,alpha:0.6})
+    }
+  }
+  return g
+}
+const OBS_DEFS = [
+  {type:'box',   w:52,  h:52 },
+  {type:'spike', w:60,  h:42 },
+  {type:'bush',  w:72,  h:48 },
+  {type:'rock',  w:58,  h:52 },
+  {type:'tall',  w:52,  h:90 },
+  {type:'double',w:100, h:52 },
+]
+function spawnObstacle(){
+  const isQuiz = S.quizDone<TOTAL_QUIZ && S.obstacles.length>0 && (S.obstacles.length%4===3)
+  if(isQuiz){ spawnQuizGate(); return }
+  const tpl=OBS_DEFS[Math.floor(Math.random()*OBS_DEFS.length)]
+  const gfx=drawObstGfx(tpl.type)
+  gfx.x=W+120; gfx.y=GROUND_Y
+  worldContainer.addChild(gfx)
+  S.obstacles.push({x:W+120,w:tpl.w,h:tpl.h,gfx,hit:false})
+}
+function spawnQuizGate(){
+  const g=new PIXI.Graphics()
+  g.roundRect(-36,-104,72,104,12).fill({color:0x4338CA,alpha:0.9})
+  g.roundRect(-30,-98,60,92,8).fill({color:0x1E1B4B,alpha:0.95})
+  g.circle(0,-74,24).fill({color:0xfbbf24,alpha:0.95})
+  g.circle(0,-74,24).stroke({color:0xffffff,width:2,alpha:0.4})
+  const t=new PIXI.Text({text:'❓',style:{fontSize:22}})
+  t.anchor.set(0.5);t.x=0;t.y=-74;g.addChild(t)
+  const ring=new PIXI.Graphics()
+  ring.circle(0,-74,32).stroke({color:0xfbbf24,width:2,alpha:0.5})
+  g.addChild(ring)
+  g.x=W+130;g.y=GROUND_Y;worldContainer.addChild(g)
+  S.obstacles.push({x:W+130,w:72,h:104,gfx:g,hit:false,isQuiz:true,ring,ringPhase:0})
+}
+
+// ═══════════════════════════════════════════════════════════
+//  POWER-UPS
+// ═══════════════════════════════════════════════════════════
+const PU_DEFS={
+  thunder:{emoji:'⚡',color:0xFACC15,light:0xFEF08A,barColor:'#fbbf24'},
+  blaze:  {emoji:'🔥',color:0xEA580C,light:0xFED7AA,barColor:'#f97316'},
+  nature: {emoji:'🍃',color:0x16A34A,light:0x86EFAC,barColor:'#22c55e'},
+  venom:  {emoji:'💜',color:0x7C3AED,light:0xDDD6FE,barColor:'#a855f7'},
+}
+const PU_TYPES=Object.keys(PU_DEFS)
+const PU_DUR={thunder:360,blaze:300,nature:480,venom:360}
+
+function spawnPowerUp(){
+  const type=PU_TYPES[Math.floor(Math.random()*PU_TYPES.length)]
+  const def=PU_DEFS[type]
+  const g=new PIXI.Graphics()
+  g.circle(0,0,22).fill({color:def.color,alpha:0.92})
+  g.circle(0,0,22).stroke({color:def.light,width:2,alpha:0.7})
+  g.circle(0,0,30).fill({color:def.color,alpha:0.15})
+  const t=new PIXI.Text({text:def.emoji,style:{fontSize:22}});t.anchor.set(0.5);g.addChild(t)
+  g.x=W+80;g.y=GROUND_Y-72;worldContainer.addChild(g)
+  S.powerUpItems.push({type,gfx:g,x:W+80,phase:Math.random()*Math.PI*2})
+}
+
+// Power-up particles
+const auraGfx=new PIXI.Graphics()
+const blazePts=Array.from({length:14},()=>({x:0,y:0,vy:0,alpha:0,r:0,hue:0}))
+const natLeaves=Array.from({length:6},()=>({angle:Math.random()*Math.PI*2,speed:0.03+Math.random()*0.02}))
+const venBubs=Array.from({length:8},()=>({x:0,y:0,r:0,alpha:0}))
+const venDrips=Array.from({length:5},()=>({x:0,y:0,alpha:0}))
+
+function respawnBlaze(p){ p.x=PLAYER_X+(Math.random()-.5)*28;p.y=S.playerY-8;p.vy=-(0.8+Math.random()*1.4);p.alpha=0.85;p.r=4+Math.random()*7;p.hue=Math.random() }
+function respawnVenBub(b){ b.x=PLAYER_X+(Math.random()-.5)*40;b.y=S.playerY-10;b.r=4+Math.random()*9;b.alpha=0.7 }
+function respawnVenDrip(d){ d.x=PLAYER_X+(Math.random()-.5)*30;d.y=S.playerY-PLAYER_H*.3;d.alpha=0.7 }
+
+function activatePowerUp(type){
+  clearAura()
+  const def=PU_DEFS[type]
+  S.activepu={type,timer:PU_DUR[type],maxTimer:PU_DUR[type],shotCooldown:0}
+  if(type==='thunder') gameSpeed=BASE_SPEED*1.2
+  if(type==='nature')  S.shieldHits=2
+  if(type==='blaze')   blazePts.forEach(p=>respawnBlaze(p))
+  if(type==='venom'){  venBubs.forEach(b=>respawnVenBub(b)); venDrips.forEach(d=>respawnVenDrip(d)) }
+  const filters={
+    thunder:'drop-shadow(0 0 8px #fbbf24) drop-shadow(0 0 16px #fbbf24) brightness(1.1)',
+    blaze:  'drop-shadow(0 0 10px #ef4444) drop-shadow(0 0 20px #f97316) brightness(1.06)',
+    nature: 'drop-shadow(0 0 10px #22c55e) drop-shadow(0 0 20px #4ade80) brightness(1.06)',
+    venom:  'drop-shadow(0 0 10px #a855f7) drop-shadow(0 0 20px #7c3aed) brightness(1.06)',
+  }
+  document.getElementById('player-img').style.filter=filters[type]
+  document.getElementById('pu-hud').style.display='flex'
+  document.getElementById('pu-icon').textContent=def.emoji
+  document.getElementById('pu-bar').style.background=def.barColor
+  sfxCollect()
+}
+function clearAura(){
+  if(S.activepu?.type==='thunder') gameSpeed=BASE_SPEED
+  if(S.activepu?.type==='nature')  S.shieldHits=0
+  S.activepu=null; auraGfx.clear()
+  document.getElementById('pu-hud').style.display='none'
+  document.getElementById('player-img').style.filter='drop-shadow(0 4px 8px rgba(0,0,0,0.4))'
+}
+function updateAura(){
+  const pu=S.activepu; if(!pu) return
+  auraGfx.clear()
+  const cx=PLAYER_X, cy=S.playerY-PLAYER_H*.5
+
+  if(pu.type==='thunder'){
+    if(S.frame%2===0){
+      for(let i=0;i<5;i++){
+        const angle=(i/5)*Math.PI*2+S.frame*.15
+        const len=20+Math.random()*18
+        let px=cx,py=cy; auraGfx.moveTo(px,py)
+        for(let s=0;s<4;s++){ px+=Math.cos(angle+(Math.random()-.5)*1.8)*len/4; py+=Math.sin(angle+(Math.random()-.5)*1.8)*len/4; auraGfx.lineTo(px,py) }
+        auraGfx.stroke({width:1.5,color:0xFEF08A,alpha:0.75})
+      }
+    }
+    for(let i=0;i<4;i++){
+      const sy=cy+(i-2)*15,sw=14+Math.random()*26
+      auraGfx.rect(cx-PLAYER_W/2-sw-8,sy-1,sw,2).fill({color:0xffffff,alpha:0.32-i*.06})
+    }
+    for(let i=0;i<3;i++) auraGfx.circle(cx+(Math.random()-.5)*52,cy+(Math.random()-.5)*42,1.5).fill({color:0xFBBF24,alpha:0.8})
+  }
+
+  if(pu.type==='blaze'){
+    for(const p of blazePts){
+      p.y+=p.vy; p.alpha-=0.022; p.r*=0.97
+      if(p.alpha<=0){ respawnBlaze(p); continue }
+      auraGfx.circle(p.x,p.y,Math.max(1,p.r)).fill({color:p.hue<.5?0xFF8800:0xFF4400,alpha:p.alpha})
+      auraGfx.circle(p.x,p.y,Math.max(.5,p.r*.42)).fill({color:0xFEF08A,alpha:p.alpha*.55})
+    }
+    const fl=S.frame*.18,flH=18+Math.sin(fl)*6
+    auraGfx.poly([cx-18,S.playerY-4,cx,S.playerY-flH-4,cx+18,S.playerY-4]).fill({color:0xFF6600,alpha:0.48})
+    pu.shotCooldown--; if(pu.shotCooldown<=0){ spawnProjectile('blaze'); pu.shotCooldown=58 }
+  }
+
+  if(pu.type==='nature'){
+    const rr=PLAYER_W*.65
+    auraGfx.circle(cx,cy,rr).stroke({width:3,color:0x22C55E,alpha:0.65})
+    auraGfx.circle(cx,cy,rr*.8).fill({color:0x22C55E,alpha:0.06+Math.sin(S.frame*.1)*.04})
+    for(const leaf of natLeaves){
+      leaf.angle+=leaf.speed
+      const lx=cx+rr*Math.cos(leaf.angle),ly=cy+rr*Math.sin(leaf.angle)
+      const rot=leaf.angle+Math.PI/2,cos=Math.cos(rot),sn=Math.sin(rot),le=8,lw=3.5
+      auraGfx.poly([lx+cos*le,ly+sn*le,lx+sn*lw,ly-cos*lw,lx-cos*le,ly-sn*le,lx-sn*lw,ly+cos*lw]).fill({color:0x4ADE80,alpha:0.88})
+    }
+    if(S.shieldHits>0){
+      const pulse=0.5+Math.sin(S.frame*.15)*.3
+      auraGfx.circle(cx,cy,rr+6).stroke({width:1.5,color:0x86EFAC,alpha:pulse})
+    }
+  }
+
+  if(pu.type==='venom'){
+    for(const b of venBubs){ b.y-=.7; b.alpha-=.013; if(b.alpha<=0||b.y<S.playerY-PLAYER_H*1.5){ respawnVenBub(b); continue } auraGfx.circle(b.x,b.y,b.r).stroke({width:1.5,color:0xA855F7,alpha:b.alpha}); auraGfx.circle(b.x-b.r*.3,b.y-b.r*.35,b.r*.22).fill({color:0xffffff,alpha:b.alpha*.4}) }
+    for(const d of venDrips){ d.y+=1.8; d.alpha-=.018; if(d.alpha<=0||d.y>S.playerY){ respawnVenDrip(d); continue } auraGfx.circle(d.x,d.y,2.8).fill({color:0xA855F7,alpha:d.alpha}) }
+    auraGfx.circle(cx,cy,PLAYER_W*.55).fill({color:0x7C3AED,alpha:0.12+Math.sin(S.frame*.12)*.06})
+    pu.shotCooldown--; if(pu.shotCooldown<=0){ spawnProjectile('venom'); pu.shotCooldown=46 }
+  }
+
+  pu.timer--
+  const pct=pu.timer/pu.maxTimer
+  document.getElementById('pu-bar').style.width=(pct*100)+'%'
+  document.getElementById('pu-hud').style.opacity=(pu.timer<=60&&S.frame%12<6)?'0.45':'1'
+  if(pu.timer<=0) clearAura()
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PROJECTILES
+// ═══════════════════════════════════════════════════════════
+function spawnProjectile(type){
+  const g=new PIXI.Graphics()
+  const cx=PLAYER_X+PLAYER_W/2+10,cy=S.playerY-PLAYER_H*.55
+  if(type==='blaze'){ g.circle(0,0,9).fill(0xFF6600); g.circle(-3,-3,4).fill({color:0xFEF08A,alpha:0.7}) }
+  else{ g.circle(0,0,8).fill(0x7C3AED); g.circle(-2,-2,3).fill({color:0xDDD6FE,alpha:0.6}); g.circle(0,0,8).stroke({color:0xA855F7,width:1.5,alpha:.8}) }
+  g.x=cx;g.y=cy;worldContainer.addChild(g)
+  S.projectiles.push({type,x:cx,y:cy,vx:9,gfx:g,dead:false,rot:0})
+}
+function updateProjectiles(){
+  for(const p of S.projectiles){
+    if(p.dead) continue
+    p.x+=p.vx; p.rot+=.2; p.gfx.x=p.x; p.gfx.rotation=p.rot
+    if(S.frame%3===0){ const sp=new PIXI.Graphics(); sp.circle(0,0,3).fill({color:p.type==='blaze'?0xFF8800:0xA855F7,alpha:.55}); sp.x=p.x-8;sp.y=p.y+(Math.random()-.5)*8; fxContainer.addChild(sp); let li=12; const tk=()=>{li--;sp.alpha=li/12;if(li<=0){fxContainer.removeChild(sp);app.ticker.remove(tk)}}; app.ticker.add(tk) }
+    if(p.x>W+60){ destroyProj(p) }
+    for(const obs of S.obstacles){ if(!obs.hit&&p.x>obs.x-obs.w/2-8&&p.x<obs.x+obs.w/2+8&&!p.dead){ destroyProj(p); destroyObs(obs,true); break } }
+  }
+  S.projectiles=S.projectiles.filter(p=>!p.dead)
+}
+function destroyProj(p){ p.dead=true; worldContainer.removeChild(p.gfx); burst(p.x,p.y,p.type==='blaze'?0xFF6600:0xA855F7,6) }
+
+// ═══════════════════════════════════════════════════════════
+//  COLLISION
+// ═══════════════════════════════════════════════════════════
+function checkCollisions(){
+  if(S.invincible>0){ S.invincible--; return }
+  const px_l=PLAYER_X-PLAYER_W/2+HIT_MARGIN
+  const px_r=PLAYER_X+PLAYER_W/2-HIT_MARGIN
+  const py_t=S.playerY-PLAYER_H*.88+HIT_MARGIN
+  const py_b=S.playerY-6
+  // Power-ups
+  for(const pu of S.powerUpItems){
+    if(pu.collected) continue
+    if(Math.abs(pu.x-PLAYER_X)<PLAYER_W/2+22&&Math.abs(pu.gfx.y-S.playerY+PLAYER_H*.5)<PLAYER_H/2+22){
+      pu.collected=true; worldContainer.removeChild(pu.gfx)
+      burst(pu.x,pu.gfx.y,PU_DEFS[pu.type].color,8); activatePowerUp(pu.type)
+    }
+  }
+  S.powerUpItems=S.powerUpItems.filter(p=>!p.collected)
+  // Obstacles
+  for(const obs of S.obstacles){
+    if(obs.hit) continue
+    const ox_l=obs.x-obs.w/2+4,ox_r=obs.x+obs.w/2-4,oy_t=GROUND_Y-obs.h+4
+    if(!(px_r>ox_l&&px_l<ox_r&&py_b>oy_t&&py_t<GROUND_Y)) continue
+    if(obs.isQuiz){ obs.hit=true; S.paused=true; S.pendingQuizGate=obs; showRunnerQuiz(obs) }
+    else if(S.activepu?.type==='nature'&&S.shieldHits>0){
+      S.shieldHits--; destroyObs(obs,false)
+      burst(PLAYER_X,S.playerY-PLAYER_H*.5,0x22C55E,12); flashScreen('#22c55e'); S.invincible=40
+      if(!S.shieldHits) clearAura()
+    } else { hitPlayer(obs) }
+    break
+  }
+}
+function hitPlayer(obs){
+  obs.hit=true; S.lives--; S.invincible=90; sfxHit()
+  flashScreen('#ef4444'); burst(PLAYER_X,S.playerY-PLAYER_H*.6,0xEF4444,10)
+  destroyObs(obs,false); updateHUD(); if(S.lives<=0) showLose()
+}
+function destroyObs(obs,withScore){
+  obs.hit=true
+  if(withScore){ S.score+=5; spawnFT('+5',obs.x,GROUND_Y-obs.h-20,0x4ade80) }
+  let alpha=1; const tk=()=>{ alpha-=.08;obs.gfx.alpha=alpha; if(alpha<=0){worldContainer.removeChild(obs.gfx);app.ticker.remove(tk)} }; app.ticker.add(tk)
+}
+
+// ═══════════════════════════════════════════════════════════
+//  RUNNER QUIZ
+// ═══════════════════════════════════════════════════════════
+function showRunnerQuiz(gate){
+  const q=S.questions[S.qIdx%S.questions.length]; S.qIdx++
+  document.getElementById('quiz-question').textContent=q.q
+  const choicesEl=document.getElementById('quiz-choices'); choicesEl.innerHTML=''
+  const choices=shuffle([q.ans,...q.wrong])
+  let answered=false
+  choices.forEach(c=>{
+    const btn=document.createElement('button'); btn.className='choice-btn'; btn.textContent=c
+    btn.onclick=()=>{
+      if(answered) return; answered=true
+      if(c===q.ans){
+        btn.classList.add('correct'); sfxCorrect()
+        S.correctAnswers++; S.quizDone++; S.score+=10
+        setTimeout(()=>{
+          document.getElementById('quiz-panel').classList.remove('show')
+          if(gate) destroyObs(gate,false)
+          S.pendingQuizGate=null; spawnFT('Benar! +10',PLAYER_X,S.playerY-PLAYER_H-20,0x4ade80)
+          S.paused=false; updateHUD()
+          if(S.quizDone>=TOTAL_QUIZ) setTimeout(()=>showWin(),600)
+        },550)
+      } else {
+        btn.classList.add('wrong'); sfxWrong(); S.wrongAnswers++; S.lives--
+        choicesEl.querySelectorAll('.choice-btn').forEach(b=>{ if(b.textContent===q.ans) b.classList.add('correct') })
+        setTimeout(()=>{
+          document.getElementById('quiz-panel').classList.remove('show')
+          if(gate) destroyObs(gate,false)
+          S.pendingQuizGate=null; S.quizDone++
+          spawnFT('Coba lagi!',PLAYER_X,S.playerY-PLAYER_H-20,0xfbbf24)
+          S.paused=false; S.invincible=60; updateHUD()
+          if(S.lives<=0){ setTimeout(()=>showLose(),200); return }
+          if(S.quizDone>=TOTAL_QUIZ) setTimeout(()=>showWin(),600)
+        },1100)
+      }
+    }
+    choicesEl.appendChild(btn)
+  })
+  document.getElementById('quiz-panel').classList.add('show')
+  document.getElementById('status-text').textContent='Jawab Soal!'
+}
+
+// ═══════════════════════════════════════════════════════════
+//  TEAM ROCKET BALLOON
+// ═══════════════════════════════════════════════════════════
+let trBalloonObj = null
+
+function spawnTRBalloon(){
+  const balloonEl=document.getElementById('tr-balloon')
+  const bw=parseFloat(getComputedStyle(balloonEl).width)||130
+  S.trBalloonX=W+bw                    // start off-screen right
+  S.trBalloonY=H*0.08                  // high in the sky
+  S.trState='approach'
+  balloonEl.style.display='block'
+  balloonEl.classList.remove('exiting')
+  balloonEl.classList.add('bobbing')
+  balloonEl.style.right='auto'
+  syncBalloonPos()
+  // Warning banner
+  const warn=document.getElementById('tr-warning')
+  warn.classList.add('show'); sfxDanger()
+  setTimeout(()=>warn.classList.remove('show'),2200)
+}
+
+function syncBalloonPos(){
+  const el=document.getElementById('tr-balloon')
+  el.style.left=S.trBalloonX+'px'
+  el.style.top =S.trBalloonY+'px'
+}
+
+function updateTRBalloon(){
+  if(S.trState==='idle'||S.trState==='battle'||S.trState==='exiting') return
+  const el=document.getElementById('tr-balloon')
+
+  if(S.trState==='approach'){
+    // Balloon drifts left slowly until it reaches ~35% of screen
+    const targetX=W*0.35
+    S.trBalloonX+=(targetX-S.trBalloonX)*0.018
+    syncBalloonPos()
+    // When close enough → engage
+    if(Math.abs(S.trBalloonX-targetX)<4) engageTRBattle()
+  }
+}
+
+function checkTRTrigger(){
+  if(S.trState!=='idle') return
+  if(S.trEncountersDone>=TR_ENCOUNTERS) return
+  if(S.distance>=S.trEncounterTriggerDist) spawnTRBalloon()
+}
+
+function engageTRBattle(){
+  if(S.trState==='battle') return
+  S.trState='battle'
+  S.paused=true
+  // Pick random TR Pokemon + trainer
+  const trPoke=TR_POKEMON[Math.floor(Math.random()*TR_POKEMON.length)]
+  const trainer=TR_TRAINERS[Math.floor(Math.random()*TR_TRAINERS.length)]
+  const gymBg=GYM_BGS[Math.floor(Math.random()*GYM_BGS.length)]
+  const playerPoke=G23_POKEMON[selectedPokemon]
+  // Set up battle state
+  S.trBattle={
+    playerHP:3, enemyHP:3,
+    attacksDone:0,   // player attacks done this set-of-2
+    trPoke, trainer, playerPoke,
+    qIdx:0, answered:false,
+    questions: pickQ(cfg.level),
+  }
+  // Build UI
+  document.getElementById('tr-battle-bg').style.backgroundImage=`url('${gymBg}')`
+  document.getElementById('tr-trainer-tag').textContent=trainer.tag
+  document.getElementById('tr-enemy-name').textContent=trPoke.name
+  document.getElementById('tr-player-name').textContent=playerPoke.name
+  document.getElementById('tr-poke-player').src=playerPoke.src
+  const pokeDbSlug=trPoke.slug.replace(/\s+/g,'-')
+  document.getElementById('tr-poke-enemy').src=
+    `https://img.pokemondb.net/sprites/home/normal/${pokeDbSlug}.png`
+  document.getElementById('tr-poke-enemy').onerror=function(){
+    this.src=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${Math.ceil(Math.random()*150)}.png`
+    this.onerror=null
+  }
+  updateTRHPDisplay()
+  // Show battle (slide up)
+  const battle=document.getElementById('tr-battle')
+  battle.style.display='flex'
+  requestAnimationFrame(()=>battle.classList.add('open'))
+  setTimeout(()=>{ loadTRQuestion() }, 400)
+}
+
+function updateTRHPDisplay(){
+  const b=S.trBattle
+  document.getElementById('tr-enemy-hp').textContent='❤️'.repeat(Math.max(0,b.enemyHP))+'🖤'.repeat(Math.max(0,3-b.enemyHP))
+  document.getElementById('tr-player-hp').textContent='❤️'.repeat(Math.max(0,b.playerHP))+'🖤'.repeat(Math.max(0,3-b.playerHP))
+}
+
+function loadTRQuestion(){
+  const b=S.trBattle; if(b.answered) return
+  const qPool=b.questions; if(!qPool.length) return
+  const q=qPool[b.qIdx%qPool.length]; b.qIdx++
+  document.getElementById('tr-question').textContent=q.q
+  const wrap=document.getElementById('tr-choices'); wrap.innerHTML=''
+  const choices=shuffle([q.ans,...q.wrong])
+  b.answered=false
+  choices.forEach(c=>{
+    const btn=document.createElement('button'); btn.className='tr-btn'; btn.textContent=c
+    btn.onclick=()=>{
+      if(b.answered) return; b.answered=true
+      if(c===q.ans){
+        btn.classList.add('correct'); sfxCorrect()
+        b.enemyHP=Math.max(0,b.enemyHP-1)
+        b.attacksDone++
+        updateTRHPDisplay()
+        showTRLog(`⚔️ ${b.playerPoke.name} menyerang! -1 HP`)
+        flashTRPoke('enemy')
+        // After 2 correct → TR counter-attacks
+        if(b.attacksDone===2){
+          b.attacksDone=0
+          setTimeout(()=>{ trCounterAttack() }, 700)
+        } else if(b.enemyHP<=0){
+          setTimeout(()=>trWin(),700)
+        } else {
+          setTimeout(()=>{ b.answered=false; loadTRQuestion() },800)
+        }
+      } else {
+        btn.classList.add('wrong'); sfxWrong()
+        b.playerHP=Math.max(0,b.playerHP-1)
+        updateTRHPDisplay()
+        showTRLog(`💥 ${b.trPoke.name} menyerang balik! -1 HP`)
+        flashTRPoke('player')
+        if(b.playerHP<=0){ setTimeout(()=>trLose(),700) }
+        else { setTimeout(()=>{ b.answered=false; loadTRQuestion() },900) }
+      }
+    }
+    wrap.appendChild(btn)
+  })
+}
+
+function trCounterAttack(){
+  const b=S.trBattle
+  b.playerHP=Math.max(0,b.playerHP-1)
+  updateTRHPDisplay()
+  showTRLog(`⚡ ${b.trPoke.name} menyerang! -1 HP`)
+  sfxHit(); flashScreen('#ef4444'); flashTRPoke('player')
+  if(b.playerHP<=0){ setTimeout(()=>trLose(),700) }
+  else if(b.enemyHP<=0){ setTimeout(()=>trWin(),400) }
+  else { setTimeout(()=>{ b.answered=false; loadTRQuestion() },900) }
+}
+
+function showTRLog(msg){
+  const el=document.getElementById('tr-log')
+  el.textContent=msg; el.style.animation='none'
+  requestAnimationFrame(()=>{ el.style.animation='logFade 2s ease' })
+}
+
+function flashTRPoke(side){
+  const id=side==='enemy'?'tr-poke-enemy':'tr-poke-player'
+  const el=document.getElementById(id)
+  el.style.filter=side==='enemy'
+    ?'drop-shadow(0 0 16px #ef4444) brightness(2.5)'
+    :'drop-shadow(0 0 16px #ef4444) brightness(2.5) scaleX(-1)'
+  setTimeout(()=>{ el.style.filter=side==='player'?'drop-shadow(0 8px 20px rgba(0,0,0,0.6)) scaleX(-1)':'drop-shadow(0 8px 20px rgba(0,0,0,0.6))' },250)
+}
+
+function trWin(){
+  sfxFanfare()
+  showTRLog('🏆 Kamu menang! Team Rocket mundur!')
+  flashScreen('#fbbf24')
+  S.correctAnswers+=3; S.score+=30
+  spawnFT('Team Rocket Kabur! +30',W/2,H*.4,0xfbbf24)
+  setTimeout(()=>{ closeTRBattle(); trBalloonExit() }, 1200)
+}
+
+function trLose(){
+  sfxHit(); sfxHit()
+  showTRLog('😢 Kamu kalah... tapi terus berlari!')
+  flashScreen('#ef4444')
+  S.lives=Math.max(0,S.lives-1)
+  setTimeout(()=>{ closeTRBattle(); trBalloonExit() }, 1200)
+}
+
+function closeTRBattle(){
+  const battle=document.getElementById('tr-battle')
+  battle.classList.remove('open')
+  setTimeout(()=>{ battle.style.display='none' }, 520)
+  S.trBattle=null
+}
+
+function trBalloonExit(){
+  const el=document.getElementById('tr-balloon')
+  el.classList.remove('bobbing')
+  el.classList.add('exiting')
+  // Sparkle burst around balloon
+  if(app&&app.stage){
+    for(let i=0;i<18;i++){
+      setTimeout(()=>{
+        burst(S.trBalloonX+65, S.trBalloonY+80, [0xfbbf24,0xffffff,0xf87171][Math.floor(Math.random()*3)], 4)
+      }, i*60)
+    }
+  }
+  sfxCollect(); setTimeout(sfxCollect,300); setTimeout(sfxCollect,600)
+  setTimeout(()=>{
+    el.style.display='none'
+    el.classList.remove('exiting')
+    S.trState='idle'; S.trEncountersDone++
+    // Queue next encounter trigger
+    const levelDist=500+(cfg.level-1)*300
+    const spacing=levelDist/(TR_ENCOUNTERS+1)
+    S.trEncounterTriggerDist=S.distance+spacing
+    // Resume runner
+    S.paused=false
+    updateHUD()
+  }, 1800)
+}
+
+// ═══════════════════════════════════════════════════════════
+//  FX HELPERS
+// ═══════════════════════════════════════════════════════════
+function burst(x,y,color,count){
+  for(let i=0;i<count;i++){
+    const dot=new PIXI.Graphics(); dot.circle(0,0,3+Math.random()*4).fill({color,alpha:.85}); dot.x=x;dot.y=y
+    const angle=Math.random()*Math.PI*2,spd=2+Math.random()*4,vx=Math.cos(angle)*spd,vy=Math.sin(angle)*spd
+    fxContainer.addChild(dot); let life=22
+    const tk=()=>{ life--;dot.x+=vx;dot.y+=vy+.2;dot.alpha=life/22; if(life<=0){fxContainer.removeChild(dot);app.ticker.remove(tk)} }; app.ticker.add(tk)
+  }
+}
+function spawnFT(text,x,y,color){
+  const t=new PIXI.Text({text,style:{fontSize:20,fontWeight:'900',fontFamily:'Fredoka One',fill:color}})
+  t.anchor.set(0.5);t.x=x;t.y=y; fxContainer.addChild(t); let life=38
+  const tk=()=>{ life--;t.y-=1.4;t.alpha=life/38; if(life<=0){fxContainer.removeChild(t);app.ticker.remove(tk)} }; app.ticker.add(tk)
+}
+function flashScreen(color){
+  const f=document.getElementById('flash');f.style.background=color;f.style.opacity='.38';setTimeout(()=>f.style.opacity='0',160)
+}
+
+// ═══════════════════════════════════════════════════════════
+//  HUD
+// ═══════════════════════════════════════════════════════════
+function updateHUD(){
+  document.getElementById('hud-lives').textContent='❤️'.repeat(Math.max(0,S.lives))+'🖤'.repeat(Math.max(0,3-S.lives))
+  document.getElementById('score-display').textContent=Math.floor(S.distance)+'m'
+  if(S.running&&!S.paused) document.getElementById('status-text').textContent=G23_POKEMON[selectedPokemon].name+' Berlari!'
+}
+
+// ═══════════════════════════════════════════════════════════
+//  WIN / LOSE
+// ═══════════════════════════════════════════════════════════
+function calcStars(){
+  return typeof GameScoring!=='undefined'
+    ? GameScoring.calc({correct:S.correctAnswers,total:Math.max(1,S.quizDone),wrong:S.wrongAnswers,lives:S.lives,maxLives:3})
+    : Math.max(1, 5-S.wrongAnswers*2)
+}
+function showWin(){
+  if(S.gameOver) return
+  S.running=false; S.gameOver=true
+  try{ if(app&&app.ticker) app.ticker.stop() }catch(_){}
+  const stars=calcStars()
+  if(typeof window.saveLevelProgress==='function') window.saveLevelProgress('g23',S.level,stars)
+  sfxFanfare()
+  document.getElementById('status-text').textContent='Level Selesai!'
+  setTimeout(()=>{
+    const info=`${Math.floor(S.distance)}m | ${S.correctAnswers}/${Math.max(1,S.quizDone)} benar`
+    const title=stars>=5?'Sempurna!':stars>=4?'Hebat!':stars>=3?'Bagus!':'Coba Lagi'
+    const emoji=stars>=5?'🏆':stars>=4?'🌟':stars>=3?'⭐':'💪'
+    const next=S.level<30?()=>{ try{sessionStorage.setItem('g23Config',JSON.stringify({level:S.level+1}))}catch(_){} location.reload() }:null
+    GameModal.show({ emoji,title,stars,msg:emoji+' '+info, onNext:next, onAgain:()=>location.reload(), onBack:()=>goBack() })
+  },700)
+}
+function showLose(){
+  if(S.gameOver) return
+  S.running=false; S.gameOver=true; S.paused=true
+  document.getElementById('quiz-panel').classList.remove('show')
+  try{ if(app&&app.ticker) app.ticker.stop() }catch(_){}
+  flashScreen('#ef4444')
+  document.getElementById('status-text').textContent='Game Over!'
+  setTimeout(()=>{
+    GameModal.show({ emoji:'😢',title:'Jangan Menyerah!',stars:0,
+      msg:`Ayo coba lagi! ${Math.floor(S.distance)}m tercapai`,
+      onAgain:()=>location.reload(), onBack:()=>goBack() })
+  },700)
+}
+
+// ═══════════════════════════════════════════════════════════
+//  INPUT
+// ═══════════════════════════════════════════════════════════
+function handleJump(){
+  if(S.gameOver) return
+  ensureAudio()
+  if(!S.started){
+    S.started=true; S.running=true
+    document.getElementById('start-overlay').classList.add('hidden')
+    document.getElementById('status-text').textContent=G23_POKEMON[selectedPokemon].name+' Berlari!'
+    return
+  }
+  if(S.paused) return
+  if(S.jumpCount<2){
+    S.playerVY=S.jumpCount===0?JUMP_POWER:DBLJ_POWER
+    S.jumpCount++; S.isGrounded=false; sfxJump()
+    burst(PLAYER_X,S.playerY,0xffffff,3)
+  }
+}
+
+document.addEventListener('pointerdown',e=>{
+  if(e.target.closest('#quiz-panel')||e.target.closest('#hud-top')||e.target.closest('#btn-back')||e.target.closest('#bag-overlay')||e.target.closest('#pause-overlay')||e.target.closest('#tr-battle')) return
+  handleJump()
+})
+window.addEventListener('keydown',e=>{
+  if(e.code==='Space'||e.code==='ArrowUp'){e.preventDefault();handleJump()}
+})
+
+function togglePause(){
+  if(!S.started||S.gameOver||S.trState==='battle') return
+  if(S.pendingQuizGate){ document.getElementById('pause-overlay').style.display='none'; document.getElementById('quiz-panel').classList.add('show'); S.paused=true; return }
+  S.paused=!S.paused; S.running=!S.paused
+  document.getElementById('btn-pause').textContent=S.paused?'▶':'⏸'
+  document.getElementById('status-text').textContent=S.paused?'PAUSE':G23_POKEMON[selectedPokemon].name+' Berlari!'
+  document.getElementById('pause-overlay').style.display=S.paused?'flex':'none'
+}
+
+function openBag(){
+  if(S.started&&!S.paused){ S.paused=true;S.running=false;document.getElementById('btn-pause').textContent='▶' }
+  const grid=document.getElementById('bag-grid'); grid.innerHTML=''
+  G23_POKEMON.forEach((p,i)=>{
+    const card=document.createElement('div')
+    card.style.cssText='display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:12px;border:2px solid '+(i===selectedPokemon?'#fbbf24':'rgba(255,255,255,.15)')+';background:'+(i===selectedPokemon?'rgba(251,191,36,.15)':'rgba(255,255,255,.05)')+';cursor:pointer'
+    const img=document.createElement('img'); img.src=p.src; img.style.cssText='width:64px;height:60px;object-fit:contain'
+    img.onerror=()=>{ img.src=`https://img.pokemondb.net/sprites/home/normal/${p.name.toLowerCase()}.png`; img.onerror=null }
+    card.appendChild(img)
+    const nm=document.createElement('div'); nm.style.cssText='font-size:10px;color:#e9d5ff;font-weight:700;text-align:center'; nm.textContent=p.name; card.appendChild(nm)
+    card.onclick=()=>{ applyPokemon(i); closeBag() }
+    grid.appendChild(card)
+  })
+  document.getElementById('bag-overlay').style.display='flex'
+}
+function closeBag(){
+  document.getElementById('bag-overlay').style.display='none'
+  if(S.pendingQuizGate){ document.getElementById('quiz-panel').classList.add('show'); S.paused=true }
+}
+function goBack(){
+  S.running=false; try{ if(app&&app.ticker) app.ticker.stop() }catch(_){} history.back()
+}
+window.addEventListener('resize',()=>{ if(app) app.renderer.resize(Math.min(window.innerWidth,1400),Math.min(window.innerHeight,1000)) })
+
+// ═══════════════════════════════════════════════════════════
+//  MAIN GAME LOOP
+// ═══════════════════════════════════════════════════════════
+function gameLoop(ticker){
+  S.frame++
+  if(!S.running||S.paused||S.gameOver) return
+  const dt=Math.min(ticker.deltaTime,2.5)
+
+  S.distance+=gameSpeed*dt*0.08
+
+  // ── Parallax scroll ──
+  scrollBgLayers(gameSpeed*dt)
+
+  // ── Player physics ──
+  if(!S.isGrounded){
+    S.playerVY+=GRAVITY*dt; S.playerVY=Math.min(S.playerVY,MAX_FALL)
+    S.playerY+=S.playerVY*dt
+    if(S.playerY>=GROUND_Y){ S.playerY=GROUND_Y; S.playerVY=0; S.isGrounded=true; S.jumpCount=0; sfxLand() }
+  } else {
+    S.playerY=GROUND_Y+Math.sin(S.frame*.3)*1.6  // subtle bob while running
+  }
+
+  // ── Clouds ──
+  for(const cl of cloudGfx){ cl.x-=gameSpeed*.22*dt; if(cl.x<-80) cl.x=W+80 }
+
+  // ── Ground deco ──
+  for(const d of groundDeco){ d.x-=gameSpeed*dt; if(d.x<-20) d.x+=W*2.5 }
+
+  // ── Spawn obstacles ──
+  S.obstacleCooldown-=dt
+  if(S.obstacleCooldown<=0&&S.obstacles.filter(o=>!o.hit).length<4){
+    S.obstacleCooldown=100+Math.random()*80-(cfg.level-1)*2
+    spawnObstacle()
+  }
+  // ── Scroll obstacles ──
+  for(const obs of S.obstacles){
+    if(obs.hit) continue
+    obs.x-=gameSpeed*dt; obs.gfx.x=obs.x
+    if(obs.isQuiz&&obs.ring){ obs.ringPhase=(obs.ringPhase||0)+.06; obs.ring.alpha=.4+Math.sin(obs.ringPhase)*.35; obs.ring.scale.set(1+Math.sin(obs.ringPhase)*.06) }
+  }
+  S.obstacles=S.obstacles.filter(o=>{ if(o.x<-200&&!o.hit){ worldContainer.removeChild(o.gfx); return false } return true })
+
+  // ── Spawn power-ups ──
+  S.puCooldown-=dt
+  if(S.puCooldown<=0&&S.powerUpItems.length<2){ S.puCooldown=900+Math.random()*500; spawnPowerUp() }
+  for(const pu of S.powerUpItems){ pu.x-=gameSpeed*dt; pu.phase+=.06; pu.gfx.x=pu.x; pu.gfx.y=GROUND_Y-72+Math.sin(pu.phase)*10; pu.gfx.rotation+=.022; if(pu.x<-60){pu.collected=true;worldContainer.removeChild(pu.gfx)} }
+  S.powerUpItems=S.powerUpItems.filter(p=>!p.collected)
+
+  // ── TR Balloon ──
+  checkTRTrigger()
+  updateTRBalloon()
+
+  // ── Aura ──
+  updateAura()
+
+  // ── Projectiles ──
+  updateProjectiles()
+
+  // ── Collision ──
+  checkCollisions()
+
+  // ── Player img sync ──
+  syncPlayerPos()
+
+  // ── HUD ──
+  if(S.frame%30===0) updateHUD()
+
+  // ── Level end ──
+  if(S.distance>=500+(cfg.level-1)*300&&S.quizDone>=TOTAL_QUIZ) showWin()
+}
+</script>
+</body>
+</html>
+<!-- g23-pixi v20260503b -->

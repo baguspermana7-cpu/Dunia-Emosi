@@ -671,3 +671,27 @@ Deleting a function definition (SPRITE_LOCAL) without grepping for ALL call site
 - **Fix**:
 - **Lesson**:
 ```
+
+---
+
+### L73 — Pixi canvas must be transparent for CSS parallax BG (G23, 2026-05-03)
+- **Symptom**: Parallax background layers not visible behind Pixi canvas.
+- **Root cause**: Pixi `Application` defaults to `backgroundAlpha:1` (opaque black/white), covering all CSS layers beneath.
+- **Fix**: Set `backgroundAlpha:0` in Pixi init options. Use `div.bg-layer` elements (CSS `background-repeat:repeat-x`, `background-size:auto 100%`) and update `backgroundPositionX` each frame at different scroll factors (0.01–0.55) for parallax depth.
+- **Lesson**: For hybrid CSS+Pixi rendering, always set `backgroundAlpha:0`. Pixi canvas stacks on top of CSS; transparency is required to see CSS layers.
+
+---
+
+### L74 — Animated WebP must use HTML img, not Pixi Sprite (G23, 2026-05-03)
+- **Symptom**: Running Pokemon sprite shows only first frame (static) when loaded as Pixi Sprite.
+- **Root cause**: PixiJS decodes images to a texture at load time — only the first frame is captured. Browser-native `<img>` handles animated WebP frame cycling natively.
+- **Fix**: Use `<img id="player-sprite">` positioned via CSS (absolute, transforms), updated each frame to match Pixi game coordinates. Reserve Pixi for game-logic objects (obstacles, pickups, particles).
+- **Lesson**: Animated WebP/GIF player characters should always be HTML `<img>` in Pixi hybrid games. Same pattern used in G19 Pokemon Birds.
+
+---
+
+### L75 — CSS slide-up overlay needs display:flex before rAF adds .open (G23, 2026-05-03)
+- **Symptom**: TR battle overlay `transform:translateY(0)` transition doesn't animate — panel snaps in instantly.
+- **Root cause**: Element had `display:none` which prevents CSS transitions. Adding `.open` class (which sets `transform:translateY(0)`) before the browser paints means transition fires with no start state.
+- **Fix**: Set `display:flex` first, then use `requestAnimationFrame(() => overlay.classList.add('open'))` so browser paints the initial `translateY(110%)` state before transitioning to `translateY(0)`.
+- **Lesson**: CSS transitions require the element to be visible (not `display:none`) for at least one paint cycle before the target state is applied.
