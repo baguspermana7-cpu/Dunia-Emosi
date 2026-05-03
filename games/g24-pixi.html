@@ -697,6 +697,7 @@ function createSwimmer() {
     }
     const em = initPoke.emoji || '🐟'
     swimImg.outerHTML = `<div id="swimmer-gif" style="position:fixed;z-index:40;pointer-events:none;font-size:${initSz}px;transform:translate(-50%,-50%);filter:drop-shadow(0 0 12px rgba(0,180,216,0.7))">${em}</div>`
+    window._swimImg = document.getElementById('swimmer-gif')
   }
   document.body.appendChild(swimImg)
   window._swimImg = swimImg
