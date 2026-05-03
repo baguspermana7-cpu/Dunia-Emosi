@@ -2201,3 +2201,56 @@ Guard changed from `v2` → `v3` in `_applyKodokSlot7Unlock()`. Root cause: func
 - Pastel colors: Left=periwinkle `rgba(147,197,253,0.28)`, Right=mint `rgba(134,239,172,0.28)`, Jump=peach `rgba(252,165,165,0.32)`.
 - Gap between left/right buttons increased.
 - Tap-anywhere on canvas (outside buttons/HUD) triggers jump via `document pointerdown`.
+
+---
+
+## 📊 Session 2026-05-03 (evening) — Code Review Hotfix #122 (58-finding audit)
+
+Cache bump: `v=20260503i` → `v=20260503j`. Branch: `main`.
+
+Code-review agent produced 58 findings (18 HIGH, 28 MEDIUM, 12 LOW). Fixed all HIGH + key MEDIUMs.
+
+### ✅ #122-A: G21 math quiz always wrong (g21-pixi.html)
+`onMathAnswer` compared `picked === correct` (string vs number) — strict equality always false. Fixed: `Number(picked) === Number(correct)`. No math answer was ever registerable as correct.
+
+### ✅ #122-B: MATCH_PAIRS_ALPHA 'Ayam' wrong emoji (game.js:77)
+`🐊` (crocodile/buaya) was labeled "Ayam" (chicken). Educational content error for ages 5-10. Fixed: changed to `🐓`.
+
+### ✅ #122-C: G21 collides() hitbox always square (g21-pixi.html)
+`aheight = looseY ? aw : aw` — ternary always evaluated to `aw`. Fixed: `aheight = looseY ? aw * 1.4 : aw`. Stomp/hit detection was wrong for all entities.
+
+### ✅ #122-D: XSS via innerHTML on player names (game.js)
+`chip.innerHTML` and `makeChip innerHTML` inserted `s.name`, `s.animal`, `p.name`, `p.animal` directly from localStorage. Fixed: replaced with `createElement` + `textContent` for all player name/animal/stars rendering.
+
+### ✅ #122-E: G23 destroyObs double-call ticker leak (g23-pixi.html)
+`destroyObs` had no double-call guard — two simultaneous hits (e.g. projectile + player) could add two `tk` ticker callbacks, causing double `removeChild` Pixi error. Fixed: `if(obs._destroying) return; obs._destroying=true` guard.
+
+### ✅ #122-F: G21 O(n²) solid tile traversal (g21-pixi.html)
+`movePlayer()` and `updateGoombas()` both iterated `world.children` (200+ objects at level 5) every frame — 24,000 iterations/sec. Fixed: `solidTiles[]` array maintained per level via `_rebuildSolidTiles()`. Both loops now iterate only solid tiles (~60-80 objects).
+
+### ✅ #122-G: G13C badge migration no-op (game.js)
+Badge was read from old global key `g13c_badges` at module load (avatar not yet selected). On save, only global key was written. Fixed: `_loadG13cBadges()` called at `g13cBuildLetterSelect()` reloads from avatar-keyed key. Save now writes to both global (backwards compat) and `dunia-avatar-{av}-g13c_badges`.
+
+### ✅ #122-H: G23 cfg.level unclamped (g23-pixi.html)
+`cfg.level` from sessionStorage had no bounds — large values produced NaN `gameSpeed`. Fixed: `cfg.level = Math.max(1, Math.min(cfg.level||1, 30))` after config parse.
+
+### ✅ #122-I: G21 saveProgress fallback hardcodes slot 0 (g21-pixi.html)
+Fallback path (when `saveLevelProgress` not available) wrote to `dunia-0-progress` regardless of selected avatar. Fixed: derives avatar slug from `dunia-active-slot` + `dunia-players` (same pattern as save-engine.js).
+
+### ✅ #122-J: G23 pointer events lack passive flag (g23-pixi.html)
+`pointerdown` and `pointermove` document listeners had no `{passive:true}`. Chrome warns and touch latency increases on Android. Fixed: both listeners now `{passive:true}` (neither calls `e.preventDefault()`).
+
+### Cross-File Integration
+| Fix | File | Status |
+|-----|------|--------|
+| Math always wrong | games/g21-pixi.html:2036 | ✅ |
+| Ayam emoji 🐓 | game.js:77 | ✅ |
+| collides() hitbox height | games/g21-pixi.html:1899 | ✅ |
+| XSS chip/makeChip innerHTML | game.js:1690-1692, 1835 | ✅ |
+| destroyObs double-call guard | games/g23-pixi.html:1009 | ✅ |
+| solidTiles O(n²) fix | games/g21-pixi.html | ✅ |
+| G13C badge avatar key | game.js:1342, 1469 | ✅ |
+| cfg.level clamp | games/g23-pixi.html:265 | ✅ |
+| saveProgress fallback key | games/g21-pixi.html:2322 | ✅ |
+| passive pointer listeners | games/g23-pixi.html:1451, 1456 | ✅ |
+| Cache bump | index.html, g21, g23 | ✅ v=20260503j |

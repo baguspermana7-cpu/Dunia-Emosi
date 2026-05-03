@@ -262,6 +262,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 // ═══════════════════════════════════════════════════════════
 const cfg = { level: 1, pokemon: 0 }
 try { const s = sessionStorage.getItem('g23Config'); if (s) Object.assign(cfg, JSON.parse(s)) } catch(_) {}
+cfg.level = Math.max(1, Math.min(cfg.level || 1, 30))
 document.getElementById('level-text').textContent  = `Level ${cfg.level}`
 document.getElementById('start-level').textContent = `Level ${cfg.level}`
 document.getElementById('quiz-total').textContent  = Math.min(8 + Math.floor((cfg.level-1) * 0.6), 16)
@@ -1006,6 +1007,7 @@ function hitPlayer(obs){
   destroyObs(obs,false); updateHUD(); if(S.lives<=0) showLose()
 }
 function destroyObs(obs,withScore){
+  if(obs._destroying) return; obs._destroying=true
   obs.hit=true
   if(withScore){ S.score+=5; spawnFT('+5',obs.x,GROUND_Y-obs.h-20,0x4ade80) }
   let alpha=1; const tk=()=>{ alpha-=.08;obs.gfx.alpha=alpha; if(alpha<=0){worldContainer.removeChild(obs.gfx);app.ticker.remove(tk)} }; app.ticker.add(tk)
@@ -1450,11 +1452,11 @@ document.addEventListener('pointerdown',e=>{
   if(e.target.closest('#quiz-panel')||e.target.closest('#hud-top')||e.target.closest('#btn-back')||e.target.closest('#bag-overlay')||e.target.closest('#pause-overlay')||e.target.closest('#tr-battle')||e.target.closest('#slide-btn')) return
   _swipeStartY=e.clientY
   handleJump()
-})
+},{passive:true})
 document.addEventListener('pointermove',e=>{
   if(e.buttons===0) return
   if(e.clientY-_swipeStartY>55){ _swipeStartY=e.clientY; handleSlide() }
-})
+},{passive:true})
 window.addEventListener('keydown',e=>{
   if(e.code==='Space'||e.code==='ArrowUp'){e.preventDefault();handleJump()}
   if(e.code==='ArrowDown'||e.code==='KeyS'){e.preventDefault();handleSlide()}

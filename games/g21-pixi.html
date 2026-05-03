@@ -299,6 +299,7 @@ const S = {
 
 // ── Pixi app ──
 let app, world, bgLayer, parallaxFar, parallaxMid, fgLayer, hudParticles
+let solidTiles = []
 let textures = {}
 let levelData = null
 let cleanedUp = false
@@ -609,7 +610,7 @@ async function loadAssets() {
 
   // Pixi 8: Assets API
   const baseUrl = '../assets/mario-pokemon/sprites/'
-  const _v = '?v=20260502g'
+  const _v = '?v=20260503j'
   const manifest = {
     // Pikachu overlays (DOM <img> but loaded so browser pre-caches)
     pikachu_small: baseUrl + 'pikachu-small-cropped.png' + _v,
@@ -978,6 +979,7 @@ function loadLevel(lvNum) {
 
   // Clear world
   world.removeChildren()
+  solidTiles.length = 0
   S.goombas.length = 0; S.coinList.length = 0; S.mushrooms.length = 0; S.bolts.length = 0
   S.stars.length = 0; S.spikes.length = 0; S.qBlocks.length = 0
 
@@ -1192,7 +1194,12 @@ function loadLevel(lvNum) {
   try { buildWorldDecorations(levelData.theme || 'default') } catch (e) { console.warn('[g21] decorations:', e) }
   document.getElementById('level-text').textContent = `LEVEL ${lvNum} • ${(S.difficulty||'easy').toUpperCase()}`
   document.getElementById('status-text').textContent = 'Ayo lompat! ⚡'
+  _rebuildSolidTiles()
   updateHUD()
+}
+function _rebuildSolidTiles() {
+  solidTiles.length = 0
+  for (const c of world.children) { if (c._g21Solid) solidTiles.push(c) }
 }
 
 // Hotfix #112-#9: theme-aware world decorations (non-collision Pixi
@@ -1661,8 +1668,7 @@ function movePlayer(dx, dy) {
   // Build player AABB (anchor 0.5, 1 → x = center, y = bottom)
   const px = S.x - w/2, py = S.y - h, pw = w, ph = h
   // Check tile collisions
-  for (const c of world.children) {
-    if (!c._g21Solid) continue
+  for (const c of solidTiles) {
     if (px + pw <= c.x || px >= c.x + TILE) continue
     if (py + ph <= c.y || py >= c.y + TILE) continue
     // Resolve based on movement axis
@@ -1750,8 +1756,7 @@ function updateGoombas() {
     const groundCheckY = Math.floor((g.y + 4) / TILE)
     const wallCheckY = Math.floor((g.y - 16) / TILE)
     let hasGroundAhead = false, wallAhead = false
-    for (const c of world.children) {
-      if (!c._g21Solid) continue
+    for (const c of solidTiles) {
       if (c._g21Tx === aheadX) {
         if (c._g21Ty === groundCheckY) hasGroundAhead = true
         if (c._g21Ty === wallCheckY) wallAhead = true
@@ -1896,7 +1901,7 @@ function checkGoal() {
 }
 
 function collides(a, player, aw, ph, looseY) {
-  const ax = a.x - aw/2, ay = a.y - aw, awidth = aw, aheight = looseY ? aw : aw
+  const ax = a.x - aw/2, ay = a.y - aw, awidth = aw, aheight = looseY ? aw * 1.4 : aw
   const px = player.x - 18, py = player.y - ph, pw = 36, pheight = ph
   return (ax + awidth > px && ax < px + pw && ay + aheight > py && ay < py + pheight)
 }
@@ -2033,7 +2038,7 @@ function onMathAnswer(btn, picked, correct) {
   if (btn.dataset.locked) return
   btn.dataset.locked = '1'
   Array.from(btn.parentElement.children).forEach(b => b.dataset.locked = '1')
-  const isCorrect = picked === correct
+  const isCorrect = Number(picked) === Number(correct)
   btn.classList.add(isCorrect ? 'correct' : 'wrong')
   if (isCorrect) {
     _mqState.correct++
@@ -2319,7 +2324,13 @@ function saveProgress(stars) {
     return
   }
   try {
-    const key = 'dunia-0-progress'
+    const aSlot = JSON.parse(localStorage.getItem('dunia-active-slot') || '[0,1]')
+    const slotIdx = Array.isArray(aSlot) ? parseInt(aSlot[0]) : 0
+    const slots = JSON.parse(localStorage.getItem('dunia-players') || '[]')
+    const animal = slots && slots[slotIdx] && slots[slotIdx].animal
+    const _SLUGS = {lion:'lion',rabbit:'rabbit',elephant:'elephant',fox:'fox',frog:'frog',tiger:'tiger',panda:'panda',koala:'koala'}
+    const av = animal ? (_SLUGS[animal] || String(animal)) : String(slotIdx)
+    const key = `dunia-avatar-${av}-progress`
     const prog = JSON.parse(localStorage.getItem(key) || '{}')
     if (!prog.g21) prog.g21 = { completed: [], stars: {} }
     if (!prog.g21.completed.includes(S.level)) prog.g21.completed.push(S.level)

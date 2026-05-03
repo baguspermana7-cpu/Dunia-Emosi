@@ -74,7 +74,7 @@ const MATCH_PAIRS_NUMS = [
   {id:'n6',emoji:'6️⃣',label:'ENAM',  emoji2:'🐝🐝🐝🐝🐝🐝',label2:'6 Lebah', eduTip:'Enam = 6'},
 ]
 const MATCH_PAIRS_ALPHA = [
-  {id:'la',emoji:'A',label:'Huruf A', emoji2:'🐊',label2:'Ayam',   eduTip:'A seperti AYAM'},
+  {id:'la',emoji:'A',label:'Huruf A', emoji2:'🐓',label2:'Ayam',   eduTip:'A seperti AYAM'},
   {id:'lb',emoji:'B',label:'Huruf B', emoji2:'🦆',label2:'Bebek',  eduTip:'B seperti BEBEK'},
   {id:'lc',emoji:'C',label:'Huruf C', emoji2:'🦎',label2:'Cicak',  eduTip:'C seperti CICAK'},
   {id:'ld',emoji:'D',label:'Huruf D', emoji2:'🐑',label2:'Domba',  eduTip:'D seperti DOMBA'},
@@ -1340,6 +1340,9 @@ const G13C_LETTERS_ORDER = ['A','B','C','D','E','F','G','H','I','J','K','L','M',
 
 let g13cState = { letter:'', round:0, total:5, correct:0, badges:{} }
 try { const s=localStorage.getItem('g13c_badges'); if(s) g13cState.badges=JSON.parse(s) } catch(_){}
+function _loadG13cBadges() {
+  try { const av=_avatarSlug(); if(av){const s=localStorage.getItem(`dunia-avatar-${av}-g13c_badges`);if(s) g13cState.badges=JSON.parse(s)} } catch(_) {}
+}
 
 function openGymGame() {
   playClick()
@@ -1347,6 +1350,7 @@ function openGymGame() {
 }
 
 function g13cBuildLetterSelect() {
+  _loadG13cBadges()
   const grid = document.getElementById('g13c-letter-grid')
   if (!grid) return
   grid.innerHTML = ''
@@ -1467,6 +1471,7 @@ function g13cShowResult() {
     if (!prev || rank[badge] > rank[prev]) {
       s.badges[s.letter] = badge
       try { localStorage.setItem('g13c_badges', JSON.stringify(s.badges)) } catch(_){}
+      try { const av=_avatarSlug(); if(av) localStorage.setItem(`dunia-avatar-${av}-g13c_badges`, JSON.stringify(s.badges)) } catch(_){}
     }
     setLevelComplete('13c', 1, badge==='gold'?3:badge==='silver'?2:1)
     saveStars()
@@ -1687,9 +1692,10 @@ function renderPlayerSlotRow(playerIdx) {
     const s = slots[i]
     const chip = document.createElement('button')
     chip.className = 'pslot-chip' + (!s?' empty':'') + (window._pSlot[playerIdx]===i?' selected':'')
-    chip.innerHTML = `<span class="psc-av">${s?s.animal:'➕'}</span>
-      <span class="psc-name">${s?s.name.slice(0,5):'Slot '+(i+1)}</span>
-      <span class="psc-stars">${s?'⭐'+s.stars:''}</span>`
+    const _av=document.createElement('span'); _av.className='psc-av'; _av.textContent=s?s.animal:'➕'
+    const _nm=document.createElement('span'); _nm.className='psc-name'; _nm.textContent=s?s.name.slice(0,5):'Slot '+(i+1)
+    const _st=document.createElement('span'); _st.className='psc-stars'; _st.textContent=s?'⭐'+s.stars:''
+    chip.append(_av,_nm,_st)
     chip.onclick = () => { window._pSlot[playerIdx]=i; _saveActiveSlot(); loadSlotIntoForm(playerIdx,i); renderPlayerSlotRow(playerIdx); playClick() }
     row.appendChild(chip)
   }
@@ -1831,7 +1837,12 @@ function buildMenuHeader() {
     chip.className='player-chip'+(state.mode==='solo'||idx===state.currentPlayer?' active':'')
     const streak=getStreakCount(),streakHtml=streak>=2?`<span class="p-streak">🔥${streak}</span>`:''
     const xp=getXP(),tier=getLevelTier(xp)
-    chip.innerHTML=`<span class="p-animal">${p.animal}</span><span class="p-name">${p.name}</span><span class="p-stars">⭐${p.stars}</span><span style="font-size:13px;background:rgba(139,92,246,0.12);color:var(--brand);border-radius:100px;padding:2px 8px;font-weight:700">${tier.icon}</span>${streakHtml}`
+    const _ca=document.createElement('span'); _ca.className='p-animal'; _ca.textContent=p.animal
+    const _cn=document.createElement('span'); _cn.className='p-name'; _cn.textContent=p.name
+    const _cs=document.createElement('span'); _cs.className='p-stars'; _cs.textContent='⭐'+p.stars
+    const _ct=document.createElement('span'); _ct.style.cssText='font-size:13px;background:rgba(139,92,246,0.12);color:var(--brand);border-radius:100px;padding:2px 8px;font-weight:700'; _ct.textContent=tier.icon
+    chip.append(_ca,_cn,_cs,_ct)
+    if(streak>=2){const _sk=document.createElement('span');_sk.className='p-streak';_sk.textContent='🔥'+streak;chip.appendChild(_sk)}
     return chip
   }
   header.appendChild(makeChip(0))
