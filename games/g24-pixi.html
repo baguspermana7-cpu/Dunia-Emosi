@@ -68,6 +68,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
 /* NPC sea creatures */
 .sea-npc-wrap{position:fixed;z-index:38;pointer-events:none}
 .sea-npc-inner{display:inline-block}
+
+/* Magikarp micro-wiggle — rotate is independent of transform, no positioning conflict */
+@keyframes swimWiggle{0%,100%{rotate:-5deg}25%,75%{rotate:0deg}50%{rotate:5deg}}
+.swim-wiggle{animation:swimWiggle 0.44s ease-in-out infinite}
 </style>
 </head>
 <body>
@@ -174,94 +178,95 @@ const THEME = getRegion(cfg.level)
 
 // ── POKEMON ROSTER ─────────────────────────────────────────────
 // flip:true → CSS scaleX(-1) so Pokemon faces right (swimming direction)
-// hd  → pokemondb_hd_alt2 WebP (always exists, used in bag + start overlay + swimmer fallback)
-// src → GIF for live swimming animation (may not exist yet → falls back to hd)
+// hd  → pokemondb_hd_alt2 WebP (bag + start overlay + fallback)
+// src → PS() Showdown animated GIF; Magikarp uses HD WebP + wiggle:true CSS micro-animation
 const HD = p => `../assets/Pokemon/pokemondb_hd_alt2/${p}.webp`
+const PS = n => `https://play.pokemonshowdown.com/sprites/ani/${n}.gif`
 const G24_POKEMON = [
   // ── KANTO (Region 0) ──
   { name:'Magikarp', region:0, evo:[
-    {name:'Magikarp',      src:'../assets/Pokemon/g24/magikarpswim.gif', hd:HD('0129_magikarp'),   flip:false, scale:0.7, emoji:'🐟'},
-    {name:'Gyarados',      src:'../assets/Pokemon/g24/gyarados.gif',     hd:HD('0130_gyarados'),   flip:false, scale:1.2, emoji:'🐉'},
-    {name:'Mega Gyarados', src:'../assets/Pokemon/g24/mega-gyarados.gif',hd:HD('0130_gyarados'),   flip:false, scale:1.4, emoji:'🌊'},
+    {name:'Magikarp',      src:HD('0129_magikarp'),         hd:HD('0129_magikarp'),   flip:true,  scale:0.7, wiggle:true, emoji:'🐟'},
+    {name:'Gyarados',      src:PS('gyarados'),              hd:HD('0130_gyarados'),   flip:true,  scale:1.2, emoji:'🐉'},
+    {name:'Mega Gyarados', src:PS('gyarados-mega'),         hd:HD('0130_gyarados'),   flip:true,  scale:1.4, emoji:'🌊'},
   ]},
   { name:'Horsea', region:0, evo:[
-    {name:'Horsea', src:'../assets/Pokemon/g24/horsea.gif', hd:HD('0116_horsea'), flip:false, scale:0.7, emoji:'🐴'},
-    {name:'Seadra',  src:'../assets/Pokemon/g24/seadra.gif', hd:HD('0117_seadra'), flip:false, scale:1.0, emoji:'🐲'},
+    {name:'Horsea', src:PS('horsea'), hd:HD('0116_horsea'), flip:true, scale:0.7, emoji:'🐴'},
+    {name:'Seadra', src:PS('seadra'), hd:HD('0117_seadra'), flip:true, scale:1.0, emoji:'🐲'},
   ]},
   { name:'Staryu', region:0, evo:[
-    {name:'Staryu',  src:'../assets/Pokemon/g24/staryu.gif',  hd:HD('0120_staryu'),  flip:false, scale:0.8, emoji:'⭐'},
-    {name:'Starmie', src:'../assets/Pokemon/g24/starmie.gif', hd:HD('0121_starmie'), flip:false, scale:1.1, emoji:'🌟'},
+    {name:'Staryu',  src:PS('staryu'),  hd:HD('0120_staryu'),  flip:false, scale:0.8, emoji:'⭐'},
+    {name:'Starmie', src:PS('starmie'), hd:HD('0121_starmie'), flip:false, scale:1.1, emoji:'🌟'},
   ]},
   { name:'Shellder', region:0, evo:[
-    {name:'Shellder', src:'../assets/Pokemon/g24/shellder.gif', hd:HD('0090_shellder'), flip:true, scale:0.7, emoji:'🐚'},
-    {name:'Cloyster',  src:'../assets/Pokemon/g24/cloyster.gif', hd:HD('0091_cloyster'), flip:true, scale:1.0, emoji:'🔮'},
+    {name:'Shellder', src:PS('shellder'), hd:HD('0090_shellder'), flip:false, scale:0.7, emoji:'🐚'},
+    {name:'Cloyster', src:PS('cloyster'), hd:HD('0091_cloyster'), flip:false, scale:1.0, emoji:'🔮'},
   ]},
   { name:'Goldeen', region:0, evo:[
-    {name:'Goldeen', src:'../assets/Pokemon/g24/goldeen.gif', hd:HD('0118_goldeen'), flip:false, scale:0.7, emoji:'🐠'},
-    {name:'Seaking', src:'../assets/Pokemon/g24/seaking.gif', hd:HD('0119_seaking'), flip:false, scale:1.0, emoji:'👑'},
+    {name:'Goldeen', src:PS('goldeen'), hd:HD('0118_goldeen'), flip:true, scale:0.7, emoji:'🐠'},
+    {name:'Seaking', src:PS('seaking'), hd:HD('0119_seaking'), flip:true, scale:1.0, emoji:'👑'},
   ]},
   { name:'Tentacool', region:0, evo:[
-    {name:'Tentacool',  src:'../assets/Pokemon/g24/tentacool.gif',  hd:HD('0072_tentacool'),  flip:false, scale:0.8, emoji:'🪼'},
-    {name:'Tentacruel', src:'../assets/Pokemon/g24/tentacruel.gif', hd:HD('0073_tentacruel'), flip:false, scale:1.2, emoji:'🔴'},
+    {name:'Tentacool',  src:PS('tentacool'),  hd:HD('0072_tentacool'),  flip:false, scale:0.8, emoji:'🪼'},
+    {name:'Tentacruel', src:PS('tentacruel'), hd:HD('0073_tentacruel'), flip:false, scale:1.2, emoji:'🔴'},
   ]},
   // ── JOHTO (Region 1) ──
   { name:'Chinchou', region:1, evo:[
-    {name:'Chinchou', src:'../assets/Pokemon/g24/chinchou.gif', hd:HD('0170_chinchou'), flip:false, scale:0.7, emoji:'💡'},
-    {name:'Lanturn',  src:'../assets/Pokemon/g24/lanturn.gif',  hd:HD('0171_lanturn'),  flip:false, scale:1.1, emoji:'🏮'},
+    {name:'Chinchou', src:PS('chinchou'), hd:HD('0170_chinchou'), flip:true, scale:0.7, emoji:'💡'},
+    {name:'Lanturn',  src:PS('lanturn'),  hd:HD('0171_lanturn'),  flip:true, scale:1.1, emoji:'🏮'},
   ]},
   { name:'Remoraid', region:1, evo:[
-    {name:'Remoraid',  src:'../assets/Pokemon/g24/remoraid.gif',  hd:HD('0223_remoraid'),  flip:false, scale:0.7, emoji:'🎯'},
-    {name:'Octillery', src:'../assets/Pokemon/g24/octillery.gif', hd:HD('0224_octillery'), flip:false, scale:1.1, emoji:'🐙'},
+    {name:'Remoraid',  src:PS('remoraid'),  hd:HD('0223_remoraid'),  flip:true,  scale:0.7, emoji:'🎯'},
+    {name:'Octillery', src:PS('octillery'), hd:HD('0224_octillery'), flip:false, scale:1.1, emoji:'🐙'},
   ]},
   { name:'Horsea+', region:1, evo:[
-    {name:'Horsea',  src:'../assets/Pokemon/g24/horsea.gif',  hd:HD('0116_horsea'),  flip:false, scale:0.7, emoji:'🐴'},
-    {name:'Seadra',  src:'../assets/Pokemon/g24/seadra.gif',  hd:HD('0117_seadra'),  flip:false, scale:1.0, emoji:'🐲'},
-    {name:'Kingdra', src:'../assets/Pokemon/g24/kingdra.gif', hd:HD('0230_kingdra'), flip:false, scale:1.3, emoji:'👸'},
+    {name:'Horsea',  src:PS('horsea'),  hd:HD('0116_horsea'),  flip:true, scale:0.7, emoji:'🐴'},
+    {name:'Seadra',  src:PS('seadra'),  hd:HD('0117_seadra'),  flip:true, scale:1.0, emoji:'🐲'},
+    {name:'Kingdra', src:PS('kingdra'), hd:HD('0230_kingdra'), flip:true, scale:1.3, emoji:'👸'},
   ]},
   { name:'Qwilfish', region:1, evo:[
-    {name:'Qwilfish', src:'../assets/Pokemon/g24/qwilfish.gif', hd:HD('0211_qwilfish'), flip:false, scale:0.8, emoji:'🐡'},
+    {name:'Qwilfish', src:PS('qwilfish'), hd:HD('0211_qwilfish'), flip:true, scale:0.8, emoji:'🐡'},
   ]},
   { name:'Mantine', region:1, evo:[
-    {name:'Mantine', src:'../assets/Pokemon/g24/mantine.gif', hd:HD('0226_mantine'), flip:false, scale:1.0, emoji:'🦅'},
+    {name:'Mantine', src:PS('mantine'), hd:HD('0226_mantine'), flip:false, scale:1.0, emoji:'🦅'},
   ]},
   // ── HOENN (Region 2) ──
   { name:'Carvanha', region:2, evo:[
-    {name:'Carvanha',      src:'../assets/Pokemon/g24/carvanha.gif',      hd:HD('0318_carvanha'), flip:false, scale:0.8, emoji:'🦈'},
-    {name:'Sharpedo',      src:'../assets/Pokemon/g24/sharpedo.gif',      hd:HD('0319_sharpedo'), flip:false, scale:1.2, emoji:'⚡'},
-    {name:'Mega Sharpedo', src:'../assets/Pokemon/g24/mega-sharpedo.gif', hd:HD('0319_sharpedo'), flip:false, scale:1.4, emoji:'💥'},
+    {name:'Carvanha',      src:PS('carvanha'),      hd:HD('0318_carvanha'), flip:true, scale:0.8, emoji:'🦈'},
+    {name:'Sharpedo',      src:PS('sharpedo'),      hd:HD('0319_sharpedo'), flip:true, scale:1.2, emoji:'⚡'},
+    {name:'Mega Sharpedo', src:PS('sharpedo-mega'), hd:HD('0319_sharpedo'), flip:true, scale:1.4, emoji:'💥'},
   ]},
   { name:'Wailmer', region:2, evo:[
-    {name:'Wailmer', src:'../assets/Pokemon/g24/wailmer.gif', hd:HD('0320_wailmer'), flip:false, scale:0.9, emoji:'🐋'},
-    {name:'Wailord', src:'../assets/Pokemon/g24/wailord.gif', hd:HD('0321_wailord'), flip:false, scale:1.5, emoji:'🌊'},
+    {name:'Wailmer', src:PS('wailmer'), hd:HD('0320_wailmer'), flip:false, scale:0.9, emoji:'🐋'},
+    {name:'Wailord', src:PS('wailord'), hd:HD('0321_wailord'), flip:true,  scale:1.5, emoji:'🌊'},
   ]},
   { name:'Feebas', region:2, evo:[
-    {name:'Feebas',  src:'../assets/Pokemon/g24/feebas.gif',  hd:HD('0349_feebas'),  flip:true, scale:0.7, emoji:'🐟'},
-    {name:'Milotic', src:'../assets/Pokemon/g24/milotic.gif', hd:HD('0350_milotic'), flip:true, scale:1.2, emoji:'🌈'},
+    {name:'Feebas',  src:PS('feebas'),  hd:HD('0349_feebas'),  flip:true, scale:0.7, emoji:'🐟'},
+    {name:'Milotic', src:PS('milotic'), hd:HD('0350_milotic'), flip:true, scale:1.2, emoji:'🌈'},
   ]},
   { name:'Barboach', region:2, evo:[
-    {name:'Barboach', src:'../assets/Pokemon/g24/barboach.gif', hd:HD('0339_barboach'), flip:false, scale:0.7, emoji:'🐍'},
-    {name:'Whiscash', src:'../assets/Pokemon/g24/whiscash.gif', hd:HD('0340_whiscash'), flip:false, scale:1.1, emoji:'🐠'},
+    {name:'Barboach', src:PS('barboach'), hd:HD('0339_barboach'), flip:true, scale:0.7, emoji:'🐍'},
+    {name:'Whiscash', src:PS('whiscash'), hd:HD('0340_whiscash'), flip:true, scale:1.1, emoji:'🐠'},
   ]},
-  { name:'Huntail',   region:2, evo:[{name:'Huntail',   src:'../assets/Pokemon/g24/huntail.gif',   hd:HD('0367_huntail'),   flip:false, scale:1.0, emoji:'🐍'}]},
-  { name:'Gorebyss',  region:2, evo:[{name:'Gorebyss',  src:'../assets/Pokemon/g24/gorebyss.gif',  hd:HD('0368_gorebyss'),  flip:false, scale:1.0, emoji:'💗'}]},
-  { name:'Luvdisc',   region:2, evo:[{name:'Luvdisc',   src:'../assets/Pokemon/g24/luvdisc.gif',   hd:HD('0370_luvdisc'),   flip:true,  scale:0.7, emoji:'💖'}]},
-  { name:'Relicanth', region:2, evo:[{name:'Relicanth', src:'../assets/Pokemon/g24/relicanth.gif', hd:HD('0369_relicanth'), flip:false, scale:1.0, emoji:'🦕'}]},
+  { name:'Huntail',   region:2, evo:[{name:'Huntail',   src:PS('huntail'),   hd:HD('0367_huntail'),   flip:true, scale:1.0, emoji:'🐍'}]},
+  { name:'Gorebyss',  region:2, evo:[{name:'Gorebyss',  src:PS('gorebyss'),  hd:HD('0368_gorebyss'),  flip:true, scale:1.0, emoji:'💗'}]},
+  { name:'Luvdisc',   region:2, evo:[{name:'Luvdisc',   src:PS('luvdisc'),   hd:HD('0370_luvdisc'),   flip:true, scale:0.7, emoji:'💖'}]},
+  { name:'Relicanth', region:2, evo:[{name:'Relicanth', src:PS('relicanth'), hd:HD('0369_relicanth'), flip:true, scale:1.0, emoji:'🦕'}]},
   // ── SINNOH (Region 3) — locked until lv 31 ──
   { name:'Finneon', region:3, evo:[
-    {name:'Finneon',  src:'../assets/Pokemon/g24/finneon.gif',  hd:HD('0456_finneon'),  flip:false, scale:0.7, emoji:'🐟'},
-    {name:'Lumineon', src:'../assets/Pokemon/g24/lumineon.gif', hd:HD('0457_lumineon'), flip:false, scale:1.0, emoji:'✨'},
+    {name:'Finneon',  src:PS('finneon'),  hd:HD('0456_finneon'),  flip:true, scale:0.7, emoji:'🐟'},
+    {name:'Lumineon', src:PS('lumineon'), hd:HD('0457_lumineon'), flip:true, scale:1.0, emoji:'✨'},
   ]},
   { name:'Buizel', region:3, evo:[
-    {name:'Buizel',   src:'../assets/Pokemon/g24/buizel.gif',   hd:HD('0418_buizel'),   flip:false, scale:0.7, emoji:'🦦'},
-    {name:'Floatzel', src:'../assets/Pokemon/g24/floatzel.gif', hd:HD('0419_floatzel'), flip:false, scale:1.1, emoji:'🌊'},
+    {name:'Buizel',   src:PS('buizel'),   hd:HD('0418_buizel'),   flip:true, scale:0.7, emoji:'🦦'},
+    {name:'Floatzel', src:PS('floatzel'), hd:HD('0419_floatzel'), flip:true, scale:1.1, emoji:'🌊'},
   ]},
   { name:'Mantyke', region:3, evo:[
-    {name:'Mantyke',  src:'../assets/Pokemon/g24/mantyke.gif',  hd:HD('0458_mantyke'), flip:false, scale:0.7, emoji:'🐟'},
-    {name:'Mantine',  src:'../assets/Pokemon/g24/mantine.gif',  hd:HD('0226_mantine'), flip:false, scale:1.1, emoji:'🦅'},
+    {name:'Mantyke', src:PS('mantyke'), hd:HD('0458_mantyke'), flip:false, scale:0.7, emoji:'🐟'},
+    {name:'Mantine', src:PS('mantine'), hd:HD('0226_mantine'), flip:false, scale:1.1, emoji:'🦅'},
   ]},
   { name:'Eternatus', region:3, evo:[
-    {name:'Eternatus',          src:'../assets/Pokemon/g24/eternatus.gif', hd:HD('0890_eternatus'), flip:false, scale:1.3, emoji:'🐉'},
-    {name:'Eternamax Eternatus', src:'../assets/Pokemon/g24/eternamax.gif', hd:HD('0890_eternatus'), flip:false, scale:1.7, emoji:'🌌'},
+    {name:'Eternatus',           src:PS('eternatus'),            hd:HD('0890_eternatus'), flip:false, scale:1.3, emoji:'🐉'},
+    {name:'Eternamax Eternatus', src:PS('eternatus-eternamax'),  hd:HD('0890_eternatus'), flip:false, scale:1.7, emoji:'🌌'},
   ]},
 ]
 let selectedPokemon = Math.max(0, Math.min(cfg.pokemon || 0, G24_POKEMON.length - 1))
@@ -547,11 +552,12 @@ function updateSeaweed() {
 // ══════════════════════════════════════════════════════════════
 //  NPC SEA CREATURES — CSS animated, swim right-to-left
 // ══════════════════════════════════════════════════════════════
+const _angler = {img:'../assets/Pokemon/g24/anglerfish.png',sp:0.5,bAmp:6,bFq:0.022,sz:34}
 const NPC_TYPES_BY_REGION = [
-  [{e:'🐠',sp:1.1,bAmp:18,bFq:0.04,sz:22},{e:'🐟',sp:0.85,bAmp:14,bFq:0.05,sz:20},{e:'🦐',sp:0.5,bAmp:10,bFq:0.06,sz:18},{e:'🐡',sp:0.75,bAmp:20,bFq:0.03,sz:22},{e:'🦀',sp:0.35,bAmp:5,bFq:0.08,sz:20}],
-  [{e:'🪼',sp:0.4,bAmp:30,bFq:0.035,sz:28},{e:'🦑',sp:0.7,bAmp:22,bFq:0.05,sz:24},{e:'💫',sp:0.3,bAmp:40,bFq:0.02,sz:20},{e:'🐙',sp:0.55,bAmp:18,bFq:0.04,sz:26}],
-  [{e:'🐡',sp:0.9,bAmp:20,bFq:0.04,sz:24},{e:'🦈',sp:1.4,bAmp:8,bFq:0.025,sz:26},{e:'🐢',sp:0.3,bAmp:6,bFq:0.02,sz:24},{e:'🐠',sp:1.0,bAmp:18,bFq:0.04,sz:20},{e:'🌸',sp:0.2,bAmp:12,bFq:0.05,sz:18}],
-  [{e:'❄️',sp:0.5,bAmp:14,bFq:0.03,sz:20},{e:'🐋',sp:0.8,bAmp:10,bFq:0.02,sz:30},{e:'🦭',sp:0.6,bAmp:16,bFq:0.04,sz:24},{e:'🌊',sp:0.4,bAmp:20,bFq:0.035,sz:22}],
+  [{e:'🐠',sp:1.1,bAmp:18,bFq:0.04,sz:22},{e:'🐟',sp:0.85,bAmp:14,bFq:0.05,sz:20},{e:'🦐',sp:0.5,bAmp:10,bFq:0.06,sz:18},{e:'🐡',sp:0.75,bAmp:20,bFq:0.03,sz:22},{e:'🦀',sp:0.35,bAmp:5,bFq:0.08,sz:20},_angler],
+  [{e:'🪼',sp:0.4,bAmp:30,bFq:0.035,sz:28},{e:'🦑',sp:0.7,bAmp:22,bFq:0.05,sz:24},{e:'💫',sp:0.3,bAmp:40,bFq:0.02,sz:20},{e:'🐙',sp:0.55,bAmp:18,bFq:0.04,sz:26},_angler],
+  [{e:'🐡',sp:0.9,bAmp:20,bFq:0.04,sz:24},{e:'🦈',sp:1.4,bAmp:8,bFq:0.025,sz:26},{e:'🐢',sp:0.3,bAmp:6,bFq:0.02,sz:24},{e:'🐠',sp:1.0,bAmp:18,bFq:0.04,sz:20},{e:'🌸',sp:0.2,bAmp:12,bFq:0.05,sz:18},_angler],
+  [{e:'❄️',sp:0.5,bAmp:14,bFq:0.03,sz:20},{e:'🐋',sp:0.8,bAmp:10,bFq:0.02,sz:30},{e:'🦭',sp:0.6,bAmp:16,bFq:0.04,sz:24},{e:'🌊',sp:0.4,bAmp:20,bFq:0.035,sz:22},_angler],
 ]
 const regionIdx = Math.min(Math.floor((cfg.level-1)/10), 3)
 const NPC_TYPES = NPC_TYPES_BY_REGION[regionIdx]
@@ -561,8 +567,16 @@ function spawnNPC() {
   const t = NPC_TYPES[Math.floor(Math.random()*NPC_TYPES.length)]
   const wrap = document.createElement('div'); wrap.className='sea-npc-wrap'
   const inner = document.createElement('div'); inner.className='sea-npc-inner'
-  inner.textContent = t.e
-  inner.style.cssText = `font-size:${t.sz}px;line-height:1`
+  if (t.img) {
+    const imgEl = document.createElement('img')
+    imgEl.src = t.img
+    imgEl.style.cssText = `width:${t.sz}px;height:auto;display:block;pointer-events:none;mix-blend-mode:multiply;opacity:0.82`
+    imgEl.onerror = () => { inner.textContent='🐟'; inner.style.fontSize=t.sz+'px' }
+    inner.appendChild(imgEl)
+  } else {
+    inner.textContent = t.e
+    inner.style.cssText = `font-size:${t.sz}px;line-height:1`
+  }
   wrap.appendChild(inner)
   const startY = 60 + Math.random()*(FLOOR_Y-130)
   wrap.style.cssText = `position:fixed;z-index:38;pointer-events:none;left:${W+50}px;top:${startY}px`
@@ -686,15 +700,15 @@ function createSwimmer() {
   const initSz = Math.round(SWIMMER_SZ * initPoke.scale)
   swimImg.src = initPoke.src
   const flipPart = initPoke.flip ? ' scaleX(-1)' : ''
-  swimImg.style.cssText = `position:fixed;z-index:40;pointer-events:none;width:min(${initSz}px,${Math.round(initPoke.scale*16)}vw);height:auto;filter:drop-shadow(0 0 10px rgba(0,180,216,0.65));image-rendering:auto;transform:translate(-50%,-50%)${flipPart};`
+  swimImg.style.cssText = `position:fixed;z-index:40;pointer-events:none;width:min(${initSz}px,${Math.round(initPoke.scale*16)}vw);height:auto;max-height:28vh;filter:drop-shadow(0 0 10px rgba(0,180,216,0.65));image-rendering:auto;transform:translate(-50%,-50%)${flipPart};`
   swimImg.onerror = () => {
-    // GIF missing → try HD WebP → emoji last resort
     if (initPoke.hd && swimImg.src !== initPoke.hd) { swimImg.src = initPoke.hd; return }
     const em = initPoke.emoji || '🐟'
     swimImg.outerHTML = `<div id="swimmer-gif" style="position:fixed;z-index:40;pointer-events:none;font-size:${initSz}px;transform:translate(-50%,-50%);filter:drop-shadow(0 0 12px rgba(0,180,216,0.7))">${em}</div>`
     window._swimImg = document.getElementById('swimmer-gif')
   }
   document.body.appendChild(swimImg)
+  if (initPoke.wiggle) swimImg.classList.add('swim-wiggle')
   window._swimImg = swimImg
 
   // Invisible anchor
@@ -1038,6 +1052,7 @@ function applyPokemon(evoStage) {
   const img = document.getElementById('swimmer-gif')
   if (!img) return
   img.src = evo.src
+  img.classList.toggle('swim-wiggle', !!evo.wiggle)
   img.onerror = () => {
     if (evo.hd && img.src !== evo.hd) { img.src = evo.hd; return }
     const em = evo.emoji||'🐟'
@@ -1115,8 +1130,8 @@ function renderBagTabs() {
   const tabDefs = [
     { id:-1, lbl:'🌊 Semua', locked:false },
     { id:0,  lbl:'🏖 Kanto', locked:false },
-    { id:1,  lbl:'🌊 Johto', locked:cfg.level < 11 },
-    { id:2,  lbl:'🌊 Hoenn', locked:cfg.level < 21 },
+    { id:1,  lbl:'🌊 Johto', locked:false },
+    { id:2,  lbl:'🌊 Hoenn', locked:false },
     { id:3,  lbl:'❄️ Sinnoh', locked:cfg.level < 31 },
   ]
   tabDefs.forEach(({id, lbl, locked})=>{
