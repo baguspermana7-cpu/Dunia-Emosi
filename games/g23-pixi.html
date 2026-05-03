@@ -532,24 +532,27 @@ function bgmResume(){ try{document.getElementById('game-bgm').play().catch(()=>{
 function bgmStop(){ try{const b=document.getElementById('game-bgm');b.pause();b.currentTime=0}catch(_){} }
 // Battle BGM (Gym theme — same as G13C)
 let _battleBgmEl = null
+let _battleFadeInterval = null
 function battleBgmPlay(){
+  if(_battleFadeInterval){ clearInterval(_battleFadeInterval); _battleFadeInterval = null }
   if(!_battleBgmEl){
     _battleBgmEl = document.createElement('audio')
     _battleBgmEl.src = '../assets/Pokemon/sound/18 Pokémon Gym（１９９７－１９９８｜Ｍ５７Ｂ） - Satoshi Sakai No Masta - SoundLoadMate.com.mp3'
     _battleBgmEl.loop = true
-    _battleBgmEl.volume = 0.32
     document.body.appendChild(_battleBgmEl)
   }
+  _battleBgmEl.volume = 0.32
   _battleBgmEl.currentTime = 0
   _battleBgmEl.play().catch(()=>{})
 }
 function battleBgmStop(){
   if(!_battleBgmEl || _battleBgmEl.paused) return
+  if(_battleFadeInterval){ clearInterval(_battleFadeInterval); _battleFadeInterval = null }
   let v = _battleBgmEl.volume
-  const fade = setInterval(()=>{
+  _battleFadeInterval = setInterval(()=>{
     v = Math.max(0, v - 0.04)
     _battleBgmEl.volume = v
-    if(v <= 0){ clearInterval(fade); _battleBgmEl.pause(); _battleBgmEl.volume = 0.32 }
+    if(v <= 0){ clearInterval(_battleFadeInterval); _battleFadeInterval = null; _battleBgmEl.pause(); _battleBgmEl.volume = 0.32 }
   }, 40)
 }
 function playTone(freq,dur,type='sine',vol=0.12){
@@ -1627,7 +1630,7 @@ function togglePause(){
 }
 
 function openBag(){
-  if(S.started&&!S.paused){ S.paused=true;S.running=false;document.getElementById('btn-pause').textContent='▶' }
+  if(S.started&&!S.paused){ S.paused=true;S.running=false;document.getElementById('btn-pause').textContent='▶'; bgmPause() }
   const grid=document.getElementById('bag-grid'); grid.innerHTML=''
   G23_POKEMON.forEach((p,i)=>{
     const card=document.createElement('div')
@@ -1645,7 +1648,13 @@ function openBag(){
 }
 function closeBag(){
   document.getElementById('bag-overlay').style.display='none'
-  if(S.pendingQuizGate){ document.getElementById('quiz-panel').classList.add('show'); S.paused=true }
+  if(S.pendingQuizGate){ document.getElementById('quiz-panel').classList.add('show'); S.paused=true; return }
+  // Resume game state if no pending quiz and game is in-flight
+  if(S.started && !S.gameOver){
+    S.paused=false; S.running=true
+    document.getElementById('btn-pause').textContent='⏸'
+    bgmResume()
+  }
 }
 function goBack(){
   S.running=false; bgmStop(); try{ if(app&&app.ticker) app.ticker.stop() }catch(_){} history.back()
@@ -1810,4 +1819,4 @@ function gameLoop(ticker){
 </script>
 </body>
 </html>
-<!-- g23-pixi v20260505b -->
+<!-- g23-pixi v20260505e -->

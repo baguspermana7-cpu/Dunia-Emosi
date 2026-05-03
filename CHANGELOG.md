@@ -71,3 +71,15 @@
 - Fixed: `_applyKodokSlot7Unlock` never triggered because world-map tile uses `openGymGame()` not `openLevelSelect`
 - Added unlock call to `openGymGame()` (G13C tile) and `openRegionOverlay()` (G13B tile)
 - G21 code review fixes: pit overlay diagonal no longer bleeds left; patrol anchor uses `!== undefined` guard
+
+## 2026-05-05 — #130 Deep Code Review Round-2 Fixes (G21/G23/G24/game.js)
+- **HIGH** G23 `battleBgm` fade interval leak — fade handle now stored at module scope, cleared in both `battleBgmPlay` and `battleBgmStop` so concurrent calls do not mute the next battle
+- **HIGH** G24 `showWin` slot-0 fallback key — removed legacy `dunia-0-progress` write that bypassed avatar-keyed scheme; `save-engine.js` is the only path now
+- **MED** G21 pit overlay right-edge bleed — loop bound capped at `w + TILE*2 - 12` so `i+12` vertex stays in overlay (no more bleed into the tile to the right)
+- **MED** G21 Q-block mushroom death animation — added `_g21Vx: 1` so death-anim `scale.x` sign is correct (previously `undefined >= 0` produced mirrored squash)
+- **MED** game.js slot-7 unlock conditions aligned — both `openLevelSelect` and `openRegionOverlay` trigger only on `gameNum === '13b'` (removed dead `'13c'` arm and incorrect `13`/`'13'` arms that fired on G13A)
+- **MED** G24 `_g24HasPendingQuiz` stale `currentCliff` — `goBack()` now nulls `S.currentCliff` to prevent stale-state guard after navigation
+- **MED** G24 anglerfish white-PNG bg — added `mix-blend-mode:multiply` to img-type NPCs (L83 pattern); reset on emoji fallback
+- **MED** G23 `closeBag` BGM resume — `openBag` now calls `bgmPause()`, `closeBag` calls `bgmResume()` and resets pause state when no quiz is pending
+- **LOW** G24 trailing version comment added (`<!-- g24-pixi v20260505e -->`) for cache-bust tracing parity with G23
+- Cache bumps: g21-pixi v=20260505e, g23-pixi v=20260505e, g24-pixi v=20260505e

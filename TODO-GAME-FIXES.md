@@ -2360,3 +2360,15 @@ Neither went through `openLevelSelect` where `_applyKodokSlot7Unlock` was placed
 - [x] Added `_applyKodokSlot7Unlock()` call to `openGymGame()` (G13C path)
 - [x] Added `_applyKodokSlot7Unlock()` call to `openRegionOverlay()` when gameNum is 13b/13
 - [x] Previous `openLevelSelect` call kept as safety net
+
+## #130 — Deep Code Review Round-2 (2026-05-05)
+- [x] HIGH: G23 battleBgm fade interval leak — module-scope handle, clear in play+stop
+- [x] HIGH: G24 showWin slot-0 fallback removed (avoid corrupting avatar-keyed progress)
+- [x] MED: G21 pit overlay right-edge bleed — cap loop bound at `w + TILE*2 - 12`
+- [x] MED: G21 Q-block mushroom death anim — added `_g21Vx:1` for correct scale.x sign
+- [x] MED: game.js slot-7 conditions aligned to `gameNum === '13b'` only (both call sites)
+- [x] MED: G24 goBack() nulls S.currentCliff (clear stale pending-quiz guard)
+- [x] MED: G24 anglerfish mix-blend-mode:multiply applied + reset on emoji fallback
+- [x] MED: G23 openBag/closeBag now bgmPause/bgmResume + restore pause state
+- [x] LOW: G24 trailing version comment added
+- [x] Cache bumps to v=20260505e (g21/g23/g24 + game.js URLs)

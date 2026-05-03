@@ -593,8 +593,9 @@ function spawnNPC() {
   if (t.img) {
     const imgEl = document.createElement('img')
     imgEl.src = t.img
-    imgEl.style.cssText = `width:${t.sz}px;height:auto;display:block;pointer-events:none;opacity:0.88`
-    imgEl.onerror = () => { inner.textContent='🐟'; inner.style.fontSize=t.sz+'px' }
+    // mix-blend-mode:multiply hides white-PNG background on blue ocean backdrop (L83)
+    imgEl.style.cssText = `width:${t.sz}px;height:auto;display:block;pointer-events:none;opacity:0.88;mix-blend-mode:multiply`
+    imgEl.onerror = () => { inner.textContent='🐟'; inner.style.fontSize=t.sz+'px'; inner.style.mixBlendMode='' }
     inner.appendChild(imgEl)
   } else {
     inner.textContent = t.e
@@ -1134,16 +1135,9 @@ function showWin() {
   try { sessionStorage.setItem('g24Result', JSON.stringify({ stars, level:S.level })) } catch(_){}
   if (typeof window.saveLevelProgress==='function') {
     window.saveLevelProgress('g24', S.level, stars)
-  } else {
-    try {
-      const key='dunia-0-progress'
-      const prog=JSON.parse(localStorage.getItem(key)||'{}')
-      if (!prog.g24) prog.g24={ completed:[], stars:{} }
-      if (!prog.g24.completed.includes(S.level)) prog.g24.completed.push(S.level)
-      if ((prog.g24.stars[S.level]||0)<stars) prog.g24.stars[S.level]=stars
-      localStorage.setItem(key,JSON.stringify(prog))
-    } catch(_){}
   }
+  // No fallback: save-engine.js MUST load. Writing slot-0 legacy key bypasses
+  // the avatar-keyed scheme and corrupts progress for the active avatar.
   document.getElementById('status-text').textContent='Level Selesai!'
   sfxCorrect(); setTimeout(()=>sfxCorrect(),200)
   try { if(app&&app.ticker) app.ticker.stop() } catch(_){}
@@ -1343,6 +1337,7 @@ function togglePause() {
 }
 function goBack() {
   clearNPCs()
+  S.currentCliff = null   // prevents stale _g24HasPendingQuiz() guard after navigation
   try { if(app&&app.ticker) app.ticker.stop() } catch(_){}
   history.back()
 }
@@ -1352,3 +1347,4 @@ document.getElementById('level-text').textContent=`Level ${cfg.level}`
 </script>
 </body>
 </html>
+<!-- g24-pixi v20260505e -->

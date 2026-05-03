@@ -1011,8 +1011,10 @@ function loadLevel(lvNum) {
     ov.rect(0, 10*TILE - 4, w, 4 + TILE*2).fill({ color: 0x991b1b, alpha: 0.22 })
     // Top edge danger band — anchored at actual ground tile top
     ov.rect(0, 10*TILE - 6, w, 6).fill({ color: 0xef4444, alpha: 0.90 })
-    // Diagonal hash lines below ground level (start at 24 to avoid negative x)
-    for (let i = 24; i < w + TILE*2; i += 28) {
+    // Diagonal hash lines below ground level. Loop bounds: start at 24 (avoid negative x at left),
+    // cap at w+TILE*2-12 so right vertex (i+12) stays within overlay (avoid right-tile bleed).
+    const _hashMax = w + TILE*2 - 12
+    for (let i = 24; i < _hashMax; i += 28) {
       ov.poly([i, 10*TILE, i+12, 10*TILE, i-12, 10*TILE+TILE*2, i-24, 10*TILE+TILE*2]).fill({ color: 0x7f1d1d, alpha: 0.22 })
     }
     ov.x = startTx * TILE; ov.y = 0
@@ -1716,6 +1718,7 @@ function movePlayer(dx, dy) {
           }
           m.x = c.x + TILE/2; m.y = c.y - 4
           m._g21Bob = 0; m._g21FromBlock = true; m._g21Alive = true
+          m._g21Vx = 1   // unused for collection, but death anim reads sign for scale.x
           world.addChild(m)
           S.mushrooms.push(m)
           sfx('sfx-powerup')

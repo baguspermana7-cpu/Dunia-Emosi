@@ -63,3 +63,27 @@ through it. But the world-map G13C tile calls `openGymGame()` and G13B calls
 `openRegionOverlay()` — neither routes through `openLevelSelect`. Always add unlock
 triggers at the actual entry-point functions that the UI calls, not in a shared utility
 that MIGHT be called. The internal guard (`dunia-kodok-slot7-v3`) makes duplicate calls safe.
+
+## L87 — Audio fade `setInterval` handles MUST be module-scope, not local
+G23 `battleBgmStop` originally created the fade interval as a local `const fade = setInterval(…)`.
+If `battleBgmPlay` was called mid-fade (e.g., second TR encounter triggered before exit anim ended),
+the stale interval kept decrementing the volume on the now-playing element — silencing the second
+battle. Pattern: hoist the handle to module scope (`let _battleFadeInterval = null`), and call
+`clearInterval` + null at the top of BOTH play and stop paths. Applies to any fade/animation interval
+that interacts with media that can be re-triggered.
+
+## L88 — Never write a "fallback" save key that bypasses the active save scheme
+G24 `showWin` had a fallback that wrote to `dunia-0-progress` (legacy slot-0 key) when
+`save-engine.js` was unavailable. Result: if save-engine ever failed to load, the player's
+avatar-keyed progress was silently corrupted by stale slot-0 writes. Rule: if the save engine
+is the canonical path, it MUST load — there is no acceptable fallback. Either remove the
+fallback entirely (let the save fail loudly) or ensure the fallback uses the SAME key resolver
+the engine uses (`pkey()` in this project). Never re-introduce legacy keys "just in case".
+
+## L89 — Pixi `ov.poly` has no implicit clipping at container bounds
+G21 pit overlay's diagonal hash poly used `[i, ..., i-24, i+12, ...]`. With the loop running
+to `i < w + TILE*2`, the right vertex `i+12` exceeded the overlay width by up to 11px and
+rendered into the adjacent tile (no clipping). Pattern: when drawing repeating shapes inside
+a Pixi `Graphics` overlay that should be visually bounded, cap the loop at `bound - maxOffset`
+where `maxOffset` is the largest positive vertex offset, OR explicitly clamp each vertex with
+`Math.min`. Same fix at left: start at the largest negative vertex offset (`i = 24` here).
