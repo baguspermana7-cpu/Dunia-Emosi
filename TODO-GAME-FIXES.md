@@ -2275,3 +2275,27 @@ Local variable `cfg` inside `spawnTypeHitFX` shadowed the module-level `cfg` con
 
 ### ✅ #122-Q: QUESTIONS hard pool expanded (g23-pixi.html)
 Hard pool had 11 questions but TOTAL_QUIZ can reach up to 16 (level 13+), causing recycled questions. Added 5 more hard questions (math + general knowledge), pool now 16 entries.
+
+### ✅ #122-R: getPlayerSlots validates array shape (game.js)
+`JSON.parse` could return non-array (object or null) if localStorage is corrupt. Added `Array.isArray(v)` check — returns fresh `Array(7).fill(null)` if parsed value is not an array.
+
+### ✅ #122-S: trBalloonExit paused=false guarded (g23-pixi.html)
+`S.paused=false` was unconditional after 1800ms exit animation. If game ended or quiz gate triggered during that window, this unset would resume a paused game unexpectedly. Fixed: `if(!S.gameOver&&!S.pendingQuizGate) S.paused=false`.
+
+### ✅ #122-T: Goomba separation no longer mutates other.x (g21-pixi.html)
+Inner separation loop wrote `other.x -= half` while the outer loop was still iterating. Fixed: accumulate `pushX` delta for current goomba only; apply in one write after inner loop. Eliminates asymmetric drift.
+
+### ✅ #122-U: Goal Y tolerance 200→100px (g21-pixi.html)
+`checkGoal()` used ±200px Y tolerance — larger than the player hitbox. Tightened to ±100px so the win zone more accurately matches the flag sprite height.
+
+### ✅ #122-V: TR battle questions exclude runner quiz pool (g23-pixi.html)
+TR battle question pool was independent `pickQ(cfg.level)` — could show the same question already seen in the runner quiz. Fixed: filter out questions with matching `.q` text already in `S.questions`. Falls back to full pool if not enough fresh questions remain.
+
+### ✅ #122-W: aria-label on jump/slide buttons (g23-pixi.html)
+`#jump-btn` and `#slide-btn` were emoji-only without accessible labels. Added `aria-label="Lompat"` and `aria-label="Merosot"`.
+
+### ✅ #122-X: bag-grid max-height 62vh→62dvh (g23-pixi.html)
+`62vh` uses initial viewport height (doesn't account for virtual keyboard). Changed to `62dvh` (dynamic viewport height) which shrinks when keyboard appears on mobile.
+
+### ✅ #122-Y: renderAsset onerror uses data attributes (game.js)
+Inline onerror string used fragile backslash-escaped nested quotes. Any future apostrophe in asset path or emoji would break. Replaced with `data-png`, `data-emoji`, `data-sz` attributes — fallback chain reads from these, eliminating quoting fragility.

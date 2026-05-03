@@ -513,11 +513,13 @@ Object.entries(ASSET_FALLBACK).forEach(([k,v])=>{ if(k.startsWith('img-')&&k.end
 function getAssetEmoji(filename) { return ASSET_FALLBACK[filename] || ASSET_FALLBACK[filename.replace('.webp','.png')] || '❓' }
 function renderAsset(filename, size=80) {
   const emoji = getAssetEmoji(filename)
-  // Always try webp first (transparent, smaller), fallback to png, then emoji
   const stem = filename.replace(/\.(png|webp|jpg|jpeg)$/i,'')
   const webpSrc = `assets/${stem}.webp`
   const pngSrc  = `assets/${stem}.png`
-  return `<img src="${webpSrc}" alt="" style="width:${size}px;height:${size}px;object-fit:contain;" onerror="this.src='${pngSrc}';this.onerror=function(){this.outerHTML='<span style=\\'font-size:${size*0.7}px\\'>${emoji}</span>'}">`
+  // Use data-* attributes for fallback values to avoid inline quote-escaping fragility
+  const ePng   = pngSrc.replace(/"/g,'&quot;')
+  const eEmoji = emoji.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')
+  return `<img src="${webpSrc}" alt="" data-png="${ePng}" data-emoji="${eEmoji}" data-sz="${size}" style="width:${size}px;height:${size}px;object-fit:contain;" onerror="if(this.src!==this.dataset.png){this.src=this.dataset.png}else{this.outerHTML='<span style=\\'font-size:'+(this.dataset.sz*0.7)+'px\\'>'+this.dataset.emoji+'</span>'}">`
 }
 
 // Game 6 word banks
@@ -1664,7 +1666,10 @@ function startGameWithDiff(diff) {
 // ================================================================
 const PLAYER_SLOTS_KEY = 'dunia-players'
 function getPlayerSlots() {
-  try { return JSON.parse(localStorage.getItem(PLAYER_SLOTS_KEY)) || Array(7).fill(null) }
+  try {
+    const v = JSON.parse(localStorage.getItem(PLAYER_SLOTS_KEY))
+    return Array.isArray(v) ? v : Array(7).fill(null)
+  }
   catch(e) { return Array(7).fill(null) }
 }
 function setPlayerSlots(slots) { try { localStorage.setItem(PLAYER_SLOTS_KEY, JSON.stringify(slots)) } catch(e){} }

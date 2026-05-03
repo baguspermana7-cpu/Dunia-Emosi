@@ -610,7 +610,7 @@ async function loadAssets() {
 
   // Pixi 8: Assets API
   const baseUrl = '../assets/mario-pokemon/sprites/'
-  const _v = '?v=20260503k'
+  const _v = '?v=20260503l'
   const manifest = {
     // Pikachu overlays (DOM <img> but loaded so browser pre-caches)
     pikachu_small: baseUrl + 'pikachu-small-cropped.png' + _v,
@@ -1763,17 +1763,17 @@ function updateGoombas() {
       }
     }
     if (!hasGroundAhead || wallAhead) g._g21Vx *= -1
-    // Goomba-goomba separation — position nudge only (no velocity override)
+    // Goomba-goomba separation — each goomba nudges only itself (no other.x mutation)
+    let pushX = 0
     for (const other of S.goombas) {
       if (other === g || !other._g21Alive) continue
       const dx = g.x - other.x
       if (Math.abs(dx) < TILE * 0.7 && Math.abs(g.y - other.y) < TILE) {
         const half = (TILE * 0.7 - Math.abs(dx)) / 2
-        const sign = dx > 0 ? 1 : -1
-        g.x += half * sign
-        other.x -= half * sign
+        pushX += dx > 0 ? half : -half
       }
     }
+    if (pushX !== 0) g.x += pushX
     // Player collision
     if (collides(g, S, 28, 70)) onGoombaCollide(g)
   }
@@ -1897,7 +1897,7 @@ function checkSpikes() {
 
 function checkGoal() {
   if (!S._goalFlag) return
-  if (Math.abs(S._goalFlag.x - S.x) < 50 && Math.abs(S._goalFlag.y - S.y) < 200) onWin()
+  if (Math.abs(S._goalFlag.x - S.x) < 50 && Math.abs(S._goalFlag.y - S.y) < 100) onWin()
 }
 
 function collides(a, player, aw, ph, looseY) {

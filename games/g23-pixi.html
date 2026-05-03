@@ -243,12 +243,12 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 
 <div id="bag-overlay">
   <div style="font-size:24px;font-weight:900;color:#fbbf24">🎒 Pilih Pokemon</div>
-  <div id="bag-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px;width:90%;max-width:440px;max-height:62vh;overflow-y:auto;padding:10px"></div>
+  <div id="bag-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px;width:90%;max-width:440px;max-height:62dvh;overflow-y:auto;padding:10px"></div>
   <button onclick="closeBag()" style="padding:10px 24px;border-radius:14px;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#e9d5ff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Tutup</button>
 </div>
 
-<button id="jump-btn" onclick="handleJump()">⬆</button>
-<button id="slide-btn" onclick="handleSlide()">⬇</button>
+<button id="jump-btn" aria-label="Lompat" onclick="handleJump()">⬆</button>
+<button id="slide-btn" aria-label="Merosot" onclick="handleSlide()">⬇</button>
 
 <script src="../shared/rz-responsive.js?v=20260422i"></script>
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
@@ -1128,7 +1128,7 @@ function engageTRBattle(){
     attacksDone:0,   // player attacks done this set-of-2
     trPoke, trainer, playerPoke,
     qIdx:0, answered:false,
-    questions: pickQ(cfg.level),
+    questions: (()=>{ const used=new Set((S.questions||[]).map(q=>q.q)); const fresh=pickQ(cfg.level).filter(q=>!used.has(q.q)); return fresh.length>=4?fresh:pickQ(cfg.level) })(),
   }
   // Build UI
   document.getElementById('tr-battle-bg').style.backgroundImage=`url('${gymBg}')`
@@ -1343,7 +1343,7 @@ function trBalloonExit(){
     S.trEncounterTriggerDist=S.distance+spacing
     // Safety guard — should not reach here at 0 lives (trLose handles it), but just in case
     if(S.lives<=0){ showLose(); return }
-    S.paused=false
+    if(!S.gameOver&&!S.pendingQuizGate) S.paused=false
     updateHUD()
   }, 1800)
 }
