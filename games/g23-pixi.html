@@ -270,24 +270,29 @@ document.getElementById('quiz-total').textContent  = Math.min(8 + Math.floor((cf
 // ═══════════════════════════════════════════════════════════
 //  POKEMON ROSTER
 // ═══════════════════════════════════════════════════════════
+const PS = n => `https://play.pokemonshowdown.com/sprites/ani/${n}.gif`
+const HD_DB = n => `https://img.pokemondb.net/sprites/home/normal/${n}.png`
 const G23_POKEMON = [
-  { name:'Arcanine',  src:'../assets/Pokemon/g23/arcanine.webp',  type:'fire',     moves:[{name:'Flamethrower',type:'fire'},{name:'Extreme Speed',type:'normal'},{name:'Crunch',type:'dark'},{name:'Flare Blitz',type:'fire'}] },
-  { name:'Lycanroc',  src:'../assets/Pokemon/g23/lycanroc.webp',  type:'rock',     moves:[{name:'Stone Edge',type:'rock'},{name:'Crunch',type:'dark'},{name:'Accelerock',type:'rock'},{name:'Iron Head',type:'steel'}] },
-  { name:'Cinderace', src:'../assets/Pokemon/g23/cinderace.webp', type:'fire',     moves:[{name:'Pyro Ball',type:'fire'},{name:'High Jump Kick',type:'fighting'},{name:'Sucker Punch',type:'dark'},{name:'Gunk Shot',type:'poison'}] },
-  { name:'Eevee',     src:'../assets/Pokemon/g23/eevee.webp',     type:'normal',   moves:[{name:'Quick Attack',type:'normal'},{name:'Bite',type:'dark'},{name:'Swift',type:'normal'},{name:'Last Resort',type:'normal'}] },
-  { name:'Pichu',     src:'../assets/Pokemon/g23/pichu.webp',     type:'electric', moves:[{name:'Thunder Shock',type:'electric'},{name:'Charm',type:'fairy'},{name:'Sweet Kiss',type:'fairy'},{name:'Thunder Wave',type:'electric'}] },
-  { name:'Umbreon',   src:'../assets/Pokemon/g23/umbreon.webp',   type:'dark',     moves:[{name:'Dark Pulse',type:'dark'},{name:'Moonlight',type:'fairy'},{name:'Foul Play',type:'dark'},{name:'Shadow Ball',type:'ghost'}] },
-  { name:'Raichu',    src:'../assets/Pokemon/g23/raichu.webp',    type:'electric', moves:[{name:'Thunderbolt',type:'electric'},{name:'Psychic',type:'psychic'},{name:'Volt Tackle',type:'electric'},{name:'Iron Tail',type:'steel'}] },
-  { name:'Sandshrew', src:'../assets/Pokemon/g23/sandshrew.webp', type:'ground',   moves:[{name:'Earthquake',type:'ground'},{name:'Slash',type:'normal'},{name:'Rock Slide',type:'rock'},{name:'Poison Jab',type:'poison'}] },
-  { name:'Mudkip',    src:'../assets/Pokemon/g23/mudkip.webp',    type:'water',    moves:[{name:'Water Gun',type:'water'},{name:'Mud Slap',type:'ground'},{name:'Tackle',type:'normal'},{name:'Whirlpool',type:'water'}] },
-  { name:'Pikachu',   src:'../assets/Pokemon/g23/pikachu.webp',   type:'electric', moves:[{name:'Thunderbolt',type:'electric'},{name:'Quick Attack',type:'normal'},{name:'Iron Tail',type:'steel'},{name:'Thunder',type:'electric'}] },
-  { name:'Jolteon',   src:'../assets/Pokemon/g23/jolteon.webp',   type:'electric', moves:[{name:'Thunderbolt',type:'electric'},{name:'Pin Missile',type:'bug'},{name:'Shadow Ball',type:'ghost'},{name:'Thunder',type:'electric'}] },
-  { name:'Emolga',    src:'../assets/Pokemon/g23/emolga.webp',    type:'electric', moves:[{name:'Thunderbolt',type:'electric'},{name:'Aerial Ace',type:'flying'},{name:'Quick Attack',type:'normal'},{name:'Acrobatics',type:'flying'}] },
-  { name:'Furret',    src:'../assets/Pokemon/g23/furret.webp',    type:'normal',   moves:[{name:'Quick Attack',type:'normal'},{name:'Slash',type:'normal'},{name:'U-turn',type:'bug'},{name:'Sucker Punch',type:'dark'}] },
-  { name:'Psyduck',   src:'../assets/Pokemon/g23/psyduck.webp',   type:'water',    moves:[{name:'Water Pulse',type:'water'},{name:'Confusion',type:'psychic'},{name:'Disable',type:'normal'},{name:'Scratch',type:'normal'}] },
-  { name:'Chespin',   src:'../assets/Pokemon/g23/chespin.png',    type:'grass',    moves:[{name:'Vine Whip',type:'grass'},{name:'Rollout',type:'rock'},{name:'Bite',type:'dark'},{name:'Seed Bomb',type:'grass'}] },
-  { name:'Lucario',   src:'../assets/Pokemon/g23/lucario.png',    type:'fighting', moves:[{name:'Aura Sphere',type:'fighting'},{name:'Close Combat',type:'fighting'},{name:'Dragon Pulse',type:'dragon'},{name:'Bullet Punch',type:'steel'}] },
+  { name:'Arcanine',  gif:PS('arcanine'),  hd:HD_DB('arcanine'),  type:'fire',     moves:[{name:'Flamethrower',type:'fire'},{name:'Extreme Speed',type:'normal'},{name:'Crunch',type:'dark'},{name:'Flare Blitz',type:'fire'}] },
+  { name:'Lycanroc',  gif:PS('lycanroc-midday'), hd:HD_DB('lycanroc-midday'), type:'rock', moves:[{name:'Stone Edge',type:'rock'},{name:'Crunch',type:'dark'},{name:'Accelerock',type:'rock'},{name:'Iron Head',type:'steel'}] },
+  { name:'Cinderace', gif:PS('cinderace'), hd:HD_DB('cinderace'), type:'fire',     moves:[{name:'Pyro Ball',type:'fire'},{name:'High Jump Kick',type:'fighting'},{name:'Sucker Punch',type:'dark'},{name:'Gunk Shot',type:'poison'}] },
+  { name:'Eevee',     gif:PS('eevee'),     hd:HD_DB('eevee'),     type:'normal',   moves:[{name:'Quick Attack',type:'normal'},{name:'Bite',type:'dark'},{name:'Swift',type:'normal'},{name:'Last Resort',type:'normal'}] },
+  { name:'Pichu', evo:[
+    {name:'Pichu',   gif:PS('pichu'),   hd:HD_DB('pichu')},
+    {name:'Pikachu', gif:PS('pikachu'), hd:HD_DB('pikachu')},
+    {name:'Raichu',  gif:PS('raichu'),  hd:HD_DB('raichu')},
+  ], type:'electric', moves:[{name:'Thunder Shock',type:'electric'},{name:'Charm',type:'fairy'},{name:'Quick Attack',type:'normal'},{name:'Thunderbolt',type:'electric'}] },
+  { name:'Umbreon',   gif:PS('umbreon'),   hd:HD_DB('umbreon'),   type:'dark',     moves:[{name:'Dark Pulse',type:'dark'},{name:'Moonlight',type:'fairy'},{name:'Foul Play',type:'dark'},{name:'Shadow Ball',type:'ghost'}] },
+  { name:'Sandshrew', gif:PS('sandshrew'), hd:HD_DB('sandshrew'), type:'ground',   moves:[{name:'Earthquake',type:'ground'},{name:'Slash',type:'normal'},{name:'Rock Slide',type:'rock'},{name:'Poison Jab',type:'poison'}] },
+  { name:'Mudkip',    gif:PS('mudkip'),    hd:HD_DB('mudkip'),    type:'water',    moves:[{name:'Water Gun',type:'water'},{name:'Mud Slap',type:'ground'},{name:'Tackle',type:'normal'},{name:'Whirlpool',type:'water'}] },
+  { name:'Jolteon',   gif:PS('jolteon'),   hd:HD_DB('jolteon'),   type:'electric', moves:[{name:'Thunderbolt',type:'electric'},{name:'Pin Missile',type:'bug'},{name:'Shadow Ball',type:'ghost'},{name:'Thunder',type:'electric'}] },
+  { name:'Emolga',    gif:PS('emolga'),    hd:HD_DB('emolga'),    type:'electric', moves:[{name:'Thunderbolt',type:'electric'},{name:'Aerial Ace',type:'flying'},{name:'Quick Attack',type:'normal'},{name:'Acrobatics',type:'flying'}] },
+  { name:'Furret',    gif:PS('furret'),    hd:HD_DB('furret'),    type:'normal',   moves:[{name:'Quick Attack',type:'normal'},{name:'Slash',type:'normal'},{name:'U-turn',type:'bug'},{name:'Sucker Punch',type:'dark'}] },
+  { name:'Psyduck',   gif:PS('psyduck'),   hd:HD_DB('psyduck'),   type:'water',    moves:[{name:'Water Pulse',type:'water'},{name:'Confusion',type:'psychic'},{name:'Disable',type:'normal'},{name:'Scratch',type:'normal'}] },
+  { name:'Chespin',   gif:PS('chespin'),   hd:HD_DB('chespin'),   type:'grass',    moves:[{name:'Vine Whip',type:'grass'},{name:'Rollout',type:'rock'},{name:'Bite',type:'dark'},{name:'Seed Bomb',type:'grass'}] },
+  { name:'Lucario',   gif:PS('lucario'),   hd:HD_DB('lucario'),   type:'fighting', moves:[{name:'Aura Sphere',type:'fighting'},{name:'Close Combat',type:'fighting'},{name:'Dragon Pulse',type:'dragon'},{name:'Bullet Punch',type:'steel'}] },
 ]
+let _g23EvolveTrigger = false
 let selectedPokemon = Math.max(0, Math.min(cfg.pokemon || 0, G23_POKEMON.length - 1))
 
 // ── Team Rocket Pokemon pool ──
@@ -346,6 +351,11 @@ function spawnProjectile(fromEl, toEl, type, cb){
   const sx=fr.left+fr.width/2, sy=fr.top+fr.height/2
   const ex=tr.left+tr.width/2, ey=tr.top+tr.height/2
   const emoji=(TYPE_PROJ[type]||TYPE_PROJ.normal).emoji
+  // Launch SFX
+  ensureAudio()
+  const sfxFreqs={fire:700,water:450,electric:1100,grass:550,psychic:900,ghost:380,ice:650,dragon:280,dark:250,fighting:400,rock:380,poison:700,ground:320,bug:600,steel:500,normal:480,flying:650,fairy:800}
+  const freq=sfxFreqs[type]||500
+  playTone(freq,80,'sine',0.1); setTimeout(()=>playTone(freq*1.2,60,'sine',0.08),50)
   const proj=document.createElement('div')
   proj.className='type-proj'; proj.textContent=emoji
   proj.style.left=sx+'px'; proj.style.top=sy+'px'
@@ -362,7 +372,7 @@ function spawnProjectile(fromEl, toEl, type, cb){
   }
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
     proj.style.left=ex+'px'; proj.style.top=ey+'px'; proj.style.transform='translate(-50%,-50%) scale(1.4)'
-    setTimeout(()=>{ proj.style.opacity='0'; setTimeout(()=>{ proj.remove(); if(cb) cb() },120) },300)
+    setTimeout(()=>{ proj.style.opacity='0'; playTone(freq*0.7,100,'sawtooth',0.09); setTimeout(()=>{ proj.remove(); if(cb) cb() },120) },300)
   }))
 }
 function spawnTypeHitFX(targetEl, type){
@@ -489,7 +499,7 @@ const MAX_FALL      = 16
 const PLAYER_H      = 110
 const PLAYER_W      = 132
 const SLIDE_H       = 52   // effective hitbox height while sliding
-const HIT_MARGIN    = 16
+const HIT_MARGIN    = 20
 const TOTAL_QUIZ    = Math.min(8 + Math.floor((cfg.level-1) * 0.6), 16)
 const TR_ENCOUNTERS = cfg.level >= 3 ? 2 : 1   // 1 encounter L1-2, 2 encounters L3+
 
@@ -520,6 +530,28 @@ function bgmStart(){ try{ const b=document.getElementById('game-bgm'); b.src=cfg
 function bgmPause(){ try{document.getElementById('game-bgm').pause()}catch(_){} }
 function bgmResume(){ try{document.getElementById('game-bgm').play().catch(()=>{})}catch(_){} }
 function bgmStop(){ try{const b=document.getElementById('game-bgm');b.pause();b.currentTime=0}catch(_){} }
+// Battle BGM (Gym theme — same as G13C)
+let _battleBgmEl = null
+function battleBgmPlay(){
+  if(!_battleBgmEl){
+    _battleBgmEl = document.createElement('audio')
+    _battleBgmEl.src = '../assets/Pokemon/sound/18 Pokémon Gym（１９９７－１９９８｜Ｍ５７Ｂ） - Satoshi Sakai No Masta - SoundLoadMate.com.mp3'
+    _battleBgmEl.loop = true
+    _battleBgmEl.volume = 0.32
+    document.body.appendChild(_battleBgmEl)
+  }
+  _battleBgmEl.currentTime = 0
+  _battleBgmEl.play().catch(()=>{})
+}
+function battleBgmStop(){
+  if(!_battleBgmEl || _battleBgmEl.paused) return
+  let v = _battleBgmEl.volume
+  const fade = setInterval(()=>{
+    v = Math.max(0, v - 0.04)
+    _battleBgmEl.volume = v
+    if(v <= 0){ clearInterval(fade); _battleBgmEl.pause(); _battleBgmEl.volume = 0.32 }
+  }, 40)
+}
 function playTone(freq,dur,type='sine',vol=0.12){
   if(!audioCtx) return
   const o=audioCtx.createOscillator(),g=audioCtx.createGain()
@@ -542,7 +574,7 @@ function sfxDanger(){ playTone(280,200,'sawtooth',0.1);setTimeout(()=>playTone(2
 const S = {
   running:false, paused:false, gameOver:false, started:false,
   level:cfg.level, lives:3,
-  score:0, distance:0,
+  score:0, distance:0, evoStage:0, evolveTriggered:false,
   correctAnswers:0, wrongAnswers:0, quizDone:0,
   frame:0,
   playerVY:0, playerY:0, jumpCount:0, isGrounded:true, isSliding:false, slideTimer:0,
@@ -644,7 +676,8 @@ function _getPlayerImg(){ return _playerImgEl || (_playerImgEl = document.getEle
 function setupPlayerImg(){
   const img=_getPlayerImg()
   const p=G23_POKEMON[selectedPokemon]
-  img.src=p.src; img.onerror=()=>{ img.src=`https://img.pokemondb.net/sprites/home/normal/${p.name.toLowerCase().replace(' ','-')}.png`; img.onerror=null }
+  const gifSrc = p.evo ? p.evo[S.evoStage||0].gif : p.gif
+  img.src=gifSrc; img.onerror=()=>{ img.src=p.evo ? p.evo[S.evoStage||0].hd : p.hd; img.onerror=null }
   img.style.width=PLAYER_W+'px'; img.style.height=PLAYER_H+'px'
   img.style.display='block'; img.style.filter='drop-shadow(0 4px 8px rgba(0,0,0,0.4))'
   syncPlayerPos()
@@ -661,8 +694,13 @@ function syncPlayerPos(){
 function applyPokemon(idx){
   selectedPokemon=Math.max(0,Math.min(idx,G23_POKEMON.length-1))
   const p=G23_POKEMON[selectedPokemon]
+  S.evoStage=0; _g23EvolveTrigger=false
+  cfg.pokemon=selectedPokemon
+  try{ sessionStorage.setItem('g23Config',JSON.stringify(cfg)) }catch(_){}
+  const gifSrc = p.evo ? p.evo[0].gif : p.gif
   const img=_getPlayerImg()
-  img.src=p.src; img.onerror=()=>{ img.src=`https://img.pokemondb.net/sprites/home/normal/${p.name.toLowerCase().replace(' ','-')}.png`; img.onerror=null }
+  img.src=gifSrc; img.onerror=()=>{ img.src=p.evo ? p.evo[0].hd : p.hd; img.onerror=null }
+  img.style.display='block'
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -673,20 +711,20 @@ function drawObstGfx(type){
   if(type==='box'){
     g.ellipse(0,2,30,6).fill({color:0,alpha:0.22})  // ground shadow
     // Outer glow outline
-    g.roundRect(-29,-55,58,58,6).stroke({color:0xFF4444,width:3,alpha:0.55})
+    g.roundRect(-29,-55,58,58,6).stroke({color:0xFF4444,width:3,alpha:0.9})
     g.roundRect(-26,-52,52,52,4).fill(0x8B4513)
     g.roundRect(-26,-52,52,6,4).fill(0xA0522D)
-    g.roundRect(-22,-44,22,20,3).fill({color:0x6B3410,alpha:0.5})
-    g.roundRect(-26,-52,52,52,4).stroke({color:0xFF8080,width:2,alpha:0.7})
+    g.roundRect(-22,-44,22,20,3).fill({color:0x6B3410,alpha:0.85})
+    g.roundRect(-26,-52,52,52,4).stroke({color:0xFF8080,width:2,alpha:0.95})
   } else if(type==='spike'){
     g.ellipse(0,2,32,6).fill({color:0,alpha:0.22})
-    g.poly([0,-46, 34,4, -34,4]).stroke({color:0xFF00FF,width:3,alpha:0.5})
+    g.poly([0,-46, 34,4, -34,4]).stroke({color:0xFF00FF,width:3,alpha:0.9})
     g.poly([0,-42, 30,0, -30,0]).fill(0x7C3AED)
-    g.poly([0,-42, 15,0, -15,0]).fill({color:0xA78BFA,alpha:0.5})
+    g.poly([0,-42, 15,0, -15,0]).fill({color:0xA78BFA,alpha:0.8})
     g.poly([0,-42, 30,0, -30,0]).stroke({color:0xC084FC,width:2,alpha:0.8})
   } else if(type==='bush'){
     g.ellipse(0,2,38,7).fill({color:0,alpha:0.2})
-    g.ellipse(0,-26,40,30).stroke({color:0xFF4444,width:3,alpha:0.45})
+    g.ellipse(0,-26,40,30).stroke({color:0xFF4444,width:3,alpha:0.9})
     g.ellipse(0,-26,36,26).fill(0x15803D)
     g.ellipse(-18,-34,24,20).fill(0x22C55E)
     g.ellipse(18,-34,24,20).fill(0x22C55E)
@@ -694,24 +732,24 @@ function drawObstGfx(type){
     g.ellipse(0,-26,36,26).stroke({color:0x86EFAC,width:2,alpha:0.6})
   } else if(type==='rock'){
     g.ellipse(0,2,30,6).fill({color:0,alpha:0.22})
-    g.ellipse(0,-26,32,30).stroke({color:0xFF4444,width:3,alpha:0.45})
+    g.ellipse(0,-26,32,30).stroke({color:0xFF4444,width:3,alpha:0.9})
     g.ellipse(0,-26,28,26).fill(0x6B7280)
-    g.ellipse(-8,-32,10,10).fill({color:0xffffff,alpha:0.15})
-    g.ellipse(0,-26,28,26).stroke({color:0xD1D5DB,width:2,alpha:0.7})
+    g.ellipse(-8,-32,10,10).fill({color:0xffffff,alpha:0.35})
+    g.ellipse(0,-26,28,26).stroke({color:0xD1D5DB,width:2,alpha:0.95})
   } else if(type==='tall'){
     g.ellipse(0,2,30,6).fill({color:0,alpha:0.22})
-    g.roundRect(-29,-93,58,93,6).stroke({color:0xFF4444,width:3,alpha:0.55})
+    g.roundRect(-29,-93,58,93,6).stroke({color:0xFF4444,width:3,alpha:0.9})
     g.roundRect(-26,-90,52,90,4).fill(0x8B4513)
     g.roundRect(-26,-90,52,6,4).fill(0xA0522D)
-    g.roundRect(-26,-45,52,1.5,0).fill({color:0x5C2E00,alpha:0.4})
-    g.roundRect(-26,-90,52,90,4).stroke({color:0xFF8080,width:2,alpha:0.7})
+    g.roundRect(-26,-45,52,1.5,0).fill({color:0x5C2E00,alpha:0.75})
+    g.roundRect(-26,-90,52,90,4).stroke({color:0xFF8080,width:2,alpha:0.95})
   } else if(type==='double'){
     g.ellipse(0,2,56,7).fill({color:0,alpha:0.22})
     for(const dx of [-28,28]){
-      g.roundRect(dx-25,-55,50,58,6).stroke({color:0xFF4444,width:3,alpha:0.55})
+      g.roundRect(dx-25,-55,50,58,6).stroke({color:0xFF4444,width:3,alpha:0.9})
       g.roundRect(dx-22,-52,44,52,4).fill(0x8B4513)
       g.roundRect(dx-22,-52,44,6,4).fill(0xA0522D)
-      g.roundRect(dx-22,-52,44,52,4).stroke({color:0xFF8080,width:2,alpha:0.7})
+      g.roundRect(dx-22,-52,44,52,4).stroke({color:0xFF8080,width:2,alpha:0.95})
     }
   } else if(type==='mid-bar'){
     // Floating electric pipe — must slide under (spans y=0 to y=-50, gfx.y = GROUND_Y-55)
@@ -721,17 +759,17 @@ function drawObstGfx(type){
     g.circle(-45,-25,13).fill(0x38BDF8); g.circle(45,-25,13).fill(0x38BDF8)
     g.circle(-45,-25,7).fill(0xBAE6FD);  g.circle(45,-25,7).fill(0xBAE6FD)
     // Warning stripes
-    for(let i=-36;i<36;i+=18){ g.rect(i,-50,9,50).fill({color:0xFBBF24,alpha:0.12}) }
+    for(let i=-36;i<36;i+=18){ g.rect(i,-50,9,50).fill({color:0xFBBF24,alpha:0.22}) }
     g.roundRect(-45,-50,90,50,6).stroke({color:0x38BDF8,width:2,alpha:0.8})
     // "DUCK" label
     const dt=new PIXI.Text({text:'⬇ DUCK',style:{fontSize:10,fontWeight:'900',fill:0xBAE6FD}})
     dt.anchor.set(0.5); dt.x=0; dt.y=-25; g.addChild(dt)
   } else if(type==='mid-rock'){
     // Floating boulder — must slide under
-    g.ellipse(0,-26,42,32).stroke({color:0x38BDF8,width:3,alpha:0.55})
+    g.ellipse(0,-26,42,32).stroke({color:0x38BDF8,width:3,alpha:0.9})
     g.ellipse(0,-26,38,28).fill(0x44403C)
-    g.ellipse(-12,-33,14,11).fill({color:0xffffff,alpha:0.18})
-    g.ellipse(0,-26,38,28).stroke({color:0x78716C,width:2,alpha:0.7})
+    g.ellipse(-12,-33,14,11).fill({color:0xffffff,alpha:0.35})
+    g.ellipse(0,-26,38,28).stroke({color:0x78716C,width:2,alpha:0.95})
     // Float shadow
     g.ellipse(0,6,32,6).fill({color:0,alpha:0.22})
     const rt=new PIXI.Text({text:'⬇',style:{fontSize:14,fill:0xBAE6FD}})
@@ -891,6 +929,14 @@ function updateAura(){
   auraGfx.ellipse(PLAYER_X + jumpX, GROUND_Y + 3, shadowRx, 7).fill({color:0x000000, alpha:shadowAlpha + 0.1})
   auraGfx.ellipse(PLAYER_X + jumpX, GROUND_Y + 3, shadowRx, 7).stroke({width:1.5, color:0xffffff, alpha:shadowAlpha * 0.65})
 
+  // ── Hitbox circle indicator (always visible) ──
+  const _hbR = PLAYER_W / 2 - HIT_MARGIN   // ~46px — matches AABB half-width
+  const _hbCy = S.playerY - (PLAYER_H - HIT_MARGIN) * 0.5 - 3  // center of hitbox vertically
+  const _hbAlpha = S.invincible > 0 ? 0.0 : 0.32  // hide during invincibility frames
+  if(_hbAlpha > 0){
+    auraGfx.circle(PLAYER_X, _hbCy, _hbR).stroke({color:0xffffff, width:1.5, alpha:_hbAlpha})
+  }
+
   const pu=S.activepu; if(!pu) return
   const cx=PLAYER_X, cy=S.playerY-PLAYER_H*.5
 
@@ -1008,10 +1054,62 @@ function checkCollisions(){
       S.shieldHits--; destroyObs(obs,false)
       burst(PLAYER_X,S.playerY-PLAYER_H*.5,0x22C55E,12); flashScreen('#22c55e'); S.invincible=40
       if(!S.shieldHits) clearAura()
-    } else { hitPlayer(obs) }
+    } else { triggerObstacleQuiz(obs) }
     break
   }
 }
+function triggerObstacleQuiz(obs){
+  obs.hit=true; S.invincible=90; S.paused=true
+  sfxHit(); flashScreen('#ef4444')
+  burst(PLAYER_X,S.playerY-PLAYER_H*.6,0xEF4444,22)
+  burst(PLAYER_X,S.playerY-PLAYER_H*.6,0xFCA5A5,10)
+  spawnFT('💥',PLAYER_X,S.playerY-PLAYER_H,0xEF4444)
+  const canvas=document.getElementById('pixi-canvas')
+  canvas.classList.remove('hit-shake'); void canvas.offsetWidth
+  canvas.classList.add('hit-shake')
+  setTimeout(()=>canvas.classList.remove('hit-shake'),450)
+  showObstacleQuiz(obs)
+}
+
+function showObstacleQuiz(obs){
+  const q=S.questions[S.qIdx%S.questions.length]; S.qIdx++
+  document.getElementById('quiz-question').textContent=q.q
+  const choicesEl=document.getElementById('quiz-choices'); choicesEl.innerHTML=''
+  const choices=shuffle([q.ans,...q.wrong])
+  let answered=false
+  choices.forEach(c=>{
+    const btn=document.createElement('button'); btn.className='choice-btn'; btn.textContent=c
+    btn.onclick=()=>{
+      if(answered) return; answered=true
+      if(c===q.ans){
+        btn.classList.add('correct'); sfxCorrect(); S.correctAnswers++; S.score+=5
+        setTimeout(()=>{
+          document.getElementById('quiz-panel').classList.remove('show')
+          ;['jump-btn','slide-btn'].forEach(id=>{const b=document.getElementById(id);if(b)b.style.display=''})
+          destroyObs(obs,false)
+          spawnFT('Benar! +5',PLAYER_X,S.playerY-PLAYER_H-20,0x4ade80)
+          S.paused=false; updateHUD()
+        },550)
+      } else {
+        btn.classList.add('wrong'); sfxWrong(); S.wrongAnswers++; S.lives--
+        choicesEl.querySelectorAll('.choice-btn').forEach(b=>{ if(b.textContent===q.ans) b.classList.add('correct') })
+        setTimeout(()=>{
+          document.getElementById('quiz-panel').classList.remove('show')
+          ;['jump-btn','slide-btn'].forEach(id=>{const b=document.getElementById(id);if(b)b.style.display=''})
+          destroyObs(obs,false)
+          spawnFT('Salah! -❤️',PLAYER_X,S.playerY-PLAYER_H-20,0xEF4444)
+          S.paused=false; S.invincible=90; updateHUD()
+          if(S.lives<=0){ setTimeout(()=>showLose(),200); return }
+        },1100)
+      }
+    }
+    choicesEl.appendChild(btn)
+  })
+  document.getElementById('quiz-panel').classList.add('show')
+  ;['jump-btn','slide-btn'].forEach(id=>{const b=document.getElementById(id);if(b)b.style.display='none'})
+  document.getElementById('status-text').textContent='Jawab Soal!'
+}
+
 function hitPlayer(obs){
   obs.hit=true; S.lives--; S.invincible=90; sfxHit()
   flashScreen('#ef4444')
@@ -1128,6 +1226,7 @@ function engageTRBattle(){
   S.trState='battle'
   S.paused=true
   bgmPause()
+  battleBgmPlay()
   // Pick random TR Pokemon + trainer
   const trPoke=TR_POKEMON[Math.floor(Math.random()*TR_POKEMON.length)]
   const trainer=TR_TRAINERS[Math.floor(Math.random()*TR_TRAINERS.length)]
@@ -1322,13 +1421,20 @@ function trLose(){
 
 function closeTRBattle(){
   const battle=document.getElementById('tr-battle')
-  battle.classList.remove('open')
-  document.getElementById('tr-move-wrap').classList.remove('show')
-  document.getElementById('tr-quiz-wrap').style.display=''
-  setTimeout(()=>{ battle.style.display='none' }, 520)
-  ;['jump-btn','slide-btn'].forEach(id=>{const b=document.getElementById(id);if(b)b.style.display=''})
-  S.trBattle=null
-  if(!S.gameOver) bgmResume()
+  // Flash before sliding out
+  const f=document.getElementById('flash')
+  f.style.background='#ffffff'; f.style.opacity='0.5'
+  setTimeout(()=>{ f.style.opacity='0' }, 100)
+  setTimeout(()=>{
+    battle.classList.remove('open')
+    document.getElementById('tr-move-wrap').classList.remove('show')
+    document.getElementById('tr-quiz-wrap').style.display=''
+    setTimeout(()=>{ battle.style.display='none' }, 600)
+    ;['jump-btn','slide-btn'].forEach(id=>{const b=document.getElementById(id);if(b)b.style.display=''})
+    S.trBattle=null
+    battleBgmStop()
+    if(!S.gameOver) bgmResume()
+  }, 120)
 }
 
 function trBalloonExit(){
@@ -1416,7 +1522,7 @@ function updateHUD(){
   document.getElementById('hud-lives').textContent='❤️'.repeat(Math.max(0,S.lives))+'🖤'.repeat(Math.max(0,3-S.lives))
   document.getElementById('score-display').textContent=Math.floor(S.distance)+'m'
   document.getElementById('quiz-progress').firstChild.textContent='✅ '+S.quizDone+'/'
-  if(S.running&&!S.paused) document.getElementById('status-text').textContent=G23_POKEMON[selectedPokemon].name+' Berlari!'
+  if(S.running&&!S.paused) document.getElementById('status-text').textContent=(()=>{ const _p=G23_POKEMON[selectedPokemon]; return (_p.evo ? _p.evo[S.evoStage||0].name : _p.name)+' Berlari!' })()
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1469,7 +1575,7 @@ function handleJump(){
   if(!S.started){
     S.started=true; S.running=true
     document.getElementById('start-overlay').classList.add('hidden')
-    document.getElementById('status-text').textContent=G23_POKEMON[selectedPokemon].name+' Berlari!'
+    document.getElementById('status-text').textContent=(()=>{ const _p=G23_POKEMON[selectedPokemon]; return (_p.evo ? _p.evo[S.evoStage||0].name : _p.name)+' Berlari!' })()
     bgmStart()
     return
   }
@@ -1515,7 +1621,7 @@ function togglePause(){
   if(S.pendingQuizGate){ document.getElementById('pause-overlay').style.display='none'; document.getElementById('quiz-panel').classList.add('show'); S.paused=true; return }
   S.paused=!S.paused; S.running=!S.paused
   document.getElementById('btn-pause').textContent=S.paused?'▶':'⏸'
-  document.getElementById('status-text').textContent=S.paused?'PAUSE':G23_POKEMON[selectedPokemon].name+' Berlari!'
+  document.getElementById('status-text').textContent=S.paused?'PAUSE':(()=>{ const _p=G23_POKEMON[selectedPokemon]; return (_p.evo ? _p.evo[S.evoStage||0].name : _p.name)+' Berlari!' })()
   document.getElementById('pause-overlay').style.display=S.paused?'flex':'none'
   S.paused ? bgmPause() : bgmResume()
 }
@@ -1526,10 +1632,12 @@ function openBag(){
   G23_POKEMON.forEach((p,i)=>{
     const card=document.createElement('div')
     card.style.cssText='display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:12px;border:2px solid '+(i===selectedPokemon?'#fbbf24':'rgba(255,255,255,.15)')+';background:'+(i===selectedPokemon?'rgba(251,191,36,.15)':'rgba(255,255,255,.05)')+';cursor:pointer'
-    const img=document.createElement('img'); img.src=p.src; img.style.cssText='width:64px;height:60px;object-fit:contain'
+    const hdSrc = p.evo ? p.evo[0].hd : p.hd
+    const img=document.createElement('img'); img.src=hdSrc; img.style.cssText='width:64px;height:60px;object-fit:contain'
     img.onerror=()=>{ img.src=`https://img.pokemondb.net/sprites/home/normal/${p.name.toLowerCase()}.png`; img.onerror=null }
     card.appendChild(img)
     const nm=document.createElement('div'); nm.style.cssText='font-size:10px;color:#e9d5ff;font-weight:700;text-align:center'; nm.textContent=p.name; card.appendChild(nm)
+    if(p.evo && p.evo.length>1){ const evoTag=document.createElement('div'); evoTag.style.cssText='font-size:9px;color:#fbbf24;font-weight:700'; evoTag.textContent=`${p.evo.length}x Evo`; card.appendChild(evoTag) }
     card.onclick=()=>{ applyPokemon(i); closeBag() }
     grid.appendChild(card)
   })
@@ -1602,6 +1710,23 @@ function gameLoop(ticker){
   const dt=Math.min(ticker.deltaTime,2.5)
 
   S.distance+=gameSpeed*dt*0.08
+
+  // ── Evolution for Pichu chain ──
+  const _curPoke = G23_POKEMON[selectedPokemon]
+  if(_curPoke.evo && _curPoke.evo.length>1 && !_g23EvolveTrigger){
+    const targetDist = 500+(cfg.level-1)*300
+    const progress = S.distance/targetDist
+    const maxEvo = _curPoke.evo.length-1
+    const evoAt = maxEvo>=2 ? (S.evoStage===0 ? 0.38 : 0.72) : 0.5
+    if(S.evoStage<maxEvo && progress>=evoAt){
+      _g23EvolveTrigger=true
+      S.evoStage++
+      const nextGif = _curPoke.evo[S.evoStage].gif
+      const evoName = _curPoke.evo[S.evoStage].name
+      spawnFT(`✨ ${evoName}!`,PLAYER_X,S.playerY-PLAYER_H-30,0xfbbf24)
+      setTimeout(()=>{ const img=_getPlayerImg(); img.src=nextGif; _g23EvolveTrigger=false },300)
+    }
+  }
 
   // ── Particle pools ──
   updateBurstParticles()

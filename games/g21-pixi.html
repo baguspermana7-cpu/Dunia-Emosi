@@ -875,7 +875,10 @@ function drawClouds(PIXI, count, fill, stroke) {
 
 function buildMidLayer(theme, PIXI) {
   // Mid layer = ground silhouettes (hills/dunes/snow piles/lava pools).
-  const groundY = _gameH() - 30
+  // Hotfix #126: use actual game ground row (10*TILE=640) not screen height.
+  // _gameH()-30 drifted with screen size, causing hills to float above or
+  // below the tile ground depending on device.
+  const groundY = 10 * TILE
   if (theme === 'lava') {
     for (let i = 0; i < 10; i++) {
       const lv = new PIXI.Graphics()
@@ -1003,14 +1006,14 @@ function loadLevel(lvNum) {
     const startTx = p[0], len = p[1]
     const ov = new PIXI_.Graphics()
     const w = len * TILE
-    // Red gradient stripes
-    ov.rect(0, 0, w, _gameH()).fill({ color: 0x991b1b, alpha: 0.15 })
-    // Top edge danger band
-    ov.rect(0, 9*TILE, w, 4).fill({ color: 0xef4444, alpha: 0.85 })
-    ov.rect(0, 9*TILE + 6, w, 2).fill({ color: 0xfca5a5, alpha: 0.6 })
-    // Diagonal hash lines
-    for (let i = 0; i < w + _gameH(); i += 28) {
-      ov.poly([i, 9*TILE+10, i+12, 9*TILE+10, i-12, _gameH(), i-24, _gameH()]).fill({ color: 0x7f1d1d, alpha: 0.18 })
+    // Red gradient stripes — from ground level down (Hotfix #126: was 0→_gameH()
+    // creating a full-sky red column; now ground-level only so sky stays clear).
+    ov.rect(0, 10*TILE - 4, w, 4 + TILE*2).fill({ color: 0x991b1b, alpha: 0.22 })
+    // Top edge danger band — anchored at actual ground tile top
+    ov.rect(0, 10*TILE - 6, w, 6).fill({ color: 0xef4444, alpha: 0.90 })
+    // Diagonal hash lines below ground level (start at 24 to avoid negative x)
+    for (let i = 24; i < w + TILE*2; i += 28) {
+      ov.poly([i, 10*TILE, i+12, 10*TILE, i-12, 10*TILE+TILE*2, i-24, 10*TILE+TILE*2]).fill({ color: 0x7f1d1d, alpha: 0.22 })
     }
     ov.x = startTx * TILE; ov.y = 0
     world.addChild(ov)
@@ -1082,31 +1085,35 @@ function loadLevel(lvNum) {
     world.addChild(g)
     S.goombas.push(g)
   }
-  // ── Mushrooms (Hotfix #118: SMB1 ref-mushroom sprite; Graphics fallback) ──
+  // ── Mushrooms (Hotfix #128: level mushrooms are patrolling enemies.
+  //    Timer-based direction flip — no ground detection needed since mushrooms
+  //    are placed at platform/mid-air positions, not ground level.) ──
   const _mushroomTex = MARIO_TEXTURES.ref_mushroom || MARIO_TEXTURES.mushroom
   for (const m of levelData.mushrooms) {
     let g
+    const _spawnX = m[0] * TILE + TILE/2
+    const _spawnY = m[1] * TILE + TILE
+    const _mvx = (Math.random() > 0.5 ? 1 : -1) * (0.7 + Math.random() * 0.5)
     if (_mushroomTex) {
       g = new PIXI.Sprite(_mushroomTex)
       g.width = TILE * 0.75; g.height = TILE * 0.75
       g.anchor.set(0.5, 1)
-      g.x = m[0] * TILE + TILE/2; g.y = m[1] * TILE + TILE
-      g._g21Bob = Math.random() * 6.28
-      world.addChild(g)
-      S.mushrooms.push(g)
-      continue
+    } else {
+      g = new PIXI.Graphics()
+      g.ellipse(0, -16, 22, 14).fill(0xDC2626).stroke({ width: 2, color: 0x7F1D1D })
+      g.circle(-10, -16, 4).fill(0xFFFFFF)
+      g.circle(10, -16, 4).fill(0xFFFFFF)
+      g.circle(0, -20, 4).fill(0xFFFFFF)
+      g.rect(-8, -8, 16, 14).fill(0xFEF3C7).stroke({ width: 2, color: 0x92400E })
+      g.circle(-3, -2, 2).fill(0x000000)
+      g.circle(3, -2, 2).fill(0x000000)
     }
-    g = new PIXI.Graphics()
-    g.ellipse(0, -16, 22, 14).fill(0xDC2626).stroke({ width: 2, color: 0x7F1D1D })
-    g.circle(-10, -16, 4).fill(0xFFFFFF)
-    g.circle(10, -16, 4).fill(0xFFFFFF)
-    g.circle(0, -20, 4).fill(0xFFFFFF)
-    g.rect(-8, -8, 16, 14).fill(0xFEF3C7).stroke({ width: 2, color: 0x92400E })
-    // Eyes
-    g.circle(-3, -2, 2).fill(0x000000)
-    g.circle(3, -2, 2).fill(0x000000)
-    g.x = m[0] * TILE + TILE/2; g.y = m[1] * TILE + TILE
+    g.x = _spawnX; g.y = _spawnY
     g._g21Bob = Math.random() * 6.28
+    g._g21Vx = _mvx
+    g._g21BaseX = _spawnX   // patrol anchor — never drift more than ±TILE*1.5
+    g._g21MoveT = Math.floor(Math.random() * 90)   // stagger initial flip
+    g._g21Alive = true
     world.addChild(g)
     S.mushrooms.push(g)
   }
@@ -1497,7 +1504,7 @@ function syncPikachuSprite() {
   // For static PNG states (pikachu-small-cropped / pikachu-big-cropped) the
   // crop already removed the halo, so fudge = 0.
   const _pikaGIFStates = ['idle', 'running', 'jump', 'happy']
-  const haloFudge = _pikaGIFStates.includes(_pikaCurrentAnim) ? 10 : 0
+  const haloFudge = _pikaGIFStates.includes(_pikaCurrentAnim) ? 4 : 0
   // GPU-composited transform — single inline transform combining translate3d
   // (for position, GPU layer) and scaleX (for facing flip). Replaces left/top
   // layout reflow to keep 60fps stable.
@@ -1708,7 +1715,7 @@ function movePlayer(dx, dy) {
             m.circle(3, -2, 2).fill(0x000000)
           }
           m.x = c.x + TILE/2; m.y = c.y - 4
-          m._g21Bob = 0; m._g21FromBlock = true
+          m._g21Bob = 0; m._g21FromBlock = true; m._g21Alive = true
           world.addChild(m)
           S.mushrooms.push(m)
           sfx('sfx-powerup')
@@ -1814,30 +1821,96 @@ function updateCoins() {
 function updateMushrooms() {
   for (let i = S.mushrooms.length - 1; i >= 0; i--) {
     const m = S.mushrooms[i]
-    m._g21Bob = (m._g21Bob || 0) + 0.12
-    if (m._g21FromBlock && m._g21Bob < 1.0) m.y -= 1.5
-    if (collides(m, S, 36, 70)) {
-      sfx('sfx-powerup')
-      if (S.pikachuState === 'small') {
-        S.pikachuState = 'big'
-        showMilestone('GROW! 🍄', '#dc2626')
-        spawnParticles(S.x, S.y - 50, 'spark', 12)
-        // Apply growth to DOM wrap (1.4× scale, 1 hit shield)
-        const wrap = document.getElementById('pikachu-wrap')
-        if (wrap) {
-          wrap.style.transition = 'transform 0.4s cubic-bezier(.34,1.56,.64,1)'
-          wrap.style.width = '118px'
-          wrap.style.height = '118px'
-          setTimeout(() => { if (wrap) wrap.style.transition = '' }, 450)
+
+    // ── Death animation ──
+    if (!m._g21Alive) {
+      m.scale.y = Math.max(0.05, m.scale.y * 0.85)
+      m.scale.x = (m._g21Vx >= 0 ? 1 : -1) * Math.min(2.5, Math.abs(m.scale.x) * 1.05)
+      m.alpha -= 0.06; m.y += 1.2
+      if (m.alpha <= 0) { world.removeChild(m); m._g21Removed = true }
+      continue
+    }
+
+    m._g21Bob = (m._g21Bob || 0) + 0.1
+
+    // ── Q-block mushroom: powerup collectible (rises from block then free-float) ──
+    if (m._g21FromBlock) {
+      if (m._g21Bob < 1.0) m.y -= 1.5
+      if (collides(m, S, 36, 70)) {
+        sfx('sfx-powerup')
+        if (S.pikachuState === 'small') {
+          S.pikachuState = 'big'
+          showMilestone('GROW! 🍄', '#dc2626')
+          spawnParticles(S.x, S.y - 50, 'spark', 12)
+          const wrap = document.getElementById('pikachu-wrap')
+          if (wrap) {
+            wrap.style.transition = 'transform 0.4s cubic-bezier(.34,1.56,.64,1)'
+            wrap.style.width = '118px'; wrap.style.height = '118px'
+            setTimeout(() => { if (wrap) wrap.style.transition = '' }, 450)
+          }
+        } else {
+          S.score += 1000
+          spawnScorePopup(m.x, m.y, '+1000', 'coin')
         }
-      } else {
-        S.score += 1000
-        spawnScorePopup(m.x, m.y, '+1000', 'coin')
+        world.removeChild(m); S.mushrooms.splice(i, 1)
+        updateHUD()
       }
-      world.removeChild(m); S.mushrooms.splice(i, 1)
-      updateHUD()
+      continue
+    }
+
+    // ── Level mushroom enemy: timer-based patrol ──
+    // Works at any y-position (platform, mid-air) — no ground detection needed.
+    m._g21MoveT = (m._g21MoveT || 0) + 1
+    // Flip every 90-120 frames (~1.5-2s) and clamp to patrol range (±TILE*1.5)
+    // Use explicit undefined check for _g21BaseX (avoids falsy-0 bug)
+    const _bx = m._g21BaseX !== undefined ? m._g21BaseX : m.x
+    const _flip = m._g21MoveT > (90 + (_bx % 30))
+      || Math.abs(m.x - _bx) > TILE * 1.5
+    if (_flip) { m._g21Vx *= -1; m._g21MoveT = 0 }
+    m.x += m._g21Vx
+    // Mirror sprite horizontally (Sprite uses scale, Graphics inherits scale)
+    m.scale.x = m._g21Vx >= 0 ? 1 : -1
+
+    // ── Collision with player ──
+    if (!collides(m, S, 28, 60)) continue
+    // Stomp from above
+    if (S.vy > 1 && S.y < m.y - 8) {
+      m._g21Alive = false
+      S.vy = JUMP_FORCE * 0.55
+      S.score += 150; sfx('sfx-stomp')
+      spawnScorePopup(m.x, m.y - 30, '+150', 'coin')
+      spawnParticles(m.x, m.y - 20, 'spark', 6)
+      continue
+    }
+    // Star mode — instant kill from any direction
+    if (S.starMode > 0) {
+      m._g21Alive = false; S.score += 200; sfx('sfx-stomp')
+      spawnParticles(m.x, m.y - 20, 'spark', 6)
+      continue
+    }
+    // Side hit — skip if protected
+    if (S.invincible > 0 || S.pendingMath) continue
+    S.invincible = 80; S.hitFrames = 55
+    knockback(); sfx('sfx-damage'); screenShake()
+    if (S.pikachuState === 'big') {
+      S.pikachuState = 'small'
+      showMilestone('SHRINK!', '#f59e0b')
+      const wrap = document.getElementById('pikachu-wrap')
+      if (wrap) {
+        wrap.style.transition = 'transform 0.4s ease, width 0.4s ease, height 0.4s ease'
+        wrap.style.width = '84px'; wrap.style.height = '84px'
+        setTimeout(() => { if (wrap) wrap.style.transition = '' }, 450)
+      }
+    } else if (S.difficulty === 'easy') {
+      S.lives -= 0.5; updateHUD()
+      if (S.lives <= 0) { onDeath('mushroom'); continue }
+      triggerMathQuiz()
+    } else {
+      S.lives -= 1; updateHUD()
+      if (S.lives <= 0) onDeath('mushroom')
     }
   }
+  S.mushrooms = S.mushrooms.filter(m => !m._g21Removed)
 }
 
 function updateStars() {

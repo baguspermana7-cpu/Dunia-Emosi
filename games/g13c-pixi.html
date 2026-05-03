@@ -1174,7 +1174,16 @@ const _g13cBadgeKey = () => (typeof activeAvatarBadgeKey === 'function')
 // load below so the seeded values are picked up immediately.
 (function _seedKodokG13cBadges() {
   try {
-    const av = (typeof _activeAvatarSlug === 'function') ? _activeAvatarSlug() : null;
+    const av = (() => {
+      try {
+        const SLUG_MAP = {'🦁':'lion','🐰':'rabbit','🐘':'elephant','🦊':'fox','🐸':'frog','🐯':'tiger','🐼':'panda','🐨':'koala'}
+        const _as = JSON.parse(localStorage.getItem('dunia-active-slot') || '[0,1]')
+        const _si = (Array.isArray(_as) ? parseInt(_as[0]) : parseInt(_as)) || 0
+        const _sl = JSON.parse(localStorage.getItem('dunia-players') || '[]')
+        const _an = _sl && _sl[_si] && _sl[_si].animal
+        return _an ? (SLUG_MAP[_an] || String(_an).toLowerCase()) : null
+      } catch(_) { return null }
+    })()
     if (av !== 'frog') return;
     if (localStorage.getItem('dunia-frog-g13c-seeded-v2') === '1') return;
     const key = _g13cBadgeKey();

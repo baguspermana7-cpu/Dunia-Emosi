@@ -58,3 +58,16 @@
 - Anglerfish NPC added to all 4 regions (1-in-6 spawn) — image silhouette with mix-blend-mode
 - Fixed Johto/Hoenn bag tabs incorrectly locked (regression from #126 ALL tab commit)
 - Cache: v=20260504c
+
+## 2026-05-05 — #128 G21 Mario Pokemon Terrain + Mushroom Fixes
+- Hills/mountains now sit at correct ground level (10*TILE, not _gameH()-30)
+- Pit danger overlay anchored to actual ground row (no more floating red line)
+- Mushrooms now walk left/right like Goombas (velocity 0.8–1.3, edge-turning)
+- Mushroom side-hit → math quiz; stomp still kills mushroom + score
+- Player feet overlap on platforms reduced (haloFudge 10 → 4)
+- Cache: g21-pixi.html v=20260505d, game.js updated
+
+## 2026-05-05 — #129 Kodok Slot-7 Preset Fix (game.js)
+- Fixed: `_applyKodokSlot7Unlock` never triggered because world-map tile uses `openGymGame()` not `openLevelSelect`
+- Added unlock call to `openGymGame()` (G13C tile) and `openRegionOverlay()` (G13B tile)
+- G21 code review fixes: pit overlay diagonal no longer bleeds left; patrol anchor uses `!== undefined` guard

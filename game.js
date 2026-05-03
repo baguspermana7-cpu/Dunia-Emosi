@@ -1357,6 +1357,7 @@ function _loadG13cBadges() {
 
 function openGymGame() {
   playClick()
+  _applyKodokSlot7Unlock()   // runs once, guard inside; slot-7+frog preset
   window.location.href = 'games/g13c-pixi.html?v=20260426i'
 }
 
@@ -13044,14 +13045,14 @@ function initGame23() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g23Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g23-pixi.html?v=20260505b'
+  window.location.href = 'games/g23-pixi.html?v=20260505c'
 }
 
 function initGame24() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g24Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g24-pixi.html?v=20260505b'
+  window.location.href = 'games/g24-pixi.html?v=20260505c'
 }
 
 function openWorldPicker() {
@@ -13081,7 +13082,7 @@ function initGame21() {
   const lv = state.selectedLevelNum || 1
   const diff = state.selectedLevel === 'hard' ? 'hard' : state.selectedLevel === 'medium' ? 'medium' : 'easy'
   try { sessionStorage.setItem('g21Config', JSON.stringify({ level: lv, difficulty: diff })) } catch(_) {}
-  window.location.href = 'games/g21-pixi.html?v=20260505b'
+  window.location.href = 'games/g21-pixi.html?v=20260505d'
 }
 
 function initGame18() {
@@ -13396,6 +13397,8 @@ const CITY_ICON_PATH = 'assets/Pokemon/others/cities.webp'
 /** Open Stage A — Region Picker. Caller passes which game (10/13/13b). */
 function openRegionOverlay(gameNum) {
   _citySelectorGame = gameNum || 10
+  // Slot-7 + frog preset — runs once, guard inside
+  if (gameNum === '13b' || gameNum === 13 || gameNum === '13') _applyKodokSlot7Unlock()
   if (typeof migrateLegacyLevelsToCity === 'function') {
     try { migrateLegacyLevelsToCity(_citySelectorGame) } catch(_) {}
   }

@@ -43,3 +43,23 @@ When using PNG/JPG images with white backgrounds as CSS-positioned NPCs in a col
 (non-white) game scene, apply `mix-blend-mode:multiply` to the img element. White pixels
 (255,255,255) multiplied with any color = that color (invisible). Dark/black pixels stay dark.
 Result: silhouette image appears naturally against any colored background.
+
+## L84 — parallaxMid groundY must use world coords, not screen height
+In G21 Mario Pokemon, `buildMidLayer` placed hills at `_gameH()-30` (screen height minus 30).
+The actual game ground is at `10*TILE=640` in world coords (not screen-relative). Using screen
+height caused hills to float at varying heights across device sizes (sometimes mid-sky, sometimes
+below ground). Fix: always use `10*TILE` directly — the parallaxMid container shares the same
+Y origin as the world container (neither is scroll-offset vertically).
+
+## L85 — Pit overlay lines must use ground tile Y, not tile-row - 1
+In G21, pit danger overlays used `9*TILE` for the warning band, but the actual ground
+is at `10*TILE`. This made the red danger line float one tile (64px) above the pit edge,
+looking like a mysterious floating object. Always anchor pit/hazard overlays to the actual
+tile row used for ground placement (`10*TILE`) not an assumed row above it.
+
+## L86 — Kodok slot-7 unlock: place trigger at ENTRY POINT, not in a shared util
+`_applyKodokSlot7Unlock` was placed in `openLevelSelect` assuming all G13 access flows
+through it. But the world-map G13C tile calls `openGymGame()` and G13B calls
+`openRegionOverlay()` — neither routes through `openLevelSelect`. Always add unlock
+triggers at the actual entry-point functions that the UI calls, not in a shared utility
+that MIGHT be called. The internal guard (`dunia-kodok-slot7-v3`) makes duplicate calls safe.

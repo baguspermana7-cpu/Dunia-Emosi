@@ -2345,3 +2345,18 @@ index.html (style.css + game.js script tags) bumped. G24 file at v=20260504a.
 - [x] img-type NPC support in spawnNPC with mix-blend-mode:multiply (hides white BG)
 - [x] Fix Johto/Hoenn bag tab regression — only Sinnoh tab locked (cfg.level < 31)
 - [x] Cache bump: g24-pixi.html?v=20260504c
+
+## #128 — G21 Mario Pokemon: Terrain + Mushroom Fixes (2026-05-05)
+- [x] Fix hills/mountains floating at wrong Y (`groundY = _gameH()-30` → `10*TILE`)
+- [x] Fix pit danger line floating mid-air (was at 9*TILE, now at 10*TILE - 6)
+- [x] Mushroom enemies now move (added `_g21Vx` velocity, edge-turning like goombas)
+- [x] Mushroom side-hit → math quiz popup (stomp still = kill + score)
+- [x] Player feet overlap reduced (`haloFudge` 10 → 4)
+- [x] Cache: g21-pixi.html?v=20260505d
+
+## #129 — Kodok Slot-7 Unlock Never Triggered (game.js)
+Root cause: G13C world-map tile calls `openGymGame()` directly; G13B tile calls `openRegionOverlay('13b')`.
+Neither went through `openLevelSelect` where `_applyKodokSlot7Unlock` was placed.
+- [x] Added `_applyKodokSlot7Unlock()` call to `openGymGame()` (G13C path)
+- [x] Added `_applyKodokSlot7Unlock()` call to `openRegionOverlay()` when gameNum is 13b/13
+- [x] Previous `openLevelSelect` call kept as safety net
