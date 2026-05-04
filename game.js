@@ -13056,7 +13056,7 @@ function initGame23() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g23Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g23-pixi.html?v=20260505r'
+  window.location.href = 'games/g23-pixi.html?v=20260505s'
 }
 
 function initGame24() {
