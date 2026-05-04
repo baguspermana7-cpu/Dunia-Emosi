@@ -1413,9 +1413,29 @@ function goBack() {
   history.back()
 }
 
+// Hotfix #157 — resize/orientationchange handler (G23 had this, G24 didn't).
+// Without this, rotating the device left FLOOR_Y/SWIM_X stale → floor
+// renders at old position, swimmer drifts off-screen.
+function _g24Resize(){
+  if(!app) return
+  app.renderer.resize(window.innerWidth, window.innerHeight)
+  W = app.screen.width; H = app.screen.height
+  FLOOR_Y = H * 0.87; SWIM_X = W * 0.22
+  S.swimY = Math.min(S.swimY, FLOOR_Y - 14)
+  // Rebuild floor + scenery so positions match the new dimensions
+  if (floorContainer) {
+    floorContainer.removeChildren()
+    drawFloor()
+  }
+  // Re-anchor swimmer X (Y is updated per-frame by gameLoop)
+  if (swimContainer) { swimContainer.x = SWIM_X }
+}
+window.addEventListener('resize', _g24Resize)
+window.addEventListener('orientationchange', _g24Resize)
+
 // HUD level + start text
 document.getElementById('level-text').textContent=`Level ${cfg.level}`
 </script>
 </body>
 </html>
-<!-- g24-pixi v20260506b -->
+<!-- g24-pixi v20260506d -->
