@@ -9,9 +9,13 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear-gradient(180deg,var(--g21-sky-top,#5C94FC) 0%,var(--g21-sky-mid,#6BB6FF) 60%,var(--g21-sky-bot,#8B6F47) 100%);font-family:'Fredoka One',sans-serif;touch-action:none;-webkit-user-select:none;user-select:none;transition:background 0.4s ease}
-/* Hotfix #112 — bottom margin so canvas doesn't reach edge of screen */
+/* Hotfix #112 — bottom margin so canvas doesn't reach edge of screen.
+ * Hotfix #142 — landscape uses a tiny margin (controls overlay over bottom of
+ * game) so canvas height stays close to the world's 12-tile height (768px).
+ * Without this, landscape on phones (~480px tall) cuts the player off-screen. */
 :root { --g21-bottom-margin: 96px }
 @media (orientation: portrait) { :root { --g21-bottom-margin: 80px } }
+@media (orientation: landscape) { :root { --g21-bottom-margin: 12px } }
 body.theme-cave{--g21-sky-top:#1f2937;--g21-sky-mid:#374151;--g21-sky-bot:#1c1917}
 body.theme-sky{--g21-sky-top:#7dd3fc;--g21-sky-mid:#bae6fd;--g21-sky-bot:#7dd3fc}
 body.theme-castle{--g21-sky-top:#4b1a72;--g21-sky-mid:#7c3aed;--g21-sky-bot:#1e1b4b}
@@ -716,6 +720,7 @@ async function initPixi() {
   buildBackground()
   loadLevel(S.level)
   attachInput()
+  fitWorldToCanvas()   // Apply Y-offset/scale so world bottom-aligns with canvas
 
   document.getElementById('loading').classList.add('hide')
 
@@ -725,6 +730,7 @@ async function initPixi() {
   S.startTime = performance.now()
 
   window.addEventListener('resize', onResize)
+  window.addEventListener('orientationchange', onResize)
 
   // Start BGM on first user interaction (autoplay policy)
   const startMusic = () => {
@@ -2484,8 +2490,37 @@ function onResize() {
   _resizeT = setTimeout(() => {
     try {
       app.renderer.resize(window.innerWidth, _gameH())
+      fitWorldToCanvas()
     } catch (e) { console.warn('[g21] resize:', e) }
   }, 200)
+}
+
+// Hotfix #142 — fit the 12-tile-tall (768px) world into the variable-height
+// canvas. Two cases:
+//   Portrait/tall canvas (height >= 768): apply Y-offset to world+parallaxMid
+//     so the world's bottom row aligns with the canvas bottom; sky shows above.
+//     Eliminates the "dark transparent block" gap below the green hill.
+//   Landscape/short canvas (height < 768): scale the Pixi stage down so the
+//     full world fits vertically. Otherwise the player gets cut off below the
+//     visible area (user reported "terpotong sisi bawahnya").
+function fitWorldToCanvas() {
+  if (!app || !world) return
+  const ch = _gameH()
+  const worldH = 12 * TILE   // 768
+  if (ch >= worldH) {
+    app.stage.scale.set(1)
+    const off = ch - worldH
+    world.y = off
+    if (parallaxMid) parallaxMid.y = off
+    if (fgLayer) fgLayer.y = off
+  } else {
+    // Scale entire stage down so the world fits the shorter canvas
+    const sc = ch / worldH
+    app.stage.scale.set(sc)
+    world.y = 0
+    if (parallaxMid) parallaxMid.y = 0
+    if (fgLayer) fgLayer.y = 0
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════
