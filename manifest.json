@@ -1,0 +1,22 @@
+{
+  "name": "Dunia Emosi — Belajar Sambil Bermain",
+  "short_name": "Dunia Emosi",
+  "description": "Game edukasi anak 5-10 tahun: matematika, bahasa, emosi, dan ratusan Pokemon!",
+  "lang": "id",
+  "dir": "ltr",
+  "start_url": "/Dunia-Emosi/",
+  "scope": "/Dunia-Emosi/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0e0220",
+  "theme_color": "#8B5CF6",
+  "categories": ["education", "kids", "games"],
+  "icons": [
+    { "src": "assets/icon-192.png",          "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png",          "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-192-maskable.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "assets/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "screenshots": [],
+  "prefer_related_applications": false
+}

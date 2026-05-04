@@ -7251,9 +7251,25 @@ function g12Answer(correct,btn,grid){
 try{
   const xp=getXP(); if(xp>0){const tier=getLevelTier(xp);const el=document.getElementById('welcome-level-badge');if(el){el.style.display='block';el.textContent=`${tier.icon} ${tier.name} — ${xp} XP`}}
 }catch(e){}
-// Unregister any lingering service workers to prevent stale cache issues
+// PWA — register service worker (#161): offline support + install-as-app.
+// Uses network-first for HTML (avoid stale UI) + cache-first for static assets.
+// Strategy details in sw.js. Falls back gracefully if SW API unavailable.
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.unregister())).catch(()=>{})
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js', { scope: './' })
+      .then(reg => {
+        // Auto-update SW when new version is available
+        reg.addEventListener('updatefound', () => {
+          const nw = reg.installing
+          if (nw) nw.addEventListener('statechange', () => {
+            if (nw.state === 'activated' && navigator.serviceWorker.controller) {
+              // New SW activated — quietly. Reload happens naturally on next nav.
+            }
+          })
+        })
+      })
+      .catch(() => { /* PWA install will degrade to web app */ })
+  })
 }
 
 // ── AAA game result handlers: fire when returning from games/g*.html ──
