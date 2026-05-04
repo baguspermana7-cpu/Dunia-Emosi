@@ -849,8 +849,12 @@ function createSwimmer() {
   swimImg.id = 'swimmer-gif'
   const initSz = Math.round(SWIMMER_SZ * initPoke.scale)
   swimImg.src = initPoke.src
-  const flipPart = initPoke.flip ? ' scaleX(-1)' : ''
-  swimImg.style.cssText = `position:fixed;z-index:40;pointer-events:none;width:min(${initSz}px,${Math.round(initPoke.scale*16)}vw);height:auto;aspect-ratio:1;object-fit:contain;max-height:28vh;filter:drop-shadow(0 0 10px rgba(0,180,216,0.65));image-rendering:auto;transform:translate(-50%,-50%)${flipPart};`
+  // Rotated sprites use translate -75% Y to place the (50%,75%) point at the
+  // player anchor — matches transform-origin from .swim-rotate CSS so the
+  // Pokemon body center (not image geometric center) sits at the anchor.
+  const initTrY = initPoke.rotate ? '-75%' : '-50%'
+  const flipPart = (!initPoke.rotate && initPoke.flip) ? ' scaleX(-1)' : ''
+  swimImg.style.cssText = `position:fixed;z-index:40;pointer-events:none;width:min(${initSz}px,${Math.round(initPoke.scale*16)}vw);height:auto;aspect-ratio:1;object-fit:contain;max-height:28vh;filter:drop-shadow(0 0 10px rgba(0,180,216,0.65));image-rendering:auto;transform:translate(-50%,${initTrY})${flipPart};`
   swimImg.onerror = () => {
     if (initPoke.hd && swimImg.src !== initPoke.hd) { swimImg.src = initPoke.hd; return }
     const em = initPoke.emoji || '🐟'
@@ -1019,10 +1023,16 @@ function syncSwimmerPos(y) {
   const offY = evo.centerOffsetY || 0
   img.style.left = SWIM_X + 'px'
   img.style.top  = (y + offY) + 'px'
+  // Rotated sprites (Buizel/Floatzel) use transform-origin:50% 75% (.swim-rotate
+  // CSS) so rotation pivots around the Pokemon body, not the image center.
+  // Translate must match: -75% Y places the image's (50%,75%) point at the
+  // player anchor — same point the rotation pivots around → Pokemon stays
+  // centered. Non-rotated sprites use standard -50% (image center).
+  const translateY = evo.rotate ? '-75%' : '-50%'
   // Skip scaleX flip for rotated sprites — rotation alone handles direction;
   // double-flipping a rotated sprite inverts the orientation back to wrong way.
   const _flipPart = (!evo.rotate && evo.flip) ? ' scaleX(-1)' : ''
-  img.style.transform = `translate(-50%,-50%)${_flipPart}`
+  img.style.transform = `translate(-50%,${translateY})${_flipPart}`
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1395,4 +1405,4 @@ document.getElementById('level-text').textContent=`Level ${cfg.level}`
 </script>
 </body>
 </html>
-<!-- g24-pixi v20260505k -->
+<!-- g24-pixi v20260505m -->
