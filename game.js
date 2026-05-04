@@ -48,7 +48,12 @@ const ANIMAL_LETTERS = [
   {animal:'🦌',word:'RUSA',      letter:'R',num:17,hint:'Hewan berkaki empat yang jantannya memiliki tanduk bercabang-cabang indah'},
   {animal:'🦁',word:'SINGA',     letter:'S',num:18,hint:'Hewan besar berbulu lebat di sekitar kepala yang dijuluki Raja Hutan'},
   {animal:'🐭',word:'TIKUS',     letter:'T',num:19,hint:'Hewan pengerat kecil berekor panjang yang sangat cepat dan gemar mencuri makanan'},
-  {animal:'🐛',word:'ULAT',      letter:'U',num:20,hint:'Hewan berbadan lunak dan bersegmen yang kelak berubah menjadi kupu-kupu indah'}
+  {animal:'🐛',word:'ULAT',      letter:'U',num:20,hint:'Hewan berbadan lunak dan bersegmen yang kelak berubah menjadi kupu-kupu indah'},
+  // W/Y/Z added for fuller alphabet coverage with REAL Indonesian animal names.
+  // Q/V/X skipped — no common Indonesian animal names with those initial letters.
+  {animal:'🦭',word:'WALRUS',    letter:'W',num:21,hint:'Mamalia laut besar bertaring panjang yang hidup di kutub utara'},
+  {animal:'🦀',word:'YUYU',      letter:'Y',num:22,hint:'Kepiting kecil air tawar yang hidup di sawah dan sungai Indonesia'},
+  {animal:'🦓',word:'ZEBRA',     letter:'Z',num:23,hint:'Kuda bergaris hitam-putih yang berasal dari padang rumput Afrika'}
 ]
 
 const MATCH_PAIRS = [
