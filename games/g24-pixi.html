@@ -874,10 +874,11 @@ function createSwimmer() {
   swimGfx = new PIXI.Graphics()
   swimGfx.circle(0,0,2).fill({ color:0xffffff, alpha:0 })
 
-  // Glow ring (steady)
+  // Glow ring (steady) — kept reachable via window for hide-on-pause logic
   const ring = new PIXI.Graphics()
   ring.circle(0,0,SWIMMER_SZ/2+4).stroke({ color:0x7dd3fc, width:1.5, alpha:0.22 })
   swimContainer.addChild(ring)
+  window._swimGlowRing = ring
 
   // Ripple rings — 3 concentric expanding rings (underwater current effect)
   window._ripples = [
@@ -974,14 +975,23 @@ function gameLoop(ticker) {
   }
 
   // Ripple rings — expand outward, fade, reset
+  // Hotfix #154: clear all ripples + hide steady glow ring when paused/in-quiz
+  // (was leaving frozen rings around swimmer that user saw as a "white circle"
+  // following the character on collision).
+  const _hideRings = S.paused || S.gameOver || _g24HasPendingQuiz()
+  if (window._swimGlowRing) window._swimGlowRing.visible = !_hideRings
   if (window._ripples) {
-    for (const r of window._ripples) {
-      r.phase = (r.phase + 0.045) % (Math.PI * 2)
-      const t = (Math.sin(r.phase) * 0.5 + 0.5) // 0→1 cycle
-      const radius = (SWIMMER_SZ / 2 + 6) + t * 28
-      const alpha = (1 - t) * 0.32
-      r.g.clear()
-      if (alpha > 0.01) r.g.circle(0, 0, radius).stroke({ color: THEME.lightColor, width: 1.5, alpha })
+    if (_hideRings) {
+      for (const r of window._ripples) r.g.clear()
+    } else {
+      for (const r of window._ripples) {
+        r.phase = (r.phase + 0.045) % (Math.PI * 2)
+        const t = (Math.sin(r.phase) * 0.5 + 0.5) // 0→1 cycle
+        const radius = (SWIMMER_SZ / 2 + 6) + t * 28
+        const alpha = (1 - t) * 0.32
+        r.g.clear()
+        if (alpha > 0.01) r.g.circle(0, 0, radius).stroke({ color: THEME.lightColor, width: 1.5, alpha })
+      }
     }
   }
   // Wake trail particles — small bubbles drifting behind swimmer
@@ -1408,4 +1418,4 @@ document.getElementById('level-text').textContent=`Level ${cfg.level}`
 </script>
 </body>
 </html>
-<!-- g24-pixi v20260505r -->
+<!-- g24-pixi v20260506b -->
