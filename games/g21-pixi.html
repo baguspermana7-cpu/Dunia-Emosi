@@ -15,7 +15,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
  * Without this, landscape on phones (~480px tall) cuts the player off-screen. */
 :root { --g21-bottom-margin: 96px }
 @media (orientation: portrait) { :root { --g21-bottom-margin: 80px } }
-@media (orientation: landscape) { :root { --g21-bottom-margin: 12px } }
+@media (orientation: landscape) { :root { --g21-bottom-margin: 60px } }
 body.theme-cave{--g21-sky-top:#1f2937;--g21-sky-mid:#374151;--g21-sky-bot:#1c1917}
 body.theme-sky{--g21-sky-top:#7dd3fc;--g21-sky-mid:#bae6fd;--g21-sky-bot:#7dd3fc}
 body.theme-castle{--g21-sky-top:#4b1a72;--g21-sky-mid:#7c3aed;--g21-sky-bot:#1e1b4b}
@@ -23,7 +23,7 @@ body.theme-desert{--g21-sky-top:#fbbf24;--g21-sky-mid:#fde68a;--g21-sky-bot:#a16
 body.theme-ice{--g21-sky-top:#bfdbfe;--g21-sky-mid:#dbeafe;--g21-sky-bot:#93c5fd}
 body.theme-lava{--g21-sky-top:#7f1d1d;--g21-sky-mid:#dc2626;--g21-sky-bot:#451a03}
 body.theme-final{--g21-sky-top:#1e1b4b;--g21-sky-mid:#312e81;--g21-sky-bot:#000000}
-#pixi-canvas{position:fixed;left:0;right:0;top:0;width:100vw;height:calc(100svh - var(--g21-bottom-margin,96px));display:block;image-rendering:auto;background:linear-gradient(180deg,#0d1020 0%,#1a1a3a 100%)}
+#pixi-canvas{position:fixed;left:0;right:0;top:0;width:100vw;height:calc(100svh - var(--g21-bottom-margin,96px));display:block;image-rendering:auto;background:transparent}
 
 /* ── HUD Top ── */
 #hud-top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:clamp(4px,1.5vw,10px);padding:max(12px,env(safe-area-inset-top)) clamp(12px,3vw,18px) 6px;background:linear-gradient(180deg,rgba(0,0,0,0.55) 0%,transparent 100%);pointer-events:none}
@@ -2495,31 +2495,25 @@ function onResize() {
   }, 200)
 }
 
-// Hotfix #142 — fit the 12-tile-tall (768px) world into the variable-height
-// canvas. Two cases:
-//   Portrait/tall canvas (height >= 768): apply Y-offset to world+parallaxMid
-//     so the world's bottom row aligns with the canvas bottom; sky shows above.
-//     Eliminates the "dark transparent block" gap below the green hill.
-//   Landscape/short canvas (height < 768): scale the Pixi stage down so the
-//     full world fits vertically. Otherwise the player gets cut off below the
-//     visible area (user reported "terpotong sisi bawahnya").
+// Hotfix #142 — only handle landscape: scale the entire Pixi stage down so
+// the 12-tile-tall world (768px) fits within the shorter canvas. Player was
+// cut off below visible area before. Portrait keeps stage at scale 1 — the
+// "dark gap" issue is solved separately by the canvas CSS background being
+// transparent so the body's sky gradient shows through.
+//
+// We DO NOT y-offset the Pixi world because the Pikachu sprite is a DOM
+// element positioned via translate3d at world coords — offsetting only the
+// Pixi world breaks the alignment between Pixi tiles and the DOM Pikachu.
 function fitWorldToCanvas() {
-  if (!app || !world) return
+  if (!app) return
   const ch = _gameH()
   const worldH = 12 * TILE   // 768
-  if (ch >= worldH) {
-    app.stage.scale.set(1)
-    const off = ch - worldH
-    world.y = off
-    if (parallaxMid) parallaxMid.y = off
-    if (fgLayer) fgLayer.y = off
-  } else {
-    // Scale entire stage down so the world fits the shorter canvas
+  if (ch < worldH) {
+    // Landscape / short canvas: scale stage down so the world fits
     const sc = ch / worldH
     app.stage.scale.set(sc)
-    world.y = 0
-    if (parallaxMid) parallaxMid.y = 0
-    if (fgLayer) fgLayer.y = 0
+  } else {
+    app.stage.scale.set(1)
   }
 }
 
