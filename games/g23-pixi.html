@@ -171,7 +171,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <img id="tr-balloon" src="../assets/Pokemon/g23/tr-balloon.gif" alt="Team Rocket">
 <div id="tr-warning">⚠️ Team Rocket Muncul!</div>
 <!-- Debug version marker (Hotfix #147) — confirms cache freshness -->
-<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260505z (Lucario gif)</div>
+<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260506a (anim restored)</div>
 
 <!-- HUD -->
 <div id="hud-top">
@@ -289,7 +289,7 @@ document.getElementById('quiz-total').textContent  = Math.min(8 + Math.floor((cf
 // (Pokemon body ~320px height, bottom-anchored) per #151.
 // `?v=` cache-bust forces browser to fetch the normalized versions
 // even when the URL is otherwise unchanged.
-const LOC_V = '20260505z'
+const LOC_V = '20260506a'
 const LOC = (n, ext='webp') => `../assets/Pokemon/g23/${n}.${ext}?v=${LOC_V}`
 const HD_DB = n => `https://img.pokemondb.net/sprites/home/normal/${n}.png`
 // All Pokemon use LOCAL animated WebP from assets/Pokemon/g23/ (user-provided
@@ -306,7 +306,7 @@ const G23_POKEMON = [
     {name:'Raichu',  gif:LOC('raichu'),  hd:HD_DB('raichu')},
   ], type:'electric', moves:[{name:'Thunder Shock',type:'electric'},{name:'Charm',type:'fairy'},{name:'Quick Attack',type:'normal'},{name:'Thunderbolt',type:'electric'}] },
   { name:'Umbreon',   gif:LOC('umbreon'),        hd:HD_DB('umbreon'),   type:'dark', noFlip:true, moves:[{name:'Dark Pulse',type:'dark'},{name:'Moonlight',type:'fairy'},{name:'Foul Play',type:'dark'},{name:'Shadow Ball',type:'ghost'}] },
-  { name:'Sandshrew', gif:LOC('sandshrew'),      hd:HD_DB('sandshrew'), type:'ground',   moves:[{name:'Earthquake',type:'ground'},{name:'Slash',type:'normal'},{name:'Rock Slide',type:'rock'},{name:'Poison Jab',type:'poison'}] },
+  { name:'Zigzagoon', gif:LOC('sandshrew'),      hd:HD_DB('zigzagoon'), type:'normal',   moves:[{name:'Headbutt',type:'normal'},{name:'Tackle',type:'normal'},{name:'Tail Whip',type:'normal'},{name:'Pin Missile',type:'bug'}] },
   { name:'Mudkip',    gif:LOC('mudkip'),         hd:HD_DB('mudkip'),    type:'water',    moves:[{name:'Water Gun',type:'water'},{name:'Mud Slap',type:'ground'},{name:'Tackle',type:'normal'},{name:'Whirlpool',type:'water'}] },
   { name:'Jolteon',   gif:LOC('jolteon'),        hd:HD_DB('jolteon'),   type:'electric', moves:[{name:'Thunderbolt',type:'electric'},{name:'Pin Missile',type:'bug'},{name:'Shadow Ball',type:'ghost'},{name:'Thunder',type:'electric'}] },
   { name:'Emolga',    gif:LOC('emolga'),         hd:HD_DB('emolga'),    type:'electric', moves:[{name:'Thunderbolt',type:'electric'},{name:'Aerial Ace',type:'flying'},{name:'Quick Attack',type:'normal'},{name:'Acrobatics',type:'flying'}] },
@@ -1995,4 +1995,4 @@ function gameLoop(ticker){
 </script>
 </body>
 </html>
-<!-- g23-pixi v20260505z -->
+<!-- g23-pixi v20260506a -->
