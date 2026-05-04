@@ -171,7 +171,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <img id="tr-balloon" src="../assets/Pokemon/g23/tr-balloon.gif" alt="Team Rocket">
 <div id="tr-warning">⚠️ Team Rocket Muncul!</div>
 <!-- Debug version marker (Hotfix #147) — confirms cache freshness -->
-<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260505x (Umbreon noFlip)</div>
+<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260505y (sprites normalized)</div>
 
 <!-- HUD -->
 <div id="hud-top">
@@ -285,9 +285,12 @@ document.getElementById('quiz-total').textContent  = Math.min(8 + Math.floor((cf
 //  POKEMON ROSTER
 // ═══════════════════════════════════════════════════════════
 // LOCAL ASSETS: user-provided animated WebP running sprites at
-// assets/Pokemon/g23/. These are the actual running animations the user
-// wants — must use these, not external CDN sprites.
-const LOC = (n, ext='webp') => `../assets/Pokemon/g23/${n}.${ext}`
+// assets/Pokemon/g23/. Sprites normalized to uniform Pokemon-fill
+// (Pokemon body ~320px height, bottom-anchored) per #151.
+// `?v=` cache-bust forces browser to fetch the normalized versions
+// even when the URL is otherwise unchanged.
+const LOC_V = '20260505y'
+const LOC = (n, ext='webp') => `../assets/Pokemon/g23/${n}.${ext}?v=${LOC_V}`
 const HD_DB = n => `https://img.pokemondb.net/sprites/home/normal/${n}.png`
 // All Pokemon use LOCAL animated WebP from assets/Pokemon/g23/ (user-provided
 // running sprites). Lycanroc/Cinderace RESTORED — user has the assets locally.
@@ -1992,4 +1995,4 @@ function gameLoop(ticker){
 </script>
 </body>
 </html>
-<!-- g23-pixi v20260505x -->
+<!-- g23-pixi v20260505y -->
