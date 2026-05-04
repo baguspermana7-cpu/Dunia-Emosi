@@ -560,7 +560,8 @@ const WORD_IMAGES = [
   {id:'bola',   emoji:'⚽',word:'BOLA',   file:'img-bola.webp',   suku:'BO-LA'},
   {id:'buku',   emoji:'📚',word:'BUKU',   file:'img-buku.webp',   suku:'BU-KU'},
   {id:'daun',   emoji:'🍃',word:'DAUN',   file:'img-daun.webp',   suku:'DA-UN'},
-  {id:'meja',   emoji:'🪑',word:'MEJA',   file:'img-meja.webp',   suku:'ME-JA'},
+  // meja entry removed: 🪑 emoji is "Chair" — was causing image=chair but
+  // answer=meja confusion. Kept img-meja.webp file in case reused elsewhere.
   // --- Animals emoji-only ---
   {id:'kucing', emoji:'🐱',word:'KUCING', file:null,suku:'KU-CING'},
   {id:'anjing', emoji:'🐶',word:'ANJING', file:null,suku:'AN-JING'},
@@ -603,7 +604,7 @@ const WORD_IMAGES = [
   {id:'tikus2', emoji:'🐀',word:'TIKUS',  file:null,suku:'TI-KUS'},
   {id:'gorila', emoji:'🦍',word:'GORILA', file:null,suku:'GO-RI-LA'},
   {id:'zebra',  emoji:'🦓',word:'ZEBRA',  file:null,suku:'ZEB-RA'},
-  {id:'kuda-nil',emoji:'🦛',word:'BADAK', file:null,suku:'BA-DAK'},
+  {id:'kuda-nil',emoji:'🦛',word:'KUDA NIL', file:null,suku:'KU-DA NIL'},
   {id:'pinguin',emoji:'🐧',word:'PINGUIN',file:null,suku:'PIN-GUIN'},
   {id:'flamingo',emoji:'🦩',word:'FLAMINGO',file:null,suku:'FLA-MIN-GO'},
   {id:'merak',  emoji:'🦚',word:'MERAK',  file:null,suku:'ME-RAK'},
@@ -624,7 +625,7 @@ const WORD_IMAGES = [
   {id:'serigala',emoji:'🐺',word:'SERIGALA',file:null,suku:'SE-RI-GA-LA'},
   {id:'rubah',  emoji:'🦊',word:'RUBAH',  file:null,suku:'RU-BAH'},
   {id:'berang', emoji:'🦦',word:'BERANG-BERANG',file:null,suku:'BE-RANG BE-RANG'},
-  {id:'musang', emoji:'🦨',word:'MUSANG', file:null,suku:'MU-SANG'},
+  {id:'musang', emoji:'🦨',word:'SIGUNG', file:null,suku:'SI-GUNG'},
   // --- More foods ---
   {id:'tomat',  emoji:'🍅',word:'TOMAT',  file:null,suku:'TO-MAT'},
   {id:'terong', emoji:'🍆',word:'TERONG', file:null,suku:'TE-RONG'},
@@ -641,7 +642,7 @@ const WORD_IMAGES = [
   {id:'melon',  emoji:'🍈',word:'MELON',  file:null,suku:'ME-LON'},
   {id:'leci',   emoji:'🍑',word:'PERSIK', file:null,suku:'PER-SIK'},
   {id:'kelapa', emoji:'🥥',word:'KELAPA', file:null,suku:'KE-LA-PA'},
-  {id:'kurma',  emoji:'🌴',word:'KURMA',  file:null,suku:'KUR-MA'},
+  {id:'kurma',  emoji:'🌴',word:'POHON KELAPA',file:null,suku:'PO-HON KE-LA-PA'},
   {id:'kacang', emoji:'🥜',word:'KACANG', file:null,suku:'KA-CANG'},
   // --- Household & school objects ---
   {id:'pensil', emoji:'✏️',word:'PENSIL', file:null,suku:'PEN-SIL'},
@@ -656,7 +657,7 @@ const WORD_IMAGES = [
   {id:'cermin', emoji:'🪞',word:'CERMIN', file:null,suku:'CER-MIN'},
   {id:'sikat',  emoji:'🪥',word:'SIKAT',  file:null,suku:'SI-KAT'},
   {id:'sabun',  emoji:'🧼',word:'SABUN',  file:null,suku:'SA-BUN'},
-  {id:'handuk', emoji:'🧣',word:'HANDUK', file:null,suku:'HAN-DUK'},
+  {id:'handuk', emoji:'🧣',word:'SYAL', file:null,suku:'SYAL'},
   {id:'sendok', emoji:'🥄',word:'SENDOK', file:null,suku:'SEN-DOK'},
   {id:'garpu',  emoji:'🍴',word:'GARPU',  file:null,suku:'GAR-PU'},
   {id:'gelas',  emoji:'🥛',word:'GELAS',  file:null,suku:'GE-LAS'},
@@ -667,7 +668,7 @@ const WORD_IMAGES = [
   {id:'gunung', emoji:'⛰️',word:'GUNUNG', file:null,suku:'GU-NUNG'},
   {id:'sungai', emoji:'🌊',word:'SUNGAI', file:null,suku:'SU-NGAI'},
   {id:'hutan',  emoji:'🌲',word:'HUTAN',  file:null,suku:'HU-TAN'},
-  {id:'danau',  emoji:'🏔️',word:'DANAU',  file:null,suku:'DA-NAU'},
+  {id:'danau',  emoji:'🏔️',word:'GUNUNG SALJU',file:null,suku:'GU-NUNG SAL-JU'},
   {id:'pantai', emoji:'🏖️',word:'PANTAI', file:null,suku:'PAN-TAI'},
   {id:'langit', emoji:'☁️',word:'LANGIT', file:null,suku:'LA-NGIT'},
   {id:'angin',  emoji:'💨',word:'ANGIN',  file:null,suku:'A-NGIN'},
