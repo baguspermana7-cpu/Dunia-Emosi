@@ -72,11 +72,12 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
 /* Magikarp micro-wiggle — rotate is independent of transform, no positioning conflict */
 @keyframes swimWiggle{0%,100%{rotate:-5deg}25%,75%{rotate:0deg}50%{rotate:5deg}}
 .swim-wiggle{animation:swimWiggle 0.44s ease-in-out infinite}
-/* Upright-pose Pokemon (Floatzel, Lugia, Eternatus): rotate 90deg so they
-   appear horizontal with head pointing right (swim direction). transform-origin
-   forced to center so rotation pivots around the sprite center, not the feet —
-   keeps the visual center aligned with the player's anchor point. */
-.swim-rotate{rotate:90deg;transform-origin:50% 50%}
+/* Upright-pose Pokemon (Buizel, Floatzel): rotate 90deg so they appear
+   horizontal with head pointing right (swim direction). Pokemon Showdown
+   sprites anchor the body in the LOWER half of the bounding box (transparent
+   space at top), so we pivot around (50%, 75%) — the Pokemon body's actual
+   center — to keep the visual center aligned with the player's anchor point. */
+.swim-rotate{rotate:90deg;transform-origin:50% 75%}
 @keyframes swimWiggleRot{0%,100%{rotate:85deg}25%,75%{rotate:90deg}50%{rotate:95deg}}
 .swim-rotate.swim-wiggle{animation:swimWiggleRot 0.44s ease-in-out infinite}
 /* Staryu/Starmie spinning star micro-animation */
@@ -290,11 +291,11 @@ const G24_POKEMON = [
     {name:'Mantine', src:PS('mantine'), hd:HD('0226_mantine'), flip:true, scale:1.1, emoji:'🦅'},
   ]},
   { name:'Lugia', region:3, evo:[
-    {name:'Lugia', src:PS('lugia'), hd:'../assets/Pokemon/g19/lugia.webp', flip:true, scale:1.3, rotate:true, wiggle:true, emoji:'🕊️'},
+    {name:'Lugia', src:PS('lugia'), hd:'../assets/Pokemon/g19/lugia.webp', flip:true, scale:1.3, emoji:'🕊️'},
   ]},
   { name:'Eternatus', region:3, evo:[
-    {name:'Eternatus',           src:PS('eternatus'),            hd:HD('0890_eternatus'), flip:true, scale:1.3, rotate:true, wiggle:true, emoji:'🐉'},
-    {name:'Eternamax Eternatus', src:PS('eternatus-eternamax'),  hd:HD('0890_eternatus'), flip:true, scale:1.7, rotate:true, wiggle:true, emoji:'🌌'},
+    {name:'Eternatus',           src:PS('eternatus'),            hd:HD('0890_eternatus'), flip:true, scale:1.3, emoji:'🐉'},
+    {name:'Eternamax Eternatus', src:PS('eternatus-eternamax'),  hd:HD('0890_eternatus'), flip:true, scale:1.7, emoji:'🌌'},
   ]},
 ]
 let selectedPokemon = Math.max(0, Math.min(cfg.pokemon || 0, G24_POKEMON.length - 1))
@@ -1012,10 +1013,13 @@ function syncSwimmerPos(y) {
   if (!img) return
   const poke = G24_POKEMON[selectedPokemon]
   const stage = Math.min(S.evoStage||0, poke.evo.length-1)
-  const flip = poke.evo[stage].flip
+  const evo = poke.evo[stage]
   img.style.left = SWIM_X + 'px'
   img.style.top  = y + 'px'
-  img.style.transform = `translate(-50%,-50%)${flip?' scaleX(-1)':''}`
+  // Skip scaleX flip for rotated sprites — rotation alone handles direction;
+  // double-flipping a rotated sprite inverts the orientation back to wrong way.
+  const _flipPart = (!evo.rotate && evo.flip) ? ' scaleX(-1)' : ''
+  img.style.transform = `translate(-50%,-50%)${_flipPart}`
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1196,9 +1200,9 @@ function refreshStartIcon() {
   si.innerHTML = ''
   const img = document.createElement('img')
   img.src = sp.hd || sp.src   // HD WebP always available; GIF only if hd missing
-  // Upright-pose Pokemon (Floatzel, Lugia, Eternatus): rotate 90deg around center
-  // so head points right. Skip scaleX flip — rotation alone handles direction.
-  const _rot = sp.rotate ? 'rotate:90deg;transform-origin:50% 50%;' : ''
+  // Upright-pose Pokemon (Buizel/Floatzel): rotate 90deg pivoting at (50%,75%)
+  // for proper centering. Skip scaleX flip — rotation alone handles direction.
+  const _rot = sp.rotate ? 'rotate:90deg;transform-origin:50% 75%;' : ''
   const _flip = (!sp.rotate && sp.flip) ? 'transform:scaleX(-1);' : ''
   img.style.cssText = `width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 4px 24px rgba(0,180,216,0.7));${_rot}${_flip}`
   img.onerror = () => { si.textContent = '🌊' }
@@ -1320,10 +1324,10 @@ function renderBagGrid() {
     const img = document.createElement('img')
     // Always use HD WebP for bag display — looks great, always available
     img.src = evo0.hd || evo0.src
-    // For rotate-pose Pokemon (Floatzel, Lugia, Eternatus): apply 90deg via `rotate`
-    // CSS property — head points right. Skip the scaleX flip when rotated (rotation
-    // already handles direction; flipping a rotated sprite would invert the result).
-    const _rot = evo0.rotate ? 'rotate:90deg;transform-origin:50% 50%;' : ''
+    // For rotate-pose Pokemon (Buizel/Floatzel): apply 90deg via `rotate` CSS property
+    // pivoting at (50%,75%) so the Pokemon body (anchored bottom in Showdown sprites)
+    // stays centered. Skip scaleX flip when rotated — rotation alone handles direction.
+    const _rot = evo0.rotate ? 'rotate:90deg;transform-origin:50% 75%;' : ''
     const _flip = (!evo0.rotate && evo0.flip) ? 'scaleX(-1)' : 'none'
     img.style.cssText = `width:60px;height:60px;object-fit:contain;${_rot}transform:${_flip}`
     // Cascade fallback chain: hd → src (Showdown URL) → emoji
@@ -1388,4 +1392,4 @@ document.getElementById('level-text').textContent=`Level ${cfg.level}`
 </script>
 </body>
 </html>
-<!-- g24-pixi v20260505i -->
+<!-- g24-pixi v20260505j -->

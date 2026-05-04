@@ -154,3 +154,25 @@
 
 - Cache: g23-pixi v=20260505h
 - Lesson L93: mobile `onclick` has 300ms debounce — use `pointerdown` for game action buttons
+
+## 2026-05-04 — #135 G24 Upright Pokemon Rotation 180° + Center Pivot
+
+User report: Buizel/Lugia/Eternatus appeared upside-down after the rotate fix in #132.
+Sprite also offset from player aura center (visible gap between aura ring and sprite).
+
+Root cause: `rotate:-90deg` + `transform:scaleX(-1)` + `transform-origin:50% 100%`
+(bottom-center, default on `#player-img`) made the rotated sprite kick out
+diagonally with head pointing left-down instead of right.
+
+Fixes:
+- `.swim-rotate`: `rotate:-90deg` → `rotate:90deg` (180° flip — head now points right)
+- `.swim-rotate`: added `transform-origin:50% 50%` (pivot around sprite center)
+- Removed `scaleX(-1)` flip when `rotate` is set — rotation alone determines direction;
+  flipping a rotated sprite inverts the result back to the wrong way.
+- `swimWiggleRot` keyframes adjusted: `85deg → 90deg → 95deg` (matches new base offset)
+- Same updates in `renderBagGrid` (bag card) and `refreshStartIcon` (start screen icon)
+
+- Cache: g24-pixi v=20260505i. Lesson L95: when rotating sprites for orientation,
+  pick rotate vs scaleX as the canonical direction handler — using both compounds
+  unpredictably; transform-origin must be `50% 50%` (center) not `50% 100%` (feet)
+  so the rotated body stays centered at the player anchor point.

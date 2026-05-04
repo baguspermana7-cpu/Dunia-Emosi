@@ -134,3 +134,21 @@ ratio and letterboxes inside the box. Pattern applies whenever you constrain an
 img/video to specific width AND height. If you only set one dimension and `auto` the
 other, aspect ratio is preserved naturally — but for game sprites where layout
 needs uniform box dimensions, `object-fit:contain` is the clean answer.
+
+## L95 — Pick rotate OR scaleX as canonical direction handler, never both
+G24 upright Pokemon initially used `rotate:-90deg` + `transform:scaleX(-1)` to make
+standing sprites lie horizontal facing right. Result was wrong: head ended up pointing
+left-down. The double transformation compounds in a way that's hard to predict —
+rotate around an off-center origin (default bottom-center for `#player-img`) plus a
+horizontal flip produces a different final orientation than either alone.
+
+Rule: when rotating a sprite for direction, choose ONE direction handler. If `rotate`
+is set, do NOT also apply `scaleX(-1)` — rotation alone determines the head direction.
+And always force `transform-origin:50% 50%` (sprite center) on rotated sprites so the
+visual center stays at the anchor point — the default `50% 100%` (bottom-center) is
+designed for upright standing, not horizontal swimming.
+
+Pattern: in renderer code, branch on `rotate` flag:
+- `rotate=true` → apply rotation, no flip, transform-origin: center
+- `rotate=false, flip=true` → apply scaleX(-1), no rotation
+- `rotate=false, flip=false` → no transform

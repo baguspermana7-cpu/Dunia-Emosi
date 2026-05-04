@@ -2408,3 +2408,11 @@ Neither went through `openLevelSelect` where `_applyKodokSlot7Unlock` was placed
 - [x] HIT_MARGIN 20 → 12 (close crown gap)
 - [x] Obstacle hitbox: removed +4 inset → matches visual fill exactly
 - [x] Cache bump g23-pixi v=20260505h
+
+## #135 — G24 Upright Pokemon Rotation 180° + Center Pivot (2026-05-04)
+- [x] .swim-rotate: rotate -90deg → +90deg (Buizel/Floatzel/Lugia/Eternatus head was facing left-down)
+- [x] .swim-rotate: transform-origin:50% 50% (pivot around center, not feet — sprite no longer offset from aura ring)
+- [x] Skip scaleX(-1) when rotate is set (rotation alone handles direction; double-flip was inverting result)
+- [x] swimWiggleRot keyframes 85/90/95deg (matches new base)
+- [x] Same fix in renderBagGrid + refreshStartIcon
+- [x] Cache bump g24-pixi v=20260505i
