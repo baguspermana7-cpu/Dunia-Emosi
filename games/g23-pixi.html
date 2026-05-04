@@ -19,10 +19,19 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 #bg-gym  {z-index:4;background-size:cover;background-position:center bottom;opacity:.7}
 
 #pixi-canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block;z-index:5}
+/* Default: most local .webp sprites face LEFT, so scaleX(-1) flips them to
+ * face RIGHT (running direction). Pokemon whose source already faces RIGHT
+ * use .noflip class to opt out. Set via syncPlayerPos based on poke.noFlip. */
 #player-img{position:fixed;z-index:40;pointer-events:none;image-rendering:auto;display:none;transition:filter .3s ease;transform:scaleX(-1);will-change:left,top;transform-origin:50% 100%;object-fit:contain;object-position:50% 100%}
+#player-img.noflip{transform:none}
 #player-img.sliding{transform:scaleX(-1) scaleY(0.47);transition:transform .08s ease-out,filter .3s ease}
+#player-img.noflip.sliding{transform:scaleY(0.47)}
 @keyframes jumpSquash{0%{transform:scaleX(-1) scaleY(1)}25%{transform:scaleX(-1) scaleY(0.75)}65%{transform:scaleX(-1) scaleY(1.1)}100%{transform:scaleX(-1) scaleY(1)}}
 @keyframes landBounce{0%{transform:scaleX(-1) scaleY(0.68)}40%{transform:scaleX(-1) scaleY(1.12)}70%{transform:scaleX(-1) scaleY(0.94)}100%{transform:scaleX(-1) scaleY(1)}}
+@keyframes jumpSquashNF{0%{transform:scaleY(1)}25%{transform:scaleY(0.75)}65%{transform:scaleY(1.1)}100%{transform:scaleY(1)}}
+@keyframes landBounceNF{0%{transform:scaleY(0.68)}40%{transform:scaleY(1.12)}70%{transform:scaleY(0.94)}100%{transform:scaleY(1)}}
+#player-img.noflip.jump-anim{animation:jumpSquashNF 0.16s ease-out}
+#player-img.noflip.land-anim{animation:landBounceNF 0.2s ease-out}
 #player-img.jump-anim{animation:jumpSquash 0.16s ease-out}
 #player-img.land-anim{animation:landBounce 0.2s ease-out}
 #slide-btn{position:fixed;bottom:max(20px,env(safe-area-inset-bottom));left:max(20px,env(safe-area-inset-left));z-index:100;width:clamp(72px,16vmin,104px);height:clamp(60px,13vmin,88px);border-radius:18px;background:linear-gradient(160deg,#34d399,#10b981);border:2.5px solid #6ee7b7;color:#fff;font-size:clamp(26px,6.5vmin,36px);font-weight:900;cursor:pointer;-webkit-tap-highlight-color:transparent;display:none;align-items:center;justify-content:center;box-shadow:0 4px 0 rgba(0,80,50,0.3),0 6px 16px rgba(0,0,0,.35);transition:transform .08s,filter .1s;text-shadow:0 1px 3px rgba(0,0,0,0.4);touch-action:manipulation}
@@ -162,7 +171,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <img id="tr-balloon" src="../assets/Pokemon/g23/tr-balloon.gif" alt="Team Rocket">
 <div id="tr-warning">⚠️ Team Rocket Muncul!</div>
 <!-- Debug version marker (Hotfix #147) — confirms cache freshness -->
-<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260505w (LOCAL+nobg)</div>
+<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260505x (Umbreon noFlip)</div>
 
 <!-- HUD -->
 <div id="hud-top">
@@ -293,7 +302,7 @@ const G23_POKEMON = [
     {name:'Pikachu', gif:LOC('pikachu'), hd:HD_DB('pikachu')},
     {name:'Raichu',  gif:LOC('raichu'),  hd:HD_DB('raichu')},
   ], type:'electric', moves:[{name:'Thunder Shock',type:'electric'},{name:'Charm',type:'fairy'},{name:'Quick Attack',type:'normal'},{name:'Thunderbolt',type:'electric'}] },
-  { name:'Umbreon',   gif:LOC('umbreon'),        hd:HD_DB('umbreon'),   type:'dark',     moves:[{name:'Dark Pulse',type:'dark'},{name:'Moonlight',type:'fairy'},{name:'Foul Play',type:'dark'},{name:'Shadow Ball',type:'ghost'}] },
+  { name:'Umbreon',   gif:LOC('umbreon'),        hd:HD_DB('umbreon'),   type:'dark', noFlip:true, moves:[{name:'Dark Pulse',type:'dark'},{name:'Moonlight',type:'fairy'},{name:'Foul Play',type:'dark'},{name:'Shadow Ball',type:'ghost'}] },
   { name:'Sandshrew', gif:LOC('sandshrew'),      hd:HD_DB('sandshrew'), type:'ground',   moves:[{name:'Earthquake',type:'ground'},{name:'Slash',type:'normal'},{name:'Rock Slide',type:'rock'},{name:'Poison Jab',type:'poison'}] },
   { name:'Mudkip',    gif:LOC('mudkip'),         hd:HD_DB('mudkip'),    type:'water',    moves:[{name:'Water Gun',type:'water'},{name:'Mud Slap',type:'ground'},{name:'Tackle',type:'normal'},{name:'Whirlpool',type:'water'}] },
   { name:'Jolteon',   gif:LOC('jolteon'),        hd:HD_DB('jolteon'),   type:'electric', moves:[{name:'Thunderbolt',type:'electric'},{name:'Pin Missile',type:'bug'},{name:'Shadow Ball',type:'ghost'},{name:'Thunder',type:'electric'}] },
@@ -726,6 +735,10 @@ function syncPlayerPos(){
   img.style.left=(PLAYER_X-PLAYER_W/2+jumpXOffset)+'px'
   img.style.top=(S.playerY-PLAYER_H)+'px'
   img.classList.toggle('sliding',S.isSliding)
+  // Per-Pokemon noFlip override: skip the global scaleX(-1) for sprites that
+  // already face right in the source .webp file.
+  const _p = G23_POKEMON[selectedPokemon]
+  img.classList.toggle('noflip', !!_p.noFlip)
 }
 function applyPokemon(idx){
   selectedPokemon=Math.max(0,Math.min(idx,G23_POKEMON.length-1))
@@ -1979,4 +1992,4 @@ function gameLoop(ticker){
 </script>
 </body>
 </html>
-<!-- g23-pixi v20260505w -->
+<!-- g23-pixi v20260505x -->

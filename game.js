@@ -727,7 +727,7 @@ const WORD_BUILD_BANK = [
   {word:'BUAH',emoji:'🍓',hint:'Makanan segar dari pohon',tier:'easy'},
   {word:'KOPI',emoji:'☕',hint:'Minuman panas dari biji',tier:'easy'},
   {word:'DADU',emoji:'🎲',hint:'Alat bermain berbentuk kubus',tier:'easy'},
-  {word:'BESI',emoji:'⚙️',hint:'Logam keras berwarna abu-abu',tier:'easy'},
+  {word:'BESI',emoji:'🔩',hint:'Logam keras berwarna abu-abu',tier:'easy'},
   {word:'KAYU',emoji:'🪵',hint:'Bahan dari pohon',tier:'easy'},
   {word:'LAGU',emoji:'🎵',hint:'Musik yang dinyanyikan',tier:'easy'},
   {word:'MATA',emoji:'👀',hint:'Digunakan untuk melihat',tier:'easy'},
@@ -789,14 +789,16 @@ const WORD_BUILD_BANK = [
   {word:'BIJI',emoji:'🌰',hint:'Cikal bakal tanaman baru',tier:'easy'},
   {word:'TALI',emoji:'🪢',hint:'Dipakai untuk mengikat',tier:'easy'},
   {word:'SAPU',emoji:'🧹',hint:'Alat membersihkan lantai',tier:'easy'},
-  {word:'RODA',emoji:'⚙️',hint:'Bagian bulat pada kendaraan',tier:'easy'},
+  {word:'RODA',emoji:'🛞',hint:'Bagian bulat pada kendaraan',tier:'easy'},
   {word:'JARI',emoji:'🖐️',hint:'Bagian dari tangan',tier:'easy'},
   {word:'GIGI',emoji:'🦷',hint:'Bagian mulut untuk mengunyah',tier:'easy'},
   {word:'GULA',emoji:'🍬',hint:'Bahan pemanis makanan',tier:'easy'},
   {word:'BATU',emoji:'🪨',hint:'Benda keras dari alam',tier:'easy'},
   {word:'EMAS',emoji:'🏅',hint:'Logam mulia berwarna kuning',tier:'easy'},
-  {word:'TAHU',emoji:'🟨',hint:'Makanan dari kedelai',tier:'easy'},
-  {word:'MEJA',emoji:'🪑',hint:'Tempat meletakkan benda',tier:'easy'},
+  // TAHU removed: no good emoji (was 🟨 placeholder yellow square — confusing).
+  // MEJA removed: emoji 🪑 is officially "chair" — exact bug user reported
+  // ("gambar kursi tapi jawaban meja"). No standard Unicode "table" emoji
+  // exists; safer to drop than mislead with wrong icon.
   {word:'PENA',emoji:'🖊️',hint:'Alat tulis berisi tinta',tier:'easy'},
   {word:'BIRU',emoji:'💙',hint:'Warna langit dan laut',tier:'easy'},
   {word:'NAGA',emoji:'🐉',hint:'Hewan mitos bernapas api',tier:'easy'},
@@ -817,9 +819,25 @@ const WORD_BUILD_BANK = [
   {word:'JALA',emoji:'🎣',hint:'Alat untuk menangkap ikan',tier:'easy'},
   {word:'API',emoji:'🔥',hint:'Cahaya panas yang menyala',tier:'easy'},
   {word:'TARI',emoji:'💃',hint:'Gerakan tubuh mengikuti irama',tier:'easy'},
-  {word:'LELE',emoji:'🐠',hint:'Ikan berkumis dari sungai',tier:'easy'},
+  {word:'LELE',emoji:'🐟',hint:'Ikan berkumis dari sungai',tier:'easy'},
   {word:'CUMI',emoji:'🦑',hint:'Hewan laut bertentakel',tier:'easy'},
-  {word:'KUTU',emoji:'🦟',hint:'Serangga kecil parasit',tier:'easy'},
+  // KUTU removed: 🦟 is mosquito (NYAMUK), not lice (KUTU). No louse emoji exists.
+  // --- More variety (additions per #150 user feedback) ---
+  {word:'KOALA',emoji:'🐨',hint:'Hewan kelabu suka pohon eukaliptus',tier:'easy'},
+  {word:'PALU',emoji:'🔨',hint:'Alat untuk memukul paku',tier:'easy'},
+  {word:'KUNCI',emoji:'🔑',hint:'Untuk membuka pintu rumah',tier:'easy'},
+  {word:'JAM',emoji:'⏰',hint:'Penunjuk waktu',tier:'easy'},
+  {word:'PIZZA',emoji:'🍕',hint:'Makanan bulat dari Italia',tier:'easy'},
+  {word:'KUE',emoji:'🍰',hint:'Makanan manis untuk ulang tahun',tier:'easy'},
+  {word:'TEH',emoji:'🍵',hint:'Minuman dari daun direbus',tier:'easy'},
+  {word:'JUS',emoji:'🥤',hint:'Minuman dari sari buah',tier:'easy'},
+  {word:'KIPAS',emoji:'🪭',hint:'Alat untuk mengusir panas',tier:'easy'},
+  {word:'KAOS',emoji:'👕',hint:'Pakaian atas tanpa kerah',tier:'easy'},
+  {word:'TOPI',emoji:'🧢',hint:'Penutup kepala bertepi',tier:'easy'},
+  {word:'BORA',emoji:'🌫️',hint:'Awan tebal dekat tanah',tier:'easy'},
+  {word:'SAYAP',emoji:'🪽',hint:'Bagian tubuh untuk terbang',tier:'easy'},
+  {word:'OBENG',emoji:'🪛',hint:'Alat untuk memutar baut',tier:'easy'},
+  {word:'KASUR',emoji:'🛏️',hint:'Tempat tidur yang empuk',tier:'easy'},
   // --- Medium additions ---
   {word:'DOMBA',emoji:'🐑',hint:'Hewan berbulu penghasil wol',tier:'medium'},
   {word:'PENYU',emoji:'🐢',hint:'Kura-kura yang hidup di laut',tier:'medium'},
@@ -13056,7 +13074,7 @@ function initGame23() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g23Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g23-pixi.html?v=20260505w'
+  window.location.href = 'games/g23-pixi.html?v=20260505x'
 }
 
 function initGame24() {
