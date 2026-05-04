@@ -1368,7 +1368,7 @@ function openGymGame() {
   playClick()
   // MUST remain synchronous — page redirects on next line, no time for async work.
   _applyKodokSlot7Unlock()   // runs once, guard inside; slot-7+frog preset
-  window.location.href = 'games/g13c-pixi.html?v=20260505k'
+  window.location.href = 'games/g13c-pixi.html?v=20260505l'
 }
 
 function g13cBuildLetterSelect() {

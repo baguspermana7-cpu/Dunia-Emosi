@@ -130,7 +130,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 #move-back{background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.2);border-radius:10px;padding:5px 10px;color:#fff;cursor:pointer;font-family:inherit;font-size:13px}
 #move-label{color:#a78bfa;font-size:13px;font-weight:700}
 #move-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.move-btn{padding:12px 8px;border-radius:14px;border:2px solid;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;text-align:center}
+.move-btn{padding:10px 6px;border-radius:14px;border:2px solid;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15;gap:2px;overflow:hidden}
+.move-btn .mv-en{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;line-height:1.15}
+.move-btn .mv-id{font-size:9px;opacity:0.8;font-weight:500;font-style:italic;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+@media(min-width:380px){.move-btn .mv-en{font-size:15px}.move-btn .mv-id{font-size:9.5px}}
 .move-btn:active{transform:scale(0.92)}
 
 /* Switch panel */
@@ -382,6 +385,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/save-engine.js?v=20260501e"></script>
 <script src="data/math-rules.js?v=20260501d"></script>
+<script src="data/move-id-translations.js?v=20260505k"></script>
 <script src="game-modal.js?v=20260424g"></script>
 <script src="battle-sprite-engine.js?v=20260502p"></script>
 
@@ -1823,7 +1827,11 @@ document.getElementById('btn-fight').onclick = ()=>{
   const pp = battle.playerTeam[battle.playerIdx];
   const mb = document.getElementById('move-btns');
   mb.innerHTML = pp.moves.map((m,i)=>
-    `<button class="move-btn type-${m.type}" onclick="useMove(${i})">${m.name}</button>`
+    (function(){
+      const idName = (typeof moveID === 'function') ? moveID(m.name) : ''
+      const idLine = idName ? `<span class="mv-id">${idName}</span>` : ''
+      return `<button class="move-btn type-${m.type}" onclick="useMove(${i})"><span class="mv-en">${m.name}</span>${idLine}</button>`
+    })()
   ).join('');
   showBattleUI('move');
   setMsg('Pilih seranganmu!');
@@ -2279,4 +2287,4 @@ document.getElementById('gym-select').style.display='flex';
 </script>
 </body>
 </html>
-<!-- g13c-pixi v20260505k -->
+<!-- g13c-pixi v20260505l -->

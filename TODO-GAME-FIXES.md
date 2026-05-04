@@ -2434,3 +2434,10 @@ Neither went through `openLevelSelect` where `_applyKodokSlot7Unlock` was placed
 - [x] Trim Eternatus.evo from 2 entries → 1 (Eternamax removed)
 - [x] Bag label auto-updates "2x Evo" → "Tetap"
 - [x] triggerEvolution auto-skips (evoStage<evo.length-1 = false)
+
+## #140 — G13C Bilingual Move Names (2026-05-04)
+- [x] Created games/data/move-id-translations.js with ~280 EN→ID move name mappings
+- [x] Two-line .move-btn layout (English primary 14-15px + Indonesian subtitle 9-9.5px italic)
+- [x] Renderer emits .mv-en + .mv-id spans; idLine hidden if no translation
+- [x] Overflow protection (white-space:nowrap + ellipsis) keeps text inside box
+- [x] Cache bump g13c v=20260505l

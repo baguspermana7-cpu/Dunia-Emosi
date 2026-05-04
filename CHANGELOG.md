@@ -216,3 +216,24 @@ visually busy (extended tendrils) and unfit. Removed evolution.
 - triggerEvolution() auto-skips for Eternatus (S.evoStage<evo.length-1 = 0<0).
 
 Cache: g13c v=20260505k, g24 v=20260505k
+
+## 2026-05-04 — #140 G13C Bilingual Move Names (English + Indonesian subtitle)
+
+User: "G13c itu biarkan nama serangannya bahasa inggris tapi tambahkan tulisan
+kecil bahasa indonesianya nama serangannya" — keep move names in English but
+add small Indonesian translation underneath each move button.
+
+- New file `games/data/move-id-translations.js` — comprehensive English→Indonesian
+  map for ~280 Pokemon move names (covers all moves used by G13C trainer rosters).
+  Falls back to empty string for unmapped moves so renderer hides the line.
+- `g13c-pixi.html` `.move-btn` CSS restructured: flex column layout with
+  `.mv-en` (14-15px primary) + `.mv-id` (9-9.5px subtitle, italic, opacity 0.8).
+  Both lines have `white-space:nowrap; overflow:hidden; text-overflow:ellipsis`
+  to prevent overflow inside the button box.
+- Move-button renderer (line 1829) now wraps name in `<span class="mv-en">`
+  and conditionally appends `<span class="mv-id">` when translation exists.
+- Indonesian font sized at ~64% of English (9px vs 14px) — readable on phones
+  while clearly subordinate. (Literal "30% of English" = 4.2px would have
+  been unreadable; bumped to readable size.)
+
+Cache: g13c v=20260505l
