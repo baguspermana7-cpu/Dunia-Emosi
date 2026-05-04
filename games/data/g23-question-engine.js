@@ -179,6 +179,35 @@
     {q:'Bentuk bola?',ans:'BULAT',wrong:['KOTAK','SEGITIGA','PANJANG']},
     {q:'Bentuk pintu?',ans:'KOTAK',wrong:['BULAT','SEGITIGA','OVAL']},
     {q:'Bentuk piramida?',ans:'SEGITIGA',wrong:['BULAT','KOTAK','OVAL']},
+
+    // Antonim / Lawan kata (5-7 yo basic)
+    {q:'Lawan kata BESAR?',ans:'KECIL',wrong:['TINGGI','LEBAR','PANJANG']},
+    {q:'Lawan kata TINGGI?',ans:'PENDEK',wrong:['KECIL','RENDAH','TIPIS']},
+    {q:'Lawan kata PANAS?',ans:'DINGIN',wrong:['HANGAT','SEJUK','BEKU']},
+    {q:'Lawan kata SIANG?',ans:'MALAM',wrong:['SORE','PAGI','SUBUH']},
+    {q:'Lawan kata BANYAK?',ans:'SEDIKIT',wrong:['KECIL','HABIS','KOSONG']},
+    {q:'Lawan kata CEPAT?',ans:'LAMBAT',wrong:['PELAN','PENDEK','KECIL']},
+    {q:'Lawan kata RAJIN?',ans:'MALAS',wrong:['BAIK','LELAH','BURUK']},
+    {q:'Lawan kata PANJANG?',ans:'PENDEK',wrong:['KECIL','LEBAR','TINGGI']},
+    {q:'Lawan kata BARU?',ans:'LAMA',wrong:['TUA','KECIL','RUSAK']},
+    {q:'Lawan kata BERSIH?',ans:'KOTOR',wrong:['BASAH','BURUK','BAU']},
+    {q:'Lawan kata BERANI?',ans:'PENAKUT',wrong:['LEMAH','BODOH','MALU']},
+    {q:'Lawan kata RAMAI?',ans:'SEPI',wrong:['DIAM','GELAP','SEDIH']},
+    {q:'Lawan kata GELAP?',ans:'TERANG',wrong:['CERAH','PUTIH','SIANG']},
+    {q:'Lawan kata HALUS?',ans:'KASAR',wrong:['KERAS','TAJAM','TEBAL']},
+    {q:'Lawan kata KAYA?',ans:'MISKIN',wrong:['SUSAH','SAKIT','SEDIH']},
+    {q:'Lawan kata BENAR?',ans:'SALAH',wrong:['BURUK','JELEK','BOHONG']},
+    {q:'Lawan kata BAIK?',ans:'JAHAT',wrong:['BURUK','SALAH','SAKIT']},
+    {q:'Lawan kata MUDA?',ans:'TUA',wrong:['LAMA','TINGGI','LEMAH']},
+    {q:'Lawan kata KUAT?',ans:'LEMAH',wrong:['LELAH','SAKIT','MALAS']},
+    {q:'Lawan kata BAHAGIA?',ans:'SEDIH',wrong:['MARAH','TAKUT','BOSAN']},
+
+    // Sinonim / Sama arti
+    {q:'Sama arti PINTAR?',ans:'CERDAS',wrong:['BAIK','RAJIN','HEBAT']},
+    {q:'Sama arti BAGUS?',ans:'BAIK',wrong:['INDAH','HEBAT','BARU']},
+    {q:'Sama arti SUKA?',ans:'SENANG',wrong:['CINTA','RAMAH','BAIK']},
+    {q:'Sama arti CANTIK?',ans:'INDAH',wrong:['BAIK','RAMAH','LUCU']},
+    {q:'Sama arti TAKUT?',ans:'NGERI',wrong:['SEDIH','MARAH','MALU']},
   ]
 
   // Medium language: more vocab, basic geography, simple sentences
@@ -239,6 +268,50 @@
     {q:'Tempat ibadah Kristen?',ans:'GEREJA',wrong:['MASJID','PURA','VIHARA']},
     {q:'Tempat ibadah Hindu?',ans:'PURA',wrong:['MASJID','GEREJA','VIHARA']},
     {q:'Tempat ibadah Buddha?',ans:'VIHARA',wrong:['MASJID','GEREJA','PURA']},
+
+    // EYD / Imbuhan (medium — 5-7 yo lanjut, 7-8 yo dasar)
+    {q:'ME- + LIHAT = ?',ans:'MELIHAT',wrong:['LIHATAN','PELIHAT','LIHATKAN']},
+    {q:'ME- + TULIS = ?',ans:'MENULIS',wrong:['MELULIS','MENTULIS','MEMTULIS']},
+    {q:'ME- + BACA = ?',ans:'MEMBACA',wrong:['MEBACA','MENBACA','MEBACAR']},
+    {q:'ME- + AMBIL = ?',ans:'MENGAMBIL',wrong:['MEAMBIL','MEMAMBIL','MENAMBIL']},
+    {q:'ME- + JADI = ?',ans:'MENJADI',wrong:['MEJADI','MEMJADI','MENGJADI']},
+    {q:'ME- + KIRIM = ?',ans:'MENGIRIM',wrong:['MEKIRIM','MENKIRIM','MEMKIRIM']},
+    {q:'ME- + GAMBAR = ?',ans:'MENGGAMBAR',wrong:['MEGAMBAR','MEMGAMBAR','MENGAMBAR']},
+    {q:'ME- + SAPU = ?',ans:'MENYAPU',wrong:['MESAPU','MENSAPU','MEMSAPU']},
+    {q:'ME- + CUCI = ?',ans:'MENCUCI',wrong:['MECUCI','MEMCUCI','MENGCUCI']},
+    {q:'ME- + POTONG = ?',ans:'MEMOTONG',wrong:['MEPOTONG','MENPOTONG','MENGPOTONG']},
+    {q:'PE- + LARI = ?',ans:'PELARI',wrong:['PELARIS','PELARIN','PELARIH']},
+    {q:'PE- + RAWAT = ?',ans:'PERAWAT',wrong:['PERAWATAN','PERAWAS','PERAWAH']},
+    {q:'PE- + AJAR = ?',ans:'PENGAJAR',wrong:['PEAJAR','PEMAJAR','PENAJAR']},
+    {q:'PE- + KERJA = ?',ans:'PEKERJA',wrong:['PEMKERJA','PEKERJAH','PENKERJA']},
+    {q:'-AN + MAKAN = ?',ans:'MAKANAN',wrong:['MAKANNAN','MAKANN','MAKANANAN']},
+    {q:'-AN + MINUM = ?',ans:'MINUMAN',wrong:['MINUMNAN','MINUMM','MINUMNAN']},
+    {q:'-AN + BACA = ?',ans:'BACAAN',wrong:['BACAANN','BACANAN','BACAAH']},
+    {q:'BER- + LARI = ?',ans:'BERLARI',wrong:['BELLARI','BERLARIN','BERLARIK']},
+    {q:'BER- + MAIN = ?',ans:'BERMAIN',wrong:['BEMAIN','BERMAINK','BERMAINN']},
+    {q:'BER- + JALAN = ?',ans:'BERJALAN',wrong:['BEJALAN','BERJALANK','BERJALANN']},
+
+    // Suku kata count
+    {q:'"Pi-ka-chu" suku kata?',ans:'3',wrong:['2','4','5']},
+    {q:'"Bu-ku" suku kata?',ans:'2',wrong:['1','3','4']},
+    {q:'"Ma-kan" suku kata?',ans:'2',wrong:['1','3','4']},
+    {q:'"Ku-cing" suku kata?',ans:'2',wrong:['1','3','4']},
+    {q:'"Ka-ka-tu-a" suku kata?',ans:'4',wrong:['3','5','2']},
+    {q:'"Pe-la-ngi" suku kata?',ans:'3',wrong:['2','4','5']},
+    {q:'"Ja-ka-rta" suku kata?',ans:'3',wrong:['2','4','5']},
+    {q:'"Si-nga" suku kata?',ans:'2',wrong:['1','3','4']},
+    {q:'"Ge-pas" suku kata?',ans:'2',wrong:['1','3','4']},
+    {q:'"Ma-ta-ha-ri" suku kata?',ans:'4',wrong:['3','5','2']},
+
+    // Subjek kalimat sederhana
+    {q:'"Adik makan bubur" — subjeknya?',ans:'ADIK',wrong:['MAKAN','BUBUR','RUMAH']},
+    {q:'"Bola itu bulat" — subjeknya?',ans:'BOLA',wrong:['ITU','BULAT','SAYA']},
+    {q:'"Ayah bekerja keras" — subjeknya?',ans:'AYAH',wrong:['BEKERJA','KERAS','RUMAH']},
+    {q:'"Burung terbang tinggi" — subjeknya?',ans:'BURUNG',wrong:['TERBANG','TINGGI','LANGIT']},
+
+    // Predikat (kata kerja) sederhana
+    {q:'"Ibu memasak nasi" — predikatnya?',ans:'MEMASAK',wrong:['IBU','NASI','DAPUR']},
+    {q:'"Anjing menggonggong" — predikatnya?',ans:'MENGGONGGONG',wrong:['ANJING','LAPAR','MARAH']},
   ]
 
   // Hard language: word problems, advanced science, multiplication-themed words
