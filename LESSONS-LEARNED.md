@@ -197,3 +197,33 @@ city-pokemon-pack, save-engine, etc.) — bump the index.html cache version of T
 file when its contents change.
 
 Quick rule: "Did I change file X? Search index.html for `src=".*X\?v=` and bump it."
+
+## L99 — ALWAYS check user's local assets folder BEFORE searching external sources
+G23 saga: user said "use the GIF from the same folder as Arcanine" and showed
+a running Arcanine image. I tried 3 external CDN sources sequentially:
+- Pokemon Showdown ani/ (modern, mostly idle)
+- Pokemon Showdown gen5ani/ (BW battle stance)
+- PokemonDB black-white/anim/normal/ (BW with motion blur)
+None matched. Then I asked the user for a URL, and they pointed me to
+`/home/baguspermana7/rz-work/Dunia-Emosi/assets/Pokemon/g23/` — they had ALL
+the running .webp sprites prepared LOCALLY the whole time. I had even
+unnecessarily replaced Lycanroc/Cinderace/Chespin with "Gen 5 equivalents"
+because external sources lacked them — when the user had `lycanroc.webp`,
+`cinderace.webp`, `chespin.png` in their assets folder.
+
+**Pattern**: when user says "use the {sprite/asset} from {folder}", FIRST
+look in the project's assets directory. Common patterns to check:
+- `assets/{game-slug}/` (e.g., `assets/Pokemon/g23/`)
+- `assets/{type}/` (e.g., `assets/Pokemon/sprites/`)
+- `public/`, `static/`, `img/`
+Run `ls assets/` for the relevant subdirectory BEFORE searching CDNs.
+
+**Bigger pattern**: the user's project is THEIR domain — they likely have
+their own asset organization, naming conventions, and prepared files. Trust
+that they've prepared what they need; don't assume they want external sources
+when they have local ones. Always grep/ls the project for "{pokemon-name}.*"
+or similar before reaching for an external URL.
+
+This wasted 5 commits (#143, #144, #147, plus 2 cache bumps) and significantly
+frustrated the user. Avoid this entire class of mistake by spending 30 seconds
+exploring the user's assets directory FIRST.
