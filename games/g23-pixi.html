@@ -501,9 +501,12 @@ function scrollBgLayers(speed){
 // ═══════════════════════════════════════════════════════════
 //  PHYSICS / LAYOUT
 // ═══════════════════════════════════════════════════════════
-const GRAVITY       = 0.52
-const JUMP_POWER    = -14.5
-const DBLJ_POWER    = -12.0
+// Jump physics tuned for clearing tall (h=90) ground obstacles + giving
+// kids enough air time to react. Lower gravity + higher jump power = longer
+// arc, easier to time. (was: GRAVITY 0.52, JUMP_POWER -14.5, DBLJ_POWER -12.0)
+const GRAVITY       = 0.45
+const JUMP_POWER    = -16.5
+const DBLJ_POWER    = -14.0
 const MAX_FALL      = 16
 const PLAYER_H      = 110
 const PLAYER_W      = 132
@@ -1745,7 +1748,11 @@ function handleSlide(){
 
 let _swipeStartY=0
 document.addEventListener('pointerdown',e=>{
-  if(e.target.closest('#quiz-panel')||e.target.closest('#hud-top')||e.target.closest('#btn-back')||e.target.closest('#bag-overlay')||e.target.closest('#pause-overlay')||e.target.closest('#tr-battle')||e.target.closest('#slide-btn')) return
+  // CRITICAL: also exclude #jump-btn — its own pointerdown listener already
+  // fires handleJump(). Without this exclusion, document handler ALSO fires
+  // → single tap consumes BOTH jumps (jumpCount 0→1→2 in one tap), making
+  // double-jump unreachable.
+  if(e.target.closest('#quiz-panel')||e.target.closest('#hud-top')||e.target.closest('#btn-back')||e.target.closest('#bag-overlay')||e.target.closest('#pause-overlay')||e.target.closest('#tr-battle')||e.target.closest('#slide-btn')||e.target.closest('#jump-btn')) return
   _swipeStartY=e.clientY
   handleJump()
 },{passive:true})
@@ -1968,4 +1975,4 @@ function gameLoop(ticker){
 </script>
 </body>
 </html>
-<!-- g23-pixi v20260505q -->
+<!-- g23-pixi v20260505r -->
