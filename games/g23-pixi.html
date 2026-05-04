@@ -19,7 +19,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 #bg-gym  {z-index:4;background-size:cover;background-position:center bottom;opacity:.7}
 
 #pixi-canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block;z-index:5}
-#player-img{position:fixed;z-index:40;pointer-events:none;image-rendering:auto;display:none;transition:filter .3s ease;transform:scaleX(-1);will-change:left,top;transform-origin:50% 100%;object-fit:contain}
+#player-img{position:fixed;z-index:40;pointer-events:none;image-rendering:auto;display:none;transition:filter .3s ease;transform:scaleX(-1);will-change:left,top;transform-origin:50% 100%;object-fit:contain;object-position:50% 100%}
 #player-img.sliding{transform:scaleX(-1) scaleY(0.47);transition:transform .08s ease-out,filter .3s ease}
 @keyframes jumpSquash{0%{transform:scaleX(-1) scaleY(1)}25%{transform:scaleX(-1) scaleY(0.75)}65%{transform:scaleX(-1) scaleY(1.1)}100%{transform:scaleX(-1) scaleY(1)}}
 @keyframes landBounce{0%{transform:scaleX(-1) scaleY(0.68)}40%{transform:scaleX(-1) scaleY(1.12)}70%{transform:scaleX(-1) scaleY(0.94)}100%{transform:scaleX(-1) scaleY(1)}}
@@ -162,7 +162,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <img id="tr-balloon" src="../assets/Pokemon/g23/tr-balloon.gif" alt="Team Rocket">
 <div id="tr-warning">⚠️ Team Rocket Muncul!</div>
 <!-- Debug version marker (Hotfix #147) — confirms cache freshness -->
-<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260505v (LOCAL)</div>
+<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260505w (LOCAL+nobg)</div>
 
 <!-- HUD -->
 <div id="hud-top">
@@ -713,7 +713,9 @@ function setupPlayerImg(){
   img.src=gifSrc
   img.onerror=()=>{ img.src=hdSrc; img.onerror=null; _scheduleGifRetry(gifSrc, 1) }
   img.style.width=PLAYER_W+'px'; img.style.height=PLAYER_H+'px'
-  img.style.display='block'; img.style.filter='drop-shadow(0 4px 8px rgba(0,0,0,0.4))'
+  img.style.display='block'
+  // No drop-shadow filter — source WebPs are transparent (RGBA), the shadow
+  // creates a visible "background halo" the user wanted removed.
   syncPlayerPos()
 }
 function syncPlayerPos(){
@@ -1977,4 +1979,4 @@ function gameLoop(ticker){
 </script>
 </body>
 </html>
-<!-- g23-pixi v20260505v -->
+<!-- g23-pixi v20260505w -->
