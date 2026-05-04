@@ -171,7 +171,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <img id="tr-balloon" src="../assets/Pokemon/g23/tr-balloon.gif" alt="Team Rocket">
 <div id="tr-warning">⚠️ Team Rocket Muncul!</div>
 <!-- Debug version marker (Hotfix #147) — confirms cache freshness -->
-<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260506h (time+coins)</div>
+<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260506i (fast-load+icon)</div>
 
 <!-- HUD -->
 <div id="hud-top">
@@ -238,11 +238,18 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <audio id="game-bgm" preload="auto" loop style="display:none"></audio>
 
 <div id="start-overlay">
-  <div id="start-icon" style="font-size:64px">🏃</div>
+  <img id="start-icon" src="../assets/g23-icon.png?v=20260506i" alt="Pokemon Run" style="width:96px;height:96px;object-fit:contain;filter:drop-shadow(0 4px 12px rgba(252,165,165,.5))">
   <div style="font-size:clamp(24px,7vw,36px);font-weight:900;color:#fca5a5">Pokemon Run</div>
   <div id="start-level" style="font-size:18px;color:#f87171"></div>
-  <div id="start-hint">Tap untuk Berlari!</div>
+  <div id="start-hint">⏳ Memuat…</div>
+  <div id="start-loading" style="font-size:13px;color:#fbbf24;opacity:0;transition:opacity .3s">⏳ Memuat asset Pokemon…</div>
 </div>
+<style>
+  #start-icon { animation: g23-pulse 1.4s ease-in-out infinite; }
+  #start-overlay.ready #start-icon { animation: g23-bounce 1.6s ease-in-out infinite; }
+  @keyframes g23-pulse { 0%,100%{transform:scale(1);opacity:.7} 50%{transform:scale(1.05);opacity:1} }
+  @keyframes g23-bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+</style>
 
 <div id="pause-overlay">
   <div style="font-size:36px">⏸</div>
@@ -264,8 +271,17 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <button id="jump-btn" aria-label="Lompat"><span id="jump-x2" aria-hidden="true">2x</span><span class="jbicon">⬆</span></button>
 <button id="slide-btn" aria-label="Merosot">⬇</button>
 
+<script>
+  // Show extended loading message only if init takes longer than 600ms
+  // (instant-feel for fast loads; clear feedback for slow loads).
+  setTimeout(()=>{
+    const ov=document.getElementById('start-overlay')
+    if(!ov||ov.classList.contains('ready')||ov.classList.contains('hidden')) return
+    const sl=document.getElementById('start-loading'); if(sl) sl.style.opacity='1'
+  },600)
+</script>
 <script src="../shared/rz-responsive.js?v=20260422i"></script>
-<script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
+<script src="lib/pixi.min.js?v=8"></script>
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/save-engine.js?v=20260501h"></script>
 <script src="data/g23-question-engine.js?v=20260506f"></script>
@@ -673,9 +689,12 @@ const S = {
 
   app.ticker.add(gameLoop)
   document.getElementById('start-hint').textContent = 'Tap untuk Berlari!'
+  document.getElementById('start-overlay').classList.add('ready')
+  const sl=document.getElementById('start-loading'); if(sl) sl.style.opacity='0'
 })().catch(e=>{
   console.error('G23 init failed:',e)
-  document.getElementById('start-hint').textContent = 'Tap untuk Berlari!'
+  document.getElementById('start-hint').textContent = '⚠ Gagal load — Tap utk reload'
+  document.getElementById('start-overlay').classList.add('ready')
 })
 
 // ═══════════════════════════════════════════════════════════
@@ -1757,6 +1776,11 @@ function showLose(){
 // ═══════════════════════════════════════════════════════════
 function handleJump(){
   if(S.gameOver) return
+  // Block tap until Pixi finished initializing — prevents "stuck on splash" feel
+  if(!S.started){
+    const ov=document.getElementById('start-overlay')
+    if(!ov||!ov.classList.contains('ready')) return
+  }
   ensureAudio()
   if(!S.started){
     S.started=true; S.running=true

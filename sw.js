@@ -15,11 +15,13 @@
  * succeeded. Only cache same-origin assets.
  * ========================================================================== */
 
-const CACHE_VERSION = 'v2-20260506'
+const CACHE_VERSION = 'v3-20260506i'
 const HTML_CACHE = `dunia-html-${CACHE_VERSION}`
 const ASSET_CACHE = `dunia-assets-${CACHE_VERSION}`
 
-// Pre-cache critical shell on install (offline-first launch)
+// Pre-cache critical shell on install (offline-first launch).
+// Includes Pixi.js + G23 game files because that's the most-played game and
+// users complained about slow first-load. Pixi is now self-hosted (~800KB).
 const SHELL = [
   '/Dunia-Emosi/',
   '/Dunia-Emosi/index.html',
@@ -27,6 +29,8 @@ const SHELL = [
   '/Dunia-Emosi/manifest.json',
   '/Dunia-Emosi/assets/icon-192.png',
   '/Dunia-Emosi/assets/icon-512.png',
+  '/Dunia-Emosi/assets/g23-icon.png',
+  '/Dunia-Emosi/games/lib/pixi.min.js?v=8',
 ]
 
 self.addEventListener('install', (e) => {
