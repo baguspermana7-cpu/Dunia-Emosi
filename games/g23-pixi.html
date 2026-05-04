@@ -171,7 +171,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <img id="tr-balloon" src="../assets/Pokemon/g23/tr-balloon.gif" alt="Team Rocket">
 <div id="tr-warning">⚠️ Team Rocket Muncul!</div>
 <!-- Debug version marker (Hotfix #147) — confirms cache freshness -->
-<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260506i (fast-load+icon)</div>
+<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260506j (defer-scripts)</div>
 
 <!-- HUD -->
 <div id="hud-top">
@@ -235,7 +235,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 </div>
 
 <div id="flash"></div>
-<audio id="game-bgm" preload="auto" loop style="display:none"></audio>
+<audio id="game-bgm" preload="none" loop style="display:none"></audio>
 
 <div id="start-overlay">
   <img id="start-icon" src="../assets/g23-icon.png?v=20260506i" alt="Pokemon Run" style="width:96px;height:96px;object-fit:contain;filter:drop-shadow(0 4px 12px rgba(252,165,165,.5))">
@@ -280,12 +280,12 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
     const sl=document.getElementById('start-loading'); if(sl) sl.style.opacity='1'
   },600)
 </script>
-<script src="../shared/rz-responsive.js?v=20260422i"></script>
-<script src="lib/pixi.min.js?v=8"></script>
-<script src="data/freeze-watchdog.js?v=20260428a"></script>
-<script src="data/save-engine.js?v=20260501h"></script>
-<script src="data/g23-question-engine.js?v=20260506f"></script>
-<script src="game-modal.js?v=20260424g"></script>
+<script defer src="../shared/rz-responsive.js?v=20260422i"></script>
+<script defer src="lib/pixi.min.js?v=8"></script>
+<script defer src="data/freeze-watchdog.js?v=20260428a"></script>
+<script defer src="data/save-engine.js?v=20260501h"></script>
+<script defer src="data/g23-question-engine.js?v=20260506f"></script>
+<script defer src="game-modal.js?v=20260424g"></script>
 <script>
 'use strict'
 // ═══════════════════════════════════════════════════════════
@@ -652,7 +652,10 @@ const S = {
 // ═══════════════════════════════════════════════════════════
 //  PIXI INIT
 // ═══════════════════════════════════════════════════════════
-;(async function initPixi(){
+// Wait for deferred scripts (Pixi etc.) before booting the game.
+// Defer + DOMContentLoaded lets the splash render IMMEDIATELY while
+// scripts download in parallel, instead of blocking parse.
+async function initPixi(){
   app = new PIXI.Application()
   await app.init({
     canvas: document.getElementById('pixi-canvas'),
@@ -691,11 +694,23 @@ const S = {
   document.getElementById('start-hint').textContent = 'Tap untuk Berlari!'
   document.getElementById('start-overlay').classList.add('ready')
   const sl=document.getElementById('start-loading'); if(sl) sl.style.opacity='0'
-})().catch(e=>{
-  console.error('G23 init failed:',e)
-  document.getElementById('start-hint').textContent = '⚠ Gagal load — Tap utk reload'
-  document.getElementById('start-overlay').classList.add('ready')
-})
+}
+// Boot once HTML parsed AND deferred scripts (incl. Pixi) executed.
+// readyState === 'loading' means DOMContentLoaded hasn't fired yet.
+function _g23Boot(){
+  initPixi().catch(e=>{
+    console.error('G23 init failed:',e)
+    const h=document.getElementById('start-hint')
+    if(h) h.textContent = '⚠ Gagal load — Tap utk reload'
+    const o=document.getElementById('start-overlay')
+    if(o) o.classList.add('ready')
+  })
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', _g23Boot, { once: true })
+} else {
+  _g23Boot()
+}
 
 // ═══════════════════════════════════════════════════════════
 //  GROUND
