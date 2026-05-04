@@ -342,8 +342,62 @@
     return [...pool].sort(() => Math.random() - 0.5)
   }
 
+  // ── G24 alias + water-themed bonus questions ─────────────────────
+  // The engine is generic enough to power both runner/swim games.
+  // G24 gets the same base pool PLUS underwater-themed bonus questions
+  // that fit the underwater Flappy-Bird theme.
+  const _LANG_WATER = [
+    {q:'🐠 Hewan apa?',ans:'IKAN',wrong:['BURUNG','MONYET','KUDA']},
+    {q:'🐟 Hewan apa?',ans:'IKAN',wrong:['BURUNG','TIKUS','SAPI']},
+    {q:'🦀 Hewan apa?',ans:'KEPITING',wrong:['LABA-LABA','SEMUT','TIKUS']},
+    {q:'🦐 Hewan apa?',ans:'UDANG',wrong:['IKAN','LOBSTER','KEPITING']},
+    {q:'🦑 Hewan apa?',ans:'CUMI',wrong:['GURITA','UBUR','IKAN']},
+    {q:'🐙 Hewan apa?',ans:'GURITA',wrong:['CUMI','UBUR','LOBSTER']},
+    {q:'🐳 Hewan apa?',ans:'PAUS',wrong:['HIU','LUMBA','IKAN']},
+    {q:'🐋 Hewan apa?',ans:'PAUS',wrong:['LUMBA','HIU','IKAN']},
+    {q:'🐬 Hewan apa?',ans:'LUMBA',wrong:['PAUS','HIU','IKAN']},
+    {q:'🦈 Hewan apa?',ans:'HIU',wrong:['PAUS','LUMBA','IKAN']},
+    {q:'🐢 Hewan apa?',ans:'KURA',wrong:['BUAYA','KATAK','ULAR']},
+    {q:'🪼 Hewan apa?',ans:'UBUR',wrong:['CUMI','GURITA','IKAN']},
+    {q:'Hewan laut bernapas dgn?',ans:'INSANG',wrong:['PARU-PARU','HIDUNG','KULIT']},
+    {q:'Air laut rasanya?',ans:'ASIN',wrong:['MANIS','PAHIT','ASAM']},
+    {q:'Hewan laut tercerdas?',ans:'LUMBA-LUMBA',wrong:['HIU','PAUS','GURITA']},
+    {q:'Karang dibuat oleh?',ans:'HEWAN KORAL',wrong:['BATU','TANAMAN','PASIR']},
+    {q:'🪸 Apa ini?',ans:'KARANG',wrong:['BATU','PASIR','RUMPUT']},
+    {q:'🐟 Berenang dengan?',ans:'SIRIP',wrong:['KAKI','SAYAP','TANGAN']},
+    {q:'Lautan terluas di dunia?',ans:'PASIFIK',wrong:['ATLANTIK','HINDIA','ARKTIK']},
+    {q:'Cumi-cumi punya berapa kaki?',ans:'10',wrong:['8','6','12']},
+  ]
+  const easyG24  = [...easy,  ..._LANG_WATER.slice(0, 14)]
+  const medG24   = [...medium, ..._LANG_WATER.slice(14)]
+
+  window.G24_QUESTIONS_EASY    = easyG24
+  window.G24_QUESTIONS_MEDIUM  = medG24
+  window.G24_QUESTIONS_HARD    = hard
+  window.G24_QUESTIONS_EXPERT  = expert
+
+  window.G24_pickQuestions = function(level, userDiff) {
+    userDiff = userDiff || 'medium'
+    let pool
+    if (userDiff === 'easy') {
+      pool = level <= 10 ? easyG24 : [...easyG24, ...medG24]
+    } else if (userDiff === 'hard') {
+      pool = level <= 10 ? [...easyG24, ...medG24]
+           : level <= 20 ? [...easyG24, ...medG24, ...hard]
+           : [...easyG24, ...medG24, ...hard, ...expert]
+    } else {
+      pool = level <= 10 ? easyG24
+           : level <= 20 ? medG24
+           : level <= 30 ? [...medG24, ...hard]
+           : [...hard, ...expert]
+    }
+    return [...pool].sort(() => Math.random() - 0.5)
+  }
+
   // Pool size diagnostic (visible in console for debug)
-  console.log('[g23-questions] easy:', easy.length, 'medium:', medium.length,
-              'hard:', hard.length, 'expert:', expert.length,
-              'TOTAL:', easy.length + medium.length + hard.length + expert.length)
+  console.log('[questions] G23 easy:', easy.length, 'med:', medium.length,
+              'hard:', hard.length, 'exp:', expert.length,
+              '| G24 easy:', easyG24.length, 'med:', medG24.length,
+              '| TOTAL G23:', easy.length + medium.length + hard.length + expert.length,
+              '| TOTAL G24:', easyG24.length + medG24.length + hard.length + expert.length)
 })()
