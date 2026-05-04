@@ -180,3 +180,20 @@ fine-tuning each sprite without changing global rendering rules. Pattern is gene
 any time a sprite has artistic anchor point that differs from its geometric center
 (tall Pokemon, wide ships, characters with extended limbs), use a per-instance offset
 to compensate.
+
+## L98 — Bump game.js cache version when changing functions in game.js
+After shipping #137 (Kodok preset tiered to 27/77), user reported the badge counter
+still showed 77/77 — the new code never ran. Root cause: `index.html` referenced
+`game.js?v=20260504b` (yesterday's version). Browser cached that version and ignored
+the new code on disk. The g13c-pixi.html cache version was bumped (v=20260505k) but
+g13c-pixi.html doesn't contain `_applyKodokSlot7Unlock` — that function lives in
+game.js, called from `openGymGame()` BEFORE the redirect to g13c-pixi.html.
+
+Pattern: when changing a function in game.js, ALWAYS bump the `?v=` query string
+on the `<script src="game.js?v=...">` tag in index.html. Bumping individual game
+HTML cache versions only refreshes those pages — it does nothing for index.html's
+shared scripts. Same applies to any other file loaded from index.html (region-meta,
+city-pokemon-pack, save-engine, etc.) — bump the index.html cache version of THAT
+file when its contents change.
+
+Quick rule: "Did I change file X? Search index.html for `src=".*X\?v=` and bump it."

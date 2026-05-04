@@ -237,3 +237,15 @@ add small Indonesian translation underneath each move button.
   been unreadable; bumped to readable size.)
 
 Cache: g13c v=20260505l
+
+## 2026-05-04 — #137-followup: bump game.js cache in index.html
+
+User reported G13C still showed 77/77 badges after #137 deploy. Root cause:
+`index.html` referenced `game.js?v=20260504b` (yesterday's version). Browser
+loaded the OLD game.js with the all-77 ALL_G13C_TRAINER_IDS array — new
+TRAINERS_BY_REGION tiered preset (Kanto 100% + others 25%) never executed.
+
+- Bumped `index.html` script tag from `game.js?v=20260504b` to `?v=20260505l`.
+- Lesson L98: when changing a function in game.js, ALWAYS bump its cache
+  version in index.html — bumping individual game HTML caches doesn't refresh
+  the shared game.js loaded from index.html.
