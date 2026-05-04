@@ -227,3 +227,54 @@ or similar before reaching for an external URL.
 This wasted 5 commits (#143, #144, #147, plus 2 cache bumps) and significantly
 frustrated the user. Avoid this entire class of mistake by spending 30 seconds
 exploring the user's assets directory FIRST.
+
+## L100 — PIL animated WebP/GIF: ALWAYS use ImageSequence.Iterator
+G23 sprite normalization (#151) ran a Python PIL script that opened each
+animated WebP file and saved a "normalized" version. The script used standard
+`Image.open(f).resize(...)` and `out.save(fname)` — which silently processed
+ONLY THE FIRST FRAME and saved single-frame WebPs. All 14 animated sprites
+became static. User caught it: "Banyak gambar kamu pakai yg static."
+
+The fix that worked: use `from PIL import ImageSequence`, iterate
+`ImageSequence.Iterator(src)`, process each frame, save with
+`save(fname, save_all=True, append_images=frames[1:], duration=durations,
+loop=0)`. Always backup originals first to a `_backup/` folder before
+running batch image processing — saved this session's work.
+
+## L101 — Resize/orientationchange handlers must rebuild scene-anchored graphics
+Both G23 and G24 had bugs where `window.innerWidth/Height` updated on rotation
+but graphics drawn at init (using snapshot of those values) stayed at OLD
+positions. User saw "green platform terbang" (G23) and floor floating (G24).
+Fix pattern:
+```js
+function _gXResize(){
+  app.renderer.resize(window.innerWidth, window.innerHeight)
+  W = app.screen.width; H = app.screen.height
+  // RECOMPUTE all anchored constants
+  GROUND_Y = H * 0.82  // or whatever
+  // CLAMP entity positions to new bounds
+  S.playerY = Math.min(S.playerY, GROUND_Y)
+  // REBUILD scene graphics that were drawn ONCE at init
+  if (sceneContainer) {
+    sceneContainer.removeChildren()
+    drawScene()
+  }
+}
+window.addEventListener('resize', _gXResize)
+window.addEventListener('orientationchange', _gXResize)  // mobile rotate
+```
+Mobile devices typically fire orientationchange BEFORE resize, sometimes
+both, sometimes only one. Listen to both for reliable triggering.
+
+## L102 — Wire your modules! Created != loaded != used
+#150 created `g23-question-engine.js` with 770+ questions but never
+added the `<script>` tag to load it OR called `window.G23_pickQuestions`
+from the game. The 1000-question feature was dead code for 7 commits
+until code review caught it. Pattern: when adding a new module:
+1. Create the file
+2. Add `<script src="...">` to the consuming HTML
+3. Wire the function call (with `typeof window.X === 'function'` guard
+   and a fallback to legacy code for graceful degradation)
+4. Bump cache version
+5. Verify in dev tools that the module loaded (console.log on init)
+Skip any of these → silent dead code.
