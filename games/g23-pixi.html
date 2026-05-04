@@ -171,7 +171,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <img id="tr-balloon" src="../assets/Pokemon/g23/tr-balloon.gif" alt="Team Rocket">
 <div id="tr-warning">⚠️ Team Rocket Muncul!</div>
 <!-- Debug version marker (Hotfix #147) — confirms cache freshness -->
-<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260506e (G23+G24 engine)</div>
+<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260506h (time+coins)</div>
 
 <!-- HUD -->
 <div id="hud-top">
@@ -621,6 +621,9 @@ const S = {
   frame:0,
   playerVY:0, playerY:0, jumpCount:0, isGrounded:true, isSliding:false, slideTimer:0,
   obstacles:[], powerUpItems:[], activepu:null, projectiles:[],
+  // Time-based level (#163): 60s base + 15s per level. Game ends when time=0.
+  // Coins: collected via path overlap → +1 score each (Subway-Surfer style trail).
+  timeRemaining:60+(cfg.level-1)*15, coins:[], coinsCollected:0, coinSpawnCooldown:90,
   shieldHits:0, invincible:0,
   questions:[], qIdx:0, pendingQuizGate:null,
   obstacleCooldown:200, puCooldown:900, obsSpawnedSinceQuiz:0,
@@ -1698,7 +1701,13 @@ function flashScreen(color){
 function updateHUD(){
   document.getElementById('hud-lives').textContent='❤️'.repeat(Math.max(0,S.lives))+'🖤'.repeat(Math.max(0,3-S.lives))
   document.getElementById('score-display').textContent=Math.floor(S.distance)+'m'
-  document.getElementById('quiz-progress').firstChild.textContent='✅ '+S.quizDone+'/'
+  // Time-based HUD (#163): show countdown + coin counter instead of "X/Y quiz"
+  // — gives kids a clear, simple goal: "survive sampai waktu habis + kumpulkan coin".
+  const t = Math.max(0, Math.ceil(S.timeRemaining))
+  const mm = Math.floor(t/60), ss = t%60
+  const tStr = mm > 0 ? `${mm}:${String(ss).padStart(2,'0')}` : `${ss}s`
+  const qp = document.getElementById('quiz-progress')
+  if (qp) qp.innerHTML = `⏱ ${tStr} · 🪙 ${S.coinsCollected}`
   if(S.running&&!S.paused) document.getElementById('status-text').textContent=(()=>{ const _p=G23_POKEMON[selectedPokemon]; return (_p.evo ? _p.evo[S.evoStage||0].name : _p.name)+' Berlari!' })()
 }
 
@@ -2014,10 +2023,85 @@ function gameLoop(ticker){
   // ── Speed lines ──
   updateSpeedLines(dt)
 
-  // ── Level end ──
-  if(S.distance>=500+(cfg.level-1)*300&&S.quizDone>=TOTAL_QUIZ) showWin()
+  // ── Time tick + coin trail spawn (#163) ──
+  // dt is fractional frames @ 60fps. Convert to seconds: dt / 60.
+  if (S.running && !S.paused && !S.gameOver) {
+    S.timeRemaining -= dt / 60
+    // Coin trail: spawn every ~3-5 frame seconds (180-300 frames) in patterns
+    S.coinSpawnCooldown -= dt
+    if (S.coinSpawnCooldown <= 0 && !S.pendingQuizGate && S.coins.filter(c => !c.collected).length < 12) {
+      spawnCoinTrail()
+      S.coinSpawnCooldown = 180 + Math.random() * 120   // 3-5 seconds @ 60fps
+    }
+  }
+  updateCoinTrail(dt)
+
+  // ── Level end (TIME-based — replaces quiz/distance gate) ──
+  if (S.timeRemaining <= 0 && !S.gameOver) showWin()
+}
+
+// ═══════════════════════════════════════════════════════════
+//  COIN TRAIL (#163) — Subway-Surfer-style coins along path
+// ═══════════════════════════════════════════════════════════
+function spawnCoinTrail(){
+  // Pattern: random pick from line / arc / ascending / descending
+  const PATTERNS = ['line','arc','asc','desc']
+  const pat = PATTERNS[Math.floor(Math.random()*PATTERNS.length)]
+  const count = 5 + Math.floor(Math.random() * 3)   // 5-7 coins per trail
+  const startX = W + 40
+  const baseY = GROUND_Y - 50   // mid-air, jumpable height
+  const stepX = 38
+  for (let i = 0; i < count; i++) {
+    let x = startX + i * stepX
+    let y = baseY
+    if (pat === 'arc') {
+      // Parabolic arc — peaks at middle coin
+      const mid = (count - 1) / 2
+      y = baseY - 60 * (1 - Math.pow((i - mid) / mid, 2))
+    } else if (pat === 'asc') {
+      y = baseY - i * 14   // rising stairs
+    } else if (pat === 'desc') {
+      y = baseY - (count - 1 - i) * 14   // falling stairs
+    }
+    const g = new PIXI.Graphics()
+    g.circle(0, 0, 12).fill({color:0xFCD34D, alpha:0.95})
+    g.circle(0, 0, 12).stroke({color:0xF59E0B, width:2})
+    g.circle(-3, -3, 4).fill({color:0xFEF08A, alpha:0.9})
+    g.x = x; g.y = y
+    worldContainer.addChild(g)
+    S.coins.push({x, y, gfx:g, collected:false, bobPhase:Math.random()*Math.PI*2})
+  }
+}
+
+function updateCoinTrail(dt){
+  if (!S.coins.length) return
+  for (let i = S.coins.length - 1; i >= 0; i--) {
+    const c = S.coins[i]
+    if (c.collected) continue
+    // Scroll left with the world
+    c.x -= gameSpeed * dt
+    c.gfx.x = c.x
+    // Subtle bob for "alive" feel
+    c.bobPhase += 0.12
+    c.gfx.y = c.y + Math.sin(c.bobPhase) * 3
+    // Off-screen left → cleanup
+    if (c.x < -30) { worldContainer.removeChild(c.gfx); c.collected = true; continue }
+    // Player collision (circle-circle approx)
+    const dx = c.x - PLAYER_X
+    const dy = c.gfx.y - (S.playerY - PLAYER_H * 0.5)
+    if (dx*dx + dy*dy < (PLAYER_W*0.42)**2) {
+      c.collected = true
+      S.coinsCollected++
+      S.score += 1
+      worldContainer.removeChild(c.gfx)
+      try { sfxCollect() } catch(_) {}
+      spawnFT('+1', c.x, c.gfx.y - 18, 0xFBBF24)
+    }
+  }
+  // Compact array periodically
+  if (S.frame % 60 === 0) S.coins = S.coins.filter(c => !c.collected)
 }
 </script>
 </body>
 </html>
-<!-- g23-pixi v20260506e -->
+<!-- g23-pixi v20260506h -->
