@@ -15,7 +15,7 @@
  * succeeded. Only cache same-origin assets.
  * ========================================================================== */
 
-const CACHE_VERSION = 'v1-20260506'
+const CACHE_VERSION = 'v2-20260506'
 const HTML_CACHE = `dunia-html-${CACHE_VERSION}`
 const ASSET_CACHE = `dunia-assets-${CACHE_VERSION}`
 
@@ -30,12 +30,20 @@ const SHELL = [
 ]
 
 self.addEventListener('install', (e) => {
-  // Pre-cache shell assets so the app launches even on first offline use
+  // Pre-cache shell assets so the app launches even on first offline use.
+  // skipWaiting() activates new SW immediately on install — no waiting for
+  // all tabs to close first. Combined with clients.claim() in activate,
+  // SW updates take effect on next page load.
   e.waitUntil(
     caches.open(ASSET_CACHE).then((c) =>
       c.addAll(SHELL.map((u) => new Request(u, { cache: 'reload' }))).catch(() => {})
     ).then(() => self.skipWaiting())
   )
+})
+
+// Allow client to force SW skipWaiting (e.g., after deploy detection)
+self.addEventListener('message', (e) => {
+  if (e.data === 'SKIP_WAITING') self.skipWaiting()
 })
 
 self.addEventListener('activate', (e) => {
