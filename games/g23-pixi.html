@@ -171,7 +171,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <img id="tr-balloon" src="../assets/Pokemon/g23/tr-balloon.gif" alt="Team Rocket">
 <div id="tr-warning">⚠️ Team Rocket Muncul!</div>
 <!-- Debug version marker (Hotfix #147) — confirms cache freshness -->
-<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260506a (anim restored)</div>
+<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260506b (more noFlip)</div>
 
 <!-- HUD -->
 <div id="hud-top">
@@ -297,10 +297,10 @@ const HD_DB = n => `https://img.pokemondb.net/sprites/home/normal/${n}.png`
 // chespin.png and lucario.png are static (no .webp version locally).
 const G23_POKEMON = [
   { name:'Arcanine',  gif:LOC('arcanine'),       hd:HD_DB('arcanine'),  type:'fire',     moves:[{name:'Flamethrower',type:'fire'},{name:'Extreme Speed',type:'normal'},{name:'Crunch',type:'dark'},{name:'Flare Blitz',type:'fire'}] },
-  { name:'Lycanroc',  gif:LOC('lycanroc'),       hd:HD_DB('lycanroc-midday'), type:'rock', moves:[{name:'Stone Edge',type:'rock'},{name:'Crunch',type:'dark'},{name:'Accelerock',type:'rock'},{name:'Iron Head',type:'steel'}] },
-  { name:'Cinderace', gif:LOC('cinderace'),      hd:HD_DB('cinderace'), type:'fire',     moves:[{name:'Pyro Ball',type:'fire'},{name:'High Jump Kick',type:'fighting'},{name:'Sucker Punch',type:'dark'},{name:'Gunk Shot',type:'poison'}] },
-  { name:'Eevee',     gif:LOC('eevee'),          hd:HD_DB('eevee'),     type:'normal',   moves:[{name:'Quick Attack',type:'normal'},{name:'Bite',type:'dark'},{name:'Swift',type:'normal'},{name:'Last Resort',type:'normal'}] },
-  { name:'Pichu', evo:[
+  { name:'Lycanroc',  gif:LOC('lycanroc'),       hd:HD_DB('lycanroc-midday'), type:'rock', noFlip:true, moves:[{name:'Stone Edge',type:'rock'},{name:'Crunch',type:'dark'},{name:'Accelerock',type:'rock'},{name:'Iron Head',type:'steel'}] },
+  { name:'Cinderace', gif:LOC('cinderace'),      hd:HD_DB('cinderace'), type:'fire', noFlip:true, moves:[{name:'Pyro Ball',type:'fire'},{name:'High Jump Kick',type:'fighting'},{name:'Sucker Punch',type:'dark'},{name:'Gunk Shot',type:'poison'}] },
+  { name:'Eevee',     gif:LOC('eevee'),          hd:HD_DB('eevee'),     type:'normal', noFlip:true, moves:[{name:'Quick Attack',type:'normal'},{name:'Bite',type:'dark'},{name:'Swift',type:'normal'},{name:'Last Resort',type:'normal'}] },
+  { name:'Pichu', noFlip:true, evo:[
     {name:'Pichu',   gif:LOC('pichu'),   hd:HD_DB('pichu')},
     {name:'Pikachu', gif:LOC('pikachu'), hd:HD_DB('pikachu')},
     {name:'Raichu',  gif:LOC('raichu'),  hd:HD_DB('raichu')},
@@ -313,7 +313,7 @@ const G23_POKEMON = [
   { name:'Furret',    gif:LOC('furret'),         hd:HD_DB('furret'),    type:'normal',   moves:[{name:'Quick Attack',type:'normal'},{name:'Slash',type:'normal'},{name:'U-turn',type:'bug'},{name:'Sucker Punch',type:'dark'}] },
   { name:'Psyduck',   gif:LOC('psyduck'),        hd:HD_DB('psyduck'),   type:'water', noFlip:true, moves:[{name:'Water Pulse',type:'water'},{name:'Confusion',type:'psychic'},{name:'Disable',type:'normal'},{name:'Scratch',type:'normal'}] },
   { name:'Chespin',   gif:LOC('chespin','png'),  hd:HD_DB('chespin'),   type:'grass',    moves:[{name:'Vine Whip',type:'grass'},{name:'Rollout',type:'rock'},{name:'Bite',type:'dark'},{name:'Seed Bomb',type:'grass'}] },
-  { name:'Lucario',   gif:LOC('lucario','gif'),  hd:HD_DB('lucario'),   type:'fighting', moves:[{name:'Aura Sphere',type:'fighting'},{name:'Close Combat',type:'fighting'},{name:'Dragon Pulse',type:'dragon'},{name:'Bullet Punch',type:'steel'}] },
+  { name:'Lucario',   gif:LOC('lucario','gif'),  hd:HD_DB('lucario'),   type:'fighting', noFlip:true, moves:[{name:'Aura Sphere',type:'fighting'},{name:'Close Combat',type:'fighting'},{name:'Dragon Pulse',type:'dragon'},{name:'Bullet Punch',type:'steel'}] },
 ]
 let _g23EvolveTrigger = false
 let selectedPokemon = Math.max(0, Math.min(cfg.pokemon || 0, G23_POKEMON.length - 1))
@@ -1995,4 +1995,4 @@ function gameLoop(ticker){
 </script>
 </body>
 </html>
-<!-- g23-pixi v20260506a -->
+<!-- g23-pixi v20260506b -->
