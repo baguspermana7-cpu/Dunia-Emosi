@@ -171,7 +171,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <img id="tr-balloon" src="../assets/Pokemon/g23/tr-balloon.gif" alt="Team Rocket">
 <div id="tr-warning">⚠️ Team Rocket Muncul!</div>
 <!-- Debug version marker (Hotfix #147) — confirms cache freshness -->
-<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260505y (sprites normalized)</div>
+<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260505z (Lucario gif)</div>
 
 <!-- HUD -->
 <div id="hud-top">
@@ -289,7 +289,7 @@ document.getElementById('quiz-total').textContent  = Math.min(8 + Math.floor((cf
 // (Pokemon body ~320px height, bottom-anchored) per #151.
 // `?v=` cache-bust forces browser to fetch the normalized versions
 // even when the URL is otherwise unchanged.
-const LOC_V = '20260505y'
+const LOC_V = '20260505z'
 const LOC = (n, ext='webp') => `../assets/Pokemon/g23/${n}.${ext}?v=${LOC_V}`
 const HD_DB = n => `https://img.pokemondb.net/sprites/home/normal/${n}.png`
 // All Pokemon use LOCAL animated WebP from assets/Pokemon/g23/ (user-provided
@@ -313,7 +313,7 @@ const G23_POKEMON = [
   { name:'Furret',    gif:LOC('furret'),         hd:HD_DB('furret'),    type:'normal',   moves:[{name:'Quick Attack',type:'normal'},{name:'Slash',type:'normal'},{name:'U-turn',type:'bug'},{name:'Sucker Punch',type:'dark'}] },
   { name:'Psyduck',   gif:LOC('psyduck'),        hd:HD_DB('psyduck'),   type:'water', noFlip:true, moves:[{name:'Water Pulse',type:'water'},{name:'Confusion',type:'psychic'},{name:'Disable',type:'normal'},{name:'Scratch',type:'normal'}] },
   { name:'Chespin',   gif:LOC('chespin','png'),  hd:HD_DB('chespin'),   type:'grass',    moves:[{name:'Vine Whip',type:'grass'},{name:'Rollout',type:'rock'},{name:'Bite',type:'dark'},{name:'Seed Bomb',type:'grass'}] },
-  { name:'Lucario',   gif:LOC('lucario','png'),  hd:HD_DB('lucario'),   type:'fighting', moves:[{name:'Aura Sphere',type:'fighting'},{name:'Close Combat',type:'fighting'},{name:'Dragon Pulse',type:'dragon'},{name:'Bullet Punch',type:'steel'}] },
+  { name:'Lucario',   gif:LOC('lucario','gif'),  hd:HD_DB('lucario'),   type:'fighting', moves:[{name:'Aura Sphere',type:'fighting'},{name:'Close Combat',type:'fighting'},{name:'Dragon Pulse',type:'dragon'},{name:'Bullet Punch',type:'steel'}] },
 ]
 let _g23EvolveTrigger = false
 let selectedPokemon = Math.max(0, Math.min(cfg.pokemon || 0, G23_POKEMON.length - 1))
@@ -1995,4 +1995,4 @@ function gameLoop(ticker){
 </script>
 </body>
 </html>
-<!-- g23-pixi v20260505y -->
+<!-- g23-pixi v20260505z -->
