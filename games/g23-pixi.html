@@ -162,7 +162,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <img id="tr-balloon" src="../assets/Pokemon/g23/tr-balloon.gif" alt="Team Rocket">
 <div id="tr-warning">⚠️ Team Rocket Muncul!</div>
 <!-- Debug version marker (Hotfix #147) — confirms cache freshness -->
-<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260505u (PDB)</div>
+<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260505v (LOCAL)</div>
 
 <!-- HUD -->
 <div id="hud-top">
@@ -275,40 +275,33 @@ document.getElementById('quiz-total').textContent  = Math.min(8 + Math.floor((cf
 // ═══════════════════════════════════════════════════════════
 //  POKEMON ROSTER
 // ═══════════════════════════════════════════════════════════
-const PS  = n => `https://play.pokemonshowdown.com/sprites/ani/${n}.gif`
-const PS5 = n => `https://play.pokemonshowdown.com/sprites/gen5ani/${n}.gif`
-// PokemonDB Black/White animated sprites — actual running/galloping poses,
-// more frames + smoother motion than PS5. Source folder for the Arcanine
-// running GIF the user referenced. Same coverage as PS5 (Pokemon ≤ #649).
-const PDB = n => `https://img.pokemondb.net/sprites/black-white/anim/normal/${n}.gif`
+// LOCAL ASSETS: user-provided animated WebP running sprites at
+// assets/Pokemon/g23/. These are the actual running animations the user
+// wants — must use these, not external CDN sprites.
+const LOC = (n, ext='webp') => `../assets/Pokemon/g23/${n}.${ext}`
 const HD_DB = n => `https://img.pokemondb.net/sprites/home/normal/${n}.png`
-// All Pokemon use PDB() = PokemonDB Black/White animated sprite folder.
-// These are the actual running/galloping poses with smoother frame counts —
-// matches the Arcanine running GIF the user referenced.
-// Post-Gen-5 Pokemon (#650+) replaced with Gen-5 equivalents (PDB only has
-// Pokemon up to #649):
-//   Lycanroc (#745) → Mightyena (#262, dark dog)
-//   Cinderace (#815) → Infernape (#392, fire fighting biped)
-//   Chespin (#650) → Chikorita (#152, grass starter)
+// All Pokemon use LOCAL animated WebP from assets/Pokemon/g23/ (user-provided
+// running sprites). Lycanroc/Cinderace RESTORED — user has the assets locally.
+// chespin.png and lucario.png are static (no .webp version locally).
 const G23_POKEMON = [
-  { name:'Arcanine',  gif:PDB('arcanine'), hd:HD_DB('arcanine'),  type:'fire',     moves:[{name:'Flamethrower',type:'fire'},{name:'Extreme Speed',type:'normal'},{name:'Crunch',type:'dark'},{name:'Flare Blitz',type:'fire'}] },
-  { name:'Mightyena', gif:PDB('mightyena'),hd:HD_DB('mightyena'), type:'dark',     moves:[{name:'Crunch',type:'dark'},{name:'Sucker Punch',type:'dark'},{name:'Iron Tail',type:'steel'},{name:'Play Rough',type:'fairy'}] },
-  { name:'Infernape', gif:PDB('infernape'),hd:HD_DB('infernape'), type:'fire',     moves:[{name:'Flare Blitz',type:'fire'},{name:'Close Combat',type:'fighting'},{name:'Mach Punch',type:'fighting'},{name:'Stone Edge',type:'rock'}] },
-  { name:'Eevee',     gif:PDB('eevee'),    hd:HD_DB('eevee'),     type:'normal',   moves:[{name:'Quick Attack',type:'normal'},{name:'Bite',type:'dark'},{name:'Swift',type:'normal'},{name:'Last Resort',type:'normal'}] },
+  { name:'Arcanine',  gif:LOC('arcanine'),       hd:HD_DB('arcanine'),  type:'fire',     moves:[{name:'Flamethrower',type:'fire'},{name:'Extreme Speed',type:'normal'},{name:'Crunch',type:'dark'},{name:'Flare Blitz',type:'fire'}] },
+  { name:'Lycanroc',  gif:LOC('lycanroc'),       hd:HD_DB('lycanroc-midday'), type:'rock', moves:[{name:'Stone Edge',type:'rock'},{name:'Crunch',type:'dark'},{name:'Accelerock',type:'rock'},{name:'Iron Head',type:'steel'}] },
+  { name:'Cinderace', gif:LOC('cinderace'),      hd:HD_DB('cinderace'), type:'fire',     moves:[{name:'Pyro Ball',type:'fire'},{name:'High Jump Kick',type:'fighting'},{name:'Sucker Punch',type:'dark'},{name:'Gunk Shot',type:'poison'}] },
+  { name:'Eevee',     gif:LOC('eevee'),          hd:HD_DB('eevee'),     type:'normal',   moves:[{name:'Quick Attack',type:'normal'},{name:'Bite',type:'dark'},{name:'Swift',type:'normal'},{name:'Last Resort',type:'normal'}] },
   { name:'Pichu', evo:[
-    {name:'Pichu',   gif:PDB('pichu'),   hd:HD_DB('pichu')},
-    {name:'Pikachu', gif:PDB('pikachu'), hd:HD_DB('pikachu')},
-    {name:'Raichu',  gif:PDB('raichu'),  hd:HD_DB('raichu')},
+    {name:'Pichu',   gif:LOC('pichu'),   hd:HD_DB('pichu')},
+    {name:'Pikachu', gif:LOC('pikachu'), hd:HD_DB('pikachu')},
+    {name:'Raichu',  gif:LOC('raichu'),  hd:HD_DB('raichu')},
   ], type:'electric', moves:[{name:'Thunder Shock',type:'electric'},{name:'Charm',type:'fairy'},{name:'Quick Attack',type:'normal'},{name:'Thunderbolt',type:'electric'}] },
-  { name:'Umbreon',   gif:PDB('umbreon'),  hd:HD_DB('umbreon'),   type:'dark',     moves:[{name:'Dark Pulse',type:'dark'},{name:'Moonlight',type:'fairy'},{name:'Foul Play',type:'dark'},{name:'Shadow Ball',type:'ghost'}] },
-  { name:'Sandshrew', gif:PDB('sandshrew'),hd:HD_DB('sandshrew'), type:'ground',   moves:[{name:'Earthquake',type:'ground'},{name:'Slash',type:'normal'},{name:'Rock Slide',type:'rock'},{name:'Poison Jab',type:'poison'}] },
-  { name:'Mudkip',    gif:PDB('mudkip'),   hd:HD_DB('mudkip'),    type:'water',    moves:[{name:'Water Gun',type:'water'},{name:'Mud Slap',type:'ground'},{name:'Tackle',type:'normal'},{name:'Whirlpool',type:'water'}] },
-  { name:'Jolteon',   gif:PDB('jolteon'),  hd:HD_DB('jolteon'),   type:'electric', moves:[{name:'Thunderbolt',type:'electric'},{name:'Pin Missile',type:'bug'},{name:'Shadow Ball',type:'ghost'},{name:'Thunder',type:'electric'}] },
-  { name:'Emolga',    gif:PDB('emolga'),   hd:HD_DB('emolga'),    type:'electric', moves:[{name:'Thunderbolt',type:'electric'},{name:'Aerial Ace',type:'flying'},{name:'Quick Attack',type:'normal'},{name:'Acrobatics',type:'flying'}] },
-  { name:'Furret',    gif:PDB('furret'),   hd:HD_DB('furret'),    type:'normal',   moves:[{name:'Quick Attack',type:'normal'},{name:'Slash',type:'normal'},{name:'U-turn',type:'bug'},{name:'Sucker Punch',type:'dark'}] },
-  { name:'Psyduck',   gif:PDB('psyduck'),  hd:HD_DB('psyduck'),   type:'water',    moves:[{name:'Water Pulse',type:'water'},{name:'Confusion',type:'psychic'},{name:'Disable',type:'normal'},{name:'Scratch',type:'normal'}] },
-  { name:'Chikorita', gif:PDB('chikorita'),hd:HD_DB('chikorita'), type:'grass',    moves:[{name:'Razor Leaf',type:'grass'},{name:'Vine Whip',type:'grass'},{name:'Tackle',type:'normal'},{name:'Body Slam',type:'normal'}] },
-  { name:'Lucario',   gif:PDB('lucario'),  hd:HD_DB('lucario'),   type:'fighting', moves:[{name:'Aura Sphere',type:'fighting'},{name:'Close Combat',type:'fighting'},{name:'Dragon Pulse',type:'dragon'},{name:'Bullet Punch',type:'steel'}] },
+  { name:'Umbreon',   gif:LOC('umbreon'),        hd:HD_DB('umbreon'),   type:'dark',     moves:[{name:'Dark Pulse',type:'dark'},{name:'Moonlight',type:'fairy'},{name:'Foul Play',type:'dark'},{name:'Shadow Ball',type:'ghost'}] },
+  { name:'Sandshrew', gif:LOC('sandshrew'),      hd:HD_DB('sandshrew'), type:'ground',   moves:[{name:'Earthquake',type:'ground'},{name:'Slash',type:'normal'},{name:'Rock Slide',type:'rock'},{name:'Poison Jab',type:'poison'}] },
+  { name:'Mudkip',    gif:LOC('mudkip'),         hd:HD_DB('mudkip'),    type:'water',    moves:[{name:'Water Gun',type:'water'},{name:'Mud Slap',type:'ground'},{name:'Tackle',type:'normal'},{name:'Whirlpool',type:'water'}] },
+  { name:'Jolteon',   gif:LOC('jolteon'),        hd:HD_DB('jolteon'),   type:'electric', moves:[{name:'Thunderbolt',type:'electric'},{name:'Pin Missile',type:'bug'},{name:'Shadow Ball',type:'ghost'},{name:'Thunder',type:'electric'}] },
+  { name:'Emolga',    gif:LOC('emolga'),         hd:HD_DB('emolga'),    type:'electric', moves:[{name:'Thunderbolt',type:'electric'},{name:'Aerial Ace',type:'flying'},{name:'Quick Attack',type:'normal'},{name:'Acrobatics',type:'flying'}] },
+  { name:'Furret',    gif:LOC('furret'),         hd:HD_DB('furret'),    type:'normal',   moves:[{name:'Quick Attack',type:'normal'},{name:'Slash',type:'normal'},{name:'U-turn',type:'bug'},{name:'Sucker Punch',type:'dark'}] },
+  { name:'Psyduck',   gif:LOC('psyduck'),        hd:HD_DB('psyduck'),   type:'water',    moves:[{name:'Water Pulse',type:'water'},{name:'Confusion',type:'psychic'},{name:'Disable',type:'normal'},{name:'Scratch',type:'normal'}] },
+  { name:'Chespin',   gif:LOC('chespin','png'),  hd:HD_DB('chespin'),   type:'grass',    moves:[{name:'Vine Whip',type:'grass'},{name:'Rollout',type:'rock'},{name:'Bite',type:'dark'},{name:'Seed Bomb',type:'grass'}] },
+  { name:'Lucario',   gif:LOC('lucario','png'),  hd:HD_DB('lucario'),   type:'fighting', moves:[{name:'Aura Sphere',type:'fighting'},{name:'Close Combat',type:'fighting'},{name:'Dragon Pulse',type:'dragon'},{name:'Bullet Punch',type:'steel'}] },
 ]
 let _g23EvolveTrigger = false
 let selectedPokemon = Math.max(0, Math.min(cfg.pokemon || 0, G23_POKEMON.length - 1))
@@ -1984,4 +1977,4 @@ function gameLoop(ticker){
 </script>
 </body>
 </html>
-<!-- g23-pixi v20260505u -->
+<!-- g23-pixi v20260505v -->
