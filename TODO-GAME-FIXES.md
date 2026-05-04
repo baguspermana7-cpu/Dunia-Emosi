@@ -2416,3 +2416,21 @@ Neither went through `openLevelSelect` where `_applyKodokSlot7Unlock` was placed
 - [x] swimWiggleRot keyframes 85/90/95deg (matches new base)
 - [x] Same fix in renderBagGrid + refreshStartIcon
 - [x] Cache bump g24-pixi v=20260505i
+
+## #137 — Kodok Slot-7 Tiered Preset (2026-05-04)
+- [x] Refactor _applyKodokSlot7Unlock with TRAINERS_BY_REGION map
+- [x] Kanto 100% (12 ids) + every other region 25% (Math.max(1, floor(0.25*len)))
+- [x] v3→v4 migration: reset over-broad badges if legacy v3 flag present
+- [x] Total preset: 27/77 trainers (was 77/77)
+- [x] Cache bump g13c v=20260505k
+
+## #138 — G24 Eternatus Centering (2026-05-04)
+- [x] Add optional centerOffsetY field to G24_POKEMON entries
+- [x] Eternatus centerOffsetY:-28 (shift up to match aura ring center)
+- [x] syncSwimmerPos applies offset to img.style.top (hitbox unchanged)
+- [x] Cache bump g24-pixi v=20260505k
+
+## #139 — G24 Remove Eternamax Eternatus Evolution (2026-05-04)
+- [x] Trim Eternatus.evo from 2 entries → 1 (Eternamax removed)
+- [x] Bag label auto-updates "2x Evo" → "Tetap"
+- [x] triggerEvolution auto-skips (evoStage<evo.length-1 = false)

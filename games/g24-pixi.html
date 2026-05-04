@@ -294,8 +294,7 @@ const G24_POKEMON = [
     {name:'Lugia', src:PS('lugia'), hd:'../assets/Pokemon/g19/lugia.webp', flip:true, scale:1.3, emoji:'🕊️'},
   ]},
   { name:'Eternatus', region:3, evo:[
-    {name:'Eternatus',           src:PS('eternatus'),            hd:HD('0890_eternatus'), flip:true, scale:1.3, emoji:'🐉'},
-    {name:'Eternamax Eternatus', src:PS('eternatus-eternamax'),  hd:HD('0890_eternatus'), flip:true, scale:1.7, emoji:'🌌'},
+    {name:'Eternatus', src:PS('eternatus'), hd:HD('0890_eternatus'), flip:true, scale:1.3, centerOffsetY:-28, emoji:'🐉'},
   ]},
 ]
 let selectedPokemon = Math.max(0, Math.min(cfg.pokemon || 0, G24_POKEMON.length - 1))
@@ -1014,8 +1013,12 @@ function syncSwimmerPos(y) {
   const poke = G24_POKEMON[selectedPokemon]
   const stage = Math.min(S.evoStage||0, poke.evo.length-1)
   const evo = poke.evo[stage]
+  // Per-Pokemon visual Y offset compensates for sprite weight asymmetry
+  // (e.g., Eternatus' tall serpentine body sits low in its bounding box).
+  // Hitbox unchanged — visual only.
+  const offY = evo.centerOffsetY || 0
   img.style.left = SWIM_X + 'px'
-  img.style.top  = y + 'px'
+  img.style.top  = (y + offY) + 'px'
   // Skip scaleX flip for rotated sprites — rotation alone handles direction;
   // double-flipping a rotated sprite inverts the orientation back to wrong way.
   const _flipPart = (!evo.rotate && evo.flip) ? ' scaleX(-1)' : ''
@@ -1392,4 +1395,4 @@ document.getElementById('level-text').textContent=`Level ${cfg.level}`
 </script>
 </body>
 </html>
-<!-- g24-pixi v20260505j -->
+<!-- g24-pixi v20260505k -->

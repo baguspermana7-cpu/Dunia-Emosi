@@ -152,3 +152,31 @@ Pattern: in renderer code, branch on `rotate` flag:
 - `rotate=true` → apply rotation, no flip, transform-origin: center
 - `rotate=false, flip=true` → apply scaleX(-1), no rotation
 - `rotate=false, flip=false` → no transform
+
+## L96 — Preset scope discipline: never default to "unlock everything"
+G13C Kodok slot-7 preset originally wrote ALL 77 trainer badges. User pushback:
+"region kanto unlock 100%, tapi region lain itu terbuka 25% saja" — Kanto full,
+others partial. The original implementation was the lazy version (just unlock
+everything for the privileged slot), which removed all gameplay challenge.
+
+Pattern: when adding a "preset/seed/starter pack" feature, always tier by region
+or category with PLAYER PROGRESSION INTENT. Ask: "what should the player still
+need to earn?" The preset should answer, not erase. Default to giving the player
+a clear starting region (full unlock, so they can see what's possible) plus small
+previews of other regions (25% — entices, doesn't satisfy). For category-based
+presets (badges, achievements), apply the same tiering: one category fully, others
+partially. NEVER write the entire data set as a preset.
+
+## L97 — Per-sprite visual offset for asymmetric image weight
+G24 Eternatus appeared too low in the player aura ring even with `object-fit:contain`
++ `transform:translate(-50%,-50%)` (which centers the bounding box). Cause: the
+Pokemon's actual visual weight was in the LOWER portion of its source sprite (tall
+serpentine pose), so geometric center ≠ visual center.
+
+`object-fit` and transform-origin can only solve symmetric cases. For sprites with
+inherent visual-weight asymmetry, add a per-sprite `centerOffsetY` (or `centerOffsetX`)
+field — pixel offset applied to the visual position only, NOT the hitbox. Allows
+fine-tuning each sprite without changing global rendering rules. Pattern is generic:
+any time a sprite has artistic anchor point that differs from its geometric center
+(tall Pokemon, wide ships, characters with extended limbs), use a per-instance offset
+to compensate.

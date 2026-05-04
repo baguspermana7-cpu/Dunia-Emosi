@@ -176,3 +176,43 @@ Fixes:
   pick rotate vs scaleX as the canonical direction handler — using both compounds
   unpredictably; transform-origin must be `50% 50%` (center) not `50% 100%` (feet)
   so the rotated body stays centered at the player anchor point.
+
+## 2026-05-04 — #137 Kodok Slot-7 Preset → Tiered (Kanto 100% + others 25%)
+
+User clarified: slot-7+frog preset should give Kanto starter region (full unlock)
+but only seed a small preview from other regions, NOT unlock everything.
+
+- `_applyKodokSlot7Unlock` (game.js): replaced flat 77-trainer array with
+  `TRAINERS_BY_REGION` map; loop applies Kanto 100% + Math.max(1, floor(0.25*len))
+  per other region. Result: 27/77 trainers preset.
+- v3→v4 migration: existing players who got the legacy 77-badge preset get
+  badges reset to {} on next entry, then receive the new tiered preset.
+- Lesson L96: preset scope discipline — never default to "unlock everything";
+  always tier by region with player-progression intent.
+
+## 2026-05-04 — #138 G24 Eternatus Centering (per-Pokemon Y offset)
+
+User: Eternatus visual still appears too low (below player aura ring center).
+
+Cause: Eternatus is the tallest Pokemon (scale 1.3), HD WebP draws body
+extending downward; with `transform:translate(-50%,-50%)` the bounding box
+center sits at player anchor but the Pokemon's visual weight is in the LOWER
+portion of the box.
+
+- Added optional `centerOffsetY` field to G24_POKEMON entries (negative = up).
+- `syncSwimmerPos` applies the offset to `img.style.top` (visual only, hitbox
+  unchanged).
+- Eternatus: `centerOffsetY:-28`. Other Pokemon iterate based on user reports.
+- Lesson L97: per-Pokemon visual offset compensates for sprite weight asymmetry
+  that object-fit:contain alone can't fix.
+
+## 2026-05-04 — #139 G24 Eternatus → Single-Form (Remove Eternamax Evo)
+
+User: "kok eternatusnya evolusi, evolusinya jelek" — Eternamax sprite is
+visually busy (extended tendrils) and unfit. Removed evolution.
+
+- Eternatus.evo array trimmed from 2 → 1 entry. Eternamax stage deleted.
+- Bag card label auto-changes "2x Evo" → "Tetap" (driven by p.evo.length).
+- triggerEvolution() auto-skips for Eternatus (S.evoStage<evo.length-1 = 0<0).
+
+Cache: g13c v=20260505k, g24 v=20260505k

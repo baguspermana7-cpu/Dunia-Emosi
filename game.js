@@ -1201,7 +1201,8 @@ function _applyKodokSlot7Unlock() {
     const animal = slots && slots[slotIdx] && slots[slotIdx].animal
     const av = animal ? (AVATAR_SLUGS[animal] || String(animal)) : null
     if (av !== 'frog') return
-    if (localStorage.getItem('dunia-kodok-slot7-v3') === '1') return
+    // v4 = tiered preset (Kanto 100% + others 25%); v3 = legacy all-77 preset
+    if (localStorage.getItem('dunia-kodok-slot7-v4') === '1') return
 
     const prog = loadProgress()
 
@@ -1219,21 +1220,29 @@ function _applyKodokSlot7Unlock() {
 
     saveProgress(prog)
 
-    // Unlock all 87 trainer badges in G13C (trainer IDs format: {id: true})
+    // Tiered G13C badge preset: Kanto 100% + every other region 25%.
+    // Migration v3→v4: existing players who got the over-broad v3 preset (all 77
+    // badges) get reset to {} first so the new tiered preset takes effect cleanly.
+    // Fresh players merge the tiered preset into existing earned badges.
+    const TRAINERS_BY_REGION = {
+      kanto:   ['misty','brock','erika','sabrina','surge','koga','blaine','lorelei','agatha','giovanni','lance','blue'],
+      johto:   ['falkner','bugsy','whitney','morty','jasmine','pryce','clair','will','karen'],
+      hoenn:   ['roxanne','brawly','wattson','norman','flannery','winona','wallace','steven'],
+      sinnoh:  ['roark','gardenia','maylene','wake','byron','candice','volkner','aaron','flint','cynthia'],
+      unova:   ['lenora','burgh','clay','skyla','drayden','elesa','iris','n'],
+      kalos:   ['viola','grant','ramos','valerie','clemont','korrina','diantha'],
+      galar:   ['milo','nessa','kabu','bea','allister','gordie','raihan','leon'],
+      rivals:  ['gary','red','hop'],
+      rockets: ['jessie','james'],
+      anime:   ['ash','ash_johto','ash_hoenn','ash_sinnoh','ash_unova','ash_kalos','may','dawn','serena','go'],
+    }
     const badgesKey = `dunia-avatar-${av}-g13c_badges`
-    const allBadges = {}
-    const ALL_G13C_TRAINER_IDS = [
-      'misty','brock','erika','sabrina','surge','koga','blaine','lorelei','agatha','giovanni','lance','blue',
-      'falkner','bugsy','whitney','morty','jasmine','pryce','clair','will','karen',
-      'roxanne','brawly','wattson','norman','flannery','winona','wallace','steven',
-      'roark','gardenia','maylene','wake','byron','candice','volkner','aaron','flint','cynthia',
-      'lenora','burgh','clay','skyla','drayden','elesa','iris','n',
-      'viola','grant','ramos','valerie','clemont','korrina','diantha',
-      'milo','nessa','kabu','bea','allister','gordie','raihan','leon',
-      'gary','red','hop','jessie','james',
-      'ash','ash_johto','ash_hoenn','ash_sinnoh','ash_unova','ash_kalos','may','dawn','serena','go'
-    ]
-    ALL_G13C_TRAINER_IDS.forEach(id => { allBadges[id] = true })
+    const oldDone = localStorage.getItem('dunia-kodok-slot7-v3') === '1'
+    const allBadges = oldDone ? {} : JSON.parse(localStorage.getItem(badgesKey) || '{}')
+    for (const [region, ids] of Object.entries(TRAINERS_BY_REGION)) {
+      const count = region === 'kanto' ? ids.length : Math.max(1, Math.floor(ids.length * 0.25))
+      for (let i = 0; i < count; i++) allBadges[ids[i]] = true
+    }
     try { localStorage.setItem(badgesKey, JSON.stringify(allBadges)) } catch(_) {}
 
     // Unlock all Kanto city presets in G13B
@@ -1251,7 +1260,7 @@ function _applyKodokSlot7Unlock() {
       }
     }
 
-    localStorage.setItem('dunia-kodok-slot7-v3', '1')
+    localStorage.setItem('dunia-kodok-slot7-v4', '1')
   } catch (_) {}
 }
 
@@ -1359,7 +1368,7 @@ function openGymGame() {
   playClick()
   // MUST remain synchronous — page redirects on next line, no time for async work.
   _applyKodokSlot7Unlock()   // runs once, guard inside; slot-7+frog preset
-  window.location.href = 'games/g13c-pixi.html?v=20260505g'
+  window.location.href = 'games/g13c-pixi.html?v=20260505k'
 }
 
 function g13cBuildLetterSelect() {
@@ -13054,7 +13063,7 @@ function initGame24() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g24Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g24-pixi.html?v=20260505j'
+  window.location.href = 'games/g24-pixi.html?v=20260505k'
 }
 
 function openWorldPicker() {
