@@ -273,10 +273,11 @@ document.getElementById('quiz-total').textContent  = Math.min(8 + Math.floor((cf
 // ═══════════════════════════════════════════════════════════
 //  POKEMON ROSTER
 // ═══════════════════════════════════════════════════════════
-const PS = n => `https://play.pokemonshowdown.com/sprites/ani/${n}.gif`
+const PS  = n => `https://play.pokemonshowdown.com/sprites/ani/${n}.gif`
+const PS5 = n => `https://play.pokemonshowdown.com/sprites/gen5ani/${n}.gif`
 const HD_DB = n => `https://img.pokemondb.net/sprites/home/normal/${n}.png`
 const G23_POKEMON = [
-  { name:'Arcanine',  gif:PS('arcanine'),  hd:HD_DB('arcanine'),  type:'fire',     moves:[{name:'Flamethrower',type:'fire'},{name:'Extreme Speed',type:'normal'},{name:'Crunch',type:'dark'},{name:'Flare Blitz',type:'fire'}] },
+  { name:'Arcanine',  gif:PS5('arcanine'), hd:HD_DB('arcanine'),  type:'fire',     moves:[{name:'Flamethrower',type:'fire'},{name:'Extreme Speed',type:'normal'},{name:'Crunch',type:'dark'},{name:'Flare Blitz',type:'fire'}] },
   { name:'Lycanroc',  gif:PS('lycanroc-midday'), hd:HD_DB('lycanroc-midday'), type:'rock', moves:[{name:'Stone Edge',type:'rock'},{name:'Crunch',type:'dark'},{name:'Accelerock',type:'rock'},{name:'Iron Head',type:'steel'}] },
   { name:'Cinderace', gif:PS('cinderace'), hd:HD_DB('cinderace'), type:'fire',     moves:[{name:'Pyro Ball',type:'fire'},{name:'High Jump Kick',type:'fighting'},{name:'Sucker Punch',type:'dark'},{name:'Gunk Shot',type:'poison'}] },
   { name:'Eevee',     gif:PS('eevee'),     hd:HD_DB('eevee'),     type:'normal',   moves:[{name:'Quick Attack',type:'normal'},{name:'Bite',type:'dark'},{name:'Swift',type:'normal'},{name:'Last Resort',type:'normal'}] },
@@ -288,12 +289,12 @@ const G23_POKEMON = [
   { name:'Umbreon',   gif:PS('umbreon'),   hd:HD_DB('umbreon'),   type:'dark',     moves:[{name:'Dark Pulse',type:'dark'},{name:'Moonlight',type:'fairy'},{name:'Foul Play',type:'dark'},{name:'Shadow Ball',type:'ghost'}] },
   { name:'Sandshrew', gif:PS('sandshrew'), hd:HD_DB('sandshrew'), type:'ground',   moves:[{name:'Earthquake',type:'ground'},{name:'Slash',type:'normal'},{name:'Rock Slide',type:'rock'},{name:'Poison Jab',type:'poison'}] },
   { name:'Mudkip',    gif:PS('mudkip'),    hd:HD_DB('mudkip'),    type:'water',    moves:[{name:'Water Gun',type:'water'},{name:'Mud Slap',type:'ground'},{name:'Tackle',type:'normal'},{name:'Whirlpool',type:'water'}] },
-  { name:'Jolteon',   gif:PS('jolteon'),   hd:HD_DB('jolteon'),   type:'electric', moves:[{name:'Thunderbolt',type:'electric'},{name:'Pin Missile',type:'bug'},{name:'Shadow Ball',type:'ghost'},{name:'Thunder',type:'electric'}] },
-  { name:'Emolga',    gif:PS('emolga'),    hd:HD_DB('emolga'),    type:'electric', moves:[{name:'Thunderbolt',type:'electric'},{name:'Aerial Ace',type:'flying'},{name:'Quick Attack',type:'normal'},{name:'Acrobatics',type:'flying'}] },
-  { name:'Furret',    gif:PS('furret'),    hd:HD_DB('furret'),    type:'normal',   moves:[{name:'Quick Attack',type:'normal'},{name:'Slash',type:'normal'},{name:'U-turn',type:'bug'},{name:'Sucker Punch',type:'dark'}] },
+  { name:'Jolteon',   gif:PS5('jolteon'),  hd:HD_DB('jolteon'),   type:'electric', moves:[{name:'Thunderbolt',type:'electric'},{name:'Pin Missile',type:'bug'},{name:'Shadow Ball',type:'ghost'},{name:'Thunder',type:'electric'}] },
+  { name:'Emolga',    gif:PS5('emolga'),   hd:HD_DB('emolga'),    type:'electric', moves:[{name:'Thunderbolt',type:'electric'},{name:'Aerial Ace',type:'flying'},{name:'Quick Attack',type:'normal'},{name:'Acrobatics',type:'flying'}] },
+  { name:'Furret',    gif:PS5('furret'),   hd:HD_DB('furret'),    type:'normal',   moves:[{name:'Quick Attack',type:'normal'},{name:'Slash',type:'normal'},{name:'U-turn',type:'bug'},{name:'Sucker Punch',type:'dark'}] },
   { name:'Psyduck',   gif:PS('psyduck'),   hd:HD_DB('psyduck'),   type:'water',    moves:[{name:'Water Pulse',type:'water'},{name:'Confusion',type:'psychic'},{name:'Disable',type:'normal'},{name:'Scratch',type:'normal'}] },
   { name:'Chespin',   gif:PS('chespin'),   hd:HD_DB('chespin'),   type:'grass',    moves:[{name:'Vine Whip',type:'grass'},{name:'Rollout',type:'rock'},{name:'Bite',type:'dark'},{name:'Seed Bomb',type:'grass'}] },
-  { name:'Lucario',   gif:PS('lucario'),   hd:HD_DB('lucario'),   type:'fighting', moves:[{name:'Aura Sphere',type:'fighting'},{name:'Close Combat',type:'fighting'},{name:'Dragon Pulse',type:'dragon'},{name:'Bullet Punch',type:'steel'}] },
+  { name:'Lucario',   gif:PS5('lucario'),  hd:HD_DB('lucario'),   type:'fighting', moves:[{name:'Aura Sphere',type:'fighting'},{name:'Close Combat',type:'fighting'},{name:'Dragon Pulse',type:'dragon'},{name:'Bullet Punch',type:'steel'}] },
 ]
 let _g23EvolveTrigger = false
 let selectedPokemon = Math.max(0, Math.min(cfg.pokemon || 0, G23_POKEMON.length - 1))
@@ -1962,4 +1963,4 @@ function gameLoop(ticker){
 </script>
 </body>
 </html>
-<!-- g23-pixi v20260505h -->
+<!-- g23-pixi v20260505p -->
