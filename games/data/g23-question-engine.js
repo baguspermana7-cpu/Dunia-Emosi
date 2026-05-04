@@ -32,7 +32,17 @@
       const w = ans + delta
       if (w !== ans && w >= 0) set.add(String(w))
     }
-    while (set.size < count) set.add(String(ans + set.size + 1))
+    // Pad with sequential values. Use an external counter (NOT set.size)
+    // so the loop always advances even if a candidate is a duplicate.
+    // Without this, e.g. ans=2 + set={'3','5'} + size-based formula
+    // → add('5') is dup → set.size never reaches count → INFINITE LOOP
+    // (this is the bug that hung G23/G24 on splash for some users).
+    let pad = 1
+    while (set.size < count && pad < 100) {
+      const v = ans + pad
+      if (v !== ans && v >= 0) set.add(String(v))
+      pad++
+    }
     return [...set].slice(0, count)
   }
 
