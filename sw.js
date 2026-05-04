@@ -15,7 +15,7 @@
  * succeeded. Only cache same-origin assets.
  * ========================================================================== */
 
-const CACHE_VERSION = 'v3-20260506i'
+const CACHE_VERSION = 'v4-20260506k'
 const HTML_CACHE = `dunia-html-${CACHE_VERSION}`
 const ASSET_CACHE = `dunia-assets-${CACHE_VERSION}`
 
@@ -51,16 +51,20 @@ self.addEventListener('message', (e) => {
 })
 
 self.addEventListener('activate', (e) => {
-  // Drop old caches from previous SW versions
-  e.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys
-          .filter((k) => k !== HTML_CACHE && k !== ASSET_CACHE)
-          .map((k) => caches.delete(k))
-      )
-    ).then(() => self.clients.claim())
-  )
+  // Drop old caches from previous SW versions, claim clients,
+  // then broadcast a reload signal so any open tab still running
+  // the OLD page bytes refreshes itself with fresh content.
+  e.waitUntil((async () => {
+    const keys = await caches.keys()
+    await Promise.all(
+      keys
+        .filter((k) => k !== HTML_CACHE && k !== ASSET_CACHE)
+        .map((k) => caches.delete(k))
+    )
+    await self.clients.claim()
+    const clients = await self.clients.matchAll({ type: 'window' })
+    clients.forEach((c) => c.postMessage({ type: 'SW_UPDATED', version: CACHE_VERSION }))
+  })())
 })
 
 self.addEventListener('fetch', (e) => {

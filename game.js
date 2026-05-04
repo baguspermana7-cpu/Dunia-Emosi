@@ -7255,21 +7255,44 @@ try{
 // Uses network-first for HTML (avoid stale UI) + cache-first for static assets.
 // Strategy details in sw.js. Falls back gracefully if SW API unavailable.
 if('serviceWorker' in navigator){
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js', { scope: './' })
-      .then(reg => {
-        // Auto-update SW when new version is available
-        reg.addEventListener('updatefound', () => {
-          const nw = reg.installing
-          if (nw) nw.addEventListener('statechange', () => {
-            if (nw.state === 'activated' && navigator.serviceWorker.controller) {
-              // New SW activated — quietly. Reload happens naturally on next nav.
-            }
+  // Self-heal: if the SW is broken/serving stale content, append ?reset=sw
+  // to the URL to force-unregister all SWs and clear caches.
+  if (location.search.includes('reset=sw')) {
+    navigator.serviceWorker.getRegistrations().then(regs => {
+      Promise.all(regs.map(r => r.unregister())).then(() => {
+        if (window.caches) {
+          caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))))
+            .then(() => location.replace(location.pathname))
+        } else { location.replace(location.pathname) }
+      })
+    })
+  } else {
+    // Listen for "SW updated" broadcast — auto-reload to pick up fresh assets.
+    // Guards against double-reload via session flag.
+    navigator.serviceWorker.addEventListener('message', (e) => {
+      if (e.data && e.data.type === 'SW_UPDATED') {
+        const flag = 'dunia-sw-reloaded-' + (e.data.version || '')
+        if (!sessionStorage.getItem(flag)) {
+          sessionStorage.setItem(flag, '1')
+          location.reload()
+        }
+      }
+    })
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js', { scope: './' })
+        .then(reg => {
+          reg.addEventListener('updatefound', () => {
+            const nw = reg.installing
+            if (nw) nw.addEventListener('statechange', () => {
+              if (nw.state === 'activated' && navigator.serviceWorker.controller) {
+                // New SW activated — broadcast handler above will reload.
+              }
+            })
           })
         })
-      })
-      .catch(() => { /* PWA install will degrade to web app */ })
-  })
+        .catch(() => { /* PWA install will degrade to web app */ })
+    })
+  }
 }
 
 // ── AAA game result handlers: fire when returning from games/g*.html ──
