@@ -171,7 +171,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <img id="tr-balloon" src="../assets/Pokemon/g23/tr-balloon.gif" alt="Team Rocket">
 <div id="tr-warning">⚠️ Team Rocket Muncul!</div>
 <!-- Debug version marker (Hotfix #147) — confirms cache freshness -->
-<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260506c (aura+resize)</div>
+<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260506d (1000q wired)</div>
 
 <!-- HUD -->
 <div id="hud-top">
@@ -268,6 +268,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js"></script>
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/save-engine.js?v=20260501h"></script>
+<script src="data/g23-question-engine.js?v=20260506c"></script>
 <script src="game-modal.js?v=20260424g"></script>
 <script>
 'use strict'
@@ -461,7 +462,19 @@ const QUESTIONS = {
   ]
 }
 function getDiff(l){ return l<=8?'easy':l<=16?'medium':l<=24?'hard':'expert' }
+// User difficulty (read from sessionStorage if set by level select; defaults
+// to 'medium'). Controls whether 7-8 yo pool (× ÷) is included.
+function _getUserDiff(){
+  try { return cfg.difficulty || sessionStorage.getItem('g23Difficulty') || 'medium' }
+  catch(_) { return 'medium' }
+}
 function pickQ(level){
+  // Prefer the new question engine (1000+ questions split by age group);
+  // fall back to legacy QUESTIONS bank if engine not loaded.
+  if (typeof window.G23_pickQuestions === 'function') {
+    const pool = window.G23_pickQuestions(level, _getUserDiff())
+    return pool.slice(0, Math.min(8 + Math.floor((level-1)*0.6), 16, pool.length))
+  }
   const pool=[...QUESTIONS[getDiff(level)]]
   for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}
   return pool.slice(0, Math.min(8 + Math.floor((level-1)*0.6), 16, pool.length))
@@ -2007,4 +2020,4 @@ function gameLoop(ticker){
 </script>
 </body>
 </html>
-<!-- g23-pixi v20260506c -->
+<!-- g23-pixi v20260506d -->
