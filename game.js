@@ -10738,10 +10738,26 @@ function showGameResult({ emoji, title, stars, msg, buttons }) {
   let _shown = false
   setTimeout(() => { if (!_shown) state._showingGameResult = false }, 4000)
 
+  // DEFENSIVE OVERLAY SWEEP (2026-05-04): kill every known modal/overlay
+  // that could sit above gr-overlay and block clicks. G13C win-modal-stuck
+  // regression traced to stale battle-stage / evo / quiz overlays leaking
+  // pointer-events even after their content was hidden.
   try {
-    const evo = document.getElementById('g13-evo-overlay')
-    if (evo) { evo.classList.remove('show'); evo.style.display = 'none'; evo.style.pointerEvents = 'none' }
-  } catch(e) { console.warn('[showGameResult] evo cleanup:', e) }
+    const KILL_SELECTORS = [
+      '#g13-evo-overlay', '#g13b-result', '#g13b-level-complete',
+      '#math-quiz-overlay', '#pause-overlay', '#bag-overlay',
+      '.g13b-result-overlay', '.gr-overlay-extra', '.quiz-panel.show'
+    ]
+    KILL_SELECTORS.forEach(sel => {
+      try {
+        document.querySelectorAll(sel).forEach(el => {
+          el.classList.remove('show')
+          el.style.display = 'none'
+          el.style.pointerEvents = 'none'
+        })
+      } catch(_){}
+    })
+  } catch(e) { console.warn('[showGameResult] overlay sweep:', e) }
 
   // SECTION 1: text content (CRITICAL)
   try {
@@ -10761,10 +10777,17 @@ function showGameResult({ emoji, title, stars, msg, buttons }) {
         const el = document.createElement('button')
         el.className = 'gr-btn ' + (i === 0 ? 'gr-btn-primary' : 'gr-btn-secondary')
         el.textContent = b.label
-        el.onclick = () => {
+        el.type = 'button'
+        // Bind via BOTH pointerdown + click — mobile Chrome sometimes
+        // swallows click on overlay-stacked buttons; pointerdown is the
+        // touch-event fallback. Idempotency guarded by _gr_fired flag.
+        const fire = (evt) => {
+          if (el._gr_fired) return
+          el._gr_fired = true
+          try { evt && evt.preventDefault && evt.preventDefault() } catch(_){}
+          console.log('[gr-btn] tap:', b.label)
           try { playClick() } catch(_) {}
           try { hideGameResult() } catch(_) {}
-          // Wrap action so misbehaving callback doesn't strand modal flag
           setTimeout(() => {
             try { b.action() }
             catch(actionErr) {
@@ -10773,6 +10796,8 @@ function showGameResult({ emoji, title, stars, msg, buttons }) {
             }
           }, 0)
         }
+        el.addEventListener('pointerdown', fire, { passive: false })
+        el.addEventListener('click', fire)
         btns.appendChild(el)
       })
     }

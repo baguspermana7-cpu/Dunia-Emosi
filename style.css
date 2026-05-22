@@ -3810,9 +3810,13 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 }
 @keyframes g13ParticleFloat{0%{transform:translateY(0) rotate(0deg);opacity:0.9}100%{transform:translateY(-100vh) rotate(360deg);opacity:0}}
 
-/* ===== Unified Game Result Overlay (G13-G18) ===== */
-.gr-overlay{position:fixed;inset:0;z-index:500;display:none;align-items:center;justify-content:center;background:rgba(15,10,30,0.78);backdrop-filter:blur(14px)}
-.gr-overlay.show{display:flex}
+/* ===== Unified Game Result Overlay (G13-G18) =====
+   z-index 99999: sits ABOVE pause-overlay (9999) and every other modal.
+   pointer-events:auto on .show forces clicks even when a stale overlay sits
+   above (defensive — see 2026-05-04 G13C win-modal-stuck regression). */
+.gr-overlay{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:rgba(15,10,30,0.78);backdrop-filter:blur(14px);pointer-events:none}
+.gr-overlay.show{display:flex;pointer-events:auto}
+.gr-overlay.show .gr-card,.gr-overlay.show .gr-btn{pointer-events:auto;touch-action:manipulation}
 @keyframes grSlideIn{from{opacity:0;transform:scale(0.88) translateY(24px)}to{opacity:1;transform:scale(1) translateY(0)}}
 .gr-card{background:linear-gradient(160deg,#f8f0ff,#ede2f6);border:2px solid rgba(180,160,220,0.45);border-radius:28px;padding:32px 24px;width:min(340px,90vw);text-align:center;box-shadow:0 16px 48px rgba(100,60,160,0.18);animation:grSlideIn .4s cubic-bezier(.34,1.56,.64,1)}
 .gr-emoji{font-size:56px;margin-bottom:4px}
