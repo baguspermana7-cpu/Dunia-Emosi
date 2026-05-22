@@ -698,10 +698,21 @@ function genMathQuestion() {
 
 function genWrongOptions(correct, count) {
   const opts = new Set([correct]);
-  while (opts.size < count + 1) {
+  let safety = 0;
+  while (opts.size < count + 1 && safety++ < 30) {
     const delta = Math.floor(Math.random() * 5) + 1;
     const wrong = Math.max(0, correct + (Math.random() < 0.5 ? delta : -delta));
     if (wrong !== correct && wrong >= 0 && wrong <= 20) opts.add(wrong);
+  }
+  // Sequential pad — always advances even if candidate is duplicate.
+  // Defensive guard against unbounded-while bug class (2026-05-04 410597c).
+  let pad = 1;
+  while (opts.size < count + 1 && pad < 30) {
+    const v = correct + pad;
+    if (v !== correct && v >= 0 && v <= 20) opts.add(v);
+    const v2 = correct - pad;
+    if (v2 !== correct && v2 >= 0 && v2 <= 20) opts.add(v2);
+    pad++;
   }
   return shuffle([...opts]).slice(0, count + 1);
 }

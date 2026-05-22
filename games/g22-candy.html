@@ -530,9 +530,17 @@ function showCandyQuiz(candy) {
   const correct = candy.q.a
   const choices = [correct]
   if (typeof correct === 'number') {
-    while (choices.length < 4) {
+    let safety = 0
+    while (choices.length < 4 && safety++ < 30) {
       const wrong = correct + Math.floor(Math.random() * 10) - 5
       if (wrong !== correct && wrong >= 0 && !choices.includes(wrong)) choices.push(wrong)
+    }
+    // Sequential pad — defensive guard against unbounded-random bug class.
+    let pad = 1
+    while (choices.length < 4 && pad < 50) {
+      const v = correct + pad
+      if (v !== correct && v >= 0 && !choices.includes(v)) choices.push(v)
+      pad++
     }
   } else {
     // Text answer — pick wrong answers from same category

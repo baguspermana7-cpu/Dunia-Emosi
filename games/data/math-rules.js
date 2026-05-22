@@ -96,7 +96,15 @@
       const w = Math.max(0, ans + off);
       if (w !== ans) wrongs.add(w);
     }
-    while (wrongs.size < 3) wrongs.add(ans + wrongs.size + 1);
+    // Pad with external counter, NOT wrongs.size, so loop always advances
+    // even when candidate is a duplicate. Hard cap 100 as defensive guard.
+    // Same bug as g23-question-engine.js _wrongs (fixed 2026-05-04 410597c).
+    let pad = 1;
+    while (wrongs.size < 3 && pad < 100) {
+      const v = ans + pad;
+      if (v !== ans && v >= 0) wrongs.add(v);
+      pad++;
+    }
     const choices = _shuffle([ans, ...wrongs]);
     return { q, ans, choices, op, level: lv, difficulty: diff };
   }

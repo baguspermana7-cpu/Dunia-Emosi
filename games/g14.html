@@ -2016,10 +2016,19 @@ function buildQuiz() {
   const symbol = op === '*' ? '×' : op
   document.getElementById('quiz-q').textContent = `${a} ${symbol} ${b} = ?`
   const wrong = new Set()
-  while (wrong.size < 3) {
+  let safety = 0
+  while (wrong.size < 3 && safety++ < 30) {
     const d = Math.floor(Math.random() * 8) + 1
     const w = answer + (Math.random() < 0.5 ? d : -d)
     if (w !== answer && w > 0) wrong.add(w)
+  }
+  // Pad with sequential always-advancing values (defensive cap).
+  // See 2026-05-04 commit 410597c for the original bug pattern.
+  let pad = 1
+  while (wrong.size < 3 && pad < 100) {
+    const v = answer + pad
+    if (v !== answer && v > 0) wrong.add(v)
+    pad++
   }
   const choices = [answer, ...[...wrong]].slice(0, 4).sort(() => Math.random() - 0.5)
   const el = document.getElementById('quiz-choices')

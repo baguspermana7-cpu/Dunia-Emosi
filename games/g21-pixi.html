@@ -2077,10 +2077,20 @@ function makeMathQuestion(level) {
     q = `${big} - ${small} = ?`; ans = big - small
   } else { q = `${a} + ${b} = ?`; ans = a + b }
   const wrongs = new Set()
-  while (wrongs.size < 3) {
+  let safety = 0
+  while (wrongs.size < 3 && safety++ < 30) {
     const off = (Math.floor(Math.random() * 6) - 3) || (Math.random() < 0.5 ? 1 : -1)
     const w = Math.max(0, ans + off)
     if (w !== ans) wrongs.add(w)
+  }
+  // Pad with sequential values (always advances). Same bug pattern as
+  // math-rules.js + g23-question-engine.js — Math.max(0, ans+off) collapses
+  // negatives to 0, so for small ans (esp. 0) random pool is too narrow.
+  let pad = 1
+  while (wrongs.size < 3 && pad < 100) {
+    const v = ans + pad
+    if (v !== ans && v >= 0) wrongs.add(v)
+    pad++
   }
   return { q, ans, choices: [...wrongs, ans].sort(() => Math.random() - 0.5) }
 }
