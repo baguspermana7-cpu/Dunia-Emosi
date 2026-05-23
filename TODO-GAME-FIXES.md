@@ -2441,3 +2441,23 @@ Neither went through `openLevelSelect` where `_applyKodokSlot7Unlock` was placed
 - [x] Renderer emits .mv-en + .mv-id spans; idLine hidden if no translation
 - [x] Overflow protection (white-space:nowrap + ellipsis) keeps text inside box
 - [x] Cache bump g13c v=20260505l
+
+## #145 — Session 2026-05-04 PWA stability hotfix (commits eb9b3de → e8fbbbf)
+### Critical bug fixes
+- [x] **#145-A** G23 splash icon — replaced 🏃 emoji with `assets/g23-icon.png` (Pokemon Run logo) + bouncing/pulsing animation states
+- [x] **#145-B** Self-host Pixi.js v8 at `games/lib/pixi.min.js` (780KB) for SW caching; all 10 Pixi games swapped from `cdn.jsdelivr.net` → local
+- [x] **#145-C** Audio `preload="auto"` → `"none"` on G23 BGM (lazy fetch on tap, not page load)
+- [x] **#145-D** ❌ Defer-script regression (commit 475b59f) — broke G23 launch on mobile, reverted in `cccc659`. Lesson L103 added.
+- [x] **#145-E** SW broadcast `SW_UPDATED` → auto-reload stale clients once per version + `?reset=sw` URL escape hatch
+- [x] **#145-F** 🔥 **ROOT CAUSE FIX** — `_wrongs()` in `g23-question-engine.js` had infinite loop: fallback `while (set.size < count) set.add(String(ans + set.size + 1))` could produce duplicates → `set.size` stuck → browser HANG. Fixed with external counter `pad++`. PWA amplified the bug because SW cached the same JS bytes (deterministic re-trigger). Lesson L104 added.
+- [x] **#145-G** G13C win modal stuck — z-index `500 → 99999` + overlay sweep (kill all known modals before render) + pointerdown/click dual binding + `_gr_fired` flag idempotency. Lesson L105 added.
+- [x] **#145-H** Audit class-wide: same bug pattern fixed in `math-rules.js` (used by ALL math games), `g21-pixi.html`, `g14.html`, `g15-pixi.html`, `g22-candy.html`. All while loops now have explicit cap. Lesson L106 added.
+
+### Cache bumps this session
+- `g23-pixi v=20260506m (fix-engine-loop)`
+- `g23-question-engine v=20260506m`
+- `g24-pixi v=20260506m`
+- `game.js v=20260506n`
+- `style.css v=20260506n`
+- `math-rules v=20260506n`
+- `sw.js CACHE_VERSION v6-20260506n`

@@ -278,3 +278,26 @@ until code review caught it. Pattern: when adding a new module:
 4. Bump cache version
 5. Verify in dev tools that the module loaded (console.log on init)
 Skip any of these → silent dead code.
+
+## L103 — `defer` + inline IIFE = brittle on mobile (2026-05-04)
+**Problem**: Added `defer` to 6 external scripts in g23-pixi.html + wrapped initPixi IIFE in DOMContentLoaded gate. Locally fine. On user's Android Chrome (Samsung): G23 stuck on splash for 1-2 minutes with no error in catch handler. Other Pixi games still worked.
+**Solution**: Reverted to original sync `<script>` pattern + immediate IIFE. Self-hosted Pixi (for SW caching) was kept — that's safe; the defer-pattern change was the regression.
+**Rule**: NEVER mix `defer` external scripts with sync inline `<script>` blocks that immediately reference globals from those defers. If load-speed is the goal, extract the inline init to its own deferred file or accept sync loading. Always test on real mobile, not just desktop.
+
+## L104 — PWA cache amplifies stochastic bugs into deterministic hangs (2026-05-04)
+**Problem**: `_wrongs()` helper in g23-question-engine.js had `while (set.size < count) set.add(String(ans + set.size + 1))` — formula could produce duplicates, set.size never advanced, infinite loop. Pre-PWA: rare (Math.random variance occasionally bypassed). Post-PWA: SW cached the same JS bytes → deterministic re-trigger → **browser CPU pegged every page load** for affected users. Incognito worked = no SW = fresh fetch.
+**Solution**: Use external counter (`let pad = 1; while (...) { ...; pad++ }`) that always advances regardless of set.size growth. Add hard cap (`pad < 100`) as defensive guard.
+**Rule**: Before shipping PWA / adding SW caching, grep for `while (...condition...)` paired with `Math.random()` or set/map mutations. Audit any loop where exit depends on side-effects of stochastic input. Always add max-iteration cap.
+
+## L105 — Modal stuck = three things at once (z-index + pointer-events + tap binding) (2026-05-04)
+**Problem**: G13C battle win modal showed but every button was dead — user couldn't tap "Level Berikutnya". Root cause was likely combination of stale overlay sitting above z-index 500 + mobile Chrome swallowing click on overlay-stacked button.
+**Solution**: 3-layer defensive fix:
+1. CSS `z-index: 99999` (above pause-overlay's 9999) + explicit `pointer-events: auto` on `.show` + `.gr-btn` + `touch-action: manipulation`
+2. Overlay sweep in showGameResult — force-hide every known modal/overlay before render (KILL_SELECTORS array)
+3. Button binding: BOTH `pointerdown` + `click` with `_gr_fired` idempotency flag (mobile Chrome ghost-click protection)
+**Rule**: When a modal's buttons are dead but modal is visible, never assume single cause. Always patch z-index + pointer-events + touch event binding together. Add `console.log` on tap handler for diagnostics.
+
+## L106 — Audit class-wide after fixing any infinite-loop bug (2026-05-04)
+**Problem**: Fixed `_wrongs()` infinite loop in engine. Trusted that was unique. Wasn't. `grep` found 5 more sites with the same `while (collection.size < N) push-may-be-duplicate` pattern in math-rules.js, g21, g14, g15, g22.
+**Solution**: Immediate codebase grep: `grep -rn 'while.*\.size <\|while.*length < [0-9]' --include='*.js' --include='*.html'`. Filter out `pad <\|safety++\|attempts++` (already-bounded). Fix every remaining unbounded site.
+**Rule**: Every infinite-loop fix triggers an audit pass — never assume the bug is local. Same template + same anti-pattern often gets pasted across modules.

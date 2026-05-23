@@ -1,3 +1,58 @@
+## [2026-05-04] — PWA stability + critical bug fixes (commits eb9b3de → e8fbbbf)
+
+### Fixed: ROOT CAUSE — `_wrongs()` infinite loop in g23-question-engine.js
+- Fallback `while (set.size < count) set.add(String(ans + set.size + 1))` could produce duplicates
+- `set.add` no-op when duplicate → `set.size` never grows → browser CPU-pegged hang
+- PWA SW caching amplified the bug from "rare" to "every load" (deterministic re-trigger)
+- **Fix**: External counter `pad++` always advances + hard cap 100 iterations
+- Affected: G23 Pokemon Run, G24 Bawah Laut (both load engine)
+
+### Fixed: G13C battle win modal stuck (commit b91c27a)
+- Modal visible but ALL buttons unclickable after winning
+- 3-layer defense: z-index 500→99999 + overlay sweep + pointerdown/click dual binding
+- Added console.log diagnostic for tap detection
+
+### Fixed: 5 more sites with same unbounded-while bug pattern (commit e8fbbbf)
+- math-rules.js (used by all math games) — identical bug to engine
+- g21-pixi.html, g14.html, g15-pixi.html, g22-candy.html — all bounded with safety + pad
+- All while loops now have explicit max-iteration cap
+
+### New: PWA infrastructure
+- Self-hosted Pixi.js v8 at `games/lib/pixi.min.js` (was CDN, now SW-cacheable)
+- All 10 Pixi games swapped from `cdn.jsdelivr.net` → `lib/pixi.min.js`
+- SW `CACHE_VERSION` v3 → v6, pre-cache shell expanded with Pixi + icons
+- Auto-reload broadcast on SW activate (one reload per version, sessionStorage flag anti-loop)
+- `?reset=sw` URL escape hatch — unregisters SW + clears caches + clean reload
+
+### Modified: G23 splash UX (commit eb9b3de)
+- Replaced 🏃 emoji with `assets/g23-icon.png` (Pokemon Run logo)
+- Pulse animation while loading → bounce when ready
+- Loading text "⏳ Memuat asset Pokemon…" appears after 600ms grace period
+- Tap-gating until Pixi finished init (prevents stuck-feel)
+- Error state: "⚠ Gagal load — Tap utk reload"
+
+### Modified: Audio + scripts
+- G23 BGM `preload="auto"` → `"none"` (lazy fetch, saves bandwidth)
+- Self-hosted Pixi.js (~250KB transfer with gzip) cached by SW after first install
+
+### Reverted: defer pattern (commits 475b59f → cccc659)
+- Adding `defer` to G23 externals + DOMContentLoaded-gating IIFE caused mobile Chrome to hang
+- Reverted to sync `<script>` pattern; self-hosted Pixi kept (that was safe)
+- Lesson L103 added
+
+### Cache bumps
+- g23-pixi v=20260506m, g24-pixi v=20260506m
+- g23-question-engine v=20260506m
+- game.js v=20260506n, style.css v=20260506n
+- math-rules v=20260506n
+- sw.js CACHE_VERSION v6-20260506n
+
+### Lessons added
+- L103 defer + inline IIFE = brittle on mobile
+- L104 PWA cache amplifies stochastic bugs
+- L105 Modal stuck = patch z-index + pointer-events + tap binding together
+- L106 Audit class-wide after any infinite-loop fix
+
 
 ## [2026-05-04] — G24 Bawah Laut (Pokemon Underwater)
 
