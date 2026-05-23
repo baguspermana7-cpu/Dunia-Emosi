@@ -236,8 +236,76 @@
     const m = calcTypeMult(atkType, defType);
     spawnEffectivenessText(defTargetEl, m);
     playEffectivenessSfx(m);
+    // First-time educational hint: only on SUPER-EFFECTIVE hits, once per
+    // unique atk→def pair per session. Teaches the relationship explicitly.
+    if (m >= 1.5) {
+      try { spawnFirstTimeHint(defTargetEl, atkType, defType) } catch(_){}
+    }
     return m;
   }
   window.applyHitFeedback = applyHitFeedback;
+
+  // ── One-time educational tooltip ──────────────────────────────────────
+  // "💡 [Air] mengalahkan [Api]!" — only shows ONCE per type-pair per session.
+  // Reinforces the visual cue with explicit text learning.
+  const _FIRST_HIT_KEY = '__dunia_eff_learned';
+  function _getLearned() {
+    try { return JSON.parse(sessionStorage.getItem(_FIRST_HIT_KEY) || '{}') } catch(_) { return {} }
+  }
+  function _markLearned(atk, def) {
+    try {
+      const obj = _getLearned(); obj[atk + '>' + def] = 1;
+      sessionStorage.setItem(_FIRST_HIT_KEY, JSON.stringify(obj));
+    } catch(_){}
+  }
+  function spawnFirstTimeHint(targetEl, atkType, defType) {
+    const a = _norm(atkType), d = _norm(defType);
+    const obj = _getLearned();
+    if (obj[a + '>' + d]) return;
+    _markLearned(a, d);
+    const aLabel = TYPE_LABEL_ID[a] || a;
+    const dLabel = TYPE_LABEL_ID[d] || d;
+    const aIcon = TYPE_EMOJI[a] || '⚪';
+    const dIcon = TYPE_EMOJI[d] || '⚪';
+    const hint = document.createElement('div');
+    hint.className = 'eff-learn-hint';
+    hint.innerHTML = `<span class="elh-bulb">💡</span><span class="elh-icon">${aIcon}</span> <span class="elh-label">${aLabel}</span> <span class="elh-vs">mengalahkan</span> <span class="elh-icon">${dIcon}</span> <span class="elh-label">${dLabel}</span><span class="elh-burst">!</span>`;
+    document.body.appendChild(hint);
+    // Position centered horizontally near top
+    setTimeout(() => { try { hint.classList.add('show') } catch(_){} }, 50);
+    setTimeout(() => { try { hint.classList.remove('show'); hint.classList.add('hide') } catch(_){} }, 2400);
+    setTimeout(() => { try { hint.remove() } catch(_){} }, 3000);
+  }
+  window.spawnFirstTimeHint = spawnFirstTimeHint;
+
+  // ── Pre-battle counter hint (for G13B bag picker, G13C trainer reveal) ─
+  // Returns up to N Pokemon from a pool that are SUPER-EFFECTIVE vs a defender.
+  function findCounters(pool, defType, max) {
+    const d = _norm(defType);
+    const out = [];
+    (pool || []).forEach((p, i) => {
+      const atk = _norm(p && p.type);
+      const m = calcTypeMult(atk, d);
+      if (m >= 1.5) out.push({ pokemon: p, index: i, mult: m });
+    });
+    out.sort((a, b) => b.mult - a.mult);
+    return out.slice(0, max || 3);
+  }
+  window.findCounters = findCounters;
+
+  // Returns simple chip HTML for "🎯 Counter: 💧 ⚡" (used in trainer reveal)
+  function getCounterHintHTML(defType) {
+    const weak = getWeaknesses(defType, 2);
+    if (!weak.length) return '';
+    const icons = weak.map(t => `<span class="tch-icon">${TYPE_EMOJI[t]||'⚪'}</span>`).join('');
+    return `<span class="tch-label">🎯 Counter:</span>${icons}`;
+  }
+  window.getCounterHintHTML = getCounterHintHTML;
+
+  // Pokemon name with type emoji prefix — used in HP cards / bag labels
+  function typeEmojiPrefix(type) {
+    return TYPE_EMOJI[_norm(type)] || '⚪';
+  }
+  window.typeEmojiPrefix = typeEmojiPrefix;
 
 })();

@@ -263,6 +263,22 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 .move-btn.resist-eff{opacity:0.55;filter:grayscale(0.4);border:2px dashed #dc2626 !important}
 .move-btn.resist-eff::before{content:'⛔';position:absolute;top:4px;left:5px;font-size:11px;opacity:0.8}
 @keyframes moveSuperPulse{0%,100%{box-shadow:0 0 12px rgba(34,197,94,0.5),0 5px 0 #15803d}50%{box-shadow:0 0 18px rgba(34,197,94,0.85),0 5px 0 #15803d}}
+/* First-hit educational tooltip */
+.eff-learn-hint{position:fixed;top:22%;left:50%;transform:translate(-50%,-8px) scale(0.85);z-index:9500;font-family:'Fredoka One',cursive,sans-serif;font-size:16px;font-weight:900;background:linear-gradient(160deg,#fef3c7,#fde68a);border:3px solid #f59e0b;border-radius:18px;padding:10px 18px;box-shadow:0 12px 32px rgba(0,0,0,0.35),0 0 24px rgba(245,158,11,0.4);display:inline-flex;align-items:center;gap:7px;opacity:0;transition:opacity .35s ease,transform .45s cubic-bezier(.34,1.56,.64,1);pointer-events:none;max-width:92vw;white-space:nowrap;color:#78350f}
+.eff-learn-hint.show{opacity:1;transform:translate(-50%,0) scale(1.0)}
+.eff-learn-hint.hide{opacity:0;transform:translate(-50%,-16px) scale(0.92)}
+.eff-learn-hint .elh-bulb{font-size:22px;animation:elhBulbWiggle 0.6s ease-in-out infinite alternate}
+.eff-learn-hint .elh-icon{font-size:22px;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.18))}
+.eff-learn-hint .elh-label{font-size:15px;color:#92400e}
+.eff-learn-hint .elh-vs{font-size:13px;font-weight:700;color:#b45309;opacity:0.85}
+.eff-learn-hint .elh-burst{font-size:20px;color:#dc2626;animation:elhBurstPop 0.5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes elhBulbWiggle{from{transform:rotate(-8deg) scale(1.0)}to{transform:rotate(8deg) scale(1.12)}}
+@keyframes elhBurstPop{0%{transform:scale(0.4);opacity:0}60%{transform:scale(1.4);opacity:1}100%{transform:scale(1.0);opacity:1}}
+@media (max-width:380px){.eff-learn-hint{font-size:13px;padding:8px 12px;gap:5px}.eff-learn-hint .elh-icon{font-size:18px}.eff-learn-hint .elh-label{font-size:12px}.eff-learn-hint .elh-vs{font-size:11px}}
+/* Counter hint chip (trainer reveal) */
+.tw-counter-hint{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;font-size:11px;font-weight:700;color:#fcd34d;background:rgba(15,23,42,0.7);border:1px solid rgba(252,211,77,0.45);border-radius:12px;margin-top:6px}
+.tw-counter-hint .tch-label{color:rgba(255,255,255,0.75);font-size:10px}
+.tw-counter-hint .tch-icon{font-size:13px;line-height:1}
 </style>
 </head>
 <body>
@@ -404,7 +420,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 <script src="data/save-engine.js?v=20260501e"></script>
 <script src="data/math-rules.js?v=20260501d"></script>
 <script src="data/move-id-translations.js?v=20260505k"></script>
-<script src="data/poke-type-chart.js?v=20260506o"></script>
+<script src="data/poke-type-chart.js?v=20260506p"></script>
 <script src="game-modal.js?v=20260424g"></script>
 <script src="battle-sprite-engine.js?v=20260502p"></script>
 
@@ -1817,7 +1833,17 @@ function startBattle(trainerId){
   setPokeSpritePlayer(battle.playerTeam[0].slug);
   msgQueue=[]; waitingForTap=false;
   queueMsg(`${trainer.name} menantangmu! Bersiap bertarung!`, ()=>{
-    queueMsg(`${trainer.name} mengeluarkan ${battle.enemyTeam[0].name}!`, ()=>{
+    // Build "Counter: 💧 ⚡" hint message so kid knows what to pick.
+    const _firstEnemy = battle.enemyTeam[0];
+    let _counterMsg = '';
+    if (typeof window.getWeaknesses === 'function' && _firstEnemy && _firstEnemy.type) {
+      const weak = window.getWeaknesses(_firstEnemy.type, 2);
+      if (weak.length) {
+        const icons = weak.map(t => (window.TYPE_EMOJI && window.TYPE_EMOJI[t]) || '⚪').join(' ');
+        _counterMsg = ` (🎯 Counter: ${icons})`;
+      }
+    }
+    queueMsg(`${trainer.name} mengeluarkan ${_firstEnemy.name}!${_counterMsg}`, ()=>{
       queueMsg(`Ayo, ${battle.playerTeam[0].name}!`, ()=>{ showActionMenu(); });
     });
   });
@@ -1836,6 +1862,16 @@ function updateHpUI(){
   document.getElementById('hpf-player-name').textContent = pp.name;
   renderDots('hpf-enemy-dots', battle.enemyTeam);
   renderDots('hpf-player-dots', battle.playerTeam);
+  // Prefix Pokemon names with type emoji ("🔥 Charizard") for instant
+  // visual association — kid sees the type icon every time the name shows.
+  try {
+    if (typeof window.typeEmojiPrefix === 'function') {
+      const eName = document.getElementById('hpf-enemy-name');
+      const pName = document.getElementById('hpf-player-name');
+      if (eName && ep.type) eName.textContent = window.typeEmojiPrefix(ep.type) + ' ' + ep.name;
+      if (pName && pp.type) pName.textContent = window.typeEmojiPrefix(pp.type) + ' ' + pp.name;
+    }
+  } catch(_){}
   // Weakness sticker — show 2 strongest counter types vs current enemy
   try { if (typeof window.renderWeaknessSticker === 'function' && ep && ep.type) {
     window.renderWeaknessSticker(document.getElementById('hpf-enemy-weakness-wrap'), ep.type)
@@ -1987,7 +2023,16 @@ function executeMove(moveIdx, mathCorrect){
             const next = battle.enemyTeam[nextIdx];
             setPokeSpriteEnemy(next.slug);
             updateHpUI();
-            queueMsg(`${battle.trainer.name} mengeluarkan ${next.name}!`, ()=>showActionMenu());
+            // Counter hint for the new enemy
+            let _swapHint = '';
+            if (typeof window.getWeaknesses === 'function' && next.type) {
+              const w = window.getWeaknesses(next.type, 2);
+              if (w.length) {
+                const ic = w.map(t => (window.TYPE_EMOJI && window.TYPE_EMOJI[t]) || '⚪').join(' ');
+                _swapHint = ` (🎯 Counter: ${ic})`;
+              }
+            }
+            queueMsg(`${battle.trainer.name} mengeluarkan ${next.name}!${_swapHint}`, ()=>showActionMenu());
           });
         }
       } else {

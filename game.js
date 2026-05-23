@@ -1392,7 +1392,7 @@ function openGymGame() {
   playClick()
   // MUST remain synchronous — page redirects on next line, no time for async work.
   _applyKodokSlot7Unlock()   // runs once, guard inside; slot-7+frog preset
-  window.location.href = 'games/g13c-pixi.html?v=20260506o'
+  window.location.href = 'games/g13c-pixi.html?v=20260506p'
 }
 
 function g13cBuildLetterSelect() {
@@ -6118,6 +6118,34 @@ function _partyBuildTabPane(trainer) {
   return pane
 }
 
+// Mark party tiles whose type is SUPER-EFFECTIVE vs the current enemy.
+// Determines enemy from context (g13b → currentWild, g10 → enemyPoke).
+// Adds .counter-strong class which CSS renders as green border + 🎯 badge.
+function _partyMarkCounters(pane) {
+  if (!pane || typeof calcTypeMult !== 'function') return
+  let enemyType = null
+  if (partyPickerCtx === 'g13b' && typeof g13bState === 'object' && g13bState && g13bState.currentWild) {
+    enemyType = g13bState.currentWild.type
+  } else if (partyPickerCtx === 'g10' && typeof g10State === 'object' && g10State && g10State.enemyPoke) {
+    enemyType = g10State.enemyPoke.type
+  }
+  if (!enemyType) return
+  pane.querySelectorAll('.g10-party-card').forEach(card => {
+    card.classList.remove('counter-strong', 'bag-tile')
+    try {
+      const pokeId = parseInt(card.dataset.pokeId)
+      const trainerId = card.dataset.trainerId
+      const trainer = (window.TRAINER_PARTIES || []).find(t => t.id === trainerId)
+      const poke = trainer && trainer.party.find(p => p.id === pokeId)
+      if (!poke) return
+      const m = calcTypeMult(poke.type, enemyType)
+      if (m >= 1.5) {
+        card.classList.add('counter-strong', 'bag-tile')
+      }
+    } catch(_){}
+  })
+}
+
 function _partyMarkCurrent(pane) {
   const currentId = _partyGetCurrentId()
   pane.querySelectorAll('.g10-party-card').forEach(card => {
@@ -6214,6 +6242,8 @@ function renderPartyGrid(trainerId){
     _partyTabCache.set(trainerId, pane)
   }
   _partyMarkCurrent(pane)
+  // Mark Pokemon that are super-effective vs current enemy (visual counter hint)
+  _partyMarkCounters(pane)
   // Swap pane contents into gridEl (single reflow).
   gridEl.innerHTML = ''
   while (pane.firstChild) gridEl.appendChild(pane.firstChild)
