@@ -168,9 +168,12 @@
       containerEl.appendChild(sticker);
     }
     if (!weak.length) {
-      sticker.innerHTML = '<span class="ws-shield">⚖️</span><span class="ws-label">Seimbang</span>';
+      // No weaknesses → render nothing (kids 5-10 don't know "Seimbang")
+      sticker.innerHTML = '';
+      sticker.style.display = 'none';
       return sticker;
     }
+    sticker.style.display = '';
     const icons = weak.map(t => `<span class="ws-icon" title="${TYPE_LABEL_ID[t]||t}">${TYPE_EMOJI[t]||'⚪'}</span>`).join('');
     sticker.innerHTML = `<span class="ws-shield">🛡</span><span class="ws-label">Lemah:</span>${icons}`;
     return sticker;
@@ -183,6 +186,12 @@
    */
   function spawnEffectivenessText(targetEl, mult) {
     if (!targetEl || mult === 1 || typeof mult !== 'number') return;
+    // Cap concurrent floating text nodes to prevent DOM accumulation
+    // on rapid hits (e.g. legendary auto-attack + correct-answer streak).
+    const existing = document.querySelectorAll('.eff-text');
+    if (existing.length >= 2) {
+      try { existing[0].remove() } catch(_){}
+    }
     const text = document.createElement('div');
     text.className = 'eff-text';
     if (mult >= 1.5) {
@@ -270,10 +279,14 @@
   // "💡 [Air] mengalahkan [Api]!" — only shows ONCE per type-pair per session.
   // Reinforces the visual cue with explicit text learning.
   const _FIRST_HIT_KEY = '__dunia_eff_learned';
+  // In-memory guard guards against the race where two rapid hits both
+  // pass the sessionStorage check before either has written.
+  const _learnedInMem = new Set();
   function _getLearned() {
     try { return JSON.parse(sessionStorage.getItem(_FIRST_HIT_KEY) || '{}') } catch(_) { return {} }
   }
   function _markLearned(atk, def) {
+    _learnedInMem.add(atk + '>' + def);
     try {
       const obj = _getLearned(); obj[atk + '>' + def] = 1;
       sessionStorage.setItem(_FIRST_HIT_KEY, JSON.stringify(obj));
@@ -281,8 +294,11 @@
   }
   function spawnFirstTimeHint(targetEl, atkType, defType) {
     const a = _norm(atkType), d = _norm(defType);
+    const key = a + '>' + d;
+    // Check in-memory first (synchronous, race-safe), then sessionStorage
+    if (_learnedInMem.has(key)) return;
     const obj = _getLearned();
-    if (obj[a + '>' + d]) return;
+    if (obj[key]) { _learnedInMem.add(key); return; }
     _markLearned(a, d);
     const aLabel = TYPE_LABEL_ID[a] || a;
     const dLabel = TYPE_LABEL_ID[d] || d;
@@ -292,10 +308,11 @@
     hint.className = 'eff-learn-hint';
     hint.innerHTML = `<span class="elh-bulb">💡</span><span class="elh-icon">${aIcon}</span> <span class="elh-label">${aLabel}</span> <span class="elh-vs">mengalahkan</span> <span class="elh-icon">${dIcon}</span> <span class="elh-label">${dLabel}</span><span class="elh-burst">!</span>`;
     document.body.appendChild(hint);
-    // Position centered horizontally near top
+    // Position centered horizontally near top — short 1.8s window so the
+    // hint reinforces without blocking the battle action zone.
     setTimeout(() => { try { hint.classList.add('show') } catch(_){} }, 50);
-    setTimeout(() => { try { hint.classList.remove('show'); hint.classList.add('hide') } catch(_){} }, 2400);
-    setTimeout(() => { try { hint.remove() } catch(_){} }, 3000);
+    setTimeout(() => { try { hint.classList.remove('show'); hint.classList.add('hide') } catch(_){} }, 1500);
+    setTimeout(() => { try { hint.remove() } catch(_){} }, 1900);
   }
   window.spawnFirstTimeHint = spawnFirstTimeHint;
 

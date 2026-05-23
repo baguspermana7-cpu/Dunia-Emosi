@@ -247,10 +247,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 .tg-row.collapsed{display:none}
 #trainer-grid{display:block}
 /* ── Type Effectiveness Visual Guide (2026-05-04) ── */
-.weakness-sticker{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:#fcd34d;margin-top:4px;padding:2px 6px;background:rgba(0,0,0,0.4);border-radius:8px;border:1px solid rgba(252,211,77,0.32);line-height:1.2;white-space:nowrap}
-.weakness-sticker .ws-shield{font-size:11px}
-.weakness-sticker .ws-label{color:rgba(255,255,255,0.75);font-size:9px;font-weight:600}
-.weakness-sticker .ws-icon{font-size:13px;line-height:1;filter:drop-shadow(0 0 3px rgba(252,211,77,0.45))}
+.weakness-sticker{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#fcd34d;margin-top:4px;padding:3px 8px;background:rgba(0,0,0,0.4);border-radius:10px;border:1px solid rgba(252,211,77,0.35);line-height:1.2;white-space:nowrap}
+.weakness-sticker .ws-shield{font-size:14px}
+.weakness-sticker .ws-label{color:rgba(255,255,255,0.82);font-size:11px;font-weight:600}
+.weakness-sticker .ws-icon{font-size:16px;line-height:1;filter:drop-shadow(0 0 4px rgba(252,211,77,0.45))}
 .eff-text{position:fixed;z-index:9000;font-family:'Fredoka One',cursive,sans-serif;font-size:14px;font-weight:900;pointer-events:none;transform:translate(-50%,0) scale(0.8);white-space:nowrap;text-shadow:0 2px 4px rgba(0,0,0,0.6)}
 .eff-text.eff-super{color:#22c55e;animation:effSuperRise 1.2s cubic-bezier(.34,1.56,.64,1) forwards}
 .eff-text.eff-resist{color:#cbd5e1;animation:effSmoothRise 1.2s ease-out forwards}
@@ -259,12 +259,12 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 @keyframes effSmoothRise{0%{transform:translate(-50%,0) scale(0.85);opacity:0}18%{transform:translate(-50%,-10px) scale(1.0);opacity:0.95}80%{transform:translate(-50%,-32px) scale(1.0);opacity:0.85}100%{transform:translate(-50%,-46px) scale(0.92);opacity:0}}
 .move-btn{position:relative}
 .move-btn.super-eff{border:2px solid #22c55e !important;box-shadow:0 0 12px rgba(34,197,94,0.55),0 5px 0 #15803d !important;animation:moveSuperPulse 1.6s ease-in-out infinite}
-.move-btn.super-eff::before{content:'✨';position:absolute;top:4px;left:5px;font-size:11px;opacity:0.9}
-.move-btn.resist-eff{opacity:0.55;filter:grayscale(0.4);border:2px dashed #dc2626 !important}
-.move-btn.resist-eff::before{content:'⛔';position:absolute;top:4px;left:5px;font-size:11px;opacity:0.8}
+.move-btn.super-eff::before{content:'✨';position:absolute;top:4px;left:5px;font-size:16px;opacity:0.95;text-shadow:0 0 6px rgba(255,255,255,0.7)}
+.move-btn.resist-eff{opacity:0.78;border:2px dashed #f59e0b !important}
+.move-btn.resist-eff::before{content:'💤';position:absolute;top:4px;left:5px;font-size:14px;opacity:0.9}
 @keyframes moveSuperPulse{0%,100%{box-shadow:0 0 12px rgba(34,197,94,0.5),0 5px 0 #15803d}50%{box-shadow:0 0 18px rgba(34,197,94,0.85),0 5px 0 #15803d}}
 /* First-hit educational tooltip */
-.eff-learn-hint{position:fixed;top:22%;left:50%;transform:translate(-50%,-8px) scale(0.85);z-index:9500;font-family:'Fredoka One',cursive,sans-serif;font-size:16px;font-weight:900;background:linear-gradient(160deg,#fef3c7,#fde68a);border:3px solid #f59e0b;border-radius:18px;padding:10px 18px;box-shadow:0 12px 32px rgba(0,0,0,0.35),0 0 24px rgba(245,158,11,0.4);display:inline-flex;align-items:center;gap:7px;opacity:0;transition:opacity .35s ease,transform .45s cubic-bezier(.34,1.56,.64,1);pointer-events:none;max-width:92vw;white-space:nowrap;color:#78350f}
+.eff-learn-hint{position:fixed;top:8%;left:50%;transform:translate(-50%,-8px) scale(0.85);z-index:9500;font-family:'Fredoka One',cursive,sans-serif;font-size:15px;font-weight:900;background:linear-gradient(160deg,#fef3c7,#fde68a);border:3px solid #f59e0b;border-radius:18px;padding:9px 16px;box-shadow:0 12px 32px rgba(0,0,0,0.35),0 0 24px rgba(245,158,11,0.4),0 0 0 2px rgba(139,92,246,0.18);display:inline-flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;opacity:0;transition:opacity .3s ease,transform .4s cubic-bezier(.34,1.56,.64,1);pointer-events:none;max-width:92vw;text-align:center;line-height:1.25;color:#78350f}
 .eff-learn-hint.show{opacity:1;transform:translate(-50%,0) scale(1.0)}
 .eff-learn-hint.hide{opacity:0;transform:translate(-50%,-16px) scale(0.92)}
 .eff-learn-hint .elh-bulb{font-size:22px;animation:elhBulbWiggle 0.6s ease-in-out infinite alternate}
@@ -420,7 +420,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 <script src="data/save-engine.js?v=20260501e"></script>
 <script src="data/math-rules.js?v=20260501d"></script>
 <script src="data/move-id-translations.js?v=20260505k"></script>
-<script src="data/poke-type-chart.js?v=20260506q"></script>
+<script src="data/poke-type-chart.js?v=20260506r"></script>
 <script src="game-modal.js?v=20260424g"></script>
 <script src="battle-sprite-engine.js?v=20260502p"></script>
 
@@ -718,7 +718,7 @@ const PLAYER_PACKAGES = [
     {name:'Emolga',slug:'emolga',type:'electric',hp:100,maxHp:100,moves:[{name:'Discharge',type:'electric'},{name:'Volt Switch',type:'electric'},{name:'Acrobatics',type:'flying'},{name:'Quick Attack',type:'normal'}]},
     {name:'Pansage',slug:'pansage',type:'grass',hp:100,maxHp:100,moves:[{name:'Vine Whip',type:'grass'},{name:'Bite',type:'dark'},{name:'Bullet Seed',type:'grass'},{name:'Scratch',type:'normal'}]},
     {name:'Crustle',slug:'crustle',type:'bug',hp:100,maxHp:100,moves:[{name:'X-Scissor',type:'bug'},{name:'Rock Slide',type:'rock'},{name:'Slash',type:'normal'},{name:'Withdraw',type:'water'}]},
-    {name:'Stunfisk',slug:'stunfisk',type:'electric',hp:100,maxHp:100,moves:[{name:'Mud Bomb',type:'ground'},{name:'Discharge',type:'electric'},{name:'Bide',type:'normal'},{name:'Tackle',type:'normal'}]},
+    {name:'Stunfisk',slug:'stunfisk',type:'ground',hp:100,maxHp:100,moves:[{name:'Mud Bomb',type:'ground'},{name:'Discharge',type:'electric'},{name:'Bide',type:'normal'},{name:'Tackle',type:'normal'}]},
    ]},
   {id:'unova-legend', label:'Legendaris Unova', series:'Legendary', tier:'mega', color:'#f59e0b', region:'unova',
    team:[
@@ -945,7 +945,7 @@ const TRAINERS = [
   {id:'blaine',  name:'Blaine',  sprite:'blaine',  badge:'🔥', gym:'Cinnabar Gym',    bg:'gym2_m.webp',   group:'kanto',
    team:[{name:'Growlithe',slug:'growlithe',type:'fire',hp:75},{name:'Ponyta',slug:'ponyta',type:'fire',hp:80},{name:'Rapidash',slug:'rapidash',type:'fire',hp:90},{name:'Arcanine',slug:'arcanine',type:'fire',hp:110},{name:'Magmar',slug:'magmar',type:'fire',hp:95},{name:'Ninetales',slug:'ninetales',type:'fire',hp:100}]},
   {id:'lorelei', name:'Lorelei', sprite:'lorelei', badge:'🧊', gym:'Indigo Plateau',  bg:'water2_m.webp', group:'kanto',
-   team:[{name:'Dewgong',slug:'dewgong',type:'ice',hp:90},{name:'Cloyster',slug:'cloyster',type:'water',hp:85},{name:'Slowbro',slug:'slowbro',type:'psychic',hp:95},{name:'Jynx',slug:'jynx',type:'ice',hp:85},{name:'Lapras',slug:'lapras',type:'ice',hp:110},{name:'Piloswine',slug:'piloswine',type:'ice',hp:100}]},
+   team:[{name:'Dewgong',slug:'dewgong',type:'ice',hp:90},{name:'Cloyster',slug:'cloyster',type:'water',hp:85},{name:'Slowbro',slug:'slowbro',type:'water',hp:95},{name:'Jynx',slug:'jynx',type:'ice',hp:85},{name:'Lapras',slug:'lapras',type:'ice',hp:110},{name:'Piloswine',slug:'piloswine',type:'ice',hp:100}]},
   {id:'agatha',  name:'Agatha',  sprite:'agatha',  badge:'👻', gym:'Indigo Plateau',  bg:'gym2_m.webp',   group:'kanto',
    team:[{name:'Gengar',slug:'gengar',type:'ghost',hp:95},{name:'Haunter',slug:'haunter',type:'ghost',hp:80},{name:'Arbok',slug:'arbok',type:'poison',hp:80},{name:'Haunter',slug:'haunter',type:'ghost',hp:85},{name:'Clefable',slug:'clefable',type:'fairy',hp:95},{name:'Gengar',slug:'gengar',type:'ghost',hp:100}]},
   {id:'giovanni',name:'Giovanni',sprite:'giovanni',badge:'🌍', gym:'Viridian Gym',    bg:'gym_m.webp',    group:'kanto',
@@ -957,7 +957,7 @@ const TRAINERS = [
 
   // ── Johto ─────────────────────────────────────────────────────────────────
   {id:'falkner', name:'Falkner', sprite:'falkner', badge:'🦅', gym:'Violet Gym',      bg:'gym2_m.webp',   group:'johto',
-   team:[{name:'Pidgey',slug:'pidgey',type:'flying',hp:65},{name:'Pidgeotto',slug:'pidgeotto',type:'flying',hp:80},{name:'Noctowl',slug:'noctowl',type:'flying',hp:90},{name:'Doduo',slug:'doduo',type:'flying',hp:75},{name:'Murkrow',slug:'murkrow',type:'flying',hp:80},{name:'Pidgeot',slug:'pidgeot',type:'flying',hp:95}]},
+   team:[{name:'Pidgey',slug:'pidgey',type:'flying',hp:65},{name:'Pidgeotto',slug:'pidgeotto',type:'flying',hp:80},{name:'Noctowl',slug:'noctowl',type:'flying',hp:90},{name:'Doduo',slug:'doduo',type:'flying',hp:75},{name:'Murkrow',slug:'murkrow',type:'dark',hp:80},{name:'Pidgeot',slug:'pidgeot',type:'flying',hp:95}]},
   {id:'bugsy',   name:'Bugsy',   sprite:'bugsy',   badge:'🐛', gym:'Azalea Gym',      bg:'forest_m.webp', group:'johto',
    team:[{name:'Metapod',slug:'metapod',type:'bug',hp:60},{name:'Kakuna',slug:'kakuna',type:'bug',hp:60},{name:'Scyther',slug:'scyther',type:'bug',hp:90},{name:'Heracross',slug:'heracross',type:'bug',hp:95},{name:'Ledyba',slug:'ledyba',type:'bug',hp:60},{name:'Yanma',slug:'yanma',type:'bug',hp:80}]},
   {id:'whitney', name:'Whitney', sprite:'whitney', badge:'🌸', gym:'Goldenrod Gym',   bg:'forest_m.webp', group:'johto',
@@ -965,13 +965,13 @@ const TRAINERS = [
   {id:'morty',   name:'Morty',   sprite:'morty',   badge:'👻', gym:'Ecruteak Gym',    bg:'gym2_m.webp',   group:'johto',
    team:[{name:'Gastly',slug:'gastly',type:'ghost',hp:65},{name:'Haunter',slug:'haunter',type:'ghost',hp:80},{name:'Haunter',slug:'haunter',type:'ghost',hp:80},{name:'Gengar',slug:'gengar',type:'ghost',hp:95},{name:'Misdreavus',slug:'misdreavus',type:'ghost',hp:80},{name:'Gengar',slug:'gengar',type:'ghost',hp:100}]},
   {id:'jasmine', name:'Jasmine', sprite:'jasmine', badge:'🔩', gym:'Olivine Gym',     bg:'gym_m.webp',    group:'johto',
-   team:[{name:'Magnemite',slug:'magnemite',type:'steel',hp:70},{name:'Magnemite',slug:'magnemite',type:'steel',hp:70},{name:'Steelix',slug:'steelix',type:'steel',hp:110},{name:'Skarmory',slug:'skarmory',type:'steel',hp:85},{name:'Forretress',slug:'forretress',type:'steel',hp:90},{name:'Mawile',slug:'mawile',type:'steel',hp:80}]},
+   team:[{name:'Magnemite',slug:'magnemite',type:'electric',hp:70},{name:'Magnemite',slug:'magnemite',type:'electric',hp:70},{name:'Steelix',slug:'steelix',type:'steel',hp:110},{name:'Skarmory',slug:'skarmory',type:'steel',hp:85},{name:'Forretress',slug:'forretress',type:'bug',hp:90},{name:'Mawile',slug:'mawile',type:'steel',hp:80}]},
   {id:'pryce',   name:'Pryce',   sprite:'pryce',   badge:'🧊', gym:'Mahogany Gym',    bg:'water2_m.webp', group:'johto',
    team:[{name:'Seel',slug:'seel',type:'ice',hp:75},{name:'Dewgong',slug:'dewgong',type:'ice',hp:90},{name:'Piloswine',slug:'piloswine',type:'ice',hp:100},{name:'Mamoswine',slug:'mamoswine',type:'ice',hp:115},{name:'Jynx',slug:'jynx',type:'ice',hp:85},{name:'Lapras',slug:'lapras',type:'ice',hp:110}]},
   {id:'clair',   name:'Clair',   sprite:'clair',   badge:'🌊', gym:'Blackthorn Gym',  bg:'water3_m.webp', group:'johto',
    team:[{name:'Dragonair',slug:'dragonair',type:'dragon',hp:100},{name:'Dragonair',slug:'dragonair',type:'dragon',hp:100},{name:'Dragonair',slug:'dragonair',type:'dragon',hp:100},{name:'Kingdra',slug:'kingdra',type:'water',hp:110},{name:'Gyarados',slug:'gyarados',type:'water',hp:120},{name:'Dragonite',slug:'dragonite',type:'dragon',hp:130}]},
   {id:'will',    name:'Will',    sprite:'will',    badge:'🔮', gym:'Johto Elite Four', bg:'gym2_m.webp',  group:'johto',
-   team:[{name:'Xatu',slug:'xatu',type:'psychic',hp:85},{name:'Jynx',slug:'jynx',type:'psychic',hp:85},{name:'Espeon',slug:'espeon',type:'psychic',hp:100},{name:'Slowbro',slug:'slowbro',type:'psychic',hp:95},{name:'Xatu',slug:'xatu',type:'psychic',hp:90},{name:'Gardevoir',slug:'gardevoir',type:'psychic',hp:100}]},
+   team:[{name:'Xatu',slug:'xatu',type:'psychic',hp:85},{name:'Jynx',slug:'jynx',type:'ice',hp:85},{name:'Espeon',slug:'espeon',type:'psychic',hp:100},{name:'Slowbro',slug:'slowbro',type:'water',hp:95},{name:'Xatu',slug:'xatu',type:'psychic',hp:90},{name:'Gardevoir',slug:'gardevoir',type:'psychic',hp:100}]},
   {id:'karen',   name:'Karen',   sprite:'karen',   badge:'🌑', gym:'Johto Elite Four', bg:'gym_m.webp',   group:'johto',
    team:[{name:'Umbreon',slug:'umbreon',type:'dark',hp:95},{name:'Houndoom',slug:'houndoom',type:'dark',hp:90},{name:'Vileplume',slug:'vileplume',type:'grass',hp:95},{name:'Gengar',slug:'gengar',type:'ghost',hp:95},{name:'Murkrow',slug:'murkrow',type:'dark',hp:75},{name:'Tyranitar',slug:'tyranitar',type:'dark',hp:120}]},
 
@@ -987,7 +987,7 @@ const TRAINERS = [
   {id:'flannery',name:'Flannery',sprite:'flannery',badge:'🌋', gym:'Lavaridge Gym',   bg:'gym2_m.webp',   group:'hoenn',
    team:[{name:'Slugma',slug:'slugma',type:'fire',hp:70},{name:'Magcargo',slug:'magcargo',type:'fire',hp:85},{name:'Numel',slug:'numel',type:'fire',hp:75},{name:'Camerupt',slug:'camerupt',type:'fire',hp:100},{name:'Torkoal',slug:'torkoal',type:'fire',hp:90},{name:'Magmar',slug:'magmar',type:'fire',hp:95}]},
   {id:'winona',  name:'Winona',  sprite:'winona',  badge:'🦤', gym:'Fortree Gym',     bg:'gym2_m.webp',   group:'hoenn',
-   team:[{name:'Swablu',slug:'swablu',type:'flying',hp:70},{name:'Altaria',slug:'altaria',type:'flying',hp:95},{name:'Swellow',slug:'swellow',type:'flying',hp:85},{name:'Pelipper',slug:'pelipper',type:'water',hp:85},{name:'Skarmory',slug:'skarmory',type:'steel',hp:85},{name:'Gyarados',slug:'gyarados',type:'water',hp:120}]},
+   team:[{name:'Swablu',slug:'swablu',type:'flying',hp:70},{name:'Altaria',slug:'altaria',type:'dragon',hp:95},{name:'Swellow',slug:'swellow',type:'flying',hp:85},{name:'Pelipper',slug:'pelipper',type:'water',hp:85},{name:'Skarmory',slug:'skarmory',type:'steel',hp:85},{name:'Gyarados',slug:'gyarados',type:'water',hp:120}]},
   {id:'wallace', name:'Wallace', sprite:'wallace', badge:'💎', gym:'Sootopolis Gym',  bg:'water_m.webp',  group:'hoenn',
    team:[{name:'Whiscash',slug:'whiscash',type:'water',hp:95},{name:'Sealeo',slug:'sealeo',type:'ice',hp:85},{name:'Spheal',slug:'spheal',type:'ice',hp:75},{name:'Seaking',slug:'seaking',type:'water',hp:85},{name:'Milotic',slug:'milotic',type:'water',hp:100},{name:'Starmie',slug:'starmie',type:'water',hp:95}]},
   {id:'steven',  name:'Steven',  sprite:'steven',  badge:'💍', gym:'Hoenn Champion',  bg:'gym_m.webp',    group:'hoenn',
@@ -1003,13 +1003,13 @@ const TRAINERS = [
   {id:'wake',    name:'Crasher Wake',sprite:'crasherwake',badge:'💧',gym:'Pastoria Gym', bg:'water_m.webp',  group:'sinnoh',
    team:[{name:'Gyarados',slug:'gyarados',type:'water',hp:110},{name:'Quagsire',slug:'quagsire',type:'water',hp:95},{name:'Floatzel',slug:'floatzel',type:'water',hp:90},{name:'Gastrodon',slug:'gastrodon',type:'water',hp:100},{name:'Lumineon',slug:'lumineon',type:'water',hp:80},{name:'Empoleon',slug:'empoleon',type:'water',hp:110}]},
   {id:'byron',   name:'Byron',   sprite:'byron',   badge:'🔩', gym:'Canalave Gym',    bg:'gym_m.webp',    group:'sinnoh',
-   team:[{name:'Magneton',slug:'magneton',type:'steel',hp:85},{name:'Steelix',slug:'steelix',type:'steel',hp:110},{name:'Bastiodon',slug:'bastiodon',type:'steel',hp:100},{name:'Bronzong',slug:'bronzong',type:'steel',hp:95},{name:'Lucario',slug:'lucario',type:'steel',hp:95},{name:'Empoleon',slug:'empoleon',type:'steel',hp:105}]},
+   team:[{name:'Magneton',slug:'magneton',type:'electric',hp:85},{name:'Steelix',slug:'steelix',type:'steel',hp:110},{name:'Bastiodon',slug:'bastiodon',type:'rock',hp:100},{name:'Bronzong',slug:'bronzong',type:'steel',hp:95},{name:'Lucario',slug:'lucario',type:'fighting',hp:95},{name:'Empoleon',slug:'empoleon',type:'water',hp:105}]},
   {id:'candice', name:'Candice', sprite:'candice', badge:'❄️', gym:'Snowpoint Gym',   bg:'water2_m.webp', group:'sinnoh',
    team:[{name:'Sneasel',slug:'sneasel',type:'ice',hp:75},{name:'Piloswine',slug:'piloswine',type:'ice',hp:100},{name:'Abomasnow',slug:'abomasnow',type:'ice',hp:100},{name:'Mamoswine',slug:'mamoswine',type:'ice',hp:115},{name:'Froslass',slug:'froslass',type:'ice',hp:85},{name:'Weavile',slug:'weavile',type:'dark',hp:90}]},
   {id:'volkner', name:'Volkner', sprite:'volkner', badge:'⚡', gym:'Sunyshore Gym',   bg:'gym2_m.webp',   group:'sinnoh',
    team:[{name:'Jolteon',slug:'jolteon',type:'electric',hp:95},{name:'Raichu',slug:'raichu',type:'electric',hp:95},{name:'Pachirisu',slug:'pachirisu',type:'electric',hp:70},{name:'Electivire',slug:'electivire',type:'electric',hp:110},{name:'Luxray',slug:'luxray',type:'electric',hp:100},{name:'Ampharos',slug:'ampharos',type:'electric',hp:100}]},
   {id:'aaron',   name:'Aaron',   sprite:'aaron',   badge:'🐞', gym:'Sinnoh Elite Four',bg:'forest_m.webp',group:'sinnoh',
-   team:[{name:'Dustox',slug:'dustox',type:'bug',hp:80},{name:'Beautifly',slug:'beautifly',type:'bug',hp:75},{name:'Heracross',slug:'heracross',type:'bug',hp:95},{name:'Vespiquen',slug:'vespiquen',type:'bug',hp:90},{name:'Drapion',slug:'drapion',type:'dark',hp:95},{name:'Scizor',slug:'scizor',type:'bug',hp:100}]},
+   team:[{name:'Dustox',slug:'dustox',type:'bug',hp:80},{name:'Beautifly',slug:'beautifly',type:'bug',hp:75},{name:'Heracross',slug:'heracross',type:'bug',hp:95},{name:'Vespiquen',slug:'vespiquen',type:'bug',hp:90},{name:'Drapion',slug:'drapion',type:'poison',hp:95},{name:'Scizor',slug:'scizor',type:'bug',hp:100}]},
   {id:'flint',   name:'Flint',   sprite:'flint',   badge:'🔥', gym:'Sinnoh Elite Four',bg:'gym2_m.webp',  group:'sinnoh',
    team:[{name:'Houndoom',slug:'houndoom',type:'fire',hp:90},{name:'Flareon',slug:'flareon',type:'fire',hp:85},{name:'Rapidash',slug:'rapidash',type:'fire',hp:90},{name:'Infernape',slug:'infernape',type:'fire',hp:100},{name:'Magmortar',slug:'magmortar',type:'fire',hp:100},{name:'Arcanine',slug:'arcanine',type:'fire',hp:110}]},
   {id:'cynthia', name:'Cynthia', sprite:'cynthia', badge:'🌟', gym:'Sinnoh Champion', bg:'gym2_m.webp',   group:'sinnoh',
@@ -1041,7 +1041,7 @@ const TRAINERS = [
   {id:'ramos',   name:'Ramos',   sprite:'ramos',   badge:'🌿', gym:'Coumarine Gym',   bg:'forest_m.webp', group:'kalos',
    team:[{name:'Jumpluff',slug:'jumpluff',type:'grass',hp:80},{name:'Weepinbell',slug:'weepinbell',type:'grass',hp:75},{name:'Gogoat',slug:'gogoat',type:'grass',hp:100},{name:'Victreebel',slug:'victreebel',type:'grass',hp:90},{name:'Ferrothorn',slug:'ferrothorn',type:'grass',hp:95},{name:'Roserade',slug:'roserade',type:'grass',hp:85}]},
   {id:'valerie', name:'Valerie', sprite:'valerie', badge:'🧚', gym:'Laverre Gym',     bg:'gym2_m.webp',   group:'kalos',
-   team:[{name:'Mawile',slug:'mawile',type:'fairy',hp:80},{name:'Mr. Mime',slug:'mr-mime',type:'fairy',hp:80},{name:'Sylveon',slug:'sylveon',type:'fairy',hp:100},{name:'Granbull',slug:'granbull',type:'fairy',hp:95},{name:'Azumarill',slug:'azumarill',type:'fairy',hp:95},{name:'Florges',slug:'florges',type:'fairy',hp:100}]},
+   team:[{name:'Mawile',slug:'mawile',type:'steel',hp:80},{name:'Mr. Mime',slug:'mr-mime',type:'psychic',hp:80},{name:'Sylveon',slug:'sylveon',type:'fairy',hp:100},{name:'Granbull',slug:'granbull',type:'fairy',hp:95},{name:'Azumarill',slug:'azumarill',type:'water',hp:95},{name:'Florges',slug:'florges',type:'fairy',hp:100}]},
   {id:'clemont', name:'Clemont', sprite:'clemont', badge:'⚡', gym:'Lumiose Gym',     bg:'gym2_m.webp',   group:'kalos',
    team:[{name:'Bunnelby',slug:'bunnelby',type:'normal',hp:70},{name:'Dedenne',slug:'dedenne',type:'electric',hp:75},{name:'Heliolisk',slug:'heliolisk',type:'electric',hp:90},{name:'Luxray',slug:'luxray',type:'electric',hp:100},{name:'Magneton',slug:'magneton',type:'electric',hp:90},{name:'Emolga',slug:'emolga',type:'electric',hp:75}]},
   {id:'korrina', name:'Korrina', sprite:'korrina', badge:'🥊', gym:'Shalour Gym',     bg:'gym_m.webp',    group:'kalos',
@@ -1053,7 +1053,7 @@ const TRAINERS = [
   {id:'milo',    name:'Milo',    sprite:'milo',    badge:'🌿', gym:'Turffield Gym',   bg:'forest_m.webp', group:'galar',
    team:[{name:'Gossifleur',slug:'gossifleur',type:'grass',hp:65},{name:'Eldegoss',slug:'eldegoss',type:'grass',hp:85},{name:'Flapple',slug:'flapple',type:'grass',hp:90},{name:'Appletun',slug:'appletun',type:'grass',hp:100},{name:'Tsareena',slug:'tsareena',type:'grass',hp:95},{name:'Rillaboom',slug:'rillaboom',type:'grass',hp:110}]},
   {id:'nessa',   name:'Nessa',   sprite:'nessa',   badge:'🌊', gym:'Hulbury Gym',     bg:'water_m.webp',  group:'galar',
-   team:[{name:'Goldeen',slug:'goldeen',type:'water',hp:75},{name:'Arrokuda',slug:'arrokuda',type:'water',hp:75},{name:'Drednaw',slug:'drednaw',type:'water',hp:105},{name:'Barraskewda',slug:'barraskewda',type:'water',hp:100},{name:'Toxapex',slug:'toxapex',type:'water',hp:85},{name:'Golisopod',slug:'golisopod',type:'bug',hp:100}]},
+   team:[{name:'Goldeen',slug:'goldeen',type:'water',hp:75},{name:'Arrokuda',slug:'arrokuda',type:'water',hp:75},{name:'Drednaw',slug:'drednaw',type:'water',hp:105},{name:'Barraskewda',slug:'barraskewda',type:'water',hp:100},{name:'Toxapex',slug:'toxapex',type:'poison',hp:85},{name:'Golisopod',slug:'golisopod',type:'bug',hp:100}]},
   {id:'kabu',    name:'Kabu',    sprite:'kabu',    badge:'🔥', gym:'Motostoke Gym',   bg:'gym2_m.webp',   group:'galar',
    team:[{name:'Ninetales',slug:'ninetales',type:'fire',hp:90},{name:'Arcanine',slug:'arcanine',type:'fire',hp:110},{name:'Centiskorch',slug:'centiskorch',type:'fire',hp:100},{name:'Salazzle',slug:'salazzle',type:'fire',hp:85},{name:'Coalossal',slug:'coalossal',type:'fire',hp:105},{name:'Cinderace',slug:'cinderace',type:'fire',hp:100}]},
   {id:'bea',     name:'Bea',     sprite:'bea',     badge:'👊', gym:'Stow-on-Side Gym',bg:'gym_m.webp',    group:'galar',
@@ -1093,7 +1093,7 @@ const TRAINERS = [
   {id:'ash_unova',name:'Ash (Unova)',sprite:'ash',  badge:'⚡', gym:'Nuvema Town',     bg:'gym2_m.webp',   group:'anime',
    team:[{name:'Pikachu',slug:'pikachu',type:'electric',hp:100},{name:'Krookodile',slug:'krookodile',type:'dark',hp:105},{name:'Leavanny',slug:'leavanny',type:'bug',hp:85},{name:'Pignite',slug:'pignite',type:'fire',hp:95},{name:'Oshawott',slug:'oshawott',type:'water',hp:80},{name:'Boldore',slug:'boldore',type:'rock',hp:90}]},
   {id:'ash_kalos',name:'Ash (Kalos)',sprite:'ash',  badge:'⚡', gym:'Lumiose City',    bg:'forest_m.webp', group:'anime',
-   team:[{name:'Pikachu',slug:'pikachu',type:'electric',hp:100},{name:'Greninja',slug:'greninja',type:'water',hp:115},{name:'Talonflame',slug:'talonflame',type:'fire',hp:90},{name:'Hawlucha',slug:'hawlucha',type:'fighting',hp:85},{name:'Noivern',slug:'noivern',type:'dragon',hp:100},{name:'Goodra',slug:'goodra',type:'dragon',hp:110}]},
+   team:[{name:'Pikachu',slug:'pikachu',type:'electric',hp:100},{name:'Greninja',slug:'greninja',type:'water',hp:115},{name:'Talonflame',slug:'talonflame',type:'fire',hp:90},{name:'Hawlucha',slug:'hawlucha',type:'fighting',hp:85},{name:'Noivern',slug:'noivern',type:'flying',hp:100},{name:'Goodra',slug:'goodra',type:'dragon',hp:110}]},
   {id:'may',     name:'May',     sprite:'may',     badge:'🌺', gym:'Littleroot Town', bg:'forest_m.webp', group:'anime',
    team:[{name:'Blaziken',slug:'blaziken',type:'fire',hp:110},{name:'Beautifly',slug:'beautifly',type:'bug',hp:70},{name:'Skitty',slug:'skitty',type:'normal',hp:70},{name:'Bulbasaur',slug:'bulbasaur',type:'grass',hp:90},{name:'Munchlax',slug:'munchlax',type:'normal',hp:100},{name:'Glaceon',slug:'glaceon',type:'ice',hp:90}]},
   {id:'dawn',    name:'Dawn',    sprite:'dawn',    badge:'❄️', gym:'Twinleaf Town',   bg:'water2_m.webp', group:'anime',

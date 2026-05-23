@@ -6187,21 +6187,21 @@ body { background: #0a0a1a !important; }
 .weakness-sticker {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 10px;
+  gap: 5px;
+  font-size: 12px;
   font-weight: 700;
   color: #fcd34d;
-  margin-top: 3px;
-  padding: 2px 6px;
-  background: rgba(0, 0, 0, 0.35);
-  border-radius: 8px;
-  border: 1px solid rgba(252, 211, 77, 0.3);
+  margin-top: 4px;
+  padding: 3px 8px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  border: 1px solid rgba(252, 211, 77, 0.35);
   line-height: 1.2;
   white-space: nowrap;
 }
-.weakness-sticker .ws-shield { font-size: 11px; }
-.weakness-sticker .ws-label { color: rgba(255, 255, 255, 0.78); font-size: 9px; font-weight: 600; }
-.weakness-sticker .ws-icon { font-size: 13px; line-height: 1; filter: drop-shadow(0 0 3px rgba(252, 211, 77, 0.4)); }
+.weakness-sticker .ws-shield { font-size: 14px; }
+.weakness-sticker .ws-label { color: rgba(255, 255, 255, 0.82); font-size: 11px; font-weight: 600; }
+.weakness-sticker .ws-icon { font-size: 16px; line-height: 1; filter: drop-shadow(0 0 4px rgba(252, 211, 77, 0.45)); }
 
 /* ── Floating effectiveness text (above defender on hit) ── */
 .eff-text {
@@ -6247,16 +6247,19 @@ body { background: #0a0a1a !important; }
   opacity: 0.9;
 }
 .move-btn.resist-eff {
-  opacity: 0.55;
-  filter: grayscale(0.4);
-  border: 2px dashed #dc2626 !important;
+  opacity: 0.78;
+  border: 2px dashed #f59e0b !important;
 }
 .move-btn.resist-eff::before {
-  content: '⛔';
+  content: '💤';
   position: absolute;
   top: 4px; left: 5px;
-  font-size: 11px;
-  opacity: 0.8;
+  font-size: 14px;
+  opacity: 0.9;
+}
+.move-btn.super-eff::before {
+  font-size: 16px;
+  text-shadow: 0 0 6px rgba(255,255,255,0.7);
 }
 .move-btn { position: relative; }
 
@@ -6291,26 +6294,29 @@ body { background: #0a0a1a !important; }
 /* ── First-hit educational tooltip (teaches type relationship) ── */
 .eff-learn-hint {
   position: fixed;
-  top: 22%;
+  top: 8%;
   left: 50%;
   transform: translate(-50%, -8px) scale(0.85);
   z-index: 9500;
   font-family: 'Fredoka One', cursive, sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 900;
   background: linear-gradient(160deg, #fef3c7, #fde68a);
   border: 3px solid #f59e0b;
   border-radius: 18px;
-  padding: 10px 18px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), 0 0 24px rgba(245, 158, 11, 0.4);
+  padding: 9px 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), 0 0 24px rgba(245, 158, 11, 0.4), 0 0 0 2px rgba(139, 92, 246, 0.18);
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
   opacity: 0;
-  transition: opacity .35s ease, transform .45s cubic-bezier(.34,1.56,.64,1);
+  transition: opacity .3s ease, transform .4s cubic-bezier(.34,1.56,.64,1);
   pointer-events: none;
   max-width: 92vw;
-  white-space: nowrap;
+  text-align: center;
+  line-height: 1.25;
   color: #78350f;
 }
 .eff-learn-hint.show {
@@ -6379,9 +6385,8 @@ body { background: #0a0a1a !important; }
   border-radius: 50%;
   width: 22px;
   height: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   box-shadow: 0 2px 4px rgba(0,0,0,0.25);
   z-index: 2;
 }
@@ -6390,15 +6395,16 @@ body { background: #0a0a1a !important; }
   50%      { box-shadow: 0 0 18px rgba(34, 197, 94, 0.75), 0 4px 0 #15803d; }
 }
 
-/* Bag picker: WARN on Pokemon resistant to current enemy (counterpart to counter-strong) */
+/* Bag picker: WARN on Pokemon resistant to current enemy (counterpart to counter-strong).
+   Softer than disable-look: still tappable-feeling, ⛔ swapped to 🛡 (defender-resists,
+   not "forbidden"), no grayscale (kid mistakes for "broken/sick Pokemon"). */
 .bag-tile.counter-weak {
-  opacity: 0.55;
-  filter: grayscale(0.35);
-  border: 2px dashed #dc2626 !important;
+  opacity: 0.78;
+  border: 2px dashed #f59e0b !important;
   position: relative;
 }
 .bag-tile.counter-weak::after {
-  content: '⛔';
+  content: '🛡';
   position: absolute;
   top: -6px;
   right: -6px;
@@ -6407,7 +6413,8 @@ body { background: #0a0a1a !important; }
   border-radius: 50%;
   width: 22px;
   height: 22px;
-  display: flex;
+  display: grid;
+  place-items: center;
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 4px rgba(0,0,0,0.22);

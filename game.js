@@ -1392,7 +1392,7 @@ function openGymGame() {
   playClick()
   // MUST remain synchronous — page redirects on next line, no time for async work.
   _applyKodokSlot7Unlock()   // runs once, guard inside; slot-7+frog preset
-  window.location.href = 'games/g13c-pixi.html?v=20260506q'
+  window.location.href = 'games/g13c-pixi.html?v=20260506r'
 }
 
 function g13cBuildLetterSelect() {
@@ -6775,7 +6775,10 @@ function g10Answer(val, btn){
       const _mult = (typeof calcFullMult === 'function')
         ? calcFullMult(s.playerPoke.type, s.playerPoke.type, s.enemyPoke.type)
         : 1
-      const _dmg  = Math.max(1, Math.round(1 * _mult))   // base 1 hp, scaled
+      // Max HP is 3-4 per level — base 1 keeps 3-4 hit KO baseline.
+      // Super-effective rounds up to 2 (one hit faster), resist stays at
+      // 1 (floating "Kurang Efektif" text signals the soft loss).
+      const _dmg  = Math.max(1, Math.round(_mult))
       s.enemyHp=Math.max(0,s.enemyHp-_dmg)
       g10RenderHp('g10-ehpfill','g10-ehpnums',s.enemyHp,s.enemyMaxHp)
       try { if (typeof applyHitFeedback === 'function') {
@@ -6816,7 +6819,7 @@ function g10Answer(val, btn){
         const _mult = (typeof calcFullMult === 'function')
           ? calcFullMult(s.enemyPoke.type, s.enemyPoke.type, s.playerPoke.type)
           : 1
-        const _dmg  = Math.max(1, Math.round(1 * _mult))
+        const _dmg  = Math.max(1, Math.round(_mult))
         s.playerHp=Math.max(0,s.playerHp-_dmg)
         g10RenderHp('g10-phpfill','g10-phpnums',s.playerHp,s.playerMaxHp)
         try { if (typeof applyHitFeedback === 'function') {
@@ -7710,7 +7713,7 @@ const G13_CHAINS = [
   {id:14, icon:'🔮', diff:'medium', maxNum:20, ops:['+','-'],
    player:{name:'Abra',slug:'abra',type:'Psychic',tc:'#EC4899'},
    evolved:{name:'Kadabra',slug:'kadabra',type:'Psychic',tc:'#EC4899'},
-   wild:{name:'Slowbro',slug:'slowbro',type:'Psychic',tc:'#EC4899'}},
+   wild:{name:'Slowbro',slug:'slowbro',type:'Water',tc:'#0369A1'}},
   {id:15, icon:'🦆', diff:'medium', maxNum:20, ops:['+','-'],
    player:{name:'Psyduck',slug:'psyduck',type:'Water',tc:'#38BDF8'},
    evolved:{name:'Golduck',slug:'golduck',type:'Water',tc:'#38BDF8'},
@@ -7993,7 +7996,7 @@ const G13_CHAINS = [
   // === ADDITIONAL MEDIUM (IDs 110-117) ===
   {id:110,icon:'🐌',diff:'medium',maxNum:20,ops:['+','-'],
    player:{name:'Slowpoke',slug:'slowpoke',type:'Psychic',tc:'#EC4899'},
-   evolved:{name:'Slowbro',slug:'slowbro',type:'Psychic',tc:'#EC4899'},
+   evolved:{name:'Slowbro',slug:'slowbro',type:'Water',tc:'#0369A1'},
    wild:{name:'Golduck',slug:'golduck',type:'Water',tc:'#38BDF8'}},
   {id:111,icon:'🐦',diff:'medium',maxNum:20,ops:['+','-'],
    player:{name:'Doduo',slug:'doduo',type:'Normal',tc:'#A3A3A3'},
@@ -8103,7 +8106,7 @@ const G13_CHAINS = [
   // === ADDITIONAL LEGENDARY (IDs 140-145) ===
   {id:140,icon:'🦊',diff:'legendary',maxNum:20,ops:['+','-','*'],
    player:{name:'Riolu',slug:'riolu',type:'Fighting',tc:'#EF4444'},
-   evolved:{name:'Lucario',slug:'lucario',type:'Steel',tc:'#94A3B8'},
+   evolved:{name:'Lucario',slug:'lucario',type:'Fighting',tc:'#1E40AF'},
    wild:{name:'Machamp',slug:'machamp',type:'Fighting',tc:'#EF4444'}},
   {id:141,icon:'🐉',diff:'legendary',maxNum:20,ops:['+','-','*'],
    player:{name:'Deino',slug:'deino',type:'Dragon',tc:'#6366F1'},
@@ -8140,7 +8143,7 @@ const G13_CHAINS = [
    player:{name:'Abra',slug:'abra',type:'Psychic',tc:'#EC4899'},
    evolved:{name:'Kadabra',slug:'kadabra',type:'Psychic',tc:'#EC4899'},
    evolved2:{name:'Alakazam',slug:'alakazam',type:'Psychic',tc:'#EC4899'},
-   wild:{name:'Slowbro',slug:'slowbro',type:'Psychic',tc:'#EC4899'}},
+   wild:{name:'Slowbro',slug:'slowbro',type:'Water',tc:'#0369A1'}},
   {id:43,icon:'🪨',diff:'2stage',maxNum:20,ops:['+','-'],
    player:{name:'Geodude',slug:'geodude',type:'Rock',tc:'#A16207'},
    evolved:{name:'Graveler',slug:'graveler',type:'Rock',tc:'#A16207'},
@@ -8269,7 +8272,7 @@ const G13_CHAINS = [
   {id:210,icon:'🐧',diff:'epic',maxNum:20,ops:['+','-'],
    player:{name:'Piplup',slug:'piplup',type:'Water',tc:'#38BDF8'},
    evolved:{name:'Prinplup',slug:'prinplup',type:'Water',tc:'#38BDF8'},
-   evolved2:{name:'Empoleon',slug:'empoleon',type:'Steel',tc:'#94A3B8'},
+   evolved2:{name:'Empoleon',slug:'empoleon',type:'Water',tc:'#0369A1'},
    wild:{name:'Blastoise',slug:'blastoise',type:'Water',tc:'#38BDF8'}},
 
   // Turtwig → Grotle → Torterra (Grass/Ground) — 3-stage
