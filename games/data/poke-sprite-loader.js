@@ -148,22 +148,60 @@
     }
     function start() {
       if (!queue.length) { finish(null); return; }
-      let pending = queue.length;
+      // PRIORITY CASCADE (2026-05-04 fix): the parallel race was letting
+      // smaller fallbacks (10KB SVG, 50KB CDN PNG) beat the 500KB HD WebP,
+      // so users saw non-HD sprites despite HD being available. User
+      // reported Weedle (id 13) as "patah-patah" — that's the bug.
+      // New behavior: try the FIRST url (highest quality) alone, give it
+      // PRIMARY_TIMEOUT_MS to win, fall back to parallel race of remainder
+      // only if it errors or times out. Browser fires onerror on 404
+      // immediately, so missing-HD Pokemon (e.g. Gen 9) don't waste the
+      // full timeout — they fall straight through to the SVG/CDN race.
+      const PRIMARY_TIMEOUT_MS = 3000;
       timeoutId = setTimeout(() => {
         if (_IS_DEV) console.warn('[sprite] total timeout, fallback emoji');
         finish(null);
       }, TOTAL_TIMEOUT_MS);
-      queue.forEach(url => {
-        const probe = new Image();
-        probe.onload = () => { finish(url); };
-        probe.onerror = () => {
-          pending--;
-          if (_IS_DEV) console.warn('[sprite] failed:', url);
-          if (pending === 0) finish(null);
-        };
-        probes.push(probe);
-        probe.src = url;
-      });
+
+      const primaryUrl = queue[0];
+      const fallbacks = queue.slice(1);
+
+      function raceFallbacks() {
+        if (resolved) return;
+        if (!fallbacks.length) { finish(null); return; }
+        let pending = fallbacks.length;
+        fallbacks.forEach(url => {
+          const probe = new Image();
+          probe.onload = () => { finish(url); };
+          probe.onerror = () => {
+            pending--;
+            if (_IS_DEV) console.warn('[sprite] failed:', url);
+            if (pending === 0) finish(null);
+          };
+          probes.push(probe);
+          probe.src = url;
+        });
+      }
+
+      const primary = new Image();
+      const primaryTimeoutId = setTimeout(() => {
+        if (resolved) return;
+        primary.onload = null;
+        primary.onerror = null;
+        if (_IS_DEV) console.warn('[sprite] primary slow, racing fallbacks:', primaryUrl);
+        raceFallbacks();
+      }, PRIMARY_TIMEOUT_MS);
+      primary.onload = () => {
+        clearTimeout(primaryTimeoutId);
+        finish(primaryUrl);
+      };
+      primary.onerror = () => {
+        clearTimeout(primaryTimeoutId);
+        if (_IS_DEV) console.warn('[sprite] primary failed, racing fallbacks:', primaryUrl);
+        raceFallbacks();
+      };
+      probes.push(primary);
+      primary.src = primaryUrl;
     }
     _slot(start);
   }
