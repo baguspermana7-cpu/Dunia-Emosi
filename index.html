@@ -6,7 +6,7 @@
 <title>Dunia Emosi 🐾</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="style.css?v=20260506n">
+<link rel="stylesheet" href="style.css?v=20260506o">
 
 <!-- PWA: install-as-app + offline support -->
 <link rel="manifest" href="manifest.json">
@@ -753,6 +753,7 @@
         <div class="g10-hp-track"><div class="g10-hp-fill" id="g10-ehpfill" style="width:100%"></div></div>
       </div>
       <div class="g10-hp-nums" id="g10-ehpnums">—</div>
+      <div id="g10-eweakness-wrap"></div>
     </div>
     <!-- Enemy sprite: top-right -->
     <div class="g10-espr-wrap" id="g10-espr-wrap">
@@ -884,6 +885,7 @@
         <div class="g13-hp-track"><div class="g13-hp-fill" id="g13-whpfill" style="width:100%"></div></div>
       </div>
       <div class="g13-hp-nums" id="g13-whpnums">—</div>
+      <div id="g13-wweakness-wrap"></div>
     </div>
     <!-- Wild sprite: top-right -->
     <div class="g13-wspr-wrap" id="g13-wspr-wrap">
@@ -999,6 +1001,11 @@
       <span style="font-size:9px;font-weight:900;color:rgba(255,255,255,0.55);">HP</span>
       <div class="g13b-hp-track"><div class="g13b-hp-fill" id="g13b-hp-fill" style="width:100%"></div></div>
       <span id="g13b-hp-nums" style="font-size:9px;font-weight:900;color:white;min-width:26px;text-align:right;"></span>
+    </div>
+    <!-- Wild type badge + weakness sticker (under HP bar) -->
+    <div id="g13b-wtype-row" style="position:absolute;top:34px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none;z-index:6">
+      <span class="g13-type-badge" id="g13b-wtype" style="font-size:9px;padding:2px 8px;background:rgba(0,0,0,0.45);border-radius:8px;color:#fff;font-weight:900;">—</span>
+      <div id="g13b-wweakness-wrap"></div>
     </div>
     <!-- Selesai button top-right -->
     <button class="g13b-selesai-btn" onclick="g13bGameOver()">✅ Selesai</button>
@@ -2167,6 +2174,7 @@ function loadPixiJS(cb) {
 <script src="games/data/freeze-watchdog.js?v=20260428a" defer></script>
 <script src="games/data/cloud-sync.js?v=20260502p" defer></script>
 <script src="games/data/math-rules.js?v=20260506n" defer></script>
-<script src="game.js?v=20260506n" defer></script>
+<script src="games/data/poke-type-chart.js?v=20260506o" defer></script>
+<script src="game.js?v=20260506o" defer></script>
 </body>
 </html>

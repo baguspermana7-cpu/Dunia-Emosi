@@ -1392,7 +1392,7 @@ function openGymGame() {
   playClick()
   // MUST remain synchronous — page redirects on next line, no time for async work.
   _applyKodokSlot7Unlock()   // runs once, guard inside; slot-7+frog preset
-  window.location.href = 'games/g13c-pixi.html?v=20260505l'
+  window.location.href = 'games/g13c-pixi.html?v=20260506o'
 }
 
 function g13cBuildLetterSelect() {
@@ -6625,6 +6625,11 @@ function g10NewBattle(){
   setType('g10-etype', s.enemyPoke.type)
   setType('g10-ptype', s.playerPoke.type)
 
+  // Weakness sticker (only on enemy — teach kid what to use)
+  try { if (typeof renderWeaknessSticker === 'function') {
+    renderWeaknessSticker(document.getElementById('g10-eweakness-wrap'), s.enemyPoke.type)
+  }} catch(_){}
+
   // HP bars
   g10RenderHp('g10-ehpfill','g10-ehpnums', s.enemyHp, s.enemyMaxHp)
   g10RenderHp('g10-phpfill','g10-phpnums', s.playerHp, s.playerMaxHp)
@@ -6732,10 +6737,15 @@ function g10Answer(val, btn){
     playCorrect()
     const hint=document.getElementById('g10-hint'); if(hint) hint.innerHTML=''
     const model=document.getElementById('g10-model'); if(model) model.innerHTML=''
-    // Player attacks enemy
+    // Player attacks enemy — apply type effectiveness
     g10DoAttack(s.playerPoke.type,'player','enemy',()=>{
-      s.enemyHp=Math.max(0,s.enemyHp-1)
+      const _mult = (typeof calcTypeMult === 'function') ? calcTypeMult(s.playerPoke.type, s.enemyPoke.type) : 1
+      const _dmg  = Math.max(1, Math.round(1 * _mult))   // base 1 hp, scaled
+      s.enemyHp=Math.max(0,s.enemyHp-_dmg)
       g10RenderHp('g10-ehpfill','g10-ehpnums',s.enemyHp,s.enemyMaxHp)
+      try { if (typeof applyHitFeedback === 'function') {
+        applyHitFeedback(document.querySelector('#g10-eptr-wrap, .g10-ewrap, #g10-espr-wrap, #g10-espr') || document.getElementById('g10-ehpfill'), s.playerPoke.type, s.enemyPoke.type)
+      }} catch(_){}
       document.getElementById('g10-battle-status').textContent=''
       setTimeout(()=>{
         if(s.enemyHp<=0) g10EnemyDefeated()
@@ -6768,8 +6778,13 @@ function g10Answer(val, btn){
       g10ShowHint('solution')
       document.getElementById('g10-battle-status').textContent=''
       g10DoAttack(s.enemyPoke.type,'enemy','player',()=>{
-        s.playerHp=Math.max(0,s.playerHp-1)
+        const _mult = (typeof calcTypeMult === 'function') ? calcTypeMult(s.enemyPoke.type, s.playerPoke.type) : 1
+        const _dmg  = Math.max(1, Math.round(1 * _mult))
+        s.playerHp=Math.max(0,s.playerHp-_dmg)
         g10RenderHp('g10-phpfill','g10-phpnums',s.playerHp,s.playerMaxHp)
+        try { if (typeof applyHitFeedback === 'function') {
+          applyHitFeedback(document.querySelector('#g10-pptr-wrap, .g10-pwrap, #g10-pspr-wrap, #g10-pspr') || document.getElementById('g10-phpfill'), s.enemyPoke.type, s.playerPoke.type)
+        }} catch(_){}
         setTimeout(()=>{
           if(s.playerHp<=0) g10PlayerDefeated()
           else { s.locked=false; g10GenQuestion() }
@@ -9107,6 +9122,10 @@ function _initGame13Impl() {
   const wlEl = document.getElementById('g13-wlv');   if(wlEl) wlEl.textContent = `Lv${lv + 5}`
   const wtype = document.getElementById('g13-wtype')
   if (wtype) { wtype.textContent = chain.wild.type; wtype.style.background = chain.wild.tc+'55'; wtype.style.color = chain.wild.tc; wtype.style.border = `1px solid ${chain.wild.tc}88` }
+  // Weakness sticker — teach kid which type counters this wild
+  try { if (typeof renderWeaknessSticker === 'function') {
+    renderWeaknessSticker(document.getElementById('g13-wweakness-wrap'), chain.wild.type)
+  }} catch(_){}
 
   // Player name/type
   const pnEl = document.getElementById('g13-pname'); if(pnEl) pnEl.textContent = chain.player.name
@@ -9336,7 +9355,15 @@ function g13Answer(val, btn) {
     if (correct) {
       playCorrect()
       vibrate(12)
-      s.wildHp = Math.max(0, s.wildHp - s.cfg.damage)
+      // Type effectiveness: scale base cfg.damage by attacker→defender multiplier
+      const _atkType = (s.megaForm ? s.chain.mega : s.evolved2 ? s.chain.evolved2 : s.evolved ? s.chain.evolved : s.chain.player).type
+      const _defType = s.chain.wild.type
+      const _mult    = (typeof calcTypeMult === 'function') ? calcTypeMult(_atkType, _defType) : 1
+      const _dmg     = Math.max(1, Math.round(s.cfg.damage * _mult))
+      s.wildHp = Math.max(0, s.wildHp - _dmg)
+      try { if (typeof applyHitFeedback === 'function') {
+        applyHitFeedback(document.getElementById('g13-wspr-wrap') || document.getElementById('g13-wspr'), _atkType, _defType)
+      }} catch(_){}
       s.evoPoints = Math.min(s.evoNeeded, s.evoPoints + 1)
       s.correctThisExchange++
       s.stars++
@@ -9452,7 +9479,14 @@ function g13WildCounterPhase() {
           setTimeout(()=>pspr.classList.remove('spr-hit','spr-flash'),450)
         }
         g13TypeHitFX(s.chain.wild.type, false)
-        s.playerHp = Math.max(0, s.playerHp - s.cfg.wildDamage)
+        // Type effectiveness on wild→player attack
+        const _curForm = s.megaForm ? s.chain.mega : s.evolved2 ? s.chain.evolved2 : s.evolved ? s.chain.evolved : s.chain.player
+        const _wMult = (typeof calcTypeMult === 'function') ? calcTypeMult(s.chain.wild.type, _curForm.type) : 1
+        const _wDmg  = Math.max(1, Math.round(s.cfg.wildDamage * _wMult))
+        s.playerHp = Math.max(0, s.playerHp - _wDmg)
+        try { if (typeof applyHitFeedback === 'function') {
+          applyHitFeedback(document.getElementById('g13-pspr-wrap') || document.getElementById('g13-pspr'), s.chain.wild.type, _curForm.type)
+        }} catch(_){}
         g13UpdateHpBars()
         g13TriggerFlash()
         vibrate(20)
@@ -10076,6 +10110,22 @@ function g13bSpawnWild() {
   }
   s.currentWild = wild
 
+  // Type badge + weakness sticker (teach kid which Pokemon counters this wild)
+  try {
+    const _wt = wild && (wild.type || 'normal')
+    const tEl = document.getElementById('g13b-wtype')
+    if (tEl && typeof TYPE_COLOR === 'object' && _wt) {
+      const _tc = TYPE_COLOR[String(_wt).toLowerCase()] || '#fcd34d'
+      tEl.textContent = String(_wt).charAt(0).toUpperCase() + String(_wt).slice(1)
+      tEl.style.background = _tc + '55'
+      tEl.style.color = _tc
+      tEl.style.border = `1px solid ${_tc}88`
+    }
+    if (typeof renderWeaknessSticker === 'function') {
+      renderWeaknessSticker(document.getElementById('g13b-wweakness-wrap'), _wt)
+    }
+  } catch(_){}
+
   // Hotfix #101-C: probe-then-swap so sprite + name + status are atomic.
   // Previously `wspr.src = ...` (async load) and `wname.textContent = ...` (sync)
   // ran back-to-back. Browser keeps showing the previous sprite (e.g. Pikachu)
@@ -10261,8 +10311,15 @@ function g13bAnswer(val, btn) {
     // COMBO FX at streak >= 3
     if (s.streak >= 3) g13bShowCombo(s.streak)
 
-    // Reduce wild HP
-    s.wildHp = Math.max(0, s.wildHp - 1)
+    // Reduce wild HP — apply type effectiveness
+    const _playerType = (g13bSavedPoke && g13bSavedPoke.type) || 'Electric'
+    const _wildType = (s.currentWild && s.currentWild.type) || 'Normal'
+    const _bMult = (typeof calcTypeMult === 'function') ? calcTypeMult(_playerType, _wildType) : 1
+    const _bDmg  = Math.max(1, Math.round(1 * _bMult))
+    s.wildHp = Math.max(0, s.wildHp - _bDmg)
+    try { if (typeof applyHitFeedback === 'function') {
+      applyHitFeedback(document.getElementById('g13b-wspr-wrap') || document.getElementById('g13b-wspr'), _playerType, _wildType)
+    }} catch(_){}
     g13bUpdateHpBar()
 
     setTimeout(() => {
@@ -10566,11 +10623,18 @@ function g13bWildHitsPlayer(onDone) {
   if (lbl) lbl.textContent = s.isLegendary
     ? `🌟 SERANGAN LEGENDARIS! ${s.currentWild ? s.currentWild.name : 'Wild'} menyerang!`
     : `💥 ${s.currentWild ? s.currentWild.name : 'Wild'} menyerang!`
-  // Reduce player HP
-  const dmg = s.isLegendary ? 2 : 1
+  // Reduce player HP — apply type effectiveness
+  const _base = s.isLegendary ? 2 : 1
+  const _wType = s.currentWild ? (s.currentWild.type || 'normal') : 'normal'
+  const _pType = (g13bSavedPoke && g13bSavedPoke.type) || 'Electric'
+  const _wbMult = (typeof calcTypeMult === 'function') ? calcTypeMult(_wType, _pType) : 1
+  const dmg = Math.max(1, Math.round(_base * _wbMult))
   s.playerHp = Math.max(0, s.playerHp - dmg)
+  try { if (typeof applyHitFeedback === 'function') {
+    applyHitFeedback(document.getElementById('g13b-pspr-wrap') || document.getElementById('g13b-pspr'), _wType, _pType)
+  }} catch(_){}
   g13bUpdatePlayerHp()
-  playAttackSound(s.currentWild ? (s.currentWild.type||'normal') : 'normal')
+  playAttackSound(_wType)
   vibrate(25)
   setTimeout(() => {
     if (lbl && s.phase === 'playing') lbl.textContent = prevLbl

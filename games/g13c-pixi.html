@@ -246,6 +246,23 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 .tg-row{display:flex;flex-direction:column;gap:6px;margin-bottom:4px}
 .tg-row.collapsed{display:none}
 #trainer-grid{display:block}
+/* ── Type Effectiveness Visual Guide (2026-05-04) ── */
+.weakness-sticker{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:#fcd34d;margin-top:4px;padding:2px 6px;background:rgba(0,0,0,0.4);border-radius:8px;border:1px solid rgba(252,211,77,0.32);line-height:1.2;white-space:nowrap}
+.weakness-sticker .ws-shield{font-size:11px}
+.weakness-sticker .ws-label{color:rgba(255,255,255,0.75);font-size:9px;font-weight:600}
+.weakness-sticker .ws-icon{font-size:13px;line-height:1;filter:drop-shadow(0 0 3px rgba(252,211,77,0.45))}
+.eff-text{position:fixed;z-index:9000;font-family:'Fredoka One',cursive,sans-serif;font-size:14px;font-weight:900;pointer-events:none;transform:translate(-50%,0) scale(0.8);white-space:nowrap;text-shadow:0 2px 4px rgba(0,0,0,0.6)}
+.eff-text.eff-super{color:#22c55e;animation:effSuperRise 1.2s cubic-bezier(.34,1.56,.64,1) forwards}
+.eff-text.eff-resist{color:#cbd5e1;animation:effSmoothRise 1.2s ease-out forwards}
+.eff-text.eff-immune{color:#f87171;animation:effSmoothRise 1.2s ease-out forwards}
+@keyframes effSuperRise{0%{transform:translate(-50%,0) scale(0.6);opacity:0}20%{transform:translate(-50%,-8px) scale(1.15);opacity:1}35%{transform:translate(-50%,-14px) scale(1.0);opacity:1}80%{transform:translate(-50%,-30px) scale(1.0);opacity:1}100%{transform:translate(-50%,-48px) scale(0.9);opacity:0}}
+@keyframes effSmoothRise{0%{transform:translate(-50%,0) scale(0.85);opacity:0}18%{transform:translate(-50%,-10px) scale(1.0);opacity:0.95}80%{transform:translate(-50%,-32px) scale(1.0);opacity:0.85}100%{transform:translate(-50%,-46px) scale(0.92);opacity:0}}
+.move-btn{position:relative}
+.move-btn.super-eff{border:2px solid #22c55e !important;box-shadow:0 0 12px rgba(34,197,94,0.55),0 5px 0 #15803d !important;animation:moveSuperPulse 1.6s ease-in-out infinite}
+.move-btn.super-eff::before{content:'✨';position:absolute;top:4px;left:5px;font-size:11px;opacity:0.9}
+.move-btn.resist-eff{opacity:0.55;filter:grayscale(0.4);border:2px dashed #dc2626 !important}
+.move-btn.resist-eff::before{content:'⛔';position:absolute;top:4px;left:5px;font-size:11px;opacity:0.8}
+@keyframes moveSuperPulse{0%,100%{box-shadow:0 0 12px rgba(34,197,94,0.5),0 5px 0 #15803d}50%{box-shadow:0 0 18px rgba(34,197,94,0.85),0 5px 0 #15803d}}
 </style>
 </head>
 <body>
@@ -286,6 +303,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
     <div class="hpf-name" id="hpf-enemy-name">Starmie</div>
     <div class="hpf-bar-wrap"><div class="hpf-bar" id="hpf-enemy-bar" style="width:100%"></div></div>
     <div class="hpf-dots" id="hpf-enemy-dots"></div>
+    <div id="hpf-enemy-weakness-wrap"></div>
   </div>
 </div>
 <div id="hp-float-player">
@@ -386,6 +404,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 <script src="data/save-engine.js?v=20260501e"></script>
 <script src="data/math-rules.js?v=20260501d"></script>
 <script src="data/move-id-translations.js?v=20260505k"></script>
+<script src="data/poke-type-chart.js?v=20260506o"></script>
 <script src="game-modal.js?v=20260424g"></script>
 <script src="battle-sprite-engine.js?v=20260502p"></script>
 
@@ -1090,28 +1109,32 @@ const TRAINER_SPRITE_LOCAL = s => `../assets/Pokemon/trainer/${s}.webp`;
 const TRAINER_SPRITE_REMOTE = s => `https://play.pokemonshowdown.com/sprites/trainers/${s}.png`;
 const TRAINER_SPRITE = s => TRAINER_SPRITE_LOCAL(s); // try local first
 
-// Type effectiveness
+// Type effectiveness — KID-FRIENDLY (2026-05-04): 2x→1.5x, 0.5x→0.75x, 0→0.5x
+// Prefer shared chart from window.calcTypeMult (poke-type-chart.js); fall back to inline.
 const EFF = {
-  fire:{grass:2,ice:2,bug:2,steel:2,water:0.5,rock:0.5,fire:0.5,dragon:0.5},
-  water:{fire:2,rock:2,ground:2,water:0.5,grass:0.5,dragon:0.5},
-  grass:{water:2,rock:2,ground:2,fire:0.5,grass:0.5,poison:0.5,flying:0.5,bug:0.5,dragon:0.5,steel:0.5},
-  electric:{water:2,flying:2,ground:0,grass:0.5,electric:0.5,dragon:0.5},
-  psychic:{fighting:2,poison:2,psychic:0.5,dark:0,steel:0.5},
-  ghost:{psychic:2,ghost:2,normal:0,dark:0.5},
-  dragon:{dragon:2,steel:0.5,fairy:0},
-  dark:{psychic:2,ghost:2,fighting:0.5,dark:0.5,fairy:0.5},
-  normal:{rock:0.5,steel:0.5,ghost:0},
-  fighting:{normal:2,rock:2,steel:2,ice:2,dark:2,poison:0.5,flying:0.5,psychic:0.5,bug:0.5,fairy:0.5,ghost:0},
-  ice:{grass:2,ground:2,flying:2,dragon:2,fire:0.5,water:0.5,ice:0.5,steel:0.5},
-  rock:{fire:2,ice:2,flying:2,bug:2,fighting:0.5,ground:0.5,steel:0.5},
-  ground:{fire:2,electric:2,poison:2,rock:2,steel:2,grass:0.5,bug:0.5,flying:0},
-  flying:{grass:2,fighting:2,bug:2,electric:0.5,rock:0.5,steel:0.5},
-  poison:{grass:2,fairy:2,poison:0.5,ground:0.5,rock:0.5,ghost:0.5,steel:0},
-  steel:{ice:2,rock:2,fairy:2,fire:0.5,water:0.5,electric:0.5,steel:0.5},
-  fairy:{fighting:2,dragon:2,dark:2,fire:0.5,poison:0.5,steel:0.5},
-  bug:{grass:2,psychic:2,dark:2,fire:0.5,fighting:0.5,flying:0.5,ghost:0.5,steel:0.5,fairy:0.5},
+  fire:{grass:1.5,ice:1.5,bug:1.5,steel:1.5,water:0.75,rock:0.75,fire:0.75,dragon:0.75},
+  water:{fire:1.5,rock:1.5,ground:1.5,water:0.75,grass:0.75,dragon:0.75},
+  grass:{water:1.5,rock:1.5,ground:1.5,fire:0.75,grass:0.75,poison:0.75,flying:0.75,bug:0.75,dragon:0.75,steel:0.75},
+  electric:{water:1.5,flying:1.5,ground:0.5,grass:0.75,electric:0.75,dragon:0.75},
+  psychic:{fighting:1.5,poison:1.5,psychic:0.75,dark:0.5,steel:0.75},
+  ghost:{psychic:1.5,ghost:1.5,normal:0.5,dark:0.75},
+  dragon:{dragon:1.5,steel:0.75,fairy:0.5},
+  dark:{psychic:1.5,ghost:1.5,fighting:0.75,dark:0.75,fairy:0.75},
+  normal:{rock:0.75,steel:0.75,ghost:0.5},
+  fighting:{normal:1.5,rock:1.5,steel:1.5,ice:1.5,dark:1.5,poison:0.75,flying:0.75,psychic:0.75,bug:0.75,fairy:0.75,ghost:0.5},
+  ice:{grass:1.5,ground:1.5,flying:1.5,dragon:1.5,fire:0.75,water:0.75,ice:0.75,steel:0.75},
+  rock:{fire:1.5,ice:1.5,flying:1.5,bug:1.5,fighting:0.75,ground:0.75,steel:0.75},
+  ground:{fire:1.5,electric:1.5,poison:1.5,rock:1.5,steel:1.5,grass:0.75,bug:0.75,flying:0.5},
+  flying:{grass:1.5,fighting:1.5,bug:1.5,electric:0.75,rock:0.75,steel:0.75},
+  poison:{grass:1.5,fairy:1.5,poison:0.75,ground:0.75,rock:0.75,ghost:0.75,steel:0.5},
+  steel:{ice:1.5,rock:1.5,fairy:1.5,fire:0.75,water:0.75,electric:0.75,steel:0.75},
+  fairy:{fighting:1.5,dragon:1.5,dark:1.5,fire:0.75,poison:0.75,steel:0.75},
+  bug:{grass:1.5,psychic:1.5,dark:1.5,fire:0.75,fighting:0.75,flying:0.75,ghost:0.75,steel:0.75,fairy:0.75},
 };
-function getEff(at, dt){ return (EFF[at]||{})[dt] ?? 1; }
+function getEff(at, dt){
+  if (typeof window.calcTypeMult === 'function') return window.calcTypeMult(at, dt);
+  return (EFF[at]||{})[dt] ?? 1;
+}
 
 const TYPE_COLOR = {
   fire:'#fb923c',water:'#60a5fa',grass:'#4ade80',electric:'#fbbf24',
@@ -1813,6 +1836,10 @@ function updateHpUI(){
   document.getElementById('hpf-player-name').textContent = pp.name;
   renderDots('hpf-enemy-dots', battle.enemyTeam);
   renderDots('hpf-player-dots', battle.playerTeam);
+  // Weakness sticker — show 2 strongest counter types vs current enemy
+  try { if (typeof window.renderWeaknessSticker === 'function' && ep && ep.type) {
+    window.renderWeaknessSticker(document.getElementById('hpf-enemy-weakness-wrap'), ep.type)
+  }} catch(_){}
 }
 
 // ─── ACTION MENU ─────────────────────────────────────────────────────────────
@@ -1825,12 +1852,16 @@ function showActionMenu(){
 document.getElementById('btn-fight').onclick = ()=>{
   if(!battle||battle.ended) return;
   const pp = battle.playerTeam[battle.playerIdx];
+  const ep = battle.enemyTeam[battle.enemyIdx];
   const mb = document.getElementById('move-btns');
   mb.innerHTML = pp.moves.map((m,i)=>
     (function(){
       const idName = (typeof moveID === 'function') ? moveID(m.name) : ''
       const idLine = idName ? `<span class="mv-id">${idName}</span>` : ''
-      return `<button class="move-btn type-${m.type}" onclick="useMove(${i})"><span class="mv-en">${m.name}</span>${idLine}</button>`
+      // Effectiveness class: auto-glow green if super-effective vs current enemy
+      const effClass = (typeof window.getMoveEffectivenessClass === 'function' && ep && ep.type)
+                       ? window.getMoveEffectivenessClass(m.type, ep.type) : ''
+      return `<button class="move-btn type-${m.type} ${effClass}" onclick="useMove(${i})"><span class="mv-en">${m.name}</span>${idLine}</button>`
     })()
   ).join('');
   showBattleUI('move');
@@ -1923,6 +1954,10 @@ function executeMove(moveIdx, mathCorrect){
       spawnTypeHitFX(epEl, move.type);
       ep.hp = Math.max(0, ep.hp-dmg);
       updateHpUI();
+      // Floating "Super Efektif!" / "Kurang Efektif…" text + sfx
+      try { if (typeof window.applyHitFeedback === 'function') {
+        window.applyHitFeedback(epEl, move.type, ep.type)
+      }} catch(_){}
 
       const r = epEl.getBoundingClientRect();
       spawnSparkles(r.left+r.width/2, r.top+r.height/2, eff>=2?'#fbbf24':eff===0?'#94a3b8':getTypeColor(move.type));
@@ -1989,6 +2024,10 @@ function enemyTurn(){
       pp.hp = Math.max(0, pp.hp-dmg);
       updateHpUI();
       flashColor(ep.type);
+      // Floating effectiveness text + sfx for enemy → player attack
+      try { if (typeof window.applyHitFeedback === 'function') {
+        window.applyHitFeedback(ppEl, ep.type, pp.type)
+      }} catch(_){}
 
       const r = ppEl.getBoundingClientRect();
       spawnSparkles(r.left+r.width/2, r.top+r.height/2, (TYPE_HIT_FX[ep.type]||TYPE_HIT_FX.normal).color);

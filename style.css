@@ -6178,3 +6178,112 @@ body { background: #0a0a1a !important; }
   .city-card { padding: 8px 10px; }
   .city-card-icon { width: 44px; height: 44px; }
 }
+/* ═══════════════════════════════════════════════════════════════
+   TYPE EFFECTIVENESS — Visual guidance system (2026-05-04)
+   Used by G10, G13, G13B, G13C battle games.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Weakness sticker (under enemy HP bar) ── */
+.weakness-sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fcd34d;
+  margin-top: 3px;
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 8px;
+  border: 1px solid rgba(252, 211, 77, 0.3);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.weakness-sticker .ws-shield { font-size: 11px; }
+.weakness-sticker .ws-label { color: rgba(255, 255, 255, 0.78); font-size: 9px; font-weight: 600; }
+.weakness-sticker .ws-icon { font-size: 13px; line-height: 1; filter: drop-shadow(0 0 3px rgba(252, 211, 77, 0.4)); }
+
+/* ── Floating effectiveness text (above defender on hit) ── */
+.eff-text {
+  position: fixed;
+  z-index: 9000;
+  font-family: 'Fredoka One', cursive, sans-serif;
+  font-size: 14px;
+  font-weight: 900;
+  pointer-events: none;
+  transform: translate(-50%, 0) scale(0.8);
+  white-space: nowrap;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+.eff-text.eff-super  { color: #22c55e; animation: effSuperRise 1.2s cubic-bezier(.34,1.56,.64,1) forwards; }
+.eff-text.eff-resist { color: #cbd5e1; animation: effSmoothRise 1.2s ease-out forwards; }
+.eff-text.eff-immune { color: #f87171; animation: effSmoothRise 1.2s ease-out forwards; }
+
+@keyframes effSuperRise {
+  0%   { transform: translate(-50%, 0)    scale(0.6); opacity: 0; }
+  20%  { transform: translate(-50%, -8px) scale(1.15); opacity: 1; }
+  35%  { transform: translate(-50%, -14px) scale(1.0); opacity: 1; }
+  80%  { transform: translate(-50%, -30px) scale(1.0); opacity: 1; }
+  100% { transform: translate(-50%, -48px) scale(0.9); opacity: 0; }
+}
+@keyframes effSmoothRise {
+  0%   { transform: translate(-50%, 0)    scale(0.85); opacity: 0; }
+  18%  { transform: translate(-50%, -10px) scale(1.0); opacity: 0.95; }
+  80%  { transform: translate(-50%, -32px) scale(1.0); opacity: 0.85; }
+  100% { transform: translate(-50%, -46px) scale(0.92); opacity: 0; }
+}
+
+/* ── Move button effectiveness states (G13C only) ── */
+.move-btn.super-eff {
+  border: 2px solid #22c55e !important;
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.55), 0 5px 0 #15803d !important;
+  animation: moveSuperPulse 1.6s ease-in-out infinite;
+}
+.move-btn.super-eff::before {
+  content: '✨';
+  position: absolute;
+  top: 4px; left: 5px;
+  font-size: 11px;
+  opacity: 0.9;
+}
+.move-btn.resist-eff {
+  opacity: 0.55;
+  filter: grayscale(0.4);
+  border: 2px dashed #dc2626 !important;
+}
+.move-btn.resist-eff::before {
+  content: '⛔';
+  position: absolute;
+  top: 4px; left: 5px;
+  font-size: 11px;
+  opacity: 0.8;
+}
+.move-btn { position: relative; }
+
+@keyframes moveSuperPulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(34, 197, 94, 0.5),  0 5px 0 #15803d; }
+  50%      { box-shadow: 0 0 18px rgba(34, 197, 94, 0.85), 0 5px 0 #15803d; }
+}
+
+/* ── Pre-battle hint chip (G13B bag picker, G13C trainer reveal) ── */
+.tw-counter-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fcd34d;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(252, 211, 77, 0.45);
+  border-radius: 12px;
+  margin-top: 6px;
+}
+.tw-counter-hint .tch-label { color: rgba(255, 255, 255, 0.75); font-size: 10px; }
+.tw-counter-hint .tch-icon { font-size: 13px; line-height: 1; }
+
+@media (max-width: 380px) {
+  .weakness-sticker { font-size: 9px; padding: 1px 5px; gap: 3px; }
+  .weakness-sticker .ws-icon { font-size: 11px; }
+  .eff-text { font-size: 12px; }
+}
