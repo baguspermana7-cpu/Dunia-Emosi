@@ -73,6 +73,27 @@
   }
   window.calcTypeMult = calcTypeMult;
 
+  // Same-Type Attack Bonus (STAB): when Pokemon uses move of own type,
+  // damage multiplied by 1.25 (canonical Pokemon mechanic, scaled down
+  // from standard 1.5x to keep balance with our 1.5x super-effective).
+  // Combined: super-effective + STAB = 1.5 * 1.25 = 1.875x max damage.
+  function calcStab(moveType, attackerType) {
+    return _norm(moveType) === _norm(attackerType) ? 1.25 : 1;
+  }
+  window.calcStab = calcStab;
+
+  // Full damage multiplier including STAB. Use this when you have both
+  // moveType + attackerType available (G13C). For games where attacker
+  // and move are the same type by definition (G10/G13/G13B auto-attack),
+  // STAB is implicit — always 1.25x. Pass attackerType as moveType to
+  // enable that auto-STAB.
+  function calcFullMult(moveType, attackerType, defenderType) {
+    const stab = calcStab(moveType, attackerType);
+    const eff  = calcTypeMult(moveType, defenderType);
+    return stab * eff;
+  }
+  window.calcFullMult = calcFullMult;
+
   // Get 1-2 most threatening types vs defender (the "weakness sticker" content)
   function getWeaknesses(defType, max) {
     const d = _norm(defType);

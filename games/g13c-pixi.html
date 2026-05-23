@@ -420,7 +420,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 <script src="data/save-engine.js?v=20260501e"></script>
 <script src="data/math-rules.js?v=20260501d"></script>
 <script src="data/move-id-translations.js?v=20260505k"></script>
-<script src="data/poke-type-chart.js?v=20260506p"></script>
+<script src="data/poke-type-chart.js?v=20260506q"></script>
 <script src="game-modal.js?v=20260424g"></script>
 <script src="battle-sprite-engine.js?v=20260502p"></script>
 
@@ -1268,7 +1268,11 @@ function deepCloneTeam(team){
 function calcDmg(moveType, atkPoke, defPoke){
   const base = 30 + Math.floor(Math.random()*10); // 3-hit KO at 100hp
   const eff = getEff(moveType, defPoke.type);
-  return Math.max(1, Math.round(base * eff));
+  // STAB: same-type-attack bonus = 1.25x when move type matches attacker's type
+  const stab = (typeof window.calcStab === 'function')
+    ? window.calcStab(moveType, atkPoke && atkPoke.type)
+    : (moveType && atkPoke && String(moveType).toLowerCase() === String(atkPoke.type||'').toLowerCase() ? 1.25 : 1);
+  return Math.max(1, Math.round(base * eff * stab));
 }
 
 function flashColor(color){
@@ -1996,10 +2000,11 @@ function executeMove(moveIdx, mathCorrect){
       }} catch(_){}
 
       const r = epEl.getBoundingClientRect();
-      spawnSparkles(r.left+r.width/2, r.top+r.height/2, eff>=2?'#fbbf24':eff===0?'#94a3b8':getTypeColor(move.type));
-      flashColor(eff>=2?'yellow':eff===0?'red':move.type);
+      spawnSparkles(r.left+r.width/2, r.top+r.height/2, eff>=1.5?'#fbbf24':eff<=0.5?'#94a3b8':getTypeColor(move.type));
+      flashColor(eff>=1.5?'yellow':eff<=0.5?'red':move.type);
 
-      let effMsg = eff>=2?' Sangat efektif!':eff<=0.5&&eff>0?' Kurang efektif.':eff===0?' Tidak berpengaruh!':'';
+      // Effectiveness label thresholds aligned to kid-friendly multipliers
+      let effMsg = eff>=1.5?' ✨ Super efektif!':eff<=0.5?' 💢 Sangat lemah!':eff<=0.75?' 💧 Kurang efektif.':'';
       const msgs = [`${pp.name} menggunakan ${move.name}!${effMsg}`];
 
       if(ep.hp<=0){
@@ -2047,37 +2052,60 @@ function enemyTurn(){
   if(!battle||battle.ended) return;
   const ep = battle.enemyTeam[battle.enemyIdx];
   const pp = battle.playerTeam[battle.playerIdx];
-  const moveNames = ['Tackle','Scratch','Pound','Slam','Bite','Crunch','Hyper Beam','Shadow Ball','Ember','Water Gun'];
-  const moveName = moveNames[Math.floor(Math.random()*moveNames.length)];
-  const dmg = calcDmg(ep.type, ep, pp);
-  const eff = getEff(ep.type, pp.type);
+  // ── Smart AI move selection ─────────────────────────────────────────
+  // 70% chance: pick the move with HIGHEST expected damage vs current
+  // player Pokemon (factors in type effectiveness + STAB).
+  // 30% chance: pick a random move (still beatable, not 100% optimal).
+  // Falls back to type-only attack if ep has no .moves array.
+  let chosenMove = null;
+  if (ep.moves && ep.moves.length) {
+    if (Math.random() < 0.70) {
+      // Optimal pick — sort by effectiveness * STAB descending
+      let best = null, bestScore = -1;
+      ep.moves.forEach(m => {
+        const eff = getEff(m.type, pp.type);
+        const stab = (typeof window.calcStab === 'function')
+          ? window.calcStab(m.type, ep.type) : (m.type === ep.type ? 1.25 : 1);
+        const score = eff * stab + Math.random() * 0.1;   // tiny jitter for tie-break
+        if (score > bestScore) { bestScore = score; best = m; }
+      });
+      chosenMove = best;
+    } else {
+      chosenMove = ep.moves[Math.floor(Math.random() * ep.moves.length)];
+    }
+  }
+  const moveType = chosenMove ? chosenMove.type : ep.type;
+  const moveName = chosenMove ? chosenMove.name : ep.type;
+  const dmg = calcDmg(moveType, ep, pp);
+  const eff = getEff(moveType, pp.type);
 
   const epEl = document.getElementById('poke-enemy');
   const ppEl = document.getElementById('poke-player');
   const portraitEnemy = document.getElementById('portrait-enemy');
 
-  // Aura on enemy attacker + ripple
-  addAura(epEl, ep.type);
+  // Aura on enemy attacker + ripple (uses MOVE type, not Pokemon type)
+  addAura(epEl, moveType);
   spawnRipple(portraitEnemy);
 
   setTimeout(()=>{
     removeAura(epEl);
-    playAttackSound(ep.type);
-    spawnProjectile(epEl, ppEl, ep.type, ()=>{
+    playAttackSound(moveType);
+    spawnProjectile(epEl, ppEl, moveType, ()=>{
       addHitEffect(ppEl, true); // player has scaleX(-1)
-      spawnTypeHitFX(ppEl, ep.type);
+      spawnTypeHitFX(ppEl, moveType);
       pp.hp = Math.max(0, pp.hp-dmg);
       updateHpUI();
-      flashColor(ep.type);
+      flashColor(moveType);
       // Floating effectiveness text + sfx for enemy → player attack
       try { if (typeof window.applyHitFeedback === 'function') {
-        window.applyHitFeedback(ppEl, ep.type, pp.type)
+        window.applyHitFeedback(ppEl, moveType, pp.type)
       }} catch(_){}
 
       const r = ppEl.getBoundingClientRect();
-      spawnSparkles(r.left+r.width/2, r.top+r.height/2, (TYPE_HIT_FX[ep.type]||TYPE_HIT_FX.normal).color);
+      spawnSparkles(r.left+r.width/2, r.top+r.height/2, (TYPE_HIT_FX[moveType]||TYPE_HIT_FX.normal).color);
 
-      let effMsg = eff>=2?' Sangat efektif!':eff<=0.5&&eff>0?' Kurang efektif.':eff===0?' Tidak berpengaruh!':'';
+      // Effectiveness label thresholds aligned to kid-friendly multipliers
+      let effMsg = eff>=1.5?' ✨ Super efektif!':eff<=0.5?' 💢 Sangat lemah!':eff<=0.75?' 💧 Kurang efektif.':'';
       const msgs = [`${ep.name} menggunakan ${moveName}!${effMsg}`];
 
       if(pp.hp<=0){

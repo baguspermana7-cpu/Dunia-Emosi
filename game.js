@@ -1392,7 +1392,7 @@ function openGymGame() {
   playClick()
   // MUST remain synchronous — page redirects on next line, no time for async work.
   _applyKodokSlot7Unlock()   // runs once, guard inside; slot-7+frog preset
-  window.location.href = 'games/g13c-pixi.html?v=20260506p'
+  window.location.href = 'games/g13c-pixi.html?v=20260506q'
 }
 
 function g13cBuildLetterSelect() {
@@ -6118,9 +6118,10 @@ function _partyBuildTabPane(trainer) {
   return pane
 }
 
-// Mark party tiles whose type is SUPER-EFFECTIVE vs the current enemy.
+// Mark party tiles based on effectiveness vs current enemy:
+//  - .counter-strong  (green + 🎯) : Pokemon's type beats enemy (1.5x+)
+//  - .counter-weak    (red dim + ⛔): Pokemon's type is resisted by enemy
 // Determines enemy from context (g13b → currentWild, g10 → enemyPoke).
-// Adds .counter-strong class which CSS renders as green border + 🎯 badge.
 function _partyMarkCounters(pane) {
   if (!pane || typeof calcTypeMult !== 'function') return
   let enemyType = null
@@ -6131,7 +6132,7 @@ function _partyMarkCounters(pane) {
   }
   if (!enemyType) return
   pane.querySelectorAll('.g10-party-card').forEach(card => {
-    card.classList.remove('counter-strong', 'bag-tile')
+    card.classList.remove('counter-strong', 'counter-weak', 'bag-tile')
     try {
       const pokeId = parseInt(card.dataset.pokeId)
       const trainerId = card.dataset.trainerId
@@ -6141,6 +6142,8 @@ function _partyMarkCounters(pane) {
       const m = calcTypeMult(poke.type, enemyType)
       if (m >= 1.5) {
         card.classList.add('counter-strong', 'bag-tile')
+      } else if (m <= 0.75) {
+        card.classList.add('counter-weak', 'bag-tile')
       }
     } catch(_){}
   })
@@ -6767,9 +6770,11 @@ function g10Answer(val, btn){
     playCorrect()
     const hint=document.getElementById('g10-hint'); if(hint) hint.innerHTML=''
     const model=document.getElementById('g10-model'); if(model) model.innerHTML=''
-    // Player attacks enemy — apply type effectiveness
+    // Player attacks enemy — apply type effectiveness + STAB (auto for auto-attack games)
     g10DoAttack(s.playerPoke.type,'player','enemy',()=>{
-      const _mult = (typeof calcTypeMult === 'function') ? calcTypeMult(s.playerPoke.type, s.enemyPoke.type) : 1
+      const _mult = (typeof calcFullMult === 'function')
+        ? calcFullMult(s.playerPoke.type, s.playerPoke.type, s.enemyPoke.type)
+        : 1
       const _dmg  = Math.max(1, Math.round(1 * _mult))   // base 1 hp, scaled
       s.enemyHp=Math.max(0,s.enemyHp-_dmg)
       g10RenderHp('g10-ehpfill','g10-ehpnums',s.enemyHp,s.enemyMaxHp)
@@ -6808,7 +6813,9 @@ function g10Answer(val, btn){
       g10ShowHint('solution')
       document.getElementById('g10-battle-status').textContent=''
       g10DoAttack(s.enemyPoke.type,'enemy','player',()=>{
-        const _mult = (typeof calcTypeMult === 'function') ? calcTypeMult(s.enemyPoke.type, s.playerPoke.type) : 1
+        const _mult = (typeof calcFullMult === 'function')
+          ? calcFullMult(s.enemyPoke.type, s.enemyPoke.type, s.playerPoke.type)
+          : 1
         const _dmg  = Math.max(1, Math.round(1 * _mult))
         s.playerHp=Math.max(0,s.playerHp-_dmg)
         g10RenderHp('g10-phpfill','g10-phpnums',s.playerHp,s.playerMaxHp)
@@ -9385,10 +9392,12 @@ function g13Answer(val, btn) {
     if (correct) {
       playCorrect()
       vibrate(12)
-      // Type effectiveness: scale base cfg.damage by attacker→defender multiplier
+      // Type effectiveness + STAB: scale base cfg.damage by full multiplier
       const _atkType = (s.megaForm ? s.chain.mega : s.evolved2 ? s.chain.evolved2 : s.evolved ? s.chain.evolved : s.chain.player).type
       const _defType = s.chain.wild.type
-      const _mult    = (typeof calcTypeMult === 'function') ? calcTypeMult(_atkType, _defType) : 1
+      const _mult    = (typeof calcFullMult === 'function')
+        ? calcFullMult(_atkType, _atkType, _defType)
+        : 1
       const _dmg     = Math.max(1, Math.round(s.cfg.damage * _mult))
       s.wildHp = Math.max(0, s.wildHp - _dmg)
       try { if (typeof applyHitFeedback === 'function') {
@@ -9509,9 +9518,11 @@ function g13WildCounterPhase() {
           setTimeout(()=>pspr.classList.remove('spr-hit','spr-flash'),450)
         }
         g13TypeHitFX(s.chain.wild.type, false)
-        // Type effectiveness on wild→player attack
+        // Type effectiveness + STAB on wild→player attack
         const _curForm = s.megaForm ? s.chain.mega : s.evolved2 ? s.chain.evolved2 : s.evolved ? s.chain.evolved : s.chain.player
-        const _wMult = (typeof calcTypeMult === 'function') ? calcTypeMult(s.chain.wild.type, _curForm.type) : 1
+        const _wMult = (typeof calcFullMult === 'function')
+          ? calcFullMult(s.chain.wild.type, s.chain.wild.type, _curForm.type)
+          : 1
         const _wDmg  = Math.max(1, Math.round(s.cfg.wildDamage * _wMult))
         s.playerHp = Math.max(0, s.playerHp - _wDmg)
         try { if (typeof applyHitFeedback === 'function') {
@@ -10341,10 +10352,12 @@ function g13bAnswer(val, btn) {
     // COMBO FX at streak >= 3
     if (s.streak >= 3) g13bShowCombo(s.streak)
 
-    // Reduce wild HP — apply type effectiveness
+    // Reduce wild HP — type effectiveness + STAB
     const _playerType = (g13bSavedPoke && g13bSavedPoke.type) || 'Electric'
     const _wildType = (s.currentWild && s.currentWild.type) || 'Normal'
-    const _bMult = (typeof calcTypeMult === 'function') ? calcTypeMult(_playerType, _wildType) : 1
+    const _bMult = (typeof calcFullMult === 'function')
+      ? calcFullMult(_playerType, _playerType, _wildType)
+      : 1
     const _bDmg  = Math.max(1, Math.round(1 * _bMult))
     s.wildHp = Math.max(0, s.wildHp - _bDmg)
     try { if (typeof applyHitFeedback === 'function') {
@@ -10653,11 +10666,13 @@ function g13bWildHitsPlayer(onDone) {
   if (lbl) lbl.textContent = s.isLegendary
     ? `🌟 SERANGAN LEGENDARIS! ${s.currentWild ? s.currentWild.name : 'Wild'} menyerang!`
     : `💥 ${s.currentWild ? s.currentWild.name : 'Wild'} menyerang!`
-  // Reduce player HP — apply type effectiveness
+  // Reduce player HP — type effectiveness + STAB
   const _base = s.isLegendary ? 2 : 1
   const _wType = s.currentWild ? (s.currentWild.type || 'normal') : 'normal'
   const _pType = (g13bSavedPoke && g13bSavedPoke.type) || 'Electric'
-  const _wbMult = (typeof calcTypeMult === 'function') ? calcTypeMult(_wType, _pType) : 1
+  const _wbMult = (typeof calcFullMult === 'function')
+    ? calcFullMult(_wType, _wType, _pType)
+    : 1
   const dmg = Math.max(1, Math.round(_base * _wbMult))
   s.playerHp = Math.max(0, s.playerHp - dmg)
   try { if (typeof applyHitFeedback === 'function') {
