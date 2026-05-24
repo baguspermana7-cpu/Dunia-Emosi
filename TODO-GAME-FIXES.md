@@ -2461,3 +2461,51 @@ Neither went through `openLevelSelect` where `_applyKodokSlot7Unlock` was placed
 - `style.css v=20260506n`
 - `math-rules v=20260506n`
 - `sw.js CACHE_VERSION v6-20260506n`
+
+## #146 — Session 2026-05-04 Pokemon type-effectiveness + sprite quality (commits b91c27a → b056bb5)
+
+### Visual type guidance system (10-layer in-context learning)
+- [x] **#146-A** Shared module `games/data/poke-type-chart.js` — POKE_EFF chart (kid-friendly 1.5×/0.75×/0.5×/1.0× multipliers), calcTypeMult, calcStab, calcFullMult, getWeaknesses, renderWeaknessSticker, spawnEffectivenessText, spawnFirstTimeHint, applyHitFeedback, playEffectivenessSfx
+- [x] **#146-B** Weakness sticker on enemy HP bar (G10/G13/G13B/G13C) — "🛡 Lemah: 💧 🪨"
+- [x] **#146-C** Move button auto-glow in G13C — green pulse for super-effective, amber dashed for resist
+- [x] **#146-D** Floating "✨ Super Efektif!" / "💧 Kurang Efektif…" / "💢 Sangat Lemah…" text on hit landed + sound cues
+- [x] **#146-E** One-time educational hint "💡 Air mengalahkan Api!" — sessionStorage-gated per pair (gold pill, top:8%, 1.8s)
+- [x] **#146-F** G13B bag picker counter highlight — green 🎯 for strong picks, amber 🛡 for resistant picks
+- [x] **#146-G** G13C trainer reveal counter chip — "(🎯 Counter: 💧 ⚡)" in encounter message + enemy swap message
+- [x] **#146-H** Type emoji prefix on G13C HP card names — "🔥 Charizard" instead of "Charizard"
+- [x] **#146-I** STAB (Same-Type Attack Bonus) 1.25× — canonical Pokemon mechanic added to all 4 battle games
+- [x] **#146-J** G13C smart enemy AI — 70% chance pick optimal move (effectiveness × STAB), 30% random
+
+### Critical bug fixes (from parallel audit + code-review + design-review)
+- [x] **#146-K** G13C win modal stuck (3-layer defense: z-index 99999 + overlay sweep + pointerdown/click dual-bind)
+- [x] **#146-L** Audit class-wide: 5 more `while (set.size < N)` unbounded loops bounded (math-rules, g21, g14, g15, g22)
+- [x] **#146-M** 17 Pokemon type corrections (Lucario fighting, Empoleon water, Magneton electric, Jynx ice, Slowbro water, Altaria dragon, Mr. Mime psychic, Mawile steel, Toxapex poison, Drapion poison, etc.)
+- [x] **#146-N** Sprite cascade race-condition fix in poke-sprite-loader.js — PRIMARY HD WebP gets 3s exclusive window before fallback race kicks in (Weedle no longer pixelated)
+- [x] **#146-O** Backfill 102 Gen 9 HD WebP sprites (fidough → hydrapple) via PokeAPI official-artwork → 1000×1000 PNG → resize 630×630 WebP
+- [x] **#146-P** New tool `scripts/download-gen9-hd-sprites.py` for future Gen 10+ backfill
+- [x] **#146-Q** G23 HD_DB rewritten to prefer local pokemondb_hd_alt2 WebP (was hardcoded CDN 180×180). Bag picker + TR Meowth battle now show 630×630 HD
+
+### UX polish (from frontend design review)
+- [x] **#146-R** Weakness sticker font 10→12px, icon 13→16px (kid legibility)
+- [x] **#146-S** Move button ✨ 11→16px + white text-shadow glow (reads as "tap me!" not decoration)
+- [x] **#146-T** Counter-weak / resist-eff softened: opacity .55→.78, dropped grayscale, red→amber dashed, ⛔→💤/🛡 (Pokemon feels tappable, not "broken")
+- [x] **#146-U** Educational hint top:22%→8% (was overlapping battle zone), flex-wrap for long Indonesian words, purple Dunia-Emosi brand accent
+- [x] **#146-V** "Seimbang" fallback dropped (kids 5-10 don't know the word) — render empty sticker
+- [x] **#146-W** display:flex → display:grid place-items:center (Android WebView compat)
+- [x] **#146-X** spawnEffectivenessText concurrent DOM cap = 2 (anti pile-up on rapid hits)
+- [x] **#146-Y** spawnFirstTimeHint in-memory Set guard (race-safe vs sessionStorage round-trip)
+- [x] **#146-Z** Hint duration 3s → 1.8s (less blocking of action zone)
+
+### Cache version history this session
+- v=20260506n → r → s → t (style/game/poke-type-chart/sprites/g23)
+- sw.js v6 → v7 → v8 → v9 → v10 → v11 → v12
+
+### Lessons added
+- L103 defer + inline IIFE = brittle on mobile (defer pattern revert)
+- L104 PWA cache amplifies stochastic bugs (engine _wrongs infinite loop)
+- L105 (deprecated, merged into L107)
+- L106 (deprecated, merged into L108)
+- L107 Modal stuck = patch z-index + pointer-events + tap binding together
+- L108 Always audit class-wide after any infinite-loop fix
+- L109 Sprite race cascade prefers smallest, not best quality
+- L110 Themed-gym contamination produces wrong Pokemon types

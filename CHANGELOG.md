@@ -1,3 +1,73 @@
+## [2026-05-04] — Type-effectiveness system + sprite quality (commits b91c27a → b056bb5)
+
+### NEW: Pokemon type-effectiveness 10-layer visual guidance (all 4 battle games)
+- Shared module `games/data/poke-type-chart.js` — kid-friendly Pokemon type chart (1.5× super, 0.75× resist, 0.5× immune, 1.25× STAB; max ~1.875× combined)
+- Per-game wiring: G10 / G13 / G13B / G13C all apply damage scaling + STAB bonus
+- Weakness sticker on enemy HP bar: "🛡 Lemah: 💧 🪨" — passive teach
+- Move button auto-glow (G13C): green pulse + ✨ for super-effective, amber dashed + 💤 for resistant
+- Floating hit text on damage: "✨ Super Efektif!" / "💧 Kurang Efektif…" / "💢 Sangat Lemah…"
+- One-time educational hint: "💡 Air mengalahkan Api!" (gold pill, top of screen, sessionStorage-gated per pair, 1.8s)
+- G13B bag picker counter highlight: 🎯 green for strong picks, 🛡 amber for resistant picks (counterpart warning)
+- G13C trainer reveal: "(🎯 Counter: 💧 ⚡)" hint chip in encounter + enemy-swap messages
+- Type emoji prefix on G13C HP names: "🔥 Charizard" instead of "Charizard"
+- G13C smart enemy AI: 70% optimal move selection by (effectiveness × STAB), 30% random
+
+### CRITICAL FIX: G13C battle win modal stuck (commit b91c27a)
+- 3-layer defense: CSS z-index 500→99999 + overlay sweep before render + pointerdown/click dual binding with `_gr_fired` idempotency
+- All known overlays (g13-evo, g13b-result, math-quiz, pause, bag) force-hidden at modal entry
+- Diagnostic console.log on tap handler
+
+### CRITICAL FIX: Sprite cascade race condition (commit cc319f1)
+- `attachSpriteCascade` was racing ALL urls in parallel; lightest source (10 KB SVG) always beat 500 KB HD WebP → kid saw pixelated sprites despite HD existing
+- Two-phase fix: PRIMARY url (HD) gets 3s exclusive window. On error (instant 404) or timeout → fallback race kicks in. HD wins on any modern network.
+- User-reported Weedle "patah-patah" issue resolved
+
+### BACKFILL: 102 Gen 9 HD WebP sprites (commit 958748b)
+- Pokemon IDs 924-1025 (fidough → hydrapple) — Indigo Disk DLC roster
+- Source: PokeAPI official-artwork 1000×1000 PNG → PIL LANCZOS resize → 630×630 WebP quality=88
+- Reusable script: `scripts/download-gen9-hd-sprites.py` (idempotent, --force re-download, --dry-run preview)
+- Folder size: 54 MB across 1128 sprites
+
+### TYPE ACCURACY: 17 corrections in g13c-pixi.html + game.js (commit 734501d)
+- Root cause: themed-gym contamination (Lucario in Steel gym mislabeled `steel` instead of canonical Fighting)
+- Fixed: Lucario, Empoleon, Magneton, Magnemite, Jynx, Slowbro (×3), Altaria, Stunfisk, Mr. Mime, Murkrow, Toxapex, Mawile, Drapion, Noivern, Azumarill, Bastiodon, Forretress
+- DELIBERATELY KEPT: Pidgey family `flying` (themed gym intent over canonical Normal accuracy)
+
+### AUDIT: 5 more unbounded-while loops bounded (commit e8fbbbf)
+- Same bug class as g23-engine `_wrongs()` fixed earlier in session
+- `math-rules.js` (used by all math games), `g21-pixi.html`, `g14.html`, `g15-pixi.html`, `g22-candy.html`
+- All `while (collection.size < N)` loops now have safety counter + sequential pad
+
+### G23 (commit b056bb5): HD_DB now uses local pokemondb_hd_alt2 instead of CDN low-res
+- `_hdAlt2(slug)` helper with regional suffix normalisation (-midday/-alola/-galar → base)
+- Falls back to CDN only for slugs not in POKE_IDS
+- Bag picker thumbnails + TR Meowth battle now 630×630 HD (was 180×180)
+- New script dep: `data/poke-sprite-cdn.js` loaded so POKE_IDS available at G23_POKEMON[] init
+
+### UX polish (from frontend design review)
+- Weakness sticker font 10→12px, icon 13→16px
+- Move button ✨ 11→16px + white text-shadow
+- Counter-weak / resist-eff softened: opacity .55→.78, no grayscale, red→amber, ⛔→💤/🛡
+- Hint top:22%→8% + wrap + purple brand accent
+- "Seimbang" fallback dropped (kid vocabulary)
+- display:flex → display:grid place-items:center (Android compat)
+- spawnEffectivenessText concurrent cap = 2
+- spawnFirstTimeHint in-memory Set guard (race-safe)
+- Hint duration 3s → 1.8s
+
+### Cache version history
+- style.css / game.js / poke-type-chart.js v=20260506n → r
+- g23-pixi v=20260506k → t
+- poke-sprite-loader v=20260506s
+- poke-sprite-cdn v=20260506t
+- sw.js CACHE_VERSION v6 → v12
+
+### Lessons added (LESSONS-LEARNED.md L107-L110)
+- L107 Modal stuck = patch z-index + pointer-events + tap binding together
+- L108 Always audit class-wide after any infinite-loop fix
+- L109 Sprite race cascade prefers smallest, not best quality
+- L110 Themed-gym contamination produces wrong Pokemon types
+
 ## [2026-05-04] — PWA stability + critical bug fixes (commits eb9b3de → e8fbbbf)
 
 ### Fixed: ROOT CAUSE — `_wrongs()` infinite loop in g23-question-engine.js

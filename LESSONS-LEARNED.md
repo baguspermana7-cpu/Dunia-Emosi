@@ -301,3 +301,26 @@ Skip any of these → silent dead code.
 **Problem**: Fixed `_wrongs()` infinite loop in engine. Trusted that was unique. Wasn't. `grep` found 5 more sites with the same `while (collection.size < N) push-may-be-duplicate` pattern in math-rules.js, g21, g14, g15, g22.
 **Solution**: Immediate codebase grep: `grep -rn 'while.*\.size <\|while.*length < [0-9]' --include='*.js' --include='*.html'`. Filter out `pad <\|safety++\|attempts++` (already-bounded). Fix every remaining unbounded site.
 **Rule**: Every infinite-loop fix triggers an audit pass — never assume the bug is local. Same template + same anti-pattern often gets pasted across modules.
+
+## L107 — Modal stuck = patch z-index + pointer-events + tap binding together (2026-05-04)
+**Problem**: G13C win modal showed but every button was dead — user couldn't tap "Level Berikutnya". Single-cause hypothesis (z-index alone, or pointer-events alone) wouldn't have caught the real bug.
+**Solution**: 3-layer defense patched simultaneously:
+1. CSS z-index 500→99999 (above any stale pause-overlay), explicit `pointer-events:auto` on `.show` + `.gr-btn` + `touch-action:manipulation`
+2. Overlay sweep in showGameResult: force-hide ALL known modals (g13-evo, g13b-result, math-quiz, pause, bag, quiz-panel) before rendering — defensive against pointer-events leak
+3. Buttons bind to BOTH `pointerdown` AND `click` with `_gr_fired` idempotency flag (mobile Chrome ghost-click protection)
+**Rule**: When a modal's buttons appear but don't respond, always patch z-index + pointer-events + touch event binding together. Never trust single-cause hypothesis. Add `console.log` on tap handler for diagnostic.
+
+## L108 — Always audit class-wide after fixing any infinite-loop bug (2026-05-04)
+**Problem**: Fixed `_wrongs()` infinite loop in g23-question-engine.js. Trusted that was unique. Wasn't. `grep` audit found 5 more sites with the same `while (collection.size < N) push-may-be-duplicate` pattern: math-rules.js (used by ALL math games), g21, g14, g15, g22.
+**Solution**: After fixing one infinite-loop bug, immediate codebase grep: `grep -rn 'while.*\.size <\|while.*length < [0-9]'` and fix every unbounded site. Already-bounded ones (containing `pad <`, `safety++`, `attempts++`) are safe.
+**Rule**: Every infinite-loop fix triggers an audit pass — never assume the bug is local. Same template + same anti-pattern often gets pasted across modules. Documented grep query above.
+
+## L109 — Pokemon sprite race cascade prefers smallest, not best quality (2026-05-04)
+**Problem**: User reported Weedle (id 13) showing as "patah-patah" (pixelated) in G13 evolution game despite HD WebP being available. Audit traced to `attachSpriteCascade` hotfix #120-Z (2026-05-02): all sources launched as parallel `new Image()` probes, first to load wins. Lightest fallback ALWAYS won the race on any normal network (10 KB SVG beats 500 KB HD WebP every time).
+**Solution**: Two-phase cascade in poke-sprite-loader.js — PRIMARY url (highest quality) gets 3s exclusive window. If it loads → use it. If it errors (404 fires immediately, ~50ms) OR times out at 3s → THEN race remaining fallbacks. Net: HD wins on any modern network. Missing-HD Pokemon don't waste 3s — instant onerror falls through.
+**Rule**: When designing fallback chains for assets with varying sizes, NEVER race them in parallel without priority. Either sequential with per-step timeout, OR primary-first with secondary-race. "First to load wins" optimizes for speed but breaks quality preference.
+
+## L110 — Themed-gym contamination produces wrong Pokemon types (2026-05-04)
+**Problem**: 17 Pokemon entries across g13c-pixi.html + game.js had wrong primary `type` fields. Pattern: when Pokemon was added to a themed gym (Steel gym, Flying gym, etc.) the SECONDARY type matching the theme was used as primary. Examples: Lucario `steel` instead of `fighting` (canonical Fighting/Steel), Empoleon `steel` instead of `water` (Water/Steel), Magneton `steel` instead of `electric` (Electric/Steel).
+**Solution**: Surgical edit each entry to canonical primary type. Skip entries where thematic intent is clearly stronger than accuracy (Pidgey family in flying gym — kid expectation that "all flying gym Pokemon are flying" outweighs canonical "Pidgey is Normal/Flying primary Normal").
+**Rule**: When adding Pokemon to themed contexts, always derive type from POKEMON_DB canonical data (primary type), not from the gym theme. Acceptable to keep thematic over canonical when game-design intent is explicit (Pidgey example), but document the tradeoff.
