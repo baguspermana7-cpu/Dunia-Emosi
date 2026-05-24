@@ -171,7 +171,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <img id="tr-balloon" src="../assets/Pokemon/g23/tr-balloon.gif" alt="Team Rocket">
 <div id="tr-warning">⚠️ Team Rocket Muncul!</div>
 <!-- Debug version marker (Hotfix #147) — confirms cache freshness -->
-<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260506m (fix-engine-loop)</div>
+<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260506t (hd-sprites)</div>
 
 <!-- HUD -->
 <div id="hud-top">
@@ -282,6 +282,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 </script>
 <script src="../shared/rz-responsive.js?v=20260422i"></script>
 <script src="lib/pixi.min.js?v=8"></script>
+<script src="data/poke-sprite-cdn.js?v=20260506t"></script>
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/save-engine.js?v=20260501h"></script>
 <script src="data/g23-question-engine.js?v=20260506m"></script>
@@ -308,7 +309,22 @@ document.getElementById('quiz-total').textContent  = Math.min(8 + Math.floor((cf
 // even when the URL is otherwise unchanged.
 const LOC_V = '20260506a'
 const LOC = (n, ext='webp') => `../assets/Pokemon/g23/${n}.${ext}?v=${LOC_V}`
-const HD_DB = n => `https://img.pokemondb.net/sprites/home/normal/${n}.png`
+// HD_DB prefers local pokemondb_hd_alt2 WebP (630×630, 30-40 KB, alpha) when
+// POKE_IDS map is loaded. Falls back to pokemondb CDN low-res (180×180 PNG)
+// for slugs not in the map (e.g. regional forms like 'lycanroc-midday').
+// User reported non-HD Pokemon images in 2026-05-04 audit — root cause was
+// this map returning CDN-low-res for all entries unconditionally.
+function _hdAlt2(slug) {
+  const POKE_IDS = (typeof window !== 'undefined' && window.POKE_IDS) || null;
+  if (!POKE_IDS) return null;
+  // Normalize regional/form suffixes to base species name for ID lookup.
+  const norm = slug.replace(/-midday$|-midnight$|-dusk$|-alola$|-galar$|-hisui$|-paldea$/, '');
+  const id = POKE_IDS[norm];
+  if (!id) return null;
+  const fname = norm.replace(/-/g, '_');
+  return `../assets/Pokemon/pokemondb_hd_alt2/${String(id).padStart(4,'0')}_${fname}.webp`;
+}
+const HD_DB = n => _hdAlt2(n) || `https://img.pokemondb.net/sprites/home/normal/${n}.png`
 // All Pokemon use LOCAL animated WebP from assets/Pokemon/g23/ (user-provided
 // running sprites). Lycanroc/Cinderace RESTORED — user has the assets locally.
 // chespin.png and lucario.png are static (no .webp version locally).
@@ -1432,18 +1448,21 @@ function engageTRBattle(){
   // Trainer sprite
   const trspr=document.getElementById('tr-trainer-sprite')
   trspr.src=trainer.sprite; trspr.style.display=''; trspr.onerror=function(){ this.style.display='none' }
-  // Enemy Pokemon
+  // Enemy Pokemon (TR Meowth balloon battle) — prefer local HD WebP
   const pokeDbSlug=trPoke.slug.replace(/\s+/g,'-')
-  document.getElementById('tr-poke-enemy').src=
+  const enemyHD = _hdAlt2(pokeDbSlug)
+  document.getElementById('tr-poke-enemy').src = enemyHD ||
     `https://img.pokemondb.net/sprites/home/normal/${pokeDbSlug}.png`
   document.getElementById('tr-poke-enemy').onerror=function(){
-    this.src=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${Math.ceil(Math.random()*150)}.png`
+    this.src=`https://img.pokemondb.net/sprites/home/normal/${pokeDbSlug}.png`
     this.onerror=null
   }
-  // Player Pokemon (HD static sprite)
+  // Player Pokemon (HD static sprite) — prefer local HD WebP
   const playerSlug=playerPoke.name.toLowerCase().replace(/\s+/g,'-')
   const playerPokeEl=document.getElementById('tr-poke-player')
-  playerPokeEl.src=`https://img.pokemondb.net/sprites/home/normal/${playerSlug}.png`
+  const playerHD = _hdAlt2(playerSlug)
+  playerPokeEl.src = playerHD ||
+    `https://img.pokemondb.net/sprites/home/normal/${playerSlug}.png`
   playerPokeEl.onerror=function(){ this.src=playerPoke.src; this.onerror=null }
   updateTRHPDisplay()
   // Reset atk-name
