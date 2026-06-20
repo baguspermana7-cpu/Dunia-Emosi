@@ -279,6 +279,20 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 .tw-counter-hint{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;font-size:11px;font-weight:700;color:#fcd34d;background:rgba(15,23,42,0.7);border:1px solid rgba(252,211,77,0.45);border-radius:12px;margin-top:6px}
 .tw-counter-hint .tch-label{color:rgba(255,255,255,0.75);font-size:10px}
 .tw-counter-hint .tch-icon{font-size:13px;line-height:1}
+/* ── VFX polish layer (2026-05-04) ── */
+.eff-screen-flash{position:fixed;inset:0;z-index:8500;pointer-events:none;background:radial-gradient(circle at 50% 50%,rgba(252,211,77,0.42) 0%,rgba(34,197,94,0.18) 38%,transparent 70%);mix-blend-mode:screen;opacity:0;animation:effScreenFlash 320ms cubic-bezier(.34,1.0,.5,1) forwards}
+.eff-screen-flash.super{background:radial-gradient(circle at 50% 50%,rgba(252,211,77,0.55) 0%,rgba(34,197,94,0.25) 35%,transparent 68%)}
+@keyframes effScreenFlash{0%{opacity:0}18%{opacity:.95}60%{opacity:.45}100%{opacity:0}}
+.eff-particle{position:fixed;width:8px;height:8px;border-radius:50%;pointer-events:none;z-index:8800;transform:translate(-50%,-50%);box-shadow:0 0 8px currentColor,0 0 16px currentColor;animation:effParticleBurst 880ms cubic-bezier(.18,.6,.4,1) forwards;will-change:transform,opacity}
+@keyframes effParticleBurst{0%{transform:translate(-50%,-50%) scale(0.4);opacity:1}35%{transform:translate(calc(-50% + var(--dx) * 0.4),calc(-50% + var(--dy) * 0.4)) scale(1.2);opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(0.2);opacity:0}}
+.eff-shake-super{animation:effShakeSuper 520ms cubic-bezier(.36,.07,.19,.97) both !important}
+@keyframes effShakeSuper{0%,100%{transform:translate3d(0,0,0)}10%{transform:translate3d(-8px,2px,0)}20%{transform:translate3d(8px,-3px,0)}30%{transform:translate3d(-10px,4px,0)}40%{transform:translate3d(10px,-2px,0)}50%{transform:translate3d(-7px,3px,0)}60%{transform:translate3d(7px,-4px,0)}70%{transform:translate3d(-5px,2px,0)}80%{transform:translate3d(5px,-2px,0)}90%{transform:translate3d(-2px,1px,0)}}
+.eff-shake-resist{animation:effShakeResist 320ms ease-in-out both !important}
+@keyframes effShakeResist{0%,100%{transform:translate3d(0,0,0)}30%{transform:translate3d(-3px,1px,0)}60%{transform:translate3d(3px,-1px,0)}}
+.eff-critical{position:fixed;z-index:9100;font-family:'Fredoka One',cursive,sans-serif;font-size:19px;font-weight:900;letter-spacing:1.5px;color:#fffbeb;background:linear-gradient(135deg,#f59e0b 0%,#dc2626 50%,#f59e0b 100%);background-size:200% 200%;padding:4px 12px;border-radius:14px;border:2px solid #fff;box-shadow:0 0 24px rgba(245,158,11,0.65),0 4px 12px rgba(0,0,0,0.4);text-shadow:0 2px 6px rgba(0,0,0,0.65),0 0 3px rgba(255,255,255,0.4);pointer-events:none;transform:translate(-50%,0) scale(0.5) rotate(-3deg);opacity:0;animation:effCriticalPop 1.2s cubic-bezier(.34,1.56,.64,1) forwards,effCriticalGradient 1.2s linear forwards}
+@keyframes effCriticalPop{0%{transform:translate(-50%,4px) scale(0.4) rotate(-8deg);opacity:0}18%{transform:translate(-50%,-6px) scale(1.35) rotate(4deg);opacity:1}30%{transform:translate(-50%,-10px) scale(1.05) rotate(-2deg);opacity:1}75%{transform:translate(-50%,-28px) scale(1.05) rotate(0deg);opacity:1}100%{transform:translate(-50%,-52px) scale(0.95) rotate(2deg);opacity:0}}
+@keyframes effCriticalGradient{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+@media (max-width:380px){.eff-particle{width:6px;height:6px}.eff-critical{font-size:16px;padding:3px 9px}}
 </style>
 </head>
 <body>
@@ -420,7 +434,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 <script src="data/save-engine.js?v=20260501e"></script>
 <script src="data/math-rules.js?v=20260501d"></script>
 <script src="data/move-id-translations.js?v=20260505k"></script>
-<script src="data/poke-type-chart.js?v=20260506r"></script>
+<script src="data/poke-type-chart.js?v=20260506v"></script>
 <script src="game-modal.js?v=20260424g"></script>
 <script src="battle-sprite-engine.js?v=20260502p"></script>
 
@@ -1994,9 +2008,10 @@ function executeMove(moveIdx, mathCorrect){
       spawnTypeHitFX(epEl, move.type);
       ep.hp = Math.max(0, ep.hp-dmg);
       updateHpUI();
-      // Floating "Super Efektif!" / "Kurang Efektif…" text + sfx
+      // Floating "Super Efektif!" / "Kurang Efektif…" text + VFX + sfx
+      // 4th arg = moveType enables CRITICAL detection on super+STAB combo
       try { if (typeof window.applyHitFeedback === 'function') {
-        window.applyHitFeedback(epEl, move.type, ep.type)
+        window.applyHitFeedback(epEl, pp.type, ep.type, move.type)
       }} catch(_){}
 
       const r = epEl.getBoundingClientRect();
@@ -2096,9 +2111,10 @@ function enemyTurn(){
       pp.hp = Math.max(0, pp.hp-dmg);
       updateHpUI();
       flashColor(moveType);
-      // Floating effectiveness text + sfx for enemy → player attack
+      // Floating effectiveness text + VFX + sfx for enemy → player attack
+      // 4th arg enables CRITICAL detection (enemy AI super+STAB combo)
       try { if (typeof window.applyHitFeedback === 'function') {
-        window.applyHitFeedback(ppEl, moveType, pp.type)
+        window.applyHitFeedback(ppEl, ep.type, pp.type, moveType)
       }} catch(_){}
 
       const r = ppEl.getBoundingClientRect();

@@ -396,6 +396,37 @@ THEMATIC_EXCEPTIONS = {
     'cloyster', 'dewgong',                             # water/ice → shown as ice
     'slowpoke', 'starmie',                             # water/* → shown as psychic
     'sceptile', 'swampert',                            # rare alt — shown as canonical
+    # Themed-gym roster exceptions (Pokemon shown as their thematic SECONDARY
+    # type to fit the gym narrative — designer intent, NOT contamination):
+    # Ice gym: water/ice Pokemon shown as ice
+    'lapras', 'seel',
+    # Rock gym
+    'corsola', 'relicanth', 'shuckle', 'tyrantrum', 'rhyhorn', 'rhyperior',
+    # Fairy gym: normal/fairy Pokemon shown as fairy
+    'gardevoir', 'wigglytuff',
+    # Water gym: normal/water shown as water
+    'bibarel',
+    # Dark gym: ground/dark
+    'krookodile',
+    # Fire gym: psychic/fire, dark/fire, poison/fire
+    'victini', 'houndoom', 'salazzle',
+    # Flying gym
+    'pikipek', 'toucannon', 'swablu', 'swoobat', 'unfezant', 'swanna',
+    'braviary', 'sigilyph', 'mandibuzz',
+    # Dragon gym (Eternatus Mega Eternamax, Turtonator dragon kin)
+    'eternatus', 'turtonator',
+    # Psychic gym (ground/psychic, ice/psychic in psychic-themed gym)
+    'claydol', 'jynx',
+    # Ice gym again (grass/ice shown as ice)
+    'abomasnow',
+    # Ground gym (water/ground)
+    'palpitoad', 'seismitoad',
+    # Electric gym (bug/electric)
+    'joltik',
+    # Ghost gym (ground/ghost)
+    'runerigus',
+    # Poison gym (fighting/poison, dark/poison)
+    'sneasler', 'overqwil',
 }
 
 PATTERN = re.compile(r"slug:'([a-z0-9\-]+)',type:'([a-zA-Z]+)'")

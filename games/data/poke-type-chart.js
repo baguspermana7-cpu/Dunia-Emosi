@@ -262,18 +262,92 @@
   window.playEffectivenessSfx = playEffectivenessSfx;
 
   // ── Convenience combined call for after-hit feedback ──────────────────
-  function applyHitFeedback(defTargetEl, atkType, defType) {
+  // Supports an optional fourth arg `moveType` so games that have a distinct
+  // move (G13C move-pool) can pass it for STAB-combo critical detection.
+  function applyHitFeedback(defTargetEl, atkType, defType, moveType) {
     const m = calcTypeMult(atkType, defType);
     spawnEffectivenessText(defTargetEl, m);
     playEffectivenessSfx(m);
-    // First-time educational hint: only on SUPER-EFFECTIVE hits, once per
-    // unique atk→def pair per session. Teaches the relationship explicitly.
+    // VFX layers (2026-05-04 polish):
     if (m >= 1.5) {
+      try { spawnScreenFlash('super') } catch(_){}
+      try { spawnHitParticles(defTargetEl, atkType, 12) } catch(_){}
+      try { applyDefenderShake(defTargetEl, 'super') } catch(_){}
+      // CRITICAL combo: super-effective + STAB → extra fanfare
+      if (moveType && calcStab(moveType, atkType) > 1) {
+        try { spawnCriticalLabel(defTargetEl) } catch(_){}
+      }
       try { spawnFirstTimeHint(defTargetEl, atkType, defType) } catch(_){}
+    } else if (m <= 0.75) {
+      try { applyDefenderShake(defTargetEl, 'resist') } catch(_){}
     }
     return m;
   }
   window.applyHitFeedback = applyHitFeedback;
+
+  // ── VFX: brief screen flash on super-effective hit ────────────────────
+  function spawnScreenFlash(kind) {
+    // Cap concurrent flash overlays to 1 (rapid hits don't stack)
+    const existing = document.querySelector('.eff-screen-flash');
+    if (existing) { try { existing.remove() } catch(_){} }
+    const flash = document.createElement('div');
+    flash.className = 'eff-screen-flash ' + (kind === 'super' ? 'super' : 'normal');
+    document.body.appendChild(flash);
+    setTimeout(() => { try { flash.remove() } catch(_){} }, 320);
+  }
+  window.spawnScreenFlash = spawnScreenFlash;
+
+  // ── VFX: spark/particle burst from defender on super-effective ────────
+  function spawnHitParticles(targetEl, atkType, count) {
+    if (!targetEl) return;
+    const rect = targetEl.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const color = (window.TYPE_COLOR && window.TYPE_COLOR[_norm(atkType)]) || '#fbbf24';
+    const N = Math.max(6, Math.min(count || 10, 16));
+    for (let i = 0; i < N; i++) {
+      const p = document.createElement('div');
+      p.className = 'eff-particle';
+      const angle = (Math.PI * 2 * i) / N + (Math.random() * 0.4 - 0.2);
+      const dist = 60 + Math.random() * 40;
+      p.style.left = cx + 'px';
+      p.style.top = cy + 'px';
+      p.style.background = color;
+      p.style.setProperty('--dx', (Math.cos(angle) * dist).toFixed(1) + 'px');
+      p.style.setProperty('--dy', (Math.sin(angle) * dist).toFixed(1) + 'px');
+      p.style.animationDelay = (Math.random() * 60) + 'ms';
+      document.body.appendChild(p);
+      setTimeout(() => { try { p.remove() } catch(_){} }, 950);
+    }
+  }
+  window.spawnHitParticles = spawnHitParticles;
+
+  // ── VFX: defender sprite shake (intensity per multiplier) ─────────────
+  function applyDefenderShake(targetEl, intensity) {
+    if (!targetEl) return;
+    const cls = intensity === 'super' ? 'eff-shake-super' : 'eff-shake-resist';
+    targetEl.classList.remove('eff-shake-super', 'eff-shake-resist');
+    // Force reflow so re-adding triggers the animation again
+    void targetEl.offsetWidth;
+    targetEl.classList.add(cls);
+    setTimeout(() => { try { targetEl.classList.remove(cls) } catch(_){} },
+               intensity === 'super' ? 520 : 320);
+  }
+  window.applyDefenderShake = applyDefenderShake;
+
+  // ── VFX: "CRITICAL!" label on super-effective + STAB combo ────────────
+  function spawnCriticalLabel(targetEl) {
+    if (!targetEl) return;
+    const rect = targetEl.getBoundingClientRect();
+    const label = document.createElement('div');
+    label.className = 'eff-critical';
+    label.textContent = 'CRITICAL!';
+    label.style.left = (rect.left + rect.width / 2) + 'px';
+    label.style.top  = (rect.top - 28) + 'px';
+    document.body.appendChild(label);
+    setTimeout(() => { try { label.remove() } catch(_){} }, 1200);
+  }
+  window.spawnCriticalLabel = spawnCriticalLabel;
 
   // ── One-time educational tooltip ──────────────────────────────────────
   // "💡 [Air] mengalahkan [Api]!" — only shows ONCE per type-pair per session.
