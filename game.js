@@ -1392,7 +1392,7 @@ function openGymGame() {
   playClick()
   // MUST remain synchronous — page redirects on next line, no time for async work.
   _applyKodokSlot7Unlock()   // runs once, guard inside; slot-7+frog preset
-  window.location.href = 'games/g13c-pixi.html?v=20260506z'
+  window.location.href = 'games/g13c-pixi.html?v=20260506aa'
 }
 
 function g13cBuildLetterSelect() {
@@ -2605,7 +2605,30 @@ function isVibrateOn(){return localStorage.getItem('dunia-emosi-vibrate')!=='off
 function vibrate(pattern){if(isVibrateOn()&&navigator.vibrate)navigator.vibrate(pattern)}
 function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx}
 function playTone(freq,dur,type='sine',vol=0.2){if(!isSoundOn())return;try{const ctx=getAudio(),osc=ctx.createOscillator(),gain=ctx.createGain();osc.connect(gain);gain.connect(ctx.destination);osc.type=type;osc.frequency.value=freq;gain.gain.setValueAtTime(vol,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);osc.start();osc.stop(ctx.currentTime+dur)}catch(e){}}
-function playCorrect(){playTone(523,0.1,'sine',0.2);setTimeout(()=>playTone(659,0.1,'sine',0.2),100);setTimeout(()=>playTone(784,0.2,'sine',0.25),200);setTimeout(()=>playTone(1047,0.3,'sine',0.2),340);vibrate([20,40,20])/* Task #87: haptic parity per AUDIT-2026-04-25 P2-6 — double-tap pattern for correct answer engagement */}
+function playCorrect(){playTone(523,0.1,'sine',0.2);setTimeout(()=>playTone(659,0.1,'sine',0.2),100);setTimeout(()=>playTone(784,0.2,'sine',0.25),200);setTimeout(()=>playTone(1047,0.3,'sine',0.2),340);vibrate([20,40,20]);try{spawnCorrectConfetti()}catch(_){}/* Task #87: haptic parity per AUDIT-2026-04-25 P2-6 — double-tap pattern for correct answer engagement */}
+
+// Small confetti burst on correct answer — universal helper for G1-G9.
+// Cap concurrent bursts to 1 so rapid streaks don't pile up.
+function spawnCorrectConfetti(){
+  const existing = document.querySelector('.g-confetti-burst')
+  if (existing) { try { existing.remove() } catch(_){} }
+  const wrap = document.createElement('div')
+  wrap.className = 'g-confetti-burst'
+  const emojis = ['🎉','⭐','✨','💫','🌟','🎊']
+  const N = 12
+  for (let i = 0; i < N; i++) {
+    const p = document.createElement('span')
+    p.className = 'g-confetti-piece'
+    p.textContent = emojis[Math.floor(Math.random() * emojis.length)]
+    p.style.left = (10 + Math.random() * 80) + '%'
+    p.style.animationDelay = (Math.random() * 250) + 'ms'
+    p.style.animationDuration = (1300 + Math.random() * 500) + 'ms'
+    p.style.fontSize = (16 + Math.random() * 14) + 'px'
+    wrap.appendChild(p)
+  }
+  document.body.appendChild(wrap)
+  setTimeout(() => { try { wrap.remove() } catch(_){} }, 2200)
+}
 let _wrongAudio=null;function playWrong(){if(!isSoundOn())return;try{if(!_wrongAudio){_wrongAudio=new Audio('assets/wrong-buzzer.mp3');_wrongAudio.volume=0.7}const a=_wrongAudio.cloneNode();a.volume=0.7;a.play().catch(()=>{playTone(280,0.35,'sawtooth',0.1);setTimeout(()=>playTone(220,0.3,'sawtooth',0.08),150)})}catch(e){playTone(280,0.35,'sawtooth',0.1);setTimeout(()=>playTone(220,0.3,'sawtooth',0.08),150)}}
 function playClick(){playTone(440,0.06,'sine',0.1)}
 
@@ -13256,7 +13279,7 @@ function initGame23() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g23Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g23-pixi.html?v=20260506z'
+  window.location.href = 'games/g23-pixi.html?v=20260506aa'
 }
 
 function initGame24() {

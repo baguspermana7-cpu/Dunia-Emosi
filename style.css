@@ -6896,3 +6896,120 @@ html.eff-viewport-shake {
   .eff-move-title { font-size: 20px; padding: 6px 16px; letter-spacing: 1.5px; }
   .eff-star-burst { font-size: 22px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   NON-POKEMON GAME UI POLISH (2026-05-04)
+   Universal layer that enhances G1-G9 question cards + choice buttons
+   + correct/wrong feedback. Targets the common .g[1-9]-* class patterns.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Question entry — gentle fade-up on each new question ── */
+.g1-question, .g2-question, .g3-question, .g4-question, .g5-question,
+.g6-question, .g7-question, .g8-question, .g9-question,
+.question-text, .qz-question {
+  animation: questionEntry 0.55s cubic-bezier(.34,1.4,.5,1) backwards;
+  will-change: transform, opacity;
+}
+@keyframes questionEntry {
+  0%   { transform: translateY(14px) scale(0.92); opacity: 0; }
+  60%  { transform: translateY(-2px) scale(1.02); opacity: 1; }
+  100% { transform: translateY(0) scale(1.0); opacity: 1; }
+}
+
+/* ── Choice button hover lift + focus ring (touch + desktop) ── */
+.g1-choice-btn, .g2-choice-btn, .g3-choice-btn, .g4-choice-btn,
+.g5-choice-btn, .g6-choice-btn, .g7-choice-btn, .g8-choice-btn,
+.g9-choice-btn {
+  transition: transform 0.18s cubic-bezier(.34,1.56,.64,1),
+              box-shadow 0.18s,
+              filter 0.18s !important;
+  position: relative;
+}
+.g1-choice-btn:hover, .g2-choice-btn:hover, .g3-choice-btn:hover,
+.g4-choice-btn:hover, .g5-choice-btn:hover, .g6-choice-btn:hover,
+.g7-choice-btn:hover, .g8-choice-btn:hover, .g9-choice-btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  filter: brightness(1.05) saturate(1.05);
+}
+.g1-choice-btn:focus-visible, .g2-choice-btn:focus-visible,
+.g3-choice-btn:focus-visible, .g4-choice-btn:focus-visible,
+.g5-choice-btn:focus-visible, .g6-choice-btn:focus-visible,
+.g7-choice-btn:focus-visible, .g8-choice-btn:focus-visible,
+.g9-choice-btn:focus-visible {
+  outline: 3px solid #8B5CF6;
+  outline-offset: 3px;
+}
+
+/* ── Correct answer celebration — pulse + lingering glow ── */
+.g1-choice-btn.correct, .g2-choice-btn.correct, .g3-choice-btn.correct,
+.g4-choice-btn.correct, .g5-choice-btn.correct, .g6-choice-btn.correct,
+.g7-choice-btn.correct, .g8-choice-btn.correct, .g9-choice-btn.correct {
+  animation: answerCorrect 0.7s cubic-bezier(.34,1.56,.64,1) !important;
+}
+@keyframes answerCorrect {
+  0%   { transform: scale(1.0); box-shadow: 0 4px 0 currentColor, 0 0 0 rgba(20,184,166,0); }
+  25%  { transform: scale(1.12); box-shadow: 0 6px 0 currentColor, 0 0 32px rgba(20,184,166,0.7); }
+  60%  { transform: scale(1.04); box-shadow: 0 5px 0 currentColor, 0 0 22px rgba(20,184,166,0.5); }
+  100% { transform: scale(1.0);  box-shadow: 0 4px 0 currentColor, 0 0 16px rgba(20,184,166,0.3); }
+}
+
+/* ── Wrong answer — flash red + shake gently ── */
+.g1-choice-btn.wrong, .g2-choice-btn.wrong, .g3-choice-btn.wrong,
+.g4-choice-btn.wrong, .g5-choice-btn.wrong, .g6-choice-btn.wrong,
+.g7-choice-btn.wrong, .g8-choice-btn.wrong, .g9-choice-btn.wrong {
+  animation: answerWrong 0.55s cubic-bezier(.36,.07,.19,.97) !important;
+}
+@keyframes answerWrong {
+  0%, 100% { transform: translate3d(0, 0, 0); background-color: inherit; }
+  15%  { transform: translate3d(-6px, 1px, 0); background-color: #FEE2E2; }
+  30%  { transform: translate3d(6px, -1px, 0); }
+  45%  { transform: translate3d(-5px, 1px, 0); background-color: #FEE2E2; }
+  60%  { transform: translate3d(5px, -1px, 0); }
+  75%  { transform: translate3d(-3px, 1px, 0); }
+}
+
+/* ── Generic confetti burst container (caller-spawned) ── */
+.g-confetti-burst {
+  position: fixed;
+  inset: 0;
+  z-index: 9100;
+  pointer-events: none;
+  overflow: hidden;
+}
+.g-confetti-piece {
+  position: absolute;
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
+  font-size: 22px;
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,0.4));
+  animation: gConfettiFall 1.5s cubic-bezier(.45,.05,.55,.95) forwards;
+  will-change: transform, opacity;
+}
+@keyframes gConfettiFall {
+  0%   { transform: translateY(-30px) rotate(0) scale(0.6); opacity: 0; }
+  15%  { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { transform: translateY(50vh) rotate(540deg) scale(1.0); opacity: 0; }
+}
+
+/* ── Mascot bubble pulse — draw kid's attention gently ── */
+.mg-bubble {
+  animation: mgBubblePulse 2.4s ease-in-out infinite;
+}
+@keyframes mgBubblePulse {
+  0%, 100% { transform: scale(1.0); box-shadow: 0 4px 12px rgba(139,92,246,0.18); }
+  50%      { transform: scale(1.015); box-shadow: 0 6px 18px rgba(139,92,246,0.32); }
+}
+
+/* ── Reduced-motion fallback — respect user preference ── */
+@media (prefers-reduced-motion: reduce) {
+  .g1-question, .g2-question, .g3-question, .g4-question, .g5-question,
+  .g6-question, .g7-question, .g8-question, .g9-question,
+  .question-text, .qz-question,
+  .g1-choice-btn:hover, .g2-choice-btn:hover, .g3-choice-btn:hover,
+  .g4-choice-btn:hover, .g5-choice-btn:hover, .g6-choice-btn:hover,
+  .g7-choice-btn:hover, .g8-choice-btn:hover, .g9-choice-btn:hover,
+  .mg-bubble {
+    animation: none !important;
+    transform: none !important;
+  }
+}
