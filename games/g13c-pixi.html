@@ -293,6 +293,18 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 @keyframes effCriticalPop{0%{transform:translate(-50%,4px) scale(0.4) rotate(-8deg);opacity:0}18%{transform:translate(-50%,-6px) scale(1.35) rotate(4deg);opacity:1}30%{transform:translate(-50%,-10px) scale(1.05) rotate(-2deg);opacity:1}75%{transform:translate(-50%,-28px) scale(1.05) rotate(0deg);opacity:1}100%{transform:translate(-50%,-52px) scale(0.95) rotate(2deg);opacity:0}}
 @keyframes effCriticalGradient{0%{background-position:0% 50%}100%{background-position:200% 50%}}
 @media (max-width:380px){.eff-particle{width:6px;height:6px}.eff-critical{font-size:16px;padding:3px 9px}}
+/* ── VFX round-2: viewport shake + knockback + emoji rain + afterglow ── */
+html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.19,.97) both}
+@keyframes effViewportShake{0%,100%{transform:translate3d(0,0,0)}15%{transform:translate3d(-3px,1px,0)}30%{transform:translate3d(3px,-2px,0)}45%{transform:translate3d(-4px,2px,0)}60%{transform:translate3d(4px,-1px,0)}75%{transform:translate3d(-2px,1px,0)}90%{transform:translate3d(2px,0,0)}}
+.eff-knockback-right{animation:effKnockbackR 600ms cubic-bezier(.18,.6,.4,1) both}
+.eff-knockback-left{animation:effKnockbackL 600ms cubic-bezier(.18,.6,.4,1) both}
+@keyframes effKnockbackR{0%{transform:translate3d(0,0,0)}20%{transform:translate3d(18px,-4px,0) rotate(2deg)}45%{transform:translate3d(28px,-8px,0) rotate(3deg)}70%{transform:translate3d(12px,-3px,0) rotate(1deg)}100%{transform:translate3d(0,0,0) rotate(0)}}
+@keyframes effKnockbackL{0%{transform:translate3d(0,0,0)}20%{transform:translate3d(-18px,-4px,0) rotate(-2deg)}45%{transform:translate3d(-28px,-8px,0) rotate(-3deg)}70%{transform:translate3d(-12px,-3px,0) rotate(-1deg)}100%{transform:translate3d(0,0,0) rotate(0)}}
+.eff-emoji-rain{position:fixed;inset:0;z-index:9050;pointer-events:none;overflow:hidden}
+.eff-emoji-piece{position:absolute;top:-40px;font-family:'Apple Color Emoji','Segoe UI Emoji',sans-serif;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.4));animation:effEmojiFall 1.4s cubic-bezier(.55,.05,.5,.95) forwards;will-change:transform,opacity}
+@keyframes effEmojiFall{0%{transform:translateY(0) rotate(0);opacity:0}12%{opacity:1}88%{opacity:1}100%{transform:translateY(100vh) rotate(540deg);opacity:0}}
+.eff-afterglow{position:fixed;pointer-events:none;z-index:8700;border-radius:50%;background:radial-gradient(circle,rgba(252,211,77,0.45) 0%,rgba(34,197,94,0.22) 45%,transparent 75%);transform:translate(-50%,-50%) scale(0.6);opacity:0;filter:blur(8px);animation:effAfterglow 680ms cubic-bezier(.4,0,.2,1) forwards}
+@keyframes effAfterglow{0%{opacity:0;transform:translate(-50%,-50%) scale(0.5)}25%{opacity:0.85;transform:translate(-50%,-50%) scale(1.0)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.25)}}
 </style>
 </head>
 <body>
@@ -434,7 +446,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 <script src="data/save-engine.js?v=20260501e"></script>
 <script src="data/math-rules.js?v=20260501d"></script>
 <script src="data/move-id-translations.js?v=20260505k"></script>
-<script src="data/poke-type-chart.js?v=20260506v"></script>
+<script src="data/poke-type-chart.js?v=20260506w"></script>
 <script src="game-modal.js?v=20260424g"></script>
 <script src="battle-sprite-engine.js?v=20260502p"></script>
 

@@ -268,12 +268,15 @@
     const m = calcTypeMult(atkType, defType);
     spawnEffectivenessText(defTargetEl, m);
     playEffectivenessSfx(m);
-    // VFX layers (2026-05-04 polish):
+    // VFX layers (2026-05-04 polish + polish-round-2):
     if (m >= 1.5) {
       try { spawnScreenFlash('super') } catch(_){}
       try { spawnHitParticles(defTargetEl, atkType, 12) } catch(_){}
       try { applyDefenderShake(defTargetEl, 'super') } catch(_){}
-      // CRITICAL combo: super-effective + STAB → extra fanfare
+      try { applyKnockback(defTargetEl, 'right') } catch(_){}
+      try { spawnAfterglow(defTargetEl) } catch(_){}
+      // CRITICAL combo: super-effective + STAB → fanfare
+      // (spawnCriticalLabel auto-triggers viewport shake + emoji rain)
       if (moveType && calcStab(moveType, atkType) > 1) {
         try { spawnCriticalLabel(defTargetEl) } catch(_){}
       }
@@ -346,8 +349,75 @@
     label.style.top  = (rect.top - 28) + 'px';
     document.body.appendChild(label);
     setTimeout(() => { try { label.remove() } catch(_){} }, 1200);
+    // CRITICAL also triggers viewport shake + emoji rain — full fanfare
+    try { applyViewportShake() } catch(_){}
+    try { spawnEmojiRain() } catch(_){}
   }
   window.spawnCriticalLabel = spawnCriticalLabel;
+
+  // ── VFX: viewport-level shake (whole screen) ──────────────────────────
+  // Subtler than the defender shake — affects the whole page, sells "weight".
+  function applyViewportShake() {
+    const root = document.documentElement;
+    if (!root) return;
+    root.classList.remove('eff-viewport-shake');
+    void root.offsetWidth;
+    root.classList.add('eff-viewport-shake');
+    setTimeout(() => { try { root.classList.remove('eff-viewport-shake') } catch(_){} }, 380);
+  }
+  window.applyViewportShake = applyViewportShake;
+
+  // ── VFX: defender knockback — sprite pushed back briefly, springs return ──
+  function applyKnockback(targetEl, direction) {
+    if (!targetEl) return;
+    // Direction: 'left' = pushed leftward, 'right' = rightward, default right
+    const cls = direction === 'left' ? 'eff-knockback-left' : 'eff-knockback-right';
+    targetEl.classList.remove('eff-knockback-left', 'eff-knockback-right');
+    void targetEl.offsetWidth;
+    targetEl.classList.add(cls);
+    setTimeout(() => { try { targetEl.classList.remove(cls) } catch(_){} }, 600);
+  }
+  window.applyKnockback = applyKnockback;
+
+  // ── VFX: type emoji rain on CRITICAL ──────────────────────────────────
+  // 8-10 mini type emojis briefly fall from top — confetti-style.
+  function spawnEmojiRain() {
+    // Cap concurrent rains to 1
+    const existing = document.querySelector('.eff-emoji-rain');
+    if (existing) { try { existing.remove() } catch(_){} }
+    const wrap = document.createElement('div');
+    wrap.className = 'eff-emoji-rain';
+    const emojis = ['✨', '⭐', '💫', '🌟', '⚡', '🎉'];
+    const N = 10;
+    for (let i = 0; i < N; i++) {
+      const p = document.createElement('span');
+      p.className = 'eff-emoji-piece';
+      p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      p.style.left = (5 + Math.random() * 90) + '%';
+      p.style.animationDelay = (Math.random() * 200) + 'ms';
+      p.style.animationDuration = (1300 + Math.random() * 500) + 'ms';
+      p.style.fontSize = (14 + Math.random() * 14) + 'px';
+      wrap.appendChild(p);
+    }
+    document.body.appendChild(wrap);
+    setTimeout(() => { try { wrap.remove() } catch(_){} }, 2200);
+  }
+  window.spawnEmojiRain = spawnEmojiRain;
+
+  // ── VFX: lingering golden afterglow on super-effective defender ───────
+  function spawnAfterglow(targetEl) {
+    if (!targetEl) return;
+    const rect = targetEl.getBoundingClientRect();
+    const glow = document.createElement('div');
+    glow.className = 'eff-afterglow';
+    glow.style.left = (rect.left + rect.width / 2) + 'px';
+    glow.style.top  = (rect.top + rect.height / 2) + 'px';
+    glow.style.width = Math.max(80, rect.width * 1.1) + 'px';
+    glow.style.height = Math.max(80, rect.height * 1.1) + 'px';
+    document.body.appendChild(glow);
+    setTimeout(() => { try { glow.remove() } catch(_){} }, 700);
+  }
+  window.spawnAfterglow = spawnAfterglow;
 
   // ── One-time educational tooltip ──────────────────────────────────────
   // "💡 [Air] mengalahkan [Api]!" — only shows ONCE per type-pair per session.
