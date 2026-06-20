@@ -278,16 +278,25 @@
       try { applyDefenderShake(defTargetEl, 'super') } catch(_){}
       try { applyKnockback(defTargetEl, 'right') } catch(_){}
       try { spawnAfterglow(defTargetEl) } catch(_){}
-      try { spawnTypeTintFlash(atkType) } catch(_){}  // round-3
+      try { spawnTypeTintFlash(atkType) } catch(_){}
+      try { spawnTypeRing(defTargetEl, atkType) } catch(_){}  // round-4
+      // Combo streak counter (round-4): increment + show label at x2+
+      const _streak = _incrementCombo();
+      if (_streak >= 2) {
+        try { spawnComboLabel(_streak) } catch(_){}
+      }
       // CRITICAL combo: super-effective + STAB → fanfare
-      // (spawnCriticalLabel auto-triggers viewport shake + emoji rain)
       if (moveType && calcStab(moveType, atkType) > 1) {
         try { spawnCriticalLabel(defTargetEl) } catch(_){}
-        try { applySlowmoFreeze(defTargetEl) } catch(_){}  // round-3
+        try { applySlowmoFreeze(defTargetEl) } catch(_){}
       }
       try { spawnFirstTimeHint(defTargetEl, atkType, defType) } catch(_){}
     } else if (m <= 0.75) {
       try { applyDefenderShake(defTargetEl, 'resist') } catch(_){}
+      resetCombo();  // round-4: break the streak
+    } else {
+      // Neutral hit also breaks the streak
+      resetCombo();
     }
     return m;
   }
@@ -484,6 +493,89 @@
     }
   }
   window.pulseLowHpBar = pulseLowHpBar;
+
+  // ── VFX round-4: combo streak + type ring + victory burst + defeat vignette ──
+
+  // In-memory combo streak counter (consecutive super-effective hits).
+  // Resets on any non-super hit, on battle end, or via resetCombo().
+  let _comboStreak = 0;
+  function _incrementCombo() { _comboStreak++; return _comboStreak; }
+  function resetCombo() { _comboStreak = 0; }
+  window.resetCombo = resetCombo;
+
+  // Combo streak label — "x2 SUPER!" or "MEGA COMBO!" or "LEGENDARY!"
+  // Position: top-center, slightly below CRITICAL label position
+  function spawnComboLabel(count) {
+    if (count < 2) return;
+    // Cap concurrent combos to 1 — fast hits override the previous
+    const existing = document.querySelector('.eff-combo');
+    if (existing) { try { existing.remove() } catch(_){} }
+    let tier, text, scale;
+    if (count >= 7) { tier = 'legendary'; text = '🏆 LEGENDARY COMBO!'; scale = 1.4; }
+    else if (count >= 5) { tier = 'mega'; text = '⚡ MEGA COMBO! x' + count; scale = 1.25; }
+    else if (count >= 3) { tier = 'super'; text = '🔥 SUPER COMBO! x' + count; scale = 1.1; }
+    else                 { tier = 'starter'; text = '✨ x' + count + ' COMBO!'; scale = 1.0; }
+    const label = document.createElement('div');
+    label.className = 'eff-combo eff-combo-' + tier;
+    label.textContent = text;
+    label.style.setProperty('--combo-scale', scale);
+    document.body.appendChild(label);
+    setTimeout(() => { try { label.remove() } catch(_){} }, 1400);
+  }
+  window.spawnComboLabel = spawnComboLabel;
+
+  // Type-colored ring expands outward from attacker (or defender on hit).
+  // Quick CSS animation — 480 ms scale+fade.
+  function spawnTypeRing(targetEl, atkType) {
+    if (!targetEl) return;
+    const rect = targetEl.getBoundingClientRect();
+    const color = (window.TYPE_COLOR && window.TYPE_COLOR[_norm(atkType)]) || '#fbbf24';
+    const ring = document.createElement('div');
+    ring.className = 'eff-type-ring';
+    ring.style.left = (rect.left + rect.width / 2) + 'px';
+    ring.style.top  = (rect.top + rect.height / 2) + 'px';
+    ring.style.borderColor = color;
+    ring.style.boxShadow = `0 0 18px ${color}, inset 0 0 12px ${color}`;
+    document.body.appendChild(ring);
+    setTimeout(() => { try { ring.remove() } catch(_){} }, 520);
+  }
+  window.spawnTypeRing = spawnTypeRing;
+
+  // Victory burst — call when battle is won. Confetti + Pokemon sparkles.
+  function spawnVictoryBurst(targetEl) {
+    const existing = document.querySelector('.eff-victory-burst');
+    if (existing) { try { existing.remove() } catch(_){} }
+    const wrap = document.createElement('div');
+    wrap.className = 'eff-victory-burst';
+    const emojis = ['🎉', '🏆', '⭐', '✨', '💫', '🎊', '👑', '🌟'];
+    const N = 20;
+    for (let i = 0; i < N; i++) {
+      const p = document.createElement('span');
+      p.className = 'eff-victory-piece';
+      p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      p.style.left = (Math.random() * 100) + '%';
+      p.style.animationDelay = (Math.random() * 400) + 'ms';
+      p.style.animationDuration = (1600 + Math.random() * 800) + 'ms';
+      p.style.fontSize = (18 + Math.random() * 18) + 'px';
+      wrap.appendChild(p);
+    }
+    document.body.appendChild(wrap);
+    setTimeout(() => { try { wrap.remove() } catch(_){} }, 3000);
+    resetCombo();
+  }
+  window.spawnVictoryBurst = spawnVictoryBurst;
+
+  // Defeat vignette — dark edges fade in. Use on player faint.
+  function spawnDefeatVignette() {
+    const existing = document.querySelector('.eff-defeat-vignette');
+    if (existing) { try { existing.remove() } catch(_){} }
+    const vg = document.createElement('div');
+    vg.className = 'eff-defeat-vignette';
+    document.body.appendChild(vg);
+    setTimeout(() => { try { vg.remove() } catch(_){} }, 2200);
+    resetCombo();
+  }
+  window.spawnDefeatVignette = spawnDefeatVignette;
 
   // ── One-time educational tooltip ──────────────────────────────────────
   // "💡 [Air] mengalahkan [Api]!" — only shows ONCE per type-pair per session.

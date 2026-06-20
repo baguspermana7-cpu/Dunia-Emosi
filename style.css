@@ -6674,3 +6674,105 @@ html.eff-viewport-shake {
   .eff-damage-num.eff-damage-super   { font-size: 22px; }
   .eff-damage-num.eff-damage-neutral { font-size: 18px; }
 }
+
+/* ── VFX polish round-4: combo + type ring + victory burst + defeat vignette ── */
+
+/* Combo streak label — appears top-center, scales with tier */
+.eff-combo {
+  position: fixed;
+  top: 12%;
+  left: 50%;
+  z-index: 9080;
+  font-family: 'Fredoka One', cursive, sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  padding: 6px 16px;
+  border-radius: 18px;
+  border: 2px solid #fff;
+  pointer-events: none;
+  transform: translate(-50%, 0) scale(0.6);
+  opacity: 0;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  animation: effComboPop 1.3s cubic-bezier(.34,1.56,.64,1) forwards;
+  white-space: nowrap;
+}
+.eff-combo-starter   { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #fff; }
+.eff-combo-super     { background: linear-gradient(135deg, #ef4444, #f59e0b, #ef4444); background-size: 200% 100%; color: #fff; animation: effComboPop 1.3s cubic-bezier(.34,1.56,.64,1) forwards, effComboShimmer 1.3s linear; }
+.eff-combo-mega      { background: linear-gradient(135deg, #a855f7, #ef4444, #f59e0b, #a855f7); background-size: 200% 100%; color: #fff; animation: effComboPop 1.3s cubic-bezier(.34,1.56,.64,1) forwards, effComboShimmer 1.3s linear; box-shadow: 0 0 28px rgba(168, 85, 247, 0.55); font-size: 26px; }
+.eff-combo-legendary { background: linear-gradient(135deg, #fde047, #f59e0b, #fde047); background-size: 200% 100%; color: #78350f; border-color: #fde047; box-shadow: 0 0 36px rgba(253, 224, 71, 0.75); animation: effComboPop 1.3s cubic-bezier(.34,1.56,.64,1) forwards, effComboShimmer 1.3s linear; font-size: 28px; }
+@keyframes effComboPop {
+  0%   { transform: translate(-50%, 12px) scale(0.4) rotate(-6deg); opacity: 0; }
+  16%  { transform: translate(-50%, -4px) scale(calc(var(--combo-scale, 1) * 1.25)) rotate(3deg); opacity: 1; }
+  28%  { transform: translate(-50%, -2px) scale(var(--combo-scale, 1)) rotate(-1deg); opacity: 1; }
+  78%  { transform: translate(-50%, -2px) scale(var(--combo-scale, 1)) rotate(0deg); opacity: 1; }
+  100% { transform: translate(-50%, -18px) scale(calc(var(--combo-scale, 1) * 0.9)) rotate(2deg); opacity: 0; }
+}
+@keyframes effComboShimmer {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* Type ring — colored ring expands outward from impact point */
+.eff-type-ring {
+  position: fixed;
+  z-index: 8650;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 4px solid;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.5);
+  opacity: 0;
+  animation: effTypeRing 480ms cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes effTypeRing {
+  0%   { transform: translate(-50%, -50%) scale(0.4); opacity: 0; }
+  25%  { transform: translate(-50%, -50%) scale(1.4); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(3.5); opacity: 0; }
+}
+
+/* Victory burst — confetti emoji rain from top */
+.eff-victory-burst {
+  position: fixed;
+  inset: 0;
+  z-index: 9300;
+  pointer-events: none;
+  overflow: hidden;
+}
+.eff-victory-piece {
+  position: absolute;
+  top: -50px;
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.5));
+  animation: effVictoryFall 1.8s cubic-bezier(.45,.05,.55,.95) forwards;
+  will-change: transform, opacity;
+}
+@keyframes effVictoryFall {
+  0%   { transform: translateY(0) rotate(0); opacity: 0; }
+  10%  { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+/* Defeat vignette — dark edges fade in */
+.eff-defeat-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.55) 85%, rgba(0,0,0,0.85) 100%);
+  opacity: 0;
+  animation: effDefeatVignette 2.1s cubic-bezier(.55,0,.45,1) forwards;
+}
+@keyframes effDefeatVignette {
+  0%   { opacity: 0; }
+  40%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@media (max-width: 380px) {
+  .eff-combo { font-size: 18px; padding: 5px 12px; }
+  .eff-combo-mega, .eff-combo-legendary { font-size: 20px; }
+}
