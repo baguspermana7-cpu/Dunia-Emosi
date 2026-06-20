@@ -171,7 +171,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <img id="tr-balloon" src="../assets/Pokemon/g23/tr-balloon.gif" alt="Team Rocket">
 <div id="tr-warning">⚠️ Team Rocket Muncul!</div>
 <!-- Debug version marker (Hotfix #147) — confirms cache freshness -->
-<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260506w (vfx-r2)</div>
+<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260506x (vfx-r3)</div>
 
 <!-- HUD -->
 <div id="hud-top">
@@ -296,6 +296,19 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
   @keyframes effEmojiFall{0%{transform:translateY(0) rotate(0);opacity:0}12%{opacity:1}88%{opacity:1}100%{transform:translateY(100vh) rotate(540deg);opacity:0}}
   .eff-afterglow{position:fixed;pointer-events:none;z-index:8700;border-radius:50%;background:radial-gradient(circle,rgba(252,211,77,0.45) 0%,rgba(34,197,94,0.22) 45%,transparent 75%);transform:translate(-50%,-50%) scale(0.6);opacity:0;filter:blur(8px);animation:effAfterglow 680ms cubic-bezier(.4,0,.2,1) forwards}
   @keyframes effAfterglow{0%{opacity:0;transform:translate(-50%,-50%) scale(0.5)}25%{opacity:0.85;transform:translate(-50%,-50%) scale(1.0)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.25)}}
+  /* ── VFX round-3 ── */
+  .eff-damage-num{position:fixed;z-index:9200;font-family:'Fredoka One',cursive,sans-serif;font-weight:900;letter-spacing:1px;pointer-events:none;text-shadow:0 2px 6px rgba(0,0,0,0.65),0 0 2px rgba(255,255,255,0.4);transform:translate(-50%,0) scale(0.6);opacity:0;animation:effDamageRise 1.1s cubic-bezier(.34,1.56,.64,1) forwards;will-change:transform,opacity}
+  .eff-damage-num.eff-damage-super{color:#fcd34d;font-size:26px}
+  .eff-damage-num.eff-damage-neutral{color:#ffffff;font-size:20px}
+  .eff-damage-num.eff-damage-resist{color:#cbd5e1;font-size:18px}
+  .eff-damage-num.eff-damage-immune{color:#f87171;font-size:18px}
+  @keyframes effDamageRise{0%{transform:translate(-50%,4px) scale(0.5);opacity:0}18%{transform:translate(-50%,-6px) scale(1.25);opacity:1}32%{transform:translate(-50%,-12px) scale(1.0);opacity:1}80%{transform:translate(-50%,-42px) scale(1.0);opacity:0.9}100%{transform:translate(-50%,-62px) scale(0.85);opacity:0}}
+  .eff-slowmo-freeze{animation:effSlowmoFreeze 420ms cubic-bezier(.4,0,.2,1) both !important}
+  @keyframes effSlowmoFreeze{0%{transform:scale(1.0);filter:brightness(1.0)}25%{transform:scale(1.08);filter:brightness(1.3) saturate(1.4)}60%{transform:scale(1.05);filter:brightness(1.15) saturate(1.2)}100%{transform:scale(1.0);filter:brightness(1.0)}}
+  .eff-type-tint{position:fixed;inset:0;z-index:8400;pointer-events:none;opacity:0;mix-blend-mode:overlay;animation:effTypeTint 320ms cubic-bezier(.34,1.0,.5,1) forwards}
+  @keyframes effTypeTint{0%{opacity:0}20%{opacity:0.35}60%{opacity:0.18}100%{opacity:0}}
+  .eff-hp-danger{animation:effHpDanger 0.9s ease-in-out infinite !important}
+  @keyframes effHpDanger{0%,100%{box-shadow:0 0 0 rgba(220,38,38,0);filter:brightness(1.0)}50%{box-shadow:0 0 14px rgba(220,38,38,0.7);filter:brightness(1.25) saturate(1.3)}}
 </style>
 
 <div id="pause-overlay">
@@ -330,7 +343,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <script src="../shared/rz-responsive.js?v=20260422i"></script>
 <script src="lib/pixi.min.js?v=8"></script>
 <script src="data/poke-sprite-cdn.js?v=20260506t"></script>
-<script src="data/poke-type-chart.js?v=20260506w"></script>
+<script src="data/poke-type-chart.js?v=20260506x"></script>
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/save-engine.js?v=20260501h"></script>
 <script src="data/g23-question-engine.js?v=20260506m"></script>
@@ -1592,7 +1605,7 @@ function loadTRQuestion(){
             const _dmg = Math.max(1, Math.round(_mult))
             b.enemyHP=Math.max(0,b.enemyHP-_dmg)
             try { if (typeof window.applyHitFeedback === 'function') {
-              window.applyHitFeedback(toEl, atkType, b.trPoke.type)
+              window.applyHitFeedback(toEl, atkType, b.trPoke.type, atkType, _dmg)
             }} catch(_){}
             b.attacksDone++
             updateTRHPDisplay()
@@ -1622,7 +1635,7 @@ function loadTRQuestion(){
           const _dmg = Math.max(1, Math.round(_mult))
           b.playerHP=Math.max(0,b.playerHP-_dmg)
           try { if (typeof window.applyHitFeedback === 'function') {
-            window.applyHitFeedback(toEl, atkType, b.playerPoke.type)
+            window.applyHitFeedback(toEl, atkType, b.playerPoke.type, atkType, _dmg)
           }} catch(_){}
           updateTRHPDisplay()
           showTRLog(`💥 ${b.trPoke.name} menyerang balik! -${_dmg} HP`)
@@ -1649,7 +1662,7 @@ function trCounterAttack(){
     const _dmg = Math.max(1, Math.round(_mult))
     b.playerHP=Math.max(0,b.playerHP-_dmg)
     try { if (typeof window.applyHitFeedback === 'function') {
-      window.applyHitFeedback(toEl, atkType, b.playerPoke.type)
+      window.applyHitFeedback(toEl, atkType, b.playerPoke.type, atkType, _dmg)
     }} catch(_){}
     updateTRHPDisplay()
     showTRLog(`⚡ ${b.trPoke.name} menyerang balik! -${_dmg} HP`)

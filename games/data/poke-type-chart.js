@@ -262,23 +262,28 @@
   window.playEffectivenessSfx = playEffectivenessSfx;
 
   // ── Convenience combined call for after-hit feedback ──────────────────
-  // Supports an optional fourth arg `moveType` so games that have a distinct
-  // move (G13C move-pool) can pass it for STAB-combo critical detection.
-  function applyHitFeedback(defTargetEl, atkType, defType, moveType) {
+  // Supports optional 4th arg `moveType` for STAB-combo critical detection,
+  // and optional 5th arg `damage` to render an animated -X HP number.
+  function applyHitFeedback(defTargetEl, atkType, defType, moveType, damage) {
     const m = calcTypeMult(atkType, defType);
     spawnEffectivenessText(defTargetEl, m);
     playEffectivenessSfx(m);
-    // VFX layers (2026-05-04 polish + polish-round-2):
+    // Damage number floats up regardless of multiplier (round-3 polish)
+    if (typeof damage === 'number' && damage > 0) {
+      try { spawnDamageNumber(defTargetEl, damage, m) } catch(_){}
+    }
     if (m >= 1.5) {
       try { spawnScreenFlash('super') } catch(_){}
       try { spawnHitParticles(defTargetEl, atkType, 12) } catch(_){}
       try { applyDefenderShake(defTargetEl, 'super') } catch(_){}
       try { applyKnockback(defTargetEl, 'right') } catch(_){}
       try { spawnAfterglow(defTargetEl) } catch(_){}
+      try { spawnTypeTintFlash(atkType) } catch(_){}  // round-3
       // CRITICAL combo: super-effective + STAB → fanfare
       // (spawnCriticalLabel auto-triggers viewport shake + emoji rain)
       if (moveType && calcStab(moveType, atkType) > 1) {
         try { spawnCriticalLabel(defTargetEl) } catch(_){}
+        try { applySlowmoFreeze(defTargetEl) } catch(_){}  // round-3
       }
       try { spawnFirstTimeHint(defTargetEl, atkType, defType) } catch(_){}
     } else if (m <= 0.75) {
@@ -418,6 +423,67 @@
     setTimeout(() => { try { glow.remove() } catch(_){} }, 700);
   }
   window.spawnAfterglow = spawnAfterglow;
+
+  // ── VFX round-3: damage number, slow-mo, type tint, HP danger ─────────
+
+  // Animated damage number rises with size scaled to multiplier impact.
+  // Color: gold/orange for super, white for neutral, gray for resist.
+  function spawnDamageNumber(targetEl, damage, mult) {
+    if (!targetEl || typeof damage !== 'number') return;
+    const m = typeof mult === 'number' ? mult : 1;
+    const rect = targetEl.getBoundingClientRect();
+    const num = document.createElement('div');
+    num.className = 'eff-damage-num';
+    num.textContent = '-' + damage;
+    // Tier per multiplier
+    if (m >= 1.5)      num.classList.add('eff-damage-super');
+    else if (m <= 0.5) num.classList.add('eff-damage-immune');
+    else if (m <= 0.75) num.classList.add('eff-damage-resist');
+    else                num.classList.add('eff-damage-neutral');
+    // Offset slightly so it doesn't overlap effectiveness text
+    num.style.left = (rect.left + rect.width / 2 + (Math.random() * 30 - 15)) + 'px';
+    num.style.top  = (rect.top + rect.height * 0.3) + 'px';
+    document.body.appendChild(num);
+    setTimeout(() => { try { num.remove() } catch(_){} }, 1100);
+  }
+  window.spawnDamageNumber = spawnDamageNumber;
+
+  // Slow-mo freeze on CRITICAL: defender briefly enlarges + slows the
+  // viewport tint to sell the "pause for emphasis" beat.
+  function applySlowmoFreeze(targetEl) {
+    if (!targetEl) return;
+    targetEl.classList.remove('eff-slowmo-freeze');
+    void targetEl.offsetWidth;
+    targetEl.classList.add('eff-slowmo-freeze');
+    setTimeout(() => { try { targetEl.classList.remove('eff-slowmo-freeze') } catch(_){} }, 420);
+  }
+  window.applySlowmoFreeze = applySlowmoFreeze;
+
+  // Background tint flash — full-screen overlay in the attacker's type color
+  // for ~280 ms. Subtler than the gold screen-flash so they can coexist.
+  function spawnTypeTintFlash(atkType) {
+    const existing = document.querySelector('.eff-type-tint');
+    if (existing) { try { existing.remove() } catch(_){} }
+    const color = (window.TYPE_COLOR && window.TYPE_COLOR[_norm(atkType)]) || '#fbbf24';
+    const tint = document.createElement('div');
+    tint.className = 'eff-type-tint';
+    tint.style.background = color;
+    document.body.appendChild(tint);
+    setTimeout(() => { try { tint.remove() } catch(_){} }, 320);
+  }
+  window.spawnTypeTintFlash = spawnTypeTintFlash;
+
+  // HP danger pulse: add red urgency animation to HP bar when low HP detected.
+  // Caller passes the bar fill element + current HP percentage (0-100).
+  function pulseLowHpBar(barEl, pct) {
+    if (!barEl) return;
+    if (typeof pct === 'number' && pct > 0 && pct <= 25) {
+      barEl.classList.add('eff-hp-danger');
+    } else {
+      barEl.classList.remove('eff-hp-danger');
+    }
+  }
+  window.pulseLowHpBar = pulseLowHpBar;
 
   // ── One-time educational tooltip ──────────────────────────────────────
   // "💡 [Air] mengalahkan [Api]!" — only shows ONCE per type-pair per session.
