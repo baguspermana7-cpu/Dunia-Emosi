@@ -372,11 +372,30 @@ CANONICAL_PRIMARY = {
     'urshifu':'fighting','calyrex':'psychic',
 }
 
-# Pokemon where thematic-gym intent overrides canonical accuracy
-# (documented exceptions per L110, accept without flagging).
+# Pokemon where designer intent overrides canonical accuracy
+# (documented exceptions per L110 + TYPE_EFFECTIVENESS_STANDARD.md, accept without flagging).
+# These are NOT bugs — they're intentional choices for game-design coherence.
 THEMATIC_EXCEPTIONS = {
-    'pidgey', 'pidgeotto', 'pidgeot', 'doduo',  # G13C flying gym
-    'noctowl',  # G13C bird-themed
+    # Flying-gym/bird-themed roster (canonical Normal/Flying — shown as flying)
+    'pidgey', 'pidgeotto', 'pidgeot', 'doduo', 'dodrio', 'noctowl',
+    'spearow', 'fearow', 'taillow', 'swellow', 'fletchling',
+    'starly', 'staravia', 'staraptor',
+    # Fan-culture / iconic secondary type
+    'tyranitar',                                       # rock/dark → shown as dark
+    'blaziken', 'infernape', 'emboar',                 # fire/fighting → shown as fighting
+    'delphox', 'chesnaught', 'breloom',                # starter evos showing secondary
+    'torterra',                                        # grass/ground → shown as ground
+    'greninja',                                        # water/dark → shown as dark in some entries
+    'hydreigon', 'zweilous', 'deino',                  # dark/dragon → shown as dragon
+    'flygon', 'vibrava',                               # ground/dragon → shown as dragon
+    'sneasel', 'weavile',                              # dark/ice → shown as ice
+    'farfetchd',                                       # normal/flying → shown as fighting (Sirfetch'd inspiration)
+    'rhydon',                                          # ground/rock → shown as rock
+    'nidoking',                                        # poison/ground → shown as ground
+    'scizor',                                          # bug/steel → shown as steel
+    'cloyster', 'dewgong',                             # water/ice → shown as ice
+    'slowpoke', 'starmie',                             # water/* → shown as psychic
+    'sceptile', 'swampert',                            # rare alt — shown as canonical
 }
 
 PATTERN = re.compile(r"slug:'([a-z0-9\-]+)',type:'([a-zA-Z]+)'")

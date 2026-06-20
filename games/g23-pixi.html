@@ -171,7 +171,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <img id="tr-balloon" src="../assets/Pokemon/g23/tr-balloon.gif" alt="Team Rocket">
 <div id="tr-warning">⚠️ Team Rocket Muncul!</div>
 <!-- Debug version marker (Hotfix #147) — confirms cache freshness -->
-<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260506t (hd-sprites)</div>
+<div id="ver-tag" style="position:fixed;bottom:4px;right:6px;z-index:200;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;pointer-events:none">v20260506u (tr-battle-types)</div>
 
 <!-- HUD -->
 <div id="hud-top">
@@ -208,6 +208,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
       <div class="tr-hp-card">
         <div class="tr-hp-name" id="tr-enemy-name">Arbok</div>
         <div class="tr-hp-hearts" id="tr-enemy-hp">❤️❤️❤️</div>
+        <div id="tr-enemy-weakness-wrap"></div>
       </div>
       <div class="tr-hp-card" style="text-align:right">
         <div class="tr-hp-name" id="tr-player-name">Pikachu</div>
@@ -249,6 +250,27 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
   #start-overlay.ready #start-icon { animation: g23-bounce 1.6s ease-in-out infinite; }
   @keyframes g23-pulse { 0%,100%{transform:scale(1);opacity:.7} 50%{transform:scale(1.05);opacity:1} }
   @keyframes g23-bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  /* ── Type Effectiveness visuals (mirrors style.css for standalone G23) ── */
+  .weakness-sticker{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:#fcd34d;margin-top:3px;padding:2px 7px;background:rgba(0,0,0,0.4);border-radius:9px;border:1px solid rgba(252,211,77,0.35);line-height:1.2;white-space:nowrap}
+  .weakness-sticker .ws-shield{font-size:13px}
+  .weakness-sticker .ws-label{color:rgba(255,255,255,0.82);font-size:10px;font-weight:600}
+  .weakness-sticker .ws-icon{font-size:15px;line-height:1;filter:drop-shadow(0 0 4px rgba(252,211,77,0.45))}
+  .eff-text{position:fixed;z-index:9000;font-family:'Fredoka One',cursive,sans-serif;font-size:14px;font-weight:900;pointer-events:none;transform:translate(-50%,0) scale(0.8);white-space:nowrap;text-shadow:0 2px 4px rgba(0,0,0,0.6)}
+  .eff-text.eff-super{color:#22c55e;animation:effSuperRise 1.2s cubic-bezier(.34,1.56,.64,1) forwards}
+  .eff-text.eff-resist{color:#cbd5e1;animation:effSmoothRise 1.2s ease-out forwards}
+  .eff-text.eff-immune{color:#f87171;animation:effSmoothRise 1.2s ease-out forwards}
+  @keyframes effSuperRise{0%{transform:translate(-50%,0) scale(0.6);opacity:0}20%{transform:translate(-50%,-8px) scale(1.15);opacity:1}35%{transform:translate(-50%,-14px) scale(1.0);opacity:1}80%{transform:translate(-50%,-30px) scale(1.0);opacity:1}100%{transform:translate(-50%,-48px) scale(0.9);opacity:0}}
+  @keyframes effSmoothRise{0%{transform:translate(-50%,0) scale(0.85);opacity:0}18%{transform:translate(-50%,-10px) scale(1.0);opacity:0.95}80%{transform:translate(-50%,-32px) scale(1.0);opacity:0.85}100%{transform:translate(-50%,-46px) scale(0.92);opacity:0}}
+  .eff-learn-hint{position:fixed;top:8%;left:50%;transform:translate(-50%,-8px) scale(0.85);z-index:9500;font-family:'Fredoka One',cursive,sans-serif;font-size:15px;font-weight:900;background:linear-gradient(160deg,#fef3c7,#fde68a);border:3px solid #f59e0b;border-radius:18px;padding:9px 16px;box-shadow:0 12px 32px rgba(0,0,0,0.35),0 0 24px rgba(245,158,11,0.4),0 0 0 2px rgba(139,92,246,0.18);display:inline-flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;opacity:0;transition:opacity .3s ease,transform .4s cubic-bezier(.34,1.56,.64,1);pointer-events:none;max-width:92vw;text-align:center;line-height:1.25;color:#78350f}
+  .eff-learn-hint.show{opacity:1;transform:translate(-50%,0) scale(1.0)}
+  .eff-learn-hint.hide{opacity:0;transform:translate(-50%,-16px) scale(0.92)}
+  .eff-learn-hint .elh-bulb{font-size:22px;animation:elhBulbWiggle 0.6s ease-in-out infinite alternate}
+  .eff-learn-hint .elh-icon{font-size:22px;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.18))}
+  .eff-learn-hint .elh-label{font-size:14px;color:#92400e}
+  .eff-learn-hint .elh-vs{font-size:12px;font-weight:700;color:#b45309;opacity:0.85}
+  .eff-learn-hint .elh-burst{font-size:20px;color:#dc2626;animation:elhBurstPop 0.5s cubic-bezier(.34,1.56,.64,1)}
+  @keyframes elhBulbWiggle{from{transform:rotate(-8deg) scale(1.0)}to{transform:rotate(8deg) scale(1.12)}}
+  @keyframes elhBurstPop{0%{transform:scale(0.4);opacity:0}60%{transform:scale(1.4);opacity:1}100%{transform:scale(1.0);opacity:1}}
 </style>
 
 <div id="pause-overlay">
@@ -283,6 +305,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <script src="../shared/rz-responsive.js?v=20260422i"></script>
 <script src="lib/pixi.min.js?v=8"></script>
 <script src="data/poke-sprite-cdn.js?v=20260506t"></script>
+<script src="data/poke-type-chart.js?v=20260506r"></script>
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/save-engine.js?v=20260501h"></script>
 <script src="data/g23-question-engine.js?v=20260506m"></script>
@@ -1444,6 +1467,10 @@ function engageTRBattle(){
   // Build UI
   document.getElementById('tr-battle-bg').style.backgroundImage=`url('${gymBg}')`
   document.getElementById('tr-enemy-name').textContent=trPoke.name
+  // Weakness sticker — teach kid which type to pick for counter
+  try { if (typeof window.renderWeaknessSticker === 'function') {
+    window.renderWeaknessSticker(document.getElementById('tr-enemy-weakness-wrap'), trPoke.type)
+  }} catch(_){}
   document.getElementById('tr-player-name').textContent=playerPoke.name
   // Trainer sprite
   const trspr=document.getElementById('tr-trainer-sprite')
@@ -1534,10 +1561,17 @@ function loadTRQuestion(){
           spawnProjectile(fromEl, toEl, atkType, ()=>{
             spawnTypeHitFX(toEl, atkType)
             flashTRPoke('enemy')
-            b.enemyHP=Math.max(0,b.enemyHP-1)
+            // Type effectiveness + STAB. Base 1 HP; super-effective rounds to 2.
+            const _mult = (typeof window.calcFullMult === 'function')
+              ? window.calcFullMult(atkType, b.playerPoke.type, b.trPoke.type) : 1
+            const _dmg = Math.max(1, Math.round(_mult))
+            b.enemyHP=Math.max(0,b.enemyHP-_dmg)
+            try { if (typeof window.applyHitFeedback === 'function') {
+              window.applyHitFeedback(toEl, atkType, b.trPoke.type)
+            }} catch(_){}
             b.attacksDone++
             updateTRHPDisplay()
-            showTRLog(`⚔️ ${b.playerPoke.name} pakai ${move.name}! -1 HP`)
+            showTRLog(`⚔️ ${b.playerPoke.name} pakai ${move.name}! -${_dmg} HP`)
             if(b.enemyHP<=0){
               b.attacksDone=0
               setTimeout(()=>trWin(),700)
@@ -1557,9 +1591,16 @@ function loadTRQuestion(){
         spawnProjectile(fromEl, toEl, atkType, ()=>{
           spawnTypeHitFX(toEl, atkType)
           flashTRPoke('player')
-          b.playerHP=Math.max(0,b.playerHP-1)
+          // Enemy attack with type effectiveness + STAB
+          const _mult = (typeof window.calcFullMult === 'function')
+            ? window.calcFullMult(atkType, b.trPoke.type, b.playerPoke.type) : 1
+          const _dmg = Math.max(1, Math.round(_mult))
+          b.playerHP=Math.max(0,b.playerHP-_dmg)
+          try { if (typeof window.applyHitFeedback === 'function') {
+            window.applyHitFeedback(toEl, atkType, b.playerPoke.type)
+          }} catch(_){}
           updateTRHPDisplay()
-          showTRLog(`💥 ${b.trPoke.name} menyerang balik! -1 HP`)
+          showTRLog(`💥 ${b.trPoke.name} menyerang balik! -${_dmg} HP`)
           if(b.playerHP<=0){ setTimeout(()=>trLose(),700) }
           else { setTimeout(()=>{ b.answered=false; showMoveSelector() },900) }
         })
@@ -1577,9 +1618,16 @@ function trCounterAttack(){
   spawnProjectile(fromEl, toEl, atkType, ()=>{
     spawnTypeHitFX(toEl, atkType)
     flashScreen('#ef4444'); flashTRPoke('player')
-    b.playerHP=Math.max(0,b.playerHP-1)
+    // Type effectiveness + STAB on counter-attack
+    const _mult = (typeof window.calcFullMult === 'function')
+      ? window.calcFullMult(atkType, b.trPoke.type, b.playerPoke.type) : 1
+    const _dmg = Math.max(1, Math.round(_mult))
+    b.playerHP=Math.max(0,b.playerHP-_dmg)
+    try { if (typeof window.applyHitFeedback === 'function') {
+      window.applyHitFeedback(toEl, atkType, b.playerPoke.type)
+    }} catch(_){}
     updateTRHPDisplay()
-    showTRLog(`⚡ ${b.trPoke.name} menyerang balik! -1 HP`)
+    showTRLog(`⚡ ${b.trPoke.name} menyerang balik! -${_dmg} HP`)
     sfxHit()
     if(b.playerHP<=0){ setTimeout(()=>trLose(),700) }
     else if(b.enemyHP<=0){ setTimeout(()=>trWin(),400) }
