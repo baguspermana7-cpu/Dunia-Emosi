@@ -279,7 +279,9 @@
       try { applyKnockback(defTargetEl, 'right') } catch(_){}
       try { spawnAfterglow(defTargetEl) } catch(_){}
       try { spawnTypeTintFlash(atkType) } catch(_){}
-      try { spawnTypeRing(defTargetEl, atkType) } catch(_){}  // round-4
+      try { spawnTypeRing(defTargetEl, atkType) } catch(_){}
+      try { spawnStarBurst(defTargetEl, window.TYPE_COLOR && window.TYPE_COLOR[_norm(atkType)]) } catch(_){}  // round-5
+      try { spawnSparkleLinger(defTargetEl) } catch(_){}  // round-5
       // Combo streak counter (round-4): increment + show label at x2+
       const _streak = _incrementCombo();
       if (_streak >= 2) {
@@ -576,6 +578,114 @@
     resetCombo();
   }
   window.spawnDefeatVignette = spawnDefeatVignette;
+
+  // ── VFX round-5: star burst + faint smoke + attacker aura + move name + sparkle linger ──
+
+  // Big 5-pointed stars burst outward from impact center.
+  // Complements the small particles with bigger satisfying punctuation.
+  function spawnStarBurst(targetEl, color) {
+    if (!targetEl) return;
+    const rect = targetEl.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const tintColor = color || '#fcd34d';
+    const N = 6;
+    for (let i = 0; i < N; i++) {
+      const star = document.createElement('div');
+      star.className = 'eff-star-burst';
+      const angle = (Math.PI * 2 * i) / N + (Math.random() * 0.3 - 0.15);
+      const dist = 50 + Math.random() * 30;
+      star.style.left = cx + 'px';
+      star.style.top = cy + 'px';
+      star.style.color = tintColor;
+      star.style.setProperty('--star-dx', (Math.cos(angle) * dist).toFixed(1) + 'px');
+      star.style.setProperty('--star-dy', (Math.sin(angle) * dist).toFixed(1) + 'px');
+      star.style.setProperty('--star-rot', (Math.random() * 360 - 180) + 'deg');
+      star.textContent = '★';
+      document.body.appendChild(star);
+      setTimeout(() => { try { star.remove() } catch(_){} }, 720);
+    }
+  }
+  window.spawnStarBurst = spawnStarBurst;
+
+  // Faint smoke puff — call when defender HP hits 0. Sprite "evaporates".
+  function spawnFaintSmoke(targetEl) {
+    if (!targetEl) return;
+    const rect = targetEl.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height * 0.55;
+    // 8 smoke puffs rising + spreading
+    for (let i = 0; i < 8; i++) {
+      const s = document.createElement('div');
+      s.className = 'eff-smoke-puff';
+      const offsetX = (Math.random() - 0.5) * rect.width * 0.7;
+      s.style.left = (cx + offsetX) + 'px';
+      s.style.top = cy + 'px';
+      s.style.animationDelay = (i * 40 + Math.random() * 80) + 'ms';
+      document.body.appendChild(s);
+      setTimeout(() => { try { s.remove() } catch(_){} }, 1500);
+    }
+  }
+  window.spawnFaintSmoke = spawnFaintSmoke;
+
+  // Attacker aura pulse — colored ring around attacker before/during attack.
+  // Auto-cleanup at 600ms. Caller-driven OR wired in applyHitFeedback when
+  // atkTargetEl is passed.
+  function spawnAttackerAura(atkEl, atkType) {
+    if (!atkEl) return;
+    const rect = atkEl.getBoundingClientRect();
+    const color = (window.TYPE_COLOR && window.TYPE_COLOR[_norm(atkType)]) || '#fbbf24';
+    const aura = document.createElement('div');
+    aura.className = 'eff-attacker-aura';
+    aura.style.left = (rect.left + rect.width / 2) + 'px';
+    aura.style.top  = (rect.top + rect.height / 2) + 'px';
+    aura.style.width = Math.max(80, rect.width * 1.3) + 'px';
+    aura.style.height = Math.max(80, rect.height * 1.3) + 'px';
+    aura.style.borderColor = color;
+    aura.style.boxShadow = `0 0 20px ${color}, inset 0 0 14px ${color}`;
+    document.body.appendChild(aura);
+    setTimeout(() => { try { aura.remove() } catch(_){} }, 620);
+  }
+  window.spawnAttackerAura = spawnAttackerAura;
+
+  // Move name dramatic title — slides in mid-screen with type-themed style.
+  // Use sparingly (G13C move pick); 1.2s display.
+  function spawnMoveTitle(moveName, atkType) {
+    if (!moveName) return;
+    const existing = document.querySelector('.eff-move-title');
+    if (existing) { try { existing.remove() } catch(_){} }
+    const color = (window.TYPE_COLOR && window.TYPE_COLOR[_norm(atkType)]) || '#fbbf24';
+    const title = document.createElement('div');
+    title.className = 'eff-move-title';
+    title.style.background = `linear-gradient(135deg, ${color}, rgba(0,0,0,0.6))`;
+    title.style.borderColor = color;
+    title.style.boxShadow = `0 0 20px ${color}, 0 6px 18px rgba(0,0,0,0.45)`;
+    title.textContent = moveName;
+    document.body.appendChild(title);
+    setTimeout(() => { try { title.remove() } catch(_){} }, 1100);
+  }
+  window.spawnMoveTitle = spawnMoveTitle;
+
+  // Sparkle linger — subtle small sparkles drift around defender for ~700ms
+  // after a super-effective hit. Complements the existing particle burst.
+  function spawnSparkleLinger(targetEl) {
+    if (!targetEl) return;
+    const rect = targetEl.getBoundingClientRect();
+    const N = 5;
+    for (let i = 0; i < N; i++) {
+      const sp = document.createElement('div');
+      sp.className = 'eff-sparkle-linger';
+      // Random drift around defender area
+      const ox = (Math.random() - 0.5) * rect.width * 0.95;
+      const oy = (Math.random() - 0.5) * rect.height * 0.95;
+      sp.style.left = (rect.left + rect.width / 2 + ox) + 'px';
+      sp.style.top  = (rect.top + rect.height / 2 + oy) + 'px';
+      sp.style.animationDelay = (i * 80 + Math.random() * 80) + 'ms';
+      document.body.appendChild(sp);
+      setTimeout(() => { try { sp.remove() } catch(_){} }, 900);
+    }
+  }
+  window.spawnSparkleLinger = spawnSparkleLinger;
 
   // ── One-time educational tooltip ──────────────────────────────────────
   // "💡 [Air] mengalahkan [Api]!" — only shows ONCE per type-pair per session.

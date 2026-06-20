@@ -15,7 +15,7 @@
  * succeeded. Only cache same-origin assets.
  * ========================================================================== */
 
-const CACHE_VERSION = 'v17-20260506y'
+const CACHE_VERSION = 'v18-20260506z'
 const HTML_CACHE = `dunia-html-${CACHE_VERSION}`
 const ASSET_CACHE = `dunia-assets-${CACHE_VERSION}`
 

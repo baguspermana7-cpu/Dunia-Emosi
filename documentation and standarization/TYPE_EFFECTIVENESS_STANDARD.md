@@ -32,9 +32,11 @@ Plus the canonical **Same-Type Attack Bonus (STAB)**:
 
 ---
 
-## 10 visual guidance layers
+## 27 visual + behavioural layers
 
 All layers are **in-context** — they appear where the action happens. Zero menus. Zero tutorials. Pure pattern recognition.
+
+### Original 10 layers (educational guidance)
 
 | # | Layer | Where | When | Trigger by |
 |---|-------|-------|------|-----------|
@@ -46,8 +48,34 @@ All layers are **in-context** — they appear where the action happens. Zero men
 | 6 | **Bag counter-weak warning** | G13B bag picker | Bag open | same |
 | 7 | **Trainer reveal hint** (G13C) | Enemy reveal message | Battle start + enemy swap | inline in `startBattle()` |
 | 8 | **Type emoji name prefix** (G13C) | HP card labels | Every HP update | `typeEmojiPrefix(type)` |
-| 9 | **STAB damage bonus** | All 4 games | Every attack | `calcStab(moveType, atkType)` |
+| 9 | **STAB damage bonus** | All 5 games | Every attack | `calcStab(moveType, atkType)` |
 | 10 | **Smart enemy AI** (G13C) | Enemy move pick | Enemy turn | 70% optimal / 30% random |
+
+### VFX rounds 1-5 (17 polish layers)
+
+| # | Round | Layer | Trigger |
+|---|-------|-------|---------|
+| 11 | R1 | **Screen flash** — radial gold-green pulse, mix-blend screen | super-effective |
+| 12 | R1 | **Particle burst** — 12 type-colored sparkles fly outward | super-effective |
+| 13 | R1 | **Defender shake** — 9-frame violent shake | super-effective |
+| 14 | R1 | **CRITICAL! label** — gold→red→gold shimmering pill | super + STAB combo |
+| 15 | R2 | **Viewport shake** — html element 6-frame shake | CRITICAL only |
+| 16 | R2 | **Knockback** — defender pushed back 28px + rotation, springs return | super-effective |
+| 17 | R2 | **Emoji rain** — 10 sparkle emojis ✨⭐💫🌟⚡🎉 fall from top | CRITICAL only |
+| 18 | R2 | **Afterglow** — gold radial bloom lingers 680ms | super-effective |
+| 19 | R3 | **Damage number** — "-X" floats up, size/color tiered by mult | every hit (any tier) |
+| 20 | R3 | **Slow-mo freeze** — defender scale 1.08 + saturate spike | CRITICAL only |
+| 21 | R3 | **Type tint flash** — full-screen overlay in attacker's type color | super-effective |
+| 22 | R3 | **HP danger pulse** — red urgency pulse on low HP bar (helper) | HP <= 25% |
+| 23 | R4 | **Combo streak** — tiered shimmer label "x2/SUPER/MEGA/LEGENDARY" | 2+ consecutive super |
+| 24 | R4 | **Type ring** — colored ring expands 24→84px outward | super-effective |
+| 25 | R4 | **Victory burst** — 20 emoji confetti 🎉🏆⭐✨ rain from top | battle won |
+| 26 | R4 | **Defeat vignette** — dark radial edges fade in | battle lost |
+| 27 | R5 | **Star burst** — 6 large ★ fly outward + rotate | super-effective |
+| 28 | R5 | **Faint smoke puff** — 8 gray clouds rise when defender HP=0 | helper (caller-driven) |
+| 29 | R5 | **Attacker aura** — colored ring around attacker before strike | helper |
+| 30 | R5 | **Move name title** — type-colored skewed slide-in pill | G13C move pick (helper) |
+| 31 | R5 | **Sparkle linger** — 5 ✦ drift around defender after super | super-effective |
 
 ### Combined teaching loop (G13C example)
 
@@ -88,9 +116,33 @@ All exported on `window` by the IIFE at bottom of `poke-type-chart.js`:
 - **`spawnEffectivenessText(targetEl, mult): void`** — floating "Super Efektif!" / "Kurang Efektif…" text. Auto-cleanup at 1.4s. Concurrent cap = 2 (anti pile-up).
 - **`spawnFirstTimeHint(targetEl, atkType, defType): void`** — once-per-pair golden popup. Race-safe (in-memory Set + sessionStorage).
 - **`playEffectivenessSfx(mult): void`** — short tone cue (sine-wave; subject to future replacement per design review).
-- **`applyHitFeedback(targetEl, atkType, defType): number`** — combined call: text + sfx + first-time hint. Returns the multiplier for caller's use.
+- **`applyHitFeedback(targetEl, atkType, defType, moveType?, damage?): number`** — combined call. Auto-fires ALL applicable VFX based on multiplier tier. Returns the multiplier for caller's use.
 - **`findCounters(pool, defType, max=3): {pokemon, index, mult}[]`** — for bag picker / pre-battle hints.
 - **`getCounterHintHTML(defType): string`** — produces "🎯 Counter: 💧 ⚡" HTML chip.
+
+### VFX helpers (auto-fired from applyHitFeedback)
+- **`spawnScreenFlash(kind)`** — gold-green radial overlay
+- **`spawnHitParticles(targetEl, atkType, count)`** — 6-16 colored sparks burst outward
+- **`applyDefenderShake(targetEl, intensity)`** — 'super' (9-frame) or 'resist' (3-frame)
+- **`spawnCriticalLabel(targetEl)`** — auto-triggers viewport shake + emoji rain
+- **`applyViewportShake()`** — html element shake
+- **`applyKnockback(targetEl, direction)`** — defender pushed back + springs return
+- **`spawnEmojiRain()`** — 10 sparkle emojis fall
+- **`spawnAfterglow(targetEl)`** — gold radial bloom
+- **`spawnDamageNumber(targetEl, damage, mult)`** — "-X" number with tier color
+- **`applySlowmoFreeze(targetEl)`** — defender scale + saturate spike
+- **`spawnTypeTintFlash(atkType)`** — full-screen type-colored overlay
+- **`pulseLowHpBar(barEl, pct)`** — caller-driven red pulse on low HP
+- **`spawnComboLabel(count)`** — tiered "x2 / SUPER / MEGA / LEGENDARY" label
+- **`spawnTypeRing(targetEl, atkType)`** — colored ring expand
+- **`spawnVictoryBurst()`** — confetti + emoji rain (caller-driven on win)
+- **`spawnDefeatVignette()`** — dark edges fade in (caller-driven on lose)
+- **`spawnStarBurst(targetEl, color)`** — 6 large ★ fly outward
+- **`spawnFaintSmoke(targetEl)`** — caller-driven when HP=0
+- **`spawnAttackerAura(atkEl, atkType)`** — caller-driven before strike
+- **`spawnMoveTitle(moveName, atkType)`** — caller-driven on move pick (G13C)
+- **`spawnSparkleLinger(targetEl)`** — ✦ drift after super-eff
+- **`resetCombo()`** — manual combo reset
 
 ---
 

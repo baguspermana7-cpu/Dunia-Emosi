@@ -6776,3 +6776,123 @@ html.eff-viewport-shake {
   .eff-combo { font-size: 18px; padding: 5px 12px; }
   .eff-combo-mega, .eff-combo-legendary { font-size: 20px; }
 }
+
+/* ── VFX polish round-5: star burst + faint smoke + attacker aura + move title + sparkle linger ── */
+
+/* Star burst — 6 large 5-pointed stars fly outward + rotate */
+.eff-star-burst {
+  position: fixed;
+  z-index: 8900;
+  font-size: 28px;
+  font-weight: bold;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.3) rotate(0);
+  opacity: 0;
+  text-shadow: 0 0 12px currentColor, 0 2px 6px rgba(0,0,0,0.6);
+  animation: effStarBurst 720ms cubic-bezier(.18,.6,.4,1) forwards;
+  will-change: transform, opacity;
+}
+@keyframes effStarBurst {
+  0%   { transform: translate(-50%, -50%) scale(0.3) rotate(0); opacity: 0; }
+  18%  { transform: translate(calc(-50% + var(--star-dx) * 0.3), calc(-50% + var(--star-dy) * 0.3)) scale(1.4) rotate(calc(var(--star-rot) * 0.3)); opacity: 1; }
+  60%  { transform: translate(calc(-50% + var(--star-dx) * 0.85), calc(-50% + var(--star-dy) * 0.85)) scale(1.0) rotate(calc(var(--star-rot) * 0.85)); opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--star-dx)), calc(-50% + var(--star-dy))) scale(0.6) rotate(var(--star-rot)); opacity: 0; }
+}
+
+/* Faint smoke puff — gray clouds rise + spread + fade when Pokemon faints */
+.eff-smoke-puff {
+  position: fixed;
+  z-index: 8400;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(180,180,180,0.85) 0%, rgba(140,140,140,0.55) 45%, rgba(100,100,100,0) 80%);
+  transform: translate(-50%, -50%) scale(0.4);
+  opacity: 0;
+  filter: blur(2px);
+  animation: effSmokePuff 1.4s cubic-bezier(.4,0,.2,1) forwards;
+  will-change: transform, opacity;
+}
+@keyframes effSmokePuff {
+  0%   { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+  20%  { transform: translate(-50%, -65%) scale(1.0); opacity: 0.95; }
+  100% { transform: translate(-50%, -180%) scale(2.0); opacity: 0; }
+}
+
+/* Attacker aura — colored ring around attacker before/during strike */
+.eff-attacker-aura {
+  position: fixed;
+  z-index: 8650;
+  border-radius: 50%;
+  border: 3px solid;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.7);
+  opacity: 0;
+  animation: effAttackerAura 600ms cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes effAttackerAura {
+  0%   { transform: translate(-50%, -50%) scale(0.7); opacity: 0; }
+  35%  { transform: translate(-50%, -50%) scale(1.05); opacity: 0.85; }
+  100% { transform: translate(-50%, -50%) scale(1.3); opacity: 0; }
+}
+
+/* Move name dramatic title card — slides in mid-screen */
+.eff-move-title {
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  z-index: 8950;
+  font-family: 'Fredoka One', cursive, sans-serif;
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #fff;
+  padding: 8px 22px;
+  border-radius: 16px;
+  border: 2px solid;
+  text-transform: uppercase;
+  pointer-events: none;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+  transform: translate(-50%, 0) translateX(-100vw) skewX(-12deg);
+  opacity: 0;
+  animation: effMoveTitle 1.1s cubic-bezier(.4,1.4,.5,1) forwards;
+  white-space: nowrap;
+}
+@keyframes effMoveTitle {
+  0%   { transform: translate(-50%, 0) translateX(-100vw) skewX(-12deg); opacity: 0; }
+  18%  { transform: translate(-50%, 0) translateX(0) skewX(-6deg); opacity: 1; }
+  28%  { transform: translate(-50%, 0) translateX(0) skewX(0); opacity: 1; }
+  75%  { transform: translate(-50%, 0) translateX(0) skewX(0); opacity: 1; }
+  100% { transform: translate(-50%, 0) translateX(100vw) skewX(6deg); opacity: 0; }
+}
+
+/* Sparkle linger — small drifting sparkles around defender after super-eff */
+.eff-sparkle-linger {
+  position: fixed;
+  z-index: 8750;
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+  font-size: 14px;
+  text-align: center;
+  line-height: 14px;
+  color: #fde047;
+  text-shadow: 0 0 6px #fde047, 0 0 12px #f59e0b;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  animation: effSparkleLinger 800ms ease-out forwards;
+  will-change: transform, opacity;
+}
+.eff-sparkle-linger::before { content: '✦'; }
+@keyframes effSparkleLinger {
+  0%   { transform: translate(-50%, -50%) scale(0) rotate(0); opacity: 0; }
+  20%  { transform: translate(-50%, -50%) scale(1.3) rotate(45deg); opacity: 1; }
+  60%  { transform: translate(-50%, -60%) scale(1.0) rotate(90deg); opacity: 0.9; }
+  100% { transform: translate(-50%, -90%) scale(0.4) rotate(180deg); opacity: 0; }
+}
+
+@media (max-width: 380px) {
+  .eff-move-title { font-size: 20px; padding: 6px 16px; letter-spacing: 1.5px; }
+  .eff-star-burst { font-size: 22px; }
+}
