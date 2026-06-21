@@ -7465,3 +7465,264 @@ button:disabled, [aria-disabled="true"] {
   padding-left: max(8px, env(safe-area-inset-left));
   padding-right: max(8px, env(safe-area-inset-right));
 }
+
+/* ────────────────────────────────────────────────────────────────
+   G25 Kuis Matematika — 2026-06-21 (clone of G11 modern style)
+   Uses .mq-* prefix to avoid CSS specificity collision with G11.
+   Adds extras: .mq-mode-pill, .mq-ops-preview, .mq-comparison choice.
+   ─────────────────────────────────────────────────────────────── */
+/* ────────────────────────────────────────────────────────────────
+   G11 Kuis Sains — modern 2026 redesign (2026-06-21)
+   Direction: glassmorphism + unified cyan accent + A/B/C/D markers.
+   Inspired by Duolingo 2024, Pokemon Sleep, Pokemon Smile, Khan Academy
+   Kids 2025, Apple HIG iOS 17+, Material 3.
+   No more saturated random-color buttons (purple/orange/teal/yellow).
+   ─────────────────────────────────────────────────────────────── */
+
+/* Dim background image so question card pops */
+#screen-game25.screen {
+  background-color: #0B1226;
+  background-blend-mode: multiply, normal;
+}
+#screen-game25.screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(6,182,212,0.18) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(168,85,247,0.15) 0%, transparent 55%),
+    linear-gradient(180deg, rgba(11,18,38,0.78) 0%, rgba(11,18,38,0.58) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+#screen-game25.screen > * { position: relative; z-index: 1; }
+
+/* Question card — glass with soft cyan ring */
+.mq-question-img {
+  font-size: clamp(72px, 18vw, 128px) !important;
+  text-align: center;
+  display: block;
+  margin: 12px auto 4px;
+  filter: drop-shadow(0 12px 28px rgba(0,0,0,0.35))
+          drop-shadow(0 0 18px rgba(6,182,212,0.25));
+  animation: mqMascotFloat 3s ease-in-out infinite;
+}
+@keyframes mqMascotFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+.mq-question-text {
+  font-size: clamp(17px, 4.5vw, 22px) !important;
+  font-weight: 700 !important;
+  color: #F1F5F9 !important;
+  text-align: center;
+  margin: 4px 18px 18px !important;
+  line-height: 1.45 !important;
+  padding: 18px 20px !important;
+  background: rgba(255,255,255,0.06) !important;
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.35),
+              inset 0 1px 0 rgba(255,255,255,0.08) !important;
+}
+
+/* Answer list — single column, generous padding */
+.mq-choices {
+  gap: 12px !important;
+  max-width: 460px !important;
+  padding: 0 16px !important;
+  margin: 0 auto !important;
+}
+
+/* Glassmorphism buttons — unified cyan family, distinguished by A/B/C/D */
+.mq-choice {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  padding: 16px 18px 16px 14px !important;
+  font-size: clamp(15px, 4vw, 17px) !important;
+  font-weight: 700 !important;
+  font-family: var(--font) !important;
+  color: #F1F5F9 !important;
+  text-align: left !important;
+  background: rgba(255,255,255,0.06) !important;
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1.5px solid rgba(255,255,255,0.10) !important;
+  border-radius: 18px !important;
+  cursor: pointer !important;
+  overflow: hidden !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.30) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.28),
+              inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  transition: transform 220ms cubic-bezier(0.34,1.56,0.64,1),
+              border-color 200ms ease,
+              box-shadow 200ms ease,
+              background-color 200ms ease !important;
+}
+
+/* Letter marker chip (A / B / C / D) */
+.mq-choice::before {
+  content: 'A';
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(140deg, #06B6D4, #0E7490);
+  border-radius: 12px;
+  font-family: 'Fredoka One', cursive;
+  font-size: 17px;
+  color: #ECFEFF;
+  box-shadow: 0 4px 12px rgba(6,182,212,0.45),
+              inset 0 1px 0 rgba(255,255,255,0.30);
+  text-shadow: none;
+}
+.mq-choice:nth-child(1)::before { content: 'A'; }
+.mq-choice:nth-child(2)::before { content: 'B'; background: linear-gradient(140deg, #0EA5E9, #0369A1); box-shadow: 0 4px 12px rgba(14,165,233,0.45), inset 0 1px 0 rgba(255,255,255,0.30); }
+.mq-choice:nth-child(3)::before { content: 'C'; background: linear-gradient(140deg, #8B5CF6, #6D28D9); box-shadow: 0 4px 12px rgba(139,92,246,0.40), inset 0 1px 0 rgba(255,255,255,0.30); }
+.mq-choice:nth-child(4)::before { content: 'D'; background: linear-gradient(140deg, #EC4899, #BE185D); box-shadow: 0 4px 12px rgba(236,72,153,0.40), inset 0 1px 0 rgba(255,255,255,0.30); }
+
+/* Spring shimmer on hover (no-touch) */
+@media (hover: hover) {
+  .mq-choice:hover {
+    transform: translateY(-2px) !important;
+    border-color: rgba(6,182,212,0.55) !important;
+    background: rgba(6,182,212,0.10) !important;
+    box-shadow: 0 14px 32px rgba(6,182,212,0.28),
+                inset 0 1px 0 rgba(255,255,255,0.12) !important;
+  }
+}
+
+/* Tap feedback — natural press, no harsh drop */
+.mq-choice:active {
+  transform: scale(0.97) !important;
+  background: rgba(255,255,255,0.10) !important;
+}
+
+/* Correct state — soft mint glow + green letter chip */
+.mq-choice.correct {
+  background: rgba(16,185,129,0.18) !important;
+  border-color: rgba(110,231,183,0.65) !important;
+  box-shadow: 0 12px 36px rgba(16,185,129,0.35),
+              0 0 0 1px rgba(110,231,183,0.45),
+              inset 0 1px 0 rgba(255,255,255,0.18) !important;
+  animation: mqCorrectPulse 520ms cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+.mq-choice.correct::before {
+  content: '✓' !important;
+  background: linear-gradient(140deg, #10B981, #047857) !important;
+  box-shadow: 0 4px 14px rgba(16,185,129,0.55),
+              inset 0 1px 0 rgba(255,255,255,0.35) !important;
+}
+@keyframes mqCorrectPulse {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+/* Wrong state — soft amber (NOT harsh red) + shake */
+.mq-choice.wrong {
+  background: rgba(251,146,60,0.16) !important;
+  border-color: rgba(253,186,116,0.55) !important;
+  box-shadow: 0 12px 32px rgba(251,146,60,0.28),
+              inset 0 1px 0 rgba(255,255,255,0.10) !important;
+  animation: mqWrongShake 420ms ease !important;
+}
+.mq-choice.wrong::before {
+  content: '✕' !important;
+  background: linear-gradient(140deg, #FB923C, #C2410C) !important;
+  box-shadow: 0 4px 14px rgba(251,146,60,0.50),
+              inset 0 1px 0 rgba(255,255,255,0.30) !important;
+}
+@keyframes mqWrongShake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-8px); }
+  40%      { transform: translateX(7px); }
+  60%      { transform: translateX(-5px); }
+  80%      { transform: translateX(4px); }
+}
+
+.mq-choice[disabled] {
+  cursor: default !important;
+  pointer-events: none !important;
+}
+.mq-choice[disabled]:not(.correct):not(.wrong) {
+  opacity: 0.42 !important;
+}
+
+/* Progress bar — thin cyan gradient instead of default */
+#screen-game25 .progress-bar-wrap {
+  background: rgba(255,255,255,0.06) !important;
+  height: 4px !important;
+  border-radius: 4px;
+  overflow: hidden;
+}
+#screen-game25 .progress-bar-fill {
+  background: linear-gradient(90deg, #06B6D4, #0EA5E9, #8B5CF6) !important;
+  box-shadow: 0 0 10px rgba(6,182,212,0.6);
+  transition: width 360ms cubic-bezier(0.22,0.61,0.36,1) !important;
+}
+
+/* Explain card — modern callout */
+
+/* G25-specific additions */
+.mq-mode-pill {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 999px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  border: 1px solid rgba(255,255,255,0.2);
+  flex-shrink: 0;
+}
+.mq-mode-pill.easy   { background: rgba(6,182,212,0.25); color: #67E8F9; border-color: rgba(6,182,212,0.45); }
+.mq-mode-pill.medium { background: rgba(139,92,246,0.25); color: #DDD6FE; border-color: rgba(139,92,246,0.45); }
+.mq-mode-pill.hard   { background: rgba(236,72,153,0.25); color: #FBCFE8; border-color: rgba(236,72,153,0.45); }
+.mq-ops-preview {
+  display: block;
+  margin: 8px 20px 4px;
+  padding: 6px 14px;
+  background: rgba(252,211,77,0.12);
+  border: 1px solid rgba(252,211,77,0.30);
+  border-radius: 999px;
+  color: #FDE68A;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.5px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+/* Comparison-shape: <, >, = buttons rendered horizontally */
+.mq-choices.mq-row {
+  flex-direction: row !important;
+  justify-content: center;
+  gap: 12px !important;
+}
+.mq-choice.mq-symbol {
+  text-align: center !important;
+  padding: 18px 22px !important;
+  font-size: 28px !important;
+  font-family: 'Fredoka One', cursive !important;
+  flex: 1 1 80px !important;
+  max-width: 110px;
+}
+.mq-choice.mq-symbol::before {
+  display: none !important;
+}
+/* Operator-pick variant — same as mq-symbol */
+.mq-choice.mq-op {
+  text-align: center !important;
+  padding: 16px 20px !important;
+  font-size: 26px !important;
+  font-family: 'Fredoka One', cursive !important;
+}
+.mq-choice.mq-op::before {
+  font-size: 13px !important;
+  width: 28px !important;
+  height: 28px !important;
+}

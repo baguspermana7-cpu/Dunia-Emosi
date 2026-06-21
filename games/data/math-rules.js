@@ -179,9 +179,226 @@
     return makeMathQuestion(level, maxLevel, difficulty);
   }
 
+  // ─────────────────────────────────────────────────────────────────────
+  // V2 generator (2026-06-21, owner G25 Kuis Matematika spec):
+  //   - max number 30 at level > 20 (was capped at 20)
+  //   - division (÷) for medium @ L>=20, hard @ any level (integer-only)
+  //   - 5 question shapes rotated: standard, missing operand, missing
+  //     operator, comparison, word problem (Indonesian kid context)
+  //   - shape selected by caller via `shape` arg ('auto' = cycle)
+  // ADDITIVE — does not modify makeMathQuestion(); G4/G10/G11/G13 stay
+  // zero-regression.
+  // ─────────────────────────────────────────────────────────────────────
+  function _divisors (n, maxD) {
+    var out = [];
+    for (var d = 2; d <= Math.min(maxD || 9, n); d++) {
+      if (n % d === 0) out.push(d);
+    }
+    return out;
+  }
+
+  function _opsForLevel (lv, diff) {
+    if (diff === 'hard')   return ['+','-','*','÷'];
+    if (diff === 'medium') {
+      if (lv > 20) return ['+','-','*','÷'];
+      if (lv >= 15) return ['+','-','*'];
+      return ['+','-'];
+    }
+    // easy: + (always), - (from L5), × simple (a≤4, b≤3 — owner spec)
+    // Division stays gated OUT of easy entirely.
+    if (lv >= 5) return ['+','-','*'];
+    return ['+','*'];
+  }
+
+  function _maxForLevel (lv, diff) {
+    if (diff === 'hard')   return lv > 20 ? 30 : 20;
+    if (diff === 'medium') return lv > 20 ? 30 : (lv >= 15 ? 20 : 15);
+    // easy
+    return lv >= 15 ? 20 : (lv >= 11 ? 15 : 10);
+  }
+
+  // Helper to produce one pure-math (a op b = ans) atom.
+  // Returns { a, b, op, ans }. Caller wraps into question shape.
+  function _mathAtom (lv, diff) {
+    var ops = _opsForLevel(lv, diff);
+    var max = _maxForLevel(lv, diff);
+    var op  = ops[Math.floor(Math.random() * ops.length)];
+    var a, b, ans;
+    if (op === '+') {
+      a = _randInt(1, Math.max(1, max - 1));
+      b = _randInt(1, Math.max(1, max - a));
+      ans = a + b;
+    } else if (op === '-') {
+      a = _randInt(2, max);
+      b = _randInt(1, a);
+      ans = a - b;
+    } else if (op === '*') {
+      // Owner spec (2026-06-21): easy mode multiplication MUST be simple —
+      // operand a ≤ 4 and multiplier b ≤ 3, so max product = 12 (kid-safe).
+      if (diff === 'easy') {
+        a = _randInt(2, 4);
+        b = _randInt(2, 3);
+      } else {
+        // Cap so a*b respects _maxForLevel (e.g. 30 at L>20 hard).
+        var maxFac = diff === 'hard' ? 9 : 5;
+        var maxMul = _maxForLevel(lv, diff);
+        a = _randInt(2, maxFac);
+        var bMax = Math.min(maxFac, Math.floor(maxMul / a));
+        if (bMax < 2) bMax = 2;
+        b = _randInt(2, bMax);
+      }
+      ans = a * b;
+    } else if (op === '÷') {
+      // Integer-only division. Cap dividend `a` at _maxForLevel.
+      var maxFacD = diff === 'hard' ? 9 : 5;
+      var maxDiv = _maxForLevel(lv, diff);
+      b = _randInt(2, maxFacD);
+      var ansMax = Math.min(maxFacD, Math.floor(maxDiv / b));
+      if (ansMax < 2) ansMax = 2;
+      ans = _randInt(2, ansMax);
+      a = ans * b;  // guaranteed integer division + within cap
+    } else {
+      a = _randInt(1, 10); b = _randInt(1, 10); ans = a + b; op = '+';
+    }
+    return { a: a, b: b, op: op, ans: ans };
+  }
+
+  function _opStr (op) {
+    if (op === '*') return '×';
+    if (op === '-') return '−';
+    return op;
+  }
+
+  function _wrongs (ans, count) {
+    var w = new Set();
+    var safety = 0;
+    while (w.size < count && safety++ < 20) {
+      var off = _randInt(-3, 3) || (Math.random() < 0.5 ? 1 : -1);
+      var v = Math.max(0, ans + off);
+      if (v !== ans) w.add(v);
+    }
+    var pad = 1;
+    while (w.size < count && pad < 100) {
+      var v2 = ans + pad;
+      if (v2 !== ans && v2 >= 0) w.add(v2);
+      pad++;
+    }
+    return Array.from(w);
+  }
+
+  // Indonesian kid word-problem templates — varied subjects, ≤ 25 words.
+  var WORD_TEMPLATES = {
+    '+': [
+      'Pikachu punya {a} apel. Bunda kasih {b} apel lagi. Berapa apel sekarang?',
+      'Di kelas ada {a} anak. Datang {b} teman lagi. Berapa anak di kelas?',
+      'Bunda beli {a} jeruk. Lalu beli {b} jeruk lagi. Total ada berapa?',
+      'Di warung ada {a} bakso. Dibuat lagi {b}. Total berapa bakso?',
+      'Charmander tangkap {a} kupu-kupu. Lalu tangkap {b} lagi. Total berapa?'
+    ],
+    '-': [
+      'Bulbasaur punya {a} biji. Dimakan burung {b} biji. Berapa sisanya?',
+      'Bunda buat {a} kue. Adik makan {b}. Berapa kue tersisa?',
+      'Di kolam ada {a} ikan. {b} ikan kabur. Berapa sisa ikan?',
+      'Squirtle mengumpulkan {a} kerang. Hilang {b} kerang. Berapa sisa?',
+      'Di pohon ada {a} mangga. Jatuh {b} mangga. Berapa yang masih di pohon?'
+    ],
+    '*': [
+      '{a} kotak berisi {b} permen. Total permen ada berapa?',
+      '{a} pohon punya {b} buah setiap pohon. Total buah?',
+      '{a} kerangkeng berisi {b} Pokemon. Total Pokemon?',
+      'Pikachu makan {b} apel per hari, selama {a} hari. Total?',
+      '{a} keranjang berisi {b} bola masing-masing. Berapa total bola?'
+    ],
+    '÷': [
+      '{a} permen dibagi rata ke {b} anak. Setiap anak dapat berapa?',
+      '{a} bunga ditanam di {b} pot sama banyak. Berapa per pot?',
+      '{a} kue dibagi {b} keluarga sama rata. Per keluarga dapat berapa?',
+      '{a} Pokemon dibagi ke {b} trainer sama rata. Per trainer?',
+      '{a} apel diatur rapi di {b} piring. Berapa apel per piring?'
+    ]
+  };
+
+  // Public V2 entry — `shape` ∈ 'standard' | 'missingOperand' | 'missingOperator'
+  // | 'comparison' | 'word' | 'auto' (caller cycles).
+  function makeMathQuestionV2 (level, maxLevel, difficulty, shape) {
+    var lv = Math.max(1, parseInt(level) || 1);
+    var diff = (difficulty || 'easy').toLowerCase();
+    var sh = shape || 'standard';
+    var atom = _mathAtom(lv, diff);
+
+    if (sh === 'standard') {
+      return {
+        shape: 'standard',
+        q: atom.a + ' ' + _opStr(atom.op) + ' ' + atom.b + ' = ?',
+        ans: atom.ans,
+        choices: _shuffle([atom.ans].concat(_wrongs(atom.ans, 3))),
+        op: atom.op, level: lv, difficulty: diff
+      };
+    }
+
+    if (sh === 'missingOperand') {
+      // 5 + ? = 8   (where ? = b)
+      return {
+        shape: 'missingOperand',
+        q: atom.a + ' ' + _opStr(atom.op) + ' ? = ' + atom.ans,
+        ans: atom.b,
+        choices: _shuffle([atom.b].concat(_wrongs(atom.b, 3))),
+        op: atom.op, level: lv, difficulty: diff
+      };
+    }
+
+    if (sh === 'missingOperator') {
+      // a ? b = ans, choices = operator strings restricted to allowed ops
+      var allowed = _opsForLevel(lv, diff).map(_opStr);
+      var ansOpStr = _opStr(atom.op);
+      // Pick 3 distractor operators that yield a DIFFERENT result than ansOpStr
+      var distractors = allowed.filter(function (o) { return o !== ansOpStr; });
+      // Always pad with the standard set so we have at least 4 buttons
+      var pad = ['+','−','×','÷'];
+      pad.forEach(function (o) { if (distractors.indexOf(o) === -1 && o !== ansOpStr) distractors.push(o); });
+      var threeDistractors = distractors.slice(0, 3);
+      return {
+        shape: 'missingOperator',
+        q: atom.a + ' ? ' + atom.b + ' = ' + atom.ans,
+        ans: ansOpStr,
+        choices: _shuffle([ansOpStr].concat(threeDistractors)),
+        op: atom.op, level: lv, difficulty: diff,
+        choicesAreOperators: true
+      };
+    }
+
+    if (sh === 'comparison') {
+      // (a op b) ___ rhs   choices = '<','>','='
+      var rhs = atom.ans + (_randInt(-2, 2));  // sometimes equal, sometimes off
+      if (rhs < 0) rhs = atom.ans;
+      var truth = atom.ans < rhs ? '<' : (atom.ans > rhs ? '>' : '=');
+      return {
+        shape: 'comparison',
+        q: atom.a + ' ' + _opStr(atom.op) + ' ' + atom.b + ' ___ ' + rhs,
+        ans: truth,
+        choices: ['<','>','='],
+        op: atom.op, level: lv, difficulty: diff,
+        choicesAreOperators: true
+      };
+    }
+
+    // word problem
+    var tmpl = (WORD_TEMPLATES[atom.op] || WORD_TEMPLATES['+'])[
+      Math.floor(Math.random() * (WORD_TEMPLATES[atom.op] || WORD_TEMPLATES['+']).length)
+    ];
+    return {
+      shape: 'word',
+      q: tmpl.replace('{a}', atom.a).replace('{b}', atom.b),
+      ans: atom.ans,
+      choices: _shuffle([atom.ans].concat(_wrongs(atom.ans, 3))),
+      op: atom.op, level: lv, difficulty: diff
+    };
+  }
+
   if (typeof window !== 'undefined') {
     window.makeMathQuestion = makeMathQuestion;
     window.makeKnowledgeQuestion = makeKnowledgeQuestion;
     window.makeGameQuestion = makeQuestion;
+    window.makeMathQuestionV2 = makeMathQuestionV2;
   }
 })();

@@ -3279,10 +3279,10 @@ function launch(gameId, mode, cityRegion) {
           <span class="reshape-pill pill-phase">Portrait only</span>
         </div>
         <div class="reshape-section">
-          <h5>Mockup ASCII</h5>
-          <div class="reshape-code">╔═════════════════════════════╗
-║  ◤ P2 ◢  (top, rotated 180°)║  ← Player 2 zone
-║  Nama: Ayu     ❤ ❤ ❤ ❤ ❤    ║      (text mirrored)
+          <h5>Mockup ASCII (2026-06-21 retune: stage 40% &amp; Pokemon size standardized)</h5>
+          <div class="reshape-code">╔═════════════════════════════╗  100dvh
+║  ◤ P2 ◢  (top, rotated 180°)║  ← Player 2 zone (30%)
+║  Nama: Ayu  ❤❤❤❤❤            ║      (text mirrored)
 ║  Pokemon: ☆Charmander☆      ║
 ║  Type: 🔥 Fire              ║
 ║                             ║
@@ -3291,10 +3291,17 @@ function launch(gameId, mode, cityRegion) {
 ║  │  [5] [7] [8] [6]      │  ║
 ║  └───────────────────────┘  ║
 ║                             ║
-║─────── BATTLE STAGE ────────║  ← shared center (20%)
-║   Damage:  -12              ║      animation, damage
-║   "Super Effective!"        ║      number, KO smoke
-║───────────────────────────  ║
+║  ═══ BATTLE STAGE (40%) ═══ ║  ← shared center bumped to 40%
+║                             ║      (was 20% — too cramped for
+║          🐲                 ║       sprite + damage + label)
+║          P2 Pokemon          ║      Pokemon = 28% of stage H
+║                             ║      Damage number: stage H × 0.18
+║       💥 −12  Super!        ║      "Super Effective!" pill
+║                             ║
+║          🐢                 ║      Pokemon P1 sprite
+║          P1 Pokemon          ║      sizing identical to P2
+║                             ║
+║  ═══════════════════════════║
 ║                             ║
 ║  ┌─────── Question ──────┐  ║  ← only when P1 active
 ║  │  6 - 2 = ?            │  ║
@@ -3303,18 +3310,57 @@ function launch(gameId, mode, cityRegion) {
 ║                             ║
 ║  Pokemon: ☆Squirtle☆        ║
 ║  Type: 💧 Water             ║
-║  Nama: Bagas   ❤ ❤ ❤ ❤ ❤    ║
-║  ◤ P1 ◢  (bottom, normal)   ║  ← Player 1 zone
+║  Nama: Bagas  ❤❤❤❤❤          ║
+║  ◤ P1 ◢  (bottom, normal)   ║  ← Player 1 zone (30%)
 ╚═════════════════════════════╝</div>
         </div>
         <div class="reshape-section">
-          <h5>CSS Layout</h5>
+          <h5>CSS Layout (updated 2026-06-21)</h5>
           <div class="reshape-code">.pvp-screen {
   display: grid;
-  grid-template-rows: 1fr 96px 1fr;     /* P2 | stage | P1 */
+  /* Center stage now 40% of viewport — was 96px fixed (~10%) — gives
+   * both Pokemon sprites + damage number + effectiveness label room
+   * to breathe. Player zones share remaining 60% (30% each). */
+  grid-template-rows: 30vh 40vh 30vh;   /* P2 | stage | P1 */
   height: 100dvh;
   position: relative;
 }
+/* Pokemon sprite sizing is a fraction of the STAGE row (not viewport)
+ * so it scales gracefully with phone / tablet / landscape rotations. */
+.pvp-pokemon-sprite {
+  width:  auto;
+  height: 28%;                 /* of stage row */
+  max-height: 220px;           /* hard cap on tablets */
+  min-height: 100px;           /* readable on small phones */
+  object-fit: contain;
+}
+.pvp-damage-number {
+  font-size: clamp(28px, 6.5vh, 56px);  /* ~ stage H × 0.18 */
+}
+/* P2 sprite mirrors vertically (180° rotation handled at zone level);
+ * within stage, both sprites stay upright — we only flip P2 ZONE. */</div>
+        </div>
+        <div class="reshape-section">
+          <h5>Why 40% center (owner spec)</h5>
+          <ul>
+            <li>20%/96 px was too cramped — Pokemon sprite fought damage number for space, no room for "Super Effective!" pill or KO smoke puff.</li>
+            <li>40% center + 30% per player zone keeps player HUD readable (name + HP hearts + Pokemon name + type) while giving the cinematic stage proper weight.</li>
+            <li>Question card + 4 answer buttons still fit comfortably in 30vh per player on phone portrait (verified 360 × 800).</li>
+          </ul>
+        </div>
+        <div class="reshape-section">
+          <h5>Pokemon sizing rules</h5>
+          <ul>
+            <li><strong>Height ratio</strong>: 28% of stage row (= 11.2 vh at 40 vh stage). Auto-width preserves aspect ratio.</li>
+            <li><strong>Hard cap</strong>: 220 px on tablets (≥ 768 px) so big screens don't get cartoon-large Pokemon.</li>
+            <li><strong>Floor</strong>: 100 px minimum on small phones so sprite stays recognizable.</li>
+            <li><strong>Position</strong>: both sprites centered horizontally; P2 in top half of stage, P1 in bottom half, gap = 8 vh for damage number + label.</li>
+            <li><strong>HD sprite</strong>: reuse <code>games/data/poke-sprite-cdn.js</code> (`pokeSpriteAlt2` 630×630) — quality scales fine at any size in this range.</li>
+          </ul>
+        </div>
+        <div class="reshape-section">
+          <h5>CSS Layout — pre-existing</h5>
+          <div class="reshape-code">/* legacy block kept for reference */</div>
 .pvp-p2 { transform: rotate(180deg); }    /* mirror text for face-to-face */
 .pvp-stage { background: rgba(0,0,0,0.04); position: relative; }
 .pvp-side[data-state="inactive"] {

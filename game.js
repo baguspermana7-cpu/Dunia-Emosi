@@ -323,6 +323,7 @@ const GAME_META = {
   22:{icon:'🍬',name:'Monster Candy'},
   23:{icon:'🏃',name:'Pokemon Run',iconImg:'assets/g23-icon.png'},
   24:{icon:'🌊',name:'Bawah Laut'},
+  25:{icon:'🧮',name:'Kuis Matematika'},
   '13c':{icon:'🏅',name:'Gym Huruf & Suara'}
 }
 
@@ -1716,7 +1717,7 @@ function startGameWithLevel(levelNum) {
   if (!standaloneGames.includes(state.currentGame)) {
     showScreen('screen-game' + state.currentGame)
   }
-  const inits = [null,initGame1,initGame2,initGame3,initGame4,initGame5,initGame6,initGame7,initGame8,initGame9,initGame10,initGame11,initGame12,initGame13,initGame14,initGame15,initGame16,initGame17,initGame18,initGame19,initGame20,initGame21,initGame22,initGame23,initGame24]
+  const inits = [null,initGame1,initGame2,initGame3,initGame4,initGame5,initGame6,initGame7,initGame8,initGame9,initGame10,initGame11,initGame12,initGame13,initGame14,initGame15,initGame16,initGame17,initGame18,initGame19,initGame20,initGame21,initGame22,initGame23,initGame24,initGame25]
   if (inits[state.currentGame]) inits[state.currentGame]()
 }
 
@@ -7450,6 +7451,163 @@ function g11Next(){
   if(explainEl) explainEl.style.display='none'
   if(lanjutEl) lanjutEl.style.display='none'
   g11ShowQuestion()
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// G25 — Kuis Matematika (2026-06-21, owner-requested)
+//   - 5-10 questions per page based on tier (easy 6, medium 8, hard 10)
+//   - Mirrors G11 (Kuis Sains) flow + modern glass UI
+//   - Question generation via window.makeMathQuestionV2() in math-rules.js
+//   - 5 question shapes cycled deterministically per level
+//   - Operator gating + max-number caps enforced by math-rules.js
+// ─────────────────────────────────────────────────────────────────────
+const G25_DIFF = {
+  easy:   { perPage: 6,  label:'EASY',   pillClass:'easy'   },
+  medium: { perPage: 8,  label:'MEDIUM', pillClass:'medium' },
+  hard:   { perPage: 10, label:'HARD',   pillClass:'hard'   }
+}
+const G25_SHAPES = ['standard','missingOperand','missingOperator','comparison','word']
+let g25State = {}
+
+function _g25TierFromLevel(lv){
+  // Mirrors the global tier mapping at game.js L1697.
+  return lv <= 13 ? 'easy' : (lv <= 26 ? 'medium' : 'hard')
+}
+
+function _g25OpsPreview(tier, lv){
+  if (tier === 'easy')   return 'Hari ini: + − ×₁₂'
+  if (tier === 'medium') {
+    if (lv > 20) return 'Hari ini: + − × ÷'
+    if (lv >= 15) return 'Hari ini: + − ×'
+    return 'Hari ini: + −'
+  }
+  return 'Hari ini: + − × ÷'
+}
+
+function initGame25(){
+  const lv = state.currentLevel || 1
+  const tier = _g25TierFromLevel(lv)
+  const cfg = G25_DIFF[tier]
+  const p = state.players[state.currentPlayer]
+  if (p) document.getElementById('g25-player-icon').textContent = p.animal || ''
+  document.getElementById('g25-level').textContent = 'Lv.' + lv
+  document.getElementById('g25-stars').textContent = '⭐ 0'
+
+  // Mode pill
+  const pill = document.getElementById('g25-mode-pill')
+  pill.className = 'mq-mode-pill ' + cfg.pillClass
+  pill.textContent = cfg.label
+
+  // Ops preview
+  document.getElementById('g25-ops-preview').textContent = _g25OpsPreview(tier, lv)
+
+  // Build the pool of questions for this level — cycle through shapes.
+  const pool = []
+  const totalLevels = (typeof MAX_LEVEL !== 'undefined') ? MAX_LEVEL : 40
+  for (let i = 0; i < cfg.perPage; i++) {
+    const shape = G25_SHAPES[i % G25_SHAPES.length]
+    const q = window.makeMathQuestionV2(lv, totalLevels, tier, shape)
+    pool.push(q)
+  }
+  g25State = { idx:0, pool, tier, total: cfg.perPage, stars:0, correct:0, wrong:0, level: lv }
+  showScreen('screen-game25')
+  g25ShowQuestion()
+}
+
+function g25ShowQuestion(){
+  const s = g25State
+  const explainEl = document.getElementById('g25-explain')
+  const lanjutEl  = document.getElementById('g25-lanjut')
+  if (explainEl) explainEl.style.display = 'none'
+  if (lanjutEl)  lanjutEl.style.display = 'none'
+  if (s.idx >= s.pool.length){
+    // End of page — score + save
+    const stars = (typeof GameScoring !== 'undefined' && GameScoring.calc)
+      ? GameScoring.calc({ correct: s.correct, total: s.total, wrong: s.wrong })
+      : Math.round((s.correct / s.total) * 5)
+    const starsEarned = stars >= 4 ? 3 : (stars >= 2 ? 2 : (stars >= 1 ? 1 : 0))
+    setLevelComplete(25, s.level, starsEarned)
+    if (typeof saveStars === 'function') saveStars()
+    if (typeof endGame === 'function') endGame(starsEarned)
+    return
+  }
+  const q = s.pool[s.idx]
+  // Emoji per shape — helps kids parse type at a glance.
+  const emojiByShape = {
+    standard:        '🧮',
+    missingOperand:  '🔍',
+    missingOperator: '❔',
+    comparison:      '⚖️',
+    word:            '📖'
+  }
+  document.getElementById('g25-emoji').textContent = emojiByShape[q.shape] || '🧮'
+  document.getElementById('g25-question').textContent = q.q
+  document.getElementById('g25-progress-bar').style.width = `${(s.idx / s.total) * 100}%`
+
+  const ch = document.getElementById('g25-choices')
+  ch.innerHTML = ''
+  // Layout class — symbol/comparison gets row, normal gets column.
+  ch.classList.remove('mq-row')
+  if (q.shape === 'comparison' || q.shape === 'missingOperator') {
+    ch.classList.add('mq-row')
+  }
+
+  q.choices.forEach((c, i) => {
+    const btn = document.createElement('button')
+    btn.className = 'mq-choice'
+    if (q.shape === 'comparison')          btn.classList.add('mq-symbol')
+    else if (q.shape === 'missingOperator') btn.classList.add('mq-op')
+    btn.textContent = String(c)
+    btn.onclick = () => g25Answer(i, btn)
+    ch.appendChild(btn)
+  })
+}
+
+function g25Answer(idx, btn){
+  const s = g25State
+  const q = s.pool[s.idx]
+  const picked = q.choices[idx]
+  const correct = String(picked) === String(q.ans)
+  // Disable all
+  document.getElementById('g25-choices').querySelectorAll('.mq-choice').forEach(b => b.setAttribute('disabled',''))
+  btn.classList.add(correct ? 'correct' : 'wrong')
+  if (!correct){
+    if (typeof spawnWrongShake === 'function') spawnWrongShake(btn)
+    if (typeof quizStreakReset === 'function') quizStreakReset()
+    // Highlight the right answer
+    const btns = document.getElementById('g25-choices').querySelectorAll('.mq-choice')
+    for (let i = 0; i < btns.length; i++){
+      if (String(q.choices[i]) === String(q.ans)){
+        btns[i].classList.add('correct')
+        if (typeof spawnCorrectCardJuice === 'function') spawnCorrectCardJuice(btns[i], { burst:false })
+        break
+      }
+    }
+    s.wrong++
+  } else {
+    if (typeof spawnCorrectCardJuice === 'function') spawnCorrectCardJuice(btn)
+    if (typeof quizStreakHit === 'function') quizStreakHit(btn)
+    s.stars++
+    s.correct++
+    if (state.players && state.players[state.currentPlayer]){
+      state.players[state.currentPlayer].stars = (state.players[state.currentPlayer].stars || 0) + 1
+    }
+    document.getElementById('g25-stars').textContent = `⭐ ${s.stars}`
+    if (typeof animateClass === 'function') animateClass(document.getElementById('g25-stars'), 'pop', 400)
+  }
+  if (typeof (correct ? playCorrect : playWrong) === 'function') {
+    correct ? playCorrect() : playWrong()
+  }
+  s.idx++
+  setTimeout(() => g25ShowQuestion(), 850)
+}
+
+function g25Next(){
+  const explainEl = document.getElementById('g25-explain')
+  const lanjutEl  = document.getElementById('g25-lanjut')
+  if (explainEl) explainEl.style.display = 'none'
+  if (lanjutEl)  lanjutEl.style.display = 'none'
+  g25ShowQuestion()
 }
 
 // ================================================================
