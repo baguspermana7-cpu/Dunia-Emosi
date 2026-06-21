@@ -197,17 +197,32 @@
     return out;
   }
 
+  // Owner spec (2026-06-21): × should only appear ~10–15% of total events.
+  // Return weighted array of {op, w}. Caller uses _pickWeightedOp.
   function _opsForLevel (lv, diff) {
-    if (diff === 'hard')   return ['+','-','*','÷'];
-    if (diff === 'medium') {
-      if (lv > 20) return ['+','-','*','÷'];
-      if (lv >= 15) return ['+','-','*'];
-      return ['+','-'];
+    if (diff === 'hard') {
+      // × ≈ 13%, ÷ ≈ 22%, + ≈ 35%, − ≈ 30%
+      return [{op:'+',w:35},{op:'-',w:30},{op:'*',w:13},{op:'÷',w:22}];
     }
-    // easy: + (always), - (from L5), × simple (a≤4, b≤3 — owner spec)
-    // Division stays gated OUT of easy entirely.
-    if (lv >= 5) return ['+','-','*'];
-    return ['+','*'];
+    if (diff === 'medium') {
+      if (lv > 20)  return [{op:'+',w:38},{op:'-',w:35},{op:'*',w:12},{op:'÷',w:15}];
+      if (lv >= 15) return [{op:'+',w:44},{op:'-',w:42},{op:'*',w:14}];
+      return [{op:'+',w:55},{op:'-',w:45}];
+    }
+    // easy: + (always), − (from L5), × simple (a≤4, b≤3 — owner spec). Division never.
+    if (lv >= 5) return [{op:'+',w:55},{op:'-',w:33},{op:'*',w:12}];
+    return [{op:'+',w:88},{op:'*',w:12}];
+  }
+
+  function _pickWeightedOp (opsWeighted) {
+    var total = 0;
+    for (var i = 0; i < opsWeighted.length; i++) total += opsWeighted[i].w;
+    var r = Math.random() * total;
+    for (var j = 0; j < opsWeighted.length; j++) {
+      r -= opsWeighted[j].w;
+      if (r <= 0) return opsWeighted[j].op;
+    }
+    return opsWeighted[0].op;
   }
 
   function _maxForLevel (lv, diff) {
@@ -220,9 +235,9 @@
   // Helper to produce one pure-math (a op b = ans) atom.
   // Returns { a, b, op, ans }. Caller wraps into question shape.
   function _mathAtom (lv, diff) {
-    var ops = _opsForLevel(lv, diff);
+    var opsWeighted = _opsForLevel(lv, diff);
     var max = _maxForLevel(lv, diff);
-    var op  = ops[Math.floor(Math.random() * ops.length)];
+    var op  = _pickWeightedOp(opsWeighted);
     var a, b, ans;
     if (op === '+') {
       a = _randInt(1, Math.max(1, max - 1));
@@ -337,33 +352,60 @@
     }
 
     if (sh === 'missingOperand') {
-      // 5 + ? = 8   (where ? = b)
+      // Owner spec (2026-06-21): ? always at the END of the equation.
+      // Transform "a op ? = result" into inverse standard form so ? = final ans.
+      //   a + b = ans  →  ans − a = ?  (answer = b)
+      //   a × b = ans  →  ans ÷ a = ?  (answer = b)
+      //   a − b = ans  →  ans + b = ?  (answer = a)
+      //   a ÷ b = ans  →  ans × b = ?  (answer = a)
+      var invQ, invAns;
+      if (atom.op === '+') { invQ = atom.ans + ' − ' + atom.a + ' = ?'; invAns = atom.b; }
+      else if (atom.op === '*') { invQ = atom.ans + ' ÷ ' + atom.a + ' = ?'; invAns = atom.b; }
+      else if (atom.op === '-') { invQ = atom.ans + ' + ' + atom.b + ' = ?'; invAns = atom.a; }
+      else if (atom.op === '÷') { invQ = atom.ans + ' × ' + atom.b + ' = ?'; invAns = atom.a; }
+      else { invQ = atom.a + ' + ' + atom.b + ' = ?'; invAns = atom.ans; }
       return {
-        shape: 'missingOperand',
-        q: atom.a + ' ' + _opStr(atom.op) + ' ? = ' + atom.ans,
-        ans: atom.b,
-        choices: _shuffle([atom.b].concat(_wrongs(atom.b, 3))),
+        shape: 'inverse',
+        q: invQ,
+        ans: invAns,
+        choices: _shuffle([invAns].concat(_wrongs(invAns, 3))),
         op: atom.op, level: lv, difficulty: diff
       };
     }
 
     if (sh === 'missingOperator') {
-      // a ? b = ans, choices = operator strings restricted to allowed ops
-      var allowed = _opsForLevel(lv, diff).map(_opStr);
-      var ansOpStr = _opStr(atom.op);
-      // Pick 3 distractor operators that yield a DIFFERENT result than ansOpStr
-      var distractors = allowed.filter(function (o) { return o !== ansOpStr; });
-      // Always pad with the standard set so we have at least 4 buttons
-      var pad = ['+','−','×','÷'];
-      pad.forEach(function (o) { if (distractors.indexOf(o) === -1 && o !== ansOpStr) distractors.push(o); });
-      var threeDistractors = distractors.slice(0, 3);
+      // Owner spec: ? at end. Replace with CHAINED 3-operand standard form.
+      // a op1 b op2 c = ?  (left-to-right evaluation, integer-only result).
+      // Keep the second operator weighted (× stays ~10–15%).
+      var atom2 = _mathAtom(lv, diff);
+      var op2 = atom2.op;
+      var c = atom2.b;
+      var mid;
+      if (atom.op === '+') mid = atom.a + atom.b;
+      else if (atom.op === '-') mid = atom.a - atom.b;
+      else if (atom.op === '*') mid = atom.a * atom.b;
+      else if (atom.op === '÷') mid = atom.a / atom.b;
+      else mid = atom.a + atom.b;
+      var chainedAns;
+      if (op2 === '+') chainedAns = mid + c;
+      else if (op2 === '-') chainedAns = mid - c;
+      else if (op2 === '*') chainedAns = mid * c;
+      else if (op2 === '÷') chainedAns = (c === 0) ? NaN : mid / c;
+      else chainedAns = mid + c;
+      // Validate: integer-only, non-negative, within cap.
+      var capMax = _maxForLevel(lv, diff);
+      if (!Number.isFinite(chainedAns) || !Number.isInteger(chainedAns) ||
+          chainedAns < 0 || chainedAns > capMax || mid < 0) {
+        // Fallback to standard if the chain is messy at this difficulty.
+        return makeMathQuestionV2(level, maxLevel, difficulty, 'standard');
+      }
       return {
-        shape: 'missingOperator',
-        q: atom.a + ' ? ' + atom.b + ' = ' + atom.ans,
-        ans: ansOpStr,
-        choices: _shuffle([ansOpStr].concat(threeDistractors)),
-        op: atom.op, level: lv, difficulty: diff,
-        choicesAreOperators: true
+        shape: 'chained',
+        q: atom.a + ' ' + _opStr(atom.op) + ' ' + atom.b + ' ' +
+           _opStr(op2) + ' ' + c + ' = ?',
+        ans: chainedAns,
+        choices: _shuffle([chainedAns].concat(_wrongs(chainedAns, 3))),
+        op: atom.op + op2, level: lv, difficulty: diff
       };
     }
 
