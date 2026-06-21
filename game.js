@@ -13390,7 +13390,7 @@ function initGame22() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g22Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g22-candy.html'
+  window.location.href = 'games/g22-candy.html?v=20260506ad'
 }
 
 function initGame23() {

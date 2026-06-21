@@ -17,6 +17,7 @@ canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
 #btn-back:active,#btn-pause:active{transform:scale(0.92);background:rgba(255,255,255,0.2)}
 #game-badge{background:linear-gradient(135deg,rgba(251,191,36,0.22),rgba(245,158,11,0.12));border:1.5px solid rgba(251,191,36,0.5);border-radius:100px;padding:4px 10px;color:#fde68a;font-size:12px;font-weight:800;flex-shrink:0;text-shadow:0 1px 3px rgba(0,0,0,0.4)}
 #hud-center{flex:1;text-align:center}
+@keyframes timerPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
 #score-display{font-size:clamp(20px,6vw,32px);font-weight:900;color:#fde68a;text-shadow:0 2px 8px rgba(0,0,0,0.6),0 0 14px rgba(251,191,36,0.35);letter-spacing:1px}
 #level-text{font-size:10px;color:#bae6fd;font-weight:700;letter-spacing:0.5px}
 #lives-display{font-size:18px;flex-shrink:0;filter:drop-shadow(0 0 6px rgba(239,68,68,0.45))}
@@ -70,6 +71,7 @@ canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
   <div id="hud-center">
     <div id="level-text"></div>
     <div id="score-display">🍬 0</div>
+    <div id="timer-display" style="font-size:14px;font-weight:900;color:#fcd34d;margin-top:2px;">⏱ 1:00</div>
   </div>
   <div id="lives-display">❤️❤️❤️</div>
 </div>
@@ -183,6 +185,11 @@ const S = {
   frame:0,
   monsterX:0, monsterXTarget:0, monsterXLerp:0,
   lastFacing:true,
+  // Time-based mode (2026-05-04 fix): game ends after timeLeft hits 0.
+  // 60s for level 1, +10s per level up to 120s cap. Lives now reduce time
+  // (-10s per miss) instead of ending game outright.
+  timeLeft: Math.min(120, 60 + (cfg.level - 1) * 10),
+  totalTime: Math.min(120, 60 + (cfg.level - 1) * 10),
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -900,11 +907,17 @@ function gameLoop(ticker) {
       S.totalMissed++
       S.combo = 0
       S.lives--
+      // Time-based mode: missing penalizes time (-10s) instead of instant lose
+      S.timeLeft = Math.max(0, S.timeLeft - 10)
       sfxMiss()
       updateHUD()
-      if (S.lives <= 0) { endGame(); return }
+      if (S.lives <= 0 || S.timeLeft <= 0) { endGame(); return }
     }
   }
+
+  // ── Time-based countdown (2026-05-04 fix) ──
+  S.timeLeft = Math.max(0, S.timeLeft - dt)
+  if (S.timeLeft <= 0 && !S.gameOver) { endGame(); return }
 
   // Update particles
   for (let i = S.particles.length - 1; i >= 0; i--) {
@@ -955,6 +968,16 @@ function updateHUD() {
   document.getElementById('score-display').textContent = `🍬 ${S.score}${comboText}`
   const hearts = '❤️'.repeat(Math.max(0, S.lives)) + '🖤'.repeat(Math.max(0, S.maxLives - S.lives))
   document.getElementById('lives-display').textContent = hearts
+  // Time display: M:SS format, red urgency when <10s
+  const t = Math.max(0, Math.ceil(S.timeLeft || 0))
+  const mm = Math.floor(t / 60)
+  const ss = t % 60
+  const td = document.getElementById('timer-display')
+  if (td) {
+    td.textContent = '⏱ ' + mm + ':' + (ss < 10 ? '0' + ss : ss)
+    td.style.color = t <= 10 ? '#ef4444' : (t <= 30 ? '#fbbf24' : '#fcd34d')
+    td.style.animation = t <= 10 ? 'timerPulse 0.6s ease-in-out infinite' : ''
+  }
 }
 
 // ═══════════════════════════════════════════════════════════
