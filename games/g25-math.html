@@ -350,13 +350,40 @@ body > * { position: relative; z-index: 1; }
   letter-spacing: 0.5px;
 }
 .shape-emoji {
-  font-size: clamp(80px, 12vh, 140px);
+  font-size: clamp(100px, 18vh, 200px);
   text-align: center;
   display: block;
-  margin: 4px auto 10px;
-  filter: drop-shadow(0 16px 36px rgba(0,0,0,0.4))
-          drop-shadow(0 0 22px rgba(6,182,212,0.30));
+  margin: 6px auto 14px;
+  filter: drop-shadow(0 20px 44px rgba(0,0,0,0.45))
+          drop-shadow(0 0 28px rgba(6,182,212,0.35));
   animation: shapeFloat 3s ease-in-out infinite;
+}
+
+/* Decorative floating math symbols — fills the empty space without
+   distracting from the question. Very low opacity. */
+.q-decor {
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.q-decor span {
+  position: absolute;
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(36px, 8vw, 64px);
+  opacity: 0.08;
+  color: var(--cyan);
+  animation: decorFloat var(--dur, 16s) ease-in-out infinite;
+}
+.q-decor span:nth-child(1) { top: 12%;  left: 6%;   color: #06B6D4; --dur: 14s; }
+.q-decor span:nth-child(2) { top: 24%;  right: 8%;  color: #8B5CF6; --dur: 18s; animation-delay: -3s; }
+.q-decor span:nth-child(3) { top: 58%;  left: 4%;   color: #EC4899; --dur: 16s; animation-delay: -6s; }
+.q-decor span:nth-child(4) { top: 72%;  right: 6%;  color: #FCD34D; --dur: 15s; animation-delay: -2s; }
+.q-decor span:nth-child(5) { top: 38%;  left: 10%;  color: #34D399; --dur: 17s; animation-delay: -8s; }
+.q-decor span:nth-child(6) { top: 85%;  right: 12%; color: #FB923C; --dur: 19s; animation-delay: -4s; }
+@keyframes decorFloat {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50%      { transform: translateY(-20px) rotate(6deg); }
 }
 @keyframes shapeFloat {
   0%,100% { transform: translateY(0); }
@@ -364,13 +391,13 @@ body > * { position: relative; z-index: 1; }
 }
 .q-text {
   font-family: 'Fredoka One', cursive;
-  font-size: clamp(26px, 5.5vw, 40px);
+  font-size: clamp(28px, 6vw, 44px);
   font-weight: 400;
   color: var(--ink);
   text-align: center;
-  padding: 22px 28px;
-  margin: 12px auto 22px;
-  max-width: 720px;
+  padding: 28px 34px;
+  margin: 16px auto 24px;
+  max-width: 780px;
   background: rgba(255,255,255,0.06);
   backdrop-filter: blur(18px) saturate(160%);
   -webkit-backdrop-filter: blur(18px) saturate(160%);
@@ -380,6 +407,8 @@ body > * { position: relative; z-index: 1; }
               inset 0 1px 0 rgba(255,255,255,0.10);
   line-height: 1.4;
   letter-spacing: 1px;
+  position: relative;
+  z-index: 2;
 }
 .q-text.word {
   font-family: var(--font);
@@ -744,6 +773,11 @@ body > * { position: relative; z-index: 1; }
   <div id="level-tiers"></div>
 </section>
 
+<!-- Decorative floating math symbols (visible only on quiz screen) -->
+<div class="q-decor" id="q-decor" style="display:none;">
+  <span>+</span><span>−</span><span>×</span><span>÷</span><span>=</span><span>π</span>
+</div>
+
 <!-- ───────── Screen C — QUIZ ───────── -->
 <section id="quiz-screen" class="scr">
   <div class="app-header">
@@ -886,6 +920,83 @@ body > * { position: relative; z-index: 1; }
     if (navigator.vibrate) try { navigator.vibrate(pat || 12); } catch (e) {}
   }
 
+  // ── Background music — very subtle ambient drone (Web Audio synth) ──
+  // No asset files. Two slow oscillators (C3 + G3) routed through a low-pass
+  // filter and a gain cap of 0.045 (~ −27 dBFS). Compliance: starts only
+  // after first user gesture.
+  const _bgm = {
+    started: false,
+    nodes: null,
+    targetGain: 0.045
+  };
+  function startBGM () {
+    const ctx = _ctx();
+    if (!ctx || _bgm.started) return;
+    try {
+      const masterGain = ctx.createGain();
+      masterGain.gain.value = 0;
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = 600;
+      filter.Q.value = 0.6;
+      const o1 = ctx.createOscillator();
+      o1.type = 'sine';
+      o1.frequency.value = 130.8;     // C3
+      const o2 = ctx.createOscillator();
+      o2.type = 'sine';
+      o2.frequency.value = 196.0;     // G3
+      const o3 = ctx.createOscillator();
+      o3.type = 'triangle';
+      o3.frequency.value = 261.6;     // C4 — gentle high overtone
+      // Slow gentle LFO on the C3 frequency for breathing feel
+      const lfo = ctx.createOscillator();
+      lfo.type = 'sine';
+      lfo.frequency.value = 0.13;
+      const lfoGain = ctx.createGain();
+      lfoGain.gain.value = 1.2;
+      lfo.connect(lfoGain);
+      lfoGain.connect(o1.frequency);
+      o1.connect(filter); o2.connect(filter); o3.connect(filter);
+      filter.connect(masterGain);
+      masterGain.connect(ctx.destination);
+      o1.start(); o2.start(); o3.start(); lfo.start();
+      // Fade in 1.2s
+      masterGain.gain.linearRampToValueAtTime(_bgm.targetGain, ctx.currentTime + 1.2);
+      _bgm.nodes = { masterGain, filter, o1, o2, o3, lfo };
+      _bgm.started = true;
+    } catch (e) {}
+  }
+  function stopBGM () {
+    if (!_bgm.started || !_bgm.nodes) return;
+    const ctx = _ctx();
+    try {
+      _bgm.nodes.masterGain.gain.cancelScheduledValues(ctx.currentTime);
+      _bgm.nodes.masterGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.6);
+      setTimeout(() => {
+        try {
+          _bgm.nodes.o1.stop(); _bgm.nodes.o2.stop();
+          _bgm.nodes.o3.stop(); _bgm.nodes.lfo.stop();
+        } catch (e) {}
+        _bgm.started = false;
+        _bgm.nodes = null;
+      }, 700);
+    } catch (e) {}
+  }
+  // Attach BGM start to the first user interaction (autoplay policy)
+  let _bgmPrimed = false;
+  function primeBGMOnGesture () {
+    if (_bgmPrimed) return;
+    _bgmPrimed = true;
+    const arm = () => {
+      try { _ctx() && _ctx().resume && _ctx().resume(); } catch (e) {}
+      document.removeEventListener('pointerdown', arm);
+      document.removeEventListener('keydown', arm);
+    };
+    document.addEventListener('pointerdown', arm, { once: true, passive: true });
+    document.addEventListener('keydown', arm, { once: true, passive: true });
+  }
+  primeBGMOnGesture();
+
   // ── Save helpers ───────────────────────────────────
   function loadAllStars () {
     // Try the avatar-keyed shared format first
@@ -942,6 +1053,10 @@ body > * { position: relative; z-index: 1; }
     if (el) el.classList.add('active');
     if (which === 'hub')   refreshHub();
     if (which === 'level') refreshLevelGrid();
+    // Decor + BGM only on quiz screen
+    const decor = document.getElementById('q-decor');
+    if (decor) decor.style.display = (which === 'quiz') ? '' : 'none';
+    if (which === 'quiz') startBGM(); else stopBGM();
     window.scrollTo({ top: 0, behavior: 'instant' });
   };
 

@@ -487,8 +487,9 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
 <script src="data/save-engine.js?v=20260501e"></script>
 <script src="data/math-rules.js?v=20260501d"></script>
 <script src="data/move-id-translations.js?v=20260505k"></script>
-<script src="data/sfx-engine.js?v=20260621"></script>
-<script src="data/weather-fx.js?v=20260621"></script>
+<script src="data/sfx-engine.js?v=20260621f"></script>
+<script src="data/weather-fx.js?v=20260621f"></script>
+<script src="data/battle-modes.js?v=20260621f"></script>
 <script src="data/poke-type-chart.js?v=20260506z"></script>
 <script>
   // Licensed Pokemon SFX + battle weather — lazy init, silent failure.
@@ -516,6 +517,35 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
         return _orig.apply(this, arguments);
       };
     }
+  });
+  // ── Adventure / PvP / Tournament mode-select wrap ──────────────────
+  // Intercept startBattle to show the 3-card mode modal first. Adventure
+  // calls original startBattle unchanged. PvP/Tournament run in battle-modes.js
+  // overlays. (Owner: "kok menu pvp dan tournament mode dan adventure
+  // tidak keluar")
+  document.addEventListener('DOMContentLoaded', function () {
+    if (typeof window.startBattle !== 'function' ||
+        typeof window.BattleModes !== 'object' ||
+        window._g13cModesWrapped) return;
+    window._g13cModesWrapped = true;
+    var _origForModes = window.startBattle;
+    var _modeLocked = false;
+    window.startBattle = function (tid) {
+      if (_modeLocked) { return _origForModes(tid); }
+      try {
+        window.BattleModes.show({
+          title: '🏅 Gym Pokemon',
+          questionType: 'type',
+          questionLevel: 5,
+          onAdventure: function () {
+            _modeLocked = true;
+            try { _origForModes(tid); }
+            finally { setTimeout(function () { _modeLocked = false; }, 100); }
+          },
+          onCancel: function () { /* stay on gym select */ }
+        });
+      } catch (e) { return _origForModes(tid); }
+    };
   });
 </script>
 <script src="game-modal.js?v=20260424g"></script>

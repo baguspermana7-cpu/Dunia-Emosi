@@ -1559,7 +1559,23 @@ function g13cNextLetter() {
 function openLevelSelect(gameNum) {
   // G25 Math Hub — standalone HTML owns hub + level grid + quiz.
   if (gameNum === 25) {
-    window.location.href = 'games/g25-math.html?v=20260621e'
+    window.location.href = 'games/g25-math.html?v=20260621f'
+    return
+  }
+  // G10 Pertarungan Pokemon — show Adventure/PvP/Tournament mode select first.
+  // Adventure re-enters this same function with the lock set so it routes to
+  // the existing in-page level-select grid (no infinite recursion).
+  if (gameNum === 10 && window.BattleModes && !window._g10AdventureLocked) {
+    window.BattleModes.show({
+      title: '⚡ Pertarungan Pokemon',
+      questionType: 'math',
+      questionLevel: 5,
+      onAdventure: function () {
+        window._g10AdventureLocked = true
+        try { openLevelSelect(10) } finally { window._g10AdventureLocked = false }
+      },
+      onCancel: function () { /* stay on world map */ }
+    })
     return
   }
   // Kodok slot-7 special unlock (runs once, guard inside).
