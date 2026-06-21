@@ -578,6 +578,106 @@ body > * { position: relative; z-index: 1; }
   border: 1px solid var(--line);
 }
 
+/* ─────────────────────────────────────────────────────
+   Streak chip + intro overlay + question transitions + confetti
+   ───────────────────────────────────────────────────── */
+.streak-chip {
+  padding: 4px 10px;
+  background: linear-gradient(135deg, var(--gold), var(--peach));
+  color: #422006;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(252,211,77,0.45);
+  display: none;
+  animation: streakPop 320ms cubic-bezier(0.34,1.56,0.64,1);
+}
+.streak-chip.visible { display: inline-block; }
+@keyframes streakPop {
+  0%   { transform: scale(0.5); opacity: 0; }
+  60%  { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+/* Question enter / exit transitions */
+.q-text, .shape-emoji, .q-choices {
+  transition: transform 280ms cubic-bezier(0.34,1.56,0.64,1), opacity 220ms;
+}
+.q-transition-out .q-text,
+.q-transition-out .shape-emoji,
+.q-transition-out .q-choices {
+  opacity: 0;
+  transform: translateY(-16px);
+}
+.q-transition-in .q-text,
+.q-transition-in .shape-emoji,
+.q-transition-in .q-choices {
+  animation: qSlideIn 360ms cubic-bezier(0.34,1.56,0.64,1) backwards;
+}
+.q-transition-in .shape-emoji { animation-delay: 0ms; }
+.q-transition-in .q-text       { animation-delay: 80ms; }
+.q-transition-in .q-choices    { animation-delay: 160ms; }
+@keyframes qSlideIn {
+  0%   { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Intro overlay — "READY?" / "3" / "2" / "1" / "MULAI!" */
+.intro-overlay {
+  position: fixed; inset: 0;
+  display: grid; place-items: center;
+  background: radial-gradient(circle at center,
+    rgba(11,18,38,0.85), rgba(11,18,38,0.98));
+  z-index: 9000;
+  pointer-events: all;
+}
+.intro-text {
+  font-family: var(--font-display);
+  font-size: clamp(56px, 16vw, 120px);
+  background: linear-gradient(135deg, var(--cyan), var(--violet), var(--pink));
+  -webkit-background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 16px 36px rgba(6,182,212,0.4));
+  animation: introBurst 520ms cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes introBurst {
+  0%   { transform: scale(0.3); opacity: 0; }
+  60%  { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+/* Confetti for result screen */
+.confetti-piece {
+  position: absolute;
+  width: 8px; height: 12px;
+  pointer-events: none;
+  opacity: 0;
+}
+.confetti-piece.go {
+  animation: confettiFall 1800ms ease-out forwards;
+}
+@keyframes confettiFall {
+  0%   { transform: translate(0, 0) rotate(0); opacity: 1; }
+  100% { transform: translate(var(--cx, 0), 90vh) rotate(720deg); opacity: 0; }
+}
+
+/* Result screen — staggered star pop */
+.result-stars span {
+  display: inline-block;
+  opacity: 0;
+  transform: scale(0.3);
+  animation: starPop 480ms cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+.result-stars span:nth-child(1) { animation-delay: 200ms; }
+.result-stars span:nth-child(2) { animation-delay: 400ms; }
+.result-stars span:nth-child(3) { animation-delay: 600ms; }
+@keyframes starPop {
+  0%   { opacity: 0; transform: scale(0.3) rotate(-20deg); }
+  60%  { opacity: 1; transform: scale(1.25) rotate(0); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation: none !important;
@@ -652,6 +752,7 @@ body > * { position: relative; z-index: 1; }
     <div class="q-pills">
       <span class="q-pill" id="q-level">Lv.1</span>
       <span class="q-pill" id="q-tier-pill">EASY</span>
+      <span class="streak-chip" id="q-streak">🔥 ×2</span>
     </div>
     <div class="hdr-stars" id="q-stars">⭐ 0</div>
   </div>
@@ -732,8 +833,58 @@ body > * { position: relative; z-index: 1; }
     idx: 0,
     correct: 0,
     wrong: 0,
-    stars: 0
+    stars: 0,
+    streak: 0,
+    bestStreak: 0
   };
+
+  // ── Audio (Web Audio synth — zero asset files, kid-safe) ─────
+  let _audioCtx = null;
+  function _ctx () {
+    if (_audioCtx) return _audioCtx;
+    try { _audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    catch (e) { _audioCtx = null; }
+    return _audioCtx;
+  }
+  function _tone (freq, dur, type, vol) {
+    const ctx = _ctx();
+    if (!ctx) return;
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = type || 'sine';
+    o.frequency.value = freq;
+    g.gain.value = 0;
+    g.gain.setValueAtTime(0, ctx.currentTime);
+    g.gain.linearRampToValueAtTime(vol || 0.18, ctx.currentTime + 0.01);
+    g.gain.linearRampToValueAtTime(0, ctx.currentTime + (dur || 0.18));
+    o.connect(g); g.connect(ctx.destination);
+    o.start(); o.stop(ctx.currentTime + (dur || 0.18) + 0.02);
+  }
+  function sfxCorrect () {
+    // Cheerful arpeggio C5 → E5 → G5
+    _tone(523, 0.12, 'triangle', 0.16);
+    setTimeout(() => _tone(659, 0.12, 'triangle', 0.16), 90);
+    setTimeout(() => _tone(784, 0.20, 'triangle', 0.18), 180);
+  }
+  function sfxWrong () {
+    // Soft descending blip (NOT harsh)
+    _tone(330, 0.16, 'sine', 0.14);
+    setTimeout(() => _tone(247, 0.20, 'sine', 0.12), 110);
+  }
+  function sfxLevelStart () { _tone(659, 0.08, 'triangle', 0.16); }
+  function sfxCountdown ()  { _tone(523, 0.06, 'square', 0.12); }
+  function sfxGo ()         { _tone(880, 0.18, 'triangle', 0.20); setTimeout(() => _tone(1175, 0.24, 'triangle', 0.18), 80); }
+  function sfxResultStar () { _tone(880, 0.10, 'triangle', 0.18); }
+  function sfxFanfare () {
+    // C-E-G-C major fanfare for high stars
+    const notes = [523, 659, 784, 1047];
+    notes.forEach((f, i) => setTimeout(() => _tone(f, 0.20, 'triangle', 0.18), i * 110));
+  }
+
+  // ── Haptic ───────────────────────────────────────────
+  function hapticTap (pat) {
+    if (navigator.vibrate) try { navigator.vibrate(pat || 12); } catch (e) {}
+  }
 
   // ── Save helpers ───────────────────────────────────
   function loadAllStars () {
@@ -862,6 +1013,40 @@ body > * { position: relative; z-index: 1; }
     });
   }
 
+  // ── Intro overlay (READY → 3-2-1 → MULAI!) ───────────────
+  function playIntro (cb) {
+    const ov = document.createElement('div');
+    ov.className = 'intro-overlay';
+    const txt = document.createElement('div');
+    txt.className = 'intro-text';
+    txt.textContent = 'Ready?';
+    ov.appendChild(txt);
+    document.body.appendChild(ov);
+    sfxLevelStart();
+    const sequence = ['Ready?', '3', '2', '1', 'Mulai!'];
+    let i = 0;
+    function step () {
+      if (i >= sequence.length) {
+        ov.style.opacity = '0';
+        setTimeout(() => { try { ov.remove(); } catch (e) {} cb && cb(); }, 200);
+        return;
+      }
+      const word = sequence[i];
+      txt.textContent = word;
+      // Re-trigger animation
+      txt.style.animation = 'none';
+      void txt.offsetWidth;
+      txt.style.animation = '';
+      if (word === 'Mulai!') sfxGo();
+      else if (word === 'Ready?') sfxLevelStart();
+      else sfxCountdown();
+      i++;
+      const delay = (word === 'Ready?') ? 700 : (word === 'Mulai!' ? 500 : 450);
+      setTimeout(step, delay);
+    }
+    step();
+  }
+
   // ── QUIZ ───────────────────────────────────────────
   function startLevel (lv) {
     state.level = lv;
@@ -872,6 +1057,8 @@ body > * { position: relative; z-index: 1; }
     state.correct = 0;
     state.wrong = 0;
     state.stars = 0;
+    state.streak = 0;
+    state.bestStreak = 0;
 
     if (typeof window.makeMathQuestionV2 !== 'function') {
       alert('Gagal memuat math engine. Refresh halaman dan coba lagi.');
@@ -888,25 +1075,31 @@ body > * { position: relative; z-index: 1; }
     pill.className = 'q-pill ' + cfg.pill;
     pill.textContent = cfg.label;
     document.getElementById('q-stars').textContent = '⭐ 0';
+    document.getElementById('q-streak').classList.remove('visible');
     document.getElementById('ops-preview').textContent = opsLabel(state.tier, lv);
     showScreen('quiz');
-    renderQuestion();
+    // Play the intro overlay, then render the first question.
+    playIntro(function () { renderQuestion(); });
   }
 
   function renderQuestion () {
     if (state.idx >= state.pool.length) return finishLevel();
     const q = state.pool[state.idx];
+    const scr = document.getElementById('quiz-screen');
+    // Apply enter animation by toggling class
+    scr.classList.remove('q-transition-in');
+    void scr.offsetWidth;     // force reflow
+    scr.classList.add('q-transition-in');
+
     document.getElementById('q-progress').style.width = ((state.idx / state.pool.length) * 100) + '%';
     document.getElementById('shape-emoji').textContent = SHAPE_EMOJI[q.shape] || '🧮';
     const qTextEl = document.getElementById('q-text');
     qTextEl.textContent = q.q;
-    // Word problems get smaller / regular-weight typography.
     qTextEl.classList.toggle('word', q.shape === 'word');
 
     const choicesEl = document.getElementById('q-choices');
     choicesEl.innerHTML = '';
     choicesEl.classList.remove('symbol-row');
-    // Only `comparison` uses 3-symbol row layout. All others use 2×2 grid.
     if (q.shape === 'comparison') {
       choicesEl.classList.add('symbol-row');
     }
@@ -927,7 +1120,8 @@ body > * { position: relative; z-index: 1; }
     document.querySelectorAll('#q-choices .q-choice').forEach(b => b.setAttribute('disabled',''));
     btn.classList.add(correct ? 'correct' : 'wrong');
     if (!correct) {
-      // Highlight correct one
+      sfxWrong();
+      hapticTap([14, 40, 14]);
       const btns = document.querySelectorAll('#q-choices .q-choice');
       for (let i = 0; i < btns.length; i++) {
         if (String(q.choices[i]) === String(q.ans)) {
@@ -936,17 +1130,51 @@ body > * { position: relative; z-index: 1; }
         }
       }
       state.wrong++;
+      state.streak = 0;
+      document.getElementById('q-streak').classList.remove('visible');
     } else {
+      sfxCorrect();
+      hapticTap(12);
       state.correct++;
       state.stars++;
+      state.streak++;
+      if (state.streak > state.bestStreak) state.bestStreak = state.streak;
       document.getElementById('q-stars').textContent = '⭐ ' + state.stars;
+      // Show streak chip when 2 or more consecutive correct
+      if (state.streak >= 2) {
+        const sc = document.getElementById('q-streak');
+        sc.textContent = '🔥 ×' + state.streak;
+        sc.classList.add('visible');
+        // Re-trigger pop animation
+        sc.style.animation = 'none';
+        void sc.offsetWidth;
+        sc.style.animation = '';
+      }
     }
     state.idx++;
-    setTimeout(renderQuestion, 880);
+    setTimeout(renderQuestion, 900);
+  }
+
+  function spawnConfetti (count) {
+    const colors = ['#06B6D4', '#0EA5E9', '#8B5CF6', '#EC4899', '#FCD34D', '#34D399', '#FB923C'];
+    const card = document.querySelector('#result-screen .result-card');
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
+    for (let i = 0; i < (count || 40); i++) {
+      const p = document.createElement('div');
+      p.className = 'confetti-piece';
+      p.style.background = colors[i % colors.length];
+      p.style.left = (rect.left + rect.width * Math.random()) + 'px';
+      p.style.top = rect.top + 'px';
+      p.style.borderRadius = (Math.random() > 0.5 ? '50%' : '2px');
+      p.style.setProperty('--cx', ((Math.random() - 0.5) * 400) + 'px');
+      document.body.appendChild(p);
+      requestAnimationFrame(() => p.classList.add('go'));
+      setTimeout(() => { try { p.remove(); } catch (e) {} }, 2200);
+    }
   }
 
   function finishLevel () {
-    // Compute stars 0-3
     const total = state.pool.length;
     const ratio = state.correct / total;
     const stars = ratio >= 0.85 ? 3 : (ratio >= 0.6 ? 2 : (ratio >= 0.3 ? 1 : 0));
@@ -956,8 +1184,18 @@ body > * { position: relative; z-index: 1; }
     const title = stars >= 3 ? 'Sempurna!' : (stars >= 2 ? 'Hebat!' : (stars >= 1 ? 'Bagus!' : 'Lain Kali!'));
     document.getElementById('r-emoji').textContent = emoji;
     document.getElementById('r-title').textContent = title;
-    document.getElementById('r-stars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
-    document.getElementById('r-detail').textContent = 'Skor: ' + state.correct + ' dari ' + total;
+    // Star reveal — wrap each character in span for staggered pop
+    const sr = document.getElementById('r-stars');
+    sr.innerHTML = '';
+    for (let i = 0; i < 3; i++) {
+      const span = document.createElement('span');
+      span.textContent = i < stars ? '⭐' : '☆';
+      sr.appendChild(span);
+      if (i < stars) setTimeout(sfxResultStar, 200 + i * 200);
+    }
+    const detail = 'Skor: ' + state.correct + ' dari ' + total;
+    const streakBit = state.bestStreak >= 3 ? ' · Streak terbaik 🔥 ×' + state.bestStreak : '';
+    document.getElementById('r-detail').textContent = detail + streakBit;
     const nextBtn = document.getElementById('r-next');
     if (state.level >= MAX_LEVEL) {
       nextBtn.style.display = 'none';
@@ -966,6 +1204,11 @@ body > * { position: relative; z-index: 1; }
       nextBtn.onclick = function () { nextLevel(); };
     }
     showScreen('result');
+    // Particle + fanfare for ≥ 2 stars
+    if (stars >= 2) {
+      setTimeout(() => spawnConfetti(stars >= 3 ? 60 : 32), 250);
+      setTimeout(sfxFanfare, 600);
+    }
   }
 
   window.nextLevel = function () {

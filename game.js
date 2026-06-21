@@ -1559,7 +1559,7 @@ function g13cNextLetter() {
 function openLevelSelect(gameNum) {
   // G25 Math Hub — standalone HTML owns hub + level grid + quiz.
   if (gameNum === 25) {
-    window.location.href = 'games/g25-math.html?v=20260621d'
+    window.location.href = 'games/g25-math.html?v=20260621e'
     return
   }
   // Kodok slot-7 special unlock (runs once, guard inside).
