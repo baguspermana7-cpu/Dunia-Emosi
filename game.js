@@ -1297,9 +1297,21 @@ function setLevelComplete(gameNum, levelNum, stars) {
   const key = 'g'+gameNum
   if (!prog[key]) prog[key] = { completed: [], stars: {} }
   const gp = prog[key]
-  if (!gp.completed.includes(levelNum)) gp.completed.push(levelNum)
+  const wasNew = !gp.completed.includes(levelNum)
+  const wasBetter = stars > (gp.stars[levelNum] || 0)
+  if (wasNew) gp.completed.push(levelNum)
   if ((gp.stars[levelNum]||0) < stars) gp.stars[levelNum] = stars
   saveProgress(prog)
+  // Toast feedback for save events (skip noise if neither new nor better)
+  try {
+    if (typeof showToast === 'function') {
+      if (wasNew) {
+        showToast(`Level ${levelNum} selesai! ⭐ ${stars}`, 'success', 2400)
+      } else if (wasBetter) {
+        showToast(`Skor baru level ${levelNum}: ⭐ ${stars}`, 'success', 2400)
+      }
+    }
+  } catch(_){}
 }
 
 // ================================================================

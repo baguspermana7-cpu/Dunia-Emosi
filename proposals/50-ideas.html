@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>50 Ide Pengembangan — Dunia Emosi</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple: #8B5CF6;
+    --purple-dark: #6D28D9;
+    --gold: #FCD34D;
+    --gold-dark: #F59E0B;
+    --green: #22C55E;
+    --pink: #EC4899;
+    --mint: #A7F3D0;
+    --lavender: #C7D2FE;
+    --cream: #FEF3C7;
+    --text: #1F2937;
+    --text-muted: #6B7280;
+    --bg: #FAF5FF;
+    --card-bg: #FFFFFF;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Quicksand', sans-serif;
+    background: linear-gradient(135deg, #FAF5FF 0%, #F0FDF4 100%);
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+  .hero {
+    background: linear-gradient(135deg, var(--purple) 0%, var(--purple-dark) 50%, var(--pink) 100%);
+    color: white;
+    padding: 60px 24px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.18) 0%, transparent 40%),
+                radial-gradient(circle at 80% 60%, rgba(252,211,77,0.22) 0%, transparent 40%);
+    pointer-events: none;
+  }
+  .hero h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(32px, 7vw, 56px);
+    margin-bottom: 12px;
+    text-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    letter-spacing: 1px;
+  }
+  .hero p {
+    font-size: clamp(15px, 3.5vw, 19px);
+    opacity: 0.95;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .hero-emoji {
+    font-size: 64px;
+    display: block;
+    margin-bottom: 16px;
+    animation: heroBounce 2.4s ease-in-out infinite;
+  }
+  @keyframes heroBounce {
+    0%,100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-12px) rotate(2deg); }
+  }
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    max-width: 800px;
+    margin: -40px auto 30px;
+    padding: 0 16px;
+    position: relative;
+    z-index: 2;
+  }
+  .summary-card {
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 16px 12px;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(139,92,246,0.18);
+    border: 2px solid rgba(139,92,246,0.1);
+  }
+  .summary-card .num {
+    font-family: 'Fredoka One', cursive;
+    font-size: 28px;
+    color: var(--purple);
+    line-height: 1;
+  }
+  .summary-card .label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    font-weight: 700;
+  }
+  .toc {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 24px;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 8px 24px rgba(139,92,246,0.1);
+  }
+  .toc h2 {
+    font-family: 'Fredoka One', cursive;
+    color: var(--purple-dark);
+    margin-bottom: 16px;
+    font-size: 22px;
+  }
+  .toc-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+  }
+  .toc-link {
+    display: block;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, var(--cream), #FEF9C3);
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--purple-dark);
+    font-weight: 700;
+    font-size: 14px;
+    border: 1px solid rgba(252,211,77,0.5);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .toc-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(252,211,77,0.35);
+  }
+  .toc-link .count {
+    float: right;
+    background: var(--purple);
+    color: white;
+    border-radius: 999px;
+    padding: 1px 10px;
+    font-size: 12px;
+  }
+  section.category {
+    max-width: 1100px;
+    margin: 50px auto;
+    padding: 0 16px;
+  }
+  .category-header {
+    background: linear-gradient(135deg, var(--lavender), var(--mint));
+    padding: 22px 24px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 4px 12px rgba(139,92,246,0.12);
+  }
+  .category-icon {
+    font-size: 38px;
+    background: white;
+    border-radius: 50%;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    flex-shrink: 0;
+  }
+  .category-header h2 {
+    font-family: 'Fredoka One', cursive;
+    color: var(--purple-dark);
+    font-size: 24px;
+    line-height: 1.2;
+  }
+  .category-header p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+  .ideas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 18px;
+  }
+  .idea {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.07);
+    border: 2px solid rgba(139,92,246,0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+  }
+  .idea:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 28px rgba(139,92,246,0.2);
+  }
+  .idea-number {
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    color: white;
+    padding: 6px 14px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 14px;
+    align-self: flex-start;
+    border-bottom-right-radius: 12px;
+  }
+  .idea-body {
+    padding: 14px 18px 18px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .idea h3 {
+    font-family: 'Fredoka One', cursive;
+    color: var(--purple-dark);
+    font-size: 17px;
+    margin-bottom: 6px;
+    line-height: 1.25;
+  }
+  .idea .desc {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 12px;
+    flex: 1;
+  }
+  .mockup {
+    background: linear-gradient(135deg, #F3E8FF, #E0E7FF);
+    border-radius: 14px;
+    padding: 14px;
+    margin-top: auto;
+    font-family: 'Quicksand', sans-serif;
+    border: 1px dashed rgba(139,92,246,0.3);
+    min-height: 90px;
+    position: relative;
+  }
+  .mockup-label {
+    position: absolute;
+    top: -8px;
+    left: 12px;
+    background: var(--purple);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 8px;
+    letter-spacing: 0.5px;
+  }
+  /* Mockup sub-elements */
+  .mock-btn {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 12px;
+    margin: 3px;
+  }
+  .mock-btn-primary { background: var(--purple); color: white; }
+  .mock-btn-success { background: var(--green); color: white; }
+  .mock-btn-gold { background: var(--gold); color: var(--text); }
+  .mock-pill {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--cream);
+    border: 1px solid var(--gold);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #78350F;
+    margin: 2px;
+  }
+  .mock-card {
+    background: white;
+    border-radius: 10px;
+    padding: 8px;
+    margin: 4px 0;
+    font-size: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+  }
+  .mock-progress {
+    background: rgba(139,92,246,0.15);
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 6px 0;
+  }
+  .mock-progress-fill {
+    background: linear-gradient(90deg, var(--purple), var(--pink));
+    height: 100%;
+    border-radius: 5px;
+  }
+  .mock-row { display: flex; align-items: center; gap: 6px; font-size: 12px; margin: 4px 0; }
+  .mock-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+  .mock-tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: var(--mint);
+    color: #064E3B;
+    font-weight: 700;
+    margin-right: 4px;
+  }
+  .mock-tag.hot { background: #FCA5A5; color: #7F1D1D; }
+  .mock-tag.new { background: var(--gold); color: #78350F; }
+  .idea-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .idea-meta .badge {
+    font-size: 10px;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-weight: 700;
+  }
+  .badge-effort-low { background: #DCFCE7; color: #166534; }
+  .badge-effort-med { background: #FEF3C7; color: #92400E; }
+  .badge-effort-high { background: #FECACA; color: #991B1B; }
+  .badge-impact { background: var(--purple); color: white; }
+  footer {
+    background: linear-gradient(135deg, var(--purple-dark), var(--purple));
+    color: white;
+    padding: 40px 24px;
+    text-align: center;
+    margin-top: 60px;
+  }
+  footer h2 {
+    font-family: 'Fredoka One', cursive;
+    margin-bottom: 12px;
+    font-size: 22px;
+  }
+  footer p {
+    opacity: 0.9;
+    font-size: 14px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .footer-emoji { font-size: 48px; display: block; margin-bottom: 12px; }
+  .legend {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 14px 24px;
+    background: white;
+    border-radius: 14px;
+    font-size: 13px;
+    color: var(--text-muted);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+  .legend strong { color: var(--purple-dark); }
+  @media (max-width: 600px) {
+    .ideas-grid { grid-template-columns: 1fr; }
+    .summary-card .num { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="hero-emoji">💡</span>
+  <h1>50 Ide Pengembangan</h1>
+  <p>Dunia Emosi — Game Edukasi Anak Usia 5-10 Tahun.<br>
+     Roadmap visual dengan mockup di setiap idea. Review + pick favorites.</p>
+</header>
+
+<div class="summary">
+  <div class="summary-card"><div class="num">50</div><div class="label">IDE TOTAL</div></div>
+  <div class="summary-card"><div class="num">10</div><div class="label">KATEGORI</div></div>
+  <div class="summary-card"><div class="num">23</div><div class="label">LOW EFFORT</div></div>
+  <div class="summary-card"><div class="num">17</div><div class="label">HIGH IMPACT</div></div>
+</div>
+
+<div class="legend">
+  <strong>Cara baca</strong>: Setiap ide punya <strong>effort badge</strong> (Low/Med/High = jam developer) + <strong>impact badge</strong> (estimasi kid engagement boost). Mockup di tiap kartu adalah representasi visual fitur saat live.
+</div>
+
+<div class="toc">
+  <h2>📋 Daftar Kategori</h2>
+  <div class="toc-links">
+    <a class="toc-link" href="#gameplay">🎮 Gameplay <span class="count">15</span></a>
+    <a class="toc-link" href="#visual">🎨 Visual <span class="count">10</span></a>
+    <a class="toc-link" href="#audio">🎵 Audio <span class="count">5</span></a>
+    <a class="toc-link" href="#educational">📚 Edukasi <span class="count">8</span></a>
+    <a class="toc-link" href="#accessibility">♿ Aksesibilitas <span class="count">4</span></a>
+    <a class="toc-link" href="#social">🤝 Sosial <span class="count">4</span></a>
+    <a class="toc-link" href="#parent">👨‍👩‍👧 Parent <span class="count">4</span></a>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- GAMEPLAY -->
+<section class="category" id="gameplay">
+  <div class="category-header">
+    <div class="category-icon">🎮</div>
+    <div>
+      <h2>Gameplay</h2>
+      <p>Mekanik baru, mode tambahan, depth & replayability</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-number">#1</div>
+      <div class="idea-body">
+        <h3>Mode Co-op Orangtua-Anak</h3>
+        <div class="idea-meta"><span class="badge badge-effort-med">EFFORT: MED</span><span class="badge badge-impact">HIGH IMPACT</span></div>
+        <p class="desc">Mode 2-pemain di device sama — orangtua + anak collaborate jawab pertanyaan. Kuatkan bonding sambil belajar.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">👨 Papa: 8★ | 👶 Bocah: 12★</div>
+          <div class="mock-row">Round 5/10 — giliran bersama!</div>
+          <div class="mock-grid-2">
+            <span class="mock-btn mock-btn-primary">😊 Papa pilih</span>
+            <span class="mock-btn mock-btn-success">😢 Bocah pilih</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#2</div>
+      <div class="idea-body">
+        <h3>Tantangan Harian (Daily Challenge)</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">HIGH IMPACT</span></div>
+        <p class="desc">Satu puzzle pilihan setiap hari dengan bintang bonus. Mendorong habit + return visit.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🎯 <strong>Hari Ini</strong>: G7 — Susun Kata "LUMBA-LUMBA"</div>
+          <div class="mock-row"><span class="mock-tag new">+5★</span><span class="mock-tag">HARI 7 STREAK</span></div>
+          <span class="mock-btn mock-btn-gold">▶ Mulai Tantangan</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#3</div>
+      <div class="idea-body">
+        <h3>Boss Battle setiap 10 Level</h3>
+        <div class="idea-meta"><span class="badge badge-effort-med">EFFORT: MED</span><span class="badge badge-impact">HIGH IMPACT</span></div>
+        <p class="desc">Level 10/20/30/40/50/60 punya mekanik unik (HP musuh 2x, time-pressure, multi-stage).</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">👑 <strong>BOSS</strong>: Mewtwo Lv.40</div>
+          <div class="mock-progress"><div class="mock-progress-fill" style="width:78%"></div></div>
+          <div class="mock-row">⚡ Phase 2/3 — Hujan Psikis</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#4</div>
+      <div class="idea-body">
+        <h3>Mode Time-Attack</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">60 detik jawab sebanyak mungkin. Skor harian + leaderboard lokal per avatar.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row" style="font-size:18px;font-weight:900">⏱ 0:42</div>
+          <div class="mock-row">Skor: 17 jawaban benar</div>
+          <div class="mock-row">Combo x5! 🔥🔥🔥</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#5</div>
+      <div class="idea-body">
+        <h3>Streak Tanpa Salah Counter</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">Bonus bintang saat 10 benar berturut-turut. Visual streak fire 🔥 di header.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">🔥 STREAK: <strong>8</strong> / 10</div>
+          <div class="mock-progress"><div class="mock-progress-fill" style="width:80%;background:linear-gradient(90deg,#FCD34D,#EF4444)"></div></div>
+          <div class="mock-row">2 lagi → BONUS BINTANG! ⭐⭐</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#6</div>
+      <div class="idea-body">
+        <h3>Adaptive Difficulty AI</h3>
+        <div class="idea-meta"><span class="badge badge-effort-high">EFFORT: HIGH</span><span class="badge badge-impact">HIGH IMPACT</span></div>
+        <p class="desc">Auto-adjust kesulitan berdasarkan success rate. Anak yang struggle dapat easy mode silent; yang jago dapat hard.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">📊 7 benar / 10 — dipertahankan di medium</div>
+          <div class="mock-card">📈 12 benar / 12 — promosi ke hard (silent)</div>
+          <div class="mock-card">📉 3 benar / 10 — turun ke easy (tanpa label)</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#7</div>
+      <div class="idea-body">
+        <h3>Mode Cerita (Story Arc)</h3>
+        <div class="idea-meta"><span class="badge badge-effort-high">EFFORT: HIGH</span><span class="badge badge-impact">HIGH IMPACT</span></div>
+        <p class="desc">Level berkaitan dengan narasi: Si Lion mau ulang tahun → harus pilih emosi yang tepat → kumpulkan teman → pesta!</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🦁 Lion sedih: "Aku tidak punya teman..."</div>
+          <div class="mock-card">→ Bab 2: Cari Hewan Bahagia</div>
+          <span class="mock-btn mock-btn-primary">▶ Lanjut Cerita</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#8</div>
+      <div class="idea-body">
+        <h3>Hidden Collectibles per Level</h3>
+        <div class="idea-meta"><span class="badge badge-effort-med">EFFORT: MED</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">Setiap level ada koin tersembunyi. Kumpulkan untuk unlock kostum mascot, theme, sound pack.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">🪙 12/40 Koin Rahasia</div>
+          <div class="mock-row">🎩 Topi Wizard (15 koin)</div>
+          <div class="mock-row">🌈 Theme Pelangi (20 koin)</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#9</div>
+      <div class="idea-body">
+        <h3>Combo Multiplier</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">Sudah ada di battle Pokemon. Extend ke G1-G9: chain benar = x1.5 → x2 → x3 skor.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row" style="font-size:22px">x3 COMBO! 🔥</div>
+          <div class="mock-row">+15 ★ (5 × 3)</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#10</div>
+      <div class="idea-body">
+        <h3>Power-up Tokens</h3>
+        <div class="idea-meta"><span class="badge badge-effort-med">EFFORT: MED</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">Token: 💡 Hint, ⏸ Pause Timer, ⏭ Skip Once. Earn dari daily / streak / koin rahasia.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-grid-2">
+            <span class="mock-pill">💡 Hint × 3</span>
+            <span class="mock-pill">⏸ Pause × 1</span>
+            <span class="mock-pill">⏭ Skip × 2</span>
+            <span class="mock-pill">🛡 Shield × 1</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#11</div>
+      <div class="idea-body">
+        <h3>Pet Companion</h3>
+        <div class="idea-meta"><span class="badge badge-effort-med">EFFORT: MED</span><span class="badge badge-impact">HIGH IMPACT</span></div>
+        <p class="desc">Pelihara hewan virtual di sidebar. Reaksi: bahagia saat menang, sedih saat salah, lapar perlu di-feed.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row" style="font-size:32px">🦊</div>
+          <div class="mock-row">Mood: 😊 Bahagia (XP 78/100)</div>
+          <div class="mock-row">"Aku bangga padamu!" — Foxxie</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#12</div>
+      <div class="idea-body">
+        <h3>Mini-Games antar Round</h3>
+        <div class="idea-meta"><span class="badge badge-effort-med">EFFORT: MED</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">Setiap 5 round, mini-game 15-detik (whack-a-mole emoji, target shooting, dll) untuk break + reward.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">🎯 Bonus Round!</div>
+          <div class="mock-row">Tap 5 😊 dalam 10 detik!</div>
+          <div class="mock-row" style="font-size:24px">⏱ 0:07</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#13</div>
+      <div class="idea-body">
+        <h3>Speedrun Lokal</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">Catat best time per level per avatar. "Beat your record!" notif setelah personal best.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🏁 G4 Lv.5: 1:23 (best 1:34) 🎉 -11s!</div>
+          <div class="mock-card">G7 Lv.3: 2:04 (best 2:04)</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#14</div>
+      <div class="idea-body">
+        <h3>Game Baru: Role-Play Emosi</h3>
+        <div class="idea-meta"><span class="badge badge-effort-high">EFFORT: HIGH</span><span class="badge badge-impact">HIGH IMPACT</span></div>
+        <p class="desc">Skenario interaktif: "Kakakmu menangis, apa yang kamu lakukan?" → pilih response → lihat dampak.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">😢 Adik kamu jatuh dari sepeda.</div>
+          <div class="mock-grid-2">
+            <span class="mock-btn mock-btn-success">🤗 Peluk dia</span>
+            <span class="mock-btn mock-btn-gold">🩹 Bantu obati</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#15</div>
+      <div class="idea-body">
+        <h3>Endless Mode</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">LOW IMPACT</span></div>
+        <p class="desc">Mode infinite tanpa level — terus jawab sampai 3 salah. Untuk anak yang sudah master semua level.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">♾ ENDLESS — Score: 247</div>
+          <div class="mock-row">❤❤❤ Lives</div>
+          <div class="mock-row">High Score: 312 (Singa 🦁)</div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- VISUAL -->
+<section class="category" id="visual">
+  <div class="category-header">
+    <div class="category-icon">🎨</div>
+    <div>
+      <h2>Visual & Personalisasi</h2>
+      <p>Theme, avatar, kostum, dekor musiman</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-number">#16</div>
+      <div class="idea-body">
+        <h3>Theme Picker (5 Background)</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">Hutan / Pantai / Luar Angkasa / Bawah Laut / Pegunungan. Kid pilih background app sesuai mood.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-grid-2">
+            <span class="mock-btn mock-btn-success">🌳 Hutan ✓</span>
+            <span class="mock-btn mock-btn-primary">🏖 Pantai</span>
+            <span class="mock-btn mock-btn-primary">🚀 Luar Angkasa</span>
+            <span class="mock-btn mock-btn-primary">🌊 Bawah Laut</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#17</div>
+      <div class="idea-body">
+        <h3>Avatar Builder</h3>
+        <div class="idea-meta"><span class="badge badge-effort-high">EFFORT: HIGH</span><span class="badge badge-impact">HIGH IMPACT</span></div>
+        <p class="desc">Mix-and-match wajah, topi, baju, aksesoris. Hasil custom avatar muncul di tiap game header.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row" style="font-size:36px">🦊👑</div>
+          <div class="mock-row">Foxxie • Topi Mahkota • Baju Pelangi</div>
+          <span class="mock-btn mock-btn-primary">Ganti Wajah</span>
+          <span class="mock-btn mock-btn-gold">Beli Item ($koin)</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#18</div>
+      <div class="idea-body">
+        <h3>Theme Musiman Otomatis</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">Desember = salju + Christmas dekor. Lebaran = ketupat + lampu. Tahun Baru = kembang api. Auto-detect tanggal.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">🎄 Mode Natal AKTIF (25 Des)</div>
+          <div class="mock-row">❄ Salju jatuh + lampu kerlip</div>
+          <span class="mock-pill">+25% bonus star sepekan!</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#19</div>
+      <div class="idea-body">
+        <h3>Mode Siang/Malam Auto</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">LOW IMPACT</span></div>
+        <p class="desc">19:00-06:00 auto-switch ke dark theme dengan moon + stars background. Eye-comfort untuk anak.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div style="background:#1E1B4B;padding:8px;border-radius:8px;color:#FBBF24;font-size:11px;">🌙 Mode Malam Aktif<br>⭐⭐⭐ Bintang berkelip<br>BG: deep purple gradient</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#20</div>
+      <div class="idea-body">
+        <h3>Pilih Mascot Favorit</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">Sekarang 8 hewan tersedia sebagai avatar (Lion/Rabbit/Elephant/Fox/Frog/Tiger/Panda/Koala). Add: pilih mascot tambahan dari hewan langka.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row" style="font-size:24px">🦁 🐰 🐘 🦊 🐸 🐯 🐼 🐨</div>
+          <div class="mock-row">🆕 🦄 🐲 🦒 🐧 (unlock)</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#21</div>
+      <div class="idea-body">
+        <h3>Particle Effect Streak</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">LOW IMPACT</span></div>
+        <p class="desc">Background partikel berubah intensitas mengikuti streak. 1-2 = calm; 5+ = burst confetti; 10+ = aurora.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">Streak 1: ✦ (1 partikel)</div>
+          <div class="mock-row">Streak 5: ✨🎉⭐💫 (medium)</div>
+          <div class="mock-row">Streak 10: AURORA 🌈🌈🌈</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#22</div>
+      <div class="idea-body">
+        <h3>Parallax Background</h3>
+        <div class="idea-meta"><span class="badge badge-effort-med">EFFORT: MED</span><span class="badge badge-impact">LOW IMPACT</span></div>
+        <p class="desc">G6 World Map sudah punya. Extend ke main menu + battle screens dengan layered scrolling.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">☁ Layer 1: clouds drift slow</div>
+          <div class="mock-card">🏔 Layer 2: mountains medium</div>
+          <div class="mock-card">🌳 Layer 3: trees fast</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#23</div>
+      <div class="idea-body">
+        <h3>Screen Transition Trails</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">LOW IMPACT</span></div>
+        <p class="desc">Saat navigasi antar screen, trail bintang mengikuti finger position. Subtle tapi feels magical.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">Tap → ⭐ ✨ ⭐ ✨ → [Screen baru]</div>
+          <div class="mock-row">300ms trail, fade out</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#24</div>
+      <div class="idea-body">
+        <h3>Confetti Density Slider</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">LOW IMPACT</span></div>
+        <p class="desc">Beberapa anak sensitive terhadap busy visuals. Setting: VFX Low/Medium/High/Off.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">🎉 VFX Intensitas:</div>
+          <div class="mock-progress"><div class="mock-progress-fill" style="width:60%"></div></div>
+          <div class="mock-row">Sedang (default)</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#25</div>
+      <div class="idea-body">
+        <h3>Achievement Badge Display Case</h3>
+        <div class="idea-meta"><span class="badge badge-effort-med">EFFORT: MED</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">Halaman trophy room: semua achievement displayed seperti display kabinet. Tap → detail story.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-grid-2">
+            <span class="mock-pill">🥇 Pertama!</span>
+            <span class="mock-pill">⭐ 100 Bintang</span>
+            <span class="mock-pill">🔥 Streak 7</span>
+            <span class="mock-pill">📚 Letter Master</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- AUDIO -->
+<section class="category" id="audio">
+  <div class="category-header">
+    <div class="category-icon">🎵</div>
+    <div>
+      <h2>Audio</h2>
+      <p>Musik, SFX, suara narasi</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-number">#26</div>
+      <div class="idea-body">
+        <h3>Music Track Pool</h3>
+        <div class="idea-meta"><span class="badge badge-effort-med">EFFORT: MED</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">3-5 BGM tracks: Calm (lullaby) / Upbeat (energetic) / Adventure (epic). Kid pick, auto random tiap session.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">🎵 Playing: "Hutan Pagi" (Calm)</div>
+          <div class="mock-grid-2">
+            <span class="mock-btn mock-btn-success">▶ Calm</span>
+            <span class="mock-btn mock-btn-primary">⚡ Upbeat</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#27</div>
+      <div class="idea-body">
+        <h3>Cartoon SFX Library</h3>
+        <div class="idea-meta"><span class="badge badge-effort-med">EFFORT: MED</span><span class="badge badge-impact">HIGH IMPACT</span></div>
+        <p class="desc">Replace sine-tone (L105 dari design review) dengan cartoon samples: bouncy "ding!", whoosh, boom, sparkle.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">Correct: 🎵 "TING-DING!" (cartoon)</div>
+          <div class="mock-card">Wrong: 🎵 "BWAH-WAH" (sad trombone)</div>
+          <div class="mock-card">Level Up: 🎵 "FANFARE!" (8-bit)</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#28</div>
+      <div class="idea-body">
+        <h3>Voice Narrasi (TTS Indo)</h3>
+        <div class="idea-meta"><span class="badge badge-effort-high">EFFORT: HIGH</span><span class="badge badge-impact">HIGH IMPACT</span></div>
+        <p class="desc">TTS Indonesia untuk anak belum bisa baca: bacakan pertanyaan + jawaban. Local Web Speech API.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🔊 "Pilih emosi yang tepat..."</div>
+          <span class="mock-btn mock-btn-primary">🔊 Voice ON</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#29</div>
+      <div class="idea-body">
+        <h3>Volume Slider per Channel</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">Separate slider: 🎵 BGM, 🔊 SFX, 🗣 Voice. Saat ini global mute aja.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">🎵 BGM <div class="mock-progress" style="width:120px;display:inline-block"><div class="mock-progress-fill" style="width:60%"></div></div></div>
+          <div class="mock-row">🔊 SFX <div class="mock-progress" style="width:120px;display:inline-block"><div class="mock-progress-fill" style="width:80%"></div></div></div>
+          <div class="mock-row">🗣 Voice <div class="mock-progress" style="width:120px;display:inline-block"><div class="mock-progress-fill" style="width:40%"></div></div></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#30</div>
+      <div class="idea-body">
+        <h3>Kid Voice Recording</h3>
+        <div class="idea-meta"><span class="badge badge-effort-high">EFFORT: HIGH</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">G7/G8/G9: kid speak the word into mic. Play back. Optional: WebSpeech recognition + score.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">🎤 Rekam suaramu!</div>
+          <div class="mock-row">⬛⬛⬛⬛▱▱▱▱ 2.3s</div>
+          <span class="mock-btn mock-btn-primary">▶ Putar Suaramu</span>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- EDUCATIONAL -->
+<section class="category" id="educational">
+  <div class="category-header">
+    <div class="category-icon">📚</div>
+    <div>
+      <h2>Edukasi (Pendalaman)</h2>
+      <p>Konten belajar lebih dalam + multi-bahasa</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-number">#31</div>
+      <div class="idea-body">
+        <h3>Step-by-Step Math Solver</h3>
+        <div class="idea-meta"><span class="badge badge-effort-med">EFFORT: MED</span><span class="badge badge-impact">HIGH IMPACT</span></div>
+        <p class="desc">Saat anak salah 3 kali, popup tutorial visual: 12 ÷ 3 → 🍎🍎🍎🍎 / 🍎🍎🍎🍎 / 🍎🍎🍎🍎.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">12 ÷ 3 = ?</div>
+          <div class="mock-row">🍎🍎🍎🍎 | 🍎🍎🍎🍎 | 🍎🍎🍎🍎</div>
+          <div class="mock-row">→ 3 kelompok, 4 apel/kelompok</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#32</div>
+      <div class="idea-body">
+        <h3>Multi-Bahasa (EN/SUN)</h3>
+        <div class="idea-meta"><span class="badge badge-effort-high">EFFORT: HIGH</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">Toggle Indonesia / English / Sunda. Buat anak bilingual + lestari budaya lokal.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-grid-2">
+            <span class="mock-btn mock-btn-primary">🇮🇩 Bahasa</span>
+            <span class="mock-btn mock-btn-success">🇬🇧 English</span>
+            <span class="mock-btn mock-btn-gold">🌾 Sunda</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#33</div>
+      <div class="idea-body">
+        <h3>Cerita Reading Comprehension</h3>
+        <div class="idea-meta"><span class="badge badge-effort-high">EFFORT: HIGH</span><span class="badge badge-impact">HIGH IMPACT</span></div>
+        <p class="desc">3 paragraf cerita pendek + 3 pertanyaan. Latih pemahaman bacaan untuk anak 7-10 tahun.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">📖 "Singa & Tikus"<br>Suatu hari di hutan...</div>
+          <div class="mock-row">Q: Siapa yang menolong singa?</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#34</div>
+      <div class="idea-body">
+        <h3>Pokemon Facts Panel</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">Setelah catch Pokemon, popup info: "Pikachu ringan 6 kg. Tipe Listrik. Asli dari Kanto."</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">⚡ Pikachu</div>
+          <div class="mock-row">Tipe: Listrik | Berat: 6 kg</div>
+          <div class="mock-row">Wilayah: Kanto (1996)</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#35</div>
+      <div class="idea-body">
+        <h3>Quiz Type-Effectiveness</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">Standalone mini-game: "Api kalahkan apa?" 3 pilihan emoji. Reinforce type chart pengetahuan.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">🔥 mengalahkan...</div>
+          <div class="mock-grid-2">
+            <span class="mock-btn mock-btn-success">🌿</span>
+            <span class="mock-btn mock-btn-primary">💧</span>
+            <span class="mock-btn mock-btn-primary">⚡</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#36</div>
+      <div class="idea-body">
+        <h3>Penjelasan "Kenapa" pada Jawaban Salah</h3>
+        <div class="idea-meta"><span class="badge badge-effort-med">EFFORT: MED</span><span class="badge badge-impact">HIGH IMPACT</span></div>
+        <p class="desc">Bukan cuma "Salah!". Tampilkan: "Kamu pilih MARAH 😠. Tapi ekspresi 😢 itu SEDIH. Lihat: mata berair, mulut turun."</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">😢 = Sedih (bukan Marah)</div>
+          <div class="mock-card">Petunjuk: mata berair + mulut turun</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#37</div>
+      <div class="idea-body">
+        <h3>Kosakata Adaptif</h3>
+        <div class="idea-meta"><span class="badge badge-effort-med">EFFORT: MED</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">G7 Susun Kata: track kata yang anak sudah master, prioritaskan kata baru tapi rotasi periodik untuk recall.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">Master: 47 kata ✓</div>
+          <div class="mock-row">Belajar: 12 kata 🆕</div>
+          <div class="mock-row">Review hari ini: GAJAH, LEBAH</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#38</div>
+      <div class="idea-body">
+        <h3>Geografi Mini Quiz</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">LOW IMPACT</span></div>
+        <p class="desc">"Pohon kelapa dari pulau apa?" 3 opsi pulau Indonesia. Belajar nasionalisme + geografi.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">🌴 Pohon kelapa khas:</div>
+          <div class="mock-grid-2">
+            <span class="mock-btn mock-btn-success">Bali</span>
+            <span class="mock-btn mock-btn-primary">Jawa</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- ACCESSIBILITY -->
+<section class="category" id="accessibility">
+  <div class="category-header">
+    <div class="category-icon">♿</div>
+    <div>
+      <h2>Aksesibilitas</h2>
+      <p>Inklusif untuk semua anak</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-number">#39</div>
+      <div class="idea-body">
+        <h3>Mode High-Contrast</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">Anak low-vision: tombol border tebal hitam, background putih, text gigantic. Toggle di settings.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div style="background:white;border:3px solid black;padding:8px;border-radius:8px;color:black;font-size:14px;font-weight:900">JAWAB: 5</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#40</div>
+      <div class="idea-body">
+        <h3>Font Size Slider</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">LOW IMPACT</span></div>
+        <p class="desc">XS / S / M / L / XL slider. Mempengaruhi semua teks + button.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">Aa <div class="mock-progress" style="width:120px;display:inline-block"><div class="mock-progress-fill" style="width:70%"></div></div> Aa</div>
+          <div class="mock-row" style="font-size:18px">Preview: HALO ANAK!</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#41</div>
+      <div class="idea-body">
+        <h3>Reduced Motion Toggle (Manual)</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">LOW IMPACT</span></div>
+        <p class="desc">Sudah respect prefers-reduced-motion. Tambah toggle manual di app settings untuk anak yang gak tau cara setting OS.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">⚡ Animasi Cepat</div>
+          <div class="mock-row">Aktif: [✓] Animasi Lembut</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#42</div>
+      <div class="idea-body">
+        <h3>Color-Blind Friendly Palette</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">LOW IMPACT</span></div>
+        <p class="desc">Mode buat 8% anak color-blind: replace hijau/merah dengan pattern + icon. Settings → toggle.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">✓ benar (checkmark + green dot)</div>
+          <div class="mock-row">✗ salah (X + red stripes)</div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SOCIAL -->
+<section class="category" id="social">
+  <div class="category-header">
+    <div class="category-icon">🤝</div>
+    <div>
+      <h2>Sosial & Komunitas</h2>
+      <p>Sharing + offline community features</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-number">#43</div>
+      <div class="idea-body">
+        <h3>Achievement Sharing Image</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">Tap achievement → generate gambar shareable ke WhatsApp/IG. Branding "Dunia Emosi" di pojok.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🏆 100 BINTANG!<br>Foxxie 🦊 | dunia-emosi</div>
+          <span class="mock-btn mock-btn-success">📤 Share</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#44</div>
+      <div class="idea-body">
+        <h3>Friend Code Offline</h3>
+        <div class="idea-meta"><span class="badge badge-effort-med">EFFORT: MED</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">Generate 6-digit code dari local score. Input code teman → bandingkan progress (manual, no server).</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">Kode kamu: <strong>FOXY42</strong></div>
+          <div class="mock-row">Input kode teman: [______]</div>
+          <div class="mock-row">Bandingkan: kamu 87★, teman 92★</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#45</div>
+      <div class="idea-body">
+        <h3>Certificate Cetak</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">Print-ready PDF: "Saya, Andi, sudah menyelesaikan Dunia Emosi Level 50!" untuk tempel di kulkas/sekolah.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">📜 SERTIFIKAT<br>Andi 🦁<br>Level 50 Selesai!<br>3 April 2026</div>
+          <span class="mock-btn mock-btn-primary">🖨 Print</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#46</div>
+      <div class="idea-body">
+        <h3>Photo Memory Album</h3>
+        <div class="idea-meta"><span class="badge badge-effort-med">EFFORT: MED</span><span class="badge badge-impact">LOW IMPACT</span></div>
+        <p class="desc">Auto-screenshot momen victory + boss kalah. Album scrollable, tap = relive moment.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-grid-2">
+            <span class="mock-pill">📷 12 Memori</span>
+            <span class="mock-pill">🏆 5 Boss</span>
+          </div>
+          <div class="mock-row">Terakhir: Mewtwo Lv.40 (3 hari lalu)</div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PARENT -->
+<section class="category" id="parent">
+  <div class="category-header">
+    <div class="category-icon">👨‍👩‍👧</div>
+    <div>
+      <h2>Untuk Orangtua</h2>
+      <p>Dashboard, kontrol, laporan progress</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-number">#47</div>
+      <div class="idea-body">
+        <h3>Parent Dashboard</h3>
+        <div class="idea-meta"><span class="badge badge-effort-high">EFFORT: HIGH</span><span class="badge badge-impact">HIGH IMPACT</span></div>
+        <p class="desc">PIN-protected page: grafik weekly progress per kemampuan (emosi, math, baca), waktu main, area lemah.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">📊 Mingguan:</div>
+          <div class="mock-row">🧠 Math: <div class="mock-progress" style="width:120px;display:inline-block"><div class="mock-progress-fill" style="width:75%"></div></div></div>
+          <div class="mock-row">📚 Baca: <div class="mock-progress" style="width:120px;display:inline-block"><div class="mock-progress-fill" style="width:60%"></div></div></div>
+          <div class="mock-row">💖 Emosi: <div class="mock-progress" style="width:120px;display:inline-block"><div class="mock-progress-fill" style="width:90%"></div></div></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#48</div>
+      <div class="idea-body">
+        <h3>Time Limit Kontrol</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">HIGH IMPACT</span></div>
+        <p class="desc">Set max screen time per hari (30/60/90 min). Auto-stop dengan animasi "Yuk istirahat dulu!".</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">⏰ Limit: 45 menit/hari</div>
+          <div class="mock-progress"><div class="mock-progress-fill" style="width:67%"></div></div>
+          <div class="mock-row">Sisa: 15 menit</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#49</div>
+      <div class="idea-body">
+        <h3>Weekly Email Report</h3>
+        <div class="idea-meta"><span class="badge badge-effort-high">EFFORT: HIGH</span><span class="badge badge-impact">MED IMPACT</span></div>
+        <p class="desc">Optional: orangtua subscribe email. Sabtu pagi dapat ringkasan: "Andi belajar 4 hari, 127 bintang, kuat di emosi."</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">📧 dunia-emosi@weekly<br>Andi minggu ini: 127★ ⭐<br>Hari aktif: 4/7<br>Saran: Latih G4 Hitung</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#50</div>
+      <div class="idea-body">
+        <h3>Konten Block (Parental)</h3>
+        <div class="idea-meta"><span class="badge badge-effort-low">EFFORT: LOW</span><span class="badge badge-impact">LOW IMPACT</span></div>
+        <p class="desc">Orangtua bisa disable game tertentu (mis. G13C battle terlalu intens). PIN-locked.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">G13C Gym Ladder: [✓] Aktif</div>
+          <div class="mock-row">G23 Pokemon Run: [✓] Aktif</div>
+          <div class="mock-row">G24 Bawah Laut: [✓] Aktif</div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<footer>
+  <span class="footer-emoji">🚀</span>
+  <h2>Pick 5-10 Favorites!</h2>
+  <p>Review semua ide di atas, lalu kasih tau saya yang mana yang paling menarik untuk dieksekusi.<br>
+  Saya bisa kasih spec lebih dalam + estimasi waktu untuk yang kamu pilih.</p>
+  <p style="margin-top:16px;font-size:12px;opacity:0.8">Dibuat 2026-05-04 · Dunia Emosi · Educational Game Roadmap</p>
+</footer>
+
+</body>
+</html>
