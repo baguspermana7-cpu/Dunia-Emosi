@@ -14038,6 +14038,23 @@ const CITY_ICON_PATH = 'assets/Pokemon/others/cities.webp'
 
 /** Open Stage A — Region Picker. Caller passes which game (10/13/13b). */
 function openRegionOverlay(gameNum) {
+  // G13 (Evolusi Math) + G13B (Quick Fire) — show Adventure/PvP/Tournament
+  // mode select first. Adventure callback re-enters this function with a
+  // lock so it falls through to the existing region picker.
+  if ((gameNum === 13 || gameNum === '13b') && window.BattleModes && !window._regionModeLocked) {
+    var _g13title = gameNum === 13 ? '🔥 Evolusi Math' : '⚡ Quick Fire'
+    window.BattleModes.show({
+      title: _g13title,
+      questionType: 'math',
+      questionLevel: 5,
+      onAdventure: function () {
+        window._regionModeLocked = true
+        try { openRegionOverlay(gameNum) } finally { window._regionModeLocked = false }
+      },
+      onCancel: function () { /* stay on world map */ }
+    })
+    return
+  }
   _citySelectorGame = gameNum || 10
   // Slot-7 + frog preset — runs once, guard inside. Trigger only on G13B.
   if (gameNum === '13b') _applyKodokSlot7Unlock()
