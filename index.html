@@ -2175,7 +2175,18 @@ function loadPixiJS(cb) {
 <script src="games/data/freeze-watchdog.js?v=20260428a" defer></script>
 <script src="games/data/cloud-sync.js?v=20260502p" defer></script>
 <script src="games/data/math-rules.js?v=20260506n" defer></script>
+<script src="games/data/sfx-engine.js?v=20260621" defer></script>
 <script src="games/data/poke-type-chart.js?v=20260506ae" defer></script>
 <script src="game.js?v=20260506ae" defer></script>
+<script>
+  // Boot SFXEngine after page loads — licensed Pokemon SFX from /Sounds/.
+  // Lazy init: failure is silent, never blocks the game.
+  document.addEventListener('DOMContentLoaded', function () {
+    try {
+      window.SFXEngine && window.SFXEngine.init &&
+        window.SFXEngine.init({ basePath: '/Dunia-Emosi/Sounds/pokemon%20sounds/' });
+    } catch (e) { /* silent */ }
+  });
+</script>
 </body>
 </html>

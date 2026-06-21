@@ -292,10 +292,25 @@
 
   // ── Convenience combined call for after-hit feedback ──────────────────
   // Supports optional 4th arg `moveType` for STAB-combo critical detection,
-  // and optional 5th arg `damage` to render an animated -X HP number.
-  function applyHitFeedback(defTargetEl, atkType, defType, moveType, damage) {
+  // 5th arg `damage` to render -X HP number,
+  // 6th arg `attackerId` (Pokemon Pokedex id) to fire the licensed cry SFX
+  //   via SFXEngine.playHitFeedback() (lazy — works even if SFXEngine
+  //   loads later or fails to init; backward compatible with old callers).
+  function applyHitFeedback(defTargetEl, atkType, defType, moveType, damage, attackerId) {
     const m = calcTypeMult(atkType, defType);
     const isRapid = _isRapidFire();
+
+    // Licensed Pokemon SFX + typed move SFX layer — never blocks the VFX path
+    try {
+      if (typeof window.SFXEngine === 'object' && window.SFXEngine.playHitFeedback) {
+        const eff = m >= 1.5 ? 'super' : (m <= 0.5 ? 'immune' : (m <= 0.75 ? 'weak' : 'normal'));
+        window.SFXEngine.playHitFeedback({
+          attackerId: attackerId,
+          moveType: moveType || atkType,
+          effectiveness: eff
+        });
+      }
+    } catch(_){}
 
     // Essential feedback always fires (lightweight)
     spawnEffectivenessText(defTargetEl, m);

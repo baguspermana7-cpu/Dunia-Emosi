@@ -487,7 +487,17 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
 <script src="data/save-engine.js?v=20260501e"></script>
 <script src="data/math-rules.js?v=20260501d"></script>
 <script src="data/move-id-translations.js?v=20260505k"></script>
+<script src="data/sfx-engine.js?v=20260621"></script>
 <script src="data/poke-type-chart.js?v=20260506z"></script>
+<script>
+  // Licensed Pokemon SFX — lazy init, silent failure.
+  document.addEventListener('DOMContentLoaded', function () {
+    try {
+      window.SFXEngine && window.SFXEngine.init &&
+        window.SFXEngine.init({ basePath: '/Dunia-Emosi/Sounds/pokemon%20sounds/' });
+    } catch (e) {}
+  });
+</script>
 <script src="game-modal.js?v=20260424g"></script>
 <script src="battle-sprite-engine.js?v=20260502p"></script>
 
@@ -2065,7 +2075,7 @@ function executeMove(moveIdx, mathCorrect){
       // 4th arg = moveType enables CRITICAL detection on super+STAB combo
       // 5th arg = damage value renders the animated -X HP number
       try { if (typeof window.applyHitFeedback === 'function') {
-        window.applyHitFeedback(epEl, pp.type, ep.type, move.type, dmg)
+        window.applyHitFeedback(epEl, pp.type, ep.type, move.type, dmg, (pp && pp.id) || null)
       }} catch(_){}
 
       const r = epEl.getBoundingClientRect();
@@ -2168,7 +2178,7 @@ function enemyTurn(){
       // Floating effectiveness text + VFX + sfx for enemy → player attack
       // 4th arg enables CRITICAL detection; 5th arg renders damage number
       try { if (typeof window.applyHitFeedback === 'function') {
-        window.applyHitFeedback(ppEl, ep.type, pp.type, moveType, dmg)
+        window.applyHitFeedback(ppEl, ep.type, pp.type, moveType, dmg, (ep && ep.id) || null)
       }} catch(_){}
 
       const r = ppEl.getBoundingClientRect();
