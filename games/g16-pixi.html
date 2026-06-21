@@ -1448,7 +1448,13 @@ function updateTrain(dt){
     const stillHasUncleared = S.obstacles && S.obstacles.some(o => !o.cleared && o.worldX >= S.worldX - 10)
     if (!stillHasUncleared) triggerArrival()
   }
-  if(S.worldX>WORLD_LENGTH+200&&S.trainState!=='DEAD'&&S.trainState!=='ARRIVING'&&S.trainState!=='ARRIVED'){triggerDeath();return}
+  // 2026-06-21 — REMOVED silent death zone at WORLD_LENGTH+200. Owner: the train
+  // would auto-accelerate past the station with no warning and trigger an
+  // unexplained red-flash loss. Now clamp at STATION_X+40 and force ARRIVING.
+  if(S.worldX>STATION_X+40&&S.trainState!=='DEAD'&&S.trainState!=='ARRIVING'&&S.trainState!=='ARRIVED'){
+    S.worldX = STATION_X + 40
+    triggerArrival()
+  }
   // Check mini-obstacles (quick math questions)
   if(S.miniObs && S.trainState==='MOVING'){
     const nextMini = S.miniObs.find(m=>!m.cleared && m.worldX > S.worldX && m.worldX - S.worldX < 80)

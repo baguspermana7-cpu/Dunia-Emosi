@@ -1639,15 +1639,21 @@ function buildAI() {
 
     const aiLane = [0, 1, 2].filter(l => l !== S.lane)[i % 2]
     c.y = laneYs[aiLane]
-    c.x = app.screen.width * (0.55 + i * 0.15)
+    // 2026-06-21 fairness pass — owner: "AI rubber-band + head start makes it
+    // un-winnable". Equal starting grid (was: 0.55-0.70 head start at width).
+    // Deterministic per-AI speed tier (was: 0.96 + Math.random() * 0.08).
+    c.x = app.screen.width * 0.15
     L.ai.addChild(c)
-
-    const variation = 0.96 + Math.random() * 0.08
+    // AI tier: train 0 = slower (0.92×), train 1 = faster (1.04×). Both
+    // deterministic — no per-frame randomness. Tunes match difficulty without
+    // making the race feel rigged.
+    const AI_TIERS = [0.92, 1.04]
     S.aiTrains.push({
       cfg, container: c,
       lane: aiLane,
-      speed: S.baseSpeed * variation,
+      speed: S.baseSpeed * (AI_TIERS[i] || 1.0),
       distance: 0,
+      hp: 3,  // AI also takes damage — fairness symmetry
     })
   })
 }
@@ -1843,7 +1849,9 @@ function loop(ticker) {
   S.speed = Math.min(S.maxSpeed, S.speed + 0.0003 * delta)
 
   // Pressure recovery
-  S.pressure = Math.min(100, S.pressure + 0.05 * delta)
+  // 2026-06-21 — pressure recovery doubled (0.05 → 0.10 per frame) so boost
+  // is accessible. Was sluggish, contributing to "no chance to catch AI" feel.
+  S.pressure = Math.min(100, S.pressure + 0.10 * delta)
   updatePressure()
 
   updateHUD()

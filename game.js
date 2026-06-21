@@ -6951,7 +6951,7 @@ function g10Answer(val, btn){
       s.enemyHp=Math.max(0,s.enemyHp-_dmg)
       g10RenderHp('g10-ehpfill','g10-ehpnums',s.enemyHp,s.enemyMaxHp)
       try { if (typeof applyHitFeedback === 'function') {
-        applyHitFeedback(document.querySelector('#g10-eptr-wrap, .g10-ewrap, #g10-espr-wrap, #g10-espr') || document.getElementById('g10-ehpfill'), s.playerPoke.type, s.enemyPoke.type)
+        applyHitFeedback(document.querySelector('#g10-eptr-wrap, .g10-ewrap, #g10-espr-wrap, #g10-espr') || document.getElementById('g10-ehpfill'), s.playerPoke.type, s.enemyPoke.type, s.playerPoke.type, _dmg, s.playerPoke.id)
       }} catch(_){}
       document.getElementById('g10-battle-status').textContent=''
       setTimeout(()=>{
@@ -6992,7 +6992,7 @@ function g10Answer(val, btn){
         s.playerHp=Math.max(0,s.playerHp-_dmg)
         g10RenderHp('g10-phpfill','g10-phpnums',s.playerHp,s.playerMaxHp)
         try { if (typeof applyHitFeedback === 'function') {
-          applyHitFeedback(document.querySelector('#g10-pptr-wrap, .g10-pwrap, #g10-pspr-wrap, #g10-pspr') || document.getElementById('g10-phpfill'), s.enemyPoke.type, s.playerPoke.type)
+          applyHitFeedback(document.querySelector('#g10-pptr-wrap, .g10-pwrap, #g10-pspr-wrap, #g10-pspr') || document.getElementById('g10-phpfill'), s.enemyPoke.type, s.playerPoke.type, s.enemyPoke.type, _dmg, s.enemyPoke.id)
         }} catch(_){}
         setTimeout(()=>{
           if(s.playerHp<=0) g10PlayerDefeated()
@@ -9650,7 +9650,7 @@ function g13Answer(val, btn) {
       const _dmg     = Math.max(1, Math.round(s.cfg.damage * _mult))
       s.wildHp = Math.max(0, s.wildHp - _dmg)
       try { if (typeof applyHitFeedback === 'function') {
-        applyHitFeedback(document.getElementById('g13-wspr-wrap') || document.getElementById('g13-wspr'), _atkType, _defType)
+        applyHitFeedback(document.getElementById('g13-wspr-wrap') || document.getElementById('g13-wspr'), _atkType, _defType, _atkType, _dmg, (s.chain && s.chain.player && s.chain.player.id) || null)
       }} catch(_){}
       s.evoPoints = Math.min(s.evoNeeded, s.evoPoints + 1)
       s.correctThisExchange++
@@ -9775,7 +9775,7 @@ function g13WildCounterPhase() {
         const _wDmg  = Math.max(1, Math.round(s.cfg.wildDamage * _wMult))
         s.playerHp = Math.max(0, s.playerHp - _wDmg)
         try { if (typeof applyHitFeedback === 'function') {
-          applyHitFeedback(document.getElementById('g13-pspr-wrap') || document.getElementById('g13-pspr'), s.chain.wild.type, _curForm.type)
+          applyHitFeedback(document.getElementById('g13-pspr-wrap') || document.getElementById('g13-pspr'), s.chain.wild.type, _curForm.type, s.chain.wild.type, _wDmg, (s.chain && s.chain.wild && s.chain.wild.id) || null)
         }} catch(_){}
         g13UpdateHpBars()
         g13TriggerFlash()
@@ -10610,7 +10610,7 @@ function g13bAnswer(val, btn) {
     const _bDmg  = Math.max(1, Math.round(1 * _bMult))
     s.wildHp = Math.max(0, s.wildHp - _bDmg)
     try { if (typeof applyHitFeedback === 'function') {
-      applyHitFeedback(document.getElementById('g13b-wspr-wrap') || document.getElementById('g13b-wspr'), _playerType, _wildType)
+      applyHitFeedback(document.getElementById('g13b-wspr-wrap') || document.getElementById('g13b-wspr'), _playerType, _wildType, _playerType, _bDmg, (s.playerFam && s.playerFam[s.curIdx] && s.playerFam[s.curIdx].id) || null)
     }} catch(_){}
     g13bUpdateHpBar()
 
@@ -10925,7 +10925,7 @@ function g13bWildHitsPlayer(onDone) {
   const dmg = Math.max(1, Math.round(_base * _wbMult))
   s.playerHp = Math.max(0, s.playerHp - dmg)
   try { if (typeof applyHitFeedback === 'function') {
-    applyHitFeedback(document.getElementById('g13b-pspr-wrap') || document.getElementById('g13b-pspr'), _wType, _pType)
+    applyHitFeedback(document.getElementById('g13b-pspr-wrap') || document.getElementById('g13b-pspr'), _wType, _pType, _wType, dmg, (s.wild && s.wild.id) || null)
   }} catch(_){}
   g13bUpdatePlayerHp()
   playAttackSound(_wType)
