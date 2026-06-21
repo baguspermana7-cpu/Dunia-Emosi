@@ -7013,3 +7013,57 @@ html.eff-viewport-shake {
     transform: none !important;
   }
 }
+
+/* ── Level expansion: milestone celebration on every 10th level ── */
+/* Caller-fired via spawnMilestoneCelebration(lv). Auto-tier badge by lv tier. */
+.eff-milestone {
+  position: fixed;
+  top: 25%;
+  left: 50%;
+  z-index: 9450;
+  font-family: 'Fredoka One', cursive, sans-serif;
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  padding: 12px 28px;
+  border-radius: 22px;
+  border: 3px solid #fde047;
+  color: #78350f;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fef3c7 100%);
+  background-size: 200% 200%;
+  box-shadow: 0 0 40px rgba(252, 211, 77, 0.6), 0 8px 22px rgba(0,0,0,0.35);
+  text-shadow: 0 2px 5px rgba(255,255,255,0.7);
+  pointer-events: none;
+  transform: translate(-50%, 0) scale(0.4) rotate(-8deg);
+  opacity: 0;
+  animation: effMilestonePop 2.0s cubic-bezier(.34,1.56,.64,1) forwards,
+             effMilestoneShimmer 2.0s linear forwards;
+  white-space: nowrap;
+}
+@keyframes effMilestonePop {
+  0%   { transform: translate(-50%, 12px) scale(0.4) rotate(-12deg); opacity: 0; }
+  14%  { transform: translate(-50%, -4px) scale(1.25) rotate(6deg); opacity: 1; }
+  24%  { transform: translate(-50%, -2px) scale(1.05) rotate(-2deg); opacity: 1; }
+  82%  { transform: translate(-50%, -2px) scale(1.05) rotate(0deg); opacity: 1; }
+  100% { transform: translate(-50%, -32px) scale(0.95) rotate(2deg); opacity: 0; }
+}
+@keyframes effMilestoneShimmer {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* Level chip on game header — emphasis when on milestone level */
+.gh-level[data-milestone="true"] {
+  background: linear-gradient(135deg, #fde047, #f59e0b) !important;
+  color: #78350f !important;
+  box-shadow: 0 0 10px rgba(252, 211, 77, 0.55) !important;
+  animation: effLevelChipPulse 1.6s ease-in-out infinite;
+}
+@keyframes effLevelChipPulse {
+  0%, 100% { transform: scale(1.0); box-shadow: 0 0 10px rgba(252, 211, 77, 0.4); }
+  50%      { transform: scale(1.04); box-shadow: 0 0 18px rgba(252, 211, 77, 0.75); }
+}
+
+@media (max-width: 380px) {
+  .eff-milestone { font-size: 20px; padding: 10px 20px; }
+}

@@ -2062,7 +2062,7 @@ function makeMathQuestion(level) {
   // Hotfix #112-H: delegate to shared math-rules.js which enforces
   // difficulty + level constraints (no × in easy, max 5 for medium ×, etc).
   // G21 has 10 levels max.
-  const G21_MAX_LEVEL = 10
+  const G21_MAX_LEVEL = 30
   if (typeof window.makeGameQuestion === 'function') {
     return window.makeGameQuestion(level, G21_MAX_LEVEL, S.difficulty || 'easy')
   }

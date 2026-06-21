@@ -1211,7 +1211,7 @@ function showWin() {
   try { if(app&&app.ticker) app.ticker.stop() } catch(_){}
 
   setTimeout(()=>{
-    const maxLevel = 40
+    const maxLevel = 60
     const nextLevel = S.level < maxLevel ? ()=>{
       try { sessionStorage.setItem('g24Config', JSON.stringify({ level:S.level+1 })) } catch(_){}
       location.reload()

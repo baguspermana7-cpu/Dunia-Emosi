@@ -1392,7 +1392,7 @@ function openGymGame() {
   playClick()
   // MUST remain synchronous — page redirects on next line, no time for async work.
   _applyKodokSlot7Unlock()   // runs once, guard inside; slot-7+frog preset
-  window.location.href = 'games/g13c-pixi.html?v=20260506aa'
+  window.location.href = 'games/g13c-pixi.html?v=20260506ab'
 }
 
 function g13cBuildLetterSelect() {
@@ -1619,7 +1619,10 @@ function openLevelSelect(gameNum) {
   // Progress bar
   const completed = gp.completed.length
   const totalStars = Object.values(gp.stars||{}).reduce((a,b)=>a+b,0)
-  const totalLevels = (state.currentGame === 13 || state.currentGame === 16 || state.currentGame === 24) ? 40 : (state.currentGame === 19 || state.currentGame === 20 || state.currentGame === 22) ? 30 : 20
+  // Expanded level caps (2026-05-04): broaden challenge ladder for every game
+  // so kids who finish level 20 still have more to chase. Pokemon games (G13/
+  // G16/G24) bump 40→60; bonus games (G19/G20/G22) 30→50; everything else 20→40.
+  const totalLevels = (state.currentGame === 13 || state.currentGame === 16 || state.currentGame === 24) ? 60 : (state.currentGame === 19 || state.currentGame === 20 || state.currentGame === 22) ? 50 : 40
   document.getElementById('level-prog-txt').textContent = `${completed} / ${totalLevels} level selesai`
   document.getElementById('level-prog-fill').style.width = (completed/totalLevels*100) + '%'
   document.getElementById('level-total-stars').textContent = '⭐ ' + totalStars
@@ -1683,7 +1686,16 @@ function startGameWithLevel(levelNum) {
   state.currentPlayer = 0
   // Update level indicator on all game headers
   const lvLabel = `Lv.${levelNum}`
-  document.querySelectorAll('.gh-level').forEach(el => { el.textContent = lvLabel })
+  const isMilestone = (levelNum % 10 === 0)
+  document.querySelectorAll('.gh-level').forEach(el => {
+    el.textContent = lvLabel
+    if (isMilestone) el.setAttribute('data-milestone', 'true')
+    else el.removeAttribute('data-milestone')
+  })
+  // Milestone celebration on 10/20/30/40/50/60 — VFX + bonus confetti
+  if (isMilestone) {
+    try { spawnMilestoneCelebration(levelNum) } catch(_){}
+  }
   if(state.selectedLevel==='hard') checkAchievement('hard_mode')
   // Standalone games navigate to separate HTML — skip showScreen (no screen-gameN div exists)
   const standaloneGames = [6, 14, 15, 16, 19, 20, 21, 22, 23, 24]
@@ -2606,6 +2618,32 @@ function vibrate(pattern){if(isVibrateOn()&&navigator.vibrate)navigator.vibrate(
 function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx}
 function playTone(freq,dur,type='sine',vol=0.2){if(!isSoundOn())return;try{const ctx=getAudio(),osc=ctx.createOscillator(),gain=ctx.createGain();osc.connect(gain);gain.connect(ctx.destination);osc.type=type;osc.frequency.value=freq;gain.gain.setValueAtTime(vol,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);osc.start();osc.stop(ctx.currentTime+dur)}catch(e){}}
 function playCorrect(){playTone(523,0.1,'sine',0.2);setTimeout(()=>playTone(659,0.1,'sine',0.2),100);setTimeout(()=>playTone(784,0.2,'sine',0.25),200);setTimeout(()=>playTone(1047,0.3,'sine',0.2),340);vibrate([20,40,20]);try{spawnCorrectConfetti()}catch(_){}/* Task #87: haptic parity per AUDIT-2026-04-25 P2-6 — double-tap pattern for correct answer engagement */}
+
+// Milestone celebration on every 10th level (10/20/30/40/50/60).
+// Auto-fires when reaching milestone level. Shows tier-appropriate label
+// + spawns extra confetti for impact.
+function spawnMilestoneCelebration(level){
+  if (!level || level % 10 !== 0) return
+  const existing = document.querySelector('.eff-milestone')
+  if (existing) { try { existing.remove() } catch(_){} }
+  let text
+  if (level >= 60) text = '👑 GRANDMASTER! Level ' + level
+  else if (level >= 50) text = '🏆 LEGENDARY! Level ' + level
+  else if (level >= 40) text = '⚡ EXPERT! Level ' + level
+  else if (level >= 30) text = '🔥 MASTER! Level ' + level
+  else if (level >= 20) text = '🌟 PRO! Level ' + level
+  else text = '⭐ MILESTONE! Level ' + level
+  const el = document.createElement('div')
+  el.className = 'eff-milestone'
+  el.textContent = text
+  document.body.appendChild(el)
+  setTimeout(() => { try { el.remove() } catch(_){} }, 2100)
+  // Bonus confetti — twice the normal burst for milestone moments
+  try {
+    spawnCorrectConfetti()
+    setTimeout(() => spawnCorrectConfetti(), 200)
+  } catch(_){}
+}
 
 // Small confetti burst on correct answer — universal helper for G1-G9.
 // Cap concurrent bursts to 1 so rapid streaks don't pile up.
@@ -6510,6 +6548,46 @@ const G10_LEVELS = {
   18: {hp:6, rounds:9,  max:35, ops:['+','-'], attemptsBeforeDamage:1, scaffold:'never'},
   19: {hp:7, rounds:10, max:40, ops:['+','-'], attemptsBeforeDamage:1, scaffold:'never'},
   20: {hp:7, rounds:12, max:50, ops:['+','-'], attemptsBeforeDamage:1, scaffold:'never', boss:true},
+  // Expanded (2026-05-04): levels 21-40 progressively introduce ×, ÷, mixed ops
+  // and bigger numbers. Boss at every 10th level. HP scales up so kid still has
+  // breathing room with the harder math.
+  21: {hp:7, rounds:8,  max:30, ops:['+','-','×'],     attemptsBeforeDamage:2, scaffold:'afterWrong'},
+  22: {hp:7, rounds:8,  max:35, ops:['+','-','×'],     attemptsBeforeDamage:2, scaffold:'afterWrong'},
+  23: {hp:7, rounds:9,  max:40, ops:['+','-','×'],     attemptsBeforeDamage:2, scaffold:'afterWrong'},
+  24: {hp:8, rounds:9,  max:45, ops:['+','-','×'],     attemptsBeforeDamage:2, scaffold:'afterWrong'},
+  25: {hp:8, rounds:10, max:50, ops:['+','-','×'],     attemptsBeforeDamage:2, scaffold:'never'},
+  26: {hp:8, rounds:10, max:55, ops:['+','-','×','÷'], attemptsBeforeDamage:2, scaffold:'afterWrong'},
+  27: {hp:8, rounds:10, max:60, ops:['+','-','×','÷'], attemptsBeforeDamage:2, scaffold:'afterWrong'},
+  28: {hp:9, rounds:11, max:65, ops:['+','-','×','÷'], attemptsBeforeDamage:2, scaffold:'afterWrong'},
+  29: {hp:9, rounds:11, max:70, ops:['+','-','×','÷'], attemptsBeforeDamage:1, scaffold:'never'},
+  30: {hp:9, rounds:12, max:75, ops:['+','-','×','÷'], attemptsBeforeDamage:1, scaffold:'never', boss:true},
+  31: {hp:10, rounds:10, max:80, ops:['+','-','×','÷'], attemptsBeforeDamage:1, scaffold:'never'},
+  32: {hp:10, rounds:10, max:85, ops:['+','-','×','÷'], attemptsBeforeDamage:1, scaffold:'never'},
+  33: {hp:10, rounds:11, max:90, ops:['+','-','×','÷'], attemptsBeforeDamage:1, scaffold:'never'},
+  34: {hp:10, rounds:11, max:95, ops:['+','-','×','÷'], attemptsBeforeDamage:1, scaffold:'never'},
+  35: {hp:11, rounds:12, max:100, ops:['+','-','×','÷'], attemptsBeforeDamage:1, scaffold:'never'},
+  36: {hp:11, rounds:12, max:110, ops:['+','-','×','÷'], attemptsBeforeDamage:1, scaffold:'never'},
+  37: {hp:11, rounds:13, max:120, ops:['+','-','×','÷'], attemptsBeforeDamage:1, scaffold:'never'},
+  38: {hp:12, rounds:13, max:130, ops:['+','-','×','÷'], attemptsBeforeDamage:1, scaffold:'never'},
+  39: {hp:12, rounds:14, max:140, ops:['+','-','×','÷'], attemptsBeforeDamage:1, scaffold:'never'},
+  40: {hp:12, rounds:15, max:150, ops:['+','-','×','÷'], attemptsBeforeDamage:1, scaffold:'never', boss:true},
+}
+
+// Procedural fallback for any level beyond what's explicitly mapped above.
+// Caps HP at 15 and max number at 200 so boss-tier difficulty plateaus.
+// Reused by initGame10() if state.selectedLevelNum > 40.
+function _g10LevelFallback(lv) {
+  const base = G10_LEVELS[40]
+  const overflow = Math.max(0, lv - 40)
+  return {
+    hp: Math.min(15, base.hp + Math.floor(overflow / 4)),
+    rounds: Math.min(20, base.rounds + Math.floor(overflow / 3)),
+    max: Math.min(200, base.max + overflow * 5),
+    ops: base.ops,
+    attemptsBeforeDamage: 1,
+    scaffold: 'never',
+    boss: (lv % 10 === 0)
+  }
 }
 
 // Diagnostic distractors — jawaban salah berbasis miskonsepsi umum anak
@@ -6578,8 +6656,9 @@ function initGame10(){
   const p=state.players[state.currentPlayer]
   const _icon=document.getElementById('g10-player-icon'); if(_icon) _icon.textContent=p.animal
   document.getElementById('g10-stars').textContent='⭐ 0'
-  const lv = Math.max(1, Math.min(20, state.selectedLevelNum || 1))
-  const cfg = G10_LEVELS[lv] || G10_LEVELS[10]
+  // Expanded cap 20 → 40 (procedural fallback handles 41+ for future growth)
+  const lv = Math.max(1, Math.min(40, state.selectedLevelNum || 1))
+  const cfg = G10_LEVELS[lv] || (typeof _g10LevelFallback === 'function' ? _g10LevelFallback(lv) : G10_LEVELS[10])
   // Task #66: load city background if selected
   loadCityBackground(document.getElementById('g10-field'))
 
@@ -13279,7 +13358,7 @@ function initGame23() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g23Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g23-pixi.html?v=20260506aa'
+  window.location.href = 'games/g23-pixi.html?v=20260506ab'
 }
 
 function initGame24() {
