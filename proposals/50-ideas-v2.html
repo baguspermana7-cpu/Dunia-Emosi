@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+<meta name="robots" content="noindex">
+<title>Dunia Emosi — 50 Ide V2 (Lebih Align)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  /* Base + tokens — mirrors V1 visual language but cleaner.
+     V1 reference: proposals/50-ideas-aaa.html */
+  :root {
+    --bg:        #0B1226;
+    --surface:   #131A33;
+    --card:      #1A2347;
+    --ink:       #F1F5F9;
+    --muted:    rgba(241,245,249,0.65);
+    --line:      rgba(255,255,255,0.10);
+    --cyan:      #06B6D4;
+    --violet:    #8B5CF6;
+    --gold:      #FCD34D;
+    --mint:      #34D399;
+    --peach:     #FB923C;
+    --pink:      #EC4899;
+    --font:      'Inter', system-ui, sans-serif;
+    --font-display: 'Fredoka One', cursive;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font);
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse at 15% 0%, rgba(6,182,212,0.18) 0%, transparent 45%),
+      radial-gradient(ellipse at 85% 100%, rgba(139,92,246,0.18) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body > * { position: relative; z-index: 1; }
+
+  /* Hero */
+  .hero {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 56px 24px 28px;
+    text-align: center;
+  }
+  .hero-tag {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(6,182,212,0.18);
+    border: 1px solid rgba(6,182,212,0.45);
+    color: #67E8F9;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(34px, 7vw, 56px);
+    margin: 16px 0 12px;
+    background: linear-gradient(135deg, #06B6D4, #8B5CF6, #EC4899);
+    -webkit-background-clip: text;
+    color: transparent;
+    line-height: 1.1;
+  }
+  .hero p {
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .v1-link {
+    display: inline-block;
+    margin-top: 18px;
+    padding: 10px 18px;
+    border: 1px solid rgba(255,255,255,0.20);
+    border-radius: 12px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 14px;
+    transition: transform 200ms cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .v1-link:hover { transform: translateY(-2px); border-color: var(--cyan); }
+
+  /* Filter principles bar */
+  .principles {
+    max-width: 1080px;
+    margin: 0 auto 32px;
+    padding: 18px 24px;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+    font-size: 13px;
+  }
+  .principle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: rgba(52,211,153,0.12);
+    border: 1px solid rgba(52,211,153,0.35);
+    border-radius: 999px;
+    color: #6EE7B7;
+    font-weight: 700;
+  }
+
+  /* Pillar section */
+  .pillar {
+    max-width: 1160px;
+    margin: 0 auto 48px;
+    padding: 0 16px;
+  }
+  .pillar-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, rgba(6,182,212,0.12), rgba(139,92,246,0.10));
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    margin-bottom: 16px;
+  }
+  .pillar-icon {
+    font-size: 34px;
+    width: 56px; height: 56px;
+    display: grid; place-items: center;
+    background: rgba(255,255,255,0.06);
+    border-radius: 14px;
+  }
+  .pillar-head h2 {
+    font-family: var(--font-display);
+    margin: 0;
+    font-size: 22px;
+    color: var(--ink);
+  }
+  .pillar-head .pillar-sub {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .ideas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+  }
+
+  /* Idea card */
+  .idea {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .idea::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: linear-gradient(180deg, var(--cyan), var(--violet));
+  }
+  .idea-num {
+    font-family: var(--font-display);
+    color: #67E8F9;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+  .idea h3 {
+    font-family: var(--font-display);
+    margin: 0;
+    font-size: 17px;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+  .idea .inspired {
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .idea .desc {
+    margin: 0;
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  .idea .plugs-into {
+    font-size: 11px;
+    color: var(--mint);
+    font-weight: 700;
+    padding: 4px 8px;
+    background: rgba(52,211,153,0.10);
+    border: 1px solid rgba(52,211,153,0.25);
+    border-radius: 8px;
+    align-self: flex-start;
+  }
+  .idea .mockup {
+    background: rgba(0,0,0,0.30);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #FCD34D;
+    white-space: pre-wrap;
+    line-height: 1.4;
+  }
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .pill {
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .pill-effort { background: rgba(252,211,77,0.20); color: #FDE68A; border: 1px solid rgba(252,211,77,0.35); }
+  .pill-impact { background: rgba(52,211,153,0.20); color: #86EFAC; border: 1px solid rgba(52,211,153,0.35); }
+  .pill-safety { background: rgba(96,165,250,0.20); color: #BFDBFE; border: 1px solid rgba(96,165,250,0.35); }
+  .pill-cost   { background: rgba(244,114,182,0.20); color: #FBCFE8; border: 1px solid rgba(244,114,182,0.35); }
+
+  /* Footer */
+  footer {
+    background: linear-gradient(135deg, rgba(6,182,212,0.06), rgba(139,92,246,0.06));
+    padding: 48px 24px;
+    text-align: center;
+    margin-top: 64px;
+  }
+  footer h2 {
+    font-family: var(--font-display);
+    background: linear-gradient(135deg, var(--cyan), var(--pink));
+    -webkit-background-clip: text;
+    color: transparent;
+    font-size: 26px;
+    margin: 0 0 12px;
+  }
+  footer p {
+    color: var(--muted);
+    max-width: 640px;
+    margin: 0 auto;
+    font-size: 14px;
+  }
+
+  /* Floating Review Console (mirrors V1) */
+  .review-widget {
+    margin-top: 8px;
+    padding: 10px;
+    background: linear-gradient(135deg, rgba(6,182,212,0.10), rgba(139,92,246,0.06));
+    border: 1px dashed rgba(6,182,212,0.40);
+    border-radius: 10px;
+    display: grid;
+    gap: 6px;
+  }
+  .review-widget[data-decision="approve-build"] { border-color: rgba(52,211,153,0.55); background: linear-gradient(135deg, rgba(52,211,153,0.10), rgba(52,211,153,0.04)); }
+  .review-widget[data-decision="approve-later"] { border-color: rgba(96,165,250,0.55); background: linear-gradient(135deg, rgba(96,165,250,0.10), rgba(96,165,250,0.04)); }
+  .review-widget[data-decision="reject"]        { border-color: rgba(248,113,113,0.55); background: linear-gradient(135deg, rgba(248,113,113,0.10), rgba(248,113,113,0.04)); }
+  .review-widget[data-decision="discuss"]       { border-color: rgba(168,85,247,0.55); background: linear-gradient(135deg, rgba(168,85,247,0.10), rgba(168,85,247,0.04)); }
+  .review-widget label {
+    font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px;
+    color: var(--cyan);
+  }
+  .review-row { display: flex; gap: 8px; align-items: center; }
+  .review-decision {
+    flex: 1 1 140px;
+    padding: 7px 9px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.20);
+    background: rgba(0,0,0,0.30);
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .review-status {
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .review-status.saved { color: #6EE7B7; }
+  .review-notes {
+    width: 100%;
+    min-height: 50px;
+    padding: 7px 9px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(0,0,0,0.30);
+    color: var(--ink);
+    font-size: 12px;
+    font-family: inherit;
+    line-height: 1.45;
+    resize: vertical;
+    box-sizing: border-box;
+  }
+  .review-console-fab {
+    position: fixed;
+    bottom: 22px; right: 22px;
+    z-index: 9000;
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
+    color: white;
+    border: 2px solid var(--gold);
+    border-radius: 999px;
+    padding: 12px 18px;
+    font-family: var(--font-display);
+    font-size: 14px;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.45);
+    cursor: pointer;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .review-console-fab .fab-count {
+    background: var(--gold);
+    color: var(--bg);
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 11px;
+  }
+  .review-console-panel {
+    position: fixed;
+    bottom: 80px; right: 22px;
+    z-index: 9001;
+    width: min(380px, calc(100vw - 32px));
+    max-height: 80vh;
+    background: linear-gradient(160deg, var(--surface), var(--card));
+    color: white;
+    border: 2px solid var(--gold);
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: 0 18px 60px rgba(0,0,0,0.55);
+    display: none;
+    overflow-y: auto;
+  }
+  .review-console-panel.open { display: block; }
+  .review-console-panel h3 {
+    font-family: var(--font-display);
+    color: var(--gold);
+    font-size: 18px;
+    margin: 0 0 4px;
+  }
+  .console-sub { font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 12px; }
+  .console-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
+  .stat {
+    background: rgba(255,255,255,0.08); border-radius: 10px; padding: 8px 4px; text-align: center;
+  }
+  .stat .stat-num { font-family: var(--font-display); font-size: 18px; display: block; }
+  .stat .stat-label { font-size: 9px; color: rgba(255,255,255,0.65); text-transform: uppercase; }
+  .stat-build  .stat-num { color: #86EFAC; }
+  .stat-later  .stat-num { color: #93C5FD; }
+  .stat-reject .stat-num { color: #FCA5A5; }
+  .stat-pending .stat-num { color: #FDE68A; }
+  .console-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .console-btn {
+    padding: 9px 10px;
+    border: 1px solid rgba(252,211,77,0.5);
+    background: rgba(252,211,77,0.15);
+    color: var(--gold);
+    border-radius: 10px;
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .console-btn:hover { background: rgba(252,211,77,0.28); }
+  .console-btn.full { grid-column: 1 / -1; }
+  .console-btn.danger { border-color: rgba(248,113,113,0.5); background: rgba(248,113,113,0.15); color: #FECACA; }
+  .console-export-area {
+    width: 100%;
+    min-height: 110px;
+    background: rgba(0,0,0,0.35);
+    color: var(--gold);
+    border: 1px solid rgba(252,211,77,0.3);
+    border-radius: 8px;
+    padding: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    box-sizing: border-box;
+    resize: vertical;
+  }
+  .console-close {
+    position: absolute;
+    top: 10px; right: 12px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  @media (max-width: 600px) {
+    .ideas-grid { grid-template-columns: 1fr; }
+    .pillar-head { flex-direction: column; align-items: flex-start; padding: 14px; }
+    .pillar-icon { width: 48px; height: 48px; font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="hero-tag">V2 · LEBIH ALIGN DENGAN GAME</span>
+  <h1>50 Ide V2</h1>
+  <p>Versi yang lebih sesuai dengan sistem game yang sudah ada (G1–G24, Pokemon roster + type chart, family avatars, regional gym ladder, kalistung + emotion mechanics). <strong>Tanpa LLM, tanpa ML, tanpa API berbayar, tanpa server, tanpa monetisasi anak.</strong> Setiap ide menjelaskan "plugs into G-X" agar jelas mana yang nyambung dengan kode existing.</p>
+  <a href="50-ideas-aaa.html" class="v1-link">◀ Versi V1 (arsip)</a>
+</header>
+
+<div class="principles">
+  <span class="principle">✅ Pluggable ke G1–G24</span>
+  <span class="principle">🚫 No LLM/ML</span>
+  <span class="principle">🚫 No paid API</span>
+  <span class="principle">🚫 No server</span>
+  <span class="principle">🎯 Kid-safe (5–10)</span>
+  <span class="principle">🇮🇩 Indonesian-first</span>
+</div>
+
+<!-- ═══════════ PILLAR 1 — Kalistung Deep Mechanics ═══════════ -->
+<section class="pillar">
+  <div class="pillar-head">
+    <div class="pillar-icon">🧮</div>
+    <div>
+      <h2>Kalistung Deep Mechanics</h2>
+      <p class="pillar-sub">Math · Reading · Writing · Indonesian alphabet — plug ke G4/G6/G8/G9/G10.</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-num">#1</div>
+      <h3>Place-Value Beads (Tactile Math)</h3>
+      <div class="inspired">Inspired by: Montessori Golden Beads · Pokemon Smile dental-quest UX</div>
+      <p class="desc">Drag-drop ratusan-puluhan-satuan beads ke kolom. Anak menyusun 254 sebagai 2 batang ratusan + 5 cincin puluhan + 4 manik satuan. Pikachu memvalidasi dengan animasi anggukan.</p>
+      <div class="plugs-into">Plugs into: G4 Hitung · G10 Math Battle</div>
+      <div class="mockup">[H] [H] | [T][T][T][T][T] | • • • •
+  100  100   10 10 10 10 10  1 1 1 1
+            = 254</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 3W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#2</div>
+      <h3>Syllable Train Cars</h3>
+      <div class="inspired">Inspired by: Endless Alphabet · G16 train cars</div>
+      <p class="desc">Setiap gerbong kereta = satu suku kata. Tap dalam urutan untuk menyusun kata: KU-PU-KU-PU. Train berjalan jika urutan benar. Reuse train sprite engine dari G14/G16.</p>
+      <div class="plugs-into">Plugs into: G6 Mobil → G16 Train · G8 Kata</div>
+      <div class="mockup">🚂 [KU] [PU] [KU] [PU] → KUPU-KUPU ✓</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 2W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#3</div>
+      <h3>Alphabet Origami</h3>
+      <div class="inspired">Inspired by: Indonesian craft tradition · G9 stroke writing</div>
+      <p class="desc">Anak melipat-lipat huruf 2D di canvas (drag corners). Setelah huruf terbentuk, sound out: "Ini huruf A, bunyinya AAA". Indonesian alphabet 26 + akar Sansekerta.</p>
+      <div class="plugs-into">Plugs into: G9 Tulis Huruf</div>
+      <div class="mockup">drag pojok ✋ → bentuk A → "AAA" 🔊</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 3W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#4</div>
+      <h3>Mental-Math Racing Chips</h3>
+      <div class="inspired">Inspired by: Endless Numbers · G10 attack timing</div>
+      <p class="desc">Soal cepat tanpa multiple-choice — anak ketik angka via numpad. Speed bonus per detik. Reuse speed×correctness damage formula dari Block 9D PvP.</p>
+      <div class="plugs-into">Plugs into: G10 Math Battle</div>
+      <div class="mockup">7 + 5 = [__]  ⏱ 2.3s ←  +150 XP</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 1W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#5</div>
+      <h3>Mirror-Letter Trainer (b↔d / p↔q)</h3>
+      <div class="inspired">Inspired by: dyslexia research · G9 confusion hints</div>
+      <p class="desc">Anak diberi rolling sequence b/d/p/q dan harus tap kategori sebelum scroll-out. Solusi langsung untuk huruf yang sering tertukar.</p>
+      <div class="plugs-into">Plugs into: G9 Tulis Huruf</div>
+      <div class="mockup">scroll →  b  d  p  q  b  d
+tap kategori sebelum keluar layar</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 1W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════ PILLAR 2 — Pokemon Battle Innovation ═══════════ -->
+<section class="pillar">
+  <div class="pillar-head">
+    <div class="pillar-icon">⚔️</div>
+    <div>
+      <h2>Pokemon Battle Innovation</h2>
+      <p class="pillar-sub">Extends G10/G13/G13B/G13C/G23 — terrain, weather, dual-type combos.</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-num">#6</div>
+      <h3>Type-Cycle Puzzle</h3>
+      <div class="inspired">Inspired by: Bejeweled · type chart 1.5/0.75/0.5</div>
+      <p class="desc">Grid 4×4 type icons. Tap 3 in a row (Fire→Grass→Water) to clear + buff next attack. Trains type chart secara intuitif tanpa hafalan.</p>
+      <div class="plugs-into">Plugs into: G13 Battle · G13C Gym</div>
+      <div class="mockup">🔥 🌿 💧 ⚡       Combo:  🔥→🌿→💧 ✓
+🌿 💧 🔥 🪨      Buff: water +30%
+💧 🔥 🌿 ❄</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 3W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#7</div>
+      <h3>Terrain-Aware Moves</h3>
+      <div class="inspired">Inspired by: Pokemon Mystery Dungeon</div>
+      <p class="desc">Battle background bukan dekorasi — Hutan boost grass +20%, Gunung boost rock, Pantai boost water. Anak belajar geografi sambil battle.</p>
+      <div class="plugs-into">Plugs into: G13C Gym · G23 Pokemon Run</div>
+      <div class="mockup">🌳 Hutan     → 🌿 grass +20%
+🏔 Gunung    → 🪨 rock +20%
+🏖 Pantai    → 💧 water +20%</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 2W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#8</div>
+      <h3>Local-Time Weather Modifier</h3>
+      <div class="inspired">Inspired by: Animal Crossing real-time</div>
+      <p class="desc">Battle pagi (5–9 WIB) → sunrise glow + bird Pokemon buff. Sore (16–19) → sunset, ghost Pokemon buff. Tidak butuh weather API — pakai local <code>Date()</code>.</p>
+      <div class="plugs-into">Plugs into: G13C Gym · G23 Run · weather-fx.js</div>
+      <div class="mockup">5–9 WIB:  🌅 sunrise — bird +15%
+17–19:    🌇 sunset — ghost +15%
+22–4:     🌙 night  — psychic +15%</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 1W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#9</div>
+      <h3>Dual-Type Combo Move</h3>
+      <div class="inspired">Inspired by: Pokemon Z-Moves</div>
+      <p class="desc">Charizard (Fire/Flying) bisa pakai "Flame Spiral" — gabungan move 2 tipe. Damage hit 2 kali dengan animation menyatu. Sekali per battle (special).</p>
+      <div class="plugs-into">Plugs into: G13 Battle · G13C Gym</div>
+      <div class="mockup">⚡ Charizard SPECIAL
+🔥 Ember (40) + 🪶 Wing (35)
+Total: 75 dmg + screen shake</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 2W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#10</div>
+      <h3>Kid-Friendly Mega Evolution (Mastery-Gated)</h3>
+      <div class="inspired">Inspired by: Pokemon XY Mega · reuse Pokemon Evolution Cinematic</div>
+      <p class="desc">Mega evolve unlock saat mastery skill terkait mencapai 0.85. Bukan random — earned by learning. 1 reusable cinematic per Pokemon (silhouette beam + scale-pulse + sprite swap).</p>
+      <div class="plugs-into">Plugs into: G13 Battle · G13C Gym · mastery system</div>
+      <div class="mockup">🌟 MEGA EVOLVE
+Charizard → Mega Charizard
+✨ silhouette beam → scale → sprite swap</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 3W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════ PILLAR 3 — Indonesian Cultural Layer ═══════════ -->
+<section class="pillar">
+  <div class="pillar-head">
+    <div class="pillar-icon">🇮🇩</div>
+    <div>
+      <h2>Indonesian Cultural Layer</h2>
+      <p class="pillar-sub">Batik · wayang · dongeng · warung · peta Nusantara — local pride.</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-num">#11</div>
+      <h3>Batik Geometry Weave</h3>
+      <div class="inspired">Inspired by: Indonesian batik patterns · symmetry math</div>
+      <p class="desc">Anak menyusun motif batik dengan grid simetri. Tiap motif benar = boost geometry score. Cocok untuk G4 (geometry awareness).</p>
+      <div class="plugs-into">Plugs into: G4 Hitung (geometry slot)</div>
+      <div class="mockup">⬛⬜⬛⬜    motif batik parang
+⬜⬛⬜⬛    simetri 4-arah ✓
+⬛⬜⬛⬜    +50 XP geometry</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 3W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#12</div>
+      <h3>Wayang Shadow Puzzles</h3>
+      <div class="inspired">Inspired by: Indonesian wayang kulit</div>
+      <p class="desc">Wayang silhouette puzzle — anak menebak karakter (Arjuna, Hanoman) dari bayangan. Educational + cultural pride.</p>
+      <div class="plugs-into">Plugs into: G12 Tebak Bayangan (existing!)</div>
+      <div class="mockup">▓▓▓▓ → siapa wayangnya?
+( ) Arjuna  ( ) Hanoman  ( ) Bima</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 2W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#13</div>
+      <h3>Dongeng Cards</h3>
+      <div class="inspired">Inspired by: Indonesian folklore (Malin Kundang, Timun Mas)</div>
+      <p class="desc">10–12 dongeng dalam bentuk swipe-able cards. Setiap dongeng punya moral question di akhir → anak pilih pelajaran. Static content, no LLM.</p>
+      <div class="plugs-into">Plugs into: Calm corner / story mode</div>
+      <div class="mockup">📜 Malin Kundang
+"Apa pelajaran dari cerita ini?"
+( ) Hormat ibu  ( ) Sombong itu jelek</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 3W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#14</div>
+      <h3>Warung Counting</h3>
+      <div class="inspired">Inspired by: Indonesian street food culture · rupiah</div>
+      <p class="desc">"Bakso Rp 12.000, es teh Rp 5.000. Total?" Math math with real Indonesian context. Belajar rupiah + arithmetic.</p>
+      <div class="plugs-into">Plugs into: G4 Hitung · G11 Kuis Sains (life-skills tier)</div>
+      <div class="mockup">🍜 Bakso     Rp 12.000
+🥤 Es Teh    Rp  5.000
+Total: Rp [_____]</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 1W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#15</div>
+      <h3>Peta Nusantara Expedition</h3>
+      <div class="inspired">Inspired by: Indonesian archipelago · Where in the World</div>
+      <p class="desc">Pulau-pulau Indonesia (Sumatra, Jawa, Kalimantan, Sulawesi, Papua) jadi expedition map. Setiap pulau punya quiz lokal (Borobudur di Jawa Tengah, Komodo di NTT).</p>
+      <div class="plugs-into">Plugs into: World map hub · Region filter</div>
+      <div class="mockup">🇮🇩 Pilih pulau:
+🗺 Sumatra  🗺 Jawa  🗺 Bali
+🗺 Kalimantan  🗺 Papua</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 3W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════ PILLAR 4 — Family Play Mechanics ═══════════ -->
+<section class="pillar">
+  <div class="pillar-head">
+    <div class="pillar-icon">👨‍👩‍👧‍👦</div>
+    <div>
+      <h2>Family Play Mechanics</h2>
+      <p class="pillar-sub">Same-device co-op modes — extends Block 9 Tournament for family bonding.</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-num">#16</div>
+      <h3>Parent Quick-Quiz Overlay</h3>
+      <div class="inspired">Inspired by: Khan Academy Kids parent mode</div>
+      <p class="desc">Parent tap "Bunda" badge → 30-second quick quiz pops up for them. Score racing against kid. Builds bonding through friendly competition.</p>
+      <div class="plugs-into">Plugs into: G11 Kuis Sains · Block 9 Tournament</div>
+      <div class="mockup">👩 Bunda quick: "Ibu kota Jepang?"
+[Tokyo] [Beijing] [Seoul]   ⏱30s</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 1W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#17</div>
+      <h3>Sibling Tag-Team</h3>
+      <div class="inspired">Inspired by: Pokemon Multi Battle</div>
+      <p class="desc">Mode 2 anak — masing-masing punya Pokemon, gantian attack. Anak ke-1 fokus math, anak ke-2 fokus type chart. Sibling roles = sibling bonding.</p>
+      <div class="plugs-into">Plugs into: G13 Battle · Block 9 PvP</div>
+      <div class="mockup">👧 Kakak (math)  👦 Adik (type)
+gantian per turn → coop attack</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 2W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#18</div>
+      <h3>Grandparent Ease Mode</h3>
+      <div class="inspired">Inspired by: accessible game design for elders</div>
+      <p class="desc">Auto-handicap: bigger buttons (52px), slower timer (×2), simpler questions. Kakek-nenek bisa join tournament tanpa frustrasi.</p>
+      <div class="plugs-into">Plugs into: Block 9 Tournament · Settings panel</div>
+      <div class="mockup">👴 Kakek mode ON
+buttons 52px · timer ×2
+font size +25%</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 1W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#19</div>
+      <h3>Family Pokemon Team Album</h3>
+      <div class="inspired">Inspired by: Pokemon HOME · family scrapbook</div>
+      <p class="desc">Tiap anggota keluarga punya Pokemon favorit. Album visual menampilkan semua. Saat tournament, bisa pakai team milik anggota lain.</p>
+      <div class="plugs-into">Plugs into: Avatar slots · Block 9 Tournament</div>
+      <div class="mockup">📔 Album Keluarga
+👨 Ayah     🐉 Charizard
+👩 Bunda    💧 Lapras
+👧 Kakak    ⚡ Pikachu</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 2W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#20</div>
+      <h3>End-of-Day Photo Album Reward</h3>
+      <div class="inspired">Inspired by: Pokemon Snap · scrapbook</div>
+      <p class="desc">Anak earn 1 photo per quest selesai. Album bisa di-export sebagai PDF/PNG ke parent via share. Tidak ada cloud — pure local export.</p>
+      <div class="plugs-into">Plugs into: Daily quest reward · save-engine.js</div>
+      <div class="mockup">📸 Hari ini:
+- Foto Pikachu (math win)
+- Foto Charizard (read quest)
+[Export PDF lokal]</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 3W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════ PILLAR 5 — Emotion Literacy Plug-Ins ═══════════ -->
+<section class="pillar">
+  <div class="pillar-head">
+    <div class="pillar-icon">💚</div>
+    <div>
+      <h2>Emotion Literacy Plug-Ins</h2>
+      <p class="pillar-sub">Extends G1/G2 emotion games — feelings, breathing, helper-by-mood.</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-num">#21</div>
+      <h3>Emotion-Themed Pokemon Moves</h3>
+      <div class="inspired">Inspired by: G1/G2 emotion · Pokemon Sleep mood</div>
+      <p class="desc">Pikachu happy → Thunderbolt (full power). Sad → Static (weaker). Anak harus baca emosi Pokemon untuk pilih waktu attack.</p>
+      <div class="plugs-into">Plugs into: G1 Emosi · G13 Battle</div>
+      <div class="mockup">⚡ Pikachu 😊 → Thunder (40)
+⚡ Pikachu 😢 → Static (20)
+"Cheer up first?" mini-quest</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 2W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#22</div>
+      <h3>Calm Corner Breathing Room</h3>
+      <div class="inspired">Inspired by: Headspace Kids · 4-7-8 breathing</div>
+      <p class="desc">Tap-anywhere portal ke "calm corner" — pelangi breathing animation 4-7-8 (inhale 4s, hold 7s, exhale 8s) dengan Pokemon companion. 60-second session.</p>
+      <div class="plugs-into">Plugs into: Global pause overlay</div>
+      <div class="mockup">🌈 inhale 4s ─── ◯
+🌈 hold    7s ─── ●●●●●●●
+🌈 exhale  8s ─── ◯ wide</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 1W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#23</div>
+      <h3>Helper Pokemon by Mood</h3>
+      <div class="inspired">Inspired by: Pokemon Sleep companion</div>
+      <p class="desc">Pre-session: "How are you?" → smiley/sad/tired. Game picks Pokemon companion that matches: lonely → Cubone, energetic → Pikachu. Empathy as core mechanic.</p>
+      <div class="plugs-into">Plugs into: Home screen · save-engine.js mood</div>
+      <div class="mockup">Mood: 😢 Sedih
+→ Cubone joins (hugs you)
+"Mau cerita?" optional</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 2W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#24</div>
+      <h3>Kindness Journal Stickers</h3>
+      <div class="inspired">Inspired by: Class Dojo · gratitude journals</div>
+      <p class="desc">Setiap hari anak nulis (atau tap-emoji) 1 hal baik yang dilakukan. Earn sticker. Compile jadi kindness album bulanan untuk parent.</p>
+      <div class="plugs-into">Plugs into: Daily quest reward · save-engine.js</div>
+      <div class="mockup">📔 Hari ini saya...
+[ ] berbagi  [ ] menolong
+[ ] sabar    [ ] memuji
++ sticker ⭐</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 1W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#25</div>
+      <h3>Emotion-of-the-Day Badge</h3>
+      <div class="inspired">Inspired by: Pokemon Sleep daily badge · mood tracking</div>
+      <p class="desc">Hari ini "Sabar Day" — slow-down challenges (puzzle yang butuh waktu). "Bersyukur Day" — gratitude journal multiplier. Daily theme rotation.</p>
+      <div class="plugs-into">Plugs into: Daily quest · home screen</div>
+      <div class="mockup">📅 Senin: 🧘 Sabar Day
+📅 Selasa: 🙏 Bersyukur Day
+📅 Rabu: 💪 Berani Day</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 1W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════ PILLAR 6 — Visual VFX Spectacle ═══════════ -->
+<section class="pillar">
+  <div class="pillar-head">
+    <div class="pillar-icon">✨</div>
+    <div>
+      <h2>Visual VFX Spectacle</h2>
+      <p class="pillar-sub">Kid-safe, free, CSS/Canvas/PIXI — no paid assets needed.</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-num">#26</div>
+      <h3>Evolution Silhouette Beam</h3>
+      <div class="inspired">Inspired by: Pokemon RBY evolution animation</div>
+      <p class="desc">1 reusable cinematic — silhouette black-out (320ms) + scale-pulse (600ms) + sprite cross-fade (280ms) + afterglow (1.2s). Honors reduced-motion (hard cut).</p>
+      <div class="plugs-into">Plugs into: G13/G13B/G13C evolution events</div>
+      <div class="mockup">🌟 BLACK-OUT silhouette
+   pulse → grow → swap sprite
+   "Charmeleon!" 🎉</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 1W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#27</div>
+      <h3>Type-Chart Constellation Map</h3>
+      <div class="inspired">Inspired by: D3 force layout · zodiac map</div>
+      <p class="desc">18 type nodes connected by 1.5×/0.75×/0.5× edges as a beautiful interactive constellation. Tap node → ripple shows relationships. Educational + visual delight.</p>
+      <div class="plugs-into">Plugs into: Type chart trainer · Home screen</div>
+      <div class="mockup">🔥─▶🌿─▶💧─▶⚡─▶🪶
+hover edge → "Fire × Grass = 2x"</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 2W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#28</div>
+      <h3>Animated Badge Ceremony</h3>
+      <div class="inspired">Inspired by: Pokemon RBY badge cutscene</div>
+      <p class="desc">Saat menang gym battle → 3-second cutscene: gym leader hands badge → spin animation → "BOULDER BADGE!" text bounce. Memorable victory moment.</p>
+      <div class="plugs-into">Plugs into: G13C Gym (post-win)</div>
+      <div class="mockup">🥇 spin → spin → grow → "BOULDER!"
+gym leader bow animation</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 2W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#29</div>
+      <h3>Per-Region Particle Kits</h3>
+      <div class="inspired">Inspired by: Genshin elemental reactions</div>
+      <p class="desc">Kanto = cherry blossoms, Johto = autumn leaves, Hoenn = water droplets, Sinnoh = snow, Unova = city sparks. Reuse weather-fx.js base, add 8 regional skins.</p>
+      <div class="plugs-into">Plugs into: G13C Gym (per region) · weather-fx.js</div>
+      <div class="mockup">Kanto:   🌸 cherry petals drift
+Johto:   🍂 autumn fall
+Hoenn:   💧 water droplets</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 2W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#30</div>
+      <h3>Gym Leader Spotlight Dynamic BG</h3>
+      <div class="inspired">Inspired by: Persona 5 BG transitions</div>
+      <p class="desc">Saat gym leader masuk arena, background morph dari biasa → tema leader (Brock = rocky cave, Misty = water cave). Re-uses bg-layer parallax system.</p>
+      <div class="plugs-into">Plugs into: G13C pre-battle intro</div>
+      <div class="mockup">📍 Brock enters
+BG morph: arena → cave
+3-second transition</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 2W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════ PILLAR 7 — Audio Magic ═══════════ -->
+<section class="pillar">
+  <div class="pillar-head">
+    <div class="pillar-icon">🎼</div>
+    <div>
+      <h2>Audio Magic</h2>
+      <p class="pillar-sub">Web Audio + Tone.js synthesis · zero asset files · free.</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-num">#31</div>
+      <h3>Type Leitmotif Per Family</h3>
+      <div class="inspired">Inspired by: classical opera leitmotif</div>
+      <p class="desc">Each Pokemon family has a 2-bar musical motif (Pikachu = E-G arpeggio, Charizard = brass fanfare). Plays subtly when Pokemon enters battle.</p>
+      <div class="plugs-into">Plugs into: G13/G13B/G13C/G23 · sfx-engine.js</div>
+      <div class="mockup">Pikachu enter: 🎵 E5—G5—B5
+Charizard:    🎵 brass fanfare 2s</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 2W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#32</div>
+      <h3>Breathing Rhythm Music</h3>
+      <div class="inspired">Inspired by: Headspace Kids audio</div>
+      <p class="desc">Calm corner background music sync to 4-7-8 breathing rhythm. Low ambient drone + occasional bell on exhale.</p>
+      <div class="plugs-into">Plugs into: Calm Corner (#22) · sfx-engine.js</div>
+      <div class="mockup">🎵 ambient drone D3
+   bell C5 on each exhale</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 1W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#33</div>
+      <h3>Lullaby End-of-Day</h3>
+      <div class="inspired">Inspired by: Pokemon Sleep · Indonesian "Nina Bobo"</div>
+      <p class="desc">After 7pm session close → soft Indonesian-themed lullaby (chiptune Nina Bobo). Gentle wind-down for kids.</p>
+      <div class="plugs-into">Plugs into: Session close · AdaptiveMusic states</div>
+      <div class="mockup">🌙 7pm+ session end:
+🎵 chiptune Nina Bobo 30s</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 1W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#34</div>
+      <h3>Syllable Phonics Drone</h3>
+      <div class="inspired">Inspired by: phonics learning audio</div>
+      <p class="desc">G9 letter trace — saat anak menggambar A, tone gradually sustained ("AAAAAA") sync ke stroke. Audio-visual link membantu phoneme learning.</p>
+      <div class="plugs-into">Plugs into: G9 Tulis Huruf · sfx-engine.js</div>
+      <div class="mockup">draw A ✏️ → 🎵 "Aaaaa" sustained
+release brush → tone fades</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 1W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#35</div>
+      <h3>Victory Choir</h3>
+      <div class="inspired">Inspired by: church choir · Pokemon victory fanfare</div>
+      <p class="desc">Win gym battle / tournament → 4-voice choir "ahhh" stacked harmony 2 seconds. Kid-safe but cinematic. Use Tone.js polyphonic synth.</p>
+      <div class="plugs-into">Plugs into: G13C Gym win · Block 9 Tournament</div>
+      <div class="mockup">🏆 WIN!
+🎵 4-voice "Ahhhhh" 2s
++ confetti</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 1W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════ PILLAR 8 — Train + Vehicle Games ═══════════ -->
+<section class="pillar">
+  <div class="pillar-head">
+    <div class="pillar-icon">🚂</div>
+    <div>
+      <h2>Train + Vehicle Games</h2>
+      <p class="pillar-sub">Reshape G14/G15/G16/G19 + add new vehicle-themed learning loops.</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-num">#36</div>
+      <h3>Cargo Math Train (G14 Reshape)</h3>
+      <div class="inspired">Inspired by: Train Stations of Indonesia · arithmetic</div>
+      <p class="desc">Reshape G14 race → kereta angkut barang. Setiap gerbong = soal math. Benar = gerbong terangkat. Salah = gerbong tetap. Win = semua gerbong sampai stasiun.</p>
+      <div class="plugs-into">Plugs into: G14 (reshape) · train-theme.js</div>
+      <div class="mockup">🚂🚃 7+5=?  🚃 4×3=?  🚃 9-2=?
+station: Jakarta → Bandung</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 3W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#37</div>
+      <h3>Syllable Signal Box (G16 Reshape)</h3>
+      <div class="inspired">Inspired by: train signal box · phonics</div>
+      <p class="desc">Reshape G16 → anak operate signal box. Setiap signal needs correct syllable to advance train. KU-PU-KU-PU → train passes. Salah → train waits at signal.</p>
+      <div class="plugs-into">Plugs into: G16 (reshape) · train-theme.js</div>
+      <div class="mockup">🚦 KU → 🚦 PU → 🚦 KU → 🚦 PU
+🚂 advances after each correct</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 3W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#38</div>
+      <h3>Boat-Letter Game</h3>
+      <div class="inspired">Inspired by: Indonesian fishermen culture · sea letters</div>
+      <p class="desc">Boats float by carrying letters. Tap boat with letter that completes word. Indonesian context (perahu nelayan, ikan, jala) + alphabet learning.</p>
+      <div class="plugs-into">Plugs into: G8 Kata · new standalone</div>
+      <div class="mockup">⛵A   ⛵K   ⛵N   ⛵I
+target word: IKAN
+tap in order: I→K→A→N ✓</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 3W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#39</div>
+      <h3>Bicycle Multiplication Route</h3>
+      <div class="inspired">Inspired by: tour-style fitness games · times tables</div>
+      <p class="desc">Pedal bicycle through path. At each intersection, multiplication question. Speed = correct streak. Pedal harder + math drills.</p>
+      <div class="plugs-into">Plugs into: G4 Hitung (multiplication tier)</div>
+      <div class="mockup">🚲 → 7×8 = ? → next intersection
+fast streak = speed bonus</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 3W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#40</div>
+      <h3>Plane Geography Quiz</h3>
+      <div class="inspired">Inspired by: flight simulator · world map</div>
+      <p class="desc">Pilot a paper plane through Indonesian provinces. At each province, question about local fact. Visual flight + geography.</p>
+      <div class="plugs-into">Plugs into: G11 Kuis Sains (geography tier)</div>
+      <div class="mockup">✈ Jakarta → Surabaya → Bali
+each city: 1 local fact quiz</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 3W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════ PILLAR 9 — Local Adaptive Progress ═══════════ -->
+<section class="pillar">
+  <div class="pillar-head">
+    <div class="pillar-icon">📈</div>
+    <div>
+      <h2>Local Adaptive Progress</h2>
+      <p class="pillar-sub">Rule-based — NO ML, NO server. Pattern detection in localStorage.</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-num">#41</div>
+      <h3>Weak-Skill Weather Forecast UI</h3>
+      <div class="inspired">Inspired by: weather app · skill mastery</div>
+      <p class="desc">Parent dashboard shows skill as weather: "Math addition 80% sunny ☀️ | Subtraction 40% rainy 🌧️". Visual metaphor instant readable.</p>
+      <div class="plugs-into">Plugs into: Parent dashboard · save-engine.js</div>
+      <div class="mockup">☀️ Math +     : 80%
+🌧 Math -      : 40%
+☁️ Read syl   : 65%</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 2W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#42</div>
+      <h3>Daily Warm-Up by Trend</h3>
+      <div class="inspired">Inspired by: athletic warm-up · adaptive curriculum</div>
+      <p class="desc">Open app → 60-second warm-up automatically picks 3 weakest skills from last 7-day localStorage logs. Rule-based selection, no ML.</p>
+      <div class="plugs-into">Plugs into: Home screen entry · save-engine.js</div>
+      <div class="mockup">Hari ini warm-up:
+1. Math - (kemarin 30%)
+2. Syllable U (3 hari salah)
+3. Type chart 🔥 (lupa)</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 2W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#43</div>
+      <h3>Parent Dashboard Canvas Graphs</h3>
+      <div class="inspired">Inspired by: Apple Health charts</div>
+      <p class="desc">Vanilla Canvas line graphs of skill accuracy over 30 days. No Chart.js dependency — hand-drawn lines + ARIA labels for screen-readers.</p>
+      <div class="plugs-into">Plugs into: Parent dashboard</div>
+      <div class="mockup">     accuracy %
+100 ┤  ─╮       ╱─
+ 50 ┤  ╮ ╲   ╱
+  0 ┼──┴──┴───
+   day1   day30</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 2W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#44</div>
+      <h3>Milestone Constellation</h3>
+      <div class="inspired">Inspired by: night-sky constellations · achievement chains</div>
+      <p class="desc">Each mastered skill = star in night sky. Connect stars → constellation appears (Beruang, Singa, Capricorn). Visual long-term motivation.</p>
+      <div class="plugs-into">Plugs into: Profile/album screen</div>
+      <div class="mockup">⭐─⭐
+ \   \
+  ⭐─⭐ "Beruang Besar"
+    completed Math + Read</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 3W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#45</div>
+      <h3>Region-Progress Mosaic</h3>
+      <div class="inspired">Inspired by: Pokedex completion · Indonesian peta</div>
+      <p class="desc">Indonesian map (Sumatra…Papua) lights up as kid masters skills tied to each region. Cultural pride + progress visualization.</p>
+      <div class="plugs-into">Plugs into: Profile · #15 Peta Nusantara</div>
+      <div class="mockup">🗺 Indonesia:
+🟢 Jawa (100%)
+🟡 Sumatra (60%)
+⬜ Papua (0%)</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 2W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════ PILLAR 10 — Accessibility & Inclusion ═══════════ -->
+<section class="pillar">
+  <div class="pillar-head">
+    <div class="pillar-icon">♿</div>
+    <div>
+      <h2>Accessibility &amp; Inclusion</h2>
+      <p class="pillar-sub">For diverse kids — color, motor, dyslexia, emerging readers.</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-num">#46</div>
+      <h3>High-Contrast Theme</h3>
+      <div class="inspired">Inspired by: WCAG AAA contrast</div>
+      <p class="desc">Toggle in settings → 7:1 contrast ratio. Black background, white text, accent yellow. Maintains all game functionality.</p>
+      <div class="plugs-into">Plugs into: Settings panel · global CSS</div>
+      <div class="mockup">[Normal] [High Contrast]
+black bg + white text +
+yellow accents</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 1W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#47</div>
+      <h3>Dyslexia Font Toggle (OpenDyslexic)</h3>
+      <div class="inspired">Inspired by: BBC Education accessibility</div>
+      <p class="desc">Toggle in settings → all body text becomes OpenDyslexic font (free, web-loaded). Letter spacing increased 15%. Easier for dyslexic readers.</p>
+      <div class="plugs-into">Plugs into: Settings panel · global CSS</div>
+      <div class="mockup">Default: Inter
+Dyslexia: OpenDyslexic
++ letter-spacing 0.15em</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 1W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#48</div>
+      <h3>Motor-Impaired Large-Button Mode</h3>
+      <div class="inspired">Inspired by: Apple Switch Control · accessibility</div>
+      <p class="desc">Toggle → all touch targets become ≥72px, tap-and-hold tolerance 500ms (was 80ms), no swipe gestures. Inclusive for fine-motor delays.</p>
+      <div class="plugs-into">Plugs into: Settings panel · global CSS</div>
+      <div class="mockup">Normal: 44px buttons, 80ms tap
+Motor:  72px buttons, 500ms tap
+        no swipe required</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 2W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#49</div>
+      <h3>Colorblind Type Icons (Shape + Color)</h3>
+      <div class="inspired">Inspired by: WCAG dual-encoding</div>
+      <p class="desc">Setiap type icon dapat unique shape: Fire = flame triangle, Water = round drop, Electric = lightning zigzag. Color alone TIDAK pernah jadi info utama.</p>
+      <div class="plugs-into">Plugs into: poke-type-chart.js · all battles</div>
+      <div class="mockup">🔥 (▲) fire
+💧 (●) water
+⚡ (Z) electric
+shape + color, never color-only</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 1W</span>
+        <span class="pill pill-impact">Impact: Med</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-num">#50</div>
+      <h3>Simple-Indonesian Language Mode</h3>
+      <div class="inspired">Inspired by: Plain Language guidelines</div>
+      <p class="desc">For emerging readers — toggle replaces complex words: "menyelesaikan" → "selesaikan", "menjawab" → "jawab". 200-word swap dictionary, static JSON.</p>
+      <div class="plugs-into">Plugs into: Settings panel · localization layer</div>
+      <div class="mockup">Default: "Bagaimana cara
+            menyelesaikan ini?"
+Simple:  "Cara selesaikan ini?"</div>
+      <div class="pills">
+        <span class="pill pill-effort">MVP 2W</span>
+        <span class="pill pill-impact">Impact: High</span>
+        <span class="pill pill-safety">Safe</span>
+        <span class="pill pill-cost">Zero $</span>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<footer>
+  <h2>50 Ide V2 · Lebih Align</h2>
+  <p>Semua 50 ide bisa dipasang ke G1–G24 yang sudah ada. Tanpa LLM/ML, tanpa paid API, tanpa server, tanpa monetisasi anak. Pakai Review Console di pojok kanan bawah untuk approve/reject + isi catatan.</p>
+</footer>
+
+<!-- ═══════════ Review Console (mirrors V1 with key swap) ═══════════ -->
+<button class="review-console-fab" id="review-fab" type="button">
+  📝 Review <span class="fab-count" id="fab-count">0/50</span>
+</button>
+<aside class="review-console-panel" id="review-panel">
+  <button class="console-close" id="console-close" type="button">×</button>
+  <h3>Review Console V2</h3>
+  <div class="console-sub">State tersimpan di localStorage <code>dunia-aaa-review-v2</code>.</div>
+  <div class="console-stats">
+    <div class="stat stat-build"><span class="stat-num" id="stat-build">0</span><span class="stat-label">Build</span></div>
+    <div class="stat stat-later"><span class="stat-num" id="stat-later">0</span><span class="stat-label">Later</span></div>
+    <div class="stat stat-reject"><span class="stat-num" id="stat-reject">0</span><span class="stat-label">Reject</span></div>
+    <div class="stat stat-pending"><span class="stat-num" id="stat-pending">50</span><span class="stat-label">Pending</span></div>
+  </div>
+  <div class="console-actions">
+    <button class="console-btn" id="btn-export-json">⬇ Export JSON</button>
+    <button class="console-btn" id="btn-copy-json">📋 Copy JSON</button>
+    <button class="console-btn full" id="btn-export-md">📄 Markdown</button>
+    <button class="console-btn danger full" id="btn-clear">🗑 Clear All</button>
+  </div>
+  <textarea class="console-export-area" id="console-output" placeholder="Output area..."></textarea>
+</aside>
+
+<script>
+(function () {
+  'use strict';
+  var STORAGE_KEY = 'dunia-aaa-review-v2';
+  var DECISIONS = [
+    { value: 'pending',         label: 'Belum ditinjau' },
+    { value: 'approve-build',   label: '✅ Approve — Build' },
+    { value: 'approve-later',   label: '🕒 Approve — Later' },
+    { value: 'reject',          label: '🚫 Reject' },
+    { value: 'discuss',         label: '💬 Diskusi' }
+  ];
+  function loadState () {
+    try { var r = localStorage.getItem(STORAGE_KEY); if (!r) return { items: {} };
+      var p = JSON.parse(r); if (!p.items) p.items = {}; return p;
+    } catch (e) { return { items: {} }; }
+  }
+  function saveState (s) {
+    s.lastUpdate = new Date().toISOString();
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch (e) {}
+  }
+  var state = loadState();
+  function getItem (k) {
+    if (!state.items[k]) state.items[k] = { decision: 'pending', notes: '' };
+    return state.items[k];
+  }
+  function buildWidget (key, title, container) {
+    var item = getItem(key);
+    var wrap = document.createElement('div');
+    wrap.className = 'review-widget';
+    wrap.setAttribute('data-decision', item.decision || 'pending');
+    var lbl = document.createElement('label'); lbl.textContent = 'Review · ' + key + ' · ' + title;
+    wrap.appendChild(lbl);
+    var row = document.createElement('div'); row.className = 'review-row';
+    var sel = document.createElement('select'); sel.className = 'review-decision';
+    DECISIONS.forEach(function (d) {
+      var o = document.createElement('option'); o.value = d.value; o.textContent = d.label;
+      if (item.decision === d.value) o.selected = true;
+      sel.appendChild(o);
+    });
+    row.appendChild(sel);
+    var st = document.createElement('span'); st.className = 'review-status';
+    st.textContent = (item.notes || item.decision !== 'pending') ? '● Tersimpan' : '○ Kosong';
+    if (item.notes || item.decision !== 'pending') st.classList.add('saved');
+    row.appendChild(st); wrap.appendChild(row);
+    var ta = document.createElement('textarea'); ta.className = 'review-notes';
+    ta.placeholder = 'Catatan review...'; ta.value = item.notes || '';
+    wrap.appendChild(ta);
+    var t = null;
+    function persist () {
+      var it = getItem(key); it.decision = sel.value; it.notes = ta.value;
+      wrap.setAttribute('data-decision', it.decision);
+      saveState(state);
+      st.textContent = '● Tersimpan ' + new Date().toLocaleTimeString();
+      st.classList.add('saved'); updateStats();
+    }
+    sel.addEventListener('change', persist);
+    ta.addEventListener('input', function () {
+      st.textContent = '… mengetik'; st.classList.remove('saved');
+      if (t) clearTimeout(t); t = setTimeout(persist, 250);
+    });
+    container.appendChild(wrap);
+  }
+  function injectWidgets () {
+    document.querySelectorAll('article.idea').forEach(function (el) {
+      var n = el.querySelector('.idea-num');
+      var h = el.querySelector('h3');
+      if (!n) return;
+      buildWidget(n.textContent.trim(), h ? h.textContent.replace(/✅.*/, '').trim() : '', el);
+    });
+  }
+  function updateStats () {
+    var c = { 'approve-build':0,'approve-later':0,'reject':0,'discuss':0,'pending':0 };
+    Object.keys(state.items).forEach(function (k) {
+      var d = state.items[k].decision || 'pending'; if (c[d] === undefined) c[d] = 0; c[d]++;
+    });
+    var total = document.querySelectorAll('.review-widget').length;
+    var reviewed = total - (c.pending || 0);
+    document.getElementById('fab-count').textContent = reviewed + '/' + total;
+    document.getElementById('stat-build').textContent = c['approve-build'] || 0;
+    document.getElementById('stat-later').textContent = c['approve-later'] || 0;
+    document.getElementById('stat-reject').textContent = c['reject'] || 0;
+    document.getElementById('stat-pending').textContent = Math.max(0, total - reviewed);
+  }
+  function exportJson () { return JSON.stringify(state, null, 2); }
+  function exportMd () {
+    var lines = ['# Dunia Emosi V2 — Review Decisions','Last: ' + (state.lastUpdate || 'now'),''];
+    var groups = { 'approve-build':'## ✅ Build', 'approve-later':'## 🕒 Later', 'reject':'## 🚫 Reject', 'discuss':'## 💬 Diskusi' };
+    Object.keys(groups).forEach(function (key) {
+      var sec = []; Object.keys(state.items).forEach(function (k) {
+        if ((state.items[k].decision || 'pending') !== key) return;
+        var n = (state.items[k].notes || '').trim();
+        sec.push('- **' + k + '**' + (n ? ' — ' + n.replace(/\n+/g,' ') : ''));
+      });
+      if (sec.length) { lines.push(groups[key]); lines = lines.concat(sec); lines.push(''); }
+    });
+    return lines.join('\n');
+  }
+  function setOut (t) {
+    var a = document.getElementById('console-output'); a.value = t; a.focus(); a.select();
+  }
+  function bindConsole () {
+    document.getElementById('review-fab').addEventListener('click', function () {
+      document.getElementById('review-panel').classList.toggle('open');
+    });
+    document.getElementById('console-close').addEventListener('click', function () {
+      document.getElementById('review-panel').classList.remove('open');
+    });
+    document.getElementById('btn-export-json').addEventListener('click', function () { setOut(exportJson()); });
+    document.getElementById('btn-copy-json').addEventListener('click', function () {
+      setOut(exportJson());
+      try { navigator.clipboard.writeText(document.getElementById('console-output').value); } catch (e) {}
+    });
+    document.getElementById('btn-export-md').addEventListener('click', function () { setOut(exportMd()); });
+    document.getElementById('btn-clear').addEventListener('click', function () {
+      if (!confirm('Hapus SEMUA review?')) return;
+      state = { items: {} }; saveState(state);
+      document.querySelectorAll('.review-widget').forEach(function (w) { w.remove(); });
+      injectWidgets(); updateStats();
+    });
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    injectWidgets(); bindConsole(); updateStats();
+  });
+})();
+</script>
+</body>
+</html>

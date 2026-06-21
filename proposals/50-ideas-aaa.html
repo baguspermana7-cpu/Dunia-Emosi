@@ -6004,5 +6004,165 @@ function forfeit(slotIdx) {
 })();
 </script>
 
+<!-- ═══════════════════════════════════════════════════════════════
+     2026-06-21 — Filter + remove (owner: hide implemented, remove LLM/ML)
+     ═══════════════════════════════════════════════════════════════ -->
+<style>
+  /* LLM/ML ideas — REMOVED entirely per owner mandate "hilangkan ide yang ada
+     hubungannya dengan llm atau ml". display:none = effectively deleted. */
+  body [data-tag~="llm-ml"] {
+    display: none !important;
+  }
+  /* Implemented ideas — hidden by default. Owner: "hilangkan karena sudah ok".
+     Restored when body has .show-implemented (toggled via filter bar). */
+  body:not(.show-implemented) [data-status="implemented"] {
+    display: none !important;
+  }
+  /* Filter bar — sits above the matrix table */
+  .aaa-filter-bar {
+    max-width: 1160px;
+    margin: 12px auto 4px;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 14px;
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    color: #E2E8F0;
+    font-size: 13px;
+    font-family: system-ui, sans-serif;
+    flex-wrap: wrap;
+  }
+  .aaa-filter-bar label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .aaa-filter-bar input[type="checkbox"] {
+    width: 18px; height: 18px;
+    cursor: pointer;
+  }
+  .aaa-filter-bar .filter-stat {
+    margin-left: auto;
+    font-size: 11px;
+    opacity: 0.65;
+  }
+  .v2-banner {
+    display: block;
+    max-width: 1160px;
+    margin: 16px auto 0;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, rgba(6,182,212,0.20), rgba(168,85,247,0.18));
+    border: 1px solid rgba(6,182,212,0.45);
+    border-radius: 14px;
+    color: #ECFEFF;
+    text-decoration: none;
+    font-family: system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    text-align: center;
+    transition: transform 200ms cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .v2-banner:hover { transform: translateY(-2px); }
+  .implemented-chip {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 2px 8px;
+    background: rgba(34,197,94,0.25);
+    border: 1px solid rgba(34,197,94,0.5);
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+    color: #86EFAC;
+    vertical-align: middle;
+  }
+</style>
+<script>
+(function () {
+  'use strict';
+  // Mapping based on 2026-06-21 audit (see CHANGELOG):
+  var LLM_ML_IDS    = ['#11','#25','#26','#27','#28','#29','#46'];
+  var IMPLEMENTED_IDS = ['#18','#42','#45'];
+
+  function tagElements (ids, attr, value) {
+    ids.forEach(function (id) {
+      // Tag matrix table row
+      document.querySelectorAll('.roadmap-id').forEach(function (cell) {
+        if (cell.textContent.trim() === id) {
+          var row = cell.closest('tr');
+          if (row) row.setAttribute(attr, value);
+        }
+      });
+      // Tag idea card (article)
+      document.querySelectorAll('.idea-number').forEach(function (n) {
+        if (n.textContent.trim() === id) {
+          var card = n.closest('.idea');
+          if (card) card.setAttribute(attr, value);
+        }
+      });
+    });
+  }
+
+  function injectFilterBar () {
+    var bar = document.createElement('div');
+    bar.className = 'aaa-filter-bar';
+    bar.innerHTML =
+      '<label><input type="checkbox" id="aaa-show-impl"> <span>Show implemented ' +
+      '(' + IMPLEMENTED_IDS.length + ')</span></label>' +
+      '<span class="filter-stat">' + LLM_ML_IDS.length +
+      ' LLM/ML ideas removed entirely · 7 ideas always hidden</span>';
+    var matrixSection = document.getElementById('roadmap-review') ||
+                        document.querySelector('section.category');
+    if (matrixSection && matrixSection.parentNode) {
+      matrixSection.parentNode.insertBefore(bar, matrixSection);
+    }
+    var cb = document.getElementById('aaa-show-impl');
+    if (cb) cb.addEventListener('change', function () {
+      document.body.classList.toggle('show-implemented', cb.checked);
+    });
+  }
+
+  function injectV2Banner () {
+    var b = document.createElement('a');
+    b.className = 'v2-banner';
+    b.href = '50-ideas-v2.html';
+    b.textContent = '▶ Versi V2 — 50 ide baru, lebih align dengan game →';
+    var header = document.querySelector('.summary') || document.body.firstElementChild;
+    if (header && header.parentNode) {
+      header.parentNode.insertBefore(b, header.nextSibling);
+    }
+  }
+
+  function addImplementedChips () {
+    IMPLEMENTED_IDS.forEach(function (id) {
+      document.querySelectorAll('.idea-number').forEach(function (n) {
+        if (n.textContent.trim() !== id) return;
+        var card = n.closest('.idea');
+        if (!card) return;
+        var h = card.querySelector('h3');
+        if (h && !h.querySelector('.implemented-chip')) {
+          var chip = document.createElement('span');
+          chip.className = 'implemented-chip';
+          chip.textContent = '✅ Sudah';
+          h.appendChild(chip);
+        }
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    try { tagElements(LLM_ML_IDS, 'data-tag', 'llm-ml'); } catch (e) {}
+    try { tagElements(IMPLEMENTED_IDS, 'data-status', 'implemented'); } catch (e) {}
+    try { addImplementedChips(); } catch (e) {}
+    try { injectFilterBar(); } catch (e) {}
+    try { injectV2Banner(); } catch (e) {}
+  });
+})();
+</script>
+
 </body>
 </html>
