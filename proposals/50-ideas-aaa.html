@@ -447,6 +447,108 @@
   .mock-tag.new { background: rgba(252,211,77,0.25); color: #FDE047; border-color: rgba(252,211,77,0.5); }
   .mock-tag.pro { background: rgba(168,85,247,0.3); color: #DDD6FE; border-color: rgba(168,85,247,0.6); }
 
+  /* ── Roadmap review correspondence ── */
+  .roadmap-review {
+    max-width: 1160px;
+    margin: 34px auto 44px;
+    padding: 0 16px;
+  }
+  .roadmap-panel {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F3E8FF 100%);
+    border-radius: 24px;
+    box-shadow: 0 18px 60px rgba(0,0,0,0.32);
+    border: 2px solid rgba(252,211,77,0.35);
+    overflow: hidden;
+  }
+  .roadmap-head {
+    padding: 24px 26px;
+    background: linear-gradient(135deg, #1E1B4B, #312E81);
+    color: white;
+  }
+  .roadmap-head h2 {
+    font-family: 'Fredoka One', cursive;
+    color: #FCD34D;
+    font-size: 26px;
+    margin-bottom: 8px;
+  }
+  .roadmap-head p {
+    color: rgba(255,255,255,0.86);
+    font-size: 14px;
+    max-width: 860px;
+  }
+  .roadmap-priority {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+    padding: 18px 20px;
+    background: rgba(252,211,77,0.12);
+  }
+  .priority-chip {
+    background: rgba(255,255,255,0.8);
+    border: 1px solid rgba(139,92,246,0.2);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #312E81;
+  }
+  .roadmap-table-wrap {
+    overflow-x: auto;
+    padding: 0 20px 22px;
+  }
+  .roadmap-table {
+    width: 100%;
+    min-width: 920px;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .roadmap-table th {
+    position: sticky;
+    top: 0;
+    background: #F3E8FF;
+    color: #4C1D95;
+    text-align: left;
+    padding: 11px 10px;
+    border-bottom: 2px solid rgba(139,92,246,0.22);
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .roadmap-table td {
+    padding: 10px;
+    border-bottom: 1px solid rgba(139,92,246,0.14);
+    vertical-align: top;
+    color: #374151;
+  }
+  .roadmap-table tr:hover td { background: rgba(252,211,77,0.12); }
+  .roadmap-id {
+    font-family: 'Fredoka One', cursive;
+    color: #6D28D9;
+    white-space: nowrap;
+  }
+  .decision {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-weight: 900;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+  .decision-now { background: #DCFCE7; color: #166534; }
+  .decision-soon { background: #DBEAFE; color: #1E40AF; }
+  .decision-reshape { background: #FEF3C7; color: #92400E; }
+  .decision-later { background: #EDE9FE; color: #5B21B6; }
+  .decision-park { background: #E5E7EB; color: #374151; }
+  .decision-avoid { background: #FEE2E2; color: #991B1B; }
+  .roadmap-note { max-width: 420px; }
+  .roadmap-link {
+    display: inline-block;
+    margin-top: 12px;
+    color: #FCD34D;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
   /* ── Footer ── */
   footer {
     background: linear-gradient(135deg, #1E1B4B, #312E81, #6D28D9);
@@ -491,6 +593,8 @@
     .category-header { padding: 20px; gap: 14px; }
     .category-icon { width: 60px; height: 60px; font-size: 32px; }
     .summary-card .num { font-size: 26px; }
+    .roadmap-head { padding: 20px; }
+    .roadmap-priority { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -521,6 +625,89 @@
   <br><strong>⏱ Effort</strong>: MVP=1-2 minggu · 3W=3-4 minggu · 2M=2-3 bulan · Q=quarter · YR=multi-tahun.
   <br><strong>🎯 Inspired by</strong> = referensi game/produk di kelas dunia yang menginspirasi ide ini.
 </div>
+
+<section class="roadmap-review" id="roadmap-review">
+  <div class="roadmap-panel">
+    <div class="roadmap-head">
+      <h2>Roadmap Review Correspondence</h2>
+      <p>Mapping hasil review untuk setiap ide. Fokus utama: learning feedback, mastery tracking, daily learning loop, dan safety untuk anak 5-9 tahun. Keputusan ini tidak menghapus visi AAA, tapi mengurutkan mana yang layak dibangun sekarang, mana yang perlu diubah, dan mana yang harus diparkir.</p>
+      <a class="roadmap-link" href="review-50-ideas-aaa-roadmap.md">Buka deep review Markdown</a>
+    </div>
+    <div class="roadmap-priority">
+      <div class="priority-chip">Top 1: #42 Mastery Trees</div>
+      <div class="priority-chip">Top 2: #26 Adaptive Curriculum lokal</div>
+      <div class="priority-chip">Top 3: #29 Stroke Feedback</div>
+      <div class="priority-chip">Top 4: #31 Daily Training aman</div>
+      <div class="priority-chip">Top 5: #16 Parent-Kid Co-Op</div>
+      <div class="priority-chip">Top 6: #1 Pulau Emosi 2D MVP</div>
+    </div>
+    <div class="roadmap-table-wrap">
+      <table class="roadmap-table">
+        <thead>
+          <tr>
+            <th>Ide</th>
+            <th>Judul</th>
+            <th>Keputusan</th>
+            <th>Fase Disarankan</th>
+            <th>Catatan Review</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="roadmap-id">#1</td><td>Open-World Hub "Pulau Emosi"</td><td><span class="decision decision-reshape">Reshape</span></td><td>Month 3</td><td class="roadmap-note">Jangan mulai dari 3D open world. Buat 2D map hub dengan 5 zona, NPC rekomendasi, dan daily quest lokal.</td></tr>
+          <tr><td class="roadmap-id">#2</td><td>Procedural Pokemon Habitat</td><td><span class="decision decision-park">Park</span></td><td>12+ bulan</td><td class="roadmap-note">Scope besar, impact belajar rendah. Habitat procedural belum menyelesaikan feedback kalistung.</td></tr>
+          <tr><td class="roadmap-id">#3</td><td>Dynamic Weather + Day/Night Cycle</td><td><span class="decision decision-later">Later</span></td><td>6-12 bulan</td><td class="roadmap-note">Bisa pakai local time dulu. Hindari weather API sampai privacy dan fallback jelas.</td></tr>
+          <tr><td class="roadmap-id">#4</td><td>World-Changing Seasonal Events</td><td><span class="decision decision-later">Later</span></td><td>6-12 bulan</td><td class="roadmap-note">Mulai dari event kecil statis. Jangan live event besar atau time pressure yang membuat FOMO.</td></tr>
+          <tr><td class="roadmap-id">#5</td><td>Pokemon Photo Safari Mode</td><td><span class="decision decision-park">Park</span></td><td>12+ bulan</td><td class="roadmap-note">Camera, AI scoring, dan child privacy terlalu dini. Tidak prioritas untuk core learning.</td></tr>
+          <tr><td class="roadmap-id">#6</td><td>Player Housing & Decoration</td><td><span class="decision decision-later">Later</span></td><td>6-12 bulan</td><td class="roadmap-note">Bagus sebagai reward sink setelah mastery dan daily reward punya makna.</td></tr>
+          <tr><td class="roadmap-id">#7</td><td>Living Dungeon Generator</td><td><span class="decision decision-park">Park</span></td><td>12+ bulan</td><td class="roadmap-note">Procedural dungeon dan leaderboard mengalihkan fokus dari pembelajaran inti.</td></tr>
+          <tr><td class="roadmap-id">#8</td><td>20-Episode Main Story</td><td><span class="decision decision-park">Park</span></td><td>Multi-tahun</td><td class="roadmap-note">Produksi konten mahal. Mulai dari micro story card per skill jika dibutuhkan.</td></tr>
+          <tr><td class="roadmap-id">#9</td><td>Branching Narrative</td><td><span class="decision decision-later">Later</span></td><td>6-12 bulan</td><td class="roadmap-note">Cocok untuk emosi, tapi MVP cukup micro-choice di Game 1, bukan 8 ending penuh.</td></tr>
+          <tr><td class="roadmap-id">#10</td><td>Pokemon Evolution Cinematic</td><td><span class="decision decision-later">Later</span></td><td>3-6 bulan</td><td class="roadmap-note">Buat 1 generic evolution animation reusable. Jangan 1025 animasi individual.</td></tr>
+          <tr><td class="roadmap-id">#11</td><td>Voice-cast Pokemon</td><td><span class="decision decision-park">Park</span></td><td>Multi-tahun</td><td class="roadmap-note">1025 samples tidak realistis dan punya IP risk. Mulai dengan generic creature barks saja.</td></tr>
+          <tr><td class="roadmap-id">#12</td><td>Animated Backstory Cards</td><td><span class="decision decision-later">Later</span></td><td>3-6 bulan</td><td class="roadmap-note">Mulai dari static backstory card yang terkait emotional learning.</td></tr>
+          <tr><td class="roadmap-id">#13</td><td>Boss Reveal</td><td><span class="decision decision-later">Later</span></td><td>3-6 bulan</td><td class="roadmap-note">Buat lightweight CSS/canvas reveal untuk boss G10, bukan cutscene produksi besar.</td></tr>
+          <tr><td class="roadmap-id">#14</td><td>Real-Time PvP Battle</td><td><span class="decision decision-avoid">Avoid Now</span></td><td>Jangan 12 bulan</td><td class="roadmap-note">Child safety, signaling server, reconnect, moderation, dan leaderboard risk tinggi.</td></tr>
+          <tr><td class="roadmap-id">#15</td><td>Guild Weekly Wars</td><td><span class="decision decision-avoid">Avoid Now</span></td><td>Jangan 12 bulan</td><td class="roadmap-note">Social pressure dan kompetisi tim belum cocok untuk target 5-9 tahun.</td></tr>
+          <tr><td class="roadmap-id">#16</td><td>Parent-Kid Co-Op Quiz</td><td><span class="decision decision-soon">Build Soon</span></td><td>Month 3</td><td class="roadmap-note">High impact dan aman. Same-device co-op tanpa chat atau online.</td></tr>
+          <tr><td class="roadmap-id">#17</td><td>Asynchronous Gift System</td><td><span class="decision decision-later">Later</span></td><td>6-12 bulan</td><td class="roadmap-note">Hanya parent-approved QR/text. Jangan public friend graph.</td></tr>
+          <tr><td class="roadmap-id">#18</td><td>Tournament Mode</td><td><span class="decision decision-avoid">Avoid Now</span></td><td>Jangan 12 bulan</td><td class="roadmap-note">Kompetisi publik menggeser tujuan belajar menjadi menang cepat.</td></tr>
+          <tr><td class="roadmap-id">#19</td><td>Mentor Mode</td><td><span class="decision decision-later">Later</span></td><td>6-12 bulan</td><td class="roadmap-note">Bagus, tapi bisa digabung ke parent-kid co-op atau sibling local session.</td></tr>
+          <tr><td class="roadmap-id">#20</td><td>Pokemon Designer Studio</td><td><span class="decision decision-later">Later</span></td><td>6-12 bulan</td><td class="roadmap-note">Ubah menjadi original creature studio agar aman untuk publik.</td></tr>
+          <tr><td class="roadmap-id">#21</td><td>Quiz Creator Marketplace</td><td><span class="decision decision-park">Park</span></td><td>12+ bulan</td><td class="roadmap-note">Marketplace butuh moderasi. Local quiz creator bisa dipikirkan belakangan.</td></tr>
+          <tr><td class="roadmap-id">#22</td><td>Animated Storyboard Builder</td><td><span class="decision decision-park">Park</span></td><td>12+ bulan</td><td class="roadmap-note">Kreatif, tapi scope besar dan tidak langsung menaikkan kalistung.</td></tr>
+          <tr><td class="roadmap-id">#23</td><td>Music Remix Mini-Studio</td><td><span class="decision decision-park">Park</span></td><td>12+ bulan</td><td class="roadmap-note">Fun, tapi paling jauh dari learning bottleneck sekarang.</td></tr>
+          <tr><td class="roadmap-id">#24</td><td>Custom Level Designer G6</td><td><span class="decision decision-later">Later</span></td><td>6-12 bulan</td><td class="roadmap-note">Useful setelah G6 road/spelling engine stabil dan data words rapi.</td></tr>
+          <tr><td class="roadmap-id">#25</td><td>Profesor Emosi LLM Companion</td><td><span class="decision decision-park">Park</span></td><td>12+ bulan</td><td class="roadmap-note">Mulai dari scripted professor. LLM anak butuh parent gate, moderation, dan data policy.</td></tr>
+          <tr><td class="roadmap-id">#26</td><td>ML Adaptive Curriculum</td><td><span class="decision decision-now">Build Now</span></td><td>Month 1</td><td class="roadmap-note">Reshape jadi rule-based adaptive learning dari local attempt logs. ML belakangan.</td></tr>
+          <tr><td class="roadmap-id">#27</td><td>AI-Generated Bedtime Stories</td><td><span class="decision decision-park">Park</span></td><td>12+ bulan</td><td class="roadmap-note">LLM + anak + personalisasi cerita butuh safety dan cost guardrail.</td></tr>
+          <tr><td class="roadmap-id">#28</td><td>Speech Recognition Spelling</td><td><span class="decision decision-later">Later</span></td><td>6-12 bulan</td><td class="roadmap-note">Optional parent-enabled feature. Harus ada fallback tanpa microphone.</td></tr>
+          <tr><td class="roadmap-id">#29</td><td>Handwriting Recognition</td><td><span class="decision decision-soon">Build Soon</span></td><td>Month 2</td><td class="roadmap-note">Reshape jadi stroke-order feedback dulu. TF.js/ML bisa menyusul.</td></tr>
+          <tr><td class="roadmap-id">#30</td><td>Pokemon Breeding System</td><td><span class="decision decision-park">Park</span></td><td>12+ bulan</td><td class="roadmap-note">Kompleks, IP risk, dan tidak prioritas kalistung.</td></tr>
+          <tr><td class="roadmap-id">#31</td><td>Daily Pokemon Training</td><td><span class="decision decision-now">Build Now</span></td><td>Month 1</td><td class="roadmap-note">Bagus untuk daily learning, tapi hapus punishment skip. Reward harus positif.</td></tr>
+          <tr><td class="roadmap-id">#32</td><td>Pokemon Trading Card Game</td><td><span class="decision decision-park">Park</span></td><td>Multi-tahun</td><td class="roadmap-note">Spin-off besar, bukan roadmap 12 bulan.</td></tr>
+          <tr><td class="roadmap-id">#33</td><td>Career Mode</td><td><span class="decision decision-later">Later</span></td><td>6-12 bulan</td><td class="roadmap-note">Ubah jadi 8-week learning journey sederhana setelah mastery siap.</td></tr>
+          <tr><td class="roadmap-id">#34</td><td>3D Type Chart</td><td><span class="decision decision-park">Park</span></td><td>12+ bulan</td><td class="roadmap-note">Tidak relevan langsung untuk kalistung anak 5-9.</td></tr>
+          <tr><td class="roadmap-id">#35</td><td>Battle Pass</td><td><span class="decision decision-avoid">Avoid As Written</span></td><td>Jangan build</td><td class="roadmap-note">Ubah jadi free Learning Journey. Hindari premium track dan FOMO.</td></tr>
+          <tr><td class="roadmap-id">#36</td><td>Weekend Raids</td><td><span class="decision decision-park">Park</span></td><td>12+ bulan</td><td class="roadmap-note">Time-gated FOMO dan live ops belum cocok untuk fase awal.</td></tr>
+          <tr><td class="roadmap-id">#37</td><td>Global Community Challenges</td><td><span class="decision decision-park">Park</span></td><td>12+ bulan</td><td class="roadmap-note">Butuh server/community safety. Build local goals dulu.</td></tr>
+          <tr><td class="roadmap-id">#38</td><td>Server-Pushed Daily Quests</td><td><span class="decision decision-now">Build Now</span></td><td>Month 1-2</td><td class="roadmap-note">Reshape jadi local daily quests dulu. Server endpoint nanti.</td></tr>
+          <tr><td class="roadmap-id">#39</td><td>Trainer Level + Prestige</td><td><span class="decision decision-soon">Build Soon</span></td><td>Month 2</td><td class="roadmap-note">Hubungkan XP ke mastery dan retry learning, bukan grind mentah.</td></tr>
+          <tr><td class="roadmap-id">#40</td><td>Pokedex Completionist</td><td><span class="decision decision-later">Later</span></td><td>6-12 bulan</td><td class="roadmap-note">Ubah rare spawn menjadi learning unlock. Hindari 0.1% grind untuk anak.</td></tr>
+          <tr><td class="roadmap-id">#41</td><td>Year-End Recap</td><td><span class="decision decision-later">Later</span></td><td>6-12 bulan</td><td class="roadmap-note">Bagus setelah telemetry local sudah rapi. Bisa mulai monthly recap.</td></tr>
+          <tr><td class="roadmap-id">#42</td><td>Mastery Trees per Subject</td><td><span class="decision decision-now">Build Now</span></td><td>Month 1</td><td class="roadmap-note">Fondasi roadmap. Tanpa mastery, reward dan XP tidak punya arah belajar.</td></tr>
+          <tr><td class="roadmap-id">#43</td><td>Orchestral Soundtrack</td><td><span class="decision decision-park">Park</span></td><td>Multi-tahun</td><td class="roadmap-note">Polish mahal. Bottleneck sekarang ada di feedback belajar, bukan album OST.</td></tr>
+          <tr><td class="roadmap-id">#44</td><td>Adaptive Music</td><td><span class="decision decision-soon">Build Soon</span></td><td>Month 3</td><td class="roadmap-note">Build light version: idle, battle, low HP, win layers.</td></tr>
+          <tr><td class="roadmap-id">#45</td><td>Cinematic Sound Design</td><td><span class="decision decision-soon">Build Soon</span></td><td>Month 3</td><td class="roadmap-note">SFX G10/G6 bisa cepat menaikkan game feel tanpa produksi besar.</td></tr>
+          <tr><td class="roadmap-id">#46</td><td>Voice Cast Mascots</td><td><span class="decision decision-park">Park</span></td><td>Multi-tahun</td><td class="roadmap-note">Mulai dari mascot barks pendek atau TTS parent-enabled belakangan.</td></tr>
+          <tr><td class="roadmap-id">#47</td><td>Native iOS/Android</td><td><span class="decision decision-later">Later</span></td><td>12+ bulan</td><td class="roadmap-note">Web app harus stabil dulu. Capacitor setelah core UX dan save system rapi.</td></tr>
+          <tr><td class="roadmap-id">#48</td><td>AR Mode</td><td><span class="decision decision-park">Park</span></td><td>12+ bulan</td><td class="roadmap-note">Camera/privacy/platform complexity tinggi. Tidak prioritas learning.</td></tr>
+          <tr><td class="roadmap-id">#49</td><td>Cross-Device Cloud Save</td><td><span class="decision decision-later">Later</span></td><td>6-12 bulan</td><td class="roadmap-note">Mulai dari export/import save. Cloud save butuh parent account dan privacy policy.</td></tr>
+          <tr><td class="roadmap-id">#50</td><td>Smart TV Mode</td><td><span class="decision decision-later">Later</span></td><td>6-12 bulan</td><td class="roadmap-note">Bisa setelah responsive landscape dan controller navigation solid.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
 
 <div class="toc">
   <h2>🏛 10 Pillar Kategori</h2>

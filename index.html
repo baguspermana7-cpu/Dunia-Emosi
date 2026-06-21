@@ -6,7 +6,7 @@
 <title>Dunia Emosi 🐾</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="style.css?v=20260506ad">
+<link rel="stylesheet" href="style.css?v=20260506ae">
 
 <!-- PWA: install-as-app + offline support -->
 <link rel="manifest" href="manifest.json">
@@ -2036,9 +2036,10 @@
     <div class="g9-stars" id="g9-stars-result"></div>
     <p id="g9-result-msg"></p>
   </div>
-  <div style="display:flex;gap:12px;margin-top:16px;width:100%;max-width:400px;">
+  <div style="display:flex;gap:8px;margin-top:16px;width:100%;max-width:480px;">
     <button class="btn btn-md" style="flex:1;background:white;color:var(--text);border:3px solid #E0E0E0;box-shadow:0 4px 0 #C0C0C0;" onclick="g9Clear()">🗑️ Hapus</button>
-    <button class="btn btn-md btn-lime" id="g9-next-btn" style="flex:1;display:none;" onclick="nextG9Round()">Huruf Berikutnya ➡️</button>
+    <button class="btn btn-md" id="g9-done-btn" style="flex:1.2;background:linear-gradient(160deg,#84CC16,#65A30D);color:white;border:3px solid #65A30D;box-shadow:0 4px 0 #4D7C0F;" onclick="evaluateG9Trace()">✅ Selesai</button>
+    <button class="btn btn-md btn-lime" id="g9-next-btn" style="flex:1;display:none;" onclick="nextG9Round()">Berikutnya ➡️</button>
   </div>
   <p class="g9-progress" id="g9-progress"></p>
 </div>
@@ -2174,7 +2175,7 @@ function loadPixiJS(cb) {
 <script src="games/data/freeze-watchdog.js?v=20260428a" defer></script>
 <script src="games/data/cloud-sync.js?v=20260502p" defer></script>
 <script src="games/data/math-rules.js?v=20260506n" defer></script>
-<script src="games/data/poke-type-chart.js?v=20260506ad" defer></script>
-<script src="game.js?v=20260506ad" defer></script>
+<script src="games/data/poke-type-chart.js?v=20260506ae" defer></script>
+<script src="game.js?v=20260506ae" defer></script>
 </body>
 </html>

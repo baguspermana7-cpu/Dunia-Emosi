@@ -1406,7 +1406,7 @@ function openGymGame() {
   playClick()
   // MUST remain synchronous — page redirects on next line, no time for async work.
   _applyKodokSlot7Unlock()   // runs once, guard inside; slot-7+frog preset
-  window.location.href = 'games/g13c-pixi.html?v=20260506ad'
+  window.location.href = 'games/g13c-pixi.html?v=20260506ae'
 }
 
 function g13cBuildLetterSelect() {
@@ -4152,6 +4152,8 @@ function nextG9Round(){
   document.getElementById('g9-letter-display').textContent=g9State.currentLetter
   document.getElementById('g9-result').style.display='none'
   document.getElementById('g9-next-btn').style.display='none'
+  // Re-show "Selesai" button when starting new letter
+  const doneBtn=document.getElementById('g9-done-btn'); if(doneBtn) doneBtn.style.display='block'
   document.getElementById('g9-progress').textContent=`${g9State.round+1} / ${g9State.maxRound}`
   g9Clear(); renderG9GuideDots(); g9State.round++
 }
@@ -4173,6 +4175,14 @@ function g9Clear(){
 function g9GetPos(e,canvas){const rect=canvas.getBoundingClientRect(),scaleX=canvas.width/rect.width,scaleY=canvas.height/rect.height;return{x:(e.clientX-rect.left)*scaleX,y:(e.clientY-rect.top)*scaleY}}
 function g9StartDraw(e){
   g9Drawing=true; const pos=g9GetPos(e,g9Canvas); g9UserPath.push(pos)
+  // Insert sentinel to mark stroke boundary (caller-driven multi-stroke support
+  // — 2026-05-04 fix: kid bisa angkat jari & lanjut stroke berikut tanpa
+  // auto-eval prematur. Sentinel value {_break:true} pisahkan satu stroke
+  // dari yang lain di g9UserPath untuk evaluasi nanti)
+  if (g9UserPath.length > 1) {
+    g9UserPath[g9UserPath.length - 1] = {_break: true}
+    g9UserPath.push(pos)
+  }
   g9Ctx.beginPath(); g9Ctx.moveTo(pos.x,pos.y)
   g9Ctx.strokeStyle='#84CC16'; g9Ctx.lineWidth=16; g9Ctx.lineCap='round'; g9Ctx.lineJoin='round'
 }
@@ -4182,16 +4192,32 @@ function g9Draw(e){
 }
 function g9TouchStart(e){e.preventDefault();if(e.touches[0])g9StartDraw(e.touches[0])}
 function g9TouchMove(e){e.preventDefault();if(e.touches[0])g9Draw(e.touches[0])}
-function g9EndDraw(){if(!g9Drawing)return;g9Drawing=false;g9Ctx.beginPath();setTimeout(evaluateG9Trace,500)}
+// 2026-05-04 FIX: REMOVE auto-evaluate timer. Was triggering setTimeout(evaluateG9Trace,500)
+// every time kid lifted finger → multi-stroke letters (A/B/E/F/H/T) impossible to
+// complete. NOW: kid taps explicit "✅ Selesai" button to evaluate.
+function g9EndDraw(){
+  if(!g9Drawing) return
+  g9Drawing=false
+  g9Ctx.beginPath()
+  // NO MORE auto-eval — explicit "Selesai" button replaces this
+}
 function checkGuideHits(pos){
   const sz=g9Canvas.width||300; const guides=getG9Guides(g9State.currentLetter)
   guides.forEach((g,i)=>{const gx=g.x*sz,gy=g.y*sz,d=Math.hypot(pos.x-gx,pos.y-gy);if(d<sz*0.18){const dot=document.getElementById(`g9-dot-${i}`);if(dot)dot.classList.add('hit')}})
 }
 function evaluateG9Trace(){
   const sz=g9Canvas.width||300; const guides=getG9Guides(g9State.currentLetter)
-  if(guides.length===0||g9UserPath.length<5)return
+  // Filter out stroke-boundary sentinels {_break:true} before evaluating
+  const pathPoints = g9UserPath.filter(p => p && !p._break && typeof p.x === 'number')
+  if(guides.length===0||pathPoints.length<5){
+    // Show "coba lagi" hint
+    const resultEl=document.getElementById('g9-result'); resultEl.style.display='block'
+    document.getElementById('g9-stars-result').textContent='💪'
+    document.getElementById('g9-result-msg').textContent='Belum cukup! Coba ikuti garis huruf 😊'
+    return
+  }
   let hits=0
-  guides.forEach(g=>{const gx=g.x*sz,gy=g.y*sz,nearest=g9UserPath.reduce((best,p)=>Math.min(best,Math.hypot(p.x-gx,p.y-gy)),Infinity);if(nearest<sz*0.22)hits++})
+  guides.forEach(g=>{const gx=g.x*sz,gy=g.y*sz,nearest=pathPoints.reduce((best,p)=>Math.min(best,Math.hypot(p.x-gx,p.y-gy)),Infinity);if(nearest<sz*0.22)hits++})
   const score=hits/guides.length
   let stars=0,msg=''
   if(score>=0.85){stars=3;msg='Sempurna! Tulisanmu bagus sekali! 🌟'}
@@ -4203,6 +4229,8 @@ function evaluateG9Trace(){
   document.getElementById('g9-result-msg').textContent=msg
   if(stars>0){addStars(stars);playCorrect();spawnSparkles(null,stars)}else playWrong()
   document.getElementById('g9-next-btn').style.display='flex'
+  // Hide "Selesai" button — user already evaluated, must press "Berikutnya"
+  const doneBtn=document.getElementById('g9-done-btn'); if(doneBtn) doneBtn.style.display='none'
 }
 
 // ================================================================
@@ -13390,14 +13418,14 @@ function initGame22() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g22Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g22-candy.html?v=20260506ad'
+  window.location.href = 'games/g22-candy.html?v=20260506ae'
 }
 
 function initGame23() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g23Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g23-pixi.html?v=20260506ad'
+  window.location.href = 'games/g23-pixi.html?v=20260506ae'
 }
 
 function initGame24() {
