@@ -825,7 +825,9 @@ const WORD_BUILD_BANK = [
   {word:'JALA',emoji:'🎣',hint:'Alat untuk menangkap ikan',tier:'easy'},
   {word:'API',emoji:'🔥',hint:'Cahaya panas yang menyala',tier:'easy'},
   {word:'TARI',emoji:'💃',hint:'Gerakan tubuh mengikuti irama',tier:'easy'},
-  {word:'LELE',emoji:'🐟',hint:'Ikan berkumis dari sungai',tier:'easy'},
+  // Lele tidak punya emoji canonical — pakai generic ikan + hint catfish-specific.
+  // Image fallback ke img-ikan.webp jika tersedia. Hint diperbaiki agar pas dengan emoji.
+  {word:'LELE',emoji:'🐟',hint:'Ikan air tawar berkumis, kulit licin, hitam',tier:'easy'},
   {word:'CUMI',emoji:'🦑',hint:'Hewan laut bertentakel',tier:'easy'},
   // KUTU removed: 🦟 is mosquito (NYAMUK), not lice (KUTU). No louse emoji exists.
   // --- More variety (additions per #150 user feedback) ---
@@ -1404,7 +1406,7 @@ function openGymGame() {
   playClick()
   // MUST remain synchronous — page redirects on next line, no time for async work.
   _applyKodokSlot7Unlock()   // runs once, guard inside; slot-7+frog preset
-  window.location.href = 'games/g13c-pixi.html?v=20260506ac'
+  window.location.href = 'games/g13c-pixi.html?v=20260506ad'
 }
 
 function g13cBuildLetterSelect() {
@@ -13395,7 +13397,7 @@ function initGame23() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g23Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g23-pixi.html?v=20260506ac'
+  window.location.href = 'games/g23-pixi.html?v=20260506ad'
 }
 
 function initGame24() {

@@ -261,17 +261,64 @@
   }
   window.playEffectivenessSfx = playEffectivenessSfx;
 
+  // ── Rate-limited "lite mode" for rapid hits (G13B Quick Fire crash fix) ──
+  // Track recent hit timestamps; if 5+ hits in last 1.2s, switch to LITE mode
+  // for the next call: text + sfx + damage number ONLY (skip heavy DOM VFX).
+  // Heavy VFX (particle bursts, ring, star, sparkle linger) creates 20+ DOM
+  // nodes per call; rapid taps in legendary auto-attack mode overload mobile.
+  const _hitTimestamps = [];
+  function _isRapidFire() {
+    const now = (typeof performance !== 'undefined' && performance.now)
+                ? performance.now() : Date.now();
+    // Drop entries older than 1.2 s
+    while (_hitTimestamps.length && now - _hitTimestamps[0] > 1200) {
+      _hitTimestamps.shift();
+    }
+    _hitTimestamps.push(now);
+    // Cap memory at 32 (defensive — never grows unbounded)
+    if (_hitTimestamps.length > 32) _hitTimestamps.shift();
+    return _hitTimestamps.length >= 5;
+  }
+
+  // Also cap total concurrent VFX DOM nodes to prevent DOM saturation
+  function _capConcurrent(selector, max) {
+    const nodes = document.querySelectorAll(selector);
+    if (nodes.length <= max) return;
+    // Remove oldest (first in document order)
+    for (let i = 0; i < nodes.length - max; i++) {
+      try { nodes[i].remove() } catch(_){}
+    }
+  }
+
   // ── Convenience combined call for after-hit feedback ──────────────────
   // Supports optional 4th arg `moveType` for STAB-combo critical detection,
   // and optional 5th arg `damage` to render an animated -X HP number.
   function applyHitFeedback(defTargetEl, atkType, defType, moveType, damage) {
     const m = calcTypeMult(atkType, defType);
+    const isRapid = _isRapidFire();
+
+    // Essential feedback always fires (lightweight)
     spawnEffectivenessText(defTargetEl, m);
     playEffectivenessSfx(m);
-    // Damage number floats up regardless of multiplier (round-3 polish)
     if (typeof damage === 'number' && damage > 0) {
       try { spawnDamageNumber(defTargetEl, damage, m) } catch(_){}
     }
+
+    // RAPID FIRE LITE MODE — skip heavy VFX, keep gameplay snappy
+    if (isRapid) {
+      if (m >= 1.5) {
+        try { applyDefenderShake(defTargetEl, 'super') } catch(_){}
+        // Cap accumulated heavy VFX from previous calls
+        _capConcurrent('.eff-particle', 24);
+        _capConcurrent('.eff-star-burst', 12);
+        _capConcurrent('.eff-sparkle-linger', 15);
+      } else if (m <= 0.75) {
+        try { applyDefenderShake(defTargetEl, 'resist') } catch(_){}
+      }
+      return m;
+    }
+
+    // NORMAL MODE — full VFX fanfare
     if (m >= 1.5) {
       try { spawnScreenFlash('super') } catch(_){}
       try { spawnHitParticles(defTargetEl, atkType, 12) } catch(_){}
@@ -280,10 +327,11 @@
       try { spawnAfterglow(defTargetEl) } catch(_){}
       try { spawnTypeTintFlash(atkType) } catch(_){}
       try { spawnTypeRing(defTargetEl, atkType) } catch(_){}
-      try { spawnStarBurst(defTargetEl, window.TYPE_COLOR && window.TYPE_COLOR[_norm(atkType)]) } catch(_){}  // round-5
-      try { spawnSparkleLinger(defTargetEl) } catch(_){}  // round-5
-      // Combo streak counter (round-4): increment + show label at x2+
-      const _streak = _incrementCombo();
+      try { spawnStarBurst(defTargetEl, window.TYPE_COLOR && window.TYPE_COLOR[_norm(atkType)]) } catch(_){}
+      try { spawnSparkleLinger(defTargetEl) } catch(_){}
+      // Combo streak counter — cap at 99 to prevent runaway growth
+      let _streak = _incrementCombo();
+      if (_streak > 99) { resetCombo(); _streak = 1; }
       if (_streak >= 2) {
         try { spawnComboLabel(_streak) } catch(_){}
       }
