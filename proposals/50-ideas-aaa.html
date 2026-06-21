@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>50 Ide AAA-Tier — Dunia Emosi</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple: #8B5CF6;
+    --purple-dark: #6D28D9;
+    --gold: #FCD34D;
+    --gold-dark: #F59E0B;
+    --green: #22C55E;
+    --pink: #EC4899;
+    --cyan: #06B6D4;
+    --red: #EF4444;
+    --mint: #A7F3D0;
+    --lavender: #C7D2FE;
+    --cream: #FEF3C7;
+    --text: #1F2937;
+    --text-muted: #6B7280;
+    --bg: #0F0A1F;
+    --card-bg: #FFFFFF;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Quicksand', sans-serif;
+    background: linear-gradient(135deg, #0F0A1F 0%, #1E1B4B 50%, #312E81 100%);
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ── Hero — cinematic ── */
+  .hero {
+    background:
+      radial-gradient(circle at 20% 30%, rgba(252,211,77,0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(236,72,153,0.18) 0%, transparent 50%),
+      linear-gradient(135deg, #0F0A1F 0%, #312E81 50%, #6D28D9 100%);
+    color: white;
+    padding: 80px 24px 100px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05) 1px, transparent 1px) 0 0 / 32px 32px,
+      radial-gradient(circle at 50% 50%, rgba(252,211,77,0.08) 1px, transparent 1px) 16px 16px / 32px 32px;
+    opacity: 0.6;
+  }
+  .hero-tag {
+    display: inline-block;
+    background: linear-gradient(135deg, #FCD34D, #EC4899);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-family: 'Fredoka One', cursive;
+    font-size: 14px;
+    letter-spacing: 4px;
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 2;
+  }
+  .hero h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(38px, 8vw, 72px);
+    margin-bottom: 16px;
+    text-shadow: 0 8px 32px rgba(0,0,0,0.55), 0 0 60px rgba(252,211,77,0.25);
+    background: linear-gradient(135deg, #FFFFFF 0%, #FCD34D 50%, #FFFFFF 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+    z-index: 2;
+    line-height: 1.05;
+  }
+  .hero p {
+    font-size: clamp(15px, 3vw, 19px);
+    opacity: 0.92;
+    max-width: 760px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-strap {
+    display: inline-block;
+    padding: 6px 18px;
+    background: linear-gradient(135deg, #EF4444, #FCD34D);
+    color: white;
+    border-radius: 20px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    margin-top: 24px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 8px 24px rgba(239,68,68,0.4);
+  }
+  .compare-link {
+    display: inline-block;
+    margin-top: 18px;
+    color: #FCD34D;
+    text-decoration: underline;
+    font-size: 13px;
+    opacity: 0.85;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ── Summary stats ── */
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+    max-width: 900px;
+    margin: -50px auto 30px;
+    padding: 0 16px;
+    position: relative;
+    z-index: 5;
+  }
+  .summary-card {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F3E8FF 100%);
+    border-radius: 20px;
+    padding: 18px 12px;
+    text-align: center;
+    box-shadow: 0 12px 40px rgba(139,92,246,0.35);
+    border: 2px solid rgba(252,211,77,0.4);
+  }
+  .summary-card .num {
+    font-family: 'Fredoka One', cursive;
+    font-size: 32px;
+    background: linear-gradient(135deg, var(--purple-dark), var(--pink));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+  }
+  .summary-card .label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ── TOC ── */
+  .toc {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 28px;
+    background: linear-gradient(135deg, #FFFFFF 0%, #F3E8FF 100%);
+    border-radius: 28px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .toc h2 {
+    font-family: 'Fredoka One', cursive;
+    background: linear-gradient(135deg, var(--purple-dark), var(--pink));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+  .toc-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  .toc-link {
+    display: block;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, #1E1B4B, #312E81);
+    border-radius: 14px;
+    text-decoration: none;
+    color: #FCD34D;
+    font-weight: 700;
+    font-size: 14px;
+    border: 1px solid rgba(252,211,77,0.3);
+    transition: transform 0.18s, box-shadow 0.18s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  .toc-link:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(252,211,77,0.35);
+  }
+  .toc-link .count {
+    float: right;
+    background: linear-gradient(135deg, var(--gold), var(--pink));
+    color: white;
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-size: 12px;
+    font-family: 'Fredoka One', cursive;
+  }
+
+  /* ── Legend ── */
+  .legend {
+    max-width: 800px;
+    margin: 24px auto;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(243,232,255,0.95));
+    border-radius: 18px;
+    font-size: 14px;
+    color: var(--text);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    backdrop-filter: blur(8px);
+  }
+  .legend strong { color: var(--purple-dark); }
+
+  /* ── Categories ── */
+  section.category {
+    max-width: 1200px;
+    margin: 60px auto;
+    padding: 0 16px;
+  }
+  .category-header {
+    background: linear-gradient(135deg, #1E1B4B, #312E81);
+    color: white;
+    padding: 28px 30px;
+    border-radius: 24px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.35);
+    border: 2px solid rgba(252,211,77,0.25);
+    position: relative;
+    overflow: hidden;
+  }
+  .category-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 80% 50%, rgba(252,211,77,0.15), transparent 60%);
+    pointer-events: none;
+  }
+  .category-icon {
+    font-size: 44px;
+    background: linear-gradient(135deg, #FCD34D, #EC4899);
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(252,211,77,0.4);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+  }
+  .category-header h2 {
+    font-family: 'Fredoka One', cursive;
+    color: #FCD34D;
+    font-size: 26px;
+    line-height: 1.2;
+    position: relative;
+    z-index: 2;
+  }
+  .category-header p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.85);
+    margin-top: 6px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ── Idea cards ── */
+  .ideas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 22px;
+  }
+  .idea {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F3E8FF 100%);
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+    border: 2px solid rgba(252,211,77,0.15);
+    transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .idea:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(139,92,246,0.35);
+    border-color: rgba(252,211,77,0.55);
+  }
+  .idea-number {
+    background: linear-gradient(135deg, var(--gold), var(--pink));
+    color: white;
+    padding: 8px 16px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 15px;
+    align-self: flex-start;
+    border-bottom-right-radius: 14px;
+    box-shadow: 0 4px 12px rgba(236,72,153,0.35);
+  }
+  .idea-body {
+    padding: 16px 20px 22px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .idea h3 {
+    font-family: 'Fredoka One', cursive;
+    color: var(--purple-dark);
+    font-size: 19px;
+    margin-bottom: 8px;
+    line-height: 1.25;
+  }
+  .idea .inspired {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+  .idea .inspired strong { color: var(--purple); font-style: normal; }
+  .idea .desc {
+    color: #374151;
+    font-size: 14px;
+    margin-bottom: 14px;
+    flex: 1;
+  }
+
+  /* ── Idea meta badges ── */
+  .idea-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .idea-meta .badge {
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .badge-tier-aaa { background: linear-gradient(135deg, #FCD34D, #EF4444); color: white; }
+  .badge-tier-aa { background: linear-gradient(135deg, #06B6D4, #8B5CF6); color: white; }
+  .badge-tier-a { background: linear-gradient(135deg, #22C55E, #06B6D4); color: white; }
+  .badge-effort-mvp { background: #DCFCE7; color: #166534; }
+  .badge-effort-3w { background: #FEF3C7; color: #92400E; }
+  .badge-effort-2m { background: #FED7AA; color: #9A3412; }
+  .badge-effort-q { background: #FECACA; color: #991B1B; }
+  .badge-effort-yr { background: #C7D2FE; color: #3730A3; }
+
+  /* ── Mockup container ── */
+  .mockup {
+    background: linear-gradient(135deg, #1E1B4B, #312E81);
+    border-radius: 18px;
+    padding: 16px;
+    margin-top: auto;
+    font-family: 'Quicksand', sans-serif;
+    color: white;
+    min-height: 120px;
+    position: relative;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.25);
+    border: 1px solid rgba(252,211,77,0.25);
+  }
+  .mockup-label {
+    position: absolute;
+    top: -10px;
+    left: 14px;
+    background: linear-gradient(135deg, var(--gold), var(--pink));
+    color: white;
+    font-size: 10px;
+    font-weight: 900;
+    padding: 3px 12px;
+    border-radius: 10px;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  }
+
+  /* ── Mockup sub-elements ── */
+  .mock-btn {
+    display: inline-block;
+    padding: 7px 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 12px;
+    margin: 3px;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .mock-btn-primary { background: linear-gradient(135deg, var(--purple), var(--pink)); color: white; }
+  .mock-btn-success { background: linear-gradient(135deg, var(--green), #14B8A6); color: white; }
+  .mock-btn-gold { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #78350F; }
+  .mock-btn-danger { background: linear-gradient(135deg, var(--red), #DC2626); color: white; }
+  .mock-pill {
+    display: inline-block;
+    padding: 4px 10px;
+    background: rgba(252,211,77,0.18);
+    border: 1px solid rgba(252,211,77,0.4);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #FCD34D;
+    margin: 2px;
+  }
+  .mock-card {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 8px 10px;
+    margin: 4px 0;
+    font-size: 12px;
+    backdrop-filter: blur(4px);
+  }
+  .mock-progress {
+    background: rgba(255,255,255,0.1);
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 6px 0;
+  }
+  .mock-progress-fill {
+    background: linear-gradient(90deg, var(--gold), var(--pink));
+    height: 100%;
+    border-radius: 5px;
+  }
+  .mock-row { display: flex; align-items: center; gap: 6px; font-size: 12px; margin: 5px 0; flex-wrap: wrap; }
+  .mock-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+  .mock-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 8px; }
+  .mock-strong { color: #FCD34D; font-weight: 900; }
+  .mock-tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: rgba(34,197,94,0.25);
+    color: #86EFAC;
+    font-weight: 700;
+    margin-right: 4px;
+    border: 1px solid rgba(34,197,94,0.4);
+  }
+  .mock-tag.hot { background: rgba(252,165,165,0.25); color: #FECACA; border-color: rgba(252,165,165,0.5); }
+  .mock-tag.new { background: rgba(252,211,77,0.25); color: #FDE047; border-color: rgba(252,211,77,0.5); }
+  .mock-tag.pro { background: rgba(168,85,247,0.3); color: #DDD6FE; border-color: rgba(168,85,247,0.6); }
+
+  /* ── Footer ── */
+  footer {
+    background: linear-gradient(135deg, #1E1B4B, #312E81, #6D28D9);
+    color: white;
+    padding: 60px 24px;
+    text-align: center;
+    margin-top: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  footer::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(252,211,77,0.12), transparent 50%),
+                radial-gradient(circle at 70% 50%, rgba(236,72,153,0.12), transparent 50%);
+  }
+  footer h2 {
+    font-family: 'Fredoka One', cursive;
+    margin-bottom: 14px;
+    font-size: 28px;
+    background: linear-gradient(135deg, var(--gold), var(--pink));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+    z-index: 2;
+  }
+  footer p {
+    opacity: 0.88;
+    font-size: 15px;
+    max-width: 640px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+  .footer-emoji { font-size: 56px; display: block; margin-bottom: 16px; position: relative; z-index: 2; }
+
+  /* ── Mobile ── */
+  @media (max-width: 600px) {
+    .ideas-grid { grid-template-columns: 1fr; }
+    .category-header { padding: 20px; gap: 14px; }
+    .category-icon { width: 60px; height: 60px; font-size: 32px; }
+    .summary-card .num { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="hero-tag">🌟 AAA TIER · WORLD CLASS</span>
+  <h1>50 Ide Visioner</h1>
+  <p>Apa jadinya kalau Dunia Emosi punya budget Pokemon Sword? Skala Minecraft Education? Polish Animal Crossing?<br>
+  Ini roadmap ambisius — premium production values, persistent world, live-ops, creator economy.</p>
+  <span class="hero-strap">⚡ NOT YOUR AVERAGE KIDS APP</span>
+  <br>
+  <a href="50-ideas.html" class="compare-link">← Lihat 50 ide incremental version</a>
+</header>
+
+<div class="summary">
+  <div class="summary-card"><div class="num">50</div><div class="label">VISIONER IDEAS</div></div>
+  <div class="summary-card"><div class="num">10</div><div class="label">PILLAR CATEGORIES</div></div>
+  <div class="summary-card"><div class="num">18</div><div class="label">AAA TIER</div></div>
+  <div class="summary-card"><div class="num">5+</div><div class="label">YEAR ROADMAP</div></div>
+</div>
+
+<div class="legend">
+  <strong>💡 Tier Definisi</strong>:
+  <span style="color:#EF4444">🔴 AAA</span> = setara Pokemon/Animal Crossing scale ·
+  <span style="color:#8B5CF6">🟣 AA</span> = sophisticated indie polish ·
+  <span style="color:#22C55E">🟢 A</span> = solid premium feature.
+  <br><strong>⏱ Effort</strong>: MVP=1-2 minggu · 3W=3-4 minggu · 2M=2-3 bulan · Q=quarter · YR=multi-tahun.
+  <br><strong>🎯 Inspired by</strong> = referensi game/produk di kelas dunia yang menginspirasi ide ini.
+</div>
+
+<div class="toc">
+  <h2>🏛 10 Pillar Kategori</h2>
+  <div class="toc-links">
+    <a class="toc-link" href="#world">🌍 Persistent World <span class="count">7</span></a>
+    <a class="toc-link" href="#narrative">🎬 Cinematic Narrative <span class="count">6</span></a>
+    <a class="toc-link" href="#multiplayer">👥 Multiplayer Social <span class="count">6</span></a>
+    <a class="toc-link" href="#creator">🛠 Creator Economy <span class="count">5</span></a>
+    <a class="toc-link" href="#ai">🤖 Adaptive AI <span class="count">5</span></a>
+    <a class="toc-link" href="#mechanics">⚔ Deep Mechanics <span class="count">5</span></a>
+    <a class="toc-link" href="#liveops">🌐 Live Operations <span class="count">4</span></a>
+    <a class="toc-link" href="#meta">🏆 Meta-Progression <span class="count">4</span></a>
+    <a class="toc-link" href="#audio">🎼 Premium Audio <span class="count">4</span></a>
+    <a class="toc-link" href="#tech">🚀 Platform Tech <span class="count">4</span></a>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="category" id="world">
+  <div class="category-header">
+    <div class="category-icon">🌍</div>
+    <div>
+      <h2>Persistent Open World</h2>
+      <p>Living, breathing hub yang anak explore setiap hari — bukan menu</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-number">#1</div>
+      <div class="idea-body">
+        <h3>Open-World Hub "Pulau Emosi"</h3>
+        <p class="inspired">Inspired by: <strong>Animal Crossing New Horizons</strong> + <strong>Pokemon Legends Arceus</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aaa">🔴 AAA</span><span class="badge badge-effort-q">EFFORT: 1 KUARTAL</span></div>
+        <p class="desc">Buka app → tidak lagi menu list. Anak langsung di pulau 3D top-down dengan 5 zona (Hutan/Pantai/Gunung/Kota/Bawah Laut). Setiap zona = entry ke game existing. NPCs kasih quest, cuaca berubah, day/night cycle.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">🗺 <span class="mock-strong">Pulau Emosi</span> · 🌤 Cerah · 🕐 16:32 WIB</div>
+          <div class="mock-card">🏝 Lokasi: Pantai Bahagia<br>🧑 Pak Lion: "Tolong cari 3 kerang!"</div>
+          <div class="mock-row">
+            <span class="mock-pill">🌳 → G3 Huruf</span>
+            <span class="mock-pill">🌊 → G24 Laut</span>
+            <span class="mock-pill">🏔 → G13 Battle</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#2</div>
+      <div class="idea-body">
+        <h3>Procedural Pokemon Habitat</h3>
+        <p class="inspired">Inspired by: <strong>Pokemon GO</strong> + <strong>No Man's Sky</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aaa">🔴 AAA</span><span class="badge badge-effort-2m">EFFORT: 2-3 BULAN</span></div>
+        <p class="desc">G24 Bawah Laut sekarang punya 1000+ zona ter-generate prosedural. Coral reef Pacific, deep trench Mariana, shipwreck Atlantik. Setiap zona spawn Pokemon ekosistem unik berdasarkan biom. Pokemon migrasi mengikuti weather.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🌊 Zona: Palung Bali · Kedalaman 800m</div>
+          <div class="mock-row">🐠 Spawning: Magikarp · Lanturn · Dragonair</div>
+          <div class="mock-row">🌡 Suhu: 4°C · 💧 Salinitas tinggi</div>
+          <span class="mock-pill">📍 1,247 zona unik tersedia</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#3</div>
+      <div class="idea-body">
+        <h3>Dynamic Weather + Day/Night Cycle</h3>
+        <p class="inspired">Inspired by: <strong>Animal Crossing</strong> + <strong>The Legend of Zelda</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-3w">EFFORT: 3-4 MINGGU</span></div>
+        <p class="desc">Real-world time + weather (via API). Hujan = ghost Pokemon spawn. Subuh = bird Pokemon aktif. Bulan purnama = legendary appear. Membuat anak return setiap waktu beda untuk dapat content beda.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">🌅 05:43 — Matahari terbit</div>
+          <div class="mock-card">🐦 Pidgey & Spearow lebih banyak spawn</div>
+          <div class="mock-row">☔ Hujan akan turun pukul 14:00</div>
+          <div class="mock-card">🌧 Bonus: Politoed dan Castform appear</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#4</div>
+      <div class="idea-body">
+        <h3>World-Changing Seasonal Events</h3>
+        <p class="inspired">Inspired by: <strong>Fortnite</strong> Live Events + <strong>Animal Crossing</strong> Festivals</p>
+        <div class="idea-meta"><span class="badge badge-tier-aaa">🔴 AAA</span><span class="badge badge-effort-q">EFFORT: 1 KUARTAL ONGOING</span></div>
+        <p class="desc">Lebaran: kota berubah jadi mode festive, ada NPC ketupat seller, special quest "kumpul amplop", limited Pokemon costume. Natal: salju jatuh, ice Pokemon dominant, Christmas-themed dungeon. Halloween: spooky mode dengan ghost Pokemon.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🌙 RAMADAN MODE — 30 hari</div>
+          <div class="mock-row"><span class="mock-tag new">🆕 EVENT</span> Iftar Bonus Run</div>
+          <div class="mock-row">🥮 Reward: Costume Eternatus "Sarung"</div>
+          <div class="mock-row">⏰ Berakhir dalam: 12 hari</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#5</div>
+      <div class="idea-body">
+        <h3>Pokemon Photo Safari Mode</h3>
+        <p class="inspired">Inspired by: <strong>New Pokemon Snap</strong> + <strong>Pokemon GO</strong> AR</p>
+        <div class="idea-meta"><span class="badge badge-tier-aaa">🔴 AAA</span><span class="badge badge-effort-2m">EFFORT: 2-3 BULAN</span></div>
+        <p class="desc">Mode dedicated: kid wander zona, snap photo Pokemon liar. AI auto-judge: pose, framing, rarity. Skor → unlock photo album, frame, filter. Daily photo challenge ("Foto Pidgey terbang").</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">📷 Pikachu sedang tidur</div>
+          <div class="mock-row">⭐⭐⭐⭐ — Composition: 9/10</div>
+          <div class="mock-row">🏆 Hari ini: Foto Slowbro mancing</div>
+          <span class="mock-btn mock-btn-primary">📷 Mulai Foto Safari</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#6</div>
+      <div class="idea-body">
+        <h3>Player Housing & Decoration</h3>
+        <p class="inspired">Inspired by: <strong>Animal Crossing</strong> + <strong>Stardew Valley</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-2m">EFFORT: 2 BULAN</span></div>
+        <p class="desc">Rumah pribadi yang anak decorate dengan furniture dari quest reward. Pokemon pet bisa diundang ke rumah. Friends bisa visit rumah teman via friend code (offline-shared).</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🏠 Rumah Foxxie 🦊</div>
+          <div class="mock-grid-3">
+            <span class="mock-pill">🛋 Sofa</span>
+            <span class="mock-pill">🎨 Poster</span>
+            <span class="mock-pill">🌿 Tanaman</span>
+          </div>
+          <div class="mock-row">Pengunjung hari ini: 3 teman 👥</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#7</div>
+      <div class="idea-body">
+        <h3>Living Dungeon Generator</h3>
+        <p class="inspired">Inspired by: <strong>Hades</strong> + <strong>The Binding of Isaac</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aaa">🔴 AAA</span><span class="badge badge-effort-2m">EFFORT: 2-3 BULAN</span></div>
+        <p class="desc">Setiap hari, 1 dungeon baru ter-generate prosedural. 5 ruangan dengan puzzle + Pokemon battle + boss. Global leaderboard "siapa selesai paling cepat hari ini". Reset 00:00 WIB.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">🏰 <span class="mock-strong">DUNGEON HARIAN</span> · 4 Mei 2026</div>
+          <div class="mock-row">🗝 Tema: Gua Es · 5 ruangan</div>
+          <div class="mock-card">🏆 Top hari ini: Foxxie 3:47 (kamu rank #12)</div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="category" id="narrative">
+  <div class="category-header">
+    <div class="category-icon">🎬</div>
+    <div>
+      <h2>Cinematic Narrative</h2>
+      <p>Production values setara animated movie</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-number">#8</div>
+      <div class="idea-body">
+        <h3>20-Episode Main Story dengan Voice Cast</h3>
+        <p class="inspired">Inspired by: <strong>Pokemon: Detective Pikachu</strong> + <strong>Studio Ghibli</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aaa">🔴 AAA</span><span class="badge badge-effort-yr">EFFORT: MULTI-TAHUN</span></div>
+        <p class="desc">Cerita "Selamatkan Kerajaan Emosi" — 20 episode @ 7-10 menit, voice-acted oleh profesional Indonesia. Anak protagonis bertualang menyatukan emosi yang terpisah. Cinematic cutscenes Pixar-quality.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">📺 Episode 7/20: "Hilangnya Kebahagiaan"</div>
+          <div class="mock-card">🎬 Cutscene 28s · Voice: Andika P. (Singa Raja)</div>
+          <div class="mock-row">⏯ Lanjut Episode 8?</div>
+          <span class="mock-btn mock-btn-primary">▶ Mulai Episode</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#9</div>
+      <div class="idea-body">
+        <h3>Branching Narrative — 8 Endings</h3>
+        <p class="inspired">Inspired by: <strong>Detroit: Become Human</strong> + <strong>Undertale</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-q">EFFORT: 1 KUARTAL</span></div>
+        <p class="desc">Pilihan emosi kid sepanjang story affect outcome. 8 ending: Bahagia Sejati / Tetap Sedih / Marah Berubah / Tenang Bijak / dll. Replay value tinggi, mengajarkan "pilihan punya konsekuensi".</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">⚡ MOMEN PILIHAN<br>Temanmu sedih. Pilih:</div>
+          <div class="mock-row">
+            <span class="mock-btn mock-btn-success">🤗 Peluk</span>
+            <span class="mock-btn mock-btn-primary">🗣 Tanya kenapa</span>
+            <span class="mock-btn mock-btn-gold">🎁 Beri hadiah</span>
+          </div>
+          <div class="mock-row">📊 Karakter level: Empati ↑5</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#10</div>
+      <div class="idea-body">
+        <h3>Pokemon Evolution Cinematic Sequence</h3>
+        <p class="inspired">Inspired by: <strong>Pokemon Anime</strong> evolution scenes</p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-2m">EFFORT: 2 BULAN</span></div>
+        <p class="desc">Saat ini evolution = sprite swap. Upgrade: 10-detik cinematic 2D animation per Pokemon (1025 sprites!). Cahaya menyilaukan, sprite re-shape dengan smooth tween, dramatic music swell.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">✨✨✨ EVOLUSI! ✨✨✨</div>
+          <div class="mock-card">⚡ Pikachu → 🌟 (cahaya menyilaukan)<br>→ 💪 Raichu!</div>
+          <div class="mock-row">🎵 Background: "Theme of Evolution"</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#11</div>
+      <div class="idea-body">
+        <h3>Voice-cast Pokemon (Anime-style)</h3>
+        <p class="inspired">Inspired by: <strong>Pokemon TV Anime</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aaa">🔴 AAA</span><span class="badge badge-effort-q">EFFORT: 1 KUARTAL ONGOING</span></div>
+        <p class="desc">Setiap Pokemon punya vocal sample unik (mimic anime: "Pi-ka!", "Char!"). Saat hit, evolusi, atau happy → suara. 1025 Pokemon = 1025 samples (bisa generated dengan AI voice).</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">🔊 "Pika Pika!" — Pikachu (saat lompat)</div>
+          <div class="mock-row">🔊 "Charrr!" — Charmander (saat marah)</div>
+          <div class="mock-row">🔊 "Mew!" — Mewtwo (saat menang)</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#12</div>
+      <div class="idea-body">
+        <h3>Animated Character Backstory Cards</h3>
+        <p class="inspired">Inspired by: <strong>Hades</strong> character bios + <strong>Spider-Verse</strong> comic style</p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-2m">EFFORT: 2 BULAN</span></div>
+        <p class="desc">Tap mascot di trophy room → unlock 3-min animated backstory. Lion: dia dulu pemalu, sekarang berani. Fox: dia kehilangan keluarga, mencari teman. Emotional + memorable.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🦊 Foxxie · Backstory<br>"Aku terpisah dari keluarga di hutan terbakar..."</div>
+          <div class="mock-row">🎬 3:14 animated · Voice: Aldo (Foxxie)</div>
+          <span class="mock-btn mock-btn-primary">▶ Putar Cerita</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#13</div>
+      <div class="idea-body">
+        <h3>Live-Action Cinematic Boss Reveal</h3>
+        <p class="inspired">Inspired by: <strong>Sekiro</strong> boss intros + <strong>Pokemon</strong> trailers</p>
+        <div class="idea-meta"><span class="badge badge-tier-aaa">🔴 AAA</span><span class="badge badge-effort-q">EFFORT: 1 KUARTAL ONGOING</span></div>
+        <p class="desc">Setiap boss battle (level 10/20/30/40/50/60) punya 15-detik cinematic reveal: camera close-up boss, slow-mo, dramatic music, screen shake. Bikin anak excited.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">⚡⚡⚡ <span class="mock-strong">BOSS WAVE!</span></div>
+          <div class="mock-row">🎬 Slow-mo · Camera zoom on...</div>
+          <div class="mock-row" style="font-size:24px">👑 MEWTWO</div>
+          <div class="mock-row">"Are you ready to face me?"</div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="category" id="multiplayer">
+  <div class="category-header">
+    <div class="category-icon">👥</div>
+    <div>
+      <h2>Multiplayer Social</h2>
+      <p>Real-time battles, guilds, parent-kid co-op</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-number">#14</div>
+      <div class="idea-body">
+        <h3>Real-Time PvP Battle (WebRTC P2P)</h3>
+        <p class="inspired">Inspired by: <strong>Pokemon Showdown</strong> + <strong>Brawl Stars</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aaa">🔴 AAA</span><span class="badge badge-effort-q">EFFORT: 1 KUARTAL</span></div>
+        <p class="desc">1v1 quiz duel via WebRTC P2P (no server cost). Random match atau pakai friend code. Match dapat: Pokemon trade card, XP, leaderboard rank.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">⚔ <span class="mock-strong">BATTLE!</span> Round 3/5</div>
+          <div class="mock-card">🦊 Foxxie (kamu): 12pt<br>🐯 Tigerboy: 9pt</div>
+          <div class="mock-row">⏱ 0:08 · Soal: 7 × 8 = ?</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#15</div>
+      <div class="idea-body">
+        <h3>Guild System dengan Weekly Wars</h3>
+        <p class="inspired">Inspired by: <strong>Clash Royale</strong> Clans + <strong>FFXIV</strong> FCs</p>
+        <div class="idea-meta"><span class="badge badge-tier-aaa">🔴 AAA</span><span class="badge badge-effort-q">EFFORT: 1 KUARTAL</span></div>
+        <p class="desc">Join Tim Lion / Tim Fox / Tim Elephant. Weekly: 4 tim compete cumulative XP. Winner tim dapat bonus XP seminggu + cosmetic title. Mendorong long-term engagement.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">🏆 <span class="mock-strong">GUILD WARS</span> · Minggu 23</div>
+          <div class="mock-row">🦁 Tim Lion: 12,847 XP (kamu)</div>
+          <div class="mock-row">🦊 Tim Fox: 11,203 XP</div>
+          <div class="mock-row">🐘 Tim Elephant: 9,847 XP</div>
+          <div class="mock-row">🐯 Tim Tiger: 8,991 XP</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#16</div>
+      <div class="idea-body">
+        <h3>Parent-Kid Co-Op Quiz</h3>
+        <p class="inspired">Inspired by: <strong>It Takes Two</strong> + <strong>Mario Party</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-3w">EFFORT: 3-4 MINGGU</span></div>
+        <p class="desc">Single device, 2 sides screen. Parent + kid jawab pertanyaan complementary. Math: parent solve angka besar, kid solve langkah kecil. Sociology: parent guide, kid response.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">👨 Papa side: 247 + 384 = ?</div>
+          <div class="mock-row">👶 Kid side: kelompokkan dulu! 200+300?</div>
+          <div class="mock-card">⭐ Bonus collaboration: 2x XP!</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#17</div>
+      <div class="idea-body">
+        <h3>Asynchronous Gift System</h3>
+        <p class="inspired">Inspired by: <strong>Pokemon GO</strong> Gift Trade + <strong>Animal Crossing</strong> mail</p>
+        <div class="idea-meta"><span class="badge badge-tier-a">🟢 A</span><span class="badge badge-effort-mvp">EFFORT: MVP</span></div>
+        <p class="desc">Kirim "kado" (Pokemon, decoration, koin) ke friend via friend code. Tanpa server: encoded payload via QR / text. Cooldown 1 hari per friend.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🎁 Kado dari Andi (3 jam lalu)</div>
+          <div class="mock-row">📦 Berisi: Pichu sprite + 50 koin</div>
+          <div class="mock-row">📨 Pesan: "Selamat ulang tahun!"</div>
+          <span class="mock-btn mock-btn-gold">📨 Buka Kado</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#18</div>
+      <div class="idea-body">
+        <h3>Tournament Mode (Weekly Brackets)</h3>
+        <p class="inspired">Inspired by: <strong>Pokemon VGC</strong> + <strong>Smash Bros</strong> tournaments</p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-q">EFFORT: 1 KUARTAL</span></div>
+        <p class="desc">Setiap weekend, all-comers bracket 16-pemain. Single-elim WebRTC battles. Top 3 dapat featured profile + special badge "Champion Mei 2026".</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">🏆 <span class="mock-strong">SABTU CHAMPIONSHIP</span></div>
+          <div class="mock-row">Round 2/4 · vs Doraemon99</div>
+          <div class="mock-row">Bracket spot: #5 / 16</div>
+          <span class="mock-btn mock-btn-danger">⚔ Battle Sekarang!</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#19</div>
+      <div class="idea-body">
+        <h3>Mentor Mode (Sibling Teacher)</h3>
+        <p class="inspired">Inspired by: <strong>Peer learning</strong> studies</p>
+        <div class="idea-meta"><span class="badge badge-tier-a">🟢 A</span><span class="badge badge-effort-3w">EFFORT: 3 MINGGU</span></div>
+        <p class="desc">Kakak (10 tahun) bisa "guide" adik (5 tahun) via shared session. Kakak lihat soal lebih dulu, kasih hint visual ke adik. XP shared bonus.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">👨‍🏫 Mode Mentor Aktif<br>Kakak Andi → adik Budi</div>
+          <div class="mock-row">💡 Andi: "Lihat ekspresi mata!"</div>
+          <div class="mock-row">😊 Budi tap: SENANG ✓</div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="category" id="creator">
+  <div class="category-header">
+    <div class="category-icon">🛠</div>
+    <div>
+      <h2>Creator Economy</h2>
+      <p>UGC tools — kid jadi pencipta, bukan konsumer</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-number">#20</div>
+      <div class="idea-body">
+        <h3>Pokemon Designer Studio</h3>
+        <p class="inspired">Inspired by: <strong>Spore</strong> Creature Creator + <strong>Roblox Studio</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aaa">🔴 AAA</span><span class="badge badge-effort-2m">EFFORT: 2-3 BULAN</span></div>
+        <p class="desc">Kid create custom Pokemon: mix body parts (kepala/badan/ekor) dari template, pilih warna, type, name, moves. Save ke koleksi pribadi. Share kode design ke teman.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🎨 Designer Studio<br>Nama: "Foxchu" 🦊⚡</div>
+          <div class="mock-row">Tipe: ⚡ Electric + 🦊 Normal</div>
+          <div class="mock-grid-2">
+            <span class="mock-pill">🟡 Body: Bouncy</span>
+            <span class="mock-pill">🔶 Ekor: Pelangi</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#21</div>
+      <div class="idea-body">
+        <h3>Quiz Creator + Marketplace</h3>
+        <p class="inspired">Inspired by: <strong>Kahoot!</strong> + <strong>Roblox</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-2m">EFFORT: 2 BULAN</span></div>
+        <p class="desc">Kid buat quiz sendiri (soal + 4 pilihan). Share ke teman via code. Quiz populer naik ke marketplace (curated, parent-moderated).</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">📚 Quiz Kreasi: "Buah-Buahan Indonesia"<br>by Foxxie 🦊</div>
+          <div class="mock-row">⭐ 4.7 (23 main)</div>
+          <span class="mock-btn mock-btn-primary">📖 Mainkan Quiz</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#22</div>
+      <div class="idea-body">
+        <h3>Animated Storyboard Builder</h3>
+        <p class="inspired">Inspired by: <strong>Toontastic</strong> + <strong>Roblox Animation</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-q">EFFORT: 1 KUARTAL</span></div>
+        <p class="desc">Drag-drop emotion characters into scenes, kasih dialogue, animate. Hasilnya story 1-min yang kid sutradarai sendiri. Share ke parent dashboard.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🎬 Scene 3/5: "Senin Pagi"</div>
+          <div class="mock-row">🦊 "Aku sedih..." [Dialog]</div>
+          <div class="mock-row">🦁 [walks in] "Kenapa, sahabat?"</div>
+          <span class="mock-btn mock-btn-primary">▶ Render</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#23</div>
+      <div class="idea-body">
+        <h3>Music Remix Mini-Studio</h3>
+        <p class="inspired">Inspired by: <strong>Garageband Kids</strong> + <strong>Incredibox</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-q">EFFORT: 1 KUARTAL</span></div>
+        <p class="desc">Drag-drop loops: drum + bass + melody + vocal samples. Kid bikin lagu sendiri. Set sebagai personal BGM in-app. Share ke teman via QR.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🎵 Lagu: "Pagi Bahagia"</div>
+          <div class="mock-row">🥁 Beat: Funky · 🎸 Bass: Low</div>
+          <div class="mock-row">🎹 Melody: Bright · 🎤 Vocal: "Halo!"</div>
+          <span class="mock-btn mock-btn-success">▶ Putar Lagu Ku</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#24</div>
+      <div class="idea-body">
+        <h3>Custom Level Designer (G6 Maps)</h3>
+        <p class="inspired">Inspired by: <strong>Super Mario Maker</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-2m">EFFORT: 2 BULAN</span></div>
+        <p class="desc">G6 World Map editor: drag-drop tiles (kota/hutan/sungai), tempatkan huruf, set jalur. Test sendiri, share via code. Top community maps featured.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🗺 Map: "Hutan Misteri" by Tigerboy</div>
+          <div class="mock-row">⭐ 4.9 · 89 main · 🎁 Featured!</div>
+          <span class="mock-btn mock-btn-primary">▶ Coba Map</span>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="category" id="ai">
+  <div class="category-header">
+    <div class="category-icon">🤖</div>
+    <div>
+      <h2>Adaptive AI Tutor</h2>
+      <p>LLM + ML untuk personalisasi pembelajaran</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-number">#25</div>
+      <div class="idea-body">
+        <h3>"Profesor Emosi" — LLM Companion</h3>
+        <p class="inspired">Inspired by: <strong>Khan Academy Khanmigo</strong> + <strong>Duolingo Max</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aaa">🔴 AAA</span><span class="badge badge-effort-q">EFFORT: 1 KUARTAL</span></div>
+        <p class="desc">Voice-input AI companion (Claude/Gemini). Kid tanya: "Kenapa harimau marah?" → AI jawab dengan Indonesia ramah anak. Moderated content. Tersedia 24/7.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🦉 Prof. Emosi:<br>"Aku Profesor Emosi! Tanya aku apa saja."</div>
+          <div class="mock-row">🎤 Kid: "Kenapa langit biru?"</div>
+          <div class="mock-card">🦉 "Karena cahaya matahari kena udara..."</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#26</div>
+      <div class="idea-body">
+        <h3>ML Adaptive Curriculum</h3>
+        <p class="inspired">Inspired by: <strong>Knewton</strong> + <strong>Squirrel Ai</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aaa">🔴 AAA</span><span class="badge badge-effort-q">EFFORT: 1 KUARTAL ONGOING</span></div>
+        <p class="desc">ML model lihat pattern jawaban anak, identify weakness area. "Kid struggle di pembagian → minggu ini fokus G4 pembagian + G10 division level". Optimasi belajar.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🧠 ML Insight Hari Ini:<br>"Foxxie struggling at: division ÷"</div>
+          <div class="mock-row">💡 Rekomen: G4 Lv.12 · G10 Lv.27</div>
+          <div class="mock-row">📈 Predicted improvement: +18%</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#27</div>
+      <div class="idea-body">
+        <h3>AI-Generated Bedtime Stories</h3>
+        <p class="inspired">Inspired by: <strong>Lalo</strong> + <strong>StoryBot</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-3w">EFFORT: 3-4 MINGGU</span></div>
+        <p class="desc">LLM generate cerita pendek personalized: tokoh utama = nama anak, includes Pokemon favoritnya, mood-appropriate (kalau anak sedih, kasih cerita penghibur).</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">📖 "Andi & Pikachu Mencari Bintang"<br>Cerita malam · 4 menit baca</div>
+          <span class="mock-btn mock-btn-primary">📖 Mulai Cerita</span>
+          <span class="mock-btn mock-btn-success">🔊 Voice-narrated</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#28</div>
+      <div class="idea-body">
+        <h3>Speech Recognition Spelling</h3>
+        <p class="inspired">Inspired by: <strong>Speak & Spell</strong> + <strong>Duolingo</strong> speak</p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-3w">EFFORT: 3 MINGGU</span></div>
+        <p class="desc">Kid ucapkan kata, browser Web Speech API recognize. "G-A-J-A-H" → mic dengar → AI cek per huruf. Praktik pronunciation Indonesia.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🎤 Sebutkan: G-A-J-A-H</div>
+          <div class="mock-row">🔊 Recording... [🟢🟢🟢🟢🟢]</div>
+          <div class="mock-row">✓ G ✓ A ✓ J ⏳ A H</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#29</div>
+      <div class="idea-body">
+        <h3>Handwriting Recognition (Canvas + ML)</h3>
+        <p class="inspired">Inspired by: <strong>iPad Scribble</strong> + <strong>Toca Boca</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aaa">🔴 AAA</span><span class="badge badge-effort-2m">EFFORT: 2-3 BULAN</span></div>
+        <p class="desc">G9 sekarang trace huruf simple. Upgrade: TF.js model recognize tulisan tangan, kasih feedback presisi (stroke order, proportion, completeness). Latih motorik halus.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">✍ Tulis huruf "A"<br>[Drawing canvas]</div>
+          <div class="mock-row">📊 Stroke: ⭐⭐⭐⭐ · Shape: ⭐⭐⭐</div>
+          <div class="mock-row">💡 Tips: garis horizontal lebih panjang</div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="category" id="mechanics">
+  <div class="category-header">
+    <div class="category-icon">⚔</div>
+    <div>
+      <h2>Deep Mechanics</h2>
+      <p>Sistem battle/koleksi yang punya depth real</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-number">#30</div>
+      <div class="idea-body">
+        <h3>Pokemon Breeding System</h3>
+        <p class="inspired">Inspired by: <strong>Pokemon</strong> Gen 2+ breeding</p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-q">EFFORT: 1 KUARTAL</span></div>
+        <p class="desc">Combine 2 Pokemon → baby Pokemon inherit traits. Pikachu × Bulbasaur = Pichu dengan grass move. Anak belajar genetik dasar via gameplay.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🥚 Bayi: Pichu</div>
+          <div class="mock-row">👨 Papa: Pikachu (Electric)</div>
+          <div class="mock-row">👩 Mama: Charmander (Fire)</div>
+          <div class="mock-row">🎁 Inherited: Quick Attack + Ember</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#31</div>
+      <div class="idea-body">
+        <h3>Daily Pokemon Training Routine</h3>
+        <p class="inspired">Inspired by: <strong>Pokemon GO</strong> Buddy + <strong>Tamagotchi</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-a">🟢 A</span><span class="badge badge-effort-mvp">EFFORT: MVP</span></div>
+        <p class="desc">Tiap hari, Pokemon active perlu "training": 10 squat (kid tap), 10 stretch (swipe), 5 meditation. Skip 3 hari = Pokemon sedih. Rutin = +stats.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">⚡ Pikachu Training<br>Hari ke-12 streak!</div>
+          <div class="mock-row">🏃 Run: 5/10 · 💪 Squat: 8/10</div>
+          <div class="mock-row">🧘 Meditate: 2/5 · 📊 Stats +1</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#32</div>
+      <div class="idea-body">
+        <h3>Pokemon Trading Card Game</h3>
+        <p class="inspired">Inspired by: <strong>Pokemon TCG Live</strong> + <strong>Hearthstone</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aaa">🔴 AAA</span><span class="badge badge-effort-yr">EFFORT: MULTI-TAHUN</span></div>
+        <p class="desc">Earn card packs from battles. Build deck (30 cards). Play TCG against AI atau friends. Trade cards. Collect rare foil variants. Bisa jadi spin-off app.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🃏 Deck: "Foxxie Lightning"<br>30 cards · Power 4.2</div>
+          <div class="mock-row">⚡ 12x Pikachu, 5x Raichu</div>
+          <div class="mock-row">🌟 RARE FOIL: Mewtwo (1)</div>
+          <span class="mock-btn mock-btn-danger">⚔ TCG Battle</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#33</div>
+      <div class="idea-body">
+        <h3>Career Mode (Multi-Week Trainer Journey)</h3>
+        <p class="inspired">Inspired by: <strong>Football Manager</strong> + <strong>Pokemon</strong> main series</p>
+        <div class="idea-meta"><span class="badge badge-tier-aaa">🔴 AAA</span><span class="badge badge-effort-q">EFFORT: 1 KUARTAL</span></div>
+        <p class="desc">8-minggu "Liga Pokemon": setiap minggu = wilayah baru (Kanto → Johto → ...). Mingguan capstone = gym battle. Final → Pokemon League Champion.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🏆 LIGA POKEMON · Minggu 3/8<br>Wilayah: Hoenn</div>
+          <div class="mock-row">⏰ Gym Battle hari Sabtu</div>
+          <div class="mock-row">Progress: ⭐⭐⭐⭐⭐⭐ (6 badges)</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#34</div>
+      <div class="idea-body">
+        <h3>3D Type Chart Visualization</h3>
+        <p class="inspired">Inspired by: <strong>WikiDex 3D</strong> + <strong>Three.js</strong> educational</p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-2m">EFFORT: 2 BULAN</span></div>
+        <p class="desc">Interactive 3D model dari 18 tipe Pokemon connected by relationships. Tap tipe → highlight connections. Belajar visual type effectiveness depth.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🌐 3D Type Chart [interactive]<br>Tap untuk explore</div>
+          <div class="mock-row">🔥 Fire connect ke: 💧 (lemah), 🌿 (kuat)</div>
+          <div class="mock-row">📚 Total: 18 types · 56 connections</div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="category" id="liveops">
+  <div class="category-header">
+    <div class="category-icon">🌐</div>
+    <div>
+      <h2>Live Operations</h2>
+      <p>Konten live yang tidak butuh app update</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-number">#35</div>
+      <div class="idea-body">
+        <h3>Battle Pass (90-Day Track)</h3>
+        <p class="inspired">Inspired by: <strong>Fortnite</strong> + <strong>Brawl Stars</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aaa">🔴 AAA</span><span class="badge badge-effort-q">EFFORT: 1 KUARTAL ONGOING</span></div>
+        <p class="desc">3-bulan season. Free + Premium track (parent-purchasable). Daily/weekly missions earn XP, unlock cosmetics, decorations, exclusive Pokemon. Encourage daily return.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">🎫 <span class="mock-strong">SEASON 1 PASS</span> · Day 23/90</div>
+          <div class="mock-progress"><div class="mock-progress-fill" style="width:25%"></div></div>
+          <div class="mock-row">Tier 12 → unlock: 🎩 Topi Pelangi</div>
+          <div class="mock-row">🆓 Free · 🌟 Premium ($4.99/3mo)</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#36</div>
+      <div class="idea-body">
+        <h3>Limited-Time Weekend Raids</h3>
+        <p class="inspired">Inspired by: <strong>Pokemon GO</strong> Raids + <strong>Destiny</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-3w">EFFORT: 3-4 MINGGU</span></div>
+        <p class="desc">Sabtu malam 19:00-21:00: legendary Pokemon spawn untuk semua pemain. Defeat dalam 2 jam → catch chance. Membentuk ritual mingguan.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">⚡⚡ <span class="mock-strong">RAID HARI INI</span><br>Sabtu 19:30 — 21:30</div>
+          <div class="mock-row">👑 Boss: Rayquaza Lv.50</div>
+          <div class="mock-row">⏰ Sisa: 47 menit</div>
+          <span class="mock-btn mock-btn-danger">⚔ Join Raid</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#37</div>
+      <div class="idea-body">
+        <h3>Global Community Challenges</h3>
+        <p class="inspired">Inspired by: <strong>Pokemon GO</strong> Global Catch Challenge</p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-3w">EFFORT: 3 MINGGU</span></div>
+        <p class="desc">"Komunitas catch 1 juta Pidgey dalam seminggu!" → semua pemain contribute counts. Sukses → unlock special Pokemon/event hari berikutnya untuk semua.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">🌐 <span class="mock-strong">CHALLENGE GLOBAL</span></div>
+          <div class="mock-row">Goal: 1,000,000 catch · 7 days</div>
+          <div class="mock-progress"><div class="mock-progress-fill" style="width:68%"></div></div>
+          <div class="mock-row">📈 678,432 catch · 2 hari sisa</div>
+          <div class="mock-row">🎁 Unlock: Shiny Pidgey for all</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#38</div>
+      <div class="idea-body">
+        <h3>Server-Pushed Daily Quests</h3>
+        <p class="inspired">Inspired by: <strong>Genshin Impact</strong> daily commissions</p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-3w">EFFORT: 3 MINGGU</span></div>
+        <p class="desc">Tiap pagi, server push 3 new quests via JSON endpoint (no app update needed). "Hari ini: catch 5 fire Pokemon, jawab 20 G4, jalan 1000m G6". Reward XP + koin.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">📋 <span class="mock-strong">QUEST HARIAN</span> · 4 Mei</div>
+          <div class="mock-card">🔥 Catch 5 fire Pokemon (2/5)</div>
+          <div class="mock-card">🧮 Jawab 20 G4 (12/20)</div>
+          <div class="mock-card">🗺 Jalan 1000m G6 (756/1000)</div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="category" id="meta">
+  <div class="category-header">
+    <div class="category-icon">🏆</div>
+    <div>
+      <h2>Meta-Progression</h2>
+      <p>Layer di atas individual game — long-term goal</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-number">#39</div>
+      <div class="idea-body">
+        <h3>Trainer Level + Prestige System</h3>
+        <p class="inspired">Inspired by: <strong>Call of Duty</strong> Prestige + <strong>Hades</strong> heat</p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-3w">EFFORT: 3-4 MINGGU</span></div>
+        <p class="desc">Beyond per-game levels: Profile XP grows from ALL activities. Lv.50 → Prestige (reset cosmetic dengan reward badge). 5 prestige tiers: Newbie → Master Trainer.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">⭐ Trainer Lv.47 · Prestige 2 🏅</div>
+          <div class="mock-progress"><div class="mock-progress-fill" style="width:82%"></div></div>
+          <div class="mock-row">→ Lv.48 dalam 1,247 XP</div>
+          <div class="mock-row">🎁 P3 reward: Title "Penjelajah"</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#40</div>
+      <div class="idea-body">
+        <h3>Pokedex Completionist Metagame</h3>
+        <p class="inspired">Inspired by: <strong>Pokemon</strong> mainline Living Dex</p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-2m">EFFORT: 2 BULAN</span></div>
+        <p class="desc">Full Pokedex: 1025 Pokemon × 3 forms (regular, shiny, regional). Catch rate: rare Pokemon 0.1% spawn (like Pokemon GO). Encourages long-term play.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">📕 Pokedex: 287 / 3075 (9.3%)</div>
+          <div class="mock-progress"><div class="mock-progress-fill" style="width:9%"></div></div>
+          <div class="mock-row">✨ Shiny: 3 (Pichu, Mareep, Eevee)</div>
+          <div class="mock-row">🌏 Regional: 0 · Lacking: Alolan Forms</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#41</div>
+      <div class="idea-body">
+        <h3>Year-End "Spotify Wrapped" Style Recap</h3>
+        <p class="inspired">Inspired by: <strong>Spotify Wrapped</strong> + <strong>Apple Activity Year</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-3w">EFFORT: 3 MINGGU (yearly)</span></div>
+        <p class="desc">Desember 31: kid lihat 60-detik animated recap pencapaian tahun ini. Pokemon favorit, total bintang, longest streak, weakness area, best moments. Share-ready.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🎉 <span class="mock-strong">DUNIA EMOSI WRAPPED 2026</span></div>
+          <div class="mock-row">⭐ 1,247 bintang total</div>
+          <div class="mock-row">🔥 47-hari longest streak</div>
+          <div class="mock-row">⚡ Favorite Pokemon: Pikachu (catch 18×)</div>
+          <span class="mock-btn mock-btn-gold">📤 Share Recap</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#42</div>
+      <div class="idea-body">
+        <h3>Mastery Trees per Subject</h3>
+        <p class="inspired">Inspired by: <strong>Khan Academy</strong> skill trees + <strong>Path of Exile</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-2m">EFFORT: 2 BULAN</span></div>
+        <p class="desc">Per subject (Math, Reading, Emotion, Type), pohon skill bercabang. "Math → Basic → Add/Sub → Mul/Div → Algebra (sneak peek)". Visual progress.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">🌳 Mastery: Matematika</div>
+          <div class="mock-row">✓ Basic 100% · ✓ Add 100% · ⏳ Mul 67%</div>
+          <div class="mock-row">🔒 Algebra (locked - unlock at Mul 100%)</div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="category" id="audio">
+  <div class="category-header">
+    <div class="category-icon">🎼</div>
+    <div>
+      <h2>Premium Audio</h2>
+      <p>Production values setara animated movie</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-number">#43</div>
+      <div class="idea-body">
+        <h3>Orchestral Soundtrack (Original Compose)</h3>
+        <p class="inspired">Inspired by: <strong>Pokemon Sword/Shield</strong> OST + <strong>Studio Ghibli</strong> scores</p>
+        <div class="idea-meta"><span class="badge badge-tier-aaa">🔴 AAA</span><span class="badge badge-effort-yr">EFFORT: MULTI-TAHUN</span></div>
+        <p class="desc">Hire composer Indonesia (atau remote international). 15-track album: main theme, battle theme, victory fanfare, sad moment, gym leader, finale. Available di Spotify sebagai marketing.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🎼 OST Album · "Suara Hati"<br>15 tracks · 47 min</div>
+          <div class="mock-row">🎵 Now: "Theme of Pulau Emosi" (3:24)</div>
+          <span class="mock-btn mock-btn-primary">▶ Spotify Link</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#44</div>
+      <div class="idea-body">
+        <h3>Adaptive Music (DAW-Style Layering)</h3>
+        <p class="inspired">Inspired by: <strong>Red Dead Redemption 2</strong> + <strong>Halo</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aaa">🔴 AAA</span><span class="badge badge-effort-q">EFFORT: 1 KUARTAL</span></div>
+        <p class="desc">Music intensity adjust dengan gameplay: idle = calm strings. Battle starts = drums in. Boss low HP = brass crescendo. Win = full orchestra. Seamless transitions.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">🎵 Layer 1: Strings (active)</div>
+          <div class="mock-row">🥁 Layer 2: Drums (battle start)</div>
+          <div class="mock-row">📯 Layer 3: Brass (boss low HP)</div>
+          <div class="mock-row">🎷 Layer 4: Full orchestra (climax)</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#45</div>
+      <div class="idea-body">
+        <h3>Cinematic Sound Design</h3>
+        <p class="inspired">Inspired by: <strong>The Last of Us</strong> + <strong>God of War</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-q">EFFORT: 1 KUARTAL</span></div>
+        <p class="desc">Replace functional beeps dengan layered SFX: super-effective hit = sword swoosh + thunder rumble + sparkle. Layered, mixed di Pro Tools.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">🔊 Super-Effective Hit:<br>L1: Whoosh · L2: Boom · L3: Sparkle</div>
+          <div class="mock-row">🎚 Mixed: 24-bit, 48kHz stereo</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#46</div>
+      <div class="idea-body">
+        <h3>Voice Cast Audition Untuk Mascots</h3>
+        <p class="inspired">Inspired by: <strong>Pixar</strong> + <strong>Studio Ghibli</strong> voice casting</p>
+        <div class="idea-meta"><span class="badge badge-tier-aaa">🔴 AAA</span><span class="badge badge-effort-yr">EFFORT: MULTI-TAHUN</span></div>
+        <p class="desc">8 mascot animals → 8 unique Indonesian voice actors. Lion: deep paternal. Rabbit: chirpy. Fox: clever. Branded character voices anak akan mengingat selamanya.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">🎤 Voice Cast:</div>
+          <div class="mock-row">🦁 Lion = Tio Pakusadewo (deep)</div>
+          <div class="mock-row">🐰 Rabbit = Iqbaal (energetic)</div>
+          <div class="mock-row">🦊 Fox = Vino G. Bastian (clever)</div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="category" id="tech">
+  <div class="category-header">
+    <div class="category-icon">🚀</div>
+    <div>
+      <h2>Platform Technology</h2>
+      <p>Cross-platform, AR, cloud save, smart TV</p>
+    </div>
+  </div>
+  <div class="ideas-grid">
+
+    <article class="idea">
+      <div class="idea-number">#47</div>
+      <div class="idea-body">
+        <h3>Native iOS/Android via Capacitor</h3>
+        <p class="inspired">Inspired by: <strong>Khan Academy Kids</strong> + <strong>Duolingo</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-q">EFFORT: 1 KUARTAL</span></div>
+        <p class="desc">PWA sekarang. Upgrade ke Capacitor + native push notification + in-app purchases + Apple/Google Sign-in. App Store listing untuk credibility.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">📱 App Store · iOS Native</div>
+          <div class="mock-row">🤖 Google Play · Android Native</div>
+          <div class="mock-row">🔔 Push: "Pikachu mau training!"</div>
+          <div class="mock-row">⭐ 4.8 (12k reviews)</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#48</div>
+      <div class="idea-body">
+        <h3>AR Mode (WebXR / ARCore)</h3>
+        <p class="inspired">Inspired by: <strong>Pokemon GO</strong> + <strong>IKEA Place</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aaa">🔴 AAA</span><span class="badge badge-effort-q">EFFORT: 1 KUARTAL</span></div>
+        <p class="desc">Tap "AR Mode" → Pikachu muncul di ruang tamu via camera. Walk around, pat Pokemon, foto. WebXR untuk web, ARCore untuk Android native.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">📷 AR Active<br>[Camera view + Pikachu 3D]</div>
+          <div class="mock-row">🐭 Pikachu lompat di sofa kamu!</div>
+          <span class="mock-btn mock-btn-primary">📸 Foto</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#49</div>
+      <div class="idea-body">
+        <h3>Cross-Device Cloud Save</h3>
+        <p class="inspired">Inspired by: <strong>Nintendo Switch</strong> Cloud + <strong>Steam Cloud</strong></p>
+        <div class="idea-meta"><span class="badge badge-tier-aa">🟣 AA</span><span class="badge badge-effort-3w">EFFORT: 3-4 MINGGU</span></div>
+        <p class="desc">Sign in dengan Google/Apple. Save sync ke Firebase/Supabase. Anak bisa main di tablet pagi, lanjut di phone sore, lanjut di smart TV malam.</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-row">☁ Cloud Save · andi@example.com</div>
+          <div class="mock-card">Last sync: 2 menit yang lalu</div>
+          <div class="mock-row">📱 Tablet · 📱 Phone · 📺 Smart TV</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="idea">
+      <div class="idea-number">#50</div>
+      <div class="idea-body">
+        <h3>Smart TV Mode + Game Controller</h3>
+        <p class="inspired">Inspired by: <strong>Apple Arcade</strong> + <strong>Roku</strong> games</p>
+        <div class="idea-meta"><span class="badge badge-tier-aaa">🔴 AAA</span><span class="badge badge-effort-q">EFFORT: 1 KUARTAL</span></div>
+        <p class="desc">Cast ke smart TV via Chromecast/AirPlay. Layout reorganize untuk landscape big-screen. Support Bluetooth game controller. Mode "Pokok TV Bareng Keluarga".</p>
+        <div class="mockup">
+          <div class="mockup-label">MOCKUP</div>
+          <div class="mock-card">📺 Casting ke "Ruang TV"<br>1920×1080 landscape mode</div>
+          <div class="mock-row">🎮 Connected: Xbox controller</div>
+          <div class="mock-row">👨‍👩‍👧 Mode: Keluarga Bareng (3 pemain)</div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<footer>
+  <span class="footer-emoji">🌟</span>
+  <h2>Pick Your Top 5</h2>
+  <p>50 ide AAA-tier di atas adalah <strong>visi multi-tahun</strong>. Tidak semua harus dibangun.<br><br>
+  Pilih 5-10 yang paling menarik untuk eksekusi 6-12 bulan ke depan.<br>
+  Saya kasih: roadmap detail, resource estimasi, technology stack, dan first-90-day spec.</p>
+  <p style="margin-top:24px;font-size:13px;opacity:0.75">Made with 💜 · Dunia Emosi · World-Class Roadmap 2026-2028</p>
+</footer>
+
+</body>
+</html>
