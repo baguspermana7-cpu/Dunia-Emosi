@@ -559,50 +559,55 @@
   // ── Pokemon roster (balanced) + type chart ─────────────────────────
   // All Pokemon normalized to HP 100. Move power 18-32 → 3-5 hits to KO.
   // Owner: "antar pokemon imbang jangan dibuat imba walaupun itu legendaris".
+  // HD sprite path resolver (matches assets/Pokemon/pokemondb_hd_alt2/...)
+  function spritePath (id, slug) {
+    var padded = String(id).padStart(4, '0');
+    return '/Dunia-Emosi/assets/Pokemon/pokemondb_hd_alt2/' + padded + '_' + slug + '.webp';
+  }
   const POKE_ROSTER = [
-    { id:25,  name:'Pikachu',    emoji:'⚡', type:'electric', color:'#FCD34D', moves:[
+    { id:25,  name:'Pikachu',    emoji:'⚡', slug:'pikachu',    type:'electric', color:'#FCD34D', moves:[
       { name:'Tackle',         type:'normal',   pwr:18 },
       { name:'Quick Attack',   type:'normal',   pwr:22 },
       { name:'Thunder Shock',  type:'electric', pwr:26 },
       { name:'Thunderbolt',    type:'electric', pwr:32 }
     ]},
-    { id:4,   name:'Charmander', emoji:'🦎', type:'fire', color:'#F97316', moves:[
+    { id:4,   name:'Charmander', emoji:'🦎', slug:'charmander', type:'fire', color:'#F97316', moves:[
       { name:'Tackle',         type:'normal', pwr:18 },
       { name:'Scratch',        type:'normal', pwr:22 },
       { name:'Ember',          type:'fire',   pwr:26 },
       { name:'Flamethrower',   type:'fire',   pwr:32 }
     ]},
-    { id:1,   name:'Bulbasaur',  emoji:'🌿', type:'grass', color:'#10B981', moves:[
+    { id:1,   name:'Bulbasaur',  emoji:'🌿', slug:'bulbasaur', type:'grass', color:'#10B981', moves:[
       { name:'Tackle',         type:'normal', pwr:18 },
       { name:'Leech Seed',     type:'grass',  pwr:22 },
       { name:'Vine Whip',      type:'grass',  pwr:26 },
       { name:'Razor Leaf',     type:'grass',  pwr:32 }
     ]},
-    { id:7,   name:'Squirtle',   emoji:'🐢', type:'water', color:'#06B6D4', moves:[
+    { id:7,   name:'Squirtle',   emoji:'🐢', slug:'squirtle', type:'water', color:'#06B6D4', moves:[
       { name:'Tackle',         type:'normal', pwr:18 },
       { name:'Bubble',         type:'water',  pwr:22 },
       { name:'Water Gun',      type:'water',  pwr:26 },
       { name:'Hydro Pump',     type:'water',  pwr:32 }
     ]},
-    { id:133, name:'Eevee',      emoji:'🦊', type:'normal', color:'#A78BFA', moves:[
+    { id:133, name:'Eevee',      emoji:'🦊', slug:'eevee', type:'normal', color:'#A78BFA', moves:[
       { name:'Tackle',         type:'normal', pwr:20 },
       { name:'Quick Attack',   type:'normal', pwr:24 },
       { name:'Bite',           type:'normal', pwr:28 },
       { name:'Swift',          type:'normal', pwr:32 }
     ]},
-    { id:39,  name:'Jigglypuff', emoji:'🎀', type:'fairy', color:'#F472B6', moves:[
+    { id:39,  name:'Jigglypuff', emoji:'🎀', slug:'jigglypuff', type:'fairy', color:'#F472B6', moves:[
       { name:'Tackle',         type:'normal', pwr:18 },
       { name:'Pound',          type:'normal', pwr:22 },
       { name:'Disarming Voice',type:'fairy',  pwr:26 },
       { name:'Hyper Voice',    type:'fairy',  pwr:32 }
     ]},
-    { id:37,  name:'Vulpix',     emoji:'🌟', type:'fire', color:'#EF4444', moves:[
+    { id:37,  name:'Vulpix',     emoji:'🌟', slug:'vulpix', type:'fire', color:'#EF4444', moves:[
       { name:'Tackle',         type:'normal', pwr:18 },
       { name:'Quick Attack',   type:'normal', pwr:22 },
       { name:'Ember',          type:'fire',   pwr:26 },
       { name:'Fire Spin',      type:'fire',   pwr:32 }
     ]},
-    { id:172, name:'Pichu',      emoji:'⭐', type:'electric', color:'#FBBF24', moves:[
+    { id:172, name:'Pichu',      emoji:'⭐', slug:'pichu', type:'electric', color:'#FBBF24', moves:[
       { name:'Tackle',         type:'normal',   pwr:18 },
       { name:'Charm',          type:'fairy',    pwr:22 },
       { name:'Thunder Shock',  type:'electric', pwr:26 },
@@ -631,6 +636,12 @@
     if (mult >= 1.5)  return 'Super Efektif! ✨';
     if (mult <= 0.75) return 'Tidak Efektif…';
     return null;
+  }
+  function hpColorClass (hp, hpMax) {
+    const r = hp / hpMax;
+    if (r >= 0.5)  return '';        // green default
+    if (r >= 0.25) return 'med';     // yellow
+    return 'low';                    // red
   }
 
   // ── PvP engine (proper mirror split-screen, 1:1 same as original) ────
@@ -755,24 +766,24 @@
         </div>
 
         <!-- Opponent Pokemon mini panel (top of player's view) -->
-        <div class="bm-half-opp">
+        <div class="bm-half-opp" id="bm-opp-${playerIdx}">
           <div class="bm-half-opp-info">
-            <div class="bm-half-opp-name">${opp.emoji} ${escapeHtml(opp.name)} <span class="bm-half-typetag" style="background:${opp.color}22; color:${opp.color}; border:1px solid ${opp.color}55;">${opp.type}</span></div>
+            <div class="bm-half-opp-name">${escapeHtml(opp.name)} <span class="bm-half-typetag" style="background:${opp.color}22; color:${opp.color}; border:1px solid ${opp.color}55;">${opp.type}</span></div>
             <div class="bm-half-hp">
-              <div class="bm-half-hp-bar"><div class="bm-half-hp-fill ${opp.hp/opp.hpMax < 0.3 ? 'low' : ''}" style="width:${(opp.hp/opp.hpMax)*100}%;"></div></div>
+              <div class="bm-half-hp-bar"><div class="bm-half-hp-fill ${hpColorClass(opp.hp, opp.hpMax)}" style="width:${(opp.hp/opp.hpMax)*100}%;"></div></div>
               <span class="bm-half-hp-text">${opp.hp}/${opp.hpMax}</span>
             </div>
           </div>
-          <div class="bm-half-opp-sprite" style="color:${opp.color};">${opp.emoji}</div>
+          <img class="bm-half-opp-img" alt="${escapeHtml(opp.name)}" src="${spritePath(opp.id, opp.slug)}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'bm-half-opp-sprite',textContent:'${opp.emoji}'}))">
         </div>
 
         <!-- Own Pokemon panel (bigger, faces opponent) -->
-        <div class="bm-half-self">
-          <div class="bm-half-self-sprite" style="color:${me.color};">${me.emoji}</div>
+        <div class="bm-half-self" id="bm-self-${playerIdx}">
+          <img class="bm-half-self-img" alt="${escapeHtml(me.name)}" src="${spritePath(me.id, me.slug)}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'bm-half-self-sprite',textContent:'${me.emoji}'}))">
           <div class="bm-half-self-info">
-            <div class="bm-half-self-name">${me.emoji} ${escapeHtml(me.name)} <span class="bm-half-typetag" style="background:${me.color}22; color:${me.color}; border:1px solid ${me.color}55;">${me.type}</span></div>
+            <div class="bm-half-self-name">${escapeHtml(me.name)} <span class="bm-half-typetag" style="background:${me.color}22; color:${me.color}; border:1px solid ${me.color}55;">${me.type}</span></div>
             <div class="bm-half-hp">
-              <div class="bm-half-hp-bar"><div class="bm-half-hp-fill ${me.hp/me.hpMax < 0.3 ? 'low' : ''}" style="width:${(me.hp/me.hpMax)*100}%;"></div></div>
+              <div class="bm-half-hp-bar"><div class="bm-half-hp-fill ${hpColorClass(me.hp, me.hpMax)}" style="width:${(me.hp/me.hpMax)*100}%;"></div></div>
               <span class="bm-half-hp-text">${me.hp}/${me.hpMax}</span>
             </div>
           </div>
@@ -841,21 +852,135 @@
       const def = state.pokes[1 - state.turn];
       const dmg = calcDamage(atk, move, def);
       const tm  = typeMult(move.type, def.type);
-      def.hp = Math.max(0, def.hp - dmg);
-      sfxKO();
-      // Show damage briefly via overlay
-      flashDamage(dmg, tm);
+      // Attack animation FIRST, then apply damage at impact.
+      runAttackAnimation(state.turn, move, dmg, tm, () => {
+        def.hp = Math.max(0, def.hp - dmg);
+        sfxKO();
+        // Update HP bars + texts in BOTH halves (both views show both HPs)
+        updateHpDisplays();
+        setTimeout(() => {
+          if (def.hp <= 0) {
+            playFaintAnimation(1 - state.turn, () => finishMatch(state.turn));
+            return;
+          }
+          // Turn passes — next player's question phase
+          root._questions = null;
+          state.turn = 1 - state.turn;
+          state.phase = 'question';
+          renderRoot();
+        }, 850);
+      });
+    }
+
+    function runAttackAnimation (attackerIdx, move, dmg, tm, done) {
+      // Lunge attacker forward (on the active side, since inactive side is hidden)
+      const activeHalf = root.querySelector(attackerIdx === 0 ? '.bm-mirror-bot' : '.bm-mirror-top');
+      const oppPanel = activeHalf && activeHalf.querySelector('.bm-half-opp');
+      const selfSprite = activeHalf && activeHalf.querySelector('.bm-half-self-img, .bm-half-self-sprite');
+      if (selfSprite) {
+        selfSprite.classList.add('bm-attack-lunge');
+        setTimeout(() => selfSprite.classList.remove('bm-attack-lunge'), 600);
+      }
+      if (oppPanel) {
+        setTimeout(() => {
+          oppPanel.classList.add('bm-defender-shake');
+          setTimeout(() => oppPanel.classList.remove('bm-defender-shake'), 360);
+        }, 300);
+      }
+      // Move-type screen tint
+      const tint = document.createElement('div');
+      const typeColor = ({
+        fire: '#F97316', water: '#06B6D4', grass: '#10B981',
+        electric: '#FCD34D', normal: '#FFFFFF', fairy: '#F472B6'
+      })[move.type] || '#FFFFFF';
+      tint.style.cssText = `
+        position: fixed; inset: 0; z-index: 9150; pointer-events: none;
+        background: radial-gradient(circle, ${typeColor}25 0%, transparent 60%);
+        opacity: 0; transition: opacity 200ms ease;
+      `;
+      document.body.appendChild(tint);
+      requestAnimationFrame(() => { tint.style.opacity = '1'; });
+      setTimeout(() => { tint.style.opacity = '0'; }, 380);
+      setTimeout(() => { try { tint.remove(); } catch (e) {} }, 700);
+
+      // Damage number float-up at defender panel
       setTimeout(() => {
-        if (def.hp <= 0) {
-          finishMatch(state.turn);
-          return;
+        if (oppPanel) {
+          const r = oppPanel.getBoundingClientRect();
+          spawnDamageNumber(r.left + r.width * 0.7, r.top + r.height * 0.5, dmg, tm);
         }
-        // Turn passes — next player's question phase
-        root._questions = null;
-        state.turn = 1 - state.turn;
-        state.phase = 'question';
-        renderRoot();
-      }, 1600);
+        // Super-effective extra flash
+        if (tm >= 1.5) screenFlash('#FCD34D', 120);
+      }, 360);
+
+      // Done at ~700ms after the lunge → applies damage in caller
+      setTimeout(done, 750);
+    }
+
+    function spawnDamageNumber (x, y, dmg, tm) {
+      const el = document.createElement('div');
+      const color = tm >= 1.5 ? '#FCD34D' : (tm <= 0.75 ? '#FB923C' : '#67E8F9');
+      const effTxt = effLabel(tm);
+      el.style.cssText = `
+        position: fixed; left: ${x - 60}px; top: ${y}px;
+        z-index: 9300; pointer-events: none;
+        font-family: 'Fredoka One', cursive;
+        font-size: clamp(36px, 8vw, 64px);
+        color: ${color};
+        text-shadow: 0 4px 14px rgba(0,0,0,0.6);
+        animation: bmDmgFloat 1100ms cubic-bezier(0.22,0.61,0.36,1) forwards;
+      `;
+      el.innerHTML = `-${dmg}` + (effTxt ? `<div style="font-size:0.40em; margin-top:4px;">${effTxt}</div>` : '');
+      document.body.appendChild(el);
+      setTimeout(() => { try { el.remove(); } catch (e) {} }, 1200);
+    }
+
+    function screenFlash (color, dur) {
+      const f = document.createElement('div');
+      f.style.cssText = `
+        position: fixed; inset: 0; z-index: 9200; pointer-events: none;
+        background: ${color}; opacity: 0.55;
+        transition: opacity ${dur || 200}ms ease-out;
+      `;
+      document.body.appendChild(f);
+      requestAnimationFrame(() => { f.style.opacity = '0'; });
+      setTimeout(() => { try { f.remove(); } catch (e) {} }, (dur || 200) + 50);
+    }
+
+    function updateHpDisplays () {
+      // Both halves show BOTH HP bars (own + opponent). Re-render the whole root
+      // is heavy — instead, surgically update fill width + text + color class.
+      [0, 1].forEach(pIdx => {
+        const me = state.pokes[pIdx];
+        const opp = state.pokes[1 - pIdx];
+        const half = root.querySelector(pIdx === 0 ? '.bm-mirror-bot' : '.bm-mirror-top');
+        if (!half) return;
+        const oppFill = half.querySelector('.bm-half-opp .bm-half-hp-fill');
+        const oppTxt  = half.querySelector('.bm-half-opp .bm-half-hp-text');
+        const selfFill = half.querySelector('.bm-half-self .bm-half-hp-fill');
+        const selfTxt  = half.querySelector('.bm-half-self .bm-half-hp-text');
+        if (oppFill)  { oppFill.style.width = (opp.hp / opp.hpMax * 100) + '%'; oppFill.className = 'bm-half-hp-fill ' + hpColorClass(opp.hp, opp.hpMax); }
+        if (oppTxt)   { oppTxt.textContent = opp.hp + '/' + opp.hpMax; }
+        if (selfFill) { selfFill.style.width = (me.hp / me.hpMax * 100) + '%'; selfFill.className = 'bm-half-hp-fill ' + hpColorClass(me.hp, me.hpMax); }
+        if (selfTxt)  { selfTxt.textContent = me.hp + '/' + me.hpMax; }
+      });
+    }
+
+    function playFaintAnimation (faintedIdx, done) {
+      // Defender's sprite slides down + rotates + fades on both halves
+      [0, 1].forEach(pIdx => {
+        const half = root.querySelector(pIdx === 0 ? '.bm-mirror-bot' : '.bm-mirror-top');
+        if (!half) return;
+        // The fainted Pokemon appears in OPPONENT slot of the winner's view,
+        // and SELF slot of the loser's view.
+        const inOppSlot = (pIdx === state.turn); // winner sees fainted as opp
+        const target = half.querySelector(
+          inOppSlot ? '.bm-half-opp-img, .bm-half-opp-sprite' :
+                      '.bm-half-self-img, .bm-half-self-sprite'
+        );
+        if (target) target.classList.add('bm-faint');
+      });
+      setTimeout(done, 900);
     }
 
     function flashDamage (dmg, eff) {
@@ -987,6 +1112,13 @@
       .bm-half-opp-info { flex: 1; min-width: 0; }
       .bm-half-opp-name { font-family: 'Fredoka One', cursive; font-size: 13px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
       .bm-half-opp-sprite { font-size: clamp(28px, 6vw, 44px); line-height: 1; flex-shrink: 0; }
+      .bm-half-opp-img {
+        width: clamp(48px, 11vw, 72px);
+        height: clamp(48px, 11vw, 72px);
+        object-fit: contain;
+        filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+        flex-shrink: 0;
+      }
 
       /* Own Pokemon panel (bigger, center-stage) */
       .bm-half-self {
@@ -999,6 +1131,45 @@
         line-height: 1; flex-shrink: 0;
         filter: drop-shadow(0 8px 22px rgba(0,0,0,0.5));
         animation: bmSpriteBob 2200ms ease-in-out infinite;
+      }
+      .bm-half-self-img {
+        width: clamp(90px, 18vw, 140px);
+        height: clamp(90px, 18vw, 140px);
+        object-fit: contain;
+        flex-shrink: 0;
+        filter: drop-shadow(0 8px 22px rgba(0,0,0,0.5));
+        animation: bmSpriteBob 2200ms ease-in-out infinite;
+      }
+      .bm-attack-lunge {
+        animation: bmAttackLunge 600ms cubic-bezier(0.34,1.56,0.64,1) !important;
+      }
+      @keyframes bmAttackLunge {
+        0%   { transform: translateX(0); }
+        35%  { transform: translateX(60px) scale(1.08); }
+        70%  { transform: translateX(70px) scale(1.10); }
+        100% { transform: translateX(0); }
+      }
+      .bm-defender-shake {
+        animation: bmDefShake 360ms ease;
+      }
+      @keyframes bmDefShake {
+        0%, 100% { transform: translateX(0); }
+        20%      { transform: translateX(-8px); }
+        40%      { transform: translateX(7px); }
+        60%      { transform: translateX(-5px); }
+        80%      { transform: translateX(4px); }
+      }
+      .bm-faint {
+        animation: bmFaint 900ms cubic-bezier(0.4,0,0.68,0.06) forwards !important;
+      }
+      @keyframes bmFaint {
+        0%   { transform: rotate(0) translateY(0); opacity: 1; }
+        100% { transform: rotate(-90deg) translateY(80px); opacity: 0; }
+      }
+      @keyframes bmDmgFloat {
+        0%   { transform: translateY(0) scale(0.5); opacity: 0; }
+        30%  { transform: translateY(-20px) scale(1.2); opacity: 1; }
+        100% { transform: translateY(-80px) scale(1.0); opacity: 0; }
       }
       @keyframes bmSpriteBob {
         0%, 100% { transform: translateY(0); }
@@ -1018,9 +1189,14 @@
       .bm-half-hp-fill {
         height: 100%;
         background: linear-gradient(90deg, #10B981, #34D399);
-        transition: width 480ms ease;
+        transition: width 480ms ease, background 280ms ease;
       }
-      .bm-half-hp-fill.low { background: linear-gradient(90deg, #EF4444, #F87171); }
+      .bm-half-hp-fill.med { background: linear-gradient(90deg, #F59E0B, #FBBF24); }
+      .bm-half-hp-fill.low { background: linear-gradient(90deg, #EF4444, #F87171); animation: bmHpPulse 800ms ease-in-out infinite; }
+      @keyframes bmHpPulse {
+        0%, 100% { filter: brightness(1); }
+        50%      { filter: brightness(1.4); }
+      }
       .bm-half-hp-text { font-family: 'Fredoka One', cursive; font-size: 11px; min-width: 56px; text-align: right; }
 
       /* Question / move panel */
