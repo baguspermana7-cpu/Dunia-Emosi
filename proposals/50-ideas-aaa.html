@@ -4541,6 +4541,580 @@ function forfeit(slotIdx) {
         </div>
       </div>
 
+      <!-- ═══════════════════════════════════════════════════════════
+           POLISH SUB-BLOCKS N–W (2026-06-21) — deep UX/VFX spec
+           Adds 10 sub-cards to Block 9 for "enak dimainkan" feel.
+           ═══════════════════════════════════════════════════════════ -->
+
+      <!-- N. Pre-Battle Cinematic -->
+      <div class="reshape-card" style="margin-top:14px">
+        <div class="reshape-head">
+          <h4>N · Pre-Battle Cinematic &amp; Match Intro</h4>
+          <span class="reshape-id">Anticipation + payoff</span>
+        </div>
+        <div class="reshape-meta">
+          <span class="reshape-pill pill-impact-high">Impact: Feel</span>
+          <span class="reshape-pill pill-safety-low">Safety: Low</span>
+          <span class="reshape-pill pill-phase">2 s · skippable</span>
+        </div>
+        <div class="reshape-section">
+          <h5>Sequence (2.0 s total)</h5>
+          <div class="reshape-code">0      ms ─ black wipe in (160 ms)
+160    ms ─ player names slide in P1 bottom / P2 top (280 ms)
+440    ms ─ Pokemon silhouettes appear (320 ms)
+760    ms ─ silhouettes fill in with color + audio swell (180 ms)
+940    ms ─ battle stage zoom-in
+1100   ms ─ "READY?" slide bottom (160 ms)
+1260   ms ─ "3" tick (280 ms)  · countdown SFX
+1540   ms ─ "2" tick (280 ms)
+1820   ms ─ "1" tick (280 ms)
+2100   ms ─ "FIGHT!" gold zoom-burst (520 ms) · battleGo gong
+2620   ms ─ UI fades in, controls active</div>
+        </div>
+        <div class="reshape-section">
+          <h5>Per-mode variant</h5>
+          <ul>
+            <li><strong>Adventure</strong>: "Battle Start!" — simple, fast.</li>
+            <li><strong>PvP</strong>: "1 vs 1!" + both player names side-by-side.</li>
+            <li><strong>Tournament</strong>: "Match X of Y · &lt;Name A&gt; vs &lt;Name B&gt;" + slot avatars.</li>
+          </ul>
+        </div>
+        <div class="reshape-section">
+          <h5>CSS Skeleton</h5>
+          <div class="reshape-code">.match-intro {
+  position: fixed; inset: 0;
+  display: grid; place-items: center;
+  background: radial-gradient(circle,
+    rgba(30,27,75,0.95), rgba(0,0,0,0.98));
+  z-index: 5000;
+}
+.intro-vs {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(48px, 12vw, 96px);
+  background: linear-gradient(135deg, #FCD34D, #EF4444);
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: vsZoom 520ms cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes vsZoom {
+  0%   { transform: scale(0.3); opacity: 0; }
+  60%  { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1.0); }
+}</div>
+        </div>
+        <div class="reshape-section">
+          <h5>Edge Cases</h5>
+          <ul>
+            <li><strong>Skip</strong>: double-tap intro OR returning player flag set after first 5 matches.</li>
+            <li><strong>Reduced motion</strong>: skip all animations, show static intro for 800 ms.</li>
+            <li><strong>Sound off</strong>: visuals still play, no audio cues.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- O. HUD + HP Hearts + Player Status -->
+      <div class="reshape-card" style="margin-top:14px">
+        <div class="reshape-head">
+          <h4>O · HUD — HP Hearts + Player Status Cards</h4>
+          <span class="reshape-id">Always-on legibility</span>
+        </div>
+        <div class="reshape-meta">
+          <span class="reshape-pill pill-impact-high">Impact: Core UX</span>
+          <span class="reshape-pill pill-safety-low">Safety: Low</span>
+          <span class="reshape-pill pill-phase">Replaces numeric HP</span>
+        </div>
+        <div class="reshape-section">
+          <h5>HP system — 5 hearts (each = 20 % HP)</h5>
+          <ul>
+            <li><strong>Full</strong>: pink fill + slight glow.</li>
+            <li><strong>Half</strong>: pink only on right side (clip-path).</li>
+            <li><strong>Empty</strong>: grey outline.</li>
+            <li><strong>Break animation</strong> (lost): shake + crack icon + disappear 320 ms.</li>
+          </ul>
+        </div>
+        <div class="reshape-section">
+          <h5>Player Status Card</h5>
+          <div class="reshape-code">┌──────────────────────────────────┐
+│ ┌────┐  Bagas         ❤❤❤❤❤     │
+│ │ P1 │  Squirtle (LV 5)           │
+│ └────┘  💧 Water                  │
+└──────────────────────────────────┘
+border-color: P1=#3B82F6 / P2=#EF4444
+active player: 1200 ms breathing pulse
+inactive: opacity 0.5 + saturate 0.6</div>
+        </div>
+        <div class="reshape-section">
+          <h5>Low HP warning (≤ 1 heart)</h5>
+          <ul>
+            <li>Heart pulses red glow 800 ms cycle.</li>
+            <li>Player card border flashes.</li>
+            <li>Heartbeat SFX (low rumble) loops at master -20 dB.</li>
+            <li>Viewport edge red vignette (subtle).</li>
+          </ul>
+        </div>
+        <div class="reshape-section">
+          <h5>Accessibility</h5>
+          <ul>
+            <li>ARIA live region announces HP change ("Bagas, 3 nyawa tersisa").</li>
+            <li>Reduced-motion: no pulse / no shake — color shift only.</li>
+            <li>High-contrast mode: hearts become outlined squares with numbers inside.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- P. Move Selection UI + Type Hint -->
+      <div class="reshape-card" style="margin-top:14px">
+        <div class="reshape-head">
+          <h4>P · Move Selection UI + Type Hint Chips</h4>
+          <span class="reshape-id">Tactical clarity</span>
+        </div>
+        <div class="reshape-meta">
+          <span class="reshape-pill pill-impact-high">Impact: Strategy depth</span>
+          <span class="reshape-pill pill-safety-low">Safety: Low</span>
+          <span class="reshape-pill pill-phase">4-button 2x2 grid</span>
+        </div>
+        <div class="reshape-section">
+          <h5>2×2 Button Grid</h5>
+          <div class="reshape-code">┌──────────────┬──────────────┐
+│ Tackle       │ Ember        │
+│ ⚡ Normal    │ 🔥 Fire ⭐    │
+│ Power: 20    │ Power: 24    │
+│              │ vs 💧 ❌      │
+├──────────────┼──────────────┤
+│ Wing Attack  │ Flame Strike │
+│ 🦅 Flying    │ 🔥 Fire ★⭐   │
+│ Power: 26    │ Power: 30    │
+│ vs 💧 ✅      │ vs 💧 ❌      │
+└──────────────┴──────────────┘</div>
+        </div>
+        <div class="reshape-section">
+          <h5>Each button shows</h5>
+          <ul>
+            <li>Move name (Fredoka One 18 px).</li>
+            <li>Type icon + type name.</li>
+            <li>Power chip 10-34 gradient (yellow→orange).</li>
+            <li>STAB indicator: 1 star = STAB, 2 stars = signature STAB.</li>
+            <li>Effectiveness chip: ✅ super / ⚪ normal / ⚠️ resist / ❌ no damage.</li>
+            <li>Color border per effectiveness (green = super, dim red = immune).</li>
+          </ul>
+        </div>
+        <div class="reshape-section">
+          <h5>Auto-fallback timer</h5>
+          <ul>
+            <li>8 s timer ring around the buttons.</li>
+            <li>At 6 s: signature move button glows yellow.</li>
+            <li>At 8 s: auto-tap signature move.</li>
+            <li>Visual: conic-gradient ring shrinks full → empty.</li>
+          </ul>
+        </div>
+        <div class="reshape-section">
+          <h5>Touch interaction</h5>
+          <ul>
+            <li>Touchmove: highlight button under finger, show hint.</li>
+            <li>Touch release outside: cancel — no commit.</li>
+            <li>Lift inside button to commit.</li>
+            <li>Double-tap debounce 80 ms.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Q. Pokemon Sprite Animation Library -->
+      <div class="reshape-card" style="margin-top:14px">
+        <div class="reshape-head">
+          <h4>Q · Pokemon Sprite Animation Library</h4>
+          <span class="reshape-id">Reusable across all Pokemon</span>
+        </div>
+        <div class="reshape-meta">
+          <span class="reshape-pill pill-impact-high">Impact: Life + personality</span>
+          <span class="reshape-pill pill-safety-low">Safety: Low</span>
+          <span class="reshape-pill pill-phase">CSS keyframes + PIXI</span>
+        </div>
+        <div class="reshape-section">
+          <h5>6 Core States</h5>
+          <ul>
+            <li><strong>idle</strong>: gentle bob, 1.8 s loop, translateY 0 → -6 px → 0.</li>
+            <li><strong>attack</strong>: lunge forward 320 ms (cubic-bezier bounce), translateX +28 px → 0.</li>
+            <li><strong>hurt</strong>: recoil 200 ms, translateX -12 px + 4-step shake, slight red tint.</li>
+            <li><strong>faint</strong>: slide down 520 ms, rotate -90 deg, fade.</li>
+            <li><strong>victory</strong>: bounce 1.2 s loop, scale 1.0 → 1.12 → 0.98 → 1.0.</li>
+            <li><strong>dodge</strong>: side-step 180 ms (rarely used in deterministic PvP, animation polish).</li>
+          </ul>
+        </div>
+        <div class="reshape-section">
+          <h5>CSS Skeleton</h5>
+          <div class="reshape-code">@keyframes pokeIdle {
+  0%, 100% { transform: translateY(0) scale(1.0); }
+  50%      { transform: translateY(-6px) scale(1.02); }
+}
+@keyframes pokeAttack {
+  0%   { transform: translateX(0); }
+  40%  { transform: translateX(28px) scale(1.08); }
+  100% { transform: translateX(0); }
+}
+@keyframes pokeHurt {
+  0%   { transform: translateX(0); }
+  20%  { transform: translateX(-12px); }
+  40%  { transform: translateX(8px); }
+  60%  { transform: translateX(-6px); }
+  100% { transform: translateX(0); }
+}
+@keyframes pokeFaint {
+  0%   { transform: rotate(0) translateY(0); opacity: 1; }
+  100% { transform: rotate(-90deg) translateY(48px); opacity: 0; }
+}</div>
+        </div>
+        <div class="reshape-section">
+          <h5>Per-player mirror</h5>
+          <ul>
+            <li>P2 sprite uses <code>pokeAttackMirror</code> (translateX -28 px).</li>
+            <li>Faint animation flips for P2 (slide UP off-screen instead of DOWN).</li>
+          </ul>
+        </div>
+        <div class="reshape-section">
+          <h5>PIXI alternative</h5>
+          <ul>
+            <li>Tween library: same state names, same timing.</li>
+            <li>Sprite atlas for HD WebP sprites — avoids per-frame DOM reflow.</li>
+            <li>Concurrent cap: 2 hurt animations max per Pokemon at a time (LITE mode in rapid fire).</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- R. Per-Type Particle FX Library -->
+      <div class="reshape-card" style="margin-top:14px">
+        <div class="reshape-head">
+          <h4>R · Per-Type Particle FX Library — 18 Types</h4>
+          <span class="reshape-id">Visual type-effectiveness signal</span>
+        </div>
+        <div class="reshape-meta">
+          <span class="reshape-pill pill-impact-high">Impact: Game feel</span>
+          <span class="reshape-pill pill-safety-low">Safety: Low</span>
+          <span class="reshape-pill pill-phase">Canvas/PIXI particles</span>
+        </div>
+        <div class="reshape-section">
+          <h5>18 Types × Particle Spec</h5>
+          <div class="reshape-code">Normal:    ⭐ stars            cream sparkles, soft
+Fire:      🔥 embers           orange particles, upward float
+Water:     💧 drops            blue droplets, downward gravity
+Electric:  ⚡ arcs             yellow zigzag, fast
+Grass:     🍃 leaves           green spinning leaves
+Ice:       ❄️ crystals         white snowflakes, slow drift
+Fighting:  💥 impact rays      red impact lines
+Poison:    🟢 bubbles          purple bubbles, slow rise
+Ground:    🟫 dust + rocks     brown debris, gravity
+Flying:    🪶 feathers         white feathers, lateral drift
+Psychic:   🌀 waves            pink ripples, expand outward
+Bug:       🐛 dots             green tiny dots, scatter
+Rock:      🪨 chips            grey rock chips, gravity
+Ghost:     👻 wisps            purple smoke, dissipate
+Dragon:    🐉 scales           orange scales, swirl
+Dark:      🌑 smoke            dark mist, fade up
+Steel:     ⚙️ sparks           silver sparks, scatter
+Fairy:     💖 hearts           pink hearts, float</div>
+        </div>
+        <div class="reshape-section">
+          <h5>Particle Spec Format</h5>
+          <div class="reshape-code">PARTICLE_FX = {
+  fire: {
+    emoji: '🔥',
+    count: 12,
+    spread: 80,           // degrees angle range
+    velocity: [40, 120],  // px/s min-max
+    lifetime: [600, 900], // ms
+    gravity: -0.3,        // upward
+    scale: [0.6, 1.0],
+    rotation: [0, 360],
+    color: '#FF6B35'
+  },
+  water: {
+    emoji: '💧',
+    count: 14,
+    spread: 60,
+    velocity: [60, 140],
+    lifetime: [500, 800],
+    gravity: 0.5,         // downward
+    scale: [0.5, 0.9],
+    color: '#3B82F6'
+  }
+  // ... 16 more
+}</div>
+        </div>
+        <div class="reshape-section">
+          <h5>Triggering Rules</h5>
+          <ul>
+            <li>On hit: spawn at center stage where damage shown.</li>
+            <li>Count cap from VFX Standard (≤24 simultaneous total across page).</li>
+            <li>Type particles for BOTH attacker move type AND defender weakness (dual layer).</li>
+            <li>Reduced-motion: skip particles entirely, use color tint flash instead.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- S. Camera & Stage Effects -->
+      <div class="reshape-card" style="margin-top:14px">
+        <div class="reshape-head">
+          <h4>S · Camera + Stage FX — Shake / Freeze / Parallax / Flash</h4>
+          <span class="reshape-id">Cinematic weight</span>
+        </div>
+        <div class="reshape-meta">
+          <span class="reshape-pill pill-impact-high">Impact: Impact weight</span>
+          <span class="reshape-pill pill-safety-low">Safety: Low</span>
+          <span class="reshape-pill pill-phase">GPU keyframes</span>
+        </div>
+        <div class="reshape-section">
+          <h5>4 Shake Variants</h5>
+          <ul>
+            <li><code>nano</code>: 8 px, 100 ms — tap accept.</li>
+            <li><code>small</code>: 12 px, 180 ms — normal hit.</li>
+            <li><code>medium</code>: 20 px, 280 ms — super effective.</li>
+            <li><code>heavy</code>: 32 px, 420 ms — KO.</li>
+          </ul>
+        </div>
+        <div class="reshape-section">
+          <h5>Shake Keyframes</h5>
+          <div class="reshape-code">@keyframes shakeSmall {
+  0%, 100% { transform: translate(0, 0); }
+  20%      { transform: translate(-8px, 4px); }
+  40%      { transform: translate(8px, -4px); }
+  60%      { transform: translate(-6px, -3px); }
+  80%      { transform: translate(6px, 3px); }
+}
+@keyframes shakeHeavy {
+  0%, 100% { transform: translate(0, 0); }
+  15%      { transform: translate(-24px,12px) rotate(-2deg) scale(1.02); }
+  35%      { transform: translate(22px,-12px) rotate(2deg) scale(0.98); }
+  55%      { transform: translate(-18px,-8px); }
+  75%      { transform: translate(18px, 8px); }
+}</div>
+        </div>
+        <div class="reshape-section">
+          <h5>Freeze Frame</h5>
+          <ul>
+            <li>Super effective hit: 200 ms pause where time stops, particles freeze.</li>
+            <li>Critical KO: 320 ms freeze + slow-mo on victory pose start.</li>
+            <li>Implementation: <code>animation-play-state: paused</code> on all children.</li>
+          </ul>
+        </div>
+        <div class="reshape-section">
+          <h5>Parallax Background</h5>
+          <ul>
+            <li>3 layers: distant mountains (slowest) · mid-trees · near-grass.</li>
+            <li>Subtle parallax on shake (different displacement per layer).</li>
+            <li>Time-of-day shift (from Block K Region — sunrise / day / sunset / night).</li>
+          </ul>
+        </div>
+        <div class="reshape-section">
+          <h5>Screen Flash + KO Vignette</h5>
+          <ul>
+            <li>White flash 80 ms on super-effective.</li>
+            <li>Gold radial burst 280 ms on KO.</li>
+            <li>Type-color tint 120 ms on element hit.</li>
+            <li>Loser side: dark vignette 600 ms fade-in + "K.O.!" big bounce + winner side gold glow.</li>
+            <li>Reduced-motion: replace all with simple color overlay.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- T. Combo & Streak System -->
+      <div class="reshape-card" style="margin-top:14px">
+        <div class="reshape-head">
+          <h4>T · Combo &amp; Streak System</h4>
+          <span class="reshape-id">Skill reward, anti-snowball</span>
+        </div>
+        <div class="reshape-meta">
+          <span class="reshape-pill pill-impact-med">Impact: Skill ladder</span>
+          <span class="reshape-pill pill-safety-low">Safety: Low</span>
+          <span class="reshape-pill pill-phase">Capped 1.5×</span>
+        </div>
+        <div class="reshape-section">
+          <h5>Streak Tiers (visible escalation)</h5>
+          <div class="reshape-code">Streak  Banner               Color    Damage bonus
+  1     (no banner)          —        ×1.00
+  2     "x2 COMBO"           white    ×1.05
+  3     "x3 SUPER COMBO"     orange   ×1.10
+  5     "x5 MEGA COMBO"      purple   ×1.15
+  8     "x8 LEGENDARY"       gold     ×1.40 (capped ×1.50)</div>
+        </div>
+        <div class="reshape-section">
+          <h5>Visual</h5>
+          <ul>
+            <li>Streak chip appears beside player's name pill.</li>
+            <li>Each new streak: pop animation + tier color shift (320 ms cubic-bezier bounce).</li>
+            <li>Streak break: chip shatters + sad fizz SFX + screen tint amber 200 ms.</li>
+            <li>Higher streak (≥ 5): small particle aura around player Pokemon — pulses in tier color.</li>
+            <li>ARIA: "Combo dua! Combo tiga!" announced.</li>
+          </ul>
+        </div>
+        <div class="reshape-section">
+          <h5>Anti-Snowball Rules</h5>
+          <ul>
+            <li>Damage bonus capped at 1.5× — high streak doesn't one-shot.</li>
+            <li>Streak resets on wrong answer or move that does 0 damage (no immunity exception).</li>
+            <li>Streak does NOT roll over between rounds in Tournament.</li>
+            <li>Streak +1 only on correct + non-zero-damage hit.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- U. Match Summary + Replay -->
+      <div class="reshape-card" style="margin-top:14px">
+        <div class="reshape-head">
+          <h4>U · Match Summary + Turn-by-Turn Replay</h4>
+          <span class="reshape-id">Reflective learning</span>
+        </div>
+        <div class="reshape-meta">
+          <span class="reshape-pill pill-impact-med">Impact: Reflection</span>
+          <span class="reshape-pill pill-safety-low">Safety: Low</span>
+          <span class="reshape-pill pill-phase">Post-match</span>
+        </div>
+        <div class="reshape-section">
+          <h5>Post-Match Screen</h5>
+          <div class="reshape-code">┌──────────────────────────────────┐
+│  🏆 Bagas Menang!                │
+│  Pokemon: Squirtle               │
+│  Move terbaik: Hydro Pump (-22)  │
+│                                  │
+│  Turn 1: Tackle (-8)             │
+│  Turn 2: Water Gun (-12) ✨      │
+│  Turn 3: Tackle (-8)             │
+│  Turn 4: Hydro Pump (-22) 🌟    │
+│                                  │
+│  Total turn: 4                   │
+│  Akurasi: 100%                   │
+│  Speed avg: 3.2 s                │
+│                                  │
+│  [Main lagi]    [Selesai]        │
+└──────────────────────────────────┘</div>
+        </div>
+        <div class="reshape-section">
+          <h5>Per-turn breakdown shows</h5>
+          <ul>
+            <li>Turn number.</li>
+            <li>Move used + emoji.</li>
+            <li>Damage dealt.</li>
+            <li>Effectiveness indicator (✨ super / normal).</li>
+            <li>Speed indicator (⚡ fast / 🐢 slow).</li>
+          </ul>
+        </div>
+        <div class="reshape-section">
+          <h5>MVP Highlight</h5>
+          <ul>
+            <li>Highest single-damage move highlighted gold with 🌟.</li>
+            <li>Streak-of-3+ marked with ⛓.</li>
+            <li>Comeback (won from ≤ 1 HP) marked with 💪.</li>
+          </ul>
+        </div>
+        <div class="reshape-section">
+          <h5>Share / Save</h5>
+          <ul>
+            <li>"Salin gambar" → canvas-to-image + clipboard write.</li>
+            <li>"Bagikan" → Web Share API (parent-gated).</li>
+            <li>No automatic upload anywhere. Manual export only.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- V. Onboarding Tutorial -->
+      <div class="reshape-card" style="margin-top:14px">
+        <div class="reshape-head">
+          <h4>V · Onboarding Tutorial — First PvP / Tournament</h4>
+          <span class="reshape-id">Learn-by-play, skippable</span>
+        </div>
+        <div class="reshape-meta">
+          <span class="reshape-pill pill-impact-med">Impact: First-run UX</span>
+          <span class="reshape-pill pill-safety-low">Safety: Low</span>
+          <span class="reshape-pill pill-phase">localStorage flag</span>
+        </div>
+        <div class="reshape-section">
+          <h5>Detection</h5>
+          <div class="reshape-code">localStorage['dunia-pvp-tutorial-done'] = true
+//  Absent → run tutorial
+//  Set    → skip, returning player</div>
+        </div>
+        <div class="reshape-section">
+          <h5>4-Step PvP Tutorial</h5>
+          <ol>
+            <li>"Halo! Mari belajar lawan teman 🎮" (full-screen card, soft fade-in).</li>
+            <li>"Tap soal di sisimu untuk menyerang" (ghost-hand 👆 pointing to question card, spotlight rest dimmed).</li>
+            <li>"Pilih jurus untuk attack lawan" (ghost-hand on move grid, dimmed background).</li>
+            <li>"Setelah kamu selesai, giliran lawan!" (animated turn switch demo).</li>
+          </ol>
+        </div>
+        <div class="reshape-section">
+          <h5>+ 2 Tournament-Specific Steps</h5>
+          <ol start="5">
+            <li>"Lihat bracket — kamu lawan siapa?" (bracket card highlighted).</li>
+            <li>"Menang lanjut ke ronde berikutnya" (winner-advance animation demo).</li>
+          </ol>
+        </div>
+        <div class="reshape-section">
+          <h5>UI elements</h5>
+          <ul>
+            <li>Spotlight on tutorial target (rest dimmed 0.55).</li>
+            <li>Ghost-hand animation pointing (subtle bobbing).</li>
+            <li>"Skip" button always available (top-right).</li>
+            <li>"Sudah ngerti, lanjut" primary button.</li>
+            <li>Progress dots ● ● ● ○ at bottom.</li>
+            <li>ARIA-live announces each step text.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- W. Settings + Accessibility Panel -->
+      <div class="reshape-card" style="margin-top:14px">
+        <div class="reshape-head">
+          <h4>W · Settings + Accessibility Panel</h4>
+          <span class="reshape-id">Inclusive by default</span>
+        </div>
+        <div class="reshape-meta">
+          <span class="reshape-pill pill-impact-high">Impact: Inclusion</span>
+          <span class="reshape-pill pill-safety-low">Safety: Low</span>
+          <span class="reshape-pill pill-phase">Drawer 320 ms</span>
+        </div>
+        <div class="reshape-section">
+          <h5>Audio Tab</h5>
+          <ul>
+            <li>Master volume slider 0-100%.</li>
+            <li>Music volume.</li>
+            <li>SFX volume.</li>
+            <li>Voice (TTS) volume.</li>
+            <li>Mute all toggle.</li>
+          </ul>
+        </div>
+        <div class="reshape-section">
+          <h5>Gameplay Tab</h5>
+          <ul>
+            <li>Difficulty preset per slot (Easy / Normal / Hard).</li>
+            <li>"Pemain Junior" toggle per slot (umur 5-7 → easier math/type questions).</li>
+            <li>Time per question slider (default 8 s, range 5-20 s).</li>
+          </ul>
+        </div>
+        <div class="reshape-section">
+          <h5>Accessibility Tab</h5>
+          <ul>
+            <li><strong>High-contrast mode</strong> toggle — boosts contrast, simplifies palette.</li>
+            <li><strong>Larger text</strong> slider 100-150 %.</li>
+            <li><strong>Dyslexia-friendly font</strong> toggle — OpenDyslexic free web font + letter-spacing 0.15 em.</li>
+            <li><strong>Motor-impaired mode</strong> — touch targets ≥ 72 px, tap-and-hold tolerance 500 ms (was 80 ms), no swipe gestures.</li>
+            <li><strong>Reduced motion</strong> override toggle (forces on, overrides OS preference).</li>
+            <li><strong>Haptic strength</strong> slider 0-100 % (vibration intensity).</li>
+            <li><strong>Colorblind mode</strong> — Deuteranopia / Protanopia / Tritanopia palette swap + dual-encoded shape icons.</li>
+            <li><strong>Simple-Indonesian</strong> toggle — 200-word swap dictionary for emerging readers (per V2 idea #50).</li>
+          </ul>
+        </div>
+        <div class="reshape-section">
+          <h5>UI</h5>
+          <ul>
+            <li>Settings drawer slides up from bottom 320 ms (cubic-bezier-bounce).</li>
+            <li>Tab structure: Audio / Gameplay / Accessibility (large tap targets).</li>
+            <li>"Simpan" button persists to <code>localStorage['dunia-settings']</code>.</li>
+            <li>"Reset ke default" with confirm modal.</li>
+            <li>All toggles instantly preview the change before save (e.g. dyslexia font applied live).</li>
+            <li>Keyboard navigation: Tab through sliders, Enter to commit.</li>
+          </ul>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -6005,52 +6579,55 @@ function forfeit(slotIdx) {
 </script>
 
 <!-- ═══════════════════════════════════════════════════════════════
-     2026-06-21 — Filter + remove (owner: hide implemented, remove LLM/ML)
+     2026-06-21 — Strikethrough mark + new gameplay pillar
+     Owner: "kasih tanda yang sudah di implementasi. coret atau apa lah"
+            "yang reject juga coret atau delete aja, dan kasih ide yang jauh
+             lebih menarik" / "Platform Technology, ide ini reject semua" /
+            "fokus pada ide gameplay"
      ═══════════════════════════════════════════════════════════════ -->
 <style>
-  /* LLM/ML ideas — REMOVED entirely per owner mandate "hilangkan ide yang ada
-     hubungannya dengan llm atau ml". display:none = effectively deleted. */
-  body [data-tag~="llm-ml"] {
-    display: none !important;
+  /* Implemented — green strikethrough, stays visible. */
+  [data-status="implemented"] {
+    opacity: 0.55;
   }
-  /* Implemented ideas — hidden by default. Owner: "hilangkan karena sudah ok".
-     Restored when body has .show-implemented (toggled via filter bar). */
-  body:not(.show-implemented) [data-status="implemented"] {
-    display: none !important;
+  [data-status="implemented"] h3,
+  [data-status="implemented"] td:not(.roadmap-note) {
+    text-decoration: line-through;
+    text-decoration-color: rgba(34,197,94,0.85);
+    text-decoration-thickness: 2px;
   }
-  /* Filter bar — sits above the matrix table */
-  .aaa-filter-bar {
-    max-width: 1160px;
-    margin: 12px auto 4px;
-    padding: 12px 16px;
-    background: rgba(255,255,255,0.04);
-    backdrop-filter: blur(14px);
-    border: 1px solid rgba(255,255,255,0.10);
-    border-radius: 14px;
-    display: flex;
-    gap: 18px;
-    align-items: center;
-    color: #E2E8F0;
-    font-size: 13px;
-    font-family: system-ui, sans-serif;
-    flex-wrap: wrap;
+  /* Rejected (LLM/ML + Park + Avoid + Platform Tech) — red strikethrough. */
+  [data-status="rejected"] {
+    opacity: 0.42;
   }
-  .aaa-filter-bar label {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    user-select: none;
+  [data-status="rejected"] h3,
+  [data-status="rejected"] td:not(.roadmap-note) {
+    text-decoration: line-through;
+    text-decoration-color: rgba(220,38,38,0.85);
+    text-decoration-thickness: 2px;
   }
-  .aaa-filter-bar input[type="checkbox"] {
-    width: 18px; height: 18px;
-    cursor: pointer;
+  /* Status chip beside title */
+  .status-chip {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+    vertical-align: middle;
+    text-decoration: none !important;
   }
-  .aaa-filter-bar .filter-stat {
-    margin-left: auto;
-    font-size: 11px;
-    opacity: 0.65;
+  .status-chip.implemented {
+    background: rgba(34,197,94,0.25);
+    border: 1px solid rgba(34,197,94,0.5);
+    color: #86EFAC;
   }
+  .status-chip.rejected {
+    background: rgba(220,38,38,0.20);
+    border: 1px solid rgba(220,38,38,0.45);
+    color: #FCA5A5;
+  }
+  /* V2 banner */
   .v2-banner {
     display: block;
     max-width: 1160px;
@@ -6068,36 +6645,107 @@ function forfeit(slotIdx) {
     transition: transform 200ms cubic-bezier(0.34,1.56,0.64,1);
   }
   .v2-banner:hover { transform: translateY(-2px); }
-  .implemented-chip {
-    display: inline-block;
-    margin-left: 6px;
-    padding: 2px 8px;
-    background: rgba(34,197,94,0.25);
-    border: 1px solid rgba(34,197,94,0.5);
+  /* New gameplay pillar section */
+  .new-pillar {
+    max-width: 1160px;
+    margin: 32px auto 24px;
+    padding: 0 16px;
+  }
+  .new-pillar-head {
+    background: linear-gradient(135deg, rgba(252,211,77,0.18), rgba(236,72,153,0.18));
+    border: 1px solid rgba(252,211,77,0.4);
+    border-radius: 18px;
+    padding: 22px 26px;
+    color: white;
+    margin-bottom: 18px;
+  }
+  .new-pillar-head h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 26px;
+    background: linear-gradient(135deg, #FCD34D, #EC4899);
+    -webkit-background-clip: text;
+    color: transparent;
+    margin: 0 0 6px;
+  }
+  .new-pillar-head p { color: rgba(255,255,255,0.86); font-size: 14px; margin: 0; }
+  .new-ideas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+  }
+  .new-idea {
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(252,211,77,0.30);
+    border-radius: 14px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .new-idea-num {
+    font-family: 'Fredoka One', cursive;
+    color: #FCD34D;
+    font-size: 12px;
+  }
+  .new-idea h4 {
+    font-family: 'Fredoka One', cursive;
+    color: #ECFEFF;
+    font-size: 17px;
+    margin: 0;
+  }
+  .new-idea .why {
+    font-size: 11px;
+    color: rgba(255,255,255,0.65);
+    font-style: italic;
+  }
+  .new-idea p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.88);
+    line-height: 1.55;
+    margin: 0;
+  }
+  .new-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .new-pill {
+    padding: 3px 8px;
     border-radius: 999px;
     font-size: 10px;
     font-weight: 800;
-    color: #86EFAC;
-    vertical-align: middle;
+    text-transform: uppercase;
   }
+  .new-pill-mech { background: rgba(6,182,212,0.20); color: #67E8F9; border: 1px solid rgba(6,182,212,0.4); }
+  .new-pill-effort { background: rgba(252,211,77,0.20); color: #FDE68A; border: 1px solid rgba(252,211,77,0.4); }
+  .new-pill-impact { background: rgba(52,211,153,0.20); color: #86EFAC; border: 1px solid rgba(52,211,153,0.4); }
 </style>
 <script>
 (function () {
   'use strict';
-  // Mapping based on 2026-06-21 audit (see CHANGELOG):
-  var LLM_ML_IDS    = ['#11','#25','#26','#27','#28','#29','#46'];
+  // 2026-06-21 audit:
   var IMPLEMENTED_IDS = ['#18','#42','#45'];
+  // Rejected = LLM/ML + Park + Avoid + Platform Tech (#47-50 per owner)
+  // LLM/ML: #11 #25 #26 #27 #28 #29 #46
+  // Park:  #2 #5 #7 #8 #21 #22 #23 #25 #27 #30 #32 #34 #36 #37 #43 #46 #48
+  // Avoid: #14 #15 #18 #35
+  // Platform Tech: #47 #48 #49 #50 (owner: "reject semua")
+  var REJECTED_IDS = [
+    '#2','#5','#7','#8','#11','#14','#15','#21','#22','#23',
+    '#25','#27','#30','#32','#34','#35','#36','#37','#43',
+    '#46','#47','#48','#49','#50'
+  ];
 
   function tagElements (ids, attr, value) {
     ids.forEach(function (id) {
-      // Tag matrix table row
       document.querySelectorAll('.roadmap-id').forEach(function (cell) {
         if (cell.textContent.trim() === id) {
           var row = cell.closest('tr');
           if (row) row.setAttribute(attr, value);
         }
       });
-      // Tag idea card (article)
       document.querySelectorAll('.idea-number').forEach(function (n) {
         if (n.textContent.trim() === id) {
           var card = n.closest('.idea');
@@ -6107,22 +6755,20 @@ function forfeit(slotIdx) {
     });
   }
 
-  function injectFilterBar () {
-    var bar = document.createElement('div');
-    bar.className = 'aaa-filter-bar';
-    bar.innerHTML =
-      '<label><input type="checkbox" id="aaa-show-impl"> <span>Show implemented ' +
-      '(' + IMPLEMENTED_IDS.length + ')</span></label>' +
-      '<span class="filter-stat">' + LLM_ML_IDS.length +
-      ' LLM/ML ideas removed entirely · 7 ideas always hidden</span>';
-    var matrixSection = document.getElementById('roadmap-review') ||
-                        document.querySelector('section.category');
-    if (matrixSection && matrixSection.parentNode) {
-      matrixSection.parentNode.insertBefore(bar, matrixSection);
-    }
-    var cb = document.getElementById('aaa-show-impl');
-    if (cb) cb.addEventListener('change', function () {
-      document.body.classList.toggle('show-implemented', cb.checked);
+  function addStatusChips (ids, label, cls) {
+    ids.forEach(function (id) {
+      document.querySelectorAll('.idea-number').forEach(function (n) {
+        if (n.textContent.trim() !== id) return;
+        var card = n.closest('.idea');
+        if (!card) return;
+        var h = card.querySelector('h3');
+        if (h && !h.querySelector('.status-chip')) {
+          var chip = document.createElement('span');
+          chip.className = 'status-chip ' + cls;
+          chip.textContent = label;
+          h.appendChild(chip);
+        }
+      });
     });
   }
 
@@ -6132,34 +6778,98 @@ function forfeit(slotIdx) {
     b.href = '50-ideas-v2.html';
     b.textContent = '▶ Versi V2 — 50 ide baru, lebih align dengan game →';
     var header = document.querySelector('.summary') || document.body.firstElementChild;
-    if (header && header.parentNode) {
-      header.parentNode.insertBefore(b, header.nextSibling);
+    if (header && header.parentNode) header.parentNode.insertBefore(b, header.nextSibling);
+  }
+
+  // 12 fresh GAMEPLAY-focused ideas — owner: "kasih ide yang jauh lebih menarik" + "fokus pada ide gameplay"
+  var GAMEPLAY_IDEAS = [
+    { id:'G1',  title:'Boss Rush Mode', why:'8 gym leaders berurutan, HP carry-over',
+      desc:'Kalahkan 8 Brock/Misty/...Giovanni dalam 1 sesi tanpa istirahat. HP Pokemon CARRY OVER antar pertarungan — taruhan tinggi. Reward: badge bertumpuk + Pokemon legendaris.',
+      pills:['Battle','MVP 2W','Impact: High'] },
+    { id:'G2',  title:'Roguelite Pokemon Run', why:'Permadeath + percabangan',
+      desc:'Map jalan bercabang. Setiap node = battle/quiz/event. Pokemon yang faint HILANG permanen sampai run selesai. Mati = mulai ulang. Adiktif tapi singkat (15 menit/run).',
+      pills:['Roguelite','MVP 3W','Impact: High'] },
+    { id:'G3',  title:'Type Triangle Combo', why:'Rock-paper-scissors layer di atas type chart',
+      desc:'Setiap turn, pemain pilih 1 dari 3 jurus dengan ikon ✊✋✌ tersembunyi. Reveal bersamaan. Cocok jurus mengalahkan lawan plus type effectiveness. Mind-game dan tactical.',
+      pills:['Mind-game','MVP 2W','Impact: Med'] },
+    { id:'G4',  title:'Pokemon Drafting Pick-3',
+      why:'Pre-battle drafting fase, counter-pick',
+      desc:'Sebelum match, pemain pilih 3 Pokemon dari 9 random. Lawan lihat pilihan kita lalu pilih counter mereka. Belajar type chart + planning ahead.',
+      pills:['Strategy','MVP 1W','Impact: High'] },
+    { id:'G5',  title:'Endless Wave Survival',
+      why:'Skalating wave, leaderboard',
+      desc:'Lawan datang gelombang demi gelombang dengan kesulitan naik. Berapa wave bisa bertahan? Local leaderboard saja (no server). 5 menit casual mode.',
+      pills:['Survival','MVP 2W','Impact: High'] },
+    { id:'G6',  title:'Mirror Match — Pure Skill',
+      why:'Keduanya Pokemon identik',
+      desc:'PvP mode khusus: kedua pemain pakai Pokemon yang SAMA persis (HP, move, stats). Murni soal akurasi + speed jawab. Tidak ada faktor luck.',
+      pills:['Skill','MVP 1W','Impact: Med'] },
+    { id:'G7',  title:'Time Attack Gym Mode',
+      why:'Speedrun setiap gym',
+      desc:'Coba selesaikan gym dalam < N detik. Damage formula tetap, tapi setiap detik kelebihan = -1 star. Local best time saved, share via screenshot.',
+      pills:['Speedrun','MVP 1W','Impact: Med'] },
+    { id:'G8',  title:'Catch Pokemon Mini-Game',
+      why:'Throw ball + timing',
+      desc:'Lawan wild Pokemon → tap & swipe arah Poke Ball. Timing sweet-spot (Pokemon di tengah radius) = critical catch. Akurasi swipe = catch rate.',
+      pills:['Mini-game','MVP 2W','Impact: High'] },
+    { id:'G9',  title:'4-Player Battle Royale',
+      why:'Semua serang semua di tournament',
+      desc:'Mode khusus tournament: bukan bracket, tapi 4 pemain bertarung BARENG. Targeting bebas. Last Pokemon standing menang. Same-device chaotic fun.',
+      pills:['Multiplayer','MVP 2W','Impact: High'] },
+    { id:'G10', title:'Move Combo Discovery',
+      why:'Hidden 2-move sequences',
+      desc:'Beberapa kombinasi 2 jurus berurutan unlock combo move khusus (mis. Ember + Wing Attack = Flame Spiral). Discoverable via play. Achievement journal mencatat semua combo yang ditemukan.',
+      pills:['Discovery','MVP 3W','Impact: High'] },
+    { id:'G11', title:'Status Effect Tactical (Kid-Safe)',
+      why:'Burn/freeze/sleep, kid-friendly',
+      desc:'Tambah status effect: Burn (-5% HP/turn), Sleep (skip 1 turn), Stun (1 turn skip). Anti-frustration: max 2 status di battle, durasi pendek (2-3 turn).',
+      pills:['Depth','MVP 2W','Impact: Med'] },
+    { id:'G12', title:'Hold Item System (Equip)',
+      why:'Equip 1 item, modifies battle',
+      desc:'Pre-battle pilih 1 item: Berry (heal saat low HP), Stone (boost type tertentu), Charm (block 1 critical). Strategic depth tanpa bikin pemain pemula bingung — opsional.',
+      pills:['Equipment','MVP 2W','Impact: High'] }
+  ];
+
+  function injectGameplayPillar () {
+    var existing = document.getElementById('new-gameplay-pillar');
+    if (existing) return;
+    var sec = document.createElement('section');
+    sec.className = 'new-pillar';
+    sec.id = 'new-gameplay-pillar';
+    var html = '<div class="new-pillar-head">' +
+      '<h2>🎮 12 Ide Gameplay Baru — Pengganti yang Direject</h2>' +
+      '<p>Sebagai pengganti ide yang dicoret (LLM/ML + Park + Avoid + Platform Tech), 12 ide ini fokus penuh pada <strong>gameplay mechanics</strong>. Semuanya bisa langsung dipasang ke G10/G13/G13B/G13C/G23 yang sudah ada. Zero LLM, zero ML, zero paid API, zero server.</p>' +
+      '</div><div class="new-ideas-grid">';
+    GAMEPLAY_IDEAS.forEach(function (g) {
+      html += '<article class="new-idea">' +
+        '<div class="new-idea-num">' + g.id + '</div>' +
+        '<h4>' + g.title + '</h4>' +
+        '<div class="why">' + g.why + '</div>' +
+        '<p>' + g.desc + '</p>' +
+        '<div class="new-pills">' +
+        '<span class="new-pill new-pill-mech">' + g.pills[0] + '</span>' +
+        '<span class="new-pill new-pill-effort">' + g.pills[1] + '</span>' +
+        '<span class="new-pill new-pill-impact">' + g.pills[2] + '</span>' +
+        '</div></article>';
+    });
+    html += '</div>';
+    sec.innerHTML = html;
+    // Insert before the footer
+    var footer = document.querySelector('footer');
+    if (footer && footer.parentNode) {
+      footer.parentNode.insertBefore(sec, footer);
+    } else {
+      document.body.appendChild(sec);
     }
   }
 
-  function addImplementedChips () {
-    IMPLEMENTED_IDS.forEach(function (id) {
-      document.querySelectorAll('.idea-number').forEach(function (n) {
-        if (n.textContent.trim() !== id) return;
-        var card = n.closest('.idea');
-        if (!card) return;
-        var h = card.querySelector('h3');
-        if (h && !h.querySelector('.implemented-chip')) {
-          var chip = document.createElement('span');
-          chip.className = 'implemented-chip';
-          chip.textContent = '✅ Sudah';
-          h.appendChild(chip);
-        }
-      });
-    });
-  }
-
   document.addEventListener('DOMContentLoaded', function () {
-    try { tagElements(LLM_ML_IDS, 'data-tag', 'llm-ml'); } catch (e) {}
     try { tagElements(IMPLEMENTED_IDS, 'data-status', 'implemented'); } catch (e) {}
-    try { addImplementedChips(); } catch (e) {}
-    try { injectFilterBar(); } catch (e) {}
+    try { tagElements(REJECTED_IDS, 'data-status', 'rejected'); } catch (e) {}
+    try { addStatusChips(IMPLEMENTED_IDS, '✅ Sudah diimplementasi', 'implemented'); } catch (e) {}
+    try { addStatusChips(REJECTED_IDS, '🚫 Reject', 'rejected'); } catch (e) {}
     try { injectV2Banner(); } catch (e) {}
+    try { injectGameplayPillar(); } catch (e) {}
   });
 })();
 </script>
