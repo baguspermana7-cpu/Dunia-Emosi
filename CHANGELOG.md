@@ -1,3 +1,68 @@
+## [2026-06-21] — AAA proposal page: detailed plan from owner review + interactive Review Console
+
+### NEW: Detail plan blocks (proposals/50-ideas-aaa.html)
+- Definition of Done card (6 criteria — Learning impact / Short-session fit / Parent-safe / Existing game fit / Pokemon hook / MVP feasible 1-4 weeks). Floor: minimum 4/6.
+- 6 build-sequence principles (stability → learning feedback → skill tracking → daily routine → 2D hub → online; never reversed).
+- Top 12 reshape specs (#42 Mastery Trees / #26 Adaptive Curriculum rule-based / #29 Stroke Feedback / #31 Daily Training / #1 Pulau Emosi 2D MVP / #16 Parent-Kid Co-Op / #38 Daily Quests local / #39 Trainer Level mastery-linked / #44 Adaptive Music light / #45 Cinematic SFX / #6 Player Housing / #17 Async Gift parent-gated) — each with MVP, data/code skeleton, acceptance criteria, impact/safety/phase pills.
+- Sprint Plan 0-6 (90 days): Audit → Learning Event Log → G10 hint-first → Mastery Trees → Daily Training → G9 stroke feedback → Pulau Emosi 2D.
+- Monthly outcome roadmap M1-M12 (outcome for child + outcome for parent, not feature list).
+- KPI table replacing time-spent metric: Correction Success ≥60% / Repeat Learning ≥50% / Session 5-12 min / Parent Clarity ≥80% / Mastery trend +5%/wk / Frustration rate ↓.
+- Refuse list: 16 ideas explicitly NOT built within 12 months (#2/#7/#8/#11/#14/#15/#18/#23/#30/#32/#35/#36/#37/#43/#46/#48) with reasons.
+
+### NEW: Interactive Review Console (per owner request)
+- Floating FAB at bottom-right with `{reviewed}/{total}` counter (69 widgets total = 50 ideas + 12 reshape + 7 sprints).
+- Per-card injected widget: 5-option decision dropdown (Pending / Approve-Build / Approve-Later / Reject / Discuss) + free-text notes + auto-save status.
+- Auto-save to `localStorage['dunia-aaa-review-v1']` 250 ms debounce, decision colors widget border (green/blue/red/purple/gold).
+- Review Console panel: stat tiles (Build / Later / Reject / Pending) + Export JSON / Copy JSON / Generate Markdown / Import / Clear All.
+- Markdown export groups items by decision for direct hand-off to developer execution.
+
+### Why
+Owner's review (`proposals/review-50-ideas-aaa-roadmap.md`, 748 lines) re-prioritized the original 50-ideas-aaa.html with a child-first framework. The matrix table was wired earlier (existing `#roadmap-review` section). This pass extends the page with the executable framework (DoD, principles, Top-12 specs, sprints, KPIs, refuse-list) AND a GUI for the owner to approve/reject per idea so the developer can execute directly from the saved state.
+
+### Files touched
+- `proposals/50-ideas-aaa.html` (+~1100 lines: CSS for detail blocks + review widget + console panel, 7 detail section blocks, floating FAB DOM, ~270-line vanilla JS module).
+
+### FOLLOWUP (same day, depth pass — owner: "konsep kurang detail, algo, vfx dll. dan nggak ada isi approve atau correspondence di htmlnya")
+- NEW: Shared Building Blocks detail card (5 sub-cards) — full algorithms + VFX standard before the Top 12 grid:
+  - **A · Learning Event Log** — TS schema, ring-buffer write path, classifyError() branches, edge cases (DST, quota, multi-tab), tests
+  - **B · Mastery Formula** — weighted MA with exponential decay (λ=0.08, t½≈8.7d), cold-start floor, hint discount, justification per constant, 4 concrete tests
+  - **C · Daily Quest Selection** — deterministic todayKey(WIB) + mulberry32(hash) seed, weak-skill slot mapping, replay/skew handling
+  - **D · Stroke Match Algorithm** — polyline scoring (start 25% + DTW order 30% + closeness 30% + completion 15%) + letter variants for T/E/M/W + b↔d confusion hints
+  - **E · VFX & Audio Standard** — timing palette (120/320/520/680/400/300ms), kid-safe color tokens (no red flash, soft amber instead), concurrent caps (24 particles, 1 shake, 3 toasts), LITE-mode trigger ≥5 hits/1.2s, reduced-motion mapping, audio mix levels (-6/-18/-12/-10/-16 dBFS)
+- DEEPER: each of the 12 reshape cards gained 3 new subsections — Algorithm pseudocode (game-specific) + VFX & Feedback (timing + palette + reduced-motion) + Edge Cases & Tests. Cards now ~5 sections each instead of 3.
+- NEW (JS): `buildSeed()` parses the matrix-table DOM at runtime to seed `state.items` for all 50 ideas (decision class → review value mapping: now/soon/reshape → approve-build, later → approve-later, park/avoid → reject). Notes prefixed `[Review default · …]` from the existing `roadmap-note` cells. Reshape cards + sprint cards also seeded with `[Reshape default …]` / `[Sprint default …]` prefixes.
+- NEW (JS): `applySeed(seed, overwrite)` runs automatically on first load (state empty) — so the page opens with all 50 correspondence notes pre-filled. Also exposed as `🌱 Reset to Review Defaults` button in the console (with confirm).
+- File size: 153 KB → 195 KB (+42 KB algorithm/VFX content). Validations: JS still parses, 50 ideas + 17 reshape cards + 7 sprints intact.
+
+### FOLLOWUP 2 (same day, free-stack pass — owner: "ganti semua ide yang pakai API bayar, semuanya yang free tanpa biaya")
+- NEW: Block 8 "Free Stack — Tanpa API Berbayar" detail card after the refuse list. Contents:
+  - Replacement matrix (15 rows): per idea → paid dep that was implied → free replacement + caveat
+  - 8 per-domain implementation cards: **LLM-free** (scripted Q&A tree OR WebLLM/Transformers.js in-browser via WebGPU) · **TTS-free** (Web Speech API SpeechSynthesis + Howler bark) · **STT-free** (Web Speech API SpeechRecognition + Vosk.js WASM fallback) · **Save-sync** (Tier 1 Export/Import JSON · Tier 2 Firebase Spark free 1GB · Tier 3 File System Access API) · **Weather** (local-time default + opt-in Open-Meteo free no-key) · **Multiplayer** (same-device + Web NFC + PeerJS public broker — #14/#15/#18 still dropped on safety not cost) · **Video** (Canvas + MediaRecorder webm) · **Music** (Web Audio + Tone.js MIT + Freesound CC0) · **Native install** (PWA install + Capacitor APK sideload, skip Apple $99/yr + Google $25)
+- Pseudocode for: scripted dialogue answer(), WebLLM CreateMLCEngine + child-safe SYSTEM prompt, SpeechSynthesisUtterance with id-ID voice + bark() pitch-shift, SpeechRecognition with id-ID + Vosk fallback, exportSave()/importSave() Blob+FileReader, timeBucket()+season(Indonesia 2-musim), Open-Meteo fetch, renderRecap() with captureStream+MediaRecorder
+- UPDATED: matrix table notes for 15 ideas (#3 #11 #21 #22 #23 #25 #27 #28 #36 #37 #41 #46 #47 #49 #50) — each now leads with "FREE STACK:" and names the free library/API and explains the paid thing being skipped. Reason: these notes feed into `buildSeed()` → review widgets show the free alternative as the default correspondence when owner clicks 🌱 Reset to Review Defaults.
+- Golden rule documented in card footer: default = no internet at all; online opt-in only after parent confirm; paid API NEVER replaces free default — only opt-in layer on top.
+- File size: 195 KB → 218 KB (+23 KB). JS validates. 15 FREE STACK references in matrix.
+
+### IMPORTANT FOR REVIEWERS
+If you had the AAA page open before this pass: the Review Console state in localStorage still contains the *old* default notes. Click **🌱 Reset to Review Defaults** in the Review Console (FAB bottom-right) to re-seed from the updated matrix notes — your existing manual edits will be overwritten by the confirm prompt.
+
+### FOLLOWUP 3 (same day, PvP+Tournament+SFX+Anti-bug — owner: "implementasi PvP same-device portrait split alternating turns, Adventure/PvP/Tournament 2-4 KO bracket, balanced Pokemon, regional filter + slot 7 kodok override, cool menu + SFX, no bugs/infinite loops")
+- NEW: Block 9 "3 Mode Same-Device" — full spec for Adventure / PvP 1v1 / Tournament 2-4 in G10 + G13 family + G13C gym. 13 sub-cards A through M:
+  - **A · Mode Toggle** — 3-card modal (Adventure / PvP / Tournament) with city-region badge
+  - **B · Portrait Split Layout** — P1 bottom + P2 top (rotated 180° for face-to-face), shared center battle stage, anti-peek (DOM not rendered on inactive side, pointer-events:none)
+  - **C · State Machine + Turn Flow** — explicit phase transitions table, alternating turn, signature includes `answerStartedAtMs` for speed factor
+  - **D · BST Normalize 500** — anti-imba formula (Magikarp = Mewtwo). Damage = base × ratio × type × STAB × **speedMult** × **correctnessMult** × 0.4. Speed table: ≤2s=1.5× → 15s=0.6×; wrong answer = 0 damage
+  - **E · Move Pool** — 4 moves per Pokemon (1 basic + 2 type STAB + 1 signature). Crit/miss/status/RNG ALL disabled. Deterministic
+  - **F · Question Pool** — G10 math / G13 type chart quiz / G13C mixed; deterministic seed per match
+  - **G · VFX & Audio** — turn switch swipe 320ms, damage number at center, KO smoke, reduced-motion mapping
+  - **H · Edge Cases & Tests** — 14 edge cases + 10 manual test scenarios
+  - **J · Tournament Mode** — bracket builder per player count (2/3/4 with BYE handling for 3), state machine, VFX bracket visualization (slot reveal stagger / breathing glow on current match / winner morph advance / SVG line draw-in / trophy bounce + confetti), family-friendly rules (no overall timer, encouragement for losers, bronze match optional, handicap mode, pause), persistence + resume from localStorage TTL 24h, 8 tournament-specific edge cases, 8 test scenarios
+  - **K · Regional Pokemon Filter** — schema requires `region` field on all 1025+ Pokemon, per-region counts table (Gen 1-9), CITY_REGION_MAP for gym cities, filterPokemonByRegion() function, **slot 7 + kodok override** that unlocks All Regions / World Cup liga selection, regional variant handling (Alolan/Galarian/Hisuian/Paldean), build-time script + runtime audit tool
+  - **I · Implementation Files** — 9 NEW files (pvp-engine.js, tournament-engine.js, bracket-renderer.js, pokemon-region-db.js, pvp-question-pools.js, pvp-sfx-pack.js, build-pokemon-region-db.py, audit-pokemon-regions.py, audit-pvp-engine.mjs), 7 UPDATED files, 1 NEW standardization doc
+  - **L · Cool Menu UX + Premium SFX Pack** — menu visual: glass-morphism cards with gold sweep border, hover wobble + ripple gold burst, mode reveal stagger 80ms, city region pill, reduced-motion mapping. Tournament setup carousel + bracket reveal + champion screen. **SFX Pack** generated with Web Audio + Tone.js (zero audio files, free): menuOpen sweep, menuHover ping, menuTap chord, modeConfirm arpeggio, countdown 3-2-1 tick + battleGo gong, turnSwitch chime, hitNormal/hitSuper/hitNotEffective layered, pokemonFaint crash, matchWin fanfare, bracketSlotReveal pop, trophyDrop ceremonial gong, tournamentWin fanfareGrand. Mix levels per kid-safe Block E standard (-6/-12/-10/-16/-8 dBFS). Anti-spam guards: voice cap, hover throttle, turn-switch cooldown, iOS autoplay gate, tab-hidden pause
+  - **M · Anti-Bug Guarantees** — 8 bug classes blocked. Guards: explicit state-machine transitions table (`PVP_TRANSITIONS`), hard sudden-death cap (3 rounds → deterministic coin flip), animation timeout 4s with cleanup fallback, tap debounce + answerLock 80ms, history log cap 200 entries, listener unsubscribe on destroy, lifecycle visibilitychange pause/resume, safeSave/safeLoad with try-catch. Tournament-specific: idempotent advanceWinner (no double-advance), match queue cap 6, MAX_TURNS_PER_MATCH 32 (anti-stalemate force-win to higher HP), idempotent forfeit handling with cancel-pending cascade. Audit tools: `audit-pvp-engine.mjs` (200 random match balance sim + state sweep), `audit-tournament-engine.mjs` (1000 random 4-player tournament + forfeit chain + resume sim), `audit-pokemon-regions.py` (0 missing-region + BST sane + variant region valid), `audit-sfx-pack.js` (event hooks + mix peak). Manual QA checklist: 20 items. Pre-ship acceptance: 0 console error in 1000-match sim, 0 invalid transition, flat memory profile, FPS ≥55 mid-tier Android.
+- File size: 218 KB → 288 KB (+70 KB PvP + Tournament + Regional + Menu/SFX + Anti-bug content). JS validates. 50 ideas + 39 reshape sub-cards + 7 sprints + 13 Block-9 sub-cards intact.
+
 ## [2026-05-04] — Massive polish session: VFX × 6 + level expansion + UX (commits 4826c53 → f886068)
 
 ### NEW: 22+ VFX layers across 6 rounds (type-effectiveness system)
