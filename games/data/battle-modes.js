@@ -952,8 +952,10 @@
       .bm-mirror-half[data-state="inactive"] .bm-mirror-wait {
         display: grid; place-items: center;
         position: absolute; inset: 0;
-        background: rgba(11,18,38,0.78);
-        backdrop-filter: blur(4px);
+        /* Owner anti-peek: fully opaque so the active player's question
+           cannot be read through the inactive overlay. */
+        background: linear-gradient(180deg, rgba(11,18,38,0.97), rgba(19,26,51,0.99));
+        backdrop-filter: blur(12px);
         font-family: 'Fredoka One', cursive;
         color: #FCD34D;
         font-size: clamp(18px, 4.5vw, 28px);
@@ -964,7 +966,7 @@
         transform: rotate(180deg);
       }
       .bm-mirror-half[data-state="inactive"] .bm-mirror-inner {
-        filter: saturate(0.4) brightness(0.55);
+        visibility: hidden;
       }
 
       /* Player header */
