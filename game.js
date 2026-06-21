@@ -1557,6 +1557,11 @@ function g13cNextLetter() {
 }
 
 function openLevelSelect(gameNum) {
+  // G25 Math Hub — standalone HTML owns hub + level grid + quiz.
+  if (gameNum === 25) {
+    window.location.href = 'games/g25-math.html?v=20260621c'
+    return
+  }
   // Kodok slot-7 special unlock (runs once, guard inside).
   // Trigger only on G13B; G13C tile uses openGymGame() which has its own call.
   if (gameNum === '13b') _applyKodokSlot7Unlock()
@@ -1713,11 +1718,11 @@ function startGameWithLevel(levelNum) {
   }
   if(state.selectedLevel==='hard') checkAchievement('hard_mode')
   // Standalone games navigate to separate HTML — skip showScreen (no screen-gameN div exists)
-  const standaloneGames = [6, 14, 15, 16, 19, 20, 21, 22, 23, 24]
+  const standaloneGames = [6, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25]
   if (!standaloneGames.includes(state.currentGame)) {
     showScreen('screen-game' + state.currentGame)
   }
-  const inits = [null,initGame1,initGame2,initGame3,initGame4,initGame5,initGame6,initGame7,initGame8,initGame9,initGame10,initGame11,initGame12,initGame13,initGame14,initGame15,initGame16,initGame17,initGame18,initGame19,initGame20,initGame21,initGame22,initGame23,initGame24,initGame25]
+  const inits = [null,initGame1,initGame2,initGame3,initGame4,initGame5,initGame6,initGame7,initGame8,initGame9,initGame10,initGame11,initGame12,initGame13,initGame14,initGame15,initGame16,initGame17,initGame18,initGame19,initGame20,initGame21,initGame22,initGame23,initGame24]
   if (inits[state.currentGame]) inits[state.currentGame]()
 }
 
@@ -7454,7 +7459,13 @@ function g11Next(){
 }
 
 // ─────────────────────────────────────────────────────────────────────
-// G25 — Kuis Matematika (2026-06-21, owner-requested)
+// G25 — Kuis Matematika
+// Moved to standalone HTML at games/g25-math.html (2026-06-21).
+// World-map tile click is routed via openLevelSelect() at the top of game.js.
+// The old in-page implementation block below is intentionally kept as dead
+// code for now (will be removed in a follow-up); the standalone is the live
+// implementation. Functions below are unreachable since `25` is in
+// `standaloneGames` and no `initGame25` is in the `inits` array.
 //   - 5-10 questions per page based on tier (easy 6, medium 8, hard 10)
 //   - Mirrors G11 (Kuis Sains) flow + modern glass UI
 //   - Question generation via window.makeMathQuestionV2() in math-rules.js
