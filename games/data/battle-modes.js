@@ -765,26 +765,31 @@
           <span class="bm-half-pname">${escapeHtml(meName)}</span>
         </div>
 
-        <!-- Opponent Pokemon mini panel (top of player's view) -->
-        <div class="bm-half-opp" id="bm-opp-${playerIdx}">
-          <div class="bm-half-opp-info">
-            <div class="bm-half-opp-name">${escapeHtml(opp.name)} <span class="bm-half-typetag" style="background:${opp.color}22; color:${opp.color}; border:1px solid ${opp.color}55;">${opp.type}</span></div>
-            <div class="bm-half-hp">
-              <div class="bm-half-hp-bar"><div class="bm-half-hp-fill ${hpColorClass(opp.hp, opp.hpMax)}" style="width:${(opp.hp/opp.hpMax)*100}%;"></div></div>
-              <span class="bm-half-hp-text">${opp.hp}/${opp.hpMax}</span>
+        <!-- Battle stage (mirrors original .g10-field quadrant layout) -->
+        <div class="bm-half-stage">
+          <!-- Opponent at top-right (mirrors .g10-espr-wrap) -->
+          <div class="bm-half-opp" id="bm-opp-${playerIdx}">
+            <div class="bm-half-opp-info">
+              <div class="bm-half-opp-name">${escapeHtml(opp.name)} <span class="bm-half-typetag" style="background:${opp.color};">${opp.type}</span></div>
+              <div class="bm-half-hp">
+                <span class="bm-half-hp-lbl">HP</span>
+                <div class="bm-half-hp-bar"><div class="bm-half-hp-fill ${hpColorClass(opp.hp, opp.hpMax)}" style="width:${(opp.hp/opp.hpMax)*100}%;"></div></div>
+              </div>
+              <div class="bm-half-hp-text">${opp.hp}/${opp.hpMax}</div>
             </div>
+            <img class="bm-half-opp-img" alt="${escapeHtml(opp.name)}" src="${spritePath(opp.id, opp.slug)}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'bm-half-opp-sprite',textContent:'${opp.emoji}'}))">
           </div>
-          <img class="bm-half-opp-img" alt="${escapeHtml(opp.name)}" src="${spritePath(opp.id, opp.slug)}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'bm-half-opp-sprite',textContent:'${opp.emoji}'}))">
-        </div>
 
-        <!-- Own Pokemon panel (bigger, faces opponent) -->
-        <div class="bm-half-self" id="bm-self-${playerIdx}">
-          <img class="bm-half-self-img" alt="${escapeHtml(me.name)}" src="${spritePath(me.id, me.slug)}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'bm-half-self-sprite',textContent:'${me.emoji}'}))">
-          <div class="bm-half-self-info">
-            <div class="bm-half-self-name">${escapeHtml(me.name)} <span class="bm-half-typetag" style="background:${me.color}22; color:${me.color}; border:1px solid ${me.color}55;">${me.type}</span></div>
-            <div class="bm-half-hp">
-              <div class="bm-half-hp-bar"><div class="bm-half-hp-fill ${hpColorClass(me.hp, me.hpMax)}" style="width:${(me.hp/me.hpMax)*100}%;"></div></div>
-              <span class="bm-half-hp-text">${me.hp}/${me.hpMax}</span>
+          <!-- Self at bottom-left (mirrors .g10-pspr-wrap) -->
+          <div class="bm-half-self" id="bm-self-${playerIdx}">
+            <img class="bm-half-self-img" alt="${escapeHtml(me.name)}" src="${spritePath(me.id, me.slug)}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'bm-half-self-sprite',textContent:'${me.emoji}'}))">
+            <div class="bm-half-self-info">
+              <div class="bm-half-self-name">${escapeHtml(me.name)} <span class="bm-half-typetag" style="background:${me.color};">${me.type}</span></div>
+              <div class="bm-half-hp">
+                <span class="bm-half-hp-lbl">HP</span>
+                <div class="bm-half-hp-bar"><div class="bm-half-hp-fill ${hpColorClass(me.hp, me.hpMax)}" style="width:${(me.hp/me.hpMax)*100}%;"></div></div>
+              </div>
+              <div class="bm-half-hp-text">${me.hp}/${me.hpMax}</div>
             </div>
           </div>
         </div>
@@ -1038,13 +1043,15 @@
   function injectPvPRealCSS () {
     if (_realCssInjected) return;
     const css = `
+      /* ── Mirrors original .g10-field battle style (style.css:2554) ── */
       .bm-pvp-real {
         position: fixed; inset: 0; z-index: 9100;
-        background: linear-gradient(180deg, #0B1226 0%, #131A33 100%);
         font-family: 'Inter', system-ui, sans-serif;
-        color: #F1F5F9;
+        color: #111;
         overflow: hidden;
+        background: #87CEEB;
       }
+      .bm-pvp-real > * { position: relative; z-index: 1; }
       .bm-real-exit {
         position: fixed; top: 8px; left: 8px; z-index: 9105;
         background: rgba(0,0,0,0.70);
@@ -1062,16 +1069,25 @@
         position: relative;
         overflow: hidden;
         transition: opacity 280ms ease, filter 280ms ease;
-        background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.20));
-        border-bottom: 1px solid rgba(255,255,255,0.10);
+        /* Mirror the original .g10-field gradient (sky → grass) */
+        background: linear-gradient(180deg,#6bbfee 0%,#a8d8f8 32%,#a0d870 46%,#5a9e3a 65%,#3e7028 100%);
+        border-bottom: 2px solid rgba(0,0,0,0.35);
+      }
+      .bm-mirror-half::before {
+        content: ''; position: absolute; inset: -10% -5%;
+        background: url('/Dunia-Emosi/assets/bg-pokemon-battle.webp') center center/cover no-repeat;
+        opacity: 0.55;
+        pointer-events: none;
       }
       .bm-mirror-half:last-child { border-bottom: none; }
       .bm-mirror-top .bm-mirror-inner { transform: rotate(180deg); transform-origin: center; height: 100%; }
       .bm-mirror-inner {
+        position: relative;
         height: 100%;
         display: grid;
-        grid-template-rows: auto auto 1fr auto;
-        padding: 8px 12px;
+        grid-template-rows: auto 1fr auto;
+        padding: 4px 8px 6px;
+        z-index: 1;
       }
       .bm-mirror-half[data-state="active"]   .bm-mirror-wait { display: none; }
       .bm-mirror-half[data-state="inactive"] .bm-mirror-wait {
@@ -1094,50 +1110,90 @@
         visibility: hidden;
       }
 
-      /* Player header */
+      /* Player header — small player-name pill, top corner */
       .bm-half-head {
-        display: flex; align-items: center; gap: 8px;
-        padding: 4px 4px 6px;
+        display: flex; align-items: center; justify-content: space-between; gap: 6px;
+        padding: 2px 4px;
       }
-      .bm-half-pname { font-family: 'Fredoka One', cursive; font-size: 14px; }
+      .bm-half-pname {
+        font-family: 'Fredoka One', cursive; font-size: 11px;
+        background: rgba(0,0,0,0.55); color: #FCD34D;
+        padding: 2px 8px; border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.20);
+      }
 
-      /* Opponent mini panel (top of player's half) */
+      /* ── Battle stage (mirrors .g10-field quadrant layout) ── */
+      .bm-half-stage {
+        position: relative; width: 100%; min-height: 0;
+        display: block;
+      }
+      /* Opponent at top-right of stage (mirrors .g10-espr-wrap) */
       .bm-half-opp {
-        display: flex; align-items: center; gap: 10px;
-        padding: 6px 10px;
-        background: rgba(0,0,0,0.30);
-        border: 1px solid rgba(255,255,255,0.10);
-        border-radius: 12px;
+        position: absolute; top: 4px; right: 4px;
+        display: flex; flex-direction: column; align-items: flex-end;
+        gap: 2px; max-width: 56%;
+        z-index: 2;
       }
-      .bm-half-opp-info { flex: 1; min-width: 0; }
-      .bm-half-opp-name { font-family: 'Fredoka One', cursive; font-size: 13px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
-      .bm-half-opp-sprite { font-size: clamp(28px, 6vw, 44px); line-height: 1; flex-shrink: 0; }
+      .bm-half-opp-info {
+        /* DS-style white info box (mirrors .g10-infobox @ style.css:2564) */
+        background: rgba(248,248,240,0.97);
+        border: 2.5px solid #444; border-radius: 10px;
+        padding: 4px 8px 5px;
+        box-shadow: 3px 3px 0 rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.9);
+        min-width: 120px; max-width: 160px;
+        color: #111;
+      }
+      .bm-half-opp-name {
+        display: flex; align-items: baseline; gap: 4px;
+        font-family: 'Fredoka One', cursive; font-size: 12px; color: #111;
+        white-space: nowrap; overflow: hidden;
+      }
+      .bm-half-opp-sprite {
+        font-size: clamp(56px, 18vw, 100px); line-height: 1;
+        filter: drop-shadow(0 6px 14px rgba(0,0,0,0.5));
+      }
       .bm-half-opp-img {
-        width: clamp(48px, 11vw, 72px);
-        height: clamp(48px, 11vw, 72px);
-        object-fit: contain;
-        filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
-        flex-shrink: 0;
+        /* Mirrors .g10-espr — responsive sprite ~5-7% screen area */
+        width: min(28vw, 12vh); height: min(28vw, 12vh);
+        object-fit: contain; max-width: 100%; max-height: 100%;
+        --flip: -1;
+        transform: scaleX(var(--flip));
+        filter: drop-shadow(0 4px 10px rgba(0,0,0,0.55));
       }
 
-      /* Own Pokemon panel (bigger, center-stage) */
+      /* Own Pokemon at bottom-left of stage (mirrors .g10-pspr-wrap) */
       .bm-half-self {
-        display: flex; align-items: center; gap: 12px;
-        padding: 8px 10px;
-        margin: 8px 0;
+        position: absolute; bottom: 4px; left: 4px;
+        display: flex; flex-direction: column-reverse; align-items: flex-start;
+        gap: 2px; max-width: 60%;
+        z-index: 2;
+      }
+      .bm-half-self-info {
+        background: rgba(248,248,240,0.97);
+        border: 2.5px solid #444; border-radius: 10px;
+        padding: 4px 8px 5px;
+        box-shadow: 3px 3px 0 rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.9);
+        min-width: 130px; max-width: 170px;
+        color: #111;
+      }
+      .bm-half-self-name {
+        display: flex; align-items: baseline; gap: 4px;
+        font-family: 'Fredoka One', cursive; font-size: 13px; color: #111;
+        white-space: nowrap; overflow: hidden;
       }
       .bm-half-self-sprite {
-        font-size: clamp(64px, 11vh, 96px);
-        line-height: 1; flex-shrink: 0;
-        filter: drop-shadow(0 8px 22px rgba(0,0,0,0.5));
+        font-size: clamp(110px, 20vh, 200px); line-height: 1;
+        filter: drop-shadow(0 12px 28px rgba(0,0,0,0.55));
         animation: bmSpriteBob 2200ms ease-in-out infinite;
       }
       .bm-half-self-img {
-        width: clamp(90px, 18vw, 140px);
-        height: clamp(90px, 18vw, 140px);
-        object-fit: contain;
-        flex-shrink: 0;
-        filter: drop-shadow(0 8px 22px rgba(0,0,0,0.5));
+        /* Mirrors .g10-pspr — responsive sprite landing in 7-10% screen-area band
+           (owner: "7-10% luasan screen, jadi responsive tidak static") */
+        width: min(45vw, 22vh); height: min(45vw, 22vh);
+        object-fit: contain; max-width: 100%; max-height: 100%;
+        --flip: 1;
+        transform: scaleX(var(--flip));
+        filter: drop-shadow(0 6px 18px rgba(0,0,0,0.7)) drop-shadow(0 0 10px rgba(255,220,50,0.45));
         animation: bmSpriteBob 2200ms ease-in-out infinite;
       }
       .bm-attack-lunge {
@@ -1175,64 +1231,86 @@
         0%, 100% { transform: translateY(0); }
         50%      { transform: translateY(-6px); }
       }
-      .bm-half-self-info { flex: 1; min-width: 0; }
-      .bm-half-self-name { font-family: 'Fredoka One', cursive; font-size: 15px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
-      .bm-half-typetag { padding: 1px 6px; border-radius: 999px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; }
+      /* Type badge — mirrors .g10-type-badge (style.css:2580) */
+      .bm-half-typetag {
+        display: inline-block;
+        padding: 2px 7px; border-radius: 100px;
+        font-size: 9px; font-weight: 700;
+        color: #fff; letter-spacing: 0.3px;
+        text-transform: uppercase;
+      }
 
-      /* HP bar */
-      .bm-half-hp { display: flex; gap: 6px; align-items: center; margin-top: 4px; }
+      /* HP bar — mirrors .g10-hp-track / .g10-hp-fill (style.css:2581-2594) */
+      .bm-half-hp {
+        display: flex; align-items: center; gap: 4px;
+        margin-top: 3px;
+      }
+      .bm-half-hp-lbl {
+        font-size: 10px; font-weight: 900; color: #333;
+        font-family: monospace; min-width: 14px;
+      }
       .bm-half-hp-bar {
         flex: 1; height: 8px;
-        background: rgba(255,255,255,0.10);
-        border-radius: 4px; overflow: hidden;
+        background: #d0d0c0; border-radius: 100px;
+        border: 1px solid #aaa; overflow: hidden;
       }
       .bm-half-hp-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #10B981, #34D399);
-        transition: width 480ms ease, background 280ms ease;
+        height: 100%; border-radius: 100px;
+        background: #52D058;
+        transition: width 0.6s cubic-bezier(0.4,0,0.2,1), background 0.4s ease;
+        position: relative; overflow: hidden;
       }
-      .bm-half-hp-fill.med { background: linear-gradient(90deg, #F59E0B, #FBBF24); }
-      .bm-half-hp-fill.low { background: linear-gradient(90deg, #EF4444, #F87171); animation: bmHpPulse 800ms ease-in-out infinite; }
-      @keyframes bmHpPulse {
-        0%, 100% { filter: brightness(1); }
-        50%      { filter: brightness(1.4); }
+      .bm-half-hp-fill::after {
+        content: ''; position: absolute; top: 0; left: -100%;
+        width: 55%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+        animation: bmHpShine 1.8s ease-in-out infinite;
       }
-      .bm-half-hp-text { font-family: 'Fredoka One', cursive; font-size: 11px; min-width: 56px; text-align: right; }
+      @keyframes bmHpShine { 0% { left: -100%; } 100% { left: 200%; } }
+      .bm-half-hp-fill.med { background: #F8C030; }
+      .bm-half-hp-fill.low { background: #E83030; animation: bmHpBlink 0.7s ease-in-out infinite; }
+      @keyframes bmHpBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.45; } }
+      .bm-half-hp-text {
+        font-size: 9px; font-weight: 700; color: #555;
+        font-family: monospace; min-width: 48px; text-align: right;
+      }
 
-      /* Question / move panel */
+      /* Question / move panel — owner: "diperkecil agar gambarnya dapat porsi lebih" */
       .bm-half-panel {
-        background: rgba(0,0,0,0.30);
-        border: 1px solid rgba(255,255,255,0.10);
-        border-radius: 12px;
-        padding: 10px 12px;
-        display: flex; flex-direction: column; gap: 8px;
+        background: rgba(0,0,0,0.45);
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(255,255,255,0.14);
+        border-radius: 10px;
+        padding: 6px 8px;
+        display: flex; flex-direction: column; gap: 4px;
       }
       .bm-half-question {
         font-family: 'Fredoka One', cursive;
-        font-size: 12px;
-        color: rgba(255,255,255,0.78);
+        font-size: 10px;
+        color: rgba(255,255,255,0.70);
         text-align: center;
       }
       .bm-half-q-text {
         font-family: 'Fredoka One', cursive;
-        font-size: clamp(15px, 3.8vw, 20px);
+        font-size: clamp(12px, 2.8vw, 16px);
         text-align: center;
-        padding: 8px 10px;
-        background: rgba(255,255,255,0.06);
-        border-radius: 10px;
+        padding: 5px 8px;
+        background: rgba(255,255,255,0.10);
+        border-radius: 8px;
       }
       .bm-half-choices, .bm-half-moves {
-        display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+        display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
       }
       .bm-half-choice {
-        padding: 10px 8px;
-        background: rgba(255,255,255,0.06);
-        border: 1.5px solid rgba(255,255,255,0.20);
-        border-radius: 10px;
+        padding: 6px 4px;
+        background: rgba(255,255,255,0.10);
+        border: 1px solid rgba(255,255,255,0.25);
+        border-radius: 8px;
         color: #F1F5F9;
         font-family: 'Fredoka One', cursive;
-        font-size: clamp(14px, 3.5vw, 18px);
+        font-size: clamp(12px, 3vw, 16px);
         cursor: pointer;
+        min-height: 32px;
         transition: transform 180ms cubic-bezier(0.34,1.56,0.64,1), border-color 180ms;
       }
       .bm-half-choice:hover { transform: translateY(-2px); border-color: rgba(6,182,212,0.55); }
@@ -1248,22 +1326,23 @@
       }
 
       .bm-half-move {
-        padding: 8px 10px;
-        background: rgba(255,255,255,0.06);
-        border: 1.5px solid rgba(255,255,255,0.20);
-        border-radius: 10px;
+        padding: 5px 8px;
+        background: rgba(255,255,255,0.10);
+        border: 1px solid rgba(255,255,255,0.25);
+        border-radius: 8px;
         color: #F1F5F9;
         font-family: 'Fredoka One', cursive;
         text-align: left;
         cursor: pointer;
+        min-height: 38px;
         transition: transform 180ms cubic-bezier(0.34,1.56,0.64,1), border-color 180ms;
       }
       .bm-half-move:hover { transform: translateY(-2px); border-color: rgba(252,211,77,0.55); }
       .bm-half-move:active { transform: scale(0.96); }
-      .bm-half-move-name { font-size: 13px; margin-bottom: 4px; }
+      .bm-half-move-name { font-size: 11px; margin-bottom: 2px; }
       .bm-half-move-meta {
-        display: flex; flex-wrap: wrap; gap: 3px;
-        font-size: 8px; letter-spacing: 0.3px; text-transform: uppercase;
+        display: flex; flex-wrap: wrap; gap: 2px;
+        font-size: 7px; letter-spacing: 0.2px; text-transform: uppercase;
       }
       .bm-real-move-type {
         padding: 1px 5px; border-radius: 5px; font-weight: 800;
