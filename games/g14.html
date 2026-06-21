@@ -1968,18 +1968,33 @@ function confirmBack() {
   goBack()
 }
 
-// Recalculate lane positions on orientation change
+// Recalculate lane positions on orientation change + rebuild track/signal/grass
+// (2026-05-04 fix): previously only player was repositioned, tracks stayed at
+// OLD laneYs → train + rails misaligned after rotate landscape↔portrait.
+let _g14ResizeDebounce = null
 window.addEventListener('resize', () => {
   if (!app) return
-  app.renderer.resize(Math.min(window.innerWidth, 1400), Math.min(window.innerHeight, 1000))
-  const H = app.screen.height
-  const laneH = (H - gameTop) / LANE_COUNT
-  laneYs = Array.from({length: LANE_COUNT}, (_, i) => gameTop + laneH * i + laneH / 2)
-  if (L.player) {
-    const wheelOffset = Math.max(0, laneH * 0.22 - 19)
-    L.player._wheelOffset = wheelOffset
-    L.player.y = laneYs[S.lane] + wheelOffset
-  }
+  if (_g14ResizeDebounce) clearTimeout(_g14ResizeDebounce)
+  // Debounce 120ms so rapid rotations don't rebuild multiple times → no
+  // duplicate sprite risk
+  _g14ResizeDebounce = setTimeout(() => {
+    if (!app) return
+    app.renderer.resize(Math.min(window.innerWidth, 1400), Math.min(window.innerHeight, 1000))
+    const H = app.screen.height
+    laneH = (H - gameTop) / LANE_COUNT
+    laneYs = Array.from({length: LANE_COUNT}, (_, i) => gameTop + laneH * i + laneH / 2)
+    // Rebuild track infrastructure to match new lane positions
+    try {
+      if (L.tracks && L.tracks.parent) { L.tracks.parent.removeChild(L.tracks); L.tracks.destroy({children:true}) }
+      if (typeof buildTracks === 'function') buildTracks()
+    } catch(_){}
+    // Reposition player to new lane Y
+    if (L.player) {
+      const wheelOffset = Math.max(0, laneH * 0.22 - 19)
+      L.player._wheelOffset = wheelOffset
+      L.player.y = laneYs[S.lane] + wheelOffset
+    }
+  }, 120)
 })
 
 // ═══════════════════════════════════════════════════════════

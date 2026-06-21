@@ -2135,32 +2135,43 @@ function togglePause(){
 })();
 function finishGame(){try{document.getElementById('game-bgm').pause()}catch(_){};goBack()}
 function restartGame(){location.reload()}
+// Resize handler with debounce (2026-05-04 fix): rapid orientation rotations
+// were creating duplicate Casey sprites because dispose() + buildTrain() raced.
+// 120ms debounce ensures only ONE rebuild per stable rotation.
+let _g16ResizeDebounce = null
 window.addEventListener('resize',()=>{
   if(!app)return
-  app.renderer.resize(Math.min(window.innerWidth,1400),Math.min(window.innerHeight,1000))
-  // Recalculate responsive layout for new viewport — TRAIN_SCREEN_X + track Y.
-  const newW=app.screen.width, newH=app.screen.height
-  // Task #59 — 5% base; per-train clamp happens inside buildTrain via CharacterTrain.computeTrainX
-  TRAIN_SCREEN_X=Math.max(40, Math.round(newW*0.05))
-  const newTY=getTrackY(newH)
-  // Rebuild character train so geometry (sprite + wheels + smoke) rescales with RZ.scale()
-  const TS_sel = TRAIN_STYLES[selectedTrainIdx]
-  const isCharacter = TS_sel && TS_sel.character && TS_sel.characterKey && G16_CHAR_CONFIGS[TS_sel.characterKey]
-  if (isCharacter && window.CharacterTrain && trainContainer) {
-    try {
-      if (g16CharacterTrain) { g16CharacterTrain.dispose(); g16CharacterTrain = null }
-      if (trainContainer.parent) trainContainer.parent.removeChild(trainContainer)
-      buildTrain(newW, newH)
-    } catch(_) {}
-  } else if (trainContainer) {
-    trainContainer.x=TRAIN_SCREEN_X
-    trainContainer.y=newTY-14
-  }
-  // Reposition obstacles and NPC to new track Y
-  if(S.obstacles) S.obstacles.forEach(o=>{if(o.container) o.container.y=newTY})
-  // Reposition headlight and fire glow
-  if(headlightBeam){ headlightBeam.x=TRAIN_SCREEN_X+66; headlightBeam.y=newTY-14 }
-  if(fireGlow){ fireGlow.x=TRAIN_SCREEN_X+2; fireGlow.y=newTY-18 }
+  if (_g16ResizeDebounce) clearTimeout(_g16ResizeDebounce)
+  _g16ResizeDebounce = setTimeout(()=>{
+    if(!app)return
+    app.renderer.resize(Math.min(window.innerWidth,1400),Math.min(window.innerHeight,1000))
+    // Recalculate responsive layout for new viewport — TRAIN_SCREEN_X + track Y.
+    const newW=app.screen.width, newH=app.screen.height
+    // Task #59 — 5% base; per-train clamp happens inside buildTrain via CharacterTrain.computeTrainX
+    TRAIN_SCREEN_X=Math.max(40, Math.round(newW*0.05))
+    const newTY=getTrackY(newH)
+    // Rebuild character train so geometry (sprite + wheels + smoke) rescales with RZ.scale()
+    const TS_sel = TRAIN_STYLES[selectedTrainIdx]
+    const isCharacter = TS_sel && TS_sel.character && TS_sel.characterKey && G16_CHAR_CONFIGS[TS_sel.characterKey]
+    if (isCharacter && window.CharacterTrain && trainContainer) {
+      try {
+        // Defensive cleanup — find ALL character train remnants on stage and remove
+        if (g16CharacterTrain) { g16CharacterTrain.dispose(); g16CharacterTrain = null }
+        if (trainContainer.parent) trainContainer.parent.removeChild(trainContainer)
+        try { trainContainer.destroy({children:true}) } catch(_){}
+        trainContainer = null
+        buildTrain(newW, newH)
+      } catch(_) {}
+    } else if (trainContainer) {
+      trainContainer.x=TRAIN_SCREEN_X
+      trainContainer.y=newTY-14
+    }
+    // Reposition obstacles and NPC to new track Y
+    if(S.obstacles) S.obstacles.forEach(o=>{if(o.container) o.container.y=newTY})
+    // Reposition headlight and fire glow
+    if(headlightBeam){ headlightBeam.x=TRAIN_SCREEN_X+66; headlightBeam.y=newTY-14 }
+    if(fireGlow){ fireGlow.x=TRAIN_SCREEN_X+2; fireGlow.y=newTY-18 }
+  }, 120)
 })
 </script>
 </body>
