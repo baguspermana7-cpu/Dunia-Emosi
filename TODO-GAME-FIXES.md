@@ -2509,3 +2509,59 @@ Neither went through `openLevelSelect` where `_applyKodokSlot7Unlock` was placed
 - L108 Always audit class-wide after any infinite-loop fix
 - L109 Sprite race cascade prefers smallest, not best quality
 - L110 Themed-gym contamination produces wrong Pokemon types
+
+## #147 — Session 2026-05-04 VFX expansion + level cap + UX polish (commits 4826c53 → f886068)
+
+### Type-effectiveness expansion + tooling
+- [x] **#147-A** Unit tests: `scripts/test-type-chart.js` — 128 cases for calcTypeMult / calcStab / calcFullMult / getWeaknesses / TYPE_EMOJI completeness / bidirectional sanity. Run: `node scripts/test-type-chart.js`
+- [x] **#147-B** Audit script: `scripts/audit-pokemon-types.py` — flags canonical-mismatch entries with THEMATIC_EXCEPTIONS list (40+ documented designer choices). Codified L110 regression catcher.
+- [x] **#147-C** Standardization doc: `documentation and standarization/TYPE_EFFECTIVENESS_STANDARD.md` — 31-layer reference (10 educational + 21 VFX) + full API table + thematic-exceptions list
+- [x] **#147-D** G23 (Pokemon Run) TR Meowth battle: extended type-effectiveness to the 5th battle subsystem. All damage now scaled by calcFullMult with STAB. Weakness sticker on enemy HP. applyHitFeedback wired for all 3 hit paths.
+
+### VFX system expansion (rounds 1-6, 22+ layers)
+- [x] **#147-E** Round 1: screen flash + particle burst + defender shake + CRITICAL label
+- [x] **#147-F** Round 2: viewport shake + knockback + emoji rain + afterglow
+- [x] **#147-G** Round 3: damage number + slow-mo freeze + type tint + HP danger pulse
+- [x] **#147-H** Round 4: combo streak counter (x2/SUPER/MEGA/LEGENDARY) + type ring + victory burst + defeat vignette
+- [x] **#147-I** Round 5: star burst + faint smoke + attacker aura + move title + sparkle linger
+- [x] **#147-J** Round 6: milestone celebration (10/20/30/40/50/60 = MILESTONE/PRO/MASTER/EXPERT/LEGENDARY/GRANDMASTER) + 2× confetti burst + .gh-level chip pulsing halo
+- [x] **#147-K** All VFX CSS mirrored to 3 locations: style.css + g13c-pixi.html inline + g23-pixi.html inline. ~600 lines CSS total, GPU-accelerated.
+
+### Level cap expansion (all games)
+- [x] **#147-L** Pokemon games (G13/G16/G24): 40 → 60 levels
+- [x] **#147-M** Pixi bonus (G19/G20/G22): 30 → 50 levels
+- [x] **#147-N** Standard games (G1-G12/G13B/G13C/G14/G15/G17/G18/G21/G23): 20 → 40 levels
+- [x] **#147-O** G10_LEVELS extended 20 → 40 with progressive math (× at 21-25, ÷ at 26-30, mix + bigger numbers 31-40)
+- [x] **#147-P** _g10LevelFallback(lv) procedural fallback for level > 40 (HP cap 15, max cap 200)
+- [x] **#147-Q** G21 MAX_LEVEL 10 → 30, G24 maxLevel 40 → 60
+
+### Comprehensive UX polish (11 phases)
+- [x] **#147-R** Touch targets ≥44px universal, ≥48px for primary actions
+- [x] **#147-S** :focus-visible polish — purple/amber 3px outline, mouse focus suppressed
+- [x] **#147-T** Universal tap feedback — scale(0.96) 80ms on press
+- [x] **#147-U** Toast notification system — showToast(msg, kind, duration?) + ARIA live region + 4 variants (success/info/warn/error)
+- [x] **#147-V** Loading skeletons — .skeleton-line/card/avatar with shimmer animation
+- [x] **#147-W** Reduced-motion respect — @media (prefers-reduced-motion: reduce) full opt-out
+- [x] **#147-X** Disabled states — opacity 0.55 + grayscale + cursor:not-allowed + pointer-events:none
+- [x] **#147-Y** Header chip animations — .gh-stars.celebrate bouncy scale on star-gain
+- [x] **#147-Z** Mascot bubble UX — cursor:pointer + tap feedback
+- [x] **#147-AA** Card hover-lift consistency across city/region/party/level cards
+- [x] **#147-AB** Safe-area padding — env(safe-area-inset-*) for notched devices
+
+### G23 sprite quality fix
+- [x] **#147-AC** G23 HD_DB rewrite — _hdAlt2() helper uses POKE_IDS for local pokemondb_hd_alt2 lookup. Bag picker + TR Meowth battle now 630×630 HD (was 180×180 CDN).
+
+### Cache version history this session
+- v=20260506m → n → o → p → q → r → s → t → u → v → w → x → y → z → aa → ab → ac
+- sw.js v6 → v7 → v8 → v9 → v10 → v11 → v12 → v13 → v14 → v15 → v16 → v17 → v18 → v19 → v20 → v21
+
+### Lessons added this session
+- L107 Modal stuck = patch z-index + pointer-events + tap binding together
+- L108 Always audit class-wide after any infinite-loop fix
+- L109 (deprecated, merged into L111)
+- L110 Themed-gym contamination produces wrong Pokemon types
+- L111 Sprite race-cascade prefers smallest, not best (priority cascade fix)
+- L112 Auto-fire VFX needs concurrent caps (anti-DOM-leak)
+- L113 Level cap expansion needs procedural fallback (defensive against save-state)
+- L114 Centralized totalLevels formula (single source of truth)
+- L115 Toast notifications need ARIA live region (a11y mandate)

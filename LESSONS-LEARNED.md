@@ -324,3 +324,34 @@ Skip any of these → silent dead code.
 **Problem**: 17 Pokemon entries across g13c-pixi.html + game.js had wrong primary `type` fields. Pattern: when Pokemon was added to a themed gym (Steel gym, Flying gym, etc.) the SECONDARY type matching the theme was used as primary. Examples: Lucario `steel` instead of `fighting` (canonical Fighting/Steel), Empoleon `steel` instead of `water` (Water/Steel), Magneton `steel` instead of `electric` (Electric/Steel).
 **Solution**: Surgical edit each entry to canonical primary type. Skip entries where thematic intent is clearly stronger than accuracy (Pidgey family in flying gym — kid expectation that "all flying gym Pokemon are flying" outweighs canonical "Pidgey is Normal/Flying primary Normal").
 **Rule**: When adding Pokemon to themed contexts, always derive type from POKEMON_DB canonical data (primary type), not from the gym theme. Acceptable to keep thematic over canonical when game-design intent is explicit (Pidgey example), but document the tradeoff.
+
+## L111 — Sprite race-cascade prefers smallest, not best (2026-05-04)
+**Problem**: G13/G13B/G23 showed pixelated Pokemon despite HD WebP files existing locally. attachSpriteCascade hotfix #120-Z launched ALL urls in parallel via `new Image()` and "first to load wins" — but the 10 KB SVG fallback always beat the 500 KB HD WebP on any normal network.
+**Solution**: Two-phase cascade — PRIMARY url (highest quality) gets 3 s exclusive window. If it loads → use it. If error (404 fires immediately ~50 ms) OR timeout → THEN race remaining fallbacks. HD wins on any modern network.
+**Rule**: When designing fallback chains for assets with varying sizes, NEVER race them naive-parallel. Either sequential with per-step timeout, or primary-first-then-secondary-race. "First to load wins" optimizes speed but breaks quality preference.
+
+## L112 — Auto-fire VFX needs concurrent caps (2026-05-04)
+**Problem**: Adding floating eff-text + particle burst + emoji rain + viewport shake to applyHitFeedback was great for super-effective hits, but legendary auto-attack loops in G13B fired 6 hits/second. DOM nodes accumulated, mobile janked.
+**Solution**: Per-effect concurrent caps:
+- spawnEffectivenessText: max 2 concurrent (oldest removed before new)
+- spawnScreenFlash: max 1 (replaces previous)
+- spawnEmojiRain: max 1
+- spawnAfterglow: stateless, 700 ms auto-cleanup
+- spawnCriticalLabel: stateless, 1.2 s cleanup
+Plus in-memory Set guard for spawnFirstTimeHint (race-safe vs sessionStorage round-trip).
+**Rule**: Any auto-fire VFX helper MUST declare its concurrent budget. Either single-slot (replace previous), capped (eject oldest), or unbounded-with-short-cleanup (<1 s). Otherwise rapid triggers leak DOM and break frame budget on low-end Android.
+
+## L113 — Level cap expansion needs procedural fallback (2026-05-04)
+**Problem**: Expanded G10 from 20 → 40 levels with explicit per-level configs. But user can install / restore save state with `selectedLevelNum > 40` (cross-version migration, future expansion). Hardcoded `G10_LEVELS[lv]` would return undefined → crash.
+**Solution**: Added `_g10LevelFallback(lv)` procedural function. Caps HP at 15, max number at 200, scales rounds. Called as `G10_LEVELS[lv] || _g10LevelFallback(lv)`. Boss at every 10th level via `lv % 10 === 0`.
+**Rule**: When a level matrix has explicit per-level configs, always pair with a procedural fallback that extrapolates from the highest defined level. Defensive against save-state migration, future expansion, and out-of-range bugs.
+
+## L114 — Centralized totalLevels formula (2026-05-04)
+**Problem**: Three games (G13/G16/G24) used 40-level cap, three more (G19/G20/G22) used 30, rest used 20. Each game might also have its own internal cap. Mismatch between UI-progress denominator and actual playable levels confused users.
+**Solution**: Single centralized formula in game.js progress UI (line 1622) maps `state.currentGame` to its level count. Per-game internal caps must STAY ≥ the centralized value (else progress bar overflows). When expanding, bump both centralized + internal.
+**Rule**: UI progress denominators must be derived from a single source of truth. When the source moves, ALL consumers move with it. Test by playing to max level + checking progress fill.
+
+## L115 — Toast notifications need ARIA live region (2026-05-04)
+**Problem**: Added showToast() helper for save/sync/achievement feedback. First implementation just appended divs — screen readers and accessibility tools wouldn't announce them.
+**Solution**: Wrap with `<div class="toast-container" role="status" aria-live="polite">`. Polite (not assertive) so it doesn't interrupt mid-speech. Auto-created on first toast call.
+**Rule**: Every dynamic UI notification (toast, snackbar, banner) needs role="status" or role="alert" + aria-live attribute. Polite for non-critical (saved, info), assertive for critical (error, must-respond).

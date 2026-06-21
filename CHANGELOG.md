@@ -1,3 +1,97 @@
+## [2026-05-04] — Massive polish session: VFX × 6 + level expansion + UX (commits 4826c53 → f886068)
+
+### NEW: 22+ VFX layers across 6 rounds (type-effectiveness system)
+- Round 1: screen flash + 12-particle burst + defender shake + CRITICAL label
+- Round 2: viewport shake + 28-px knockback + 10-emoji rain + golden afterglow
+- Round 3: tier-colored damage number + slow-mo CRITICAL freeze + type-tint flash + HP danger pulse
+- Round 4: combo streak counter (x2 → SUPER → MEGA → LEGENDARY) + type-colored ring + victory confetti burst + defeat vignette
+- Round 5: 6 ★ star burst + smoke puff on faint + attacker aura + dramatic move title + sparkle linger
+- Round 6: milestone celebration on every 10th level (MILESTONE/PRO/MASTER/EXPERT/LEGENDARY/GRANDMASTER) + 2× confetti + pulsing chip halo
+- All GPU-accelerated, concurrent caps prevent DOM leak, mirrored CSS to 3 locations (style.css + g13c inline + g23 inline)
+
+### NEW: G23 TR Meowth battle wired with type-effectiveness
+- 5th battle subsystem now uses calcFullMult with STAB
+- Weakness sticker on enemy HP, applyHitFeedback all 3 hit paths
+- Damage scaled 1 → 2 HP on super-effective for visual feedback
+
+### NEW: Toast notification system
+- window.showToast(msg, kind, duration?) helper
+- ARIA live region + 4 variants (success/info/warn/error)
+- Auto-stacks, dismisses at 2.9s, gradient-bordered pill design
+
+### NEW: Loading skeleton states
+- .skeleton-line / .skeleton-card / .skeleton-avatar shimmer placeholders
+- 1.4s ease-in-out background-position animation
+- Drop-in for any loading state across all games
+
+### NEW: Unit tests + audit tools
+- scripts/test-type-chart.js — 128 assertions covering type chart math
+- scripts/audit-pokemon-types.py — L110 regression catcher with 40+ thematic exceptions documented
+- documentation and standarization/TYPE_EFFECTIVENESS_STANDARD.md — 31-layer reference + full API
+
+### EXPANDED: Level caps for all games
+- Pokemon games (G13/G16/G24): 40 → 60 levels
+- Pixi bonus (G19/G20/G22): 30 → 50 levels
+- Standard games (G1-G12/G13B/G13C/G14/G15/G17/G18/G21/G23): 20 → 40 levels
+- G10_LEVELS extended with progressive math (× at 21-25, ÷ at 26-30, mix + bigger numbers 31-40)
+- _g10LevelFallback procedural fallback for level > 40 (HP cap 15, max cap 200, boss every 10th)
+- G21 MAX_LEVEL 10 → 30, G24 maxLevel 40 → 60
+
+### POLISH: Comprehensive UX hardening
+- Touch targets ≥44px universal, ≥48px for primary actions (kid precision-friendly)
+- :focus-visible 3px purple/amber outlines for keyboard nav, mouse focus suppressed
+- Universal tap feedback scale(0.96) 80ms — every press gets proprioceptive response
+- Reduced-motion @media query full opt-out (skeletons, toasts, animations)
+- Disabled state polish — opacity 0.55 + grayscale + cursor:not-allowed
+- Header chip animations — .gh-stars.celebrate bouncy scale on star-gain
+- Card hover-lift consistency across city/region/party/level cards
+- Safe-area padding for notched devices via env(safe-area-inset-*)
+
+### FIX: 17 Pokemon type corrections (themed-gym contamination)
+- Lucario steel→fighting, Empoleon steel→water, Magneton/Magnemite steel→electric
+- Jynx psychic→ice, Slowbro psychic→water, Altaria flying→dragon
+- Mr. Mime fairy→psychic, Mawile fairy→steel, Stunfisk electric→ground
+- Murkrow flying→dark, Toxapex water→poison, Drapion dark→poison
+- Noivern dragon→flying, Azumarill fairy→water, Bastiodon steel→rock, Forretress steel→bug
+- Pidgey family kept as flying (thematic gym intent documented)
+
+### FIX: 5 unbounded-while loops bounded (audit class-wide after L108 fix)
+- math-rules.js, g21-pixi.html, g14.html, g15-pixi.html, g22-candy.html
+- All while loops now have safety counter + sequential pad
+
+### FIX: Sprite cascade race condition (L111)
+- attachSpriteCascade was racing ALL urls in parallel; 10 KB SVG always beat 500 KB HD WebP
+- New two-phase: PRIMARY url 3s exclusive window, fallback race only on timeout/error
+- Weedle "patah-patah" resolved + all Gen 1-9 HD now wins on modern network
+
+### BACKFILL: 102 Gen 9 HD WebP sprites (fidough → hydrapple)
+- Pokemon IDs 924-1025 — Indigo Disk DLC roster
+- Source: PokeAPI official-artwork 1000×1000 → PIL LANCZOS resize → 630×630 WebP
+- Reusable script: scripts/download-gen9-hd-sprites.py
+- Folder: 54 MB across 1128 sprites
+
+### G23 HD_DB rewrite — local HD WebP fallback (was CDN 180×180)
+- _hdAlt2(slug) helper with regional suffix normalisation
+- Bag picker + TR Meowth battle thumbnails now 630×630 HD
+
+### G13C battle win modal stuck (L107) — 3-layer defense
+- CSS z-index 500 → 99999 + overlay sweep + pointerdown/click dual binding
+- Force-hide all known overlays before render (g13-evo, math-quiz, pause, bag)
+
+### Cache version history
+- v=20260506m → ac (17 bumps)
+- sw.js v6 → v21 (15 bumps)
+
+### Lessons added (LESSONS-LEARNED.md L107-L115)
+- L107 Modal stuck = patch z-index + pointer-events + tap binding together
+- L108 Always audit class-wide after any infinite-loop fix
+- L110 Themed-gym contamination produces wrong Pokemon types
+- L111 Sprite race-cascade prefers smallest, not best
+- L112 Auto-fire VFX needs concurrent caps
+- L113 Level cap expansion needs procedural fallback
+- L114 Centralized totalLevels formula
+- L115 Toast notifications need ARIA live region
+
 ## [2026-05-04] — Type-effectiveness system + sprite quality (commits b91c27a → b056bb5)
 
 ### NEW: Pokemon type-effectiveness 10-layer visual guidance (all 4 battle games)
