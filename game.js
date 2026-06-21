@@ -1392,7 +1392,7 @@ function openGymGame() {
   playClick()
   // MUST remain synchronous — page redirects on next line, no time for async work.
   _applyKodokSlot7Unlock()   // runs once, guard inside; slot-7+frog preset
-  window.location.href = 'games/g13c-pixi.html?v=20260506ab'
+  window.location.href = 'games/g13c-pixi.html?v=20260506ac'
 }
 
 function g13cBuildLetterSelect() {
@@ -2618,6 +2618,31 @@ function vibrate(pattern){if(isVibrateOn()&&navigator.vibrate)navigator.vibrate(
 function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx}
 function playTone(freq,dur,type='sine',vol=0.2){if(!isSoundOn())return;try{const ctx=getAudio(),osc=ctx.createOscillator(),gain=ctx.createGain();osc.connect(gain);gain.connect(ctx.destination);osc.type=type;osc.frequency.value=freq;gain.gain.setValueAtTime(vol,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);osc.start();osc.stop(ctx.currentTime+dur)}catch(e){}}
 function playCorrect(){playTone(523,0.1,'sine',0.2);setTimeout(()=>playTone(659,0.1,'sine',0.2),100);setTimeout(()=>playTone(784,0.2,'sine',0.25),200);setTimeout(()=>playTone(1047,0.3,'sine',0.2),340);vibrate([20,40,20]);try{spawnCorrectConfetti()}catch(_){}/* Task #87: haptic parity per AUDIT-2026-04-25 P2-6 — double-tap pattern for correct answer engagement */}
+
+// ── Toast notification helper (universal UX feedback pattern) ──
+// Usage: showToast('Saved!', 'success') or showToast('Network error', 'error')
+// Auto-stacks vertically, dismisses at 2.9s, container created on demand.
+function showToast(msg, kind, durationMs){
+  if (!msg) return
+  const validKinds = ['success', 'info', 'warn', 'error']
+  const k = validKinds.indexOf(kind) >= 0 ? kind : 'info'
+  let container = document.querySelector('.toast-container')
+  if (!container) {
+    container = document.createElement('div')
+    container.className = 'toast-container'
+    container.setAttribute('role', 'status')
+    container.setAttribute('aria-live', 'polite')
+    document.body.appendChild(container)
+  }
+  const icons = { success: '✅', info: '💡', warn: '⚠', error: '⚠' }
+  const t = document.createElement('div')
+  t.className = 'toast toast-' + k
+  t.innerHTML = '<span class="toast-icon" aria-hidden="true">' + icons[k] + '</span>' +
+                '<span>' + String(msg).replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</span>'
+  container.appendChild(t)
+  setTimeout(() => { try { t.remove() } catch(_){} }, durationMs || 2900)
+}
+window.showToast = showToast
 
 // Milestone celebration on every 10th level (10/20/30/40/50/60).
 // Auto-fires when reaching milestone level. Shows tier-appropriate label
@@ -13358,7 +13383,7 @@ function initGame23() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g23Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g23-pixi.html?v=20260506ab'
+  window.location.href = 'games/g23-pixi.html?v=20260506ac'
 }
 
 function initGame24() {
