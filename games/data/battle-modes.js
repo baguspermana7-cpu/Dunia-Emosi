@@ -689,16 +689,36 @@
       { name:'Volt Tackle',    type:'electric', pwr:34 }
     ]}
   ];
-  // A1 Pre-built packages. Each `teamIdx` indexes into POKE_ROSTER above so 3-mode
-  // pulls the first 3 slots, 6-mode pulls all 6. Mirror of G13C PLAYER_PACKAGES.
-  const PVP_PACKAGES = [
-    { id:'pikachu_squad', name:'Tim Pikachu', emoji:'⚡', desc:'Listrik & cucu Pikachu',  teamIdx:[0, 7, 4, 5, 6, 1] },
-    { id:'water_crew',    name:'Tim Air',     emoji:'💧', desc:'Petualang air',           teamIdx:[3, 0, 4, 2, 5, 7] },
-    { id:'fire_brigade',  name:'Tim Api',     emoji:'🔥', desc:'Pasukan berapi-api',      teamIdx:[1, 6, 4, 0, 7, 5] },
-    { id:'grass_garden',  name:'Tim Hutan',   emoji:'🌿', desc:'Penjaga taman',           teamIdx:[2, 4, 5, 3, 6, 7] },
-    { id:'cute_friends',  name:'Tim Lucu',    emoji:'🎀', desc:'Imut tapi tangguh',       teamIdx:[5, 7, 4, 0, 6, 2] },
-    { id:'mixed_starter', name:'Tim Campur',  emoji:'🌟', desc:'Semua starter klasik',    teamIdx:[0, 1, 3, 2, 4, 5] }
-  ];
+  // A1 Pre-built packages — consume the SHARED window.POKE_PACKAGES (49 packages,
+  // identical to G13C Adventure). Owner: "Ambil dan gunakan package picker yang
+  // sudah existing di Gym Pokémon agar isinya konsisten dengan yang ada di sana."
+  // Loaded by games/data/poke-packages.js.
+  function getPokePackages () {
+    return (typeof window !== 'undefined' && Array.isArray(window.POKE_PACKAGES))
+      ? window.POKE_PACKAGES
+      : [];
+  }
+
+  // Region label + emoji map for grouping the 49 packages in the picker.
+  const REGION_META = {
+    kanto:  { name:'Kanto',  emoji:'🔥' },
+    johto:  { name:'Johto',  emoji:'🌅' },
+    hoenn:  { name:'Hoenn',  emoji:'🌊' },
+    sinnoh: { name:'Sinnoh', emoji:'❄️' },
+    unova:  { name:'Unova',  emoji:'🏙️' },
+    kalos:  { name:'Kalos',  emoji:'🗼' },
+    alola:  { name:'Alola',  emoji:'🌴' },
+    galar:  { name:'Galar',  emoji:'🏰' },
+    paldea: { name:'Paldea', emoji:'🌵' }
+  };
+  const REGION_ORDER = ['kanto','johto','hoenn','sinnoh','unova','kalos','alola','galar','paldea'];
+
+  // Tier badge map — G13C ships base / final / mega tiers. Mirror visually.
+  const TIER_META = {
+    base:  { label:'EVO 1', color:'#22c55e' },
+    final: { label:'FINAL', color:'#3b82f6' },
+    mega:  { label:'MEGA',  color:'#a855f7' }
+  };
 
   // A1 Random — per-region random teams from the full 1025-Pokemon database.
   // Owner: "Random per region (random terus). Truly random yang tidak ada di ash."
@@ -741,12 +761,28 @@
     fighting: ['Karate Chop', 'Brick Break'], steel: ['Metal Claw', 'Iron Head']
   };
 
-  // Lazy Pokedex fetch — load once on first random pick. Returns a Promise.
+  // Lazy Pokedex fetch — load once. Builds slug→id map so G13C packages
+  // (which only ship slugs) can resolve to sprite filenames.
   let _pokeDB = null;
+  let _slugToId = null;
   function loadPokeDB () {
     if (_pokeDB) return Promise.resolve(_pokeDB);
     const url = _ASSET_BASE + 'assets/Pokemon/pokemon-db.json';
-    return fetch(url).then(r => r.json()).then(db => { _pokeDB = db; return db; });
+    return fetch(url).then(r => r.json()).then(db => {
+      _pokeDB = db;
+      _slugToId = {};
+      db.forEach(p => { _slugToId[p.slug] = p.id; });
+      return db;
+    });
+  }
+  function slugToId (slug) {
+    if (_slugToId && _slugToId[slug]) return _slugToId[slug];
+    // Fallback for Mega slugs like 'charizard-mega-x' → use base form 'charizard'.
+    if (slug && _slugToId) {
+      const base = slug.split('-')[0];
+      if (_slugToId[base]) return _slugToId[base];
+    }
+    return 0;
   }
 
   // Build a single fresh Pokemon entry from a Pokedex row.
@@ -785,10 +821,37 @@
     return shuffled.slice(0, teamSize).map(buildRandomPokemon).map(p => ({ ...p, hp:80, hpMax:80 }));
   }
 
-  // Convert a package into a fresh team array of {…pokemon, hp, hpMax}.
+  // Adapt G13C-format Pokemon to engine format: add id (from slug→id map), color
+  // (from type), pwr on each move (derived from move-name heuristic + STAB).
+  function adaptPkmFromG13C (pkm) {
+    const moves = (pkm.moves || []).slice(0, 4).map(mv => {
+      let pwr;
+      const isWeak = /^(Tackle|Pound|Scratch|Bide|Withdraw|Growl|Tail Whip|Leer|Endure|Harden|Defense Curl|Smokescreen|Sand Attack|Sing|Howl|Rest|Recover|Heal Bell|Cotton Spore|Lick|Charm|Sweet Kiss|Mean Look|Protect|Astonish|Mimic|Disable|String Shot|Hypnosis|Supersonic|Screech|Confuse Ray|Mist Ball|Calm Mind|Teleport|Light Screen|Agility|Double Team|Spikes|Magnitude|Play Nice)$/.test(mv.name);
+      const isQuick = /^(Quick Attack|Bite|Peck|Headbutt|Ember|Water Gun|Vine Whip|Thunder Shock|Confusion|Pound|Spark|Bubble|Absorb|Gust|Mud Slap|Bubble Beam|Mud Shot)$/.test(mv.name);
+      if (isWeak) pwr = 18;
+      else if (isQuick) pwr = 24;
+      else if (mv.type === pkm.type) pwr = 32;   // STAB-typed signature
+      else pwr = 28;
+      return { name: mv.name, type: mv.type, pwr };
+    });
+    return {
+      id: slugToId(pkm.slug),
+      name: pkm.name,
+      slug: pkm.slug,
+      type: pkm.type,
+      color: TYPE_COLOR[pkm.type] || '#A8A878',
+      emoji: '⭐',
+      hp: 80, hpMax: 80,
+      moves
+    };
+  }
+
+  // Build a fresh team from a package by id. Reads window.POKE_PACKAGES.
   function buildTeamFromPackage (pkgId, teamSize) {
-    const pkg = PVP_PACKAGES.find(p => p.id === pkgId) || PVP_PACKAGES[5];
-    return pkg.teamIdx.slice(0, teamSize).map(idx => ({ ...POKE_ROSTER[idx], hp: 80, hpMax: 80 }));
+    const packages = getPokePackages();
+    const pkg = packages.find(p => p.id === pkgId) || packages[0];
+    if (!pkg || !pkg.team) return [];
+    return pkg.team.slice(0, teamSize).map(adaptPkmFromG13C);
   }
 
   // Type chart — element multiplier capped at 1.2× per owner spec ("elemen itu 1.2x max pengali").
@@ -899,7 +962,9 @@
       // (e.g. Tournament passes pre-picked teams), jump straight to 'battle'.
       preStep: opts.teams ? 'battle' : 'size',
       pickingPlayer: 0,
-      phase: 'question',   // 'question' | 'moves' | 'animating'
+      // Per-turn phases — mirror G13C: each turn starts with the action menu,
+      // then question (if Serang) or switch (if Ganti), then moves, then animating.
+      phase: 'action',     // 'action' | 'question' | 'moves' | 'animating'
       questionStartedAt: 0,
       lastAnswerElapsed: [null, null],
       comboCount: [0, 0]
@@ -999,72 +1064,73 @@
       });
     }
 
-    function renderPickStep () {
-      stopQuestionTimer();
-      const playerIdx = state.pickingPlayer;
-      const meName = opts.players[playerIdx].name;
-      const badgeClass = playerIdx === 0 ? 'p1' : 'p2';
-      root.innerHTML = `
-        <button class="bm-back bm-real-exit" data-exit>×</button>
-        <div class="bm-prestep">
-          <div class="bm-prestep-header">
-            <span class="bm-pvp-badge ${badgeClass}">${badgeClass.toUpperCase()}</span>
-            <span class="bm-prestep-pname">Giliran <b>${escapeHtml(meName)}</b> memilih tim</span>
-          </div>
-          <div class="bm-prestep-sub">Pilih satu paket tim · ${state.teamSize} Pokemon</div>
+    // Build picker HTML for the shared G13C 49 packages, grouped by region with
+    // section headers + tier badges. Also appends the 9 🎲 Random region cards.
+    function renderPkgPickerHtml (teamSize) {
+      const all = getPokePackages();
+      let html = '';
+      // Group by region (per G13C convention)
+      REGION_ORDER.forEach(regKey => {
+        const inRegion = all.filter(p => p.region === regKey);
+        if (!inRegion.length) return;
+        const rmeta = REGION_META[regKey];
+        html += `<div class="bm-section-label">${rmeta.emoji} ${rmeta.name}</div>`;
+        html += `<div class="bm-pkg-grid">`;
+        inRegion.forEach(pkg => {
+          const tier = TIER_META[pkg.tier] || TIER_META.base;
+          const tierBadge = `<span class="bm-pkg-tier" style="background:${tier.color};">${tier.label}</span>`;
+          html += `
+            <button class="bm-pkg-card" data-pkg="${pkg.id}" style="border-color:${pkg.color};">
+              <div class="bm-pkg-head">
+                <span class="bm-pkg-name">${escapeHtml(pkg.label)}</span>
+                ${tierBadge}
+              </div>
+              <div class="bm-pkg-desc">${escapeHtml(pkg.series || '')}</div>
+              <div class="bm-pkg-thumbs">
+                ${pkg.team.slice(0, teamSize).map(p => {
+                  const id = slugToId(p.slug);
+                  const color = TYPE_COLOR[p.type] || '#A8A878';
+                  return `<div class="bm-pkg-thumb" title="${escapeHtml(p.name)}" style="background:${color}22; border-color:${color};">
+                    <img src="${spritePath(id, p.slug)}" alt="${escapeHtml(p.name)}"
+                         onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'⭐',className:'bm-pkg-thumb-fallback'}))">
+                  </div>`;
+                }).join('')}
+              </div>
+            </button>
+          `;
+        });
+        html += `</div>`;
+      });
+      // Random region cards (always at the bottom)
+      html += `<div class="bm-section-label">🎲 Tim Acak · per Region (1025 Pokemon)</div>`;
+      html += `<div class="bm-pkg-grid">`;
+      RANDOM_REGIONS.forEach(reg => {
+        html += `
+          <button class="bm-pkg-card bm-pkg-random" data-region="${reg.id}" data-gen="${reg.gen}">
+            <div class="bm-pkg-head">
+              <span class="bm-pkg-emoji">${reg.emoji}</span>
+              <span class="bm-pkg-name">Tim Acak ${reg.name}</span>
+            </div>
+            <div class="bm-pkg-desc">${reg.desc}</div>
+            <div class="bm-pkg-thumbs bm-pkg-thumbs-random">
+              ${Array.from({length: teamSize}).map(() => `<div class="bm-pkg-thumb bm-pkg-thumb-random"><span>🎲</span></div>`).join('')}
+            </div>
+          </button>
+        `;
+      });
+      html += `</div>`;
+      return html;
+    }
 
-          <div class="bm-section-label">⭐ Tim Tema</div>
-          <div class="bm-pkg-grid">
-            ${PVP_PACKAGES.map(pkg => `
-              <button class="bm-pkg-card" data-pkg="${pkg.id}">
-                <div class="bm-pkg-head">
-                  <span class="bm-pkg-emoji">${pkg.emoji}</span>
-                  <span class="bm-pkg-name">${pkg.name}</span>
-                </div>
-                <div class="bm-pkg-desc">${pkg.desc}</div>
-                <div class="bm-pkg-thumbs">
-                  ${pkg.teamIdx.slice(0, state.teamSize).map(idx => {
-                    const p = POKE_ROSTER[idx];
-                    return `<div class="bm-pkg-thumb" title="${p.name}" style="background:${p.color}22; border-color:${p.color};">
-                      <img src="${spritePath(p.id, p.slug)}" alt="${p.name}"
-                           onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'${p.emoji}',className:'bm-pkg-thumb-fallback'}))">
-                    </div>`;
-                  }).join('')}
-                </div>
-              </button>
-            `).join('')}
-          </div>
-
-          <div class="bm-section-label">🎲 Tim Acak · per Region (1025 Pokemon)</div>
-          <div class="bm-pkg-grid">
-            ${RANDOM_REGIONS.map(reg => `
-              <button class="bm-pkg-card bm-pkg-random" data-region="${reg.id}" data-gen="${reg.gen}">
-                <div class="bm-pkg-head">
-                  <span class="bm-pkg-emoji">${reg.emoji}</span>
-                  <span class="bm-pkg-name">Tim Acak ${reg.name}</span>
-                </div>
-                <div class="bm-pkg-desc">${reg.desc}</div>
-                <div class="bm-pkg-thumbs bm-pkg-thumbs-random">
-                  ${Array.from({length: state.teamSize}).map(() =>
-                    `<div class="bm-pkg-thumb bm-pkg-thumb-random"><span>🎲</span></div>`
-                  ).join('')}
-                </div>
-              </button>
-            `).join('')}
-          </div>
-        </div>
-      `;
-      root.querySelector('[data-exit]').addEventListener('click', exitMatch);
-      // Themed packages — synchronous
+    function wirePickerHandlers (root, playerIdx, advanceFn) {
       root.querySelectorAll('.bm-pkg-card[data-pkg]').forEach(b => {
         b.addEventListener('click', () => {
           const pkgId = b.getAttribute('data-pkg');
           state.teams[playerIdx] = buildTeamFromPackage(pkgId, state.teamSize);
           state.activeIdx[playerIdx] = 0;
-          advancePickStep(playerIdx);
+          advanceFn(playerIdx);
         });
       });
-      // Random region packages — async (lazy-load Pokedex on first click)
       root.querySelectorAll('.bm-pkg-card[data-region]').forEach(b => {
         b.addEventListener('click', () => {
           const gen = parseInt(b.getAttribute('data-gen'));
@@ -1074,13 +1140,55 @@
             if (!team.length) { b.classList.remove('bm-pkg-loading'); return; }
             state.teams[playerIdx] = team;
             state.activeIdx[playerIdx] = 0;
-            advancePickStep(playerIdx);
+            advanceFn(playerIdx);
           }).catch(err => {
             console.warn('[battle-modes] random region pick failed', err);
             b.classList.remove('bm-pkg-loading');
           });
         });
       });
+    }
+
+    function renderPickStep () {
+      stopQuestionTimer();
+      const playerIdx = state.pickingPlayer;
+      const meName = opts.players[playerIdx].name;
+      const badgeClass = playerIdx === 0 ? 'p1' : 'p2';
+      // If pokemon-db isn't loaded yet, the slug→id map is null and all sprites
+      // would fall back to file path 0000_{slug}.webp. Load FIRST, then render.
+      const wasLoaded = !!_pokeDB;
+      const draw = () => {
+        root.innerHTML = `
+          <button class="bm-back bm-real-exit" data-exit>×</button>
+          <div class="bm-prestep">
+            <div class="bm-prestep-header">
+              <span class="bm-pvp-badge ${badgeClass}">${badgeClass.toUpperCase()}</span>
+              <span class="bm-prestep-pname">Giliran <b>${escapeHtml(meName)}</b> memilih tim</span>
+            </div>
+            <div class="bm-prestep-sub">Pilih satu paket tim · ${state.teamSize} Pokemon</div>
+            ${renderPkgPickerHtml(state.teamSize)}
+          </div>
+        `;
+        root.querySelector('[data-exit]').addEventListener('click', exitMatch);
+        wirePickerHandlers(root, playerIdx, advancePickStep);
+      };
+      if (wasLoaded) {
+        draw();
+      } else {
+        // Show a quick loading state while the 19KB pokemon-db fetches.
+        root.innerHTML = `
+          <button class="bm-back bm-real-exit" data-exit>×</button>
+          <div class="bm-prestep" style="padding-top:60px;">
+            <div class="bm-prestep-title">📦 Memuat Pokedex…</div>
+            <div class="bm-prestep-sub">Sebentar, sedang siapkan pakettim Pokemon.</div>
+          </div>
+        `;
+        root.querySelector('[data-exit]').addEventListener('click', exitMatch);
+        loadPokeDB().then(draw).catch(err => {
+          console.warn('[battle-modes] pokedex load failed', err);
+          draw();   // render anyway with placeholder sprites
+        });
+      }
     }
 
     function advancePickStep (playerIdx) {
@@ -1220,15 +1328,38 @@
       if (state.switchForced === playerIdx) {
         return renderSwitchPanel(playerIdx, false /*allowCancel*/);
       }
+      // Voluntary switch panel — when player toggled it via "Ganti Pokemon"
+      // from either the action menu or the move-pick row.
+      if (root._switchOpen === playerIdx) {
+        return renderSwitchPanel(playerIdx, true /*allowCancel*/);
+      }
+      // Action menu phase — owner: "Sebelum masuk ke pertanyaan, pemain diberikan
+      // pilihan aksi: Serang / Ganti Pokemon." Mirror G13C action menu.
+      if (state.phase === 'action') {
+        const aliveBench = state.teams[playerIdx].filter((p, i) => i !== state.activeIdx[playerIdx] && p.hp > 0).length;
+        return `
+          <div class="bm-action-row">
+            <div class="bm-action-prompt">Aksi giliranmu, <b>${escapeHtml(meName)}</b>?</div>
+            <div class="bm-action-grid">
+              <button class="bm-action-card bm-action-attack" data-action="attack">
+                <span class="bm-action-emoji">⚔️</span>
+                <span class="bm-action-label">Serang!</span>
+                <span class="bm-action-sub">Jawab soal untuk menyerang</span>
+              </button>
+              <button class="bm-action-card bm-action-switch" data-action="switch" ${aliveBench === 0 ? 'disabled' : ''}>
+                <span class="bm-action-emoji">🔄</span>
+                <span class="bm-action-label">Ganti Pokemon</span>
+                <span class="bm-action-sub">${aliveBench === 0 ? 'Tidak ada cadangan' : aliveBench + ' tim siap'}</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }
       // moves phase — show achieved time-mult badge so player sees the bonus
       const lastElapsed = state.lastAnswerElapsed[playerIdx];
       const lastMult = timeMultFromElapsed(lastElapsed);
       const tMultBadge = (lastElapsed != null && lastMult > 1.0)
         ? `<div class="bm-tmult-badge">⚡ ${lastMult.toFixed(2)}× cepat!</div>` : '';
-      // Voluntary switch panel — when player toggled it via "Ganti Pokemon"
-      if (root._switchOpen === playerIdx) {
-        return renderSwitchPanel(playerIdx, true /*allowCancel*/);
-      }
       const aliveBench = state.teams[playerIdx].filter((p, i) => i !== state.activeIdx[playerIdx] && p.hp > 0).length;
       return `
         <div class="bm-q-row">
@@ -1307,11 +1438,28 @@
       });
       const cancelBtn = activeZone.querySelector('[data-cancel-switch]');
       if (cancelBtn) cancelBtn.addEventListener('click', () => {
-        root._switchOpen = null; renderRoot();
+        root._switchOpen = null;
+        // Return to action menu (not question) so user can pick again.
+        state.phase = 'action';
+        renderRoot();
       });
       const switchBtn = activeZone.querySelector('.bm-switch-btn');
       if (switchBtn) switchBtn.addEventListener('click', () => {
         root._switchOpen = state.turn; renderRoot();
+      });
+      // A1: action menu — wire Serang / Ganti
+      activeZone.querySelectorAll('.bm-action-card[data-action]').forEach(b => {
+        b.addEventListener('click', () => {
+          if (b.disabled) return;
+          const a = b.getAttribute('data-action');
+          if (a === 'attack') {
+            state.phase = 'question';
+            renderRoot();
+          } else if (a === 'switch') {
+            root._switchOpen = state.turn;
+            renderRoot();
+          }
+        });
       });
       if (state.phase === 'question') {
         activeZone.querySelectorAll('.bm-choice').forEach(b => {
@@ -1354,14 +1502,15 @@
         setTimeout(() => {
           root._questions = null;
           state.turn = 1 - state.turn;
-          state.phase = 'question';
+          state.phase = 'action';   // next turn starts at action menu
           renderRoot();
         }, 1400);
       }
     }
 
     // A1: voluntary or forced switch — change active slot for the given player,
-    // then advance turn flow appropriately.
+    // then advance turn flow appropriately. HP per slot persists (we only change
+    // state.activeIdx — the swapped-out Pokemon retains its current hp).
     function performSwitch (playerIdx, newIdx) {
       const wasForced = state.switchForced === playerIdx;
       state.activeIdx[playerIdx] = newIdx;
@@ -1369,15 +1518,16 @@
       root._switchOpen = null;
       state.comboCount[playerIdx] = 0;  // streak resets on switch
       if (wasForced) {
-        // Forced (after faint) — switching player keeps the turn; they answer
-        // a fresh question on the new Pokemon.
+        // Forced (after faint) — switching player keeps the turn; they go to
+        // the action menu with the new Pokemon.
         root._questions = null;
-        state.phase = 'question';
+        state.phase = 'action';
         state.turn = playerIdx;
       } else {
         // Voluntary mid-turn switch — costs the turn, passes to opponent.
+        // Opponent starts at action menu.
         root._questions = null;
-        state.phase = 'question';
+        state.phase = 'action';
         state.turn = 1 - playerIdx;
       }
       renderRoot();
@@ -1406,18 +1556,19 @@
                 finishMatch(state.turn);
                 return;
               }
-              // A1: force defender to pick next Pokemon
+              // A1: force defender to pick next Pokemon. After they pick, they
+              // start their next turn at the action menu with the new Pokemon.
               state.switchForced = defIdx;
               state.turn = defIdx;
-              state.phase = 'moves';
+              state.phase = 'action';
               renderRoot();
             });
             return;
           }
-          // Turn passes — next player's question phase
+          // Turn passes — next player starts at action menu
           root._questions = null;
           state.turn = 1 - state.turn;
-          state.phase = 'question';
+          state.phase = 'action';
           renderRoot();
         }, 850);
       });
@@ -1937,9 +2088,11 @@
         background: linear-gradient(180deg, rgba(20,20,40,0.92), rgba(14,14,30,0.96));
         border-top: 2px solid rgba(255,255,255,0.07);
         display: grid; place-items: center;
-        padding: 6px 10px 10px;
+        /* Reduced bottom padding so choice buttons sit higher, less risk of clipping
+           by Android nav bar. Horizontal padding 4px keeps content tight. */
+        padding: 3px 4px 5px;
       }
-      .bm-qzone-bot { padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)); }
+      .bm-qzone-bot { padding-bottom: calc(5px + env(safe-area-inset-bottom, 0px)); }
       .bm-qzone-top { border-top: none; border-bottom: 2px solid rgba(255,255,255,0.07); }
       .bm-qzone-inner {
         width: 100%; max-width: 480px;
@@ -2207,6 +2360,19 @@
       }
       .bm-pkg-thumb img { width: 100%; height: 100%; object-fit: contain; }
       .bm-pkg-thumb-fallback { font-size: 22px; line-height: 1; }
+      .bm-pkg-tier {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1.5px solid #111;
+        color: #fff;
+        font-family: 'Fredoka One', cursive;
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 1px 1px 0 #111;
+        margin-left: 4px;
+      }
 
       /* Random region card — visually distinct from themed packages */
       .bm-section-label {
@@ -2349,22 +2515,64 @@
       }
       .bm-switch-back:active { transform: translate(2px,2px); box-shadow: 0 0 0 rgba(0,0,0,0); }
 
-      /* ── Pastel choice buttons — owner spec, with ORIGINAL G13C 5px-raised effect ── */
+      /* ── Action menu (Serang / Ganti) — shown BEFORE the question, owner spec ── */
+      .bm-action-row {
+        width: 100%; display: flex; flex-direction: column;
+        gap: 4px; align-items: center;
+      }
+      .bm-action-prompt {
+        font-family: 'Fredoka One', cursive;
+        font-size: clamp(13px, 3.2vw, 17px);
+        color: #fff;
+        text-shadow: 0 2px 6px rgba(0,0,0,0.55);
+        text-align: center;
+      }
+      .bm-action-prompt b { color: #FCD34D; }
+      .bm-action-grid {
+        display: grid; grid-template-columns: 1fr 1fr;
+        gap: 8px; width: 100%; max-width: 380px;
+      }
+      .bm-action-card {
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        gap: 2px;
+        padding: 8px 6px;
+        border: 3px solid #111;
+        border-radius: 14px;
+        cursor: pointer;
+        box-shadow: 0 5px 0 var(--btn-shadow);
+        font-family: 'Fredoka One', cursive;
+        color: #1F2937;
+        transition: transform 120ms, box-shadow 120ms;
+      }
+      .bm-action-card:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--btn-shadow); }
+      .bm-action-card:disabled { opacity: 0.55; cursor: not-allowed; }
+      .bm-action-attack { background: #FED7AA; --btn-shadow: #D97706; }
+      .bm-action-switch { background: #A7F3D0; --btn-shadow: #059669; }
+      .bm-action-emoji { font-size: clamp(24px, 6vw, 32px); line-height: 1; }
+      .bm-action-label { font-size: clamp(14px, 3.5vw, 18px); }
+      .bm-action-sub {
+        font-size: clamp(9px, 2.2vw, 11px); opacity: 0.75;
+        font-family: 'Inter', system-ui, sans-serif; font-weight: 700;
+      }
+
+      /* ── Pastel choice buttons — owner spec: tighter horizontal padding ── */
       .bm-choices, .bm-moves {
         display: grid; grid-template-columns: repeat(2, 1fr);
-        gap: 8px; width: 100%; max-width: 420px;
+        gap: 6px; width: 100%; max-width: 380px;
         margin: 0 auto;
       }
       .bm-choice {
-        padding: 12px 8px;
+        padding: 9px 4px;
         border: 2px solid #111;
-        border-radius: 14px;
+        border-radius: 12px;
         font-family: 'Fredoka One', cursive;
-        font-size: clamp(18px, 4.5vw, 24px);
+        font-size: clamp(16px, 4vw, 22px);
         color: #1F2937;
-        box-shadow: 0 5px 0 var(--btn-shadow);
+        box-shadow: 0 4px 0 var(--btn-shadow);
         cursor: pointer; position: relative;
         transition: transform 120ms, box-shadow 120ms;
+        min-width: 0;
       }
       .bm-choice:nth-child(1) { background:#DDD6FE; --btn-shadow:#7C3AED; }  /* lavender */
       .bm-choice:nth-child(2) { background:#A7F3D0; --btn-shadow:#059669; }  /* mint     */
@@ -2601,70 +2809,57 @@
     function renderTourPick () {
       const p = players[pickingPlayer];
       const badgeClass = pickingPlayer % 2 === 0 ? 'p1' : 'p2';
-      root.innerHTML = `
-        ${header()}
-        <div class="bm-prestep" style="position:relative; padding-top:20px;">
-          <div class="bm-prestep-header">
-            <span class="bm-pvp-badge ${badgeClass}">P${pickingPlayer + 1}</span>
-            <span class="bm-prestep-pname">Giliran <b>${escapeHtml(p.name)}</b> memilih tim</span>
+      const draw = () => {
+        root.innerHTML = `
+          ${header()}
+          <div class="bm-prestep" style="position:relative; padding-top:20px;">
+            <div class="bm-prestep-header">
+              <span class="bm-pvp-badge ${badgeClass}">P${pickingPlayer + 1}</span>
+              <span class="bm-prestep-pname">Giliran <b>${escapeHtml(p.name)}</b> memilih tim</span>
+            </div>
+            <div class="bm-prestep-sub">${pickingPlayer + 1}/${playerCount} · ${teamSize} Pokemon</div>
+            ${renderPkgPickerHtml(teamSize)}
           </div>
-          <div class="bm-prestep-sub">${pickingPlayer + 1}/${playerCount} · ${teamSize} Pokemon</div>
-
-          <div class="bm-section-label">⭐ Tim Tema</div>
-          <div class="bm-pkg-grid">
-            ${PVP_PACKAGES.map(pkg => `
-              <button class="bm-pkg-card" data-pkg="${pkg.id}">
-                <div class="bm-pkg-head"><span class="bm-pkg-emoji">${pkg.emoji}</span><span class="bm-pkg-name">${pkg.name}</span></div>
-                <div class="bm-pkg-desc">${pkg.desc}</div>
-                <div class="bm-pkg-thumbs">
-                  ${pkg.teamIdx.slice(0, teamSize).map(idx => {
-                    const pp = POKE_ROSTER[idx];
-                    return `<div class="bm-pkg-thumb" title="${pp.name}" style="background:${pp.color}22; border-color:${pp.color};">
-                      <img src="${spritePath(pp.id, pp.slug)}" alt="${pp.name}"
-                           onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'${pp.emoji}',className:'bm-pkg-thumb-fallback'}))">
-                    </div>`;
-                  }).join('')}
-                </div>
-              </button>
-            `).join('')}
-          </div>
-
-          <div class="bm-section-label">🎲 Tim Acak per Region (1025 Pokemon)</div>
-          <div class="bm-pkg-grid">
-            ${RANDOM_REGIONS.map(reg => `
-              <button class="bm-pkg-card bm-pkg-random" data-region="${reg.id}" data-gen="${reg.gen}">
-                <div class="bm-pkg-head"><span class="bm-pkg-emoji">${reg.emoji}</span><span class="bm-pkg-name">Tim Acak ${reg.name}</span></div>
-                <div class="bm-pkg-desc">${reg.desc}</div>
-                <div class="bm-pkg-thumbs bm-pkg-thumbs-random">
-                  ${Array.from({length: teamSize}).map(() => `<div class="bm-pkg-thumb bm-pkg-thumb-random"><span>🎲</span></div>`).join('')}
-                </div>
-              </button>
-            `).join('')}
-          </div>
-        </div>
-      `;
-      bindBack();
-      root.querySelectorAll('.bm-pkg-card[data-pkg]').forEach(b => {
-        b.addEventListener('click', () => {
-          p.team = buildTeamFromPackage(b.getAttribute('data-pkg'), teamSize);
-          p.teamSize = teamSize;
-          advanceTourPick();
-        });
-      });
-      root.querySelectorAll('.bm-pkg-card[data-region]').forEach(b => {
-        b.addEventListener('click', () => {
-          const gen = parseInt(b.getAttribute('data-gen'));
-          b.classList.add('bm-pkg-loading');
-          loadPokeDB().then(() => {
-            p.team = buildTeamFromRegion(gen, teamSize);
+        `;
+        bindBack();
+        root.querySelectorAll('.bm-pkg-card[data-pkg]').forEach(b => {
+          b.addEventListener('click', () => {
+            p.team = buildTeamFromPackage(b.getAttribute('data-pkg'), teamSize);
             p.teamSize = teamSize;
             advanceTourPick();
-          }).catch(err => {
-            console.warn('[tournament] random region load failed', err);
-            b.classList.remove('bm-pkg-loading');
           });
         });
-      });
+        root.querySelectorAll('.bm-pkg-card[data-region]').forEach(b => {
+          b.addEventListener('click', () => {
+            const gen = parseInt(b.getAttribute('data-gen'));
+            b.classList.add('bm-pkg-loading');
+            loadPokeDB().then(() => {
+              p.team = buildTeamFromRegion(gen, teamSize);
+              p.teamSize = teamSize;
+              advanceTourPick();
+            }).catch(err => {
+              console.warn('[tournament] random region load failed', err);
+              b.classList.remove('bm-pkg-loading');
+            });
+          });
+        });
+      };
+      if (_pokeDB) {
+        draw();
+      } else {
+        root.innerHTML = `
+          ${header()}
+          <div class="bm-tour-step">
+            <h2>📦 Memuat Pokedex…</h2>
+            <p style="text-align:center; color:#fff; text-shadow:1px 1px 0 rgba(0,0,0,0.55);">Sebentar, sedang siapkan paket tim Pokemon.</p>
+          </div>
+        `;
+        bindBack();
+        loadPokeDB().then(draw).catch(err => {
+          console.warn('[tournament] pokedex load failed', err);
+          draw();
+        });
+      }
     }
 
     function advanceTourPick () {
