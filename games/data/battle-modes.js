@@ -531,6 +531,13 @@
     const notes = [523, 659, 784, 1047, 1319];
     notes.forEach((f, i) => setTimeout(() => _tone(f, 0.22, 'triangle', 0.18), i * 130));
   }
+  // A5: time-out — 3-note descending blip, distinct from sfxWrong so the player
+  // knows the turn ended because of the clock, not a wrong answer.
+  function sfxTimeout () {
+    _tone(440, 0.12, 'square', 0.14);
+    setTimeout(() => _tone(330, 0.14, 'square', 0.13), 110);
+    setTimeout(() => _tone(220, 0.22, 'square', 0.16), 230);
+  }
 
   // ── Confetti ────────────────────────────────────────────────────────
   function spawnConfetti (count, originEl) {
@@ -595,76 +602,94 @@
     var padded = String(id).padStart(4, '0');
     return '/Dunia-Emosi/assets/Pokemon/pokemondb_hd_alt2/' + padded + '_' + slug + '.webp';
   }
+  // Balance pass for A5 timer mechanic. HP 80, move pwr tuned so a typical match
+  // lasts 4-6 hits per side (≈ 2 minutes). Math:
+  //   best hit  (super+STAB+1s):  pwr 34 × 1.25 × 1.20 × 1.27 ≈ 65 dmg → ~1.5 hits to KO
+  //   typical   (STAB, 5s):       pwr 28 × 1.25 × 1.00 × 1.15 ≈ 40 dmg → 2 hits to KO
+  //   neutral   (typed, 5s):      pwr 28 × 1.00 × 1.00 × 1.15 ≈ 32 dmg → 3 hits to KO
+  //   weak      (tackle, 5s):     pwr 18 × 1.00 × 1.00 × 1.15 ≈ 20 dmg → 4 hits to KO
+  //   worst     (resist, slow):   pwr 18 × 1.00 × 0.75 × 1.00 ≈ 13 dmg → 7 hits to KO
+  // Owner: "agar tidak terlalu panjang tapi juga proper dengan mechanism".
   const POKE_ROSTER = [
     { id:25,  name:'Pikachu',    emoji:'⚡', slug:'pikachu',    type:'electric', color:'#FCD34D', moves:[
       { name:'Tackle',         type:'normal',   pwr:18 },
       { name:'Quick Attack',   type:'normal',   pwr:22 },
-      { name:'Thunder Shock',  type:'electric', pwr:26 },
-      { name:'Thunderbolt',    type:'electric', pwr:32 }
+      { name:'Thunder Shock',  type:'electric', pwr:28 },
+      { name:'Thunderbolt',    type:'electric', pwr:34 }
     ]},
     { id:4,   name:'Charmander', emoji:'🦎', slug:'charmander', type:'fire', color:'#F97316', moves:[
       { name:'Tackle',         type:'normal', pwr:18 },
       { name:'Scratch',        type:'normal', pwr:22 },
-      { name:'Ember',          type:'fire',   pwr:26 },
-      { name:'Flamethrower',   type:'fire',   pwr:32 }
+      { name:'Ember',          type:'fire',   pwr:28 },
+      { name:'Flamethrower',   type:'fire',   pwr:34 }
     ]},
     { id:1,   name:'Bulbasaur',  emoji:'🌿', slug:'bulbasaur', type:'grass', color:'#10B981', moves:[
       { name:'Tackle',         type:'normal', pwr:18 },
       { name:'Leech Seed',     type:'grass',  pwr:22 },
-      { name:'Vine Whip',      type:'grass',  pwr:26 },
-      { name:'Razor Leaf',     type:'grass',  pwr:32 }
+      { name:'Vine Whip',      type:'grass',  pwr:28 },
+      { name:'Razor Leaf',     type:'grass',  pwr:34 }
     ]},
     { id:7,   name:'Squirtle',   emoji:'🐢', slug:'squirtle', type:'water', color:'#06B6D4', moves:[
       { name:'Tackle',         type:'normal', pwr:18 },
       { name:'Bubble',         type:'water',  pwr:22 },
-      { name:'Water Gun',      type:'water',  pwr:26 },
-      { name:'Hydro Pump',     type:'water',  pwr:32 }
+      { name:'Water Gun',      type:'water',  pwr:28 },
+      { name:'Hydro Pump',     type:'water',  pwr:34 }
     ]},
     { id:133, name:'Eevee',      emoji:'🦊', slug:'eevee', type:'normal', color:'#A78BFA', moves:[
       { name:'Tackle',         type:'normal', pwr:20 },
       { name:'Quick Attack',   type:'normal', pwr:24 },
-      { name:'Bite',           type:'normal', pwr:28 },
-      { name:'Swift',          type:'normal', pwr:32 }
+      { name:'Bite',           type:'normal', pwr:30 },
+      { name:'Swift',          type:'normal', pwr:34 }
     ]},
     { id:39,  name:'Jigglypuff', emoji:'🎀', slug:'jigglypuff', type:'fairy', color:'#F472B6', moves:[
       { name:'Tackle',         type:'normal', pwr:18 },
       { name:'Pound',          type:'normal', pwr:22 },
-      { name:'Disarming Voice',type:'fairy',  pwr:26 },
-      { name:'Hyper Voice',    type:'fairy',  pwr:32 }
+      { name:'Disarming Voice',type:'fairy',  pwr:28 },
+      { name:'Hyper Voice',    type:'fairy',  pwr:34 }
     ]},
     { id:37,  name:'Vulpix',     emoji:'🌟', slug:'vulpix', type:'fire', color:'#EF4444', moves:[
       { name:'Tackle',         type:'normal', pwr:18 },
       { name:'Quick Attack',   type:'normal', pwr:22 },
-      { name:'Ember',          type:'fire',   pwr:26 },
-      { name:'Fire Spin',      type:'fire',   pwr:32 }
+      { name:'Ember',          type:'fire',   pwr:28 },
+      { name:'Fire Spin',      type:'fire',   pwr:34 }
     ]},
     { id:172, name:'Pichu',      emoji:'⭐', slug:'pichu', type:'electric', color:'#FBBF24', moves:[
       { name:'Tackle',         type:'normal',   pwr:18 },
       { name:'Charm',          type:'fairy',    pwr:22 },
-      { name:'Thunder Shock',  type:'electric', pwr:26 },
-      { name:'Volt Tackle',    type:'electric', pwr:32 }
+      { name:'Thunder Shock',  type:'electric', pwr:28 },
+      { name:'Volt Tackle',    type:'electric', pwr:34 }
     ]}
   ];
-  // Simple type chart — kid-friendly. 1.5 super-effective, 0.75 not very, 1.0 neutral.
+  // Type chart — element multiplier capped at 1.2× per owner spec ("elemen itu 1.2x max pengali").
+  // Resist (0.75) + immune (0.5) floors preserved — defense still meaningful.
   const TYPE_CHART = {
-    fire:     { grass: 1.5, water: 0.75, fire: 0.75 },
-    water:    { fire: 1.5, grass: 0.75, water: 0.75, electric: 0.5 },
-    grass:    { water: 1.5, fire: 0.75, grass: 0.75 },
-    electric: { water: 1.5, electric: 0.75, grass: 0.75 },
+    fire:     { grass: 1.2, water: 0.75, fire: 0.75 },
+    water:    { fire: 1.2, grass: 0.75, water: 0.75, electric: 0.5 },
+    grass:    { water: 1.2, fire: 0.75, grass: 0.75 },
+    electric: { water: 1.2, electric: 0.75, grass: 0.75 },
     normal:   {},
     fairy:    {}
   };
+  // Time multiplier curve — owner spec: "1 detik effectnya 1.3 (max pengali)".
+  // Linear: 0ms → 1.30, 1000ms → 1.27, 5000ms → 1.15, 10000ms → 1.0. Auto-fail at 10000ms.
+  const ANSWER_TIMEOUT_MS = 10000;
+  function timeMultFromElapsed (elapsedMs) {
+    if (elapsedMs == null || elapsedMs < 0) return 1.0;
+    const raw = 1.3 - (elapsedMs / 1000) * 0.03;
+    return Math.max(1.0, Math.min(1.3, raw));
+  }
   function typeMult (moveType, defType) {
     const t = (TYPE_CHART[moveType] || {})[defType];
     return t == null ? 1.0 : t;
   }
-  function calcDamage (atk, move, def) {
+  function calcDamage (atk, move, def, timeMult) {
     const stab = move.type === atk.type ? 1.25 : 1.0;
     const tm   = typeMult(move.type, def.type);
-    return Math.max(1, Math.floor(move.pwr * stab * tm));
+    const tMul = (typeof timeMult === 'number' && timeMult > 0) ? timeMult : 1.0;
+    return Math.max(1, Math.floor(move.pwr * stab * tm * tMul));
   }
   function effLabel (mult) {
-    if (mult >= 1.5)  return 'Super Efektif! ✨';
+    if (mult >= 1.15) return 'Super Efektif! ✨';   // threshold tuned to 1.2× cap
     if (mult <= 0.75) return 'Tidak Efektif…';
     return null;
   }
@@ -712,13 +737,21 @@
     const state = {
       turn: 0,
       pokes: [
-        { ...POKE_ROSTER[3], hp: 100, hpMax: 100 },  // Squirtle (water)
-        { ...POKE_ROSTER[1], hp: 100, hpMax: 100 }   // Charmander (fire)
+        // A5 balance: HP 80 (was 100) — matches feel snappy, ≈ 2 minutes typical.
+        { ...POKE_ROSTER[3], hp: 80, hpMax: 80 },  // Squirtle (water)
+        { ...POKE_ROSTER[1], hp: 80, hpMax: 80 }   // Charmander (fire)
       ],
       qType: opts.questionType || 'math',
       qLevel: opts.questionLevel || 5,
-      phase: 'question'   // 'question' | 'moves' | 'animating'
+      phase: 'question',   // 'question' | 'moves' | 'animating'
+      // A5 timer mechanic — owner spec: "timer kecil … 10 detik max + presentase serangan".
+      // Capture when the active player's question becomes visible. Reset every turn.
+      questionStartedAt: 0,
+      // Per-player elapsed time at correct-answer moment → drives time-mult in calcDamage.
+      lastAnswerElapsed: [null, null]
     };
+    let _timerRaf = 0;       // RAF handle for tickTimer
+    let _timerExpired = false;
 
     function exitMatch () {
       if (confirm('Keluar dari match?')) {
@@ -758,6 +791,59 @@
       `;
       root.querySelector('[data-exit]').addEventListener('click', exitMatch);
       wireActiveZone();
+      // A5: start the 10-second answer timer when a fresh question phase shows.
+      // (Move phase + animating phase don't tick — RAF self-stops.)
+      if (state.phase === 'question') {
+        startQuestionTimer();
+      } else {
+        stopQuestionTimer();
+      }
+    }
+
+    function startQuestionTimer () {
+      stopQuestionTimer();
+      _timerExpired = false;
+      state.questionStartedAt = Date.now();
+      const tick = () => {
+        if (state.phase !== 'question' || _timerExpired) return;
+        const elapsed = Date.now() - state.questionStartedAt;
+        const pct = Math.max(0, 1 - elapsed / ANSWER_TIMEOUT_MS);
+        const bars = root.querySelectorAll('.bm-qzone[data-state="active"] .bm-timer-fill');
+        bars.forEach(b => {
+          b.style.width = (pct * 100) + '%';
+          b.className = 'bm-timer-fill' + (pct < 0.25 ? ' low' : pct < 0.5 ? ' mid' : '');
+        });
+        if (elapsed >= ANSWER_TIMEOUT_MS) {
+          _timerExpired = true;
+          onTimeout();
+          return;
+        }
+        _timerRaf = requestAnimationFrame(tick);
+      };
+      _timerRaf = requestAnimationFrame(tick);
+    }
+
+    function stopQuestionTimer () {
+      if (_timerRaf) { cancelAnimationFrame(_timerRaf); _timerRaf = 0; }
+    }
+
+    function onTimeout () {
+      // Active player ran out of time — reveal correct, pass turn.
+      sfxTimeout();
+      const activeZone = root.querySelector('.bm-qzone[data-state="active"]');
+      if (activeZone) {
+        const q = root._questions && root._questions[state.turn];
+        activeZone.querySelectorAll('.bm-choice').forEach(b => {
+          b.setAttribute('disabled', '');
+          if (q && b.getAttribute('data-c') === String(q.ans)) b.classList.add('correct');
+        });
+      }
+      setTimeout(() => {
+        root._questions = null;
+        state.turn = 1 - state.turn;
+        state.phase = 'question';
+        renderRoot();
+      }, 1200);
     }
 
     function renderArena (p1, p2) {
@@ -817,6 +903,8 @@
         const q = root._questions[playerIdx];
         return `
           <div class="bm-q-row">
+            <!-- A5: 10-second answer countdown — RAF-driven width update -->
+            <div class="bm-timer-bar"><div class="bm-timer-fill" style="width:100%;"></div></div>
             <div class="bm-q-text">${escapeHtml(q.q)}</div>
             <div class="bm-choices" data-pidx="${playerIdx}">
               ${q.choices.map(c => `<button class="bm-choice" data-c="${escapeHtml(String(c))}">${escapeHtml(String(c))}</button>`).join('')}
@@ -824,15 +912,20 @@
           </div>
         `;
       }
-      // moves phase
+      // moves phase — show achieved time-mult badge so player sees the bonus
+      const lastElapsed = state.lastAnswerElapsed[playerIdx];
+      const lastMult = timeMultFromElapsed(lastElapsed);
+      const tMultBadge = (lastElapsed != null && lastMult > 1.0)
+        ? `<div class="bm-tmult-badge">⚡ ${lastMult.toFixed(2)}× cepat!</div>` : '';
       return `
         <div class="bm-q-row">
           <div class="bm-q-text">Pilih jurus untuk menyerang ${escapeHtml(opp.name)}:</div>
+          ${tMultBadge}
           <div class="bm-moves" data-pidx="${playerIdx}">
             ${me.moves.map((mv, mi) => {
               const tm = typeMult(mv.type, opp.type);
               const eff = effLabel(tm);
-              const effCls = tm >= 1.5 ? ' super-eff' : (tm <= 0.75 ? ' resist-eff' : '');
+              const effCls = tm >= 1.15 ? ' super-eff' : (tm <= 0.75 ? ' resist-eff' : '');
               return `
                 <button class="bm-move${effCls}" data-mi="${mi}">
                   <div class="bm-move-name">${escapeHtml(mv.name)}</div>
@@ -874,6 +967,10 @@
 
     function onAnswer (picked, btn, q, playerIdx) {
       const isCorrect = String(picked) === String(q.ans);
+      // A5: freeze the timer + record elapsed for this player's time-mult bonus.
+      stopQuestionTimer();
+      const elapsed = state.questionStartedAt > 0 ? (Date.now() - state.questionStartedAt) : 0;
+      state.lastAnswerElapsed[playerIdx] = elapsed;
       btn.classList.add(isCorrect ? 'correct' : 'wrong');
       btn.parentElement.querySelectorAll('.bm-choice').forEach(b => b.setAttribute('disabled',''));
       if (isCorrect) {
@@ -899,10 +996,12 @@
     function executeMove (move) {
       const atk = state.pokes[state.turn];
       const def = state.pokes[1 - state.turn];
-      const dmg = calcDamage(atk, move, def);
+      // A5: time-mult derived from the answer elapsed captured in onAnswer.
+      const timeMult = timeMultFromElapsed(state.lastAnswerElapsed[state.turn]);
+      const dmg = calcDamage(atk, move, def, timeMult);
       const tm  = typeMult(move.type, def.type);
       // Attack animation FIRST, then apply damage at impact.
-      runAttackAnimation(state.turn, move, dmg, tm, () => {
+      runAttackAnimation(state.turn, move, dmg, tm, timeMult, () => {
         def.hp = Math.max(0, def.hp - dmg);
         sfxKO();
         // Update HP bars + texts in BOTH halves (both views show both HPs)
@@ -921,7 +1020,7 @@
       });
     }
 
-    function runAttackAnimation (attackerIdx, move, dmg, tm, done) {
+    function runAttackAnimation (attackerIdx, move, dmg, tm, timeMult, done) {
       // Shared arena — attacker/defender map to .bm-arena-self / .bm-arena-opp.
       // P1 (index 0) is .bm-arena-self (bottom-left), P2 (index 1) is .bm-arena-opp (top-right).
       const arena = root.querySelector('.bm-arena');
@@ -959,20 +1058,22 @@
       setTimeout(() => {
         if (defenderPanel) {
           const r = defenderPanel.getBoundingClientRect();
-          spawnDamageNumber(r.left + r.width * 0.7, r.top + r.height * 0.5, dmg, tm);
+          spawnDamageNumber(r.left + r.width * 0.7, r.top + r.height * 0.5, dmg, tm, timeMult);
         }
-        // Super-effective extra flash
-        if (tm >= 1.5) screenFlash('#FCD34D', 120);
+        // Super-effective extra flash — threshold matches new 1.2× cap.
+        if (tm >= 1.15) screenFlash('#FCD34D', 120);
       }, 360);
 
       // Done at ~700ms after the lunge → applies damage in caller
       setTimeout(done, 750);
     }
 
-    function spawnDamageNumber (x, y, dmg, tm) {
+    function spawnDamageNumber (x, y, dmg, tm, timeMult) {
       const el = document.createElement('div');
-      const color = tm >= 1.5 ? '#FCD34D' : (tm <= 0.75 ? '#FB923C' : '#67E8F9');
+      const color = tm >= 1.15 ? '#FCD34D' : (tm <= 0.75 ? '#FB923C' : '#67E8F9');
       const effTxt = effLabel(tm);
+      const showTimeMult = (typeof timeMult === 'number' && timeMult > 1.01);
+      const tMultTxt = showTimeMult ? `<div style="font-size:0.32em; margin-top:2px; color:#FDE68A;">⚡ ×${timeMult.toFixed(2)} cepat</div>` : '';
       el.style.cssText = `
         position: fixed; left: ${x - 60}px; top: ${y}px;
         z-index: 9300; pointer-events: none;
@@ -982,7 +1083,7 @@
         text-shadow: 0 4px 14px rgba(0,0,0,0.6);
         animation: bmDmgFloat 1100ms cubic-bezier(0.22,0.61,0.36,1) forwards;
       `;
-      el.innerHTML = `-${dmg}` + (effTxt ? `<div style="font-size:0.40em; margin-top:4px;">${effTxt}</div>` : '');
+      el.innerHTML = `-${dmg}` + (effTxt ? `<div style="font-size:0.40em; margin-top:4px;">${effTxt}</div>` : '') + tMultTxt;
       document.body.appendChild(el);
       setTimeout(() => { try { el.remove(); } catch (e) {} }, 1200);
     }
@@ -1244,6 +1345,33 @@
         color: #FCD34D;
       }
       .bm-q-row { width: 100%; display: flex; flex-direction: column; gap: 6px; }
+      /* A5 — 10-second answer countdown bar */
+      .bm-timer-bar {
+        width: 100%; height: 5px;
+        background: rgba(255,255,255,0.10);
+        border-radius: 999px;
+        overflow: hidden;
+        margin-bottom: 2px;
+      }
+      .bm-timer-fill {
+        height: 100%; width: 100%;
+        background: linear-gradient(90deg, #67E8F9, #34D399);
+        border-radius: 999px;
+        transition: width 0.1s linear, background 0.3s ease;
+      }
+      .bm-timer-fill.mid { background: linear-gradient(90deg, #FCD34D, #F59E0B); }
+      .bm-timer-fill.low { background: linear-gradient(90deg, #EF4444, #F87171); animation: bmHpBlink 0.7s ease-in-out infinite; }
+      /* Time-mult achievement badge (shows during move phase) */
+      .bm-tmult-badge {
+        align-self: center;
+        font-family: 'Fredoka One', cursive;
+        font-size: 11px;
+        padding: 2px 10px; border-radius: 999px;
+        background: rgba(252,211,77,0.20);
+        color: #FDE68A;
+        border: 1px solid rgba(252,211,77,0.45);
+        letter-spacing: 0.3px;
+      }
       .bm-q-text {
         font-family: 'Fredoka One', cursive;
         font-size: clamp(16px, 4.5vw, 26px);
