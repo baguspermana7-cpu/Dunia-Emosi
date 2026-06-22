@@ -51,56 +51,64 @@
   function injectCSS () {
     if (_cssInjected) return;
     const css = `
+      /* Mode select + PvP setup + Tournament shell — mirrors G10 sky→grass field */
       .bm-modal, .bm-pvp, .bm-tour {
         position: fixed; inset: 0;
         z-index: 9100;
-        background: radial-gradient(circle at center, rgba(11,18,38,0.92), rgba(11,18,38,0.99));
+        background: linear-gradient(180deg,#6bbfee 0%,#a8d8f8 32%,#a0d870 46%,#5a9e3a 65%,#3e7028 100%);
         display: flex; flex-direction: column;
         padding: 18px 14px 24px;
         overflow-y: auto;
         font-family: 'Inter', system-ui, sans-serif;
-        color: #F1F5F9;
+        color: #111;
       }
       .bm-modal::before, .bm-pvp::before, .bm-tour::before {
         content: '';
-        position: fixed; inset: 0;
-        background:
-          radial-gradient(ellipse at 15% 0%, rgba(6,182,212,0.20), transparent 45%),
-          radial-gradient(ellipse at 85% 100%, rgba(139,92,246,0.20), transparent 50%);
-        pointer-events: none; z-index: -1;
+        position: fixed; inset: -10% -5%;
+        background: url('/Dunia-Emosi/assets/bg-pokemon-battle.webp') center center/cover no-repeat;
+        opacity: 0.40;
+        pointer-events: none; z-index: 0;
       }
+      .bm-modal > *, .bm-pvp > *, .bm-tour > * { position: relative; z-index: 1; }
       .bm-header {
         display: flex; align-items: center; gap: 8px;
         padding: 4px 4px 16px;
       }
+      /* Back button — DS-style white info box */
       .bm-back {
         width: 44px; height: 44px;
         display: grid; place-items: center;
-        background: rgba(255,255,255,0.06);
-        border: 1px solid rgba(255,255,255,0.12);
-        border-radius: 14px;
-        color: #F1F5F9; font-size: 18px;
-        cursor: pointer; font-family: inherit;
+        background: rgba(248,248,240,0.97);
+        border: 2.5px solid #444; border-radius: 10px;
+        box-shadow: 3px 3px 0 rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.9);
+        color: #111; font-size: 20px; font-weight: 900;
+        cursor: pointer; font-family: 'Fredoka One', cursive;
       }
+      .bm-back:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 rgba(0,0,0,0.35); }
       .bm-title {
         flex: 1; text-align: center;
         font-family: 'Fredoka One', cursive;
         font-size: clamp(18px, 5vw, 26px);
-        background: linear-gradient(135deg, #67E8F9, #C4B5FD);
-        -webkit-background-clip: text; color: transparent;
+        color: #fff;
+        text-shadow: 2px 2px 0 rgba(0,0,0,0.55), 0 4px 12px rgba(0,0,0,0.4);
         letter-spacing: 0.5px;
       }
-      .bm-intro {
-        text-align: center; padding: 12px 12px 22px;
-        color: rgba(255,255,255,0.75);
-        font-size: 14px;
-      }
+      .bm-intro { text-align: center; padding: 12px 12px 22px; }
       .bm-intro h1 {
         font-family: 'Fredoka One', cursive;
-        font-size: clamp(28px, 7vw, 44px);
-        margin: 4px 0 8px;
-        background: linear-gradient(135deg, #FCD34D, #F472B6, #8B5CF6);
-        -webkit-background-clip: text; color: transparent;
+        font-size: clamp(26px, 7vw, 40px);
+        margin: 4px 0 10px;
+        color: #fff;
+        text-shadow: 2px 2px 0 rgba(0,0,0,0.55), 0 4px 14px rgba(0,0,0,0.45);
+        letter-spacing: 0.5px;
+      }
+      .bm-intro p {
+        display: inline-block;
+        padding: 6px 14px;
+        background: rgba(248,248,240,0.95);
+        border: 2px solid #444; border-radius: 999px;
+        color: #111; font-size: 13px; font-weight: 700;
+        box-shadow: 2px 2px 0 rgba(0,0,0,0.25);
       }
       .bm-grid {
         display: grid;
@@ -112,41 +120,49 @@
       @media (min-width: 720px) {
         .bm-grid { grid-template-columns: 1fr 1fr 1fr; }
       }
+      /* Mode cards — DS-style white info boxes with colored border (mirrors .g10-infobox) */
       .bm-card {
         position: relative;
         display: flex; flex-direction: column; gap: 8px;
-        padding: 22px 20px;
-        background: rgba(255,255,255,0.05);
-        backdrop-filter: blur(20px) saturate(150%);
-        border: 1.5px solid rgba(255,255,255,0.12);
-        border-radius: 20px;
-        color: #F1F5F9;
+        padding: 18px 18px 16px;
+        background: rgba(248,248,240,0.97);
+        border: 3px solid #444; border-radius: 14px;
+        box-shadow: 4px 4px 0 rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.95);
+        color: #111;
         font-family: inherit; text-align: left;
         cursor: pointer;
-        transition: transform 220ms cubic-bezier(0.34,1.56,0.64,1),
-                    border-color 200ms, background 200ms;
+        transition: transform 180ms cubic-bezier(0.34,1.56,0.64,1),
+                    box-shadow 180ms;
       }
-      .bm-card[data-mode="adventure"] { border-color: rgba(34,197,94,0.45); background: linear-gradient(135deg, rgba(34,197,94,0.10), rgba(255,255,255,0.04)); }
-      .bm-card[data-mode="pvp"]       { border-color: rgba(236,72,153,0.45); background: linear-gradient(135deg, rgba(236,72,153,0.10), rgba(255,255,255,0.04)); }
-      .bm-card[data-mode="tournament"]{ border-color: rgba(252,211,77,0.50); background: linear-gradient(135deg, rgba(252,211,77,0.10), rgba(255,255,255,0.04)); }
-      .bm-card:hover { transform: translateY(-4px); }
-      .bm-card-emoji { font-size: 56px; line-height: 1; filter: drop-shadow(0 6px 18px rgba(0,0,0,0.5)); }
+      .bm-card[data-mode="adventure"]  { border-color: #15803d; }
+      .bm-card[data-mode="pvp"]        { border-color: #be185d; }
+      .bm-card[data-mode="tournament"] { border-color: #d97706; }
+      .bm-card:hover { transform: translate(-2px, -4px); box-shadow: 6px 6px 0 rgba(0,0,0,0.32); }
+      .bm-card:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 rgba(0,0,0,0.30); }
+      .bm-card-emoji { font-size: 56px; line-height: 1; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.25)); }
       .bm-card h3 {
         font-family: 'Fredoka One', cursive;
-        font-size: 20px; margin: 6px 0 2px;
+        font-size: 22px; margin: 4px 0 2px;
+        color: #111;
       }
-      .bm-card p { font-size: 13px; color: rgba(255,255,255,0.70); line-height: 1.45; }
+      .bm-card[data-mode="adventure"]  h3 { color: #15803d; }
+      .bm-card[data-mode="pvp"]        h3 { color: #be185d; }
+      .bm-card[data-mode="tournament"] h3 { color: #b45309; }
+      .bm-card p { font-size: 13px; color: #444; line-height: 1.45; font-weight: 600; }
       .bm-card-cta {
-        margin-top: 8px;
-        padding: 7px 14px;
-        background: linear-gradient(135deg, #06B6D4, #0EA5E9);
+        margin-top: 6px;
+        padding: 8px 14px;
+        background: #22c55e;
         color: white;
         border-radius: 999px;
-        font-weight: 800; font-size: 12px;
+        border: 2px solid #111;
+        box-shadow: 2px 2px 0 #111;
+        font-family: 'Fredoka One', cursive;
+        font-size: 13px;
         align-self: flex-start;
       }
-      .bm-card[data-mode="pvp"] .bm-card-cta       { background: linear-gradient(135deg, #EC4899, #BE185D); }
-      .bm-card[data-mode="tournament"] .bm-card-cta{ background: linear-gradient(135deg, #FCD34D, #F59E0B); color: #422006; }
+      .bm-card[data-mode="pvp"] .bm-card-cta       { background: #ec4899; }
+      .bm-card[data-mode="tournament"] .bm-card-cta{ background: #f59e0b; }
 
       /* PvP screen */
       .bm-pvp { padding: 0; flex-direction: column; }

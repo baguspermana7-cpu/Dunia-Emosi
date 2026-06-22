@@ -1562,22 +1562,11 @@ function openLevelSelect(gameNum) {
     window.location.href = 'games/g25-math.html?v=20260621f'
     return
   }
-  // G10 Pertarungan Pokemon — show Adventure/PvP/Tournament mode select first.
-  // Adventure re-enters this same function with the lock set so it routes to
-  // the existing in-page level-select grid (no infinite recursion).
-  if (gameNum === 10 && window.BattleModes && !window._g10AdventureLocked) {
-    window.BattleModes.show({
-      title: '⚡ Pertarungan Pokemon',
-      questionType: 'math',
-      questionLevel: 5,
-      onAdventure: function () {
-        window._g10AdventureLocked = true
-        try { openLevelSelect(10) } finally { window._g10AdventureLocked = false }
-      },
-      onCancel: function () { /* stay on world map */ }
-    })
-    return
-  }
+  // G10 mode-select intercept moved upstream to openRegionOverlay(10) so the
+  // selector fires once on the world-map tile tap. Keeping the intercept here
+  // too caused a double-prompt during Adventure (region → openLevelSelect → 2nd
+  // prompt). Adventure path goes openRegionOverlay → locked-fall-through →
+  // region grid → openLevelSelect (no prompt here, intended).
   // Kodok slot-7 special unlock (runs once, guard inside).
   // Trigger only on G13B; G13C tile uses openGymGame() which has its own call.
   if (gameNum === '13b') _applyKodokSlot7Unlock()
