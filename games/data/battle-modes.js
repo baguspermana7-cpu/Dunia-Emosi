@@ -583,6 +583,13 @@
     const notes = [523, 659, 784, 1047, 1319];
     notes.forEach((f, i) => setTimeout(() => _tone(f, 0.22, 'triangle', 0.18), i * 130));
   }
+  // Match-win chime — shorter than sfxChampion, fires between tournament matches.
+  // 3-note ascending, lighter than the full champion fanfare.
+  function sfxMatchWin () {
+    _tone(523, 0.14, 'triangle', 0.16);
+    setTimeout(() => _tone(784, 0.14, 'triangle', 0.16), 100);
+    setTimeout(() => _tone(1047, 0.22, 'triangle', 0.18), 200);
+  }
   // A5: time-out — 3-note descending blip, distinct from sfxWrong so the player
   // knows the turn ended because of the clock, not a wrong answer.
   function sfxTimeout () {
@@ -1129,15 +1136,26 @@
 
     // Build picker HTML for the shared G13C 49 packages, grouped by region with
     // section headers + tier badges. Also appends the 9 🎲 Random region cards.
+    // Region quick-nav tabs at top — click to scroll to that region.
     function renderPkgPickerHtml (teamSize) {
       const all = getPokePackages();
-      let html = '';
+      // Quick-nav tab bar (sticky scroll target). 49 cards is a lot to scroll
+      // through; tabs jump to each region's section anchor.
+      let tabs = '<div class="bm-region-tabs">';
+      REGION_ORDER.forEach(regKey => {
+        if (!all.some(p => p.region === regKey)) return;
+        const rmeta = REGION_META[regKey];
+        tabs += `<button class="bm-region-tab" data-jump="bm-anchor-${regKey}">${rmeta.emoji} ${rmeta.name}</button>`;
+      });
+      tabs += '<button class="bm-region-tab" data-jump="bm-anchor-random">🎲 Acak</button>';
+      tabs += '</div>';
+      let html = tabs;
       // Group by region (per G13C convention)
       REGION_ORDER.forEach(regKey => {
         const inRegion = all.filter(p => p.region === regKey);
         if (!inRegion.length) return;
         const rmeta = REGION_META[regKey];
-        html += `<div class="bm-section-label">${rmeta.emoji} ${rmeta.name}</div>`;
+        html += `<div class="bm-section-label" id="bm-anchor-${regKey}">${rmeta.emoji} ${rmeta.name}</div>`;
         html += `<div class="bm-pkg-grid">`;
         inRegion.forEach(pkg => {
           const tier = TIER_META[pkg.tier] || TIER_META.base;
@@ -1165,7 +1183,7 @@
         html += `</div>`;
       });
       // Random region cards (always at the bottom)
-      html += `<div class="bm-section-label">🎲 Tim Acak · per Region (1025 Pokemon)</div>`;
+      html += `<div class="bm-section-label" id="bm-anchor-random">🎲 Tim Acak · per Region (1025 Pokemon)</div>`;
       html += `<div class="bm-pkg-grid">`;
       RANDOM_REGIONS.forEach(reg => {
         html += `
@@ -1186,6 +1204,14 @@
     }
 
     function wirePickerHandlers (root, playerIdx, advanceFn) {
+      // Region quick-nav tabs — scroll the picker scroll-container to the anchor.
+      root.querySelectorAll('.bm-region-tab').forEach(t => {
+        t.addEventListener('click', () => {
+          const targetId = t.getAttribute('data-jump');
+          const anchor = root.querySelector('#' + targetId);
+          if (anchor) anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
       root.querySelectorAll('.bm-pkg-card[data-pkg]').forEach(b => {
         b.addEventListener('click', () => {
           const pkgId = b.getAttribute('data-pkg');
@@ -2080,7 +2106,7 @@
     }
 
     function updateHpDisplays () {
-      // Single shared arena — one set of HP fills to update (P1 = self, P2 = opp).
+      // Single shared arena — surgically update HP bars + texts + sprite danger glow.
       const arena = root.querySelector('.bm-arena');
       if (!arena) return;
       const p1 = activePoke(0);
@@ -2089,10 +2115,15 @@
       const p1Txt  = arena.querySelector('.bm-arena-self .bm-hp-text');
       const p2Fill = arena.querySelector('.bm-arena-opp .bm-hp-fill');
       const p2Txt  = arena.querySelector('.bm-arena-opp .bm-hp-text');
+      const p1Sprite = arena.querySelector('.bm-arena-self-img, .bm-arena-self-sprite');
+      const p2Sprite = arena.querySelector('.bm-arena-opp-img, .bm-arena-opp-sprite');
       if (p1Fill) { p1Fill.style.width = (p1.hp / p1.hpMax * 100) + '%'; p1Fill.className = 'bm-hp-fill ' + hpColorClass(p1.hp, p1.hpMax); }
       if (p1Txt)  { p1Txt.textContent = p1.hp + '/' + p1.hpMax; }
       if (p2Fill) { p2Fill.style.width = (p2.hp / p2.hpMax * 100) + '%'; p2Fill.className = 'bm-hp-fill ' + hpColorClass(p2.hp, p2.hpMax); }
       if (p2Txt)  { p2Txt.textContent = p2.hp + '/' + p2.hpMax; }
+      // Sprite-level low-HP pulse — kid sees the danger immediately
+      if (p1Sprite) p1Sprite.classList.toggle('bm-sprite-danger', p1.hp / p1.hpMax < 0.25 && p1.hp > 0);
+      if (p2Sprite) p2Sprite.classList.toggle('bm-sprite-danger', p2.hp / p2.hpMax < 0.25 && p2.hp > 0);
     }
 
     function playFaintAnimation (faintedIdx, done) {
@@ -2294,6 +2325,16 @@
       @keyframes bmHpDanger {
         0%,100% { box-shadow: 0 0 0 0 rgba(232,48,48,0); }
         50%     { box-shadow: 0 0 8px 2px rgba(232,48,48,0.7); }
+      }
+      /* Sprite-level low-HP red pulse — fires when active Pokemon hp < 25%.
+         Combines with existing sprite-bob; uses drop-shadow so PNG sprites
+         still pulse red without changing the sprite color itself. */
+      .bm-sprite-danger {
+        animation: bmSpriteBob 2200ms ease-in-out infinite, bmSpriteDanger 0.9s ease-in-out infinite !important;
+      }
+      @keyframes bmSpriteDanger {
+        0%, 100% { filter: drop-shadow(0 6px 18px rgba(0,0,0,0.7)) drop-shadow(0 0 0 transparent); }
+        50%      { filter: drop-shadow(0 6px 18px rgba(0,0,0,0.7)) drop-shadow(0 0 16px rgba(232,48,48,0.95)) drop-shadow(0 0 26px rgba(232,48,48,0.6)); }
       }
       .bm-hp-text {
         font-size: 9px; font-weight: 700; color: #555;
@@ -2591,6 +2632,37 @@
         box-shadow: 1px 1px 0 #111;
         margin-left: 4px;
       }
+
+      /* Region quick-nav tabs — sticky top of the picker, horizontal scroll */
+      .bm-region-tabs {
+        position: sticky; top: -8px;
+        display: flex; gap: 4px;
+        padding: 6px 4px 6px;
+        background: linear-gradient(180deg, rgba(168,216,248,0.95), rgba(168,216,248,0.0));
+        backdrop-filter: blur(6px);
+        overflow-x: auto;
+        scrollbar-width: thin;
+        max-width: 100%;
+        z-index: 5;
+        align-self: stretch;
+        margin: 0 -8px;
+      }
+      .bm-region-tabs::-webkit-scrollbar { height: 4px; }
+      .bm-region-tabs::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius: 2px; }
+      .bm-region-tab {
+        flex-shrink: 0;
+        padding: 5px 10px;
+        background: rgba(248,248,240,0.95);
+        border: 2px solid #444; border-radius: 999px;
+        font-family: 'Fredoka One', cursive;
+        font-size: 11px; color: #111;
+        cursor: pointer;
+        box-shadow: 1px 1px 0 rgba(0,0,0,0.25);
+        transition: transform 120ms, box-shadow 120ms;
+        white-space: nowrap;
+      }
+      .bm-region-tab:hover { transform: translate(-1px,-1px); box-shadow: 2px 2px 0 rgba(0,0,0,0.30); }
+      .bm-region-tab:active { transform: translate(1px,1px); box-shadow: 0 0 0 rgba(0,0,0,0); }
 
       /* Random region card — visually distinct from themed packages */
       .bm-section-label {
@@ -3250,6 +3322,12 @@
           // winnerIdx is 0 or 1 within the match's players
           cur.winner = res.winnerIdx === 0 ? 'a' : 'b';
           currentMatch++;
+          // Audio cue between intermediate matches (final winner gets sfxChampion
+          // from showChampion). Fires only if more matches remain.
+          const flat = flatMatches();
+          if (currentMatch < flat.length) {
+            try { sfxMatchWin(); } catch (e) {}
+          }
           renderBracket();
         },
         onCancel: () => {
