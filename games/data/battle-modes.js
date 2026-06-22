@@ -1650,10 +1650,10 @@
         setTimeout(() => attackerSprite.classList.remove('bm-attack-lunge'), 600);
       }
       // Projectile flies attacker → defender (~320ms). Lands at the start of
-      // the defender shake / damage frame, so all impact VFX read as caused
-      // by the projectile collision.
+      // the defender shake / damage frame. Per-move unique projectile via
+      // MOVE_PROJECTILE map (Flamethrower differs from Fire Blast, etc.).
       setTimeout(() => {
-        spawnProjectile(attackerSprite, defenderPanel, move.type);
+        spawnProjectile(attackerSprite, defenderPanel, move);
       }, 40);
       if (defenderPanel) {
         setTimeout(() => {
@@ -1756,11 +1756,172 @@
     }
 
     // ── A2 VFX helpers — port from G13C ────────────────────────────────
-    // Projectile flying attacker → defender, type-coded emoji core.
+    // Per-move projectile config (overrides the type default).
+    // Each entry: emoji core(s) + trail color + size + arc style ('straight'/'arc'/'spiral'/'zigzag').
+    const MOVE_PROJECTILE = {
+      // Fire variants
+      'Ember':           { emoji:'🔥',   trail:'#F97316', size:32 },
+      'Flamethrower':    { emoji:'🔥',   trail:'#F97316', size:38, arc:'wave' },
+      'Fire Blast':      { emoji:'💥',   trail:'#DC2626', size:44 },
+      'Heat Wave':       { emoji:'🌋',   trail:'#DC2626', size:40 },
+      'Blaze Kick':      { emoji:'🦵',   trail:'#F97316', size:38 },
+      'Flame Charge':    { emoji:'🔥',   trail:'#F59E0B', size:36 },
+      'Sacred Fire':     { emoji:'🔥',   trail:'#FCD34D', size:44 },
+      'Blast Burn':      { emoji:'💥',   trail:'#DC2626', size:46 },
+      'Flame Wheel':     { emoji:'🛞',   trail:'#F97316', size:36 },
+      'Flare Blitz':     { emoji:'💥',   trail:'#F97316', size:42 },
+      // Water variants
+      'Water Gun':       { emoji:'💧',   trail:'#06B6D4', size:32 },
+      'Hydro Pump':      { emoji:'🌊',   trail:'#0EA5E9', size:42, arc:'wave' },
+      'Hydro Cannon':    { emoji:'🌊',   trail:'#0284C7', size:46 },
+      'Bubble':          { emoji:'🫧',   trail:'#06B6D4', size:34 },
+      'Bubble Beam':     { emoji:'🫧',   trail:'#06B6D4', size:36 },
+      'Surf':            { emoji:'🌊',   trail:'#0EA5E9', size:42 },
+      'Aqua Jet':        { emoji:'💧',   trail:'#06B6D4', size:34 },
+      'Water Pulse':     { emoji:'💧',   trail:'#06B6D4', size:36, arc:'spiral' },
+      'Water Shuriken':  { emoji:'🪐',   trail:'#06B6D4', size:32 },
+      'Crabhammer':      { emoji:'🦀',   trail:'#06B6D4', size:38 },
+      // Electric variants
+      'Thunder Shock':   { emoji:'⚡',   trail:'#FCD34D', size:34 },
+      'Thunderbolt':     { emoji:'⚡',   trail:'#FCD34D', size:40, arc:'zigzag' },
+      'Thunder':         { emoji:'🌩️',  trail:'#FBBF24', size:44 },
+      'Volt Tackle':     { emoji:'⚡',   trail:'#FBBF24', size:38 },
+      'Zap Cannon':      { emoji:'⚡',   trail:'#FCD34D', size:42 },
+      'Spark':           { emoji:'✨',   trail:'#FCD34D', size:32 },
+      'Electro Ball':    { emoji:'⚡',   trail:'#FCD34D', size:36 },
+      // Grass variants
+      'Vine Whip':       { emoji:'🌿',   trail:'#10B981', size:34 },
+      'Razor Leaf':      { emoji:'🍃',   trail:'#10B981', size:34 },
+      'Leaf Blade':      { emoji:'🍃',   trail:'#10B981', size:38 },
+      'Solar Beam':      { emoji:'🌞',   trail:'#FCD34D', size:44, arc:'beam' },
+      'Frenzy Plant':    { emoji:'🌳',   trail:'#10B981', size:46 },
+      'Leaf Storm':      { emoji:'🌿',   trail:'#10B981', size:42 },
+      'Petal Dance':     { emoji:'🌸',   trail:'#F472B6', size:38 },
+      'Absorb':          { emoji:'🍃',   trail:'#10B981', size:30 },
+      'Bug Bite':        { emoji:'🪲',   trail:'#A8B820', size:32 },
+      'Bullet Seed':     { emoji:'🌱',   trail:'#10B981', size:32 },
+      'Leech Seed':      { emoji:'🌱',   trail:'#10B981', size:30 },
+      // Ice variants
+      'Ice Beam':        { emoji:'❄️',  trail:'#98D8D8', size:38, arc:'beam' },
+      'Blizzard':        { emoji:'🥶',   trail:'#98D8D8', size:44 },
+      'Ice Shard':       { emoji:'🧊',   trail:'#98D8D8', size:32 },
+      'Aurora Beam':     { emoji:'🌈',   trail:'#98D8D8', size:38 },
+      'Powder Snow':     { emoji:'❄️',  trail:'#E0F2FE', size:30 },
+      // Dragon
+      'Dragon Pulse':    { emoji:'🐉',   trail:'#7038F8', size:42, arc:'spiral' },
+      'Dragon Claw':     { emoji:'🐾',   trail:'#7038F8', size:38 },
+      'Dragon Breath':   { emoji:'🐉',   trail:'#7038F8', size:36 },
+      'Dragon Ascent':   { emoji:'🐲',   trail:'#7038F8', size:46 },
+      'Outrage':         { emoji:'🐲',   trail:'#7038F8', size:42 },
+      'Twister':         { emoji:'🌀',   trail:'#7038F8', size:38 },
+      // Ghost / Dark
+      'Shadow Ball':     { emoji:'👻',   trail:'#705898', size:40, arc:'spiral' },
+      'Dark Pulse':      { emoji:'🌑',   trail:'#705848', size:38, arc:'spiral' },
+      'Crunch':          { emoji:'🦷',   trail:'#705848', size:36 },
+      'Bite':            { emoji:'🦷',   trail:'#705848', size:32 },
+      'Dream Eater':     { emoji:'💤',   trail:'#705898', size:36 },
+      // Psychic
+      'Psychic':         { emoji:'🔮',   trail:'#F85888', size:40 },
+      'Confusion':       { emoji:'😵‍💫', trail:'#F85888', size:34 },
+      'Psycho Boost':    { emoji:'🌀',   trail:'#F85888', size:44 },
+      'Mist Ball':       { emoji:'🌫️',  trail:'#F85888', size:38 },
+      'Luster Purge':    { emoji:'✨',   trail:'#F85888', size:38 },
+      // Fighting
+      'Karate Chop':     { emoji:'🤚',   trail:'#C03028', size:34 },
+      'Brick Break':     { emoji:'👊',   trail:'#C03028', size:36 },
+      'Close Combat':    { emoji:'💢',   trail:'#C03028', size:40 },
+      'High Jump Kick':  { emoji:'🦵',   trail:'#C03028', size:40 },
+      'Mach Punch':      { emoji:'👊',   trail:'#C03028', size:34 },
+      'Sky Uppercut':    { emoji:'🥊',   trail:'#C03028', size:38 },
+      'Flying Press':    { emoji:'🦅',   trail:'#A890F0', size:38 },
+      'Aura Sphere':     { emoji:'💠',   trail:'#C03028', size:40, arc:'spiral' },
+      // Flying
+      'Gust':            { emoji:'🌪️',  trail:'#A890F0', size:36 },
+      'Aerial Ace':      { emoji:'💨',   trail:'#A890F0', size:34 },
+      'Wing Attack':     { emoji:'🪽',   trail:'#A890F0', size:34 },
+      'Peck':            { emoji:'🐦',   trail:'#A890F0', size:30 },
+      'Drill Peck':      { emoji:'🪶',   trail:'#A890F0', size:38 },
+      'Air Slash':       { emoji:'💨',   trail:'#A890F0', size:36 },
+      'Brave Bird':      { emoji:'🕊️',  trail:'#A890F0', size:40 },
+      'Sky Attack':      { emoji:'🦅',   trail:'#FCD34D', size:42 },
+      'Fly':             { emoji:'🪽',   trail:'#A890F0', size:36 },
+      'Boomburst':       { emoji:'💥',   trail:'#A890F0', size:44 },
+      'Hurricane':       { emoji:'🌀',   trail:'#A890F0', size:42 },
+      // Rock / Ground
+      'Rock Throw':      { emoji:'🪨',   trail:'#B8A038', size:36 },
+      'Rock Slide':      { emoji:'⛰️',  trail:'#B8A038', size:40 },
+      'Stone Edge':      { emoji:'🪨',   trail:'#B8A038', size:42 },
+      'Earthquake':      { emoji:'🌋',   trail:'#E0C068', size:46 },
+      'Mud Slap':        { emoji:'🟫',   trail:'#E0C068', size:32 },
+      'Mud Shot':        { emoji:'🟫',   trail:'#E0C068', size:32 },
+      'Dig':             { emoji:'⛏️',  trail:'#E0C068', size:36 },
+      'Magnitude':       { emoji:'📊',   trail:'#E0C068', size:38 },
+      // Steel
+      'Iron Tail':       { emoji:'⚙️',  trail:'#B8B8D0', size:36 },
+      'Iron Head':       { emoji:'⚙️',  trail:'#B8B8D0', size:38 },
+      'Steel Wing':      { emoji:'🪽',   trail:'#B8B8D0', size:34 },
+      'Flash Cannon':    { emoji:'💿',   trail:'#B8B8D0', size:40 },
+      'Meteor Mash':     { emoji:'☄️',  trail:'#B8B8D0', size:42 },
+      'Bullet Punch':    { emoji:'👊',   trail:'#B8B8D0', size:32 },
+      'Metal Claw':      { emoji:'⚙️',  trail:'#B8B8D0', size:32 },
+      // Poison
+      'Sludge Bomb':     { emoji:'☠️',  trail:'#A040A0', size:38 },
+      'Poison Sting':    { emoji:'☠️',  trail:'#A040A0', size:30 },
+      'Poison Jab':      { emoji:'💉',   trail:'#A040A0', size:36 },
+      'Cross Poison':    { emoji:'☠️',  trail:'#A040A0', size:36 },
+      'Toxic':           { emoji:'☠️',  trail:'#A040A0', size:34 },
+      // Fairy
+      'Moonblast':       { emoji:'🌙',   trail:'#F472B6', size:42 },
+      'Disarming Voice': { emoji:'🎶',   trail:'#F472B6', size:34 },
+      'Hyper Voice':     { emoji:'📢',   trail:'#F472B6', size:40 },
+      'Dazzling Gleam':  { emoji:'✨',   trail:'#F472B6', size:40 },
+      'Play Nice':       { emoji:'💕',   trail:'#F472B6', size:30 },
+      'Charm':           { emoji:'💕',   trail:'#F472B6', size:30 },
+      // Normal (physical) — usually low-pwr quick hits
+      'Tackle':          { emoji:'💢',   trail:'#A8A878', size:32 },
+      'Quick Attack':    { emoji:'💨',   trail:'#FFFFFF', size:32 },
+      'Slash':           { emoji:'⚔️',  trail:'#A8A878', size:34 },
+      'Hyper Beam':      { emoji:'🌟',   trail:'#FCD34D', size:44, arc:'beam' },
+      'Body Slam':       { emoji:'💥',   trail:'#A8A878', size:38 },
+      'Headbutt':        { emoji:'💢',   trail:'#A8A878', size:34 },
+      'Extreme Speed':   { emoji:'💨',   trail:'#FFFFFF', size:36 },
+      'Swift':           { emoji:'⭐',   trail:'#FCD34D', size:32 },
+      'Take Down':       { emoji:'💢',   trail:'#A8A878', size:36 },
+      'Last Resort':     { emoji:'💥',   trail:'#A8A878', size:38 },
+      'Scratch':         { emoji:'🐾',   trail:'#A8A878', size:30 },
+      'Pound':           { emoji:'💢',   trail:'#A8A878', size:30 }
+    };
+
+    function resolveProjectile (move) {
+      if (move && MOVE_PROJECTILE[move.name]) return MOVE_PROJECTILE[move.name];
+      const typeDefaults = {
+        fire:     { emoji:'🔥', trail:'#F97316', size:38 },
+        water:    { emoji:'💧', trail:'#06B6D4', size:36 },
+        grass:    { emoji:'🌿', trail:'#10B981', size:34 },
+        electric: { emoji:'⚡', trail:'#FCD34D', size:36 },
+        normal:   { emoji:'⭐', trail:'#FFFFFF', size:34 },
+        fairy:    { emoji:'💖', trail:'#F472B6', size:34 },
+        poison:   { emoji:'☠️', trail:'#A040A0', size:34 },
+        ground:   { emoji:'🪨', trail:'#E0C068', size:36 },
+        flying:   { emoji:'💨', trail:'#A890F0', size:34 },
+        bug:      { emoji:'🪲', trail:'#A8B820', size:32 },
+        psychic:  { emoji:'🔮', trail:'#F85888', size:38 },
+        rock:     { emoji:'🪨', trail:'#B8A038', size:36 },
+        ghost:    { emoji:'👻', trail:'#705898', size:36 },
+        ice:      { emoji:'❄️', trail:'#98D8D8', size:34 },
+        dragon:   { emoji:'🐉', trail:'#7038F8', size:40 },
+        dark:     { emoji:'🌑', trail:'#705848', size:36 },
+        fighting: { emoji:'👊', trail:'#C03028', size:34 },
+        steel:    { emoji:'⚙️', trail:'#B8B8D0', size:34 }
+      };
+      return typeDefaults[move && move.type] || typeDefaults.normal;
+    }
+
+    // Projectile flying attacker → defender, per-move emoji + glow.
     // Lands in ~340ms (synced with the lunge-to-impact window) and triggers
-    // the impact particle burst on landing. Owner: "projectile vfx serangannya
-    // belum ada" — this fills the visible attack travel.
-    function spawnProjectile (attackerSprite, defenderPanel, moveType, onLand) {
+    // the impact particle burst on landing. Now per-MOVE unique (Flamethrower
+    // differs from Fire Blast, Hydro Pump differs from Bubble, etc.).
+    function spawnProjectile (attackerSprite, defenderPanel, move, onLand) {
       if (!attackerSprite || !defenderPanel) { setTimeout(onLand || (()=>{}), 340); return; }
       const a = attackerSprite.getBoundingClientRect();
       const d = defenderPanel.getBoundingClientRect();
@@ -1768,17 +1929,13 @@
       const startY = a.top + a.height * 0.35;
       const endX   = d.left + d.width * 0.5;
       const endY   = d.top + d.height * 0.45;
-      const config = {
-        fire:     { emoji: '🔥', trail: '#F97316', size: 38 },
-        water:    { emoji: '💧', trail: '#06B6D4', size: 36 },
-        grass:    { emoji: '🌿', trail: '#10B981', size: 34 },
-        electric: { emoji: '⚡', trail: '#FCD34D', size: 36 },
-        normal:   { emoji: '⭐', trail: '#FFFFFF', size: 34 },
-        fairy:    { emoji: '💖', trail: '#F472B6', size: 34 }
-      };
-      const cfg = config[moveType] || config.normal;
+      const cfg = resolveProjectile(move);
       const el = document.createElement('div');
       el.textContent = cfg.emoji;
+      // Arc style modulates rotation + scale terminal — different feel per move kind.
+      const arc = cfg.arc || 'straight';
+      const endRotate = arc === 'spiral' ? 900 : arc === 'zigzag' ? 360 : arc === 'beam' ? 0 : arc === 'wave' ? 180 : 540;
+      const endScale  = arc === 'beam' ? 1.0 : 1.4;
       el.style.cssText = `
         position: fixed;
         left: ${startX}px; top: ${startY}px;
@@ -1789,13 +1946,11 @@
         transition: left 320ms cubic-bezier(0.4,0,0.2,1), top 320ms cubic-bezier(0.4,0,0.2,1), transform 320ms cubic-bezier(0.4,0,0.2,1);
       `;
       document.body.appendChild(el);
-      // Trigger movement on the next frame so transition applies
       requestAnimationFrame(() => {
         el.style.left = endX + 'px';
         el.style.top  = endY + 'px';
-        el.style.transform = 'translate(-50%, -50%) scale(1.4) rotate(540deg)';
+        el.style.transform = `translate(-50%, -50%) scale(${endScale}) rotate(${endRotate}deg)`;
       });
-      // Cleanup + invoke landing callback at ~340ms
       setTimeout(() => {
         try { el.remove(); } catch (e) {}
         if (typeof onLand === 'function') onLand();
