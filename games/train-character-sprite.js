@@ -51,26 +51,42 @@
     state.sprite = placeholder
 
     if (config.spriteUrl && window.PIXI && PIXI.Assets) {
+      // Each mount() pulls its own texture by URL. PIXI.Assets caches per-URL, but each
+      // Sprite instance is fresh so no cross-character pollution.
       PIXI.Assets.load(config.spriteUrl).then(tex => {
         if (state.disposed || !tex) return
         if (placeholder && placeholder.parent) container.removeChild(placeholder)
+        // Defensive sanity check: warn if texture size doesn't broadly match config expectations
+        if (tex && tex.height && config.spriteHeight && Math.abs(tex.height - config.spriteHeight * 4) > tex.height) {
+          // Big mismatch — not fatal but log so cache collisions surface
+          console.warn('[CTSE] texture size unusual for', config.spriteUrl, 'tex.h=', tex.height, 'cfg.h=', config.spriteHeight)
+        }
         const targetH = config.spriteHeight || 90
         const baseScale = targetH / tex.height
-        // White-outline underlay: a slightly-larger white-tinted clone rendered behind the main sprite.
-        // Gives a crisp silhouette edge against dark backgrounds (G16 night theme, etc.).
-        const outline = new PIXI.Sprite(tex)
-        outline.anchor.set(0.5, 1)
-        outline.scale.set(baseScale * 1.06) // ~6% larger
-        outline.tint = 0xffffff
-        outline.alpha = 0.85
-        container.addChildAt(outline, 0) // lowest layer
-        state.outline = outline
-        // Main sprite
+
+        // White-outline underlay — DISABLED by default. Owner reported "all trains look
+        // like Malivlak overlay, like 2 images stacked" — the outline was the second
+        // image stacking on top of every character sprite. Opt-in via config.enableOutline.
+        if (config.enableOutline === true) {
+          const outline = new PIXI.Sprite(tex)
+          outline.anchor.set(0.5, 1)
+          outline.scale.set(baseScale * 1.06)
+          outline.tint = 0xffffff
+          outline.alpha = 0.35   // softer — was 0.85, that was too dominant
+          outline.zIndex = 0
+          container.addChild(outline)
+          state.outline = outline
+        }
+
+        // Main sprite — always rendered, anchored bottom-center
         const s = new PIXI.Sprite(tex)
         s.anchor.set(0.5, 1)
         s.scale.set(baseScale)
-        container.addChildAt(s, 1) // above outline, below wheels
+        s.zIndex = 1
+        container.addChild(s)
         state.sprite = s
+        // Enforce explicit render order via zIndex so we don't depend on insertion order
+        container.sortableChildren = true
       }).catch(err => console.warn('[CTSE] sprite load failed', config.spriteUrl, err))
     }
 

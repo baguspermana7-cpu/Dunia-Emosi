@@ -1497,27 +1497,29 @@ function syncPikachuSprite() {
   const el = document.getElementById('pikachu-sprite')
   const aura = document.getElementById('pikachu-aura')
   if (!wrap || !el) return
-  const screenX = S.x - S.camX
+  // Owner: "saat landscape atau portrait karakternya tidak pas di tanah/base, seperti
+  // kesan terbang". On short viewports (landscape), fitWorldToCanvas() scales the Pixi
+  // stage by `ch/worldH`, but the DOM Pikachu wrapper is positioned in raw world coords
+  // → he floats above the scaled ground. Apply the same scale to the DOM transform so
+  // his feet stay on the Pixi ground. L84 documented but never propagated to the overlay.
+  const ch = (typeof _gameH === 'function') ? _gameH() : (window.innerHeight || 768)
+  const worldH = 12 * TILE
+  const stageScale = ch < worldH ? ch / worldH : 1
+  const screenX = (S.x - S.camX)
   const screenY = S.y
   // Hotfix #112: state-aware anchor — big mode wrap is 118×118 (was hardcoded
   // -84 → big sprite floated 34px into the platform). Match collision body.
   const wrapH = S.pikachuState === 'big' ? 118 : 84
   const wrapW = S.pikachuState === 'big' ? 80 : 60
-  // Hotfix #118: haloFudge compensates for remaining glow/padding in the GIF
-  // files (idle/running/jump/happy). The static PNGs are now cropped via
-  // process-mario-sprites.py, but GIFs cannot be cropped without losing
-  // animation. The glow halo in GIFs adds ~12px transparent space at bottom,
-  // making Pikachu appear to hover. We add haloFudge to move sprite DOWN by
-  // that amount, so feet visually sit on the platform.
-  // For static PNG states (pikachu-small-cropped / pikachu-big-cropped) the
-  // crop already removed the halo, so fudge = 0.
+  // Hotfix #118: haloFudge compensates for remaining glow/padding in GIF files.
   const _pikaGIFStates = ['idle', 'running', 'jump', 'happy']
   const haloFudge = _pikaGIFStates.includes(_pikaCurrentAnim) ? 4 : 0
-  // GPU-composited transform — single inline transform combining translate3d
-  // (for position, GPU layer) and scaleX (for facing flip). Replaces left/top
-  // layout reflow to keep 60fps stable.
+  // Apply stage scale to BOTH position and sprite size so DOM matches the Pixi-scaled world.
   const flip = S.facing >= 0 ? 1 : -1
-  wrap.style.transform = `translate3d(${screenX - wrapW/2}px, ${screenY - wrapH + haloFudge}px, 0)`
+  const tx = (screenX - wrapW/2) * stageScale
+  const ty = (screenY - wrapH + haloFudge) * stageScale
+  wrap.style.transformOrigin = '0 0'
+  wrap.style.transform = `translate3d(${tx}px, ${ty}px, 0) scale(${stageScale})`
   const glow = S.electricMode > 0 ? 'drop-shadow(0 0 14px #fbbf24) drop-shadow(0 0 22px #fde047)' : 'drop-shadow(0 4px 6px rgba(0,0,0,0.4))'
   el.style.filter = glow + (S.hitFrames > 0 && Math.floor(S.hitFrames/4)%2 === 0 ? ' brightness(2.3)' : '')
   el.style.transform = `scaleX(${flip})`
@@ -1676,6 +1678,10 @@ function movePlayer(dx, dy) {
   // discrepancy causing big Pikachu to clip through platform top).
   const w = 52, hSmall = 80, hBig = 118
   const h = S.pikachuState === 'small' ? hSmall : hBig
+  // Record pre-step Y so we can detect fast vertical crossings — owner reported
+  // "ada pijakan setelah lompat itu tidak bisa menaiki object" — that bug is the
+  // single-frame overshoot where current-frame AABB rejects the platform.
+  const prevBottom = S.y
   S.x += dx
   S.y += dy
   // Clamp horizontal
@@ -1685,7 +1691,10 @@ function movePlayer(dx, dy) {
   // Check tile collisions
   for (const c of solidTiles) {
     if (px + pw <= c.x || px >= c.x + TILE) continue
-    if (py + ph <= c.y || py >= c.y + TILE) continue
+    // Crossed-from-above check (catches single-frame overshoot during fast falls).
+    // If we WERE above this tile's top last frame and are now AT or BELOW it, treat as landing.
+    const crossedFromAbove = (dy > 0) && (prevBottom <= c.y) && (S.y >= c.y)
+    if (!crossedFromAbove && (py + ph <= c.y || py >= c.y + TILE)) continue
     // Skip elevated platform bricks for lateral collision — player walks under them
     if (dy === 0 && (c._g21Type === 'brick' || c._g21Type === 'qblock') && (c.y + TILE) <= S.y + 2) continue
     // Resolve based on movement axis
@@ -1792,8 +1801,10 @@ function updateGoombas() {
       }
     }
     if (pushX !== 0) g.x += pushX
-    // Player collision
-    if (collides(g, S, 28, 70)) onGoombaCollide(g)
+    // Player collision — only if the goomba is alive AND visibly mounted on the world.
+    // Defensive guard: owner reported "ada musuh yang tidak terlihat tiba2 kehilangan
+    // nyawa saja" — dying-fade or pre-mount sprites kept colliding while invisible.
+    if (g._g21Alive && g.parent && !g._g21Removed && collides(g, S, 28, 70)) onGoombaCollide(g)
   }
   S.goombas = S.goombas.filter(g => !g._g21Removed)
 }
@@ -1880,7 +1891,9 @@ function updateMushrooms() {
     // Mirror sprite horizontally (Sprite uses scale, Graphics inherits scale)
     m.scale.x = m._g21Vx >= 0 ? 1 : -1
 
-    // ── Collision with player ──
+    // ── Collision with player ── only when mushroom is alive, mounted, and not removed.
+    // Defensive guard for "invisible enemy damage" (owner #4) — pre-mount or fading.
+    if (!m._g21Alive || !m.parent || m._g21Removed) continue
     if (!collides(m, S, 28, 60)) continue
     // Stomp from above
     if (S.vy > 1 && S.y < m.y - 8) {
@@ -1928,7 +1941,10 @@ function updateStars() {
     st._g21Bob = (st._g21Bob || 0) + 0.15
     st.rotation = st._g21Bob
     st.y += Math.sin(st._g21Bob) * 0.6
-    if (collides(st, S, 36, 70)) {
+    // Owner: "ada bintang tidak bisa di ambil padahal sudah lurus dan loncat".
+    // The bobbing star ±0.6px/frame drifted just outside the static 36×36 box on
+    // some frames. Bump the box to 48×48 and accept loose vertical tolerance.
+    if (collides(st, S, 48, 70, true)) {
       sfx('sfx-powerup')
       S.starMode = 600     // 10s invincibility (existing)
       S.electricMode = 600 // 10s ELECTRIC MODE — can fire bolts

@@ -1685,10 +1685,11 @@ const OBS_EMOJIS = ['🪨','🐄','🐔','🌵','⚠️','🛑','🪵','🧱']
 const OBS_SIZE = 44
 
 function spawnObstacle() {
-  // Only spawn on lanes NOT occupied by AI trains
-  // Spawn on any lane EXCEPT player's current lane (player should dodge to avoid)
-  const otherLanes = [0, 1, 2].filter(l => l !== S.lane)
-  const lane = otherLanes[Math.floor(Math.random() * otherLanes.length)]
+  // Spawn uniformly across all 3 lanes (including middle). Player gets reaction
+  // buffer from the distance D ahead, not from lane-exclusion. Previous logic
+  // excluded the player's lane → middle lane never spawned anything, owner
+  // could park there forever ("di lane tengah tidak ada halangan").
+  const lane = Math.floor(Math.random() * 3)
   const W = app.screen.width
   const emoji = OBS_EMOJIS[Math.floor(Math.random() * OBS_EMOJIS.length)]
 
@@ -1898,7 +1899,16 @@ function endRace() {
   S.running = false
   document.getElementById('quiz-ovl').style.display = 'none'
 
-  const stars = GameScoring.calc({correct:S.correctAnswers||0, total:(S.correctAnswers||0)+(S.wrongAnswers||0)||1, wrong:S.wrongAnswers||0, lives:S.hp, maxLives:LIVES_MAX, bonus:S.position===1?1:0})
+  // G14 is a pure-action runner — there's no quiz, so GameScoring.calc({correct:0,...})
+  // would return 0 stars regardless of HP/position (game-modal.js:169 rule). Use a
+  // runner-style formula instead: survive base 3 + HP retention bonus + position bonus.
+  // Owner: "nyawa/life masih full tapi kalah 0 bintang" — this fixes that.
+  const hpRatio = (S.hp || 0) / LIVES_MAX
+  const alive = (S.hp || 0) > 0
+  let stars = alive ? 3 : 0
+  if (alive && hpRatio >= 0.8) stars += 1
+  if (S.position === 1) stars += 1
+  stars = Math.min(5, Math.max(0, stars))
   const emoji = stars >= 5 ? '🏆' : stars >= 4 ? '🌟' : stars >= 3 ? '⭐' : stars >= 1 ? '💪' : '😞'
   const posLabel = S.position === 1 ? `Juara 1! (${Math.floor(S.distance)}m)` : S.position === 2 ? `Posisi 2 (${Math.floor(S.distance)}m)` : `Posisi 3 (${Math.floor(S.distance)}m)`
   const title = stars >= 5 ? 'Sempurna!' : stars >= 4 ? 'Hebat!' : stars >= 3 ? 'Bagus!' : stars >= 1 ? 'Coba Lagi' : 'Gagal! Coba Lagi'

@@ -154,7 +154,7 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/save-engine.js?v=20260501h"></script>
 <script src="game-modal.js?v=20260424g"></script>
-<script src="train-character-sprite.js?v=20260423c"></script>
+<script src="train-character-sprite.js?v=20260622d"></script>
 
 <script src="lib/pixi.min.js?v=8"></script>
 <script>
@@ -303,12 +303,47 @@ function selectTrain(idx) {
 }
 
 // ── Train Select Preview Canvas ───────────────────────────────────────────────
+// Owner: "saat di screen pilih keretamu, itu gambar yang dipakai bukan asset
+// gambar yang benar". For character trains (Casey Jr / Linus / Dragutin /
+// Malivlak), load the REAL WebP sprite from assets/train/<slug>-body.webp
+// instead of drawing a procedural box-and-wheel placeholder. Procedural draw
+// remains for non-character styles (Sakura, Nocturne, Bima Express).
 function drawPreview(canvasId, styleIdx) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   const TS = TRAIN_STYLES[styleIdx];
   ctx.clearRect(0, 0, 116, 52);
+
+  // Character train branch — async-load + draw the real WebP, no procedural fallback unless image fails
+  if (TS && TS.character && TS.characterKey && typeof G16_CHAR_CONFIGS === 'object' && G16_CHAR_CONFIGS[TS.characterKey]) {
+    const cfg = G16_CHAR_CONFIGS[TS.characterKey];
+    if (cfg && cfg.spriteUrl) {
+      const img = new Image();
+      img.onload = () => {
+        ctx.clearRect(0, 0, 116, 52);
+        // Fit inside 116×52 keeping aspect ratio, anchored center
+        const ar = img.naturalWidth / img.naturalHeight;
+        let drawW = 116, drawH = 116 / ar;
+        if (drawH > 50) { drawH = 50; drawW = 50 * ar; }
+        const dx = (116 - drawW) / 2;
+        const dy = (52 - drawH) / 2 + 1;
+        ctx.drawImage(img, dx, dy, drawW, drawH);
+        // Soft rail line
+        ctx.fillStyle = '#4ade80'; ctx.fillRect(0, 49, 116, 2);
+      };
+      img.onerror = () => drawPreviewProcedural(ctx, TS);
+      img.src = cfg.spriteUrl;
+      // Placeholder while loading: subtle colored rectangle so the card isn't blank
+      ctx.fillStyle = 'rgba(139,92,246,0.10)';
+      ctx.fillRect(8, 12, 100, 32);
+      return;
+    }
+  }
+  drawPreviewProcedural(ctx, TS);
+}
+
+function drawPreviewProcedural(ctx, TS) {
   const hex = c => '#' + c.toString(16).padStart(6, '0');
 
   const spokeWheel = (cx, cy, r, spokes) => {
@@ -1891,12 +1926,16 @@ function showWin(){
 }
 function showLose(){
   try{document.getElementById('game-bgm').pause()}catch(_){}
-  try{sessionStorage.setItem('g16Result',JSON.stringify({stars:0,level:S.level}))}catch(_){}
-  // Hotfix #102-C (2026-04-27): stop Pixi ticker so 60fps callback doesn't keep
-  // firing after game-end. See games/g15-pixi.html for canonical pattern.
+  // Stars derived from partial progress, not hardcoded 0. If the player cleared
+  // some stations before losing they deserve credit. calcStars() floor-clamps to 0
+  // when nothing was cleared. Owner-style fairness — symmetric with showWin().
+  const stars = calcStars()
+  try{sessionStorage.setItem('g16Result',JSON.stringify({stars,level:S.level}))}catch(_){}
   try { if (app && app.ticker) app.ticker.stop() } catch(_){}
+  const emoji = stars>=3?'⭐':stars>=1?'💪':'😞'
+  const title = stars>=3?'Bagus, hampir!':stars>=1?'Coba Lagi':'Gagal! Coba Lagi'
   GameModal.show({
-    emoji:'😞', title:'Gagal! Coba Lagi', stars:0,
+    emoji, title, stars,
     msg:`Jangan menyerah, ayo coba lagi! (${S.cleared}/${S.totalObstacles} rintangan bersih)`,
     onAgain:()=>restartGame(), onBack:()=>finishGame()
   })

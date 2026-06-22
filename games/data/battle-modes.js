@@ -294,13 +294,14 @@
         75%     { transform: translateX(-3px); }
       }
 
-      /* Tournament setup + bracket */
+      /* ── Tournament setup + bracket — DS-card cohesion (owner: "warnanya blend") ── */
       .bm-tour-step h2 {
         font-family: 'Fredoka One', cursive;
         font-size: clamp(22px, 5vw, 32px);
         text-align: center;
-        background: linear-gradient(135deg, #FCD34D, #EC4899);
-        -webkit-background-clip: text; color: transparent;
+        color: #fff;
+        text-shadow: 2px 2px 0 rgba(0,0,0,0.55), 0 4px 14px rgba(0,0,0,0.45);
+        letter-spacing: 0.5px;
         margin: 8px 0 18px;
       }
       .bm-tour-count {
@@ -309,55 +310,62 @@
       }
       .bm-tour-count-btn {
         padding: 16px 22px;
-        background: rgba(255,255,255,0.06);
-        border: 2px solid rgba(255,255,255,0.18);
-        border-radius: 16px;
-        color: #F1F5F9;
+        background: rgba(248,248,240,0.97);
+        border: 3px solid #444;
+        border-radius: 14px;
+        color: #111;
         font-family: 'Fredoka One', cursive;
         font-size: clamp(22px, 5vw, 30px);
         cursor: pointer;
         min-width: 96px;
-        transition: transform 200ms cubic-bezier(0.34,1.56,0.64,1), border-color 180ms, background 180ms;
+        box-shadow: 4px 4px 0 rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.95);
+        transition: transform 180ms cubic-bezier(0.34,1.56,0.64,1), box-shadow 180ms;
       }
-      .bm-tour-count-btn:hover { transform: translateY(-3px); border-color: #FCD34D; background: rgba(252,211,77,0.10); }
+      .bm-tour-count-btn:hover { transform: translate(-2px,-4px); box-shadow: 6px 6px 0 rgba(0,0,0,0.32); }
+      .bm-tour-count-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,0.30); }
       .bm-tour-names {
         max-width: 480px; margin: 0 auto;
         display: flex; flex-direction: column; gap: 12px;
       }
       .bm-tour-name-row {
         display: flex; gap: 10px; align-items: center;
-        background: rgba(255,255,255,0.05);
-        border: 1.5px solid rgba(255,255,255,0.12);
-        border-radius: 14px; padding: 12px 14px;
+        background: rgba(248,248,240,0.97);
+        border: 2.5px solid #444;
+        border-radius: 12px; padding: 10px 12px;
+        box-shadow: 3px 3px 0 rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.95);
       }
       .bm-tour-name-badge {
         font-family: 'Fredoka One', cursive;
         padding: 4px 10px; border-radius: 999px;
         font-size: 12px; flex-shrink: 0;
+        border: 2px solid #111; color: #fff;
+        box-shadow: 1px 1px 0 #111;
       }
       .bm-tour-name-input {
         flex: 1; min-width: 0;
         background: transparent;
         border: none;
-        color: #F1F5F9;
+        color: #111;
         font-family: 'Fredoka One', cursive;
         font-size: 18px;
         outline: none;
       }
-      .bm-tour-name-input::placeholder { color: rgba(255,255,255,0.40); }
+      .bm-tour-name-input::placeholder { color: rgba(17,24,39,0.45); }
       .bm-tour-go {
         display: block;
         margin: 24px auto 0;
         padding: 14px 36px;
-        background: linear-gradient(135deg, #FCD34D, #F59E0B);
-        color: #422006;
-        border: none;
-        border-radius: 999px;
+        background: #A7F3D0;
+        color: #064E3B;
+        border: 3px solid #111;
+        border-radius: 16px;
         font-family: 'Fredoka One', cursive;
         font-size: 18px;
         cursor: pointer;
-        box-shadow: 0 12px 32px rgba(252,211,77,0.45);
+        box-shadow: 0 6px 0 #059669;
+        transition: transform 120ms, box-shadow 120ms;
       }
+      .bm-tour-go:active { transform: translateY(4px); box-shadow: 0 1px 0 #059669; }
       .bm-tour-go:disabled { opacity: 0.55; cursor: not-allowed; }
       .bm-bracket {
         display: grid; gap: 16px;
@@ -370,48 +378,55 @@
       .bm-bracket-round h3 {
         font-family: 'Fredoka One', cursive;
         font-size: 14px;
-        color: #FCD34D;
+        color: #fff;
+        text-shadow: 1px 1px 0 rgba(0,0,0,0.55);
         margin-bottom: 4px;
         text-align: center;
         letter-spacing: 1px;
       }
       .bm-bracket-match {
-        background: rgba(255,255,255,0.05);
-        border: 1.5px solid rgba(255,255,255,0.12);
-        border-radius: 14px;
+        background: rgba(248,248,240,0.97);
+        border: 2.5px solid #444;
+        border-radius: 12px;
         padding: 10px 14px;
         display: flex; flex-direction: column; gap: 4px;
+        box-shadow: 3px 3px 0 rgba(0,0,0,0.30);
       }
       .bm-bracket-match[data-state="current"] {
-        border-color: #FCD34D;
+        border: 3px solid #F59E0B;
         animation: bmGlow 1200ms ease-in-out infinite;
       }
       @keyframes bmGlow {
-        0%,100% { box-shadow: 0 0 0 0 rgba(252,211,77,0.55); }
-        50%     { box-shadow: 0 0 0 12px rgba(252,211,77,0); }
+        0%,100% { box-shadow: 3px 3px 0 rgba(0,0,0,0.30), 0 0 0 0 rgba(245,158,11,0.65); }
+        50%     { box-shadow: 3px 3px 0 rgba(0,0,0,0.30), 0 0 0 14px rgba(245,158,11,0); }
       }
-      .bm-bracket-match[data-state="done"] { opacity: 0.7; }
+      .bm-bracket-match[data-state="done"] { opacity: 0.65; }
       .bm-bracket-slot {
         display: flex; gap: 8px; align-items: center;
         padding: 4px 0;
         font-family: 'Fredoka One', cursive;
         font-size: 16px;
+        color: #111;
       }
-      .bm-bracket-slot.winner { color: #6EE7B7; }
-      .bm-bracket-slot.loser  { color: rgba(255,255,255,0.40); text-decoration: line-through; }
-      .bm-bracket-vs { color: rgba(255,255,255,0.40); font-size: 11px; text-align: center; margin: 2px 0; }
+      .bm-bracket-slot.winner { color: #047857; }
+      .bm-bracket-slot.loser  { color: rgba(17,24,39,0.45); text-decoration: line-through; }
+      .bm-bracket-vs { color: rgba(17,24,39,0.50); font-size: 11px; text-align: center; margin: 2px 0; font-weight: 700; }
 
       .bm-tour-go-match {
         display: block;
         margin: 18px auto 0;
         padding: 12px 28px;
-        background: linear-gradient(135deg, #06B6D4, #0EA5E9);
-        color: white;
-        border: none; border-radius: 999px;
+        background: #FBCFE8;
+        color: #831843;
+        border: 3px solid #111;
+        border-radius: 14px;
         font-family: 'Fredoka One', cursive;
         font-size: 16px;
         cursor: pointer;
+        box-shadow: 0 5px 0 #BE185D;
+        transition: transform 120ms, box-shadow 120ms;
       }
+      .bm-tour-go-match:active { transform: translateY(4px); box-shadow: 0 1px 0 #BE185D; }
 
       /* Champion */
       .bm-champion {
@@ -1319,28 +1334,30 @@
         75%      { transform: translateX(7px); }
       }
 
-      /* ── Move buttons — pastel-anchored, same 5px-raised effect ── */
+      /* ── Move buttons — calm pastel rotation (lavender/mint/peach/rose), original G13C 5px-raised effect ── */
       .bm-move {
         padding: 9px 10px;
         border: 2px solid #111;
         border-radius: 12px;
-        background: #FEF3C7; --btn-shadow: #F59E0B;
+        background: #DDD6FE; --btn-shadow: #7C3AED;   /* lavender default */
         color: #1F2937;
         font-family: 'Fredoka One', cursive;
         text-align: left; cursor: pointer; position: relative;
         box-shadow: 0 5px 0 var(--btn-shadow);
         transition: transform 120ms, box-shadow 120ms;
       }
+      .bm-move:nth-child(2) { background:#A7F3D0; --btn-shadow:#059669; }  /* mint  */
+      .bm-move:nth-child(3) { background:#FED7AA; --btn-shadow:#D97706; }  /* peach */
+      .bm-move:nth-child(4) { background:#FBCFE8; --btn-shadow:#BE185D; }  /* rose  */
       .bm-move:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--btn-shadow); }
       .bm-move-name { font-size: 13px; margin-bottom: 3px; color: #111; }
       .bm-move-meta {
         display: flex; flex-wrap: wrap; gap: 3px;
         font-size: 8px; letter-spacing: 0.2px; text-transform: uppercase;
       }
-      /* Mirror G10 super-eff (✨ green pulse) / resist-eff (💤 dashed amber) standards */
+      /* Mirror G10 super-eff (✨ green border + pulsing glow) / resist-eff (💤 purple dashed) standards */
       .bm-move.super-eff {
-        background: #BBF7D0 !important; --btn-shadow: #16A34A !important;
-        border-color: #16A34A !important;
+        border: 2px solid #16A34A !important;
         animation: bmMoveSuperPulse 1.6s ease-in-out infinite;
       }
       .bm-move.super-eff::before {
@@ -1349,8 +1366,7 @@
       }
       .bm-move.resist-eff {
         opacity: 0.80;
-        background: #FEF3C7 !important;
-        border: 2px dashed #D97706 !important;
+        border: 2px dashed #7C3AED !important;   /* purple — never blends with any pastel base */
       }
       .bm-move.resist-eff::before {
         content: '💤'; position: absolute; top: 4px; right: 6px;
@@ -1370,7 +1386,7 @@
       .bm-real-move-type[data-mt="electric"] { background: rgba(252,211,77,0.25); color: #FDE68A; }
       .bm-real-move-type[data-mt="normal"]   { background: rgba(255,255,255,0.15); color: #E5E7EB; }
       .bm-real-move-type[data-mt="fairy"]    { background: rgba(244,114,182,0.25); color: #FBCFE8; }
-      .bm-real-move-pwr { background: rgba(252,211,77,0.20); color: #FDE68A; padding: 1px 5px; border-radius: 5px; font-weight: 800; }
+      .bm-real-move-pwr { background: rgba(255,255,255,0.65); color: #1F2937; padding: 1px 5px; border-radius: 5px; font-weight: 800; }
       .bm-real-stab { color: #FCD34D; }
       .bm-real-move-eff { color: #86EFAC; font-weight: 800; }
 
