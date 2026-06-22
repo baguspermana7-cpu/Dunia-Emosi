@@ -924,6 +924,73 @@
     return pkg.team.slice(0, teamSize).map(adaptPkmFromG13C);
   }
 
+  // ── Picker HTML builder (MODULE SCOPE) ────────────────────────────────────
+  // Called from BOTH startPvP and startTournament. Was previously inside
+  // startPvP's closure → Tournament's renderTourPick threw
+  // "renderPkgPickerHtml is not defined". Real-mouse-click + console-error
+  // probe (deep-testing standard #6) caught this.
+  function renderPkgPickerHtml (teamSize) {
+    const all = getPokePackages();
+    let tabs = '<div class="bm-region-tabs">';
+    REGION_ORDER.forEach(regKey => {
+      if (!all.some(p => p.region === regKey)) return;
+      const rmeta = REGION_META[regKey];
+      tabs += `<button class="bm-region-tab" data-jump="bm-anchor-${regKey}">${rmeta.emoji} ${rmeta.name}</button>`;
+    });
+    tabs += '<button class="bm-region-tab" data-jump="bm-anchor-random">🎲 Acak</button>';
+    tabs += '</div>';
+    let html = tabs;
+    REGION_ORDER.forEach(regKey => {
+      const inRegion = all.filter(p => p.region === regKey);
+      if (!inRegion.length) return;
+      const rmeta = REGION_META[regKey];
+      html += `<div class="bm-section-label" id="bm-anchor-${regKey}">${rmeta.emoji} ${rmeta.name}</div>`;
+      html += `<div class="bm-pkg-grid">`;
+      inRegion.forEach(pkg => {
+        const tier = TIER_META[pkg.tier] || TIER_META.base;
+        const tierBadge = `<span class="bm-pkg-tier" style="background:${tier.color};">${tier.label}</span>`;
+        html += `
+          <button class="bm-pkg-card" data-pkg="${pkg.id}" style="border-color:${pkg.color};">
+            <div class="bm-pkg-head">
+              <span class="bm-pkg-name">${escapeHtml(pkg.label)}</span>
+              ${tierBadge}
+            </div>
+            <div class="bm-pkg-desc">${escapeHtml(pkg.series || '')}</div>
+            <div class="bm-pkg-thumbs">
+              ${pkg.team.slice(0, teamSize).map(p => {
+                const id = slugToId(p.slug);
+                const color = TYPE_COLOR[p.type] || '#A8A878';
+                return `<div class="bm-pkg-thumb" title="${escapeHtml(p.name)}" style="background:${color}22; border-color:${color};">
+                  <img src="${spritePath(id, spriteSlug(p.slug))}" alt="${escapeHtml(p.name)}"
+                       onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'⭐',className:'bm-pkg-thumb-fallback'}))">
+                </div>`;
+              }).join('')}
+            </div>
+          </button>
+        `;
+      });
+      html += `</div>`;
+    });
+    html += `<div class="bm-section-label" id="bm-anchor-random">🎲 Tim Acak · per Region (1025 Pokemon)</div>`;
+    html += `<div class="bm-pkg-grid">`;
+    RANDOM_REGIONS.forEach(reg => {
+      html += `
+        <button class="bm-pkg-card bm-pkg-random" data-region="${reg.id}" data-gen="${reg.gen}">
+          <div class="bm-pkg-head">
+            <span class="bm-pkg-emoji">${reg.emoji}</span>
+            <span class="bm-pkg-name">Tim Acak ${reg.name}</span>
+          </div>
+          <div class="bm-pkg-desc">${reg.desc}</div>
+          <div class="bm-pkg-thumbs bm-pkg-thumbs-random">
+            ${Array.from({length: teamSize}).map(() => `<div class="bm-pkg-thumb bm-pkg-thumb-random"><span>🎲</span></div>`).join('')}
+          </div>
+        </button>
+      `;
+    });
+    html += `</div>`;
+    return html;
+  }
+
   // Type chart — element multiplier capped at 1.2× per owner spec ("elemen itu 1.2x max pengali").
   // Resist (0.75) + immune (0.5) floors preserved — defense still meaningful.
   const TYPE_CHART = {
@@ -934,13 +1001,14 @@
     normal:   {},
     fairy:    {}
   };
-  // Time multiplier curve — owner spec: "1 detik effectnya 1.3 (max pengali)".
-  // Linear: 0ms → 1.30, 1000ms → 1.27, 5000ms → 1.15, 10000ms → 1.0. Auto-fail at 10000ms.
+  // Time multiplier curve — owner spec: "dibuat 1.6 max multipliernya" (bumped
+  // from 1.3 to 1.6). Linear decay: 0ms → 1.60, 1000ms → 1.54, 5000ms → 1.30,
+  // 10000ms → 1.0. Auto-fail at 10000ms.
   const ANSWER_TIMEOUT_MS = 10000;
   function timeMultFromElapsed (elapsedMs) {
     if (elapsedMs == null || elapsedMs < 0) return 1.0;
-    const raw = 1.3 - (elapsedMs / 1000) * 0.03;
-    return Math.max(1.0, Math.min(1.3, raw));
+    const raw = 1.6 - (elapsedMs / 1000) * 0.06;
+    return Math.max(1.0, Math.min(1.6, raw));
   }
   function typeMult (moveType, defType) {
     const t = (TYPE_CHART[moveType] || {})[defType];
@@ -1134,74 +1202,8 @@
       });
     }
 
-    // Build picker HTML for the shared G13C 49 packages, grouped by region with
-    // section headers + tier badges. Also appends the 9 🎲 Random region cards.
-    // Region quick-nav tabs at top — click to scroll to that region.
-    function renderPkgPickerHtml (teamSize) {
-      const all = getPokePackages();
-      // Quick-nav tab bar (sticky scroll target). 49 cards is a lot to scroll
-      // through; tabs jump to each region's section anchor.
-      let tabs = '<div class="bm-region-tabs">';
-      REGION_ORDER.forEach(regKey => {
-        if (!all.some(p => p.region === regKey)) return;
-        const rmeta = REGION_META[regKey];
-        tabs += `<button class="bm-region-tab" data-jump="bm-anchor-${regKey}">${rmeta.emoji} ${rmeta.name}</button>`;
-      });
-      tabs += '<button class="bm-region-tab" data-jump="bm-anchor-random">🎲 Acak</button>';
-      tabs += '</div>';
-      let html = tabs;
-      // Group by region (per G13C convention)
-      REGION_ORDER.forEach(regKey => {
-        const inRegion = all.filter(p => p.region === regKey);
-        if (!inRegion.length) return;
-        const rmeta = REGION_META[regKey];
-        html += `<div class="bm-section-label" id="bm-anchor-${regKey}">${rmeta.emoji} ${rmeta.name}</div>`;
-        html += `<div class="bm-pkg-grid">`;
-        inRegion.forEach(pkg => {
-          const tier = TIER_META[pkg.tier] || TIER_META.base;
-          const tierBadge = `<span class="bm-pkg-tier" style="background:${tier.color};">${tier.label}</span>`;
-          html += `
-            <button class="bm-pkg-card" data-pkg="${pkg.id}" style="border-color:${pkg.color};">
-              <div class="bm-pkg-head">
-                <span class="bm-pkg-name">${escapeHtml(pkg.label)}</span>
-                ${tierBadge}
-              </div>
-              <div class="bm-pkg-desc">${escapeHtml(pkg.series || '')}</div>
-              <div class="bm-pkg-thumbs">
-                ${pkg.team.slice(0, teamSize).map(p => {
-                  const id = slugToId(p.slug);
-                  const color = TYPE_COLOR[p.type] || '#A8A878';
-                  return `<div class="bm-pkg-thumb" title="${escapeHtml(p.name)}" style="background:${color}22; border-color:${color};">
-                    <img src="${spritePath(id, spriteSlug(p.slug))}" alt="${escapeHtml(p.name)}"
-                         onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'⭐',className:'bm-pkg-thumb-fallback'}))">
-                  </div>`;
-                }).join('')}
-              </div>
-            </button>
-          `;
-        });
-        html += `</div>`;
-      });
-      // Random region cards (always at the bottom)
-      html += `<div class="bm-section-label" id="bm-anchor-random">🎲 Tim Acak · per Region (1025 Pokemon)</div>`;
-      html += `<div class="bm-pkg-grid">`;
-      RANDOM_REGIONS.forEach(reg => {
-        html += `
-          <button class="bm-pkg-card bm-pkg-random" data-region="${reg.id}" data-gen="${reg.gen}">
-            <div class="bm-pkg-head">
-              <span class="bm-pkg-emoji">${reg.emoji}</span>
-              <span class="bm-pkg-name">Tim Acak ${reg.name}</span>
-            </div>
-            <div class="bm-pkg-desc">${reg.desc}</div>
-            <div class="bm-pkg-thumbs bm-pkg-thumbs-random">
-              ${Array.from({length: teamSize}).map(() => `<div class="bm-pkg-thumb bm-pkg-thumb-random"><span>🎲</span></div>`).join('')}
-            </div>
-          </button>
-        `;
-      });
-      html += `</div>`;
-      return html;
-    }
+    // renderPkgPickerHtml is now defined at module scope (so startTournament
+    // can reach it). startPvP inherits the module-scope binding.
 
     function wirePickerHandlers (root, playerIdx, advanceFn) {
       // Region quick-nav tabs — scroll the picker scroll-container to the anchor.
@@ -2992,6 +2994,12 @@
   // ── Tournament engine ────────────────────────────────────────────────
   function startTournament (opts) {
     injectCSS();
+    // CRITICAL: also inject the PvP-real CSS — Tournament's size/picker/action UI
+    // reuses .bm-size-card / .bm-pkg-card / .bm-prestep / .bm-action-card /
+    // .bm-region-tabs classes which all live in injectPvPRealCSS. Owner reported
+    // size step was unclickable because cards rendered without CSS, collapsing
+    // to default tiny <button>. _realCssInjected guard makes this idempotent.
+    injectPvPRealCSS();
     const root = document.createElement('div');
     root.className = 'bm-tour';
     document.body.appendChild(root);
