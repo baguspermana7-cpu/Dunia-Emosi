@@ -660,6 +660,24 @@
     return 'low';                    // red
   }
 
+  // Type icon + weakness lookup — derived from TYPE_CHART by inversion.
+  // "lemah thp" = "weak against" — types whose attacks deal 1.5× to this type.
+  const TYPE_ICON = { fire: '🔥', water: '💧', grass: '🌿', electric: '⚡', normal: '⭐', fairy: '🎀' };
+  const WEAKNESS = {
+    fire:     ['water'],
+    water:    ['grass', 'electric'],
+    grass:    ['fire'],
+    electric: [],
+    normal:   [],
+    fairy:    []
+  };
+  function weaknessChipHtml (type) {
+    const ws = WEAKNESS[type] || [];
+    if (!ws.length) return '<span class="bm-weak-chip bm-weak-none">⚖ Seimbang</span>';
+    const inner = ws.map(t => (TYPE_ICON[t] || '') + ' ' + t).join(' · ');
+    return `<span class="bm-weak-chip">🔻 Lemah: ${inner}</span>`;
+  }
+
   // ── PvP engine (proper mirror split-screen, 1:1 same as original) ────
   // No picker. Each player gets a Pokemon from the roster. Same battle
   // mechanics on both halves (Pokemon sprite + HP + name + type). Active
@@ -694,140 +712,134 @@
       }
     }
 
+    // Owner spec: 20vh top q-zone + 60vh shared arena (FIXED) + 20vh bottom q-zone.
+    // Arena shows BOTH Pokemon (each with DS info card + type chip + 🔻weakness chip + HP).
+    // Q-zone roles swap with state.turn — active player sees question/moves, inactive
+    // sees opaque "Tunggu giliran" overlay (anti-peek). Top zone rotated 180° so P2
+    // (facing the screen upside-down) reads normally. Arena itself is NOT rotated.
     function renderRoot () {
-      // Same battle UI in TOP and BOTTOM halves. Top is rotated 180° so
-      // two players face each other on the same device.
-      // Each half shows: opponent's Pokemon (small at top), own Pokemon
-      // (big at center), HP bars for both, and the question/move panel.
       const p1 = state.pokes[0];
       const p2 = state.pokes[1];
 
       root.innerHTML = `
         <button class="bm-back bm-real-exit" data-exit>×</button>
 
-        <div class="bm-mirror-grid">
-          <!-- TOP HALF — P2's view (rotated 180° for face-to-face) -->
-          <section class="bm-mirror-half bm-mirror-top" data-state="${state.turn === 1 ? 'active' : 'inactive'}">
-            <div class="bm-mirror-inner">
-              ${renderHalf(1, p2, p1)}
-            </div>
-            <div class="bm-mirror-wait">Tunggu giliran lawan…</div>
+        <div class="bm-stage-grid">
+          <!-- TOP Q-ZONE (P2) — rotated 180° for face-to-face -->
+          <section class="bm-qzone bm-qzone-top" data-state="${state.turn === 1 ? 'active' : 'inactive'}">
+            <div class="bm-qzone-inner">${renderQZone(1, p2, p1)}</div>
+            <div class="bm-qzone-wait">⌛ Tunggu giliran lawan…</div>
           </section>
 
-          <!-- BOTTOM HALF — P1's view (normal orientation) -->
-          <section class="bm-mirror-half bm-mirror-bot" data-state="${state.turn === 0 ? 'active' : 'inactive'}">
-            <div class="bm-mirror-inner">
-              ${renderHalf(0, p1, p2)}
-            </div>
-            <div class="bm-mirror-wait">Tunggu giliran lawan…</div>
+          <!-- SHARED ARENA — both Pokemon visible to both players -->
+          ${renderArena(p1, p2)}
+
+          <!-- BOTTOM Q-ZONE (P1) — normal orientation -->
+          <section class="bm-qzone bm-qzone-bot" data-state="${state.turn === 0 ? 'active' : 'inactive'}">
+            <div class="bm-qzone-inner">${renderQZone(0, p1, p2)}</div>
+            <div class="bm-qzone-wait">⌛ Tunggu giliran lawan…</div>
           </section>
         </div>
       `;
       root.querySelector('[data-exit]').addEventListener('click', exitMatch);
-      // Wire question/move buttons on active side
-      wireActiveSide();
+      wireActiveZone();
     }
 
-    function renderHalf (playerIdx, me, opp) {
+    function renderArena (p1, p2) {
+      return `
+        <section class="bm-arena">
+          <!-- Opponent quadrant (P2) — top-right, mirrors .g10-espr-wrap -->
+          <div class="bm-arena-opp">
+            <div class="bm-info-card">
+              <div class="bm-info-name">${escapeHtml(p2.name)}</div>
+              <div class="bm-info-chips">
+                <span class="bm-type-chip" style="background:${p2.color};">${TYPE_ICON[p2.type] || ''} ${p2.type}</span>
+                ${weaknessChipHtml(p2.type)}
+              </div>
+              <div class="bm-hp-row">
+                <span class="bm-hp-lbl">HP</span>
+                <div class="bm-hp-bar"><div class="bm-hp-fill ${hpColorClass(p2.hp, p2.hpMax)}" style="width:${(p2.hp/p2.hpMax)*100}%;"></div></div>
+              </div>
+              <div class="bm-hp-text">${p2.hp}/${p2.hpMax}</div>
+            </div>
+            <img class="bm-arena-opp-img" alt="${escapeHtml(p2.name)}" src="${spritePath(p2.id, p2.slug)}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'bm-arena-opp-sprite',textContent:'${p2.emoji}'}))">
+          </div>
+
+          <!-- Self quadrant (P1) — bottom-left, mirrors .g10-pspr-wrap -->
+          <div class="bm-arena-self">
+            <img class="bm-arena-self-img" alt="${escapeHtml(p1.name)}" src="${spritePath(p1.id, p1.slug)}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'bm-arena-self-sprite',textContent:'${p1.emoji}'}))">
+            <div class="bm-info-card">
+              <div class="bm-info-name">${escapeHtml(p1.name)}</div>
+              <div class="bm-info-chips">
+                <span class="bm-type-chip" style="background:${p1.color};">${TYPE_ICON[p1.type] || ''} ${p1.type}</span>
+                ${weaknessChipHtml(p1.type)}
+              </div>
+              <div class="bm-hp-row">
+                <span class="bm-hp-lbl">HP</span>
+                <div class="bm-hp-bar"><div class="bm-hp-fill ${hpColorClass(p1.hp, p1.hpMax)}" style="width:${(p1.hp/p1.hpMax)*100}%;"></div></div>
+              </div>
+              <div class="bm-hp-text">${p1.hp}/${p1.hpMax}</div>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderQZone (playerIdx, me, opp) {
       const meName = opts.players[playerIdx].name;
-      const oppName = opts.players[1 - playerIdx].name;
       const badgeClass = playerIdx === 0 ? 'p1' : 'p2';
-      const qData = root._questions && root._questions[playerIdx];
-      // Question or moves panel content
-      let panelHtml = '';
+      const isActive = state.turn === playerIdx;
+      if (!isActive) {
+        // Inactive — show player name pill only; the .bm-qzone-wait overlay covers content
+        return `<div class="bm-qzone-pname"><span class="bm-pvp-badge ${badgeClass}">${badgeClass.toUpperCase()}</span> ${escapeHtml(meName)}</div>`;
+      }
+      // Active — question phase or moves phase
       if (state.phase === 'question') {
-        // Generate question for this half only if missing
-        if (!qData) {
-          const q = state.qType === 'type' ? makeTypeQ() : makeMathQ(state.qLevel);
-          if (!root._questions) root._questions = [null, null];
-          root._questions[playerIdx] = q;
+        if (!root._questions) root._questions = [null, null];
+        if (!root._questions[playerIdx]) {
+          root._questions[playerIdx] = state.qType === 'type' ? makeTypeQ() : makeMathQ(state.qLevel);
         }
         const q = root._questions[playerIdx];
-        panelHtml = `
-          <div class="bm-half-question">Jawab untuk menyerang:</div>
-          <div class="bm-half-q-text">${escapeHtml(q.q)}</div>
-          <div class="bm-half-choices" data-pidx="${playerIdx}">
-            ${q.choices.map(c => `<button class="bm-half-choice" data-c="${escapeHtml(String(c))}">${escapeHtml(String(c))}</button>`).join('')}
+        return `
+          <div class="bm-q-row">
+            <div class="bm-q-text">${escapeHtml(q.q)}</div>
+            <div class="bm-choices" data-pidx="${playerIdx}">
+              ${q.choices.map(c => `<button class="bm-choice" data-c="${escapeHtml(String(c))}">${escapeHtml(String(c))}</button>`).join('')}
+            </div>
           </div>
         `;
-      } else if (state.phase === 'moves') {
-        const isAttacker = (state.turn === playerIdx);
-        if (isAttacker) {
-          panelHtml = `
-            <div class="bm-half-question">Pilih jurus untuk menyerang:</div>
-            <div class="bm-half-moves" data-pidx="${playerIdx}">
-              ${me.moves.map((mv, mi) => {
-                // Mirror G10 standard: super-eff (green border + ✨) / resist-eff (dashed yellow + 💤)
-                const tm = typeMult(mv.type, opp.type);
-                const eff = effLabel(tm);
-                const effCls = tm >= 1.5 ? ' super-eff' : (tm <= 0.75 ? ' resist-eff' : '');
-                return `
-                  <button class="bm-half-move${effCls}" data-mi="${mi}">
-                    <div class="bm-half-move-name">${escapeHtml(mv.name)}</div>
-                    <div class="bm-half-move-meta">
-                      <span class="bm-real-move-type" data-mt="${mv.type}">${mv.type}</span>
-                      <span class="bm-real-move-pwr">PWR ${mv.pwr}</span>
-                      ${mv.type === me.type ? '<span class="bm-real-stab">⭐</span>' : ''}
-                      ${eff ? `<span class="bm-real-move-eff">${eff}</span>` : ''}
-                    </div>
-                  </button>
-                `;
-              }).join('')}
-            </div>
-          `;
-        } else {
-          panelHtml = `<div class="bm-half-question">Lawan sedang memilih jurus…</div>`;
-        }
       }
-
+      // moves phase
       return `
-        <div class="bm-half-head">
-          <span class="bm-pvp-badge ${badgeClass}">${badgeClass.toUpperCase()}</span>
-          <span class="bm-half-pname">${escapeHtml(meName)}</span>
-        </div>
-
-        <!-- Battle stage (mirrors original .g10-field quadrant layout) -->
-        <div class="bm-half-stage">
-          <!-- Opponent at top-right (mirrors .g10-espr-wrap) -->
-          <div class="bm-half-opp" id="bm-opp-${playerIdx}">
-            <div class="bm-half-opp-info">
-              <div class="bm-half-opp-name">${escapeHtml(opp.name)} <span class="bm-half-typetag" style="background:${opp.color};">${opp.type}</span></div>
-              <div class="bm-half-hp">
-                <span class="bm-half-hp-lbl">HP</span>
-                <div class="bm-half-hp-bar"><div class="bm-half-hp-fill ${hpColorClass(opp.hp, opp.hpMax)}" style="width:${(opp.hp/opp.hpMax)*100}%;"></div></div>
-              </div>
-              <div class="bm-half-hp-text">${opp.hp}/${opp.hpMax}</div>
-            </div>
-            <img class="bm-half-opp-img" alt="${escapeHtml(opp.name)}" src="${spritePath(opp.id, opp.slug)}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'bm-half-opp-sprite',textContent:'${opp.emoji}'}))">
+        <div class="bm-q-row">
+          <div class="bm-q-text">Pilih jurus untuk menyerang ${escapeHtml(opp.name)}:</div>
+          <div class="bm-moves" data-pidx="${playerIdx}">
+            ${me.moves.map((mv, mi) => {
+              const tm = typeMult(mv.type, opp.type);
+              const eff = effLabel(tm);
+              const effCls = tm >= 1.5 ? ' super-eff' : (tm <= 0.75 ? ' resist-eff' : '');
+              return `
+                <button class="bm-move${effCls}" data-mi="${mi}">
+                  <div class="bm-move-name">${escapeHtml(mv.name)}</div>
+                  <div class="bm-move-meta">
+                    <span class="bm-real-move-type" data-mt="${mv.type}">${mv.type}</span>
+                    <span class="bm-real-move-pwr">PWR ${mv.pwr}</span>
+                    ${mv.type === me.type ? '<span class="bm-real-stab">⭐</span>' : ''}
+                    ${eff ? `<span class="bm-real-move-eff">${eff}</span>` : ''}
+                  </div>
+                </button>
+              `;
+            }).join('')}
           </div>
-
-          <!-- Self at bottom-left (mirrors .g10-pspr-wrap) -->
-          <div class="bm-half-self" id="bm-self-${playerIdx}">
-            <img class="bm-half-self-img" alt="${escapeHtml(me.name)}" src="${spritePath(me.id, me.slug)}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'bm-half-self-sprite',textContent:'${me.emoji}'}))">
-            <div class="bm-half-self-info">
-              <div class="bm-half-self-name">${escapeHtml(me.name)} <span class="bm-half-typetag" style="background:${me.color};">${me.type}</span></div>
-              <div class="bm-half-hp">
-                <span class="bm-half-hp-lbl">HP</span>
-                <div class="bm-half-hp-bar"><div class="bm-half-hp-fill ${hpColorClass(me.hp, me.hpMax)}" style="width:${(me.hp/me.hpMax)*100}%;"></div></div>
-              </div>
-              <div class="bm-half-hp-text">${me.hp}/${me.hpMax}</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Question / Move panel -->
-        <div class="bm-half-panel">
-          ${panelHtml}
         </div>
       `;
     }
 
-    function wireActiveSide () {
-      // Find active player's choice buttons and bind click
-      const activeHalf = root.querySelector(state.turn === 0 ? '.bm-mirror-bot' : '.bm-mirror-top');
-      if (!activeHalf) return;
+    function wireActiveZone () {
+      const activeZone = root.querySelector(`.bm-qzone[data-state="active"]`);
+      if (!activeZone) return;
       if (state.phase === 'question') {
-        activeHalf.querySelectorAll('.bm-half-choice').forEach(b => {
+        activeZone.querySelectorAll('.bm-choice').forEach(b => {
           b.addEventListener('click', () => {
             const picked = b.getAttribute('data-c');
             const q = root._questions[state.turn];
@@ -835,7 +847,7 @@
           });
         });
       } else if (state.phase === 'moves') {
-        activeHalf.querySelectorAll('.bm-half-move').forEach(b => {
+        activeZone.querySelectorAll('.bm-move').forEach(b => {
           b.addEventListener('click', () => {
             const mi = parseInt(b.getAttribute('data-mi'));
             const mv = state.pokes[state.turn].moves[mi];
@@ -848,23 +860,19 @@
     function onAnswer (picked, btn, q, playerIdx) {
       const isCorrect = String(picked) === String(q.ans);
       btn.classList.add(isCorrect ? 'correct' : 'wrong');
-      btn.parentElement.querySelectorAll('.bm-half-choice').forEach(b => b.setAttribute('disabled',''));
+      btn.parentElement.querySelectorAll('.bm-choice').forEach(b => b.setAttribute('disabled',''));
       if (isCorrect) {
         sfxCorrect();
-        // Transition to move-pick phase. Both halves re-render — active shows
-        // move grid, inactive shows "Lawan sedang memilih jurus…" inverted.
         setTimeout(() => {
           state.phase = 'moves';
           renderRoot();
         }, 650);
       } else {
         sfxWrong();
-        // Reveal correct
-        btn.parentElement.querySelectorAll('.bm-half-choice').forEach(b => {
+        btn.parentElement.querySelectorAll('.bm-choice').forEach(b => {
           if (b.getAttribute('data-c') === String(q.ans)) b.classList.add('correct');
         });
         setTimeout(() => {
-          // Turn passes — clear questions, next player's turn
           root._questions = null;
           state.turn = 1 - state.turn;
           state.phase = 'question';
@@ -899,18 +907,21 @@
     }
 
     function runAttackAnimation (attackerIdx, move, dmg, tm, done) {
-      // Lunge attacker forward (on the active side, since inactive side is hidden)
-      const activeHalf = root.querySelector(attackerIdx === 0 ? '.bm-mirror-bot' : '.bm-mirror-top');
-      const oppPanel = activeHalf && activeHalf.querySelector('.bm-half-opp');
-      const selfSprite = activeHalf && activeHalf.querySelector('.bm-half-self-img, .bm-half-self-sprite');
-      if (selfSprite) {
-        selfSprite.classList.add('bm-attack-lunge');
-        setTimeout(() => selfSprite.classList.remove('bm-attack-lunge'), 600);
+      // Shared arena — attacker/defender map to .bm-arena-self / .bm-arena-opp.
+      // P1 (index 0) is .bm-arena-self (bottom-left), P2 (index 1) is .bm-arena-opp (top-right).
+      const arena = root.querySelector('.bm-arena');
+      const atkSelector = attackerIdx === 0 ? '.bm-arena-self-img, .bm-arena-self-sprite' : '.bm-arena-opp-img, .bm-arena-opp-sprite';
+      const defPanelSel = attackerIdx === 0 ? '.bm-arena-opp' : '.bm-arena-self';
+      const attackerSprite = arena && arena.querySelector(atkSelector);
+      const defenderPanel  = arena && arena.querySelector(defPanelSel);
+      if (attackerSprite) {
+        attackerSprite.classList.add('bm-attack-lunge');
+        setTimeout(() => attackerSprite.classList.remove('bm-attack-lunge'), 600);
       }
-      if (oppPanel) {
+      if (defenderPanel) {
         setTimeout(() => {
-          oppPanel.classList.add('bm-defender-shake');
-          setTimeout(() => oppPanel.classList.remove('bm-defender-shake'), 360);
+          defenderPanel.classList.add('bm-defender-shake');
+          setTimeout(() => defenderPanel.classList.remove('bm-defender-shake'), 360);
         }, 300);
       }
       // Move-type screen tint
@@ -931,8 +942,8 @@
 
       // Damage number float-up at defender panel
       setTimeout(() => {
-        if (oppPanel) {
-          const r = oppPanel.getBoundingClientRect();
+        if (defenderPanel) {
+          const r = defenderPanel.getBoundingClientRect();
           spawnDamageNumber(r.left + r.width * 0.7, r.top + r.height * 0.5, dmg, tm);
         }
         // Super-effective extra flash
@@ -974,38 +985,28 @@
     }
 
     function updateHpDisplays () {
-      // Both halves show BOTH HP bars (own + opponent). Re-render the whole root
-      // is heavy — instead, surgically update fill width + text + color class.
-      [0, 1].forEach(pIdx => {
-        const me = state.pokes[pIdx];
-        const opp = state.pokes[1 - pIdx];
-        const half = root.querySelector(pIdx === 0 ? '.bm-mirror-bot' : '.bm-mirror-top');
-        if (!half) return;
-        const oppFill = half.querySelector('.bm-half-opp .bm-half-hp-fill');
-        const oppTxt  = half.querySelector('.bm-half-opp .bm-half-hp-text');
-        const selfFill = half.querySelector('.bm-half-self .bm-half-hp-fill');
-        const selfTxt  = half.querySelector('.bm-half-self .bm-half-hp-text');
-        if (oppFill)  { oppFill.style.width = (opp.hp / opp.hpMax * 100) + '%'; oppFill.className = 'bm-half-hp-fill ' + hpColorClass(opp.hp, opp.hpMax); }
-        if (oppTxt)   { oppTxt.textContent = opp.hp + '/' + opp.hpMax; }
-        if (selfFill) { selfFill.style.width = (me.hp / me.hpMax * 100) + '%'; selfFill.className = 'bm-half-hp-fill ' + hpColorClass(me.hp, me.hpMax); }
-        if (selfTxt)  { selfTxt.textContent = me.hp + '/' + me.hpMax; }
-      });
+      // Single shared arena — one set of HP fills to update (P1 = self, P2 = opp).
+      const arena = root.querySelector('.bm-arena');
+      if (!arena) return;
+      const p1 = state.pokes[0];
+      const p2 = state.pokes[1];
+      const p1Fill = arena.querySelector('.bm-arena-self .bm-hp-fill');
+      const p1Txt  = arena.querySelector('.bm-arena-self .bm-hp-text');
+      const p2Fill = arena.querySelector('.bm-arena-opp .bm-hp-fill');
+      const p2Txt  = arena.querySelector('.bm-arena-opp .bm-hp-text');
+      if (p1Fill) { p1Fill.style.width = (p1.hp / p1.hpMax * 100) + '%'; p1Fill.className = 'bm-hp-fill ' + hpColorClass(p1.hp, p1.hpMax); }
+      if (p1Txt)  { p1Txt.textContent = p1.hp + '/' + p1.hpMax; }
+      if (p2Fill) { p2Fill.style.width = (p2.hp / p2.hpMax * 100) + '%'; p2Fill.className = 'bm-hp-fill ' + hpColorClass(p2.hp, p2.hpMax); }
+      if (p2Txt)  { p2Txt.textContent = p2.hp + '/' + p2.hpMax; }
     }
 
     function playFaintAnimation (faintedIdx, done) {
-      // Defender's sprite slides down + rotates + fades on both halves
-      [0, 1].forEach(pIdx => {
-        const half = root.querySelector(pIdx === 0 ? '.bm-mirror-bot' : '.bm-mirror-top');
-        if (!half) return;
-        // The fainted Pokemon appears in OPPONENT slot of the winner's view,
-        // and SELF slot of the loser's view.
-        const inOppSlot = (pIdx === state.turn); // winner sees fainted as opp
-        const target = half.querySelector(
-          inOppSlot ? '.bm-half-opp-img, .bm-half-opp-sprite' :
-                      '.bm-half-self-img, .bm-half-self-sprite'
-        );
-        if (target) target.classList.add('bm-faint');
-      });
+      // Single shared arena — fainted Pokemon = the loser's sprite. P1 in self slot, P2 in opp slot.
+      const arena = root.querySelector('.bm-arena');
+      if (!arena) { setTimeout(done, 900); return; }
+      const sel = faintedIdx === 0 ? '.bm-arena-self-img, .bm-arena-self-sprite' : '.bm-arena-opp-img, .bm-arena-opp-sprite';
+      const target = arena.querySelector(sel);
+      if (target) target.classList.add('bm-faint');
       setTimeout(done, 900);
     }
 
@@ -1080,142 +1081,161 @@
         font-size: 18px;
       }
 
-      /* MIRROR SPLIT — 50/50 portrait, P2 top rotated 180° */
-      .bm-mirror-grid {
+      /* ── FIXED 20/60/20 GRID — owner spec ──
+         20vh top q-zone + 60vh shared arena (NEVER moves) + 20vh bottom q-zone.
+         When turn switches, only the q-zone roles swap. Arena stays put. */
+      .bm-stage-grid {
         display: grid;
-        grid-template-rows: 1fr 1fr;
+        grid-template-rows: 20vh 60vh 20vh;
         height: 100dvh; max-height: 100svh;
       }
-      .bm-mirror-half {
-        position: relative;
-        overflow: hidden;
-        transition: opacity 280ms ease, filter 280ms ease;
-        /* Mirror the original .g10-field gradient (sky → grass) */
+
+      /* ── SHARED ARENA — both Pokemon in one view ── */
+      .bm-arena {
+        position: relative; overflow: hidden;
         background: linear-gradient(180deg,#6bbfee 0%,#a8d8f8 32%,#a0d870 46%,#5a9e3a 65%,#3e7028 100%);
-        border-bottom: 2px solid rgba(0,0,0,0.35);
       }
-      .bm-mirror-half::before {
+      .bm-arena::before {
         content: ''; position: absolute; inset: -10% -5%;
         background: url('/Dunia-Emosi/assets/bg-pokemon-battle.webp') center center/cover no-repeat;
-        opacity: 0.55;
-        pointer-events: none;
+        opacity: 0.55; pointer-events: none;
       }
-      .bm-mirror-half:last-child { border-bottom: none; }
-      .bm-mirror-top .bm-mirror-inner { transform: rotate(180deg); transform-origin: center; height: 100%; }
-      .bm-mirror-inner {
-        position: relative;
-        height: 100%;
-        display: grid;
-        grid-template-rows: auto 1fr auto;
-        padding: 4px 8px 6px;
-        z-index: 1;
+      /* Opponent (P2) — top-right (mirrors .g10-espr-wrap) */
+      .bm-arena-opp {
+        position: absolute; top: 4%; right: 3%; z-index: 2;
+        display: flex; flex-direction: column-reverse; align-items: flex-end;
+        gap: 4px; max-width: 56%;
       }
-      .bm-mirror-half[data-state="active"]   .bm-mirror-wait { display: none; }
-      .bm-mirror-half[data-state="inactive"] .bm-mirror-wait {
+      /* Self (P1) — bottom-left (mirrors .g10-pspr-wrap) */
+      .bm-arena-self {
+        position: absolute; bottom: 4%; left: 3%; z-index: 2;
+        display: flex; flex-direction: column; align-items: flex-start;
+        gap: 4px; max-width: 60%;
+      }
+      .bm-arena-opp-img, .bm-arena-self-img {
+        /* Responsive sprite ~44vw / 22vh — identical to original .g10-espr / .g10-pspr */
+        width: min(44vw, 22vh); height: min(44vw, 22vh);
+        object-fit: contain; max-width: 100%; max-height: 100%;
+        animation: bmSpriteBob 2200ms ease-in-out infinite;
+      }
+      .bm-arena-opp-img {
+        --flip: -1; transform: scaleX(-1);
+        filter: drop-shadow(0 6px 18px rgba(0,0,0,0.7)) drop-shadow(0 0 10px rgba(255,220,50,0.45));
+      }
+      .bm-arena-self-img {
+        --flip: 1; transform: scaleX(1);
+        filter: drop-shadow(0 6px 18px rgba(0,0,0,0.7)) drop-shadow(0 0 10px rgba(255,220,50,0.45));
+      }
+      .bm-arena-opp-sprite, .bm-arena-self-sprite {
+        font-size: clamp(96px, 20vh, 180px); line-height: 1;
+        filter: drop-shadow(0 6px 14px rgba(0,0,0,0.5));
+      }
+
+      /* DS-style info card (mirrors .g10-infobox @ style.css:2564) */
+      .bm-info-card {
+        background: rgba(248,248,240,0.97);
+        border: 2.5px solid #444; border-radius: 10px;
+        padding: 5px 9px 6px;
+        box-shadow: 3px 3px 0 rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.9);
+        min-width: 138px; max-width: 175px;
+        color: #111;
+      }
+      .bm-info-name {
+        font-family: 'Fredoka One', cursive; font-size: 13px; color: #111;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .bm-info-chips { display: flex; flex-wrap: wrap; gap: 3px; margin: 3px 0 4px; }
+      .bm-type-chip {
+        display: inline-flex; align-items: center; gap: 3px;
+        padding: 1px 7px; border-radius: 100px;
+        font-size: 9px; font-weight: 800;
+        color: #fff; letter-spacing: 0.3px;
+        text-transform: uppercase;
+        text-shadow: 0 1px 1px rgba(0,0,0,0.35);
+      }
+      .bm-weak-chip {
+        display: inline-flex; align-items: center; gap: 3px;
+        padding: 1px 7px; border-radius: 100px;
+        font-size: 9px; font-weight: 800;
+        color: #7c2d12;
+        background: #FED7AA; border: 1px solid #F97316;
+        text-transform: uppercase; letter-spacing: 0.2px;
+      }
+      .bm-weak-chip.bm-weak-none {
+        background: #E0E7FF; color: #312E81; border-color: #818CF8;
+      }
+
+      /* HP row (mirrors .g10-hp-row + .g10-hp-track + .g10-hp-fill) */
+      .bm-hp-row { display: flex; align-items: center; gap: 4px; }
+      .bm-hp-lbl {
+        font-size: 10px; font-weight: 900; color: #333;
+        font-family: monospace; min-width: 14px;
+      }
+      .bm-hp-bar {
+        flex: 1; height: 8px;
+        background: #d0d0c0; border-radius: 100px;
+        border: 1px solid #aaa; overflow: hidden;
+      }
+      .bm-hp-fill {
+        height: 100%; border-radius: 100px;
+        background: #52D058;
+        transition: width 0.6s cubic-bezier(0.4,0,0.2,1), background 0.4s ease;
+        position: relative; overflow: hidden;
+      }
+      .bm-hp-fill::after {
+        content: ''; position: absolute; top: 0; left: -100%;
+        width: 55%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+        animation: bmHpShine 1.8s ease-in-out infinite;
+      }
+      .bm-hp-fill.med { background: #F8C030; }
+      .bm-hp-fill.low { background: #E83030; animation: bmHpBlink 0.7s ease-in-out infinite; }
+      .bm-hp-text {
+        font-size: 9px; font-weight: 700; color: #555;
+        font-family: monospace; text-align: right;
+      }
+
+      /* ── Q-ZONE (top + bottom) ── */
+      .bm-qzone {
+        position: relative; overflow: hidden;
+        background: rgba(14,14,30,0.96);
+        border-top: 2px solid rgba(255,255,255,0.07);
         display: grid; place-items: center;
+        padding: 6px 10px;
+      }
+      .bm-qzone-top { border-top: none; border-bottom: 2px solid rgba(255,255,255,0.07); }
+      .bm-qzone-inner {
+        width: 100%; max-width: 480px;
+        display: grid; place-items: center;
+      }
+      .bm-qzone-top .bm-qzone-inner { transform: rotate(180deg); transform-origin: center; }
+      .bm-qzone[data-state="active"]   .bm-qzone-wait { display: none; }
+      .bm-qzone[data-state="inactive"] .bm-qzone-inner { visibility: hidden; }
+      .bm-qzone-wait {
         position: absolute; inset: 0;
-        /* Owner anti-peek: fully opaque so the active player's question
-           cannot be read through the inactive overlay. */
+        display: grid; place-items: center;
         background: linear-gradient(180deg, rgba(11,18,38,0.97), rgba(19,26,51,0.99));
         backdrop-filter: blur(12px);
         font-family: 'Fredoka One', cursive;
         color: #FCD34D;
-        font-size: clamp(18px, 4.5vw, 28px);
+        font-size: clamp(16px, 4vw, 24px);
         text-align: center;
         z-index: 3;
+        letter-spacing: 0.5px;
       }
-      .bm-mirror-top.bm-mirror-half[data-state="inactive"] .bm-mirror-wait {
-        transform: rotate(180deg);
+      .bm-qzone-top[data-state="inactive"] .bm-qzone-wait { transform: rotate(180deg); }
+      .bm-qzone-pname {
+        font-family: 'Fredoka One', cursive; font-size: 13px;
+        color: #FCD34D;
       }
-      .bm-mirror-half[data-state="inactive"] .bm-mirror-inner {
-        visibility: hidden;
-      }
-
-      /* Player header — small player-name pill, top corner */
-      .bm-half-head {
-        display: flex; align-items: center; justify-content: space-between; gap: 6px;
-        padding: 2px 4px;
-      }
-      .bm-half-pname {
-        font-family: 'Fredoka One', cursive; font-size: 11px;
-        background: rgba(0,0,0,0.55); color: #FCD34D;
-        padding: 2px 8px; border-radius: 999px;
-        border: 1px solid rgba(255,255,255,0.20);
-      }
-
-      /* ── Battle stage (mirrors .g10-field quadrant layout) ── */
-      .bm-half-stage {
-        position: relative; width: 100%; min-height: 0;
-        display: block;
-      }
-      /* Opponent at top-right of stage (mirrors .g10-espr-wrap) */
-      .bm-half-opp {
-        position: absolute; top: 4px; right: 4px;
-        display: flex; flex-direction: column; align-items: flex-end;
-        gap: 2px; max-width: 56%;
-        z-index: 2;
-      }
-      .bm-half-opp-info {
-        /* DS-style white info box (mirrors .g10-infobox @ style.css:2564) */
-        background: rgba(248,248,240,0.97);
-        border: 2.5px solid #444; border-radius: 10px;
-        padding: 4px 8px 5px;
-        box-shadow: 3px 3px 0 rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.9);
-        min-width: 120px; max-width: 160px;
-        color: #111;
-      }
-      .bm-half-opp-name {
-        display: flex; align-items: baseline; gap: 4px;
-        font-family: 'Fredoka One', cursive; font-size: 12px; color: #111;
-        white-space: nowrap; overflow: hidden;
-      }
-      .bm-half-opp-sprite {
-        font-size: clamp(56px, 18vw, 100px); line-height: 1;
-        filter: drop-shadow(0 6px 14px rgba(0,0,0,0.5));
-      }
-      .bm-half-opp-img {
-        /* Mirrors .g10-espr — responsive sprite ~5-7% screen area */
-        width: min(28vw, 12vh); height: min(28vw, 12vh);
-        object-fit: contain; max-width: 100%; max-height: 100%;
-        --flip: -1;
-        transform: scaleX(var(--flip));
-        filter: drop-shadow(0 4px 10px rgba(0,0,0,0.55));
-      }
-
-      /* Own Pokemon at bottom-left of stage (mirrors .g10-pspr-wrap) */
-      .bm-half-self {
-        position: absolute; bottom: 4px; left: 4px;
-        display: flex; flex-direction: column-reverse; align-items: flex-start;
-        gap: 2px; max-width: 60%;
-        z-index: 2;
-      }
-      .bm-half-self-info {
-        background: rgba(248,248,240,0.97);
-        border: 2.5px solid #444; border-radius: 10px;
-        padding: 4px 8px 5px;
-        box-shadow: 3px 3px 0 rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.9);
-        min-width: 130px; max-width: 170px;
-        color: #111;
-      }
-      .bm-half-self-name {
-        display: flex; align-items: baseline; gap: 4px;
-        font-family: 'Fredoka One', cursive; font-size: 13px; color: #111;
-        white-space: nowrap; overflow: hidden;
-      }
-      .bm-half-self-sprite {
-        font-size: clamp(110px, 20vh, 200px); line-height: 1;
-        filter: drop-shadow(0 12px 28px rgba(0,0,0,0.55));
-        animation: bmSpriteBob 2200ms ease-in-out infinite;
-      }
-      .bm-half-self-img {
-        /* Mirrors .g10-pspr — responsive sprite landing in 7-10% screen-area band
-           (owner: "7-10% luasan screen, jadi responsive tidak static") */
-        width: min(45vw, 22vh); height: min(45vw, 22vh);
-        object-fit: contain; max-width: 100%; max-height: 100%;
-        --flip: 1;
-        transform: scaleX(var(--flip));
-        filter: drop-shadow(0 6px 18px rgba(0,0,0,0.7)) drop-shadow(0 0 10px rgba(255,220,50,0.45));
-        animation: bmSpriteBob 2200ms ease-in-out infinite;
+      .bm-q-row { width: 100%; display: flex; flex-direction: column; gap: 6px; }
+      .bm-q-text {
+        font-family: 'Fredoka One', cursive;
+        font-size: clamp(16px, 4.5vw, 26px);
+        text-align: center;
+        color: #fff;
+        text-shadow: 0 2px 12px rgba(139,92,246,0.55);
+        letter-spacing: 0.5px;
       }
       .bm-attack-lunge {
         animation: bmAttackLunge 600ms cubic-bezier(0.34,1.56,0.64,1) !important;
@@ -1252,144 +1272,93 @@
         0%, 100% { transform: translateY(0); }
         50%      { transform: translateY(-6px); }
       }
-      /* Type badge — mirrors .g10-type-badge (style.css:2580) */
-      .bm-half-typetag {
-        display: inline-block;
-        padding: 2px 7px; border-radius: 100px;
-        font-size: 9px; font-weight: 700;
-        color: #fff; letter-spacing: 0.3px;
-        text-transform: uppercase;
-      }
-
-      /* HP bar — mirrors .g10-hp-track / .g10-hp-fill (style.css:2581-2594) */
-      .bm-half-hp {
-        display: flex; align-items: center; gap: 4px;
-        margin-top: 3px;
-      }
-      .bm-half-hp-lbl {
-        font-size: 10px; font-weight: 900; color: #333;
-        font-family: monospace; min-width: 14px;
-      }
-      .bm-half-hp-bar {
-        flex: 1; height: 8px;
-        background: #d0d0c0; border-radius: 100px;
-        border: 1px solid #aaa; overflow: hidden;
-      }
-      .bm-half-hp-fill {
-        height: 100%; border-radius: 100px;
-        background: #52D058;
-        transition: width 0.6s cubic-bezier(0.4,0,0.2,1), background 0.4s ease;
-        position: relative; overflow: hidden;
-      }
-      .bm-half-hp-fill::after {
-        content: ''; position: absolute; top: 0; left: -100%;
-        width: 55%; height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-        animation: bmHpShine 1.8s ease-in-out infinite;
-      }
+      /* Shared HP-bar shine + blink keyframes */
       @keyframes bmHpShine { 0% { left: -100%; } 100% { left: 200%; } }
-      .bm-half-hp-fill.med { background: #F8C030; }
-      .bm-half-hp-fill.low { background: #E83030; animation: bmHpBlink 0.7s ease-in-out infinite; }
       @keyframes bmHpBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.45; } }
-      .bm-half-hp-text {
-        font-size: 9px; font-weight: 700; color: #555;
-        font-family: monospace; min-width: 48px; text-align: right;
+
+      /* ── Pastel choice buttons — owner spec, with ORIGINAL G13C 5px-raised effect ── */
+      .bm-choices, .bm-moves {
+        display: grid; grid-template-columns: repeat(2, 1fr);
+        gap: 8px; width: 100%; max-width: 420px;
+        margin: 0 auto;
+      }
+      .bm-choice {
+        padding: 12px 8px;
+        border: 2px solid #111;
+        border-radius: 14px;
+        font-family: 'Fredoka One', cursive;
+        font-size: clamp(18px, 4.5vw, 24px);
+        color: #1F2937;
+        box-shadow: 0 5px 0 var(--btn-shadow);
+        cursor: pointer; position: relative;
+        transition: transform 120ms, box-shadow 120ms;
+      }
+      .bm-choice:nth-child(1) { background:#DDD6FE; --btn-shadow:#7C3AED; }  /* lavender */
+      .bm-choice:nth-child(2) { background:#A7F3D0; --btn-shadow:#059669; }  /* mint     */
+      .bm-choice:nth-child(3) { background:#FED7AA; --btn-shadow:#D97706; }  /* peach    */
+      .bm-choice:nth-child(4) { background:#FBCFE8; --btn-shadow:#BE185D; }  /* rose     */
+      .bm-choice:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--btn-shadow); }
+      /* Correct: scale-up bounce + cyan glow + dark-green base — preserves G10/G13C effect */
+      .bm-choice.correct {
+        background: linear-gradient(135deg,#059669,#10B981) !important;
+        border-color: #2DD4BF !important; color: #fff !important;
+        box-shadow: 0 0 22px rgba(45,212,191,0.55), 0 5px 0 #047857 !important;
+        animation: bmChoiceCorrect 0.42s cubic-bezier(0.34,1.56,0.64,1);
+      }
+      /* Wrong: horizontal shake + rose glow */
+      .bm-choice.wrong {
+        background: linear-gradient(135deg,#DC2626,#EF4444) !important;
+        border-color: #F43F5E !important; color: #fff !important;
+        box-shadow: 0 0 22px rgba(244,63,94,0.50), 0 5px 0 #991B1B !important;
+        animation: bmChoiceWrong 0.36s ease;
+      }
+      @keyframes bmChoiceCorrect { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+      @keyframes bmChoiceWrong {
+        0%, 100% { transform: translateX(0); }
+        25%      { transform: translateX(-7px); }
+        75%      { transform: translateX(7px); }
       }
 
-      /* Question / move panel — owner: "diperkecil agar gambarnya dapat porsi lebih" */
-      .bm-half-panel {
-        background: rgba(0,0,0,0.45);
-        backdrop-filter: blur(6px);
-        border: 1px solid rgba(255,255,255,0.14);
-        border-radius: 10px;
-        padding: 6px 8px;
-        display: flex; flex-direction: column; gap: 4px;
-      }
-      .bm-half-question {
+      /* ── Move buttons — pastel-anchored, same 5px-raised effect ── */
+      .bm-move {
+        padding: 9px 10px;
+        border: 2px solid #111;
+        border-radius: 12px;
+        background: #FEF3C7; --btn-shadow: #F59E0B;
+        color: #1F2937;
         font-family: 'Fredoka One', cursive;
-        font-size: 10px;
-        color: rgba(255,255,255,0.70);
-        text-align: center;
+        text-align: left; cursor: pointer; position: relative;
+        box-shadow: 0 5px 0 var(--btn-shadow);
+        transition: transform 120ms, box-shadow 120ms;
       }
-      .bm-half-q-text {
-        font-family: 'Fredoka One', cursive;
-        font-size: clamp(12px, 2.8vw, 16px);
-        text-align: center;
-        padding: 5px 8px;
-        background: rgba(255,255,255,0.10);
-        border-radius: 8px;
+      .bm-move:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--btn-shadow); }
+      .bm-move-name { font-size: 13px; margin-bottom: 3px; color: #111; }
+      .bm-move-meta {
+        display: flex; flex-wrap: wrap; gap: 3px;
+        font-size: 8px; letter-spacing: 0.2px; text-transform: uppercase;
       }
-      .bm-half-choices, .bm-half-moves {
-        display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
-      }
-      .bm-half-choice {
-        padding: 6px 4px;
-        background: rgba(255,255,255,0.10);
-        border: 1px solid rgba(255,255,255,0.25);
-        border-radius: 8px;
-        color: #F1F5F9;
-        font-family: 'Fredoka One', cursive;
-        font-size: clamp(12px, 3vw, 16px);
-        cursor: pointer;
-        min-height: 32px;
-        transition: transform 180ms cubic-bezier(0.34,1.56,0.64,1), border-color 180ms;
-      }
-      .bm-half-choice:hover { transform: translateY(-2px); border-color: rgba(6,182,212,0.55); }
-      .bm-half-choice:active { transform: scale(0.96); }
-      .bm-half-choice.correct {
-        background: rgba(16,185,129,0.25) !important;
-        border-color: rgba(110,231,183,0.65) !important;
-        animation: bmPulse 480ms cubic-bezier(0.34,1.56,0.64,1);
-      }
-      .bm-half-choice.wrong {
-        background: rgba(251,146,60,0.22) !important;
-        border-color: rgba(253,186,116,0.55) !important;
-      }
-
-      .bm-half-move {
-        padding: 5px 8px;
-        background: rgba(255,255,255,0.10);
-        border: 1px solid rgba(255,255,255,0.25);
-        border-radius: 8px;
-        color: #F1F5F9;
-        font-family: 'Fredoka One', cursive;
-        text-align: left;
-        cursor: pointer;
-        min-height: 38px;
-        transition: transform 180ms cubic-bezier(0.34,1.56,0.64,1), border-color 180ms;
-      }
-      .bm-half-move:hover { transform: translateY(-2px); border-color: rgba(252,211,77,0.55); }
-      .bm-half-move:active { transform: scale(0.96); }
-      .bm-half-move { position: relative; }
-      /* Mirror G10 standard move-button effectiveness states (style.css:6446-6478) */
-      .bm-half-move.super-eff {
-        border: 2px solid #22c55e !important;
-        box-shadow: 0 0 12px rgba(34,197,94,0.55) !important;
+      /* Mirror G10 super-eff (✨ green pulse) / resist-eff (💤 dashed amber) standards */
+      .bm-move.super-eff {
+        background: #BBF7D0 !important; --btn-shadow: #16A34A !important;
+        border-color: #16A34A !important;
         animation: bmMoveSuperPulse 1.6s ease-in-out infinite;
       }
-      .bm-half-move.super-eff::before {
-        content: '✨'; position: absolute;
-        top: 2px; left: 4px;
-        font-size: 12px; opacity: 0.95;
-        text-shadow: 0 0 6px rgba(255,255,255,0.7);
+      .bm-move.super-eff::before {
+        content: '✨'; position: absolute; top: 4px; right: 6px;
+        font-size: 14px; text-shadow: 0 0 6px rgba(255,255,255,0.7);
       }
-      .bm-half-move.resist-eff {
-        opacity: 0.78;
-        border: 2px dashed #f59e0b !important;
+      .bm-move.resist-eff {
+        opacity: 0.80;
+        background: #FEF3C7 !important;
+        border: 2px dashed #D97706 !important;
       }
-      .bm-half-move.resist-eff::before {
-        content: '💤'; position: absolute;
-        top: 2px; left: 4px;
-        font-size: 12px; opacity: 0.9;
+      .bm-move.resist-eff::before {
+        content: '💤'; position: absolute; top: 4px; right: 6px;
+        font-size: 14px;
       }
       @keyframes bmMoveSuperPulse {
-        0%,100% { box-shadow: 0 0 12px rgba(34,197,94,0.5); }
-        50%     { box-shadow: 0 0 18px rgba(34,197,94,0.85); }
-      }
-      .bm-half-move-name { font-size: 11px; margin-bottom: 2px; }
-      .bm-half-move-meta {
-        display: flex; flex-wrap: wrap; gap: 2px;
-        font-size: 7px; letter-spacing: 0.2px; text-transform: uppercase;
+        0%,100% { box-shadow: 0 5px 0 var(--btn-shadow), 0 0 12px rgba(22,163,74,0.45); }
+        50%     { box-shadow: 0 5px 0 var(--btn-shadow), 0 0 22px rgba(22,163,74,0.85); }
       }
       .bm-real-move-type {
         padding: 1px 5px; border-radius: 5px; font-weight: 800;
