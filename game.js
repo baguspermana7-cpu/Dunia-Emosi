@@ -14038,13 +14038,15 @@ const CITY_ICON_PATH = 'assets/Pokemon/others/cities.webp'
 
 /** Open Stage A — Region Picker. Caller passes which game (10/13/13b). */
 function openRegionOverlay(gameNum) {
-  // G13 (Evolusi Math) + G13B (Quick Fire) — show Adventure/PvP/Tournament
-  // mode select first. Adventure callback re-enters this function with a
-  // lock so it falls through to the existing region picker.
-  if ((gameNum === 13 || gameNum === '13b') && window.BattleModes && !window._regionModeLocked) {
-    var _g13title = gameNum === 13 ? '🔥 Evolusi Math' : '⚡ Quick Fire'
+  // G10 (Pertarungan Pokemon) + G13 (Evolusi Math) + G13B (Quick Fire) —
+  // show Adventure/PvP/Tournament mode select first. Adventure callback re-enters
+  // this function with a lock so it falls through to the existing region picker.
+  if ((gameNum === 10 || gameNum === 13 || gameNum === '13b') && window.BattleModes && !window._regionModeLocked) {
+    var _regTitle = gameNum === 10 ? '⚡ Pertarungan Pokemon'
+                  : gameNum === 13 ? '🔥 Evolusi Math'
+                  : '⚡ Quick Fire'
     window.BattleModes.show({
-      title: _g13title,
+      title: _regTitle,
       questionType: 'math',
       questionLevel: 5,
       onAdventure: function () {

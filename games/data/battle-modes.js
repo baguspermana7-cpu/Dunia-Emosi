@@ -657,12 +657,14 @@
     document.body.appendChild(root);
 
     // Default Pokemon (deterministic, fair): P1 = Pikachu, P2 = Charmander.
-    // Type matchup is roughly even (electric vs fire — neutral both ways).
+    // Demo matchup: Squirtle (water) vs Charmander (fire). Water→fire = SUPER (✨),
+    // fire→water = RESIST (💤) — showcases the type-effectiveness standard on
+    // both sides' move panels (mirrors G10's super-eff / resist-eff classes).
     const state = {
       turn: 0,
       pokes: [
-        { ...POKE_ROSTER[0], hp: 100, hpMax: 100 },  // Pikachu
-        { ...POKE_ROSTER[1], hp: 100, hpMax: 100 }   // Charmander
+        { ...POKE_ROSTER[3], hp: 100, hpMax: 100 },  // Squirtle (water)
+        { ...POKE_ROSTER[1], hp: 100, hpMax: 100 }   // Charmander (fire)
       ],
       qType: opts.questionType || 'math',
       qLevel: opts.questionLevel || 5,
@@ -739,9 +741,12 @@
             <div class="bm-half-question">Pilih jurus untuk menyerang:</div>
             <div class="bm-half-moves" data-pidx="${playerIdx}">
               ${me.moves.map((mv, mi) => {
-                const eff = effLabel(typeMult(mv.type, opp.type));
+                // Mirror G10 standard: super-eff (green border + ✨) / resist-eff (dashed yellow + 💤)
+                const tm = typeMult(mv.type, opp.type);
+                const eff = effLabel(tm);
+                const effCls = tm >= 1.5 ? ' super-eff' : (tm <= 0.75 ? ' resist-eff' : '');
                 return `
-                  <button class="bm-half-move" data-mi="${mi}">
+                  <button class="bm-half-move${effCls}" data-mi="${mi}">
                     <div class="bm-half-move-name">${escapeHtml(mv.name)}</div>
                     <div class="bm-half-move-meta">
                       <span class="bm-real-move-type" data-mt="${mv.type}">${mv.type}</span>
@@ -1339,6 +1344,32 @@
       }
       .bm-half-move:hover { transform: translateY(-2px); border-color: rgba(252,211,77,0.55); }
       .bm-half-move:active { transform: scale(0.96); }
+      .bm-half-move { position: relative; }
+      /* Mirror G10 standard move-button effectiveness states (style.css:6446-6478) */
+      .bm-half-move.super-eff {
+        border: 2px solid #22c55e !important;
+        box-shadow: 0 0 12px rgba(34,197,94,0.55) !important;
+        animation: bmMoveSuperPulse 1.6s ease-in-out infinite;
+      }
+      .bm-half-move.super-eff::before {
+        content: '✨'; position: absolute;
+        top: 2px; left: 4px;
+        font-size: 12px; opacity: 0.95;
+        text-shadow: 0 0 6px rgba(255,255,255,0.7);
+      }
+      .bm-half-move.resist-eff {
+        opacity: 0.78;
+        border: 2px dashed #f59e0b !important;
+      }
+      .bm-half-move.resist-eff::before {
+        content: '💤'; position: absolute;
+        top: 2px; left: 4px;
+        font-size: 12px; opacity: 0.9;
+      }
+      @keyframes bmMoveSuperPulse {
+        0%,100% { box-shadow: 0 0 12px rgba(34,197,94,0.5); }
+        50%     { box-shadow: 0 0 18px rgba(34,197,94,0.85); }
+      }
       .bm-half-move-name { font-size: 11px; margin-bottom: 2px; }
       .bm-half-move-meta {
         display: flex; flex-wrap: wrap; gap: 2px;
