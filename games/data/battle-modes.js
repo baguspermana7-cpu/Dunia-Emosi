@@ -2406,24 +2406,47 @@
         50%     { transform: scale(0.98); }
       }
 
-      /* Bench dots in arena info card (G13C .hp-poke-dot mirror) */
+      /* Bench dots — VERBATIM mirror of G13C .hp-poke-dot (g13c-pixi.html:67-73).
+         Owner: "ikuti alur dan logika game Gym Pokemon yang asli". Pure-CSS
+         Pokeball: red top half, white bottom half, black equator line, white
+         center button. Info-only — no click handler. */
       .bm-bench-dots {
-        display: flex; gap: 3px; margin-top: 4px;
+        display: flex; gap: 4px; margin-top: 6px; align-items: center;
+        pointer-events: none;
+      }
+      .bm-bench-dots::before {
+        content: '🎒'; font-size: 11px; margin-right: 2px; pointer-events: none;
       }
       .bm-bench-dot {
-        width: 10px; height: 10px; border-radius: 50%;
-        background: radial-gradient(circle at 50% 35%, #fff 0%, #fff 35%, #DC2626 35%, #DC2626 100%);
-        border: 1px solid #111;
-        transition: transform 200ms, opacity 200ms, filter 200ms;
+        width: 18px; height: 18px; border-radius: 50%;
+        background: linear-gradient(180deg, #e3000b 50%, #fff 50%);
+        border: 2px solid #1a1a1a;
+        position: relative; flex-shrink: 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+        transition: transform 220ms, box-shadow 220ms, background 220ms;
+      }
+      .bm-bench-dot::before {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: calc(50% - 1.5px); height: 3px;
+        background: #1a1a1a; pointer-events: none;
+      }
+      .bm-bench-dot::after {
+        content: ''; width: 6px; height: 6px; border-radius: 50%;
+        background: #fff; border: 2px solid #1a1a1a;
+        position: absolute; top: 50%; left: 50%;
+        transform: translate(-50%, -50%); pointer-events: none;
       }
       .bm-bench-dot.active {
-        transform: scale(1.35);
-        box-shadow: 0 0 0 1.5px #FCD34D, 0 0 6px rgba(252,211,77,0.7);
+        transform: scale(1.18);
+        box-shadow: 0 0 0 2px #FCD34D, 0 0 8px rgba(252,211,77,0.9), 0 1px 3px rgba(0,0,0,0.6);
       }
       .bm-bench-dot.fainted {
-        filter: grayscale(1);
-        opacity: 0.35;
+        background: #6b7280 !important;
+        border-color: #4b5563 !important;
+        box-shadow: none;
       }
+      .bm-bench-dot.fainted::before { background: #4b5563; }
+      .bm-bench-dot.fainted::after { background: #9ca3af; border-color: #374151; }
 
       /* Switch button (in move-pick) */
       .bm-switch-btn {
