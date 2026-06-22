@@ -784,6 +784,13 @@
     }
     return 0;
   }
+  // Strip mega/gmax/regional suffix so the sprite lookup hits the base form's file.
+  // Sprite library only ships base forms; display name stays "Mega Charizard" but
+  // the visual is base Charizard (clean fallback instead of noisy 404 + emoji).
+  function spriteSlug (slug) {
+    if (!slug) return '';
+    return slug.replace(/-(mega|gmax|primal)(-[xy])?$/, '');
+  }
 
   // Build a single fresh Pokemon entry from a Pokedex row.
   function buildRandomPokemon (entry) {
@@ -823,17 +830,22 @@
 
   // Adapt G13C-format Pokemon to engine format: add id (from slug→id map), color
   // (from type), pwr on each move (derived from move-name heuristic + STAB).
+  // Preserve G13C's per-tier HP (base 90 / final 115 / mega 125-130) — owner:
+  // "ikuti alur dan logika game Gym Pokemon yang asli". Match length stays
+  // reasonable because pwr scales with STAB + time-mult + elem.
   function adaptPkmFromG13C (pkm) {
     const moves = (pkm.moves || []).slice(0, 4).map(mv => {
       let pwr;
-      const isWeak = /^(Tackle|Pound|Scratch|Bide|Withdraw|Growl|Tail Whip|Leer|Endure|Harden|Defense Curl|Smokescreen|Sand Attack|Sing|Howl|Rest|Recover|Heal Bell|Cotton Spore|Lick|Charm|Sweet Kiss|Mean Look|Protect|Astonish|Mimic|Disable|String Shot|Hypnosis|Supersonic|Screech|Confuse Ray|Mist Ball|Calm Mind|Teleport|Light Screen|Agility|Double Team|Spikes|Magnitude|Play Nice)$/.test(mv.name);
-      const isQuick = /^(Quick Attack|Bite|Peck|Headbutt|Ember|Water Gun|Vine Whip|Thunder Shock|Confusion|Pound|Spark|Bubble|Absorb|Gust|Mud Slap|Bubble Beam|Mud Shot)$/.test(mv.name);
+      const isWeak = /^(Tackle|Pound|Scratch|Bide|Withdraw|Growl|Tail Whip|Leer|Endure|Harden|Defense Curl|Smokescreen|Sand Attack|Sing|Howl|Rest|Recover|Heal Bell|Cotton Spore|Lick|Charm|Sweet Kiss|Mean Look|Protect|Astonish|Mimic|Disable|String Shot|Hypnosis|Supersonic|Screech|Confuse Ray|Calm Mind|Teleport|Light Screen|Agility|Double Team|Spikes|Magnitude|Play Nice|Synthesis|Iron Defense|Powder Snow|Sleep Powder)$/.test(mv.name);
+      const isQuick = /^(Quick Attack|Bite|Peck|Headbutt|Ember|Water Gun|Vine Whip|Thunder Shock|Confusion|Pound|Spark|Bubble|Absorb|Gust|Mud Slap|Bubble Beam|Mud Shot|Aqua Jet|Wing Attack|Slash|Mach Punch|Ice Shard|Extreme Speed|Bullet Punch|Sonic Boom|Disarming Voice|Rapid Spin|Razor Leaf|Bullet Seed|Leech Seed|Fire Fang|Ice Fang|Thunder Fang|Aerial Ace|Karate Chop|Rock Throw|Bug Bite|Steel Wing)$/.test(mv.name);
       if (isWeak) pwr = 18;
       else if (isQuick) pwr = 24;
       else if (mv.type === pkm.type) pwr = 32;   // STAB-typed signature
       else pwr = 28;
       return { name: mv.name, type: mv.type, pwr };
     });
+    // HP from G13C package data — preserves base/final/mega tier scaling.
+    const maxHp = pkm.maxHp || pkm.hp || 80;
     return {
       id: slugToId(pkm.slug),
       name: pkm.name,
@@ -841,7 +853,8 @@
       type: pkm.type,
       color: TYPE_COLOR[pkm.type] || '#A8A878',
       emoji: '⭐',
-      hp: 80, hpMax: 80,
+      hp: maxHp,    // start at full HP
+      hpMax: maxHp,
       moves
     };
   }
@@ -1091,7 +1104,7 @@
                   const id = slugToId(p.slug);
                   const color = TYPE_COLOR[p.type] || '#A8A878';
                   return `<div class="bm-pkg-thumb" title="${escapeHtml(p.name)}" style="background:${color}22; border-color:${color};">
-                    <img src="${spritePath(id, p.slug)}" alt="${escapeHtml(p.name)}"
+                    <img src="${spritePath(id, spriteSlug(p.slug))}" alt="${escapeHtml(p.name)}"
                          onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'⭐',className:'bm-pkg-thumb-fallback'}))">
                   </div>`;
                 }).join('')}
@@ -1274,12 +1287,12 @@
               <div class="bm-hp-text">${p2.hp}/${p2.hpMax}</div>
               ${renderBenchDots(1)}
             </div>
-            <img class="bm-arena-opp-img" alt="${escapeHtml(p2.name)}" src="${spritePath(p2.id, p2.slug)}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'bm-arena-opp-sprite',textContent:'${p2.emoji}'}))">
+            <img class="bm-arena-opp-img" alt="${escapeHtml(p2.name)}" src="${spritePath(p2.id, spriteSlug(p2.slug))}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'bm-arena-opp-sprite',textContent:'${p2.emoji}'}))">
           </div>
 
           <!-- Self quadrant (P1) — bottom-left, mirrors .g10-pspr-wrap -->
           <div class="bm-arena-self">
-            <img class="bm-arena-self-img" alt="${escapeHtml(p1.name)}" src="${spritePath(p1.id, p1.slug)}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'bm-arena-self-sprite',textContent:'${p1.emoji}'}))">
+            <img class="bm-arena-self-img" alt="${escapeHtml(p1.name)}" src="${spritePath(p1.id, spriteSlug(p1.slug))}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'bm-arena-self-sprite',textContent:'${p1.emoji}'}))">
             <div class="bm-info-card">
               <div class="bm-info-name">${escapeHtml(p1.name)}</div>
               <div class="bm-info-chips">
@@ -1355,12 +1368,13 @@
           </div>
         `;
       }
-      // moves phase — show achieved time-mult badge so player sees the bonus
+      // moves phase — show achieved time-mult badge so player sees the bonus.
+      // No 🔄 Ganti button here — owner spec: switching happens via action menu
+      // BEFORE the question, not as an alternative to a move.
       const lastElapsed = state.lastAnswerElapsed[playerIdx];
       const lastMult = timeMultFromElapsed(lastElapsed);
       const tMultBadge = (lastElapsed != null && lastMult > 1.0)
         ? `<div class="bm-tmult-badge">⚡ ${lastMult.toFixed(2)}× cepat!</div>` : '';
-      const aliveBench = state.teams[playerIdx].filter((p, i) => i !== state.activeIdx[playerIdx] && p.hp > 0).length;
       return `
         <div class="bm-q-row">
           <div class="bm-q-text">Pilih jurus untuk menyerang ${escapeHtml(opp.name)}:</div>
@@ -1383,7 +1397,6 @@
               `;
             }).join('')}
           </div>
-          ${aliveBench > 0 ? `<button class="bm-switch-btn" data-pidx="${playerIdx}">🔄 Ganti Pokemon</button>` : ''}
         </div>
       `;
     }
@@ -1405,7 +1418,7 @@
               return `
                 <button class="bm-switch-card ${isActive?'active':''} ${isFainted?'fainted':''}"
                         ${isDisabled?'disabled':''} data-swap="${i}">
-                  <img class="bm-switch-img" src="${spritePath(p.id, p.slug)}" alt="${escapeHtml(p.name)}"
+                  <img class="bm-switch-img" src="${spritePath(p.id, spriteSlug(p.slug))}" alt="${escapeHtml(p.name)}"
                        onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'${p.emoji}',className:'bm-switch-img-fallback'}))">
                   <div class="bm-switch-meta">
                     <div class="bm-switch-name">${escapeHtml(p.name)}</div>
