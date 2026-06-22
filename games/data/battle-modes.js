@@ -65,7 +65,7 @@
       .bm-modal::before, .bm-pvp::before, .bm-tour::before {
         content: '';
         position: fixed; inset: -10% -5%;
-        background: url('/Dunia-Emosi/assets/bg-pokemon-battle.webp') center center/cover no-repeat;
+        background: url('${_ASSET_BASE}assets/bg-pokemon-battle.webp') center center/cover no-repeat;
         opacity: 0.40;
         pointer-events: none; z-index: 0;
       }
@@ -598,9 +598,22 @@
   // All Pokemon normalized to HP 100. Move power 18-32 → 3-5 hits to KO.
   // Owner: "antar pokemon imbang jangan dibuat imba walaupun itu legendaris".
   // HD sprite path resolver (matches assets/Pokemon/pokemondb_hd_alt2/...)
+  // Sprite path resolution must work on BOTH:
+  //   - GitHub Pages (baguspermana7-cpu.github.io/Dunia-Emosi/games/...) — needs /Dunia-Emosi/ prefix
+  //   - Vercel (dunia-emosi-z2ss.vercel.app/games/...) — root-relative, no prefix
+  // Owner: "di vercel bukan gambar pokemon tapi emoji" — fallback firing because
+  // the hardcoded /Dunia-Emosi/ path was 404 on Vercel. Detect from location.
+  var _ASSET_BASE = (function () {
+    try {
+      return location.pathname.indexOf('/Dunia-Emosi/') === 0 ? '/Dunia-Emosi/' : '/';
+    } catch (e) { return '/'; }
+  })();
   function spritePath (id, slug) {
     var padded = String(id).padStart(4, '0');
-    return '/Dunia-Emosi/assets/Pokemon/pokemondb_hd_alt2/' + padded + '_' + slug + '.webp';
+    return _ASSET_BASE + 'assets/Pokemon/pokemondb_hd_alt2/' + padded + '_' + slug + '.webp';
+  }
+  function bgPath (file) {
+    return _ASSET_BASE + 'assets/' + file;
   }
   // Balance pass for A5 timer mechanic. HP 80, move pwr tuned so a typical match
   // lasts 4-6 hits per side (≈ 2 minutes). Math:
@@ -1032,6 +1045,12 @@
         attackerSprite.classList.add('bm-attack-lunge');
         setTimeout(() => attackerSprite.classList.remove('bm-attack-lunge'), 600);
       }
+      // Projectile flies attacker → defender (~320ms). Lands at the start of
+      // the defender shake / damage frame, so all impact VFX read as caused
+      // by the projectile collision.
+      setTimeout(() => {
+        spawnProjectile(attackerSprite, defenderPanel, move.type);
+      }, 40);
       if (defenderPanel) {
         setTimeout(() => {
           defenderPanel.classList.add('bm-defender-shake');
@@ -1133,6 +1152,52 @@
     }
 
     // ── A2 VFX helpers — port from G13C ────────────────────────────────
+    // Projectile flying attacker → defender, type-coded emoji core.
+    // Lands in ~340ms (synced with the lunge-to-impact window) and triggers
+    // the impact particle burst on landing. Owner: "projectile vfx serangannya
+    // belum ada" — this fills the visible attack travel.
+    function spawnProjectile (attackerSprite, defenderPanel, moveType, onLand) {
+      if (!attackerSprite || !defenderPanel) { setTimeout(onLand || (()=>{}), 340); return; }
+      const a = attackerSprite.getBoundingClientRect();
+      const d = defenderPanel.getBoundingClientRect();
+      const startX = a.left + a.width * 0.5;
+      const startY = a.top + a.height * 0.35;
+      const endX   = d.left + d.width * 0.5;
+      const endY   = d.top + d.height * 0.45;
+      const config = {
+        fire:     { emoji: '🔥', trail: '#F97316', size: 38 },
+        water:    { emoji: '💧', trail: '#06B6D4', size: 36 },
+        grass:    { emoji: '🌿', trail: '#10B981', size: 34 },
+        electric: { emoji: '⚡', trail: '#FCD34D', size: 36 },
+        normal:   { emoji: '⭐', trail: '#FFFFFF', size: 34 },
+        fairy:    { emoji: '💖', trail: '#F472B6', size: 34 }
+      };
+      const cfg = config[moveType] || config.normal;
+      const el = document.createElement('div');
+      el.textContent = cfg.emoji;
+      el.style.cssText = `
+        position: fixed;
+        left: ${startX}px; top: ${startY}px;
+        z-index: 9210; pointer-events: none;
+        font-size: ${cfg.size}px;
+        transform: translate(-50%, -50%) scale(0.6) rotate(0deg);
+        filter: drop-shadow(0 0 14px ${cfg.trail}) drop-shadow(0 0 26px ${cfg.trail}aa);
+        transition: left 320ms cubic-bezier(0.4,0,0.2,1), top 320ms cubic-bezier(0.4,0,0.2,1), transform 320ms cubic-bezier(0.4,0,0.2,1);
+      `;
+      document.body.appendChild(el);
+      // Trigger movement on the next frame so transition applies
+      requestAnimationFrame(() => {
+        el.style.left = endX + 'px';
+        el.style.top  = endY + 'px';
+        el.style.transform = 'translate(-50%, -50%) scale(1.4) rotate(540deg)';
+      });
+      // Cleanup + invoke landing callback at ~340ms
+      setTimeout(() => {
+        try { el.remove(); } catch (e) {}
+        if (typeof onLand === 'function') onLand();
+      }, 340);
+    }
+
     // Type-coded particle burst at defender (8 emojis, type-specific animation).
     function spawnTypeParticles (cx, cy, moveType) {
       const config = {
@@ -1352,13 +1417,16 @@
         font-size: 18px;
       }
 
-      /* ── FIXED 20/60/20 GRID — owner spec ──
-         20vh top q-zone + 60vh shared arena (NEVER moves) + 20vh bottom q-zone.
-         When turn switches, only the q-zone roles swap. Arena stays put. */
+      /* ── FIXED 18/62/20 GRID — owner spec refined for safe-area cutoff ──
+         Owner: "Kasih margin lagi area bawah agar nggak terpotong" + "masih
+         banyak black space" — pulled top down to 18vh (less wasted dark zone),
+         arena up to 62vh (more action), bottom 20vh + safe-area padding so
+         choice buttons don't get clipped by the device nav bar. */
       .bm-stage-grid {
         display: grid;
-        grid-template-rows: 20vh 60vh 20vh;
+        grid-template-rows: 18vh 62vh 20vh;
         height: 100dvh; max-height: 100svh;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
       }
 
       /* ── SHARED ARENA — both Pokemon in one view ── */
@@ -1368,7 +1436,7 @@
       }
       .bm-arena::before {
         content: ''; position: absolute; inset: -10% -5%;
-        background: url('/Dunia-Emosi/assets/bg-pokemon-battle.webp') center center/cover no-repeat;
+        background: url('${_ASSET_BASE}assets/bg-pokemon-battle.webp') center center/cover no-repeat;
         opacity: 0.55; pointer-events: none;
       }
       /* Opponent (P2) — top-right (mirrors .g10-espr-wrap) */
@@ -1473,14 +1541,15 @@
         font-family: monospace; text-align: right;
       }
 
-      /* ── Q-ZONE (top + bottom) ── */
+      /* ── Q-ZONE (top + bottom) — softer gradient so the inactive zone doesn't read as dead black ── */
       .bm-qzone {
         position: relative; overflow: hidden;
-        background: rgba(14,14,30,0.96);
+        background: linear-gradient(180deg, rgba(20,20,40,0.92), rgba(14,14,30,0.96));
         border-top: 2px solid rgba(255,255,255,0.07);
         display: grid; place-items: center;
-        padding: 6px 10px;
+        padding: 6px 10px 10px;
       }
+      .bm-qzone-bot { padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)); }
       .bm-qzone-top { border-top: none; border-bottom: 2px solid rgba(255,255,255,0.07); }
       .bm-qzone-inner {
         width: 100%; max-width: 480px;
