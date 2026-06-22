@@ -745,10 +745,10 @@
       qLevel: opts.questionLevel || 5,
       phase: 'question',   // 'question' | 'moves' | 'animating'
       // A5 timer mechanic — owner spec: "timer kecil … 10 detik max + presentase serangan".
-      // Capture when the active player's question becomes visible. Reset every turn.
       questionStartedAt: 0,
-      // Per-player elapsed time at correct-answer moment → drives time-mult in calcDamage.
-      lastAnswerElapsed: [null, null]
+      lastAnswerElapsed: [null, null],
+      // A2 VFX combo counter — per-player streak of super-effective hits in a row.
+      comboCount: [0, 0]
     };
     let _timerRaf = 0;       // RAF handle for tickTimer
     let _timerExpired = false;
@@ -1054,14 +1054,46 @@
       setTimeout(() => { tint.style.opacity = '0'; }, 380);
       setTimeout(() => { try { tint.remove(); } catch (e) {} }, 700);
 
-      // Damage number float-up at defender panel
+      // A2 VFX cascade — matches G13C standard. Owner: "effect serangan, dampak combo,
+      // text sfx, vfx kok tidak ada. berkurang. saya bilang samakan."
+      // Type-coded screen tint kept (above). Now: particles + effectiveness text +
+      // viewport shake on super-eff + CRITICAL on super+STAB + knockback push.
       setTimeout(() => {
         if (defenderPanel) {
           const r = defenderPanel.getBoundingClientRect();
-          spawnDamageNumber(r.left + r.width * 0.7, r.top + r.height * 0.5, dmg, tm, timeMult);
+          const cx = r.left + r.width * 0.7;
+          const cy = r.top + r.height * 0.5;
+          spawnDamageNumber(cx, cy, dmg, tm, timeMult);
+          // Type-emoji particles burst at defender (8 particles, type-specific keyframe)
+          spawnTypeParticles(cx, cy, move.type);
+          // Effectiveness rise-text (Super Efektif / Tidak Efektif / Seimbang)
+          spawnEffectivenessText(cx, cy - 30, tm);
+          // Knockback sprite push on defender (28px) — visible recoil
+          if (defenderPanel && tm >= 1.15) {
+            const dir = attackerIdx === 0 ? 'right' : 'left';
+            defenderPanel.classList.add('bm-knock-' + dir);
+            setTimeout(() => defenderPanel.classList.remove('bm-knock-' + dir), 600);
+          }
         }
-        // Super-effective extra flash — threshold matches new 1.2× cap.
-        if (tm >= 1.15) screenFlash('#FCD34D', 120);
+        // Super-effective extra flash + viewport shake — threshold matches 1.2× cap.
+        if (tm >= 1.15) {
+          screenFlash('#FCD34D', 120);
+          applyViewportShake();
+        }
+        // CRITICAL! pop on super+STAB combo (super-effective AND same-type attack)
+        const isStab = move.type === state.pokes[attackerIdx].type;
+        if (tm >= 1.15 && isStab) {
+          spawnCriticalBadge(defenderPanel);
+        }
+        // Combo counter — track super-effective streak per attacker
+        if (tm >= 1.15) {
+          state.comboCount[attackerIdx]++;
+          if (state.comboCount[attackerIdx] >= 2) {
+            spawnComboBadge(defenderPanel, state.comboCount[attackerIdx]);
+          }
+        } else {
+          state.comboCount[attackerIdx] = 0;
+        }
       }, 360);
 
       // Done at ~700ms after the lunge → applies damage in caller
@@ -1098,6 +1130,129 @@
       document.body.appendChild(f);
       requestAnimationFrame(() => { f.style.opacity = '0'; });
       setTimeout(() => { try { f.remove(); } catch (e) {} }, (dur || 200) + 50);
+    }
+
+    // ── A2 VFX helpers — port from G13C ────────────────────────────────
+    // Type-coded particle burst at defender (8 emojis, type-specific animation).
+    function spawnTypeParticles (cx, cy, moveType) {
+      const config = {
+        fire:     { emojis: ['🔥','✨'], count: 8, anim: 'bmFxRise',  spreadX: 60, spreadY: -90 },
+        water:    { emojis: ['💧','🫧'], count: 8, anim: 'bmFxDrop',  spreadX: 50, spreadY: 70 },
+        grass:    { emojis: ['🌿','🍃'], count: 7, anim: 'bmFxSwirl', spreadX: 70, spreadY: -60 },
+        electric: { emojis: ['⚡','✨'], count: 9, anim: 'bmFxZap',   spreadX: 80, spreadY: -50 },
+        normal:   { emojis: ['⭐','✨'], count: 7, anim: 'bmFxBurst', spreadX: 70, spreadY: -70 },
+        fairy:    { emojis: ['🎀','💖'], count: 8, anim: 'bmFxFloat', spreadX: 60, spreadY: -80 }
+      };
+      const cfg = config[moveType] || config.normal;
+      for (let i = 0; i < cfg.count; i++) {
+        const el = document.createElement('div');
+        const emoji = cfg.emojis[i % cfg.emojis.length];
+        const dx = (Math.random() - 0.5) * cfg.spreadX;
+        const dy = cfg.spreadY * (0.5 + Math.random() * 0.8);
+        el.textContent = emoji;
+        el.style.cssText = `
+          position: fixed; left: ${cx + dx}px; top: ${cy}px;
+          z-index: 9220; pointer-events: none;
+          font-size: ${18 + Math.random() * 16}px;
+          opacity: 0.95;
+          animation: ${cfg.anim} 880ms cubic-bezier(0.22,0.61,0.36,1) forwards;
+          animation-delay: ${i * 35}ms;
+          --dx: ${dx}px; --dy: ${dy}px;
+        `;
+        document.body.appendChild(el);
+        setTimeout(() => { try { el.remove(); } catch (e) {} }, 1300 + i * 35);
+      }
+    }
+
+    // "Super Efektif!" / "Tidak Efektif…" / "Seimbang" rise-text above defender
+    function spawnEffectivenessText (cx, cy, mult) {
+      const eff = effLabel(mult);
+      if (!eff) return;
+      const el = document.createElement('div');
+      const color = mult >= 1.15 ? '#22C55E' : mult <= 0.75 ? '#F87171' : '#CBD5E1';
+      el.textContent = eff;
+      el.style.cssText = `
+        position: fixed; left: ${cx}px; top: ${cy}px;
+        z-index: 9320; pointer-events: none;
+        font-family: 'Fredoka One', cursive;
+        font-size: clamp(16px, 4vw, 22px);
+        font-weight: 900;
+        color: ${color};
+        text-shadow: 0 2px 6px rgba(0,0,0,0.7), 0 0 14px rgba(0,0,0,0.5);
+        transform: translate(-50%, 0) scale(0.6);
+        animation: bmEffRise 1200ms cubic-bezier(0.34,1.56,0.64,1) forwards;
+        white-space: nowrap;
+      `;
+      document.body.appendChild(el);
+      setTimeout(() => { try { el.remove(); } catch (e) {} }, 1300);
+    }
+
+    // CRITICAL! pop on super-effective + STAB combo
+    function spawnCriticalBadge (target) {
+      if (!target) return;
+      const r = target.getBoundingClientRect();
+      const el = document.createElement('div');
+      el.textContent = 'CRITICAL!';
+      el.style.cssText = `
+        position: fixed;
+        left: ${r.left + r.width * 0.5}px;
+        top:  ${r.top - 40}px;
+        z-index: 9340; pointer-events: none;
+        font-family: 'Fredoka One', cursive;
+        font-size: clamp(20px, 5vw, 32px);
+        font-weight: 900;
+        color: #fff;
+        background: linear-gradient(135deg, #F97316, #DC2626);
+        padding: 4px 14px;
+        border-radius: 999px;
+        border: 2px solid #fff;
+        box-shadow: 0 0 18px rgba(249,115,22,0.7), 0 4px 14px rgba(0,0,0,0.5);
+        transform: translate(-50%, 0) scale(0.3);
+        animation: bmCritPop 1100ms cubic-bezier(0.34,1.56,0.64,1) forwards;
+        letter-spacing: 1px;
+        white-space: nowrap;
+      `;
+      document.body.appendChild(el);
+      setTimeout(() => { try { el.remove(); } catch (e) {} }, 1200);
+    }
+
+    // Combo chain badge — appears when ≥2 super-eff hits in a row
+    function spawnComboBadge (target, count) {
+      if (!target) return;
+      const r = target.getBoundingClientRect();
+      const el = document.createElement('div');
+      el.textContent = `COMBO ×${count}!`;
+      const tier = count >= 4 ? { bg: 'linear-gradient(135deg,#A855F7,#EC4899)', border: '#F0ABFC' }
+                  : count >= 3 ? { bg: 'linear-gradient(135deg,#06B6D4,#3B82F6)', border: '#7DD3FC' }
+                  :              { bg: 'linear-gradient(135deg,#10B981,#22C55E)', border: '#86EFAC' };
+      el.style.cssText = `
+        position: fixed;
+        left: ${r.left + r.width * 0.5}px;
+        top:  ${r.top + 10}px;
+        z-index: 9330; pointer-events: none;
+        font-family: 'Fredoka One', cursive;
+        font-size: clamp(15px, 3.5vw, 22px);
+        font-weight: 900;
+        color: #fff;
+        background: ${tier.bg};
+        padding: 3px 12px;
+        border-radius: 999px;
+        border: 2px solid ${tier.border};
+        box-shadow: 0 0 14px rgba(34,197,94,0.6);
+        transform: translate(-50%, 0) scale(0.5);
+        animation: bmComboPop 1000ms cubic-bezier(0.34,1.56,0.64,1) forwards;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+      `;
+      document.body.appendChild(el);
+      setTimeout(() => { try { el.remove(); } catch (e) {} }, 1100);
+    }
+
+    // Viewport shake — apply to <html> for 380ms on super-effective hits
+    function applyViewportShake () {
+      const root = document.documentElement;
+      root.classList.add('bm-vp-shake');
+      setTimeout(() => root.classList.remove('bm-vp-shake'), 380);
     }
 
     function updateHpDisplays () {
@@ -1305,7 +1460,14 @@
         animation: bmHpShine 1.8s ease-in-out infinite;
       }
       .bm-hp-fill.med { background: #F8C030; }
-      .bm-hp-fill.low { background: #E83030; animation: bmHpBlink 0.7s ease-in-out infinite; }
+      .bm-hp-fill.low {
+        background: #E83030;
+        animation: bmHpBlink 0.7s ease-in-out infinite, bmHpDanger 1.2s ease-in-out infinite;
+      }
+      @keyframes bmHpDanger {
+        0%,100% { box-shadow: 0 0 0 0 rgba(232,48,48,0); }
+        50%     { box-shadow: 0 0 8px 2px rgba(232,48,48,0.7); }
+      }
       .bm-hp-text {
         font-size: 9px; font-weight: 700; color: #555;
         font-family: monospace; text-align: right;
@@ -1410,6 +1572,78 @@
         0%   { transform: translateY(0) scale(0.5); opacity: 0; }
         30%  { transform: translateY(-20px) scale(1.2); opacity: 1; }
         100% { transform: translateY(-80px) scale(1.0); opacity: 0; }
+      }
+      /* A2 VFX cascade keyframes (port from g13c-pixi.html lines 252-330) */
+      @keyframes bmEffRise {
+        0%   { transform: translate(-50%, 0)    scale(0.6); opacity: 0; }
+        20%  { transform: translate(-50%, -8px) scale(1.15); opacity: 1; }
+        35%  { transform: translate(-50%, -14px) scale(1.0); opacity: 1; }
+        80%  { transform: translate(-50%, -30px) scale(1.0); opacity: 1; }
+        100% { transform: translate(-50%, -48px) scale(0.9); opacity: 0; }
+      }
+      @keyframes bmCritPop {
+        0%   { transform: translate(-50%, 0) scale(0.3) rotate(-12deg); opacity: 0; }
+        30%  { transform: translate(-50%, -8px) scale(1.25) rotate(6deg); opacity: 1; }
+        60%  { transform: translate(-50%, -10px) scale(1.05) rotate(-2deg); opacity: 1; }
+        100% { transform: translate(-50%, -22px) scale(1.0) rotate(0deg); opacity: 0; }
+      }
+      @keyframes bmComboPop {
+        0%   { transform: translate(-50%, 0) scale(0.5); opacity: 0; }
+        30%  { transform: translate(-50%, -6px) scale(1.18); opacity: 1; }
+        100% { transform: translate(-50%, -28px) scale(1.0); opacity: 0; }
+      }
+      /* Type-specific particle keyframes — use --dx --dy CSS vars from spawnTypeParticles */
+      @keyframes bmFxRise {
+        0%   { transform: scale(0.4) translate(0, 0);                opacity: 0.95; }
+        50%  { transform: scale(1.2) translate(calc(var(--dx)*0.5), calc(var(--dy)*0.5)); opacity: 0.85; }
+        100% { transform: scale(0.5) translate(var(--dx), var(--dy)); opacity: 0; }
+      }
+      @keyframes bmFxDrop {
+        0%   { transform: scale(0.9) translate(0, -10px);            opacity: 0.95; }
+        70%  { transform: scale(1.0) translate(calc(var(--dx)*0.8), calc(var(--dy)*0.8)); opacity: 0.6; }
+        100% { transform: scale(0.6) translate(var(--dx), var(--dy)); opacity: 0; }
+      }
+      @keyframes bmFxSwirl {
+        0%   { transform: scale(0.3) rotate(0deg) translate(0, 0);                          opacity: 1; }
+        60%  { transform: scale(1.1) rotate(200deg) translate(calc(var(--dx)*0.6), calc(var(--dy)*0.5)); opacity: 0.7; }
+        100% { transform: scale(0.4) rotate(400deg) translate(var(--dx), var(--dy));        opacity: 0; }
+      }
+      @keyframes bmFxZap {
+        0%   { transform: scale(0) rotate(0deg);                                            opacity: 1; }
+        30%  { transform: scale(1.6) rotate(45deg);                                         opacity: 1; }
+        100% { transform: scale(0.2) rotate(200deg) translate(var(--dx), var(--dy));        opacity: 0; }
+      }
+      @keyframes bmFxBurst {
+        0%   { transform: scale(0);                                                          opacity: 1; }
+        40%  { transform: scale(1.4) translate(calc(var(--dx)*0.5), calc(var(--dy)*0.4));   opacity: 0.95; }
+        100% { transform: scale(0.3) translate(var(--dx), var(--dy));                       opacity: 0; }
+      }
+      @keyframes bmFxFloat {
+        0%   { transform: scale(0.6) translate(0, 0);                                        opacity: 0.85; }
+        50%  { transform: scale(1.1) translate(calc(var(--dx)*0.4), calc(var(--dy)*0.6));   opacity: 0.7; }
+        100% { transform: scale(0) translate(var(--dx), var(--dy));                         opacity: 0; }
+      }
+      /* Knockback push on defender — direction-aware translate */
+      .bm-knock-right { animation: bmKnockR 600ms cubic-bezier(0.18,0.6,0.4,1); }
+      .bm-knock-left  { animation: bmKnockL 600ms cubic-bezier(0.18,0.6,0.4,1); }
+      @keyframes bmKnockR {
+        0%   { transform: translateX(0); }
+        30%  { transform: translateX(28px); }
+        100% { transform: translateX(0); }
+      }
+      @keyframes bmKnockL {
+        0%   { transform: translateX(0); }
+        30%  { transform: translateX(-28px); }
+        100% { transform: translateX(0); }
+      }
+      /* Viewport shake on super-effective — applied to <html> */
+      html.bm-vp-shake { animation: bmVpShake 380ms ease; }
+      @keyframes bmVpShake {
+        0%, 100% { transform: translate(0, 0); }
+        20%      { transform: translate(-3px, 1px); }
+        40%      { transform: translate(2px, -2px); }
+        60%      { transform: translate(-2px, 2px); }
+        80%      { transform: translate(2px, 1px); }
       }
       @keyframes bmSpriteBob {
         0%, 100% { transform: translateY(0); }
