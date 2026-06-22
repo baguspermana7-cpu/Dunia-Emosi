@@ -410,7 +410,23 @@
       }
       .bm-bracket-slot.winner { color: #047857; }
       .bm-bracket-slot.loser  { color: rgba(17,24,39,0.45); text-decoration: line-through; }
+      .bm-bracket-slot.loser .bm-bracket-team { opacity: 0.5; filter: grayscale(0.7); }
+      .bm-bracket-slot-line { display: block; }
       .bm-bracket-vs { color: rgba(17,24,39,0.50); font-size: 11px; text-align: center; margin: 2px 0; font-weight: 700; }
+      .bm-bracket-team {
+        display: flex; gap: 3px; margin-top: 4px;
+        flex-wrap: wrap;
+      }
+      .bm-bracket-mini {
+        width: 22px; height: 22px;
+        border-radius: 50%;
+        border: 1.5px solid #111;
+        display: inline-flex; align-items: center; justify-content: center;
+        font-size: 12px;
+        color: #fff;
+        text-shadow: 0 1px 1px rgba(0,0,0,0.55);
+        box-shadow: 1px 1px 0 rgba(0,0,0,0.30);
+      }
 
       .bm-tour-go-match {
         display: block;
@@ -2459,9 +2475,12 @@
     root.className = 'bm-tour';
     document.body.appendChild(root);
 
-    let step = 'count';     // 'count' | 'names' | 'bracket'
+    // Tournament steps: count → names → size (3 or 6) → pick (per player) → bracket
+    let step = 'count';
     let playerCount = 0;
-    let players = [];
+    let players = [];       // [{ name, idx, team: [], teamSize }]
+    let teamSize = 6;
+    let pickingPlayer = 0;  // who's currently picking
     let bracket = null;
     let currentMatch = 0;
 
@@ -2538,10 +2557,125 @@
       });
       syncGo();
       goBtn.addEventListener('click', () => {
+        // After names → team-size step (3 or 6 Pokemon)
+        step = 'size';
+        renderTourSize();
+      });
+    }
+
+    function renderTourSize () {
+      root.innerHTML = `
+        ${header()}
+        <div class="bm-tour-step">
+          <h2>Pilih Mode Tim</h2>
+          <p style="text-align:center; color:#fff; text-shadow:1px 1px 0 rgba(0,0,0,0.55); font-size:13px; margin-top:-4px;">
+            Berapa Pokemon yang bertarung di setiap match?
+          </p>
+          <div class="bm-size-grid" style="margin-top:14px;">
+            <button class="bm-size-card" data-size="3">
+              <div class="bm-size-emoji">⚡</div>
+              <div class="bm-size-name">Cepat</div>
+              <div class="bm-size-count">3 Pokemon</div>
+              <div class="bm-size-time">~5 menit/match</div>
+            </button>
+            <button class="bm-size-card bm-size-card-full" data-size="6">
+              <div class="bm-size-emoji">🔥</div>
+              <div class="bm-size-name">Lengkap</div>
+              <div class="bm-size-count">6 Pokemon</div>
+              <div class="bm-size-time">~10 menit/match</div>
+            </button>
+          </div>
+        </div>
+      `;
+      bindBack();
+      root.querySelectorAll('.bm-size-card').forEach(b => {
+        b.addEventListener('click', () => {
+          teamSize = parseInt(b.getAttribute('data-size'));
+          step = 'pick';
+          pickingPlayer = 0;
+          renderTourPick();
+        });
+      });
+    }
+
+    function renderTourPick () {
+      const p = players[pickingPlayer];
+      const badgeClass = pickingPlayer % 2 === 0 ? 'p1' : 'p2';
+      root.innerHTML = `
+        ${header()}
+        <div class="bm-prestep" style="position:relative; padding-top:20px;">
+          <div class="bm-prestep-header">
+            <span class="bm-pvp-badge ${badgeClass}">P${pickingPlayer + 1}</span>
+            <span class="bm-prestep-pname">Giliran <b>${escapeHtml(p.name)}</b> memilih tim</span>
+          </div>
+          <div class="bm-prestep-sub">${pickingPlayer + 1}/${playerCount} · ${teamSize} Pokemon</div>
+
+          <div class="bm-section-label">⭐ Tim Tema</div>
+          <div class="bm-pkg-grid">
+            ${PVP_PACKAGES.map(pkg => `
+              <button class="bm-pkg-card" data-pkg="${pkg.id}">
+                <div class="bm-pkg-head"><span class="bm-pkg-emoji">${pkg.emoji}</span><span class="bm-pkg-name">${pkg.name}</span></div>
+                <div class="bm-pkg-desc">${pkg.desc}</div>
+                <div class="bm-pkg-thumbs">
+                  ${pkg.teamIdx.slice(0, teamSize).map(idx => {
+                    const pp = POKE_ROSTER[idx];
+                    return `<div class="bm-pkg-thumb" title="${pp.name}" style="background:${pp.color}22; border-color:${pp.color};">
+                      <img src="${spritePath(pp.id, pp.slug)}" alt="${pp.name}"
+                           onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'${pp.emoji}',className:'bm-pkg-thumb-fallback'}))">
+                    </div>`;
+                  }).join('')}
+                </div>
+              </button>
+            `).join('')}
+          </div>
+
+          <div class="bm-section-label">🎲 Tim Acak per Region (1025 Pokemon)</div>
+          <div class="bm-pkg-grid">
+            ${RANDOM_REGIONS.map(reg => `
+              <button class="bm-pkg-card bm-pkg-random" data-region="${reg.id}" data-gen="${reg.gen}">
+                <div class="bm-pkg-head"><span class="bm-pkg-emoji">${reg.emoji}</span><span class="bm-pkg-name">Tim Acak ${reg.name}</span></div>
+                <div class="bm-pkg-desc">${reg.desc}</div>
+                <div class="bm-pkg-thumbs bm-pkg-thumbs-random">
+                  ${Array.from({length: teamSize}).map(() => `<div class="bm-pkg-thumb bm-pkg-thumb-random"><span>🎲</span></div>`).join('')}
+                </div>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      bindBack();
+      root.querySelectorAll('.bm-pkg-card[data-pkg]').forEach(b => {
+        b.addEventListener('click', () => {
+          p.team = buildTeamFromPackage(b.getAttribute('data-pkg'), teamSize);
+          p.teamSize = teamSize;
+          advanceTourPick();
+        });
+      });
+      root.querySelectorAll('.bm-pkg-card[data-region]').forEach(b => {
+        b.addEventListener('click', () => {
+          const gen = parseInt(b.getAttribute('data-gen'));
+          b.classList.add('bm-pkg-loading');
+          loadPokeDB().then(() => {
+            p.team = buildTeamFromRegion(gen, teamSize);
+            p.teamSize = teamSize;
+            advanceTourPick();
+          }).catch(err => {
+            console.warn('[tournament] random region load failed', err);
+            b.classList.remove('bm-pkg-loading');
+          });
+        });
+      });
+    }
+
+    function advanceTourPick () {
+      if (pickingPlayer < playerCount - 1) {
+        pickingPlayer++;
+        renderTourPick();
+      } else {
         bracket = buildBracket(players);
         step = 'bracket';
         renderBracket();
-      });
+      }
     }
 
     function buildBracket (ps) {
@@ -2611,11 +2745,22 @@
           let stateAttr = 'data-state="pending"';
           if (m.winner !== null) stateAttr = 'data-state="done"';
           if (flatIdx === currentMatch) stateAttr = 'data-state="current"';
+          const aTeam = aP && aP.team ? aP.team : null;
+          const bTeam = bP && bP.team ? bP.team : null;
+          const teamRow = (team) => team ? `<div class="bm-bracket-team">${
+            team.slice(0,6).map(p => `<span class="bm-bracket-mini" title="${escapeHtml(p.name)}" style="background:${p.color};">${TYPE_ICON[p.type]||'•'}</span>`).join('')
+          }</div>` : '';
           html += `
             <div class="bm-bracket-match" ${stateAttr}>
-              <div class="bm-bracket-slot ${m.winner === 'a' ? 'winner' : (m.winner === 'b' ? 'loser' : '')}">⚔️ ${escapeHtml(aName)}</div>
+              <div class="bm-bracket-slot ${m.winner === 'a' ? 'winner' : (m.winner === 'b' ? 'loser' : '')}">
+                <div class="bm-bracket-slot-line">⚔️ ${escapeHtml(aName)}</div>
+                ${teamRow(aTeam)}
+              </div>
               <div class="bm-bracket-vs">— ${escapeHtml(m.label)} —</div>
-              <div class="bm-bracket-slot ${m.winner === 'b' ? 'winner' : (m.winner === 'a' ? 'loser' : '')}">⚔️ ${escapeHtml(bName)}</div>
+              <div class="bm-bracket-slot ${m.winner === 'b' ? 'winner' : (m.winner === 'a' ? 'loser' : '')}">
+                <div class="bm-bracket-slot-line">⚔️ ${escapeHtml(bName)}</div>
+                ${teamRow(bTeam)}
+              </div>
             </div>
           `;
         });
@@ -2652,12 +2797,19 @@
       const cur = flat[currentMatch];
       const aP = resolveSlot(cur.a);
       const bP = resolveSlot(cur.b);
+      // Fresh HP clone per match — teams persist across the bracket but every
+      // match starts with full HP. Owner spec: "fresh team each match".
+      const cloneFreshTeam = (team) => team ? team.map(p => ({...p, hp: p.hpMax || 80})) : null;
       startPvP({
         players: [aP, bP],
         matchNo: currentMatch + 1,
         stageLineText: cur.label,
         questionLevel: opts.questionLevel,
         questionType: opts.questionType,
+        // Pass picked teams — startPvP sees opts.teams so it skips the pre-battle
+        // picker and goes straight to the arena with these teams.
+        teams: [cloneFreshTeam(aP.team), cloneFreshTeam(bP.team)],
+        teamSize: aP.teamSize || teamSize,
         onComplete: (res) => {
           // winnerIdx is 0 or 1 within the match's players
           cur.winner = res.winnerIdx === 0 ? 'a' : 'b';
@@ -2709,8 +2861,12 @@
           teardown(root);
           opts.onCancel && opts.onCancel();
         } else if (step === 'names') {
-          step = 'count';
-          renderCount();
+          step = 'count'; renderCount();
+        } else if (step === 'size') {
+          step = 'names'; renderNames();
+        } else if (step === 'pick') {
+          if (pickingPlayer > 0) { pickingPlayer--; renderTourPick(); }
+          else { step = 'size'; renderTourSize(); }
         } else {
           if (confirm('Keluar dari tournament?')) {
             teardown(root);
