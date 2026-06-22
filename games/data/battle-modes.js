@@ -481,7 +481,43 @@
       .bm-champion-name {
         font-family: 'Fredoka One', cursive;
         font-size: clamp(20px, 5vw, 28px);
-        color: #F1F5F9; margin-bottom: 16px;
+        color: #F1F5F9; margin-bottom: 8px;
+      }
+      .bm-champion-team-label {
+        font-family: 'Fredoka One', cursive;
+        font-size: 12px;
+        color: #FCD34D;
+        letter-spacing: 0.5px;
+        margin-top: 10px; margin-bottom: 6px;
+      }
+      .bm-champion-team-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        max-width: 320px;
+        margin: 0 auto 4px;
+      }
+      .bm-champion-poke {
+        border: 2px solid #444;
+        border-radius: 10px;
+        padding: 4px;
+        background: rgba(248,248,240,0.97);
+        display: flex; flex-direction: column; align-items: center;
+        box-shadow: 2px 2px 0 rgba(0,0,0,0.30);
+      }
+      .bm-champion-poke-img { width: 42px; height: 42px; object-fit: contain; }
+      .bm-champion-poke-fb { font-size: 30px; }
+      .bm-champion-poke-name {
+        font-family: 'Fredoka One', cursive;
+        font-size: 9px; color: #111;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        max-width: 80px;
+      }
+      .bm-champion-defeated {
+        font-family: 'Inter', system-ui, sans-serif;
+        font-size: 12px; color: rgba(255,255,255,0.70);
+        margin-top: 6px;
+        font-style: italic;
       }
       .bm-champion-actions {
         display: flex; gap: 10px; flex-direction: column; margin-top: 16px;
@@ -777,19 +813,33 @@
   }
   function slugToId (slug) {
     if (_slugToId && _slugToId[slug]) return _slugToId[slug];
-    // Fallback for Mega slugs like 'charizard-mega-x' → use base form 'charizard'.
     if (slug && _slugToId) {
-      const base = slug.split('-')[0];
+      // Strip regional prefix (alolan-vulpix → vulpix) and form suffix
+      // (charizard-mega-x → charizard) to find the base-form id.
+      const stripped = slug
+        .replace(/^(alolan|galarian|hisuian|paldean)-/, '')
+        .replace(/-(mega|gmax|primal)(-[xy])?$/, '');
+      if (_slugToId[stripped]) return _slugToId[stripped];
+      // Final fallback: first segment only
+      const base = stripped.split('-')[0];
       if (_slugToId[base]) return _slugToId[base];
     }
     return 0;
   }
-  // Strip mega/gmax/regional suffix so the sprite lookup hits the base form's file.
-  // Sprite library only ships base forms; display name stays "Mega Charizard" but
-  // the visual is base Charizard (clean fallback instead of noisy 404 + emoji).
+  // Convert canonical hyphen-slug to the sprite library's underscore format,
+  // strip regional + form prefixes/suffixes so the file always exists.
+  //   ho-oh        → ho_oh            (file: 0250_ho_oh.webp)
+  //   tapu-koko    → tapu_koko        (file: 0785_tapu_koko.webp)
+  //   wo-chien     → wo_chien         (file: 0999_wo_chien.webp)
+  //   alolan-vulpix → vulpix          (file: 0037_vulpix.webp — base form only)
+  //   charizard-mega-x → charizard    (file: 0006_charizard.webp)
+  //   gengar-mega   → gengar          (file: 0094_gengar.webp)
   function spriteSlug (slug) {
     if (!slug) return '';
-    return slug.replace(/-(mega|gmax|primal)(-[xy])?$/, '');
+    return slug
+      .replace(/^(alolan|galarian|hisuian|paldean)-/, '')
+      .replace(/-(mega|gmax|primal)(-[xy])?$/, '')
+      .replace(/-/g, '_');
   }
 
   // Build a single fresh Pokemon entry from a Pokedex row.
@@ -3056,6 +3106,20 @@
 
     function showChampion (champP) {
       sfxChampion();
+      // Collect defeated player names from the bracket
+      const defeated = players.filter(p => p !== champP).map(p => p.name);
+      // Team grid showcase — champion's picked team with sprites
+      const teamGrid = champP.team ? champP.team.slice(0, champP.teamSize || champP.team.length).map(p => {
+        const id = slugToId(p.slug);
+        const color = TYPE_COLOR[p.type] || '#A8A878';
+        return `
+          <div class="bm-champion-poke" title="${escapeHtml(p.name)}" style="background:${color}33; border-color:${color};">
+            <img class="bm-champion-poke-img" src="${spritePath(id, spriteSlug(p.slug))}" alt="${escapeHtml(p.name)}"
+                 onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'⭐',className:'bm-champion-poke-fb'}))">
+            <div class="bm-champion-poke-name">${escapeHtml(p.name)}</div>
+          </div>
+        `;
+      }).join('') : '';
       const card = document.createElement('div');
       card.className = 'bm-champion';
       card.innerHTML = `
@@ -3063,6 +3127,8 @@
           <span class="bm-champion-trophy">🏆</span>
           <div class="bm-champion-title">Juara Tournament!</div>
           <div class="bm-champion-name">${escapeHtml(champP.name)}</div>
+          ${teamGrid ? `<div class="bm-champion-team-label">Tim Juara</div><div class="bm-champion-team-grid">${teamGrid}</div>` : ''}
+          ${defeated.length ? `<div class="bm-champion-defeated">Mengalahkan: ${defeated.map(escapeHtml).join(', ')}</div>` : ''}
           <div class="bm-champion-actions">
             <button class="bm-champion-btn" id="bm-tour-again">Main Lagi (pemain sama)</button>
             <button class="bm-champion-btn secondary" id="bm-tour-exit">Selesai</button>
