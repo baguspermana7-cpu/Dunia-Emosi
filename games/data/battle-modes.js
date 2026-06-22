@@ -673,6 +673,22 @@
       { name:'Volt Tackle',    type:'electric', pwr:34 }
     ]}
   ];
+  // A1 Pre-built packages. Each `teamIdx` indexes into POKE_ROSTER above so 3-mode
+  // pulls the first 3 slots, 6-mode pulls all 6. Mirror of G13C PLAYER_PACKAGES.
+  const PVP_PACKAGES = [
+    { id:'pikachu_squad', name:'Tim Pikachu', emoji:'⚡', desc:'Listrik & cucu Pikachu',  teamIdx:[0, 7, 4, 5, 6, 1] },
+    { id:'water_crew',    name:'Tim Air',     emoji:'💧', desc:'Petualang air',           teamIdx:[3, 0, 4, 2, 5, 7] },
+    { id:'fire_brigade',  name:'Tim Api',     emoji:'🔥', desc:'Pasukan berapi-api',      teamIdx:[1, 6, 4, 0, 7, 5] },
+    { id:'grass_garden',  name:'Tim Hutan',   emoji:'🌿', desc:'Penjaga taman',           teamIdx:[2, 4, 5, 3, 6, 7] },
+    { id:'cute_friends',  name:'Tim Lucu',    emoji:'🎀', desc:'Imut tapi tangguh',       teamIdx:[5, 7, 4, 0, 6, 2] },
+    { id:'mixed_starter', name:'Tim Campur',  emoji:'🌟', desc:'Semua starter klasik',    teamIdx:[0, 1, 3, 2, 4, 5] }
+  ];
+  // Convert a package into a fresh team array of {…pokemon, hp, hpMax}.
+  function buildTeamFromPackage (pkgId, teamSize) {
+    const pkg = PVP_PACKAGES.find(p => p.id === pkgId) || PVP_PACKAGES[5];
+    return pkg.teamIdx.slice(0, teamSize).map(idx => ({ ...POKE_ROSTER[idx], hp: 80, hpMax: 80 }));
+  }
+
   // Type chart — element multiplier capped at 1.2× per owner spec ("elemen itu 1.2x max pengali").
   // Resist (0.75) + immune (0.5) floors preserved — defense still meaningful.
   const TYPE_CHART = {
@@ -747,22 +763,35 @@
     // Demo matchup: Squirtle (water) vs Charmander (fire). Water→fire = SUPER (✨),
     // fire→water = RESIST (💤) — showcases the type-effectiveness standard on
     // both sides' move panels (mirrors G10's super-eff / resist-eff classes).
+    // A1 team mechanic — preload teams from opts.teams (Tournament passes pre-picked teams),
+    // else default to Mixed Starter 6-team for both sides until pre-battle picker runs.
+    const _initSize = opts.teamSize || 6;
+    const _initTeams = opts.teams || [
+      buildTeamFromPackage('mixed_starter', _initSize),
+      buildTeamFromPackage('mixed_starter', _initSize)
+    ];
     const state = {
       turn: 0,
-      pokes: [
-        // A5 balance: HP 80 (was 100) — matches feel snappy, ≈ 2 minutes typical.
-        { ...POKE_ROSTER[3], hp: 80, hpMax: 80 },  // Squirtle (water)
-        { ...POKE_ROSTER[1], hp: 80, hpMax: 80 }   // Charmander (fire)
-      ],
+      teams: _initTeams,
+      activeIdx: [0, 0],
+      teamSize: _initSize,
+      switchForced: null,
       qType: opts.questionType || 'math',
       qLevel: opts.questionLevel || 5,
+      // Pre-battle steps: 'size' → 'pick' → 'battle'. When opts.teams is supplied
+      // (e.g. Tournament passes pre-picked teams), jump straight to 'battle'.
+      preStep: opts.teams ? 'battle' : 'size',
+      pickingPlayer: 0,
       phase: 'question',   // 'question' | 'moves' | 'animating'
-      // A5 timer mechanic — owner spec: "timer kecil … 10 detik max + presentase serangan".
       questionStartedAt: 0,
       lastAnswerElapsed: [null, null],
-      // A2 VFX combo counter — per-player streak of super-effective hits in a row.
       comboCount: [0, 0]
     };
+    // Active Pokemon shorthand. ALWAYS use this — never read state.teams directly
+    // outside engine internals.
+    function activePoke (playerIdx) {
+      return state.teams[playerIdx][state.activeIdx[playerIdx]];
+    }
     let _timerRaf = 0;       // RAF handle for tickTimer
     let _timerExpired = false;
 
@@ -779,8 +808,12 @@
     // sees opaque "Tunggu giliran" overlay (anti-peek). Top zone rotated 180° so P2
     // (facing the screen upside-down) reads normally. Arena itself is NOT rotated.
     function renderRoot () {
-      const p1 = state.pokes[0];
-      const p2 = state.pokes[1];
+      // A1: pre-battle steps. Dispatch on state.preStep.
+      if (state.preStep === 'size') { renderSizeStep(); return; }
+      if (state.preStep === 'pick') { renderPickStep(); return; }
+
+      const p1 = activePoke(0);
+      const p2 = activePoke(1);
 
       root.innerHTML = `
         <button class="bm-back bm-real-exit" data-exit>×</button>
@@ -806,11 +839,99 @@
       wireActiveZone();
       // A5: start the 10-second answer timer when a fresh question phase shows.
       // (Move phase + animating phase don't tick — RAF self-stops.)
-      if (state.phase === 'question') {
+      if (state.phase === 'question' && !state.switchForced) {
         startQuestionTimer();
       } else {
         stopQuestionTimer();
       }
+    }
+
+    // ── A1 Pre-battle steps ────────────────────────────────────────────
+    function renderSizeStep () {
+      stopQuestionTimer();
+      root.innerHTML = `
+        <button class="bm-back bm-real-exit" data-exit>×</button>
+        <div class="bm-prestep">
+          <div class="bm-prestep-title">Pilih Mode Tim</div>
+          <div class="bm-prestep-sub">Berapa Pokemon yang bertarung?</div>
+          <div class="bm-size-grid">
+            <button class="bm-size-card" data-size="3">
+              <div class="bm-size-emoji">⚡</div>
+              <div class="bm-size-name">Cepat</div>
+              <div class="bm-size-count">3 Pokemon</div>
+              <div class="bm-size-time">~5 menit</div>
+            </button>
+            <button class="bm-size-card bm-size-card-full" data-size="6">
+              <div class="bm-size-emoji">🔥</div>
+              <div class="bm-size-name">Lengkap</div>
+              <div class="bm-size-count">6 Pokemon</div>
+              <div class="bm-size-time">~10 menit</div>
+            </button>
+          </div>
+        </div>
+      `;
+      root.querySelector('[data-exit]').addEventListener('click', exitMatch);
+      root.querySelectorAll('.bm-size-card').forEach(b => {
+        b.addEventListener('click', () => {
+          const sz = parseInt(b.getAttribute('data-size'));
+          state.teamSize = sz;
+          state.preStep = 'pick';
+          state.pickingPlayer = 0;
+          renderRoot();
+        });
+      });
+    }
+
+    function renderPickStep () {
+      stopQuestionTimer();
+      const playerIdx = state.pickingPlayer;
+      const meName = opts.players[playerIdx].name;
+      const badgeClass = playerIdx === 0 ? 'p1' : 'p2';
+      root.innerHTML = `
+        <button class="bm-back bm-real-exit" data-exit>×</button>
+        <div class="bm-prestep">
+          <div class="bm-prestep-header">
+            <span class="bm-pvp-badge ${badgeClass}">${badgeClass.toUpperCase()}</span>
+            <span class="bm-prestep-pname">Giliran <b>${escapeHtml(meName)}</b> memilih tim</span>
+          </div>
+          <div class="bm-prestep-sub">Pilih satu paket tim · ${state.teamSize} Pokemon</div>
+          <div class="bm-pkg-grid">
+            ${PVP_PACKAGES.map(pkg => `
+              <button class="bm-pkg-card" data-pkg="${pkg.id}">
+                <div class="bm-pkg-head">
+                  <span class="bm-pkg-emoji">${pkg.emoji}</span>
+                  <span class="bm-pkg-name">${pkg.name}</span>
+                </div>
+                <div class="bm-pkg-desc">${pkg.desc}</div>
+                <div class="bm-pkg-thumbs">
+                  ${pkg.teamIdx.slice(0, state.teamSize).map(idx => {
+                    const p = POKE_ROSTER[idx];
+                    return `<div class="bm-pkg-thumb" title="${p.name}" style="background:${p.color}22; border-color:${p.color};">
+                      <img src="${spritePath(p.id, p.slug)}" alt="${p.name}"
+                           onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'${p.emoji}',className:'bm-pkg-thumb-fallback'}))">
+                    </div>`;
+                  }).join('')}
+                </div>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      root.querySelector('[data-exit]').addEventListener('click', exitMatch);
+      root.querySelectorAll('.bm-pkg-card').forEach(b => {
+        b.addEventListener('click', () => {
+          const pkgId = b.getAttribute('data-pkg');
+          state.teams[playerIdx] = buildTeamFromPackage(pkgId, state.teamSize);
+          state.activeIdx[playerIdx] = 0;
+          if (playerIdx === 0 && opts.players.length > 1) {
+            state.pickingPlayer = 1;
+            renderRoot();
+          } else {
+            state.preStep = 'battle';
+            renderRoot();
+          }
+        });
+      });
     }
 
     function startQuestionTimer () {
@@ -859,6 +980,15 @@
       }, 1200);
     }
 
+    function renderBenchDots (playerIdx) {
+      // A1: bench Pokéball dots row — mirrors G13C .hp-poke-dot.
+      const team = state.teams[playerIdx];
+      const active = state.activeIdx[playerIdx];
+      return `<div class="bm-bench-dots">
+        ${team.map((p, i) => `<div class="bm-bench-dot ${p.hp<=0?'fainted':''} ${i===active?'active':''}" title="${escapeHtml(p.name)} ${p.hp}/${p.hpMax}"></div>`).join('')}
+      </div>`;
+    }
+
     function renderArena (p1, p2) {
       return `
         <section class="bm-arena">
@@ -875,6 +1005,7 @@
                 <div class="bm-hp-bar"><div class="bm-hp-fill ${hpColorClass(p2.hp, p2.hpMax)}" style="width:${(p2.hp/p2.hpMax)*100}%;"></div></div>
               </div>
               <div class="bm-hp-text">${p2.hp}/${p2.hpMax}</div>
+              ${renderBenchDots(1)}
             </div>
             <img class="bm-arena-opp-img" alt="${escapeHtml(p2.name)}" src="${spritePath(p2.id, p2.slug)}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'bm-arena-opp-sprite',textContent:'${p2.emoji}'}))">
           </div>
@@ -893,6 +1024,7 @@
                 <div class="bm-hp-bar"><div class="bm-hp-fill ${hpColorClass(p1.hp, p1.hpMax)}" style="width:${(p1.hp/p1.hpMax)*100}%;"></div></div>
               </div>
               <div class="bm-hp-text">${p1.hp}/${p1.hpMax}</div>
+              ${renderBenchDots(0)}
             </div>
           </div>
         </section>
@@ -925,11 +1057,20 @@
           </div>
         `;
       }
+      // Forced switch (after faint) — show switch panel only, no other action.
+      if (state.switchForced === playerIdx) {
+        return renderSwitchPanel(playerIdx, false /*allowCancel*/);
+      }
       // moves phase — show achieved time-mult badge so player sees the bonus
       const lastElapsed = state.lastAnswerElapsed[playerIdx];
       const lastMult = timeMultFromElapsed(lastElapsed);
       const tMultBadge = (lastElapsed != null && lastMult > 1.0)
         ? `<div class="bm-tmult-badge">⚡ ${lastMult.toFixed(2)}× cepat!</div>` : '';
+      // Voluntary switch panel — when player toggled it via "Ganti Pokemon"
+      if (root._switchOpen === playerIdx) {
+        return renderSwitchPanel(playerIdx, true /*allowCancel*/);
+      }
+      const aliveBench = state.teams[playerIdx].filter((p, i) => i !== state.activeIdx[playerIdx] && p.hp > 0).length;
       return `
         <div class="bm-q-row">
           <div class="bm-q-text">Pilih jurus untuk menyerang ${escapeHtml(opp.name)}:</div>
@@ -952,6 +1093,44 @@
               `;
             }).join('')}
           </div>
+          ${aliveBench > 0 ? `<button class="bm-switch-btn" data-pidx="${playerIdx}">🔄 Ganti Pokemon</button>` : ''}
+        </div>
+      `;
+    }
+
+    function renderSwitchPanel (playerIdx, allowCancel) {
+      const team = state.teams[playerIdx];
+      const active = state.activeIdx[playerIdx];
+      const title = allowCancel ? 'Pilih Pokemon Pengganti' : '😵 Pokemon pingsan — pilih pengganti!';
+      return `
+        <div class="bm-switch-panel">
+          <div class="bm-switch-title">${title}</div>
+          <div class="bm-switch-grid">
+            ${team.map((p, i) => {
+              const isActive = i === active;
+              const isFainted = p.hp <= 0;
+              const isDisabled = isActive || isFainted;
+              const hpPct = (p.hp / p.hpMax) * 100;
+              const hpColor = hpPct > 50 ? '#52D058' : hpPct > 25 ? '#F8C030' : '#E83030';
+              return `
+                <button class="bm-switch-card ${isActive?'active':''} ${isFainted?'fainted':''}"
+                        ${isDisabled?'disabled':''} data-swap="${i}">
+                  <img class="bm-switch-img" src="${spritePath(p.id, p.slug)}" alt="${escapeHtml(p.name)}"
+                       onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'${p.emoji}',className:'bm-switch-img-fallback'}))">
+                  <div class="bm-switch-meta">
+                    <div class="bm-switch-name">${escapeHtml(p.name)}</div>
+                    <div class="bm-switch-hp">
+                      <div class="bm-switch-hp-bar"><div style="width:${hpPct}%;background:${hpColor};"></div></div>
+                      <span class="bm-switch-hp-text">${p.hp}/${p.hpMax}</span>
+                    </div>
+                  </div>
+                  ${isActive ? '<span class="bm-switch-tag">Aktif</span>' : ''}
+                  ${isFainted ? '<span class="bm-switch-tag bm-switch-tag-fainted">Pingsan</span>' : ''}
+                </button>
+              `;
+            }).join('')}
+          </div>
+          ${allowCancel ? '<button class="bm-switch-back" data-cancel-switch>← Batal</button>' : ''}
         </div>
       `;
     }
@@ -959,6 +1138,22 @@
     function wireActiveZone () {
       const activeZone = root.querySelector(`.bm-qzone[data-state="active"]`);
       if (!activeZone) return;
+      // A1 switch panel — wire BOTH voluntary (Ganti button) and forced (after faint)
+      activeZone.querySelectorAll('.bm-switch-card[data-swap]').forEach(b => {
+        b.addEventListener('click', () => {
+          if (b.disabled) return;
+          const targetIdx = parseInt(b.getAttribute('data-swap'));
+          performSwitch(state.turn, targetIdx);
+        });
+      });
+      const cancelBtn = activeZone.querySelector('[data-cancel-switch]');
+      if (cancelBtn) cancelBtn.addEventListener('click', () => {
+        root._switchOpen = null; renderRoot();
+      });
+      const switchBtn = activeZone.querySelector('.bm-switch-btn');
+      if (switchBtn) switchBtn.addEventListener('click', () => {
+        root._switchOpen = state.turn; renderRoot();
+      });
       if (state.phase === 'question') {
         activeZone.querySelectorAll('.bm-choice').forEach(b => {
           b.addEventListener('click', () => {
@@ -971,7 +1166,7 @@
         activeZone.querySelectorAll('.bm-move').forEach(b => {
           b.addEventListener('click', () => {
             const mi = parseInt(b.getAttribute('data-mi'));
-            const mv = state.pokes[state.turn].moves[mi];
+            const mv = activePoke(state.turn).moves[mi];
             executeMove(mv);
           });
         });
@@ -1006,9 +1201,32 @@
       }
     }
 
+    // A1: voluntary or forced switch — change active slot for the given player,
+    // then advance turn flow appropriately.
+    function performSwitch (playerIdx, newIdx) {
+      const wasForced = state.switchForced === playerIdx;
+      state.activeIdx[playerIdx] = newIdx;
+      state.switchForced = null;
+      root._switchOpen = null;
+      state.comboCount[playerIdx] = 0;  // streak resets on switch
+      if (wasForced) {
+        // Forced (after faint) — switching player keeps the turn; they answer
+        // a fresh question on the new Pokemon.
+        root._questions = null;
+        state.phase = 'question';
+        state.turn = playerIdx;
+      } else {
+        // Voluntary mid-turn switch — costs the turn, passes to opponent.
+        root._questions = null;
+        state.phase = 'question';
+        state.turn = 1 - playerIdx;
+      }
+      renderRoot();
+    }
+
     function executeMove (move) {
-      const atk = state.pokes[state.turn];
-      const def = state.pokes[1 - state.turn];
+      const atk = activePoke(state.turn);
+      const def = activePoke(1 - state.turn);
       // A5: time-mult derived from the answer elapsed captured in onAnswer.
       const timeMult = timeMultFromElapsed(state.lastAnswerElapsed[state.turn]);
       const dmg = calcDamage(atk, move, def, timeMult);
@@ -1021,7 +1239,20 @@
         updateHpDisplays();
         setTimeout(() => {
           if (def.hp <= 0) {
-            playFaintAnimation(1 - state.turn, () => finishMatch(state.turn));
+            const defIdx = 1 - state.turn;
+            const aliveCount = state.teams[defIdx].filter(p => p.hp > 0).length;
+            playFaintAnimation(defIdx, () => {
+              if (aliveCount === 0) {
+                // All fainted — that player loses
+                finishMatch(state.turn);
+                return;
+              }
+              // A1: force defender to pick next Pokemon
+              state.switchForced = defIdx;
+              state.turn = defIdx;
+              state.phase = 'moves';
+              renderRoot();
+            });
             return;
           }
           // Turn passes — next player's question phase
@@ -1100,7 +1331,7 @@
           applyViewportShake();
         }
         // CRITICAL! pop on super+STAB combo (super-effective AND same-type attack)
-        const isStab = move.type === state.pokes[attackerIdx].type;
+        const isStab = move.type === activePoke(attackerIdx).type;
         if (tm >= 1.15 && isStab) {
           spawnCriticalBadge(defenderPanel);
         }
@@ -1324,8 +1555,8 @@
       // Single shared arena — one set of HP fills to update (P1 = self, P2 = opp).
       const arena = root.querySelector('.bm-arena');
       if (!arena) return;
-      const p1 = state.pokes[0];
-      const p2 = state.pokes[1];
+      const p1 = activePoke(0);
+      const p2 = activePoke(1);
       const p1Fill = arena.querySelector('.bm-arena-self .bm-hp-fill');
       const p1Txt  = arena.querySelector('.bm-arena-self .bm-hp-text');
       const p2Fill = arena.querySelector('.bm-arena-opp .bm-hp-fill');
@@ -1375,11 +1606,11 @@
       `;
       banner.innerHTML = `
         <div style="text-align:center; padding:32px;">
-          <div style="font-size:clamp(72px, 16vw, 120px); margin-bottom:8px;">${state.pokes[winnerIdx].emoji}</div>
+          <div style="font-size:clamp(72px, 16vw, 120px); margin-bottom:8px;">${activePoke(winnerIdx).emoji}</div>
           <div style="font-family:'Fredoka One',cursive; font-size:clamp(28px,7vw,52px); background:linear-gradient(135deg,#FCD34D,#EC4899); -webkit-background-clip:text; color:transparent; margin-bottom:16px;">
             🏆 ${escapeHtml(winName)} Menang!
           </div>
-          <div style="color:rgba(255,255,255,0.8); margin-bottom:18px;">${escapeHtml(state.pokes[winnerIdx].name)} jadi juara</div>
+          <div style="color:rgba(255,255,255,0.8); margin-bottom:18px;">${escapeHtml(activePoke(winnerIdx).name)} jadi juara</div>
           <button class="bm-champion-btn" style="font-size:18px; padding:14px 28px;" id="bm-match-next">Lanjut →</button>
         </div>
       `;
@@ -1721,6 +1952,211 @@
       /* Shared HP-bar shine + blink keyframes */
       @keyframes bmHpShine { 0% { left: -100%; } 100% { left: 200%; } }
       @keyframes bmHpBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.45; } }
+
+      /* ── A1 Pre-battle steps — sky bg shows through, DS cards on top ── */
+      .bm-prestep {
+        position: absolute; inset: 0;
+        display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+        padding: 70px 16px 20px;
+        gap: 14px; overflow-y: auto;
+        z-index: 2;
+      }
+      .bm-prestep-title {
+        font-family: 'Fredoka One', cursive;
+        font-size: clamp(22px, 5.5vw, 30px);
+        color: #fff;
+        text-shadow: 2px 2px 0 rgba(0,0,0,0.55), 0 4px 12px rgba(0,0,0,0.45);
+      }
+      .bm-prestep-sub {
+        font-family: 'Inter', system-ui, sans-serif;
+        font-size: clamp(12px, 3vw, 14px);
+        color: rgba(248,250,252,0.95);
+        background: rgba(0,0,0,0.40);
+        padding: 4px 12px; border-radius: 999px;
+        text-align: center;
+      }
+      .bm-prestep-header {
+        display: flex; align-items: center; gap: 8px;
+        background: rgba(248,248,240,0.97);
+        border: 2.5px solid #444; border-radius: 12px;
+        padding: 6px 12px;
+        box-shadow: 3px 3px 0 rgba(0,0,0,0.30);
+        font-family: 'Fredoka One', cursive;
+        font-size: 14px; color: #111;
+      }
+      .bm-prestep-pname { font-size: 14px; color: #111; }
+      .bm-prestep-pname b { color: #BE185D; }
+
+      /* Team-size mode cards (3 vs 6 Pokemon) */
+      .bm-size-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+        max-width: 480px; width: 100%; margin-top: 12px;
+      }
+      .bm-size-card {
+        background: rgba(248,248,240,0.97);
+        border: 3px solid #15803d;
+        border-radius: 18px;
+        padding: 22px 14px 18px;
+        box-shadow: 4px 4px 0 rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.95);
+        font-family: 'Fredoka One', cursive; color: #111;
+        cursor: pointer; text-align: center;
+        transition: transform 180ms cubic-bezier(0.34,1.56,0.64,1), box-shadow 180ms;
+      }
+      .bm-size-card-full { border-color: #BE185D; }
+      .bm-size-card:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 rgba(0,0,0,0.30); }
+      .bm-size-card:hover { transform: translate(-2px, -4px); box-shadow: 6px 6px 0 rgba(0,0,0,0.32); }
+      .bm-size-emoji { font-size: 44px; line-height: 1; margin-bottom: 4px; }
+      .bm-size-name { font-size: 22px; margin-bottom: 4px; }
+      .bm-size-card.bm-size-card-full .bm-size-name { color: #BE185D; }
+      .bm-size-card:not(.bm-size-card-full) .bm-size-name { color: #15803d; }
+      .bm-size-count {
+        background: #fff; border: 2px solid #111; border-radius: 999px;
+        padding: 2px 10px; font-size: 13px;
+        display: inline-block; margin-top: 4px;
+      }
+      .bm-size-time { font-size: 11px; color: #555; margin-top: 4px; }
+
+      /* Package picker grid — DS-style team cards */
+      .bm-pkg-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+        max-width: 560px; width: 100%; margin-top: 6px;
+      }
+      @media (min-width: 720px) { .bm-pkg-grid { grid-template-columns: 1fr 1fr 1fr; } }
+      .bm-pkg-card {
+        background: rgba(248,248,240,0.97);
+        border: 2.5px solid #444; border-radius: 12px;
+        padding: 8px 10px 10px;
+        box-shadow: 3px 3px 0 rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.95);
+        font-family: inherit; color: #111;
+        cursor: pointer; text-align: left;
+        transition: transform 140ms, box-shadow 140ms;
+      }
+      .bm-pkg-card:hover { transform: translate(-2px,-3px); box-shadow: 5px 5px 0 rgba(0,0,0,0.30); }
+      .bm-pkg-card:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,0.30); }
+      .bm-pkg-head { display: flex; align-items: center; gap: 6px; }
+      .bm-pkg-emoji { font-size: 22px; }
+      .bm-pkg-name { font-family: 'Fredoka One', cursive; font-size: 15px; color: #111; }
+      .bm-pkg-desc { font-size: 11px; color: #555; margin: 2px 0 6px; line-height: 1.3; }
+      .bm-pkg-thumbs {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;
+      }
+      .bm-pkg-thumb {
+        aspect-ratio: 1; border-radius: 8px;
+        border: 2px solid #444;
+        display: flex; align-items: center; justify-content: center;
+        overflow: hidden; background: rgba(248,248,240,0.50);
+      }
+      .bm-pkg-thumb img { width: 100%; height: 100%; object-fit: contain; }
+      .bm-pkg-thumb-fallback { font-size: 22px; line-height: 1; }
+
+      /* Bench dots in arena info card (G13C .hp-poke-dot mirror) */
+      .bm-bench-dots {
+        display: flex; gap: 3px; margin-top: 4px;
+      }
+      .bm-bench-dot {
+        width: 10px; height: 10px; border-radius: 50%;
+        background: radial-gradient(circle at 50% 35%, #fff 0%, #fff 35%, #DC2626 35%, #DC2626 100%);
+        border: 1px solid #111;
+        transition: transform 200ms, opacity 200ms, filter 200ms;
+      }
+      .bm-bench-dot.active {
+        transform: scale(1.35);
+        box-shadow: 0 0 0 1.5px #FCD34D, 0 0 6px rgba(252,211,77,0.7);
+      }
+      .bm-bench-dot.fainted {
+        filter: grayscale(1);
+        opacity: 0.35;
+      }
+
+      /* Switch button (in move-pick) */
+      .bm-switch-btn {
+        margin-top: 6px;
+        padding: 8px 16px;
+        background: #06B6D4;
+        color: #fff;
+        border: 3px solid #111;
+        border-radius: 12px;
+        box-shadow: 0 5px 0 #0891B2;
+        font-family: 'Fredoka One', cursive;
+        font-size: 14px;
+        cursor: pointer;
+        transition: transform 120ms, box-shadow 120ms;
+        align-self: center;
+      }
+      .bm-switch-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #0891B2; }
+
+      /* Switch panel overlay */
+      .bm-switch-panel {
+        width: 100%; max-width: 480px;
+        display: flex; flex-direction: column; gap: 6px;
+      }
+      .bm-switch-title {
+        font-family: 'Fredoka One', cursive;
+        font-size: clamp(13px, 3vw, 16px);
+        color: #fff;
+        text-align: center;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+        margin-bottom: 2px;
+      }
+      .bm-switch-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+      }
+      @media (min-width: 540px) { .bm-switch-grid { grid-template-columns: repeat(3, 1fr); } }
+      .bm-switch-card {
+        position: relative;
+        background: rgba(248,248,240,0.97);
+        border: 2px solid #444; border-radius: 10px;
+        padding: 4px 6px;
+        display: flex; align-items: center; gap: 6px;
+        font-family: inherit; color: #111;
+        cursor: pointer;
+        box-shadow: 2px 2px 0 rgba(0,0,0,0.30);
+        transition: transform 120ms, box-shadow 120ms;
+      }
+      .bm-switch-card:not(:disabled):hover { transform: translate(-1px,-2px); box-shadow: 3px 3px 0 rgba(0,0,0,0.30); }
+      .bm-switch-card:not(:disabled):active { transform: translate(1px,1px); box-shadow: 1px 1px 0 rgba(0,0,0,0.30); }
+      .bm-switch-card:disabled { cursor: not-allowed; }
+      .bm-switch-card.active { opacity: 0.65; border-color: #FCD34D; box-shadow: 2px 2px 0 rgba(0,0,0,0.30), 0 0 0 2px #FCD34D; }
+      .bm-switch-card.fainted { opacity: 0.45; filter: grayscale(0.8); }
+      .bm-switch-img {
+        width: 36px; height: 36px; object-fit: contain; flex-shrink: 0;
+      }
+      .bm-switch-img-fallback { font-size: 30px; flex-shrink: 0; }
+      .bm-switch-meta { flex: 1; min-width: 0; }
+      .bm-switch-name {
+        font-family: 'Fredoka One', cursive; font-size: 11px; color: #111;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .bm-switch-hp { display: flex; align-items: center; gap: 4px; margin-top: 2px; }
+      .bm-switch-hp-bar {
+        flex: 1; height: 4px;
+        background: #d0d0c0; border-radius: 100px;
+        border: 1px solid #aaa; overflow: hidden;
+      }
+      .bm-switch-hp-bar > div {
+        height: 100%; border-radius: 100px;
+        transition: width 400ms ease;
+      }
+      .bm-switch-hp-text { font-size: 8px; color: #555; font-family: monospace; }
+      .bm-switch-tag {
+        position: absolute; top: -4px; right: -4px;
+        background: #FCD34D; color: #422006;
+        font-family: 'Fredoka One', cursive; font-size: 9px;
+        padding: 1px 6px; border-radius: 999px;
+        border: 1.5px solid #111;
+      }
+      .bm-switch-tag.bm-switch-tag-fainted { background: #E83030; color: #fff; }
+      .bm-switch-back {
+        margin-top: 4px; padding: 6px 14px;
+        background: rgba(248,248,240,0.97);
+        border: 2px solid #444; border-radius: 10px;
+        font-family: 'Fredoka One', cursive; font-size: 12px;
+        color: #111;
+        cursor: pointer;
+        box-shadow: 2px 2px 0 rgba(0,0,0,0.30);
+        align-self: center;
+      }
+      .bm-switch-back:active { transform: translate(2px,2px); box-shadow: 0 0 0 rgba(0,0,0,0); }
 
       /* ── Pastel choice buttons — owner spec, with ORIGINAL G13C 5px-raised effect ── */
       .bm-choices, .bm-moves {
