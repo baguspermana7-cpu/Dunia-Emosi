@@ -683,6 +683,92 @@
     { id:'cute_friends',  name:'Tim Lucu',    emoji:'🎀', desc:'Imut tapi tangguh',       teamIdx:[5, 7, 4, 0, 6, 2] },
     { id:'mixed_starter', name:'Tim Campur',  emoji:'🌟', desc:'Semua starter klasik',    teamIdx:[0, 1, 3, 2, 4, 5] }
   ];
+
+  // A1 Random — per-region random teams from the full 1025-Pokemon database.
+  // Owner: "Random per region (random terus). Truly random yang tidak ada di ash."
+  // Generation → Region mapping (canonical Pokedex). Click on a region card →
+  // fresh random team drawn each time; non-deterministic.
+  const RANDOM_REGIONS = [
+    { gen:1, id:'kanto',  name:'Kanto',  emoji:'🍃', desc:'Region klasik Gen 1' },
+    { gen:2, id:'johto',  name:'Johto',  emoji:'🌅', desc:'Region Gen 2' },
+    { gen:3, id:'hoenn',  name:'Hoenn',  emoji:'🌊', desc:'Region tropis Gen 3' },
+    { gen:4, id:'sinnoh', name:'Sinnoh', emoji:'❄️', desc:'Region salju Gen 4' },
+    { gen:5, id:'unova',  name:'Unova',  emoji:'🏙️', desc:'Region modern Gen 5' },
+    { gen:6, id:'kalos',  name:'Kalos',  emoji:'🗼', desc:'Region elegan Gen 6' },
+    { gen:7, id:'alola',  name:'Alola',  emoji:'🌴', desc:'Region pantai Gen 7' },
+    { gen:8, id:'galar',  name:'Galar',  emoji:'🏰', desc:'Region masa raja Gen 8' },
+    { gen:9, id:'paldea', name:'Paldea', emoji:'🌵', desc:'Region gurun Gen 9' }
+  ];
+
+  // 18-type color table — Pokemon canonical palette (used in arena info card +
+  // package thumbnails) so a randomly-generated bug/ghost/dragon Pokemon still
+  // renders with its proper type accent.
+  const TYPE_COLOR = {
+    fire:'#F97316', water:'#06B6D4', grass:'#10B981', electric:'#FCD34D',
+    normal:'#A8A878', fairy:'#F472B6', poison:'#A040A0', ground:'#E0C068',
+    flying:'#A890F0', bug:'#A8B820', psychic:'#F85888', rock:'#B8A038',
+    ghost:'#705898', ice:'#98D8D8', dragon:'#7038F8', dark:'#705848',
+    fighting:'#C03028', steel:'#B8B8D0'
+  };
+
+  // Typed signature move-name templates per type (for procedurally-built
+  // random Pokemon). Tackle + Quick Attack are added universally.
+  const MOVE_NAMES = {
+    fire:     ['Ember', 'Flamethrower'], water: ['Water Gun', 'Hydro Pump'],
+    grass:    ['Vine Whip', 'Razor Leaf'], electric: ['Thunder Shock', 'Thunderbolt'],
+    normal:   ['Bite', 'Body Slam'], fairy: ['Disarming Voice', 'Hyper Voice'],
+    poison:   ['Poison Sting', 'Sludge Bomb'], ground: ['Mud Slap', 'Earthquake'],
+    flying:   ['Gust', 'Air Slash'], bug: ['Bug Bite', 'X-Scissor'],
+    psychic:  ['Confusion', 'Psychic'], rock: ['Rock Throw', 'Rock Slide'],
+    ghost:    ['Lick', 'Shadow Ball'], ice: ['Powder Snow', 'Ice Beam'],
+    dragon:   ['Twister', 'Dragon Pulse'], dark: ['Bite', 'Crunch'],
+    fighting: ['Karate Chop', 'Brick Break'], steel: ['Metal Claw', 'Iron Head']
+  };
+
+  // Lazy Pokedex fetch — load once on first random pick. Returns a Promise.
+  let _pokeDB = null;
+  function loadPokeDB () {
+    if (_pokeDB) return Promise.resolve(_pokeDB);
+    const url = _ASSET_BASE + 'assets/Pokemon/pokemon-db.json';
+    return fetch(url).then(r => r.json()).then(db => { _pokeDB = db; return db; });
+  }
+
+  // Build a single fresh Pokemon entry from a Pokedex row.
+  function buildRandomPokemon (entry) {
+    const type = entry.type;
+    return {
+      id: entry.id,
+      name: entry.name,
+      slug: entry.slug,
+      type: type,
+      color: TYPE_COLOR[type] || '#A8A878',
+      emoji: '🎲',
+      moves: [
+        { name:'Tackle',       type:'normal', pwr:18 },
+        { name:'Quick Attack', type:'normal', pwr:22 },
+        { name:(MOVE_NAMES[type] || ['Strike'])[0],                type:type, pwr:28 },
+        { name:(MOVE_NAMES[type] || ['Strike'])[1] || (MOVE_NAMES[type] || ['Strike'])[0], type:type, pwr:34 }
+      ]
+    };
+  }
+
+  // Build a fresh random team for the requested region (gen). Excludes the IDs
+  // already in POKE_ROSTER so a "random" team never overlaps with Ash-style
+  // starters — owner: "Truly random yang tidak ada di ash".
+  const _EXCLUDED_IDS = new Set([25, 4, 1, 7, 133, 39, 37, 172]);
+  function buildTeamFromRegion (gen, teamSize) {
+    if (!_pokeDB) return [];
+    const pool = _pokeDB.filter(p => p.gen === gen && !_EXCLUDED_IDS.has(p.id));
+    if (!pool.length) return [];
+    // Fisher-Yates shuffle (no Math.random bias) — truly random per click.
+    const shuffled = pool.slice();
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = shuffled[i]; shuffled[i] = shuffled[j]; shuffled[j] = t;
+    }
+    return shuffled.slice(0, teamSize).map(buildRandomPokemon).map(p => ({ ...p, hp:80, hpMax:80 }));
+  }
+
   // Convert a package into a fresh team array of {…pokemon, hp, hpMax}.
   function buildTeamFromPackage (pkgId, teamSize) {
     const pkg = PVP_PACKAGES.find(p => p.id === pkgId) || PVP_PACKAGES[5];
@@ -732,13 +818,28 @@
   // Type icon + weakness lookup — derived from TYPE_CHART by inversion.
   // "lemah thp" = "weak against" — types whose attacks deal 1.5× to this type.
   const TYPE_ICON = { fire: '🔥', water: '💧', grass: '🌿', electric: '⚡', normal: '⭐', fairy: '🎀' };
+  // WEAKNESS table — primary type's weakness. Used for the 🔻 Lemah chip.
+  // Random Pokemon from full 1025 db may have any of 18 types; types not listed
+  // here render as "Seimbang" (the chip code already handles that fallback).
   const WEAKNESS = {
     fire:     ['water'],
     water:    ['grass', 'electric'],
     grass:    ['fire'],
     electric: [],
     normal:   [],
-    fairy:    []
+    fairy:    [],
+    poison:   ['ground', 'psychic'],
+    ground:   ['water', 'grass', 'ice'],
+    flying:   ['electric', 'ice', 'rock'],
+    bug:      ['fire', 'flying', 'rock'],
+    psychic:  ['bug', 'ghost', 'dark'],
+    rock:     ['water', 'grass', 'fighting', 'ground', 'steel'],
+    ghost:    ['ghost', 'dark'],
+    ice:      ['fire', 'fighting', 'rock', 'steel'],
+    dragon:   ['ice', 'dragon', 'fairy'],
+    dark:     ['fighting', 'bug', 'fairy'],
+    fighting: ['flying', 'psychic', 'fairy'],
+    steel:    ['fire', 'fighting', 'ground']
   };
   function weaknessChipHtml (type) {
     const ws = WEAKNESS[type] || [];
@@ -895,6 +996,8 @@
             <span class="bm-prestep-pname">Giliran <b>${escapeHtml(meName)}</b> memilih tim</span>
           </div>
           <div class="bm-prestep-sub">Pilih satu paket tim · ${state.teamSize} Pokemon</div>
+
+          <div class="bm-section-label">⭐ Tim Tema</div>
           <div class="bm-pkg-grid">
             ${PVP_PACKAGES.map(pkg => `
               <button class="bm-pkg-card" data-pkg="${pkg.id}">
@@ -915,23 +1018,63 @@
               </button>
             `).join('')}
           </div>
+
+          <div class="bm-section-label">🎲 Tim Acak · per Region (1025 Pokemon)</div>
+          <div class="bm-pkg-grid">
+            ${RANDOM_REGIONS.map(reg => `
+              <button class="bm-pkg-card bm-pkg-random" data-region="${reg.id}" data-gen="${reg.gen}">
+                <div class="bm-pkg-head">
+                  <span class="bm-pkg-emoji">${reg.emoji}</span>
+                  <span class="bm-pkg-name">Tim Acak ${reg.name}</span>
+                </div>
+                <div class="bm-pkg-desc">${reg.desc}</div>
+                <div class="bm-pkg-thumbs bm-pkg-thumbs-random">
+                  ${Array.from({length: state.teamSize}).map(() =>
+                    `<div class="bm-pkg-thumb bm-pkg-thumb-random"><span>🎲</span></div>`
+                  ).join('')}
+                </div>
+              </button>
+            `).join('')}
+          </div>
         </div>
       `;
       root.querySelector('[data-exit]').addEventListener('click', exitMatch);
-      root.querySelectorAll('.bm-pkg-card').forEach(b => {
+      // Themed packages — synchronous
+      root.querySelectorAll('.bm-pkg-card[data-pkg]').forEach(b => {
         b.addEventListener('click', () => {
           const pkgId = b.getAttribute('data-pkg');
           state.teams[playerIdx] = buildTeamFromPackage(pkgId, state.teamSize);
           state.activeIdx[playerIdx] = 0;
-          if (playerIdx === 0 && opts.players.length > 1) {
-            state.pickingPlayer = 1;
-            renderRoot();
-          } else {
-            state.preStep = 'battle';
-            renderRoot();
-          }
+          advancePickStep(playerIdx);
         });
       });
+      // Random region packages — async (lazy-load Pokedex on first click)
+      root.querySelectorAll('.bm-pkg-card[data-region]').forEach(b => {
+        b.addEventListener('click', () => {
+          const gen = parseInt(b.getAttribute('data-gen'));
+          b.classList.add('bm-pkg-loading');
+          loadPokeDB().then(() => {
+            const team = buildTeamFromRegion(gen, state.teamSize);
+            if (!team.length) { b.classList.remove('bm-pkg-loading'); return; }
+            state.teams[playerIdx] = team;
+            state.activeIdx[playerIdx] = 0;
+            advancePickStep(playerIdx);
+          }).catch(err => {
+            console.warn('[battle-modes] random region pick failed', err);
+            b.classList.remove('bm-pkg-loading');
+          });
+        });
+      });
+    }
+
+    function advancePickStep (playerIdx) {
+      if (playerIdx === 0 && opts.players.length > 1) {
+        state.pickingPlayer = 1;
+        renderRoot();
+      } else {
+        state.preStep = 'battle';
+        renderRoot();
+      }
     }
 
     function startQuestionTimer () {
@@ -2048,6 +2191,38 @@
       }
       .bm-pkg-thumb img { width: 100%; height: 100%; object-fit: contain; }
       .bm-pkg-thumb-fallback { font-size: 22px; line-height: 1; }
+
+      /* Random region card — visually distinct from themed packages */
+      .bm-section-label {
+        align-self: stretch;
+        font-family: 'Fredoka One', cursive;
+        font-size: 13px; color: #FCD34D;
+        text-shadow: 1px 1px 0 rgba(0,0,0,0.55);
+        letter-spacing: 0.5px;
+        margin-top: 6px;
+      }
+      .bm-pkg-random {
+        background: linear-gradient(135deg, rgba(196,181,253,0.96), rgba(248,248,240,0.97));
+        border-color: #7C3AED;
+      }
+      .bm-pkg-random .bm-pkg-name { color: #5B21B6; }
+      .bm-pkg-thumb-random {
+        background: linear-gradient(135deg, #DDD6FE, #C4B5FD);
+        border-color: #7C3AED;
+      }
+      .bm-pkg-thumb-random span {
+        font-size: 18px;
+        opacity: 0.7;
+      }
+      .bm-pkg-loading {
+        opacity: 0.65;
+        pointer-events: none;
+        animation: bmPkgLoad 0.8s ease-in-out infinite;
+      }
+      @keyframes bmPkgLoad {
+        0%,100% { transform: scale(1); }
+        50%     { transform: scale(0.98); }
+      }
 
       /* Bench dots in arena info card (G13C .hp-poke-dot mirror) */
       .bm-bench-dots {
