@@ -1,5 +1,33 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.3 "Per-Train-Game Polish" (G14 boost punch + G15 slow-mo + collision feel)
+
+Eighth v54.x ship. Light, surgical polish — small juice helpers inline in each game (skipping the v54.2 shared-module abstraction layer; it's overengineering for current scope and v54.2 can be a future refactor pass).
+
+### C1 — G14 boost activation upgrade
+`spawnBoostFX` upgraded: 36 particles (was 24), 2-tone gold/orange mix (every 3rd particle is orange #f97316), radial outward spray angles instead of pure horizontal. + 0.4s player sprite shake (±4px) via per-particle RAF closure.
+
+### C2 — G14 collision rotational jitter
+On `S.shakeTimer > 0`, `stage.rotation = (Math.random() - 0.5) * 0.04 * t` adds rotational jitter on top of existing XY shake. Damped `stage.rotation *= 0.7` when shake ends. Heavier hit-stop feel without re-tuning shake magnitude.
+
+### C3 — G15 word completion slow-mo + double burst
+`onWordComplete()` now spawns 3 particle bursts (center + ±30px offsets in purple + green), then drops gameSpeed to 0.4× for 1 second before bouncing back to the normal 1.12× speed-up. Plus the existing rainbow + flash. "Wreath" celebration feel.
+
+### Files touched
+- `games/g14.html` — `spawnBoostFX` (radial spray + player shake); shake-rotation jitter in main tick.
+- `games/g15-pixi.html` — `onWordComplete` (triple burst + slow-mo via setTimeout).
+- `sw.js` — CACHE_VERSION v54.9-20260624m → v54.3-20260624n.
+
+### Skipped (deferred)
+- G16 polish: already heavy from v54.6 ship; theme transition cinematic is heavy LOC for marginal gain. Future v54.3.x.
+- VS-card race intro: requires DOM scaffold + countdown choreography (~120 LOC), not aligned with surgical pass.
+- v54.2 shared infrastructure: each game's local FX is already different enough that an abstraction would just add indirection. Future refactor pass.
+
+### Lessons captured
+- L109 — abstraction premature when per-game FX diverges enough.
+
+---
+
 ## 2026-06-24 — v54.9 "G1+G2 SEL Improvement Wave" (Aku Merasa + Napas Pelangi — preserve, not delete)
 
 Seventh v54.x ship. Owner's "hapus saja" → REJECTED via my counter-argument that G1 + G2 are the SEL identity of "Dunia EMOSI." Improve via expressive animation, particle drift, and mock-biofeedback therapy — no engine rewrites. Closes 4 highest-impact v54.9 plan items.

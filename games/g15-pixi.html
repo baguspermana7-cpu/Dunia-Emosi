@@ -1611,8 +1611,14 @@ function onWordComplete() {
   trainContainer._bounceT = Math.PI;
   spawnRainbow();
   spawnCollectParticles(TRAIN_X, trainContainer.y, 0xfbbf24);
+  // v54.3 — double burst at center for the "victory wreath" feel.
+  spawnCollectParticles(TRAIN_X - 30, trainContainer.y - 20, 0xc084fc);
+  spawnCollectParticles(TRAIN_X + 30, trainContainer.y - 20, 0x4ade80);
   flashScreen('green');
-  gameSpeed = Math.min(gameSpeed * 1.12, 8);
+  // v54.3 — Slow-mo on word completion: 1.0s game-speed dip then bounce back.
+  const _prevSpeed = gameSpeed
+  gameSpeed = Math.max(0.4, gameSpeed * 0.35)
+  setTimeout(() => { gameSpeed = Math.min(_prevSpeed * 1.12, 8) }, 1000)
   currentWordIdx++;
   if (currentWordIdx >= WORDS_LIST.length) { setTimeout(showWin, 700); return; }
   currentLetterIdx = 0;

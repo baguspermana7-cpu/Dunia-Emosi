@@ -4,6 +4,16 @@
 
 ---
 
+## 2026-06-24 — v54.3 Per-Train-Game Polish
+
+### L109 — Abstraction is premature when per-game FX diverges enough
+- **Symptom**: v54.2 plan called for shared `train-vfx.js` module exporting `spawnSmokePuff`/`spawnSparks` etc., so G14/G15/G16 could "all consume same primitives." I was about to build it.
+- **Root cause**: Each game's FX is already divergent — G14 uses Pixi Graphics with custom `S.sparks` array, G15 uses Pixi Graphics with closure-based `app.ticker.add` per-particle, G16 uses both Pixi + CSS DOM particles. Abstracting them all under one helper would either (a) lose game-specific control or (b) become a leaky abstraction that just dispatches to game-specific implementations under the hood. Either way, no net win.
+- **Fix**: Inline the polish into each game directly. v54.3 ships visible value (more particles, slow-mo, rotational shake) without paying the abstraction tax.
+- **Lesson**: For visual FX especially, "three similar lines is better than a premature abstraction." (CLAUDE.md echo.) Build the abstraction once a 4th consumer appears AND the divergence isn't deep — not while only 3 games consume and each has its own primitive vocabulary.
+
+---
+
 ## 2026-06-24 — v54.9 G1+G2 SEL Improvement Wave
 
 ### L107 — Generated biometric numbers are research-backed therapeutic perception

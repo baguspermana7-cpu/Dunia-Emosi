@@ -1722,15 +1722,18 @@ function tickPlayer(delta) {
     if (S.invincible <= 0) L.player.alpha = 1
   }
 
-  // Screen shake on crash
+  // Screen shake on crash — v54.3 adds rotational jitter on top of XY shake.
   if (S.shakeTimer > 0) {
     S.shakeTimer -= delta
     const t = S.shakeTimer / 22
     stage.x = Math.sin(S.shakeTimer * 1.5) * 7 * t
     stage.y = Math.cos(S.shakeTimer * 1.2) * 4 * t
+    // v54.3 — rotational jitter (±0.02 rad max at peak) for hit-stop weight.
+    stage.rotation = (Math.random() - 0.5) * 0.04 * t
   } else {
     stage.x *= 0.8
     stage.y *= 0.8
+    stage.rotation *= 0.7
   }
 }
 
@@ -1919,13 +1922,34 @@ function spawnCrashFX(x, y) {
 }
 
 function spawnBoostFX() {
-  for (let i = 0; i < 24; i++) {
+  // v54.3 — Boost activation upgrade: 36 particles (was 24) + 2-tone gold/orange mix
+  // + radial outward spray pattern + larger size band for visual punch.
+  for (let i = 0; i < 36; i++) {
     const g = new PIXI.Graphics()
-    g.circle(0, 0, 3 + Math.random() * 4).fill(0xfbbf24)
+    const isOrange = i % 3 === 0
+    const sz = 3 + Math.random() * 6
+    g.circle(0, 0, sz).fill(isOrange ? 0xf97316 : 0xfbbf24)
     g.x = L.player.x + (Math.random() - 0.5) * 40
     g.y = L.player.y + (Math.random() - 0.5) * 20
     L.fx.addChild(g)
-    S.sparks.push({ g, vx: -(3 + Math.random() * 5), vy: (Math.random() - 0.5) * 3, gravity: 0.05, life: 1, decay: 0.03 + Math.random() * 0.02 })
+    // Radial spray angles for outer ring instead of pure horizontal
+    const ang = (Math.PI*2) * (i/36)
+    const speed = 3 + Math.random() * 5
+    const vx = -speed - Math.cos(ang) * 1.5
+    const vy = Math.sin(ang) * 2.5 + (Math.random() - 0.5)
+    S.sparks.push({ g, vx, vy, gravity: 0.05, life: 1, decay: 0.025 + Math.random() * 0.02 })
+  }
+  // v54.3 — Player sprite shake 0.4s on boost activation (golden punch).
+  if(L.player){
+    const _t0 = performance.now()
+    const _baseX = L.player.x
+    function _shakeTick(){
+      const dt = performance.now() - _t0
+      if(dt >= 400){ L.player.x = _baseX; return }
+      L.player.x = _baseX + (Math.random() - 0.5) * 4
+      requestAnimationFrame(_shakeTick)
+    }
+    requestAnimationFrame(_shakeTick)
   }
 }
 
