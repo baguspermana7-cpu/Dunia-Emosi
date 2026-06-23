@@ -88,6 +88,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 @keyframes rippleOut{0%{transform:scale(0.5);opacity:1}100%{transform:scale(3.2);opacity:0}}
 .trainer-ripple-el{position:fixed;border-radius:50%;border:3px solid rgba(251,191,36,0.9);pointer-events:none;z-index:31;animation:rippleOut 0.7s ease-out forwards}
 
+/* v53.7 polish parity: achievement toast slide-in / slide-out */
+@keyframes advAchIn{0%{opacity:0;transform:translateX(360px) scale(0.9)}100%{opacity:1;transform:translateX(0) scale(1)}}
+@keyframes advAchOut{0%{opacity:1;transform:translateX(0)}100%{opacity:0;transform:translateX(360px)}}
+
 /* ── Type-specific hit FX keyframes ── */
 @keyframes fxRise{0%{transform:scale(0) translateY(0);opacity:0.9}50%{transform:scale(1.3) translateY(-45px);opacity:0.8}100%{transform:scale(0.4) translateY(-90px);opacity:0}}
 @keyframes fxRain{0%{transform:scale(1.2) translateY(-15px);opacity:0.9}100%{transform:scale(0.7) translateY(70px);opacity:0}}
@@ -489,8 +493,8 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
 <script src="data/move-id-translations.js?v=20260505k"></script>
 <script src="data/sfx-engine.js?v=20260621f"></script>
 <script src="data/weather-fx.js?v=20260621f"></script>
-<script src="data/poke-packages.js?v=53.6-20260624c"></script>
-<script src="data/battle-modes.js?v=53.6-20260624c"></script>
+<script src="data/poke-packages.js?v=53.7-20260624d"></script>
+<script src="data/battle-modes.js?v=53.7-20260624d"></script>
 <script src="data/poke-type-chart.js?v=20260506z"></script>
 <script>
   // Licensed Pokemon SFX + battle weather — lazy init, silent failure.
@@ -1464,6 +1468,52 @@ function deepCloneTeam(team){
   }));
 }
 
+// v53.7 polish parity: achievements toast (port from PvP v53.3).
+// Spawns a bottom-right slide-in toast; stacks vertically when multiple
+// achievements land back-to-back; dedup per battle via battle.achievements.
+function advSpawnAchievement (kind) {
+  if (!battle) return;
+  if (battle.achievements[kind]) return;
+  battle.achievements[kind] = true;
+  const META = {
+    firstBlood: { emoji:'🩸', title:'Pukulan Pertama!', sub:'KO pertama di pertandingan' },
+    sweep:      { emoji:'🌪️', title:'Sweep!',           sub:'Menang tanpa Pokemon yang faint' },
+    comeback:   { emoji:'🔥', title:'Comeback!',        sub:'Balik dari ketinggalan 3+ Pokemon' },
+    perfect:    { emoji:'💎', title:'Sempurna!',        sub:'Pokemon terakhir full HP' },
+    combo:      { emoji:'⚡', title:'Combo Listrik!',   sub:'3 super-effective beruntun' }
+  };
+  const m = META[kind]; if (!m) return;
+  const existing = document.querySelectorAll('.adv-achievement').length;
+  const el = document.createElement('div');
+  el.className = 'adv-achievement';
+  el.style.cssText = `
+    position: fixed; right: 16px; bottom: ${24 + existing * 78}px;
+    z-index: 9420;
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; min-width: 220px; max-width: 320px;
+    background: linear-gradient(135deg, #fde68a, #fbbf24);
+    color: #422006;
+    border: 2px solid #92400e;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+    font-family: 'Inter', system-ui, sans-serif;
+    transform: translateX(360px);
+    opacity: 0;
+    animation: advAchIn 280ms cubic-bezier(0.22,1.4,0.36,1) forwards;
+    transition: bottom 220ms ease;
+  `;
+  el.innerHTML = `
+    <div style="font-size:36px;line-height:1;">${m.emoji}</div>
+    <div style="display:flex;flex-direction:column;">
+      <div style="font-family:'Fredoka One',cursive;font-size:16px;">${m.title}</div>
+      <div style="font-size:11px;opacity:0.85;margin-top:1px;">${m.sub}</div>
+    </div>
+  `;
+  document.body.appendChild(el);
+  setTimeout(() => { try { el.style.animation = 'advAchOut 400ms ease forwards'; } catch(e){} }, 2200);
+  setTimeout(() => { try { el.remove(); } catch(e){} }, 2700);
+}
+
 function calcDmg(moveType, atkPoke, defPoke){
   const base = 30 + Math.floor(Math.random()*10); // 3-hit KO at 100hp
   const eff = getEff(moveType, defPoke.type);
@@ -2041,6 +2091,13 @@ function startBattle(trainerId){
     ended: false,
     wrongAnswers: 0,
     totalAnswers: 0,
+    // v53.7 polish parity with PvP: track achievement triggers + stats.
+    enemyKOs: 0,
+    playerFainted: 0,
+    maxFainted: 0,
+    comboCount: 0,
+    maxCombo: 0,
+    achievements: {},
   };
 
   updateHpUI();
@@ -2179,6 +2236,9 @@ function executeMove(moveIdx, mathCorrect){
 
     const msgs = [`Jawaban salah! ${pp.name} terluka!`];
     if(pp.hp<=0){
+      // v53.7 polish parity: bookkeeping for sweep + comeback achievements.
+      battle.playerFainted = (battle.playerFainted|0) + 1;
+      battle.maxFainted = Math.max(battle.maxFainted, battle.playerFainted);
       msgs.push(`${pp.name} pingsan!`);
       const anyAlive = battle.playerTeam.findIndex(p=>p.hp>0);
       if(anyAlive===-1){
@@ -2230,11 +2290,23 @@ function executeMove(moveIdx, mathCorrect){
       spawnSparkles(r.left+r.width/2, r.top+r.height/2, eff>=1.5?'#fbbf24':eff<=0.5?'#94a3b8':getTypeColor(move.type));
       flashColor(eff>=1.5?'yellow':eff<=0.5?'red':move.type);
 
+      // v53.7 polish parity: super-effective streak → Combo Listrik at 3.
+      if (eff >= 1.5) {
+        battle.comboCount = (battle.comboCount|0) + 1;
+        battle.maxCombo = Math.max(battle.maxCombo|0, battle.comboCount);
+        if (battle.comboCount >= 3) advSpawnAchievement('combo');
+      } else {
+        battle.comboCount = 0;
+      }
+
       // Effectiveness label thresholds aligned to kid-friendly multipliers
       let effMsg = eff>=1.5?' ✨ Super efektif!':eff<=0.5?' 💢 Sangat lemah!':eff<=0.75?' 💧 Kurang efektif.':'';
       const msgs = [`${pp.name} menggunakan ${move.name}!${effMsg}`];
 
       if(ep.hp<=0){
+        // v53.7 polish parity: enemy-KO count drives First Blood + final stats.
+        battle.enemyKOs = (battle.enemyKOs|0) + 1;
+        if (battle.enemyKOs === 1) advSpawnAchievement('firstBlood');
         msgs.push(`${ep.name} pingsan!`);
         const nextIdx = battle.enemyTeam.findIndex((p,i)=>i>battle.enemyIdx&&p.hp>0);
         if(nextIdx===-1){
@@ -2399,6 +2471,13 @@ function queueMsgs(arr, finalCb){
 function endBattleWin(){
   if(!battle||battle.ended) return;
   battle.ended=true;
+  // v53.7 polish parity: end-of-match achievements (sweep / comeback / perfect).
+  try {
+    const winnerActive = battle.playerTeam[battle.playerIdx];
+    if ((battle.playerFainted|0) === 0) advSpawnAchievement('sweep');
+    if ((battle.maxFainted|0) >= 3) advSpawnAchievement('comeback');
+    if (winnerActive && winnerActive.hp >= winnerActive.maxHp) advSpawnAchievement('perfect');
+  } catch (e) {}
   // VFX victory burst — confetti + emoji rain
   try { if (typeof window.spawnVictoryBurst === 'function') window.spawnVictoryBurst() } catch(_){}
   const trainer = battle.trainer;
@@ -2430,11 +2509,15 @@ function endBattleWin(){
   showBadgeZoom(trainer, trainer.name, trainer.gym).then(() => {
     const info = `Lencana ${trainer.name} diraih! Total: ${total} badges`
     const title = stars >= 5 ? 'Sempurna!' : stars >= 4 ? 'Hebat!' : stars >= 3 ? 'Bagus!' : stars >= 1 ? 'Coba Lagi' : 'Gagal! Coba Lagi'
-    const msg = stars >= 5 ? `Wow, kamu hebat! ${info}` :
+    // v53.7 polish parity: stats line — accuracy, enemy KOs, longest combo.
+    const _correctCount = Math.max(0, (battle.totalAnswers|0) - (battle.wrongAnswers|0));
+    const _accuracy = battle.totalAnswers > 0 ? Math.round((_correctCount / battle.totalAnswers) * 100) : 100;
+    const _statsLine = `\n📊 ${_correctCount}/${battle.totalAnswers||0} jawaban benar (${_accuracy}%) · 💥 ${battle.enemyKOs||0} KO · ⚡ Combo max ${battle.maxCombo||0}×`;
+    const msg = (stars >= 5 ? `Wow, kamu hebat! ${info}` :
       stars >= 4 ? `Kerja bagus! ${info}` :
       stars >= 3 ? `Lumayan, terus berlatih! ${info}` :
       stars >= 1 ? `Kamu bisa lebih baik lagi! ${info}` :
-      'Jangan menyerah, ayo coba lagi!'
+      'Jangan menyerah, ayo coba lagi!') + _statsLine
     GameModal.show({
       emoji: stars >= 3 ? trainer.badge : (stars >= 1 ? '💪' : '😞'),
       title,
