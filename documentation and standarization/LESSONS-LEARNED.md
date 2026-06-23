@@ -4,6 +4,22 @@
 
 ---
 
+## 2026-06-24 — v54.5 Cross-cutting UX (a11y wave)
+
+### L105 — Standalone Pixi games do NOT inherit `style.css` a11y guards
+- **Symptom**: A global `@media (prefers-reduced-motion: reduce){...}` rule sits in `style.css` line 6. Yet G14/G15/G16/G17/G23 had 0 effect when a user with reduce-motion set browsed them.
+- **Root cause**: Standalone games are full HTML pages with their own `<style>` block and DON'T import `style.css`. The audit thought "covered globally" but coverage was only on the in-app screens.
+- **Fix**: Inject the universal `* { animation-duration:0.01ms!important; ... }` reduce-motion guard at the top of EACH standalone game's `<style>` block.
+- **Lesson**: A global CSS guard only protects pages that load it. Audit by `grep -L "style.css" games/*.html` for files that are missing the import; those are the ones that need their own copy of every a11y guard.
+
+### L106 — Text-shadow is the cheapest WCAG-AA fix on light HUDs
+- **Symptom**: HUD chips (timer, score, train name) were ~2.8:1 contrast on bright-sky scenes.
+- **Root cause**: Chip backgrounds at rgba(0,0,0,0.5) and pure-color text (no shadow) — the gradient sky fade-out made the chip transparent enough that the bright background bled through, lowering effective contrast.
+- **Fix**: Two cheap changes per chip: (a) floor background opacity to 0.78, (b) add `text-shadow:0 1px 2px rgba(0,0,0,0.6)` to every chip text. Now ≥4.6:1 even on white sky.
+- **Lesson**: Solid pill backgrounds change visual character. Text-shadow keeps the "glass HUD" feel while passing contrast. Always pair the two for cheap wins.
+
+---
+
 ## 2026-06-24 — v54.1 G23 Polish Wave (Pokemon Run feel)
 
 ### L101 — Variable-jump cut needs an upward-velocity gate

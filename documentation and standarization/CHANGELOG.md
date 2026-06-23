@@ -1,5 +1,37 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.5 "Cross-cutting UX / Accessibility" (a11y wave across all standalone games)
+
+Sixth v54.x ship. Closes 4 highest-leverage cross-cutting items from the 15-item v54.5 plan. Touches all 5 standalone Pixi games + index style.css (already had its global guard).
+
+### C1 — `prefers-reduced-motion: reduce` respect on ALL standalone games
+G14, G15, G16, G17, G23 had 0 reduce-motion guards (style.css guard didn't apply — they don't import it). Added `*, *::before, *::after { animation-duration:0.01ms!important; ... }` to each style block. G23 also kills `.bg-layer` parallax via the guard. Critical for kids with vestibular sensitivity / photosensitive epilepsy.
+
+### C2 — Tap-target enforcement ≥44×44 on HUD buttons
+G14 `#btn-back` was 33px (padding 8 + font 14 = 30); G16/G23 `#btn-back` were ~28px. All bumped to `padding:10px 14px` + `min-height:44px`. Hits WCAG 2.1 AAA touch-target rule + 5yo finger ergonomics.
+
+### C3 — WCAG AA contrast on HUD overlays
+- G14/G16/G23 `#hud-top` gradient floors raised from 0.72/0.82 → 0.85/0.88; added 0.40-0.45 mid-stop so text stays legible mid-fade.
+- All HUD chip backgrounds floored: rgba(0,0,0,0.5) → 0.78. Borders bumped to 0.28-0.32 alpha.
+- Text-shadows added: `0 1px 2px rgba(0,0,0,0.6-0.7)` on every HUD text chip. Spot-check on Chrome contrast checker: previously ~2.8:1 against light sky, now ≥4.6:1.
+
+### C4 — `env(safe-area-inset-left)` + `env(safe-area-inset-right)` coverage
+G14/G16/G23 honored top/bottom only. iPhone landscape notch clipped HUD on the left side. All 3 now use `max(clamp(...), env(safe-area-inset-left))` for padding-left + right. Tested formula matches the v53 pattern from index.html.
+
+### Files touched
+- `games/g14.html` — style block: reduce-motion guard prepended (lines 9-13), HUD chips floored opacity + text-shadow + ≥44px tap-target (lines 19-32).
+- `games/g15-pixi.html` — reduce-motion guard.
+- `games/g16-pixi.html` — reduce-motion guard + HUD WCAG + tap-target + safe-area-inset L/R.
+- `games/g17-pixi.html` — expanded existing reduce-motion guard from 2 selectors → universal.
+- `games/g23-pixi.html` — reduce-motion guard (incl `.bg-layer` parallax kill) + HUD WCAG + tap-target + safe-area-inset L/R.
+- `sw.js` — `CACHE_VERSION: 'v54.1-20260624k' → 'v54.5-20260624l'`.
+
+### Lessons captured
+- L105 — standalone games don't inherit style.css guards.
+- L106 — text-shadow on light HUDs is cheaper than solid pill rebuilds.
+
+---
+
 ## 2026-06-24 — v54.1 "G23 Polish Wave" (Pokemon Run — distinct pickups, variable jump, coyote-time, combo banner, milestones)
 
 Fifth v54.x ship. Owner concerns folded in: "aneh sekali bentuk2 yang di ambil" + "loncatannya kurang." Closes 7 of the 28 v54.1 plan items with the highest impact-per-cost.

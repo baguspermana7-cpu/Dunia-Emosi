@@ -51,7 +51,10 @@ html,body{margin:0;padding:0;height:100%;background:#1f2937;color:#fff;font-fami
 #g17-toast.show{opacity:1;transform:translate(-50%,0)}
 #g17-tap-hint{position:fixed;left:50%;bottom:18%;transform:translateX(-50%);z-index:60;background:rgba(0,0,0,0.6);padding:8px 14px;border-radius:100px;font-size:12px;font-weight:700;color:rgba(255,255,255,0.85);pointer-events:none;animation:g17HintPulse 1.6s ease-in-out infinite}
 @keyframes g17HintPulse{0%,100%{opacity:0.5}50%{opacity:1}}
-@media (prefers-reduced-motion: reduce){#g17-tap-hint{animation:none}#g17-toast{transition:none}}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important}
+  #g17-tap-hint{animation:none}#g17-toast{transition:none}
+}
 </style>
 </head>
 <body>
