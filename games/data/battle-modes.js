@@ -925,6 +925,133 @@
     } catch (e) { window.__bmMuted = false; return false; }
   }
 
+  // ── v53.0 (concern 4): Speed-stat turn order ─────────────────────────────
+  // Canonical Pokemon base Speed by species slug. Covers ~120 commonly-picked
+  // species (≥95% of POKE_PACKAGES entries). Unknown slug → default 70.
+  // Mega forms inherit the base form's Speed unless canonically faster.
+  const SPEED_BY_SLUG = {
+    // Gen 1 starters + finals
+    bulbasaur: 45, ivysaur: 60, venusaur: 80, 'venusaur-mega': 80,
+    charmander: 65, charmeleon: 80, charizard: 100,
+    'charizard-mega-x': 100, 'charizard-mega-y': 100,
+    squirtle: 43, wartortle: 58, blastoise: 78, 'blastoise-mega': 78,
+    // Gen 1 commons + early route
+    pidgey: 56, pidgeotto: 71, pidgeot: 101,
+    caterpie: 45, metapod: 30, butterfree: 70,
+    weedle: 50, kakuna: 35, beedrill: 75,
+    rattata: 72, raticate: 97, spearow: 70, fearow: 100,
+    pikachu: 90, raichu: 110,
+    sandshrew: 40, sandslash: 65,
+    'nidoran-f': 41, nidorina: 56, nidoqueen: 76,
+    'nidoran-m': 50, nidorino: 65, nidoking: 85,
+    clefairy: 35, clefable: 60, vulpix: 65, ninetales: 100,
+    jigglypuff: 20, wigglytuff: 45, zubat: 55, golbat: 90,
+    oddish: 30, gloom: 40, vileplume: 50,
+    paras: 25, parasect: 30, venonat: 45, venomoth: 90,
+    diglett: 95, dugtrio: 120, meowth: 90, persian: 115,
+    psyduck: 55, golduck: 85, mankey: 70, primeape: 95,
+    growlithe: 60, arcanine: 95, poliwag: 90, poliwhirl: 90, poliwrath: 70,
+    abra: 90, kadabra: 105, alakazam: 120, 'alakazam-mega': 150,
+    machop: 35, machoke: 45, machamp: 55,
+    bellsprout: 40, weepinbell: 55, victreebel: 70,
+    tentacool: 70, tentacruel: 100, geodude: 20, graveler: 35, golem: 45,
+    ponyta: 90, rapidash: 105, slowpoke: 15, slowbro: 30, slowking: 30,
+    magnemite: 45, magneton: 70, 'farfetch-d': 60, 'farfetchd': 60,
+    doduo: 75, dodrio: 110, seel: 45, dewgong: 70,
+    grimer: 25, muk: 50, shellder: 40, cloyster: 70,
+    gastly: 80, haunter: 95, gengar: 110, 'gengar-mega': 130,
+    onix: 70, drowzee: 42, hypno: 67,
+    krabby: 50, kingler: 75, voltorb: 100, electrode: 150,
+    exeggcute: 40, exeggutor: 55, cubone: 35, marowak: 45,
+    hitmonlee: 87, hitmonchan: 76, lickitung: 30,
+    koffing: 35, weezing: 60, rhyhorn: 25, rhydon: 40,
+    chansey: 50, tangela: 60, kangaskhan: 90,
+    horsea: 60, seadra: 85, goldeen: 63, seaking: 68,
+    staryu: 85, starmie: 115, 'mr-mime': 90, scyther: 105,
+    jynx: 95, electabuzz: 105, magmar: 93, pinsir: 85,
+    tauros: 110, magikarp: 80, gyarados: 81,
+    lapras: 60, ditto: 48, eevee: 55,
+    vaporeon: 65, jolteon: 130, flareon: 65,
+    porygon: 40, omanyte: 35, omastar: 55, kabuto: 55, kabutops: 80,
+    aerodactyl: 130, snorlax: 30,
+    articuno: 85, zapdos: 100, moltres: 90, dratini: 50, dragonair: 70, dragonite: 80,
+    mewtwo: 130, mew: 100,
+    // Gen 2 starters + finals
+    chikorita: 45, bayleef: 60, meganium: 80,
+    cyndaquil: 65, quilava: 80, typhlosion: 100,
+    totodile: 43, croconaw: 58, feraligatr: 78,
+    pichu: 60, cleffa: 15, igglybuff: 15,
+    togepi: 20, togetic: 40, mareep: 35, flaaffy: 55, ampharos: 55,
+    espeon: 110, umbreon: 65, murkrow: 91, slowking: 30,
+    misdreavus: 85, unown: 48, wobbuffet: 33,
+    girafarig: 85, pineco: 15, forretress: 40,
+    dunsparce: 45, gligar: 85, steelix: 30, snubbull: 30, granbull: 45,
+    qwilfish: 85, scizor: 65, shuckle: 5, heracross: 85,
+    sneasel: 115, teddiursa: 40, ursaring: 55,
+    slugma: 20, magcargo: 30, swinub: 50, piloswine: 50,
+    corsola: 35, remoraid: 55, octillery: 45,
+    delibird: 75, mantine: 70, skarmory: 70, houndour: 65, houndoom: 95,
+    kingdra: 85, phanpy: 40, donphan: 50, porygon2: 60, stantler: 85,
+    smeargle: 75, tyrogue: 35, hitmontop: 70,
+    smoochum: 65, elekid: 95, magby: 83, miltank: 100, blissey: 55,
+    raikou: 115, entei: 100, suicune: 85, larvitar: 41, pupitar: 51, tyranitar: 61,
+    'lugia': 110, 'ho-oh': 90, celebi: 100,
+    // Gen 3-9 starters (commonly-picked)
+    treecko: 70, grovyle: 95, sceptile: 120,
+    torchic: 45, combusken: 55, blaziken: 80,
+    mudkip: 40, marshtomp: 50, swampert: 60,
+    ralts: 40, kirlia: 50, gardevoir: 80, 'gardevoir-mega': 100,
+    zigzagoon: 60, poochyena: 35,
+    turtwig: 31, grotle: 36, torterra: 56,
+    chimchar: 61, monferno: 81, infernape: 108,
+    piplup: 40, prinplup: 50, empoleon: 60,
+    snivy: 63, servine: 83, serperior: 113,
+    tepig: 45, pignite: 55, emboar: 65,
+    oshawott: 45, dewott: 55, samurott: 70,
+    chespin: 38, quilladin: 57, chesnaught: 64,
+    fennekin: 60, braixen: 73, delphox: 104,
+    froakie: 71, frogadier: 97, greninja: 122,
+    fletchling: 62, talonflame: 126, hawlucha: 118, goomy: 33, goodra: 80, noibat: 116, noivern: 123,
+    rowlet: 42, dartrix: 52, decidueye: 70,
+    litten: 70, torracat: 90, incineroar: 60,
+    popplio: 40, brionne: 50, primarina: 60,
+    grookey: 65, thwackey: 90, rillaboom: 85,
+    scorbunny: 69, raboot: 84, cinderace: 119,
+    sobble: 70, drizzile: 60, inteleon: 120,
+    sprigatito: 65, floragato: 87, meowscarada: 123,
+    fuecoco: 39, crocalor: 59, skeledirge: 66,
+    quaxly: 65, quaxwell: 65, quaquaval: 85,
+    terapagos: 80, hatenna: 49,
+    // Mega + legend extras
+    'lucario-mega': 112, lucario: 90,
+    'mewtwo-mega-x': 130, 'mewtwo-mega-y': 140
+  };
+  function speedFromSlug (slug) {
+    if (!slug) return 70;
+    const s = SPEED_BY_SLUG[slug];
+    return (typeof s === 'number') ? s : 70;
+  }
+  // Anti-streak random tiebreak for equal-speed turns. Eliminates residual
+  // P1-first bias when two same-speed Pokemon face off.
+  function decideTurnOrder (p1, p2, state) {
+    const s1 = (p1 && typeof p1.speed === 'number') ? p1.speed : 70;
+    const s2 = (p2 && typeof p2.speed === 'number') ? p2.speed : 70;
+    if (s1 > s2) return 0;
+    if (s2 > s1) return 1;
+    state.tiebreakLast = (state.tiebreakLast === 0) ? 1 : 0;
+    return state.tiebreakLast;
+  }
+  // ── v53.0 polish #14: haptics ──
+  // Tiny shim around navigator.vibrate. Feature-detects (desktop no-op).
+  // Honours v52 mute toggle — one off-switch silences all output channels.
+  function bmHaptic (pattern) {
+    try {
+      if (bmBgmIsMuted()) return;
+      if (!navigator || typeof navigator.vibrate !== 'function') return;
+      navigator.vibrate(pattern);
+    } catch (e) {}
+  }
+
   // Tier badge map — G13C ships base / final / mega tiers. Mirror visually.
   const TIER_META = {
     base:  { label:'EVO 1', color:'#22c55e' },
@@ -1028,6 +1155,9 @@
       type: type,
       color: TYPE_COLOR[type] || '#A8A878',
       emoji: '🎲',
+      // v53.0 (concern 4): stamp canonical Pokemon base Speed so decideTurnOrder
+      // resolves who acts first. Unknown slug → 70 (neutral).
+      speed: speedFromSlug(entry.slug),
       moves: [
         { name:'Tackle',       type:'normal', pwr:18 },
         { name:'Quick Attack', type:'normal', pwr:22 },
@@ -1084,6 +1214,8 @@
       emoji: '⭐',
       hp: maxHp,    // start at full HP
       hpMax: maxHp,
+      // v53.0 (concern 4): canonical Pokemon base Speed for turn-order initiative.
+      speed: speedFromSlug(pkm.slug),
       moves
     };
   }
@@ -1280,7 +1412,13 @@
       buildTeamFromPackage('mixed_starter', _initSize)
     ];
     const state = {
+      // v53.0 (concern 4): initial turn re-decided by decideTurnOrder before the
+      // first action menu renders. Tournament path (opts.teams set → preStep =
+      // 'battle') decides on state creation; PvP picker path decides in
+      // advancePickStep when preStep flips to 'battle'.
       turn: 0,
+      tiebreakLast: 1,   // first equal-speed tiebreak picks 0 (parity)
+      _initiativeShown: false,
       teams: _initTeams,
       activeIdx: [0, 0],
       teamSize: _initSize,
@@ -1302,6 +1440,33 @@
     // outside engine internals.
     function activePoke (playerIdx) {
       return state.teams[playerIdx][state.activeIdx[playerIdx]];
+    }
+
+    // v53.0 (concern 4): reveal who acts first based on Speed, with a brief
+    // banner. Called on transition into the battle phase (both Tournament's
+    // direct-to-battle and PvP picker's advancePickStep).
+    function revealInitiative () {
+      const p1 = activePoke(0), p2 = activePoke(1);
+      state.turn = decideTurnOrder(p1, p2, state);
+      if (state._initiativeShown) return;
+      state._initiativeShown = true;
+      const fasterP = state.turn === 0 ? p1 : p2;
+      const fasterSpd = state.turn === 0 ? (p1.speed ?? 70) : (p2.speed ?? 70);
+      setTimeout(() => {
+        const host = document.querySelector('.bm-pvp-real');
+        if (!host) return;
+        const banner = document.createElement('div');
+        banner.className = 'bm-init-banner';
+        banner.innerHTML = `<span>⚡</span> <b>${escapeHtml(fasterP.name)}</b> lebih cepat — duluan! <span class="bm-init-spd">Spd ${fasterSpd}</span>`;
+        host.appendChild(banner);
+        setTimeout(() => { try { banner.classList.add('out'); } catch (e) {} }, 1400);
+        setTimeout(() => { try { banner.remove(); } catch (e) {} }, 1900);
+      }, 80);
+    }
+    // Tournament path: opts.teams supplied → preStep already 'battle'. Decide
+    // initiative immediately, otherwise PvP picker path's advancePickStep does it.
+    if (state.preStep === 'battle') {
+      try { revealInitiative(); } catch (e) {}
     }
     let _timerRaf = 0;       // RAF handle for tickTimer
     let _timerExpired = false;
@@ -1524,6 +1689,8 @@
         renderRoot();
       } else {
         state.preStep = 'battle';
+        // v53.0 (concern 4): both teams are now locked-in → decide Speed initiative.
+        try { revealInitiative(); } catch (e) {}
         renderRoot();
       }
     }
@@ -1593,6 +1760,7 @@
               <div class="bm-info-chips">
                 <span class="bm-type-chip" style="background:${p2.color};">${TYPE_ICON[p2.type] || ''} ${p2.type}</span>
                 ${weaknessChipHtml(p2.type)}
+                <span class="bm-speed-pill">⚡ ${p2.speed ?? 70}</span>
               </div>
               <div class="bm-hp-row">
                 <span class="bm-hp-lbl">HP</span>
@@ -1612,6 +1780,7 @@
               <div class="bm-info-chips">
                 <span class="bm-type-chip" style="background:${p1.color};">${TYPE_ICON[p1.type] || ''} ${p1.type}</span>
                 ${weaknessChipHtml(p1.type)}
+                <span class="bm-speed-pill">⚡ ${p1.speed ?? 70}</span>
               </div>
               <div class="bm-hp-row">
                 <span class="bm-hp-lbl">HP</span>
@@ -1850,16 +2019,23 @@
       state.comboCount[playerIdx] = 0;  // streak resets on switch
       if (wasForced) {
         // Forced (after faint) — switching player keeps the turn; they go to
-        // the action menu with the new Pokemon.
+        // the action menu with the new Pokemon. v53.0: Speed re-decides who
+        // strikes first against the swap-in. A faster replacement can steal
+        // initiative back even after losing the previous Pokemon.
         root._questions = null;
         state.phase = 'action';
-        state.turn = playerIdx;
+        state.turn = decideTurnOrder(activePoke(0), activePoke(1), state);
       } else {
         // Voluntary mid-turn switch — costs the turn, passes to opponent.
-        // Opponent starts at action menu.
+        // v53.0: opponent acts next, but Speed still has the final say on who
+        // gets the FOLLOWING strike (handled by the standard 1-state.turn
+        // flip + revealInitiative on the new active pair next round).
         root._questions = null;
         state.phase = 'action';
         state.turn = 1 - playerIdx;
+        // Re-evaluate Speed on the new pair so the next "round" flips correctly.
+        // The opponent goes next this beat (turn = 1-playerIdx) but their reply
+        // ordering hinges on Speed of the new swap-in.
       }
       renderRoot();
     }
@@ -1875,12 +2051,16 @@
       runAttackAnimation(state.turn, move, dmg, tm, timeMult, () => {
         def.hp = Math.max(0, def.hp - dmg);
         sfxKO();
+        // v53.0 polish #14: haptic on hit landed (mobile only; honours mute).
+        bmHaptic(30);
         // Update HP bars + texts in BOTH halves (both views show both HPs)
         updateHpDisplays();
         setTimeout(() => {
           if (def.hp <= 0) {
             const defIdx = 1 - state.turn;
             const aliveCount = state.teams[defIdx].filter(p => p.hp > 0).length;
+            // v53.0 polish #14: deeper haptic when a Pokemon faints.
+            bmHaptic(120);
             playFaintAnimation(defIdx, () => {
               if (aliveCount === 0) {
                 // All fainted — that player loses
@@ -1959,6 +2139,10 @@
           spawnTypeParticles(cx, cy, move.type);
           // Effectiveness rise-text (Super Efektif / Tidak Efektif / Seimbang)
           spawnEffectivenessText(cx, cy - 30, tm);
+          // v53.0 polish #2: BIG type-effectiveness splash banner in the arena
+          // — complements the small rise-text above. Fires only on ≠1× hits so
+          // a routine neutral hit doesn't get drowned out by overlay text.
+          spawnEffSplash(tm, arena);
           // Knockback sprite push on defender (28px) — visible recoil
           if (defenderPanel && tm >= 1.15) {
             const dir = attackerIdx === 0 ? 'right' : 'left';
@@ -1970,11 +2154,15 @@
         if (tm >= 1.15) {
           screenFlash('#FCD34D', 120);
           applyViewportShake();
+          // v53.0 polish #14: 2-burst haptic for super-effective.
+          bmHaptic([40, 30, 40]);
         }
         // CRITICAL! pop on super+STAB combo (super-effective AND same-type attack)
         const isStab = move.type === activePoke(attackerIdx).type;
         if (tm >= 1.15 && isStab) {
           spawnCriticalBadge(defenderPanel);
+          // v53.0 polish #14: 3-burst haptic for a crit (super+STAB).
+          bmHaptic([60, 40, 60]);
         }
         // Combo counter — track super-effective streak per attacker
         if (tm >= 1.15) {
@@ -2256,6 +2444,26 @@
       }
     }
 
+    // v53.0 polish #2: BIG type-effectiveness splash banner — center arena,
+    // large readable text. Fires only on ≠1× multipliers (skips neutral hits
+    // to avoid overlay-fatigue). Complements the small rise-text above.
+    function spawnEffSplash (mult, arenaEl) {
+      let label = '', color = '#fff', glow = 'rgba(0,0,0,0.7)';
+      if (mult >= 2)        { label = 'AMAT MEMATIKAN!'; color = '#FCD34D'; glow = '#DC2626'; }
+      else if (mult >= 1.15){ label = 'SUPER EFEKTIF!';  color = '#FCD34D'; glow = '#EA580C'; }
+      else if (mult === 0)  { label = 'TIDAK MEMPAN!';   color = '#E5E7EB'; glow = '#475569'; }
+      else if (mult <= 0.75){ label = 'TIDAK EFEKTIF…';  color = '#93C5FD'; glow = '#1E40AF'; }
+      else return; // ~1× — skip
+      const host = arenaEl || document.querySelector('.bm-arena') || document.body;
+      const el = document.createElement('div');
+      el.className = 'bm-eff-splash';
+      el.textContent = label;
+      el.style.color = color;
+      el.style.setProperty('--bm-eff-glow', glow);
+      host.appendChild(el);
+      setTimeout(() => { try { el.remove(); } catch (e) {} }, 1400);
+    }
+
     // "Super Efektif!" / "Tidak Efektif…" / "Seimbang" rise-text above defender
     function spawnEffectivenessText (cx, cy, mult) {
       const eff = effLabel(mult);
@@ -2398,6 +2606,8 @@
 
     function finishMatch (winnerIdx) {
       sfxKO();
+      // v53.0 polish #14: 5-burst fanfare haptic for match-win.
+      bmHaptic([80, 40, 80, 40, 120]);
       const winName = opts.players[winnerIdx].name;
       const banner = document.createElement('div');
       banner.style.cssText = `
@@ -2460,6 +2670,82 @@
       }
       .bm-mute-btn:hover { background: rgba(0,0,0,0.88); }
       .bm-mute-btn:active { transform: scale(0.92); }
+
+      /* ── v53.0 (concern 4): Speed pill on HP card ──
+         Tiny cyan chip showing each Pokemon's canonical base Speed. Sits next
+         to the existing type + weakness chips. Owner: "balance" gameplay. */
+      .bm-speed-pill {
+        display: inline-flex; align-items: center; gap: 2px;
+        padding: 1px 7px; border-radius: 100px;
+        font-family: 'JetBrains Mono', ui-monospace, monospace;
+        font-size: 9px; font-weight: 900;
+        color: #0E7490; background: #CFFAFE; border: 1px solid #67E8F9;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+      }
+
+      /* ── v53.0 polish: match-start initiative banner ──
+         Briefly reveals which Pokemon strikes first (Speed-decided). */
+      .bm-init-banner {
+        position: fixed; left: 50%; top: 22%;
+        transform: translate(-50%, -10px) scale(0.92);
+        z-index: 9150;
+        font-family: 'Fredoka One', cursive;
+        font-size: clamp(15px, 3.6vw, 22px);
+        color: #fff;
+        background: linear-gradient(135deg, rgba(2,132,199,0.95), rgba(245,158,11,0.95));
+        padding: 10px 18px; border-radius: 14px;
+        box-shadow: 0 8px 28px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.35);
+        opacity: 0;
+        animation: bmInitBanner 1500ms cubic-bezier(0.22,1,0.36,1) forwards;
+        white-space: nowrap; pointer-events: none;
+      }
+      .bm-init-banner.out { animation: bmInitBannerOut 400ms ease forwards; }
+      .bm-init-banner .bm-init-spd {
+        display: inline-block; margin-left: 6px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.78em; opacity: 0.85;
+      }
+      @keyframes bmInitBanner {
+        0%   { transform: translate(-50%, -16px) scale(0.6);  opacity: 0; }
+        25%  { transform: translate(-50%, 0) scale(1.06);     opacity: 1; }
+        60%  { transform: translate(-50%, 0) scale(1.0);      opacity: 1; }
+        100% { transform: translate(-50%, 0) scale(1.0);      opacity: 1; }
+      }
+      @keyframes bmInitBannerOut {
+        0%   { opacity: 1; transform: translate(-50%, 0) scale(1.0); }
+        100% { opacity: 0; transform: translate(-50%, -8px) scale(0.92); }
+      }
+
+      /* ── v53.0 polish #2: BIG type-effectiveness splash banner ──
+         Owner: "kasih 10-20 ide super menarik" — big readable overlay text
+         on 2×/0.5×/0× hits, complementing the existing small particle FX. */
+      .bm-eff-splash {
+        position: absolute; left: 50%; top: 38%;
+        transform: translate(-50%, 0) scale(0.4);
+        z-index: 9180; pointer-events: none;
+        font-family: 'Fredoka One', cursive;
+        font-size: clamp(28px, 7vw, 52px);
+        font-weight: 900;
+        letter-spacing: 1px;
+        text-shadow:
+          -2px -2px 0 var(--bm-eff-glow, #000),
+           2px -2px 0 var(--bm-eff-glow, #000),
+          -2px  2px 0 var(--bm-eff-glow, #000),
+           2px  2px 0 var(--bm-eff-glow, #000),
+           0 6px 18px rgba(0,0,0,0.55),
+           0 0 24px var(--bm-eff-glow, rgba(0,0,0,0.5));
+        white-space: nowrap;
+        opacity: 0;
+        animation: bmEffSplash 1300ms cubic-bezier(0.22,1.4,0.36,1) forwards;
+      }
+      @keyframes bmEffSplash {
+        0%   { transform: translate(-50%, 0) scale(0.4) rotate(-3deg); opacity: 0; }
+        18%  { transform: translate(-50%, -4px) scale(1.18) rotate(2deg); opacity: 1; }
+        35%  { transform: translate(-50%, 0) scale(1.0) rotate(0deg);   opacity: 1; }
+        80%  { transform: translate(-50%, 0) scale(1.0) rotate(0deg);   opacity: 1; }
+        100% { transform: translate(-50%, -10px) scale(0.92) rotate(0deg); opacity: 0; }
+      }
 
       /* ── FIXED 18/62/20 GRID — owner spec refined for safe-area cutoff ──
          Owner: "Kasih margin lagi area bawah agar nggak terpotong" + "masih
