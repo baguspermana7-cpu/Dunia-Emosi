@@ -235,17 +235,56 @@ function g17BuildLevel(lvl){
   // Anchors — bamboo platforms hanging from sky
   S.anchors = []
   let curX = 80
+  // v54.13 — World-specific anchor palette. Bambu = bamboo green; Vulkanik = obsidian
+  // grey with orange embers; Awan = silver cloud bracket.
+  const _aPal = lvl.world === 'vulkanik'
+    ? { beam: 0x3a2818, post: 0x4a3018, ring: 0xfb923c, ringStroke: 0xea580c }
+    : lvl.world === 'awan'
+      ? { beam: 0xcfd8ea, post: 0xa3b1cf, ring: 0xe0f2fe, ringStroke: 0x60a5fa }
+      : { beam: 0x4a6b35, post: 0x6b8e23, ring: 0xfde047, ringStroke: 0xf59e0b }
   for (let i = 0; i < lvl.anchors; i++){
     const yJitter = Math.sin(i * 0.6) * 35
     const ay = H * 0.32 + yJitter
     S.anchors.push({ x: curX, y: ay, gfx: null })
     const a = new PIXI.Graphics()
-    a.rect(-22, -8, 44, 5).fill({ color: 0x4a6b35 })  // beam top
-    a.rect(-3, -3, 6, 14).fill({ color: 0x6b8e23 })   // post
-    a.circle(0, 0, 7).fill({ color: 0xfde047 }).stroke({ color: 0xf59e0b, width: 2 })
+    a.rect(-22, -8, 44, 5).fill({ color: _aPal.beam })  // beam top
+    a.rect(-3, -3, 6, 14).fill({ color: _aPal.post })   // post
+    a.circle(0, 0, 7).fill({ color: _aPal.ring }).stroke({ color: _aPal.ringStroke, width: 2 })
     a.x = curX; a.y = ay
     g17World.addChild(a)
     S.anchors[i].gfx = a
+    // v54.13 — Boss anchor at L15 (last anchor of the lvl). Giant Pidgeot sentinel
+    // drawn as massive bird silhouette PERCHED on the final anchor. Wings spread
+    // each tick via _bossSwingPhase. Visual only — gameplay-wise it's just the
+    // landing anchor for now, but the kid sees a clear "you reached the boss" payoff.
+    if (lvl.boss && i === lvl.anchors - 1){
+      const boss = new PIXI.Graphics()
+      // Body (large brown/tan oval)
+      boss.ellipse(0, -16, 22, 24).fill({ color: 0x7c4a1e })
+      boss.ellipse(0, -16, 22, 24).stroke({ color: 0x4a2c12, width: 2 })
+      // Head crest (feather plume)
+      boss.poly([-14, -38, -8, -52, 0, -38]).fill({ color: 0xf59e0b })
+      boss.poly([-2, -42, 6, -56, 12, -42]).fill({ color: 0xfbbf24 })
+      boss.poly([8, -38, 18, -50, 22, -38]).fill({ color: 0xf59e0b })
+      // Eyes (yellow with black pupils)
+      boss.circle(-6, -22, 3).fill({ color: 0xfde047 })
+      boss.circle(-6, -22, 1.4).fill({ color: 0x111827 })
+      boss.circle(6, -22, 3).fill({ color: 0xfde047 })
+      boss.circle(6, -22, 1.4).fill({ color: 0x111827 })
+      // Beak (orange triangle)
+      boss.poly([-4, -14, 0, -8, 4, -14]).fill({ color: 0xea580c })
+      // Wings (large feather fans on each side)
+      boss.poly([-22, -16, -50, -30, -42, -8, -28, -4]).fill({ color: 0x92400e }).stroke({ color: 0x4a2c12, width: 1.5 })
+      boss.poly([22, -16, 50, -30, 42, -8, 28, -4]).fill({ color: 0x92400e }).stroke({ color: 0x4a2c12, width: 1.5 })
+      // Talon perched on the anchor beam
+      boss.rect(-4, 4, 2, 8).fill({ color: 0x1c1917 })
+      boss.rect(2, 4, 2, 8).fill({ color: 0x1c1917 })
+      boss.x = curX; boss.y = ay - 6  // perched above the anchor ring
+      g17World.addChild(boss)
+      S._boss = boss
+      // Wing-flap animation hook (ticker drives _bossSwingPhase via g17Tick)
+      S._bossSwingPhase = 0
+    }
 
     // Spawn gems in arc between this anchor and the next
     if (i < lvl.anchors - 1){
@@ -338,6 +377,14 @@ function g17OnTapUp(e){
 function g17Tick(ticker){
   if (!S || !S.running) return
   const dt = Math.min(ticker.deltaTime, 2.5) / 60   // clamp + seconds
+
+  // v54.13 — Boss wing-flap idle animation. Subtle scaleY sway + slight rotation
+  // gives the Pidgeot sentinel a living-bird feel.
+  if (S._boss){
+    S._bossSwingPhase = (S._bossSwingPhase || 0) + 0.08
+    S._boss.scale.y = 1 + Math.sin(S._bossSwingPhase) * 0.06
+    S._boss.rotation = Math.sin(S._bossSwingPhase * 0.4) * 0.05
+  }
 
   if (S.grabbedIdx >= 0){
     // Hanging / swinging on rope (pendulum SHM)

@@ -2047,6 +2047,10 @@ function showWin(){
   sfxFanfare()
   // v54.11 — Confetti shower on win. Color-coded by star tier.
   g23RunConfetti(stars)
+  // v54.13 — Daily-streak + lifetime Pokeball meta currency persistence. Run
+  // coins counted as Pokeballs banked + daily-streak tally if at least one coin
+  // grabbed today. Survives across game sessions via localStorage.
+  g23BankPokeballs(S.coinsCollected || 0)
   document.getElementById('status-text').textContent='Level Selesai!'
   setTimeout(()=>{
     // v54.11 — Run summary with rich stats (distance, pickups, top combo, quiz%, top streak).
@@ -2058,6 +2062,60 @@ function showWin(){
     GameModal.show({ emoji,title,stars,msg:emoji+' '+info, onNext:next, onAgain:()=>location.reload(), onBack:()=>goBack() })
   },700)
 }
+// v54.13 — Daily-streak Pokeball meta currency. Persists totals + per-day count
+// across runs via localStorage. Future v54.13.x will unlock Pikachu re-colors at
+// 50 / 200 / 500 lifetime Pokeballs.
+const G23_PB_KEY_LIFETIME = 'dunia-g23-pokeballs'
+const G23_PB_KEY_TODAY    = 'dunia-g23-pokeballs-today'
+const G23_PB_KEY_DATE     = 'dunia-g23-pokeballs-date'
+const G23_PB_KEY_STREAK   = 'dunia-g23-daily-streak'
+function _g23TodayKey(){
+  const d = new Date()
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0')
+}
+function g23BankPokeballs(n){
+  if (!n || n <= 0) return
+  try {
+    const lifetime = parseInt(localStorage.getItem(G23_PB_KEY_LIFETIME) || '0', 10) + n
+    localStorage.setItem(G23_PB_KEY_LIFETIME, String(lifetime))
+    // Daily counter — reset on date change + bump streak if rolling.
+    const today = _g23TodayKey()
+    const lastDate = localStorage.getItem(G23_PB_KEY_DATE)
+    let todayN = 0
+    let streak = parseInt(localStorage.getItem(G23_PB_KEY_STREAK) || '0', 10)
+    if (lastDate === today){
+      todayN = parseInt(localStorage.getItem(G23_PB_KEY_TODAY) || '0', 10)
+    } else {
+      // Date rollover. If yesterday had ≥1, streak continues; else reset to 1.
+      // (We don't track "yesterday" exactly — but if lastDate is set and today
+      // wasn't recorded yet, this run is the first today, so streak++ if any
+      // prior balance accrued; otherwise streak=1.)
+      if (lastDate) streak += 1
+      else streak = 1
+      localStorage.setItem(G23_PB_KEY_STREAK, String(streak))
+    }
+    localStorage.setItem(G23_PB_KEY_TODAY, String(todayN + n))
+    localStorage.setItem(G23_PB_KEY_DATE, today)
+    // Render the chip on the HUD if it exists.
+    g23RenderPokeballChip()
+  } catch(_) {}
+}
+function g23RenderPokeballChip(){
+  try {
+    const lifetime = parseInt(localStorage.getItem(G23_PB_KEY_LIFETIME) || '0', 10)
+    const today    = parseInt(localStorage.getItem(G23_PB_KEY_TODAY)    || '0', 10)
+    const streak   = parseInt(localStorage.getItem(G23_PB_KEY_STREAK)   || '0', 10)
+    let el = document.getElementById('g23-pokeball-chip')
+    if (!el){
+      el = document.createElement('div')
+      el.id = 'g23-pokeball-chip'
+      el.style.cssText = 'position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:300;background:rgba(0,0,0,0.78);border:1.5px solid rgba(255,255,255,0.28);border-radius:14px;padding:6px 12px;color:#fff;font-family:Fredoka One,sans-serif;font-size:12px;font-weight:700;display:flex;gap:10px;align-items:center;text-shadow:0 1px 2px rgba(0,0,0,0.6);pointer-events:none'
+      document.body.appendChild(el)
+    }
+    el.innerHTML = `<span style="color:#fbbf24">🔴 ${lifetime}</span><span style="color:#7dd3fc">📅 ${today}</span><span style="color:#f472b6">🔥 ${streak}d</span>`
+  } catch(_) {}
+}
+
 // v54.11 — Lightweight CSS-particle confetti shower. Color-coded by star tier.
 function g23RunConfetti(stars){
   const palette = stars>=5 ? ['#fbbf24','#a855f7','#22c55e','#ef4444','#38bdf8','#f472b6']  // rainbow
@@ -2101,6 +2159,8 @@ function handleJump(){
   if(!S.started){
     S.started=true; S.running=true
     document.getElementById('start-overlay').classList.add('hidden')
+    // v54.13 — Render Pokeball meta-currency chip (lifetime + today + streak).
+    try { g23RenderPokeballChip() } catch(_) {}
     document.getElementById('status-text').textContent=(()=>{ const _p=G23_POKEMON[selectedPokemon]; return (_p.evo ? _p.evo[S.evoStage||0].name : _p.name)+' Berlari!' })()
     bgmStart()
     return

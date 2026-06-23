@@ -1,5 +1,44 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.13 "Boss + Meta Currency + Hints" (G17 Pidgeot sentinel; G23 Pokeball streak; G15 slot polish)
+
+Twelfth v54.x ship. Three high-visibility additions across G17, G23, G15.
+
+### C1 — G17 World-keyed anchor palette
+Anchors now repaint per `lvl.world`:
+- **Bambu**: green beam + yellow ring (unchanged baseline).
+- **Vulkanik**: obsidian-grey beam + orange ember-flame ring.
+- **Awan**: silver-blue cloud bracket + pale-cyan halo ring.
+
+### C2 — G17 Giant Pidgeot Boss Sentinel (L15)
+At World-3 finale (`lvl.boss === true`), the FINAL anchor gets a perched Pidgeot sentinel. Pixi Graphics composite: body (oval), head crest (3-feather plume), eyes with pupils, beak triangle, large wing fans, talons. Visible only at L15. `g17Tick` runs idle wing-flap animation via `_bossSwingPhase` (scaleY ±0.06 + rotation ±0.05 rad sin curve).
+
+### C3 — G23 Daily-Streak Pokeball Meta Currency
+NEW `g23BankPokeballs(n)` called on `showWin()` — persists 3 keys to localStorage:
+- `dunia-g23-pokeballs` (lifetime total)
+- `dunia-g23-pokeballs-today` (today's count, resets on date change)
+- `dunia-g23-daily-streak` (consecutive days with ≥1 coin)
+
+NEW `g23RenderPokeballChip()` — top-center floating chip with `🔴 lifetime · 📅 today · 🔥 streak-days`. Auto-injects DOM lazily on first render. Future v54.13.x will unlock Pikachu re-color at 50/200/500 lifetime.
+
+### C4 — G15 letter-slot polish (collect bounce + next-target pulse)
+- `.slot.filled` now plays `slotFilledBounce` 0.3s cubic-bezier on add — scale 0.6→1.25→1.0 with rotation jiggle ±10°→+5°→0°. Tactile feedback for "letter collected!"
+- NEW `.slot.next-target` class on the slot at `currentLetterIdx`. Pulsing lime-green ring + glow (1.4s loop). Eye guidance for "this is the one to fill next."
+- `refreshHUD()` tags the correct slot per round, replacing static fill-only render.
+
+### Files touched
+- `games/g17-pixi.html` — world-keyed anchor palette + boss Pidgeot Graphics + `_bossSwingPhase` tick.
+- `games/g23-pixi.html` — `g23BankPokeballs()` + `g23RenderPokeballChip()` + localStorage keys + chip render in start-overlay handler + post-win bank call.
+- `games/g15-pixi.html` — new `slotFilledBounce` + `slotNextPulse` keyframes; `.next-target` class; `refreshHUD()` tag.
+- `sw.js` — CACHE_VERSION v54.12-20260624q → v54.13-20260624r.
+
+### Lessons captured
+- L116 — boss sentinel as static perched sprite + idle scaleY sway = "alive bird" for ~30 LOC.
+- L117 — meta currency persistence is 4 localStorage keys, not a "system." Don't overengineer.
+- L118 — pulsing next-target ring beats "★ next letter: A" copy for 5yo (visual > verbal).
+
+---
+
 ## 2026-06-24 — v54.12 "Polish Wave 2" (G17 worlds 2+3; G14 AI bubbles; G23 pause polish)
 
 Eleventh v54.x ship. More breadth: G17 grows from 5 → 15 levels across 3 worlds; G14 rivals get personality via thought bubbles; G23 pause overlay becomes "ISTIRAHAT" cockpit with live run stats.

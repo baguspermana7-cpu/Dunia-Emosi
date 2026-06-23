@@ -4,6 +4,28 @@
 
 ---
 
+## 2026-06-24 — v54.13 Boss + Meta Currency + Hints
+
+### L116 — Boss as static perched sprite + idle sway = "alive" for ~30 LOC
+- **Symptom**: I was tempted to spawn the Pidgeot boss as a full animated character with flap loop, attack pattern, HP bar, etc. — easily 300+ LOC.
+- **Root cause**: The plan calls for "L15 boss encounter" as a payoff for completing world 3. The kid's eye reads "big bird at the end." That doesn't require attack mechanics — it requires PRESENCE.
+- **Fix**: Pixi Graphics composite (body oval + head crest + wings + eyes + beak + talons). 25 fill ops. `scaleY` ±0.06 sin + rotation ±0.05 sin in `g17Tick` = wing-flap idle. ~30 LOC including the polygon coordinates.
+- **Lesson**: A boss for end-of-world payoff doesn't need mechanics. Sprite + idle sway = visible reward. Save the combat layer for v54.13.x if owner asks.
+
+### L117 — Meta currency persistence is 4 localStorage keys, not a "system"
+- **Symptom**: I was about to scaffold a "PokeballManager" class with hooks for unlocks, achievements, leaderboards.
+- **Root cause**: localStorage IS the database. A 200-line "manager" class wraps 4 lines of `setItem`/`getItem`.
+- **Fix**: 4 const keys (`G23_PB_KEY_LIFETIME` / `..._TODAY` / `..._DATE` / `..._STREAK`). One `g23BankPokeballs(n)` function. One `g23RenderPokeballChip()` function. Done. ~50 LOC total. No classes, no events, no async.
+- **Lesson**: For per-game meta currency on a single device, plain localStorage + a 2-function API beats any abstraction. Build the "system" the day owner asks for cross-device sync.
+
+### L118 — Pulsing next-target ring beats verbal hint for 5yo
+- **Symptom**: G15 had a `#next-letter` chip showing "★ next letter: A" — clean copy, but kids still tapped wrong slots.
+- **Root cause**: 5-7yo are still reading. Verbal hints require eye → chip → parse → eye-back-to-grid. Visual hints fire instantly.
+- **Fix**: Tag the slot at `currentLetterIdx` with `.next-target` class. Pulsing lime ring + glow (1.4s loop). Eye is GUIDED to the right slot without translation.
+- **Lesson**: For pre-readers and early readers, visual eye-guides beat text hints every time. Don't write the hint — paint the path.
+
+---
+
 ## 2026-06-24 — v54.12 Polish Wave 2
 
 ### L114 — Per-world palette + decorative sprinkles = "different game" feel for zero new mechanics

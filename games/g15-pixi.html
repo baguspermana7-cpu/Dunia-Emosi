@@ -22,10 +22,14 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 #word-display{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;min-width:0}
 #word-emoji{font-size:24px;flex-shrink:0}
 #word-slots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center}
-.slot{display:inline-flex;align-items:center;justify-content:center;width:28px;height:32px;border-radius:8px;border:2px solid rgba(255,255,255,0.35);background:rgba(0,0,0,0.35);color:#fff;font-size:15px;font-weight:900;transition:all .2s}
-.slot.filled{border-color:#fbbf24;background:rgba(251,191,36,0.28);color:#fde68a}
+.slot{display:inline-flex;align-items:center;justify-content:center;width:28px;height:32px;border-radius:8px;border:2px solid rgba(255,255,255,0.35);background:rgba(0,0,0,0.35);color:#fff;font-size:15px;font-weight:900;transition:all .2s;position:relative}
+.slot.filled{border-color:#fbbf24;background:rgba(251,191,36,0.28);color:#fde68a;animation:slotFilledBounce .3s cubic-bezier(.34,1.56,.64,1)}
 .slot.done{border-color:#4ade80;background:rgba(74,222,128,0.28);color:#bbf7d0;animation:slotPop .3s cubic-bezier(.34,1.56,.64,1)}
+/* v54.13 — Slot polish: filled bounce (collect feedback) + next-slot pulse (visual cue for current target) */
+.slot.next-target{border-color:#a3e635;box-shadow:0 0 0 2px rgba(163,230,53,0.35),0 0 12px rgba(163,230,53,0.4);animation:slotNextPulse 1.4s ease-in-out infinite}
+@keyframes slotFilledBounce{0%{transform:scale(0.6) rotate(-10deg)}50%{transform:scale(1.25) rotate(5deg)}100%{transform:scale(1) rotate(0deg)}}
 @keyframes slotPop{from{transform:scale(0.7)}to{transform:scale(1)}}
+@keyframes slotNextPulse{0%,100%{box-shadow:0 0 0 2px rgba(163,230,53,0.35),0 0 12px rgba(163,230,53,0.4)}50%{box-shadow:0 0 0 3px rgba(163,230,53,0.55),0 0 18px rgba(163,230,53,0.7)}}
 #lives-hud{display:flex;gap:3px;flex-shrink:0}
 .life-heart{font-size:20px;transition:all .3s;display:inline-block}
 .life-heart.lost{opacity:0.18;transform:scale(0.65);filter:grayscale(1)}
@@ -1720,7 +1724,12 @@ function refreshHUD() {
   slotsEl.innerHTML = '';
   for (let i = 0; i < word.word.length; i++) {
     const s = document.createElement('span');
-    s.className = 'slot' + (i < currentLetterIdx ? ' filled' : '');
+    // v54.13 — Tag the slot at currentLetterIdx as next-target. Pulsing lime ring
+    // guides the kid's eye to the slot they need to fill next without text-only hint.
+    let cls = 'slot';
+    if (i < currentLetterIdx) cls += ' filled';
+    else if (i === currentLetterIdx) cls += ' next-target';
+    s.className = cls;
     s.textContent = i < currentLetterIdx ? word.word[i] : '_';
     slotsEl.appendChild(s);
   }
