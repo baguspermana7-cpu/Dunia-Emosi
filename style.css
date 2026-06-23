@@ -1462,6 +1462,46 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
   border-left-color: white;
 }
 @keyframes emotBadgePop { from{transform:scale(0) rotate(-20deg)} to{transform:scale(1) rotate(0)} }
+/* v54.9 — Per-emotion animal performance. Animal physically PERFORMS the emotion
+   instead of just being labeled, so kids learn the body-language association.
+   Driven by JS adding `g1-emo-{name}` class to .g1-char node. */
+.g1-char.g1-emo-senang { animation: g1Wobble 0.6s ease, g1EmoHappy 1.2s ease-in-out 0.6s infinite !important; }
+.g1-char.g1-emo-sedih  { animation: g1Wobble 0.6s ease, g1EmoSad   2.0s ease-in-out 0.6s infinite !important; }
+.g1-char.g1-emo-marah  { animation: g1Wobble 0.6s ease, g1EmoMad   0.7s ease-in-out 0.6s infinite !important; }
+.g1-char.g1-emo-takut  { animation: g1Wobble 0.6s ease, g1EmoFear  0.4s ease-in-out 0.6s infinite !important; }
+.g1-char.g1-emo-malu   { animation: g1Wobble 0.6s ease, g1EmoShy   2.4s ease-in-out 0.6s infinite !important; }
+.g1-char.g1-emo-kaget  { animation: g1Wobble 0.6s ease, g1EmoShock 0.9s ease-in-out 0.6s infinite !important; }
+.g1-char.g1-emo-cinta  { animation: g1Wobble 0.6s ease, g1EmoLove  1.4s ease-in-out 0.6s infinite !important; }
+.g1-char.g1-emo-bingung{ animation: g1Wobble 0.6s ease, g1EmoConfused 1.8s ease-in-out 0.6s infinite !important; }
+@keyframes g1EmoHappy { 0%,100%{transform:translateY(0) scale(1)} 30%{transform:translateY(-16px) scale(1.08) rotate(-4deg)} 60%{transform:translateY(-10px) scale(1.05) rotate(4deg)} }
+@keyframes g1EmoSad   { 0%,100%{transform:translateY(0) scale(1) rotate(0)} 50%{transform:translateY(6px) scale(0.94) rotate(-3deg)} }
+@keyframes g1EmoMad   { 0%,100%{transform:scale(1.05) rotate(0)} 25%{transform:scale(1.12) rotate(-2deg)} 75%{transform:scale(1.12) rotate(2deg)} }
+@keyframes g1EmoFear  { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-3px)} 75%{transform:translateX(3px)} }
+@keyframes g1EmoShy   { 0%,100%{transform:scale(0.9) rotate(0)} 50%{transform:scale(0.86) rotate(-8deg) translateX(-6px)} }
+@keyframes g1EmoShock { 0%,100%{transform:scale(1)} 30%{transform:scale(1.18)} 60%{transform:scale(0.96)} }
+@keyframes g1EmoLove  { 0%,100%{transform:scale(1) rotate(0)} 50%{transform:scale(1.12) rotate(4deg)} }
+@keyframes g1EmoConfused { 0%,100%{transform:rotate(0)} 50%{transform:rotate(-12deg)} }
+
+/* v54.9 — Mock biofeedback card (G2). Renders post-session.
+   Cortisol-regulation evidence-base: kids who believe their breathing
+   "worked" engage deeper next time. Numbers are generated (not real). */
+.g2-bio-card{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.6);width:min(360px,92vw);background:linear-gradient(135deg,#fef3c7,#fde68a);border:3px solid #b45309;border-radius:24px;padding:24px;z-index:9100;box-shadow:0 24px 80px rgba(180,83,9,0.45);opacity:0;animation:g2BioCardIn 0.6s cubic-bezier(.34,1.56,.64,1) forwards}
+.g2-bio-card h3{font-family:'Fredoka One',cursive;font-size:22px;color:#78350f;margin:0 0 16px;text-align:center}
+.g2-bio-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;margin-bottom:8px;background:rgba(255,255,255,0.6);border-radius:14px}
+.g2-bio-icon{font-size:28px;flex-shrink:0}
+.g2-bio-meta{flex:1;margin:0 12px;font-weight:700;color:#78350f}
+.g2-bio-num{font-family:'Fredoka One',cursive;font-size:20px;color:#15803d;font-weight:900}
+.g2-bio-num.bad{color:#b91c1c}
+.g2-bio-arrow{font-size:14px;color:#78350f;opacity:0.55;margin:0 6px}
+.g2-bio-card .g2-bio-close{margin-top:14px;width:100%;padding:14px;border:0;border-radius:14px;background:#16a34a;color:#fff;font-family:'Fredoka One',cursive;font-size:16px;font-weight:900;cursor:pointer;box-shadow:0 4px 0 #166534}
+@keyframes g2BioCardIn { from{opacity:0;transform:translate(-50%,-50%) scale(0.4)} to{opacity:1;transform:translate(-50%,-50%) scale(1)} }
+
+/* v54.9 — G2 inhale/exhale particle drift. Floating .g2-breath-part emitted
+   by JS on each phase tick; gravity-free, radial from / toward circle. */
+.g2-breath-part{position:fixed;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle,rgba(167,139,250,0.95),rgba(167,139,250,0));pointer-events:none;z-index:60;animation:g2BreathDrift 1.4s ease-out forwards}
+.g2-breath-part.exhale{background:radial-gradient(circle,rgba(20,184,166,0.95),rgba(20,184,166,0));animation:g2BreathDriftOut 1.4s ease-out forwards}
+@keyframes g2BreathDrift { from{transform:translate(var(--dx,40px),var(--dy,40px)) scale(0.3);opacity:0} 50%{opacity:0.9} to{transform:translate(0,0) scale(1.4);opacity:0} }
+@keyframes g2BreathDriftOut { from{transform:translate(0,0) scale(0.3);opacity:0} 50%{opacity:0.9} to{transform:translate(var(--dx,80px),var(--dy,80px)) scale(1.4);opacity:0} }
 /* Tappable hearts pop animation */
 @keyframes heartPop { 0%{transform:scale(1) translateY(0);opacity:1} 100%{transform:scale(2.5) translateY(-30px);opacity:0} }
 .world-hearts span.popping { animation:heartPop 0.35s ease-out forwards !important; pointer-events:none !important; }

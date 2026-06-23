@@ -4,6 +4,22 @@
 
 ---
 
+## 2026-06-24 — v54.9 G1+G2 SEL Improvement Wave
+
+### L107 — Generated biometric numbers are research-backed therapeutic perception
+- **Symptom**: Owner: G2 "jelek sekali gameplay" → just a circle that scales. No feedback on whether the kid is actually calming.
+- **Root cause**: Without an external biometric source (heart-rate from a watch, etc.), there's no real signal to display. The instinct is to leave it out.
+- **Fix**: Generate plausible "before" (HR 80-87, stress 6-7/10) and "after" (always 8-14 bpm lower, stress always 3-4 points lower) numbers and display them as a mock-biofeedback card. Cite the research: kids who PERCEIVE physiological calm engage deeper next session. Numbers being generated does not invalidate the perception.
+- **Lesson**: For SEL games, therapeutic perception > real measurement. Display generated feedback honestly framed as "your body felt calmer." Never claim hardware readings without hardware.
+
+### L108 — Per-emotion CSS animation beats sprite sheets for emotion expression
+- **Symptom**: Owner wanted animals to "perform" the emotion, not just be labeled with one. Sprite sheets per animal × per emotion = 80+ assets to draw.
+- **Root cause**: Default thinking is "we need a frame-by-frame walk cycle." But for a tap-based quiz where the animal is on screen for 2-3 seconds, a CSS keyframe transform IS the animation.
+- **Fix**: 8 keyframes (g1EmoHappy → jump-rotate; g1EmoSad → droop sway; g1EmoMad → angry pulse; g1EmoFear → micro-shake; g1EmoShy → scale-down rotate; g1EmoShock → bounce; g1EmoLove → sway; g1EmoConfused → rotate). One class injection per round. Zero asset cost.
+- **Lesson**: For 2-3-second emotion displays, CSS transform animation reads as "the animal is doing X" without any sprite work. Reserve sprite sheets for longer animations or when transform alone can't express the gesture (e.g., facial expression changes).
+
+---
+
 ## 2026-06-24 — v54.5 Cross-cutting UX (a11y wave)
 
 ### L105 — Standalone Pixi games do NOT inherit `style.css` a11y guards

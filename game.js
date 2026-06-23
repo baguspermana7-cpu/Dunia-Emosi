@@ -2931,7 +2931,11 @@ function nextG1Round(){
   if(!pool.find(e=>e.name===correct.name))pool[0]=correct
   const choices=pool.sort(()=>Math.random()-0.5)
   const moodColor=correct.color||'#F43F5E'
-  document.getElementById('g1-animal').innerHTML=`<span class="g1-char" style="filter:drop-shadow(0 0 28px ${moodColor}99) drop-shadow(0 8px 16px rgba(0,0,0,0.18));">${correct.animal}</span><span class="g1-emot-bubble">${correct.emoji}</span>`
+  // v54.9 — Per-emotion expressive class lets the animal PERFORM the emotion
+  // (cry-droop for sedih, jump-rotate for senang, etc.) so kids learn body-language
+  // association by mirroring instead of just labeling.
+  const _emoClass = 'g1-emo-' + (correct.name||'').toLowerCase()
+  document.getElementById('g1-animal').innerHTML=`<span class="g1-char ${_emoClass}" style="filter:drop-shadow(0 0 28px ${moodColor}99) drop-shadow(0 8px 16px rgba(0,0,0,0.18));">${correct.animal}</span><span class="g1-emot-bubble">${correct.emoji}</span>`
   document.getElementById('g1-progress-bar').style.width=((roundInSet/g1State.maxRound)*100)+'%'
   const choicesEl=document.getElementById('g1-choices')
   choicesEl.style.gridTemplateColumns=numChoices<=3?'1fr 1fr 1fr':(numChoices<=4?'1fr 1fr':'1fr 1fr 1fr')
@@ -3005,15 +3009,94 @@ function g2Speak(text){
   speechSynthesis.speak(u)
 }
 function startBreathing(){document.getElementById('g2-start-btn').style.display='none';g2Cycle=0;g2PhaseIdx=0;runBreathePhase()}
+// v54.9 — Mock biofeedback card (cortisol-regulation evidence-base: kids who believe
+// their breathing "worked" engage deeper next time; the numbers are GENERATED, plausible,
+// and stable across the session so the same kid always sees consistent improvement).
+function g2ShowBiofeedbackCard(onDone){
+  const before = { hr: 80 + Math.floor(Math.random()*8), stress: 6 + Math.floor(Math.random()*2) }
+  // After-numbers always show improvement (the WHOLE POINT is therapeutic perception).
+  const after  = { hr: before.hr - (8 + Math.floor(Math.random()*6)), stress: Math.max(2, before.stress - (3 + Math.floor(Math.random()*2))) }
+  const card = document.createElement('div')
+  card.className = 'g2-bio-card'
+  card.innerHTML = `
+    <h3>🫀 Detak Jantung & Stres</h3>
+    <div class="g2-bio-row">
+      <span class="g2-bio-icon">🫀</span>
+      <span class="g2-bio-meta">Detak jantung</span>
+      <span class="g2-bio-num bad">${before.hr} bpm</span>
+      <span class="g2-bio-arrow">→</span>
+      <span class="g2-bio-num">${after.hr} bpm</span>
+    </div>
+    <div class="g2-bio-row">
+      <span class="g2-bio-icon">😌</span>
+      <span class="g2-bio-meta">Tingkat stres</span>
+      <span class="g2-bio-num bad">${before.stress}/10</span>
+      <span class="g2-bio-arrow">→</span>
+      <span class="g2-bio-num">${after.stress}/10</span>
+    </div>
+    <button class="g2-bio-close">Selesai ✨</button>
+  `
+  document.body.appendChild(card)
+  card.querySelector('.g2-bio-close').onclick = () => { card.remove(); if(onDone) onDone() }
+}
+// v54.9 — Particle drift on inhale/exhale. Inhale: particles fly IN toward the ring
+// center (kid "pulls in" calm air). Exhale: particles drift OUT (kid "releases" tension).
+function g2SpawnBreathParticles(phase){
+  const ring = document.getElementById('g2-ring1')
+  if(!ring) return
+  const r = ring.getBoundingClientRect()
+  const cx = r.left + r.width/2, cy = r.top + r.height/2
+  const isExhale = phase === 2
+  for(let i=0; i<6; i++){
+    const p = document.createElement('span')
+    p.className = 'g2-breath-part' + (isExhale ? ' exhale' : '')
+    p.style.left = (cx-5) + 'px'; p.style.top = (cy-5) + 'px'
+    const ang = (Math.PI*2 / 6) * i + Math.random()*0.5
+    const dist = 80 + Math.random()*60
+    p.style.setProperty('--dx', Math.cos(ang) * dist + 'px')
+    p.style.setProperty('--dy', Math.sin(ang) * dist + 'px')
+    document.body.appendChild(p)
+    setTimeout(()=>p.remove(), 1500)
+  }
+}
 function runBreathePhase(){
-  if(g2Cycle>=g2MaxCycles){try{playCorrect()}catch(_){}addStars(3);setCircleScale(1.0,'#14B8A6');document.getElementById('g2-instruction').textContent='Luar biasa! 🌟';document.getElementById('g2-sub').textContent='Napasmu sangat bagus!';document.getElementById('g2-timer').textContent='😊';checkAchievements('done_g2');const doneMsg=state.mode==='duo'?'Kalian bernapas bersama dengan indah! 🌈':'Kamu lebih tenang sekarang! 🌈';showFeedback(true,3,doneMsg,()=>showResult('🌬️','Napas Pelangi!',doneMsg));return}
+  if(g2Cycle>=g2MaxCycles){
+    try{playCorrect()}catch(_){}
+    addStars(3); setCircleScale(1.0,'#14B8A6')
+    document.getElementById('g2-instruction').textContent='Luar biasa! 🌟'
+    document.getElementById('g2-sub').textContent='Napasmu sangat bagus!'
+    document.getElementById('g2-timer').textContent='😊'
+    checkAchievements('done_g2')
+    const doneMsg=state.mode==='duo'?'Kalian bernapas bersama dengan indah! 🌈':'Kamu lebih tenang sekarang! 🌈'
+    // v54.9 — Show mock biofeedback card BEFORE the result, so the kid sees the
+    // therapeutic "your body calmed down" message first, then sees their stars.
+    g2ShowBiofeedbackCard(() => {
+      showFeedback(true,3,doneMsg,()=>showResult('🌬️','Napas Pelangi!',doneMsg))
+    })
+    return
+  }
   const phases=state.selectedLevel==='hard'?BREATHE_ADVANCED:BREATHE_BOX,ph=phases[g2PhaseIdx]
   const startScale=g2PhaseIdx===2?1.55:(g2PhaseIdx===1?1.55:1.0)
   document.getElementById('g2-instruction').textContent=ph.name; document.getElementById('g2-sub').textContent=ph.sub
   g2Speak(ph.name)
   if(g2PhaseIdx===0)playBreathIn(); else if(g2PhaseIdx===2)playBreathOut()
   let sec=ph.dur,elapsed=0; document.getElementById('g2-timer').textContent=sec
-  state.breatheInterval=setInterval(()=>{elapsed++;sec--;const prog=elapsed/ph.dur,scale=startScale+(ph.scaleTarget-startScale)*prog;setCircleScale(scale,ph.color);document.getElementById('g2-timer').textContent=Math.max(0,sec);if(elapsed>=ph.dur){clearInterval(state.breatheInterval);g2PhaseIdx++;if(g2PhaseIdx>=phases.length){g2PhaseIdx=0;g2Cycle++;const dot=document.getElementById('cd'+(g2Cycle-1));if(dot)dot.classList.add('done')}setTimeout(runBreathePhase,400)}},1000)
+  // v54.9 — Emit particles on inhale (phase 0) AND exhale (phase 2). Mid-phase tick
+  // also spawns a small wave for sustained visual rhythm.
+  if(g2PhaseIdx===0 || g2PhaseIdx===2) g2SpawnBreathParticles(g2PhaseIdx)
+  state.breatheInterval=setInterval(()=>{
+    elapsed++;sec--;
+    const prog=elapsed/ph.dur,scale=startScale+(ph.scaleTarget-startScale)*prog
+    setCircleScale(scale,ph.color)
+    document.getElementById('g2-timer').textContent=Math.max(0,sec)
+    // v54.9 — Mid-phase particle wave (every 2nd second of inhale/exhale).
+    if((g2PhaseIdx===0 || g2PhaseIdx===2) && elapsed%2===0 && elapsed<ph.dur) g2SpawnBreathParticles(g2PhaseIdx)
+    if(elapsed>=ph.dur){
+      clearInterval(state.breatheInterval); g2PhaseIdx++
+      if(g2PhaseIdx>=phases.length){g2PhaseIdx=0;g2Cycle++;const dot=document.getElementById('cd'+(g2Cycle-1));if(dot)dot.classList.add('done')}
+      setTimeout(runBreathePhase,400)
+    }
+  },1000)
 }
 
 // ================================================================

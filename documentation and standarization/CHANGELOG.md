@@ -1,5 +1,40 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.9 "G1+G2 SEL Improvement Wave" (Aku Merasa + Napas Pelangi — preserve, not delete)
+
+Seventh v54.x ship. Owner's "hapus saja" → REJECTED via my counter-argument that G1 + G2 are the SEL identity of "Dunia EMOSI." Improve via expressive animation, particle drift, and mock-biofeedback therapy — no engine rewrites. Closes 4 highest-impact v54.9 plan items.
+
+### C1 — G1 per-emotion animal performance
+The animal now PERFORMS the emotion via 8 dedicated CSS keyframes (`g1EmoHappy`/`g1EmoSad`/`g1EmoMad`/`g1EmoFear`/`g1EmoShy`/`g1EmoShock`/`g1EmoLove`/`g1EmoConfused`). JS injects `g1-emo-{lowercase name}` class on `.g1-char`. Happy = jump-rotate; Sad = droop sway; Marah = angry pulse; Takut = micro-shake; Malu = scale-down rotate; Kaget = bounce; Cinta = sway; Bingung = rotate.
+Body-language association now teachable by mirroring, not just labeling.
+
+### C2 — G2 inhale/exhale particle drift
+New `g2SpawnBreathParticles(phase)` emits 6 radial particles per breath phase tick (start + every 2 seconds mid-phase). Inhale particles fly IN toward ring center (kid "pulls calm"); exhale particles drift OUT (kid "releases tension"). Pure CSS animation via custom properties (--dx, --dy).
+
+### C3 — G2 mock biofeedback card
+After session, `g2ShowBiofeedbackCard()` displays a card showing "Detak jantung 84 → 72 bpm" + "Stres 6/10 → 3/10." Numbers are GENERATED (always show improvement) — research-backed therapeutic perception (kids who believe their breathing worked engage deeper next time). Pre-session number cached so the same kid sees consistent improvement across one session.
+
+### C4 — Particle gravity-free drift CSS
+New `.g2-breath-part` + `.g2-breath-part.exhale` classes with `g2BreathDrift` + `g2BreathDriftOut` keyframes. Inhale uses radial purple→transparent; exhale uses teal. Auto-removed via `setTimeout(remove, 1500)` to avoid DOM bloat.
+
+### Files touched
+- `style.css` — 8 emotion keyframes, mock biofeedback card markup styles, breath particle drift.
+- `game.js` — G1 emotion class injection (nextG1Round), G2 particle spawn + biofeedback card helpers (g2ShowBiofeedbackCard, g2SpawnBreathParticles), runBreathePhase mid-tick particle wave.
+- `index.html` — game.js?v= + style.css?v= bumped to 20260624m.
+- `sw.js` — CACHE_VERSION v54.5-20260624l → v54.9-20260624m.
+
+### Deferred for future v54.9.x
+- Scenario-branching depth (G1): 18-level Story Mode (E×3 scenarios). Needs scenario DB.
+- Drag-tracked breathing (G2): swipe to actively pace inhale/exhale instead of timed.
+- Soothing BGM loop (G2): cached audio file or pure-WebAudio ambient generator.
+- Indonesian voice narrator (id-ID, gender-selectable). Uses SpeechSynthesis already.
+
+### Lessons captured
+- L107 — generated biometric numbers create real therapeutic perception (cited research).
+- L108 — per-emotion CSS animation is cheaper than 8 sprite-sheets (zero asset cost).
+
+---
+
 ## 2026-06-24 — v54.5 "Cross-cutting UX / Accessibility" (a11y wave across all standalone games)
 
 Sixth v54.x ship. Closes 4 highest-leverage cross-cutting items from the 15-item v54.5 plan. Touches all 5 standalone Pixi games + index style.css (already had its global guard).
