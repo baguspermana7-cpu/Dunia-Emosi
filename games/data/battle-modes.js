@@ -599,8 +599,18 @@
   }
 
   // ── Confetti ────────────────────────────────────────────────────────
-  function spawnConfetti (count, originEl) {
-    const colors = ['#06B6D4','#0EA5E9','#8B5CF6','#EC4899','#FCD34D','#34D399','#FB923C'];
+  function spawnConfetti (count, originEl, paletteOverride) {
+    // v53.3 polish: paletteOverride can be a single hex string OR an array.
+    // finishMatch / showChampion pass the winner Pokemon's TYPE_COLOR so
+    // the confetti matches the victory type (fire winner → red/orange burst).
+    let colors = ['#06B6D4','#0EA5E9','#8B5CF6','#EC4899','#FCD34D','#34D399','#FB923C'];
+    if (paletteOverride) {
+      if (Array.isArray(paletteOverride) && paletteOverride.length) colors = paletteOverride;
+      else if (typeof paletteOverride === 'string') {
+        // Mix the type color with bright white-gold accents for contrast.
+        colors = [paletteOverride, paletteOverride, '#FCD34D', '#FFFFFF', paletteOverride];
+      }
+    }
     const rect = originEl ? originEl.getBoundingClientRect() :
       { left: window.innerWidth/2, top: window.innerHeight/3, width: 0, height: 0 };
     for (let i = 0; i < count; i++) {
@@ -2387,6 +2397,15 @@
             const aliveCount = state.teams[defIdx].filter(p => p.hp > 0).length;
             // v53.0 polish #14: deeper haptic when a Pokemon faints.
             bmHaptic(120);
+            // v53.3 polish: KO bookkeeping for achievements + stats.
+            if (!state.kosByPlayer) state.kosByPlayer = [0, 0];
+            if (!state.lostByPlayer) state.lostByPlayer = [0, 0];
+            if (!state.maxLostByPlayer) state.maxLostByPlayer = [0, 0];
+            state.kosByPlayer[state.turn]++;
+            state.lostByPlayer[defIdx]++;
+            state.maxLostByPlayer[defIdx] = Math.max(state.maxLostByPlayer[defIdx], state.lostByPlayer[defIdx]);
+            const totalKOs = state.kosByPlayer[0] + state.kosByPlayer[1];
+            if (totalKOs === 1) spawnAchievement('firstBlood');
             playFaintAnimation(defIdx, () => {
               if (aliveCount === 0) {
                 // All fainted — that player loses.
@@ -2409,6 +2428,8 @@
           root._questions = null;
           state.turn = 1 - state.turn;
           state.phase = 'action';
+          // v53.3 polish: turn counter drives win-predictor visibility.
+          state.turnsPlayed = (state.turnsPlayed | 0) + 1;
           renderRoot();
         }, 850);
       });
@@ -2502,6 +2523,10 @@
           state.comboCount[attackerIdx]++;
           if (state.comboCount[attackerIdx] >= 2) {
             spawnComboBadge(defenderPanel, state.comboCount[attackerIdx]);
+          }
+          // v53.3 polish: 3-in-a-row super-effective → achievement (once per match).
+          if (state.comboCount[attackerIdx] >= 3) {
+            try { spawnAchievement('critStreak'); } catch (e) {}
           }
         } else {
           state.comboCount[attackerIdx] = 0;
@@ -2931,6 +2956,83 @@
       // v53.1: heartbeat audio loop kicks in for the tense low-HP state.
       if (p1Low || p2Low) sfxLowHPStart();
       else                sfxLowHPStop();
+      // v53.3 polish: refresh the mid-match win-predictor pill.
+      try { refreshPredictor(); } catch (e) {}
+    }
+
+    // v53.3 polish: achievements toast queue. Triggers fire from inside the
+    // executeMove/finishMatch flow; queue avoids overlapping toasts when
+    // multiple achievements land on the same beat (e.g. Sweep + Perfect).
+    function spawnAchievement (kind) {
+      if (!state.achievements) state.achievements = {};
+      if (state.achievements[kind]) return; // dedup per match
+      state.achievements[kind] = true;
+      const META = {
+        firstBlood: { emoji:'🩸', title:'Pukulan Pertama!', sub:'KO pertama di pertandingan' },
+        sweep:      { emoji:'🌪️', title:'Sweep!',           sub:'Menang tanpa Pokemon yang faint' },
+        comeback:   { emoji:'🔥', title:'Comeback!',        sub:'Balik dari ketinggalan 3+ Pokemon' },
+        perfect:    { emoji:'💎', title:'Sempurna!',        sub:'Pokemon terakhir full HP' },
+        critStreak: { emoji:'⚡', title:'Combo Listrik!',   sub:'3 super-effective beruntun' }
+      };
+      const m = META[kind]; if (!m) return;
+      const host = document.body;
+      const el = document.createElement('div');
+      el.className = 'bm-achievement';
+      el.innerHTML = `
+        <div class="bm-achievement-emoji">${m.emoji}</div>
+        <div class="bm-achievement-text">
+          <div class="bm-achievement-title">${escapeHtml(m.title)}</div>
+          <div class="bm-achievement-sub">${escapeHtml(m.sub)}</div>
+        </div>
+      `;
+      // Stack newer toasts ABOVE existing ones (offset by index).
+      const existing = host.querySelectorAll('.bm-achievement').length;
+      el.style.bottom = (24 + existing * 78) + 'px';
+      host.appendChild(el);
+      setTimeout(() => { try { el.classList.add('out'); } catch (e) {} }, 2200);
+      setTimeout(() => { try { el.remove(); } catch (e) {} }, 2700);
+    }
+
+    // v53.3 polish: mid-match win predictor — Score = total HP ratio +
+    // bench-alive bonus. Shown after 3 turns so the prediction isn't
+    // 50/50 noise at match start.
+    function predictWin () {
+      const ratio = (idx) => {
+        const team = state.teams[idx];
+        const totHp  = team.reduce((s, p) => s + Math.max(0, p.hp), 0);
+        const totMax = team.reduce((s, p) => s + Math.max(1, p.hpMax || 1), 0);
+        return totHp / totMax;
+      };
+      const benchAlive = (idx) => state.teams[idx].filter(p => p.hp > 0).length;
+      const s1 = ratio(0) + benchAlive(0) * 0.04;
+      const s2 = ratio(1) + benchAlive(1) * 0.04;
+      const tot = s1 + s2;
+      if (tot === 0) return { p1: 50, p2: 50 };
+      const p1 = Math.max(5, Math.min(95, Math.round(s1 / tot * 100)));
+      return { p1, p2: 100 - p1 };
+    }
+    function refreshPredictor () {
+      if (!state.turnsPlayed || state.turnsPlayed < 3) return;
+      const arena = root.querySelector('.bm-arena');
+      if (!arena) return;
+      const old = arena.querySelector('.bm-predictor');
+      if (old) old.remove();
+      const pred = predictWin();
+      const p1Name = (opts.players && opts.players[0] && opts.players[0].name) || 'P1';
+      const p2Name = (opts.players && opts.players[1] && opts.players[1].name) || 'P2';
+      const pill = document.createElement('div');
+      pill.className = 'bm-predictor';
+      pill.innerHTML = `
+        <span class="bm-predictor-side bm-predictor-p1" style="flex: ${pred.p1};">
+          <span class="bm-predictor-name">${escapeHtml(p1Name)}</span>
+          <span class="bm-predictor-pct">${pred.p1}%</span>
+        </span>
+        <span class="bm-predictor-side bm-predictor-p2" style="flex: ${pred.p2};">
+          <span class="bm-predictor-pct">${pred.p2}%</span>
+          <span class="bm-predictor-name">${escapeHtml(p2Name)}</span>
+        </span>
+      `;
+      arena.appendChild(pill);
     }
 
     // v53.1: winner pose — triumphant bounce + sparkle burst on the winning
@@ -3000,6 +3102,16 @@
       sfxKO();
       // v53.0 polish #14: 5-burst fanfare haptic for match-win.
       bmHaptic([80, 40, 80, 40, 120]);
+      // v53.3 polish: end-of-match achievements (deferred so toasts surface
+      // alongside the "Menang!" banner). Sweep, comeback, perfect-win.
+      try {
+        const lostByWinner = (state.lostByPlayer && state.lostByPlayer[winnerIdx]) || 0;
+        const maxLost = (state.maxLostByPlayer && state.maxLostByPlayer[winnerIdx]) || 0;
+        const winnerActive = activePoke(winnerIdx);
+        if (lostByWinner === 0)                                 spawnAchievement('sweep');
+        if (maxLost >= 3)                                       spawnAchievement('comeback');
+        if (winnerActive && winnerActive.hp >= winnerActive.hpMax) spawnAchievement('perfect');
+      } catch (e) {}
       const winName = opts.players[winnerIdx].name;
       const banner = document.createElement('div');
       banner.style.cssText = `
@@ -3018,7 +3130,10 @@
         </div>
       `;
       document.body.appendChild(banner);
-      spawnConfetti(36);
+      // v53.3 polish: confetti palette keyed to winner Pokemon's type color.
+      const _winType = activePoke(winnerIdx) && activePoke(winnerIdx).type;
+      const _winColor = (_winType && TYPE_COLOR[_winType]) || '#FCD34D';
+      spawnConfetti(36, null, _winColor);
       banner.querySelector('#bm-match-next').addEventListener('click', () => {
         try { banner.remove(); } catch (e) {}
         teardown(root);
@@ -3399,6 +3514,92 @@
         text-align: left;
       }
       .bm-tour-resume-line { margin: 4px 0; font-size: 14px; color: #f1f5f9; }
+
+      /* ── v53.3 polish: mid-match win predictor pill ──
+         Top-center of arena, showing P1 vs P2 win-probability after turn 3.
+         The two halves grow proportionally to the prediction. */
+      .bm-predictor {
+        position: absolute; top: 6px; left: 50%;
+        transform: translateX(-50%);
+        z-index: 3;
+        display: flex; align-items: stretch;
+        width: 78%; max-width: 320px; height: 22px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.2);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px; font-weight: 900;
+        border: 1.5px solid rgba(0,0,0,0.4);
+        pointer-events: none;
+      }
+      .bm-predictor-side {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0 10px; color: #fff;
+        transition: flex 600ms cubic-bezier(0.4,0,0.2,1);
+        min-width: 0; white-space: nowrap; overflow: hidden;
+      }
+      .bm-predictor-name { opacity: 0.85; text-overflow: ellipsis; overflow: hidden; }
+      .bm-predictor-pct { font-size: 12px; }
+      .bm-predictor-p1 { background: linear-gradient(90deg, #1d4ed8, #3b82f6); }
+      .bm-predictor-p2 { background: linear-gradient(90deg, #b91c1c, #ef4444); flex-direction: row-reverse; }
+
+      /* ── v53.3 polish: achievement toast (bottom-right slide-in) ── */
+      .bm-achievement {
+        position: fixed; right: 16px; bottom: 24px;
+        z-index: 9420;
+        display: flex; align-items: center; gap: 10px;
+        padding: 10px 14px; min-width: 220px; max-width: 320px;
+        background: linear-gradient(135deg, #fde68a, #fbbf24);
+        color: #422006;
+        border: 2px solid #92400e;
+        border-radius: 14px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+        font-family: 'Inter', system-ui, sans-serif;
+        transform: translateX(360px);
+        opacity: 0;
+        animation: bmAchievementIn 280ms cubic-bezier(0.22,1.4,0.36,1) forwards;
+        transition: bottom 220ms ease;
+      }
+      .bm-achievement.out { animation: bmAchievementOut 400ms ease forwards; }
+      @keyframes bmAchievementIn {
+        0%   { opacity: 0; transform: translateX(360px) scale(0.9); }
+        100% { opacity: 1; transform: translateX(0)     scale(1);   }
+      }
+      @keyframes bmAchievementOut {
+        0%   { opacity: 1; transform: translateX(0); }
+        100% { opacity: 0; transform: translateX(360px); }
+      }
+      .bm-achievement-emoji { font-size: 36px; line-height: 1; }
+      .bm-achievement-text  { display: flex; flex-direction: column; }
+      .bm-achievement-title { font-family: 'Fredoka One', cursive; font-size: 16px; }
+      .bm-achievement-sub   { font-size: 11px; opacity: 0.85; margin-top: 1px; }
+
+      /* ── v53.3 polish: tournament summary stats on champion card ── */
+      .bm-tour-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px; margin: 14px auto;
+        max-width: 380px;
+      }
+      .bm-tour-stat {
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: 12px;
+        padding: 8px 6px;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        text-align: center;
+      }
+      .bm-tour-stat-val {
+        font-family: 'Fredoka One', cursive;
+        font-size: clamp(20px, 4.5vw, 28px);
+        color: #FCD34D;
+        line-height: 1.1;
+      }
+      .bm-tour-stat-lbl {
+        font-size: 11px; opacity: 0.8;
+        margin-top: 2px;
+        color: rgba(255,255,255,0.85);
+      }
 
       /* ── FIXED 18/62/20 GRID — owner spec refined for safe-area cutoff ──
          Owner: "Kasih margin lagi area bawah agar nggak terpotong" + "masih
@@ -4227,6 +4428,12 @@
     let pickingPlayer = 0;  // who's currently picking
     let bracket = null;
     let currentMatch = 0;
+    // v53.3 polish: tournament-level stats for the post-final summary card.
+    let tourStats = {
+      startedAt: Date.now(),
+      matchesPlayed: 0,
+      achievementsFired: {} // dedup across matches
+    };
 
     function header () {
       return `
@@ -4572,6 +4779,8 @@
           // v53.2 polish #2: persist bracket state after every match so a kid
           // abandoning mid-tournament can pick it back up next session.
           try { saveBracket(); } catch (e) {}
+          // v53.3 polish: tournament stats accumulator (totals shown on champion card).
+          tourStats.matchesPlayed++;
           renderBracket();
         },
         onCancel: () => {
@@ -4600,6 +4809,15 @@
           </div>
         `;
       }).join('') : '';
+      // v53.3 polish: tournament summary stats — duration, matches, defeated count.
+      const elapsedMin = Math.max(1, Math.round((Date.now() - tourStats.startedAt) / 60000));
+      const statsHtml = `
+        <div class="bm-tour-stats">
+          <div class="bm-tour-stat"><span class="bm-tour-stat-val">${tourStats.matchesPlayed}</span><span class="bm-tour-stat-lbl">⚔️ Pertandingan</span></div>
+          <div class="bm-tour-stat"><span class="bm-tour-stat-val">${defeated.length}</span><span class="bm-tour-stat-lbl">😵 Lawan Dikalahkan</span></div>
+          <div class="bm-tour-stat"><span class="bm-tour-stat-val">${elapsedMin}m</span><span class="bm-tour-stat-lbl">⏱️ Durasi</span></div>
+        </div>
+      `;
       const card = document.createElement('div');
       card.className = 'bm-champion';
       card.innerHTML = `
@@ -4608,6 +4826,7 @@
           <div class="bm-champion-title">Juara Tournament!</div>
           <div class="bm-champion-name">${escapeHtml(champP.name)}</div>
           ${teamGrid ? `<div class="bm-champion-team-label">Tim Juara</div><div class="bm-champion-team-grid">${teamGrid}</div>` : ''}
+          ${statsHtml}
           ${defeated.length ? `<div class="bm-champion-defeated">Mengalahkan: ${defeated.map(escapeHtml).join(', ')}</div>` : ''}
           <div class="bm-champion-actions">
             <button class="bm-champion-btn" id="bm-tour-again">Main Lagi (pemain sama)</button>
@@ -4616,7 +4835,11 @@
         </div>
       `;
       document.body.appendChild(card);
-      spawnConfetti(60);
+      // v53.3 polish: champion confetti palette keyed to the winning team's
+      // active Pokemon type. Reads the first slot if no current active.
+      const _champFirst = (champP.team && champP.team[0]) || null;
+      const _champColor = (_champFirst && TYPE_COLOR[_champFirst.type]) || '#FCD34D';
+      spawnConfetti(60, null, _champColor);
       card.querySelector('#bm-tour-again').addEventListener('click', () => {
         try { card.remove(); } catch (e) {}
         bracket = buildBracket(players);
