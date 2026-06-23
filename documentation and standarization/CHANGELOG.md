@@ -1,5 +1,64 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-23 — PvP/Tournament + G13C Adventure overhaul (v52 → v53.5)
+
+Six bundled ships landing 12+ owner concerns across PvP/Tournament + G13C Adventure. See `LESSONS-LEARNED.md` L78–L88 and `POKEMON_BALANCE_STANDARD.md` for the canonical damage formula.
+
+### v52 — Arena Awakens (commit `ec41770`)
+- **C1 Per-gym arena BG**: `REGION_BG` map drives `--bm-arena-bg` CSS variable; `buildTeamFromPackage` + `buildTeamFromRegion` stamp `_region` on every team member. Tournament rotates BG per match. 9 G13C gym art assets reused.
+- **C2 P2 HP card 180° rotation**: pure CSS — `.bm-arena-opp .bm-info-card { transform: rotate(180deg); }` + bench-dot counter-rotation. Face-to-face two-player legibility.
+- **C5+C7 BGM**: ported `bmBgmPlay()` from G13C with PvP-scoped volume **0.245** (= G13C's 0.35 × 0.7). Wired in `startPvP` / `startTournament`. `_noBgm` marker on per-match PvP roots keeps music continuous across Tournament matches.
+- **C6 Question diversification**: `QUESTION_BANK` with 5 non-math categories (fruits, animals, colors, opposites, body parts), 80/20 sampler via `pickQuestion()`.
+- **Polish #6 Mute toggle**: 🔊/🔇 button top-right, `localStorage['bm-mute']` persistence.
+
+### v53.0 — Balance Foundation (commit `04cfc18`)
+- **C4 Speed-stat turn order**: `SPEED_BY_SLUG` map (~120 canonical species). `decideTurnOrder()` with anti-streak tiebreak fires at match start + after every switch. ⚡ pill on each HP card + match-start initiative banner.
+- **Polish #2 Type-effectiveness splash banner**: BIG center-arena overlay ("AMAT MEMATIKAN!" / "TIDAK EFEKTIF…" / "TIDAK MEMPAN!") on 2×/0.5×/0× hits.
+- **Polish #14 Haptics**: `navigator.vibrate` 30ms hit, 2-burst super-eff, 3-burst crit, 120ms KO, 5-burst match-win.
+
+### v53.1 — Atmosphere (commit `f9b2cfd`)
+- **VS Card intro**: full-screen split-screen P1 vs P2 + team grid + region badge + 3-2-1-FIGHT countdown, tap to skip, auto-dismiss 2.8s.
+- **Weather per region**: 4 ambient particle layers (rain on water gyms, embers on volcano, leaves on grassy regions, sparkle on psychic/gym2). Couples with v52 BG swap.
+- **Win-pose + sparkle burst**: 1.3s sprite bounce + 12-particle sparkle on final KO.
+- **SFX expansion**: `sfxAttackByType` (14 type whooshes), `sfxCrowdCheer`, `sfxLowHPStart/Stop`.
+- **VFX expansion**: `spawnTypeTint` 280ms type-coloured screen wash on super-effective.
+
+### v53.2 — Quality of Life (commit `386ddd5`)
+- **Pause / Snack-break**: ⏸ button next to mute → full-screen "ISTIRAHAT" overlay. Freezes question timer + BGM. Resume button big and central.
+- **Name persistence**: pre-fill PvP `askForNames()` + Tournament `renderNames()` from `localStorage[dunia-pvp-names | dunia-tour-names]`, write back on submit.
+- **Tournament save & resume**: `saveBracket()` on every match completion, `loadSave()` + `renderResumePrompt()` on boot. Auto-clear on `showChampion`; defensive skip already-complete saves.
+
+### v53.3 — Bonus Polish (commit `e1beaaa`)
+- **Confetti by winner type**: `spawnConfetti(count, originEl, paletteOverride)` — `finishMatch` + `showChampion` pass winner's `TYPE_COLOR`.
+- **Mid-match win predictor**: pill on top of arena from turn 3 onwards, two-tone bar driven by `predictWin(state)` (HP ratio × bench-alive).
+- **Achievements toast**: 5 triggers — 🩸 Pukulan Pertama, 🌪️ Sweep, 🔥 Comeback, 💎 Sempurna, ⚡ Combo Listrik. Stack bottom-right.
+- **Tournament summary stats**: pertandingan / lawan dikalahkan / durasi tiles on the champion card.
+
+### v53.4 — Turn-display fix + canonical Atk/Def + Alola/Paldea (commit `9aaf091`)
+- **Bug fix (turn-display)**: `revealInitiative` now calls `renderRoot()` immediately after `state.turn = decideTurnOrder(...)` so the displayed active zone matches who actually attacks. Fixed "banner says P1 / question appears at P2" mismatch.
+- **Bug fix (move-spam guard)**: `state._moveLock` + DOM `disabled` on every `.bm-move` on first click. Lock resets at every action-phase transition. `.bm-move[disabled]` CSS dims + grayscales the row.
+- **Balance — canonical Pokemon damage scaling**: new `STAT_BY_SLUG` map (~120 species, Gen 1-9 + mega forms, `[attack, defense]` tuples). `adaptPkmFromG13C` + `buildRandomPokemon` stamp `attack` + `defense`. `calcDamage` applies `statRatio = clamp(0.6, 1.6, atk.attack / def.defense)`.
+- **Balance — time-mult cap**: 1.6 → 1.4. Slope re-tuned 0.057/s to keep floor at 7s+.
+- **Balance — Speed-gap modifier**: +10% damage when Δspd ≥ 30, -5% when ≤ -30.
+- **Region expansion**: 10 Alola (Ilima, Hala, Lana, Kiawe, Mallow, Olivia, Sophocles, Acerola, Nanu, Prof. Kukui) + 8 Paldea (Katy, Brassius, Iono, Kofu, Larry, Ryme, Tulip, Grusha) added to G13C TRAINERS. TRAINER_GROUPS gets 🌴 Alola + 🌵 Paldea between Galar and Rivals. Pokemon HD sprites all already present; trainer portraits fall back to remote Pokémon Showdown CDN.
+
+### v53.5 — Adventure canonical balance + move-spam guard (commit `5668c62`)
+- **G13C Adventure balance** (`g13c-pixi.html`): `calcDmg(moveType, atkPoke, defPoke)` now wraps `base × eff × stab` through `BattleModes.stats.shapeDamage(dmg, atkPoke.slug, defPoke.slug)`. Glass-cannons hit harder than tanks; tanks absorb more.
+- **Shared stat helpers exported**: `global.BattleModes.stats = { speedFromSlug, attackFromSlug, defenseFromSlug, shapeDamage }`. Single source of truth — Adventure consumes battle-modes.js stat maps without duplication.
+- **Adventure move-spam guard**: `battle._moveLock` at `useMove(moveIdx)` entry + DOM disabled on every `.move-btn`. Reset at `showActionMenu()`. Mirrors v53.4 PvP fix.
+
+### Files touched across all 6 ships
+- `games/data/battle-modes.js` — main engine for PvP/Tournament
+- `games/g13c-pixi.html` — Adventure engine + region expansion data
+- `sw.js` — cache version
+- `index.html` + `games/g13c-pixi.html` — `?v=` query bumps
+- `games/data/pvp-deep-probe.mjs` — URL stamp
+
+### Lessons added
+L78–L88 (see `LESSONS-LEARNED.md`)
+
+---
+
 ## 2026-05-03 — Polish: G19/G20/G22 Sprite Fallback Hardening
 
 ### Fixed

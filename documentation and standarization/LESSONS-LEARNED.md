@@ -707,3 +707,67 @@ Deleting a function definition (SPRITE_LOCAL) without grepping for ALL call site
 - **Root cause**: `scaleX(-1)` mirrors the coordinate system, so positive degrees rotate the opposite visual direction.
 - **Fix**: Negate the tilt value when scaleX(-1) is applied: `scaleX(-1) rotate(${-tilt}deg)`.
 - **Lesson**: Always negate rotation angles when applying CSS horizontal mirror.
+
+---
+
+## 2026-06-23 — PvP/Tournament + G13C Adventure overhaul (v52 → v53.5, 6 commits)
+
+### L78 — State write before async render = stale DOM (battle-modes.js v53.4)
+- **Symptom**: Owner saw initiative banner say "Pikachu (P2) lebih cepat — duluan!" but the bottom-zone (P1) action menu remained active. User taps bottom → click handler reads the new `state.turn=1` → question pops up at top instead. "Aneh".
+- **Root cause**: `advancePickStep` called `renderRoot()` synchronously (with default `turn:0`) **before** triggering `beginBattleSequence()`. The VS card overlay masked the underlying stale arena; once it dismissed, `revealInitiative` flipped `state.turn` to 1 but never re-rendered. Click handlers read the new turn but the visible UI still had P1 active.
+- **Fix**: Insert `try { renderRoot(); } catch (e) {}` immediately after `state.turn = decideTurnOrder(p1, p2, state)` in `revealInitiative`. Synchronous re-paint aligns DOM with state before any user click.
+- **Lesson**: Any state mutation that affects which DOM zone is "active" MUST be followed by a render call in the same tick. If render fires before the mutation and the mutation is async (setTimeout, await, callback), the displayed state is stale and click handlers behave inconsistently. Rule: state writes that drive UI dispatch must either render in the same tick OR be queued until the next render slot.
+
+### L79 — Move-pick spam = canonical anti-cheat hole (battle-modes.js + g13c-pixi.html v53.4–v53.5)
+- **Symptom**: After a correct math answer the `.bm-move` row appears. Rapid taps on the same move (or impatient kid spam) fire `executeMove` 2-3× back-to-back → 2-3× damage on a single answer. Owner: "bisa curang bisa 2-3 tapi keluarkan jurus 2-3x".
+- **Root cause**: The click handler had no guard. The question-pick `.bm-choice` already used a disable-after-click pattern (`b.setAttribute('disabled','')`) but moves were never wired to mirror it. Adventure had the same hole at `useMove(moveIdx)`.
+- **Fix**: Belt-and-suspenders — `state._moveLock` flag (truth-source) + DOM `setAttribute('disabled','')` on every sibling (visual + browser-level guard) on first click. Reset at every `state.phase = 'action'` transition (4 sites in PvP, `showActionMenu` in Adventure). CSS `.bm-move[disabled] { opacity: 0.55; pointer-events: none; filter: grayscale(0.4); }`.
+- **Lesson**: Every action button that triggers an irreversible game-state change needs a per-turn lock. Browsers can fire `click` faster than the engine can transition phases; the disable-after-click pattern must be applied uniformly across choice + move + switch + any future action UI. When porting an engine fix from one game to another (PvP → Adventure), audit the same UI surface in the target.
+
+### L80 — Canonical Pokemon balance needs Atk/Def stat ratio, not just Speed (battle-modes.js + g13c-pixi.html v53.4–v53.5)
+- **Symptom**: Owner: "mekanismenya masih kurang balance" and later "yang mode pokemon, itu imbalance sekali". After shipping Speed turn order, equal-team simulations were 50/50, but the FEEL was that Charizard hit Snorlax the same as Caterpie did. Glass-cannon vs tank distinction was missing.
+- **Root cause**: `calcDamage(atk, move, def, timeMult)` only multiplied `move.pwr × stab × type × timeMult`. No per-species stat differentiation. Adventure's `calcDmg` was even simpler — flat `base 30-39 × eff × stab`.
+- **Fix**: Add canonical Pokemon `STAT_BY_SLUG` map (~120 species, Gen 1-9 + mega forms, keyed `[attack, defense]` tuples). Stamp `attack` + `defense` on every Pokemon during `adaptPkmFromG13C` + `buildRandomPokemon`. In `calcDamage`, apply `statRatio = clamp(0.6, 1.6, atk.attack / def.defense)` as a multiplier. Expose `window.BattleModes.stats.shapeDamage(baseDmg, atkSlug, defSlug)` so G13C Adventure can apply the same canonical math without duplicating the maps.
+- **Lesson**: Pokemon-style RPG balance has a canonical formula and "skipping" the Atk/Def ratio for simplicity makes every Pokemon feel interchangeable — defeating the point of having ~120 different Pokemon. Always include the canonical Atk/Def ratio (clamped to prevent unwinnable matchups) when you have per-species stat data. Single source of truth: expose stat helpers from one engine to others, never duplicate the maps.
+
+### L81 — Per-package data stamp avoids opts threading (battle-modes.js v52)
+- **Symptom**: Want to switch arena BG per the chosen team's region. Naive approach threads `opts.region` through `startPvP` → `state` → `renderArena` → `applyArenaBg`. Tournament adds another layer of threading.
+- **Fix**: Stamp `_region` on every team member inside `buildTeamFromPackage` + `buildTeamFromRegion` (the two builders). `regionFromTeam(team)` just reads `team[0]._region`. Same pattern for `_pkgId`. Engine code reads the team it already has; no threading.
+- **Lesson**: When a piece of metadata follows a value through many code paths, attach it to the value at construction time. Threading per-call is a code smell that only gets worse as the call graph grows.
+
+### L82 — Two engines, one balance shaper via global export (v53.5)
+- **Symptom**: PvP/Tournament (battle-modes.js) and G13C Adventure (g13c-pixi.html) both need the same canonical Atk/Def + Speed-gap balance. Duplicating the ~120-entry stat maps in both files would be 200+ lines of redundant data.
+- **Fix**: Expand `global.BattleModes` export with `stats: { speedFromSlug, attackFromSlug, defenseFromSlug, shapeDamage }`. Adventure's `calcDmg` calls `BattleModes.stats.shapeDamage(dmg, atkPoke.slug, defPoke.slug)` after the base × eff × stab chain. Try/catch falls back to the legacy formula if battle-modes.js failed to load.
+- **Lesson**: When two scripts in the same page need the same data + helpers, expose them from the side that loads first via a `window.X.helpers` namespace. The consumer guards the call with feature-detection so it degrades gracefully. Never duplicate data maps between engines that ship together.
+
+### L83 — Tournament save/resume must reject already-complete saves (battle-modes.js v53.2)
+- **Symptom**: After completing a tournament + clicking "Selesai", next boot still offered "Lanjutkan tournament tersimpan?" — but loading it dumped the user straight into the champion screen (or worse, an inconsistent state).
+- **Root cause**: `loadSave()` only validated structural shape (`v: 1`, `players` array, `bracket` exists), not progress completeness. `showChampion` cleared the save but if the user closed the tab during the champion-screen viewing, the save lingered.
+- **Fix**: `loadSave()` defensively checks `if (flat.length && flat.every(m => m.winner !== null)) return null` so a save where every match already has a winner is treated as gone. Champion screen still clears explicitly as the primary path.
+- **Lesson**: Persisted state needs structural + semantic validation at load time. "Looks valid" ≠ "is usable". Add a completeness check on every restore path.
+
+### L84 — Pre-fill from localStorage at mount, write back on submit (battle-modes.js v53.2)
+- **Symptom**: Owner wanted P1/P2 names to persist across sessions without a settings page.
+- **Fix**: Universal pattern — in `askForNames()` + `renderNames()`, read `localStorage[key]` JSON.parse → pre-fill input `value`. In the submit handler, `JSON.stringify(names) → localStorage[key]`. Two keys, one per mode: `dunia-pvp-names` + `dunia-tour-names`.
+- **Lesson**: For ANY input field that benefits from cross-session persistence (names, settings, last-used team), use the pre-fill-at-mount + write-on-submit pattern. No middleware, no schema migration headaches. Wrap reads in try/catch so localStorage failures degrade silently.
+
+### L85 — BGM volume scales per context, not globally (battle-modes.js v52)
+- **Symptom**: Owner: "backsound saat pvp dan tournament jangan keras pakai 70% volume dari suara gym pokemon."
+- **Fix**: G13C plays at `volume: 0.35`. PvP/Tournament wrapper `bmBgmPlay()` sets `_bmBgmEl.volume = 0.245` (= 0.35 × 0.7). G13C's own BGM is untouched.
+- **Lesson**: When BGM is shared across multiple game modes with different intensity profiles (Adventure = focused solo play, PvP = two-player social), each mode should scale the same source by its own multiplier. Don't change the source file's volume; wrap it.
+
+### L86 — Two-pronged trainer-region audit before claiming "missing" (g13c-pixi.html v53.4)
+- **Symptom**: Owner: "kok region galar, paldea, orange tidak ada ya". Audit revealed Galar HAS 8 trainers (Milo, Nessa, Kabu, Bea, Allister, Gordie, Raihan, Leon). Owner had missed them because they sit between Kalos and Anime groups.
+- **Fix**: Before scoping a region-add ship, grep the TRAINERS array AND check the UI render order. Confirmed: Alola + Paldea + Hisui + Orange Islands ARE missing.
+- **Lesson**: When owner says "X is missing", do a code-level audit before agreeing. Apparent absence might just be UI ordering / scroll-position. Counter-evidence saves time.
+
+### L87 — Match data stamped on Pokemon survives ...spread clones (battle-modes.js v52)
+- **Symptom**: Tournament clones teams via `team.map(p => ({...p, hp: p.hpMax}))` for fresh-HP-each-match. Need `_region` to survive the clone.
+- **Fix**: `_region` is just a string field on each Pokemon object → object-spread copies it natively. No extra plumbing.
+- **Lesson**: When stamping metadata that needs to follow a value through clone/restore cycles, use shallow data fields (strings, numbers, plain arrays) — object-spread copies them automatically. Avoid getter properties, prototypes, or class instances unless you actually need them.
+
+### L88 — CSS variable on dynamically-created element: set AFTER innerHTML (battle-modes.js v52)
+- **Symptom**: `--bm-arena-bg` CSS variable set in `<style>` block defaulted correctly, but per-team-region override never showed up.
+- **Root cause**: Tried to set `.bm-arena.style.setProperty('--bm-arena-bg', ...)` BEFORE `root.innerHTML = ...` rebuilt the arena DOM. The `setProperty` call targeted an element that was about to be replaced.
+- **Fix**: Move the `applyArenaBg(root, ...)` call to AFTER `root.innerHTML = ...` + `wireActiveZone()`. Now it targets the freshly-rendered `.bm-arena`.
+- **Lesson**: Inline-style writes to dynamically-rendered elements must happen AFTER the element is mounted in the DOM. If you're replacing innerHTML, all inline-style state on the old element is gone — reapply after the replacement.
