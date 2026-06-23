@@ -489,8 +489,8 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
 <script src="data/move-id-translations.js?v=20260505k"></script>
 <script src="data/sfx-engine.js?v=20260621f"></script>
 <script src="data/weather-fx.js?v=20260621f"></script>
-<script src="data/poke-packages.js?v=53.4-20260624a"></script>
-<script src="data/battle-modes.js?v=53.4-20260624a"></script>
+<script src="data/poke-packages.js?v=53.5-20260624b"></script>
+<script src="data/battle-modes.js?v=53.5-20260624b"></script>
 <script src="data/poke-type-chart.js?v=20260506z"></script>
 <script>
   // Licensed Pokemon SFX + battle weather — lazy init, silent failure.
@@ -1444,7 +1444,19 @@ function calcDmg(moveType, atkPoke, defPoke){
   const stab = (typeof window.calcStab === 'function')
     ? window.calcStab(moveType, atkPoke && atkPoke.type)
     : (moveType && atkPoke && String(moveType).toLowerCase() === String(atkPoke.type||'').toLowerCase() ? 1.25 : 1);
-  return Math.max(1, Math.round(base * eff * stab));
+  let dmg = Math.max(1, Math.round(base * eff * stab));
+  // v53.5 balance: apply canonical Pokemon Atk/Def stat ratio + Speed-gap
+  // modifier via the shared shaper exposed from battle-modes.js. Owner:
+  // "mode pokemon, itu imbalance sekali" — without per-species stats every
+  // Pokemon hit equally hard regardless of choice. shapeDamage clamps the
+  // ratio so no matchup becomes invincible.
+  try {
+    if (window.BattleModes && BattleModes.stats && typeof BattleModes.stats.shapeDamage === 'function'
+        && atkPoke && defPoke && atkPoke.slug && defPoke.slug) {
+      dmg = BattleModes.stats.shapeDamage(dmg, atkPoke.slug, defPoke.slug);
+    }
+  } catch (e) {}
+  return dmg;
 }
 
 function flashColor(color){
@@ -2056,6 +2068,9 @@ function updateHpUI(){
 
 // ─── ACTION MENU ─────────────────────────────────────────────────────────────
 function showActionMenu(){
+  // v53.5: every fresh action menu releases the move-spam lock so the
+  // next turn's moves are tappable again.
+  if (battle) battle._moveLock = false;
   if(!battle||battle.ended) return;
   showBattleUI('action');
   setMsg('Apa yang akan kamu lakukan?');
@@ -2094,6 +2109,17 @@ document.getElementById('msg-box').onclick = ()=>{ if(waitingForTap) advanceMsg(
 // ─── USE MOVE → MATH QUIZ ────────────────────────────────────────────────────
 function useMove(moveIdx){
   if(!battle||battle.ended) return;
+  // v53.5 anti-spam (mirrors PvP v53.4 fix): rapid taps on .move-btn used
+  // to queue multiple math quizzes + multiple executeMove fires before the
+  // first quiz opened. Lock guards executeMove from firing 2-3× per turn.
+  if (battle._moveLock) return;
+  battle._moveLock = true;
+  // Visually freeze every move button so the locked state is unambiguous.
+  document.querySelectorAll('#move-btns .move-btn').forEach(b => {
+    b.setAttribute('disabled','');
+    b.style.opacity = '0.55';
+    b.style.pointerEvents = 'none';
+  });
   const pp = battle.playerTeam[battle.playerIdx];
   setMsg(`${pp.name} bersiap menggunakan ${pp.moves[moveIdx].name}!`);
   showMathQuiz(moveIdx);

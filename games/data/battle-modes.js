@@ -5302,9 +5302,31 @@
   }
 
   // ── Export ─────────────────────────────────────────────────────────
+  // v53.5: expose canonical Pokemon stat lookups + calcDamage helper so
+  // G13C Adventure (separate engine in g13c-pixi.html) can apply the same
+  // balance refinements without duplicating the ~120-entry stat maps.
   global.BattleModes = {
     show: show,
     startPvP: startPvP,
-    startTournament: startTournament
+    startTournament: startTournament,
+    stats: {
+      speedFromSlug: speedFromSlug,
+      attackFromSlug: attackFromSlug,
+      defenseFromSlug: defenseFromSlug,
+      // Adventure-friendly damage shaper: takes the engine's base damage and
+      // applies Atk/Def stat ratio + Speed-gap modifier. Clamps the stat
+      // ratio to [0.6, 1.6] so no matchup becomes invincible/unwinnable.
+      shapeDamage: function (baseDmg, atkSlug, defSlug) {
+        const a = attackFromSlug(atkSlug);
+        const d = defenseFromSlug(defSlug);
+        const aSpd = speedFromSlug(atkSlug);
+        const dSpd = speedFromSlug(defSlug);
+        const statRatio = Math.max(0.6, Math.min(1.6, a / d));
+        let spdMod = 1.0;
+        if (aSpd >= dSpd + 30) spdMod = 1.10;
+        else if (aSpd <= dSpd - 30) spdMod = 0.95;
+        return Math.max(1, Math.round(baseDmg * statRatio * spdMod));
+      }
+    }
   };
 })(typeof window !== 'undefined' ? window : globalThis);
