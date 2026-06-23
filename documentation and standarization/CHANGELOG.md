@@ -1,5 +1,44 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.8 "G14 Deep Revamp" (Balapan Kereta — characters + TIME_OF_DAY + physics juice)
+
+Fourth v54.x ship. Owner concerns: "tidak ada karakter malivlak, brave, dragutin dan casey JR di pickernya. tambahkan, pastikan sizenya sesuai, proportional. kok selalu gelap harusnya bener2 pintar dan dinamic bisa pagi ke sore... mekanik gamenya aneh... physisc dll. sangat2 kurang."
+
+### C1 — Character trains in picker (PROTECTED)
+4 character trains added to G14's local `TRAIN_CATS` steam_id category (after Casey Jr at line 192) — Casey JR ⭐, Linus Brave ⭐, JZ 711 Dragutin ⭐, Malivlak ⭐. Full metadata: `isCharacter:true`, `spriteUrl` (assets/train/*-body.webp), proportional spriteHeight (88-118px), wheelPositions, smokePos, bodyColor/accColor. Procedural render uses bodyColor; future v54.8.x will detect `isCharacter` and call CharacterTrain.mount sprite render.
+
+### C2 — TIME_OF_DAY dynamic sky system
+Replaced 6 hardcoded THEMES cycle with 6-phase time progression (subuh → pagi → siang → sore → petang → malam). Each phase has skyTop/skyBot color stops + cloudTint + sunY position + stars-visible flag. `g14CurrentTimePhase()` computes phase + lerp from `S.distance / S.finishLine`. `g14CurrentSkyColors()` returns lerped colors. `g14ApplyTimeOfDaySky()` redraws sky gradient every 18 frames (3.3 Hz refresh — smooth, cheap). buildSky() now starts at subuh colors; loop morphs them through the race. Owner: "harusnya bener2 pintar dan dinamic bisa pagi ke sore."
+
+### C3 — Lane-switch carriage sway + anticipation bounce
+Player train rotates ±0.05 rad during lane-switch in direction of motion (sin curve from switchFrame counter). Lateral movement amplitude modulated by `(1 + sin(switchFrame*0.4)*0.18)` for anticipation bounce. Replaces snappy linear `dy * 0.22 * delta`. Sway decays after target lane reached.
+
+### C4 — Dust kickup from wheels
+New `g14SpawnLaneDust()` — 3 gray particles per ~6 frames during lane switch, with gravity-affected fall via requestAnimationFrame. Cheap PIXI.Graphics; auto-cull on alpha=0 or life=0.
+
+### C5 — Frame-rate dt clamp (from v54.0 plan rolled into v54.8)
+`Math.min(ticker.deltaTime, 2.5)` at top of `loop()`. Stutter spikes no longer teleport particles.
+
+### Files touched
+- `games/g14.html` lines 438-510 (TIME_PHASES + time-phase helpers), 580-630 (buildSky uses subuh colors + g14ApplyTimeOfDaySky redraw fn), 192-220 (4 character trains in picker), 1664-1685 (carriage sway in player tick), 1899-1916 (dt clamp + sky redraw every 18f), g14SpawnLaneDust helper.
+- `sw.js` — `CACHE_VERSION: 'v54.7-20260624i' → 'v54.8-20260624j'`
+
+### Lessons learned
+See `LESSONS-LEARNED.md` L99–L100 (TIME_OF_DAY lerp pattern, dust-particle RAF pool).
+
+### NOT in v54.8 (planned for v54.8.x)
+- Character sprite render (currently characters appear in picker but use procedural drawTrainCard2d; v54.8.1 will detect `isCharacter` and call `CharacterTrain.mount` for real sprite art)
+- Sun + moon body sprites (TIME_PHASES has sunY but render not yet wired)
+- Cloud tint by time (TIME_PHASES has cloudTint but tickClouds doesn't apply it)
+- Wheel rotation animation (planned for v54.10 procedural-train-render upgrade)
+- AI rival "decision visible" thought bubble (v54.8.2)
+- Math quiz 5s countdown timer
+- Parallax depth-of-field on boost
+
+Cache bump v54.7-20260624i → v54.8-20260624j.
+
+---
+
 ## 2026-06-24 — v54.7 "G17 Rope Swing Pikachu" (FULL REVAMP — Jembatan Goyang)
 
 Third v54.x ship. Owner concern: "konsep game jembatan goyang, parah gameplaynya. revamp buat game yang jauh2 menarik konsepnya dan keren." Owner asked me to pick the most interesting concept → **Rope Swing Pikachu** (Spider-Man pendulum + Indiana Jones flavour) approved.

@@ -189,6 +189,34 @@ const TRAIN_CATS = [
       {key:'d1601',  name:'D 16 01',  sub:'Jawa 1932',       emoji:'🚂', bodyColor:'#1c1917', accColor:'#4ade80', kmh:58,  baseSpeed:1.95, boostMult:1.53, boostDur:1600, desc:'Lokomotif angkutan barang era Depresi Besar.'},
       {key:'e2202',  name:'E 22 02',  sub:'Aceh 1930',       emoji:'🚂', bodyColor:'#172554', accColor:'#60a5fa', kmh:36,  baseSpeed:1.58, boostMult:1.44, boostDur:1380, desc:'Penguasa jalur Aceh–Medan.'},
       {key:'f1001',  name:'F 10 01',  sub:'Kalimantan 1940', emoji:'🚂', bodyColor:'#14532d', accColor:'#86efac', kmh:33,  baseSpeed:1.53, boostMult:1.45, boostDur:1400, desc:'Angkutan kayu hutan Borneo.'},
+      // v54.8 (concern 10): inject 4 character trains in picker — owner mandate
+      // "tambahkan, pastikan sizenya sesuai, proportional." Casey Jr / Linus Brave /
+      // JZ 711 Dragutin / Malivlak. PROTECTED — never remove.
+      {key:'caseyjr_character', name:'Casey JR ⭐', sub:'0-4-0 Circus', emoji:'🚂',
+       isCharacter:true, spriteUrl:'../assets/train/caseyjr-body.webp', spriteHeight:90,
+       wheelLayout:'0-4-0', wheelPositions:[[-40,-10,8],[-14,-10,8],[13,-10,8],[40,-10,8]],
+       smokePos:[-40,-130], bottomPaddingOffset:8,
+       bodyColor:'#1e2a4a', accColor:'#c0392b', kmh:40, baseSpeed:1.65, boostMult:1.50, boostDur:1500,
+       desc:'Lokomotif sirkus Casey JR! Si kecil yang berani.'},
+      {key:'linus_brave', name:'Linus Brave ⭐', sub:'2-4-0 Sumatera', emoji:'🚂',
+       isCharacter:true, spriteUrl:'../assets/train/linus-body.webp', spriteHeight:88,
+       wheelLayout:'2-4-0', wheelPositions:[[-66,-8,8],[-38,-12,12],[-14,-12,12],[10,-12,12],[34,-12,12]],
+       smokePos:[-42,-132], bottomPaddingOffset:8,
+       bodyColor:'#1a3a5c', accColor:'#d4aa58', kmh:42, baseSpeed:1.70, boostMult:1.52, boostDur:1520,
+       desc:'Linus Brave — Lokomotif Sumatera yang gagah.'},
+      {key:'jz711_dragutin', name:'JZ 711 Dragutin ⭐', sub:'Tram Yugoslav', emoji:'🚆',
+       isCharacter:true, spriteUrl:'../assets/train/jz711-body.webp', spriteHeight:72,
+       wheelLayout:'articulated-tram', wheelPositions:[[-125,-4,7],[-108,-4,7],[106,-4,7],[123,-4,7]],
+       smokePos:null, bottomPaddingOffset:12,
+       bodyColor:'#0d7377', accColor:'#14b8a6', kmh:60, baseSpeed:1.95, boostMult:1.55, boostDur:1600,
+       desc:'JZ 711 Dragutin — Tram listrik artikulasi Yugoslavia!'},
+      {key:'jz62_malivlak', name:'Malivlak ⭐', sub:'JZ 62 Steam + 3 Cars', emoji:'🚂',
+       isCharacter:true, spriteUrl:'../assets/train/malivlak-body.webp', spriteHeight:118,
+       wheelLayout:'passenger-train',
+       wheelPositions:[[-138,-5,7],[-112,-5,7],[-86,-5,7],[-63,-5,7],[-37,-5,7],[-14,-5,7],[23,-4,5],[37,-4,5],[63,-5,9],[101,-5,9]],
+       smokePos:[108,-195], bottomPaddingOffset:0,
+       bodyColor:'#4a2040', accColor:'#c0392b', kmh:48, baseSpeed:1.75, boostMult:1.50, boostDur:1550,
+       desc:'Malivlak — Kereta uap dengan 3 gerbong, klasik Yugoslavia!'},
       {key:'caseyjr', name:'Casey Jr',  sub:'B 2-4-0',        emoji:'🚂', bodyColor:'#1e2a4a', accColor:'#c0392b', kmh:40,  baseSpeed:1.65, boostMult:1.50, boostDur:1500, desc:'Lokomotif sirkus legendaris! Si kecil yang berani.'},
       {key:'c1205',  name:'C 12 05',  sub:'Jawa 1911',       emoji:'🚂', bodyColor:'#1c1917', accColor:'#ef4444', kmh:35,  baseSpeed:1.58, boostMult:1.46, boostDur:1420, desc:'Lokomotif tank ringan jalur cabang Jawa.'},
       {key:'b2502',  name:'B 25 02',  sub:'Ambarawa 1902',   emoji:'🚂', bodyColor:'#292524', accColor:'#f97316', kmh:28,  baseSpeed:1.46, boostMult:1.44, boostDur:1350, desc:'Saudara B 25 07, rak gigi Ambarawa!'},
@@ -407,6 +435,10 @@ const OBS_INTERVAL_MS = Math.max(cfg.difficulty === 'easy' ? 1300 : 900, (2800 -
 const AI_COUNT = 2
 
 // ── LEVEL THEMES (6 backgrounds, cycle every 5 levels) ──
+// (v54.8: THEMES kept for biome variation; TIME_PHASES below overlays the
+// time-of-day color shift on whatever biome is active. Owner: "harusnya
+// bener2 pintar dan dinamic bisa pagi ke sore, atau pagi saja, atau siang
+// atau sore, atau petang, atau malam atau subuh atau transisi.")
 const THEMES = [
   { name:'forest',  skyTop:0x071a0d, skyBot:0x0d3318, mountain:0x0d2510, tree:'🌲', ground1:0x0d2008, ground2:0x071005, rail:0x6b7280, stars:true },
   { name:'desert',  skyTop:0xf97316, skyBot:0xfbbf24, mountain:0x92400e, tree:'🌵', ground1:0x92400e, ground2:0x78350f, rail:0xd97706, stars:false },
@@ -416,6 +448,45 @@ const THEMES = [
   { name:'volcano', skyTop:0x1c0000, skyBot:0x4a0000, mountain:0x7f1d1d, tree:'🔥', ground1:0x451a03, ground2:0x2d0800, rail:0xf97316, stars:false },
 ]
 const TH = THEMES[((cfg.level || 1) - 1) % THEMES.length]
+
+// v54.8 (concern 10): TIME_OF_DAY dynamic sky system. 6 time phases lerp via
+// race progress (S.distance / S.finishLine). Each phase has skyTop/skyBot
+// color stops + cloud tint + sun position fraction (0..1, 0=below horizon,
+// 1=zenith) + flag for stars-visible. The active TH biome blends with the
+// time phase color so a "forest" race can still cycle pagi→siang→sore→malam.
+const TIME_PHASES = [
+  { name:'subuh',  skyTop:0x1a2850, skyBot:0x4a5f7f, cloudTint:0x6e7faa, sunY:-0.20, sunColor:0xff6644, stars:true  },
+  { name:'pagi',   skyTop:0xfdb462, skyBot:0x87ceeb, cloudTint:0xfff7e8, sunY: 0.20, sunColor:0xffdd00, stars:false },
+  { name:'siang',  skyTop:0x87ceeb, skyBot:0xe0f6ff, cloudTint:0xffffff, sunY: 0.55, sunColor:0xffff00, stars:false },
+  { name:'sore',   skyTop:0xff8c42, skyBot:0xffb366, cloudTint:0xffd0a0, sunY: 0.78, sunColor:0xffaa00, stars:false },
+  { name:'petang', skyTop:0x6b3b6b, skyBot:0xff6b35, cloudTint:0xa07050, sunY: 0.90, sunColor:0xff5500, stars:false },
+  { name:'malam',  skyTop:0x0a0a2e, skyBot:0x1a1a5e, cloudTint:0x3a3a6e, sunY:-0.40, sunColor:0xeeee88, stars:true  },
+]
+function g14CurrentTimePhase(){
+  // race progress 0..1 mapped to subuh..malam, with smooth blend inside each.
+  if (!S || !S.finishLine) return { phase: TIME_PHASES[2], next: TIME_PHASES[3], lerp: 0 }
+  const t = Math.max(0, Math.min(1, S.distance / S.finishLine))
+  const span = t * TIME_PHASES.length
+  const idx = Math.min(TIME_PHASES.length - 1, Math.floor(span))
+  const nextIdx = Math.min(TIME_PHASES.length - 1, idx + 1)
+  return { phase: TIME_PHASES[idx], next: TIME_PHASES[nextIdx], lerp: span - idx }
+}
+function _lerpHex(a, b, t){
+  const ar=(a>>16)&255, ag=(a>>8)&255, ab=a&255
+  const br=(b>>16)&255, bg=(b>>8)&255, bb=b&255
+  const r=Math.round(ar + (br-ar)*t), g=Math.round(ag + (bg-ag)*t), bl=Math.round(ab + (bb-ab)*t)
+  return (r<<16) | (g<<8) | bl
+}
+function g14CurrentSkyColors(){
+  const { phase, next, lerp } = g14CurrentTimePhase()
+  return {
+    skyTop:    _lerpHex(phase.skyTop, next.skyTop, lerp),
+    skyBot:    _lerpHex(phase.skyBot, next.skyBot, lerp),
+    cloudTint: _lerpHex(phase.cloudTint, next.cloudTint, lerp),
+    stars:     phase.stars || next.stars,
+    name:      phase.name,
+  }
+}
 
 // ═══════════════════════════════════════════════════════════
 //  STATE
@@ -503,17 +574,71 @@ async function initPixi() {
   } catch(_){}
 }
 
+// v54.8 (concern 10): redraw sky each animation frame with current time-of-day
+// phase colors. Re-renders the 10-step gradient by clearing existing children
+// and rebuilding with lerped top/bot. Cheap (~10 PIXI.Graphics per call); only
+// runs once per 18 frames so it's effectively 3.3 Hz. Stars layer is preserved.
+function g14ApplyTimeOfDaySky(){
+  if (!L.sky || typeof g14CurrentSkyColors !== 'function') return
+  const colors = g14CurrentSkyColors()
+  // Remove existing gradient strips but keep stars (which are appended after).
+  const W = app.screen.width, H = app.screen.height
+  const steps = 10
+  // Replace first 10 children (the strips); keep anything beyond (stars).
+  for (let i = 0; i < steps && i < L.sky.children.length; i++){
+    const t = i / steps
+    const g = L.sky.children[i]
+    g.clear()
+    g.rect(0, 0, W, H / steps + 2).fill(lerpColor(colors.skyTop, colors.skyBot, t))
+  }
+  L._skyTopC = colors.skyTop
+  L._skyBotC = colors.skyBot
+}
+
+// v54.8 (concern 10 — physics juice): dust particle kickup from wheels during
+// lane switch. 2-3 small gray particles fall behind the train sprite with
+// gravity. Cheap PIXI.Graphics; auto-cull when faded.
+function g14SpawnLaneDust(){
+  if (!L.fx || !L.player) return
+  for (let i = 0; i < 3; i++){
+    const d = new PIXI.Graphics()
+    d.circle(0, 0, 2 + Math.random() * 2).fill({ color: 0x9a8676, alpha: 0.72 })
+    d.x = L.player.x + (Math.random() - 0.5) * 24
+    d.y = L.player.y + 18 + Math.random() * 4
+    L.fx.addChild(d)
+    const vx = -2 - Math.random() * 2
+    const vy = -1.5 - Math.random() * 1.5
+    let life = 22
+    const tick = () => {
+      d.x += vx
+      d.y += vy + (22 - life) * 0.12   // gravity-affected fall
+      d.alpha -= 0.04
+      life--
+      if (life <= 0 || d.alpha <= 0){ try { L.fx.removeChild(d) } catch(_){} return }
+      requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
+  }
+}
+
 // ── Sky ───────────────────────────────────────────────────
 function buildSky() {
   const c = new PIXI.Container(); L.sky = c; stage.addChild(c)
   const W = app.screen.width, H = app.screen.height
 
-  // Gradient sky
+  // Gradient sky — v54.8: start at the first TIME_PHASE color (subuh) instead
+  // of the THEMES preset. g14ApplyTimeOfDaySky() then morphs it through the
+  // race progress every 18 frames.
+  const phase = (typeof TIME_PHASES !== 'undefined') ? TIME_PHASES[0] : null
+  const topC = phase ? phase.skyTop : TH.skyTop
+  const botC = phase ? phase.skyBot : TH.skyBot
+  L._skyTopC = topC
+  L._skyBotC = botC
   const steps = 10
   for (let i = 0; i < steps; i++) {
     const t = i / steps
     const g = new PIXI.Graphics()
-    g.rect(0, 0, W, H / steps + 2).fill(lerpColor(TH.skyTop, TH.skyBot, t))
+    g.rect(0, 0, W, H / steps + 2).fill(lerpColor(topC, botC, t))
     g.y = H * i / steps
     c.addChild(g)
   }
@@ -1564,7 +1689,19 @@ function tickPlayer(delta) {
   if (!L.player) return
   const targetY = laneYs[S.targetLane] + (L.player._wheelOffset || 0)
   const dy = targetY - L.player.y
-  L.player.y += dy * 0.22 * delta
+  // v54.8 (concern 10 — physics juice): carriage sway during lane switch.
+  // Anticipation bounce curve on lateral movement, rotational sway on body.
+  if (Math.abs(dy) > 4) {
+    S.switchFrame = (S.switchFrame | 0) + 1
+    L.player.y += dy * 0.22 * delta * (1 + Math.sin(S.switchFrame * 0.4) * 0.18)
+    L.player.rotation = Math.sin(S.switchFrame * 0.18) * 0.05 * Math.sign(dy)
+    // Dust kickup from wheels every ~6 frames during switch.
+    if (S.switchFrame % 6 === 0 && L.fx) g14SpawnLaneDust()
+  } else {
+    L.player.y += dy * 0.22 * delta
+    if (L.player.rotation) L.player.rotation *= 0.85
+    S.switchFrame = 0
+  }
 
   // Bob
   L.player.y += Math.sin(S.frame * 0.12) * 0.4
@@ -1827,7 +1964,7 @@ function tickSpeedLines(delta) {
 // ═══════════════════════════════════════════════════════════
 function loop(ticker) {
   if (!S.running || S.paused) return
-  const delta = ticker.deltaTime
+  const delta = Math.min(ticker.deltaTime, 2.5)   // v54.0 (concern 6) dt clamp
   const now = performance.now()
 
   // Spawn obstacle
@@ -1835,6 +1972,10 @@ function loop(ticker) {
     spawnObstacle()
     lastObsTime = now
   }
+
+  // v54.8 (concern 10): TIME_OF_DAY sky redraw — every 18 frames so the gradient
+  // smoothly cycles pagi→siang→sore→petang→malam across the 800m race.
+  if (S.frame % 18 === 0) g14ApplyTimeOfDaySky()
 
   tickClouds(delta)
   tickBirds(delta)

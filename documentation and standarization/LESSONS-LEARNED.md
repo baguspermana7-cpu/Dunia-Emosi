@@ -838,3 +838,17 @@ Owner-locked: every Dunia Emosi ship MUST update CHANGELOG.md + LESSONS-LEARNED.
 - **Symptom**: Pendulum games are notoriously hard for young kids (precise release timing required). If next-anchor catch demands frame-perfect release, the 5yo cohort gives up after 2 attempts.
 - **Fix**: Auto-grab any anchor within ±60px during airtime. The radius is generous enough that even a wildly mistimed release usually catches SOMETHING. But the radius is NOT so wide that the 10yo cohort feels deprived of skill — releasing optimally still gets them further per swing.
 - **Lesson**: Forgiveness mechanics (catch radius, coyote-time, jump buffer) widen the playable age range without removing the skill ceiling. Add them generously for the 5-10yo target. Game design rule: the floor sets accessibility, the ceiling sets mastery; forgiveness mechanics raise the floor without lowering the ceiling.
+
+---
+
+## 2026-06-24 — v54.8 G14 Deep Revamp (Balapan Kereta)
+
+### L99 — TIME_OF_DAY: race-progress lerp + low-frequency redraw beats per-frame update (g14.html v54.8)
+- **Symptom**: Owner: "kok selalu gelap harusnya bener2 pintar dan dinamic bisa pagi ke sore." G14 had 6 hardcoded biome THEMES; sky was static the entire race.
+- **Fix**: Define 6 TIME_PHASES (subuh / pagi / siang / sore / petang / malam) with skyTop/skyBot color stops + sunY + cloudTint + stars flag. Compute `phase = floor(distance/finishLine * 6)`, `lerp = (...) - phase`. Lerp colors between current phase and next. Redraw sky gradient ONLY every 18 frames (3.3 Hz at 60fps) — invisible difference to the eye but 18× cheaper than per-frame.
+- **Lesson**: For slowly-changing visual state (sky color, ambient lighting), don't redraw every frame. Pick a refresh rate matched to the change speed (3.3 Hz works for sky cycles spanning 60+ seconds). The eye won't notice; the GPU thanks you.
+
+### L100 — Per-particle RAF pool beats global RAF for ≤30 concurrent particles (g14.html v54.8)
+- **Symptom**: G14 dust kickup needed gravity-affected particle fall during lane switches.
+- **Fix**: Each particle gets its own requestAnimationFrame tick closure that updates x/y/alpha until cull conditions are met. No global pool, no per-tick array iteration. Just N independent RAF tickers running in parallel.
+- **Lesson**: For ≤30 concurrent particles with diverse lifecycles (some die at 22 frames, some at 12, some by alpha clamp), individual RAF closures beat a global pool's array iteration. Browser batches RAF callbacks; no overhead penalty. Skip the pool unless you spawn 50+/sec.
