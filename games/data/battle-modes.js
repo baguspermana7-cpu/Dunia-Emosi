@@ -871,6 +871,19 @@
     } else {
       arena.style.removeProperty('--bm-arena-bg');
     }
+    // v53.1: pair the BG swap with a matching weather layer (rain on water gyms,
+    // embers on volcano, leaves on forest, sparkle on psychic). regionFromTeam
+    // is defined alongside REGION_BG; weather catalog is in WEATHER_BY_REGION.
+    try {
+      const r1 = regionFromTeam(team1);
+      const r2 = regionFromTeam(team2);
+      const seed = (matchSeed | 0);
+      let useRegion;
+      if (r1 && r2 && r1 === r2) useRegion = r1;
+      else if (r1 && r2) useRegion = (seed % 2 === 0) ? r1 : r2;
+      else useRegion = r1 || r2 || null;
+      spawnWeather(arena, useRegion);
+    } catch (e) {}
   }
 
   // ── v52 PvP/Tournament BGM (concerns 5 + 7) ──
@@ -1050,6 +1063,176 @@
       if (!navigator || typeof navigator.vibrate !== 'function') return;
       navigator.vibrate(pattern);
     } catch (e) {}
+  }
+
+  // ── v53.1 SFX expansion ─────────────────────────────────────────────────
+  // White-noise burst via filtered buffer-source — used for water splash + crowd.
+  function _noiseBurst (duration, type, vol) {
+    try {
+      const ctx = _ctx(); if (!ctx) return;
+      const sr = ctx.sampleRate;
+      const len = Math.max(1, Math.floor(sr * duration));
+      const buf = ctx.createBuffer(1, len, sr);
+      const data = buf.getChannelData(0);
+      // Pink-ish noise (1/f) for crowd; white noise for water/splash.
+      let b0=0, b1=0, b2=0;
+      for (let i = 0; i < len; i++) {
+        const white = Math.random() * 2 - 1;
+        if (type === 'pink') {
+          b0 = 0.997 * b0 + 0.029591 * white;
+          b1 = 0.985 * b1 + 0.032534 * white;
+          b2 = 0.950 * b2 + 0.048056 * white;
+          data[i] = (b0 + b1 + b2 + white * 0.18) * 0.18;
+        } else {
+          data[i] = white;
+        }
+      }
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      const filt = ctx.createBiquadFilter();
+      filt.type = 'bandpass'; filt.frequency.value = (type === 'pink') ? 600 : 1400; filt.Q.value = 0.7;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(vol || 0.10, ctx.currentTime + 0.02);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
+      src.connect(filt); filt.connect(g); g.connect(ctx.destination);
+      src.start();
+      src.stop(ctx.currentTime + duration + 0.02);
+    } catch (e) {}
+  }
+  // Type-specific attack whoosh — fires alongside the visual lunge. Replaces
+  // the dead 404'd type-attack SFX path references the v52 plan flagged.
+  function sfxAttackByType (type) {
+    if (bmBgmIsMuted()) return;
+    switch (type) {
+      case 'fire':
+        _tone(220, 0.06, 'sawtooth', 0.12);
+        setTimeout(() => _tone(110, 0.10, 'sawtooth', 0.10), 40);
+        break;
+      case 'water':
+        _noiseBurst(0.18, 'white', 0.09);
+        break;
+      case 'electric':
+        _tone(1300, 0.05, 'square', 0.10);
+        setTimeout(() => _tone(680,  0.06, 'square', 0.10), 30);
+        setTimeout(() => _tone(1100, 0.05, 'square', 0.10), 70);
+        break;
+      case 'grass':
+        _tone(440, 0.10, 'triangle', 0.10);
+        setTimeout(() => _tone(330, 0.08, 'triangle', 0.09), 60);
+        break;
+      case 'ice':
+        _tone(1500, 0.06, 'sine', 0.10);
+        setTimeout(() => _tone(900,  0.10, 'sine', 0.09), 50);
+        break;
+      case 'psychic':
+        _tone(720, 0.18, 'sine', 0.10);
+        break;
+      case 'fighting':
+      case 'rock':
+      case 'ground':
+        _tone(110, 0.10, 'square', 0.13);
+        break;
+      case 'poison':
+        _tone(600, 0.08, 'sine', 0.09);
+        setTimeout(() => _tone(420, 0.10, 'sine', 0.08), 60);
+        break;
+      case 'flying':
+      case 'bug':
+        _tone(500, 0.05, 'triangle', 0.10);
+        setTimeout(() => _tone(380, 0.06, 'triangle', 0.09), 30);
+        break;
+      case 'ghost':
+      case 'dark':
+        _tone(180, 0.12, 'sawtooth', 0.10);
+        break;
+      case 'dragon':
+        _tone(140, 0.10, 'sawtooth', 0.12);
+        setTimeout(() => _tone(95, 0.16, 'sawtooth', 0.11), 70);
+        break;
+      case 'steel':
+        _tone(2200, 0.04, 'square', 0.09);
+        setTimeout(() => _tone(1800, 0.04, 'square', 0.08), 30);
+        break;
+      case 'fairy':
+        _tone(1200, 0.08, 'sine', 0.09);
+        setTimeout(() => _tone(1700, 0.10, 'sine', 0.09), 50);
+        break;
+      default: // normal
+        _tone(200, 0.08, 'sine', 0.10);
+    }
+  }
+  // Pink-noise crowd-cheer swell — fires on super-effective + KO.
+  function sfxCrowdCheer () {
+    if (bmBgmIsMuted()) return;
+    _noiseBurst(0.9, 'pink', 0.07);
+  }
+  // Looping low-HP heartbeat — fires when active Pokemon HP < 25%.
+  // Self-stops via _bmHeartTimer reset; idempotent start/stop.
+  let _bmHeartTimer = 0;
+  function sfxLowHPStart () {
+    if (_bmHeartTimer) return;
+    const tick = () => {
+      if (!_bmHeartTimer) return;
+      if (!bmBgmIsMuted()) {
+        _tone(80, 0.08, 'square', 0.10);
+        setTimeout(() => _tone(60, 0.10, 'square', 0.09), 100);
+      }
+    };
+    _bmHeartTimer = setInterval(tick, 750);
+    tick();
+  }
+  function sfxLowHPStop () {
+    if (!_bmHeartTimer) return;
+    clearInterval(_bmHeartTimer);
+    _bmHeartTimer = 0;
+  }
+
+  // ── v53.1 weather per region (couples with v52 REGION_BG) ─────────────
+  // Each gym region gets an ambient particle layer that matches its mood.
+  // Particles are absolute-positioned divs inside the arena, animated by
+  // CSS keyframes (see injectPvPRealCSS). Honours prefers-reduced-motion
+  // (the existing v52 @media rule disables animations on .bm-pvp-real *).
+  const WEATHER_BY_REGION = {
+    kanto:  'leaf',     // grassy plains → leaves
+    johto:  'sparkle',  // Pokemon-Gym vibe → sparkle
+    hoenn:  'rain',     // water → rain
+    sinnoh: 'sparkle',  // psychic gym2 → sparkle
+    unova:  'ember',    // volcano → embers
+    kalos:  'sparkle',  // elegant region → sparkle
+    alola:  'rain',     // tropical island → rain
+    galar:  'rain',     // industrial → drizzle
+    paldea: 'ember'     // desert grass → embers
+  };
+  function spawnWeather (arenaEl, regionId) {
+    if (!arenaEl) return;
+    // Remove any existing layer (re-render or new match).
+    const prev = arenaEl.querySelector('.bm-weather-layer');
+    if (prev) prev.remove();
+    const kind = regionId && WEATHER_BY_REGION[regionId];
+    if (!kind) return;
+    const layer = document.createElement('div');
+    layer.className = 'bm-weather-layer bm-weather-' + kind;
+    // 14 particles is enough to look populated without being noisy.
+    const count = 14;
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('span');
+      p.className = 'bm-weather-particle';
+      // Stagger left% across 0–100, randomise delay + duration so it doesn't
+      // look like a synchronised march.
+      const left = (i * 100 / count) + ((((i * 37) % 100) / 100) - 0.5) * 8;
+      const delay = (i * 0.18) + (((i * 53) % 100) / 100) * 0.5;
+      const dur = 2.6 + (((i * 71) % 100) / 100) * 1.8;
+      p.style.left = left + '%';
+      p.style.animationDelay = '-' + delay + 's';
+      p.style.animationDuration = dur + 's';
+      if (kind === 'leaf')    p.textContent = (i % 2 ? '🍃' : '🍂');
+      else if (kind === 'ember')   p.textContent = '🔥';
+      else if (kind === 'sparkle') p.textContent = '✨';
+      // rain particles use ::before content from CSS — leave empty
+      layer.appendChild(p);
+    }
+    arenaEl.appendChild(layer);
   }
 
   // Tier badge map — G13C ships base / final / mega tiers. Mirror visually.
@@ -1463,10 +1646,87 @@
         setTimeout(() => { try { banner.remove(); } catch (e) {} }, 1900);
       }, 80);
     }
-    // Tournament path: opts.teams supplied → preStep already 'battle'. Decide
-    // initiative immediately, otherwise PvP picker path's advancePickStep does it.
+
+    // v53.1: VS Card intro — full-screen split-screen "P1 vs P2" with both
+    // team grids, region pill, and 3-2-1 "FIGHT!" countdown. Auto-dismisses
+    // in ~2800ms; tap anywhere to skip. Calls onDone when removed so the
+    // initiative banner can follow.
+    function showVsCard (onDone) {
+      if (state._vsCardShown) { onDone && onDone(); return; }
+      state._vsCardShown = true;
+      const p1Active = activePoke(0), p2Active = activePoke(1);
+      const p1Team = state.teams[0] || [];
+      const p2Team = state.teams[1] || [];
+      const p1Name = (opts.players && opts.players[0]) ? opts.players[0].name : 'Pemain 1';
+      const p2Name = (opts.players && opts.players[1]) ? opts.players[1].name : 'Pemain 2';
+      const r1 = regionFromTeam(p1Team), r2 = regionFromTeam(p2Team);
+      const r1Meta = (r1 && REGION_META[r1]) || null;
+      const r2Meta = (r2 && REGION_META[r2]) || null;
+      function teamRowHtml (team, activeIdx) {
+        return team.map((p, i) => {
+          const isAct = i === activeIdx;
+          return `<div class="bm-vs-mini ${isAct ? 'is-active' : ''}" title="${escapeHtml(p.name)}">
+            <img alt="" src="${spritePath(p.id, spriteSlug(p.slug))}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'⭐',className:'bm-vs-mini-fb'}))">
+          </div>`;
+        }).join('');
+      }
+      const card = document.createElement('div');
+      card.className = 'bm-vs-card';
+      card.innerHTML = `
+        <div class="bm-vs-half bm-vs-p1">
+          <div class="bm-vs-tag"><span class="bm-pvp-badge p1">P1</span> ${escapeHtml(p1Name)}</div>
+          <div class="bm-vs-poke-name">${escapeHtml(p1Active.name)}</div>
+          ${r1Meta ? `<div class="bm-vs-region">${r1Meta.emoji} ${r1Meta.name}</div>` : ''}
+          <div class="bm-vs-mini-row">${teamRowHtml(p1Team, state.activeIdx[0])}</div>
+        </div>
+        <div class="bm-vs-center">
+          <div class="bm-vs-vs">VS</div>
+          <div class="bm-vs-countdown" id="bm-vs-cd">3</div>
+        </div>
+        <div class="bm-vs-half bm-vs-p2">
+          <div class="bm-vs-tag"><span class="bm-pvp-badge p2">P2</span> ${escapeHtml(p2Name)}</div>
+          <div class="bm-vs-poke-name">${escapeHtml(p2Active.name)}</div>
+          ${r2Meta ? `<div class="bm-vs-region">${r2Meta.emoji} ${r2Meta.name}</div>` : ''}
+          <div class="bm-vs-mini-row">${teamRowHtml(p2Team, state.activeIdx[1])}</div>
+        </div>
+        <button class="bm-vs-skip" id="bm-vs-skip">Lewati ▸</button>
+      `;
+      document.body.appendChild(card);
+      const cd = card.querySelector('#bm-vs-cd');
+      const seq = ['3', '2', '1', 'FIGHT!'];
+      let i = 1;
+      const cdTimer = setInterval(() => {
+        if (!cd) return;
+        cd.textContent = seq[i];
+        cd.classList.remove('bm-vs-pulse');
+        // re-trigger animation
+        void cd.offsetWidth;
+        cd.classList.add('bm-vs-pulse');
+        i++;
+        if (i >= seq.length) clearInterval(cdTimer);
+      }, 600);
+      const dismiss = () => {
+        clearInterval(cdTimer);
+        card.classList.add('out');
+        setTimeout(() => { try { card.remove(); } catch (e) {}; onDone && onDone(); }, 350);
+      };
+      const skipBtn = card.querySelector('#bm-vs-skip');
+      if (skipBtn) skipBtn.addEventListener('click', dismiss);
+      // Auto-dismiss at 2800ms (3 + 2 + 1 + FIGHT! ~600ms each ≈ 2400 + 400 hold)
+      setTimeout(dismiss, 2800);
+    }
+
+    // Battle-entry sequence: VS card → initiative banner. Both routes converge.
+    function beginBattleSequence () {
+      showVsCard(() => {
+        try { revealInitiative(); } catch (e) {}
+      });
+    }
+
+    // Tournament path: opts.teams supplied → preStep already 'battle'. Begin
+    // the sequence immediately; PvP picker path's advancePickStep does the same.
     if (state.preStep === 'battle') {
-      try { revealInitiative(); } catch (e) {}
+      try { beginBattleSequence(); } catch (e) {}
     }
     let _timerRaf = 0;       // RAF handle for tickTimer
     let _timerExpired = false;
@@ -1689,9 +1949,9 @@
         renderRoot();
       } else {
         state.preStep = 'battle';
-        // v53.0 (concern 4): both teams are now locked-in → decide Speed initiative.
-        try { revealInitiative(); } catch (e) {}
         renderRoot();
+        // v53.0 + v53.1: both teams locked-in → VS card intro then Speed initiative.
+        try { beginBattleSequence(); } catch (e) {}
       }
     }
 
@@ -2053,6 +2313,9 @@
         sfxKO();
         // v53.0 polish #14: haptic on hit landed (mobile only; honours mute).
         bmHaptic(30);
+        // v53.1: type-specific attack whoosh layered on top of the existing
+        // sfxKO thud. Replaces the dead 404'd type-attack SFX paths.
+        try { sfxAttackByType(move.type); } catch (e) {}
         // Update HP bars + texts in BOTH halves (both views show both HPs)
         updateHpDisplays();
         setTimeout(() => {
@@ -2063,8 +2326,11 @@
             bmHaptic(120);
             playFaintAnimation(defIdx, () => {
               if (aliveCount === 0) {
-                // All fainted — that player loses
-                finishMatch(state.turn);
+                // All fainted — that player loses.
+                // v53.1: winner-pose sprite bounce + sparkle burst before the
+                // "Menang!" banner so the victory FEELS earned.
+                try { playWinPose(state.turn); } catch (e) {}
+                setTimeout(() => finishMatch(state.turn), 1400);
                 return;
               }
               // A1: force defender to pick next Pokemon. After they pick, they
@@ -2156,6 +2422,10 @@
           applyViewportShake();
           // v53.0 polish #14: 2-burst haptic for super-effective.
           bmHaptic([40, 30, 40]);
+          // v53.1: type-tinted screen wash (fire=red, water=blue, …) +
+          // pink-noise crowd cheer so a big hit FEELS like a stadium moment.
+          try { spawnTypeTint(move.type); } catch (e) {}
+          try { sfxCrowdCheer(); } catch (e) {}
         }
         // CRITICAL! pop on super+STAB combo (super-effective AND same-type attack)
         const isStab = move.type === activePoke(attackerIdx).type;
@@ -2444,6 +2714,25 @@
       }
     }
 
+    // v53.1: type-tinted full-screen wash on super-effective hits.
+    // 200ms opacity pulse — fire = red flash, water = blue, electric = yellow.
+    function spawnTypeTint (type) {
+      const TINT = {
+        fire:'#ff4500', water:'#1e90ff', electric:'#ffd700',
+        ice:'#aeeeff', grass:'#22c55e', psychic:'#d946ef',
+        ghost:'#7c3aed', dark:'#475569', dragon:'#9333ea',
+        fairy:'#ec4899', poison:'#a21caf', flying:'#7dd3fc',
+        rock:'#a16207', ground:'#a16207', bug:'#84cc16',
+        steel:'#94a3b8', fighting:'#dc2626', normal:'#ffffff'
+      };
+      const color = TINT[type] || '#ffffff';
+      const el = document.createElement('div');
+      el.className = 'bm-type-tint';
+      el.style.background = color;
+      document.body.appendChild(el);
+      setTimeout(() => { try { el.remove(); } catch (e) {} }, 280);
+    }
+
     // v53.0 polish #2: BIG type-effectiveness splash banner — center arena,
     // large readable text. Fires only on ≠1× multipliers (skips neutral hits
     // to avoid overlay-fatigue). Complements the small rise-text above.
@@ -2572,8 +2861,48 @@
       if (p2Fill) { p2Fill.style.width = (p2.hp / p2.hpMax * 100) + '%'; p2Fill.className = 'bm-hp-fill ' + hpColorClass(p2.hp, p2.hpMax); }
       if (p2Txt)  { p2Txt.textContent = p2.hp + '/' + p2.hpMax; }
       // Sprite-level low-HP pulse — kid sees the danger immediately
-      if (p1Sprite) p1Sprite.classList.toggle('bm-sprite-danger', p1.hp / p1.hpMax < 0.25 && p1.hp > 0);
-      if (p2Sprite) p2Sprite.classList.toggle('bm-sprite-danger', p2.hp / p2.hpMax < 0.25 && p2.hp > 0);
+      const p1Low = p1.hp / p1.hpMax < 0.25 && p1.hp > 0;
+      const p2Low = p2.hp / p2.hpMax < 0.25 && p2.hp > 0;
+      if (p1Sprite) p1Sprite.classList.toggle('bm-sprite-danger', p1Low);
+      if (p2Sprite) p2Sprite.classList.toggle('bm-sprite-danger', p2Low);
+      // v53.1: heartbeat audio loop kicks in for the tense low-HP state.
+      if (p1Low || p2Low) sfxLowHPStart();
+      else                sfxLowHPStop();
+    }
+
+    // v53.1: winner pose — triumphant bounce + sparkle burst on the winning
+    // Pokemon's sprite when the LAST opponent Pokemon faints. Fires before
+    // finishMatch's banner so the visual reward is anchored to the sprite.
+    function playWinPose (winnerIdx) {
+      const arena = root.querySelector('.bm-arena');
+      if (!arena) return;
+      const sel = winnerIdx === 0
+        ? '.bm-arena-self-img, .bm-arena-self-sprite'
+        : '.bm-arena-opp-img, .bm-arena-opp-sprite';
+      const sprite = arena.querySelector(sel);
+      if (!sprite) return;
+      sprite.classList.add('bm-win-pose');
+      // 12 sparkle particles bursting from sprite center.
+      const r = sprite.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      for (let i = 0; i < 12; i++) {
+        const p = document.createElement('span');
+        p.className = 'bm-win-sparkle';
+        p.textContent = (i % 2 === 0) ? '✨' : '⭐';
+        const angle = (i / 12) * Math.PI * 2;
+        const dist = 70 + Math.random() * 40;
+        p.style.left = cx + 'px';
+        p.style.top  = cy + 'px';
+        p.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+        p.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+        p.style.animationDelay = (i * 30) + 'ms';
+        document.body.appendChild(p);
+        setTimeout(() => { try { p.remove(); } catch (e) {} }, 1300 + i * 30);
+      }
+      // Clean up the class after the keyframe finishes so subsequent matches
+      // don't compound the transform.
+      setTimeout(() => { try { sprite.classList.remove('bm-win-pose'); } catch (e) {} }, 1500);
     }
 
     function playFaintAnimation (faintedIdx, done) {
@@ -2746,6 +3075,192 @@
         80%  { transform: translate(-50%, 0) scale(1.0) rotate(0deg);   opacity: 1; }
         100% { transform: translate(-50%, -10px) scale(0.92) rotate(0deg); opacity: 0; }
       }
+
+      /* ── v53.1 polish: type-tint full-screen wash on super-effective ── */
+      .bm-type-tint {
+        position: fixed; inset: 0; z-index: 9180;
+        pointer-events: none; opacity: 0;
+        mix-blend-mode: screen;
+        animation: bmTypeTint 280ms ease-out forwards;
+      }
+      @keyframes bmTypeTint {
+        0%   { opacity: 0; }
+        30%  { opacity: 0.45; }
+        100% { opacity: 0; }
+      }
+
+      /* ── v53.1 polish: winner pose + sparkle burst on final KO ── */
+      .bm-arena-self-img.bm-win-pose,
+      .bm-arena-opp-img.bm-win-pose,
+      .bm-arena-self-sprite.bm-win-pose,
+      .bm-arena-opp-sprite.bm-win-pose {
+        animation: bmWinPose 1300ms cubic-bezier(0.22,1.6,0.36,1) forwards !important;
+        filter: drop-shadow(0 0 18px rgba(255,210,80,0.9)) drop-shadow(0 6px 18px rgba(0,0,0,0.45));
+      }
+      @keyframes bmWinPose {
+        0%   { transform: translateY(0)     scale(1);    }
+        18%  { transform: translateY(-22px) scale(1.10); }
+        32%  { transform: translateY(0)     scale(1.02); }
+        46%  { transform: translateY(-14px) scale(1.06); }
+        60%  { transform: translateY(0)     scale(1.02); }
+        74%  { transform: translateY(-8px)  scale(1.04); }
+        100% { transform: translateY(0)     scale(1);    }
+      }
+      .bm-win-sparkle {
+        position: fixed; z-index: 9360; pointer-events: none;
+        font-size: clamp(18px, 3vw, 26px);
+        line-height: 1; transform: translate(-50%, -50%);
+        animation: bmWinSparkle 1100ms cubic-bezier(0.22,1.4,0.36,1) forwards;
+        filter: drop-shadow(0 0 10px rgba(255,235,140,0.9));
+      }
+      @keyframes bmWinSparkle {
+        0%   { transform: translate(-50%, -50%) scale(0.4);                                            opacity: 0; }
+        25%  { transform: translate(calc(-50% + var(--dx) * 0.5), calc(-50% + var(--dy) * 0.5)) scale(1.2); opacity: 1; }
+        100% { transform: translate(calc(-50% + var(--dx)),       calc(-50% + var(--dy)))       scale(0.6); opacity: 0; }
+      }
+
+      /* ── v53.1 polish: per-region weather (couples with v52 BG swap) ──
+         Particles ride a CSS animation; spawnWeather() inserts 14 .bm-weather-particle
+         spans into a single .bm-weather-layer DIV nested in .bm-arena. */
+      .bm-weather-layer {
+        position: absolute; inset: 0;
+        pointer-events: none; z-index: 1;
+        overflow: hidden;
+      }
+      .bm-weather-particle {
+        position: absolute; top: -20px;
+        font-size: clamp(14px, 2.4vw, 20px);
+        line-height: 1;
+        opacity: 0.78;
+        will-change: transform;
+        animation: bmWeatherFall 4s linear infinite;
+      }
+      .bm-weather-leaf .bm-weather-particle    { animation-name: bmWeatherLeaf; }
+      .bm-weather-rain .bm-weather-particle    { animation-name: bmWeatherRain; opacity: 0; }
+      .bm-weather-rain .bm-weather-particle::before {
+        content: ''; display: block;
+        width: 2px; height: 16px;
+        background: linear-gradient(180deg, rgba(140,200,255,0) 0%, rgba(140,200,255,0.85) 100%);
+        border-radius: 1px;
+      }
+      .bm-weather-rain .bm-weather-particle { opacity: 0.85; }
+      .bm-weather-ember .bm-weather-particle   { animation-name: bmWeatherEmber; opacity: 0.85; }
+      .bm-weather-sparkle .bm-weather-particle { animation-name: bmWeatherSparkle; opacity: 0.9; }
+      @keyframes bmWeatherFall {
+        0%   { transform: translateY(-20px); }
+        100% { transform: translateY(90vh); }
+      }
+      @keyframes bmWeatherLeaf {
+        0%   { transform: translate(0, -20px)    rotate(0deg); }
+        50%  { transform: translate(20px, 30vh)  rotate(180deg); }
+        100% { transform: translate(-10px, 90vh) rotate(360deg); }
+      }
+      @keyframes bmWeatherRain {
+        0%   { transform: translate(0, -20px) skewX(-8deg); }
+        100% { transform: translate(-20px, 90vh) skewX(-8deg); }
+      }
+      @keyframes bmWeatherEmber {
+        0%   { transform: translate(0, 100vh) scale(0.7); opacity: 0; }
+        20%  { opacity: 0.95; }
+        100% { transform: translate(20px, -10vh) scale(1.0); opacity: 0; }
+      }
+      @keyframes bmWeatherSparkle {
+        0%   { transform: translate(0, 20vh) scale(0.4); opacity: 0; }
+        40%  { transform: translate(8px, 40vh) scale(1.0); opacity: 1; }
+        60%  { transform: translate(-6px, 50vh) scale(1.0); opacity: 1; }
+        100% { transform: translate(0, 70vh) scale(0.4); opacity: 0; }
+      }
+
+      /* ── v53.1 polish: VS Card intro overlay ──
+         Full-screen split-screen P1 vs P2 with team grids + countdown.
+         Auto-dismisses in 2.8s; tap "Lewati" to skip. */
+      .bm-vs-card {
+        position: fixed; inset: 0; z-index: 9400;
+        display: grid; grid-template-columns: 1fr auto 1fr;
+        align-items: stretch;
+        background: linear-gradient(135deg, rgba(2,132,199,0.94), rgba(15,23,42,0.94) 40%, rgba(220,38,38,0.94));
+        color: #fff;
+        font-family: 'Inter', system-ui, sans-serif;
+        animation: bmVsCardIn 380ms cubic-bezier(0.22,1,0.36,1) forwards;
+        overflow: hidden;
+      }
+      .bm-vs-card.out { animation: bmVsCardOut 350ms ease forwards; }
+      @keyframes bmVsCardIn {
+        0%   { opacity: 0; transform: scale(0.98); }
+        100% { opacity: 1; transform: scale(1);    }
+      }
+      @keyframes bmVsCardOut {
+        0%   { opacity: 1; transform: scale(1);    }
+        100% { opacity: 0; transform: scale(1.04); }
+      }
+      .bm-vs-half {
+        padding: 32px 18px 24px;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 10px; text-align: center;
+      }
+      .bm-vs-p1 { background: linear-gradient(135deg, rgba(59,130,246,0.18), transparent); }
+      .bm-vs-p2 { background: linear-gradient(225deg, rgba(220,38,38,0.18), transparent); }
+      .bm-vs-tag {
+        font-family: 'Fredoka One', cursive;
+        font-size: clamp(14px, 3vw, 18px);
+        display: flex; align-items: center; gap: 6px;
+      }
+      .bm-vs-poke-name {
+        font-family: 'Fredoka One', cursive;
+        font-size: clamp(20px, 5vw, 32px);
+        text-shadow: 0 4px 14px rgba(0,0,0,0.6);
+      }
+      .bm-vs-region {
+        font-size: clamp(11px, 2vw, 13px);
+        opacity: 0.85;
+        padding: 2px 8px; border-radius: 100px;
+        background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25);
+      }
+      .bm-vs-mini-row {
+        display: flex; gap: 4px; flex-wrap: nowrap; justify-content: center;
+        margin-top: 6px;
+      }
+      .bm-vs-mini {
+        width: clamp(36px, 8vw, 44px); height: clamp(36px, 8vw, 44px);
+        border-radius: 10px;
+        background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.20);
+        display: grid; place-items: center; overflow: hidden;
+      }
+      .bm-vs-mini.is-active { border-color: #FCD34D; box-shadow: 0 0 12px rgba(252,211,77,0.7); }
+      .bm-vs-mini img { width: 100%; height: 100%; object-fit: contain; }
+      .bm-vs-mini-fb { font-size: 20px; }
+      .bm-vs-center {
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 8px; padding: 0 6px;
+      }
+      .bm-vs-vs {
+        font-family: 'Fredoka One', cursive;
+        font-size: clamp(40px, 10vw, 64px);
+        color: #FCD34D;
+        text-shadow: 0 0 18px rgba(252,211,77,0.65), 0 6px 18px rgba(0,0,0,0.55);
+        line-height: 1;
+      }
+      .bm-vs-countdown {
+        font-family: 'Fredoka One', cursive;
+        font-size: clamp(28px, 7vw, 44px);
+        color: #fff;
+        text-shadow: 0 4px 14px rgba(0,0,0,0.6);
+        min-height: 1.2em;
+      }
+      .bm-vs-pulse { animation: bmVsPulse 600ms ease-out; }
+      @keyframes bmVsPulse {
+        0%   { transform: scale(0.4); opacity: 0; }
+        45%  { transform: scale(1.20); opacity: 1; }
+        100% { transform: scale(1.0); opacity: 1; }
+      }
+      .bm-vs-skip {
+        position: absolute; bottom: 18px; right: 18px;
+        padding: 8px 14px; min-height: 38px;
+        background: rgba(0,0,0,0.55); color: #fff;
+        border: 1px solid rgba(255,255,255,0.25); border-radius: 8px;
+        font-size: 13px; cursor: pointer;
+      }
+      .bm-vs-skip:hover { background: rgba(0,0,0,0.75); }
 
       /* ── FIXED 18/62/20 GRID — owner spec refined for safe-area cutoff ──
          Owner: "Kasih margin lagi area bawah agar nggak terpotong" + "masih
