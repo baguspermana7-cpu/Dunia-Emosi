@@ -11,7 +11,7 @@
 import puppeteer from 'puppeteer';
 
 const HOST = process.env.PVP_PROBE_HOST || 'http://localhost:8081';
-const URL  = `${HOST}/Dunia-Emosi/games/g13c-pixi.html?v=53.5-20260624b`;
+const URL  = `${HOST}/Dunia-Emosi/games/g13c-pixi.html?v=53.6-20260624c`;
 
 const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox','--disable-setuid-sandbox']});
 

@@ -855,7 +855,11 @@
     kalos:  'gym_p.webp',
     alola:  'water2_m.webp',
     galar:  'water3_m.webp',
-    paldea: 'water_p.webp'
+    paldea: 'water_p.webp',
+    // v53.6 region expansion — Hisui (Legends Arceus, snowy ancient Sinnoh)
+    // + Orange Islands (anime archipelago, tropical waters).
+    hisui:  'water2_m.webp',
+    orange: 'water_m.webp'
   };
   function regionFromTeam (team) {
     if (!team || !team.length) return null;
@@ -1325,7 +1329,11 @@
     kalos:  'sparkle',  // elegant region → sparkle
     alola:  'rain',     // tropical island → rain
     galar:  'rain',     // industrial → drizzle
-    paldea: 'ember'     // desert grass → embers
+    paldea: 'ember',    // desert grass → embers
+    // v53.6: Hisui = ancient snowy Sinnoh → sparkle (snowfall feel)
+    //        Orange Islands = anime tropical archipelago → rain (sea spray)
+    hisui:  'sparkle',
+    orange: 'rain'
   };
   function spawnWeather (arenaEl, regionId) {
     if (!arenaEl) return;
