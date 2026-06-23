@@ -1054,6 +1054,119 @@
     const s = SPEED_BY_SLUG[slug];
     return (typeof s === 'number') ? s : 70;
   }
+
+  // ── v53.4 balance (concern 3): canonical Pokemon Atk + Def base stats ──
+  // Tuple format: [attack, defense]. Drives the statRatio multiplier in
+  // calcDamage so glass-cannon vs tank matchups feel canonical. Unknown
+  // slug → neutral [70, 70]. ~120 entries cover the same coverage as
+  // SPEED_BY_SLUG (≥95% of POKE_PACKAGES hits + common Pokedex picks).
+  const STAT_BY_SLUG = {
+    // Gen 1 starters + finals (Atk / Def)
+    bulbasaur: [49, 49], ivysaur: [62, 63], venusaur: [82, 83], 'venusaur-mega': [100, 123],
+    charmander: [52, 43], charmeleon: [64, 58], charizard: [84, 78],
+    'charizard-mega-x': [130, 111], 'charizard-mega-y': [104, 78],
+    squirtle: [48, 65], wartortle: [63, 80], blastoise: [83, 100], 'blastoise-mega': [103, 120],
+    // Gen 1 commons + Kanto roster
+    pidgey: [45, 40], pidgeotto: [60, 55], pidgeot: [80, 75],
+    caterpie: [30, 35], metapod: [20, 55], butterfree: [45, 50],
+    weedle: [35, 30], kakuna: [25, 50], beedrill: [90, 40],
+    rattata: [56, 35], raticate: [81, 60], spearow: [60, 30], fearow: [90, 65],
+    pikachu: [55, 40], raichu: [90, 55],
+    sandshrew: [75, 85], sandslash: [100, 110],
+    'nidoran-f': [47, 52], nidorina: [62, 67], nidoqueen: [92, 87],
+    'nidoran-m': [57, 40], nidorino: [72, 57], nidoking: [102, 77],
+    clefairy: [45, 48], clefable: [70, 73], vulpix: [41, 40], ninetales: [76, 75],
+    jigglypuff: [45, 20], wigglytuff: [70, 45], zubat: [45, 35], golbat: [80, 70],
+    oddish: [50, 55], gloom: [65, 70], vileplume: [80, 85],
+    paras: [70, 55], parasect: [95, 80], venonat: [55, 50], venomoth: [65, 60],
+    diglett: [55, 25], dugtrio: [100, 50], meowth: [45, 35], persian: [70, 60],
+    psyduck: [52, 48], golduck: [82, 78], mankey: [80, 35], primeape: [105, 60],
+    growlithe: [70, 45], arcanine: [110, 80], poliwag: [50, 40], poliwhirl: [65, 65], poliwrath: [95, 95],
+    abra: [20, 15], kadabra: [35, 30], alakazam: [50, 45], 'alakazam-mega': [50, 65],
+    machop: [80, 50], machoke: [100, 70], machamp: [130, 80],
+    bellsprout: [75, 35], weepinbell: [90, 50], victreebel: [105, 65],
+    tentacool: [40, 35], tentacruel: [70, 65], geodude: [80, 100], graveler: [95, 115], golem: [120, 130],
+    ponyta: [85, 55], rapidash: [100, 70], slowpoke: [65, 65], slowbro: [75, 110], slowking: [75, 80],
+    magnemite: [35, 70], magneton: [60, 95], 'farfetch-d': [90, 55], 'farfetchd': [90, 55],
+    doduo: [85, 45], dodrio: [110, 70], seel: [45, 55], dewgong: [70, 80],
+    grimer: [80, 50], muk: [105, 75], shellder: [65, 100], cloyster: [95, 180],
+    gastly: [35, 30], haunter: [50, 45], gengar: [65, 60], 'gengar-mega': [65, 80],
+    onix: [45, 160], drowzee: [48, 45], hypno: [73, 70],
+    krabby: [105, 90], kingler: [130, 115], voltorb: [30, 50], electrode: [50, 70],
+    exeggcute: [40, 80], exeggutor: [95, 85], cubone: [50, 95], marowak: [80, 110],
+    hitmonlee: [120, 53], hitmonchan: [105, 79], lickitung: [55, 75],
+    koffing: [65, 95], weezing: [90, 120], rhyhorn: [85, 95], rhydon: [130, 120],
+    chansey: [5, 5], tangela: [55, 115], kangaskhan: [95, 80],
+    horsea: [40, 70], seadra: [65, 95], goldeen: [67, 60], seaking: [92, 65],
+    staryu: [45, 55], starmie: [75, 85], 'mr-mime': [45, 65], scyther: [110, 80],
+    jynx: [50, 35], electabuzz: [83, 57], magmar: [95, 57], pinsir: [125, 100],
+    tauros: [100, 95], magikarp: [10, 55], gyarados: [125, 79],
+    lapras: [85, 80], ditto: [48, 48], eevee: [55, 50],
+    vaporeon: [65, 60], jolteon: [65, 60], flareon: [130, 60],
+    porygon: [60, 70], omanyte: [40, 100], omastar: [60, 125], kabuto: [80, 90], kabutops: [115, 105],
+    aerodactyl: [105, 65], snorlax: [110, 65],
+    articuno: [85, 100], zapdos: [90, 85], moltres: [100, 90], dratini: [64, 45], dragonair: [84, 65], dragonite: [134, 95],
+    mewtwo: [110, 90], mew: [100, 100],
+    // Gen 2 starters + finals
+    chikorita: [49, 65], bayleef: [62, 80], meganium: [82, 100],
+    cyndaquil: [52, 43], quilava: [64, 58], typhlosion: [84, 78],
+    totodile: [65, 64], croconaw: [80, 80], feraligatr: [105, 100],
+    pichu: [40, 15], cleffa: [25, 28], igglybuff: [30, 15],
+    togepi: [20, 65], togetic: [40, 85], mareep: [40, 40], flaaffy: [55, 55], ampharos: [75, 85],
+    espeon: [65, 60], umbreon: [65, 110], murkrow: [85, 42],
+    misdreavus: [60, 60], unown: [72, 48], wobbuffet: [33, 58],
+    girafarig: [80, 65], pineco: [65, 90], forretress: [90, 140],
+    dunsparce: [70, 70], gligar: [75, 105], steelix: [85, 200], snubbull: [80, 50], granbull: [120, 75],
+    qwilfish: [95, 75], scizor: [130, 100], shuckle: [10, 230], heracross: [125, 75],
+    sneasel: [95, 55], teddiursa: [80, 50], ursaring: [130, 75],
+    slugma: [40, 40], magcargo: [50, 120], swinub: [50, 40], piloswine: [100, 80],
+    corsola: [55, 95], remoraid: [65, 35], octillery: [105, 75],
+    delibird: [55, 45], mantine: [40, 70], skarmory: [80, 140], houndour: [60, 30], houndoom: [90, 50],
+    kingdra: [95, 95], phanpy: [60, 60], donphan: [120, 120], porygon2: [80, 90], stantler: [95, 62],
+    smeargle: [20, 35], tyrogue: [35, 35], hitmontop: [95, 95],
+    smoochum: [30, 15], elekid: [63, 37], magby: [75, 37], miltank: [80, 105], blissey: [10, 10],
+    raikou: [85, 75], entei: [115, 85], suicune: [75, 115], larvitar: [64, 50], pupitar: [84, 70], tyranitar: [134, 110],
+    'lugia': [90, 130], 'ho-oh': [130, 90], celebi: [100, 100],
+    // Gen 3-9 starters (popular picks)
+    treecko: [45, 35], grovyle: [65, 45], sceptile: [85, 65],
+    torchic: [60, 40], combusken: [85, 60], blaziken: [120, 70],
+    mudkip: [70, 50], marshtomp: [85, 70], swampert: [110, 90],
+    ralts: [25, 25], kirlia: [35, 35], gardevoir: [65, 65], 'gardevoir-mega': [85, 65],
+    zigzagoon: [30, 41], poochyena: [55, 35],
+    turtwig: [68, 64], grotle: [85, 85], torterra: [109, 105],
+    chimchar: [58, 44], monferno: [78, 52], infernape: [104, 71],
+    piplup: [51, 53], prinplup: [66, 68], empoleon: [86, 88],
+    snivy: [45, 55], servine: [60, 75], serperior: [75, 95],
+    tepig: [63, 45], pignite: [93, 55], emboar: [123, 65],
+    oshawott: [55, 45], dewott: [75, 60], samurott: [100, 85],
+    chespin: [61, 65], quilladin: [78, 95], chesnaught: [107, 122],
+    fennekin: [45, 40], braixen: [59, 58], delphox: [69, 72],
+    froakie: [56, 40], frogadier: [63, 52], greninja: [95, 67],
+    fletchling: [50, 43], talonflame: [81, 71], hawlucha: [92, 75], goomy: [50, 35], goodra: [100, 70], noibat: [30, 35], noivern: [70, 80],
+    rowlet: [55, 55], dartrix: [75, 75], decidueye: [107, 75],
+    litten: [65, 40], torracat: [85, 50], incineroar: [115, 90],
+    popplio: [54, 54], brionne: [69, 69], primarina: [74, 74],
+    grookey: [65, 50], thwackey: [85, 70], rillaboom: [125, 90],
+    scorbunny: [71, 40], raboot: [86, 60], cinderace: [116, 75],
+    sobble: [40, 40], drizzile: [60, 55], inteleon: [85, 65],
+    sprigatito: [61, 54], floragato: [80, 63], meowscarada: [110, 70],
+    fuecoco: [45, 59], crocalor: [55, 78], skeledirge: [75, 100],
+    quaxly: [65, 45], quaxwell: [85, 65], quaquaval: [120, 80],
+    terapagos: [105, 110], hatenna: [30, 45],
+    // Mega + legend extras
+    'lucario-mega': [145, 88], lucario: [110, 70],
+    'mewtwo-mega-x': [190, 100], 'mewtwo-mega-y': [150, 70]
+  };
+  function attackFromSlug (slug) {
+    if (!slug) return 70;
+    const s = STAT_BY_SLUG[slug];
+    return (s && typeof s[0] === 'number') ? s[0] : 70;
+  }
+  function defenseFromSlug (slug) {
+    if (!slug) return 70;
+    const s = STAT_BY_SLUG[slug];
+    return (s && typeof s[1] === 'number') ? s[1] : 70;
+  }
   // Anti-streak random tiebreak for equal-speed turns. Eliminates residual
   // P1-first bias when two same-speed Pokemon face off.
   function decideTurnOrder (p1, p2, state) {
@@ -1351,6 +1464,9 @@
       // v53.0 (concern 4): stamp canonical Pokemon base Speed so decideTurnOrder
       // resolves who acts first. Unknown slug → 70 (neutral).
       speed: speedFromSlug(entry.slug),
+      // v53.4 (concern 3): canonical Atk + Def for calcDamage's statRatio.
+      attack:  attackFromSlug(entry.slug),
+      defense: defenseFromSlug(entry.slug),
       moves: [
         { name:'Tackle',       type:'normal', pwr:18 },
         { name:'Quick Attack', type:'normal', pwr:22 },
@@ -1409,6 +1525,11 @@
       hpMax: maxHp,
       // v53.0 (concern 4): canonical Pokemon base Speed for turn-order initiative.
       speed: speedFromSlug(pkm.slug),
+      // v53.4 (concern 3): canonical Atk + Def base stats. Drives statRatio
+      // inside calcDamage so a glass-cannon (Charizard 84/78) hits harder
+      // than a tank-type signature, and a Snorlax (110/65) absorbs less DEF.
+      attack:  attackFromSlug(pkm.slug),
+      defense: defenseFromSlug(pkm.slug),
       moves
     };
   }
@@ -1509,10 +1630,13 @@
   // from 1.3 to 1.6). Linear decay: 0ms → 1.60, 1000ms → 1.54, 5000ms → 1.30,
   // 10000ms → 1.0. Auto-fail at 10000ms.
   const ANSWER_TIMEOUT_MS = 10000;
+  // v53.4 balance (concern 3A): tighten cap from 1.6× → 1.4× so a single
+  // lucky-fast answer doesn't snowball the match. Slope tuned so 0s = 1.4×
+  // and 7s+ floors at 1.0×.
   function timeMultFromElapsed (elapsedMs) {
     if (elapsedMs == null || elapsedMs < 0) return 1.0;
-    const raw = 1.6 - (elapsedMs / 1000) * 0.06;
-    return Math.max(1.0, Math.min(1.6, raw));
+    const raw = 1.4 - (elapsedMs / 1000) * 0.057;
+    return Math.max(1.0, Math.min(1.4, raw));
   }
   function typeMult (moveType, defType) {
     const t = (TYPE_CHART[moveType] || {})[defType];
@@ -1522,7 +1646,24 @@
     const stab = move.type === atk.type ? 1.25 : 1.0;
     const tm   = typeMult(move.type, def.type);
     const tMul = (typeof timeMult === 'number' && timeMult > 0) ? timeMult : 1.0;
-    return Math.max(1, Math.floor(move.pwr * stab * tm * tMul));
+    // v53.4 balance (concern 3 — canonical Pokemon damage scaling):
+    // Real Pokemon games use Atk/Def stat ratio inside the damage formula.
+    // Glass-cannon Pokemon (high Atk, low Def) hit harder but take more.
+    // Tank Pokemon (low Atk, high Def) hit softer but survive. Clamp the
+    // ratio to [0.6, 1.6] so no matchup becomes invincible / unwinnable.
+    const atkStat = (atk && typeof atk.attack === 'number') ? atk.attack : 70;
+    const defStat = (def && typeof def.defense === 'number') ? def.defense : 70;
+    const statRatio = Math.max(0.6, Math.min(1.6, atkStat / defStat));
+    // v53.4 balance (concern 3 — Speed-gap modifier):
+    // Speed matters beyond initiative — faster attacker hits a tick harder,
+    // slower attacker a tick softer. Caps at ±10% so it doesn't swing too
+    // hard; the canonical Atk/Def ratio above is the heavier lever.
+    const aSpd = (atk && typeof atk.speed === 'number') ? atk.speed : 70;
+    const dSpd = (def && typeof def.speed === 'number') ? def.speed : 70;
+    let spdMod = 1.0;
+    if (aSpd >= dSpd + 30) spdMod = 1.10;
+    else if (aSpd <= dSpd - 30) spdMod = 0.95;
+    return Math.max(1, Math.floor(move.pwr * stab * tm * tMul * statRatio * spdMod));
   }
   function effLabel (mult) {
     if (mult >= 1.15) return 'Super Efektif! ✨';   // threshold tuned to 1.2× cap
@@ -1641,6 +1782,13 @@
     function revealInitiative () {
       const p1 = activePoke(0), p2 = activePoke(1);
       state.turn = decideTurnOrder(p1, p2, state);
+      // v53.4 bug fix: re-render so the active q-zone matches the new turn.
+      // Previously the initial renderRoot painted with the default turn=0;
+      // when Speed flipped the turn to 1 the DOM stayed stale until the next
+      // user click, producing "banner says P2 first / bottom (P1) still
+      // appears active". Synchronous renderRoot here aligns DOM with state
+      // before the VS card dismisses and the user can interact.
+      try { renderRoot(); } catch (e) {}
       if (state._initiativeShown) return;
       state._initiativeShown = true;
       const fasterP = state.turn === 0 ? p1 : p2;
@@ -2305,6 +2453,14 @@
       } else if (state.phase === 'moves') {
         activeZone.querySelectorAll('.bm-move').forEach(b => {
           b.addEventListener('click', () => {
+            // v53.4 anti-spam (concern 4): rapid taps on .bm-move used to
+            // fire executeMove 2-3× back-to-back (kid spam-tap = curang).
+            // state._moveLock is the truth-source the engine relies on;
+            // disabling siblings is the visual cue. Lock resets at every
+            // fresh action-phase transition (see executeMove + performSwitch).
+            if (state._moveLock) return;
+            state._moveLock = true;
+            activeZone.querySelectorAll('.bm-move').forEach(x => x.setAttribute('disabled', ''));
             const mi = parseInt(b.getAttribute('data-mi'));
             const mv = activePoke(state.turn).moves[mi];
             executeMove(mv);
@@ -2335,6 +2491,7 @@
         setTimeout(() => {
           root._questions = null;
           state.turn = 1 - state.turn;
+          state._moveLock = false;  // v53.4: release move-spam guard for next turn
           state.phase = 'action';   // next turn starts at action menu
           renderRoot();
         }, 1400);
@@ -2356,6 +2513,7 @@
         // strikes first against the swap-in. A faster replacement can steal
         // initiative back even after losing the previous Pokemon.
         root._questions = null;
+        state._moveLock = false;  // v53.4: forced switch → next turn re-enables moves
         state.phase = 'action';
         state.turn = decideTurnOrder(activePoke(0), activePoke(1), state);
       } else {
@@ -2364,6 +2522,7 @@
         // gets the FOLLOWING strike (handled by the standard 1-state.turn
         // flip + revealInitiative on the new active pair next round).
         root._questions = null;
+        state._moveLock = false;  // v53.4: voluntary switch → opponent's moves re-enable
         state.phase = 'action';
         state.turn = 1 - playerIdx;
         // Re-evaluate Speed on the new pair so the next "round" flips correctly.
@@ -2419,6 +2578,7 @@
               // start their next turn at the action menu with the new Pokemon.
               state.switchForced = defIdx;
               state.turn = defIdx;
+              state._moveLock = false;  // v53.4: defender's switch-then-attack moves re-enable
               state.phase = 'action';
               renderRoot();
             });
@@ -2426,6 +2586,7 @@
           }
           // Turn passes — next player starts at action menu
           root._questions = null;
+          state._moveLock = false;  // v53.4: opponent's moves re-enable next turn
           state.turn = 1 - state.turn;
           state.phase = 'action';
           // v53.3 polish: turn counter drives win-predictor visibility.
@@ -4342,6 +4503,14 @@
       .bm-move:nth-child(3) { background:#FED7AA; --btn-shadow:#D97706; }  /* peach */
       .bm-move:nth-child(4) { background:#FBCFE8; --btn-shadow:#BE185D; }  /* rose  */
       .bm-move:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--btn-shadow); }
+      /* v53.4 anti-spam (concern 2): once a move is locked-in the row dims and
+         every sibling becomes inert until the next action-phase reset. */
+      .bm-move[disabled] {
+        opacity: 0.55;
+        pointer-events: none;
+        cursor: not-allowed;
+        filter: grayscale(0.4);
+      }
       .bm-move-name { font-size: 13px; margin-bottom: 3px; color: #111; }
       .bm-move-meta {
         display: flex; flex-wrap: wrap; gap: 3px;

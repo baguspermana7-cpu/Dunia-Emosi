@@ -489,8 +489,8 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
 <script src="data/move-id-translations.js?v=20260505k"></script>
 <script src="data/sfx-engine.js?v=20260621f"></script>
 <script src="data/weather-fx.js?v=20260621f"></script>
-<script src="data/poke-packages.js?v=53.3-20260623e"></script>
-<script src="data/battle-modes.js?v=53.3-20260623e"></script>
+<script src="data/poke-packages.js?v=53.4-20260624a"></script>
+<script src="data/battle-modes.js?v=53.4-20260624a"></script>
 <script src="data/poke-type-chart.js?v=20260506z"></script>
 <script>
   // Licensed Pokemon SFX + battle weather — lazy init, silent failure.
@@ -1196,6 +1196,46 @@ const TRAINERS = [
   {id:'leon',    name:'Leon',    sprite:'leon',    badge:'👑', gym:'Galar Champion',  bg:'gym_m.webp',    group:'galar',
    team:[{name:'Aegislash',slug:'aegislash',type:'steel',hp:95},{name:'Dragapult',slug:'dragapult',type:'dragon',hp:110},{name:'Haxorus',slug:'haxorus',type:'dragon',hp:115},{name:'Rhyperior',slug:'rhyperior',type:'rock',hp:120},{name:'Seismitoad',slug:'seismitoad',type:'water',hp:100},{name:'Charizard',slug:'charizard',type:'fire',hp:130}]},
 
+  // ── Alola (Gen 7 — Trial Captains + Kahunas + Champion) ──────────────────
+  {id:'ilima',    name:'Ilima',    sprite:'ilima',    badge:'🟣', gym:'Verdant Cavern',       bg:'gym_m.webp',    group:'alola',
+   team:[{name:'Smeargle',slug:'smeargle',type:'normal',hp:80},{name:'Komala',slug:'komala',type:'normal',hp:90},{name:'Yungoos',slug:'yungoos',type:'normal',hp:75},{name:'Gumshoos',slug:'gumshoos',type:'normal',hp:100},{name:'Rattata',slug:'rattata',type:'normal',hp:70},{name:'Raticate',slug:'raticate',type:'normal',hp:95}]},
+  {id:'hala',     name:'Hala',     sprite:'hala',     badge:'👊', gym:'Iki Town Grand Trial', bg:'gym_m.webp',    group:'alola',
+   team:[{name:'Crabrawler',slug:'crabrawler',type:'fighting',hp:85},{name:'Makuhita',slug:'makuhita',type:'fighting',hp:80},{name:'Hariyama',slug:'hariyama',type:'fighting',hp:115},{name:'Mankey',slug:'mankey',type:'fighting',hp:75},{name:'Primeape',slug:'primeape',type:'fighting',hp:100},{name:'Hawlucha',slug:'hawlucha',type:'fighting',hp:95}]},
+  {id:'lana',     name:'Lana',     sprite:'lana',     badge:'💧', gym:'Brooklet Hill',        bg:'water_m.webp',  group:'alola',
+   team:[{name:'Wishiwashi',slug:'wishiwashi',type:'water',hp:80},{name:'Araquanid',slug:'araquanid',type:'water',hp:100},{name:'Lapras',slug:'lapras',type:'water',hp:115},{name:'Vaporeon',slug:'vaporeon',type:'water',hp:105},{name:'Lanturn',slug:'lanturn',type:'water',hp:95},{name:'Bruxish',slug:'bruxish',type:'water',hp:95}]},
+  {id:'kiawe',    name:'Kiawe',    sprite:'kiawe',    badge:'🔥', gym:'Wela Volcano',         bg:'volcano_m.webp',group:'alola',
+   team:[{name:'Marowak',slug:'marowak',type:'fire',hp:95},{name:'Magmar',slug:'magmar',type:'fire',hp:95},{name:'Salazzle',slug:'salazzle',type:'fire',hp:90},{name:'Turtonator',slug:'turtonator',type:'fire',hp:100},{name:'Arcanine',slug:'arcanine',type:'fire',hp:110},{name:'Talonflame',slug:'talonflame',type:'fire',hp:100}]},
+  {id:'mallow',   name:'Mallow',   sprite:'mallow',   badge:'🌿', gym:'Lush Jungle',          bg:'forest_m.webp', group:'alola',
+   team:[{name:'Trumbeak',slug:'trumbeak',type:'flying',hp:80},{name:'Lurantis',slug:'lurantis',type:'grass',hp:100},{name:'Tsareena',slug:'tsareena',type:'grass',hp:105},{name:'Steenee',slug:'steenee',type:'grass',hp:90},{name:'Bounsweet',slug:'bounsweet',type:'grass',hp:70},{name:'Shiinotic',slug:'shiinotic',type:'grass',hp:85}]},
+  {id:'olivia',   name:'Olivia',   sprite:'olivia',   badge:'💎', gym:'Konikoni Grand Trial', bg:'gym_m.webp',    group:'alola',
+   team:[{name:'Nosepass',slug:'nosepass',type:'rock',hp:80},{name:'Probopass',slug:'probopass',type:'rock',hp:100},{name:'Boldore',slug:'boldore',type:'rock',hp:90},{name:'Gigalith',slug:'gigalith',type:'rock',hp:110},{name:'Lycanroc',slug:'lycanroc',type:'rock',hp:100},{name:'Carbink',slug:'carbink',type:'rock',hp:95}]},
+  {id:'sophocles',name:'Sophocles',sprite:'sophocles',badge:'⚡', gym:'Hokulani Observatory', bg:'gym2_m.webp',   group:'alola',
+   team:[{name:'Charjabug',slug:'charjabug',type:'electric',hp:90},{name:'Vikavolt',slug:'vikavolt',type:'electric',hp:105},{name:'Togedemaru',slug:'togedemaru',type:'electric',hp:85},{name:'Magnezone',slug:'magnezone',type:'electric',hp:110},{name:'Xurkitree',slug:'xurkitree',type:'electric',hp:115},{name:'Metagross',slug:'metagross',type:'steel',hp:115}]},
+  {id:'acerola',  name:'Acerola',  sprite:'acerola',  badge:'👻', gym:'Thrifty Megamart',     bg:'gym2_m.webp',   group:'alola',
+   team:[{name:'Mimikyu',slug:'mimikyu',type:'ghost',hp:95},{name:'Gengar',slug:'gengar',type:'ghost',hp:100},{name:'Banette',slug:'banette',type:'ghost',hp:95},{name:'Dhelmise',slug:'dhelmise',type:'ghost',hp:100},{name:'Drifblim',slug:'drifblim',type:'ghost',hp:90},{name:'Palossand',slug:'palossand',type:'ghost',hp:100}]},
+  {id:'nanu',     name:'Nanu',     sprite:'nanu',     badge:'🌑', gym:'Po Town Grand Trial',  bg:'gym_m.webp',    group:'alola',
+   team:[{name:'Sableye',slug:'sableye',type:'dark',hp:90},{name:'Krokorok',slug:'krokorok',type:'dark',hp:90},{name:'Krookodile',slug:'krookodile',type:'dark',hp:110},{name:'Persian',slug:'persian',type:'dark',hp:90},{name:'Honchkrow',slug:'honchkrow',type:'dark',hp:95},{name:'Absol',slug:'absol',type:'dark',hp:100}]},
+  {id:'kukui',    name:'Prof. Kukui',sprite:'kukui',  badge:'🥋', gym:'Alola Champion',       bg:'gym_m.webp',    group:'alola',
+   team:[{name:'Decidueye',slug:'decidueye',type:'grass',hp:120},{name:'Incineroar',slug:'incineroar',type:'fire',hp:120},{name:'Primarina',slug:'primarina',type:'water',hp:115},{name:'Lycanroc',slug:'lycanroc',type:'rock',hp:110},{name:'Snorlax',slug:'snorlax',type:'normal',hp:130},{name:'Magnezone',slug:'magnezone',type:'electric',hp:115}]},
+
+  // ── Paldea (Gen 9 — Scarlet/Violet Gym Leaders) ──────────────────────────
+  {id:'katy',     name:'Katy',     sprite:'katy',     badge:'🐛', gym:'Cortondo Gym',         bg:'forest_m.webp', group:'paldea',
+   team:[{name:'Nymble',slug:'nymble',type:'bug',hp:75},{name:'Tarountula',slug:'tarountula',type:'bug',hp:70},{name:'Teddiursa',slug:'teddiursa',type:'normal',hp:80},{name:'Spidops',slug:'spidops',type:'bug',hp:95},{name:'Ursaring',slug:'ursaring',type:'normal',hp:100},{name:'Rabsca',slug:'rabsca',type:'psychic',hp:95}]},
+  {id:'brassius', name:'Brassius', sprite:'brassius', badge:'🌿', gym:'Artazon Gym',          bg:'forest_m.webp', group:'paldea',
+   team:[{name:'Sudowoodo',slug:'sudowoodo',type:'rock',hp:90},{name:'Smoliv',slug:'smoliv',type:'grass',hp:70},{name:'Petilil',slug:'petilil',type:'grass',hp:75},{name:'Lilligant',slug:'lilligant',type:'grass',hp:90},{name:'Sunflora',slug:'sunflora',type:'grass',hp:85},{name:'Arboliva',slug:'arboliva',type:'grass',hp:100}]},
+  {id:'iono',     name:'Iono',     sprite:'iono',     badge:'⚡', gym:'Levincia Gym',         bg:'gym2_m.webp',   group:'paldea',
+   team:[{name:'Wattrel',slug:'wattrel',type:'electric',hp:75},{name:'Bellibolt',slug:'bellibolt',type:'electric',hp:100},{name:'Luxio',slug:'luxio',type:'electric',hp:85},{name:'Mismagius',slug:'mismagius',type:'ghost',hp:95},{name:'Magneton',slug:'magneton',type:'electric',hp:90},{name:'Kilowattrel',slug:'kilowattrel',type:'electric',hp:100}]},
+  {id:'kofu',     name:'Kofu',     sprite:'kofu',     badge:'🌊', gym:'Cascarrafa Gym',       bg:'water_m.webp',  group:'paldea',
+   team:[{name:'Veluza',slug:'veluza',type:'water',hp:95},{name:'Wugtrio',slug:'wugtrio',type:'water',hp:90},{name:'Crabominable',slug:'crabominable',type:'fighting',hp:105},{name:'Clawitzer',slug:'clawitzer',type:'water',hp:100},{name:'Mantine',slug:'mantine',type:'water',hp:95},{name:'Lapras',slug:'lapras',type:'water',hp:115}]},
+  {id:'larry',    name:'Larry',    sprite:'larry',    badge:'🛡️', gym:'Medali Gym',           bg:'gym_m.webp',    group:'paldea',
+   team:[{name:'Komala',slug:'komala',type:'normal',hp:90},{name:'Dudunsparce',slug:'dudunsparce',type:'normal',hp:100},{name:'Staraptor',slug:'staraptor',type:'flying',hp:100},{name:'Oranguru',slug:'oranguru',type:'normal',hp:95},{name:'Tropius',slug:'tropius',type:'grass',hp:95},{name:'Flamigo',slug:'flamigo',type:'flying',hp:95}]},
+  {id:'ryme',     name:'Ryme',     sprite:'ryme',     badge:'🎤', gym:'Montenevera Gym',      bg:'gym2_m.webp',   group:'paldea',
+   team:[{name:'Mimikyu',slug:'mimikyu',type:'ghost',hp:95},{name:'Banette',slug:'banette',type:'ghost',hp:95},{name:'Houndstone',slug:'houndstone',type:'ghost',hp:100},{name:'Toxtricity',slug:'toxtricity',type:'electric',hp:100},{name:'Gengar',slug:'gengar',type:'ghost',hp:100},{name:'Polteageist',slug:'polteageist',type:'ghost',hp:95}]},
+  {id:'tulip',    name:'Tulip',    sprite:'tulip',    badge:'🌷', gym:'Alfornada Gym',        bg:'gym2_m.webp',   group:'paldea',
+   team:[{name:'Farigiraf',slug:'farigiraf',type:'normal',hp:100},{name:'Gardevoir',slug:'gardevoir',type:'psychic',hp:100},{name:'Espathra',slug:'espathra',type:'psychic',hp:100},{name:'Florges',slug:'florges',type:'fairy',hp:95},{name:'Slowking',slug:'slowking',type:'psychic',hp:100},{name:'Indeedee',slug:'indeedee',type:'psychic',hp:95}]},
+  {id:'grusha',   name:'Grusha',   sprite:'grusha',   badge:'❄️', gym:'Glaseado Gym',         bg:'water2_m.webp', group:'paldea',
+   team:[{name:'Frosmoth',slug:'frosmoth',type:'ice',hp:90},{name:'Beartic',slug:'beartic',type:'ice',hp:100},{name:'Cetitan',slug:'cetitan',type:'ice',hp:115},{name:'Altaria',slug:'altaria',type:'dragon',hp:95},{name:'Glaceon',slug:'glaceon',type:'ice',hp:95},{name:'Avalugg',slug:'avalugg',type:'ice',hp:110}]},
+
   // ── Rivals ────────────────────────────────────────────────────────────────
   {id:'gary',    name:'Gary',    sprite:'gary',    badge:'🌟', gym:'Rival — Pallet',  bg:'gym_m.webp',    group:'rivals',
    team:[{name:'Blastoise',slug:'blastoise',type:'water',hp:120},{name:'Arcanine',slug:'arcanine',type:'fire',hp:110},{name:'Alakazam',slug:'alakazam',type:'psychic',hp:95},{name:'Scizor',slug:'scizor',type:'bug',hp:100},{name:'Umbreon',slug:'umbreon',type:'dark',hp:95},{name:'Kingdra',slug:'kingdra',type:'water',hp:110}]},
@@ -1240,6 +1280,9 @@ const TRAINER_GROUPS = [
   {id:'unova',   label:'⚡ Unova',           color:'#fbbf24'},
   {id:'kalos',   label:'✨ Kalos',           color:'#f472b6'},
   {id:'galar',   label:'👑 Galar',           color:'#34d399'},
+  // v53.4: Alola + Paldea region expansion (Gen 7 + Gen 9 trainers).
+  {id:'alola',   label:'🌴 Alola',          color:'#0ea5e9'},
+  {id:'paldea',  label:'🌵 Paldea',         color:'#f97316'},
   {id:'rivals',  label:'🤝 Rival',           color:'#fb923c'},
   {id:'rockets', label:'💀 Team Rocket',     color:'#94a3b8'},
   {id:'anime',   label:'🌟 Anime Heroes',    color:'#fde68a'},
