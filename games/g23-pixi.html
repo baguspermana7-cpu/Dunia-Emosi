@@ -812,6 +812,15 @@ const S = {
   correctAnswers:0, wrongAnswers:0, quizDone:0,
   frame:0,
   playerVY:0, playerY:0, jumpCount:0, isGrounded:true, isSliding:false, slideTimer:0,
+  // v54.1 — Mario-style variable jump + coyote-time/jump-buffer (standard platformer crutches).
+  // coyoteFrames: frames left where player can still jump after walking off edge (we use it
+  //   as a forgiveness window post-landing because runner has no ledges).
+  // jumpBufferFrames: frames left where a "too early" tap will still register on landing.
+  // jumpHeld: did the player release the jump tap? If they release while still rising, cut VY.
+  coyoteFrames:0, jumpBufferFrames:0, jumpHeld:false,
+  // v54.1 — combo + milestone state. coinStreak tracks consecutive pickup hits without taking damage.
+  // lastMilestone tracks last 100m banner shown so we don't repeat-fire.
+  coinStreak:0, lastMilestone:0,
   obstacles:[], powerUpItems:[], activepu:null, projectiles:[],
   // Time-based level (#163): 60s base + 15s per level. Game ends when time=0.
   // Coins: collected via path overlap → +1 score each (Subway-Surfer style trail).
@@ -1136,20 +1145,44 @@ function spawnPowerUp(){
   const type=PU_TYPES[Math.floor(Math.random()*PU_TYPES.length)]
   const def=PU_DEFS[type]
   const g=new PIXI.Graphics()
-  // Unified GOLD aura makes pickups visually distinct from RED-rimmed obstacles.
-  // Body still uses per-type tint for visual variety, but aura is consistent.
-  g.circle(0,0,34).fill({color:0xFCD34D,alpha:0.18})  // outer gold halo
-  g.circle(0,0,28).fill({color:0xFBBF24,alpha:0.32})  // mid gold glow
-  g.circle(0,0,22).fill({color:def.color,alpha:0.95}) // body (per-type color)
-  g.circle(0,0,22).stroke({color:0xFEF3C7,width:2.5,alpha:0.95})  // gold rim
-  // Sparkle dots around the orb (4 corners)
+  // Unified GOLD aura halo (visually distinct from RED-rimmed obstacles).
+  g.circle(0,0,34).fill({color:0xFCD34D,alpha:0.18})
+  g.circle(0,0,28).fill({color:0xFBBF24,alpha:0.32})
+  // v54.1 (concern: "aneh sekali bentuk2 yang di ambil") — per-type SHAPE.
+  // Owner explicit: pickups looked identical at a glance. 4 distinct silhouettes
+  // give players a 50ms read on what power-up is coming.
+  if(type==='thunder'){
+    // Lightning bolt polygon (Z-shape)
+    g.poly([-5,-22, 6,-6, -1,-2, 8,22, -4,8, 2,4, -8,-2]).fill({color:def.color,alpha:0.98}).stroke({color:0xFEF3C7,width:2.5})
+  } else if(type==='blaze'){
+    // Flame teardrop (rounded base + pointed top)
+    g.moveTo(0,-22).bezierCurveTo(14,-10, 14,8, 0,22).bezierCurveTo(-14,8, -14,-10, 0,-22).fill({color:def.color,alpha:0.98}).stroke({color:0xFEF3C7,width:2.5})
+    // Inner flame highlight
+    g.moveTo(0,-12).bezierCurveTo(7,-4, 7,10, 0,16).bezierCurveTo(-7,10, -7,-4, 0,-12).fill({color:0xFFFBEB,alpha:0.45})
+  } else if(type==='nature'){
+    // Leaf with central vein + stem
+    g.moveTo(0,-22).bezierCurveTo(16,-12, 16,12, 0,22).bezierCurveTo(-16,12, -16,-12, 0,-22).fill({color:def.color,alpha:0.98}).stroke({color:0xFEF3C7,width:2.5})
+    // Central vein
+    g.moveTo(0,-22).lineTo(0,22).stroke({color:0x064E3B,width:1.5,alpha:0.6})
+    // Stem
+    g.moveTo(0,22).lineTo(0,30).stroke({color:0x065F46,width:3})
+  } else {
+    // Venom: skull silhouette (rounded dome + jaw notch)
+    g.circle(0,-4,18).fill({color:def.color,alpha:0.98}).stroke({color:0xFEF3C7,width:2.5})
+    g.rect(-9,12,18,8).fill({color:def.color,alpha:0.98}).stroke({color:0xFEF3C7,width:2.5})
+    // Eye sockets
+    g.circle(-6,-4,3.5).fill({color:0x1F2937})
+    g.circle(6,-4,3.5).fill({color:0x1F2937})
+    // Jaw teeth
+    g.rect(-2,12,4,8).fill({color:0xFEF3C7})
+  }
+  // Sparkle dots around (4 corners)
   for(let s=0; s<4; s++){
     const ang = (Math.PI*2 / 4) * s + Math.PI/4
     const sx = Math.cos(ang) * 30, sy = Math.sin(ang) * 30
     g.circle(sx, sy, 2.5).fill({color:0xFEF3C7, alpha:0.85})
   }
-  const t=new PIXI.Text({text:def.emoji,style:{fontSize:22}});t.anchor.set(0.5);g.addChild(t)
-  // Upward-pointing chevron above the orb — "collect me" affordance
+  // Upward-pointing chevron above (collect-me affordance)
   const chev=new PIXI.Graphics()
   chev.poly([-6,4, 0,-4, 6,4]).stroke({color:0xFEF3C7,width:2.5,alpha:0.95})
   chev.y = -34
@@ -1436,6 +1469,9 @@ function showObstacleQuiz(obs){
 
 function hitPlayer(obs){
   obs.hit=true; S.lives--; S.invincible=90; sfxHit()
+  // v54.1 — break the coin-streak combo on damage. Going back to 0 makes the streak
+  // feel costly (it's the only player-facing penalty other than lives).
+  S.coinStreak = 0
   flashScreen('#ef4444')
   burst(PLAYER_X,S.playerY-PLAYER_H*.6,0xEF4444,22)
   burst(PLAYER_X,S.playerY-PLAYER_H*.6,0xFCA5A5,10)
@@ -2042,10 +2078,18 @@ function handleJump(){
   }
   if(S.paused) return
   if(S.isSliding) return  // can't jump while sliding
-  if(S.jumpCount<2){
-    const isDouble=S.jumpCount===1
+  // v54.1 — coyote-time forgiveness: if player JUST left the ground (coyoteFrames > 0),
+  // they still count as grounded for the first jump. Helps 5yo who tap fractionally late.
+  const _coyoteOk = S.coyoteFrames > 0 && S.jumpCount === 0
+  if(S.jumpCount<2 || _coyoteOk){
+    const isDouble=S.jumpCount===1 && !_coyoteOk
     S.playerVY=isDouble?DBLJ_POWER:JUMP_POWER
-    S.jumpCount++; S.isGrounded=false; sfxJump()
+    S.jumpCount = isDouble ? 2 : 1
+    S.isGrounded=false
+    S.coyoteFrames=0     // consumed
+    S.jumpBufferFrames=0  // consumed
+    S.jumpHeld=true       // tap is "held" — releasing it triggers variable-jump cut
+    sfxJump()
     // Visual cue: button shows "2x" badge while a second jump is still available
     const _jb = document.getElementById('jump-btn')
     if(_jb) _jb.classList.toggle('in-air', S.jumpCount === 1)
@@ -2054,6 +2098,11 @@ function handleJump(){
     if(img){ img.classList.remove('jump-anim','land-anim'); void img.offsetWidth; img.classList.add('jump-anim'); setTimeout(()=>img.classList.remove('jump-anim'),180) }
     burst(PLAYER_X,S.playerY,isDouble?0xFBBF24:0xffffff,isDouble?10:3)
     if(isDouble){ burst(PLAYER_X,S.playerY,0xF472B6,6) }
+  } else {
+    // v54.1 — jump-buffer: tap too early (in air, both jumps spent). Remember it for
+    // 6 frames; if we land within that window, auto-fire a jump on landing. Standard
+    // platformer crutch.
+    S.jumpBufferFrames = 6
   }
 }
 function handleSlide(){
@@ -2079,9 +2128,19 @@ document.addEventListener('pointermove',e=>{
   if(e.buttons===0) return
   if(e.clientY-_swipeStartY>55){ _swipeStartY=e.clientY; handleSlide() }
 },{passive:true})
+// v54.1 — variable jump (Mario-style short-hop). On pointerup, if player is still rising
+// (playerVY < -6) AND the tap is still "held", halve upward velocity for a short hop.
+function handleJumpRelease(){
+  if(S.jumpHeld && S.playerVY < -6){ S.playerVY *= 0.45 }
+  S.jumpHeld = false
+}
+document.addEventListener('pointerup', handleJumpRelease, {passive:true})
 window.addEventListener('keydown',e=>{
   if(e.code==='Space'||e.code==='ArrowUp'){e.preventDefault();handleJump()}
   if(e.code==='ArrowDown'||e.code==='KeyS'){e.preventDefault();handleSlide()}
+})
+window.addEventListener('keyup',e=>{
+  if(e.code==='Space'||e.code==='ArrowUp'){ handleJumpRelease() }
 })
 // Bind jump/slide buttons via pointerdown — kills the 300ms onclick debounce
 // on mobile and lets rapid double-tap fire two distinct handleJump() calls
@@ -2212,6 +2271,20 @@ function gameLoop(ticker){
 
   S.distance+=gameSpeed*dt*0.08
 
+  // v54.1 — distance milestone banners every 100m. Reuse the .eff-combo CSS lane;
+  // sparkle burst + chime gives the run a sense of progression beyond raw timer.
+  const _milestone = Math.floor(S.distance / 100) * 100
+  if(_milestone > 0 && _milestone !== S.lastMilestone){
+    S.lastMilestone = _milestone
+    const el = document.createElement('div')
+    el.className = 'eff-combo eff-combo-starter'
+    el.textContent = '🏁 ' + _milestone + 'm!'
+    el.style.top = '20%'
+    document.body.appendChild(el)
+    setTimeout(()=>el.remove(), 1400)
+    try { playTone(880, 90, 'triangle', 0.12); setTimeout(()=>playTone(1320, 120, 'triangle', 0.10), 80) } catch(_) {}
+  }
+
   // ── Evolution for Pichu chain ──
   const _curPoke = G23_POKEMON[selectedPokemon]
   if(_curPoke.evo && _curPoke.evo.length>1 && !_g23EvolveTrigger){
@@ -2245,16 +2318,35 @@ function gameLoop(ticker){
     const _grav = GRAVITY * (S.natureGravMul || 1)
     S.playerVY+=_grav*dt; S.playerVY=Math.min(S.playerVY,MAX_FALL)
     S.playerY+=S.playerVY*dt
+    // v54.1 — coyote-frames tick down each frame in-air after just-launched (or fell off).
+    if(S.coyoteFrames>0) S.coyoteFrames -= dt
+    // v54.1 — jump trail particles (3-4 sparks trailing during airtime, type-coloured if PU active).
+    if(S.frame % 3 === 0){
+      const _trailHue = S.activepu ? (S.activepu.type==='thunder'?0xFBBF24 : S.activepu.type==='blaze'?0xEF4444 : S.activepu.type==='nature'?0x22C55E : 0xA855F7) : 0xFFFFFF
+      burst(PLAYER_X-6, S.playerY+8, _trailHue, 2)
+    }
     if(S.playerY>=GROUND_Y){
-      S.playerY=GROUND_Y; S.playerVY=0; S.isGrounded=true; S.jumpCount=0; S.isSliding=false; sfxLand()
+      const _airTime = (S.airTimeFrames || 0)
+      S.playerY=GROUND_Y; S.playerVY=0; S.isGrounded=true; S.jumpCount=0; S.isSliding=false; S.jumpHeld=false; sfxLand()
       const _jb=document.getElementById('jump-btn'); if(_jb) _jb.classList.remove('in-air')
-      burst(PLAYER_X,GROUND_Y-6,0xD4A574,7); burst(PLAYER_X,GROUND_Y-6,0xffffff,3)
+      // v54.1 — Landing impact crack (4 white lines + dust puff) on hard landings (airtime ≥ 8f).
+      burst(PLAYER_X,GROUND_Y-6,0xD4A574,_airTime>=8?14:7); burst(PLAYER_X,GROUND_Y-6,0xffffff,_airTime>=8?6:3)
+      if(_airTime>=8){
+        burst(PLAYER_X-18,GROUND_Y-2,0xE5E7EB,4); burst(PLAYER_X+18,GROUND_Y-2,0xE5E7EB,4)
+      }
+      S.airTimeFrames = 0
       const img=document.getElementById('player-img')
       if(img){ img.classList.remove('jump-anim','land-anim'); void img.offsetWidth; img.classList.add('land-anim'); setTimeout(()=>img.classList.remove('land-anim'),220) }
+      // v54.1 — jump-buffer: if player tapped while airborne within the last 6 frames, auto-jump on land.
+      if(S.jumpBufferFrames>0){ S.jumpBufferFrames=0; handleJump() }
+    } else {
+      S.airTimeFrames = (S.airTimeFrames || 0) + dt
     }
   } else {
     S.playerY=GROUND_Y+Math.sin(S.frame*.3)*1.6  // subtle bob while running
     if(S.isSliding){ S.slideTimer-=dt; if(S.slideTimer<=0){ S.isSliding=false } }
+    // v54.1 — jump-buffer tick (player tapped before fully landing; we drained to 6 in handleJump).
+    if(S.jumpBufferFrames>0) S.jumpBufferFrames -= dt
   }
 
   // ── Clouds ──
@@ -2378,10 +2470,23 @@ function updateCoinTrail(dt){
     if (dx*dx + dy*dy < (PLAYER_W*0.42)**2) {
       c.collected = true
       S.coinsCollected++
-      S.score += 1
+      // v54.1 — coin-streak combo: scale score per streak tier (1x→2x→3x→5x).
+      // streak banners at 10/20/40/80 hit thresholds, matching pre-shipped CSS classes.
+      S.coinStreak = (S.coinStreak||0) + 1
+      const streakMul = S.coinStreak >= 40 ? 5 : S.coinStreak >= 20 ? 3 : S.coinStreak >= 10 ? 2 : 1
+      S.score += streakMul
       worldContainer.removeChild(c.gfx)
       try { sfxCollect() } catch(_) {}
-      spawnFT('+1', c.x, c.gfx.y - 18, 0xFBBF24)
+      spawnFT('+' + streakMul, c.x, c.gfx.y - 18, 0xFBBF24)
+      // Combo banner thresholds: 10 starter, 20 super, 40 mega, 80 legendary.
+      const tier = S.coinStreak === 10 ? 'starter' : S.coinStreak === 20 ? 'super' : S.coinStreak === 40 ? 'mega' : S.coinStreak === 80 ? 'legendary' : null
+      if(tier){
+        const el = document.createElement('div')
+        el.className = 'eff-combo eff-combo-' + tier
+        el.textContent = (S.coinStreak) + 'x KOMBO!'
+        document.body.appendChild(el)
+        setTimeout(()=>el.remove(), 1400)
+      }
     }
   }
   // Compact array periodically

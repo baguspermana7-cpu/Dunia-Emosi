@@ -1,5 +1,48 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.1 "G23 Polish Wave" (Pokemon Run — distinct pickups, variable jump, coyote-time, combo banner, milestones)
+
+Fifth v54.x ship. Owner concerns folded in: "aneh sekali bentuk2 yang di ambil" + "loncatannya kurang." Closes 7 of the 28 v54.1 plan items with the highest impact-per-cost.
+
+### C1 — Distinct pickup shapes per type (owner-explicit)
+Replaced identical-circle orb body with 4 distinct silhouettes via Pixi Graphics polygon/bezier paths:
+- **Thunder** → lightning bolt Z polygon
+- **Blaze** → flame teardrop (rounded base + pointed top + inner highlight)
+- **Nature** → leaf with central vein + stem
+- **Venom** → skull silhouette (dome + jaw notch + eye sockets + teeth)
+
+Gold halo + sparkle dots + collect-chevron unchanged (kept the "pickup vs obstacle" read).
+
+### C2 — Variable jump height (Mario-style short-hop)
+`pointerup` / `keyup` triggers `handleJumpRelease()` — if `playerVY < -6` (still rising) AND `jumpHeld` is true, `playerVY *= 0.45`. Lets skilled players tap-short for low arcs, hold-long for full height. State: `S.jumpHeld` boolean.
+
+### C3 — Coyote-time + jump-buffer (platformer crutches)
+- **Coyote**: if player just left ground (`coyoteFrames > 0`), first jump still counts as grounded — 5yo who tap fractionally late get forgiveness.
+- **Jump-buffer**: tap while in-air with both jumps spent sets `S.jumpBufferFrames = 6`. On landing, auto-fires a jump if buffer > 0.
+
+### C4 — Coin-streak combo banner + score multiplier
+`S.coinStreak++` on every coin pickup; resets to 0 on damage. Score multiplier scales 1× → 2× (10+) → 3× (20+) → 5× (40+). Streak banners at 10/20/40/80 reuse existing `.eff-combo-{starter|super|mega|legendary}` CSS — text "10x KOMBO!" / "80x KOMBO!" etc.
+
+### C5 — Distance milestone celebrations (every 100m)
+`Math.floor(distance/100)*100 !== lastMilestone` triggers `.eff-combo-starter` banner "🏁 200m!" + 2-tone WebAudio chime (880Hz → 1320Hz triangle). State: `S.lastMilestone`.
+
+### C6 — Jump trail particles
+Every 3rd in-air frame, 2-particle `burst()` behind player. Type-coloured when PU active (Thunder yellow, Blaze red, Nature green, Venom purple); white otherwise.
+
+### C7 — Landing impact crack on hard landings
+`S.airTimeFrames >= 8` doubles ground dust burst (14 instead of 7) + spawns left/right side dust puffs at GROUND_Y-2. Subtle but visible feedback for big leaps.
+
+### Files touched
+- `games/g23-pixi.html` — spawnPowerUp shape branch (~70 lines new geometry); S state add (coyoteFrames/jumpBufferFrames/jumpHeld/coinStreak/lastMilestone/airTimeFrames); handleJump rewrite (coyote + buffer + jumpHeld set); handleJumpRelease() + pointerup/keyup wiring; player physics block (coyote tick + trail + airtime accumulator + landing branch + jump-buffer drain); damage handler (combo reset); coin pickup (streak multiplier + banner); gameLoop top (milestone banner).
+- `sw.js` — `CACHE_VERSION: 'v54.8-20260624j' → 'v54.1-20260624k'`
+
+### Lessons captured
+- L101 — variable-jump cut: multiply VY by 0.45 on release, gate by `playerVY < -6` so falling players can't accidentally cut.
+- L102 — coyote/buffer pattern: 6-frame windows are the standard platformer values (Celeste/Mario); larger ranges feel "spongy."
+- L103 — reuse pre-shipped CSS keyframes: `.eff-combo-*` was already in style block from v53; v54.1 just wires JS to trigger it.
+
+---
+
 ## 2026-06-24 — v54.8 "G14 Deep Revamp" (Balapan Kereta — characters + TIME_OF_DAY + physics juice)
 
 Fourth v54.x ship. Owner concerns: "tidak ada karakter malivlak, brave, dragutin dan casey JR di pickernya. tambahkan, pastikan sizenya sesuai, proportional. kok selalu gelap harusnya bener2 pintar dan dinamic bisa pagi ke sore... mekanik gamenya aneh... physisc dll. sangat2 kurang."

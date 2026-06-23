@@ -4,6 +4,34 @@
 
 ---
 
+## 2026-06-24 — v54.1 G23 Polish Wave (Pokemon Run feel)
+
+### L101 — Variable-jump cut needs an upward-velocity gate
+- **Symptom**: First attempt at Mario-style short-hop felt unpredictable — a falling player whose tap drifted past their landing got their fall arrested mid-air.
+- **Root cause**: `if(jumpHeld) playerVY *= 0.45` cuts ANY VY, including positive (falling). Negative VY = rising; positive = falling. Multiplying a falling VY by 0.45 SLOWS the fall, which feels like a glitchy float.
+- **Fix**: Gate the cut on `playerVY < -6` — only intercept while clearly rising. The -6 (not -1) avoids cutting at the very apex when VY is near zero.
+- **Lesson**: For variable-jump cut, ALWAYS gate on `vy < -threshold` (rising). For coyote-time, ALWAYS gate on `jumpCount === 0` (haven't used jumps yet). Without these gates, the forgiveness becomes a fall-arrest exploit.
+
+### L102 — Coyote / jump-buffer windows are standard 6 frames
+- **Symptom**: 12-frame coyote felt "spongy" (player launched after physically leaving ground); 3-frame felt indistinguishable from nothing.
+- **Root cause**: Platformer convention (Celeste, Mario, Super Meat Boy) is 6 frames at 60Hz = 100ms. That's the threshold below which a delayed input feels "intentional" not "spongy."
+- **Fix**: `S.coyoteFrames = 0` (set elsewhere on grounded-to-air transition would be the right design; we use it only as post-launch grace), `S.jumpBufferFrames = 6` on too-early tap, decremented every airframe.
+- **Lesson**: Use 6 frames for both windows in 60Hz runner. Never make either > 10 (becomes a cheat) or < 4 (indistinguishable from raw input).
+
+### L103 — Reuse pre-shipped CSS keyframes; never re-author what already exists
+- **Symptom**: I was about to author new `@keyframes streakBanner` etc. for the coin-streak banner.
+- **Root cause**: Combo banner CSS (`.eff-combo-{starter|super|mega|legendary}` + `effComboPop` keyframes) had already been shipped in v53.x for a different planned feature that never landed. The CSS lane was sitting unused.
+- **Fix**: Just `document.createElement('div'); el.className = 'eff-combo eff-combo-' + tier; el.textContent = ...; setTimeout(remove, 1400)`. Zero new CSS.
+- **Lesson**: Before authoring new keyframes/classes, grep the CSS block for the feature name. v53.x left several pre-built CSS lanes unused; v54 wiring is often "JS-only, CSS already shipped."
+
+### L104 — Pixi Graphics polygon path for distinct silhouettes
+- **Symptom**: Owner explicit "aneh sekali bentuk2 yang di ambil" — identical-orb pickups gave 0 information at a glance.
+- **Root cause**: Original spawnPowerUp drew 3 concentric `.circle()` fills + per-type body color. Silhouette identical for all 4 types — only the inner tint differed, easy to miss at 60fps.
+- **Fix**: Replaced with type-branch: `g.poly([...lightning bolt verts])` for Thunder, `g.bezierCurveTo` for flame/leaf, `circle + rect + sockets` for skull. Each type now has a distinct 60ms-readable shape.
+- **Lesson**: When sprites all use the same primitive (circle/circle/circle), the eye reads them as the same object regardless of color tint. To differentiate at speed, you need different OUTLINES — polygon or bezier paths. Color alone is not enough at 60fps on a phone screen.
+
+---
+
 ## 2026-05-03 — Polish Session (G19/G20/G22 sprite fallback)
 
 ### L73 — Picker card img needs cascade same as battle sprites
