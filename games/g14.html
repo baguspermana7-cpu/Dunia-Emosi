@@ -1881,15 +1881,37 @@ function buildAI() {
     // deterministic — no per-frame randomness. Tunes match difficulty without
     // making the race feel rigged.
     const AI_TIERS = [0.92, 1.04]
+    // v54.12 — AI thought bubble. Small Pixi Text floating above each AI showing
+    // its current "intent" — gives the rival visible personality so the race feels
+    // alive instead of empty. State updated by tickAI via _intentText.
+    const bubble = new PIXI.Graphics()
+    bubble.roundRect(-32, -36, 64, 18, 6).fill({ color: 0xffffff, alpha: 0.92 })
+    bubble.roundRect(-32, -36, 64, 18, 6).stroke({ color: 0x1f2937, width: 1 })
+    // tail
+    bubble.poly([-3, -18, 0, -10, 3, -18]).fill({ color: 0xffffff, alpha: 0.92 })
+    bubble.alpha = 0
+    c.addChild(bubble)
+    const txt = new PIXI.Text({ text: '...', style: { fontFamily: 'Fredoka One, sans-serif', fontSize: 11, fill: 0x1f2937, align: 'center' } })
+    txt.anchor.set(0.5)
+    txt.x = 0; txt.y = -27
+    txt.alpha = 0
+    c.addChild(txt)
     S.aiTrains.push({
       cfg, container: c,
       lane: aiLane,
       speed: S.baseSpeed * (AI_TIERS[i] || 1.0),
       distance: 0,
       hp: 3,  // AI also takes damage — fairness symmetry
+      // v54.12 — intent system
+      bubble, txt,
+      intent: 'lurus', intentTimer: 60,
     })
   })
 }
+
+// v54.12 — Rotate AI intent message (small dictionary). Gives visible personality.
+const G14_AI_INTENTS = ['Maju!', 'Hati2!', 'Ngebut...', 'Pindah!', 'Hampir!', 'Wuss!', 'Hindari!']
+function g14PickIntent(){ return G14_AI_INTENTS[Math.floor(Math.random()*G14_AI_INTENTS.length)] }
 
 function tickAI(delta) {
   const W = app.screen.width
@@ -1904,6 +1926,22 @@ function tickAI(delta) {
     ai.container.visible = screenX > -80 && screenX < W + 80
     // Bob
     ai.container.y = laneYs[ai.lane] + Math.sin(S.frame * 0.1 + ai.lane) * 0.5
+    // v54.12 — Update thought bubble: rotate intent every ~2.5s (60 frames *
+    // 2.5 = 150 frames), fade in for 30 frames, fade out after 120 frames.
+    if (ai.txt && ai.bubble){
+      ai.intentTimer -= delta
+      if (ai.intentTimer <= 0){
+        ai.intent = g14PickIntent()
+        ai.intentTimer = 150
+        ai.txt.text = ai.intent
+      }
+      // Bubble visibility window: appears at start of intent, fades out at the end.
+      const t = (150 - ai.intentTimer) / 150
+      const a = t < 0.18 ? t / 0.18 : t > 0.85 ? (1 - t) / 0.15 : 1
+      const tgt = ai.container.visible ? a : 0
+      ai.txt.alpha += (tgt - ai.txt.alpha) * 0.15
+      ai.bubble.alpha = ai.txt.alpha
+    }
   })
 
   // Update race position

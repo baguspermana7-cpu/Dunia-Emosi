@@ -1,5 +1,43 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.12 "Polish Wave 2" (G17 worlds 2+3; G14 AI bubbles; G23 pause polish)
+
+Eleventh v54.x ship. More breadth: G17 grows from 5 → 15 levels across 3 worlds; G14 rivals get personality via thought bubbles; G23 pause overlay becomes "ISTIRAHAT" cockpit with live run stats.
+
+### C1 — G17 World 2 "Lembah Vulkanik" (levels 6-10)
+NEW levels 6-10 in G17_LEVELS: Lereng Lava / Sumber Panas / Lubang Magma / Punggung Gunung / Puncak Berapi. World tag `'vulkanik'`. Anchor counts 7→16.
+
+### C2 — G17 World 3 "Awan Tinggi" (levels 11-15)
+NEW levels 11-15: Awan Putih / Pelangi Tinggi / Petir Diam / Bintang Sore / Sarang Pidgeot. L15 carries `boss:true` (Giant Pidgeot Anchor — boss render to come in v54.12.x). World tag `'awan'`.
+
+### C3 — G17 per-world sky palette
+`g17BuildLevel()` reads `lvl.world` to swap sky palette:
+- **Bambu**: classic forest blue (a8c5d8 base, 8eb4d2 top, 6e5b3a misty gorge).
+- **Vulkanik**: hot ember orange (c97d4f base, b05a36 top, 4a1f0a magma mist) + 14 floating ember particles drifting upward.
+- **Awan**: high-sky lavender (b8c0e0 base, 8b9bd0 top, e2e8f0 mist) + 5 white cloud puffs at varying heights.
+
+### C4 — G14 AI rival thought bubbles
+NEW per-AI Pixi Graphics bubble + Pixi.Text floating above each rival train. Intent rotates every 2.5s from `G14_AI_INTENTS` dictionary (Maju! / Hati2! / Ngebut... / Pindah! / Hampir! / Wuss! / Hindari!). Bubble fades in/out per intent cycle. Closes plan item #122 ("AI no visible decision-making").
+
+### C5 — G23 pause overlay polish ("ISTIRAHAT" cockpit)
+`#pause-overlay` upgraded:
+- "⏸" icon now floats with `pauseFloat` keyframe (translateY ±6px on 2.4s loop).
+- Title "PAUSE" → "ISTIRAHAT" (Indonesian-first), font 24px → 28px with letterspacing 2px + gold text-shadow.
+- NEW `#pause-run-stats` row showing live `🏃 Xm · 🪙 Y · 🧠 Z%`.
+`togglePause()` populates the stats chip on each open.
+
+### Files touched
+- `games/g17-pixi.html` — G17_LEVELS extended 5→15 levels; g17BuildLevel sky palette branch + ember/cloud decorations.
+- `games/g14.html` — buildAI thought bubble + Text creation; tickAI intent timer + alpha lerp; G14_AI_INTENTS array + g14PickIntent helper.
+- `games/g23-pixi.html` — pause overlay HTML; togglePause stats update; pauseFloat keyframe.
+- `sw.js` — CACHE_VERSION v54.11-20260624p → v54.12-20260624q.
+
+### Lessons captured
+- L114 — per-world palette + sprinkles (embers/clouds) make a single-engine game feel like 3 different games for kids.
+- L115 — AI personality via thought bubble = 30 LOC, ~3% perf, infinite perceived value.
+
+---
+
 ## 2026-06-24 — v54.11 "Continuous Refine Wave" (G14 celestial + cloud tint + quiz timer; G15/G16 polish overlay; G23 game-over)
 
 Tenth v54.x ship. Owner: "improve, refine more, polish." Touches 4 standalone games — G14 completes its TIME_OF_DAY system + adds quiz timer; G15/G16 inherit the universal procedural polish overlay pattern from v54.10 (closes the deferred items); G23 game-over screen gets confetti + run-summary stats.

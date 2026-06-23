@@ -89,6 +89,18 @@ const G17_LEVELS = [
   { id:3, name:'Lembah Hijau', anchors:10, gemsPer:3, gap:[180,250], world:'bambu' },
   { id:4, name:'Air Terjun', anchors:12, gemsPer:4, gap:[200,260], world:'bambu' },
   { id:5, name:'Puncak Bukit', anchors:15, gemsPer:5, gap:[210,280], world:'bambu' },
+  // v54.12 — World 2 "Lembah Vulkanik" — 5 levels, dynamic anchors hint, hotter palette
+  { id:6, name:'Lereng Lava', anchors:7, gemsPer:3, gap:[160,220], world:'vulkanik' },
+  { id:7, name:'Sumber Panas', anchors:9, gemsPer:3, gap:[180,240], world:'vulkanik' },
+  { id:8, name:'Lubang Magma', anchors:11, gemsPer:4, gap:[200,260], world:'vulkanik' },
+  { id:9, name:'Punggung Gunung', anchors:13, gemsPer:4, gap:[220,270], world:'vulkanik' },
+  { id:10, name:'Puncak Berapi', anchors:16, gemsPer:5, gap:[240,290], world:'vulkanik' },
+  // v54.12 — World 3 "Awan Tinggi" — 5 levels, sky theme, boss at L15
+  { id:11, name:'Awan Putih', anchors:8, gemsPer:3, gap:[180,240], world:'awan' },
+  { id:12, name:'Pelangi Tinggi', anchors:10, gemsPer:4, gap:[200,260], world:'awan' },
+  { id:13, name:'Petir Diam', anchors:12, gemsPer:4, gap:[220,280], world:'awan' },
+  { id:14, name:'Bintang Sore', anchors:14, gemsPer:5, gap:[240,290], world:'awan' },
+  { id:15, name:'Sarang Pidgeot', anchors:16, gemsPer:5, gap:[260,310], world:'awan', boss:true },
 ]
 
 // Physics constants (canonical pendulum SHM)
@@ -175,11 +187,39 @@ function g17BuildLevel(lvl){
   const groundY = H * G17_PHYS.groundY
   const skyTopY = H * 0.15
 
-  // Sky gradient (PIXI doesn't have native gradients in v8 Graphics; layered fills)
+  // v54.12 — Per-world sky palette. Bambu = forest blue, Vulkanik = ember orange,
+  // Awan = high-sky lavender. Each layered: base + top tint + bottom mist.
+  const _world = lvl.world || 'bambu'
+  const _pal = _world === 'vulkanik'
+    ? { base: 0xc97d4f, top: 0xb05a36, mist: 0x4a1f0a }   // hot lava lighting
+    : _world === 'awan'
+      ? { base: 0xb8c0e0, top: 0x8b9bd0, mist: 0xe2e8f0 } // cloud heights, no gorge mist
+      : { base: 0xa8c5d8, top: 0x8eb4d2, mist: 0x6e5b3a } // classic bambu (default)
   const sky = new PIXI.Graphics()
-  sky.rect(0, 0, W, H).fill({ color: 0xa8c5d8 })
-  sky.rect(0, 0, W, H * 0.5).fill({ color: 0x8eb4d2, alpha: 0.5 })
-  sky.rect(0, H * 0.55, W, H * 0.45).fill({ color: 0x6e5b3a, alpha: 0.45 }) // misty gorge
+  sky.rect(0, 0, W, H).fill({ color: _pal.base })
+  sky.rect(0, 0, W, H * 0.5).fill({ color: _pal.top, alpha: 0.5 })
+  sky.rect(0, H * 0.55, W, H * 0.45).fill({ color: _pal.mist, alpha: 0.45 })
+  // v54.12 — Vulkanik adds ember particles drifting upward (decorative).
+  if (_world === 'vulkanik'){
+    for (let i = 0; i < 14; i++){
+      const e = new PIXI.Graphics()
+      e.circle(0, 0, 1 + Math.random() * 2).fill({ color: 0xfb923c, alpha: 0.7 })
+      e.x = Math.random() * W
+      e.y = H * 0.55 + Math.random() * (H * 0.4)
+      sky.addChild(e)
+    }
+  }
+  // v54.12 — Awan adds 5 cloud puffs at varying heights.
+  if (_world === 'awan'){
+    for (let i = 0; i < 5; i++){
+      const c = new PIXI.Graphics()
+      const cw = 60 + Math.random() * 80
+      c.ellipse(0, 0, cw, 14 + Math.random() * 8).fill({ color: 0xffffff, alpha: 0.55 })
+      c.ellipse(-cw * 0.25, -10, cw * 0.6, 12).fill({ color: 0xffffff, alpha: 0.40 })
+      c.x = Math.random() * W; c.y = H * 0.1 + Math.random() * (H * 0.35)
+      sky.addChild(c)
+    }
+  }
   g17World.addChild(sky)
 
   // Far parallax — bamboo silhouettes

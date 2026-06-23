@@ -4,6 +4,22 @@
 
 ---
 
+## 2026-06-24 — v54.12 Polish Wave 2
+
+### L114 — Per-world palette + decorative sprinkles = "different game" feel for zero new mechanics
+- **Symptom**: G17 had 5 levels and felt like "the same game with longer ropes." Owner could grind through and bounce out.
+- **Root cause**: Mechanics were unchanged across levels — same swing physics, same auto-grab, same gem rules. The eye reads "I've seen this."
+- **Fix**: Per-world sky palette (vulkanik orange + ember particles, awan lavender + cloud puffs, bambu forest blue). NEW worlds get NEW visual identity without new code paths. World 2 worlds 3 grew the catalog 5→15 levels with zero engine change.
+- **Lesson**: For runner / level-based games, the cheapest way to "make 3 games out of 1" is per-world palette + 5-10 decorative sprites. The mechanic doesn't change; the FEELING does. Replay value spike, dev cost flat.
+
+### L115 — AI personality via thought bubble: 30 LOC, infinite perceived value
+- **Symptom**: G14 AI rivals were silent box-trains scrolling past. Owner: "AI no visible decision-making."
+- **Root cause**: AI ran a deterministic speed tier (0.92× / 1.04×) with zero player-visible state. The race felt empty.
+- **Fix**: Add Pixi Graphics speech-bubble + Pixi.Text per AI. Rotate a 7-string intent dictionary every 2.5s. Fade in/out with alpha lerp. Total: ~30 LOC, ~3% per-frame cost.
+- **Lesson**: When AI behavior is hard to expose mechanically (because it'd unbalance fairness), expose it COSMETICALLY. A "Maju!" / "Hindari!" bubble makes the rival feel like a person with intent. Worth far more than the LOC cost.
+
+---
+
 ## 2026-06-24 — v54.11 Continuous Refine Wave
 
 ### L111 — Pixi `tint` swap is the cheapest dynamic recolor
