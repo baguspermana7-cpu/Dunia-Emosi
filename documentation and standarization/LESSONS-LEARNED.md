@@ -805,3 +805,22 @@ Deleting a function definition (SPRITE_LOCAL) without grepping for ALL call site
 
 ### Documentation update mandate (locked 2026-06-24)
 Owner-locked: every Dunia Emosi ship MUST update CHANGELOG.md + LESSONS-LEARNED.md (Lxxx) + relevant `*_STANDARD.md` in the SAME commit. A ship without docs is INCOMPLETE. Memory note saved at `feedback_dunia_emosi_docs_continuous_update.md`. Effective immediately for all v54.x ships.
+
+---
+
+## 2026-06-24 — v54.6 G16 Deep Polish Wave (Selamatkan Kereta — owner's favorite)
+
+### L94 — Polish-helper extraction pattern: small DOM/CSS primitives over engine refactor (game.js v54.6)
+- **Symptom**: 12 polish items (sparkle burst, dust trail, screen shake, danger flash, celebration text, audio sting) ALL touching the same 6 engine functions (g16BeginGame, g16StartDangerTimer, g16ThrowHook, g16StartPhase2, g16TapPull, g16PullComplete, g16EndGame). Inline-ing every effect would balloon those functions 2-3×.
+- **Fix**: Extract 6 small DOM/CSS helpers at module scope (g16SpawnSparks, g16SpawnDust, g16ScreenShake, g16FullScreenDangerFlash, g16ShowCelebrationText, g16PlayStingPull). Each is ≤15 LOC of `document.createElement` + class assignment + setTimeout cleanup. Engine functions call them as 1-liners; CSS keyframes handle the actual animation.
+- **Lesson**: When polish items each touch DOM + CSS + timing in ≤20 LOC, extract them as standalone helpers rather than refactoring the engine. The engine stays readable (1-liner polish hooks); the helpers are testable in isolation; CSS keyframes carry the visual weight. This is the cheapest path to a polished game without an engine rewrite.
+
+### L95 — Body-class slow-mo without engine pause (style.css v54.6)
+- **Symptom**: Owner wants "slow-mo on danger 100%" — bullet-time before the lose screen. But the G16 engine has no game-loop ticker that can be slowed (it's setInterval-driven for danger + needle).
+- **Fix**: Add `body.g16-slowmo` class. CSS overrides extend `#g16-victim-train` and `#g16-rope` transition durations to 1.5s + drop screen saturation/brightness. Engine doesn't pause; the visual response curves slow. Auto-clear class after 1300ms with setTimeout.
+- **Lesson**: Slow-mo / time-dilation effects don't require an engine pause — they require CSS transition stretching on the elements that move. When you can't (or don't want to) slow down setInterval, slow down the VISUAL CONSEQUENCES via cascading `transition` durations. Pair with desaturation filter for cinematic feel.
+
+### L96 — RAF-free DOM particles for short-lived effects (game.js v54.6)
+- **Symptom**: G16 needed sparkle burst + dust trail + danger flash particles. Adding a RAF particle pool would mean ~80 LOC of state machine + cleanup.
+- **Fix**: Use plain `document.createElement('div'/'span')` + CSS keyframe + `setTimeout(remove, dur)`. Each particle is self-contained: DOM lifetime ≤ animation duration; appendChild + setTimeout removal. No global pool, no RAF, no leaking refs.
+- **Lesson**: For SHORT-LIVED particles (<1 second) with FEW concurrent particles (<20), DOM + CSS keyframes is cheaper than canvas/Pixi/RAF pools. Each particle is its own element; the CSS engine handles interpolation; setTimeout cleans up. Only switch to a pool when you spawn 50+ particles per second or need pixel-level control.

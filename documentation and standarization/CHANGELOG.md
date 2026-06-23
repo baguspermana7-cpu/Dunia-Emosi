@@ -1,5 +1,41 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.6 "G16 Deep Polish Wave" (Selamatkan Kereta — owner's favorite)
+
+Second v54.x ship. Pure VFX/physics/audio polish on the rope-rescue "Selamatkan Kereta" loop (`#screen-game16` in index.html + `g16*` functions in `game.js` lines 12640–12825). Owner explicit: "saya yang paling happy itu game g16. secara gameplay story sudah ok hanya tinggal polish more and more, phisic dan effect VFX dll." 12 items + 2 refine bonus shipped.
+
+### v54.6 polish items
+
+- **C1 (item 90) Hook throw screen-shake on green-zone hit**: 280ms 5-keyframe `g16ScreenShake` translates `#screen-game16` by ±2px so the kid FEELS the contact.
+- **C2 (item 91) Rope tension oscillation**: 1.2s damped sine wave (`@keyframes g16RopeTension` with 7 stops, cubic-bezier(.34,1.56,.64,1)) applied to `#g16-rope` on successful hook. Rope visibly stretches + recoils like a real cable taking weight.
+- **C3 (item 92) Full-screen red tint flash on danger ≥60**: radial-gradient overlay `.g16-danger-flash` pulses 30% opacity every ~1.6s while danger is high. Throttled so it builds tension instead of strobing.
+- **C4 (item 93) Pull-phase button juice**: per-tap 6-particle sparkle burst from button center + screen-shake proportional to tap count (1→3px) + 2-tone low-pass-sweep audio. Tap impact escalates with progress.
+- **C5 (item 94) Rope rubber-band stretch on every tap**: 180ms `g16RopeStretch` scaleY 0.78 oscillation. Tactile feedback per tap; rubber-band feel.
+- **C6 (item 95) Train pull-away ease-out + 12-particle dust trail**: victim-train transition changed from `0.5s linear` → `0.8s cubic-bezier(.34,1.56,.64,1)` with bounce. 12 dust particles spawn under wheels each pull.
+- **C7 (item 96) Danger bar pulsing glow when ≥75**: `.crit` class on `#g16-danger-fill` runs `g16DangerBarGlow` 0.8s box-shadow pulse. Auto-toggle in dangerInterval.
+- **C8 (item 97) Hook success 8-star sparkle burst**: `g16SpawnSparks()` emits 8 ✨⭐💫 particles radiating from throw button position with staggered delays.
+- **C9 (item 98) Phase 1→2 transition wipe**: 250ms `g16PhaseOut` (slide-up + blur 3px + scale 0.96) on phase-1 hide → 250ms `g16PhaseIn` mirror on phase-2 show. Replaces instant `display:none` cut.
+- **C10 (item 99) Distinct pull-complete audio sting**: new `g16PlayStingPull()` — 4-note ascending arpeggio (880→1100→1400→720Hz) differentiated from generic `playCorrect()`. Pull completion feels rewarding.
+- **C11 (item 100) Slow-mo bullet-time on danger 100%**: `body.g16-slowmo` class drops saturation 0.6 + brightness 0.85 + extends victim/rope CSS transitions to 1.5s for 1300ms. Heightens defeat impact.
+- **C12 (item 101) Victory train cross-screen slide animation**: `.victory-slide` class runs `g16VictorySlide` 1.5s cubic-bezier — right 5% → 30% → 110% (off-screen) with fade-out. Confetti + 4-note fanfare chord. Replaces silent hide.
+
+### Refine bonus (beyond plan)
+
+- **C13 (refine) Celebration text overlay**: new `g16ShowCelebrationText()` with `g16-celebration-text` class — Fredoka One 9vw text with `g16CelebPop` cubic-bezier scale-up. Shows "🆘 AMAN!" per pull and "🏆 MENANG!" on win.
+- **C14 (refine) Polish state reset on g16BeginGame**: clear `_dangerFlashAccum`, remove `g16-slowmo` body class, strip `.crit` from danger fill. Ensures fresh polish state per run (defensive).
+
+### Files touched
+- `game.js` lines 12640–12865 — helper block (g16SpawnSparks/Dust, g16ScreenShake, g16FullScreenDangerFlash, g16ShowCelebrationText, g16PlayStingPull) + engine wiring (g16StartDangerTimer, g16ThrowHook, g16StartPhase2, g16TapPull, g16PullComplete, g16EndGame)
+- `style.css` lines 3490–3590 — 8 new @keyframes (g16RopeTension, g16RopeStretch, g16DangerFlash, g16DangerBarGlow, g16SparkFly, g16DustDrift, g16VictorySlide, g16ScreenShake, g16PhaseOut, g16PhaseIn, g16CelebPop) + supporting classes
+- `sw.js` — `CACHE_VERSION: 'v54.0-20260624g' → 'v54.6-20260624h'`
+
+### Lessons learned
+See `LESSONS-LEARNED.md` L94–L96 (polish-helper extraction pattern, body-class slow-mo without engine pause, RAF-free DOM particles for short-lived effects).
+
+Cache bump v54.0-20260624g → v54.6-20260624h.
+
+---
+
 ## 2026-06-24 — v54.0 "Critical Fixes" (G23 + G14 + G15 + G16 multi-game)
 
 First ship in the v54 series targeting G23 Pokemon Run + 4 train games + G17 revamp + SEL games. v54.0 bundles **9 owner-flagged critical fixes** + foundational power-up gameplay revival across G23. See planning doc at `~/.claude/plans/purring-brewing-flurry.md` for the full 144-item v54 roadmap (v54.0 → v54.10).

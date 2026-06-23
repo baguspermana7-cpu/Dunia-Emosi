@@ -12646,9 +12646,87 @@ function initGame16() {
   window.location.href = 'games/g16-pixi.html'
 }
 
+// ───────────────────────────────────────────────────────────────────────
+// v54.6 G16 Deep Polish helpers (owner's favorite — VFX/physics/audio
+// layer on top of the rope-rescue "Selamatkan Kereta" loop). Pure DOM
+// + CSS; no engine refactor. CSS keyframes live in style.css.
+// ───────────────────────────────────────────────────────────────────────
+function g16SpawnSparks(cx, cy, count, emoji){
+  count = count || 8
+  emoji = emoji || ['✨','⭐','💫'][0]
+  for (let i = 0; i < count; i++){
+    const sp = document.createElement('span')
+    sp.className = 'g16-spark-particle'
+    sp.textContent = ['✨','⭐','💫'][i % 3]
+    const angle = (i / count) * Math.PI * 2 + Math.random() * 0.3
+    const dist = 50 + Math.random() * 40
+    sp.style.left = cx + 'px'
+    sp.style.top  = cy + 'px'
+    sp.style.setProperty('--dx', Math.cos(angle) * dist + 'px')
+    sp.style.setProperty('--dy', Math.sin(angle) * dist + 'px')
+    sp.style.animationDelay = (i * 25) + 'ms'
+    document.body.appendChild(sp)
+    setTimeout(() => { try { sp.remove() } catch(_){} }, 800 + i * 25)
+  }
+}
+function g16SpawnDust(cx, cy, count){
+  count = count || 12
+  for (let i = 0; i < count; i++){
+    const d = document.createElement('div')
+    d.className = 'g16-dust-particle'
+    d.style.left = (cx + (Math.random() - 0.5) * 30) + 'px'
+    d.style.top  = (cy + Math.random() * 8) + 'px'
+    d.style.setProperty('--dx', ((-1 - Math.random()) * 25 - i * 3) + 'px')
+    d.style.setProperty('--dy', (-5 - Math.random() * 12) + 'px')
+    d.style.animationDelay = (i * 18) + 'ms'
+    document.body.appendChild(d)
+    setTimeout(() => { try { d.remove() } catch(_){} }, 900 + i * 18)
+  }
+}
+function g16ScreenShake(intensity){
+  const root = document.getElementById('screen-game16')
+  if (!root) return
+  if (intensity > 1) root.style.setProperty('--shake-amp', intensity + 'px')
+  root.classList.remove('g16-screen-shake')
+  void root.offsetWidth   // reflow to restart animation
+  root.classList.add('g16-screen-shake')
+  setTimeout(() => root.classList.remove('g16-screen-shake'), 320)
+}
+function g16FullScreenDangerFlash(){
+  // dedup — don't stack flashes
+  if (document.querySelector('.g16-danger-flash')) return
+  const fl = document.createElement('div')
+  fl.className = 'g16-danger-flash'
+  document.body.appendChild(fl)
+  setTimeout(() => { try { fl.remove() } catch(_){} }, 650)
+}
+function g16ShowCelebrationText(text){
+  // Remove any prior celebration
+  document.querySelectorAll('.g16-celebration-text').forEach(el => { try { el.remove() } catch(_){} })
+  const el = document.createElement('div')
+  el.className = 'g16-celebration-text'
+  el.textContent = text
+  document.body.appendChild(el)
+  setTimeout(() => { try { el.remove() } catch(_){} }, 1600)
+}
+function g16PlayStingPull(){
+  // (item 99) distinct audio sting differentiating g16PullComplete from playCorrect
+  try {
+    playTone(880,  0.10, 0.10)
+    setTimeout(() => playTone(1100, 0.10, 0.10), 90)
+    setTimeout(() => playTone(1400, 0.18, 0.10), 200)
+    setTimeout(() => playTone(720,  0.22, 0.07), 320)
+  } catch(_){}
+}
+
 function g16BeginGame() {
   document.getElementById('g16-start-overlay').style.display = 'none'
   g16State.running = true
+  // v54.6: reset polish state for a fresh run.
+  g16State._dangerFlashAccum = 0
+  document.body.classList.remove('g16-slowmo')
+  const dfEl = document.getElementById('g16-danger-fill')
+  if (dfEl) dfEl.classList.remove('crit')
   g16StartDangerTimer()
   g16StartPhase1()
 }
@@ -12658,7 +12736,21 @@ function g16StartDangerTimer() {
   g16State.dangerInterval = setInterval(() => {
     if (!g16State.running) { clearInterval(g16State.dangerInterval); return }
     g16State.danger = Math.min(100, g16State.danger + 2)
-    document.getElementById('g16-danger-fill').style.width = g16State.danger + '%'
+    const dfEl = document.getElementById('g16-danger-fill')
+    if (dfEl) dfEl.style.width = g16State.danger + '%'
+    // v54.6 (item 92): periodic red flash when danger >= 60. Throttled to once
+    // per ~1.6s so it builds tension without strobing.
+    if (g16State.danger >= 60) {
+      g16State._dangerFlashAccum = (g16State._dangerFlashAccum | 0) + 1
+      if (g16State._dangerFlashAccum >= 4) {
+        g16State._dangerFlashAccum = 0
+        g16FullScreenDangerFlash()
+      }
+    } else {
+      g16State._dangerFlashAccum = 0
+    }
+    // v54.6 (item 96): danger bar pulsing glow when >= 75.
+    if (dfEl) dfEl.classList.toggle('crit', g16State.danger >= 75)
     const victim = document.getElementById('g16-victim-train')
     const rightPct = 8 + (g16State.danger / 100) * 14
     victim.style.right = (22 - rightPct) + '%'
@@ -12715,6 +12807,20 @@ function g16ThrowHook() {
     resultEl.style.color = '#A5D6A7'
     document.getElementById('g16-throw-btn').disabled = true
     playCorrect()
+    // v54.6 (item 90): screen shake on green-zone hit.
+    g16ScreenShake()
+    // v54.6 (item 91): rope tension oscillation — damped sine wave 1.2s.
+    const _rope = document.getElementById('g16-rope')
+    if (_rope) {
+      _rope.classList.remove('g16-rope-tension'); void _rope.offsetWidth
+      _rope.classList.add('g16-rope-tension')
+    }
+    // v54.6 (item 97): 8-star sparkle burst from hook button (player side).
+    const _throwBtn = document.getElementById('g16-throw-btn')
+    if (_throwBtn) {
+      const r = _throwBtn.getBoundingClientRect()
+      g16SpawnSparks(r.left + r.width / 2, r.top + r.height / 2, 8)
+    }
     // Speed up danger a bit to build tension
     clearInterval(g16State.dangerInterval)
     g16State.dangerInterval = setInterval(() => {
@@ -12724,7 +12830,18 @@ function g16ThrowHook() {
       if (g16State.danger >= 100) { clearInterval(g16State.dangerInterval); g16EndGame(false) }
     }, 600)
     setTimeout(() => {
-      document.getElementById('g16-phase1').style.display = 'none'
+      // v54.6 (item 98): phase 1→2 wipe transition. Animate out, then hide,
+      // start phase 2 (which animates in via g16StartPhase2).
+      const _p1 = document.getElementById('g16-phase1')
+      if (_p1) {
+        _p1.classList.add('g16-phase-out')
+        setTimeout(() => {
+          _p1.style.display = 'none'
+          _p1.classList.remove('g16-phase-out')
+        }, 250)
+      } else {
+        document.getElementById('g16-phase1').style.display = 'none'
+      }
       document.getElementById('g16-throw-btn').disabled = false
       g16StartPhase2()
     }, 800)
@@ -12744,7 +12861,12 @@ function g16StartPhase2() {
   const tapsNeeded = g16State.diff === 'easy' ? 5 : g16State.diff === 'medium' ? 8 : 12
   g16State.tapsNeeded = tapsNeeded
   g16State.tapCount = 0
-  document.getElementById('g16-phase2').style.display = 'flex'
+  const p2 = document.getElementById('g16-phase2')
+  p2.style.display = 'flex'
+  // v54.6 (item 98): phase-in wipe animation matching phase-out.
+  p2.classList.remove('g16-phase-in'); void p2.offsetWidth
+  p2.classList.add('g16-phase-in')
+  setTimeout(() => p2.classList.remove('g16-phase-in'), 260)
   document.getElementById('g16-pull-fill').style.width = '0%'
   document.getElementById('g16-tap-count-display').textContent = `TAP 0 / ${tapsNeeded}`
   document.getElementById('g16-word-progress').textContent = `Tarik ${g16State.wordsComplete + 1} / ${g16State.wordsNeeded}`
@@ -12766,11 +12888,27 @@ function g16TapPull() {
       setTimeout(() => { btn.style.transform = 'scale(1)'; btn.style.boxShadow = '' }, 80)
     }, 80)
   }
-  // Rope shake
+  // v54.6 (item 94): rope rubber-band stretch on every tap.
   const rope = document.getElementById('g16-rope')
-  if (rope) { rope.style.transform = 'scaleX(0.94) rotate(-1.5deg)'; setTimeout(() => rope.style.transform = '', 90) }
-  // Sound
+  if (rope) {
+    rope.classList.remove('g16-rope-stretch'); void rope.offsetWidth
+    rope.classList.add('g16-rope-stretch')
+  }
+  // v54.6 (item 93): proportional screen-shake increases with tap count.
+  if (g16State.tapCount % 2 === 0) {
+    g16ScreenShake(1 + Math.min(g16State.tapCount / 4, 2))
+  }
+  // v54.6 (item 93): 6-particle burst at button center per tap.
+  if (btn) {
+    const r = btn.getBoundingClientRect()
+    g16SpawnSparks(r.left + r.width / 2, r.top + r.height / 2, 6, '✨')
+  }
+  // Sound — preserve existing pitch ramp, add a low-pass-style sweep via
+  // chord (item 93).
   playTone(Math.min(300 + g16State.tapCount * 25, 900), 0.18, 0.07)
+  if (g16State.tapCount % 3 === 0) {
+    setTimeout(() => playTone(Math.min(180 + g16State.tapCount * 18, 540), 0.10, 0.05), 30)
+  }
   // Update bar and counter
   const pct = Math.min(100, (g16State.tapCount / g16State.tapsNeeded) * 100)
   document.getElementById('g16-pull-fill').style.width = pct + '%'
@@ -12787,11 +12925,23 @@ function g16PullComplete() {
   // Reduce danger and move victim train away from cliff
   g16State.danger = Math.max(0, g16State.danger - 25)
   document.getElementById('g16-danger-fill').style.width = g16State.danger + '%'
+  const dfEl = document.getElementById('g16-danger-fill')
+  if (dfEl) dfEl.classList.toggle('crit', g16State.danger >= 75)
   const victim = document.getElementById('g16-victim-train')
   const newRight = Math.min(20, 8 + (g16State.danger / 100) * 14)
-  victim.style.right = (22 - newRight) + '%'
+  // v54.6 (item 95): ease-out cubic-bezier bounce on victim-train pull-away.
+  if (victim) {
+    victim.style.transition = 'right 0.8s cubic-bezier(.34,1.56,.64,1)'
+    victim.style.right = (22 - newRight) + '%'
+    // v54.6 (item 95): dust trail from victim train wheels.
+    const r = victim.getBoundingClientRect()
+    g16SpawnDust(r.left + r.width * 0.5, r.bottom - 6, 12)
+  }
   document.getElementById('g16-stars-badge').textContent = `🆘 ${g16State.wordsComplete}`
-  playCorrect()
+  // v54.6 (item 99): distinct pull-complete sting differentiated from playCorrect.
+  g16PlayStingPull()
+  // refine — brief "AMAN!" celebration.
+  g16ShowCelebrationText('🆘 AMAN!')
   if (g16State.wordsComplete >= g16State.wordsNeeded) {
     clearInterval(g16State.dangerInterval)
     setTimeout(() => g16EndGame(true), 600)
@@ -12811,6 +12961,26 @@ function g16EndGame(won) {
   clearInterval(g16State.dangerInterval)
   document.getElementById('g16-phase1').style.display = 'none'
   document.getElementById('g16-phase2').style.display = 'none'
+  const _victim = document.getElementById('g16-victim-train')
+  const _dfEl = document.getElementById('g16-danger-fill')
+  if (_dfEl) _dfEl.classList.remove('crit')
+  if (won) {
+    // v54.6 (item 101): victory train slides across the screen with confetti
+    // + big celebration text + champion fanfare.
+    if (_victim) _victim.classList.add('victory-slide')
+    g16ShowCelebrationText('🏆 MENANG!')
+    try {
+      if (typeof spawnConfetti === 'function') spawnConfetti(48)
+      playTone(523, 0.18, 0.10); setTimeout(()=>playTone(659,0.18,0.10), 110)
+      setTimeout(()=>playTone(784,0.18,0.10), 220); setTimeout(()=>playTone(1047,0.30,0.10), 330)
+    } catch(_){}
+  } else if (g16State.danger >= 100) {
+    // v54.6 (item 100): slow-mo bullet-time when danger hits 100. Body class
+    // throttles CSS transitions on the screen; auto-clears after 1200ms.
+    document.body.classList.add('g16-slowmo')
+    g16FullScreenDangerFlash()
+    setTimeout(() => document.body.classList.remove('g16-slowmo'), 1300)
+  }
   const pct = g16State.wordsComplete / g16State.wordsNeeded
   const perfStars = won ? (g16State.danger < 20 ? 5 : g16State.danger < 50 ? 4 : 3) : (pct >= 0.5 ? 2 : 1)
   state.gameStars[state.currentPlayer] = perfStars

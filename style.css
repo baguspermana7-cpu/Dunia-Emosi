@@ -3488,6 +3488,114 @@ body { font-family: var(--font); color: var(--text); min-height: 100vh; overflow
 @keyframes g16DangerPulse { 0%,100%{filter:brightness(1)} 50%{filter:brightness(1.5) drop-shadow(0 0 8px #E53935)} }
 .g16-victim-danger { animation:g16DangerPulse 0.8s infinite; }
 
+/* ===== v54.6 G16 Deep Polish Wave (owner's favorite) ===== */
+/* (item 91) damped rope tension oscillation on hook contact */
+@keyframes g16RopeTension {
+  0%   { transform:scaleX(1)    scaleY(1);    }
+  15%  { transform:scaleX(1.04) scaleY(0.92); }
+  30%  { transform:scaleX(0.97) scaleY(1.05); }
+  45%  { transform:scaleX(1.02) scaleY(0.96); }
+  60%  { transform:scaleX(0.99) scaleY(1.02); }
+  75%  { transform:scaleX(1.01) scaleY(0.99); }
+  100% { transform:scaleX(1)    scaleY(1);    }
+}
+.g16-rope-tension { animation:g16RopeTension 1.2s cubic-bezier(.34,1.56,.64,1) forwards; }
+/* (item 94) rope rubber-band during pull phase */
+@keyframes g16RopeStretch {
+  0%,100% { transform:scaleX(1) scaleY(1); }
+  50%     { transform:scaleX(1.03) scaleY(0.78); }
+}
+.g16-rope-stretch { animation:g16RopeStretch 0.18s ease-out; }
+/* (item 92) full-screen red tint flash when danger >= 60 */
+@keyframes g16DangerFlash {
+  0%,100% { opacity:0; }
+  50%     { opacity:0.30; }
+}
+.g16-danger-flash {
+  position:fixed; inset:0; z-index:50; pointer-events:none;
+  background:radial-gradient(circle at center, rgba(239,68,68,0) 30%, rgba(239,68,68,0.6) 100%);
+  animation:g16DangerFlash 0.6s ease-out;
+}
+/* (item 96) danger bar pulsing glow when danger >= 75 */
+@keyframes g16DangerBarGlow {
+  0%,100% { box-shadow:0 0 0 0 rgba(239,68,68,0); }
+  50%     { box-shadow:0 0 14px 4px rgba(239,68,68,0.65); }
+}
+#g16-danger-fill.crit { animation:g16DangerBarGlow 0.8s infinite; }
+/* (item 97) 8-star sparkle burst from hook success point */
+.g16-spark-particle {
+  position:fixed; z-index:60; pointer-events:none;
+  font-size:18px; line-height:1;
+  animation:g16SparkFly 700ms cubic-bezier(.22,1.4,.36,1) forwards;
+}
+@keyframes g16SparkFly {
+  0%   { transform:translate(-50%,-50%) scale(0.4); opacity:0; }
+  20%  { transform:translate(calc(-50% + var(--dx,0)*0.4), calc(-50% + var(--dy,0)*0.4)) scale(1.1); opacity:1; }
+  100% { transform:translate(calc(-50% + var(--dx,0)),     calc(-50% + var(--dy,0)))     scale(0.6); opacity:0; }
+}
+/* (item 95) train pull-away dust particles */
+.g16-dust-particle {
+  position:fixed; z-index:55; pointer-events:none;
+  width:8px; height:8px; border-radius:50%;
+  background:radial-gradient(circle, rgba(180,150,110,0.85), rgba(180,150,110,0));
+  animation:g16DustDrift 800ms ease-out forwards;
+}
+@keyframes g16DustDrift {
+  0%   { transform:translate(0,0) scale(0.4); opacity:0; }
+  30%  { opacity:0.7; }
+  100% { transform:translate(var(--dx,-20px),var(--dy,-10px)) scale(1.4); opacity:0; }
+}
+/* (item 100) slow-mo bullet-time on danger 100% — applied via .slowmo on body */
+body.g16-slowmo #screen-game16 { filter:saturate(0.6) brightness(0.85); }
+body.g16-slowmo #g16-victim-train { transition:right 1.5s cubic-bezier(.22,.61,.36,1) !important; }
+body.g16-slowmo #g16-rope { transition:transform 1.5s, opacity 1.5s !important; }
+/* (item 101) victory train slide across screen */
+@keyframes g16VictorySlide {
+  0%   { right:5%;  opacity:1; }
+  60%  { right:30%; opacity:1; }
+  100% { right:110%; opacity:0; }
+}
+#g16-victim-train.victory-slide { animation:g16VictorySlide 1.5s cubic-bezier(.34,1.56,.64,1) forwards; }
+/* (item 90) hook-throw screen-shake on green-zone hit */
+@keyframes g16ScreenShake {
+  0%,100% { transform:translate(0,0); }
+  20%     { transform:translate(-2px,1px); }
+  40%     { transform:translate(2px,-1px); }
+  60%     { transform:translate(-2px,2px); }
+  80%     { transform:translate(2px,0); }
+}
+.g16-screen-shake { animation:g16ScreenShake 280ms; }
+/* (item 98) phase 1→2 transition wipe */
+@keyframes g16PhaseOut {
+  0%   { opacity:1; transform:translateY(0)    scale(1);    filter:blur(0); }
+  100% { opacity:0; transform:translateY(-12px) scale(0.96); filter:blur(3px); }
+}
+@keyframes g16PhaseIn {
+  0%   { opacity:0; transform:translateY(12px)  scale(0.96); filter:blur(3px); }
+  100% { opacity:1; transform:translateY(0)     scale(1);    filter:blur(0); }
+}
+.g16-phase-out { animation:g16PhaseOut 250ms ease-out forwards; }
+.g16-phase-in  { animation:g16PhaseIn  250ms ease-out forwards; }
+/* refine — big victory text */
+.g16-celebration-text {
+  position:fixed; left:50%; top:38%;
+  transform:translate(-50%,-50%) scale(0.4);
+  z-index:9100; pointer-events:none;
+  font-family:'Fredoka One',cursive;
+  font-size:clamp(36px,9vw,72px);
+  color:#FCD34D;
+  text-shadow:-2px -2px 0 #B45309, 2px -2px 0 #B45309, -2px 2px 0 #B45309, 2px 2px 0 #B45309, 0 8px 24px rgba(0,0,0,0.6);
+  white-space:nowrap;
+  animation:g16CelebPop 1500ms cubic-bezier(.22,1.4,.36,1) forwards;
+}
+@keyframes g16CelebPop {
+  0%   { transform:translate(-50%,-50%) scale(0.4) rotate(-4deg); opacity:0; }
+  20%  { transform:translate(-50%,-50%) scale(1.18) rotate(2deg); opacity:1; }
+  35%  { transform:translate(-50%,-50%) scale(1.0)  rotate(0deg); opacity:1; }
+  85%  { transform:translate(-50%,-50%) scale(1.0)  rotate(0deg); opacity:1; }
+  100% { transform:translate(-50%,-50%) scale(0.92) rotate(0deg); opacity:0; }
+}
+
 /* ===== GAME 17 — Jembatan Goyang ===== */
 #screen-game17 { background:#1a2a0a;flex-direction:column; }
 .g17-block {
