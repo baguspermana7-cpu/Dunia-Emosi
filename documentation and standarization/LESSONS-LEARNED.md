@@ -4,6 +4,16 @@
 
 ---
 
+## 2026-06-24 — v54.10 Procedural Train Render Upgrade
+
+### L110 — Universal polish pass function beats per-category embedded edits
+- **Symptom**: Owner asked for "improve more model render semua kereta." Procedural train render in G14 has 5 category branches (maglev/hsr/steam/diesel/emu) each with 60+ Graphics primitives. Editing every branch to add rim highlight + shadow + weathering streaks would be 200+ LOC + brittle (every future category has to remember to add it).
+- **Root cause**: Default thinking was "add details inside each category render." But the details (rim/shadow/weathering/shine) are CATEGORY-INDEPENDENT — they describe what every train hull looks like, not what makes a maglev different from a steam.
+- **Fix**: Extract polish into `g14PolishOverlay(g)` helper applied AFTER drawTrainG runs. Two call sites (player + AI rivals). Skipped for character trains via `!isCharacter` guard.
+- **Lesson**: When a polish pass applies universally across categories AND is independent of category-specific layout, extract it ONCE and apply at the entry point. Beats embedding the same code in 5 branches.
+
+---
+
 ## 2026-06-24 — v54.3 Per-Train-Game Polish
 
 ### L109 — Abstraction is premature when per-game FX diverges enough

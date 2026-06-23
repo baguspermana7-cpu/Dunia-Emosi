@@ -1655,6 +1655,27 @@ function drawTrainG(g, bodyC, accC, catKey, trainKey, variant) {
   }
 }
 
+// v54.10 — Premium polish overlay. Adds 4 finishing touches (rim highlight, soft
+// underbody shadow, vertical chassis weathering streaks, diagonal shine sweep)
+// on top of any procedural train. Universal — every category benefits. Character
+// trains use a separate sprite render path and are skipped via isCharacter check
+// at the call sites.
+function g14PolishOverlay(g) {
+  const W = 70, hW = 35, H = 26, hH = 13
+  // 1) Top-edge rim highlight (light glances off top of body — adds metallic feel)
+  g.rect(-hW + 4, -hH, W - 8, 0.8).fill({ color: 0xffffff, alpha: 0.35 })
+  g.rect(-hW + 4, -hH + 0.8, W - 8, 0.6).fill({ color: 0xffffff, alpha: 0.18 })
+  // 2) Soft underbody shadow (ground contact gradient — anchors train to ground)
+  g.rect(-hW + 2, hH + 6, W - 4, 1).fill({ color: 0x000000, alpha: 0.20 })
+  g.rect(-hW + 4, hH + 7, W - 8, 1).fill({ color: 0x000000, alpha: 0.10 })
+  // 3) Subtle vertical chassis streak (water/rust weathering — realism touch)
+  for (let we = 0; we < 3; we++) {
+    g.rect(-hW + 16 + we * 18, -hH + 4, 0.4, H - 8).fill({ color: 0x000000, alpha: 0.08 })
+  }
+  // 4) Body shine sweep (diagonal highlight band — gives 3D feel without gradient cost)
+  g.poly([-hW + 8, -hH + 1, -hW + 22, -hH + 1, -hW + 14, -hH + 8, -hW, -hH + 8]).fill({ color: 0xffffff, alpha: 0.06 })
+}
+
 function buildPlayer() {
   const c = new PIXI.Container(); L.player = c; stage.addChild(c)
   // Lock scale.x=1 — drawTrainG authors the sprite right-facing (nose at +X).
@@ -1689,6 +1710,11 @@ function updatePlayerEmoji() {
   const cat = S.trainCfg.category || ''
   const drawKey = cat.includes('maglev') ? 'maglev' : cat.includes('hsr') ? 'hsr' : cat.includes('steam') ? 'steam' : cat.includes('emu') ? 'emu' : 'diesel'
   drawTrainG(playerSprite, S.trainCfg.bodyColor, S.trainCfg.accColor, drawKey, S.trainCfg.key, S.trainCfg.variant||1)
+  // v54.10 — Apply universal polish overlay (skip for character trains; they use
+  // sprite render via spriteUrl, not procedural). PROTECTED trains untouched.
+  if (!S.trainCfg.isCharacter && typeof g14PolishOverlay === 'function') {
+    g14PolishOverlay(playerSprite)
+  }
 }
 
 function tickPlayer(delta) {
@@ -1779,6 +1805,8 @@ function buildAI() {
     const c = new PIXI.Container()
     const spr = new PIXI.Graphics()
     drawTrainG(spr, cfg.bodyColor || '#374151', cfg.accColor || '#9ca3af', cfg.category)
+    // v54.10 — Universal polish overlay (skip character trains — they use sprite path).
+    if (!cfg.isCharacter && typeof g14PolishOverlay === 'function') g14PolishOverlay(spr)
     c.addChild(spr)
 
     // Glow

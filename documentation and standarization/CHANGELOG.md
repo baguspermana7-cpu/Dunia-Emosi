@@ -1,5 +1,36 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.10 "Procedural Train Render Upgrade" (G14 universal polish overlay)
+
+Ninth v54.x ship. Owner-explicit: "improve more model render semua kereta yang sudah dibuat menjadi lebih presisi dengan detail2nya... kecuali 4 kereta yang saya sebut tadi. jangan makin jelek tapi lebih bagus."
+
+### C1 — Universal polish overlay function
+NEW `g14PolishOverlay(g)` extracted from drawTrainG body, applied AFTER any procedural category render. 4 finishing touches:
+1. **Top-edge rim highlight** (light glances off top — adds metallic feel via `g.rect` white 0.35α + 0.18α band).
+2. **Soft underbody shadow** (1-2px ground contact gradient — anchors train visually to track instead of "floating").
+3. **Vertical chassis weathering streaks** (3 thin dark verticals at 0.08α — realism without being dirty).
+4. **Diagonal body shine sweep** (polygon shine band at 0.06α — gives 3D illusion without gradient computation cost).
+
+### C2 — Apply polish at render entry points
+- `updatePlayerEmoji()` — applies `g14PolishOverlay(playerSprite)` AFTER drawTrainG, guarded by `!S.trainCfg.isCharacter`.
+- `buildAI()` — applies same overlay on AI rival sprites, guarded by `!cfg.isCharacter`.
+
+### C3 — PROTECTED character trains untouched
+4 character trains (Casey JR, Linus Brave, JZ 711 Dragutin, Malivlak) carry `isCharacter:true` flag from v54.8. Polish overlay skipped for them since they're meant to render as sprite images via spriteUrl, not procedural Graphics. Owner mandate honored.
+
+### Skipped (deferred to future v54.10.x)
+- G15 + G16 procedural polish: those games use shared `trains-db.js` import path with `train-character-sprite.js`, not local `drawTrainG`. Different render architecture; needs separate polish pass.
+- Picker canvas (`drawTrainCard2d`) polish: uses canvas2d API, different primitives. Needs canvas-equivalent overlay.
+
+### Files touched
+- `games/g14.html` — `g14PolishOverlay` helper extracted (~10 lines at end of drawTrainG block), 2 call sites added (updatePlayerEmoji + buildAI).
+- `sw.js` — CACHE_VERSION v54.3-20260624n → v54.10-20260624o.
+
+### Lessons captured
+- L110 — universal "polish pass" function beats per-category embedded code for cross-cutting visual upgrades.
+
+---
+
 ## 2026-06-24 — v54.3 "Per-Train-Game Polish" (G14 boost punch + G15 slow-mo + collision feel)
 
 Eighth v54.x ship. Light, surgical polish — small juice helpers inline in each game (skipping the v54.2 shared-module abstraction layer; it's overengineering for current scope and v54.2 can be a future refactor pass).
