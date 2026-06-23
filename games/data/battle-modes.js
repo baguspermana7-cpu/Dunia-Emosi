@@ -1757,6 +1757,7 @@
       root.innerHTML = `
         <button class="bm-back bm-real-exit" data-exit>×</button>
         <button class="bm-mute-btn" data-mute aria-label="Bisukan musik">${bmBgmIsMuted() ? '🔇' : '🔊'}</button>
+        <button class="bm-pause-btn" data-pause aria-label="Jeda permainan">⏸</button>
 
         <div class="bm-stage-grid">
           <!-- TOP Q-ZONE (P2) — rotated 180° for face-to-face -->
@@ -1785,6 +1786,9 @@
         bmBgmSetMuted(next);
         _muteBtn.textContent = next ? '🔇' : '🔊';
       });
+      // v53.2 polish #4: pause button — face-to-face snack-break overlay.
+      const _pauseBtn = root.querySelector('[data-pause]');
+      if (_pauseBtn) _pauseBtn.addEventListener('click', pauseGame);
       // v52 (concern 1): set --bm-arena-bg per the active matchup's region.
       applyArenaBg(root, state.teams[0], state.teams[1], state.matchNo | 0);
       wireActiveZone();
@@ -1803,6 +1807,7 @@
       root.innerHTML = `
         <button class="bm-back bm-real-exit" data-exit>×</button>
         <button class="bm-mute-btn" data-mute aria-label="Bisukan musik">${bmBgmIsMuted() ? '🔇' : '🔊'}</button>
+        <button class="bm-pause-btn" data-pause aria-label="Jeda permainan">⏸</button>
         <div class="bm-prestep">
           <div class="bm-prestep-title">Pilih Mode Tim</div>
           <div class="bm-prestep-sub">Berapa Pokemon yang bertarung?</div>
@@ -1832,6 +1837,9 @@
         bmBgmSetMuted(next);
         _muteBtn.textContent = next ? '🔇' : '🔊';
       });
+      // v53.2 polish #4: pause button — face-to-face snack-break overlay.
+      const _pauseBtn = root.querySelector('[data-pause]');
+      if (_pauseBtn) _pauseBtn.addEventListener('click', pauseGame);
       root.querySelectorAll('.bm-size-card').forEach(b => {
         b.addEventListener('click', () => {
           const sz = parseInt(b.getAttribute('data-size'));
@@ -1893,6 +1901,7 @@
         root.innerHTML = `
           <button class="bm-back bm-real-exit" data-exit>×</button>
         <button class="bm-mute-btn" data-mute aria-label="Bisukan musik">${bmBgmIsMuted() ? '🔇' : '🔊'}</button>
+        <button class="bm-pause-btn" data-pause aria-label="Jeda permainan">⏸</button>
           <div class="bm-prestep">
             <div class="bm-prestep-header">
               <span class="bm-pvp-badge ${badgeClass}">${badgeClass.toUpperCase()}</span>
@@ -1912,6 +1921,9 @@
         bmBgmSetMuted(next);
         _muteBtn.textContent = next ? '🔇' : '🔊';
       });
+      // v53.2 polish #4: pause button — face-to-face snack-break overlay.
+      const _pauseBtn = root.querySelector('[data-pause]');
+      if (_pauseBtn) _pauseBtn.addEventListener('click', pauseGame);
         wirePickerHandlers(root, playerIdx, advancePickStep);
       };
       if (wasLoaded) {
@@ -1921,6 +1933,7 @@
         root.innerHTML = `
           <button class="bm-back bm-real-exit" data-exit>×</button>
         <button class="bm-mute-btn" data-mute aria-label="Bisukan musik">${bmBgmIsMuted() ? '🔇' : '🔊'}</button>
+        <button class="bm-pause-btn" data-pause aria-label="Jeda permainan">⏸</button>
           <div class="bm-prestep" style="padding-top:60px;">
             <div class="bm-prestep-title">📦 Memuat Pokedex…</div>
             <div class="bm-prestep-sub">Sebentar, sedang siapkan pakettim Pokemon.</div>
@@ -1936,6 +1949,9 @@
         bmBgmSetMuted(next);
         _muteBtn.textContent = next ? '🔇' : '🔊';
       });
+      // v53.2 polish #4: pause button — face-to-face snack-break overlay.
+      const _pauseBtn = root.querySelector('[data-pause]');
+      if (_pauseBtn) _pauseBtn.addEventListener('click', pauseGame);
         loadPokeDB().then(draw).catch(err => {
           console.warn('[battle-modes] pokedex load failed', err);
           draw();   // render anyway with placeholder sprites
@@ -1980,6 +1996,53 @@
 
     function stopQuestionTimer () {
       if (_timerRaf) { cancelAnimationFrame(_timerRaf); _timerRaf = 0; }
+    }
+
+    // ── v53.2 polish #4: pause / resume snack-break ───────────────────────
+    // Owner: critical for face-to-face 2-player so kids can break for snacks.
+    // Freezes question timer + BGM; shifts state.questionStartedAt on resume
+    // so elapsed time doesn't count the pause. Tap "Lanjut Main" to resume.
+    function pauseGame () {
+      if (state.paused) return;
+      state.paused = true;
+      state.pausedAt = Date.now();
+      stopQuestionTimer();
+      try { if (_bmBgmEl) _bmBgmEl.pause(); } catch (e) {}
+      try { sfxLowHPStop(); } catch (e) {}
+      showPauseOverlay();
+    }
+    function resumeGame () {
+      if (!state.paused) return;
+      state.paused = false;
+      // Shift the question-clock baseline forward by the pause duration so
+      // the remaining timer matches what the player saw before they paused.
+      if (state.questionStartedAt && state.pausedAt) {
+        state.questionStartedAt += (Date.now() - state.pausedAt);
+      }
+      state.pausedAt = 0;
+      try { if (_bmBgmEl && !bmBgmIsMuted()) { const p = _bmBgmEl.play(); if (p && p.catch) p.catch(() => {}); } } catch (e) {}
+      hidePauseOverlay();
+      if (state.phase === 'question' && !state.switchForced) startQuestionTimer();
+    }
+    function showPauseOverlay () {
+      if (document.querySelector('.bm-pause-overlay')) return;
+      const ov = document.createElement('div');
+      ov.className = 'bm-pause-overlay';
+      ov.innerHTML = `
+        <div class="bm-pause-card">
+          <div class="bm-pause-icon">⏸️</div>
+          <div class="bm-pause-title">ISTIRAHAT</div>
+          <div class="bm-pause-sub">Permainan dijeda — minum dulu, bro!</div>
+          <button class="bm-pause-resume" id="bm-pause-resume">▶ Lanjut Main</button>
+        </div>
+      `;
+      document.body.appendChild(ov);
+      const resumeBtn = ov.querySelector('#bm-pause-resume');
+      if (resumeBtn) resumeBtn.addEventListener('click', resumeGame);
+    }
+    function hidePauseOverlay () {
+      const ov = document.querySelector('.bm-pause-overlay');
+      if (ov) ov.remove();
     }
 
     function onTimeout () {
@@ -3262,6 +3325,81 @@
       }
       .bm-vs-skip:hover { background: rgba(0,0,0,0.75); }
 
+      /* ── v53.2 polish: pause / resume snack-break ── */
+      .bm-pause-btn {
+        position: fixed; top: 8px; right: 60px; z-index: 9105;
+        background: rgba(0,0,0,0.70); color: #fff;
+        width: 44px; height: 44px;
+        border: none; border-radius: 10px;
+        font-size: 18px; line-height: 1; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: background 150ms ease, transform 120ms ease;
+      }
+      .bm-pause-btn:hover  { background: rgba(0,0,0,0.88); }
+      .bm-pause-btn:active { transform: scale(0.92); }
+      .bm-pause-overlay {
+        position: fixed; inset: 0; z-index: 9450;
+        background: radial-gradient(circle, rgba(14,165,233,0.30), rgba(15,23,42,0.92));
+        display: grid; place-items: center;
+        animation: bmPauseIn 250ms ease forwards;
+      }
+      @keyframes bmPauseIn {
+        from { opacity: 0; backdrop-filter: blur(0); }
+        to   { opacity: 1; backdrop-filter: blur(4px); }
+      }
+      .bm-pause-card {
+        background: linear-gradient(180deg, rgba(248,250,252,0.97), rgba(226,232,240,0.95));
+        color: #0f172a;
+        padding: 32px 36px;
+        border-radius: 22px;
+        border: 2.5px solid #475569;
+        box-shadow: 0 24px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.8);
+        text-align: center;
+        max-width: 360px;
+      }
+      .bm-pause-icon { font-size: 72px; margin-bottom: 6px; line-height: 1; }
+      .bm-pause-title {
+        font-family: 'Fredoka One', cursive;
+        font-size: clamp(28px, 6vw, 38px);
+        margin-bottom: 4px;
+        background: linear-gradient(135deg, #0EA5E9, #6366F1);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+        letter-spacing: 1px;
+      }
+      .bm-pause-sub {
+        font-size: 14px; color: #475569;
+        margin-bottom: 22px;
+      }
+      .bm-pause-resume {
+        font-family: 'Fredoka One', cursive;
+        font-size: 18px; padding: 14px 28px; min-height: 56px;
+        background: linear-gradient(135deg, #10B981, #059669);
+        color: #fff; border: none; border-radius: 14px;
+        box-shadow: 0 4px 0 #047857, 0 8px 16px rgba(0,0,0,0.3);
+        cursor: pointer;
+        transition: transform 100ms ease;
+      }
+      .bm-pause-resume:hover  { transform: translateY(-1px); }
+      .bm-pause-resume:active { transform: translateY(3px); box-shadow: 0 1px 0 #047857; }
+
+      /* ── v53.2 polish: tournament resume prompt secondary button ── */
+      .bm-tour-go-secondary {
+        background: linear-gradient(135deg, #64748B, #475569) !important;
+        box-shadow: 0 4px 0 #334155 !important;
+        margin-top: 8px;
+      }
+      .bm-tour-go-secondary:active { box-shadow: 0 1px 0 #334155 !important; }
+      .bm-tour-resume-card {
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: 12px;
+        padding: 14px 16px;
+        margin: 12px auto 18px;
+        max-width: 360px;
+        text-align: left;
+      }
+      .bm-tour-resume-line { margin: 4px 0; font-size: 14px; color: #f1f5f9; }
+
       /* ── FIXED 18/62/20 GRID — owner spec refined for safe-area cutoff ──
          Owner: "Kasih margin lagi area bawah agar nggak terpotong" + "masih
          banyak black space" — pulled top down to 18vh (less wasted dark zone),
@@ -4119,7 +4257,17 @@
       root.querySelectorAll('.bm-tour-count-btn').forEach(b => {
         b.addEventListener('click', () => {
           playerCount = parseInt(b.getAttribute('data-count'));
-          players = Array.from({ length: playerCount }, (_, i) => ({ name: '', idx: i }));
+          // v53.2 polish #3: pre-fill from localStorage so trainer names
+          // persist across tournament sessions.
+          let saved = [];
+          try {
+            const raw = localStorage.getItem('dunia-tour-names');
+            if (raw) { const j = JSON.parse(raw); if (Array.isArray(j)) saved = j; }
+          } catch (e) {}
+          players = Array.from({ length: playerCount }, (_, i) => ({
+            name: (typeof saved[i] === 'string') ? saved[i] : '',
+            idx: i
+          }));
           step = 'names';
           renderNames();
         });
@@ -4163,6 +4311,11 @@
       });
       syncGo();
       goBtn.addEventListener('click', () => {
+        // v53.2 polish #3: persist trainer names for next session.
+        try {
+          const allNames = players.map(p => p.name || '');
+          localStorage.setItem('dunia-tour-names', JSON.stringify(allNames));
+        } catch (e) {}
         // After names → team-size step (3 or 6 Pokemon)
         step = 'size';
         renderTourSize();
@@ -4416,6 +4569,9 @@
           if (currentMatch < flat.length) {
             try { sfxMatchWin(); } catch (e) {}
           }
+          // v53.2 polish #2: persist bracket state after every match so a kid
+          // abandoning mid-tournament can pick it back up next session.
+          try { saveBracket(); } catch (e) {}
           renderBracket();
         },
         onCancel: () => {
@@ -4427,6 +4583,9 @@
 
     function showChampion (champP) {
       sfxChampion();
+      // v53.2 polish #2: tournament complete → clear the resume save so the
+      // next boot starts fresh instead of offering to "lanjutkan" a finished run.
+      try { localStorage.removeItem('dunia-tour-save-v1'); } catch (e) {}
       // Collect defeated player names from the bracket
       const defeated = players.filter(p => p !== champP).map(p => p.name);
       // Team grid showcase — champion's picked team with sprites
@@ -4494,7 +4653,75 @@
       });
     }
 
-    renderCount();
+    // v53.2 polish #2: tournament save & resume.
+    // Save snapshot fires on every match completion (in runCurrentMatch's
+    // onComplete). Resume prompt appears on the next boot if a save exists.
+    // Auto-clear on showChampion (above) and on user's "Mulai Baru" choice.
+    function saveBracket () {
+      try {
+        const data = {
+          v: 1,
+          title: opts.title || 'Tournament',
+          playerCount, players, teamSize, bracket, currentMatch,
+          savedAt: Date.now()
+        };
+        localStorage.setItem('dunia-tour-save-v1', JSON.stringify(data));
+      } catch (e) {}
+    }
+    function loadSave () {
+      try {
+        const raw = localStorage.getItem('dunia-tour-save-v1');
+        if (!raw) return null;
+        const j = JSON.parse(raw);
+        if (!j || j.v !== 1 || !Array.isArray(j.players) || !j.bracket) return null;
+        // Reject saves that are already complete (defensive).
+        const flat = (j.bracket.rounds || []).flat();
+        if (flat.length && flat.every(m => m.winner !== null)) return null;
+        return j;
+      } catch (e) { return null; }
+    }
+    function restoreFromSave (data) {
+      playerCount = data.playerCount;
+      players = data.players;
+      teamSize = data.teamSize;
+      bracket = data.bracket;
+      currentMatch = data.currentMatch | 0;
+      step = 'bracket';
+      renderBracket();
+    }
+    function renderResumePrompt (data) {
+      const flat = (data.bracket.rounds || []).flat();
+      const finished = flat.filter(m => m.winner !== null).length;
+      const total = flat.length;
+      const when = new Date(data.savedAt || Date.now());
+      const ago = Math.max(1, Math.round((Date.now() - (data.savedAt || Date.now())) / 60000));
+      const names = data.players.map(p => escapeHtml(p.name || '?')).join(' · ');
+      root.innerHTML = `
+        ${header()}
+        <div class="bm-tour-step">
+          <h2>📂 Lanjutkan tournament tersimpan?</h2>
+          <div class="bm-tour-resume-card">
+            <div class="bm-tour-resume-line"><b>🏆 ${escapeHtml(data.title || 'Tournament')}</b></div>
+            <div class="bm-tour-resume-line">👥 ${names}</div>
+            <div class="bm-tour-resume-line">⚔️ Pertandingan ${finished}/${total} selesai</div>
+            <div class="bm-tour-resume-line" style="opacity:0.7; font-size:12px;">Disimpan ${ago} menit lalu</div>
+          </div>
+          <button class="bm-tour-go" id="bm-tour-resume">▶ Lanjutkan</button>
+          <button class="bm-tour-go bm-tour-go-secondary" id="bm-tour-restart">🆕 Mulai Baru</button>
+        </div>
+      `;
+      bindBack();
+      const resumeBtn = root.querySelector('#bm-tour-resume');
+      const restartBtn = root.querySelector('#bm-tour-restart');
+      if (resumeBtn) resumeBtn.addEventListener('click', () => restoreFromSave(data));
+      if (restartBtn) restartBtn.addEventListener('click', () => {
+        try { localStorage.removeItem('dunia-tour-save-v1'); } catch (e) {}
+        renderCount();
+      });
+    }
+    const _existingSave = loadSave();
+    if (_existingSave) renderResumePrompt(_existingSave);
+    else renderCount();
   }
 
   // ── Mode select modal ───────────────────────────────────────────────
@@ -4593,13 +4820,21 @@
     const root = document.createElement('div');
     root.className = 'bm-modal';
     const suggestions = ['Bagas','Ayu','Adik','Kakak'];
+    // v53.2 polish #3: pre-fill from localStorage so the names persist across
+    // sessions. Owner-friendly: type once, remembered next time.
+    let saved = [];
+    try {
+      const raw = localStorage.getItem('dunia-pvp-names');
+      if (raw) { const j = JSON.parse(raw); if (Array.isArray(j)) saved = j; }
+    } catch (e) {}
     let rows = '';
     const palette = ['#3B82F6','#EF4444'];
     for (let i = 0; i < count; i++) {
+      const prev = (typeof saved[i] === 'string') ? saved[i] : '';
       rows += `
         <div class="bm-tour-name-row">
           <span class="bm-tour-name-badge" style="background:${palette[i]}25; color:${palette[i]}; border:1px solid ${palette[i]}80;">P${i+1}</span>
-          <input class="bm-tour-name-input" type="text" placeholder="Nama pemain ${i+1} (${suggestions[i]})" data-idx="${i}" maxlength="14">
+          <input class="bm-tour-name-input" type="text" placeholder="Nama pemain ${i+1} (${suggestions[i]})" data-idx="${i}" maxlength="14" value="${escapeHtml(prev)}">
         </div>
       `;
     }
@@ -4627,6 +4862,8 @@
     sync();
     goBtn.addEventListener('click', () => {
       const names = Array.from(inputs).map(inp => inp.value.trim());
+      // v53.2 polish #3: persist for next session.
+      try { localStorage.setItem('dunia-pvp-names', JSON.stringify(names)); } catch (e) {}
       teardown(root);
       cb(names);
     });
