@@ -653,6 +653,84 @@
     return { q: q.q, ans: q.ans, choices: q.choices.slice().sort(() => Math.random() - 0.5) };
   }
 
+  // ── v52 (concern 6): diversified question bank — 80% math / 20% mixed ──
+  // Owner: "pertanyaannya jangan matematika semua 20% pertanyaan pertanyaan lain,
+  //   misal buah apa yang xxxx atau hewan apa yang xx." Kid-comprehension grade 1-4.
+  // The existing choice-button click compares the rendered choice string to the
+  // answer string, so non-numeric answers work without any engine change.
+  const QUESTION_BANK = {
+    fruits: [
+      { q:'Buah apa yang berwarna kuning panjang?',     ans:'Pisang',   choices:['Pisang','Apel','Anggur','Semangka'] },
+      { q:'Buah apa yang berwarna merah dan bulat?',    ans:'Apel',     choices:['Apel','Pisang','Jeruk','Pir'] },
+      { q:'Buah apa yang luarnya hijau, dalamnya merah?', ans:'Semangka', choices:['Semangka','Apel','Mangga','Melon'] },
+      { q:'Buah apa yang ungu kecil-kecil?',            ans:'Anggur',   choices:['Anggur','Stroberi','Ceri','Blueberry'] },
+      { q:'Buah apa yang oranye dan asam segar?',       ans:'Jeruk',    choices:['Jeruk','Pisang','Mangga','Apel'] },
+      { q:'Buah apa yang berwarna oranye dan manis di musim panas?', ans:'Mangga', choices:['Mangga','Jeruk','Pir','Pepaya'] },
+      { q:'Buah apa yang kulitnya berduri, dagingnya manis?', ans:'Nanas', choices:['Nanas','Durian','Salak','Apel'] },
+      { q:'Buah apa yang baunya tajam tapi rasanya manis?', ans:'Durian', choices:['Durian','Mangga','Pepaya','Jeruk'] },
+      { q:'Buah kecil merah yang biasa di atas kue?',   ans:'Ceri',     choices:['Ceri','Stroberi','Anggur','Blueberry'] },
+      { q:'Buah apa yang biasa untuk salad, hijau bulat?', ans:'Melon',  choices:['Melon','Apel','Jeruk','Mangga'] }
+    ],
+    animals: [
+      { q:'Hewan apa yang bisa terbang?',               ans:'Burung',   choices:['Burung','Ikan','Kucing','Sapi'] },
+      { q:'Hewan apa yang hidup di air?',               ans:'Ikan',     choices:['Ikan','Kuda','Ayam','Anjing'] },
+      { q:'Hewan apa yang berkokok di pagi hari?',      ans:'Ayam',     choices:['Ayam','Bebek','Burung','Anjing'] },
+      { q:'Hewan apa yang berkata "meong"?',            ans:'Kucing',   choices:['Kucing','Anjing','Sapi','Kambing'] },
+      { q:'Hewan apa yang berkata "guk-guk"?',          ans:'Anjing',   choices:['Anjing','Kucing','Bebek','Sapi'] },
+      { q:'Hewan apa yang menghasilkan susu?',          ans:'Sapi',     choices:['Sapi','Ayam','Bebek','Kuda'] },
+      { q:'Hewan apa yang punya belalai panjang?',      ans:'Gajah',    choices:['Gajah','Jerapah','Singa','Beruang'] },
+      { q:'Hewan apa yang lehernya panjang sekali?',    ans:'Jerapah',  choices:['Jerapah','Gajah','Kuda','Unta'] },
+      { q:'Hewan apa yang melompat dan punya kantung?', ans:'Kanguru',  choices:['Kanguru','Kelinci','Tupai','Panda'] },
+      { q:'Hewan apa yang dijuluki raja hutan?',        ans:'Singa',    choices:['Singa','Harimau','Beruang','Serigala'] },
+      { q:'Hewan apa yang sukanya makan wortel?',       ans:'Kelinci',  choices:['Kelinci','Sapi','Kuda','Kambing'] },
+      { q:'Hewan apa yang membangun sarang di pohon?',  ans:'Burung',   choices:['Burung','Ikan','Anjing','Sapi'] }
+    ],
+    colors: [
+      { q:'Warna apa hasil merah + kuning?',            ans:'Oranye',   choices:['Oranye','Hijau','Ungu','Biru'] },
+      { q:'Warna apa hasil biru + kuning?',             ans:'Hijau',    choices:['Hijau','Ungu','Oranye','Pink'] },
+      { q:'Warna apa hasil merah + biru?',              ans:'Ungu',     choices:['Ungu','Hijau','Oranye','Coklat'] },
+      { q:'Warna apa langit cerah?',                    ans:'Biru',     choices:['Biru','Merah','Hijau','Hitam'] },
+      { q:'Warna apa rumput?',                          ans:'Hijau',    choices:['Hijau','Biru','Coklat','Ungu'] },
+      { q:'Warna apa matahari?',                        ans:'Kuning',   choices:['Kuning','Biru','Hijau','Ungu'] },
+      { q:'Warna apa salju?',                           ans:'Putih',    choices:['Putih','Hitam','Abu-abu','Biru'] },
+      { q:'Warna apa pisang yang matang?',              ans:'Kuning',   choices:['Kuning','Hijau','Merah','Coklat'] }
+    ],
+    opposites: [
+      { q:'Lawan kata BESAR?',                          ans:'Kecil',    choices:['Kecil','Tinggi','Pendek','Lebar'] },
+      { q:'Lawan kata TINGGI?',                         ans:'Pendek',   choices:['Pendek','Besar','Kecil','Lebar'] },
+      { q:'Lawan kata PANAS?',                          ans:'Dingin',   choices:['Dingin','Hangat','Sejuk','Kering'] },
+      { q:'Lawan kata SIANG?',                          ans:'Malam',    choices:['Malam','Pagi','Sore','Subuh'] },
+      { q:'Lawan kata BUKA?',                           ans:'Tutup',    choices:['Tutup','Naik','Turun','Berhenti'] },
+      { q:'Lawan kata CEPAT?',                          ans:'Lambat',   choices:['Lambat','Tinggi','Rendah','Tebal'] },
+      { q:'Lawan kata KAYA?',                           ans:'Miskin',   choices:['Miskin','Hemat','Mahal','Murah'] },
+      { q:'Lawan kata TUA?',                            ans:'Muda',     choices:['Muda','Lama','Baru','Lebar'] },
+      { q:'Lawan kata GELAP?',                          ans:'Terang',   choices:['Terang','Suram','Pekat','Buram'] },
+      { q:'Lawan kata BERAT?',                          ans:'Ringan',   choices:['Ringan','Padat','Tebal','Keras'] }
+    ],
+    bodyParts: [
+      { q:'Bagian tubuh apa untuk melihat?',            ans:'Mata',     choices:['Mata','Telinga','Hidung','Mulut'] },
+      { q:'Bagian tubuh apa untuk mendengar?',          ans:'Telinga',  choices:['Telinga','Mata','Hidung','Mulut'] },
+      { q:'Bagian tubuh apa untuk mencium bau?',        ans:'Hidung',   choices:['Hidung','Mulut','Mata','Telinga'] },
+      { q:'Bagian tubuh apa untuk berjalan?',           ans:'Kaki',     choices:['Kaki','Tangan','Kepala','Mata'] },
+      { q:'Bagian tubuh apa untuk memegang?',           ans:'Tangan',   choices:['Tangan','Kaki','Telinga','Hidung'] },
+      { q:'Bagian tubuh apa untuk berbicara?',          ans:'Mulut',    choices:['Mulut','Hidung','Mata','Telinga'] },
+      { q:'Berapa jumlah jari di satu tangan?',         ans:'5',        choices:['5','4','6','10'] }
+    ]
+  };
+  // 20% non-math sampler. Uses the same {q, ans, choices} shape so the existing
+  // choice-render + click-handler work unchanged.
+  function pickFromBank (cat) {
+    const pool = QUESTION_BANK[cat];
+    const q = pool[Math.floor(Math.random() * pool.length)];
+    // Shuffle choices so the answer position varies match-to-match.
+    return { q: q.q, ans: q.ans, choices: q.choices.slice().sort(() => Math.random() - 0.5) };
+  }
+  function pickQuestion (level) {
+    if (Math.random() >= 0.2) return makeMathQ(level);
+    const cats = ['fruits','animals','colors','opposites','bodyParts'];
+    return pickFromBank(cats[Math.floor(Math.random() * cats.length)]);
+  }
+
   // ── Pokemon roster (balanced) + type chart ─────────────────────────
   // All Pokemon normalized to HP 100. Move power 18-32 → 3-5 hits to KO.
   // Owner: "antar pokemon imbang jangan dibuat imba walaupun itu legendaris".
@@ -755,6 +833,97 @@
     paldea: { name:'Paldea', emoji:'🌵' }
   };
   const REGION_ORDER = ['kanto','johto','hoenn','sinnoh','unova','kalos','alola','galar','paldea'];
+
+  // ── v52 Per-gym arena background (concern 1) ──
+  // Map each region to one of the 9 G13C gym-themed background assets.
+  const REGION_BG = {
+    kanto:  'forest_m.webp',
+    johto:  'gym_m.webp',
+    hoenn:  'water_m.webp',
+    sinnoh: 'gym2_m.webp',
+    unova:  'volcano_m.webp',
+    kalos:  'gym_p.webp',
+    alola:  'water2_m.webp',
+    galar:  'water3_m.webp',
+    paldea: 'water_p.webp'
+  };
+  function regionFromTeam (team) {
+    if (!team || !team.length) return null;
+    for (const p of team) {
+      if (p && p._region) return p._region;
+    }
+    return null;
+  }
+  function pickArenaBg (team1, team2, matchSeed) {
+    const r1 = regionFromTeam(team1);
+    const r2 = regionFromTeam(team2);
+    matchSeed = matchSeed | 0;
+    if (r1 && r2 && r1 === r2) return REGION_BG[r1] || null;
+    if (r1 && r2) return REGION_BG[(matchSeed % 2 === 0) ? r1 : r2] || null;
+    return REGION_BG[r1 || r2] || null;
+  }
+  function applyArenaBg (root, team1, team2, matchSeed) {
+    const arena = root && root.querySelector('.bm-arena');
+    if (!arena) return;
+    const file = pickArenaBg(team1, team2, matchSeed);
+    if (file) {
+      arena.style.setProperty('--bm-arena-bg', "url('" + _ASSET_BASE + "assets/background/Gym pokemon/" + file + "')");
+    } else {
+      arena.style.removeProperty('--bm-arena-bg');
+    }
+  }
+
+  // ── v52 PvP/Tournament BGM (concerns 5 + 7) ──
+  // Port of G13C bgmPlay/bgmStop with PvP-scoped volume = 0.245 (70% of G13C's 0.35).
+  // Owner: "backsound saat pvp dan tournament jangan keras pakai 70% volume dari suara gym pokemon."
+  // Honours window.__bmMuted (set by mute toggle) on every (re)start.
+  var _bmBgmEl = null;
+  var _bmBgmVolume = 0.245;
+  function bmBgmPlay () {
+    try {
+      if (!_bmBgmEl) {
+        _bmBgmEl = document.createElement('audio');
+        _bmBgmEl.dataset.bgm = 'pvp';
+        _bmBgmEl.src = _ASSET_BASE + 'assets/Pokemon/sound/18 Pokémon Gym（１９９７－１９９８｜Ｍ５７Ｂ） - Satoshi Sakai No Masta - SoundLoadMate.com.mp3';
+        _bmBgmEl.loop = true;
+        _bmBgmEl.volume = _bmBgmVolume;
+        document.body.appendChild(_bmBgmEl);
+      }
+      _bmBgmEl.volume = window.__bmMuted ? 0 : _bmBgmVolume;
+      _bmBgmEl.currentTime = 0;
+      const p = _bmBgmEl.play();
+      if (p && p.catch) p.catch(() => {
+        setTimeout(() => { try { _bmBgmEl && _bmBgmEl.play().catch(() => {}); } catch (e) {} }, 300);
+      });
+    } catch (e) {}
+  }
+  function bmBgmStop () {
+    try {
+      if (!_bmBgmEl || _bmBgmEl.paused) return;
+      let v = _bmBgmEl.volume;
+      const fade = setInterval(() => {
+        v = Math.max(0, v - 0.04);
+        if (_bmBgmEl) _bmBgmEl.volume = v;
+        if (v <= 0) {
+          clearInterval(fade);
+          if (_bmBgmEl) { _bmBgmEl.pause(); _bmBgmEl.volume = _bmBgmVolume; }
+        }
+      }, 40);
+    } catch (e) {}
+  }
+  function bmBgmSetMuted (muted) {
+    window.__bmMuted = !!muted;
+    try { localStorage.setItem('bm-mute', muted ? '1' : '0'); } catch (e) {}
+    if (_bmBgmEl) _bmBgmEl.volume = muted ? 0 : _bmBgmVolume;
+  }
+  function bmBgmIsMuted () {
+    if (typeof window.__bmMuted !== 'undefined') return !!window.__bmMuted;
+    try {
+      const stored = localStorage.getItem('bm-mute');
+      window.__bmMuted = (stored === '1');
+      return window.__bmMuted;
+    } catch (e) { window.__bmMuted = false; return false; }
+  }
 
   // Tier badge map — G13C ships base / final / mega tiers. Mirror visually.
   const TIER_META = {
@@ -882,7 +1051,10 @@
       const j = Math.floor(Math.random() * (i + 1));
       const t = shuffled[i]; shuffled[i] = shuffled[j]; shuffled[j] = t;
     }
-    return shuffled.slice(0, teamSize).map(buildRandomPokemon).map(p => ({ ...p, hp:80, hpMax:80 }));
+    // v52 (concern 1): stamp _region so renderArena → applyArenaBg can pick the
+    // gym-themed BG for "🎲 Acak" random-region teams too.
+    const _regionId = (RANDOM_REGIONS.find(r => r.gen === gen) || {}).id || null;
+    return shuffled.slice(0, teamSize).map(buildRandomPokemon).map(p => ({ ...p, hp:80, hpMax:80, _region: _regionId }));
   }
 
   // Adapt G13C-format Pokemon to engine format: add id (from slug→id map), color
@@ -917,11 +1089,18 @@
   }
 
   // Build a fresh team from a package by id. Reads window.POKE_PACKAGES.
+  // v52: stamps `_region` (and `_pkgId`) on every team member so renderArena
+  // can resolve the gym-themed BG without threading opts through every caller.
   function buildTeamFromPackage (pkgId, teamSize) {
     const packages = getPokePackages();
     const pkg = packages.find(p => p.id === pkgId) || packages[0];
     if (!pkg || !pkg.team) return [];
-    return pkg.team.slice(0, teamSize).map(adaptPkmFromG13C);
+    return pkg.team.slice(0, teamSize).map(p => {
+      const adapted = adaptPkmFromG13C(p);
+      adapted._region = pkg.region || null;
+      adapted._pkgId  = pkg.id || null;
+      return adapted;
+    });
   }
 
   // ── Picker HTML builder (MODULE SCOPE) ────────────────────────────────────
@@ -1073,8 +1252,20 @@
     injectCSS();
     injectPvPRealCSS();
 
+    // v52 (concerns 5+7): wire G13C gym OST at 70% of G13C's base volume (0.245).
+    // Tournament sets opts._noBgm = true so its own bmBgmPlay isn't re-triggered
+    // by per-match startPvP calls.
+    if (!opts._noBgm) {
+      bmBgmIsMuted(); // primes window.__bmMuted from localStorage
+      bmBgmPlay();
+    }
+
     const root = document.createElement('div');
     root.className = 'bm-pvp-real';
+    // v52: marker so teardown knows whether to silence BGM. Tournament's
+    // per-match PvP roots set _noBgm → teardown skips bmBgmStop and the OST
+    // keeps playing across matches.
+    if (opts._noBgm) root.dataset.noBgm = '1';
     document.body.appendChild(root);
 
     // Default Pokemon (deterministic, fair): P1 = Pikachu, P2 = Charmander.
@@ -1117,6 +1308,9 @@
 
     function exitMatch () {
       if (confirm('Keluar dari match?')) {
+        // v52 (concerns 5+7): silence BGM only when the user truly exits PvP.
+        // Tournament's per-match exit (winner advances) keeps BGM playing.
+        if (!opts._noBgm) bmBgmStop();
         teardown(root);
         opts.onCancel && opts.onCancel();
       }
@@ -1137,6 +1331,7 @@
 
       root.innerHTML = `
         <button class="bm-back bm-real-exit" data-exit>×</button>
+        <button class="bm-mute-btn" data-mute aria-label="Bisukan musik">${bmBgmIsMuted() ? '🔇' : '🔊'}</button>
 
         <div class="bm-stage-grid">
           <!-- TOP Q-ZONE (P2) — rotated 180° for face-to-face -->
@@ -1156,6 +1351,17 @@
         </div>
       `;
       root.querySelector('[data-exit]').addEventListener('click', exitMatch);
+      // v52 (concerns 5+7+polish #6): persistent mute toggle for BGM (and the
+      // SFX layer once it consults bmBgmIsMuted()). Survives page reloads via
+      // localStorage. Owner: "kasih 10-20 ide super menarik" → mute is item #6.
+      const _muteBtn = root.querySelector('[data-mute]');
+      if (_muteBtn) _muteBtn.addEventListener('click', () => {
+        const next = !bmBgmIsMuted();
+        bmBgmSetMuted(next);
+        _muteBtn.textContent = next ? '🔇' : '🔊';
+      });
+      // v52 (concern 1): set --bm-arena-bg per the active matchup's region.
+      applyArenaBg(root, state.teams[0], state.teams[1], state.matchNo | 0);
       wireActiveZone();
       // A5: start the 10-second answer timer when a fresh question phase shows.
       // (Move phase + animating phase don't tick — RAF self-stops.)
@@ -1171,6 +1377,7 @@
       stopQuestionTimer();
       root.innerHTML = `
         <button class="bm-back bm-real-exit" data-exit>×</button>
+        <button class="bm-mute-btn" data-mute aria-label="Bisukan musik">${bmBgmIsMuted() ? '🔇' : '🔊'}</button>
         <div class="bm-prestep">
           <div class="bm-prestep-title">Pilih Mode Tim</div>
           <div class="bm-prestep-sub">Berapa Pokemon yang bertarung?</div>
@@ -1191,6 +1398,15 @@
         </div>
       `;
       root.querySelector('[data-exit]').addEventListener('click', exitMatch);
+      // v52 (concerns 5+7+polish #6): persistent mute toggle for BGM (and the
+      // SFX layer once it consults bmBgmIsMuted()). Survives page reloads via
+      // localStorage. Owner: "kasih 10-20 ide super menarik" → mute is item #6.
+      const _muteBtn = root.querySelector('[data-mute]');
+      if (_muteBtn) _muteBtn.addEventListener('click', () => {
+        const next = !bmBgmIsMuted();
+        bmBgmSetMuted(next);
+        _muteBtn.textContent = next ? '🔇' : '🔊';
+      });
       root.querySelectorAll('.bm-size-card').forEach(b => {
         b.addEventListener('click', () => {
           const sz = parseInt(b.getAttribute('data-size'));
@@ -1251,6 +1467,7 @@
       const draw = () => {
         root.innerHTML = `
           <button class="bm-back bm-real-exit" data-exit>×</button>
+        <button class="bm-mute-btn" data-mute aria-label="Bisukan musik">${bmBgmIsMuted() ? '🔇' : '🔊'}</button>
           <div class="bm-prestep">
             <div class="bm-prestep-header">
               <span class="bm-pvp-badge ${badgeClass}">${badgeClass.toUpperCase()}</span>
@@ -1261,6 +1478,15 @@
           </div>
         `;
         root.querySelector('[data-exit]').addEventListener('click', exitMatch);
+      // v52 (concerns 5+7+polish #6): persistent mute toggle for BGM (and the
+      // SFX layer once it consults bmBgmIsMuted()). Survives page reloads via
+      // localStorage. Owner: "kasih 10-20 ide super menarik" → mute is item #6.
+      const _muteBtn = root.querySelector('[data-mute]');
+      if (_muteBtn) _muteBtn.addEventListener('click', () => {
+        const next = !bmBgmIsMuted();
+        bmBgmSetMuted(next);
+        _muteBtn.textContent = next ? '🔇' : '🔊';
+      });
         wirePickerHandlers(root, playerIdx, advancePickStep);
       };
       if (wasLoaded) {
@@ -1269,12 +1495,22 @@
         // Show a quick loading state while the 19KB pokemon-db fetches.
         root.innerHTML = `
           <button class="bm-back bm-real-exit" data-exit>×</button>
+        <button class="bm-mute-btn" data-mute aria-label="Bisukan musik">${bmBgmIsMuted() ? '🔇' : '🔊'}</button>
           <div class="bm-prestep" style="padding-top:60px;">
             <div class="bm-prestep-title">📦 Memuat Pokedex…</div>
             <div class="bm-prestep-sub">Sebentar, sedang siapkan pakettim Pokemon.</div>
           </div>
         `;
         root.querySelector('[data-exit]').addEventListener('click', exitMatch);
+      // v52 (concerns 5+7+polish #6): persistent mute toggle for BGM (and the
+      // SFX layer once it consults bmBgmIsMuted()). Survives page reloads via
+      // localStorage. Owner: "kasih 10-20 ide super menarik" → mute is item #6.
+      const _muteBtn = root.querySelector('[data-mute]');
+      if (_muteBtn) _muteBtn.addEventListener('click', () => {
+        const next = !bmBgmIsMuted();
+        bmBgmSetMuted(next);
+        _muteBtn.textContent = next ? '🔇' : '🔊';
+      });
         loadPokeDB().then(draw).catch(err => {
           console.warn('[battle-modes] pokedex load failed', err);
           draw();   // render anyway with placeholder sprites
@@ -1401,7 +1637,11 @@
       if (state.phase === 'question') {
         if (!root._questions) root._questions = [null, null];
         if (!root._questions[playerIdx]) {
-          root._questions[playerIdx] = state.qType === 'type' ? makeTypeQ() : makeMathQ(state.qLevel);
+          // v52 (concern 6): when qType is 'math', sample from QUESTION_BANK
+          // (80% math / 20% non-math: fruits, animals, colors, opposites, body).
+          root._questions[playerIdx] = state.qType === 'type'
+            ? makeTypeQ()
+            : pickQuestion(state.qLevel);
         }
         const q = root._questions[playerIdx];
         return `
@@ -2208,6 +2448,18 @@
         width: 36px; height: 36px;
         font-size: 18px;
       }
+      /* v52 polish #6 — persistent mute toggle (concerns 5+7) */
+      .bm-mute-btn {
+        position: fixed; top: 8px; right: 8px; z-index: 9105;
+        background: rgba(0,0,0,0.70); color: #fff;
+        width: 44px; height: 44px;
+        border: none; border-radius: 10px;
+        font-size: 20px; line-height: 1; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: background 150ms ease, transform 120ms ease;
+      }
+      .bm-mute-btn:hover { background: rgba(0,0,0,0.88); }
+      .bm-mute-btn:active { transform: scale(0.92); }
 
       /* ── FIXED 18/62/20 GRID — owner spec refined for safe-area cutoff ──
          Owner: "Kasih margin lagi area bawah agar nggak terpotong" + "masih
@@ -2222,14 +2474,33 @@
       }
 
       /* ── SHARED ARENA — both Pokemon in one view ── */
+      /* v52 (concern 1): --bm-arena-bg drives the gym-themed background image
+         per package region. renderArena() sets it via inline style; default
+         fallback is the legacy bg-pokemon-battle.webp. */
       .bm-arena {
         position: relative; overflow: hidden;
         background: linear-gradient(180deg,#6bbfee 0%,#a8d8f8 32%,#a0d870 46%,#5a9e3a 65%,#3e7028 100%);
+        --bm-arena-bg: url('${_ASSET_BASE}assets/bg-pokemon-battle.webp');
       }
       .bm-arena::before {
         content: ''; position: absolute; inset: -10% -5%;
-        background: url('${_ASSET_BASE}assets/bg-pokemon-battle.webp') center center/cover no-repeat;
-        opacity: 0.55; pointer-events: none;
+        background-image: var(--bm-arena-bg);
+        background-position: center center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        opacity: 0.65; pointer-events: none;
+      }
+      /* v52 (concern 2): P2 HP card rotated 180° so the player sitting
+         opposite the device reads HP / name / chips right-side-up.
+         Bench-dot row counter-rotates so slot order remains L→R from
+         P2's seat (slot 1 leftmost).
+         Owner: "yang pokemon 2 itu health barnya menghadap ke atas (rotate 180deg)". */
+      .bm-arena-opp .bm-info-card {
+        transform: rotate(180deg);
+        transform-origin: center center;
+      }
+      .bm-arena-opp .bm-info-card .bm-bench-dots {
+        transform: rotate(180deg);
       }
       /* Opponent (P2) — top-right (mirrors .g10-espr-wrap) */
       .bm-arena-opp {
@@ -3000,6 +3271,11 @@
     // size step was unclickable because cards rendered without CSS, collapsing
     // to default tiny <button>. _realCssInjected guard makes this idempotent.
     injectPvPRealCSS();
+    // v52 (concerns 5+7): start BGM once for the whole tournament. Per-match
+    // startPvP calls pass `_noBgm: true` so the music doesn't restart between
+    // matches. bmBgmStop fires when the user backs out (see `close()`).
+    bmBgmIsMuted();
+    bmBgmPlay();
     const root = document.createElement('div');
     root.className = 'bm-tour';
     document.body.appendChild(root);
@@ -3322,6 +3598,9 @@
         stageLineText: cur.label,
         questionLevel: opts.questionLevel,
         questionType: opts.questionType,
+        // v52: Tournament's own startTournament boot already started BGM —
+        // suppress per-match restart so the gym OST plays continuously.
+        _noBgm: true,
         // Pass picked teams — startPvP sees opts.teams so it skips the pre-battle
         // picker and goes straight to the arena with these teams.
         teams: [cloneFreshTeam(aP.team), cloneFreshTeam(bP.team)],
@@ -3573,7 +3852,17 @@
   }
 
   function teardown (root) {
-    try { root.remove(); } catch (e) {}
+    try {
+      // v52 (concerns 5+7): silence the gym OST when leaving PvP / Tournament.
+      // Tournament's per-match PvP roots carry data-no-bgm so the music keeps
+      // playing across matches; only the outer Tournament root tear-down stops it.
+      if (root && root.classList) {
+        const isTourRoot = root.classList.contains('bm-tour');
+        const isStandalonePvP = root.classList.contains('bm-pvp-real') && !root.dataset.noBgm;
+        if (isTourRoot || isStandalonePvP) bmBgmStop();
+      }
+      root.remove();
+    } catch (e) {}
   }
 
   function escapeHtml (s) {
