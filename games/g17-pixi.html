@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<!--
+  G17 "Jembatan Goyang" — REVAMP v54.7 (2026-06-24)
+  Owner's pick: rope-swing platformer (Spider-Man pendulum + Indiana Jones
+  collapsing-planks vibe). Pikachu swings from anchor to anchor via electric
+  tail-rope over a misty Indonesian gorge. Collapsing bamboo planks below
+  force forward motion — walking is not an option.
+
+  Core mechanic:
+    TAP-AND-HOLD     → swing forward (pendulum SHM, omega += -g*sin(angle)*dt/L)
+    RELEASE          → launch (release timing decides arc; early=short, late=long)
+    AUTO-GRAB next   → catch nearest anchor within ±60px (forgiveness for 5yo)
+    Collapsing planks below force forward motion
+    Gems mid-arc give +score and combo
+    3 lives (Pikachu falls into mist → respawn at last anchor)
+
+  This is a v54.7 MVP — 5 stages in 1 world (Hutan Bambu). World 2 (Lembah
+  Vulkanik) + World 3 (Awan Tinggi) + boss are planned for v54.7.x follow-ups.
+
+  Replaces the prior tap-the-glowing-block whack-a-mole game (game.js lines
+  12830-13094 + index.html #screen-game17 lines 1443-1526). Owner: "parah
+  gameplaynya" → full concept revamp.
+
+  Tech: Pixi 8 + minimal CSS. Self-contained — no external deps beyond Pixi
+  CDN already pre-loaded by parent page.
+-->
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>🐒 Jembatan Goyang — Pikachu Rope Swing</title>
+<style>
+:root{--mist:#a8c5d8;--bamboo:#76b04a;--gold:#fcd34d;--electric:#fde047;--cliff:#3d3527}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+html,body{margin:0;padding:0;height:100%;background:#1f2937;color:#fff;font-family:'Inter',system-ui,sans-serif;overflow:hidden;overscroll-behavior:none;user-select:none;-webkit-user-select:none}
+#g17-stage{position:fixed;inset:0;z-index:1}
+#g17-stage canvas{display:block;width:100%;height:100%}
+#g17-hud{position:fixed;top:env(safe-area-inset-top,10px);left:env(safe-area-inset-left,12px);right:env(safe-area-inset-right,12px);z-index:50;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;background:linear-gradient(180deg,rgba(15,23,42,0.78),rgba(15,23,42,0.55));backdrop-filter:blur(8px);border-radius:14px}
+.g17-hud-chip{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);padding:4px 10px;border-radius:100px;font-weight:700;font-size:13px}
+.g17-hud-emoji{font-size:18px;line-height:1}
+#g17-back{background:rgba(0,0,0,0.7);color:#fff;border:none;border-radius:10px;padding:8px 12px;font-size:18px;cursor:pointer;font-weight:700;min-height:44px;min-width:44px}
+#g17-back:active{transform:scale(0.92)}
+#g17-overlay{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(15,23,42,0.85),rgba(15,23,42,0.95));backdrop-filter:blur(6px);padding:18px;text-align:center;gap:14px}
+#g17-overlay.hidden{display:none}
+#g17-overlay h1{font-family:'Fredoka One',cursive;font-size:clamp(28px,7vw,46px);margin:0;color:var(--gold);text-shadow:0 4px 14px rgba(0,0,0,0.6)}
+#g17-overlay p{margin:0;font-size:15px;line-height:1.5;max-width:380px;color:rgba(255,255,255,0.85)}
+.g17-btn{background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;border-radius:14px;padding:14px 26px;font-size:18px;font-weight:900;font-family:'Fredoka One',cursive;box-shadow:0 5px 0 #047857,0 8px 16px rgba(0,0,0,0.3);cursor:pointer;min-height:56px;letter-spacing:0.5px}
+.g17-btn:active{transform:translateY(3px);box-shadow:0 2px 0 #047857}
+.g17-btn.secondary{background:linear-gradient(135deg,#64748b,#475569);box-shadow:0 5px 0 #334155}
+#g17-toast{position:fixed;left:50%;top:22%;transform:translate(-50%,-20px);z-index:90;background:rgba(15,23,42,0.95);color:#fff;padding:10px 18px;border-radius:14px;font-weight:700;opacity:0;pointer-events:none;transition:opacity 200ms,transform 200ms;border:2px solid var(--gold)}
+#g17-toast.show{opacity:1;transform:translate(-50%,0)}
+#g17-tap-hint{position:fixed;left:50%;bottom:18%;transform:translateX(-50%);z-index:60;background:rgba(0,0,0,0.6);padding:8px 14px;border-radius:100px;font-size:12px;font-weight:700;color:rgba(255,255,255,0.85);pointer-events:none;animation:g17HintPulse 1.6s ease-in-out infinite}
+@keyframes g17HintPulse{0%,100%{opacity:0.5}50%{opacity:1}}
+@media (prefers-reduced-motion: reduce){#g17-tap-hint{animation:none}#g17-toast{transition:none}}
+</style>
+</head>
+<body>
+
+<button id="g17-back" onclick="g17ExitToMenu()" aria-label="Kembali">⌂</button>
+
+<div id="g17-hud">
+  <div class="g17-hud-chip"><span class="g17-hud-emoji">❤️</span><span id="g17-lives">3</span></div>
+  <div class="g17-hud-chip"><span class="g17-hud-emoji">💎</span><span id="g17-gems">0</span></div>
+  <div class="g17-hud-chip"><span class="g17-hud-emoji">⚡</span><span id="g17-combo">x1</span></div>
+  <div class="g17-hud-chip"><span class="g17-hud-emoji">🏁</span><span id="g17-level">L1</span></div>
+</div>
+
+<div id="g17-stage"></div>
+
+<div id="g17-tap-hint">Tahan layar untuk ayun &middot; lepas untuk lompat</div>
+
+<div id="g17-overlay">
+  <h1 id="g17-over-title">🐒 Jembatan Goyang</h1>
+  <p id="g17-over-text">Tahan layar lalu lepas untuk ayun Pikachu! Loncat dari anchor ke anchor sambil ambil 💎. Auto-grab membantu kamu menangkap anchor berikutnya.</p>
+  <button class="g17-btn" id="g17-over-go" onclick="g17BeginGame()">▶ Mulai Main!</button>
+  <button class="g17-btn secondary" onclick="g17ExitToMenu()">← Kembali</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/pixi.js@8.6.6/dist/pixi.min.js"></script>
+<script>
+// ─── Config ────────────────────────────────────────────────────────────────
+const G17_LEVELS = [
+  // World 1 "Hutan Bambu" — 5 levels, gentle to challenging
+  { id:1, name:'Pohon Bambu', anchors:6, gemsPer:2, gap:[150,200], world:'bambu' },
+  { id:2, name:'Sungai Kecil', anchors:8, gemsPer:3, gap:[170,230], world:'bambu' },
+  { id:3, name:'Lembah Hijau', anchors:10, gemsPer:3, gap:[180,250], world:'bambu' },
+  { id:4, name:'Air Terjun', anchors:12, gemsPer:4, gap:[200,260], world:'bambu' },
+  { id:5, name:'Puncak Bukit', anchors:15, gemsPer:5, gap:[210,280], world:'bambu' },
+]
+
+// Physics constants (canonical pendulum SHM)
+const G17_PHYS = {
+  gravity: 1200,           // px/s² downward
+  ropeLength: 110,         // base rope length when hanging
+  pendulumDamping: 0.998,  // velocity decay per frame (very slight)
+  swingForce: 8,           // omega impulse per frame while tap-held
+  launchBoost: 1.1,        // velocity multiplier on release
+  autoGrabRadius: 60,      // ±60 px catch zone for next anchor (kid-forgiving)
+  airDrag: 0.995,          // air resistance during flight
+  gemRadius: 20,           // gem catch radius
+  groundY: 0.78,           // collapsing-planks line as fraction of canvas H
+}
+
+// ─── Runtime state ─────────────────────────────────────────────────────────
+let g17App, g17World, g17Cfg, S
+let g17TapDown = false
+
+// ─── Boot ──────────────────────────────────────────────────────────────────
+(async function g17Boot(){
+  try {
+    const cfgRaw = sessionStorage.getItem('g17Config')
+    g17Cfg = cfgRaw ? JSON.parse(cfgRaw) : { level: 1 }
+  } catch(_) { g17Cfg = { level: 1 } }
+
+  const stage = document.getElementById('g17-stage')
+  g17App = new PIXI.Application()
+  await g17App.init({
+    resizeTo: stage,
+    background: '#a8c5d8',
+    antialias: true,
+    autoDensity: true,
+    resolution: Math.min(window.devicePixelRatio || 1, 2),
+  })
+  stage.appendChild(g17App.canvas)
+  g17World = new PIXI.Container()
+  g17App.stage.addChild(g17World)
+
+  document.getElementById('g17-level').textContent = 'L' + (g17Cfg.level || 1)
+  // Wire input
+  g17App.canvas.addEventListener('pointerdown', g17OnTapDown)
+  g17App.canvas.addEventListener('pointerup',   g17OnTapUp)
+  g17App.canvas.addEventListener('pointerleave',g17OnTapUp)
+})()
+
+// ─── Game start ────────────────────────────────────────────────────────────
+function g17BeginGame(){
+  document.getElementById('g17-overlay').classList.add('hidden')
+  g17Reset()
+  g17BuildLevel(G17_LEVELS[(g17Cfg.level - 1) % G17_LEVELS.length])
+  g17App.ticker.add(g17Tick)
+}
+
+function g17Reset(){
+  S = {
+    running: true,
+    lives: 3,
+    gems: 0,
+    combo: 1,
+    score: 0,
+    level: g17Cfg.level || 1,
+    anchors: [],        // [{x,y,gfx}]
+    gems: 0,            // total collected
+    gemSprites: [],     // [{x,y,collected,gfx}]
+    pikachu: { x:0, y:0, vx:0, vy:0 },
+    grabbedIdx: -1,
+    angle: Math.PI,     // hanging down from anchor (radians)
+    omega: 0,           // angular velocity
+    inAir: false,
+    cameraX: 0,
+    deathTimer: 0,
+    levelComplete: false,
+  }
+  if (g17World) g17World.removeChildren()
+  g17UpdateHUD()
+}
+
+// ─── Level builder ─────────────────────────────────────────────────────────
+function g17BuildLevel(lvl){
+  S.lvl = lvl
+  const W = g17App.canvas.width / (g17App.renderer.resolution || 1)
+  const H = g17App.canvas.height / (g17App.renderer.resolution || 1)
+  const groundY = H * G17_PHYS.groundY
+  const skyTopY = H * 0.15
+
+  // Sky gradient (PIXI doesn't have native gradients in v8 Graphics; layered fills)
+  const sky = new PIXI.Graphics()
+  sky.rect(0, 0, W, H).fill({ color: 0xa8c5d8 })
+  sky.rect(0, 0, W, H * 0.5).fill({ color: 0x8eb4d2, alpha: 0.5 })
+  sky.rect(0, H * 0.55, W, H * 0.45).fill({ color: 0x6e5b3a, alpha: 0.45 }) // misty gorge
+  g17World.addChild(sky)
+
+  // Far parallax — bamboo silhouettes
+  const farLayer = new PIXI.Graphics()
+  for (let i = 0; i < 16; i++){
+    const x = i * (W * 0.18), y = skyTopY + Math.random() * 40
+    const h = 80 + Math.random() * 90
+    farLayer.rect(x, y, 3, h).fill({ color: 0x4a6b35, alpha: 0.45 })
+    farLayer.circle(x + 1.5, y - 4, 8).fill({ color: 0x4a6b35, alpha: 0.45 })
+  }
+  g17World.addChild(farLayer)
+
+  // Anchors — bamboo platforms hanging from sky
+  S.anchors = []
+  let curX = 80
+  for (let i = 0; i < lvl.anchors; i++){
+    const yJitter = Math.sin(i * 0.6) * 35
+    const ay = H * 0.32 + yJitter
+    S.anchors.push({ x: curX, y: ay, gfx: null })
+    const a = new PIXI.Graphics()
+    a.rect(-22, -8, 44, 5).fill({ color: 0x4a6b35 })  // beam top
+    a.rect(-3, -3, 6, 14).fill({ color: 0x6b8e23 })   // post
+    a.circle(0, 0, 7).fill({ color: 0xfde047 }).stroke({ color: 0xf59e0b, width: 2 })
+    a.x = curX; a.y = ay
+    g17World.addChild(a)
+    S.anchors[i].gfx = a
+
+    // Spawn gems in arc between this anchor and the next
+    if (i < lvl.anchors - 1){
+      const nextX = curX + (lvl.gap[0] + Math.random() * (lvl.gap[1] - lvl.gap[0]))
+      const midX = (curX + nextX) / 2
+      const arcMidY = ay + 80   // mid-arc dip
+      for (let gi = 0; gi < lvl.gemsPer; gi++){
+        const t = (gi + 1) / (lvl.gemsPer + 1)
+        const gx = curX + (nextX - curX) * t
+        const gy = ay - 20 + (arcMidY - ay) * (1 - Math.cos(t * Math.PI)) / 2
+        const gg = new PIXI.Graphics()
+        gg.poly([0, -10, 7, 0, 0, 10, -7, 0]).fill({ color: 0x06b6d4 }).stroke({ color: 0x0e7490, width: 1.5 })
+        gg.x = gx; gg.y = gy
+        g17World.addChild(gg)
+        S.gemSprites.push({ x: gx, y: gy, collected: false, gfx: gg })
+      }
+      curX = nextX
+    }
+  }
+
+  // Collapsing planks line — visual reference for the "gorge below"
+  const planks = new PIXI.Graphics()
+  for (let i = 0; i < 30; i++){
+    const px = i * 80 - 40
+    const py = groundY - 4 + Math.sin(i * 0.6) * 6
+    planks.rect(px, py, 60, 8).fill({ color: 0xa16207, alpha: 0.7 })
+    planks.rect(px - 5, py + 8, 4, 14).fill({ color: 0x7c2d12 })
+  }
+  g17World.addChild(planks)
+
+  // Pikachu sprite
+  const pika = new PIXI.Graphics()
+  pika.circle(0, 0, 14).fill({ color: 0xfde047 }).stroke({ color: 0xb45309, width: 2 })
+  pika.circle(-4, -3, 1.6).fill({ color: 0x000000 })  // left eye
+  pika.circle(4, -3, 1.6).fill({ color: 0x000000 })   // right eye
+  pika.circle(-6, 1, 2).fill({ color: 0xef4444 })     // left cheek
+  pika.circle(6, 1, 2).fill({ color: 0xef4444 })      // right cheek
+  pika.poly([-9, -12, -4, -20, -2, -12]).fill({ color: 0xfde047 }).stroke({ color: 0xb45309, width: 1 })  // ear L
+  pika.poly([9, -12, 4, -20, 2, -12]).fill({ color: 0xfde047 }).stroke({ color: 0xb45309, width: 1 })    // ear R
+  g17World.addChild(pika)
+  S.pika = pika
+
+  // Rope sprite (drawn fresh each frame)
+  S.ropeGfx = new PIXI.Graphics()
+  g17World.addChild(S.ropeGfx)
+
+  // Start hanging from first anchor
+  S.grabbedIdx = 0
+  S.angle = Math.PI
+  S.omega = 0
+  S.inAir = false
+  const a0 = S.anchors[0]
+  S.pikachu.x = a0.x
+  S.pikachu.y = a0.y + G17_PHYS.ropeLength
+  S.pika.x = S.pikachu.x
+  S.pika.y = S.pikachu.y
+  S.cameraX = 0
+
+  document.getElementById('g17-tap-hint').style.display = ''
+  setTimeout(() => { try { document.getElementById('g17-tap-hint').style.display = 'none' } catch(_){} }, 4500)
+}
+
+// ─── Input ─────────────────────────────────────────────────────────────────
+function g17OnTapDown(e){
+  if (!S || !S.running) return
+  g17TapDown = true
+}
+function g17OnTapUp(e){
+  if (!S || !S.running) return
+  if (!g17TapDown) return
+  g17TapDown = false
+  if (S.grabbedIdx >= 0){
+    // Release — launch into air
+    const anchor = S.anchors[S.grabbedIdx]
+    const releaseAngle = S.angle
+    const tangentX = Math.cos(releaseAngle - Math.PI / 2)
+    const tangentY = Math.sin(releaseAngle - Math.PI / 2)
+    const speed = Math.abs(S.omega) * G17_PHYS.ropeLength * G17_PHYS.launchBoost
+    S.pikachu.vx = tangentX * speed
+    S.pikachu.vy = tangentY * speed
+    // Always nudge forward so the kid doesn't release backwards by accident
+    if (S.pikachu.vx < 60) S.pikachu.vx = 60
+    S.grabbedIdx = -1
+    S.inAir = true
+    g17PlaySwoosh()
+  }
+}
+
+// ─── Game tick ─────────────────────────────────────────────────────────────
+function g17Tick(ticker){
+  if (!S || !S.running) return
+  const dt = Math.min(ticker.deltaTime, 2.5) / 60   // clamp + seconds
+
+  if (S.grabbedIdx >= 0){
+    // Hanging / swinging on rope (pendulum SHM)
+    const anchor = S.anchors[S.grabbedIdx]
+    if (g17TapDown){
+      // Apply forward swing force based on player intent
+      S.omega += G17_PHYS.swingForce * dt * Math.cos(S.angle - Math.PI)
+    }
+    // SHM physics: omega += -g/L * sin(angle) * dt
+    const restoringForce = -G17_PHYS.gravity / G17_PHYS.ropeLength * Math.sin(S.angle - Math.PI)
+    S.omega += restoringForce * dt
+    S.omega *= G17_PHYS.pendulumDamping
+    S.angle += S.omega * dt
+
+    S.pikachu.x = anchor.x + Math.sin(S.angle - Math.PI) * G17_PHYS.ropeLength
+    S.pikachu.y = anchor.y - Math.cos(S.angle - Math.PI) * G17_PHYS.ropeLength
+  } else if (S.inAir){
+    // Projectile motion
+    S.pikachu.vy += G17_PHYS.gravity * dt
+    S.pikachu.vx *= G17_PHYS.airDrag
+    S.pikachu.x += S.pikachu.vx * dt
+    S.pikachu.y += S.pikachu.vy * dt
+
+    // Auto-grab next anchor if close enough + moving past
+    for (let i = S.grabbedIdx + 1; i < S.anchors.length; i++){
+      const a = S.anchors[i]
+      const dx = a.x - S.pikachu.x
+      const dy = a.y + G17_PHYS.ropeLength - S.pikachu.y
+      const dist = Math.sqrt(dx*dx + dy*dy)
+      if (dist < G17_PHYS.autoGrabRadius){
+        // Grab it!
+        S.grabbedIdx = i
+        S.angle = Math.PI + Math.atan2(S.pikachu.x - a.x, a.y + G17_PHYS.ropeLength - S.pikachu.y)
+        S.omega = S.pikachu.vx / G17_PHYS.ropeLength * 0.7
+        S.inAir = false
+        // Combo
+        S.combo += 1
+        g17ShowToast('⚡ x' + S.combo)
+        g17UpdateHUD()
+        g17PlayGrabChime()
+        break
+      }
+    }
+
+    // Death — fell below ground line
+    const groundY = g17App.canvas.height / (g17App.renderer.resolution || 1) * G17_PHYS.groundY
+    if (S.pikachu.y > groundY){
+      g17OnFall()
+      return
+    }
+  }
+
+  // Gem collection
+  for (const g of S.gemSprites){
+    if (g.collected) continue
+    const dx = g.x - S.pikachu.x, dy = g.y - S.pikachu.y
+    if (dx*dx + dy*dy < G17_PHYS.gemRadius * G17_PHYS.gemRadius){
+      g.collected = true
+      g.gfx.alpha = 0.0
+      S.gems++
+      S.score += 10 * S.combo
+      g17UpdateHUD()
+      g17PlayGemChime()
+    }
+  }
+
+  // Update sprite + rope
+  S.pika.x = S.pikachu.x
+  S.pika.y = S.pikachu.y
+  S.ropeGfx.clear()
+  if (S.grabbedIdx >= 0){
+    const a = S.anchors[S.grabbedIdx]
+    S.ropeGfx.moveTo(a.x, a.y).lineTo(S.pikachu.x, S.pikachu.y - 10).stroke({ color: 0xfde047, width: 3, alpha: 0.85 })
+  }
+
+  // Camera follow — only scroll forward
+  const W = g17App.canvas.width / (g17App.renderer.resolution || 1)
+  const camTargetX = Math.max(0, S.pikachu.x - W * 0.35)
+  S.cameraX += (camTargetX - S.cameraX) * 0.08
+  g17World.x = -S.cameraX
+
+  // Level complete check
+  if (!S.levelComplete && S.grabbedIdx === S.anchors.length - 1 && !g17TapDown){
+    S.levelComplete = true
+    setTimeout(g17OnLevelComplete, 600)
+  }
+}
+
+// ─── Death & respawn ───────────────────────────────────────────────────────
+function g17OnFall(){
+  S.lives--
+  S.combo = 1
+  g17UpdateHUD()
+  if (S.lives <= 0){
+    g17OnGameOver()
+    return
+  }
+  g17ShowToast('💔 -1 nyawa')
+  // Respawn at last grabbed anchor
+  const respawnIdx = Math.max(0, S.lastGrabbedIdx || 0)
+  S.grabbedIdx = respawnIdx
+  const a = S.anchors[respawnIdx]
+  S.pikachu.x = a.x
+  S.pikachu.y = a.y + G17_PHYS.ropeLength
+  S.pikachu.vx = 0
+  S.pikachu.vy = 0
+  S.angle = Math.PI
+  S.omega = 0
+  S.inAir = false
+}
+
+function g17OnLevelComplete(){
+  S.running = false
+  g17App.ticker.remove(g17Tick)
+  const o = document.getElementById('g17-overlay')
+  document.getElementById('g17-over-title').textContent = '🏆 Selamat!'
+  document.getElementById('g17-over-text').textContent = 'Kamu menyelamatkan ' + S.gems + ' 💎 dengan ' + S.lives + ' ❤️ tersisa!'
+  const btn = document.getElementById('g17-over-go')
+  btn.textContent = '▶ Level Berikutnya'
+  btn.onclick = () => {
+    g17Cfg.level = (S.level % G17_LEVELS.length) + 1
+    document.getElementById('g17-level').textContent = 'L' + g17Cfg.level
+    g17BeginGame()
+  }
+  o.classList.remove('hidden')
+  g17PlayFanfare()
+}
+
+function g17OnGameOver(){
+  S.running = false
+  g17App.ticker.remove(g17Tick)
+  const o = document.getElementById('g17-overlay')
+  document.getElementById('g17-over-title').textContent = '💫 Coba Lagi?'
+  document.getElementById('g17-over-text').textContent = 'Kamu mengumpulkan ' + S.gems + ' 💎. Pikachu butuh kamu!'
+  const btn = document.getElementById('g17-over-go')
+  btn.textContent = '🔁 Coba Lagi'
+  btn.onclick = () => { g17BeginGame() }
+  o.classList.remove('hidden')
+}
+
+function g17ExitToMenu(){
+  try { sessionStorage.removeItem('g17Config') } catch(_){}
+  window.location.href = '../index.html'
+}
+
+// ─── HUD + toasts ──────────────────────────────────────────────────────────
+function g17UpdateHUD(){
+  document.getElementById('g17-lives').textContent = S.lives
+  document.getElementById('g17-gems').textContent = S.gems
+  document.getElementById('g17-combo').textContent = 'x' + S.combo
+  document.getElementById('g17-level').textContent = 'L' + S.level
+}
+function g17ShowToast(text){
+  const t = document.getElementById('g17-toast')
+  if (!t){
+    const newT = document.createElement('div')
+    newT.id = 'g17-toast'
+    document.body.appendChild(newT)
+    return g17ShowToast(text)
+  }
+  t.textContent = text
+  t.classList.remove('show')
+  void t.offsetWidth
+  t.classList.add('show')
+  setTimeout(() => t.classList.remove('show'), 900)
+}
+
+// ─── Audio (WebAudio synth, no asset deps) ─────────────────────────────────
+let g17AudioCtx
+function g17EnsureAudio(){ if (!g17AudioCtx) try { g17AudioCtx = new (window.AudioContext || window.webkitAudioContext)() } catch(_){} }
+function g17Tone(freq, dur, type, vol){
+  g17EnsureAudio()
+  if (!g17AudioCtx) return
+  const o = g17AudioCtx.createOscillator(), g = g17AudioCtx.createGain()
+  o.type = type || 'sine'; o.frequency.value = freq
+  g.gain.setValueAtTime(0, g17AudioCtx.currentTime)
+  g.gain.linearRampToValueAtTime(vol || 0.12, g17AudioCtx.currentTime + 0.01)
+  g.gain.linearRampToValueAtTime(0, g17AudioCtx.currentTime + dur)
+  o.connect(g); g.connect(g17AudioCtx.destination)
+  o.start(); o.stop(g17AudioCtx.currentTime + dur + 0.02)
+}
+function g17PlaySwoosh(){ g17Tone(440, 0.18, 'sawtooth', 0.08); setTimeout(()=>g17Tone(330, 0.20, 'sawtooth', 0.06), 50) }
+function g17PlayGrabChime(){ g17Tone(880, 0.08, 'triangle', 0.10); setTimeout(()=>g17Tone(1320, 0.12, 'triangle', 0.10), 50) }
+function g17PlayGemChime(){ g17Tone(1500 + S.combo * 60, 0.10, 'sine', 0.10); setTimeout(()=>g17Tone(2000 + S.combo * 80, 0.10, 'sine', 0.08), 50) }
+function g17PlayFanfare(){ const notes=[523,659,784,1047]; notes.forEach((n,i)=>setTimeout(()=>g17Tone(n,0.20,'triangle',0.12),i*110)) }
+
+</script>
+</body>
+</html>

@@ -824,3 +824,17 @@ Owner-locked: every Dunia Emosi ship MUST update CHANGELOG.md + LESSONS-LEARNED.
 - **Symptom**: G16 needed sparkle burst + dust trail + danger flash particles. Adding a RAF particle pool would mean ~80 LOC of state machine + cleanup.
 - **Fix**: Use plain `document.createElement('div'/'span')` + CSS keyframe + `setTimeout(remove, dur)`. Each particle is self-contained: DOM lifetime ≤ animation duration; appendChild + setTimeout removal. No global pool, no RAF, no leaking refs.
 - **Lesson**: For SHORT-LIVED particles (<1 second) with FEW concurrent particles (<20), DOM + CSS keyframes is cheaper than canvas/Pixi/RAF pools. Each particle is its own element; the CSS engine handles interpolation; setTimeout cleans up. Only switch to a pool when you spawn 50+ particles per second or need pixel-level control.
+
+---
+
+## 2026-06-24 — v54.7 G17 Rope Swing Pikachu (FULL REVAMP)
+
+### L97 — Canonical pendulum SHM in 3 lines beats custom velocity model (g17-pixi.html v54.7)
+- **Symptom**: Need realistic rope-swing physics for a kid game. Tempting to use ad-hoc velocity model (e.g. "increase vx while held, decay when not"). Custom models feel wrong — too floaty OR too snappy.
+- **Fix**: Use canonical pendulum simple harmonic motion. Two state vars (angle, omega). Per frame: `omega += -gravity/L * sin(angle) * dt; omega *= damping; angle += omega * dt`. Apply player input as `omega += swingForce * cos(angle) * dt`. Project pikachu position via `x = anchor.x + sin(angle) * L; y = anchor.y - cos(angle) * L`.
+- **Lesson**: For rope/swing/pendulum physics, ALWAYS use the textbook SHM equation. It's 3 lines, mathematically exact, and tunable via gravity / ropeLength / damping. Ad-hoc models will feel wrong because they don't conserve energy or model the restoring force correctly. The kid intuits real physics even if they can't name it.
+
+### L98 — Auto-grab forgiveness radius separates 5yo-playable from 10yo-mastery (g17-pixi.html v54.7)
+- **Symptom**: Pendulum games are notoriously hard for young kids (precise release timing required). If next-anchor catch demands frame-perfect release, the 5yo cohort gives up after 2 attempts.
+- **Fix**: Auto-grab any anchor within ±60px during airtime. The radius is generous enough that even a wildly mistimed release usually catches SOMETHING. But the radius is NOT so wide that the 10yo cohort feels deprived of skill — releasing optimally still gets them further per swing.
+- **Lesson**: Forgiveness mechanics (catch radius, coyote-time, jump buffer) widen the playable age range without removing the skill ceiling. Add them generously for the 5-10yo target. Game design rule: the floor sets accessibility, the ceiling sets mastery; forgiveness mechanics raise the floor without lowering the ceiling.

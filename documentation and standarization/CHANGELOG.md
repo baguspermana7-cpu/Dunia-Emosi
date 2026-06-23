@@ -1,5 +1,56 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.7 "G17 Rope Swing Pikachu" (FULL REVAMP — Jembatan Goyang)
+
+Third v54.x ship. Owner concern: "konsep game jembatan goyang, parah gameplaynya. revamp buat game yang jauh2 menarik konsepnya dan keren." Owner asked me to pick the most interesting concept → **Rope Swing Pikachu** (Spider-Man pendulum + Indiana Jones flavour) approved.
+
+### What changed
+
+The legacy G17 was a tap-the-glowing-block whack-a-mole (zero physics, no swinging, no narrative). REPLACED with a real rope-swing platformer.
+
+**Core mechanic**: TAP-AND-HOLD to swing forward (pendulum SHM physics) → RELEASE to launch (release timing decides arc) → AUTO-GRAB next anchor within ±60px (forgiveness for 5yo) → collapsing planks below force forward motion → gems mid-arc give +score + combo → 3 lives.
+
+**Physics**: canonical pendulum simple harmonic motion (`omega += -g/L * sin(angle) * dt`), gravity 1200 px/s², rope length 110px, damping 0.998, swing force impulse per frame while tap-held.
+
+**Levels (MVP)**: 5 stages in World 1 "Hutan Bambu" (bamboo gorge):
+- L1 Pohon Bambu (6 anchors, gentle tutorial)
+- L2 Sungai Kecil (8 anchors)
+- L3 Lembah Hijau (10 anchors)
+- L4 Air Terjun (12 anchors)
+- L5 Puncak Bukit (15 anchors, challenge)
+
+Worlds 2 (Lembah Vulkanik) + 3 (Awan Tinggi) + boss "Giant Pidgeot Anchor" planned for v54.7.x follow-ups.
+
+**Visual**: Pixi 8 procedural sky gradient + far bamboo silhouettes + collapsing-planks line. Pikachu sprite: 14px body + ears + cheeks + eyes. Anchors: 44px wide bamboo beam + post + gold catch-bead. Gems: cyan diamond polygon. Rope: golden line yellow 3px.
+
+**Audio**: WebAudio synth — swoosh (sawtooth 440→330) on release, grab chime (triangle 880+1320), gem chime (sine pitched by combo), 4-note fanfare on level clear. No asset deps.
+
+**Controls**: pointerdown/up on canvas. `tapHint` overlay teaches "Tahan untuk ayun, lepas untuk lompat" for first 4.5s.
+
+**HUD**: 4 chips — lives ❤️, gems 💎, combo ⚡xN, level 🏁LN. Top-left back button (⌂, 44×44 tap target).
+
+**Death**: fall below ground line → -1 life, respawn at last anchor with reset combo. 0 lives → game over modal with retry.
+
+**Win**: reach last anchor and release tap → "🏆 Selamat!" modal with stars summary + next level button.
+
+### Files touched
+- **NEW** `games/g17-pixi.html` (~580 LOC self-contained Pixi 8 game, no external deps beyond Pixi CDN)
+- `game.js` lines 13002–13016 — `initGame17()` early-return + redirect to `g17-pixi.html`. Legacy whack-a-mole code kept beyond the return for reference; will be stripped in v54.7.1.
+- `sw.js` — `CACHE_VERSION: 'v54.6-20260624h' → 'v54.7-20260624i'`
+
+### Lessons learned
+See `LESSONS-LEARNED.md` L97–L98 (pendulum SHM in 3 lines, auto-grab forgiveness for 5yo cohort).
+
+### NOT in v54.7 (planned for v54.7.x)
+- World 2 "Lembah Vulkanik" — moving anchors + lava obstacles + ember weather
+- World 3 "Awan Tinggi" — wind currents (lateral force) + cloud platforms + boss
+- Strip legacy G17 markup from `index.html` lines 1443–1526
+- Strip dead whack-a-mole code from `game.js` lines 13002–13260
+
+Cache bump v54.6-20260624h → v54.7-20260624i.
+
+---
+
 ## 2026-06-24 — v54.6 "G16 Deep Polish Wave" (Selamatkan Kereta — owner's favorite)
 
 Second v54.x ship. Pure VFX/physics/audio polish on the rope-rescue "Selamatkan Kereta" loop (`#screen-game16` in index.html + `g16*` functions in `game.js` lines 12640–12825). Owner explicit: "saya yang paling happy itu game g16. secara gameplay story sudah ok hanya tinggal polish more and more, phisic dan effect VFX dll." 12 items + 2 refine bonus shipped.

@@ -13000,8 +13000,16 @@ function g16EndGame(won) {
 let g17State = {}
 
 function initGame17() {
+  // v54.7 REVAMP: G17 is now the Rope Swing Pikachu game. Redirect to the
+  // standalone Pixi page that replaces the legacy whack-a-mole. The old
+  // tap-the-glowing-block code below is kept temporarily for reference but
+  // never executed (early return guards). Will be stripped in v54.7.1.
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
+  try { sessionStorage.setItem('g17Config', JSON.stringify({ level: lv })) } catch(_){}
+  window.location.href = 'games/g17-pixi.html'
+  return  // hard-exit — legacy code below is dead.
+  // ── LEGACY (whack-a-mole, removed in v54.7) ────────────────────────────
   const diff = lv <= 7 ? 'easy' : lv <= 14 ? 'medium' : 'hard'
   const totalBlocks = diff === 'easy' ? 8 : diff === 'medium' ? 10 : 12
   g17State = {
