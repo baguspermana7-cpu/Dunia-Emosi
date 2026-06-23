@@ -771,3 +771,37 @@ Deleting a function definition (SPRITE_LOCAL) without grepping for ALL call site
 - **Root cause**: Tried to set `.bm-arena.style.setProperty('--bm-arena-bg', ...)` BEFORE `root.innerHTML = ...` rebuilt the arena DOM. The `setProperty` call targeted an element that was about to be replaced.
 - **Fix**: Move the `applyArenaBg(root, ...)` call to AFTER `root.innerHTML = ...` + `wireActiveZone()`. Now it targets the freshly-rendered `.bm-arena`.
 - **Lesson**: Inline-style writes to dynamically-rendered elements must happen AFTER the element is mounted in the DOM. If you're replacing innerHTML, all inline-style state on the old element is gone — reapply after the replacement.
+
+---
+
+## 2026-06-24 — v54.0 Critical Fixes (G23 + G14 + G15 + G16)
+
+### L89 — Power-up that only renders an aura is felt as "no PU at all" (g23-pixi.html v54.0)
+- **Symptom**: Owner complaint covering Thunder + Nature pickups: "banyak yang perlu diperbaiki." The 4 power-ups had distinct visual auras (yellow lightning, orange fire, green leaves, purple bubbles) but Thunder + Nature were aura-only — they didn't change any gameplay state. Kid grabbed Nature, saw green spin, hit the next obstacle and died normally — felt like nothing happened.
+- **Root cause**: `activatePowerUp(type)` set up the aura render and a per-type gameplay flag (gameSpeed×1.2 for Thunder, shieldHits=2 for Nature). But the aura render code only DREW particles — it didn't drive game mechanics. Speed boost was barely perceptible at L1, shield was invisible until consumed.
+- **Fix**: Wire genuine gameplay differentiation. Thunder gets a chain-zap routine (every 90 frames, find 2 nearest obstacles in front and destroy them with sparkle arc). Nature gets `S.natureGravMul = 0.55` read by playerVY update so the kid floats noticeably longer in air.
+- **Lesson**: Every power-up needs a felt mechanic, not just a felt visual. Audit power-ups by asking "could the kid notice this WITHOUT the aura?" If the answer is no, the PU is decorative. Tie each PU to a single observable game-state change.
+
+### L90 — Per-type SFX is the missing audio half of "feels different" (g23-pixi.html v54.0)
+- **Symptom**: All 4 pickups played the same `sfxCollect()` chime (3 ascending sine tones 900→1200→1500Hz). Kid heard generic "ding" regardless of which PU they grabbed.
+- **Fix**: New `sfxCollectByType(type)` with 4 timbrally-distinct envelopes — Thunder uses square wave fast cluster, Blaze uses sawtooth descend, Nature uses triangle major arpeggio, Venom uses sine descending. Each is 3 tones in ≤220ms.
+- **Lesson**: When multiple items share visual variations but identical SFX, the audio becomes meaningless noise. Pair each visual category with a distinct audio signature — even 3 tones with different waveforms (sine/triangle/sawtooth/square) tier-differentiate at zero engineering cost.
+
+### L91 — Conic-gradient cooldown arc beats opacity fade (g14.html v54.0)
+- **Symptom**: G14 boost button used `opacity: 0.45` during 3000ms cooldown. Visually unambiguous (button looks disabled) but **non-communicative** — kid sees "no boost" but not "X seconds until ready". They tap-spam during cooldown wasting energy.
+- **Fix**: CSS `conic-gradient(from -90deg, rgba(251,191,36,0.55) var(--boost-pct), transparent var(--boost-pct))` rendered via `::before` with radial-gradient mask cutout for the inner button. `--boost-pct` is JS-driven from 360deg → 0 over 3000ms via RAF. Kid sees a glowing ring shrink — clear progress.
+- **Lesson**: Disabled-state opacity is binary; cooldown is analog. Use a progress-bearing visual (linear bar / circular arc / shrinking glow) for any time-bound state. The conic-gradient approach is CSS-pure (no canvas/SVG/PIXI overhead) and animates smoothly even on low-end Android via RAF.
+
+### L92 — Picker loop bounds are silent failure mode (g16-pixi.html v54.0)
+- **Symptom**: Owner: "di g16 kok gambar saat picker/pilih itu bima express kosong ya." Bima Express's preview canvas was blank.
+- **Root cause**: `for (let i = 0; i < 6; i++) drawPreview('prev-' + i, i)` at line 407. The 7th canvas (`prev-6` for Bima Express, defined at line 144) was outside the loop bound. Adding Bima as the 7th train didn't trigger the loop bump because the loop was hardcoded.
+- **Fix**: `for (i<7)`. One-character change. Going forward use `TRAIN_STYLES.length` instead of magic numbers.
+- **Lesson**: When a picker has a hardcoded loop bound (`i < N`), adding a new entry will silently skip that entry's render. ALWAYS use `array.length` over magic numbers. Add a smoke test that opens the picker and asserts every canvas has non-empty `getImageData()`.
+
+### L93 — Character-train protected lineup verification is a session-start ritual (trains-db.js v54.0)
+- **Symptom**: Owner mandate locked 2026-06-24: never delete the 4-5 character trains from G15/G16 picker. Polish allowed; deletion prohibited.
+- **Fix**: Save mandate to memory (`feedback_dunia_emosi_train_characters_protected.md`). On every train-code change, grep the shared `trains-db.js` for the 4 known character keys (`caseyjr_character`, `linus_brave`, `jz711_dragutin`, `jz62_malivlak`) BEFORE editing. Confirm presence in the picker post-edit.
+- **Lesson**: When an owner mandates protection of N entities in a list, codify the verification as a probe + memory note. The mandate decays when no automated check enforces it. Don't trust "I'll remember" — trust the grep that runs every session.
+
+### Documentation update mandate (locked 2026-06-24)
+Owner-locked: every Dunia Emosi ship MUST update CHANGELOG.md + LESSONS-LEARNED.md (Lxxx) + relevant `*_STANDARD.md` in the SAME commit. A ship without docs is INCOMPLETE. Memory note saved at `feedback_dunia_emosi_docs_continuous_update.md`. Effective immediately for all v54.x ships.

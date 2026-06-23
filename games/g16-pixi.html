@@ -334,9 +334,17 @@ function drawPreview(canvasId, styleIdx) {
       };
       img.onerror = () => drawPreviewProcedural(ctx, TS);
       img.src = cfg.spriteUrl;
-      // Placeholder while loading: subtle colored rectangle so the card isn't blank
-      ctx.fillStyle = 'rgba(139,92,246,0.10)';
+      // v54.0 (concern 10): richer placeholder — solid hex bodyColor base +
+      // simple train-silhouette skeleton (locomotive body + wheel pair + chimney
+      // hint) so the card communicates "a train is loading" rather than blank/purple.
+      const _bodyHex = '#' + ((TS.bodyColor || 0x8B5CF6).toString(16).padStart(6, '0'));
+      ctx.fillStyle = _bodyHex + '22';   // 13% opacity tint of body color
       ctx.fillRect(8, 12, 100, 32);
+      ctx.fillStyle = _bodyHex + '55';   // 33% opacity skeleton outline
+      ctx.fillRect(20, 18, 76, 18);      // body silhouette
+      ctx.fillRect(28, 12, 14, 8);       // chimney/cab
+      ctx.beginPath(); ctx.arc(38, 42, 5, 0, Math.PI*2); ctx.fill();    // wheel L
+      ctx.beginPath(); ctx.arc(78, 42, 5, 0, Math.PI*2); ctx.fill();    // wheel R
       return;
     }
   }
@@ -404,7 +412,10 @@ function drawPreviewProcedural(ctx, TS) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  for (let i = 0; i < 6; i++) drawPreview('prev-' + i, i);
+  // v54.0 (concern 2): owner-flagged Bima Express picker bug. Loop was `i < 6`
+  // but Bima Express is the 7th train (canvas id `prev-6`, line 144). Single-char
+  // bound fix so all 7 train previews render.
+  for (let i = 0; i < 7; i++) drawPreview('prev-' + i, i);
 });
 
 function startGame() {

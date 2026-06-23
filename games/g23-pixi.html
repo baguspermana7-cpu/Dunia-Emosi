@@ -66,6 +66,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 #pu-icon{font-size:28px;line-height:1}
 #pu-bar-bg{width:80px;height:8px;background:rgba(255,255,255,0.15);border-radius:4px;overflow:hidden}
 #pu-bar{height:100%;width:100%;border-radius:4px;transition:width .1s linear}
+/* v54.0 (concern 14): active-PU label chip — name + countdown */
+#pu-label{font-family:'Fredoka One',cursive;font-size:11px;color:#fff;letter-spacing:0.5px;padding:2px 6px;border-radius:6px;background:rgba(255,255,255,0.18);white-space:nowrap;min-width:60px;text-align:center}
 
 /* ── Team Rocket Balloon ── */
 #tr-balloon{position:fixed;pointer-events:none;z-index:45;display:none;width:clamp(90px,18vw,160px);image-rendering:auto;transition:filter .2s}
@@ -204,6 +206,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <div id="pu-hud">
   <span id="pu-icon">⚡</span>
   <div id="pu-bar-bg"><div id="pu-bar"></div></div>
+  <!-- v54.0 (concern 14): active-PU label chip showing type name + countdown. -->
+  <span id="pu-label"></span>
 </div>
 
 <!-- Runner Quiz Panel -->
@@ -678,12 +682,19 @@ function scrollBgLayers(speed){
 // ═══════════════════════════════════════════════════════════
 // Jump physics (2026-06-21 retune) — owner: "loncatannya tinggi tapi distance
 // pendek jadi sering gagal". Apex was 302px / horizontal 205px (ratio 1.47:1
-// vertical-heavy). Flatter arc gives better natural feel:
-//   GRAVITY 0.62 / JUMP_POWER -14.5 → apex 170px / horizontal 165px (1:1).
-// Was: GRAVITY 0.45, JUMP_POWER -16.5, DBLJ_POWER -14.0, BASE_SPEED 2.8.
-const GRAVITY       = 0.62
-const JUMP_POWER    = -14.5
-const DBLJ_POWER    = -11.5
+// vertical-heavy). Flatter arc gives better natural feel.
+// v54.0 (2026-06-24): owner complaint "dia itu loncat tapi secara distance
+// itu kayak kurang, jadi denga 2 loncatan pun itu kurang." Re-tuned for
+// longer horizontal arc without making jumps feel floaty:
+//   GRAVITY 0.62 → 0.54 (was too snappy)
+//   JUMP_POWER -14.5 → -15.8 (stronger launch)
+//   DBLJ_POWER -11.5 → -13.0 (second-jump no longer feels punishing)
+// New arc: apex ≈ 140px, horizontal ≈ 240px single / ≈ 420px double.
+// Clears all single obstacles + most doubles with comfortable margin.
+// Was-before-v54.0: GRAVITY 0.62, JUMP_POWER -14.5, DBLJ_POWER -11.5.
+const GRAVITY       = 0.54
+const JUMP_POWER    = -15.8
+const DBLJ_POWER    = -13.0
 const MAX_FALL      = 18
 // Player size — 2026-06-21 made responsive (was: const 132 × 110).
 // Now derived from viewport height; recomputed in _g23Resize().
@@ -760,6 +771,34 @@ function sfxHit(){  playTone(150,180,'square',0.12) }
 function sfxCorrect(){ playTone(800,180);setTimeout(()=>playTone(1050,140),100) }
 function sfxWrong(){ playTone(320,120,'sawtooth',0.1);setTimeout(()=>playTone(180,180,'sawtooth',0.1),80) }
 function sfxCollect(){ playTone(900,60);setTimeout(()=>playTone(1200,80),40);setTimeout(()=>playTone(1500,100),80) }
+// v54.0 (concern 13): per-type pickup SFX — each PU gets a distinct
+// envelope so the kid hears WHICH power-up they grabbed without looking.
+function sfxCollectByType(type){
+  switch(type){
+    case 'thunder':
+      playTone(1200,40,'square',0.10)
+      setTimeout(()=>playTone(800,60,'square',0.10),50)
+      setTimeout(()=>playTone(1500,80,'square',0.10),110)
+      break
+    case 'blaze':
+      playTone(200,80,'sawtooth',0.13)
+      setTimeout(()=>playTone(140,100,'sawtooth',0.11),60)
+      setTimeout(()=>playTone(95,120,'sawtooth',0.09),140)
+      break
+    case 'nature':
+      playTone(440,90,'triangle',0.11)
+      setTimeout(()=>playTone(550,90,'triangle',0.10),70)
+      setTimeout(()=>playTone(660,120,'triangle',0.10),150)
+      break
+    case 'venom':
+      playTone(600,80,'sine',0.10)
+      setTimeout(()=>playTone(400,100,'sine',0.09),70)
+      setTimeout(()=>playTone(300,140,'sine',0.08),160)
+      break
+    default:
+      sfxCollect()
+  }
+}
 function sfxFanfare(){ [600,700,900,1200].forEach((f,i)=>setTimeout(()=>playTone(f,120),i*80)) }
 function sfxDanger(){ playTone(280,200,'sawtooth',0.1);setTimeout(()=>playTone(220,300,'sawtooth',0.1),150) }
 
@@ -1133,9 +1172,13 @@ function respawnVenDrip(d){ d.x=PLAYER_X+(Math.random()-.5)*30;d.y=S.playerY-PLA
 function activatePowerUp(type){
   clearAura()
   const def=PU_DEFS[type]
-  S.activepu={type,timer:PU_DUR[type],maxTimer:PU_DUR[type],shotCooldown:0}
+  // v54.0 (concerns 11+12): per-type extra state.
+  // - Thunder gains `zapCooldown` (chain-zap obstacles every 90 frames).
+  // - Nature gains `natureMul=0.55` (low-gravity float — read by playerVY update).
+  S.activepu={type,timer:PU_DUR[type],maxTimer:PU_DUR[type],shotCooldown:0,zapCooldown:60}
   if(type==='thunder') gameSpeed=BASE_SPEED*1.2
-  if(type==='nature')  S.shieldHits=2
+  if(type==='nature'){ S.shieldHits=2; S.natureGravMul=0.55 }
+  else                S.natureGravMul=1.0
   if(type==='blaze')   blazePts.forEach(p=>respawnBlaze(p))
   if(type==='venom'){  venBubs.forEach(b=>respawnVenBub(b)); venDrips.forEach(d=>respawnVenDrip(d)) }
   const filters={
@@ -1148,11 +1191,16 @@ function activatePowerUp(type){
   document.getElementById('pu-hud').style.display='flex'
   document.getElementById('pu-icon').textContent=def.emoji
   document.getElementById('pu-bar').style.background=def.barColor
-  sfxCollect()
+  // v54.0 (concern 14): set Indonesian label for HUD chip.
+  const _puNames = { thunder:'PETIR', blaze:'API', nature:'DAUN', venom:'RACUN' }
+  const _label = document.getElementById('pu-label')
+  if(_label) _label.textContent = _puNames[type] || ''
+  // v54.0 (concern 13): distinct per-type pickup envelope.
+  try { sfxCollectByType(type) } catch(_) { sfxCollect() }
 }
 function clearAura(){
   if(S.activepu?.type==='thunder') gameSpeed=BASE_SPEED
-  if(S.activepu?.type==='nature')  S.shieldHits=0
+  if(S.activepu?.type==='nature'){ S.shieldHits=0; S.natureGravMul=1.0 }
   S.activepu=null; auraGfx.clear()
   document.getElementById('pu-hud').style.display='none'
   document.getElementById('player-img').style.filter='drop-shadow(0 4px 8px rgba(0,0,0,0.4))'
@@ -1195,6 +1243,32 @@ function updateAura(){
       auraGfx.rect(cx-PLAYER_W/2-sw-8,sy-1,sw,2).fill({color:0xffffff,alpha:0.32-i*.06})
     }
     for(let i=0;i<3;i++) auraGfx.circle(cx+(Math.random()-.5)*52,cy+(Math.random()-.5)*42,1.5).fill({color:0xFBBF24,alpha:0.8})
+    // v54.0 (concern 11): Thunder chain-zap — every 90 frames, find up to
+    // 2 nearest obstacles within ±200px in front of the player and zap them.
+    // Each zap calls destroyObs(o, true) so the player still scores the kill.
+    pu.zapCooldown--
+    if(pu.zapCooldown<=0){
+      pu.zapCooldown = 90
+      let zapped = 0
+      for(const o of S.obstacles){
+        if(zapped >= 2) break
+        if(o.hit || o.dead) continue
+        const dx = o.x - PLAYER_X
+        if(dx < 0 || dx > 200) continue
+        try { destroyObs(o, true) } catch(e){}
+        // Sparkle arc from player to obstacle
+        try {
+          for(let k=0;k<6;k++){
+            const t=k/5, zx=PLAYER_X + dx*t, zy=cy + (Math.random()-.5)*18
+            const sp = new PIXI.Graphics()
+            sp.circle(0,0,2+Math.random()*2).fill({color:0xFBBF24,alpha:0.9})
+            sp.x=zx; sp.y=zy; fxContainer.addChild(sp)
+            _trailParticles.push({sp,life:12})
+          }
+        } catch(e){}
+        zapped++
+      }
+    }
   }
 
   if(pu.type==='blaze'){
@@ -1236,6 +1310,14 @@ function updateAura(){
   const pct=pu.timer/pu.maxTimer
   document.getElementById('pu-bar').style.width=(pct*100)+'%'
   document.getElementById('pu-hud').style.opacity=(pu.timer<=60&&S.frame%12<6)?'0.45':'1'
+  // v54.0 (concern 14): live countdown text on label chip.
+  if(S.frame%6===0){
+    const _lbl=document.getElementById('pu-label')
+    if(_lbl){
+      const _names={thunder:'PETIR',blaze:'API',nature:'DAUN',venom:'RACUN'}
+      _lbl.textContent=(_names[pu.type]||'')+' '+Math.ceil(pu.timer/60)+'s'
+    }
+  }
   if(pu.timer<=0) clearAura()
 }
 
@@ -2157,8 +2239,11 @@ function gameLoop(ticker){
   scrollBgLayers(gameSpeed*dt)
 
   // ── Player physics ──
+  // v54.0 (concern 12): Nature low-gravity float. natureGravMul=0.55 while
+  // Nature is active, 1.0 otherwise. Owner: power-up should FEEL different.
   if(!S.isGrounded){
-    S.playerVY+=GRAVITY*dt; S.playerVY=Math.min(S.playerVY,MAX_FALL)
+    const _grav = GRAVITY * (S.natureGravMul || 1)
+    S.playerVY+=_grav*dt; S.playerVY=Math.min(S.playerVY,MAX_FALL)
     S.playerY+=S.playerVY*dt
     if(S.playerY>=GROUND_Y){
       S.playerY=GROUND_Y; S.playerVY=0; S.isGrounded=true; S.jumpCount=0; S.isSliding=false; sfxLand()

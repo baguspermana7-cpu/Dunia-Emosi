@@ -36,8 +36,12 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 #ctrl-row{display:flex;gap:10px;align-items:stretch}
 .ctrl-btn{flex:1;padding:16px 0;border-radius:20px;border:2.5px solid rgba(196,181,253,0.4);background:rgba(139,92,246,0.25);color:#e9d5ff;font-size:22px;cursor:pointer;backdrop-filter:blur(6px);user-select:none;-webkit-user-select:none;transition:transform .08s,background .08s;font-family:inherit;-webkit-tap-highlight-color:transparent;box-shadow:0 3px 0 rgba(91,33,182,0.3)}
 .ctrl-btn:active{transform:scale(.91) translateY(2px);background:rgba(139,92,246,.45);box-shadow:0 1px 0 rgba(91,33,182,0.3)}
-#btn-boost{background:linear-gradient(135deg,rgba(251,191,36,0.35),rgba(249,115,22,0.35));border-color:rgba(251,191,36,0.6);flex:1.4;font-size:14px;padding:14px 6px;line-height:1.2;color:#fef3c7;box-shadow:0 3px 0 rgba(146,64,14,0.3)}
-#btn-boost.cooldown{opacity:0.45;pointer-events:none}
+#btn-boost{background:linear-gradient(135deg,rgba(251,191,36,0.35),rgba(249,115,22,0.35));border-color:rgba(251,191,36,0.6);flex:1.4;font-size:14px;padding:14px 6px;line-height:1.2;color:#fef3c7;box-shadow:0 3px 0 rgba(146,64,14,0.3);position:relative;overflow:hidden;--boost-pct:0deg}
+#btn-boost.cooldown{opacity:0.55;pointer-events:none}
+/* v54.0 (concern 9): cooldown circular arc — conic-gradient sweeping from
+   100% → 0% over 3s while boost regenerates. --boost-pct is JS-driven. */
+#btn-boost.cooldown::before{content:'';position:absolute;inset:-2px;border-radius:inherit;background:conic-gradient(from -90deg,rgba(251,191,36,0.55) var(--boost-pct),rgba(0,0,0,0) var(--boost-pct));pointer-events:none;z-index:0;mask:radial-gradient(circle,transparent 64%,#000 65%);-webkit-mask:radial-gradient(circle,transparent 64%,#000 65%)}
+#btn-boost > *{position:relative;z-index:1}
 #btn-boost.boosting{background:linear-gradient(135deg,rgba(239,68,68,0.6),rgba(251,146,60,0.6));animation:boostGlow .25s ease-in-out infinite alternate}
 @keyframes boostGlow{to{box-shadow:0 0 18px rgba(251,146,60,0.7)}}
 
@@ -2105,9 +2109,25 @@ function executeBoost() {
     S.speed = S.baseSpeed
     document.getElementById('btn-boost').classList.remove('boosting')
     document.getElementById('btn-boost').innerHTML = '🔥<br><span style="font-size:12px;font-weight:900">BOOST!</span>'
+    // v54.0 (concern 9): animate the cooldown arc from full (360deg) to empty
+    // over the 3000ms cooldown window. RAF-driven so the conic-gradient sweep
+    // stays smooth on low-end Android.
+    const _bb = document.getElementById('btn-boost')
+    const _t0 = performance.now()
+    const _CD_MS = 3000
+    _bb.style.setProperty('--boost-pct', '360deg')
+    function _cdTick(){
+      if(!S.boostCooldown){ _bb.style.setProperty('--boost-pct', '0deg'); return }
+      const elapsed = performance.now() - _t0
+      const remaining = Math.max(0, 1 - elapsed/_CD_MS)
+      _bb.style.setProperty('--boost-pct', (remaining*360).toFixed(1) + 'deg')
+      if(elapsed < _CD_MS) requestAnimationFrame(_cdTick)
+    }
+    requestAnimationFrame(_cdTick)
     setTimeout(() => {
       S.boostCooldown = false
       document.getElementById('btn-boost').classList.remove('cooldown')
+      document.getElementById('btn-boost').style.setProperty('--boost-pct', '0deg')
     }, 3000)
   }, (S.trainCfg.boostDur || 2000))
   document.getElementById('btn-boost').classList.add('cooldown')

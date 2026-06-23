@@ -1,5 +1,42 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.0 "Critical Fixes" (G23 + G14 + G15 + G16 multi-game)
+
+First ship in the v54 series targeting G23 Pokemon Run + 4 train games + G17 revamp + SEL games. v54.0 bundles **9 owner-flagged critical fixes** + foundational power-up gameplay revival across G23. See planning doc at `~/.claude/plans/purring-brewing-flurry.md` for the full 144-item v54 roadmap (v54.0 → v54.10).
+
+### Owner concerns addressed (v54.0)
+
+- **C1 G23 jump physics**: "loncat tapi distance kayak kurang, 2 loncatan pun kurang" → `GRAVITY 0.62→0.54`, `JUMP_POWER -14.5→-15.8`, `DBLJ_POWER -11.5→-13.0`. New arc apex ≈140px, horizontal ≈240px single / ≈420px double (was ≈198/360). Clears all single + most double obstacles with comfortable margin.
+- **C2 G23 Thunder PU gameplay revival**: in `updateAura()` when activePU=thunder, **chain-zap nearest 2 obstacles** within ±200px in front every 90 frames + sparkle arc VFX from player to obstacle. Mirrors Blaze's projectile cadence. Thunder was previously aura-visual-only.
+- **C3 G23 Nature PU gameplay revival**: applied `S.natureGravMul = 0.55` while Nature active → low-gravity float. Combined with existing shield-2-hits, Nature now FEELS distinctively defensive vs Thunder's aggressive zap.
+- **C4 G23 per-type pickup SFX**: new `sfxCollectByType(type)` with 4 distinct WebAudio envelopes — Thunder=square 1200→800→1500, Blaze=sawtooth 200→140→95, Nature=triangle 440→550→660, Venom=sine 600→400→300. Kid hears which PU they grabbed without looking.
+- **C5 G23 HUD active-PU label chip**: new `#pu-label` element + Fredoka-One CSS. Shows Indonesian name (PETIR/API/DAUN/RACUN) + countdown updated every 6 frames.
+- **C6 G16 Bima Express picker bug**: `for (i<6)` → `for (i<7)` at `g16-pixi.html:407`. Bima Express (canvas `prev-6`) was never being drawn. Single-character fix; all 7 train previews now render.
+- **C7 G15 character train preservation probe**: verified Casey Jr / Linus Brave / JZ 711 Dragutin / JZ 62 Malivlak all visible in `trains-db.js`. Outline default-disabled state is correct (Hotfix #102-E rationale stands). PROTECTED mandate honoured.
+- **C8 G14 boost cooldown visual arc**: CSS conic-gradient on `#btn-boost::before` driven by `--boost-pct` JS variable. RAF-animated from 360deg → 0 over 3000ms cooldown. Kid sees cooldown progress instead of just opacity:0.45.
+- **C9 G16 train preview placeholder upgrade**: while character sprite WebP loads async, draw a body-color-tinted skeleton (body silhouette + chimney + 2 wheels) instead of the prior faint purple rectangle. Picker card communicates "a train is loading" visually.
+
+### Files touched
+- `games/g23-pixi.html` — jump physics constants (lines 684–687), updateAura branches (Thunder + Nature), sfxCollectByType helper, HUD pu-label markup + CSS + countdown logic
+- `games/g14.html` — `#btn-boost` cooldown conic CSS + `--boost-pct` RAF animation in `executeBoost()`
+- `games/g16-pixi.html` — `for (i<7)` loop bound fix + drawPreview body-color skeleton
+- `sw.js` — `CACHE_VERSION: 'v53.9-20260624f' → 'v54.0-20260624g'`
+
+### Lessons learned
+See `LESSONS-LEARNED.md` for L89–L93 entries (state-only PU effects, per-type SFX pattern, conic cooldown arc, picker bound checks, character-train protection verification).
+
+### NOT in v54.0 (deferred to later v54.x ships)
+- v54.1 G23 polish wave (28 items: pickup shape redesign, coyote-time, combo banner, etc.)
+- v54.6 G16 deep polish (12 items: hook easing, rope tension, slow-mo on danger, etc.)
+- v54.7 G17 Jembatan Goyang full REVAMP — Rope Swing Pikachu (owner-approved)
+- v54.8 G14 deep revamp (15 items: character train picker integration, TIME_OF_DAY, physics juice)
+- v54.9 G1 + G2 SEL revamp (16 items + 5 shared infra modules)
+- v54.10 procedural train model render upgrade (15 items: piston rod animation, gradient bodies, spoke count visual)
+
+Cache bump v53.9-20260624f → v54.0-20260624g.
+
+---
+
 ## 2026-06-23 — PvP/Tournament + G13C Adventure overhaul (v52 → v53.5)
 
 Six bundled ships landing 12+ owner concerns across PvP/Tournament + G13C Adventure. See `LESSONS-LEARNED.md` L78–L88 and `POKEMON_BALANCE_STANDARD.md` for the canonical damage formula.
