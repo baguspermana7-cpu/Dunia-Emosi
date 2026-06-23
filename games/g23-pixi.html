@@ -339,6 +339,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
   .eff-combo-mega{background:linear-gradient(135deg,#a855f7,#ef4444,#f59e0b,#a855f7);background-size:200% 100%;color:#fff;animation:effComboPop 1.3s cubic-bezier(.34,1.56,.64,1) forwards,effComboShimmer 1.3s linear;box-shadow:0 0 28px rgba(168,85,247,0.55);font-size:24px}
   .eff-combo-legendary{background:linear-gradient(135deg,#fde047,#f59e0b,#fde047);background-size:200% 100%;color:#78350f;border-color:#fde047;box-shadow:0 0 36px rgba(253,224,71,0.75);animation:effComboPop 1.3s cubic-bezier(.34,1.56,.64,1) forwards,effComboShimmer 1.3s linear;font-size:26px}
   @keyframes effComboPop{0%{transform:translate(-50%,12px) scale(0.4) rotate(-6deg);opacity:0}16%{transform:translate(-50%,-4px) scale(calc(var(--combo-scale,1) * 1.25)) rotate(3deg);opacity:1}28%{transform:translate(-50%,-2px) scale(var(--combo-scale,1)) rotate(-1deg);opacity:1}78%{transform:translate(-50%,-2px) scale(var(--combo-scale,1)) rotate(0deg);opacity:1}100%{transform:translate(-50%,-18px) scale(calc(var(--combo-scale,1) * 0.9)) rotate(2deg);opacity:0}}
+  /* v54.11 — Confetti rain for game-over win celebration. */
+  @keyframes g23ConfettiFall{0%{transform:translateY(-30px) rotate(0deg);opacity:0}10%{opacity:1}100%{transform:translateY(105vh) rotate(720deg);opacity:0.5}}
   @keyframes effComboShimmer{0%{background-position:0% 50%}100%{background-position:200% 50%}}
   .eff-type-ring{position:fixed;z-index:8650;width:24px;height:24px;border-radius:50%;border:4px solid;pointer-events:none;transform:translate(-50%,-50%) scale(0.5);opacity:0;animation:effTypeRing 480ms cubic-bezier(.4,0,.2,1) forwards}
   @keyframes effTypeRing{0%{transform:translate(-50%,-50%) scale(0.4);opacity:0}25%{transform:translate(-50%,-50%) scale(1.4);opacity:1}100%{transform:translate(-50%,-50%) scale(3.5);opacity:0}}
@@ -2040,14 +2042,32 @@ function showWin(){
   const stars=calcStars()
   if(typeof window.saveLevelProgress==='function') window.saveLevelProgress('g23',S.level,stars)
   sfxFanfare()
+  // v54.11 — Confetti shower on win. Color-coded by star tier.
+  g23RunConfetti(stars)
   document.getElementById('status-text').textContent='Level Selesai!'
   setTimeout(()=>{
-    const info=`${Math.floor(S.distance)}m | ${S.correctAnswers}/${Math.max(1,S.quizDone)} benar`
+    // v54.11 — Run summary with rich stats (distance, pickups, top combo, quiz%, top streak).
+    const quizPct = Math.round(100 * S.correctAnswers / Math.max(1,S.quizDone))
+    const info = `🏃 ${Math.floor(S.distance)}m · 🪙 ${S.coinsCollected||0} · 🔥 ${S.coinStreak||0}× · 🧠 ${quizPct}%`
     const title=stars>=5?'Sempurna!':stars>=4?'Hebat!':stars>=3?'Bagus!':'Coba Lagi'
     const emoji=stars>=5?'🏆':stars>=4?'🌟':stars>=3?'⭐':'💪'
     const next=S.level<30?()=>{ try{sessionStorage.setItem('g23Config',JSON.stringify({level:S.level+1}))}catch(_){} location.reload() }:null
     GameModal.show({ emoji,title,stars,msg:emoji+' '+info, onNext:next, onAgain:()=>location.reload(), onBack:()=>goBack() })
   },700)
+}
+// v54.11 — Lightweight CSS-particle confetti shower. Color-coded by star tier.
+function g23RunConfetti(stars){
+  const palette = stars>=5 ? ['#fbbf24','#a855f7','#22c55e','#ef4444','#38bdf8','#f472b6']  // rainbow
+                : stars>=4 ? ['#fbbf24','#fde047','#f59e0b','#fef3c7']                       // gold
+                : stars>=3 ? ['#d1d5db','#e5e7eb','#9ca3af','#f3f4f6']                       // silver
+                : ['#9ca3af','#6b7280']                                                       // mist
+  for(let i=0; i<48; i++){
+    const p = document.createElement('span')
+    const sz = 6 + Math.random() * 6
+    p.style.cssText = `position:fixed;top:-20px;left:${Math.random()*100}vw;width:${sz}px;height:${sz}px;background:${palette[i%palette.length]};border-radius:${Math.random()<0.5?'50%':'2px'};z-index:9090;pointer-events:none;animation:g23ConfettiFall ${2.4+Math.random()*1.8}s linear forwards;animation-delay:${(i*0.04).toFixed(2)}s`
+    document.body.appendChild(p)
+    setTimeout(()=>p.remove(), 5000 + i*40)
+  }
 }
 function showLose(){
   if(S.gameOver) return

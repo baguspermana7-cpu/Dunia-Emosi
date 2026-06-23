@@ -599,6 +599,43 @@ function g14ApplyTimeOfDaySky(){
   }
   L._skyTopC = colors.skyTop
   L._skyBotC = colors.skyBot
+  // v54.11 — Cloud tint by time-of-day. Clouds are drawn with a fixed dark color;
+  // applying `tint` swaps the visible color without redrawing geometry. Cheap.
+  if (L.clouds && colors.cloudTint != null) {
+    for (const cl of L.clouds.children) cl.tint = colors.cloudTint
+  }
+  // v54.11 — Sun / moon body sprite. Position via phase.sunY * gameTop (negative = below
+  // horizon; positive = above). Only one body visible at a time. Pre-built once in
+  // buildSky and re-positioned + re-tinted here.
+  if (L._sunBody) {
+    const { phase } = g14CurrentTimePhase()
+    const sunY = phase.sunY
+    const isMoon = !!phase.stars
+    const visible = sunY > -0.10
+    L._sunBody.visible = visible
+    if (visible) {
+      // sunY=0 = horizon (gameTop), sunY=1 = top of sky band
+      L._sunBody.y = gameTop - sunY * gameTop * 0.85
+      L._sunBody.x = W * (0.30 + sunY * 0.10)
+      L._sunBody.tint = phase.sunColor || 0xfff5b0
+      L._sunBody.scale.set(isMoon ? 0.85 : 1.0)
+    }
+  }
+  // v54.11 — Star twinkle. Fade stars in/out per phase + animate sin alpha for life.
+  if (L.sky && colors.stars != null) {
+    for (const node of L.sky.children) {
+      if (node._baseAlpha != null) {
+        const targetAlpha = colors.stars ? node._baseAlpha : 0
+        // Smooth alpha lerp toward target
+        node.alpha += (targetAlpha - node.alpha) * 0.18
+        // Subtle twinkle only when visible enough
+        if (node.alpha > 0.1) {
+          node._twinklePhase = (node._twinklePhase || 0) + 0.04
+          node.alpha *= 0.85 + 0.3 * Math.sin(node._twinklePhase)
+        }
+      }
+    }
+  }
 }
 
 // v54.8 (concern 10 — physics juice): dust particle kickup from wheels during
@@ -649,15 +686,33 @@ function buildSky() {
     c.addChild(g)
   }
 
-  // Stars (only for night/dark themes)
-  if (!TH.stars) return
+  // v54.11 — Sun / moon body sprite. Built once, tinted + positioned by
+  // g14ApplyTimeOfDaySky each phase. Drawn as halo + main disc + inner highlight
+  // for a soft "celestial body" feel that works for both sun (yellow) and moon
+  // (cool white) via tint.
+  const sb = new PIXI.Graphics()
+  sb.circle(0, 0, 56).fill({ color: 0xffffff, alpha: 0.18 })   // outer halo
+  sb.circle(0, 0, 42).fill({ color: 0xffffff, alpha: 0.32 })   // mid halo
+  sb.circle(0, 0, 30).fill({ color: 0xffffff, alpha: 1.0 })    // disc body (tinted)
+  sb.circle(-8, -8, 6).fill({ color: 0xffffff, alpha: 0.55 })  // highlight
+  sb.tint = 0xfff5b0
+  sb.x = W * 0.35; sb.y = gameTop * 0.4
+  sb.visible = false  // hidden until first ApplyTimeOfDaySky tick
+  c.addChild(sb)
+  L._sunBody = sb
+
+  // Stars (always built; visible state controlled by phase.stars + alpha twinkle)
+  // v54.11 — Make stars always available so we can fade them in/out per phase
+  // (was hardcoded to ONLY night themes via TH.stars early-return).
   for (let i = 0; i < 60; i++) {
     const r = 0.5 + Math.random() * 1.5
     const s = new PIXI.Graphics()
     s.circle(0, 0, r).fill(0xffffff)
     s.x = Math.random() * W
     s.y = Math.random() * gameTop + Math.random() * 10
-    s.alpha = 0.3 + Math.random() * 0.5
+    s.alpha = 0  // start hidden; fade in during stars phases via ApplyTimeOfDaySky
+    s._baseAlpha = 0.3 + Math.random() * 0.5
+    s._twinklePhase = Math.random() * Math.PI * 2
     c.addChild(s)
   }
 }
@@ -2228,6 +2283,50 @@ function triggerBoost() {
   buildQuiz()
   document.getElementById('quiz-ovl').style.display = 'block'
   playTone(440, 0.08)
+  // v54.11 — 5-second quiz countdown timer. Red flash at 2s. Timeout penalizes
+  // -15 pressure (was infinite — kids could stall forever). Pattern from plan #119.
+  g14StartQuizCountdown()
+}
+
+function g14StartQuizCountdown(){
+  const COUNT_MS = 5000
+  const _t0 = performance.now()
+  // Inject countdown bar HTML if missing.
+  let bar = document.getElementById('quiz-countdown')
+  if (!bar){
+    bar = document.createElement('div')
+    bar.id = 'quiz-countdown'
+    bar.style.cssText = 'position:absolute;left:0;right:0;bottom:0;height:6px;background:rgba(255,255,255,0.12);border-radius:3px;overflow:hidden'
+    const inner = document.createElement('div')
+    inner.id = 'quiz-countdown-fill'
+    inner.style.cssText = 'height:100%;background:#4ade80;width:100%;transition:background .15s'
+    bar.appendChild(inner)
+    const ovl = document.getElementById('quiz-ovl')
+    if (ovl) ovl.appendChild(bar)
+  }
+  const fill = document.getElementById('quiz-countdown-fill')
+  fill.style.width = '100%'
+  fill.style.background = '#4ade80'
+  function _tick(){
+    if (!S.quizOpen){ return }
+    const dt = performance.now() - _t0
+    const rem = Math.max(0, 1 - dt / COUNT_MS)
+    fill.style.width = (rem * 100).toFixed(1) + '%'
+    if (rem < 0.4) fill.style.background = '#ef4444'
+    else if (rem < 0.7) fill.style.background = '#fbbf24'
+    if (rem <= 0){
+      // Timeout — close quiz, penalize, no boost.
+      S.quizOpen = false
+      document.getElementById('quiz-ovl').style.display = 'none'
+      S.pressure = Math.max(0, S.pressure - 15)
+      try { updatePressure() } catch(_) {}
+      try { playTone(180, 0.18, 'square') } catch(_) {}
+      screenFlash('rgba(255,60,60,0.18)')
+      return
+    }
+    requestAnimationFrame(_tick)
+  }
+  requestAnimationFrame(_tick)
 }
 
 function buildQuiz() {

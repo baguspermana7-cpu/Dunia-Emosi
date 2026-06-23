@@ -4,6 +4,28 @@
 
 ---
 
+## 2026-06-24 — v54.11 Continuous Refine Wave
+
+### L111 — Pixi `tint` swap is the cheapest dynamic recolor
+- **Symptom**: G14 clouds were fixed color `0x1a3a1a` regardless of time of day. Owner: "selalu gelap." Could redraw each tick — expensive.
+- **Root cause**: `g.clear() + g.ellipse().fill()` recomputes geometry. For a tint change, geometry is identical — only the color tint should change.
+- **Fix**: `cloud.tint = colors.cloudTint` per frame. Zero geometry work; GPU swaps the color channel. Applied across 6 cloud Graphics in ~6 ops per second.
+- **Lesson**: For dynamic recolor of pre-built Graphics, use `.tint` not `g.clear() + redraw`. Tint is GPU-side; redraw is CPU+GPU. Always prefer tint when geometry is stable.
+
+### L112 — Universal polish overlay pattern scales to multiple games once extracted
+- **Symptom**: v54.10 polished only G14 procedural trains. G15 + G16 deferred.
+- **Root cause**: I had treated "extract polish overlay into a helper" as a G14-specific decision. But the same 4 finishing touches (top rim, underbody shadow, weathering, shine sweep) describe what every train hull looks like — not just G14.
+- **Fix**: Applied the same pattern with game-specific geometry tuning to G15 (`g15ApplyProceduralPolish`) and G16 (inlined before container.addChild since G16 already has a centralized programmatic path). All 3 games now share the same visual language for procedural trains.
+- **Lesson**: When you discover a polish pattern, look for OTHER places where the same visual concept (rim/shadow/weathering/shine) applies. Polish is more about visual language consistency than specific code reuse — even with different geometry, the same 4 ops describe a polished train hull.
+
+### L113 — Countdown UI is best built lazily on first use
+- **Symptom**: I was about to add a `<div id="quiz-countdown">` to G14's static HTML markup.
+- **Root cause**: Pre-baked DOM lives forever even when not used (until first quiz appears). Plus it changes the HTML for a feature that's only sometimes active.
+- **Fix**: Build the countdown div+inner via JS on first call (`if (!bar) { create; append }`). Reuse the same DOM nodes for subsequent quiz countdowns.
+- **Lesson**: For UI elements that show only on event (countdown bars, toasts, modals), prefer lazy creation + reuse. Cleaner HTML, no orphan DOM for users who never trigger the feature.
+
+---
+
 ## 2026-06-24 — v54.10 Procedural Train Render Upgrade
 
 ### L110 — Universal polish pass function beats per-category embedded edits

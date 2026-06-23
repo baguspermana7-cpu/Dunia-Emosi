@@ -1182,7 +1182,29 @@ function buildTrain() {
   else drawSteamBody(g, c); // fallback
 
   trainContainer.addChild(g);
+  // v54.11 — Universal polish overlay (skips character trains; they take the early
+  // return above). Adds 4 cheap finishing touches per L110 (extracted lesson from G14).
+  g15ApplyProceduralPolish(g, c);
   addWheels(c);
+}
+
+// v54.11 — Procedural train polish overlay for G15. Each train body in G15 spans
+// roughly x=[-80, +30], y=[-30, +10] with type-specific contours. The polish adds
+// generic top-rim highlight + soft underbody shadow + 2 weathering streaks + light
+// shine sweep. Applied AFTER the type-specific drawSteamBody/drawDieselBody/etc.
+function g15ApplyProceduralPolish(g, c) {
+  // Top-rim highlight (light glances off boiler/body)
+  g.rect(-72, -28, 90, 0.8).fill({ color: 0xffffff, alpha: 0.32 });
+  g.rect(-72, -27.2, 90, 0.5).fill({ color: 0xffffff, alpha: 0.16 });
+  // Soft underbody shadow (ground contact)
+  g.rect(-78, 12, 100, 1).fill({ color: 0x000000, alpha: 0.22 });
+  g.rect(-74, 13, 92, 0.8).fill({ color: 0x000000, alpha: 0.10 });
+  // Vertical chassis weathering streaks
+  g.rect(-50, -22, 0.4, 28).fill({ color: 0x000000, alpha: 0.08 });
+  g.rect(-22, -22, 0.4, 28).fill({ color: 0x000000, alpha: 0.08 });
+  g.rect(  4, -22, 0.4, 28).fill({ color: 0x000000, alpha: 0.08 });
+  // Diagonal body shine sweep
+  g.poly([-70, -26, -50, -26, -58, -18, -78, -18]).fill({ color: 0xffffff, alpha: 0.06 });
 }
 
 function drawSteamBody(g, c) {

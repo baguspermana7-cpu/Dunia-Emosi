@@ -1,5 +1,44 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.11 "Continuous Refine Wave" (G14 celestial + cloud tint + quiz timer; G15/G16 polish overlay; G23 game-over)
+
+Tenth v54.x ship. Owner: "improve, refine more, polish." Touches 4 standalone games — G14 completes its TIME_OF_DAY system + adds quiz timer; G15/G16 inherit the universal procedural polish overlay pattern from v54.10 (closes the deferred items); G23 game-over screen gets confetti + run-summary stats.
+
+### C1 — G14 sun + moon body sprite + cloud tint by time-of-day
+NEW `L._sunBody` Graphics container built once in `buildSky()` — outer halo + mid halo + disc + highlight. Tinted + repositioned each `g14ApplyTimeOfDaySky()` tick. `phase.sunY > -0.10` controls visibility (below horizon = hidden). Sun for daylight phases (siang/pagi/sore yellow); moon for malam (cool white via tint + 0.85× scale).
+
+### C2 — G14 cloud tint by time-of-day
+`L.clouds.children.forEach(c => c.tint = colors.cloudTint)` runs each phase tick. Pagi clouds glow cream, siang white, sore orange, malam dark navy. Previously fixed `0x1a3a1a` regardless of time. Pure tint swap, zero geometry redraw.
+
+### C3 — G14 stars twinkle with phase fade
+Stars now ALWAYS built (was night-only). `_baseAlpha` + `_twinklePhase` stored on each star. Phase-aware: `colors.stars=true` fades them in; otherwise toward 0. Each star also gets a `0.85 + 0.3 * sin(twinklePhase)` alpha modulation when visible.
+
+### C4 — G14 math quiz 5-second countdown timer
+NEW `g14StartQuizCountdown()` injects 6px progress bar at bottom of `#quiz-ovl`. Green → yellow (70%) → red (40%). On timeout: closes quiz, -15 pressure penalty, square-wave 180Hz buzz. Replaces infinite stall window. Plan item #119.
+
+### C5 — G15 procedural polish overlay (extends v54.10 universal pattern)
+NEW `g15ApplyProceduralPolish(g, c)` called AFTER type-specific drawSteamBody/drawDieselBody/etc. Same 4 finishing touches as G14: top rim, soft underbody shadow, weathering streaks, diagonal shine. Geometry tuned for G15 body dimensions (x=-78..+30). Character trains untouched (early return upstream).
+
+### C6 — G16 procedural polish overlay
+4 finishing touches inlined before `trainContainer.addChild(g)` for the programmatic train path. Geometry tuned for G16 (-12..+82). Character trains take early return upstream and are skipped.
+
+### C7 — G23 game-over confetti shower + rich run summary
+NEW `g23RunConfetti(stars)` — 48 CSS-particles in star-tier-coded palette (rainbow for 5★, gold for 4★, silver for 3★, mist for ≤2★). NEW `g23ConfettiFall` keyframe in style. Summary chip upgraded from `${m} | ${q}/${total} benar` to `🏃 distance · 🪙 coins · 🔥 top streak · 🧠 quiz%`.
+
+### Files touched
+- `games/g14.html` — buildSky (sun/moon body + always-built stars); g14ApplyTimeOfDaySky (sun position, cloud tint, star twinkle); triggerBoost (countdown hook); g14StartQuizCountdown helper.
+- `games/g15-pixi.html` — buildTrain procedural branch + g15ApplyProceduralPolish helper.
+- `games/g16-pixi.html` — buildTrain programmatic path polish overlay inline.
+- `games/g23-pixi.html` — showWin (confetti + rich summary); g23RunConfetti helper; g23ConfettiFall keyframe.
+- `sw.js` — CACHE_VERSION v54.10-20260624o → v54.11-20260624p.
+
+### Lessons captured
+- L111 — Pixi `tint` swap is the cheapest dynamic recolor (no geometry redraw).
+- L112 — Universal polish overlay scales perfectly to other games once the pattern (L110) was extracted — G15 + G16 are now both polished from one mental model.
+- L113 — Countdown UI built lazily on first use beats markup-time scaffolding (no DOM in HTML; created when needed).
+
+---
+
 ## 2026-06-24 — v54.10 "Procedural Train Render Upgrade" (G14 universal polish overlay)
 
 Ninth v54.x ship. Owner-explicit: "improve more model render semua kereta yang sudah dibuat menjadi lebih presisi dengan detail2nya... kecuali 4 kereta yang saya sebut tadi. jangan makin jelek tapi lebih bagus."

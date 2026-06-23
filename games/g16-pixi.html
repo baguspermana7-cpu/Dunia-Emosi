@@ -1140,6 +1140,19 @@ function buildTrain(W,H){
     g.roundRect(cx-2,-2,4,7,1).stroke({width:0.8,color:0x000000,alpha:0.3})
   }
 
+  // v54.11 — Universal procedural polish overlay (character trains take the
+  // early return above; this only runs for programmatic). 4 finishing touches
+  // matching G14/G15 L110 pattern. G16 body spans roughly x=[-12, +82], y=[-46, +22].
+  g.rect(-10, -28, 78, 0.8).fill({ color: 0xffffff, alpha: 0.30 })   // top rim
+  g.rect(-10, -27.2, 78, 0.5).fill({ color: 0xffffff, alpha: 0.16 })
+  g.rect(-12, 16, 96, 1).fill({ color: 0x000000, alpha: 0.18 })       // soft underbody shadow
+  g.rect(-8,  17, 88, 0.7).fill({ color: 0x000000, alpha: 0.08 })
+  // Weathering streaks (2 verticals along boiler)
+  g.rect(16, -26, 0.4, 30).fill({ color: 0x000000, alpha: 0.10 })
+  g.rect(40, -26, 0.4, 30).fill({ color: 0x000000, alpha: 0.10 })
+  // Diagonal body shine sweep
+  g.poly([8, -26, 26, -26, 18, -16, 0, -16]).fill({ color: 0xffffff, alpha: 0.07 })
+
   trainContainer.addChild(g)
 
   // ── SPOKED WHEELS ──
