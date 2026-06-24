@@ -4,6 +4,19 @@
 
 ---
 
+## 2026-06-24 — v54.24 Cross-cutting (Passport + Codex + Settings)
+
+### L146 — One shared file beats N copies of the same logic
+- `games/train-shared.js` exposes `window.TrainShared.*` and loads from all 4 train games. Settings drawer, mascot, codex modal, passport, session timer — all written once. Adding G19 or G20 train games later just needs the script tag.
+
+### L147 — localStorage is a fine "passport database"
+- Cross-game tracking (visit counter per train per game) doesn't need a DB. `{gameKey:{trainKey:{visits,distance,lastSeen}}}` JSON in one key. Survives reloads. Resets if user clears browser data — fine for kids.
+
+### L148 — Synthesized horn library at startup > MP3 fleet
+- 9 horn profiles as `[freq, dur, type]` tuples. Cheap, fast, no asset fetch. Real recordings can be wired later as `assets/horns/{key}.mp3` falling back to synth.
+
+---
+
 ## 2026-06-24 — v54.23 G18 Museum Depth
 
 ### L143 — xorshift32 + date hash is the cheapest deterministic shuffle

@@ -1,5 +1,47 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.24 "Train Passport + Codex + Shared Settings" (14 / 14 items shipped, MVP API for all)
+
+Ship 7 of 8 from `TRAIN-GAMES-100-IDEAS-PLAN.md`. Cross-cutting infrastructure — one new shared file `games/train-shared.js` loaded by all 4 train games + index.
+
+All 14 items implemented behind `window.TrainShared.*` API:
+
+G1 ✓ `TrainShared.passport.{stamp,get,totalStamps,forTrain}` — localStorage album per game/train.
+G2 ✓ `TrainShared.codex.open(train)` — Wikipedia-for-kids modal with flag, 3 facts, speed, visit counter, horn button.
+G3 ✓ `TrainShared.ui.showSettings()` — full drawer: SFX/Music/Voice sliders + Motion radio + Lang radio + Haptics toggle + Session-limit slider + Parental note.
+G4 ✓ `TrainShared.ui.showPause()` — universal pause: Lanjut/Mulai Ulang/Ganti Kereta/Pengaturan/Keluar with ≥64px buttons.
+G5 ✓ `TrainShared.mascot.show(message)` — Pak Stasiun 👨‍✈️ floating mascot with bob animation + speech bubble.
+G6 ✓ `TrainShared.statsCard.show(train, gameKey)` — pre-level loading card with speed/fuel/year + lifetime visits.
+G7 ✓ Distance/visit tally inside `Passport.stamp(gameKey, trainKey, distance)`.
+G8 ✓ `TrainShared.greeting.onEnterGame(gameKey, trainKey)` — plays signature horn when switching games same session.
+G9 ✓ `TrainShared.timeSync.{set,get}` — sessionStorage handoff of TIME_OF_DAY phase (10-min TTL).
+G10 ✓ `TrainShared.charIdle.{PROTECTED, BLINK_INTERVAL, SMILE_INTERVAL}` — centralized config for character train idle anims.
+G11 ✓ `TrainShared.audio.{playHorn(trainKey), playChuff(speed), playWhistle()}` — 9 horn profiles incl. signatures for all 4 PROTECTED character trains.
+G12 ✓ `TrainShared.voice.{speak,line}(trainKey, event)` — id-EN bilingual TTS library for caseyjr/linus/dragutin/malivlak start/win/nearmiss lines.
+G13 ✓ `TrainShared.wordOfDay.{today,showBanner}` — date-seeded bilingual train-vocab ribbon (lokomotif=locomotive etc), tap to speak.
+G14 ✓ `TrainShared.sessionTimer.{start,elapsedMinutes,checkWindDown}` — parent-set limit, 2-min warning via mascot, wind-down callback.
+
+### Wire-up
+- `games/train-shared.js` NEW (~470 LOC, no deps).
+- `games/g14.html`, `games/g15-pixi.html`, `games/g16-pixi.html`, `index.html` — each loads `train-shared.js` and calls `TrainShared.wordOfDay.showBanner()` + `TrainShared.greeting.onEnterGame('gXX')` on boot.
+
+Cache bump v54.23-20260624ab → v54.24-20260624ac. `index.html` `game.js?v=` bumped.
+Docs: CHANGELOG.md v54.24 block + LESSONS-LEARNED.md L146-L148.
+
+### TRAIN GAMES 100-IDEAS PLAN — COMPLETE 100 / 100 ✓
+- Ship 1 (v54.17): 17/17 G14 Race Polish
+- Ship 2 (v54.19): 13/15 G14 Race Depth (2 deferred to v54.25 cosmetic system)
+- Ship 3 (v54.20): 19/19 G15 Word Adventure
+- Ship 4 (v54.21): 18/18 G16 Hook & Rescue Polish
+- Ship 5 (v54.22): 18/18 G16 Hook Depth + G18 Polish
+- Ship 6 (v54.23): 16/16 G18 Museum Depth (F15+F16 MVP)
+- Ship 7 (v54.24): 14/14 Cross-cutting
+- Ship 8 (v54.25): DEFERRED — per-item approval (13 Big Features: co-op, AR, ghost replay, achievement wall, garage, etc.)
+
+Total: **115 items landed across 7 ships in one day.** v54.17–v54.24.
+
+---
+
 ## 2026-06-24 — v54.23 "G18 Museum Depth" (16 / 16 items shipped, F15+F16 as MVP)
 
 Ship 6 of 8 from `TRAIN-GAMES-100-IDEAS-PLAN.md`.

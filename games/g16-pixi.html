@@ -130,6 +130,7 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
+<script src="train-shared.js?v=54.24-20260624ac"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
@@ -483,12 +484,10 @@ function drawPreviewProcedural(ctx, TS) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  // v54.0 (concern 2): owner-flagged Bima Express picker bug. Loop was `i < 6`
-  // but Bima Express is the 7th train (canvas id `prev-6`, line 144). Single-char
-  // bound fix so all 7 train previews render.
   for (let i = 0; i < 7; i++) drawPreview('prev-' + i, i);
-  // v54.21 D7: start picker idle bob (CSS transforms on canvases).
   try { g16StartPreviewBob() } catch(_){}
+  // v54.24 G13 + G8: word-of-the-day banner + game-enter greeting hook.
+  try { if (window.TrainShared) { TrainShared.wordOfDay.showBanner(); TrainShared.greeting.onEnterGame('g16') } } catch(_){}
 });
 
 function startGame() {

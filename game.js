@@ -13994,6 +13994,8 @@ function initGame18() {
   try { g18ShowDailyTrivia() } catch(_){}
   try { g18UpdatePassportChip() } catch(_){}
   g18Missed = []
+  // v54.24 G13 + G8: cross-cutting word-of-the-day + greeting
+  try { if (window.TrainShared) { TrainShared.wordOfDay.showBanner(); TrainShared.greeting.onEnterGame('g18') } } catch(_){}
   // v54.23 hooks: collapsible sections, hero banner, cerita glow, gamelan ambient,
   // long-press whistle, conductor avatar greet, timeline/map FAB buttons.
   try { g18MakeSectionsCollapsible() } catch(_){}
