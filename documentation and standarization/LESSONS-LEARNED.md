@@ -4,6 +4,19 @@
 
 ---
 
+## 2026-06-24 — v54.28 G15 trifecta
+
+### L158 — `loop` is an HTML attribute, not a playback assumption
+- G15's train ambient SFX was started with `sfx.play()` but the `<audio>` tag lacked `loop`. After the first cycle it silently went quiet. Always verify the HTML markup for looping ambient tracks, not just the JS playback call.
+
+### L159 — Pool one ticker over many particles; never N tickers
+- For ANY particle effect with > 4-5 elements, register ONE ticker that iterates a pool. Per-particle `app.ticker.add(closure)` thrashes the ticker list and forces V8 to allocate a closure for each particle. Pool pattern is 5 LOC of housekeeping for substantial perf win.
+
+### L160 — Lerp the rendering, not the model
+- `playerLane` should stay a discrete integer (0/1/2). Don't lerp it. Instead, lerp a SEPARATE `_tweenY` toward `LANE_Y[playerLane]`. This way: gameplay logic (collision lane checks, "are we in lane 1?") stays simple and accurate, while rendering enjoys smooth tweening. Trying to lerp the model state always leads to fractional-lane edge cases and "is 1.4 close enough to lane 1?" bugs.
+
+---
+
 ## 2026-06-24 — v54.27 Polish Pass 2
 
 ### L155 — Module-level state needs explicit per-session reset hooks

@@ -171,7 +171,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <canvas id="pixi-canvas"></canvas>
 <script src="train-shared.js?v=54.27-20260624af"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
-<audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
+<!-- v54.28 I13: loop the train ambient SFX (was one-shot, faded after first cycle, leaving silence). -->
+<audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" loop preload="auto" style="display:none"></audio>
 
 <!-- v54.20: G15 Word Adventure DOM scaffolds -->
 <div id="g15-streak"></div>
@@ -384,7 +385,10 @@ function togglePause() {
   if (typeof GamePause !== 'undefined') {
     if (gamePaused) GamePause.show(); else GamePause.hide();
   } else {
+    // v54.28 I13: pause the looping train-sfx alongside BGM. Was running
+    // through pauses, sounding like the train kept moving while frozen.
     try{const bgm=document.getElementById('game-bgm');gamePaused?bgm.pause():bgm.play().catch(()=>{})}catch(_){}
+    try{const sfx=document.getElementById('train-sfx');if(sfx){gamePaused?sfx.pause():sfx.play().catch(()=>{})}}catch(_){}
   }
 }
 let _mathTimerStart = null;
@@ -813,8 +817,23 @@ async function initPixi() {
   showStationBanner(getCurrentStation());
 
   gameRunning = true;
-  try{const bgm=document.getElementById('game-bgm');bgm.volume=0.2;bgm.play().catch(()=>{})}catch(_){}
-  try{const sfx=document.getElementById('train-sfx');if(sfx){sfx.currentTime=0;sfx.volume=0.7;sfx.play().catch(()=>{})}}catch(_){}
+  // v54.28 I13: BGM volume lift 0.20 → 0.35 with a 200ms ramp so it's actually
+  // audible against the train ambient. Was easy to miss entirely.
+  try {
+    const bgm = document.getElementById('game-bgm')
+    if (bgm) {
+      bgm.volume = 0.0
+      bgm.play().catch(()=>{})
+      const tStart = performance.now()
+      const ramp = () => {
+        const k = Math.min(1, (performance.now() - tStart) / 200)
+        bgm.volume = 0.35 * k
+        if (k < 1) requestAnimationFrame(ramp)
+      }
+      ramp()
+    }
+  } catch(_){}
+  try{const sfx=document.getElementById('train-sfx');if(sfx){sfx.currentTime=0;sfx.volume=0.55;sfx.play().catch(()=>{})}}catch(_){}
   startTime = Date.now();
   let spawnTimer = 0;
   const spawnInterval = () => Math.max(45, 90 - LEVEL * 2);
@@ -935,15 +954,29 @@ async function initPixi() {
       if (b.container.x < -90) { boxLayer.removeChild(b.container); letterBoxes.splice(i, 1); }
     }
 
-    // Train bounce
+    // v54.28 I12: smooth Y tween toward target lane (was teleport-snap to
+    // LANE_Y[playerLane] every frame, which made carriage-bob look glitchy
+    // mid-switch). _tweenY is the current displayed Y; it lerps at ~0.22/frame
+    // (≈120ms ease-out) toward LANE_Y[playerLane]. Bounce + bob are then
+    // added on top of the smooth carrier value.
+    const targetLaneY = LANE_Y[playerLane];
+    if (trainContainer._tweenY == null) trainContainer._tweenY = targetLaneY;
+    const ldy = targetLaneY - trainContainer._tweenY;
+    if (Math.abs(ldy) > 0.5) trainContainer._tweenY += ldy * 0.22 * dt;
+    else trainContainer._tweenY = targetLaneY;
+
     if (trainContainer._bounceT > 0) {
       trainContainer._bounceT -= 0.1 * dt;
-      trainContainer.y = LANE_Y[playerLane] - Math.sin(trainContainer._bounceT * Math.PI) * 6;
+      trainContainer.y = trainContainer._tweenY - Math.sin(trainContainer._bounceT * Math.PI) * 6;
     } else {
       trainContainer._bounceT = 0;
-      // v54.20 C13: subtle breathing parallax bob always-on.
       const bob = Math.sin(performance.now() * 0.003) * 1.4;
-      trainContainer.y = LANE_Y[playerLane] + bob;
+      trainContainer.y = trainContainer._tweenY + bob;
+    }
+    // v54.28 I12: tiny lead-rotation while the lerp is in flight (subtle banking
+    // INTO the turn before the body finishes moving). Direction = sign(ldy).
+    if (Math.abs(ldy) > 4 && (!trainContainer._leanTimer || trainContainer._leanTimer <= 0)) {
+      trainContainer.rotation += (Math.sign(ldy) * 0.04 - trainContainer.rotation) * 0.18 * dt;
     }
     // v54.20 C1: banking lean lerp toward 0.
     if (trainContainer._leanTimer && trainContainer._leanTimer > 0) {
@@ -2136,24 +2169,45 @@ function flashScreen(type) {
 }
 
 // ── Particles ─────────────────────────────────────────────────────────────────
+// v54.28 I14: pooled particle system.
+// Was: every particle registered its own `app.ticker.add(closure)` and removed
+// itself with `app.ticker.remove(tick)`. On a word-complete burst that's 48
+// closures created + removed in the same lifecycle — Pixi's ticker list churns,
+// and each closure carries the per-particle state via closure-capture (GC churn).
+// Now: a single _g15FXPool array is ticked ONCE per frame via _g15TickFX.
+// spawnCollectParticles just pushes plain objects. Much friendlier to V8 hot path.
+const _g15FXPool = [];
+let _g15FXBound = false;
+function _g15TickFX(ticker){
+  const d = ticker.deltaTime;
+  for (let i = _g15FXPool.length - 1; i >= 0; i--) {
+    const p = _g15FXPool[i];
+    p.gfx.x += p.vx * d; p.gfx.y += p.vy * d;
+    p.vy += 0.18 * d;
+    p.gfx.alpha -= 0.035 * d;
+    if (p.gfx.alpha <= 0) {
+      try { particleLayer.removeChild(p.gfx) } catch(_){}
+      _g15FXPool.splice(i, 1);
+    }
+  }
+}
+function _g15EnsureFXTicker(){
+  if (_g15FXBound || !app || !app.ticker) return;
+  app.ticker.add(_g15TickFX);
+  _g15FXBound = true;
+}
 function spawnCollectParticles(x, y, mainColor) {
   const colors = [mainColor, 0xfbbf24, 0x38bdf8, 0xf472b6, 0xc084fc, 0x4ade80];
+  _g15EnsureFXTicker();
   for (let i = 0; i < 16; i++) {
-    const p = new PIXI.Graphics();
+    const gfx = new PIXI.Graphics();
     const r = 3 + Math.random() * 3.5;
-    p.circle(0, 0, r).fill({ color: colors[i % colors.length] });
-    p.x = x; p.y = y;
+    gfx.circle(0, 0, r).fill({ color: colors[i % colors.length] });
+    gfx.x = x; gfx.y = y; gfx.alpha = 1;
+    particleLayer.addChild(gfx);
     const angle = (Math.PI * 2 * i) / 16 + Math.random() * 0.5;
     const spd = 2.5 + Math.random() * 4;
-    p._vx = Math.cos(angle) * spd; p._vy = Math.sin(angle) * spd - 1.5;
-    p.alpha = 1;
-    particleLayer.addChild(p);
-    const tick = app.ticker.add((t) => {
-      p.x += p._vx * t.deltaTime; p.y += p._vy * t.deltaTime;
-      p._vy += 0.18 * t.deltaTime;
-      p.alpha -= 0.035 * t.deltaTime;
-      if (p.alpha <= 0) { particleLayer.removeChild(p); app.ticker.remove(tick); }
-    });
+    _g15FXPool.push({ gfx, vx: Math.cos(angle) * spd, vy: Math.sin(angle) * spd - 1.5 });
   }
 }
 
@@ -2228,6 +2282,8 @@ function showWin() {
   // reported "no respond hang" — every frame the loop checked the flag, doing
   // nothing useful but eating CPU. Stop here AND in showLose to guarantee halt.
   try { if (app && app.ticker) app.ticker.stop() } catch(_){}
+  // v54.28 I13: stop looped train-sfx so it doesn't bleed into the result modal.
+  try { const sfx = document.getElementById('train-sfx'); if (sfx) { sfx.pause(); sfx.currentTime = 0 } } catch(_){}
   const elapsed = (Date.now() - startTime) / 1000;
   const totalQ = mathCorrect + wrongTaps;
   try{document.getElementById('game-bgm').pause()}catch(_){}
@@ -2259,6 +2315,7 @@ function showLose() {
   gameRunning = false;
   // Hotfix #102-C: see showWin — same ticker.stop to prevent post-game hang.
   try { if (app && app.ticker) app.ticker.stop() } catch(_){}
+  try { const sfx = document.getElementById('train-sfx'); if (sfx) { sfx.pause(); sfx.currentTime = 0 } } catch(_){}  // v54.28 I13
   sessionStorage.setItem('g15Result', JSON.stringify({ stars: 0 }));
   GameModal.show({
     emoji: '😞', title: 'Gagal! Coba Lagi', stars: 0, msg: 'Jangan menyerah, ayo coba lagi!',

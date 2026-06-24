@@ -1,5 +1,32 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.28 "Polish Pass 3 — G15 trifecta" (I12 + I13 + I14)
+
+Third iteration of "continuous polish." All three G15 items from the iter-2 queue. One file, three big improvements.
+
+### I12 — smooth Y lane tween + lead-rotation
+- **Was**: `trainContainer.y = LANE_Y[playerLane]` snapped every frame on lane change. Combined with the always-on bob, the carriage looked like it teleported then jiggled.
+- **Now**: `_tweenY` field lerps at `0.22 * dt` toward `LANE_Y[playerLane]` (≈120ms ease-out). Bob + bounce ride on top of the smooth carrier. Plus: a subtle banking lead-rotation (`Math.sign(ldy) * 0.04`) while the lerp is in flight, giving the carriage visible lean INTO the turn before the body finishes moving.
+
+### I13 — looped train ambient + lifted BGM mix + pause-aware
+- **Was**: `<audio id="train-sfx">` had no `loop` attribute, so after the first cycle the ambient train rumble silently died. BGM volume was 0.20 (barely audible against the train noise that wasn't even playing). Pausing didn't pause the train-sfx.
+- **Now**: `loop` attribute added. BGM volume floor raised 0.20 → 0.35 with a 200ms fade-in ramp (prevents audio click). Pause/resume button now also pauses/resumes train-sfx. `showWin`/`showLose` stop and reset train-sfx so it doesn't bleed into the result modal. Initial volume eased from 0.7 → 0.55 since the loop means it's now constant.
+
+### I14 — pooled particle ticker
+- **Was**: `spawnCollectParticles` registered a per-particle `app.ticker.add(closure)` and removed it with `app.ticker.remove(tick)`. On a word-complete burst (48 particles), Pixi's ticker list churned 48× create+remove cycles in the same lifecycle, each capturing per-particle state via closure capture.
+- **Now**: single `_g15FXPool` array ticked ONCE per frame via shared `_g15TickFX`. `spawnCollectParticles` just pushes plain `{gfx, vx, vy}` objects. V8 hot path is friendlier; less GC churn; ticker list stays clean.
+
+### Files touched
+- `games/g15-pixi.html` — `<audio>` loop attribute, startGame BGM ramp + sfx volume, togglePause sfx hook, showWin/showLose sfx stop, train tick `_tweenY` lerp, spawnCollectParticles refactor to pool.
+- `sw.js` — CACHE_VERSION v54.27-20260624af → v54.28-20260624ag.
+
+### Lessons captured
+- L158 — Looping background audio MUST have `loop` set in HTML, not assumed by playback.
+- L159 — Single shared ticker over a pool always beats per-particle closures for any pool > 4-5 elements.
+- L160 — Lerp the rendering, not the model state: keep `playerLane` discrete and snap-resolving, but lerp `_tweenY` smoothly toward `LANE_Y[playerLane]`. Best of both worlds.
+
+---
+
 ## 2026-06-24 — v54.27 "Polish Pass 2 — top 10 from iteration audit" (10 / 18 ranked items)
 
 Second iteration of "continuous polish" mandate. Top 10 highest-impact-per-cost items from the 56-finding audit (workflow `wwo9w6jvf`). Mix of dead-code revivals, silent-failure fixes, and feel improvements. Source-of-record for remaining 8 + 35 iter-3 follow-ups: `/tmp/.../wwo9w6jvf.output`.
