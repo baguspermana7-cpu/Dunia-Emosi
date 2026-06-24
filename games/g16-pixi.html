@@ -54,8 +54,57 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0d102
 @keyframes correctFlash{0%{transform:scale(1.1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
 @keyframes wrongShake{0%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}100%{transform:translateX(0)}}
 #mercy-bar{margin-top:10px;display:flex;gap:5px;align-items:center}
-.mercy-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.2);transition:all .2s}
-.mercy-dot.used{background:#ef4444;border-color:#ef4444}
+.mercy-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.2);transition:all .25s cubic-bezier(.34,1.56,.64,1)}
+.mercy-dot.used{background:#ef4444;border-color:#ef4444;transform:scale(1.5);animation:g16MercyExplode 700ms cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes g16MercyExplode{0%{transform:scale(1)}40%{transform:scale(1.5)}100%{transform:scale(1);box-shadow:0 0 0 8px rgba(239,68,68,0)}}
+
+/* ── v54.21 — G16 Hook & Rescue Polish ── */
+
+/* D1: READY-SET-GO countdown */
+#g16-countdown{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(15,23,42,0.6),rgba(15,23,42,0.92));backdrop-filter:blur(2px);pointer-events:none}
+#g16-countdown.show{display:flex}
+#g16-cd-num{font-family:'Fredoka One',cursive;font-size:clamp(120px,30vmin,220px);color:#fbbf24;text-shadow:0 0 32px rgba(251,191,36,0.8),0 8px 24px rgba(0,0,0,0.7);animation:g16CdPop 700ms cubic-bezier(.34,1.56,.64,1);line-height:1}
+#g16-cd-num.go{color:#86efac;animation:g16CdGo 600ms ease-out}
+@keyframes g16CdPop{0%{transform:scale(0.2);opacity:0}40%{transform:scale(1.25);opacity:1}100%{transform:scale(1);opacity:0.95}}
+@keyframes g16CdGo{0%{transform:scale(0.4);opacity:0}30%{transform:scale(1.4);opacity:1}100%{transform:scale(2.4);opacity:0}}
+
+/* D2: Quiz panel bouncy slide-up */
+#quiz-panel.show{animation:g16QuizSlide 350ms cubic-bezier(.34,1.56,.64,1)}
+@keyframes g16QuizSlide{0%{transform:translateY(100%)}60%{transform:translateY(-12px)}100%{transform:translateY(0)}}
+
+/* D3: Combo streak HUD badge */
+#g16-streak{position:fixed;top:max(60px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:60;font-family:'Fredoka One',cursive;background:linear-gradient(135deg,#fb923c,#ef4444);color:#fff;padding:5px 12px;border-radius:14px;font-size:12px;letter-spacing:0.8px;font-weight:900;box-shadow:0 4px 12px rgba(239,68,68,0.45);text-shadow:0 1px 2px rgba(0,0,0,0.4);opacity:0;transform:scale(0.6);transition:all 250ms cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+#g16-streak.show{opacity:1;transform:scale(1)}
+#g16-streak.bump{animation:g16StreakBump 280ms cubic-bezier(.34,1.56,.64,1)}
+@keyframes g16StreakBump{0%{transform:scale(1)}40%{transform:scale(1.4);box-shadow:0 0 20px rgba(251,146,60,0.7)}100%{transform:scale(1)}}
+
+/* D5: Mid-level milestone banner */
+.g16-milestone{position:fixed;top:24%;left:50%;transform:translate(-50%,0);z-index:65;font-family:'Fredoka One',cursive;font-size:26px;color:#fff;text-shadow:0 0 18px rgba(74,222,128,0.7),0 4px 12px rgba(0,0,0,0.6);padding:8px 22px;background:linear-gradient(135deg,rgba(0,0,0,0.6),rgba(20,40,30,0.5));border:2px solid #4ade80;border-radius:18px;pointer-events:none;animation:g16MilestonePop 1400ms cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes g16MilestonePop{0%{opacity:0;transform:translate(-50%,20px) scale(0.4)}18%{opacity:1;transform:translate(-50%,-6px) scale(1.2)}30%{opacity:1;transform:translate(-50%,0) scale(1)}78%{opacity:1;transform:translate(-50%,0) scale(1)}100%{opacity:0;transform:translate(-50%,-30px) scale(0.85)}}
+
+/* D6: Cinematic 16:9 black bars on ARRIVING */
+.g16-cinema-bar{position:fixed;left:0;right:0;height:10vh;background:#000;z-index:55;pointer-events:none;transition:transform 600ms cubic-bezier(.34,1.56,.64,1)}
+.g16-cinema-bar.top{top:0;transform:translateY(-100%)}
+.g16-cinema-bar.bottom{bottom:0;transform:translateY(100%)}
+.g16-cinema-bar.show{transform:translateY(0)}
+
+/* D8: wrong-answer correct-highlight pulse */
+.choice-btn.show-correct{border-color:#4ade80;background:rgba(74,222,128,0.45);animation:g16ShowCorrect 600ms ease}
+@keyframes g16ShowCorrect{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,0.6)}50%{box-shadow:0 0 0 14px rgba(74,222,128,0)}}
+
+/* D10: Train HEALTH heart row */
+#g16-health-row{position:fixed;top:max(86px,calc(env(safe-area-inset-top) + 36px));left:50%;transform:translateX(-50%);z-index:50;display:flex;gap:6px;pointer-events:none}
+.g16-heart{font-size:18px;text-shadow:0 1px 2px rgba(0,0,0,0.6);transition:opacity 300ms,transform 300ms}
+.g16-heart.lost{opacity:0.18;transform:scale(0.6) rotate(-12deg);filter:grayscale(1)}
+
+/* D12: Tutorial mercy-dot help overlay */
+.g16-tutorial-overlay{position:fixed;top:30%;left:50%;transform:translate(-50%,0);z-index:70;background:linear-gradient(135deg,#fde047,#f59e0b);color:#451a03;font-family:'Fredoka One',cursive;font-size:14px;padding:14px 20px;border-radius:16px;box-shadow:0 14px 36px rgba(0,0,0,0.5);text-align:center;pointer-events:none;animation:g16TutIn 400ms cubic-bezier(.34,1.56,.64,1) forwards}
+.g16-tutorial-overlay::after{content:'';position:absolute;top:-10px;left:50%;transform:translateX(-50%);border:10px solid transparent;border-bottom-color:#fde047}
+@keyframes g16TutIn{0%{opacity:0;transform:translate(-50%,20px) scale(0.6)}100%{opacity:1;transform:translate(-50%,0) scale(1)}}
+
+/* D13: Heart-fall on mercy-dot consume */
+.g16-mercy-heart-fall{position:fixed;font-size:18px;color:#f472b6;z-index:65;pointer-events:none;animation:g16HeartFall 900ms ease-out forwards}
+@keyframes g16HeartFall{0%{transform:translateY(0);opacity:1}100%{transform:translateY(60px);opacity:0}}
 
 /* ── Speed Lines / Flash ── */
 #speed-lines{position:fixed;inset:0;z-index:45;pointer-events:none;opacity:0;transition:opacity .15s;background:repeating-linear-gradient(90deg,transparent,transparent 38px,rgba(255,255,255,0.035) 38px,rgba(255,255,255,0.035) 40px)}
@@ -83,6 +132,23 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 <canvas id="pixi-canvas"></canvas>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
+
+<!-- v54.21 D1: READY-SET-GO countdown -->
+<div id="g16-countdown"><div id="g16-cd-num">SIAP?</div></div>
+
+<!-- v54.21 D3: combo streak badge -->
+<div id="g16-streak"></div>
+
+<!-- v54.21 D6: cinema bars -->
+<div class="g16-cinema-bar top"></div>
+<div class="g16-cinema-bar bottom"></div>
+
+<!-- v54.21 D10: train HEALTH heart row -->
+<div id="g16-health-row">
+  <span class="g16-heart" data-i="0">❤️</span>
+  <span class="g16-heart" data-i="1">❤️</span>
+  <span class="g16-heart" data-i="2">❤️</span>
+</div>
 <audio id="sfx-crash" src="../assets/sfx/crash.mp3?v=20260422a" preload="auto" style="display:none"></audio>
 
 <div id="hud-top">
@@ -421,10 +487,13 @@ window.addEventListener('DOMContentLoaded', () => {
   // but Bima Express is the 7th train (canvas id `prev-6`, line 144). Single-char
   // bound fix so all 7 train previews render.
   for (let i = 0; i < 7; i++) drawPreview('prev-' + i, i);
+  // v54.21 D7: start picker idle bob (CSS transforms on canvases).
+  try { g16StartPreviewBob() } catch(_){}
 });
 
 function startGame() {
   document.getElementById('train-select').style.display = 'none';
+  try { g16StopPreviewBob() } catch(_){}  // v54.21 D7
   // Hotfix #104 (2026-04-28): explicit state reset BEFORE initPixi.
   // Previously S was a top-level const initialized once; replaying or
   // advancing to next level inherited stale S.cleared and
@@ -593,11 +662,251 @@ async function initPixi(){
   buildHeadlightBeam(W,H)
   buildFireGlow(W,H)
   app.ticker.add(gameLoop)
-  S.startTime=performance.now(); S.running=true
-  try{const bgm=document.getElementById('game-bgm');bgm.volume=0.25;bgm.play().catch(()=>{})}catch(_){}
-  try{const sfx=document.getElementById('train-sfx');if(sfx){sfx.currentTime=0;sfx.volume=0.7;sfx.play().catch(()=>{})}}catch(_){}
+  // v54.21 D10 + D5: reset health row + milestone tracker on new game.
+  g16MilestonesFired = new Set()
+  try { g16UpdateHealthRow() } catch(_){}
+  // v54.21 D1: defer S.running until READY-SET-GO ritual completes.
+  g16RunCountdown(() => {
+    S.startTime=performance.now(); S.running=true
+    try{const bgm=document.getElementById('game-bgm');bgm.volume=0.25;bgm.play().catch(()=>{})}catch(_){}
+    try{const sfx=document.getElementById('train-sfx');if(sfx){sfx.currentTime=0;sfx.volume=0.7;sfx.play().catch(()=>{})}}catch(_){}
+    // v54.21 D12: tutorial overlay on L1 first quiz only.
+    g16TutorialState.shown = false
+  })
   updateHUD()
 }
+
+// ═══════════════════════════════════════════════════════════
+//  v54.21 — G16 Hook & Rescue Polish helpers
+// ═══════════════════════════════════════════════════════════
+
+// D1: READY-SET-GO countdown
+function g16RunCountdown(onDone){
+  const ov = document.getElementById('g16-countdown')
+  const num = document.getElementById('g16-cd-num')
+  if (!ov || !num) { if (onDone) onDone(); return }
+  ov.classList.add('show')
+  const seq = ['SIAP', 'SET', 'GO!']
+  let i = 0
+  function step(){
+    num.classList.remove('go')
+    void num.offsetWidth
+    num.textContent = seq[i]
+    if (seq[i] === 'GO!') {
+      num.classList.add('go')
+      // Whistle + steam burst on GO
+      try { playTone(880, 0.18, 'sine'); setTimeout(()=>playTone(660, 0.22, 'sine'), 140) } catch(_){}
+      g16SpawnSteamBurst(8)
+    } else {
+      try { playTone(660 + i * 220, 0.10, 'triangle') } catch(_){}
+    }
+    i++
+    if (i < seq.length) setTimeout(step, 700)
+    else setTimeout(() => { ov.classList.remove('show'); if (onDone) onDone() }, 550)
+  }
+  step()
+}
+
+// D3: combo streak HUD badge
+function g16ShowStreakBadge(n){
+  const el = document.getElementById('g16-streak')
+  if (!el) return
+  if (n <= 0) { el.classList.remove('show'); return }
+  el.textContent = '🔥 STREAK x' + n
+  el.classList.add('show')
+  el.classList.remove('bump')
+  void el.offsetWidth
+  el.classList.add('bump')
+}
+
+// D4: tap-tick SFX on choice button touch
+function g16TapTick(){ try { playTone(180, 0.04, 'square') } catch(_){} }
+
+// D5: mid-level milestone banner with haptic
+let g16MilestonesFired = new Set()
+function g16MaybeMilestone(){
+  if (!S.totalObstacles) return
+  const cleared = S.cleared || 0
+  const pct = cleared / S.totalObstacles
+  const thresholds = [
+    { t: 0.25, label: 'STATION 1 ✓' },
+    { t: 0.50, label: 'STATION 2 ✓' },
+    { t: 0.75, label: 'STATION 3 ✓' },
+  ]
+  for (const th of thresholds) {
+    if (pct >= th.t && !g16MilestonesFired.has(th.t)) {
+      g16MilestonesFired.add(th.t)
+      const el = document.createElement('div')
+      el.className = 'g16-milestone'
+      el.textContent = '🚉 ' + th.label
+      document.body.appendChild(el)
+      setTimeout(() => el.remove(), 1500)
+      if (navigator.vibrate) { try { navigator.vibrate(40) } catch(_){} }
+      try { playTone(660, 0.10, 'sine'); setTimeout(()=>playTone(880, 0.10, 'sine'), 100); setTimeout(()=>playTone(1100, 0.16, 'sine'), 220) } catch(_){}
+      break
+    }
+  }
+}
+
+// D6: cinematic 16:9 black bars on ARRIVING
+let g16CinemaShown = false
+function g16ShowCinema(show){
+  const bars = document.querySelectorAll('.g16-cinema-bar')
+  bars.forEach(b => b.classList.toggle('show', show))
+  g16CinemaShown = show
+  // pair: 1->1.05 stage scale + 0.7x slow-mo while ARRIVING
+  if (typeof stage !== 'undefined' && stage && show) {
+    try { stage.scale.set(1.05); if (app && app.ticker) app.ticker.speed = 0.7 } catch(_){}
+  } else if (typeof stage !== 'undefined' && stage && !show) {
+    try { stage.scale.set(1.0); if (app && app.ticker) app.ticker.speed = 1.0 } catch(_){}
+  }
+}
+
+// D7: train picker idle bob — wraps drawPreview's canvas update with sin Y offset.
+let g16PreviewBobRAF = null
+function g16StartPreviewBob(){
+  if (g16PreviewBobRAF) return
+  function loop(){
+    const t = performance.now() * 0.003
+    document.querySelectorAll('.train-card canvas, [id^="prev-"]').forEach((c, idx) => {
+      const o = Math.sin(t + idx * 0.7) * 2
+      c.style.transform = 'translateY(' + o.toFixed(2) + 'px)'
+    })
+    g16PreviewBobRAF = requestAnimationFrame(loop)
+  }
+  g16PreviewBobRAF = requestAnimationFrame(loop)
+}
+function g16StopPreviewBob(){
+  if (g16PreviewBobRAF) { cancelAnimationFrame(g16PreviewBobRAF); g16PreviewBobRAF = null }
+}
+
+// D8: wrong-answer pedagogical hint — highlight correct option for 600ms.
+function g16HighlightCorrect(question){
+  const btns = document.querySelectorAll('#quiz-panel .choice-btn')
+  btns.forEach(b => {
+    if (b.textContent && b.textContent.trim() === String(question.ans).trim()) {
+      b.classList.add('show-correct')
+      setTimeout(() => b.classList.remove('show-correct'), 600)
+    }
+  })
+}
+
+// D9: question history dedup
+const G16_QHIST_KEY = 'dunia-g16-qhist'
+function g16FilterFreshQuestions(pool){
+  try {
+    const raw = sessionStorage.getItem(G16_QHIST_KEY) || '[]'
+    const seen = new Set(JSON.parse(raw))
+    const fresh = pool.filter(q => !seen.has(q.id || q.text || JSON.stringify(q)))
+    return fresh.length ? fresh : pool  // fallback if filter empties pool
+  } catch(_){ return pool }
+}
+function g16RecordQuestion(q){
+  try {
+    const key = q.id || q.text || JSON.stringify(q)
+    const raw = sessionStorage.getItem(G16_QHIST_KEY) || '[]'
+    let arr = JSON.parse(raw)
+    arr.push(key)
+    if (arr.length > 15) arr = arr.slice(-15)
+    sessionStorage.setItem(G16_QHIST_KEY, JSON.stringify(arr))
+  } catch(_){}
+}
+
+// D10: train HEALTH heart row — sync to mercy-dot wrongs.
+function g16UpdateHealthRow(){
+  const wrongs = S.wrongTaps_station || 0
+  document.querySelectorAll('#g16-health-row .g16-heart').forEach((h, i) => {
+    h.classList.toggle('lost', i < wrongs)
+  })
+}
+
+// D11: steam whistle on station clear
+function g16StationClearWhistle(){
+  try {
+    playTone(1100, 0.20, 'sine')
+    setTimeout(() => playTone(880, 0.24, 'sine'), 180)
+    setTimeout(() => playTone(660, 0.20, 'sine'), 380)
+  } catch(_){}
+  g16SpawnSteamBurst(10)
+  // 8px shake
+  if (stage) {
+    let t = 0
+    const tickFn = (ticker) => {
+      t += ticker.deltaTime
+      const k = Math.max(0, 1 - t / 18)
+      stage.x = Math.sin(t * 1.6) * 8 * k
+      if (t > 18) { stage.x = 0; app.ticker.remove(tickFn) }
+    }
+    if (app && app.ticker) app.ticker.add(tickFn)
+  }
+}
+function g16SpawnSteamBurst(n){
+  // visual chimney puff burst via existing smokePuffs system
+  for (let i = 0; i < n; i++) {
+    setTimeout(() => { try { if (typeof emitSmoke === 'function') emitSmoke() } catch(_){} }, i * 50)
+  }
+}
+
+// D12: tutorial mercy-dot help overlay (L1 first quiz only)
+const g16TutorialState = { shown: false }
+function g16MaybeTutorial(){
+  if (g16TutorialState.shown) return
+  if (cfg && cfg.level && cfg.level > 1) return
+  g16TutorialState.shown = true
+  const t = document.createElement('div')
+  t.className = 'g16-tutorial-overlay'
+  t.innerHTML = '👆 Kamu punya 3 kesempatan! Klik jawaban benar!'
+  document.body.appendChild(t)
+  setTimeout(() => t.remove(), 3000)
+}
+
+// D13: mercy-dot consume — heart-fall on the dot's screen position.
+function g16HeartFallFromMercyDot(idx){
+  const dots = document.querySelectorAll('.mercy-dot')
+  const dot = dots[idx]
+  if (!dot) return
+  const r = dot.getBoundingClientRect()
+  const h = document.createElement('div')
+  h.className = 'g16-mercy-heart-fall'
+  h.textContent = '💔'
+  h.style.left = (r.left + r.width/2 - 9) + 'px'
+  h.style.top = (r.top + r.height/2 - 9) + 'px'
+  document.body.appendChild(h)
+  setTimeout(() => h.remove(), 900)
+}
+
+// D14: BGM sidechain duck during quiz panel
+function g16DuckBGM(active){
+  try {
+    const bgm = document.getElementById('game-bgm')
+    if (!bgm) return
+    bgm.volume = active ? 0.10 : 0.25
+  } catch(_){}
+}
+
+// D15: telegraph spark frequency dampener — multiplied at spawn site.
+let g16SparkDamp = 0.12
+
+// D16: mini-obstacle destruction burst
+function g16MiniObstacleBurst(x, y, emoji){
+  const colorMap = { '🪨':0x9ca3af, '🌳':0x4ade80, '🌵':0x10b981, '🔥':0xfb923c, '⚡':0xfbbf24 }
+  const baseColor = colorMap[emoji] || 0xfbbf24
+  for (let i = 0; i < 6; i++) {
+    const g = new PIXI.Graphics()
+    g.circle(0, 0, 3 + Math.random() * 3).fill(baseColor)
+    g.x = x; g.y = y
+    sparkParticles.push({ g, vx: (Math.random() - 0.5) * 9, vy: -Math.random() * 7 - 1, gravity: 0.3, life: 1, decay: 0.025 })
+    if (worldContainer) worldContainer.addChild(g)
+  }
+}
+
+// D17: smoke color modulation by train state
+function g16CurrentSmokeColor(){
+  if (S.trainState === 'BOOSTING') return 0x4b5563  // dark, dense
+  if (S.trainState === 'STOPPED' || S.trainState === 'ARRIVED') return 0xe5e7eb  // thin wisps
+  return 0xaaaaaa
+}
+
 
 // ── Sky ────────────────────────────────────────────────────────────────────────
 function drawSky(W,H){
@@ -1210,7 +1519,8 @@ function buildTrain(W,H){
 // ── Obstacles ─────────────────────────────────────────────────────────────────
 function buildObstaclesOnTrack(W,H){
   const tY=getTrackY(H)
-  const allQ=pickQuestions(S.level)
+  // v54.21 D9: dedup against the last 15 sessionStorage-recorded questions.
+  const allQ = g16FilterFreshQuestions(pickQuestions(S.level))
   // Each station gets 3-5 questions (distribute evenly)
   const stationCount = Math.max(4, Math.min(Math.ceil(allQ.length/2), 8))
   const qPerStation = Math.max(2, Math.ceil(allQ.length/stationCount))
@@ -1593,7 +1903,9 @@ function updateSmoke(dt){
   if(Math.random()<rate){
     const p=new PIXI.Graphics()
     const r=5+Math.random()*(S.trainState==='BOOSTING'?14:9)
-    p.circle(0,0,r).fill({color:TS.smokeCol||0x888888,alpha:0.55})
+    // v54.21 D17: smoke color modulation by train state (overrides TS.smokeCol)
+    const smokeCol = g16CurrentSmokeColor()
+    p.circle(0,0,r).fill({color: smokeCol, alpha:0.55})
     p.x=trainContainer.x+17; p.y=trainContainer.y-46
     p._vx=(Math.random()-0.5)*22-18; p._vy=-32-Math.random()*22; p._life=1.0
     stage.addChild(p); smokePuffs.push(p)
@@ -1633,7 +1945,8 @@ function spawnSteamJet(){
 }
 
 function showBrakeSparks(){
-  if(Math.random()>0.15)return
+  // v54.21 D15: rarer brake sparks (g16SparkDamp ~ 0.12 vs old 0.15) + bigger reactions
+  if(Math.random()>g16SparkDamp)return
   const s=new PIXI.Graphics()
   s.rect(-1,-2,2,4).fill({color:0xfbbf24})
   s.x=trainContainer.x+70; s.y=trainContainer.y+8
@@ -1691,6 +2004,8 @@ function showQuizPanel(obs){
   choices.forEach(c=>{
     const btn=document.createElement('button'); btn.className='choice-btn'; btn.textContent=c
     if (longestLen > 5) btn.classList.add('long-text')
+    // v54.21 D4: tap-tick SFX on pointerdown before answer resolves
+    btn.addEventListener('pointerdown', g16TapTick, { passive: true })
     btn.onclick=()=>onChoiceTap(btn,c,obs); choicesEl.appendChild(btn)
   })
   const mercyEl=document.getElementById('mercy-bar'); mercyEl.innerHTML=''
@@ -1698,6 +2013,12 @@ function showQuizPanel(obs){
     const dot=document.createElement('div'); dot.className='mercy-dot'+(m<obs.wrongCount?' used':''); mercyEl.appendChild(dot)
   }
   document.getElementById('quiz-panel').classList.add('show')
+  // v54.21 D14: BGM duck on quiz open
+  g16DuckBGM(true)
+  // v54.21 D12: tutorial nudge on L1 first quiz
+  try { g16MaybeTutorial() } catch(_){}
+  // v54.21 D9: record question for dedup history
+  try { g16RecordQuestion(obs.question) } catch(_){}
 }
 
 function onChoiceTap(btn,choice,obs){
@@ -1706,6 +2027,12 @@ function onChoiceTap(btn,choice,obs){
     btn.classList.add('correct'); flashScreen('#00ff44',0.35)
     // Juice layer — Task #38: celebration FX + streak + stage punch
     S.correctStreak = (S.correctStreak||0) + 1
+    // v54.21 D3: streak badge bump
+    g16ShowStreakBadge(S.correctStreak)
+    // v54.21 D14: BGM restore once question resolved
+    g16DuckBGM(false)
+    // v54.21 D5: maybe fire milestone banner
+    try { g16MaybeMilestone() } catch(_){}
     try {
       const fxX = obs._mini ? (obs._miniRef && obs._miniRef.container ? obs._miniRef.container.x : app.screen.width*0.55)
                             : (obs.worldX + worldContainer.x)
@@ -1737,9 +2064,18 @@ function onChoiceTap(btn,choice,obs){
     }
     S.noWrongAnswers=false; obs.wrongCount++
     S.correctStreak = 0 // reset streak on wrong
+    g16ShowStreakBadge(0)  // v54.21 D3: clear streak chip
     btn.classList.add('wrong'); S.cameraShake=1.0; flashScreen('#ff8800',0.28)
-    playSfxCrash() // Task #35 — crash SFX on wrong answer (obstacle impact)
+    playSfxCrash()
+    // v54.21 D8: pedagogical "yang benar!" highlight
+    setTimeout(() => g16HighlightCorrect(obs.question), 200)
     document.querySelectorAll('.mercy-dot').forEach((d,i)=>{if(i<obs.wrongCount)d.classList.add('used')})
+    // v54.21 D13: heart-fall on the just-consumed dot
+    g16HeartFallFromMercyDot(obs.wrongCount - 1)
+    // v54.21 D10: health row sync
+    try { g16UpdateHealthRow() } catch(_){}
+    // v54.21 D14: BGM restore on wrong too
+    g16DuckBGM(false)
     if(obs._mini){
       // Mini obstacle — wrong answer, just resume after delay
       setTimeout(()=>{clearMiniObstacle(obs._miniRef)},600)
@@ -1760,15 +2096,26 @@ function generateMiniChoices(ans){
 function clearMiniObstacle(mini){
   mini.cleared = true
   S.miniQuizActive = false
+  // v54.21 D16: mini destruction burst (6 particles colored by emoji)
+  try {
+    const emoji = (mini.emoji || mini.q?.emoji || '🪨')
+    const cx = mini.container ? (mini.container.x || 0) : (app.screen.width * 0.5)
+    const cy = mini.container ? (mini.container.y || 0) : (app.screen.height * 0.5)
+    g16MiniObstacleBurst(cx, cy, emoji)
+  } catch(_){}
   if(mini.container){mini.container.visible=false; try{worldContainer.removeChild(mini.container)}catch(_){}}
   hideQuizPanel()
-  // Resume moving (no boost — just continue)
+  g16DuckBGM(false)  // D14
   if(S.trainState!=='ARRIVING'&&S.trainState!=='ARRIVED') S.trainState='MOVING'
 }
 
 function clearObstacle(obs){
   hideQuizPanel(); obs.cleared=true; S.cleared++; S.currentObstacleIdx=-1
   explodeObstacle(obs)
+  // v54.21 D11: whistle + chimney puff + 8px shake on station clear (final question).
+  g16StationClearWhistle()
+  // v54.21 D14: BGM restore
+  g16DuckBGM(false)
   // Resume moving — no boost effect (just continue at normal speed)
   if(S.trainState!=='ARRIVING'&&S.trainState!=='ARRIVED'){
     S.trainState='MOVING'
@@ -1895,9 +2242,11 @@ function triggerArrival(){
   S.celebrationFrame = 0
   hideQuizPanel()
   document.getElementById('speed-lines').style.opacity='0'
+  // v54.21 D6: cinema bars + 1.05 scale + 0.7x slow-mo on ARRIVING.
+  g16ShowCinema(true)
+  setTimeout(() => g16ShowCinema(false), 2400)
   // Task #49-v2 — no setTimeout safety net. showWin fires deterministically via
-  // the ARRIVED-state celebrationFrame counter in updateTrain. Brake (positional)
-  // + celebration (frame counter) are both replay-safe and pause-safe.
+  // the ARRIVED-state celebrationFrame counter in updateTrain.
 }
 
 function updateHUD(){
@@ -2032,7 +2381,17 @@ function buildArrivalStation(W,H){
   }
 
   // ── Bunting flags ──
-  const flagCols=[0xef4444,0xfbbf24,0x22c55e,0x3b82f6,0xa855f7,0xf97316]
+  // v54.21 D18: per-train arrival livery — bunting tints toward selected train's bodyColor.
+  const TS_sel = TRAIN_STYLES[selectedTrainIdx]
+  const trainBody = (TS_sel && TS_sel.locoBody) ? TS_sel.locoBody : null
+  const flagCols = trainBody
+    ? [trainBody, 0xfbbf24, trainBody, 0xfde68a, trainBody, 0xfef3c7]
+    : [0xef4444,0xfbbf24,0x22c55e,0x3b82f6,0xa855f7,0xf97316]
+  // Sign board also tints
+  if (trainBody) {
+    // recolor SELAMAT TIBA bg slightly toward train's color
+    g.rect(bX+14,bY-bH+58,bW-28,18).fill({color: trainBody, alpha: 0.18})
+  }
   g.moveTo(pX+55,tY-pH-55).lineTo(bX+bW+20,tY-pH-55).stroke({width:0.9,color:0x9ca3af,alpha:0.55})
   for(let i=0;i<16;i++){
     const fx=pX+55+i*36, fy=tY-pH-55+Math.sin(i*0.72)*5

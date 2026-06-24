@@ -4,6 +4,19 @@
 
 ---
 
+## 2026-06-24 — v54.21 G16 Hook & Rescue Polish
+
+### L137 — sessionStorage question dedup is the right floor for fatigue prevention
+- A 15-item rolling history is enough to keep kids from seeing the same question twice in a session. Fallback to full pool when dedup empties it — never punish the player for limited content.
+
+### L138 — Cinematic black bars + 1.05 scale + ticker.speed 0.7 = "important moment is happening"
+- Three cheap effects together create a cinematic ARRIVING moment. No per-element animation needed.
+
+### L139 — Health row + mercy dots = redundant readability; both are correct
+- A 3-pip mercy bar at the quiz panel + a 3-heart row at the top of HUD overlap conceptually. Both are kept because the mercy bar is visible during the quiz prompt and the heart row is visible during the running game. Redundant readability is a feature, not a bug, for kids.
+
+---
+
 ## 2026-06-24 — v54.20 G15 Word Adventure
 
 ### L134 — `app.ticker.speed` is the cheapest brief slow-mo

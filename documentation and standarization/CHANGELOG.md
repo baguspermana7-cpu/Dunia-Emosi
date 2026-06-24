@@ -1,5 +1,16 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.21 "G16 Hook & Rescue Polish" (18 / 18 items shipped)
+
+Ship 4 of 8 from `TRAIN-GAMES-100-IDEAS-PLAN.md`. All HIGH/S — fastest ship of the series. Converts obstacle-clearing into felt heroic ride.
+
+D1-D18 all ✓ shipped: READY-SET-GO countdown + whistle/steam burst · quiz panel bouncy slide-up · combo streak HUD badge · tap-tick choice SFX · milestone STATION ✓ banners with haptic · cinematic 16:9 black bars + 1.05 scale + 0.7x slow-mo on ARRIVING · train picker idle bob · wrong-answer pedagogical correct-highlight · question dedup (sessionStorage last 15) · train HEALTH heart row synced to wrongTaps_station · steam whistle on station clear + chimney burst + 8px shake · tutorial mercy-dot help overlay (L1 first quiz only) · mercy-dot explosion + heart-fall · BGM duck during quiz · brake-spark frequency dampened · mini-obstacle destruction burst · smoke color modulation by train state · per-train arrival livery (bunting tints to bodyColor).
+
+Cache bump v54.20-20260624y → v54.21-20260624z.
+Docs: CHANGELOG.md v54.21 block + LESSONS-LEARNED.md L137-L139.
+
+---
+
 ## 2026-06-24 — v54.20 "G15 Word Adventure" (19 / 19 items shipped)
 
 Ship 3 of 8 from `TRAIN-GAMES-100-IDEAS-PLAN.md`. Buttery letter-pickup with banking lean, anticipation previews, voice readout, and graceful mistake forgiveness.
