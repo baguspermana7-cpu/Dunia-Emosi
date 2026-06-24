@@ -1534,6 +1534,10 @@
     <span id="g18-level" style="color:rgba(255,220,150,0.9);flex-shrink:0;font-weight:800;">Lv.1</span>
     <button class="gh-pause" onclick="pauseGame()" style="background:rgba(255,255,255,0.15);color:white;border:none;border-radius:8px;padding:6px 10px;font-size:16px;cursor:pointer;flex-shrink:0;">⏸</button>
     <span id="g18-stars-badge" style="background:linear-gradient(135deg,#8D6E63,#A1887F);border-radius:100px;padding:4px 10px;font-size:14px;font-weight:900;box-shadow:0 3px 0 #4E342E;color:white;flex-shrink:0;">🏛️ 0</span>
+    <!-- v54.22 E16: passport chip -->
+    <span id="g18-passport-chip" style="background:rgba(255,255,255,0.15);border-radius:100px;padding:4px 10px;font-size:13px;font-weight:900;color:#fde68a;flex-shrink:0;">🛂 0</span>
+    <!-- v54.22 E10: streak pill -->
+    <span id="g18-streak-pill" style="background:linear-gradient(135deg,#fb923c,#ef4444);border-radius:100px;padding:4px 10px;font-size:12px;font-weight:900;color:#fff;display:none;transition:transform 200ms;text-shadow:0 1px 2px rgba(0,0,0,0.4)"></span>
   </div>
   <!-- Gallery view -->
   <div id="g18-gallery" style="flex:1;overflow-y:auto;padding:10px 12px;">
@@ -1579,6 +1583,8 @@
       </div>
       <div style="display:flex;gap:8px;width:100%;">
         <button onclick="g18ShowStory()" id="g18-story-btn" style="flex:1;background:linear-gradient(135deg,#f59e0b,#d97706);color:white;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:900;cursor:pointer;">📖 Cerita</button>
+        <!-- v54.22 E15: read-aloud button -->
+        <button onclick="g18SpeakCurrent()" id="g18-tts-btn" aria-label="Bacakan" style="flex:0 0 50px;background:linear-gradient(135deg,#06b6d4,#0891b2);color:white;border:none;border-radius:12px;padding:12px;font-size:18px;font-weight:900;cursor:pointer;">🔊</button>
         <button onclick="g18CloseModal()" style="flex:1;background:linear-gradient(135deg,#5D3A1A,#8D6E63);color:white;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:900;cursor:pointer;">✅ Mengerti!</button>
       </div>
     </div>
@@ -2210,7 +2216,7 @@ function loadPixiJS(cb) {
 <script src="games/data/poke-packages.js?v=53.9-20260624f" defer></script>
 <script src="games/data/battle-modes.js?v=54.18-20260624w" defer></script>
 <script src="games/data/poke-type-chart.js?v=20260506ae" defer></script>
-<script src="game.js?v=20260624m" defer></script>
+<script src="game.js?v=54.22-20260624aa" defer></script>
 <script>
   // Boot SFXEngine + WeatherFX after page loads — both lazy, never block the game.
   document.addEventListener('DOMContentLoaded', function () {

@@ -13991,6 +13991,11 @@ function initGame18() {
   document.getElementById('g18-gallery').style.display = 'block'
   document.getElementById('g18-quiz-view').style.display = 'none'
   g18RenderGallery()
+  // v54.22 E8 + E16: daily trivia card + passport chip refresh
+  try { g18ShowDailyTrivia() } catch(_){}
+  try { g18UpdatePassportChip() } catch(_){}
+  // v54.22 E18: reset missed tracker on game init
+  g18Missed = []
 }
 
 function g18RenderGallery() {
@@ -14020,11 +14025,12 @@ function g18RenderGallery() {
       card.className = 'g18-card'
       card.style.borderColor = sec.borderCol
       const svgHtml = g18TrainSVG(train, 110, 48)
+      // v54.22 E7+E9: proportional speed badge with tier icon
       card.innerHTML = `
         <div style="width:100%;height:56px;display:flex;align-items:center;justify-content:center;margin-bottom:4px;overflow:hidden;">${svgHtml}</div>
         <div class="g18-card-name" style="font-size:11px;">${train.name}</div>
         <div class="g18-card-country" style="font-size:9px;">${train.country.split(',')[0]}</div>
-        <div class="g18-speed-badge">⚡ ${train.speed} km/j</div>
+        ${g18SpeedBadge(train.speed)}
         <div style="color:rgba(255,255,255,0.5);font-size:9px;font-weight:700;margin-top:2px;">${train.year}</div>
       `
       card.onclick = () => g18ShowDetail(i)
@@ -14038,6 +14044,12 @@ function g18ShowDetail(idx) {
   const train = G18_TRAINS[idx]
   const emojiEl = document.getElementById('g18-modal-emoji')
   emojiEl.innerHTML = g18TrainSVG(train, 160, 70)
+  // v54.22 E13: animate locomotive SVG — gentle horizontal bob + wheel sweep via CSS
+  if (!document.getElementById('g18-train-anim-kf')) {
+    const s = document.createElement('style'); s.id = 'g18-train-anim-kf'
+    s.textContent = '#g18-modal-emoji{animation:g18TrainAnim 2.4s ease-in-out infinite}@keyframes g18TrainAnim{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}#g18-modal-emoji svg circle{transform-origin:center;animation:g18WheelSpin 3s linear infinite}@keyframes g18WheelSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}'
+    document.head.appendChild(s)
+  }
   document.getElementById('g18-modal-name').textContent = train.name
   document.getElementById('g18-modal-country').textContent = `${train.country} • ${train.year}`
   const details = document.getElementById('g18-modal-details')
@@ -14075,12 +14087,168 @@ function g18ShowDetail(idx) {
     `<div style="margin-bottom:6px;">💡 ${train.fact}</div>` +
     (train.funFact ? `<div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.12);">${train.funFact}</div>` : '')
   document.getElementById('g18-modal').classList.add('open')
+  // v54.22 E11+E12: wire ESC/backdrop/swipe + ARIA
+  try { g18WireModalClose() } catch(_){}
+  // v54.22 E14: chunked SEJARAH render
+  try { g18ChunkedHistoryRender(train) } catch(_){}
+  // v54.22 E16: passport stamp on view
+  try { g18PassportStamp(idx) } catch(_){}
   playClick()
 }
 
 function g18CloseModal() {
   document.getElementById('g18-modal').classList.remove('open')
   document.getElementById('g18-story-panel').style.display = 'none'
+}
+
+// ═══════════════════════════════════════════════════════════
+//  v54.22 — G18 Museum Polish helpers (E7-E18)
+// ═══════════════════════════════════════════════════════════
+
+// E10: streak pill state + helpers
+let g18Streak = 0
+let g18StreakBest = 0
+let g18Missed = []
+function g18AddStreak() {
+  g18Streak++
+  if (g18Streak > g18StreakBest) g18StreakBest = g18Streak
+  const pill = document.getElementById('g18-streak-pill')
+  if (pill) {
+    pill.style.display = 'inline-flex'
+    pill.textContent = '🔥 x' + g18Streak + (g18Streak >= 5 ? ' (2× Bintang!)' : '')
+    pill.style.transform = 'scale(1.25)'; setTimeout(() => { pill.style.transform = 'scale(1)' }, 200)
+  }
+}
+function g18ResetStreak() {
+  g18Streak = 0
+  const pill = document.getElementById('g18-streak-pill')
+  if (pill) pill.style.display = 'none'
+}
+
+// E15: read-aloud the current modal's train info
+function g18SpeakCurrent() {
+  const train = G18_TRAINS[_g18CurrentTrainIdx]
+  if (!train) return
+  const parts = []
+  parts.push(train.name)
+  if (train.country) parts.push(train.country.replace(/[🇮🇩🇬🇧🇫🇷🇩🇪🇨🇳🇯🇵🇺🇸🇰🇷]/g, ''))
+  if (train.year) parts.push('Tahun ' + train.year)
+  if (train.fact) parts.push(train.fact)
+  if (train.funFact) parts.push(train.funFact)
+  g18Speak(parts.join('. '))
+}
+
+// E15: id-ID speech for text content. Tied to global isSoundOn() gate.
+function g18Speak(text) {
+  if (!isSoundOn() || !window.speechSynthesis || !text) return
+  try {
+    window.speechSynthesis.cancel()
+    const u = new SpeechSynthesisUtterance(String(text).slice(0, 220))
+    u.lang = 'id-ID'; u.rate = 0.95; u.pitch = 1.05
+    window.speechSynthesis.speak(u)
+  } catch(_){}
+}
+
+// E11: ESC + backdrop + swipe-down close. Wired on DOMContentLoaded fallback.
+function g18WireModalClose() {
+  const modal = document.getElementById('g18-modal')
+  if (!modal || modal.dataset.bound === '1') return
+  modal.dataset.bound = '1'
+  modal.setAttribute('role', 'dialog')
+  modal.setAttribute('aria-modal', 'true')
+  modal.setAttribute('aria-live', 'polite')
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) g18CloseModal()
+  })
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('open')) g18CloseModal()
+  })
+  // Swipe-down
+  let touchStartY = 0
+  modal.addEventListener('touchstart', (e) => { if (e.touches[0]) touchStartY = e.touches[0].clientY }, { passive: true })
+  modal.addEventListener('touchend', (e) => {
+    const dy = (e.changedTouches[0] ? e.changedTouches[0].clientY : 0) - touchStartY
+    if (dy > 80) g18CloseModal()
+  }, { passive: true })
+}
+
+// E14: SEJARAH tap-to-reveal chunks. Splits long history into 2-sentence chunks.
+function g18ChunkedHistoryRender(train) {
+  const histText = document.getElementById('g18-modal-history-text')
+  if (!histText || !train.history) return
+  const sentences = train.history.split(/(?<=\. )/).filter(s => s.trim())
+  if (sentences.length <= 2) { histText.textContent = train.history; return }
+  let shown = 2
+  function render() {
+    histText.innerHTML = sentences.slice(0, shown).join('') +
+      (shown < sentences.length ? '<button onclick="g18RevealMoreHistory(' + (sentences.length) + ', ' + shown + ')" id="g18-more-btn" style="margin-top:6px;padding:5px 10px;border-radius:8px;border:0;background:#f59e0b;color:#451a03;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer;font-size:11px">📖 Baca lebih →</button>' : '')
+    histText.dataset.shown = shown
+    histText.dataset.total = sentences.length
+    histText.dataset.fullText = train.history
+  }
+  render()
+}
+function g18RevealMoreHistory(total, current) {
+  const histText = document.getElementById('g18-modal-history-text')
+  if (!histText) return
+  const sentences = (histText.dataset.fullText || '').split(/(?<=\. )/).filter(s => s.trim())
+  const next = Math.min(sentences.length, current + 2)
+  histText.innerHTML = sentences.slice(0, next).join('') +
+    (next < sentences.length ? '<button onclick="g18RevealMoreHistory(' + sentences.length + ', ' + next + ')" style="margin-top:6px;padding:5px 10px;border-radius:8px;border:0;background:#f59e0b;color:#451a03;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer;font-size:11px">📖 Baca lebih →</button>' : '')
+}
+
+// E16: museum passport — localStorage stamp set, header progress chip.
+const G18_PASSPORT_KEY = 'dunia-g18-passport'
+function g18PassportGet() {
+  try { return new Set(JSON.parse(localStorage.getItem(G18_PASSPORT_KEY) || '[]')) } catch(_){ return new Set() }
+}
+function g18PassportStamp(trainIdx) {
+  try {
+    const set = g18PassportGet()
+    set.add(trainIdx)
+    localStorage.setItem(G18_PASSPORT_KEY, JSON.stringify([...set]))
+    g18UpdatePassportChip()
+  } catch(_){}
+}
+function g18UpdatePassportChip() {
+  const chip = document.getElementById('g18-passport-chip')
+  if (!chip) return
+  const set = g18PassportGet()
+  chip.textContent = '🛂 ' + set.size + ' / ' + (typeof G18_TRAINS !== 'undefined' ? G18_TRAINS.length : 23)
+}
+
+// E7: proportional speed badge HTML — used in card rendering
+function g18SpeedBadge(speed) {
+  const max = 603
+  const pct = Math.min(100, Math.round((speed / max) * 100))
+  const icon = speed < 80 ? '🐢' : speed < 200 ? '🚆' : speed < 400 ? '🚀' : '🚀⚡'
+  return `<div class="g18-speed-badge" title="Max ${speed} km/j" style="display:flex;align-items:center;gap:4px;font-size:10px;font-weight:900;color:#fde68a;background:rgba(0,0,0,0.4);border-radius:8px;padding:2px 6px;margin-top:2px"><span>${icon}</span><span style="display:inline-block;width:40px;height:5px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden"><span style="display:block;height:100%;background:linear-gradient(90deg,#86efac,#fbbf24,#ef4444);width:${pct}%"></span></span><span>${speed}</span></div>`
+}
+
+// E8: trivia kartu hari ini — daily-seeded funFact card pinned to gallery.
+function g18ShowDailyTrivia() {
+  const grid = document.getElementById('g18-card-grid')
+  if (!grid || document.getElementById('g18-daily-trivia')) return
+  const day = new Date().toDateString()
+  // Simple deterministic hash: convert day string to a number
+  let h = 0
+  for (let i = 0; i < day.length; i++) h = (h * 31 + day.charCodeAt(i)) >>> 0
+  const idx = h % G18_TRAINS.length
+  const train = G18_TRAINS[idx]
+  if (!train || !train.funFact) return
+  const card = document.createElement('div')
+  card.id = 'g18-daily-trivia'
+  card.style.cssText = 'grid-column:1/-1;background:linear-gradient(135deg,#fde047,#f59e0b);border-radius:14px;padding:12px;font-family:Fredoka One,cursive;font-size:12px;color:#451a03;cursor:pointer;animation:g18TriviaPulse 2.4s ease-in-out infinite;line-height:1.4'
+  card.innerHTML = `<div style="font-size:11px;letter-spacing:1.5px;color:#92400e;margin-bottom:4px">🌟 TRIVIA HARI INI</div><div>${train.funFact}</div>`
+  card.onclick = () => g18ShowDetail(idx)
+  // inject keyframe once
+  if (!document.getElementById('g18-trivia-kf')) {
+    const s = document.createElement('style')
+    s.id = 'g18-trivia-kf'
+    s.textContent = '@keyframes g18TriviaPulse{0%,100%{box-shadow:0 0 0 0 rgba(251,191,36,0.6)}50%{box-shadow:0 0 0 14px rgba(251,191,36,0)}}'
+    document.head.appendChild(s)
+  }
+  grid.insertBefore(card, grid.firstChild)
 }
 
 let _g18CurrentTrainIdx = -1
@@ -14117,8 +14285,16 @@ function g18RenderQuestion() {
   document.getElementById('g18-q-num').textContent = g18State.quizIdx + 1
   const pct=(g18State.quizIdx/G18_QUIZ_SESSION.length)*100
   const fillEl=document.getElementById('g18-quiz-fill');if(fillEl)fillEl.style.width=pct+'%'
-  document.getElementById('g18-q-image').textContent = q.emoji
+  // v54.22 E17: SVG-image quiz when q.subjectTrainId set — render train SVG instead of emoji.
+  const imgEl = document.getElementById('g18-q-image')
+  if (q.subjectTrainId != null && typeof g18TrainSVG === 'function' && G18_TRAINS[q.subjectTrainId]) {
+    imgEl.innerHTML = g18TrainSVG(G18_TRAINS[q.subjectTrainId], 120, 56)
+  } else {
+    imgEl.textContent = q.emoji
+  }
   document.getElementById('g18-q-text').textContent = q.q
+  // v54.22 E15: optional speak-on-render of question text
+  try { g18Speak(q.q) } catch(_){}
   document.getElementById('g18-q-feedback').textContent = ''
   document.getElementById('g18-q-next-wrap').style.display = 'none'
   const opts = document.getElementById('g18-q-options')
@@ -14146,6 +14322,8 @@ function g18AnswerQuestion(picked, correct, btn) {
     spawnCorrectCardJuice(btn)
     quizStreakHit(btn)
     g18State.quizScore++
+    // v54.22 E10: streak pill on correct + 2× stars at ≥5
+    try { g18AddStreak() } catch(_){}
     document.getElementById('g18-q-feedback').textContent = '✅ Benar! Kamu pintar!'
     document.getElementById('g18-q-feedback').style.color = '#A5D6A7'
     playCorrect()
@@ -14153,6 +14331,8 @@ function g18AnswerQuestion(picked, correct, btn) {
     btn.classList.add('wrong')
     spawnWrongShake(btn)
     quizStreakReset()
+    // v54.22 E10: reset visible streak; E18: track missed for review-loop
+    try { g18ResetStreak(); g18Missed.push({ q, picked, correct, idx: g18State.quizIdx }) } catch(_){}
     // Highlight correct answer
     opts.querySelectorAll('.g18-quiz-option').forEach(b => {
       if (parseInt(b.dataset.ansIdx) === correct) {
@@ -14184,14 +14364,25 @@ function g18FinishQuiz() {
   const score = g18State.quizScore
   const total = G18_QUIZ_SESSION.length
   // Unified scoring: pure quiz accuracy
-  const perfStars = GameScoring.calc({ correct: score, total })
+  let perfStars = GameScoring.calc({ correct: score, total })
+  // v54.22 E10: 2× stars bonus if best streak reached 5+
+  if (g18StreakBest >= 5) perfStars = Math.min(5, perfStars + 1)
   state.gameStars[state.currentPlayer] = perfStars
-  const gradeEmoji = score === 5 ? '🏆' : score >= 3 ? '⭐' : '📚'
-  const gradeMsg = score === 5 ? 'SEMPURNA! Kamu ahli kereta!' : score >= 3 ? 'Bagus! Terus belajar!' : 'Jangan lupa baca kartu museumnya ya!'
+  // v54.22 E18: review-the-misses summary list appended to msg
+  let reviewLine = ''
+  try {
+    if (g18Missed && g18Missed.length) {
+      reviewLine = `\n📚 ${g18Missed.length} soal terlewat — coba lagi untuk belajar!`
+    }
+  } catch(_){}
+  // v54.22 E6: stale '===5' replaced with full-quiz mastery threshold so 8/8
+  // actually grants 🏆 SEMPURNA (was triggering on 5/8 — wrong since G18_QUIZ_COUNT=8).
+  const gradeEmoji = score === G18_QUIZ_COUNT ? '🏆' : score >= Math.ceil(G18_QUIZ_COUNT * 0.5) ? '⭐' : '📚'
+  const gradeMsg = score === G18_QUIZ_COUNT ? 'SEMPURNA! Kamu ahli kereta!' : score >= Math.ceil(G18_QUIZ_COUNT * 0.5) ? 'Bagus! Terus belajar!' : 'Jangan lupa baca kartu museumnya ya!'
   document.getElementById('g18-quiz-view').style.display = 'none'
   showGameResult({
     emoji:gradeEmoji, title:gradeMsg, stars:perfStars,
-    msg:`Skor kuis: ${score} / ${total} benar\nAda ${G18_TRAINS.length} kereta di museum — sudah kamu pelajari semua?\nSoal berubah setiap main, coba lagi!`,
+    msg:`Skor kuis: ${score} / ${total} benar\nAda ${G18_TRAINS.length} kereta di museum — sudah kamu pelajari semua?${reviewLine}\nSoal berubah setiap main, coba lagi!`,
     buttons:[{label:'Main Lagi 🔄', action:()=>initGame18()},{label:'Kembali ⌂', action:()=>endGameFromOverlay()}]
   })
   if (score >= 3) playCorrect(); else playWrong()

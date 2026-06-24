@@ -907,6 +907,92 @@ function g16CurrentSmokeColor(){
   return 0xaaaaaa
 }
 
+// ═══════════════════════════════════════════════════════════
+//  v54.22 — G16 Hook Depth helpers (E1-E5)
+// ═══════════════════════════════════════════════════════════
+
+// E1: per-character arrival bark — id-ID speechSynthesis fallback (asset MP3s
+// can be wired later by uploading to assets/voices/{characterKey}.mp3).
+const G16_CHAR_BARKS = {
+  caseyjr_character: 'Hore, kita sampai!',
+  linus_brave:       'Misi selesai!',
+  jz711_dragutin:    'Tepat waktu!',
+  jz62_malivlak:     'Sukses besar!',
+}
+function g16PlayCharacterBark(){
+  const TS = TRAIN_STYLES[selectedTrainIdx]
+  if (!TS || !TS.character || !TS.characterKey) return
+  const line = G16_CHAR_BARKS[TS.characterKey] || 'Hore!'
+  // Voice via speechSynthesis (id-ID)
+  try {
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel()
+      const u = new SpeechSynthesisUtterance(line)
+      u.lang = 'id-ID'; u.rate = 0.95; u.pitch = 1.15
+      window.speechSynthesis.speak(u)
+    }
+  } catch(_){}
+  // Visual text bubble above train
+  const bubble = document.createElement('div')
+  bubble.style.cssText = 'position:fixed;left:50%;top:30%;transform:translateX(-50%);z-index:80;background:#fff;color:#1f2937;font-family:Fredoka One,cursive;font-size:16px;padding:10px 18px;border-radius:18px;box-shadow:0 8px 24px rgba(0,0,0,0.4);animation:g16BubbleIn 400ms cubic-bezier(.34,1.56,.64,1) forwards;pointer-events:none'
+  bubble.textContent = '💬 ' + line
+  document.body.appendChild(bubble)
+  setTimeout(() => bubble.remove(), 2200)
+  // Inject keyframe once
+  if (!document.getElementById('g16-bubble-kf')) {
+    const s = document.createElement('style')
+    s.id = 'g16-bubble-kf'
+    s.textContent = '@keyframes g16BubbleIn{0%{opacity:0;transform:translateX(-50%) scale(0.6) translateY(20px)}100%{opacity:1;transform:translateX(-50%) scale(1) translateY(0)}}'
+    document.head.appendChild(s)
+  }
+}
+
+// E2: character thought bubbles. Reuse the inline-style approach for moments —
+// boost trigger, station-clear, mercy-loss, near-arrival.
+function g16CharBubble(text){
+  const TS = TRAIN_STYLES[selectedTrainIdx]
+  if (!TS || !TS.character || !TS.characterKey) return
+  g16PlayCharacterBark.__line = text  // not used; just visualizing
+  const bubble = document.createElement('div')
+  bubble.style.cssText = 'position:fixed;right:24px;top:25%;z-index:62;background:#fff;color:#1f2937;font-family:Fredoka One,cursive;font-size:13px;padding:8px 14px;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,0.35);pointer-events:none;max-width:180px;animation:g16BubbleIn 320ms cubic-bezier(.34,1.56,.64,1)'
+  bubble.textContent = text
+  document.body.appendChild(bubble)
+  setTimeout(() => { bubble.style.opacity = '0'; bubble.style.transition = 'opacity 400ms' }, 1600)
+  setTimeout(() => bubble.remove(), 2200)
+}
+
+// E4: dual-meter DANGER model. PROGRESS bar tracks cleared/total; DANGER fills on
+// wrong taps + sparks + idle, drains on correct streaks.
+function g16TickDanger(dt){
+  S.danger = (S.danger || 0)
+  // Drain on streaks
+  if (S.correctStreak >= 3) S.danger = Math.max(0, S.danger - 0.5 * dt * 60)
+  // Slow drift up on idle
+  S.danger = Math.min(100, S.danger + 0.02 * dt * 60)
+  // Render bar
+  let bar = document.getElementById('g16-danger-bar')
+  if (!bar) {
+    bar = document.createElement('div')
+    bar.id = 'g16-danger-bar'
+    bar.style.cssText = 'position:fixed;top:max(60px,calc(env(safe-area-inset-top) + 20px));left:50%;transform:translateX(-50%);z-index:50;width:140px;height:6px;background:rgba(0,0,0,0.55);border-radius:3px;overflow:hidden;pointer-events:none'
+    const fill = document.createElement('div')
+    fill.id = 'g16-danger-fill'
+    fill.style.cssText = 'height:100%;width:0%;background:linear-gradient(90deg,#86efac,#fbbf24,#ef4444);transition:width 200ms'
+    bar.appendChild(fill)
+    document.body.appendChild(bar)
+  }
+  const fill = document.getElementById('g16-danger-fill')
+  if (fill) fill.style.width = (S.danger || 0).toFixed(1) + '%'
+}
+
+// E5: adaptive difficulty — extend brake distance when wrongTaps_station ≥ 2
+let g16AdaptiveBrakeBonus = 0
+function g16ApplyAdaptiveDifficulty(){
+  if ((S.wrongTaps_station || 0) >= 2) {
+    g16AdaptiveBrakeBonus = 80  // brakeDist 220 → 300 effectively
+  }
+}
+
 
 // ── Sky ────────────────────────────────────────────────────────────────────────
 function drawSky(W,H){
@@ -1698,6 +1784,19 @@ function updateFX(dt){
   }
   // Safety valve steam jets when stopped
   if(S.trainState==='STOPPED'&&Math.random()<0.18) spawnSteamJet()
+  // v54.22 E3: speed-lines + chromatic on BOOSTING
+  const speedLines = document.getElementById('speed-lines')
+  if (speedLines) {
+    if (S.trainState === 'BOOSTING') {
+      speedLines.style.opacity = '0.95'
+      speedLines.style.filter = 'hue-rotate(' + ((_ticker_t * 60) % 360) + 'deg)'
+    } else if (S.trainState !== 'ARRIVING') {
+      speedLines.style.opacity = '0'
+      speedLines.style.filter = ''
+    }
+  }
+  // v54.22 E4: tick DANGER meter — fills on wrong taps + sparks frequency + idle
+  g16TickDanger(dt)
 }
 
 // ── Train Update ──────────────────────────────────────────────────────────────
@@ -1707,7 +1806,8 @@ function updateTrain(dt){
   let speed=0
   const baseSpeed=(80+S.level*12)*1.8, boostSpeed=baseSpeed*2.0
   const nextObs=S.obstacles.find(o=>!o.cleared&&o.worldX>S.worldX-10)
-  const stopDist=100, brakeDist=220
+  // v54.22 E5: adaptive brake distance — extends by g16AdaptiveBrakeBonus (80 when triggered)
+  const stopDist=100, brakeDist=220 + (g16AdaptiveBrakeBonus || 0)
 
   if(S.trainState==='DEAD'){
     S.deadTimer-=dt
@@ -2025,14 +2125,14 @@ function onChoiceTap(btn,choice,obs){
   if(quizLocked)return; quizLocked=true
   if(choice===obs.question.ans){
     btn.classList.add('correct'); flashScreen('#00ff44',0.35)
-    // Juice layer — Task #38: celebration FX + streak + stage punch
     S.correctStreak = (S.correctStreak||0) + 1
-    // v54.21 D3: streak badge bump
     g16ShowStreakBadge(S.correctStreak)
-    // v54.21 D14: BGM restore once question resolved
     g16DuckBGM(false)
-    // v54.21 D5: maybe fire milestone banner
     try { g16MaybeMilestone() } catch(_){}
+    // v54.22 E2: character bubble on streak ≥3
+    if (S.correctStreak === 3) try { g16CharBubble('Aman!') } catch(_){}
+    // v54.22 E4: drain danger on correct
+    S.danger = Math.max(0, (S.danger || 0) - 8)
     try {
       const fxX = obs._mini ? (obs._miniRef && obs._miniRef.container ? obs._miniRef.container.x : app.screen.width*0.55)
                             : (obs.worldX + worldContainer.x)
@@ -2067,8 +2167,13 @@ function onChoiceTap(btn,choice,obs){
     g16ShowStreakBadge(0)  // v54.21 D3: clear streak chip
     btn.classList.add('wrong'); S.cameraShake=1.0; flashScreen('#ff8800',0.28)
     playSfxCrash()
-    // v54.21 D8: pedagogical "yang benar!" highlight
     setTimeout(() => g16HighlightCorrect(obs.question), 200)
+    // v54.22 E2: character bubble on mercy loss
+    try { g16CharBubble('Hati-hati!') } catch(_){}
+    // v54.22 E4: danger spike on wrong
+    S.danger = Math.min(100, (S.danger || 0) + 18)
+    // v54.22 E5: maybe apply adaptive difficulty (next station gets longer brake distance)
+    g16ApplyAdaptiveDifficulty()
     document.querySelectorAll('.mercy-dot').forEach((d,i)=>{if(i<obs.wrongCount)d.classList.add('used')})
     // v54.21 D13: heart-fall on the just-consumed dot
     g16HeartFallFromMercyDot(obs.wrongCount - 1)
@@ -2245,6 +2350,8 @@ function triggerArrival(){
   // v54.21 D6: cinema bars + 1.05 scale + 0.7x slow-mo on ARRIVING.
   g16ShowCinema(true)
   setTimeout(() => g16ShowCinema(false), 2400)
+  // v54.22 E1: per-character arrival bark + text bubble
+  setTimeout(() => { try { g16PlayCharacterBark() } catch(_){} }, 400)
   // Task #49-v2 — no setTimeout safety net. showWin fires deterministically via
   // the ARRIVED-state celebrationFrame counter in updateTrain.
 }

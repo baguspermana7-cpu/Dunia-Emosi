@@ -4,6 +4,19 @@
 
 ---
 
+## 2026-06-24 — v54.22 G16 Hook Depth + G18 Museum Polish
+
+### L140 — `score === 5` was a typo bomb that hid for ages — always compute thresholds from constants
+- G18 had `if (score === 5) // SEMPURNA` when the quiz was 8 questions. Kids who got 5/8 saw SEMPURNA 🏆 incorrectly; kids who got 8/8 saw the same. Replaced with `score === G18_QUIZ_COUNT`. Hardcoded magic numbers in scoring code are landmines.
+
+### L141 — speechSynthesis id-ID is "free voice" for kids' games
+- Modern browsers ship Indonesian TTS. No assets needed. Gating with `isSoundOn()` integrates with existing mute toggle. The voice quality is "acceptable" not "great" — fine for accessibility, mediocre for primary content. Plan voice MP3s for headline lines.
+
+### L142 — Dual-meter is more readable than single-meter for kids
+- A single "danger" bar mixed with progress confuses kids. Splitting into PROGRESS (cleared/total) + DANGER (wrongs + idle + drains on streak) gives two independent feedback signals. Kids learn each lane separately.
+
+---
+
 ## 2026-06-24 — v54.21 G16 Hook & Rescue Polish
 
 ### L137 — sessionStorage question dedup is the right floor for fatigue prevention

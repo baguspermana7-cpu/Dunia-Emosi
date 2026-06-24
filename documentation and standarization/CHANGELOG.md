@@ -1,5 +1,18 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.22 "G16 Hook Depth + G18 Museum Polish" (18 / 18 items shipped)
+
+Ship 5 of 8 from `TRAIN-GAMES-100-IDEAS-PLAN.md`.
+
+**G16 (E1-E5)**: E1 per-character arrival bark via id-ID speechSynthesis + 💬 text bubble (Casey/Linus/Dragutin/Malivlak); E2 character thought bubbles on streak ≥3 + mercy-loss; E3 speed-lines hue-rotate chromatic on BOOSTING; E4 dual-meter DANGER bar (top-center, drains on streaks ≥3, spikes on wrong, slow idle drift); E5 adaptive brake bonus (+80 dist when wrongTaps_station ≥2).
+
+**G18 (E6-E18)**: E6 FIX `score===5` → `score===G18_QUIZ_COUNT` (real 8/8 SEMPURNA), `>=3` → `>= Math.ceil(QUIZ_COUNT*0.5)`; E7 proportional speed badge with mini-bar; E8 daily-trivia card (date-seeded funFact, pinned to gallery); E9 speed-tier icon on every card (🐢/🚆/🚀/🚀⚡); E10 streak pill 🔥 + 2× stars bonus at best ≥5; E11 ESC/backdrop/swipe-down close on `#g18-modal`; E12 `role=dialog`, `aria-modal`, `aria-live=polite`; E13 modal locomotive SVG animation (horizontal bob + wheel spin); E14 SEJARAH tap-to-reveal chunks (2 sentences + "Baca lebih →" button); E15 🔊 read-aloud button (id-ID speechSynthesis, gated by `isSoundOn()`); E16 museum passport — localStorage stamps + header `🛂 N / 23` chip; E17 SVG-image quiz questions when `q.subjectTrainId` set; E18 review-the-misses — `g18Missed[]` track + summary line in result modal.
+
+Cache bump v54.21-20260624z → v54.22-20260624aa. `index.html` `game.js?v=` bumped.
+Docs: CHANGELOG.md v54.22 block + LESSONS-LEARNED.md L140-L142.
+
+---
+
 ## 2026-06-24 — v54.21 "G16 Hook & Rescue Polish" (18 / 18 items shipped)
 
 Ship 4 of 8 from `TRAIN-GAMES-100-IDEAS-PLAN.md`. All HIGH/S — fastest ship of the series. Converts obstacle-clearing into felt heroic ride.
