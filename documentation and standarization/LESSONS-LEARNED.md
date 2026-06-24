@@ -4,6 +4,19 @@
 
 ---
 
+## 2026-06-24 — v54.20 G15 Word Adventure
+
+### L134 — `app.ticker.speed` is the cheapest brief slow-mo
+- For Pixi-driven games, dropping `app.ticker.speed = 0.45` for 200ms then restoring is the simplest slow-mo. No per-update timestep changes; entire scene auto-pauses uniformly.
+
+### L135 — Voice TTS toggle defaults ON in easy, off in higher difficulties
+- Non-readers need audio support automatically. Turn off as kids grow into reading. The default ties to `getDifficulty()` — no menu friction.
+
+### L136 — "First wrong is free per word" balances forgiveness without breaking stakes
+- A learning kid trying letters shouldn't lose a heart on their first guess. Reset key is `currentWordIdx` so the next word resets the budget. Streak still resets — first-wrong is forgiving but not free.
+
+---
+
 ## 2026-06-24 — v54.19 G14 Race Depth
 
 ### L131 — Per-obstacle SFX dictionary keyed by emoji is the right factoring

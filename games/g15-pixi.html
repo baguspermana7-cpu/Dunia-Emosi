@@ -85,6 +85,39 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
 .shaking{animation:shake .3s ease}
 
+/* ── v54.20 — G15 Word Adventure ── */
+
+/* C2: Combo streak HUD chip */
+#g15-streak{position:fixed;top:max(56px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:60;font-family:'Fredoka One',cursive;background:linear-gradient(135deg,#fde047,#f59e0b);color:#451a03;padding:5px 14px;border-radius:14px;font-size:13px;letter-spacing:1px;font-weight:900;box-shadow:0 4px 12px rgba(245,158,11,0.45);pointer-events:none;opacity:0;transform:translateX(-50%) scale(0.7);transition:all 250ms cubic-bezier(.34,1.56,.64,1)}
+#g15-streak.show{opacity:1;transform:translateX(-50%) scale(1)}
+#g15-streak.epic{background:linear-gradient(135deg,#fbbf24,#ef4444,#fbbf24);background-size:200% 100%;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.4);animation:g15StreakShimmer 1.4s linear infinite}
+@keyframes g15StreakShimmer{0%{background-position:0% 0}100%{background-position:200% 0}}
+
+/* C4: Last-life red vignette + heartbeat pulse */
+#g15-vignette{position:fixed;inset:0;z-index:48;pointer-events:none;box-shadow:inset 0 0 0 0 rgba(239,68,68,0);transition:box-shadow 600ms ease;opacity:0}
+#g15-vignette.last-life{opacity:1;animation:g15Vignette 1.4s ease-in-out infinite}
+@keyframes g15Vignette{0%,100%{box-shadow:inset 0 0 80px 16px rgba(239,68,68,0.32)}50%{box-shadow:inset 0 0 160px 32px rgba(239,68,68,0.55)}}
+
+/* C5: TTS toggle button */
+#g15-tts-toggle{position:fixed;top:max(56px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:60;background:rgba(0,0,0,0.6);color:#fff;border:1.5px solid rgba(255,255,255,0.3);border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)}
+#g15-tts-toggle.muted{opacity:0.45}
+#g15-tts-toggle:active{transform:scale(0.9)}
+
+/* C6: Anti-frustration assist toast */
+.g15-assist-toast{position:fixed;top:30%;left:50%;transform:translate(-50%,0);z-index:75;background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff;padding:14px 18px;border-radius:18px;font-family:'Fredoka One',cursive;font-size:14px;text-align:center;box-shadow:0 14px 36px rgba(99,102,241,0.55);max-width:280px;animation:g15AssistIn 400ms cubic-bezier(.34,1.56,.64,1) forwards}
+.g15-assist-toast button{margin-top:10px;padding:10px 22px;border-radius:12px;border:0;background:#fde047;color:#451a03;font-family:inherit;font-weight:900;cursor:pointer;font-size:13px;box-shadow:0 3px 0 #b45309}
+@keyframes g15AssistIn{0%{opacity:0;transform:translate(-50%,30px) scale(0.7)}100%{opacity:1;transform:translate(-50%,0) scale(1)}}
+
+/* C10: Heart recovery banner */
+.g15-heart-banner{position:fixed;top:24%;left:50%;transform:translate(-50%,0);z-index:70;font-family:'Fredoka One',cursive;font-size:26px;color:#fff;text-shadow:0 0 14px rgba(244,114,182,0.8),0 4px 14px rgba(0,0,0,0.6);padding:8px 22px;background:linear-gradient(135deg,rgba(244,114,182,0.95),rgba(168,85,247,0.85));border:2px solid #fde047;border-radius:18px;pointer-events:none;animation:g15HeartIn 1500ms cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes g15HeartIn{0%{opacity:0;transform:translate(-50%,30px) scale(0.4) rotate(-3deg)}20%{opacity:1;transform:translate(-50%,-8px) scale(1.18) rotate(3deg)}80%{opacity:1;transform:translate(-50%,0) scale(1) rotate(0)}100%{opacity:0;transform:translate(-50%,-30px) scale(0.9)}}
+
+/* C19: Math iris-wipe */
+#g15-iris{position:fixed;inset:0;z-index:380;pointer-events:none;background:radial-gradient(circle at center,transparent var(--g15iris,100%),rgba(15,23,42,0.96) calc(var(--g15iris,100%) + 1px));transition:background 500ms ease}
+#g15-iris.show{pointer-events:none}
+#g15-iris-station{position:fixed;left:50%;top:35%;transform:translate(-50%,-50%) scale(0);z-index:381;background:linear-gradient(135deg,#fde047,#f59e0b);border:3px solid #b45309;border-radius:18px;padding:14px 28px;font-family:'Fredoka One',cursive;font-size:22px;color:#451a03;text-shadow:0 1px 2px rgba(255,255,255,0.4);box-shadow:0 12px 36px rgba(0,0,0,0.5);transition:transform 600ms cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+#g15-iris-station.show{transform:translate(-50%,-50%) scale(1)}
+
 /* ── Train Select Screen ── */
 #train-select{position:fixed;inset:0;z-index:900;background:linear-gradient(180deg,#1a1028 0%,#2a1848 40%,#1e1230 70%,#140e22 100%);display:flex;flex-direction:column;overflow:hidden}
 #ts-header{padding:12px 16px 6px;flex-shrink:0;display:flex;align-items:center;gap:10px;position:relative;z-index:2}
@@ -138,6 +171,13 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <canvas id="pixi-canvas"></canvas>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
+
+<!-- v54.20: G15 Word Adventure DOM scaffolds -->
+<div id="g15-streak"></div>
+<div id="g15-vignette"></div>
+<button id="g15-tts-toggle" type="button" aria-label="Suara huruf" onclick="g15ToggleTTS()">🔊</button>
+<div id="g15-iris"></div>
+<div id="g15-iris-station">🚉 Stasiun</div>
 
 <!-- HUD Top -->
 <div id="hud-top">
@@ -198,12 +238,22 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
       <div id="ts-subtitle">PILIH KERETA UNTUK MEMULAI</div>
     </div>
   </div>
-  <div id="station-intro">
+  <div id="station-intro" onclick="g15ShowJourneyMap()" style="cursor:pointer">
     <span class="si-icon" id="si-icon">🏛️</span>
     <div class="si-text">
       <span class="si-label">STASIUN BERANGKAT</span>
       <span class="si-name" id="si-name">Surabaya Kota</span>
       <span class="si-landmark" id="si-landmark">Tugu Pahlawan</span>
+    </div>
+  </div>
+  <!-- v54.20 C16: train recommendation ribbon -->
+  <div id="g15-rec-ribbon" style="display:none;background:linear-gradient(90deg,rgba(251,191,36,0.18),rgba(244,114,182,0.12));border:1px solid rgba(251,191,36,0.45);border-radius:12px;margin:6px 12px 0;padding:6px 12px;color:#fde68a;font-size:12px;font-family:'Fredoka One',cursive;letter-spacing:0.6px"></div>
+  <!-- v54.20 C18: journey-map overlay -->
+  <div id="g15-journey-map" style="display:none;position:fixed;inset:0;z-index:920;background:linear-gradient(180deg,#0c0a22,#1a1028);padding:24px 18px;overflow-y:auto">
+    <div style="max-width:520px;margin:0 auto;color:#fde68a;font-family:'Fredoka One',cursive">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px"><span style="font-size:18px">🗺️ Peta Perjalanan</span><button onclick="g15CloseJourneyMap()" style="padding:8px 14px;border-radius:10px;border:0;background:#fbbf24;color:#451a03;font-family:inherit;font-weight:900;cursor:pointer">Tutup ✕</button></div>
+      <div id="g15-journey-route" style="position:relative;height:60px;background:rgba(255,255,255,0.04);border-radius:30px;border:1.5px dashed rgba(251,191,36,0.45);margin-bottom:14px"></div>
+      <div id="g15-journey-info" style="font-size:13px;line-height:1.6;color:#fde68a;opacity:0.85"></div>
     </div>
   </div>
   <div id="type-filter">
@@ -890,8 +940,23 @@ async function initPixi() {
       trainContainer.y = LANE_Y[playerLane] - Math.sin(trainContainer._bounceT * Math.PI) * 6;
     } else {
       trainContainer._bounceT = 0;
-      trainContainer.y = LANE_Y[playerLane];
+      // v54.20 C13: subtle breathing parallax bob always-on.
+      const bob = Math.sin(performance.now() * 0.003) * 1.4;
+      trainContainer.y = LANE_Y[playerLane] + bob;
     }
+    // v54.20 C1: banking lean lerp toward 0.
+    if (trainContainer._leanTimer && trainContainer._leanTimer > 0) {
+      trainContainer._leanTimer -= dt;
+      const k = Math.max(0, Math.min(1, trainContainer._leanTimer / 18));
+      trainContainer.rotation = (trainContainer._leanTarget || 0) * k;
+    } else if (trainContainer.rotation) {
+      trainContainer.rotation *= 0.85;
+      if (Math.abs(trainContainer.rotation) < 0.002) trainContainer.rotation = 0;
+    }
+    // v54.20 C17: ghost-letter anticipation preview
+    g15UpdateGhostLetter();
+    // v54.20 C15: character train enhanced idle micro-anim
+    try { g15TickCharIdle(dt) } catch(_){}
 
     // Steam emit
     if (Math.random() < 0.05 * dt) emitSteam();
@@ -1520,6 +1585,320 @@ function createBox({ type, lane, letter, isTarget, color }) {
   return { container, lane, letter, isTarget, type, glowGfx, _glowPhase: 0 };
 }
 
+// ═══════════════════════════════════════════════════════════
+//  v54.20 — G15 Word Adventure helpers
+// ═══════════════════════════════════════════════════════════
+
+// C2: combo streak + chip
+let g15Streak = 0;
+function g15StreakAdd() {
+  g15Streak++;
+  const el = document.getElementById('g15-streak');
+  if (!el) return;
+  el.textContent = '🔥 ' + g15Streak + 'x';
+  el.classList.add('show');
+  el.classList.toggle('epic', g15Streak >= 7);
+  // Scale pulse on each increment
+  el.style.transform = 'translateX(-50%) scale(1.25)';
+  setTimeout(() => { el.style.transform = 'translateX(-50%) scale(1)'; }, 200);
+  // C2: 200ms brief slow-mo at streak ≥7
+  if (g15Streak >= 7) g15BriefSlowMo();
+}
+function g15StreakReset() {
+  g15Streak = 0;
+  const el = document.getElementById('g15-streak');
+  if (el) { el.classList.remove('show', 'epic'); el.textContent = ''; }
+}
+function g15BriefSlowMo() {
+  if (typeof app === 'undefined' || !app.ticker) return;
+  const prev = app.ticker.speed;
+  app.ticker.speed = 0.45;
+  setTimeout(() => { app.ticker.speed = prev; }, 200);
+}
+
+// C3: per-letter SFX pitch ladder — C-major scale climb
+const G15_C_MAJOR = [523.25, 587.33, 659.25, 698.46, 783.99, 880.0, 987.77, 1046.5];  // C5..C6
+function g15LetterChime(letterIdx) {
+  try {
+    const i = letterIdx % G15_C_MAJOR.length;
+    const freq = G15_C_MAJOR[i];
+    if (typeof playTone === 'function') playTone(freq, 0.10, 'sine');
+  } catch(_){}
+}
+function g15WordCompleteArpeggio() {
+  try {
+    [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => setTimeout(() => playTone(f, 0.12, 'triangle'), i * 90));
+  } catch(_){}
+}
+
+// C4: last-life heartbeat alert
+function g15UpdateVignette() {
+  const v = document.getElementById('g15-vignette');
+  if (!v) return;
+  v.classList.toggle('last-life', lives === 1);
+  // BGM duck low-pass via dropping volume slightly
+  try {
+    const bgm = document.getElementById('game-bgm');
+    if (bgm) bgm.volume = lives === 1 ? 0.10 : 0.20;
+  } catch(_){}
+  if (lives === 1 && navigator.vibrate) { try { navigator.vibrate(20) } catch(_){} }
+}
+
+// C5: voice-readout of target letter (id-ID TTS). Default ON in easy mode.
+let g15TTSOn = (typeof getDifficulty === 'function' && getDifficulty() === 'easy');
+function g15SpeakLetter(letter) {
+  if (!g15TTSOn || !window.speechSynthesis || !letter) return;
+  try {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(letter);
+    u.lang = 'id-ID';
+    u.rate = 0.8;
+    u.pitch = 1.1;
+    window.speechSynthesis.speak(u);
+  } catch(_){}
+}
+function g15ToggleTTS() {
+  g15TTSOn = !g15TTSOn;
+  const btn = document.getElementById('g15-tts-toggle');
+  if (btn) {
+    btn.classList.toggle('muted', !g15TTSOn);
+    btn.textContent = g15TTSOn ? '🔊' : '🔇';
+  }
+}
+// Apply initial toggle visual on boot
+setTimeout(() => {
+  const btn = document.getElementById('g15-tts-toggle');
+  if (btn) { btn.classList.toggle('muted', !g15TTSOn); btn.textContent = g15TTSOn ? '🔊' : '🔇'; }
+}, 100);
+
+// C6: anti-frustration assist trigger
+let g15AssistOffered = false;
+function g15MaybeOfferAssist() {
+  if (g15AssistOffered) return;
+  if (lives !== 1) return;
+  if (currentLetterIdx !== 0) return;
+  if ((typeof LEVEL !== 'undefined' && LEVEL <= 10)) return;
+  g15AssistOffered = true;
+  const t = document.createElement('div');
+  t.className = 'g15-assist-toast';
+  t.innerHTML = `<div>Butuh bantuan? Pilih satu:</div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:8px">
+      <button onclick="g15AcceptAssist('slowmo');this.closest('.g15-assist-toast').remove()">Slow-mo + magnet</button>
+      <button onclick="g15AcceptAssist('heart');this.closest('.g15-assist-toast').remove()">+1 Nyawa</button>
+    </div>`;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 6000);
+}
+function g15AcceptAssist(kind) {
+  if (kind === 'slowmo') {
+    if (typeof app !== 'undefined' && app.ticker) {
+      const prev = app.ticker.speed; app.ticker.speed = 0.55;
+      setTimeout(() => { app.ticker.speed = prev; }, 5000);
+    }
+  } else {
+    lives = Math.min(MAX_LIVES, lives + 1);
+    try { updateLivesHUD() } catch(_){}
+    g15ShowHeartBanner();
+  }
+}
+
+// C8: wrong-tap graceful warning tier (first wrong per word is free)
+let g15WrongWordKey = -1;
+function g15IsFirstWrongInWord() {
+  if (g15WrongWordKey !== currentWordIdx) {
+    g15WrongWordKey = currentWordIdx;
+    return true;
+  }
+  return false;
+}
+
+// C10: heart-box recovery banner + zoom
+function g15ShowHeartBanner() {
+  const b = document.createElement('div');
+  b.className = 'g15-heart-banner';
+  b.textContent = '❤️ NYAWA KEMBALI!';
+  document.body.appendChild(b);
+  setTimeout(() => b.remove(), 1500);
+  // Brief 110% Pixi zoom
+  if (typeof stage !== 'undefined' && stage) {
+    const prev = stage.scale.x;
+    let t = 0;
+    const tickFn = (ticker) => {
+      t += ticker.deltaTime;
+      const k = Math.min(1, t / 16);
+      stage.scale.set(prev + (1.10 - prev) * (1 - Math.abs(0.5 - k) * 2));
+      if (t > 16) { stage.scale.set(prev); app.ticker.remove(tickFn); }
+    };
+    if (app && app.ticker) app.ticker.add(tickFn);
+  }
+}
+
+// C12: math timer scales with level + difficulty
+function g15MathTimerSec() {
+  const diff = (typeof getDifficulty === 'function') ? getDifficulty() : 'medium';
+  const lvl = (typeof LEVEL !== 'undefined') ? LEVEL : 1;
+  if (diff === 'easy') return 14;
+  if (diff === 'medium') return Math.max(7, 12 - Math.floor((lvl - 8) / 2));
+  return Math.max(5, 10 - Math.floor((lvl - 15) / 3));
+}
+
+// C17: ghost-letter anticipation preview — pulse #next-char brighter as a matching box approaches
+function g15UpdateGhostLetter() {
+  if (typeof letterBoxes === 'undefined') return;
+  const word = WORDS_LIST[currentWordIdx];
+  if (!word) return;
+  const target = word.word[currentLetterIdx];
+  if (!target) return;
+  // Distance to nearest matching letter box (smaller = brighter)
+  let nearestDx = Infinity;
+  const W = app.screen.width;
+  for (const b of letterBoxes) {
+    if (b.letter === target) {
+      const dx = b.container.x - TRAIN_X;
+      if (dx > 0 && dx < nearestDx) nearestDx = dx;
+    }
+  }
+  const ch = document.getElementById('next-char');
+  if (!ch) return;
+  if (nearestDx === Infinity) {
+    ch.style.textShadow = '0 0 10px rgba(220,38,38,0.35)';
+    return;
+  }
+  const proximity = Math.max(0, 1 - nearestDx / W);
+  const glow = 10 + proximity * 22;
+  ch.style.textShadow = `0 0 ${glow}px rgba(253,224,71,${0.5 + proximity * 0.5})`;
+}
+
+// C14: speed-streak visual cue — short flash of 8 horizontal white lines
+function g15SpeedStreak() {
+  if (!stage) return;
+  const W2 = (typeof W !== 'undefined') ? W : app.screen.width;
+  const H2 = (typeof H !== 'undefined') ? H : app.screen.height;
+  for (let i = 0; i < 8; i++) {
+    const g = new PIXI.Graphics();
+    const y = H2 * 0.2 + Math.random() * (H2 * 0.6);
+    const len = 80 + Math.random() * 120;
+    g.rect(0, 0, len, 1.6).fill({ color: 0xffffff, alpha: 0.7 });
+    g.x = W2 + 20; g.y = y;
+    g._vx = -(18 + Math.random() * 12);
+    g._life = 1;
+    bgLayer.addChild(g);
+    let t = 0;
+    const tickFn = (ticker) => {
+      t += ticker.deltaTime;
+      g.x += g._vx * ticker.deltaTime;
+      g.alpha = Math.max(0, 1 - t / 35);
+      if (g.alpha <= 0) { try { bgLayer.removeChild(g); } catch(_){} app.ticker.remove(tickFn); }
+    };
+    if (app && app.ticker) app.ticker.add(tickFn);
+  }
+}
+
+// C15: character train enhanced idle micro-anim (Casey/Linus/Dragutin/Malivlak).
+// Blink every 3-5s, smile twitch every 7-10s. ENHANCE-only — PROTECTED.
+let g15CharIdleTimer = 0;
+function g15TickCharIdle(dt) {
+  if (!selectedTrain || !selectedTrain.isCharacter) return;
+  if (!characterTrainInstance) return;
+  g15CharIdleTimer += dt;
+  if (g15CharIdleTimer > 60 * (3 + Math.random() * 2)) {
+    g15CharIdleTimer = 0;
+    // Brief vertical squish on the sprite container as a "blink" hint
+    if (characterTrainInstance.container) {
+      const c = characterTrainInstance.container;
+      const baseScale = c.scale.y;
+      c.scale.y = baseScale * 0.9;
+      setTimeout(() => { if (c && c.scale) c.scale.y = baseScale; }, 120);
+    }
+  }
+}
+
+// C16: station-themed train suggestion ribbon
+const G15_STATION_RECS = {
+  'Surabaya Kota':   { id:'argoBromo',   name:'Argo Bromo Anggrek' },
+  'Yogyakarta':      { id:'argoLawu',    name:'Argo Lawu' },
+  'Jakarta Gambir':  { id:'argoMuria',   name:'Argo Muria' },
+  'Cirebon':         { id:'argoCheribon',name:'Argo Cheribon' },
+  'Bandung':         { id:'argoParahyangan', name:'Argo Parahyangan' },
+}
+function g15ApplyStationRibbon() {
+  const station = document.getElementById('si-name');
+  const ribbon = document.getElementById('g15-rec-ribbon');
+  if (!station || !ribbon) return;
+  const rec = G15_STATION_RECS[(station.textContent || '').trim()];
+  if (rec) {
+    ribbon.style.display = 'block';
+    ribbon.textContent = `💡 Direkomendasikan untuk ${station.textContent.trim()}: ${rec.name}`;
+  } else {
+    ribbon.style.display = 'none';
+  }
+}
+
+// C18: journey-map overlay
+function g15ShowJourneyMap() {
+  const m = document.getElementById('g15-journey-map');
+  const route = document.getElementById('g15-journey-route');
+  const info = document.getElementById('g15-journey-info');
+  if (!m) return;
+  // Build a simple horizontal route Surabaya → Merak with markers.
+  const stations = ['Surabaya','Solo','Yogya','Cirebon','Jakarta','Merak'];
+  if (route) {
+    route.innerHTML = '';
+    stations.forEach((s, i) => {
+      const dot = document.createElement('div');
+      dot.style.cssText = `position:absolute;left:${(i / (stations.length - 1)) * 100}%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px`;
+      dot.innerHTML = `<div style="width:14px;height:14px;border-radius:50%;background:#fbbf24;box-shadow:0 0 8px rgba(251,191,36,0.6)"></div><div style="font-size:9px;color:#fde68a">${s}</div>`;
+      route.appendChild(dot);
+    });
+    // chuffing marker at left
+    const marker = document.createElement('div');
+    marker.id = 'g15-route-marker';
+    marker.style.cssText = 'position:absolute;left:0%;top:50%;transform:translate(-50%,-50%);font-size:18px;animation:g15RouteChuff 4s linear infinite';
+    marker.textContent = '🚂';
+    route.appendChild(marker);
+    // inject keyframes once
+    if (!document.getElementById('g15-route-kf')) {
+      const s = document.createElement('style');
+      s.id = 'g15-route-kf';
+      s.textContent = '@keyframes g15RouteChuff{0%{left:0%}100%{left:100%}}';
+      document.head.appendChild(s);
+    }
+  }
+  if (info) {
+    info.innerHTML = '<p>Klik kereta favoritmu di pemilih untuk mulai dari sini. Setiap kota punya kereta khasnya sendiri! 🚂✨</p>';
+  }
+  m.style.display = 'block';
+}
+function g15CloseJourneyMap() {
+  const m = document.getElementById('g15-journey-map');
+  if (m) m.style.display = 'none';
+}
+
+// C19: math iris-wipe cinematic in/out
+function g15MathIrisIn(onDone) {
+  const iris = document.getElementById('g15-iris');
+  const station = document.getElementById('g15-iris-station');
+  if (!iris || !station) { if (onDone) onDone(); return; }
+  // Animate iris from 100% (open) to 6% (small dot in center)
+  iris.style.setProperty('--g15iris', '100%');
+  iris.style.background = 'radial-gradient(circle at center,transparent 100%,rgba(15,23,42,0.96) 101%)';
+  setTimeout(() => {
+    iris.style.setProperty('--g15iris', '6%');
+    iris.style.background = 'radial-gradient(circle at center,transparent 6%,rgba(15,23,42,0.96) 8%)';
+    station.classList.add('show');
+  }, 20);
+  setTimeout(() => { if (onDone) onDone(); }, 600);
+}
+function g15MathIrisOut() {
+  const iris = document.getElementById('g15-iris');
+  const station = document.getElementById('g15-iris-station');
+  if (iris) {
+    iris.style.background = 'radial-gradient(circle at center,transparent 100%,rgba(15,23,42,0.96) 101%)';
+    iris.style.setProperty('--g15iris', '100%');
+  }
+  if (station) station.classList.remove('show');
+}
+
 // ── Box Collection ────────────────────────────────────────────────────────────
 function collectBox(box, idx) {
   if (box.type === 'heart') {
@@ -1529,20 +1908,19 @@ function collectBox(box, idx) {
     flashScreen('green');
     boxLayer.removeChild(box.container);
     letterBoxes.splice(idx, 1);
+    g15ShowHeartBanner();   // v54.20 C10
+    g15UpdateVignette();
     return;
   }
 
   if (box.type === 'math') {
     boxLayer.removeChild(box.container);
     letterBoxes.splice(idx, 1);
-    showMathQuiz();
+    // v54.20 C19: iris-wipe cinematic before math quiz appears.
+    g15MathIrisIn(() => showMathQuiz());
     return;
   }
 
-  // Letter box — validate at COLLECT time against live target letter.
-  // Don't trust box.isTarget (set at spawn time, becomes stale after
-  // onWordComplete resets currentLetterIdx or after currentLetterIdx advances
-  // while old boxes remain on-screen).
   const word = WORDS_LIST[currentWordIdx];
   if (!word) return;
   const liveTarget = word.word[currentLetterIdx];
@@ -1551,11 +1929,23 @@ function collectBox(box, idx) {
     spawnCollectParticles(box.container.x, box.container.y, 0xfbbf24);
     boxLayer.removeChild(box.container);
     letterBoxes.splice(idx, 1);
+    // v54.20 C3: per-letter pitch ladder chime; C2: streak inc
+    g15LetterChime(currentLetterIdx);
+    g15StreakAdd();
     currentLetterIdx++;
     if (currentLetterIdx >= word.word.length) onWordComplete();
-    else refreshHUD();
+    else { refreshHUD(); g15SpeakLetter(word.word[currentLetterIdx]); }
   } else {
-    if (!invincible) { wrongTaps++; triggerWrong(); }
+    // v54.20 C8: graceful first-wrong per word — orange flash, 600ms invuln, no heart loss.
+    if (g15IsFirstWrongInWord()) {
+      flashScreen('orange');
+      invincible = true;
+      setTimeout(() => { invincible = false; }, 600);
+      try { playTone(440, 0.06, 'square') } catch(_){}
+      g15StreakReset();   // even graceful wrong resets streak
+    } else if (!invincible) {
+      wrongTaps++; triggerWrong(); g15StreakReset();
+    }
     boxLayer.removeChild(box.container);
     letterBoxes.splice(idx, 1);
   }
@@ -1579,21 +1969,22 @@ function showMathQuiz() {
   });
   document.getElementById('math-quiz').classList.add('show');
 
-  // Timer bar
+  // v54.20 C12: math timer scales with difficulty + level (was fixed 8s)
+  const _mathSec = g15MathTimerSec();
+  const _mathMs = _mathSec * 1000;
   const fill = document.getElementById('math-timer-fill');
   fill.style.transition = 'none'; fill.style.width = '100%';
   requestAnimationFrame(() => {
-    fill.style.transition = 'width 8s linear';
+    fill.style.transition = `width ${_mathSec}s linear`;
     requestAnimationFrame(() => { fill.style.width = '0%'; });
   });
 
-  // Auto-fail after 8s — Task #63: track start + remaining so pause can halt + resume
   _mathTimerStart = performance.now();
-  _mathTimerRemaining = 8000;
+  _mathTimerRemaining = _mathMs;
   let timedOut = false;
   mathTimerRaf = setTimeout(() => {
     if (mathQuizActive) { timedOut = true; answerMath(false, null, true); }
-  }, 8000);
+  }, _mathMs);
 }
 
 function answerMath(correct, btnEl, timeout = false) {
@@ -1601,6 +1992,8 @@ function answerMath(correct, btnEl, timeout = false) {
   clearTimeout(mathTimerRaf);
   mathQuizActive = false;
   document.getElementById('math-quiz').classList.remove('show');
+  // v54.20 C19: iris-out cinematic returning to the race.
+  try { g15MathIrisOut() } catch(_){}
 
   if (correct) {
     mathCorrect++;
@@ -1612,23 +2005,56 @@ function answerMath(correct, btnEl, timeout = false) {
     flashScreen('red');
     lives--; if (lives < 0) lives = 0;
     updateLivesHUD();
+    try { g15UpdateVignette() } catch(_){}
     if (lives <= 0) { setTimeout(showLose, 600); return; }
   }
 }
 
 // ── Rainbow effect ────────────────────────────────────────────────────────────
+// v54.20 C11: draw-in left→right then fade. Animate per-color stroke alpha over time.
 function spawnRainbow() {
   if (rainbow) { bgLayer.removeChild(rainbow); rainbow = null; }
-  const rb = new PIXI.Graphics();
   const colors = [0xff6b6b, 0xffa500, 0xffd700, 0x4ade80, 0x38bdf8, 0x818cf8, 0xf472b6];
   const cx = W * 0.5, cy = H * 0.85;
-  for (let i = 0; i < colors.length; i++) {
-    const r = 180 + i * 22;
-    rb.arc(cx, cy, r, Math.PI, 0, false).stroke({ width: 16, color: colors[i], alpha: 0.55 });
-  }
-  rb.alpha = 0.7;
+  const rb = new PIXI.Graphics();
+  rb.alpha = 0;
   bgLayer.addChild(rb);
   rainbow = rb;
+  let elapsed = 0;
+  const DRAW_MS = 500, HOLD_MS = 250, FADE_MS = 750;
+  const startT = performance.now();
+  function _tick(){
+    elapsed = performance.now() - startT;
+    rb.clear();
+    if (elapsed < DRAW_MS) {
+      // sweep angle PI → 0 (left → right)
+      const k = elapsed / DRAW_MS;
+      for (let i = 0; i < colors.length; i++) {
+        const r = 180 + i * 22;
+        rb.arc(cx, cy, r, Math.PI, Math.PI - Math.PI * k, false).stroke({ width: 16, color: colors[i], alpha: 0.55 });
+      }
+      rb.alpha = 0.7;
+    } else if (elapsed < DRAW_MS + HOLD_MS) {
+      for (let i = 0; i < colors.length; i++) {
+        const r = 180 + i * 22;
+        rb.arc(cx, cy, r, Math.PI, 0, false).stroke({ width: 16, color: colors[i], alpha: 0.55 });
+      }
+      rb.alpha = 0.7;
+    } else if (elapsed < DRAW_MS + HOLD_MS + FADE_MS) {
+      const fk = (elapsed - DRAW_MS - HOLD_MS) / FADE_MS;
+      for (let i = 0; i < colors.length; i++) {
+        const r = 180 + i * 22;
+        rb.arc(cx, cy, r, Math.PI, 0, false).stroke({ width: 16, color: colors[i], alpha: 0.55 });
+      }
+      rb.alpha = 0.7 * (1 - fk);
+    } else {
+      try { bgLayer.removeChild(rb); } catch(_){}
+      rainbow = null;
+      if (app && app.ticker) app.ticker.remove(_tick);
+      return;
+    }
+  }
+  if (app && app.ticker) app.ticker.add(_tick);
 }
 
 // ── Word Complete / Game Logic ─────────────────────────────────────────────────
@@ -1637,14 +2063,20 @@ function onWordComplete() {
   trainContainer._bounceT = Math.PI;
   spawnRainbow();
   spawnCollectParticles(TRAIN_X, trainContainer.y, 0xfbbf24);
-  // v54.3 — double burst at center for the "victory wreath" feel.
   spawnCollectParticles(TRAIN_X - 30, trainContainer.y - 20, 0xc084fc);
   spawnCollectParticles(TRAIN_X + 30, trainContainer.y - 20, 0x4ade80);
   flashScreen('green');
-  // v54.3 — Slow-mo on word completion: 1.0s game-speed dip then bounce back.
+  // v54.20 C3: word-complete arpeggio
+  g15WordCompleteArpeggio();
+  // v54.20 C9: carriage tilt during boost-out (only for steam/heritage trains)
+  if (selectedTrain && (selectedTrain.type === 'steam' || selectedTrain.type === 'heritage')) {
+    trainContainer._leanTarget = -0.05;
+    trainContainer._leanTimer = 20;
+  }
   const _prevSpeed = gameSpeed
   gameSpeed = Math.max(0.4, gameSpeed * 0.35)
-  setTimeout(() => { gameSpeed = Math.min(_prevSpeed * 1.12, 8) }, 1000)
+  // v54.20 C14: speed-streak cue right BEFORE the speed bump.
+  setTimeout(() => { try { g15SpeedStreak() } catch(_){}; gameSpeed = Math.min(_prevSpeed * 1.12, 8) }, 1000)
   currentWordIdx++;
   if (currentWordIdx >= WORDS_LIST.length) { setTimeout(showWin, 700); return; }
   currentLetterIdx = 0;
@@ -1672,6 +2104,8 @@ function triggerWrong() {
   document.body.classList.add('shaking');
   setTimeout(() => document.body.classList.remove('shaking'), 320);
   flashScreen('red');
+  // v54.20 C4: vignette update; C6: maybe offer assist when last-life + idx 0
+  try { g15UpdateVignette(); g15MaybeOfferAssist(); } catch(_){}
   if (lives <= 0) { setTimeout(showLose, 600); return; }
   setTimeout(() => { invincible = false; }, 900);
 }
@@ -1719,6 +2153,8 @@ function updateLivesHUD() {
 
 function refreshHUD() {
   const word = WORDS_LIST[currentWordIdx]; if (!word) return;
+  // v54.20 C5: speak the next target letter when HUD refreshes (new word or progression).
+  try { g15SpeakLetter(word.word[currentLetterIdx]) } catch(_){}
   document.getElementById('word-emoji').textContent = word.emoji;
   const slotsEl = document.getElementById('word-slots');
   slotsEl.innerHTML = '';
@@ -1749,6 +2185,10 @@ function switchLane(dir) {
   const n = Math.max(0, Math.min(2, playerLane + dir));
   if (n === playerLane) return;
   playerLane = n; updateLaneDots();
+  // v54.20 C1: banking lean — small rotation in direction of travel, lerps back via tickTrainAnim
+  trainContainer._leanTarget = dir * 0.08;
+  trainContainer._leanTimer = 18;
+  if (navigator.vibrate) { try { navigator.vibrate(10) } catch(_){} }
 }
 document.addEventListener('keydown', e => {
   if (e.key === 'ArrowUp') switchLane(-1);
@@ -1816,6 +2256,9 @@ function restartGame() {
   wrongTaps = 0; mathCorrect = 0; invincible = false; mathQuizActive = false;
   gameRunning = false; gameSpeed = 2 + LEVEL * 0.15;
   lives = MAX_LIVES;
+  // v54.20 reset hooks
+  g15Streak = 0; g15WrongWordKey = -1; g15AssistOffered = false;
+  try { g15UpdateVignette(); g15StreakReset() } catch(_){}
   wheels = []; steamPuffs = []; letterBoxes = []; bgStars = []; sleepers = [];
   bgClouds = []; bgFireflies = []; rainbow = null; LANE_Y = [];
   mathBoxTimer = 0; heartBoxTimer = 0; totalBoxSpawned = 0;
@@ -1842,6 +2285,8 @@ function showTrainSelect() {
   document.getElementById('train-select').style.display = 'flex';
   document.getElementById('station-chip').style.display = 'none';
   buildTrainGrid();
+  // v54.20 C16: station-themed recommendation ribbon.
+  try { g15ApplyStationRibbon() } catch(_){}
 }
 
 let activeTrainFilter = 'all';

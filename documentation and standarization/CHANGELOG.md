@@ -1,5 +1,40 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.20 "G15 Word Adventure" (19 / 19 items shipped)
+
+Ship 3 of 8 from `TRAIN-GAMES-100-IDEAS-PLAN.md`. Buttery letter-pickup with banking lean, anticipation previews, voice readout, and graceful mistake forgiveness.
+
+C1 ✓ Lane-change banking lean (±0.08 rad, lerps back in 18 frames)
+C2 ✓ Combo streak HUD chip; ≥7 triggers brief 200ms slow-mo via ticker.speed
+C3 ✓ Per-letter SFX pitch ladder (C5..C6 C-major) + word-complete arpeggio (C5/E5/G5/C6 triangle)
+C4 ✓ Last-life red vignette + heartbeat pulse + BGM duck 0.20→0.10
+C5 ✓ Voice-readout of target letter (id-ID, rate 0.8, pitch 1.1); default ON in easy; toggleable 🔊/🔇 button top-right
+C6 ✓ Anti-frustration assist offer (lives=1 + letterIdx=0 + LVL>10): slow-mo+magnet OR +1 heart, once per run
+C7 ✓ Distractor lane randomization (already correct via `shuffle([0,1,2])` — verified, no edit needed)
+C8 ✓ Wrong-tap graceful warning tier — first wrong per word is orange flash + 600ms invuln, no heart lost; streak resets
+C9 ✓ Carriage tilt during boost-out (-0.05 rad for steam/heritage trains only)
+C10 ✓ Heart-box recovery cinematic — 110% Pixi zoom + "NYAWA KEMBALI!" banner + arc particles
+C11 ✓ Rainbow draw-in animation (left→right 500ms sweep + 250ms hold + 750ms fade) via app.ticker
+C12 ✓ Math timer scales with level + difficulty (14s easy / 7-12s medium / 5-10s hard, ramps down by level)
+C13 ✓ Carriage breathing parallax bob (sin*1.4 always-on while not bouncing)
+C14 ✓ Speed-streak visual cue (8 white horizontal lines) right before gameSpeed bump
+C15 ✓ Character train enhanced idle micro-anim — Casey/Linus/Dragutin/Malivlak get scaleY blink every 3-5s (ENHANCE only)
+C16 ✓ Station-themed train suggestion ribbon (Surabaya→Argo Bromo, Yogya→Argo Lawu, etc.)
+C17 ✓ Ghost-letter anticipation preview — `#next-char` glow brightens as nearest matching box approaches
+C18 ✓ Journey-map overlay tied to #station-intro (Surabaya→Solo→Yogya→Cirebon→Jakarta→Merak with chuffing 🚂 marker)
+C19 ✓ Math iris-wipe cinematic — closes to dot at center showing station card on math quiz, opens back on answer
+
+### Files touched
+- `games/g15-pixi.html` — 11 new CSS blocks (streak, vignette, TTS toggle, assist toast, heart banner, iris, journey map); 5 new DOM nodes (streak chip, vignette, TTS button, iris layer, station card); ~17 new JS helpers (g15StreakAdd/Reset, g15BriefSlowMo, g15LetterChime, g15WordCompleteArpeggio, g15UpdateVignette, g15SpeakLetter, g15ToggleTTS, g15MaybeOfferAssist, g15AcceptAssist, g15IsFirstWrongInWord, g15ShowHeartBanner, g15MathTimerSec, g15UpdateGhostLetter, g15MathIrisIn/Out, g15SpeedStreak, g15TickCharIdle, g15ApplyStationRibbon, g15ShowJourneyMap, g15CloseJourneyMap). Wired into `collectBox` (C3 chime + C2 streak + C8 graceful wrong + C10 heart banner + C19 iris), `switchLane` (C1 banking lean), `onWordComplete` (C3 arpeggio + C9 boost tilt + C14 speed-streak cue), `triggerWrong` (C4 vignette + C6 assist), `showMathQuiz` (C12 scaled timer), `answerMath` (C19 iris-out), `spawnRainbow` (C11 draw-in), main tick (C13 bob + C1 lean lerp + C15 idle + C17 ghost-letter), `refreshHUD` (C5 speak), `restart` (resets), `showTrainSelect` (C16 ribbon).
+- `sw.js` — `CACHE_VERSION: 'v54.19-20260624x' → 'v54.20-20260624y'`.
+
+### Lessons captured
+- L134 — `app.ticker.speed = 0.45` is the cheapest "brief slow-mo" — no per-update timestep changes needed.
+- L135 — Voice TTS toggle defaults ON in easy mode so non-readers get audio support automatically; turn off as kids grow.
+- L136 — "First wrong is free per word" is the right balance: a learning kid won't be punished for trying.
+
+---
+
 ## 2026-06-24 — v54.19 "G14 Race Depth" (13 / 15 items shipped)
 
 Ship 2 of 8 from `TRAIN-GAMES-100-IDEAS-PLAN.md`. Medium-cost depth additions: hazards, cinematics, train-themed math, signature SFX.
