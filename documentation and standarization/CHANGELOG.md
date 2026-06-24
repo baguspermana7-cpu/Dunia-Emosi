@@ -1,5 +1,71 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.17 "G14 Race Polish — Ritual, Stakes, Identity" (17 items)
+
+Sixteenth v54.x ship. First item from `TRAIN-GAMES-100-IDEAS-PLAN.md` (synthesized from ultraplan workflow `wbvjxrcqw`). Tightens the racing loop with audio rituals, lane awareness, and reactive world detail.
+
+### A1 — 3-2-1-GO countdown ritual
+NEW `g14RunCountdown(onDone)` deferring `S.running = true` until "GO!" finishes its zoom-out. Station-bell ding-ding (1200→900 Hz squares) on 3/2/1, descending steam whistle (880→660 Hz sines) on GO. Full-screen overlay with `effComboPop`-style scale spring on each digit. ~2.6s total.
+
+### A2 — Lane indicator pip column
+3-pip vertical column fixed at left-edge mid-height. Cyan glow on `S.targetLane` pip; outer-radius pulse ring on switch. Updated via NEW `g14UpdateLanePips()` hook in `laneUp()`/`laneDn()`.
+
+### A3 — Near-miss "+5 ⚡" floating text
+Tracks adjacent-lane obstacles crossing the player column with `Math.abs(o._lane - S.lane) === 1`. Fires ONCE per obstacle via `_nearmissFired` flag. +5 pressure + pink floating text via `g14SpawnNearMiss(x,y)`. Rewards close-pass bravery.
+
+### A4 — Heart loss animation in #lives-hud
+NEW `g14SpawnHeartPop()` spawns a 💔 at the rightmost slot of `#lives-hud` (computed from `LIVES_MAX`). Pops 1.6×, fades red→gray, rises 40px in 700ms. Player SEES which heart was lost.
+
+### A5 — Gap-to-next position chip
+NEW `#g14-position-gap` element below `#position-badge`. Shows `+12m unggul` when P1, `-8m ke #1` when behind. Computed from `S.aiTrains` distances each tickAI.
+
+### A6 — Low-fuel siren + red border pulse
+When `S.pressure < 20`, `#hud-top` gets `.g14-low-fuel` class (inset red box-shadow pulse 1s loop) and a 220Hz sawtooth pip every 60 frames. Clears when pressure ≥ 20.
+
+### A7 — Engine-rev SFX preview on train picker
+NEW `g14PreviewEngine(catKey)` fires on train-card click. 6 distinct envelopes: characters chime (triangle ascend), steam chuff-chuff (square descending), diesel rumble (sawtooth low), EMU electric whine (triangle ascend), HSR whoosh (sine sweep), maglev synth ramp.
+
+### A8 — Tiny train silhouette next to AI bubble
+Bubble width 64→74 with NEW 12×6 sil rect tinted by `cfg.bodyColor`. Kids see WHO is taunting them. Faded with the bubble's alpha curve.
+
+### A9 — Slow-mo zoom crash instead of rotation jitter
+Replaced `stage.rotation = (Math.random()-0.5)*0.04*t` with `stage.scale = 1 + 0.08 * sin(t * π)`. Smooth bell-curve scale zoom that peaks mid-shake then lerps back. Eliminates the rotation jitter complaint (nauseating for some kids).
+
+### A10 — Milestone announcement banner — 100/250/500/750m
+NEW `g14ShowMilestone(text)` triggers at distance thresholds via `S.lastMilestone` gate. Gold pop banner + 2-tone chime (880 → 1320 Hz triangle).
+
+### A11 — Camera tilt during lane switch
+Stage rotates `±0.03 rad` in switch direction (Math.sign(dy)), lerps back to 0 when settled. Banked-turn feel without nausea.
+
+### A12 — Confetti + golden ribbon at P1 finish
+NEW `g14SpawnConfetti()` — 48 CSS particles in 7-color palette (gold/violet/green/red/cyan/pink/yellow). Triggered in `endRace()` when `S.position === 1`. Bonus 4-note fanfare (523→659→784→1047 Hz).
+
+### A13 — Best speed callout on result
+NEW `S.bestSpeed` tracked each loop frame as `trainCfg.kmh * (S.speed/baseSpeed) * speedFactor`. Result modal msg gets `⚡ NNN km/h max!` appended.
+
+### A14 — Cloud shadow projection across lanes
+NEW `L.cloudShadows` container at z-1, one ellipse per cloud at `gameTop + laneH*0.4`. Tracks cloud x in `tickClouds`. Dark 0.22 alpha — subtle but real.
+
+### A15 — Boost-cooldown smooth fade-down
+Replaced hard `S.speed = S.baseSpeed` with 600ms RAF lerp from peak speed back to baseSpeed. Pair: 5-puff steam burst on fade-start + descending whir (1100→800→500 Hz triangle).
+
+### A16 — Steam puff cluster shape with soft blur
+`spawnSteam` upgraded: 3-blob cluster (was 1 circle) tinted by `g14CurrentSkyColors().cloudTint` when not boosting. `PIXI.BlurFilter strength:2` for soft diffusion.
+
+### A17 — Floating coin/star/heart pickup tokens every ~180m
+NEW `PICKUP_TYPES` (coin 60% / bolt 30% / heart 10%) + `spawnPickup()` + `tickPickups()`. Halo+emoji sprite floats with `sin(phase)*6` bob. Collected when player overlaps column in same lane. Effects: +10 score (coin), +5 pressure (bolt), +1 HP cap LIVES_MAX (heart). `S.nextPickupAt` schedules next at 180m intervals.
+
+### Files touched
+- `games/g14.html` — 14 new CSS rules + 2 new DOM nodes (#g14-countdown, #g14-lane-pips, #g14-position-gap) + 6 new JS helpers (g14RunCountdown, g14UpdateLanePips, g14SpawnNearMiss, g14SpawnHeartPop, g14ShowMilestone, g14SpawnConfetti, g14PreviewEngine, spawnPickup, tickPickups) + integration into laneUp/Dn, tickObstacles, crashHit, tickAI, tickPlayer (camera tilt), tickClouds (shadows), spawnSteam (cluster), executeBoost (fade), startRace (countdown gate), loop (low-fuel + milestone + pickup-schedule), endRace (confetti + best speed). Bubble width + silhouette in buildAI.
+- `sw.js` — `CACHE_VERSION: 'v54.16-20260624u' → 'v54.17-20260624v'`.
+
+### Lessons captured
+- L127 — Defer `S.running = true` behind a countdown gate so the race actually STARTS when the player can see "GO!", not 2s earlier.
+- L128 — Replace rotational screen-shake with bell-curve scale-zoom for cinematic hit-stop without vestibular nausea risk.
+- L129 — Pickup tokens at fixed distance intervals beat random spawns — kids quickly internalize "next pickup soon" rhythm.
+
+---
+
 ## 2026-06-24 — v54.16 "G17 stuck-on-empty-screen hotfix" (back button + boot-failure recovery)
 
 Fifteenth v54.x ship. Owner: "jembatan goyang game error, stuck on empy screen, tidak ada back harus refresh."

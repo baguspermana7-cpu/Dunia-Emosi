@@ -4,6 +4,28 @@
 
 ---
 
+## 2026-06-24 — v54.17 G14 Race Polish
+
+### L127 — Defer running-state behind a countdown gate so the race STARTS at GO!
+- **Symptom**: Player taps the train card, the screen instantly starts moving — there's no ritual, no buildup, no "ready... set..." Race feels like it teleported into being.
+- **Root cause**: `startRace()` directly set `S.running = true` and started the ticker. There was no anticipation period.
+- **Fix**: Wrapped the `S.running = true` + BGM/SFX start inside a callback passed to `g14RunCountdown(onDone)`. Countdown shows 3 → 2 → 1 → GO! with station bell on 1/2/3 and steam whistle on GO. Caller's body fires ONLY after GO!'s animation finishes.
+- **Lesson**: For ANY game with a "start" moment, defer the actual physics/spawn/run state behind a ritual that has a clear END signal. Ritual = anticipation = "I'm ready" feeling. Without it, the game feels accidentally started.
+
+### L128 — Bell-curve scale-zoom replaces rotational shake for hit-stop without nausea risk
+- **Symptom**: Previous v54.3 added rotational jitter on top of XY shake. Some players reported "neg" (dizzy) feel.
+- **Root cause**: Rotation perturbs the vestibular sense more than translation. Even tiny ±0.04 rad jitters add up across the 24-frame shake window.
+- **Fix**: Removed rotation jitter from the shake block. Added `stage.scale = 1 + 0.08 * sin(t * π)` — bell-curve scale zoom that peaks mid-shake at 1.08× and returns to 1.0. Smooth lerp back when shake ends.
+- **Lesson**: Scale zoom + XY translation is the cinematic combo for hit-stop. Rotation should be reserved for orientation effects (banked turns, intentional camera roll), NOT for impact shake.
+
+### L129 — Distance-thresholded pickup spawns beat random spawns for kid rhythm
+- **Symptom**: My initial impulse was to randomize the next pickup spawn within a window (e.g., 150-220m). But the plan called for "every ~180m" intervals.
+- **Root cause**: Kids 5-10yo build expectation. Random spawns feel inconsistent — sometimes you get 3 in a row, sometimes you go 400m dry. The brain reads inconsistency as "I'm missing them" not "the game is random."
+- **Fix**: `S.nextPickupAt = 180; ...; if (distance >= nextPickupAt) { spawn(); nextPickupAt += 180 }`. Deterministic rhythm.
+- **Lesson**: Game-feel for kids favors RHYTHM over randomness. Random rewards what hooks adults (variable-ratio reinforcement) but frustrates kids. Make pickups predictable; vary the TYPE not the TIMING.
+
+---
+
 ## 2026-06-24 — v54.16 G17 stuck-on-empty-screen hotfix
 
 ### L125 — Exit UI MUST have explicit position + z-index above the game canvas
