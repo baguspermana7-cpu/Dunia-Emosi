@@ -4,6 +4,20 @@
 
 ---
 
+## 2026-06-24 — v54.30 PvP balance hard-cap + 9 new picker packages
+
+### L163 — Per-layer multiplier caps are not enough; the PRODUCT of caps must respect the smallest HP bucket
+- The v53.4 canonical formula had defensible per-layer caps (STAB 1.25, type 1.2, statRatio 1.6, timeMult 1.4, speedMod 1.1). Each cap individually felt fine. But `34 × 1.25 × 1.2 × 1.4 × 1.6 × 1.1 = 125.6` — one-shots every base-tier 80-90 HP Pokémon and even final-tier 110.
+- Root cause: nobody multiplied the maxima to compare against the smallest defender HP bucket. The standard documented the layers in isolation but never product-checked against `min(hpMax)`.
+- Lesson: When designing a multi-layer formula, write the worst-case product NEXT TO the smallest target HP. If `product > target`, add a final clamp keyed to the target — not to each input. The cleanest clamp is `min(raw, defender.hpMax * SAFETY_FRACTION)` where SAFETY_FRACTION ≤ 0.40 guarantees the defender survives the first hit and the player keeps an action.
+
+### L164 — Symmetric house rules beat trying to predict every team-mismatch edge case
+- Owner's 6-0 wipe came from PvP random-team Kalos (Malamar default 70/70) vs Hoenn Starter base team (Ralts def 25, Poochyena def 35). Trying to detect "team mismatch" and apply a handicap would mean shipping a similarity heuristic, edge cases for legendaries, weighting per stage…
+- Instead: ship ONE per-hit cap (40% hpMax), TIGHTEN clamps, FLOOR HP at 95, and BLOCK box legendaries from random rolls. All four rules apply symmetrically to BOTH sides. No detection needed. No team-aware scoring.
+- Lesson: When fairness fails at the matchup level, fix the rule that governs every match — not the matchmaker. Symmetric rules carry zero detection overhead and never become asymmetric over time as new content lands.
+
+---
+
 ## 2026-06-24 — v54.29 PvP sprite-mismatch hotfix
 
 ### L161 — Corrupted-but-loading asset files are invisible to onerror

@@ -451,6 +451,92 @@ const PKG_DATA = [
     {name:'Ting-Lu',slug:'ting-lu',type:'dark',hp:130,maxHp:130,moves:[{name:'Ruination',type:'dark'},{name:'Earthquake',type:'ground'},{name:'Stomping Tantrum',type:'ground'},{name:'Heavy Slam',type:'steel'}]},
     {name:'Chi-Yu',slug:'chi-yu',type:'dark',hp:130,maxHp:130,moves:[{name:'Ruination',type:'dark'},{name:'Lava Plume',type:'fire'},{name:'Fire Blast',type:'fire'},{name:'Dark Pulse',type:'dark'}]},
    ]},
+  // ─── v54.30 ADDITIONS — owner-requested friends-of-Ash + Kingler ──────
+  // Owner: "Di picker package banyak pokemon tidak ada seperti pokemon
+  // teman2nya ash atau kingler itu juga g ada. Banyak yg g ada. Tolong
+  // tambahkan." Eight new packages covering canon companion rosters and
+  // the Ash Kanto-extended team that includes Kingler / Muk / Tauros.
+  {id:'ash-kanto-extended', label:'Tim Ash Kanto Lengkap', series:'Anime Kanto', tier:'final', color:'#ef4444', region:'kanto',
+   team:[
+    {name:'Pikachu',slug:'pikachu',type:'electric',hp:105,maxHp:105,moves:[{name:'Thunderbolt',type:'electric'},{name:'Quick Attack',type:'normal'},{name:'Iron Tail',type:'steel'},{name:'Thunder',type:'electric'}]},
+    {name:'Kingler',slug:'kingler',type:'water',hp:105,maxHp:105,moves:[{name:'Crabhammer',type:'water'},{name:'Vice Grip',type:'normal'},{name:'Metal Claw',type:'steel'},{name:'Bubble Beam',type:'water'}]},
+    {name:'Muk',slug:'muk',type:'poison',hp:105,maxHp:105,moves:[{name:'Sludge Bomb',type:'poison'},{name:'Body Slam',type:'normal'},{name:'Acid Armor',type:'poison'},{name:'Mud Bomb',type:'ground'}]},
+    {name:'Tauros',slug:'tauros',type:'normal',hp:105,maxHp:105,moves:[{name:'Take Down',type:'normal'},{name:'Horn Attack',type:'normal'},{name:'Rage',type:'normal'},{name:'Stomp',type:'normal'}]},
+    {name:'Primeape',slug:'primeape',type:'fighting',hp:105,maxHp:105,moves:[{name:'Cross Chop',type:'fighting'},{name:'Karate Chop',type:'fighting'},{name:'Fury Swipes',type:'normal'},{name:'Low Kick',type:'fighting'}]},
+    {name:'Butterfree',slug:'butterfree',type:'bug',hp:105,maxHp:105,moves:[{name:'Sleep Powder',type:'grass'},{name:'Confusion',type:'psychic'},{name:'Bug Bite',type:'bug'},{name:'Gust',type:'flying'}]},
+   ]},
+  {id:'misty-team', label:'Tim Misty', series:'Pelatih Air', tier:'final', color:'#3b82f6', region:'kanto',
+   team:[
+    {name:'Starmie',slug:'starmie',type:'water',hp:100,maxHp:100,moves:[{name:'Hydro Pump',type:'water'},{name:'Psychic',type:'psychic'},{name:'Swift',type:'normal'},{name:'Rapid Spin',type:'normal'}]},
+    {name:'Staryu',slug:'staryu',type:'water',hp:100,maxHp:100,moves:[{name:'Water Gun',type:'water'},{name:'Swift',type:'normal'},{name:'Tackle',type:'normal'},{name:'Recover',type:'normal'}]},
+    {name:'Psyduck',slug:'psyduck',type:'water',hp:100,maxHp:100,moves:[{name:'Water Gun',type:'water'},{name:'Confusion',type:'psychic'},{name:'Headbutt',type:'normal'},{name:'Disable',type:'normal'}]},
+    {name:'Goldeen',slug:'goldeen',type:'water',hp:100,maxHp:100,moves:[{name:'Horn Attack',type:'normal'},{name:'Water Gun',type:'water'},{name:'Peck',type:'flying'},{name:'Tail Whip',type:'normal'}]},
+    {name:'Horsea',slug:'horsea',type:'water',hp:100,maxHp:100,moves:[{name:'Water Gun',type:'water'},{name:'Bubble',type:'water'},{name:'Smokescreen',type:'normal'},{name:'Leer',type:'normal'}]},
+    {name:'Togepi',slug:'togepi',type:'fairy',hp:100,maxHp:100,moves:[{name:'Pound',type:'normal'},{name:'Charm',type:'fairy'},{name:'Metronome',type:'normal'},{name:'Sweet Kiss',type:'fairy'}]},
+   ]},
+  {id:'brock-team', label:'Tim Brock', series:'Pelatih Batu', tier:'final', color:'#a16207', region:'kanto',
+   team:[
+    {name:'Steelix',slug:'steelix',type:'steel',hp:110,maxHp:110,moves:[{name:'Iron Tail',type:'steel'},{name:'Earthquake',type:'ground'},{name:'Bind',type:'normal'},{name:'Dragon Breath',type:'dragon'}]},
+    {name:'Onix',slug:'onix',type:'rock',hp:110,maxHp:110,moves:[{name:'Rock Throw',type:'rock'},{name:'Bind',type:'normal'},{name:'Tackle',type:'normal'},{name:'Harden',type:'normal'}]},
+    {name:'Geodude',slug:'geodude',type:'rock',hp:110,maxHp:110,moves:[{name:'Rock Throw',type:'rock'},{name:'Magnitude',type:'ground'},{name:'Defense Curl',type:'normal'},{name:'Tackle',type:'normal'}]},
+    {name:'Crobat',slug:'crobat',type:'poison',hp:110,maxHp:110,moves:[{name:'Cross Poison',type:'poison'},{name:'Air Slash',type:'flying'},{name:'Bite',type:'dark'},{name:'Supersonic',type:'normal'}]},
+    {name:'Forretress',slug:'forretress',type:'bug',hp:110,maxHp:110,moves:[{name:'Bug Bite',type:'bug'},{name:'Rapid Spin',type:'normal'},{name:'Tackle',type:'normal'},{name:'Spikes',type:'ground'}]},
+    {name:'Croagunk',slug:'croagunk',type:'poison',hp:110,maxHp:110,moves:[{name:'Poison Jab',type:'poison'},{name:'Brick Break',type:'fighting'},{name:'Mud Slap',type:'ground'},{name:'Astonish',type:'ghost'}]},
+   ]},
+  {id:'team-rocket', label:'Tim Rocket', series:'Jessie + James + Meowth', tier:'final', color:'#7c2d12', region:'kanto',
+   team:[
+    {name:'Meowth',slug:'meowth',type:'normal',hp:100,maxHp:100,moves:[{name:'Fury Swipes',type:'normal'},{name:'Bite',type:'dark'},{name:'Pay Day',type:'normal'},{name:'Scratch',type:'normal'}]},
+    {name:'Wobbuffet',slug:'wobbuffet',type:'psychic',hp:100,maxHp:100,moves:[{name:'Counter',type:'fighting'},{name:'Mirror Coat',type:'psychic'},{name:'Safeguard',type:'normal'},{name:'Destiny Bond',type:'ghost'}]},
+    {name:'Arbok',slug:'arbok',type:'poison',hp:100,maxHp:100,moves:[{name:'Poison Sting',type:'poison'},{name:'Bite',type:'dark'},{name:'Wrap',type:'normal'},{name:'Glare',type:'normal'}]},
+    {name:'Weezing',slug:'weezing',type:'poison',hp:100,maxHp:100,moves:[{name:'Sludge Bomb',type:'poison'},{name:'Tackle',type:'normal'},{name:'Smokescreen',type:'normal'},{name:'Smog',type:'poison'}]},
+    {name:'Victreebel',slug:'victreebel',type:'grass',hp:100,maxHp:100,moves:[{name:'Razor Leaf',type:'grass'},{name:'Acid',type:'poison'},{name:'Vine Whip',type:'grass'},{name:'Sleep Powder',type:'grass'}]},
+    {name:'Lickitung',slug:'lickitung',type:'normal',hp:100,maxHp:100,moves:[{name:'Lick',type:'ghost'},{name:'Slam',type:'normal'},{name:'Stomp',type:'normal'},{name:'Defense Curl',type:'normal'}]},
+   ]},
+  {id:'may-team', label:'Tim May', series:'Penampil Hoenn', tier:'final', color:'#ec4899', region:'hoenn',
+   team:[
+    {name:'Blaziken',slug:'blaziken',type:'fire',hp:110,maxHp:110,moves:[{name:'Blaze Kick',type:'fire'},{name:'Sky Uppercut',type:'fighting'},{name:'Flamethrower',type:'fire'},{name:'Slash',type:'normal'}]},
+    {name:'Beautifly',slug:'beautifly',type:'bug',hp:110,maxHp:110,moves:[{name:'Silver Wind',type:'bug'},{name:'Gust',type:'flying'},{name:'Absorb',type:'grass'},{name:'String Shot',type:'bug'}]},
+    {name:'Glaceon',slug:'glaceon',type:'ice',hp:110,maxHp:110,moves:[{name:'Ice Beam',type:'ice'},{name:'Mirror Coat',type:'psychic'},{name:'Bite',type:'dark'},{name:'Quick Attack',type:'normal'}]},
+    {name:'Skitty',slug:'skitty',type:'normal',hp:110,maxHp:110,moves:[{name:'Assist',type:'normal'},{name:'Tackle',type:'normal'},{name:'Charm',type:'fairy'},{name:'Sing',type:'normal'}]},
+    {name:'Munchlax',slug:'munchlax',type:'normal',hp:110,maxHp:110,moves:[{name:'Body Slam',type:'normal'},{name:'Tackle',type:'normal'},{name:'Lick',type:'ghost'},{name:'Defense Curl',type:'normal'}]},
+    {name:'Wartortle',slug:'wartortle',type:'water',hp:110,maxHp:110,moves:[{name:'Water Gun',type:'water'},{name:'Rapid Spin',type:'normal'},{name:'Tackle',type:'normal'},{name:'Withdraw',type:'water'}]},
+   ]},
+  {id:'dawn-team', label:'Tim Dawn', series:'Penampil Sinnoh', tier:'final', color:'#0ea5e9', region:'sinnoh',
+   team:[
+    {name:'Piplup',slug:'piplup',type:'water',hp:105,maxHp:105,moves:[{name:'Bubble Beam',type:'water'},{name:'Peck',type:'flying'},{name:'Pound',type:'normal'},{name:'Bide',type:'normal'}]},
+    {name:'Lopunny',slug:'lopunny',type:'normal',hp:105,maxHp:105,moves:[{name:'Dizzy Punch',type:'normal'},{name:'Ice Beam',type:'ice'},{name:'Charm',type:'fairy'},{name:'Quick Attack',type:'normal'}]},
+    {name:'Pachirisu',slug:'pachirisu',type:'electric',hp:105,maxHp:105,moves:[{name:'Spark',type:'electric'},{name:'Quick Attack',type:'normal'},{name:'Sweet Kiss',type:'fairy'},{name:'Charm',type:'fairy'}]},
+    {name:'Mamoswine',slug:'mamoswine',type:'ice',hp:105,maxHp:105,moves:[{name:'Ice Shard',type:'ice'},{name:'Earthquake',type:'ground'},{name:'Take Down',type:'normal'},{name:'Powder Snow',type:'ice'}]},
+    {name:'Typhlosion',slug:'typhlosion',type:'fire',hp:105,maxHp:105,moves:[{name:'Flamethrower',type:'fire'},{name:'Eruption',type:'fire'},{name:'Quick Attack',type:'normal'},{name:'Swift',type:'normal'}]},
+    {name:'Togekiss',slug:'togekiss',type:'fairy',hp:105,maxHp:105,moves:[{name:'Air Slash',type:'flying'},{name:'Aura Sphere',type:'fighting'},{name:'Sky Attack',type:'flying'},{name:'Extreme Speed',type:'normal'}]},
+   ]},
+  {id:'iris-team', label:'Tim Iris', series:'Pelatih Naga', tier:'final', color:'#a855f7', region:'unova',
+   team:[
+    {name:'Haxorus',slug:'haxorus',type:'dragon',hp:110,maxHp:110,moves:[{name:'Dragon Claw',type:'dragon'},{name:'X-Scissor',type:'bug'},{name:'Slash',type:'normal'},{name:'Outrage',type:'dragon'}]},
+    {name:'Axew',slug:'axew',type:'dragon',hp:110,maxHp:110,moves:[{name:'Dragon Rage',type:'dragon'},{name:'Scratch',type:'normal'},{name:'Bite',type:'dark'},{name:'Leer',type:'normal'}]},
+    {name:'Excadrill',slug:'excadrill',type:'ground',hp:110,maxHp:110,moves:[{name:'Drill Run',type:'ground'},{name:'Earthquake',type:'ground'},{name:'Metal Claw',type:'steel'},{name:'Slash',type:'normal'}]},
+    {name:'Emolga',slug:'emolga',type:'electric',hp:110,maxHp:110,moves:[{name:'Discharge',type:'electric'},{name:'Volt Switch',type:'electric'},{name:'Acrobatics',type:'flying'},{name:'Quick Attack',type:'normal'}]},
+    {name:'Dragonite',slug:'dragonite',type:'dragon',hp:110,maxHp:110,moves:[{name:'Dragon Claw',type:'dragon'},{name:'Hyper Beam',type:'normal'},{name:'Fly',type:'flying'},{name:'Outrage',type:'dragon'}]},
+    {name:'Gible',slug:'gible',type:'dragon',hp:110,maxHp:110,moves:[{name:'Dragon Rage',type:'dragon'},{name:'Bite',type:'dark'},{name:'Sand Attack',type:'ground'},{name:'Tackle',type:'normal'}]},
+   ]},
+  {id:'serena-clemont', label:'Tim Serena + Clemont', series:'Anime XY', tier:'final', color:'#f472b6', region:'kalos',
+   team:[
+    {name:'Delphox',slug:'delphox',type:'fire',hp:110,maxHp:110,moves:[{name:'Mystical Fire',type:'fire'},{name:'Psychic',type:'psychic'},{name:'Flamethrower',type:'fire'},{name:'Light Screen',type:'psychic'}]},
+    {name:'Sylveon',slug:'sylveon',type:'fairy',hp:110,maxHp:110,moves:[{name:'Moonblast',type:'fairy'},{name:'Disarming Voice',type:'fairy'},{name:'Swift',type:'normal'},{name:'Quick Attack',type:'normal'}]},
+    {name:'Pangoro',slug:'pangoro',type:'fighting',hp:110,maxHp:110,moves:[{name:'Hammer Arm',type:'fighting'},{name:'Karate Chop',type:'fighting'},{name:'Body Slam',type:'normal'},{name:'Slash',type:'normal'}]},
+    {name:'Luxray',slug:'luxray',type:'electric',hp:110,maxHp:110,moves:[{name:'Wild Charge',type:'electric'},{name:'Crunch',type:'dark'},{name:'Spark',type:'electric'},{name:'Bite',type:'dark'}]},
+    {name:'Chesnaught',slug:'chesnaught',type:'grass',hp:110,maxHp:110,moves:[{name:'Hammer Arm',type:'fighting'},{name:'Vine Whip',type:'grass'},{name:'Spiky Shield',type:'grass'},{name:'Rollout',type:'rock'}]},
+    {name:'Heliolisk',slug:'heliolisk',type:'electric',hp:110,maxHp:110,moves:[{name:'Thunderbolt',type:'electric'},{name:'Parabolic Charge',type:'electric'},{name:'Quick Attack',type:'normal'},{name:'Mud Slap',type:'ground'}]},
+   ]},
+  {id:'goh-team', label:'Tim Goh', series:'Anime Journeys', tier:'final', color:'#2563eb', region:'galar',
+   team:[
+    {name:'Cinderace',slug:'cinderace',type:'fire',hp:110,maxHp:110,moves:[{name:'Pyro Ball',type:'fire'},{name:'High Jump Kick',type:'fighting'},{name:'Bounce',type:'flying'},{name:'Quick Attack',type:'normal'}]},
+    {name:'Grookey',slug:'grookey',type:'grass',hp:110,maxHp:110,moves:[{name:'Branch Poke',type:'grass'},{name:'Scratch',type:'normal'},{name:'Razor Leaf',type:'grass'},{name:'Growl',type:'normal'}]},
+    {name:'Inteleon',slug:'inteleon',type:'water',hp:110,maxHp:110,moves:[{name:'Snipe Shot',type:'water'},{name:'Ice Beam',type:'ice'},{name:'Acrobatics',type:'flying'},{name:'Water Gun',type:'water'}]},
+    {name:'Suicune',slug:'suicune',type:'water',hp:110,maxHp:110,moves:[{name:'Hydro Pump',type:'water'},{name:'Aurora Beam',type:'ice'},{name:'Bubble Beam',type:'water'},{name:'Bite',type:'dark'}]},
+    {name:'Regieleki',slug:'regieleki',type:'electric',hp:110,maxHp:110,moves:[{name:'Thunder Cage',type:'electric'},{name:'Thunderbolt',type:'electric'},{name:'Volt Switch',type:'electric'},{name:'Quick Attack',type:'normal'}]},
+    {name:'Sobble',slug:'sobble',type:'water',hp:110,maxHp:110,moves:[{name:'Water Gun',type:'water'},{name:'Pound',type:'normal'},{name:'Bind',type:'normal'},{name:'Growl',type:'normal'}]},
+   ]},
 ];
 window.POKE_PACKAGES = PKG_DATA;
 })();

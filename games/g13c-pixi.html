@@ -555,7 +555,7 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
 <script src="data/sfx-engine.js?v=20260621f"></script>
 <script src="data/weather-fx.js?v=20260621f"></script>
 <script src="data/poke-packages.js?v=53.9-20260624f"></script>
-<script src="data/battle-modes.js?v=53.9-20260624f"></script>
+<script src="data/battle-modes.js?v=54.30-20260624ai"></script>
 <script src="data/poke-type-chart.js?v=20260506z"></script>
 <script>
   // Licensed Pokemon SFX + battle weather — lazy init, silent failure.
@@ -1644,7 +1644,13 @@ function calcDmg(moveType, atkPoke, defPoke){
   try {
     if (window.BattleModes && BattleModes.stats && typeof BattleModes.stats.shapeDamage === 'function'
         && atkPoke && defPoke && atkPoke.slug && defPoke.slug) {
-      dmg = BattleModes.stats.shapeDamage(dmg, atkPoke.slug, defPoke.slug);
+      // v54.30: pass defender hpMax so shapeDamage can apply the per-hit cap
+      // (40% of hpMax). Adventure Pokemon carry hp/maxHp via G13C package
+      // adapter — fall back to defPoke.hp if maxHp absent (still safe).
+      const defMax = (typeof defPoke.maxHp === 'number' && defPoke.maxHp > 0)
+                       ? defPoke.maxHp
+                       : (typeof defPoke.hp === 'number' ? defPoke.hp : 90);
+      dmg = BattleModes.stats.shapeDamage(dmg, atkPoke.slug, defPoke.slug, defMax);
     }
   } catch (e) {}
   return dmg;

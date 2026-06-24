@@ -1535,9 +1535,27 @@
   // already in POKE_ROSTER so a "random" team never overlaps with Ash-style
   // starters — owner: "Truly random yang tidak ada di ash".
   const _EXCLUDED_IDS = new Set([25, 4, 1, 7, 133, 39, 37, 172]);
+  // v54.30 (balance): box legendaries + Ultra Beasts blocked from random rolls
+  // so a 🎲 Acak Kalos team never produces a 6-Pokemon Mewtwo+Lugia+Rayquaza
+  // wipe-team against a base-tier Hoenn Starter team. Players who want
+  // legendaries still get them via the "Legendaris" package picks.
+  const _LEGEND_BLOCKLIST = new Set([
+    150, 249, 250,
+    382, 383, 384,
+    483, 484, 487,
+    643, 644, 646,
+    716, 717, 718,
+    785, 786, 787, 788,
+    791, 792, 800,
+    793, 794, 795, 796, 797, 798, 799, 803, 804, 805, 806,
+    888, 889, 890,
+    898, 1005, 1006, 1020
+  ]);
   function buildTeamFromRegion (gen, teamSize) {
     if (!_pokeDB) return [];
-    const pool = _pokeDB.filter(p => p.gen === gen && !_EXCLUDED_IDS.has(p.id));
+    const pool = _pokeDB.filter(p =>
+      p.gen === gen && !_EXCLUDED_IDS.has(p.id) && !_LEGEND_BLOCKLIST.has(p.id)
+    );
     if (!pool.length) return [];
     // Fisher-Yates shuffle (no Math.random bias) — truly random per click.
     const shuffled = pool.slice();
@@ -1548,7 +1566,10 @@
     // v52 (concern 1): stamp _region so renderArena → applyArenaBg can pick the
     // gym-themed BG for "🎲 Acak" random-region teams too.
     const _regionId = (RANDOM_REGIONS.find(r => r.gen === gen) || {}).id || null;
-    return shuffled.slice(0, teamSize).map(buildRandomPokemon).map(p => ({ ...p, hp:80, hpMax:80, _region: _regionId }));
+    // v54.30 (balance): HP raised from 80 → 95 so random teams never tower over
+    // package teams (Hoenn base 90, final 110). Per-hit cap inside calcDamage
+    // is the primary safeguard; this floor smooths the residual edge.
+    return shuffled.slice(0, teamSize).map(buildRandomPokemon).map(p => ({ ...p, hp:95, hpMax:95, _region: _regionId }));
   }
 
   // Adapt G13C-format Pokemon to engine format: add id (from slug→id map), color
@@ -1690,8 +1711,11 @@
   // and 7s+ floors at 1.0×.
   function timeMultFromElapsed (elapsedMs) {
     if (elapsedMs == null || elapsedMs < 0) return 1.0;
-    const raw = 1.4 - (elapsedMs / 1000) * 0.057;
-    return Math.max(1.0, Math.min(1.4, raw));
+    // v54.30 (balance): ceiling lowered 1.4 → 1.2 to match the type-chart cap
+    // ("elemen itu 1.2x max pengali"). Fast answer reward stays, but the
+    // worst-case multiplier stack no longer one-shots base-tier Pokemon.
+    const raw = 1.2 - (elapsedMs / 1000) * 0.040;
+    return Math.max(1.0, Math.min(1.2, raw));
   }
   function typeMult (moveType, defType) {
     const t = (TYPE_CHART[moveType] || {})[defType];
@@ -1701,24 +1725,27 @@
     const stab = move.type === atk.type ? 1.25 : 1.0;
     const tm   = typeMult(move.type, def.type);
     const tMul = (typeof timeMult === 'number' && timeMult > 0) ? timeMult : 1.0;
-    // v53.4 balance (concern 3 — canonical Pokemon damage scaling):
-    // Real Pokemon games use Atk/Def stat ratio inside the damage formula.
-    // Glass-cannon Pokemon (high Atk, low Def) hit harder but take more.
-    // Tank Pokemon (low Atk, high Def) hit softer but survive. Clamp the
-    // ratio to [0.6, 1.6] so no matchup becomes invincible / unwinnable.
+    // v54.30 balance (no one-shot KOs): statRatio clamp tightened from
+    // [0.6, 1.6] → [0.75, 1.35]. Glass-cannon vs tank is still felt, but the
+    // 1.6× swing combined with STAB+timeMult was producing 95-125 dmg vs
+    // 80-90 HP defenders. New range keeps the lever meaningful while the
+    // per-hit cap below guarantees no fresh defender drops 100→0 in one strike.
     const atkStat = (atk && typeof atk.attack === 'number') ? atk.attack : 70;
     const defStat = (def && typeof def.defense === 'number') ? def.defense : 70;
-    const statRatio = Math.max(0.6, Math.min(1.6, atkStat / defStat));
-    // v53.4 balance (concern 3 — Speed-gap modifier):
-    // Speed matters beyond initiative — faster attacker hits a tick harder,
-    // slower attacker a tick softer. Caps at ±10% so it doesn't swing too
-    // hard; the canonical Atk/Def ratio above is the heavier lever.
+    const statRatio = Math.max(0.75, Math.min(1.35, atkStat / defStat));
     const aSpd = (atk && typeof atk.speed === 'number') ? atk.speed : 70;
     const dSpd = (def && typeof def.speed === 'number') ? def.speed : 70;
     let spdMod = 1.0;
     if (aSpd >= dSpd + 30) spdMod = 1.10;
     else if (aSpd <= dSpd - 30) spdMod = 0.95;
-    return Math.max(1, Math.floor(move.pwr * stab * tm * tMul * statRatio * spdMod));
+    // v54.30 balance (CRITICAL): per-hit damage cap at 40% of defender hpMax.
+    // Owner reported (2026-06-24, screenshot): P1 5 Pokemon alive vs P2 1
+    // alive — Malamar (Acak Kalos, default 70/70 stats) one-shotting Hoenn
+    // Starter base team. New rule: a fresh defender ALWAYS survives ≥1 hit.
+    // Cap scales per defender — final-tier 110 HP caps at 44, base 90 caps at 36.
+    const raw = Math.floor(move.pwr * stab * tm * tMul * statRatio * spdMod);
+    const cap = Math.floor(((def && def.hpMax) || 90) * 0.40);
+    return Math.max(1, Math.min(raw, cap));
   }
   function effLabel (mult) {
     if (mult >= 1.15) return 'Super Efektif! ✨';   // threshold tuned to 1.2× cap
@@ -1825,6 +1852,25 @@
       lastAnswerElapsed: [null, null],
       comboCount: [0, 0]
     };
+    // v54.30 balance: PvP HP floor — every Pokemon in PvP/Tournament has
+    // hpMax ≥ 95 so a Kalos-random team never towers over a Hoenn-Starter
+    // base team. Random-region teams build at 95; package teams that come
+    // in below 95 (none currently, but defends against future low-HP packs)
+    // get raised here. Final-tier 110 and mega-tier 125+ keep their HP.
+    function applyPvPHpFloor (team) {
+      if (!Array.isArray(team)) return;
+      const FLOOR = 95;
+      team.forEach(p => {
+        if (!p) return;
+        if ((p.hpMax || 0) < FLOOR) {
+          p.hpMax = FLOOR;
+          p.hp    = FLOOR;
+        }
+      });
+    }
+    applyPvPHpFloor(state.teams[0]);
+    applyPvPHpFloor(state.teams[1]);
+
     // Active Pokemon shorthand. ALWAYS use this — never read state.teams directly
     // outside engine internals.
     function activePoke (playerIdx) {
@@ -2080,6 +2126,7 @@
         b.addEventListener('click', () => {
           const pkgId = b.getAttribute('data-pkg');
           state.teams[playerIdx] = buildTeamFromPackage(pkgId, state.teamSize);
+          applyPvPHpFloor(state.teams[playerIdx]);    // v54.30 balance
           state.activeIdx[playerIdx] = 0;
           advanceFn(playerIdx);
         });
@@ -2092,6 +2139,7 @@
             const team = buildTeamFromRegion(gen, state.teamSize);
             if (!team.length) { b.classList.remove('bm-pkg-loading'); return; }
             state.teams[playerIdx] = team;
+            applyPvPHpFloor(state.teams[playerIdx]);  // v54.30 balance
             state.activeIdx[playerIdx] = 0;
             advanceFn(playerIdx);
           }).catch(err => {
@@ -5375,18 +5423,24 @@
       attackFromSlug: attackFromSlug,
       defenseFromSlug: defenseFromSlug,
       // Adventure-friendly damage shaper: takes the engine's base damage and
-      // applies Atk/Def stat ratio + Speed-gap modifier. Clamps the stat
-      // ratio to [0.6, 1.6] so no matchup becomes invincible/unwinnable.
-      shapeDamage: function (baseDmg, atkSlug, defSlug) {
+      // applies Atk/Def stat ratio + Speed-gap modifier.
+      // v54.30 balance:
+      //   - statRatio clamp tightened [0.6, 1.6] → [0.75, 1.35] (parity w/ PvP).
+      //   - per-hit damage cap at 40% of defender hpMax — defender survives a
+      //     1st hit even in worst-case stacking. 4th arg defHpMax is OPTIONAL
+      //     (backwards-compatible: undefined → 90 baseline → cap 36).
+      shapeDamage: function (baseDmg, atkSlug, defSlug, defHpMax) {
         const a = attackFromSlug(atkSlug);
         const d = defenseFromSlug(defSlug);
         const aSpd = speedFromSlug(atkSlug);
         const dSpd = speedFromSlug(defSlug);
-        const statRatio = Math.max(0.6, Math.min(1.6, a / d));
+        const statRatio = Math.max(0.75, Math.min(1.35, a / d));
         let spdMod = 1.0;
         if (aSpd >= dSpd + 30) spdMod = 1.10;
         else if (aSpd <= dSpd - 30) spdMod = 0.95;
-        return Math.max(1, Math.round(baseDmg * statRatio * spdMod));
+        const raw = Math.max(1, Math.round(baseDmg * statRatio * spdMod));
+        const cap = Math.floor(((typeof defHpMax === 'number' && defHpMax > 0) ? defHpMax : 90) * 0.40);
+        return Math.min(raw, cap);
       }
     }
   };

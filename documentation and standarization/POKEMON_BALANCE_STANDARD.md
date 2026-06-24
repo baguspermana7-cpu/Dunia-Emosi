@@ -1,6 +1,6 @@
 # Pokemon Battle Balance Standard
 
-**Status**: Active (shipped 2026-06-23 commits `04cfc18` → `5668c62`, v53.0 → v53.5)
+**Status**: Active (v54.30 — 2026-06-24 hard-cap pass on top of v53.0 → v53.5 canonical formula)
 **Engines covered**: PvP / Tournament (`games/data/battle-modes.js`) + G13C Adventure (`games/g13c-pixi.html`)
 **Shared data**: `SPEED_BY_SLUG`, `STAT_BY_SLUG`, `decideTurnOrder`, `shapeDamage` — all live in `battle-modes.js` and re-exposed via `window.BattleModes.stats` for Adventure to consume.
 
@@ -18,18 +18,70 @@ Owner's actual words during the v53 series:
 
 ---
 
-## The Canonical Damage Formula
+## The Canonical Damage Formula (v54.30 hard-capped)
 
 ```
-finalDmg = max(1, floor(
+raw      = floor(
     move.pwr               // base move power (PvP) OR 30-39 random (Adventure)
   * stab                   // 1.25 if move.type === attacker.type else 1.0
-  * typeMult               // 0 / 0.5 / 1.0 / 1.5 / 2.0 from TYPE_CHART
-  * timeMult               // PvP only: 1.0 to 1.4 from answer speed
-  * statRatio              // clamp(0.6, 1.6, attacker.attack / defender.defense)
+  * typeMult               // 0 / 0.5 / 1.0 / 1.2 (cap from TYPE_CHART)
+  * timeMult               // PvP only: 1.0 to 1.20 from answer speed  (v54.30: was 1.40)
+  * statRatio              // clamp(0.75, 1.35, atk.attack / def.defense)  (v54.30: was 0.6, 1.6)
   * speedMod               // 1.10 if Δspd ≥ +30, 0.95 if Δspd ≤ -30, else 1.0
-))
+)
+cap      = floor(defender.hpMax * 0.40)   // v54.30 (CRITICAL): per-hit floor on the 1st hit
+finalDmg = max(1, min(raw, cap))
 ```
+
+### Per-hit damage cap (v54.30, CRITICAL)
+
+A fresh defender ALWAYS survives the first hit. Cap = 40% of `defender.hpMax`, so:
+
+| Defender tier | hpMax | Per-hit cap |
+|---|---|---|
+| Random region (raised) | 95  | 38 |
+| Package base           | 90  | 36 |
+| Package final          | 110 | 44 |
+| Package mega / legend  | 125-130 | 50-52 |
+
+Glass-cannons still hit harder against frail targets; tanks still absorb more (their LARGER hpMax raises the cap). The cap only fires when the raw stack EXCEEDS 40% — for typical matchups (raw 25-40) it never fires.
+
+**Why 0.40, not 0.50**: at 40% per hit, every Pokémon gets 3 meaningful decision points before the KO (100% → 60% → 20% → KO). Each decision is a swap/attack/accept-defeat moment. At 50% it would only be 2 decisions, which feels too quick for a kids' game; at 30% it would feel too slow.
+
+### Why the product matters (the failure that prompted v54.30)
+
+Owner reported a 6-0 wipe via screenshot (2026-06-24): Malamar (Acak Kalos, default 70/70) facing Hoenn Starter base team (Ralts def 25, Poochyena def 35). Pre-v54.30 the worst-case stack was:
+
+```
+34 × 1.25 × 1.20 × 1.40 × 1.60 × 1.10 = 125.6  →  one-shots ALL hp 80-110
+```
+
+Each layer's cap is defensible. The PRODUCT of caps wasn't checked against the smallest HP bucket. **L163** captures the lesson: when designing multi-layer formulas, write the worst-case product NEXT TO the smallest target HP and clamp the product itself.
+
+### PvP HP-floor (v54.30)
+
+Every Pokemon in PvP/Tournament has hpMax ≥ 95. Applied by `applyPvPHpFloor(team)` in three sites:
+- `startPvP` initial state build (`battle-modes.js:~1871`)
+- After package-card click (`~2128`)
+- After random-region pick (`~2140`)
+
+Random-region teams now build at 95 HP from the start (was 80). Package teams at HP 90 base / 110 final / 125-130 mega keep their original HP — only the rare sub-95 case is lifted.
+
+### Random-region legendary blocklist (v54.30)
+
+`buildTeamFromRegion` filters out 30 box-legend + Ultra Beast IDs so 🎲 Acak rolls never produce wipe-teams:
+
+```js
+const _LEGEND_BLOCKLIST = new Set([
+  150, 249, 250, 382, 383, 384, 483, 484, 487,
+  643, 644, 646, 716, 717, 718, 785, 786, 787, 788,
+  791, 792, 800, 793, 794, 795, 796, 797, 798, 799,
+  803, 804, 805, 806, 888, 889, 890,
+  898, 1005, 1006, 1020
+]);
+```
+
+Players still get legendaries via the per-region `Legendaris-…` packages.
 
 ### Layer rationale
 

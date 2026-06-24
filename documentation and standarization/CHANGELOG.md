@@ -1,5 +1,62 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.30 "PvP balance hard-cap + 9 new picker packages" (critical owner report)
+
+Owner reported 6-0 wipe via screenshot: P1 with **5 Pokemon alive** (Malamar 13/80) vs P2 with **1 Pokemon left** (Poochyena 59/90, the others all KO'd at 0/90). "Kok bisa 1x hit ko terus. Something wrong." Also reported missing picker Pokemon: "Pokemon teman2nya ash atau kingler itu juga g ada. Banyak yg g ada. Tolong tambahkan."
+
+### Root cause — damage stacking allowed one-shot KOs
+
+The v53.4 canonical formula `pwr × stab × type × timeMult × statRatio × speedMod` had MATHEMATICALLY-CORRECT per-layer caps but PRODUCT-OF-CAPS exceeded base-tier defender HP:
+
+```
+max stack = 34 × 1.25 × 1.20 × 1.40 × 1.60 × 1.10 = 125.6  →  vs HP 80-90 = one-shot
+typical   = 34 × 1.25 × 1.00 × 1.40 × 1.60 × 1.10 = 104.7  →  still one-shot
+```
+
+Malamar (default 70/70, missing from `STAT_BY_SLUG`) facing Hoenn Starter base team (Ralts 25/25 def, Poochyena 55/35 def, Zigzagoon 30/41 def) yielded a 95-dmg DARK move clamped only by statRatio 1.6 → guaranteed KO every turn.
+
+### Fixes — battle-modes.js (7 surgical changes)
+
+1. **NEW per-hit damage cap** = `floor(defender.hpMax * 0.40)`. A fresh Pokemon NEVER drops 100→0 in one strike. Cap scales with defender tier (base 90 → cap 36, final 110 → 44, mega 125 → 50). `calcDamage:1721`.
+2. **statRatio clamp tightened** [0.6, 1.6] → [0.75, 1.35]. Glass-cannon vs tank still felt, but 1.6× swing capped. `calcDamage:1711`.
+3. **timeMult ceiling lowered** 1.4 → 1.2 (parity with type-chart 1.2× super-effective cap). `timeMultFromElapsed:1691`.
+4. **PvP HP floor 95** applied by `applyPvPHpFloor(team)` post-team-build in `startPvP` AND after each picker selection (package + random region).
+5. **Random-region legendary blocklist** in `buildTeamFromRegion`: 30 box-legend + UB IDs (Mewtwo, Lugia, Ho-Oh, Kyogre, Groudon, Rayquaza, Dialga, Palkia, Giratina, Reshiram, Zekrom, Kyurem, Xerneas, Yveltal, Zygarde, Tapu×4, Solgaleo, Lunala, Necrozma, UB pack, Zacian, Zamazenta, Eternatus, Calyrex, Koraidon, Miraidon, Terapagos). Players still get legendaries via `Legendaris-…` packages.
+6. **Random-region HP** 80 → 95 (matches new floor).
+7. **`BattleModes.stats.shapeDamage`** gets 4th arg `defHpMax` + applies the same 40% per-hit cap. Adventure `calcDmg` passes `defPoke.maxHp` (g13c-pixi.html).
+
+### Fixes — poke-packages.js (9 new packages, owner-requested)
+
+Added (49 → 58 total packages):
+
+- **`ash-kanto-extended`** (Tim Ash Kanto Lengkap) — Pikachu / **Kingler** / Muk / Tauros / Primeape / Butterfree
+- **`misty-team`** (Tim Misty) — Starmie / Staryu / Psyduck / Goldeen / Horsea / Togepi
+- **`brock-team`** (Tim Brock) — Steelix / Onix / Geodude / Crobat / Forretress / Croagunk
+- **`team-rocket`** (Tim Rocket) — Meowth / Wobbuffet / Arbok / Weezing / Victreebel / Lickitung
+- **`may-team`** (Tim May) — Blaziken / Beautifly / Glaceon / Skitty / Munchlax / Wartortle
+- **`dawn-team`** (Tim Dawn) — Piplup / Lopunny / Pachirisu / Mamoswine / Typhlosion / Togekiss
+- **`iris-team`** (Tim Iris) — Haxorus / Axew / Excadrill / Emolga / Dragonite / Gible
+- **`serena-clemont`** (Tim Serena + Clemont) — Delphox / Sylveon / Pangoro / Luxray / Chesnaught / Heliolisk
+- **`goh-team`** (Tim Goh) — Cinderace / Grookey / Inteleon / Suicune / Regieleki / Sobble
+
+### Files touched
+- `games/data/battle-modes.js` — calcDamage, timeMultFromElapsed, buildTeamFromRegion, startPvP HP-floor + 2 picker-callback insert sites, shapeDamage.
+- `games/g13c-pixi.html` — calcDmg passes `defMax` into shapeDamage + cache-bust on battle-modes.js script tag.
+- `games/data/poke-packages.js` — 9 new package blocks appended.
+- `index.html` — cache-bust on battle-modes.js + poke-packages.js.
+- `sw.js` — CACHE_VERSION v54.29-20260624ah → v54.30-20260624ai.
+- `documentation and standarization/POKEMON_BALANCE_STANDARD.md` — § "Per-hit Damage Cap (v54.30)" + clamp updates + HP floor rule + blocklist.
+- `documentation and standarization/LESSONS-LEARNED.md` — L162 + L163.
+
+### Verification
+- `node -e "new Function(require('fs').readFileSync('games/data/battle-modes.js','utf8'))"` ✓
+- `node -e "new Function(require('fs').readFileSync('games/data/poke-packages.js','utf8'))"` ✓ — 58 packages.
+- Worst-case `calcDamage` stack now caps at 38 (40% of floor-95 defender), not 125.
+- Switch-Fairness Rule (v54.18, `performSwitch:2579`) unchanged — replacement still gets next turn.
+- PROTECTED train characters Casey / Linus / Dragutin / Brave / Malivlak — unchanged (this ship doesn't touch train code).
+
+---
+
 ## 2026-06-24 — v54.29 "PvP sprite-mismatch hotfix" (critical owner report)
 
 Owner screenshot showed Pokemon named **"Dolliv"** with sprite of **Growlithe/Dolliv-hybrid**. Verified via Read of `assets/Pokemon/pokemondb_hd_alt2/0927_dolliv.webp` — the local asset file is literally a corrupted / AI-merged sprite.
