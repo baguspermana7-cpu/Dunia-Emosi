@@ -4,6 +4,28 @@
 
 ---
 
+## 2026-06-24 — v54.15 3 owner-reported bug fixes
+
+### L122 — Lane-runner collision must snap to the INPUT lane, not the visual lane
+- **Symptom**: Owner: "saat pindah lane ke atas misalnya kok seperti ada menabrak padahal tidak ada apa2." Player visually moves to a new lane but still gets hit by an obstacle in the OLD lane.
+- **Root cause**: Two pieces of state — `S.lane` (used for collision) and `S.targetLane` (used for visual interpolation) — drifted apart. Only `targetLane` was updated by lane-change input; `S.lane` was set once at init and never touched again. Collision check `o._lane === S.lane` therefore always referenced the player's INITIAL lane.
+- **Fix**: Sync `S.lane = S.targetLane` inside `laneUp()`/`laneDn()` immediately on input. Visual interpolation continues in `tickPlayer` against `targetLane`; only collision needed to flip earlier.
+- **Lesson**: When you have separate "logical" and "visual" position state in a lane runner, the COLLISION read must use the LOGICAL state, and that state must update on INPUT, not on visual completion. Subway Surfers / Temple Run pattern. If a player tapped the button, they committed to the new lane — collision should reflect that the same frame.
+
+### L123 — Reuse existing overlay infrastructure via MutationObserver instead of authoring a new picker
+- **Symptom**: I was about to scaffold a brand-new "Team Confirm" picker with its own 10-team grid, click handlers, localStorage write, etc.
+- **Root cause**: The pkg-overlay (with full 10-package grid + click handlers that already update mid-Adventure team) was sitting unused at the new step.
+- **Fix**: `showTeamConfirm` reuses `openPackageSelector()` for the "Ganti Tim" CTA. To know when the picker has closed and re-render our mini-row with the new team, attach a MutationObserver on the picker's `style` attribute (same pattern as `refreshActivePkgLabel` at line 2785). On close → reread `getCurrentPackage()` → repaint.
+- **Lesson**: Before writing a new picker UI, audit for existing pickers that already do 80% of what you need. MutationObserver is the right tool for "let me know when this third-party overlay closes" — no patching its internals.
+
+### L124 — `drawTrainCard2d` procedural render bypasses sprite assets; need an `isCharacter` branch
+- **Symptom**: Owner added Casey/Linus/Dragutin/Malivlak to picker in v54.8 (with `isCharacter:true` + `spriteUrl:'../assets/train/*.webp'`) but they still rendered as generic procedural shapes using only bodyColor/accColor.
+- **Root cause**: `showTrainsForCat` (line 2614) unconditionally called `drawTrainCard2d` which is a CANVAS 2D procedural renderer. It only reads `bodyColor`+`accColor`+`catKey`+`v`. It never consults `spriteUrl`.
+- **Fix**: In the per-train loop, branch on `t.isCharacter`. If true AND `spriteUrl` set, create `<img>` element with the WebP path. `onerror` fallback to procedural canvas.
+- **Lesson**: When you add a new schema field (`isCharacter`+`spriteUrl`), audit ALL render paths for that entity. The in-game player sprite path was correctly branched (v54.8 added `if (selectedTrain.isCharacter && window.CharacterTrain)` in G15), but the picker card render was missed because it lives in a separate function. New schema fields = new render-path audit checklist.
+
+---
+
 ## 2026-06-24 — v54.14 Deeper Wave
 
 ### L119 — World-keyed env swap is just an if/else, not a "biome system"

@@ -1,5 +1,41 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.15 "3 owner-reported bug fixes" (Adventure VS-card timing · G14 phantom collision · G14 character picker)
+
+Fourteenth v54.x ship. Owner play-test caught 3 bugs in shipped work; this is a surgical fix wave, not a feature ship.
+
+### B1 — g13c Adventure: VS card was firing too early (before pokemon commitment)
+**Symptom**: After picking a gym trainer and pressing Fight, the YOU-vs-GYM card immediately appeared before the player could confirm/change their team. Owner: "harunya kan itu setelah pilih pokemon."
+**Root cause**: `gw-fight.onclick` at `games/g13c-pixi.html:2110-2115` called `showAdvVsCard(trainer, ...)` directly with no intermediate team-confirmation step.
+**Fix**: NEW `showTeamConfirm(trainer, onConfirmed)` overlay inserted between Fight click and VS card. Reuses `getCurrentPackage()` (line 1090) + `openPackageSelector()` (line 2707) + existing `.adv-vs-mini` styling for visual continuity. Two CTAs: "🔄 Ganti Tim" (open package picker, MutationObserver refreshes mini-row on close) and "⚔️ Maju!" (proceed to VS card). Tap-outside / ✕ button cancels.
+
+### B2 — G14: phantom collision feel on lane switch
+**Symptom**: Player moves train to a new lane visually but still loses HP / screen-shakes as if hitting something in the new lane. Owner: "kok seperti ada menabrak padahal tidak ada apa2."
+**Root cause**: `S.lane` was initialized to 1 at `games/g14.html:502` and reset to 1 at `:2233` but NEVER updated during gameplay. Only `S.targetLane` changed when `laneUp()`/`laneDn()` fired. Collision check at line 2066 (`o._lane === S.lane`) therefore read the stale OLD lane the whole time — obstacle in the lane the player just left still hit them.
+**Fix**: `laneUp()`/`laneDn()` now sync `S.lane = S.targetLane` immediately on input. Standard lane-runner convention (Subway Surfers / Temple Run): collision-lane snaps to input-lane the frame the button is pressed, visual interpolation follows. Player gets out of obstacle's lane instantly.
+
+### B3 — G14: 4 character trains buried in steam_id, rendered as generic procedural
+**Symptom**: Owner browsing "Uap Dunia 🌍" found no Casey/Linus/Dragutin/Malivlak. Owner: "sangat2 belum ada perubahan sama sekali."
+**Root cause(s)**:
+- 4 character trains were placed in `steam_id` (Uap Indonesia 🇮🇩) at lines 198-225, invisible from the world categories.
+- Even when found, `drawTrainCard2d` (called at line 2606) rendered procedural canvas using `bodyColor`/`accColor` only — never loaded the WebP sprite at `t.spriteUrl`. So Casey looked like any blue/red steam train.
+**Fix**:
+- NEW `characters` category at `TRAIN_CATS[0]` with name "Karakter Spesial ⭐", gold `color:#fbbf24`, containing the 4 trains verbatim (Casey JR, Linus Brave, JZ 711 Dragutin, Malivlak). PROTECTED — never remove.
+- `showTrainsForCat` (line 2621) now branches on `t.isCharacter`: WebP `<img>` for character trains, procedural canvas otherwise. `onerror` fallback to procedural if WebP fails.
+- NEW CSS `.train-card.is-character`: gold border (`#fbbf24`) + ⭐ ring top-right + gold-tinted gradient bg.
+
+### Files touched
+- `games/g13c-pixi.html` — B1: `showTeamConfirm()` helper (~80 LOC after `showAdvVsCard`), 6 new CSS rules for `#team-confirm-overlay` + `.tcf-*` classes, gw-fight handler rewired.
+- `games/g14.html` — B2: `laneUp`/`laneDn` 8-line rewrite at line 2529. B3a: NEW `characters` category as `TRAIN_CATS[0]` (lines 178+), 4 character entries removed from `steam_id` (lines 198-225 deleted). B3b: `showTrainsForCat` (line 2621) split render branch. B3c: 3 CSS rules for `.train-card.is-character` + `::after`.
+- `sw.js` — `CACHE_VERSION: 'v54.14-20260624s' → 'v54.15-20260624t'`.
+
+### Lessons captured
+- L122 — Lane-runner collision snap must happen on INPUT frame, not visual settle.
+- L123 — Reuse pkg-overlay via MutationObserver instead of authoring a new team picker.
+- L124 — Procedural picker render bypasses sprite assets — `isCharacter` branch is required.
+
+---
+
 ## 2026-06-24 — v54.14 "Deeper Wave" (G17 vulkanik lava + awan clouds; G14 km markers; G23 endless unlock)
 
 Thirteenth v54.x ship. Owner: continuing the polish drumbeat.

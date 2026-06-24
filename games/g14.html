@@ -85,8 +85,12 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 .train-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
 @media(min-width:480px){.train-grid{grid-template-columns:repeat(4,1fr)}}
 @media(min-width:700px){.train-grid{grid-template-columns:repeat(5,1fr)}}
-.train-card{background:rgba(248,240,255,0.06);border:2px solid rgba(180,160,220,0.2);border-radius:12px;padding:8px 6px;cursor:pointer;text-align:center;transition:all .15s;font-family:inherit;color:#e9d5ff;overflow:hidden}
+.train-card{background:rgba(248,240,255,0.06);border:2px solid rgba(180,160,220,0.2);border-radius:12px;padding:8px 6px;cursor:pointer;text-align:center;transition:all .15s;font-family:inherit;color:#e9d5ff;overflow:hidden;position:relative}
 .train-card:active,.train-card.sel{border-color:#a78bfa;background:rgba(139,92,246,0.18)}
+/* v54.15 (B3): gold character treatment — distinguishes Casey/Linus/Dragutin/Malivlak. */
+.train-card.is-character{border-color:#fbbf24;background:linear-gradient(160deg,rgba(251,191,36,0.10),rgba(251,191,36,0.02))}
+.train-card.is-character::after{content:'⭐';position:absolute;top:4px;right:6px;font-size:14px;pointer-events:none}
+.train-card.is-character:active,.train-card.is-character.sel{border-color:#f59e0b;background:linear-gradient(160deg,rgba(251,191,36,0.22),rgba(251,191,36,0.08))}
 .train-emoji{font-size:28px;display:block;margin-bottom:4px}
 .train-nm{font-size:11px;font-weight:900;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .train-sub{font-size:9px;color:rgba(200,180,230,.45);margin-top:1px}
@@ -176,28 +180,14 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 //  TRAIN CATALOG
 // ═══════════════════════════════════════════════════════════
 const TRAIN_CATS = [
+  // v54.15 (B3): dedicated category at the TOP for the 4 PROTECTED character trains.
+  // Owner complaint "belum ada perubahan sama sekali" — they were buried inside
+  // steam_id (Indonesia) which made them invisible when browsing "Uap Dunia 🌍".
+  // Gold accent (color:#fbbf24) + ⭐ in name flags them as special.
   {
-    key:'steam_id', name:'Uap Indonesia 🇮🇩', emoji:'🚂',
-    color:'#92400e', desc:'Lokomotif uap klasik koleksi Indonesia',
+    key:'characters', name:'Karakter Spesial ⭐', emoji:'⭐',
+    color:'#fbbf24', desc:'Lokomotif karakter favoritmu — Casey, Linus, Dragutin, Malivlak!',
     trains:[
-      {key:'b2507',  name:'B 25 07',  sub:'Ambarawa 1902',  emoji:'🚂', bodyColor:'#1a1a2e', accColor:'#e11d48', kmh:30,  baseSpeed:1.55, boostMult:1.55, boostDur:1600, desc:'Pendaki gunung Ambarawa! Masih beroperasi sebagai wisata.'},
-      {key:'c2801',  name:'C 28 01',  sub:'Jawa 1921',       emoji:'🚂', bodyColor:'#451a03', accColor:'#f59e0b', kmh:45,  baseSpeed:1.75, boostMult:1.50, boostDur:1500, desc:'Lokomotif ekspres Jawa era kolonial.'},
-      {key:'b1304',  name:'B 13 04',  sub:'Bandung 1914',    emoji:'🚂', bodyColor:'#0c0a09', accColor:'#78716c', kmh:40,  baseSpeed:1.65, boostMult:1.48, boostDur:1500, desc:'Hitam legam penakluk jalur Priangan.'},
-      {key:'d1408',  name:'D 14 08',  sub:'Malang 1930',     emoji:'🚂', bodyColor:'#431407', accColor:'#dc2626', kmh:55,  baseSpeed:1.90, boostMult:1.52, boostDur:1600, desc:'Si Api Merah kebanggaan Malang!'},
-      {key:'e1060',  name:'E 10 60',  sub:'Sumatera 1925',   emoji:'🚂', bodyColor:'#1c1917', accColor:'#a16207', kmh:35,  baseSpeed:1.60, boostMult:1.45, boostDur:1400, desc:'Raja jalur Sumatera Barat.'},
-      {key:'c5130',  name:'C 51 30',  sub:'Solo 1928',       emoji:'🚂', bodyColor:'#422006', accColor:'#f97316', kmh:60,  baseSpeed:2.00, boostMult:1.55, boostDur:1700, desc:'Ekspres Solo–Yogya, andalan Pakubuwono!'},
-      {key:'b5002',  name:'B 50 02',  sub:'Jawa 1900',       emoji:'🚂', bodyColor:'#292524', accColor:'#84cc16', kmh:38,  baseSpeed:1.62, boostMult:1.46, boostDur:1450, desc:'Veteran perintis rel Jawa pertama.'},
-      {key:'c3004',  name:'C 30 04',  sub:'Surabaya 1922',   emoji:'🚂', bodyColor:'#3b0764', accColor:'#c084fc', kmh:50,  baseSpeed:1.82, boostMult:1.50, boostDur:1550, desc:'Unggulan jalur pantai utara Jawa.'},
-      {key:'d5201',  name:'D 52 01',  sub:'Pasundan 1943',   emoji:'🚂', bodyColor:'#1e293b', accColor:'#38bdf8', kmh:65,  baseSpeed:2.10, boostMult:1.58, boostDur:1700, desc:'Lokomotif angkutan batu bara tercepat!'},
-      {key:'c2401',  name:'C 24 01',  sub:'Sumbar 1918',     emoji:'🚂', bodyColor:'#44403c', accColor:'#fbbf24', kmh:42,  baseSpeed:1.68, boostMult:1.47, boostDur:1480, desc:'Pendaki bukit Padang Panjang.'},
-      {key:'b2002',  name:'B 20 02',  sub:'Ambarawa 1891',   emoji:'🚂', bodyColor:'#0f172a', accColor:'#64748b', kmh:28,  baseSpeed:1.48, boostMult:1.44, boostDur:1350, desc:'Lokomotif tua paling tua koleksi museum.'},
-      {key:'c1901',  name:'C 19 01',  sub:'Jawa 1905',       emoji:'🚂', bodyColor:'#422006', accColor:'#fb923c', kmh:32,  baseSpeed:1.52, boostMult:1.46, boostDur:1400, desc:'Kuda beban jalur perkebunan.'},
-      {key:'d1601',  name:'D 16 01',  sub:'Jawa 1932',       emoji:'🚂', bodyColor:'#1c1917', accColor:'#4ade80', kmh:58,  baseSpeed:1.95, boostMult:1.53, boostDur:1600, desc:'Lokomotif angkutan barang era Depresi Besar.'},
-      {key:'e2202',  name:'E 22 02',  sub:'Aceh 1930',       emoji:'🚂', bodyColor:'#172554', accColor:'#60a5fa', kmh:36,  baseSpeed:1.58, boostMult:1.44, boostDur:1380, desc:'Penguasa jalur Aceh–Medan.'},
-      {key:'f1001',  name:'F 10 01',  sub:'Kalimantan 1940', emoji:'🚂', bodyColor:'#14532d', accColor:'#86efac', kmh:33,  baseSpeed:1.53, boostMult:1.45, boostDur:1400, desc:'Angkutan kayu hutan Borneo.'},
-      // v54.8 (concern 10): inject 4 character trains in picker — owner mandate
-      // "tambahkan, pastikan sizenya sesuai, proportional." Casey Jr / Linus Brave /
-      // JZ 711 Dragutin / Malivlak. PROTECTED — never remove.
       {key:'caseyjr_character', name:'Casey JR ⭐', sub:'0-4-0 Circus', emoji:'🚂',
        isCharacter:true, spriteUrl:'../assets/train/caseyjr-body.webp', spriteHeight:90,
        wheelLayout:'0-4-0', wheelPositions:[[-40,-10,8],[-14,-10,8],[13,-10,8],[40,-10,8]],
@@ -223,6 +213,30 @@ const TRAIN_CATS = [
        smokePos:[108,-195], bottomPaddingOffset:0,
        bodyColor:'#4a2040', accColor:'#c0392b', kmh:48, baseSpeed:1.75, boostMult:1.50, boostDur:1550,
        desc:'Malivlak — Kereta uap dengan 3 gerbong, klasik Yugoslavia!'},
+    ],
+  },
+  {
+    key:'steam_id', name:'Uap Indonesia 🇮🇩', emoji:'🚂',
+    color:'#92400e', desc:'Lokomotif uap klasik koleksi Indonesia',
+    trains:[
+      {key:'b2507',  name:'B 25 07',  sub:'Ambarawa 1902',  emoji:'🚂', bodyColor:'#1a1a2e', accColor:'#e11d48', kmh:30,  baseSpeed:1.55, boostMult:1.55, boostDur:1600, desc:'Pendaki gunung Ambarawa! Masih beroperasi sebagai wisata.'},
+      {key:'c2801',  name:'C 28 01',  sub:'Jawa 1921',       emoji:'🚂', bodyColor:'#451a03', accColor:'#f59e0b', kmh:45,  baseSpeed:1.75, boostMult:1.50, boostDur:1500, desc:'Lokomotif ekspres Jawa era kolonial.'},
+      {key:'b1304',  name:'B 13 04',  sub:'Bandung 1914',    emoji:'🚂', bodyColor:'#0c0a09', accColor:'#78716c', kmh:40,  baseSpeed:1.65, boostMult:1.48, boostDur:1500, desc:'Hitam legam penakluk jalur Priangan.'},
+      {key:'d1408',  name:'D 14 08',  sub:'Malang 1930',     emoji:'🚂', bodyColor:'#431407', accColor:'#dc2626', kmh:55,  baseSpeed:1.90, boostMult:1.52, boostDur:1600, desc:'Si Api Merah kebanggaan Malang!'},
+      {key:'e1060',  name:'E 10 60',  sub:'Sumatera 1925',   emoji:'🚂', bodyColor:'#1c1917', accColor:'#a16207', kmh:35,  baseSpeed:1.60, boostMult:1.45, boostDur:1400, desc:'Raja jalur Sumatera Barat.'},
+      {key:'c5130',  name:'C 51 30',  sub:'Solo 1928',       emoji:'🚂', bodyColor:'#422006', accColor:'#f97316', kmh:60,  baseSpeed:2.00, boostMult:1.55, boostDur:1700, desc:'Ekspres Solo–Yogya, andalan Pakubuwono!'},
+      {key:'b5002',  name:'B 50 02',  sub:'Jawa 1900',       emoji:'🚂', bodyColor:'#292524', accColor:'#84cc16', kmh:38,  baseSpeed:1.62, boostMult:1.46, boostDur:1450, desc:'Veteran perintis rel Jawa pertama.'},
+      {key:'c3004',  name:'C 30 04',  sub:'Surabaya 1922',   emoji:'🚂', bodyColor:'#3b0764', accColor:'#c084fc', kmh:50,  baseSpeed:1.82, boostMult:1.50, boostDur:1550, desc:'Unggulan jalur pantai utara Jawa.'},
+      {key:'d5201',  name:'D 52 01',  sub:'Pasundan 1943',   emoji:'🚂', bodyColor:'#1e293b', accColor:'#38bdf8', kmh:65,  baseSpeed:2.10, boostMult:1.58, boostDur:1700, desc:'Lokomotif angkutan batu bara tercepat!'},
+      {key:'c2401',  name:'C 24 01',  sub:'Sumbar 1918',     emoji:'🚂', bodyColor:'#44403c', accColor:'#fbbf24', kmh:42,  baseSpeed:1.68, boostMult:1.47, boostDur:1480, desc:'Pendaki bukit Padang Panjang.'},
+      {key:'b2002',  name:'B 20 02',  sub:'Ambarawa 1891',   emoji:'🚂', bodyColor:'#0f172a', accColor:'#64748b', kmh:28,  baseSpeed:1.48, boostMult:1.44, boostDur:1350, desc:'Lokomotif tua paling tua koleksi museum.'},
+      {key:'c1901',  name:'C 19 01',  sub:'Jawa 1905',       emoji:'🚂', bodyColor:'#422006', accColor:'#fb923c', kmh:32,  baseSpeed:1.52, boostMult:1.46, boostDur:1400, desc:'Kuda beban jalur perkebunan.'},
+      {key:'d1601',  name:'D 16 01',  sub:'Jawa 1932',       emoji:'🚂', bodyColor:'#1c1917', accColor:'#4ade80', kmh:58,  baseSpeed:1.95, boostMult:1.53, boostDur:1600, desc:'Lokomotif angkutan barang era Depresi Besar.'},
+      {key:'e2202',  name:'E 22 02',  sub:'Aceh 1930',       emoji:'🚂', bodyColor:'#172554', accColor:'#60a5fa', kmh:36,  baseSpeed:1.58, boostMult:1.44, boostDur:1380, desc:'Penguasa jalur Aceh–Medan.'},
+      {key:'f1001',  name:'F 10 01',  sub:'Kalimantan 1940', emoji:'🚂', bodyColor:'#14532d', accColor:'#86efac', kmh:33,  baseSpeed:1.53, boostMult:1.45, boostDur:1400, desc:'Angkutan kayu hutan Borneo.'},
+      // v54.15 (B3): the 4 PROTECTED character trains moved to the new "Karakter
+      // Spesial ⭐" category at TRAIN_CATS[0] for prominence. Source of truth lives
+      // there now — DO NOT duplicate here.
       {key:'caseyjr', name:'Casey Jr',  sub:'B 2-4-0',        emoji:'🚂', bodyColor:'#1e2a4a', accColor:'#c0392b', kmh:40,  baseSpeed:1.65, boostMult:1.50, boostDur:1500, desc:'Lokomotif sirkus legendaris! Si kecil yang berani.'},
       {key:'c1205',  name:'C 12 05',  sub:'Jawa 1911',       emoji:'🚂', bodyColor:'#1c1917', accColor:'#ef4444', kmh:35,  baseSpeed:1.58, boostMult:1.46, boostDur:1420, desc:'Lokomotif tank ringan jalur cabang Jawa.'},
       {key:'b2502',  name:'B 25 02',  sub:'Ambarawa 1902',   emoji:'🚂', bodyColor:'#292524', accColor:'#f97316', kmh:28,  baseSpeed:1.46, boostMult:1.44, boostDur:1350, desc:'Saudara B 25 07, rak gigi Ambarawa!'},
@@ -2526,8 +2540,25 @@ function executeBoost() {
 // ═══════════════════════════════════════════════════════════
 //  INPUT
 // ═══════════════════════════════════════════════════════════
-function laneUp() { if (S.running && S.targetLane > 0) { S.targetLane--; playTone(500, 0.05) } }
-function laneDn() { if (S.running && S.targetLane < LANE_COUNT - 1) { S.targetLane++; playTone(400, 0.05) } }
+// v54.15 (B2): sync S.lane = S.targetLane immediately on input. Bug: S.lane was
+// set once at init and never updated; collision check (line ~2066: o._lane === S.lane)
+// kept firing against the OLD lane after a switch, so player visually moved but
+// felt phantom hits in the old lane. Standard lane-runner convention is input-snap
+// collision (Subway Surfers / Temple Run pattern); visual interpolation follows.
+function laneUp() {
+  if (S.running && S.targetLane > 0) {
+    S.targetLane--
+    S.lane = S.targetLane
+    playTone(500, 0.05)
+  }
+}
+function laneDn() {
+  if (S.running && S.targetLane < LANE_COUNT - 1) {
+    S.targetLane++
+    S.lane = S.targetLane
+    playTone(400, 0.05)
+  }
+}
 window.addEventListener('keydown', e => {
   if (e.key === 'ArrowUp') { laneUp(); e.preventDefault() }
   if (e.key === 'ArrowDown') { laneDn(); e.preventDefault() }
@@ -2593,17 +2624,40 @@ function showTrainsForCat(cat) {
   grid.className = 'train-grid'
   cat.trains.forEach((t, idx) => {
     const card = document.createElement('button')
-    card.className = 'train-card'
-    const cv = document.createElement('canvas')
-    cv.width = 96; cv.height = 48
-    cv.className = 'train-emoji'  // reuse sizing slot
-    cv.style.cssText = 'display:block;margin:0 auto 4px;width:84px;height:42px'
-    card.appendChild(cv)
+    card.className = 'train-card' + (t.isCharacter ? ' is-character' : '')
+    const trainV = (idx % 5) + 1
+    // v54.15 (B3): character trains render the real WebP sprite, not procedural.
+    // Owner: "sangat2 belum ada perubahan sama sekali" — the v54.8 entries WERE
+    // there, just rendered as generic procedural shapes via bodyColor/accColor.
+    // Now Casey/Linus/Dragutin/Malivlak each show their cartoon sprite.
+    if (t.isCharacter && t.spriteUrl) {
+      const img = document.createElement('img')
+      img.src = t.spriteUrl
+      img.alt = t.name
+      img.loading = 'lazy'
+      img.decoding = 'async'
+      img.style.cssText = 'display:block;margin:0 auto 4px;width:96px;height:48px;object-fit:contain'
+      img.onerror = () => {
+        // Defensive: WebP load failure falls back to procedural so the card still renders.
+        const fb = document.createElement('canvas')
+        fb.width = 96; fb.height = 48
+        fb.className = 'train-emoji'
+        fb.style.cssText = 'display:block;margin:0 auto 4px;width:84px;height:42px'
+        img.replaceWith(fb)
+        drawTrainCard2d(fb, t.bodyColor, t.accColor, cat.key, trainV)
+      }
+      card.appendChild(img)
+    } else {
+      const cv = document.createElement('canvas')
+      cv.width = 96; cv.height = 48
+      cv.className = 'train-emoji'
+      cv.style.cssText = 'display:block;margin:0 auto 4px;width:84px;height:42px'
+      card.appendChild(cv)
+      drawTrainCard2d(cv, t.bodyColor, t.accColor, cat.key, trainV)
+    }
     const info = document.createElement('div')
     info.innerHTML = `<div class="train-nm">${t.name}</div><div class="train-sub">${t.sub}</div><div class="train-spd">${t.kmh} km/h</div>`
     card.appendChild(info)
-    const trainV = (idx % 5) + 1
-    drawTrainCard2d(cv, t.bodyColor, t.accColor, cat.key, trainV)
     card.onclick = () => {
       grid.querySelectorAll('.train-card').forEach(c => c.classList.remove('sel'))
       card.classList.add('sel')
