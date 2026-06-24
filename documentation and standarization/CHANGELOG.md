@@ -1,5 +1,37 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.14 "Deeper Wave" (G17 vulkanik lava + awan clouds; G14 km markers; G23 endless unlock)
+
+Thirteenth v54.x ship. Owner: continuing the polish drumbeat.
+
+### C1 — G17 vulkanik lava strip + awan cloud strip below
+Replaced static bamboo planks with world-keyed ground hazards:
+- **Vulkanik**: continuous orange lava strip + 8 bubbling pockets along it (Pixi Graphics fills, no animation cost).
+- **Awan**: 12 soft cloud puffs (ellipse pairs at varying x positions) instead of solid ground line.
+- **Bambu**: classic planks unchanged.
+
+### C2 — G14 distance KM markers
+NEW `buildKMMarkers()` + `tickKMMarkers()`. 3 reusable Pixi Containers (sign + pole + green Indonesian-highway rect + white text). Spawn at `S.distance >= m._nextValueAt`, scroll past at 0.95× game speed, recycle on screen exit. Slot 0 first @ 150m, slot 1 @ 350m, slot 2 @ 550m; each slot rescheduled 600m later. Spatial progress sense — kid sees "230m... 350m... 450m" signs whizz past, not just an abstract bar.
+
+### C3 — G23 endless-mode unlock at L10 max-stars
+`showWin()` after stars calculation: if `S.level === 10 && stars >= 5` AND `dunia-g23-endless-unlocked` not set, persist the unlock + show a gradient purple/blue toast `🔓 MODE TAK TERBATAS — Tersedia!` with `effComboPop` keyframe. Future v54.14.x will surface the unlocked endless mode in start-overlay selector.
+
+### Files touched
+- `games/g17-pixi.html` — world-keyed ground hazard branches in `g17BuildLevel()`.
+- `games/g14.html` — `buildKMMarkers` + `tickKMMarkers` helpers; wired into both `setup()` build-phase and main loop.
+- `games/g23-pixi.html` — endless unlock check + toast inside `showWin()`.
+- `sw.js` — CACHE_VERSION v54.13-20260624r → v54.14-20260624s.
+
+### Skipped
+- G16 theme transition cinematic: G16 standalone (`games/g16-pixi.html`) doesn't carry a "themes cycle" — that was an in-app `screen-game16` rope-rescue feature. Will revisit in a future ship that targets the in-app version specifically.
+
+### Lessons captured
+- L119 — world-keyed env swap is just `if (world === X) draw lava; else if Y draw clouds; else default`. No "biome system" needed.
+- L120 — recyclable Pixi Container pool beats per-spawn allocations for repeated env elements.
+- L121 — unlock toast on win (vs interrupting modal) keeps flow smooth.
+
+---
+
 ## 2026-06-24 — v54.13 "Boss + Meta Currency + Hints" (G17 Pidgeot sentinel; G23 Pokeball streak; G15 slot polish)
 
 Twelfth v54.x ship. Three high-visibility additions across G17, G23, G15.

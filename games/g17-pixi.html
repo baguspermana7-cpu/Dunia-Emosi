@@ -306,14 +306,38 @@ function g17BuildLevel(lvl){
   }
 
   // Collapsing planks line — visual reference for the "gorge below"
-  const planks = new PIXI.Graphics()
-  for (let i = 0; i < 30; i++){
-    const px = i * 80 - 40
-    const py = groundY - 4 + Math.sin(i * 0.6) * 6
-    planks.rect(px, py, 60, 8).fill({ color: 0xa16207, alpha: 0.7 })
-    planks.rect(px - 5, py + 8, 4, 14).fill({ color: 0x7c2d12 })
+  // v54.14 — Vulkanik = lava pools below instead of bamboo planks.
+  // Awan = cloud platforms instead of planks.
+  if (lvl.world === 'vulkanik') {
+    const lava = new PIXI.Graphics()
+    // Continuous lava strip
+    lava.rect(0, groundY - 4, W * 4, 18).fill({ color: 0xea580c })
+    lava.rect(0, groundY - 4, W * 4, 18).stroke({ color: 0xfde047, width: 1.5, alpha: 0.6 })
+    // Bubbling pockets (8 darker glows along the strip)
+    for (let i = 0; i < 8; i++){
+      const bx = (i + 0.5) * (W / 4)
+      lava.circle(bx, groundY + 6, 3 + Math.random() * 3).fill({ color: 0xfb923c, alpha: 0.9 })
+    }
+    g17World.addChild(lava)
+  } else if (lvl.world === 'awan') {
+    // Cloud platform strip — soft white puffs instead of solid planks.
+    const cloud = new PIXI.Graphics()
+    for (let i = 0; i < 12; i++){
+      const px = i * 130 + Math.random() * 50
+      cloud.ellipse(px, groundY, 60 + Math.random() * 30, 14).fill({ color: 0xffffff, alpha: 0.75 })
+      cloud.ellipse(px - 20, groundY - 6, 30, 9).fill({ color: 0xffffff, alpha: 0.55 })
+    }
+    g17World.addChild(cloud)
+  } else {
+    const planks = new PIXI.Graphics()
+    for (let i = 0; i < 30; i++){
+      const px = i * 80 - 40
+      const py = groundY - 4 + Math.sin(i * 0.6) * 6
+      planks.rect(px, py, 60, 8).fill({ color: 0xa16207, alpha: 0.7 })
+      planks.rect(px - 5, py + 8, 4, 14).fill({ color: 0x7c2d12 })
+    }
+    g17World.addChild(planks)
   }
-  g17World.addChild(planks)
 
   // Pikachu sprite
   const pika = new PIXI.Graphics()

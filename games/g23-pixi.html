@@ -2051,6 +2051,21 @@ function showWin(){
   // coins counted as Pokeballs banked + daily-streak tally if at least one coin
   // grabbed today. Survives across game sessions via localStorage.
   g23BankPokeballs(S.coinsCollected || 0)
+  // v54.14 — Endless-mode unlock at L10 with max stars (≥5). One-time persist
+  // to localStorage `dunia-g23-endless-unlocked`; future v54.14.x adds the
+  // selector chip on start overlay.
+  if (S.level === 10 && stars >= 5) {
+    try {
+      if (!localStorage.getItem('dunia-g23-endless-unlocked')) {
+        localStorage.setItem('dunia-g23-endless-unlocked', '1')
+        const toast = document.createElement('div')
+        toast.style.cssText = 'position:fixed;top:30%;left:50%;transform:translateX(-50%);z-index:9099;background:linear-gradient(135deg,#a855f7,#3b82f6);color:#fff;font-family:Fredoka One,sans-serif;font-size:18px;font-weight:900;padding:18px 28px;border-radius:18px;box-shadow:0 16px 48px rgba(168,85,247,0.55);text-shadow:0 1px 3px rgba(0,0,0,0.4);text-align:center;animation:effComboPop 1.6s cubic-bezier(.34,1.56,.64,1) forwards'
+        toast.innerHTML = '🔓 MODE TAK TERBATAS<br><span style="font-size:13px;opacity:0.85">Tersedia!</span>'
+        document.body.appendChild(toast)
+        setTimeout(()=>toast.remove(), 2200)
+      }
+    } catch(_){}
+  }
   document.getElementById('status-text').textContent='Level Selesai!'
   setTimeout(()=>{
     // v54.11 — Run summary with rich stats (distance, pickups, top combo, quiz%, top streak).

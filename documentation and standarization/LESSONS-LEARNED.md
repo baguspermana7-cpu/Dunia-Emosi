@@ -4,6 +4,28 @@
 
 ---
 
+## 2026-06-24 — v54.14 Deeper Wave
+
+### L119 — World-keyed env swap is just an if/else, not a "biome system"
+- **Symptom**: I was about to scaffold a Biome class with `register()`, `unregister()`, fallback handling, world-config DB schema, etc.
+- **Root cause**: Three worlds (bambu/vulkanik/awan) need three different ground hazards. That's exactly 3 if/else branches — not a system.
+- **Fix**: `if (lvl.world === 'vulkanik') drawLava() else if ('awan') drawClouds() else drawPlanks()`. Done. ~20 LOC including the geometry calls.
+- **Lesson**: Class-based scaffolding for finite enumerable variations adds indirection without value. Use plain if/else until you discover a 4th case that doesn't fit the pattern. Then revisit.
+
+### L120 — Recyclable Pixi Container pool > per-spawn allocations
+- **Symptom**: G14 KM markers had to appear at 150m / 350m / 550m / 750m / ... potentially 50+ over a single race.
+- **Root cause**: Naïve approach is `new PIXI.Container()` per spawn, destroy on exit. Allocations + GC pressure scale with race length.
+- **Fix**: Pre-build 3 containers once. Each carries `_nextValueAt` for "when to appear next." On screen exit, increment `_nextValueAt += 600` so the slot reappears at the next milestone. Total allocations: 3 forever.
+- **Lesson**: For periodic spawned UI/sprites that have clear "off-screen" recycle events, build a fixed-size pool and rotate. Beats per-spawn allocations especially on long sessions or low-end Android.
+
+### L121 — Unlock toast on win beats interrupting modal
+- **Symptom**: A "🎉 You unlocked endless mode! [Try now] [Later]" modal would interrupt the post-win flow.
+- **Root cause**: Win moment is already busy: confetti, stars, summary, next button. Modal-on-modal stacks attention.
+- **Fix**: 2.2s gradient toast at 30% viewport top, animated with existing `effComboPop` keyframe. Kid sees the unlock; the existing modal flow continues underneath. Endless selector appears on next start-overlay visit.
+- **Lesson**: For one-time recognition events (unlocks, achievements), use a transient toast OVER the existing flow. Never stop the current modal to spawn a celebration modal.
+
+---
+
 ## 2026-06-24 — v54.13 Boss + Meta Currency + Hints
 
 ### L116 — Boss as static perched sprite + idle sway = "alive" for ~30 LOC

@@ -551,6 +551,7 @@ async function initPixi() {
   buildBirds()
   buildMidScenery()
   buildSignalPosts()
+  buildKMMarkers()  // v54.14 — scrolling distance signs
   buildTracks()
 
   L.obstacles = new PIXI.Container(); stage.addChild(L.obstacles)
@@ -813,6 +814,58 @@ function tickSignalPosts(delta) {
   for (const p of signalPosts) {
     p.x -= px
     if (p.x < -40) p.x = W + 40 + Math.random() * 60
+  }
+}
+
+// v54.14 — Distance KM markers. Spawn an Indonesian highway-style sign every ~150m
+// that scrolls past with the player. Adds a sense of "progress through space" beyond
+// the abstract progress bar. Pixi Container per marker; auto-recycled on screen exit.
+let kmMarkers = []
+function buildKMMarkers() {
+  const c = new PIXI.Container(); L.kmMarkers = c; stage.addChild(c)
+  // Pre-build 3 markers — we'll recycle them as they exit screen.
+  for (let i = 0; i < 3; i++) {
+    const m = new PIXI.Container()
+    // Pole
+    const pole = new PIXI.Graphics()
+    pole.rect(-1, 0, 2, 38).fill(0x6b7280)
+    m.addChild(pole)
+    // Sign rectangle (green Indonesian directional)
+    const sign = new PIXI.Graphics()
+    sign.rect(-22, -12, 44, 22).fill(0x15803d)
+    sign.rect(-22, -12, 44, 22).stroke({ color: 0xffffff, width: 1.8 })
+    m.addChild(sign)
+    // Text — placeholder; updated by tickKMMarkers
+    const txt = new PIXI.Text({ text: '0m', style: { fontFamily: 'Fredoka One, sans-serif', fontSize: 11, fill: 0xffffff, fontWeight: '900' } })
+    txt.anchor.set(0.5); txt.x = 0; txt.y = -1
+    m.addChild(txt)
+    m._txt = txt
+    m._nextValueAt = 150 + i * 200  // first show at 150m / 350m / 550m
+    m.visible = false
+    c.addChild(m)
+    kmMarkers.push(m)
+  }
+}
+function tickKMMarkers(delta) {
+  if (!kmMarkers.length) return
+  const W = app.screen.width
+  const px = S.speed * delta * 0.95
+  for (const m of kmMarkers) {
+    if (!m.visible) {
+      // Spawn when player reaches the marker's next value.
+      if (S.distance >= m._nextValueAt) {
+        const targetM = Math.round(m._nextValueAt)
+        m._txt.text = targetM + 'm'
+        m.x = W + 30
+        m.y = laneYs[0] - laneH * 0.4
+        m.visible = true
+        // Schedule next marker for this slot after a 600m gap.
+        m._nextValueAt += 600
+      }
+      continue
+    }
+    m.x -= px
+    if (m.x < -50) m.visible = false
   }
 }
 
@@ -2132,6 +2185,7 @@ function loop(ticker) {
   tickBirds(delta)
   tickMid(delta)
   tickSignalPosts(delta)
+  tickKMMarkers(delta)  // v54.14
   tickTracks(delta)
   tickSteam(delta)
   tickPlayer(delta)
