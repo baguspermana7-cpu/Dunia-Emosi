@@ -356,7 +356,7 @@ const CITY_PACK = {
         _p(219,'magcargo','fire'), _p(324,'torkoal','fire'), _p(305,'lairon','steel'),
       ], 'unova'),
       _city('humilau-city', 'Humilau City', 15, 4, null, {leader:'Marlon',type:'water'}, [
-        _p(564,'carracosta','water'), _p(321,'wailord','water'), _p(593,'jellicent','water'),
+        _p(565, 'carracosta', 'water'), _p(321,'wailord','water'), _p(593,'jellicent','water'),
         _p(226,'mantine','water'), _p(320,'wailmer','water'), _p(458,'mantyke','water'),
       ], 'unova'),
       _city('lacunosa-town', 'Lacunosa Town', 16, 4, null, null, [
@@ -571,47 +571,47 @@ const CITY_PACK = {
       ], 'paldea'),
       _city('los-platos', 'Los Platos', 2, 1, 'HZ002', null, [
         _p(915,'lechonk','normal'), _p(921,'pawmi','electric'), _p(187,'hoppip','grass'),
-        _p(926,'fidough','fairy'), _p(661,'fletchling','flying'), _p(270,'lotad','water'),
+        _p(924, 'fidough', 'fairy'), _p(661,'fletchling','flying'), _p(270,'lotad','water'),
       ], 'paldea'),
       _city('mesagoza', 'Mesagoza', 3, 2, 'HZ003', null, [
         _p(906,'sprigatito','grass'), _p(909,'fuecoco','fire'), _p(912,'quaxly','water'),
         _p(921,'pawmi','electric'), _p(923,'pawmot','electric'), _p(925,'maushold','normal'),
-        _p(1000,'gholdengo','steel'),
+        _p(998, 'gholdengo', 'steel'),
       ], 'paldea'),
       _city('cortondo', 'Cortondo', 4, 2, null, {leader:'Katy',type:'bug'}, [
         _p(919,'nymble','bug'), _p(917,'tarountula','bug'), _p(216,'teddiursa','normal'),
         _p(872,'snom','ice'), _p(669,'flabebe','fairy'), _p(401,'kricketot','bug'),
       ], 'paldea'),
       _city('artazon', 'Artazon', 5, 2, null, {leader:'Brassius',type:'grass'}, [
-        _p(928,'smoliv','grass'), _p(548,'petilil','grass'), _p(185,'sudowoodo','rock'),
+        _p(926, 'smoliv', 'grass'), _p(548,'petilil','grass'), _p(185,'sudowoodo','rock'),
         _p(191,'sunkern','grass'), _p(192,'sunflora','grass'), _p(273,'seedot','grass'),
       ], 'paldea'),
       _city('levincia', 'Levincia', 6, 3, null, {leader:'Iono',type:'electric'}, [
-        _p(940,'wattrel','electric'), _p(939,'bellibolt','electric'), _p(404,'luxio','electric'),
+        _p(938, 'wattrel', 'electric'), _p(937, 'bellibolt', 'electric'), _p(404,'luxio','electric'),
         _p(429,'mismagius','ghost'), _p(92,'gastly','ghost'), _p(871,'pincurchin','electric'),
       ], 'paldea'),
       _city('cascarrafa', 'Cascarrafa', 7, 3, null, {leader:'Kofu',type:'water'}, [
-        _p(976,'veluza','water'), _p(961,'wugtrio','water'), _p(740,'crabominable','fighting'),
-        _p(960,'wiglett','water'), _p(339,'barboach','water'), _p(211,'qwilfish','water'),
+        _p(974, 'veluza', 'water'), _p(959, 'wugtrio', 'water'), _p(740,'crabominable','fighting'),
+        _p(958, 'wiglett', 'water'), _p(339,'barboach','water'), _p(211,'qwilfish','water'),
       ], 'paldea'),
       _city('porto-marinada', 'Porto Marinada', 8, 3, null, null, [
         _p(551,'sandile','ground'), _p(246,'larvitar','rock'), _p(449,'hippopotas','ground'),
         _p(632,'durant','bug'), _p(631,'heatmor','fire'), _p(451,'skorupi','poison'),
       ], 'paldea'),
       _city('medali', 'Medali', 9, 4, null, {leader:'Larry',type:'normal'}, [
-        _p(775,'komala','normal'), _p(982,'dudunsparce','normal'), _p(398,'staraptor','flying'),
+        _p(775,'komala','normal'), _p(980, 'dudunsparce', 'normal'), _p(398,'staraptor','flying'),
         _p(264,'linoone','normal'), _p(161,'sentret','normal'), _p(506,'lillipup','normal'),
       ], 'paldea'),
       _city('montenevera', 'Montenevera', 10, 4, null, {leader:'Ryme',type:'ghost'}, [
-        _p(354,'banette','ghost'), _p(778,'mimikyu','ghost'), _p(972,'houndstone','ghost'),
+        _p(354,'banette','ghost'), _p(778,'mimikyu','ghost'), _p(970, 'houndstone', 'ghost'),
         _p(849,'toxtricity','electric'), _p(477,'dusknoir','ghost'), _p(353,'shuppet','ghost'),
       ], 'paldea'),
       _city('alfornada', 'Alfornada', 11, 4, null, {leader:'Tulip',type:'psychic'}, [
-        _p(981,'farigiraf','normal'), _p(282,'gardevoir','psychic'), _p(956,'espathra','psychic'),
+        _p(979, 'farigiraf', 'normal'), _p(282,'gardevoir','psychic'), _p(954, 'espathra', 'psychic'),
         _p(671,'florges','fairy'), _p(96,'drowzee','psychic'), _p(280,'ralts','psychic'),
       ], 'paldea'),
       _city('zapapico', 'Zapapico', 12, 4, null, null, [
-        _p(449,'hippopotas','ground'), _p(450,'hippowdon','ground'), _p(982,'dudunsparce','normal'),
+        _p(449,'hippopotas','ground'), _p(450,'hippowdon','ground'), _p(980, 'dudunsparce', 'normal'),
         _p(529,'drilbur','ground'), _p(530,'excadrill','ground'), _p(95,'onix','rock'),
       ], 'paldea'),
     ],

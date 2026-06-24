@@ -4,6 +4,19 @@
 
 ---
 
+## 2026-06-24 — v54.29 PvP sprite-mismatch hotfix
+
+### L161 — Corrupted-but-loading asset files are invisible to onerror
+- Owner reported "Pokemon name says Dolliv but sprite is wrong." Local `.webp` file existed; loaded successfully; HTTP 200 OK. No `onerror` to catch. Only way to detect: visual diff against canonical source.
+- Mitigation: maintain an explicit `LOCAL_SPRITE_BLOCKLIST` of ids known to be corrupted. Route those directly to the canonical remote CDN. Audit and expand the blocklist as more bad files surface.
+- Lesson: For asset bundles you don't fully control, never trust "the file loaded" as proof of correctness. Maintain a blocklist OR validate file content via known-good hashes when feasible.
+
+### L162 — Generated data pairing an id with a string-key MUST be machine-validated
+- 14 rows in `city-pokemon-pack.js` had `_p(928, 'smoliv', ...)` where 928 is Arboliva and Smoliv is 926. Pattern: id off-by-2 from slug. Authored by hand against one Pokemon numbering scheme; the lookup tables use a different one.
+- Lesson: When you have two parallel id systems (Pokedex national-id vs sprite-bundle id, or any canonical-id-vs-display-key pair), every row in every table MUST cross-check via a build-time audit script. Mismatches are invisible until a user reports a wrong rendering, and by then the bug has been shipping for months.
+
+---
+
 ## 2026-06-24 — v54.28 G15 trifecta
 
 ### L158 — `loop` is an HTML attribute, not a playback assumption

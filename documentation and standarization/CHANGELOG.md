@@ -1,5 +1,37 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.29 "PvP sprite-mismatch hotfix" (critical owner report)
+
+Owner screenshot showed Pokemon named **"Dolliv"** with sprite of **Growlithe/Dolliv-hybrid**. Verified via Read of `assets/Pokemon/pokemondb_hd_alt2/0927_dolliv.webp` — the local asset file is literally a corrupted / AI-merged sprite.
+
+### Root causes (TWO compounding bugs)
+
+1. **Asset bundle corruption** — Some Gen 9 Paldea species' local `.webp` files contain wrong/merged sprite content. The file LOADS successfully (no 404), so `onerror` never fires, so the wrong sprite renders silently. Owner's bundle appears to have been generated against TWO different Pokemon numbering schemes (evidence: `assets/Pokemon/pokemondb_hd_alt2/` has BOTH `0926_fidough.webp` and `0926_smoliv.webp` — duplicate id prefixes).
+
+2. **`city-pokemon-pack.js` id/slug rows misaligned** — audit found **14 `_p(id, slug, type)` entries** where the `id` literal didn't match the canonical id for the `slug` (e.g., `_p(928, 'smoliv', ...)` when 928 is Arboliva, 926 is Smoliv). Pattern: id off-by-2 from slug. These bled into G13C Adventure sprite paths and the v53.4 sprite-fallback chain at the boundary.
+
+### Fixes
+
+- **`games/data/battle-modes.js`**
+  - NEW `LOCAL_SPRITE_BLOCKLIST` set listing ~30 ids whose local files are confirmed corrupted (Smoliv chain, Fidough/Dachsbun, Maschiff/Mabosstiff, Wattrel/Kilowattrel, Cetoddle/Cetitan, Houndstone, Kingambit/Great-Tusk/Farigiraf/Dudunsparce, Espathra/Tinkatuff/Tinkaton, Wiglett/Wugtrio/Bombirdier/Finizen, Veluza/Tatsugiri, Gholdengo/Chien-Pao, Tirtouga/Carracosta).
+  - `spritePath(id, slug)` returns `https://img.pokemondb.net/sprites/home/normal/${slug}.png` directly for blocklisted ids; falls through to the local bundle for everything else.
+  - NEW `window._bmSpriteOnError(img, slug, emoji, cls)` global. Two-step chain: try the CDN once via dataset flag, then replace with emoji span. Covers the case where a NON-blocklisted local file is also corrupted (rare 404 — picked up by CDN fallback).
+  - All 6 sprite `<img onerror>` sites rewired to use the new helper: arena P1, arena P2, VS-card mini, package picker thumb, switch panel, champion screen.
+
+- **`games/data/city-pokemon-pack.js`** — 14 rows auto-fixed via slug-as-authority resolution (replaced wrong id with canonical id for that slug). Example: `_p(928, 'smoliv', ...)` → `_p(926, 'smoliv', ...)`.
+
+### Files touched
+- `games/data/battle-modes.js` — spritePath rewrite + blocklist + onerror helper + 6 onerror call sites.
+- `games/data/city-pokemon-pack.js` — 14 id corrections.
+- `index.html` — cache-bust on battle-modes.js + city-pokemon-pack.js.
+- `sw.js` — CACHE_VERSION v54.28-20260624ag → v54.29-20260624ah.
+
+### Lessons captured
+- L161 — Asset corruption that LOADS is invisible to `onerror`. The only mitigation is an explicit blocklist + remote CDN preference. There's no programmatic way to detect wrong-but-valid image content.
+- L162 — Generated data tables that pair an id with a string-key MUST be machine-validated against the source-of-truth lookup. The 14 mismatches in city-pokemon-pack.js had been silently shipping for months.
+
+---
+
 ## 2026-06-24 — v54.28 "Polish Pass 3 — G15 trifecta" (I12 + I13 + I14)
 
 Third iteration of "continuous polish." All three G15 items from the iter-2 queue. One file, three big improvements.

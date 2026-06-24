@@ -756,8 +756,55 @@
     } catch (e) { return '/'; }
   })();
   function spritePath (id, slug) {
+    // v54.29: owner reported name/sprite mismatch (Dolliv labeled, Growlithe/Dolliv
+    // hybrid rendered) — root cause is the LOCAL asset bundle has corrupted /
+    // AI-merged files for some Gen 9 species. Switch to the canonical PokemonDB
+    // CDN as the PRIMARY source for these known-bad ids; fall through to local
+    // for everything else. The onerror handlers throughout the file already
+    // catch 404s and replace with the emoji span.
+    if (LOCAL_SPRITE_BLOCKLIST.has(id)) {
+      return 'https://img.pokemondb.net/sprites/home/normal/' + slug + '.png';
+    }
     var padded = String(id).padStart(4, '0');
     return _ASSET_BASE + 'assets/Pokemon/pokemondb_hd_alt2/' + padded + '_' + slug + '.webp';
+  }
+  // Ids whose LOCAL .webp is mis-named or mis-content per audit. Anything in here
+  // bypasses the local bundle entirely. Expand as more bad files are found.
+  // Olive chain (926-928) confirmed corrupted via owner screenshot (Dolliv labeled
+  // → Growlithe-hybrid sprite). Adjacent Paldea Gen 9 species likely same issue.
+  const LOCAL_SPRITE_BLOCKLIST = new Set([
+    926, 927, 928,            // Smoliv / Dolliv / Arboliva
+    924, 925,                 // Fidough / Dachsbun (duplicate-prefix asset evidence)
+    940, 941, 938, 939,       // Maschiff / Mabosstiff / Wattrel / Kilowattrel
+    972, 973, 970,            // Cetoddle / Cetitan / Houndstone
+    981, 982, 979, 980,       // Kingambit / Great-Tusk / Farigiraf / Dudunsparce
+    954, 956, 957,            // Espathra / Tinkatuff / Tinkaton
+    958, 959, 960, 961,       // Wiglett / Wugtrio / Bombirdier / Finizen
+    974, 976,                 // Veluza / Tatsugiri
+    998, 1000,                // Gholdengo / Chien-Pao
+    564, 565,                 // Tirtouga / Carracosta (also mismatched in city-pack audit)
+  ]);
+
+  // v54.29 onerror chain: try CDN once if local 404s; then replace with the
+  // emoji/star span. Without the CDN step, ALL non-blocklisted corrupted files
+  // would silently render their wrong content (no 404 to catch). This catches
+  // 404s only (corruption-but-loads stays a manual fix via the blocklist above).
+  if (typeof window !== 'undefined' && !window._bmSpriteOnError) {
+    window._bmSpriteOnError = function(img, slug, emoji, cls) {
+      try {
+        if (!img.dataset.bmCdnTried) {
+          img.dataset.bmCdnTried = '1';
+          img.src = 'https://img.pokemondb.net/sprites/home/normal/' + slug + '.png';
+          return;
+        }
+      } catch(_) {}
+      try {
+        const span = document.createElement('span');
+        span.textContent = emoji || '⭐';
+        if (cls) span.className = cls;
+        img.replaceWith(span);
+      } catch(_) {}
+    };
   }
   function bgPath (file) {
     return _ASSET_BASE + 'assets/' + file;
@@ -1595,7 +1642,7 @@
                 const color = TYPE_COLOR[p.type] || '#A8A878';
                 return `<div class="bm-pkg-thumb" title="${escapeHtml(p.name)}" style="background:${color}22; border-color:${color};">
                   <img src="${spritePath(id, spriteSlug(p.slug))}" alt="${escapeHtml(p.name)}"
-                       onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'⭐',className:'bm-pkg-thumb-fallback'}))">
+                       onerror="window._bmSpriteOnError(this,'${spriteSlug(p.slug)}','⭐','bm-pkg-thumb-fallback')">
                 </div>`;
               }).join('')}
             </div>
@@ -1832,7 +1879,7 @@
         return team.map((p, i) => {
           const isAct = i === activeIdx;
           return `<div class="bm-vs-mini ${isAct ? 'is-active' : ''}" title="${escapeHtml(p.name)}">
-            <img alt="" src="${spritePath(p.id, spriteSlug(p.slug))}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'⭐',className:'bm-vs-mini-fb'}))">
+            <img alt="" src="${spritePath(p.id, spriteSlug(p.slug))}" onerror="window._bmSpriteOnError(this,'${spriteSlug(p.slug)}','⭐','bm-vs-mini-fb')">
           </div>`;
         }).join('');
       }
@@ -2258,12 +2305,12 @@
               <div class="bm-hp-text">${p2.hp}/${p2.hpMax}</div>
               ${renderBenchDots(1)}
             </div>
-            <img class="bm-arena-opp-img" alt="${escapeHtml(p2.name)}" src="${spritePath(p2.id, spriteSlug(p2.slug))}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'bm-arena-opp-sprite',textContent:'${p2.emoji}'}))">
+            <img class="bm-arena-opp-img" alt="${escapeHtml(p2.name)}" src="${spritePath(p2.id, spriteSlug(p2.slug))}" onerror="window._bmSpriteOnError(this,'${spriteSlug(p2.slug)}','${p2.emoji}','bm-arena-opp-sprite')">
           </div>
 
           <!-- Self quadrant (P1) — bottom-left, mirrors .g10-pspr-wrap -->
           <div class="bm-arena-self">
-            <img class="bm-arena-self-img" alt="${escapeHtml(p1.name)}" src="${spritePath(p1.id, spriteSlug(p1.slug))}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'bm-arena-self-sprite',textContent:'${p1.emoji}'}))">
+            <img class="bm-arena-self-img" alt="${escapeHtml(p1.name)}" src="${spritePath(p1.id, spriteSlug(p1.slug))}" onerror="window._bmSpriteOnError(this,'${spriteSlug(p1.slug)}','${p1.emoji}','bm-arena-self-sprite')">
             <div class="bm-info-card">
               <div class="bm-info-name">${escapeHtml(p1.name)}</div>
               <div class="bm-info-chips">
@@ -2395,7 +2442,7 @@
                 <button class="bm-switch-card ${isActive?'active':''} ${isFainted?'fainted':''}"
                         ${isDisabled?'disabled':''} data-swap="${i}">
                   <img class="bm-switch-img" src="${spritePath(p.id, spriteSlug(p.slug))}" alt="${escapeHtml(p.name)}"
-                       onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'${p.emoji}',className:'bm-switch-img-fallback'}))">
+                       onerror="window._bmSpriteOnError(this,'${spriteSlug(p.slug)}','${p.emoji}','bm-switch-img-fallback')">
                   <div class="bm-switch-meta">
                     <div class="bm-switch-name">${escapeHtml(p.name)}</div>
                     <div class="bm-switch-hp">
@@ -4987,7 +5034,7 @@
         return `
           <div class="bm-champion-poke" title="${escapeHtml(p.name)}" style="background:${color}33; border-color:${color};">
             <img class="bm-champion-poke-img" src="${spritePath(id, spriteSlug(p.slug))}" alt="${escapeHtml(p.name)}"
-                 onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'⭐',className:'bm-champion-poke-fb'}))">
+                 onerror="window._bmSpriteOnError(this,'${spriteSlug(p.slug)}','⭐','bm-champion-poke-fb')">
             <div class="bm-champion-poke-name">${escapeHtml(p.name)}</div>
           </div>
         `;
