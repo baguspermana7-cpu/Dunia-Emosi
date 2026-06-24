@@ -2389,6 +2389,17 @@ function g14PreviewEngine(catKey){
   }
 }
 
+// v54.26 polish: track active requestAnimationFrame handles so we can cancel
+// them on game-end / back-button. Without this, a boost fade in flight when
+// the player navigates back keeps RAF'ing for 600ms (and S.speed mutates a
+// detached state object). Same for boost cooldown's 3s sweep.
+const _g14RAFs = new Set()
+function _g14TrackRAF(handle){ _g14RAFs.add(handle); return handle }
+function _g14CancelAllRAFs(){
+  for (const h of _g14RAFs) { try { cancelAnimationFrame(h) } catch(_){} }
+  _g14RAFs.clear()
+}
+
 // v54.17 A10: milestone banner — appears, holds ~0.6s, fades up.
 function g14ShowMilestone(text){
   const el = document.createElement('div')
@@ -2790,7 +2801,7 @@ function g14SpinWheel(){
     { emoji:'⚡', label:'+30 Tekanan', apply: () => { S.pressure = Math.min(100, (S.pressure || 70) + 30); try { updatePressure() } catch(_){} } },
     { emoji:'❤️', label:'+1 Nyawa', apply: () => { if (S.hp != null) S.hp = Math.min(LIVES_MAX + 1, S.hp + 1) } },
     { emoji:'🚂', label:'Bonus Boost', apply: () => { try { executeBoost() } catch(_){} } },
-    { emoji:'⭐', label:'2× Skor Hari Ini', apply: () => { try { localStorage.setItem('dunia-g14-score-mult', '2') } catch(_){} } },
+    { emoji:'⭐', label:'2× Skor Hari Ini', apply: () => { try { localStorage.setItem('dunia-g14-score-mult', '2'); localStorage.setItem('dunia-g14-score-mult-day', new Date().toDateString()) } catch(_){} } },
     { emoji:'👻', label:'Ghost Mode 5s', apply: () => { S.invincible = Math.max(S.invincible || 0, 300) } },
     { emoji:'🎁', label:'Misteri!', apply: () => { S.pressure = 100; if (S.hp != null) S.hp = Math.min(LIVES_MAX, (S.hp || LIVES_MAX) + 1) } },
   ]
@@ -2906,8 +2917,11 @@ function loop(ticker) {
     }
   }
 
-  // v54.17 A10: milestone announcement banner — 100/250/500/750m.
-  const _milestones = [100, 250, 500, 750]
+  // v54.17 A10 + v54.26 polish: milestone banners shifted off conductor stations.
+  // Was 100/250/500/750 — collided with conductor's 100/200/300/400 announcements
+  // creating double-banners at 100m and 250m near 200m station ping. New set
+  // 175/375/575/725 lives in the gaps between conductor pings.
+  const _milestones = [175, 375, 575, 725]
   for (const m of _milestones) {
     if (S.distance >= m && (S.lastMilestone || 0) < m) {
       S.lastMilestone = m
@@ -2949,6 +2963,18 @@ function startRace() {
 
   // v54.19 B12: Mode Belajar gate. Reads dunia-g14-deaths-l{level} to soften.
   try { g14ApplyKidMode() } catch(_){}
+  // v54.26 polish: tidy stale DOM particles before a new run so confetti / heart
+  // pops / nearmiss texts / milestone banners from the last finish don't stack.
+  try { document.querySelectorAll('.g14-confetti, .g14-milestone, .g14-nearmiss, .g14-heart-pop, .g14-station-cinema').forEach(e => e.remove()) } catch(_){}
+  // v54.26 polish: expire 2× score multiplier if it's not today's spin.
+  try {
+    const today = new Date().toDateString()
+    const stamp = localStorage.getItem('dunia-g14-score-mult-day')
+    if (stamp !== today) { localStorage.removeItem('dunia-g14-score-mult'); localStorage.removeItem('dunia-g14-score-mult-day') }
+  } catch(_){}
+  // v54.26 polish: cancel any leftover RAFs from the previous race so they don't
+  // bleed into this one (boost fade, cooldown, shake).
+  try { _g14CancelAllRAFs() } catch(_){}
   S.distance = 0; S.hp = LIVES_MAX; S.pressure = 70
   // v54.19 B12: if kid mode active, +1 HP buffer (applied AFTER reset above).
   if (S.kidMode) S.hp = Math.min(LIVES_MAX + 1, S.hp + 1)
@@ -3022,16 +3048,20 @@ function g14RunCountdown(onDone){
 
 // v54.17 A2: paint the lane-pip column to match S.targetLane.
 // triggerSwitch=true adds a pulse ring on the destination pip.
+// v54.26 polish: per-pip timeout tracker so rapid lane changes don't cancel
+// each other's animation mid-flight. Each pip caches its own pending timeout
+// and clears it before re-triggering.
 function g14UpdateLanePips(triggerSwitch){
   const pips = document.querySelectorAll('#g14-lane-pips .g14-pip')
   if (!pips || !pips.length) return
   pips.forEach((p, idx) => {
     p.classList.toggle('active', idx === S.targetLane)
     if (triggerSwitch && idx === S.targetLane) {
+      if (p._switchTimeout) { clearTimeout(p._switchTimeout); p._switchTimeout = null }
       p.classList.remove('switching')
       void p.offsetWidth
       p.classList.add('switching')
-      setTimeout(() => p.classList.remove('switching'), 320)
+      p._switchTimeout = setTimeout(() => { p.classList.remove('switching'); p._switchTimeout = null }, 320)
     }
   })
 }
@@ -3066,6 +3096,10 @@ function endRace() {
     try { g14SpawnConfetti() } catch(_){}
     try { playTone(523, 0.12); setTimeout(()=>playTone(659, 0.12), 120); setTimeout(()=>playTone(784, 0.12), 240); setTimeout(()=>playTone(1047, 0.20), 360) } catch(_){}
     try { g14ShowCabDriverWave() } catch(_){}
+    // v54.26 polish: reset Mode Belajar death counter on P1 finish so kids who
+    // mastered a level start fresh next attempt. Was permanent — owner perception
+    // "still in kid mode even though I won."
+    try { localStorage.setItem('dunia-g14-deaths-l' + (cfg.level || 5), '0') } catch(_){}
     // v54.25 H1: race-1st achievement; H4: perfected sensor; H7: ghost record
     try {
       if (window.TrainShared) {
@@ -3156,6 +3190,9 @@ function goBack() {
   S.running = false
   try { if (app && app.ticker) app.ticker.stop() } catch(_){}
   try{document.getElementById('game-bgm').pause()}catch(_){}
+  // v54.26 polish: cancel all pending RAFs so leftover boost-fade/cooldown
+  // animations don't keep eating CPU after the player navigates back.
+  try { _g14CancelAllRAFs() } catch(_){}
   history.back()
 }
 function confirmBack() {
@@ -3340,19 +3377,28 @@ function executeBoost() {
 
   setTimeout(() => {
     S.boosting = false
-    // v54.17 A15: smooth speed fade-down over 600ms via RAF lerp instead of
-    // a hard snap. Pair with a steam burst + descending whir tone.
+    // v54.17 A15 + v54.26 polish: pause-aware speed fade-down with cubic ease-out
+    // (was linear; now feels less abrupt). Skips advancement while paused so
+    // the player doesn't silently lose their boost on a pause-resume cycle.
     const _peak = S.speed
-    const _t0boost = performance.now()
     const _BOOST_FADE_MS = 600
+    let _accumBoost = 0
+    let _lastBoostT = performance.now()
     function _boostFadeTick(){
-      const dt = performance.now() - _t0boost
-      const t = Math.min(1, dt / _BOOST_FADE_MS)
-      S.speed = _peak + (S.baseSpeed - _peak) * t
-      if (t < 1) requestAnimationFrame(_boostFadeTick)
+      if (!S.running || (typeof S.gameOver !== 'undefined' && S.gameOver)) { S.speed = S.baseSpeed; return }
+      const now = performance.now()
+      const dt = now - _lastBoostT
+      _lastBoostT = now
+      if (S.paused) { _g14TrackRAF(requestAnimationFrame(_boostFadeTick)); return }
+      _accumBoost += dt
+      const t = Math.min(1, _accumBoost / _BOOST_FADE_MS)
+      // cubic ease-out: 1 - (1 - t)^3 — fast initial decay, gentle settle
+      const eased = 1 - Math.pow(1 - t, 3)
+      S.speed = _peak + (S.baseSpeed - _peak) * eased
+      if (t < 1) _g14TrackRAF(requestAnimationFrame(_boostFadeTick))
       else S.speed = S.baseSpeed
     }
-    requestAnimationFrame(_boostFadeTick)
+    _g14TrackRAF(requestAnimationFrame(_boostFadeTick))
     // Steam burst — fire 5 cluster puffs in rapid succession.
     try { for (let bi = 0; bi < 5; bi++) setTimeout(spawnSteam, bi * 40) } catch(_){}
     // Descending whir: 1100 → 800 → 500 Hz.
@@ -3363,17 +3409,24 @@ function executeBoost() {
     // over the 3000ms cooldown window. RAF-driven so the conic-gradient sweep
     // stays smooth on low-end Android.
     const _bb = document.getElementById('btn-boost')
-    const _t0 = performance.now()
     const _CD_MS = 3000
     _bb.style.setProperty('--boost-pct', '360deg')
+    // v54.26 polish: pause-aware cooldown sweep — was burning down silently
+    // while paused, leaving the player back with no boost on resume.
+    let _accumCd = 0
+    let _lastCdT = performance.now()
     function _cdTick(){
       if(!S.boostCooldown){ _bb.style.setProperty('--boost-pct', '0deg'); return }
-      const elapsed = performance.now() - _t0
-      const remaining = Math.max(0, 1 - elapsed/_CD_MS)
+      const now = performance.now()
+      const dt = now - _lastCdT
+      _lastCdT = now
+      if (S.paused) { _g14TrackRAF(requestAnimationFrame(_cdTick)); return }
+      _accumCd += dt
+      const remaining = Math.max(0, 1 - _accumCd/_CD_MS)
       _bb.style.setProperty('--boost-pct', (remaining*360).toFixed(1) + 'deg')
-      if(elapsed < _CD_MS) requestAnimationFrame(_cdTick)
+      if(_accumCd < _CD_MS) _g14TrackRAF(requestAnimationFrame(_cdTick))
     }
-    requestAnimationFrame(_cdTick)
+    _g14TrackRAF(requestAnimationFrame(_cdTick))
     setTimeout(() => {
       S.boostCooldown = false
       document.getElementById('btn-boost').classList.remove('cooldown')

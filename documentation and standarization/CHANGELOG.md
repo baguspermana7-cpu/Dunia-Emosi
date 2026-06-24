@@ -1,5 +1,38 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.26 "Polish Pass — bug fixes + smoothness" (refine existing systems)
+
+First iteration of the "continuous polish" mandate. Focus: improve what's shipped before adding new features. Targeted real bugs the player can feel (pause-aware timers, RAF leaks, DOM particle stacking, lane-pip race conditions).
+
+### Bugs fixed
+- **G14 boost fade RAF was pause-unaware** — paused during fade silently drained your boost; on resume your speed was gone. Now: tick advances elapsed-time only while `!S.paused`; aborts cleanly if game ends. Bonus: linear lerp → cubic ease-out for a smoother feel (`1 - (1 - t)³`).
+- **G14 boost cooldown RAF was pause-unaware** — conic-gradient arc kept sweeping during pause; player would unpause to find boost cooled-down already. Same pause-aware accumulator pattern.
+- **G14 Mode Belajar deaths counter was permanent** — kid masters L5 after 4 deaths, but next attempt still got Mode Belajar +1 HP because death count never reset. Now resets on P1 finish for that specific level.
+- **G14 daily-spin 2× score multiplier never expired** — `dunia-g14-score-mult` stayed set forever. New `dunia-g14-score-mult-day` companion key stamps the date; startRace clears the multiplier if stamp ≠ today.
+- **G14 DOM particle leak on restart** — confetti/milestone/nearmiss/heart-pop/station-cinema from the prior finish stayed in the DOM when the player tapped Again. `startRace` now sweeps `.g14-confetti, .g14-milestone, .g14-nearmiss, .g14-heart-pop, .g14-station-cinema` before init.
+- **G14 lane-pip pulse race** — rapid lane changes cancelled each other's animation mid-flight because the cleanup setTimeout from call N fired DURING call N+1's animation. Per-pip `_switchTimeout` tracker now clears prior pending timeout before re-triggering.
+- **G14 RAF leak on goBack** — leftover boost fade / cooldown / shake RAFs kept firing after the player navigated away. NEW `_g14RAFs` Set tracks every RAF; `goBack` and `startRace` call `_g14CancelAllRAFs()` to drain them.
+- **G14 milestone + conductor double-fire at 100m / 200m** — A10 banners triggered at 100/250/500/750; B5 conductor announced 50m before 100/200/300/.... Both fired at 100m. New A10 set 175/375/575/725 lives in the gaps.
+- **G16 cinema bars ignored pause** — 2.4s setTimeout fired through a pause, closing the cinema while paused. NEW `S.cinemaTimer` decrements in gameLoop (which already returns on pause), then closes bars when it reaches 0.
+- **G15 streak chip inline transform stuck after reset** — `el.style.transform = 'translateX(-50%) scale(1.25)'` stayed inline after the streak reset, blocking the CSS rule from taking back over. Now both `g15StreakReset` and the timeout in `g15StreakAdd` clear inline `style.transform = ''`.
+
+### Smoothness improvements
+- Boost fade uses cubic ease-out (was linear); feels less abrupt.
+- Lane-pip animation re-triggers reliably under rapid input.
+
+### Files touched
+- `games/g14.html` — pause-aware boost fade + cooldown · RAF tracker · Mode Belajar reset · score-mult day stamp · DOM particle sweep on restart · lane-pip timeout tracker · milestone offset.
+- `games/g16-pixi.html` — `S.cinemaTimer` countdown in `gameLoop`; `triggerArrival` schedules via timer instead of `setTimeout`.
+- `games/g15-pixi.html` — `g15StreakReset` and `g15StreakAdd` clear inline transform.
+- `sw.js` — CACHE_VERSION v54.25-20260624ad → v54.26-20260624ae.
+
+### Lessons captured
+- L152 — Pause-aware RAF pattern: accumulate elapsed only when `!S.paused`; never read `performance.now() - _t0`.
+- L153 — Each polish layer needs its own "DOM particle sweep on restart" — confetti/milestone/nearmiss don't unwind via state reset.
+- L154 — Persistent counters (deaths, multipliers, streaks) must have clear lifecycle hooks. Without reset-on-success they become stale forever.
+
+---
+
 ## 2026-06-24 — v54.25 "Big Features" (13 / 13 items shipped — H7+H11 as MVPs)
 
 Ship 8 of 8 from `TRAIN-GAMES-100-IDEAS-PLAN.md`. PLAN 100% COMPLETE (128/130 items, 2 from v54.19 already deferred to cosmetics system which IS this ship).

@@ -1701,6 +1701,12 @@ function buildObstacleGraphic(ox,tY,idx){
 function gameLoop(ticker){
   if(!S.running||S.paused)return
   const dt=ticker.deltaMS/1000; _ticker_t+=dt
+  // v54.26 polish: pause-aware cinema-bars countdown. Was setTimeout-based which
+  // ignored S.paused. Now ticked here so paused arrivals truly stay cinematic.
+  if (S.cinemaTimer > 0) {
+    S.cinemaTimer -= dt
+    if (S.cinemaTimer <= 0) { try { g16ShowCinema(false) } catch(_){} }
+  }
   // Character train animation — wheels spin, body bob, smoke puff
   if(g16CharacterTrain){
     const trainSpeed = S.trainState==='BOOSTING' ? 4 : (S.trainState==='MOVING' ? 2 : 0)
@@ -2354,10 +2360,11 @@ function triggerArrival(){
   S.celebrationFrame = 0
   hideQuizPanel()
   document.getElementById('speed-lines').style.opacity='0'
-  // v54.21 D6: cinema bars + 1.05 scale + 0.7x slow-mo on ARRIVING.
+  // v54.21 D6 + v54.26 polish: cinema choreography is pause-aware. Without this,
+  // the 2.4s timeout fires through a pause, so a paused arrival un-cinema'd
+  // itself silently. Now we tick down only while the game is running.
   g16ShowCinema(true)
-  setTimeout(() => g16ShowCinema(false), 2400)
-  // v54.22 E1: per-character arrival bark + text bubble
+  S.cinemaTimer = 2.4   // seconds, decremented in gameLoop (skips when paused)
   setTimeout(() => { try { g16PlayCharacterBark() } catch(_){} }, 400)
   // Task #49-v2 — no setTimeout safety net. showWin fires deterministically via
   // the ARRIVED-state celebrationFrame counter in updateTrain.

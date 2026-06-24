@@ -1599,16 +1599,24 @@ function g15StreakAdd() {
   el.textContent = '🔥 ' + g15Streak + 'x';
   el.classList.add('show');
   el.classList.toggle('epic', g15Streak >= 7);
-  // Scale pulse on each increment
+  // Scale pulse on each increment. v54.26 polish: clear inline at end so the
+  // CSS rule (which already centers via `transform:translateX(-50%) scale(1)`)
+  // can re-take over. Without clearing, the chip stays inline-scaled forever.
   el.style.transform = 'translateX(-50%) scale(1.25)';
-  setTimeout(() => { el.style.transform = 'translateX(-50%) scale(1)'; }, 200);
-  // C2: 200ms brief slow-mo at streak ≥7
+  setTimeout(() => { if (el) el.style.transform = ''; }, 200);
   if (g15Streak >= 7) g15BriefSlowMo();
 }
 function g15StreakReset() {
   g15Streak = 0;
   const el = document.getElementById('g15-streak');
-  if (el) { el.classList.remove('show', 'epic'); el.textContent = ''; }
+  if (el) {
+    el.classList.remove('show', 'epic');
+    el.textContent = '';
+    // v54.26 polish: clear inline transform so the CSS rules for `.show`/normal
+    // can take back over next time. Without this, the chip stays scaled at 1.25
+    // after a long streak that just reset.
+    el.style.transform = '';
+  }
 }
 function g15BriefSlowMo() {
   if (typeof app === 'undefined' || !app.ticker) return;

@@ -4,6 +4,28 @@
 
 ---
 
+## 2026-06-24 — v54.26 Polish Pass
+
+### L152 — Pause-aware RAF: accumulate elapsed, never read absolute time
+- **Symptom**: G14 boost fade and cooldown silently completed during pause; player resumed to find boost gone or cooldown finished.
+- **Root cause**: RAF callbacks computed `dt = performance.now() - _t0` (absolute), which ticks regardless of game state.
+- **Fix**: Each callback tracks `_lastT` (previous fire) and `_accumElapsed` (only-when-running total). On pause, re-queue without advancing the accumulator.
+- **Lesson**: For ANY game-state-dependent animation, never use `performance.now() - _t0` as your time source. Always accumulate-when-active. The implementation overhead is 3 lines but the correctness is significant.
+
+### L153 — DOM particle sweep on restart, every time
+- **Symptom**: Player taps Again mid-confetti shower → confetti from L4's finish stacks on L5's start.
+- **Root cause**: CSS particles use `setTimeout(remove, NNNN)` for cleanup. If the player navigates away during the timeout window, the cleanup fires on a fresh page state (or worse, on a hot-loaded next-level state).
+- **Fix**: `startRace` sweeps all `.g14-*` polish classes via `querySelectorAll(...).forEach(e => e.remove())` before re-initializing.
+- **Lesson**: Every polish layer that adds DOM nodes outside the game canvas needs an explicit reset sweep in the game-start sequence. Don't rely on natural timeout cleanup.
+
+### L154 — Persistent counters need explicit reset hooks
+- **Symptom**: G14 Mode Belajar counter never reset; score-multiplier from yesterday's daily spin still active today.
+- **Root cause**: localStorage keys with no clear lifecycle. Once written, only manual clearing removes them.
+- **Fix**: 1) Reset death counter on success (P1 finish). 2) Stamp the multiplier's day; expire on next-day check at startRace.
+- **Lesson**: Any persistent counter or flag needs (a) a clear write moment AND (b) a clear clear moment. Without (b), they accumulate stale state. Use companion `-day` keys for daily features.
+
+---
+
 ## 2026-06-24 — v54.25 Big Features
 
 ### L149 — Achievement unlocking is an event tail; never block the main flow
