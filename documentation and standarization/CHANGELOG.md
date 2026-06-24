@@ -1,5 +1,38 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.19 "G14 Race Depth" (13 / 15 items shipped)
+
+Ship 2 of 8 from `TRAIN-GAMES-100-IDEAS-PLAN.md`. Medium-cost depth additions: hazards, cinematics, train-themed math, signature SFX.
+
+| Idx | Item | Status |
+|---|---|---|
+| B1 | Per-obstacle SFX + reaction | ✓ shipped (cow moo/chicken cluck/rock thud — 8 envelopes) |
+| B2 | Train-themed math word problems | ✓ shipped (50% of quizzes randomized to "3 gerbong × 8 penumpang = ?") |
+| B3 | Mini-station checkpoint cinema | ✓ shipped (arch + name + sub on each cp pass) |
+| B4 | Cab driver wave for character trains | ✓ shipped (👋 sprite on race start + P1 finish) |
+| B5 | Conductor announcer pre-station | ✓ shipped (50m pre-chime + station name overlay) |
+| B6 | Light-tree gantry signals show position | ✓ shipped (lamp tint = green/yellow/red by S.position) |
+| B7 | Photo-mode + share button | ✓ shipped (`📸 Tunjukkan Mama` FAB w/ Pixi extract + Web Share API + fallback download) |
+| B8 | Floating-chip mini-quiz | ✓ shipped (240px RHS chip every ~25s; lanes stay active; +10 pressure on correct) |
+| B9 | Haptic vibrate on crash/lane/quiz | ✓ shipped (`navigator.vibrate`) |
+| B10 | Dynamic kmh needle gauge | ✓ shipped (conic-gradient arc + rotating needle next to text) |
+| B11 | Replay-the-crash 2s rewind | ✓ shipped (red vignette + ⏮ REWIND label, 2.2s before result modal) |
+| B12 | Difficulty-adaptive Mode Belajar | ✓ shipped (2 deaths → +1 HP, slower spawns, mint badge) |
+| B13 | Daily login spin | ✓ shipped (6-wedge wheel: +30 pressure / +1 HP / boost / 2× score / ghost mode / misteri) |
+| B14 | Biome-keyed hazards | → deferred to v54.19.x (L cost) |
+| B15 | Train livery selector | → deferred to v54.25 (cosmetic system) |
+
+### Files touched
+- `games/g14.html` — 9 new CSS blocks (B3 station cinema, B7 share FAB, B8 mini-quiz chip, B10 needle, B11 replay vignette, B12 kid-mode badge, B13 spin wheel); 5 new DOM nodes (mini-quiz, kid badge, crash replay, spin overlay, share fab built lazily); ~14 new JS helpers (`G14_OBS_SFX`, `g14ObsSFX`, `G14_STATIONS`, `g14StationCinema`, `g14ShowCabDriverWave`, `g14CheckConductorAnnounce`, `g14ShowShareButton`, `g14HideShareButton`, `g14HandleShare`, `g14MaybeFloatMiniQuiz`, `g14CloseMiniQuiz`, `g14Vibrate`, `g14CrashReplay`, `g14ApplyKidMode`, `g14RecordDeath`, `g14CheckDailySpin`, `g14SpinWheel`). Wired into `crashHit` (per-obstacle SFX + B9 + B11), `laneUp`/`laneDn` (B9), `answerQuiz` (B9), `spawnObstacle` (B1 emoji capture), `buildQuiz` (B2 templates), `tickSignalPosts` (B6 tint), checkpoint loop (B3 + B5 + B8), `startRace` (B12 + B5/B8 reset), `g14RunCountdown` callback (B4 cab wave), `endRace` (B7 share + B4 wave on P1), `updateHUD` (B10 needle update), `showSelectScreen` (B7 hide), `boot` (B13).
+- `sw.js` — `CACHE_VERSION: 'v54.18-20260624w' → 'v54.19-20260624x'`.
+
+### Lessons captured
+- L131 — Per-obstacle SFX dictionary keyed by emoji is cheap and meaningful.
+- L132 — Word-problem variants on top of canonical arithmetic add STEM context without changing the answer math.
+- L133 — Mode Belajar (kid-mode after 2 deaths) auto-rescues frustrated players without a UI prompt.
+
+---
+
 ## 2026-06-24 — v54.18 "PvP chain-KO snowball fix" (forced-switch replacement always gets next turn)
 
 Seventeenth v54.x ship. Surgical PvP balance hotfix.

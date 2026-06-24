@@ -91,6 +91,57 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 .g14-confetti{position:fixed;top:-20px;width:8px;height:14px;z-index:80;pointer-events:none;border-radius:2px;animation:g14ConfettiFall 2.4s linear forwards}
 @keyframes g14ConfettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:0}10%{opacity:1}100%{transform:translateY(108vh) rotate(720deg);opacity:0.6}}
 
+/* ── v54.19 — G14 Race Depth ── */
+
+/* B3: Mini-station checkpoint cinematic */
+.g14-station-cinema{position:fixed;left:50%;top:25%;transform:translateX(-50%);z-index:65;font-family:'Fredoka One',cursive;color:#fff;text-shadow:0 0 12px rgba(251,191,36,0.7),0 4px 14px rgba(0,0,0,0.6);pointer-events:none;animation:g14StationPop 1.4s cubic-bezier(.34,1.56,.64,1) forwards;text-align:center}
+.g14-station-cinema .gsc-arch{font-size:42px;margin-bottom:2px;filter:drop-shadow(0 0 14px rgba(253,224,71,0.7))}
+.g14-station-cinema .gsc-name{font-size:22px;letter-spacing:1.5px}
+.g14-station-cinema .gsc-sub{font-size:12px;opacity:0.85;letter-spacing:1px;margin-top:2px}
+@keyframes g14StationPop{0%{opacity:0;transform:translate(-50%,30px) scale(0.6)}25%{opacity:1;transform:translate(-50%,-6px) scale(1.08)}75%{opacity:1;transform:translate(-50%,0) scale(1)}100%{opacity:0;transform:translate(-50%,-18px) scale(0.95)}}
+
+/* B7: Photo-mode share button */
+.g14-share-fab{position:fixed;bottom:max(16px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:9999;padding:14px 22px;border-radius:18px;border:0;background:linear-gradient(135deg,#f472b6,#a855f7);color:#fff;font-family:'Fredoka One',cursive;font-size:15px;font-weight:900;cursor:pointer;box-shadow:0 6px 0 #6b21a8,0 10px 24px rgba(168,85,247,0.45);text-shadow:0 1px 2px rgba(0,0,0,0.4);display:none}
+.g14-share-fab.show{display:block;animation:g14SharePop 600ms cubic-bezier(.34,1.56,.64,1) forwards}
+.g14-share-fab:active{transform:translateX(-50%) translateY(3px);box-shadow:0 3px 0 #6b21a8}
+@keyframes g14SharePop{0%{opacity:0;transform:translateX(-50%) translateY(20px) scale(0.6)}60%{opacity:1;transform:translateX(-50%) translateY(-4px) scale(1.05)}100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
+
+/* B8: Floating-chip mini-quiz */
+#g14-mini-quiz{position:fixed;right:max(12px,env(safe-area-inset-right));top:50%;transform:translateY(-50%);z-index:210;width:min(240px,40vw);background:linear-gradient(135deg,rgba(15,23,42,0.96),rgba(45,12,75,0.92));border:2px solid #fbbf24;border-radius:18px;padding:12px;font-family:'Fredoka One',cursive;color:#fff;box-shadow:0 12px 36px rgba(0,0,0,0.6);display:none}
+#g14-mini-quiz.show{display:block;animation:g14MiniIn 280ms cubic-bezier(.34,1.56,.64,1)}
+@keyframes g14MiniIn{0%{opacity:0;transform:translateY(-50%) translateX(40px)}100%{opacity:1;transform:translateY(-50%) translateX(0)}}
+#g14-mini-quiz .gmq-q{text-align:center;font-size:18px;font-weight:900;margin-bottom:8px;color:#fde68a}
+#g14-mini-quiz .gmq-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+#g14-mini-quiz .gmq-btn{padding:10px 4px;border:1.5px solid rgba(255,255,255,0.18);border-radius:12px;background:rgba(255,255,255,0.07);color:#fff;font-family:inherit;font-size:15px;font-weight:900;cursor:pointer}
+#g14-mini-quiz .gmq-btn:active{background:rgba(255,255,255,0.18)}
+
+/* B10: Dynamic kmh needle gauge */
+#g14-speed-needle{display:inline-block;width:44px;height:24px;position:relative;vertical-align:middle;margin-left:4px}
+#g14-speed-needle .gsn-arc{position:absolute;inset:0;border-radius:24px 24px 0 0;background:conic-gradient(from 225deg,#22d3ee 0deg,#86efac calc(90deg * var(--gns,0)),rgba(255,255,255,0.08) calc(90deg * var(--gns,0)));mask:radial-gradient(circle at 50% 100%,transparent 0,transparent 11px,#000 12px,#000 22px,transparent 23px);-webkit-mask:radial-gradient(circle at 50% 100%,transparent 0,transparent 11px,#000 12px,#000 22px,transparent 23px)}
+#g14-speed-needle .gsn-needle{position:absolute;left:50%;bottom:2px;width:2px;height:18px;background:#fff;border-radius:1px;transform-origin:50% 100%;transform:rotate(calc((var(--gns,0) - 0.5) * 90deg));transition:transform 200ms}
+#g14-speed-needle.boost .gsn-arc{box-shadow:0 0 12px rgba(251,191,36,0.7)}
+
+/* B11: Replay-the-crash vignette */
+#g14-crash-replay{position:fixed;inset:0;z-index:240;display:none;background:radial-gradient(circle,transparent 30%,rgba(120,0,0,0.85));backdrop-filter:blur(2px);pointer-events:none}
+#g14-crash-replay.show{display:block;animation:g14ReplayFade 2200ms ease-out forwards}
+#g14-crash-replay-label{position:absolute;top:14%;left:50%;transform:translateX(-50%);font-family:'Fredoka One',cursive;color:#fff;font-size:18px;letter-spacing:2px;text-shadow:0 0 12px rgba(255,60,60,0.8),0 4px 14px rgba(0,0,0,0.6)}
+@keyframes g14ReplayFade{0%{opacity:0}10%{opacity:1}90%{opacity:1}100%{opacity:0}}
+
+/* B12: Mode Belajar badge */
+#g14-kid-mode-badge{position:fixed;top:max(10px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:60;padding:5px 14px;border-radius:14px;background:linear-gradient(135deg,#86efac,#22d3ee);color:#0c4a6e;font-family:'Fredoka One',cursive;font-size:12px;letter-spacing:1px;font-weight:900;box-shadow:0 4px 12px rgba(34,211,238,0.45);pointer-events:none;display:none}
+#g14-kid-mode-badge.show{display:block;animation:g14KidBadge 600ms ease-out}
+@keyframes g14KidBadge{0%{opacity:0;transform:translateX(-50%) translateY(-12px)}100%{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* B13: Daily login spin */
+#g14-spin-overlay{position:fixed;inset:0;z-index:380;display:none;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(15,23,42,0.95),rgba(45,12,75,0.95));backdrop-filter:blur(8px)}
+#g14-spin-overlay.show{display:flex}
+.g14-spin-wheel{width:min(280px,72vw);height:min(280px,72vw);border-radius:50%;border:8px solid #fbbf24;background:conic-gradient(#ef4444 0 60deg,#f59e0b 60deg 120deg,#22c55e 120deg 180deg,#06b6d4 180deg 240deg,#a855f7 240deg 300deg,#ec4899 300deg 360deg);position:relative;box-shadow:0 16px 48px rgba(0,0,0,0.6);transform:rotate(0deg);transition:transform 3.4s cubic-bezier(.17,.67,.32,1)}
+.g14-spin-arrow{position:absolute;top:-24px;left:50%;transform:translateX(-50%);font-size:32px;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.5));z-index:2}
+.g14-spin-emoji{position:absolute;top:14px;left:50%;transform:translateX(-50%);font-size:28px}
+.g14-spin-msg{position:absolute;top:55%;left:50%;transform:translate(-50%,-50%);font-family:'Fredoka One',cursive;color:#fff;font-size:22px;text-align:center;text-shadow:0 4px 14px rgba(0,0,0,0.7);pointer-events:none}
+.g14-spin-cta{margin-top:24px;padding:14px 28px;border-radius:16px;border:0;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#451a03;font-family:'Fredoka One',cursive;font-size:16px;font-weight:900;cursor:pointer;box-shadow:0 5px 0 #92400e}
+.g14-spin-cta:active{transform:translateY(2px);box-shadow:0 3px 0 #92400e}
+
 /* Pressure gauge */
 #pressure-row{display:flex;align-items:center;gap:8px;margin-top:8px}
 #pressure-label{font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1px;flex-shrink:0}
@@ -162,6 +213,37 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
   <div class="g14-pip" data-lane="2"></div>
 </div>
 
+<!-- v54.19 B11: crash replay vignette + label -->
+<div id="g14-crash-replay"><div id="g14-crash-replay-label">⏮ REWIND</div></div>
+
+<!-- v54.19 B12: Mode Belajar (kid-mode) badge -->
+<div id="g14-kid-mode-badge">🌱 MODE BELAJAR</div>
+
+<!-- v54.19 B8: Floating-chip mini-quiz -->
+<div id="g14-mini-quiz">
+  <div class="gmq-q" id="gmq-q">?</div>
+  <div class="gmq-grid" id="gmq-grid"></div>
+</div>
+
+<!-- v54.19 B13: Daily login spin -->
+<div id="g14-spin-overlay">
+  <div style="position:relative;display:flex;flex-direction:column;align-items:center">
+    <div style="position:relative">
+      <div class="g14-spin-arrow">▼</div>
+      <div class="g14-spin-wheel" id="g14-spin-wheel">
+        <div class="g14-spin-emoji" style="top:14px;left:50%;transform:translateX(-50%)">⚡</div>
+        <div class="g14-spin-emoji" style="top:50%;right:14px;transform:translateY(-50%)">❤️</div>
+        <div class="g14-spin-emoji" style="bottom:14px;left:50%;transform:translate(-50%)">🚂</div>
+        <div class="g14-spin-emoji" style="top:50%;left:14px;transform:translateY(-50%)">⭐</div>
+        <div class="g14-spin-emoji" style="top:24px;left:24px">👻</div>
+        <div class="g14-spin-emoji" style="top:24px;right:24px">🎁</div>
+        <div class="g14-spin-msg" id="g14-spin-msg">🎰 Roda Harian!</div>
+      </div>
+    </div>
+    <button class="g14-spin-cta" id="g14-spin-go" onclick="g14SpinWheel()">PUTAR!</button>
+  </div>
+</div>
+
 <!-- HUD Top -->
 <div id="hud-top">
   <button id="btn-back" type="button" onclick="confirmBack()">← Kembali</button>
@@ -173,7 +255,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
   </div>
   <button id="btn-pause" onclick="togglePause()" style="pointer-events:all;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.25);border-radius:10px;color:#fff;padding:5px 8px;font-size:14px;cursor:pointer;font-family:inherit;flex-shrink:0">⏸</button>
   <div id="lives-hud">❤️❤️❤️</div>
-  <div id="speed-hud">0 km/h</div>
+  <div id="speed-hud"><span id="speed-hud-num">0 km/h</span><span id="g14-speed-needle" style="--gns:0"><span class="gsn-arc"></span><span class="gsn-needle"></span></span></div>
 </div>
 <div id="prog-strip"><div id="prog-fill"></div></div>
 <div id="cp-row">
@@ -896,6 +978,14 @@ function tickSignalPosts(delta) {
   for (const p of signalPosts) {
     p.x -= px
     if (p.x < -40) p.x = W + 40 + Math.random() * 60
+    // v54.19 B6: light-tree gantry behavior — tint the lamp by race position.
+    // P1 = green, P2 = yellow, P3 = red. Subtle environmental scoreboard.
+    const lamp = p.children && p.children[1]
+    const glow = p.children && p.children[2]
+    if (lamp && glow) {
+      const col = S.position === 1 ? 0x22c55e : S.position === 2 ? 0xfbbf24 : 0xef4444
+      try { lamp.tint = col; glow.tint = col } catch(_){}
+    }
   }
 }
 
@@ -2185,6 +2275,7 @@ function spawnObstacle() {
   c._lane = lane
   c._alive = true
   c._warned = false
+  c._emoji = emoji         // v54.19 B1 — for crashHit's per-obstacle SFX
   c._nearmissFired = false  // v54.17 A3
 
   L.obstacles.addChild(c)
@@ -2219,7 +2310,7 @@ function tickObstacles(delta) {
     if (S.invincible <= 0 && o._lane === S.lane &&
         o.x > hitZoneX - OBS_SIZE && o.x < hitZoneX + OBS_SIZE) {
       o._alive = false
-      crashHit()
+      crashHit(o._emoji)  // v54.19 B1
       continue
     }
     // v54.17 A3: near-miss bonus. Fire ONCE when an adjacent-lane obstacle
@@ -2246,22 +2337,28 @@ function g14SpawnNearMiss(x, y){
   setTimeout(() => el.remove(), 1000)
 }
 
-function crashHit() {
+function crashHit(obstacleEmoji) {
   if (S.invincible > 0) return
   S.invincible = 60
   // v54.17 A9: replace rotation jitter with cinematic scale zoom + chromatic flash.
-  // shakeTimer kept for legacy compat but scale-zoom drives the visual.
   S.shakeTimer = 24
   S.zoomTimer  = 24
   S.hp--
   spawnCrashFX(L.player.x, L.player.y)
-  playTone(200, 0.2, 'square')
+  // v54.19 B1: per-obstacle SFX (cow moos, chicken cluck, rock thud, etc.) replaces
+  // the single 200Hz crash tone.
+  if (obstacleEmoji) g14ObsSFX(obstacleEmoji); else playTone(200, 0.2, 'square')
   screenFlash('rgba(255,60,60,0.35)')
-  // v54.17 A4: animated heart loss — pop & rise from #lives-hud's right edge
-  // so the player SEES which heart was lost.
+  // v54.19 B9: haptic on crash.
+  g14Vibrate([30, 50, 20])
+  // v54.17 A4: animated heart loss
   try { g14SpawnHeartPop() } catch(_){}
   updateHUD()
-  if (S.hp <= 0) setTimeout(endRace, 500)
+  if (S.hp <= 0) {
+    // v54.19 B11: 2.2s crash replay vignette before end-screen.
+    try { g14RecordDeath() } catch(_){}
+    g14CrashReplay(() => setTimeout(endRace, 100))
+  }
 }
 
 // v54.17 A7: engine-rev preview SFX. ~400ms envelope per category.
@@ -2469,6 +2566,253 @@ function tickPickups(delta){
   }
 }
 
+// ═══════════════════════════════════════════════════════════
+//  v54.19 — G14 Race Depth helpers
+// ═══════════════════════════════════════════════════════════
+
+// B1: per-obstacle SFX. Owner: replace one shared crash tone with reactive sounds.
+const G14_OBS_SFX = {
+  '🪨': () => { playTone(180, 0.05, 'sawtooth'); setTimeout(()=>playTone(120, 0.08, 'sawtooth'), 60) },
+  '🐄': () => { playTone(220, 0.18, 'triangle'); setTimeout(()=>playTone(160, 0.20, 'triangle'), 120) },
+  '🐔': () => { playTone(660, 0.06, 'square'); setTimeout(()=>playTone(880, 0.05, 'square'), 50); setTimeout(()=>playTone(1100, 0.04, 'square'), 100) },
+  '🌵': () => { playTone(180, 0.08, 'square') },
+  '⚠️': () => { playTone(880, 0.06, 'square'); setTimeout(()=>playTone(880, 0.06, 'square'), 100) },
+  '🛑': () => { playTone(440, 0.15, 'sawtooth') },
+  '🪵': () => { playTone(140, 0.16, 'square') },
+  '🧱': () => { playTone(200, 0.05, 'square'); setTimeout(()=>playTone(160, 0.10, 'square'), 70) },
+}
+function g14ObsSFX(emoji){ try { (G14_OBS_SFX[emoji] || G14_OBS_SFX['🪨'])() } catch(_){} }
+
+// B3: Mini-station checkpoint cinematic. Replaces .cp-dot ding with floating arch.
+const G14_STATIONS = ['Surabaya','Yogyakarta','Cirebon','Bandung','Bekasi','Jakarta','Tanjung Priok','Ambarawa']
+function g14StationCinema(stationName, sub){
+  const el = document.createElement('div')
+  el.className = 'g14-station-cinema'
+  el.innerHTML = `<div class="gsc-arch">🏛️</div><div class="gsc-name">${stationName}</div><div class="gsc-sub">${sub||''}</div>`
+  document.body.appendChild(el)
+  setTimeout(() => el.remove(), 1500)
+  try { playTone(880, 0.07, 'sine'); setTimeout(()=>playTone(660, 0.08, 'sine'), 80); setTimeout(()=>playTone(990, 0.10, 'sine'), 180) } catch(_){}
+  if (navigator.vibrate) try { navigator.vibrate(40) } catch(_){}
+}
+
+// B4: Cab window driver wave for character trains. Adds a Pixi Text "👋" hovering
+// next to player on idle (every 4s blink) and on P1 finish.
+function g14ShowCabDriverWave(){
+  if (!S.trainCfg || !S.trainCfg.isCharacter) return
+  if (!L.player) return
+  const txt = new PIXI.Text({ text: '👋', style: { fontSize: 26 } })
+  txt.anchor.set(0.5)
+  txt.x = -28; txt.y = -34
+  L.player.addChild(txt)
+  let t = 0
+  const tickHandle = (ticker) => {
+    t += ticker.deltaTime
+    if (t > 30) { try { L.player.removeChild(txt); app.ticker.remove(tickHandle) } catch(_){} return }
+    txt.rotation = Math.sin(t * 0.4) * 0.3
+    txt.alpha = 1 - t / 30
+  }
+  app.ticker.add(tickHandle)
+}
+
+// B5: Conductor announcer for KM markers — "ting-tong" chime 50m before next station.
+let _lastConductorAnnounce = 0
+function g14CheckConductorAnnounce(){
+  // KM markers spawn every ~600m starting at 150m. Pre-announce 50m before.
+  const upcoming = [100, 200, 300, 400, 500, 600, 700]
+  for (const m of upcoming) {
+    if (S.distance >= m - 50 && S.distance < m - 48 && _lastConductorAnnounce < m) {
+      _lastConductorAnnounce = m
+      const stationName = G14_STATIONS[m % G14_STATIONS.length] || 'Stasiun'
+      try { playTone(1320, 0.10, 'sine'); setTimeout(()=>playTone(880, 0.18, 'sine'), 120) } catch(_){}
+      // Brief overlay banner
+      const el = document.createElement('div')
+      el.className = 'g14-milestone'
+      el.style.top = '36%'
+      el.style.fontSize = '20px'
+      el.textContent = '🚉 ' + stationName
+      document.body.appendChild(el)
+      setTimeout(() => el.remove(), 1200)
+      break
+    }
+  }
+}
+
+// B7: Photo-mode + share button. Generates a result PNG via Pixi extract + composite frame.
+function g14ShowShareButton(){
+  let btn = document.getElementById('g14-share-fab')
+  if (!btn) {
+    btn = document.createElement('button')
+    btn.id = 'g14-share-fab'
+    btn.className = 'g14-share-fab'
+    btn.textContent = '📸 Tunjukkan Mama'
+    btn.onclick = g14HandleShare
+    document.body.appendChild(btn)
+  }
+  setTimeout(() => btn.classList.add('show'), 200)
+}
+function g14HideShareButton(){
+  const btn = document.getElementById('g14-share-fab')
+  if (btn) btn.classList.remove('show')
+}
+async function g14HandleShare(){
+  try {
+    let dataUrl = null
+    if (app && app.renderer && app.renderer.extract && app.stage) {
+      try { dataUrl = app.renderer.extract.canvas(app.stage).toDataURL('image/png') } catch(_){}
+    }
+    const payload = {
+      title: 'Dunia Emosi — Balapan Kereta',
+      text: `Aku raih ${S.position === 1 ? '🥇' : S.position === 2 ? '🥈' : '🥉'} ${Math.floor(S.distance)}m dengan ${(S.trainCfg && S.trainCfg.name) || 'kereta'} di Dunia Emosi! 🚂`
+    }
+    if (dataUrl && navigator.canShare && navigator.canShare({ files: [new File([await (await fetch(dataUrl)).blob()], 'race.png', { type: 'image/png' })] })) {
+      const blob = await (await fetch(dataUrl)).blob()
+      const file = new File([blob], 'race.png', { type: 'image/png' })
+      await navigator.share({ ...payload, files: [file] })
+    } else if (navigator.share) {
+      await navigator.share(payload)
+    } else if (dataUrl) {
+      // Fallback: open in new tab for save-as
+      const a = document.createElement('a')
+      a.href = dataUrl; a.download = 'dunia-emosi-race.png'
+      document.body.appendChild(a); a.click(); a.remove()
+    }
+  } catch(_){}
+}
+
+// B8: Floating-chip mini-quiz. Triggered randomly during race; lanes stay active.
+let _miniQuizArmed = false
+function g14MaybeFloatMiniQuiz(){
+  if (_miniQuizArmed || S.quizOpen || !S.running || S.gameOver) return
+  // Fire approximately every ~25s of race AFTER 150m to give the player some warmup.
+  if (S.distance < 150) return
+  if (S.frame % (60 * 25) !== 0) return
+  _miniQuizArmed = true
+  const a = Math.floor(Math.random() * 9) + 1
+  const b = Math.floor(Math.random() * 9) + 1
+  const ans = a + b
+  const qEl = document.getElementById('gmq-q')
+  const grid = document.getElementById('gmq-grid')
+  const ovl = document.getElementById('g14-mini-quiz')
+  if (!qEl || !grid || !ovl) { _miniQuizArmed = false; return }
+  qEl.textContent = `${a} + ${b} = ?`
+  const wrongs = new Set()
+  while (wrongs.size < 3) {
+    const w = ans + (Math.random() < 0.5 ? -1 : 1) * (Math.floor(Math.random() * 5) + 1)
+    if (w !== ans && w > 0) wrongs.add(w)
+  }
+  const choices = [ans, ...wrongs].sort(() => Math.random() - 0.5)
+  grid.innerHTML = ''
+  choices.forEach(c => {
+    const btn = document.createElement('button')
+    btn.className = 'gmq-btn'
+    btn.textContent = c
+    btn.onclick = () => g14CloseMiniQuiz(c === ans)
+    grid.appendChild(btn)
+  })
+  ovl.classList.add('show')
+  // Auto-dismiss after 7s (no penalty)
+  setTimeout(() => { if (_miniQuizArmed) g14CloseMiniQuiz(false) }, 7000)
+}
+function g14CloseMiniQuiz(correct){
+  const ovl = document.getElementById('g14-mini-quiz')
+  if (ovl) ovl.classList.remove('show')
+  _miniQuizArmed = false
+  if (correct) {
+    S.pressure = Math.min(100, S.pressure + 10)
+    try { updatePressure() } catch(_){}
+    try { playTone(880, 0.08); setTimeout(()=>playTone(1320, 0.12), 100) } catch(_){}
+  }
+}
+
+// B9: Haptic vibration on crash + lane switch + correct quiz.
+function g14Vibrate(pattern){
+  if (!navigator.vibrate) return
+  try { navigator.vibrate(pattern) } catch(_){}
+}
+
+// B11: Replay-the-crash 2-second rewind. Plays a red vignette + label before result modal.
+function g14CrashReplay(onDone){
+  const el = document.getElementById('g14-crash-replay')
+  if (!el) { if (onDone) onDone(); return }
+  el.classList.add('show')
+  setTimeout(() => { el.classList.remove('show'); if (onDone) onDone() }, 2200)
+}
+
+// B12: Difficulty-adaptive rubber band ("Mode Belajar"). Tracks deaths per level.
+function g14ApplyKidMode(){
+  const key = 'dunia-g14-deaths-l' + (cfg.level || 5)
+  let deaths = 0
+  try { deaths = parseInt(localStorage.getItem(key) || '0', 10) } catch(_){}
+  if (deaths >= 2) {
+    // Enable Mode Belajar
+    S.kidMode = true
+    if (S.hp != null && LIVES_MAX) S.hp = Math.min(LIVES_MAX + 1, (S.hp || LIVES_MAX) + 1)
+    OBS_INTERVAL_MS_CURRENT = (typeof OBS_INTERVAL_MS !== 'undefined' ? OBS_INTERVAL_MS : 1100) + 200
+    const badge = document.getElementById('g14-kid-mode-badge')
+    if (badge) { badge.classList.add('show'); setTimeout(() => badge.classList.remove('show'), 3000) }
+    try { playTone(660, 0.12, 'sine'); setTimeout(()=>playTone(880, 0.14, 'sine'), 130) } catch(_){}
+  } else {
+    S.kidMode = false
+    OBS_INTERVAL_MS_CURRENT = (typeof OBS_INTERVAL_MS !== 'undefined' ? OBS_INTERVAL_MS : 1100)
+  }
+}
+function g14RecordDeath(){
+  const key = 'dunia-g14-deaths-l' + (cfg.level || 5)
+  try {
+    const cur = parseInt(localStorage.getItem(key) || '0', 10)
+    localStorage.setItem(key, String(cur + 1))
+  } catch(_){}
+}
+let OBS_INTERVAL_MS_CURRENT = 1100
+
+// B13: Daily login spin. First launch each day → wheel offers 6 wedges of reward.
+function g14CheckDailySpin(){
+  const today = new Date().toDateString()
+  const key = 'dunia-g14-spin'
+  try {
+    const last = localStorage.getItem(key)
+    if (last === today) return false
+    // Show spin overlay on next idle frame
+    setTimeout(() => {
+      const ovl = document.getElementById('g14-spin-overlay')
+      if (ovl) ovl.classList.add('show')
+    }, 400)
+    return true
+  } catch(_){ return false }
+}
+function g14SpinWheel(){
+  const wheel = document.getElementById('g14-spin-wheel')
+  const msg = document.getElementById('g14-spin-msg')
+  const cta = document.getElementById('g14-spin-go')
+  if (!wheel) return
+  const rewards = [
+    { emoji:'⚡', label:'+30 Tekanan', apply: () => { S.pressure = Math.min(100, (S.pressure || 70) + 30); try { updatePressure() } catch(_){} } },
+    { emoji:'❤️', label:'+1 Nyawa', apply: () => { if (S.hp != null) S.hp = Math.min(LIVES_MAX + 1, S.hp + 1) } },
+    { emoji:'🚂', label:'Bonus Boost', apply: () => { try { executeBoost() } catch(_){} } },
+    { emoji:'⭐', label:'2× Skor Hari Ini', apply: () => { try { localStorage.setItem('dunia-g14-score-mult', '2') } catch(_){} } },
+    { emoji:'👻', label:'Ghost Mode 5s', apply: () => { S.invincible = Math.max(S.invincible || 0, 300) } },
+    { emoji:'🎁', label:'Misteri!', apply: () => { S.pressure = 100; if (S.hp != null) S.hp = Math.min(LIVES_MAX, (S.hp || LIVES_MAX) + 1) } },
+  ]
+  const idx = Math.floor(Math.random() * rewards.length)
+  const r = rewards[idx]
+  const sweep = 360 * 4 + 360 - (idx * 60) - 30
+  wheel.style.transform = 'rotate(' + sweep + 'deg)'
+  if (cta) cta.style.display = 'none'
+  setTimeout(() => {
+    if (msg) msg.innerHTML = '🎉 ' + r.emoji + '<br>' + r.label
+    try { r.apply() } catch(_){}
+    try { playTone(660, 0.10); setTimeout(()=>playTone(880, 0.10), 100); setTimeout(()=>playTone(1100, 0.18), 220) } catch(_){}
+    try { localStorage.setItem('dunia-g14-spin', new Date().toDateString()) } catch(_){}
+    setTimeout(() => {
+      const ovl = document.getElementById('g14-spin-overlay')
+      if (ovl) ovl.classList.remove('show')
+      if (cta) cta.style.display = 'block'
+      if (msg) msg.innerHTML = '🎰 Roda Harian!'
+      wheel.style.transform = 'rotate(0deg)'
+    }, 2200)
+  }, 3500)
+}
+
 // ── Speed Lines ───────────────────────────────────────────
 let spdLines = []
 function tickSpeedLines(delta) {
@@ -2574,14 +2918,24 @@ function loop(ticker) {
 
   // Checkpoints
   const frac = S.distance / S.finishLine
-  ;[['cp0',0.25],['cp1',0.5],['cp2',0.75]].forEach(([id,th]) => {
+  ;[['cp0',0.25,1],['cp1',0.5,2],['cp2',0.75,3]].forEach(([id,th,sIdx]) => {
     const el = document.getElementById(id)
-    if (frac >= th && !el.classList.contains('reached')) el.classList.add('reached')
+    if (frac >= th && !el.classList.contains('reached')) {
+      el.classList.add('reached')
+      // v54.19 B3: mini-station cinematic on each checkpoint pass.
+      const name = G14_STATIONS[(sIdx - 1) % G14_STATIONS.length]
+      g14StationCinema(name, 'Pos ' + sIdx + ' tercapai')
+    }
   })
   if (frac >= 1) {
     document.getElementById('cp3').classList.add('reached')
     endRace()
   }
+
+  // v54.19 B5: conductor pre-announce upcoming station.
+  try { g14CheckConductorAnnounce() } catch(_){}
+  // v54.19 B8: maybe float mini-quiz chip.
+  try { g14MaybeFloatMiniQuiz() } catch(_){}
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -2592,10 +2946,16 @@ function startRace() {
   document.getElementById('select-ovl').style.display = 'none'
   document.getElementById('go-btn').style.display = 'none'
 
+  // v54.19 B12: Mode Belajar gate. Reads dunia-g14-deaths-l{level} to soften.
+  try { g14ApplyKidMode() } catch(_){}
   S.distance = 0; S.hp = LIVES_MAX; S.pressure = 70
+  // v54.19 B12: if kid mode active, +1 HP buffer (applied AFTER reset above).
+  if (S.kidMode) S.hp = Math.min(LIVES_MAX + 1, S.hp + 1)
   S.obstacles = []; S.steam = []; S.sparks = []; spdLines = []; S.frame = 0
   S.pickups = []  // v54.17 A17
   S.nextPickupAt = 180  // first floating pickup at 180m
+  _lastConductorAnnounce = 0  // v54.19 B5 reset on race-start
+  _miniQuizArmed = false       // v54.19 B8 reset
   S.boosting = false; S.boostCooldown = false; S.invincible = 0
   S.lane = 1; S.targetLane = 1
   S.speed = S.baseSpeed = S.trainCfg.baseSpeed
@@ -2619,6 +2979,8 @@ function startRace() {
     S.running = true
     try{const bgm=document.getElementById('game-bgm');bgm.volume=0.2;bgm.play().catch(()=>{})}catch(_){}
     try{const sfx=document.getElementById('train-sfx');if(sfx){sfx.currentTime=0;sfx.volume=0.7;sfx.play().catch(()=>{})}}catch(_){}
+    // v54.19 B4: cab-window driver wave on race start for character trains only.
+    try { g14ShowCabDriverWave() } catch(_){}
   })
 }
 
@@ -2702,7 +3064,11 @@ function endRace() {
   if (S.position === 1) {
     try { g14SpawnConfetti() } catch(_){}
     try { playTone(523, 0.12); setTimeout(()=>playTone(659, 0.12), 120); setTimeout(()=>playTone(784, 0.12), 240); setTimeout(()=>playTone(1047, 0.20), 360) } catch(_){}
+    // v54.19 B4: character train waves on P1 finish too.
+    try { g14ShowCabDriverWave() } catch(_){}
   }
+  // v54.19 B7: photo-share button on result modal.
+  try { g14ShowShareButton() } catch(_){}
   // v54.17 A13: best-speed callout line in the result message.
   const bestKmh = Math.round(S.bestSpeed || 0)
   const speedLine = bestKmh > 0 ? `⚡ ${bestKmh} km/h max!` : ''
@@ -2726,6 +3092,7 @@ function endRace() {
 }
 
 function showSelectScreen() {
+  try { g14HideShareButton() } catch(_){}  // v54.19 B7
   S.running = false
   document.getElementById('quiz-ovl').style.display = 'none'
   const so = document.getElementById('select-ovl')
@@ -2878,8 +3245,25 @@ function buildQuiz() {
     b = Math.floor(Math.random() * 6) + 2
     answer = a * b
   }
+  // v54.19 B2: train-themed word problems 50% of the time (adds STEM context without
+  // changing the arithmetic — kids practice math + see trains).
   const symbol = op === '*' ? '×' : op
-  document.getElementById('quiz-q').textContent = `${a} ${symbol} ${b} = ?`
+  let qText = `${a} ${symbol} ${b} = ?`
+  if (Math.random() < 0.5) {
+    const templates = op === '+'
+      ? [ `${a} penumpang naik di Bandung, ${b} naik di Bogor. Total?`,
+          `${a} gerbong + ${b} gerbong dirangkai = ?`,
+          `${a} km Yogya–Solo + ${b} km Solo–Madiun = ?` ]
+      : op === '-'
+      ? [ `Kereta bawa ${a} penumpang, ${b} turun di Cirebon. Sisanya?`,
+          `${a} menit perjalanan. Sudah ${b} menit lewat. Sisa?`,
+          `${a} gerbong, ${b} dilepas di depo. Sisa?` ]
+      : [ `${a} gerbong × ${b} penumpang per gerbong = ?`,
+          `${a} kereta × ${b} jam keberangkatan = ?`,
+          `${a} km/menit × ${b} menit = ? km` ]
+    qText = templates[Math.floor(Math.random() * templates.length)]
+  }
+  document.getElementById('quiz-q').textContent = qText
   const wrong = new Set()
   let safety = 0
   while (wrong.size < 3 && safety++ < 30) {
@@ -2912,6 +3296,7 @@ function answerQuiz(val, correct) {
   document.getElementById('quiz-ovl').style.display = 'none'
   S.quizOpen = false
   if (val === correct) {
+    try { g14Vibrate(40) } catch(_){}  // v54.19 B9
     executeBoost()
   } else {
     playTone(200, 0.15, 'square')
@@ -2991,6 +3376,7 @@ function laneUp() {
     S.lane = S.targetLane
     playTone(500, 0.05)
     try { g14UpdateLanePips(true) } catch(_){}
+    try { g14Vibrate(10) } catch(_){}  // v54.19 B9
   }
 }
 function laneDn() {
@@ -2999,6 +3385,7 @@ function laneDn() {
     S.lane = S.targetLane
     playTone(400, 0.05)
     try { g14UpdateLanePips(true) } catch(_){}
+    try { g14Vibrate(10) } catch(_){}  // v54.19 B9
   }
 }
 window.addEventListener('keydown', e => {
@@ -3025,7 +3412,16 @@ function updateHUD() {
   document.getElementById('lives-hud').textContent = '❤️'.repeat(S.hp) + '🖤'.repeat(LIVES_MAX - S.hp)
   if (S.trainCfg) {
     const displayKmh = Math.round(S.trainCfg.kmh * (S.speed / S.baseSpeed) * (S.boosting ? S.trainCfg.boostMult : 1))
-    document.getElementById('speed-hud').textContent = displayKmh + ' km/h'
+    // v54.19 B10: needle gauge — update num + var(--gns) which conic-arc + needle read.
+    const numEl = document.getElementById('speed-hud-num')
+    if (numEl) numEl.textContent = displayKmh + ' km/h'
+    else document.getElementById('speed-hud').textContent = displayKmh + ' km/h'
+    const needleEl = document.getElementById('g14-speed-needle')
+    if (needleEl) {
+      const ratio = Math.max(0, Math.min(1, displayKmh / Math.max(1, S.trainCfg.kmh * S.trainCfg.boostMult)))
+      needleEl.style.setProperty('--gns', ratio.toFixed(3))
+      needleEl.classList.toggle('boost', !!S.boosting)
+    }
   }
 }
 function updatePressure() {
@@ -3196,6 +3592,8 @@ function applyRdeScaling() {
   await initPixi()
   showCategories()
   if (window.RZ) window.RZ.onResize(applyRdeScaling)
+  // v54.19 B13: daily-spin overlay on first launch of the day.
+  try { g14CheckDailySpin() } catch(_){}
 })()
 </script>
 </body>

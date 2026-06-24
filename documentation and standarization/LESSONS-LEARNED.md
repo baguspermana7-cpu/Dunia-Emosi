@@ -4,6 +4,25 @@
 
 ---
 
+## 2026-06-24 — v54.19 G14 Race Depth
+
+### L131 — Per-obstacle SFX dictionary keyed by emoji is the right factoring
+- **Symptom**: All obstacles fired the same crash tone. Cow, rock, chicken, log — same boring 200Hz square.
+- **Fix**: `G14_OBS_SFX = { '🪨': () => playTone(...), '🐄': () => moo, '🐔': () => cluck, ... }`. Pass the obstacle's `_emoji` into `crashHit(emoji)`. Lookup fires the right envelope.
+- **Lesson**: When you have N variants of an entity and want N variants of a side-effect (SFX, particle, animation), the right factoring is a SMALL DICTIONARY keyed by the entity's identifying property. Not a switch statement, not subclasses — just an object literal. Adding a 9th obstacle? Add one entry.
+
+### L132 — Word-problem templates over canonical arithmetic = STEM context without changing math
+- **Symptom**: Quiz showed bare `3 × 8 = ?`. Owner wanted train context.
+- **Fix**: 50% of the time, wrap the SAME (a, b, op, answer) in a Indonesian train-context template ("3 gerbong × 8 penumpang = ?"). Answer math identical; surface text varied.
+- **Lesson**: For educational games, you can add domain context (trains, food, animals, etc.) by templating the SURFACE TEXT without touching the underlying answer math. Templates are cheap; getting kids to read a sentence is the win.
+
+### L133 — Auto-rescue ("Mode Belajar") triggers on failure count, not menu opt-in
+- **Symptom**: Kids who die 2× on a level can't progress. A "make it easier" toggle in settings won't help — kids don't open settings.
+- **Fix**: localStorage tracks deaths per level. On 2+ deaths, `g14ApplyKidMode` adds +1 HP and slows obstacle spawning by 200ms. Mint badge "🌱 MODE BELAJAR" floats in for 3s on entry — visible reassurance.
+- **Lesson**: Adaptive difficulty for kids should be SILENT and AUTOMATIC. They don't read menus. Track frustration signals (death count, time-to-progress), auto-soften, surface a friendly badge for transparency — but never gate the rescue behind a toggle.
+
+---
+
 ## 2026-06-24 — v54.18 PvP chain-KO snowball fix
 
 ### L130 — Canon-game rules can snowball unfairly in kids' contexts; protect post-loss participation
