@@ -2516,14 +2516,20 @@
       root._switchOpen = null;
       state.comboCount[playerIdx] = 0;  // streak resets on switch
       if (wasForced) {
-        // Forced (after faint) — switching player keeps the turn; they go to
-        // the action menu with the new Pokemon. v53.0: Speed re-decides who
-        // strikes first against the swap-in. A faster replacement can steal
-        // initiative back even after losing the previous Pokemon.
+        // Forced (after faint) — switching player keeps the turn.
+        // v54.18 HOUSE RULE (Switch-Fairness Rule, POKEMON_BALANCE_STANDARD.md):
+        // The replacement ALWAYS gets the next attack. Owner: "ganti pokemon
+        // karena kalah ya harusnya dapat giliran bukan malah skip giliran."
+        // Previously decideTurnOrder ran here — a faster attacker's pokemon
+        // could keep initiative against the slower fresh replacement, chain-
+        // KO'ing it before it ever moved. Canon-Pokemon allows that; for a
+        // 5-10yo PvP game it snowballs unfairly. The NEXT natural round (after
+        // the replacement acts) still flows through decideTurnOrder normally;
+        // only this single post-faint action is overridden.
         root._questions = null;
         state._moveLock = false;  // v53.4: forced switch → next turn re-enables moves
         state.phase = 'action';
-        state.turn = decideTurnOrder(activePoke(0), activePoke(1), state);
+        state.turn = playerIdx;
       } else {
         // Voluntary mid-turn switch — costs the turn, passes to opponent.
         // v53.0: opponent acts next, but Speed still has the final say on who

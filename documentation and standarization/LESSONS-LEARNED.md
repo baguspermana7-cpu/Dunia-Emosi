@@ -4,6 +4,17 @@
 
 ---
 
+## 2026-06-24 — v54.18 PvP chain-KO snowball fix
+
+### L130 — Canon-game rules can snowball unfairly in kids' contexts; protect post-loss participation
+- **Symptom**: In 6v6 PvP, a 1-hit-KO chain wiped Player 2 6-0 because the replacement after each faint was attacked again before it could move. Owner: "harusnya dapat giliran bukan malah skip giliran."
+- **Root cause (mechanical)**: `performSwitch` re-decided turn order via `decideTurnOrder` after a forced switch. Higher-Speed attacker kept the initiative against the slower replacement. Canon-Pokémon behavior.
+- **Root cause (philosophical)**: canon-Pokémon assumes competent prediction. A 5-10yo doesn't predict — they pick favorites. With lethal damage rolls in the mix, a single faint cascades to a wipe and the kid never gets to do the FUN PART of the game (attacking).
+- **Fix**: in `performSwitch`'s `wasForced` branch, override `state.turn = playerIdx` so the replacement player ALWAYS gets the next action. Single line change. Documented as the "Switch-Fairness Rule" in POKEMON_BALANCE_STANDARD.md with a "DO NOT regress" warning.
+- **Lesson**: When porting a canon mechanic (chess, Pokémon, Smash, anything competitive) to a kids' educational game, audit it for snowball failure modes. The canon rule may be correct for adult competition but cruel for a 6-year-old who just wants to attack. House rules that PROTECT participation (everyone gets a turn, comeback bonuses, mercy invulnerability) almost always win for kids. Document the canon-divergence clearly so future agents don't "correct" it.
+
+---
+
 ## 2026-06-24 — v54.17 G14 Race Polish
 
 ### L127 — Defer running-state behind a countdown gate so the race STARTS at GO!

@@ -1,5 +1,45 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.18 "PvP chain-KO snowball fix" (forced-switch replacement always gets next turn)
+
+Seventeenth v54.x ship. Surgical PvP balance hotfix.
+
+### Bug
+**Symptom**: 6v6 PvP. P1 attacks, KOs P2's lead with a 1-hit-KO roll. P2 brings in a replacement. **The replacement gets attacked immediately** before it can act — P1 keeps the initiative because their pokémon's Speed is higher than the fresh replacement. Chain repeats until P2 is wiped 6-0, often without landing a single hit.
+
+**Owner**: "ganti pokemon karena kalah ya harusnya dapat giliran bukan malah skip giliran." (Translation: "Changing pokémon because of losing — they should get a turn, not skip a turn.")
+
+### Root cause
+`games/data/battle-modes.js` — interaction between two spots:
+1. **`executeMove` faint handler at line ~2588** correctly sets `state.turn = defIdx` so the defending player's replacement-pick menu appears.
+2. **`performSwitch` line 2526** in the `wasForced === true` branch then RE-COMPUTES the turn order: `state.turn = decideTurnOrder(activePoke(0), activePoke(1), state)`. If the attacker's pokémon has higher Speed than the just-switched-in replacement, `state.turn` flips back to the attacker. The attacker's action menu appears. They attack the fresh replacement. Snowball.
+
+### Fix
+**House rule (Switch-Fairness Rule, now codified in POKEMON_BALANCE_STANDARD.md)**: in `performSwitch`'s `wasForced` branch, the replacement player ALWAYS keeps the turn. `decideTurnOrder` is bypassed for the single post-faint action.
+
+```js
+// OLD
+state.turn = decideTurnOrder(activePoke(0), activePoke(1), state);
+// NEW (v54.18)
+state.turn = playerIdx;  // replacement player always gets the next action
+```
+
+The NEXT natural round (after the replacement's first action resolves) still flows through `decideTurnOrder` normally — only this one post-faint action is overridden. Voluntary mid-fight switches unchanged (still cost the turn, opponent acts next).
+
+### Why a house rule, not canon-Pokémon
+Canon-Pokémon's Speed-only model is competitively sound but snowballs unfairly in a 5-10-year-old kids' game where damage rolls can hit 1-shot KO territory. The fairness rule applies symmetrically — every faint gives the OTHER side initiative on the next action — so tournament integrity is preserved. Whoever has more pokémon or better damage rolls overall still wins, but losing one pokémon doesn't lose the match.
+
+### Files touched
+- `games/data/battle-modes.js` — `performSwitch` `wasForced` branch: replace `decideTurnOrder(...)` call with `state.turn = playerIdx` (single-line behavioural change, ~8 lines of explanatory comment added).
+- `documentation and standarization/POKEMON_BALANCE_STANDARD.md` — NEW "Switch-Fairness Rule (v54.18)" section before Verification. Documents the rule + "DO NOT regress" warning for future agents.
+- `index.html` — `battle-modes.js?v=` bumped to 54.18-20260624w.
+- `sw.js` — `CACHE_VERSION: 'v54.17-20260624v' → 'v54.18-20260624w'`.
+
+### Lessons captured
+- L130 — Canon-game rules can snowball unfairly in kids' contexts. House rules that protect post-loss participation are worth the canon-divergence.
+
+---
+
 ## 2026-06-24 — v54.17 "G14 Race Polish — Ritual, Stakes, Identity" (17 items)
 
 Sixteenth v54.x ship. First item from `TRAIN-GAMES-100-IDEAS-PLAN.md` (synthesized from ultraplan workflow `wbvjxrcqw`). Tightens the racing loop with audio rituals, lane awareness, and reactive world detail.

@@ -137,6 +137,40 @@ CSS belt-and-suspenders: `.bm-move[disabled] { opacity: 0.55; pointer-events: no
 
 ---
 
+## Switch-Fairness Rule (v54.18, locked 2026-06-24)
+
+After a Pokémon faints and the defending player must bring in a replacement (forced switch), the **replacement ALWAYS gets the next attack** — `decideTurnOrder` is bypassed for that single post-faint action.
+
+### Why this is a house rule, not canon-Pokémon
+
+Canon-Pokémon lets Speed determine the next attacker the round after a switch. For competitive play this is fine — you predict the switch, you bring a speed counter, you win the prediction. For a 5-10-year-old PvP game with potentially lethal damage rolls, that rule **snowballs**: a fast attacker KOs the lead, then the fresh replacement (often slower) gets attacked again before it can move, gets KO'd, and so on. Owner reported a 6-0 wipe where Player 2 never landed a single hit.
+
+Owner's literal direction (2026-06-24):
+> "ganti pokemon karena kalah ya harusnya dapat giliran bukan malah skip giliran."
+> ("Changing pokémon because of losing — they should get a turn, not skip a turn.")
+
+### Mechanic
+
+| State | Behaviour |
+|---|---|
+| Forced switch after faint (`wasForced === true`) | Replacement player keeps the turn (`state.turn = playerIdx`). `decideTurnOrder` is NOT called. |
+| Voluntary mid-fight switch | Unchanged — costs the turn, opponent acts next. |
+| Next natural round (after replacement's action) | `decideTurnOrder` runs normally — Speed is back in charge. |
+
+### Code site
+
+`games/data/battle-modes.js` inside `performSwitch`'s `if (wasForced)` branch (~line 2518). The override is a single line: `state.turn = playerIdx`.
+
+### Why this does NOT break tournament integrity
+
+The rule applies symmetrically. Every faint in either direction gives the OTHER side the initiative on the replacement's first attack. In a chain-KO scenario, both sides trade evenly. The rule REMOVES the snowball; it doesn't add a new one. Whoever has more or better-rolled pokémon overall still wins, but losing a single pokémon doesn't lose you the match.
+
+### DO NOT regress
+
+Future agents reviewing `performSwitch` may be tempted to "fix" this back to canon-Pokémon (`state.turn = decideTurnOrder(...)`). That regression has been measured to cause 6-0 wipes. The fairness rule must remain.
+
+---
+
 ## What's intentionally NOT in this standard (yet)
 
 - **Status conditions** (paralyse / burn / poison / freeze / sleep). Owner hasn't asked; large engine work; defer.
