@@ -1,5 +1,41 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.27 "Polish Pass 2 — top 10 from iteration audit" (10 / 18 ranked items)
+
+Second iteration of "continuous polish" mandate. Top 10 highest-impact-per-cost items from the 56-finding audit (workflow `wwo9w6jvf`). Mix of dead-code revivals, silent-failure fixes, and feel improvements. Source-of-record for remaining 8 + 35 iter-3 follow-ups: `/tmp/.../wwo9w6jvf.output`.
+
+### Critical reveals (silent failures the player has been suffering from)
+- **G14 Mode Belajar was a no-op** — `OBS_INTERVAL_MS_CURRENT` was written by `g14ApplyKidMode` but the spawn condition still read the immutable `OBS_INTERVAL_MS`. Kids in Mode Belajar got the same obstacle cadence as everyone else. **I1 fix**: spawn condition now reads `OBS_INTERVAL_MS_CURRENT`.
+- **G16 audio was inaudible** — countdown, whistle, tap-tick all called bare `playTone(...)` which was undefined in g16-pixi.html, throwing ReferenceError into a swallowing try/catch. **I6 fix**: `train-shared.js` now exposes `window.playTone = _playTone` so all standalone games inherit a real WebAudio backend.
+- **G18 streak bonus was leaking +1 star across sessions** — `g18StreakBest` initialized at module level and never reset. Replay a level → still qualified for the bonus from the last run. **I10 fix**: zero both `g18Streak` and `g18StreakBest` at top of `g18StartQuiz()`.
+- **G18 quiz shuffle was biased** — `Array.sort(() => Math.random() - 0.5)` is not a uniform shuffle. **I11 fix**: Fisher-Yates + integration with the seeded shuffle + recent-question filter from v54.23 F3.
+
+### Feel improvements
+- **I4 G14 lane oscillation** — removed `sin(switchFrame * 0.4) * 0.18` multiplier from position lerp; it produced a non-monotonic curve that briefly reversed motion mid-switch. Sway is now rotation-only.
+- **Camera tilt jitter** — was recomputing `_tiltDy` AFTER position update, so sign could flip at the end of move → 1-frame counter-tilt. Now uses cached `_switchDySign` from the start of the move.
+- **I8 G16 mini-obstacle brake** — was a hard 80px stop. Now a 120px brake ramp with sparks, snapping to stopped only at 40px. Feels intentional instead of an invisible wall.
+
+### UX cleanups
+- **I3 G14 daily spin defer** — was triggered on boot, blocking train picker before first touch. Now triggered from `endRace`'s `onAgain`/`onBack`/`onExtra` callbacks (after at least one race).
+- **I5 G14 mini-quiz speed dip** — chip re-anchored LEFT (was covering BOOST button on right). Speed drops to 0.4× baseSpeed and obstacle spawns suppressed for 6s while chip is open. Kid can read math without dodging.
+- **I2 G14 swipe handler scope** — was on `window`, so a slight finger-drag on BOOST registered as a swipe and triggered phantom lane changes. Now bound to `#pixi-canvas` only.
+- **I7 G16 duplicate danger bars** — original `#danger-wrap` and v54.22's `#g16-danger-bar` both showed danger with the same gradient. Renamed the new one to `#g16-progress-bar` with blue gradient + "JALUR" label so they're complementary (DANGER vs PROGRESS).
+- **I9 G18 cleanup** — NEW `g18Cleanup()` stops gamelan + chuff loops, cancels speechSynthesis queue, removes lingering `#g18-extra-fab` / `#g18-pak-masinis` / storybook / timeline / java map / rod overlay / daily-trivia DOM nodes. Wired into `backToLevelSelect` + `endGameFromOverlay`.
+
+### Files touched
+- `games/g14.html` — tickPlayer (lane lerp + tilt sign cache), tickObstacles spawn condition, boot (defer spin), endRace (lazy spin trigger), mini-quiz (left anchor + speed dip), swipe handler scope.
+- `games/g16-pixi.html` — DANGER bar renamed to PROGRESS, mini-obstacle brake ramp.
+- `games/train-shared.js` — expose `window.playTone`.
+- `game.js` — `g18Cleanup` + wires; `g18ShuffleQuiz` Fisher-Yates; `g18StartQuiz` streak reset.
+- `sw.js` + 4 cache-stamp bumps.
+
+### Lessons captured
+- L155 — Module-level state needs explicit per-session reset hooks.
+- L156 — `playTone` and similar "ambient" helpers should be exported from shared module, never assumed defined.
+- L157 — When a shipped feature looks visibly working but silently no-ops, the bug surface is invisible. Code review must check that written-to variables are actually read.
+
+---
+
 ## 2026-06-24 — v54.26 "Polish Pass — bug fixes + smoothness" (refine existing systems)
 
 First iteration of the "continuous polish" mandate. Focus: improve what's shipped before adding new features. Targeted real bugs the player can feel (pause-aware timers, RAF leaks, DOM particle stacking, lane-pip race conditions).

@@ -106,10 +106,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 .g14-share-fab:active{transform:translateX(-50%) translateY(3px);box-shadow:0 3px 0 #6b21a8}
 @keyframes g14SharePop{0%{opacity:0;transform:translateX(-50%) translateY(20px) scale(0.6)}60%{opacity:1;transform:translateX(-50%) translateY(-4px) scale(1.05)}100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
 
-/* B8: Floating-chip mini-quiz */
-#g14-mini-quiz{position:fixed;right:max(12px,env(safe-area-inset-right));top:50%;transform:translateY(-50%);z-index:210;width:min(240px,40vw);background:linear-gradient(135deg,rgba(15,23,42,0.96),rgba(45,12,75,0.92));border:2px solid #fbbf24;border-radius:18px;padding:12px;font-family:'Fredoka One',cursive;color:#fff;box-shadow:0 12px 36px rgba(0,0,0,0.6);display:none}
+/* B8 + v54.27 I5: anchored LEFT (was RIGHT, covered BOOST button) */
+#g14-mini-quiz{position:fixed;left:max(56px,env(safe-area-inset-left));top:50%;transform:translateY(-50%);z-index:210;width:min(240px,40vw);background:linear-gradient(135deg,rgba(15,23,42,0.96),rgba(45,12,75,0.92));border:2px solid #fbbf24;border-radius:18px;padding:12px;font-family:'Fredoka One',cursive;color:#fff;box-shadow:0 12px 36px rgba(0,0,0,0.6);display:none}
 #g14-mini-quiz.show{display:block;animation:g14MiniIn 280ms cubic-bezier(.34,1.56,.64,1)}
-@keyframes g14MiniIn{0%{opacity:0;transform:translateY(-50%) translateX(40px)}100%{opacity:1;transform:translateY(-50%) translateX(0)}}
+@keyframes g14MiniIn{0%{opacity:0;transform:translateY(-50%) translateX(-40px)}100%{opacity:1;transform:translateY(-50%) translateX(0)}}
 #g14-mini-quiz .gmq-q{text-align:center;font-size:18px;font-weight:900;margin-bottom:8px;color:#fde68a}
 #g14-mini-quiz .gmq-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 #g14-mini-quiz .gmq-btn{padding:10px 4px;border:1.5px solid rgba(255,255,255,0.18);border-radius:12px;background:rgba(255,255,255,0.07);color:#fff;font-family:inherit;font-size:15px;font-weight:900;cursor:pointer}
@@ -200,7 +200,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<script src="train-shared.js?v=54.25-20260624ad"></script>
+<script src="train-shared.js?v=54.27-20260624af"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
@@ -2002,18 +2002,26 @@ function tickPlayer(delta) {
   if (!L.player) return
   const targetY = laneYs[S.targetLane] + (L.player._wheelOffset || 0)
   const dy = targetY - L.player.y
-  // v54.8 (concern 10 — physics juice): carriage sway during lane switch.
-  // Anticipation bounce curve on lateral movement, rotational sway on body.
-  if (Math.abs(dy) > 4) {
+  // v54.8 carriage sway, v54.27 polish:
+  //   - Position lerp is now MONOTONIC (was `* (1 + sin*0.18)` which could
+  //     briefly reverse mid-switch causing the visible "jelly wobble").
+  //   - Sway curve is rotation-only (body twist), capped at 0.05 rad.
+  //   - Dust kickup only fires in the first 18 frames of the switch (start-of-turn
+  //     burst) instead of the entire transition so a slow rebound doesn't keep emitting.
+  //   - Cache _switchDySign so camera tilt (below) uses a stable sign even after dy
+  //     near-zeroes at the end of the move.
+  const dyAbs = Math.abs(dy)
+  if (dyAbs > 4) {
     S.switchFrame = (S.switchFrame | 0) + 1
-    L.player.y += dy * 0.22 * delta * (1 + Math.sin(S.switchFrame * 0.4) * 0.18)
-    L.player.rotation = Math.sin(S.switchFrame * 0.18) * 0.05 * Math.sign(dy)
-    // Dust kickup from wheels every ~6 frames during switch.
-    if (S.switchFrame % 6 === 0 && L.fx) g14SpawnLaneDust()
+    L.player._switchDySign = Math.sign(dy)
+    L.player.y += dy * 0.22 * delta
+    L.player.rotation = Math.sin(S.switchFrame * 0.18) * 0.05 * L.player._switchDySign
+    if (S.switchFrame <= 18 && S.switchFrame % 6 === 0 && L.fx) g14SpawnLaneDust()
   } else {
     L.player.y += dy * 0.22 * delta
     if (L.player.rotation) L.player.rotation *= 0.85
     S.switchFrame = 0
+    L.player._switchDySign = 0
   }
 
   // Bob
@@ -2052,11 +2060,14 @@ function tickPlayer(delta) {
     stage.y *= 0.8
     stage.rotation *= 0.7
   }
-  // v54.17 A11: subtle banked-turn camera tilt during lane switch.
-  // Tilts the stage ±0.03 rad in the switch direction, lerps back when settled.
-  const _tiltDy = (laneYs[S.targetLane] + (L.player._wheelOffset || 0)) - L.player.y
-  if (Math.abs(_tiltDy) > 4) {
-    const targetTilt = Math.sign(_tiltDy) * 0.03
+  // v54.17 A11 + v54.27 polish: banked-turn camera tilt during lane switch.
+  // Was computing `_tiltDy` AFTER tickPlayer's position update, so dy could
+  // be near-zero or sign-flipped at the end of the move → 1-frame counter-tilt.
+  // Now uses L.player._switchDySign cached at the START of the move (only set
+  // while |dy| > 4) so the tilt is monotonic.
+  const sign = L.player._switchDySign || 0
+  if (sign) {
+    const targetTilt = sign * 0.03
     stage.rotation += (targetTilt - stage.rotation) * 0.12
   } else if (Math.abs(stage.rotation) > 0.001) {
     stage.rotation *= 0.85
@@ -2722,6 +2733,14 @@ function g14MaybeFloatMiniQuiz(){
     grid.appendChild(btn)
   })
   ovl.classList.add('show')
+  // v54.27 I5: while the chip is open, drop speed to 0.4× baseSpeed and freeze
+  // obstacle spawns for 6s so the kid can read math without dodging at full
+  // speed. The chip is anchored RIGHT which previously occluded the BOOST
+  // button; until we re-anchor, slow-mo is a kid-friendly mitigation.
+  S._preMiniQuizSpeed = S.speed
+  S._preMiniQuizSpawnGate = lastObsTime
+  S.speed = Math.max(S.baseSpeed * 0.4, 0.4)
+  lastObsTime = performance.now() + 6000  // suppress spawns 6s
   // Auto-dismiss after 7s (no penalty)
   setTimeout(() => { if (_miniQuizArmed) g14CloseMiniQuiz(false) }, 7000)
 }
@@ -2729,6 +2748,8 @@ function g14CloseMiniQuiz(correct){
   const ovl = document.getElementById('g14-mini-quiz')
   if (ovl) ovl.classList.remove('show')
   _miniQuizArmed = false
+  // v54.27 I5: restore speed; spawn gate ramps back to normal naturally.
+  if (S._preMiniQuizSpeed != null) { S.speed = S._preMiniQuizSpeed; S._preMiniQuizSpeed = null }
   if (correct) {
     S.pressure = Math.min(100, S.pressure + 10)
     try { updatePressure() } catch(_){}
@@ -2859,7 +2880,11 @@ function loop(ticker) {
   const now = performance.now()
 
   // Spawn obstacle
-  if (now - lastObsTime > OBS_INTERVAL_MS) {
+  // v54.27 I1: read OBS_INTERVAL_MS_CURRENT (Mode Belajar live value) instead
+  // of the immutable OBS_INTERVAL_MS const. Without this, g14ApplyKidMode's
+  // +200ms loosening was a silent no-op — kid mode promised easier spawn cadence
+  // but obstacles still flew at the same rate.
+  if (now - lastObsTime > (typeof OBS_INTERVAL_MS_CURRENT !== 'undefined' ? OBS_INTERVAL_MS_CURRENT : OBS_INTERVAL_MS)) {
     spawnObstacle()
     lastObsTime = now
   }
@@ -3135,9 +3160,11 @@ function endRace() {
   GameModal.show({
     emoji, title, stars, msg: fullMsg,
     onNext: nextLevel,
-    onAgain: () => startRace(),
-    onBack: () => goBack(),
-    onExtra: { label: 'Ganti Kereta 🚂', action: () => showSelectScreen() }
+    // v54.27 I3: lazy daily-spin trigger AFTER first race. Wraps the original
+    // callbacks so the wheel pops once per day on game-over, not on boot.
+    onAgain: () => { try { g14CheckDailySpin() } catch(_){}; startRace() },
+    onBack:  () => { try { g14CheckDailySpin() } catch(_){}; goBack() },
+    onExtra: { label: 'Ganti Kereta 🚂', action: () => { try { g14CheckDailySpin() } catch(_){}; showSelectScreen() } }
   })
 
   try {
@@ -3467,9 +3494,14 @@ window.addEventListener('keydown', e => {
   if (e.key === 'ArrowDown') { laneDn(); e.preventDefault() }
   if (e.key === ' ') { triggerBoost(); e.preventDefault() }
 })
+// v54.27 I2: swipe handler scoped to #pixi-canvas only. Was on `window` so a
+// tap-drag on the BOOST button (slight finger movement) registered as a swipe
+// and armed a phantom lane change. By restricting to the canvas, taps on HUD
+// elements (BOOST, BACK, train name badge) no longer trigger lane gestures.
 let touchY0 = null
-window.addEventListener('touchstart', e => { touchY0 = e.touches[0].clientY }, {passive:true})
-window.addEventListener('touchend', e => {
+const _g14SwipeTarget = document.getElementById('pixi-canvas') || document.documentElement
+_g14SwipeTarget.addEventListener('touchstart', e => { touchY0 = e.touches[0].clientY }, {passive:true})
+_g14SwipeTarget.addEventListener('touchend', e => {
   if (touchY0 === null) return
   const dy = e.changedTouches[0].clientY - touchY0
   if (Math.abs(dy) > 40) { dy < 0 ? laneUp() : laneDn() }
@@ -3666,7 +3698,10 @@ function applyRdeScaling() {
   await initPixi()
   showCategories()
   if (window.RZ) window.RZ.onResize(applyRdeScaling)
-  try { g14CheckDailySpin() } catch(_){}
+  // v54.27 I3: do NOT show daily spin on boot — it blocks first-touch UX
+  // (huge wheel covers train picker before kid even taps anything). Now
+  // triggered from endRace's onAgain/onBack path below, AFTER first race.
+  // try { g14CheckDailySpin() } catch(_){}  // deferred to post-race
   // v54.24 G13 + G8: Word-of-the-day banner + greeting hook.
   // v54.25 H9: Garage pre-select. If sessionStorage carries a chosen train, jump to picker pre-selected.
   try {

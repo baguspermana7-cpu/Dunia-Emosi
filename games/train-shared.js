@@ -241,6 +241,11 @@
       osc.start(); osc.stop(ctx.currentTime + dur)
     } catch(_){}
   }
+  // v54.27 I6: expose globally so G16 (and any other standalone game that uses
+  // bare `playTone(...)`) gets a real audio backend. Was silently throwing
+  // ReferenceError → caught and swallowed → countdown/whistle/tap-tick were
+  // ALL inaudible for owner. Fixed.
+  if (typeof window.playTone === 'undefined') window.playTone = _playTone
   const HORN_PROFILES = {
     caseyjr_character: [[660, 0.20, 'sine'], [880, 0.16, 'sine'], [1100, 0.14, 'sine']],
     linus_brave:       [[440, 0.30, 'sine'], [550, 0.24, 'sine']],

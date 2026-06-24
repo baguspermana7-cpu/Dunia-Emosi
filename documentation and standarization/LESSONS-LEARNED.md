@@ -4,6 +4,22 @@
 
 ---
 
+## 2026-06-24 — v54.27 Polish Pass 2
+
+### L155 — Module-level state needs explicit per-session reset hooks
+- **Symptom**: `g18StreakBest` lived at module top-level, kept its value across replays, leaked +1 star bonus into every subsequent quiz session.
+- **Lesson**: Any module-level `let` that affects scoring/UX needs a clear reset call at the start of every session boundary (`startQuiz`, `startRace`, etc.). Don't rely on the value being "fresh" just because the screen reloaded — the JS module didn't.
+
+### L156 — Cross-game audio helpers must be exported, not assumed
+- **Symptom**: G16 called bare `playTone(...)` which was never defined in `games/g16-pixi.html`. The bare reference threw a ReferenceError into surrounding try/catch and ALL countdown/whistle/tap-tick audio was silent.
+- **Lesson**: When extracting a shared module (`train-shared.js`), audit every CALLER for assumed globals. Either define the global from the shared module (`window.playTone = _playTone`) or convert callers to namespaced calls (`TrainShared.audio.playTone(...)`). The half-extracted state is the worst of both worlds — looks shared, fails silently.
+
+### L157 — "Looks working" silent no-ops are the worst kind of bug
+- **Symptom**: G14 Mode Belajar UI shows the mint badge, kid sees it, feels reassured — but the gameplay never softened. The variable was WRITTEN by `g14ApplyKidMode` but never READ by the spawn condition.
+- **Lesson**: When you ship a feature, search the codebase for READS of every WRITTEN-TO variable. A grep-orphaned variable is dead code in production. Test the feature end-to-end, not just from the UI side.
+
+---
+
 ## 2026-06-24 — v54.26 Polish Pass
 
 ### L152 — Pause-aware RAF: accumulate elapsed, never read absolute time

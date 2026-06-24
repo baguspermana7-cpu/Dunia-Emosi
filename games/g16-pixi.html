@@ -130,7 +130,7 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<script src="train-shared.js?v=54.25-20260624ad"></script>
+<script src="train-shared.js?v=54.27-20260624af"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
@@ -969,19 +969,28 @@ function g16TickDanger(dt){
   // Slow drift up on idle
   S.danger = Math.min(100, S.danger + 0.02 * dt * 60)
   // Render bar
-  let bar = document.getElementById('g16-danger-bar')
+  // v54.27 I7: this bar tracks PROGRESS, not danger (which is already shown by
+  // the existing #danger-wrap at top). Renamed + recolored + labeled so the two
+  // bars are complementary: blue progress (cleared/total) here, red danger
+  // (wrongs+idle) in the original. Was visually redundant + competing for the
+  // same color band (both green→amber→red).
+  let bar = document.getElementById('g16-progress-bar')
   if (!bar) {
     bar = document.createElement('div')
-    bar.id = 'g16-danger-bar'
-    bar.style.cssText = 'position:fixed;top:max(60px,calc(env(safe-area-inset-top) + 20px));left:50%;transform:translateX(-50%);z-index:50;width:140px;height:6px;background:rgba(0,0,0,0.55);border-radius:3px;overflow:hidden;pointer-events:none'
+    bar.id = 'g16-progress-bar'
+    bar.style.cssText = 'position:fixed;top:max(86px,calc(env(safe-area-inset-top) + 46px));left:50%;transform:translateX(-50%);z-index:50;width:180px;height:8px;background:rgba(0,0,0,0.55);border-radius:4px;overflow:hidden;pointer-events:none;display:flex;align-items:center'
+    bar.innerHTML = '<span style="position:absolute;left:-46px;top:-2px;font-size:9px;color:rgba(255,255,255,0.7);font-family:Fredoka One,cursive;letter-spacing:0.5px">JALUR</span>'
     const fill = document.createElement('div')
-    fill.id = 'g16-danger-fill'
-    fill.style.cssText = 'height:100%;width:0%;background:linear-gradient(90deg,#86efac,#fbbf24,#ef4444);transition:width 200ms'
+    fill.id = 'g16-progress-fill'
+    fill.style.cssText = 'height:100%;width:0%;background:linear-gradient(90deg,#38bdf8,#0ea5e9);transition:width 300ms'
     bar.appendChild(fill)
     document.body.appendChild(bar)
   }
-  const fill = document.getElementById('g16-danger-fill')
-  if (fill) fill.style.width = (S.danger || 0).toFixed(1) + '%'
+  const fill = document.getElementById('g16-progress-fill')
+  if (fill) {
+    const pct = S.totalObstacles ? Math.min(100, (S.cleared / S.totalObstacles) * 100) : 0
+    fill.style.width = pct.toFixed(1) + '%'
+  }
 }
 
 // E5: adaptive difficulty — extend brake distance when wrongTaps_station ≥ 2
@@ -1934,17 +1943,26 @@ function updateTrain(dt){
     S.worldX = STATION_X + 40
     triggerArrival()
   }
-  // Check mini-obstacles (quick math questions)
-  if(S.miniObs && S.trainState==='MOVING'){
-    const nextMini = S.miniObs.find(m=>!m.cleared && m.worldX > S.worldX && m.worldX - S.worldX < 80)
+  // Check mini-obstacles (quick math questions).
+  // v54.27 I8: smooth brake ramp from 120px out instead of an 80px hard stop.
+  // Was: train hits an invisible wall. Now: brake sparks at distance 120,
+  // gradually slowing to STOPPED at distance 40 (the actual quiz trigger).
+  if(S.miniObs && (S.trainState==='MOVING' || S.trainState==='BOOSTING')){
+    const nextMini = S.miniObs.find(m => !m.cleared && m.worldX > S.worldX && m.worldX - S.worldX < 120)
     if(nextMini && !S.miniQuizActive){
-      S.miniQuizActive = true
-      S.trainState = 'STOPPED'; speed = 0
-      // Show quick quiz inline
-      const qEl = document.getElementById('quiz-label')
-      if(qEl) qEl.textContent = '🚧 Singkirkan rintangan!'
-      const _mc=generateMiniChoices(nextMini.ans), _mw=_mc.filter(c=>c!==String(nextMini.ans))
-      showQuizPanel({questions:[{q:nextMini.q,ans:String(nextMini.ans),wrong:_mw}],qIdx:0,question:{q:nextMini.q,ans:String(nextMini.ans),wrong:_mw},cleared:false,wrongCount:0,_mini:true,_miniRef:nextMini})
+      const dist = nextMini.worldX - S.worldX
+      if (dist > 40) {
+        // Brake ramp: speed scales linearly from current to ~0.15 by stopDist
+        speed = Math.max(speed * Math.max(0.15, (dist - 40) / 80), baseSpeed * 0.15)
+        try { showBrakeSparks() } catch(_){}
+      } else {
+        S.miniQuizActive = true
+        S.trainState = 'STOPPED'; speed = 0
+        const qEl = document.getElementById('quiz-label')
+        if(qEl) qEl.textContent = '🚧 Singkirkan rintangan!'
+        const _mc = generateMiniChoices(nextMini.ans), _mw = _mc.filter(c => c !== String(nextMini.ans))
+        showQuizPanel({questions:[{q:nextMini.q,ans:String(nextMini.ans),wrong:_mw}],qIdx:0,question:{q:nextMini.q,ans:String(nextMini.ans),wrong:_mw},cleared:false,wrongCount:0,_mini:true,_miniRef:nextMini})
+      }
     }
   }
 

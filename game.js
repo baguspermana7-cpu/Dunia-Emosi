@@ -2063,7 +2063,10 @@ function backToLevelSelect() {
   document.getElementById('pause-overlay').style.display='none'
   document.getElementById('settings-overlay').style.display='none'
   if(g6State?.running){cancelAnimationFrame(g6State.animFrame);g6State.running=false}
-  PixiManager.destroyAll() // free WebGL context — prevents "context was lost" freeze
+  // v54.27 I9: drain G18 ambient + DOM before leaving so gamelan/Pak Masinis
+  // don't linger on the level select.
+  try { g18Cleanup() } catch(_){}
+  PixiManager.destroyAll()
   clearTimers(); stopAllGameSounds(); playClick(); showScreen('screen-level')
 }
 function clearTimers() {
@@ -11334,6 +11337,8 @@ function g13bLevelComplete() {
 // HELPER — called from in-game result overlays
 // ============================================================
 function endGameFromOverlay() {
+  // v54.27 I9: clean up G18 ambient + DOM on game-end
+  try { g18Cleanup() } catch(_){}
   hideGameResult()
   endGame(state.gameStars[state.currentPlayer] || 3)
 }
@@ -13903,8 +13908,23 @@ const G18_QUIZ_COUNT = 8
 let G18_QUIZ_SESSION = []
 
 function g18ShuffleQuiz() {
-  const shuffled = [...G18_QUESTIONS_BANK].sort(() => Math.random() - 0.5)
+  // v54.27 I11: `Array.sort(() => Math.random() - 0.5)` is BIASED — items
+  // near the start tend to stay put. Real Fisher-Yates instead.
+  // Plus: filter against last-3-session question history (g18FilterRecent
+  // from v54.23 F3) and use seeded shuffle so same-day quiz is stable.
+  let pool = G18_QUESTIONS_BANK.slice()
+  try { if (typeof g18FilterRecent === 'function') pool = g18FilterRecent(pool) } catch(_){}
+  let shuffled
+  try {
+    shuffled = (typeof g18SeededShuffle === 'function') ? g18SeededShuffle(pool) : pool.slice()
+  } catch(_){ shuffled = pool.slice() }
+  // Fisher-Yates fallback / refinement
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
   G18_QUIZ_SESSION = shuffled.slice(0, G18_QUIZ_COUNT)
+  try { if (typeof g18RecordRecent === 'function') g18RecordRecent(G18_QUIZ_SESSION) } catch(_){}
 }
 
 // Legacy alias (used by g18FinishQuiz star calculation)
@@ -14663,7 +14683,28 @@ function g18ShowStory() {
   document.getElementById('g18-story-text').textContent = story + extra
 }
 
+// v54.27 I9: shut down G18 ambient audio + TTS + FAB column when leaving the
+// game (back, end-from-overlay, pause). Without this, gamelan loop continued
+// in the home screen, Pak Masinis avatar floated on top of unrelated screens,
+// FAB column blocked taps on other games' UI, and TTS queue kept reading aloud.
+function g18Cleanup(){
+  try { g18GamelanStop() } catch(_){}
+  try { g18ChuffLoopStop() } catch(_){}
+  try { if (window.speechSynthesis) window.speechSynthesis.cancel() } catch(_){}
+  try {
+    ;['g18-extra-fab', 'g18-pak-masinis', 'g18-storybook', 'g18-timeline', 'g18-javamap',
+      'g18-rod-overlay', 'g18-daily-trivia'].forEach(id => {
+      const e = document.getElementById(id); if (e) e.remove()
+    })
+  } catch(_){}
+}
+
 function g18StartQuiz() {
+  // v54.27 I10: reset streak counters at quiz start. Without this, g18StreakBest
+  // from a previous session leaked into THIS session's "+1 star" bonus — so
+  // every replay started with the 2× streak bonus already qualified, granting
+  // 5★ for free.
+  g18Streak = 0; g18StreakBest = 0
   g18ShuffleQuiz()
   g18State.quizIdx = 0
   g18State.quizScore = 0
