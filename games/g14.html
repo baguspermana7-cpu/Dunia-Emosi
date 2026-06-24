@@ -200,7 +200,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<script src="train-shared.js?v=54.24-20260624ac"></script>
+<script src="train-shared.js?v=54.25-20260624ad"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
@@ -3065,9 +3065,29 @@ function endRace() {
   if (S.position === 1) {
     try { g14SpawnConfetti() } catch(_){}
     try { playTone(523, 0.12); setTimeout(()=>playTone(659, 0.12), 120); setTimeout(()=>playTone(784, 0.12), 240); setTimeout(()=>playTone(1047, 0.20), 360) } catch(_){}
-    // v54.19 B4: character train waves on P1 finish too.
     try { g14ShowCabDriverWave() } catch(_){}
+    // v54.25 H1: race-1st achievement; H4: perfected sensor; H7: ghost record
+    try {
+      if (window.TrainShared) {
+        TrainShared.achievements.unlock('race_1st_g14')
+        TrainShared.sensor.perfected('g14')
+        TrainShared.ghost14.record(cfg.level || 5, Math.floor(performance.now() - (S.startTime || performance.now())))
+        if (S.trainCfg && S.trainCfg.key === 'caseyjr_character') TrainShared.achievements.unlock('casey_first_race')
+      }
+    } catch(_){}
   }
+  // v54.25 H2: daily challenge progress, H1: passport count badges
+  try {
+    if (window.TrainShared) {
+      TrainShared.dailyChallenge.progress('g14', 1)
+      if (S.trainCfg) TrainShared.passport.stamp('g14', S.trainCfg.key || 'unknown', S.distance)
+      const total = TrainShared.passport.totalStamps()
+      if (total >= 5) TrainShared.achievements.unlock('passport_5')
+      if (total >= 15) TrainShared.achievements.unlock('passport_15')
+    }
+  } catch(_){}
+  // v54.25 H1: count crashes as "failed" → adaptive sensor
+  if (S.position > 1) { try { if (window.TrainShared) TrainShared.sensor.failed('g14') } catch(_){} }
   // v54.19 B7: photo-share button on result modal.
   try { g14ShowShareButton() } catch(_){}
   // v54.17 A13: best-speed callout line in the result message.
@@ -3595,7 +3615,20 @@ function applyRdeScaling() {
   if (window.RZ) window.RZ.onResize(applyRdeScaling)
   try { g14CheckDailySpin() } catch(_){}
   // v54.24 G13 + G8: Word-of-the-day banner + greeting hook.
-  try { if (window.TrainShared) { TrainShared.wordOfDay.showBanner(); TrainShared.greeting.onEnterGame('g14') } } catch(_){}
+  // v54.25 H9: Garage pre-select. If sessionStorage carries a chosen train, jump to picker pre-selected.
+  try {
+    if (window.TrainShared) {
+      TrainShared.wordOfDay.showBanner()
+      const garageKey = sessionStorage.getItem('garageTrainKey')
+      if (garageKey) {
+        sessionStorage.removeItem('garageTrainKey')
+        // Find and select the train in TRAIN_MAP
+        const t = TRAIN_MAP[garageKey]
+        if (t) { S.trainCfg = { ...t, category: t.category, variant: 1 }; document.getElementById('train-name-badge').textContent = t.name }
+      }
+      TrainShared.greeting.onEnterGame('g14', S.trainCfg && S.trainCfg.key)
+    }
+  } catch(_){}
 })()
 </script>
 </body>

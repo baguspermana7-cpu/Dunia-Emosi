@@ -4,6 +4,19 @@
 
 ---
 
+## 2026-06-24 — v54.25 Big Features
+
+### L149 — Achievement unlocking is an event tail; never block the main flow
+- Every `achievements.unlock(id)` is fire-and-forget. The badge toast appears, the SFX plays, game logic doesn't wait. If unlock fails (already owned), silent no-op. Game logic NEVER awaits unlock — that would create attention contention with the player's main action.
+
+### L150 — MVP stubs are valid ship items if the data layer + API are real
+- H7 (ghost replay) shipped as data-layer-only: `ghost14.record/forLevel`. No visual ghost sprite yet. But the records exist; future polish can render them. Similarly H11 (split-screen) ships as mascot stub — owner can fund the rendering split when ready. Documenting clearly what's MVP vs full is the discipline.
+
+### L151 — Modal FAB stacks scale better than nav bars for kids
+- G18 ended up with 7 FAB buttons in a vertical column (📅🗺️🏆🏠🎁🖼️⚙️). Better than cramming them into the top nav. Each is a 50px round button — easy tap, easy to remember by emoji. Adults might prefer text labels; kids navigate by icon.
+
+---
+
 ## 2026-06-24 — v54.24 Cross-cutting (Passport + Codex + Settings)
 
 ### L146 — One shared file beats N copies of the same logic

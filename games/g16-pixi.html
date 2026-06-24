@@ -130,7 +130,7 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<script src="train-shared.js?v=54.24-20260624ac"></script>
+<script src="train-shared.js?v=54.25-20260624ad"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
@@ -2216,10 +2216,18 @@ function clearMiniObstacle(mini){
 function clearObstacle(obs){
   hideQuizPanel(); obs.cleared=true; S.cleared++; S.currentObstacleIdx=-1
   explodeObstacle(obs)
-  // v54.21 D11: whistle + chimney puff + 8px shake on station clear (final question).
   g16StationClearWhistle()
-  // v54.21 D14: BGM restore
   g16DuckBGM(false)
+  // v54.25 H1 + H2: station-clear progression
+  try {
+    if (window.TrainShared) {
+      TrainShared.dailyChallenge.progress('g16', 1)
+      const TS = TRAIN_STYLES[selectedTrainIdx]
+      if (TS && TS.character && TS.characterKey === 'jz711_dragutin' && obs.wrongCount === 0) TrainShared.achievements.unlock('dragutin_on_time')
+      if (obs.wrongCount === 0) TrainShared.achievements.unlock('station_perfect')
+      if (TS) TrainShared.passport.stamp('g16', TS.character ? TS.characterKey : ('g16-' + selectedTrainIdx), 1)
+    }
+  } catch(_){}
   // Resume moving — no boost effect (just continue at normal speed)
   if(S.trainState!=='ARRIVING'&&S.trainState!=='ARRIVED'){
     S.trainState='MOVING'

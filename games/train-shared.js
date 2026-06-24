@@ -439,6 +439,414 @@
     },
   }
 
+  // ═════════════════════════════════════════════════════════════════════════════
+  //  v54.25 — Big Features (H1-H13)
+  // ═════════════════════════════════════════════════════════════════════════════
+
+  const KEY25 = {
+    ach:        'dunia-ts-ach',             // {badgeId: ts}
+    daily:      'dunia-ts-daily',           // {date, missionId, progress, claimed}
+    streak:     'dunia-ts-streak',          // {days, lastDate}
+    sensor:     'dunia-ts-sensor',          // {gameKey:{fails, perfects, mode}}
+    birthday:   'dunia-ts-birthday',        // 'MM-DD'
+    ghost14:    'dunia-ts-ghost-g14',       // {level: { time, samples }}
+    cosmetic:   'dunia-ts-cosmetic',        // {owned:[ids], equipped:{trainKey:id}}
+    photoframe: 'dunia-ts-photoframe',      // [{gameKey,trainKey,thumb,when,score}]
+  }
+
+  // ── H1: ACHIEVEMENT BADGE WALL ──────────────────────────────────────────────
+  const BADGES = [
+    // PROTECTED-train-keyed (12)
+    { id:'casey_first_race',    icon:'🥇', label:'Balapan pertama Casey JR',  hint:'Selesaikan 1 balapan G14 dengan Casey JR' },
+    { id:'linus_brave_finish',  icon:'🛡️', label:'Misi pertama Linus Brave',  hint:'Selesaikan 1 level G15 dengan Linus Brave' },
+    { id:'dragutin_on_time',    icon:'⏱️', label:'Tepat waktu, Dragutin!',    hint:'Selesaikan stasiun G16 dengan JZ 711 tanpa salah' },
+    { id:'malivlak_three_cars', icon:'🚃', label:'Tiga gerbong Malivlak',     hint:'Mainkan 3 game berbeda dengan Malivlak' },
+    // Progress (cross-game)
+    { id:'first_whistle',       icon:'🔔', label:'Bunyi pertama',             hint:'Dengar klakson kereta pertamamu' },
+    { id:'passport_5',          icon:'🛂', label:'Passport: 5 Kereta',        hint:'Kunjungi 5 kereta berbeda' },
+    { id:'passport_15',         icon:'🛂', label:'Passport: 15 Kereta',       hint:'Kunjungi 15 kereta berbeda' },
+    { id:'visit_10_exhibits',   icon:'🏛️', label:'Pengunjung Museum',         hint:'Lihat detail 10 kereta di Museum (G18)' },
+    { id:'visit_all_museum',    icon:'🏆', label:'Ahli Museum',                hint:'Lihat detail semua kereta di Museum' },
+    // Speed/skill
+    { id:'race_1st_g14',        icon:'🥇', label:'Juara 1 G14',               hint:'Finish posisi 1 di G14' },
+    { id:'word_10_in_row',      icon:'📚', label:'10 huruf beruntun',         hint:'Combo 10 huruf benar di G15' },
+    { id:'station_perfect',     icon:'⭐', label:'Stasiun Sempurna',          hint:'Selesai stasiun G16 tanpa salah' },
+    { id:'museum_8_of_8',       icon:'🎓', label:'8 dari 8',                   hint:'Skor sempurna kuis G18' },
+    // Streak
+    { id:'streak_3',            icon:'🔥', label:'Streak 3 hari',             hint:'Main 3 hari berturut' },
+    { id:'streak_7',            icon:'🔥', label:'Streak seminggu',           hint:'Main 7 hari berturut' },
+    // Birthday + comeback
+    { id:'birthday',            icon:'🎂', label:'Selamat Ulang Tahun!',       hint:'Main di hari ulang tahunmu' },
+    { id:'comeback',            icon:'👋', label:'Selamat Datang Kembali',     hint:'Kembali main setelah lebih dari 3 hari' },
+  ]
+  const Achievements = {
+    unlock(id) {
+      if (!BADGES.find(b => b.id === id)) return false
+      const owned = rd(KEY25.ach, {})
+      if (owned[id]) return false
+      owned[id] = Date.now()
+      wr(KEY25.ach, owned)
+      // toast
+      const b = BADGES.find(x => x.id === id)
+      const el = document.createElement('div')
+      el.style.cssText = 'position:fixed;top:30%;left:50%;transform:translate(-50%,-50%);z-index:9095;background:linear-gradient(135deg,#fde047,#f59e0b);color:#451a03;font-family:Fredoka One,cursive;padding:14px 22px;border-radius:18px;box-shadow:0 16px 48px rgba(251,191,36,0.5);text-align:center;pointer-events:none;animation:tsBadgeIn 600ms cubic-bezier(.34,1.56,.64,1) forwards'
+      el.innerHTML = `<div style="font-size:38px">${b.icon}</div><div style="font-size:14px;letter-spacing:1px;margin-top:6px">${b.label}</div><div style="font-size:11px;opacity:0.7;margin-top:4px">${b.hint}</div>`
+      document.body.appendChild(el)
+      setTimeout(() => el.remove(), 2400)
+      if (!document.getElementById('ts-badge-kf')) {
+        const s = document.createElement('style'); s.id = 'ts-badge-kf'
+        s.textContent = '@keyframes tsBadgeIn{0%{opacity:0;transform:translate(-50%,-50%) scale(0.3)}60%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}'
+        document.head.appendChild(s)
+      }
+      try { Audio.playWhistle() } catch(_){}
+      return true
+    },
+    owned() { return rd(KEY25.ach, {}) },
+    showWall() {
+      let ov = document.getElementById('ts-badge-wall')
+      if (!ov) {
+        ov = document.createElement('div')
+        ov.id = 'ts-badge-wall'
+        ov.style.cssText = 'position:fixed;inset:0;z-index:9080;background:linear-gradient(180deg,#0c0a22,#1a1028);color:#fff;display:flex;flex-direction:column;padding:18px'
+        document.body.appendChild(ov)
+      }
+      const owned = this.owned()
+      const total = BADGES.length
+      const ownedN = BADGES.filter(b => owned[b.id]).length
+      const grid = BADGES.map(b => {
+        const got = !!owned[b.id]
+        return `<div style="background:${got?'linear-gradient(135deg,rgba(251,191,36,0.18),rgba(245,158,11,0.10))':'rgba(255,255,255,0.04)'};border:1.5px solid ${got?'#fbbf24':'rgba(255,255,255,0.1)'};border-radius:14px;padding:10px;text-align:center;cursor:pointer" title="${b.hint}"><div style="font-size:32px;${got?'':'filter:grayscale(1);opacity:0.35'}">${b.icon}</div><div style="font-size:10px;font-weight:900;margin-top:4px;color:${got?'#fde68a':'rgba(255,255,255,0.6)'}">${b.label}</div></div>`
+      }).join('')
+      ov.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div><span style="font-family:Fredoka One,cursive;font-size:18px;color:#fde68a">🏆 Achievement Wall</span><div style="opacity:0.7;font-size:12px;margin-top:2px">${ownedN} / ${total} terbuka</div></div>
+          <button onclick="document.getElementById('ts-badge-wall').remove()" style="padding:8px 14px;border-radius:10px;border:0;background:#fbbf24;color:#451a03;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer">Tutup ✕</button>
+        </div>
+        <div style="flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px">${grid}</div>`
+    },
+    BADGES,
+  }
+
+  // ── H2: DAILY CONDUCTOR CHALLENGE ───────────────────────────────────────────
+  const MISSIONS = [
+    { id:'race_g14_x1', label:'Selesaikan 1 balapan G14',  game:'g14',  target:1 },
+    { id:'words_g15_x2', label:'Selesaikan 2 kata di G15',  game:'g15',  target:2 },
+    { id:'station_g16_x2', label:'Bersihkan 2 stasiun G16', game:'g16',  target:2 },
+    { id:'museum_quiz_5', label:'Jawab 5 kuis museum benar', game:'g18', target:5 },
+    { id:'casey_x1',    label:'Main 1 game dengan Casey JR', game:'any', target:1 },
+  ]
+  const DailyChallenge = {
+    today() {
+      const today = new Date().toDateString()
+      const cur = rd(KEY25.daily, null)
+      if (cur && cur.date === today) return cur
+      let h = 0; for (let i = 0; i < today.length; i++) h = (h * 31 + today.charCodeAt(i)) >>> 0
+      const m = MISSIONS[h % MISSIONS.length]
+      const out = { date: today, missionId: m.id, progress: 0, claimed: false, target: m.target, label: m.label, game: m.game }
+      wr(KEY25.daily, out)
+      return out
+    },
+    progress(gameKey, amount) {
+      const cur = this.today()
+      if (cur.claimed) return
+      if (cur.game !== 'any' && cur.game !== gameKey) return
+      cur.progress = Math.min(cur.target, (cur.progress || 0) + (amount || 1))
+      wr(KEY25.daily, cur)
+      if (cur.progress >= cur.target && !cur.claimed) {
+        cur.claimed = true
+        wr(KEY25.daily, cur)
+        try { Mascot.show('🎯 Misi Harian selesai! Stiker harian +1', { duration: 4000 }) } catch(_){}
+        Achievements.unlock('first_whistle')
+      }
+    },
+    show() {
+      const cur = this.today()
+      try { Mascot.show(`🎯 Misi Hari Ini:\n${cur.label}\n(${cur.progress}/${cur.target})`, { duration: 5000 }) } catch(_){}
+    },
+  }
+
+  // ── H3: STREAK + COMEBACK ──────────────────────────────────────────────────
+  const Comeback = {
+    pingToday() {
+      const cur = rd(KEY25.streak, { days: 0, lastDate: null })
+      const today = new Date().toDateString()
+      if (cur.lastDate === today) return cur
+      const yesterday = new Date(Date.now() - 86400000).toDateString()
+      if (cur.lastDate === yesterday) cur.days++
+      else if (cur.lastDate) { // gap > 1 day → comeback
+        try { Mascot.show('Selamat datang kembali! 👋', { duration: 4000 }) } catch(_){}
+        Achievements.unlock('comeback')
+        cur.days = 1
+      } else cur.days = 1
+      cur.lastDate = today
+      wr(KEY25.streak, cur)
+      if (cur.days >= 3) Achievements.unlock('streak_3')
+      if (cur.days >= 7) Achievements.unlock('streak_7')
+      return cur
+    },
+    get() { return rd(KEY25.streak, { days: 0, lastDate: null }) },
+  }
+
+  // ── H4: ADAPTIVE FRUSTRATION & FLOW SENSOR ─────────────────────────────────
+  const Sensor = {
+    failed(gameKey) {
+      const cur = rd(KEY25.sensor, {})
+      const g = (cur[gameKey] = cur[gameKey] || { fails: 0, perfects: 0, mode: 'normal' })
+      g.fails++; g.perfects = 0
+      if (g.fails >= 3 && g.mode !== 'hint') {
+        g.mode = 'hint'
+        try { Mascot.show('Tenang aja, aku bantu ya 💡', { duration: 4000 }) } catch(_){}
+      }
+      wr(KEY25.sensor, cur)
+      return g
+    },
+    perfected(gameKey) {
+      const cur = rd(KEY25.sensor, {})
+      const g = (cur[gameKey] = cur[gameKey] || { fails: 0, perfects: 0, mode: 'normal' })
+      g.perfects++; g.fails = 0
+      if (g.perfects >= 3 && g.mode !== 'speedstar') {
+        g.mode = 'speedstar'
+        try { Mascot.show('⭐ Hebat! Mode lebih sulit terbuka.', { duration: 4500 }) } catch(_){}
+      }
+      wr(KEY25.sensor, cur)
+      return g
+    },
+    mode(gameKey) {
+      const cur = rd(KEY25.sensor, {})
+      return (cur[gameKey] && cur[gameKey].mode) || 'normal'
+    },
+  }
+
+  // ── H5: DYNAMIC MUSIC TEMPO ─────────────────────────────────────────────────
+  const MusicTempo = {
+    apply(speedRatio) {
+      // speedRatio 0..1 maps to playbackRate 0.85..1.25
+      const rate = 0.85 + Math.max(0, Math.min(1, speedRatio)) * 0.40
+      try {
+        const bgm = document.getElementById('game-bgm')
+        if (bgm) { bgm.playbackRate = rate; bgm.preservesPitch = false }
+      } catch(_){}
+    },
+    reset() {
+      try {
+        const bgm = document.getElementById('game-bgm')
+        if (bgm) bgm.playbackRate = 1.0
+      } catch(_){}
+    },
+  }
+
+  // ── H6: BIRTHDAY TRAIN MODE ─────────────────────────────────────────────────
+  const Birthday = {
+    set(mmdd) { wr(KEY25.birthday, mmdd) },
+    get() { return rd(KEY25.birthday, null) },
+    isToday() {
+      const set = this.get(); if (!set) return false
+      const d = new Date()
+      const mmdd = String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0')
+      return mmdd === set
+    },
+    celebrate() {
+      if (!this.isToday()) return false
+      Achievements.unlock('birthday')
+      try { Mascot.show('🎂 Selamat Ulang Tahun! Hari ini semua kereta pakai topi pesta! 🎉', { duration: 6000 }) } catch(_){}
+      // simple confetti
+      for (let i = 0; i < 36; i++) {
+        const c = document.createElement('span')
+        c.style.cssText = 'position:fixed;top:-20px;left:' + (Math.random() * 100) + 'vw;width:8px;height:14px;background:hsl(' + (Math.random() * 360) + ',80%,55%);z-index:9085;pointer-events:none;border-radius:50%;animation:tsBdayFall 2.4s linear forwards'
+        c.style.animationDelay = (i * 0.05) + 's'
+        document.body.appendChild(c)
+        setTimeout(() => c.remove(), 5000 + i * 30)
+      }
+      if (!document.getElementById('ts-bday-kf')) {
+        const s = document.createElement('style'); s.id = 'ts-bday-kf'
+        s.textContent = '@keyframes tsBdayFall{0%{transform:translateY(-30px) rotate(0)}100%{transform:translateY(110vh) rotate(720deg);opacity:0.5}}'
+        document.head.appendChild(s)
+      }
+      return true
+    },
+    promptSet() {
+      if (this.get()) return
+      const mmdd = prompt('Atur ulang tahun (MM-DD), kosongkan untuk lewati:')
+      if (mmdd && /^\d{2}-\d{2}$/.test(mmdd.trim())) this.set(mmdd.trim())
+    },
+  }
+
+  // ── H7: GHOST REPLAY (G14) ──────────────────────────────────────────────────
+  const Ghost14 = {
+    record(level, time, samples) {
+      const all = rd(KEY25.ghost14, {})
+      const cur = all[level]
+      if (!cur || time < cur.time) all[level] = { time, samples: samples || [] }
+      wr(KEY25.ghost14, all)
+    },
+    forLevel(level) { return (rd(KEY25.ghost14, {}) || {})[level] || null },
+  }
+
+  // ── H8: COSMETIC UNLOCK SYSTEM ──────────────────────────────────────────────
+  const COSMETICS = [
+    { id:'hat_birthday', label:'Topi Pesta',   emoji:'🎩' },
+    { id:'scarf_red',    label:'Syal Merah',   emoji:'🧣' },
+    { id:'lantern',      label:'Lentera',      emoji:'🏮' },
+    { id:'star_crown',   label:'Mahkota Bintang', emoji:'⭐' },
+    { id:'rainbow',      label:'Pelangi',      emoji:'🌈' },
+  ]
+  const Cosmetics = {
+    unlock(id) {
+      const cur = rd(KEY25.cosmetic, { owned: [], equipped: {} })
+      if (!cur.owned.includes(id)) {
+        cur.owned.push(id); wr(KEY25.cosmetic, cur)
+        try { Mascot.show('🎁 Aksesoris baru terbuka: ' + (COSMETICS.find(c => c.id === id) || {}).label, { duration: 4000 }) } catch(_){}
+      }
+    },
+    equip(trainKey, id) {
+      const cur = rd(KEY25.cosmetic, { owned: [], equipped: {} })
+      cur.equipped[trainKey] = id; wr(KEY25.cosmetic, cur)
+    },
+    equipped(trainKey) {
+      const cur = rd(KEY25.cosmetic, { owned: [], equipped: {} })
+      return cur.equipped[trainKey] || null
+    },
+    show() {
+      let ov = document.getElementById('ts-cosmetic'); if (!ov) {
+        ov = document.createElement('div')
+        ov.id = 'ts-cosmetic'
+        ov.style.cssText = 'position:fixed;inset:0;z-index:9080;background:linear-gradient(180deg,#1a1028,#0c0a22);color:#fff;padding:18px;display:flex;flex-direction:column'
+        document.body.appendChild(ov)
+      }
+      const cur = rd(KEY25.cosmetic, { owned: [], equipped: {} })
+      const grid = COSMETICS.map(c => {
+        const owned = cur.owned.includes(c.id)
+        return `<div style="background:${owned?'rgba(168,85,247,0.18)':'rgba(255,255,255,0.04)'};border:1.5px solid ${owned?'#a855f7':'rgba(255,255,255,0.1)'};border-radius:14px;padding:14px;text-align:center"><div style="font-size:42px;${owned?'':'filter:grayscale(1);opacity:0.35'}">${c.emoji}</div><div style="font-size:11px;margin-top:6px;color:${owned?'#e9d5ff':'rgba(255,255,255,0.5)'}">${c.label}</div></div>`
+      }).join('')
+      ov.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span style="font-family:Fredoka One,cursive;font-size:18px;color:#e9d5ff">🎁 Koleksi Aksesoris</span><button onclick="document.getElementById('ts-cosmetic').remove()" style="padding:8px 14px;border-radius:10px;border:0;background:#fbbf24;color:#451a03;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer">Tutup ✕</button></div>
+        <div style="flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px">${grid}</div>`
+    },
+    overlayFor(trainKey) {
+      // returns emoji for the equipped cosmetic; caller can render as Pixi Text or DOM
+      const id = this.equipped(trainKey)
+      if (!id) return null
+      const c = COSMETICS.find(x => x.id === id)
+      return c ? c.emoji : null
+    },
+    COSMETICS,
+  }
+
+  // ── H9: TRAIN GARAGE — Pre-Game Hub ─────────────────────────────────────────
+  const Garage = {
+    show(onPick) {
+      let ov = document.getElementById('ts-garage'); if (!ov) {
+        ov = document.createElement('div')
+        ov.id = 'ts-garage'
+        ov.style.cssText = 'position:fixed;inset:0;z-index:9078;background:linear-gradient(180deg,#0c0a22,#3b0764);color:#fff;padding:18px;display:flex;flex-direction:column'
+        document.body.appendChild(ov)
+      }
+      const trains = [
+        { key:'caseyjr_character', emoji:'🚂', name:'Casey JR ⭐' },
+        { key:'linus_brave',       emoji:'🚂', name:'Linus Brave ⭐' },
+        { key:'jz711_dragutin',    emoji:'🚆', name:'JZ 711 Dragutin ⭐' },
+        { key:'jz62_malivlak',     emoji:'🚂', name:'Malivlak ⭐' },
+      ]
+      const games = [
+        { key:'g14', label:'Balapan Kereta', path:'games/g14.html' },
+        { key:'g15', label:'Lokomotif Pemberani', path:'games/g15-pixi.html' },
+        { key:'g16', label:'Selamatkan Kereta', path:'games/g16-pixi.html' },
+      ]
+      const trainCards = trains.map(t => `<div onclick="TrainShared._cb.garagePick&&TrainShared._cb.garagePick('${t.key}');document.querySelectorAll('.ts-grg-train').forEach(e=>e.style.borderColor='rgba(255,255,255,0.15)');this.style.borderColor='#fde047';TrainShared._cb._chosen='${t.key}';TrainShared.audio.playHorn('${t.key}')" class="ts-grg-train" style="background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.15);border-radius:14px;padding:14px;text-align:center;cursor:pointer;transition:all 200ms"><div style="font-size:36px">${t.emoji}</div><div style="font-size:11px;margin-top:6px;color:#fde68a">${t.name}</div></div>`).join('')
+      const gameCards = games.map(g => `<button onclick="if(TrainShared._cb._chosen){sessionStorage.setItem('garageTrainKey',TrainShared._cb._chosen);location.href='${g.path}'}else{alert('Pilih kereta dulu!')}" style="background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff;border:0;border-radius:14px;padding:14px;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer">🎮 ${g.label}</button>`).join('')
+      ov.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span style="font-family:Fredoka One,cursive;font-size:18px;color:#fde68a">🏠 Garasi Kereta</span><button onclick="document.getElementById('ts-garage').remove()" style="padding:8px 14px;border-radius:10px;border:0;background:#fbbf24;color:#451a03;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer">Tutup ✕</button></div>
+        <div style="opacity:0.7;font-size:13px;margin-bottom:14px">1. Pilih kereta favoritmu (klakson akan berbunyi). 2. Pilih game untuk dimainkan.</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:18px">${trainCards}</div>
+        <div style="display:flex;flex-direction:column;gap:10px">${gameCards}</div>`
+      TrainShared._cb.garagePick = onPick
+    },
+  }
+
+  // ── H10: PHOTO FRAME (G18 Memory Hall) ──────────────────────────────────────
+  const PhotoFrame = {
+    capture(gameKey, trainKey, dataUrl, score) {
+      const arr = rd(KEY25.photoframe, [])
+      arr.push({ gameKey, trainKey, thumb: dataUrl, when: Date.now(), score: score || 0 })
+      while (arr.length > 12) arr.shift()
+      wr(KEY25.photoframe, arr)
+    },
+    show() {
+      let ov = document.getElementById('ts-photoframe'); if (!ov) {
+        ov = document.createElement('div')
+        ov.id = 'ts-photoframe'
+        ov.style.cssText = 'position:fixed;inset:0;z-index:9080;background:linear-gradient(180deg,#0c0a22,#1a1028);color:#fff;padding:18px;display:flex;flex-direction:column'
+        document.body.appendChild(ov)
+      }
+      const arr = rd(KEY25.photoframe, [])
+      const cards = arr.length ? arr.slice().reverse().map(p => `<div style="background:#fdf6e3;border:6px solid #8d6e63;border-radius:8px;padding:6px;text-align:center"><img src="${p.thumb || ''}" style="width:100%;border-radius:4px;background:rgba(0,0,0,0.2)" onerror="this.style.display='none'"><div style="font-size:10px;color:#3e2723;margin-top:4px">${p.gameKey} · ${new Date(p.when).toLocaleDateString()}</div></div>`).join('') : '<div style="opacity:0.6;text-align:center;margin:20vh auto">Belum ada foto. Main game dan tekan 📸 untuk menyimpan!</div>'
+      ov.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span style="font-family:Fredoka One,cursive;font-size:18px;color:#fde68a">🖼️ Lorong Kenangan</span><button onclick="document.getElementById('ts-photoframe').remove()" style="padding:8px 14px;border-radius:10px;border:0;background:#fbbf24;color:#451a03;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer">Tutup ✕</button></div>
+        <div style="flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px">${cards}</div>`
+    },
+  }
+
+  // ── H11: G14 COOP SPLIT-SCREEN (MVP — toggle stub) ──────────────────────────
+  const Coop14 = {
+    show() {
+      try { Mascot.show('Co-op split-screen ada di v54.25.x — beritahu owner kalau mau prioritaskan.', { duration: 6000 }) } catch(_){}
+    },
+  }
+
+  // ── H12: AR-style "Lihat ukuran asli" (G18) ─────────────────────────────────
+  const ARMode = {
+    async start(train) {
+      let ov = document.getElementById('ts-ar'); if (!ov) {
+        ov = document.createElement('div')
+        ov.id = 'ts-ar'
+        ov.style.cssText = 'position:fixed;inset:0;z-index:9090;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;padding:14px'
+        document.body.appendChild(ov)
+      }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+        const v = document.createElement('video')
+        v.srcObject = stream; v.autoplay = true; v.playsInline = true
+        v.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover'
+        ov.appendChild(v)
+        const overlay = document.createElement('div')
+        overlay.style.cssText = 'position:absolute;left:50%;bottom:14%;transform:translateX(-50%);font-size:48px;opacity:0.65;filter:drop-shadow(0 0 18px rgba(255,255,255,0.7));pointer-events:none'
+        overlay.textContent = '🚂'
+        ov.appendChild(overlay)
+        const info = document.createElement('div')
+        info.style.cssText = 'position:absolute;left:50%;top:18%;transform:translateX(-50%);background:rgba(0,0,0,0.6);padding:10px 16px;border-radius:14px;font-family:Fredoka One,cursive;font-size:14px;text-align:center;max-width:80vw'
+        info.innerHTML = `📏 Ukuran asli ${train.name || 'kereta ini'}<br><span style="opacity:0.7;font-size:12px">≈ ${train.length || '?'}m panjang · ${train.height || '?'}m tinggi</span>`
+        ov.appendChild(info)
+        const close = document.createElement('button')
+        close.textContent = '✕'
+        close.style.cssText = 'position:absolute;top:14px;right:14px;width:44px;height:44px;border-radius:50%;border:0;background:rgba(0,0,0,0.7);color:#fff;font-size:18px;cursor:pointer'
+        close.onclick = () => { stream.getTracks().forEach(t => t.stop()); ov.remove() }
+        ov.appendChild(close)
+      } catch (err) {
+        ov.innerHTML = `<div style="text-align:center;padding:30px"><div style="font-size:42px;margin-bottom:10px">📷</div><div>Aktifkan izin kamera untuk melihat ukuran asli.</div><button onclick="document.getElementById('ts-ar').remove()" style="margin-top:18px;padding:10px 22px;border-radius:12px;border:0;background:#fbbf24;color:#451a03;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer">Tutup</button></div>`
+      }
+    },
+  }
+
+  // ── H13: G18 HOT-SEAT COOP (Pemandu Museum) ─────────────────────────────────
+  const Hotseat18 = {
+    state: { active: false, p1Score: 0, p2Score: 0, turn: 0 },
+    start() {
+      this.state = { active: true, p1Score: 0, p2Score: 0, turn: 0 }
+      try { Mascot.show('Mode 2-pemain: P1 ungu, P2 oranye. Bergiliran jawab kuis!', { duration: 5000 }) } catch(_){}
+    },
+    nextTurn() { this.state.turn = 1 - this.state.turn; return this.state.turn === 0 ? 'P1' : 'P2' },
+    score(correct) {
+      if (!this.state.active) return
+      if (this.state.turn === 0) this.state.p1Score += correct ? 1 : 0
+      else this.state.p2Score += correct ? 1 : 0
+    },
+    end() {
+      if (!this.state.active) return null
+      const s = this.state; this.state.active = false
+      return s
+    },
+  }
+
   // ── Public API ──────────────────────────────────────────────────────────────
   window.TrainShared = {
     passport: Passport,
@@ -454,9 +862,26 @@
     wordOfDay: WordOfDay,
     sessionTimer: SessionTimer,
     settings: { get: getSettings, save: saveSettings },
+    // v54.25 Big Features
+    achievements: Achievements,
+    dailyChallenge: DailyChallenge,
+    comeback: Comeback,
+    sensor: Sensor,
+    musicTempo: MusicTempo,
+    birthday: Birthday,
+    ghost14: Ghost14,
+    cosmetics: Cosmetics,
+    garage: Garage,
+    photoframe: PhotoFrame,
+    coop14: Coop14,
+    arMode: ARMode,
+    hotseat18: Hotseat18,
     _cb: {},
   }
 
   // Boot
   try { SessionTimer.start() } catch(_){}
+  // v54.25 boot hooks: ping comeback streak + birthday detection on every page load
+  try { Comeback.pingToday() } catch(_){}
+  try { if (Birthday.isToday()) Birthday.celebrate() } catch(_){}
 })();

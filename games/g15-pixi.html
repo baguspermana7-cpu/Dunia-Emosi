@@ -169,7 +169,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<script src="train-shared.js?v=54.24-20260624ac"></script>
+<script src="train-shared.js?v=54.25-20260624ad"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
@@ -2074,6 +2074,15 @@ function onWordComplete() {
     trainContainer._leanTarget = -0.05;
     trainContainer._leanTimer = 20;
   }
+  // v54.25 H1 + H2: word-complete progression
+  try {
+    if (window.TrainShared) {
+      TrainShared.dailyChallenge.progress('g15', 1)
+      if (selectedTrain && selectedTrain.key === 'linus_brave') TrainShared.achievements.unlock('linus_brave_finish')
+      if (g15Streak >= 10) TrainShared.achievements.unlock('word_10_in_row')
+      if (selectedTrain) TrainShared.passport.stamp('g15', selectedTrain.key || 'unknown', 0)
+    }
+  } catch(_){}
   const _prevSpeed = gameSpeed
   gameSpeed = Math.max(0.4, gameSpeed * 0.35)
   // v54.20 C14: speed-streak cue right BEFORE the speed bump.

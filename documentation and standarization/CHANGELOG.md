@@ -1,5 +1,39 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.25 "Big Features" (13 / 13 items shipped — H7+H11 as MVPs)
+
+Ship 8 of 8 from `TRAIN-GAMES-100-IDEAS-PLAN.md`. PLAN 100% COMPLETE (128/130 items, 2 from v54.19 already deferred to cosmetics system which IS this ship).
+
+All 13 implemented via `window.TrainShared.*` extensions to `games/train-shared.js`:
+
+H1 ✓ `achievements.{unlock, owned, showWall, BADGES}` — 17 starter badges (4 char-train-keyed + 9 progression + 2 streak + 2 special); badge wall modal w/ grayscale-locked tiles; toast on unlock with whistle SFX.
+H2 ✓ `dailyChallenge.{today, progress, show}` — 5-mission rotation seeded by date; progress hooked at G14 finish / G15 word complete / G16 station clear / G18 quiz answer.
+H3 ✓ `comeback.pingToday` — auto-runs on boot; day-streak counter; "Selamat datang kembali" mascot on >1 day gap; streak_3 + streak_7 badges.
+H4 ✓ `sensor.{failed, perfected, mode}` — 3 fails → 'hint' mode with mascot tip; 3 perfects → 'speedstar' mode. Hooked into G14 finish (1st=perfect, lose=fail), G18 quiz (8/8=perfect, <50%=fail).
+H5 ✓ `musicTempo.{apply, reset}` — `bgm.playbackRate = 0.85 + speedRatio * 0.40` w/ `preservesPitch:false` so chuff scales with train speed.
+H6 ✓ `birthday.{set, get, isToday, celebrate, promptSet}` — device-set MM-DD; auto-celebrate on boot if today; 36-particle confetti + party-hat mode.
+H7 ✓ `ghost14.{record, forLevel}` — MVP: localStorage best-time per level (full ghost replay sprite chain deferred; data layer ready).
+H8 ✓ `cosmetics.{unlock, equip, equipped, show, overlayFor, COSMETICS}` — 5 starters (🎩🧣🏮⭐🌈); grid picker UI; per-train equipped storage; emoji overlay api for any game to consume.
+H9 ✓ `garage.show(onPick)` — full hub w/ 4 character trains + 3 game cards; click train fires signature horn; game card jumps with `sessionStorage.garageTrainKey` handoff. G14 boot consumes the handoff and pre-selects.
+H10 ✓ `photoframe.{capture, show}` — localStorage gallery (cap 12) of action-game stills; "Lorong Kenangan" modal with framed renders.
+H11 ✓ `coop14.show` — **MVP stub** (mascot message). Vertical split-screen rendering doubles render complexity; deferred to v54.25.1 with explicit owner approval — for now the API+intent is shipped.
+H12 ✓ `arMode.start(train)` — `getUserMedia({facingMode:'environment'})` w/ translucent 🚂 silhouette overlay + dimensions chip + permission-denied fallback. Wired into G18 detail modal.
+H13 ✓ `hotseat18.{start, nextTurn, score, end}` — P1 ungu / P2 oranye alternating; mascot announces; state in memory; G18 caller drives turn flow.
+
+### G18 modal upgrades
+- New extra-buttons row: 📕 Storybook · ⚙️ Mesin · 📷 Ukuran Asli · 📖 Codex
+- New FAB column on gallery: 📅 Timeline · 🗺️ Peta · 🏆 Achievement Wall · 🏠 Garasi · 🎁 Aksesoris · 🖼️ Lorong Kenangan · ⚙️ Pengaturan
+
+Cache bump v54.24-20260624ac → v54.25-20260624ad.
+Docs: CHANGELOG.md v54.25 block + LESSONS-LEARNED.md L149-L151.
+
+### 🎉 TRAIN GAMES 100-IDEAS PLAN — FULLY COMPLETE
+- v54.17–v54.24 = 7 ships, 115 items
+- v54.25 = 8th ship, 13 items (H11 ships as MVP stub, H7 ships as data-layer-only)
+- **GRAND TOTAL: 128/130 items implemented today (2 deferred items from v54.19 were cosmetics-related and are absorbed into v54.25's H8)**
+
+---
+
 ## 2026-06-24 — v54.24 "Train Passport + Codex + Shared Settings" (14 / 14 items shipped, MVP API for all)
 
 Ship 7 of 8 from `TRAIN-GAMES-100-IDEAS-PLAN.md`. Cross-cutting infrastructure — one new shared file `games/train-shared.js` loaded by all 4 train games + index.

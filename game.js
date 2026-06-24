@@ -14004,7 +14004,7 @@ function initGame18() {
   try { g18WireLongPressWhistle() } catch(_){}
   try { g18GamelanStart() } catch(_){}
   try { g18ConductorWave() } catch(_){}
-  // v54.23 F15/F16 FAB: add Timeline + Java Map buttons next to gallery.
+  // v54.23 F15/F16 + v54.25 H1/H9/H8/H10/H6 FAB
   try {
     let fab = document.getElementById('g18-extra-fab')
     if (!fab) {
@@ -14013,11 +14013,18 @@ function initGame18() {
       fab.style.cssText = 'position:fixed;right:14px;bottom:18px;z-index:60;display:flex;flex-direction:column;gap:8px'
       fab.innerHTML = `
         <button onclick="g18ShowTimeline()" style="width:50px;height:50px;border-radius:50%;border:0;background:linear-gradient(135deg,#fde047,#f59e0b);color:#451a03;font-size:20px;font-weight:900;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,0.4)" title="Timeline">📅</button>
-        <button onclick="g18ShowJavaMap()" style="width:50px;height:50px;border-radius:50%;border:0;background:linear-gradient(135deg,#06b6d4,#0891b2);color:#fff;font-size:20px;font-weight:900;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,0.4)" title="Peta">🗺️</button>`
+        <button onclick="g18ShowJavaMap()" style="width:50px;height:50px;border-radius:50%;border:0;background:linear-gradient(135deg,#06b6d4,#0891b2);color:#fff;font-size:20px;font-weight:900;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,0.4)" title="Peta">🗺️</button>
+        <button onclick="if(window.TrainShared)TrainShared.achievements.showWall()" style="width:50px;height:50px;border-radius:50%;border:0;background:linear-gradient(135deg,#fbbf24,#d97706);color:#451a03;font-size:20px;font-weight:900;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,0.4)" title="Achievement Wall">🏆</button>
+        <button onclick="if(window.TrainShared)TrainShared.garage.show()" style="width:50px;height:50px;border-radius:50%;border:0;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;font-size:20px;font-weight:900;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,0.4)" title="Garasi">🏠</button>
+        <button onclick="if(window.TrainShared)TrainShared.cosmetics.show()" style="width:50px;height:50px;border-radius:50%;border:0;background:linear-gradient(135deg,#ec4899,#be185d);color:#fff;font-size:20px;font-weight:900;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,0.4)" title="Aksesoris">🎁</button>
+        <button onclick="if(window.TrainShared)TrainShared.photoframe.show()" style="width:50px;height:50px;border-radius:50%;border:0;background:linear-gradient(135deg,#8d6e63,#5d3a1a);color:#fff;font-size:20px;font-weight:900;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,0.4)" title="Lorong Kenangan">🖼️</button>
+        <button onclick="if(window.TrainShared){TrainShared.ui.showSettings()}" style="width:50px;height:50px;border-radius:50%;border:0;background:linear-gradient(135deg,#64748b,#334155);color:#fff;font-size:20px;font-weight:900;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,0.4)" title="Pengaturan">⚙️</button>`
       document.body.appendChild(fab)
     }
     fab.style.display = 'flex'
   } catch(_){}
+  // v54.25 H6: birthday celebrate (already auto-runs on boot, but kick again on visit)
+  try { if (window.TrainShared && TrainShared.birthday.isToday()) TrainShared.birthday.celebrate() } catch(_){}
 }
 
 function g18RenderGallery() {
@@ -14113,16 +14120,29 @@ function g18ShowDetail(idx) {
   try { g18ChunkedHistoryRender(train) } catch(_){}
   try { g18PassportStamp(idx) } catch(_){}
   // v54.23 F1 + F14: storybook + rod kinematics extra buttons (lazy-injected once)
+  // v54.25 H12 + H8: AR mode + cosmetics buttons added
   try {
     const factEl = document.getElementById('g18-modal-fact')
     if (factEl && !document.getElementById('g18-extra-btns')) {
       const extra = document.createElement('div')
       extra.id = 'g18-extra-btns'
-      extra.style.cssText = 'display:flex;gap:6px;margin:8px 0'
+      extra.style.cssText = 'display:flex;gap:6px;margin:8px 0;flex-wrap:wrap'
       extra.innerHTML = `
-        <button onclick="g18ShowStorybook(_g18CurrentTrainIdx)" style="flex:1;padding:10px;border-radius:10px;border:0;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer;font-size:12px">📕 Storybook</button>
-        <button onclick="g18ShowRodKinematics()" style="flex:1;padding:10px;border-radius:10px;border:0;background:linear-gradient(135deg,#0891b2,#0e7490);color:#fff;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer;font-size:12px">⚙️ Mesin</button>`
+        <button onclick="g18ShowStorybook(_g18CurrentTrainIdx)" style="flex:1;min-width:90px;padding:10px;border-radius:10px;border:0;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer;font-size:12px">📕 Storybook</button>
+        <button onclick="g18ShowRodKinematics()" style="flex:1;min-width:90px;padding:10px;border-radius:10px;border:0;background:linear-gradient(135deg,#0891b2,#0e7490);color:#fff;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer;font-size:12px">⚙️ Mesin</button>
+        <button onclick="if(window.TrainShared){TrainShared.arMode.start(G18_TRAINS[_g18CurrentTrainIdx])}" style="flex:1;min-width:90px;padding:10px;border-radius:10px;border:0;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer;font-size:12px">📷 Ukuran Asli</button>
+        <button onclick="if(window.TrainShared){TrainShared.codex.open(G18_TRAINS[_g18CurrentTrainIdx])}" style="flex:1;min-width:90px;padding:10px;border-radius:10px;border:0;background:linear-gradient(135deg,#06b6d4,#0891b2);color:#fff;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer;font-size:12px">📖 Codex</button>`
       factEl.parentNode.insertBefore(extra, factEl)
+    }
+  } catch(_){}
+  // v54.25 H1: museum visit badges
+  try {
+    if (window.TrainShared) {
+      TrainShared.passport.stamp('g18', train.id || ('idx-' + idx), 1)
+      const visits = TrainShared.passport.get().g18 || {}
+      const visited = Object.keys(visits).length
+      if (visited >= 10) TrainShared.achievements.unlock('visit_10_exhibits')
+      if (visited >= G18_TRAINS.length) TrainShared.achievements.unlock('visit_all_museum')
     }
   } catch(_){}
   // v54.23 F8: chuff loop for steam trains
@@ -14698,8 +14718,9 @@ function g18AnswerQuestion(picked, correct, btn) {
     spawnCorrectCardJuice(btn)
     quizStreakHit(btn)
     g18State.quizScore++
-    // v54.22 E10: streak pill on correct + 2× stars at ≥5
     try { g18AddStreak() } catch(_){}
+    // v54.25 H2: daily challenge progress for museum quiz
+    try { if (window.TrainShared) TrainShared.dailyChallenge.progress('g18', 1) } catch(_){}
     document.getElementById('g18-q-feedback').textContent = '✅ Benar! Kamu pintar!'
     document.getElementById('g18-q-feedback').style.color = '#A5D6A7'
     playCorrect()
@@ -14743,7 +14764,12 @@ function g18FinishQuiz() {
   if (g18StreakBest >= 5) perfStars = Math.min(5, perfStars + 1)
   state.gameStars[state.currentPlayer] = perfStars
   // v54.23 F2: confetti + brass fanfare on real 8/8 mastery
-  if (score === G18_QUIZ_COUNT) try { g18Mastery8of8() } catch(_){}
+  if (score === G18_QUIZ_COUNT) {
+    try { g18Mastery8of8() } catch(_){}
+    try { if (window.TrainShared) { TrainShared.achievements.unlock('museum_8_of_8'); TrainShared.sensor.perfected('g18') } } catch(_){}
+  }
+  // v54.25 H4: register failure if below half
+  try { if (window.TrainShared && score < Math.ceil(G18_QUIZ_COUNT * 0.5)) TrainShared.sensor.failed('g18') } catch(_){}
   // v54.23 F10 stop gamelan
   try { g18GamelanStop() } catch(_){}
   // v54.22 E18: review-the-misses summary list appended to msg
