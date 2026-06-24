@@ -4,6 +4,22 @@
 
 ---
 
+## 2026-06-24 — v54.16 G17 stuck-on-empty-screen hotfix
+
+### L125 — Exit UI MUST have explicit position + z-index above the game canvas
+- **Symptom**: Owner stuck on empty G17 screen; couldn't find a back button; had to refresh the tab.
+- **Root cause**: `#g17-back` button was in document flow with no `position`/`z-index`. The Pixi `#g17-stage` canvas had `position:fixed inset:0 z-index:1`, so it painted OVER the back button as soon as it appended.
+- **Fix**: `position:fixed top:max(10px,env(safe-area-inset-top)) left:max(12px,env(safe-area-inset-left)) z-index:95`. Above the canvas (1), HUD (50), and tap-hint (60); below the overlay (80) and toast (90).
+- **Lesson**: Any "exit" / "back" / "menu" UI in a canvas-based game MUST have explicit `position:fixed` and a `z-index` higher than the canvas. NEVER trust document-flow positioning to render over a fixed full-bleed canvas — it won't. This is the kind of bug that's invisible in dev (you know where to click) but strands real users.
+
+### L126 — Async boot needs an error fallback overlay
+- **Symptom**: A failed Pixi CDN load OR a thrown error inside `g17BuildLevel` left the player on a blank screen with no path back. Owner had to refresh the browser tab.
+- **Root cause**: Boot was an unwrapped async IIFE; `g17BeginGame` was an unwrapped sync function. Neither caught exceptions. When something threw, the page state was already mid-transition (overlay hidden), so the user just stared at whatever partial state was on screen.
+- **Fix**: NEW `g17ShowErrorState(msg)` re-shows the overlay with "⚠️ Hmm, ada error" and hides the "Mulai" button so the existing "← Kembali" inside the overlay becomes the user's exit. Boot wraps init in try/catch + `typeof PIXI === 'undefined'` check. `g17BeginGame` pre-checks readiness AND wraps build in try/catch.
+- **Lesson**: For any single-page game with an async boot path, ALWAYS surface a friendly error overlay on throw. The minimum viable error UI is: title + 1-line bilingual message + a back button. Without that, ANY edge-case throw (CDN slow, sessionStorage corrupt, etc.) becomes a "have to refresh" UX, which kids will read as "the app is broken."
+
+---
+
 ## 2026-06-24 — v54.15 3 owner-reported bug fixes
 
 ### L122 — Lane-runner collision must snap to the INPUT lane, not the visual lane

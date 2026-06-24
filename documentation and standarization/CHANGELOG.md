@@ -1,5 +1,32 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.16 "G17 stuck-on-empty-screen hotfix" (back button + boot-failure recovery)
+
+Fifteenth v54.x ship. Owner: "jembatan goyang game error, stuck on empy screen, tidak ada back harus refresh."
+
+### B4 — `#g17-back` was invisible behind canvas
+**Symptom**: Player loads G17, sees empty screen with no exit, must refresh browser tab.
+**Root cause**: `#g17-back` button at `games/g17-pixi.html:62` had NO `position`/`z-index` CSS — sat in document flow, fully covered by `#g17-stage` canvas (`position:fixed inset:0 z-index:1`). Once the overlay was dismissed, there was no way out.
+**Fix**: `#g17-back` gets `position:fixed top:max(10px,env(safe-area-inset-top)) left:max(12px,env(safe-area-inset-left)) z-index:95`. Box-shadow + border for legibility. `#g17-hud` left-edge shifts right to `max(70px, ...)` so the leftmost HUD chip doesn't overlap the back button.
+
+### B5 — boot/build failure now surfaces an error overlay instead of empty screen
+**Symptom**: Same as B4 — if Pixi CDN failed to load OR if g17BuildLevel threw mid-way, the user landed on a blank canvas with no UI.
+**Root cause**: Boot was an unwrapped async IIFE; `g17BeginGame` was an unwrapped function call. Any throw → empty screen + no error recovery.
+**Fix**:
+- NEW `g17ShowErrorState(msg)` re-shows the start overlay with `⚠️ Hmm, ada error` title + bilingual error text + hides the "Mulai" button. The "← Kembali" button (already inside the overlay) becomes the user's exit path.
+- Boot wraps Pixi init in `try/catch`; `typeof PIXI === 'undefined'` check guards CDN failure.
+- `g17BeginGame` pre-checks `g17App`/`g17World` readiness; wraps level build in `try/catch`. Either failure path calls `g17ShowErrorState`.
+
+### Files touched
+- `games/g17-pixi.html` — `#g17-back` + `#g17-hud` CSS rewrite; NEW `g17ShowErrorState` helper; `g17Boot` + `g17BeginGame` wrapped in try/catch.
+- `sw.js` — `CACHE_VERSION: 'v54.15-20260624t' → 'v54.16-20260624u'`.
+
+### Lessons captured
+- L125 — `position:fixed` + canvas + un-positioned button → button is invisible. ALWAYS give exit UI explicit position + z-index above canvas.
+- L126 — Async boot needs error fallback. A blank screen with no exit is the worst-case UX; ANY throw should surface a friendly "ada error" overlay that keeps the back path alive.
+
+---
+
 ## 2026-06-24 — v54.15 "3 owner-reported bug fixes" (Adventure VS-card timing · G14 phantom collision · G14 character picker)
 
 Fourteenth v54.x ship. Owner play-test caught 3 bugs in shipped work; this is a surgical fix wave, not a feature ship.
