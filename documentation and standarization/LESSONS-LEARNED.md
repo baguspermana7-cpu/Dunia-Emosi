@@ -4,6 +4,19 @@
 
 ---
 
+## 2026-06-24 — v54.23 G18 Museum Depth
+
+### L143 — xorshift32 + date hash is the cheapest deterministic shuffle
+- For a "today's quiz" that's same for everyone, hash the date string into a 32-bit seed and xorshift it. ~15 lines, zero deps, kid-friendly determinism.
+
+### L144 — Synthesized gamelan/chuff via WebAudio playTone() is good enough for ambient bed
+- Don't ship MP3s for ambient texture. Five-note slendro scale at 6% volume on triangle waves reads as "Indonesian museum" without any asset cost. Same for steam-chuff (square+saw at 140Hz).
+
+### L145 — MVP shipped > "perfect" deferred
+- F15 (timeline) and F16 (Java map) called for SVG-of-Java + animated route lines + pinch-zoom. Shipped MVP: timeline as horizontal scroll of mini-train SVGs at year %, Java map as list with route badges. Both are functional today; richer renders go in v54.25.
+
+---
+
 ## 2026-06-24 — v54.22 G16 Hook Depth + G18 Museum Polish
 
 ### L140 — `score === 5` was a typo bomb that hid for ages — always compute thresholds from constants

@@ -13991,11 +13991,31 @@ function initGame18() {
   document.getElementById('g18-gallery').style.display = 'block'
   document.getElementById('g18-quiz-view').style.display = 'none'
   g18RenderGallery()
-  // v54.22 E8 + E16: daily trivia card + passport chip refresh
   try { g18ShowDailyTrivia() } catch(_){}
   try { g18UpdatePassportChip() } catch(_){}
-  // v54.22 E18: reset missed tracker on game init
   g18Missed = []
+  // v54.23 hooks: collapsible sections, hero banner, cerita glow, gamelan ambient,
+  // long-press whistle, conductor avatar greet, timeline/map FAB buttons.
+  try { g18MakeSectionsCollapsible() } catch(_){}
+  try { g18EnhanceHeroBanner() } catch(_){}
+  try { g18MaybeGlowStoryBtn() } catch(_){}
+  try { g18WireLongPressWhistle() } catch(_){}
+  try { g18GamelanStart() } catch(_){}
+  try { g18ConductorWave() } catch(_){}
+  // v54.23 F15/F16 FAB: add Timeline + Java Map buttons next to gallery.
+  try {
+    let fab = document.getElementById('g18-extra-fab')
+    if (!fab) {
+      fab = document.createElement('div')
+      fab.id = 'g18-extra-fab'
+      fab.style.cssText = 'position:fixed;right:14px;bottom:18px;z-index:60;display:flex;flex-direction:column;gap:8px'
+      fab.innerHTML = `
+        <button onclick="g18ShowTimeline()" style="width:50px;height:50px;border-radius:50%;border:0;background:linear-gradient(135deg,#fde047,#f59e0b);color:#451a03;font-size:20px;font-weight:900;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,0.4)" title="Timeline">📅</button>
+        <button onclick="g18ShowJavaMap()" style="width:50px;height:50px;border-radius:50%;border:0;background:linear-gradient(135deg,#06b6d4,#0891b2);color:#fff;font-size:20px;font-weight:900;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,0.4)" title="Peta">🗺️</button>`
+      document.body.appendChild(fab)
+    }
+    fab.style.display = 'flex'
+  } catch(_){}
 }
 
 function g18RenderGallery() {
@@ -14087,18 +14107,33 @@ function g18ShowDetail(idx) {
     `<div style="margin-bottom:6px;">💡 ${train.fact}</div>` +
     (train.funFact ? `<div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.12);">${train.funFact}</div>` : '')
   document.getElementById('g18-modal').classList.add('open')
-  // v54.22 E11+E12: wire ESC/backdrop/swipe + ARIA
   try { g18WireModalClose() } catch(_){}
-  // v54.22 E14: chunked SEJARAH render
   try { g18ChunkedHistoryRender(train) } catch(_){}
-  // v54.22 E16: passport stamp on view
   try { g18PassportStamp(idx) } catch(_){}
+  // v54.23 F1 + F14: storybook + rod kinematics extra buttons (lazy-injected once)
+  try {
+    const factEl = document.getElementById('g18-modal-fact')
+    if (factEl && !document.getElementById('g18-extra-btns')) {
+      const extra = document.createElement('div')
+      extra.id = 'g18-extra-btns'
+      extra.style.cssText = 'display:flex;gap:6px;margin:8px 0'
+      extra.innerHTML = `
+        <button onclick="g18ShowStorybook(_g18CurrentTrainIdx)" style="flex:1;padding:10px;border-radius:10px;border:0;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer;font-size:12px">📕 Storybook</button>
+        <button onclick="g18ShowRodKinematics()" style="flex:1;padding:10px;border-radius:10px;border:0;background:linear-gradient(135deg,#0891b2,#0e7490);color:#fff;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer;font-size:12px">⚙️ Mesin</button>`
+      factEl.parentNode.insertBefore(extra, factEl)
+    }
+  } catch(_){}
+  // v54.23 F8: chuff loop for steam trains
+  try {
+    if (/(uap|steam)/i.test(train.fuel || '')) g18ChuffLoopStart(train.speed || 60)
+  } catch(_){}
   playClick()
 }
 
 function g18CloseModal() {
   document.getElementById('g18-modal').classList.remove('open')
   document.getElementById('g18-story-panel').style.display = 'none'
+  try { g18ChuffLoopStop() } catch(_){}  // v54.23 F8
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -14225,6 +14260,343 @@ function g18SpeedBadge(speed) {
   return `<div class="g18-speed-badge" title="Max ${speed} km/j" style="display:flex;align-items:center;gap:4px;font-size:10px;font-weight:900;color:#fde68a;background:rgba(0,0,0,0.4);border-radius:8px;padding:2px 6px;margin-top:2px"><span>${icon}</span><span style="display:inline-block;width:40px;height:5px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden"><span style="display:block;height:100%;background:linear-gradient(90deg,#86efac,#fbbf24,#ef4444);width:${pct}%"></span></span><span>${speed}</span></div>`
 }
 
+// ═══════════════════════════════════════════════════════════
+//  v54.23 — G18 Museum Depth helpers (F1-F16)
+// ═══════════════════════════════════════════════════════════
+
+// F1: storybook 3-page swipeable — auto-builds from existing modal data.
+function g18ShowStorybook(idx) {
+  const train = G18_TRAINS[idx]; if (!train) return
+  let overlay = document.getElementById('g18-storybook')
+  if (!overlay) {
+    overlay = document.createElement('div')
+    overlay.id = 'g18-storybook'
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:9000;background:linear-gradient(135deg,#1a1028,#2a1848);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;color:#fff;font-family:Inter,system-ui,sans-serif'
+    document.body.appendChild(overlay)
+  }
+  const pages = [
+    `<div style="text-align:center"><div style="font-size:42px;margin-bottom:8px">📖</div><h2 style="font-family:Fredoka One,cursive;margin:0 0 8px;color:#fde68a">${train.name}</h2><div style="opacity:0.7;margin-bottom:14px">${train.country || ''}</div><div style="margin:0 auto;max-width:280px;background:rgba(0,0,0,0.3);border-radius:14px;padding:14px">${g18TrainSVG(train, 240, 100)}</div><div style="margin-top:14px;line-height:1.55;max-width:380px;text-align:center;opacity:0.85">${train.fact || ''}</div></div>`,
+    `<div style="text-align:center"><div style="font-size:36px;margin-bottom:6px">💡</div><h3 style="font-family:Fredoka One,cursive;color:#fde68a">Fakta Seru</h3><div style="background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.35);border-radius:14px;padding:18px;max-width:380px;line-height:1.6">${train.funFact || train.fact}</div></div>`,
+    `<div style="text-align:center"><div style="font-size:36px;margin-bottom:6px">🎓</div><h3 style="font-family:Fredoka One,cursive;color:#fde68a">Yuk Belajar</h3><div style="line-height:1.6;max-width:380px;opacity:0.85">${train.quizHint || 'Lihat detail trainnya dan coba kuis museum di bagian akhir!'}</div><button onclick="document.getElementById('g18-storybook').remove();g18StartQuiz()" style="margin-top:18px;padding:12px 28px;border-radius:14px;border:0;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-family:Fredoka One,cursive;font-size:16px;font-weight:900;cursor:pointer;box-shadow:0 5px 0 #92400e">🎯 Mulai Kuis!</button></div>`,
+  ]
+  let page = 0
+  function render() {
+    overlay.innerHTML = `
+      <button onclick="document.getElementById('g18-storybook').remove()" style="position:absolute;top:18px;right:18px;background:rgba(0,0,0,0.5);color:#fff;border:0;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:18px">✕</button>
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;width:100%">${pages[page]}</div>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:12px">
+        <button onclick="window._g18BookPrev()" style="padding:8px 14px;border-radius:10px;border:0;background:rgba(255,255,255,0.1);color:#fff;cursor:pointer">◀</button>
+        <span style="color:#fde68a;font-family:Fredoka One,cursive">${page + 1} / ${pages.length}</span>
+        <button onclick="window._g18BookNext()" style="padding:8px 14px;border-radius:10px;border:0;background:rgba(255,255,255,0.1);color:#fff;cursor:pointer">▶</button>
+      </div>`
+  }
+  window._g18BookPrev = () => { page = Math.max(0, page - 1); render() }
+  window._g18BookNext = () => { page = Math.min(pages.length - 1, page + 1); render() }
+  render()
+  // Swipe handling
+  let sx = 0
+  overlay.ontouchstart = (e) => { sx = e.touches[0]?.clientX || 0 }
+  overlay.ontouchend = (e) => {
+    const dx = (e.changedTouches[0]?.clientX || 0) - sx
+    if (dx > 60) window._g18BookPrev(); else if (dx < -60) window._g18BookNext()
+  }
+}
+
+// F2: confetti + brass-band fanfare on 8/8
+function g18Mastery8of8() {
+  // confetti
+  for (let i = 0; i < 48; i++) {
+    const c = document.createElement('span')
+    c.style.cssText = 'position:fixed;top:-20px;left:' + (Math.random()*100) + 'vw;width:8px;height:14px;background:hsl(' + (Math.random()*360) + ',80%,55%);z-index:9090;pointer-events:none;border-radius:' + (Math.random() < 0.5 ? '50%' : '2px') + ';animation:g18ConfettiFall 2.4s linear forwards'
+    c.style.animationDelay = (i * 0.04) + 's'
+    document.body.appendChild(c)
+    setTimeout(() => c.remove(), 5000 + i * 30)
+  }
+  if (!document.getElementById('g18-confetti-kf')) {
+    const s = document.createElement('style'); s.id = 'g18-confetti-kf'
+    s.textContent = '@keyframes g18ConfettiFall{0%{transform:translateY(-30px) rotate(0)}100%{transform:translateY(110vh) rotate(720deg);opacity:0.6}}'
+    document.head.appendChild(s)
+  }
+  // major-7 arpeggio (C E G B) — brass-ish triangle
+  try { [523, 659, 784, 988].forEach((f, i) => setTimeout(() => playTone(f, 0.18, 'triangle', 0.18), i * 110)) } catch(_){}
+  // passport master badge
+  try { localStorage.setItem('dunia-g18-master', '1') } catch(_){}
+}
+
+// F3: seeded RNG quiz + no-repeat-last-3
+function g18SeededShuffle(arr) {
+  // xorshift32 seeded by date string hash
+  let x = 0; const day = new Date().toDateString()
+  for (let i = 0; i < day.length; i++) x = (x ^ day.charCodeAt(i)) >>> 0
+  x ^= x << 13; x ^= x >>> 17; x ^= x << 5; x >>>= 0
+  const out = arr.slice()
+  for (let i = out.length - 1; i > 0; i--) {
+    x ^= x << 13; x ^= x >>> 17; x ^= x << 5; x >>>= 0
+    const j = x % (i + 1)
+    ;[out[i], out[j]] = [out[j], out[i]]
+  }
+  return out
+}
+function g18FilterRecent(arr) {
+  try {
+    const recent = JSON.parse(localStorage.getItem('dunia-g18-recent') || '[]')
+    const recentSet = new Set(recent.flat())
+    const out = arr.filter(q => !recentSet.has(q.id || q.q || JSON.stringify(q)))
+    return out.length ? out : arr
+  } catch(_) { return arr }
+}
+function g18RecordRecent(qs) {
+  try {
+    const keys = qs.map(q => q.id || q.q || JSON.stringify(q))
+    const prior = JSON.parse(localStorage.getItem('dunia-g18-recent') || '[]')
+    prior.push(keys)
+    while (prior.length > 3) prior.shift()
+    localStorage.setItem('dunia-g18-recent', JSON.stringify(prior))
+  } catch(_){}
+}
+
+// F4: quiz bar tint by accuracy
+function g18TintQuizBar() {
+  const fill = document.getElementById('g18-quiz-fill'); if (!fill) return
+  const answered = g18State.quizIdx
+  if (answered <= 0) return
+  const acc = g18State.quizScore / answered
+  fill.style.background = acc >= 0.8 ? 'linear-gradient(90deg,#22c55e,#86efac)'
+    : acc >= 0.5 ? 'linear-gradient(90deg,#fbbf24,#fcd34d)'
+    : 'linear-gradient(90deg,#ef4444,#fb7185)'
+}
+
+// F5: first-tap glow on 📖 Cerita button until first discovery (localStorage)
+function g18MaybeGlowStoryBtn() {
+  try {
+    if (localStorage.getItem('dunia-g18-cerita-seen')) return
+    const btn = document.getElementById('g18-story-btn'); if (!btn) return
+    btn.style.boxShadow = '0 0 0 4px rgba(251,191,36,0.4)'
+    btn.style.animation = 'g18CeritaPulse 1.6s ease-in-out infinite'
+    if (!document.getElementById('g18-cerita-kf')) {
+      const s = document.createElement('style'); s.id = 'g18-cerita-kf'
+      s.textContent = '@keyframes g18CeritaPulse{0%,100%{box-shadow:0 0 0 4px rgba(251,191,36,0.4)}50%{box-shadow:0 0 0 12px rgba(251,191,36,0)}}'
+      document.head.appendChild(s)
+    }
+  } catch(_){}
+}
+const _g18ShowStoryOrig = (typeof g18ShowStory === 'function') ? g18ShowStory : null
+if (typeof window !== 'undefined') {
+  window.g18ShowStory = function() {
+    try { localStorage.setItem('dunia-g18-cerita-seen', '1') } catch(_){}
+    const btn = document.getElementById('g18-story-btn')
+    if (btn) { btn.style.animation = ''; btn.style.boxShadow = '' }
+    if (_g18ShowStoryOrig) _g18ShowStoryOrig()
+  }
+}
+
+// F6: section chapters collapse + golden chevron + medal on complete
+function g18MakeSectionsCollapsible() {
+  const grid = document.getElementById('g18-card-grid')
+  if (!grid) return
+  // Section headers are the grid-column:1/-1 children
+  const headers = [...grid.children].filter(c => c.style && c.style.gridColumn === '1/-1' && c.style.color)
+  headers.forEach((h, idx) => {
+    if (h.dataset.collapsibleBound === '1') return
+    h.dataset.collapsibleBound = '1'
+    h.style.cursor = 'pointer'
+    h.style.userSelect = 'none'
+    h.dataset.collapseState = 'open'
+    const chevron = document.createElement('span')
+    chevron.textContent = ' ▼'
+    chevron.style.color = '#fbbf24'
+    chevron.style.fontWeight = '900'
+    h.appendChild(chevron)
+    h.addEventListener('click', () => {
+      // toggle following sibling cards (up to next header)
+      const next = []
+      let n = h.nextElementSibling
+      while (n && !(n.style && n.style.gridColumn === '1/-1' && n.style.color)) { next.push(n); n = n.nextElementSibling }
+      const open = h.dataset.collapseState === 'open'
+      next.forEach(c => c.style.display = open ? 'none' : '')
+      h.dataset.collapseState = open ? 'closed' : 'open'
+      chevron.textContent = open ? ' ▶' : ' ▼'
+      try { playTone(660, 0.05, 'sine') } catch(_){}
+    })
+  })
+}
+
+// F7: long-press steam-loco modal plays whistle
+let _g18LongPressTimer = null
+function g18WireLongPressWhistle() {
+  const modal = document.getElementById('g18-modal'); if (!modal || modal.dataset.lpBound === '1') return
+  modal.dataset.lpBound = '1'
+  modal.addEventListener('pointerdown', () => {
+    const train = G18_TRAINS[_g18CurrentTrainIdx]
+    if (!train || !/(uap|steam)/i.test(train.fuel || '')) return
+    _g18LongPressTimer = setTimeout(() => {
+      try { playTone(1100, 0.40, 'sine', 0.16); setTimeout(()=>playTone(880, 0.50, 'sine', 0.14), 380); setTimeout(()=>playTone(660, 0.40, 'sine', 0.12), 800) } catch(_){}
+      if (navigator.vibrate) { try { navigator.vibrate(60) } catch(_){} }
+    }, 800)
+  })
+  ;['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => modal.addEventListener(ev, () => { if (_g18LongPressTimer) { clearTimeout(_g18LongPressTimer); _g18LongPressTimer = null } }))
+}
+
+// F8: steam-chuff BGM bed (WebAudio loop) — open via g18ShowDetail; F8 scaling
+let _g18ChuffActive = false
+function g18ChuffLoopStart(speed) {
+  if (_g18ChuffActive || !isSoundOn()) return
+  _g18ChuffActive = true
+  const interval = Math.max(180, 600 - speed * 1.0)
+  let count = 0
+  const fire = () => {
+    if (!_g18ChuffActive) return
+    try { playTone(140 + (count % 2) * 20, 0.06, 'square', 0.10); playTone(80, 0.06, 'sawtooth', 0.07) } catch(_){}
+    count++
+    setTimeout(fire, interval)
+  }
+  fire()
+}
+function g18ChuffLoopStop() { _g18ChuffActive = false }
+
+// F10: gamelan ambient loop (WebAudio synth)
+let _g18GamelanActive = false
+function g18GamelanStart() {
+  if (_g18GamelanActive || !isSoundOn()) return
+  _g18GamelanActive = true
+  const scale = [261.6, 311.1, 349.2, 392.0, 466.2]  // slendro-ish (approx)
+  let t = 0
+  const tick = () => {
+    if (!_g18GamelanActive) return
+    try {
+      const note = scale[Math.floor(Math.random() * scale.length)]
+      playTone(note, 0.6, 'triangle', 0.06)
+    } catch(_){}
+    t++
+    setTimeout(tick, 1200 + Math.random() * 1400)
+  }
+  tick()
+}
+function g18GamelanStop() { _g18GamelanActive = false }
+
+// F11: hero banner Stasiun Willem I 1873 — replace existing hero banner content.
+function g18EnhanceHeroBanner() {
+  const gallery = document.getElementById('g18-gallery'); if (!gallery) return
+  const banner = gallery.querySelector('div[style*="rgba(93,57,34"]')
+  if (!banner || banner.dataset.willem === '1') return
+  banner.dataset.willem = '1'
+  banner.style.position = 'relative'
+  banner.style.overflow = 'hidden'
+  banner.innerHTML = `
+    <div style="position:absolute;inset:0;background:radial-gradient(circle at 30% 70%,rgba(251,191,36,0.18),transparent 60%);pointer-events:none"></div>
+    <div style="position:relative;z-index:1">
+      <div style="color:#FFD082;font-size:13px;font-weight:900;letter-spacing:1px">🏛️ STASIUN WILLEM I · 1873</div>
+      <div style="color:rgba(255,255,255,0.7);font-size:11px;font-weight:700;margin-top:2px">Ambarawa · Bekas stasiun militer Kolonial · Sekarang Museum Kereta Api</div>
+      <div style="color:rgba(255,193,80,0.7);font-size:10px;letter-spacing:1px;margin-top:6px">📅 GROUNDBREAKING 1873 · 🚂 ZAHARA TRACK RACK & PINION · 🇮🇩 INDONESIA</div>
+    </div>`
+}
+
+// F12: optional 15s soft timer ring + speed bonus (under 5s = +50% stars)
+let _g18QuestionStartT = 0
+function g18StartQuestionTimer() {
+  _g18QuestionStartT = performance.now()
+  // We could render a conic ring here — keeping logic-only MVP for now.
+}
+function g18QuestionElapsedSec() {
+  return (performance.now() - (_g18QuestionStartT || performance.now())) / 1000
+}
+
+// F13: conductor avatar narrator (Pak Masinis)
+function g18ConductorWave() {
+  let av = document.getElementById('g18-pak-masinis')
+  if (!av) {
+    av = document.createElement('div')
+    av.id = 'g18-pak-masinis'
+    av.style.cssText = 'position:fixed;left:14px;bottom:18px;z-index:65;font-size:40px;pointer-events:none;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.4))'
+    av.textContent = '👨‍✈️'
+    document.body.appendChild(av)
+  }
+  av.style.animation = 'g18MasinisWave 1.4s ease-in-out'
+  if (!document.getElementById('g18-masinis-kf')) {
+    const s = document.createElement('style'); s.id = 'g18-masinis-kf'
+    s.textContent = '@keyframes g18MasinisWave{0%,100%{transform:rotate(0)}25%{transform:rotate(-12deg) scale(1.1)}75%{transform:rotate(12deg) scale(1.1)}}'
+    document.head.appendChild(s)
+  }
+  setTimeout(() => { av.style.animation = '' }, 1400)
+}
+
+// F14: steam-loco rod kinematics teaching mode (overlay with i info)
+function g18ShowRodKinematics() {
+  const train = G18_TRAINS[_g18CurrentTrainIdx]
+  if (!train || !/(uap|steam)/i.test(train.fuel || '')) return
+  let ov = document.getElementById('g18-rod-overlay')
+  if (!ov) {
+    ov = document.createElement('div')
+    ov.id = 'g18-rod-overlay'
+    ov.style.cssText = 'position:fixed;inset:0;z-index:9100;background:rgba(15,23,42,0.94);color:#fff;display:flex;flex-direction:column;padding:24px;align-items:center;justify-content:center;text-align:center'
+    document.body.appendChild(ov)
+  }
+  ov.innerHTML = `
+    <div style="font-family:Fredoka One,cursive;color:#fde68a;font-size:20px;margin-bottom:6px">⚙️ Bagaimana Kereta Uap Bergerak?</div>
+    <div style="opacity:0.75;font-size:13px;max-width:380px;line-height:1.55;margin-bottom:14px">Piston dorong-tarik di silinder mengubah uap menjadi gerak putar lewat <b>main rod</b> dan <b>side rods</b>. Klik tutup untuk kembali.</div>
+    <div style="width:260px;background:rgba(255,255,255,0.06);border-radius:14px;padding:14px;margin-bottom:14px">
+      <div style="font-size:11px;color:#fbbf24">Bagian utama:</div>
+      <ul style="text-align:left;font-size:12px;line-height:1.6;padding-left:18px;color:rgba(255,255,255,0.85)">
+        <li>🔥 Boiler — menampung air panas</li>
+        <li>💨 Cylinder — tempat uap dorong piston</li>
+        <li>⚙️ Main rod — dorong roda penggerak</li>
+        <li>🔧 Side rods — sinkronkan roda</li>
+      </ul>
+    </div>
+    <button onclick="document.getElementById('g18-rod-overlay').remove()" style="padding:12px 24px;border-radius:14px;border:0;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer">Tutup</button>`
+}
+
+// F15: Timeline 1880→2023 MVP — horizontal scroll w/ train SVG at year position
+function g18ShowTimeline() {
+  let ov = document.getElementById('g18-timeline')
+  if (!ov) {
+    ov = document.createElement('div')
+    ov.id = 'g18-timeline'
+    ov.style.cssText = 'position:fixed;inset:0;z-index:9000;background:linear-gradient(180deg,#0c0a22,#1a1028);color:#fff;display:flex;flex-direction:column;padding:18px'
+    document.body.appendChild(ov)
+  }
+  const sorted = [...G18_TRAINS].map((t, i) => ({ t, i })).sort((a, b) => (a.t.year || 0) - (b.t.year || 0))
+  const minY = sorted[0]?.t.year || 1880, maxY = sorted[sorted.length - 1]?.t.year || 2023
+  const yearsHTML = sorted.map(s => {
+    const pct = ((s.t.year || 1900) - minY) / Math.max(1, maxY - minY) * 100
+    return `<div style="position:absolute;left:${pct}%;top:50%;transform:translate(-50%,-50%);cursor:pointer" onclick="g18ShowDetail(${s.i})">
+      <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:6px">${g18TrainSVG(s.t, 60, 28)}</div>
+      <div style="color:#fde68a;font-size:9px;text-align:center;margin-top:4px">${s.t.year}</div>
+    </div>`
+  }).join('')
+  ov.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <span style="font-family:Fredoka One,cursive;font-size:18px;color:#fde68a">📅 Timeline ${minY}—${maxY}</span>
+      <button onclick="document.getElementById('g18-timeline').remove()" style="padding:8px 14px;border-radius:10px;border:0;background:#fbbf24;color:#451a03;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer">Tutup ✕</button>
+    </div>
+    <div style="flex:1;overflow-x:auto;overflow-y:hidden;position:relative">
+      <div style="position:relative;width:max(${G18_TRAINS.length * 88}px,100%);height:100%;background:linear-gradient(180deg,transparent,rgba(255,255,255,0.04));border-radius:14px;border:1px dashed rgba(251,191,36,0.3)">
+        ${yearsHTML}
+      </div>
+    </div>`
+}
+
+// F16: Map of Java MVP — list mode w/ route lines
+function g18ShowJavaMap() {
+  let ov = document.getElementById('g18-javamap')
+  if (!ov) {
+    ov = document.createElement('div')
+    ov.id = 'g18-javamap'
+    ov.style.cssText = 'position:fixed;inset:0;z-index:9000;background:linear-gradient(180deg,#0c0a22,#1a1028);color:#fff;display:flex;flex-direction:column;padding:18px'
+    document.body.appendChild(ov)
+  }
+  const itemsHTML = G18_TRAINS.filter(t => t.route).map((t, i) => `
+    <div onclick="g18ShowDetail(${G18_TRAINS.indexOf(t)})" style="background:rgba(255,255,255,0.05);border:1px solid rgba(251,191,36,0.3);border-radius:14px;padding:12px;cursor:pointer;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:10px"><span style="font-size:24px">🚂</span><div><div style="font-family:Fredoka One,cursive;color:#fde68a">${t.name}</div><div style="font-size:11px;opacity:0.7">🗺️ ${t.route}</div></div></div>
+    </div>`).join('')
+  ov.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <span style="font-family:Fredoka One,cursive;font-size:18px;color:#fde68a">🗺️ Peta Rute Pulau Jawa</span>
+      <button onclick="document.getElementById('g18-javamap').remove()" style="padding:8px 14px;border-radius:10px;border:0;background:#fbbf24;color:#451a03;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer">Tutup ✕</button>
+    </div>
+    <div style="flex:1;overflow-y:auto">${itemsHTML}</div>`
+}
+
 // E8: trivia kartu hari ini — daily-seeded funFact card pinned to gallery.
 function g18ShowDailyTrivia() {
   const grid = document.getElementById('g18-card-grid')
@@ -14285,7 +14657,6 @@ function g18RenderQuestion() {
   document.getElementById('g18-q-num').textContent = g18State.quizIdx + 1
   const pct=(g18State.quizIdx/G18_QUIZ_SESSION.length)*100
   const fillEl=document.getElementById('g18-quiz-fill');if(fillEl)fillEl.style.width=pct+'%'
-  // v54.22 E17: SVG-image quiz when q.subjectTrainId set — render train SVG instead of emoji.
   const imgEl = document.getElementById('g18-q-image')
   if (q.subjectTrainId != null && typeof g18TrainSVG === 'function' && G18_TRAINS[q.subjectTrainId]) {
     imgEl.innerHTML = g18TrainSVG(G18_TRAINS[q.subjectTrainId], 120, 56)
@@ -14293,8 +14664,11 @@ function g18RenderQuestion() {
     imgEl.textContent = q.emoji
   }
   document.getElementById('g18-q-text').textContent = q.q
-  // v54.22 E15: optional speak-on-render of question text
   try { g18Speak(q.q) } catch(_){}
+  // v54.23 F4: tint quiz progress bar by current accuracy
+  try { g18TintQuizBar() } catch(_){}
+  // v54.23 F12: start question timer
+  try { g18StartQuestionTimer() } catch(_){}
   document.getElementById('g18-q-feedback').textContent = ''
   document.getElementById('g18-q-next-wrap').style.display = 'none'
   const opts = document.getElementById('g18-q-options')
@@ -14363,11 +14737,13 @@ function g18NextQuestion() {
 function g18FinishQuiz() {
   const score = g18State.quizScore
   const total = G18_QUIZ_SESSION.length
-  // Unified scoring: pure quiz accuracy
   let perfStars = GameScoring.calc({ correct: score, total })
-  // v54.22 E10: 2× stars bonus if best streak reached 5+
   if (g18StreakBest >= 5) perfStars = Math.min(5, perfStars + 1)
   state.gameStars[state.currentPlayer] = perfStars
+  // v54.23 F2: confetti + brass fanfare on real 8/8 mastery
+  if (score === G18_QUIZ_COUNT) try { g18Mastery8of8() } catch(_){}
+  // v54.23 F10 stop gamelan
+  try { g18GamelanStop() } catch(_){}
   // v54.22 E18: review-the-misses summary list appended to msg
   let reviewLine = ''
   try {

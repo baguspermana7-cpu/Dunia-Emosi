@@ -1,5 +1,31 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-24 — v54.23 "G18 Museum Depth" (16 / 16 items shipped, F15+F16 as MVP)
+
+Ship 6 of 8 from `TRAIN-GAMES-100-IDEAS-PLAN.md`.
+
+F1 ✓ Storybook 3-page swipeable (intro+SVG, funFact, quizHint+CTA). Swipe gestures + page nav buttons.
+F2 ✓ Confetti shower (48 particles) + brass C-E-G-B arpeggio on 8/8 mastery. Persists `dunia-g18-master`.
+F3 ✓ Seeded RNG quiz (xorshift32 from date hash) + no-repeat-last-3 dedup via localStorage.
+F4 ✓ Quiz progress bar tints green/amber/red by accuracy ratio.
+F5 ✓ Cerita button pulse-glow (4px ring) until first tap, persists `dunia-g18-cerita-seen`.
+F6 ✓ Section chapter collapse — click header to fold/unfold; gold chevron rotates ▼/▶.
+F7 ✓ Long-press steam-train modal (800ms) plays 1.1kHz→880Hz→660Hz whistle + haptic.
+F8 ✓ Steam-chuff BGM bed (WebAudio square+saw 80/140Hz) on steam modal open, scales with speed.
+F9 ✓ SVG-image quiz when `q.subjectTrainId` set (E17 reused; reaffirmed here as F9 is the visual variant).
+F10 ✓ Gamelan ambient loop (5-note slendro scale, 1.2-2.6s interval, soft triangle, ~6% volume).
+F11 ✓ Hero banner — Stasiun Willem I 1873 with date subtitle + gold radial glow + landmark facts.
+F12 ✓ Question timer (`_g18QuestionStartT`) — captures elapsed for future speed-bonus scoring.
+F13 ✓ Pak Masinis conductor avatar — waves 👨‍✈️ on gallery init via 1.4s rotation keyframe.
+F14 ✓ Rod kinematics overlay for steam trains — boiler/cylinder/main-rod/side-rods explainer.
+F15 → MVP: Timeline 1880→2023 — horizontal-scroll layout, each train SVG at percentage position, click = detail modal.
+F16 → MVP: Java Map — list-mode with route badges (full SVG-of-Java + pin animation deferred to v54.25).
+
+Cache bump v54.22-20260624aa → v54.23-20260624ab.
+Docs: CHANGELOG.md v54.23 block + LESSONS-LEARNED.md L143-L145.
+
+---
+
 ## 2026-06-24 — v54.22 "G16 Hook Depth + G18 Museum Polish" (18 / 18 items shipped)
 
 Ship 5 of 8 from `TRAIN-GAMES-100-IDEAS-PLAN.md`.
