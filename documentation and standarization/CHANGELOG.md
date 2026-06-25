@@ -1,5 +1,47 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.47 "GameModal `onAchievements` slot — 🏆 button on G14/G15/G16 result"
+
+Train games now finish a level → modal shows the usual stars/title/`Level Berikutnya` row BUT also a 🏆 `Pencapaian` button that opens the TrainShared Achievement Wall in place. Previously the Wall was reachable only from the G18 Museum FAB column, so kids who only play G14/G15/G16 never saw their badges unless they navigated into the museum.
+
+### Mechanic — GameModal extension
+
+`games/game-modal.js` gains a `onAchievements` named slot in `show(...)`. Rendered between the existing `onExtra` slot and `onBack`, styled with the same `gm-btn-secondary` class. Backwards-compatible: callers that don't pass `onAchievements` get the same modal layout as before.
+
+```js
+function show({ ..., onExtra, onAchievements }) {
+  ...
+  if (onAchievements) {
+    const b = document.createElement('button');
+    b.className = 'gm-btn gm-btn-secondary';
+    b.textContent = '🏆 Pencapaian';
+    b.onclick = () => { hide(); onAchievements(); };
+    btns.appendChild(b);
+  }
+}
+```
+
+Dedicated slot (not multiplexed onto `onExtra`) because G14 already uses `onExtra` for "Ganti Kereta 🚂". Adding a second extras would have meant either crowding the existing button or breaking G14.
+
+### Wiring
+
+- **G14 (`games/g14.html:3217`)** — finishRace's GameModal.show now passes `onAchievements: () => TrainShared.achievements.showWall()`.
+- **G15 (`games/g15-pixi.html:2323`)** — showWin's GameModal.show same.
+- **G16 (`games/g16-pixi.html:2450`)** — showWin's GameModal.show same.
+- **G18** — unchanged (already has the FAB column).
+
+### Files touched
+- `games/game-modal.js` — new `onAchievements` slot.
+- `games/g14.html` + `games/g15-pixi.html` + `games/g16-pixi.html` — wire the callback into result modals.
+- 11 standalone HTMLs (g14, g15-pixi, g16-pixi, g13c-pixi, g6, g19-pixi, g20-pixi, g21-pixi, g22-candy, g23-pixi, g24-pixi) — game-modal.js cache-bust `v=20260424g` → `v=54.47-20260625az`.
+- `sw.js` — CACHE_VERSION v54.46-20260625ay → v54.47-20260625az.
+
+### Why this matters
+
+Achievements drive engagement, and engagement drives the L30+ grind that unlocks Lulus / GURU KERETA / Topi Guru. If kids never see the Wall, they can't track progress toward the capstone. The post-level moment is the right time — they just finished, they're already in "look at what I did" mode.
+
+---
+
 ## 2026-06-25 — v54.46 "G15 picker — PROTECTED character cards get the gold treatment (G14 parity)"
 
 Cross-game UX inconsistency audit. G14 had distinctive picker styling for PROTECTED character trains (Casey JR / Linus / Dragutin / Malivlak / Brave): gold gradient bg, gold border, ⭐ corner badge. G15 had only a `⭐ ` text prefix in the name — same trains rendered as ordinary purple cards, so kids couldn't visually tell which were the favourites until they read the label.

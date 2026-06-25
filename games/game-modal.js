@@ -38,7 +38,7 @@ const GameModal = (() => {
     document.body.appendChild(overlay);
   }
 
-  function show({ emoji = '🏆', title = '', stars = 0, msg = '', onNext, onAgain, onBack, onExtra }) {
+  function show({ emoji = '🏆', title = '', stars = 0, msg = '', onNext, onAgain, onBack, onExtra, onAchievements }) {
     init();
     // Coerce contradictory caller inputs: 0-star can never be "Sempurna"/"Hebat"/"Bagus"
     // or show a "Level Berikutnya" button. Standardize fail-state messaging.
@@ -92,6 +92,18 @@ const GameModal = (() => {
       b.className = 'gm-btn gm-btn-secondary';
       b.textContent = onExtra.label;
       b.onclick = () => { hide(); onExtra.action(); };
+      btns.appendChild(b);
+    }
+    // v54.47: dedicated slot for opening the TrainShared Achievement Wall.
+    // Provided as its own callback (not onExtra) so train games can keep their
+    // existing onExtra usage (e.g. G14 "Ganti Kereta") and still surface the
+    // 🏆 wall right after a level finishes. Backwards-compatible — older
+    // callers that don't pass onAchievements get the same modal as before.
+    if (onAchievements) {
+      const b = document.createElement('button');
+      b.className = 'gm-btn gm-btn-secondary';
+      b.textContent = '🏆 Pencapaian';
+      b.onclick = () => { hide(); onAchievements(); };
       btns.appendChild(b);
     }
     if (onBack) {

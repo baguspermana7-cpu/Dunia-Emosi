@@ -225,7 +225,7 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 <script src="../shared/rz-responsive.js?v=20260423c"></script>
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/save-engine.js?v=20260501h"></script>
-<script src="game-modal.js?v=20260424g"></script>
+<script src="game-modal.js?v=54.47-20260625az"></script>
 <script src="train-character-sprite.js?v=20260622d"></script>
 
 <script src="lib/pixi.min.js?v=8"></script>
@@ -2449,7 +2449,9 @@ function showWin(){
   try { if (app && app.ticker) app.ticker.stop() } catch(_){}
   GameModal.show({
     emoji, title, stars, msg,
-    onNext:nextLevel, onAgain:()=>restartGame(), onBack:()=>finishGame()
+    onNext:nextLevel, onAgain:()=>restartGame(), onBack:()=>finishGame(),
+    // v54.47: 🏆 Pencapaian — opens TrainShared Achievement Wall in-place.
+    onAchievements: () => { try { window.TrainShared && TrainShared.achievements.showWall() } catch(_){} }
   })
 }
 function showLose(){

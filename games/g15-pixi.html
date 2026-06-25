@@ -235,7 +235,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/save-engine.js?v=20260501h"></script>
-<script src="game-modal.js?v=20260424g"></script>
+<script src="game-modal.js?v=54.47-20260625az"></script>
 
 <!-- Train Select Screen -->
 <div id="train-select">
@@ -2322,7 +2322,9 @@ function showWin() {
   }
   GameModal.show({
     emoji, title, stars: finalStars, msg,
-    onNext: nextLevel, onAgain: () => restartGame(), onBack: () => goBack()
+    onNext: nextLevel, onAgain: () => restartGame(), onBack: () => goBack(),
+    // v54.47: 🏆 Pencapaian — opens TrainShared Achievement Wall in-place.
+    onAchievements: () => { try { window.TrainShared && TrainShared.achievements.showWall() } catch(_){} }
   });
 }
 

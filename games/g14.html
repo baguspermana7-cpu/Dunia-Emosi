@@ -302,7 +302,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/save-engine.js?v=20260501h"></script>
-<script src="game-modal.js?v=20260424g"></script>
+<script src="game-modal.js?v=54.47-20260625az"></script>
 
 <div id="flash"></div>
 
@@ -3221,7 +3221,9 @@ function endRace() {
     // callbacks so the wheel pops once per day on game-over, not on boot.
     onAgain: () => { try { g14CheckDailySpin() } catch(_){}; startRace() },
     onBack:  () => { try { g14CheckDailySpin() } catch(_){}; goBack() },
-    onExtra: { label: 'Ganti Kereta 🚂', action: () => { try { g14CheckDailySpin() } catch(_){}; showSelectScreen() } }
+    onExtra: { label: 'Ganti Kereta 🚂', action: () => { try { g14CheckDailySpin() } catch(_){}; showSelectScreen() } },
+    // v54.47: 🏆 Pencapaian — opens TrainShared Achievement Wall in-place.
+    onAchievements: () => { try { window.TrainShared && TrainShared.achievements.showWall() } catch(_){} }
   })
 
   try {
