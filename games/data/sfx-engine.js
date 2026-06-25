@@ -35,7 +35,16 @@
     initing: null,
     muted: false,
     volume: 0.6,
-    basePath: '/Dunia-Emosi/Sounds/pokemon%20sounds/',
+    // v54.36 audit fix: default basePath now detects deployment root (Vercel
+    // serves at `/` while GitHub Pages serves at `/Dunia-Emosi/`). Previously
+    // hardcoded /Dunia-Emosi/ → silently 404'd on Vercel → SFX engine fell
+    // into "fallback mode" and ALL Pokemon SFX were missing.
+    basePath: (function () {
+      try {
+        var base = (location.pathname.indexOf('/Dunia-Emosi/') === 0) ? '/Dunia-Emosi/' : '/'
+        return base + 'Sounds/pokemon%20sounds/'
+      } catch (e) { return '/Sounds/pokemon%20sounds/' }
+    })(),
     // manifests
     speciesByName: {},   // 'pikachu' → manifest entry
     speciesById: {},     // 25 → manifest entry

@@ -1,5 +1,37 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.37 "SFX engine basePath silently 404 on Vercel"
+
+Pattern-match audit (same shape as the silent-broken keyframes pass v54.35/v54.36): scan for hardcoded `/Dunia-Emosi/...` paths that would 404 on the Vercel mirror (`dunia-emosi.vercel.app`).
+
+### Found
+
+- **`games/data/sfx-engine.js:38`** — `state.basePath` defaulted to `/Dunia-Emosi/Sounds/pokemon%20sounds/`. On Vercel the deployment root is `/`, not `/Dunia-Emosi/`. Result: every Pokemon SFX 404'd silently → `[SFXEngine] manifest load failed; engine in fallback mode` (line 172) → all per-Pokemon cries and per-move attack SFX missing on Vercel.
+
+This is the same root cause that `_ASSET_BASE` in `battle-modes.js:753` solved for sprites in v54.29 ("di vercel bukan gambar pokemon tapi emoji"). The SFX engine pre-dated that pattern and never got the same fix.
+
+### Fix
+
+Mirror the `_ASSET_BASE` runtime detection in `sfx-engine.js`:
+
+```js
+basePath: (function () {
+  try {
+    var base = (location.pathname.indexOf('/Dunia-Emosi/') === 0) ? '/Dunia-Emosi/' : '/'
+    return base + 'Sounds/pokemon%20sounds/'
+  } catch (e) { return '/Sounds/pokemon%20sounds/' }
+})(),
+```
+
+Now resolves correctly on both GitHub Pages (`/Dunia-Emosi/Sounds/...`) and Vercel (`/Sounds/...`). SW SHELL paths are unaffected because SW is scoped to GitHub Pages only.
+
+### Files touched
+- `games/data/sfx-engine.js` — basePath dynamic detection.
+- `index.html` — cache-bust on sfx-engine.js (`v=20260621f` → `v=54.37-20260625ap`).
+- `sw.js` — CACHE_VERSION v54.36-20260625ao → v54.37-20260625ap.
+
+---
+
 ## 2026-06-25 — v54.36 "Cross-file silent-broken keyframes audit"
 
 Following the v54.35 bmSpriteBob fix, ran the same `animation:` → `@keyframes` diff across the rest of the codebase (game.js, style.css, all 4 train HTMLs). Found 3 more silent-broken animations spanning two months of code.
