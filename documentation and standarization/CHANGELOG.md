@@ -1,5 +1,39 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.57 "G15 Arena Foundation Fix" (plan Phase 1.3, NEW tranche)
+
+Addresses owner's 2nd-SS feedback directly (smoke + HUD).
+
+### Ships
+
+- **Smoke alignment per train sprite** (`games/g15-pixi.html:emitSteam`) — `trains-db.js` defines `smokePos:[x,y]` per character train (Casey JR `[-40,-130]`, Linus `[-42,-132]`, Malivlak `[108,-195]`) but the field was DORMANT — `emitSteam` hardcoded `puff.x = TRAIN_X - 62; puff.y = trainContainer.y - 42` for all trains. Fix: NEW `g15ChimneyPos()` helper reads `selectedTrain.smokePos` if present, falls back to legacy `(-62, -42)` for non-character trains. Both `emitSteam` and `g15SmokeBillow` (v54.55) now route through it. Character trains finally emit smoke from their actual sprite chimney.
+- **HUD declutter — heart-pill collapse** (`updateLivesHUD`) — Owner SS showed easy-mode hearts (MAX_LIVES=8) overflowing past the mute button. New rule: when `MAX_LIVES > 5`, render a single `❤️ N/N` pill (red glass background) instead of 8 individual hearts. Reduces HUD top width from ~360px → ~80px on easy mode.
+- **HUD top gap + word-category clamp** (`#hud-top` CSS) — `gap: 8px → 6px`, `padding-x: 16px → 12px`, added `flex-wrap: wrap` so badges spill to a 2nd row before pushing past mute. `#g15-word-cat` pill gets `max-width:120px` (90px on ≤480px viewports) + `text-overflow:ellipsis` so long category labels can't blow up the header.
+
+### Skipped (no concrete bug data)
+
+- Train-on-rail Y alignment — survey showed character-train branch already uses `wheelAnchor` + `visualOffset`; non-character branch uses `LANE_Y[1]` (lane middle) which by the procedural sprite math should land wheels on rail at `LANE_Y[1] + 14-20`. Without a reproducer pinning a specific train + lane, defer until owner reports persistence.
+
+### Files touched
+- `games/g15-pixi.html` — `g15ChimneyPos` helper + `emitSteam`/`g15SmokeBillow` rewrite + `updateLivesHUD` collapse + `#hud-top` CSS.
+- `sw.js` — CACHE_VERSION v54.56-20260625bi → v54.57-20260626bj.
+
+### Verification
+- Syntax check OK.
+- `smokePos` reads validated against trains-db.js character entries.
+- Heart-pill collapse fires only when MAX_LIVES > 5 (easy mode); default mode (3 lives) renders unchanged.
+- PROTECTED chars + PvP balance untouched.
+
+### Next (plan v54.58–v54.69)
+
+- v54.58 Time-of-Day shared module + G15 port (6 phases: subuh/pagi/siang/sore/petang/malam).
+- v54.59 Scenery variation (3-layer parallax + biome decorations + weather variants).
+- v54.60 G16 Visual+VFX (was v54.56 in original plan).
+- v54.61 G18 Visual+VFX.
+- v54.62-v54.69 hybrid carryover + smooth + gameplay depth + QA.
+
+---
+
 ## 2026-06-25 — v54.56 "G14 critical fixes — freeze after spin + brighter biomes"
 
 Owner-reported critical issues (screenshot 2026-06-25 23:40):

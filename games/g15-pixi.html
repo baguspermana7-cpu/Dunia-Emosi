@@ -16,7 +16,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 #pixi-canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
 
 /* ── HUD Top ── */
-#hud-top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:8px;padding:max(14px,env(safe-area-inset-top)) 16px 8px;background:linear-gradient(180deg,rgba(0,0,0,0.72) 0%,transparent 100%);pointer-events:none}
+/* v54.57: tighter gap + flex-wrap on mobile so hearts don't push past mute */
+#hud-top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:6px;padding:max(14px,env(safe-area-inset-top)) 12px 8px;background:linear-gradient(180deg,rgba(0,0,0,0.72) 0%,transparent 100%);pointer-events:none;flex-wrap:wrap}
+#g15-word-cat{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:480px){#g15-word-cat{max-width:90px}}
 #btn-back{background:#fff3c4;border:2.5px solid #f59e0b;border-radius:8px;color:#3f2a08;padding:8px 12px;font-size:14px;cursor:pointer;font-family:inherit;pointer-events:all;flex-shrink:0;box-shadow:0 3px 0 #b45309;font-weight:900;min-width:96px;min-height:44px;text-align:center}
 #btn-back:active{transform:translateY(2px);box-shadow:0 1px 0 #D4956A}
 /* v54.54: tap-target audit fix — pause was 25×30, TTS toggle was 38×38, filter tabs were 86×30. All lifted to 44px minimum per WCAG kid-touch standard. */
@@ -1547,14 +1550,27 @@ function addWheels(c) {
 }
 
 // ── Steam ─────────────────────────────────────────────────────────────────────
+// v54.57 ARENA FIX: owner reported smoke didn't align with chimney.
+// trains-db.js per-train `smokePos:[x,y]` was dormant; now read it.
+// Helper returns chimney world coords for the SELECTED train.
+function g15ChimneyPos() {
+  const sp = selectedTrain && selectedTrain.smokePos
+  // Default fallback matches the legacy hardcoded chimney for non-character trains.
+  const offX = sp ? sp[0] : -62
+  const offY = sp ? sp[1] : -42
+  return { x: TRAIN_X + offX, y: trainContainer.y + offY }
+}
+
 function emitSteam() {
+  const cp = g15ChimneyPos()
   for (let j = 0; j < 2; j++) {
     const puff = new PIXI.Graphics();
     const r = 5 + Math.random() * 5;
     puff.circle(0, 0, r).fill({ color: 0xdbeafe });
-    // Chimney is now on the LEFT side after flip (trainContainer.scale.x=-1 mirrors it)
-    puff.x = TRAIN_X - 62 + (Math.random() - 0.5) * 8;
-    puff.y = trainContainer.y - 42;
+    // v54.57: chimney coords from g15ChimneyPos so each train's actual chimney
+    // emits steam from the right location (Casey, Linus, Dragutin, Malivlak).
+    puff.x = cp.x + (Math.random() - 0.5) * 8;
+    puff.y = cp.y;
     puff.alpha = 0.55;
     puff._vx = -(0.4 + Math.random() * 0.5);
     puff._vy = -(0.5 + Math.random() * 0.7);
@@ -2171,10 +2187,13 @@ function g15FloatDamageLabel(x, y, text) {
 // uses PIXI.Graphics circles) with a smoke particle puff via TrainVFX so the
 // trail reads thicker on faster passes. Called from emitSteam alongside the
 // original puffs (not replacing them).
+// v54.57 ARENA FIX: read chimney coords from g15ChimneyPos so character
+// trains emit smoke from their actual chimney sprite location.
 function g15SmokeBillow() {
   if (!window.TrainVFX || !particleLayer) return
-  const x = TRAIN_X - 62 + (Math.random() - 0.5) * 6
-  const y = trainContainer.y - 46
+  const cp = (typeof g15ChimneyPos === 'function') ? g15ChimneyPos() : { x: TRAIN_X - 62, y: trainContainer.y - 46 }
+  const x = cp.x + (Math.random() - 0.5) * 6
+  const y = cp.y - 4
   try {
     TrainVFX.particles.spawn({ type: 'smoke', parent: particleLayer, x, y, count: 1, speed: 0.4, ttl: 70, gravity: -0.04, upBias: 1.2, opts: { color: 0xd1d5db } })
   } catch(_){}
@@ -2393,9 +2412,20 @@ function spawnCollectParticles(x, y, mainColor) {
 }
 
 // ── HUD ────────────────────────────────────────────────────────────────────────
+// v54.57 HUD declutter: when MAX_LIVES > 5 (easy mode = 8), collapse to
+// "❤️ × N / N" pill instead of 8 individual hearts overflowing the HUD.
+// Owner SS showed hearts pushing past mute button in mobile width 414px.
 function updateLivesHUD() {
   const el = document.getElementById('lives-hud');
   el.innerHTML = '';
+  if (MAX_LIVES > 5) {
+    const pill = document.createElement('span')
+    pill.className = 'life-pill' + (lives <= 1 ? ' low' : '')
+    pill.style.cssText = 'background:rgba(239,68,68,0.18);border:1.5px solid rgba(248,113,113,0.5);color:#fee2e2;font-family:Fredoka One,cursive;font-size:13px;padding:3px 10px;border-radius:12px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap'
+    pill.innerHTML = '<span style="font-size:14px">❤️</span><span>' + lives + '/' + MAX_LIVES + '</span>'
+    el.appendChild(pill)
+    return
+  }
   for (let i = 0; i < MAX_LIVES; i++) {
     const s = document.createElement('span');
     s.className = 'life-heart' + (i >= lives ? ' lost' : '');
