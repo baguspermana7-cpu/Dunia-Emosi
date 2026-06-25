@@ -481,6 +481,7 @@
     { id:'masinis_profesional_g14', icon:'🎓', label:'Masinis Profesional',    hint:'Lulus L30 G14 dengan 5 bintang + Juara 1' },
     { id:'lulus_akademi_g15',       icon:'🎓', label:'Lulus Akademi Lokomotif', hint:'Lulus L30 G15 dengan 5 bintang + 0 salah' },
     { id:'lulus_akademi_g16',       icon:'🎓', label:'Lulus Akademi Penyelamat',hint:'Lulus L30 G16 dengan 5 bintang' },
+    { id:'sarjana_museum_g18',      icon:'🎓', label:'Sarjana Museum',          hint:'Kunjungi semua kereta DAN raih 8/8 kuis G18 di sesi yang sama' },
     // Streak
     { id:'streak_3',            icon:'🔥', label:'Streak 3 hari',             hint:'Main 3 hari berturut' },
     { id:'streak_7',            icon:'🔥', label:'Streak seminggu',           hint:'Main 7 hari berturut' },

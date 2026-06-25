@@ -1,5 +1,52 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.43 "G18 Museum — Sarjana Museum end-game recognition"
+
+Completes the Lulus Akademi tier across all four train games. G18's per-session 8/8 quiz already had `museum_8_of_8` recognition; this ship adds the TRUE mastery state — both passport-complete (visited every train) AND 8/8 quiz IN THE SAME SESSION.
+
+### Fix
+
+`game.js:g18FinishQuiz` — after the 8/8 unlock, read `TrainShared.passport.get().g18` and check if visit count ≥ `G18_TRAINS.length`. If both conditions hit:
+
+- Modal emoji `🎓` (was 🏆 for 8/8)
+- Title `'SARJANA MUSEUM!'`
+- Message `'Kamu kunjungi semua kereta DAN jawab semua benar!'`
+- Unlocks new badge `sarjana_museum_g18`
+
+```js
+let isSarjana = false
+if (window.TrainShared && score === G18_QUIZ_COUNT) {
+  const visited = (TrainShared.passport.get().g18) || {}
+  if (Object.keys(visited).length >= G18_TRAINS.length) {
+    isSarjana = true
+    TrainShared.achievements.unlock('sarjana_museum_g18')
+  }
+}
+```
+
+### BADGES catalog
+
+Added `sarjana_museum_g18` to train-shared.js BADGES so the unlock actually fires (lesson L171 — pre-flight audit confirmed 20 used / 21 in catalog, no orphans).
+
+### Why "Sarjana" not "Lulus Akademi"
+
+G14/G15/G16 use "Lulus Akademi" because they have a clear graduation arc (L1 → L30). G18 has no level progression — it's a free-explore museum + quiz. "Sarjana" (graduate / scholar) reads as "mastered the whole curriculum" which is the right framing for the museum experience.
+
+### Files touched
+- `game.js` — `g18FinishQuiz` Sarjana branch.
+- `games/train-shared.js` — `sarjana_museum_g18` BADGES entry.
+- `index.html` + `games/g14.html` + `games/g15-pixi.html` + `games/g16-pixi.html` — train-shared.js cache-bust.
+- `index.html` — game.js cache-bust (`v=54.39-20260625ar` → `v=54.43-20260625av`).
+- `sw.js` — CACHE_VERSION v54.42-20260625au → v54.43-20260625av.
+
+After v54.43, all four train games have a unique end-game mastery state:
+- G14 🎓 Masinis Profesional (L30 + 5★ + 1st)
+- G15 🎓 Lulus Akademi Lokomotif (L30 + 5★ + 0 wrong)
+- G16 🎓 Lulus Akademi Penyelamat (L30 + 5★)
+- G18 🎓 Sarjana Museum (all trains visited + 8/8 quiz, same session)
+
+---
+
 ## 2026-06-25 — v54.42 "G14 AI catch-up boost — thought bubble now means something"
 
 The G14 race AI had thought bubbles cycling through `Ngebut...` / `Maju!` / `Hati2!` but its actual speed never changed — bubble was decorative noise. Audit found that AI behind the player would just stay behind forever (AI speed multiplier locked at 0.92-1.04× of player base). Catch-up never happened; players who took an early lead glided to victory unopposed.

@@ -14820,10 +14820,27 @@ function g18FinishQuiz() {
       reviewLine = `\n📚 ${g18Missed.length} soal terlewat — coba lagi untuk belajar!`
     }
   } catch(_){}
+  // v54.43: true G18 mastery — visited every train in passport AND 8/8 quiz.
+  // This is the genuine "museum graduate" state and deserves its own banner
+  // separate from the per-session 8/8.
+  let isSarjana = false
+  try {
+    if (window.TrainShared && score === G18_QUIZ_COUNT) {
+      const visited = (TrainShared.passport.get().g18) || {}
+      if (Object.keys(visited).length >= G18_TRAINS.length) {
+        isSarjana = true
+        TrainShared.achievements.unlock('sarjana_museum_g18')
+      }
+    }
+  } catch(_){}
   // v54.22 E6: stale '===5' replaced with full-quiz mastery threshold so 8/8
   // actually grants 🏆 SEMPURNA (was triggering on 5/8 — wrong since G18_QUIZ_COUNT=8).
-  const gradeEmoji = score === G18_QUIZ_COUNT ? '🏆' : score >= Math.ceil(G18_QUIZ_COUNT * 0.5) ? '⭐' : '📚'
-  const gradeMsg = score === G18_QUIZ_COUNT ? 'SEMPURNA! Kamu ahli kereta!' : score >= Math.ceil(G18_QUIZ_COUNT * 0.5) ? 'Bagus! Terus belajar!' : 'Jangan lupa baca kartu museumnya ya!'
+  const gradeEmoji = isSarjana ? '🎓' : score === G18_QUIZ_COUNT ? '🏆' : score >= Math.ceil(G18_QUIZ_COUNT * 0.5) ? '⭐' : '📚'
+  const gradeMsg = isSarjana
+    ? 'SARJANA MUSEUM! Kamu kunjungi semua kereta DAN jawab semua benar!'
+    : score === G18_QUIZ_COUNT ? 'SEMPURNA! Kamu ahli kereta!'
+    : score >= Math.ceil(G18_QUIZ_COUNT * 0.5) ? 'Bagus! Terus belajar!'
+    : 'Jangan lupa baca kartu museumnya ya!'
   document.getElementById('g18-quiz-view').style.display = 'none'
   showGameResult({
     emoji:gradeEmoji, title:gradeMsg, stars:perfStars,
