@@ -4,6 +4,14 @@
 
 ---
 
+## 2026-06-25 — v54.41 hotfix on v54.40 achievement IDs
+
+### L171 — Catalog-keyed dispatchers silently no-op on unknown IDs; audit every ship
+- v54.40 added three `Achievements.unlock('lulus_akademi_*')` calls but didn't add the IDs to the `BADGES` catalog. `unlock(id)` does `BADGES.find(b => b.id === id)` and early-returns `false` if undefined. No toast, no record, no error — just silent no-op. Same shape as the v54.35 missing-keyframes bug: the dispatcher's "ID not found" path is indistinguishable from "ID handled fine, just nothing visible to do".
+- Lesson: When a registry-keyed dispatcher (achievements, badges, sounds, themes, anything with a catalog lookup) has a silent fall-through, the only safe gate is a pre-flight script that diffs `used IDs` against `catalog IDs`. Same pattern as the `animation: → @keyframes` audit. Run before every commit that touches either side.
+
+---
+
 ## 2026-06-25 — v54.35 silent-broken keyframes
 
 ### L169 — CSS `animation:` references that point to undefined keyframes fail SILENTLY

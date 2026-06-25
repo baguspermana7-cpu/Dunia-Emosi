@@ -1,5 +1,40 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.41 "Hotfix: v54.40 Lulus achievement IDs missing from BADGES"
+
+Self-found regression. v54.40 added `TrainShared.achievements.unlock('masinis_profesional_g14')` / `unlock('lulus_akademi_g15')` / `unlock('lulus_akademi_g16')` calls but never added those IDs to the `BADGES` catalog in `train-shared.js:463`. The `unlock(id)` function does `BADGES.find(b => b.id === id)` — returns undefined → early-returns `false` → no toast, no record, no celebration. The Lulus tier shipped functionally broken.
+
+### Fix
+
+Added the 3 new BADGES entries co-located with `museum_8_of_8`:
+
+```js
+{ id:'masinis_profesional_g14', icon:'🎓', label:'Masinis Profesional',    hint:'Lulus L30 G14 dengan 5 bintang + Juara 1' },
+{ id:'lulus_akademi_g15',       icon:'🎓', label:'Lulus Akademi Lokomotif', hint:'Lulus L30 G15 dengan 5 bintang + 0 salah' },
+{ id:'lulus_akademi_g16',       icon:'🎓', label:'Lulus Akademi Penyelamat',hint:'Lulus L30 G16 dengan 5 bintang' },
+```
+
+Also audited every `unlock('id')` call site against BADGES — 19 unique IDs called from code, all 19 now present in BADGES (20 total catalog).
+
+### Files touched
+- `games/train-shared.js` — 3 BADGES entries appended.
+- `games/g14.html` + `games/g15-pixi.html` + `games/g16-pixi.html` + `index.html` — cache-bust on train-shared.js (`v=54.27-20260624af` → `v=54.41-20260625at`).
+- `sw.js` — CACHE_VERSION v54.40-20260625as → v54.41-20260625at.
+
+### Lesson
+
+L171 — Achievement IDs that live in BADGES catalog AND are referenced from game code must be co-located in a single source of truth, or the audit script must run on every ship. Pre-flight audit:
+
+```js
+const idsInBadges = new Set(/* extract from BADGES literal */);
+const used = new Set(/* extract unlock("id") calls across all files */);
+const orphan = [...used].filter(u => !idsInBadges.has(u));
+```
+
+If `orphan.length > 0`, the ship breaks an achievement silently. Run before commit. Captured in LESSONS-LEARNED.md.
+
+---
+
 ## 2026-06-25 — v54.40 "Train games — Lulus Akademi end-game recognition"
 
 Audit of train-game final-level victory state. G14, G15, G16 all cap at level 30, but reaching level 30 + perfect score showed the SAME `Sempurna!` modal as a level 5 or 15 win. The end-game journey wasn't visually distinguished — a kid who actually mastered all 30 levels got the same banner as someone who just won one level.
