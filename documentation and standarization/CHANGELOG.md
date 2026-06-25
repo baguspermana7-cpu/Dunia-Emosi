@@ -1,5 +1,37 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.52 "AI Personality & Pacing + Word Categories" (ultraplan tranche 4/12)
+
+Tranche 4 (partial). Big-ticket HIGH/M items split: 2 ship now, 3 deferred to v54.53 to keep this commit reviewable.
+
+### Ships
+
+- **G14 AI personality archetypes (Reckless / Cautious / Copycat)** — `buildAI` assigns `ai.persona` from a 3-item shuffle. In `tickAI`:
+  - **Reckless** — 2.2× boost probability (`Math.random() < 0.0018 * 2.2`). Intent bubble flips to "Ngebut!" (no ellipsis). Never swaps lanes.
+  - **Cautious** — 0.6× boost probability. Every 30 frames, scans `S.obstacles` for any in own lane within 220px ahead; if found, swaps lane and shows "Pindah!". Avoids collisions proactively.
+  - **Copycat** — 1.0× boost. Tracks `S.lane` change → after 48 frame delay (~800ms) mirrors to the player's lane and shows "Ikut!". Creates pressure when player tries to dodge.
+  - Render reads `ai.lane` per frame so y-position updates automatically when persona swaps lane.
+- **G15 word-bank category badges** — `g15WordCategory(wordObj)` infers category from emoji regex (hewan / buah / kendaraan / alam / benda / lain). `g15UpdateCategoryPill()` renders a sticky 11px pill under the HUD with category icon + label + left-border accent in category-coded color. Called from `refreshHUD` on every word change. Anak belajar konteks kata, not just huruf-per-huruf.
+
+### Deferred to v54.53
+
+- G14 tunnel sections every 250m — MED priority, deferred.
+- G15 math quiz visualizer (counting dots) — HIGH/M, big enough for its own commit.
+- G15 station landmark photo card on arrival — HIGH/M, big enough for its own commit.
+
+### Files touched
+- `games/g14.html` — `_persona` assignment in buildAI loop + `tickAI` adds boost-prob mod, cautious lane-swap scan, copycat mirror delay.
+- `games/g15-pixi.html` — `g15WordCategory` + `g15UpdateCategoryPill` functions; called in `refreshHUD`.
+- `sw.js` — CACHE_VERSION v54.51-20260625bd → v54.52-20260625be.
+
+### Verification
+- Inline `<script>` syntax check: OK.
+- AI persona randomly distributed (Math.random for offset, 3-cycle so 2 AIs cover 2 different personas on average).
+- Word category infers correctly for the canonical Word lists; default falls to "✨ Kata" for unmatched emoji.
+- PROTECTED chars + PvP balance unchanged.
+
+---
+
 ## 2026-06-25 — v54.51 "Accessibility Cross-Game Pass" (ultraplan tranche 3/12)
 
 Tranche 3 — accessibility. Gating via localStorage + matchMedia. Silent (no UI), low cost, high inclusion impact.

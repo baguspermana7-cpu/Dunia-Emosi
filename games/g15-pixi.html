@@ -2318,11 +2318,43 @@ function updateLivesHUD() {
   }
 }
 
+// v54.52: word-category inference from emoji + word pattern. Used by the
+// category-pill UI under the word HUD so anak belajar konteks kata, not just
+// huruf-per-huruf. Categories: hewan / buah / kendaraan / alam / benda / lain.
+function g15WordCategory(wordObj) {
+  if (!wordObj) return null
+  const e = wordObj.emoji || ''
+  if (/🐔|🐟|🐮|🐴|🐱|🦆|🐘|🐯|🐐|🐰|🐻|🐬|🦋|🦁|🐶|🐷|🦌|🦒|🐧/.test(e)) return { id:'hewan', label:'🐾 Hewan', color:'#f59e0b' }
+  if (/🍎|🍌|🥕|🍊|🍉|🥭|🍓|🍇|🍒|🍑|🍍|🥝/.test(e))                       return { id:'buah',  label:'🍎 Buah',  color:'#ef4444' }
+  if (/🚂|🚃|🚄|🚖|🚓|🚑|🚀|🚁|✈️|🚲|🛵|🛴/.test(e))                       return { id:'kendaraan', label:'🚂 Kendaraan', color:'#3b82f6' }
+  if (/🌳|🌲|🌴|🌸|🌹|🌺|🌻|🌷|💐|🪴|🌿|🍃/.test(e))                       return { id:'alam',  label:'🌳 Alam', color:'#10b981' }
+  if (/📚|📖|🪟|🪑|🎩|🖊️|⚽|🏫|🛡️|⚔️|🏆/.test(e))                          return { id:'benda', label:'🎒 Benda', color:'#8b5cf6' }
+  return { id:'lain', label:'✨ Kata', color:'#a855f7' }
+}
+function g15UpdateCategoryPill(word) {
+  const cat = g15WordCategory(word)
+  let pill = document.getElementById('g15-word-cat')
+  if (!pill && cat) {
+    pill = document.createElement('div')
+    pill.id = 'g15-word-cat'
+    pill.style.cssText = 'position:absolute;top:48px;left:50%;transform:translateX(-50%);font-family:Fredoka One,cursive;font-size:11px;padding:3px 10px;border-radius:10px;background:rgba(0,0,0,0.45);color:#fff;letter-spacing:0.5px;z-index:11;pointer-events:none'
+    const hud = document.querySelector('#hud-top') || document.body
+    hud.appendChild(pill)
+  }
+  if (pill && cat) {
+    pill.style.borderLeft = '3px solid ' + cat.color
+    pill.textContent = cat.label
+  } else if (pill && !cat) {
+    pill.style.display = 'none'
+  }
+}
+
 function refreshHUD() {
   const word = WORDS_LIST[currentWordIdx]; if (!word) return;
   // v54.20 C5: speak the next target letter when HUD refreshes (new word or progression).
   try { g15SpeakLetter(word.word[currentLetterIdx]) } catch(_){}
   document.getElementById('word-emoji').textContent = word.emoji;
+  try { g15UpdateCategoryPill(word) } catch(_){}
   const slotsEl = document.getElementById('word-slots');
   slotsEl.innerHTML = '';
   for (let i = 0; i < word.word.length; i++) {

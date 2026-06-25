@@ -2290,6 +2290,13 @@ function buildAI() {
     txt.x = 5; txt.y = -27  // shifted +5 to make room for silhouette on the left
     txt.alpha = 0
     c.addChild(txt)
+    // v54.52: assign one of 3 personality archetypes per AI train. Persona drives
+    // boost frequency, lane-swap behaviour, and intent vocabulary in tickAI.
+    //   - reckless: boosts 2× more often, doesn't swap lanes
+    //   - cautious: swaps lane when obstacle ahead < 220px in own lane
+    //   - copycat:  mirrors player's lane 800ms after a change
+    const PERSONAS = ['reckless','cautious','copycat']
+    const _persona = PERSONAS[(i + Math.floor(Math.random() * 3)) % PERSONAS.length]
     S.aiTrains.push({
       cfg, container: c,
       lane: aiLane,
@@ -2301,6 +2308,10 @@ function buildAI() {
       intent: 'lurus', intentTimer: 60,
       // v54.42: AI mini-boost matching thought bubble.
       boostTimer: 0,
+      // v54.52: persona archetype.
+      persona: _persona,
+      copycatDelay: 0,
+      lastPlayerLane: -1,
       // v54.50: track distance-relative-to-player from last frame so a
       // SIGN CHANGE = overtake event. Throttled by lastWhistleAt to avoid
       // doppler spam on close pacing.
@@ -2326,9 +2337,39 @@ function tickAI(delta) {
     // straggler closes gaps, never the leader runs away.
     const behind = ai.distance < S.distance - 40
     if (ai.boostTimer > 0) ai.boostTimer -= delta
-    if (behind && ai.boostTimer <= 0 && Math.random() < 0.0018) {
+    // v54.52: persona-modulated boost probability + behaviour.
+    const _personaBoostMult = ai.persona === 'reckless' ? 2.2 : ai.persona === 'cautious' ? 0.6 : 1.0
+    if (behind && ai.boostTimer <= 0 && Math.random() < 0.0018 * _personaBoostMult) {
       ai.boostTimer = 90
-      if (ai.txt) { ai.intent = 'Ngebut...'; ai.txt.text = 'Ngebut...'; ai.intentTimer = 150 }
+      if (ai.txt) {
+        const intent = ai.persona === 'reckless' ? 'Ngebut!' : ai.persona === 'cautious' ? 'Hati2!' : 'Ngebut...'
+        ai.intent = intent; ai.txt.text = intent; ai.intentTimer = 150
+      }
+    }
+    // v54.52: cautious AI swaps lane when obstacle ahead < 220px in own lane.
+    if (ai.persona === 'cautious' && S.frame % 30 === 0) {
+      for (let oi = 0; oi < S.obstacles.length; oi++) {
+        const o = S.obstacles[oi]
+        if (o._lane === ai.lane && o.x > 0 && o.x < 220) {
+          ai.lane = (ai.lane + (Math.random() < 0.5 ? -1 : 1) + 3) % 3
+          if (ai.txt) { ai.intent = 'Pindah!'; ai.txt.text = 'Pindah!'; ai.intentTimer = 90 }
+          break
+        }
+      }
+    }
+    // v54.52: copycat AI mirrors player's lane after 800ms (48 frames at 60fps).
+    if (ai.persona === 'copycat') {
+      if (S.lane !== ai.lastPlayerLane) {
+        ai.copycatDelay = 48
+        ai.lastPlayerLane = S.lane
+      }
+      if (ai.copycatDelay > 0) {
+        ai.copycatDelay -= delta
+        if (ai.copycatDelay <= 0 && ai.lane !== S.lane) {
+          ai.lane = S.lane
+          if (ai.txt) { ai.intent = 'Ikut!'; ai.txt.text = 'Ikut!'; ai.intentTimer = 80 }
+        }
+      }
     }
     const boostMult = ai.boostTimer > 0
       ? 1 + 0.15 * Math.sin(((90 - ai.boostTimer) / 90) * Math.PI)
