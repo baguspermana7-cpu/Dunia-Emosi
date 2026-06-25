@@ -4,6 +4,20 @@
 
 ---
 
+## 2026-06-25 — v54.31 Loading speed + Gen 9 blocklist completion
+
+### L165 — `loading="lazy" decoding="async"` is the cheapest way to keep a sprite grid responsive
+- Picker grid renders 348 sprites (58 packages × 6 thumbs). Browser image queue saturates instantly without lazy-load — every off-screen thumb steals bandwidth from the on-screen ones, so the user sees a slow ladder of pop-in even for the first card.
+- Fix: add the two attributes to every grid `<img>`. Browser only fetches when within viewport (or about to scroll into it).
+- Lesson: For any sprite/thumbnail grid >20 items, `loading="lazy" decoding="async"` is mandatory. Zero LOC, zero JS, massive perceived-speed win. Same rule applies to team-switch panels, region grids, achievement walls.
+
+### L166 — SW SHELL pre-cache is the right place to amortize known cold-paths
+- v54.29 shipped the sprite blocklist but didn't pre-cache anything → every PvP first launch re-fetched the SFX manifests (950KB) over network plus 6-12 sprite WebPs cold. On a slow connection that's a 2-minute black screen.
+- SW SHELL fetches once at install (silent background) and is then instant from cache. Owner pays the network cost ONCE per SW version, not per battle.
+- Lesson: When users repeatedly hit the same cold-start path, pre-cache it in SW SHELL. The 5MB ceiling is much higher than people assume; spend it on the assets that gate the perceived first-paint of the highest-traffic feature.
+
+---
+
 ## 2026-06-24 — v54.30 PvP balance hard-cap + 9 new picker packages
 
 ### L163 — Per-layer multiplier caps are not enough; the PRODUCT of caps must respect the smallest HP bucket

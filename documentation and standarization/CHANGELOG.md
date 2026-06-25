@@ -1,5 +1,40 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.31 "Loading speed + Gen 9 sprite blocklist completion"
+
+Owner reported (with v54.29): "loading asset dan spritesnya lama ya. Membutuhkan at least 2 menit sound dan gambar2 pokemon baru keluar." Two-minute first-paint on PvP/Tournament was traced to:
+1. Only 29 of 102 corrupted Gen 9 IDs were in the v54.29 sprite blocklist — the other 73 Gen 9 species failed silently as "corrupted-but-loading" until users noticed wrong sprites OR the CDN fallback fired late.
+2. SFX manifests (953KB combined) fetched cold at PvP first launch (sfx-engine.js:148-149).
+3. Top starter sprites NOT in SW SHELL → cold-fetch over slow connections.
+4. Picker grids (58 packages × 6 thumbs = 348 imgs) rendered without lazy-load, saturating the browser image queue.
+5. Team-switch panel (6 imgs) rendered without lazy-load.
+
+### Fixes
+
+- **`games/data/battle-modes.js`**
+  - `LOCAL_SPRITE_BLOCKLIST` expanded 29 → 104 ids (entire Gen 9 range 924-1025 + Tirtouga/Carracosta). Audit confirmed by enumerating `assets/Pokemon/pokemondb_hd_alt2/` — all 102 Gen 9 IDs have duplicate prefix files (`0927_dolliv.webp` AND `0927_dachsbun.webp`), evidence of an off-by-2 numbering scheme merge that scrambled the slug↔id mapping for the entire generation. Built via `Array.from({length: 102}, (_,i) => 924+i)` so the literal stays short and auditable.
+  - Picker-thumb `<img>` (~348 sprites in the picker grid) gets `loading="lazy" decoding="async"` so the browser only fetches sprites whose tabs are in view.
+  - Team-switch panel `<img>` (6 sprites per panel open) gets `loading="lazy" decoding="async"` — only fetched when the bench is actually opened.
+
+- **`sw.js`**
+  - SW SHELL precache expanded: added 2 SFX manifests (`pokemon_attack_sfx_manifest.json` 491KB + `attack_move_sfx_manifest.json` 463KB) + 30 most-likely-first-paint Pokemon sprites (Kanto + Johto starter lines, Hoenn pack roster, Ash signatures Snorlax/Lapras/Dragonite, common companions Kingler/Starmie/Onix/Steelix/Meowth). ~3MB total — fetched once silently on SW install, then instant from cache.
+  - Sprites pre-cached use literal id-padded slug paths (`0025_pikachu.webp` etc.), bypassing the runtime `spritePath` resolver. Gen 9 IDs intentionally NOT pre-cached because they route to the CDN at battle time (blocklisted above).
+
+### Files touched
+- `games/data/battle-modes.js` — blocklist expansion + 2 `loading="lazy"` injections.
+- `games/g13c-pixi.html` — cache-bust on battle-modes.js script tag.
+- `index.html` — cache-bust on battle-modes.js (poke-packages.js unchanged).
+- `sw.js` — CACHE_VERSION v54.30-20260624ai → v54.31-20260625aj + 32 SHELL additions (2 JSON + 30 sprites).
+- `documentation and standarization/LESSONS-LEARNED.md` — L165 (lazy-load on large grids) + L166 (SW SHELL is the right place to amortize known cold-paths).
+
+### Verification
+- `node -e "new Function(require('fs').readFileSync('games/data/battle-modes.js','utf8'))"` ✓
+- `node -e "new Function(require('fs').readFileSync('sw.js','utf8'))"` ✓
+- Blocklist size 104 confirmed via eval.
+- Old SW caches dropped on activate (existing logic in sw.js:53-67) — clients re-fetch the new SHELL on first navigation under v54.31.
+
+---
+
 ## 2026-06-24 — v54.30 "PvP balance hard-cap + 9 new picker packages" (critical owner report)
 
 Owner reported 6-0 wipe via screenshot: P1 with **5 Pokemon alive** (Malamar 13/80) vs P2 with **1 Pokemon left** (Poochyena 59/90, the others all KO'd at 0/90). "Kok bisa 1x hit ko terus. Something wrong." Also reported missing picker Pokemon: "Pokemon teman2nya ash atau kingler itu juga g ada. Banyak yg g ada. Tolong tambahkan."

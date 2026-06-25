@@ -769,20 +769,21 @@
     return _ASSET_BASE + 'assets/Pokemon/pokemondb_hd_alt2/' + padded + '_' + slug + '.webp';
   }
   // Ids whose LOCAL .webp is mis-named or mis-content per audit. Anything in here
-  // bypasses the local bundle entirely. Expand as more bad files are found.
-  // Olive chain (926-928) confirmed corrupted via owner screenshot (Dolliv labeled
-  // → Growlithe-hybrid sprite). Adjacent Paldea Gen 9 species likely same issue.
+  // bypasses the local bundle entirely.
+  // v54.31 expansion: ALL Gen 9 (924-1025, 102 ids) confirmed corrupted via
+  // bundle audit — every Gen 9 id has DUPLICATE id-prefix files
+  // (e.g. `0927_dolliv.webp` AND `0927_dachsbun.webp`), evidence of an
+  // off-by-2 numbering scheme merge that scrambled the slug↔id mapping for
+  // the entire generation. Safest mitigation: route every Gen 9 id straight
+  // to the PokemonDB CDN. Owner-visible name/sprite mismatches go away;
+  // first-paint of Gen 9 sprites is now CDN-bound (1-3s) — accepted trade
+  // for correctness. Pre-v54.31 we shipped 29 blocklisted ids, leaving 73
+  // Gen 9 species still rendering wrong content.
   const LOCAL_SPRITE_BLOCKLIST = new Set([
-    926, 927, 928,            // Smoliv / Dolliv / Arboliva
-    924, 925,                 // Fidough / Dachsbun (duplicate-prefix asset evidence)
-    940, 941, 938, 939,       // Maschiff / Mabosstiff / Wattrel / Kilowattrel
-    972, 973, 970,            // Cetoddle / Cetitan / Houndstone
-    981, 982, 979, 980,       // Kingambit / Great-Tusk / Farigiraf / Dudunsparce
-    954, 956, 957,            // Espathra / Tinkatuff / Tinkaton
-    958, 959, 960, 961,       // Wiglett / Wugtrio / Bombirdier / Finizen
-    974, 976,                 // Veluza / Tatsugiri
-    998, 1000,                // Gholdengo / Chien-Pao
-    564, 565,                 // Tirtouga / Carracosta (also mismatched in city-pack audit)
+    // Gen 9 — entire range 924..1025 blocked (bundle corruption)
+    ...Array.from({length: 1025 - 924 + 1}, (_, i) => 924 + i),
+    // Tirtouga / Carracosta — also mismatched in city-pack audit
+    564, 565,
   ]);
 
   // v54.29 onerror chain: try CDN once if local 404s; then replace with the
@@ -1663,6 +1664,7 @@
                 const color = TYPE_COLOR[p.type] || '#A8A878';
                 return `<div class="bm-pkg-thumb" title="${escapeHtml(p.name)}" style="background:${color}22; border-color:${color};">
                   <img src="${spritePath(id, spriteSlug(p.slug))}" alt="${escapeHtml(p.name)}"
+                       loading="lazy" decoding="async"
                        onerror="window._bmSpriteOnError(this,'${spriteSlug(p.slug)}','⭐','bm-pkg-thumb-fallback')">
                 </div>`;
               }).join('')}
@@ -2490,6 +2492,7 @@
                 <button class="bm-switch-card ${isActive?'active':''} ${isFainted?'fainted':''}"
                         ${isDisabled?'disabled':''} data-swap="${i}">
                   <img class="bm-switch-img" src="${spritePath(p.id, spriteSlug(p.slug))}" alt="${escapeHtml(p.name)}"
+                       loading="lazy" decoding="async"
                        onerror="window._bmSpriteOnError(this,'${spriteSlug(p.slug)}','${p.emoji}','bm-switch-img-fallback')">
                   <div class="bm-switch-meta">
                     <div class="bm-switch-name">${escapeHtml(p.name)}</div>
