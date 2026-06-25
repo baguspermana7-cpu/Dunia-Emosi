@@ -203,7 +203,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 <body>
 <canvas id="pixi-canvas"></canvas>
 <script src="train-shared.js?v=54.48-20260625ba"></script>
-<script src="train-vfx.js?v=54.53-20260625bf"></script>
+<script src="train-vfx.js?v=54.56-20260625bi"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
@@ -596,13 +596,16 @@ const AI_COUNT = 2
 // time-of-day color shift on whatever biome is active. Owner: "harusnya
 // bener2 pintar dan dinamic bisa pagi ke sore, atau pagi saja, atau siang
 // atau sore, atau petang, atau malam atau subuh atau transisi.")
+// v54.56: owner reported "Jangan dark terus lbh bervariasi" — brightened
+// the 3 darkest biomes (forest, urban, volcano) so kids see variety, not a
+// black wall every other level. The new skyTops are still moody but readable.
 const THEMES = [
-  { name:'forest',  skyTop:0x071a0d, skyBot:0x0d3318, mountain:0x0d2510, tree:'🌲', ground1:0x0d2008, ground2:0x071005, rail:0x6b7280, stars:true },
+  { name:'forest',  skyTop:0x2d5e3d, skyBot:0x4f7c4d, mountain:0x244a30, tree:'🌲', ground1:0x3a5a2d, ground2:0x2d4520, rail:0x9ca3af, stars:true },
   { name:'desert',  skyTop:0xf97316, skyBot:0xfbbf24, mountain:0x92400e, tree:'🌵', ground1:0x92400e, ground2:0x78350f, rail:0xd97706, stars:false },
-  { name:'snow',    skyTop:0x1e3a5f, skyBot:0x7dd3fc, mountain:0xbfdbfe, tree:'🌲', ground1:0xbfdbfe, ground2:0x94a3b8, rail:0x94a3b8, stars:false },
-  { name:'coastal', skyTop:0x0891b2, skyBot:0x38bdf8, mountain:0x0d7a34, tree:'🌴', ground1:0x0d7a34, ground2:0x065f46, rail:0xfbbf24, stars:false },
-  { name:'urban',   skyTop:0x0f172a, skyBot:0x1e293b, mountain:0x374151, tree:'🏢', ground1:0x1f2937, ground2:0x111827, rail:0x9ca3af, stars:true },
-  { name:'volcano', skyTop:0x1c0000, skyBot:0x4a0000, mountain:0x7f1d1d, tree:'🔥', ground1:0x451a03, ground2:0x2d0800, rail:0xf97316, stars:false },
+  { name:'snow',    skyTop:0x60a5fa, skyBot:0xbfdbfe, mountain:0xe0e7ff, tree:'🌲', ground1:0xe0e7ff, ground2:0xc7d2fe, rail:0x94a3b8, stars:false },
+  { name:'coastal', skyTop:0x0891b2, skyBot:0x67e8f9, mountain:0x15803d, tree:'🌴', ground1:0x16a34a, ground2:0x065f46, rail:0xfbbf24, stars:false },
+  { name:'urban',   skyTop:0x6366f1, skyBot:0xa5b4fc, mountain:0x6b7280, tree:'🏢', ground1:0x4b5563, ground2:0x374151, rail:0xfde047, stars:true },
+  { name:'volcano', skyTop:0x991b1b, skyBot:0xea580c, mountain:0xb91c1c, tree:'🔥', ground1:0x7c2d12, ground2:0x451a03, rail:0xfbbf24, stars:false },
 ]
 const TH = THEMES[((cfg.level || 1) - 1) % THEMES.length]
 
@@ -3112,13 +3115,18 @@ function g14SpinWheel(){
   const msg = document.getElementById('g14-spin-msg')
   const cta = document.getElementById('g14-spin-go')
   if (!wheel) return
+  // v54.56 FREEZE FIX: previously reward 'Bonus Boost' called executeBoost()
+  // directly. That set S.boosting=true + cooldown + S.pressure -= 30 even when
+  // the modal/wheel was open POST-race — state bled into the NEXT startRace,
+  // causing a frozen-looking race. Now all rewards are SAFE state-only mutations
+  // queued via localStorage flag for startRace to consume cleanly.
   const rewards = [
-    { emoji:'⚡', label:'+30 Tekanan', apply: () => { S.pressure = Math.min(100, (S.pressure || 70) + 30); try { updatePressure() } catch(_){} } },
-    { emoji:'❤️', label:'+1 Nyawa', apply: () => { if (S.hp != null) S.hp = Math.min(LIVES_MAX + 1, S.hp + 1) } },
-    { emoji:'🚂', label:'Bonus Boost', apply: () => { try { executeBoost() } catch(_){} } },
-    { emoji:'⭐', label:'2× Skor Hari Ini', apply: () => { try { localStorage.setItem('dunia-g14-score-mult', '2'); localStorage.setItem('dunia-g14-score-mult-day', new Date().toDateString()) } catch(_){} } },
-    { emoji:'👻', label:'Ghost Mode 5s', apply: () => { S.invincible = Math.max(S.invincible || 0, 300) } },
-    { emoji:'🎁', label:'Misteri!', apply: () => { S.pressure = 100; if (S.hp != null) S.hp = Math.min(LIVES_MAX, (S.hp || LIVES_MAX) + 1) } },
+    { emoji:'⚡', label:'+30 Tekanan',         apply: () => { try { localStorage.setItem('dunia-g14-spin-bonus', 'pressure') } catch(_){} } },
+    { emoji:'❤️', label:'+1 Nyawa',            apply: () => { try { localStorage.setItem('dunia-g14-spin-bonus', 'hp') } catch(_){} } },
+    { emoji:'🚂', label:'Bonus Boost',         apply: () => { try { localStorage.setItem('dunia-g14-spin-bonus', 'boost') } catch(_){} } },
+    { emoji:'⭐', label:'2× Skor Hari Ini',   apply: () => { try { localStorage.setItem('dunia-g14-score-mult', '2'); localStorage.setItem('dunia-g14-score-mult-day', new Date().toDateString()) } catch(_){} } },
+    { emoji:'👻', label:'Ghost Mode 5s',       apply: () => { try { localStorage.setItem('dunia-g14-spin-bonus', 'ghost') } catch(_){} } },
+    { emoji:'🎁', label:'Misteri!',            apply: () => { try { localStorage.setItem('dunia-g14-spin-bonus', 'mystery') } catch(_){} } },
   ]
   const idx = Math.floor(Math.random() * rewards.length)
   const r = rewards[idx]
@@ -3313,6 +3321,19 @@ function startRace() {
   _miniQuizArmed = false       // v54.19 B8 reset
   S.boosting = false; S.boostCooldown = false; S.invincible = 0
   S.lane = 1; S.targetLane = 1
+  // v54.56: consume queued daily-spin bonus (set via g14SpinWheel post-race).
+  // Single-use: read + remove the key so the bonus only applies to this run.
+  try {
+    const bonus = localStorage.getItem('dunia-g14-spin-bonus')
+    if (bonus) {
+      localStorage.removeItem('dunia-g14-spin-bonus')
+      if (bonus === 'pressure') S.pressure = 100
+      else if (bonus === 'hp')   S.hp = Math.min(LIVES_MAX + 1, S.hp + 1)
+      else if (bonus === 'boost') S.pressure = 100  // delivered as full pressure; boost button armed
+      else if (bonus === 'ghost') S.invincible = 300  // 5s ghost (60fps × 5)
+      else if (bonus === 'mystery') { S.pressure = 100; S.hp = Math.min(LIVES_MAX, S.hp + 1) }
+    }
+  } catch(_){}
   S.speed = S.baseSpeed = S.trainCfg.baseSpeed
   S.maxSpeed = S.trainCfg.baseSpeed * 2.5
   // v54.17 A13: best speed tracking for the result chip

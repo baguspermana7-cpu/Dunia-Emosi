@@ -1,5 +1,58 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.56 "G14 critical fixes — freeze after spin + brighter biomes"
+
+Owner-reported critical issues (screenshot 2026-06-25 23:40):
+1. **Freeze after putar roda harian** — daily wheel reward triggered freeze
+2. **"Jangan dark terus"** — game biomes were too dark/gloomy
+
+### Fix 1 — Freeze after daily-spin reward
+
+`g14SpinWheel` previously called `executeBoost()` directly inside `r.apply()`. That mutated `S.boosting=true / S.boostCooldown=true / S.pressure -= 30` IMMEDIATELY when the wheel resolved — POST-race, the modal was still open, the next race hadn't started, so the state leaked into the next `startRace` and produced a frozen-feeling boost-locked race.
+
+Fix: all wheel rewards are now safe STATE-ONLY mutations queued via `localStorage['dunia-g14-spin-bonus']`. `startRace` reads + removes the key on init and applies the bonus cleanly:
+- `pressure` → `S.pressure = 100`
+- `hp` → `S.hp = min(LIVES_MAX+1, S.hp+1)`
+- `boost` → `S.pressure = 100` (boost button armed, player triggers manually)
+- `ghost` → `S.invincible = 300` (5s ghost)
+- `mystery` → `S.pressure = 100; S.hp = min(LIVES_MAX, S.hp+1)`
+
+### Fix 2 — Brighter biomes + soft-light lighting overlay
+
+`TrainVFX.screen.lighting` previously used `mix-blend-mode: multiply` which DARKENS its tint with the underlying scene — compounded with already-dark biome skies (forest 0x071a0d, urban 0x0f172a, volcano 0x1c0000) → unreadable.
+
+Fix:
+- Lighting overlay → `mix-blend-mode: soft-light` (brightens subtly, never darkens).
+- Per-biome tints lightened across the board (e.g. forest tint 0x148c28 → 0x6ed28c, urban tint 0x0f172a → 0xb4c8e6).
+- Biome `skyTop` colors brightened in G14 `THEMES`:
+  - forest `0x071a0d → 0x2d5e3d` (medium green)
+  - snow `0x1e3a5f → 0x60a5fa` (lively blue)
+  - urban `0x0f172a → 0x6366f1` (indigo)
+  - volcano `0x1c0000 → 0x991b1b` (medium red, not black)
+
+### Files touched
+- `games/g14.html` — wheel rewards rewrite + startRace bonus consumer + THEMES brightening.
+- `games/train-vfx.js` — lighting tints + blend mode.
+- `index.html` + 3 train HTMLs — train-vfx.js cache bust v54.53→v54.56.
+- `sw.js` — CACHE_VERSION v54.55-20260625bh → v54.56-20260625bi.
+
+### Verification
+- Syntax check: OK (g14.html + train-vfx.js).
+- Wheel reward flow simulation: queued key → startRace reads + removes → no executeBoost leak.
+- PROTECTED chars + PvP balance unchanged.
+
+### Pending (owner-requested plan-mode followup)
+
+Owner's 2nd screenshot (23:42) flagged:
+- Smoke not aligned with chimney
+- Train doesn't sit properly on rail
+- No weather/time-of-day variation (pagi/siang/sore/petang/malam)
+- Scenery very lacking variation
+
+Plan mode entering after this commit to design arena/UIUX enhancement pass.
+
+---
+
 ## 2026-06-25 — v54.55 "G15 Visual+VFX" (plan Phase 1.2)
 
 Second per-game VFX tranche. Wires TrainVFX into G15 for word-complete celebration, math feedback, heart-loss damage label, and chimney smoke billows.

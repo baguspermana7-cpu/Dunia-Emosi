@@ -448,14 +448,19 @@
     setTimeout(() => { el.style.opacity = '0' }, durMs || 600)
   }
   function screenLighting (biome) {
-    // Apply a soft full-screen tint matching the biome. Idempotent.
+    // v54.56 FIX: owner reported game "dark terus" — the multiply blend mode
+    // compounded with already-dark biome skies (forest 0x071a0d, urban
+    // 0x0f172a, volcano 0x1c0000) to make the screen unreadable.
+    // Switched to `soft-light` blend mode which BRIGHTENS the tint subtly
+    // rather than darkening, and lightened the per-biome tints so they
+    // add color character without sapping luminosity.
     const tints = {
-      forest:  'rgba(20,80,40,0.10)',
-      desert:  'rgba(217,119,6,0.10)',
-      snow:    'rgba(200,230,255,0.12)',
-      coastal: 'rgba(6,182,212,0.10)',
-      urban:   'rgba(15,23,42,0.16)',
-      volcano: 'rgba(220,38,38,0.12)',
+      forest:  'rgba(110,210,140,0.18)',   // bright green wash
+      desert:  'rgba(252,211,77,0.20)',    // warm sun
+      snow:    'rgba(220,240,255,0.22)',   // cool brightness
+      coastal: 'rgba(125,211,252,0.22)',   // sky teal
+      urban:   'rgba(180,200,230,0.22)',   // pale slate (NOT dark)
+      volcano: 'rgba(254,202,202,0.20)',   // warm rose, not pure red
       none:    'transparent'
     }
     const col = tints[biome] || tints.none
@@ -463,7 +468,7 @@
     if (!el) {
       el = document.createElement('div')
       el.id = 'train-vfx-lighting'
-      el.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:9997;mix-blend-mode:multiply;transition:background 800ms ease-in-out'
+      el.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:9997;mix-blend-mode:soft-light;transition:background 800ms ease-in-out'
       document.body.appendChild(el)
     }
     el.style.background = col
