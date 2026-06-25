@@ -1,5 +1,39 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.42 "G14 AI catch-up boost — thought bubble now means something"
+
+The G14 race AI had thought bubbles cycling through `Ngebut...` / `Maju!` / `Hati2!` but its actual speed never changed — bubble was decorative noise. Audit found that AI behind the player would just stay behind forever (AI speed multiplier locked at 0.92-1.04× of player base). Catch-up never happened; players who took an early lead glided to victory unopposed.
+
+### Fix
+
+`games/g14.html:tickAI` — when an AI is `> 40px` behind the player AND has no active boost, fire a ~0.18%/frame probability boost (≈one fire per 9 seconds). The boost timer ramps the speed multiplier to **+15% over 1.5s** via a sinusoidal curve (smooth in/out, no jerk). The AI's thought bubble flips to `Ngebut...` at the same moment, so the bubble now reflects real behaviour.
+
+```js
+const behind = ai.distance < S.distance - 40
+if (behind && ai.boostTimer <= 0 && Math.random() < 0.0018) {
+  ai.boostTimer = 90
+  ai.intent = 'Ngebut...'; ai.txt.text = 'Ngebut...'
+}
+const boostMult = ai.boostTimer > 0
+  ? 1 + 0.15 * Math.sin(((90 - ai.boostTimer) / 90) * Math.PI)
+  : 1
+ai.distance += ai.speed * boostMult * delta * 0.12
+```
+
+### Constraints respected
+
+- **Player can still win** — average +1.3% speed bump on behind-AI is small vs the player's 50% boost button.
+- **AI in front never gets the boost** — only the straggler closes gaps; the leader never runs away unfairly.
+- **Lulus Akademi (v54.40) still reachable** — catch-up nudges races toward closer finishes, doesn't make L30 unwinnable.
+
+### Files touched
+- `games/g14.html` — `tickAI` catch-up logic + `boostTimer` field on aiTrains push.
+- `sw.js` — CACHE_VERSION v54.41-20260625at → v54.42-20260625au.
+
+PROTECTED train chars Casey / Linus / Dragutin / Brave / Malivlak unchanged.
+
+---
+
 ## 2026-06-25 — v54.41 "Hotfix: v54.40 Lulus achievement IDs missing from BADGES"
 
 Self-found regression. v54.40 added `TrainShared.achievements.unlock('masinis_profesional_g14')` / `unlock('lulus_akademi_g15')` / `unlock('lulus_akademi_g16')` calls but never added those IDs to the `BADGES` catalog in `train-shared.js:463`. The `unlock(id)` function does `BADGES.find(b => b.id === id)` — returns undefined → early-returns `false` → no toast, no record, no celebration. The Lulus tier shipped functionally broken.

@@ -2187,6 +2187,10 @@ function buildAI() {
       // v54.12 — intent system; v54.17 A8 adds silhouette `sil`.
       bubble, txt, sil,
       intent: 'lurus', intentTimer: 60,
+      // v54.42: AI mini-boost matching thought bubble. When the AI says
+      // "Ngebut..." its speed multiplier ramps to 1.15× for ~1.5s. Sells
+      // the lie that the bubble is a real signal of behaviour.
+      boostTimer: 0,
     })
   })
 }
@@ -2200,7 +2204,21 @@ function tickAI(delta) {
   const playerX = W * PLAYER_X
 
   S.aiTrains.forEach(ai => {
-    ai.distance += ai.speed * delta * 0.12
+    // v54.42: catch-up boost. AI behind the player gets a small chance per
+    // frame to fire a "Ngebut..." boost. Effect is bell-curved over ~1.5s
+    // and capped at +15%. Keeps the race feeling alive without unfair
+    // teleportation. AI ahead of player never gets the boost — only the
+    // straggler closes gaps, never the leader runs away.
+    const behind = ai.distance < S.distance - 40
+    if (ai.boostTimer > 0) ai.boostTimer -= delta
+    if (behind && ai.boostTimer <= 0 && Math.random() < 0.0018) {
+      ai.boostTimer = 90
+      if (ai.txt) { ai.intent = 'Ngebut...'; ai.txt.text = 'Ngebut...'; ai.intentTimer = 150 }
+    }
+    const boostMult = ai.boostTimer > 0
+      ? 1 + 0.15 * Math.sin(((90 - ai.boostTimer) / 90) * Math.PI)
+      : 1
+    ai.distance += ai.speed * boostMult * delta * 0.12
     // Screen position based on relative distance
     const relDist = ai.distance - S.distance
     const screenX = playerX + relDist * 1.8
