@@ -1,5 +1,49 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.35 "Silent-broken `bmSpriteBob` keyframes fix"
+
+Audit-pass-style polish. Cross-checked every `animation:` reference in `battle-modes.js` against defined `@keyframes`. Found one orphan:
+
+- `.bm-arena-opp-img, .bm-arena-self-img { animation: bmSpriteBob 2200ms ease-in-out infinite }` — referenced since the v53.x arena rewrite. NO `@keyframes bmSpriteBob` block existed. Browser silently fell back to no animation. Arena sprites were frozen in place during entire battles.
+
+### Fix
+
+Added the missing `@keyframes bmSpriteBob` using the CSS `translate:` individual property so it composes with the `transform: scaleX(-1)` mirror on opp-img instead of overwriting it. Sprite now does a gentle 5px Y-axis breath every 2.2s.
+
+```css
+@keyframes bmSpriteBob {
+  0%   { translate: 0 0; }
+  50%  { translate: 0 -5px; }
+  100% { translate: 0 0; }
+}
+```
+
+### Audit script
+
+For posterity:
+
+```js
+const c = fs.readFileSync('games/data/battle-modes.js','utf8');
+const anims = new Set(); const re = /animation:\s*([\w-]+)/g;
+while ((m = re.exec(c))) anims.add(m[1]);
+const kf = new Set(); const krx = /@keyframes\s+([\w-]+)/g;
+while ((m = krx.exec(c))) kf.add(m[1]);
+const missing = [...anims].filter(a => !kf.has(a));
+// missing → []
+```
+
+After the fix the missing list is empty.
+
+### Files touched
+- `games/data/battle-modes.js` — `@keyframes bmSpriteBob` block added.
+- `index.html` + `games/g13c-pixi.html` — cache-bust on battle-modes.js script tag.
+- `sw.js` — CACHE_VERSION v54.34-20260625am → v54.35-20260625an.
+
+### Lesson
+L169 captured in LESSONS-LEARNED.md.
+
+---
+
 ## 2026-06-25 — v54.34 "Themed rosters x6 + Adventure balance probe"
 
 Third pass on owner-requested picker depth ("banyak yg g ada"). Adds 6 fan-favourite themed rosters that span eeveelutions, mythicals, mono-type masters. Also includes a one-time verification probe that the v54.30 per-hit damage cap fires correctly through the Adventure (G13C) code path.

@@ -4,6 +4,20 @@
 
 ---
 
+## 2026-06-25 — v54.35 silent-broken keyframes
+
+### L169 — CSS `animation:` references that point to undefined keyframes fail SILENTLY
+- The arena sprite carried `animation: bmSpriteBob 2200ms ease-in-out infinite` since v53.x. No `@keyframes bmSpriteBob` block ever existed. Browser dev-tools don't warn about unresolved animation names; the property just no-ops. Sprites were frozen in place across two months of "polished" battles.
+- Fix: a 5-line audit script — extract every `animation:` name, extract every `@keyframes` name, diff. Found the orphan instantly.
+- Lesson: When you ship animations as CSS-in-JS strings (no linter pass), include a one-time audit script that diffs `animation:` refs against `@keyframes` defs. Even more important on big single-file engines where the keyframes and the consumer rule can be 3000 lines apart.
+
+### L170 — Use the `translate:` individual property when an animation must compose with `transform: scaleX(-1)` mirroring
+- Tried `transform: translateY()` first in the keyframe. That overwrites the `.bm-arena-opp-img { transform: scaleX(-1) }` mirror — opp-img stops being mirrored mid-animation.
+- Fix: animate the CSS individual `translate:` property (`translate: 0 -5px`). It composes with `transform` automatically.
+- Lesson: When you need an animation property to coexist with a static transform on the same element, use the modern individual transform properties (`translate`, `rotate`, `scale`) instead of the shorthand. Saves wrapping the element.
+
+---
+
 ## 2026-06-25 — v54.32 Iter-2 polish queue closure
 
 ### L167 — Effects that mutate a shared property (stage.scale) must READ the current base, never write a literal

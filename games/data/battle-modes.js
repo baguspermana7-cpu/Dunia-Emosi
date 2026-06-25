@@ -3540,6 +3540,18 @@
         100% { opacity: 0; }
       }
 
+      /* v54.35: idle bob — sprite breathes up/down ~5px so an in-battle
+         arena does not read as static. Animates the CSS individual
+         translate property so it composes with .bm-arena-opp-img's
+         transform: scaleX(-1) mirror (transform property would otherwise
+         overwrite the mirror). Pre-v54.35 the CSS referenced bmSpriteBob
+         but no @keyframes existed, so sprites were silently frozen. */
+      @keyframes bmSpriteBob {
+        0%   { translate: 0 0; }
+        50%  { translate: 0 -5px; }
+        100% { translate: 0 0; }
+      }
+
       /* ── v53.1 polish: winner pose + sparkle burst on final KO ── */
       .bm-arena-self-img.bm-win-pose,
       .bm-arena-opp-img.bm-win-pose,
