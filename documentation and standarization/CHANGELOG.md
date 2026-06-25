@@ -1,5 +1,35 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.46 "G15 picker — PROTECTED character cards get the gold treatment (G14 parity)"
+
+Cross-game UX inconsistency audit. G14 had distinctive picker styling for PROTECTED character trains (Casey JR / Linus / Dragutin / Malivlak / Brave): gold gradient bg, gold border, ⭐ corner badge. G15 had only a `⭐ ` text prefix in the name — same trains rendered as ordinary purple cards, so kids couldn't visually tell which were the favourites until they read the label.
+
+### Fix
+
+`games/g15-pixi.html`:
+- Added `.tcard.is-character` rules (gold bg gradient + border + ⭐ corner pseudo) mirroring G14's `.train-card.is-character`.
+- Added `.tcard.is-character.selected` for the selected-state intensity bump (parity with `.train-card.is-character.sel`).
+- In the `filtered.forEach(entry => …)` picker render, the card classname now appends ` is-character` when `entry.isCharacter` is true.
+- Dropped the redundant `⭐ ` text prefix in `name.textContent` — the corner badge replaces it (cleaner look).
+
+### Visual parity outcome
+
+| Game | Character card border | Character card bg | Corner badge | Name prefix |
+|---|---|---|---|---|
+| G14 (before) | ✅ gold | ✅ gold gradient | ✅ ⭐ | none |
+| G15 (before) | ❌ purple (same as rest) | ❌ purple | ❌ none | `⭐ ` text only |
+| G15 (v54.46) | ✅ gold | ✅ gold gradient | ✅ ⭐ | none |
+
+G16 unaffected — it uses `TS_sel` from train-shared (no DOM picker per game).
+
+### Files touched
+- `games/g15-pixi.html` — 3 CSS rules + picker className wiring + text prefix cleanup.
+- `sw.js` — CACHE_VERSION v54.45-20260625ax → v54.46-20260625ay.
+
+PROTECTED chars (Casey JR / Linus / Dragutin / Malivlak / Brave) are now visually distinguished in BOTH train games — owner's "PROTECTED, never delete" mandate gets its UI signal everywhere a kid sees them.
+
+---
+
 ## 2026-06-25 — v54.45 "🎓 Topi Guru exclusive cosmetic (GURU KERETA reward)"
 
 Adds a tangible reward for the v54.44 GURU KERETA capstone — an exclusive 🎓 Topi Guru cosmetic that's the only one not buyable / earnable any other way. The kid sees it on their train sprite whenever they equip it, signalling "I'm the rare GURU KERETA holder."
