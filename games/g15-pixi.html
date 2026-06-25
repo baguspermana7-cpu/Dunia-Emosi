@@ -66,6 +66,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 /* ── Math Quiz Overlay ── */
 #math-quiz{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;background:rgba(10,5,25,0.82);backdrop-filter:blur(14px)}
 #math-quiz.show{display:flex}
+/* v54.35 audit: popIn was referenced but undefined → math card had no entrance animation. */
+@keyframes popIn{0%{opacity:0;transform:scale(0.7)}60%{opacity:1;transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
 #math-card{background:linear-gradient(145deg,#1e1b4b,#312e81);border:3px solid #818cf8;border-radius:28px;padding:24px 20px;max-width:300px;width:88%;text-align:center;animation:popIn .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 60px rgba(129,140,248,0.4),0 20px 40px rgba(0,0,0,.6)}
 #math-question{font-size:34px;font-weight:900;color:#e0e7ff;margin-bottom:4px}
 #math-timer-bar{height:6px;background:rgba(255,255,255,0.12);border-radius:4px;margin:8px 0 16px;overflow:hidden}

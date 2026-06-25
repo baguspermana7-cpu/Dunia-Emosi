@@ -1,5 +1,35 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.36 "Cross-file silent-broken keyframes audit"
+
+Following the v54.35 bmSpriteBob fix, ran the same `animation:` → `@keyframes` diff across the rest of the codebase (game.js, style.css, all 4 train HTMLs). Found 3 more silent-broken animations spanning two months of code.
+
+### Found
+
+- **`popIn`** — `games/g15-pixi.html:69` `#math-card { animation: popIn 0.3s ... }`. No keyframes anywhere. Math quiz card had no entrance animation.
+- **`g10mathPop`** — `style.css:4049` `.g13-math.pop { animation: g10mathPop 0.25s ... }`. No keyframes. G13 battle math text didn't bounce on update.
+- **`slideUp`** — `game.js:3648` G5 (match game) eduTip injected with `animation:slideUp 0.3s ease`. No keyframes. Tip popped in without any motion.
+
+### Fix
+
+Added inline keyframes co-located with each consumer rule:
+
+```css
+@keyframes popIn{0%{opacity:0;transform:scale(0.7)}60%{opacity:1;transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
+@keyframes g10mathPop{0%{transform:scale(0.85)}55%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes slideUp{0%{opacity:0;transform:translate(-50%,30px)}100%{opacity:1;transform:translate(-50%,0)}}
+```
+
+After fix the cross-file audit returns CLEAN across game.js + style.css + battle-modes.js + g13c-pixi.html + g14.html + g15-pixi.html + g16-pixi.html + train-shared.js.
+
+### Files touched
+- `style.css` — popIn + slideUp + g10mathPop keyframes added (`g10mathPop`/`slideUp` next to consumers, `popIn` was inline in g15-pixi.html).
+- `games/g15-pixi.html` — `popIn` keyframes added inline near `#math-card`.
+- `index.html` — cache-bust on style.css (`v=20260624m` → `v=20260625n`).
+- `sw.js` — CACHE_VERSION v54.35-20260625an → v54.36-20260625ao.
+
+---
+
 ## 2026-06-25 — v54.35 "Silent-broken `bmSpriteBob` keyframes fix"
 
 Audit-pass-style polish. Cross-checked every `animation:` reference in `battle-modes.js` against defined `@keyframes`. Found one orphan:
