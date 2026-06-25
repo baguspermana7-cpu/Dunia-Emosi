@@ -1,5 +1,42 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.45 "🎓 Topi Guru exclusive cosmetic (GURU KERETA reward)"
+
+Adds a tangible reward for the v54.44 GURU KERETA capstone — an exclusive 🎓 Topi Guru cosmetic that's the only one not buyable / earnable any other way. The kid sees it on their train sprite whenever they equip it, signalling "I'm the rare GURU KERETA holder."
+
+### Mechanic
+
+- Added `hat_guru` to the COSMETICS catalog in `train-shared.js` (was 5 items, now 6).
+- In `Achievements.unlock`, after the existing guru_kereta recursion, fire `Cosmetics.unlock('hat_guru')` when the unlocked id IS `guru_kereta`. Cosmetics.unlock is idempotent so replay sessions are safe no-ops.
+
+```js
+if (id === 'guru_kereta') Cosmetics.unlock('hat_guru')
+```
+
+The reward chain on the 4th Lulus unlock now reads:
+1. The 4th individual Lulus badge fires its own toast.
+2. Recursive unlock fires `guru_kereta` — 🏆 capstone toast.
+3. Capstone unlock fires `hat_guru` cosmetic — 🎁 "Aksesoris baru terbuka: Topi Guru" mascot tip.
+
+Three celebrations in ~6 seconds, escalating in gravitas.
+
+### Why an exclusive cosmetic and not currency
+
+`TrainShared.cosmetics` already supports equip-per-train via `Cosmetics.equipped(trainKey)`. A unique unlock that only the most-dedicated kids can equip becomes a status signal in the picker AND in-game (sprite overlay). Currency would be invisible until spent; a hat is visible immediately.
+
+### Verification
+
+- Inline module-load test passes (27 TrainShared modules registered).
+- Syntax check clean.
+- Cosmetics.unlock idempotent — confirmed via existing `if (!cur.owned.includes(id))` guard.
+
+### Files touched
+- `games/train-shared.js` — `hat_guru` COSMETICS entry + auto-unlock in Achievements.unlock.
+- `sw.js` — CACHE_VERSION v54.44-20260625aw → v54.45-20260625ax.
+- `index.html` + 3 train HTMLs — train-shared.js cache-bust.
+
+---
+
 ## 2026-06-25 — v54.44 "GURU KERETA meta-achievement (4-Lulus capstone)"
 
 Ties the 4 Lulus Akademi mastery achievements (v54.40 + v54.43) into a single celebration when all four are owned.

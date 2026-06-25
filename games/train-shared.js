@@ -521,6 +521,12 @@
           if (LULUS.every(k => owned[k])) this.unlock('guru_kereta')
         }
       } catch(_){}
+      // v54.45: GURU KERETA also unlocks the exclusive 🎓 Topi Guru cosmetic
+      // — the only way to earn it. Cosmetics.unlock is idempotent so re-firing
+      // on later sessions is a no-op.
+      try {
+        if (id === 'guru_kereta') Cosmetics.unlock('hat_guru')
+      } catch(_){}
       return true
     },
     owned() { return rd(KEY25.ach, {}) },
@@ -711,6 +717,8 @@
     { id:'lantern',      label:'Lentera',      emoji:'🏮' },
     { id:'star_crown',   label:'Mahkota Bintang', emoji:'⭐' },
     { id:'rainbow',      label:'Pelangi',      emoji:'🌈' },
+    // v54.45 — exclusive cosmetic unlocked only by the GURU KERETA capstone (v54.44)
+    { id:'hat_guru',     label:'Topi Guru',    emoji:'🎓' },
   ]
   const Cosmetics = {
     unlock(id) {
