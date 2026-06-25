@@ -1,5 +1,63 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.54 "G14 Visual+VFX + cross-game tap-target fix" (plan Phase 1.1)
+
+First per-game VFX tranche after v54.53 foundation. Wires `TrainVFX` into G14 (crash, low-HP, biome lighting, finish-confetti) AND closes the tap-target gap surfaced by a Puppeteer screenshot audit across G14/G15/G16.
+
+### Puppeteer screenshot audit findings (ran post-v54.53)
+
+12 shots captured (4 train games × 3 viewports). Findings:
+- TrainVFX exposed ✓ across all 4 pages.
+- Tap targets under 44px (kid-touch standard): **13 buttons total**
+  - G14: pause ⏸ 25×30, ← Kembali 103×37
+  - G15: 🔊 38×38, pause ⏸ 25×30, 4 filter tabs 86×30 each, 2 back buttons
+  - G16: ⌂ 39×44, pause ⏸ 25×30, ◀ Kembali 101×35
+- 404 noise: `assets/lion-avatar.png`, OG image, train-station SFX — onerror fallbacks already swallow these; visual behaviour OK; logged for later cleanup.
+- PROTECTED chars ⭐ visible in G15+G16 picker ✓.
+
+### Tap-target fix (CSS only)
+
+- **G14 `#btn-pause`** — added `min-width:44px;min-height:44px;padding:8px 12px;font-size:18px` rule.
+- **G15 `#btn-pause` + `#g15-tts-toggle`** — same 44×44 rule. `#btn-back` got `min-height:44px`.
+- **G15 `.tfbtn`** (filter tabs) — `padding:6px 14px;font-size:11px` → `padding:12px 18px;font-size:13px;min-height:44px;display:inline-flex;align-items:center`. 4 buttons (Semua/Steam/Diesel/Elektrik) now meet the kid-touch standard.
+- **G16 `#btn-back`** — added `min-width:44px`. `#btn-pause` got the 44×44 rule.
+
+### G14 Visual+VFX wiring (uses TrainVFX)
+
+- **`crashHit`** — on every crash:
+  - `TrainVFX.particles.spawn('crack',  count: 10, gravity: 0.18)` — wheel sparks.
+  - `TrainVFX.particles.spawn('dust',   count: 8,  upBias: 0.2)` — ground kick-up.
+  - `TrainVFX.particles.spawn('sparkle',count: 6,  color: 0xfde047)` — golden glint.
+  - `TrainVFX.screen.freezeFrame(90)` — cinematic hit-stop.
+  - `TrainVFX.filters.chromatic(stage, 6)` for 220ms — chromatic aberration burst.
+  - `TrainVFX.screen.vignettePulse('rgba(239,68,68,…)', 700)` — red pulse, intensified when HP ≤ 1.
+- **`startRace`** — `TrainVFX.screen.lighting(TH.name)` applies a soft full-screen tint matching the biome (forest=green, desert=amber, snow=cool, coastal=cyan, urban=slate, volcano=red).
+- **`g14SpawnConfetti`** (P1 finish) — supplemented with `TrainVFX.particles.spawn('confetti', count: 36) + spawn('star', count: 12) + vignettePulse(golden)`. The DOM-CSS confetti still runs alongside.
+
+All wiring `try/catch`'d so a missing `TrainVFX` (offline / SW preload race) never blocks the level.
+
+### Files touched
+
+- `games/g14.html` — `#btn-pause` rule + `startRace` lighting + `crashHit` VFX + `g14SpawnConfetti` VFX.
+- `games/g15-pixi.html` — `#btn-pause` + `#g15-tts-toggle` + `#btn-back` + `.tfbtn` rules.
+- `games/g16-pixi.html` — `#btn-back` width + `#btn-pause` rule.
+- `sw.js` — CACHE_VERSION v54.53-20260625bf → v54.54-20260625bg.
+
+### Verification
+
+- Inline `<script>` syntax check on all 3 train HTMLs: OK.
+- TrainVFX still exposes 6 namespaces (sandbox load test from v54.53 unchanged).
+- PROTECTED chars unchanged.
+- All new VFX `try/catch` guarded.
+
+### Next
+
+- v54.55 G15 Visual+VFX (letter-box depth, word-complete burst, math burst, parallax 3 layers, chimney smoke billows, station curtain reveal).
+- v54.56 G16 Visual+VFX.
+- v54.57 G18 Visual+VFX.
+
+---
+
 ## 2026-06-25 — v54.53 "Train VFX Foundation" (ULTRA-REFINED PLAN Phase 0)
 
 Owner approved a major VFX/Tampilan/Gameplay/Smooth overhaul plan (13 tranches v54.53→v54.65). This ship is **Phase 0 foundation** — without it every per-game VFX tranche would duplicate effort.

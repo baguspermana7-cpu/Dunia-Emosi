@@ -20,6 +20,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 #hud-top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:8px;padding:max(14px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 8px max(16px,env(safe-area-inset-left));background:linear-gradient(180deg,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.4) 60%,transparent 100%);pointer-events:none}
 #btn-back{background:#fff3c4;border:2.5px solid #f59e0b;border-radius:10px;color:#3f2a08;padding:10px 14px;font-size:14px;cursor:pointer;font-family:inherit;pointer-events:all;flex-shrink:0;box-shadow:0 3px 0 #b45309;font-weight:900;min-width:96px;min-height:44px;text-align:center;text-shadow:0 1px 1px rgba(255,255,255,0.4)}
 #btn-back:active{transform:translateY(2px);box-shadow:0 1px 0 #b45309}
+/* v54.54: tap-target audit fix — pause button was 25×30, lifted to 44×44 minimum per WCAG. */
+#btn-pause{min-width:44px;min-height:44px;padding:8px 12px!important;font-size:18px!important}
 /* WCAG AA: solid pill backgrounds behind HUD chips + 1px text-shadow for legibility on light scenes. */
 #train-name-badge{background:rgba(0,0,0,0.78);border:1.5px solid rgba(255,255,255,0.28);border-radius:10px;padding:6px 12px;color:#fde68a;font-size:13px;font-weight:700;flex-shrink:0;white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,0.6)}
 #race-info{flex:1;text-align:center;min-width:0}
@@ -2579,12 +2581,31 @@ function crashHit(obstacleEmoji) {
   S.zoomTimer  = 24
   S.hp--
   spawnCrashFX(L.player.x, L.player.y)
+  // v54.54 VFX: TrainVFX particles (sparks + dust) + freeze-frame + chromatic
+  // burst. Wired through the shared module so reduce-motion gate is automatic.
+  try {
+    if (window.TrainVFX && L.fx) {
+      TrainVFX.particles.spawn({ type: 'crack',  parent: L.fx, x: L.player.x, y: L.player.y, count: 10, speed: 5, ttl: 28, gravity: 0.18 })
+      TrainVFX.particles.spawn({ type: 'dust',   parent: L.fx, x: L.player.x, y: L.player.y + 8, count: 8, speed: 2, ttl: 40, gravity: 0.04, upBias: 0.2 })
+      TrainVFX.particles.spawn({ type: 'sparkle',parent: L.fx, x: L.player.x, y: L.player.y, count: 6, speed: 4, ttl: 24, opts: { color: 0xfde047 } })
+      TrainVFX.screen.freezeFrame(90)
+      TrainVFX.filters.chromatic(stage, 6)
+      setTimeout(() => { try { stage.filters = null } catch(_){} }, 220)
+    }
+  } catch(_){}
   // v54.19 B1: per-obstacle SFX (cow moos, chicken cluck, rock thud, etc.) replaces
   // the single 200Hz crash tone.
   if (obstacleEmoji) g14ObsSFX(obstacleEmoji); else playTone(200, 0.2, 'square')
   // v54.31 I16: duck BGM on crash so the impact SFX cuts through.
   try { duckBgm(0.6, 420) } catch(_){}
   screenFlash('rgba(255,60,60,0.35)')
+  // v54.54 VFX: vignette pulse intensifies if low HP (last life red breath).
+  try {
+    if (window.TrainVFX) {
+      const col = (S.hp <= 1) ? 'rgba(239,68,68,0.8)' : 'rgba(239,68,68,0.5)'
+      TrainVFX.screen.vignettePulse(col, 700)
+    }
+  } catch(_){}
   // v54.19 B9: haptic on crash.
   g14Vibrate([30, 50, 20])
   // v54.17 A4: animated heart loss
@@ -2648,6 +2669,16 @@ function g14ShowMilestone(text){
 function g14SpawnConfetti(){
   // v54.51: skip confetti when reduce-motion gated.
   if (g14ReducedMotion()) return
+  // v54.54 VFX: extra Pixi-layer confetti via TrainVFX (golden + star burst).
+  try {
+    if (window.TrainVFX && L.fx) {
+      const cx = app.screen.width * 0.5
+      const cy = app.screen.height * 0.35
+      TrainVFX.particles.spawn({ type: 'confetti', parent: L.fx, x: cx, y: cy, count: 36, speed: 5, ttl: 90, gravity: 0.06 })
+      TrainVFX.particles.spawn({ type: 'star',     parent: L.fx, x: cx, y: cy, count: 12, speed: 6, ttl: 60, gravity: 0.04, opts: { color: 0xfde047 } })
+      TrainVFX.screen.vignettePulse('rgba(253,224,71,0.55)', 900)
+    }
+  } catch(_){}
   const palette = ['#fbbf24','#a855f7','#22c55e','#ef4444','#38bdf8','#f472b6','#fde047']
   for (let i = 0; i < 48; i++) {
     const p = document.createElement('span')
@@ -3255,6 +3286,8 @@ function startRace() {
   // across all train games — keyed on today's date). Skips if mission already
   // claimed so it doesn't repeat "(2/2)" after the kid earned today's reward.
   try { window.TrainShared && TrainShared.dailyChallenge.showOncePerDay() } catch(_){}
+  // v54.54 VFX: per-biome lighting overlay tinting the whole screen.
+  try { window.TrainVFX && TrainVFX.screen.lighting(TH.name) } catch(_){}
 
   // v54.19 B12: Mode Belajar gate. Reads dunia-g14-deaths-l{level} to soften.
   try { g14ApplyKidMode() } catch(_){}
