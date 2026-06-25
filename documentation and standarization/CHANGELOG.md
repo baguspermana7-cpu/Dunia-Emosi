@@ -1,5 +1,28 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.39 "Broken asset path audit (2 fixes)"
+
+Path-like-string audit across `index.html`, `game.js`, `battle-modes.js`, and all 5 standalone Pixi pages. Found 2 references to files that don't exist on disk.
+
+### Found
+
+- **`game.js:2825`** — `dragon` attack SFX pointed to `Sounds/Attack/Other/Boomburst.mp3`. No `Other/` dir exists (Sounds/Attack is organized by type). Boomburst is in `Sounds/Attack/Normal/`. Dragon SFX silently 404'd → no audio when a dragon-type move played.
+- **`index.html:514`** — Mario Pokemon world-map node icon `src="assets/mario-pokemon/icon.png"`. File doesn't exist. The `onerror` handler fell back to a 🍄 emoji, so visible behaviour was correct, but every page load logged a 404 in DevTools.
+
+### Fix
+
+- `game.js:2825` — point dragon SFX at three actual dragon-type clips: `Dragon Claw.mp3`, `Outrage.mp3`, `Dragon Rage.mp3`.
+- `index.html:514` — point icon at `assets/mario-pokemon/sprites/ref-mushroom.png` (the actual mushroom sprite that already ships).
+
+### Files touched
+- `game.js` — dragon SFX path correction.
+- `index.html` — Mario Pokemon icon path correction + cache-bust on game.js (`v=54.27-20260624af` → `v=54.39-20260625ar`).
+- `sw.js` — CACHE_VERSION v54.38-20260625aq → v54.39-20260625ar.
+
+After the fix, 0 missing path-like refs across the audited files.
+
+---
+
 ## 2026-06-25 — v54.38 "SFX path sweep — remove hardcoded `/Dunia-Emosi/` paths"
 
 Follow-up to v54.37. Swept the codebase for any other hardcoded `/Dunia-Emosi/...` paths that would 404 on Vercel.

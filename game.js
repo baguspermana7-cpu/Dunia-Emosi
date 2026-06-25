@@ -2822,7 +2822,7 @@ document.addEventListener('click', function _unlockMusic(){
 const G_ATK_SOUNDS = {
   bug:      ['Sounds/Attack/Bug/Attack Order.mp3'],
   dark:     ['Sounds/Attack/Dark/Bite.mp3','Sounds/Attack/Dark/Beat Up.mp3'],
-  dragon:   ['Sounds/Attack/Other/Boomburst.mp3'],
+  dragon:   ['Sounds/Attack/Dragon/Dragon Claw.mp3','Sounds/Attack/Dragon/Outrage.mp3','Sounds/Attack/Dragon/Dragon Rage.mp3'],
   electric: ['Sounds/Attack/Electric/Bolt Strike.mp3'],
   fairy:    ['Sounds/Attack/Fairy/Baby-Doll Eyes.mp3'],
   fighting: ['Sounds/Attack/Fighting/Arm Thrust 2hits.mp3','Sounds/Attack/Fighting/Aura Sphere.mp3'],
