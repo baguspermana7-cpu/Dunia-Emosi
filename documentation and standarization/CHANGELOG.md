@@ -1,5 +1,54 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.53 "Train VFX Foundation" (ULTRA-REFINED PLAN Phase 0)
+
+Owner approved a major VFX/Tampilan/Gameplay/Smooth overhaul plan (13 tranches v54.53→v54.65). This ship is **Phase 0 foundation** — without it every per-game VFX tranche would duplicate effort.
+
+### Ships
+
+NEW `games/train-vfx.js` (~500 LOC) exposing `window.TrainVFX` with 6 namespaces:
+
+- **particles** — Pixi-based spawner. 10 types: confetti, sparkle, dust, smoke, snow, leaf, ember, bubble, star, crack. Object pool (free list + active list), hard cap 200. `spawn({ type, parent, x, y, count, opts })` returns spawn count. Reduce-motion halves count + skips dust/smoke entirely.
+- **filters** — Pixi wrappers. `glow(target, color, intensity)`, `bloom(target, intensity)`, `chromatic(target, offsetPx)`, `clear(target)`. Falls back gracefully when PIXI not loaded.
+- **trails** — `attach(target, opts)` → fading sprite trail behind a Pixi DisplayObject. Sample every `emitEveryMs`, decay over `decayMs`. Returns `{ detach() }`.
+- **screen** — DOM-level: `flash(color, durMs)`, `shake(intensity, durMs)`, `vignettePulse(color, durMs)`, `lighting(biome)` (forest/desert/snow/coastal/urban/volcano/none), `freezeFrame(durMs)`. All reduce-motion gated.
+- **ease** — 5 functions (`outQuart`, `inOutCubic`, `outBack`, `outElastic`, `outBounce`) + `linear` baseline.
+- **tween** — RAF-based property tween. `tween(target, props, durMs, easeFn, onDone)` returns `{ cancel, pause, resume }`. Cancelable, pause-aware. Reduce-motion snaps to end value.
+
+### Reduce-motion compliance
+
+Single `reducedMotion()` helper checks 2 localStorage keys (`g14-reduced-motion`, `train-vfx-reduced-motion`) AND `prefers-reduced-motion: reduce`. Every motion-heavy API short-circuits when true. Particles for celebrations (confetti/sparkle/star/crack) halve count; particles for ambient (dust/smoke) skip entirely.
+
+### Performance budget
+
+- 200 particles MAX active. Spawn returns truncated count if cap reached.
+- Single shared RAF for particles, separate RAF for tweens, separate RAF for trails. All idle when no work.
+- Pool reuses up to 80 detached particle records (no per-spawn GC churn).
+
+### Files touched
+
+- **NEW `games/train-vfx.js`** — 503 lines, exposes `window.TrainVFX`.
+- `games/g14.html` + `games/g15-pixi.html` + `games/g16-pixi.html` + `index.html` — `<script src="train-vfx.js?v=54.53-20260625bf">` added right after train-shared.js (so train-shared.js helpers stay available + TrainVFX loads before game logic).
+- `sw.js` — CACHE_VERSION v54.52-20260625be → v54.53-20260625bf.
+
+### Verification
+
+- `node -e "new Function(...)"` syntax check: OK (503 lines).
+- Sandbox load test confirms all 6 namespaces present: `version`, `reducedMotion`, `particles`, `filters`, `trails`, `screen`, `ease`, `tween`.
+- 6 ease functions confirmed: `linear`, `outQuart`, `inOutCubic`, `outBack`, `outElastic`, `outBounce`.
+- PROTECTED chars + PvP balance untouched (this commit only adds a shared module).
+
+### Next
+
+- v54.54 G14 Visual+VFX (8 items: headlight cone, speed-lines, wheel sparks, freeze-frame chromatic, biome lighting, sprite squash-stretch…).
+- v54.55-v54.57 per-game VFX rotation.
+- v54.58-v54.59 cherry-picked HIGH ultraplan carryover.
+- v54.60 Smooth Transitions library.
+- v54.61-v54.64 per-game Gameplay Depth rotation.
+- v54.65 QA + Docs.
+
+---
+
 ## 2026-06-25 — v54.52 "AI Personality & Pacing + Word Categories" (ultraplan tranche 4/12)
 
 Tranche 4 (partial). Big-ticket HIGH/M items split: 2 ship now, 3 deferred to v54.53 to keep this commit reviewable.
