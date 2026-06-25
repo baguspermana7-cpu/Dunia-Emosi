@@ -1,5 +1,41 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.34 "Themed rosters x6 + Adventure balance probe"
+
+Third pass on owner-requested picker depth ("banyak yg g ada"). Adds 6 fan-favourite themed rosters that span eeveelutions, mythicals, mono-type masters. Also includes a one-time verification probe that the v54.30 per-hit damage cap fires correctly through the Adventure (G13C) code path.
+
+### Ships
+
+- **`eevee-evolutions`** (Tim Eevee + Evolusi) — Vaporeon / Jolteon / Flareon / Espeon / Umbreon / Sylveon. All 6 main eeveelutions in one pack.
+- **`mythical-club`** (Klub Mythical) — Mew / Celebi / Jirachi / Manaphy / Shaymin / Victini. Tier `mega`, hp 120.
+- **`dragon-masters`** (Klub Naga) — Dragonite / Salamence / Garchomp / Hydreigon / Haxorus / Goodra. Mono-dragon power team.
+- **`psychic-aces`** (Klub Psikis) — Alakazam / Gardevoir / Espeon / Reuniclus / Gallade / Metagross.
+- **`ghost-spooky`** (Klub Hantu) — Gengar / Mismagius / Spiritomb / Cofagrigus / Chandelure / Mimikyu.
+- **`fairy-pop`** (Klub Fairy) — Gardevoir / Sylveon / Togekiss / Mimikyu / Florges / Granbull.
+
+Total packages: 64 → 70.
+
+### Adventure balance verification (one-shot probe)
+
+Confirmed via `node` simulation that `BattleModes.stats.shapeDamage` properly applies the v54.30 cap when called from `g13c-pixi.html:calcDmg` with `defPoke.maxHp`. Five representative scenarios:
+
+| Attacker → Defender | Base | hpMax | Final | Hits to KO |
+|---|---|---|---|---|
+| Charizard → Ralts | 35 | 90  | 36 | 3 |
+| Charizard → Snorlax | 35 | 100 | 40 | 3 |
+| Snorlax → Ralts | 35 | 90  | 36 | 3 |
+| Pikachu → Poochyena | 32 | 90  | 36 | 3 |
+| Ralts → Charizard | 30 | 100 | 21 | 5 |
+
+All sit in the canonical Adventure "3-5 hits to KO" feel. The cap fires on attacker-favoured matchups but lets noodle vs tank scenarios play out naturally.
+
+### Files touched
+- `games/data/poke-packages.js` — 6 packages appended.
+- `index.html` — cache-bust on poke-packages.js.
+- `sw.js` — CACHE_VERSION v54.33-20260625al → v54.34-20260625am.
+
+---
+
 ## 2026-06-25 — v54.33 "Champion rosters x6 (Lance/Steven/Wallace/Cynthia/Diantha/Leon)"
 
 Owner: "banyak yg g ada. Tolong tambahkan" — second pass on picker depth. v54.30 added 9 companion/anime-roster packages; this ship adds the canonical Champion teams across 6 regions for full Indigo-Plateau-style coverage.
