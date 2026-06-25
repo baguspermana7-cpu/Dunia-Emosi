@@ -1,5 +1,34 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.49 "Variasi Biome & Cuaca Instan" (ultraplan tranche 1/12)
+
+First tranche from the /ultraplan workflow (`ww5tolt0a`, 69 verified ideas across 4 train games, synthesized into 12 tranches v54.49 → v54.60). Theme: visual variety per biome — cuaca + obstacle per-biome saling melengkapi tanpa nambah aset.
+
+### Ships
+
+- **G14 per-biome obstacle palette** — `OBS_PER_BIOME` map keyed on `TH.name`. Forest spawns boars/deer/mushrooms; desert spawns cacti/snakes/scorpions; snow spawns snowmen/ice; coastal crabs/anchors; urban construction/taxis; volcano flames/rocks. Generic `OBS_EMOJIS` is the fallback. 18 new emoji SFX added to `G14_OBS_SFX` keyed on the new obstacle set.
+- **G14 weather overlay layer** — new `L.weather` PIXI container with 60 particles. Per-biome pattern: rain (forest/coastal blue streaks), snow (white drifting circles), sandstorm (tan horizontal dots), embers (volcano red rising). Init-gated at `cfg.level >= 3` so kids see clean biomes first.
+- **G14 forecast banner** — `g14ShowForecast()` fires at 200m (current biome) and 500m (next biome) via top-of-screen `g14Forecast` keyframe banner. "🌲 Hutan di depan!" / "🌵 Padang pasir di depan!" / etc. Animation: drop-in + 1.6s hold + fade-up.
+- **G15 train cabin smoke ramping with speed** — `emitSteam` rate scales with `gameSpeed` (capped at 2.6×). L1 ratio ~1.0, L30 ratio ~2.6. Asap kerasa membesar saat boost.
+- **G15 day→dusk→night sky cycle every 10 levels** — SKIPPED: already covered by the existing 30 distinct per-level THEMES (Lv28 Twilight indigo, Lv30 Cosmic rainbow). Implementing chunk-overlay would conflict with per-level themes already shipping rich variety.
+
+### Files touched
+- `games/g14.html` — `OBS_PER_BIOME` + `G14_WEATHER_PATTERN` + `g14InitWeather` + `tickWeather` + `g14CheckForecast` + `g14ShowForecast` + 18 new SFX entries; wired into main loop and initPixi.
+- `games/g15-pixi.html` — `emitSteam` rate ramps with `gameSpeed`.
+- `sw.js` — CACHE_VERSION v54.48-20260625ba → v54.49-20260625bb.
+
+### Verification
+- Inline `<script>` syntax check on both touched HTMLs: OK.
+- PROTECTED train chars Casey JR / Linus / Dragutin / Brave / Malivlak — unchanged.
+- PvP balance untouched (no battle-modes.js modification).
+
+### Source workflow
+
+- Plan: 12 tranches v54.49-v54.60 from `ww5tolt0a`.
+- Re-tranche workflow for G16+G18 (`w51n4rfyr`) launched in parallel — will produce v54.61-v54.66 once it completes.
+
+---
+
 ## 2026-06-25 — v54.48 "Daily mission surfaces via Pak Stasiun mascot (once per day)"
 
 The H2 Daily Conductor Challenge module existed since v54.24 — it computes a fresh mission each day (`race_g14_x1`, `museum_quiz_5`, etc.), tracks progress, and unlocks `first_whistle` on completion. But `DailyChallenge.show()` was **never called from anywhere**. The mission was a hidden feature: kids would auto-complete missions without knowing they existed, never seeing "🎯 Misi Hari Ini" until they happened to wander into the rare debug surface.

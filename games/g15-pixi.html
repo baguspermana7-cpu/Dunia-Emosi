@@ -998,8 +998,11 @@ async function initPixi() {
     // v54.20 C15: character train enhanced idle micro-anim
     try { g15TickCharIdle(dt) } catch(_){}
 
-    // Steam emit
-    if (Math.random() < 0.05 * dt) emitSteam();
+    // Steam emit — v54.49 polish: ramp emission rate with current gameSpeed
+    // so faster sections feel more "alive" via thicker smoke trail. Default
+    // gameSpeed is ~2 + 0.15*level; ratio ~1 at L0, ~3.25 at L30.
+    const _steamRate = 0.05 * Math.min(2.6, gameSpeed / 2.0)
+    if (Math.random() < _steamRate * dt) emitSteam();
   });
 }
 
