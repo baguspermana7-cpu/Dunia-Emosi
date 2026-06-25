@@ -1561,6 +1561,11 @@ function emitSteam() {
     particleLayer.addChild(puff);
     steamPuffs.push(puff);
   }
+  // v54.55 VFX: extra smoke billow particle via TrainVFX — adds a thicker
+  // upward-drifting puff alongside the legacy bluish ones, ~30% of frames.
+  if (Math.random() < 0.30) {
+    try { g15SmokeBillow() } catch(_){}
+  }
 }
 
 // ── Letter / Special Boxes ────────────────────────────────────────────────────
@@ -2067,13 +2072,33 @@ function answerMath(correct, btnEl, timeout = false) {
     mathCorrect++;
     spawnCollectParticles(W / 2, H / 2, 0x4ade80);
     flashScreen('green');
+    // v54.55 VFX: math-correct golden burst — star + sparkle particles +
+    // golden vignette pulse + screen flash.
+    try {
+      if (window.TrainVFX && particleLayer) {
+        TrainVFX.particles.spawn({ type: 'star',    parent: particleLayer, x: W / 2, y: H / 2, count: 16, speed: 6, ttl: 70, gravity: 0.04, opts: { color: 0xfde047 } })
+        TrainVFX.particles.spawn({ type: 'sparkle', parent: particleLayer, x: W / 2, y: H / 2, count: 10, speed: 4, ttl: 50, opts: { color: 0xffffff } })
+        TrainVFX.screen.vignettePulse('rgba(250,204,21,0.55)', 600)
+        TrainVFX.screen.flash('rgba(74,222,128,0.18)', 220)
+      }
+    } catch(_){}
   } else if (!timeout) {
     triggerWrong();
+    // v54.55 VFX: math-wrong red crack burst at screen center.
+    try {
+      if (window.TrainVFX && particleLayer) {
+        TrainVFX.particles.spawn({ type: 'crack',   parent: particleLayer, x: W / 2, y: H / 2, count: 12, speed: 5, ttl: 32, gravity: 0.18, opts: { color: 0xf87171 } })
+        TrainVFX.screen.vignettePulse('rgba(248,113,113,0.55)', 500)
+      }
+    } catch(_){}
   } else {
     flashScreen('red');
     lives--; if (lives < 0) lives = 0;
     updateLivesHUD();
     try { g15UpdateVignette() } catch(_){}
+    // v54.55 VFX: floating "-1" damage label + red crack particle burst when
+    // timeout consumes a life.
+    try { g15FloatDamageLabel(W / 2, H / 2, '-1') } catch(_){}
     if (lives <= 0) { setTimeout(showLose, 600); return; }
   }
 }
@@ -2123,6 +2148,36 @@ function spawnRainbow() {
     }
   }
   if (app && app.ticker) app.ticker.add(_tick);
+}
+
+// v54.55 VFX: floating "-1" damage label using TrainVFX.tween for position + alpha.
+// Spawn a PIXI.Text above the train that rises 60px and fades over 700ms.
+// Bonus: layer a red crack burst at the same spot to sell the hit.
+function g15FloatDamageLabel(x, y, text) {
+  if (!window.TrainVFX || !particleLayer || !PIXI || !PIXI.Text) return
+  try {
+    TrainVFX.particles.spawn({ type: 'crack', parent: particleLayer, x, y, count: 8, speed: 4, ttl: 30, gravity: 0.18, opts: { color: 0xf87171 } })
+    const t = new PIXI.Text({ text: text || '-1', style: { fontFamily: 'Fredoka One, sans-serif', fontSize: 26, fill: 0xfca5a5, stroke: { color: 0x7f1d1d, width: 3 } } })
+    t.anchor.set(0.5)
+    t.x = x; t.y = y; t.alpha = 1
+    particleLayer.addChild(t)
+    TrainVFX.tween(t, { y: y - 60, alpha: 0 }, 700, TrainVFX.ease.outQuart, () => {
+      try { particleLayer.removeChild(t); t.destroy && t.destroy() } catch(_){}
+    })
+  } catch(_){}
+}
+
+// v54.55 VFX: chimney smoke billows. Augment the existing emitSteam (which
+// uses PIXI.Graphics circles) with a smoke particle puff via TrainVFX so the
+// trail reads thicker on faster passes. Called from emitSteam alongside the
+// original puffs (not replacing them).
+function g15SmokeBillow() {
+  if (!window.TrainVFX || !particleLayer) return
+  const x = TRAIN_X - 62 + (Math.random() - 0.5) * 6
+  const y = trainContainer.y - 46
+  try {
+    TrainVFX.particles.spawn({ type: 'smoke', parent: particleLayer, x, y, count: 1, speed: 0.4, ttl: 70, gravity: -0.04, upBias: 1.2, opts: { color: 0xd1d5db } })
+  } catch(_){}
 }
 
 // v54.50: rail sleeper clatter ticks synced to gameSpeed. The interval shrinks
@@ -2205,6 +2260,31 @@ function onWordComplete() {
   flashScreen('green');
   // v54.20 C3: word-complete arpeggio
   g15WordCompleteArpeggio();
+  // v54.55 VFX: word-complete golden burst — star + confetti via TrainVFX +
+  // sky-wide vignettePulse + emoji scale-pop tween. Stacks on top of the
+  // existing spawnRainbow + spawnCollectParticles for layered celebration.
+  try {
+    if (window.TrainVFX && particleLayer) {
+      const cx = TRAIN_X
+      const cy = trainContainer.y - 12
+      TrainVFX.particles.spawn({ type: 'star',     parent: particleLayer, x: cx, y: cy, count: 14, speed: 6, ttl: 70, gravity: 0.04, opts: { color: 0xfde047 } })
+      TrainVFX.particles.spawn({ type: 'confetti', parent: particleLayer, x: cx, y: cy, count: 24, speed: 5, ttl: 90, gravity: 0.08 })
+      TrainVFX.particles.spawn({ type: 'sparkle',  parent: particleLayer, x: cx, y: cy, count: 10, speed: 3, ttl: 50, opts: { color: 0xffffff } })
+      TrainVFX.screen.vignettePulse('rgba(250,204,21,0.55)', 750)
+      // Emoji-on-HUD scale pop (overshoot) so word-emoji clearly celebrates.
+      const we = document.getElementById('word-emoji')
+      if (we) {
+        we.style.transformOrigin = 'center'
+        TrainVFX.tween({ scale: 1 }, { scale: 1.35 }, 180, TrainVFX.ease.outBack, () => {
+          TrainVFX.tween({ scale: 1.35 }, { scale: 1 }, 220, TrainVFX.ease.outQuart)
+        })
+        // Mirror tween value into transform on every frame via shared RAF.
+        we.style.transition = 'transform 380ms cubic-bezier(0.22,1.6,0.36,1)'
+        we.style.transform = 'scale(1.35)'
+        setTimeout(() => { we.style.transform = 'scale(1)' }, 220)
+      }
+    }
+  } catch(_){}
   // v54.50: TTS word spell-out — eja per huruf lalu utuh, untuk pembelajaran
   // fonik anak 5-7 tahun. Lazy speechSynthesis, queued. Skip if browser
   // doesn't support or user muted via shared TrainShared.settings.
@@ -2256,6 +2336,8 @@ function triggerWrong() {
   flashScreen('red');
   // v54.20 C4: vignette update; C6: maybe offer assist when last-life + idx 0
   try { g15UpdateVignette(); g15MaybeOfferAssist(); } catch(_){}
+  // v54.55 VFX: floating "-1" damage label + red crack burst near train.
+  try { g15FloatDamageLabel(TRAIN_X, trainContainer.y - 20, '-1') } catch(_){}
   if (lives <= 0) { setTimeout(showLose, 600); return; }
   setTimeout(() => { invincible = false; }, 900);
 }

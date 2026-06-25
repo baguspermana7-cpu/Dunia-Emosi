@@ -1,5 +1,53 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.55 "G15 Visual+VFX" (plan Phase 1.2)
+
+Second per-game VFX tranche. Wires TrainVFX into G15 for word-complete celebration, math feedback, heart-loss damage label, and chimney smoke billows.
+
+### Ships
+
+- **Word-complete golden burst** (`onWordComplete`)
+  - `TrainVFX.particles.spawn('star', count: 14, color: golden)` + `confetti` (24) + `sparkle` (10) layered above the existing rainbow+collect particles.
+  - `TrainVFX.screen.vignettePulse('rgba(250,204,21,0.55)', 750)` — golden pulse.
+  - Word-emoji HUD scale-pop via CSS transition (overshoot 1.0→1.35→1.0 over 380ms).
+
+- **Math-correct golden burst** (`answerMath` correct branch)
+  - star (16) + sparkle (10) particles + golden vignette + soft green screen flash.
+
+- **Math-wrong red crack burst** (`answerMath` non-timeout wrong branch)
+  - crack (12) particles tinted `0xf87171` + red vignette pulse.
+
+- **Floating "-1" damage label** (`g15FloatDamageLabel`)
+  - NEW helper. Spawns a Pixi `<Text>` with bold red stroke at hit position, tweens y -60px and alpha 1→0 over 700ms via `TrainVFX.tween + ease.outQuart`, then auto-destroys.
+  - Bonus: layers a red `crack` particle burst at the same point.
+  - Called from BOTH `lives--` sites (timeout in answerMath + triggerWrong).
+
+- **Chimney smoke billows** (`g15SmokeBillow` + `emitSteam` hook)
+  - NEW helper spawns a single `smoke` particle via TrainVFX with upward `upBias: 1.2` + negative gravity (rises) + grayish tint.
+  - Called from inside `emitSteam` ~30% of frames, layered alongside the legacy bluish chimney puffs. The trail reads thicker on faster passes without replacing the original look.
+
+### Skipped/deferred to v54.56+ catch-all
+
+- Letter-box 3D depth (drop shadow + side glow) — touches box render; defer.
+- Background parallax 3 layers — defer.
+- Station banner cinematic curtain reveal — defer.
+
+### Files touched
+- `games/g15-pixi.html` — 6 VFX wiring sites + 2 new helper functions.
+- `sw.js` — CACHE_VERSION v54.54-20260625bg → v54.55-20260625bh.
+
+### Verification
+- Inline `<script>` syntax check: OK.
+- All VFX calls `try/catch` guarded — missing TrainVFX (offline / SW preload race) never blocks gameplay.
+- Reduce-motion gate inherited via TrainVFX (no celebratory ambient particles when on).
+- PROTECTED chars + PvP balance unchanged.
+
+### Next
+- v54.56 G16 Visual+VFX (hook bezier trail, rescue snap-zoom, obstacle destroy 3-layer, cinema bars easeOutBack…).
+- v54.57 G18 Visual+VFX.
+
+---
+
 ## 2026-06-25 — v54.54 "G14 Visual+VFX + cross-game tap-target fix" (plan Phase 1.1)
 
 First per-game VFX tranche after v54.53 foundation. Wires `TrainVFX` into G14 (crash, low-HP, biome lighting, finish-confetti) AND closes the tap-target gap surfaced by a Puppeteer screenshot audit across G14/G15/G16.
