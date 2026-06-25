@@ -822,6 +822,12 @@ async function initPixi() {
   updateStationChip();
   showStationBanner(getCurrentStation());
 
+  // v54.50: whistle-horn sting on level-start — descending 880→523Hz triad
+  // + 600ms steam-noise burst on '1'. Signals "kereta siap berangkat".
+  try { g15PlayCountdownWhistle() } catch(_){}
+  // v54.50: start rail clatter ticks once countdown whistle settles.
+  setTimeout(() => { try { g15StartClatter() } catch(_){} }, 900)
+
   gameRunning = true;
   // v54.28 I13: BGM volume lift 0.20 → 0.35 with a 200ms ramp so it's actually
   // audible against the train ambient. Was easy to miss entirely.
@@ -2108,6 +2114,75 @@ function spawnRainbow() {
   if (app && app.ticker) app.ticker.add(_tick);
 }
 
+// v54.50: rail sleeper clatter ticks synced to gameSpeed. The interval shrinks
+// as speed grows so the klak-klak rhythm matches the train's perceived velocity.
+// Honors reduced-motion + TrainShared mute. RAF-driven, runs only when gameRunning.
+let g15ClatterTimer = null
+function g15StartClatter() {
+  if (g15ClatterTimer) return
+  // Skip if user prefers reduced motion (rhythmic clicks can be triggering).
+  try {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  } catch(_){}
+  const tick = () => {
+    if (!gameRunning || gamePaused) {
+      g15ClatterTimer = setTimeout(tick, 200)
+      return
+    }
+    try {
+      if (typeof playTone === 'function') {
+        playTone(80, 0.03, 'square')
+      }
+    } catch(_){}
+    // Speed 2 → 8 maps to 220ms → 60ms interval.
+    const interval = Math.max(60, 240 - (gameSpeed - 2) * 30)
+    g15ClatterTimer = setTimeout(tick, interval)
+  }
+  g15ClatterTimer = setTimeout(tick, 400)
+}
+function g15StopClatter() {
+  if (g15ClatterTimer) { clearTimeout(g15ClatterTimer); g15ClatterTimer = null }
+}
+
+// v54.50: level-start whistle horn — descending 3-note triad + steam-noise
+// burst on the last note. Fires once per level when gameRunning flips true.
+function g15PlayCountdownWhistle() {
+  if (typeof playTone !== 'function') return
+  try {
+    playTone(880, 0.18, 'sine')
+    setTimeout(() => playTone(659, 0.18, 'sine'), 220)
+    setTimeout(() => {
+      playTone(523, 0.30, 'sine')
+      // Steam-noise burst: rapid descending sawtooth simulating chuff release.
+      for (let i = 0; i < 6; i++) {
+        setTimeout(() => playTone(200 - i * 18, 0.06, 'sawtooth'), i * 50)
+      }
+    }, 460)
+  } catch(_){}
+}
+
+// v54.50: TTS word spell-out — "B - U - A - H, BUAH!" for phonics learning.
+// Honors shared mute settings via TrainShared if available.
+function g15SpeakWord(wordObj) {
+  if (!wordObj || !wordObj.word) return
+  if (!('speechSynthesis' in window)) return
+  // Honor TrainShared sfx-mute if installed
+  try {
+    if (window.TrainShared && TrainShared.settings) {
+      const s = TrainShared.settings.get()
+      if (s && s.sfx === false) return
+    }
+  } catch(_){}
+  try { window.speechSynthesis.cancel() } catch(_){}
+  const letters = wordObj.word.toUpperCase().split('')
+  const spellText = letters.join(' . ') + ', ' + wordObj.word.toLowerCase() + '!'
+  const u = new SpeechSynthesisUtterance(spellText)
+  u.lang = 'id-ID'
+  u.rate = 0.85
+  u.volume = 0.7
+  try { window.speechSynthesis.speak(u) } catch(_){}
+}
+
 // ── Word Complete / Game Logic ─────────────────────────────────────────────────
 function onWordComplete() {
   document.querySelectorAll('.slot').forEach(s => { s.classList.remove('filled'); s.classList.add('done'); });
@@ -2119,6 +2194,10 @@ function onWordComplete() {
   flashScreen('green');
   // v54.20 C3: word-complete arpeggio
   g15WordCompleteArpeggio();
+  // v54.50: TTS word spell-out — eja per huruf lalu utuh, untuk pembelajaran
+  // fonik anak 5-7 tahun. Lazy speechSynthesis, queued. Skip if browser
+  // doesn't support or user muted via shared TrainShared.settings.
+  try { g15SpeakWord(WORDS_LIST[currentWordIdx]) } catch(_){}
   // v54.20 C9: carriage tilt during boost-out (only for steam/heritage trains)
   if (selectedTrain && (selectedTrain.type === 'steam' || selectedTrain.type === 'heritage')) {
     trainContainer._leanTarget = -0.05;
@@ -2291,6 +2370,8 @@ function showWin() {
   // reported "no respond hang" — every frame the loop checked the flag, doing
   // nothing useful but eating CPU. Stop here AND in showLose to guarantee halt.
   try { if (app && app.ticker) app.ticker.stop() } catch(_){}
+  // v54.50: stop the sleeper-clatter ticker so it doesn't keep firing post-game.
+  try { g15StopClatter() } catch(_){}
   // v54.28 I13: stop looped train-sfx so it doesn't bleed into the result modal.
   try { const sfx = document.getElementById('train-sfx'); if (sfx) { sfx.pause(); sfx.currentTime = 0 } } catch(_){}
   const elapsed = (Date.now() - startTime) / 1000;
@@ -2335,6 +2416,8 @@ function showLose() {
   gameRunning = false;
   // Hotfix #102-C: see showWin — same ticker.stop to prevent post-game hang.
   try { if (app && app.ticker) app.ticker.stop() } catch(_){}
+  // v54.50: stop the sleeper-clatter ticker.
+  try { g15StopClatter() } catch(_){}
   try { const sfx = document.getElementById('train-sfx'); if (sfx) { sfx.pause(); sfx.currentTime = 0 } } catch(_){}  // v54.28 I13
   sessionStorage.setItem('g15Result', JSON.stringify({ stars: 0 }));
   GameModal.show({

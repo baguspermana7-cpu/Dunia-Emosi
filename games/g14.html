@@ -2294,10 +2294,13 @@ function buildAI() {
       // v54.12 — intent system; v54.17 A8 adds silhouette `sil`.
       bubble, txt, sil,
       intent: 'lurus', intentTimer: 60,
-      // v54.42: AI mini-boost matching thought bubble. When the AI says
-      // "Ngebut..." its speed multiplier ramps to 1.15× for ~1.5s. Sells
-      // the lie that the bubble is a real signal of behaviour.
+      // v54.42: AI mini-boost matching thought bubble.
       boostTimer: 0,
+      // v54.50: track distance-relative-to-player from last frame so a
+      // SIGN CHANGE = overtake event. Throttled by lastWhistleAt to avoid
+      // doppler spam on close pacing.
+      lastRelDist: 0,
+      lastWhistleAt: 0,
     })
   })
 }
@@ -2325,6 +2328,19 @@ function tickAI(delta) {
     const boostMult = ai.boostTimer > 0
       ? 1 + 0.15 * Math.sin(((90 - ai.boostTimer) / 90) * Math.PI)
       : 1
+    // v54.50: detect overtake — sign change of (ai.distance - S.distance).
+    // Throttle 1.5s to avoid doppler chirp on close pacing.
+    const _curRel = ai.distance - S.distance
+    const _now = S.frame
+    if (ai.lastRelDist !== undefined &&
+        Math.sign(_curRel) !== Math.sign(ai.lastRelDist) &&
+        Math.abs(_curRel) < 80 && Math.abs(ai.lastRelDist) < 80 &&
+        (_now - ai.lastWhistleAt) > 90) {
+      ai.lastWhistleAt = _now
+      // Descending whistle 880Hz → 440Hz (doppler pass).
+      try { playTone(880, 0.10, 'sine'); setTimeout(() => playTone(660, 0.10, 'sine'), 100); setTimeout(() => playTone(440, 0.14, 'sine'), 200) } catch(_){}
+    }
+    ai.lastRelDist = _curRel
     ai.distance += ai.speed * boostMult * delta * 0.12
     // Screen position based on relative distance
     const relDist = ai.distance - S.distance

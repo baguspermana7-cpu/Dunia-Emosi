@@ -1,5 +1,30 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.50 "Audio Sinkron & Doppler" (ultraplan tranche 2/12)
+
+Tranche 2 — semua WebAudio polish via existing `playTone`. No new assets.
+
+### Ships
+
+- **G14 Doppler whistle on AI overtake** — `tickAI` tracks `ai.lastRelDist`; sign change in `(ai.distance - S.distance)` within 80px = overtake event. Throttled to 1 whistle per 90 frames per AI. Plays descending 880→660→440 Hz triad — classic doppler pass effect. Adds tension to susul-menyusul.
+- **G15 level-start whistle horn sting** — `g15PlayCountdownWhistle()` fires once when `gameRunning` flips true. Triad 880→659→523 Hz spaced 220ms + 6-note descending sawtooth steam-noise burst. Signals "kereta siap berangkat" before the letter rain starts.
+- **G15 sleeper-clatter ticks synced to speed** — `g15StartClatter()` runs a self-rescheduling setTimeout. Tick interval shrinks from 240ms (gameSpeed 2) to 60ms (gameSpeed 8). Pauses during gamePaused. Honors `prefers-reduced-motion` (rhythmic clicks can be triggering for sensory-sensitive kids). Stopped in `showWin`/`showLose` so it doesn't bleed into the result modal.
+- **G15 TTS word spell-out (`g15SpeakWord`)** — on word-complete, lazy `speechSynthesis` queues "B . U . A . H, buah!" in id-ID. For phonics learning (eja per huruf). Honors shared `TrainShared.settings.sfx === false` mute.
+- **G14 rumble-strip audio + screen shake on lane drift** — DEFERRED (LOW priority, ranks below v54.50 quick wins; can ship in v54.56 catch-all).
+
+### Files touched
+- `games/g14.html` — `tickAI` doppler detection + `S.aiTrains.push` adds `lastRelDist` + `lastWhistleAt` fields.
+- `games/g15-pixi.html` — `g15SpeakWord`, `g15PlayCountdownWhistle`, `g15StartClatter`, `g15StopClatter` functions; wired into `onWordComplete`, level-start (gameRunning flip), `showWin`, `showLose`.
+- `sw.js` — CACHE_VERSION v54.49-20260625bb → v54.50-20260625bc.
+
+### Verification
+- Inline `<script>` syntax check on both touched HTMLs: OK.
+- PROTECTED chars unchanged.
+- All audio uses existing `playTone` helper (window-scope from train-shared.js).
+- Reduced-motion + sfx-mute honored.
+
+---
+
 ## 2026-06-25 — v54.49 "Variasi Biome & Cuaca Instan" (ultraplan tranche 1/12)
 
 First tranche from the /ultraplan workflow (`ww5tolt0a`, 69 verified ideas across 4 train games, synthesized into 12 tranches v54.49 → v54.60). Theme: visual variety per biome — cuaca + obstacle per-biome saling melengkapi tanpa nambah aset.
