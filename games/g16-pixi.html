@@ -2430,11 +2430,19 @@ function calcStars(){
 function showWin(){
   try{document.getElementById('game-bgm').pause()}catch(_){}
   const stars=calcStars()
-  const title = stars>=5?'Sempurna!':stars>=4?'Hebat!':stars>=3?'Bagus!':stars>=1?'Coba Lagi':'Gagal! Coba Lagi'
-  const emoji = stars>=5?'🏆':stars>=4?'🌟':stars>=3?'⭐':stars>=1?'💪':'😞'
-  const msg = stars>=5?'Wow, kamu hebat!':stars>=4?'Kerja bagus!':stars>=3?'Lumayan, terus berlatih!':stars>=1?'Kamu bisa lebih baik lagi!':'Jangan menyerah, ayo coba lagi!'
+  // v54.40: final-level mastery → Lulus Akademi recognition. Parity with G14/G15.
+  const isFinalMastery = S.level >= 30 && stars >= 5
+  const title = isFinalMastery ? '🎓 LULUS AKADEMI PENYELAMAT!' :
+    stars>=5?'Sempurna!':stars>=4?'Hebat!':stars>=3?'Bagus!':stars>=1?'Coba Lagi':'Gagal! Coba Lagi'
+  const emoji = isFinalMastery ? '🎓' :
+    stars>=5?'🏆':stars>=4?'🌟':stars>=3?'⭐':stars>=1?'💪':'😞'
+  const msg = isFinalMastery ? `Kamu menyelesaikan semua 30 stasiun! Selamat, Penyelamat Kereta Profesional!` :
+    stars>=5?'Wow, kamu hebat!':stars>=4?'Kerja bagus!':stars>=3?'Lumayan, terus berlatih!':stars>=1?'Kamu bisa lebih baik lagi!':'Jangan menyerah, ayo coba lagi!'
   try{sessionStorage.setItem('g16Result',JSON.stringify({stars,level:S.level,cleared:S.cleared,total:S.totalObstacles}))}catch(_){}
   saveG16Progress(stars)
+  if (isFinalMastery) {
+    try { window.TrainShared && TrainShared.achievements && TrainShared.achievements.unlock('lulus_akademi_g16') } catch(_){}
+  }
   const nextLevel = S.level < 30 ? () => { sessionStorage.setItem('g16Config', JSON.stringify({level: S.level + 1})); location.reload(); } : null;
   // Hotfix #102-C (2026-04-27): stop Pixi ticker so 60fps callback doesn't keep
   // firing after game-end. See games/g15-pixi.html for canonical pattern.

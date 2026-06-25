@@ -3131,14 +3131,30 @@ function endRace() {
   stars = Math.min(5, Math.max(0, stars))
   const emoji = stars >= 5 ? '🏆' : stars >= 4 ? '🌟' : stars >= 3 ? '⭐' : stars >= 1 ? '💪' : '😞'
   const posLabel = S.position === 1 ? `Juara 1! (${Math.floor(S.distance)}m)` : S.position === 2 ? `Posisi 2 (${Math.floor(S.distance)}m)` : `Posisi 3 (${Math.floor(S.distance)}m)`
-  const title = stars >= 5 ? 'Sempurna!' : stars >= 4 ? 'Hebat!' : stars >= 3 ? 'Bagus!' : stars >= 1 ? 'Coba Lagi' : 'Gagal! Coba Lagi'
-  const msg = stars >= 5 ? `Wow, kamu hebat! ${posLabel}` :
+  // v54.40: special end-game title + message when player perfects level 30
+  // (max level) with full stars + 1st place. Owner mandate "improve, continuous
+  // refine" — the final-level victory deserves a unique signal beyond just
+  // "Sempurna!", so kids understand they completed the whole akademi journey.
+  const isFinalMastery = (cfg.level || 5) >= 30 && stars >= 5 && S.position === 1
+  const title = isFinalMastery ? '🎓 LULUS AKADEMI MASINIS!' :
+    stars >= 5 ? 'Sempurna!' : stars >= 4 ? 'Hebat!' : stars >= 3 ? 'Bagus!' : stars >= 1 ? 'Coba Lagi' : 'Gagal! Coba Lagi'
+  const msg = isFinalMastery ? `Kamu menyelesaikan semua 30 level! Selamat, Masinis Profesional! ${posLabel}` :
+    stars >= 5 ? `Wow, kamu hebat! ${posLabel}` :
     stars >= 4 ? `Kerja bagus! ${posLabel}` :
     stars >= 3 ? `Lumayan, terus berlatih! ${posLabel}` :
     stars >= 1 ? `Kamu bisa lebih baik lagi! ${posLabel}` :
     'Jangan menyerah, ayo coba lagi!'
 
   const nextLevel = (cfg.level||5) < 30 ? () => { sessionStorage.setItem('g14Config', JSON.stringify({...cfg, level:(cfg.level||5)+1})); location.reload(); } : null;
+
+  // v54.40: unlock the masinis-profesional achievement on final mastery.
+  if (isFinalMastery) {
+    try {
+      if (window.TrainShared && TrainShared.achievements) {
+        TrainShared.achievements.unlock('masinis_profesional_g14')
+      }
+    } catch(_){}
+  }
   // v54.17 A12: confetti shower + golden ribbon for P1 finishes.
   if (S.position === 1) {
     try { g14SpawnConfetti() } catch(_){}

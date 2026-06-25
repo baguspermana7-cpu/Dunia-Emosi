@@ -2299,14 +2299,23 @@ function showWin() {
   sessionStorage.setItem('g15Result', JSON.stringify({ stars: finalStars }));
   saveG15Progress(finalStars);
   // Msg + title must align with stars — zero correct = fail, not "Sempurna"
-  const msg = mathCorrect === 0
-    ? `Belum ada jawaban benar. Ayo coba lagi!`
-    : wrongTaps === 0
-      ? `Sempurna! Tidak ada kesalahan! Matematika Benar: ${mathCorrect}`
-      : `${wrongTaps} kesalahan. Matematika benar: ${mathCorrect}. Terus berlatih!`;
-  const title = finalStars >= 5 ? 'Sempurna!' : finalStars >= 4 ? 'Hebat!' : finalStars >= 3 ? 'Bagus!' : finalStars >= 1 ? 'Coba Lagi' : 'Gagal! Coba Lagi';
-  const emoji = finalStars >= 5 ? '🏆' : finalStars >= 4 ? '🌟' : finalStars >= 3 ? '⭐' : finalStars >= 1 ? '💪' : '😞';
+  // v54.40: final-level mastery → Lulus Akademi recognition. Parity with G14.
+  const isFinalMastery = LEVEL >= 30 && finalStars >= 5 && wrongTaps === 0
+  const msg = isFinalMastery
+    ? `Kamu menyelesaikan semua 30 kata-petualangan! Lulus Akademi Lokomotif! Matematika benar: ${mathCorrect}`
+    : mathCorrect === 0
+      ? `Belum ada jawaban benar. Ayo coba lagi!`
+      : wrongTaps === 0
+        ? `Sempurna! Tidak ada kesalahan! Matematika Benar: ${mathCorrect}`
+        : `${wrongTaps} kesalahan. Matematika benar: ${mathCorrect}. Terus berlatih!`;
+  const title = isFinalMastery ? '🎓 LULUS AKADEMI LOKOMOTIF!' :
+    finalStars >= 5 ? 'Sempurna!' : finalStars >= 4 ? 'Hebat!' : finalStars >= 3 ? 'Bagus!' : finalStars >= 1 ? 'Coba Lagi' : 'Gagal! Coba Lagi';
+  const emoji = isFinalMastery ? '🎓' :
+    finalStars >= 5 ? '🏆' : finalStars >= 4 ? '🌟' : finalStars >= 3 ? '⭐' : finalStars >= 1 ? '💪' : '😞';
   const nextLevel = LEVEL < 30 ? () => { sessionStorage.setItem('g15Config', JSON.stringify({level: LEVEL + 1})); location.reload(); } : null;
+  if (isFinalMastery) {
+    try { window.TrainShared && TrainShared.achievements && TrainShared.achievements.unlock('lulus_akademi_g15') } catch(_){}
+  }
   GameModal.show({
     emoji, title, stars: finalStars, msg,
     onNext: nextLevel, onAgain: () => restartGame(), onBack: () => goBack()

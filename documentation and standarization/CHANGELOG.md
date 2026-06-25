@@ -1,5 +1,27 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.40 "Train games — Lulus Akademi end-game recognition"
+
+Audit of train-game final-level victory state. G14, G15, G16 all cap at level 30, but reaching level 30 + perfect score showed the SAME `Sempurna!` modal as a level 5 or 15 win. The end-game journey wasn't visually distinguished — a kid who actually mastered all 30 levels got the same banner as someone who just won one level.
+
+### Ships
+
+- **G14 (Balapan Kereta)** — `games/g14.html`. When `cfg.level >= 30 && stars >= 5 && position === 1`, the result modal title becomes "🎓 LULUS AKADEMI MASINIS!" and the message reads "Kamu menyelesaikan semua 30 level! Selamat, Masinis Profesional!". Unlocks `masinis_profesional_g14` via TrainShared.achievements.
+- **G15 (Lokomotif Pemberani)** — `games/g15-pixi.html`. When `LEVEL >= 30 && finalStars >= 5 && wrongTaps === 0`, title becomes "🎓 LULUS AKADEMI LOKOMOTIF!" with matching message. Unlocks `lulus_akademi_g15`.
+- **G16 (Selamatkan Kereta)** — `games/g16-pixi.html`. When `S.level >= 30 && stars >= 5`, title becomes "🎓 LULUS AKADEMI PENYELAMAT!" with matching message. Unlocks `lulus_akademi_g16`.
+
+All three keep the regular tiered titles (Sempurna / Hebat / Bagus / Coba Lagi) for normal levels. The Lulus tier only fires on the genuine end-game perfect run.
+
+### Files touched
+- `games/g14.html` — finishRace modal title/msg + achievement hook.
+- `games/g15-pixi.html` — showWin modal title/msg + achievement hook.
+- `games/g16-pixi.html` — showWin modal title/msg + achievement hook.
+- `sw.js` — CACHE_VERSION v54.39-20260625ar → v54.40-20260625as.
+
+PROTECTED train characters (Casey / Linus / Dragutin / Brave / Malivlak) unchanged. v54.30 PvP balance + v54.31 loading speed unaffected.
+
+---
+
 ## 2026-06-25 — v54.39 "Broken asset path audit (2 fixes)"
 
 Path-like-string audit across `index.html`, `game.js`, `battle-modes.js`, and all 5 standalone Pixi pages. Found 2 references to files that don't exist on disk.
