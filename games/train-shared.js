@@ -482,6 +482,8 @@
     { id:'lulus_akademi_g15',       icon:'🎓', label:'Lulus Akademi Lokomotif', hint:'Lulus L30 G15 dengan 5 bintang + 0 salah' },
     { id:'lulus_akademi_g16',       icon:'🎓', label:'Lulus Akademi Penyelamat',hint:'Lulus L30 G16 dengan 5 bintang' },
     { id:'sarjana_museum_g18',      icon:'🎓', label:'Sarjana Museum',          hint:'Kunjungi semua kereta DAN raih 8/8 kuis G18 di sesi yang sama' },
+    // v54.44 meta-mastery — only unlocks when all 4 individual Lulus badges are owned
+    { id:'guru_kereta',             icon:'🏆', label:'GURU KERETA',              hint:'Raih ke-empat Lulus Akademi (G14, G15, G16, G18)' },
     // Streak
     { id:'streak_3',            icon:'🔥', label:'Streak 3 hari',             hint:'Main 3 hari berturut' },
     { id:'streak_7',            icon:'🔥', label:'Streak seminggu',           hint:'Main 7 hari berturut' },
@@ -509,6 +511,16 @@
         document.head.appendChild(s)
       }
       try { Audio.playWhistle() } catch(_){}
+      // v54.44 meta-mastery: after any individual unlock, check whether the
+      // 4 Lulus Akademi badges are now all owned and auto-unlock the meta.
+      // The recursive call early-returns on the next pass because guru_kereta
+      // is then in `owned`, so no infinite loop.
+      try {
+        if (id !== 'guru_kereta') {
+          const LULUS = ['masinis_profesional_g14','lulus_akademi_g15','lulus_akademi_g16','sarjana_museum_g18']
+          if (LULUS.every(k => owned[k])) this.unlock('guru_kereta')
+        }
+      } catch(_){}
       return true
     },
     owned() { return rd(KEY25.ach, {}) },

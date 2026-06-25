@@ -1,5 +1,42 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.44 "GURU KERETA meta-achievement (4-Lulus capstone)"
+
+Ties the 4 Lulus Akademi mastery achievements (v54.40 + v54.43) into a single celebration when all four are owned.
+
+### Mechanic
+
+`Achievements.unlock(id)` in `train-shared.js` now checks, on every individual unlock, whether the 4 Lulus IDs are all in the owned map. If yes AND we didn't just unlock `guru_kereta` itself, it recursively self-calls to fire the meta. The recursion is single-step safe — guru_kereta is then in owned, so the next pass early-returns.
+
+```js
+if (id !== 'guru_kereta') {
+  const LULUS = ['masinis_profesional_g14','lulus_akademi_g15','lulus_akademi_g16','sarjana_museum_g18']
+  if (LULUS.every(k => owned[k])) this.unlock('guru_kereta')
+}
+```
+
+### Why this matters
+
+A kid who endures the L30 grind on G14, G15, G16 AND completes Sarjana Museum on G18 has demonstrated mastery across racing reflexes, word recognition, station rescue logic, and museum-curriculum recall. That's the canon "Guru" (master) framing — they've taught themselves every dimension of the train-game collection. The capstone deserves its own moment, not just four separate identical-looking 🎓 toasts.
+
+### Verification
+
+Inline simulation of the unlock chain confirms:
+- Unlocking each Lulus individually → no premature guru_kereta fire
+- Unlocking the 4th Lulus → guru_kereta auto-fires
+- Re-calling unlock('guru_kereta') after it's owned → early-returns without infinite loop
+
+### Files touched
+- `games/train-shared.js` — `guru_kereta` BADGES entry + meta-unlock recursion in `Achievements.unlock`.
+- `sw.js` — CACHE_VERSION v54.43-20260625av → v54.44-20260625aw.
+- `index.html` + 3 train HTMLs — train-shared.js cache-bust.
+
+After v54.44 the train-game progression curve:
+- Per-game L30 + perfect → 🎓 individual Lulus
+- All 4 Lulus owned → 🏆 GURU KERETA capstone
+
+---
+
 ## 2026-06-25 — v54.43 "G18 Museum — Sarjana Museum end-game recognition"
 
 Completes the Lulus Akademi tier across all four train games. G18's per-session 8/8 quiz already had `museum_8_of_8` recognition; this ship adds the TRUE mastery state — both passport-complete (visited every train) AND 8/8 quiz IN THE SAME SESSION.
