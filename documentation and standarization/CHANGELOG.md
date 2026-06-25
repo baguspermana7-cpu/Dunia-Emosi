@@ -1,5 +1,30 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.33 "Champion rosters x6 (Lance/Steven/Wallace/Cynthia/Diantha/Leon)"
+
+Owner: "banyak yg g ada. Tolong tambahkan" — second pass on picker depth. v54.30 added 9 companion/anime-roster packages; this ship adds the canonical Champion teams across 6 regions for full Indigo-Plateau-style coverage.
+
+### Ships
+
+- **`champion-lance`** (Juara Lance, Kanto/Johto) — Dragonite / Gyarados / Aerodactyl / Charizard / Dragonair / Salamence. Tier `mega`, hp 120.
+- **`champion-steven`** (Juara Steven, Hoenn) — Metagross / Aggron / Skarmory / Cradily / Armaldo / Claydol. Tier `mega`, hp 120.
+- **`champion-wallace`** (Juara Wallace, Hoenn) — Milotic / Tentacruel / Wailord / Whiscash / Ludicolo / Gyarados. Tier `mega`, hp 120.
+- **`champion-cynthia`** (Juara Cynthia, Sinnoh) — Garchomp / Spiritomb / Roserade / Lucario / Milotic / Togekiss. Tier `mega`, hp 125 (canonical champion bias).
+- **`champion-diantha`** (Juara Diantha, Kalos) — Gardevoir / Aurorus / Gourgeist / Tyrantrum / Goodra / Hawlucha. Tier `mega`, hp 120.
+- **`champion-leon`** (Juara Leon, Galar) — Charizard / Cinderace / Dragapult / Aegislash / Haxorus / Mr. Rime. Tier `mega`, hp 125 (Galar champion bias).
+
+Total packages: 58 → 64. All use canonical-Pokemon slugs that map to `POKE_IDS` (no new sprite lookups needed). v54.30 per-hit damage cap applies symmetrically — champion teams hit hard but never one-shot.
+
+### Files touched
+- `games/data/poke-packages.js` — 6 packages appended.
+- `index.html` — cache-bust on poke-packages.js.
+- `sw.js` — CACHE_VERSION v54.32-20260625ak → v54.33-20260625al.
+
+### Verification
+- `node -e "new Function(require('fs').readFileSync('games/data/poke-packages.js','utf8'))"` ✓ — 64 packages confirmed.
+
+---
+
 ## 2026-06-25 — v54.32 "Iter-2 polish queue closure (I15-I18)"
 
 Closes the deferred polish queue from the v54.27 audit. Locked mandate: "improve, continuous refine."

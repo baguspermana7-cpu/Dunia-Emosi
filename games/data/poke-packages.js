@@ -537,6 +537,63 @@ const PKG_DATA = [
     {name:'Regieleki',slug:'regieleki',type:'electric',hp:110,maxHp:110,moves:[{name:'Thunder Cage',type:'electric'},{name:'Thunderbolt',type:'electric'},{name:'Volt Switch',type:'electric'},{name:'Quick Attack',type:'normal'}]},
     {name:'Sobble',slug:'sobble',type:'water',hp:110,maxHp:110,moves:[{name:'Water Gun',type:'water'},{name:'Pound',type:'normal'},{name:'Bind',type:'normal'},{name:'Growl',type:'normal'}]},
    ]},
+  // ─── v54.33 — Champion rosters (6 packages) ─────────────────────────
+  // Locked mandate "improve, continuous refine"; owner: "Banyak yg g ada".
+  // Each is the canonical 6-Pokemon team that defines that region's champion.
+  {id:'champion-lance', label:'Juara Lance', series:'Juara Kanto/Johto', tier:'mega', color:'#f59e0b', region:'johto',
+   team:[
+    {name:'Dragonite',slug:'dragonite',type:'dragon',hp:120,maxHp:120,moves:[{name:'Hyper Beam',type:'normal'},{name:'Dragon Claw',type:'dragon'},{name:'Outrage',type:'dragon'},{name:'Fly',type:'flying'}]},
+    {name:'Gyarados',slug:'gyarados',type:'water',hp:120,maxHp:120,moves:[{name:'Hydro Pump',type:'water'},{name:'Hyper Beam',type:'normal'},{name:'Crunch',type:'dark'},{name:'Dragon Dance',type:'dragon'}]},
+    {name:'Aerodactyl',slug:'aerodactyl',type:'rock',hp:120,maxHp:120,moves:[{name:'Rock Slide',type:'rock'},{name:'Wing Attack',type:'flying'},{name:'Hyper Beam',type:'normal'},{name:'Bite',type:'dark'}]},
+    {name:'Charizard',slug:'charizard',type:'fire',hp:120,maxHp:120,moves:[{name:'Flamethrower',type:'fire'},{name:'Dragon Claw',type:'dragon'},{name:'Wing Attack',type:'flying'},{name:'Slash',type:'normal'}]},
+    {name:'Dragonair',slug:'dragonair',type:'dragon',hp:120,maxHp:120,moves:[{name:'Dragon Rage',type:'dragon'},{name:'Hyper Beam',type:'normal'},{name:'Thunder Wave',type:'electric'},{name:'Slam',type:'normal'}]},
+    {name:'Salamence',slug:'salamence',type:'dragon',hp:120,maxHp:120,moves:[{name:'Dragon Pulse',type:'dragon'},{name:'Fly',type:'flying'},{name:'Crunch',type:'dark'},{name:'Hyper Beam',type:'normal'}]},
+   ]},
+  {id:'champion-steven', label:'Juara Steven', series:'Juara Hoenn', tier:'mega', color:'#475569', region:'hoenn',
+   team:[
+    {name:'Metagross',slug:'metagross',type:'steel',hp:120,maxHp:120,moves:[{name:'Meteor Mash',type:'steel'},{name:'Psychic',type:'psychic'},{name:'Earthquake',type:'ground'},{name:'Hammer Arm',type:'fighting'}]},
+    {name:'Aggron',slug:'aggron',type:'steel',hp:120,maxHp:120,moves:[{name:'Iron Tail',type:'steel'},{name:'Earthquake',type:'ground'},{name:'Iron Head',type:'steel'},{name:'Stone Edge',type:'rock'}]},
+    {name:'Skarmory',slug:'skarmory',type:'steel',hp:120,maxHp:120,moves:[{name:'Steel Wing',type:'steel'},{name:'Aerial Ace',type:'flying'},{name:'Spikes',type:'ground'},{name:'Slash',type:'normal'}]},
+    {name:'Cradily',slug:'cradily',type:'grass',hp:120,maxHp:120,moves:[{name:'Giga Drain',type:'grass'},{name:'Rock Slide',type:'rock'},{name:'Ingrain',type:'grass'},{name:'Ancient Power',type:'rock'}]},
+    {name:'Armaldo',slug:'armaldo',type:'rock',hp:120,maxHp:120,moves:[{name:'X-Scissor',type:'bug'},{name:'Rock Slide',type:'rock'},{name:'Slash',type:'normal'},{name:'Stone Edge',type:'rock'}]},
+    {name:'Claydol',slug:'claydol',type:'ground',hp:120,maxHp:120,moves:[{name:'Earthquake',type:'ground'},{name:'Psychic',type:'psychic'},{name:'Mud Slap',type:'ground'},{name:'Light Screen',type:'psychic'}]},
+   ]},
+  {id:'champion-wallace', label:'Juara Wallace', series:'Juara Hoenn', tier:'mega', color:'#0ea5e9', region:'hoenn',
+   team:[
+    {name:'Milotic',slug:'milotic',type:'water',hp:120,maxHp:120,moves:[{name:'Hydro Pump',type:'water'},{name:'Ice Beam',type:'ice'},{name:'Recover',type:'normal'},{name:'Dragon Pulse',type:'dragon'}]},
+    {name:'Tentacruel',slug:'tentacruel',type:'water',hp:120,maxHp:120,moves:[{name:'Hydro Pump',type:'water'},{name:'Sludge Bomb',type:'poison'},{name:'Ice Beam',type:'ice'},{name:'Wrap',type:'normal'}]},
+    {name:'Wailord',slug:'wailord',type:'water',hp:120,maxHp:120,moves:[{name:'Hydro Pump',type:'water'},{name:'Body Slam',type:'normal'},{name:'Ice Beam',type:'ice'},{name:'Rain Dance',type:'water'}]},
+    {name:'Whiscash',slug:'whiscash',type:'water',hp:120,maxHp:120,moves:[{name:'Earthquake',type:'ground'},{name:'Surf',type:'water'},{name:'Mud Bomb',type:'ground'},{name:'Bite',type:'dark'}]},
+    {name:'Ludicolo',slug:'ludicolo',type:'grass',hp:120,maxHp:120,moves:[{name:'Hydro Pump',type:'water'},{name:'Giga Drain',type:'grass'},{name:'Ice Beam',type:'ice'},{name:'Rain Dance',type:'water'}]},
+    {name:'Gyarados',slug:'gyarados',type:'water',hp:120,maxHp:120,moves:[{name:'Hydro Pump',type:'water'},{name:'Crunch',type:'dark'},{name:'Hyper Beam',type:'normal'},{name:'Dragon Dance',type:'dragon'}]},
+   ]},
+  {id:'champion-cynthia', label:'Juara Cynthia', series:'Juara Sinnoh', tier:'mega', color:'#9333ea', region:'sinnoh',
+   team:[
+    {name:'Garchomp',slug:'garchomp',type:'dragon',hp:125,maxHp:125,moves:[{name:'Dragon Claw',type:'dragon'},{name:'Earthquake',type:'ground'},{name:'Fire Fang',type:'fire'},{name:'Brick Break',type:'fighting'}]},
+    {name:'Spiritomb',slug:'spiritomb',type:'ghost',hp:125,maxHp:125,moves:[{name:'Shadow Ball',type:'ghost'},{name:'Dark Pulse',type:'dark'},{name:'Hypnosis',type:'psychic'},{name:'Embargo',type:'dark'}]},
+    {name:'Roserade',slug:'roserade',type:'grass',hp:125,maxHp:125,moves:[{name:'Solar Beam',type:'grass'},{name:'Sludge Bomb',type:'poison'},{name:'Magical Leaf',type:'grass'},{name:'Sleep Powder',type:'grass'}]},
+    {name:'Lucario',slug:'lucario',type:'fighting',hp:125,maxHp:125,moves:[{name:'Aura Sphere',type:'fighting'},{name:'Dragon Pulse',type:'dragon'},{name:'Close Combat',type:'fighting'},{name:'Bone Rush',type:'ground'}]},
+    {name:'Milotic',slug:'milotic',type:'water',hp:125,maxHp:125,moves:[{name:'Hydro Pump',type:'water'},{name:'Ice Beam',type:'ice'},{name:'Recover',type:'normal'},{name:'Dragon Pulse',type:'dragon'}]},
+    {name:'Togekiss',slug:'togekiss',type:'fairy',hp:125,maxHp:125,moves:[{name:'Air Slash',type:'flying'},{name:'Aura Sphere',type:'fighting'},{name:'Dazzling Gleam',type:'fairy'},{name:'Extreme Speed',type:'normal'}]},
+   ]},
+  {id:'champion-diantha', label:'Juara Diantha', series:'Juara Kalos', tier:'mega', color:'#ec4899', region:'kalos',
+   team:[
+    {name:'Gardevoir',slug:'gardevoir',type:'fairy',hp:120,maxHp:120,moves:[{name:'Moonblast',type:'fairy'},{name:'Psychic',type:'psychic'},{name:'Shadow Ball',type:'ghost'},{name:'Thunderbolt',type:'electric'}]},
+    {name:'Aurorus',slug:'aurorus',type:'ice',hp:120,maxHp:120,moves:[{name:'Ice Beam',type:'ice'},{name:'Ancient Power',type:'rock'},{name:'Aurora Beam',type:'ice'},{name:'Hyper Voice',type:'normal'}]},
+    {name:'Gourgeist',slug:'gourgeist',type:'ghost',hp:120,maxHp:120,moves:[{name:'Shadow Ball',type:'ghost'},{name:'Seed Bomb',type:'grass'},{name:'Phantom Force',type:'ghost'},{name:'Trick-or-Treat',type:'ghost'}]},
+    {name:'Tyrantrum',slug:'tyrantrum',type:'dragon',hp:120,maxHp:120,moves:[{name:'Dragon Claw',type:'dragon'},{name:'Stone Edge',type:'rock'},{name:'Crunch',type:'dark'},{name:'Head Smash',type:'rock'}]},
+    {name:'Goodra',slug:'goodra',type:'dragon',hp:120,maxHp:120,moves:[{name:'Dragon Pulse',type:'dragon'},{name:'Ice Beam',type:'ice'},{name:'Body Slam',type:'normal'},{name:'Bide',type:'normal'}]},
+    {name:'Hawlucha',slug:'hawlucha',type:'fighting',hp:120,maxHp:120,moves:[{name:'Flying Press',type:'fighting'},{name:'High Jump Kick',type:'fighting'},{name:'Karate Chop',type:'fighting'},{name:'X-Scissor',type:'bug'}]},
+   ]},
+  {id:'champion-leon', label:'Juara Leon', series:'Juara Galar', tier:'mega', color:'#dc2626', region:'galar',
+   team:[
+    {name:'Charizard',slug:'charizard',type:'fire',hp:125,maxHp:125,moves:[{name:'Flamethrower',type:'fire'},{name:'Air Slash',type:'flying'},{name:'Dragon Claw',type:'dragon'},{name:'Solar Beam',type:'grass'}]},
+    {name:'Cinderace',slug:'cinderace',type:'fire',hp:125,maxHp:125,moves:[{name:'Pyro Ball',type:'fire'},{name:'High Jump Kick',type:'fighting'},{name:'Bounce',type:'flying'},{name:'Quick Attack',type:'normal'}]},
+    {name:'Dragapult',slug:'dragapult',type:'dragon',hp:125,maxHp:125,moves:[{name:'Dragon Pulse',type:'dragon'},{name:'Shadow Ball',type:'ghost'},{name:'Phantom Force',type:'ghost'},{name:'Steel Wing',type:'steel'}]},
+    {name:'Aegislash',slug:'aegislash',type:'steel',hp:125,maxHp:125,moves:[{name:'Shadow Claw',type:'ghost'},{name:'Iron Head',type:'steel'},{name:'Sacred Sword',type:'fighting'},{name:'King\'s Shield',type:'steel'}]},
+    {name:'Haxorus',slug:'haxorus',type:'dragon',hp:125,maxHp:125,moves:[{name:'Dragon Claw',type:'dragon'},{name:'Outrage',type:'dragon'},{name:'X-Scissor',type:'bug'},{name:'Slash',type:'normal'}]},
+    {name:'Mr. Rime',slug:'mr-rime',type:'ice',hp:125,maxHp:125,moves:[{name:'Ice Beam',type:'ice'},{name:'Psychic',type:'psychic'},{name:'Triple Axel',type:'ice'},{name:'Tickle',type:'normal'}]},
+   ]},
 ];
 window.POKE_PACKAGES = PKG_DATA;
 })();
