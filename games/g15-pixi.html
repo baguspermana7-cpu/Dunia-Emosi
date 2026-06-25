@@ -848,7 +848,14 @@ async function initPixi() {
   try{const sfx=document.getElementById('train-sfx');if(sfx){sfx.currentTime=0;sfx.volume=0.55;sfx.play().catch(()=>{})}}catch(_){}
   startTime = Date.now();
   let spawnTimer = 0;
-  const spawnInterval = () => Math.max(45, 90 - LEVEL * 2);
+  // v54.51: adaptive difficulty silent — if kid died ≥2× on this level (tracked
+  // in localStorage `dunia-g15-deaths-l{LEVEL}`), widen spawn interval by 25%
+  // so spawning feels less relentless. No UI, no announcement — anti-frustrasi.
+  const _g15LevelDeaths = (() => {
+    try { return parseInt(localStorage.getItem('dunia-g15-deaths-l' + LEVEL) || '0', 10) || 0 } catch(_){ return 0 }
+  })()
+  const _g15SpawnEase = _g15LevelDeaths >= 2 ? 1.25 : 1.0
+  const spawnInterval = () => Math.max(45, (90 - LEVEL * 2) * _g15SpawnEase);
 
   app.ticker.add((ticker) => {
     if (!gameRunning || gamePaused || mathQuizActive) return;
@@ -2340,10 +2347,26 @@ function updateLaneDots() {
 }
 
 // ── Controls ───────────────────────────────────────────────────────────────────
+// v54.51: lane-switch undo grace window — anak kecil double-tap karena gugup;
+// catat lane sebelumnya + timestamp, kalau switch berikut <200ms restore lane
+// awal (treat the second tap as an "oops, balik"). No collision/feedback selama
+// grace window.
+let _g15LastSwitchAt = 0
+let _g15LastLane = 1
 function switchLane(dir) {
   if (!gameRunning || mathQuizActive) return;
+  const now = performance.now()
   const n = Math.max(0, Math.min(2, playerLane + dir));
   if (n === playerLane) return;
+  // Detect oscillation within 200ms — undo to previous lane.
+  if (now - _g15LastSwitchAt < 200 && n === _g15LastLane) {
+    playerLane = _g15LastLane
+    _g15LastSwitchAt = now
+    updateLaneDots()
+    return
+  }
+  _g15LastLane = playerLane
+  _g15LastSwitchAt = now
   playerLane = n; updateLaneDots();
   // v54.20 C1: banking lean — small rotation in direction of travel, lerps back via tickTrainAnim
   trainContainer._leanTarget = dir * 0.08;
@@ -2414,6 +2437,11 @@ function showWin() {
 
 function showLose() {
   gameRunning = false;
+  // v54.51: increment per-level death count for adaptive difficulty silent ease.
+  try {
+    const k = 'dunia-g15-deaths-l' + LEVEL
+    localStorage.setItem(k, String((parseInt(localStorage.getItem(k) || '0', 10) || 0) + 1))
+  } catch(_){}
   // Hotfix #102-C: see showWin — same ticker.stop to prevent post-game hang.
   try { if (app && app.ticker) app.ticker.stop() } catch(_){}
   // v54.50: stop the sleeper-clatter ticker.

@@ -1,5 +1,35 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.51 "Accessibility Cross-Game Pass" (ultraplan tranche 3/12)
+
+Tranche 3 — accessibility. Gating via localStorage + matchMedia. Silent (no UI), low cost, high inclusion impact.
+
+### Ships
+
+- **G14 reduce-motion mode** — `g14ReducedMotion()` helper checks `localStorage['g14-reduced-motion'] === '1'` AND `prefers-reduced-motion: reduce`. Short-circuits the screen-shake/scale-zoom timer (instant decay to 0) AND `g14SpawnConfetti` (skip entirely). Anak sensori sensitif tetap bisa main tanpa motion sickness.
+- **G14 color-blind safe pickup outlines** — when `localStorage['g14-cb-safe'] === '1'`, `spawnPickup` adds a per-kind WHITE SHAPE outline above the halo:
+  - coin → square
+  - bolt → diamond (4-vertex poly)
+  - heart → twin circles (heart bumps)
+  - other → ring
+  Shape carries the meaning so color perception is no longer the only signal.
+- **G15 adaptive difficulty silent** — tracks `dunia-g15-deaths-l{LEVEL}` in localStorage; increments in `showLose`. On level-start init, if count ≥ 2 multiply `spawnInterval` by 1.25 (25% slower spawn). No UI, no announcement — anti-frustrasi.
+- **G15 lane-switch undo grace window** — `switchLane` now tracks `_g15LastLane` + `_g15LastSwitchAt`. If a second switch arrives within 200ms heading back to the previous lane, restore the previous lane (treat as "oops, balik"). Anak kecil yang double-tap karena gugup tidak ke-stuck di lane salah.
+- **G14 SFX captions** — DEFERRED (LOW priority, M effort; can ship in v54.56 catch-all).
+
+### Files touched
+- `games/g14.html` — `g14ReducedMotion` helper + gate in shake/zoom logic + gate in `g14SpawnConfetti` + cb-safe shape branch in `spawnPickup`.
+- `games/g15-pixi.html` — `_g15LevelDeaths` + `_g15SpawnEase` adaptive logic + death-counter increment in `showLose` + lane-undo grace in `switchLane`.
+- `sw.js` — CACHE_VERSION v54.50-20260625bc → v54.51-20260625bd.
+
+### Verification
+- Inline `<script>` syntax check: OK.
+- All toggles localStorage-gated (no UI yet — can ship a settings panel later if owner asks).
+- Default-OFF for cb-safe + reduce-motion-localStorage; ON automatically when `prefers-reduced-motion: reduce` is set OS-level.
+- PROTECTED chars + PvP balance unchanged.
+
+---
+
 ## 2026-06-25 — v54.50 "Audio Sinkron & Doppler" (ultraplan tranche 2/12)
 
 Tranche 2 — semua WebAudio polish via existing `playTone`. No new assets.

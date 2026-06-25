@@ -2147,6 +2147,11 @@ function tickPlayer(delta) {
   // Screen shake on crash. v54.17 A9: replaced rotational jitter (nauseating
   // for some kids) with cinematic scale ZOOM 1→1.08→1 over ~24 frames. Owner:
   // hit-stop weight via scale instead of rotation.
+  // v54.51: short-circuit when reduce-motion is on — just decay the timer
+  // without applying any visual transform so anak sensori sensitif tetap aman.
+  if (S.shakeTimer > 0 && g14ReducedMotion()) {
+    S.shakeTimer = 0
+  }
   if (S.shakeTimer > 0) {
     S.shakeTimer -= delta
     const t = S.shakeTimer / 22
@@ -2399,6 +2404,16 @@ function tickAI(delta) {
   }
 }
 
+// v54.51: reduce-motion gate — honors prefers-reduced-motion media query AND
+// an explicit localStorage opt-in. Shake/confetti/dust/zoom short-circuit when on.
+function g14ReducedMotion() {
+  try {
+    if (localStorage.getItem('g14-reduced-motion') === '1') return true
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return true
+  } catch(_){}
+  return false
+}
+
 // ── Obstacles ─────────────────────────────────────────────
 const OBS_EMOJIS = ['🪨','🐄','🐔','🌵','⚠️','🛑','🪵','🧱']
 // v54.49: per-biome obstacle palette. Cacti only in desert, logs only in forest,
@@ -2589,6 +2604,8 @@ function g14ShowMilestone(text){
 
 // v54.17 A12: confetti shower on P1 finish.
 function g14SpawnConfetti(){
+  // v54.51: skip confetti when reduce-motion gated.
+  if (g14ReducedMotion()) return
   const palette = ['#fbbf24','#a855f7','#22c55e','#ef4444','#38bdf8','#f472b6','#fde047']
   for (let i = 0; i < 48; i++) {
     const p = document.createElement('span')
@@ -2700,7 +2717,21 @@ function spawnPickup(){
   halo.circle(0, 0, 22).fill({ color: type.color, alpha: 0.18 })
   halo.circle(0, 0, 16).fill({ color: type.color, alpha: 0.32 })
   halo.circle(0, 0, 22).stroke({ color: type.color, width: 1.5, alpha: 0.65 })
-  g.addChild(halo)
+  // v54.51: color-blind safe — add a per-kind shape outline (square=coin,
+  // diamond=bolt, heart-tick=heart, ring=other) layered above the halo when
+  // localStorage g14-cb-safe === '1'. Shape carries the meaning so color
+  // perception is no longer the only signal.
+  try {
+    if (localStorage.getItem('g14-cb-safe') === '1') {
+      const m = new PIXI.Graphics()
+      m.lineStyle = undefined
+      if (type.kind === 'coin')      m.rect(-9, -9, 18, 18).stroke({ color: 0xffffff, width: 2 })
+      else if (type.kind === 'bolt') m.poly([0,-12, 12,0, 0,12, -12,0]).stroke({ color: 0xffffff, width: 2 })
+      else if (type.kind === 'heart')m.circle(-5, -3, 5).circle(5, -3, 5).stroke({ color: 0xffffff, width: 2 })
+      else                            m.circle(0, 0, 14).stroke({ color: 0xffffff, width: 2 })
+      g.addChild(m)
+    }
+  } catch(_){}
   const t = new PIXI.Text({ text: type.emoji, style: { fontSize: 26, fontFamily: 'Arial' } })
   t.anchor.set(0.5)
   g.addChild(t)
