@@ -2303,6 +2303,18 @@ function spawnObstacle() {
   }
 }
 
+// v54.31 I17: per-level obstacle approach multiplier. Computed once.
+//   L1 → 1.000 ×, L5 → 1.000 ×, L10 → 1.060 ×, L20 → 1.180 ×, L30 → 1.300 ×
+// Difficulty mode amplifies (hard) or dampens (easy) the curve. Keeps the
+// same train baseSpeed but the lane becomes progressively more demanding,
+// matching the locked "improve, continuous refine" mandate.
+const _G14_OBS_LEVEL_MULT = (function () {
+  const lvl = cfg.level || 5
+  const base = 1.0 + Math.max(0, lvl - 5) * 0.012
+  if (cfg.difficulty === 'easy') return 1.0 + (base - 1.0) * 0.6
+  if (cfg.difficulty === 'hard') return 1.0 + (base - 1.0) * 1.35
+  return base
+})()
 function tickObstacles(delta) {
   const W = app.screen.width
   const playerX = W * PLAYER_X
@@ -2312,7 +2324,7 @@ function tickObstacles(delta) {
     const o = S.obstacles[i]
     if (!o._alive) { L.obstacles.removeChild(o); S.obstacles.splice(i, 1); continue }
 
-    o.x -= S.speed * delta * 1.0
+    o.x -= S.speed * delta * _G14_OBS_LEVEL_MULT
     // Pulse warning
     o.children[1].alpha = 0.1 + Math.sin(S.frame * 0.2) * 0.1
 
@@ -2360,6 +2372,8 @@ function crashHit(obstacleEmoji) {
   // v54.19 B1: per-obstacle SFX (cow moos, chicken cluck, rock thud, etc.) replaces
   // the single 200Hz crash tone.
   if (obstacleEmoji) g14ObsSFX(obstacleEmoji); else playTone(200, 0.2, 'square')
+  // v54.31 I16: duck BGM on crash so the impact SFX cuts through.
+  try { duckBgm(0.6, 420) } catch(_){}
   screenFlash('rgba(255,60,60,0.35)')
   // v54.19 B9: haptic on crash.
   g14Vibrate([30, 50, 20])
@@ -3098,13 +3112,22 @@ function endRace() {
 
   // G14 is a pure-action runner — there's no quiz, so GameScoring.calc({correct:0,...})
   // would return 0 stars regardless of HP/position (game-modal.js:169 rule). Use a
-  // runner-style formula instead: survive base 3 + HP retention bonus + position bonus.
-  // Owner: "nyawa/life masih full tapi kalah 0 bintang" — this fixes that.
+  // runner-style formula instead.
+  // v54.31 tightened: previously "alive = 3 stars" gave the same reward to a
+  // last-place crawler and a clean 2nd-place finish. New tiering uses position
+  // AND HP retention so the difference between "survived" and "dominated" is felt.
+  //   Base alive               → 2 stars  (you finished, that matters)
+  //   HP ≥ 50%                 → +1       (kept your run clean)
+  //   HP ≥ 90%                 → +1       (almost untouched)
+  //   1st place                → +1       (dominated the lane)
+  // Max 5, min 0. Owner: "nyawa/life masih full tapi kalah 0 bintang" — already
+  // fixed in v54.x; this pass refines the upper tier so 5 stars feels earned.
   const hpRatio = (S.hp || 0) / LIVES_MAX
   const alive = (S.hp || 0) > 0
-  let stars = alive ? 3 : 0
-  if (alive && hpRatio >= 0.8) stars += 1
-  if (S.position === 1) stars += 1
+  let stars = alive ? 2 : 0
+  if (alive && hpRatio >= 0.5) stars += 1
+  if (alive && hpRatio >= 0.9) stars += 1
+  if (alive && S.position === 1) stars += 1
   stars = Math.min(5, Math.max(0, stars))
   const emoji = stars >= 5 ? '🏆' : stars >= 4 ? '🌟' : stars >= 3 ? '⭐' : stars >= 1 ? '💪' : '😞'
   const posLabel = S.position === 1 ? `Juara 1! (${Math.floor(S.distance)}m)` : S.position === 2 ? `Posisi 2 (${Math.floor(S.distance)}m)` : `Posisi 3 (${Math.floor(S.distance)}m)`
@@ -3400,6 +3423,8 @@ function executeBoost() {
   document.getElementById('btn-boost').innerHTML = '🔥<br><span style="font-size:12px">BOOSTING!</span>'
   spawnBoostFX()
   playTone(660, 0.12); playTone(880, 0.08)
+  // v54.31 I16: BGM duck on boost so the rise feels energetic, not muddied.
+  try { duckBgm(0.55, 700) } catch(_){}
   screenFlash('rgba(251,191,36,0.2)')
 
   setTimeout(() => {
@@ -3628,8 +3653,14 @@ function selBack() {
 //  AUDIO
 // ═══════════════════════════════════════════════════════════
 let audioCtx
+let masterGain               // v54.31 I16: single global SFX bus
 function ensureAudio() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+    masterGain = audioCtx.createGain()
+    masterGain.gain.value = 0.85
+    masterGain.connect(audioCtx.destination)
+  }
   if (audioCtx.state === 'suspended') audioCtx.resume()
   return audioCtx
 }
@@ -3637,11 +3668,27 @@ function playTone(freq, dur = 0.1, type = 'sine') {
   try {
     const ctx = ensureAudio()
     const osc = ctx.createOscillator(), gain = ctx.createGain()
-    osc.connect(gain); gain.connect(ctx.destination)
+    // v54.31 I16: route every SFX through masterGain so a single knob
+    // controls overall SFX loudness without per-call audits.
+    osc.connect(gain); gain.connect(masterGain || ctx.destination)
     osc.frequency.value = freq; osc.type = type
     gain.gain.setValueAtTime(0.1, ctx.currentTime)
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur)
     osc.start(); osc.stop(ctx.currentTime + dur)
+  } catch(_) {}
+}
+// v54.31 I16: BGM duck — briefly lower the BGM <audio> volume so a punctuated
+// SFX (boost, crash, victory) cuts through. Auto-restores after the duration.
+// Owner mandate "improve, continuous refine": punchier audio mix.
+let _bgmDuckTimer = null
+function duckBgm(amount = 0.5, dur = 350) {
+  try {
+    const bgm = document.getElementById('game-bgm')
+    if (!bgm) return
+    const target = Math.max(0, 0.2 * (1 - amount))
+    bgm.volume = target
+    clearTimeout(_bgmDuckTimer)
+    _bgmDuckTimer = setTimeout(() => { try { bgm.volume = 0.2 } catch(_) {} }, dur)
   } catch(_) {}
 }
 

@@ -4,6 +4,19 @@
 
 ---
 
+## 2026-06-25 — v54.32 Iter-2 polish queue closure
+
+### L167 — Effects that mutate a shared property (stage.scale) must READ the current base, never write a literal
+- G16 had `g16ShowCinema(true)` set `stage.scale = 1.05`, and `updateStagePunch` reset it to `1` when the punch animation ended. Result: a quiz-correct mid-ARRIVING erased the cinema scale mid-frame.
+- Lesson: When two effects both mutate the same display property, factor out the "base" the property is composed FROM (cinema base 1.0 or 1.05) and have every effect compute its delta on top of that base each frame. Never hard-code `=1.0` as a reset — always reset to the current base.
+
+### L168 — A single master-gain bus is the cheapest mixing surface for procedural audio
+- G14 had ~20 sites calling `playTone(freq, dur, type)`, each creating its own gain node connected directly to `ctx.destination`. To globally lower SFX volume you'd have to audit every site.
+- New pattern: one `masterGain = ctx.createGain()` between the SFX bus and `ctx.destination`. Every per-tone gain feeds `masterGain` instead. Tuning the entire SFX mix is then a single `masterGain.gain.value = X` write.
+- Lesson: For procedural audio, build the master bus on first `ensureAudio()`. Even if you don't need mixing today, you will tomorrow (BGM ducking, SFX mute, mobile-vs-desktop balance).
+
+---
+
 ## 2026-06-25 — v54.31 Loading speed + Gen 9 blocklist completion
 
 ### L165 — `loading="lazy" decoding="async"` is the cheapest way to keep a sprite grid responsive

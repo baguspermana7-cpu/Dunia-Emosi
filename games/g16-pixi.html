@@ -753,12 +753,10 @@ function g16ShowCinema(show){
   const bars = document.querySelectorAll('.g16-cinema-bar')
   bars.forEach(b => b.classList.toggle('show', show))
   g16CinemaShown = show
-  // pair: 1->1.05 stage scale + 0.7x slow-mo while ARRIVING
-  if (typeof stage !== 'undefined' && stage && show) {
-    try { stage.scale.set(1.05); if (app && app.ticker) app.ticker.speed = 0.7 } catch(_){}
-  } else if (typeof stage !== 'undefined' && stage && !show) {
-    try { stage.scale.set(1.0); if (app && app.ticker) app.ticker.speed = 1.0 } catch(_){}
-  }
+  // v54.31 I18: scale + position are managed by updateStagePunch which composes
+  // cinema (1.05) with stage-punch bumps. Only adjust ticker speed here —
+  // 0.7× slow-mo while ARRIVING for a cinematic feel.
+  try { if (app && app.ticker) app.ticker.speed = show ? 0.7 : 1.0 } catch(_){}
 }
 
 // D7: train picker idle bob — wraps drawPreview's canvas update with sin Y offset.
@@ -1741,20 +1739,25 @@ function gameLoop(ticker){
 }
 
 // Task #38 — one-shot stage zoom bump 1 → 1.04 → 1 over ~0.5s on correct answer
+// v54.31 I18: compose with the cinema scale (1.05) instead of overwriting it.
+// Previously a correct answer during ARRIVING would jerk the stage back to 1.0
+// mid-cinema and snap back. Now the punch ADDS on top of the cinema base, so
+// the bump still reads but the cinematic frame isn't broken.
 function updateStagePunch(dt){
   if(!stage) return
+  const cinemaScale = g16CinemaShown ? 1.05 : 1.0
   if(S.stagePunch>0){
     S.stagePunch=Math.max(0,S.stagePunch-dt)
-    // Bell curve: peaks at mid (0.25s), zero at start/end
     const t = 1 - (S.stagePunch/0.5) // 0..1
     const bump = Math.sin(t*Math.PI) * 0.04
-    const sc = 1 + bump
+    const sc = cinemaScale + bump
     stage.scale.set(sc)
-    // Keep centered — pivot is (0,0), compensate via negative offset
-    stage.x = -app.screen.width*0.5*bump
-    stage.y = -app.screen.height*0.5*bump
-  } else if(stage.scale.x !== 1) {
-    stage.scale.set(1); stage.x=0; stage.y=0
+    stage.x = -app.screen.width*0.5*(sc - 1)
+    stage.y = -app.screen.height*0.5*(sc - 1)
+  } else if (Math.abs(stage.scale.x - cinemaScale) > 0.001) {
+    stage.scale.set(cinemaScale)
+    stage.x = -app.screen.width*0.5*(cinemaScale - 1)
+    stage.y = -app.screen.height*0.5*(cinemaScale - 1)
   }
 }
 

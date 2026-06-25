@@ -1,5 +1,37 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.32 "Iter-2 polish queue closure (I15-I18)"
+
+Closes the deferred polish queue from the v54.27 audit. Locked mandate: "improve, continuous refine."
+
+### Ships
+
+- **I15 — G14 star formula tightening** (`games/g14.html:3105`). Was 3 stars base for being alive (dilution). Now: 2 base + (HP ≥ 50%) + (HP ≥ 90%) + (1st place). A clean 1st-place finish at high HP earns the 5-star top; a last-place crawl at low HP earns 2. Position and HP retention are felt distinctly.
+- **I16 — G14 master gain + BGM ducking** (`games/g14.html` audio section + crashHit + executeBoost). New `masterGain` node routes every SFX through a single bus (default 0.85 amplitude). New `duckBgm(amount, dur)` helper lowers BGM volume briefly so punchy SFX cut through. Wired to crash (0.6× duck, 420ms) and boost (0.55× duck, 700ms).
+- **I17 — G14 obstacle speed by level/difficulty** (`games/g14.html:tickObstacles`). New `_G14_OBS_LEVEL_MULT` constant scales obstacle approach speed from 1.00× (L1-L5) to 1.30× (L30). Easy mode dampens to 0.6× the curve, hard amplifies to 1.35×. Player trainCfg.baseSpeed unchanged — the lane just gets more demanding as levels rise.
+- **I18 — G16 cinema vs stage-punch composition** (`games/g16-pixi.html:updateStagePunch` + `g16ShowCinema`). Stage-punch on correct answer was overwriting the cinema 1.05× scale and snapping back to 1.0, breaking the cinematic frame mid-ARRIVING. Now the punch composes ADDITIVELY on top of `cinemaScale` (1.05 when cinema is on, 1.0 otherwise). Position offset is recalculated each frame so the stage stays centered at any composed scale.
+
+### Files touched
+- `games/g14.html` — star formula, master gain bus, duckBgm helper, crash/boost wiring, obstacle speed multiplier.
+- `games/g16-pixi.html` — updateStagePunch composition, g16ShowCinema simplification.
+- `sw.js` — CACHE_VERSION v54.31-20260625aj → v54.32-20260625ak.
+
+### Verification
+- `node` inline-script syntax check on both HTMLs ✓.
+- Star formula sanity table:
+  | Position | HP   | Stars |
+  |---|---|---|
+  | 1st | 100% | 5 |
+  | 1st | 60%  | 4 |
+  | 2nd | 100% | 4 |
+  | 2nd | 60%  | 3 |
+  | 3rd | 100% | 4 |
+  | 3rd | 40%  | 2 |
+  | KO  | —    | 0 |
+- PROTECTED train characters unchanged.
+
+---
+
 ## 2026-06-25 — v54.31 "Loading speed + Gen 9 sprite blocklist completion"
 
 Owner reported (with v54.29): "loading asset dan spritesnya lama ya. Membutuhkan at least 2 menit sound dan gambar2 pokemon baru keluar." Two-minute first-paint on PvP/Tournament was traced to:
