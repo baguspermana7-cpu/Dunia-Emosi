@@ -1,5 +1,51 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.48 "Daily mission surfaces via Pak Stasiun mascot (once per day)"
+
+The H2 Daily Conductor Challenge module existed since v54.24 — it computes a fresh mission each day (`race_g14_x1`, `museum_quiz_5`, etc.), tracks progress, and unlocks `first_whistle` on completion. But `DailyChallenge.show()` was **never called from anywhere**. The mission was a hidden feature: kids would auto-complete missions without knowing they existed, never seeing "🎯 Misi Hari Ini" until they happened to wander into the rare debug surface.
+
+### Mechanic
+
+`train-shared.js` gains `DailyChallenge.showOncePerDay()` — a guard wrapper around the existing `show()`:
+
+```js
+showOncePerDay() {
+  const today = new Date().toDateString()
+  const KEY = 'ts-mission-shown-' + today
+  if (localStorage.getItem(KEY)) return
+  const cur = this.today()
+  if (cur.claimed) { localStorage.setItem(KEY, '1'); return }
+  localStorage.setItem(KEY, '1')
+  Mascot.show(`🎯 Misi Hari Ini:\n${cur.label}\n(${cur.progress}/${cur.target})`, { duration: 5000 })
+}
+```
+
+Two behaviour rules:
+1. **Once per day across all train games** — keyed on `new Date().toDateString()` so launching G14 then G15 the same day only shows the mission once total.
+2. **Skip if already claimed** — kids who completed yesterday's mission don't get a stale "(2/2)" reminder; the once-per-day flag still records so subsequent launches stay quiet.
+
+### Wiring
+
+- **G14 `startRace`** — first call after pause-overlay clear.
+- **G15 train-card click → `initPixi`** — fires right before the Pixi app starts.
+- **G16 `startGame`** — right after preview-bob teardown.
+- **G18 `initGame18`** — first line after BGM stop.
+
+Each call is `try/catch`'d so a missing TrainShared (offline / SW preload race) never blocks the level start.
+
+### Files touched
+- `games/train-shared.js` — new `showOncePerDay` method on DailyChallenge.
+- `games/g14.html` + `games/g15-pixi.html` + `games/g16-pixi.html` + `game.js` — wire the call.
+- `index.html` + 3 train HTMLs — train-shared.js cache-bust `v=54.45-20260625ax` → `v=54.48-20260625ba`.
+- `index.html` — game.js cache-bust `v=54.43-20260625av` → `v=54.48-20260625ba`.
+- `sw.js` — CACHE_VERSION v54.47-20260625az → v54.48-20260625ba.
+
+### Why this matters
+
+The H2 mission system feeds into the GURU KERETA → Topi Guru chain via `first_whistle` and the streak achievements. If kids never see the mission they can't track toward it. Pak Stasiun (the 👨‍✈️ conductor mascot, bottom-left, 5-second toast) is the right messenger — already in-character, already styled.
+
+---
+
 ## 2026-06-25 — v54.47 "GameModal `onAchievements` slot — 🏆 button on G14/G15/G16 result"
 
 Train games now finish a level → modal shows the usual stars/title/`Level Berikutnya` row BUT also a 🏆 `Pencapaian` button that opens the TrainShared Achievement Wall in place. Previously the Wall was reachable only from the G18 Museum FAB column, so kids who only play G14/G15/G16 never saw their badges unless they navigated into the museum.

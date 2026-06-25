@@ -13999,6 +13999,8 @@ function initGame21() {
 
 function initGame18() {
   battleBgmStop()
+  // v54.48: daily mission via mascot (once per day across all train games).
+  try { window.TrainShared && TrainShared.dailyChallenge.showOncePerDay() } catch(_){}
   const lv = state.selectedLevelNum || 1
   g18State = {
     lv, quizIdx: 0, quizScore: 0, quizActive: false,

@@ -591,6 +591,21 @@
       const cur = this.today()
       try { Mascot.show(`🎯 Misi Hari Ini:\n${cur.label}\n(${cur.progress}/${cur.target})`, { duration: 5000 }) } catch(_){}
     },
+    // v54.48: surface today's mission ONCE per day on first train-game launch
+    // across G14/G15/G16/G18. Guards via localStorage key keyed on today's date.
+    // Skips silently if the mission is already complete (claimed), so kids
+    // don't see "(2/2)" spam after they've earned the reward.
+    showOncePerDay() {
+      try {
+        const today = new Date().toDateString()
+        const KEY = 'ts-mission-shown-' + today
+        if (localStorage.getItem(KEY)) return
+        const cur = this.today()
+        if (cur.claimed) { localStorage.setItem(KEY, '1'); return }
+        localStorage.setItem(KEY, '1')
+        Mascot.show(`🎯 Misi Hari Ini:\n${cur.label}\n(${cur.progress}/${cur.target})`, { duration: 5000 })
+      } catch(_){}
+    },
   }
 
   // ── H3: STREAK + COMEBACK ──────────────────────────────────────────────────

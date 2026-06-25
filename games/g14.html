@@ -200,7 +200,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<script src="train-shared.js?v=54.45-20260625ax"></script>
+<script src="train-shared.js?v=54.48-20260625ba"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
@@ -3017,6 +3017,11 @@ function startRace() {
   if (!S.trainCfg) return
   document.getElementById('select-ovl').style.display = 'none'
   document.getElementById('go-btn').style.display = 'none'
+
+  // v54.48: surface today's daily mission via Pak Stasiun mascot (once per day,
+  // across all train games — keyed on today's date). Skips if mission already
+  // claimed so it doesn't repeat "(2/2)" after the kid earned today's reward.
+  try { window.TrainShared && TrainShared.dailyChallenge.showOncePerDay() } catch(_){}
 
   // v54.19 B12: Mode Belajar gate. Reads dunia-g14-deaths-l{level} to soften.
   try { g14ApplyKidMode() } catch(_){}
