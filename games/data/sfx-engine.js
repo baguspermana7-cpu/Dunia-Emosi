@@ -292,12 +292,17 @@
     ctx: null,
     masterGain: null,
     crossfadeMs: 400,
-    targets: {
-      idle:   null,    // null = silent
-      battle: '/Dunia-Emosi/Sounds/battle-bgm.mp3',
-      lowHp:  '/Dunia-Emosi/Sounds/battle-bgm.mp3',   // same source, filter applied
-      win:    null     // short fanfare via SFXEngine instead
-    },
+    targets: (function () {
+      // v54.38: dynamic deployment-root detection — same pattern as basePath above.
+      var base = '/'
+      try { if (location.pathname.indexOf('/Dunia-Emosi/') === 0) base = '/Dunia-Emosi/' } catch(_){}
+      return {
+        idle:   null,
+        battle: base + 'Sounds/battle-bgm.mp3',
+        lowHp:  base + 'Sounds/battle-bgm.mp3',
+        win:    null
+      }
+    })(),
     init: function () {
       if (this.ctx) return
       var ACtx = window.AudioContext || window.webkitAudioContext

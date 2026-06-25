@@ -1,5 +1,30 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-25 — v54.38 "SFX path sweep — remove hardcoded `/Dunia-Emosi/` paths"
+
+Follow-up to v54.37. Swept the codebase for any other hardcoded `/Dunia-Emosi/...` paths that would 404 on Vercel.
+
+### Found
+
+- **`games/g13c-pixi.html:565`** — `SFXEngine.init({ basePath: '/Dunia-Emosi/Sounds/...' })` — explicit override defeated the v54.37 dynamic default.
+- **`games/g23-pixi.html:407`** — same explicit override.
+- **`games/data/sfx-engine.js:297-298`** — `targets.battle` and `targets.lowHp` BGM paths hardcoded to `/Dunia-Emosi/Sounds/battle-bgm.mp3`.
+
+### Fix
+
+- g13c-pixi.html / g23-pixi.html — drop the `basePath` argument so v54.37's runtime-detection kicks in.
+- sfx-engine.js — wrap `targets` in an IIFE that detects deployment root the same way the basePath default does.
+
+### Files touched
+- `games/g13c-pixi.html` + `games/g23-pixi.html` — remove SFXEngine.init basePath override.
+- `games/data/sfx-engine.js` — targets IIFE for deployment-root detection.
+- `index.html` — cache-bust on sfx-engine.js.
+- `sw.js` — CACHE_VERSION v54.37-20260625ap → v54.38-20260625aq.
+
+After v54.37+v54.38 the SFX engine is portable. Audio works on both `bfrfranco.github.io/Dunia-Emosi/` and `dunia-emosi.vercel.app/`.
+
+---
+
 ## 2026-06-25 — v54.37 "SFX engine basePath silently 404 on Vercel"
 
 Pattern-match audit (same shape as the silent-broken keyframes pass v54.35/v54.36): scan for hardcoded `/Dunia-Emosi/...` paths that would 404 on the Vercel mirror (`dunia-emosi.vercel.app`).

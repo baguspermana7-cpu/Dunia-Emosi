@@ -403,8 +403,9 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
   // Licensed Pokemon SFX + weather — lazy init, silent failure.
   document.addEventListener('DOMContentLoaded', function () {
     try {
-      window.SFXEngine && window.SFXEngine.init &&
-        window.SFXEngine.init({ basePath: '/Dunia-Emosi/Sounds/pokemon%20sounds/' });
+      // v54.38: omit basePath so SFXEngine uses its own dynamic detection
+      // (works on both GitHub Pages /Dunia-Emosi/ and Vercel /).
+      window.SFXEngine && window.SFXEngine.init && window.SFXEngine.init();
     } catch (e) {}
     // Start weather when game canvas is present; no harm if it isn't.
     try {
