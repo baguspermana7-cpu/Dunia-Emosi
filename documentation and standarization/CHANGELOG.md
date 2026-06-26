@@ -1,5 +1,44 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.82 "Question pool expansion (73 → 103 entries) for repeat-play variety" (Phase 4.13)
+
+Added 30 new child-friendly questions across all 10 categories. Total pool now exceeds 100 entries — repeat-play freshness ensured.
+
+| Category | Before | After | Δ |
+|---|---|---|---|
+| Shape   | 10 | 13 | +3 |
+| Color   | 10 | 13 | +3 |
+| Count   |  8 | 11 | +3 |
+| Number  |  6 |  9 | +3 |
+| Math    |  8 | 11 | +3 |
+| Letter  |  3 |  7 | +4 |
+| Animal  | 13 | 18 | +5 |
+| Safety  |  8 | 11 | +3 |
+| Comparison | 5 | 8 | +3 |
+
+### Sample additions
+
+- **Shapes (age 7)**: "Mana segi lima?" "Mana yang seperti rel kereta?"
+- **Colors (age 6-7)**: "Mana warna semangka di luar?" "Mana warna pisang masak?"
+- **Count 1-10 (age 6-7)**: "Berapa gerbong? 🚃🚃🚃🚃🚃🚃🚃🚃🚃🚃"
+- **Subtraction (age 7)**: "4 - 1 = ?" "5 - 2 = ?"
+- **Letter (age 6-7)**: "Awal nama 'Kereta' huruf apa?" "Awal nama 'Rumah' huruf apa?"
+- **Animal habitat (age 6-7)**: "Hewan apa yang hidup di air?" "Hewan apa yang punya belalai?"
+- **Safety (age 7)**: "Kalau kereta lewat, kita harus?" (Berhenti & tunggu ✋ correct)
+- **Comparison (age 7)**: "Mana yang lebih cepat? 🚂 Kereta / 🐢 Kura-kura"
+
+### Files touched
+- `games/data/kids-questions.js` — 30 new entries (~50 LOC added).
+- `games/g14.html` — cache-bust `v=54.82-20260626ci`.
+- `sw.js` v54.81 → v54.82.
+
+### Verification
+- Syntax OK.
+- `grep -c "{ tags:" games/data/kids-questions.js` = 103 ✓
+- `node tools/probe-obstacle-engine.mjs` — 14/14 PASS.
+
+---
+
 ## 2026-06-26 — v54.81 "Mode Latihan (Practice Mode) — standalone obstacle try from gallery" (Phase 4.12)
 
 ### Engine — standalone mode

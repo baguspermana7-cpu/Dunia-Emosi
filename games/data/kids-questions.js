@@ -119,6 +119,56 @@
     { tags:['safety'], age:'6', q:'Saat hewan menyeberang, kereta?', options:['Berhenti ✋','Cepat ➡️','Maju 🐢'], correct:0 },
     { tags:['safety'], age:'6', q:'Mana yang membantu kita lihat malam?', options:['🔦','🥖','🌧️'], correct:0 },
     { tags:['safety'], age:'5', q:'Mana yang dipakai saat hujan?', options:['☔','🧢','🥾'], correct:0 },
+
+    // ── EXTENDED v54.82 — round 2 of pool expansion (target ≥100 total) ──
+
+    // Shapes — patterns + recognition (age 6-7)
+    { tags:['shape'], age:'7', q:'Mana segi lima?', options:['⬟','⬤','■'], correct:0 },
+    { tags:['shape'], age:'6', q:'Mana yang berbentuk roda?', options:['⬤','■','▲'], correct:0 },
+    { tags:['shape'], age:'7', q:'Mana yang seperti rel kereta?', options:['═','⬤','▲'], correct:0 },
+
+    // Colors — combinations (age 6-7)
+    { tags:['color'], age:'6', q:'Mana warna semangka di luar?', options:['🟢','🔴','🟡'], correct:0 },
+    { tags:['color'], age:'6', q:'Mana warna pisang masak?', options:['🟢','🟡','🔴'], correct:1 },
+    { tags:['color'], age:'7', q:'Mana warna langit cerah?', options:['🔵','⚫','🟢'], correct:0 },
+
+    // Count 1-10 (age 6-7)
+    { tags:['count'], age:'6', q:'Berapa? 🚂🚂🚂🚂🚂🚂🚂🚂', options:['7','8','9'], correct:1 },
+    { tags:['count'], age:'7', q:'Berapa? ⭐⭐⭐⭐⭐⭐⭐⭐⭐', options:['8','9','10'], correct:1 },
+    { tags:['count'], age:'7', q:'Berapa gerbong? 🚃🚃🚃🚃🚃🚃🚃🚃🚃🚃', options:['9','10','11'], correct:1 },
+
+    // Numbers — recognition (age 6-7)
+    { tags:['number'], age:'6', q:'Mana angka 6?', options:['5','6','7'], correct:1 },
+    { tags:['number'], age:'7', q:'Mana angka terkecil?', options:['9','3','5'], correct:1 },
+    { tags:['number'], age:'7', q:'Mana angka terbesar?', options:['4','7','2'], correct:1 },
+
+    // Math — subtraction + addition (age 7)
+    { tags:['math'], age:'7', q:'4 - 1 = ?', options:['2','3','4'], correct:1 },
+    { tags:['math'], age:'7', q:'5 - 2 = ?', options:['2','3','4'], correct:1 },
+    { tags:['math'], age:'7', q:'6 + 1 = ?', options:['6','7','8'], correct:1 },
+
+    // Letters — early literacy (age 5-7)
+    { tags:['letter'], age:'5', q:'Mana huruf D?', options:['B','C','D'], correct:2 },
+    { tags:['letter'], age:'6', q:'Mana huruf M?', options:['M','N','O'], correct:0 },
+    { tags:['letter'], age:'6', q:'Awal nama "Kereta" huruf apa?', options:['J','K','L'], correct:1 },
+    { tags:['letter'], age:'7', q:'Awal nama "Rumah" huruf apa?', options:['M','R','S'], correct:1 },
+
+    // Animals — habitat (age 5-7)
+    { tags:['animal'], age:'5', q:'Mana monyet?', options:['🐒','🐶','🐱'], correct:0 },
+    { tags:['animal'], age:'5', q:'Mana harimau?', options:['🐯','🐶','🐱'], correct:0 },
+    { tags:['animal'], age:'6', q:'Hewan apa yang hidup di air?', options:['🦋','🐢','🐦'], correct:1 },
+    { tags:['animal'], age:'6', q:'Hewan apa yang punya belalai?', options:['🐘','🐭','🐱'], correct:0 },
+    { tags:['animal'], age:'7', q:'Hewan apa yang bisa terbang?', options:['🐠','🦅','🐍'], correct:1 },
+
+    // Safety / kindness (age 5-7)
+    { tags:['safety'], age:'5', q:'Mana yang harus dipakai ke sekolah?', options:['👟','🩴','🥾'], correct:0 },
+    { tags:['safety'], age:'6', q:'Saat hujan deras, naik kereta lebih?', options:['Aman 😊','Berbahaya 😨','Sama saja'], correct:0 },
+    { tags:['safety'], age:'7', q:'Kalau kereta lewat, kita harus?', options:['Berhenti & tunggu ✋','Lari ke rel 🏃','Lompat 🦘'], correct:0 },
+
+    // Comparison + pattern (age 7)
+    { tags:['comparison'], age:'7', q:'Mana yang lebih cepat?', options:['🚂 Kereta','🐢 Kura-kura'], correct:0 },
+    { tags:['comparison'], age:'7', q:'Mana yang lebih berat?', options:['🐘 Gajah','🐭 Tikus'], correct:0 },
+    { tags:['comparison'], age:'7', q:'Mana yang lebih dingin?', options:['❄️ Salju','🔥 Api'], correct:0 },
   ]
 
 })(typeof window !== 'undefined' ? window : globalThis);
