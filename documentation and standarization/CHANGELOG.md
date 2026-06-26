@@ -1,5 +1,26 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.83 "G15 + G16 lightweight opt-in (Koleksi gallery + Practice Mode reachable)" (Phase 4.14)
+
+Opt-in path: scripts only (no obstacle scheduler). Each game now has the Koleksi 🏆 button in its HUD; tapping opens the gallery with full Stickers / Badges / Horns view and Practice Mode tab. Kids can browse + try any of the 15 representative obstacles from G15 (Lokomotif Pemberani) and G16 (Selamatkan Kereta) without touching the active gameplay.
+
+Why opt-in lite:
+- G15's state model is Pixi-driven (not `S.running` like G14). Inserting an obstacle scheduler mid-game requires a separate audit + design pass.
+- G16's "Selamatkan Kereta" rescue gameplay already has its own narrative beats; adding random puzzle interrupts could conflict.
+- Bringing Practice Mode + gallery to both games gives value WITHOUT risk of regression.
+
+### Files touched
+- `games/g15-pixi.html` — 6 new script tags + 🏆 Koleksi button in HUD.
+- `games/g16-pixi.html` — 6 new script tags + 🏆 Koleksi button in HUD.
+- `sw.js` v54.82 → v54.83.
+
+### Verification
+- Syntax OK on g15-pixi.html + g16-pixi.html.
+- `node tools/probe-obstacle-engine.mjs` — 14/14 still PASS.
+- Standalone-mode spawn (Practice) verified to skip gameAPI hooks — safe to use from G15/G16 even though they don't call `OE.attach()`.
+
+---
+
 ## 2026-06-26 — v54.82 "Question pool expansion (73 → 103 entries) for repeat-play variety" (Phase 4.13)
 
 Added 30 new child-friendly questions across all 10 categories. Total pool now exceeds 100 entries — repeat-play freshness ensured.

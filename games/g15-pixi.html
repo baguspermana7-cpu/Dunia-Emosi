@@ -189,6 +189,13 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <script src="data/bg-npcs.js?v=54.64-20260626bq"></script>
 <script src="data/bg-audio.js?v=54.65-20260626br"></script>
 <script src="data/bg-events.js?v=54.67-20260626bt"></script>
+<!-- v54.83 — ObstacleEngine + Koleksi gallery available from G15 picker (Practice Mode) -->
+<script src="obstacle-engine.js?v=54.83-20260626cj"></script>
+<script src="data/kids-questions.js?v=54.83-20260626cj"></script>
+<script src="data/obstacles.js?v=54.83-20260626cj"></script>
+<script src="data/routes.js?v=54.83-20260626cj"></script>
+<script src="data/reward-catalog.js?v=54.83-20260626cj"></script>
+<script src="reward-gallery.js?v=54.83-20260626cj"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <!-- v54.28 I13: loop the train ambient SFX (was one-shot, faded after first cycle, leaving silence). -->
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" loop preload="auto" style="display:none"></audio>
@@ -204,6 +211,11 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <div id="hud-top">
   <button id="btn-back" type="button" onclick="goBack()">← Kembali</button>
   <button id="btn-pause" onclick="togglePause()" style="pointer-events:all;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.25);border-radius:10px;color:#fff;padding:5px 8px;font-size:14px;cursor:pointer;font-family:inherit;flex-shrink:0">⏸</button>
+  <!-- v54.83 — Koleksi gallery (Practice Mode) trigger -->
+  <button id="g15-koleksi-btn" type="button" onclick="if(window.RewardGallery) RewardGallery.open()" aria-label="Buka koleksi stiker"
+          style="pointer-events:all;background:linear-gradient(135deg,#fbbf24,#f59e0b);border:2px solid #b45309;border-radius:10px;color:#5a2a00;padding:6px 10px;font-size:14px;cursor:pointer;font-family:inherit;font-weight:900;flex-shrink:0;box-shadow:0 3px 0 rgba(120,53,15,0.4)">
+    🏆
+  </button>
   <div id="word-display">
     <span id="word-emoji">❓</span>
     <div id="word-slots"></div>
