@@ -1,5 +1,67 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.88 "NEW games/g14-side.html — side-scrolling cartoon racing foundation" (Phase 5.1)
+
+Per owner reference image 2 (cartoon "Train Racing") + verbatim "g terbaik, walaupun effort nya sangat besar". MAJOR new view: side-scrolling race with sky+landscape filling upper 65%, rail strip lower 35%, train sprite side-on. Parallel to (not replacement of) top-down g14.html.
+
+### Layout
+
+```
+Sky gradient (16-band lerp 135→175 / 206→220 / 235→250)
+Sun + stroke halo @ (0.82W, 0.22 skyH)
+6 distant mountains (light blue-grey)
+4 mid-ground hills (medium green) + 10 distant trees
+Close wooden fence with posts every 50px
+─────────────────────────────────────────── @ 65%
+Grass strip (4px lighter top + dark green body)
+Rail ballast + 2 parallel steel rails + sleepers (40px spacing)
+Train sprite @ 25% from left, fixed X, side-on profile
+Obstacles scroll right → left (varying icons: 🪨 🌳 🚧 💧 🐮)
+```
+
+### Mechanics
+
+- **Tap-to-jump**: `⬆ LOMPAT!` button (green, 240px wide, 84px tall, raised shadow), screen-tap, Spacebar, or ArrowUp. Gravity 1500px/s², jump velocity -720px/s, arc back to baseline.
+- **Single track**: no lane switching. Replaces top-down 3-lane mechanic.
+- **Distance-based finish**: 1000m. Speed 4px/tick × 0.4m/px = ~150-200s race depending on speed scaling.
+- **Soft-fail collisions**: HP 3 → 2 → 1 → game-over modal. 1.2s grace window per hit.
+- **Pixi 8 ticker** drives world scroll + jump physics + obstacle movement.
+
+### Train sprite render
+
+Side-on anchor (0.5, 1.0) — bottom-center for rail alignment. Side-view scale: `(spriteHeight × 1.5) / texture.height` — 50% larger than top-down for cinematic feel.
+- 3-tier texture load handler (sync-check → addEventListener → RAF poll) — identical pattern as v54.87 fix in g14.html.
+- Non-character trains: `drawProceduralSideLoco()` draws side-profile boiler + cab + chimney + 3 wheels with given body/accent colors.
+
+### Background
+
+NEW dedicated cartoon-racing background drawn directly in g14-side.html (does NOT use TrainBG engine in v54.88 — that's a v54.89 candidate to wire up). Reasoning: TrainBG was authored for top-down 3-lane layout; reusing for side-scroll requires v54.89 viewMode flag work.
+
+### Entry point — g14.html picker
+
+NEW "🏁 Side Race (Beta) — Tampilan Premium!" button below "🚦 Mulai Balapan!". Reads selected train key, stores `sessionStorage['g14-side-train']`, redirects to `g14-side.html`. Alerts kid to pick a train first if none selected.
+
+### Shared modules loaded
+
+Identical script tags as g14.html: pixi.min, train-shared, train-vfx, train-bg-engine + bg-themes/renderers/npcs/audio/events, obstacle-engine + kids-questions + obstacles + routes + reward-catalog, reward-gallery, settings-modal, trains-db, game-modal. ObstacleEngine integration deferred to v54.89.
+
+### Files
+- NEW `games/g14-side.html` (~430 LOC).
+- `games/g14.html` — `g14LaunchSideRace()` + entry button (~25 LOC added) + cache-bust `v=54.88-20260626co`.
+- `sw.js` — CACHE_VERSION + SHELL precache list adds `g14-side.html`.
+
+### Verification
+- Syntax OK on g14-side.html + g14.html.
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS (no regression).
+- Manual: launch g14.html → pick Thomas → tap "🏁 Side Race (Beta)" → confirm side-on Thomas WebP loads + sky+landscape upper 65% + rail+train lower 35% + jump works.
+
+### Coming in v54.89
+- Wire TrainBG engine for parallax (sky engine drives clouds + landmarks + weather + lighting in side-view).
+- ObstacleEngine integration (puzzle gates as race interrupts).
+- AI competitor ghost in background lane.
+
+---
+
 ## 2026-06-26 — v54.87 "CRITICAL FIX — Character train sprites now actually load (Thomas + PROTECTED visible)" (Phase 5.0)
 
 ### The bug
