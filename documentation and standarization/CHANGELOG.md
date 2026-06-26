@@ -1,5 +1,47 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.61 "5 Indonesian LocationThemes" (Phase 2.1)
+
+5 Indonesian city configs auto-register on load per spec §6 + §17 schema. Each carries palette tokens, weighted weather + time-of-day distributions, 5 landmarks (with allowedPhases + timeCompatibility + weatherCompatibility), trackside object list, NPC profiles (mapped per time-of-day phase + a `hujan` rain override list), audio profile (per zone: station / urban / rain / ambient), KAI signage style, doNotUse list to prevent visual mismatches.
+
+### Cities shipped
+
+| Location | Climate | Landmark highlights | Signature audio |
+|---|---|---|---|
+| `id_surabaya`   | tropical_urban    | Tugu Pahlawan, Suramadu far, Kalimas, heritage colonial | tropical_rain_light, vendor_calls |
+| `id_jakarta`    | tropical_megacity | High-rise tower, flyover, digital billboard, KRL passing| traffic_dense, horns_frequent, KRL_door_chime |
+| `id_bandung`    | highland_cool     | Distant mountain ridge, art-deco hall, tea plantation, pine grove | wind_through_pines, birds_mountain |
+| `id_yogyakarta` | heritage_urban    | Tugu Jogja, Malioboro arcade, becak/andong, banyan tree | gamelan_distant, andong_bells |
+| `id_semarang`   | coastal_tropical  | Lawang Sewu, Kota Lama, harbor cranes, Sam Poo Kong | harbor_horn_far, distant_harbor_horn |
+
+### Per-city weather distribution
+
+Each city's `defaultWeatherWeights` reflects its real climate. Surabaya: 30% cerah / 18% hujan-ringan; Bandung: 14% kabut-tipis (mountain); Semarang: 6% kabut-tipis (coastal haze); Yogyakarta: 36% cerah (driest of the 5). Test simulation across 6 picks for Surabaya returned: cerah, berawan, berawan, hujan-ringan, hujan-deras, mendung — distribution holds.
+
+### Files touched
+- NEW `games/data/bg-themes.js` — 5 city configs (~360 LOC).
+- `games/g14.html` + `games/g15-pixi.html` + `games/g16-pixi.html` + `index.html` — `<script src=".../bg-themes.js?v=54.61-20260626bn">` right after train-bg-engine.js.
+- `sw.js` — CACHE_VERSION v54.60-20260626bm → v54.61-20260626bn.
+
+### Verification
+- Boot log expected: `[bg-themes] registered 5 LocationThemes: id_surabaya, id_jakarta, id_bandung, id_yogyakarta, id_semarang` (verified via `node` sandbox load).
+- `LocationTheme.pickWeatherFor('id_surabaya')` returns variants with frequency matching the configured weights.
+- All 5 cities have ≥5 landmarks, ≥4 trackside object types, ≥4 time-of-day NPC pools, and a rain override.
+- PROTECTED chars + PvP balance unchanged.
+
+### Next
+
+- v54.62 Procedural sky + far + mid layer renderers. G15 wired to call `TrainBG.init` + `TrainBG.setContext` + delegate to engine for sky/far/mid layers.
+- v54.63 NPC archetypes + behavior FSM.
+- v54.64 International cities (Tokyo / London / Zurich / NY / Seoul).
+- v54.65 Audio ambience packs.
+- v54.66 Journey transitions + events.
+- v54.67 Surabaya Sunset Light Rain demo (per spec §23).
+- v54.68 Performance tier + QA.
+- v54.69 Docs + acceptance criteria sweep.
+
+---
+
 ## 2026-06-26 — v54.60 "Dynamic Train Racing Background Engine — Foundation" (NEW Phase 2.0)
 
 Owner attached comprehensive 26-section spec (`DYNAMIC_BG_ENGINE_SPEC.md`) for a dynamic train-racing background engine spanning 8 time-of-day phases, 12 weather variants, 17+ Indonesian + international cities, 7 journey phases, 12 modular layers, NPC archetypes, lighting/audio overlays. Owner: "Build this as a reusable engine/module… The final result should make the game feel like a train racing journey across different real-world-inspired locations."
