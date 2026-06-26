@@ -1,5 +1,37 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.90 "Side-race AI competitor + coin pickups + landing dust" (Phase 5.3)
+
+### AI competitor (ghost lane)
+
+Random character train (NOT player's pick) renders behind/above player rail at 65% scale + 85% alpha (perspective depth cue). Position oscillates: `aiDistanceOffset = 40 + sin(phase) × 18` — AI lags 22–58m behind on average, wobbles every ~12s for sense of catching-up / falling-back. Subtle bob via `sin(frame × 0.20)`. Sprite loads via same 3-tier handler as player.
+
+### Coin pickups
+
+Spawn every 2.5–5s at random Y between rail level and peak jump height. Spinning emoji 🪙 (rotation 0.08 rad/frame). Collected when train passes within 50×40 px. On collect: gold tint + alpha 0.3 → removed in 100ms + success tone (1175 Hz).
+
+`S.coinScore` tracked. HUD shows "Posisi 1 🥇 · 🪙 N" alternating with AI lead state. End modal lists "🪙 Koin terkumpul: N".
+
+### Landing dust
+
+When jump lands (Y returns to 0), 5 small grey dust particles spawn at train base with random spread. Each particle: outward velocity + gravity drop + alpha fade over 0.6s. Plus low 200 Hz landing tone.
+
+### HUD position
+
+`hud-pos` now shows position vs AI ("Posisi 1 🥇" if S.aiDistanceOffset > 0, else "Posisi 2 🥈") plus coin count. Updates every 6 frames (10 Hz).
+
+### Files
+- `games/g14-side.html` — `buildAITrain()` + AI animation tick + `spawnCoin()` + coin pickup tick + `spawnLandingDust()` + HUD updates (~140 LOC added).
+- `games/g14.html` — cache-bust to `v=54.90-20260626cq`.
+- `sw.js` v54.89 → v54.90.
+
+### Verification
+- Syntax OK on g14-side.html.
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS.
+- AI sprite uses same 3-tier load handler as player + buildAI in g14.html — no race conditions.
+
+---
+
 ## 2026-06-26 — v54.89 "Side-race scene polish — clouds, birds, NPCs, smoke, time-of-day, milestones" (Phase 5.2)
 
 Owner mandate "Keep refine, iterate". Side-scroll race now FEELS alive — not just static art with a moving train.

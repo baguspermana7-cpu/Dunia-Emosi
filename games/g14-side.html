@@ -60,14 +60,14 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <script src="data/bg-npcs.js?v=54.64-20260626bq"></script>
 <script src="data/bg-audio.js?v=54.65-20260626br"></script>
 <script src="data/bg-events.js?v=54.67-20260626bt"></script>
-<script src="obstacle-engine.js?v=54.89-20260626cp"></script>
-<script src="data/kids-questions.js?v=54.89-20260626cp"></script>
-<script src="data/obstacles.js?v=54.89-20260626cp"></script>
-<script src="data/routes.js?v=54.89-20260626cp"></script>
-<script src="data/reward-catalog.js?v=54.89-20260626cp"></script>
-<script src="reward-gallery.js?v=54.89-20260626cp"></script>
-<script src="settings-modal.js?v=54.89-20260626cp"></script>
-<script src="trains-db.js?v=54.89-20260626cp"></script>
+<script src="obstacle-engine.js?v=54.90-20260626cq"></script>
+<script src="data/kids-questions.js?v=54.90-20260626cq"></script>
+<script src="data/obstacles.js?v=54.90-20260626cq"></script>
+<script src="data/routes.js?v=54.90-20260626cq"></script>
+<script src="data/reward-catalog.js?v=54.90-20260626cq"></script>
+<script src="reward-gallery.js?v=54.90-20260626cq"></script>
+<script src="settings-modal.js?v=54.90-20260626cq"></script>
+<script src="trains-db.js?v=54.90-20260626cq"></script>
 <script src="game-modal.js?v=54.47-20260625az"></script>
 
 <div id="hud-top">
@@ -161,6 +161,14 @@ const S = {
   timeOfDay: 'pagi',     // 'pagi'|'siang'|'sore' — set at init
   milestones: [200, 400, 600, 800],
   milestonesPassed: 0,
+  // v54.90 — race + pickups
+  aiTrain: null,         // PIXI.Container — behind player ghost
+  aiDistanceOffset: 30,  // AI lags player by this many metres (varies during race)
+  aiPhase: 0,            // for AI speed wobble
+  coins: [],             // {sprite, y, scored}
+  coinScore: 0,
+  nextCoinAt: 2.5,
+  coinTimer: 0,
 }
 
 // Layout
@@ -194,6 +202,7 @@ const JUMP_VELOCITY = 720         // initial upward velocity
   buildClouds()  // v54.89
   buildRail()
   buildTrain()
+  buildAITrain() // v54.90
   setupInput()
   runCountdown(() => { S.running = true; S.frame = 0 })
 
@@ -449,6 +458,51 @@ function parseHex(s) {
   return parseInt(s.replace(/^#/, ''), 16) || 0x6b7280
 }
 
+// v54.90 — AI competitor train in background lane (slightly behind player)
+function buildAITrain() {
+  // Pick a different character train as opponent (random non-player AEG)
+  const candidates = []
+  if (window.TRAIN_CATS) {
+    for (const cat of window.TRAIN_CATS) {
+      for (const t of (cat.trains || [])) {
+        if (t.isCharacter && t.spriteUrl && t.key !== (S.trainCfg && S.trainCfg.key)) {
+          candidates.push({ ...t, category: cat.key })
+        }
+      }
+    }
+  }
+  const aiCfg = candidates.length ? candidates[Math.floor(Math.random() * candidates.length)] : null
+  if (!aiCfg) return
+
+  S.aiTrain = new PIXI.Container()
+  // Place AI in a "back lane" — visually behind/above the player rail
+  S.aiTrain.x = W * 0.10 // start further left (visually behind)
+  S.aiTrain.y = H * RAIL_Y_FRAC - 26 // slightly above player rail (behind in perspective)
+  S.aiTrain.scale.set(0.65) // smaller (further away)
+  S.aiTrain.alpha = 0.85
+
+  if (aiCfg.spriteUrl) {
+    const img = PIXI.Sprite.from(aiCfg.spriteUrl)
+    img.anchor.set(0.5, 1.0)
+    const targetH = (aiCfg.spriteHeight || 90) * 1.5
+    img.scale.set(0.5)
+    const onLoad = () => {
+      if (img.texture && img.texture.height > 1) img.scale.set(targetH / img.texture.height)
+    }
+    if (img.texture && img.texture.source && img.texture.source.loaded) onLoad()
+    else if (img.texture && img.texture.source && typeof img.texture.source.addEventListener === 'function') {
+      img.texture.source.addEventListener('load', onLoad)
+    } else {
+      let tries = 0
+      const tk = () => { if (img.texture && img.texture.height > 1) { onLoad(); return } if (tries++ < 60) requestAnimationFrame(tk) }
+      tk()
+    }
+    S.aiTrain.addChild(img)
+  }
+  // Insert BEHIND obstacle layer but BEFORE player container layering
+  stage.addChildAt(S.aiTrain, stage.getChildIndex(trainContainer))
+}
+
 // ── INPUT ───────────────────────────────────────────────────────────────────
 
 function setupInput() {
@@ -583,6 +637,52 @@ function tick(tickerOrDelta) {
     S.milestonesPassed++
   }
 
+  // v54.90 — AI competitor wobble
+  if (S.aiTrain) {
+    S.aiPhase += 0.04
+    // AI lags 20–60m behind player, wobbles ±20m every ~6s.
+    S.aiDistanceOffset = 40 + Math.sin(S.aiPhase) * 18
+    // Visual X: tracks player but offset by aiDistanceOffset / 5 px
+    const targetX = W * 0.10 - Math.min(60, Math.max(-30, (S.aiDistanceOffset - 40) * 0.8))
+    S.aiTrain.x += (targetX - S.aiTrain.x) * 0.04
+    // Subtle bob
+    S.aiTrain.y = H * RAIL_Y_FRAC - 26 + Math.sin(S.frame * 0.20) * 1.2
+  }
+
+  // v54.90 — Coin pickups spawn every 2.5-5s at varying jump heights
+  S.coinTimer += dt
+  if (S.coinTimer >= S.nextCoinAt && !S.finished) {
+    spawnCoin()
+    S.coinTimer = 0
+    S.nextCoinAt = 2.5 + Math.random() * 2.5
+  }
+  // Move + collect coins
+  for (let i = S.coins.length - 1; i >= 0; i--) {
+    const c = S.coins[i]
+    c.sprite.x -= scrollDx
+    c.sprite.rotation += 0.08 // spin
+    if (c.sprite.x < -50) {
+      particleLayer.removeChild(c.sprite)
+      S.coins.splice(i, 1)
+      continue
+    }
+    // Collection: within ~50px horizontally + within ~40px vertically of train center
+    if (!c.scored && Math.abs(c.sprite.x - trainContainer.x) < 50) {
+      const trainY = H * RAIL_Y_FRAC - 4 + S.jumpY - 35 // train sprite center approx
+      if (Math.abs(c.sprite.y - trainY) < 40) {
+        c.scored = true
+        S.coinScore++
+        try { if (typeof playTone === 'function') playTone({ freq: 1175, dur: 0.10, vol: 0.10 }) } catch {}
+        // Visual collect
+        c.sprite.tint = 0xfff7c0
+        c.sprite.alpha = 0.3
+        setTimeout(() => {
+          try { particleLayer.removeChild(c.sprite); const idx = S.coins.indexOf(c); if (idx >= 0) S.coins.splice(idx, 1) } catch {}
+        }, 100)
+      }
+    }
+  }
+
   // v54.89 — Subtle train bob (chuff rhythm)
   if (!S.jumping) {
     const bob = Math.sin(S.frame * 0.18) * 1.4
@@ -598,6 +698,9 @@ function tick(tickerOrDelta) {
       S.jumpVel = 0
       S.jumpingMissed = false
       S.jumping = false
+      // v54.90 — Landing dust puff
+      spawnLandingDust()
+      try { if (typeof playTone === 'function') playTone({ freq: 200, dur: 0.08, vol: 0.10 }) } catch {}
     }
   }
   // Jump Y override (replaces the bob below if jumping)
@@ -643,6 +746,9 @@ function tick(tickerOrDelta) {
   if (S.frame % 6 === 0) {
     document.getElementById('hud-dist').textContent = Math.floor(S.distance) + 'm / ' + S.targetDistance + 'm'
     document.getElementById('hud-hp').textContent = '❤️'.repeat(Math.max(0, S.hp)) || '💀'
+    // v54.90 — Position vs AI
+    const pos = S.aiTrain ? (S.aiDistanceOffset > 0 ? 'Posisi 1 🥇' : 'Posisi 2 🥈') : 'Mulai!'
+    document.getElementById('hud-pos').textContent = pos + ' · 🪙 ' + S.coinScore
   }
 
   // Decrement invincible
@@ -686,6 +792,43 @@ function spawnBirds() {
     bgContainer.addChild(t)
     S.birds.push({ sprite: t, vx: -1.6 - Math.random() * 0.8, frame: 0 })
   }
+}
+
+// v54.90 — Coin pickup (gold spinning coin at varying Y heights)
+// v54.90 — Landing dust puffs (5 small grey particles)
+function spawnLandingDust() {
+  for (let i = 0; i < 5; i++) {
+    const dust = new PIXI.Graphics()
+    dust.circle(0, 0, 4 + Math.random() * 3).fill(0xd7ccc8)
+    dust.x = trainContainer.x + (Math.random() - 0.5) * 30
+    dust.y = H * RAIL_Y_FRAC - 4
+    dust.alpha = 0.7
+    particleLayer.addChild(dust)
+    const vx = (Math.random() - 0.5) * 4
+    const vy = -Math.random() * 6
+    let life = 0.6
+    const tick = () => {
+      life -= 0.016
+      dust.x += vx
+      dust.y += vy * 0.4 + (0.6 - life) * 6
+      dust.alpha = (life / 0.6) * 0.7
+      if (life > 0) requestAnimationFrame(tick)
+      else { try { particleLayer.removeChild(dust); dust.destroy() } catch {} }
+    }
+    tick()
+  }
+}
+
+function spawnCoin() {
+  const coin = new PIXI.Text({ text: '🪙', style: { fontSize: 30 } })
+  coin.anchor.set(0.5, 0.5)
+  coin.x = W + 40
+  // Y range: train baseline up to peak jump height
+  const baseY = H * RAIL_Y_FRAC - 30
+  const peakY = H * RAIL_Y_FRAC - 90
+  coin.y = baseY - Math.random() * (baseY - peakY)
+  particleLayer.addChild(coin)
+  S.coins.push({ sprite: coin, scored: false })
 }
 
 // v54.89 — Milestone signpost at 200/400/600/800m
@@ -773,7 +916,8 @@ function endRace(title, outcome) {
   const stats = [
     'Jarak: ' + Math.floor(S.distance) + 'm',
     'Sisa HP: ' + Math.max(0, S.hp) + '/' + S.maxHp,
-    outcome === 'win' ? '🏆 1 koin bonus dari setiap rintangan terlewati!' : '🌱 Kamu sudah hebat! Coba lagi ya.',
+    '🪙 Koin terkumpul: ' + S.coinScore,
+    outcome === 'win' ? '🏆 Hebat! Kamu sampai duluan!' : '🌱 Kamu sudah hebat! Coba lagi ya.',
   ]
   document.getElementById('end-stats').innerHTML = stats.join('<br>')
   document.getElementById('end-modal').classList.add('show')
