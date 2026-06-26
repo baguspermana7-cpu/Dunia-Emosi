@@ -1,5 +1,45 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.75 "Adaptive difficulty + age presets + accessibility + reward storage" (Phase 4.6)
+
+### Adaptive difficulty
+
+- `ObstacleEngine.suggestedDifficulty(baseTier)` — uses `_state.recentFails` / `_state.recentWins` counters:
+  - `recentFails >= 2` → tier = max(1, baseTier - 1) (easier)
+  - `recentWins  >= 5` → tier = min(4, baseTier + 1) (harder)
+- `ObstacleEngine.pickAdaptiveCandidates({age?, baseTier?})` — filters `_registry` by age + difficulty tier ±1. Falls back to full registry if filter yields zero.
+- G14 `_pickObstacleId()` now uses `pickAdaptiveCandidates()` as the primary filter, then narrows by `TrainBG._state.journey.name` + `location.id` if BG engine is active.
+
+### Age preset (4 / 5 / 6 / 7)
+
+- `ObstacleEngine.getAgePreset()` / `setAgePreset(a)` — persists `localStorage['train-age-preset']`. Default = '5'.
+- 4 buttons on G14 train-picker row (Usia: 4 5 6 7), active state shows pink-pastel gradient pill.
+- Per spec §30: age 4 → shapes/colors/count 1-3; age 5 → +matching; age 6 → +addition; age 7 → +pattern. Engine reads age range from each obstacle's `def.ageRange` field (e.g. "4-7", "5-7", "6-7").
+
+### Accessibility — high-contrast mode
+
+- `ObstacleEngine.getHighContrast()` / `setHighContrast(v)` — adds `obstacle-engine-highcontrast` class to `<html>`.
+- CSS rules force black-on-white card + 6px black borders + green/red bold correct/wrong states.
+- Toggle button ♿ Kontras on G14 train picker.
+
+### Reward storage extension
+
+- `ObstacleEngine` now reads `def.reward.sticker / .badge / .hornUnlock` strings and persists to `localStorage['train-stickers' / 'train-badges' / 'train-horn-unlocks']` (JSON arrays, dedup).
+- Public accessors: `getStickers()`, `getBadges()`, `getHornUnlocks()`.
+- v54.76+ obstacles can add rewards like `reward: {coins: 5, sticker: 'surabaya_helper'}` — engine auto-writes.
+
+### Files touched
+- `games/obstacle-engine.js` — adaptive + age + high-contrast + reward storage (~120 LOC added).
+- `games/g14.html` — adaptive picker call + age picker UI + HC toggle UI + g14SetAge/g14ToggleHighContrast helpers + cache-bust `v=54.75-20260626cb`.
+- `sw.js` v54.74 → v54.75.
+
+### Verification
+- Syntax OK on obstacle-engine.js + g14.html.
+- Age picker persists across page reloads (localStorage).
+- High-contrast applies to ALL obstacles via shared CSS rules (no per-obstacle edits needed).
+
+---
+
 ## 2026-06-26 — v54.74 "Station task tranche (9 obstacles + cargo sort generator)" (Phase 4.5)
 
 52 obstacles total (43 from v54.73 + 9 new). All station tasks gated to `allowedJourneyPhases: ['arrival']` so they fire when the train reaches a station.

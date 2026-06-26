@@ -211,9 +211,9 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 <script src="data/bg-audio.js?v=54.65-20260626br"></script>
 <script src="data/bg-events.js?v=54.67-20260626bt"></script>
 <!-- v54.69 — ObstacleEngine foundation (modular obstacle system, soft-fail, kids-friendly) -->
-<script src="obstacle-engine.js?v=54.74-20260626ca"></script>
-<script src="data/kids-questions.js?v=54.74-20260626ca"></script>
-<script src="data/obstacles.js?v=54.74-20260626ca"></script>
+<script src="obstacle-engine.js?v=54.75-20260626cb"></script>
+<script src="data/kids-questions.js?v=54.75-20260626cb"></script>
+<script src="data/obstacles.js?v=54.75-20260626cb"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
@@ -313,6 +313,22 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
       <span id="g14-mode-icon">😊</span> <span id="g14-mode-label">Mudah</span>
     </button>
   </div>
+  <!-- v54.75 — Age picker + high-contrast toggle row -->
+  <div id="g14-prefs-row" style="display:flex;justify-content:center;align-items:center;gap:8px;padding:8px 12px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:900;color:#c4b5fd">Usia:</span>
+    <button class="g14-age-btn" data-age="4" onclick="g14SetAge('4')">4</button>
+    <button class="g14-age-btn" data-age="5" onclick="g14SetAge('5')">5</button>
+    <button class="g14-age-btn" data-age="6" onclick="g14SetAge('6')">6</button>
+    <button class="g14-age-btn" data-age="7" onclick="g14SetAge('7')">7</button>
+    <button id="g14-hc-toggle" type="button" onclick="g14ToggleHighContrast()" aria-label="Mode kontras tinggi"
+            style="background:rgba(255,255,255,0.12);border:2px solid rgba(255,255,255,0.3);border-radius:10px;color:#fff;padding:8px 12px;font-size:13px;cursor:pointer;font-family:inherit;font-weight:900;min-height:40px;margin-left:6px">
+      ♿ <span id="g14-hc-label">Standar</span>
+    </button>
+  </div>
+  <style>
+    .g14-age-btn { background: rgba(255,255,255,0.10); border: 2px solid rgba(255,255,255,0.25); border-radius: 10px; color: #fff; padding: 8px 14px; font-size: 16px; cursor: pointer; font-family: inherit; font-weight: 900; min-width: 44px; min-height: 40px; }
+    .g14-age-btn.active { background: linear-gradient(135deg, #f9a8d4, #ec4899); border-color: #fbcfe8; color: #fff; box-shadow: 0 3px 0 rgba(190,24,93,0.4); }
+  </style>
   <div id="sel-crumb" onclick="showCategories()">← Semua Kategori</div>
   <div id="select-body"></div>
   <div id="go-btn-wrap"><button id="go-btn" onclick="startRace()">🚦 Mulai Balapan!</button></div>
@@ -354,9 +370,42 @@ function g14RefreshModeBadge(){
 }
 // Refresh badge on load once engine is present
 (function pollEngine(){
-  if (window.ObstacleEngine) { g14RefreshModeBadge(); return }
+  if (window.ObstacleEngine) { g14RefreshModeBadge(); g14RefreshAgeButtons(); g14RefreshHCBadge(); return }
   setTimeout(pollEngine, 100)
 })();
+
+// v54.75 — Age picker (4/5/6/7) and high-contrast accessibility toggle.
+function g14SetAge(a){
+  if (!window.ObstacleEngine) return
+  window.ObstacleEngine.setAgePreset(a)
+  g14RefreshAgeButtons()
+}
+function g14RefreshAgeButtons(){
+  if (!window.ObstacleEngine) return
+  const cur = window.ObstacleEngine.getAgePreset()
+  document.querySelectorAll('.g14-age-btn').forEach(b => {
+    if (b.dataset.age === cur) b.classList.add('active')
+    else b.classList.remove('active')
+  })
+}
+function g14ToggleHighContrast(){
+  if (!window.ObstacleEngine) return
+  const cur = window.ObstacleEngine.getHighContrast()
+  window.ObstacleEngine.setHighContrast(!cur)
+  g14RefreshHCBadge()
+}
+function g14RefreshHCBadge(){
+  if (!window.ObstacleEngine) return
+  const on = window.ObstacleEngine.getHighContrast()
+  const btn = document.getElementById('g14-hc-toggle')
+  const label = document.getElementById('g14-hc-label')
+  if (label) label.textContent = on ? 'Kontras' : 'Standar'
+  if (btn) {
+    btn.style.background = on ? 'rgba(250,204,21,0.92)' : 'rgba(255,255,255,0.12)'
+    btn.style.borderColor = on ? '#000' : 'rgba(255,255,255,0.3)'
+    btn.style.color = on ? '#000' : '#fff'
+  }
+}
 </script>
 
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
@@ -3488,18 +3537,21 @@ function g14WireObstacleEngine(){
   })
 
   // Schedule a puzzle every ~28-40s during the race. Re-arms on success.
-  // v54.70: pick a random obstacle from the registry, weighted toward foundation
-  // (missing_rail_triangle) and repair types. Subsequent tranches expand library.
+  // v54.75: adaptive picker — filters by age preset + suggested difficulty tier
+  // + journey/location context. Falls back gracefully to full registry.
   function _pickObstacleId(){
-    const registry = window.ObstacleEngine._registry || {}
+    const OE = window.ObstacleEngine
+    if (!OE) return 'missing_rail_triangle'
+    const registry = OE._registry || {}
     const allIds = Object.keys(registry)
     if (allIds.length === 0) return 'missing_rail_triangle'
-    // Filter by allowed journey phases / locations if we have BG context
-    let pool = allIds
+    // Adaptive filter — age + difficulty tier
+    let pool = (typeof OE.pickAdaptiveCandidates === 'function') ? OE.pickAdaptiveCandidates() : allIds
+    // Further filter by journey/location context if BG engine has state
     try {
       const ctx = window.TrainBG && window.TrainBG._state
       if (ctx && ctx.journey && ctx.location) {
-        pool = allIds.filter(id => {
+        const filtered = pool.filter(id => {
           const def = registry[id]
           if (!def) return false
           const phases = def.allowedJourneyPhases || ['*']
@@ -3508,7 +3560,7 @@ function g14WireObstacleEngine(){
           const locOK   = locs.includes('*')   || locs.includes(ctx.location.id) || locs.includes((ctx.location.id || '').replace(/^id_/, ''))
           return phaseOK && locOK
         })
-        if (pool.length === 0) pool = allIds
+        if (filtered.length > 0) pool = filtered
       }
     } catch(_){}
     return pool[Math.floor(Math.random() * pool.length)]

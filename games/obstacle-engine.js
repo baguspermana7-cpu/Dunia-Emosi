@@ -115,6 +115,67 @@
     try { localStorage.setItem('train-game-mode', m) } catch {}
   }
 
+  // ── v54.75: Age preset (4 / 5 / 6 / 7) ──────────────────────────────────────
+
+  let _agePreset = (() => {
+    try { return localStorage.getItem('train-age-preset') || '5' } catch { return '5' }
+  })()
+  function getAgePreset() { return _agePreset }
+  function setAgePreset(a) {
+    if (!['4','5','6','7'].includes(String(a))) return
+    _agePreset = String(a)
+    try { localStorage.setItem('train-age-preset', _agePreset) } catch {}
+  }
+
+  // ── v54.75: High-contrast mode ──────────────────────────────────────────────
+
+  let _highContrast = (() => {
+    try { return localStorage.getItem('train-high-contrast') === '1' } catch { return false }
+  })()
+  function getHighContrast() { return _highContrast }
+  function setHighContrast(v) {
+    _highContrast = !!v
+    try { localStorage.setItem('train-high-contrast', _highContrast ? '1' : '0') } catch {}
+    _applyHighContrastClass()
+  }
+  function _applyHighContrastClass() {
+    if (typeof document === 'undefined') return
+    document.documentElement.classList.toggle('obstacle-engine-highcontrast', _highContrast)
+  }
+
+  // ── v54.75: Adaptive difficulty picker hint ────────────────────────────────
+
+  // Given current state, returns a tier hint (1-4) the picker should bias toward.
+  // recentFails >= 2 → bias down to tier 1 (easier).
+  // recentWins  >= 5 → bias up by 1 tier.
+  function suggestedDifficulty(baseTier) {
+    let tier = baseTier || 2
+    if (_state.recentFails >= 2) tier = Math.max(1, tier - 1)
+    if (_state.recentWins  >= 5) tier = Math.min(4, tier + 1)
+    return tier
+  }
+
+  // Filter registry by age + suggested tier. Returns list of obstacle IDs.
+  // Falls back to full registry if filter yields zero matches.
+  function pickAdaptiveCandidates(opts) {
+    const list = []
+    const ageKey = (opts && opts.age) || _agePreset
+    const tier = suggestedDifficulty((opts && opts.baseTier) || 2)
+    Object.keys(REGISTRY).forEach(id => {
+      const def = REGISTRY[id]
+      if (!def) return
+      const ageRange = def.ageRange || '4-7'
+      const [lo, hi] = ageRange.split('-').map(s => parseInt(s, 10))
+      const ageNum = parseInt(ageKey, 10)
+      const ageOK = !isNaN(ageNum) && ageNum >= lo && ageNum <= hi
+      if (!ageOK) return
+      // Allow tier ±1 around suggested
+      if (Math.abs((def.difficulty || 1) - tier) <= 1) list.push(id)
+    })
+    if (list.length === 0) return Object.keys(REGISTRY)
+    return list
+  }
+
   // ── Internal: approach (slow down + zoom) ───────────────────────────────────
 
   function _approach(def) {
@@ -183,6 +244,13 @@
     if (_gameAPI && _gameAPI.awardReward) {
       try { _gameAPI.awardReward(def.reward, def.id) } catch (e) { console.warn(e) }
     }
+
+    // v54.75: persist sticker / badge / hornUnlock rewards to localStorage
+    try {
+      if (def.reward && def.reward.sticker) _addToStorageList('train-stickers', def.reward.sticker)
+      if (def.reward && def.reward.badge)   _addToStorageList('train-badges',   def.reward.badge)
+      if (def.reward && def.reward.hornUnlock) _addToStorageList('train-horn-unlocks', def.reward.hornUnlock)
+    } catch (e) { console.warn(e) }
 
     // Tone
     if (typeof global.playTone === 'function' && def.reward && def.reward.sound) {
@@ -420,6 +488,38 @@
           animation: none !important; transition: none !important;
         }
       }
+      /* v54.75: high-contrast outline mode (accessibility) */
+      .obstacle-engine-highcontrast .obstacle-engine-body {
+        background: #fff !important;
+        border-color: #000 !important;
+        border-width: 6px !important;
+      }
+      .obstacle-engine-highcontrast .obstacle-engine-shape-btn {
+        background: #fff !important;
+        border-color: #000 !important;
+        border-width: 6px !important;
+        color: #000 !important;
+      }
+      .obstacle-engine-highcontrast .obstacle-engine-shape-btn.correct {
+        background: #16a34a !important;
+        color: #fff !important;
+        border-color: #052e16 !important;
+      }
+      .obstacle-engine-highcontrast .obstacle-engine-shape-btn.wrong {
+        background: #dc2626 !important;
+        color: #fff !important;
+        border-color: #450a0a !important;
+      }
+      .obstacle-engine-highcontrast .obstacle-engine-target {
+        background: #fff !important;
+        border-color: #000 !important;
+        border-width: 6px !important;
+        color: #000 !important;
+      }
+      .obstacle-engine-highcontrast .obstacle-engine-title {
+        color: #000 !important;
+        text-shadow: none !important;
+      }
     `
     document.head.appendChild(style)
   }
@@ -443,6 +543,24 @@
     }
   }
 
+  // ── v54.75: localStorage list helpers (stickers, badges, horn unlocks) ─────
+
+  function _addToStorageList(key, item) {
+    try {
+      const raw = localStorage.getItem(key) || '[]'
+      const list = JSON.parse(raw)
+      if (!Array.isArray(list)) return
+      if (!list.includes(item)) {
+        list.push(item)
+        localStorage.setItem(key, JSON.stringify(list))
+      }
+    } catch (e) { console.warn('[OE] list write fail', key, e) }
+  }
+
+  function getStickers()    { try { return JSON.parse(localStorage.getItem('train-stickers')    || '[]') } catch { return [] } }
+  function getBadges()      { try { return JSON.parse(localStorage.getItem('train-badges')      || '[]') } catch { return [] } }
+  function getHornUnlocks() { try { return JSON.parse(localStorage.getItem('train-horn-unlocks')|| '[]') } catch { return [] } }
+
   // ── Voice prompt (Web Speech, silent fallback) ─────────────────────────────
 
   function speak(text) {
@@ -463,9 +581,22 @@
     VERSION,
     register, attach, spawn,
     getMode, setMode,
+    // v54.75
+    getAgePreset, setAgePreset,
+    getHighContrast, setHighContrast,
+    suggestedDifficulty, pickAdaptiveCandidates,
+    getStickers, getBadges, getHornUnlocks,
     spawnSparkles, speak, reducedMotion,
     _registry: REGISTRY,
     _state: _state,
   }
+
+  // Apply persisted high-contrast on load
+  try {
+    if (typeof document !== 'undefined') {
+      if (document.readyState !== 'loading') _applyHighContrastClass()
+      else document.addEventListener('DOMContentLoaded', _applyHighContrastClass)
+    }
+  } catch {}
 
 })(typeof window !== 'undefined' ? window : globalThis);
