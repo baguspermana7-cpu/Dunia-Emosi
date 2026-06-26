@@ -211,9 +211,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 <script src="data/bg-audio.js?v=54.65-20260626br"></script>
 <script src="data/bg-events.js?v=54.67-20260626bt"></script>
 <!-- v54.69 — ObstacleEngine foundation (modular obstacle system, soft-fail, kids-friendly) -->
-<script src="obstacle-engine.js?v=54.75-20260626cb"></script>
-<script src="data/kids-questions.js?v=54.75-20260626cb"></script>
-<script src="data/obstacles.js?v=54.75-20260626cb"></script>
+<script src="obstacle-engine.js?v=54.76-20260626cc"></script>
+<script src="data/kids-questions.js?v=54.76-20260626cc"></script>
+<script src="data/obstacles.js?v=54.76-20260626cc"></script>
+<script src="data/routes.js?v=54.76-20260626cc"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
@@ -3579,7 +3580,87 @@ function g14WireObstacleEngine(){
       }
     }, delayMs)
   }
-  _scheduleNext()
+
+  // v54.76 — Scripted route runner. If BG engine has set a known location,
+  // try to look up a scripted route and run it step-by-step. Falls back to
+  // _scheduleNext() (adaptive random) if no scripted route matches.
+  function _tryRunScriptedRoute(){
+    if (typeof window.findRouteForLocation !== 'function') return false
+    const bg = window.TrainBG && window.TrainBG._state
+    const locId = bg && bg.location && bg.location.id
+    if (!locId) return false
+    const route = window.findRouteForLocation(locId)
+    if (!route || !route.sequence || route.sequence.length === 0) return false
+
+    console.log('[g14] running scripted route:', route.id, 'with', route.sequence.length, 'beats')
+    let step = 0
+    function _runStep(){
+      if (!S.running) return
+      if (step >= route.sequence.length) {
+        // Route complete — award completion reward, then fall back to random for remainder of race
+        if (route.completionReward && window.ObstacleEngine) {
+          try {
+            const r = route.completionReward
+            if (r.coins) { S.coins = (S.coins||0) + r.coins; try{updateHUD()}catch(_){} }
+            if (r.sticker)    window.ObstacleEngine._addToStorageList && window.ObstacleEngine._addToStorageList('train-stickers', r.sticker)
+            if (r.badge)      window.ObstacleEngine._addToStorageList && window.ObstacleEngine._addToStorageList('train-badges', r.badge)
+            if (r.hornUnlock) window.ObstacleEngine._addToStorageList && window.ObstacleEngine._addToStorageList('train-horn-unlocks', r.hornUnlock)
+            // Fallback for missing helper
+            if (!window.ObstacleEngine._addToStorageList) {
+              try {
+                const w = (k,v) => { const a = JSON.parse(localStorage.getItem(k)||'[]'); if (!a.includes(v)) { a.push(v); localStorage.setItem(k, JSON.stringify(a)) } }
+                if (r.sticker)    w('train-stickers', r.sticker)
+                if (r.badge)      w('train-badges',   r.badge)
+                if (r.hornUnlock) w('train-horn-unlocks', r.hornUnlock)
+              } catch {}
+            }
+          } catch(e) { console.warn(e) }
+        }
+        _scheduleNext()
+        return
+      }
+      const beat = route.sequence[step]; step++
+      if (beat.type === 'wait') {
+        setTimeout(_runStep, beat.durationMs || 6000)
+      } else if (beat.type === 'arrival') {
+        // Arrival beat — no obstacle, just a short transition pause
+        setTimeout(_runStep, 4000)
+      } else if (beat.obstacleId) {
+        try {
+          const overrideReward = beat.overrideReward
+          // For now, just spawn the obstacle (overrideReward propagates via the def's reward field).
+          // A future tranche could allow per-spawn overrides via opts.
+          window.ObstacleEngine.spawn(beat.obstacleId, { overrideReward }).then(() => {
+            // Apply override reward extras (sticker/badge) on success
+            if (overrideReward) {
+              try {
+                if (overrideReward.coins) { S.coins = (S.coins||0) + overrideReward.coins; try{updateHUD()}catch(_){} }
+                const w = (k,v) => { const a = JSON.parse(localStorage.getItem(k)||'[]'); if (!a.includes(v)) { a.push(v); localStorage.setItem(k, JSON.stringify(a)) } }
+                if (overrideReward.sticker)    w('train-stickers', overrideReward.sticker)
+                if (overrideReward.badge)      w('train-badges',   overrideReward.badge)
+                if (overrideReward.hornUnlock) w('train-horn-unlocks', overrideReward.hornUnlock)
+              } catch(e) { console.warn(e) }
+            }
+            // Inter-beat delay
+            setTimeout(_runStep, 4000 + Math.random() * 3000)
+          })
+        } catch(e) {
+          console.warn('[g14] scripted spawn failed', e)
+          setTimeout(_runStep, 5000)
+        }
+      } else {
+        setTimeout(_runStep, 1000) // unknown beat — skip
+      }
+    }
+    // Wait 1500ms for BG context to settle then start
+    setTimeout(_runStep, 1500)
+    return true
+  }
+
+  // Try scripted route first; if no match, fall back to adaptive random scheduler.
+  if (!_tryRunScriptedRoute()) {
+    _scheduleNext()
+  }
 }
 
 // v54.17 A1: 3-2-1-GO ritual with station bell ding + steam whistle on GO.

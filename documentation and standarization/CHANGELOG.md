@@ -1,5 +1,51 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.76 "Scripted route runner — Surabaya + Jakarta + Bandung + Yogya + Semarang" (Phase 4.7)
+
+### NEW `games/data/routes.js` (~150 LOC, 5 routes)
+
+Each route = ordered sequence of beats (wait, obstacleId, arrival). Per spec §28, Surabaya is the anchor scripted demo with 8 beats:
+
+| Beat | Type | Detail |
+|---|---|---|
+| 1 | wait 8s     | opening lane drive |
+| 2 | obstacle    | `falling_rocks_small` (lane avoid) |
+| 3 | obstacle    | `missing_rail_triangle` (drag-drop) |
+| 4 | obstacle    | `fire_jump_question` (shape Q) |
+| 5 | obstacle    | `signal_light_challenge` (red/yellow/green) |
+| 6 | obstacle    | `animal_crossing_cat` (kindness tap) |
+| 7 | obstacle    | `station_cargo_sort_color` + 🏆 Surabaya Helper sticker + 🏅 Surabaya Explorer badge |
+| 8 | arrival     | route complete + 20 coins + Surabaya Route Complete badge |
+
+4 additional scripted routes (Jakarta urban-komuter, Bandung pegunungan, Yogyakarta budaya, Semarang pesisir) each ~7-8 beats with location-themed obstacle picks and completion rewards.
+
+### Route runner — G14
+
+`g14WireObstacleEngine()._tryRunScriptedRoute()`:
+- Reads `window.TrainBG._state.location.id` (set by BG engine per-level location rotation).
+- Calls `window.findRouteForLocation(locId)` — returns matching scripted route or null.
+- If route matches: runs `route.sequence` one beat at a time. Wait beats use `setTimeout`; obstacle beats `spawn` then schedule next; arrival beat awards completion reward then transitions to adaptive random scheduler for race remainder.
+- If no route matches: falls back to `_scheduleNext()` (adaptive random).
+
+### Reward integration
+
+- Per-obstacle `overrideReward` field in route sequence: e.g. `{ obstacleId:'station_cargo_sort_color', overrideReward:{ coins:10, sticker:'surabaya_helper', badge:'surabaya_explorer' }}`.
+- Engine `_addToStorageList` exposed publicly so route runners write to `train-stickers / train-badges / train-horn-unlocks` consistently with single-obstacle reward flow.
+
+### Files touched
+- NEW `games/data/routes.js` (~150 LOC).
+- `games/g14.html` — `_tryRunScriptedRoute()` runner + script tag for routes.js + cache-bust `v=54.76-20260626cc`.
+- `games/obstacle-engine.js` — `_addToStorageList` exposed publicly.
+- `sw.js` v54.75 → v54.76.
+
+### Verification
+- 5 routes registered; each route ID maps to a unique BG-engine `locationId`.
+- Syntax OK across obstacles + routes + engine + g14.
+- Surabaya route runs ~60-90 seconds with all 8 beats.
+- PROTECTED chars unchanged.
+
+---
+
 ## 2026-06-26 — v54.75 "Adaptive difficulty + age presets + accessibility + reward storage" (Phase 4.6)
 
 ### Adaptive difficulty

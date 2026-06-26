@@ -556,6 +556,8 @@
       }
     } catch (e) { console.warn('[OE] list write fail', key, e) }
   }
+  // Exposed as public helper so route runners can write rewards via the engine
+  // instead of duplicating the JSON-list logic. v54.76.
 
   function getStickers()    { try { return JSON.parse(localStorage.getItem('train-stickers')    || '[]') } catch { return [] } }
   function getBadges()      { try { return JSON.parse(localStorage.getItem('train-badges')      || '[]') } catch { return [] } }
@@ -586,6 +588,7 @@
     getHighContrast, setHighContrast,
     suggestedDifficulty, pickAdaptiveCandidates,
     getStickers, getBadges, getHornUnlocks,
+    _addToStorageList, // v54.76 — exposed for route runners
     spawnSparkles, speak, reducedMotion,
     _registry: REGISTRY,
     _state: _state,
