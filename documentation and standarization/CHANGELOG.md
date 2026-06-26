@@ -1,5 +1,49 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.95 "Side-race tutorial intro (3 slides, first-visit-only) — parallel agent A ship" (Phase 5.8)
+
+Parallel multi-agent ship per owner directive "Deploy more agent". Agent B (worktree-isolated) added a tutorial intro overlay for first-time players.
+
+### Tutorial slides
+
+3 slides, fade-in entrance, 3-dot progress indicator:
+
+1. **🎮 Cara Bermain** — Fake green LOMPAT chip + animated 👆 finger that taps it on 1.2s loop. Text: "Tap tombol LOMPAT untuk melompat!"
+2. **🪨 Awas Rintangan!** — 🪨 + 🌵 art. Text: "Hindari rintangan dengan lompat tinggi!"
+3. **🪙 Kumpulkan Koin!** — 3 🪙 row. Final green "🏁 Mulai!" CTA.
+
+### Behavior
+
+- Gated by `localStorage['g14s-tutorial-seen']` — shown only on first visit. Set to `'1'` on completion.
+- Init sequence wraps to: `showTutorial → showPreRaceBanner → runCountdown → race start`.
+- "Lewati tutorial" skip link on slides 1 + 2; final slide only has the Mulai CTA.
+- `prefers-reduced-motion` honored: slide fade-in disabled, finger freezes mid-tap.
+- Tap targets ≥ 48 px (Mulai button 160×48 min, fake LOMPAT chip 110×56).
+
+### Re-watch from pause modal
+
+NEW "🎓 Lihat Tutorial Lagi" link added to the pause modal. Tapping it:
+- Clears the `g14s-tutorial-seen` localStorage flag
+- Hides pause modal
+- Calls `showTutorial()` again
+- Auto-resumes race after tutorial completes
+
+### Files
+- `games/g14-side.html` — Tutorial CSS + 3 slides HTML + `showTutorial(done)` function + pause-modal re-watch link (~125 LOC added by agent B).
+- `games/g14.html` — cache-bust `v=54.95-20260626cv`.
+- `sw.js` v54.94 → v54.95.
+
+### Verification
+- Syntax OK on g14-side.html.
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS (no regression).
+- Built in worktree-agent-ac65ede54fceb27c6, patched onto main via `git apply`.
+
+### Parallel work still in flight
+- Agent A — obstacle scene cinematic polish (signal_light / water_puddle_pump / station_passenger_pickup_3 / tunnel_gate_question) — running, will ship as v54.96+.
+- Agent C — Puppeteer visual QA — running, will inform v54.97+ refinements.
+
+---
+
 ## 2026-06-26 — v54.94 "Side-race pre-race overview banner + L190-L194 lessons catch-up" (Phase 5.7)
 
 ### Pre-race overview banner

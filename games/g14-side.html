@@ -39,6 +39,31 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 @keyframes g14sShake{0%,100%{transform:translate(0)}20%{transform:translate(-6px,2px)}40%{transform:translate(6px,-2px)}60%{transform:translate(-4px,3px)}80%{transform:translate(3px,-3px)}}
 @media (prefers-reduced-motion: reduce){@keyframes g14sShake{0%,100%{transform:translate(0)}}}
 
+/* v54.95 — Tutorial intro overlay (first-visit only) */
+#tutorial-overlay{position:fixed;inset:0;z-index:220;display:none;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,rgba(15,23,42,0.55),rgba(15,23,42,0.85));padding:16px}
+#tutorial-overlay.show{display:flex}
+.tut-slide{display:none;width:min(92vw,440px);background:linear-gradient(180deg,#fef3c7,#fcd34d);border:5px solid #f59e0b;border-radius:24px;padding:26px 22px;text-align:center;box-shadow:0 16px 50px rgba(0,0,0,0.4);animation:tut-fade 0.4s ease-out}
+.tut-slide.active{display:block}
+.tut-title{font-size:clamp(22px,5.4vw,30px);color:#5a2a00;font-weight:900;margin-bottom:10px;text-shadow:0 2px 0 rgba(255,255,255,0.7)}
+.tut-art{font-size:clamp(72px,18vw,110px);line-height:1;margin:14px 0;display:flex;align-items:center;justify-content:center;gap:14px}
+.tut-text{font-size:clamp(15px,3.8vw,18px);color:#92400e;font-weight:900;line-height:1.5;margin:8px 0 18px}
+.tut-fake-jump{display:inline-block;background:linear-gradient(135deg,#bbf7d0,#22c55e);border:4px solid #166534;border-radius:18px;color:#052e16;padding:14px 30px;font-family:inherit;font-weight:900;font-size:18px;box-shadow:0 5px 0 #14532d;position:relative}
+.tut-finger{position:absolute;right:-22px;bottom:-26px;font-size:38px;animation:tut-tap 1.2s ease-in-out infinite;transform-origin:center}
+@keyframes tut-tap{0%,100%{transform:translate(0,0) scale(1)}40%{transform:translate(-16px,-18px) scale(1.05)}55%{transform:translate(-4px,-2px) scale(0.95)}}
+@keyframes tut-fade{0%{opacity:0;transform:scale(0.85)}100%{opacity:1;transform:scale(1)}}
+.tut-dots{display:flex;justify-content:center;gap:8px;margin:14px 0 12px}
+.tut-dot{width:10px;height:10px;border-radius:50%;background:rgba(120,53,15,0.3)}
+.tut-dot.on{background:#b45309;transform:scale(1.2)}
+.tut-btn{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;border:0;padding:14px 28px;font-family:inherit;font-weight:900;font-size:16px;border-radius:14px;cursor:pointer;min-height:48px;min-width:160px;box-shadow:0 5px 0 #14532d;margin-top:6px}
+.tut-btn.amber{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#5a2a00;box-shadow:0 5px 0 #b45309}
+.tut-btn:active{transform:translateY(2px);box-shadow:0 3px 0 #14532d}
+.tut-skip{display:block;margin-top:10px;background:none;border:0;color:#92400e;font-family:inherit;font-size:13px;text-decoration:underline;cursor:pointer;font-weight:900}
+.tut-rewatch{background:none;border:0;color:#312e81;font-family:inherit;font-size:14px;text-decoration:underline;cursor:pointer;margin-top:14px;font-weight:900}
+@media (prefers-reduced-motion: reduce){
+  .tut-slide{animation:none}
+  .tut-finger{animation:none;transform:translate(-12px,-14px)}
+}
+
 /* End modal */
 #end-modal{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,0.7);backdrop-filter:blur(4px)}
 #end-modal.show{display:flex}
@@ -64,14 +89,14 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <script src="data/bg-npcs.js?v=54.64-20260626bq"></script>
 <script src="data/bg-audio.js?v=54.65-20260626br"></script>
 <script src="data/bg-events.js?v=54.67-20260626bt"></script>
-<script src="obstacle-engine.js?v=54.94-20260626cu"></script>
-<script src="data/kids-questions.js?v=54.94-20260626cu"></script>
-<script src="data/obstacles.js?v=54.94-20260626cu"></script>
-<script src="data/routes.js?v=54.94-20260626cu"></script>
-<script src="data/reward-catalog.js?v=54.94-20260626cu"></script>
-<script src="reward-gallery.js?v=54.94-20260626cu"></script>
-<script src="settings-modal.js?v=54.94-20260626cu"></script>
-<script src="trains-db.js?v=54.94-20260626cu"></script>
+<script src="obstacle-engine.js?v=54.95-20260626cv"></script>
+<script src="data/kids-questions.js?v=54.95-20260626cv"></script>
+<script src="data/obstacles.js?v=54.95-20260626cv"></script>
+<script src="data/routes.js?v=54.95-20260626cv"></script>
+<script src="data/reward-catalog.js?v=54.95-20260626cv"></script>
+<script src="reward-gallery.js?v=54.95-20260626cv"></script>
+<script src="settings-modal.js?v=54.95-20260626cv"></script>
+<script src="trains-db.js?v=54.95-20260626cv"></script>
 <script src="game-modal.js?v=54.47-20260625az"></script>
 
 <div id="hud-top">
@@ -96,6 +121,36 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
       <button onclick="g14sTogglePause()" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;border:0;padding:14px 24px;font-family:inherit;font-weight:900;font-size:15px;border-radius:14px;cursor:pointer;min-height:48px;min-width:140px;box-shadow:0 4px 0 #14532d">▶ Lanjutkan</button>
       <button onclick="goBack()" style="background:linear-gradient(135deg,#f87171,#dc2626);color:#fff;border:0;padding:14px 24px;font-family:inherit;font-weight:900;font-size:15px;border-radius:14px;cursor:pointer;min-height:48px;min-width:140px;box-shadow:0 4px 0 #7f1d1d">🚂 Ganti Kereta</button>
     </div>
+    <button type="button" class="tut-rewatch" onclick="g14sReplayTutorial()">🎓 Lihat Tutorial Lagi</button>
+  </div>
+</div>
+
+<!-- v54.95 — Tutorial intro overlay (first-visit only, gated by localStorage) -->
+<div id="tutorial-overlay" role="dialog" aria-label="Cara Bermain">
+  <div class="tut-slide" id="tut-slide-1">
+    <div class="tut-title">🎮 Cara Bermain</div>
+    <div class="tut-art">
+      <span class="tut-fake-jump">⬆ LOMPAT!<span class="tut-finger">👆</span></span>
+    </div>
+    <div class="tut-text">Tap tombol <b>LOMPAT</b> untuk melompat!</div>
+    <div class="tut-dots"><span class="tut-dot on"></span><span class="tut-dot"></span><span class="tut-dot"></span></div>
+    <button type="button" class="tut-btn amber" onclick="g14sTutorialNext()">Lanjut →</button>
+    <button type="button" class="tut-skip" onclick="g14sTutorialFinish()">Lewati tutorial</button>
+  </div>
+  <div class="tut-slide" id="tut-slide-2">
+    <div class="tut-title">🪨 Awas Rintangan!</div>
+    <div class="tut-art"><span>🪨</span><span style="font-size:0.5em">+</span><span>🌵</span></div>
+    <div class="tut-text">Hindari rintangan dengan <b>lompat tinggi</b>!</div>
+    <div class="tut-dots"><span class="tut-dot"></span><span class="tut-dot on"></span><span class="tut-dot"></span></div>
+    <button type="button" class="tut-btn amber" onclick="g14sTutorialNext()">Lanjut →</button>
+    <button type="button" class="tut-skip" onclick="g14sTutorialFinish()">Lewati tutorial</button>
+  </div>
+  <div class="tut-slide" id="tut-slide-3">
+    <div class="tut-title">🪙 Kumpulkan Koin!</div>
+    <div class="tut-art"><span>🪙</span><span>🪙</span><span>🪙</span></div>
+    <div class="tut-text">Kumpulkan <b>koin</b> untuk skor tinggi!</div>
+    <div class="tut-dots"><span class="tut-dot"></span><span class="tut-dot"></span><span class="tut-dot on"></span></div>
+    <button type="button" class="tut-btn" onclick="g14sTutorialFinish()">🏁 Mulai!</button>
   </div>
 </div>
 
@@ -235,13 +290,15 @@ const JUMP_VELOCITY = 720         // initial upward velocity
   buildTrain()
   buildAITrain() // v54.90
   setupInput()
-  // v54.94 — Show pre-race overview banner before countdown
-  showPreRaceBanner(() => {
-    runCountdown(() => {
-      S.running = true
-      S.frame = 0
-      // v54.91 — Wire ObstacleEngine + schedule first puzzle
-      try { g14sWireObstacleEngine() } catch(e) { console.warn('OE wire fail', e) }
+  // v54.95 — Tutorial intro (first-visit only) → pre-race banner → countdown
+  showTutorial(() => {
+    showPreRaceBanner(() => {
+      runCountdown(() => {
+        S.running = true
+        S.frame = 0
+        // v54.91 — Wire ObstacleEngine + schedule first puzzle
+        try { g14sWireObstacleEngine() } catch(e) { console.warn('OE wire fail', e) }
+      })
     })
   })
 
@@ -1131,6 +1188,71 @@ function crashOn(o) {
     const idx = S.obstacles.indexOf(o)
     if (idx >= 0) S.obstacles.splice(idx, 1)
   } catch {}
+}
+
+// v54.95 — Tutorial intro overlay (first-visit gated; advance on tap)
+const G14S_TUT_FLAG = 'g14s-tutorial-seen'
+let g14sTutSlide = 1
+let g14sTutDone = null
+
+function showTutorial(done) {
+  g14sTutDone = done || function(){}
+  // First-visit gate — skip if user has already seen it
+  let seen = false
+  try { seen = localStorage.getItem(G14S_TUT_FLAG) === '1' } catch {}
+  if (seen) { g14sTutDone(); g14sTutDone = null; return }
+  g14sShowTutorialOverlay()
+}
+
+function g14sShowTutorialOverlay() {
+  const ov = document.getElementById('tutorial-overlay')
+  if (!ov) { if (g14sTutDone) { const d = g14sTutDone; g14sTutDone = null; d() } ; return }
+  g14sTutSlide = 1
+  g14sRenderTutSlide()
+  ov.classList.add('show')
+}
+
+function g14sRenderTutSlide() {
+  for (let i = 1; i <= 3; i++) {
+    const el = document.getElementById('tut-slide-' + i)
+    if (el) el.classList.toggle('active', i === g14sTutSlide)
+  }
+}
+
+function g14sTutorialNext() {
+  if (g14sTutSlide < 3) {
+    g14sTutSlide++
+    g14sRenderTutSlide()
+  } else {
+    g14sTutorialFinish()
+  }
+}
+
+function g14sTutorialFinish() {
+  try { localStorage.setItem(G14S_TUT_FLAG, '1') } catch {}
+  const ov = document.getElementById('tutorial-overlay')
+  if (ov) ov.classList.remove('show')
+  const d = g14sTutDone
+  g14sTutDone = null
+  if (d) d()
+}
+
+// Re-watch from pause modal — closes pause, replays tutorial, then resumes the race
+function g14sReplayTutorial() {
+  // Hide pause modal (the race stays in paused state until tutorial completes)
+  const pause = document.getElementById('pause-modal')
+  if (pause) pause.style.display = 'none'
+  // Reset flag so overlay shows
+  try { localStorage.removeItem(G14S_TUT_FLAG) } catch {}
+  showTutorial(() => {
+    // After tutorial closes, resume the race (only if it wasn't game-over/finished)
+    if (!S.gameOver && !S.finished) {
+      S.paused = false
+      S.running = true
+      const btn = document.getElementById('btn-pause')
+      if (btn) btn.textContent = '⏸'
+    }
+  })
 }
 
 // v54.94 — Pre-race overview banner (shows train + mode + age + distance)
