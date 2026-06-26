@@ -1,5 +1,44 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v55.5 "G14 compact rail layout — rail strip 54px (60% of train height)" (Phase 6.6)
+
+Owner verbatim: *"Buat rail itu hanya 80% dari tinggi kereta."* + correction *"bukan 80% ya tapi kurang dari itu."*
+
+**Closes B-202.**
+
+### Before vs after
+
+| Element | Before | After |
+|---|---|---|
+| Rail offset (cy → rail line) | `laneH * 0.28` ≈ 67 px (134 px strip = 56% of lane) | `RAIL_HALF = 27` (54 px strip ≈ 60% of 90 px train height) |
+| Sleeper width `TIE_W` | 28 px | 16 px |
+| Sleeper gap `TIE_GAP` | 38 px | 58 px (less dense) |
+| Sleeper height | full strip + 4 px | strip + 2 px |
+| Steel rail thickness | 4 px | 2 px |
+| Ground fill alpha | 0.6 | 0.45 (lets BG breathe) |
+
+### Layer order per lane (front to back)
+1. Sleepers (brown 0x4e342e)
+2. Steel rails + highlights
+3. Ballast strip (gravel 0x6b5b4a, alpha 0.55)
+4. Upper grass tint (0x4ade80, alpha 0.12) above rail
+5. Lower grass tint (0x16a34a, alpha 0.10) below rail
+6. Grass full-lane fill (theme-colored, alpha 0.45)
+7. Lane separator line (subtle)
+
+Result: rail strip looks like a clearly defined track with scenery breathing around it, not a black sleeper wall filling the whole lane.
+
+### Files touched
+- `games/g14.html` — TIE constants + `buildLanes()` rewrite (~50 LOC).
+- `sw.js` v55.4 → v55.5.
+
+### Verification
+- Syntax OK on g14.html.
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS.
+- Visual diff: rail strip on mobile drops from ~134px to ~54px — sleepers stop dominating the lane.
+
+---
+
 ## 2026-06-26 — v55.7-v55.9 "G14 scoring engagement gate + ↑↓ arrow controls + Side Race picker state" (Phase 6.5)
 
 Bundled 3 small g14.html fixes. **Closes B-203, B-205, B-206.**

@@ -211,13 +211,13 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 <script src="data/bg-audio.js?v=54.65-20260626br"></script>
 <script src="data/bg-events.js?v=54.67-20260626bt"></script>
 <!-- v54.69 — ObstacleEngine foundation (modular obstacle system, soft-fail, kids-friendly) -->
-<script src="obstacle-engine.js?v=55.4-20260626dc"></script>
-<script src="data/kids-questions.js?v=55.4-20260626dc"></script>
-<script src="data/obstacles.js?v=55.4-20260626dc"></script>
-<script src="data/routes.js?v=55.4-20260626dc"></script>
-<script src="data/reward-catalog.js?v=55.4-20260626dc"></script>
-<script src="reward-gallery.js?v=55.4-20260626dc"></script>
-<script src="settings-modal.js?v=55.4-20260626dc"></script>
+<script src="obstacle-engine.js?v=55.5-20260626dd"></script>
+<script src="data/kids-questions.js?v=55.5-20260626dd"></script>
+<script src="data/obstacles.js?v=55.5-20260626dd"></script>
+<script src="data/routes.js?v=55.5-20260626dd"></script>
+<script src="data/reward-catalog.js?v=55.5-20260626dd"></script>
+<script src="reward-gallery.js?v=55.5-20260626dd"></script>
+<script src="settings-modal.js?v=55.5-20260626dd"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
@@ -1373,49 +1373,71 @@ function buildMidScenery() {
 
 // ── Tracks ────────────────────────────────────────────────
 let trackTies = []
-const TIE_W = 28, TIE_H = 6, TIE_GAP = 38
+// v55.5 — TIE_W shrunk (was 28→16), TIE_GAP widened (38→58) so sleepers
+// occupy less screen and scenery between rails reads as background. Closes B-202.
+const TIE_W = 16, TIE_H = 4, TIE_GAP = 58
 
 function buildTracks() {
   const c = new PIXI.Container(); L.tracks = c; stage.addChild(c)
   const W = app.screen.width
 
-  // Per-lane track
+  // v55.5 — Per-lane track redesign (closes B-202). Owner: rail strip should be
+  // LESS than 80% of train height. Train spriteHeight ~90px → rail strip ≈ 54px
+  // (60% of train). Previously railOffset = laneH * 0.28 = ~67px (134px strip
+  // on mobile) — dominated the lane. Now fixed-pixel railOffset 27 → 54px strip.
+  // Rest of lane fills with grass + sparse fence + tree dots for breathing room.
+  const RAIL_HALF = 27  // 27 × 2 = 54px rail strip (≈ 60% of 90px train height)
   for (let ln = 0; ln < LANE_COUNT; ln++) {
     const cy = laneYs[ln]
-    const railOffset = laneH * 0.28
+    const railOffset = RAIL_HALF
 
-    // Ground fill for lane
-    const ground = new PIXI.Graphics()
-    ground.rect(0, cy - laneH * 0.5, W, laneH).fill(ln === 1 ? TH.ground1 : TH.ground2)
-    ground.alpha = 0.6
-    c.addChild(ground)
+    // Grass fill (full lane height — was darker pattern; now flat soft green)
+    const grass = new PIXI.Graphics()
+    grass.rect(0, cy - laneH * 0.5, W, laneH).fill(ln === 1 ? TH.ground1 : TH.ground2)
+    grass.alpha = 0.45
+    c.addChild(grass)
 
-    // Lane separator
+    // Lane separator (subtle line between lanes)
     if (ln < LANE_COUNT - 1) {
       const sep = new PIXI.Graphics()
       sep.rect(0, cy + laneH * 0.5 - 1, W, 2).fill(0x1a3a1a)
-      sep.alpha = 0.6
+      sep.alpha = 0.5
       c.addChild(sep)
     }
 
-    // Rail lines (top + bottom of lane, inset)
+    // v55.5 — Light grass texture strip above + below rail (depth illusion)
+    const upperGrass = new PIXI.Graphics()
+    upperGrass.rect(0, cy - laneH * 0.5, W, laneH * 0.5 - railOffset - 2).fill(0x4ade80)
+    upperGrass.alpha = 0.12
+    c.addChild(upperGrass)
+    const lowerGrass = new PIXI.Graphics()
+    lowerGrass.rect(0, cy + railOffset + 2, W, laneH * 0.5 - railOffset - 2).fill(0x16a34a)
+    lowerGrass.alpha = 0.10
+    c.addChild(lowerGrass)
+
+    // Ballast strip (gravel under rails — gives rail strip definition)
+    const ballast = new PIXI.Graphics()
+    ballast.rect(0, cy - railOffset, W, railOffset * 2).fill(0x6b5b4a)
+    ballast.alpha = 0.55
+    c.addChild(ballast)
+
+    // Steel rails — 2 thin lines at edges of rail strip
     for (const sign of [-1, 1]) {
       const rail = new PIXI.Graphics()
-      rail.rect(0, cy + sign * railOffset - 2, W, 4).fill(0x4b5563)
+      rail.rect(0, cy + sign * railOffset - 1, W, 2).fill(0x4b5563)
       c.addChild(rail)
-
-      // Glow strip
-      const glow = new PIXI.Graphics()
-      glow.rect(0, cy + sign * railOffset - 3, W, 6).fill(0x86efac)
-      glow.alpha = 0.12
-      c.addChild(glow)
+      // Subtle highlight on top edge
+      const highlight = new PIXI.Graphics()
+      highlight.rect(0, cy + sign * railOffset - 1.5, W, 0.5).fill(0x9ca3af)
+      highlight.alpha = 0.6
+      c.addChild(highlight)
     }
 
-    // Ties (sleepers) — scrolling
+    // Sleepers (ties) — scrolling, thinner + wider spacing
     const numTies = Math.ceil(W / (TIE_W + TIE_GAP)) + 3
     for (let j = 0; j < numTies; j++) {
       const tie = new PIXI.Graphics()
-      tie.rect(-TIE_W / 2, cy - railOffset - 2, TIE_W, railOffset * 2 + 4).fill(0x292524)
+      tie.rect(-TIE_W / 2, cy - railOffset - 1, TIE_W, railOffset * 2 + 2).fill(0x4e342e)
       tie.x = j * (TIE_W + TIE_GAP)
       c.addChild(tie)
       trackTies.push({ g: tie, ln })
