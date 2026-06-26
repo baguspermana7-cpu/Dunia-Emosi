@@ -569,10 +569,10 @@
       }
     }
 
-    // Fire jump question (spec §6) — answer right → cartoon jump animation
-    OE.register('fire_jump_question', makeQuestionGateObstacle({
+    // v54.86: Fire jump question — cinematic scene with train jump arc on success
+    OE.register('fire_jump_question', Object.assign(makeQuestionGateObstacle({
       title: '🔥 Lompati api kecil!',
-      banner: '🔥 🚂 🔥',
+      banner: '🔥🚂🔥',
       questionCategory: 'shape',
       difficulty: 2,
       coins: 7,
@@ -581,13 +581,109 @@
         'Lihat bentuk yang ditanya! ✨',
         'Yang ini! 👇',
       ],
-      onSuccess(body) {
-        // Add cartoon jump effect at top of overlay
-        const fx = document.createElement('div')
-        fx.style.cssText = 'position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:56px;animation:obstacle-target-pulse 0.6s ease-out;'
-        fx.textContent = '🚂✨'
-        body.appendChild(fx)
-        setTimeout(() => fx.remove(), 900)
+    }), {
+      // Override interaction.setup to add the scene PLUS still use shared question handler
+      interaction: {
+        setup(ctx, callbacks) {
+          const body = ctx.body
+          if (!body) return
+
+          // Title
+          const title = document.createElement('div')
+          title.className = 'obstacle-engine-title'
+          title.textContent = '🔥 Lompati api kecil!'
+          body.appendChild(title)
+
+          // Cinematic fire scene (above question card)
+          const sceneRow = document.createElement('div')
+          sceneRow.className = 'obstacle-engine-row'
+          const scene = document.createElement('div')
+          scene.style.cssText = 'position:relative;width:min(86vw,440px);height:100px;background:linear-gradient(180deg,#fef3c7 0%,#fcd34d 70%,#d4a574 100%);border-radius:14px;border:3px solid #92400e;overflow:hidden;box-shadow:inset 0 -8px 12px rgba(0,0,0,0.15);'
+
+          // Rail + sleepers
+          const rail = document.createElement('div')
+          rail.style.cssText = 'position:absolute;bottom:18px;left:0;right:0;height:6px;background:linear-gradient(180deg,#475569 0%,#1e293b 100%);'
+          scene.appendChild(rail)
+          for (let i = 0; i < 8; i++) {
+            const s = document.createElement('div')
+            s.style.cssText = `position:absolute;bottom:8px;left:${i*55+10}px;width:34px;height:10px;background:#7c2d12;border-radius:2px;`
+            scene.appendChild(s)
+          }
+          // Train (left side)
+          const train = document.createElement('div')
+          train.style.cssText = 'position:absolute;bottom:26px;left:14px;font-size:46px;line-height:1;transition:transform 0.9s cubic-bezier(0.4,0,0.3,1);z-index:2;'
+          train.textContent = '🚂'
+          scene.appendChild(train)
+          // Flickering fire in center
+          const fire = document.createElement('div')
+          fire.style.cssText = 'position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-size:42px;line-height:1;animation:fire-flicker 0.6s ease-in-out infinite alternate;'
+          fire.textContent = '🔥'
+          scene.appendChild(fire)
+
+          sceneRow.appendChild(scene)
+          body.appendChild(sceneRow)
+
+          // Question text + options (reused pattern from makeQuestionGateObstacle)
+          const q = ctx.questionData
+          if (!q) {
+            // Defensive fallback
+            setTimeout(() => callbacks.success(), 200)
+            return
+          }
+          const qText = document.createElement('div')
+          qText.className = 'obstacle-engine-subtitle'
+          qText.style.fontSize = 'clamp(16px, 4vw, 22px)'
+          qText.style.fontWeight = '700'
+          qText.style.color = '#3b2066'
+          qText.style.padding = '8px 0 12px'
+          qText.textContent = q.q
+          body.appendChild(qText)
+
+          const choicesRow = document.createElement('div')
+          choicesRow.className = 'obstacle-engine-row'
+
+          const wrapped = q.options.map((opt, i) => ({ key: i, icon: opt }))
+          const shuffled = wrapped.slice().sort(() => Math.random() - 0.5)
+
+          const onPick = (btn, key) => {
+            const all = choicesRow.querySelectorAll('.obstacle-engine-shape-btn')
+            if (key === q.correct) {
+              btn.classList.add('correct')
+              OE.spawnSparkles(btn, 8)
+              all.forEach(b => { b.disabled = true })
+              // v54.86: train jump arc — leap over the fire!
+              const dist = scene.clientWidth - 80
+              train.style.transform = `translateX(${dist - 30}px) translateY(-30px)`
+              setTimeout(() => {
+                // land on right side
+                train.style.transform = `translateX(${dist - 30}px) translateY(0)`
+                // fire shrinks
+                fire.style.fontSize = '24px'
+                fire.style.opacity = '0.5'
+                OE.spawnSparkles(train, 8)
+              }, 500)
+              setTimeout(() => callbacks.success(), 1100)
+            } else {
+              btn.classList.add('wrong')
+              setTimeout(() => btn.classList.remove('wrong'), 500)
+              callbacks.fail()
+            }
+          }
+
+          shuffled.forEach(c => {
+            const btn = document.createElement('button')
+            btn.className = 'obstacle-engine-shape-btn'
+            btn.textContent = c.icon
+            btn.dataset.key = c.key
+            btn.setAttribute('aria-label', 'Jawaban ' + c.icon)
+            btn.addEventListener('click', () => onPick(btn, c.key))
+            choicesRow.appendChild(btn)
+          })
+
+          body.appendChild(choicesRow)
+          OE.speak(q.voicePrompt || q.q)
+        },
+        teardown() {}
       },
     }))
 

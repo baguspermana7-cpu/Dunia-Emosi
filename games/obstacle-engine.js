@@ -477,6 +477,11 @@
         0%, 100% { transform: translateX(-50%) translateY(0); }
         50%      { transform: translateX(-50%) translateY(-4px); }
       }
+      /* v54.86 — fire flicker for fire_jump cinematic scene */
+      @keyframes fire-flicker {
+        0%   { transform: translateX(-50%) scale(1)    rotate(-3deg); filter: hue-rotate(0deg); }
+        100% { transform: translateX(-50%) scale(1.12) rotate(3deg);  filter: hue-rotate(-10deg); }
+      }
       .obstacle-engine-target-pulse {
         animation: obstacle-target-pulse 0.6s ease-in-out infinite alternate;
       }

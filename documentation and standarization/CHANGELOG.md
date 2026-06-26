@@ -1,5 +1,37 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.86 "Fire jump cinematic scene — train jump arc on correct answer" (Phase 4.17)
+
+### Fire jump scene upgrade
+
+Previously: simple banner + question card pattern (functional, but generic).
+
+Now: 440×100px cinematic mini-scene above the question:
+- Sky gradient (cream → amber → earth tones)
+- Animated rail + 8 brown sleepers
+- Train 🚂 anchored at left edge
+- 🔥 fire flickering at center via `@keyframes fire-flicker` (scale 1 ↔ 1.12, rotate -3° ↔ 3°, hue-rotate for warmth)
+- On correct answer: train jumps in arc (translateX + translateY -30px over 500ms cubic-bezier, then lands), fire shrinks to 24px, sparkles burst at landing point
+
+Custom `interaction.setup` that uses the shared `questionData` pulled from `KidsQuestions[shape]` pool — same question-gate logic, premium scene wrapping.
+
+### New CSS keyframe
+
+`@keyframes fire-flicker` — added to engine CSS. Honors reduce-motion via existing `prefers-reduced-motion` block (animations disabled).
+
+### Files touched
+- `games/data/obstacles.js` — `fire_jump_question` interaction.setup override with custom scene (~110 LOC changed).
+- `games/obstacle-engine.js` — fire-flicker keyframe added (~5 LOC).
+- `games/g14.html` — cache-bust to `v=54.86-20260626cm`.
+- `sw.js` v54.85 → v54.86.
+
+### Verification
+- Syntax OK.
+- `node tools/probe-obstacle-engine.mjs` — 14/14 PASS.
+- Custom setup preserves callbacks.success/fail contract from shared engine.
+
+---
+
 ## 2026-06-26 — v54.85 "Animal crossing animation polish + kindness sticker + G15/G16 ⚙️ parity" (Phase 4.16)
 
 ### Animal crossing cinematic upgrade
