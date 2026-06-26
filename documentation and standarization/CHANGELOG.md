@@ -1,5 +1,54 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.66 "Journey events: passing-train, crossing, tunnel, sun-break, fireworks" (Phase 2.5)
+
+NEW `games/data/bg-events.js` (~280 LOC). 5 random journey events fire during gameplay, journey-phase + time-of-day gated.
+
+### Events shipped
+
+| Event | Visual | Audio | Allowed phases | Time |
+|---|---|---|---|---|
+| **passingTrain** | Thomas-blue locomotive + 4 cherry-red coaches scroll across far layer in 3.5s (chimney + headlight + window detail) | `distantHorn` | departure / urban-exit / suburban / countryside / landmark / approaching | any |
+| **railwayCrossing** | 2 lamp posts with alternating red-flash (400ms cycle) + brown poles | `crossingBell` × 2 + `klaxonShort` | urban-exit / approaching / arrival | any |
+| **sunBreak** | Full-screen golden flash (alpha 0→0.20→0 over 1.8s, bell-curve) | none | * | day-only |
+| **tunnel** | Full-screen dim ramp (alpha 0→0.78 600ms, hold 2.4s, fadeOut 800ms) → exits to `sunBreak` for "exiting into bright city" | `mountainWind` | suburban / countryside / landmark | any |
+| **fireworks** | 5 bursts via `TrainVFX.particles.spawn('star', count: 18)` + sparkle layer + 6-color rotation (red/yellow/blue/green/purple/orange) | `playTone` pop melody | arrival / departure | night-only |
+
+### Scheduling
+
+- Self-rescheduling timer: 18-35s between events.
+- Picker reads `state.journey.name` + `state.timeOfDay.name`, builds a weighted pool excluding `nightOnly` events in day OR `excludeAtNight` events in night OR phase-mismatches. Picks one at random weighted by `weight × 10` entries.
+- Maximum ONE event active at a time (lifecycle promise gate).
+- Tab-visibility pause: hidden tab stops scheduler, visible restarts if a location is set.
+
+### Auto-start
+
+Wraps `TrainBG.setContext` so first context-with-location call auto-starts the scheduler. Caller code never touches `BGEvents` directly.
+
+### Public API
+- `BGEvents.start()` / `BGEvents.stop()` — manual control.
+- `BGEvents.fire(name)` — force-fire a specific event (debug).
+- `BGEvents.EVENTS` (debug).
+
+### Files touched
+- NEW `games/data/bg-events.js` (~280 LOC).
+- 3 train HTMLs + `index.html` — script tag right after bg-audio.js.
+- `sw.js` v54.65 → v54.66.
+
+### Verification
+- Syntax check OK.
+- 5 event types, weighted picker honors phase/time gates.
+- TrainBG.setContext wrap delegates to original (non-invasive, like bg-audio.js).
+- PROTECTED chars + PvP balance + reduce-motion unchanged.
+
+### Next
+
+- v54.67 Surabaya Sunset Light Rain demo scene (per spec §23).
+- v54.68 International cities (Tokyo / London / Zurich / NY / Seoul).
+- v54.69 Performance tier + acceptance criteria sweep.
+
+---
+
 ## 2026-06-26 — v54.65 "Audio Ambience packs (5 locations)" (Phase 2.4)
 
 NEW `games/data/bg-audio.js` (~210 LOC). Per-location periodic-accent audio packs. Scene feels alive without a continuous synthesized drone (those sound sterile).
