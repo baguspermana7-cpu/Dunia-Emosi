@@ -1,5 +1,55 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.70 "Repair tranche — 12 drag-drop puzzles + signal/tunnel timing" (Phase 4.1)
+
+13 obstacles total registered after this tranche (1 from v54.69 + 12 new). All soft-fail, all retry-3 auto-help, all 88px tap targets, all reduced-motion-honored.
+
+### Shape repair generator (spec §5)
+
+`makeShapeRepairObstacle(shapeKey, opts)` — shared interaction handler with per-obstacle target shape + voice prompt. 6 new variants:
+
+| ID | Target | Voice | Difficulty |
+|---|---|---|---|
+| `missing_rail_circle`     | ⬤ | Pilih lingkaran | 1 |
+| `missing_rail_square`     | ■ | Pilih persegi | 1 |
+| `missing_rail_arrow`      | ➤ | Pilih panah | 2 |
+| `missing_rail_curve_left` | ↰ | Pilih belok kiri | 2 |
+| `missing_rail_curve_right`| ↱ | Pilih belok kanan | 2 |
+| `missing_rail_ramp_up`    | ↗ | Pilih rel naik | 2 |
+
+### Bridge repair generator (spec §7)
+
+`makeBridgeRepairObstacle(opts)` — sequence-aware: child must tap correct icons IN ORDER from a shared pool with distractors. Each slot snaps green + sparkles when filled correctly; wrong tap shakes + retries. Auto-help at retry 3.
+
+| ID | Sequence | Difficulty |
+|---|---|---|
+| `broken_bridge_1block`              | 🟫 | 1 |
+| `broken_bridge_2block`              | 🟫 🟫 | 2 |
+| `broken_bridge_color`               | 🔴 → 🟢 → 🔵 | 2 |
+| `broken_bridge_number_sequence_1to3`| 1️⃣ → 2️⃣ → 3️⃣ | 3 |
+| `tunnel_light_repair`               | 🔴 → 🟡 → 🟢 (re-uses bridge gen) | 2 |
+
+### Signal repair (timing tap, spec §11 cousin)
+
+`signal_repair` — NEW timing pattern. Yellow signal pulses on/off 900ms cycle. Child taps "🛠️ Perbaiki!" button DURING yellow phase → green ✅. Tap during off → red shake + retry. Auto-help at retry 3.
+
+### G14 picker
+
+`g14WireObstacleEngine._pickObstacleId()` — randomly picks from `ObstacleEngine._registry`, filtered by current `TrainBG._state.journey.name` and `_state.location.id` if BG engine has set a context. Falls back to full registry if no BG context.
+
+### Files touched
+- `games/data/obstacles.js` — 12 new registrations + 2 generator functions (~270 LOC added).
+- `games/g14.html` — `_pickObstacleId()` random selector + cache-bust `v=54.70-20260626bw`.
+- `sw.js` v54.69 → v54.70.
+
+### Verification
+- `grep -c "OE.register" games/data/obstacles.js` = 13 ✓
+- Syntax check OK on obstacles.js + g14.html.
+- All obstacles have `softFail: true`, `maxRetry: 3`.
+- Auto-help at retry 3 confirmed in foundation flow (shared engine path).
+
+---
+
 ## 2026-06-26 — v54.69 "ObstacleEngine foundation + Missing Rail Triangle reference + Easy/Hard mode" (Phase 4.0)
 
 Owner spec (`/home/baguspermana7/Documents/2.txt`, 33 sections) mandates G14 Balapan Kereta evolve from "lane switch + crash" into a child-friendly (age 4-7) interactive train adventure with 20+ obstacle variations, soft-fail puzzles, and modular config. v54.69 lays the foundation.
