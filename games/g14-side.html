@@ -63,14 +63,14 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <script src="data/bg-npcs.js?v=54.64-20260626bq"></script>
 <script src="data/bg-audio.js?v=54.65-20260626br"></script>
 <script src="data/bg-events.js?v=54.67-20260626bt"></script>
-<script src="obstacle-engine.js?v=54.91-20260626cr"></script>
-<script src="data/kids-questions.js?v=54.91-20260626cr"></script>
-<script src="data/obstacles.js?v=54.91-20260626cr"></script>
-<script src="data/routes.js?v=54.91-20260626cr"></script>
-<script src="data/reward-catalog.js?v=54.91-20260626cr"></script>
-<script src="reward-gallery.js?v=54.91-20260626cr"></script>
-<script src="settings-modal.js?v=54.91-20260626cr"></script>
-<script src="trains-db.js?v=54.91-20260626cr"></script>
+<script src="obstacle-engine.js?v=54.92-20260626cs"></script>
+<script src="data/kids-questions.js?v=54.92-20260626cs"></script>
+<script src="data/obstacles.js?v=54.92-20260626cs"></script>
+<script src="data/routes.js?v=54.92-20260626cs"></script>
+<script src="data/reward-catalog.js?v=54.92-20260626cs"></script>
+<script src="reward-gallery.js?v=54.92-20260626cs"></script>
+<script src="settings-modal.js?v=54.92-20260626cs"></script>
+<script src="trains-db.js?v=54.92-20260626cs"></script>
 <script src="game-modal.js?v=54.47-20260625az"></script>
 
 <div id="hud-top">
@@ -172,6 +172,11 @@ const S = {
   coinScore: 0,
   nextCoinAt: 2.5,
   coinTimer: 0,
+  // v54.92 — power-ups + finish
+  hearts: [],            // {sprite, scored}
+  nextHeartAt: 18,
+  heartTimer: 0,
+  finishFlagSpawned: false,
 }
 
 // Layout
@@ -702,6 +707,40 @@ function tick(tickerOrDelta) {
     S.aiTrain.y = H * RAIL_Y_FRAC - 26 + Math.sin(S.frame * 0.20) * 1.2
   }
 
+  // v54.92 — Heart power-up spawn every 18-30s (rare HP restore)
+  S.heartTimer += dt
+  if (S.heartTimer >= S.nextHeartAt && !S.finished && S.hp < S.maxHp) {
+    spawnHeart()
+    S.heartTimer = 0
+    S.nextHeartAt = 18 + Math.random() * 12
+  }
+  for (let i = S.hearts.length - 1; i >= 0; i--) {
+    const hp = S.hearts[i]
+    hp.sprite.x -= scrollDx
+    hp.sprite.rotation = Math.sin(S.frame * 0.10 + i) * 0.15
+    if (hp.sprite.x < -50) {
+      particleLayer.removeChild(hp.sprite)
+      S.hearts.splice(i, 1)
+      continue
+    }
+    if (!hp.scored && Math.abs(hp.sprite.x - trainContainer.x) < 50) {
+      const trainY = H * RAIL_Y_FRAC - 4 + S.jumpY - 35
+      if (Math.abs(hp.sprite.y - trainY) < 40) {
+        hp.scored = true
+        if (S.hp < S.maxHp) S.hp++
+        try { if (typeof playTone === 'function') { playTone({ freq: 880, dur: 0.10, vol: 0.10 }); setTimeout(() => playTone({ freq: 1320, dur: 0.14, vol: 0.10 }), 80) } } catch {}
+        hp.sprite.alpha = 0.3
+        setTimeout(() => { try { particleLayer.removeChild(hp.sprite); const idx = S.hearts.indexOf(hp); if (idx >= 0) S.hearts.splice(idx, 1) } catch {} }, 100)
+      }
+    }
+  }
+
+  // v54.92 — Finish flag at 980m (slightly before 1000m so it scrolls past as we win)
+  if (S.distance >= 980 && !S.finishFlagSpawned && !S.finished) {
+    S.finishFlagSpawned = true
+    spawnFinishFlag()
+  }
+
   // v54.90 — Coin pickups spawn every 2.5-5s at varying jump heights
   S.coinTimer += dt
   if (S.coinTimer >= S.nextCoinAt && !S.finished) {
@@ -811,7 +850,19 @@ function tick(tickerOrDelta) {
   if (S.distance >= S.targetDistance && !S.finished) {
     S.finished = true
     S.running = false
-    endRace('🏁 Selamat! Kamu sampai di tujuan! 🚂', 'win')
+    // v54.92 — Confetti burst around train + finish chime
+    spawnConfetti(trainContainer.x, trainContainer.y - 40)
+    try {
+      if (typeof playTone === 'function') {
+        playTone({ freq: 523, dur: 0.14, vol: 0.12 })
+        setTimeout(() => playTone({ freq: 659, dur: 0.14, vol: 0.12 }), 120)
+        setTimeout(() => playTone({ freq: 784, dur: 0.20, vol: 0.12 }), 240)
+        setTimeout(() => playTone({ freq: 1047, dur: 0.30, vol: 0.12 }), 420)
+      }
+    } catch {}
+    // Slow scroll for celebration
+    S.speed = 1.0
+    setTimeout(() => endRace('🏁 Selamat! Kamu sampai di tujuan! 🚂', 'win'), 1400)
   }
 
   // Game over check
@@ -844,6 +895,76 @@ function spawnBirds() {
     t.y = baseY + i * 12
     bgContainer.addChild(t)
     S.birds.push({ sprite: t, vx: -1.6 - Math.random() * 0.8, frame: 0 })
+  }
+}
+
+// v54.92 — Heart power-up (gentle bob, restores HP on contact)
+function spawnHeart() {
+  const heart = new PIXI.Text({ text: '❤️', style: { fontSize: 32 } })
+  heart.anchor.set(0.5, 0.5)
+  heart.x = W + 40
+  const baseY = H * RAIL_Y_FRAC - 30
+  const peakY = H * RAIL_Y_FRAC - 90
+  heart.y = baseY - Math.random() * (baseY - peakY)
+  particleLayer.addChild(heart)
+  S.hearts.push({ sprite: heart, scored: false })
+}
+
+// v54.92 — Finish flag (chequered, spawns at 980m, race ends when it scrolls past train)
+function spawnFinishFlag() {
+  const flag = new PIXI.Container()
+  flag.x = W + 30
+  flag.y = H * RAIL_Y_FRAC
+
+  // Pole
+  const g = new PIXI.Graphics()
+  g.rect(-2, -90, 4, 90).fill(0x6d4c41)
+  // Chequered flag (8×4 pattern)
+  for (let r = 0; r < 4; r++) {
+    for (let c = 0; c < 8; c++) {
+      const x = c * 6 + 4
+      const y = -90 + r * 6
+      const isBlack = (r + c) % 2 === 0
+      g.rect(x, y, 6, 6).fill(isBlack ? 0x212121 : 0xfafafa)
+    }
+  }
+  flag.addChild(g)
+  // Wiggling label "FINISH"
+  const label = new PIXI.Text({ text: 'FINISH!', style: { fontSize: 18, fill: 0xfde047, fontWeight: 'bold', fontFamily: 'Fredoka One, sans-serif', stroke: { color: 0x5a2a00, width: 3 } } })
+  label.anchor.set(0.5, 1.0)
+  label.x = 26
+  label.y = -100
+  flag.addChild(label)
+
+  obstacleLayer.addChild(flag)
+  S.obstacles.push({ sprite: flag, type: { id: '__finish_flag__' }, height: 0, isDecoration: true })
+}
+
+// v54.92 — Confetti burst (called at race finish)
+function spawnConfetti(cx, cy) {
+  const colors = [0xef4444, 0xfde047, 0x60a5fa, 0x22c55e, 0xa855f7, 0xff7043]
+  for (let i = 0; i < 40; i++) {
+    const c = new PIXI.Graphics()
+    const color = colors[Math.floor(Math.random() * colors.length)]
+    c.rect(-3, -5, 6, 10).fill(color)
+    c.x = cx + (Math.random() - 0.5) * 100
+    c.y = cy - 20
+    c.rotation = Math.random() * Math.PI * 2
+    particleLayer.addChild(c)
+    const vx = (Math.random() - 0.5) * 8
+    const vy = -8 - Math.random() * 8
+    let life = 2.0
+    let curVx = vx, curVy = vy
+    const tick = () => {
+      life -= 0.016
+      curVy += 0.3 // gravity
+      c.x += curVx
+      c.y += curVy
+      c.rotation += 0.1
+      if (life > 0 && c.y < H + 50) requestAnimationFrame(tick)
+      else { try { particleLayer.removeChild(c); c.destroy() } catch {} }
+    }
+    tick()
   }
 }
 

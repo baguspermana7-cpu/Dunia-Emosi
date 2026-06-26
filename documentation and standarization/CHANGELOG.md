@@ -1,5 +1,33 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.92 "Side-race finish flag + confetti + heart power-ups" (Phase 5.5)
+
+### Finish sequence
+
+At 980m, a chequered-flag pole (32×24 px black/white pattern + "FINISH!" gold-yellow stroked label) spawns from the right. Scrolls past the train as the race wraps.
+
+At 1000m (target):
+- 40-piece confetti burst around train (6 rainbow colors, gravity + rotation physics, 2s lifetime).
+- C-E-G-C major arpeggio (523 / 659 / 784 / 1047 Hz) plays in sequence over 420ms.
+- Scroll speed drops to 1.0 px/tick for celebration feel.
+- End modal appears after 1.4s delay.
+
+### Heart power-ups
+
+Spawn every 18–30s ONLY when player HP < maxHp. Bouncing ❤️ emoji at random Y. Tap-to-jump-and-collect mechanic. Restores 1 HP + 880/1320 Hz "yay" tone. Doesn't spawn during finish sequence.
+
+### Files
+- `games/g14-side.html` — `spawnHeart()` + `spawnFinishFlag()` + `spawnConfetti()` + finish trigger (~140 LOC added).
+- `games/g14.html` — cache-bust to `v=54.92-20260626cs`.
+- `sw.js` v54.91 → v54.92.
+
+### Verification
+- Syntax OK on g14-side.html.
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS.
+- Heart only spawns when HP < maxHp (no useless drops at full health).
+
+---
+
 ## 2026-06-26 — v54.91 "Side-race ObstacleEngine integration + crash red flash + shake" (Phase 5.4)
 
 ### ObstacleEngine wired
