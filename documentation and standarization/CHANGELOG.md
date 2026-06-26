@@ -1,5 +1,48 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.77 "Acceptance probe + standarization docs (FINAL of obstacle engine series)" (Phase 4.8)
+
+### Acceptance probe (`tools/probe-obstacle-engine.mjs`)
+
+NEW Node.js probe with stubbed browser globals (window, document, localStorage, matchMedia, speechSynthesis). Loads `obstacle-engine.js` + `data/kids-questions.js` + `data/obstacles.js` + `data/routes.js` into a `vm.createContext` sandbox and runs 14 acceptance assertions:
+
+| Group | Check |
+|---|---|
+| Spec §33 | ≥20 obstacles, version stamp, attach fn, spawn fn |
+| Per-obstacle | all softFail + maxRetry≥1 + reward.coins + accessibility flags |
+| Questions | ≥50 entries, ≥6 categories |
+| Routes | ≥1 scripted, Surabaya ≥7 beats |
+| Engine modes | Easy default, age=5 default, HC off default, suggestedDifficulty+pickAdaptiveCandidates present |
+
+**Result: 14/14 PASS.** 52 obstacles, 72 questions, 5 routes, Surabaya 8 beats.
+
+### Standarization docs
+
+- NEW `documentation and standarization/OBSTACLE_ENGINE_STANDARD.md` — engine API, obstacle schema, soft-fail cascade, adaptive difficulty, high-contrast accessibility, reward storage, scripted routes, how-to-add-new-obstacle guide, lessons references.
+- NEW `documentation and standarization/SPEC_OBSTACLE_VARIETY.md` — owner's 33-section spec verbatim (archived from `/home/baguspermana7/Documents/2.txt`).
+
+### Final tally (v54.69 → v54.77 — Obstacle Engine series)
+
+- 9 ship tranches v54.69 → v54.77.
+- 52 obstacles registered (260% over spec §33's "at least 20" requirement).
+- 72 child-friendly questions across 10 categories (shape/color/count/animal/letter/number/math/safety/comparison + ageRange tiering).
+- 5 scripted location routes (Surabaya anchor + Jakarta/Bandung/Yogya/Semarang).
+- All soft-fail. All ≥88 px tap targets. All voice-prompted. All reduced-motion compliant. All high-contrast compatible.
+- 6 Lessons (L177–L181 v54.69 foundation; this tranche adds none — engine architecture stable).
+
+### Files touched
+- NEW `tools/probe-obstacle-engine.mjs` (~150 LOC).
+- NEW `documentation and standarization/OBSTACLE_ENGINE_STANDARD.md` (~280 LOC).
+- NEW `documentation and standarization/SPEC_OBSTACLE_VARIETY.md` (archive).
+- `sw.js` v54.76 → v54.77.
+
+### Verification
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS.
+- PROTECTED chars (Casey/Linus/Dragutin/Brave/Malivlak) untouched throughout the 9-tranche series.
+- PvP balance + Adventure (`battle-modes.js`, `g13c-pixi.html`) untouched.
+
+---
+
 ## 2026-06-26 — v54.76 "Scripted route runner — Surabaya + Jakarta + Bandung + Yogya + Semarang" (Phase 4.7)
 
 ### NEW `games/data/routes.js` (~150 LOC, 5 routes)
