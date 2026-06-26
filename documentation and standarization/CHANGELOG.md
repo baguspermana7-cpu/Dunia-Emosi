@@ -1,5 +1,23 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.63 "NPC archetypes (10) + behavior FSM" (Phase 2.3)
+
+NEW `games/data/bg-npcs.js` (~270 LOC). Adds 10 Pixi-drawn NPC archetypes + 19 alias mappings + FSM for idle/walking/sheltering behavior.
+
+### Ships
+- 10 archetypes: commuter / family_passenger / tourist / student / office_worker / station_staff / security / vendor / umbrella_commuter / sheltering_passenger. Each ~18px tall.
+- 19 alias mappings (office_worker_rush→office_worker, commuter_dense→commuter, vendor_jamu→vendor, etc.) so configs that name flavored profiles still render.
+- Behavior FSM: idle (subtle bob), walking (left drift + wrap, deeper bob), sheltering (stand-still + tiny scale pulse).
+- Spawn density: high=11, medium=7, low=4 NPCs per scene. Read `state.location.npcProfiles[currentTime]` mapping `dini-hari/subuh→pagi`, `golden-hour→sore`, `blue-hour→malam`. Rain weather prepends `hujan` override list.
+- Extends `TrainBG.Renderers.attachAll` to wire npc layer `_setup` + `_tick`. Registers all 10 archetypes on `TrainBG.NPCSystem`.
+
+### Files touched
+- NEW `games/data/bg-npcs.js`.
+- 3 train HTMLs + `index.html` — bg-npcs.js script tag right after bg-renderers.js.
+- `sw.js` v54.62 → v54.63.
+
+---
+
 ## 2026-06-26 — v54.62 "BG Renderers + G15 wired to Dynamic BG Engine" (Phase 2.2)
 
 First VISIBLE upgrade from the Dynamic BG Engine. Sky / farFar / far / mid / weather / lighting layers all paint per-LocationTheme content. G15 picks city by level chunk and time/weather by location weights.
