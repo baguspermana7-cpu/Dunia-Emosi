@@ -4,6 +4,19 @@
 
 ---
 
+## 2026-06-27 — v55.18 Hardcoded deployment prefixes
+
+### L207 — Hardcoded `/project-name/` deployment prefixes lie about being portable
+- Both `sw.js` SHELL (9 items) + `index.html:2236` SFX init hardcoded `/Dunia-Emosi/` as the URL prefix. Only correct when hosted at exactly that path (some GitHub Pages org-page setups). On Vercel (`dunia-emosi.vercel.app/`) and on local dev (`localhost:8081/`), every prefixed URL 404'd silently. Graceful fallbacks (lazy cache-first / silent SFX engine fallback) meant the bug never reached user-visible behavior — only the console log.
+- **Symptom**: 13 server-side 404s on every audit run that nobody noticed because games still loaded via the fallback paths.
+- **Fix** (v55.18): SHELL → relative `./` (SW scope-relative resolution); SFX init → drop override, let sfx-engine.js's own `location.pathname.indexOf('/Dunia-Emosi/')` runtime detection win.
+- **Lesson**: any path constant containing the repo/project name is a code smell unless the project ONLY ships to that exact path. Prefer:
+  - For SW SHELL → relative `./` (auto-resolves against SW scope).
+  - For app code → runtime detection like `location.pathname.indexOf('/<prefix>/') === 0 ? '/<prefix>/' : '/'`.
+  - When a runtime-detection helper exists, **don't override it** with a hardcoded string in caller code. v55.18 B-215 was exactly this — `sfx-engine.js` already detected the prefix correctly, but `index.html` passed an explicit broken override.
+
+---
+
 ## 2026-06-26 — v55.2-v55.10 Train/Pokemon UIUX cleanup tranche
 
 ### L197 — `PIXI.Sprite.from(url)` returns a 1×1 placeholder; use `PIXI.Assets.load(url).then(tex => new PIXI.Sprite(tex))`

@@ -2232,8 +2232,10 @@ function loadPixiJS(cb) {
   // Boot SFXEngine + WeatherFX after page loads — both lazy, never block the game.
   document.addEventListener('DOMContentLoaded', function () {
     try {
-      window.SFXEngine && window.SFXEngine.init &&
-        window.SFXEngine.init({ basePath: '/Dunia-Emosi/Sounds/pokemon%20sounds/' });
+      // v55.18 (B-215) — drop the hardcoded /Dunia-Emosi/ override that 404'd
+      // on Vercel + local. sfx-engine.js's default basePath already runtime-
+      // detects /Dunia-Emosi/ vs / from location.pathname.
+      window.SFXEngine && window.SFXEngine.init && window.SFXEngine.init();
     } catch (e) { /* silent */ }
     // Battle-screen weather wrapper — runs when the screen-game10/13/13b becomes visible.
     try {

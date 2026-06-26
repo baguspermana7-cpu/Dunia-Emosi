@@ -1,5 +1,41 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.18 "Kill /Dunia-Emosi/ hardcoded prefixes (closes B-214 + B-215)"
+
+Phase extension tranche 3/5. v55.17 audit surfaced two latent bugs where code hardcoded `/Dunia-Emosi/` as the deployment path. That prefix is correct only when hosted at exactly that subpath; **wrong on Vercel (`dunia-emosi.vercel.app/`) and wrong on local dev (`localhost:8081/`)** — every owner-facing host this site uses.
+
+### B-214 — sw.js SHELL precache 9 hardcoded URLs
+
+Changed `'/Dunia-Emosi/...'` → `'./...'` in the SHELL list. SW relative paths resolve against the SW's own scope, so they work on every host shape:
+- Vercel / local dev: SW at `/sw.js` → `./index.html` → `/index.html` ✓
+- GitHub Pages subdir: SW at `/Dunia-Emosi/sw.js` → `./index.html` → `/Dunia-Emosi/index.html` ✓
+
+Without this, the install-time SHELL `addAll()` 404'd on the very hosts owner actually uses. The cache-first fetch handler still rescued real requests so games loaded, but the SHELL convenience was broken.
+
+### B-215 — index.html SFX basePath override
+
+`index.html:2236` called `SFXEngine.init({ basePath: '/Dunia-Emosi/Sounds/pokemon%20sounds/' })` which **overrode** sfx-engine.js's already-correct runtime-detected default. Replaced with `SFXEngine.init()` (no override) so the engine's own `location.pathname.indexOf('/Dunia-Emosi/')` detection wins.
+
+### Acceptance probe — second run after fixes
+
+```
+captured 18 screens to: tools/qa-screenshots/
+P10 index home — errs: NONE (was 3 console errors before)
+P01-P09       — errs: NONE (regression-safe)
+P11-P18       — errs: NONE (untouched standalones already clean)
+server 404s   — 0 (was 13)
+```
+
+### Files touched
+
+- `sw.js` — SHELL list (9 entries) `./` instead of `/Dunia-Emosi/`; CACHE_VERSION v55.16 → v55.18.
+- `index.html` — line 2236 SFX init drops broken override.
+
+### L207 — Hardcoded deployment prefixes lie about being portable
+When a path constant looks portable (`'/foo/...'`) but actually encodes a single host's URL shape, every other host fails. The sneakiest cases (this is exactly B-214/B-215) are when a graceful fallback exists — install-time SHELL falls back to lazy cache, SFX falls back to silent — so the bug never reaches user-visible behavior, only the console log. Lesson: any path constant that contains the repo or project name (`/Dunia-Emosi/`, `/my-app/`) is a code smell unless the project ONLY ships to that exact path. Prefer relative paths (`./`) for SW scope-relative behavior, or runtime detection via `location.pathname`.
+
+---
+
 ## 2026-06-27 — v55.17 "Wider audit — 9 more screens (index + 8 untouched standalones)"
 
 Phase extension tranche 2/5. Extended `tools/visual-polish-audit.mjs` with P10-P18 covering everything v55.0-v55.15 didn't touch.

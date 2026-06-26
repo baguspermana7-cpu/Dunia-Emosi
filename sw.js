@@ -15,7 +15,7 @@
  * succeeded. Only cache same-origin assets.
  * ========================================================================== */
 
-const CACHE_VERSION = 'v55.16-20260627dh'
+const CACHE_VERSION = 'v55.18-20260627di'
 const HTML_CACHE = `dunia-html-${CACHE_VERSION}`
 const ASSET_CACHE = `dunia-assets-${CACHE_VERSION}`
 
@@ -32,16 +32,21 @@ const ASSET_CACHE = `dunia-assets-${CACHE_VERSION}`
 // cache-version bumps in this session (closes B-209, B-210, B-211).
 //
 // To restore aggressive pre-caching later: revert this hunk + bump CACHE.
+// v55.18 — paths are RELATIVE so they resolve against the SW's scope.
+// Works on every host shape:
+//   - Vercel / local dev:   SW at /sw.js          → ./index.html → /index.html
+//   - GitHub Pages subdir:  SW at /Dunia-Emosi/sw.js → ./index.html → /Dunia-Emosi/index.html
+// Previously hardcoded /Dunia-Emosi/ prefix → 404'd on Vercel + local (closes B-214).
 const SHELL = [
-  '/Dunia-Emosi/',
-  '/Dunia-Emosi/index.html',
-  '/Dunia-Emosi/style.css',
-  '/Dunia-Emosi/manifest.json',
-  '/Dunia-Emosi/assets/icon-192.png',
-  '/Dunia-Emosi/assets/icon-512.png',
-  '/Dunia-Emosi/assets/g23-icon.png',
-  '/Dunia-Emosi/games/lib/pixi.min.js?v=8',
-  '/Dunia-Emosi/games/g14-side.html',
+  './',
+  './index.html',
+  './style.css',
+  './manifest.json',
+  './assets/icon-192.png',
+  './assets/icon-512.png',
+  './assets/g23-icon.png',
+  './games/lib/pixi.min.js?v=8',
+  './games/g14-side.html',
 ]
 
 self.addEventListener('install', (e) => {
