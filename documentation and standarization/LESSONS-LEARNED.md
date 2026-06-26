@@ -4,6 +4,37 @@
 
 ---
 
+## 2026-06-26 — v54.68 Thomas AEG character pack (3 train games)
+
+### L172 — Cartoon character sprites have baked-in wheels; set `wheelPositions: []` not invented coords
+- Thomas All Engines Go sprites are cartoon profile views with detailed eyes, wheels, chimneys, and faces already drawn in. The procedural-wheel overlay in `train-character-sprite.js:94-114` (`PIXI.Graphics` circles per `wheelPositions` entry) is designed for HD photographic body sprites (Casey JR, Linus Brave) that need rendered wheels on top.
+- **Symptom**: My initial reflex was to invent `wheelPositions: [[-30,-10,5],...]` per Thomas character for "consistency" with PROTECTED chars.
+- **Root cause**: PROTECTED chars HAVE faceless body sprites that NEED procedural wheels. AEG sprites are FULL cartoon art that already include wheels.
+- **Fix**: `wheelPositions: []` (empty array) on all 26 Thomas entries. The overlay loop iterates zero times — clean skip, no overhead, no double-render.
+- **Lesson**: Inspect what's IN the sprite art before adding overlay decoration. Baked-in features (wheels, chimneys, faces) DON'T need procedural counterparts. The `[]` literal is the correct value, not `null` and not omission (omission would crash a `.forEach` on undefined elsewhere). Body bob + smoke emission still work because they read `spriteHeight`, not wheels.
+
+### L173 — PIL trim-then-WebP is the right asset pipeline for cartoon transparent PNGs
+- 31 Thomas sprites came from rembg alpha-matting (clean transparent backgrounds, 800–1670 px wide, 30 MB total). Filtered to 26 rail characters per owner.
+- **Pattern**: `Image.getbbox()` finds the content bbox (rembg's alpha matte gives sub-pixel-precise boundaries). Crop, resize so longer dim = 600 px, save WebP quality 85 method 6.
+- **Result**: 369 KB total (vs ~30 MB PNG raw) — 98% size reduction. Each sprite < 100 KB.
+- **Lesson**: For cartoon sprites with clean alpha (rembg or hand-cut), trim-bbox + WebP is the right pipeline. NEVER ship the raw PNG with transparent padding — the bbox trim makes spriteHeight math predictable (cropped trimmed dims → `_meta.json` provenance for tuning). Owner-readable meta file lets future tunes happen without re-running rembg.
+
+### L174 — Per-game height scaling differs: G14 ~80% of G15 due to procedural-wheel render scale
+- G14 PROTECTED Casey JR has spriteHeight=90, G15 trains-db Casey has spriteHeight=117. Same sprite, different display heights. Why? G14's render context uses `wheelPositions` overlay aligned to baseline; G15's render uses cleaner anchor math. The ratio is consistent ≈0.77.
+- **Fix**: For new Thomas characters, set G14 heights ≈80% of trains-db heights. G14 tiny=78, G15 tiny=100. G14 standard=90, G15 standard=115. Etc.
+- **Lesson**: When adding sprites to a shared family across games, audit the existing PROTECTED chars' per-game height ratios. The "same character" needs different `spriteHeight` per render context. Document the ratio in the new entry's comments so future characters get scaled correctly without trial-and-error.
+
+### L175 — G16 has TWO config maps (`TRAIN_STYLES` array + `G16_CHAR_CONFIGS` object). Adding a character requires BOTH.
+- G16 picker reads `TRAIN_STYLES[idx]` for palette (locoBody / carBody / locoCab / etc). G16 character renderer reads `G16_CHAR_CONFIGS[characterKey]` for sprite/smoke/wheel config. Adding a Thomas character requires entries in BOTH maps with matching `characterKey`.
+- **Symptom risk**: Adding only `G16_CHAR_CONFIGS` would render the sprite but with wrong/empty palette behind it. Adding only `TRAIN_STYLES` would show the picker card but crash on sprite mount.
+- **Lesson**: G16's duplication (`TRAIN_STYLES` + `G16_CHAR_CONFIGS`) is intentional per-game-tuning, NOT a bug to refactor. When extending G16's character roster, edit both maps in the same commit. Owner-future-self will appreciate the per-game palette knob. Mid-term cleanup candidate: unify behind a `G16CharsAccessor.get(characterKey)` layer that fetches from both.
+
+### L176 — `smokePos: null` is the canonical disable-emission marker (not `[]`, not omission, not `[0,0]`)
+- Existing JZ 711 Dragutin tram has `smokePos: null`. Looking at `train-character-sprite.js:155`: `if (!state.smokeParent || !config.smokePos || !Array.isArray(config.smokePos)) return`. `null` falsy → early return. `[]` would be truthy, then `Array.isArray([])` true, then `.slice()` on undefined indices → silent NaN positioning. `[0,0]` would emit AT THE BASELINE.
+- **Lesson**: When extending the character sprite system to non-steam vehicles (diesel, electric, work cars, coaches), set `smokePos: null` exactly. The check is `!config.smokePos || !Array.isArray(config.smokePos)` — `null` is the cleanest signal. Verify with `aeg_diesel` running through `g15-pixi.html` race: zero smoke emitter, zero console warnings.
+
+---
+
 ## 2026-06-25 — v54.41 hotfix on v54.40 achievement IDs
 
 ### L171 — Catalog-keyed dispatchers silently no-op on unknown IDs; audit every ship

@@ -310,6 +310,35 @@ const TRAIN_STYLES = [
     cabColor:0x9a3412, chimney:0x292524, wheelRim:0xe2e8f0,
     caboose:0x9a3412, cabooseLight:0xfbbf24, smokeCol:0x999999,
   },
+  // v54.68 — Thomas AEG pack (26 character train styles, indices 11–36).
+  // Palette extracted from canonical Thomas & Friends All Engines Go (Mattel 2021+/2025 film).
+  // smokeCol = null disables steam emission (diesel/electric/coaches).
+  { character:true, characterKey:'aeg_thomas',           locoBody:0x1976d2, locoCab:0x1565c0, locoAccent:0xe53935, carBody:0x1976d2, carWindow:0xbae6fd, carStripe:0xe53935, cabColor:0x0d47a1, chimney:0x212121, wheelRim:0xe1f5fe, caboose:0x1976d2, cabooseLight:0xe53935, smokeCol:0xbbbbbb },
+  { character:true, characterKey:'aeg_percy',            locoBody:0x43a047, locoCab:0x2e7d32, locoAccent:0xe53935, carBody:0x43a047, carWindow:0xdcedc8, carStripe:0xe53935, cabColor:0x1b5e20, chimney:0x212121, wheelRim:0xc8e6c9, caboose:0x43a047, cabooseLight:0xe53935, smokeCol:0xbbbbbb },
+  { character:true, characterKey:'aeg_james',            locoBody:0xd32f2f, locoCab:0xb71c1c, locoAccent:0xfdd835, carBody:0xd32f2f, carWindow:0xffcdd2, carStripe:0xfdd835, cabColor:0x7f0000, chimney:0x212121, wheelRim:0xffebee, caboose:0xd32f2f, cabooseLight:0xfdd835, smokeCol:0xbbbbbb },
+  { character:true, characterKey:'aeg_edward',           locoBody:0x1565c0, locoCab:0x0d47a1, locoAccent:0xfdd835, carBody:0x1565c0, carWindow:0xbbdefb, carStripe:0xfdd835, cabColor:0x0a3678, chimney:0x212121, wheelRim:0xe3f2fd, caboose:0x1565c0, cabooseLight:0xfdd835, smokeCol:0xbbbbbb },
+  { character:true, characterKey:'aeg_henry',            locoBody:0x2e7d32, locoCab:0x1b5e20, locoAccent:0xfdd835, carBody:0x2e7d32, carWindow:0xc8e6c9, carStripe:0xfdd835, cabColor:0x103810, chimney:0x212121, wheelRim:0xe8f5e9, caboose:0x2e7d32, cabooseLight:0xfdd835, smokeCol:0xbbbbbb },
+  { character:true, characterKey:'aeg_gordon',           locoBody:0x1565c0, locoCab:0x0d47a1, locoAccent:0xd32f2f, carBody:0x1565c0, carWindow:0xbbdefb, carStripe:0xd32f2f, cabColor:0x0a3678, chimney:0x212121, wheelRim:0xe3f2fd, caboose:0x1565c0, cabooseLight:0xd32f2f, smokeCol:0xbbbbbb },
+  { character:true, characterKey:'aeg_emily',            locoBody:0x00897b, locoCab:0x004d40, locoAccent:0xffb300, carBody:0x00897b, carWindow:0xb2dfdb, carStripe:0xffb300, cabColor:0x00251a, chimney:0x212121, wheelRim:0xe0f2f1, caboose:0x00897b, cabooseLight:0xffb300, smokeCol:0xbbbbbb },
+  { character:true, characterKey:'aeg_duck',             locoBody:0x388e3c, locoCab:0x1b5e20, locoAccent:0xfdd835, carBody:0x388e3c, carWindow:0xc8e6c9, carStripe:0xfdd835, cabColor:0x1b5e20, chimney:0x212121, wheelRim:0xe8f5e9, caboose:0x388e3c, cabooseLight:0xfdd835, smokeCol:0xbbbbbb },
+  { character:true, characterKey:'aeg_toby',             locoBody:0x6d4c41, locoCab:0x4e342e, locoAccent:0xfdd835, carBody:0x6d4c41, carWindow:0xd7ccc8, carStripe:0xfdd835, cabColor:0x3e2723, chimney:0x212121, wheelRim:0xefebe9, caboose:0x6d4c41, cabooseLight:0xfdd835, smokeCol:0xbbbbbb },
+  { character:true, characterKey:'aeg_hiro',             locoBody:0x212121, locoCab:0x000000, locoAccent:0xffd54f, carBody:0x212121, carWindow:0xeeeeee, carStripe:0xffd54f, cabColor:0x000000, chimney:0x212121, wheelRim:0xfafafa, caboose:0x212121, cabooseLight:0xffd54f, smokeCol:0xbbbbbb },
+  { character:true, characterKey:'aeg_ashima',           locoBody:0xec407a, locoCab:0xc2185b, locoAccent:0xffd54f, carBody:0xec407a, carWindow:0xfce4ec, carStripe:0xffd54f, cabColor:0x880e4f, chimney:0x212121, wheelRim:0xfff8e1, caboose:0xec407a, cabooseLight:0xffd54f, smokeCol:0xbbbbbb },
+  { character:true, characterKey:'aeg_yong_bao',         locoBody:0xd32f2f, locoCab:0xb71c1c, locoAccent:0xfdd835, carBody:0xd32f2f, carWindow:0xffcdd2, carStripe:0xfdd835, cabColor:0x7f0000, chimney:0x212121, wheelRim:0xffebee, caboose:0xd32f2f, cabooseLight:0xfdd835, smokeCol:0xbbbbbb },
+  { character:true, characterKey:'aeg_diesel',           locoBody:0x424242, locoCab:0x212121, locoAccent:0xfbc02d, carBody:0x424242, carWindow:0xeeeeee, carStripe:0xfbc02d, cabColor:0x000000, chimney:0x212121, wheelRim:0xfafafa, caboose:0x424242, cabooseLight:0xfbc02d, smokeCol:null },
+  { character:true, characterKey:'aeg_kenji',            locoBody:0xeceff1, locoCab:0xcfd8dc, locoAccent:0xe53935, carBody:0xeceff1, carWindow:0x90a4ae, carStripe:0xe53935, cabColor:0xb0bec5, chimney:0x546e7a, wheelRim:0xffffff, caboose:0xeceff1, cabooseLight:0xe53935, smokeCol:null },
+  { character:true, characterKey:'aeg_kana',             locoBody:0xf48fb1, locoCab:0xec407a, locoAccent:0xffffff, carBody:0xf48fb1, carWindow:0xfce4ec, carStripe:0xffffff, cabColor:0xad1457, chimney:0x546e7a, wheelRim:0xfff8e1, caboose:0xf48fb1, cabooseLight:0xffffff, smokeCol:null },
+  { character:true, characterKey:'aeg_nia',              locoBody:0x00bcd4, locoCab:0x00838f, locoAccent:0xff9800, carBody:0x00bcd4, carWindow:0xb2ebf2, carStripe:0xff9800, cabColor:0x006064, chimney:0x212121, wheelRim:0xe0f7fa, caboose:0x00bcd4, cabooseLight:0xff9800, smokeCol:null },
+  { character:true, characterKey:'aeg_bruno',            locoBody:0xfdd835, locoCab:0xf9a825, locoAccent:0x1976d2, carBody:0xfdd835, carWindow:0xfff9c4, carStripe:0x1976d2, cabColor:0xf57f17, chimney:0x212121, wheelRim:0xfffde7, caboose:0xfdd835, cabooseLight:0x1976d2, smokeCol:null },
+  { character:true, characterKey:'aeg_carly',            locoBody:0xfb8c00, locoCab:0xe65100, locoAccent:0x212121, carBody:0xfb8c00, carWindow:0xffe0b2, carStripe:0x212121, cabColor:0xbf360c, chimney:0x212121, wheelRim:0xfff3e0, caboose:0xfb8c00, cabooseLight:0xfdd835, smokeCol:null },
+  { character:true, characterKey:'aeg_sandy',            locoBody:0xffeb3b, locoCab:0xfbc02d, locoAccent:0xfb8c00, carBody:0xffeb3b, carWindow:0xfff9c4, carStripe:0xfb8c00, cabColor:0xf57f17, chimney:0x212121, wheelRim:0xfffde7, caboose:0xffeb3b, cabooseLight:0xfb8c00, smokeCol:null },
+  { character:true, characterKey:'aeg_salty',            locoBody:0xc62828, locoCab:0x8e0000, locoAccent:0xfdd835, carBody:0xc62828, carWindow:0xffcdd2, carStripe:0xfdd835, cabColor:0x5d0000, chimney:0x546e7a, wheelRim:0xffebee, caboose:0xc62828, cabooseLight:0xfdd835, smokeCol:null },
+  { character:true, characterKey:'aeg_winston',          locoBody:0x4caf50, locoCab:0x2e7d32, locoAccent:0x212121, carBody:0x4caf50, carWindow:0xc8e6c9, carStripe:0x212121, cabColor:0x1b5e20, chimney:0x212121, wheelRim:0xe8f5e9, caboose:0x4caf50, cabooseLight:0xfdd835, smokeCol:null },
+  { character:true, characterKey:'aeg_trainiac',         locoBody:0x7c4dff, locoCab:0x5e35b1, locoAccent:0x00e5ff, carBody:0x7c4dff, carWindow:0xd1c4e9, carStripe:0x00e5ff, cabColor:0x311b92, chimney:0x546e7a, wheelRim:0xede7f6, caboose:0x7c4dff, cabooseLight:0x00e5ff, smokeCol:null },
+  { character:true, characterKey:'aeg_annie_clarabel',   locoBody:0x5d4037, locoCab:0x3e2723, locoAccent:0xfdd835, carBody:0x5d4037, carWindow:0xd7ccc8, carStripe:0xfdd835, cabColor:0x3e2723, chimney:0x212121, wheelRim:0xefebe9, caboose:0x5d4037, cabooseLight:0xfdd835, smokeCol:null },
+  { character:true, characterKey:'aeg_slip_coaches',     locoBody:0x6d4c41, locoCab:0x4e342e, locoAccent:0xffd54f, carBody:0x6d4c41, carWindow:0xd7ccc8, carStripe:0xffd54f, cabColor:0x3e2723, chimney:0x212121, wheelRim:0xefebe9, caboose:0x6d4c41, cabooseLight:0xffd54f, smokeCol:null },
+  { character:true, characterKey:'aeg_troublesome_tankers',locoBody:0x455a64, locoCab:0x263238, locoAccent:0xfdd835, carBody:0x455a64, carWindow:0xcfd8dc, carStripe:0xfdd835, cabColor:0x263238, chimney:0x212121, wheelRim:0xeceff1, caboose:0x455a64, cabooseLight:0xfdd835, smokeCol:null },
+  { character:true, characterKey:'aeg_farona_frederico', locoBody:0x1565c0, locoCab:0x0d47a1, locoAccent:0xffd54f, carBody:0x1565c0, carWindow:0xbbdefb, carStripe:0xffd54f, cabColor:0x0a3678, chimney:0x546e7a, wheelRim:0xe3f2fd, caboose:0x1565c0, cabooseLight:0xffd54f, smokeCol:null },
 ];
 
 const LEVEL_THEMES = [
@@ -1368,7 +1397,34 @@ const G16_CHAR_CONFIGS = {
     ],
     smokePos:[108,-195], bodyBobFreq:0.08, bodyBobAmp:1.5, smokeInterval:12,
     bottomPaddingOffset:0
-  }
+  },
+  // v54.68 — Thomas AEG pack mirror (26 chars). wheelPositions:[] because baked-in wheels.
+  aeg_thomas:           {spriteUrl:'../assets/train/aeg/thomas.webp',           spriteHeight:115, wheelPositions:[], smokePos:[-25,-125], bodyBobFreq:0.09, bodyBobAmp:1.3, smokeInterval:10, bottomPaddingOffset:0},
+  aeg_percy:            {spriteUrl:'../assets/train/aeg/percy.webp',            spriteHeight:100, wheelPositions:[], smokePos:[-20,-110], bodyBobFreq:0.10, bodyBobAmp:1.2, smokeInterval:10, bottomPaddingOffset:0},
+  aeg_james:            {spriteUrl:'../assets/train/aeg/james.webp',            spriteHeight:115, wheelPositions:[], smokePos:[-55,-125], bodyBobFreq:0.09, bodyBobAmp:1.3, smokeInterval:10, bottomPaddingOffset:0},
+  aeg_edward:           {spriteUrl:'../assets/train/aeg/edward.webp',           spriteHeight:115, wheelPositions:[], smokePos:[-65,-125], bodyBobFreq:0.08, bodyBobAmp:1.3, smokeInterval:11, bottomPaddingOffset:0},
+  aeg_henry:            {spriteUrl:'../assets/train/aeg/henry.webp',            spriteHeight:115, wheelPositions:[], smokePos:[-75,-125], bodyBobFreq:0.08, bodyBobAmp:1.3, smokeInterval:11, bottomPaddingOffset:0},
+  aeg_gordon:           {spriteUrl:'../assets/train/aeg/gordon.webp',           spriteHeight:125, wheelPositions:[], smokePos:[-58,-135], bodyBobFreq:0.07, bodyBobAmp:1.4, smokeInterval:9,  bottomPaddingOffset:0},
+  aeg_emily:            {spriteUrl:'../assets/train/aeg/emily.webp',            spriteHeight:115, wheelPositions:[], smokePos:[-63,-125], bodyBobFreq:0.09, bodyBobAmp:1.3, smokeInterval:10, bottomPaddingOffset:0},
+  aeg_duck:             {spriteUrl:'../assets/train/aeg/duck.webp',             spriteHeight:100, wheelPositions:[], smokePos:[-26,-110], bodyBobFreq:0.10, bodyBobAmp:1.2, smokeInterval:10, bottomPaddingOffset:0},
+  aeg_toby:             {spriteUrl:'../assets/train/aeg/toby.webp',             spriteHeight:115, wheelPositions:[], smokePos:[-25,-125], bodyBobFreq:0.09, bodyBobAmp:1.3, smokeInterval:10, bottomPaddingOffset:0},
+  aeg_hiro:             {spriteUrl:'../assets/train/aeg/hiro.webp',             spriteHeight:115, wheelPositions:[], smokePos:[-62,-125], bodyBobFreq:0.08, bodyBobAmp:1.3, smokeInterval:11, bottomPaddingOffset:0},
+  aeg_ashima:           {spriteUrl:'../assets/train/aeg/ashima.webp',           spriteHeight:115, wheelPositions:[], smokePos:[-25,-125], bodyBobFreq:0.09, bodyBobAmp:1.3, smokeInterval:10, bottomPaddingOffset:0},
+  aeg_yong_bao:         {spriteUrl:'../assets/train/aeg/yong-bao.webp',         spriteHeight:125, wheelPositions:[], smokePos:[-78,-135], bodyBobFreq:0.07, bodyBobAmp:1.4, smokeInterval:9,  bottomPaddingOffset:0},
+  aeg_diesel:           {spriteUrl:'../assets/train/aeg/diesel.webp',           spriteHeight:115, wheelPositions:[], smokePos:null,         bodyBobFreq:0.10, bodyBobAmp:1.0, smokeInterval:10, bottomPaddingOffset:0},
+  aeg_kenji:            {spriteUrl:'../assets/train/aeg/kenji.webp',            spriteHeight:125, wheelPositions:[], smokePos:null,         bodyBobFreq:0.11, bodyBobAmp:0.9, smokeInterval:10, bottomPaddingOffset:0},
+  aeg_kana:             {spriteUrl:'../assets/train/aeg/kana.webp',             spriteHeight:100, wheelPositions:[], smokePos:null,         bodyBobFreq:0.11, bodyBobAmp:0.9, smokeInterval:10, bottomPaddingOffset:0},
+  aeg_nia:              {spriteUrl:'../assets/train/aeg/nia.webp',              spriteHeight:115, wheelPositions:[], smokePos:null,         bodyBobFreq:0.10, bodyBobAmp:1.0, smokeInterval:10, bottomPaddingOffset:0},
+  aeg_bruno:            {spriteUrl:'../assets/train/aeg/bruno.webp',            spriteHeight:100, wheelPositions:[], smokePos:null,         bodyBobFreq:0.10, bodyBobAmp:1.0, smokeInterval:12, bottomPaddingOffset:0},
+  aeg_carly:            {spriteUrl:'../assets/train/aeg/carly.webp',            spriteHeight:130, wheelPositions:[], smokePos:null,         bodyBobFreq:0.09, bodyBobAmp:1.1, smokeInterval:12, bottomPaddingOffset:0},
+  aeg_sandy:            {spriteUrl:'../assets/train/aeg/sandy.webp',            spriteHeight:125, wheelPositions:[], smokePos:null,         bodyBobFreq:0.09, bodyBobAmp:1.2, smokeInterval:12, bottomPaddingOffset:0},
+  aeg_salty:            {spriteUrl:'../assets/train/aeg/salty.webp',            spriteHeight:125, wheelPositions:[], smokePos:null,         bodyBobFreq:0.09, bodyBobAmp:1.2, smokeInterval:12, bottomPaddingOffset:0},
+  aeg_winston:          {spriteUrl:'../assets/train/aeg/winston.webp',          spriteHeight:100, wheelPositions:[], smokePos:null,         bodyBobFreq:0.10, bodyBobAmp:1.0, smokeInterval:12, bottomPaddingOffset:0},
+  aeg_trainiac:         {spriteUrl:'../assets/train/aeg/trainiac.webp',         spriteHeight:105, wheelPositions:[], smokePos:null,         bodyBobFreq:0.08, bodyBobAmp:1.1, smokeInterval:12, bottomPaddingOffset:0},
+  aeg_annie_clarabel:   {spriteUrl:'../assets/train/aeg/annie-and-clarabel.webp',spriteHeight:105, wheelPositions:[], smokePos:null,         bodyBobFreq:0.09, bodyBobAmp:1.1, smokeInterval:12, bottomPaddingOffset:0},
+  aeg_slip_coaches:     {spriteUrl:'../assets/train/aeg/slip-coaches.webp',     spriteHeight:105, wheelPositions:[], smokePos:null,         bodyBobFreq:0.09, bodyBobAmp:1.1, smokeInterval:12, bottomPaddingOffset:0},
+  aeg_troublesome_tankers:{spriteUrl:'../assets/train/aeg/troublesome-tankers.webp',spriteHeight:105, wheelPositions:[], smokePos:null,    bodyBobFreq:0.09, bodyBobAmp:1.1, smokeInterval:12, bottomPaddingOffset:0},
+  aeg_farona_frederico: {spriteUrl:'../assets/train/aeg/farona-and-frederico.webp',spriteHeight:105, wheelPositions:[], smokePos:null,     bodyBobFreq:0.09, bodyBobAmp:1.1, smokeInterval:12, bottomPaddingOffset:0}
 };
 
 // ── Train (detailed) ──────────────────────────────────────────────────────────

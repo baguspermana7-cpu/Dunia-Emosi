@@ -1,5 +1,65 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.68 "Thomas All Engines Go cheerful character pack (26 chars × 3 train games)" (Phase 3.0)
+
+Owner-mandated cheerful character expansion: 26 Thomas All Engines Go locomotives / coaches added to the train picker in G14 Balapan Kereta, G15 Lokomotif Pemberani, and G16 Selamatkan Kereta — joining the 4 PROTECTED character trains (Casey JR, Linus Brave, JZ 711 Dragutin, Malivlak) without touching them.
+
+### Pack
+
+| Tier | Characters | spriteHeight (G14/G16) | spriteHeight (G15) | kmh | smokePos |
+|---|---|---|---|---|---|
+| **Standard steam** | Thomas, James, Edward, Henry, Toby, Emily, Hiro, Ashima | 90 / 115 | 115 | 55–60 | populated |
+| **Express steam** | Gordon, Yong Bao | 100 / 125 | 125 | 72–78 | populated |
+| **Tiny tank** | Percy, Duck | 78 / 100 | 100 | 42 | populated |
+| **Diesel / Electric** | Diesel, Kenji, Kana, Nia, Salty | 78–100 / 115–125 | 100–125 | 55–88 | null |
+| **Work vehicles** | Bruno (brake), Carly (crane), Sandy (sand), Winston (inspection), Trainiac (future) | 78–104 / 100–130 | 100–130 | 35–85 | null |
+| **Coaches** | Annie & Clarabel, Slip Coaches, Troublesome Tankers, Farona & Frederico | 84 / 105 | 105 | 45–52 | null |
+
+### Asset pipeline
+
+NEW `scripts/process-aeg-thomas-sprites.py` (~120 LOC):
+- Reads 26 selected PNGs from `assets/train/Thomas/characters/` (filtered out 5 non-rail: Bulstrode/Cranky/Darcy/Harold/Skiff/Terence per owner — "Locomotives + coaches only").
+- PIL `Image.getbbox()` trim → `Image.resize` longer-dim = 600 px (aspect preserved) → WebP quality 85.
+- Outputs `assets/train/aeg/<slug>.webp` + `_meta.json` (provenance).
+- Result: **26 sprites, 369 KB total** (vs ~30 MB raw PNGs).
+
+### Catalog integration (3 games)
+
+- `games/trains-db.js` — NEW category `thomas_aeg` (index 1) with 26 entries, archetype-tiered sizing, canonical AEG palette (Thomas blue+red, Percy green+red, James red+yellow, Edward blue+yellow, Henry green+yellow, Gordon blue+red, Emily emerald+gold, Diesel grey+yellow, Kenji silver+red, etc.). Used by G15.
+- `games/g14.html` — same NEW category appended to `TRAIN_CATS` with G14's lower heights (78–104 range) to match procedural-wheel rendering scale.
+- `games/g16-pixi.html` — both `TRAIN_STYLES` (26 new style entries with locoBody/carBody palette) AND `G16_CHAR_CONFIGS` (26 new sprite configs) appended.
+
+`wheelPositions: []` for all Thomas characters — the AEG sprites have baked-in wheels in artwork; the procedural wheel-overlay code in `train-character-sprite.js:94-114` skips an empty array cleanly. Body bob, smoke emission, and other animations still work (driven by `spriteHeight`, not wheels).
+
+### smokePos derivation
+
+Steam locos: derived from chimney position in trimmed sprite via formula `[round(-W_rendered/6), -spriteHeight - 10]` (chimney one-third from left edge). 12 steam locos with smoke: Thomas, Percy, James, Edward, Henry, Gordon, Emily, Duck, Toby, Hiro, Ashima, Yong Bao.
+
+Diesel/electric/coaches: `smokePos: null` — confirmed disables smoke emission at `train-character-sprite.js:155`. 14 entries get null.
+
+### PROTECTED chars verified
+
+- `TRAIN_CATS[0]` "Karakter Spesial ⭐" unchanged in G14: 4 entries (caseyjr_character, linus_brave, jz711_dragutin, jz62_malivlak).
+- trains-db.js index 0 "Karakter ⭐" unchanged: 4 entries.
+- Thomas AEG sits at index 1 (after PROTECTED) per owner direction.
+
+### Files touched
+- NEW `scripts/process-aeg-thomas-sprites.py` (~120 LOC).
+- NEW 26 × `assets/train/aeg/*.webp` + `_meta.json` (369 KB).
+- `games/trains-db.js` — new `thomas_aeg` category, ~110 LOC added.
+- `games/g14.html` — new `thomas_aeg` category, ~30 LOC added.
+- `games/g16-pixi.html` — `TRAIN_STYLES` ~28 LOC added + `G16_CHAR_CONFIGS` ~28 LOC added.
+- `sw.js` v54.67 → v54.68.
+
+### Verification
+- Syntax check OK on g14.html, g15-pixi.html, g16-pixi.html (all inline scripts), trains-db.js.
+- `grep -c "key:'aeg_" games/trains-db.js` = 26 ✓
+- `grep -c "characterKey:'aeg_" games/g16-pixi.html` = 26 ✓
+- `grep -c "key:'aeg_" games/g14.html` = 26 ✓
+- `ls assets/train/aeg/*.webp | wc -l` = 26 ✓
+
+---
+
 ## 2026-06-26 — v54.67 "Demo scene + debug overlay for QA" (Phase 2.6)
 
 Adds two engine entry-points for spec §23 acceptance scenarios + live QA.
