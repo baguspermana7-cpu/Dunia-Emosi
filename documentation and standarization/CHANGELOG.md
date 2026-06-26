@@ -1,5 +1,38 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.94 "Side-race pre-race overview banner + L190-L194 lessons catch-up" (Phase 5.7)
+
+### Pre-race overview banner
+
+Before the 3-2-1 countdown, a yellow card flashes for 1.9s showing:
+- "🏁 SIAP-SIAP! 🚂"
+- Train name (large)
+- Mode (😊 Mudah / 🔥 Sulit) · Usia (4/5/6/7)
+- Time of day icon (🌅 pagi / ☀️ siang / 🌇 sore) + label
+- Distance target (🎯 1000m)
+
+Cubic-bezier overshoot entrance/exit. Reduces "Where am I? What did I pick?" confusion when restarting or coming back to a saved race.
+
+### Lessons documented (L190-L194)
+
+L190 — Parallax wrap: container + reset is cheaper than per-shape spawn/despawn.
+L191 — AI competitor as visual depth, not gameplay rival.
+L192 — Confetti physics: 3-line gravity is enough for celebration.
+L193 — Pause modal needs terminal-state guard on resume (same as L186 race condition).
+L194 — Difficulty curve caps at +20% with visible "⚡ KECEPATAN NAIK!" badge for kid-game clarity.
+
+### Files
+- `games/g14-side.html` — `showPreRaceBanner()` + #prerace overlay HTML (~30 LOC added).
+- `documentation and standarization/LESSONS-LEARNED.md` — L190-L194 entries (~80 LOC added).
+- `games/g14.html` — cache-bust to `v=54.94-20260626cu`.
+- `sw.js` v54.93 → v54.94.
+
+### Verification
+- Syntax OK.
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS.
+
+---
+
 ## 2026-06-26 — v54.93 "Side-race pause button + difficulty curve (speed scaling per milestone)" (Phase 5.6)
 
 ### Pause button

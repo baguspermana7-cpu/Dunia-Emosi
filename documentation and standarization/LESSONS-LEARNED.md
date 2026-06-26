@@ -4,6 +4,30 @@
 
 ---
 
+## 2026-06-26 — v54.88-v54.93 Side-race build lessons
+
+### L190 — Parallax wrap pattern: container x decrement + reset when off-screen
+- Hills container scrolls at `0.25× train speed`. When `container.x < -W * 0.6`, reset to 0. Works because hills are 8 shapes spread across 1.5× screen width — when first 0.6× scrolls off-screen, the duplicate at +0.6× is now at 0. Seamless loop without re-rendering.
+- **Lesson**: For 2D parallax wrap, draw your content 1.5× wider than the viewport and reset container.x when half scrolls off. Don't dynamically spawn/despawn shapes — fixed-content + container-translate is cheaper and prettier (no pop-in artifacts).
+
+### L191 — AI competitor as visual depth, not gameplay rival
+- Side-race AI ghost train at 65% scale + 85% alpha behind the player rail makes the race FEEL competitive without actual collision/scoring. AI position oscillates `40 + sin(phase) × 18` over ~12s — feels like a real opponent catching up and falling back, but never affects gameplay state.
+- **Lesson**: Game feel ≠ game mechanics. A purely cosmetic AI competitor that wobbles in the background sells the "racing" fantasy without complicating collision, scoring, or balance. Use scale + alpha to push it into perspective depth.
+
+### L192 — Confetti physics: 3-line gravity model is sufficient for celebration
+- 40 confetti pieces × `vy += 0.3 per frame` (gravity) + rotation 0.1 rad/frame + 2s lifetime. Total cost: 40 requestAnimationFrame loops, each ~3 lines. Looks like a fireworks burst at finish.
+- **Lesson**: For celebration moments (race win, level complete), simple gravity + rotation + lifetime is enough. Don't reach for particle systems — 3 lines of math per piece × 40 pieces = under 200 LOC for a kid-pleasing visual.
+
+### L193 — Pause modal: don't trust S.running alone for control
+- Pause overlay's "▶ Lanjutkan" button calls `g14sTogglePause()` which sets `S.paused = false; S.running = true`. But if game-over or finish happened DURING pause, resuming would re-arm a dead race. Fix: check `S.gameOver` and `S.finished` before re-enabling (mirrors L186 obstacle engine resume guard).
+- **Lesson**: Pause is a state OVERLAY, not a mode. Other states (game over, finish) can transition while paused. Always re-check terminal flags on resume — pause is just "we put a hold on running" not "we know the world is ready to resume".
+
+### L194 — Difficulty curve "+5% per milestone" lands at "challenging but fair"
+- Speed grows from baseSpeed (4.0) at start to 1.20× (4.8) by 800m. Linear at the end-game where kids are warmed up. NOT a sharp ramp — caps at 1.20 to prevent late-game overwhelm. "⚡ KECEPATAN NAIK!" badge sells the moment.
+- **Lesson**: For kid games, cap difficulty growth at +20% over baseline. Linear, not exponential. Show a visible cue (badge/animation) when difficulty bumps so kids understand why the game changed feel — not "the game is buggy and faster".
+
+---
+
 ## 2026-06-26 — v54.87 Sprite-loading bug discovery
 
 ### L187 — `spriteUrl` field declared but never loaded silently passed code review for 6 months

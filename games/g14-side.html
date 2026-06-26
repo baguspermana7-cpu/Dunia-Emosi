@@ -64,14 +64,14 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <script src="data/bg-npcs.js?v=54.64-20260626bq"></script>
 <script src="data/bg-audio.js?v=54.65-20260626br"></script>
 <script src="data/bg-events.js?v=54.67-20260626bt"></script>
-<script src="obstacle-engine.js?v=54.93-20260626ct"></script>
-<script src="data/kids-questions.js?v=54.93-20260626ct"></script>
-<script src="data/obstacles.js?v=54.93-20260626ct"></script>
-<script src="data/routes.js?v=54.93-20260626ct"></script>
-<script src="data/reward-catalog.js?v=54.93-20260626ct"></script>
-<script src="reward-gallery.js?v=54.93-20260626ct"></script>
-<script src="settings-modal.js?v=54.93-20260626ct"></script>
-<script src="trains-db.js?v=54.93-20260626ct"></script>
+<script src="obstacle-engine.js?v=54.94-20260626cu"></script>
+<script src="data/kids-questions.js?v=54.94-20260626cu"></script>
+<script src="data/obstacles.js?v=54.94-20260626cu"></script>
+<script src="data/routes.js?v=54.94-20260626cu"></script>
+<script src="data/reward-catalog.js?v=54.94-20260626cu"></script>
+<script src="reward-gallery.js?v=54.94-20260626cu"></script>
+<script src="settings-modal.js?v=54.94-20260626cu"></script>
+<script src="trains-db.js?v=54.94-20260626cu"></script>
 <script src="game-modal.js?v=54.47-20260625az"></script>
 
 <div id="hud-top">
@@ -96,6 +96,15 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
       <button onclick="g14sTogglePause()" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;border:0;padding:14px 24px;font-family:inherit;font-weight:900;font-size:15px;border-radius:14px;cursor:pointer;min-height:48px;min-width:140px;box-shadow:0 4px 0 #14532d">▶ Lanjutkan</button>
       <button onclick="goBack()" style="background:linear-gradient(135deg,#f87171,#dc2626);color:#fff;border:0;padding:14px 24px;font-family:inherit;font-weight:900;font-size:15px;border-radius:14px;cursor:pointer;min-height:48px;min-width:140px;box-shadow:0 4px 0 #7f1d1d">🚂 Ganti Kereta</button>
     </div>
+  </div>
+</div>
+
+<!-- v54.94 — Pre-race overview banner -->
+<div id="prerace" style="position:fixed;inset:0;z-index:180;display:none;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,rgba(15,23,42,0.55),rgba(15,23,42,0.85));pointer-events:none">
+  <div style="background:linear-gradient(180deg,#fef3c7,#fcd34d);border:5px solid #f59e0b;border-radius:24px;padding:24px 32px;text-align:center;box-shadow:0 16px 50px rgba(0,0,0,0.4);min-width:280px;animation:cd-pop 1.8s ease-out forwards;transform-origin:center">
+    <div style="font-size:36px;line-height:1;margin-bottom:6px">🏁 SIAP-SIAP! 🚂</div>
+    <div id="prerace-train" style="font-size:clamp(20px,4.6vw,26px);color:#5a2a00;font-weight:900;margin:6px 0;text-shadow:0 2px 0 rgba(255,255,255,0.7)">Thomas</div>
+    <div id="prerace-info" style="font-size:13px;color:#92400e;line-height:1.5">Mode: Mudah · Usia 5<br>🎯 Jarak: 1000m</div>
   </div>
 </div>
 
@@ -226,11 +235,14 @@ const JUMP_VELOCITY = 720         // initial upward velocity
   buildTrain()
   buildAITrain() // v54.90
   setupInput()
-  runCountdown(() => {
-    S.running = true
-    S.frame = 0
-    // v54.91 — Wire ObstacleEngine + schedule first puzzle
-    try { g14sWireObstacleEngine() } catch(e) { console.warn('OE wire fail', e) }
+  // v54.94 — Show pre-race overview banner before countdown
+  showPreRaceBanner(() => {
+    runCountdown(() => {
+      S.running = true
+      S.frame = 0
+      // v54.91 — Wire ObstacleEngine + schedule first puzzle
+      try { g14sWireObstacleEngine() } catch(e) { console.warn('OE wire fail', e) }
+    })
   })
 
   // Start ticker
@@ -1119,6 +1131,27 @@ function crashOn(o) {
     const idx = S.obstacles.indexOf(o)
     if (idx >= 0) S.obstacles.splice(idx, 1)
   } catch {}
+}
+
+// v54.94 — Pre-race overview banner (shows train + mode + age + distance)
+function showPreRaceBanner(done) {
+  const overlay = document.getElementById('prerace')
+  const trainEl = document.getElementById('prerace-train')
+  const infoEl = document.getElementById('prerace-info')
+  if (!overlay || !trainEl || !infoEl) { done && done(); return }
+  const trainName = (S.trainCfg && S.trainCfg.name) || 'Kereta'
+  const mode = (window.ObstacleEngine && window.ObstacleEngine.getMode) ? window.ObstacleEngine.getMode() : 'easy'
+  const modeLabel = mode === 'hard' ? '🔥 Sulit' : '😊 Mudah'
+  const age = (window.ObstacleEngine && window.ObstacleEngine.getAgePreset) ? window.ObstacleEngine.getAgePreset() : '5'
+  const tod = S.timeOfDay
+  const todIcon = tod === 'pagi' ? '🌅' : (tod === 'siang' ? '☀️' : '🌇')
+  trainEl.textContent = trainName
+  infoEl.innerHTML = `Mode: ${modeLabel} · Usia ${age}<br>${todIcon} ${tod.charAt(0).toUpperCase()+tod.slice(1)} · 🎯 Jarak: 1000m`
+  overlay.style.display = 'flex'
+  setTimeout(() => {
+    overlay.style.display = 'none'
+    done && done()
+  }, 1900)
 }
 
 // ── COUNTDOWN ──────────────────────────────────────────────────────────────
