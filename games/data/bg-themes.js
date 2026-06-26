@@ -31,33 +31,35 @@
   const LT = global.TrainBG.LocationTheme
 
   // ── Shared palette tokens ──────────────────────────────────────────────────
-  // Per spec §11 lighting rules: never full black, contrast preserved.
+  // v54.64 Thomas & Friends: All Engines Go cheerful pass. Primary-color heavy,
+  // higher saturation, no pure-black/slate. Per spec §11 "lighting rules: never
+  // full black, contrast preserved" — now stronger: explicit happy primaries.
   const COLORS = {
-    asphalt:        0x2a2a2a,
-    asphaltLight:   0x4a4a4a,
-    concrete:       0x9ca3af,
-    concreteWarm:   0xb8b0a2,
-    brickRed:       0x991b1b,
-    brickOrange:    0xc2410c,
-    woodBrown:      0x78350f,
-    leafGreen:      0x16a34a,
-    leafForest:     0x14532d,
-    palmGreen:      0x15803d,
-    paddyGreen:     0x84cc16,
-    mountainGray:   0x4b5563,
-    mountainGreen:  0x365314,
-    skylineDark:    0x1f2937,
-    skylineCream:   0xfde68a,
-    neonRed:        0xef4444,
-    neonYellow:     0xfde047,
-    neonCyan:       0x06b6d4,
-    glassBlue:      0x60a5fa,
-    canopyGray:     0x6b7280,
-    railSteel:      0x71717a,
-    headlightWarm:  0xfde68a,
-    streetlampWarm: 0xfbbf24,
-    riverBlue:      0x0ea5e9,
-    fogLight:       0xe5e7eb,
+    asphalt:        0x607d8b,   // blue-gray (was slate)
+    asphaltLight:   0x90a4ae,
+    concrete:       0xeceff1,   // bright concrete (warmer)
+    concreteWarm:   0xffe0b2,   // peach
+    brickRed:       0xe53935,   // Thomas cherry red (was muted brick)
+    brickOrange:    0xf57c00,   // warm orange
+    woodBrown:      0xa1887f,   // warm taupe wood
+    leafGreen:      0x66bb6a,   // happy green (was forest)
+    leafForest:     0x388e3c,
+    palmGreen:      0x4caf50,
+    paddyGreen:     0x9ccc65,
+    mountainGray:   0x90caf9,   // sky-blue mountains (Thomas-style)
+    mountainGreen:  0x81c784,
+    skylineDark:    0x546e7a,   // warm blue-gray (was near-black)
+    skylineCream:   0xfff9c4,   // bright cream
+    neonRed:        0xef5350,
+    neonYellow:     0xffeb3b,
+    neonCyan:       0x00bcd4,
+    glassBlue:      0x42a5f5,   // brighter sky-blue (Thomas tower color)
+    canopyGray:     0x90a4ae,
+    railSteel:      0x9e9e9e,
+    headlightWarm:  0xfff59d,   // bright bulb yellow
+    streetlampWarm: 0xffc107,   // amber lantern
+    riverBlue:      0x29b6f6,   // bright water
+    fogLight:       0xf5f5f5,
   }
 
   // ── 1. Surabaya ─────────────────────────────────────────────────────────────

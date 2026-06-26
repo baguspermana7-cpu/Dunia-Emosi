@@ -53,122 +53,126 @@
   }
 
   // ── 10 NPC archetype drawers ──────────────────────────────────────────────
-  // Each draws a tiny silhouette ~18px tall on the container.
+  // v54.64 Thomas & Friends: All Engines Go cheerful pass. All NPC skin tones
+  // warmer (peach), shirts in bright primary colors (cherry red / royal blue /
+  // happy yellow / emerald green) instead of muted slate/navy/olive. Pants
+  // stay mid-tone for contrast.
+  const SKIN = 0xffab91   // warm peach (was khaki tan)
+  const SKIN_DARK = 0xff8a65
+  const PANT = 0x546e7a   // warm blue-gray pants (was near-black)
+  const SHOE = 0x6d4c41
   const ARCHETYPES = {
     commuter: (c) => {
-      // Dark jacket + briefcase. 18px tall.
       const g = new PIXI.Graphics()
-      g.circle(0, -16, 3.5).fill({ color: 0xd4a574 })   // head
-      g.rect(-3, -13, 6, 8).fill({ color: 0x1f2937 })   // jacket
-      g.rect(-3, -5, 2.5, 5).fill({ color: 0x111827 })  // left leg
-      g.rect(0.5, -5, 2.5, 5).fill({ color: 0x111827 }) // right leg
-      g.rect(2, -10, 3, 4).fill({ color: 0x422006 })    // briefcase
+      g.circle(0, -16, 3.5).fill({ color: SKIN })
+      g.rect(-3, -13, 6, 8).fill({ color: 0x1e88e5 })   // royal blue jacket
+      g.rect(-3, -5, 2.5, 5).fill({ color: PANT })
+      g.rect(0.5, -5, 2.5, 5).fill({ color: PANT })
+      g.rect(2, -10, 3, 4).fill({ color: 0xa1887f })    // briefcase
       c.addChild(g)
     },
     family_passenger: (c) => {
-      // Adult + small child (3px wide).
       const g = new PIXI.Graphics()
-      // Adult
-      g.circle(-2, -16, 3.5).fill({ color: 0xd4a574 })
-      g.rect(-5, -13, 6, 8).fill({ color: 0xb91c1c })   // red shirt
-      g.rect(-5, -5, 2.5, 5).fill({ color: 0x1e293b })
-      g.rect(-2.5, -5, 2.5, 5).fill({ color: 0x1e293b })
-      // Child
-      g.circle(5, -10, 2.5).fill({ color: 0xd4a574 })
-      g.rect(3, -8, 4, 5).fill({ color: 0xfbbf24 })     // yellow shirt
-      g.rect(3, -3, 1.5, 3).fill({ color: 0x1e293b })
-      g.rect(5, -3, 1.5, 3).fill({ color: 0x1e293b })
+      // Adult — cherry red shirt
+      g.circle(-2, -16, 3.5).fill({ color: SKIN })
+      g.rect(-5, -13, 6, 8).fill({ color: 0xe53935 })
+      g.rect(-5, -5, 2.5, 5).fill({ color: PANT })
+      g.rect(-2.5, -5, 2.5, 5).fill({ color: PANT })
+      // Child — happy yellow shirt
+      g.circle(5, -10, 2.5).fill({ color: SKIN_DARK })
+      g.rect(3, -8, 4, 5).fill({ color: 0xfdd835 })
+      g.rect(3, -3, 1.5, 3).fill({ color: 0x6d4c41 })
+      g.rect(5, -3, 1.5, 3).fill({ color: 0x6d4c41 })
       c.addChild(g)
     },
     tourist: (c) => {
-      // Backpack + camera.
       const g = new PIXI.Graphics()
-      g.circle(0, -16, 3.5).fill({ color: 0xfde68a })   // head
-      g.rect(-3, -13, 6, 8).fill({ color: 0x059669 })   // green shirt
-      g.rect(-5, -12, 2.5, 7).fill({ color: 0x6b7280 }) // backpack strap
-      g.rect(2.5, -12, 2.5, 7).fill({ color: 0x6b7280 })
-      g.rect(-1, -10, 3, 2.5).fill({ color: 0x1f2937 }) // camera
-      g.rect(-3, -5, 2.5, 5).fill({ color: 0x422006 })
-      g.rect(0.5, -5, 2.5, 5).fill({ color: 0x422006 })
+      g.circle(0, -16, 3.5).fill({ color: SKIN })
+      g.rect(-3, -13, 6, 8).fill({ color: 0x43a047 })   // bright emerald
+      g.rect(-5, -12, 2.5, 7).fill({ color: 0xe53935 }) // red backpack strap
+      g.rect(2.5, -12, 2.5, 7).fill({ color: 0xe53935 })
+      g.rect(-1, -10, 3, 2.5).fill({ color: 0x546e7a }) // camera
+      g.rect(-3, -5, 2.5, 5).fill({ color: 0x6d4c41 })
+      g.rect(0.5, -5, 2.5, 5).fill({ color: 0x6d4c41 })
       c.addChild(g)
     },
     student: (c) => {
-      // School uniform white shirt + dark pants + backpack.
       const g = new PIXI.Graphics()
-      g.circle(0, -16, 3.5).fill({ color: 0x78350f })
-      g.rect(-3, -13, 6, 5).fill({ color: 0xf3f4f6 })   // white shirt
-      g.rect(-3, -8, 6, 4).fill({ color: 0x1e3a8a })    // dark pants/skirt
-      g.rect(2.5, -12, 3, 6).fill({ color: 0xb91c1c })  // backpack
-      g.rect(-3, -4, 2.5, 4).fill({ color: 0x1f2937 })
-      g.rect(0.5, -4, 2.5, 4).fill({ color: 0x1f2937 })
+      g.circle(0, -16, 3.5).fill({ color: SKIN_DARK })
+      g.rect(-3, -13, 6, 5).fill({ color: 0xffffff })   // white shirt
+      g.rect(-1, -12, 2, 3).fill({ color: 0xe53935 })   // red bow tie
+      g.rect(-3, -8, 6, 4).fill({ color: 0x1565c0 })    // royal blue uniform pants
+      g.rect(2.5, -12, 3, 6).fill({ color: 0xfdd835 })  // happy yellow backpack
+      g.rect(-3, -4, 2.5, 4).fill({ color: PANT })
+      g.rect(0.5, -4, 2.5, 4).fill({ color: PANT })
       c.addChild(g)
     },
     office_worker: (c) => {
-      // Suit + briefcase, taller silhouette.
       const g = new PIXI.Graphics()
-      g.circle(0, -17, 3.5).fill({ color: 0xd4a574 })
-      g.rect(-3, -14, 6, 9).fill({ color: 0x111827 })   // dark suit
-      g.rect(-1, -13, 2, 4).fill({ color: 0xfde68a })   // tie / shirt
-      g.rect(-3, -5, 2.5, 5).fill({ color: 0x111827 })
-      g.rect(0.5, -5, 2.5, 5).fill({ color: 0x111827 })
-      g.rect(2, -10, 3.5, 4).fill({ color: 0x422006 })
+      g.circle(0, -17, 3.5).fill({ color: SKIN })
+      g.rect(-3, -14, 6, 9).fill({ color: 0x283593 })   // deep indigo suit
+      g.rect(-1, -13, 2, 4).fill({ color: 0xe53935 })   // cherry red tie
+      g.rect(-3, -5, 2.5, 5).fill({ color: 0x283593 })
+      g.rect(0.5, -5, 2.5, 5).fill({ color: 0x283593 })
+      g.rect(2, -10, 3.5, 4).fill({ color: 0xa1887f })
       c.addChild(g)
     },
     station_staff: (c) => {
-      // KAI-style: white shirt + dark slacks + cap.
+      // KAI-style royal-blue uniform + cap with red band.
       const g = new PIXI.Graphics()
-      g.circle(0, -16, 3.5).fill({ color: 0xd4a574 })
-      g.rect(-4, -18, 8, 2).fill({ color: 0x1e3a8a })   // cap brim
-      g.rect(-3, -13, 6, 6).fill({ color: 0x1e3a8a })   // navy uniform top
-      g.rect(-3, -7, 6, 7).fill({ color: 0x1f2937 })    // dark slacks
+      g.circle(0, -16, 3.5).fill({ color: SKIN })
+      g.rect(-4, -19, 8, 2).fill({ color: 0x1565c0 })   // cap top
+      g.rect(-4, -17, 8, 1).fill({ color: 0xe53935 })   // red band
+      g.rect(-3, -13, 6, 6).fill({ color: 0x1565c0 })
+      g.rect(-1, -12, 2, 4).fill({ color: 0xfdd835 })   // yellow stripe
+      g.rect(-3, -7, 6, 7).fill({ color: PANT })
       c.addChild(g)
     },
     security: (c) => {
-      // Vest + radio.
       const g = new PIXI.Graphics()
-      g.circle(0, -16, 3.5).fill({ color: 0xd4a574 })
-      g.rect(-3, -13, 6, 8).fill({ color: 0xfde047 })   // yellow vest
-      g.rect(-3, -13, 6, 1.5).fill({ color: 0x1f2937 })
-      g.rect(-3, -10, 6, 1).fill({ color: 0xf97316 })   // hi-vis stripe
-      g.rect(-3, -5, 2.5, 5).fill({ color: 0x1f2937 })
-      g.rect(0.5, -5, 2.5, 5).fill({ color: 0x1f2937 })
-      g.rect(3, -12, 1.5, 3).fill({ color: 0x111827 }) // radio
+      g.circle(0, -16, 3.5).fill({ color: SKIN })
+      g.rect(-3, -13, 6, 8).fill({ color: 0xfdd835 })   // bright yellow vest
+      g.rect(-3, -13, 6, 1.5).fill({ color: 0xe53935 }) // red shoulder
+      g.rect(-3, -10, 6, 1).fill({ color: 0xff5722 })   // hi-vis orange stripe
+      g.rect(-3, -5, 2.5, 5).fill({ color: PANT })
+      g.rect(0.5, -5, 2.5, 5).fill({ color: PANT })
+      g.rect(3, -12, 1.5, 3).fill({ color: 0x546e7a })
       c.addChild(g)
     },
     vendor: (c) => {
-      // Small cart silhouette.
       const g = new PIXI.Graphics()
-      g.circle(-4, -14, 3).fill({ color: 0xd4a574 })
-      g.rect(-6, -12, 4, 7).fill({ color: 0xc2410c })   // shirt
-      g.rect(-6, -5, 1.5, 5).fill({ color: 0x422006 })
-      g.rect(-4.5, -5, 1.5, 5).fill({ color: 0x422006 })
-      // Cart
-      g.rect(-2, -9, 12, 6).fill({ color: 0xfde68a })   // cart top
-      g.rect(-2, -10, 12, 1.5).fill({ color: 0x991b1b }) // awning
-      g.circle(0, -2, 1.5).fill({ color: 0x1f2937 })    // wheel L
-      g.circle(8, -2, 1.5).fill({ color: 0x1f2937 })    // wheel R
+      g.circle(-4, -14, 3).fill({ color: SKIN })
+      g.rect(-6, -12, 4, 7).fill({ color: 0xe53935 })   // cherry red shirt
+      g.rect(-6, -5, 1.5, 5).fill({ color: 0x6d4c41 })
+      g.rect(-4.5, -5, 1.5, 5).fill({ color: 0x6d4c41 })
+      // Cart — cream top + cherry red awning + happy yellow trim
+      g.rect(-2, -9, 12, 6).fill({ color: 0xfff9c4 })
+      g.rect(-2, -10, 12, 1.5).fill({ color: 0xe53935 })
+      g.rect(-2, -7, 12, 1).fill({ color: 0xfdd835 })
+      g.circle(0, -2, 1.5).fill({ color: 0x546e7a })
+      g.circle(8, -2, 1.5).fill({ color: 0x546e7a })
       c.addChild(g)
     },
     umbrella_commuter: (c) => {
-      // Figure + umbrella (curved dome).
       const g = new PIXI.Graphics()
-      g.circle(0, -14, 3.5).fill({ color: 0xd4a574 })
-      g.rect(-3, -11, 6, 7).fill({ color: 0x1f2937 })
-      g.rect(-3, -4, 2.5, 4).fill({ color: 0x111827 })
-      g.rect(0.5, -4, 2.5, 4).fill({ color: 0x111827 })
-      // Umbrella canopy + shaft
-      g.ellipse(0, -19, 10, 4).fill({ color: 0xef4444 })
-      g.rect(-0.5, -19, 1, 5).fill({ color: 0x1f2937 })
+      g.circle(0, -14, 3.5).fill({ color: SKIN })
+      g.rect(-3, -11, 6, 7).fill({ color: 0x1e88e5 })   // royal blue jacket
+      g.rect(-3, -4, 2.5, 4).fill({ color: PANT })
+      g.rect(0.5, -4, 2.5, 4).fill({ color: PANT })
+      // Cherry red umbrella canopy + dark shaft
+      g.ellipse(0, -19, 10, 4).fill({ color: 0xe53935 })
+      g.rect(-0.5, -19, 1, 5).fill({ color: 0x546e7a })
       c.addChild(g)
     },
     sheltering_passenger: (c) => {
-      // Standing under canopy — figure + thin overhead bar.
       const g = new PIXI.Graphics()
-      g.rect(-12, -22, 24, 1.5).fill({ color: 0x9ca3af })  // canopy bar
-      g.circle(0, -16, 3.5).fill({ color: 0xd4a574 })
-      g.rect(-3, -13, 6, 8).fill({ color: 0x3730a3 })      // raincoat / jacket
-      g.rect(-3, -5, 2.5, 5).fill({ color: 0x1f2937 })
-      g.rect(0.5, -5, 2.5, 5).fill({ color: 0x1f2937 })
+      // Cheerful blue canopy bar with red trim
+      g.rect(-12, -22, 24, 1.5).fill({ color: 0xfdd835 })
+      g.rect(-12, -23, 24, 1).fill({ color: 0xe53935 })
+      g.circle(0, -16, 3.5).fill({ color: SKIN })
+      g.rect(-3, -13, 6, 8).fill({ color: 0x6a1b9a })   // purple raincoat (playful)
+      g.rect(-3, -5, 2.5, 5).fill({ color: PANT })
+      g.rect(0.5, -5, 2.5, 5).fill({ color: PANT })
       c.addChild(g)
     },
   }

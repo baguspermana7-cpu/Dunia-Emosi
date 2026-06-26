@@ -162,13 +162,20 @@
     if (/megacity/.test(climate)) strips = 28
     if (/heritage|highland/.test(climate)) strips = 12
     const palette = (state.location.palette || {})
-    const buildingColor = palette.hill || 0x1f2937
+    const buildingColor = palette.hill || 0x546e7a
+    // v54.64 Thomas palette: cycle through 6 pastel building tints so the
+    // skyline strip reads as a playful row of varied buildings, not a dark
+    // monotone slab.
+    const TINTS = [0xfff9c4, 0xb3e5fc, 0xf8bbd0, 0xc8e6c9, 0xffe0b2, 0xd1c4e9]
     const nightLights = (state.timeOfDay && state.timeOfDay.stars) || (state.timeOfDay && /malam|petang|blue-hour/.test(state.timeOfDay.name))
     for (let i = 0; i < strips; i++) {
       const b = new PIXI.Graphics()
       const w = 18 + Math.random() * 30
       const h = 30 + Math.random() * 80
-      b.rect(0, 0, w, h).fill({ color: buildingColor, alpha: 0.75 })
+      const tint = nightLights ? buildingColor : TINTS[i % TINTS.length]
+      b.rect(0, 0, w, h).fill({ color: tint, alpha: nightLights ? 0.85 : 0.95 })
+      // Roof accent stripe in cheerful Thomas red
+      b.rect(0, 0, w, 3).fill({ color: 0xe53935, alpha: 0.85 })
       // Night windows for some buildings
       if (nightLights && Math.random() < 0.6) {
         const rows = Math.floor(h / 14)
@@ -176,7 +183,7 @@
         for (let r = 0; r < rows; r++) {
           for (let c = 0; c < cols; c++) {
             if (Math.random() < 0.35) {
-              b.rect(c * 10 + 2, r * 14 + 4, 4, 4).fill({ color: 0xfbbf24, alpha: 0.9 })
+              b.rect(c * 10 + 2, r * 14 + 4, 4, 4).fill({ color: 0xfff59d, alpha: 0.95 })
             }
           }
         }
@@ -297,6 +304,7 @@
 
   // FarFar drawers
   LANDMARK_DRAWERS['Distant mountain ridge'] = (c, W, baseY) => {
+    // v54.64 Thomas palette: warm sky-blue mountain silhouette (not slate gray)
     const g = new PIXI.Graphics()
     g.poly([
       0, baseY,
@@ -310,7 +318,10 @@
       W, baseY - 30,
       W, baseY + 50,
       0, baseY + 50,
-    ]).fill({ color: 0x4b5563, alpha: 0.65 })
+    ]).fill({ color: 0x90caf9, alpha: 0.75 })
+    // Snow caps on tall peaks
+    g.poly([W*0.14, baseY-68, W*0.18, baseY-75, W*0.22, baseY-68]).fill({color:0xffffff,alpha:0.85})
+    g.poly([W*0.74, baseY-82, W*0.78, baseY-90, W*0.82, baseY-82]).fill({color:0xffffff,alpha:0.85})
     c.addChild(g)
   }
   LANDMARK_DRAWERS['Suramadu Bridge far'] = (c, W, baseY) => {
@@ -407,37 +418,44 @@
 
   // Mid drawers
   LANDMARK_DRAWERS['Heritage colonial block'] = (c, W, midY) => {
+    // v54.64 Thomas palette: bright cream body + cherry red roof.
     const x = W * (0.10 + Math.random() * 0.7)
     const g = new PIXI.Graphics()
-    g.rect(x - 18, midY - 35, 36, 35).fill({ color: 0xfde68a, alpha: 0.85 })
-    g.poly([x - 22, midY - 35, x, midY - 48, x + 22, midY - 35]).fill({ color: 0x991b1b, alpha: 0.85 })
+    g.rect(x - 18, midY - 35, 36, 35).fill({ color: 0xfff9c4, alpha: 0.95 })
+    g.poly([x - 22, midY - 35, x, midY - 48, x + 22, midY - 35]).fill({ color: 0xe53935, alpha: 0.95 })
     for (let r = 0; r < 2; r++) {
       for (let col = 0; col < 4; col++) {
-        g.rect(x - 14 + col * 8, midY - 28 + r * 12, 3, 5).fill({ color: 0x1e293b, alpha: 0.8 })
+        g.rect(x - 14 + col * 8, midY - 28 + r * 12, 3, 5).fill({ color: 0x42a5f5, alpha: 0.85 })
       }
     }
     c.addChild(g)
   }
   LANDMARK_DRAWERS['Ruko commercial strip'] = (c, W, midY) => {
+    // v54.64 Thomas palette: cycle through happy primaries (red/blue/yellow/
+    // green/orange/teal) instead of muted earth tones.
     const g = new PIXI.Graphics()
+    const tints = [0xe53935, 0xfb8c00, 0xfdd835, 0x43a047, 0x1e88e5, 0x8e24aa]
     for (let i = 0; i < 6; i++) {
       const x = i * (W / 6) + 10
       const w = W / 6 - 14
-      const tints = [0xc2410c, 0x991b1b, 0x6b7280, 0xb45309, 0x1e40af, 0x065f46]
-      g.rect(x, midY - 30, w, 30).fill({ color: tints[i % tints.length], alpha: 0.85 })
-      g.rect(x, midY - 34, w, 4).fill({ color: 0x1f2937, alpha: 0.85 })
-      g.rect(x + 4, midY - 12, w - 8, 10).fill({ color: 0xfde047, alpha: 0.85 })
+      g.rect(x, midY - 30, w, 30).fill({ color: tints[i % tints.length], alpha: 0.95 })
+      g.rect(x, midY - 34, w, 4).fill({ color: 0x546e7a, alpha: 0.95 })
+      // Lit awning/sign in cheerful yellow
+      g.rect(x + 4, midY - 12, w - 8, 10).fill({ color: 0xfff59d, alpha: 0.95 })
     }
     c.addChild(g)
   }
   LANDMARK_DRAWERS['High-rise glass tower'] = (c, W, midY) => {
+    // v54.64 Thomas palette: vivid sky-blue with cheerful window-band stripes.
     const x = W * (0.15 + Math.random() * 0.7)
     const g = new PIXI.Graphics()
     const h = 80 + Math.random() * 40
-    g.rect(x - 18, midY - h, 36, h).fill({ color: 0x60a5fa, alpha: 0.85 })
+    g.rect(x - 18, midY - h, 36, h).fill({ color: 0x42a5f5, alpha: 0.92 })
     for (let r = 0; r < Math.floor(h / 10); r++) {
-      g.rect(x - 16, midY - h + r * 10 + 1, 32, 1.5).fill({ color: 0x1e3a8a, alpha: 0.7 })
+      g.rect(x - 16, midY - h + r * 10 + 1, 32, 1.5).fill({ color: 0xfff59d, alpha: 0.55 })
     }
+    // Crown stripe
+    g.rect(x - 18, midY - h, 36, 3).fill({ color: 0xe53935, alpha: 0.95 })
     c.addChild(g)
   }
   LANDMARK_DRAWERS['Flyover overpass'] = (c, W, midY) => {
@@ -543,24 +561,26 @@
     c.addChild(g)
   }
   LANDMARK_DRAWERS['Heritage low-rise row'] = (c, W, midY) => {
+    // v54.64 Thomas palette: bright cream + cherry red gabled roofs.
     const g = new PIXI.Graphics()
     for (let i = 0; i < 4; i++) {
       const x = i * (W / 4) + 20
       const w = W / 4 - 30
-      g.rect(x, midY - 26, w, 26).fill({ color: 0xfde68a, alpha: 0.88 })
-      g.poly([x - 4, midY - 26, x + w / 2, midY - 38, x + w + 4, midY - 26]).fill({ color: 0x991b1b, alpha: 0.92 })
-      g.rect(x + 6, midY - 14, 4, 8).fill({ color: 0x1e293b, alpha: 0.7 })
-      g.rect(x + w - 10, midY - 14, 4, 8).fill({ color: 0x1e293b, alpha: 0.7 })
+      g.rect(x, midY - 26, w, 26).fill({ color: 0xfff9c4, alpha: 0.95 })
+      g.poly([x - 4, midY - 26, x + w / 2, midY - 38, x + w + 4, midY - 26]).fill({ color: 0xe53935, alpha: 0.95 })
+      g.rect(x + 6, midY - 14, 4, 8).fill({ color: 0x42a5f5, alpha: 0.85 })
+      g.rect(x + w - 10, midY - 14, 4, 8).fill({ color: 0x42a5f5, alpha: 0.85 })
     }
     c.addChild(g)
   }
   LANDMARK_DRAWERS['Banyan tree (beringin)'] = (c, W, midY) => {
+    // v54.64 Thomas palette: happy bright green foliage.
     const x = W * (0.6 + Math.random() * 0.3)
     const g = new PIXI.Graphics()
-    g.rect(x - 3, midY - 14, 6, 14).fill({ color: 0x422006, alpha: 0.9 })
-    g.circle(x, midY - 26, 18).fill({ color: 0x16a34a, alpha: 0.85 })
-    g.circle(x - 12, midY - 18, 12).fill({ color: 0x15803d, alpha: 0.8 })
-    g.circle(x + 12, midY - 18, 12).fill({ color: 0x15803d, alpha: 0.8 })
+    g.rect(x - 3, midY - 14, 6, 14).fill({ color: 0x6d4c41, alpha: 0.92 })
+    g.circle(x, midY - 26, 18).fill({ color: 0x66bb6a, alpha: 0.95 })
+    g.circle(x - 12, midY - 18, 12).fill({ color: 0x81c784, alpha: 0.9 })
+    g.circle(x + 12, midY - 18, 12).fill({ color: 0x81c784, alpha: 0.9 })
     c.addChild(g)
   }
   LANDMARK_DRAWERS['Becak/andong silhouette'] = (c, W, midY) => {

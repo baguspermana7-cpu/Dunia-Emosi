@@ -1,5 +1,83 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.64 "Thomas Cheerful Palette" — bright primaries across BG engine
+
+Owner: "warna2nya buat ceria misal menggunakan style color pallet seperti di thomas all engine go yang film baru 2025, itu ceria sekali colour palletnya. pada game train". Comprehensive palette pass across the engine, themes, landmark drawers, and NPC archetypes — saturated primaries, higher alpha, no slate/near-black anywhere.
+
+### Ships
+
+**`train-bg-engine.js` — TimeOfDay PHASES brightened**
+- dini-hari: deep cobalt + lavender clouds (was muddy black)
+- subuh: indigo + warm coral (was navy + cool gray)
+- pagi: vivid sky blue `0x4fc3f7` + pale yellow `0xfff59d` cloud-tint `0xffffff` (was orange + tan-skyblue)
+- golden-hour: amber `0xffb74d` + cream `0xfff176`
+- siang: vivid azure `0x29b6f6` + ice cream `0xe1f5fe` + bright sun `0xffeb3b` (was muted sky)
+- sore: warm coral `0xff7043` + peach `0xffcc80`
+- petang: cheerful violet `0xab47bc` + warm coral `0xff7043`
+- blue-hour: deep indigo + lavender (still vibrant)
+- malam: cobalt `0x1a237e` + bright royal `0x3f51b5` + sunny moon `0xfff59d` (no pure black)
+
+**`bg-themes.js` — COLORS tokens reset to Thomas primaries**
+- `brickRed: 0x991b1b → 0xe53935` (Thomas cherry red)
+- `glassBlue: 0x60a5fa → 0x42a5f5` (vivid sky-blue)
+- `mountainGray: 0x4b5563 → 0x90caf9` (sky-blue mountains — Thomas-style)
+- `skylineDark: 0x1f2937 → 0x546e7a` (warm blue-gray, not near-black)
+- `leafGreen: 0x16a34a → 0x66bb6a` (happy green)
+- `palmGreen: 0x15803d → 0x4caf50`
+- `headlightWarm/streetlampWarm/skylineCream: bright sun-yellow tones
+- `riverBlue: 0x0ea5e9 → 0x29b6f6` (clearer water)
+- `neonYellow: 0xfde047 → 0xffeb3b` (Thomas signal yellow)
+- `asphalt: 0x2a2a2a → 0x607d8b` (warm blue-gray — gone is the slate)
+
+**`bg-renderers.js` — landmark drawers cheerful update**
+- Mountain ridge: sky-blue `0x90caf9` body + WHITE snow caps on tall peaks
+- Heritage colonial block: bright cream `0xfff9c4` body + Thomas cherry red `0xe53935` roof + sky-blue `0x42a5f5` windows
+- Ruko commercial strip: 6 shops cycle through happy primaries (red/orange/yellow/green/blue/purple) instead of muted earth tones; sun-yellow lit signs
+- High-rise glass tower: vivid sky-blue body + sunshine window-bands + Thomas-red crown stripe
+- Heritage low-rise row: cream + red gable + sky-blue windows
+- Banyan tree: 3-circle foliage in happy green `0x66bb6a` + lighter `0x81c784` highlights
+- City skyline strip (setupFar): 6-tint pastel cycle (cream/sky/pink/mint/peach/lavender) WHEN NOT NIGHT + Thomas red roof stripe on every building
+
+**`bg-npcs.js` — NPC archetypes get bright shirts**
+- Skin tone: `0xd4a574` (khaki tan) → `0xffab91` (warm peach) for all 10 archetypes
+- Pants: `0x1f2937`/`0x111827` (near-black) → `0x546e7a` (warm blue-gray)
+- commuter: jacket `0x1f2937` → `0x1e88e5` (royal blue)
+- family_passenger: yellow shirt for child `0xfbbf24` → `0xfdd835`; red for adult `0xb91c1c` → `0xe53935`
+- tourist: green shirt `0x059669` → `0x43a047` (emerald) + RED backpack straps
+- student: red bow tie, royal blue `0x1565c0` pants, happy yellow `0xfdd835` backpack
+- office_worker: deep indigo `0x283593` suit + cherry red tie
+- station_staff: KAI royal-blue uniform `0x1565c0` + cap with red band + yellow stripe (was dark navy)
+- security: bright yellow vest + red shoulder + hi-vis orange stripe
+- vendor: cherry red shirt + cream cart + Thomas red awning + yellow trim
+- umbrella_commuter: royal blue jacket + cherry red umbrella
+- sheltering_passenger: yellow canopy bar with red trim + purple raincoat (cheerful playful)
+
+### Files touched
+- `games/train-bg-engine.js` — TimeOfDay PHASES (9 entries × 6 fields each).
+- `games/data/bg-themes.js` — COLORS token map.
+- `games/data/bg-renderers.js` — 7 landmark drawers + setupFar skyline strip.
+- `games/data/bg-npcs.js` — 10 ARCHETYPES + SKIN/PANT constants.
+- 3 train HTMLs + `index.html` — cache-bust on ALL 4 engine scripts: `v=54.64-20260626bq`.
+- `sw.js` CACHE_VERSION v54.63-20260626bp → v54.64-20260626bq.
+
+### Verification
+- All 4 engine files syntax-check OK.
+- Single cache version `v=54.64-20260626bq` applied across train-bg-engine.js + bg-themes.js + bg-renderers.js + bg-npcs.js.
+- TimeOfDay PHASES still 9. Weather still 12. Journey still 7. LocationTheme still 5 cities. NPC archetypes still 10 + 19 aliases.
+- PROTECTED chars + PvP balance unchanged.
+
+### Owner reference
+
+Thomas & Friends: All Engines Go (Mattel 2021+ reboot, 2025 film) is the cited palette guide. The defining traits applied here:
+- Sky azures + creams (not muddy yellow-blue blends)
+- Building cream + cherry red roofs (the canonical heritage look)
+- Skyline pastels (cream/sky/pink/mint/peach/lavender)
+- NPC shirts in vivid primaries (red/blue/yellow/green/orange)
+- Happy-green vegetation instead of dark forest
+- Royal blue + cherry red uniform-trim combinations
+
+---
+
 ## 2026-06-26 — v54.63 "NPC archetypes (10) + behavior FSM" (Phase 2.3)
 
 NEW `games/data/bg-npcs.js` (~270 LOC). Adds 10 Pixi-drawn NPC archetypes + 19 alias mappings + FSM for idle/walking/sheltering behavior.

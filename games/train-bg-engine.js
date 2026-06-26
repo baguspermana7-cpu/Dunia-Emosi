@@ -57,17 +57,22 @@
   // ── 8-phase TimeOfDay palette (extended from TrainShared.timeOfDay 6-phase) ─
   // Adds golden-hour + blue-hour to the existing subuh/pagi/siang/sore/petang/malam.
   // Phases are ordered chronologically so forProgress(t) lerps in real time.
+  // v54.64 Thomas & Friends: All Engines Go cheerful palette pass.
+  // Owner: "warna2nya buat ceria… colour pallet seperti di thomas all engine
+  // go… ceria sekali". Sky tops vivid azure/cream/coral. Cloud tints near-white.
+  // Sun is bright sun-yellow (#FFD54F-class), not orange-red. Night still
+  // playable (not pure black) — uses deep cobalt with bright stars.
   const TimeOfDay = {
     PHASES: [
-      { name:'dini-hari',   skyTop:0x0a0a2e, skyBot:0x1a1a5e, cloudTint:0x3a3a6e, sunY:-0.50, sunColor:0x8888aa, stars:true,  ambient:0x4a4a7a },
-      { name:'subuh',       skyTop:0x1a2850, skyBot:0x4a5f7f, cloudTint:0x6e7faa, sunY:-0.20, sunColor:0xff6644, stars:true,  ambient:0x5e6a8a },
-      { name:'pagi',        skyTop:0xfdb462, skyBot:0x87ceeb, cloudTint:0xfff7e8, sunY: 0.20, sunColor:0xffdd00, stars:false, ambient:0xfde6a0 },
-      { name:'golden-hour', skyTop:0xfdba74, skyBot:0xfde68a, cloudTint:0xfed7aa, sunY: 0.30, sunColor:0xfb923c, stars:false, ambient:0xfed7aa },
-      { name:'siang',       skyTop:0x87ceeb, skyBot:0xe0f6ff, cloudTint:0xffffff, sunY: 0.55, sunColor:0xffff00, stars:false, ambient:0xffffff },
-      { name:'sore',        skyTop:0xff8c42, skyBot:0xffb366, cloudTint:0xffd0a0, sunY: 0.78, sunColor:0xffaa00, stars:false, ambient:0xffd0a0 },
-      { name:'petang',      skyTop:0x6b3b6b, skyBot:0xff6b35, cloudTint:0xa07050, sunY: 0.90, sunColor:0xff5500, stars:false, ambient:0xa07050 },
-      { name:'blue-hour',   skyTop:0x1e3a5f, skyBot:0x4a5680, cloudTint:0x3a4060, sunY:-0.10, sunColor:0x4060a0, stars:true,  ambient:0x4a5680 },
-      { name:'malam',       skyTop:0x0a0a2e, skyBot:0x1a1a5e, cloudTint:0x3a3a6e, sunY:-0.40, sunColor:0xeeee88, stars:true,  ambient:0x2a2a4a },
+      { name:'dini-hari',   skyTop:0x1a237e, skyBot:0x3949ab, cloudTint:0x9fa8da, sunY:-0.50, sunColor:0xb39ddb, stars:true,  ambient:0x7986cb },
+      { name:'subuh',       skyTop:0x3949ab, skyBot:0xff8a65, cloudTint:0xffccbc, sunY:-0.20, sunColor:0xffab40, stars:true,  ambient:0xffccbc },
+      { name:'pagi',        skyTop:0x4fc3f7, skyBot:0xfff59d, cloudTint:0xffffff, sunY: 0.20, sunColor:0xffd54f, stars:false, ambient:0xfff8e1 },
+      { name:'golden-hour', skyTop:0xffb74d, skyBot:0xfff176, cloudTint:0xfff8e1, sunY: 0.30, sunColor:0xffc107, stars:false, ambient:0xfff3e0 },
+      { name:'siang',       skyTop:0x29b6f6, skyBot:0xe1f5fe, cloudTint:0xffffff, sunY: 0.55, sunColor:0xffeb3b, stars:false, ambient:0xffffff },
+      { name:'sore',        skyTop:0xff7043, skyBot:0xffcc80, cloudTint:0xffe0b2, sunY: 0.78, sunColor:0xffa726, stars:false, ambient:0xffe0b2 },
+      { name:'petang',      skyTop:0xab47bc, skyBot:0xff7043, cloudTint:0xf48fb1, sunY: 0.90, sunColor:0xff5722, stars:false, ambient:0xf8bbd0 },
+      { name:'blue-hour',   skyTop:0x283593, skyBot:0x5c6bc0, cloudTint:0x9fa8da, sunY:-0.10, sunColor:0xb39ddb, stars:true,  ambient:0x7986cb },
+      { name:'malam',       skyTop:0x1a237e, skyBot:0x3f51b5, cloudTint:0x7986cb, sunY:-0.40, sunColor:0xfff59d, stars:true,  ambient:0x5c6bc0 },
     ],
     _lerpHex (a, b, t) {
       const ar=(a>>16)&255, ag=(a>>8)&255, ab=a&255
