@@ -735,7 +735,8 @@
         requiredAction: 'tap_button',
         softFail: true,
         maxRetry: 3,
-        reward: { coins: 5, badgeProgress: 1, sound: 'success_chime' },
+        // v54.85: kindness_star sticker rewarded on success (catalog entry exists)
+        reward: { coins: 5, badgeProgress: 1, sound: 'success_chime', sticker: 'kindness_star' },
         visual: { cameraZoom: true, successSparkle: true },
         accessibility: { voicePrompt: true, largeTouchTarget: true, reducedMotion: true },
         title: animal + ' menyeberang rel!',
@@ -760,12 +761,33 @@
             sub.textContent = 'Bunyikan bell agar kereta berhenti dan ' + name + ' lewat aman.'
             body.appendChild(sub)
 
-            // Animal scene
+            // v54.85: cinematic scene — animated train + animal slide across track
             const sceneRow = document.createElement('div')
             sceneRow.className = 'obstacle-engine-row'
             const scene = document.createElement('div')
-            scene.style.cssText = 'font-size:64px;line-height:1;padding:8px 16px;background:rgba(255,255,255,0.5);border-radius:14px;'
-            scene.textContent = '🚂  ⋯  ' + animal
+            scene.style.cssText = 'position:relative;width:min(86vw,460px);height:96px;background:linear-gradient(180deg,#bae6fd 0%,#fef3c7 60%,#d4a574 100%);border-radius:14px;border:3px solid #92400e;overflow:hidden;box-shadow:inset 0 -8px 12px rgba(0,0,0,0.15);'
+
+            // Rail layer (decorative)
+            const rail = document.createElement('div')
+            rail.style.cssText = 'position:absolute;bottom:18px;left:0;right:0;height:6px;background:linear-gradient(180deg,#475569 0%,#1e293b 100%);'
+            scene.appendChild(rail)
+            // Sleepers
+            for (let i = 0; i < 8; i++) {
+              const s = document.createElement('div')
+              s.style.cssText = `position:absolute;bottom:8px;left:${i*60+10}px;width:36px;height:10px;background:#7c2d12;border-radius:2px;`
+              scene.appendChild(s)
+            }
+            // Train (left side, faces right)
+            const train = document.createElement('div')
+            train.style.cssText = 'position:absolute;bottom:24px;left:8px;font-size:46px;line-height:1;transition:transform 0.6s ease-out;'
+            train.textContent = '🚂'
+            scene.appendChild(train)
+            // Animal (right side, walks toward left/center then off-screen left)
+            const animalEl = document.createElement('div')
+            animalEl.style.cssText = 'position:absolute;bottom:28px;right:20px;font-size:42px;line-height:1;transition:transform 2.4s linear;'
+            animalEl.textContent = animal
+            scene.appendChild(animalEl)
+
             sceneRow.appendChild(scene)
             body.appendChild(sceneRow)
 
@@ -785,12 +807,16 @@
             btn.addEventListener('click', () => {
               btn.classList.add('correct')
               btn.disabled = true
-              // Animal walks across
-              scene.style.transition = 'transform 1.2s ease-out'
-              scene.textContent = animal + '  ⋯  🚂'
-              scene.style.transform = 'translateX(-20px)'
+              // v54.85: animate sequence — train holds, animal walks across to safety
+              train.style.transform = 'translateX(0)' // train stays put
+              // Animal walks across (right → left) over 2.4s
+              const distance = scene.clientWidth - 60
+              animalEl.style.transform = `translateX(-${distance}px)`
               OE.spawnSparkles(btn, 6)
-              setTimeout(() => callbacks.success(), 1300)
+              setTimeout(() => {
+                OE.spawnSparkles(animalEl, 8) // safe arrival sparkles
+                setTimeout(() => callbacks.success(), 600)
+              }, 2200)
             })
 
             btnRow.appendChild(btn)

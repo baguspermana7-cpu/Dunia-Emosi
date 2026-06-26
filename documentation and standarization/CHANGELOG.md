@@ -1,5 +1,45 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.85 "Animal crossing animation polish + kindness sticker + G15/G16 ⚙️ parity" (Phase 4.16)
+
+### Animal crossing cinematic upgrade
+
+Previous: static row showing `🚂  ⋯  🐱` text replaced after bell tap. Functional but flat.
+
+Now: 460×96px scene with:
+- Sky gradient (light blue → cream → earth) for depth
+- Animated rail (gradient steel) + 8 brown sleepers
+- Train 🚂 anchored at left
+- Animal slides smoothly from right edge to off-screen left over 2.4s linear transition (CSS transform translateX)
+- Safe-arrival sparkles burst at end position
+- 6 sparkles on bell button on initial tap
+
+Reduce-motion gate: CSS transition disabled if user prefers reduce-motion (inherited from engine).
+
+### Kindness sticker reward
+
+Each of the 6 animal_crossing variants now awards `kindness_star` sticker on success (declared in `reward-catalog.js` v54.78 but no obstacle was wiring it). Earn toast fires once (engine dedup-checks).
+
+Rewards: `{ coins: 5, badgeProgress: 1, sound: 'success_chime', sticker: 'kindness_star' }`
+
+### G15 / G16 ⚙️ parity
+
+Both games now load `settings-modal.js` and expose ⚙️ button in HUD next to 🏆 Koleksi. Players can adjust Mode / Age / Contrast / Voice / Reduce-Motion from any train game.
+
+### Files touched
+- `games/data/obstacles.js` — `makeAnimalCrossingObstacle` polish + sticker reward (~50 LOC changed).
+- `games/g15-pixi.html` — settings-modal.js script tag + ⚙️ button.
+- `games/g16-pixi.html` — settings-modal.js script tag + ⚙️ button.
+- `games/g14.html` — cache-bust to `v=54.85-20260626cl`.
+- `sw.js` v54.84 → v54.85.
+
+### Verification
+- Syntax OK across all 4 touched files + obstacles.js.
+- `node tools/probe-obstacle-engine.mjs` — 14/14 PASS (no regression).
+- Animal crossing earns kindness_star: confirmed by `reward.sticker` field. Engine `_storageListContains` dedup prevents repeat toast.
+
+---
+
 ## 2026-06-26 — v54.84 "§29 completeness (54 obstacles) + ⚙️ Pengaturan modal" (Phase 4.15)
 
 ### NEW obstacles (final 2 for spec §29 content library completeness)

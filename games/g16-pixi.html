@@ -147,6 +147,7 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 <script src="data/routes.js?v=54.83-20260626cj"></script>
 <script src="data/reward-catalog.js?v=54.83-20260626cj"></script>
 <script src="reward-gallery.js?v=54.83-20260626cj"></script>
+<script src="settings-modal.js?v=54.85-20260626cl"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
@@ -174,6 +175,11 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
   <button id="g16-koleksi-btn" type="button" onclick="if(window.RewardGallery) RewardGallery.open()" aria-label="Buka koleksi stiker"
           style="pointer-events:all;background:linear-gradient(135deg,#fbbf24,#f59e0b);border:2px solid #b45309;border-radius:10px;color:#5a2a00;padding:6px 10px;font-size:14px;cursor:pointer;font-family:inherit;font-weight:900;flex-shrink:0;box-shadow:0 3px 0 rgba(120,53,15,0.4);min-height:44px;text-shadow:0 1px 0 rgba(255,255,255,0.5)">
     🏆
+  </button>
+  <!-- v54.85 — Pengaturan modal trigger -->
+  <button id="g16-settings-btn" type="button" onclick="if(window.SettingsModal) SettingsModal.open()" aria-label="Pengaturan"
+          style="pointer-events:all;background:linear-gradient(135deg,#dbeafe,#60a5fa);border:2px solid #1e3a8a;border-radius:10px;color:#1e3a8a;padding:6px 10px;font-size:14px;cursor:pointer;font-family:inherit;font-weight:900;flex-shrink:0;box-shadow:0 3px 0 rgba(30,58,138,0.4);min-height:44px;text-shadow:0 1px 0 rgba(255,255,255,0.5)">
+    ⚙️
   </button>
   <button id="btn-pause" onclick="togglePause()" style="pointer-events:all;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.25);border-radius:10px;color:#fff;padding:5px 8px;font-size:14px;cursor:pointer;font-family:inherit;flex-shrink:0">⏸</button>
   <div id="game-badge">🚂 Signal Rush</div>
