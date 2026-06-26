@@ -1083,6 +1083,391 @@
       difficulty: 1,
     }))
 
+    // ── Choice / Memory / Balance tranche v54.73 ────────────────────────────
+
+    // Choose correct track — junction with signage. Wrong path = no harm, just retry.
+    function makeChooseTrackObstacle(opts) {
+      return {
+        type: 'route_choice',
+        difficulty: opts.difficulty || 2,
+        ageRange: opts.ageRange || '5-7',
+        allowedLocations: ['*'],
+        allowedJourneyPhases: ['urban_exit', 'suburban', 'approaching_station'],
+        requiredAction: 'tap_choice',
+        softFail: true,
+        maxRetry: 3,
+        reward: { coins: 6, badgeProgress: 1, sound: 'success_chime' },
+        visual: { cameraZoom: true, highlightSlot: true, successSparkle: true },
+        accessibility: { voicePrompt: true, largeTouchTarget: true, reducedMotion: true },
+        title: opts.title,
+        hints: [
+          'Coba jalur lain! 💡',
+          'Lihat tanda yang ditanya! ✨',
+          'Yang ini! 👇',
+        ],
+
+        interaction: {
+          setup(ctx, callbacks) {
+            const body = ctx.body
+            if (!body) return
+
+            const title = document.createElement('div')
+            title.className = 'obstacle-engine-title'
+            title.textContent = opts.title
+            body.appendChild(title)
+
+            const sub = document.createElement('div')
+            sub.className = 'obstacle-engine-subtitle'
+            sub.textContent = opts.subtitle
+            body.appendChild(sub)
+
+            const targetIdx = Math.floor(Math.random() * opts.choices.length)
+            const targetChoice = opts.choices[targetIdx]
+
+            // Prompt
+            const prompt = document.createElement('div')
+            prompt.style.cssText = 'text-align:center;font-size:clamp(15px,3.6vw,18px);font-weight:900;color:#3b2066;padding:8px 0 12px;'
+            prompt.textContent = opts.promptPrefix + ' ' + (targetChoice.label || targetChoice.icon)
+            body.appendChild(prompt)
+
+            const choicesRow = document.createElement('div')
+            choicesRow.className = 'obstacle-engine-row'
+            const shuffled = opts.choices.map((c, i) => ({ ...c, idx: i })).sort(() => Math.random() - 0.5)
+
+            shuffled.forEach(c => {
+              const btn = document.createElement('button')
+              btn.className = 'obstacle-engine-shape-btn'
+              btn.style.flexDirection = 'column'
+              btn.style.minWidth = '108px'
+              btn.style.minHeight = '110px'
+              const ic = document.createElement('span')
+              ic.style.cssText = 'font-size:42px;line-height:1;'
+              ic.textContent = c.icon
+              const lab = document.createElement('span')
+              lab.style.cssText = 'font-size:13px;font-weight:900;margin-top:4px;'
+              lab.textContent = c.label || ''
+              btn.appendChild(ic); btn.appendChild(lab)
+
+              btn.addEventListener('click', () => {
+                if (c.idx === targetIdx) {
+                  btn.classList.add('correct')
+                  OE.spawnSparkles(btn, 6)
+                  Array.from(choicesRow.querySelectorAll('button')).forEach(b => { b.disabled = true })
+                  setTimeout(() => callbacks.success(), 700)
+                } else {
+                  btn.classList.add('wrong')
+                  setTimeout(() => btn.classList.remove('wrong'), 500)
+                  callbacks.fail()
+                }
+              })
+              choicesRow.appendChild(btn)
+            })
+
+            body.appendChild(choicesRow)
+            OE.speak(opts.voice || 'Pilih jalur yang benar')
+          },
+          teardown() {}
+        },
+      }
+    }
+
+    OE.register('choose_correct_track_destination', makeChooseTrackObstacle({
+      title: '🚉 Pilih jalur menuju stasiun!',
+      subtitle: 'Kereta harus ke stasiun yang ditunjukkan.',
+      promptPrefix: 'Pergi ke',
+      voice: 'Pilih stasiun tujuan',
+      choices: [
+        { icon:'🅰️', label:'Stasiun A' },
+        { icon:'🅱️', label:'Stasiun B' },
+        { icon:'🆎', label:'Stasiun AB' },
+      ],
+    }))
+
+    OE.register('choose_track_color', makeChooseTrackObstacle({
+      title: '🚦 Pilih jalur warna!',
+      subtitle: 'Pilih rel dengan warna yang ditanya.',
+      promptPrefix: 'Pilih warna:',
+      voice: 'Pilih jalur warna',
+      choices: [
+        { icon:'🔴', label:'Merah' },
+        { icon:'🟢', label:'Hijau' },
+        { icon:'🔵', label:'Biru' },
+      ],
+    }))
+
+    OE.register('choose_track_number', makeChooseTrackObstacle({
+      title: '🔢 Pilih jalur angka!',
+      subtitle: 'Pilih rel dengan angka yang ditanya.',
+      promptPrefix: 'Pilih angka:',
+      voice: 'Pilih jalur angka',
+      choices: [
+        { icon:'1️⃣', label:'Satu' },
+        { icon:'2️⃣', label:'Dua' },
+        { icon:'3️⃣', label:'Tiga' },
+      ],
+    }))
+
+    OE.register('choose_track_shape', makeChooseTrackObstacle({
+      title: '🔷 Pilih jalur bentuk!',
+      subtitle: 'Pilih rel dengan bentuk yang ditanya.',
+      promptPrefix: 'Pilih bentuk:',
+      voice: 'Pilih jalur bentuk',
+      choices: [
+        { icon:'▲', label:'Segitiga' },
+        { icon:'⬤', label:'Lingkaran' },
+        { icon:'■', label:'Persegi' },
+      ],
+    }))
+
+    // ── Memory sequence (Simon-says, spec §16) ──────────────────────────────
+    function makeMemorySequenceObstacle(seqLength, difficulty) {
+      return {
+        type: 'memory_sequence',
+        difficulty: difficulty,
+        ageRange: seqLength <= 2 ? '4-5' : (seqLength <= 3 ? '5-7' : '6-7'),
+        allowedLocations: ['*'],
+        allowedJourneyPhases: ['*'],
+        requiredAction: 'tap_sequence',
+        softFail: true,
+        maxRetry: 3,
+        reward: { coins: 4 + seqLength, badgeProgress: 1, sound: 'success_chime' },
+        visual: { cameraZoom: true, highlightSlot: true, successSparkle: true },
+        accessibility: { voicePrompt: true, largeTouchTarget: true, reducedMotion: true },
+        title: '🎨 Tirukan urutan lampu! (' + seqLength + ' warna)',
+        hints: [
+          'Tap warna dengan urutan yang sama! 💡',
+          'Lihat warnanya menyala satu per satu! ✨',
+          'Coba lagi! 👇',
+        ],
+
+        interaction: {
+          setup(ctx, callbacks) {
+            const body = ctx.body
+            if (!body) return
+
+            const title = document.createElement('div')
+            title.className = 'obstacle-engine-title'
+            title.textContent = '🎨 Tirukan urutan lampu!'
+            body.appendChild(title)
+
+            const sub = document.createElement('div')
+            sub.className = 'obstacle-engine-subtitle'
+            sub.textContent = 'Lihat urutan, lalu tap warna sesuai.'
+            body.appendChild(sub)
+
+            const COLORS = ['red', 'green', 'blue', 'yellow']
+            const ICONS = { red:'🔴', green:'🟢', blue:'🔵', yellow:'🟡' }
+
+            // Generate random sequence
+            const sequence = []
+            for (let i = 0; i < seqLength; i++) {
+              sequence.push(COLORS[Math.floor(Math.random() * COLORS.length)])
+            }
+
+            const choicesRow = document.createElement('div')
+            choicesRow.className = 'obstacle-engine-row'
+
+            const buttons = {}
+            const shown = COLORS.slice(0, Math.max(seqLength + 1, 3))
+            shown.forEach(c => {
+              const btn = document.createElement('button')
+              btn.className = 'obstacle-engine-shape-btn'
+              btn.style.fontSize = '54px'
+              btn.dataset.color = c
+              btn.textContent = ICONS[c]
+              btn.disabled = true
+              btn.addEventListener('click', () => onTap(btn, c))
+              choicesRow.appendChild(btn)
+              buttons[c] = btn
+            })
+            body.appendChild(choicesRow)
+
+            // Play the sequence
+            let playStep = 0
+            const playInterval = setInterval(() => {
+              if (playStep >= sequence.length) {
+                clearInterval(playInterval)
+                // Enable taps
+                Object.values(buttons).forEach(b => { b.disabled = false })
+                sub.textContent = 'Sekarang tap urutan tadi!'
+                return
+              }
+              const c = sequence[playStep]
+              const btn = buttons[c]
+              if (btn) {
+                btn.style.transform = 'scale(1.15)'
+                btn.style.boxShadow = '0 0 22px rgba(251,191,36,0.95)'
+                setTimeout(() => {
+                  btn.style.transform = ''
+                  btn.style.boxShadow = ''
+                }, 350)
+              }
+              playStep++
+            }, 600)
+
+            let userStep = 0
+            function onTap(btn, color) {
+              const expected = sequence[userStep]
+              if (color === expected) {
+                btn.classList.add('correct')
+                setTimeout(() => btn.classList.remove('correct'), 250)
+                userStep++
+                if (userStep >= sequence.length) {
+                  Object.values(buttons).forEach(b => { b.disabled = true })
+                  OE.spawnSparkles(body.querySelector('.obstacle-engine-row:last-child'), 8)
+                  setTimeout(() => callbacks.success(), 700)
+                }
+              } else {
+                btn.classList.add('wrong')
+                setTimeout(() => btn.classList.remove('wrong'), 500)
+                userStep = 0 // restart sequence input
+                callbacks.fail()
+              }
+            }
+
+            ctx.__cleanup = () => { clearInterval(playInterval) }
+            OE.speak('Tirukan urutan lampu')
+          },
+          teardown(ctx) { if (ctx && ctx.__cleanup) ctx.__cleanup() }
+        },
+      }
+    }
+
+    OE.register('memory_sequence_2color', makeMemorySequenceObstacle(2, 1))
+    OE.register('memory_sequence_3color', makeMemorySequenceObstacle(3, 2))
+    OE.register('memory_sequence_4color', makeMemorySequenceObstacle(4, 3))
+
+    // ── Friendly race boost (spec §17) — quick question for speed boost ─────
+    OE.register('friendly_race_boost', makeQuestionGateObstacle({
+      title: '🏁 Tantangan teman!',
+      banner: '🚂💨🚂',
+      questionCategory: 'comparison',
+      difficulty: 1,
+      coins: 6,
+      hints: [
+        'Coba pilihan lain! 💡',
+        'Lihat baik-baik! ✨',
+        'Yang ini! 👇',
+      ],
+      onSuccess(body) {
+        const fx = document.createElement('div')
+        fx.style.cssText = 'position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:48px;animation:obstacle-target-pulse 0.6s ease-out;'
+        fx.textContent = '🚂💨✨'
+        body.appendChild(fx)
+        setTimeout(() => fx.remove(), 900)
+      },
+    }))
+
+    // ── Windy bridge balance (spec §14) — left/right tap to balance ─────────
+    OE.register('windy_bridge_balance', {
+      type: 'balance_tap',
+      difficulty: 2,
+      ageRange: '5-7',
+      allowedLocations: ['*'],
+      allowedJourneyPhases: ['countryside'],
+      requiredAction: 'tap_balance',
+      softFail: true,
+      maxRetry: 3,
+      reward: { coins: 7, badgeProgress: 1, sound: 'success_chime' },
+      visual: { cameraZoom: true, highlightSlot: true, successSparkle: true },
+      accessibility: { voicePrompt: true, largeTouchTarget: true, reducedMotion: true },
+      title: '🌬️ Jembatan berangin!',
+      hints: [
+        'Tap ⬅️ atau ➡️ untuk seimbang! 💡',
+        'Lihat arah kemiringan, tap arah sebaliknya! ✨',
+        'Tap! 👇',
+      ],
+
+      interaction: {
+        setup(ctx, callbacks) {
+          const body = ctx.body
+          if (!body) return
+
+          const title = document.createElement('div')
+          title.className = 'obstacle-engine-title'
+          title.textContent = '🌬️ Jembatan berangin!'
+          body.appendChild(title)
+
+          const sub = document.createElement('div')
+          sub.className = 'obstacle-engine-subtitle'
+          sub.textContent = 'Tap arah berlawanan angin agar kereta seimbang.'
+          body.appendChild(sub)
+
+          // Balance meter
+          const meterWrap = document.createElement('div')
+          meterWrap.style.cssText = 'width:80%;height:30px;background:rgba(0,0,0,0.1);border-radius:15px;margin:8px auto;border:3px solid #1565c0;position:relative;overflow:hidden;'
+          const center = document.createElement('div')
+          center.style.cssText = 'position:absolute;left:50%;top:0;bottom:0;width:2px;background:#16a34a;'
+          meterWrap.appendChild(center)
+          const ball = document.createElement('div')
+          ball.style.cssText = 'position:absolute;top:50%;width:22px;height:22px;border-radius:50%;background:#fb8c00;transform:translate(-50%,-50%);transition:left 0.2s ease-out;left:50%;'
+          meterWrap.appendChild(ball)
+          body.appendChild(meterWrap)
+
+          // Direction display
+          const dirRow = document.createElement('div')
+          dirRow.className = 'obstacle-engine-row'
+          const arrowDisp = document.createElement('div')
+          arrowDisp.style.cssText = 'font-size:50px;line-height:1;padding:0 12px;'
+          dirRow.appendChild(arrowDisp)
+          body.appendChild(dirRow)
+
+          // Tap buttons
+          const btnRow = document.createElement('div')
+          btnRow.className = 'obstacle-engine-row'
+          const leftBtn = document.createElement('button')
+          leftBtn.className = 'obstacle-engine-shape-btn'
+          leftBtn.textContent = '⬅️'
+          leftBtn.style.minWidth = '120px'
+          const rightBtn = document.createElement('button')
+          rightBtn.className = 'obstacle-engine-shape-btn'
+          rightBtn.textContent = '➡️'
+          rightBtn.style.minWidth = '120px'
+          btnRow.appendChild(leftBtn)
+          btnRow.appendChild(rightBtn)
+          body.appendChild(btnRow)
+
+          // Wind sim: drift toward random direction, user counters with taps
+          let pos = 50 // 0 = far left, 100 = far right; target = 30-70 (wide tolerance)
+          let stable = 0
+          const TARGET = 50
+          const TOLERANCE = 20 // very wide for kids
+          const TICKS_TO_WIN = 12
+          let phase = Math.random() < 0.5 ? 1 : -1
+          const phaseInterval = setInterval(() => {
+            phase = Math.random() < 0.5 ? 1 : -1
+            arrowDisp.textContent = phase > 0 ? '💨➡️ angin ke kanan' : '⬅️💨 angin ke kiri'
+          }, 1400)
+          const drift = setInterval(() => {
+            pos += phase * 3
+            pos = Math.max(0, Math.min(100, pos))
+            ball.style.left = pos + '%'
+            if (Math.abs(pos - TARGET) <= TOLERANCE) {
+              ball.style.background = '#16a34a'
+              stable++
+              if (stable >= TICKS_TO_WIN) {
+                clearInterval(drift)
+                clearInterval(phaseInterval)
+                leftBtn.disabled = true; rightBtn.disabled = true
+                OE.spawnSparkles(meterWrap, 6)
+                setTimeout(() => callbacks.success(), 700)
+              }
+            } else {
+              ball.style.background = '#fb8c00'
+              stable = Math.max(0, stable - 1)
+            }
+          }, 220)
+
+          leftBtn.addEventListener('click', () => { pos = Math.max(0, pos - 12); ball.style.left = pos + '%' })
+          rightBtn.addEventListener('click', () => { pos = Math.min(100, pos + 12); ball.style.left = pos + '%' })
+
+          ctx.__cleanup = () => { clearInterval(drift); clearInterval(phaseInterval) }
+          OE.speak('Tap arah berlawanan angin')
+        },
+        teardown(ctx) { if (ctx && ctx.__cleanup) ctx.__cleanup() }
+      },
+    })
+
     if (typeof console !== 'undefined' && console.log) {
       console.log('[obstacles.js] registered', Object.keys(OE._registry).length, 'obstacle types')
     }

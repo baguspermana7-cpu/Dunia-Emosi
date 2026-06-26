@@ -1,5 +1,50 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.73 "Choice + Memory + Balance tranche (9 obstacles)" (Phase 4.4)
+
+43 obstacles total (34 from v54.72 + 9 new). Owner acceptance criterion §33 ("At least 20 obstacle variations exist") now exceeded by 2.15×.
+
+### Choose Correct Track (spec §15) — 4 variants via `makeChooseTrackObstacle`
+
+| ID | Choice criterion | Choices |
+|---|---|---|
+| `choose_correct_track_destination` | Station name | 🅰️ 🅱️ 🆎 |
+| `choose_track_color`                | Color match   | 🔴 🟢 🔵 |
+| `choose_track_number`               | Number match  | 1️⃣ 2️⃣ 3️⃣ |
+| `choose_track_shape`                | Shape match   | ▲ ⬤ ■ |
+
+Each obstacle picks a random correct path per spawn. Wrong tap shake + retry; auto-help at retry 3. Per spec §15, no game-over on wrong path — kids learn through retry, not punishment.
+
+### Memory Sequence (spec §16) — 3 difficulty tiers via `makeMemorySequenceObstacle`
+
+| ID | Sequence length | Age | Coins |
+|---|---|---|---|
+| `memory_sequence_2color` | 2 colors | 4-5 | 6 |
+| `memory_sequence_3color` | 3 colors | 5-7 | 7 |
+| `memory_sequence_4color` | 4 colors | 6-7 | 8 |
+
+Simon-says pattern: lamp colors blink in sequence (600ms each, scale 1.15 + amber glow), then child taps the buttons in order. Wrong tap restarts sequence input (not game), counts toward retry budget. Sparkles + success on completion.
+
+### Friendly Race Boost (spec §17)
+
+`friendly_race_boost` — neighbor train question. Uses `comparison` category questions ("which is bigger?", "which is longer?"). Banner shows 🚂💨🚂 race scene; correct answer triggers 🚂💨✨ boost FX.
+
+### Windy Bridge Balance (spec §14)
+
+`windy_bridge_balance` — left/right tap balance meter. Wind randomly shifts direction every 1.4s; child taps ⬅️ or ➡️ to keep orange ball within green tolerance zone (TOLERANCE=20 of 100, very wide for kids). 12 stable ticks → ✅. Per spec §14: "toleransi harus besar" (tolerance must be large) — meets that.
+
+### Files touched
+- `games/data/obstacles.js` — 9 new registrations + 2 generators (~330 LOC added).
+- `games/g14.html` — cache-bust `v=54.73-20260626bz`.
+- `sw.js` v54.72 → v54.73.
+
+### Verification
+- `grep -c "OE.register" games/data/obstacles.js` = 43 ✓
+- Memory sequence reduce-motion: scale/box-shadow animations honor `prefers-reduced-motion` via shared engine CSS.
+- Windy bridge tolerance: TARGET=50, TOLERANCE=20 → balanced range 30-70 (40% of meter, very forgiving).
+
+---
+
 ## 2026-06-26 — v54.72 "Reaction tranche — signal + animals + rocks + water (13 obstacles)" (Phase 4.3)
 
 34 obstacles total (21 from v54.71 + 13 new).
