@@ -1,5 +1,59 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v55.7-v55.9 "G14 scoring engagement gate + ↑↓ arrow controls + Side Race picker state" (Phase 6.5)
+
+Bundled 3 small g14.html fixes. **Closes B-203, B-205, B-206.**
+
+### v55.7 — Scoring engagement gate (B-203)
+
+Owner verbatim: *"Tanpa apapun dibiarkan aja nilai perfect."* — idle race = 5 stars + "Sempurna!"
+
+Before: `stars = alive ? 2 : 0` + HP-ratio bonus + 1st-place bonus → idle with full HP + deterministic AI = 5 stars.
+
+After (engagement-index gate at `games/g14.html:3827`):
+```js
+const engagementIndex = (S.coins||0) + (S.dodgeCount||0)*2 + (S.puzzlesSolved||0)*5
+let stars = 0
+if (alive && S.distance > 100) stars = 1
+if (alive && hpRatio >= 0.5 && engagementIndex >= 5) stars = 2
+if (alive && hpRatio >= 0.5 && engagementIndex >= 15) stars = 3
+if (alive && hpRatio >= 0.7 && engagementIndex >= 25 && S.position <= 2) stars = 4
+if (alive && hpRatio >= 0.9 && engagementIndex >= 40 && S.position === 1) stars = 5
+if (engagementIndex === 0) stars = Math.min(stars, 1)  // SAFETY: idle ≤ 1 star
+```
+
+Wired counters:
+- `S.dodgeCount` — increments in `tickObstacles()` when obstacle scrolls off-screen without crashing the player (`!o._crashed`).
+- `S.puzzlesSolved` — increments on `ObstacleEngine.spawn(id).then(outcome === 'success')`.
+- `o._crashed` flag set in collision branch so crashed obstacles don't double as dodges.
+
+### v55.8 — ↑/↓ arrow controls (B-205)
+
+Owner verbatim: *"Button atas bawah belum berubah jadi simbol panah."*
+
+`games/g14.html:289-293`:
+- `<button>Atas</button>` → `<button aria-label="Atas"><span style="font-size:32px;font-weight:900">↑</span></button>`
+- `<button>Bawah</button>` → `<button aria-label="Bawah"><span style="font-size:32px;font-weight:900">↓</span></button>`
+- aria-label preserves screen-reader semantics.
+
+### v55.9 — Side Race picker state (B-206)
+
+Owner: "Side race not working" — clicking the Side Race button raised `alert('Pilih kereta dulu ya! 🚂')` even when a train WAS selected.
+
+Fix:
+- `card.onclick` handlers now `window.selectedTrainKey = t.key` so the global is set on every picker click (2 sites: main picker + garage-warp restore).
+- `g14LaunchSideRace()` reads `S.trainCfg.key` first, then `window.selectedTrainKey`, then falls back to `.train-card.sel` / `.train-card.active` DOM lookup. Order matters: `S.trainCfg.key` is set synchronously in the click handler before any reflow.
+
+### Files touched
+- `games/g14.html` — scoring + counters (~40 LOC), button HTML (~6 LOC), picker state (~3 LOC), side-race launcher (~10 LOC).
+
+### Verification
+- Syntax OK on g14.html.
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS.
+- Manual: idle race → ≤ 1 star confirmed by code review. Active race with coins + dodges → 2-5 stars per engagement-index.
+
+---
+
 ## 2026-06-26 — v55.4 "G16 Selamatkan Kereta dynamic 33-card picker + g15 trains-db.js cache-bust" (Phase 6.4)
 
 Owner verbatim: *"Game selamatkan kereta belum ada pilihan sprite karakter thomas dkk."*

@@ -286,11 +286,12 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 <!-- Controls -->
 <div id="ctrl-area">
   <div id="ctrl-row">
-    <button class="ctrl-btn" id="btn-up"
-      ontouchstart="laneUp();event.preventDefault()" onclick="laneUp()">Atas</button>
+    <!-- v55.8 — Atas/Bawah replaced with ↑/↓ arrow symbols (closes B-205). -->
+    <button class="ctrl-btn" id="btn-up" aria-label="Atas"
+      ontouchstart="laneUp();event.preventDefault()" onclick="laneUp()"><span style="font-size:32px;font-weight:900;line-height:1">↑</span></button>
     <button class="ctrl-btn" id="btn-boost" onclick="triggerBoost()">BOOST!</button>
-    <button class="ctrl-btn" id="btn-dn"
-      ontouchstart="laneDn();event.preventDefault()" onclick="laneDn()">Bawah</button>
+    <button class="ctrl-btn" id="btn-dn" aria-label="Bawah"
+      ontouchstart="laneDn();event.preventDefault()" onclick="laneDn()"><span style="font-size:32px;font-weight:900;line-height:1">↓</span></button>
   </div>
   <div id="pressure-row">
     <span id="pressure-label">TEKANAN</span>
@@ -340,15 +341,17 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </div>
 <script>
 function g14LaunchSideRace() {
-  // Find currently selected train key (from picker state)
+  // v55.9 — Read picker selection robustly (closes B-206). The picker click
+  // handler sets S.trainCfg.key as primary path; window.selectedTrainKey is
+  // exposed as a fallback. Previously this raised "Pilih kereta dulu ya!" even
+  // when a train WAS selected because neither global was checked first.
   let key = null
   try {
-    if (window.selectedTrainKey) key = window.selectedTrainKey
-    else if (window.S && window.S.trainCfg) key = window.S.trainCfg.key
+    if (typeof S !== 'undefined' && S && S.trainCfg && S.trainCfg.key) key = S.trainCfg.key
+    else if (window.selectedTrainKey) key = window.selectedTrainKey
   } catch (e) {}
   if (!key) {
-    // Try to read from last picker click
-    const active = document.querySelector('.train-card.active') || document.querySelector('.train-card[data-active="true"]')
+    const active = document.querySelector('.train-card.active') || document.querySelector('.train-card.sel') || document.querySelector('.train-card[data-active="true"]')
     if (active && active.dataset && active.dataset.trainKey) key = active.dataset.trainKey
   }
   if (!key) {
@@ -2767,12 +2770,19 @@ function tickObstacles(delta) {
     // Pulse warning
     o.children[1].alpha = 0.1 + Math.sin(S.frame * 0.2) * 0.1
 
-    if (o.x < -OBS_SIZE * 2) { o._alive = false; continue }
+    // v55.7 — Increment dodgeCount when obstacle scrolls off-screen WITHOUT
+    // having hit the player. Used by endRace() engagement-index gate (B-203).
+    if (o.x < -OBS_SIZE * 2) {
+      if (!o._crashed) S.dodgeCount = (S.dodgeCount || 0) + 1
+      o._alive = false
+      continue
+    }
 
     // Collision
     if (S.invincible <= 0 && o._lane === S.lane &&
         o.x > hitZoneX - OBS_SIZE && o.x < hitZoneX + OBS_SIZE) {
       o._alive = false
+      o._crashed = true  // v55.7 — mark so off-screen tick doesn't count it as a dodge
       crashHit(o._emoji)  // v54.19 B1
       continue
     }
@@ -3661,7 +3671,11 @@ function g14WireObstacleEngine(){
       if (!S.running || S.quizOpen || S.gameOver) return
       const id = _pickObstacleId()
       try {
-        window.ObstacleEngine.spawn(id).then(() => _scheduleNext())
+        window.ObstacleEngine.spawn(id).then((outcome) => {
+          // v55.7 — engagement counter for star gate (B-203)
+          if (outcome === 'success') S.puzzlesSolved = (S.puzzlesSolved || 0) + 1
+          _scheduleNext()
+        })
       } catch(e) {
         console.warn('[g14] OE.spawn failed', e)
         _scheduleNext()
@@ -3826,10 +3840,19 @@ function endRace() {
   // fixed in v54.x; this pass refines the upper tier so 5 stars feels earned.
   const hpRatio = (S.hp || 0) / LIVES_MAX
   const alive = (S.hp || 0) > 0
-  let stars = alive ? 2 : 0
-  if (alive && hpRatio >= 0.5) stars += 1
-  if (alive && hpRatio >= 0.9) stars += 1
-  if (alive && S.position === 1) stars += 1
+  // v55.7 — Scoring engagement gate (closes B-203). Owner verbatim:
+  // "Tanpa apapun dibiarkan aja nilai perfect." Idle race used to → 5 stars
+  // because alive + full HP + 1st place (AI deterministic) maxed out the formula.
+  // Now stars require actual engagement (coins / dodges / puzzles).
+  const engagementIndex = (S.coins||0) + (S.dodgeCount||0)*2 + (S.puzzlesSolved||0)*5
+  let stars = 0
+  if (alive && S.distance > 100) stars = 1
+  if (alive && hpRatio >= 0.5 && engagementIndex >= 5) stars = 2
+  if (alive && hpRatio >= 0.5 && engagementIndex >= 15) stars = 3
+  if (alive && hpRatio >= 0.7 && engagementIndex >= 25 && S.position <= 2) stars = 4
+  if (alive && hpRatio >= 0.9 && engagementIndex >= 40 && S.position === 1) stars = 5
+  // SAFETY: zero engagement (truly idle race) → max 1 star regardless of position/HP.
+  if (engagementIndex === 0) stars = Math.min(stars, 1)
   stars = Math.min(5, Math.max(0, stars))
   const emoji = stars >= 5 ? '🏆' : stars >= 4 ? '🌟' : stars >= 3 ? '⭐' : stars >= 1 ? '💪' : '😞'
   const posLabel = S.position === 1 ? `Juara 1! (${Math.floor(S.distance)}m)` : S.position === 2 ? `Posisi 2 (${Math.floor(S.distance)}m)` : `Posisi 3 (${Math.floor(S.distance)}m)`
@@ -4351,6 +4374,7 @@ function showTrainsForCat(cat) {
       grid.querySelectorAll('.train-card').forEach(c => c.classList.remove('sel'))
       card.classList.add('sel')
       S.trainCfg = { ...t, category: cat.key, variant: trainV }
+      window.selectedTrainKey = t.key  // v55.9 — expose for g14LaunchSideRace (B-206)
       document.getElementById('train-name-badge').textContent = t.name
       document.getElementById('go-btn').style.display = 'block'
       // v54.17 A7: 0.4s engine-rev SFX preview keyed by train category.
@@ -4479,7 +4503,7 @@ function applyRdeScaling() {
         sessionStorage.removeItem('garageTrainKey')
         // Find and select the train in TRAIN_MAP
         const t = TRAIN_MAP[garageKey]
-        if (t) { S.trainCfg = { ...t, category: t.category, variant: 1 }; document.getElementById('train-name-badge').textContent = t.name }
+        if (t) { S.trainCfg = { ...t, category: t.category, variant: 1 }; window.selectedTrainKey = t.key; document.getElementById('train-name-badge').textContent = t.name }
       }
       TrainShared.greeting.onEnterGame('g14', S.trainCfg && S.trainCfg.key)
     }
