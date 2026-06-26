@@ -1,5 +1,62 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.16 "Finish-it-all sweep: cache-meta + favicon parity across all 14 game HTMLs + home"
+
+Owner verbatim: *"commit and push, apakah ada task yang belum selesai? plan mode, finish it all"* — closes the consistency gap from v55.10 + v55.15. After this ship, every standalone game HTML + index.html shares the same head-block baseline.
+
+### Inventory before vs after
+
+| File | Before | After |
+|---|---|---|
+| `index.html` | favicon ✅ / cache-meta ❌ | both ✅ |
+| `games/g6.html` | favicon ❌ / cache-meta ❌ | both ✅ |
+| `games/g17-pixi.html` | favicon ❌ / cache-meta ❌ | both ✅ |
+| `games/g20-pixi.html` | favicon ❌ / cache-meta ❌ | both ✅ |
+| `games/g21-pixi.html` | favicon ❌ / cache-meta ❌ | both ✅ |
+| `games/g22-candy.html` | favicon ❌ / partial cache (no-cache only) | both ✅ (full block) |
+| `games/g23-pixi.html` | favicon ❌ / cache-meta ❌ | both ✅ |
+| `games/g24-pixi.html` | favicon ❌ / cache-meta ❌ | both ✅ |
+| `games/g25-math.html` | favicon ❌ / cache-meta ❌ | both ✅ |
+
+### Head block injected (same as v55.10 + v55.15)
+
+```html
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
+```
+
+`index.html` favicon paths use no `../` prefix (already present from before).
+
+### What this fixes
+
+- **Stale HTML on next visit** — every game shell now signals no-cache so users pull the latest version on hard-refresh.
+- **`/favicon.ico` 404 storm** — Chrome auto-requests `/favicon.ico` on every navigation; without an explicit `<link rel="icon">` that 404s. 8 more games closed.
+
+### Files touched
+
+- 9 HTML files (cache-meta + favicon).
+- `sw.js` v55.15 → v55.16.
+
+### Verification
+
+- 14/14 obstacle-engine probe PASS.
+- `grep -c "no-cache, must-revalidate"` = 1 on every touched file.
+- `grep -c 'rel="icon"'` = 2 on every touched file.
+- No code-quality regression (survey agent confirmed: NO PIXI.Sprite.from violations, NO unsafe fetch, NO undefined-variable smells in the 8 untouched games).
+
+### Plan extension v55.16-v55.20
+
+This is tranche 1 of 5 in the plan extension (`purring-brewing-flurry.md`). Coming up:
+- v55.17 — wider audit + screenshots for the 8 untouched + home (9 new captures).
+- v55.18 — fix audit findings (likely no-op based on survey).
+- v55.19 — final clean acceptance across all 14 games.
+- v55.20 — docs + memory close.
+
+---
+
 ## 2026-06-27 — v55.15 "Console-noise sweep: trainer 404s + favicon 404s = 0"
 
 Owner verbatim: *"yes, continue, keep refining. ensure no bug, tampilan bagus"* (A-301 standing refinement directive).
