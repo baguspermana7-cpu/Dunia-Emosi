@@ -1,5 +1,78 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.65 "Audio Ambience packs (5 locations)" (Phase 2.4)
+
+NEW `games/data/bg-audio.js` (~210 LOC). Per-location periodic-accent audio packs. Scene feels alive without a continuous synthesized drone (those sound sterile).
+
+### Why periodic accents
+
+Real train stations sound like occasional horn + announcement chime + vendor call + bird chirp, not a flat continuous noise floor. Periodic accents fire on jittered timers (`every ± jitter ms`) so the cadence feels natural. Each accent self-reschedules — no master clock.
+
+### Ships
+
+**15 accent primitives** (`ACCENTS` map) via existing `window.playTone`:
+- `distantHorn` (180→140 Hz sine, 0.4s+0.3s)
+- `klaxonShort` (440→330 Hz square)
+- `KAIChime` (523→659→784 Hz sine triad, classic 5-3-1 station gong)
+- `KRLDoorChime` (3× 880 Hz sine pings)
+- `crossingBell` (3× 880 Hz triangle)
+- `vendorCall` (660→880→659 Hz triangle melody)
+- `birdsLow` / `birdsHigh` (2200/3000 Hz triangle trills)
+- `mountainWind` (80 Hz sawtooth long)
+- `cityMurmur` (220 Hz sawtooth)
+- `harborHorn` (95→75 Hz sawtooth, deep + long)
+- `distantThunder` (70→50→40 Hz sawtooth, 3-step rumble)
+- `gamelanLow` (440→523→659 Hz sine slow)
+- `andongBells` (1200/1400 Hz sine bell triplet)
+- `cricket` (4400 Hz triangle, paired ping)
+
+**5 location packs** with curated accent rotations:
+
+| Location | Pack flavor | Key accents |
+|---|---|---|
+| `id_surabaya`   | tropical urban | distantHorn, KAIChime, vendorCall, cityMurmur, crossingBell, birdsLow (day), cricket (night), thunder (rain) |
+| `id_jakarta`    | megacity dense | klaxonShort (14s base!), KRLDoorChime, KAIChime, cityMurmur, crossingBell, distantHorn, cricket (night), thunder (rain) |
+| `id_bandung`    | highland calm  | birdsHigh (day), mountainWind, distantHorn slow, KAIChime slow, birdsLow, cricket (night), thunder (rain) |
+| `id_yogyakarta` | heritage cultural | **gamelanLow**, **andongBells**, vendorCall, KAIChime, cityMurmur, birdsLow (day), cricket (night) |
+| `id_semarang`   | coastal heritage | **harborHorn**, distantHorn, KAIChime, cityMurmur, vendorCall, birdsLow (day), thunder (rain) |
+
+**Context-aware pace**:
+- Night (`malam`/`petang`/`blue-hour`/`dini-hari`) → 1.6× slower accent cadence (quieter)
+- Rain (`hujan`/`gerimis`/`badai`) → 0.85× faster accent cadence (busier)
+- `dayOnly` accents skip at night, `nightOnly` skip at day, `rainOnly` skip in clear weather
+
+**Mute compliance**: Reads `TrainShared.settings.sfx` — accents silently skipped when muted.
+
+**Tab-visibility pause**: Hidden tab → clear all timers; visible → restart from current engine state. No accent build-up while user is away.
+
+**Auto-wire**: Monkey-patches `TrainBG.setContext` so every context change triggers `setContextAudio(state)` automatically. Caller code never needs to touch `BGAudio` directly.
+
+### Public API
+- `BGAudio.activate(locationId, { isNight, isRain })`
+- `BGAudio.stop()`
+- `BGAudio.setContextAudio(state)` — convenience reading engine state.
+- `BGAudio.PACKS` + `BGAudio.ACCENTS` (debug).
+
+### Files touched
+- NEW `games/data/bg-audio.js` (~210 LOC).
+- 3 train HTMLs + `index.html` — script tag right after bg-npcs.js.
+- `sw.js` CACHE_VERSION v54.64-20260626bq → v54.65-20260626br.
+
+### Verification
+- Syntax check OK.
+- 5 packs registered, 15 accents.
+- `TrainBG.setContext` monkey-patch verified non-invasive (calls original then `setContextAudio`).
+- Reduce-motion / PvP balance / PROTECTED chars unchanged.
+
+### Next
+
+- v54.66 Journey transitions + random events (passing-train, crossing, fireworks).
+- v54.67 Surabaya Sunset Light Rain demo scene (per spec §23).
+- v54.68 International cities (Tokyo / London / Zurich / NY / Seoul).
+- v54.69 Performance tier + acceptance criteria sweep.
+
+---
+
 ## 2026-06-26 — v54.64 "Thomas Cheerful Palette" — bright primaries across BG engine
 
 Owner: "warna2nya buat ceria misal menggunakan style color pallet seperti di thomas all engine go yang film baru 2025, itu ceria sekali colour palletnya. pada game train". Comprehensive palette pass across the engine, themes, landmark drawers, and NPC archetypes — saturated primaries, higher alpha, no slate/near-black anywhere.
