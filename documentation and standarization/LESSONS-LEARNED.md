@@ -4,6 +4,32 @@
 
 ---
 
+## 2026-06-26 — v54.80 Bug audit + lessons catch-up from v54.70-v54.79
+
+### L182 — Generator pattern for obstacle families saves ~1500 LOC vs hand-coding
+- 6 shape-repair variants share `makeShapeRepairObstacle(shapeKey, opts)`; 5 bridge variants share `makeBridgeRepairObstacle(opts)`; 6 animal crossings share `makeAnimalCrossingObstacle(animal, name)`; 8 question gates share `makeQuestionGateObstacle(opts)`. Each generator returns a fresh `def` object; the engine freezes it on register. Avg per-obstacle cost is now ~3 lines (per-obstacle config delta).
+- **Lesson**: When 5+ obstacles share a pattern, factor a generator BEFORE the 5th. The cost of refactoring later is much higher than designing it in. Generator config should be data-only (`{title, icons, voice, difficulty}`); the interaction handler is shared. Save the variant in the obstacle ID, not in the def shape.
+
+### L183 — Node `vm.createContext` + stub browser globals = headless probe loop
+- `tools/probe-obstacle-engine.mjs` runs all the engine scripts inside a fake browser context (window, document, localStorage, matchMedia, speechSynthesis stubs). Inspects `window.ObstacleEngine._registry` directly after load.
+- **Lesson**: Don't write fake test fixtures for browser code — stub the platform globals and load the real source. The probe catches structural bugs (missing fields, mistyped IDs) that no amount of "looks fine" in PR review would. Use `vm.createContext` for sandbox isolation; one bad script doesn't pollute Node's globals.
+
+### L184 — Catalog metadata + locked placeholders give kids visible progress
+- `RewardCatalog` declares all 18 possible rewards (stickers/badges/horns). Gallery renders earned items vibrant + locked items grayscale with "???". Empty state would feel like punishment; locked-with-hint feels like potential.
+- **Lesson**: For kid-targeted apps, NEVER hide the full collection set. Show what's earned + what's possible. Description is hidden on locked entries ("???") to preserve surprise, but the slot itself is visible. Progress bar shows completion %.
+
+### L185 — Dedup-check BEFORE list mutation prevents toast spam
+- `_storageListContains(key, item)` reads the list and checks membership. Only if NEW does `_addToStorageList` write + `RewardGallery.toastEarn` fire. Without this dedup check, re-completing the same scripted route would re-fire the same sticker toast every time.
+- **Lesson**: When persisting append-only collections, ALWAYS check before write AND gate side-effects on the wasNew flag. The dedup check is cheap; the alternative is "Earned Surabaya Helper!" toast popping up every 8 minutes. Dedup means: read → check → write + side-effect, all atomic (no second read).
+
+### L186 — Pause/resume must check game-over before re-flipping running flag
+- ObstacleEngine `_success` and `_fail` call `gameAPI.resumeTick()` to un-pause the game. But if `endRace()` set `S.running = false` while the obstacle was active, the resume re-flipped it back true, causing post-end-race state corruption (tick loop spinning after game-over modal shown).
+- **Symptom**: Random state-leak bugs reported after race end — coins continuing to accumulate, music looping, scrolling background.
+- **Fix**: `resumeTick: () => { if (!S.gameOver && !S.paused) S.running = true }` — guard the re-enable on game state. Same pattern applies to route runner's `_runStep` recursion.
+- **Lesson**: Resume callbacks should never trust the previous pause state. Always check the game's TERMINAL state flags (gameOver, ended, quit) before re-enabling. The engine pause is a temporary loan; resume only returns what game still owns.
+
+---
+
 ## 2026-06-26 — v54.69 ObstacleEngine foundation
 
 ### L177 — Registry-based obstacle engine: freeze the def, never the runtime ctx

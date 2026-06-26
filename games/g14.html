@@ -211,12 +211,12 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 <script src="data/bg-audio.js?v=54.65-20260626br"></script>
 <script src="data/bg-events.js?v=54.67-20260626bt"></script>
 <!-- v54.69 — ObstacleEngine foundation (modular obstacle system, soft-fail, kids-friendly) -->
-<script src="obstacle-engine.js?v=54.79-20260626cf"></script>
-<script src="data/kids-questions.js?v=54.79-20260626cf"></script>
-<script src="data/obstacles.js?v=54.79-20260626cf"></script>
-<script src="data/routes.js?v=54.79-20260626cf"></script>
-<script src="data/reward-catalog.js?v=54.79-20260626cf"></script>
-<script src="reward-gallery.js?v=54.79-20260626cf"></script>
+<script src="obstacle-engine.js?v=54.80-20260626cg"></script>
+<script src="data/kids-questions.js?v=54.80-20260626cg"></script>
+<script src="data/obstacles.js?v=54.80-20260626cg"></script>
+<script src="data/routes.js?v=54.80-20260626cg"></script>
+<script src="data/reward-catalog.js?v=54.80-20260626cg"></script>
+<script src="reward-gallery.js?v=54.80-20260626cg"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
@@ -3516,7 +3516,10 @@ function g14WireObstacleEngine(){
   if (!window.ObstacleEngine) return
   window.ObstacleEngine.attach({
     pauseTick: () => { S.running = false },
-    resumeTick: () => { S.running = true },
+    // v54.80 bug-fix: resumeTick must NOT re-enable race if game is over.
+    // Previously, an obstacle finishing mid-end-race could re-flip S.running=true,
+    // re-arming the tick loop after endRace() set it false.
+    resumeTick: () => { if (!S.gameOver && !S.paused) S.running = true },
     slowDown: (factor, durMs) => { /* visual slow already handled by overlay zoom */ },
     resumeSpeed: () => {},
     cameraZoom: (scale, durMs) => {
@@ -3577,7 +3580,9 @@ function g14WireObstacleEngine(){
   function _scheduleNext(){
     const delayMs = 28000 + Math.random() * 12000
     setTimeout(() => {
-      if (!S.running) return // race ended or modal open
+      // v54.80 bug-fix: also gate on S.quizOpen + S.gameOver to avoid overlap
+      // with the existing mini-quiz (g14-mini-quiz) or after race ends.
+      if (!S.running || S.quizOpen || S.gameOver) return
       const id = _pickObstacleId()
       try {
         window.ObstacleEngine.spawn(id).then(() => _scheduleNext())
@@ -3602,7 +3607,8 @@ function g14WireObstacleEngine(){
     console.log('[g14] running scripted route:', route.id, 'with', route.sequence.length, 'beats')
     let step = 0
     function _runStep(){
-      if (!S.running) return
+      // v54.80 bug-fix: also bail if game over or pre-existing modal is open.
+      if (!S.running || S.gameOver || S.quizOpen) return
       if (step >= route.sequence.length) {
         // Route complete — award completion reward, then fall back to random for remainder of race
         if (route.completionReward && window.ObstacleEngine) {

@@ -1,5 +1,35 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.80 "Bug audit (pause/resume race condition) + L182-L186 lessons catch-up" (Phase 4.11 — quality)
+
+### Bug fixes
+
+- **Pause/resume race condition**: `resumeTick: () => { S.running = true }` could re-enable the race tick AFTER `endRace()` had set `S.running = false`. Symptom: tick loop kept spinning post-game-over, music looping, coins continuing to accumulate.
+  - Fix: `resumeTick: () => { if (!S.gameOver && !S.paused) S.running = true }` — guards on terminal state flags.
+- **Overlap with existing mini-quiz**: Scheduler did not check `S.quizOpen` before spawning, so a new obstacle could fire WHILE the existing `g14-mini-quiz` floating chip was active.
+  - Fix: `_scheduleNext` now also gates on `S.quizOpen || S.gameOver`.
+- **Same fix applied to route runner**: `_runStep` recursion now also bails on game-over / mini-quiz open.
+
+### Lessons documented (L182–L186)
+
+L182 — Generator pattern saves ~1500 LOC vs hand-coding each obstacle.
+L183 — Node `vm.createContext` + stub globals is the right shape for headless probe.
+L184 — Catalog metadata + locked placeholders = visible progress for kids.
+L185 — Dedup-check before list mutation prevents toast spam on re-earns.
+L186 — Pause/resume must check game-over before re-flipping running flag.
+
+### Files touched
+- `games/g14.html` — 3 bug-fix sites (resumeTick guard + _scheduleNext + _runStep gates), cache-bust `v=54.80-20260626cg`.
+- `documentation and standarization/LESSONS-LEARNED.md` — L182-L186 entries (~100 LOC added).
+- `sw.js` v54.79 → v54.80.
+
+### Verification
+- Syntax OK on g14.html.
+- `node tools/probe-obstacle-engine.mjs` — 14/14 PASS (no regression).
+- Audit: all 3 ObstacleEngine integration points in G14 now check `gameOver` and `quizOpen` before mutating game state.
+
+---
+
 ## 2026-06-26 — v54.79 "Overlay polish — cinematic backdrop + floating sparkles + train ribbon" (Phase 4.10 — visual)
 
 Owner mandate "Tampilan yg sangat keren dan bagus" applied to the obstacle overlay.
