@@ -1,5 +1,35 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.93 "Side-race pause button + difficulty curve (speed scaling per milestone)" (Phase 5.6)
+
+### Pause button
+
+`#btn-pause` added to HUD top (indigo-blue gradient, 44×44px). Tap to pause:
+- `S.paused = true; S.running = false` (tick loop bails on running=false)
+- Full-screen indigo overlay (#1e3a8a border, 24px padding, scale-overshoot entrance)
+- "⏸ Jeda" title + 2 buttons: "▶ Lanjutkan" + "🚂 Ganti Kereta"
+- Resume: closes modal + sets `S.running = true`
+
+### Difficulty curve
+
+At each milestone (200/400/600/800m), train speed +5% (capped at +20% over baseline at 800m). Shows "⚡ KECEPATAN NAIK!" floating badge for 1.4s. Affects:
+- World scroll speed
+- Obstacle approach rate
+- Coin/heart approach rate
+- AI competitor sense of speed
+
+### Files
+- `games/g14-side.html` — pause UI + `g14sTogglePause()` + difficulty curve in tick (~50 LOC added).
+- `games/g14.html` — cache-bust to `v=54.93-20260626ct`.
+- `sw.js` v54.92 → v54.93.
+
+### Verification
+- Syntax OK.
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS.
+- Pause works mid-race; resume restores speed correctly.
+
+---
+
 ## 2026-06-26 — v54.92 "Side-race finish flag + confetti + heart power-ups" (Phase 5.5)
 
 ### Finish sequence
