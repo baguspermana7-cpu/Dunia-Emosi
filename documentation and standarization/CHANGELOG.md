@@ -1,5 +1,74 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.19-v55.20 "Final acceptance + docs/memory close (extension complete)"
+
+Phase extension tranches 4 and 5 of plan `purring-brewing-flurry`. v55.19 = run BOTH probes from scratch and confirm clean. v55.20 = sync CHANGELOG / LESSONS / memory / plan history.
+
+### v55.19 — Final acceptance probe results
+
+```
+tools/visual-qa-comprehensive.mjs        PASS=7 FAIL=0 INFO=0 TOTAL=8
+  T1 g14 Casey JR sprite        125×90px isCharacter=true        PASS
+  T2 g14 ↑↓ controls            labels=["↑","↓"]                  PASS
+  T3 g14 rail strip ratio       54px / 90px train = 60% (< 80%)  PASS
+  T4 g15 orientation            picker-only (no live stage)      INFO (honest)
+  T5 g16 picker count           36 cards rendered                PASS
+  T6 obstacle modal pastel      title rgb(107,68,35) / btn-border rgb(180,212,240) PASS
+  T7 g13c Pokedex load          0.4s   (target ≤ 10s)            PASS
+  T8 g19 Pokemon Birds load     1.1s   (target ≤ 10s)            PASS
+
+tools/visual-polish-audit.mjs            18 screens, 0 errors
+  P01-P09 (G14 / G14-side / G15 / G16 / G13C / G19)              errs none
+  P10     (index home)                                           errs NONE (was 3 before v55.18)
+  P11-P18 (g6 / g17 / g20 / g21 / g22 / g23 / g24 / g25)         errs none
+
+server log                              0 server-side 404s (was 13)
+```
+
+Every single game HTML in the Dunia Emosi catalog now ships with:
+- v55.10 cache-meta block (Cache-Control + Pragma + Expires)
+- v55.15 favicon links (no `/favicon.ico` 404 spam)
+- Clean P-state screenshot in `tools/qa-screenshots/`
+- Zero boot-time 404s, zero console errors
+
+### v55.20 — Docs + memory + plan close
+
+- CHANGELOG entries for v55.16 + v55.17 + v55.18 + v55.19-v55.20 (this one) shipped in their respective commits.
+- LESSONS-LEARNED.md L207 added in v55.18.
+- Memory `session_2026-06-26_v55_marathon.md` will be appended with v55.16-v55.20 deltas in this commit.
+- Plan file `purring-brewing-flurry.md` extension section closes; A-301 standing directive remains active.
+
+### Marathon summary v55.0 → v55.20
+
+| Range | Theme | Bugs closed |
+|---|---|---|
+| v55.0 | STOP-THE-BLEED Pokemon load + slim SHELL | B-209, B-210, B-211 |
+| v55.1 | Total audit (3 parallel agents) | — |
+| v55.2-v55.4 | Sprite fixes + G16 dynamic picker | B-201, B-207 (verify), B-208 |
+| v55.5-v55.10 | Owner UIUX backlog (rail, pastel, scoring, arrows, side-race, cache-meta) | B-202, B-203, B-204, B-205, B-206, defensive B-211 |
+| v55.11-v55.13 | Docs L195-L205 + comprehensive QA probe + acceptance | — |
+| v55.14 | Probe hardening | — |
+| v55.15 | Console-noise sweep (trainer 404s + favicon) | B-212, B-213 |
+| v55.16 | Cache-meta + favicon parity across all 14 HTMLs + home | — |
+| v55.17 | Wider polish audit (9 more screens) | — |
+| v55.18 | Kill /Dunia-Emosi/ hardcoded prefixes | B-214, B-215 |
+| v55.19-v55.20 | Final acceptance + docs/memory close | — |
+
+**15 bugs closed across the v55.x marathon. 12 lessons documented (L195-L207).**
+
+### Files touched in v55.19-v55.20
+
+- This CHANGELOG entry.
+- Memory entry `session_2026-06-26_v55_marathon.md` (deltas).
+- Plan file `purring-brewing-flurry.md` (history append).
+
+### Verification
+
+`node tools/probe-obstacle-engine.mjs` → 14/14 PASS.
+Both visual probes (comprehensive + polish) clean as documented above.
+
+---
+
 ## 2026-06-27 — v55.18 "Kill /Dunia-Emosi/ hardcoded prefixes (closes B-214 + B-215)"
 
 Phase extension tranche 3/5. v55.17 audit surfaced two latent bugs where code hardcoded `/Dunia-Emosi/` as the deployment path. That prefix is correct only when hosted at exactly that subpath; **wrong on Vercel (`dunia-emosi.vercel.app/`) and wrong on local dev (`localhost:8081/`)** — every owner-facing host this site uses.
