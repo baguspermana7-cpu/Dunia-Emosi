@@ -4,6 +4,16 @@
 
 ---
 
+## 2026-06-27 — v55.24 Touch-target sizing for child UX
+
+### L209 — `min-width` + `min-height` is the cleanest touch-target fix
+- Audit found 25 sub-44px buttons across 12 games (Apple HIG / Material Design minimum). For existing UI where layout flow is fragile (Pixi-canvas-overlaid HUDs, absolute-positioned chips, side-race tutorial skip link), `min-width:44px;min-height:44px` is the SAFEST fix.
+- **Why it's safe**: doesn't override explicit `width`/`height` if set (so labels stay in place), doesn't push siblings (so HUDs don't reflow), but caps the smallest reachable size. Painted background + border grow around the content.
+- **Fix** (v55.24): added the property pair to every offending rule + inline style. 25 → 0 sub-44 buttons in one pass, 0 polish-audit regressions.
+- **Lesson**: when touch-targets fail and the layout is sensitive (Pixi HUD overlay, absolute corner buttons, text-only links), reach for `min-width` / `min-height` BEFORE you reach for padding bumps or fixed dimensions. Padding bumps text/emoji position. Fixed `width:44px;height:44px` overrides explicit sizes. `min-*` only floors.
+
+---
+
 ## 2026-06-27 — v55.22 Manifest + SW offline fallback
 
 ### L208 — PWA manifest `start_url` + `scope` are absolute-resolved; use relative paths

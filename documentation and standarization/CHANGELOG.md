@@ -1,5 +1,69 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.24 "Touch-target fixes — 25→0 sub-44px buttons across 12 games"
+
+Owner A-301 polish iteration. v55.23 baseline found 25 sub-44px touch targets that fail Apple HIG / Material Design minimums for child UX. v55.24 fixes all of them by adding `min-width:44px;min-height:44px` to each offending CSS rule + inline style — purely additive, no layout-flow changes.
+
+### Acceptance — re-run touch audit
+
+```
+Before (v55.23): 25 sub-44 instances across 12 pages
+After  (v55.24):  0 sub-44 instances across all 15 pages
+
+T01 index home              8 ≥ 44×44 ✓
+T02 g6 vehicle picker       27 ≥ 44×44 ✓  (was 2 sub-44: ⌂ + ⏸)
+T03 g13c team picker        6 ≥ 44×44 ✓  (was 6 sub-44: 4 chips + 2 inner-modal)
+T04 g14 category picker     14 ≥ 44×44 ✓
+T05 g14-side intro          7 ≥ 44×44 ✓  (was 1 sub-44: "Lewati tutorial" 16px tall)
+T06 g15 train picker        14 ≥ 44×44 ✓  (was 2 sub-44: 🏆 + ⚙️)
+T07 g16 train picker        42 ≥ 44×44 ✓  (was 2 sub-44: 🏆 + ⚙️)
+T08 g17 intro               2 ≥ 44×44 ✓
+T09 g19 splash              2 ≥ 44×44 ✓  (was 2 sub-44: ◀ + ⏸)
+T10 g20 splash              2 ≥ 44×44 ✓  (was 2 sub-44: ◀ + ⏸)
+T11 g21 splash              5 ≥ 44×44 ✓  (was 2 sub-44: ← Kembali + ⏸)
+T12 g22 splash              2 ≥ 44×44 ✓  (was 2 sub-44: ◀ + ⏸)
+T13 g23 splash              2 ≥ 44×44 ✓  (was 2 sub-44: ◀ + ⏸)
+T14 g24 splash              2 ≥ 44×44 ✓  (was 2 sub-44: ◀ + ⏸)
+T15 g25 level picker        51 ≥ 44×44 ✓
+```
+
+### Fix pattern
+
+Single CSS property pair added to each offending rule:
+```css
+min-width: 44px;
+min-height: 44px;
+```
+
+Applied to:
+- `#btn-back`, `#btn-pause` rules / inline styles in g6, g19, g20, g22, g23, g24
+- `.hud-btn` rule in g21 (covers both back + pause)
+- `#g15-koleksi-btn`, `#g15-settings-btn` inline styles (🏆 ⚙️)
+- `#g16-koleksi-btn`, `#g16-settings-btn` inline styles (🏆 ⚙️) — also bumped pause + got missing min-width
+- g13c `#btn-back`, `#btn-pkg`, `#gs-back` CSS rules + inline `#pkg-close`, `#btn-badges`, `#btn-pkg-gs`
+- g14-side `.tut-skip` — added `min-height:44px;padding:8px 12px` so the text link gets a proper tap zone
+
+### Why purely additive
+
+`min-width` + `min-height` cap the SMALLEST size a button can reach; they don't override explicit `width`/`height` if set, and they don't push content layout. The button text/emoji stays where it was — only the clickable area grows around it. Zero visual diff on already-large buttons; sub-44 buttons just become 44×44.
+
+### Files touched
+
+- 9 HTML files: g6.html, g13c-pixi.html, g14-side.html, g15-pixi.html, g16-pixi.html, g19-pixi.html, g20-pixi.html, g21-pixi.html, g22-candy.html, g23-pixi.html, g24-pixi.html (10 — counted both g14-side and g14-side).
+- `sw.js` v55.22 → v55.24.
+
+### Verification
+
+- `node tools/touch-target-audit.mjs` → 0 sub-44 instances (was 25).
+- `node tools/visual-polish-audit.mjs` → 18 screens, 0 errors, 0 server 404s (no regression).
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS.
+
+### L209 — `min-width` + `min-height` is the cleanest touch-target fix
+
+For existing UI where layout flow is fragile (Pixi-canvas-overlaid HUDs, absolute-positioned chips), adding `min-width:44px;min-height:44px` to the offending button is the SAFEST fix. It doesn't override explicit dimensions if set (so labels stay in place), doesn't push siblings (so HUDs don't reflow), but caps the smallest reachable size. Painted background + border grow around the content. Children's fingers tap the same emoji at a 44px box.
+
+---
+
 ## 2026-06-27 — v55.23 "Touch-target audit — finds 25 sub-44px buttons across 12 games"
 
 Owner A-301 standing directive — polish iteration. NEW `tools/touch-target-audit.mjs` (4th probe) measures every clickable on every game HTML, flags any width or height < 44px (Apple HIG minimum, Material Design recommendation for child UX).

@@ -32,7 +32,7 @@ body.theme-final{--g21-sky-top:#1e1b4b;--g21-sky-mid:#312e81;--g21-sky-bot:#0000
 
 /* ── HUD Top ── */
 #hud-top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:clamp(4px,1.5vw,10px);padding:max(12px,env(safe-area-inset-top)) clamp(12px,3vw,18px) 6px;background:linear-gradient(180deg,rgba(0,0,0,0.55) 0%,transparent 100%);pointer-events:none}
-.hud-btn{background:rgba(255,255,255,0.14);border:1.5px solid rgba(255,255,255,0.28);border-radius:12px;color:#fff;padding:6px 11px;font-size:14px;cursor:pointer;font-family:inherit;pointer-events:all;flex-shrink:0;-webkit-tap-highlight-color:transparent;transition:transform .08s}
+.hud-btn{background:rgba(255,255,255,0.14);border:1.5px solid rgba(255,255,255,0.28);border-radius:12px;color:#fff;padding:6px 11px;font-size:14px;cursor:pointer;font-family:inherit;pointer-events:all;flex-shrink:0;-webkit-tap-highlight-color:transparent;transition:transform .08s;min-width:44px;min-height:44px}
 .hud-btn:active{transform:scale(0.92)}
 #game-badge{background:rgba(0,0,0,0.55);border:1.5px solid rgba(251,191,36,0.55);border-radius:10px;padding:5px 10px;color:#fde68a;font-size:clamp(10px,3vw,13px);font-weight:700;flex-shrink:0;white-space:nowrap}
 #hud-center{flex:1;text-align:center;min-width:0}
