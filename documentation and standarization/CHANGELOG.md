@@ -1,5 +1,56 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.21 "Deep-interaction probe — 9/9 mid-gameplay states clean"
+
+Owner standing directive A-301 — keep refining + ensure no bug + tampilan bagus. v55.0-v55.20 verified splash + boot states; v55.21 goes BEYOND splash and captures mid-gameplay state on each of the 8 standalone games + index home. Also tracks `console.warn` (not just `.error`) so silent warnings surface too.
+
+### What's new
+
+NEW `tools/visual-deep-audit.mjs` — for each probe:
+1. Navigate to URL, wait for boot.
+2. Perform a real interaction (click "MAIN SEKARANG" / "Mulai!" / tap center).
+3. Wait 2-3s for gameplay to manifest.
+4. Capture screenshot + collect `console.error` + `console.warn`.
+
+### Acceptance results
+
+```
+D10 index home           clicked=true errs=0 warns=0
+D11 g6 word racer        clicked=true errs=0 warns=0
+D12 g17 rope-swing       clicked=true errs=0 warns=0
+D13 g20 duck volley      clicked=true errs=0 warns=0
+D14 g21 Mario Pokemon    clicked=true errs=0 warns=0
+D15 g22 candy            clicked=true errs=0 warns=0
+D16 g23 runner           clicked=true errs=0 warns=0
+D17 g24 underwater       clicked=true errs=0 warns=0
+D18 g25 math             clicked=true errs=0 warns=0
+
+server log               0 server-side 404s
+9 of 9 probe lines fully clean
+```
+
+### Visual highlights from deep state
+
+- **D14 g21 Mario Pokemon** — Pikachu jumps over green hill, ?-block visible, classic Mario brick floor + spike pit.
+- **D17 g24 underwater** — Magikarp swims past coral pipes, math quiz pops up at bottom "RINTANGAN 1+8=?" with 4 colored answer chips (7/8/9/12). Pantai Kanto tag + Jawab Soal! instruction. Integrates math learning into Flappy mechanic.
+- **D18 g25 math** — level picker grid 3 tiers (EASY +-÷× / MEDIUM +-÷× / HARD "semua + maks 30") with progress 0/150 + padlocked levels.
+
+### Files touched
+
+- NEW `tools/visual-deep-audit.mjs` (~180 LOC).
+- NEW 9 PNGs in `tools/qa-screenshots/deep-1[0-8]-*.png`.
+
+### Verification
+
+`node tools/probe-obstacle-engine.mjs` → 14/14 PASS.
+All 3 probes (`comprehensive` + `polish` + `deep`) now clean.
+
+### Closes nothing new — A-301 standing remains active
+
+This is pure refinement + tampilan-bagus verification per owner's standing directive. No new B-NNN bugs surfaced. The games were already clean during interaction; v55.21 just proves it.
+
+---
+
 ## 2026-06-27 — v55.19-v55.20 "Final acceptance + docs/memory close (extension complete)"
 
 Phase extension tranches 4 and 5 of plan `purring-brewing-flurry`. v55.19 = run BOTH probes from scratch and confirm clean. v55.20 = sync CHANGELOG / LESSONS / memory / plan history.
