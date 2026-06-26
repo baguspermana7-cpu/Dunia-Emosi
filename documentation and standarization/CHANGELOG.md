@@ -1,5 +1,91 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.62 "BG Renderers + G15 wired to Dynamic BG Engine" (Phase 2.2)
+
+First VISIBLE upgrade from the Dynamic BG Engine. Sky / farFar / far / mid / weather / lighting layers all paint per-LocationTheme content. G15 picks city by level chunk and time/weather by location weights.
+
+### Ships
+
+**NEW `games/data/bg-renderers.js` (~600 LOC)** — Layer setup/tick functions + 18 landmark drawers.
+
+- **Sky layer** — 16-band vertical gradient from `tod.skyTop` → `tod.skyBot`, sun (when `sunY > 0`) with halo at position `(W*(0.15+0.65*sunY), H*(0.06+0.16*(1-sunY)))`, OR crescent moon + 50 stars when night, 3 drifting clouds tinted by `cloudTint` (parallax via `_vx`).
+- **FarFar layer** — distant horizon features. Climate-keyed haze band (coastal warm / highland slate), then iterates `location.landmarks` where `layer === 'farFar'` and spawn-rolls each.
+- **Far layer** — city skyline strip (12-28 buildings, density by climate; night windows lit when ToD has stars or night phase), then per-landmark drawers.
+- **Mid layer** — per-landmark drawers from `location.landmarks` where `layer === 'mid'`.
+- **Weather layer** — `setupWeather` reads `state.weather`: paints dim alpha, fog band, rain streaks (count = `rainDensity`, len = 7 or 10 by intensity), heat-haze shimmer band, wet-reflect shine line. `tickWeather` falls rain + drifts heat haze + wraps clouds.
+- **Lighting layer** — single 12%-alpha overlay using `state.timeOfDay.ambient` color. Sits above weather, below particles.
+
+**18 landmark drawers** (each `(container, W, baseY, state) → void`):
+- Tugu Pahlawan silhouette (obelisk + pyramid top + base)
+- Suramadu Bridge far (horizontal line + 2 pylons + cable V-pattern)
+- Harbor cranes distant (4 cranes with horizontal arm + diagonal cable)
+- Coastal haze far layer (warm-tone band)
+- Distant mountain ridge (12-vertex polygon)
+- Tugu Jogja monument (vertical column + dome top)
+- Lawang Sewu silhouette (2 towers + central block + pyramid roofs + window grid)
+- KRL/MRT train passing (elevated rail line + blue train rect + pylons)
+- Tea plantation field (green strip + dot texture)
+- Heritage colonial block (rect body + red roof + 8 windows)
+- Ruko commercial strip (6 colored shops + dark eave + lit signs)
+- High-rise glass tower (blue rect + window-band rows)
+- Flyover overpass (deck + 5 pylons)
+- Digital billboard (frame + red panel + yellow accent + stand)
+- Art-deco station hall (cream body + orange roof + central tower + window grid)
+- Pine grove + rumah panggung (5 pines + tiny stilt house)
+- Heritage cafe row (5 cafes with eaves + lit windows)
+- Malioboro arcade glow (red awning + 8 hanging lanterns)
+- Kalimas river bend (blue water band + white highlight)
+- Pedestrian bridge (JPO) (deck + 2 vertical supports + top rail)
+- Kota Lama heritage block (2× heritage colonial blocks)
+- Sam Poo Kong temple roof (red base + maroon pyramid + gold eaves)
+- Heritage low-rise row (4 cream houses + red gabled roofs + windows)
+- Banyan tree (beringin) (brown trunk + 3-circle foliage cluster)
+- Becak/andong silhouette (red cabin + canopy + 2 wheels)
+
+**`TrainBG.Renderers.attachAll()`** — registers all layer `_setup`/`_tick` fns on engine init.
+
+**G15 integration** (`games/g15-pixi.html:initPixi`):
+- Creates a dedicated `bgEngineContainer` and inserts it BELOW `bgLayer` so engine paints behind existing buildBackground content.
+- Calls `TrainBG.init({ app, container: bgEngineContainer, viewport: { w: W, h: H } })`.
+- `TrainBG.Renderers.attachAll()` wires layer renderers.
+- Per-level location rotation:
+  - L1-6 → `id_surabaya`
+  - L7-12 → `id_jakarta`
+  - L13-18 → `id_bandung`
+  - L19-24 → `id_yogyakarta`
+  - L25-30 → `id_semarang`
+- Time-of-day picked from location weights via `LocationTheme.pickTimeFor(id, LEVEL, 30)`.
+- Weather picked from location weights via `LocationTheme.pickWeatherFor(id)`.
+- `setContext` then fires each layer's `_setup` → paints initial content.
+- Main ticker calls `TrainBG.tick(dt, journeyProgress)` every frame; progress = `(currentWordIdx + currentLetterIdx/6) / WORDS_LIST.length`.
+- Console log: `[BG] level <n> → <city> / <time> / <weather>` on level boot for verification.
+
+### Files touched
+- NEW `games/data/bg-renderers.js` — 600 LOC.
+- `games/train-bg-engine.js` — `setContext` now fires layer `_setup` (~7 LOC change).
+- `games/g15-pixi.html` — engine init + per-level context pick + tick wiring.
+- `games/g14.html` + `games/g16-pixi.html` + `index.html` — `<script src=".../bg-renderers.js?v=54.62-20260626bo">` added right after bg-themes.js.
+- `sw.js` — CACHE_VERSION v54.61-20260626bn → v54.62-20260626bo.
+
+### Verification
+- Syntax check: all 3 engine files + g15-pixi.html OK.
+- Sandbox: `TrainBG.Renderers.LANDMARK_DRAWERS` has 25+ entries.
+- Engine sky setup paints 16 bands + sun OR moon + 3 clouds per call.
+- Weather setup honors `rainDensity` (0/14/24/48/60) per variant.
+- PROTECTED chars + PvP balance untouched.
+
+### Next
+
+- v54.63 NPC archetypes + behavior FSM (commuter / family / tourist / umbrella).
+- v54.64 International cities (Tokyo / London / Zurich / NY / Seoul).
+- v54.65 Audio ambience packs.
+- v54.66 Journey transitions + random events.
+- v54.67 Surabaya Sunset Light Rain demo scene.
+- v54.68 Performance tier auto + QA.
+- v54.69 Docs + acceptance criteria sweep.
+
+---
+
 ## 2026-06-26 — v54.61 "5 Indonesian LocationThemes" (Phase 2.1)
 
 5 Indonesian city configs auto-register on load per spec §6 + §17 schema. Each carries palette tokens, weighted weather + time-of-day distributions, 5 landmarks (with allowedPhases + timeCompatibility + weatherCompatibility), trackside object list, NPC profiles (mapped per time-of-day phase + a `hujan` rain override list), audio profile (per zone: station / urban / rain / ambient), KAI signage style, doNotUse list to prevent visual mismatches.

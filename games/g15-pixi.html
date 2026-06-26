@@ -185,6 +185,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <script src="train-vfx.js?v=54.56-20260625bi"></script>
 <script src="train-bg-engine.js?v=54.60-20260626bm"></script>
 <script src="data/bg-themes.js?v=54.61-20260626bn"></script>
+<script src="data/bg-renderers.js?v=54.62-20260626bo"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <!-- v54.28 I13: loop the train ambient SFX (was one-shot, faded after first cycle, leaving silence). -->
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" loop preload="auto" style="display:none"></audio>
@@ -822,6 +823,37 @@ async function initPixi() {
   boxLayer      = new PIXI.Container(); stage.addChild(boxLayer);
   particleLayer = new PIXI.Container(); stage.addChild(particleLayer);
 
+  // v54.62: Dynamic BG Engine init. Bootstrap engine + attach renderers +
+  // pick location/time/weather based on LEVEL. Per-level rotation:
+  //   L1-6:   id_surabaya
+  //   L7-12:  id_jakarta
+  //   L13-18: id_bandung
+  //   L19-24: id_yogyakarta
+  //   L25-30: id_semarang
+  try {
+    if (window.TrainBG && window.PIXI) {
+      // Create a dedicated container BELOW bgLayer so the engine's layers sit
+      // behind the existing buildBackground content. The engine container will
+      // host sky/farFar/far/mid/weather/lighting; the legacy bgLayer keeps
+      // ground/hills/sleepers etc.
+      const bgEngineContainer = new PIXI.Container()
+      stage.addChildAt(bgEngineContainer, stage.getChildIndex(bgLayer))
+      TrainBG.init({ app, container: bgEngineContainer, viewport: { w: W, h: H } })
+      if (TrainBG.Renderers && typeof TrainBG.Renderers.attachAll === 'function') {
+        TrainBG.Renderers.attachAll()
+      }
+      // Pick location by level chunk
+      const CITIES = ['id_surabaya','id_jakarta','id_bandung','id_yogyakarta','id_semarang']
+      const cityIdx = Math.min(CITIES.length - 1, Math.floor((LEVEL - 1) / 6))
+      const locationId = CITIES[cityIdx]
+      // Pick time-of-day + weather using location-weighted random
+      const tod = TrainBG.LocationTheme.pickTimeFor(locationId, LEVEL, 30)
+      const weather = TrainBG.LocationTheme.pickWeatherFor(locationId)
+      TrainBG.setContext({ locationId, timeOfDay: tod, weather, journeyProgress: 0 })
+      console.log('[BG] level', LEVEL, '→', locationId, '/', tod.name, '/', weather.id)
+    }
+  } catch (e) { console.warn('[BG] init failed', e) }
+
   buildBackground();
   buildTracks();
   buildTrain();
@@ -1034,6 +1066,17 @@ async function initPixi() {
     // gameSpeed is ~2 + 0.15*level; ratio ~1 at L0, ~3.25 at L30.
     const _steamRate = 0.05 * Math.min(2.6, gameSpeed / 2.0)
     if (Math.random() < _steamRate * dt) emitSteam();
+
+    // v54.62: drive the BG engine. We don't have a real distance metric in
+    // G15 so journey progress is approximated by elapsed-time-vs-level-budget.
+    // Word completions push it forward in big steps below (see onWordComplete).
+    try {
+      if (window.TrainBG) {
+        const totalWords = (WORDS_LIST && WORDS_LIST.length) || 8
+        const progress = Math.max(0, Math.min(1, (currentWordIdx + (currentLetterIdx / 6)) / totalWords))
+        TrainBG.tick(dt, progress)
+      }
+    } catch(_){}
   });
 }
 

@@ -308,12 +308,21 @@
   }
 
   // ── Set context (location + time + weather for this run) ────────────────────
+  // v54.62: after applying new context, fire each layer's `_setup` (if any)
+  // so renderers can rebuild their content for the new location/time/weather.
   function setContext (opts) {
     opts = opts || {}
     if (opts.locationId) State.location = LocationTheme.get(opts.locationId)
     if (opts.timeOfDay)  State.timeOfDay = (typeof opts.timeOfDay === 'string') ? TimeOfDay.forName(opts.timeOfDay) : opts.timeOfDay
     if (opts.weather)    State.weather   = (typeof opts.weather === 'string')   ? Weather.forId(opts.weather)       : opts.weather
     if (typeof opts.journeyProgress === 'number') State.journeyProgress = opts.journeyProgress
+    // Fire each layer's setup so renderers populate.
+    for (const k in State.layers) {
+      const L = State.layers[k]
+      if (L && typeof L._setup === 'function') {
+        try { L._setup(State) } catch(_){}
+      }
+    }
   }
 
   // ── Tick (per-frame update) ────────────────────────────────────────────────
