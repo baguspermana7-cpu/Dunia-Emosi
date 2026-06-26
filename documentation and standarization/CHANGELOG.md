@@ -1,5 +1,46 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v55.6 "Pastel soft-calm palette in obstacle modal" (Phase 6.5)
+
+Owner verbatim: *"pilihan jawabannya style tidak soft calm pallet colour pastell."*
+
+**Closes B-204.**
+
+### What changed
+
+`games/obstacle-engine.js` modal — palette swept from saturated child-bright to muted pastel-calm so the obstacle puzzle reads as a gentle quiz card, not an arcade dialog. The same modal renders on G14 / G15 / G16 obstacles.
+
+| Element | Before | After |
+|---|---|---|
+| Card gradient | bright cream-yellow `#fef9c3 → #fde68a → #fcd34d` | soft cream `#fefdf7 → #fef9e7 → #fef3d4` |
+| Card border | saturated gold `#facc15` | pastel gold `#fde68a` |
+| Title color | warm brown `#451a03` | softer brown `#6b4423` |
+| Subtitle | gold `#92400e` | taupe `#a08060` |
+| Choice button border | navy blue `#1e40af` | powder blue `#b4d4f0` |
+| Choice button bg | white `#fff` | very-soft blue `#fafcff` |
+| Choice button text | dark navy `#1e3a8a` | dusty blue `#6b8eb8` |
+| Correct state | saturated green `#bbf7d0 / #16a34a / #14532d` | sage `#e8f5e8 / #a8d8a8 / #4a7c4a` |
+| Wrong state | saturated red `#fecaca / #dc2626 / #7f1d1d` | rose `#fce8e8 / #f4a8a8 / #8a4a4a` |
+| Hint pill | violet `#8b5cf6 → #6d28d9` | lavender `#c4a5e0 → #a48cc8` |
+| Ribbon | saturated yellow `#fcd34d → #fef08a → #fcd34d` | pastel `#fde68a → #fef3d4 → #fde68a` |
+| Target dashed border | saturated gold `#facc15` | pastel gold `#fde68a` |
+
+### Why these tints
+
+The modal interrupts gameplay for 4-7 year olds. Saturated colors over a vibrant Pixi scene fatigued the eye and clashed with the train-game art direction. Pastel matches the rest of the in-game UI (Dreamy Meadow palette) and keeps the kids' attention on the question, not on the dialog frame.
+
+### Files touched
+- `games/obstacle-engine.js` — 6 palette edits, no logic changes.
+- `games/g14.html` + `games/g15-pixi.html` + `games/g16-pixi.html` — cache-bust `?v=55.5-...dd → ?v=55.6-...de`.
+- `sw.js` v55.5 → v55.6.
+
+### Verification
+- Syntax OK on obstacle-engine.js.
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS.
+- No engine API changes — Casey/Linus/Dragutin/Brave/Malivlak PROTECTED chars + PvP/Adventure isolation unaffected.
+
+---
+
 ## 2026-06-26 — v55.5 "G14 compact rail layout — rail strip 54px (60% of train height)" (Phase 6.6)
 
 Owner verbatim: *"Buat rail itu hanya 80% dari tinggi kereta."* + correction *"bukan 80% ya tapi kurang dari itu."*

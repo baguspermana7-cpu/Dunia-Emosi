@@ -351,8 +351,8 @@
     // v54.79: cream + amber card with subtle inner cap + train silhouette ribbon
     body.style.cssText = [
       'width:min(95vw,640px)', 'max-height:62vh', 'overflow:auto',
-      'background:linear-gradient(180deg,#fffbeb 0%,#fef3c7 50%,#fde68a 100%)',
-      'border:5px solid #f59e0b', 'border-radius:26px',
+      'background:linear-gradient(180deg,#fefdf7 0%,#fef9e7 50%,#fef3d4 100%)',
+      'border:5px solid #fde68a', 'border-radius:26px',
       'padding:22px 24px 26px',
       'box-shadow:0 14px 50px rgba(0,0,0,0.45), inset 0 4px 12px rgba(255,255,255,0.6)',
       'pointer-events:auto', 'position:relative',
@@ -363,7 +363,7 @@
     // v54.79: train silhouette ribbon at card top
     const ribbon = document.createElement('div')
     ribbon.className = 'obstacle-engine-ribbon'
-    ribbon.style.cssText = 'position:absolute;top:-2px;left:0;right:0;height:14px;background:linear-gradient(90deg,#f59e0b 0%,#fbbf24 25%,#fcd34d 50%,#fbbf24 75%,#f59e0b 100%);border-radius:24px 24px 0 0;display:flex;align-items:center;justify-content:center;font-size:10px;letter-spacing:1px;'
+    ribbon.style.cssText = 'position:absolute;top:-2px;left:0;right:0;height:14px;background:linear-gradient(90deg,#fde68a 0%,#fef3d4 50%,#fde68a 100%);border-radius:24px 24px 0 0;display:flex;align-items:center;justify-content:center;font-size:10px;letter-spacing:1px;'
     ribbon.innerHTML = '<span style="font-size:14px;line-height:1">🚂 🚃 🚃 🚃</span>'
     body.appendChild(ribbon)
 
@@ -373,7 +373,7 @@
     hint.style.cssText = [
       'position:absolute', 'top:-40px', 'left:50%',
       'transform:translateX(-50%)',
-      'background:linear-gradient(135deg,#7c3aed,#6d28d9)',
+      'background:linear-gradient(135deg,#c4a5e0,#a48cc8)',
       'color:white',
       'padding:9px 20px', 'border-radius:22px',
       'font-size:15px', 'font-weight:900', 'white-space:nowrap',
@@ -485,25 +485,27 @@
       .obstacle-engine-target-pulse {
         animation: obstacle-target-pulse 0.6s ease-in-out infinite alternate;
       }
+      /* v55.6 — Pastel soft-calm palette (closes B-204). Owner: "pilihan jawabannya
+         style tidak soft calm pallet colour pastell." Map saturated → pastel. */
       .obstacle-engine-target {
         min-width: 96px; min-height: 96px;
-        border: 5px dashed #fbbf24; border-radius: 18px;
+        border: 5px dashed #fde68a; border-radius: 18px;
         display: inline-flex; align-items: center; justify-content: center;
-        background: rgba(251,191,36,0.12);
+        background: rgba(253,230,138,0.10);
         font-size: 56px; margin: 6px;
-        color: #6b3410;
+        color: #6b4423;
       }
       .obstacle-engine-shape-btn {
         min-width: 88px; min-height: 88px;
-        background: white;
-        border: 5px solid #1976d2;
+        background: #fafcff;
+        border: 5px solid #b4d4f0;
         border-radius: 16px;
         cursor: pointer; touch-action: manipulation; user-select: none;
         font-size: 52px; line-height: 1;
         display: inline-flex; align-items: center; justify-content: center;
         transition: transform 0.18s, background 0.18s, border-color 0.18s;
         margin: 6px;
-        color: #1565c0;
+        color: #6b8eb8;
         font-family: inherit;
         padding: 4px;
       }
@@ -511,14 +513,14 @@
         transform: scale(0.94);
       }
       .obstacle-engine-shape-btn.correct {
-        background: #dcfce7 !important;
-        border-color: #16a34a !important;
-        color: #166534 !important;
+        background: #e8f5e8 !important;
+        border-color: #a8d8a8 !important;
+        color: #4a7c4a !important;
       }
       .obstacle-engine-shape-btn.wrong {
-        background: #fecaca !important;
-        border-color: #ef4444 !important;
-        color: #991b1b !important;
+        background: #fce8e8 !important;
+        border-color: #f4a8a8 !important;
+        color: #8a4a4a !important;
         animation: obstacle-shake 0.4s ease-in-out;
       }
       @keyframes obstacle-shake {
@@ -533,14 +535,14 @@
       }
       .obstacle-engine-title {
         font-size: clamp(20px, 5vw, 28px);
-        text-align: center; color: #5a2a00;
+        text-align: center; color: #6b4423;
         font-weight: 900; margin: 16px 0 8px;
         text-shadow: 0 2px 0 rgba(255,255,255,0.85);
         letter-spacing: 0.3px;
       }
       .obstacle-engine-subtitle {
         font-size: clamp(13px, 3.4vw, 15px);
-        text-align: center; color: #92400e;
+        text-align: center; color: #a08060;
         margin-bottom: 10px;
         font-weight: 700;
       }
