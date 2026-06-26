@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 /* =============================================================================
- * tools/visual-qa.mjs   (visual QA pass for G14 train games, v54.94)
+ * tools/visual-qa.mjs   (visual QA pass for G14 train games, v54.98+)
+ * v54.99: Pre-sets g14s-tutorial-seen=1 + g14-side-train in evaluateOnNewDocument
+ * so the tutorial is dismissed and race starts cleanly for clean screenshots.
  * =============================================================================
  * Launches Puppeteer headless, takes 5 screenshots covering:
  *   1) g14.html top-down with Thomas (sprite verification)
@@ -112,6 +114,7 @@ async function main() {
 
       await page.evaluateOnNewDocument(() => {
         sessionStorage.setItem('g14-side-train', 'aeg_thomas')
+        localStorage.setItem('g14s-tutorial-seen', '1')
       })
       await page.goto(`${BASE}/games/g14-side.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(7200) // 1.9s banner + 3.4s countdown + ~1.9s race
@@ -149,6 +152,7 @@ async function main() {
 
       await page.evaluateOnNewDocument(() => {
         sessionStorage.setItem('g14-side-train', 'caseyjr_character')
+        localStorage.setItem('g14s-tutorial-seen', '1')
       })
       await page.goto(`${BASE}/games/g14-side.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(7200)
@@ -182,6 +186,7 @@ async function main() {
 
       await page.evaluateOnNewDocument(() => {
         sessionStorage.setItem('g14-side-train', 'aeg_thomas')
+        localStorage.setItem('g14s-tutorial-seen', '1')
       })
       await page.goto(`${BASE}/games/g14-side.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(5400) // through countdown
@@ -222,6 +227,7 @@ async function main() {
 
       await page.evaluateOnNewDocument(() => {
         sessionStorage.setItem('g14-side-train', 'aeg_thomas')
+        localStorage.setItem('g14s-tutorial-seen', '1')
       })
       await page.goto(`${BASE}/games/g14-side.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(5400) // through countdown
