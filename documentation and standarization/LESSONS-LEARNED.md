@@ -46,6 +46,12 @@
 - Owner directive 2026-06-26: *"selalu record comment2 saya jadi suatu task ya. agar tahu mana yang sudah di address mana yang belum."*
 - **Lesson**: Every owner comment that names a bug, feature request, or UX nit MUST be filed as a tracked task with: (a) verbatim Indonesian quote, (b) translated symptom, (c) assigned tranche, (d) status updated on ship. Without this, multi-turn marathons accrete unaddressed complaints that surface in re-reports a few turns later. Persistence: `feedback_comment_tracking_mandate.md` memory.
 
+### L206 — Module globals in classic scripts: `let` / `const` are NOT on `window`
+- Probes that read game state via `window.S` / `window.app` will see `undefined` when those globals are declared with `let` / `const` at the top of a classic `<script>` block. A `var` would attach to `window`, but `let` / `const` go to the script's "global lexical environment" which is accessible by bare identifier but not as a `window` property.
+- **Symptom**: `tools/visual-qa-comprehensive.mjs` v55.13 first run reported `sprite null×nullpx` for T1 and `stage undefined×undefined` for T4 — but the actual screenshots showed Casey JR rendered correctly + g15 picker chimney-up. The state was there; the probe just couldn't see it via `window.`.
+- **Fix**: In Puppeteer `page.evaluate`, use `(typeof S !== 'undefined') ? S : null` instead of `window.S`. `evaluate` runs in the page's global scope so bare identifiers reach `let`/`const` globals.
+- **Lesson**: For game-state introspection in probes, never assume `window.<name>` works for top-level declarations. Read by bare identifier and guard with `typeof !== 'undefined'`. Same pattern applies to `S`, `L`, `app`, `stage`, or anything else declared with `let`/`const` at top-level.
+
 ### L205 — One ship per tranche keeps git-blame and CHANGELOG honest
 - This session shipped 8 separate commits (v55.0, v55.2, v55.4, v55.5, v55.6, v55.7-v55.9, v55.10) instead of one mega-merge. Each commit closes a clearly named B-NNN. CHANGELOG entries cross-reference the closed bug IDs.
 - **Lesson**: For multi-bug recovery sessions, every owner-reported bug deserves its own commit + CHANGELOG entry. Git-blame stays useful, owner can scan CHANGELOG and see exactly which complaint was closed in which version, and rollback granularity is per-bug. Mega-merges optimize for typing speed; per-tranche ships optimize for owner trust.

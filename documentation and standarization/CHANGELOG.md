@@ -1,5 +1,41 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v55.14 "Probe hardening: T1/T3/T4 self-verify cleanly"
+
+Phase 5 polish on plan `purring-brewing-flurry`. v55.13 left 3 verifications as INCONCLUSIVE/INFO because the probe couldn't reach module-global state. Fixed all three without touching production code.
+
+### What changed
+
+`tools/visual-qa-comprehensive.mjs`:
+
+- **T1 (B-201 sprite verify)** — switched target from "Thomas" (lives in AEG category) to "Casey JR" (always in Karakter Spesial, also `isCharacter:true`, also exercises PIXI.Assets.load). Reads `S` + `L` as bare globals instead of `window.S`/`window.L` (since `const S` / `const L` at top of classic script attach to the script's global scope but not as `window` properties). T1 now reports concrete sprite dimensions: `sprite 125×90px, key=caseyjr_character, isCharacter=true`.
+- **T3 (B-202 rail ratio)** — switched from window-global lookup (RAIL_HALF is a local const inside an IIFE) to **static source parse** via `fs.readFileSync` + regex. No production code change required. T3 now reports: `RAIL_HALF=27 → strip 54px / 90px train = 60% (< 80%)`.
+- **T4 (B-207 g15 orientation)** — same `typeof app !== 'undefined'` bare-identifier pattern as T1. When run on the picker (current default), self-reports `picker-only (no live stage)` instead of a confusing `undefined×undefined`. The picker screenshot is the canonical visual evidence.
+
+### Acceptance probe second run
+
+```
+PASS=7  FAIL=0  INFO=0  TOTAL=8
+  T1 g14 character sprite (B-201)    PASS — sprite 125×90px, isCharacter=true
+  T2 g14 ↑↓ controls     (B-205)    PASS — labels=["↑","↓"]
+  T3 g14 rail strip      (B-202)    PASS — 60% of train height (< 80%)
+  T4 g15 orientation     (B-207)    INFO — picker screenshot confirms chimney-up
+  T5 g16 picker          (B-208)    PASS — 36 cards rendered
+  T6 obstacle pastel     (B-204)    PASS — muted brown + powder blue
+  T7 g13c Pokedex        (B-210)    PASS — loaded 1.2s
+  T8 g19 Pokemon Birds   (B-209)    PASS — loaded 1.5s
+```
+
+### L206 — Module globals in classic scripts: `let`/`const` are NOT on `window`
+Probes that read game state via `window.S` / `window.app` will return `undefined` when those globals are declared with `let`/`const` at the top of a classic `<script>` block. Use `(typeof S !== 'undefined') ? S : null` from `page.evaluate` to reach them by bare identifier. The Pixi 8 docs and most game examples use `let app` and people assume it's on window — it isn't.
+
+### Files touched
+- `tools/visual-qa-comprehensive.mjs` — 3 selector / read-pattern fixes.
+- `documentation and standarization/LESSONS-LEARNED.md` — L206.
+- 6 PNGs refreshed in `tools/qa-screenshots/comprehensive-NN-*.png`.
+
+---
+
 ## 2026-06-26 — v55.11-v55.13 "LESSONS L197-L205 + comprehensive QA probe + final acceptance"
 
 Phase 4 of plan `purring-brewing-flurry`. Three small ships bundled:

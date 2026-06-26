@@ -58,9 +58,9 @@ async function main() {
   })
 
   try {
-    // ── T1: g14.html top-down Thomas sprite (B-201) ──────────────────────────
+    // ── T1: g14.html top-down character sprite (B-201) ──────────────────────
     {
-      console.log('T1 g14 top-down Thomas sprite (B-201)')
+      console.log('T1 g14 top-down character sprite (B-201)')
       const { page, consoleMsgs } = await newPage(browser)
       await page.goto(`${BASE}/games/g14.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(700)
@@ -70,9 +70,11 @@ async function main() {
         if (btn) btn.click()
       })
       await wait(500)
+      // Pick Casey JR — isCharacter+PROTECTED, always in Karakter Spesial.
+      // Same PIXI.Assets.load code path as Thomas, so verifies B-201 either way.
       await page.evaluate(() => {
-        const t = Array.from(document.querySelectorAll('.train-card'))
-          .find(c => /Thomas/i.test(c.textContent || ''))
+        const cards = Array.from(document.querySelectorAll('.train-card'))
+        const t = cards.find(c => /Casey/i.test(c.textContent || '')) || cards[0]
         if (t) t.click()
       })
       await wait(400)
@@ -86,20 +88,25 @@ async function main() {
       await page.screenshot({ path: out })
 
       const info = await page.evaluate(() => {
-        const L = window.L || {}
-        const charImg = L.playerCharImg
-        return {
-          trainKey: window.S?.trainCfg?.key,
-          isCharacter: window.S?.trainCfg?.isCharacter,
-          spriteUrl: window.S?.trainCfg?.spriteUrl,
-          hasPlayerCharImg: !!charImg,
-          charImgWidth: charImg ? Math.round(charImg.width) : null,
-          charImgHeight: charImg ? Math.round(charImg.height) : null,
-          charImgVisible: charImg ? (charImg.visible !== false) : null,
-        }
+        // `const S` + `const L` at top of classic script — globals by name,
+        // NOT properties of window. Reference by bare identifier.
+        try {
+          const Slocal = (typeof S !== 'undefined') ? S : null
+          const Llocal = (typeof L !== 'undefined') ? L : null
+          const charImg = Llocal?.playerCharImg
+          return {
+            trainKey: Slocal?.trainCfg?.key,
+            isCharacter: Slocal?.trainCfg?.isCharacter,
+            spriteUrl: Slocal?.trainCfg?.spriteUrl,
+            hasPlayerCharImg: !!charImg,
+            charImgWidth: charImg ? Math.round(charImg.width) : null,
+            charImgHeight: charImg ? Math.round(charImg.height) : null,
+            charImgVisible: charImg ? (charImg.visible !== false) : null,
+          }
+        } catch (e) { return { err: e.message } }
       })
       const ok = info.hasPlayerCharImg && info.charImgHeight && info.charImgHeight > 10
-      verdict('T1', ok, `sprite ${info.charImgWidth}×${info.charImgHeight}px, key=${info.trainKey}`)
+      verdict('T1', ok, `sprite ${info.charImgWidth}×${info.charImgHeight}px, key=${info.trainKey}, isCharacter=${info.isCharacter}`)
       if (!ok) verdict('T1', null, `console: ${consoleMsgs.slice(0, 4).join(' | ')}`)
       await page.close()
     }
@@ -126,21 +133,16 @@ async function main() {
     // ── T3: g14.html rail strip dimensions (B-202) ──────────────────────────
     {
       console.log('T3 g14 rail strip ratio (B-202: < 80% of train height)')
-      const { page } = await newPage(browser)
-      await page.goto(`${BASE}/games/g14.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
-      await wait(500)
-      const railInfo = await page.evaluate(() => {
-        // RAIL_HALF constant + train sprite target height ≈ 90
-        const txt = (window.RAIL_HALF != null) ? window.RAIL_HALF : null
-        return {
-          railHalf: txt,
-          windowKeys: ['RAIL_HALF', 'TIE_W', 'TIE_GAP'].map(k => ({ k, v: window[k] })),
-        }
-      })
-      // Visual fallback via source inspection
-      const ratioOk = (railInfo.railHalf == null) || (railInfo.railHalf * 2 / 90 < 0.8)
-      verdict('T3', ratioOk, `RAIL_HALF=${railInfo.railHalf}, strip ratio ≈ ${railInfo.railHalf ? (railInfo.railHalf * 2 / 90).toFixed(2) : 'n/a'}`)
-      await page.close()
+      // Static source parse — RAIL_HALF is a local const inside an IIFE,
+      // not on window. Read it straight from the file.
+      const g14src = fs.readFileSync(path.join(__dirname, '..', 'games', 'g14.html'), 'utf8')
+      const railMatch = g14src.match(/const\s+RAIL_HALF\s*=\s*(\d+)/)
+      const heightMatch = g14src.match(/spriteHeight:\s*90/) // canonical PROTECTED-char body height
+      const railHalf = railMatch ? parseInt(railMatch[1], 10) : null
+      const trainH = heightMatch ? 90 : null
+      const ratio = (railHalf != null && trainH != null) ? (railHalf * 2 / trainH) : null
+      const ok = ratio != null && ratio < 0.8
+      verdict('T3', ok, `RAIL_HALF=${railHalf} → strip ${railHalf ? railHalf * 2 : '?'}px / ${trainH}px train = ${ratio != null ? (ratio * 100).toFixed(0) + '%' : 'n/a'} (< 80%)`)
     }
 
     // ── T4: g15-pixi.html sprite orientation (B-207 KEY VERIFICATION) ───────
@@ -154,22 +156,29 @@ async function main() {
       await page.screenshot({ path: out })
 
       const info = await page.evaluate(() => {
-        const app = window.app || window.pixiApp || null
-        if (!app || !app.stage) return { err: 'no pixi app' }
-        // Walk top-level children for any Sprite/Container that looks train-shaped
-        const kids = []
-        app.stage.children.forEach((c, i) => {
-          if (i > 12) return
-          kids.push({
-            i, type: c.constructor?.name, x: Math.round(c.x), y: Math.round(c.y),
-            width: Math.round(c.width || 0), height: Math.round(c.height || 0),
-            rotation: c.rotation || 0,
+        // `let app` at the top of a classic script is in the global lexical
+        // scope but NOT a property of window. Reference by bare name.
+        try {
+          if (typeof app === 'undefined' || !app || !app.stage) return { err: 'no pixi app' }
+          const kids = []
+          app.stage.children.forEach((c, i) => {
+            if (i > 12) return
+            kids.push({
+              i, type: c.constructor?.name, x: Math.round(c.x), y: Math.round(c.y),
+              width: Math.round(c.width || 0), height: Math.round(c.height || 0),
+              rotation: c.rotation || 0,
+            })
           })
-        })
-        return { kids, stageW: app.renderer?.width, stageH: app.renderer?.height }
+          return { kids, stageW: app.renderer?.width, stageH: app.renderer?.height }
+        } catch (e) { return { err: e.message } }
       })
-      verdict('T4', null, `(screenshot inspect required) stage=${info.stageW}×${info.stageH}, children=${(info.kids||[]).length}`)
-      verdict('T4', null, `console: ${consoleMsgs.slice(0, 4).join(' | ')}`)
+      // Picker view shows trains chimney-up correctly per v55.13 screenshot.
+      // Once the user clicks into a level, the running scene exposes `app`;
+      // if we can reach it here, check no top-level child has rotation ≠ 0.
+      const rotated = (info.kids || []).filter(k => Math.abs(k.rotation) > 0.01)
+      const ok = info.kids && info.kids.length > 0 && rotated.length === 0
+      verdict('T4', ok, info.err ? `picker-only (no live stage): ${info.err}` : `stage ${info.stageW}×${info.stageH}, ${info.kids.length} kids, ${rotated.length} rotated`)
+      if (!ok && !info.err) verdict('T4', null, `rotated kids: ${JSON.stringify(rotated).slice(0, 200)}`)
       await page.close()
     }
 
