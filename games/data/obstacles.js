@@ -1359,6 +1359,450 @@
     }))
 
     // ── Windy bridge balance (spec §14) — left/right tap to balance ─────────
+    // ── Station task tranche v54.74 — 8 station mini-tasks ─────────────────
+
+    // Cargo sort generator — drag cargo icon to matching wagon
+    function makeCargoSortObstacle(opts) {
+      return {
+        type: 'cargo_sort',
+        difficulty: opts.difficulty || 2,
+        ageRange: '5-7',
+        allowedLocations: ['*'],
+        allowedJourneyPhases: ['arrival'],
+        requiredAction: 'tap_match',
+        softFail: true,
+        maxRetry: 3,
+        reward: { coins: opts.coins || 8, badgeProgress: 1, sound: 'success_chime' },
+        visual: { cameraZoom: true, highlightSlot: true, successSparkle: true },
+        accessibility: { voicePrompt: true, largeTouchTarget: true, reducedMotion: true },
+        title: opts.title,
+        hints: [
+          'Cocokkan dengan benar! 💡',
+          'Lihat warnanya / bentuknya! ✨',
+          'Yang ini! 👇',
+        ],
+
+        interaction: {
+          setup(ctx, callbacks) {
+            const body = ctx.body
+            if (!body) return
+
+            const title = document.createElement('div')
+            title.className = 'obstacle-engine-title'
+            title.textContent = opts.title
+            body.appendChild(title)
+
+            const sub = document.createElement('div')
+            sub.className = 'obstacle-engine-subtitle'
+            sub.textContent = opts.subtitle || 'Antar muatan ke gerbong yang sesuai.'
+            body.appendChild(sub)
+
+            const cargoIdx = Math.floor(Math.random() * opts.cargoes.length)
+            const target = opts.cargoes[cargoIdx]
+
+            // Cargo display (the item to deliver)
+            const cargoRow = document.createElement('div')
+            cargoRow.className = 'obstacle-engine-row'
+            const cargo = document.createElement('div')
+            cargo.style.cssText = 'font-size:64px;line-height:1;padding:8px 12px;background:rgba(255,255,255,0.6);border-radius:14px;'
+            cargo.textContent = target.icon
+            cargoRow.appendChild(cargo)
+            const arrow = document.createElement('div')
+            arrow.style.cssText = 'font-size:32px;display:inline-flex;align-items:center;padding:0 8px;'
+            arrow.textContent = '➡️'
+            cargoRow.appendChild(arrow)
+            body.appendChild(cargoRow)
+
+            // Wagons row
+            const wagonsRow = document.createElement('div')
+            wagonsRow.className = 'obstacle-engine-row'
+            const shuffled = opts.cargoes.map((c, i) => ({ ...c, idx: i })).sort(() => Math.random() - 0.5)
+            shuffled.forEach(c => {
+              const btn = document.createElement('button')
+              btn.className = 'obstacle-engine-shape-btn'
+              btn.style.flexDirection = 'column'
+              btn.style.minWidth = '100px'
+              btn.style.minHeight = '110px'
+              const ic = document.createElement('span')
+              ic.style.cssText = 'font-size:42px;line-height:1;'
+              ic.textContent = c.wagon
+              const lab = document.createElement('span')
+              lab.style.cssText = 'font-size:12px;font-weight:900;margin-top:4px;'
+              lab.textContent = c.label
+              btn.appendChild(ic); btn.appendChild(lab)
+
+              btn.addEventListener('click', () => {
+                if (c.idx === cargoIdx) {
+                  btn.classList.add('correct')
+                  OE.spawnSparkles(btn, 6)
+                  Array.from(wagonsRow.querySelectorAll('button')).forEach(b => { b.disabled = true })
+                  setTimeout(() => callbacks.success(), 700)
+                } else {
+                  btn.classList.add('wrong')
+                  setTimeout(() => btn.classList.remove('wrong'), 500)
+                  callbacks.fail()
+                }
+              })
+              wagonsRow.appendChild(btn)
+            })
+            body.appendChild(wagonsRow)
+            OE.speak(opts.voice || 'Antar muatan ke gerbong sesuai')
+          },
+          teardown() {}
+        },
+      }
+    }
+
+    OE.register('station_cargo_sort_color', makeCargoSortObstacle({
+      title: '🚉 Sortir muatan — warna!',
+      subtitle: 'Antar muatan ke gerbong warna yang sama.',
+      voice: 'Antar muatan ke gerbong warna sama',
+      cargoes: [
+        { icon:'🔴', wagon:'🟥', label:'Merah' },
+        { icon:'🟢', wagon:'🟩', label:'Hijau' },
+        { icon:'🔵', wagon:'🟦', label:'Biru' },
+      ],
+    }))
+
+    OE.register('station_cargo_sort_shape', makeCargoSortObstacle({
+      title: '🚉 Sortir muatan — bentuk!',
+      subtitle: 'Antar muatan ke gerbong bentuk yang sama.',
+      voice: 'Antar muatan ke gerbong bentuk sama',
+      cargoes: [
+        { icon:'▲', wagon:'▽', label:'Segitiga' },
+        { icon:'⬤', wagon:'◯', label:'Lingkaran' },
+        { icon:'■', wagon:'▢', label:'Persegi' },
+      ],
+    }))
+
+    OE.register('station_cargo_sort_object_category', makeCargoSortObstacle({
+      title: '🚉 Sortir muatan — kategori!',
+      subtitle: 'Antar muatan ke gerbong kategori yang sama.',
+      voice: 'Antar muatan ke kategori yang sama',
+      cargoes: [
+        { icon:'🍎', wagon:'🥗', label:'Makanan' },
+        { icon:'🧸', wagon:'🎮', label:'Mainan' },
+        { icon:'📫', wagon:'📦', label:'Surat' },
+      ],
+    }))
+
+    OE.register('station_cargo_sort_destination', makeCargoSortObstacle({
+      title: '🚉 Sortir muatan — tujuan!',
+      subtitle: 'Antar muatan ke gerbong stasiun tujuan.',
+      voice: 'Antar muatan ke stasiun tujuan',
+      cargoes: [
+        { icon:'📦🅰️', wagon:'🅰️', label:'Stasiun A' },
+        { icon:'📦🅱️', wagon:'🅱️', label:'Stasiun B' },
+        { icon:'📦🆎', wagon:'🆎', label:'Stasiun AB' },
+      ],
+    }))
+
+    // Passenger pickup — tap 3 passengers in any order
+    OE.register('station_passenger_pickup_3', {
+      type: 'tap_count',
+      difficulty: 1,
+      ageRange: '4-7',
+      allowedLocations: ['*'],
+      allowedJourneyPhases: ['arrival'],
+      requiredAction: 'tap_count',
+      softFail: true,
+      maxRetry: 3,
+      reward: { coins: 6, badgeProgress: 1, sound: 'success_chime' },
+      visual: { cameraZoom: true, successSparkle: true },
+      accessibility: { voicePrompt: true, largeTouchTarget: true, reducedMotion: true },
+      title: '🚉 Jemput penumpang!',
+      hints: [
+        'Tap setiap penumpang untuk masuk kereta! 💡',
+        'Tap lagi! 1 lagi! ✨',
+        'Tap! 👇',
+      ],
+
+      interaction: {
+        setup(ctx, callbacks) {
+          const body = ctx.body
+          if (!body) return
+
+          const title = document.createElement('div')
+          title.className = 'obstacle-engine-title'
+          title.textContent = '🚉 Jemput 3 penumpang!'
+          body.appendChild(title)
+
+          const sub = document.createElement('div')
+          sub.className = 'obstacle-engine-subtitle'
+          sub.textContent = 'Tap setiap orang untuk masuk kereta.'
+          body.appendChild(sub)
+
+          const row = document.createElement('div')
+          row.className = 'obstacle-engine-row'
+
+          const PEOPLE = ['🧑', '👨', '👩', '🧒', '👶']
+          const shown = PEOPLE.slice(0, 3 + Math.floor(Math.random() * 2)) // 3 or 4
+          let picked = 0
+          shown.forEach((p, i) => {
+            const btn = document.createElement('button')
+            btn.className = 'obstacle-engine-shape-btn'
+            btn.style.fontSize = '52px'
+            btn.style.minWidth = '90px'
+            btn.style.minHeight = '90px'
+            btn.textContent = p
+            btn.addEventListener('click', () => {
+              btn.classList.add('correct')
+              btn.disabled = true
+              btn.style.opacity = '0.5'
+              btn.textContent = '✅'
+              OE.spawnSparkles(btn, 4)
+              picked++
+              if (picked >= 3) {
+                setTimeout(() => callbacks.success(), 600)
+              }
+            })
+            row.appendChild(btn)
+          })
+          body.appendChild(row)
+          OE.speak('Tap penumpang')
+        },
+        teardown() {}
+      },
+    })
+
+    // Ticket color match — drag color-coded ticket to matching passenger
+    OE.register('station_ticket_color_match', makeCargoSortObstacle({
+      title: '🎫 Cocokkan tiket warna!',
+      subtitle: 'Antar tiket ke penumpang dengan warna sama.',
+      voice: 'Antar tiket sesuai warna',
+      cargoes: [
+        { icon:'🎫🔴', wagon:'🧑‍🦱🔴', label:'Merah' },
+        { icon:'🎫🟢', wagon:'🧑‍🦱🟢', label:'Hijau' },
+        { icon:'🎫🔵', wagon:'🧑‍🦱🔵', label:'Biru' },
+      ],
+    }))
+
+    // Lost suitcase — find labeled suitcase among 4
+    OE.register('station_lost_suitcase', {
+      type: 'find_match',
+      difficulty: 2,
+      ageRange: '5-7',
+      allowedLocations: ['*'],
+      allowedJourneyPhases: ['arrival', 'approaching_station'],
+      requiredAction: 'tap_choice',
+      softFail: true,
+      maxRetry: 3,
+      reward: { coins: 7, badgeProgress: 1, sound: 'success_chime' },
+      visual: { cameraZoom: true, highlightSlot: true, successSparkle: true },
+      accessibility: { voicePrompt: true, largeTouchTarget: true, reducedMotion: true },
+      title: '🧳 Koper hilang!',
+      hints: [
+        'Coba yang lain! 💡',
+        'Lihat label/warna koper! ✨',
+        'Yang ini! 👇',
+      ],
+
+      interaction: {
+        setup(ctx, callbacks) {
+          const body = ctx.body
+          if (!body) return
+
+          const title = document.createElement('div')
+          title.className = 'obstacle-engine-title'
+          title.textContent = '🧳 Bantu cari koper!'
+          body.appendChild(title)
+
+          const sub = document.createElement('div')
+          sub.className = 'obstacle-engine-subtitle'
+          sub.textContent = 'Cari koper dengan tanda yang sama.'
+          body.appendChild(sub)
+
+          // Reference suitcase (the one to find)
+          const SHAPES = ['⭐', '❤️', '🌙', '⚡']
+          const targetShape = SHAPES[Math.floor(Math.random() * SHAPES.length)]
+
+          const refRow = document.createElement('div')
+          refRow.className = 'obstacle-engine-row'
+          const ref = document.createElement('div')
+          ref.style.cssText = 'font-size:50px;padding:8px 14px;background:rgba(255,255,255,0.6);border-radius:14px;'
+          ref.textContent = '🧳' + targetShape
+          refRow.appendChild(ref)
+          body.appendChild(refRow)
+
+          const choicesRow = document.createElement('div')
+          choicesRow.className = 'obstacle-engine-row'
+          const shuffled = SHAPES.slice().sort(() => Math.random() - 0.5)
+          shuffled.forEach(s => {
+            const btn = document.createElement('button')
+            btn.className = 'obstacle-engine-shape-btn'
+            btn.style.minWidth = '100px'
+            btn.style.minHeight = '100px'
+            btn.textContent = '🧳' + s
+            btn.addEventListener('click', () => {
+              if (s === targetShape) {
+                btn.classList.add('correct')
+                OE.spawnSparkles(btn, 6)
+                Array.from(choicesRow.querySelectorAll('button')).forEach(b => { b.disabled = true })
+                setTimeout(() => callbacks.success(), 700)
+              } else {
+                btn.classList.add('wrong')
+                setTimeout(() => btn.classList.remove('wrong'), 500)
+                callbacks.fail()
+              }
+            })
+            choicesRow.appendChild(btn)
+          })
+          body.appendChild(choicesRow)
+          OE.speak('Cari koper yang sama')
+        },
+        teardown() {}
+      },
+    })
+
+    // Clean leaves — tap each leaf to sweep
+    OE.register('station_clean_leaves_track', {
+      type: 'tap_clear',
+      difficulty: 1,
+      ageRange: '4-7',
+      allowedLocations: ['*'],
+      allowedJourneyPhases: ['arrival'],
+      requiredAction: 'tap_count',
+      softFail: true,
+      maxRetry: 3,
+      reward: { coins: 5, badgeProgress: 1, sound: 'success_chime' },
+      visual: { cameraZoom: true, successSparkle: true },
+      accessibility: { voicePrompt: true, largeTouchTarget: true, reducedMotion: true },
+      title: '🍂 Bersihkan daun!',
+      hints: [
+        'Tap daun untuk membersihkan! 💡',
+        'Tap setiap daun! ✨',
+        'Tap! 👇',
+      ],
+
+      interaction: {
+        setup(ctx, callbacks) {
+          const body = ctx.body
+          if (!body) return
+
+          const title = document.createElement('div')
+          title.className = 'obstacle-engine-title'
+          title.textContent = '🍂 Bersihkan daun dari rel!'
+          body.appendChild(title)
+
+          const sub = document.createElement('div')
+          sub.className = 'obstacle-engine-subtitle'
+          sub.textContent = 'Tap setiap daun untuk menyapu.'
+          body.appendChild(sub)
+
+          const row = document.createElement('div')
+          row.className = 'obstacle-engine-row'
+          const N = 5
+          let cleared = 0
+          for (let i = 0; i < N; i++) {
+            const btn = document.createElement('button')
+            btn.className = 'obstacle-engine-shape-btn'
+            btn.style.fontSize = '40px'
+            btn.style.minWidth = '74px'
+            btn.style.minHeight = '74px'
+            btn.textContent = '🍂'
+            btn.addEventListener('click', () => {
+              btn.classList.add('correct')
+              btn.style.opacity = '0.3'
+              btn.textContent = '✨'
+              btn.disabled = true
+              cleared++
+              if (cleared >= N) {
+                OE.spawnSparkles(row, 8)
+                setTimeout(() => callbacks.success(), 600)
+              }
+            })
+            row.appendChild(btn)
+          }
+          body.appendChild(row)
+          OE.speak('Tap setiap daun')
+        },
+        teardown() {}
+      },
+    })
+
+    // Signal lamp fix at station — timing tap (variant of signal_repair)
+    OE.register('station_signal_lamp_fix', {
+      type: 'timing_tap',
+      difficulty: 2,
+      ageRange: '5-7',
+      allowedLocations: ['*'],
+      allowedJourneyPhases: ['arrival'],
+      requiredAction: 'tap_timing',
+      softFail: true,
+      maxRetry: 3,
+      reward: { coins: 6, badgeProgress: 1, sound: 'success_chime' },
+      visual: { cameraZoom: true, successSparkle: true },
+      accessibility: { voicePrompt: true, largeTouchTarget: true, reducedMotion: true },
+      title: '🚉 Perbaiki sinyal stasiun!',
+      hints: [
+        'Tap saat lampu hijau menyala! 💡',
+        'Tunggu hijau, lalu tap! ✨',
+        'Sekarang! 👇',
+      ],
+
+      interaction: {
+        setup(ctx, callbacks) {
+          const body = ctx.body
+          if (!body) return
+
+          const title = document.createElement('div')
+          title.className = 'obstacle-engine-title'
+          title.textContent = '🚉 Perbaiki lampu sinyal stasiun!'
+          body.appendChild(title)
+
+          const sub = document.createElement('div')
+          sub.className = 'obstacle-engine-subtitle'
+          sub.textContent = 'Tap tombol saat lampu menyala HIJAU.'
+          body.appendChild(sub)
+
+          const lampRow = document.createElement('div')
+          lampRow.className = 'obstacle-engine-row'
+          const lamp = document.createElement('div')
+          lamp.style.cssText = 'width:96px;height:96px;border-radius:50%;background:#555;border:5px solid #333;display:inline-flex;align-items:center;justify-content:center;font-size:48px;transition:background 0.2s, box-shadow 0.2s;'
+          lampRow.appendChild(lamp)
+          body.appendChild(lampRow)
+
+          const btnRow = document.createElement('div')
+          btnRow.className = 'obstacle-engine-row'
+          const tapBtn = document.createElement('button')
+          tapBtn.className = 'obstacle-engine-shape-btn'
+          tapBtn.style.minWidth = '160px'
+          tapBtn.style.fontSize = '22px'
+          tapBtn.textContent = '✨ Perbaiki!'
+          btnRow.appendChild(tapBtn)
+          body.appendChild(btnRow)
+
+          // 3 phases: red 700, yellow 500, green 900 — only green is correct
+          let phase = 0 // 0=red, 1=yellow, 2=green
+          let interval = setInterval(() => {
+            phase = (phase + 1) % 3
+            if (phase === 0) { lamp.style.background='#dc2626'; lamp.style.boxShadow='0 0 20px rgba(220,38,38,0.7)'; lamp.textContent='🔴' }
+            else if (phase === 1) { lamp.style.background='#facc15'; lamp.style.boxShadow='0 0 22px rgba(250,204,21,0.7)'; lamp.textContent='🟡' }
+            else { lamp.style.background='#22c55e'; lamp.style.boxShadow='0 0 26px rgba(34,197,94,0.8)'; lamp.textContent='🟢' }
+          }, 700)
+
+          tapBtn.addEventListener('click', () => {
+            if (phase === 2) {
+              clearInterval(interval)
+              interval = null
+              tapBtn.classList.add('correct')
+              tapBtn.disabled = true
+              OE.spawnSparkles(lamp, 8)
+              setTimeout(() => callbacks.success(), 700)
+            } else {
+              tapBtn.classList.add('wrong')
+              setTimeout(() => tapBtn.classList.remove('wrong'), 500)
+              callbacks.fail()
+            }
+          })
+
+          ctx.__cleanup = () => { if (interval) clearInterval(interval) }
+          OE.speak('Tap saat lampu hijau')
+        },
+        teardown(ctx) { if (ctx && ctx.__cleanup) ctx.__cleanup() }
+      },
+    })
+
     OE.register('windy_bridge_balance', {
       type: 'balance_tap',
       difficulty: 2,

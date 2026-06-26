@@ -1,5 +1,40 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.74 "Station task tranche (9 obstacles + cargo sort generator)" (Phase 4.5)
+
+52 obstacles total (43 from v54.73 + 9 new). All station tasks gated to `allowedJourneyPhases: ['arrival']` so they fire when the train reaches a station.
+
+### Cargo sort generator (spec §12) — 4 variants
+
+`makeCargoSortObstacle(opts)` — drag cargo icon → wagon match. Cargo displayed at top with ➡️ arrow; child taps the matching wagon below.
+
+| ID | Match by | Cargoes |
+|---|---|---|
+| `station_cargo_sort_color`            | Color    | 🔴🟢🔵 |
+| `station_cargo_sort_shape`            | Shape    | ▲⬤■ |
+| `station_cargo_sort_object_category`  | Category | 🍎🧸📫 → 🥗🎮📦 |
+| `station_cargo_sort_destination`      | Station  | 📦🅰️📦🅱️📦🆎 |
+
+### Other station tasks (spec §18)
+
+- `station_passenger_pickup_3` — tap 3 random people (🧑👨👩🧒👶 pool). Each tap → ✅ + sparkle + opacity drop. Success after 3 picked.
+- `station_ticket_color_match` — re-uses cargo-sort generator (color tickets → color-coded passengers).
+- `station_lost_suitcase` — find suitcase by symbol (⭐❤️🌙⚡). Reference suitcase shown; child taps matching one of 4.
+- `station_clean_leaves_track` — tap-clear: 5 🍂 leaves; each tap → ✨; auto-success when all cleared.
+- `station_signal_lamp_fix` — timing variant. Lamp cycles red 🔴 → yellow 🟡 → green 🟢 (700ms each). Tap during green = success; otherwise soft-fail.
+
+### Files touched
+- `games/data/obstacles.js` — 9 new registrations + cargo-sort generator (~300 LOC added).
+- `games/g14.html` — cache-bust `v=54.74-20260626ca`.
+- `sw.js` v54.73 → v54.74.
+
+### Verification
+- `grep -c "OE.register" games/data/obstacles.js` = 52 ✓
+- All station tasks `allowedJourneyPhases: ['arrival']` so they fire on station approach.
+- Reward system extension (sticker album / badge passport / horn unlocks) — DEFERRED to v54.75 (will integrate via TrainShared.achievements + new TrainShared.stickers module).
+
+---
+
 ## 2026-06-26 — v54.73 "Choice + Memory + Balance tranche (9 obstacles)" (Phase 4.4)
 
 43 obstacles total (34 from v54.72 + 9 new). Owner acceptance criterion §33 ("At least 20 obstacle variations exist") now exceeded by 2.15×.
