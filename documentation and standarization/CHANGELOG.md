@@ -1,5 +1,56 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.79 "Overlay polish — cinematic backdrop + floating sparkles + train ribbon" (Phase 4.10 — visual)
+
+Owner mandate "Tampilan yg sangat keren dan bagus" applied to the obstacle overlay.
+
+### Cinematic backdrop
+
+- Radial vignette gradient: `radial-gradient(ellipse at 50% 60%, rgba(15,23,42,0.18) 0%, rgba(15,23,42,0.55) 100%)` instead of flat scrim. Focuses attention on the puzzle card.
+- Backdrop blur upgraded 2px → 3px.
+
+### Floating sparkle layer
+
+- 12 floating ✨/⭐/🌟/💫 emoji drift upward continuously via `@keyframes obstacle-sparkle-float` (6-12s duration, randomized delay + size + opacity).
+- `position:absolute; pointer-events:none` so taps pass through.
+- Hidden entirely in `prefers-reduced-motion: reduce` to honor accessibility.
+
+### Card improvements
+
+- Background: 3-stop cream gradient (`#fffbeb → #fef3c7 → #fde68a`) instead of 2-stop.
+- Border: 5px solid `#f59e0b` (was 4px `#fbbf24`) for stronger framing.
+- Shadow: outer drop + `inset 0 4px 12px rgba(255,255,255,0.6)` inner cap for depth.
+- Entrance animation: combined `translateY + scale(0.94→1)` with cubic-bezier overshoot — more delightful than pure slide.
+
+### Train ribbon
+
+- Sticky 14px ribbon at card top: `🚂 🚃 🚃 🚃` on amber gradient strip. Persists across body clear (clearOverlayBody preserves it).
+
+### Hint pill polish
+
+- New palette: violet gradient `#7c3aed → #6d28d9` (was navy blue) — distinct from card amber, won't compete visually.
+- 2px white border for legibility against any background.
+- New shadow: `0 6px 18px rgba(124,58,237,0.5)` — soft violet glow.
+- Subtle bob animation `obstacle-hint-bob 1.2s` while visible (reduce-motion gated).
+
+### Title + subtitle
+
+- Title font scale up: `clamp(20px, 5vw, 28px)` (was 18px / 4.5vw / 26px).
+- Subtitle now `font-weight: 700` for clearer hierarchy.
+- Letter-spacing: 0.3px on title for premium feel.
+
+### Files touched
+- `games/obstacle-engine.js` — overlay HTML/CSS polish (~50 LOC changed).
+- `games/g14.html` — cache-bust `v=54.79-20260626cf`.
+- `sw.js` v54.78 → v54.79.
+
+### Verification
+- Syntax OK.
+- `node tools/probe-obstacle-engine.mjs` — 14/14 PASS.
+- Reduce-motion `display:none` on sparkle layer confirmed in CSS.
+
+---
+
 ## 2026-06-26 — v54.78 "Koleksi gallery modal + earn toast notifications" (Phase 4.9 — polish)
 
 Visible reward closure for the obstacle engine series. Kids now see their stickers, badges, and horn unlocks grow in a beautiful modal — and a celebration toast fires the moment they earn one.

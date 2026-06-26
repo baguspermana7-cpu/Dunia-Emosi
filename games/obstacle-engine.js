@@ -317,39 +317,67 @@
 
     const root = document.createElement('div')
     root.id = 'obstacle-engine-overlay'
+    // v54.79: cinematic backdrop — soft radial vignette + warm ambient gradient
     root.style.cssText = [
       'position:fixed', 'inset:0', 'z-index:2000',
       'pointer-events:none', 'display:none',
       'align-items:flex-end', 'justify-content:center',
       'padding-bottom:max(20px, env(safe-area-inset-bottom))',
       "font-family:'Fredoka One','Comic Sans MS',system-ui,sans-serif",
-      'background:rgba(15,23,42,0.32)', 'backdrop-filter:blur(2px)',
+      'background:radial-gradient(ellipse at 50% 60%, rgba(15,23,42,0.18) 0%, rgba(15,23,42,0.55) 100%)',
+      'backdrop-filter:blur(3px)',
     ].join(';')
+
+    // v54.79: floating sparkle layer (decorative, pointer-events:none)
+    const sparkleLayer = document.createElement('div')
+    sparkleLayer.className = 'obstacle-engine-sparkle-layer'
+    sparkleLayer.style.cssText = 'position:absolute;inset:0;pointer-events:none;overflow:hidden;'
+    for (let i = 0; i < 12; i++) {
+      const s = document.createElement('div')
+      const dur = 6 + Math.random() * 6
+      const delay = -Math.random() * 6
+      const left = Math.random() * 100
+      s.style.cssText = `position:absolute;left:${left}%;top:110%;font-size:${12 + Math.random()*14}px;opacity:${0.4 + Math.random()*0.4};animation:obstacle-sparkle-float ${dur}s linear ${delay}s infinite;`
+      s.textContent = ['✨','⭐','🌟','💫'][Math.floor(Math.random() * 4)]
+      sparkleLayer.appendChild(s)
+    }
+    root.appendChild(sparkleLayer)
 
     const body = document.createElement('div')
     body.className = 'obstacle-engine-body'
+    // v54.79: cream + amber card with subtle inner cap + train silhouette ribbon
     body.style.cssText = [
-      'width:min(95vw,640px)', 'max-height:60vh', 'overflow:auto',
-      'background:linear-gradient(180deg,#fef3c7 0%,#fed7aa 100%)',
-      'border:4px solid #fbbf24', 'border-radius:24px',
-      'padding:20px 24px 24px',
-      'box-shadow:0 10px 40px rgba(0,0,0,0.4)',
+      'width:min(95vw,640px)', 'max-height:62vh', 'overflow:auto',
+      'background:linear-gradient(180deg,#fffbeb 0%,#fef3c7 50%,#fde68a 100%)',
+      'border:5px solid #f59e0b', 'border-radius:26px',
+      'padding:22px 24px 26px',
+      'box-shadow:0 14px 50px rgba(0,0,0,0.45), inset 0 4px 12px rgba(255,255,255,0.6)',
       'pointer-events:auto', 'position:relative',
-      'transform:translateY(120%)',
-      'transition:transform 0.45s cubic-bezier(0.34,1.56,0.64,1)',
+      'transform:translateY(120%) scale(0.94)',
+      'transition:transform 0.48s cubic-bezier(0.34,1.56,0.64,1)',
     ].join(';')
 
+    // v54.79: train silhouette ribbon at card top
+    const ribbon = document.createElement('div')
+    ribbon.className = 'obstacle-engine-ribbon'
+    ribbon.style.cssText = 'position:absolute;top:-2px;left:0;right:0;height:14px;background:linear-gradient(90deg,#f59e0b 0%,#fbbf24 25%,#fcd34d 50%,#fbbf24 75%,#f59e0b 100%);border-radius:24px 24px 0 0;display:flex;align-items:center;justify-content:center;font-size:10px;letter-spacing:1px;'
+    ribbon.innerHTML = '<span style="font-size:14px;line-height:1">🚂 🚃 🚃 🚃</span>'
+    body.appendChild(ribbon)
+
+    // v54.79: hint pill with subtle bob animation + better palette
     const hint = document.createElement('div')
     hint.className = 'obstacle-engine-hint'
     hint.style.cssText = [
-      'position:absolute', 'top:-36px', 'left:50%',
+      'position:absolute', 'top:-40px', 'left:50%',
       'transform:translateX(-50%)',
-      'background:linear-gradient(135deg,#1976d2,#0d47a1)', 'color:white',
-      'padding:8px 18px', 'border-radius:18px',
-      'font-size:15px', 'font-weight:700', 'white-space:nowrap',
-      'opacity:0', 'transition:opacity 0.3s',
-      'box-shadow:0 4px 12px rgba(0,0,0,0.3)',
-      'pointer-events:none',
+      'background:linear-gradient(135deg,#7c3aed,#6d28d9)',
+      'color:white',
+      'padding:9px 20px', 'border-radius:22px',
+      'font-size:15px', 'font-weight:900', 'white-space:nowrap',
+      'opacity:0', 'transition:opacity 0.32s',
+      'box-shadow:0 6px 18px rgba(124,58,237,0.5)',
+      'border:2px solid rgba(255,255,255,0.5)',
+      'pointer-events:none', 'letter-spacing:0.2px',
     ].join(';')
 
     body.appendChild(hint)
@@ -366,13 +394,13 @@
     _overlay.root.style.display = 'flex'
     _overlay.root.style.pointerEvents = 'auto'
     requestAnimationFrame(() => {
-      _overlay.body.style.transform = 'translateY(0)'
+      _overlay.body.style.transform = 'translateY(0) scale(1)'
     })
   }
 
   function _hideOverlay(done) {
     if (!_overlay) { done && done(); return }
-    _overlay.body.style.transform = 'translateY(120%)'
+    _overlay.body.style.transform = 'translateY(120%) scale(0.94)'
     setTimeout(() => {
       _overlay.root.style.display = 'none'
       _overlay.root.style.pointerEvents = 'none'
@@ -384,10 +412,13 @@
   function _clearOverlayBody() {
     if (!_overlay) return
     const keep = _overlay.hint
+    const ribbon = _overlay.body.querySelector('.obstacle-engine-ribbon')
     _overlay.body.innerHTML = ''
+    if (ribbon) _overlay.body.appendChild(ribbon)
     _overlay.body.appendChild(keep)
     _overlay.hint.style.opacity = 0
     _overlay.hint.textContent = ''
+    _overlay.hint.style.animation = '' // v54.79: clear bob
   }
 
   function _showHint(level, customMsg, def) {
@@ -397,6 +428,10 @@
     const msg = customMsg || messages[idx]
     _overlay.hint.textContent = msg
     _overlay.hint.style.opacity = 1
+    // v54.79: bob animation while hint is visible (cleared on next hide)
+    if (!reducedMotion()) {
+      _overlay.hint.style.animation = 'obstacle-hint-bob 1.2s ease-in-out infinite'
+    }
 
     // Escalate: pulse the target slot on retry >= 2
     if (level >= 2) {
@@ -427,6 +462,17 @@
       @keyframes obstacle-sparkle {
         0%   { transform: scale(0.4) rotate(0deg);   opacity: 1; }
         100% { transform: scale(1.6) rotate(180deg); opacity: 0; }
+      }
+      /* v54.79 — floating sparkle background that drifts upward continuously */
+      @keyframes obstacle-sparkle-float {
+        0%   { transform: translateY(0) rotate(0deg);   opacity: 0; }
+        10%  { opacity: 1; }
+        90%  { opacity: 1; }
+        100% { transform: translateY(-130vh) rotate(360deg); opacity: 0; }
+      }
+      @keyframes obstacle-hint-bob {
+        0%, 100% { transform: translateX(-50%) translateY(0); }
+        50%      { transform: translateX(-50%) translateY(-4px); }
       }
       .obstacle-engine-target-pulse {
         animation: obstacle-target-pulse 0.6s ease-in-out infinite alternate;
@@ -478,15 +524,17 @@
         padding: 10px 0;
       }
       .obstacle-engine-title {
-        font-size: clamp(18px, 4.5vw, 26px);
-        text-align: center; color: #6b3410;
-        font-weight: 900; margin: 4px 0 12px;
-        text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+        font-size: clamp(20px, 5vw, 28px);
+        text-align: center; color: #5a2a00;
+        font-weight: 900; margin: 16px 0 8px;
+        text-shadow: 0 2px 0 rgba(255,255,255,0.85);
+        letter-spacing: 0.3px;
       }
       .obstacle-engine-subtitle {
-        font-size: clamp(13px, 3.2vw, 15px);
+        font-size: clamp(13px, 3.4vw, 15px);
         text-align: center; color: #92400e;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
+        font-weight: 700;
       }
       .obstacle-engine-sparkle {
         position: absolute; pointer-events: none;
@@ -497,9 +545,11 @@
       }
       @media (prefers-reduced-motion: reduce) {
         .obstacle-engine-body, .obstacle-engine-shape-btn, .obstacle-engine-target,
-        .obstacle-engine-target-pulse, .obstacle-engine-shape-btn.wrong {
+        .obstacle-engine-target-pulse, .obstacle-engine-shape-btn.wrong,
+        .obstacle-engine-sparkle-layer * /* v54.79 */ {
           animation: none !important; transition: none !important;
         }
+        .obstacle-engine-sparkle-layer { display: none !important; }
       }
       /* v54.75: high-contrast outline mode (accessibility) */
       .obstacle-engine-highcontrast .obstacle-engine-body {
