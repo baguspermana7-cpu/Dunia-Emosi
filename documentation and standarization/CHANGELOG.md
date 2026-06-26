@@ -1,5 +1,48 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.97 "Side-race visual refinements (Agent C QA list items 3-9)" (Phase 5.10)
+
+Closes 6 of 10 refinements from Agent C's prioritized list.
+
+### Misplaced sky-blue band → mountains extend to ground (#3)
+
+Previously mountains polygons ended at `skyH * 0.85` (~52% of viewport on mobile), leaving a 60-px strip of bare sky color visible between mountains and the grass ground starting at 65%. Agent C flagged as "misplaced sky/water layer".
+
+Fix: near mountain polygon bases extended from `skyH * 0.88` to `H * SKY_FRAC` (the actual ground top). Added a solid horizon strip at `H * SKY_FRAC - 8, height 16` filled with `pal.hillNear` to fully cover any sub-pixel gap.
+
+### Mountain depth + snow caps (#4)
+
+NEW far mountain layer (cooler tint `0x7a8a98` for pagi/siang, `0x9c8e7f` for sore) with 6 peaks. Each peak gets a 5-vertex white snow-cap polygon covering the top 25% of the mountain. Creates depth + alpine character per reference image 1.
+
+### Tree variety (#5)
+
+Previously 16 identical green circles in a row. Now 20 trees with 3 size variants (small/medium/tall) × 2 shape variants (round-leaf circle + pine-triangle stack). Every 4th tree is a pine. Sore time tints them brown. Stems vary 8/13/18 px.
+
+### NPC stagger (#8)
+
+Previously 4 NPCs at fixed X positions [0.15, 0.42, 0.68, 0.88] × W with random ±60 px X offset. Now ±60 px X stagger + ±4 px Y offset for organic feel.
+
+### KECEPATAN NAIK toast position (#6)
+
+Was top:60px, left:50% → overlapped settings/Koleksi/pause buttons in top-right.
+Now bottom:120px above the LOMPAT button. Bigger padding (10/20) + larger font (16px) + softer shadow.
+
+### Pause Pixi ticker during obstacle modal (#9)
+
+ObstacleEngine.attach pauseTick/resumeTick now ALSO sets `app.ticker.speed = 0/1`. Coins, milestones, NPC animations all freeze during puzzle modal so kids can focus.
+
+### Files touched
+- `games/g14-side.html` — mountain layers + horizon strip + tree variety + NPC stagger + toast position + pause-ticker (~80 LOC changed).
+- `games/g14.html` — cache-bust to `v=54.97-20260626cx`.
+- `sw.js` v54.96 → v54.97.
+
+### Verification
+- Syntax OK.
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS.
+- Run `node tools/visual-qa.mjs` after deploy to re-capture screenshots for regression check.
+
+---
+
 ## 2026-06-26 — v54.96 "CRITICAL — Side-race train invisible bug fixed + Agent A obstacle cinematic polish + HUD overlap fix" (Phase 5.9)
 
 Mega-ship combining 3 streams:

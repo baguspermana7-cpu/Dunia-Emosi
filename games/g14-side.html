@@ -89,14 +89,14 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <script src="data/bg-npcs.js?v=54.64-20260626bq"></script>
 <script src="data/bg-audio.js?v=54.65-20260626br"></script>
 <script src="data/bg-events.js?v=54.67-20260626bt"></script>
-<script src="obstacle-engine.js?v=54.96-20260626cw"></script>
-<script src="data/kids-questions.js?v=54.96-20260626cw"></script>
-<script src="data/obstacles.js?v=54.96-20260626cw"></script>
-<script src="data/routes.js?v=54.96-20260626cw"></script>
-<script src="data/reward-catalog.js?v=54.96-20260626cw"></script>
-<script src="reward-gallery.js?v=54.96-20260626cw"></script>
-<script src="settings-modal.js?v=54.96-20260626cw"></script>
-<script src="trains-db.js?v=54.96-20260626cw"></script>
+<script src="obstacle-engine.js?v=54.97-20260626cx"></script>
+<script src="data/kids-questions.js?v=54.97-20260626cx"></script>
+<script src="data/obstacles.js?v=54.97-20260626cx"></script>
+<script src="data/routes.js?v=54.97-20260626cx"></script>
+<script src="data/reward-catalog.js?v=54.97-20260626cx"></script>
+<script src="reward-gallery.js?v=54.97-20260626cx"></script>
+<script src="settings-modal.js?v=54.97-20260626cx"></script>
+<script src="trains-db.js?v=54.97-20260626cx"></script>
 <script src="game-modal.js?v=54.47-20260625az"></script>
 
 <div id="hud-top">
@@ -380,21 +380,52 @@ function buildBackground() {
   bgContainer.addChild(sky)
   bgContainer._sky = sky
 
-  // Distant mountains (static, parallax 0×)
-  const mtn = new PIXI.Graphics()
+  // v54.97 — Distant mountain layer 1 (cooler, snowy peaks, parallax 0×)
+  const mtnFar = new PIXI.Graphics()
+  // Cooler tint for far mountains — slight blue shift
+  const farTint = S.timeOfDay === 'sore' ? 0x9c8e7f : 0x7a8a98
   const peaks = [
-    [0.05, 0.50, 0.18], [0.18, 0.62, 0.22], [0.35, 0.48, 0.20],
-    [0.55, 0.58, 0.24], [0.72, 0.50, 0.20], [0.90, 0.60, 0.22],
+    [0.05, 0.46, 0.18], [0.18, 0.58, 0.22], [0.35, 0.44, 0.20],
+    [0.55, 0.54, 0.24], [0.72, 0.46, 0.20], [0.90, 0.56, 0.22],
   ]
   peaks.forEach(([x, peakY, w]) => {
     const cx = W * x
     const py = skyH * peakY
     const halfW = W * w
-    mtn.poly([cx - halfW, skyH * 0.85, cx, py, cx + halfW, skyH * 0.85]).fill(pal.hillFar)
+    mtnFar.poly([cx - halfW, skyH * 0.85, cx, py, cx + halfW, skyH * 0.85]).fill(farTint)
+    // Snow cap on each peak (only top 25%)
+    const snowDrop = (skyH * 0.85 - py) * 0.25
+    const snowW = halfW * 0.32
+    mtnFar.poly([
+      cx - snowW, py + snowDrop,
+      cx, py,
+      cx + snowW, py + snowDrop,
+      cx + snowW * 0.6, py + snowDrop * 1.3,
+      cx, py + snowDrop * 1.0,
+      cx - snowW * 0.6, py + snowDrop * 1.3
+    ]).fill(0xfefefe)
   })
-  bgContainer.addChild(mtn)
+  bgContainer.addChild(mtnFar)
 
-  // Mid-ground hills + trees (parallax via container x offset)
+  // v54.97 — Closer mountain layer 2 — lower, darker, overlaps front, extends to ground
+  const mtnNear = new PIXI.Graphics()
+  const nearPeaks = [
+    [0.10, 0.66, 0.16], [0.30, 0.72, 0.20], [0.50, 0.64, 0.18],
+    [0.75, 0.70, 0.22], [0.94, 0.68, 0.18],
+  ]
+  // Bottom of near mountains extended to ground top to remove "sky-blue band"
+  // gap that Agent C QA flagged.
+  nearPeaks.forEach(([x, peakY, w]) => {
+    const cx = W * x
+    const py = skyH * peakY
+    const halfW = W * w
+    mtnNear.poly([cx - halfW, H * SKY_FRAC, cx, py, cx + halfW, H * SKY_FRAC]).fill(pal.hillFar)
+  })
+  // Solid horizon strip filling any remaining gap
+  mtnNear.rect(0, H * SKY_FRAC - 8, W, 16).fill(pal.hillNear)
+  bgContainer.addChild(mtnNear)
+
+  // v54.97 — Mid-ground hills + varied trees (parallax via container x offset)
   const hills = new PIXI.Container()
   const hillG = new PIXI.Graphics()
   // 8 hill shapes spread 1.5× screen width for seamless loop
@@ -405,24 +436,40 @@ function buildBackground() {
     const ry = skyH * 0.14
     hillG.ellipse(cx, cy, rx, ry).fill(pal.hillNear)
   }
-  // Distant trees
-  for (let i = 0; i < 16; i++) {
-    const tx = (i + 0.5) * (W / 12) + (Math.sin(i * 17) * 30)
-    const ty = skyH * 0.84
-    hillG.rect(tx - 2, ty, 4, 12).fill(0x6d4c41)
-    hillG.circle(tx, ty - 2, 9).fill(S.timeOfDay === 'sore' ? 0x6d4c41 : 0x388e3c)
+  // v54.97 — Varied trees: 3 sizes × 2 shapes, random positions
+  const treeBaseY = skyH * 0.84
+  for (let i = 0; i < 20; i++) {
+    const tx = (i + 0.5) * (W / 14) + (Math.sin(i * 17) * 40)
+    const variant = i % 3 // 0 = small, 1 = medium, 2 = tall
+    const size = variant === 0 ? 6 : variant === 1 ? 9 : 12
+    const stemH = variant === 0 ? 8 : variant === 1 ? 13 : 18
+    const tint = S.timeOfDay === 'sore' ?
+      (variant === 2 ? 0x8b6f3f : 0x6d4c41) :
+      (variant === 2 ? 0x2e7d32 : variant === 1 ? 0x388e3c : 0x43a047)
+    const ty = treeBaseY + (variant === 0 ? 4 : 0)
+    hillG.rect(tx - 2, ty, 4, stemH).fill(0x6d4c41)
+    if (i % 4 === 0) {
+      // Pine-like: triangle stack
+      hillG.poly([tx - size, ty, tx, ty - size * 1.6, tx + size, ty]).fill(tint)
+      hillG.poly([tx - size * 0.7, ty - size * 0.4, tx, ty - size * 2.0, tx + size * 0.7, ty - size * 0.4]).fill(tint)
+    } else {
+      // Round-leaf
+      hillG.circle(tx, ty - 2, size).fill(tint)
+    }
   }
   hills.addChild(hillG)
   bgContainer.addChild(hills)
   bgContainer._hills = hills
 
-  // NPCs (waving villagers near fence — visible at random X)
+  // v54.97 — NPCs (waving villagers) — staggered X + Y for organic feel
   const npcLayer = new PIXI.Container()
-  const NPC_SPOTS = [0.15, 0.42, 0.68, 0.88]
+  const NPC_SPOTS = [0.13, 0.39, 0.62, 0.83]
   NPC_SPOTS.forEach((xFrac, i) => {
     const npc = new PIXI.Container()
-    npc.x = W * xFrac + Math.random() * 60
-    npc.y = H * RAIL_Y_FRAC - 38
+    // Staggered X (±30px random offset)
+    npc.x = W * xFrac + (Math.random() - 0.5) * 60
+    // Staggered Y (±4px subtle vertical variation)
+    npc.y = H * RAIL_Y_FRAC - 38 + (Math.random() - 0.5) * 8
     const g = new PIXI.Graphics()
     // Body
     g.circle(0, -16, 6).fill(0xffe082) // head
@@ -617,8 +664,18 @@ function buildAITrain() {
 function g14sWireObstacleEngine() {
   if (!window.ObstacleEngine) return
   window.ObstacleEngine.attach({
-    pauseTick: () => { S.running = false; S.paused = true },
-    resumeTick: () => { if (!S.gameOver && !S.finished) { S.paused = false; S.running = true } },
+    pauseTick: () => {
+      S.running = false; S.paused = true
+      // v54.97 — Also pause Pixi ticker so background sim halts during puzzle.
+      // (Agent C feedback #9: coins/stars kept falling behind modal.)
+      try { if (app && app.ticker) app.ticker.speed = 0 } catch {}
+    },
+    resumeTick: () => {
+      if (!S.gameOver && !S.finished) {
+        S.paused = false; S.running = true
+        try { if (app && app.ticker) app.ticker.speed = 1 } catch {}
+      }
+    },
     slowDown: () => {},
     resumeSpeed: () => {},
     cameraZoom: () => {},
@@ -811,8 +868,10 @@ function tick(tickerOrDelta) {
       S.speed = Math.min(S.baseSpeed * 1.20, S.speed * 1.05)
       // Show a brief "+SPEED" badge
       try {
+        // v54.97 — Position toast ABOVE the LOMPAT button (not top-right gutter)
+        // to avoid overlap with settings/pause/Koleksi buttons (Agent C feedback).
         const badge = document.createElement('div')
-        badge.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#5a2a00;padding:8px 16px;border-radius:14px;font-family:inherit;font-weight:900;font-size:14px;border:3px solid #92400e;z-index:120;box-shadow:0 4px 14px rgba(0,0,0,0.3);animation:cd-pop 1.4s ease-out forwards;pointer-events:none'
+        badge.style.cssText = 'position:fixed;bottom:120px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#5a2a00;padding:10px 20px;border-radius:18px;font-family:inherit;font-weight:900;font-size:16px;border:3px solid #92400e;z-index:120;box-shadow:0 6px 18px rgba(0,0,0,0.35);animation:cd-pop 1.4s ease-out forwards;pointer-events:none'
         badge.textContent = '⚡ KECEPATAN NAIK!'
         document.body.appendChild(badge)
         setTimeout(() => { try { badge.remove() } catch {} }, 1400)
