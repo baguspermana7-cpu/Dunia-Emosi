@@ -1,5 +1,51 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.15 "Console-noise sweep: trainer 404s + favicon 404s = 0"
+
+Owner verbatim: *"yes, continue, keep refining. ensure no bug, tampilan bagus"* (A-301 standing refinement directive).
+
+Phase 5 polish iteration. Wider visual-polish probe (9 game states) surfaced two latent bugs that were spamming the console on every visit without anyone noticing.
+
+### B-212 — g13c trainer sprites: 94 wasted 404 round-trips per session
+`TRAINER_SPRITE` tried `/assets/Pokemon/trainer/<slug>.webp` for every trainer in the 105-entry TRAINERS array. Only 6 slugs actually have local files (`agatha`, `lorelei`, `gary`, `james`, `jessie`, `goh`). The other ~99 lookups returned 404, then the `onerror` fallback redirected to the Pokemon Showdown CDN. Functionally fine — visually a flash of broken-image — but the console smelled and every team-picker render burned ~94 wasted HTTP requests.
+
+**Fix**: `LOCAL_TRAINER_SET` allowlist gates `TRAINER_SPRITE` so non-local trainers go straight to remote. The `onerror` chain remains as defence in depth. Touched 3 call sites: line 1392 (definition), line 2145 (`gw-sprite`), line 2353 (`portrait-enemy`).
+
+```js
+const LOCAL_TRAINER_SET = new Set(['agatha', 'lorelei', 'gary', 'james', 'jessie', 'goh']);
+const TRAINER_SPRITE = s => LOCAL_TRAINER_SET.has(s) ? TRAINER_SPRITE_LOCAL(s) : TRAINER_SPRITE_REMOTE(s);
+```
+
+### B-213 — favicon.ico 404 on every game subpage
+Only `index.html` had `<link rel="icon">`. Every `games/*.html` page request triggered a `/favicon.ico` 404 (Chrome auto-requests it). Six entry HTMLs now reference the existing `../assets/favicon-32.png` + `icon-192.png`.
+
+### Acceptance probe — visual-polish-audit second run (post-fix)
+
+```
+PASS=9  FAIL=0  ERRS=0
+  P01 g14 picker      errors: none
+  P02 g14 race        state: {distance:16, hp:3, position:2}; errs: 0
+  P03 g14 finish      modal stars=4 / engagement=22; errs: 0
+  P04 g14-side Casey  errors: none
+  P05 g14-side finish errors: none
+  P06 g15-pixi        errors: none
+  P07 g16-pixi        errors: none
+  P08 g13c picker     errors: none
+  P09 g19 Birds       errors: none
+```
+
+Before this commit: ~94 trainer 404s + 6 favicon 404s per session = 100+ wasted requests. After: zero 404s across all 9 captured states.
+
+### Files touched
+- `games/g13c-pixi.html` — `TRAINER_SPRITE` gated by `LOCAL_TRAINER_SET`; 3 call sites converted from `TRAINER_SPRITE_LOCAL` to `TRAINER_SPRITE`.
+- `games/g13c-pixi.html` + `g14.html` + `g14-side.html` + `g15-pixi.html` + `g16-pixi.html` + `g19-pixi.html` — favicon link tags added after the v55.10 cache-control meta block.
+- NEW `tools/visual-polish-audit.mjs` — 9-state wider QA probe (P01-P09).
+- `sw.js` v55.10 → v55.15.
+
+### Closes B-212, B-213 (logged from wider audit, not owner-reported).
+
+---
+
 ## 2026-06-26 — v55.14 "Probe hardening: T1/T3/T4 self-verify cleanly"
 
 Phase 5 polish on plan `purring-brewing-flurry`. v55.13 left 3 verifications as INCONCLUSIVE/INFO because the probe couldn't reach module-global state. Fixed all three without touching production code.

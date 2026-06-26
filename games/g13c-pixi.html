@@ -7,6 +7,8 @@
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
 <title>Gym Pokémon ⚔️</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -1391,7 +1393,12 @@ const SPRITE_HD_REMOTE = s => `https://img.pokemondb.net/sprites/home/normal/${s
 const SPRITE_HD        = s => (typeof pokeSpriteAlt2 === 'function' ? pokeSpriteAlt2(s) : null) || SPRITE_HD_REMOTE(s); // true HD WebP
 const TRAINER_SPRITE_LOCAL = s => `../assets/Pokemon/trainer/${s}.webp`;
 const TRAINER_SPRITE_REMOTE = s => `https://play.pokemonshowdown.com/sprites/trainers/${s}.png`;
-const TRAINER_SPRITE = s => TRAINER_SPRITE_LOCAL(s); // try local first
+// v55.15 — only 6 trainer slugs ship local; everything else was 404→remote-fallback
+// which spammed ~94 wasted requests + broken-image flashes per visit. Allowlist
+// the known-local set so we go straight to remote for the rest. onerror chain
+// still rescues if remote fails for any trainer (player.webp keeps its own path).
+const LOCAL_TRAINER_SET = new Set(['agatha', 'lorelei', 'gary', 'james', 'jessie', 'goh']);
+const TRAINER_SPRITE = s => LOCAL_TRAINER_SET.has(s) ? TRAINER_SPRITE_LOCAL(s) : TRAINER_SPRITE_REMOTE(s);
 
 // Type effectiveness — KID-FRIENDLY (2026-05-04): 2x→1.5x, 0.5x→0.75x, 0→0.5x
 // Prefer shared chart from window.calcTypeMult (poke-type-chart.js); fall back to inline.
@@ -2137,7 +2144,7 @@ function showGymWelcome(trainerId) {
   const mainType = trainer.team[0]?.type || 'normal'
   document.getElementById('gw-type').textContent = 'Type: ' + (typeMap[mainType] || mainType)
   const spr = document.getElementById('gw-sprite')
-  spr.src = TRAINER_SPRITE_LOCAL(trainer.sprite)
+  spr.src = TRAINER_SPRITE(trainer.sprite)
   spr.onerror = () => { if (!spr.dataset.tried) { spr.dataset.tried = '1'; spr.src = TRAINER_SPRITE_REMOTE(trainer.sprite) } else { spr.style.display = 'none' } }
   document.getElementById('gw-fight').onclick = () => {
     closeWelcome();
@@ -2345,7 +2352,7 @@ function startBattle(trainerId){
   const epFb = document.getElementById('portrait-enemy-fb');
   epFb.style.display = 'none'; epFb.textContent = '';
   ep.style.display = ''; ep.dataset.triedRemote = ''; // reset flag for new battle
-  ep.src = TRAINER_SPRITE_LOCAL(trainer.sprite);
+  ep.src = TRAINER_SPRITE(trainer.sprite);
   ep.onerror = ()=>{
     if(!ep.dataset.triedRemote){ep.dataset.triedRemote='1';ep.src=TRAINER_SPRITE_REMOTE(trainer.sprite);return}
     ep.style.display = 'none';
