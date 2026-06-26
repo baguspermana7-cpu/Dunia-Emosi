@@ -1,5 +1,40 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.87 "CRITICAL FIX — Character train sprites now actually load (Thomas + PROTECTED visible)" (Phase 5.0)
+
+### The bug
+
+Owner screenshot (2026-06-26): "saya pilih karakter thomas tapi yg muncul sprite kereta lain" — Selected Thomas, but a procedural blue/green locomotive rendered instead.
+
+Root cause confirmed at `games/g14.html:2241` `updatePlayerEmoji()`:
+- Always called `drawTrainG()` (procedural draw using bodyColor + accColor).
+- The `S.trainCfg.spriteUrl` field has been declared on PROTECTED chars (Casey JR / Linus Brave / Dragutin / Malivlak) since v54.15, but the file NEVER LOADED them — every "character train" in G14 has been rendered procedurally since day 1.
+- Adding 26 Thomas AEG entries in v54.68 inherited this hidden bug. Their procedural draw uses their bodyColor only — looks nothing like the actual Thomas WebP.
+
+### Fix
+
+`updatePlayerEmoji()` and `buildAI()` both updated:
+- For trains with `isCharacter === true && spriteUrl` → load `PIXI.Sprite.from(spriteUrl)`, set anchor (0.5, 0.6), scale to `spriteHeight / texture.height` on load.
+- Sprite layered above procedural Graphics (the procedural draw is cleared on character path so no double-render).
+- Texture load handled defensively: checks `source.loaded`, falls back to `'load'` event listener, falls back to RAF polling (60 frames max).
+- Non-character trains: procedural path UNCHANGED (current rendering intact).
+- Player container cleans up old character sprite when switching to a non-character train (prevents leak).
+
+### Files touched
+- `games/g14.html` — `updatePlayerEmoji()` (~50 LOC) + `buildAI()` (~30 LOC).
+- Cache-bust `v=54.87-20260626cn` across all v54.x script tags in g14.html.
+- `sw.js` v54.86 → v54.87.
+
+### Verification
+- Syntax OK on g14.html.
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS (no regression).
+- Browser smoke (manual): pick Thomas → race shows Thomas WebP from `/Dunia-Emosi/assets/train/aeg/thomas.webp` (149×114 native). Pick Casey JR → Casey WebP from `/Dunia-Emosi/assets/train/caseyjr-body.webp`. Pick CC 201 (non-character) → procedural draw still works.
+
+### Coming in v54.88
+Full side-scrolling racing rebuild as NEW `games/g14-side.html` per owner reference image 2 (cartoon side-on Train Racing). v54.87 fixes sprites in CURRENT top-down view; v54.88 builds the premium side-on view.
+
+---
+
 ## 2026-06-26 — v54.86 "Fire jump cinematic scene — train jump arc on correct answer" (Phase 4.17)
 
 ### Fire jump scene upgrade

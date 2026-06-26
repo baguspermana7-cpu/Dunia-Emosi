@@ -4,6 +4,27 @@
 
 ---
 
+## 2026-06-26 — v54.87 Sprite-loading bug discovery
+
+### L187 — `spriteUrl` field declared but never loaded silently passed code review for 6 months
+- G14 PROTECTED character trains had `spriteUrl: '../assets/train/caseyjr-body.webp'` in `TRAIN_CATS[0]` since v54.15. The data was correct. The renderer (`updatePlayerEmoji()`) ignored it entirely — always called procedural `drawTrainG()`. Nobody noticed because the procedural draw used the same `bodyColor` so Casey looked like "a Casey-colored procedural train" instead of "a procedural diesel". v54.68 added 26 Thomas chars expecting the same pattern. Owner spotted it instantly when Thomas's specific palette didn't match the actual cartoon character.
+- **Symptom**: Owner selected Thomas; saw a green/blue procedural locomotive.
+- **Root cause**: Render path branches on `category.includes('steam' | 'maglev' | etc)` for procedural variant; NEVER checks `isCharacter` to load WebP via `PIXI.Sprite.from`.
+- **Lesson**: When you add a data field that ASSUMES a renderer hook (`spriteUrl` → "render sprite"), grep the entire codebase for the render-time read. If the field never appears in a render context, that's the bug. Cross-check: G16 properly loads spriteUrl via `CharacterTrain.mount` (`games/train-character-sprite.js`); G14 NEVER replicated that path.
+
+### L188 — Pixi v8 texture load: 3-tier fallback for cross-environment reliability
+- `PIXI.Sprite.from(url)` returns a Sprite with potentially placeholder texture. Texture loaded later asynchronously. To scale the sprite correctly (anchor + spriteHeight ratio), need to detect load. Three signals:
+  1. `texture.source.loaded === true` (already loaded — synchronous case, cache hit)
+  2. `texture.source.addEventListener('load', fn)` (browser standard load event)
+  3. RAF polling for `texture.height > 1` (defensive — some browsers don't fire load event when source is a cache hit)
+- **Lesson**: For Pixi.Sprite.from() with URL-based loading, write a 3-tier load handler: synchronous-loaded check → addEventListener('load') → RAF poll (capped at 60 frames). One alone leaks edge cases.
+
+### L189 — Sprite anchor 0.5/0.6 for side-on locomotives (not 0.5/0.5)
+- Side-on Thomas WebPs have wheels in the bottom 40% of the sprite. Using anchor.set(0.5, 0.5) makes the wheels float mid-lane. Using anchor.set(0.5, 0.6) puts the wheel center at the anchor point, then `c.y = laneYs[lane] + wheelOffset` aligns wheels to rail surface.
+- **Lesson**: For artwork anchored to a baseline (wheels on rails, feet on ground), anchor Y should be set HIGHER than 0.5 to place the visual "ground contact" at the container's local origin. Don't use anchor 0.5/0.5 by reflex — figure out where the contact point IS in the artwork.
+
+---
+
 ## 2026-06-26 — v54.80 Bug audit + lessons catch-up from v54.70-v54.79
 
 ### L182 — Generator pattern for obstacle families saves ~1500 LOC vs hand-coding
