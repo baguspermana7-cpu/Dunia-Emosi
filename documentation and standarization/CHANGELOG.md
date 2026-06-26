@@ -1,5 +1,59 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.60 "Dynamic Train Racing Background Engine — Foundation" (NEW Phase 2.0)
+
+Owner attached comprehensive 26-section spec (`DYNAMIC_BG_ENGINE_SPEC.md`) for a dynamic train-racing background engine spanning 8 time-of-day phases, 12 weather variants, 17+ Indonesian + international cities, 7 journey phases, 12 modular layers, NPC archetypes, lighting/audio overlays. Owner: "Build this as a reusable engine/module… The final result should make the game feel like a train racing journey across different real-world-inspired locations."
+
+This ship is **Foundation only** — engine skeleton + registries. Content (city configs, NPCs, audio packs, full layer renderers) populate in v54.61-v54.69.
+
+### Ships
+
+NEW `games/train-bg-engine.js` (~390 LOC, exposes `window.TrainBG`):
+
+- **`init({ app, container, viewport })`** — bootstrap. Creates a root container under `app.stage` (or accepts an existing container) and builds 12 named child Pixi Containers in z-order.
+- **`layers` (12 named Containers)** — `sky / farFar / far / mid / near / track / station / npc / weather / lighting / particles / event`. Match spec §9.
+- **`TimeOfDay`** — 9 phases (`dini-hari / subuh / pagi / golden-hour / siang / sore / petang / blue-hour / malam`). Extended from `TrainShared.timeOfDay` 6-phase by adding golden-hour + blue-hour + dini-hari per spec §1. Each phase: `skyTop / skyBot / cloudTint / sunY / sunColor / ambient / stars`. `forProgress(t)`, `forLevel(lv, max)`, `forName(name)` accessors.
+- **`Weather`** — 12 variants per spec §4: `cerah / berawan / mendung / gerimis / hujan-ringan / hujan-deras / badai-ringan / kabut-tipis / kabut-tebal / wet-road / panas-tropis / angin-ringan`. Each carries `rainDensity / fogAlpha / dimAlpha / wetReflect / particleHint`. `weightedPick(weights)` for per-location distribution.
+- **`Journey`** — 7-phase FSM per spec §8: `departure / urban-exit / suburban / countryside / landmark / approaching / arrival` with non-uniform durations (countryside longest at 30% of race). `forProgress(t)` returns `{ name, idx, localT }`.
+- **`LocationTheme`** — JSON-schema registry per spec §17. `register(cfg)` + `get(id)` + `list()` + `pickWeatherFor(id)` + `pickTimeFor(id, level, max)`. Configs ship in v54.61 (Surabaya/Jakarta/Bandung/Yogya/Semarang first).
+- **`NPCSystem`** — archetype registry stub (populated v54.63).
+- **`AudioSystem`** — ambience pack registry stub (populated v54.65).
+- **`tick(dt, journeyProgress)`** — per-frame update. Walks layers and fires their `_tick` if registered. Enforces quality cap (low=90 / medium=180 / high=300 active sprites) by dropping from `event > particles > npc > weather > near` until under cap.
+- **`setQuality / getQuality`** — performance tier override.
+- **`weightedRandom(weights)`** + **`reducedMotion()`** utilities (latter inherits from `TrainVFX.reducedMotion` if loaded).
+
+### Why a separate engine vs extending TrainVFX
+
+TrainVFX handles per-effect VFX bursts (particles/filters/trails) called from inside game logic. TrainBG owns the BACKGROUND PIPELINE — layer z-order, journey FSM, location/weather/time context, content registries. Different responsibility, different lifecycle.
+
+### Files touched
+- **NEW `games/train-bg-engine.js`** — 390 LOC engine module.
+- `games/g14.html` + `games/g15-pixi.html` + `games/g16-pixi.html` + `index.html` — `<script src="train-bg-engine.js?v=54.60-20260626bm">` added right after train-vfx.js.
+- **NEW `documentation and standarization/DYNAMIC_BG_ENGINE_SPEC.md`** — owner's 26-section spec archived in standarization/ folder for ongoing reference.
+- `sw.js` — CACHE_VERSION v54.59-20260626bl → v54.60-20260626bm.
+
+### Verification
+- `node` smoke test: syntax OK, 9 TimeOfDay phases, 12 Weather variants, 7 Journey phases, 12 layer names ✓.
+- `Weather.weightedPick({cerah:0.5, 'hujan-ringan':0.3, kabut:0.2}).id` returns valid variant.
+- `Journey.forProgress(0.5).name === 'countryside'` ✓.
+- PROTECTED chars + PvP balance untouched (this commit only adds a module).
+
+### Next ship sequence (revised)
+
+- **v54.61** First LocationThemes (Surabaya, Jakarta, Bandung, Yogyakarta, Semarang) + G15 wiring to call `TrainBG.init` + `TrainBG.setContext` + layer renderers for sky/far/mid.
+- **v54.62** Weather System v2 (visual layers via TrainBG.layers.weather, wet-surface reflection, per-weather lighting).
+- **v54.63** NPC archetypes (commuter/family/tourist/staff/umbrella) + behavior FSM.
+- **v54.64** International configs (Tokyo, London, Zurich, NY, Seoul).
+- **v54.65** Audio ambience packs.
+- **v54.66** Journey phase transitions + random events.
+- **v54.67** Surabaya Sunset Light Rain demo scene (per spec §23).
+- **v54.68** Performance tier + QA.
+- **v54.69** Docs + acceptance criteria sweep.
+
+Original Phase 1.6 (G16 Visual+VFX) + Phase 1.7 (G18 Visual+VFX) shift to v54.70 / v54.71.
+
+---
+
 ## 2026-06-26 — v54.59 "G15 Scenery variation — weather + biome decorations" (plan Phase 1.5)
 
 Owner: "pemandangan sangat tidak variasi". G15 `buildBackground` now ships per-race weather + per-theme decorative depth.
