@@ -1,5 +1,41 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v55.4 "G16 Selamatkan Kereta dynamic 33-card picker + g15 trains-db.js cache-bust" (Phase 6.4)
+
+Owner verbatim: *"Game selamatkan kereta belum ada pilihan sprite karakter thomas dkk."*
+
+**Closes B-208.**
+
+### G16 picker — was 7 hardcoded cards, now 33 dynamic
+
+`games/g16-pixi.html:211-247` hardcoded 7 `<div class="ts-card">` entries (Casey JR, Linus Brave, Dragutin, Malivlak, Sakura Special, Nocturne, Bima Express). `TRAIN_STYLES[]` has 33 entries — the 26 Thomas AEG characters were added at v54.68 to indices 11-36 along with `G16_CHAR_CONFIGS[]` sprite configs but never rendered.
+
+Fix:
+- Replaced hardcoded picker DOM with a single `<div id="ts-trains"></div>` container + `<span id="ts-count">…</span>` for the subtitle count.
+- NEW `g16RenderPicker()` function called on `DOMContentLoaded`. Iterates `TRAIN_STYLES`, creates a `.ts-card` per entry with canvas, name, desc. Wires `selectTrain(i)` per click.
+- NEW `G16_CARD_META` map keyed by `characterKey` (PROTECTED chars + 26 Thomas AEG) + `G16_CARD_INDEX_META` fallback for the 3 original PROGRAMMATIC liveries (indices 4-9). PROTECTED chars keep ⭐ prefix.
+- `#ts-trains` CSS changed from flex-wrap to `display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); max-height: 58vh; overflow-y: auto;` — 33 cards scroll cleanly on mobile.
+- `#ts-count` updates to `TRAIN_STYLES.length` (now 33).
+- Preview canvas render still uses existing `drawPreview(canvasId, styleIdx)` helper — character entries pull WebP from `G16_CHAR_CONFIGS[characterKey].spriteUrl`; programmatic entries use procedural drawing.
+
+### Agent AUDIT-SW P1 finding bundled in
+
+`games/g15-pixi.html:308` loaded `trains-db.js` **without `?v=` cache-bust** while every other page busts it. Once cached it pinned until full `CACHE_VERSION` roll. Added `?v=55.4-20260626dc` to align with g14.html / g16-pixi.html convention.
+
+### Files touched
+- `games/g16-pixi.html` — hardcoded picker removed (~37 LOC) + `g16RenderPicker()` + `G16_CARD_META` + `G16_CARD_INDEX_META` (~75 LOC added).
+- `games/g15-pixi.html` — `trains-db.js?v=55.4-20260626dc` cache-bust.
+- `games/g14.html` — cache-bust to v=55.4.
+- `sw.js` v55.2 → v55.4.
+
+### Verification
+- Syntax OK on g16-pixi.html.
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS.
+- Manual: open g16-pixi.html → picker shows 33 cards (4 PROTECTED + 3 original + 26 Thomas AEG). Scroll works. Click Thomas → race starts with Thomas WebP (uses existing CharacterTrain.mount).
+- PROTECTED chars first 4 indices unchanged.
+
+---
+
 ## 2026-06-26 — v55.2 "G14 top-down character sprites — PIXI.Assets.load fix (Agent G confirmed root cause)" (Phase 6.2)
 
 Owner verbatim: *"Karakter spritenya nggak keluar thomas dkk."* — Picked Thomas in top-down G14, saw small procedural blue/teal rectangle instead.
