@@ -1,5 +1,45 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v55.2 "G14 top-down character sprites — PIXI.Assets.load fix (Agent G confirmed root cause)" (Phase 6.2)
+
+Owner verbatim: *"Karakter spritenya nggak keluar thomas dkk."* — Picked Thomas in top-down G14, saw small procedural blue/teal rectangle instead.
+
+**Closes B-201.**
+
+### Root cause (Agent G investigation, HIGH confidence)
+
+`PIXI.Sprite.from(url)` in Pixi 8 returns a sprite with 1×1 placeholder texture. `texture.source.addEventListener('load', ...)` does not fire reliably across browsers/SW contexts. `scale.set(0.5)` on the 1×1 placeholder = 0.5×0.5 px = invisible. RAF poll exhausts 60 frames before `texture.height` updates.
+
+This explains why the v54.87 fix shipped 4 turns ago looked correct but never worked in production.
+
+### Fix
+
+Replace with `PIXI.Assets.load(url).then((tex) => new PIXI.Sprite(tex))` — same pattern that v54.96 already uses in `games/g14-side.html` (where it works correctly per puppeteer screenshots).
+
+`updatePlayerEmoji()` at line 2274:
+- `PIXI.Assets.load` awaits a fully-resolved texture
+- `new PIXI.Sprite(tex)` constructs with real dimensions immediately
+- `img.scale.set(targetH / tex.height)` correct on first render
+- `L.player.addChild(img)` (top of z-stack — covers cleared Graphics)
+- `.catch()` falls back to procedural draw on 404/error
+
+`buildAI()` at line 2465 — same pattern applied to AI character trains.
+
+### Files touched
+- `games/g14.html` — `updatePlayerEmoji` (~30 LOC) + `buildAI` (~15 LOC) + cache-bust `v=55.2-20260626db`.
+- `sw.js` v55.0 → v55.2 (skipped v55.1 since audit is doc-only).
+
+### Verification
+- Syntax OK.
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS.
+- Manual: open g14.html → Karakter Spesial → Thomas → Mulai Balapan → Thomas WebP renders correctly. Pick a non-character (e.g. CC 201) → procedural draw still works (unchanged path).
+
+### Why this fix WILL work where v54.87 didn't
+
+The g14-side.html fix v54.96 uses this exact pattern and Agent C's puppeteer screenshots confirmed it works. Same approach, same library version, same browser. The only thing v54.87 didn't have was `PIXI.Assets.load`. Now it does.
+
+---
+
 ## 2026-06-26 — v55.0 "STOP-THE-BLEED — Pokemon games loading regression fix" (Phase 6.0)
 
 Owner verbatim: *"Pada error semua ini. Bener2 parah slow loadingnya. Ini sampai nggak tahu ini stuck atau lama loading."* — Pokemon Birds + Pertarungan Pokemon were stuck on "Memuat Pokedex…" / "Memuat game…" indefinitely.

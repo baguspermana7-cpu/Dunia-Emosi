@@ -211,13 +211,13 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 <script src="data/bg-audio.js?v=54.65-20260626br"></script>
 <script src="data/bg-events.js?v=54.67-20260626bt"></script>
 <!-- v54.69 — ObstacleEngine foundation (modular obstacle system, soft-fail, kids-friendly) -->
-<script src="obstacle-engine.js?v=54.99-20260626cz"></script>
-<script src="data/kids-questions.js?v=54.99-20260626cz"></script>
-<script src="data/obstacles.js?v=54.99-20260626cz"></script>
-<script src="data/routes.js?v=54.99-20260626cz"></script>
-<script src="data/reward-catalog.js?v=54.99-20260626cz"></script>
-<script src="reward-gallery.js?v=54.99-20260626cz"></script>
-<script src="settings-modal.js?v=54.99-20260626cz"></script>
+<script src="obstacle-engine.js?v=55.2-20260626db"></script>
+<script src="data/kids-questions.js?v=55.2-20260626db"></script>
+<script src="data/obstacles.js?v=55.2-20260626db"></script>
+<script src="data/routes.js?v=55.2-20260626db"></script>
+<script src="data/reward-catalog.js?v=55.2-20260626db"></script>
+<script src="reward-gallery.js?v=55.2-20260626db"></script>
+<script src="settings-modal.js?v=55.2-20260626db"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
@@ -2268,48 +2268,38 @@ function buildPlayer() {
 function updatePlayerEmoji() {
   if (!playerSprite || !S.trainCfg) return
 
-  // v54.87 — Character trains use their WebP sprite, NOT procedural.
-  // Previously: drawTrainG (procedural) was called for everyone, character sprites
-  // were never loaded. Owner reported "pilih Thomas tapi muncul sprite lain".
+  // v55.2 — Character trains use their WebP sprite via PIXI.Assets.load.
+  // Replaces v54.87 PIXI.Sprite.from + addEventListener path which silently
+  // failed in production (Agent G root cause: load event unreliable; texture
+  // stuck at 1×1 placeholder; RAF poll exhausted 60 frames before update).
+  // Mirror of the v54.96 g14-side.html fix that DOES work in puppeteer.
+  // Closes B-201.
   if (S.trainCfg.isCharacter && S.trainCfg.spriteUrl) {
-    // Clear procedural Graphics — character sprite takes its place.
-    playerSprite.clear()
     const url = S.trainCfg.spriteUrl
     if (!L.playerCharImg || L.playerCharImg._url !== url) {
-      if (L.playerCharImg) {
-        try { L.playerCharImg.parent && L.playerCharImg.parent.removeChild(L.playerCharImg) } catch(_){}
-        try { L.playerCharImg.destroy() } catch(_){}
-        L.playerCharImg = null
-      }
-      const img = PIXI.Sprite.from(url)
-      img._url = url
-      img.anchor.set(0.5, 0.6) // 60% from top — wheel area near bottom of sprite
-      // Initial scale (corrected when texture loads)
       const targetH = S.trainCfg.spriteHeight || 90
-      img.scale.set(0.5)
-      const onLoad = () => {
-        if (img.texture && img.texture.source && img.texture.height > 1) {
-          img.scale.set(targetH / img.texture.height)
+      PIXI.Assets.load(url).then((tex) => {
+        // Tear down any previous character sprite
+        if (L.playerCharImg && L.playerCharImg.parent) {
+          try { L.playerCharImg.parent.removeChild(L.playerCharImg) } catch(_){}
+          try { L.playerCharImg.destroy() } catch(_){}
         }
-      }
-      if (img.texture && img.texture.source && img.texture.source.loaded) onLoad()
-      else if (img.texture && img.texture.source && typeof img.texture.source.addEventListener === 'function') {
-        img.texture.source.addEventListener('load', onLoad)
-      } else {
-        // Fallback: poll texture once a frame for up to 60 frames
-        let tries = 0
-        const tick = () => {
-          if (img.texture && img.texture.height > 1) { onLoad(); return }
-          if (tries++ < 60) requestAnimationFrame(tick)
-        }
-        tick()
-      }
-      L.playerCharImg = img
-      // Insert above glow (index 1) but below smoke. L.player is the container.
-      try { L.player.addChildAt(img, Math.min(1, L.player.children.length)) }
-      catch(_) { try { L.player.addChild(img) } catch(__){} }
+        const img = new PIXI.Sprite(tex)
+        img._url = url
+        img.anchor.set(0.5, 0.6)
+        img.scale.set(targetH / tex.height)
+        L.playerCharImg = img
+        L.player.addChild(img) // TOP of z-stack — covers cleared procedural Graphics
+        try { playerSprite.clear() } catch(_){}
+      }).catch((e) => {
+        console.warn('[g14] sprite load failed; falling back to procedural', url, e)
+        // Procedural fallback (current code path below will draw with bodyColor)
+        const cat = S.trainCfg.category || ''
+        const drawKey = cat.includes('maglev') ? 'maglev' : cat.includes('hsr') ? 'hsr' : cat.includes('steam') ? 'steam' : cat.includes('emu') ? 'emu' : 'diesel'
+        drawTrainG(playerSprite, S.trainCfg.bodyColor, S.trainCfg.accColor, drawKey, S.trainCfg.key, S.trainCfg.variant||1)
+      })
     }
-    return // skip procedural draw
+    return // skip procedural draw — sprite is loading (or already loaded)
   }
 
   // Non-character train — procedural path (current behavior, unchanged).
@@ -2471,30 +2461,19 @@ function buildAI() {
     if (!cfg.isCharacter && typeof g14PolishOverlay === 'function') g14PolishOverlay(spr)
     c.addChild(spr)
 
-    // v54.87 — Layer character sprite on top of procedural placeholder.
+    // v55.2 — AI character sprite via PIXI.Assets.load (mirrors player path).
+    // Replaces v54.87 PIXI.Sprite.from which silently failed. Closes B-201 AI side.
     if (cfg.isCharacter && cfg.spriteUrl) {
-      try {
-        const img = PIXI.Sprite.from(cfg.spriteUrl)
+      const targetH = (cfg.spriteHeight || 90) * 0.85 // AI slightly smaller than player
+      PIXI.Assets.load(cfg.spriteUrl).then((tex) => {
+        const img = new PIXI.Sprite(tex)
         img.anchor.set(0.5, 0.6)
-        const targetH = (cfg.spriteHeight || 90) * 0.85 // AI slightly smaller than player
-        img.scale.set(0.5)
-        const onLoad = () => {
-          if (img.texture && img.texture.height > 1) {
-            img.scale.set(targetH / img.texture.height)
-          }
-        }
-        if (img.texture && img.texture.source && img.texture.source.loaded) onLoad()
-        else if (img.texture && img.texture.source && typeof img.texture.source.addEventListener === 'function') {
-          img.texture.source.addEventListener('load', onLoad)
-        } else {
-          let tries = 0
-          const t = () => { if (img.texture && img.texture.height > 1) { onLoad(); return } if (tries++ < 60) requestAnimationFrame(t) }
-          t()
-        }
+        img.scale.set(targetH / tex.height)
         c.addChild(img)
-        // Hide procedural Graphics so the sprite isn't double-rendered.
-        spr.clear()
-      } catch(e) { console.warn('[g14] AI sprite load fail', cfg.key, e) }
+        try { spr.clear() } catch(_){}
+      }).catch((e) => {
+        console.warn('[g14] AI sprite load fail; keeping procedural', cfg.key, e)
+      })
     }
 
     // Glow
