@@ -1,5 +1,39 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.91 "Side-race ObstacleEngine integration + crash red flash + shake" (Phase 5.4)
+
+### ObstacleEngine wired
+
+`g14sWireObstacleEngine()` called from countdown `onDone` callback. Mirrors the G14 top-down pattern:
+- `pauseTick` → `S.running = false; S.paused = true`
+- `resumeTick` → guards on `S.gameOver` and `S.finished` (per L186 lesson) before re-enabling
+- `takeHP(n)` → decrements HP, capped at 0
+- `awardReward({coins})` → increments `S.coinScore`
+
+Scheduler: first puzzle 40–55s into race, re-arms after each success. Uses adaptive picker (`OE.pickAdaptiveCandidates`) for age + difficulty tier match — same as G14 top-down.
+
+Kids playing side-race now get the same 54-obstacle library + 103 questions experience as top-down G14.
+
+### Crash red flash + camera shake
+
+When train hits an obstacle:
+- Full-screen red radial flash overlay (`g14sFlash` keyframe, 0.45s ease-out fade).
+- Canvas-level CSS shake (`g14sShake` keyframe, ±6 px translate over 0.35s).
+- Existing 220 Hz crash tone preserved.
+- `prefers-reduced-motion` honored — shake keyframe replaced with no-op for sensitive users.
+
+### Files
+- `games/g14-side.html` — `g14sWireObstacleEngine()` + crash flash/shake + CSS keyframes (~80 LOC added).
+- `games/g14.html` — cache-bust to `v=54.91-20260626cr`.
+- `sw.js` v54.90 → v54.91.
+
+### Verification
+- Syntax OK on g14-side.html.
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS.
+- ObstacleEngine pause/resume race-condition guard (L186) applied in side-race resumeTick.
+
+---
+
 ## 2026-06-26 — v54.90 "Side-race AI competitor + coin pickups + landing dust" (Phase 5.3)
 
 ### AI competitor (ghost lane)

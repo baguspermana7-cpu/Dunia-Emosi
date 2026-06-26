@@ -34,6 +34,9 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 #countdown.show{display:flex}
 #countdown-num{font-size:clamp(80px,20vw,160px);color:#fde047;font-weight:900;text-shadow:0 6px 0 #92400e, 0 10px 20px rgba(0,0,0,0.5);animation:cd-pop 0.9s ease-out forwards}
 @keyframes cd-pop{0%{transform:scale(0.4);opacity:0}30%{transform:scale(1.15);opacity:1}70%{transform:scale(1);opacity:1}100%{transform:scale(2);opacity:0}}
+@keyframes g14sFlash{0%{opacity:1}100%{opacity:0}}
+@keyframes g14sShake{0%,100%{transform:translate(0)}20%{transform:translate(-6px,2px)}40%{transform:translate(6px,-2px)}60%{transform:translate(-4px,3px)}80%{transform:translate(3px,-3px)}}
+@media (prefers-reduced-motion: reduce){@keyframes g14sShake{0%,100%{transform:translate(0)}}}
 
 /* End modal */
 #end-modal{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,0.7);backdrop-filter:blur(4px)}
@@ -60,14 +63,14 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <script src="data/bg-npcs.js?v=54.64-20260626bq"></script>
 <script src="data/bg-audio.js?v=54.65-20260626br"></script>
 <script src="data/bg-events.js?v=54.67-20260626bt"></script>
-<script src="obstacle-engine.js?v=54.90-20260626cq"></script>
-<script src="data/kids-questions.js?v=54.90-20260626cq"></script>
-<script src="data/obstacles.js?v=54.90-20260626cq"></script>
-<script src="data/routes.js?v=54.90-20260626cq"></script>
-<script src="data/reward-catalog.js?v=54.90-20260626cq"></script>
-<script src="reward-gallery.js?v=54.90-20260626cq"></script>
-<script src="settings-modal.js?v=54.90-20260626cq"></script>
-<script src="trains-db.js?v=54.90-20260626cq"></script>
+<script src="obstacle-engine.js?v=54.91-20260626cr"></script>
+<script src="data/kids-questions.js?v=54.91-20260626cr"></script>
+<script src="data/obstacles.js?v=54.91-20260626cr"></script>
+<script src="data/routes.js?v=54.91-20260626cr"></script>
+<script src="data/reward-catalog.js?v=54.91-20260626cr"></script>
+<script src="reward-gallery.js?v=54.91-20260626cr"></script>
+<script src="settings-modal.js?v=54.91-20260626cr"></script>
+<script src="trains-db.js?v=54.91-20260626cr"></script>
 <script src="game-modal.js?v=54.47-20260625az"></script>
 
 <div id="hud-top">
@@ -204,7 +207,12 @@ const JUMP_VELOCITY = 720         // initial upward velocity
   buildTrain()
   buildAITrain() // v54.90
   setupInput()
-  runCountdown(() => { S.running = true; S.frame = 0 })
+  runCountdown(() => {
+    S.running = true
+    S.frame = 0
+    // v54.91 — Wire ObstacleEngine + schedule first puzzle
+    try { g14sWireObstacleEngine() } catch(e) { console.warn('OE wire fail', e) }
+  })
 
   // Start ticker
   app.ticker.add((tickerOrDelta) => tick(tickerOrDelta))
@@ -501,6 +509,51 @@ function buildAITrain() {
   }
   // Insert BEHIND obstacle layer but BEFORE player container layering
   stage.addChildAt(S.aiTrain, stage.getChildIndex(trainContainer))
+}
+
+// v54.91 — ObstacleEngine integration: pause race, show puzzle, resume on success
+function g14sWireObstacleEngine() {
+  if (!window.ObstacleEngine) return
+  window.ObstacleEngine.attach({
+    pauseTick: () => { S.running = false; S.paused = true },
+    resumeTick: () => { if (!S.gameOver && !S.finished) { S.paused = false; S.running = true } },
+    slowDown: () => {},
+    resumeSpeed: () => {},
+    cameraZoom: () => {},
+    takeHP: (n) => {
+      if (S.hp > 0) S.hp = Math.max(0, S.hp - n)
+    },
+    awardReward: (reward) => {
+      if (!reward) return
+      if (reward.coins) S.coinScore += reward.coins
+    },
+  })
+  // Schedule first puzzle 40-55s into race; re-arm after each.
+  function _scheduleNext() {
+    const delayMs = 40000 + Math.random() * 15000
+    setTimeout(() => {
+      if (!S.running || S.gameOver || S.finished) return
+      const id = _pickObstacleId()
+      try {
+        window.ObstacleEngine.spawn(id).then(() => _scheduleNext())
+      } catch(e) {
+        console.warn('[g14-side] OE.spawn failed', e)
+        _scheduleNext()
+      }
+    }, delayMs)
+  }
+  function _pickObstacleId() {
+    const OE = window.ObstacleEngine
+    const registry = OE._registry || {}
+    const allIds = Object.keys(registry)
+    if (allIds.length === 0) return 'missing_rail_triangle'
+    if (typeof OE.pickAdaptiveCandidates === 'function') {
+      const pool = OE.pickAdaptiveCandidates()
+      return pool[Math.floor(Math.random() * pool.length)]
+    }
+    return allIds[Math.floor(Math.random() * allIds.length)]
+  }
+  _scheduleNext()
 }
 
 // ── INPUT ───────────────────────────────────────────────────────────────────
@@ -873,10 +926,26 @@ function spawnObstacle() {
 function crashOn(o) {
   S.hp = Math.max(0, S.hp - 1)
   S.invincible = 1.2 // 1.2s grace
-  // Visual: red shake
+  // Visual: red shake + flash
   try { if (typeof playTone === 'function') playTone({ freq: 220, dur: 0.18, vol: 0.14 }) } catch {}
+
+  // v54.91 — Red screen flash overlay
+  const flash = document.createElement('div')
+  flash.style.cssText = 'position:fixed;inset:0;background:radial-gradient(circle,rgba(239,68,68,0.4) 0%,rgba(239,68,68,0.1) 70%,transparent 100%);pointer-events:none;z-index:150;animation:g14sFlash 0.45s ease-out forwards;'
+  document.body.appendChild(flash)
+  setTimeout(() => { try { flash.remove() } catch {} }, 500)
+
+  // v54.91 — Camera shake (canvas-level via CSS transform)
+  const canvas = document.getElementById('pixi-canvas')
+  if (canvas) {
+    canvas.style.animation = 'none'
+    requestAnimationFrame(() => {
+      canvas.style.animation = 'g14sShake 0.35s ease-out'
+      setTimeout(() => { canvas.style.animation = '' }, 360)
+    })
+  }
+
   // Soft mode? still HP loss but won't game-over until 0
-  // Mode check (Hard = stricter)
   const mode = (window.ObstacleEngine && window.ObstacleEngine.getMode) ? window.ObstacleEngine.getMode() : 'easy'
   if (mode === 'easy' && S.hp > 0) {
     // Easy: keep going, no game-over until obvious
