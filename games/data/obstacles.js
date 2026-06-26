@@ -632,6 +632,457 @@
       title: '🐾 Tantangan Hewan!',   banner: '🐾', questionCategory: 'animal', difficulty: 1, coins: 5,
     }))
 
+    // ── Reaction tranche v54.72 — signal + animals + rocks + water ──────────
+
+    // Signal Light Challenge (spec §11) — match button to light color
+    OE.register('signal_light_challenge', {
+      type: 'reaction_match',
+      difficulty: 2,
+      ageRange: '5-7',
+      allowedLocations: ['*'],
+      allowedJourneyPhases: ['urban_exit', 'approaching_station', 'arrival'],
+      requiredAction: 'tap_choice',
+      softFail: true,
+      maxRetry: 3,
+      reward: { coins: 6, badgeProgress: 1, sound: 'success_chime' },
+      visual: { cameraZoom: true, highlightSlot: true, successSparkle: true },
+      accessibility: { voicePrompt: true, largeTouchTarget: true, reducedMotion: true },
+      title: '🚦 Sinyal lalu lintas kereta!',
+      hints: [
+        'Lihat warna sinyal! 💡',
+        'Merah = berhenti ✋, Kuning = pelan 🐢, Hijau = maju ➡️',
+        'Yang ini! 👇',
+      ],
+
+      interaction: {
+        setup(ctx, callbacks) {
+          const body = ctx.body
+          if (!body) return
+
+          // Random signal color
+          const COLORS = ['red', 'yellow', 'green']
+          const COLOR_ICON = { red:'🔴', yellow:'🟡', green:'🟢' }
+          const ACTION_ICON = { red:'✋', yellow:'🐢', green:'➡️' }
+          const ACTION_LABEL = { red:'Berhenti', yellow:'Pelan', green:'Maju' }
+          const showColor = COLORS[Math.floor(Math.random() * 3)]
+
+          const title = document.createElement('div')
+          title.className = 'obstacle-engine-title'
+          title.textContent = '🚦 Sinyal kereta!'
+          body.appendChild(title)
+
+          const sub = document.createElement('div')
+          sub.className = 'obstacle-engine-subtitle'
+          sub.textContent = 'Pilih tombol sesuai warna lampu sinyal.'
+          body.appendChild(sub)
+
+          // Signal display
+          const lampRow = document.createElement('div')
+          lampRow.className = 'obstacle-engine-row'
+          const lamp = document.createElement('div')
+          lamp.style.cssText = 'width:96px;height:96px;border-radius:50%;border:5px solid #333;display:inline-flex;align-items:center;justify-content:center;font-size:54px;'
+          lamp.textContent = COLOR_ICON[showColor]
+          lamp.style.background = showColor === 'red' ? '#fee2e2' : (showColor === 'yellow' ? '#fef3c7' : '#dcfce7')
+          lampRow.appendChild(lamp)
+          body.appendChild(lampRow)
+
+          // Choices
+          const choicesRow = document.createElement('div')
+          choicesRow.className = 'obstacle-engine-row'
+
+          const shuffled = COLORS.slice().sort(() => Math.random() - 0.5)
+          const onPick = (btn, color) => {
+            const all = choicesRow.querySelectorAll('.obstacle-engine-shape-btn')
+            if (color === showColor) {
+              btn.classList.add('correct')
+              all.forEach(b => { b.disabled = true })
+              OE.spawnSparkles(btn, 6)
+              setTimeout(() => callbacks.success(), 700)
+            } else {
+              btn.classList.add('wrong')
+              setTimeout(() => btn.classList.remove('wrong'), 500)
+              callbacks.fail()
+            }
+          }
+
+          shuffled.forEach(c => {
+            const btn = document.createElement('button')
+            btn.className = 'obstacle-engine-shape-btn'
+            btn.style.flexDirection = 'column'
+            btn.style.fontSize = '20px'
+            btn.style.minWidth = '108px'
+            btn.innerHTML = '<span style="font-size:36px;line-height:1">' + ACTION_ICON[c] + '</span><span style="font-size:14px;font-weight:700;margin-top:4px">' + ACTION_LABEL[c] + '</span>'
+            btn.dataset.color = c
+            btn.addEventListener('click', () => onPick(btn, c))
+            choicesRow.appendChild(btn)
+          })
+
+          body.appendChild(choicesRow)
+          OE.speak('Pilih tombol sesuai warna sinyal')
+        },
+        teardown() {}
+      },
+    })
+
+    // ── Animal crossing generator (6 variants, spec §13) ────────────────────
+    function makeAnimalCrossingObstacle(animal, name) {
+      return {
+        type: 'kindness_tap',
+        difficulty: 1,
+        ageRange: '4-7',
+        allowedLocations: ['*'],
+        allowedJourneyPhases: ['suburban', 'countryside'],
+        requiredAction: 'tap_button',
+        softFail: true,
+        maxRetry: 3,
+        reward: { coins: 5, badgeProgress: 1, sound: 'success_chime' },
+        visual: { cameraZoom: true, successSparkle: true },
+        accessibility: { voicePrompt: true, largeTouchTarget: true, reducedMotion: true },
+        title: animal + ' menyeberang rel!',
+        hints: [
+          'Tap bell untuk berhenti! 🔔',
+          'Bunyikan bell agar ' + name + ' aman!',
+          'Tap tombol bell 👇',
+        ],
+
+        interaction: {
+          setup(ctx, callbacks) {
+            const body = ctx.body
+            if (!body) return
+
+            const title = document.createElement('div')
+            title.className = 'obstacle-engine-title'
+            title.textContent = animal + ' menyeberang rel!'
+            body.appendChild(title)
+
+            const sub = document.createElement('div')
+            sub.className = 'obstacle-engine-subtitle'
+            sub.textContent = 'Bunyikan bell agar kereta berhenti dan ' + name + ' lewat aman.'
+            body.appendChild(sub)
+
+            // Animal scene
+            const sceneRow = document.createElement('div')
+            sceneRow.className = 'obstacle-engine-row'
+            const scene = document.createElement('div')
+            scene.style.cssText = 'font-size:64px;line-height:1;padding:8px 16px;background:rgba(255,255,255,0.5);border-radius:14px;'
+            scene.textContent = '🚂  ⋯  ' + animal
+            sceneRow.appendChild(scene)
+            body.appendChild(sceneRow)
+
+            // Bell button
+            const btnRow = document.createElement('div')
+            btnRow.className = 'obstacle-engine-row'
+            const btn = document.createElement('button')
+            btn.className = 'obstacle-engine-shape-btn'
+            btn.style.flexDirection = 'column'
+            btn.style.minWidth = '140px'
+            btn.style.minHeight = '100px'
+            btn.style.background = 'linear-gradient(135deg,#fef3c7,#fcd34d)'
+            btn.style.borderColor = '#d97706'
+            btn.style.color = '#7c2d12'
+            btn.innerHTML = '<span style="font-size:42px;line-height:1">🔔</span><span style="font-size:14px;font-weight:900;margin-top:4px">Bunyikan!</span>'
+
+            btn.addEventListener('click', () => {
+              btn.classList.add('correct')
+              btn.disabled = true
+              // Animal walks across
+              scene.style.transition = 'transform 1.2s ease-out'
+              scene.textContent = animal + '  ⋯  🚂'
+              scene.style.transform = 'translateX(-20px)'
+              OE.spawnSparkles(btn, 6)
+              setTimeout(() => callbacks.success(), 1300)
+            })
+
+            btnRow.appendChild(btn)
+            body.appendChild(btnRow)
+            OE.speak('Tap bell untuk membantu ' + name)
+          },
+          teardown() {}
+        },
+      }
+    }
+
+    OE.register('animal_crossing_cat',  makeAnimalCrossingObstacle('🐱', 'kucing'))
+    OE.register('animal_crossing_dog',  makeAnimalCrossingObstacle('🐶', 'anjing'))
+    OE.register('animal_crossing_duck', makeAnimalCrossingObstacle('🦆', 'bebek'))
+    OE.register('animal_crossing_cow',  makeAnimalCrossingObstacle('🐮', 'sapi'))
+    OE.register('animal_crossing_goat', makeAnimalCrossingObstacle('🐐', 'kambing'))
+    OE.register('animal_crossing_bird', makeAnimalCrossingObstacle('🐦', 'burung'))
+
+    // ── Lane choice generator (falling rocks small + water puddle swerve) ───
+    function makeLaneChoiceObstacle(opts) {
+      return {
+        type: 'lane_choice',
+        difficulty: 1,
+        ageRange: '4-7',
+        allowedLocations: ['*'],
+        allowedJourneyPhases: opts.allowedJourneyPhases || ['*'],
+        requiredAction: 'tap_choice',
+        softFail: true,
+        maxRetry: 3,
+        reward: { coins: 5, badgeProgress: 1, sound: 'success_chime' },
+        visual: { cameraZoom: true, highlightSlot: true, successSparkle: true },
+        accessibility: { voicePrompt: true, largeTouchTarget: true, reducedMotion: true },
+        title: opts.title,
+        hints: [
+          'Coba lane lain! 💡',
+          'Pilih lane yang kosong (tidak ada rintangan)! ✨',
+          'Yang ini! 👇',
+        ],
+
+        interaction: {
+          setup(ctx, callbacks) {
+            const body = ctx.body
+            if (!body) return
+
+            const title = document.createElement('div')
+            title.className = 'obstacle-engine-title'
+            title.textContent = opts.title
+            body.appendChild(title)
+
+            const sub = document.createElement('div')
+            sub.className = 'obstacle-engine-subtitle'
+            sub.textContent = opts.subtitle || 'Pilih lane yang aman untuk kereta lewat.'
+            body.appendChild(sub)
+
+            const safeIdx = Math.floor(Math.random() * 3)
+            const lanes = ['kiri', 'tengah', 'kanan']
+
+            const choicesRow = document.createElement('div')
+            choicesRow.className = 'obstacle-engine-row'
+
+            lanes.forEach((lane, i) => {
+              const btn = document.createElement('button')
+              btn.className = 'obstacle-engine-shape-btn'
+              btn.style.flexDirection = 'column'
+              btn.style.minWidth = '100px'
+              btn.style.minHeight = '100px'
+              const inner = document.createElement('span')
+              inner.style.cssText = 'font-size:36px;line-height:1;display:block;'
+              inner.textContent = i === safeIdx ? '🛤️' : opts.obstacleIcon
+              const label = document.createElement('span')
+              label.style.cssText = 'font-size:13px;font-weight:900;margin-top:4px;'
+              label.textContent = lane.toUpperCase()
+              btn.appendChild(inner); btn.appendChild(label)
+              btn.dataset.idx = i
+
+              btn.addEventListener('click', () => {
+                if (i === safeIdx) {
+                  btn.classList.add('correct')
+                  OE.spawnSparkles(btn, 6)
+                  Array.from(choicesRow.querySelectorAll('button')).forEach(b => { b.disabled = true })
+                  setTimeout(() => callbacks.success(), 700)
+                } else {
+                  btn.classList.add('wrong')
+                  setTimeout(() => btn.classList.remove('wrong'), 500)
+                  callbacks.fail()
+                }
+              })
+              choicesRow.appendChild(btn)
+            })
+
+            body.appendChild(choicesRow)
+            OE.speak('Pilih lane yang aman')
+          },
+          teardown() {}
+        },
+      }
+    }
+
+    OE.register('falling_rocks_small', makeLaneChoiceObstacle({
+      title: '🪨 Batu kecil di rel!',
+      subtitle: 'Pilih lane tanpa batu untuk kereta lewat.',
+      obstacleIcon: '🪨',
+    }))
+
+    OE.register('water_puddle_swerve', makeLaneChoiceObstacle({
+      title: '💧 Genangan air di rel!',
+      subtitle: 'Pilih lane yang kering.',
+      obstacleIcon: '💧',
+    }))
+
+    // ── Falling rocks big — drag rock to side ────────────────────────────────
+    OE.register('falling_rocks_big', {
+      type: 'drag_to_side',
+      difficulty: 2,
+      ageRange: '5-7',
+      allowedLocations: ['*'],
+      allowedJourneyPhases: ['countryside', 'suburban'],
+      requiredAction: 'tap_count',
+      softFail: true,
+      maxRetry: 3,
+      reward: { coins: 7, badgeProgress: 1, sound: 'success_chime' },
+      visual: { cameraZoom: true, successSparkle: true },
+      accessibility: { voicePrompt: true, largeTouchTarget: true, reducedMotion: true },
+      title: '🪨 Batu besar menutup rel!',
+      hints: [
+        'Tap berkali-kali untuk pindahkan batu! 💪',
+        'Tap lagi! Hampir bisa!',
+        'Tap! 👇',
+      ],
+
+      interaction: {
+        setup(ctx, callbacks) {
+          const body = ctx.body
+          if (!body) return
+
+          const title = document.createElement('div')
+          title.className = 'obstacle-engine-title'
+          title.textContent = '🪨 Batu besar menutup rel!'
+          body.appendChild(title)
+
+          const sub = document.createElement('div')
+          sub.className = 'obstacle-engine-subtitle'
+          sub.textContent = 'Tap batu 5 kali untuk menggesernya.'
+          body.appendChild(sub)
+
+          const rockRow = document.createElement('div')
+          rockRow.className = 'obstacle-engine-row'
+
+          const rock = document.createElement('button')
+          rock.className = 'obstacle-engine-shape-btn'
+          rock.style.fontSize = '64px'
+          rock.style.minWidth = '120px'
+          rock.style.minHeight = '120px'
+          rock.textContent = '🪨'
+          rockRow.appendChild(rock)
+          body.appendChild(rockRow)
+
+          // Progress bar
+          const bar = document.createElement('div')
+          bar.style.cssText = 'width:80%;height:18px;background:rgba(0,0,0,0.1);border-radius:9px;margin:8px auto;border:2px solid #92400e;overflow:hidden;'
+          const fill = document.createElement('div')
+          fill.style.cssText = 'height:100%;width:0%;background:linear-gradient(90deg,#fbbf24,#fb923c);transition:width 0.2s;'
+          bar.appendChild(fill)
+          body.appendChild(bar)
+
+          let count = 0
+          const TARGET = 5
+          rock.addEventListener('click', () => {
+            count++
+            const pct = Math.min(100, (count / TARGET) * 100)
+            fill.style.width = pct + '%'
+            rock.style.transform = 'translateX(' + (count * 6) + 'px)'
+            OE.spawnSparkles(rock, 3)
+            if (count >= TARGET) {
+              rock.disabled = true
+              rock.classList.add('correct')
+              rock.textContent = '✅'
+              setTimeout(() => callbacks.success(), 600)
+            }
+          })
+
+          OE.speak('Tap batu beberapa kali')
+        },
+        teardown() {}
+      },
+    })
+
+    // Falling rocks question crane — answer question → helper crane removes rock
+    OE.register('falling_rocks_question_crane', makeQuestionGateObstacle({
+      title: '🏗️ Panggil derek untuk angkat batu!',
+      banner: '🏗️🪨',
+      questionCategory: 'number',
+      difficulty: 2,
+      coins: 7,
+      hints: [
+        'Pilih angka yang benar! 💡',
+        'Derek butuh angka tepat untuk angkat batu! ✨',
+        'Yang ini! 👇',
+      ],
+      onSuccess(body) {
+        const fx = document.createElement('div')
+        fx.style.cssText = 'position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:48px;animation:obstacle-target-pulse 0.6s ease-out;'
+        fx.textContent = '🏗️✨'
+        body.appendChild(fx)
+        setTimeout(() => fx.remove(), 900)
+      },
+    }))
+
+    // ── Water puddle pump — tap-repeat pattern ─────────────────────────────
+    OE.register('water_puddle_pump', {
+      type: 'tap_repeat',
+      difficulty: 1,
+      ageRange: '4-7',
+      allowedLocations: ['*'],
+      allowedJourneyPhases: ['*'],
+      requiredAction: 'tap_count',
+      softFail: true,
+      maxRetry: 3,
+      reward: { coins: 5, badgeProgress: 1, sound: 'success_chime' },
+      visual: { cameraZoom: true, successSparkle: true },
+      accessibility: { voicePrompt: true, largeTouchTarget: true, reducedMotion: true },
+      title: '💧 Kuras genangan air!',
+      hints: [
+        'Tap pump untuk kuras air! 💪',
+        'Tap lagi!',
+        'Tap! 👇',
+      ],
+
+      interaction: {
+        setup(ctx, callbacks) {
+          const body = ctx.body
+          if (!body) return
+
+          const title = document.createElement('div')
+          title.className = 'obstacle-engine-title'
+          title.textContent = '💧 Kuras genangan air!'
+          body.appendChild(title)
+
+          const sub = document.createElement('div')
+          sub.className = 'obstacle-engine-subtitle'
+          sub.textContent = 'Tap pompa 4 kali untuk mengeringkan rel.'
+          body.appendChild(sub)
+
+          const row = document.createElement('div')
+          row.className = 'obstacle-engine-row'
+          const pump = document.createElement('button')
+          pump.className = 'obstacle-engine-shape-btn'
+          pump.style.minWidth = '140px'
+          pump.style.minHeight = '120px'
+          pump.style.fontSize = '50px'
+          pump.textContent = '🔧'
+          row.appendChild(pump)
+          body.appendChild(row)
+
+          const bar = document.createElement('div')
+          bar.style.cssText = 'width:80%;height:24px;background:#bfdbfe;border-radius:12px;margin:8px auto;border:2px solid #1e40af;overflow:hidden;position:relative;'
+          const fill = document.createElement('div')
+          fill.style.cssText = 'height:100%;width:100%;background:linear-gradient(90deg,#3b82f6,#60a5fa);transition:width 0.2s;'
+          bar.appendChild(fill)
+          body.appendChild(bar)
+
+          let count = 0
+          const TARGET = 4
+          pump.addEventListener('click', () => {
+            count++
+            const pct = Math.max(0, 100 - (count / TARGET) * 100)
+            fill.style.width = pct + '%'
+            OE.spawnSparkles(pump, 3)
+            if (count >= TARGET) {
+              pump.disabled = true
+              pump.classList.add('correct')
+              pump.textContent = '✅'
+              setTimeout(() => callbacks.success(), 600)
+            }
+          })
+
+          OE.speak('Tap pompa untuk kuras air')
+        },
+        teardown() {}
+      },
+    })
+
+    // Water puddle plank — single drag to bridge (simplified: tap plank to place)
+    OE.register('water_puddle_plank', makeBridgeRepairObstacle({
+      title: '🪵 Pasang papan kayu di atas air!',
+      subtitle: 'Pilih papan kayu untuk jembatan sementara.',
+      slots: ['plank'],
+      slotIcons: ['🪵'],
+      distractors: [{ key:'_d0', icon:'🪨' }, { key:'_d1', icon:'🌿' }],
+      difficulty: 1,
+    }))
+
     if (typeof console !== 'undefined' && console.log) {
       console.log('[obstacles.js] registered', Object.keys(OE._registry).length, 'obstacle types')
     }

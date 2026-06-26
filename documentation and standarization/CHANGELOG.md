@@ -1,5 +1,57 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.72 "Reaction tranche — signal + animals + rocks + water (13 obstacles)" (Phase 4.3)
+
+34 obstacles total (21 from v54.71 + 13 new).
+
+### Signal Light Challenge (spec §11)
+
+`signal_light_challenge` — random color (red/yellow/green) lamp displayed. Child picks Stop ✋ / Slow 🐢 / Go ➡️ button matching the color. Each button shows icon + Indonesian action label. Sparkles on correct, soft-fail shake on wrong.
+
+### Animal Crossing (spec §13) — 6 variants
+
+`makeAnimalCrossingObstacle(animal, name)` generator. 6 obstacles registered:
+
+| ID | Animal | Indonesian |
+|---|---|---|
+| `animal_crossing_cat`  | 🐱 | kucing |
+| `animal_crossing_dog`  | 🐶 | anjing |
+| `animal_crossing_duck` | 🦆 | bebek |
+| `animal_crossing_cow`  | 🐮 | sapi |
+| `animal_crossing_goat` | 🐐 | kambing |
+| `animal_crossing_bird` | 🐦 | burung |
+
+Single big 🔔 bell button (140×100 px). Tap → train stops → animal walks across with slide transition → success + sparkles. Spec §13 "Kindness Star" theme baked in (reward.coins:5, sound:success_chime).
+
+### Falling Rocks (spec §9) — 3 variants
+
+- `falling_rocks_small` — lane choice (3 lanes, pick the empty one, others show 🪨).
+- `falling_rocks_big` — tap-repeat: tap the 🪨 5 times to push it aside. Progress bar amber→orange. ✅ on completion.
+- `falling_rocks_question_crane` — question gate (number category) → helper crane summoned 🏗️✨ on correct.
+
+### Water Puddle (spec §10) — 3 variants
+
+- `water_puddle_swerve` — lane choice (3 lanes, pick the dry one, others show 💧).
+- `water_puddle_pump` — tap-repeat: tap 🔧 pump 4 times to drain water. Progress bar blue → 0%. ✅ on completion.
+- `water_puddle_plank` — drag-drop: pick 🪵 plank from 3 options (correct = wood, distractors = rock + grass).
+
+### Shared generators
+
+- `makeLaneChoiceObstacle(opts)` — generic 3-lane safe-path picker. Used by falling_rocks_small and water_puddle_swerve. Random safe lane each spawn.
+- `makeAnimalCrossingObstacle(animal, name)` — kindness-tap pattern, animal name in Indonesian for voice prompt.
+
+### Files touched
+- `games/data/obstacles.js` — 13 new registrations + 2 generators (~330 LOC added).
+- `games/g14.html` — cache-bust `v=54.72-20260626by`.
+- `sw.js` v54.71 → v54.72.
+
+### Verification
+- `grep -c "OE.register" games/data/obstacles.js` = 34 ✓
+- All obstacles soft-fail + maxRetry:3 + ≥88px tap targets.
+- Animal crossing tap targets 140×100 (extra-large for child-friendly UX).
+
+---
+
 ## 2026-06-26 — v54.71 "Question gate tranche — fire jump + tunnel gate + 6 educational gates" (Phase 4.2)
 
 21 obstacles total registered after this tranche (13 from v54.70 + 8 new). Question pool extended from 49 → 73 entries.
