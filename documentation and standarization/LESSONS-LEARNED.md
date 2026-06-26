@@ -4,6 +4,54 @@
 
 ---
 
+## 2026-06-26 — v55.2-v55.10 Train/Pokemon UIUX cleanup tranche
+
+### L197 — `PIXI.Sprite.from(url)` returns a 1×1 placeholder; use `PIXI.Assets.load(url).then(tex => new PIXI.Sprite(tex))`
+- The v54.87 sprite fix used `PIXI.Sprite.from(url)` + `texture.source.addEventListener('load', ...)` and a RAF poll to detect when the texture height settled. The `load` event did not fire reliably and the poll exhausted 60 frames before `texture.height` updated.
+- **Symptom**: G14 Thomas/character sprites showed nothing on screen; they were actually rendered at scale 0.5 of a 1×1 placeholder = 0.5px = invisible.
+- **Fix** (v55.2): `PIXI.Assets.load(url).then(tex => { const img = new PIXI.Sprite(tex); img.scale.set(targetH / tex.height); ... })`. This is the same pattern v54.96 side-race already used successfully — confirmed by Puppeteer screenshot at the time.
+- **Lesson**: In Pixi 8, `Sprite.from(url)` and `Texture.from(url)` are pure-cache lookups that return a 1×1 placeholder until the real texture loads, and there is no reliable per-texture load event you can subscribe to. Use `Assets.load(url)` (Promise-based, batched, cached, deduplicated) for every dynamic image load.
+
+### L198 — Hardcoded picker HTML rots silently when the underlying array grows
+- v54.68 added 26 Thomas AEG entries to `TRAIN_STYLES[]`, but G16's picker (`games/g16-pixi.html:211-247`) was 7 hardcoded `<div class="ts-card">` entries. The array had 33 cards; the UI showed 7. Bug only surfaced when owner expected new Thomas chars to appear.
+- **Symptom**: G16 "Selamatkan Kereta" only showed 7 trains in the picker, missing Thomas Allies / Enemies (AEG entries 11-36).
+- **Fix** (v55.4): replace hardcoded HTML with a `g16RenderPicker()` function that iterates `TRAIN_STYLES` and emits a card per index. Click handlers wire to existing `selectTrain(idx)`. CSS to grid auto-fill + scroll cap so 33 cards remain mobile-friendly.
+- **Lesson**: When a piece of data is also a UI dimension (catalog → picker / inventory → grid / region → tabs), ALWAYS render it from the source array. Never hand-write the markup. Pre-flight grep: when adding to TRAIN_STYLES or any catalog array, immediately grep for the picker/list/tab markup that should consume it and convert to dynamic render if it's still hardcoded.
+
+### L199 — Engagement-index scoring beats survival scoring for "perfect when idle" complaints
+- G14 star formula was `stars = alive ? 2 : 0` plus HP-ratio + 1st-place bonuses. Idle race with full HP and deterministic AI = 5 stars + "Sempurna!" — owner called this out (B-203).
+- **Fix** (v55.7): introduce `engagementIndex = (S.coins||0) + (S.dodgeCount||0)*2 + (S.puzzlesSolved||0)*5` and gate each star tier on a minimum index. Floor: `if (engagementIndex === 0) stars = Math.min(stars, 1)`. Wired `dodgeCount` in tick obstacle scroll-past and `puzzlesSolved` in obstacle spawn success path.
+- **Lesson**: For arcade-style games where survival alone shouldn't earn the top tier, sum the active actions (coin collection / dodges / puzzles) into an engagement index and gate stars on it. The collision math stays untouched; you only add counter increments at the natural events (despawn-without-hit, puzzle-success).
+
+### L200 — Selected-train state must round-trip via window globals for cross-page launches
+- G14 main view's "Side Race" button alerted `"Pilih kereta dulu ya!"` even after the user selected a train, because `g14LaunchSideRace()` read from a session global the picker never wrote.
+- **Fix** (v55.9): picker click handler sets `window.selectedTrainKey = t.key` AND `S.trainCfg.key`. Side-race launcher reads `S.trainCfg.key` first, falls back to the window global, then to the picker DOM-attribute. Triple-source defends against arbitrary code reordering.
+- **Lesson**: When a control on page A causes a navigation/launch on page B, the selected-state must persist to a globally-readable namespace (`window.<key>` or `sessionStorage`) at the click event, NOT only in local state machine. Don't trust the launch handler to find the state in your closure.
+
+### L201 — Pastel palette over saturated colors when the modal interrupts vibrant gameplay
+- Owner: *"pilihan jawabannya style tidak soft calm pallet colour pastell."* The obstacle puzzle modal used saturated cream-yellow + navy buttons + saturated green/red states. Over the bright Pixi scene this felt aggressive and overstimulating for 4-7 year olds.
+- **Fix** (v55.6): sweep card / borders / buttons / correct / wrong / hint / ribbon to muted pastels (soft cream, powder blue, sage, rose, lavender). No logic changes; only color tokens.
+- **Lesson**: Interrupting modals over vibrant game scenes should de-saturate, not match the scene's intensity. Pastel = "this is a quiet aside, look here calmly." Saturated = "this competes for attention." For child-facing UI, pastel almost always wins.
+
+### L202 — Aggressive cache-control meta is belt-and-braces, NOT a primary refresh mechanism
+- After 7 SW cache bumps in one session, some users still see stale HTML from disk cache. http-equiv Cache-Control meta is a weak signal — modern browsers prefer server headers — but it nudges Chrome/Safari to revalidate when server headers are absent (Vercel / GitHub Pages static).
+- **Fix** (v55.10): add 3-line meta block (`Cache-Control no-cache, must-revalidate` + `Pragma no-cache` + `Expires 0`) to every game entry HTML. Combine with SW HTML-network-first strategy as the PRIMARY refresh mechanism.
+- **Lesson**: For static-hosted PWAs where you can't always control HTTP response headers, layer SW network-first (primary) + http-equiv meta (secondary) + `?v=...` query-string busting on every script/stylesheet load (tertiary). All three are needed for reliable mobile cache eviction.
+
+### L203 — Visual verification needed before claiming a "rotation" or "orientation" bug fixed
+- Owner reported G15 sprite "upside down" (B-207). Agent H investigation HIGH confidence said G15 is a horizontal scroller and Thomas WebP is correctly chimney-up. Owner perception could be cached pre-fix asset, a `PIXI.Sprite.from` 1×1 placeholder showing as a tiny mark, or a real rotation bug elsewhere.
+- **Lesson**: For sprite orientation/rotation complaints, ALWAYS verify with a fresh Puppeteer screenshot of the running game before claiming "no fix needed" or "already fixed." The fix candidate space is wide (asset cache / placeholder / actual rotation matrix / wrong asset URL) so visual evidence is the only ground truth. Deferred B-207 to v55.12's comprehensive visual QA probe.
+
+### L204 — Owner-comment tracking mandate (M-301): every comment → B-NNN task with verbatim quote
+- Owner directive 2026-06-26: *"selalu record comment2 saya jadi suatu task ya. agar tahu mana yang sudah di address mana yang belum."*
+- **Lesson**: Every owner comment that names a bug, feature request, or UX nit MUST be filed as a tracked task with: (a) verbatim Indonesian quote, (b) translated symptom, (c) assigned tranche, (d) status updated on ship. Without this, multi-turn marathons accrete unaddressed complaints that surface in re-reports a few turns later. Persistence: `feedback_comment_tracking_mandate.md` memory.
+
+### L205 — One ship per tranche keeps git-blame and CHANGELOG honest
+- This session shipped 8 separate commits (v55.0, v55.2, v55.4, v55.5, v55.6, v55.7-v55.9, v55.10) instead of one mega-merge. Each commit closes a clearly named B-NNN. CHANGELOG entries cross-reference the closed bug IDs.
+- **Lesson**: For multi-bug recovery sessions, every owner-reported bug deserves its own commit + CHANGELOG entry. Git-blame stays useful, owner can scan CHANGELOG and see exactly which complaint was closed in which version, and rollback granularity is per-bug. Mega-merges optimize for typing speed; per-tranche ships optimize for owner trust.
+
+---
+
 ## 2026-06-26 — v55.0 STOP-THE-BLEED Pokemon load regression
 
 ### L195 — SW cache bumps cost 5MB per visit when SHELL is bloated; budget your SHELL

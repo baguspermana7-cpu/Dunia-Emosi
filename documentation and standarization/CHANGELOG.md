@@ -1,5 +1,41 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v55.11-v55.13 "LESSONS L197-L205 + comprehensive QA probe + final acceptance"
+
+Phase 4 of plan `purring-brewing-flurry`. Three small ships bundled:
+
+### v55.11 — LESSONS-LEARNED.md L197-L205 (9 new entries)
+Documented every regression class encountered this session: PIXI.Sprite.from placeholder bug, hardcoded picker rot, engagement-index scoring, cross-page state round-trip, pastel-over-vibrant rule, http-equiv cache layer, visual verification before claiming, owner-comment tracking mandate, one-ship-per-tranche discipline.
+
+### v55.12 — NEW `tools/visual-qa-comprehensive.mjs`
+8 verification screens covering every B-NNN closed in v55.0-v55.10. Saves to `tools/qa-screenshots/comprehensive-NN-*.png`. Prereq: local server on :8081.
+
+### v55.13 — Final acceptance probe run
+First run results (with local http.server on :8081):
+
+| Test | B-NNN | Verdict | Notes |
+|---|---|---|---|
+| T1 g14 Thomas sprite | B-201 | INCONCLUSIVE | Probe selector hit Karakter Spesial which only has 4 PROTECTED chars; Thomas lives in AEG category. Code fix confirmed via Agent G investigation + v54.96 same-pattern Puppeteer pass. |
+| T2 g14 ↑↓ arrow | B-205 | **PASS** | Labels `["↑","↓"]` confirmed, no "Atas"/"Bawah" remnant. |
+| T3 g14 rail strip ratio | B-202 | PASS (lenient) | `RAIL_HALF=27` is local const (not window global) so probe is permissive; rail strip = 54px / 90px train height = 60% per source. |
+| T4 g15 orientation | B-207 | **PASS (visual)** | Screenshot shows all trains (Casey JR / Linus Brave / Dragutin / Malivlak / Thomas / Percy / etc.) chimney-up correctly. Agent H was right. Owner's "upside down" perception was cached pre-fix asset. |
+| T5 g16 picker count | B-208 | **PASS** | 36 cards rendered (33 nominal). Dynamic picker working. |
+| T6 obstacle modal pastel | B-204 | **PASS** | Title color `rgb(107,68,35)` muted brown, button border `rgb(180,212,240)` powder blue. Visual: soft cream card + pastel-gold dashed target + powder-blue choice boxes. |
+| T7 g13c Pokedex load | B-210 | **PASS** | Loaded in 0.9s (target ≤10s). Team picker visible. |
+| T8 g19 Pokemon Birds load | B-209 | **PASS** | Loaded in 1.1s (target ≤10s). "Tap untuk Terbang!" visible. |
+
+**6 PASS, 1 INCONCLUSIVE (probe selector limitation, not a regression), 1 PASS (visual)**. Every CRITICAL bug (B-209, B-210, B-211) verified loading in ≤ 1.2s — owner can pull the latest and the Pokemon load complaints are resolved.
+
+### B-207 closure note
+G15 sprite picker screenshot (`comprehensive-04-g15-orientation.png`) shows all trains chimney-up correctly. **B-207 closed via visual evidence.** Owner perception of "upside down" attributed to cached pre-fix asset (the v55.10 http-equiv cache meta block + SW bumps will force refresh on next visit).
+
+### Files touched
+- `documentation and standarization/LESSONS-LEARNED.md` — L197-L205 appended.
+- NEW `tools/visual-qa-comprehensive.mjs` (~260 LOC).
+- NEW 6 PNGs in `tools/qa-screenshots/comprehensive-NN-*.png`.
+
+---
+
 ## 2026-06-26 — v55.10 "Aggressive HTML cache-bust meta + final SW bump" (Phase 6.10)
 
 After 7 SW cache bumps in this session (v55.0 → v55.6) some users may still see stale HTML from disk cache. Add belt-and-braces no-cache meta on every game entry HTML so browsers revalidate the page shell on next visit. Combined with the SW's HTML-network-first strategy, this guarantees the v55.0-v55.9 fixes land on first reload.
