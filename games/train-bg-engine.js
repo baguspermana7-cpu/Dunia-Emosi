@@ -380,6 +380,70 @@
     return ids[ids.length - 1]
   }
 
+  // ── v54.67: demo scene for spec §23 acceptance scenarios ──────────────────
+  // demoScene({ locationId, time, weather, journeyProgress }) sets the engine
+  // to a known state for QA / spec validation. After call, all layer setups
+  // fire so the scene paints immediately.
+  function demoScene (opts) {
+    opts = opts || {}
+    setContext({
+      locationId: opts.locationId || 'id_surabaya',
+      timeOfDay: opts.time || 'sore',
+      weather: opts.weather || 'hujan-ringan',
+      journeyProgress: typeof opts.journeyProgress === 'number' ? opts.journeyProgress : 0.85, // approaching station
+    })
+  }
+
+  // ── v54.67: debug overlay — fixed-position DOM panel showing engine state.
+  // Enabled by `localStorage['bg-debug'] === '1'` OR `?bgdebug=1` URL param.
+  // RAF-updated every ~500ms with current location / time / weather / journey /
+  // active sprite count / NPC count.
+  let _debugEl = null
+  let _debugRaf = null
+  let _debugLastTick = 0
+  function debugEnabled () {
+    try {
+      if (localStorage.getItem('bg-debug') === '1') return true
+      if (location && location.search && /[?&]bgdebug=1/.test(location.search)) return true
+    } catch (_) {}
+    return false
+  }
+  function showDebug () {
+    if (_debugEl || !debugEnabled()) return
+    _debugEl = document.createElement('div')
+    _debugEl.id = 'train-bg-debug'
+    _debugEl.style.cssText = 'position:fixed;top:8px;right:8px;z-index:9990;background:rgba(0,0,0,0.78);color:#fde047;font-family:monospace;font-size:11px;line-height:1.4;padding:8px 10px;border-radius:6px;pointer-events:none;max-width:240px;border:1px solid rgba(253,224,71,0.5)'
+    document.body.appendChild(_debugEl)
+    function loop (now) {
+      if (!_debugEl) return
+      const n = (typeof now === 'number') ? now : ((global.performance && global.performance.now) ? global.performance.now() : Date.now())
+      if (n - _debugLastTick > 500) {
+        _debugLastTick = n
+        const s = State
+        const lines = []
+        lines.push('<b>TrainBG ' + (global.TrainBG.version || '?') + '</b>')
+        lines.push('loc: ' + ((s.location && s.location.displayName) || '—'))
+        lines.push('time: ' + ((s.timeOfDay && s.timeOfDay.name) || '—'))
+        lines.push('wx: ' + ((s.weather && s.weather.id) || '—'))
+        lines.push('phase: ' + ((s.journey && s.journey.name) || '—'))
+        lines.push('progress: ' + (s.journeyProgress * 100).toFixed(0) + '%')
+        lines.push('sprites: ' + activeSpriteCount() + '/' + (QUALITY_CAPS[_quality] || 0))
+        const npcL = s.layers.npc
+        lines.push('npc: ' + (npcL ? npcL.children.length : 0))
+        try {
+          if (global.BGEvents && global.BGEvents._activeName) lines.push('event: ' + global.BGEvents._activeName)
+        } catch (_) {}
+        _debugEl.innerHTML = lines.join('<br>')
+      }
+      _debugRaf = requestAnimationFrame(loop)
+    }
+    _debugRaf = requestAnimationFrame(loop)
+  }
+  function hideDebug () {
+    if (_debugRaf) { try { cancelAnimationFrame(_debugRaf) } catch (_) {} _debugRaf = null }
+    if (_debugEl) { try { _debugEl.remove() } catch (_) {} _debugEl = null }
+  }
+
   // ── Public API ─────────────────────────────────────────────────────────────
   global.TrainBG = {
     version: '54.60',
@@ -401,5 +465,9 @@
     LocationTheme,
     NPCSystem,
     AudioSystem,
+    demoScene,
+    showDebug,
+    hideDebug,
+    debugEnabled,
   }
 })(typeof window !== 'undefined' ? window : globalThis)

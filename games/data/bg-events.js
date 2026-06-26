@@ -371,6 +371,7 @@
     version: '54.66',
     start, stop,
     EVENTS,
+    get _activeName () { return State.active },  // v54.67: for debug overlay
     fire (name) {
       const e = EVENTS[name]; if (!e) return
       State.active = name

@@ -183,12 +183,12 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <canvas id="pixi-canvas"></canvas>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="train-vfx.js?v=54.56-20260625bi"></script>
-<script src="train-bg-engine.js?v=54.64-20260626bq"></script>
+<script src="train-bg-engine.js?v=54.67-20260626bt"></script>
 <script src="data/bg-themes.js?v=54.64-20260626bq"></script>
 <script src="data/bg-renderers.js?v=54.64-20260626bq"></script>
 <script src="data/bg-npcs.js?v=54.64-20260626bq"></script>
 <script src="data/bg-audio.js?v=54.65-20260626br"></script>
-<script src="data/bg-events.js?v=54.66-20260626bs"></script>
+<script src="data/bg-events.js?v=54.67-20260626bt"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <!-- v54.28 I13: loop the train ambient SFX (was one-shot, faded after first cycle, leaving silence). -->
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" loop preload="auto" style="display:none"></audio>
@@ -845,15 +845,28 @@ async function initPixi() {
       if (TrainBG.Renderers && typeof TrainBG.Renderers.attachAll === 'function') {
         TrainBG.Renderers.attachAll()
       }
-      // Pick location by level chunk
-      const CITIES = ['id_surabaya','id_jakarta','id_bandung','id_yogyakarta','id_semarang']
-      const cityIdx = Math.min(CITIES.length - 1, Math.floor((LEVEL - 1) / 6))
-      const locationId = CITIES[cityIdx]
-      // Pick time-of-day + weather using location-weighted random
-      const tod = TrainBG.LocationTheme.pickTimeFor(locationId, LEVEL, 30)
-      const weather = TrainBG.LocationTheme.pickWeatherFor(locationId)
-      TrainBG.setContext({ locationId, timeOfDay: tod, weather, journeyProgress: 0 })
-      console.log('[BG] level', LEVEL, '→', locationId, '/', tod.name, '/', weather.id)
+      // v54.67: URL-param overrides for QA / spec demos
+      //   ?demo=surabaya-sunset-rain  → forces spec §23 demo scene
+      //   ?bgdebug=1                  → show fixed-position state overlay
+      const urlParams = new URLSearchParams(location.search || '')
+      const demoMode = urlParams.get('demo')
+      if (demoMode === 'surabaya-sunset-rain') {
+        TrainBG.demoScene({ locationId: 'id_surabaya', time: 'sore', weather: 'hujan-ringan', journeyProgress: 0.85 })
+        console.log('[BG] DEMO surabaya-sunset-rain forced')
+      } else {
+        // Pick location by level chunk
+        const CITIES = ['id_surabaya','id_jakarta','id_bandung','id_yogyakarta','id_semarang']
+        const cityIdx = Math.min(CITIES.length - 1, Math.floor((LEVEL - 1) / 6))
+        const locationId = CITIES[cityIdx]
+        // Pick time-of-day + weather using location-weighted random
+        const tod = TrainBG.LocationTheme.pickTimeFor(locationId, LEVEL, 30)
+        const weather = TrainBG.LocationTheme.pickWeatherFor(locationId)
+        TrainBG.setContext({ locationId, timeOfDay: tod, weather, journeyProgress: 0 })
+        console.log('[BG] level', LEVEL, '→', locationId, '/', tod.name, '/', weather.id)
+      }
+      if (urlParams.get('bgdebug') === '1' || (typeof localStorage !== 'undefined' && localStorage.getItem('bg-debug') === '1')) {
+        TrainBG.showDebug()
+      }
     }
   } catch (e) { console.warn('[BG] init failed', e) }
 

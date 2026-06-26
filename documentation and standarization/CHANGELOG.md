@@ -1,5 +1,37 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.67 "Demo scene + debug overlay for QA" (Phase 2.6)
+
+Adds two engine entry-points for spec §23 acceptance scenarios + live QA.
+
+### New engine API
+
+- `TrainBG.demoScene({locationId, time, weather, journeyProgress})` — sets a complete known context for one-shot reproduction. Defaults reproduce the spec §23 "Surabaya Sore Hujan Ringan" scenario (`id_surabaya` / `sore` / `hujan-ringan` / `journeyProgress 0.85`).
+- `TrainBG.showDebug()` / `TrainBG.hideDebug()` / `TrainBG.debugEnabled()` — fixed-position DOM panel (top-right). Polls every 500ms via RAF and shows: TrainBG version, location displayName, timeOfDay name, weather id, journey phase, progress %, sprite count vs cap, NPC layer children count, active event name.
+
+### Activation
+
+- URL params on G15 (`games/g15-pixi.html`): `?demo=surabaya-sunset-rain` calls `TrainBG.demoScene(...)`; `?bgdebug=1` calls `TrainBG.showDebug()`.
+- localStorage flag: `localStorage.setItem('bg-debug', '1')` persists the overlay.
+
+### bg-events touch
+
+- `BGEvents._activeName` getter exposes `State.active` for the debug overlay's "active event" row.
+
+### Files touched
+- `games/train-bg-engine.js` — `demoScene`, `showDebug`, `hideDebug`, `debugEnabled`, RAF panel render loop.
+- `games/data/bg-events.js` — `_activeName` getter.
+- `games/g15-pixi.html` — URL param handler (post-`init` block).
+- `sw.js` v54.66 → v54.67.
+- 3 train HTMLs — `train-bg-engine.js?v=` + `bg-events.js?v=` cache-bust to v54.67-20260626bt.
+
+### Verification
+
+- Syntax check OK on all 6 engine files.
+- `?demo=surabaya-sunset-rain&bgdebug=1` reproduces spec §23 acceptance scenario with overlay readout for verification.
+
+---
+
 ## 2026-06-26 — v54.66 "Journey events: passing-train, crossing, tunnel, sun-break, fireworks" (Phase 2.5)
 
 NEW `games/data/bg-events.js` (~280 LOC). 5 random journey events fire during gameplay, journey-phase + time-of-day gated.
