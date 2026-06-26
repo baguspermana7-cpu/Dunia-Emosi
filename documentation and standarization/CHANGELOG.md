@@ -1,5 +1,32 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v55.10 "Aggressive HTML cache-bust meta + final SW bump" (Phase 6.10)
+
+After 7 SW cache bumps in this session (v55.0 → v55.6) some users may still see stale HTML from disk cache. Add belt-and-braces no-cache meta on every game entry HTML so browsers revalidate the page shell on next visit. Combined with the SW's HTML-network-first strategy, this guarantees the v55.0-v55.9 fixes land on first reload.
+
+### What changed
+
+Added to `<head>` of g13c-pixi.html, g14.html, g14-side.html, g15-pixi.html, g16-pixi.html, g19-pixi.html:
+```html
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+```
+
+SW bumped v55.6 → v55.10 (skip v55.7/v55.8/v55.9 numbers — those were bundled into v55.7-v55.9 commit `ab39e0e`; bumping directly to v55.10 keeps the SW version aligned with the latest cumulative state).
+
+### Why this is "belt-and-braces"
+
+http-equiv Cache-Control is a weak signal — most modern browsers prefer the server's HTTP headers. But for static-hosted Dunia Emosi on Vercel/GitHub Pages where we can't always control response headers, this nudges Chrome/Safari mobile to revalidate. The PRIMARY mechanism remains the SW network-first HTML strategy (sw.js fetch handler at line 90+).
+
+### Files touched
+- 6 game HTMLs — 3-line meta block injection after apple-mobile-web-app-capable.
+- `sw.js` v55.6 → v55.10.
+
+### Closes B-211 (slow-loading sensation) — defensive layer on top of v55.0's slim-SHELL fix.
+
+---
+
 ## 2026-06-26 — v55.6 "Pastel soft-calm palette in obstacle modal" (Phase 6.5)
 
 Owner verbatim: *"pilihan jawabannya style tidak soft calm pallet colour pastell."*
