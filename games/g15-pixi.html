@@ -877,9 +877,18 @@ async function initPixi() {
     // Stars (night/space theme)
     if (BG_THEME === 0 || BG_THEME === 3) {
       for (const st of bgStars) {
+        if (st._weather) continue;  // weather drops handled below
         st.x -= st._speed * dt;
         if (st.x < 0) { st.x = W; st.y = Math.random() * H * 0.65; }
       }
+    }
+    // v54.59 weather drops — fall + wrap. Tick regardless of BG_THEME.
+    for (const st of bgStars) {
+      if (!st._weather) continue;
+      st.y += st._vy * dt;
+      st.x += (st._vx || 0) * dt;
+      if (st.y > H + 10) { st.y = -10; st.x = Math.random() * W; }
+      if (st.x < -10) { st.x = W + 5; }
     }
 
     // Clouds move
@@ -1249,6 +1258,111 @@ function buildBackground() {
       b._phase = Math.random() * Math.PI * 2;
       bgLayer.addChild(b);
       bgBirds.push(b);
+    }
+  }
+
+  // v54.59: per-level WEATHER variant — random roll once per level, stable
+  // for the whole run. 50% clear / 20% rain / 15% storm / 10% sunny / 5% fog.
+  // Stored in S.weather (declared at top of file). Pixi particles via TrainVFX.
+  if (typeof S !== 'undefined') {
+    S.weather = S.weather || (() => {
+      const r = Math.random()
+      if (r < 0.50) return 'clear'
+      if (r < 0.70) return 'rain'
+      if (r < 0.85) return 'storm'
+      if (r < 0.95) return 'sunny'
+      return 'fog'
+    })()
+    if (S.weather === 'rain' || S.weather === 'storm') {
+      // 30-45 falling rain streaks (storm denser + slower-fade darker sky)
+      const count = S.weather === 'storm' ? 45 : 30
+      for (let i = 0; i < count; i++) {
+        const drop = new PIXI.Graphics();
+        drop.rect(-1, -6, 2, 8).fill({ color: 0x60a5fa, alpha: 0.55 });
+        drop.x = Math.random() * W; drop.y = Math.random() * H;
+        drop._vy = 6 + Math.random() * 3
+        drop._vx = -1.5
+        drop._weather = true
+        bgLayer.addChild(drop); bgStars.push(drop)
+      }
+      if (S.weather === 'storm') {
+        const dim = new PIXI.Graphics();
+        dim.rect(0, 0, W, H * 0.6).fill({ color: 0x111827, alpha: 0.25 });
+        bgLayer.addChild(dim)
+      }
+    } else if (S.weather === 'sunny') {
+      // Extra golden glints high in the sky
+      for (let i = 0; i < 8; i++) {
+        const gl = new PIXI.Graphics();
+        gl.circle(0, 0, 1.6 + Math.random()).fill({ color: 0xfde047, alpha: 0.85 })
+        gl.x = Math.random() * W; gl.y = Math.random() * H * 0.35
+        gl._speed = 0.1
+        bgLayer.addChild(gl); bgStars.push(gl)
+      }
+    } else if (S.weather === 'fog') {
+      const fog = new PIXI.Graphics();
+      fog.rect(0, H * 0.25, W, H * 0.5).fill({ color: 0xe2e8f0, alpha: 0.22 });
+      bgLayer.addChild(fog)
+    }
+  }
+
+  // v54.59: biome-specific decorations keyed on BG_THEME. Augments the
+  // existing per-theme element batches (moon/sun/fireflies) with more
+  // density so each level reads as a distinct world. Owner: "pemandangan
+  // sangat tidak variasi".
+  if (BG_THEME === 0) {
+    // Night: add 2 distant lit windows (yellow squares) far in the BG.
+    for (let i = 0; i < 4; i++) {
+      const w = new PIXI.Graphics();
+      w.rect(0, 0, 3, 3).fill({ color: 0xfbbf24, alpha: 0.65 });
+      w.x = W * (0.18 + Math.random() * 0.7); w.y = H * (0.38 + Math.random() * 0.06);
+      w._speed = 0.05;
+      bgLayer.addChild(w); bgStars.push(w);
+    }
+  } else if (BG_THEME === 1) {
+    // Sunrise: add 6 floating golden petals drifting
+    for (let i = 0; i < 6; i++) {
+      const p = new PIXI.Graphics();
+      p.ellipse(0, 0, 3, 5).fill({ color: 0xfb923c, alpha: 0.7 });
+      p.x = Math.random() * W; p.y = H * (0.45 + Math.random() * 0.15);
+      p._speed = 0.25 + Math.random() * 0.15;
+      p.rotation = Math.random() * Math.PI;
+      bgLayer.addChild(p); bgStars.push(p);
+    }
+  } else if (BG_THEME === 2) {
+    // Forest: 4 distant pine silhouettes (parallax slow)
+    for (let i = 0; i < 4; i++) {
+      const tr = new PIXI.Graphics();
+      tr.poly([0,-22, -10,4, 10,4]).fill({ color: 0x14532d, alpha: 0.7 });
+      tr.rect(-2, 4, 4, 6).fill({ color: 0x422006, alpha: 0.7 });
+      tr.x = W * (0.1 + i * 0.27); tr.y = H * 0.62;
+      tr._speed = 0.12;
+      bgLayer.addChild(tr); bgStars.push(tr);
+    }
+  } else if (BG_THEME === 3) {
+    // Mountain: 3 snow drifts on the foreground
+    for (let i = 0; i < 3; i++) {
+      const sd = new PIXI.Graphics();
+      sd.ellipse(0, 0, 18 + i * 6, 5).fill({ color: 0xf0f9ff, alpha: 0.85 });
+      sd.x = W * (0.2 + i * 0.32); sd.y = H * 0.78;
+      sd._speed = 0.18;
+      bgLayer.addChild(sd); bgStars.push(sd);
+    }
+  } else if (BG_THEME === 4) {
+    // Tropical: 3 palm fronds at the foreground edges
+    for (let i = 0; i < 3; i++) {
+      const palm = new PIXI.Graphics();
+      // Trunk
+      palm.rect(-1, 0, 2, 22).fill({ color: 0x422006, alpha: 0.8 });
+      // Fronds (5-spoke star approximating leaves)
+      for (let a = 0; a < 5; a++) {
+        const ang = -Math.PI / 2 + (a - 2) * 0.4;
+        palm.rect(-1, -2, 2, 12).fill({ color: 0x15803d, alpha: 0.75 });
+        palm.rotation = ang * 0.1;
+      }
+      palm.x = W * (0.12 + i * 0.4); palm.y = H * 0.68;
+      palm._speed = 0.2;
+      bgLayer.addChild(palm); bgStars.push(palm);
     }
   }
 }

@@ -1,5 +1,44 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.59 "G15 Scenery variation — weather + biome decorations" (plan Phase 1.5)
+
+Owner: "pemandangan sangat tidak variasi". G15 `buildBackground` now ships per-race weather + per-theme decorative depth.
+
+### Ships
+
+- **S.weather randomizer** — once per level/race-start, S.weather is rolled with this distribution:
+  - 50% **clear** (no overlay, default)
+  - 20% **rain** — 30 falling streaks (`rect 2×8`, `_vy 6-9 px/frame`, `_vx -1.5`)
+  - 15% **storm** — 45 streaks + dim 25%-alpha gray overlay on upper 60% of screen
+  - 10% **sunny** — 8 golden glint particles drifting in upper third
+  - 5% **fog** — slate-tinted 22%-alpha mid-band overlay
+  Stored in `S.weather` so it persists across `tick` calls within a run.
+
+- **Weather drop tick** — extended the existing `bgStars` tick to handle weather drops via `st._weather` flag. Drops fall via `_vy`, drift via `_vx`, and wrap to top of screen when off-bottom. Independent of `BG_THEME` so storms can land on any level.
+
+- **Per-BG_THEME decoration density** — 4 new decoration sets stacked on top of existing moon/sun/fireflies:
+  - **BG_THEME 0 (night)** — 4 distant lit windows (3×3 yellow squares)
+  - **BG_THEME 1 (sunrise)** — 6 floating golden petals
+  - **BG_THEME 2 (forest)** — 4 distant pine silhouettes (poly + trunk, parallax slow)
+  - **BG_THEME 3 (mountain)** — 3 snow drifts (ellipses, foreground)
+  - **BG_THEME 4 (tropical)** — 3 palm fronds (trunk + frond layers)
+
+### Files touched
+- `games/g15-pixi.html` — `buildBackground` weather randomizer + decoration switch; bgStars tick extended with `_weather` branch.
+- `sw.js` — CACHE_VERSION v54.58-20260626bk → v54.59-20260626bl.
+
+### Verification
+- Syntax check OK.
+- Weather is stable per race-start (RNG seeded once on level boot, stored in S).
+- PROTECTED chars + PvP balance unchanged.
+
+### Next
+
+- v54.60 G16 Visual+VFX (hook bezier trail, rescue snap-zoom, obstacle destroy, cinema bars easeOutBack).
+- v54.61 G18 Visual+VFX.
+
+---
+
 ## 2026-06-26 — v54.58 "TimeOfDay shared module + G15 port" (plan Phase 1.4)
 
 Owner: "kurang variasi cuaca atau waktu". Lifted G14's `TIME_PHASES` into `train-shared.js` as a 6-phase sky-color rotation reusable by all 4 train games. G15 ports first.
