@@ -16,9 +16,15 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 #btn-back{background:rgba(255,255,255,0.92);border:2px solid rgba(120,53,15,0.6);border-radius:12px;color:#5a2a00;padding:10px 14px;font-size:14px;cursor:pointer;font-family:inherit;pointer-events:all;flex-shrink:0;font-weight:900;min-width:88px;min-height:44px;box-shadow:0 3px 0 rgba(120,53,15,0.3)}
 #train-badge{background:linear-gradient(135deg,#fde68a,#fcd34d);border:2px solid #b45309;border-radius:10px;padding:7px 12px;color:#5a2a00;font-size:13px;font-weight:900;flex-shrink:0;pointer-events:none;box-shadow:0 3px 0 rgba(120,53,15,0.3);max-width:46vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #hud-mid{flex:1;text-align:center;min-width:0;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.5);pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center}
-#hud-dist{font-size:clamp(12px,3.2vw,15px);font-weight:900;white-space:nowrap}
-#hud-pos{font-size:10px;color:#fde047;font-weight:900;margin-top:1px;white-space:nowrap;max-width:50vw;overflow:hidden;text-overflow:ellipsis}
-#hud-hp{font-size:clamp(13px,3.6vw,17px);flex-shrink:0;pointer-events:none;text-shadow:0 2px 4px rgba(0,0,0,0.5);white-space:nowrap}
+#hud-dist{font-size:clamp(18px,4.8vw,22px);font-weight:900;white-space:nowrap;line-height:1}
+#hud-dist .target{font-size:0.55em;color:#fde047;font-weight:900;opacity:0.9;margin-left:2px}
+#hud-pos{font-size:clamp(10px,2.6vw,12px);color:#fde047;font-weight:900;margin-top:3px;white-space:nowrap;max-width:50vw;overflow:hidden;text-overflow:ellipsis}
+#hud-hp{flex-shrink:0;pointer-events:none;white-space:nowrap;background:rgba(0,0,0,0.40);border:2px solid #ef4444;border-radius:14px;padding:6px 10px;color:#fff;font-size:14px;font-weight:900;text-shadow:0 1px 2px rgba(0,0,0,0.6);display:inline-flex;align-items:center;gap:3px;min-height:36px}
+
+/* v55.0 — Progress bar under HUD top */
+#hud-progress{position:fixed;top:max(60px,calc(env(safe-area-inset-top) + 48px));left:10px;right:10px;z-index:49;height:12px;background:rgba(0,0,0,0.42);border:2px solid rgba(255,255,255,0.85);border-radius:10px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.35);pointer-events:none}
+#hud-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#22c55e 0%,#84cc16 55%,#fbbf24 100%);border-radius:6px 0 0 6px;transition:width 0.35s ease-out;box-shadow:inset 0 -2px 0 rgba(0,0,0,0.18)}
+@media (prefers-reduced-motion: reduce){#hud-progress-fill{transition:none}}
 #btn-pause,#btn-koleksi,#btn-settings{pointer-events:all;flex-shrink:0;border-radius:10px;padding:7px 10px;font-size:14px;cursor:pointer;font-family:inherit;font-weight:900;min-height:44px;min-width:44px;box-shadow:0 3px 0 rgba(0,0,0,0.3)}
 #btn-pause{background:linear-gradient(135deg,#e0e7ff,#a5b4fc);border:2px solid #3730a3;color:#1e1b4b}
 #btn-koleksi{background:linear-gradient(135deg,#fcd34d,#f59e0b);border:2px solid #b45309;color:#5a2a00}
@@ -74,6 +80,36 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 .end-btn{background:linear-gradient(135deg,#1976d2,#0d47a1);color:#fff;border:0;padding:14px 24px;font-family:inherit;font-weight:900;font-size:15px;border-radius:14px;cursor:pointer;min-height:48px;min-width:140px;box-shadow:0 4px 0 #0a3678}
 .end-btn.amber{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#5a2a00;box-shadow:0 4px 0 #b45309}
 .end-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #0a3678}
+
+/* v55.0 — End modal celebration extras */
+.end-confetti-ring{display:none;justify-content:center;gap:10px;margin-bottom:6px;font-size:26px;animation:end-confetti-pop 0.7s ease-out}
+.end-confetti-ring.show{display:flex}
+.end-confetti-ring span{display:inline-block;animation:end-confetti-bounce 1.6s ease-in-out infinite;transform-origin:center bottom}
+.end-confetti-ring span:nth-child(2){animation-delay:0.1s}
+.end-confetti-ring span:nth-child(3){animation-delay:0.2s}
+.end-confetti-ring span:nth-child(4){animation-delay:0.3s}
+.end-confetti-ring span:nth-child(5){animation-delay:0.4s}
+.end-confetti-ring span:nth-child(6){animation-delay:0.5s}
+@keyframes end-confetti-pop{0%{opacity:0;transform:scale(0.6)}100%{opacity:1;transform:scale(1)}}
+@keyframes end-confetti-bounce{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-7px) rotate(8deg)}}
+.end-stars-row{display:none;justify-content:center;gap:12px;margin:12px 0 4px;font-size:46px;line-height:1}
+.end-stars-row.show{display:flex}
+.end-star{opacity:0.22;transform:scale(0.6);transition:transform 0.34s cubic-bezier(0.34,1.56,0.64,1),opacity 0.34s,filter 0.34s;filter:grayscale(0.7)}
+.end-star.on{opacity:1;transform:scale(1);filter:drop-shadow(0 0 10px #fde047) grayscale(0)}
+.end-mascot{display:none;font-size:68px;line-height:1;margin:6px 0 -2px;animation:end-mascot-wobble 2.2s ease-in-out infinite}
+.end-mascot.show{display:block}
+@keyframes end-mascot-wobble{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+.end-btn.cta-retry{animation:retry-bounce 1.4s ease-in-out infinite}
+.end-btn.cta-retry:hover{animation:none;transform:translateY(-3px) scale(1.06);box-shadow:0 7px 0 #b45309}
+@keyframes retry-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@media (prefers-reduced-motion: reduce){
+  .end-confetti-ring,.end-confetti-ring span,.end-mascot,.end-btn.cta-retry{animation:none}
+  .end-star{transition:none}
+  .end-btn.cta-retry:hover{transform:none}
+}
+
+/* v55.0 — Pause tip */
+.pause-tip{margin:18px auto 0;padding:12px 14px;background:rgba(255,255,255,0.85);border:2px dashed #312e81;border-radius:14px;color:#312e81;font-size:13px;font-weight:900;text-align:left;line-height:1.45;max-width:340px}
 </style>
 </head>
 <body>
@@ -103,14 +139,17 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
   <button id="btn-back" type="button" onclick="goBack()">← Kembali</button>
   <div id="train-badge"><span id="train-name">Loading…</span></div>
   <div id="hud-mid">
-    <div id="hud-dist">0m / 1000m</div>
+    <div id="hud-dist">0m<span class="target"> / 1000m</span></div>
     <div id="hud-pos">Mulai!</div>
   </div>
-  <div id="hud-hp">❤️❤️❤️</div>
+  <div id="hud-hp">❤️×3</div>
   <button id="btn-pause" type="button" onclick="g14sTogglePause()">⏸</button>
   <button id="btn-koleksi" type="button" onclick="if(window.RewardGallery) RewardGallery.open()">🏆</button>
   <button id="btn-settings" type="button" onclick="if(window.SettingsModal) SettingsModal.open()">⚙️</button>
 </div>
+
+<!-- v55.0 — Progress bar under HUD top -->
+<div id="hud-progress" aria-hidden="true"><div id="hud-progress-fill"></div></div>
 
 <!-- v54.93 — Pause overlay -->
 <div id="pause-modal" style="position:fixed;inset:0;z-index:250;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,0.75);backdrop-filter:blur(6px)">
@@ -121,6 +160,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
       <button onclick="g14sTogglePause()" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;border:0;padding:14px 24px;font-family:inherit;font-weight:900;font-size:15px;border-radius:14px;cursor:pointer;min-height:48px;min-width:140px;box-shadow:0 4px 0 #14532d">▶ Lanjutkan</button>
       <button onclick="goBack()" style="background:linear-gradient(135deg,#f87171,#dc2626);color:#fff;border:0;padding:14px 24px;font-family:inherit;font-weight:900;font-size:15px;border-radius:14px;cursor:pointer;min-height:48px;min-width:140px;box-shadow:0 4px 0 #7f1d1d">🚂 Ganti Kereta</button>
     </div>
+    <div class="pause-tip" id="pause-tip"><span id="pause-tip-text">💡 Tips: Lompat lebih awal untuk lewati rintangan tinggi!</span></div>
     <button type="button" class="tut-rewatch" onclick="g14sReplayTutorial()">🎓 Lihat Tutorial Lagi</button>
   </div>
 </div>
@@ -170,10 +210,19 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 </div>
 
 <div id="end-modal"><div class="end-card">
+  <div id="end-confetti-ring" class="end-confetti-ring" aria-hidden="true">
+    <span>🎉</span><span>⭐</span><span>🏆</span><span>🎊</span><span>🪙</span><span>🚂</span>
+  </div>
+  <div id="end-mascot" class="end-mascot" aria-hidden="true">🐱</div>
   <div class="end-title" id="end-title">🏁 Selesai!</div>
+  <div id="end-stars-row" class="end-stars-row" aria-hidden="true">
+    <span class="end-star" id="end-star-1">⭐</span>
+    <span class="end-star" id="end-star-2">⭐</span>
+    <span class="end-star" id="end-star-3">⭐</span>
+  </div>
   <div class="end-stats" id="end-stats">…</div>
   <div class="end-btns">
-    <button class="end-btn amber" onclick="g14sRestart()">🔁 Ulangi</button>
+    <button class="end-btn amber" id="end-btn-retry" onclick="g14sRestart()">🔁 Ulangi</button>
     <button class="end-btn" onclick="goBack()">🚂 Ganti Kereta</button>
   </div>
 </div></div>
@@ -260,6 +309,12 @@ const S = {
 // v54.98 — Expose game state on window so headless probes (visual-qa.mjs) can
 // inspect cloud/bird counts, jumpY, distance, etc. without source modification.
 if (typeof window !== 'undefined') window.S = S
+
+// v54.99 — Detect prefers-reduced-motion once at load. When true, skip the bob,
+// micro-rotation, and sway overlays so motion-sensitive users get a still train.
+const REDUCED_MOTION = (typeof window !== 'undefined' && typeof window.matchMedia === 'function')
+  ? !!window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  : false
 
 // Layout
 const SKY_FRAC = 0.65            // upper 65% = sky/landscape
@@ -571,7 +626,9 @@ function buildTrain() {
     // Previous PIXI.Sprite.from(url) + RAF poll missed the texture load window
     // in headless puppeteer testing (texture stayed at 1×1 placeholder, sprite
     // rendered as 0.5px dot). Assets.load returns a fully-resolved texture.
-    const targetH = (cfg.spriteHeight || 90) * 1.5
+    // v54.99 — Reduced from *1.5 to *1.1 so sprite fills ~18-22% of screen width
+    // instead of ~30%+. Keeps train proportional to scene; lets background read.
+    const targetH = (cfg.spriteHeight || 90) * 1.1
     PIXI.Assets.load(cfg.spriteUrl).then((tex) => {
       try {
         const sprite = new PIXI.Sprite(tex)
@@ -730,7 +787,14 @@ function setupInput() {
   document.getElementById('pixi-canvas').addEventListener('pointerdown', () => g14sJump())
 }
 
-// v54.93 — Pause/resume
+// v54.93 — Pause/resume  (v55.0 — random kid-friendly tip)
+const G14S_PAUSE_TIPS = [
+  '💡 Tips: Lompat lebih awal untuk lewati rintangan tinggi!',
+  '💡 Tips: Koin di atas = perlu lompat tinggi',
+  '💡 Tips: Hati di langit = sembuhkan kereta',
+  '💡 Tips: Sinyal merah berarti berhenti',
+  '💡 Tips: Hewan menyeberang? Bunyikan bell dengan tap!',
+]
 function g14sTogglePause() {
   if (S.gameOver || S.finished) return
   if (S.paused) {
@@ -741,6 +805,9 @@ function g14sTogglePause() {
   } else {
     S.paused = true
     S.running = false
+    // v55.0 — pick a fresh tip each time
+    const tipEl = document.getElementById('pause-tip-text')
+    if (tipEl) tipEl.textContent = G14S_PAUSE_TIPS[Math.floor(Math.random() * G14S_PAUSE_TIPS.length)]
     document.getElementById('pause-modal').style.display = 'flex'
     document.getElementById('btn-pause').textContent = '▶'
   }
@@ -963,9 +1030,10 @@ function tick(tickerOrDelta) {
     }
   }
 
-  // v54.89 — Subtle train bob (chuff rhythm)
+  // v54.99 — Train bob (chuff rhythm). Amplitude raised 1.4 → 2.8 so the lift
+  // actually reads on screen at the smaller sprite scale.
   if (!S.jumping) {
-    const bob = Math.sin(S.frame * 0.18) * 1.4
+    const bob = REDUCED_MOTION ? 0 : Math.sin(S.frame * 0.18) * 2.8
     trainContainer.y = H * RAIL_Y_FRAC - 4 + bob
   }
 
@@ -986,9 +1054,35 @@ function tick(tickerOrDelta) {
   // Jump Y override (replaces the bob below if jumping)
   if (S.jumping) {
     trainContainer.y = H * RAIL_Y_FRAC - 4 + S.jumpY
-    trainContainer.rotation = Math.sin(S.frame * 0.15) * 0.04
+    trainContainer.rotation = REDUCED_MOTION ? 0 : Math.sin(S.frame * 0.15) * 0.04
   } else {
-    trainContainer.rotation = 0
+    // v54.99 — Micro wheel-rhythm rotation (±~1.4°) faked on container since
+    // the wheels are baked into the WebP sprite. Gives a sense of chuff motion.
+    trainContainer.rotation = REDUCED_MOTION ? 0 : Math.sin(S.frame * 0.18) * 0.025
+  }
+
+  // v54.99 — Horizontal sway overlay when boosting (post-milestone speed bump)
+  // and a starting puff at race begin from the chimney.
+  {
+    const baseX = W * PLAYER_X_FRAC
+    if (!REDUCED_MOTION && !S.jumping && S.speed > S.baseSpeed + 0.001) {
+      trainContainer.x = baseX + Math.sin(S.frame * 0.4) * 1.0
+    } else {
+      trainContainer.x = baseX
+    }
+    // Big launch puffs from chimney during the first 30 frames after S.running
+    // becomes true (S.frame is reset to 0 at the same moment). Three big puffs
+    // at frames 2, 12, 22 give a "puff puff CHUFF" launch feel.
+    if (!S.finished && (S.frame === 2 || S.frame === 12 || S.frame === 22)) {
+      const launch = new PIXI.Graphics()
+      launch.circle(0, 0, 12).fill(0xeeeeee)
+      // Chimney sits ~28px forward of train center, ~70px above the rail.
+      launch.x = trainContainer.x + 16
+      launch.y = trainContainer.y - 80 + S.jumpY
+      launch.alpha = 0.95
+      particleLayer.addChild(launch)
+      S.smokePuffs.push({ sprite: launch, vy: -16, vx: -0.6, life: 2.2 })
+    }
   }
 
   // Spawn obstacles
@@ -1009,6 +1103,11 @@ function tick(tickerOrDelta) {
       S.obstacles.splice(i, 1)
       continue
     }
+    // v54.99 — Per-frame visual animation (rotation wobble, ripple, bob).
+    // Lives outside the decoration short-circuit so decorations stay static.
+    if (o.type && typeof o.type.tick === 'function') {
+      try { o.type.tick(o.sprite, S.frame) } catch {}
+    }
     // v54.89 — Skip collision for decoration items (milestone signposts)
     if (o.isDecoration) continue
     // Collision: train fixed-X area vs obstacle
@@ -1024,11 +1123,16 @@ function tick(tickerOrDelta) {
 
   // Update HUD
   if (S.frame % 6 === 0) {
-    document.getElementById('hud-dist').textContent = Math.floor(S.distance) + 'm / ' + S.targetDistance + 'm'
-    document.getElementById('hud-hp').textContent = '❤️'.repeat(Math.max(0, S.hp)) || '💀'
+    // v55.0 — Big current distance + small "/ target" subscript
+    document.getElementById('hud-dist').innerHTML = Math.floor(S.distance) + 'm<span class="target"> / ' + S.targetDistance + 'm</span>'
+    // v55.0 — Compact heart pill (❤️×N) instead of repeated emoji
+    document.getElementById('hud-hp').textContent = S.hp > 0 ? ('❤️×' + S.hp) : '💀'
     // v54.90 — Position vs AI
     const pos = S.aiTrain ? (S.aiDistanceOffset > 0 ? 'Posisi 1 🥇' : 'Posisi 2 🥈') : 'Mulai!'
     document.getElementById('hud-pos').textContent = pos + ' · 🪙 ' + S.coinScore
+    // v55.0 — Progress bar fill
+    const pfill = document.getElementById('hud-progress-fill')
+    if (pfill) pfill.style.width = Math.min(100, (S.distance / S.targetDistance) * 100) + '%'
   }
 
   // Decrement invincible
@@ -1063,12 +1167,135 @@ function tick(tickerOrDelta) {
 
 // ── OBSTACLES ───────────────────────────────────────────────────────────────
 
+// v54.99 — Premium PIXI.Graphics obstacles with per-type animation + shadow.
+// Each definition exposes build(container) to draw children and tick(container, frame)
+// for per-frame motion. Containers are anchored at the rail bottom: children draw
+// upward via negative Y. The standard soft shadow is added inside build() at +4 px
+// (4 px below the rail line). Respect prefers-reduced-motion: skip wobble/rotation.
+const G14S_REDUCED_MOTION = (typeof window !== 'undefined' && window.matchMedia)
+  ? !!window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  : false
+
+function _g14sAddShadow(container, width, color) {
+  const sh = new PIXI.Graphics()
+  sh.ellipse(0, 4, Math.max(8, width * 0.5), 3).fill({ color: color != null ? color : 0x000000, alpha: 0.3 })
+  container.addChild(sh)
+  return sh
+}
+
 const OBSTACLE_TYPES = [
-  { id: 'rock',    icon: '🪨', height: 36, width: 40 },
-  { id: 'branch',  icon: '🌳', height: 60, width: 44 },
-  { id: 'barrier', icon: '🚧', height: 50, width: 48 },
-  { id: 'water',   icon: '💧', height: 22, width: 60 },
-  { id: 'cow',     icon: '🐮', height: 46, width: 56 },
+  {
+    id: 'rock', width: 40, height: 36,
+    build(c) {
+      _g14sAddShadow(c, 40)
+      const g = new PIXI.Graphics()
+      // Irregular boulder polygon, bottom-anchored (y = 0 at rail)
+      g.poly([
+        -18, 0,
+        -20, -12,
+        -14, -26,
+        -4, -34,
+        10, -32,
+        18, -22,
+        20, -10,
+        14, -2,
+      ]).fill(0x9e9e9e).stroke({ color: 0x424242, width: 2 })
+      // Soft highlight
+      g.ellipse(-6, -22, 5, 3).fill({ color: 0xe0e0e0, alpha: 0.55 })
+      c.addChild(g)
+    },
+    tick(c, frame) {
+      if (G14S_REDUCED_MOTION) return
+      c.rotation = Math.sin(frame * 0.3) * 0.05
+    },
+  },
+  {
+    id: 'branch', width: 44, height: 60,
+    build(c) {
+      _g14sAddShadow(c, 44)
+      const g = new PIXI.Graphics()
+      // Vertical brown stem 4×55
+      g.rect(-2, -55, 4, 55).fill(0x6d4c41).stroke({ color: 0x3e2723, width: 1 })
+      // 3 green leafy circles forming a bush at the top
+      g.circle(-7, -55, 9).fill(0x66bb6a).stroke({ color: 0x2e7d32, width: 1 })
+      g.circle(0, -62, 10).fill(0x66bb6a).stroke({ color: 0x2e7d32, width: 1 })
+      g.circle(7, -55, 9).fill(0x66bb6a).stroke({ color: 0x2e7d32, width: 1 })
+      c.addChild(g)
+    },
+    tick(c, frame) {
+      if (G14S_REDUCED_MOTION) return
+      c.rotation = Math.sin(frame * 0.15) * 0.08
+    },
+  },
+  {
+    id: 'barrier', width: 48, height: 50,
+    build(c) {
+      _g14sAddShadow(c, 48)
+      const g = new PIXI.Graphics()
+      // Two brown side posts spanning full height
+      g.rect(-22, -50, 5, 50).fill(0x6d4c41).stroke({ color: 0x3e2723, width: 1 })
+      g.rect(17, -50, 5, 50).fill(0x6d4c41).stroke({ color: 0x3e2723, width: 1 })
+      // Red/white candy-striped horizontal bar at mid-height (4 segments)
+      const barY = -32, barH = 14, segW = 10
+      for (let i = 0; i < 4; i++) {
+        const x = -20 + i * segW
+        g.rect(x, barY, segW, barH).fill(i % 2 === 0 ? 0xef4444 : 0xfafafa).stroke({ color: 0x424242, width: 1 })
+      }
+      c.addChild(g)
+    },
+    tick(_c, _frame) {
+      // Static — barrier does not animate
+    },
+  },
+  {
+    id: 'water', width: 60, height: 22,
+    build(c) {
+      _g14sAddShadow(c, 60)
+      const g = new PIXI.Graphics()
+      // Main light-blue puddle ellipse 60×16 sitting on the rail
+      g.ellipse(0, -8, 30, 8).fill({ color: 0x64b5f6, alpha: 0.85 }).stroke({ color: 0x1976d2, width: 1.5 })
+      // 3 small ripple circles offset around the puddle, alpha 0.6
+      g.circle(-18, -16, 3).fill({ color: 0xbbdefb, alpha: 0.6 })
+      g.circle(4, -18, 2.5).fill({ color: 0xbbdefb, alpha: 0.6 })
+      g.circle(15, -14, 3).fill({ color: 0xbbdefb, alpha: 0.6 })
+      // Soft highlight crescent on the puddle
+      g.ellipse(-8, -10, 8, 2).fill({ color: 0xe3f2fd, alpha: 0.6 })
+      c.addChild(g)
+    },
+    tick(c, frame) {
+      if (G14S_REDUCED_MOTION) return
+      const s = 1 + Math.sin(frame * 0.12) * 0.04
+      c.scale.x = s
+    },
+  },
+  {
+    id: 'cow', width: 56, height: 46,
+    build(c) {
+      // Brown shadow specifically for the cow per spec (override default black)
+      _g14sAddShadow(c, 56, 0x5d4037)
+      const t = new PIXI.Text({
+        text: '🐮',
+        style: { fontSize: 46, fontFamily: 'Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif' },
+      })
+      t.anchor.set(0.5, 1.0)
+      t.x = 0
+      t.y = 0
+      // Mark the emoji child so tick can find it without index gymnastics
+      t._g14sCowEmoji = true
+      c.addChild(t)
+    },
+    tick(c, frame) {
+      if (G14S_REDUCED_MOTION) return
+      // Small upward bob: shift the emoji within the container
+      for (let i = 0; i < c.children.length; i++) {
+        const ch = c.children[i]
+        if (ch && ch._g14sCowEmoji) {
+          ch.y = -Math.sin(frame * 0.2) * 1.5
+          break
+        }
+      }
+    },
+  },
 ]
 
 // v54.89 — Spawn flock of 3-5 birds flying right→left
@@ -1218,18 +1445,15 @@ function spawnMilestone(num) {
 
 function spawnObstacle() {
   const type = OBSTACLE_TYPES[Math.floor(Math.random() * OBSTACLE_TYPES.length)]
-  const text = new PIXI.Text({
-    text: type.icon,
-    style: {
-      fontSize: Math.max(type.height, type.width),
-      fontFamily: 'Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif',
-    }
-  })
-  text.anchor.set(0.5, 1.0)
-  text.x = W + 60
-  text.y = H * RAIL_Y_FRAC
-  obstacleLayer.addChild(text)
-  S.obstacles.push({ sprite: text, type, height: type.height })
+  // v54.99 — Wrap each obstacle in a PIXI.Container so animations (rotation,
+  // wobble, bob) can modify the wrapping container without leaking into the
+  // collision math, which still uses `o.height` plus container.x.
+  const container = new PIXI.Container()
+  container.x = W + 60
+  container.y = H * RAIL_Y_FRAC   // children draw upward via negative Y
+  if (typeof type.build === 'function') type.build(container)
+  obstacleLayer.addChild(container)
+  S.obstacles.push({ sprite: container, type, height: type.height })
 }
 
 function crashOn(o) {
@@ -1376,7 +1600,41 @@ function runCountdown(done) {
 // ── END ────────────────────────────────────────────────────────────────────
 
 function endRace(title, outcome) {
-  document.getElementById('end-title').textContent = title
+  // v55.0 — Outcome-aware polish: win = confetti ring + animated stars; lose = mascot + bouncy retry
+  const ring = document.getElementById('end-confetti-ring')
+  const mascot = document.getElementById('end-mascot')
+  const starsRow = document.getElementById('end-stars-row')
+  const retryBtn = document.getElementById('end-btn-retry')
+
+  // Reset display states (idempotent across replays)
+  if (ring) ring.classList.remove('show')
+  if (mascot) mascot.classList.remove('show')
+  if (starsRow) starsRow.classList.remove('show')
+  for (let i = 1; i <= 3; i++) {
+    const s = document.getElementById('end-star-' + i)
+    if (s) s.classList.remove('on')
+  }
+  if (retryBtn) retryBtn.classList.remove('cta-retry')
+
+  if (outcome === 'win') {
+    document.getElementById('end-title').textContent = title
+    if (ring) ring.classList.add('show')
+    if (starsRow) starsRow.classList.add('show')
+    // Star rating: 3 stars if full HP, 2 if 2HP, 1 if 1HP, 1 minimum on a win
+    const starCount = Math.max(1, Math.min(3, S.hp))
+    for (let i = 1; i <= starCount; i++) {
+      setTimeout(() => {
+        const s = document.getElementById('end-star-' + i)
+        if (s) s.classList.add('on')
+      }, i * 150)
+    }
+  } else {
+    // Lose — encouraging mascot + Hampir! header + bouncy "Coba lagi" CTA
+    if (mascot) { mascot.textContent = '🐱'; mascot.classList.add('show') }
+    document.getElementById('end-title').textContent = 'Hampir!'
+    if (retryBtn) { retryBtn.classList.add('cta-retry'); retryBtn.textContent = '🔁 Coba lagi' }
+  }
+
   const stats = [
     'Jarak: ' + Math.floor(S.distance) + 'm',
     'Sisa HP: ' + Math.max(0, S.hp) + '/' + S.maxHp,

@@ -1,5 +1,65 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.99 "Side-race premium enhancement — 3 parallel agents merged (train + obstacles + HUD)" (Phase 5.12)
+
+Owner verbatim: "/ultraplan. enhance. ini masih sangat2 kurang. please. do it properly." MEGA-SHIP combining 3 parallel worktree-isolated agents to dramatically elevate the side-race quality.
+
+### Agent D — Train sprite + animation polish
+
+- **Sprite size**: `targetH = spriteHeight × 1.5` → `× 1.1`. Thomas dropped from ~55% screen width to ~28% — train no longer dominates, scene reads cleanly.
+- **REDUCED_MOTION const**: detect `prefers-reduced-motion` once at load. All new motion gates on this.
+- **Bob amplitude**: 1.4 → 2.8 (more visible chuff rhythm).
+- **Idle micro-rotation**: `trainContainer.rotation = sin(frame × 0.18) × 0.025` — fake wheel rhythm via subtle tilt.
+- **Boost sway**: when `S.speed > S.baseSpeed`, train sways `sin(frame × 0.4) × 1.0` px in X.
+- **Launch puffs**: 3 big radius-12 smoke puffs emitted on frame 2/12/22 from chimney offset for race-start feel.
+
+### Agent E — Obstacle visual upgrade (+125 LOC)
+
+Replaced plain emoji obstacles with PIXI.Graphics + per-type animation. Each obstacle wrapped in PIXI.Container with a shared shadow ellipse beneath.
+
+| Type | Visual | Animation |
+|---|---|---|
+| `rock` | Grey 40×36 polygon with 2px dark outline + highlight ellipse | ±0.05 rad sine wobble |
+| `branch` | 4×55 brown stem + 3 green leafy circles | Sway ±0.08 rad |
+| `barrier` | 2 brown posts + 4-segment red/white candy-stripe | Static |
+| `water` | 60×16 puddle ellipse + ripple circles + highlight | Scale-X wobble 1 + sin × 0.04 |
+| `cow` | 🐮 emoji + brown shadow | y -= sin(frame × 0.2) × 1.5 bob |
+
+All animations honor `G14S_REDUCED_MOTION`. Collision math unchanged (still uses `o.height`).
+
+### Agent F — HUD polish + end modal celebration (+98 LOC)
+
+- **Progress bar**: thin 12px gradient (green → lime → gold) under HUD top, animated width transition matches distance progress.
+- **Distance label**: "201m" large + "/ 1000m" subscript — cleaner reading.
+- **HP pill**: compact dark `❤️×3` pill (red border, 36px min-height) instead of 3-emoji string.
+- **End modal — WIN**: confetti ring of 6 emojis (🎉⭐🏆🎊🪙🚂) bouncing in 100ms stagger. 3-star rating filling 0→N at 150ms intervals based on remaining HP.
+- **End modal — LOSE**: title "Hampir!", 🐱 mascot with gentle wobble, "🔁 Coba lagi" bouncy CTA.
+- **Pause modal**: dashed-border `.pause-tip` card showing 1 of 5 randomized kid-friendly tips ("Lompat lebih awal untuk lewati rintangan tinggi!" / "Koin di atas = perlu lompat tinggi" / etc.).
+
+### Merge orchestration
+
+All 3 agents ran in isolated git worktrees in parallel (~5 min total). Sequential patch apply: D first (smaller diff), then E (obstacles), then F (HUD CSS+HTML). Auto-offset resolved conflicts in `git apply --reject` mode. Final `g14-side.html` is 1539 → ~1700 LOC after all 3 merged.
+
+### Visual QA confirmation
+
+`node tools/visual-qa.mjs` after merge:
+- T2 Thomas: distance:215m, clouds:5, smokePuffs:14, milestonesPassed:1 ✓
+- T3 Casey JR: sprite loads correctly ✓
+- T4 Finish: distance:1002m, finished:true ✓
+- Screenshot confirms: smaller train, progress bar, HP pill, bigger smoke trail.
+
+### Files touched
+- `games/g14-side.html` — Agents D + E + F merged (~265 LOC total added).
+- `games/g14.html` — cache-bust to `v=54.99-20260626cz`.
+- `sw.js` v54.97 → v54.99 (jumped v54.98 since combined ship).
+
+### Verification
+- Syntax OK.
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS.
+- All 3 agents' verification steps passed in their worktrees BEFORE merge.
+
+---
+
 ## 2026-06-26 — v54.98 "Regression QA confirmation + window.S exposure for probes" (Phase 5.11)
 
 ### Regression QA pass
