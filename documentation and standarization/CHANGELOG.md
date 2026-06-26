@@ -1,5 +1,64 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.96 "CRITICAL — Side-race train invisible bug fixed + Agent A obstacle cinematic polish + HUD overlap fix" (Phase 5.9)
+
+Mega-ship combining 3 streams:
+1. **CRITICAL bug fix** — side-race train NEVER rendered for ANY character. Discovered by Agent C Puppeteer QA.
+2. **Agent A** parallel ship — 4 obstacle scenes upgraded to cinematic quality (signal_light, water_puddle_pump, station_passenger_pickup_3, tunnel_gate_question).
+3. **HUD overlap + train name fallback fix** from Agent C's refinement list.
+
+### CRITICAL: `window.TRAIN_CATS` undefined bug
+
+`trains-db.js` declares `const TRAIN_CATS = [...]`. In a `<script>` tag, `const` does NOT attach to `window` (unlike `var`). G14-side.html reads `window.TRAIN_CATS` to pick the player + AI train → returns `null` → `buildTrain()` early-returns → **no train sprite ever rendered.**
+
+Puppeteer probe (Agent C) confirmed: `windowTRAIN_CATS=undefined`, `globalTRAIN_CATS=object (9 cats)`, train name fell back to "Kereta".
+
+Fix: Added explicit `window.TRAIN_CATS = TRAIN_CATS` at bottom of `trains-db.js`. One-line patch, restores all side-race trains.
+
+Defensive secondary fix: `buildTrain()` now draws a procedural placeholder FIRST, then `PIXI.Assets.load(spriteUrl).then(...)` replaces with WebP when ready. Even if the WebP fails to load, the procedural placeholder remains visible.
+
+### Agent A: 4 obstacle cinematic scenes (+327 LOC)
+
+| Obstacle | New scene |
+|---|---|
+| `signal_light_challenge` | Sky→asphalt rail + industrial black signal pole with 3 stacked lamps (red/yellow/green), pulsing radial glow halo on active light. Train rolls past on correct. |
+| `water_puddle_pump` | Cyan rail + stationary train + 3 concentric blue ellipses forming wobbling puddle that shrinks 20% per tap. Final tap: 💨💨💨 steam plume + sparkle bloom. |
+| `station_passenger_pickup_3` | Amber rail + train with dark open door (left) + yellow platform (right) with 3-4 passenger emoji. Each tap walks matching sprite into door + fades. |
+| `tunnel_gate_question` | Stone-gray rail + black rounded tunnel arch + candy-striped red gate bar. On correct: gate slides up, interior glows amber, train rolls in. |
+
+All scenes honor `OE.reducedMotion()` — reduced delays + skip pulse/wobble loops. Teardown clears all timers via `ctx._timers` tracking.
+
+### HUD overlap fix (Agent C feedback #2)
+
+`#hud-mid` was a single line text "187m / 1000m" stacking on top of HP and coin counter. Refactor:
+- Container becomes flex-column with centered alignment.
+- `#hud-dist` font shrunk (clamp 12-15px), white-space nowrap.
+- `#hud-pos` max-width 50vw + ellipsis.
+- HP text white-space nowrap.
+- Padding/gap reduced.
+
+### Train name fallback (Agent C feedback #7)
+
+When no train cfg loaded (e.g., sessionStorage empty), hide the entire `#train-badge` instead of showing fallback "Kereta".
+
+### Files touched
+- `games/trains-db.js` — `window.TRAIN_CATS = TRAIN_CATS` export (+~8 LOC).
+- `games/g14-side.html` — `PIXI.Assets.load` sprite path + procedural placeholder + HUD CSS + train name guard (~50 LOC changed).
+- `games/data/obstacles.js` — Agent A cinematic scenes (+327 LOC net).
+- `games/g14.html` — cache-bust `v=54.96-20260626cw`.
+- `sw.js` v54.95 → v54.96.
+
+### Verification
+- Syntax OK across trains-db.js, obstacles.js, g14-side.html.
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS.
+- `grep -c "OE.register" games/data/obstacles.js` = 54 (unchanged).
+- Agent A's worktree work merged via `git apply`.
+
+### Coming next (v54.97+)
+Remaining Agent C refinements: misplaced sky-blue band, mountain depth + snow caps, tree variety, NPC stagger, KECEPATAN NAIK toast position, pause-during-obstacle ticker, mode-toggle UX.
+
+---
+
 ## 2026-06-26 — v54.95 "Side-race tutorial intro (3 slides, first-visit-only) — parallel agent A ship" (Phase 5.8)
 
 Parallel multi-agent ship per owner directive "Deploy more agent". Agent B (worktree-isolated) added a tutorial intro overlay for first-time players.

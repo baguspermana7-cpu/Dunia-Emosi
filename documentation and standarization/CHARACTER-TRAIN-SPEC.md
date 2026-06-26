@@ -1,7 +1,40 @@
 # Character Train Engine — Spec + Calibration Guide
 
-> Shared between G15 Lokomotif Pemberani + G16 Selamatkan Kereta.
-> Engine lives in `games/train-character-sprite.js`.
+> Shared between G14 Balapan Kereta (top-down + side-race), G15 Lokomotif Pemberani, G16 Selamatkan Kereta.
+> Top-down + G15 + G16 engine lives in `games/train-character-sprite.js`. G14 top-down has its own inline loader (v54.87+). G14 side-race has its own inline loader (v54.88+).
+
+## v54.87 critical fix (G14 top-down)
+
+**Bug shipped to production**: G14's `updatePlayerEmoji()` always called `drawTrainG()` (procedural). Character trains' `spriteUrl` field was DECLARED in trains-db.js since v54.15 but **never loaded** in G14. PROTECTED chars (Casey/Linus/Dragutin/Malivlak) rendered procedurally. v54.68 added 26 Thomas chars inheriting the bug — owner spotted instantly because Thomas's specific palette didn't match the cartoon.
+
+**Fix pattern** (`games/g14.html:2241 updatePlayerEmoji()` + `buildAI()`):
+
+```js
+if (S.trainCfg.isCharacter && S.trainCfg.spriteUrl) {
+  playerSprite.clear() // hide procedural
+  if (!L.playerCharImg || L.playerCharImg._url !== url) {
+    const img = PIXI.Sprite.from(url)
+    img.anchor.set(0.5, 0.6) // anchor 0.6 because wheels are in bottom 40% of art
+    const targetH = S.trainCfg.spriteHeight || 90
+    img.scale.set(0.5)
+    // 3-tier load handler (L188)
+    const onLoad = () => { if (img.texture?.height > 1) img.scale.set(targetH / img.texture.height) }
+    if (img.texture?.source?.loaded) onLoad()
+    else if (img.texture?.source?.addEventListener) img.texture.source.addEventListener('load', onLoad)
+    else { /* RAF poll fallback */ }
+    L.playerCharImg = img
+    L.player.addChildAt(img, Math.min(1, L.player.children.length))
+  }
+  return // skip procedural
+}
+// procedural fallback unchanged
+```
+
+When switching to non-character train, the existing character sprite is removed to prevent leak.
+
+## v54.88 side-race rendering (games/g14-side.html)
+
+The side-scrolling race uses `anchor.set(0.5, 1.0)` (bottom-center) and `spriteHeight × 1.5` (50% larger than top-down for cinematic feel). Same 3-tier load handler. Single source of truth for catalog (trains-db.js) — no separate side-race train list.
 
 ---
 

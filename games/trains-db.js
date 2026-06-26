@@ -461,3 +461,12 @@ const TRAIN_CATS = [
     ]
   },
 ]
+
+// v54.96 — CRITICAL: Expose the catalog on window.
+// `const` declarations do NOT attach to `window` (unlike `var`). g14-side.html
+// reads `window.TRAIN_CATS` to pick the player + AI train. Without these lines,
+// pickTrain() returns null and the player train never renders. Agent C QA found
+// this via puppeteer screenshot. G15 reads it via direct identifier so was fine.
+if (typeof window !== 'undefined') {
+  window.TRAIN_CATS = TRAIN_CATS
+}

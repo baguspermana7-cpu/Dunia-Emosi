@@ -12,13 +12,13 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 #pixi-canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
 
 /* HUD top */
-#hud-top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:8px;padding:max(14px,env(safe-area-inset-top)) 14px 8px;background:linear-gradient(180deg,rgba(0,0,0,0.55) 0%,transparent 100%);pointer-events:none}
+#hud-top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:6px;padding:max(14px,env(safe-area-inset-top)) 8px 8px;background:linear-gradient(180deg,rgba(0,0,0,0.55) 0%,transparent 100%);pointer-events:none;flex-wrap:nowrap}
 #btn-back{background:rgba(255,255,255,0.92);border:2px solid rgba(120,53,15,0.6);border-radius:12px;color:#5a2a00;padding:10px 14px;font-size:14px;cursor:pointer;font-family:inherit;pointer-events:all;flex-shrink:0;font-weight:900;min-width:88px;min-height:44px;box-shadow:0 3px 0 rgba(120,53,15,0.3)}
 #train-badge{background:linear-gradient(135deg,#fde68a,#fcd34d);border:2px solid #b45309;border-radius:10px;padding:7px 12px;color:#5a2a00;font-size:13px;font-weight:900;flex-shrink:0;pointer-events:none;box-shadow:0 3px 0 rgba(120,53,15,0.3);max-width:46vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#hud-mid{flex:1;text-align:center;min-width:0;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.5);pointer-events:none}
-#hud-dist{font-size:clamp(13px,3.5vw,17px);font-weight:900}
-#hud-pos{font-size:11px;color:#fde047;font-weight:900;margin-top:2px}
-#hud-hp{font-size:clamp(14px,4vw,20px);flex-shrink:0;pointer-events:none;text-shadow:0 2px 4px rgba(0,0,0,0.5)}
+#hud-mid{flex:1;text-align:center;min-width:0;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.5);pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#hud-dist{font-size:clamp(12px,3.2vw,15px);font-weight:900;white-space:nowrap}
+#hud-pos{font-size:10px;color:#fde047;font-weight:900;margin-top:1px;white-space:nowrap;max-width:50vw;overflow:hidden;text-overflow:ellipsis}
+#hud-hp{font-size:clamp(13px,3.6vw,17px);flex-shrink:0;pointer-events:none;text-shadow:0 2px 4px rgba(0,0,0,0.5);white-space:nowrap}
 #btn-pause,#btn-koleksi,#btn-settings{pointer-events:all;flex-shrink:0;border-radius:10px;padding:7px 10px;font-size:14px;cursor:pointer;font-family:inherit;font-weight:900;min-height:44px;min-width:44px;box-shadow:0 3px 0 rgba(0,0,0,0.3)}
 #btn-pause{background:linear-gradient(135deg,#e0e7ff,#a5b4fc);border:2px solid #3730a3;color:#1e1b4b}
 #btn-koleksi{background:linear-gradient(135deg,#fcd34d,#f59e0b);border:2px solid #b45309;color:#5a2a00}
@@ -89,14 +89,14 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <script src="data/bg-npcs.js?v=54.64-20260626bq"></script>
 <script src="data/bg-audio.js?v=54.65-20260626br"></script>
 <script src="data/bg-events.js?v=54.67-20260626bt"></script>
-<script src="obstacle-engine.js?v=54.95-20260626cv"></script>
-<script src="data/kids-questions.js?v=54.95-20260626cv"></script>
-<script src="data/obstacles.js?v=54.95-20260626cv"></script>
-<script src="data/routes.js?v=54.95-20260626cv"></script>
-<script src="data/reward-catalog.js?v=54.95-20260626cv"></script>
-<script src="reward-gallery.js?v=54.95-20260626cv"></script>
-<script src="settings-modal.js?v=54.95-20260626cv"></script>
-<script src="trains-db.js?v=54.95-20260626cv"></script>
+<script src="obstacle-engine.js?v=54.96-20260626cw"></script>
+<script src="data/kids-questions.js?v=54.96-20260626cw"></script>
+<script src="data/obstacles.js?v=54.96-20260626cw"></script>
+<script src="data/routes.js?v=54.96-20260626cw"></script>
+<script src="data/reward-catalog.js?v=54.96-20260626cw"></script>
+<script src="reward-gallery.js?v=54.96-20260626cw"></script>
+<script src="settings-modal.js?v=54.96-20260626cw"></script>
+<script src="trains-db.js?v=54.96-20260626cw"></script>
 <script src="game-modal.js?v=54.47-20260625az"></script>
 
 <div id="hud-top">
@@ -281,7 +281,13 @@ const JUMP_VELOCITY = 720         // initial upward velocity
   })
   stage = app.stage
   S.trainCfg = pickTrain()
-  document.getElementById('train-name').textContent = (S.trainCfg && S.trainCfg.name) || 'Kereta'
+  // v54.96 — Hide name badge entirely if no train cfg (instead of fallback "Kereta")
+  const trainBadge = document.getElementById('train-badge')
+  if (S.trainCfg && S.trainCfg.name) {
+    document.getElementById('train-name').textContent = S.trainCfg.name
+  } else if (trainBadge) {
+    trainBadge.style.display = 'none'
+  }
   S.timeOfDay = pickTimeOfDay() // v54.89 — random pagi/siang/sore per race
   buildLayers()
   buildBackground()
@@ -503,30 +509,38 @@ function buildTrain() {
   trainContainer.x = W * PLAYER_X_FRAC
   trainContainer.y = H * RAIL_Y_FRAC - 4  // baseline at rail top
 
+  // v54.96 — Always draw a procedural placeholder first so something is visible
+  // immediately. If a character WebP loads later, it covers the placeholder.
+  const placeholder = new PIXI.Graphics()
+  drawProceduralSideLoco(placeholder, cfg.bodyColor || '#1976d2', cfg.accColor || '#e53935')
+  trainContainer.addChild(placeholder)
+
   if (cfg.isCharacter && cfg.spriteUrl) {
-    trainSprite = PIXI.Sprite.from(cfg.spriteUrl)
-    trainSprite.anchor.set(0.5, 1.0) // bottom-center
-    const targetH = (cfg.spriteHeight || 90) * 1.5 // side view = bigger
-    trainSprite.scale.set(0.5)
-    const onLoad = () => {
-      if (trainSprite.texture && trainSprite.texture.height > 1) {
-        trainSprite.scale.set(targetH / trainSprite.texture.height)
-      }
-    }
-    if (trainSprite.texture && trainSprite.texture.source && trainSprite.texture.source.loaded) onLoad()
-    else if (trainSprite.texture && trainSprite.texture.source && typeof trainSprite.texture.source.addEventListener === 'function') {
-      trainSprite.texture.source.addEventListener('load', onLoad)
-    } else {
-      let tries = 0
-      const tk = () => { if (trainSprite.texture && trainSprite.texture.height > 1) { onLoad(); return } if (tries++ < 60) requestAnimationFrame(tk) }
-      tk()
-    }
+    // v54.96 — Use PIXI.Assets.load for reliable async texture loading in Pixi 8.
+    // Previous PIXI.Sprite.from(url) + RAF poll missed the texture load window
+    // in headless puppeteer testing (texture stayed at 1×1 placeholder, sprite
+    // rendered as 0.5px dot). Assets.load returns a fully-resolved texture.
+    const targetH = (cfg.spriteHeight || 90) * 1.5
+    PIXI.Assets.load(cfg.spriteUrl).then((tex) => {
+      try {
+        const sprite = new PIXI.Sprite(tex)
+        sprite.anchor.set(0.5, 1.0) // bottom-center
+        sprite.scale.set(targetH / tex.height)
+        trainContainer.removeChild(placeholder)
+        try { placeholder.destroy() } catch {}
+        trainContainer.addChild(sprite)
+        trainSprite = sprite
+      } catch (e) { console.warn('[g14s] sprite mount fail', e) }
+    }).catch((e) => {
+      console.warn('[g14s] sprite load fail, keeping placeholder', cfg.spriteUrl, e)
+      trainSprite = placeholder
+    })
+    // While loading, placeholder is the active visual
+    trainSprite = placeholder
   } else {
-    // Procedural side-on locomotive (fallback for non-character trains)
-    trainSprite = new PIXI.Graphics()
-    drawProceduralSideLoco(trainSprite, cfg.bodyColor || '#1976d2', cfg.accColor || '#e53935')
+    // Non-character train — placeholder IS the final visual
+    trainSprite = placeholder
   }
-  trainContainer.addChild(trainSprite)
 }
 
 function drawProceduralSideLoco(g, bodyHex, accHex) {

@@ -688,7 +688,8 @@
     }))
 
     // Tunnel gate question (spec §8) — answer right → gate slides open
-    OE.register('tunnel_gate_question', makeQuestionGateObstacle({
+    // v54.87: tunnel gate cinematic scene — black tunnel arch + red gate bar that slides open on success
+    OE.register('tunnel_gate_question', Object.assign(makeQuestionGateObstacle({
       title: '🚇 Pintu tunnel terkunci!',
       banner: '🚇',
       questionCategory: 'color',
@@ -699,12 +700,129 @@
         'Lihat warna yang ditanya! ✨',
         'Yang ini! 👇',
       ],
-      onSuccess(body) {
-        const fx = document.createElement('div')
-        fx.style.cssText = 'position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:48px;animation:obstacle-target-pulse 0.6s ease-out;'
-        fx.textContent = '🚇✅'
-        body.appendChild(fx)
-        setTimeout(() => fx.remove(), 900)
+    }), {
+      interaction: {
+        setup(ctx, callbacks) {
+          const body = ctx.body
+          if (!body) return
+
+          ctx._timers = []
+          const reduced = (OE.reducedMotion ? OE.reducedMotion() : false)
+
+          const title = document.createElement('div')
+          title.className = 'obstacle-engine-title'
+          title.textContent = '🚇 Pintu tunnel terkunci!'
+          body.appendChild(title)
+
+          // Cinematic tunnel scene
+          const sceneRow = document.createElement('div')
+          sceneRow.className = 'obstacle-engine-row'
+          const scene = document.createElement('div')
+          scene.style.cssText = 'position:relative;width:min(86vw,440px);height:100px;background:linear-gradient(180deg,#94a3b8 0%,#cbd5e1 60%,#78716c 100%);border-radius:14px;border:3px solid #44403c;overflow:hidden;box-shadow:inset 0 -8px 12px rgba(0,0,0,0.2);'
+
+          // Rail + sleepers
+          const rail = document.createElement('div')
+          rail.style.cssText = 'position:absolute;bottom:18px;left:0;right:0;height:6px;background:linear-gradient(180deg,#475569 0%,#1e293b 100%);'
+          scene.appendChild(rail)
+          for (let i = 0; i < 8; i++) {
+            const s = document.createElement('div')
+            s.style.cssText = `position:absolute;bottom:8px;left:${i*55+10}px;width:34px;height:10px;background:#7c2d12;border-radius:2px;`
+            scene.appendChild(s)
+          }
+
+          // Train (left) — will roll into tunnel on success
+          const train = document.createElement('div')
+          train.style.cssText = 'position:absolute;bottom:26px;left:14px;font-size:46px;line-height:1;transition:transform 1.1s cubic-bezier(0.4,0,0.3,1),opacity 0.4s;z-index:2;'
+          train.textContent = '🚂'
+          scene.appendChild(train)
+
+          // Tunnel mouth (right) — black rounded arch
+          const tunnel = document.createElement('div')
+          tunnel.style.cssText = 'position:absolute;bottom:18px;right:14px;width:96px;height:74px;background:linear-gradient(180deg,#0c0a09 0%,#1c1917 100%);border-radius:48px 48px 4px 4px;border:3px solid #44403c;border-bottom:none;box-shadow:inset 0 4px 12px rgba(0,0,0,0.85);overflow:hidden;z-index:1;'
+
+          // Interior light (initially dim, brightens on success)
+          const interiorLight = document.createElement('div')
+          interiorLight.style.cssText = 'position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:64px;height:50px;border-radius:32px 32px 0 0;background:radial-gradient(ellipse at center bottom,rgba(254,240,138,0.05) 0%,transparent 70%);transition:background 0.6s ease-out;'
+          tunnel.appendChild(interiorLight)
+
+          // Closed gate bar (red) — translateY 0 = closed
+          const gate = document.createElement('div')
+          gate.style.cssText = 'position:absolute;bottom:6px;left:50%;transform:translateX(-50%) translateY(0);width:84px;height:14px;background:linear-gradient(180deg,#dc2626 0%,#7f1d1d 100%);border:2px solid #450a0a;border-radius:3px;box-shadow:0 2px 4px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.2);transition:transform 0.7s cubic-bezier(0.4,0,0.3,1);z-index:3;'
+          // White stripe accents
+          const stripes = document.createElement('div')
+          stripes.style.cssText = 'position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent 0,transparent 8px,rgba(255,255,255,0.35) 8px,rgba(255,255,255,0.35) 14px);'
+          gate.appendChild(stripes)
+          tunnel.appendChild(gate)
+
+          scene.appendChild(tunnel)
+
+          sceneRow.appendChild(scene)
+          body.appendChild(sceneRow)
+
+          // Question text + options (reused pattern from makeQuestionGateObstacle)
+          const q = ctx.questionData
+          if (!q) {
+            ctx._timers.push(setTimeout(() => callbacks.success(), 200))
+            return
+          }
+          const qText = document.createElement('div')
+          qText.className = 'obstacle-engine-subtitle'
+          qText.style.fontSize = 'clamp(16px, 4vw, 22px)'
+          qText.style.fontWeight = '700'
+          qText.style.color = '#3b2066'
+          qText.style.padding = '8px 0 12px'
+          qText.textContent = q.q
+          body.appendChild(qText)
+
+          const choicesRow = document.createElement('div')
+          choicesRow.className = 'obstacle-engine-row'
+
+          const wrapped = q.options.map((opt, i) => ({ key: i, icon: opt }))
+          const shuffled = wrapped.slice().sort(() => Math.random() - 0.5)
+
+          const onPick = (btn, key) => {
+            const all = choicesRow.querySelectorAll('.obstacle-engine-shape-btn')
+            if (key === q.correct) {
+              btn.classList.add('correct')
+              OE.spawnSparkles(btn, 8)
+              all.forEach(b => { b.disabled = true })
+              // Gate slides up (out of view) + interior glows + train rolls in
+              gate.style.transform = 'translateX(-50%) translateY(-80px)'
+              interiorLight.style.background = 'radial-gradient(ellipse at center bottom,rgba(254,240,138,0.9) 0%,rgba(254,240,138,0.35) 50%,transparent 80%)'
+              ctx._timers.push(setTimeout(() => {
+                const dist = scene.clientWidth - 130
+                train.style.transform = `translateX(${dist}px)`
+              }, reduced ? 60 : 500))
+              ctx._timers.push(setTimeout(() => {
+                train.style.opacity = '0.3'
+              }, reduced ? 200 : 1300))
+              ctx._timers.push(setTimeout(() => callbacks.success(), reduced ? 400 : 1600))
+            } else {
+              btn.classList.add('wrong')
+              ctx._timers.push(setTimeout(() => btn.classList.remove('wrong'), 500))
+              callbacks.fail()
+            }
+          }
+
+          shuffled.forEach(c => {
+            const btn = document.createElement('button')
+            btn.className = 'obstacle-engine-shape-btn'
+            btn.textContent = c.icon
+            btn.dataset.key = c.key
+            btn.setAttribute('aria-label', 'Jawaban ' + c.icon)
+            btn.addEventListener('click', () => onPick(btn, c.key))
+            choicesRow.appendChild(btn)
+          })
+
+          body.appendChild(choicesRow)
+          OE.speak(q.voicePrompt || q.q)
+        },
+        teardown(ctx) {
+          if (ctx && ctx._timers) {
+            ctx._timers.forEach(t => clearTimeout(t))
+            ctx._timers = null
+          }
+        }
       },
     }))
 
@@ -755,11 +873,16 @@
           const body = ctx.body
           if (!body) return
 
+          // Track timers for teardown
+          ctx._timers = []
+          const reduced = (OE.reducedMotion ? OE.reducedMotion() : false)
+
           // Random signal color
           const COLORS = ['red', 'yellow', 'green']
-          const COLOR_ICON = { red:'🔴', yellow:'🟡', green:'🟢' }
           const ACTION_ICON = { red:'✋', yellow:'🐢', green:'➡️' }
           const ACTION_LABEL = { red:'Berhenti', yellow:'Pelan', green:'Maju' }
+          const LIGHT_HEX = { red:'#ef4444', yellow:'#fbbf24', green:'#22c55e' }
+          const GLOW_HEX = { red:'rgba(239,68,68,0.85)', yellow:'rgba(251,191,36,0.85)', green:'rgba(34,197,94,0.85)' }
           const showColor = COLORS[Math.floor(Math.random() * 3)]
 
           const title = document.createElement('div')
@@ -772,15 +895,47 @@
           sub.textContent = 'Pilih tombol sesuai warna lampu sinyal.'
           body.appendChild(sub)
 
-          // Signal display
-          const lampRow = document.createElement('div')
-          lampRow.className = 'obstacle-engine-row'
-          const lamp = document.createElement('div')
-          lamp.style.cssText = 'width:96px;height:96px;border-radius:50%;border:5px solid #333;display:inline-flex;align-items:center;justify-content:center;font-size:54px;'
-          lamp.textContent = COLOR_ICON[showColor]
-          lamp.style.background = showColor === 'red' ? '#fee2e2' : (showColor === 'yellow' ? '#fef3c7' : '#dcfce7')
-          lampRow.appendChild(lamp)
-          body.appendChild(lampRow)
+          // v54.87: cinematic signal scene — rail + 3-light pole on right + train
+          const sceneRow = document.createElement('div')
+          sceneRow.className = 'obstacle-engine-row'
+          const scene = document.createElement('div')
+          scene.style.cssText = 'position:relative;width:min(86vw,460px);height:96px;background:linear-gradient(180deg,#bae6fd 0%,#fde68a 60%,#a3a3a3 100%);border-radius:14px;border:3px solid #475569;overflow:hidden;box-shadow:inset 0 -8px 12px rgba(0,0,0,0.18);'
+
+          const rail = document.createElement('div')
+          rail.style.cssText = 'position:absolute;bottom:18px;left:0;right:0;height:6px;background:linear-gradient(180deg,#475569 0%,#1e293b 100%);'
+          scene.appendChild(rail)
+          for (let i = 0; i < 8; i++) {
+            const s = document.createElement('div')
+            s.style.cssText = `position:absolute;bottom:8px;left:${i*58+10}px;width:34px;height:10px;background:#7c2d12;border-radius:2px;`
+            scene.appendChild(s)
+          }
+
+          // Train (left) — will roll across on success
+          const train = document.createElement('div')
+          train.style.cssText = 'position:absolute;bottom:24px;left:10px;font-size:42px;line-height:1;transition:transform 1.2s cubic-bezier(0.4,0,0.3,1);z-index:2;'
+          train.textContent = '🚂'
+          scene.appendChild(train)
+
+          // Active light glow halo (behind pole)
+          const glow = document.createElement('div')
+          glow.style.cssText = `position:absolute;bottom:18px;right:6px;width:64px;height:78px;border-radius:14px;background:radial-gradient(circle,${GLOW_HEX[showColor]} 0%,transparent 70%);opacity:0.6;pointer-events:none;${reduced ? '' : 'animation:obstacle-target-pulse 1.4s ease-in-out infinite;'}`
+          scene.appendChild(glow)
+
+          // Signal pole (right) — black post with 3 stacked lamps (red/yellow/green)
+          const pole = document.createElement('div')
+          pole.style.cssText = 'position:absolute;bottom:24px;right:22px;width:30px;height:66px;background:linear-gradient(180deg,#1f2937 0%,#374151 100%);border-radius:6px 6px 2px 2px;border:2px solid #111827;display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;padding:4px 0;z-index:1;box-shadow:0 2px 4px rgba(0,0,0,0.3);'
+          const lamps = {}
+          COLORS.forEach(c => {
+            const lamp = document.createElement('div')
+            const on = (c === showColor)
+            lamp.style.cssText = `width:14px;height:14px;border-radius:50%;background:${on ? LIGHT_HEX[c] : '#1f2937'};border:1.5px solid #0f172a;box-shadow:${on ? `0 0 10px 3px ${GLOW_HEX[c]}` : 'none'};transition:background 0.25s,box-shadow 0.25s;`
+            pole.appendChild(lamp)
+            lamps[c] = lamp
+          })
+          scene.appendChild(pole)
+
+          sceneRow.appendChild(scene)
+          body.appendChild(sceneRow)
 
           // Choices
           const choicesRow = document.createElement('div')
@@ -793,10 +948,27 @@
               btn.classList.add('correct')
               all.forEach(b => { b.disabled = true })
               OE.spawnSparkles(btn, 6)
-              setTimeout(() => callbacks.success(), 700)
+              // Flash green light 3× then roll the train past the pole
+              let flips = 0
+              const flashGreen = () => {
+                const on = (flips % 2 === 0)
+                lamps.green.style.background = on ? LIGHT_HEX.green : '#1f2937'
+                lamps.green.style.boxShadow = on ? `0 0 14px 5px ${GLOW_HEX.green}` : 'none'
+                lamps.red.style.background = '#1f2937'; lamps.red.style.boxShadow = 'none'
+                lamps.yellow.style.background = '#1f2937'; lamps.yellow.style.boxShadow = 'none'
+                glow.style.background = `radial-gradient(circle,${GLOW_HEX.green} 0%,transparent 70%)`
+                flips++
+                if (flips < 6) ctx._timers.push(setTimeout(flashGreen, reduced ? 60 : 180))
+              }
+              flashGreen()
+              ctx._timers.push(setTimeout(() => {
+                const dist = scene.clientWidth - 110
+                train.style.transform = `translateX(${dist}px)`
+              }, reduced ? 120 : 750))
+              ctx._timers.push(setTimeout(() => callbacks.success(), reduced ? 400 : 1500))
             } else {
               btn.classList.add('wrong')
-              setTimeout(() => btn.classList.remove('wrong'), 500)
+              ctx._timers.push(setTimeout(() => btn.classList.remove('wrong'), 500))
               callbacks.fail()
             }
           }
@@ -816,7 +988,12 @@
           body.appendChild(choicesRow)
           OE.speak('Pilih tombol sesuai warna sinyal')
         },
-        teardown() {}
+        teardown(ctx) {
+          if (ctx && ctx._timers) {
+            ctx._timers.forEach(t => clearTimeout(t))
+            ctx._timers = null
+          }
+        }
       },
     })
 
@@ -1146,6 +1323,9 @@
           const body = ctx.body
           if (!body) return
 
+          ctx._timers = []
+          const reduced = (OE.reducedMotion ? OE.reducedMotion() : false)
+
           const title = document.createElement('div')
           title.className = 'obstacle-engine-title'
           title.textContent = '💧 Kuras genangan air!'
@@ -1155,6 +1335,45 @@
           sub.className = 'obstacle-engine-subtitle'
           sub.textContent = 'Tap pompa 4 kali untuk mengeringkan rel.'
           body.appendChild(sub)
+
+          // v54.87: cinematic puddle scene — rail + animated blue puddle with ripples
+          const sceneRow = document.createElement('div')
+          sceneRow.className = 'obstacle-engine-row'
+          const scene = document.createElement('div')
+          scene.style.cssText = 'position:relative;width:min(86vw,460px);height:96px;background:linear-gradient(180deg,#cffafe 0%,#a5f3fc 55%,#7dd3fc 100%);border-radius:14px;border:3px solid #0e7490;overflow:hidden;box-shadow:inset 0 -8px 12px rgba(0,0,0,0.15);'
+
+          // Rail + sleepers (partially submerged)
+          const rail = document.createElement('div')
+          rail.style.cssText = 'position:absolute;bottom:18px;left:0;right:0;height:6px;background:linear-gradient(180deg,#475569 0%,#1e293b 100%);'
+          scene.appendChild(rail)
+          for (let i = 0; i < 8; i++) {
+            const s = document.createElement('div')
+            s.style.cssText = `position:absolute;bottom:8px;left:${i*58+10}px;width:34px;height:10px;background:#7c2d12;border-radius:2px;`
+            scene.appendChild(s)
+          }
+
+          // Train on left edge — waits while pumping
+          const train = document.createElement('div')
+          train.style.cssText = 'position:absolute;bottom:24px;left:10px;font-size:42px;line-height:1;z-index:2;'
+          train.textContent = '🚂'
+          scene.appendChild(train)
+
+          // Puddle layer — 3 ellipse ripples concentric, shrink with each pump
+          const puddleWrap = document.createElement('div')
+          puddleWrap.style.cssText = 'position:absolute;bottom:14px;left:50%;transform:translateX(-50%);width:180px;height:36px;pointer-events:none;z-index:1;'
+          const ripples = []
+          const RIPPLE_TINT = ['rgba(8,145,178,0.85)', 'rgba(14,165,233,0.55)', 'rgba(125,211,252,0.45)']
+          ;[1.0, 0.78, 0.55].forEach((scale, idx) => {
+            const ell = document.createElement('div')
+            ell.style.cssText = `position:absolute;left:50%;bottom:0;transform:translateX(-50%) scale(${scale});width:180px;height:30px;border-radius:50%;background:radial-gradient(ellipse at center,${RIPPLE_TINT[idx]} 0%,rgba(125,211,252,0.15) 90%);transition:transform 0.45s cubic-bezier(0.34,1.2,0.64,1),opacity 0.4s;`
+            ell.dataset.baseScale = String(scale)
+            puddleWrap.appendChild(ell)
+            ripples.push(ell)
+          })
+          scene.appendChild(puddleWrap)
+
+          sceneRow.appendChild(scene)
+          body.appendChild(sceneRow)
 
           const row = document.createElement('div')
           row.className = 'obstacle-engine-row'
@@ -1175,23 +1394,66 @@
           body.appendChild(bar)
 
           let count = 0
+          let currentShrink = 1.0
           const TARGET = 4
+
+          // Gentle ripple wobble (composed on top of currentShrink, so click shrink survives)
+          if (!reduced) {
+            let phase = 0
+            const interval = setInterval(() => {
+              phase += 1
+              ripples.forEach((r, i) => {
+                const base = parseFloat(r.dataset.baseScale)
+                const wobble = 1 + Math.sin((phase + i * 1.2) * 0.5) * 0.04
+                r.style.transform = `translateX(-50%) scale(${(base * currentShrink * wobble).toFixed(3)})`
+              })
+            }, 220)
+            ctx._wobbleInterval = interval
+          }
+
           pump.addEventListener('click', () => {
             count++
             const pct = Math.max(0, 100 - (count / TARGET) * 100)
             fill.style.width = pct + '%'
             OE.spawnSparkles(pump, 3)
+            // Shrink each ripple ellipse by ~20% per tap (composed via currentShrink)
+            currentShrink = Math.max(0.05, 1 - (count / TARGET) * 0.95)
+            ripples.forEach(r => {
+              const base = parseFloat(r.dataset.baseScale)
+              r.style.transform = `translateX(-50%) scale(${(base * currentShrink).toFixed(3)})`
+              r.style.opacity = String(Math.max(0.15, currentShrink))
+            })
             if (count >= TARGET) {
               pump.disabled = true
               pump.classList.add('correct')
               pump.textContent = '✅'
-              setTimeout(() => callbacks.success(), 600)
+              // Final steam burst + sparkle bloom
+              if (ctx._wobbleInterval) { clearInterval(ctx._wobbleInterval); ctx._wobbleInterval = null }
+              ripples.forEach(r => { r.style.opacity = '0'; r.style.transform = 'translateX(-50%) scale(0.05)' })
+              const steam = document.createElement('div')
+              steam.style.cssText = 'position:absolute;bottom:30px;left:50%;transform:translateX(-50%);font-size:30px;line-height:1;opacity:0;transition:opacity 0.3s,transform 0.6s ease-out;z-index:3;'
+              steam.textContent = '💨💨💨'
+              scene.appendChild(steam)
+              ctx._timers.push(setTimeout(() => {
+                steam.style.opacity = '0.9'
+                steam.style.transform = 'translateX(-50%) translateY(-14px)'
+                OE.spawnSparkles(scene, 8)
+              }, reduced ? 20 : 120))
+              ctx._timers.push(setTimeout(() => callbacks.success(), reduced ? 350 : 800))
             }
           })
 
           OE.speak('Tap pompa untuk kuras air')
         },
-        teardown() {}
+        teardown(ctx) {
+          if (ctx) {
+            if (ctx._wobbleInterval) { clearInterval(ctx._wobbleInterval); ctx._wobbleInterval = null }
+            if (ctx._timers) {
+              ctx._timers.forEach(t => { try { clearTimeout(t); clearInterval(t) } catch (e) {} })
+              ctx._timers = null
+            }
+          }
+        }
       },
     })
 
@@ -1644,6 +1906,9 @@
           const body = ctx.body
           if (!body) return
 
+          ctx._timers = []
+          const reduced = (OE.reducedMotion ? OE.reducedMotion() : false)
+
           const title = document.createElement('div')
           title.className = 'obstacle-engine-title'
           title.textContent = '🚉 Jemput 3 penumpang!'
@@ -1654,11 +1919,56 @@
           sub.textContent = 'Tap setiap orang untuk masuk kereta.'
           body.appendChild(sub)
 
+          // v54.87: cinematic platform scene — train door on left + platform + passenger sprites on right
+          const sceneRow = document.createElement('div')
+          sceneRow.className = 'obstacle-engine-row'
+          const scene = document.createElement('div')
+          scene.style.cssText = 'position:relative;width:min(86vw,460px);height:96px;background:linear-gradient(180deg,#fef3c7 0%,#fed7aa 60%,#a16207 100%);border-radius:14px;border:3px solid #92400e;overflow:hidden;box-shadow:inset 0 -8px 12px rgba(0,0,0,0.18);'
+
+          // Rail + sleepers
+          const rail = document.createElement('div')
+          rail.style.cssText = 'position:absolute;bottom:18px;left:0;right:0;height:6px;background:linear-gradient(180deg,#475569 0%,#1e293b 100%);'
+          scene.appendChild(rail)
+          for (let i = 0; i < 8; i++) {
+            const s = document.createElement('div')
+            s.style.cssText = `position:absolute;bottom:8px;left:${i*58+10}px;width:34px;height:10px;background:#7c2d12;border-radius:2px;`
+            scene.appendChild(s)
+          }
+
+          // Train (left edge) — visible door
+          const train = document.createElement('div')
+          train.style.cssText = 'position:absolute;bottom:24px;left:6px;font-size:46px;line-height:1;z-index:2;'
+          train.textContent = '🚂'
+          scene.appendChild(train)
+          // Open door (dark slot) suggesting passenger entrance
+          const door = document.createElement('div')
+          door.style.cssText = 'position:absolute;bottom:30px;left:46px;width:14px;height:24px;background:linear-gradient(180deg,#1e293b 0%,#0f172a 100%);border:1.5px solid #b45309;border-radius:3px;box-shadow:inset 0 0 6px rgba(0,0,0,0.6);z-index:2;'
+          scene.appendChild(door)
+
+          // Station platform (right side) — yellow rectangle
+          const platform = document.createElement('div')
+          platform.style.cssText = 'position:absolute;bottom:18px;right:0;width:200px;height:34px;background:linear-gradient(180deg,#fde047 0%,#facc15 70%,#a16207 100%);border-top:3px solid #ca8a04;border-left:3px solid #ca8a04;border-radius:8px 0 0 0;box-shadow:inset 0 2px 4px rgba(255,255,255,0.4);'
+          scene.appendChild(platform)
+
+          // Passenger sprites on platform — 3 of them
+          const PEOPLE = ['🧑', '👨', '👩', '🧒', '👶']
+          const shown = PEOPLE.slice(0, 3 + Math.floor(Math.random() * 2)) // 3 or 4
+          const sceneSprites = []
+          shown.forEach((p, i) => {
+            const sp = document.createElement('div')
+            const startX = 300 + i * 42 // platform-side x (will translate left)
+            sp.style.cssText = `position:absolute;bottom:46px;font-size:28px;line-height:1;left:${startX}px;transition:transform 1.0s cubic-bezier(0.4,0,0.4,1),opacity 0.4s;z-index:3;`
+            sp.textContent = p
+            scene.appendChild(sp)
+            sceneSprites.push(sp)
+          })
+
+          sceneRow.appendChild(scene)
+          body.appendChild(sceneRow)
+
           const row = document.createElement('div')
           row.className = 'obstacle-engine-row'
 
-          const PEOPLE = ['🧑', '👨', '👩', '🧒', '👶']
-          const shown = PEOPLE.slice(0, 3 + Math.floor(Math.random() * 2)) // 3 or 4
           let picked = 0
           shown.forEach((p, i) => {
             const btn = document.createElement('button')
@@ -1668,14 +1978,26 @@
             btn.style.minHeight = '90px'
             btn.textContent = p
             btn.addEventListener('click', () => {
+              if (btn.disabled) return
               btn.classList.add('correct')
               btn.disabled = true
               btn.style.opacity = '0.5'
               btn.textContent = '✅'
               OE.spawnSparkles(btn, 4)
+              // Walk this passenger sprite into train door (slide left then fade)
+              const sprite = sceneSprites[i]
+              if (sprite) {
+                const startLeft = parseFloat(sprite.style.left) || 0
+                // Distance from current pos to door (~x=46)
+                const dist = -(startLeft - 46)
+                sprite.style.transform = `translateX(${dist}px)`
+                ctx._timers.push(setTimeout(() => {
+                  sprite.style.opacity = '0'
+                }, reduced ? 80 : 850))
+              }
               picked++
               if (picked >= 3) {
-                setTimeout(() => callbacks.success(), 600)
+                ctx._timers.push(setTimeout(() => callbacks.success(), reduced ? 350 : 1100))
               }
             })
             row.appendChild(btn)
@@ -1683,7 +2005,12 @@
           body.appendChild(row)
           OE.speak('Tap penumpang')
         },
-        teardown() {}
+        teardown(ctx) {
+          if (ctx && ctx._timers) {
+            ctx._timers.forEach(t => clearTimeout(t))
+            ctx._timers = null
+          }
+        }
       },
     })
 
