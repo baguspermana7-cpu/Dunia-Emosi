@@ -246,10 +246,23 @@
     }
 
     // v54.75: persist sticker / badge / hornUnlock rewards to localStorage
+    // v54.78: also fire earn toast via RewardGallery
     try {
-      if (def.reward && def.reward.sticker) _addToStorageList('train-stickers', def.reward.sticker)
-      if (def.reward && def.reward.badge)   _addToStorageList('train-badges',   def.reward.badge)
-      if (def.reward && def.reward.hornUnlock) _addToStorageList('train-horn-unlocks', def.reward.hornUnlock)
+      if (def.reward && def.reward.sticker) {
+        const wasNew = !_storageListContains('train-stickers', def.reward.sticker)
+        _addToStorageList('train-stickers', def.reward.sticker)
+        if (wasNew && global.RewardGallery) global.RewardGallery.toastEarn('sticker', def.reward.sticker)
+      }
+      if (def.reward && def.reward.badge) {
+        const wasNew = !_storageListContains('train-badges', def.reward.badge)
+        _addToStorageList('train-badges', def.reward.badge)
+        if (wasNew && global.RewardGallery) global.RewardGallery.toastEarn('badge', def.reward.badge)
+      }
+      if (def.reward && def.reward.hornUnlock) {
+        const wasNew = !_storageListContains('train-horn-unlocks', def.reward.hornUnlock)
+        _addToStorageList('train-horn-unlocks', def.reward.hornUnlock)
+        if (wasNew && global.RewardGallery) global.RewardGallery.toastEarn('horn', def.reward.hornUnlock)
+      }
     } catch (e) { console.warn(e) }
 
     // Tone
@@ -555,6 +568,14 @@
         localStorage.setItem(key, JSON.stringify(list))
       }
     } catch (e) { console.warn('[OE] list write fail', key, e) }
+  }
+  // v54.78: check membership without mutation (for earn-toast dedup)
+  function _storageListContains(key, item) {
+    try {
+      const raw = localStorage.getItem(key) || '[]'
+      const list = JSON.parse(raw)
+      return Array.isArray(list) && list.includes(item)
+    } catch { return false }
   }
   // Exposed as public helper so route runners can write rewards via the engine
   // instead of duplicating the JSON-list logic. v54.76.

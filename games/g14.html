@@ -211,10 +211,12 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 <script src="data/bg-audio.js?v=54.65-20260626br"></script>
 <script src="data/bg-events.js?v=54.67-20260626bt"></script>
 <!-- v54.69 — ObstacleEngine foundation (modular obstacle system, soft-fail, kids-friendly) -->
-<script src="obstacle-engine.js?v=54.76-20260626cc"></script>
-<script src="data/kids-questions.js?v=54.76-20260626cc"></script>
-<script src="data/obstacles.js?v=54.76-20260626cc"></script>
-<script src="data/routes.js?v=54.76-20260626cc"></script>
+<script src="obstacle-engine.js?v=54.78-20260626ce"></script>
+<script src="data/kids-questions.js?v=54.78-20260626ce"></script>
+<script src="data/obstacles.js?v=54.78-20260626ce"></script>
+<script src="data/routes.js?v=54.78-20260626ce"></script>
+<script src="data/reward-catalog.js?v=54.78-20260626ce"></script>
+<script src="reward-gallery.js?v=54.78-20260626ce"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
@@ -324,6 +326,11 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
     <button id="g14-hc-toggle" type="button" onclick="g14ToggleHighContrast()" aria-label="Mode kontras tinggi"
             style="background:rgba(255,255,255,0.12);border:2px solid rgba(255,255,255,0.3);border-radius:10px;color:#fff;padding:8px 12px;font-size:13px;cursor:pointer;font-family:inherit;font-weight:900;min-height:40px;margin-left:6px">
       ♿ <span id="g14-hc-label">Standar</span>
+    </button>
+    <!-- v54.78 — Koleksi (Collection) modal trigger -->
+    <button id="g14-koleksi-btn" type="button" onclick="if(window.RewardGallery) RewardGallery.open()" aria-label="Buka koleksi stiker"
+            style="background:linear-gradient(135deg,#fbbf24,#f59e0b);border:2px solid #b45309;border-radius:10px;color:#5a2a00;padding:8px 14px;font-size:14px;cursor:pointer;font-family:inherit;font-weight:900;min-height:40px;margin-left:6px;box-shadow:0 3px 0 rgba(120,53,15,0.4)">
+      🏆 Koleksi
     </button>
   </div>
   <style>

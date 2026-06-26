@@ -1,5 +1,45 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.78 "Koleksi gallery modal + earn toast notifications" (Phase 4.9 — polish)
+
+Visible reward closure for the obstacle engine series. Kids now see their stickers, badges, and horn unlocks grow in a beautiful modal — and a celebration toast fires the moment they earn one.
+
+### NEW `games/data/reward-catalog.js`
+
+Metadata registry: stickers (6 entries), badges (10 entries), horn unlocks (2 entries) — each with `{id, icon, name, description, category}`. Locked rewards render as gray placeholders with "🔒" appended, no description leak.
+
+### NEW `games/reward-gallery.js` (~290 LOC)
+
+Public API:
+- `RewardGallery.open()` — show modal with 3 sections (Stiker / Lencana / Klakson Spesial), progress bar, % completion.
+- `RewardGallery.close()` — hide.
+- `RewardGallery.toastEarn(type, id, customLabel?)` — fire 3.2 s celebration toast at top of screen with icon + name. Plays C-E-G success arpeggio via `playTone`.
+
+Visual: amber gradient card with 5px gold border, scale-overshoot entrance (cubic-bezier 0.34, 1.56, 0.64, 1), progress bar with 0→% animated fill. Reduce-motion compliant.
+
+### ObstacleEngine wiring
+
+`_storageListContains(key, item)` — non-mutating membership check. On reward success, engine compares to known-list BEFORE adding, then calls `RewardGallery.toastEarn(type, id)` only if newly earned (no toast spam on repeated visits).
+
+### G14 picker
+
+NEW **🏆 Koleksi** button on train picker (amber gradient, 88+ px tap target). Opens the gallery modal. Sits alongside Easy/Hard, Age, and ♿ Kontras toggles.
+
+### Files touched
+- NEW `games/data/reward-catalog.js` (~50 LOC, 18 reward entries total).
+- NEW `games/reward-gallery.js` (~290 LOC).
+- `games/obstacle-engine.js` — earn-toast wiring + `_storageListContains` helper (~20 LOC).
+- `games/g14.html` — 2 new script tags + Koleksi button (+ cache-bust `v=54.78-20260626ce`).
+- `sw.js` v54.77 → v54.78.
+
+### Verification
+- Syntax OK on all touched + new files.
+- `node tools/probe-obstacle-engine.mjs` — 14/14 PASS (no regression).
+- Earn toast dedup confirmed: re-earning the same sticker doesn't re-fire toast.
+- PROTECTED chars + PvP balance untouched.
+
+---
+
 ## 2026-06-26 — v54.77 "Acceptance probe + standarization docs (FINAL of obstacle engine series)" (Phase 4.8)
 
 ### Acceptance probe (`tools/probe-obstacle-engine.mjs`)
