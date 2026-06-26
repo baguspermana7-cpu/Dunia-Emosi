@@ -1,5 +1,58 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.69 "ObstacleEngine foundation + Missing Rail Triangle reference + Easy/Hard mode" (Phase 4.0)
+
+Owner spec (`/home/baguspermana7/Documents/2.txt`, 33 sections) mandates G14 Balapan Kereta evolve from "lane switch + crash" into a child-friendly (age 4-7) interactive train adventure with 20+ obstacle variations, soft-fail puzzles, and modular config. v54.69 lays the foundation.
+
+### NEW shared modules
+
+- **`games/obstacle-engine.js`** (~370 LOC). Registry-based engine.
+  - `ObstacleEngine.register(id, def)` — registry with frozen definitions matching spec §21 JSON schema (`type`, `difficulty`, `ageRange`, `allowedLocations`, `allowedJourneyPhases`, `requiredAction`, `softFail`, `maxRetry`, `reward`, `visual`, `accessibility`, `interaction.setup/teardown`, `successFx`, `failFx`, `hints[3]`).
+  - `ObstacleEngine.attach(gameAPI)` — game provides hooks: `pauseTick`, `resumeTick`, `slowDown`, `resumeSpeed`, `cameraZoom`, `takeHP`, `awardReward`.
+  - `ObstacleEngine.spawn(typeId, opts)` — returns a Promise that resolves when the puzzle is solved (or auto-helped). Lifecycle: approach (slow-down + zoom 500ms) → pause game → show DOM overlay → interaction.setup → success/fail callback → resume game.
+  - Soft-fail 3-tier cascade: retry 1 = generic hint, retry 2 = target slot pulses, retry 3 = "🎉 Hebat, kita berhasil bersama! 🎉" + auto-success after 1.2s (kids never get stuck).
+  - Hard mode: takes 1 HP per wrong tap; soft fail still kicks in at retry 3.
+  - DOM overlay: full-screen scrim + bottom card (gradient amber, 4px border, scale-overshoot entrance), 88px tap-target buttons, child-friendly Fredoka One typography. Honors `prefers-reduced-motion`.
+  - Voice prompt: `ObstacleEngine.speak(text)` via Web Speech API with `id-ID` locale; silent fallback on unsupported browsers.
+  - Success sparkles: `ObstacleEngine.spawnSparkles(el, count)` — 6 amber radial bursts at element center.
+
+- **`games/data/kids-questions.js`** (~50 questions, seed pool). Tagged by category (shape / color / count / animal / letter / number / math / safety / comparison) and age (4 / 5 / 6 / 7). Voice prompts where applicable. Tranches v54.71/v54.74 grow this to ~150.
+
+- **`games/data/obstacles.js`** (foundation skeleton). Registers `missing_rail_triangle` (spec §5): drag-drop track repair, 3 shape choices (triangle correct, circle, square as distractors). Camera-zoom approach + overlay tray + magnetic snap on correct → green target glow + sparkles + success tone. Wrong taps shake the button red, decrement retry, auto-help on retry 3.
+
+### G14 integration
+
+- 3 new `<script>` tags at line 213 (after BG engine modules): `obstacle-engine.js`, `data/kids-questions.js`, `data/obstacles.js` (all cache-bust `v=54.69-20260626bv`).
+- NEW function `g14WireObstacleEngine()` — called from countdown `onDone` callback at line 3408. Attaches `ObstacleEngine` with G14's `S.running`, `S.hp`, `S.coins`, `updateHUD()` hooks. Schedules first puzzle 28-40s into race; re-arms on success.
+- NEW Easy/Hard mode toggle button on train picker (`#g14-mode-toggle`, line 310). 😊 Mudah = soft-fail default; 🔥 Sulit = HP decrement on wrong tap. Persists to `localStorage['train-game-mode']`.
+
+### Files touched
+- NEW `games/obstacle-engine.js` (~370 LOC).
+- NEW `games/data/kids-questions.js` (~80 LOC, 50 questions).
+- NEW `games/data/obstacles.js` (~115 LOC, 1 obstacle).
+- `games/g14.html` — 3 script tags + `g14WireObstacleEngine()` + Easy/Hard toggle UI + `g14RefreshModeBadge()` + `g14ToggleMode()`.
+- `sw.js` v54.68 → v54.69.
+
+### Verification
+- Syntax check OK on obstacle-engine.js, kids-questions.js, obstacles.js, g14.html.
+- `window.ObstacleEngine._registry` has key `missing_rail_triangle` after page load.
+- Easy mode (default): wrong taps → red shake → hint → retry, NO HP decrement.
+- Hard mode (after toggle): wrong taps → red shake → hint → retry, -1 HP per wrong.
+- Auto-help at retry 3: "🎉 Hebat, kita berhasil bersama!" message + auto-success in 1.2s.
+- PROTECTED chars still selectable in `Karakter Spesial ⭐` tab.
+
+### Tranches queued (v54.70–v54.77)
+- v54.70: Repair tranche (6 missing_rail_* shape variants + 4 broken_bridge_* + signal_repair + tunnel_light_repair).
+- v54.71: Question gates (fire_jump, tunnel_gate, 6 edu_gate_*).
+- v54.72: Reaction (signal_light, 6 animal_crossing_*, 3 falling_rocks, 3 water_puddle).
+- v54.73: Choice/Memory/Balance.
+- v54.74: Station tasks + reward extension.
+- v54.75: Adaptive difficulty + age presets + accessibility.
+- v54.76: Surabaya route scripted sequence.
+- v54.77: Acceptance probe + standarization docs.
+
+---
+
 ## 2026-06-26 — v54.68 "Thomas All Engines Go cheerful character pack (26 chars × 3 train games)" (Phase 3.0)
 
 Owner-mandated cheerful character expansion: 26 Thomas All Engines Go locomotives / coaches added to the train picker in G14 Balapan Kereta, G15 Lokomotif Pemberani, and G16 Selamatkan Kereta — joining the 4 PROTECTED character trains (Casey JR, Linus Brave, JZ 711 Dragutin, Malivlak) without touching them.

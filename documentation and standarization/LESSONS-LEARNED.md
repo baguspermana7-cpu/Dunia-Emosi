@@ -4,6 +4,30 @@
 
 ---
 
+## 2026-06-26 — v54.69 ObstacleEngine foundation
+
+### L177 — Registry-based obstacle engine: freeze the def, never the runtime ctx
+- ObstacleEngine.register stores a frozen def (immutable schema). The per-spawn `ctx` (passed to interaction.setup) is mutable — that's where retryCount, hintLevel, mode, questionData live. Freezing the def prevents accidental mutation; keeping ctx mutable lets the same obstacle handle multiple retries cleanly without re-registering.
+- **Lesson**: For registry patterns, freeze the schema, keep instance state mutable. Use `Object.freeze(def)` and pass `ctx` by reference into the setup function. Trying to mutate frozen objects throws in strict mode — that's the safety net.
+
+### L178 — Soft-fail auto-help at retry 3 prevents stuck kids
+- Without auto-help, a 4-year-old who can't solve a puzzle might tap wrong options forever. With auto-help, after 3 wrong attempts the engine shows "🎉 Hebat, kita berhasil bersama! 🎉" and auto-succeeds after 1.2s. The child feels they finished (not failed) and the race continues.
+- **Lesson**: For age 4-7 game UX, ALWAYS clamp puzzle failure to a forgiving auto-complete. The retry budget is a kindness gate, not a difficulty gate. Hard mode can use the same clamp (HP penalty per wrong tap is the lever, not the auto-help removal).
+
+### L179 — DOM overlay over Pixi canvas: pointer-events:none on root, auto on body
+- The overlay has `pointer-events: none` on the full-screen scrim root and `pointer-events: auto` on the inner card. Result: taps on the background scrim pass through (no accidental clicks on hidden game canvas), but taps on the puzzle card work normally. Without this two-tier setting, the overlay either blocks ALL events (no canvas interaction even during reveal animation) or NONE (taps on the puzzle pass through).
+- **Lesson**: For full-screen modal overlays in canvas games, set `pointer-events: none` on the outer container and `auto` on the actual interactive child. This is the canonical pattern; CSS `pointer-events: none` is inherited so children must re-enable.
+
+### L180 — Promise-based spawn API enables clean per-tranche extension
+- `ObstacleEngine.spawn(typeId).then(_scheduleNext)` lets the game schedule the next puzzle only after the current one resolves. No race conditions, no concurrent puzzles. Tranches v54.70-v54.76 add 20+ obstacles without touching the scheduler — same .then chain handles all of them.
+- **Lesson**: When designing engine APIs that gate game flow, return Promises. Callbacks chain into spaghetti at 5+ obstacles. With promises, the game's race controller stays one line: `OE.spawn(id).then(scheduleNext)`. Defer the choice of `id` to a strategy function that reads journey state.
+
+### L181 — Web Speech API in `id-ID` locale: best-effort + silent fallback
+- Indonesian voice prompts work on Chrome desktop (`Microsoft Andika - Indonesian (Indonesia)` voice) but are missing on iOS Safari and Android Chrome <100. Silent fallback (`try/catch` wrap, never throw) is required.
+- **Lesson**: NEVER make UX flow depend on TTS success. Always provide a text + icon equivalent. Web Speech is decoration, not delivery. The `try { speechSynthesis.speak(...) } catch {}` pattern is right — never wait for `onend` events because they fire inconsistently across browsers.
+
+---
+
 ## 2026-06-26 — v54.68 Thomas AEG character pack (3 train games)
 
 ### L172 — Cartoon character sprites have baked-in wheels; set `wheelPositions: []` not invented coords

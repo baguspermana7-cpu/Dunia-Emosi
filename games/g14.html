@@ -210,6 +210,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 <script src="data/bg-npcs.js?v=54.64-20260626bq"></script>
 <script src="data/bg-audio.js?v=54.65-20260626br"></script>
 <script src="data/bg-events.js?v=54.67-20260626bt"></script>
+<!-- v54.69 — ObstacleEngine foundation (modular obstacle system, soft-fail, kids-friendly) -->
+<script src="obstacle-engine.js?v=54.69-20260626bv"></script>
+<script src="data/kids-questions.js?v=54.69-20260626bv"></script>
+<script src="data/obstacles.js?v=54.69-20260626bv"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
@@ -303,11 +307,57 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
   <div id="select-header">
     <button id="sel-back" type="button" onclick="selBack()">← Kembali</button>
     <div id="sel-title">Pilih Kereta 🚂</div>
+    <!-- v54.69 — Easy/Hard mode toggle (default: easy, child-friendly soft-fail) -->
+    <button id="g14-mode-toggle" type="button" onclick="g14ToggleMode()" aria-label="Mode permainan"
+            style="background:rgba(254,240,138,0.92);border:2px solid rgba(202,138,4,0.6);border-radius:12px;color:#713f12;padding:10px 14px;font-size:13px;cursor:pointer;font-family:inherit;box-shadow:0 3px 0 rgba(202,138,4,0.25);font-weight:900;min-width:88px;min-height:44px;text-align:center">
+      <span id="g14-mode-icon">😊</span> <span id="g14-mode-label">Mudah</span>
+    </button>
   </div>
   <div id="sel-crumb" onclick="showCategories()">← Semua Kategori</div>
   <div id="select-body"></div>
   <div id="go-btn-wrap"><button id="go-btn" onclick="startRace()">🚦 Mulai Balapan!</button></div>
 </div>
+<script>
+// v54.69 — Easy/Hard mode toggle integration with ObstacleEngine.
+function g14ToggleMode(){
+  if (!window.ObstacleEngine) return
+  const cur = window.ObstacleEngine.getMode()
+  const next = cur === 'easy' ? 'hard' : 'easy'
+  window.ObstacleEngine.setMode(next)
+  g14RefreshModeBadge()
+}
+function g14RefreshModeBadge(){
+  if (!window.ObstacleEngine) return
+  const m = window.ObstacleEngine.getMode()
+  const icon = document.getElementById('g14-mode-icon')
+  const label = document.getElementById('g14-mode-label')
+  const btn = document.getElementById('g14-mode-toggle')
+  if (m === 'easy') {
+    if (icon) icon.textContent = '😊'
+    if (label) label.textContent = 'Mudah'
+    if (btn) {
+      btn.style.background = 'rgba(254,240,138,0.92)'
+      btn.style.borderColor = 'rgba(202,138,4,0.6)'
+      btn.style.color = '#713f12'
+      btn.style.boxShadow = '0 3px 0 rgba(202,138,4,0.25)'
+    }
+  } else {
+    if (icon) icon.textContent = '🔥'
+    if (label) label.textContent = 'Sulit'
+    if (btn) {
+      btn.style.background = 'rgba(254,202,202,0.92)'
+      btn.style.borderColor = 'rgba(220,38,38,0.6)'
+      btn.style.color = '#7f1d1d'
+      btn.style.boxShadow = '0 3px 0 rgba(220,38,38,0.25)'
+    }
+  }
+}
+// Refresh badge on load once engine is present
+(function pollEngine(){
+  if (window.ObstacleEngine) { g14RefreshModeBadge(); return }
+  setTimeout(pollEngine, 100)
+})();
+</script>
 
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/save-engine.js?v=20260501h"></script>
@@ -3398,7 +3448,60 @@ function startRace() {
     try{const sfx=document.getElementById('train-sfx');if(sfx){sfx.currentTime=0;sfx.volume=0.7;sfx.play().catch(()=>{})}}catch(_){}
     // v54.19 B4: cab-window driver wave on race start for character trains only.
     try { g14ShowCabDriverWave() } catch(_){}
+    // v54.69 — ObstacleEngine wiring: attach game API + schedule first puzzle.
+    try { g14WireObstacleEngine() } catch(e){ console.warn('OE wire fail', e) }
   })
+}
+
+// v54.69 — Bind ObstacleEngine to G14's game-state hooks and start the puzzle scheduler.
+// Soft-fail by default (Easy mode); Hard mode keeps current HP/crash semantics.
+function g14WireObstacleEngine(){
+  if (!window.ObstacleEngine) return
+  window.ObstacleEngine.attach({
+    pauseTick: () => { S.running = false },
+    resumeTick: () => { S.running = true },
+    slowDown: (factor, durMs) => { /* visual slow already handled by overlay zoom */ },
+    resumeSpeed: () => {},
+    cameraZoom: (scale, durMs) => {
+      // Optional: animate L.world zoom for puzzle approach. v54.69 = no-op for safety.
+    },
+    takeHP: (n) => {
+      // Only fires in Hard mode (engine gates this)
+      if (S.hp > 0) {
+        S.hp = Math.max(0, S.hp - n)
+        try { updateHUD() } catch(_){}
+      }
+    },
+    awardReward: (reward, obstacleId) => {
+      if (!reward) return
+      if (reward.coins) {
+        S.coins = (S.coins || 0) + reward.coins
+        try { updateHUD() } catch(_){}
+      }
+      // Surface reward via floating "+N coins" if available
+      try {
+        if (typeof spawnFloatScore === 'function' && reward.coins) {
+          // best-effort; ignore failure
+        }
+      } catch(_){}
+    },
+  })
+
+  // Schedule a puzzle every ~30s during the race. Re-arms on success.
+  // v54.69 foundation uses one obstacle (missing_rail_triangle). Library expands in v54.70+.
+  function _scheduleNext(){
+    const delayMs = 28000 + Math.random() * 12000
+    setTimeout(() => {
+      if (!S.running) return // race ended or modal open
+      try {
+        window.ObstacleEngine.spawn('missing_rail_triangle').then(() => _scheduleNext())
+      } catch(e) {
+        console.warn('[g14] OE.spawn failed', e)
+        _scheduleNext()
+      }
+    }, delayMs)
+  }
+  _scheduleNext()
 }
 
 // v54.17 A1: 3-2-1-GO ritual with station bell ding + steam whistle on GO.
