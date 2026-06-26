@@ -1,5 +1,53 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.89 "Side-race scene polish — clouds, birds, NPCs, smoke, time-of-day, milestones" (Phase 5.2)
+
+Owner mandate "Keep refine, iterate". Side-scroll race now FEELS alive — not just static art with a moving train.
+
+### Time-of-day variation
+
+Each race picks one of 3 palettes (pagi 45%, siang 35%, sore 20%):
+
+| Time | Sky top → bot | Hill near | Hill far | Sun position |
+|---|---|---|---|---|
+| pagi (morning) | sky-blue → light blue | medium green | grey-blue | upper-right |
+| siang (noon) | brighter blue | grass green | warm grey | upper-center |
+| sore (afternoon) | golden orange → peach | brown-orange | warm tan | mid-right |
+
+Trees tint brown-orange in sore. Ground color shifts.
+
+### Animated parallax layers
+
+- **Clouds** (5×, drift across sky 0.06–0.10 px/frame after speed scaling, wrap-around).
+- **Hills** (parallax 0.25× train speed, wrap when off-screen left).
+- **NPCs** (4 villagers waving 👋 — wave hand rotates via `Math.sin`; layer recycles after scrolling off).
+- **Fence** (parallax 1.0×, wraps).
+- **Birds** (fly-by every 8–14s — flock of 3–5 🐦/V emoji glides right→left at random sky-Y, sine bob).
+
+### Train smoke trail
+
+Steam locos (those with `smokePos` in trains-db) emit grey smoke puffs every 0.12s. Puffs spawn at chimney offset, drift up + slightly back, scale up + fade over 1.6s. Particle layer.
+
+### Milestone signposts
+
+At 200m / 400m / 600m / 800m, a yellow signpost spawns from the right edge with the distance label ("200m", "400m" …). Decoration only — no collision. Scrolls past the train as a visual progress checkpoint.
+
+### Subtle train bob
+
+When NOT jumping, train Y offsets by `Math.sin(frame × 0.18) × 1.4` — chuff-chuff rhythm bob. Disabled mid-jump.
+
+### Files
+- `games/g14-side.html` — `pickTimeOfDay()` + `TIME_PALETTES` + `buildClouds()` + cloud/bird/NPC/smoke/milestone logic in tick (~200 LOC added).
+- `games/g14.html` — cache-bust to `v=54.89-20260626cp`.
+- `sw.js` v54.88 → v54.89.
+
+### Verification
+- Syntax OK on g14-side.html.
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS.
+- Smoke puffs only fire when `S.trainCfg.smokePos` is non-null (diesels/electrics get no smoke — correct per trains-db data).
+
+---
+
 ## 2026-06-26 — v54.88 "NEW games/g14-side.html — side-scrolling cartoon racing foundation" (Phase 5.1)
 
 Per owner reference image 2 (cartoon "Train Racing") + verbatim "g terbaik, walaupun effort nya sangat besar". MAJOR new view: side-scrolling race with sky+landscape filling upper 65%, rail strip lower 35%, train sprite side-on. Parallel to (not replacement of) top-down g14.html.

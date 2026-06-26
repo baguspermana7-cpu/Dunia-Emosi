@@ -60,14 +60,14 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <script src="data/bg-npcs.js?v=54.64-20260626bq"></script>
 <script src="data/bg-audio.js?v=54.65-20260626br"></script>
 <script src="data/bg-events.js?v=54.67-20260626bt"></script>
-<script src="obstacle-engine.js?v=54.88-20260626co"></script>
-<script src="data/kids-questions.js?v=54.88-20260626co"></script>
-<script src="data/obstacles.js?v=54.88-20260626co"></script>
-<script src="data/routes.js?v=54.88-20260626co"></script>
-<script src="data/reward-catalog.js?v=54.88-20260626co"></script>
-<script src="reward-gallery.js?v=54.88-20260626co"></script>
-<script src="settings-modal.js?v=54.88-20260626co"></script>
-<script src="trains-db.js?v=54.88-20260626co"></script>
+<script src="obstacle-engine.js?v=54.89-20260626cp"></script>
+<script src="data/kids-questions.js?v=54.89-20260626cp"></script>
+<script src="data/obstacles.js?v=54.89-20260626cp"></script>
+<script src="data/routes.js?v=54.89-20260626cp"></script>
+<script src="data/reward-catalog.js?v=54.89-20260626cp"></script>
+<script src="reward-gallery.js?v=54.89-20260626cp"></script>
+<script src="settings-modal.js?v=54.89-20260626cp"></script>
+<script src="trains-db.js?v=54.89-20260626cp"></script>
 <script src="game-modal.js?v=54.47-20260625az"></script>
 
 <div id="hud-top">
@@ -152,6 +152,15 @@ const S = {
   nextSpawnAt: 4.0,      // seconds
   frame: 0,
   finished: false,
+  // v54.89 — animated scene
+  clouds: [],            // {x, y, scale, speed}
+  birds: [],             // {x, y, vy, frame}
+  smokePuffs: [],        // {x, y, alpha, scale, drift}
+  smokeTimer: 0,
+  nextBirdAt: 8,
+  timeOfDay: 'pagi',     // 'pagi'|'siang'|'sore' — set at init
+  milestones: [200, 400, 600, 800],
+  milestonesPassed: 0,
 }
 
 // Layout
@@ -179,8 +188,10 @@ const JUMP_VELOCITY = 720         // initial upward velocity
   stage = app.stage
   S.trainCfg = pickTrain()
   document.getElementById('train-name').textContent = (S.trainCfg && S.trainCfg.name) || 'Kereta'
+  S.timeOfDay = pickTimeOfDay() // v54.89 — random pagi/siang/sore per race
   buildLayers()
   buildBackground()
+  buildClouds()  // v54.89
   buildRail()
   buildTrain()
   setupInput()
@@ -192,6 +203,20 @@ const JUMP_VELOCITY = 720         // initial upward velocity
   // Resize
   window.addEventListener('resize', onResize)
 })()
+
+// v54.89 — pick a random time-of-day per race for variety
+function pickTimeOfDay() {
+  const r = Math.random()
+  if (r < 0.45) return 'pagi'   // 45% morning (bright)
+  if (r < 0.80) return 'siang'  // 35% noon (vivid)
+  return 'sore'                 // 20% afternoon (warm)
+}
+
+const TIME_PALETTES = {
+  pagi:  { skyTop: [135,206,235], skyBot: [200,234,250], ground: 0x2e7d32, hillNear: 0x66bb6a, hillFar: 0x90a4ae, sunColor: 0xfff7c0, sunGlow: 0xfde047 },
+  siang: { skyTop: [110,190,235], skyBot: [185,225,250], ground: 0x388e3c, hillNear: 0x4caf50, hillFar: 0x9ba8b3, sunColor: 0xfff9c4, sunGlow: 0xfff176 },
+  sore:  { skyTop: [255,170,110], skyBot: [255,213,168], ground: 0x5d4037, hillNear: 0x8d6e63, hillFar: 0xa1887f, sunColor: 0xffab40, sunGlow: 0xff7043 },
+}
 
 function pickTrain() {
   const key = sessionStorage.getItem('g14-side-train') || 'aeg_thomas'
@@ -224,22 +249,27 @@ function buildLayers() {
 }
 
 function buildBackground() {
-  // Sky gradient (top 65% of screen)
-  const sky = new PIXI.Graphics()
+  const pal = TIME_PALETTES[S.timeOfDay] || TIME_PALETTES.pagi
   const skyH = H * SKY_FRAC + 20
+
+  // Sky gradient (top 65% of screen) — uses time-of-day palette
+  const sky = new PIXI.Graphics()
   for (let i = 0; i < 16; i++) {
     const t = i / 15
-    const r = Math.round(135 + (175 - 135) * t)
-    const g = Math.round(206 + (220 - 206) * t)
-    const b = Math.round(235 + (250 - 235) * t)
+    const r = Math.round(pal.skyTop[0] + (pal.skyBot[0] - pal.skyTop[0]) * t)
+    const g = Math.round(pal.skyTop[1] + (pal.skyBot[1] - pal.skyTop[1]) * t)
+    const b = Math.round(pal.skyTop[2] + (pal.skyBot[2] - pal.skyTop[2]) * t)
     sky.rect(0, (skyH * i / 16), W, skyH / 16 + 1).fill((r << 16) | (g << 8) | b)
   }
-  // Sun
-  sky.circle(W * 0.82, skyH * 0.22, 36).fill(0xfff7c0)
-  sky.circle(W * 0.82, skyH * 0.22, 50).stroke({ color: 0xfde047, width: 4, alpha: 0.6 })
+  // Sun (position varies per time-of-day)
+  const sunX = S.timeOfDay === 'sore' ? W * 0.65 : (S.timeOfDay === 'siang' ? W * 0.55 : W * 0.82)
+  const sunY = S.timeOfDay === 'sore' ? skyH * 0.45 : skyH * 0.22
+  sky.circle(sunX, sunY, 50).fill(pal.sunGlow).stroke({ color: pal.sunGlow, width: 6, alpha: 0.5 })
+  sky.circle(sunX, sunY, 36).fill(pal.sunColor)
   bgContainer.addChild(sky)
+  bgContainer._sky = sky
 
-  // Distant mountains (parallax 0.2×)
+  // Distant mountains (static, parallax 0×)
   const mtn = new PIXI.Graphics()
   const peaks = [
     [0.05, 0.50, 0.18], [0.18, 0.62, 0.22], [0.35, 0.48, 0.20],
@@ -249,27 +279,58 @@ function buildBackground() {
     const cx = W * x
     const py = skyH * peakY
     const halfW = W * w
-    mtn.poly([cx - halfW, skyH * 0.85, cx, py, cx + halfW, skyH * 0.85]).fill(0x90a4ae)
+    mtn.poly([cx - halfW, skyH * 0.85, cx, py, cx + halfW, skyH * 0.85]).fill(pal.hillFar)
   })
   bgContainer.addChild(mtn)
 
-  // Mid-ground hills (parallax 0.5×)
-  const hills = new PIXI.Graphics()
-  for (let i = 0; i < 4; i++) {
-    const cx = W * (0.1 + i * 0.28)
+  // Mid-ground hills + trees (parallax via container x offset)
+  const hills = new PIXI.Container()
+  const hillG = new PIXI.Graphics()
+  // 8 hill shapes spread 1.5× screen width for seamless loop
+  for (let i = 0; i < 8; i++) {
+    const cx = W * (0.1 + i * 0.20)
     const cy = skyH * 0.78
     const rx = W * 0.18
     const ry = skyH * 0.14
-    hills.ellipse(cx, cy, rx, ry).fill(0x66bb6a)
+    hillG.ellipse(cx, cy, rx, ry).fill(pal.hillNear)
   }
   // Distant trees
-  for (let i = 0; i < 10; i++) {
-    const tx = (i + 0.5) * (W / 10) + (Math.sin(i * 17) * 30)
+  for (let i = 0; i < 16; i++) {
+    const tx = (i + 0.5) * (W / 12) + (Math.sin(i * 17) * 30)
     const ty = skyH * 0.84
-    hills.rect(tx - 2, ty, 4, 12).fill(0x6d4c41)
-    hills.circle(tx, ty - 2, 9).fill(0x388e3c)
+    hillG.rect(tx - 2, ty, 4, 12).fill(0x6d4c41)
+    hillG.circle(tx, ty - 2, 9).fill(S.timeOfDay === 'sore' ? 0x6d4c41 : 0x388e3c)
   }
+  hills.addChild(hillG)
   bgContainer.addChild(hills)
+  bgContainer._hills = hills
+
+  // NPCs (waving villagers near fence — visible at random X)
+  const npcLayer = new PIXI.Container()
+  const NPC_SPOTS = [0.15, 0.42, 0.68, 0.88]
+  NPC_SPOTS.forEach((xFrac, i) => {
+    const npc = new PIXI.Container()
+    npc.x = W * xFrac + Math.random() * 60
+    npc.y = H * RAIL_Y_FRAC - 38
+    const g = new PIXI.Graphics()
+    // Body
+    g.circle(0, -16, 6).fill(0xffe082) // head
+    g.rect(-5, -10, 10, 14).fill(0xff7043) // body
+    g.rect(-5, 2, 4, 8).fill(0x424242)  // leg L
+    g.rect(1, 2, 4, 8).fill(0x424242)   // leg R
+    npc.addChild(g)
+    // Wave hand (Pixi text)
+    const hand = new PIXI.Text({ text: '👋', style: { fontSize: 14 } })
+    hand.anchor.set(0.5, 0.5)
+    hand.x = -10; hand.y = -8
+    npc.addChild(hand)
+    npc._hand = hand
+    npc._wavePhase = Math.random() * Math.PI * 2
+    npc._baseX = npc.x
+    npcLayer.addChild(npc)
+  })
+  bgContainer.addChild(npcLayer)
+  bgContainer._npcs = npcLayer
 
   // Close fence (parallax 1.0×)
   const fence = new PIXI.Graphics()
@@ -280,13 +341,36 @@ function buildBackground() {
     fence.rect(fx, fenceY - 18, 4, 22).fill(0x6d4c41)
   }
   bgContainer.addChild(fence)
+  bgContainer._fence = fence
+  bgContainer._fenceY = fenceY
 
-  // Grass ground (between sky bottom and rail)
+  // Grass ground
   const ground = new PIXI.Graphics()
-  ground.rect(0, H * SKY_FRAC, W, H - H * SKY_FRAC).fill(GROUND_FILL_COLOR)
-  // Lighter strip top
+  ground.rect(0, H * SKY_FRAC, W, H - H * SKY_FRAC).fill(pal.ground)
   ground.rect(0, H * SKY_FRAC, W, 4).fill(0x4caf50)
-  bgContainer.addChildAt(ground, 0) // behind everything else
+  bgContainer.addChildAt(ground, 0)
+}
+
+// v54.89 — clouds drift across sky
+function buildClouds() {
+  const skyH = H * SKY_FRAC + 20
+  const cloudLayer = new PIXI.Container()
+  for (let i = 0; i < 5; i++) {
+    const c = new PIXI.Graphics()
+    const cx = (i / 5) * W * 1.4 - 100
+    const cy = skyH * (0.15 + Math.random() * 0.20)
+    const scale = 0.7 + Math.random() * 0.5
+    c.circle(0, 0, 18 * scale).fill(0xffffff)
+    c.circle(-14 * scale, 4 * scale, 14 * scale).fill(0xffffff)
+    c.circle(16 * scale, 4 * scale, 16 * scale).fill(0xffffff)
+    c.circle(8 * scale, -10 * scale, 12 * scale).fill(0xfafafa)
+    c.x = cx
+    c.y = cy
+    cloudLayer.addChild(c)
+    S.clouds.push({ sprite: c, speed: 0.15 + Math.random() * 0.25 })
+  }
+  bgContainer.addChild(cloudLayer)
+  bgContainer._cloudLayer = cloudLayer
 }
 
 function buildRail() {
@@ -414,6 +498,97 @@ function tick(tickerOrDelta) {
     }
   }
 
+  // v54.89 — Parallax background animation
+  // Hills (slow scroll, 0.25× speed of train)
+  if (bgContainer._hills) {
+    bgContainer._hills.x -= scrollDx * 0.25
+    if (bgContainer._hills.x < -W * 0.6) bgContainer._hills.x = 0
+  }
+  // Fence (1.0× speed)
+  if (bgContainer._fence) {
+    bgContainer._fence.x -= scrollDx
+    if (bgContainer._fence.x < -50) bgContainer._fence.x = 0
+  }
+  // Clouds drift across sky
+  S.clouds.forEach(c => {
+    c.sprite.x -= scrollDx * c.speed * 0.4
+    if (c.sprite.x < -100) c.sprite.x = W + 100
+  })
+  // NPCs wave + scroll out + recycle
+  if (bgContainer._npcs) {
+    const npcs = bgContainer._npcs
+    npcs.x -= scrollDx
+    if (npcs.x < -W * 0.5) {
+      // Re-randomize NPC positions for variety
+      npcs.x = 0
+      npcs.children.forEach((npc, i) => {
+        npc.x = (W * (0.15 + i * 0.25)) + Math.random() * 80
+      })
+    }
+    npcs.children.forEach(npc => {
+      if (!npc._hand) return
+      npc._wavePhase += 0.2
+      const wave = Math.sin(npc._wavePhase)
+      npc._hand.rotation = wave * 0.4
+      npc._hand.y = -8 - Math.abs(wave) * 3
+    })
+  }
+
+  // v54.89 — Smoke trail behind train (steam locos only — smokePos populated)
+  S.smokeTimer += dt
+  if (S.smokeTimer >= 0.12 && S.trainCfg && S.trainCfg.smokePos) {
+    S.smokeTimer = 0
+    const puff = new PIXI.Graphics()
+    puff.circle(0, 0, 6 + Math.random() * 4).fill(0xeeeeee)
+    puff.x = trainContainer.x - 30
+    puff.y = trainContainer.y - 70 + S.jumpY
+    puff.alpha = 0.85
+    particleLayer.addChild(puff)
+    S.smokePuffs.push({ sprite: puff, vy: -8, vx: -1.2, life: 1.6 })
+  }
+  // Update smoke puffs
+  for (let i = S.smokePuffs.length - 1; i >= 0; i--) {
+    const p = S.smokePuffs[i]
+    p.life -= dt
+    p.sprite.x += p.vx
+    p.sprite.y += p.vy * dt * 6
+    p.sprite.scale.x = p.sprite.scale.y = 1 + (1.6 - p.life) * 0.5
+    p.sprite.alpha = p.life / 1.6 * 0.85
+    if (p.life <= 0) {
+      particleLayer.removeChild(p.sprite)
+      S.smokePuffs.splice(i, 1)
+    }
+  }
+
+  // v54.89 — Bird flock fly-by every 8-14s
+  S.nextBirdAt -= dt
+  if (S.nextBirdAt <= 0) {
+    S.nextBirdAt = 8 + Math.random() * 6
+    spawnBirds()
+  }
+  for (let i = S.birds.length - 1; i >= 0; i--) {
+    const b = S.birds[i]
+    b.frame++
+    b.sprite.x += b.vx
+    b.sprite.y += Math.sin(b.frame * 0.1) * 0.5
+    if (b.sprite.x < -50) {
+      bgContainer.removeChild(b.sprite)
+      S.birds.splice(i, 1)
+    }
+  }
+
+  // v54.89 — Milestone signposts at 200/400/600/800
+  if (S.milestonesPassed < S.milestones.length && S.distance >= S.milestones[S.milestonesPassed]) {
+    spawnMilestone(S.milestonesPassed + 1)
+    S.milestonesPassed++
+  }
+
+  // v54.89 — Subtle train bob (chuff rhythm)
+  if (!S.jumping) {
+    const bob = Math.sin(S.frame * 0.18) * 1.4
+    trainContainer.y = H * RAIL_Y_FRAC - 4 + bob
+  }
+
   // Jump physics
   if (S.jumping) {
     S.jumpVel += GRAVITY * dt
@@ -425,10 +600,13 @@ function tick(tickerOrDelta) {
       S.jumping = false
     }
   }
-  trainContainer.y = H * RAIL_Y_FRAC - 4 + S.jumpY
-  // Small horizontal sway on jump
-  if (S.jumping) trainContainer.rotation = Math.sin(S.frame * 0.15) * 0.04
-  else trainContainer.rotation = 0
+  // Jump Y override (replaces the bob below if jumping)
+  if (S.jumping) {
+    trainContainer.y = H * RAIL_Y_FRAC - 4 + S.jumpY
+    trainContainer.rotation = Math.sin(S.frame * 0.15) * 0.04
+  } else {
+    trainContainer.rotation = 0
+  }
 
   // Spawn obstacles
   S.spawnTimer += dt
@@ -448,6 +626,8 @@ function tick(tickerOrDelta) {
       S.obstacles.splice(i, 1)
       continue
     }
+    // v54.89 — Skip collision for decoration items (milestone signposts)
+    if (o.isDecoration) continue
     // Collision: train fixed-X area vs obstacle
     if (S.invincible <= 0 && Math.abs(o.sprite.x - trainContainer.x) < 50) {
       const trainBottom = H * RAIL_Y_FRAC + S.jumpY
@@ -492,6 +672,44 @@ const OBSTACLE_TYPES = [
   { id: 'water',   icon: '💧', height: 22, width: 60 },
   { id: 'cow',     icon: '🐮', height: 46, width: 56 },
 ]
+
+// v54.89 — Spawn flock of 3-5 birds flying right→left
+function spawnBirds() {
+  const skyH = H * SKY_FRAC + 20
+  const count = 3 + Math.floor(Math.random() * 3)
+  const baseY = skyH * (0.18 + Math.random() * 0.30)
+  for (let i = 0; i < count; i++) {
+    const t = new PIXI.Text({ text: i % 2 === 0 ? '🐦' : 'V', style: { fontSize: 16, fill: 0x424242 } })
+    t.anchor.set(0.5, 0.5)
+    t.x = W + 30 + i * 28
+    t.y = baseY + i * 12
+    bgContainer.addChild(t)
+    S.birds.push({ sprite: t, vx: -1.6 - Math.random() * 0.8, frame: 0 })
+  }
+}
+
+// v54.89 — Milestone signpost at 200/400/600/800m
+function spawnMilestone(num) {
+  const totalKm = (num * 200) + 'm'
+  const post = new PIXI.Container()
+  post.x = W + 60
+  post.y = H * RAIL_Y_FRAC
+
+  // Sign board
+  const g = new PIXI.Graphics()
+  g.rect(-2, -56, 4, 56).fill(0x6d4c41) // post
+  g.roundRect(-32, -68, 64, 22, 6).fill(0xfde047).stroke({ color: 0x92400e, width: 2 })
+  post.addChild(g)
+  const label = new PIXI.Text({ text: totalKm, style: { fontSize: 14, fill: 0x5a2a00, fontWeight: 'bold', fontFamily: 'Fredoka One, sans-serif' } })
+  label.anchor.set(0.5, 0.5)
+  label.x = 0
+  label.y = -57
+  post.addChild(label)
+
+  obstacleLayer.addChild(post)
+  // Treat as decoration — scroll with same speed but no collision
+  S.obstacles.push({ sprite: post, type: { id: '__milestone__' }, height: 0, isDecoration: true })
+}
 
 function spawnObstacle() {
   const type = OBSTACLE_TYPES[Math.floor(Math.random() * OBSTACLE_TYPES.length)]
