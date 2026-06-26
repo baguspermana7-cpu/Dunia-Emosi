@@ -465,6 +465,173 @@
       difficulty: 2,
     }))
 
+    // ── Question gate generator (spec §6, §8, §19) ──────────────────────────
+    // Shared interaction handler that pulls from window.KidsQuestions pool.
+    // Each gate has a unique header + success animation theme.
+    function makeQuestionGateObstacle(opts) {
+      return {
+        type: opts.type || 'question_gate',
+        difficulty: opts.difficulty || 2,
+        ageRange: opts.ageRange || '4-7',
+        allowedLocations: opts.allowedLocations || ['*'],
+        allowedJourneyPhases: opts.allowedJourneyPhases || ['*'],
+        requiredAction: 'tap_choice',
+        questionRequired: true,
+        questionCategory: opts.questionCategory || 'shape',
+        softFail: true,
+        maxRetry: 3,
+        reward: { coins: opts.coins || 6, badgeProgress: 1, sound: 'success_chime' },
+        visual: { cameraZoom: true, highlightSlot: true, successSparkle: true },
+        accessibility: { voicePrompt: true, largeTouchTarget: true, reducedMotion: true },
+        title: opts.title,
+        hints: opts.hints || [
+          'Coba pilihan lain! 💡',
+          'Lihat gambarnya baik-baik! ✨',
+          'Yang ini! 👇',
+        ],
+
+        interaction: {
+          setup(ctx, callbacks) {
+            const body = ctx.body
+            if (!body) return
+
+            const q = ctx.questionData
+            if (!q) {
+              console.warn('[obstacles] no question for', opts.title)
+              setTimeout(() => callbacks.success(), 200) // skip if no q
+              return
+            }
+
+            // Banner (header per obstacle theme)
+            if (opts.banner) {
+              const banner = document.createElement('div')
+              banner.style.cssText = 'text-align:center;font-size:48px;line-height:1;margin-bottom:6px;'
+              banner.textContent = opts.banner
+              body.appendChild(banner)
+            }
+
+            const title = document.createElement('div')
+            title.className = 'obstacle-engine-title'
+            title.textContent = opts.title
+            body.appendChild(title)
+
+            const qText = document.createElement('div')
+            qText.className = 'obstacle-engine-subtitle'
+            qText.style.fontSize = 'clamp(16px, 4vw, 22px)'
+            qText.style.fontWeight = '700'
+            qText.style.color = '#3b2066'
+            qText.style.padding = '6px 0 12px'
+            qText.textContent = q.q
+            body.appendChild(qText)
+
+            const choicesRow = document.createElement('div')
+            choicesRow.className = 'obstacle-engine-row'
+
+            // Render each option as a big tap button
+            const options = q.options.slice()
+            // Map options to {key, icon} so we can shuffle without losing correctness
+            const wrapped = options.map((opt, i) => ({ key: i, icon: opt }))
+            const shuffled = wrapped.slice().sort(() => Math.random() - 0.5)
+
+            const onPick = (btn, key) => {
+              const all = choicesRow.querySelectorAll('.obstacle-engine-shape-btn')
+              if (key === q.correct) {
+                btn.classList.add('correct')
+                OE.spawnSparkles(btn, 8)
+                all.forEach(b => { b.disabled = true })
+                // Per-obstacle success animation hook
+                if (typeof opts.onSuccess === 'function') {
+                  try { opts.onSuccess(body) } catch (e) { console.warn(e) }
+                }
+                setTimeout(() => callbacks.success(), 900)
+              } else {
+                btn.classList.add('wrong')
+                setTimeout(() => btn.classList.remove('wrong'), 500)
+                callbacks.fail()
+              }
+            }
+
+            shuffled.forEach(c => {
+              const btn = document.createElement('button')
+              btn.className = 'obstacle-engine-shape-btn'
+              btn.textContent = c.icon
+              btn.dataset.key = c.key
+              btn.setAttribute('aria-label', 'Jawaban ' + c.icon)
+              btn.addEventListener('click', () => onPick(btn, c.key))
+              choicesRow.appendChild(btn)
+            })
+
+            body.appendChild(choicesRow)
+            OE.speak(q.voicePrompt || q.q)
+          },
+          teardown() {}
+        },
+      }
+    }
+
+    // Fire jump question (spec §6) — answer right → cartoon jump animation
+    OE.register('fire_jump_question', makeQuestionGateObstacle({
+      title: '🔥 Lompati api kecil!',
+      banner: '🔥 🚂 🔥',
+      questionCategory: 'shape',
+      difficulty: 2,
+      coins: 7,
+      hints: [
+        'Coba pilih bentuk lain! 💡',
+        'Lihat bentuk yang ditanya! ✨',
+        'Yang ini! 👇',
+      ],
+      onSuccess(body) {
+        // Add cartoon jump effect at top of overlay
+        const fx = document.createElement('div')
+        fx.style.cssText = 'position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:56px;animation:obstacle-target-pulse 0.6s ease-out;'
+        fx.textContent = '🚂✨'
+        body.appendChild(fx)
+        setTimeout(() => fx.remove(), 900)
+      },
+    }))
+
+    // Tunnel gate question (spec §8) — answer right → gate slides open
+    OE.register('tunnel_gate_question', makeQuestionGateObstacle({
+      title: '🚇 Pintu tunnel terkunci!',
+      banner: '🚇',
+      questionCategory: 'color',
+      difficulty: 2,
+      coins: 7,
+      hints: [
+        'Pilih jawaban yang lain! 💡',
+        'Lihat warna yang ditanya! ✨',
+        'Yang ini! 👇',
+      ],
+      onSuccess(body) {
+        const fx = document.createElement('div')
+        fx.style.cssText = 'position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:48px;animation:obstacle-target-pulse 0.6s ease-out;'
+        fx.textContent = '🚇✅'
+        body.appendChild(fx)
+        setTimeout(() => fx.remove(), 900)
+      },
+    }))
+
+    // Educational question gates per spec §19 (6 categories)
+    OE.register('educational_question_gate_shape', makeQuestionGateObstacle({
+      title: '🟦 Tantangan Bentuk!',  banner: '🟦', questionCategory: 'shape',  difficulty: 1, coins: 5,
+    }))
+    OE.register('educational_question_gate_color', makeQuestionGateObstacle({
+      title: '🎨 Tantangan Warna!',   banner: '🎨', questionCategory: 'color',  difficulty: 1, coins: 5,
+    }))
+    OE.register('educational_question_gate_count', makeQuestionGateObstacle({
+      title: '🔢 Hitung Bersama!',    banner: '🔢', questionCategory: 'count',  difficulty: 1, coins: 5,
+    }))
+    OE.register('educational_question_gate_number', makeQuestionGateObstacle({
+      title: '🔟 Tantangan Angka!',   banner: '🔟', questionCategory: 'number', difficulty: 2, coins: 6,
+    }))
+    OE.register('educational_question_gate_letter', makeQuestionGateObstacle({
+      title: '🔠 Tantangan Huruf!',   banner: '🔠', questionCategory: 'letter', difficulty: 2, coins: 6,
+    }))
+    OE.register('educational_question_gate_animal', makeQuestionGateObstacle({
+      title: '🐾 Tantangan Hewan!',   banner: '🐾', questionCategory: 'animal', difficulty: 1, coins: 5,
+    }))
+
     if (typeof console !== 'undefined' && console.log) {
       console.log('[obstacles.js] registered', Object.keys(OE._registry).length, 'obstacle types')
     }

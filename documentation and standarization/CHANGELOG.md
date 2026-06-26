@@ -1,5 +1,54 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.71 "Question gate tranche — fire jump + tunnel gate + 6 educational gates" (Phase 4.2)
+
+21 obstacles total registered after this tranche (13 from v54.70 + 8 new). Question pool extended from 49 → 73 entries.
+
+### Question gate generator
+
+`makeQuestionGateObstacle(opts)` — pulls from `window.KidsQuestions` filtered by `opts.questionCategory`. Per-obstacle banner (cartoon icon) + theme-specific success animation. Shuffles answer options, shows ≥88px tap buttons, sparkle on correct.
+
+### 8 obstacles added
+
+| ID | Banner | Question category | Difficulty | Spec |
+|---|---|---|---|---|
+| `fire_jump_question`                       | 🔥 🚂 🔥 | shape  | 2 | §6  — train jump cartoon FX on success |
+| `tunnel_gate_question`                     | 🚇       | color  | 2 | §8  — gate-open ✅ FX on success |
+| `educational_question_gate_shape`          | 🟦       | shape  | 1 | §19 |
+| `educational_question_gate_color`          | 🎨       | color  | 1 | §19 |
+| `educational_question_gate_count`          | 🔢       | count  | 1 | §19 |
+| `educational_question_gate_number`         | 🔟       | number | 2 | §19 |
+| `educational_question_gate_letter`         | 🔠       | letter | 2 | §19 |
+| `educational_question_gate_animal`         | 🐾       | animal | 1 | §19 |
+
+### Question pool extensions (kids-questions.js)
+
+24 new questions added:
+- Shape: 3 new (belah ketupat, segi enam, segi delapan)
+- Color: 3 new (putih, hitam, coklat)
+- Count: 3 new (count 4-7)
+- Number: 2 new (8, 10)
+- Math: 3 new (5+1, 3+3, 4+2)
+- Animal: 4 new (terbang, berenang, kelinci, gajah)
+- Safety: 3 new (animal-crossing rule, flashlight, payung)
+- Comparison: 2 new (lebih tinggi, lebih banyak)
+- Letter pool unchanged (3 entries).
+
+Total: 73 questions across 4 ages × 10 categories.
+
+### Files touched
+- `games/data/obstacles.js` — 8 new registrations + question-gate generator (~140 LOC added).
+- `games/data/kids-questions.js` — 24 new entries (+ slot count 49 → 73).
+- `games/g14.html` — cache-bust `v=54.71-20260626bx`.
+- `sw.js` v54.70 → v54.71.
+
+### Verification
+- `grep -c "OE.register" games/data/obstacles.js` = 21 ✓
+- `grep -c "{ tags:" games/data/kids-questions.js` = 73 ✓
+- Question gate with no matching category falls back to immediate success (defensive; should never fire because all 8 gates use existing categories).
+
+---
+
 ## 2026-06-26 — v54.70 "Repair tranche — 12 drag-drop puzzles + signal/tunnel timing" (Phase 4.1)
 
 13 obstacles total registered after this tranche (1 from v54.69 + 12 new). All soft-fail, all retry-3 auto-help, all 88px tap targets, all reduced-motion-honored.

@@ -88,6 +88,37 @@
     { tags:['comparison'], age:'6', q:'Mana yang lebih besar?', options:['🚂','🚆'], correct:1 },
     { tags:['comparison'], age:'6', q:'Mana yang lebih kecil?', options:['🐘','🐭'], correct:1 },
     { tags:['comparison'], age:'6', q:'Mana yang lebih panjang?', options:['🚃🚃🚃','🚃'], correct:0 },
+    { tags:['comparison'], age:'6', q:'Mana yang lebih tinggi?', options:['🌳','🌱'], correct:0 },
+    { tags:['comparison'], age:'7', q:'Mana yang lebih banyak?', options:['⭐⭐⭐⭐','⭐⭐'], correct:0 },
+
+    // ── EXTENDED v54.71 — more shapes, more colors, more counts ─────────────
+    { tags:['shape'], age:'6', q:'Mana belah ketupat?', options:['◆','⬤','■'], correct:0 },
+    { tags:['shape'], age:'6', q:'Mana segi enam?', options:['⬢','⬤','▲'], correct:0 },
+    { tags:['shape'], age:'7', q:'Mana segi delapan?', options:['◯','⯁','⬤'], correct:1 },
+
+    { tags:['color'], age:'5', q:'Mana yang putih?', options:['⚪','⚫','🔵'], correct:0 },
+    { tags:['color'], age:'5', q:'Mana yang hitam?', options:['⚪','⚫','🔵'], correct:1 },
+    { tags:['color'], age:'6', q:'Mana yang coklat?', options:['🟫','🟢','🔵'], correct:0 },
+
+    { tags:['count'], age:'5', q:'Berapa? 🐱🐱🐱🐱', options:['3','4','5'], correct:1 },
+    { tags:['count'], age:'6', q:'Berapa? 🐱🐱🐱🐱🐱🐱', options:['5','6','7'], correct:1 },
+    { tags:['count'], age:'6', q:'Berapa kereta? 🚂🚂🚂🚂🚂🚂🚂', options:['6','7','8'], correct:1 },
+
+    { tags:['number'], age:'6', q:'Mana angka 8?', options:['6','7','8'], correct:2 },
+    { tags:['number'], age:'7', q:'Mana angka 10?', options:['8','9','10'], correct:2 },
+
+    { tags:['math'], age:'7', q:'5 + 1 = ?', options:['5','6','7'], correct:1 },
+    { tags:['math'], age:'7', q:'3 + 3 = ?', options:['5','6','7'], correct:1 },
+    { tags:['math'], age:'7', q:'4 + 2 = ?', options:['5','6','7'], correct:1 },
+
+    { tags:['animal'], age:'6', q:'Mana hewan yang terbang?', options:['🐦','🐱','🐟'], correct:0 },
+    { tags:['animal'], age:'6', q:'Mana hewan yang berenang?', options:['🐦','🐱','🐟'], correct:2 },
+    { tags:['animal'], age:'5', q:'Mana kelinci?', options:['🐰','🐶','🐱'], correct:0 },
+    { tags:['animal'], age:'5', q:'Mana gajah?', options:['🐘','🐶','🐱'], correct:0 },
+
+    { tags:['safety'], age:'6', q:'Saat hewan menyeberang, kereta?', options:['Berhenti ✋','Cepat ➡️','Maju 🐢'], correct:0 },
+    { tags:['safety'], age:'6', q:'Mana yang membantu kita lihat malam?', options:['🔦','🥖','🌧️'], correct:0 },
+    { tags:['safety'], age:'5', q:'Mana yang dipakai saat hujan?', options:['☔','🧢','🥾'], correct:0 },
   ]
 
 })(typeof window !== 'undefined' ? window : globalThis);
