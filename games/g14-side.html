@@ -89,14 +89,14 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <script src="data/bg-npcs.js?v=54.64-20260626bq"></script>
 <script src="data/bg-audio.js?v=54.65-20260626br"></script>
 <script src="data/bg-events.js?v=54.67-20260626bt"></script>
-<script src="obstacle-engine.js?v=54.97-20260626cx"></script>
-<script src="data/kids-questions.js?v=54.97-20260626cx"></script>
-<script src="data/obstacles.js?v=54.97-20260626cx"></script>
-<script src="data/routes.js?v=54.97-20260626cx"></script>
-<script src="data/reward-catalog.js?v=54.97-20260626cx"></script>
-<script src="reward-gallery.js?v=54.97-20260626cx"></script>
-<script src="settings-modal.js?v=54.97-20260626cx"></script>
-<script src="trains-db.js?v=54.97-20260626cx"></script>
+<script src="obstacle-engine.js?v=54.98-20260626cy"></script>
+<script src="data/kids-questions.js?v=54.98-20260626cy"></script>
+<script src="data/obstacles.js?v=54.98-20260626cy"></script>
+<script src="data/routes.js?v=54.98-20260626cy"></script>
+<script src="data/reward-catalog.js?v=54.98-20260626cy"></script>
+<script src="reward-gallery.js?v=54.98-20260626cy"></script>
+<script src="settings-modal.js?v=54.98-20260626cy"></script>
+<script src="trains-db.js?v=54.98-20260626cy"></script>
 <script src="game-modal.js?v=54.47-20260625az"></script>
 
 <div id="hud-top">
@@ -181,7 +181,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <script>
 'use strict'
 /* =============================================================================
- * g14-side.html  (v54.88 foundation)
+ * g14-side.html  (v54.88 foundation, v54.96+ critical fixes)
  * =============================================================================
  * Side-scrolling cartoon train racing — replaces top-down 3-lane G14 for the
  * "side-race (beta)" experience per owner reference image 2 ("Train Racing").
@@ -256,6 +256,10 @@ const S = {
   heartTimer: 0,
   finishFlagSpawned: false,
 }
+
+// v54.98 — Expose game state on window so headless probes (visual-qa.mjs) can
+// inspect cloud/bird counts, jumpY, distance, etc. without source modification.
+if (typeof window !== 'undefined') window.S = S
 
 // Layout
 const SKY_FRAC = 0.65            // upper 65% = sky/landscape

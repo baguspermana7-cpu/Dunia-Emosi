@@ -1,5 +1,36 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.98 "Regression QA confirmation + window.S exposure for probes" (Phase 5.11)
+
+### Regression QA pass
+
+Re-ran `node tools/visual-qa.mjs` after v54.96 + v54.97 fixes. Visual confirms:
+- **Train sprite visible**: Thomas (blue+red side-on) + Casey JR both render correctly on rail. **CRITICAL BUG FIXED** ✅
+- **Train name correct**: shows "Thomas" / "Casey JR" (not fallback "Kereta") ✅
+- **Tutorial overlay**: shows correctly on first visit (Agent B's work) ✅
+- **Mountains**: snow caps visible on far peaks ✅
+- **HUD**: no overlap with distance/HP/coin ✅
+- **Background scene**: rich with clouds + sun + mountains + NPCs + fence ✅
+
+5 new regression screenshots saved at `tools/qa-screenshots/`.
+
+### `window.S` exposure
+
+NEW: `if (typeof window !== 'undefined') window.S = S` at module scope. Lets headless probes inspect game state (`S.clouds.length`, `S.distance`, `S.jumpY`, etc.) without source modification. Probe earlier reported `clouds: 0` only because `window.S` was undefined — clouds were created correctly in module scope.
+
+### Files touched
+- `games/g14-side.html` — `window.S = S` exposure (+~3 LOC) + cache-bust.
+- `games/g14.html` — cache-bust.
+- `sw.js` v54.97 → v54.98.
+- `tools/qa-screenshots/*.png` — updated regression screenshots.
+
+### Verification
+- Syntax OK.
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS.
+- `node tools/visual-qa.mjs` → 20 findings recorded, screenshots saved.
+
+---
+
 ## 2026-06-26 — v54.97 "Side-race visual refinements (Agent C QA list items 3-9)" (Phase 5.10)
 
 Closes 6 of 10 refinements from Agent C's prioritized list.
