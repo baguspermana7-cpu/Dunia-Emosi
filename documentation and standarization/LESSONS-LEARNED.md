@@ -4,6 +4,16 @@
 
 ---
 
+## 2026-06-27 — v55.22 Manifest + SW offline fallback
+
+### L208 — PWA manifest `start_url` + `scope` are absolute-resolved; use relative paths
+- `manifest.json` had `"start_url": "/Dunia-Emosi/"` + `"scope": "/Dunia-Emosi/"`. Browsers treat these as absolute paths anchored at the host root, NOT at the manifest's URL. On Vercel and local dev (both serving at `/`), the start_url pointed to `dunia-emosi.vercel.app/Dunia-Emosi/` → 404, and the scope confined the SW to a non-existent path.
+- **Symptom**: PWA install on Vercel either failed or launched to a 404 page. Add-to-Home-Screen UX broken on the host owner actually uses.
+- **Fix** (v55.22): switch to `"start_url": "./"` + `"scope": "./"`. Manifest URLs *do* resolve against the manifest's own URL, so `./` on Vercel `/manifest.json` → `/`, and on GH Pages `/Dunia-Emosi/manifest.json` → `/Dunia-Emosi/`. Works everywhere.
+- **Lesson**: this is the same code-smell pattern as L207 — any path constant containing the project name (`/Dunia-Emosi/`, `/my-app/`) is portability-broken unless you ship ONLY to that exact path. Use relative paths or runtime detection. Audit checklist for new projects: SW SHELL, SW offline fallback, manifest.json `start_url` + `scope`, app-code basePath constants — ALL four are vectors for this bug.
+
+---
+
 ## 2026-06-27 — v55.18 Hardcoded deployment prefixes
 
 ### L207 — Hardcoded `/project-name/` deployment prefixes lie about being portable

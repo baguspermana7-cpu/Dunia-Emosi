@@ -1,5 +1,47 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.22 "Manifest + SW offline-fallback /Dunia-Emosi/ cleanup (closes B-216)"
+
+Owner A-301 standing directive — continuing the /Dunia-Emosi/ prefix hunt from v55.18. Two more silent bugs surface when grepping the codebase + manifest.
+
+### B-216 — manifest.json `start_url` + `scope` hardcoded /Dunia-Emosi/
+
+The PWA manifest had `"start_url": "/Dunia-Emosi/"` + `"scope": "/Dunia-Emosi/"`. Browsers resolve these as ABSOLUTE paths against the host root. On Vercel (`dunia-emosi.vercel.app/`) and local dev (`localhost:8081/`):
+- `start_url` → `dunia-emosi.vercel.app/Dunia-Emosi/` → 404
+- `scope` → restricts SW to the same non-existent path
+
+**Effect**: installing as PWA on Vercel either fails outright or launches to a 404 page. PWA "Add to Home Screen" UX broken on the host owner actually uses.
+
+**Fix**: switch to relative paths.
+```json
+"start_url": "./",
+"scope": "./"
+```
+
+Manifest URLs resolve against the manifest's own URL. On Vercel: `start_url: "./"` against `/manifest.json` → `/` ✓. On GH Pages: against `/Dunia-Emosi/manifest.json` → `/Dunia-Emosi/` ✓.
+
+### Bonus — sw.js offline-fallback `caches.match('/Dunia-Emosi/')`
+
+Line 107 had the same hardcoded prefix for the offline HTML fallback. On Vercel/local, that cache key never existed (since the SHELL switched to `./` in v55.18) → the fallback silently no-op'd. Switched to `caches.match('./')` which matches the SHELL's `./` entry on every host.
+
+### Files touched
+
+- `manifest.json` — 2 keys: `start_url` + `scope` → `./`.
+- `sw.js` — line 107 fallback `'/Dunia-Emosi/'` → `'./'`; CACHE_VERSION v55.18 → v55.22.
+
+### Verification
+
+- `node -e "JSON.parse(require('fs').readFileSync('manifest.json'))"` → valid JSON.
+- `node tools/visual-polish-audit.mjs` → 18 screens, 0 errors, 0 server 404s.
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS.
+- Manual: PWA install flow now lands on the actual home page on Vercel (was 404).
+
+### L208 — Manifest start_url + scope are ABSOLUTE-resolved against host root
+
+The same `/Dunia-Emosi/` prefix that broke `sw.js` SHELL in v55.18 also broke PWA install via `manifest.json`. Browsers resolve `start_url` and `scope` against the host root, not the manifest's own URL. Use relative paths (`./`) so resolution anchors against the manifest itself — works on every host shape. This is the same code-smell pattern as L207 — any path constant containing the project name belongs in a runtime detection helper, not in declarative config.
+
+---
+
 ## 2026-06-27 — v55.21 "Deep-interaction probe — 9/9 mid-gameplay states clean"
 
 Owner standing directive A-301 — keep refining + ensure no bug + tampilan bagus. v55.0-v55.20 verified splash + boot states; v55.21 goes BEYOND splash and captures mid-gameplay state on each of the 8 standalone games + index home. Also tracks `console.warn` (not just `.error`) so silent warnings surface too.
