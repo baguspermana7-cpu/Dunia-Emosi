@@ -892,12 +892,63 @@
     },
   }
 
+  // ── v54.58: TimeOfDay shared module ─────────────────────────────────────────
+  // Lifted from games/g14.html TIME_PHASES (was G14-only). Used by G14 (race
+  // progress lerp) AND G15 (per-level chunk lerp) so all train games share a
+  // single 6-phase sky-color rotation: subuh / pagi / siang / sore / petang
+  // / malam. Each phase ships skyTop, skyBot, cloudTint, sunY (-1..1),
+  // sunColor + stars boolean. Owner: "kurang variasi cuaca atau waktu".
+  const TimeOfDay = {
+    PHASES: [
+      { name:'subuh',  skyTop:0x1a2850, skyBot:0x4a5f7f, cloudTint:0x6e7faa, sunY:-0.20, sunColor:0xff6644, stars:true  },
+      { name:'pagi',   skyTop:0xfdb462, skyBot:0x87ceeb, cloudTint:0xfff7e8, sunY: 0.20, sunColor:0xffdd00, stars:false },
+      { name:'siang',  skyTop:0x87ceeb, skyBot:0xe0f6ff, cloudTint:0xffffff, sunY: 0.55, sunColor:0xffff00, stars:false },
+      { name:'sore',   skyTop:0xff8c42, skyBot:0xffb366, cloudTint:0xffd0a0, sunY: 0.78, sunColor:0xffaa00, stars:false },
+      { name:'petang', skyTop:0x6b3b6b, skyBot:0xff6b35, cloudTint:0xa07050, sunY: 0.90, sunColor:0xff5500, stars:false },
+      { name:'malam',  skyTop:0x0a0a2e, skyBot:0x1a1a5e, cloudTint:0x3a3a6e, sunY:-0.40, sunColor:0xeeee88, stars:true  },
+    ],
+    _lerpHex(a, b, t) {
+      const ar=(a>>16)&255, ag=(a>>8)&255, ab=a&255
+      const br=(b>>16)&255, bg=(b>>8)&255, bb=b&255
+      const r=Math.round(ar + (br-ar)*t), g=Math.round(ag + (bg-ag)*t), bl=Math.round(ab + (bb-ab)*t)
+      return (r<<16) | (g<<8) | bl
+    },
+    // forProgress(t in 0..1) → blended phase colors. Use for race progress (G14).
+    forProgress(t) {
+      const tc = Math.max(0, Math.min(1, t))
+      const span = tc * this.PHASES.length
+      const idx = Math.min(this.PHASES.length - 1, Math.floor(span))
+      const nextIdx = Math.min(this.PHASES.length - 1, idx + 1)
+      const lerp = span - idx
+      const a = this.PHASES[idx], b = this.PHASES[nextIdx]
+      return {
+        phase: a, next: b, lerp,
+        skyTop:    this._lerpHex(a.skyTop, b.skyTop, lerp),
+        skyBot:    this._lerpHex(a.skyBot, b.skyBot, lerp),
+        cloudTint: this._lerpHex(a.cloudTint, b.cloudTint, lerp),
+        sunY:      a.sunY + (b.sunY - a.sunY) * lerp,
+        sunColor:  this._lerpHex(a.sunColor, b.sunColor, lerp),
+        stars:     a.stars || b.stars,
+        name:      a.name,
+      }
+    },
+    // forLevel(level, maxLevel) → blended colors keyed on level chunk. Used by
+    // G15 (no race-progress concept). Each phase covers maxLevel/6 levels.
+    forLevel(level, maxLevel) {
+      const lv = Math.max(1, level | 0)
+      const max = Math.max(1, maxLevel | 0)
+      const t = Math.min(1, (lv - 0.5) / max)
+      return this.forProgress(t)
+    },
+  }
+
   // ── Public API ──────────────────────────────────────────────────────────────
   window.TrainShared = {
     passport: Passport,
     codex: Codex,
     ui: UI,
     mascot: Mascot,
+    timeOfDay: TimeOfDay,   // v54.58: shared 6-phase sky color rotation
     statsCard: StatsCard,
     audio: Audio,
     greeting: Greeting,

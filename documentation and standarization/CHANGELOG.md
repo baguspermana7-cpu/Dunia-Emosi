@@ -1,5 +1,44 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.58 "TimeOfDay shared module + G15 port" (plan Phase 1.4)
+
+Owner: "kurang variasi cuaca atau waktu". Lifted G14's `TIME_PHASES` into `train-shared.js` as a 6-phase sky-color rotation reusable by all 4 train games. G15 ports first.
+
+### Ships
+
+- **NEW `TrainShared.timeOfDay`** (in `games/train-shared.js`)
+  - `PHASES` — 6-entry array: subuh / pagi / siang / sore / petang / malam. Each with `skyTop`, `skyBot`, `cloudTint`, `sunY` (-1..1), `sunColor`, `stars` boolean. Colors match G14's existing TIME_PHASES so visual continuity is preserved.
+  - `forProgress(t)` — race-progress lerp (G14 use case). Returns `{ phase, next, lerp, skyTop, skyBot, cloudTint, sunY, sunColor, stars, name }` — pre-blended.
+  - `forLevel(level, maxLevel)` — level-chunk lerp (G15 use case). Maps `level=1..maxLevel` to `t=(level-0.5)/maxLevel`, then calls `forProgress(t)`. So L1-5≈subuh, L6-10≈pagi, L11-15≈siang, L16-20≈sore, L21-25≈petang, L26-30≈malam (with smooth blend between adjacent phases).
+  - `_lerpHex(a, b, t)` — color-channel lerp helper.
+
+- **G15 buildBackground port** (`games/g15-pixi.html:1030`)
+  - Added a 28%-alpha sky-tint overlay using `TrainShared.timeOfDay.forLevel(LEVEL, 30).skyTop` + a 18%-alpha lower band using `skyBot`. The per-level biome theme (`T.sky` / `T.skyMid`) stays as the BASE; TimeOfDay overlays mood on top.
+  - Sun / moon glyph: when `sunY > 0` draws a sun at `(W*(0.18+0.64*sunY), H*(0.10+0.18*(1-sunY)))`; when `stars` is true draws a crescent moon at the canonical night position.
+  - Existing per-level THEMES (30 entries) keep their biome accent role for ground/hill/rail colors. So a forest level at L20 reads as "forest at petang" not "petang flattens the forest".
+
+### Why not change G14
+
+G14's race-progress-based `g14CurrentSkyColors` already uses local `TIME_PHASES` and is tightly coupled to `S.distance / S.finishLine`. Keeping the local copy avoids any race-state regression. The shared module exposes the same color palette so a future G14 migration is trivial.
+
+### Files touched
+- `games/train-shared.js` — NEW `TimeOfDay` namespace + Public API entry.
+- `games/g15-pixi.html` — `buildBackground` TimeOfDay overlay + sun/moon glyph.
+- `index.html` + 3 train HTMLs — train-shared.js cache-bust v54.45/v54.48 → v54.58.
+- `sw.js` — CACHE_VERSION v54.57-20260626bj → v54.58-20260626bk.
+
+### Verification
+- Syntax check OK on both files.
+- Sandbox load test: `TrainShared.timeOfDay.PHASES.length === 6`, `forLevel(5,30).name === 'subuh'`, `forLevel(15,30).name === 'siang'`, `forLevel(25,30).name === 'petang'` ✓.
+- PROTECTED chars + PvP balance unchanged.
+
+### Next
+
+- v54.59 Scenery parallax + biome decorations + weather variants per level.
+- v54.60 G16 Visual+VFX.
+
+---
+
 ## 2026-06-26 — v54.57 "G15 Arena Foundation Fix" (plan Phase 1.3, NEW tranche)
 
 Addresses owner's 2nd-SS feedback directly (smoke + HUD).

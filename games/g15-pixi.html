@@ -181,7 +181,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<script src="train-shared.js?v=54.48-20260625ba"></script>
+<script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="train-vfx.js?v=54.56-20260625bi"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <!-- v54.28 I13: loop the train ambient SFX (was one-shot, faded after first cycle, leaving silence). -->
@@ -1038,6 +1038,45 @@ function buildBackground() {
   skyGrad.rect(0, 0, W, H * 0.5).fill({ color: T.skyMid });
   skyGrad.alpha = 0.4;
   bgLayer.addChild(skyGrad);
+
+  // v54.58: time-of-day overlay — blends a phase-specific sky tint on top of
+  // the level's biome theme so a "forest level 12" reads as siang-forest, and
+  // "level 28" reads as malam-twilight. The biome accent (T.ground / T.hill /
+  // T.railColor) stays untouched; only the sky picks up TimeOfDay color +
+  // sun/moon position. Owner: "kurang variasi cuaca atau waktu".
+  let todPhase = null
+  try {
+    if (window.TrainShared && TrainShared.timeOfDay) {
+      todPhase = TrainShared.timeOfDay.forLevel(LEVEL, 30)
+    }
+  } catch(_){}
+  if (todPhase) {
+    const todTint = new PIXI.Graphics();
+    todTint.rect(0, 0, W, H * 0.55).fill({ color: todPhase.skyTop });
+    todTint.alpha = 0.28;
+    bgLayer.addChild(todTint);
+    const todTintBot = new PIXI.Graphics();
+    todTintBot.rect(0, H * 0.25, W, H * 0.40).fill({ color: todPhase.skyBot });
+    todTintBot.alpha = 0.18;
+    bgLayer.addChild(todTintBot);
+    // Sun / moon glyph drifts left → right across the sky as level chunk shifts.
+    if (todPhase.sunY > 0) {
+      // Sun (visible above horizon)
+      const sun = new PIXI.Graphics();
+      sun.circle(0, 0, 28).fill({ color: todPhase.sunColor, alpha: 0.85 });
+      sun.circle(0, 0, 18).fill({ color: 0xffffff, alpha: 0.55 });
+      sun.x = W * (0.18 + 0.64 * todPhase.sunY);
+      sun.y = H * (0.10 + 0.18 * (1 - todPhase.sunY));
+      bgLayer.addChild(sun);
+    } else if (todPhase.stars) {
+      // Moon (crescent) for night-leaning phases
+      const moon = new PIXI.Graphics();
+      moon.circle(0, 0, 26).fill({ color: 0xfef9c3 });
+      moon.circle(-9, -9, 19).fill({ color: 0x0a0a2e });
+      moon.x = W * 0.78; moon.y = H * 0.11;
+      bgLayer.addChild(moon);
+    }
+  }
 
   if (BG_THEME === 0) {
     // Night: moon + stars
