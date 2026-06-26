@@ -1,5 +1,46 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.17 "Wider audit — 9 more screens (index + 8 untouched standalones)"
+
+Phase extension tranche 2/5. Extended `tools/visual-polish-audit.mjs` with P10-P18 covering everything v55.0-v55.15 didn't touch.
+
+### Acceptance probe results
+
+```
+P10 index home          — captured (3 console errors → investigated, B-214/B-215)
+P11 g6 word racer       — errs: none, visual: vehicle picker + difficulty toggle, clean
+P12 g17 rope-swing      — errs: none, visual: "Jembatan Goyang" intro with monkey emoji + Pikachu, clean
+P13 g20 duck volley     — errs: none, visual: "Ducky Volley" intro, controls hint, clean
+P14 g21 Mario Pokemon   — errs: none, visual: Mario green hills + Pikachu + ?-block + brick, clean
+P15 g22 candy           — errs: none, visual: "Monster Wants Candy" lollipop intro, clean
+P16 g23 runner          — errs: none, visual: "POKEMON RUN" logo + Pikachu mascot, clean
+P17 g24 underwater      — errs: none, visual: "Pokemon Bawah Laut" Magikarp + Pantai Kanto tag, clean
+P18 g25 math            — errs: none, visual: "Kuis Matematika" abacus + 3 mode cards, clean
+```
+
+### What the audit surfaced
+
+P10 console errors traced via server log to two latent bugs (closes the v55.18 tranche scope):
+
+**B-214** — `sw.js` SHELL precaches `/Dunia-Emosi/`-prefixed URLs. Works only when the site sits at exactly that path. Vercel (`dunia-emosi.vercel.app/`) and local dev (`localhost:8081/`) both serve at root → all 9 SHELL items 404 on install. The lazy cache-first fetch handler still caches assets on first real request, so games work; just the SHELL precache silently fails.
+
+**B-215** — `index.html:2236` hardcodes `SFXEngine.init({ basePath: '/Dunia-Emosi/Sounds/pokemon%20sounds/' })`. Two SFX manifests 404 on the same hosts. SFX engine has a fallback path so audio still triggers, but the boot-time 404 noise is real.
+
+Both fixes shipped in v55.18.
+
+### Files touched
+
+- `tools/visual-polish-audit.mjs` — extended with 9 more probe entries P10-P18.
+- NEW 9 PNGs in `tools/qa-screenshots/polish-1[0-8]-*.png`.
+
+### Verification
+
+14/14 obstacle-engine probe PASS.
+All 18 polish screens captured.
+Each untouched standalone reports `errs: none` at boot.
+
+---
+
 ## 2026-06-27 — v55.16 "Finish-it-all sweep: cache-meta + favicon parity across all 14 game HTMLs + home"
 
 Owner verbatim: *"commit and push, apakah ada task yang belum selesai? plan mode, finish it all"* — closes the consistency gap from v55.10 + v55.15. After this ship, every standalone game HTML + index.html shares the same head-block baseline.

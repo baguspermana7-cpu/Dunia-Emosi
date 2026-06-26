@@ -255,6 +255,38 @@ async function main() {
       note('P09', `errs: ${errs.length === 0 ? 'none' : errs.slice(0, 3).join(' | ')}`)
       await page.close()
     }
+
+    // ── v55.17 EXTENSION — 9 more screens for index + 8 untouched games ────
+    // Capture each at first paint after a short settle. No deep interactions —
+    // we want to catch console errors / 404s / boot-time visual nits.
+
+    const EXTRA = [
+      { id: 'P10', label: 'index home',        url: '/index.html',          settle: 2200 },
+      { id: 'P11', label: 'g6 word racer',     url: '/games/g6.html',       settle: 1800 },
+      { id: 'P12', label: 'g17 rope-swing',    url: '/games/g17-pixi.html', settle: 2200 },
+      { id: 'P13', label: 'g20 duck volley',   url: '/games/g20-pixi.html', settle: 2200 },
+      { id: 'P14', label: 'g21 Mario Pokemon', url: '/games/g21-pixi.html', settle: 2500 },
+      { id: 'P15', label: 'g22 candy',         url: '/games/g22-candy.html',settle: 2000 },
+      { id: 'P16', label: 'g23 runner',        url: '/games/g23-pixi.html', settle: 2500 },
+      { id: 'P17', label: 'g24 underwater',    url: '/games/g24-pixi.html', settle: 2500 },
+      { id: 'P18', label: 'g25 math',          url: '/games/g25-math.html', settle: 1800 },
+    ]
+    for (const t of EXTRA) {
+      console.log(`${t.id} ${t.label}`)
+      const { page, errs } = await newPage(browser)
+      try {
+        await page.goto(`${BASE}${t.url}`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+        await wait(t.settle)
+        const slug = t.url.replace(/^\//, '').replace(/\//g, '-').replace(/\.html$/, '')
+        const out = path.join(OUT, `polish-${t.id.toLowerCase().replace('p', '')}-${slug}.png`)
+        await page.screenshot({ path: out })
+        note(t.id, `${t.label}: errs=${errs.length === 0 ? 'none' : errs.slice(0, 3).join(' | ')}`)
+      } catch (e) {
+        note(t.id, `FAIL ${t.label}: ${e.message}`)
+      } finally {
+        await page.close()
+      }
+    }
   } finally {
     await browser.close()
   }
