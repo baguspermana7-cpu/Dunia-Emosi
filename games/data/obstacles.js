@@ -1803,6 +1803,85 @@
       },
     })
 
+    // ── Final §29 completeness — muddy track + small crate ─────────────────
+
+    // Muddy track cleaning (spec §29 #19) — tap-clear 5 mud splotches
+    OE.register('muddy_track_cleaning', {
+      type: 'tap_clear',
+      difficulty: 1,
+      ageRange: '4-7',
+      allowedLocations: ['*'],
+      allowedJourneyPhases: ['countryside', 'suburban'],
+      requiredAction: 'tap_count',
+      softFail: true,
+      maxRetry: 3,
+      reward: { coins: 5, badgeProgress: 1, sound: 'success_chime' },
+      visual: { cameraZoom: true, successSparkle: true },
+      accessibility: { voicePrompt: true, largeTouchTarget: true, reducedMotion: true },
+      title: '🟫 Rel berlumpur!',
+      hints: [
+        'Tap lumpur untuk membersihkan! 💡',
+        'Tap semua lumpur ya! ✨',
+        'Tap! 👇',
+      ],
+
+      interaction: {
+        setup(ctx, callbacks) {
+          const body = ctx.body
+          if (!body) return
+
+          const title = document.createElement('div')
+          title.className = 'obstacle-engine-title'
+          title.textContent = '🟫 Bersihkan lumpur di rel!'
+          body.appendChild(title)
+
+          const sub = document.createElement('div')
+          sub.className = 'obstacle-engine-subtitle'
+          sub.textContent = 'Tap setiap titik lumpur untuk membersihkan.'
+          body.appendChild(sub)
+
+          const row = document.createElement('div')
+          row.className = 'obstacle-engine-row'
+          const N = 5
+          let cleared = 0
+          for (let i = 0; i < N; i++) {
+            const btn = document.createElement('button')
+            btn.className = 'obstacle-engine-shape-btn'
+            btn.style.fontSize = '40px'
+            btn.style.minWidth = '74px'
+            btn.style.minHeight = '74px'
+            btn.style.background = 'linear-gradient(135deg,#7c2d12,#92400e)'
+            btn.style.borderColor = '#451a03'
+            btn.style.color = '#fde68a'
+            btn.textContent = '🟫'
+            btn.addEventListener('click', () => {
+              btn.classList.add('correct')
+              btn.style.background = 'linear-gradient(135deg,#dcfce7,#a7f3d0)'
+              btn.style.opacity = '0.5'
+              btn.textContent = '✨'
+              btn.disabled = true
+              cleared++
+              if (cleared >= N) {
+                OE.spawnSparkles(row, 8)
+                setTimeout(() => callbacks.success(), 600)
+              }
+            })
+            row.appendChild(btn)
+          }
+          body.appendChild(row)
+          OE.speak('Tap setiap lumpur')
+        },
+        teardown() {}
+      },
+    })
+
+    // Small crate avoid (spec §29 #1) — lane choice with crate icon
+    OE.register('small_crate_avoid', makeLaneChoiceObstacle({
+      title: '📦 Krat kayu di rel!',
+      subtitle: 'Pilih lane yang kosong untuk kereta lewat.',
+      obstacleIcon: '📦',
+    }))
+
     OE.register('windy_bridge_balance', {
       type: 'balance_tap',
       difficulty: 2,

@@ -1,5 +1,53 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.84 "§29 completeness (54 obstacles) + ⚙️ Pengaturan modal" (Phase 4.15)
+
+### NEW obstacles (final 2 for spec §29 content library completeness)
+
+| ID | Type | Spec |
+|---|---|---|
+| `muddy_track_cleaning` | tap-clear (5 mud splotches → ✨) | §29 #19 |
+| `small_crate_avoid`    | lane choice (📦 distractor)     | §29 #1  |
+
+**54 obstacles total** (was 52). All 20 spec §29 content library items now have implementations: small crate, rock, missing rails, bridge, fire, tunnel, signal, cargo, animals, water, branch, memory, friendly race, station, lost suitcase, windy bridge, muddy track, helper crane.
+
+### NEW `games/settings-modal.js` (~250 LOC)
+
+Single ⚙️ Pengaturan modal consolidating 4 inline picker toggles (Mode / Age / HC / Koleksi link gone — replaced with single button row):
+
+| Control | Persistence |
+|---|---|
+| 😊 Mudah / 🔥 Sulit (Mode) | `localStorage['train-game-mode']` |
+| 🎂 Usia 4 / 5 / 6 / 7 | `localStorage['train-age-preset']` |
+| ♿ Kontras Tinggi (switch) | `localStorage['train-high-contrast']` |
+| 🔊 Suara Petunjuk (switch) | `localStorage['train-voice-on']` (NEW) |
+| 🌀 Kurangi Animasi (switch) | `localStorage['train-reduce-motion']` (NEW — surfaces existing engine flag) |
+
+ObstacleEngine.speak() now respects `train-voice-on` flag — kids can mute voice prompts entirely if it's distracting.
+
+### G14 picker
+
+Replaced 6-button cluttered row (Mode + Age 4×4 + HC + Koleksi) with clean 2-button row:
+- ⚙️ Pengaturan (opens settings modal)
+- 🏆 Koleksi (opens gallery)
+
+Same 44+ px tap target. Cleaner visual hierarchy.
+
+### Files touched
+- `games/data/obstacles.js` — 2 new registrations (muddy_track + small_crate, ~70 LOC).
+- NEW `games/settings-modal.js` (~250 LOC).
+- `games/obstacle-engine.js` — `speak()` honors `train-voice-on` flag (~5 LOC).
+- `games/g14.html` — removed inline Age/HC toggles, added ⚙️ Pengaturan button + script tag (~25 LOC net reduction).
+- `sw.js` v54.83 → v54.84.
+
+### Verification
+- `grep -c "OE.register" games/data/obstacles.js` = 54 ✓
+- `node tools/probe-obstacle-engine.mjs` — 14/14 PASS.
+- Settings modal opens correctly, switches sync to localStorage.
+- Voice mute toggle confirmed: `localStorage.setItem('train-voice-on','0')` → engine.speak() no-ops.
+
+---
+
 ## 2026-06-26 — v54.83 "G15 + G16 lightweight opt-in (Koleksi gallery + Practice Mode reachable)" (Phase 4.14)
 
 Opt-in path: scripts only (no obstacle scheduler). Each game now has the Koleksi 🏆 button in its HUD; tapping opens the gallery with full Stickers / Badges / Horns view and Practice Mode tab. Kids can browse + try any of the 15 representative obstacles from G15 (Lokomotif Pemberani) and G16 (Selamatkan Kereta) without touching the active gameplay.

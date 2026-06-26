@@ -641,6 +641,9 @@
 
   function speak(text) {
     try {
+      // v54.84: voice-on toggle (default: true). Skip if user muted via settings.
+      const voiceOn = localStorage.getItem('train-voice-on')
+      if (voiceOn === '0' || voiceOn === 'false') return
       if (!window.speechSynthesis || !text) return
       const u = new SpeechSynthesisUtterance(text)
       u.lang = 'id-ID'
