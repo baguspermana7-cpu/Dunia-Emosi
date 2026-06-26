@@ -99,7 +99,9 @@
     }
 
     _activeId = typeId
-    return _approach(def).then(() => _interact(def, opts || {})).then(result => {
+    // v54.81: standalone mode — Practice from gallery. Skip gameAPI hooks.
+    const standalone = opts && opts.standalone === true
+    return _approach(def, standalone).then(() => _interact(def, opts || {}, standalone)).then(result => {
       _activeId = null
       return result
     })
@@ -178,9 +180,9 @@
 
   // ── Internal: approach (slow down + zoom) ───────────────────────────────────
 
-  function _approach(def) {
-    if (_gameAPI && _gameAPI.slowDown) _gameAPI.slowDown(0.3, 500)
-    if (def.visual && def.visual.cameraZoom && _gameAPI && _gameAPI.cameraZoom) {
+  function _approach(def, standalone) {
+    if (!standalone && _gameAPI && _gameAPI.slowDown) _gameAPI.slowDown(0.3, 500)
+    if (!standalone && def.visual && def.visual.cameraZoom && _gameAPI && _gameAPI.cameraZoom) {
       _gameAPI.cameraZoom(1.15, 600)
     }
     const dur = reducedMotion() ? 200 : 500
@@ -189,8 +191,8 @@
 
   // ── Internal: interact (one full attempt) ───────────────────────────────────
 
-  function _interact(def, opts) {
-    if (_gameAPI && _gameAPI.pauseTick) _gameAPI.pauseTick()
+  function _interact(def, opts, standalone) {
+    if (!standalone && _gameAPI && _gameAPI.pauseTick) _gameAPI.pauseTick()
     _showOverlay()
 
     return new Promise(resolve => {
@@ -200,6 +202,7 @@
         hintLevel: 0,
         mode: _mode,
         questionData: def.questionRequired ? _pickQuestion(def) : null,
+        standalone: !!standalone, // v54.81
       }
 
       let resolved = false
@@ -215,13 +218,13 @@
         success: () => {
           _state.recentWins++
           _state.recentFails = 0
-          _success(def, finish)
+          _success(def, finish, standalone)
         },
         fail: () => {
           ctx.retryCount++
           _state.recentFails++
           _state.recentWins = 0
-          _fail(def, ctx, callbacks, finish)
+          _fail(def, ctx, callbacks, finish, standalone)
         },
         hint: (msg) => _showHint(ctx.retryCount, msg, def),
       }
@@ -237,11 +240,11 @@
 
   // ── Internal: success ───────────────────────────────────────────────────────
 
-  function _success(def, done) {
+  function _success(def, done, standalone) {
     // Visual: green target flash + sparkle
     if (def.successFx) try { def.successFx(_overlay.body) } catch (e) { console.warn(e) }
 
-    if (_gameAPI && _gameAPI.awardReward) {
+    if (!standalone && _gameAPI && _gameAPI.awardReward) {
       try { _gameAPI.awardReward(def.reward, def.id) } catch (e) { console.warn(e) }
     }
 
@@ -274,18 +277,18 @@
     }
 
     _hideOverlay(() => {
-      if (_gameAPI && _gameAPI.resumeTick) _gameAPI.resumeTick()
-      if (_gameAPI && _gameAPI.resumeSpeed) _gameAPI.resumeSpeed()
-      if (_gameAPI && _gameAPI.cameraZoom) _gameAPI.cameraZoom(1.0, 350)
+      if (!standalone && _gameAPI && _gameAPI.resumeTick) _gameAPI.resumeTick()
+      if (!standalone && _gameAPI && _gameAPI.resumeSpeed) _gameAPI.resumeSpeed()
+      if (!standalone && _gameAPI && _gameAPI.cameraZoom) _gameAPI.cameraZoom(1.0, 350)
       done('success')
     })
   }
 
   // ── Internal: fail (with hint cascade + auto-help) ──────────────────────────
 
-  function _fail(def, ctx, callbacks, done) {
+  function _fail(def, ctx, callbacks, done, standalone) {
     // Hard mode: HP decrement on each wrong tap (gentle, capped at 1)
-    if (_mode === 'hard' && _gameAPI && _gameAPI.takeHP) {
+    if (!standalone && _mode === 'hard' && _gameAPI && _gameAPI.takeHP) {
       try { _gameAPI.takeHP(1) } catch {}
     }
 

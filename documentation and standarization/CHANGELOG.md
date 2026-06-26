@@ -1,5 +1,52 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v54.81 "Mode Latihan (Practice Mode) — standalone obstacle try from gallery" (Phase 4.12)
+
+### Engine — standalone mode
+
+`ObstacleEngine.spawn(id, { standalone: true })` — bypasses ALL `_gameAPI` hooks. No pauseTick, no awardReward, no takeHP, no cameraZoom. Just shows the obstacle overlay against the current page; on success/fail, just hides. Perfect for Practice Mode where no race is running.
+
+Threaded through `_approach`, `_interact`, `_success`, `_fail` via `standalone` flag.
+
+### Reward Gallery — Mode Latihan tab
+
+NEW tab strip at top of gallery: **🏆 Koleksi** (default) / **🎮 Mode Latihan**.
+
+Practice tab lists 15 representative obstacles grouped by family:
+
+| Icon | Label | Spawned ID |
+|---|---|---|
+| 🛠️ | Pasang Rel | `missing_rail_triangle` |
+| 🌉 | Pasang Jembatan | `broken_bridge_color` |
+| 🔥 | Tantangan Api | `fire_jump_question` |
+| 🚇 | Pintu Tunnel | `tunnel_gate_question` |
+| 🚦 | Sinyal Kereta | `signal_light_challenge` |
+| 🐱 | Hewan Lewat | `animal_crossing_cat` |
+| 🪨 | Batu di Rel | `falling_rocks_big` |
+| 💧 | Genangan Air | `water_puddle_pump` |
+| 🚉 | Pilih Jalur | `choose_correct_track_destination` |
+| 🎨 | Ingat Lampu | `memory_sequence_3color` |
+| 🌬️ | Jembatan Angin | `windy_bridge_balance` |
+| 📦 | Sortir Muatan | `station_cargo_sort_color` |
+| 🧑 | Jemput Penumpang | `station_passenger_pickup_3` |
+| 🧳 | Cari Koper | `station_lost_suitcase` |
+| 🍂 | Bersihkan Daun | `station_clean_leaves_track` |
+
+Tap **Coba** button: gallery closes → 500ms after → obstacle spawns standalone → kid plays → on resolve, gallery re-opens (so they can try another).
+
+### Files touched
+- `games/obstacle-engine.js` — standalone flag threaded through approach/interact/success/fail (~10 LOC changed across 4 sites).
+- `games/reward-gallery.js` — tab strip + Practice grid renderer + practice button CSS (~80 LOC added).
+- `games/g14.html` — cache-bust `v=54.81-20260626ch`.
+- `sw.js` v54.80 → v54.81.
+
+### Verification
+- Syntax OK across engine + gallery.
+- `node tools/probe-obstacle-engine.mjs` — 14/14 PASS.
+- Standalone spawn does NOT mutate game state (no gameAPI calls). Verified by code review of all 4 gating sites.
+
+---
+
 ## 2026-06-26 — v54.80 "Bug audit (pause/resume race condition) + L182-L186 lessons catch-up" (Phase 4.11 — quality)
 
 ### Bug fixes

@@ -109,6 +109,38 @@
         text-align: center; padding: 18px; color: #92400e;
         font-size: 14px; opacity: 0.7;
       }
+      /* v54.81 — Tabs */
+      .reward-gallery-tabs {
+        display: flex; gap: 8px; margin-bottom: 14px;
+        border-bottom: 3px solid rgba(146,64,14,0.25);
+        padding-bottom: 4px;
+      }
+      .reward-gallery-tab {
+        background: rgba(255,255,255,0.5); border: 2px solid rgba(146,64,14,0.3);
+        border-radius: 14px 14px 0 0; color: #5a2a00;
+        padding: 10px 16px; font-family: inherit;
+        font-weight: 900; font-size: clamp(13px, 3.4vw, 16px);
+        cursor: pointer; min-height: 44px;
+        transition: background 0.2s, transform 0.18s;
+      }
+      .reward-gallery-tab:active { transform: scale(0.97); }
+      .reward-gallery-tab.active {
+        background: linear-gradient(135deg, #fcd34d, #f59e0b);
+        border-color: #92400e;
+        color: #5a2a00;
+        box-shadow: 0 3px 0 rgba(146,64,14,0.35);
+      }
+      .reward-gallery-practice-btn {
+        margin-top: 6px;
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        color: #5a2a00; border: 2px solid #b45309;
+        border-radius: 12px;
+        padding: 6px 14px; font-family: inherit;
+        font-weight: 900; font-size: 13px;
+        cursor: pointer; min-height: 36px;
+        box-shadow: 0 3px 0 rgba(120,53,15,0.4);
+      }
+      .reward-gallery-practice-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(120,53,15,0.4); }
       .reward-gallery-progress {
         text-align: center; margin: 8px 0 14px;
         font-size: 14px; color: #92400e; font-weight: 900;
@@ -163,19 +195,33 @@
           <div class="reward-gallery-title">🏆 Koleksiku</div>
           <button class="reward-gallery-close" type="button" aria-label="Tutup">✕ Tutup</button>
         </div>
-        <div class="reward-gallery-progress" data-role="progress"></div>
-        <div class="reward-gallery-progress-bar"><div class="reward-gallery-progress-fill" data-role="progress-fill" style="width:0%"></div></div>
-        <div class="reward-gallery-section">
-          <div class="reward-gallery-section-title">🌟 Stiker</div>
-          <div class="reward-gallery-grid" data-role="stickers-grid"></div>
+        <!-- v54.81: Tab strip -->
+        <div class="reward-gallery-tabs" data-role="tabs">
+          <button class="reward-gallery-tab active" data-tab="collection" type="button">🏆 Koleksi</button>
+          <button class="reward-gallery-tab" data-tab="practice" type="button">🎮 Mode Latihan</button>
         </div>
-        <div class="reward-gallery-section">
-          <div class="reward-gallery-section-title">🏅 Lencana</div>
-          <div class="reward-gallery-grid" data-role="badges-grid"></div>
+        <div class="reward-gallery-tab-content" data-tab-id="collection">
+          <div class="reward-gallery-progress" data-role="progress"></div>
+          <div class="reward-gallery-progress-bar"><div class="reward-gallery-progress-fill" data-role="progress-fill" style="width:0%"></div></div>
+          <div class="reward-gallery-section">
+            <div class="reward-gallery-section-title">🌟 Stiker</div>
+            <div class="reward-gallery-grid" data-role="stickers-grid"></div>
+          </div>
+          <div class="reward-gallery-section">
+            <div class="reward-gallery-section-title">🏅 Lencana</div>
+            <div class="reward-gallery-grid" data-role="badges-grid"></div>
+          </div>
+          <div class="reward-gallery-section">
+            <div class="reward-gallery-section-title">🔔 Klakson Spesial</div>
+            <div class="reward-gallery-grid" data-role="horns-grid"></div>
+          </div>
         </div>
-        <div class="reward-gallery-section">
-          <div class="reward-gallery-section-title">🔔 Klakson Spesial</div>
-          <div class="reward-gallery-grid" data-role="horns-grid"></div>
+        <div class="reward-gallery-tab-content" data-tab-id="practice" style="display:none">
+          <div class="reward-gallery-section">
+            <div class="reward-gallery-section-title">🎮 Coba tantangan sebelum balapan!</div>
+            <div style="font-size:13px;color:#92400e;margin-bottom:12px;text-align:center">Tap salah satu kategori untuk berlatih tanpa balapan.</div>
+            <div class="reward-gallery-grid" data-role="practice-grid"></div>
+          </div>
         </div>
       </div>
     `
@@ -186,7 +232,75 @@
     _root.addEventListener('click', (e) => {
       if (e.target === _root) close()
     })
+
+    // v54.81 — Tab switching
+    _root.querySelectorAll('.reward-gallery-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = tab.dataset.tab
+        _root.querySelectorAll('.reward-gallery-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === target))
+        _root.querySelectorAll('.reward-gallery-tab-content').forEach(c => {
+          c.style.display = (c.dataset.tabId === target) ? '' : 'none'
+        })
+      })
+    })
+
     return _root
+  }
+
+  // v54.81 — Practice Mode: lists representative obstacles from registry,
+  // grouped by category. Tap "Coba" to spawn the obstacle standalone.
+  function _renderPractice(gridEl) {
+    if (!gridEl) return
+    gridEl.innerHTML = ''
+    const OE = global.ObstacleEngine
+    if (!OE || !OE._registry) {
+      gridEl.innerHTML = '<div class="reward-gallery-empty">Mode latihan belum tersedia. Buka game balapan dulu.</div>'
+      return
+    }
+    // Curated highlight per category — pick one representative ID
+    const CATEGORIES = [
+      { label:'Pasang Rel',     icon:'🛠️', id:'missing_rail_triangle' },
+      { label:'Pasang Jembatan',icon:'🌉', id:'broken_bridge_color' },
+      { label:'Tantangan Api',  icon:'🔥', id:'fire_jump_question' },
+      { label:'Pintu Tunnel',   icon:'🚇', id:'tunnel_gate_question' },
+      { label:'Sinyal Kereta',  icon:'🚦', id:'signal_light_challenge' },
+      { label:'Hewan Lewat',    icon:'🐱', id:'animal_crossing_cat' },
+      { label:'Batu di Rel',    icon:'🪨', id:'falling_rocks_big' },
+      { label:'Genangan Air',   icon:'💧', id:'water_puddle_pump' },
+      { label:'Pilih Jalur',    icon:'🚉', id:'choose_correct_track_destination' },
+      { label:'Ingat Lampu',    icon:'🎨', id:'memory_sequence_3color' },
+      { label:'Jembatan Angin', icon:'🌬️', id:'windy_bridge_balance' },
+      { label:'Sortir Muatan',  icon:'📦', id:'station_cargo_sort_color' },
+      { label:'Jemput Penumpang',icon:'🧑',id:'station_passenger_pickup_3' },
+      { label:'Cari Koper',     icon:'🧳', id:'station_lost_suitcase' },
+      { label:'Bersihkan Daun', icon:'🍂', id:'station_clean_leaves_track' },
+    ]
+    CATEGORIES.forEach(cat => {
+      if (!OE._registry[cat.id]) return // skip if obstacle not registered
+      const cell = document.createElement('div')
+      cell.className = 'reward-gallery-item earned reward-gallery-practice-cell'
+      cell.style.cursor = 'pointer'
+      cell.innerHTML = `
+        <div class="reward-gallery-icon">${cat.icon}</div>
+        <div class="reward-gallery-name">${cat.label}</div>
+        <button class="reward-gallery-practice-btn" type="button">Coba</button>
+      `
+      const btn = cell.querySelector('.reward-gallery-practice-btn')
+      const fire = () => {
+        close() // hide gallery first so the obstacle overlay shows on top
+        setTimeout(() => {
+          try {
+            OE.spawn(cat.id, { standalone: true }).then(() => {
+              // After practice ends, re-open the gallery for kid to try another
+              setTimeout(() => open(), 400)
+            })
+          } catch (e) { console.warn(e) }
+        }, 500)
+      }
+      btn.addEventListener('click', fire)
+      cell.addEventListener('click', (e) => { if (e.target !== btn) fire() })
+      gridEl.appendChild(cell)
+    })
   }
 
   function _renderGrid(gridEl, catalogList, earnedSet, emptyMsg) {
@@ -235,6 +349,9 @@
       fillEl.style.width = '0%'
       requestAnimationFrame(() => { fillEl.style.width = pct + '%' })
     }
+
+    // v54.81 — also populate Practice Mode grid
+    _renderPractice(_root.querySelector('[data-role="practice-grid"]'))
 
     _root.classList.add('show')
   }
