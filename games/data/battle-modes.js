@@ -1469,12 +1469,37 @@
   function loadPokeDB () {
     if (_pokeDB) return Promise.resolve(_pokeDB);
     const url = _ASSET_BASE + 'assets/Pokemon/pokemon-db.json';
-    return fetch(url).then(r => r.json()).then(db => {
-      _pokeDB = db;
-      _slugToId = {};
-      db.forEach(p => { _slugToId[p.slug] = p.id; });
-      return db;
-    });
+    // v55.0 — AbortController timeout + 3-retry backoff so the load can never
+    // hang forever. Owner reported "Memuat Pokedex…" sticking eternally after
+    // SW cache thrashing in this session. (Closes B-210, B-211.)
+    const TIMEOUT_MS = 15000;
+    const MAX_TRIES = 3;
+    function attempt (tryNum) {
+      const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+      const timer = ctrl ? setTimeout(() => ctrl.abort(), TIMEOUT_MS) : null;
+      return fetch(url, ctrl ? { signal: ctrl.signal } : undefined)
+        .then(r => {
+          if (timer) clearTimeout(timer);
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        })
+        .then(db => {
+          _pokeDB = db;
+          _slugToId = {};
+          db.forEach(p => { _slugToId[p.slug] = p.id; });
+          return db;
+        })
+        .catch(err => {
+          if (timer) clearTimeout(timer);
+          console.warn('[battle-modes] pokedex fetch try ' + tryNum + '/' + MAX_TRIES + ' failed', err);
+          if (tryNum < MAX_TRIES) {
+            // Linear backoff: 800ms, 1600ms
+            return new Promise(r => setTimeout(r, tryNum * 800)).then(() => attempt(tryNum + 1));
+          }
+          throw err;
+        });
+    }
+    return attempt(1);
   }
   function slugToId (slug) {
     if (_slugToId && _slugToId[slug]) return _slugToId[slug];

@@ -4,6 +4,19 @@
 
 ---
 
+## 2026-06-26 — v55.0 STOP-THE-BLEED Pokemon load regression
+
+### L195 — SW cache bumps cost 5MB per visit when SHELL is bloated; budget your SHELL
+- 12 cache-version bumps in one session × ~5MB SHELL = ~60MB owner re-downloaded. Owner perceived this as games "stuck loading" — symptom was correctly a regression even though the code was unchanged. The SW SHELL precache list is a **download budget**, not a free correctness layer.
+- **Symptom**: Owner stuck on "Memuat Pokedex…" / "Memuat game…" indefinitely after a session full of unrelated cache-version bumps.
+- **Lesson**: NEVER add bulk assets (sprites, manifests, audio) to the SW SHELL precache list. The stale-while-revalidate fetch handler caches them on first use just as effectively, without blocking install. Reserve SHELL for the absolute minimum first-paint shell — HTML, CSS, primary JS, Pixi, icons. If a particular asset is critical, **cache-version-stamp the asset URL** instead so its cache is independent of the SHELL bump.
+
+### L196 — Every fetch in user-facing code paths MUST have AbortController + retry + progress
+- `loadPokeDB()` was `fetch(url).then(r => r.json())` — no timeout, no retry, no progress indicator. On a throttled connection, the promise sits unresolved forever. The UI keeps showing the loading message, and the owner can't distinguish "stuck" from "still working."
+- **Lesson**: Audit every fetch in the loading critical path. Wrap each in: `AbortController` timeout (10-15s), 2-3 retries with linear backoff, a visible progress indicator (text + spinner), and a fallback "Reload" button after 10s. Apply to: `loadPokeDB`, Pokemon Birds sprite manifest, BG audio packs, anything that gates UI on a network roundtrip.
+
+---
+
 ## 2026-06-26 — v54.88-v54.93 Side-race build lessons
 
 ### L190 — Parallax wrap pattern: container x decrement + reset when off-screen

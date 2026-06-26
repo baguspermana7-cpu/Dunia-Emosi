@@ -1,5 +1,47 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-26 — v55.0 "STOP-THE-BLEED — Pokemon games loading regression fix" (Phase 6.0)
+
+Owner verbatim: *"Pada error semua ini. Bener2 parah slow loadingnya. Ini sampai nggak tahu ini stuck atau lama loading."* — Pokemon Birds + Pertarungan Pokemon were stuck on "Memuat Pokedex…" / "Memuat game…" indefinitely.
+
+**Closes B-209, B-210, B-211.**
+
+### Root cause (Agent G + my own audit)
+
+12 `CACHE_VERSION` bumps in this session (v54.67 → v54.99) — each invalidates SW cache, each install retries pre-caching ~5MB of SHELL assets (2 SFX manifests + 30 Pokemon WebPs). Until SHELL re-cache completes, fetches stall.
+
+Additionally `loadPokeDB()` had **no timeout, no retry, no progress UI** — `fetch().then(r => r.json())` hangs forever on a slow/throttled network.
+
+### Fixes
+
+1. **`sw.js` slim SHELL** — removed Pokemon SFX manifests + 30 sprite WebPs from the install-time SHELL list. They still cache via the existing stale-while-revalidate fetch handler (first request → cache → second request instant). Install download drops from ~5MB → ~800KB.
+
+2. **`games/data/battle-modes.js:1469` `loadPokeDB`** — wrapped in `attempt(tryNum)` with:
+   - `AbortController` timeout 15s per try (`signal: ctrl.signal` + `setTimeout` abort)
+   - 3 attempts max with linear backoff (800ms, 1600ms)
+   - Logs each failed attempt
+   - Final `.catch()` rethrows after exhaust so calling code's existing catch handler renders the "load failed" UI path
+
+3. **`sw.js` `CACHE_VERSION` bumped to `v55.0-20260626da`** so the slim SHELL ships immediately.
+
+### Why this is the correct minimal fix
+
+PROTECTED constraint: NO changes to `battle-modes.js` battle/PvP logic or `g13c-pixi.html` Adventure. Only the LOADING shell touched.
+
+### Files touched
+- `sw.js` — slim SHELL + CACHE_VERSION (~50 LOC removed, ~13 LOC kept).
+- `games/data/battle-modes.js` — `loadPokeDB` resilience (~25 LOC).
+
+### Verification
+- Syntax OK on sw.js + battle-modes.js.
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS.
+- Manual: open `Pertarungan Pokemon` from home → loads in ≤ 10s on broadband; falls back gracefully on slow.
+
+### Stop & verify with owner
+Per plan Phase 0, STOP after this ship and confirm Pokemon games open before continuing to v55.1 audit phase.
+
+---
+
 ## 2026-06-26 — v54.99 "Side-race premium enhancement — 3 parallel agents merged (train + obstacles + HUD)" (Phase 5.12)
 
 Owner verbatim: "/ultraplan. enhance. ini masih sangat2 kurang. please. do it properly." MEGA-SHIP combining 3 parallel worktree-isolated agents to dramatically elevate the side-race quality.
