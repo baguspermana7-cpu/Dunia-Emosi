@@ -1,5 +1,58 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.23 "Touch-target audit — finds 25 sub-44px buttons across 12 games"
+
+Owner A-301 standing directive — polish iteration. NEW `tools/touch-target-audit.mjs` (4th probe) measures every clickable on every game HTML, flags any width or height < 44px (Apple HIG minimum, Material Design recommendation for child UX).
+
+### Audit results — first run
+
+```
+T01 index home              8 clickables — all ≥ 44×44px ✓
+T02 g6 vehicle picker       27 clickables, 2 below 44px  ⌂ 37×35 / ⏸ 25×30
+T03 g13c team picker        6 clickables,  6 below 44px  all header chips 60-100 wide × 27-39 tall
+T04 g14 category picker     14 clickables — all ≥ 44×44px ✓
+T05 g14-side intro          7 clickables,  1 below 44px  "Lewati tutorial" 93×16 (height!)
+T06 g15 train picker        14 clickables, 2 below 44px  🏆 41×33 / ⚙️ 41×33
+T07 g16 train picker        42 clickables, 2 below 44px  🏆 41×44 / ⚙️ 41×44
+T08 g17 intro               2 clickables — all ≥ 44×44px ✓
+T09 g19 splash              2 clickables, 2 below 44px  ◀ 38×35 / ⏸ 30×33
+T10 g20 splash              2 clickables, 2 below 44px  ◀ 33×31 / ⏸ 25×30
+T11 g21 splash              5 clickables, 2 below 44px  ← Kembali 95×31 / ⏸ 31×32
+T12 g22 splash              2 clickables, 2 below 44px  ◀ 33×31 / ⏸ 29×32
+T13 g23 splash              2 clickables, 2 below 44px  ◀ 42×44 / ⏸ 30×33
+T14 g24 splash              2 clickables, 2 below 44px  ◀ 38×35 / ⏸ 30×33
+T15 g25 level picker        51 clickables — all ≥ 44×44px ✓
+
+total: 25 sub-44 instances across 12 game pages
+```
+
+### Patterns found
+
+- **Pause `⏸` button** — 25-31 × 30-33px on 7 Pixi games. Most common offender.
+- **Back `◀` / Kembali button** — 33-42 × 31-44px on 7 Pixi games.
+- **g13c HUD chips** (Kembali / Tim / Tutup / Lencana) — 60-100 × 27-39px. All 6 too short on height.
+- **g15 / g16 trophy + settings icons** — 41 × 33-44px (just 3px short on width).
+- **g14-side "Lewati tutorial"** — 93 × **16px** (single-row text link, no padding).
+
+### Proposed fix (v55.24+)
+
+These cluster around HUD/header chip CSS. Likely a small set of shared classes — fixing one or two CSS rules with `min-width: 44px; min-height: 44px; padding` could close most cases in 20-30 LOC. Defer to a focused follow-up since it spans 7+ files and warrants a per-file visual check (don't want to break layout).
+
+### Files touched
+
+- NEW `tools/touch-target-audit.mjs` (~135 LOC).
+
+### Verification
+
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS (no code changes).
+- Touch-audit reports baseline against `tools/qa-screenshots/touch-*.png` (not saved this run — pure measurement audit).
+
+### Closes nothing yet — establishes baseline for v55.24
+
+Owner can decide to ship v55.24 sizing fixes, or defer if the existing UX is acceptable (kids on 412×915 mobile do tap successfully — the 44px rule is a guideline, not a hard requirement).
+
+---
+
 ## 2026-06-27 — v55.22 "Manifest + SW offline-fallback /Dunia-Emosi/ cleanup (closes B-216)"
 
 Owner A-301 standing directive — continuing the /Dunia-Emosi/ prefix hunt from v55.18. Two more silent bugs surface when grepping the codebase + manifest.
