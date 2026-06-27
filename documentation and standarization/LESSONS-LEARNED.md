@@ -1589,3 +1589,22 @@ Owner-locked: every Dunia Emosi ship MUST update CHANGELOG.md + LESSONS-LEARNED.
 - **Symptom**: G14 dust kickup needed gravity-affected particle fall during lane switches.
 - **Fix**: Each particle gets its own requestAnimationFrame tick closure that updates x/y/alpha until cull conditions are met. No global pool, no per-tick array iteration. Just N independent RAF tickers running in parallel.
 - **Lesson**: For ≤30 concurrent particles with diverse lifecycles (some die at 22 frames, some at 12, some by alpha clamp), individual RAF closures beat a global pool's array iteration. Browser batches RAF callbacks; no overhead penalty. Skip the pool unless you spawn 50+/sec.
+
+### L101 — Sprite "facing" must be read from the ART (face = nose), not trusted from a metadata table (train games v55.61)
+- **Symptom**: B-239 facing "fixed" 4× yet Thomas & friends still rendered backward in g14. Owner pinned it: only winston/bruno/sandy/slip/troublesome/salty looked correct.
+- **Root cause**: g14's inline `TRAIN_CATS` had NO `faces` field, so the mirror (`scale.x*=-1` for left-facing webps in a right-travelling race) defaulted everyone to `'right'` → left-facing sprites never flipped. The owner's "correct" set = exactly the native-right sprites (right IS the default).
+- **Trap**: `trains-db.js` faces tags were UNRELIABLE for some art (Kana/Kenji/Diesel are tagged `'left'` but their face/nose is actually on the right). Blindly syncing them would have regressed those.
+- **Fix**: Built a centralized `G14_FACES` map by VISUALLY inspecting every AEG webp (montage at high res), classifying by where the face sits (face on right → `'right'` no-mirror; face on left → `'left'` mirror). Applied onto `TRAIN_CATS` before the flat copy so picker + game both see it. Anchored the read to the owner's empirical ground-truth set.
+- **Lesson**: For facing/orientation, the sprite IS the source of truth — inspect the pixels, don't trust a hand-authored tag table that may have drifted. Verify in the running game with a screenshot, not by reading the data.
+
+### L102 — A throwing tick callback aborts the WHOLE frame after it (Pixi ticker, g14 v55.61)
+- **Symptom**: New parallax bands "didn't move" in the probe; also a per-frame `Cannot read properties of null (reading 'x')` in `tickTracks`.
+- **Root cause**: `trackTies` kept references to tie Graphics that were destroyed when `buildTracks` rebuilt on resize (the array was never reset). `tickTracks` then read `.x` on a destroyed/nulled Pixi object and threw. Because `tickTracks` runs inside the single `loop()` ticker callback BEFORE `tickMid`, the throw aborted the rest of the frame every tick — so the parallax scroll (in `tickMid`) never ran.
+- **Fix**: reset `trackTies = []` at the top of `buildTracks` + guard `if (!t.g || t.g.destroyed) continue` in `tickTracks`.
+- **Lesson**: One `app.ticker.add(loop)` means one try-scope. A throw anywhere in `loop()` silently kills everything downstream in that frame. Either split independent systems into separate ticker callbacks, or guard against destroyed display objects. When "feature B downstream of feature A doesn't run," suspect A is throwing.
+
+### L103 — Overlapping BGM usually comes from page RE-ENTRY/bfcache, not a second `<audio>` (train games v55.61)
+- **Symptom**: "ada 2 backsound" in g14 even though the page has exactly one `#game-bgm` element and one play path.
+- **Root cause**: a backgrounded / bfcache-restored game instance keeps its audio playing; entering a fresh race starts a second stream. Tied to broken back-nav (B-256) that left stale instances alive.
+- **Fix**: in the shared `train-bgm.js`, stop `#game-bgm` on `visibilitychange`(hidden) / `pagehide` / persisted `pageshow`.
+- **Lesson**: For "two soundtracks at once" when the code clearly has one element, stop hunting for a second source — add a lifecycle guard that silences audio whenever the page is hidden or restored from bfcache.

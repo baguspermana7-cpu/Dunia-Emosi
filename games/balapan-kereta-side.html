@@ -132,7 +132,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <script src="data/bg-audio.js?v=54.65-20260626br"></script>
 <!-- v55.27 — Thomas BGM (silent by default; only fires for aeg_* chars) -->
 <audio id="game-bgm" loop preload="none" style="display:none"></audio>
-<script src="train-bgm.js?v=55.25-20260627dl"></script>
+<script src="train-bgm.js?v=55.61-20260627em"></script>
 <script src="data/bg-events.js?v=54.67-20260626bt"></script>
 <script src="obstacle-engine.js?v=54.98-20260626cy"></script>
 <script src="data/kids-questions.js?v=54.98-20260626cy"></script>
@@ -313,6 +313,10 @@ const S = {
   nextHeartAt: 18,
   heartTimer: 0,
   finishFlagSpawned: false,
+  // B-250 — Undulating terrain + jumpable gaps
+  gaps: [],              // {worldStart, worldEnd}
+  nextGapAt: 180,        // first gap trigger at 180m (safe warm-up zone)
+  terrainOffset: 0,      // current terrain Y offset under the player (set each tick)
 }
 
 // v54.98 — Expose game state on window so headless probes (visual-qa.mjs) can
@@ -333,7 +337,7 @@ const GROUND_FILL_COLOR = 0x2e7d32 // grass green
 
 // Physics
 const GRAVITY = 1500              // px/s²
-const JUMP_VELOCITY = 720         // initial upward velocity
+const JUMP_VELOCITY = 1080        // B-251: 1.5× jump — was 720, new airtime ~1.44s
 
 // ── INIT ────────────────────────────────────────────────────────────────────
 ;(async () => {
@@ -349,6 +353,9 @@ const JUMP_VELOCITY = 720         // initial upward velocity
   })
   stage = app.stage
   S.trainCfg = pickTrain()
+  // B-248: apply saved difficulty speed from a previous onNext call
+  const _savedSpd = parseFloat(sessionStorage.getItem('g14s-next-speed') || '0')
+  if (_savedSpd > 4.0) { S.speed = _savedSpd; S.baseSpeed = _savedSpd }
   // v54.96 — Hide name badge entirely if no train cfg (instead of fallback "Kereta")
   const trainBadge = document.getElementById('train-badge')
   if (S.trainCfg && S.trainCfg.name) {
@@ -694,6 +701,14 @@ function parseHex(s) {
   return parseInt(s.replace(/^#/, ''), 16) || 0x6b7280
 }
 
+// B-250 — Smooth undulating terrain height at a given world distance.
+// Returns a Y pixel offset (positive = visually lower / shifted down the screen).
+// Two overlapping sine waves with long periods → gentle rolling hills, never spiky.
+// Amplitude ≤ 23px total so hills read clearly but don't feel punishing for a 4-7 year old.
+function terrainHeightAt(dist) {
+  return Math.sin(dist * 0.007) * 16 + Math.sin(dist * 0.019 + 1.4) * 7
+}
+
 // v54.90 — AI competitor train in background lane (slightly behind player)
 function buildAITrain() {
   // v55.32 B-221 — owner: NPCs may NOT be PROTECTED (Casey/Linus/Dragutin/Malivlak)
@@ -756,8 +771,16 @@ function g14sWireObstacleEngine() {
         try { if (app && app.ticker) app.ticker.speed = 1 } catch {}
       }
     },
-    slowDown: () => {},
-    resumeSpeed: () => {},
+    // B-249: slow train visually when a quiz puzzle triggers (gives "stopping at signal" feel)
+    slowDown: () => {
+      if (!S._prePuzzleSpeed) S._prePuzzleSpeed = S.speed
+      S.speed = Math.max(0.8, S.speed * 0.35)
+    },
+    // B-249: restore speed after puzzle answer
+    resumeSpeed: () => {
+      S.speed = S._prePuzzleSpeed || S.baseSpeed
+      S._prePuzzleSpeed = 0
+    },
     cameraZoom: () => {},
     takeHP: (n) => {
       if (S.hp > 0) S.hp = Math.max(0, S.hp - n)
@@ -768,16 +791,19 @@ function g14sWireObstacleEngine() {
     },
   })
   // Schedule first puzzle 40-55s into race; re-arm after each.
-  function _scheduleNext() {
-    const delayMs = 40000 + Math.random() * 15000
+  function _scheduleNext(isFirst) {
+    // B-249: race is ~10-15s. Fire first puzzle at 7-11s, re-arm every 10-15s after.
+    const delayMs = isFirst
+      ? (7000 + Math.random() * 4000)
+      : (10000 + Math.random() * 5000)
     setTimeout(() => {
       if (!S.running || S.gameOver || S.finished) return
       const id = _pickObstacleId()
       try {
-        window.ObstacleEngine.spawn(id).then(() => _scheduleNext())
+        window.ObstacleEngine.spawn(id).then(() => _scheduleNext(false))
       } catch(e) {
         console.warn('[g14-side] OE.spawn failed', e)
-        _scheduleNext()
+        _scheduleNext(false)
       }
     }, delayMs)
   }
@@ -792,7 +818,7 @@ function g14sWireObstacleEngine() {
     }
     return allIds[Math.floor(Math.random() * allIds.length)]
   }
-  _scheduleNext()
+  _scheduleNext(true)  // B-249: pass isFirst=true for short initial delay
 }
 
 // ── INPUT ───────────────────────────────────────────────────────────────────
@@ -854,23 +880,51 @@ function tick(tickerOrDelta) {
   // Pixi 8 ticker: get deltaTime from ticker
   let deltaMS = 16.67
   if (tickerOrDelta && typeof tickerOrDelta === 'object' && tickerOrDelta.deltaMS) deltaMS = tickerOrDelta.deltaMS
-  const dt = deltaMS / 1000
+  // B-251: clamp dt so throttled tablets (low-battery delta spikes) don't overshoot jump physics
+  const dt = Math.min(deltaMS / 1000, 0.10)
 
   // Scroll world
   const scrollDx = S.speed * (deltaMS / 16.67)
   S.distance += scrollDx * 0.4 // 0.4 m per scroll px (calibrate for 1000m goal)
 
-  // Animate rail (re-draw sleepers offset by frame counter)
+  // B-250 — Animate rail: segmented terrain-following draw + gap voids
   if (railContainer._rail) {
     railContainer._rail.clear()
     const rail = railContainer._rail
-    const railY = H * RAIL_Y_FRAC
-    rail.rect(0, railY - 4, W, 28).fill(0x8d6e63)
-    rail.rect(0, railY, W, 4).fill(0x424242)
-    rail.rect(0, railY + 12, W, 4).fill(0x424242)
+    const TSEG = 12  // px per terrain segment (≈65 segments across screen)
+    const sleepersOff = (S.frame * scrollDx * 0.4) % 40
+
+    // Update player terrain offset for the train position tracking below
+    S.terrainOffset = terrainHeightAt(S.distance)
+
+    // Helper: is a world-distance inside a gap zone?
+    function _inGap(wd) {
+      for (const g of S.gaps) { if (wd > g.worldStart && wd < g.worldEnd) return true }
+      return false
+    }
+
+    // Rail body segments — follow terrain, draw dark void inside gaps
+    for (let px = 0; px <= W; px += TSEG) {
+      const wd = S.distance + (px - W * PLAYER_X_FRAC) * 0.4
+      const tOff = terrainHeightAt(wd)
+      const ry = H * RAIL_Y_FRAC + tOff
+      if (_inGap(wd)) {
+        // Abyss visual: dark void from just above rail down to screen bottom
+        rail.rect(px, ry - 4, TSEG + 1, H - ry + 8).fill(0x0a0a1e)
+      } else {
+        rail.rect(px, ry - 4, TSEG + 1, 28).fill(0x8d6e63)  // ballast
+        rail.rect(px, ry, TSEG + 1, 4).fill(0x424242)        // top rail
+        rail.rect(px, ry + 12, TSEG + 1, 4).fill(0x424242)   // bottom rail
+      }
+    }
+    // Sleepers on top (non-gap only)
     for (let i = 0; i < Math.ceil(W / 40) + 2; i++) {
-      const sx = i * 40 - (S.frame * scrollDx * 0.4) % 40
-      rail.rect(sx, railY - 2, 18, 22).fill(0x4e342e)
+      const sx = i * 40 - sleepersOff
+      const wd = S.distance + (sx - W * PLAYER_X_FRAC) * 0.4
+      if (_inGap(wd)) continue
+      const tOff = terrainHeightAt(wd)
+      const ry = H * RAIL_Y_FRAC + tOff
+      rail.rect(sx, ry - 2, 18, 22).fill(0x4e342e)
     }
   }
 
@@ -1002,7 +1056,7 @@ function tick(tickerOrDelta) {
       continue
     }
     if (!hp.scored && Math.abs(hp.sprite.x - trainContainer.x) < 50) {
-      const trainY = H * RAIL_Y_FRAC - 4 + S.jumpY - 35
+      const trainY = H * RAIL_Y_FRAC + S.terrainOffset - 4 + S.jumpY - 35  // B-250: terrain-aware
       if (Math.abs(hp.sprite.y - trainY) < 40) {
         hp.scored = true
         if (S.hp < S.maxHp) S.hp++
@@ -1038,7 +1092,7 @@ function tick(tickerOrDelta) {
     }
     // Collection: within ~50px horizontally + within ~40px vertically of train center
     if (!c.scored && Math.abs(c.sprite.x - trainContainer.x) < 50) {
-      const trainY = H * RAIL_Y_FRAC - 4 + S.jumpY - 35 // train sprite center approx
+      const trainY = H * RAIL_Y_FRAC + S.terrainOffset - 4 + S.jumpY - 35  // B-250: terrain-aware
       if (Math.abs(c.sprite.y - trainY) < 40) {
         c.scored = true
         S.coinScore++
@@ -1055,9 +1109,10 @@ function tick(tickerOrDelta) {
 
   // v54.99 — Train bob (chuff rhythm). Amplitude raised 1.4 → 2.8 so the lift
   // actually reads on screen at the smaller sprite scale.
+  // B-250: add terrainOffset so train rides the rolling hills visually.
   if (!S.jumping) {
     const bob = REDUCED_MOTION ? 0 : Math.sin(S.frame * 0.18) * 2.8
-    trainContainer.y = H * RAIL_Y_FRAC - 4 + bob
+    trainContainer.y = H * RAIL_Y_FRAC + S.terrainOffset - 4 + bob
   }
 
   // Jump physics
@@ -1075,8 +1130,9 @@ function tick(tickerOrDelta) {
     }
   }
   // Jump Y override (replaces the bob below if jumping)
+  // B-250: base jump from terrain height, not flat rail
   if (S.jumping) {
-    trainContainer.y = H * RAIL_Y_FRAC - 4 + S.jumpY
+    trainContainer.y = H * RAIL_Y_FRAC + S.terrainOffset - 4 + S.jumpY
     trainContainer.rotation = REDUCED_MOTION ? 0 : Math.sin(S.frame * 0.15) * 0.04
   } else {
     // v54.99 — Micro wheel-rhythm rotation (±~1.4°) faked on container since
@@ -1086,12 +1142,16 @@ function tick(tickerOrDelta) {
 
   // v54.99 — Horizontal sway overlay when boosting (post-milestone speed bump)
   // and a starting puff at race begin from the chimney.
+  // B-251: forward arc while airborne — train visually travels over gaps.
+  // jumpY is negative at peak (−388px at JUMP_VELOCITY=1080 / GRAVITY=1500),
+  // so -jumpY*0.09 pushes train forward (right) at peak, creating a natural arc.
   {
     const baseX = W * PLAYER_X_FRAC
+    const jumpArcX = (S.jumping && !REDUCED_MOTION) ? (-S.jumpY * 0.09) : 0  // max ~35px at peak
     if (!REDUCED_MOTION && !S.jumping && S.speed > S.baseSpeed + 0.001) {
       trainContainer.x = baseX + Math.sin(S.frame * 0.4) * 1.0
     } else {
-      trainContainer.x = baseX
+      trainContainer.x = baseX + jumpArcX
     }
     // Big launch puffs from chimney during the first 30 frames after S.running
     // becomes true (S.frame is reset to 0 at the same moment). Three big puffs
@@ -1139,6 +1199,34 @@ function tick(tickerOrDelta) {
       const obstacleTop = H * RAIL_Y_FRAC - o.height
       if (trainBottom > obstacleTop + 8) {
         crashOn(o)
+        break
+      }
+    }
+  }
+
+  // B-250 — Gap spawning: trigger a new gap every ~200m after the warm-up zone
+  if (S.nextGapAt > 0 && S.distance >= S.nextGapAt && !S.finished) {
+    const gapW = 38 + Math.random() * 20          // 38-58 distance units wide
+    const gapStart = S.distance + 80              // appears 80m ahead (visible on screen)
+    S.gaps.push({ worldStart: gapStart, worldEnd: gapStart + gapW })
+    S.nextGapAt = gapStart + gapW + 200 + Math.random() * 80  // next gap 200-280m later
+  }
+  // Expire gaps that have fully scrolled past the player
+  for (let gi = S.gaps.length - 1; gi >= 0; gi--) {
+    if (S.gaps[gi].worldEnd < S.distance - 20) S.gaps.splice(gi, 1)
+  }
+  // B-250 — Gap fall detection: if player is over a gap and not airborne → HP loss
+  if (!S.jumping && S.invincible <= 0 && !S.gameOver && !S.finished) {
+    for (const g of S.gaps) {
+      // 4m tolerance at edges avoids punishing the very boundary of a gap
+      if (S.distance > g.worldStart + 4 && S.distance < g.worldEnd - 4) {
+        S.hp = Math.max(0, S.hp - 1)
+        S.invincible = 2.4  // 2.4s invincibility — enough to cross any gap safely
+        try { if (typeof playTone === 'function') playTone({ freq: 200, dur: 0.22, vol: 0.14 }) } catch {}
+        const gapFlash = document.createElement('div')
+        gapFlash.style.cssText = 'position:fixed;inset:0;background:radial-gradient(circle,rgba(239,68,68,0.4) 0%,rgba(239,68,68,0.1) 70%,transparent 100%);pointer-events:none;z-index:150;animation:g14sFlash 0.45s ease-out forwards;'
+        document.body.appendChild(gapFlash)
+        setTimeout(() => { try { gapFlash.remove() } catch {} }, 500)
         break
       }
     }
@@ -1343,8 +1431,8 @@ function spawnHeart() {
   const heart = new PIXI.Text({ text: '❤️', style: { fontSize: 32 } })
   heart.anchor.set(0.5, 0.5)
   heart.x = W + 40
-  const baseY = H * RAIL_Y_FRAC - 30
-  const peakY = H * RAIL_Y_FRAC - 90
+  const baseY = H * RAIL_Y_FRAC + S.terrainOffset - 30  // B-250: terrain-relative
+  const peakY = H * RAIL_Y_FRAC + S.terrainOffset - 90
   heart.y = baseY - Math.random() * (baseY - peakY)
   particleLayer.addChild(heart)
   S.hearts.push({ sprite: heart, scored: false })
@@ -1437,9 +1525,9 @@ function spawnCoin() {
   const coin = new PIXI.Text({ text: '🪙', style: { fontSize: 30 } })
   coin.anchor.set(0.5, 0.5)
   coin.x = W + 40
-  // Y range: train baseline up to peak jump height
-  const baseY = H * RAIL_Y_FRAC - 30
-  const peakY = H * RAIL_Y_FRAC - 90
+  // B-250: terrain-relative Y range so coins stay reachable on hills/valleys
+  const baseY = H * RAIL_Y_FRAC + S.terrainOffset - 30
+  const peakY = H * RAIL_Y_FRAC + S.terrainOffset - 100  // slightly higher now (1.5× jump)
   coin.y = baseY - Math.random() * (baseY - peakY)
   particleLayer.addChild(coin)
   S.coins.push({ sprite: coin, scored: false })
@@ -1624,50 +1712,53 @@ function runCountdown(done) {
 
 // ── END ────────────────────────────────────────────────────────────────────
 
+// B-248 — Standard end modal via shared GameModal.show()
+// Replaces the bespoke #end-modal overlay. The #end-modal HTML stays in DOM but is never opened.
 function endRace(title, outcome) {
-  // v55.0 — Outcome-aware polish: win = confetti ring + animated stars; lose = mascot + bouncy retry
-  const ring = document.getElementById('end-confetti-ring')
-  const mascot = document.getElementById('end-mascot')
-  const starsRow = document.getElementById('end-stars-row')
-  const retryBtn = document.getElementById('end-btn-retry')
+  // Stop Pixi ticker (prevents background callbacks from accumulating)
+  try { if (app && app.ticker) app.ticker.stop() } catch (_) {}
 
-  // Reset display states (idempotent across replays)
-  if (ring) ring.classList.remove('show')
-  if (mascot) mascot.classList.remove('show')
-  if (starsRow) starsRow.classList.remove('show')
-  for (let i = 1; i <= 3; i++) {
-    const s = document.getElementById('end-star-' + i)
-    if (s) s.classList.remove('on')
+  // Star rating: win always ≥ 3 so "Level Berikutnya" button appears; lose = 1
+  const starCount = outcome === 'win'
+    ? (S.hp >= S.maxHp ? 5 : S.hp >= 2 ? 4 : 3)
+    : 1
+
+  const emoji = outcome === 'win'
+    ? (S.hp >= S.maxHp ? '🏆' : S.hp >= 2 ? '🎉' : '🎊')
+    : '😊'
+
+  const modalTitle = outcome === 'win'
+    ? (S.hp >= S.maxHp ? 'Sempurna!' : S.hp >= 2 ? 'Hebat!' : 'Bagus!')
+    : 'Hampir!'
+
+  const msg = outcome === 'win'
+    ? '🏁 ' + Math.floor(S.distance) + 'm · ❤️ ' + Math.max(0,S.hp) + '/' + S.maxHp + ' · 🪙 ' + S.coinScore + ' koin'
+    : '🌱 Jarak: ' + Math.floor(S.distance) + 'm · 🪙 ' + S.coinScore + ' koin · Ayo coba lagi!'
+
+  // B-248: onNext = bump speed 20% for a meaningful "next difficulty" level
+  function _onNext() {
+    const curSpd = parseFloat(sessionStorage.getItem('g14s-next-speed') || String(S.baseSpeed))
+    sessionStorage.setItem('g14s-next-speed', String(Math.min(7.0, curSpd + 0.8)))
+    location.reload()
   }
-  if (retryBtn) retryBtn.classList.remove('cta-retry')
 
-  if (outcome === 'win') {
-    document.getElementById('end-title').textContent = title
-    if (ring) ring.classList.add('show')
-    if (starsRow) starsRow.classList.add('show')
-    // Star rating: 3 stars if full HP, 2 if 2HP, 1 if 1HP, 1 minimum on a win
-    const starCount = Math.max(1, Math.min(3, S.hp))
-    for (let i = 1; i <= starCount; i++) {
-      setTimeout(() => {
-        const s = document.getElementById('end-star-' + i)
-        if (s) s.classList.add('on')
-      }, i * 150)
-    }
+  if (window.GameModal) {
+    GameModal.show({
+      emoji,
+      title: modalTitle,
+      stars: starCount,
+      msg,
+      onNext: outcome === 'win' ? _onNext : undefined,
+      onAgain: () => location.reload(),
+      onBack: goBack,
+      onExtra: { label: '🚂 Ganti Kereta', action: goBack },
+    })
   } else {
-    // Lose — encouraging mascot + Hampir! header + bouncy "Coba lagi" CTA
-    if (mascot) { mascot.textContent = '🐱'; mascot.classList.add('show') }
-    document.getElementById('end-title').textContent = 'Hampir!'
-    if (retryBtn) { retryBtn.classList.add('cta-retry'); retryBtn.textContent = '🔁 Coba lagi' }
+    // Fallback: bespoke overlay if GameModal script failed to load
+    document.getElementById('end-title').textContent = modalTitle
+    document.getElementById('end-stats').textContent = msg
+    document.getElementById('end-modal').classList.add('show')
   }
-
-  const stats = [
-    'Jarak: ' + Math.floor(S.distance) + 'm',
-    'Sisa HP: ' + Math.max(0, S.hp) + '/' + S.maxHp,
-    '🪙 Koin terkumpul: ' + S.coinScore,
-    outcome === 'win' ? '🏆 Hebat! Kamu sampai duluan!' : '🌱 Kamu sudah hebat! Coba lagi ya.',
-  ]
-  document.getElementById('end-stats').innerHTML = stats.join('<br>')
-  document.getElementById('end-modal').classList.add('show')
 }
 
 function g14sRestart() {

@@ -1,5 +1,37 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.61 "train-games bug batch: facing · BGM · parallax · nav · Kana/Percy · g14-side" (B-239→B-256)
+
+Owner ran the restyled train games and filed a large plan-mode batch. Root-caused + fixed, each verified by headless puppeteer screenshots (M-302):
+
+**balapan-kereta (g14)**
+- **B-239 facing (recurring) — FIXED at the root.** g14's inline `TRAIN_CATS` carried no `faces` field, so the player/AI mirror (`scale.x*=-1` for left-facing webps) defaulted every train to `'right'` → left-facing sprites (Thomas, Percy…) never mirrored and looked backward. Added a centralized `G14_FACES` map (applied onto `TRAIN_CATS` before the flat copy) derived by **visually inspecting every AEG webp's face** (face = nose: right→`'right'` no-mirror, left→`'left'` mirror). Intentionally overrides trains-db.js where the art disagrees (Kana/Kenji/Diesel actually face right). Verified: Thomas now faces RIGHT mid-race.
+- **B-252 double BGM ("ada 2 backsound").** Hardened shared `train-bgm.js`: pause/stop game-bgm on `visibilitychange`(hidden)/`pagehide`/bfcache `pageshow` so a backgrounded or re-entered instance can't overlap a fresh race.
+- **B-253 deleted the "Roda Harian" daily-spin overlay** (CSS + markup + `g14SpinWheel` removed; `g14CheckDailySpin` kept as a safe no-op).
+- **B-241 parallax-3D.** Far backdrop was `_speed:0` (static). Rebuilt `buildFarScenery` into depth-banded layers (mountains 0.10 · hills 0.20 · near-hills+sawah 0.38), each **tiled 2× and wrapped seamlessly**; volcano+smoke kept as a fixed Merapi landmark. dt-clamped. Verified: bands scroll depth-varied in-race.
+- **B-240 responsive** pickups (halo/emoji/colour-blind shapes) now derive from `min(W,H)` like the train + obstacles.
+- **B-243 Diesel** confirmed present + selectable in the Thomas picker (was never missing).
+- **B-256 navigation** — race "Kembali" → in-page picker; picker "Kembali" / win-modal / pause-home → app home (`../index.html`) via real navigation (no more `history.back()` loop that never reached the home screen).
+- Fixed a latent per-frame crash: stale destroyed tie refs in `trackTies` after a resize rebuild → `tickTracks` read `.x` on null (which aborted the whole loop incl. parallax). Now `trackTies` resets in `buildTracks` + guarded in the tick.
+
+**lokomotif-pemberani (g15)**
+- **B-246 black between rail lanes — FIXED.** The rail-band ground was drawn only when `IndoScene.palette` resolved; now always drawn with a hardcoded green fallback spanning the full band. Verified: full green field, no dark.
+- **B-245 BGM → Thomas track.** `TrainBGM.setTrack` + play now fire inside the train-card click (user-gesture), not only deep in initPixi (autoplay-blocked). Verified: `game-bgm.src = train-bgm-thomas/all-engines-go-theme.mp3` after picking Thomas.
+- **B-247 parallax** far mountains/hills tiled 2× + gentle wrap scroll (dt-clamped).
+- **B-256 nav** → home deterministically.
+
+**balapan-kereta-side (g14-side)**
+- **B-251 jump 1.5× easier** (`JUMP_VELOCITY` 720→1080, ~1.44s airtime, + forward arc over gaps, dt-clamped).
+- **B-250 undulating terrain + jumpable gaps** (`terrainHeightAt(distance)`, terrain-following rail, gap abyss + fall-detection wired to existing HP).
+- **B-248 standard end modal** via shared `GameModal.show({onNext,onAgain,onBack})` (adds "Level Berikutnya ➡️").
+- **B-249 obstacle quiz** now actually fires (slowDown/resume implemented, first puzzle 7–11s).
+
+**Assets**
+- **B-242 Kana** — owner supplied the correct art (purple streamlined loco); processed (manual-threshold trim) → `assets/train/aeg/kana.webp` (was an Ashima-like wrong image).
+- **B-244 Percy** — stripped the leftover full-width 1px top/bottom borderline + re-exported with a small transparent margin.
+
+sw `v55.60→v55.61`. train-bgm.js cache-bust `55.61-20260627em` across all 4 train games. 0 console errors on all three games (verified). **Pending next tranche:** B-254 obstacle-puzzle graphics redraw, B-255 station-arrival polish (g15 already shows a station card), B-258 background variation engine (birds/weather), B-257 extra g14-side polish, B-241 g14 cosmetic track-sway.
+
 ## 2026-06-27 — v55.60 "g15 pastel HUD + green field ground" (A-311)
 
 - **g15 HUD → soft pastel** (matches g14): light top gradient, cream `.slot` word tiles, cream `#station-chip`, cream `#g15-tts-toggle`. Bottom nav + lane-indicator were already pastel.

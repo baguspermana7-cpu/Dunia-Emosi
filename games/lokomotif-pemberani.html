@@ -216,7 +216,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <script src="reward-gallery.js?v=54.83-20260626cj"></script>
 <script src="settings-modal.js?v=54.85-20260626cl"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
-<script src="train-bgm.js?v=55.25-20260627dl"></script>
+<script src="train-bgm.js?v=55.61-20260627em"></script>
 <!-- v54.28 I13: loop the train ambient SFX (was one-shot, faded after first cycle, leaving silence). -->
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" loop preload="auto" style="display:none"></audio>
 
@@ -387,7 +387,7 @@ function saveG15Progress(stars) {
     localStorage.setItem(key, JSON.stringify(prog))
   } catch(_) {}
 }
-function goBack() { try{document.getElementById('game-bgm').pause()}catch(_){}; history.back(); }
+function goBack() { try{document.getElementById('game-bgm').pause()}catch(_){}; location.href = '../index.html'; }  /* v55.61 B-256 — reach app home deterministically (no history.back loop) */
 window.addEventListener('resize',()=>{
   if(typeof app==='undefined' || !app) return;
   app.renderer.resize(Math.min(window.innerWidth,1400),Math.min(window.innerHeight,1000));
@@ -456,7 +456,7 @@ let _mathTimerRemaining = 8000;
     bgmEl: document.getElementById('game-bgm'),
     onResume: () => { gamePaused = false; document.getElementById('btn-pause').textContent = '⏸'; },
     onRetry:  () => { location.reload(); },
-    onHome:   () => { try{document.getElementById('game-bgm').pause()}catch(_){}; history.back(); }
+    onHome:   () => { try{document.getElementById('game-bgm').pause()}catch(_){}; location.href = '../index.html'; }
   });
 })();
 
@@ -788,6 +788,7 @@ let rainbow = null;
 let LANE_Y = [];
 let g15RailTop = 0;   // A-311 — top of the rail band; Indonesian scenery sits above it
 let g15Smoke = null, g15SmokeLayer = null, g15CraterX = 0, g15CraterY = 0, g15ScenePal = null, g15SmokeT = 0;
+let g15ParWrap = null;  // B-247: parallax far-scenery container (mountains + hills, 2-tile seamless)
 let W = 0, H = 0;
 // Responsive: 5% of viewport width, clamped 40-180. On 400px phone → 40, on 1200px desktop → 180.
 let TRAIN_X = 40;
@@ -972,6 +973,13 @@ async function initPixi() {
     if (window.IndoScene && g15Smoke && g15SmokeLayer && g15ScenePal) {
       g15SmokeT += dt;
       IndoScene.tickSmoke(g15SmokeLayer, g15Smoke, g15CraterX, g15CraterY, g15ScenePal, dt, (g15SmokeT % 5) < dt);
+    }
+
+    // B-247 — gentle parallax on far mountains + hills (0.15 px/frame, dt-clamped).
+    // Container holds 2 tiles of width W; wrap at -W restores to 0 seamlessly.
+    if (g15ParWrap) {
+      g15ParWrap.x -= 0.15 * dt;
+      if (g15ParWrap.x <= -W) g15ParWrap.x += W;
     }
 
     // Character train animation — wheel spin, body bob, smoke
@@ -1165,11 +1173,22 @@ function buildG15Indo() {
   const sceneH = Math.max(40, railY - horizonY)
   const sky = new PIXI.Graphics(); IS.paintSky(sky, W, railY, pal); c.addChild(sky)
   const ground = new PIXI.Graphics(); ground.rect(0, horizonY, W, railY - horizonY + 4).fill({ color: pal.grass }); c.addChild(ground)
-  c.addChild(IS.mountains(W, horizonY + 6, pal))
-  c.addChild(IS.hills(W, horizonY, pal, 0))
+  // B-247: parallax far scenery — mountains + 3 hill layers in a 2-tile wide container.
+  // Two identical copies placed at x=0 and x=W; when container scrolls to -W we wrap to 0
+  // giving seamless continuous drift. Speed 0.15 px/frame (dt-clamped in ticker).
+  g15ParWrap = new PIXI.Container()
+  // Tile 1 at local x=0
+  g15ParWrap.addChild(IS.mountains(W, horizonY + 6, pal))
+  g15ParWrap.addChild(IS.hills(W, horizonY, pal, 0))
+  g15ParWrap.addChild(IS.hills(W, horizonY + 10, pal, 1))
+  g15ParWrap.addChild(IS.hills(W, horizonY + 24, pal, 2))
+  // Tile 2 shifted by W for seamless wrap
+  const _m2 = IS.mountains(W, horizonY + 6, pal); _m2.x = W; g15ParWrap.addChild(_m2)
+  const _h0b = IS.hills(W, horizonY, pal, 0); _h0b.x = W; g15ParWrap.addChild(_h0b)
+  const _h1b = IS.hills(W, horizonY + 10, pal, 1); _h1b.x = W; g15ParWrap.addChild(_h1b)
+  const _h2b = IS.hills(W, horizonY + 24, pal, 2); _h2b.x = W; g15ParWrap.addChild(_h2b)
+  c.addChild(g15ParWrap)
   const vol = IS.volcano(W, horizonY + 10, pal, Math.min(horizonY * 0.78, bandH * 0.5)); c.addChild(vol)
-  c.addChild(IS.hills(W, horizonY + 10, pal, 1))
-  c.addChild(IS.hills(W, horizonY + 24, pal, 2))
   c.addChild(IS.sawahBand(W, horizonY + Math.min(sceneH * 0.3, 30), Math.min(sceneH * 0.7, 60), pal))
   const mask = new PIXI.Graphics(); mask.rect(0, 0, W, railY).fill(0xffffff); c.addChild(mask); c.mask = mask
   // kampung props at the field edge above the rails
@@ -1546,7 +1565,9 @@ function buildTracks() {
         C_SHINE = _p ? _p.railShine : 0x9ca3af, C_TIE = _p ? _p.tie : T.sleeperColor
   // A-311 — green field ground behind the rails (the indo backdrop is masked to the
   // upper band, so without this the rail region shows the dark canvas background).
-  if (_p && g15RailTop) { const gnd = new PIXI.Graphics(); gnd.rect(0, g15RailTop - 2, W, H - g15RailTop + 6).fill({ color: _p.grass }); trackLayer.addChild(gnd) }
+  // B-246: ALWAYS paint the rail-band ground so the dark canvas never shows through.
+  // Use _p.grass when IndoScene palette is available, else hardcoded fallback green.
+  { const gnd = new PIXI.Graphics(); gnd.rect(0, g15RailTop - 2, W, H - g15RailTop + 6).fill({ color: (_p && _p.grass) || 0x7ec850 }); trackLayer.addChild(gnd) }
   for (let lane = 0; lane < 3; lane++) {
     const lY = LANE_Y[lane];
     // reddish-brown ballast bed behind the rails
@@ -2946,7 +2967,7 @@ function restartGame() {
   g15Streak = 0; g15WrongWordKey = -1; g15AssistOffered = false;
   try { g15UpdateVignette(); g15StreakReset() } catch(_){}
   wheels = []; steamPuffs = []; letterBoxes = []; bgStars = []; sleepers = [];
-  bgClouds = []; bgFireflies = []; rainbow = null; LANE_Y = [];
+  bgClouds = []; bgFireflies = []; rainbow = null; LANE_Y = []; g15ParWrap = null;
   mathBoxTimer = 0; heartBoxTimer = 0; totalBoxSpawned = 0;
   nextMathAt = MATH_BOX_INTERVAL(); nextHeartAt = HEART_BOX_INTERVAL();
   WORDS_LIST = pickWords(WORD_COUNT);
@@ -3052,6 +3073,18 @@ function buildTrainGrid() {
       document.getElementById('train-select').style.display = 'none';
       // v54.48: daily mission via mascot (once per day across all train games).
       try { window.TrainShared && TrainShared.dailyChallenge.showOncePerDay() } catch(_){}
+      // B-245: swap BGM src + start play SYNCHRONOUSLY here (still inside user-gesture
+      // context) so the browser's autoplay policy allows play(). The await app.init()
+      // inside initPixi() breaks the gesture chain, causing play() to be blocked there.
+      // setTrack is idempotent: if initPixi later calls it with the same key, it no-ops.
+      try {
+        const _bk = entry.key || entry.id;
+        if (window.TrainBGM) {
+          TrainBGM.setTrack(_bk, 0.0);
+          const _bgm = document.getElementById('game-bgm');
+          if (_bgm) { _bgm.volume = 0.0; _bgm.play().catch(function(){}); }
+        }
+      } catch(_){}
       initPixi().catch(e => console.error('g15 pixi init error:', e));
     });
   });

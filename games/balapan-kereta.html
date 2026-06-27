@@ -146,15 +146,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 #g14-kid-mode-badge.show{display:block;animation:g14KidBadge 600ms ease-out}
 @keyframes g14KidBadge{0%{opacity:0;transform:translateX(-50%) translateY(-12px)}100%{opacity:1;transform:translateX(-50%) translateY(0)}}
 
-/* B13: Daily login spin */
-#g14-spin-overlay{position:fixed;inset:0;z-index:380;display:none;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(15,23,42,0.95),rgba(45,12,75,0.95));backdrop-filter:blur(8px)}
-#g14-spin-overlay.show{display:flex}
-.g14-spin-wheel{width:min(280px,72vw);height:min(280px,72vw);border-radius:50%;border:8px solid #fbbf24;background:conic-gradient(#ef4444 0 60deg,#f59e0b 60deg 120deg,#22c55e 120deg 180deg,#06b6d4 180deg 240deg,#a855f7 240deg 300deg,#ec4899 300deg 360deg);position:relative;box-shadow:0 16px 48px rgba(0,0,0,0.6);transform:rotate(0deg);transition:transform 3.4s cubic-bezier(.17,.67,.32,1)}
-.g14-spin-arrow{position:absolute;top:-24px;left:50%;transform:translateX(-50%);font-size:32px;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.5));z-index:2}
-.g14-spin-emoji{position:absolute;top:14px;left:50%;transform:translateX(-50%);font-size:28px}
-.g14-spin-msg{position:absolute;top:55%;left:50%;transform:translate(-50%,-50%);font-family:'Fredoka One',cursive;color:#fff;font-size:22px;text-align:center;text-shadow:0 4px 14px rgba(0,0,0,0.7);pointer-events:none}
-.g14-spin-cta{margin-top:24px;padding:14px 28px;border-radius:16px;border:0;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#451a03;font-family:'Fredoka One',cursive;font-size:16px;font-weight:900;cursor:pointer;box-shadow:0 5px 0 #92400e}
-.g14-spin-cta:active{transform:translateY(2px);box-shadow:0 3px 0 #92400e}
+/* v55.61 B-253 — Daily login spin ("Roda Harian") removed per owner request. */
 
 /* Pressure gauge */
 #pressure-row{display:flex;align-items:center;gap:8px;margin-top:8px}
@@ -241,7 +233,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 <script src="reward-gallery.js?v=55.5-20260626dd"></script>
 <script src="settings-modal.js?v=55.5-20260626dd"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
-<script src="train-bgm.js?v=55.25-20260627dl"></script>
+<script src="train-bgm.js?v=55.61-20260627em"></script>
 <script src="indo-scene.js?v=2.0.0"></script>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
@@ -267,24 +259,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
   <div class="gmq-grid" id="gmq-grid"></div>
 </div>
 
-<!-- v54.19 B13: Daily login spin -->
-<div id="g14-spin-overlay">
-  <div style="position:relative;display:flex;flex-direction:column;align-items:center">
-    <div style="position:relative">
-      <div class="g14-spin-arrow">▼</div>
-      <div class="g14-spin-wheel" id="g14-spin-wheel">
-        <div class="g14-spin-emoji" style="top:14px;left:50%;transform:translateX(-50%)">⚡</div>
-        <div class="g14-spin-emoji" style="top:50%;right:14px;transform:translateY(-50%)">❤️</div>
-        <div class="g14-spin-emoji" style="bottom:14px;left:50%;transform:translate(-50%)">🚂</div>
-        <div class="g14-spin-emoji" style="top:50%;left:14px;transform:translateY(-50%)">⭐</div>
-        <div class="g14-spin-emoji" style="top:24px;left:24px">👻</div>
-        <div class="g14-spin-emoji" style="top:24px;right:24px">🎁</div>
-        <div class="g14-spin-msg" id="g14-spin-msg">🎰 Roda Harian!</div>
-      </div>
-    </div>
-    <button class="g14-spin-cta" id="g14-spin-go" onclick="g14SpinWheel()">PUTAR!</button>
-  </div>
-</div>
+<!-- v55.61 B-253: Daily login spin ("Roda Harian") overlay removed per owner request. -->
 
 <!-- HUD Top -->
 <div id="hud-top">
@@ -764,6 +739,36 @@ const TRAIN_CATS = [
   },
 ]
 
+// v55.61 B-239 — FACING SOURCE OF TRUTH (g14 only).
+// The inline TRAIN_CATS above carries no `faces` field, so the player + AI
+// renderers (which mirror left-facing webps so every train points RIGHT, the
+// race travel direction) defaulted every sprite to 'right' → left-facing
+// sprites (Thomas, Percy, …) were never mirrored and looked backward.
+// These values were determined by VISUALLY inspecting each AEG webp's face
+// (the face = the loco's NOSE): face on the right → 'right' (already correct,
+// no mirror); face on the left → 'left' (mirror to face right). This is the
+// authoritative map for g14 and intentionally overrides trains-db.js where the
+// art disagrees (e.g. Kana/Kenji/Diesel actually face right). Owner ground
+// truth confirmed: winston/bruno/sandy/slip/troublesome/salty already correct.
+const G14_FACES = {
+  // already face RIGHT — no mirror
+  aeg_thomas:'left', aeg_percy:'left', aeg_james:'left', aeg_edward:'left',
+  aeg_henry:'left', aeg_gordon:'left', aeg_emily:'left', aeg_duck:'left',
+  aeg_hiro:'left', aeg_nia:'left', aeg_yong_bao:'left', aeg_trainiac:'left',
+  aeg_carly:'left', aeg_farona_frederico:'left',
+  // already face RIGHT — keep as authored
+  aeg_ashima:'right', aeg_diesel:'right', aeg_kana:'right', aeg_kenji:'right',
+  aeg_winston:'right', aeg_bruno:'right', aeg_sandy:'right', aeg_salty:'right',
+  aeg_slip_coaches:'right', aeg_troublesome_tankers:'right',
+  aeg_annie_clarabel:'right', aeg_toby:'forward'
+}
+// Apply onto the live TRAIN_CATS train objects BEFORE the flat copies are made,
+// so the picker (reads cat.trains[*].faces) and the game (spreads the object
+// into S.trainCfg) both see it. Only fills when not already explicitly set.
+TRAIN_CATS.forEach(cat => cat.trains.forEach(t => {
+  if (t.faces == null && G14_FACES[t.key] != null) t.faces = G14_FACES[t.key]
+}))
+
 // Build flat lookup
 const TRAIN_MAP = {}
 TRAIN_CATS.forEach(cat => cat.trains.forEach(t => { TRAIN_MAP[t.key] = {...t, category: cat.key} }))
@@ -955,7 +960,7 @@ async function initPixi() {
           const pb = document.getElementById('position-badge'); if (pb) pb.textContent = '🏁 Lanjut!'
         },
         onRetry: () => { location.reload() },
-        onHome:  () => { S.running = false; history.back() }
+        onHome:  () => { goBack() }   // v55.61 B-256 — go to app home deterministically
       })
     }
   } catch(_){}
@@ -1400,14 +1405,25 @@ function buildFarScenery() {
   // then green ground below the horizon — so the volcano sits against blue sky.
   const sky = new PIXI.Graphics(); IS.paintSky(sky, W, railY, pal); sky._speed = 0; c.addChild(sky)
   const ground = new PIXI.Graphics(); ground.rect(0, horizonY, W, railY - horizonY + 4).fill({ color: pal.grass }); ground._speed = 0; c.addChild(ground)
-  // distant mountains → far hills → volcano → near hills → sawah (static backdrop)
-  const add = (node) => { node._speed = 0; c.addChild(node) }
-  add(IS.mountains(W, horizonY + 6, pal))
-  add(IS.hills(W, horizonY, pal, 0))
-  const vol = IS.volcano(W, horizonY + 10, pal, Math.min(horizonY * 0.78, bandH * 0.5)); add(vol)
-  add(IS.hills(W, horizonY + 10, pal, 1))
-  add(IS.hills(W, horizonY + 24, pal, 2))
-  add(IS.sawahBand(W, horizonY + Math.min(sceneH * 0.3, 30), Math.min(sceneH * 0.7, 60), pal))
+  // v55.61 B-241 — PARALLAX-3D. Each depth band is tiled TWICE (copy at x=0 and
+  // x=W) so it scrolls left and wraps SEAMLESSLY (no gap exposing the canvas).
+  // Far = slowest, near = fastest → real depth. Volcano stays a fixed Merapi
+  // landmark (so its smoke column never jumps). dt-clamped in tickMid.
+  L._farBands = []
+  const makeBand = (pf, drawFns) => {
+    const band = new PIXI.Container(); band._pf = pf; band._tileW = W; band._speed = 0
+    for (let copy = 0; copy < 2; copy++) {
+      const tile = new PIXI.Container(); tile.x = copy * W
+      drawFns.forEach(fn => { const n = fn(); if (n) tile.addChild(n) })
+      band.addChild(tile)
+    }
+    c.addChild(band); L._farBands.push(band); return band
+  }
+  makeBand(0.10, [() => IS.mountains(W, horizonY + 6, pal)])                         // distant range (slowest)
+  makeBand(0.20, [() => IS.hills(W, horizonY, pal, 0), () => IS.hills(W, horizonY + 10, pal, 1)])
+  // volcano = fixed landmark (static) sits between the mid and near hill bands
+  const vol = IS.volcano(W, horizonY + 10, pal, Math.min(horizonY * 0.78, bandH * 0.5)); vol._speed = 0; c.addChild(vol)
+  makeBand(0.38, [() => IS.hills(W, horizonY + 24, pal, 2), () => IS.sawahBand(W, horizonY + Math.min(sceneH * 0.3, 30), Math.min(sceneH * 0.7, 60), pal)])
   // mask the backdrop to the scenery band so hills/ground never draw over the rails
   const mask = new PIXI.Graphics(); mask.rect(0, 0, W, railTop).fill(0xffffff); mask._speed = 0; c.addChild(mask); c.mask = mask
   // smoke in its OWN container (so tickMid's far-scroll never moves the puffs)
@@ -1501,6 +1517,7 @@ const TIE_W = 11, TIE_H = 3, TIE_GAP = 78
 
 function buildTracks() {
   const c = new PIXI.Container(); L.tracks = c; stage.addChild(c)
+  trackTies = []   // v55.61 — drop stale (destroyed) tie refs from a previous build (resize) so tickTracks never reads a null sprite
   const W = app.screen.width
   // A-311 — Indonesian ballast palette (reddish-brown gravel, steel rails, grain ties)
   const _is = window.IndoScene, _p = _is && _is.palette(g14SceneMood())
@@ -1576,6 +1593,7 @@ function tickTracks(delta) {
   const px = S.speed * delta * 1.0
   const period = (TIE_W + TIE_GAP) * (Math.ceil(W / (TIE_W + TIE_GAP)) + 3)
   for (const t of trackTies) {
+    if (!t.g || t.g.destroyed) continue
     t.g.x -= px
     if (t.g.x < -(TIE_W + 10)) t.g.x += period
   }
@@ -1588,14 +1606,13 @@ function tickMid(delta) {
     t.x -= t._speed * S.speed * delta * 0.4
     if (t.x < -60) t.x = W + 20
   }
-  // Far
-  if (L.far) {
-    L.far.children.forEach(c => {
-      const sp = (c._speed != null) ? c._speed : 0.15
-      if (sp === 0) return            // v55.46 — static atmosphere (haze) never scrolls
-      c.x -= sp * delta
-      if (c.x < -200) c.x = W + 50
-    })
+  // Far — v55.61 B-241: depth-banded parallax, each band tiled 2× → seamless wrap.
+  if (L._farBands) {
+    const _d = Math.min(delta, 2)   // dt-clamp (throttled-tablet frame spikes)
+    for (const band of L._farBands) {
+      band.x -= band._pf * S.speed * _d * 0.4
+      if (band.x <= -band._tileW) band.x += band._tileW
+    }
   }
   // v55.46 — foreground parallax (fast, in front of the train) for 2.5D depth
   tickFore(delta)
@@ -3188,15 +3205,20 @@ function _pickPickupType(){
 }
 function spawnPickup(){
   if (!L.fx) return
-  const W = app.screen.width
+  const W = app.screen.width, H = app.screen.height
   const lane = Math.floor(Math.random() * LANE_COUNT)
   const type = _pickPickupType()
+  // v55.61 B-240 — responsive: derive pickup radius from the viewport (was fixed
+  // 22px) so it scales with the device like the train + obstacles. f = scale vs
+  // the original 22px design.
+  const PK = Math.round(Math.max(15, Math.min(Math.min(W, H) * 0.05, 26)))
+  const f = PK / 22
   // Halo + emoji text. Halo gives the affordance "this is collectable, not an obstacle."
   const g = new PIXI.Container()
   const halo = new PIXI.Graphics()
-  halo.circle(0, 0, 22).fill({ color: type.color, alpha: 0.18 })
-  halo.circle(0, 0, 16).fill({ color: type.color, alpha: 0.32 })
-  halo.circle(0, 0, 22).stroke({ color: type.color, width: 1.5, alpha: 0.65 })
+  halo.circle(0, 0, PK).fill({ color: type.color, alpha: 0.18 })
+  halo.circle(0, 0, PK * 0.72).fill({ color: type.color, alpha: 0.32 })
+  halo.circle(0, 0, PK).stroke({ color: type.color, width: 1.5, alpha: 0.65 })
   // v54.51: color-blind safe — add a per-kind shape outline (square=coin,
   // diamond=bolt, heart-tick=heart, ring=other) layered above the halo when
   // localStorage g14-cb-safe === '1'. Shape carries the meaning so color
@@ -3205,14 +3227,15 @@ function spawnPickup(){
     if (localStorage.getItem('g14-cb-safe') === '1') {
       const m = new PIXI.Graphics()
       m.lineStyle = undefined
-      if (type.kind === 'coin')      m.rect(-9, -9, 18, 18).stroke({ color: 0xffffff, width: 2 })
-      else if (type.kind === 'bolt') m.poly([0,-12, 12,0, 0,12, -12,0]).stroke({ color: 0xffffff, width: 2 })
-      else if (type.kind === 'heart')m.circle(-5, -3, 5).circle(5, -3, 5).stroke({ color: 0xffffff, width: 2 })
-      else                            m.circle(0, 0, 14).stroke({ color: 0xffffff, width: 2 })
+      const s = f   // scale color-blind shapes with the responsive pickup size
+      if (type.kind === 'coin')      m.rect(-9*s, -9*s, 18*s, 18*s).stroke({ color: 0xffffff, width: 2 })
+      else if (type.kind === 'bolt') m.poly([0,-12*s, 12*s,0, 0,12*s, -12*s,0]).stroke({ color: 0xffffff, width: 2 })
+      else if (type.kind === 'heart')m.circle(-5*s, -3*s, 5*s).circle(5*s, -3*s, 5*s).stroke({ color: 0xffffff, width: 2 })
+      else                            m.circle(0, 0, 14*s).stroke({ color: 0xffffff, width: 2 })
       g.addChild(m)
     }
   } catch(_){}
-  const t = new PIXI.Text({ text: type.emoji, style: { fontSize: 26, fontFamily: 'Arial' } })
+  const t = new PIXI.Text({ text: type.emoji, style: { fontSize: Math.round(26 * f), fontFamily: 'Arial' } })
   t.anchor.set(0.5)
   g.addChild(t)
   g.x = W + 60
@@ -3509,58 +3532,9 @@ function g14RecordDeath(){
 }
 let OBS_INTERVAL_MS_CURRENT = 1100
 
-// B13: Daily login spin. First launch each day → wheel offers 6 wedges of reward.
-function g14CheckDailySpin(){
-  const today = new Date().toDateString()
-  const key = 'dunia-g14-spin'
-  try {
-    const last = localStorage.getItem(key)
-    if (last === today) return false
-    // Show spin overlay on next idle frame
-    setTimeout(() => {
-      const ovl = document.getElementById('g14-spin-overlay')
-      if (ovl) ovl.classList.add('show')
-    }, 400)
-    return true
-  } catch(_){ return false }
-}
-function g14SpinWheel(){
-  const wheel = document.getElementById('g14-spin-wheel')
-  const msg = document.getElementById('g14-spin-msg')
-  const cta = document.getElementById('g14-spin-go')
-  if (!wheel) return
-  // v54.56 FREEZE FIX: previously reward 'Bonus Boost' called executeBoost()
-  // directly. That set S.boosting=true + cooldown + S.pressure -= 30 even when
-  // the modal/wheel was open POST-race — state bled into the NEXT startRace,
-  // causing a frozen-looking race. Now all rewards are SAFE state-only mutations
-  // queued via localStorage flag for startRace to consume cleanly.
-  const rewards = [
-    { emoji:'⚡', label:'+30 Tekanan',         apply: () => { try { localStorage.setItem('dunia-g14-spin-bonus', 'pressure') } catch(_){} } },
-    { emoji:'❤️', label:'+1 Nyawa',            apply: () => { try { localStorage.setItem('dunia-g14-spin-bonus', 'hp') } catch(_){} } },
-    { emoji:'🚂', label:'Bonus Boost',         apply: () => { try { localStorage.setItem('dunia-g14-spin-bonus', 'boost') } catch(_){} } },
-    { emoji:'⭐', label:'2× Skor Hari Ini',   apply: () => { try { localStorage.setItem('dunia-g14-score-mult', '2'); localStorage.setItem('dunia-g14-score-mult-day', new Date().toDateString()) } catch(_){} } },
-    { emoji:'👻', label:'Ghost Mode 5s',       apply: () => { try { localStorage.setItem('dunia-g14-spin-bonus', 'ghost') } catch(_){} } },
-    { emoji:'🎁', label:'Misteri!',            apply: () => { try { localStorage.setItem('dunia-g14-spin-bonus', 'mystery') } catch(_){} } },
-  ]
-  const idx = Math.floor(Math.random() * rewards.length)
-  const r = rewards[idx]
-  const sweep = 360 * 4 + 360 - (idx * 60) - 30
-  wheel.style.transform = 'rotate(' + sweep + 'deg)'
-  if (cta) cta.style.display = 'none'
-  setTimeout(() => {
-    if (msg) msg.innerHTML = '🎉 ' + r.emoji + '<br>' + r.label
-    try { r.apply() } catch(_){}
-    try { playTone(660, 0.10); setTimeout(()=>playTone(880, 0.10), 100); setTimeout(()=>playTone(1100, 0.18), 220) } catch(_){}
-    try { localStorage.setItem('dunia-g14-spin', new Date().toDateString()) } catch(_){}
-    setTimeout(() => {
-      const ovl = document.getElementById('g14-spin-overlay')
-      if (ovl) ovl.classList.remove('show')
-      if (cta) cta.style.display = 'block'
-      if (msg) msg.innerHTML = '🎰 Roda Harian!'
-      wheel.style.transform = 'rotate(0deg)'
-    }, 2200)
-  }, 3500)
-}
+// v55.61 B-253 — Daily login spin ("Roda Harian") removed per owner request.
+// Kept as a no-op so any residual call sites stay safe.
+function g14CheckDailySpin(){ return false }
 
 // ── Speed Lines ───────────────────────────────────────────
 let spdLines = []
@@ -4168,17 +4142,24 @@ function saveG14Progress(stars) {
     localStorage.setItem(key, JSON.stringify(prog))
   } catch(_) {}
 }
-function goBack() {
+// v55.61 B-256 — deterministic navigation (no history.back() loop). Owner: back
+// from the race must reach the picker, and back from the picker must reach the
+// app home (tampilan awal) — never bounce back into the race.
+function goBack() {   // = go HOME (app landing)
   S.running = false
   try { if (app && app.ticker) app.ticker.stop() } catch(_){}
   try{document.getElementById('game-bgm').pause()}catch(_){}
   // v54.26 polish: cancel all pending RAFs so leftover boost-fade/cooldown
   // animations don't keep eating CPU after the player navigates back.
   try { _g14CancelAllRAFs() } catch(_){}
-  history.back()
+  location.href = '../index.html'
 }
-function confirmBack() {
-  goBack()
+function confirmBack() {   // RACE "Kembali" → return to the in-page train picker
+  S.running = false
+  S.paused = false
+  try{document.getElementById('game-bgm').pause()}catch(_){}
+  try { _g14CancelAllRAFs() } catch(_){}
+  showSelectScreen()
 }
 
 // Recalculate lane positions on orientation change + rebuild track/signal/grass

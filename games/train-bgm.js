@@ -82,4 +82,18 @@
     stop: stop,
     isThomas: isThomas
   }
+
+  // v55.61 B-252 — kill duplicate / overlapping BGM ("ada 2 backsound").
+  // When the page is hidden, backgrounded, or restored from bfcache (a stale
+  // game instance that kept playing), pause game-bgm so a freshly-entered race
+  // never overlaps a previous one. The race start re-plays explicitly.
+  try {
+    var _hush = function () { stop() }
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) _hush()
+    })
+    window.addEventListener('pagehide', _hush)
+    // bfcache restore: a persisted page may resume its old audio — silence it.
+    window.addEventListener('pageshow', function (e) { if (e && e.persisted) _hush() })
+  } catch (e) {}
 })()
