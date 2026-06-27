@@ -3,14 +3,14 @@
  * tools/visual-qa-comprehensive.mjs   (v55.12 — final acceptance probe)
  * =============================================================================
  * 8 verification screens covering every B-NNN closed in v55.0-v55.10:
- *   T1 g14.html top-down Thomas sprite     (B-201 PIXI.Assets.load fix)
- *   T2 g14.html ↑↓ control buttons         (B-205 arrow symbol replacement)
- *   T3 g14.html rail strip dimensions      (B-202 < 80% of train height)
- *   T4 g15-pixi.html sprite orientation    (B-207 chimney-up verification)
- *   T5 g16-pixi.html dynamic picker count  (B-208 33-card render)
+ *   T1 balapan-kereta.html top-down Thomas sprite     (B-201 PIXI.Assets.load fix)
+ *   T2 balapan-kereta.html ↑↓ control buttons         (B-205 arrow symbol replacement)
+ *   T3 balapan-kereta.html rail strip dimensions      (B-202 < 80% of train height)
+ *   T4 lokomotif-pemberani.html sprite orientation    (B-207 chimney-up verification)
+ *   T5 selamatkan-kereta.html dynamic picker count  (B-208 33-card render)
  *   T6 ObstacleEngine pastel modal         (B-204 color sweep)
- *   T7 g13c-pixi.html Pokedex load time    (B-210 timeout/retry/progress)
- *   T8 g19-pixi.html Pokemon Birds load    (B-209 slim SHELL effect)
+ *   T7 gym-pokemon.html Pokedex load time    (B-210 timeout/retry/progress)
+ *   T8 pokemon-birds.html Pokemon Birds load    (B-209 slim SHELL effect)
  *
  * Prereq: local server on :8081
  *   cd /home/baguspermana7/rz-work/Dunia-Emosi && python3 -m http.server 8081
@@ -58,11 +58,11 @@ async function main() {
   })
 
   try {
-    // ── T1: g14.html top-down character sprite (B-201) ──────────────────────
+    // ── T1: balapan-kereta.html top-down character sprite (B-201) ──────────────────────
     {
       console.log('T1 g14 top-down character sprite (B-201)')
       const { page, consoleMsgs } = await newPage(browser)
-      await page.goto(`${BASE}/games/g14.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto(`${BASE}/games/balapan-kereta.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(700)
       await page.evaluate(() => {
         const btn = Array.from(document.querySelectorAll('.cat-btn'))
@@ -111,11 +111,11 @@ async function main() {
       await page.close()
     }
 
-    // ── T2: g14.html ↑↓ arrow buttons (B-205) ───────────────────────────────
+    // ── T2: balapan-kereta.html ↑↓ arrow buttons (B-205) ───────────────────────────────
     {
       console.log('T2 g14 ↑↓ arrow controls (B-205)')
       const { page } = await newPage(browser)
-      await page.goto(`${BASE}/games/g14.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto(`${BASE}/games/balapan-kereta.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(500)
       const labels = await page.evaluate(() => {
         const btns = Array.from(document.querySelectorAll('button, .ctrl-btn, [class*="ctrl"]'))
@@ -130,12 +130,12 @@ async function main() {
       await page.close()
     }
 
-    // ── T3: g14.html rail strip dimensions (B-202) ──────────────────────────
+    // ── T3: balapan-kereta.html rail strip dimensions (B-202) ──────────────────────────
     {
       console.log('T3 g14 rail strip ratio (B-202: < 80% of train height)')
       // Static source parse — RAIL_HALF is a local const inside an IIFE,
       // not on window. Read it straight from the file.
-      const g14src = fs.readFileSync(path.join(__dirname, '..', 'games', 'g14.html'), 'utf8')
+      const g14src = fs.readFileSync(path.join(__dirname, '..', 'games', 'balapan-kereta.html'), 'utf8')
       const railMatch = g14src.match(/const\s+RAIL_HALF\s*=\s*(\d+)/)
       const heightMatch = g14src.match(/spriteHeight:\s*90/) // canonical PROTECTED-char body height
       const railHalf = railMatch ? parseInt(railMatch[1], 10) : null
@@ -145,11 +145,11 @@ async function main() {
       verdict('T3', ok, `RAIL_HALF=${railHalf} → strip ${railHalf ? railHalf * 2 : '?'}px / ${trainH}px train = ${ratio != null ? (ratio * 100).toFixed(0) + '%' : 'n/a'} (< 80%)`)
     }
 
-    // ── T4: g15-pixi.html sprite orientation (B-207 KEY VERIFICATION) ───────
+    // ── T4: lokomotif-pemberani.html sprite orientation (B-207 KEY VERIFICATION) ───────
     {
       console.log('T4 g15-pixi sprite orientation (B-207)')
       const { page, consoleMsgs } = await newPage(browser)
-      await page.goto(`${BASE}/games/g15-pixi.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto(`${BASE}/games/lokomotif-pemberani.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(3000) // pixi boot + first frames
 
       const out = path.join(OUT, 'comprehensive-04-g15-orientation.png')
@@ -182,11 +182,11 @@ async function main() {
       await page.close()
     }
 
-    // ── T5: g16-pixi.html picker count (B-208: 33 cards) ────────────────────
+    // ── T5: selamatkan-kereta.html picker count (B-208: 33 cards) ────────────────────
     {
       console.log('T5 g16-pixi dynamic picker count (B-208)')
       const { page, consoleMsgs } = await newPage(browser)
-      await page.goto(`${BASE}/games/g16-pixi.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto(`${BASE}/games/selamatkan-kereta.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(1800)
 
       const out = path.join(OUT, 'comprehensive-05-g16-picker.png')
@@ -211,7 +211,7 @@ async function main() {
           localStorage.setItem('g14s-tutorial-seen', '1')
         },
       })
-      await page.goto(`${BASE}/games/g14-side.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto(`${BASE}/games/balapan-kereta-side.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(5500) // through countdown
 
       const spawned = await page.evaluate(() => {
@@ -244,7 +244,7 @@ async function main() {
       console.log('T7 g13c-pixi Pokedex load (B-210: ≤ 10s)')
       const t0 = Date.now()
       const { page, consoleMsgs } = await newPage(browser)
-      await page.goto(`${BASE}/games/g13c-pixi.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto(`${BASE}/games/gym-pokemon.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
 
       // Wait until loading-text disappears OR 12s timeout
       const loadedWithin = await Promise.race([
@@ -269,7 +269,7 @@ async function main() {
       console.log('T8 g19-pixi Pokemon Birds load (B-209: ≤ 10s)')
       const t0 = Date.now()
       const { page, consoleMsgs } = await newPage(browser)
-      await page.goto(`${BASE}/games/g19-pixi.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto(`${BASE}/games/pokemon-birds.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
 
       const loadedWithin = await Promise.race([
         page.waitForFunction(() => {

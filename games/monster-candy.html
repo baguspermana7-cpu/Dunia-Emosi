@@ -1021,7 +1021,7 @@ function endGame() {
   }
 
   // Hotfix #102-C (2026-04-27): stop Pixi ticker so 60fps callback doesn't keep
-  // firing after game-end. See games/g15-pixi.html for canonical pattern.
+  // firing after game-end. See games/lokomotif-pemberani.html for canonical pattern.
   try { if (app && app.ticker) app.ticker.stop() } catch(_){}
 
   setTimeout(() => {
@@ -1058,7 +1058,7 @@ function goBack() {
   try{document.getElementById('game-bgm').pause()}catch(_){}
   S.running = false
   // Hotfix #102-C (2026-04-27): stop Pixi ticker so 60fps callback doesn't keep
-  // firing after game-end. See games/g15-pixi.html for canonical pattern.
+  // firing after game-end. See games/lokomotif-pemberani.html for canonical pattern.
   try { if (app && app.ticker) app.ticker.stop() } catch(_){}
   history.back()
 }

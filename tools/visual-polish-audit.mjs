@@ -3,15 +3,15 @@
  * tools/visual-polish-audit.mjs   (v55.15 — wider polish audit)
  * =============================================================================
  * Captures additional game states beyond the comprehensive-NN-*.png set:
- *   P01 g14.html category picker (Karakter Spesial)
- *   P02 g14.html race mid-flight (HP + coins + arrows visible)
- *   P03 g14.html race finish modal (engagement-index stars)
- *   P04 g14-side.html race in progress (PROTECTED Casey)
- *   P05 g14-side.html finish line + confetti
- *   P06 g15-pixi.html in-game (post picker, locomotive on track)
- *   P07 g16-pixi.html in-game (post Casey JR selection)
- *   P08 g13c-pixi.html team picker mid-scroll
- *   P09 g19-pixi.html post-tap mid-flight
+ *   P01 balapan-kereta.html category picker (Karakter Spesial)
+ *   P02 balapan-kereta.html race mid-flight (HP + coins + arrows visible)
+ *   P03 balapan-kereta.html race finish modal (engagement-index stars)
+ *   P04 balapan-kereta-side.html race in progress (PROTECTED Casey)
+ *   P05 balapan-kereta-side.html finish line + confetti
+ *   P06 lokomotif-pemberani.html in-game (post picker, locomotive on track)
+ *   P07 selamatkan-kereta.html in-game (post Casey JR selection)
+ *   P08 gym-pokemon.html team picker mid-scroll
+ *   P09 pokemon-birds.html post-tap mid-flight
  *
  * Output: tools/qa-screenshots/polish-NN-*.png + console findings.
  * Usage:  node tools/visual-polish-audit.mjs
@@ -54,7 +54,7 @@ async function main() {
     {
       console.log('P01 g14 category picker')
       const { page, errs } = await newPage(browser)
-      await page.goto(`${BASE}/games/g14.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto(`${BASE}/games/balapan-kereta.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(900)
       await page.evaluate(() => {
         const btn = Array.from(document.querySelectorAll('.cat-btn'))
@@ -71,7 +71,7 @@ async function main() {
     {
       console.log('P02 g14 race mid-flight')
       const { page, errs } = await newPage(browser)
-      await page.goto(`${BASE}/games/g14.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto(`${BASE}/games/balapan-kereta.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(900)
       await page.evaluate(() => {
         const btn = Array.from(document.querySelectorAll('.cat-btn'))
@@ -106,7 +106,7 @@ async function main() {
     {
       console.log('P03 g14 race finish modal')
       const { page, errs } = await newPage(browser)
-      await page.goto(`${BASE}/games/g14.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto(`${BASE}/games/balapan-kereta.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(900)
       await page.evaluate(() => {
         const btn = Array.from(document.querySelectorAll('.cat-btn'))
@@ -156,7 +156,7 @@ async function main() {
         sessionStorage.setItem('g14-side-train', 'caseyjr_character')
         localStorage.setItem('g14s-tutorial-seen', '1')
       })
-      await page.goto(`${BASE}/games/g14-side.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto(`${BASE}/games/balapan-kereta-side.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(7000)
       await page.screenshot({ path: path.join(OUT, 'polish-04-g14side-casey.png') })
       note('P04', `errs: ${errs.length === 0 ? 'none' : errs.slice(0, 3).join(' | ')}`)
@@ -170,7 +170,7 @@ async function main() {
         sessionStorage.setItem('g14-side-train', 'caseyjr_character')
         localStorage.setItem('g14s-tutorial-seen', '1')
       })
-      await page.goto(`${BASE}/games/g14-side.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto(`${BASE}/games/balapan-kereta-side.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(5400)
       await page.evaluate(() => { if (typeof S !== 'undefined') S.distance = 998 })
       await wait(3200)
@@ -183,7 +183,7 @@ async function main() {
     {
       console.log('P06 g15-pixi in-game (Casey JR pick)')
       const { page, errs } = await newPage(browser)
-      await page.goto(`${BASE}/games/g15-pixi.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto(`${BASE}/games/lokomotif-pemberani.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(2000)
       await page.evaluate(() => {
         // Click Casey JR card if a click handler is bound via class
@@ -209,7 +209,7 @@ async function main() {
     {
       console.log('P07 g16-pixi in-game')
       const { page, errs } = await newPage(browser)
-      await page.goto(`${BASE}/games/g16-pixi.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto(`${BASE}/games/selamatkan-kereta.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(2000)
       await page.evaluate(() => {
         const card = document.querySelector('.ts-card') // first card = Casey JR
@@ -231,7 +231,7 @@ async function main() {
     {
       console.log('P08 g13c-pixi team picker')
       const { page, errs } = await newPage(browser)
-      await page.goto(`${BASE}/games/g13c-pixi.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto(`${BASE}/games/gym-pokemon.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(2000)
       await page.screenshot({ path: path.join(OUT, 'polish-08-g13c-picker.png') })
       note('P08', `errs: ${errs.length === 0 ? 'none' : errs.slice(0, 3).join(' | ')}`)
@@ -242,7 +242,7 @@ async function main() {
     {
       console.log('P09 g19-pixi mid-flight')
       const { page, errs } = await newPage(browser)
-      await page.goto(`${BASE}/games/g19-pixi.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto(`${BASE}/games/pokemon-birds.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(2000)
       // Tap centre to start
       await page.mouse.click(VP.width / 2, VP.height / 2)
@@ -262,14 +262,14 @@ async function main() {
 
     const EXTRA = [
       { id: 'P10', label: 'index home',        url: '/index.html',          settle: 2200 },
-      { id: 'P11', label: 'g6 word racer',     url: '/games/g6.html',       settle: 1800 },
-      { id: 'P12', label: 'g17 rope-swing',    url: '/games/g17-pixi.html', settle: 2200 },
-      { id: 'P13', label: 'g20 duck volley',   url: '/games/g20-pixi.html', settle: 2200 },
-      { id: 'P14', label: 'g21 Mario Pokemon', url: '/games/g21-pixi.html', settle: 2500 },
-      { id: 'P15', label: 'g22 candy',         url: '/games/g22-candy.html',settle: 2000 },
-      { id: 'P16', label: 'g23 runner',        url: '/games/g23-pixi.html', settle: 2500 },
-      { id: 'P17', label: 'g24 underwater',    url: '/games/g24-pixi.html', settle: 2500 },
-      { id: 'P18', label: 'g25 math',          url: '/games/g25-math.html', settle: 1800 },
+      { id: 'P11', label: 'g6 word racer',     url: '/games/mobil.html',       settle: 1800 },
+      { id: 'P12', label: 'g17 rope-swing',    url: '/games/jembatan-goyang.html', settle: 2200 },
+      { id: 'P13', label: 'g20 duck volley',   url: '/games/ducky-volley.html', settle: 2200 },
+      { id: 'P14', label: 'g21 Mario Pokemon', url: '/games/mario-pokemon.html', settle: 2500 },
+      { id: 'P15', label: 'g22 candy',         url: '/games/monster-candy.html',settle: 2000 },
+      { id: 'P16', label: 'g23 runner',        url: '/games/pokemon-run.html', settle: 2500 },
+      { id: 'P17', label: 'g24 underwater',    url: '/games/pokemon-bawah-laut.html', settle: 2500 },
+      { id: 'P18', label: 'g25 math',          url: '/games/kuis-matematika.html', settle: 1800 },
     ]
     for (const t of EXTRA) {
       console.log(`${t.id} ${t.label}`)

@@ -31,10 +31,10 @@ async function main() {
   })
 
   const TARGETS = [
-    { id: 'B1', label: 'g14 top-down race',  url: '/games/g14.html'     },
-    { id: 'B2', label: 'g15 Lokomotif',      url: '/games/g15-pixi.html' },
-    { id: 'B3', label: 'g16 Selamatkan',     url: '/games/g16-pixi.html' },
-    { id: 'B4', label: 'g14-side (v55.27)',  url: '/games/g14-side.html' },
+    { id: 'B1', label: 'g14 top-down race',  url: '/games/balapan-kereta.html'     },
+    { id: 'B2', label: 'g15 Lokomotif',      url: '/games/lokomotif-pemberani.html' },
+    { id: 'B3', label: 'g16 Selamatkan',     url: '/games/selamatkan-kereta.html' },
+    { id: 'B4', label: 'g14-side (v55.27)',  url: '/games/balapan-kereta-side.html' },
   ]
 
   try {

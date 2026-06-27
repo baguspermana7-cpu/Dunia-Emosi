@@ -5,11 +5,11 @@
  * so the tutorial is dismissed and race starts cleanly for clean screenshots.
  * =============================================================================
  * Launches Puppeteer headless, takes 5 screenshots covering:
- *   1) g14.html top-down with Thomas (sprite verification)
- *   2) g14-side.html race scene with Thomas
- *   3) g14-side.html race scene with Casey JR (PROTECTED)
- *   4) g14-side.html finish line with confetti
- *   5) g14-side.html ObstacleEngine puzzle overlay
+ *   1) balapan-kereta.html top-down with Thomas (sprite verification)
+ *   2) balapan-kereta-side.html race scene with Thomas
+ *   3) balapan-kereta-side.html race scene with Casey JR (PROTECTED)
+ *   4) balapan-kereta-side.html finish line with confetti
+ *   5) balapan-kereta-side.html ObstacleEngine puzzle overlay
  *
  * Output: tools/qa-screenshots/*.png
  * Usage:  node tools/visual-qa.mjs
@@ -40,7 +40,7 @@ async function main() {
   })
 
   try {
-    // ── Test 1: g14.html top-down Thomas ─────────────────────────────────────
+    // ── Test 1: balapan-kereta.html top-down Thomas ─────────────────────────────────────
     {
       const page = await browser.newPage()
       await page.setViewport(VP)
@@ -48,7 +48,7 @@ async function main() {
       page.on('console', m => consoleMsgs.push(`${m.type()}: ${m.text()}`))
       page.on('pageerror', e => consoleMsgs.push(`PAGEERR: ${e.message}`))
 
-      await page.goto(`${BASE}/games/g14.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto(`${BASE}/games/balapan-kereta.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(700)
 
       // Click the Karakter Spesial ⭐ category (first cat button)
@@ -104,7 +104,7 @@ async function main() {
       await page.close()
     }
 
-    // ── Test 2: g14-side.html with Thomas ────────────────────────────────────
+    // ── Test 2: balapan-kereta-side.html with Thomas ────────────────────────────────────
     {
       const page = await browser.newPage()
       await page.setViewport(VP)
@@ -116,7 +116,7 @@ async function main() {
         sessionStorage.setItem('g14-side-train', 'aeg_thomas')
         localStorage.setItem('g14s-tutorial-seen', '1')
       })
-      await page.goto(`${BASE}/games/g14-side.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto(`${BASE}/games/balapan-kereta-side.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(7200) // 1.9s banner + 3.4s countdown + ~1.9s race
 
       const out = path.join(OUT, 'g14-side-thomas.png')
@@ -142,7 +142,7 @@ async function main() {
       await page.close()
     }
 
-    // ── Test 3: g14-side.html with Casey JR ──────────────────────────────────
+    // ── Test 3: balapan-kereta-side.html with Casey JR ──────────────────────────────────
     {
       const page = await browser.newPage()
       await page.setViewport(VP)
@@ -154,7 +154,7 @@ async function main() {
         sessionStorage.setItem('g14-side-train', 'caseyjr_character')
         localStorage.setItem('g14s-tutorial-seen', '1')
       })
-      await page.goto(`${BASE}/games/g14-side.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto(`${BASE}/games/balapan-kereta-side.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(7200)
 
       const out = path.join(OUT, 'g14-side-caseyjr.png')
@@ -176,7 +176,7 @@ async function main() {
       await page.close()
     }
 
-    // ── Test 4: g14-side.html finish line ────────────────────────────────────
+    // ── Test 4: balapan-kereta-side.html finish line ────────────────────────────────────
     {
       const page = await browser.newPage()
       await page.setViewport(VP)
@@ -188,7 +188,7 @@ async function main() {
         sessionStorage.setItem('g14-side-train', 'aeg_thomas')
         localStorage.setItem('g14s-tutorial-seen', '1')
       })
-      await page.goto(`${BASE}/games/g14-side.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto(`${BASE}/games/balapan-kereta-side.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(5400) // through countdown
 
       // Fast-forward
@@ -217,7 +217,7 @@ async function main() {
       await page.close()
     }
 
-    // ── Test 5: g14-side.html ObstacleEngine puzzle ──────────────────────────
+    // ── Test 5: balapan-kereta-side.html ObstacleEngine puzzle ──────────────────────────
     {
       const page = await browser.newPage()
       await page.setViewport(VP)
@@ -229,7 +229,7 @@ async function main() {
         sessionStorage.setItem('g14-side-train', 'aeg_thomas')
         localStorage.setItem('g14s-tutorial-seen', '1')
       })
-      await page.goto(`${BASE}/games/g14-side.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      await page.goto(`${BASE}/games/balapan-kereta-side.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
       await wait(5400) // through countdown
 
       const spawned = await page.evaluate(() => {

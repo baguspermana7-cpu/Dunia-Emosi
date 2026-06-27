@@ -55,7 +55,7 @@ async function main() {
     page.on('console', m => { if (m.type() === 'error') errs.push(m.text()) })
     page.on('pageerror', e => errs.push('PAGEERR: ' + e.message))
 
-    await page.goto(`${BASE}/games/g15-pixi.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
+    await page.goto(`${BASE}/games/lokomotif-pemberani.html`, { waitUntil: 'domcontentloaded', timeout: 30000 })
     await wait(1800)
 
     // Build {key,name} list of character trains from TRAIN_CATALOG.

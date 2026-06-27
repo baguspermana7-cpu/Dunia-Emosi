@@ -381,7 +381,7 @@ function g14LaunchSideRace() {
     return
   }
   sessionStorage.setItem('g14-side-train', key)
-  location.href = 'g14-side.html'
+  location.href = 'balapan-kereta-side.html'
 }
 </script>
 <script>
@@ -2332,7 +2332,7 @@ function updatePlayerEmoji() {
   // Replaces v54.87 PIXI.Sprite.from + addEventListener path which silently
   // failed in production (Agent G root cause: load event unreliable; texture
   // stuck at 1×1 placeholder; RAF poll exhausted 60 frames before update).
-  // Mirror of the v54.96 g14-side.html fix that DOES work in puppeteer.
+  // Mirror of the v54.96 balapan-kereta-side.html fix that DOES work in puppeteer.
   // Closes B-201.
   if (S.trainCfg.isCharacter && S.trainCfg.spriteUrl) {
     const url = S.trainCfg.spriteUrl
@@ -3990,7 +3990,7 @@ function endRace() {
   const fullMsg = speedLine ? `${msg}\n${speedLine}` : msg
   // Hotfix #102-C (2026-04-27): stop Pixi ticker so 60fps callback doesn't keep
   // firing after game-end (early-returns on !S.running but loop still spins,
-  // accumulating CPU → mobile hang). See games/g15-pixi.html for canonical pattern.
+  // accumulating CPU → mobile hang). See games/lokomotif-pemberani.html for canonical pattern.
   try { if (app && app.ticker) app.ticker.stop() } catch(_){}
   GameModal.show({
     emoji, title, stars, msg: fullMsg,

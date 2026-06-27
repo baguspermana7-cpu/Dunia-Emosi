@@ -1,5 +1,56 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.42 "Rename all 14 games to landing-page slugs (A-305)"
+
+Owner ask: *"gamenya jangan dibuat pakai kode g16,g17. ini susah scalablenya. better align dengan nama di landing page... agar scalable."* Owner approved all-14-at-once.
+
+### File rename map (gNN code → landing-page slug)
+
+| Old | New | internal gameId (kept) |
+|---|---|---|
+| g6.html | `mobil.html` | g6 |
+| g13c-pixi.html | `gym-pokemon.html` | g13c |
+| g14.html | `balapan-kereta.html` | g14 |
+| g14-side.html | `balapan-kereta-side.html` | g14 |
+| g15-pixi.html | `lokomotif-pemberani.html` | g15 |
+| g16-pixi.html | `selamatkan-kereta.html` | g16 |
+| g17-pixi.html | `jembatan-goyang.html` | g17 |
+| g19-pixi.html | `pokemon-birds.html` | g19 |
+| g20-pixi.html | `ducky-volley.html` | g20 |
+| g21-pixi.html | `mario-pokemon.html` | g21 |
+| g22-candy.html | `monster-candy.html` | g22 |
+| g23-pixi.html | `pokemon-run.html` | g23 |
+| g24-pixi.html | `pokemon-bawah-laut.html` | g24 |
+| g25-math.html | `kuis-matematika.html` | g25 |
+
+Engine suffixes (`-pixi/-candy/-math`) dropped; slugs match the `title=` names on the home map.
+
+### Save-data preserved (CRITICAL)
+`saveLevelProgress('gNN', …)` is keyed by the internal **gameId string**, not the filename. The gameIds (`'g14'`, `'g6'`, …) are **left unchanged** so existing star progress survives the rename. The gameId is invisible to users; only the filename changed. Same for the `sessionStorage['g14-side-train']` handoff key.
+
+### References updated (via `git mv` + sed, 0 stale refs)
+- `game.js` — every `window.location.href = 'games/gNN.html'` (+ `?v=` queries preserved) → slug
+- `games/balapan-kereta.html` — Side Race cross-link `location.href` → `balapan-kereta-side.html`
+- `sw.js` — SHELL precache `./games/balapan-kereta-side.html`
+- 8 `tools/*.mjs` probes — all game URLs updated to slugs
+- Comment refs across all game HTMLs (cosmetic, "see games/gNN.html for pattern")
+
+### Verification
+- All 14 renamed games serve HTTP 200; old `g14.html` → 404 (expected)
+- `grep gNN.html` across game.js/index.html/sw.js/games/tools → **0 stale refs**
+- `node tools/probe-train-bgm.mjs` → **28/28 PASS** on renamed files
+- `balapan-kereta.html` loads with title "Balapan Kereta 🚂"
+- index.html tiles use numeric `openLevelSelect(N)` (not filenames) → no tile change needed; launch flows through `startGameWithLevel` → new slug href
+
+### Files touched
+- 14 `games/*.html` renamed (git mv preserves history)
+- `game.js`, `sw.js`, `games/balapan-kereta.html` cross-link, 8 `tools/*.mjs`
+- `sw.js` v55.41 → v55.42
+
+### Closes A-305. Game catalog is now scalable — meaningful filenames, each game its own HTML.
+
+---
+
 ## 2026-06-27 — v55.41 "Train-game focus: jelly buttons + bigger character + thinner rail (B-226/B-227/B-228)"
 
 Owner ask 2026-06-27 (+ reference photo of a soft glossy play button):

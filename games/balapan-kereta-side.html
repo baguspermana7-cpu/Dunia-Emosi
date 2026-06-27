@@ -121,7 +121,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <body>
 <canvas id="pixi-canvas"></canvas>
 
-<!-- Pixi + shared modules (same versions as g14.html for cache reuse) -->
+<!-- Pixi + shared modules (same versions as balapan-kereta.html for cache reuse) -->
 <script src="lib/pixi.min.js?v=8"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="train-vfx.js?v=54.56-20260625bi"></script>
@@ -239,7 +239,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <script>
 'use strict'
 /* =============================================================================
- * g14-side.html  (v54.88 foundation, v54.96+ critical fixes)
+ * balapan-kereta-side.html  (v54.88 foundation, v54.96+ critical fixes)
  * =============================================================================
  * Side-scrolling cartoon train racing — replaces top-down 3-lane G14 for the
  * "side-race (beta)" experience per owner reference image 2 ("Train Racing").
@@ -253,7 +253,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
  *   - Distance-based finish at 1000m
  *
  * Owner-mandate (v54.88+): ensure no bug, no error. Premium side-on feel.
- * Shares modules with g14.html — single source of truth for trains-db + obstacles.
+ * Shares modules with balapan-kereta.html — single source of truth for trains-db + obstacles.
  * ========================================================================== */
 
 const W = window.innerWidth
@@ -1679,11 +1679,11 @@ function g14sRestart() {
 }
 
 function goBack() {
-  // Try to navigate back to the picker (g14.html)
-  if (document.referrer && document.referrer.includes('g14.html')) {
+  // Try to navigate back to the picker (balapan-kereta.html)
+  if (document.referrer && document.referrer.includes('balapan-kereta.html')) {
     history.back()
   } else {
-    location.href = 'g14.html'
+    location.href = 'balapan-kereta.html'
   }
 }
 

@@ -1188,7 +1188,7 @@ async function _syncFromCloud() {
 }
 // Kodok (frog) avatar starter preset: ~25% of cities pre-completed in each
 // region for G10/G13/G13B, giving frog players a head start. G13C handled
-// separately in games/g13c-pixi.html (different storage system).
+// separately in games/gym-pokemon.html (different storage system).
 // One-time per avatar via 'dunia-frog-seeded-v2' flag.
 function _seedKodokProgress() {
   try {
@@ -1407,7 +1407,7 @@ function openGymGame() {
   playClick()
   // MUST remain synchronous — page redirects on next line, no time for async work.
   _applyKodokSlot7Unlock()   // runs once, guard inside; slot-7+frog preset
-  window.location.href = 'games/g13c-pixi.html?v=20260506ae'
+  window.location.href = 'games/gym-pokemon.html?v=20260506ae'
 }
 
 function g13cBuildLetterSelect() {
@@ -1559,7 +1559,7 @@ function g13cNextLetter() {
 function openLevelSelect(gameNum) {
   // G25 Math Hub — standalone HTML owns hub + level grid + quiz.
   if (gameNum === 25) {
-    window.location.href = 'games/g25-math.html?v=20260621f'
+    window.location.href = 'games/kuis-matematika.html?v=20260621f'
     return
   }
   // G10 mode-select intercept moved upstream to openRegionOverlay(10) so the
@@ -3742,7 +3742,7 @@ function initGame6() {
       totalWords: words, wordBank: wordBank
     }))
   } catch(_) {}
-  window.location.href = 'games/g6.html'
+  window.location.href = 'games/mobil.html'
 }
 function setupDriveMap(map) {
   g6State.map = map
@@ -7551,7 +7551,7 @@ function g11Next(){
 
 // ─────────────────────────────────────────────────────────────────────
 // G25 — Kuis Matematika
-// Moved to standalone HTML at games/g25-math.html (2026-06-21).
+// Moved to standalone HTML at games/kuis-matematika.html (2026-06-21).
 // World-map tile click is routed via openLevelSelect() at the top of game.js.
 // The old in-page implementation block below is intentionally kept as dead
 // code for now (will be removed in a follow-up); the standalone is the live
@@ -12060,7 +12060,7 @@ function initGame14() {
   const lv = state.selectedLevelNum || state.selectedLevel || 5
   const diff = state.selectedLevel || 'easy'
   try { sessionStorage.setItem('g14Config', JSON.stringify({ level: lv, difficulty: diff })) } catch(_) {}
-  window.location.href = 'games/g14.html'
+  window.location.href = 'games/balapan-kereta.html'
 }
 
 function g14RenderTrainSelect() {
@@ -12598,7 +12598,7 @@ function initGame15() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g15Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g15-pixi.html'
+  window.location.href = 'games/lokomotif-pemberani.html'
 }
 
 function g15LoadWord() {
@@ -12731,7 +12731,7 @@ function initGame16() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g16Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g16-pixi.html'
+  window.location.href = 'games/selamatkan-kereta.html'
 }
 
 // ───────────────────────────────────────────────────────────────────────
@@ -13095,7 +13095,7 @@ function initGame17() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g17Config', JSON.stringify({ level: lv })) } catch(_){}
-  window.location.href = 'games/g17-pixi.html'
+  window.location.href = 'games/jembatan-goyang.html'
   return  // hard-exit — legacy code below is dead.
   // ── LEGACY (whack-a-mole, removed in v54.7) ────────────────────────────
   const diff = lv <= 7 ? 'easy' : lv <= 14 ? 'medium' : 'hard'
@@ -13936,35 +13936,35 @@ function initGame19() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g19Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g19-pixi.html'
+  window.location.href = 'games/pokemon-birds.html'
 }
 
 function initGame20() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g20Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g20-pixi.html?v=20260424h'
+  window.location.href = 'games/ducky-volley.html?v=20260424h'
 }
 
 function initGame22() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g22Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g22-candy.html?v=20260506ae'
+  window.location.href = 'games/monster-candy.html?v=20260506ae'
 }
 
 function initGame23() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g23Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g23-pixi.html?v=20260506ae'
+  window.location.href = 'games/pokemon-run.html?v=20260506ae'
 }
 
 function initGame24() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g24Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/g24-pixi.html?v=20260506m'
+  window.location.href = 'games/pokemon-bawah-laut.html?v=20260506m'
 }
 
 function openWorldPicker() {
@@ -13994,7 +13994,7 @@ function initGame21() {
   const lv = state.selectedLevelNum || 1
   const diff = state.selectedLevel === 'hard' ? 'hard' : state.selectedLevel === 'medium' ? 'medium' : 'easy'
   try { sessionStorage.setItem('g21Config', JSON.stringify({ level: lv, difficulty: diff })) } catch(_) {}
-  window.location.href = 'games/g21-pixi.html?v=20260505o'
+  window.location.href = 'games/mario-pokemon.html?v=20260505o'
 }
 
 function initGame18() {

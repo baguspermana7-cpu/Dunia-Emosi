@@ -2583,7 +2583,7 @@ function showWin(){
   }
   const nextLevel = S.level < 30 ? () => { sessionStorage.setItem('g16Config', JSON.stringify({level: S.level + 1})); location.reload(); } : null;
   // Hotfix #102-C (2026-04-27): stop Pixi ticker so 60fps callback doesn't keep
-  // firing after game-end. See games/g15-pixi.html for canonical pattern.
+  // firing after game-end. See games/lokomotif-pemberani.html for canonical pattern.
   try { if (app && app.ticker) app.ticker.stop() } catch(_){}
   GameModal.show({
     emoji, title, stars, msg,
@@ -2833,7 +2833,7 @@ function saveG16Progress(stars) {
 function goBack(){
   S.running=false
   // Hotfix #102-C (2026-04-27): stop Pixi ticker so 60fps callback doesn't keep
-  // firing after game-end. See games/g15-pixi.html for canonical pattern.
+  // firing after game-end. See games/lokomotif-pemberani.html for canonical pattern.
   try { if (app && app.ticker) app.ticker.stop() } catch(_){}
   history.back()
 }

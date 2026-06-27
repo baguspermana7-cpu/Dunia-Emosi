@@ -60,9 +60,9 @@ async function main() {
 
   const TARGETS = [
     { id: 'T01', label: 'index home',          url: '/index.html',          settle: 2200 },
-    { id: 'T02', label: 'g6 vehicle picker',   url: '/games/g6.html',       settle: 1800 },
-    { id: 'T03', label: 'g13c team picker',    url: '/games/g13c-pixi.html',settle: 2200 },
-    { id: 'T04', label: 'g14 category picker', url: '/games/g14.html',      settle: 1800, prep: async (page) => {
+    { id: 'T02', label: 'g6 vehicle picker',   url: '/games/mobil.html',       settle: 1800 },
+    { id: 'T03', label: 'g13c team picker',    url: '/games/gym-pokemon.html',settle: 2200 },
+    { id: 'T04', label: 'g14 category picker', url: '/games/balapan-kereta.html',      settle: 1800, prep: async (page) => {
         await page.evaluate(() => {
           const btn = Array.from(document.querySelectorAll('.cat-btn'))
             .find(b => /Karakter Spesial/i.test(b.textContent || ''))
@@ -71,17 +71,17 @@ async function main() {
         await wait(500)
       }
     },
-    { id: 'T05', label: 'g14-side intro',      url: '/games/g14-side.html', settle: 2200 },
-    { id: 'T06', label: 'g15 train picker',    url: '/games/g15-pixi.html', settle: 1800 },
-    { id: 'T07', label: 'g16 train picker',    url: '/games/g16-pixi.html', settle: 1800 },
-    { id: 'T08', label: 'g17 intro',           url: '/games/g17-pixi.html', settle: 2200 },
-    { id: 'T09', label: 'g19 splash',          url: '/games/g19-pixi.html', settle: 2000 },
-    { id: 'T10', label: 'g20 splash',          url: '/games/g20-pixi.html', settle: 2200 },
-    { id: 'T11', label: 'g21 splash',          url: '/games/g21-pixi.html', settle: 2500 },
-    { id: 'T12', label: 'g22 splash',          url: '/games/g22-candy.html',settle: 2000 },
-    { id: 'T13', label: 'g23 splash',          url: '/games/g23-pixi.html', settle: 2500 },
-    { id: 'T14', label: 'g24 splash',          url: '/games/g24-pixi.html', settle: 2500 },
-    { id: 'T15', label: 'g25 level picker',    url: '/games/g25-math.html', settle: 1800, prep: async (page) => {
+    { id: 'T05', label: 'g14-side intro',      url: '/games/balapan-kereta-side.html', settle: 2200 },
+    { id: 'T06', label: 'g15 train picker',    url: '/games/lokomotif-pemberani.html', settle: 1800 },
+    { id: 'T07', label: 'g16 train picker',    url: '/games/selamatkan-kereta.html', settle: 1800 },
+    { id: 'T08', label: 'g17 intro',           url: '/games/jembatan-goyang.html', settle: 2200 },
+    { id: 'T09', label: 'g19 splash',          url: '/games/pokemon-birds.html', settle: 2000 },
+    { id: 'T10', label: 'g20 splash',          url: '/games/ducky-volley.html', settle: 2200 },
+    { id: 'T11', label: 'g21 splash',          url: '/games/mario-pokemon.html', settle: 2500 },
+    { id: 'T12', label: 'g22 splash',          url: '/games/monster-candy.html',settle: 2000 },
+    { id: 'T13', label: 'g23 splash',          url: '/games/pokemon-run.html', settle: 2500 },
+    { id: 'T14', label: 'g24 splash',          url: '/games/pokemon-bawah-laut.html', settle: 2500 },
+    { id: 'T15', label: 'g25 level picker',    url: '/games/kuis-matematika.html', settle: 1800, prep: async (page) => {
         await page.evaluate(() => {
           const m = Array.from(document.querySelectorAll('button, a, .btn'))
             .find(b => /Main/i.test(b.textContent || ''))

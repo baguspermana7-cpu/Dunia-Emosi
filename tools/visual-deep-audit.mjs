@@ -64,7 +64,7 @@ async function main() {
     },
     {
       id: 'D11', label: 'g6 word racer',
-      url: '/games/g6.html', preSettle: 1800,
+      url: '/games/mobil.html', preSettle: 1800,
       interact: async (page) => {
         // Pick a vehicle + difficulty + tap Mulai!
         return await page.evaluate(() => {
@@ -79,7 +79,7 @@ async function main() {
     },
     {
       id: 'D12', label: 'g17 rope-swing',
-      url: '/games/g17-pixi.html', preSettle: 2200,
+      url: '/games/jembatan-goyang.html', preSettle: 2200,
       interact: async (page) => {
         return await page.evaluate(() => {
           const start = Array.from(document.querySelectorAll('button')).find(b => /Mulai/i.test(b.textContent || ''))
@@ -91,7 +91,7 @@ async function main() {
     },
     {
       id: 'D13', label: 'g20 duck volley',
-      url: '/games/g20-pixi.html', preSettle: 2200,
+      url: '/games/ducky-volley.html', preSettle: 2200,
       interact: async (page) => {
         await page.mouse.click(VP.width / 2, VP.height / 2)
         return true
@@ -100,7 +100,7 @@ async function main() {
     },
     {
       id: 'D14', label: 'g21 Mario Pokemon',
-      url: '/games/g21-pixi.html', preSettle: 2500,
+      url: '/games/mario-pokemon.html', preSettle: 2500,
       interact: async (page) => {
         await page.mouse.click(VP.width / 2, VP.height / 2)
         await wait(500)
@@ -111,7 +111,7 @@ async function main() {
     },
     {
       id: 'D15', label: 'g22 candy',
-      url: '/games/g22-candy.html', preSettle: 2000,
+      url: '/games/monster-candy.html', preSettle: 2000,
       interact: async (page) => {
         await page.mouse.click(VP.width / 2, VP.height / 2)
         return true
@@ -120,7 +120,7 @@ async function main() {
     },
     {
       id: 'D16', label: 'g23 runner',
-      url: '/games/g23-pixi.html', preSettle: 2500,
+      url: '/games/pokemon-run.html', preSettle: 2500,
       interact: async (page) => {
         await page.mouse.click(VP.width / 2, VP.height / 2)
         await wait(800)
@@ -131,7 +131,7 @@ async function main() {
     },
     {
       id: 'D17', label: 'g24 underwater',
-      url: '/games/g24-pixi.html', preSettle: 2500,
+      url: '/games/pokemon-bawah-laut.html', preSettle: 2500,
       interact: async (page) => {
         await page.mouse.click(VP.width / 2, VP.height / 2)
         await wait(500)
@@ -144,7 +144,7 @@ async function main() {
     },
     {
       id: 'D18', label: 'g25 math',
-      url: '/games/g25-math.html', preSettle: 1800,
+      url: '/games/kuis-matematika.html', preSettle: 1800,
       interact: async (page) => {
         // Tap "Main" on Soal Matematika card
         return await page.evaluate(() => {
