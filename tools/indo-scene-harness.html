@@ -1,0 +1,15 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000}#c{width:100vw;height:100vh}</style></head>
+<body><div id="c"></div>
+<script src="../games/lib/pixi.min.js?v=8"></script>
+<script src="../games/indo-scene.js?v=1"></script>
+<script>
+(async function(){
+  const params=new URLSearchParams(location.search); const TIME=params.get('t')||'day';
+  const W=1280,H=720;
+  const app=new PIXI.Application(); await app.init({width:W,height:H,background:0x87ceeb,antialias:true});
+  document.getElementById('c').appendChild(app.canvas);
+  const ctrl=IndoScene.demo(PIXI, app.stage, W, H, TIME);
+  let last=0; app.ticker.add((tk)=>{ ctrl.tick(Math.min(tk.deltaTime,2)); });
+  window.__ready=true;
+})();
+</script></body></html>

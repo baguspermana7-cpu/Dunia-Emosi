@@ -1,5 +1,13 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.52 "Indonesian scene engine — Phase 1 of train-game restyle" (A-311)
+
+Owner sent an art-direction reference (Indonesian side-view 3-lane scene) and wants `balapan-kereta` (g14) + `lokomotif-pemberani` (g15) to match it: *"Tiru persis · 100% SAMA PERSIS · super responsive · +parallax 3d."* Decisions (owner): procedural reconstruction in-engine (no raster art available; keep the Thomas/character trains). This is **Phase 1** — the shared scene module, built + verified before touching the games.
+
+- **NEW `games/indo-scene.js`** (`IndoScene` v1) — a procedural PixiJS-8 drawer for the Indonesian parallax-3D landscape, all vector (scales crisp to any screen, no raster assets): **Merapi volcano** (cone + crater glow + animated smoke plume), distant mountain range, soft clouds, **terraced rice fields (sawah)**, **traditional joglo houses**, **coconut palms**, leafy trees, **telephone poles**, and a realistic **3-lane ballast + sleeper + steel-rail** bed. Four soft-pastel **time-of-day** palettes (day · rain · sore · malam) recolour sky/volcano/scenery/rail; night adds stars + glowing moon + lit windows; rain adds streaks + dim. Granular drawers (so the games keep their own layers) + a `demo()` for the harness.
+- **NEW `tools/indo-scene-harness.html`** + `tools/indo-scene-shot.mjs` — standalone render + screenshot probe. Verified all 4 moods render (0 errors); day + night read faithfully against the reference.
+- Next phases: integrate into g14 (swap scenery/rail builders) → HUD restyle (soft-pastel, checkpointed progress, power-up tray) → power-ups + lightning event → g15 → super-responsive pass. No game code touched yet.
+
 ## 2026-06-27 — v55.51 "Plan-B mockup quality pass" (A-309 polish)
 
 Owner: *"Sempurnakan planb, mock upnya kurang detail dan kurang bagus."* The scenes had a broken landscape composition. Reworked `planb-3d.html` + `pokemon-3d.html` scene CSS into a proper dusk diorama.
