@@ -277,12 +277,20 @@ sprite.scale.set(t.scale)
     var start = -((offset % tileW) + tileW) % tileW
     for(var x = start; x < W + tileW; x += tileW) paint(x)
   }
+  // A-310 perf: Canvas2D ctx.filter='blur()' was the SOLE cause of a ~5.9s frozen
+  // frame on a throttled tablet (0fps; without it 26fps). Even a 1.8px cap still
+  // hung — setting ctx.filter to any blur forces a full-canvas filter pass each
+  // layer each frame. So we DROP canvas blur entirely and approximate depth-of-
+  // field with a cheap translucent wash folded into the haze (one fillRect),
+  // scaled by the layer's blur amount. Closes A-310.
   function applyHaze(t){
-    if(!opt.haze || t.haze <= 0.01) return
-    ctx.globalAlpha = t.haze; ctx.fillStyle = t.hazeColor
+    var a = (opt.haze ? t.haze : 0)
+    if(opt.dof && t.blur > 0.2) a += Math.min(t.blur, 10) * 0.02   // soft-focus wash ≈ DOF, ~free
+    if(a <= 0.01) return
+    ctx.globalAlpha = Math.min(a, 0.6); ctx.fillStyle = t.hazeColor || 'rgba(120,110,150,1)'
     ctx.fillRect(-50,-50,W+100,H+100); ctx.globalAlpha = 1
   }
-  function setFilter(t){ ctx.filter = (opt.dof && t.blur > 0.2) ? ('blur('+t.blur.toFixed(1)+'px)') : 'none' }
+  function setFilter(){ ctx.filter = 'none' }   // never use Canvas2D blur (see applyHaze)
 
   function paintSky(){
     var g = ctx.createLinearGradient(0,0,0,H)
@@ -303,7 +311,7 @@ sprite.scale.set(t.scale)
     ctx.fillStyle='#fff3d6'; ctx.beginPath(); ctx.arc(0,0,30,0,7); ctx.fill(); ctx.restore()
   }
   function paintMountains(t, scrollX, col, baseY, amp){
-    ctx.save(); setFilter(t); ctx.translate(t.x, t.y)
+    ctx.save(); setFilter(t, true); ctx.translate(t.x, t.y)   // big full-screen fill → haze-only depth, no blur
     tile(scrollX, 520, function(ox){
       ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(ox, baseY)
       ctx.lineTo(ox+130, baseY-amp); ctx.lineTo(ox+250, baseY-amp*0.55)

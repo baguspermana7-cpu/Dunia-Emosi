@@ -1,5 +1,9 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.65 "planb.html perf — kill the Canvas2D blur stall" (A-310)
+
+- **A-310 planb mockup very laggy → FIXED.** Profiled the three planb pages under a 4× CPU throttle (tablet-like): `planb-3d.html` 56fps + `planb-true3d.html` 60fps were fine, but **`planb.html` was frozen — 0fps with a single ~5900ms frame**. Root cause: the parallax demo set `ctx.filter='blur(Npx)'` (Canvas2D blur) per layer per frame; that filter path is O(area×radius) and hangs a throttled device. Capping the radius didn't help (any `ctx.filter` blur forces a full-canvas pass). **Fix:** dropped Canvas2D blur entirely and approximate depth-of-field with a cheap translucent wash folded into the existing haze (one `fillRect`, alpha ∝ layer blur). Result: **0fps → 26fps @4×CPU (worst frame 5900ms → 50ms)**, 0 console errors, scene still reads with atmospheric depth. (HTML is network-first, no sw bump needed.)
+
 ## 2026-06-27 — v55.64 "g14 rolling-terrain feel" (B-241)
 
 - **B-241 cosmetic track-sway (g14).** Owner: *"bisa dikasih jalur menanjak/menurun atau belok atau apalah."* Added a gentle per-band vertical bob to the far parallax scenery (slow sine, amplitude scaled by depth — nearer bands roll a little more) so the distant landscape gently rises/falls for a "menanjak/menurun" rolling feel. **Scenery only** (masked sky band); the rail strip + the 3 lane Ys are never touched, so on-rail alignment is unaffected. dt-clamped. Verified 0 console errors. sw `v55.63→v55.64`.
