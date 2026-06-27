@@ -37,21 +37,32 @@
 
   /* ───────── scene tile (shared, animated) ───────── */
   .scene{position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#0a0d1c;border:1px solid var(--line);contain:content}
-  .scene .lyr{position:absolute;left:0;right:0;background-repeat:repeat-x;background-position:0 100%;background-size:auto 100%;will-change:background-position}
+  /* horizon-based landscape composition (sky → distant range → mid range →
+     treeline → GROUND → rail+train → foreground). Mountains are sized to sit at
+     the horizon, not fill the frame. */
+  .scene .lyr{position:absolute;left:0;right:0;background-repeat:repeat-x;background-position:bottom center;background-size:auto 100%;will-change:background-position}
   .scene .sky{inset:0;background-size:cover;background-position:center}
-  .scene .farc{top:6%;height:42%;opacity:.7}
-  .scene .farm{top:24%;height:64%}
-  .scene .mtn{top:34%;height:62%}
-  .scene .tree{top:48%;height:52%}
-  .scene .fore{bottom:-4%;height:34%;filter:brightness(.32) saturate(.6);transform:scale(1.18);transform-origin:bottom}
-  .scene .rail{position:absolute;left:0;right:0;bottom:11%;height:4px;background:linear-gradient(#8b93a3,#5b6577)}
-  .scene .ties{position:absolute;left:0;right:0;bottom:8%;height:8px;background:repeating-linear-gradient(90deg,#4a3b2e 0 16px,transparent 16px 64px);will-change:background-position}
-  .scene .shadow{position:absolute;bottom:9%;width:26%;height:5%;left:14%;border-radius:50%;background:radial-gradient(rgba(0,0,0,.45),transparent 70%)}
-  .scene .train{position:absolute;bottom:11%;height:40%;left:14%;transform-origin:bottom center;image-rendering:auto;
-    filter:drop-shadow(0 5px 4px rgba(0,0,0,.4))}
-  .scene .haze{position:absolute;inset:0;background:linear-gradient(transparent 30%, rgba(188,210,232,.16) 62%, transparent 78%);pointer-events:none}
-  .scene .sun{position:absolute;width:14%;aspect-ratio:1;border-radius:50%;right:14%;top:14%;background:radial-gradient(#fff3d6 40%,rgba(255,238,200,.15) 70%,transparent)}
-  .scene .label{position:absolute;left:10px;top:9px;font-size:11px;font-weight:700;padding:4px 9px;border-radius:8px;z-index:6;background:rgba(13,16,28,.7);color:#fff;letter-spacing:.3px}
+  .scene .farc{top:16%;height:26%;opacity:.6;background-position:center}
+  .scene .farm{bottom:31%;height:30%;opacity:.92}
+  .scene .mtn {bottom:19%;height:40%}
+  .scene .tree{bottom:15%;height:24%}
+  .scene .ground{position:absolute;left:0;right:0;bottom:0;height:22%;background:linear-gradient(#456a47 0%,#2f4f31 52%,#21381e 100%)}
+  .scene .ground::before{content:'';position:absolute;left:0;right:0;top:0;height:3px;background:rgba(150,205,150,.45)}
+  .scene .ground::after{content:'';position:absolute;left:0;right:0;top:3px;height:40%;background:repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 3px,transparent 3px 22px)}
+  .scene .fore{bottom:-2%;height:27%;filter:brightness(.26) saturate(.55)}
+  .scene .rail{position:absolute;left:0;right:0;bottom:8.5%;height:4px;background:linear-gradient(#9aa3b3,#5b6577);box-shadow:0 5px 0 -2px rgba(0,0,0,.22)}
+  .scene .ties{position:absolute;left:0;right:0;bottom:6%;height:7px;background:repeating-linear-gradient(90deg,#4a3b2e 0 14px,transparent 14px 58px);will-change:background-position}
+  .scene .shadow{position:absolute;bottom:7%;width:24%;height:5%;left:13%;border-radius:50%;background:radial-gradient(rgba(0,0,0,.5),transparent 70%);filter:blur(2px)}
+  .scene .train{position:absolute;bottom:8.5%;height:48%;left:13%;transform-origin:bottom center;image-rendering:auto;
+    filter:drop-shadow(0 6px 5px rgba(0,0,0,.45))}
+  .scene .haze{position:absolute;inset:0;background:linear-gradient(transparent 36%,rgba(190,210,235,.14) 60%,transparent 76%);pointer-events:none}
+  /* sky.png already has a baked dusk moon — the CSS sun would double it, so it's
+     a soft atmospheric bloom behind the same spot, not a second disc. */
+  .scene .sun{position:absolute;width:30%;aspect-ratio:1;border-radius:50%;left:35%;top:2%;
+    background:radial-gradient(circle,rgba(255,236,194,.22),transparent 62%);filter:blur(6px);pointer-events:none}
+  .scene .vignette{position:absolute;inset:0;pointer-events:none;border-radius:inherit;
+    box-shadow:inset 0 0 55px 6px rgba(0,0,0,.34),inset 0 -26px 38px -10px rgba(0,0,0,.32)}
+  .scene .label{position:absolute;left:10px;top:9px;font-size:11px;font-weight:700;padding:4px 9px;border-radius:8px;z-index:7;background:rgba(13,16,28,.7);color:#fff;letter-spacing:.3px}
 
   /* run animations — only when .run present (gated by IntersectionObserver) */
   @keyframes sx{to{background-position-x:-1024px}}
@@ -79,13 +90,15 @@
      translateZ + a fixed camera tilt → reads as a 3D diorama even without pointer.
      (background-position scroll animates separately, so these transforms are safe.)
      The hero overrides its own transform per-frame via JS for live interaction. */
-  .d3 .scene:not(#hero){transform:rotateX(8deg) rotateY(-4deg)}
-  .d3 .scene:not(#hero) .farc{transform:translateZ(-260px) scale(1.26)}
-  .d3 .scene:not(#hero) .farm{transform:translateZ(-180px) scale(1.18)}
-  .d3 .scene:not(#hero) .mtn {transform:translateZ(-95px) scale(1.10)}
-  .d3 .scene:not(#hero) .tree{transform:translateZ(-25px) scale(1.04)}
-  .d3 .scene:not(#hero) .sun {transform:translateZ(-200px) scale(1.2)}
-  .d3 .scene:not(#hero) .fore{transform:translateZ(240px) scale(1.5)!important}
+  .d3 .scene:not(#hero){transform:rotateX(6deg) rotateY(-3deg)}
+  .d3 .scene:not(#hero) .farc{transform:translateZ(-180px) scale(1.18)}
+  .d3 .scene:not(#hero) .farm{transform:translateZ(-130px) scale(1.13)}
+  .d3 .scene:not(#hero) .mtn {transform:translateZ(-70px) scale(1.08)}
+  .d3 .scene:not(#hero) .tree{transform:translateZ(-20px) scale(1.03)}
+  .d3 .scene:not(#hero) .ground{transform:translateZ(12px)}
+  .d3 .scene:not(#hero) .shadow{transform:translateZ(14px)}
+  .d3 .scene:not(#hero) .sun {transform:translateZ(-150px) scale(1.15)}
+  .d3 .scene:not(#hero) .fore{transform:translateZ(110px) scale(1.2)!important}
 
   /* grids */
   .ba{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0}
@@ -93,12 +106,12 @@
   .aspects{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px;margin:20px 0}
   .acard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px}
   .acard .pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .acard .scene{aspect-ratio:16/10;border-radius:10px}
+  .acard .scene{aspect-ratio:16/9;border-radius:10px}
   .acard h3{margin:10px 0 2px;font-size:15px}
   .acard p{margin:0;font-size:13px;color:var(--muted)}
   .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin:18px 0}
   .gtile{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px}
-  .gtile .scene{aspect-ratio:16/10;border-radius:9px}
+  .gtile .scene{aspect-ratio:16/9;border-radius:9px}
   .gtile .nm{margin-top:8px;font-size:13px;font-weight:700;text-align:center;color:var(--ink)}
   .gtile .nm small{display:block;font-weight:500;color:var(--faint);font-size:11px}
 
@@ -144,9 +157,9 @@
       <div class="scene run" id="hero">
         <div class="lyr sky"></div><div class="lyr farc"></div><div class="sun"></div>
         <div class="lyr farm"></div><div class="lyr mtn"></div><div class="lyr tree"></div>
-        <div class="ties"></div><div class="rail"></div>
+        <div class="ground"></div><div class="ties"></div><div class="rail"></div>
         <div class="shadow"></div><img class="train" id="heroTrain" alt="train">
-        <div class="lyr fore"></div><div class="haze"></div>
+        <div class="lyr fore"></div><div class="haze"></div><div class="vignette"></div>
         <div class="label">● HERO · karakter asli · 3D interaktif</div>
         <div class="hint" id="hint">Gerakkan mouse / drag — atau tap "Sensor Miring HP"</div>
       </div>
@@ -171,15 +184,15 @@
       <div class="col"><h3><span class="pill b">BEFORE</span> Datar 2D</h3>
         <div class="scene run flat" data-train="thomas">
           <div class="lyr sky"></div><div class="lyr farm"></div><div class="lyr mtn"></div><div class="lyr tree"></div>
-          <div class="ties"></div><div class="rail"></div><img class="train" alt="">
-          <div class="label">flat · tanpa kedalaman</div>
+          <div class="ground"></div><div class="ties"></div><div class="rail"></div><img class="train" alt="">
+          <div class="vignette"></div><div class="label">flat · tanpa kedalaman</div>
         </div>
       </div>
       <div class="col"><h3><span class="pill a">AFTER</span> Parallax 3D</h3>
         <div class="d3"><div class="scene run" data-train="thomas" data-d3="1">
           <div class="lyr sky"></div><div class="lyr farc"></div><div class="sun"></div><div class="lyr farm"></div><div class="lyr mtn"></div><div class="lyr tree"></div>
-          <div class="ties"></div><div class="rail"></div><div class="shadow"></div><img class="train" alt="">
-          <div class="lyr fore"></div><div class="haze"></div>
+          <div class="ground"></div><div class="ties"></div><div class="rail"></div><div class="shadow"></div><img class="train" alt="">
+          <div class="lyr fore"></div><div class="haze"></div><div class="vignette"></div>
           <div class="label">3D · 6 lapisan + kamera</div>
         </div></div>
       </div>
@@ -272,7 +285,7 @@
   document.getElementById('t-tilt').addEventListener('click',function(){var el=this;px.bindTilt().then(function(ok){if(ok){el.classList.add('on');if(hint)hint.style.opacity=0}})})
   hero.addEventListener('pointerdown',function(){if(hint)hint.style.opacity=0})
   // depth placement of hero layers (translateZ per depth)
-  var heroDepths=[['.sky',0],['.farc',.08],['.farm',.16],['.mtn',.28],['.tree',.44],['.shadow',.58],['.train',.6],['.fore',1]]
+  var heroDepths=[['.sky',0],['.farc',.08],['.farm',.16],['.mtn',.28],['.tree',.44],['.ground',.55],['.shadow',.58],['.train',.6],['.fore',1]]
   function layout3d(){ heroDepths.forEach(function(p){ var el=hero.querySelector(p[0]); if(!el)return; var t=px.css3dLayer(p[1],1100,opt.z); el.style.transform=(p[0]==='.train'?('translateZ('+t.translateZ.toFixed(0)+'px) scale('+(t.scale).toFixed(3)+') scaleX('+fx(heroTrain.faces)+')'):('translateZ('+t.translateZ.toFixed(0)+'px) scale('+t.scale.toFixed(3)+')')) }) }
   var last=0
   function frame(ts){ var dtF=last?Math.min(3,(ts-last)/16.67):1;last=ts; px.update(dtF); var sc=px.css3dScene(opt.tilt); hero.style.transform='rotateX('+sc.rotateX.toFixed(2)+'deg) rotateY('+sc.rotateY.toFixed(2)+'deg)'; requestAnimationFrame(frame) }
@@ -309,11 +322,12 @@
     if(!opts.noclouds) html+='<div class="lyr farc"></div>'
     if(!opts.nosun) html+='<div class="sun"></div>'
     html+='<div class="lyr farm"></div><div class="lyr mtn"></div><div class="lyr tree"></div>'
-    html+='<div class="ties"></div><div class="rail"></div>'
+    html+='<div class="ground"></div><div class="ties"></div><div class="rail"></div>'
     if(!opts.noshadow) html+='<div class="shadow"></div>'
     html+='<img class="train" alt="">'
     if(!opts.nofore) html+='<div class="lyr fore"></div>'
     if(!opts.nohaze) html+='<div class="haze"></div>'
+    html+='<div class="vignette"></div>'
     var cls='scene'+(opts.still?'':' run')+(opts.flat?' flat':'')
     var sc='<div class="'+cls+'" style="'+(opts.style||'')+'">'+html+'</div>'
     return d3? '<div class="d3">'+sc+'</div>' : sc

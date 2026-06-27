@@ -1,5 +1,15 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.51 "Plan-B mockup quality pass" (A-309 polish)
+
+Owner: *"Sempurnakan planb, mock upnya kurang detail dan kurang bagus."* The scenes had a broken landscape composition. Reworked `planb-3d.html` + `pokemon-3d.html` scene CSS into a proper dusk diorama.
+
+- **Horizon composition** — the MountainDuskGodot layers were sized to FILL the frame (mountains huge, no sky/ground separation, the train looked like it floated in front of the rock face). Now each layer is sized + bottom-anchored to sit at a real horizon: sky → distant range → mid range → treeline → **ground plane** → rail + character → foreground. Mountains read as distance, not wallpaper.
+- **Real ground** — added a grass `.ground`/`.road` plane (gradient + grass-edge + texture) so the train/Pokemon clearly stands ON the ground; soft blurred contact shadow.
+- **Single moon** — `sky.png` already bakes a dusk moon; the CSS `.sun` was a second disc. It's now a soft atmospheric bloom (no double-moon).
+- **Polish** — visible cloud band, **vignette** (inner shadow for depth), bigger grounded character, gentler tile tilt + lighter foreground so the short gallery tiles read clearly (and widened to 16/9).
+- Verified: hero + 30-train gallery + before/after + Pokemon Run/gallery all render the new composition, 0 console errors. sw `v55.48→v55.51`.
+
 ## 2026-06-27 — v55.50 "True 3D (Three.js) + Pokemon 3D concept" (A-307/A-308)
 
 Completes the 3D-concept set. All concept pages — NO game code touched.
