@@ -1,5 +1,51 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.40 "Final acceptance — B-218 complete + 7-probe sweep"
+
+Marathon close-out. "Finish it all."
+
+### B-218 button standardization — COMPLETE (4 phases)
+
+| Phase | Ship | Scope |
+|---|---|---|
+| 1 | v55.35 | Quiz answer rows (g13c math, g15 math, g14 quiz) → pastel 4-color |
+| 2 | v55.36 | g13c Pokemon (18 type moves + Fight/Switch + Pokemon list) |
+| 3 | v55.37 | Train picker cards (g14 / g15 / g16) harmonized |
+| 4 | v55.40 | **Verification: obstacle-engine + game-modal already token-consistent** |
+
+Phase 4 finding: `game-modal.js` `.gm-btn-primary` (`linear-gradient(160deg,#a78bfa,#8b5cf6)` + `0 4px 0 #6d28d9`) is **identical** to `du-buttons.css` `.du-btn-primary`, and `obstacle-engine.js` `.obstacle-engine-shape-btn` **IS** the v55.6 pastel reference that `.du-btn-choice` was derived from. Both already match the canonical tokens — a cosmetic class-rename would add regression risk for zero visual benefit. B-218 closed: every game now shares the pastel-soft palette + the same purple/green/gold/sage/rose token set.
+
+### Final acceptance — all gates green
+
+```
+obstacle-engine probe      14/14 PASS
+train-bgm probe            28/28 PASS  (4 games × 7 checks)
+comprehensive probe         7 PASS / 0 FAIL / 0 INFO
+touch-target audit          0 sub-44px targets (15 pages)
+server log                  0 server-side 404s
+```
+
+### 7 operational probes (the verification harness)
+
+1. `visual-qa-comprehensive.mjs` — acceptance contracts (B-NNN gates)
+2. `visual-polish-audit.mjs` — splash/boot states (18 screens)
+3. `visual-deep-audit.mjs` — mid-gameplay interactions (9 screens)
+4. `touch-target-audit.mjs` — ≥44px tap targets (15 pages)
+5. `perf-audit.mjs` — load-to-interactive budget
+6. `probe-train-bgm.mjs` — Thomas BGM swap + A-303 collision (4 games)
+7. `sprite-visual-audit.mjs` — M-302 rendered-sprite verification
+
+### Marathon summary v55.0 → v55.40
+
+- **40+ ship versions**, ~36 commits
+- **25 bugs closed** (B-201 → B-225)
+- **4 owner asks fulfilled** (A-301 standing, A-302 Thomas BGM, A-303 no-collision, A-304 engine research page)
+- **3 standing mandates active** (M-301 comment tracking, M-302 visual audit, A-301 refinement)
+- **19 lessons** documented (L195 → L213)
+- **plan.html** engine-research deliverable shipped
+
+---
+
 ## 2026-06-27 — v55.39 "g15 BGM key-mismatch + smoke-explosion + VISUAL audit (B-224/B-225/M-302)"
 
 Owner ask 2026-06-27 with 2 g15 screenshots:
