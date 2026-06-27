@@ -4281,7 +4281,9 @@ function g14StartQuizCountdown(){
 function buildQuiz() {
   const lv = cfg.level || 5
   let a, b, answer, op
-  const ops = lv <= 6 ? ['+'] : lv <= 12 ? ['+', '-'] : ['+', '-', '*']
+  // A-311 — owner: "pertanyaan jangan aneh2 atau sulit2." Boost is +/- ONLY (no ×),
+  // operands ≤ 20 → always easy for a 4-7yo.
+  const ops = lv <= 6 ? ['+'] : ['+', '-']
   op = ops[Math.floor(Math.random() * ops.length)]
   // v55.45 B-233 — owner: "max angka 20. Dan jangan sampai 3 angka." Every
   // operand is clamped to ≤ 20; products are capped so no answer reaches 3 digits.

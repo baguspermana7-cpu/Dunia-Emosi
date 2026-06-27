@@ -1,5 +1,13 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.56 "g15 swipe + boost easy-cap" (A-311 controls/questions)
+
+Two of the owner's must-haves, contained + verified (g15 full scene swap is the next dedicated ship).
+
+- **Swipe controls in g15** (`lokomotif-pemberani.html`) — the game only had ↑/↓ buttons + keyboard + tap; g14 already had swipe. Added a `#pixi-canvas` touchstart/touchend vertical-swipe handler (>40px, <600ms → `switchLane(-1/1)`). Both train games now support **swipe + buttons** like the reference.
+- **Boost quiz easy-cap (g14)** — `buildQuiz` could include **multiplication** at level >12 (owner: *"pertanyaan jangan aneh2 atau sulit2"*). Now `+`/`−` ONLY, operands ≤20 → always easy for a 4-7yo. (g15 math is already ≤15 add/sub; obstacle pool is age-appropriate recognition.)
+- Verified: g14 + g15 both load clean at 412×915 (pickers render, 0 console errors). sw `v55.55→v55.56`.
+
 ## 2026-06-27 — v55.55 "Balapan Kereta → Indonesian scene LIVE in-game" (A-311 Phase 3)
 
 The big one: `games/indo-scene.js` is now wired into **balapan-kereta (g14)**, so the actual game looks like the owner's reference.

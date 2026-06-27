@@ -2800,6 +2800,20 @@ document.getElementById('pixi-canvas').addEventListener('click', e => {
     if (Math.abs(y - LANE_Y[i]) < 55) { playerLane = i; updateLaneDots(); return; }
   }
 });
+// A-311 — SWIPE up/down to change lane (owner: "bisa swipe bisa pakai button").
+// g14 already had this; g15 only had buttons/keyboard/tap. Vertical swipe > 40px.
+(function () {
+  const cv = document.getElementById('pixi-canvas')
+  let _sy = null, _st = 0
+  cv.addEventListener('touchstart', e => { if (e.touches[0]) { _sy = e.touches[0].clientY; _st = performance.now() } }, { passive: true })
+  cv.addEventListener('touchend', e => {
+    if (_sy == null || !gameRunning || mathQuizActive) { _sy = null; return }
+    const t = e.changedTouches[0]; if (!t) { _sy = null; return }
+    const dy = t.clientY - _sy
+    if (Math.abs(dy) > 40 && performance.now() - _st < 600) { if (dy < 0) switchLane(-1); else switchLane(1) }
+    _sy = null
+  }, { passive: true })
+})();
 
 // ── Win / Lose ─────────────────────────────────────────────────────────────────
 function showWin() {
