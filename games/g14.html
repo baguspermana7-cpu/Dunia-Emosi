@@ -2330,11 +2330,15 @@ function updatePlayerEmoji() {
         const img = new PIXI.Sprite(tex)
         img._url = url
         img.anchor.set(0.5, 0.6)
-        // v55.29 B-217 — sprite asset is side-view (W>H, chimney pointing right).
-        // g14 is top-down vertical race; rotate 90° CCW so chimney points UP
-        // = direction of travel. Scale must use tex.WIDTH (not height) post-rotate.
-        img.rotation = -Math.PI / 2
-        img.scale.set(targetH / tex.width)
+        // v55.34 B-217/B-222 — per-character `faces` from trains-db.js (LEFT/RIGHT/
+        // FORWARD). g14 is top-down vertical race; chimney must point UP = forward.
+        //   faces='left'    → rotate +90° CW   (chimney left → up)
+        //   faces='right'   → rotate -90° CCW  (chimney right → up)
+        //   faces='forward' → no rotation     (chimney already up)
+        const _faces = (S.trainCfg && S.trainCfg.faces) || 'left'
+        if (_faces === 'right')       { img.rotation =  Math.PI / 2 * -1; img.scale.set(targetH / tex.width) }
+        else if (_faces === 'forward'){ img.rotation =  0;                 img.scale.set(targetH / tex.height) }
+        else                          { img.rotation =  Math.PI / 2;       img.scale.set(targetH / tex.width) }
         L.playerCharImg = img
         L.player.addChild(img) // TOP of z-stack — covers cleared procedural Graphics
         try { playerSprite.clear() } catch(_){}
@@ -2516,9 +2520,12 @@ function buildAI() {
       PIXI.Assets.load(cfg.spriteUrl).then((tex) => {
         const img = new PIXI.Sprite(tex)
         img.anchor.set(0.5, 0.6)
-        // v55.29 B-217 — same 90° CCW rotation as player sprite; scale by tex.width post-rotate.
-        img.rotation = -Math.PI / 2
-        img.scale.set(targetH / tex.width)
+        // v55.34 B-217/B-222 — per-character `faces` from trains-db.js; same logic
+        // as player sprite above.
+        const _faces = (cfg.faces) || 'left'
+        if (_faces === 'right')       { img.rotation =  Math.PI / 2 * -1; img.scale.set(targetH / tex.width) }
+        else if (_faces === 'forward'){ img.rotation =  0;                 img.scale.set(targetH / tex.height) }
+        else                          { img.rotation =  Math.PI / 2;       img.scale.set(targetH / tex.width) }
         c.addChild(img)
         try { spr.clear() } catch(_){}
       }).catch((e) => {

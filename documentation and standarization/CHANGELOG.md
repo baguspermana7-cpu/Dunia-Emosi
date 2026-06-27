@@ -1,5 +1,58 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.34 "Per-character sprite rotation map (closes B-217 + B-222)"
+
+Owner ask 2026-06-27 (after v55.32 sprite-rotation ship): *"rotation char kamu yang identify satu persatu. pastikan benar arahnya."*
+
+v55.32 applied a universal `-Math.PI/2` rotation to all AEG sprites. Owner correctly pointed out: **the 26 AEG WebPs do NOT face the same direction natively** — applying one rotation breaks half of them. Each sprite needs to be inspected and tagged individually.
+
+### Per-character audit (visual inspection of 26 WebPs)
+
+| Orientation | Count | Characters |
+|---|---|---|
+| **LEFT-facing** (chimney/face on left) | 17 | Thomas, Percy, James, Edward, Henry, Gordon, Emily, Duck, Hiro, Yong-Bao, Diesel, Kenji, Kana, Nia, Carly, Trainiac, Farona-and-Frederico |
+| **RIGHT-facing** (face on right) | 6 | Ashima, Bruno, Sandy, Salty, Winston, Troublesome-Tankers |
+| **FORWARD** (camera view, chimney already up) | 1 | Toby |
+| **Wagon** (no clear direction, treated as LEFT default) | 2 | Slip-Coaches, Annie-and-Clarabel |
+
+### Rotation logic for top-down g14 (chimney must point UP)
+
+```js
+faces='left'    → rotation = +Math.PI / 2     (90° CW   : chimney left  → up)
+faces='right'   → rotation = -Math.PI / 2     (90° CCW  : chimney right → up)
+faces='forward' → rotation = 0                (no rotation needed)
+```
+
+Scale denominator chosen accordingly:
+- `left` / `right` → `targetH / tex.width` (post-rotate, original width becomes visual height)
+- `forward` → `targetH / tex.height` (no rotation, native dimensions)
+
+### Files touched
+
+- `games/trains-db.js` — added `faces:'left'|'right'|'forward'` to all 26 AEG entries.
+- `games/g14.html` — player sprite (line ~2321) + AI sprite (line ~2502) read `cfg.faces` and apply per-character rotation.
+- `sw.js` v55.33 → v55.34.
+
+### Verification
+
+- `grep -cE "faces:'(left|right|forward)'" games/trains-db.js` → 26 (all entries tagged)
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS
+- Syntax check on trains-db + g14: both green
+
+### Owner-test path
+
+Hard-refresh `localhost:8081/games/g14.html`, pick from Karakter Spesial:
+- **Thomas / Percy / James / Edward / Henry / Gordon / Emily / Duck / Hiro / Yong-Bao / Diesel / Kenji / Kana / Nia / Carly / Trainiac** → chimney points UP, train moves forward
+- **Ashima / Bruno / Sandy / Salty / Winston / Troublesome-Tankers** → also chimney UP
+- **Toby** → tram view, no weird rotation
+- **Wagons (Slip-Coaches, Annie-and-Clarabel)** → point forward, looks like cars from above
+
+If ANY character still looks wrong, the `faces` value in trains-db.js can be flipped (one-word edit per character).
+
+### Closes B-217 (re-opened) + B-222.
+
+---
+
 ## 2026-06-27 — v55.33 "Engine research page (plan.html) — A-304 owner-review deliverable"
 
 Owner ask 2026-06-27 (after v55.27): *"try to research more powerful engine to create game, and put some mock up dan detail di http://localhost:8081/Dunia-Emosi/plan.html kita diskusi dan review disitu. saya mikirnya mungkin unity engine."*
