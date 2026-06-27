@@ -33,6 +33,16 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 #btn-pause{min-width:44px;min-height:44px;padding:8px 12px!important;font-size:18px!important}
 #g15-tts-toggle{min-width:44px;min-height:44px;padding:8px!important;font-size:18px!important}
 #word-display{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;min-width:0}
+/* B-257 — on small phones (≤400px) the nowrap-wrapping top HUD (back + pause +
+   koleksi + settings + word-display + lives) crowded/overlapped. Tighten gaps +
+   button padding + emoji so the row fits cleanly. Tablet view (>400px) unchanged. */
+@media (max-width:400px){
+  #hud-top{gap:3px;padding-left:6px;padding-right:6px;flex-wrap:nowrap}
+  #btn-back{padding:8px 9px;min-width:auto}
+  #g15-koleksi-btn,#g15-settings-btn,#btn-pause{padding:5px 6px!important}
+  #word-emoji{font-size:20px}
+  #word-display{gap:3px}
+}
 #word-emoji{font-size:24px;flex-shrink:0}
 #word-slots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center}
 .slot{display:inline-flex;align-items:center;justify-content:center;width:28px;height:32px;border-radius:10px;border:2px solid rgba(167,139,250,0.4);background:#fffdf6;color:#4a3a5e;font-size:15px;font-weight:900;transition:all .2s;position:relative;box-shadow:0 2px 5px rgba(0,0,0,0.1)}
