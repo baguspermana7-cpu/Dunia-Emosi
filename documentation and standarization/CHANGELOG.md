@@ -1,5 +1,15 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.53 "Indonesian scene — fidelity sharpened (Phase 1b)" (A-311)
+
+Owner: *"Yes, pertajam."* The v55.52 scene was faithful in content but flat/hard-vector. `games/indo-scene.js` → **v2**: every element is now 2-tone **shaded** (lit/shadow) for an illustrated look, with softer warm-pastel palettes.
+
+- **Volcano nested in layered green hills** (3 hill layers, hazier toward the back) + distant hazy mountains — no longer isolated. Volcano shaded (lit right / shadow left, erosion gullies, snow cap, crater glow, continuous smoke plume).
+- **Lusher detail:** fluffy multi-lobe clouds (bright top + soft underside), curved terraced **sawah** with water sheen, **joglo houses** with roof ridge + ground shadow, **palms** with 9 layered fronds + shaded curved trunk + coconuts, trees with highlight + base shadow.
+- **Richer rail:** 2-tone speckled ballast, grained sleepers, steel rails + shine + cast shadow, grassy verges, **gentle perspective** (lanes grow toward the viewer).
+- **NEW foreground tropical-foliage framing** (big palm fronds in both bottom corners) — frames the scene like the reference AND is the strong parallax-3D near layer. Plus a soft **vignette** + per-mood light overlay + **aerial-haze** horizon band for depth.
+- Verified: all 4 moods (day/sore/malam/hujan) render, 0 errors; day + sore read faithfully against the reference. Still standalone — integration into g14/g15 is the next phase (awaiting owner sign-off on the look).
+
 ## 2026-06-27 — v55.52 "Indonesian scene engine — Phase 1 of train-game restyle" (A-311)
 
 Owner sent an art-direction reference (Indonesian side-view 3-lane scene) and wants `balapan-kereta` (g14) + `lokomotif-pemberani` (g15) to match it: *"Tiru persis · 100% SAMA PERSIS · super responsive · +parallax 3d."* Decisions (owner): procedural reconstruction in-engine (no raster art available; keep the Thomas/character trains). This is **Phase 1** — the shared scene module, built + verified before touching the games.
