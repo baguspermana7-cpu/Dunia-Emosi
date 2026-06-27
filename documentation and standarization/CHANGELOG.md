@@ -1,5 +1,13 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.47 "RZ Parallax Engine — concept + live mockup (planb.html)" (A-306)
+
+Owner: *"buat engine parallax yang sangat2 keren. /ultraplan, konsep dan masukkan mock up di planb."*
+
+- **NEW `games/parallax-engine.js`** (`RZParallax`, ~190 LOC) — a renderer-agnostic 2.5D parallax engine. Core is pure MATH (no DOM/canvas/Pixi), so one instance drives the Canvas2D mockup AND the Pixi train games. Inputs: auto-scroll + pointer drag + **device-tilt gyro** (iOS permission handled) + scroll, critically-damped (smooth, no jerk), dt-clamped. `layer(depth)` returns `{x, y, scale, blur, haze, dim}` for any depth ∈ [0..1] — the 6 depth cues (parallax · scale · aerial haze · depth-of-field · contrast · look-around).
+- **NEW `planb.html`** — the concept "ultraplan" page + a **live interactive mockup**: a 6-layer procedurally-drawn night-train scene (sky/moon/mountains+haze/hills/trees/train+rail/foreground bushes) driven by `RZParallax`. Responds to mouse, drag, and HP gyro; toggles for auto-scroll / depth-of-field / aerial haze + a depth-strength slider. Plus: concept, the 6 cues, the layer-depth table, the engine API, an integration roadmap, and the perf rationale (≤6 layers, dt-clamp, 0 assets, ~300KB vs 5-10MB WebGL). Impeccable-grade dark-indigo theme.
+- Verified: page loads, engine global present, 0 console/page errors; hero + full-page screenshots read and confirmed beautiful. Internal/review page (not in SW SHELL). Builds on the v55.46 POC.
+
 ## 2026-06-27 — v55.46 "2.5D depth POC in balapan-kereta" (A-306 first cut)
 
 Owner saw `messenger.abeto.co` (a Three.js WebGL game) and asked for that "2D-but-looks-3D" feel. This is the cheap-but-effective version in Pixi: **layered parallax depth**, no engine change.

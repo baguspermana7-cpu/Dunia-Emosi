@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<title>Plan B — RZ Parallax Engine · Dunia Emosi</title>
+<style>
+  :root{
+    --bg:#0d1020; --bg2:#141a33; --panel:#171d38; --line:rgba(180,196,255,.12);
+    --ink:#eef1ff; --muted:#9aa6d4; --faint:#6b76a8;
+    --amber:#ffb454; --amber-deep:#e08a2c;
+    --mint:#7ee0b8; --violet:#a98bf0; --sky:#7db8f0; --rose:#f4a6c0;
+    --focus:#ffd18a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:radial-gradient(120% 90% at 50% -10%, #1a2148 0%, var(--bg) 55%) fixed, var(--bg);
+    color:var(--ink);
+    font-family:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  a{color:var(--sky);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* ── Top bar ── */
+  .top{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;max-width:1080px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.2px}
+  .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--amber);box-shadow:0 0 14px var(--amber)}
+  .tag{font-size:12px;color:var(--faint);border:1px solid var(--line);border-radius:999px;padding:4px 11px}
+
+  /* ── Hero canvas ── */
+  .stage-wrap{position:relative;max-width:1080px;margin:8px auto 0;padding:0 20px}
+  .stage{
+    position:relative;width:100%;aspect-ratio:2/1;border-radius:20px;overflow:hidden;
+    border:1px solid var(--line);
+    box-shadow:0 30px 80px -30px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.05);
+    background:#0a0d1c;cursor:grab;touch-action:none;
+  }
+  .stage:active{cursor:grabbing}
+  .stage canvas{display:block;width:100%;height:100%}
+  .stage .hint{
+    position:absolute;left:0;right:0;bottom:14px;text-align:center;color:rgba(255,255,255,.82);
+    font-size:13px;letter-spacing:.3px;pointer-events:none;text-shadow:0 2px 8px rgba(0,0,0,.6);
+    transition:opacity .5s;
+  }
+  .stage .badge{
+    position:absolute;top:13px;left:13px;display:flex;gap:7px;align-items:center;
+    font-size:11px;font-weight:700;color:#0a0d1c;background:var(--focus);
+    padding:5px 10px;border-radius:999px;letter-spacing:.4px;
+  }
+  .ctrls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;margin:16px 0 4px}
+  .chip{
+    font:inherit;font-size:13px;font-weight:600;color:var(--ink);
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:9px 15px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+    transition:border-color .15s, transform .08s, background .15s;-webkit-tap-highlight-color:transparent;
+  }
+  .chip:hover{border-color:rgba(180,196,255,.32)}
+  .chip:active{transform:translateY(1px)}
+  .chip.on{background:rgba(255,180,84,.14);border-color:var(--amber);color:var(--focus)}
+  .chip .sw{width:9px;height:9px;border-radius:50%;background:var(--faint)}
+  .chip.on .sw{background:var(--amber);box-shadow:0 0 8px var(--amber)}
+  .slider{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+  .slider input{accent-color:var(--amber);width:120px}
+
+  /* ── Sections ── */
+  section{padding:54px 0 8px}
+  h1{font-size:clamp(30px,5.5vw,50px);line-height:1.05;margin:18px 0 10px;letter-spacing:-.02em;font-weight:850}
+  h1 .sub{display:block;font-size:clamp(15px,2.4vw,19px);font-weight:600;color:var(--muted);margin-top:14px;letter-spacing:0}
+  h2{font-size:clamp(22px,3.4vw,30px);margin:6px 0 6px;letter-spacing:-.01em;font-weight:800}
+  h2 .n{color:var(--amber);font-variant-numeric:tabular-nums;margin-right:12px;font-size:.7em;vertical-align:2px}
+  .lead{font-size:17px;color:var(--muted);max-width:68ch}
+  p{max-width:70ch;color:#c7cdf0}
+  .quote{border-left:3px solid var(--amber);padding:6px 0 6px 16px;margin:18px 0;color:var(--ink);font-style:italic;background:linear-gradient(90deg,rgba(255,180,84,.06),transparent)}
+
+  /* depth-cue list */
+  .cues{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:26px 0}
+  .cue{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .cue .k{display:flex;align-items:center;gap:10px;font-weight:800;margin-bottom:6px}
+  .cue .k b{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:14px;color:#0a0d1c}
+  .cue p{font-size:14px;color:var(--muted);margin:0}
+
+  /* layer table */
+  .ltable{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;overflow:hidden;border-radius:14px;border:1px solid var(--line)}
+  .ltable th,.ltable td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line)}
+  .ltable th{background:var(--bg2);color:var(--muted);font-weight:700;font-size:12px;letter-spacing:.5px;text-transform:uppercase}
+  .ltable td{color:#cdd3f4}
+  .ltable tr:last-child td{border-bottom:none}
+  .ltable .d{font-variant-numeric:tabular-nums;color:var(--focus);font-weight:700}
+
+  pre{background:#0a0d1c;border:1px solid var(--line);border-radius:14px;padding:18px 20px;overflow-x:auto;font-size:13px;line-height:1.7;
+    font-family:"JetBrains Mono","SF Mono",ui-monospace,monospace;color:#d6dcff}
+  pre .c{color:var(--faint)} pre .k{color:var(--violet)} pre .s{color:var(--mint)} pre .f{color:var(--amber)}
+
+  .road{display:grid;gap:12px;margin:22px 0}
+  .step{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+  .step .ph{font-weight:800;font-size:13px;color:#0a0d1c;background:var(--mint);border-radius:8px;padding:4px 10px;white-space:nowrap;height:fit-content}
+  .step.done .ph{background:var(--mint)} .step.next .ph{background:var(--amber)} .step.later .ph{background:var(--faint);color:#0a0d1c}
+  .step h3{margin:0 0 4px;font-size:16px}
+  .step p{margin:0;font-size:14px;color:var(--muted)}
+
+  .perf{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:20px 0}
+  .perf div{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .perf .big{font-size:26px;font-weight:850;color:var(--focus)}
+  .perf small{color:var(--muted);font-size:13px}
+
+  footer{padding:46px 0 60px;color:var(--faint);font-size:13px;border-top:1px solid var(--line);margin-top:40px}
+  .pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--mint);
+    background:rgba(126,224,184,.12);border:1px solid rgba(126,224,184,.3);padding:3px 10px;border-radius:999px}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand"><span class="dot"></span> Dunia Emosi · Plan&nbsp;B</div>
+  <span class="tag">RZ Parallax Engine · konsep + mockup hidup</span>
+</div>
+
+<div class="wrap">
+  <h1>Engine Parallax 2.5D
+    <span class="sub">Bikin dunia 2D terasa 3D — tanpa ganti engine, tanpa aset 3D, tetap ngebut di tablet anak.</span>
+  </h1>
+</div>
+
+<!-- ── LIVE MOCKUP ────────────────────────────────────────── -->
+<div class="stage-wrap">
+  <div class="stage" id="stage">
+    <span class="badge">● LIVE MOCKUP</span>
+    <canvas id="px" width="1200" height="600"></canvas>
+    <div class="hint" id="hint">Gerakkan mouse / drag — atau tap "Sensor Miring HP" di bawah</div>
+  </div>
+  <div class="ctrls">
+    <button class="chip on" id="t-auto"><span class="sw"></span>Auto-scroll</button>
+    <button class="chip on" id="t-dof"><span class="sw"></span>Depth-of-field</button>
+    <button class="chip on" id="t-haze"><span class="sw"></span>Aerial haze</button>
+    <button class="chip" id="t-tilt"><span class="sw"></span>Sensor Miring HP</button>
+    <label class="slider">Kedalaman <input type="range" id="s-str" min="6" max="60" value="30"></label>
+  </div>
+  <p style="text-align:center;color:var(--faint);font-size:13px;margin:2px 0 0">
+    6 lapisan flat di atas digerakkan oleh <code>RZParallax</code>. Yang bikin "3D": tiap lapisan bergerak beda kecepatan + skala + blur + kabut sesuai kedalamannya.
+  </p>
+</div>
+
+<div class="wrap">
+
+  <!-- ── §1 ── -->
+  <section>
+    <h2><span class="n">01</span>Konsep</h2>
+    <p class="lead">Owner lihat <a href="https://messenger.abeto.co/" target="_blank" rel="noopener">messenger.abeto.co</a> — game web yang terasa 3D. Itu <b>WebGL/Three.js 3D beneran</b> dengan gaya <i>cel-shaded</i>. Berat: butuh Blender/Houdini, bundle besar, rawan lag.</p>
+    <div class="quote">"buat engine parallax yang sangat2 keren… konsep dan masukkan mock up di planb."</div>
+    <p>Untuk game anak yang dibuka di HP/tablet, kita kejar <b>kesan</b> 3D-nya, bukan 3D-nya. Caranya: <b>parallax berlapis</b>. Tumpuk beberapa gambar 2D, gerakkan tiap lapisan dengan kecepatan berbeda menurut "jaraknya" dari kamera. Otak langsung membaca kedalaman. Ini trik yang dipakai Ori, Hollow Knight, dan game 2.5D papan atas — ringan, mulus, jalan di mana saja.</p>
+  </section>
+
+  <!-- ── §2 6 cues ── -->
+  <section>
+    <h2><span class="n">02</span>6 sinyal kedalaman yang dipakai engine</h2>
+    <p class="lead">Parallax saja sudah meyakinkan. Tumpuk keenam sinyal ini dan otak benar-benar "melihat" ruang.</p>
+    <div class="cues">
+      <div class="cue"><div class="k"><b style="background:var(--amber)">↔</b>Parallax</div><p>Lapisan dekat bergerak jauh lebih cepat dari yang jauh. Sinyal kedalaman paling kuat.</p></div>
+      <div class="cue"><div class="k"><b style="background:var(--violet)">⤢</b>Skala</div><p>Objek dekat digambar lebih besar; yang jauh mengecil — perspektif.</p></div>
+      <div class="cue"><div class="k"><b style="background:var(--sky)">≈</b>Kabut udara</div><p>Yang jauh memudar ke warna langit (aerial perspective). Mendorong latar mundur.</p></div>
+      <div class="cue"><div class="k"><b style="background:var(--mint)">◉</b>Depth-of-field</div><p>Hanya bidang fokus yang tajam; depan & belakang sedikit blur — seperti lensa kamera.</p></div>
+      <div class="cue"><div class="k"><b style="background:var(--rose)">◐</b>Kontras</div><p>Latar jauh lebih datar/redup; subjek dekat lebih kontras dan hidup.</p></div>
+      <div class="cue"><div class="k"><b style="background:var(--focus)">↑</b>Gerak look-around</div><p>Geser mouse / miringkan HP → semua lapisan menyapu sesuai kedalaman. Ini "kamera 3D" semunya.</p></div>
+    </div>
+  </section>
+
+  <!-- ── §3 layer model ── -->
+  <section>
+    <h2><span class="n">03</span>Model lapisan (yang kamu lihat di mockup)</h2>
+    <p>Tiap lapisan punya satu angka <b>depth ∈ [0..1]</b> (0 = tak terhingga jauh, 1 = tepat di kamera). Engine menurunkan semua transform dari angka itu.</p>
+    <table class="ltable">
+      <tr><th>Lapisan</th><th>Depth</th><th>Peran</th></tr>
+      <tr><td>Langit + bulan + bintang</td><td class="d">0.00</td><td>Gradien, nyaris diam. Latar paling jauh.</td></tr>
+      <tr><td>Pegunungan + kabut</td><td class="d">0.14</td><td>Siluet berlapis, paling berkabut.</td></tr>
+      <tr><td>Bukit bergulir</td><td class="d">0.30</td><td>Punggungan lembut, mulai bergerak.</td></tr>
+      <tr><td>Deret pohon / rumah</td><td class="d">0.46</td><td>Detail menengah.</td></tr>
+      <tr><td><b>Rel + kereta</b> <span class="pill">FOKUS</span></td><td class="d">0.62</td><td>Bidang tajam — subjek utama.</td></tr>
+      <tr><td>Semak depan (blur, cepat)</td><td class="d">1.00</td><td>Menyapu di DEPAN kereta. Sinyal "dekat kamera" terkuat.</td></tr>
+    </table>
+  </section>
+
+  <!-- ── §4 API ── -->
+  <section>
+    <h2><span class="n">04</span>API engine — <code>games/parallax-engine.js</code></h2>
+    <p>Inti engine cuma <b>matematika</b> — tak menyentuh DOM/canvas/Pixi. Instance yang sama menyetir mockup Canvas2D ini <i>dan</i> game Pixi. Satu sumber kebenaran.</p>
+<pre><span class="c">// 1) buat sekali</span>
+<span class="k">const</span> px = <span class="f">RZParallax</span>.create({ strength: <span class="s">30</span>, autoScroll: <span class="s">40</span> })
+px.<span class="f">bindPointer</span>(canvas)   <span class="c">// mouse + drag → lihat-sekeliling</span>
+px.<span class="f">bindTilt</span>()           <span class="c">// gyro HP → lihat-sekeliling (izin iOS otomatis)</span>
+
+<span class="c">// 2) tiap frame (dt sudah di-clamp di dalam)</span>
+px.<span class="f">update</span>(ticker.deltaTime)
+
+<span class="c">// 3) tanya transform per lapisan</span>
+<span class="k">const</span> t = px.<span class="f">layer</span>(<span class="s">0.62</span>)        <span class="c">// → { x, y, scale, blur, haze, dim }</span>
+sprite.x = baseX + t.x
+sprite.y = baseY + t.y
+sprite.scale.set(t.scale)
+<span class="c">// blur/haze → filter di Canvas2D, atau alpha-overlay di Pixi</span></pre>
+    <p style="color:var(--muted);font-size:14px">Karena murni angka, engine ini portabel ke <b>semua</b> game (kereta, Mario, Pokemon Run, bawah laut) — tiap game cuma mendaftarkan lapisannya.</p>
+  </section>
+
+  <!-- ── §5 roadmap ── -->
+  <section>
+    <h2><span class="n">05</span>Rencana integrasi</h2>
+    <div class="road">
+      <div class="step done"><span class="ph">SUDAH · v55.46</span><div><h3>POC di Balapan Kereta</h3><p>Lapisan foreground (semak menyapu di depan kereta) + kabut udara di pegunungan. 3 bidang kedalaman, dt-clamped, sudah live.</p></div></div>
+      <div class="step next"><span class="ph">BERIKUT</span><div><h3>Angkat jadi <code>parallax-engine.js</code> penuh</h3><p>Pindahkan logika depth ke engine bersama (file ini). Balapan Kereta + Lokomotif Pemberani + Selamatkan Kereta memakai engine yang sama — tilt-gyro aktif, look-around saat idle.</p></div></div>
+      <div class="step later"><span class="ph">NANTI</span><div><h3>Depth-of-field + kabut bertema</h3><p>Blur halus depan/belakang, kabut mengikuti waktu-hari (pagi/sore/malam). Per-biome (salju, gurun, vulkanik).</p></div></div>
+      <div class="step later"><span class="ph">NANTI</span><div><h3>Sebar ke game lain</h3><p>Mario Pokemon, Pokemon Run, Bawah Laut — masing-masing daftarkan lapisannya. Satu engine, banyak dunia.</p></div></div>
+    </div>
+  </section>
+
+  <!-- ── §6 perf ── -->
+  <section>
+    <h2><span class="n">06</span>Kenapa tetap ngebut di tablet anak</h2>
+    <div class="perf">
+      <div><div class="big">≤ 6</div><small>lapisan per scene — bukan ratusan objek 3D</small></div>
+      <div><div class="big">dt-clamp</div><small>tiap easing & scroll di-batasi <code>min(dt, 3)</code> — frame spike di tablet throttle tak meledak</small></div>
+      <div><div class="big">0 aset</div><small>scene mockup digambar prosedural — tak ada model/tekstur 3D di-download</small></div>
+      <div><div class="big">~300KB</div><small>tetap PixiJS 2D; bukan 5–10MB bundle WebGL 3D ala Three.js</small></div>
+    </div>
+    <p style="color:var(--muted);font-size:14px">Trade-off jujur: ini bukan 3D sungguhan (tak bisa muter kamera 360°). Tapi untuk side-scroller anak, kesan kedalaman + look-around sudah <b>"sangat keren"</b> dengan ongkos hampir nol. Kalau suatu hari mau 3D penuh → lihat <a href="plan.html">plan.html</a> (riset engine: tetap rekomendasi Pixi + sidecar).</p>
+  </section>
+
+  <footer>
+    <span class="pill">REVIEW PAGE</span> &nbsp; Internal · Dunia Emosi · RZ Parallax Engine v1 · 2026-06-27 ·
+    POC live di <code>games/balapan-kereta.html</code> (v55.46) · engine: <code>games/parallax-engine.js</code><br>
+    Diskusi langsung di sini — geser mockup, atur slider, lalu kabari mau lanjut ke fase mana.
+  </footer>
+</div>
+
+<script src="games/parallax-engine.js?v=1.0.0"></script>
+<script>
+(function(){
+  'use strict'
+  var cv = document.getElementById('px'), ctx = cv.getContext('2d')
+  var W = cv.width, H = cv.height
+  var hint = document.getElementById('hint')
+
+  // engine
+  var px = RZParallax.create({ strength: 30, autoScroll: 46, depthFocus: 0.62, maxBlur: 3.5, hazeMax: 0.55, vertical: 0.6 })
+  px.bindPointer(document.getElementById('stage'))
+
+  // toggles
+  var opt = { auto:true, dof:true, haze:true }
+  function bindToggle(id, key, onChange){
+    var el = document.getElementById(id)
+    el.addEventListener('click', function(){
+      var on = !el.classList.contains('on')
+      el.classList.toggle('on', on); opt[key] = on; if(onChange) onChange(on)
+    })
+  }
+  bindToggle('t-auto','auto', function(on){ px.set('autoScroll', on ? 46 : 0) })
+  bindToggle('t-dof','dof')
+  bindToggle('t-haze','haze')
+  document.getElementById('s-str').addEventListener('input', function(e){ px.set('strength', +e.target.value) })
+  document.getElementById('t-tilt').addEventListener('click', function(){
+    var el = this
+    px.bindTilt().then(function(ok){ if(ok){ el.classList.add('on'); if(hint) hint.style.opacity = 0 } })
+  })
+  document.getElementById('stage').addEventListener('pointerdown', function(){ if(hint) hint.style.opacity = 0 })
+
+  // ── procedural layer painters ────────────────────────────
+  function lerp(a,b,t){ return a+(b-a)*t }
+  // tile a painter across the width with a horizontal offset (wrap)
+  function tile(offset, tileW, paint){
+    var start = -((offset % tileW) + tileW) % tileW
+    for(var x = start; x < W + tileW; x += tileW) paint(x)
+  }
+  function applyHaze(t){
+    if(!opt.haze || t.haze <= 0.01) return
+    ctx.globalAlpha = t.haze; ctx.fillStyle = t.hazeColor
+    ctx.fillRect(-50,-50,W+100,H+100); ctx.globalAlpha = 1
+  }
+  function setFilter(t){ ctx.filter = (opt.dof && t.blur > 0.2) ? ('blur('+t.blur.toFixed(1)+'px)') : 'none' }
+
+  function paintSky(){
+    var g = ctx.createLinearGradient(0,0,0,H)
+    g.addColorStop(0,'#171a3a'); g.addColorStop(.42,'#39306a'); g.addColorStop(.72,'#7a4f7e'); g.addColorStop(.86,'#e7935f'); g.addColorStop(1,'#f7c98a')
+    ctx.fillStyle = g; ctx.fillRect(0,0,W,H)
+  }
+  function paintStars(t){
+    ctx.save(); ctx.translate(t.x*0.4, t.y*0.4)
+    ctx.fillStyle = 'rgba(255,255,255,.85)'
+    for(var i=0;i<46;i++){ var sx=(i*137.5)%W, sy=(i*61.7)%(H*0.5); var r=(i%4===0)?1.6:0.9
+      ctx.globalAlpha = .35+0.5*((i*7)%5)/5; ctx.beginPath(); ctx.arc(sx,sy,r,0,7); ctx.fill() }
+    ctx.globalAlpha=1; ctx.restore()
+  }
+  function paintMoon(t){
+    ctx.save(); ctx.translate(W*0.76 + t.x, H*0.24 + t.y)
+    var gg = ctx.createRadialGradient(0,0,4,0,0,70); gg.addColorStop(0,'rgba(255,238,200,.9)'); gg.addColorStop(1,'rgba(255,238,200,0)')
+    ctx.fillStyle=gg; ctx.beginPath(); ctx.arc(0,0,70,0,7); ctx.fill()
+    ctx.fillStyle='#fff3d6'; ctx.beginPath(); ctx.arc(0,0,30,0,7); ctx.fill(); ctx.restore()
+  }
+  function paintMountains(t, scrollX, col, baseY, amp){
+    ctx.save(); setFilter(t); ctx.translate(t.x, t.y)
+    tile(scrollX, 520, function(ox){
+      ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(ox, baseY)
+      ctx.lineTo(ox+130, baseY-amp); ctx.lineTo(ox+250, baseY-amp*0.55)
+      ctx.lineTo(ox+360, baseY-amp*1.05); ctx.lineTo(ox+520, baseY-amp*0.3); ctx.lineTo(ox+520, H); ctx.lineTo(ox, H); ctx.closePath(); ctx.fill()
+    })
+    applyHaze(t); ctx.restore(); ctx.filter='none'
+  }
+  function paintHills(t, scrollX, col, baseY){
+    ctx.save(); setFilter(t); ctx.translate(t.x, t.y); ctx.fillStyle=col
+    tile(scrollX, 420, function(ox){
+      ctx.beginPath(); ctx.moveTo(ox, H)
+      for(var i=0;i<=420;i+=20){ var y=baseY - Math.sin((ox+i)/120)*26 - 14; ctx.lineTo(ox+i, y) }
+      ctx.lineTo(ox+420, H); ctx.closePath(); ctx.fill()
+    })
+    applyHaze(t); ctx.restore(); ctx.filter='none'
+  }
+  function paintTrees(t, scrollX, baseY){
+    ctx.save(); setFilter(t); ctx.translate(t.x, t.y)
+    tile(scrollX, 150, function(ox){
+      var h = 46 + ((ox%3)*8)
+      // little house
+      if(((ox/150)|0)%3===0){ ctx.fillStyle='#2f3a63'; ctx.fillRect(ox+50, baseY-30, 40, 30); ctx.fillStyle='#46406e'; ctx.beginPath(); ctx.moveTo(ox+46,baseY-30); ctx.lineTo(ox+70,baseY-50); ctx.lineTo(ox+94,baseY-30); ctx.closePath(); ctx.fill(); ctx.fillStyle='#ffd18a'; ctx.fillRect(ox+62,baseY-22,12,12) }
+      // pine
+      ctx.fillStyle='#21402f'; ctx.beginPath(); ctx.moveTo(ox+10,baseY); ctx.lineTo(ox+10+18,baseY-h); ctx.lineTo(ox+10+36,baseY); ctx.closePath(); ctx.fill()
+    })
+    applyHaze(t); ctx.restore(); ctx.filter='none'
+  }
+  function paintTrainPlane(t, scrollX){
+    ctx.save(); setFilter(t); ctx.translate(t.x, t.y)
+    var railY = H*0.78
+    // ground
+    var gg = ctx.createLinearGradient(0,railY-10,0,H); gg.addColorStop(0,'#2c5138'); gg.addColorStop(1,'#1c3826'); ctx.fillStyle=gg; ctx.fillRect(0,railY-6,W,H)
+    // rail + ties (scroll)
+    ctx.strokeStyle='#6b7280'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(0,railY); ctx.lineTo(W,railY); ctx.stroke()
+    tile(scrollX*1.0, 46, function(ox){ ctx.fillStyle='#4a3b2e'; ctx.fillRect(ox, railY+3, 16, 8) })
+    // cute loco (parked at focus, gentle bob already from parallax y)
+    var tx = W*0.30, ty = railY
+    ctx.save(); ctx.translate(tx, ty)
+    // shadow
+    ctx.fillStyle='rgba(0,0,0,.28)'; ctx.beginPath(); ctx.ellipse(8,4,66,10,0,0,7); ctx.fill()
+    // body
+    ctx.fillStyle='#3b7fd1'; roundRect(-58,-58,112,58,12); ctx.fill()
+    ctx.fillStyle='#2b6bb8'; roundRect(-58,-22,112,22,8); ctx.fill()
+    // cab
+    ctx.fillStyle='#2b6bb8'; roundRect(18,-78,40,40,10); ctx.fill()
+    // window glow
+    ctx.fillStyle='#ffe6a3'; roundRect(26,-70,24,22,6); ctx.fill()
+    // funnel
+    ctx.fillStyle='#1f2d4a'; roundRect(-46,-80,20,26,5); ctx.fill()
+    // boiler face number
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(-18,-30,16,0,7); ctx.fill(); ctx.fillStyle='#d23b3b'; ctx.font='800 20px Inter,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('1',-18,-29)
+    // wheels
+    ctx.fillStyle='#10131f'; [-34,-6,28].forEach(function(wx){ ctx.beginPath(); ctx.arc(wx,0,13,0,7); ctx.fill(); ctx.strokeStyle='#5b6577'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(wx,0,13,0,7); ctx.stroke() })
+    ctx.restore()
+    // smoke puffs (animated)
+    var pf = (px.get('scroll')*0.6)
+    ctx.fillStyle='rgba(220,224,235,.5)'
+    for(var s=0;s<4;s++){ var pp=(pf+s*26)%150; ctx.globalAlpha=0.5*(1-pp/150); ctx.beginPath(); ctx.arc(tx-36-pp*0.7, ty-86-pp*0.5, 6+pp*0.06, 0,7); ctx.fill() }
+    ctx.globalAlpha=1
+    ctx.restore(); ctx.filter='none'
+  }
+  function paintForeground(t, scrollX){
+    ctx.save(); setFilter(t); ctx.translate(t.x, t.y)
+    tile(scrollX, 240, function(ox){
+      // big soft bush clusters along the very bottom — IN FRONT
+      ctx.fillStyle='#10271a'
+      ;[0,90,170].forEach(function(dx){ var bx=ox+dx, by=H-6, r=34+(dx%40)
+        ctx.beginPath(); ctx.ellipse(bx-r*0.7,by,r*0.9,r*0.7,0,0,7); ctx.fill()
+        ctx.beginPath(); ctx.ellipse(bx+r*0.7,by,r*0.9,r*0.7,0,0,7); ctx.fill()
+        ctx.beginPath(); ctx.ellipse(bx,by-r*0.35,r*1.1,r*0.95,0,0,7); ctx.fill() })
+      // a couple grass blades
+      ctx.strokeStyle='#15351f'; ctx.lineWidth=5
+      for(var b=0;b<5;b++){ var gx=ox+30+b*44; ctx.beginPath(); ctx.moveTo(gx,H); ctx.quadraticCurveTo(gx+6,H-44,gx+16,H-58); ctx.stroke() }
+    })
+    ctx.restore(); ctx.filter='none'
+  }
+  function roundRect(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath() }
+
+  // ── frame loop ───────────────────────────────────────────
+  var last = 0
+  function frame(ts){
+    var dtF = last ? Math.min(3,(ts-last)/16.67) : 1; last = ts
+    px.update(dtF)
+    ctx.filter='none'; paintSky()
+    paintStars(px.layer(0.0))
+    paintMoon(px.layer(0.05))
+    paintMountains(px.layer(0.14), px.scrollFor(0.14, 1.0), '#2a2c54', H*0.62, 150)
+    paintMountains(px.layer(0.22), px.scrollFor(0.22, 1.0), '#33356a', H*0.70, 110)
+    paintHills(px.layer(0.30), px.scrollFor(0.30, 1.0), '#2c3a4f', H*0.80)
+    paintTrees(px.layer(0.46), px.scrollFor(0.46, 1.0), H*0.86)
+    paintTrainPlane(px.layer(0.62), px.scrollFor(0.62, 1.0))
+    paintForeground(px.layer(1.0), px.scrollFor(1.0, 1.0))
+    requestAnimationFrame(frame)
+  }
+  requestAnimationFrame(frame)
+})();
+</script>
+</body>
+</html>
