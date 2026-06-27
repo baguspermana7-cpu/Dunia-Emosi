@@ -1615,9 +1615,16 @@ function tickMid(delta) {
   // Far — v55.61 B-241: depth-banded parallax, each band tiled 2× → seamless wrap.
   if (L._farBands) {
     const _d = Math.min(delta, 2)   // dt-clamp (throttled-tablet frame spikes)
+    // v55.64 B-241 — gentle vertical bob per band = rolling "menanjak/menurun"
+    // terrain feel. SCENERY ONLY (masked sky band); the rail + lane Ys are never
+    // touched so on-rail alignment holds. Slow + small + scaled by depth.
+    S._terrainPhase = (S._terrainPhase || 0) + S.speed * _d * 0.012
+    let _bi = 0
     for (const band of L._farBands) {
       band.x -= band._pf * S.speed * _d * 0.4
       if (band.x <= -band._tileW) band.x += band._tileW
+      band.y = Math.sin(S._terrainPhase + _bi * 1.7) * (3 + band._pf * 14)   // nearer band rolls more
+      _bi++
     }
   }
   // v55.61 B-258 — living sky (birds/clouds/kites), self-paced + dt-clamped

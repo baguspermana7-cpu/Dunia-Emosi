@@ -1,5 +1,9 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.64 "g14 rolling-terrain feel" (B-241)
+
+- **B-241 cosmetic track-sway (g14).** Owner: *"bisa dikasih jalur menanjak/menurun atau belok atau apalah."* Added a gentle per-band vertical bob to the far parallax scenery (slow sine, amplitude scaled by depth — nearer bands roll a little more) so the distant landscape gently rises/falls for a "menanjak/menurun" rolling feel. **Scenery only** (masked sky band); the rail strip + the 3 lane Ys are never touched, so on-rail alignment is unaffected. dt-clamped. Verified 0 console errors. sw `v55.63→v55.64`.
+
 ## 2026-06-27 — v55.63 "station slow-down + clean puzzle graphics" (B-255, B-254)
 
 - **B-255 station-arrival slow-down (g14).** Owner: *"indikasi sampai di stasiun … seolah slow di situ."* g14 already played a station-arch cinematic on each checkpoint (25/50/75%); now it also briefly **eases the world scroll** (parallax/obstacles/AI) with a cosine envelope (1 → 0.55 → 1 over ~60 frames) so the train feels like it slows into the station. Real speed is restored before the distance/accel update so race length is unchanged. Verified: envelope fires + recovers, 0 errors.
