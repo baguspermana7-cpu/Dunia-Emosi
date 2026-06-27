@@ -234,7 +234,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 <script src="settings-modal.js?v=55.5-20260626dd"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <script src="train-bgm.js?v=55.61-20260627em"></script>
-<script src="indo-scene.js?v=2.0.0"></script>
+<script src="indo-scene.js?v=2.1.0"></script>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
 <!-- v54.17 A1: 3-2-1-GO countdown overlay -->
@@ -1424,6 +1424,12 @@ function buildFarScenery() {
   // volcano = fixed landmark (static) sits between the mid and near hill bands
   const vol = IS.volcano(W, horizonY + 10, pal, Math.min(horizonY * 0.78, bandH * 0.5)); vol._speed = 0; c.addChild(vol)
   makeBand(0.38, [() => IS.hills(W, horizonY + 24, pal, 2), () => IS.sawahBand(W, horizonY + Math.min(sceneH * 0.3, 30), Math.min(sceneH * 0.7, 60), pal)])
+  // v55.61 B-258 — living sky (bird flocks / clouds / kites), seeded variety + perf cap
+  if (IS.ambient) {
+    const _seed = (((typeof cfg !== 'undefined' && cfg.level) || 1) * 7919 + Math.floor(Math.random() * 997)) >>> 0
+    L._ambient = IS.ambient(W, railTop, pal, { seed: _seed, density: 1 })
+    c.addChild(L._ambient.container)
+  }
   // mask the backdrop to the scenery band so hills/ground never draw over the rails
   const mask = new PIXI.Graphics(); mask.rect(0, 0, W, railTop).fill(0xffffff); mask._speed = 0; c.addChild(mask); c.mask = mask
   // smoke in its OWN container (so tickMid's far-scroll never moves the puffs)
@@ -1614,6 +1620,8 @@ function tickMid(delta) {
       if (band.x <= -band._tileW) band.x += band._tileW
     }
   }
+  // v55.61 B-258 — living sky (birds/clouds/kites), self-paced + dt-clamped
+  if (L._ambient) { try { L._ambient.tick(delta) } catch(_){} }
   // v55.46 — foreground parallax (fast, in front of the train) for 2.5D depth
   tickFore(delta)
 }

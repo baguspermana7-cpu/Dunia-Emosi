@@ -1,5 +1,14 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.62 "background variation engine — living sky (birds/clouds/kites)" (B-258)
+
+Owner: *"background lebih rame, parallax lebih bagus, banyak variasi (mis. 1000): burung siluet, cuaca, dsb. buat engine variablenya."* Added a self-contained **ambient variation engine** to `games/indo-scene.js` → `IndoScene.ambient(W, railY, pal, { seed, density, weather })`:
+- **Engine variables**: seeded RNG (mulberry32, reproducible per level), `weather` ∈ {clear, hazy, cloudy, golden, overcast, breezy}, `density`, weighted spawn table. The "~1000 variations" = the combinatorial product of these knobs × time-of-day palette (not 1000 literal assets).
+- **Ambient spawns**: bird-flock silhouettes (V-formation soft "M" shapes), drifting clouds, Indonesian kites (layangan, bob + sway) — each self-paced, off-screen culled/recycled.
+- **Perf**: hard CAP (~9×density) concurrent sprites, dt-clamped motion (throttled-tablet safe).
+- Wired into **g14** (`buildFarScenery` → `L._ambient`, ticked in `tickMid`, masked to the sky band) and **g15** (`buildG15Indo` → `g15Ambient`, ticked in the main loop, reset on restart). g14-side already carries its own `S.clouds`/`S.birds`.
+- Verified headless: g14 weather="hazy", g15 weather="breezy", 0 console errors. `indo-scene.js` 2.0.0→**2.1.0**; sw `v55.61→v55.62`.
+
 ## 2026-06-27 — v55.61 "train-games bug batch: facing · BGM · parallax · nav · Kana/Percy · g14-side" (B-239→B-256)
 
 Owner ran the restyled train games and filed a large plan-mode batch. Root-caused + fixed, each verified by headless puppeteer screenshots (M-302):

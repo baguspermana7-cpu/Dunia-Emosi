@@ -208,7 +208,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <script src="data/bg-events.js?v=54.67-20260626bt"></script>
 <!-- v54.83 — ObstacleEngine + Koleksi gallery available from G15 picker (Practice Mode) -->
 <script src="obstacle-engine.js?v=55.6-20260626de"></script>
-<script src="indo-scene.js?v=2.0.0"></script>
+<script src="indo-scene.js?v=2.1.0"></script>
 <script src="data/kids-questions.js?v=54.83-20260626cj"></script>
 <script src="data/obstacles.js?v=54.83-20260626cj"></script>
 <script src="data/routes.js?v=54.83-20260626cj"></script>
@@ -789,6 +789,7 @@ let LANE_Y = [];
 let g15RailTop = 0;   // A-311 — top of the rail band; Indonesian scenery sits above it
 let g15Smoke = null, g15SmokeLayer = null, g15CraterX = 0, g15CraterY = 0, g15ScenePal = null, g15SmokeT = 0;
 let g15ParWrap = null;  // B-247: parallax far-scenery container (mountains + hills, 2-tile seamless)
+let g15Ambient = null;  // B-258: living-sky ambient engine (birds/clouds/kites)
 let W = 0, H = 0;
 // Responsive: 5% of viewport width, clamped 40-180. On 400px phone → 40, on 1200px desktop → 180.
 let TRAIN_X = 40;
@@ -981,6 +982,7 @@ async function initPixi() {
       g15ParWrap.x -= 0.15 * dt;
       if (g15ParWrap.x <= -W) g15ParWrap.x += W;
     }
+    if (g15Ambient) { try { g15Ambient.tick(dt) } catch(_){} }   // v55.62 B-258 living sky
 
     // Character train animation — wheel spin, body bob, smoke
     if (characterTrainInstance) { characterTrainInstance.tick(dt, gameSpeed); }
@@ -1206,6 +1208,12 @@ function buildG15Indo() {
   if (g15SmokeLayer && g15SmokeLayer.parent) g15SmokeLayer.parent.removeChild(g15SmokeLayer)
   g15SmokeLayer = new PIXI.Container(); bgLayer.addChild(g15SmokeLayer)
   g15Smoke = IS.makeSmoke(); g15CraterX = vol._craterX; g15CraterY = vol._craterY; g15ScenePal = pal; g15SmokeT = 0
+  // v55.62 B-258 — living sky (bird flocks / clouds / kites), seeded + perf-capped, masked to the sky band
+  if (IS.ambient) {
+    const _seed = ((typeof level !== 'undefined' ? level : 1) * 7919 + Math.floor(Math.random() * 997)) >>> 0
+    g15Ambient = IS.ambient(W, g15RailTop, pal, { seed: _seed, density: 1 })
+    c.addChild(g15Ambient.container)
+  }
   return true
 }
 
@@ -2967,7 +2975,7 @@ function restartGame() {
   g15Streak = 0; g15WrongWordKey = -1; g15AssistOffered = false;
   try { g15UpdateVignette(); g15StreakReset() } catch(_){}
   wheels = []; steamPuffs = []; letterBoxes = []; bgStars = []; sleepers = [];
-  bgClouds = []; bgFireflies = []; rainbow = null; LANE_Y = []; g15ParWrap = null;
+  bgClouds = []; bgFireflies = []; rainbow = null; LANE_Y = []; g15ParWrap = null; g15Ambient = null;
   mathBoxTimer = 0; heartBoxTimer = 0; totalBoxSpawned = 0;
   nextMathAt = MATH_BOX_INTERVAL(); nextHeartAt = HEART_BOX_INTERVAL();
   WORDS_LIST = pickWords(WORD_COUNT);

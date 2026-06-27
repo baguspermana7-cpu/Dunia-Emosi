@@ -15,7 +15,7 @@
  * succeeded. Only cache same-origin assets.
  * ========================================================================== */
 
-const CACHE_VERSION = 'v55.61-20260627em'
+const CACHE_VERSION = 'v55.62-20260627en'
 const HTML_CACHE = `dunia-html-${CACHE_VERSION}`
 const ASSET_CACHE = `dunia-assets-${CACHE_VERSION}`
 
@@ -47,7 +47,7 @@ const SHELL = [
   './assets/g23-icon.png',
   './games/lib/pixi.min.js?v=8',
   './games/balapan-kereta-side.html',
-  './games/indo-scene.js?v=2.0.0',
+  './games/indo-scene.js?v=2.1.0',
 ]
 
 self.addEventListener('install', (e) => {

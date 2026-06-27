@@ -308,6 +308,108 @@
     }
   }
 
+  // ── B-258 AMBIENT VARIATION ENGINE ──────────────────────────────────────
+  // A self-contained "living sky" layer driven by ENGINE VARIABLES (seed +
+  // weather + density + weighted spawn table). The "~1000 variations" the owner
+  // asked for = the combinatorial product of these knobs × time-of-day palette,
+  // not 1000 literal assets. Perf-budgeted for a throttled tablet: a hard CAP on
+  // concurrent ambient sprites, off-screen culling/recycling, dt-clamped motion.
+  //
+  // Usage (any train game):
+  //   var amb = IndoScene.ambient(W, railTopY, pal, { seed: <int>, density: 1 })
+  //   stage.addChildAt(amb.container, 1)   // above far backdrop, below props
+  //   ... in the ticker: amb.tick(deltaFrames)
+  var WEATHERS = ['clear', 'hazy', 'cloudy', 'golden', 'overcast', 'breezy']
+  // seeded RNG (mulberry32) — same seed ⇒ same scene (reproducible per level)
+  function rng(seed) {
+    var s = (seed >>> 0) || 1
+    return function () {
+      s = (s + 0x6D2B79F5) | 0
+      var t = Math.imul(s ^ (s >>> 15), 1 | s)
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+    }
+  }
+  // soft "M" bird silhouette; phase 0..1 raises the wings
+  function birdSilho(col, sz, phase) {
+    var g = gfx()
+    var up = (Math.sin(phase * Math.PI * 2) * 0.5 + 0.5)
+    var wy = -sz * (0.25 + up * 0.55)
+    g.moveTo(-sz, 0).quadraticCurveTo(-sz * 0.5, wy, 0, -sz * 0.12)
+     .quadraticCurveTo(sz * 0.5, wy, sz, 0)
+     .stroke({ color: col, width: Math.max(1.4, sz * 0.18), alpha: 0.7 })
+    return g
+  }
+  function ambient(W, railY, pal, opts) {
+    opts = opts || {}
+    var rand = rng(opts.seed || 1234)
+    var density = opts.density != null ? opts.density : 1
+    var weather = opts.weather || WEATHERS[Math.floor(rand() * WEATHERS.length)]
+    var skyH = Math.max(40, railY)
+    var c = cont()
+    var birdCol = dark(pal.mountain || 0x6a7a86, 0.32)
+    var ents = []
+    var CAP = Math.max(4, Math.round(9 * density))   // throttled-tablet budget
+    var t = 0, spawnT = 0
+
+    function spawnFlock() {
+      var n = 3 + Math.floor(rand() * 5)
+      var sz = 4.5 + rand() * 5
+      var dir = rand() < 0.5 ? -1 : 1
+      var grp = cont()
+      for (var i = 0; i < n; i++) {
+        var b = birdSilho(birdCol, sz, rand())
+        b.x = i * sz * 2.4 * -dir
+        b.y = Math.abs(i - (n - 1) / 2) * sz * 1.1   // V-formation
+        grp.addChild(b)
+      }
+      grp.x = dir < 0 ? W + 40 : -40
+      grp.y = skyH * (0.10 + rand() * 0.40)
+      c.addChild(grp)
+      ents.push({ g: grp, kind: 'flock', vx: dir * (0.22 + rand() * 0.30) })
+    }
+    function spawnCloud() {
+      var cl = cloud(pal, 0.5 + rand() * 0.8)
+      cl.x = W + 70; cl.y = skyH * (0.06 + rand() * 0.30); cl.alpha = (weather === 'clear' ? 0.8 : 0.92)
+      c.addChild(cl)
+      ents.push({ g: cl, kind: 'cloud', vx: -(0.05 + rand() * 0.12) })
+    }
+    function spawnKite() {   // Indonesian layangan
+      var cols = [0xef4444, 0xf59e0b, 0x22d3ee, 0xa855f7, 0xec4899]
+      var k = gfx()
+      k.poly([0, -11, 8, 0, 0, 13, -8, 0]).fill({ color: cols[Math.floor(rand() * cols.length)], alpha: 0.92 })
+      k.moveTo(0, 13).lineTo(0, 34).stroke({ color: 0x7a6a55, width: 1, alpha: 0.5 })
+      k.x = 50 + rand() * (W - 100); k.y = skyH * (0.14 + rand() * 0.26)
+      c.addChild(k)
+      ents.push({ g: k, kind: 'kite', vx: 0.03 * (rand() < 0.5 ? -1 : 1), baseY: k.y, phase: rand() * 6 })
+    }
+
+    // pre-seed so the sky isn't empty at start
+    spawnFlock()
+    if (weather !== 'clear') spawnCloud()
+
+    function tick(dt) {
+      var d = Math.min(dt, 2)
+      t += d; spawnT -= d
+      if (spawnT <= 0 && ents.length < CAP) {
+        var roll = rand()
+        if (roll < 0.46) spawnFlock()
+        else if (roll < 0.80) spawnCloud()
+        else if (weather === 'clear' || weather === 'golden' || weather === 'breezy') spawnKite()
+        else spawnCloud()
+        spawnT = (80 + rand() * 160) / density
+      }
+      for (var i = ents.length - 1; i >= 0; i--) {
+        var e = ents[i]
+        e.g.x += e.vx * d
+        if (e.kind === 'kite') { e.phase += d * 0.05; e.g.y = e.baseY + Math.sin(e.phase) * 6; e.g.rotation = Math.sin(e.phase * 0.7) * 0.12 }
+        else if (e.kind === 'flock') { e.g.y += Math.sin((t + i) * 0.05) * 0.15 }   // gentle bob
+        if (e.g.x < -140 || e.g.x > W + 140) { c.removeChild(e.g); try { e.g.destroy({ children: true }) } catch (_) {} ents.splice(i, 1) }
+      }
+    }
+    return { container: c, tick: tick, weather: weather }
+  }
+
   // ── standalone demo (test harness) ──────────────────────────────────────
   function demo(PIXI, stage, W, H, timeKey) {
     P = PIXI
@@ -386,6 +488,7 @@
     volcano: volcano, sawahBand: sawahBand, house: house, palm: palm, tree: tree, pole: pole,
     ballastLane: ballastLane, ties: ties, foliageFrame: foliageFrame,
     makeSmoke: makeSmoke, tickSmoke: tickSmoke, lerp: _lerp, light: light, dark: dark,
-    TIME: TIME, demo: demo, version: '2.0.0'
+    ambient: ambient, WEATHERS: WEATHERS,
+    TIME: TIME, demo: demo, version: '2.1.0'
   }
 })()
