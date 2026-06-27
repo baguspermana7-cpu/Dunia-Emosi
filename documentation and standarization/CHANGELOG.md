@@ -1,5 +1,32 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.43 "Jelly buttons across ALL train games (B-228 parity)"
+
+v55.41 gave the jelly/candy buttons to g14 (balapan-kereta) only. Owner said *"Elemen button pada game kereta"* — train GAMES (plural). This ship extends the soft glossy jelly style to the other two train games for full consistency.
+
+### lokomotif-pemberani.html (g15)
+- `#btn-up` → green jelly, `#btn-dn` → coral jelly. Both get the cream ring + glossy top→bottom gradient + specular shine dots + soft diffused shadow (replacing the old flat gradient + hard `0 5px 0` offset shadow).
+
+### selamatkan-kereta.html (g16)
+- `.choice-btn` (answer buttons) → purple jelly — the buttons owner originally flagged as inconsistent in B-218, now soft + glossy.
+- `#btn-start` → green jelly.
+
+All match the `.du-btn-jelly` spec from v55.41: 24px radius, 4px cream ring, layered soft + inner-gloss shadow, ::after shine dots, press = translateY+scale.
+
+### Verification
+- g15 + g16 Puppeteer load: **0 pageerrors** (CSS valid)
+- jelly screenshot captures saved
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS
+
+### Files touched
+- `games/lokomotif-pemberani.html` — `#btn-up`/`#btn-dn` jelly
+- `games/selamatkan-kereta.html` — `.choice-btn`/`#btn-start` jelly
+- `sw.js` v55.42 → v55.43
+
+### Closes B-228 across all 3 train games.
+
+---
+
 ## 2026-06-27 — v55.42 "Rename all 14 games to landing-page slugs (A-305)"
 
 Owner ask: *"gamenya jangan dibuat pakai kode g16,g17. ini susah scalablenya. better align dengan nama di landing page... agar scalable."* Owner approved all-14-at-once.
