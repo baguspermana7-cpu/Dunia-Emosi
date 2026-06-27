@@ -395,11 +395,10 @@ window.addEventListener('resize',()=>{
   TRAIN_X = Math.max(40, Math.round(W * 0.05));  // Task #59 — 5% base (per-train clamp in buildTrain)
   const topHUD = 120, botHUD = 115;
   const available = H - topHUD - botHUD;
-  LANE_Y = [
-    topHUD + available * 0.18,
-    topHUD + available * 0.50,
-    topHUD + available * 0.82
-  ];
+  // A-311 — Indonesian layout: scenery band on top, 3 rail lanes in the lower part.
+  g15RailTop = Math.round(topHUD + available * 0.46);
+  { const _band = (H - botHUD) - g15RailTop;
+    LANE_Y = [ g15RailTop + _band * 0.17, g15RailTop + _band * 0.50, g15RailTop + _band * 0.83 ]; }
   if (selectedTrain && selectedTrain.isCharacter && typeof buildTrain === 'function') {
     try { buildTrain(); } catch(_) {}  // rebuild re-applies RZ.trainScale + rail-anchor + 5% clamp
   } else if (trainContainer) {
@@ -786,6 +785,8 @@ let bgSignalPosts = [];
 let bgBirds = [];
 let rainbow = null;
 let LANE_Y = [];
+let g15RailTop = 0;   // A-311 — top of the rail band; Indonesian scenery sits above it
+let g15Smoke = null, g15SmokeLayer = null, g15CraterX = 0, g15CraterY = 0, g15ScenePal = null, g15SmokeT = 0;
 let W = 0, H = 0;
 // Responsive: 5% of viewport width, clamped 40-180. On 400px phone → 40, on 1200px desktop → 180.
 let TRAIN_X = 40;
@@ -851,11 +852,10 @@ async function initPixi() {
   TRAIN_X = Math.max(40, Math.round(W * 0.05));
   const topHUD = 120, botHUD = 115;
   const available = H - topHUD - botHUD;
-  LANE_Y = [
-    topHUD + available * 0.18,
-    topHUD + available * 0.50,
-    topHUD + available * 0.82
-  ];
+  // A-311 — Indonesian layout: scenery band on top, 3 rail lanes in the lower part.
+  g15RailTop = Math.round(topHUD + available * 0.46);
+  { const _band = (H - botHUD) - g15RailTop;
+    LANE_Y = [ g15RailTop + _band * 0.17, g15RailTop + _band * 0.50, g15RailTop + _band * 0.83 ]; }
   stage = app.stage;
   bgLayer       = new PIXI.Container(); stage.addChild(bgLayer);
   trackLayer    = new PIXI.Container(); stage.addChild(trackLayer);
@@ -966,6 +966,12 @@ async function initPixi() {
     // every particle's velocity + scale into giant tessellated shards across
     // the screen ("wajah terbang" / mutilation). 2 = at most 2 frames of catch-up.
     const dt = Math.min(ticker.deltaTime, 2);
+
+    // A-311 — volcano smoke plume
+    if (window.IndoScene && g15Smoke && g15SmokeLayer && g15ScenePal) {
+      g15SmokeT += dt;
+      IndoScene.tickSmoke(g15SmokeLayer, g15Smoke, g15CraterX, g15CraterY, g15ScenePal, dt, (g15SmokeT % 5) < dt);
+    }
 
     // Character train animation — wheel spin, body bob, smoke
     if (characterTrainInstance) { characterTrainInstance.tick(dt, gameSpeed); }
@@ -1146,7 +1152,47 @@ async function initPixi() {
 }
 
 // ── Background ────────────────────────────────────────────────────────────────
+// A-311 — Indonesian scene backdrop (mirrors Balapan Kereta): volcano-in-hills +
+// sawah + kampung props + foreground foliage, in the upper scenery band.
+function buildG15Indo() {
+  const IS = window.IndoScene, pal = IS && IS.palette('day')
+  if (!IS || !pal || !g15RailTop) return false
+  const c = bgLayer
+  const railY = g15RailTop - 1
+  const bandH = Math.max(80, railY)
+  const horizonY = Math.round(bandH * 0.62)
+  const sceneH = Math.max(40, railY - horizonY)
+  const sky = new PIXI.Graphics(); IS.paintSky(sky, W, railY, pal); c.addChild(sky)
+  const ground = new PIXI.Graphics(); ground.rect(0, horizonY, W, railY - horizonY + 4).fill({ color: pal.grass }); c.addChild(ground)
+  c.addChild(IS.mountains(W, horizonY + 6, pal))
+  c.addChild(IS.hills(W, horizonY, pal, 0))
+  const vol = IS.volcano(W, horizonY + 10, pal, Math.min(horizonY * 0.78, bandH * 0.5)); c.addChild(vol)
+  c.addChild(IS.hills(W, horizonY + 10, pal, 1))
+  c.addChild(IS.hills(W, horizonY + 24, pal, 2))
+  c.addChild(IS.sawahBand(W, horizonY + Math.min(sceneH * 0.3, 30), Math.min(sceneH * 0.7, 60), pal))
+  const mask = new PIXI.Graphics(); mask.rect(0, 0, W, railY).fill(0xffffff); c.addChild(mask); c.mask = mask
+  // kampung props at the field edge above the rails
+  const unit = Math.max(0.5, Math.min(W, H) / 760)
+  const kinds = ['house', 'palm', 'tree', 'pole', 'palm', 'house', 'tree']
+  const N = Math.max(6, Math.round(W / 150))
+  for (let i = 0; i < N; i++) {
+    const k = kinds[i % kinds.length], sc = (0.55 + ((i * 7) % 4) / 10) * unit
+    let pr; if (k === 'house') pr = IS.house(pal, sc); else if (k === 'palm') pr = IS.palm(pal, sc); else if (k === 'tree') pr = IS.tree(pal, sc); else pr = IS.pole(pal, sc)
+    pr.x = 40 + i * (W / N) + ((i * 23) % 50) - 25; pr.y = railY - 3; c.addChild(pr)
+  }
+  // foreground foliage framing (in the front particle layer)
+  try { if (particleLayer) particleLayer.addChild(IS.foliageFrame(W, H, pal)) } catch (_) {}
+  // smoke plume in its own container
+  if (g15SmokeLayer && g15SmokeLayer.parent) g15SmokeLayer.parent.removeChild(g15SmokeLayer)
+  g15SmokeLayer = new PIXI.Container(); bgLayer.addChild(g15SmokeLayer)
+  g15Smoke = IS.makeSmoke(); g15CraterX = vol._craterX; g15CraterY = vol._craterY; g15ScenePal = pal; g15SmokeT = 0
+  return true
+}
+
 function buildBackground() {
+  // A-311 — Indonesian scene path (gated). Falls through to the legacy background
+  // only if the module is unavailable.
+  if (buildG15Indo()) return;
   // Sky base
   const sky = new PIXI.Graphics();
   sky.rect(0, 0, W, H).fill({ color: T.sky });

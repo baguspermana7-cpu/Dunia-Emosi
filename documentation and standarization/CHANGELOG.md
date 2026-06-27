@@ -1,5 +1,15 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.58 "Lokomotif Pemberani → Indonesian scene LIVE (g15 = g14)" (A-311 Phase 6)
+
+g15 now has the SAME Indonesian scene as Balapan Kereta, so both train games match the reference.
+
+- **Layout** — lanes moved to the lower part (`g15RailTop`), scenery band on top, in `initPixi` + resize (responsive).
+- **`buildBackground` gated** — `buildG15Indo()` draws the Indonesian backdrop (light sky + **Merapi volcano** + smoke nested in **green hills** + mountains + **terraced sawah**, masked to the band) + **kampung houses/palms/trees/poles** at the field edge + **foreground foliage** framing. Legacy background only as fallback.
+- **Smoke plume** wired into g15's main ticker (dt-clamped).
+- Rail already ballast (v55.57); train stays exactly on the rail (rail Y unchanged) + facing right.
+- Verified: g15 race at **412×915 + 1024×600**, 0 console errors, scene matches reference + g14, on-rail + facing right. sw `v55.57→v55.58`.
+
 ## 2026-06-27 — v55.57 "g15 ballast rail (matches Balapan Kereta)" (A-311)
 
 `lokomotif-pemberani.html` rail restyled to the Indonesian **ballast** look (reddish-brown gravel bed + steel rails + shine + grain sleepers), matching g14, via `indo-scene.js` palette. Rail Y positions UNCHANGED so the character train stays exactly on the rail. Verified: g15 race loads + runs, 0 console errors, train on rail + facing right. sw `v55.56→v55.57`. (Full g15 volcano-scenery backdrop = next.)
