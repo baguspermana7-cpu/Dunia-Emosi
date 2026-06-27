@@ -1,5 +1,18 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.49 "Mockup Total — Parallax 3D with REAL characters" (A-307/A-309)
+
+Owner: *"Karakternya pakai karakter yg ada sekarang malivlak dkk, thomas dkk … cuma dibuat parallax 3D kesannya. Buat lebih complete … before vs after, banyakin mock up … animated … 20-100 mockup element."* (Concept pages only — NO game code touched.)
+
+- **`games/parallax-engine.js` → v1.1** (additive, backward-compatible): `cameraVec()`, `css3dScene(maxTilt)` → scene `rotateX/Y`, `css3dLayer(depth)` → real `translateZ` + perspective-neutralising `scale`. Existing `layer()`/`scrollFor()` unchanged so `planb.html` still works.
+- **`planb-3d.html` rebuilt as "Mockup Total"** — a comprehensive **animated** gallery driven by the **REAL sprites** (`assets/train/aeg/*.webp` + Malivlak/Casey/Linus/Dragutin) over the real **MountainDuskGodot** parallax PNG layers (sky / far-mountains / mountains / trees / clouds):
+  - **Hero** — interactive CSS-3D scene, real Thomas running on the rail, mouse/tilt camera, character quick-pick (Thomas/Malivlak/Casey/…).
+  - **Before vs After** headline — same train, flat-2D vs parallax-3D, both animated.
+  - **Aspect catalog** — 12 before/after cards isolating each change (menghadap · di rel · ukuran seragam · scenery penuh · kedalaman · foreground · kabut · bayangan · kamera 3D · rim-light · fokus karakter · animasi).
+  - **Character gallery** — all **30** real trains running in tilted 3D dioramas, facing the travel direction, on-rail, proportional.
+  - **57 mockup elements total**, all animated; visible-only animation via IntersectionObserver (throttled-tablet friendly). Verified: 57/57 sprites loaded, 0 console/page errors, all bg PNGs 200.
+- Tabs link forward to `planb-true3d.html` + `pokemon-3d.html` (shipping next in v55.50).
+
 ## 2026-06-27 — v55.48 "Visual audit + 3 bug fixes" (B-236/B-237/B-238)
 
 Maintenance pass (owner: *"lanjutkan visual puppeteer audit appearance dan perbaiki bug2 dan error saat ini"*). A 3-agent read-only scan + live puppeteer audit surfaced three real bugs; all fixed.

@@ -142,14 +142,42 @@
       return S.scroll * clamp(depth, 0, 1) * (baseSpeed != null ? baseSpeed : 1)
     }
 
+    // ── CSS 3D helpers (v1.1 — genuinely-3D output) ──────────
+    // The 2.5D path above fakes depth with x/y offset. These instead place each
+    // layer at a REAL translateZ and rotate the whole SCENE from the look vector,
+    // so near layers sweep more than far ones = true parallax from 3D transforms.
+    function cameraVec() { return { x: S.cx, y: S.cy } }
+
+    // Scene-level rotation (apply to the preserve-3d container).
+    function css3dScene(maxTiltDeg) {
+      const m = (maxTiltDeg != null) ? maxTiltDeg : 10
+      return { rotateX: -S.cy * m, rotateY: S.cx * m }   // look right → yaw right
+    }
+
+    // Per-layer depth placement. depth 0 = far (pushed back), 1 = near (toward
+    // viewer); the focus plane (depthFocus) sits at Z=0. `scale` neutralises the
+    // perspective foreshortening so all layers read at their authored size — the
+    // depth shows up as PARALLAX when the scene rotates, not as size jumps.
+    function css3dLayer(depth, perspective, zSpread) {
+      const persp = perspective || 1100
+      const spread = (zSpread != null) ? zSpread : 900
+      const d = clamp(depth, 0, 1)
+      const translateZ = (d - S.depthFocus) * spread
+      const scale = (persp - translateZ) / persp
+      // reuse the 2.5D cues for atmosphere
+      const lay = layer(d)
+      return { translateZ, scale, blur: lay.blur, haze: lay.haze, dim: lay.dim, hazeColor: lay.hazeColor }
+    }
+
     function set(k, v) { if (k in S) S[k] = v; return api }
     function get(k) { return S[k] }
     function destroy() { S._cleanup.forEach((f) => { try { f() } catch (_) {} }); S._cleanup = [] }
 
-    const api = { setLook, bindPointer, bindTilt, update, layer, scrollFor, set, get, destroy,
+    const api = { setLook, bindPointer, bindTilt, update, layer, scrollFor,
+                  cameraVec, css3dScene, css3dLayer, set, get, destroy,
                   get state() { return S } }
     return api
   }
 
-  window.RZParallax = { create, version: '1.0.0' }
+  window.RZParallax = { create, version: '1.1.0' }
 })()
