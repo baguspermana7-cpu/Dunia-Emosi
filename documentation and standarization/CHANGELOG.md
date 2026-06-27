@@ -1,5 +1,14 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.46 "2.5D depth POC in balapan-kereta" (A-306 first cut)
+
+Owner saw `messenger.abeto.co` (a Three.js WebGL game) and asked for that "2D-but-looks-3D" feel. This is the cheap-but-effective version in Pixi: **layered parallax depth**, no engine change.
+
+- **Foreground parallax layer** (`buildForeScenery` / `tickFore`): soft dark foliage blobs that hug the top + bottom edges, scroll FAST (1.5×) and render IN FRONT of the train. Three depth planes now read as 3D — far mountains 0.15× · mid trees ~0.4× · foreground 1.6× — the same trick 2.5D games (Ori, Hollow Knight) use. ~10 blobs, dt-clamped, perf-safe for throttled tablets.
+- **Aerial-perspective haze**: 6 stacked low-alpha sky-tinted strips over the mountain bases push the far layer back into atmosphere (faked gradient; static, zero per-frame cost). `tickMid` far-scroll now respects `_speed` so the haze stays put.
+
+Verified: in-race screenshot shows clear 3-plane depth, 0 page errors. sw `v55.45→v55.46`. This is the POC; the full reusable "parallax engine" + mockup lands in `planb.html` (A-306).
+
 ## 2026-06-27 — v55.45 "Train-game deep polish: 6 owner complaints" (B-229→B-235)
 
 Owner sent 5 screenshots of the train games with six concrete complaints. All fixed in one tranche.

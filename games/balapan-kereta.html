@@ -922,6 +922,8 @@ async function initPixi() {
 
   buildPlayer()
 
+  buildForeScenery()   // v55.46 — 2.5D foreground parallax (in front of the train)
+
   L.fx = new PIXI.Container(); stage.addChild(L.fx)
   L.speedlines = new PIXI.Container(); stage.addChild(L.speedlines)
   // v54.49: weather overlay — rain (forest/coastal), snow (snow), sandstorm
@@ -1379,6 +1381,19 @@ function buildFarScenery() {
     g._speed = 0.15
     c.addChild(g)
   }
+  // v55.46 — 2.5D aerial-perspective haze. A soft sky-tinted band fading downward
+  // over the mountain bases pushes the far layer back, the way distance fades into
+  // atmosphere. Faked as 6 stacked low-alpha strips (Pixi Graphics has no gradient
+  // fill); cheap, static, no per-frame cost. Closes the "flat backdrop" feel.
+  const hazeTop = gameTop + 14, hazeH = 78, strips = 6
+  for (let s = 0; s < strips; s++) {
+    const hz = new PIXI.Graphics()
+    // strongest at the horizon line, fading up — classic depth cue
+    const a = 0.16 * (1 - s / strips)
+    hz.rect(0, hazeTop + (hazeH / strips) * s, W, hazeH / strips + 1).fill({ color: (TH.haze != null ? TH.haze : 0xbcd2e8), alpha: a })
+    hz._speed = 0   // haze is atmosphere — it does NOT parallax-scroll
+    c.addChild(hz)
+  }
   c._speed = 0.15
 }
 
@@ -1423,6 +1438,53 @@ function buildMidScenery() {
     t._laneY = yPos
     c.addChild(t)
     midItems.push(t)
+  }
+}
+
+// ── Foreground parallax (2.5D depth POC, v55.46) ──────────
+// A CLOSE layer that scrolls FAST and passes IN FRONT of the train. Three depth
+// planes (far mountains 0.15× · mid trees ~0.4× · this 1.6×) read as real 3D
+// depth — the same parallax trick used by 2.5D games (Ori, Hollow Knight) — with
+// zero engine change. Items hug the top + bottom edges so they frame the action
+// without covering the 3 lanes. Soft, dark, low-detail = "near camera, slightly
+// out of focus." Kept to ~10 blobs so a throttled tablet never feels it.
+let foreItems = []
+function buildForeScenery() {
+  foreItems = []   // reset so a re-init (resize/restart) doesn't keep stale sprite refs
+  const c = new PIXI.Container(); L.fore = c; stage.addChild(c)  // after player → in front of train
+  const W = app.screen.width, H = app.screen.height
+  const botY = H - 122          // bottom of the play band (below lane 2)
+  const topY = gameTop          // top of the play band (above lane 0)
+  // theme-tinted dark foliage; falls back to a deep green
+  const leaf = (TH.fore != null) ? TH.fore : 0x14331f
+  const mkBush = (x, baseY, scale, up) => {
+    const g = new PIXI.Graphics()
+    // cluster of 3 overlapping ellipses = soft bush silhouette
+    const r = 26 * scale
+    g.ellipse(-r * 0.8, 0, r * 0.9, r * 0.7).fill({ color: leaf, alpha: 0.62 })
+    g.ellipse(r * 0.8, 0, r * 0.9, r * 0.7).fill({ color: leaf, alpha: 0.62 })
+    g.ellipse(0, -r * 0.35, r * 1.15, r * 0.95).fill({ color: leaf, alpha: 0.66 })
+    g.x = x
+    g.y = baseY + (up ? r * 0.5 : -r * 0.5)   // anchor toward the edge
+    g._speed = 1.5 + Math.random() * 0.3      // FAST = close to camera
+    g._baseY = g.y
+    g._bob = Math.random() * Math.PI * 2
+    c.addChild(g)
+    foreItems.push(g)
+  }
+  // bottom row (5) + top row (4), spread across + past the right edge
+  for (let i = 0; i < 5; i++) mkBush((i * W / 4) + Math.random() * 60, botY, 1.0 + Math.random() * 0.5, false)
+  for (let i = 0; i < 4; i++) mkBush((i * W / 3) + 80 + Math.random() * 60, topY, 0.8 + Math.random() * 0.4, true)
+}
+
+function tickFore(delta) {
+  if (!L.fore) return
+  const W = app.screen.width
+  for (const g of foreItems) {
+    g.x -= g._speed * S.speed * delta * 0.4
+    g._bob += 0.04 * delta
+    g.y = g._baseY + Math.sin(g._bob) * 1.5   // subtle sway = parallax life
+    if (g.x < -90) g.x = W + 60 + Math.random() * 40
   }
 }
 
@@ -1521,10 +1583,14 @@ function tickMid(delta) {
   // Far
   if (L.far) {
     L.far.children.forEach(c => {
-      c.x -= 0.15 * delta
+      const sp = (c._speed != null) ? c._speed : 0.15
+      if (sp === 0) return            // v55.46 — static atmosphere (haze) never scrolls
+      c.x -= sp * delta
       if (c.x < -200) c.x = W + 50
     })
   }
+  // v55.46 — foreground parallax (fast, in front of the train) for 2.5D depth
+  tickFore(delta)
 }
 
 // ── Player train ──────────────────────────────────────────
