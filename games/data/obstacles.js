@@ -22,6 +22,67 @@
 ;(function (global) {
   'use strict'
 
+  // ── B-254 — clean inline-SVG track/bridge pieces (replaces crude Unicode
+  // glyphs ◯ ▢ ▲ ➤ ↰ ↱ ↗ the owner called "sangat payah"). Deliberately-drawn,
+  // soft-pastel, kid-friendly. Geometric kinds = solid shapes (shape-matching);
+  // rail kinds = real steel rails + sleepers; plank = a wooden bridge board.
+  var GLYPH_KIND = {
+    '⬤': 'circle', '◯': 'circle', '●': 'circle',
+    '■': 'square', '▢': 'square', '◼': 'square',
+    '▲': 'triangle', '⏷': 'triangle', '▼': 'triangle',
+    '➤': 'arrow', '▷': 'arrow', '▶': 'arrow',
+    '↰': 'curve_left', '↱': 'curve_right', '↗': 'ramp_up', '↘': 'ramp_down', '—': 'straight',
+    '🟫': 'plank', '🪵': 'plank', '🟤': 'plank'
+  }
+  function railTrack(d1, d2, filled) {
+    var op = filled ? 1 : 0.42, w = filled ? 5 : 4, steel = filled ? '#64748b' : '#9aa6b5'
+    return '<path d="' + d1 + '" fill="none" stroke="' + steel + '" stroke-width="' + w + '" stroke-linecap="round" opacity="' + op + '"/>'
+         + '<path d="' + d2 + '" fill="none" stroke="' + steel + '" stroke-width="' + w + '" stroke-linecap="round" opacity="' + op + '"/>'
+  }
+  function railPieceSVG(kind, filled) {
+    var ink = '#334155'
+    var fill = { circle: '#86efac', square: '#a7f3d0', triangle: '#fed7aa', arrow: '#c7d2fe', plank: '#d8a35e' }[kind] || '#bbf7d0'
+    var op = filled ? 1 : 0.18, dash = filled ? '' : 'stroke-dasharray="4 4"'
+    var s = '<svg viewBox="0 0 64 64" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="display:block">'
+    switch (kind) {
+      case 'circle': s += '<circle cx="32" cy="32" r="19" fill="' + fill + '" fill-opacity="' + op + '" stroke="' + ink + '" stroke-width="3" ' + dash + '/>'; break
+      case 'square': s += '<rect x="13" y="13" width="38" height="38" rx="7" fill="' + fill + '" fill-opacity="' + op + '" stroke="' + ink + '" stroke-width="3" ' + dash + '/>'; break
+      case 'triangle': s += '<path d="M32 12 L52 50 L12 50 Z" fill="' + fill + '" fill-opacity="' + op + '" stroke="' + ink + '" stroke-width="3" stroke-linejoin="round" ' + dash + '/>'; break
+      case 'arrow': s += '<path d="M14 25 H36 V16 L52 32 L36 48 V39 H14 Z" fill="' + fill + '" fill-opacity="' + op + '" stroke="' + ink + '" stroke-width="3" stroke-linejoin="round" ' + dash + '/>'; break
+      case 'plank':
+        s += '<rect x="8" y="22" width="48" height="20" rx="4" fill="' + fill + '" fill-opacity="' + op + '" stroke="#7c4a1e" stroke-width="3" ' + dash + '/>'
+        if (filled) s += '<path d="M18 26 V38 M30 26 V38 M42 26 V38" stroke="#9a6a3a" stroke-width="2" opacity="0.6"/>'
+        break
+      case 'straight':
+        s += railTrack('M8 24 H56', 'M8 40 H56', filled)
+        if (filled) s += '<path d="M18 20 V44 M32 20 V44 M46 20 V44" stroke="#9a6a45" stroke-width="4" stroke-linecap="round" opacity="0.8"/>'
+        break
+      case 'curve_left': s += railTrack('M56 18 Q22 18 14 52', 'M56 32 Q34 32 28 56', filled); break
+      case 'curve_right': s += railTrack('M8 18 Q42 18 50 52', 'M8 32 Q30 32 36 56', filled); break
+      case 'ramp_up':
+        s += railTrack('M8 50 L56 16', 'M8 58 L56 24', filled)
+        if (filled) s += '<path d="M20 47 L26 38 M34 39 L40 30 M48 31 L54 22" stroke="#9a6a45" stroke-width="3.5" stroke-linecap="round" opacity="0.8"/>'
+        break
+      case 'ramp_down':
+        s += railTrack('M8 16 L56 50', 'M8 24 L56 58', filled)
+        if (filled) s += '<path d="M20 17 L26 26 M34 25 L40 34 M48 33 L54 42" stroke="#9a6a45" stroke-width="3.5" stroke-linecap="round" opacity="0.8"/>'
+        break
+      default: return null   // unknown → caller falls back to the glyph
+    }
+    return s + '</svg>'
+  }
+  // accept a kind name OR an original glyph; returns SVG string, or null if unmappable
+  function pieceHTML(kindOrGlyph, filled) {
+    var k = GLYPH_KIND[kindOrGlyph] || kindOrGlyph
+    return railPieceSVG(k, filled)
+  }
+  // set element content to a clean SVG piece, falling back to the glyph text
+  function setPiece(el, kindOrGlyph, filled, fallbackGlyph) {
+    var html = pieceHTML(kindOrGlyph, filled)
+    if (html) { el.innerHTML = html; el.classList.add('oe-svg-piece') }
+    else el.textContent = (fallbackGlyph != null ? fallbackGlyph : kindOrGlyph)
+  }
+
   function registerAll() {
     if (!global.ObstacleEngine) {
       console.warn('[obstacles.js] ObstacleEngine not loaded yet')
@@ -71,7 +132,7 @@
           targetRow.className = 'obstacle-engine-row'
           const target = document.createElement('div')
           target.className = 'obstacle-engine-target'
-          target.textContent = '⏷'
+          setPiece(target, 'triangle', false, '⏷')   // B-254
           target.dataset.shape = 'triangle'
           targetRow.appendChild(target)
           body.appendChild(targetRow)
@@ -90,7 +151,7 @@
             const allBtns = choicesRow.querySelectorAll('.obstacle-engine-shape-btn')
             if (shape === 'triangle') {
               btn.classList.add('correct')
-              target.textContent = '▲'
+              setPiece(target, 'triangle', true, '▲')   // B-254
               target.style.borderStyle = 'solid'
               target.style.borderColor = '#16a34a'
               target.style.background = 'rgba(34,197,94,0.18)'
@@ -107,7 +168,7 @@
           shuffled.forEach(shape => {
             const btn = document.createElement('button')
             btn.className = 'obstacle-engine-shape-btn'
-            btn.textContent = ICONS[shape]
+            setPiece(btn, shape, true, ICONS[shape])   // B-254
             btn.dataset.shape = shape
             btn.setAttribute('aria-label', shape)
             btn.addEventListener('click', () => onPick(btn, shape))
@@ -164,7 +225,7 @@
             targetRow.className = 'obstacle-engine-row'
             const target = document.createElement('div')
             target.className = 'obstacle-engine-target'
-            target.textContent = opts.targetSlotIcon || opts.targetIcon
+            setPiece(target, shapeKey, false, opts.targetSlotIcon || opts.targetIcon)   // B-254: dashed socket of the shape
             target.dataset.shape = shapeKey
             targetRow.appendChild(target)
             body.appendChild(targetRow)
@@ -182,7 +243,7 @@
               const all = choicesRow.querySelectorAll('.obstacle-engine-shape-btn')
               if (key === shapeKey) {
                 btn.classList.add('correct')
-                target.textContent = opts.targetIcon
+                setPiece(target, shapeKey, true, opts.targetIcon)   // B-254: fill the socket with the solid piece
                 target.style.borderStyle = 'solid'
                 target.style.borderColor = '#16a34a'
                 target.style.background = 'rgba(34,197,94,0.18)'
@@ -199,7 +260,8 @@
             shuffled.forEach(c => {
               const btn = document.createElement('button')
               btn.className = 'obstacle-engine-shape-btn'
-              btn.textContent = c.icon
+              // B-254: correct piece uses the reliable shapeKey; distractors map their glyph → kind
+              setPiece(btn, c.key === shapeKey ? shapeKey : c.icon, true, c.icon)
               btn.dataset.shape = c.key
               btn.setAttribute('aria-label', c.key)
               btn.addEventListener('click', () => onPick(btn, c.key))
@@ -287,7 +349,8 @@
               const expected = opts.slots[curIdx]
               if (key === expected) {
                 btn.classList.add('correct')
-                slots[curIdx].textContent = btn.textContent
+                if (btn.innerHTML && btn.querySelector('svg')) slots[curIdx].innerHTML = btn.innerHTML   // B-254: carry the SVG plank into the slot
+                else slots[curIdx].textContent = btn.textContent
                 slots[curIdx].style.borderStyle = 'solid'
                 slots[curIdx].style.borderColor = '#16a34a'
                 slots[curIdx].style.background = 'rgba(34,197,94,0.18)'
@@ -308,7 +371,7 @@
             shuffled.forEach(c => {
               const btn = document.createElement('button')
               btn.className = 'obstacle-engine-shape-btn'
-              btn.textContent = c.icon
+              setPiece(btn, c.icon, true, c.icon)   // B-254: plank → SVG; rock/leaf/color/number stay emoji
               btn.dataset.key = c.key
               btn.addEventListener('click', () => onPick(btn, c.key))
               choicesRow.appendChild(btn)

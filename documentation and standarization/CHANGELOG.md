@@ -1,5 +1,12 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.63 "station slow-down + clean puzzle graphics" (B-255, B-254)
+
+- **B-255 station-arrival slow-down (g14).** Owner: *"indikasi sampai di stasiun … seolah slow di situ."* g14 already played a station-arch cinematic on each checkpoint (25/50/75%); now it also briefly **eases the world scroll** (parallax/obstacles/AI) with a cosine envelope (1 → 0.55 → 1 over ~60 frames) so the train feels like it slows into the station. Real speed is restored before the distance/accel update so race length is unchanged. Verified: envelope fires + recovers, 0 errors.
+- **B-254 clean puzzle graphics.** Owner: *"kotak dialog pertanyaan aneh 'pasang 1 balok jembatan', gambarnya sangat payah"* → chose "gambar ulang bersih". Replaced the crude Unicode glyphs (◯ ▢ ▲ ➤ ↰ ↱ ↗ 🟫) in the rail-repair + bridge puzzles (`games/data/obstacles.js`) with **clean inline-SVG track/bridge pieces**: geometric kinds = solid soft-pastel shapes (shape-matching); rail kinds = real steel rails + sleepers (straight / curve-left / curve-right / ramp-up / ramp-down); bridge "balok" = a wooden plank with grain. Empty target = a dashed socket of the shape; correct piece fills it. Helper `railPieceSVG(kind, filled)` + `setPiece()` with glyph fallback so nothing breaks. CSS sizing added in `obstacle-engine.js`. Verified via a render gallery — pieces look deliberately designed, ≥44px taps. obstacle files cache-bust `55.63-20260627eo`.
+
+sw `v55.62→v55.63`.
+
 ## 2026-06-27 — v55.62 "background variation engine — living sky (birds/clouds/kites)" (B-258)
 
 Owner: *"background lebih rame, parallax lebih bagus, banyak variasi (mis. 1000): burung siluet, cuaca, dsb. buat engine variablenya."* Added a self-contained **ambient variation engine** to `games/indo-scene.js` → `IndoScene.ambient(W, railY, pal, { seed, density, weather })`:

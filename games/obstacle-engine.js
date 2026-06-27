@@ -509,6 +509,10 @@
         font-family: inherit;
         padding: 4px;
       }
+      /* B-254 — clean inline-SVG track/bridge pieces need an explicit box
+         (the containers were sized by glyph font-size before). */
+      .obstacle-engine-target svg { width: 62px; height: 62px; }
+      .obstacle-engine-shape-btn svg { width: 56px; height: 56px; }
       .obstacle-engine-shape-btn:active {
         transform: scale(0.94);
       }
