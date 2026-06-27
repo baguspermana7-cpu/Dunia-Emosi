@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<title>Plan B · True 3D (Three.js) — kereta + arena Pokemon</title>
+<style>
+  :root{--bg:#0d1020;--panel:#171d38;--line:rgba(180,196,255,.12);--ink:#eef1ff;--muted:#9aa6d4;--faint:#6b76a8;
+    --amber:#ffb454;--mint:#7ee0b8;--sky:#7db8f0;--focus:#ffd18a;--rose:#f4a6c0}
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{background:radial-gradient(120% 90% at 50% -10%,#1a2148 0%,var(--bg) 55%) fixed,var(--bg);color:var(--ink);
+    font-family:"Inter","Segoe UI",system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  a{color:var(--sky);text-decoration:none} a:hover{text-decoration:underline}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:16px 20px;max-width:1080px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800}
+  .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--amber);box-shadow:0 0 14px var(--amber)}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap}.tab{font:inherit;font-size:13px;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 13px}
+  .tab.cur{color:#0a0d1c;background:var(--focus);border-color:var(--focus);font-weight:700}
+  h1{font-size:clamp(28px,5vw,46px);line-height:1.05;margin:14px 0 8px;letter-spacing:-.02em;font-weight:850}
+  h1 .sub{display:block;font-size:clamp(14px,2.3vw,18px);font-weight:600;color:var(--muted);margin-top:12px;max-width:74ch}
+  .stage-wrap{max-width:1080px;margin:6px auto 0;padding:0 20px}
+  .stage{position:relative;width:100%;aspect-ratio:2/1;border-radius:20px;overflow:hidden;border:1px solid var(--line);
+    box-shadow:0 30px 80px -30px rgba(0,0,0,.8);background:#070a16;cursor:grab;touch-action:none}
+  .stage:active{cursor:grabbing} .stage canvas{display:block;width:100%;height:100%}
+  .badge{position:absolute;top:13px;left:13px;z-index:5;font-size:11px;font-weight:700;color:#0a0d1c;background:var(--focus);padding:5px 10px;border-radius:999px;letter-spacing:.4px}
+  .hint{position:absolute;left:0;right:0;bottom:14px;z-index:5;text-align:center;color:rgba(255,255,255,.85);font-size:13px;pointer-events:none;text-shadow:0 2px 8px rgba(0,0,0,.7);transition:opacity .5s}
+  .err{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;color:var(--muted);padding:30px;font-size:14px}
+  .ctrls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;margin:16px 0 2px}
+  .seg{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .seg button{font:inherit;font-size:13px;font-weight:700;color:var(--muted);background:transparent;border:0;padding:9px 16px;cursor:pointer}
+  .seg button.on{background:var(--mint);color:#0a0d1c}
+  .chip{font:inherit;font-size:13px;font-weight:600;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:9px 15px;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
+  .chip.on{background:rgba(255,180,84,.14);border-color:var(--amber);color:var(--focus)}
+  .chip .sw{width:9px;height:9px;border-radius:50%;background:var(--faint)} .chip.on .sw{background:var(--amber);box-shadow:0 0 8px var(--amber)}
+  section{padding:42px 0 6px} h2{font-size:clamp(20px,3vw,28px);margin:6px 0 6px;font-weight:800} h2 .n{color:var(--amber);margin-right:10px;font-size:.7em}
+  p{max-width:72ch;color:#c7cdf0} .lead{font-size:16px;color:var(--muted);max-width:72ch}
+  .cmp{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:20px 0}
+  .cmp div{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}.cmp h3{margin:0 0 8px;font-size:16px}.cmp p{font-size:14px;color:var(--muted);margin:0}
+  .pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.4px;color:var(--mint);background:rgba(126,224,184,.12);border:1px solid rgba(126,224,184,.3);padding:3px 10px;border-radius:999px}
+  footer{padding:42px 0 60px;color:var(--faint);font-size:13px;border-top:1px solid var(--line);margin-top:36px}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="brand"><span class="dot"></span> Dunia Emosi · Plan B</div>
+  <div class="tabs">
+    <a class="tab" href="planb.html">2.5D</a>
+    <a class="tab" href="planb-3d.html">Mockup Total</a>
+    <a class="tab cur" href="planb-true3d.html">True 3D</a>
+    <a class="tab" href="pokemon-3d.html">Pokemon</a>
+  </div>
+</div>
+<div class="wrap">
+  <h1>True 3D — Three.js (WebGL)
+    <span class="sub">3D sungguhan ala messenger.abeto.co: tiap elemen jadi bidang di kedalaman-Z nyata, kamera bisa diputar/dolly. Pakai sprite ASLI (Thomas + Pokemon). Ini halaman konsep — berat (~600KB), jadi TIDAK dikirim ke game anak.</span>
+  </h1>
+</div>
+<div class="stage-wrap">
+  <div class="stage" id="stage">
+    <span class="badge" id="badge">● TRUE 3D · WebGL</span>
+    <canvas id="cv"></canvas>
+    <div class="hint" id="hint">Drag untuk memutar kamera · scroll untuk dolly</div>
+    <div class="err" id="err">WebGL/Three.js tak bisa dimuat di sini. Buka di browser biasa untuk melihat scene 3D.</div>
+  </div>
+  <div class="ctrls">
+    <div class="seg"><button class="on" id="sc-train">🚂 Kereta</button><button id="sc-battle">⚔️ Arena Pokemon</button></div>
+    <button class="chip on" id="t-spin"><span class="sw"></span>Auto-putar</button>
+    <button class="chip on" id="t-run"><span class="sw"></span>Berjalan</button>
+  </div>
+  <p style="text-align:center;color:var(--faint);font-size:13px;margin:6px 0 0">Bandingkan dengan tab <a href="planb-3d.html">Mockup Total</a> (pseudo-3D CSS, ringan, bisa masuk game) — di sini geometri 3D-nya nyata.</p>
+</div>
+<div class="wrap">
+  <section>
+    <h2><span class="n">01</span>Kapan pakai yang mana?</h2>
+    <div class="cmp">
+      <div><h3>Pseudo-3D (CSS) <span class="pill">UNTUK GAME</span></h3><p>Ringan, 0 KB, jalan di tablet anak. Cukup meyakinkan. Ini yang dipindah ke game.</p></div>
+      <div><h3>True 3D (di sini)</h3><p>Paling meyakinkan — kamera 3D nyata. Tapi ~600KB three.js + lebih berat. Hanya untuk eksplorasi/konsep, atau game spin-off khusus web.</p></div>
+      <div><h3>Rekomendasi</h3><p>Pakai pseudo-3D untuk Dunia Emosi sekarang. Simpan true-3D untuk "dunia 3D" terpisah bila suatu hari mau, sesuai <a href="plan.html">plan.html</a>.</p></div>
+    </div>
+  </section>
+  <footer>
+    <span class="pill">REVIEW PAGE</span> &nbsp; Internal · True 3D (Three.js r149, vendored di <code>games/lib/three.min.js</code> — dipakai HANYA halaman ini, tidak oleh game) ·
+    <a href="planb-3d.html">← Mockup Total</a> · <a href="pokemon-3d.html">Pokemon →</a>
+  </footer>
+</div>
+
+<script src="games/lib/three.min.js?v=149"></script>
+<script>
+(function(){
+  'use strict'
+  var stage=document.getElementById('stage'), cv=document.getElementById('cv'), hint=document.getElementById('hint'), badge=document.getElementById('badge')
+  if(typeof THREE==='undefined'){ document.getElementById('err').style.display='flex'; return }
+  var BG='assets/background/MountainDuskGodot/MountainDuskGodot/MountainsLayers/'
+  var POKE='assets/Pokemon/pokemondb_hd_alt2/'
+  var renderer, scene, camera, clock, raf
+  var spin=true, run=true, mode='train'
+  var scrollables=[], bobbers=[]
+  var loader=new THREE.TextureLoader()
+  function tex(url, cb){ return loader.load(url, function(t){ t.colorSpace=THREE.SRGBColorSpace; if(cb)cb(t); }, undefined, function(){}) }
+
+  function initRenderer(){
+    try{ renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true}) }catch(e){ document.getElementById('err').style.display='flex'; return false }
+    renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1))
+    resize(); window.addEventListener('resize',resize); clock=new THREE.Clock()
+    return true
+  }
+  function resize(){ if(!renderer)return; var w=stage.clientWidth,h=stage.clientHeight; renderer.setSize(w,h,false); if(camera){camera.aspect=w/h;camera.updateProjectionMatrix()} }
+
+  // a flat textured plane (billboard-ish) at depth z
+  function plane(url, w, h, x, y, z, opts){
+    opts=opts||{}
+    var mat=new THREE.MeshBasicMaterial({transparent:true, alphaTest:opts.alphaTest!=null?opts.alphaTest:0.04, depthWrite:opts.depthWrite!==false, fog:opts.fog!==false, opacity:opts.opacity!=null?opts.opacity:1})
+    mat.map=tex(url,function(t){ if(opts.repeat){ t.wrapS=THREE.RepeatWrapping; t.repeat.x=opts.repeat } })
+    var m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),mat); m.position.set(x,y,z)
+    if(opts.flip) m.scale.x=-1
+    scene.add(m); return m
+  }
+
+  function clearScene(){ if(scene){ scene.traverse(function(o){ if(o.material){ if(o.material.map)o.material.map.dispose(); o.material.dispose() } if(o.geometry)o.geometry.dispose() }) } scrollables=[]; bobbers=[] }
+
+  function buildTrain(){
+    scene=new THREE.Scene(); scene.fog=new THREE.Fog(0x6a4f7a, 22, 70)
+    camera=new THREE.PerspectiveCamera(46, stage.clientWidth/stage.clientHeight, 0.1, 200); camera.position.set(0,2.2,20)
+    scene.add(new THREE.AmbientLight(0xffffff,0.9)); var d=new THREE.DirectionalLight(0xffe6c0,0.7); d.position.set(6,10,8); scene.add(d)
+    // sky as scene background
+    tex(BG+'sky.png', function(t){ scene.background=t })
+    // depth planes (far → near)
+    scrollables.push({m:plane(BG+'far-mountains.png', 70,22, 0,7,-34, {repeat:2}), s:0.004})
+    scrollables.push({m:plane(BG+'mountains.png',     64,20, 0,4,-22, {repeat:2}), s:0.012})
+    scrollables.push({m:plane(BG+'trees.png',         52,16, 0,1.4,-11,{repeat:3}), s:0.03})
+    // ground
+    var gmat=new THREE.MeshBasicMaterial({color:0x244a30}); var g=new THREE.Mesh(new THREE.PlaneGeometry(120,80),gmat); g.rotation.x=-Math.PI/2; g.position.set(0,-2.4,-10); scene.add(g)
+    // rail
+    var rmat=new THREE.MeshBasicMaterial({color:0x5b6577}); for(var rs=-1;rs<=1;rs+=2){ var r=new THREE.Mesh(new THREE.BoxGeometry(120,0.12,0.18),rmat); r.position.set(0,-2.33,-2+rs*0.7); scene.add(r) }
+    // train (real Thomas), standing plane on the rail
+    var tr=plane('assets/train/aeg/thomas.webp', 6.2,4.7, -2.2,-0.1,-1.6, {flip:true, fog:false})
+    bobbers.push({m:tr, base:tr.position.y, amp:0.12, sp:5})
+    // foreground trees in front
+    var fg=plane(BG+'trees.png', 40,14, 0,-1,7, {repeat:3, fog:false}); fg.material.color=new THREE.Color(0x223322); scrollables.push({m:fg, s:0.07})
+    camera.lookAt(0,0.4,-2)
+    badge.textContent='● TRUE 3D · Kereta'
+  }
+
+  function buildBattle(){
+    scene=new THREE.Scene(); scene.fog=new THREE.Fog(0x10131f, 26, 80)
+    camera=new THREE.PerspectiveCamera(46, stage.clientWidth/stage.clientHeight, 0.1, 200); camera.position.set(0,3.0,19)
+    scene.add(new THREE.AmbientLight(0xffffff,1.0)); var d=new THREE.DirectionalLight(0xfff0d0,0.6); d.position.set(-4,9,6); scene.add(d)
+    tex('assets/background/gym/g13c-bg-gym-m.webp', function(t){ scene.background=t })
+    // arena floor (converging)
+    var fmat=new THREE.MeshBasicMaterial({color:0x2a2440}); var f=new THREE.Mesh(new THREE.PlaneGeometry(60,60),fmat); f.rotation.x=-Math.PI/2; f.position.set(0,-3,-8); scene.add(f)
+    // arena ring lines
+    var ring=new THREE.Mesh(new THREE.RingGeometry(5.6,6.0,48), new THREE.MeshBasicMaterial({color:0x6a5acd,side:THREE.DoubleSide})); ring.rotation.x=-Math.PI/2; ring.position.set(0,-2.98,-6); scene.add(ring)
+    // enemy Pokemon back-high, player front-low (depth-scaled by perspective)
+    var enemy=plane(POKE+'0006_charizard.webp', 6,6, 3.2,1.6,-12, {fog:false}); bobbers.push({m:enemy, base:1.6, amp:0.18, sp:2.4})
+    var player=plane(POKE+'0025_pikachu.webp', 6.4,6.4, -3.0,-0.3,-1.5, {fog:false, flip:true}); bobbers.push({m:player, base:-0.3, amp:0.16, sp:3.0})
+    // a couple of bench/crowd pokeball orbs
+    for(var i=0;i<6;i++){ var o=new THREE.Mesh(new THREE.SphereGeometry(0.5,16,16), new THREE.MeshBasicMaterial({color:i%2?0xef4444:0xf8fafc})); o.position.set(-9+i*3.4, 2.6+(i%2?0.4:0), -16); scene.add(o) }
+    camera.lookAt(0,0.8,-6)
+    badge.textContent='● TRUE 3D · Arena Pokemon'
+  }
+  function lastMesh(){ for(var i=scene.children.length-1;i>=0;i--){ if(scene.children[i].isMesh && scene.children[i].geometry.type==='PlaneGeometry') return scene.children[i] } }
+
+  // ── orbit controls (drag + wheel dolly) ──
+  var az=0, pol=0, drag=false, px0=0, py0=0, dist=1
+  stage.addEventListener('pointerdown',function(e){ drag=true; px0=e.clientX; py0=e.clientY; if(hint)hint.style.opacity=0 })
+  window.addEventListener('pointerup',function(){ drag=false })
+  window.addEventListener('pointermove',function(e){ if(!drag)return; az+= (e.clientX-px0)*0.005; pol=Math.max(-0.5,Math.min(0.5,pol+(e.clientY-py0)*0.004)); px0=e.clientX; py0=e.clientY })
+  stage.addEventListener('wheel',function(e){ dist=Math.max(0.6,Math.min(1.7,dist+(e.deltaY>0?0.06:-0.06))); e.preventDefault() },{passive:false})
+
+  function setMode(m){
+    mode=m; clearScene()
+    document.getElementById('sc-train').classList.toggle('on',m==='train')
+    document.getElementById('sc-battle').classList.toggle('on',m==='battle')
+    if(m==='train') buildTrain(); else buildBattle()
+    az=0; pol=0; dist=1
+  }
+  document.getElementById('sc-train').onclick=function(){ setMode('train') }
+  document.getElementById('sc-battle').onclick=function(){ setMode('battle') }
+  document.getElementById('t-spin').onclick=function(){ spin=!spin; this.classList.toggle('on',spin) }
+  document.getElementById('t-run').onclick=function(){ run=!run; this.classList.toggle('on',run) }
+
+  function animate(){
+    raf=requestAnimationFrame(animate)
+    var dt=Math.min(0.05, clock.getDelta()), t=clock.elapsedTime
+    if(spin && !drag) az+=dt*0.25
+    if(run){ scrollables.forEach(function(o){ if(o.m&&o.m.material&&o.m.material.map) o.m.material.map.offset.x=(o.m.material.map.offset.x+o.s)%1 }) }
+    bobbers.forEach(function(b){ if(b.m) b.m.position.y=b.base+Math.sin(t*b.sp)*b.amp })
+    // camera orbit around target
+    var tgt=new THREE.Vector3(0, mode==='train'?0.4:0.8, mode==='train'?-2:-6)
+    var radius=(mode==='train'?20:19)*dist
+    camera.position.x=tgt.x+Math.sin(az)*radius*0.5
+    camera.position.z=tgt.z+Math.cos(az)*radius
+    camera.position.y=tgt.y+2.2+pol*8
+    camera.lookAt(tgt)
+    renderer.render(scene,camera)
+  }
+  if(initRenderer()){ setMode('train'); animate() }
+})();
+</script>
+</body>
+</html>

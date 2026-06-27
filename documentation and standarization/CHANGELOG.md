@@ -1,5 +1,15 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.50 "True 3D (Three.js) + Pokemon 3D concept" (A-307/A-308)
+
+Completes the 3D-concept set. All concept pages — NO game code touched.
+
+- **NEW `planb-true3d.html`** + **vendored `games/lib/three.min.js`** (Three.js r149 UMD, ~600KB) — genuine WebGL 3D (textured planes at real Z-depth, `PerspectiveCamera` orbit/dolly on drag, fog) using the REAL sprites. Two tabs: **🚂 Kereta** (Thomas on the rail over MountainDuskGodot depth planes) + **⚔️ Arena Pokemon** (Pikachu vs Charizard battle diorama on the real gym backdrop, floating pokéballs). Graceful fallback message if WebGL is unavailable. **`three.min.js` is loaded ONLY by this page** — verified not referenced by any game and not in the SW SHELL, so the kid-facing bundle stays Pixi-only.
+- **NEW `pokemon-3d.html`** — pseudo-3D Pokemon concept (same CSS-3D engine as planb-3d), REAL pokemondb HD sprites + real gym/mountain backgrounds: interactive **Pokemon Run** hero (Pikachu running, 3D camera, character pick), **Run before/after** (flat vs parallax-3D), a **Gym battle-arena before/after** (flat DOM vs 3D diorama — converging floor, ring, depth-staged Pokemon, HP bars), and a **19-Pokemon running gallery**. 24 animated mockup elements; IntersectionObserver-gated.
+- All four Plan-B tabs now resolve (2.5D · Mockup Total · True 3D · Pokemon). Verified: both Three.js scenes render under WebGL, pokemon-3d 26/26 images loaded, 0 console/page errors.
+
+**Engine-research recommendation reaffirmed** (see `plan.html`): ship the **pseudo-3D CSS** treatment into the games (cheap, tablet-safe); keep **true-3D Three.js** for the concept page / a future web-only spin-off.
+
 ## 2026-06-27 — v55.49 "Mockup Total — Parallax 3D with REAL characters" (A-307/A-309)
 
 Owner: *"Karakternya pakai karakter yg ada sekarang malivlak dkk, thomas dkk … cuma dibuat parallax 3D kesannya. Buat lebih complete … before vs after, banyakin mock up … animated … 20-100 mockup element."* (Concept pages only — NO game code touched.)
