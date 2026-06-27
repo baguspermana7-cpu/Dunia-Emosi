@@ -113,7 +113,7 @@ const TRAIN_CATS = [
        kmh:42, baseSpeed:1.65, boostMult:1.48, boostDur:1490,
        desc:'Duck — Great Western yang setia dan tegas!'},
       {key:'aeg_toby', name:'Toby', sub:'Tram Engine 🚋', emoji:'🚂',
-       isCharacter:true, spriteUrl:'../assets/train/aeg/toby.webp', faces:'forward',
+       isCharacter:true, spriteUrl:'../assets/train/aeg/toby.webp', faces:'left',
        wheelLayout:'aeg', spriteHeight:115, wheelPositions:[],
        smokePos:[-25,-125], bottomPaddingOffset:0,
        bodyColor:'#6d4c41', accColor:'#fdd835',
@@ -143,7 +143,7 @@ const TRAIN_CATS = [
 
       // Diesel + electric (smokePos null)
       {key:'aeg_diesel', name:'Diesel', sub:'BR Class 08 Diesel ⚙️', emoji:'🚆',
-       isCharacter:true, spriteUrl:'../assets/train/aeg/diesel.webp', faces:'left',
+       isCharacter:true, spriteUrl:'../assets/train/aeg/diesel.webp', faces:'right',
        wheelLayout:'aeg', spriteHeight:115, wheelPositions:[],
        smokePos:null, bottomPaddingOffset:0,
        bodyColor:'#424242', accColor:'#fbc02d',
@@ -157,7 +157,7 @@ const TRAIN_CATS = [
        kmh:88, baseSpeed:2.30, boostMult:1.48, boostDur:1500,
        desc:'Kenji — bullet train super cepat dari Jepang!'},
       {key:'aeg_kana', name:'Kana', sub:'Express Electric 🇯🇵', emoji:'🚄',
-       isCharacter:true, spriteUrl:'../assets/train/aeg/kana.webp', faces:'left',
+       isCharacter:true, spriteUrl:'../assets/train/aeg/kana.webp', faces:'right',
        wheelLayout:'aeg', spriteHeight:100, wheelPositions:[],
        smokePos:null, bottomPaddingOffset:0,
        bodyColor:'#f48fb1', accColor:'#ffffff',

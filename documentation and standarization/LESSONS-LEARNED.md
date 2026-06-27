@@ -1608,3 +1608,21 @@ Owner-locked: every Dunia Emosi ship MUST update CHANGELOG.md + LESSONS-LEARNED.
 - **Root cause**: a backgrounded / bfcache-restored game instance keeps its audio playing; entering a fresh race starts a second stream. Tied to broken back-nav (B-256) that left stale instances alive.
 - **Fix**: in the shared `train-bgm.js`, stop `#game-bgm` on `visibilitychange`(hidden) / `pagehide` / persisted `pageshow`.
 - **Lesson**: For "two soundtracks at once" when the code clearly has one element, stop hunting for a second source — add a lifecycle guard that silences audio whenever the page is hidden or restored from bfcache.
+
+### L104 — Size sprites by a BOUNDING BOX, never by height alone (g14 v55.67)
+- **Symptom**: wide articulated trains (Dragutin/JZ-711) spanned the whole screen while compact ones looked fine.
+- **Root cause**: `img.scale.set(targetH/tex.height)` scales by HEIGHT only → width = targetH × aspect. A 5×-aspect sprite at lane-height becomes 5× the screen.
+- **Fix**: fit into a screen-%-relative box, scale by the LIMITING dimension: `s = min(maxH/texH, maxW/texW)`, `maxH=min(laneH*0.70, H*0.105)`, `maxW=W*0.22`. Wide→width-bound, compact→height-bound. ONE helper for player+AI.
+- **Lesson**: for art of varying aspect ratio, "uniform height" is NOT responsive — always constrain BOTH dimensions to a %-of-viewport box. Verify the EXTREMES (widest + most compact), not the average.
+
+### L105 — Sprite `faces` must have ONE source of truth across games (v55.67)
+- **Symptom**: a character faced correct in g14 but backward in the g15/g16 picker (Kana), or vice-versa (Toby/Kenji/Diesel).
+- **Root cause**: g14 used an inline `G14_FACES` map; g15/g16 used `trains-db.js` — the two drifted apart, so the same webp got mirrored in one game but not the other.
+- **Fix**: reconcile `trains-db.js` to the verified `G14_FACES` values (built by inspecting each webp + confirmed in-game). kana→right, kenji→left, toby→left, diesel→right.
+- **Lesson**: the same asset rendered by multiple games needs ONE facing table (or g14's map synced to the shared db). When you fix facing in one game, diff the OTHER game's source and align it the same commit.
+
+### L106 — A tween that re-targets the lane-center undoes a wheel-anchor offset (g15 v55.67)
+- **Symptom**: character trains floated above the rail despite `buildTrain` placing them correctly.
+- **Root cause**: `buildTrain` set `trainContainer.y = LANE_Y[1] + 14 − wheelAnchor`, but the per-frame lane tween drove Y back toward plain `LANE_Y[lane]` (no anchor) → float.
+- **Fix**: capture `g15CharRailOffset = containerY − LANE_Y[1]` and add it to the tween target for every lane.
+- **Lesson**: if an init-time vertical correction "disappears" once the game loop runs, a tween/animation is overwriting it — fold the offset into the tween's target, don't just set it once.

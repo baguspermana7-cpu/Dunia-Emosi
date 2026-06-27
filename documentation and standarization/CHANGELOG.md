@@ -1,5 +1,30 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-28 — v55.67 "train polish batch v2: sizing engine · facing · easy quiz · g15 engine · g16 packages" (B-259→B-271)
+
+Owner playtested all the train games and filed a large batch. This tranche (verified headless, M-302):
+
+**g14 (balapan-kereta)**
+- **B-259 RESPONSIVE SIZING ENGINE.** Owner: *"dragutin dkk terlalu over, pakai method %, rancang enginenya."* The old scale was HEIGHT-ONLY (`scale = targetH/tex.height`), so a wide articulated train (Dragutin/JZ-711, aspect 4-6×) became 4-6× as wide as tall → **spanned the whole screen**. New `g14TrainScale(tex)` engine fits every train into a screen-%-relative BOUNDING BOX: `scale = min(maxH/texH, maxW/texW)`, `maxH = min(laneH*0.70, H*0.105)`, `maxW = W*0.22`. Wide trains bound by width, compact by height — all proportional to the viewport. Verified: **Dragutin 95%→22% of screen width**, Thomas a sensible 9-10%, both on-rail. Player + AI (×0.85) use the one helper.
+- **B-261 boost quiz EASY at early levels.** Owner: *"soal saat boost masih terlalu sulit padahal baru level awal."* Was always operands 1..20 (e.g. "17+14"), default level 5. Now LEVEL-SCALED (default unset→1): L1-2 sums ≤10 single-digit ("2+5"), L3-5 ≤10, L6-10 ≤20, L11+ adds subtraction. No ×, single-step, ≤2-digit. Verified level-1 trivial.
+- **B-262 facing:** Toby + Kenji were backward (`G14_FACES` had `toby:'forward'`/`kenji:'right'`) → set both `'left'` (mirror). Verified `faces=left` in-game.
+
+**Shared assets + facing source-of-truth (B-262/264/265)**
+- `trains-db.js` AEG `faces` reconciled to the verified `G14_FACES` sprite-truth so g14 (G14_FACES) and g15/g16 (trains-db) agree: **kana→right, kenji→left, toby→left, diesel→right**. Fixes Kana-backward in the g15 picker + Toby/Kenji/Diesel across games.
+- **B-263 James** leftover full-width top borderline stripped + re-export (same fix as Percy). **B-264 Diesel** trains-db set to `right`; the ART SWAP is blocked on the owner's image file (export to ~/Downloads → process like Kana).
+
+**g15 (lokomotif-pemberani) — character-train engine** (`train-character-sprite.js`)
+- **B-266** stop double-rendering procedural wheels on character webps (guard `!config.isCharacter`).
+- **B-267** chimney smoke coloured by type: STEAM grey `0x9aa0a6`, DIESEL black `0x2b2b2b` (electric/highspeed none).
+- **B-268** Malivlak (+ all chars) were FLOATING above the rail — the tick tween reset Y to `LANE_Y` without the wheel-anchor offset. Added `g15CharRailOffset` so every lane includes the anchor → wheels sit EXACTLY on the rail (math-verified 0.00px). Verified: Malivlak on-rail + grey smoke + no dup wheels.
+
+**g16 (selamatkan-kereta)**
+- **B-269 picker → PACKAGES.** The picker collapsed to one messy overlapping column (root: the grid child had no explicit width in a centred flex-column). Now a tabbed package layout — ⭐ Karakter / 🚂 Thomas & Friends / 🎨 Livery Klasik — responsive multi-column grid (≥2 cols on phone), readable cards. **B-270** chimney-smoke `smokePos` X offsets corrected for g16's larger sprites.
+
+**B-271** deleted `games/jembatan-goyang.html` (owner: *"konsepnya nggak ada"*) + removed its landing-page world-map tile.
+
+sw `v55.66→v55.67`; cache-busts bumped (trains-db, train-character-sprite). **Pending next:** B-260 HD/smooth background (indo-scene gradients — the agent timed out), B-272/273/274 museum (extract to own page + fix orbiting wheels + expand), B-264 Diesel art (owner file).
+
 ## 2026-06-27 — v55.66 "g14-side HUD overlap fix" (B-257)
 
 - **B-257 g14-side HUD overlap.** Visual M-302 audit of a live run caught the distance read-out **"350m / 1000m" overlapping the "Thomas" train badge**: the top bar is a nowrap flex row of 7 items (back · badge · distance · hearts · pause · trophy · settings) and on a phone the flex:1 distance block was starved to ~0px, so its centred nowrap text spilled left over the badge. **Fix:** lifted the distance out of the row into a fixed centred pill just under the progress bar (out of the flex flow) + added a flex spacer so the row balances (back+badge left, hearts+buttons right). Verified: `getBoundingClientRect` overlap=false, HUD reads cleanly at 412px. sw `v55.64→v55.66`.

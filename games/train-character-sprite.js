@@ -3,15 +3,18 @@
 // and subtle body bob so it feels alive instead of being a static image.
 // See documentation/CODING-STANDARDS.md "Character Train Sprite Engine" (TODO).
 (function(){
-  // Default smoke particle style — gray ellipse, fades while rising + expanding
-  function createSmokePuff(stage, x, y) {
+  // Default smoke particle style — gray ellipse, fades while rising + expanding.
+  // B-267: accepts optional `color` so steam trains get grey (0x9aa0a6) and
+  // diesel trains get dark (0x2b2b2b); falls back to 0xd8d8d8 when not supplied.
+  function createSmokePuff(stage, x, y, color) {
     if (!stage || !PIXI) return null
     const g = new PIXI.Graphics()
     // v55.39 B-225 — softer + smaller smoke so it reads as a gentle wisp, never
     // as harsh shards (owner: "hilangkan bersihkan sprites"). Combined with the
     // dt clamp this guarantees no "wajah terbang" mutilation on throttled devices.
     const size = 4 + Math.random() * 3
-    g.circle(0, 0, size).fill({ color: 0xd8d8d8, alpha: 0.40 })
+    const _fc = (typeof color === 'number') ? color : 0xd8d8d8
+    g.circle(0, 0, size).fill({ color: _fc, alpha: 0.40 })
     g.x = x + (Math.random() - 0.5) * 3
     g.y = y
     stage.addChild(g)
@@ -43,6 +46,12 @@
       speed: 1,
       disposed: false
     }
+    // B-267: derive smoke colour from train type so steam gets warm grey and
+    // diesel gets near-black exhaust.  smokePos:null already suppresses smoke
+    // entirely via the guard in spawnSmoke(), so colour only matters for locos
+    // that actually have a chimney.
+    { const _t = config.type || ''
+      state.smokeColor = (_t === 'diesel') ? 0x2b2b2b : 0x9aa0a6 }
 
     // Async sprite load with emoji fallback
     const placeholder = new PIXI.Text({
@@ -93,8 +102,12 @@
       }).catch(err => console.warn('[CTSE] sprite load failed', config.spriteUrl, err))
     }
 
-    // Wheel overlay — each wheel is a PIXI.Graphics container that rotates independently
-    if (Array.isArray(config.wheelPositions)) {
+    // Wheel overlay — each wheel is a PIXI.Graphics container that rotates independently.
+    // B-266: character WebP sprites already have painted wheels baked in; adding
+    // procedural wheels on top double-renders ("roda2 tambahan").  Skip entirely
+    // for isCharacter trains (both protected chars and AEG).  Non-character/
+    // programmatic trains that need wheels still get them.
+    if (!config.isCharacter && Array.isArray(config.wheelPositions)) {
       config.wheelPositions.forEach(pos => {
         const [wx, wy, wr] = pos
         const wc = new PIXI.Container()
@@ -170,7 +183,7 @@
       const [sx, sy] = config.smokePos
       const worldX = (container.x || 0) + sx
       const worldY = (container.y || 0) + sy
-      const puff = createSmokePuff(state.smokeParent, worldX, worldY)
+      const puff = createSmokePuff(state.smokeParent, worldX, worldY, state.smokeColor)
       if (puff) state.smokeParticles.push(puff)
     }
 

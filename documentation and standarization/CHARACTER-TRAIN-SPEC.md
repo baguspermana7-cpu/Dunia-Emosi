@@ -208,3 +208,24 @@ Use `scripts/process-character-sprite.py` for new sprite drops.
 - Body bob animation affects sprite but wheels stay on baseline — intended, but may look slightly unnatural at high bob amplitudes. Current amp 1.5 is subtle enough.
 - Smoke particles don't cull when train exits visible area (standalone games don't typically resize mid-play, so leak is bounded).
 - No per-wheel rotation direction — all wheels rotate same direction as train speed. Realistic since drive wheels + idlers all turn same way.
+
+## v55.67 — Sizing engine, facing source-of-truth, on-rail, wheels, smoke (B-259/262/266/267/268)
+
+**Responsive sizing (bounding-box %, NOT height-only).** Every train fits a screen-%-relative box:
+`scale = min(maxH/tex.height, maxW/tex.width)`, `maxH = min(laneH*0.70, H*0.105)`, `maxW = W*0.22`
+(g14 `g14TrainScale()`). Wide articulated trains are bounded by width, compact by height. Player + AI(×0.85)
+share the one helper. NEVER scale by height alone — wide sprites span the screen (see LESSONS L104).
+
+**Facing — one source of truth.** g14 uses inline `G14_FACES`; g15/g16 use `trains-db.js`. They MUST agree
+(value = the webp's actual nose direction). Current: thomas/percy/james/edward/henry/gordon/emily/duck/hiro/
+nia/yong_bao/trainiac/carly/farona_frederico/**toby/kenji** = `left` (mirror); ashima/diesel/**kana**/winston/
+bruno/sandy/salty/slip_coaches/troublesome_tankers/annie_clarabel = `right`. Fix BOTH tables together (L105).
+
+**On-rail (g15).** The wheel-band must sit exactly on the rail. `g15CharRailOffset` is added to the lane tween
+target so the anchor offset survives the game loop (L106). 0px float for all chars incl. protected ones.
+
+**Duplicate wheels.** Character webps include painted wheels → skip the procedural wheel draw when
+`config.isCharacter` (train-character-sprite.js). Only programmatic trains get procedural wheels.
+
+**Chimney smoke by type.** STEAM → grey `0x9aa0a6`, DIESEL → black `0x2b2b2b`, electric/highspeed → none.
+Anchor at the train's `smokePos`; g16 uses larger sprites so its `smokePos` X is scaled per spriteHeight ratio.

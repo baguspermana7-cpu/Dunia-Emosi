@@ -757,10 +757,12 @@ const G14_FACES = {
   aeg_hiro:'left', aeg_nia:'left', aeg_yong_bao:'left', aeg_trainiac:'left',
   aeg_carly:'left', aeg_farona_frederico:'left',
   // already face RIGHT — keep as authored
-  aeg_ashima:'right', aeg_diesel:'right', aeg_kana:'right', aeg_kenji:'right',
+  aeg_ashima:'right', aeg_diesel:'right', aeg_kana:'right',
   aeg_winston:'right', aeg_bruno:'right', aeg_sandy:'right', aeg_salty:'right',
   aeg_slip_coaches:'right', aeg_troublesome_tankers:'right',
-  aeg_annie_clarabel:'right', aeg_toby:'forward'
+  aeg_annie_clarabel:'right',
+  // v55.67 B-262 — owner: toby + kenji menghadap salah → they need mirroring (native LEFT).
+  aeg_toby:'left', aeg_kenji:'left'
 }
 // Apply onto the live TRAIN_CATS train objects BEFORE the flat copies are made,
 // so the picker (reads cat.trains[*].faces) and the game (spreads the object
@@ -800,6 +802,20 @@ const LIVES_MAX = 3
 // A-311 — responsive: recomputed from the live viewport in initPixi/resize so the
 // train scales to ANY device (phone/tablet/desktop). Default until init runs.
 let G14_UNIFORM_H = 120
+// v55.67 B-259 — RESPONSIVE TRAIN-SIZING ENGINE. Owner: "dragutin dkk terlalu over,
+// pakai method % sehingga dimensi tetap thp luasan layar." The old code scaled by
+// HEIGHT ONLY (scale = targetH/tex.height), so width = targetH × aspect → a wide
+// articulated train (Dragutin/JZ-711, slip coaches, aspect 4-6×) spanned the whole
+// screen. Now every train is fit INSIDE a screen-%-relative bounding box and scaled
+// by the LIMITING dimension — wide trains are bounded by width, compact ones by
+// height, all proportional to the viewport at any size. ONE source of truth.
+function g14TrainScale(tex) {
+  const W = app.screen.width, H = app.screen.height
+  const lh = (typeof laneH !== 'undefined' && laneH) ? laneH : H * 0.16
+  const maxH = Math.max(40, Math.min(lh * 0.70, H * 0.105))   // ≤70% of a lane, ≤10.5% of screen height
+  const maxW = W * 0.22                                        // ≤22% of screen width — kills the screen-spanning overspill
+  return Math.min(maxH / tex.height, maxW / tex.width)         // fit-inside-box, aspect preserved
+}
 // Difficulty-scaled obstacle interval. Previously only level-scaled → "easy"
 // level 1 spawned every 2.7s which is too dense for a 5-10yo on their first play.
 // Easy adds +60% spacing + raises floor from 900ms→1300ms + halves wave count.
@@ -2484,7 +2500,8 @@ function updatePlayerEmoji() {
         img.anchor.set(0.5, 0.86)
         // v55.38 B-223 — g14 is a HORIZONTAL 3-lane race; forward = RIGHT. Use
         // horizontal MIRROR for left-facing assets; right + forward stay native.
-        img.scale.set(targetH / tex.height)
+        img.scale.set(g14TrainScale(tex))   // v55.67 B-259 — bounding-box %, fits any train in its lane
+        void targetH
         const _faces = (S.trainCfg && S.trainCfg.faces) || 'right'
         if (_faces === 'left') img.scale.x *= -1
         L.playerCharImg = img
@@ -2671,7 +2688,8 @@ function buildAI() {
         const img = new PIXI.Sprite(tex)
         img.anchor.set(0.5, 0.86)
         // v55.38 B-223 — horizontal mirror, no rotation (see player above).
-        img.scale.set(targetH / tex.height)
+        img.scale.set(g14TrainScale(tex) * 0.85)   // v55.67 B-259 — AI uses the same bounding-box engine, 0.85×
+        void targetH
         const _faces = (cfg.faces) || 'right'
         if (_faces === 'left') img.scale.x *= -1
         c.addChild(img)
@@ -4290,26 +4308,22 @@ function g14StartQuizCountdown(){
 }
 
 function buildQuiz() {
-  const lv = cfg.level || 5
+  const lv = cfg.level || 1   // v55.67 B-261 — default to EASIEST when level unset (was 5)
   let a, b, answer, op
-  // A-311 — owner: "pertanyaan jangan aneh2 atau sulit2." Boost is +/- ONLY (no ×),
-  // operands ≤ 20 → always easy for a 4-7yo.
-  const ops = lv <= 6 ? ['+'] : ['+', '-']
-  op = ops[Math.floor(Math.random() * ops.length)]
-  // v55.45 B-233 — owner: "max angka 20. Dan jangan sampai 3 angka." Every
-  // operand is clamped to ≤ 20; products are capped so no answer reaches 3 digits.
+  // v55.67 B-261 — owner: "soal saat boost masih terlalu sulit padahal baru level awal."
+  // Difficulty now SCALES BY LEVEL so level-1 kids get trivial single-digit sums, never
+  // two-digit carrying. Always +/− only (no ×), single-step, answer ≤ 2 digits.
+  const rnd = (n) => Math.floor(Math.random() * n) + 1
+  let maxN, useMinus
+  if (lv <= 2)      { maxN = 5;  useMinus = false }   // L1-2: 1..5  (sum ≤ 10) — trivial
+  else if (lv <= 5) { maxN = 10; useMinus = false }   // L3-5: 1..10
+  else if (lv <= 10){ maxN = 20; useMinus = false }   // L6-10: 1..20, still + only
+  else              { maxN = 20; useMinus = true }     // L11+: add subtraction
+  op = (useMinus && Math.random() < 0.5) ? '-' : '+'
   if (op === '+') {
-    a = Math.floor(Math.random() * 20) + 1   // 1..20
-    b = Math.floor(Math.random() * 20) + 1   // 1..20  (sum ≤ 40 → 2 digits)
-    answer = a + b
-  } else if (op === '-') {
-    a = Math.floor(Math.random() * 20) + 1   // 1..20
-    b = Math.floor(Math.random() * a) + 1    // 1..a  (never negative)
-    answer = a - b
+    a = rnd(maxN); b = rnd(maxN); answer = a + b
   } else {
-    a = Math.floor(Math.random() * 4) + 2    // 2..5
-    b = Math.floor(Math.random() * 3) + 2    // 2..4  (product ≤ 20)
-    answer = a * b
+    a = rnd(maxN); b = Math.floor(Math.random() * a) + 1; answer = a - b   // b ≤ a → never negative
   }
   // v55.45 B-235 — owner: "Pertanyaan saat boost pertanyaan yg aneh. Buat
   // pertanyaan yg seperti biasa aja matematika." The boost quiz now shows PLAIN

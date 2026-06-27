@@ -92,3 +92,13 @@ When implementing a new math game:
 - See `CODING-STANDARDS.md` § "Math Generation Rules" (cross-reference)
 - See `LESSONS-LEARNED.md` L22 (centralized cross-game settings pattern)
 - See `CHANGELOG.md` 2026-04-25 entry (initial implementation)
+
+## v55.67 — g14 boost quiz LEVEL-SCALED (B-261)
+
+The boost-quiz difficulty scales by level (default unset → **1**, easiest), so early-level kids never get
+two-digit carrying sums:
+- **L1-2:** `+` only, operands 1..5 (sum ≤ 10) — trivial single-digit.
+- **L3-5:** `+` only, operands 1..10.
+- **L6-10:** `+` only, operands 1..20.
+- **L11+:** add `−` (b ≤ a, never negative), operands ≤ 20.
+Always: no `×`, single-step, plain `a + b = ?`, answer ≤ 2 digits, 4 choices with near-answer distractors.
