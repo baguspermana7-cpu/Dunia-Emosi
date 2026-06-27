@@ -7,7 +7,7 @@ const TRAIN_CATS = [
       // NOTE: wheelPositions Y negative = ABOVE baseline (attached to sprite bottom).
       // smokePos Y < -spriteHeight = ABOVE sprite top (not overlapping body).
       {key:'caseyjr_character', name:'Casey JR', sub:'0-4-0 Circus', emoji:'🚂',
-       isCharacter:true, spriteUrl:'../assets/train/caseyjr-body.webp',
+       isCharacter:true, spriteUrl:'../assets/train/caseyjr-body.webp', faces:'right',
        wheelLayout:'0-4-0', spriteHeight:117,
        // Sprite 267×193 (rails cleaned). spriteHeight 90→117 (1.3x). Wheels r 10→8 (0.8x).
        wheelPositions:[[-40,-10,8],[-14,-10,8],[13,-10,8],[40,-10,8]],
@@ -15,7 +15,7 @@ const TRAIN_CATS = [
        bodyColor:'#1e2a4a', accColor:'#c0392b', kmh:40, baseSpeed:1.65, boostMult:1.50, boostDur:1500,
        desc:'Lokomotif sirkus Casey JR! Si kecil yang berani.'},
       {key:'linus_brave', name:'Linus Brave', sub:'2-4-0 Sumatera', emoji:'🚂',
-       isCharacter:true, spriteUrl:'../assets/train/linus-body.webp',
+       isCharacter:true, spriteUrl:'../assets/train/linus-body.webp', faces:'right',
        wheelLayout:'2-4-0', spriteHeight:108,
        // Sprite 600×446 (Linus.png HD). spriteHeight 90→108 (user 1.2x). Wheels scaled 1.2x.
        wheelPositions:[[-66,-8,8],[-38,-12,12],[-14,-12,12],[10,-12,12],[34,-12,12]],
@@ -23,7 +23,7 @@ const TRAIN_CATS = [
        bodyColor:'#1a3a5c', accColor:'#d4aa58', kmh:42, baseSpeed:1.70, boostMult:1.52, boostDur:1520,
        desc:'Linus Brave — Lokomotif Sumatera yang gagah.'},
       {key:'jz711_dragutin', name:'JZ 711 Dragutin', sub:'Articulated Tram Yugoslav', emoji:'🚆',
-       isCharacter:true, spriteUrl:'../assets/train/jz711-body.webp',
+       isCharacter:true, spriteUrl:'../assets/train/jz711-body.webp', faces:'right',
        wheelLayout:'articulated-tram', spriteHeight:72,
        // Sprite 600×149 (simple threshold), body ±137 rendered. Wheels inside end bogies.
        wheelPositions:[[-125,-4,7],[-108,-4,7],[106,-4,7],[123,-4,7]],
@@ -31,7 +31,7 @@ const TRAIN_CATS = [
        bodyColor:'#0d7377', accColor:'#14b8a6', kmh:60, baseSpeed:1.95, boostMult:1.55, boostDur:1600,
        desc:'JZ 711 Dragutin — Tram listrik artikulasi Yugoslavia!'},
       {key:'jz62_malivlak', name:'Malivlak', sub:'JZ 62 Steam + 3 Cars', emoji:'🚂',
-       isCharacter:true, spriteUrl:'../assets/train/malivlak-body.webp',
+       isCharacter:true, spriteUrl:'../assets/train/malivlak-body.webp', faces:'right',
        wheelLayout:'passenger-train', spriteHeight:172,
        // User's cleaned source 928×553 → 700×342 (zero bottom padding). Render ~352×172.
        // 10 wheels rescaled x by 1.147× from prior values, y=-5 (near baseline since no padding).

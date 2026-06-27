@@ -1,5 +1,67 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.38 "Sprite MIRROR not rotation (closes B-223; corrects v55.34)"
+
+Owner verbatim 2026-06-27 (with screenshot of contorted Casey in g14):
+> *"sumpah tolol kau itu. dibilang menghadapnya salah yang hadap kiri dibuat ke kanan=mirror. ini kenapa lo rotate semua. tolo. plan mode"*
+
+### What was wrong with v55.34
+
+I assumed g14 was a top-down vertical race. **It's a horizontal 3-lane race in landscape view.** Direction of travel = RIGHT, not UP. v55.34 rotated sprites 90° CW/CCW based on per-character `faces` mapping. That rotation made LEFT-facing sprites point chimney UP — but the game scrolls horizontally, so they ended up tilted on their side, visually contorted (especially Casey JR who became a vertical sliver).
+
+### Correct fix
+
+**Horizontal mirror, not rotation**. Sprites whose native orientation is LEFT-facing get `scale.x *= -1` so they face RIGHT. RIGHT-facing and FORWARD (Toby tram) get no transform — they're already correct.
+
+```js
+// v55.38 player + AI sprite render in g14.html
+img.scale.set(targetH / tex.height)         // uniform scale (no rotation, no width swap)
+const _faces = (cfg.faces) || 'right'
+if (_faces === 'left') img.scale.x *= -1    // mirror around anchor X
+```
+
+The default fallback changed from `'left'` to `'right'` so any character without an explicit `faces` field renders untransformed (safe default for unknown assets).
+
+### 4 PROTECTED chars now have `faces:'right'`
+
+Visual inspection confirms all 4 PROTECTED native-face RIGHT:
+- Casey JR (caseyjr-body.webp)
+- Linus Brave (linus-body.webp)
+- JZ711 Dragutin (jz711-body.webp)
+- Malivlak (malivlak-body.webp)
+
+Adding `faces:'right'` to each entry makes the per-character logic explicit and prevents any future default-fallback regression.
+
+Total `faces`-tagged entries in trains-db.js: **30** (26 AEG + 4 PROTECTED).
+
+### Files touched
+
+- `games/g14.html` — player sprite (line ~2321) + AI sprite (line ~2502) rewrites
+- `games/trains-db.js` — 4 PROTECTED entries get `faces:'right'`
+- `sw.js` v55.37 → v55.38
+
+### Verification
+
+- `grep -cE "faces:'(left|right|forward)'"` on trains-db.js → 30 ✓
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS
+- `node tools/visual-polish-audit.mjs` → 18 screens / 0 errors / 0 server 404s
+
+### L212 — Confirm game scroll axis BEFORE picking transform
+
+When an owner says "menghadap salah" (facing wrong) for a side-view sprite, the fix is almost always a **horizontal mirror** (`scale.x *= -1`), not a rotation. Rotation produces 90° tilts that destroy the visual identity of the sprite (it becomes a vertical contortion).
+
+Always confirm the game's scroll axis FIRST:
+- Horizontal scroll, forward = right → use mirror for left-facing assets
+- Horizontal scroll, forward = left → use mirror for right-facing assets
+- Top-down 4-directional movement → use rotation per move direction
+- Fixed-camera top-down → use mirror at most, not rotation
+
+v55.34 failed because I assumed top-down vertical without checking the actual game view. The fix shipped works for an imaginary geometry that doesn't exist in g14.
+
+### Closes B-223.
+
+---
+
 ## 2026-06-27 — v55.37 "Button standardization phase 3 — train picker cards harmonized (B-218)"
 
 Phase 3 of B-218. The 3 train picker games (g14 / g15 / g16) all had similar dark-mode card pickers but used **different border tokens, different selected glows, different active scales**. Now they share one harmonized spec.

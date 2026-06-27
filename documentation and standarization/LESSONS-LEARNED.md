@@ -4,6 +4,21 @@
 
 ---
 
+## 2026-06-27 — v55.38 Sprite mirror vs rotation lesson
+
+### L212 — Confirm game scroll axis BEFORE picking sprite transform
+- v55.34 applied 90° rotation to AEG sprites based on a wrong assumption that g14 was top-down vertical race. Game is actually a HORIZONTAL 3-lane race (forward = right). Rotation contorted sprites vertically; owner verbatim: "ini kenapa lo rotate semua. tolo."
+- **Symptom**: Casey JR rendered as a vertical sliver in middle lane; AI sprites tilted on their sides.
+- **Fix** (v55.38): replace `img.rotation = ±Math.PI/2` with `img.scale.x *= -1` for left-facing assets. Right-facing + forward stay untransformed. Default fallback flipped from 'left' to 'right' (safer for unknown assets).
+- **Lesson**: when an owner says "menghadap salah" (facing wrong) for a side-view sprite, the fix is almost always a horizontal mirror, NOT a rotation. Always confirm the game's scroll axis FIRST:
+  - Horizontal scroll, forward = right → mirror for left-facing assets
+  - Horizontal scroll, forward = left → mirror for right-facing assets
+  - Top-down 4-directional movement → rotation per move direction
+  - Fixed-camera top-down → mirror at most, not rotation
+- **Meta-lesson**: when I ship a fix and owner says "still wrong", I should re-inspect the actual game state (screenshot or run a probe) before assuming my fix worked. Don't assume the per-character data needed the same fix the rendering code did — they're independent surfaces.
+
+---
+
 ## 2026-06-27 — v55.25 Audio collision constraint & stable per-key track pick
 
 ### L210 — Audio collision is non-negotiable; route every BGM swap through a single helper
