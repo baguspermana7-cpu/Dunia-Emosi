@@ -750,6 +750,18 @@ const TRAIN_CATS = [
 const TRAIN_MAP = {}
 TRAIN_CATS.forEach(cat => cat.trains.forEach(t => { TRAIN_MAP[t.key] = {...t, category: cat.key} }))
 const ALL_TRAINS = Object.values(TRAIN_MAP)
+// v55.32 B-221 — owner mandate: NPCs may only use NEUTRAL trains, NEVER the
+// PROTECTED chars (Casey JR / Linus Brave / Dragutin / Malivlak) and NEVER
+// the Thomas AEG pack. Player keeps full picker access; AI gets a narrower pool.
+const NPC_TRAINS = ALL_TRAINS.filter(t => {
+  const k = t.key || ''
+  if (k.indexOf('aeg_') === 0) return false                 // Thomas & Friends pack
+  if (k === 'caseyjr_character') return false
+  if (k === 'linus_brave') return false
+  if (k === 'jz711_dragutin') return false
+  if (k === 'jz62_malivlak') return false
+  return true
+})
 
 // ═══════════════════════════════════════════════════════════
 //  CONFIG
@@ -2318,7 +2330,11 @@ function updatePlayerEmoji() {
         const img = new PIXI.Sprite(tex)
         img._url = url
         img.anchor.set(0.5, 0.6)
-        img.scale.set(targetH / tex.height)
+        // v55.29 B-217 — sprite asset is side-view (W>H, chimney pointing right).
+        // g14 is top-down vertical race; rotate 90° CCW so chimney points UP
+        // = direction of travel. Scale must use tex.WIDTH (not height) post-rotate.
+        img.rotation = -Math.PI / 2
+        img.scale.set(targetH / tex.width)
         L.playerCharImg = img
         L.player.addChild(img) // TOP of z-stack — covers cleared procedural Graphics
         try { playerSprite.clear() } catch(_){}
@@ -2482,7 +2498,8 @@ function spawnSteam() {
 function buildAI() {
   L.ai.removeChildren()
   S.aiTrains = []
-  const pool = shuffle([...ALL_TRAINS]).slice(0, AI_COUNT)
+  // v55.32 B-221 — use NPC_TRAINS (excludes PROTECTED + AEG Thomas pack).
+  const pool = shuffle([...NPC_TRAINS]).slice(0, AI_COUNT)
   pool.forEach((cfg, i) => {
     const c = new PIXI.Container()
     const spr = new PIXI.Graphics()
@@ -2499,7 +2516,9 @@ function buildAI() {
       PIXI.Assets.load(cfg.spriteUrl).then((tex) => {
         const img = new PIXI.Sprite(tex)
         img.anchor.set(0.5, 0.6)
-        img.scale.set(targetH / tex.height)
+        // v55.29 B-217 — same 90° CCW rotation as player sprite; scale by tex.width post-rotate.
+        img.rotation = -Math.PI / 2
+        img.scale.set(targetH / tex.width)
         c.addChild(img)
         try { spr.clear() } catch(_){}
       }).catch((e) => {
@@ -3573,6 +3592,10 @@ function startRace() {
   // v54.26 polish: cancel any leftover RAFs from the previous race so they don't
   // bleed into this one (boost fade, cooldown, shake).
   try { _g14CancelAllRAFs() } catch(_){}
+  // v55.32 B-220 — resume the Pixi ticker that endRace() stopped at line 3951 to
+  // save CPU on the result screen. Without this, S.running=true sets state but
+  // the render loop never fires → game appears frozen after "Main Lagi".
+  try { if (app && app.ticker && !app.ticker.started) app.ticker.start() } catch(_){}
   S.distance = 0; S.hp = LIVES_MAX; S.pressure = 70
   // v54.19 B12: if kid mode active, +1 HP buffer (applied AFTER reset above).
   if (S.kidMode) S.hp = Math.min(LIVES_MAX + 1, S.hp + 1)

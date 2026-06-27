@@ -1,5 +1,67 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.29-v55.32 "4 critical owner complaints (B-217 B-219 B-220 B-221)"
+
+Owner ask 2026-06-27 (frustrated, with 2 screenshots):
+> *"Ini masih salah menghadapnya. Cek semua karakter thomas dkk. Balik arahnya. ... Dan soalnya jangan aneh2 ngap soal menirukan lampu. ... Dan setelah roda undian itu freeze game stuck. Ini juga bug comment saya. Anda belum perbaiki. ... Kok ada char casey sebagai npc. Jangan. Npc hanya pakai non thomas dkk and non case dkk package."*
+
+4 fixes shipped together in one tranche (one-bug-one-ship deferred per owner urgency).
+
+### B-217 — Thomas/AEG sprites face wrong direction in g14 top-down
+
+Survey agent confirmed: `g14.html:2321` (player) + `g14.html:2502` (AI) use `PIXI.Assets.load` then `new PIXI.Sprite(tex)` with `anchor.set(0.5, 0.6)` + `scale.set(targetH / tex.height)` — **zero rotation applied**. All 26 AEG WebPs are side-view native (W>H, chimney edge-pointing): thomas 149×114, percy 145×118, james 378×131, edward 444×131.
+
+Fix: rotate 90° CCW (`img.rotation = -Math.PI / 2`) so chimney points UP = direction of travel. Scale denominator changed `tex.height` → `tex.width` (post-rotate the visual height comes from the original width). Same patch for player + AI sprites.
+
+PROTECTED chars (Casey JR, Linus Brave, Dragutin, Malivlak) untouched — they render procedurally (no spriteUrl path), so they already work in top-down. g14-side / g15 / g16 untouched — they're horizontal scrollers where side-view native orientation is correct.
+
+### B-219 — "Tirukan urutan lampu" obstacle title copy-edit
+
+Survey agent finding: no actual "imitate lamp" quiz question exists in the 103-entry bank. The owner-flagged text is the TITLE of a Simon-Says memory game obstacle at `games/data/obstacles.js:1620`:
+> Before: `'🎨 Tirukan urutan lampu! (' + seqLength + ' warna)'`
+> After:  `'🎨 Ingat urutan warnanya, lalu tap!'`
+
+Hints rewritten for clarity. Mechanic untouched — color-sequence memory game is age-appropriate.
+
+### B-220 — Roda undian freeze fix (g14 ticker restart)
+
+Survey agent root cause: `g14.html:3951` `endRace()` calls `app.ticker.stop()` to save CPU on the result screen. `startRace()` then sets `S.running = true` but **never calls `app.ticker.start()`** — state updates but the Pixi loop never fires. Game appears frozen after "Main Lagi".
+
+Fix: in `startRace()` (line ~3582), add idempotent ticker restart before `S.distance = 0`:
+```js
+try { if (app && app.ticker && !app.ticker.started) app.ticker.start() } catch(_){}
+```
+
+Hotfix #102-C added the `stop()` without the matching `start()`. v55.32 closes the loop.
+
+### B-221 — NPC pool excludes PROTECTED + Thomas AEG
+
+Owner mandate: NPCs may only use NEUTRAL trains. Casey JR / Linus / Dragutin / Malivlak are PROTECTED → never enemies. Thomas AEG pack → player-only.
+
+**g14.html** — added `NPC_TRAINS` filter (line ~752) that excludes any key starting with `aeg_` or matching one of the 4 PROTECTED slugs. `buildAI()` uses `NPC_TRAINS` instead of `ALL_TRAINS`.
+
+**g14-side.html** — rewrote `buildAITrain()` candidate pool from "character trains except player" (which included Casey + all AEG) to "neutral trains (not PROTECTED, not AEG)". If pool is empty, no AI shown.
+
+### Files touched
+
+- `games/g14.html` — sprite rotation × 2 sites + NPC_TRAINS filter + ticker restart
+- `games/g14-side.html` — AI candidate filter
+- `games/data/obstacles.js` — obstacle title + hints copy-edit
+- `sw.js` — CACHE_VERSION v55.27 → v55.32
+
+### Verification
+
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS.
+- `node tools/visual-qa-comprehensive.mjs` → 7 PASS / 0 FAIL / 0 INFO.
+- `node tools/visual-polish-audit.mjs` → 18 screens / 0 errors / 0 server 404s.
+- `node tools/probe-train-bgm.mjs` → 28/28 PASS.
+- Manual screenshot review: g14 with Casey (PROTECTED) renders procedurally; AI lanes show NEUTRAL trains (yellow excavator + red industrial — no more Casey/Linus/etc. as enemies).
+- B-217 Thomas-with-rotation: owner to verify in browser; if `-Math.PI / 2` shows wrong direction, single-character sign flip to `+Math.PI / 2`.
+
+### Closes B-217 + B-219 + B-220 + B-221. B-218 (button standardization) deferred to its own v55.33 ship.
+
+---
+
 ## 2026-06-27 — v55.27 "g14-side joins Thomas BGM (closes 'untuk semua game kereta' gap)"
 
 v55.25 covered g14, g15, g16. Owner's A-302 ask was *"untuk semua game kereta"* — that includes g14-side. v55.27 closes the gap.

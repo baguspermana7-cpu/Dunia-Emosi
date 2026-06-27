@@ -1617,11 +1617,13 @@
         reward: { coins: 4 + seqLength, badgeProgress: 1, sound: 'success_chime' },
         visual: { cameraZoom: true, highlightSlot: true, successSparkle: true },
         accessibility: { voicePrompt: true, largeTouchTarget: true, reducedMotion: true },
-        title: '🎨 Tirukan urutan lampu! (' + seqLength + ' warna)',
+        // v55.31 B-219 — clearer copy for the kid (was "Tirukan urutan lampu!"
+        // which sounds like "imitate the lamp" out of context; owner flagged).
+        title: '🎨 Ingat urutan warnanya, lalu tap!',
         hints: [
-          'Tap warna dengan urutan yang sama! 💡',
-          'Lihat warnanya menyala satu per satu! ✨',
-          'Coba lagi! 👇',
+          'Lihat warna menyala satu per satu, lalu tap sesuai urutan! ✨',
+          'Coba ingat warna pertama, lalu yang berikutnya! 💡',
+          'Tidak apa-apa salah, coba lagi! 👇',
         ],
 
         interaction: {

@@ -695,14 +695,19 @@ function parseHex(s) {
 
 // v54.90 — AI competitor train in background lane (slightly behind player)
 function buildAITrain() {
-  // Pick a different character train as opponent (random non-player AEG)
+  // v55.32 B-221 — owner: NPCs may NOT be PROTECTED (Casey/Linus/Dragutin/Malivlak)
+  // and may NOT be Thomas AEG pack. Pool = NEUTRAL trains (regular steam/diesel/
+  // electric) which don't have `isCharacter: true`.
   const candidates = []
   if (window.TRAIN_CATS) {
     for (const cat of window.TRAIN_CATS) {
       for (const t of (cat.trains || [])) {
-        if (t.isCharacter && t.spriteUrl && t.key !== (S.trainCfg && S.trainCfg.key)) {
-          candidates.push({ ...t, category: cat.key })
-        }
+        const k = t.key || ''
+        if (t.isCharacter) continue                    // skip all PROTECTED + AEG
+        if (k.indexOf('aeg_') === 0) continue          // belt-and-braces
+        if (!t.spriteUrl && !t.bodyColor) continue     // need *some* visual
+        if (k === (S.trainCfg && S.trainCfg.key)) continue
+        candidates.push({ ...t, category: cat.key })
       }
     }
   }
