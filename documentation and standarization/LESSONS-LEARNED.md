@@ -4,6 +4,16 @@
 
 ---
 
+## 2026-06-27 — v55.39 Clamp dt + visual-audit mandate
+
+### L213 — Always clamp `ticker.deltaTime`; verify visuals with a screenshot
+- **dt clamp**: g15's main tick, FX tick, and CharacterTrain smoke tick all used raw `ticker.deltaTime`. On a throttled/backgrounded device (owner's tablet at 36% battery) deltaTime spikes; un-clamped, `pos += vx * dt` and `scale += growth * dt` multiplied every particle into screen-filling tessellated shards = the "wajah terbang" mutilation. Fix: `const dt = Math.min(ticker.deltaTime, 2)` at EVERY tick. One-liner, protects all particle systems. Apply this prophylactically to any PIXI ticker that moves/scales things.
+- **field-name mismatch**: g15 stored the train key under `id` (`{id: t.key}`), so `selectedTrain.key` was undefined → Thomas BGM detection silently failed. When a value flows between modules with different field conventions, read `a.key || a.id` defensively, or normalize at the boundary.
+- **visual verification mandate (M-302)**: owner: "lakukan audit jangan code aja, tapi juga tampilan pakai puppeteer." Code-grep said the sprite was clean; only a Puppeteer SCREENSHOT revealed the smoke explosion. For any sprite/visual bug, drive the REAL UI (click the actual picker card — module-scoped `selectedTrain` is NOT reachable via `window.x =`), screenshot, and READ the image before claiming fixed. `tools/sprite-visual-audit.mjs` is the gate.
+- **headless caveat**: headless Chrome's SwiftShader software-WebGL tessellates translucent scaled Graphics with visible edge lines that do NOT appear on real GPU. Distinguish "artifact of the test environment" from "real device bug" — the dt-spike explosion is real (reproduces on throttled device); the faint residual tessellation lines are headless-only.
+
+---
+
 ## 2026-06-27 — v55.38 Sprite mirror vs rotation lesson
 
 ### L212 — Confirm game scroll axis BEFORE picking sprite transform

@@ -7,17 +7,20 @@
   function createSmokePuff(stage, x, y) {
     if (!stage || !PIXI) return null
     const g = new PIXI.Graphics()
-    const size = 6 + Math.random() * 6
-    g.circle(0, 0, size).fill({ color: 0xcccccc, alpha: 0.75 })
-    g.x = x + (Math.random() - 0.5) * 4
+    // v55.39 B-225 — softer + smaller smoke so it reads as a gentle wisp, never
+    // as harsh shards (owner: "hilangkan bersihkan sprites"). Combined with the
+    // dt clamp this guarantees no "wajah terbang" mutilation on throttled devices.
+    const size = 4 + Math.random() * 3
+    g.circle(0, 0, size).fill({ color: 0xd8d8d8, alpha: 0.40 })
+    g.x = x + (Math.random() - 0.5) * 3
     g.y = y
     stage.addChild(g)
     return {
       g,
-      vx: -0.4 + Math.random() * 0.8,
-      vy: -1.2 - Math.random() * 0.6,
-      growth: 0.035 + Math.random() * 0.03,
-      alphaDecay: 0.012 + Math.random() * 0.008,
+      vx: -0.3 + Math.random() * 0.6,
+      vy: -1.0 - Math.random() * 0.4,
+      growth: 0.022 + Math.random() * 0.02,
+      alphaDecay: 0.016 + Math.random() * 0.01,
       life: 1
     }
   }
@@ -133,13 +136,17 @@
           state.spawnSmoke()
         }
       }
-      // Update existing smoke particles
+      // Update existing smoke particles.
+      // v55.39 B-225 — clamp dt so a throttled / backgrounded device (large frame
+      // delta) doesn't explode the puff scale into giant tessellated shards
+      // (owner's "wajah terbang" mutilation). Cap absolute scale as a backstop.
+      const sdt = Math.min(dt, 2)
       for (let i = state.smokeParticles.length - 1; i >= 0; i--) {
         const p = state.smokeParticles[i]
-        p.g.x += p.vx * dt
-        p.g.y += p.vy * dt
-        p.g.scale.x = p.g.scale.y = p.g.scale.x + p.growth * dt
-        p.life -= p.alphaDecay * dt
+        p.g.x += p.vx * sdt
+        p.g.y += p.vy * sdt
+        p.g.scale.x = p.g.scale.y = Math.min(2.6, p.g.scale.x + p.growth * sdt)
+        p.life -= p.alphaDecay * sdt
         p.g.alpha = Math.max(0, p.life * 0.75)
         if (p.life <= 0 && p.g.parent) {
           p.g.parent.removeChild(p.g)

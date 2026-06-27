@@ -497,7 +497,7 @@ const TRAIN_MODELS = typeof TRAIN_CATS !== 'undefined'
       const hexToInt = s => parseInt((s||'#000').replace('#',''), 16)
       const typeMap = {steam_id:'steam',steam_world:'steam',diesel_id:'diesel',diesel_world:'diesel',emu:'electric',hsr:'highspeed',maglev:'highspeed',character:'character'}
       const subMap = {steam_id:'classic',steam_world:'pacific',diesel_id:'hood',diesel_world:'boxcab',emu:'krl',hsr:'bullet',maglev:'maglev',character:'featured'}
-      const base = {id:t.key, name:t.name, type:typeMap[cat.key]||'heritage', sub:subMap[cat.key]||'royal',
+      const base = {id:t.key, key:t.key, name:t.name, type:typeMap[cat.key]||'heritage', sub:subMap[cat.key]||'royal',
         v:(ti%5)+1, b:hexToInt(t.bodyColor), r:hexToInt(t.accColor), s:hexToInt(t.accColor),
         w:0xdbeafe, k:0x111827 }
       // Preserve character sprite fields so buildTrain + preview can render real image
@@ -508,6 +508,7 @@ const TRAIN_MODELS = typeof TRAIN_CATS !== 'undefined'
         base.wheelPositions = t.wheelPositions
         base.smokePos = t.smokePos
         base.wheelLayout = t.wheelLayout
+        base.faces = t.faces || 'right'  // v55.39 B-225 — carry facing for mirror
       }
       return base
     }))
@@ -921,14 +922,17 @@ async function initPixi() {
   try {
     // v55.25 — swap to Thomas BGM if a Thomas & Friends char is picked.
     // setTrack() pauses+loads the new src cleanly (A-303 no-collision).
-    if (window.TrainBGM) TrainBGM.setTrack(selectedTrain && selectedTrain.key, 0.0)
+    // v55.39 B-224 — g15 TRAIN_MODELS stores the train id under `id` (and now
+    // also `key`); read whichever exists so Thomas detection works.
+    const _trainKey = selectedTrain && (selectedTrain.key || selectedTrain.id)
+    if (window.TrainBGM) TrainBGM.setTrack(_trainKey, 0.0)
     const bgm = document.getElementById('game-bgm')
     if (bgm) {
       bgm.volume = 0.0
       bgm.play().catch(()=>{})
       const tStart = performance.now()
       // Owner: Thomas BGM 30-50% range. Ramp target = 0.40 for Thomas, 0.35 default.
-      const rampTarget = (window.TrainBGM && TrainBGM.isThomas(selectedTrain && selectedTrain.key)) ? 0.40 : 0.35
+      const rampTarget = (window.TrainBGM && TrainBGM.isThomas(_trainKey)) ? 0.40 : 0.35
       const ramp = () => {
         const k = Math.min(1, (performance.now() - tStart) / 200)
         bgm.volume = rampTarget * k
@@ -951,7 +955,11 @@ async function initPixi() {
 
   app.ticker.add((ticker) => {
     if (!gameRunning || gamePaused || mathQuizActive) return;
-    const dt = ticker.deltaTime;
+    // v55.39 B-225 — clamp dt. On a throttled / backgrounded device (owner's
+    // tablet at low battery) ticker.deltaTime spikes; un-clamped it multiplied
+    // every particle's velocity + scale into giant tessellated shards across
+    // the screen ("wajah terbang" / mutilation). 2 = at most 2 frames of catch-up.
+    const dt = Math.min(ticker.deltaTime, 2);
 
     // Character train animation — wheel spin, body bob, smoke
     if (characterTrainInstance) { characterTrainInstance.tick(dt, gameSpeed); }
@@ -1541,8 +1549,11 @@ function buildTrain() {
     // Per-train TRAIN_X (5% rule + wheel-safe clamp).
     TRAIN_X = CharacterTrain.computeTrainX(scaledCfg, W, 0.05);
     trainContainer.x = TRAIN_X;
-    // Sprite faces RIGHT naturally — don't mirror container
-    trainContainer.scale.x = 1;
+    // v55.39 B-225 — g15 scrolls RIGHT (direction of travel). Mirror the
+    // left-facing AEG chars (Carly etc.) so they face the right. Right/forward
+    // stay native. (Previously hardcoded scale.x=1, ignoring `.faces`.)
+    const _faces = (selectedTrain && selectedTrain.faces) || scaledCfg.faces || 'right';
+    trainContainer.scale.x = (_faces === 'left') ? -1 : 1;
     characterTrainInstance = CharacterTrain.mount(trainContainer, scaledCfg);
     if (characterTrainInstance) characterTrainInstance.setSmokeParent(stage);
     return;
@@ -2628,7 +2639,7 @@ function flashScreen(type) {
 const _g15FXPool = [];
 let _g15FXBound = false;
 function _g15TickFX(ticker){
-  const d = ticker.deltaTime;
+  const d = Math.min(ticker.deltaTime, 2); // v55.39 B-225 — clamp dt (see main tick)
   for (let i = _g15FXPool.length - 1; i >= 0; i--) {
     const p = _g15FXPool[i];
     p.gfx.x += p.vx * d; p.gfx.y += p.vy * d;

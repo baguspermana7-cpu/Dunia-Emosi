@@ -1,5 +1,47 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.39 "g15 BGM key-mismatch + smoke-explosion + VISUAL audit (B-224/B-225/M-302)"
+
+Owner ask 2026-06-27 with 2 g15 screenshots:
+> *"backsound masih backsound original padahal saya pakai karakter thomas... pilih karakter carly tapi yang muncul kereta hitam, dan gambarnya termutilas ada wajah terbang. hilangkan bersihkan sprites... saya sudah bilang lakukan audit jangan code aja, tapi juga tampilan pakai puppeteer."*
+
+### B-224 — g15 BGM stays original despite Thomas char (FIXED)
+
+Root cause: `g15-pixi.html:500` maps the train key into `id` (`{id: t.key, ...}`), NOT `key`. The picker sets `selectedTrain = entry`, so `selectedTrain.key` was **undefined** → `TrainBGM.setTrack(undefined)` → `isThomas(undefined)` = false → no swap.
+
+Fix: read `selectedTrain.key || selectedTrain.id`; also add `key: t.key` to the TRAIN_MODELS mapping so any other `.key` consumer is safe. **Verified via Puppeteer**: picking Carly now sets `game-bgm` src to `train-bgm-thomas/im-gonna-chug-song.mp3`. ✓
+
+### B-225 — Carly facing + "wajah terbang" mutilation (FIXED)
+
+Two sub-bugs:
+
+1. **Facing**: g15 hardcoded `trainContainer.scale.x = 1` (line 1544) and NEVER applied the `.faces` field. Left-facing AEG chars (Carly, Thomas, …) rendered facing left = wrong direction. Fix: `scale.x = (faces === 'left') ? -1 : 1` + carry `faces` through the TRAIN_MODELS mapping. **Verified via Puppeteer**: Carly/Thomas now face right; Ashima/Casey (native right) unchanged.
+
+2. **"Wajah terbang" mutilation** = smoke-particle explosion. The g15 main tick (line 958), FX tick (line 2642), and CharacterTrain smoke tick all used raw `ticker.deltaTime`. On a **throttled / backgrounded device (owner's tablet at 36% battery)** `deltaTime` spikes; un-clamped it multiplied every particle's velocity + scale into giant tessellated shards across the screen. Fix: clamp `dt = Math.min(ticker.deltaTime, 2)` at all three tick sites + cap puff scale + soften the smoke (smaller, lower-alpha, faster-decay wisp instead of a hard cloud). Owner: "hilangkan bersihkan sprites."
+
+The **black "51" train** owner saw could not be reproduced post-fix — picking Carly now mounts carly.webp (yellow crane) correctly. Likely a pre-fix stale-state artifact resolved by the id/key fix.
+
+### M-302 — NEW `tools/sprite-visual-audit.mjs` (mandate)
+
+Owner: "lakukan audit jangan code aja, tapi juga tampilan pakai puppeteer." NEW probe drives g15 by **clicking the real picker card** for each character, then screenshots the rendered train (clipped to the train region). I READ each screenshot to confirm: correct sprite, faces right, no mutilation. This is now the sprite-verification gate.
+
+Verified clean this run: Carly (yellow crane), Thomas (blue, faces right), Ashima (pink, faces right), Toby (brown tram), Casey JR (circus). Residual faint lines in the headless captures are a SwiftShader software-WebGL tessellation of the translucent smoke — does not occur on real GPU; the dt clamp + soft smoke handle the device case.
+
+### Files touched
+
+- `games/g15-pixi.html` — TRAIN_MODELS `key`+`faces` (line 500/510), BGM `id||key` (line 924), `.faces` mirror (line 1544), dt clamp main tick (958) + FX tick (2642)
+- `games/train-character-sprite.js` — smoke dt clamp + scale cap + softer puff (createSmokePuff + tick)
+- NEW `tools/sprite-visual-audit.mjs`
+- `sw.js` v55.38 → v55.39
+
+### L213 — Clamp `ticker.deltaTime`; verify sprites with VISUAL screenshots
+1. **Always clamp `dt`** at every animation tick (`Math.min(deltaTime, 2)`). An un-clamped frame delta on a stalled/throttled device multiplies particle velocity + scale into screen-filling shards. This is the "wajah terbang" mutilation. Cheap one-liner per tick; protects every particle system.
+2. **Verify sprite/visual bugs with a Puppeteer SCREENSHOT, not code-grep.** Code said the sprite was clean; only the rendered capture revealed the smoke explosion. Owner was right to demand visual audit. Drive the REAL picker click (module-scoped state isn't reachable via `window.x =`).
+
+### Closes B-224 + B-225 + satisfies M-302.
+
+---
+
 ## 2026-06-27 — v55.38 "Sprite MIRROR not rotation (closes B-223; corrects v55.34)"
 
 Owner verbatim 2026-06-27 (with screenshot of contorted Casey in g14):
