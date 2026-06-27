@@ -190,10 +190,14 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 
 /* Action buttons */
 #action-btns{display:none;grid-template-columns:1fr 1fr;gap:8px}
-.act-btn{padding:13px 10px;border-radius:16px;border:2px solid;color:#fff;font-size:16px;font-weight:900;cursor:pointer;font-family:inherit;transition:transform 0.1s;-webkit-tap-highlight-color:transparent;text-align:center}
-.act-btn:active{transform:scale(0.92)}
-#btn-fight{background:linear-gradient(160deg,#7C3AED,#6D28D9);border-color:#A78BFA;box-shadow:0 5px 0 #4C1D95}
-#btn-switch{background:linear-gradient(160deg,#0D9488,#0F766E);border-color:#2DD4BF;box-shadow:0 5px 0 #064E3B}
+/* v55.36 B-218 — action buttons (Fight/Switch) standardized.
+   Fight = primary purple, Switch = success green, both pastel-softened. */
+.act-btn{padding:13px 10px;min-height:44px;border-radius:16px;border:2.5px solid;font-size:16px;font-weight:900;cursor:pointer;font-family:inherit;transition:transform .08s,box-shadow .12s;-webkit-tap-highlight-color:transparent;text-align:center}
+.act-btn:active{transform:translateY(2px)}
+#btn-fight{background:linear-gradient(160deg,#a78bfa,#8b5cf6);color:#fff;border-color:#c4b5fd;box-shadow:0 4px 0 #6d28d9}
+#btn-fight:active{box-shadow:0 1px 0 #6d28d9}
+#btn-switch{background:linear-gradient(160deg,#4ade80,#22c55e);color:#fff;border-color:#86efac;box-shadow:0 4px 0 #15803d}
+#btn-switch:active{box-shadow:0 1px 0 #15803d}
 
 /* Move selection */
 #move-panel{display:none;flex-direction:column;gap:8px}
@@ -201,7 +205,11 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 #move-back{background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.2);border-radius:10px;padding:5px 10px;color:#fff;cursor:pointer;font-family:inherit;font-size:13px}
 #move-label{color:#a78bfa;font-size:13px;font-weight:700}
 #move-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.move-btn{padding:10px 6px;border-radius:14px;border:2px solid;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15;gap:2px;overflow:hidden}
+/* v55.36 B-218 — move buttons pastel-softened. Type hue still recognizable
+   (water blue, fire orange) but background is a pastel tint, border carries
+   the brand color, text is dark. Matches v55.6 obstacle modal + v55.35
+   quiz palette tone. */
+.move-btn{padding:10px 6px;min-height:44px;border-radius:14px;border:2.5px solid;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15;gap:2px;overflow:hidden;transition:transform .08s,box-shadow .12s}
 .move-btn .mv-en{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;line-height:1.15}
 .move-btn .mv-id{font-size:9px;opacity:0.8;font-weight:500;font-style:italic;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 @media(min-width:380px){.move-btn .mv-en{font-size:15px}.move-btn .mv-id{font-size:9.5px}}
@@ -213,11 +221,13 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 #switch-back{background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.2);border-radius:10px;padding:5px 10px;color:#fff;cursor:pointer;font-family:inherit;font-size:13px}
 #switch-label{color:#2DD4BF;font-size:13px;font-weight:700}
 #switch-btns{display:flex;flex-wrap:wrap;gap:8px}
-.sw-btn{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:14px;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.07);color:#fff;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;flex:1;min-width:120px;-webkit-tap-highlight-color:transparent}
+/* v55.36 B-218 — Pokemon switch buttons pastel-softened. Active poke gets
+   gold border accent (Pokemon currently in battle). */
+.sw-btn{display:flex;align-items:center;gap:8px;padding:8px 12px;min-height:44px;border-radius:14px;border:2.5px solid #e6dff0;background:#fefdf7;color:#3b2a4a;cursor:pointer;font-family:inherit;font-size:13px;font-weight:800;flex:1;min-width:120px;-webkit-tap-highlight-color:transparent;transition:transform .08s,border-color .15s}
 .sw-btn img{width:36px;height:36px;object-fit:contain}
-.sw-btn:active{transform:scale(0.93)}
-.sw-btn.fainted{opacity:0.35;pointer-events:none}
-.sw-btn.active-poke{border-color:#fbbf24;background:rgba(251,191,36,0.12)}
+.sw-btn:active{transform:scale(0.96)}
+.sw-btn.fainted{opacity:0.45;pointer-events:none}
+.sw-btn.active-poke{border-color:#f59e0b;background:#fef9e7;box-shadow:0 0 0 2px rgba(251,191,36,0.18)}
 
 /* Math quiz panel */
 #math-panel{display:none;flex-direction:column;align-items:center;gap:8px;padding:2px 0 4px}
@@ -294,24 +304,27 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 /* Result overlay handled by game-modal.js */
 
 /* type colors */
-.type-normal{background:linear-gradient(160deg,#6b7280,#4b5563);border-color:#9ca3af;box-shadow:0 5px 0 #374151}
-.type-fire{background:linear-gradient(160deg,#c2410c,#ea580c);border-color:#fb923c;box-shadow:0 5px 0 #9a3412}
-.type-water{background:linear-gradient(160deg,#1d4ed8,#2563eb);border-color:#60a5fa;box-shadow:0 5px 0 #1e3a8a}
-.type-grass{background:linear-gradient(160deg,#15803d,#16a34a);border-color:#4ade80;box-shadow:0 5px 0 #14532d}
-.type-electric{background:linear-gradient(160deg,#a16207,#ca8a04);border-color:#fbbf24;box-shadow:0 5px 0 #713f12}
-.type-psychic{background:linear-gradient(160deg,#9d174d,#be185d);border-color:#f472b6;box-shadow:0 5px 0 #831843}
-.type-rock{background:linear-gradient(160deg,#78716c,#57534e);border-color:#a8a29e;box-shadow:0 5px 0 #44403c}
-.type-ghost{background:linear-gradient(160deg,#4c1d95,#5b21b6);border-color:#a78bfa;box-shadow:0 5px 0 #2e1065}
-.type-ice{background:linear-gradient(160deg,#0e7490,#0891b2);border-color:#67e8f9;box-shadow:0 5px 0 #164e63}
-.type-dragon{background:linear-gradient(160deg,#1d4ed8,#7c3aed);border-color:#818cf8;box-shadow:0 5px 0 #1e3a8a}
-.type-dark{background:linear-gradient(160deg,#1c1917,#292524);border-color:#78716c;box-shadow:0 5px 0 #0c0a09}
-.type-steel{background:linear-gradient(160deg,#475569,#334155);border-color:#94a3b8;box-shadow:0 5px 0 #1e293b}
-.type-fighting{background:linear-gradient(160deg,#9a3412,#b91c1c);border-color:#fca5a5;box-shadow:0 5px 0 #7f1d1d}
-.type-ground{background:linear-gradient(160deg,#92400e,#b45309);border-color:#fcd34d;box-shadow:0 5px 0 #78350f}
-.type-flying{background:linear-gradient(160deg,#1e40af,#3b82f6);border-color:#bae6fd;box-shadow:0 5px 0 #1e3a8a}
-.type-poison{background:linear-gradient(160deg,#6b21a8,#7e22ce);border-color:#d946ef;box-shadow:0 5px 0 #4a044e}
-.type-bug{background:linear-gradient(160deg,#3f6212,#4d7c0f);border-color:#a3e635;box-shadow:0 5px 0 #1a2e05}
-.type-fairy{background:linear-gradient(160deg,#9d174d,#db2777);border-color:#fbcfe8;box-shadow:0 5px 0 #831843}
+/* v55.36 B-218 — type rules pastel-softened. Background = pastel tint;
+   border = brand hue (still recognizable); text = dark hue-matched. */
+.type-normal  {background:#f5f5f5;color:#374151;border-color:#9ca3af;box-shadow:0 4px 0 #d1d5db}
+.type-fire    {background:#fed7aa;color:#9a3412;border-color:#fb923c;box-shadow:0 4px 0 #fdba74}
+.type-water   {background:#bfdbfe;color:#1e40af;border-color:#60a5fa;box-shadow:0 4px 0 #93c5fd}
+.type-grass   {background:#bbf7d0;color:#14532d;border-color:#4ade80;box-shadow:0 4px 0 #86efac}
+.type-electric{background:#fef3c7;color:#713f12;border-color:#fbbf24;box-shadow:0 4px 0 #fcd34d}
+.type-psychic {background:#fbcfe8;color:#831843;border-color:#f472b6;box-shadow:0 4px 0 #f9a8d4}
+.type-rock    {background:#e7e5e4;color:#44403c;border-color:#a8a29e;box-shadow:0 4px 0 #d6d3d1}
+.type-ghost   {background:#e9d5ff;color:#5b21b6;border-color:#a78bfa;box-shadow:0 4px 0 #c4b5fd}
+.type-ice     {background:#cffafe;color:#164e63;border-color:#67e8f9;box-shadow:0 4px 0 #a5f3fc}
+.type-dragon  {background:#dbeafe;color:#3730a3;border-color:#818cf8;box-shadow:0 4px 0 #c7d2fe}
+.type-dark    {background:#e7e5e4;color:#1c1917;border-color:#78716c;box-shadow:0 4px 0 #a8a29e}
+.type-steel   {background:#e2e8f0;color:#334155;border-color:#94a3b8;box-shadow:0 4px 0 #cbd5e1}
+.type-fighting{background:#fecaca;color:#7f1d1d;border-color:#fca5a5;box-shadow:0 4px 0 #fda4af}
+.type-ground  {background:#fef3c7;color:#78350f;border-color:#fcd34d;box-shadow:0 4px 0 #fde68a}
+.type-flying  {background:#dbeafe;color:#0c4a6e;border-color:#7dd3fc;box-shadow:0 4px 0 #bae6fd}
+.type-poison  {background:#f3e8ff;color:#581c87;border-color:#d946ef;box-shadow:0 4px 0 #e9d5ff}
+.type-bug     {background:#ecfccb;color:#3f6212;border-color:#a3e635;box-shadow:0 4px 0 #bef264}
+.type-fairy   {background:#fce7f3;color:#831843;border-color:#fbcfe8;box-shadow:0 4px 0 #f9a8d4}
+.move-btn:active{transform:translateY(2px);box-shadow:0 1px 0 currentColor !important}
 
 /* ── Trainer group headers ── */
 .tg-header{font-size:13px;font-weight:900;color:var(--gc,#a78bfa);letter-spacing:1px;padding:10px 0 4px;border-bottom:2px solid var(--gc,rgba(167,139,250,0.4));margin:12px 0 8px;cursor:pointer;display:flex;align-items:center;gap:6px}

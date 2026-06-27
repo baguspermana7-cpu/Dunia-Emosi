@@ -1,5 +1,61 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.36 "Button standardization phase 2 — Pokemon move + action + switch (B-218)"
+
+Phase 2 of B-218. Owner specifically called out "button di game pokemon" as an example of inconsistency. v55.35 fixed the math quiz; v55.36 closes the rest of g13c (Pokemon Pertarungan): the 18 type-specific move buttons + Fight/Switch action menu + Pokemon switch list.
+
+### Type-button design — pastel hue retention
+
+Pokemon types had to keep brand-color recognition (water = blue, fire = orange) so kids learn "this Pokemon is fire-type, that move is water-type". Direct pastel-flatten would erase that learning.
+
+**Solution**: each type gets a 3-color stack:
+- **Background** = pastel tint of the type color (very soft)
+- **Border** = brand-saturated mid-tone (clearly recognizable hue)
+- **Text** = dark version of the same hue (readable + thematic)
+
+Example (Fire):
+```
+Before: background #c2410c → #ea580c (gradient dark orange), text #fff
+After:  background #fed7aa (pastel peach), border #fb923c (brand orange), text #9a3412 (dark)
+```
+
+All 18 types rewritten with this pattern. Hue preserved, intensity dropped to match v55.6 obstacle modal + v55.35 quiz row.
+
+### Action buttons (Fight / Switch)
+
+- `#btn-fight` → purple gradient #a78bfa→#8b5cf6 (du-btn-primary alias), white text, 4px shadow
+- `#btn-switch` → green gradient #4ade80→#22c55e (du-btn-success alias), white text, 4px shadow
+
+Both use the canonical du-btn shape (16px radius, 44px min height, translateY active).
+
+### Switch buttons (Pokemon list)
+
+- Base: cream background #fefdf7 + lavender border + dark text (matches du-card-btn token)
+- `.active-poke`: gold border + cream-yellow background + 2px ring shadow (clear "currently in battle" state)
+- `.fainted`: opacity 0.45 (softer than 0.35; fainted Pokemon still readable)
+
+### Files touched
+
+- `games/g13c-pixi.html` — 18 type rules + .move-btn base + .act-btn + #btn-fight + #btn-switch + .sw-btn rewrites (~30 lines net change)
+- `sw.js` v55.35 → v55.36
+
+### Verification
+
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS
+- `node tools/visual-polish-audit.mjs` → 18 screens / 0 errors / 0 server 404s
+- Pokemon Pertarungan rendering: math quiz (v55.35) + move buttons (v55.36) + action menu (v55.36) all share the pastel-soft DNA
+
+### Phase progress B-218
+
+| Phase | Scope | Status |
+|---|---|---|
+| v55.35 | Quiz answers (math/quiz rows) across g13c + g14 + g15 | ✅ shipped |
+| **v55.36** | **g13c move buttons (18 types) + Fight/Switch + Pokemon list** | **✅ shipped** |
+| v55.37 | Train picker cards (.train-card / .cat-btn / .tcard / .tfbtn) | deferred |
+| v55.38 | Rename obstacle-engine + game-modal classes to canonical .du-* | deferred |
+
+---
+
 ## 2026-06-27 — v55.35 "Button standardization phase 1 — pastel quiz answers (B-218 POC)"
 
 Owner mandate 2026-06-27: *"button, pilihan jawabannya itu bentuk dan colour pallet stylenya tidak sama dg yg game2 lain (contoh button di game pokemon atau game tebak huruf kata dll)... Kamu itu nggak standard."*
