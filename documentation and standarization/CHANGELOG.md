@@ -1,5 +1,9 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.59 "g14 HUD → soft pastel" (A-311)
+
+The g14 HUD used dark `rgba(0,0,0,.78)` pills (built for the old dark scenes) which clashed with the new bright Indonesian scene. Restyled to **soft-pastel cream rounded cards** (owner: *"hud pastell ok"*): cream `#fffdf6` chips with soft lavender/amber borders + soft drop-shadows, dark ink text, light top gradient. Back/pause/train-name/distance/position/speed all pastel; hearts kept with a soft drop-shadow. Verified: real race at 412×915, 0 console errors, HUD reads cleanly on the bright scene. sw `v55.58→v55.59`. (g15 HUD + power-up tray next.)
+
 ## 2026-06-27 — v55.58 "Lokomotif Pemberani → Indonesian scene LIVE (g15 = g14)" (A-311 Phase 6)
 
 g15 now has the SAME Indonesian scene as Balapan Kereta, so both train games match the reference.
