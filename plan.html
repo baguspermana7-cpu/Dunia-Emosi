@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<title>🎮 Engine Riset — Diskusi Owner</title>
+<style>
+  :root{
+    --purple:#8B5CF6; --purple-dark:#6d28d9; --purple-soft:#c4a5e0;
+    --cream:#fefdf7; --cream-2:#fef9e7; --cream-3:#fef3d4;
+    --gold:#fde68a; --gold-deep:#f59e0b;
+    --sage:#a8d8a8; --sage-deep:#4a7c4a;
+    --rose:#f4a8a8; --rose-deep:#8a4a4a;
+    --powder:#b4d4f0; --powder-deep:#6b8eb8;
+    --ink:#3b2a4a; --muted:#6b5b7a; --line:#e6dff0;
+    --bg:#faf7ff;
+    --shadow:0 6px 24px rgba(139,92,246,0.10);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'Nunito','SF Pro Rounded',system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+  body{padding:24px 18px 80px;max-width:980px;margin:0 auto;line-height:1.55}
+  h1,h2,h3,h4{font-family:'Baloo 2','Nunito',sans-serif;letter-spacing:-0.01em;line-height:1.2;margin:0 0 0.4em}
+  h1{font-size:clamp(28px,5vw,42px);color:var(--purple-dark)}
+  h2{font-size:clamp(22px,3.5vw,30px);color:var(--purple-dark);margin-top:1.4em}
+  h3{font-size:clamp(18px,2.6vw,22px);color:var(--ink);margin-top:1em}
+  h4{font-size:16px;color:var(--muted);margin-top:0.8em;text-transform:uppercase;letter-spacing:0.04em;font-weight:700}
+  p{margin:0 0 0.8em}
+  code,pre{font-family:'JetBrains Mono','Fira Code',ui-monospace,monospace;font-size:13px}
+  pre{background:#2d1f3d;color:#e6dff0;padding:14px 16px;border-radius:10px;overflow-x:auto;line-height:1.55;margin:8px 0 16px}
+  pre code{color:inherit;background:transparent;padding:0}
+  code{background:var(--cream-2);color:var(--purple-dark);padding:2px 6px;border-radius:4px;font-size:0.9em}
+  a{color:var(--purple);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s}
+  a:hover{border-color:var(--purple)}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+  th,td{padding:9px 11px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--cream-2);font-weight:700;color:var(--ink);font-size:12px;text-transform:uppercase;letter-spacing:0.04em}
+  td:first-child{font-weight:700;color:var(--purple-dark);white-space:nowrap}
+  /* hero */
+  .hero{background:linear-gradient(135deg,#fffdf7 0%,var(--cream-2) 50%,#f5edff 100%);border:1px solid var(--gold);border-radius:18px;padding:24px 22px;margin-bottom:24px;box-shadow:var(--shadow)}
+  .hero h1{margin-bottom:6px}
+  .hero .sub{color:var(--muted);font-size:15px;margin:0 0 14px}
+  .hero .meta{display:flex;flex-wrap:wrap;gap:6px;font-size:11.5px;text-transform:uppercase;letter-spacing:0.05em}
+  .hero .meta span{background:var(--cream);border:1px solid var(--gold);padding:4px 10px;border-radius:999px;color:var(--purple-dark);font-weight:700}
+  /* owner-quote */
+  .quote{background:var(--cream);border-left:4px solid var(--purple-soft);padding:12px 16px;border-radius:0 10px 10px 0;font-style:italic;color:var(--ink);margin:10px 0 14px}
+  .quote-attr{font-style:normal;color:var(--muted);font-size:12.5px;margin-top:6px;letter-spacing:0.04em;text-transform:uppercase}
+  /* answer-table */
+  .answers{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:12px 0 16px}
+  .answers dl{margin:0}
+  .answers dt{font-weight:700;color:var(--purple-dark);margin-top:8px;font-size:13.5px}
+  .answers dt:first-child{margin-top:0}
+  .answers dd{margin:2px 0 0;color:var(--ink);font-size:14.5px;line-height:1.4}
+  /* section card */
+  .section{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px 22px 14px;margin-bottom:18px;box-shadow:0 2px 8px rgba(60,40,80,0.03)}
+  .section[data-engine="pixi"]{border-color:var(--sage);background:linear-gradient(180deg,#fff 0%,#f3fbf3 100%)}
+  /* chips */
+  .chip{display:inline-block;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;letter-spacing:0.03em;margin:2px 4px 2px 0;border:1px solid;vertical-align:middle}
+  .chip-rec{background:var(--sage);color:var(--sage-deep);border-color:var(--sage-deep)}
+  .chip-warn{background:var(--cream-3);color:var(--rose-deep);border-color:var(--rose)}
+  .chip-info{background:var(--cream-2);color:var(--purple-dark);border-color:var(--gold-deep)}
+  .chip-skip{background:#f0eaf6;color:var(--muted);border-color:var(--purple-soft)}
+  /* eng-head */
+  .eng-head{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+  .eng-logo{width:54px;height:54px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0;background:var(--cream-2);border:1px solid var(--gold)}
+  .eng-title{flex:1;min-width:200px}
+  .eng-title h2{margin:0 0 4px;font-size:24px}
+  .eng-title .url{font-size:13px;color:var(--muted)}
+  /* matrix */
+  .matrix-wrap{overflow-x:auto;margin:0 -22px;padding:0 22px}
+  .matrix{font-size:12.5px}
+  .matrix th:first-child,.matrix td:first-child{position:sticky;left:0;background:#fff}
+  .matrix th:first-child{background:var(--cream-2)}
+  .matrix .star{color:var(--gold-deep);letter-spacing:-2px;white-space:nowrap}
+  .matrix .ok{color:var(--sage-deep);font-weight:700}
+  .matrix .no{color:var(--rose-deep);font-weight:700}
+  .matrix .meh{color:var(--gold-deep);font-weight:700}
+  .matrix tr td.win{background:#f3fbf3}
+  /* pros/cons */
+  .pro-con{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:10px 0}
+  .pro,.con{padding:12px 14px;border-radius:10px}
+  .pro{background:#f3fbf3;border:1px solid var(--sage);color:var(--sage-deep)}
+  .con{background:#fcefef;border:1px solid var(--rose);color:var(--rose-deep)}
+  .pro h4,.con h4{margin:0 0 4px;color:inherit;letter-spacing:0.05em;font-size:11px}
+  .pro ul,.con ul{margin:0;padding-left:18px;line-height:1.55;font-size:13.5px;color:var(--ink)}
+  /* dev-day */
+  .devday{background:var(--cream);border:1px dashed var(--purple-soft);border-radius:10px;padding:12px 14px;margin:10px 0;font-size:13.5px}
+  .devday strong{color:var(--purple-dark)}
+  /* migration */
+  .migration{background:var(--cream-2);border-radius:10px;padding:12px 14px;margin:10px 0;font-size:13.5px}
+  .migration ol{margin:6px 0 0;padding-left:20px}
+  .migration li{margin:4px 0}
+  /* discussion buttons */
+  .vote{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0;align-items:center}
+  .vote-label{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:0.04em;text-transform:uppercase;margin-right:4px}
+  .vote button{font-family:inherit;font-size:13px;font-weight:700;border:2px solid;border-radius:999px;padding:6px 14px;cursor:pointer;background:#fff;transition:transform .08s,box-shadow .12s;min-width:44px;min-height:44px}
+  .vote button:active{transform:scale(0.94)}
+  .vote .v-yes{border-color:var(--sage-deep);color:var(--sage-deep)}
+  .vote .v-yes.active{background:var(--sage);color:#fff;box-shadow:0 4px 12px rgba(74,124,74,0.25)}
+  .vote .v-maybe{border-color:var(--gold-deep);color:var(--gold-deep)}
+  .vote .v-maybe.active{background:var(--gold-deep);color:#fff;box-shadow:0 4px 12px rgba(245,158,11,0.25)}
+  .vote .v-no{border-color:var(--rose-deep);color:var(--rose-deep)}
+  .vote .v-no.active{background:var(--rose-deep);color:#fff;box-shadow:0 4px 12px rgba(138,74,74,0.25)}
+  /* toc */
+  .toc{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:18px;font-size:13.5px}
+  .toc h4{margin:0 0 6px}
+  .toc ol{margin:0;padding-left:20px;line-height:1.65}
+  .toc a{font-weight:600}
+  /* recommendation block */
+  .rec-final{background:linear-gradient(135deg,#f3fbf3 0%,#fffdf7 100%);border:2px solid var(--sage-deep);border-radius:16px;padding:22px 24px;margin:14px 0}
+  .rec-final h3{color:var(--sage-deep);margin-top:0}
+  .rec-final .rec-tag{display:inline-block;background:var(--sage-deep);color:#fff;font-size:11px;font-weight:700;letter-spacing:0.06em;padding:4px 12px;border-radius:999px;margin-bottom:8px;text-transform:uppercase}
+  /* mockup ascii */
+  .ascii{background:#2d1f3d;color:#c4a5e0;padding:14px 16px;border-radius:10px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11.5px;line-height:1.4;white-space:pre;overflow-x:auto;margin:8px 0 14px;border:1px solid #4a3960}
+  /* status footer */
+  .footer{text-align:center;color:var(--muted);font-size:12px;margin-top:30px;padding-top:18px;border-top:1px solid var(--line)}
+  /* responsive */
+  @media (max-width:600px){
+    body{padding:16px 12px 60px}
+    .section{padding:18px 16px 12px}
+    .pro-con{grid-template-columns:1fr}
+    .hero{padding:18px 16px}
+  }
+</style>
+</head>
+<body>
+
+<!-- §1 HERO -->
+<div class="hero">
+  <h1>🎮 Engine Riset — Diskusi Owner</h1>
+  <p class="sub">4 engine dievaluasi untuk masa depan Dunia Emosi. Read → review → diskusi. Setiap section punya tombol vote di bawah.</p>
+  <div class="meta">
+    <span>v55.28</span><span>2026-06-27</span><span>A-304</span><span>parallel ke v55.29+</span>
+  </div>
+
+  <h4 style="margin-top:18px">Owner Ask (verbatim)</h4>
+  <div class="quote">
+    "try to research more powerful engine to create game, and put some mock up dan detail di http://localhost:8081/Dunia-Emosi/plan.html kita diskusi dan review disitu. saya mikirnya mungkin <strong>unity engine</strong>, karena itu engine yang bisa anda kontrol pakai command kan? paralel tetap ada yang keep improve and refine game dunia emosi lebih bagus lagi lebih keren."
+    <div class="quote-attr">— Bagus, 2026-06-27</div>
+  </div>
+
+  <h4>Owner Clarifying Answers</h4>
+  <div class="answers">
+    <dl>
+      <dt>1. Target distribusi?</dt>
+      <dd>✅ <strong>Web/PWA</strong> — anak buka di browser HP/tablet (status quo).</dd>
+      <dt>2. Migration appetite?</dt>
+      <dd>✅ <strong>Incremental</strong> — keep current PixiJS, upgrade satu game per minggu.</dd>
+      <dt>3. Engine yang dieksplor di plan ini?</dt>
+      <dd>✅ <strong>Semua 4</strong>: Unity 6 LTS, Godot 4, Phaser 3, PixiJS 8 Enhanced.</dd>
+    </dl>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <h4>📑 Daftar Isi</h4>
+  <ol>
+    <li><a href="#konteks">Konteks &amp; Mengapa Sekarang</a></li>
+    <li><a href="#matrix">Comparison Matrix (heart of the page)</a></li>
+    <li><a href="#unity">Unity 6 LTS — Owner's first suggestion</a></li>
+    <li><a href="#godot">Godot 4 — strongest 2D alternative</a></li>
+    <li><a href="#phaser">Phaser 3 — JS-native middle ground</a></li>
+    <li><a href="#pixi">PixiJS 8 Enhanced (current) — recommended</a></li>
+    <li><a href="#rec">Rekomendasi &amp; Discussion</a></li>
+  </ol>
+</div>
+
+<!-- §2 KONTEKS -->
+<div class="section" id="konteks">
+  <h2>1. Konteks &amp; Mengapa Sekarang</h2>
+  <p>Dunia Emosi sudah melewati marathon <strong>v55.0 → v55.27</strong>: <strong>24+ commit</strong>, <strong>16 bug</strong> ditutup (B-201 → B-216), <strong>3 ask owner</strong> dipenuhi (A-301 standing, A-302 Thomas BGM, A-303 anti-collision), <strong>17 lesson</strong> dipropagasi (L195 → L211).</p>
+  <p>Stack sekarang: <strong>vanilla JS + Pixi 8 + DOM</strong>. Total 25+ game (g6 sampai g25 + train games). Engine yang sudah dipakai luas:</p>
+  <ul>
+    <li><code>PIXI.Application</code> (g13c, g14, g15, g16, g17, g19, g20, g21, g22, g23, g24)</li>
+    <li><code>train-bg-engine.js</code> + <code>obstacle-engine.js</code> + <code>battle-sprite-engine.js</code> (shared)</li>
+    <li><code>SFXEngine</code> + <code>TrainBGM</code> (audio, v55.18 + v55.25)</li>
+  </ul>
+  <p>Pertanyaan: <strong>apakah stack ini sudah ceiling?</strong> Atau masih banyak head-room untuk grow tanpa migrasi?</p>
+  <p>Jawaban jujur — keduanya bisa benar tergantung tujuan:</p>
+  <ul>
+    <li>Kalau owner mau <strong>3D dunia eksploratif</strong>, kompleks particle, photorealistic shader → Pixi 8 = ceiling. Unity/Godot menang.</li>
+    <li>Kalau owner mau <strong>2D edukatif super polished</strong>, kid-friendly, fast iteration, ringan di HP murah → Pixi 8 belum ada ceiling. Tinggal pasang sidecar libraries.</li>
+  </ul>
+</div>
+
+<!-- §3 MATRIX -->
+<div class="section" id="matrix">
+  <h2>2. Comparison Matrix</h2>
+  <p>10 kriteria × 4 engine. Highlight kolom <strong>PixiJS 8</strong> karena = current stack (zero migration cost).</p>
+  <div class="matrix-wrap">
+    <table class="matrix">
+      <thead>
+        <tr><th>Kriteria</th><th>Unity 6 LTS</th><th>Godot 4</th><th>Phaser 3</th><th>PixiJS 8 (current)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Bahasa</td><td>C#</td><td>GDScript / C#</td><td class="ok">JavaScript / TS</td><td class="ok win">JavaScript / TS</td></tr>
+        <tr><td>Web/PWA bundle</td><td class="no">WebGL 5–10 MB</td><td class="meh">HTML5 2–3 MB</td><td class="ok">~500 KB</td><td class="ok win">&lt;300 KB</td></tr>
+        <tr><td>Native APK (future)</td><td class="ok">excellent</td><td class="ok">excellent</td><td class="meh">via Capacitor</td><td class="meh win">via Capacitor</td></tr>
+        <tr><td>Owner JS skill reuse</td><td class="no">❌</td><td class="no">❌</td><td class="ok">✅</td><td class="ok win">✅ 100%</td></tr>
+        <tr><td>2D rendering</td><td class="star">★★★★★</td><td class="star">★★★★★</td><td class="star">★★★★</td><td class="star win">★★★★</td></tr>
+        <tr><td>3D capability</td><td class="star">★★★★★</td><td class="star">★★★★</td><td class="meh">via Three.js</td><td class="meh win">via Three.js</td></tr>
+        <tr><td>CLI-buildable</td><td class="ok">✅</td><td class="ok">✅</td><td class="ok">✅ vite</td><td class="ok win">✅ no build needed</td></tr>
+        <tr><td>Iterasi (save → see)</td><td class="no">slow (build)</td><td class="meh">medium</td><td class="ok">fast</td><td class="ok win">fastest (refresh)</td></tr>
+        <tr><td>Migrasi 25 game</td><td class="no">~6 bulan</td><td class="no">~3–4 bulan</td><td class="meh">~6–8 minggu</td><td class="ok win">hari (incremental)</td></tr>
+        <tr><td>Existing investment</td><td class="no">0%</td><td class="no">0%</td><td class="meh">~20%</td><td class="ok win">100%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:14px;font-size:13.5px;color:var(--muted)">
+    <strong>Reading the matrix</strong>: ✅ = matches owner's constraint (web/PWA + incremental), ❌ = breaks it, ⚠ = with caveats. Last row "Existing investment" = berapa persen kode existing bisa dipakai kembali.
+  </p>
+</div>
+
+<!-- §4 UNITY -->
+<div class="section" id="unity">
+  <div class="eng-head">
+    <div class="eng-logo">🎮</div>
+    <div class="eng-title">
+      <h2>3. Unity 6 LTS</h2>
+      <div class="url"><a href="https://unity.com/" target="_blank" rel="noopener">unity.com</a> · Owner's first suggestion ("engine yang bisa anda kontrol pakai command kan?")</div>
+    </div>
+  </div>
+  <p><span class="chip chip-warn">Powerful but heavy</span> <span class="chip chip-info">Reserve for native APK era</span></p>
+
+  <h4>Mockup — Dunia Emosi di Unity</h4>
+  <div class="ascii">┌──────────────────────────────┐
+│  🎮 Dunia Emosi (Unity)      │
+│                              │
+│  Loading 7.4 MB WebGL bundle │
+│  [████████░░] 80% ETA 4s     │
+│                              │
+│  ⚙️ Powered by Unity 6 LTS   │
+│                              │
+│  ↳ Kids tunggu 12s sebelum   │
+│    main. Patience &lt; 12s.   │
+└──────────────────────────────┘</div>
+
+  <h4>Sample Code — render Casey JR moving sprite (C# MonoBehaviour)</h4>
+  <pre><code>// CaseyController.cs
+using UnityEngine;
+
+public class CaseyController : MonoBehaviour {
+  public Sprite caseyTexture;
+  public float speed = 5f;
+  private Rigidbody2D rb;
+
+  void Start() {
+    rb = GetComponent&lt;Rigidbody2D&gt;();
+    GetComponent&lt;SpriteRenderer&gt;().sprite = caseyTexture;
+  }
+
+  void FixedUpdate() {
+    float dx = Input.GetAxis("Horizontal") * speed;
+    rb.linearVelocity = new Vector2(dx, rb.linearVelocity.y);
+  }
+}</code></pre>
+
+  <h4>Dev workflow</h4>
+  <div class="devday">
+    Owner edit <code>CaseyController.cs</code> di Visual Studio → Save → Switch ke Unity Editor → Wait for domain reload (3–6 detik) → Hit Play → Test di Game window → Tweak inspector → Repeat. <strong>Build WebGL untuk test di browser asli = 90–180 detik per build.</strong>
+  </div>
+
+  <div class="pro-con">
+    <div class="pro">
+      <h4>Pros (kids' game)</h4>
+      <ul>
+        <li>3D + 2D dalam satu engine</li>
+        <li>Asset Store luas (free + paid sprites/sounds/effects)</li>
+        <li>Native APK via Build → Android (one-click)</li>
+        <li>Mature animation system (Animator + Timeline)</li>
+        <li>CLI buildable: <code>Unity -batchmode -executeMethod Build.BuildPlayer</code></li>
+      </ul>
+    </div>
+    <div class="con">
+      <h4>Cons (kids' game)</h4>
+      <ul>
+        <li>WebGL bundle 5–10 MB → kids tunggu lama di HP murah</li>
+        <li>Owner harus belajar C# (bahasa baru)</li>
+        <li>Iterasi lambat (build cycle 90+ detik)</li>
+        <li>Overkill untuk 2D edukatif sederhana</li>
+        <li>Migrasi 25 game ≈ 6 bulan kerja</li>
+      </ul>
+    </div>
+  </div>
+
+  <h4>Migration plan (kalau dipilih)</h4>
+  <div class="migration">
+    <strong>POC scope:</strong> port <code>games/g6.html</code> (word racer, ~1.25 K LOC) ke Unity 6.
+    <ol>
+      <li>Install Unity Hub + 6 LTS (~6 GB disk).</li>
+      <li>Buat project 2D Mobile WebGL target.</li>
+      <li>Import car sprites + Indonesian word list.</li>
+      <li>Tulis <code>CarController.cs</code> + <code>WordSpawner.cs</code> + <code>UIManager.cs</code>.</li>
+      <li>Build WebGL bundle → host di subfolder Vercel.</li>
+      <li>Side-by-side load comparison vs <code>g6.html</code> existing.</li>
+    </ol>
+    <strong>Estimasi:</strong> 2 minggu untuk satu game POC. <strong>25 game × 2 minggu = ~12 bulan.</strong>
+  </div>
+
+  <div class="vote" data-engine="unity">
+    <span class="vote-label">Owner vote:</span>
+    <button class="v-yes">👍 Pakai</button>
+    <button class="v-maybe">🤔 Pikir lagi</button>
+    <button class="v-no">👎 Skip</button>
+  </div>
+</div>
+
+<!-- §5 GODOT -->
+<div class="section" id="godot">
+  <div class="eng-head">
+    <div class="eng-logo">🤖</div>
+    <div class="eng-title">
+      <h2>4. Godot 4</h2>
+      <div class="url"><a href="https://godotengine.org/" target="_blank" rel="noopener">godotengine.org</a> · Free MIT, strongest 2D engine for our use case</div>
+    </div>
+  </div>
+  <p><span class="chip chip-info">Best balance if migration appetite changes later</span></p>
+
+  <h4>Mockup — Dunia Emosi di Godot</h4>
+  <div class="ascii">┌──────────────────────────────┐
+│  🤖 Dunia Emosi (Godot 4)    │
+│                              │
+│  Loading 2.4 MB HTML5 bundle │
+│  [██████████] 100% (4s)      │
+│                              │
+│  🎯 GDScript = Python-like   │
+│  📦 Native APK juga ringan   │
+│                              │
+│  ↳ Lebih ringan dari Unity   │
+│    tapi bukan native JS.     │
+└──────────────────────────────┘</div>
+
+  <h4>Sample Code — Casey JR moving sprite (GDScript)</h4>
+  <pre><code># casey.gd
+extends CharacterBody2D
+
+@export var speed: float = 300.0
+@export var casey_sprite: Texture2D
+
+func _ready() -&gt; void:
+    $Sprite2D.texture = casey_sprite
+
+func _physics_process(delta: float) -&gt; void:
+    var dir := Input.get_axis("ui_left", "ui_right")
+    velocity.x = dir * speed
+    move_and_slide()</code></pre>
+
+  <h4>Dev workflow</h4>
+  <div class="devday">
+    Edit <code>casey.gd</code> di Godot Editor → Save (Ctrl+S) → F5 Play scene → <strong>Live</strong> (no rebuild). HTML5 export = 1 menu click + 20 detik. Native APK = same project, export Android template. <strong>Iterasi cepat, hampir setara Pixi.</strong>
+  </div>
+
+  <div class="pro-con">
+    <div class="pro">
+      <h4>Pros (kids' game)</h4>
+      <ul>
+        <li>Bundle HTML5 ringan (2–3 MB vs Unity 5–10)</li>
+        <li>Native APK + HTML5 dari source yang sama</li>
+        <li>GDScript mudah (mirip Python, low ceiling)</li>
+        <li>Free, MIT, no royalty, no Pro tier</li>
+        <li>CLI: <code>godot --headless --export ...</code></li>
+        <li>2D engine kelas-1 (lebih baik dari Unity 2D)</li>
+      </ul>
+    </div>
+    <div class="con">
+      <h4>Cons (kids' game)</h4>
+      <ul>
+        <li>Owner harus belajar GDScript (bahasa baru)</li>
+        <li>Smaller community vs Unity (lesson rarer di YouTube)</li>
+        <li>Migrasi 25 game ≈ 3–4 bulan</li>
+        <li>Tooling ecosystem masih tumbuh (Godot 4 baru)</li>
+        <li>Asset library belum sebesar Unity</li>
+      </ul>
+    </div>
+  </div>
+
+  <h4>Migration plan (kalau dipilih)</h4>
+  <div class="migration">
+    <strong>POC scope:</strong> port <code>games/g6.html</code> ke Godot 4.
+    <ol>
+      <li>Install Godot 4.3+ (single 100 MB binary, no installer needed).</li>
+      <li>Buat project Mobile Web target.</li>
+      <li>Import car sprites sebagai Texture2D resources.</li>
+      <li>Tulis <code>vehicle_picker.gd</code> + <code>race.gd</code> + <code>word_quiz.gd</code>.</li>
+      <li>Export HTML5 → host di subfolder Vercel.</li>
+      <li>Side-by-side dengan Pixi g6.</li>
+    </ol>
+    <strong>Estimasi:</strong> 1 minggu untuk POC. <strong>25 game × 1 minggu = ~6 bulan.</strong>
+  </div>
+
+  <div class="vote" data-engine="godot">
+    <span class="vote-label">Owner vote:</span>
+    <button class="v-yes">👍 Pakai</button>
+    <button class="v-maybe">🤔 Pikir lagi</button>
+    <button class="v-no">👎 Skip</button>
+  </div>
+</div>
+
+<!-- §6 PHASER -->
+<div class="section" id="phaser">
+  <div class="eng-head">
+    <div class="eng-logo">⚡</div>
+    <div class="eng-title">
+      <h2>5. Phaser 3.80</h2>
+      <div class="url"><a href="https://phaser.io/" target="_blank" rel="noopener">phaser.io</a> · JavaScript-native, 7-year mature ecosystem</div>
+    </div>
+  </div>
+  <p><span class="chip chip-info">Best "safe" upgrade if Pixi feels limited</span></p>
+
+  <h4>Mockup — Dunia Emosi di Phaser</h4>
+  <div class="ascii">┌──────────────────────────────┐
+│  ⚡ Dunia Emosi (Phaser 3)    │
+│                              │
+│  Loading 0.6 MB JS bundle    │
+│  [██████████] 100% (1s)      │
+│                              │
+│  🟦 100% JavaScript          │
+│  📚 Banyak example kids game │
+│                              │
+│  ↳ Closest to current stack  │
+│    pindah game-by-game.      │
+└──────────────────────────────┘</div>
+
+  <h4>Sample Code — Casey JR moving sprite (Phaser 3)</h4>
+  <pre><code>// CaseyScene.js
+class CaseyScene extends Phaser.Scene {
+  preload() {
+    this.load.image('casey', 'assets/train/caseyjr-body.webp')
+  }
+  create() {
+    this.casey = this.physics.add.sprite(200, 300, 'casey')
+    this.casey.setCollideWorldBounds(true)
+    this.cursors = this.input.keyboard.createCursorKeys()
+  }
+  update() {
+    this.casey.setVelocityX(0)
+    if (this.cursors.left.isDown)  this.casey.setVelocityX(-200)
+    if (this.cursors.right.isDown) this.casey.setVelocityX(200)
+  }
+}</code></pre>
+
+  <h4>Dev workflow</h4>
+  <div class="devday">
+    Edit <code>CaseyScene.js</code> → save → <strong>browser refresh</strong>. No build step. <code>vite</code> bisa di-pakai untuk hot-reload + module bundling, tapi opsional. <strong>Sama cepat dengan Pixi sekarang.</strong>
+  </div>
+
+  <div class="pro-con">
+    <div class="pro">
+      <h4>Pros (kids' game)</h4>
+      <ul>
+        <li>100% JS — owner sudah fluent</li>
+        <li>7-year mature, lots of kids-game examples</li>
+        <li>Arcade physics + Matter physics built-in</li>
+        <li>Bundle 500 KB → kids load instant</li>
+        <li>Migrasi game-by-game, no full rewrite</li>
+        <li>Tween + animation system built-in (Pixi tidak)</li>
+      </ul>
+    </div>
+    <div class="con">
+      <h4>Cons (kids' game)</h4>
+      <ul>
+        <li>Belum sebagus Godot/Unity untuk 3D</li>
+        <li>Capacitor wrap untuk APK (tidak senatif Godot)</li>
+        <li>Migrasi tetap butuh time (6-8 minggu untuk 25 game)</li>
+        <li>API style berbeda dari Pixi raw, butuh adaptasi</li>
+      </ul>
+    </div>
+  </div>
+
+  <h4>Migration plan (kalau dipilih)</h4>
+  <div class="migration">
+    <strong>POC scope:</strong> port <code>games/g6.html</code> ke Phaser 3.
+    <ol>
+      <li><code>npm install phaser</code> di project root.</li>
+      <li>Buat <code>games/g6-phaser.html</code> baru (parallel ke existing).</li>
+      <li>Port logic: car-picker scene + race scene + word quiz scene.</li>
+      <li>Side-by-side test dengan <code>g6.html</code>.</li>
+      <li>Owner pilih winner; loser dihapus.</li>
+    </ol>
+    <strong>Estimasi:</strong> 1 minggu untuk POC. <strong>25 game × 1 minggu = ~6 bulan.</strong>
+  </div>
+
+  <div class="vote" data-engine="phaser">
+    <span class="vote-label">Owner vote:</span>
+    <button class="v-yes">👍 Pakai</button>
+    <button class="v-maybe">🤔 Pikir lagi</button>
+    <button class="v-no">👎 Skip</button>
+  </div>
+</div>
+
+<!-- §7 PIXI ENHANCED (RECOMMENDED) -->
+<div class="section" id="pixi" data-engine="pixi">
+  <div class="eng-head">
+    <div class="eng-logo" style="background:var(--sage);border-color:var(--sage-deep)">🍃</div>
+    <div class="eng-title">
+      <h2>6. PixiJS 8 Enhanced (current) <span class="chip chip-rec" style="font-size:11px">RECOMMENDED</span></h2>
+      <div class="url"><a href="https://pixijs.com/" target="_blank" rel="noopener">pixijs.com</a> · Already deployed across 11+ game HTMLs</div>
+    </div>
+  </div>
+  <p><span class="chip chip-rec">Matches owner's web-first + incremental constraint</span> <span class="chip chip-info">80% upside, 5% cost</span></p>
+
+  <h4>Mockup — Dunia Emosi setelah +4 libraries</h4>
+  <div class="ascii">┌──────────────────────────────┐
+│  🍃 Dunia Emosi (Pixi 8++)   │
+│                              │
+│  Loading 280 KB JS bundle    │
+│  [██████████] 100% (0.4s)    │
+│                              │
+│  Existing 11 Pixi games:     │
+│   + 🎵 Howler.js audio       │
+│   + 🪨 Matter.js physics     │
+│   + 🎹 Tone.js procedural BGM│
+│   + 🌀 GSAP smooth animation │
+│                              │
+│  ↳ Same stack, more power.   │
+│    Per-week incremental.     │
+└──────────────────────────────┘</div>
+
+  <h4>Sample Code — Casey JR moving sprite (current PixiJS 8 pattern)</h4>
+  <pre><code>// games/g14.html (real code shipped v55.2)
+PIXI.Assets.load(S.trainCfg.spriteUrl).then((tex) =&gt; {
+  const img = new PIXI.Sprite(tex)
+  img.anchor.set(0.5, 0.6)
+  img.scale.set(targetH / tex.height)
+  L.playerCharImg = img
+  L.player.addChild(img)
+})
+
+// After Howler.js (v55.29):
+sound.play('thomas-theme')  // cross-fade, no &lt;audio&gt; element
+
+// After Matter.js (v55.30):
+const body = Matter.Bodies.rectangle(x, y, w, h, { restitution: 0.6 })
+Matter.World.add(world, body)
+
+// After GSAP (v55.32):
+gsap.to(L.player, { y: '-=80', duration: 0.4, ease: 'expo.out' })</code></pre>
+
+  <h4>Dev workflow</h4>
+  <div class="devday">
+    <strong>Identical to today</strong>: edit <code>games/g14.html</code> → <strong>refresh browser</strong>. Zero build step. Hot-swap libraries one at a time. Each upgrade = 1 v55.x version bump = traceable.
+  </div>
+
+  <div class="pro-con">
+    <div class="pro">
+      <h4>Pros (kids' game)</h4>
+      <ul>
+        <li>100% existing code reuse</li>
+        <li>Sub-300 KB bundle (kids load instant on 3G)</li>
+        <li>Owner fluent dengan stack</li>
+        <li>Per-week shippable (Howler week 1, Matter week 2, Tone week 3, GSAP week 4)</li>
+        <li>Tetap PWA installable</li>
+        <li>Sidecar libraries semua MIT free</li>
+      </ul>
+    </div>
+    <div class="con">
+      <h4>Cons (kids' game)</h4>
+      <ul>
+        <li>Ceiling lebih rendah untuk 3D (tidak relevant)</li>
+        <li>Native APK butuh Capacitor (tapi web-first kata owner)</li>
+        <li>Tidak ada visual editor; semua code-first</li>
+        <li>Owner harus tetap maintenance lib upgrade sendiri</li>
+      </ul>
+    </div>
+  </div>
+
+  <h4>Migration plan (kalau dipilih — direkomendasi!)</h4>
+  <div class="migration">
+    <strong>POC scope:</strong> tidak ada POC. Ini current stack. Tinggal tambah sidecar libs satu per minggu.
+    <ol>
+      <li><strong>v55.29</strong> — Install <a href="https://howlerjs.com/" target="_blank" rel="noopener">Howler.js</a>. Migrate <code>TrainBGM</code> + <code>SFXEngine</code> ke Howler. Cross-fade Thomas track tanpa pause-load gap. ~1 week.</li>
+      <li><strong>v55.30</strong> — Install <a href="https://brm.io/matter-js/" target="_blank" rel="noopener">Matter.js</a>. Replace g21 Mario ad-hoc jump physics dengan proper rigid bodies. ~1 week.</li>
+      <li><strong>v55.31</strong> — Install <a href="https://tonejs.github.io/" target="_blank" rel="noopener">Tone.js</a>. Casey JR dapat circus-themed synth track yang generated runtime (no two playthroughs sama). ~1 week.</li>
+      <li><strong>v55.32</strong> — Install <a href="https://greensock.com/gsap/" target="_blank" rel="noopener">GSAP</a>. Polish finish modals, obstacle overlays, picker animations. ~1 week.</li>
+      <li><strong>v55.33+</strong> — Optional: <a href="https://en.esotericsoftware.com/spine-pixi" target="_blank" rel="noopener">pixi-spine</a> untuk character bone animation di train games.</li>
+    </ol>
+    <strong>Total:</strong> ~5 minggu calendar. <strong>Per-week ship</strong>, owner test setelah setiap upgrade.
+  </div>
+
+  <div class="vote" data-engine="pixi">
+    <span class="vote-label">Owner vote:</span>
+    <button class="v-yes">👍 Pakai</button>
+    <button class="v-maybe">🤔 Pikir lagi</button>
+    <button class="v-no">👎 Skip</button>
+  </div>
+</div>
+
+<!-- §8 REKOMENDASI -->
+<div class="section" id="rec">
+  <h2>7. Rekomendasi &amp; Discussion</h2>
+
+  <div class="rec-final">
+    <span class="rec-tag">🏆 Primary recommendation</span>
+    <h3>Tetap di PixiJS 8, tambah 4 sidecar libraries incremental</h3>
+    <p>Match dengan kedua constraint owner: <strong>web/PWA</strong> + <strong>incremental</strong>. Stack existing 100% dipakai. Per-minggu ada upgrade yang visible (v55.29 Howler, v55.30 Matter, v55.31 Tone, v55.32 GSAP).</p>
+    <p style="margin:0"><strong>Trade-off jujur</strong>: ceiling 3D + native APK akan tetap di Pixi (artinya: not as high as Unity). Tapi untuk kids' 2D edukatif di browser, ceiling itu belum dipakai sama sekali. Naikkan saja yang sekarang.</p>
+  </div>
+
+  <h3>Backup options</h3>
+  <ul>
+    <li><strong>POC Phaser 3 (1 minggu)</strong> — kalau owner mau actually test rasa migrasi sebelum commit. Port <code>g6.html</code> ke Phaser, side-by-side dengan existing.</li>
+    <li><strong>Godot 4 untuk native APK era (later)</strong> — kalau owner publish ke Play Store nanti, revisit. Bukan untuk sekarang.</li>
+    <li><strong>Unity 6 LTS (skip atau later)</strong> — bundle WebGL 5–10 MB terlalu berat untuk kids' 3G. C# learning curve tinggi. Reserve untuk 3D ambition / native APK serius.</li>
+  </ul>
+
+  <h3>Apa yang AKAN dikerjakan paralel (Track B v55.29+)</h3>
+  <p>Owner explicitly bilang <em>"paralel tetap ada yang keep improve and refine game dunia emosi lebih bagus lagi lebih keren"</em>. Plan polish queue (urutan bisa di-swap):</p>
+  <ol>
+    <li><strong>v55.29 Howler.js audio swap</strong> — cross-fade BGM swap (eliminate the 200ms pause-and-load gap)</li>
+    <li><strong>v55.30 Matter.js physics POC</strong> di g21 Mario Pokemon</li>
+    <li><strong>v55.31 Tone.js procedural BGM</strong> — Casey JR circus synth, never the same twice</li>
+    <li><strong>v55.32 GSAP polish</strong> — finish modal + obstacle overlay easing curves</li>
+    <li><strong>v55.33+</strong> tergantung apa yang owner highlight dari plan.html ini</li>
+  </ol>
+
+  <h3>Discussion threads (vote di setiap section)</h3>
+  <p>Setiap section §3–§6 punya 3 button <strong>👍 Pakai / 🤔 Pikir lagi / 👎 Skip</strong>. Pilihan owner di-persist di <code>localStorage</code>. Setelah owner vote semua, refresh page → vote masih ada. Reload page baru = saya tau pilihan owner langsung dari URL ini saja.</p>
+  <p>Page juga bisa di-edit pakai Edit tool — kalau owner mau tambah catatan personal (mis. "Phaser POC dulu ya"), saya tulis ke section ini.</p>
+
+  <div class="vote" data-engine="overall">
+    <span class="vote-label">Final pick:</span>
+    <button class="v-yes" data-overall="pixi">PixiJS+ (rec)</button>
+    <button class="v-maybe" data-overall="phaser-poc">Phaser POC dulu</button>
+    <button class="v-no" data-overall="hold">Hold dulu, polish only</button>
+  </div>
+</div>
+
+<!-- footer -->
+<div class="footer">
+  plan.html v55.28 — built 2026-06-27 — last updated <span id="updated">(refresh untuk lihat)</span>
+  <br>
+  Marathon v55.0 → v55.27 ringkasan: 24+ ships · 16 bugs closed · 3 owner-asks fulfilled · 17 lessons documented
+</div>
+
+<script>
+  // Persist votes per engine to localStorage
+  (function(){
+    'use strict';
+    const KEY = 'dunia-engine-plan-votes-v1';
+    let votes = {};
+    try { votes = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(_) {}
+
+    function render() {
+      document.querySelectorAll('.vote').forEach(group => {
+        const engine = group.dataset.engine;
+        const choice = votes[engine];
+        group.querySelectorAll('button').forEach(btn => {
+          btn.classList.remove('active');
+          const cls = btn.className.match(/v-(yes|maybe|no)/);
+          if (cls && cls[1] === choice) btn.classList.add('active');
+        });
+      });
+    }
+
+    document.querySelectorAll('.vote button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const group = btn.closest('.vote');
+        const engine = group.dataset.engine;
+        const cls = btn.className.match(/v-(yes|maybe|no)/);
+        if (!cls) return;
+        const choice = cls[1];
+        votes[engine] = (votes[engine] === choice) ? null : choice;
+        try { localStorage.setItem(KEY, JSON.stringify(votes)); } catch(_) {}
+        render();
+      });
+    });
+
+    render();
+
+    // Stamp 'updated' with localStorage save time (proxy for last visit)
+    const stamp = document.getElementById('updated');
+    if (stamp) {
+      const saved = (Object.keys(votes).length > 0)
+        ? 'votes tersimpan'
+        : '(belum vote)';
+      stamp.textContent = saved;
+    }
+  })();
+</script>
+
+</body>
+</html>

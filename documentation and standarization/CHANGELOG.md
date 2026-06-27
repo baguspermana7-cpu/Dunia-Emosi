@@ -1,5 +1,69 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.33 "Engine research page (plan.html) — A-304 owner-review deliverable"
+
+Owner ask 2026-06-27 (after v55.27): *"try to research more powerful engine to create game, and put some mock up dan detail di http://localhost:8081/Dunia-Emosi/plan.html kita diskusi dan review disitu. saya mikirnya mungkin unity engine."*
+
+Owner clarifying answers (AskUserQuestion):
+- Target distribution: **Web/PWA** (status quo, status quo).
+- Migration appetite: **Incremental** (PixiJS+ per minggu).
+- Research priorities: **all 4** (Unity 6 LTS, Godot 4, Phaser 3, PixiJS 8 Enhanced).
+
+### Deliverable: `plan.html`
+
+Self-contained ~700 LOC review page at project root. Served as:
+- Local: `http://localhost:8081/plan.html`
+- Vercel: `https://dunia-emosi.vercel.app/plan.html`
+- GH Pages: `https://baguspermana7-cpu.github.io/Dunia-Emosi/plan.html`
+
+### Page structure
+
+1. **Hero** — owner ask verbatim + 3 clarifying answers
+2. **Konteks** — current stack (Pixi 8 + 25 games), is it ceiling?
+3. **Comparison Matrix** — 4 engines × 10 criteria, color-coded chips. PixiJS 8 row highlighted as recommended (100% existing investment reuse).
+4. **Unity 6 LTS deep-dive** — code sample (C# MonoBehaviour), dev workflow (90+s build), 5 pros / 5 cons, migration plan POC.
+5. **Godot 4 deep-dive** — GDScript code sample, headless CLI export, native APK + HTML5 from same source.
+6. **Phaser 3 deep-dive** — JS-native, lowest learning curve, vite hot-reload workflow.
+7. **PixiJS 8 Enhanced (RECOMMENDED)** — current stack + Howler/Matter/Tone/GSAP/pixi-spine sidecar libraries. Per-week upgrade plan v55.34→v55.37.
+8. **Rekomendasi & Discussion** — final pick recommendation + Track B parallel work queue + vote buttons (localStorage persistence).
+
+### Self-contained design
+
+- **NO external dependencies** — inline CSS + minimal JS for vote-button persistence
+- **Dreamy Meadow palette** — purple `#8B5CF6` + cream + sage + powder, matches Dunia Emosi brand
+- **Mobile-responsive** — 412×915 portrait baseline + scales up; pro/con grid collapses to single column on <600px
+- **Vote buttons** — each engine section has 👍 Pakai / 🤔 Pikir lagi / 👎 Skip; choices persist to `localStorage['dunia-engine-plan-votes-v1']`
+- **v55.16 head block** — cache-meta + favicon links (cache-clean)
+- **No mockup screenshots faking fidelity** — text + ASCII layouts + real code samples instead
+
+### Recommendation
+
+**Primary**: stay on PixiJS 8, add 4 sidecar libraries incremental (Howler audio v55.34 → Matter physics v55.35 → Tone synth BGM v55.36 → GSAP animations v55.37).
+
+**Backup**: 1-week Phaser 3 POC of `g6.html` if owner wants to test alternative.
+
+**Future**: Godot 4 revisit IF owner publishes to Play Store (native APK era).
+
+**Skip**: Unity 6 LTS — bundle size 5-10 MB too heavy for kids' 3G; C# learning curve high; overkill for 2D kids' game.
+
+### Files touched
+
+- NEW `plan.html` (~700 LOC, self-contained)
+- `sw.js` v55.32 → v55.33
+
+### Verification
+
+- `curl http://localhost:8081/plan.html` → 200
+- Page loads in browser, all 8 sections visible
+- Mobile viewport 412×915 → no horizontal scroll, all chips readable
+- Vote buttons persist to localStorage on click
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS (no game-code touched)
+- `node tools/visual-polish-audit.mjs` → 18 screens / 0 errors (no regression)
+
+### Closes A-304. B-218 button standardization remains for v55.34.
+
+---
+
 ## 2026-06-27 — v55.29-v55.32 "4 critical owner complaints (B-217 B-219 B-220 B-221)"
 
 Owner ask 2026-06-27 (frustrated, with 2 screenshots):
