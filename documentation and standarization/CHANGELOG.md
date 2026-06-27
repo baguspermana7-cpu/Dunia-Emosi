@@ -1,5 +1,55 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.41 "Train-game focus: jelly buttons + bigger character + thinner rail (B-226/B-227/B-228)"
+
+Owner ask 2026-06-27 (+ reference photo of a soft glossy play button):
+> *"game kereta... besarnya rel, agar fokus besarnya di karakter kereta. pastikan karakter keretanya clean tidak ada mutilasi... Elemen button pada game kereta buat seperti ini. Analisa, renyah, lembut, bagus. Yg anda buat itu terlalu kasar dan jelek."*
+
+### B-228 — soft jelly/candy buttons (NEW `.du-btn-jelly` family)
+
+My old buttons (flat gradient + hard `0 4px 0` offset shadow) read as "kasar" (rough). The reference is a soft glossy candy button: thick cream ring, glossy top→bottom gradient, 2 specular shine dots top-right, soft diffused drop shadow, big radius.
+
+NEW in `games/du-buttons.css`:
+```
+.du-btn-jelly — 24px radius, 4px cream ring, layered soft+inner-gloss shadow,
+                ::after specular shine dots top-right, press = translateY+scale
+.du-jelly-coral / -green / -purple / -blue / -gold — glossy color skins
+```
+
+Applied to **g14** controls: `↑/↓` = blue jelly, `BOOST` = coral jelly, `#go-btn` (Mulai) = green jelly — all with the cream ring + shine dots + soft shadow.
+
+### B-226 — train character is now the visual star
+
+Shrunk rail + scenery, enlarged the character so it dominates the lane:
+
+| | g14 (Balapan Kereta) | g15 (Lokomotif Pemberani) |
+|---|---|---|
+| Rail strip | `RAIL_HALF` 27 → **18** (54→36px) | rail line 5 → **3px**, gap 11→**8px** |
+| Sleepers | `TIE_W` 16→**11**, `TIE_GAP` 58→**78** | 14×24 → **10×16**, every 40 → **56px** |
+| Ground | grass α 0.45→**0.22**, ballast 0.55→**0.30** | glow α 0.18→**0.12** |
+| Character | `targetH` ×**1.35** (player + AI) | scaleConfig ×**1.3** focus multiplier |
+
+Research basis: for a 4-7yo game where the named character is the draw, the character should own the play band; rails recede to thin guide-lines; scenery is low-contrast background. Verified via Puppeteer: Casey JR/Thomas now clearly the largest element, rails thin, scenery subtle.
+
+### B-227 — sprites verified clean (M-302)
+
+`tools/sprite-visual-audit.mjs` re-run: Carly (yellow crane), Thomas, Ashima, Toby, Casey JR all render clean + correct + facing right, now at the larger scale. g14 race capture: 0 pageerrors, Casey JR clean + dominant. The v55.39 dt-clamp + soft smoke removed the throttled-device shard artifact. (Residual faint lines in headless captures are SwiftShader smoke tessellation — not present on real GPU.)
+
+### Files touched
+
+- `games/du-buttons.css` — `.du-btn-jelly` + 5 color skins
+- `games/g14.html` — jelly `.ctrl-btn`/`#go-btn`/`#btn-boost`, `RAIL_HALF`/`TIE_*`, grass+ballast alpha, char `targetH` ×1.35
+- `games/g15-pixi.html` — thinner rails + smaller sleepers, char scale ×1.3
+- `sw.js` v55.40 → v55.41
+
+### Verification
+
+- g14 Puppeteer load: 0 pageerrors
+- sprite-visual-audit: all train sprites clean
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS
+
+---
+
 ## 2026-06-27 — v55.40 "Final acceptance — B-218 complete + 7-probe sweep"
 
 Marathon close-out. "Finish it all."

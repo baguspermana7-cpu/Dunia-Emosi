@@ -1486,23 +1486,25 @@ function buildCloud(color, alpha) {
 
 // ── Tracks ────────────────────────────────────────────────────────────────────
 function buildTracks() {
+  // v55.41 B-226 — thinner rails + smaller, sparser sleepers so the train
+  // CHARACTER is the dominant element (owner: "fokus besarnya di karakter kereta").
   for (let lane = 0; lane < 3; lane++) {
     const lY = LANE_Y[lane];
     const rail1 = new PIXI.Graphics();
-    rail1.rect(0, lY + 14, W, 5).fill({ color: T.railColor });
+    rail1.rect(0, lY + 14, W, 3).fill({ color: T.railColor });
     trackLayer.addChild(rail1);
     const rail2 = new PIXI.Graphics();
-    rail2.rect(0, lY + 25, W, 5).fill({ color: T.railColor });
+    rail2.rect(0, lY + 22, W, 3).fill({ color: T.railColor });
     trackLayer.addChild(rail2);
-    // Rail glow
+    // Rail glow (subtler)
     const glow = new PIXI.Graphics();
-    glow.rect(0, lY + 10, W, 24).fill({ color: T.railShadow });
-    glow.alpha = 0.18; trackLayer.addChild(glow);
-    // Sleepers
-    for (let x = 0; x < W + 40; x += 40) {
+    glow.rect(0, lY + 11, W, 16).fill({ color: T.railShadow });
+    glow.alpha = 0.12; trackLayer.addChild(glow);
+    // Sleepers — smaller (10×16) + sparser (every 56px)
+    for (let x = 0; x < W + 56; x += 56) {
       const sl = new PIXI.Graphics();
-      sl.rect(-7, lY + 10, 14, 24).fill({ color: T.sleeperColor });
-      sl.rect(-7, lY + 10, 14, 24).stroke({ width: 1, color: 0x000000, alpha: 0.3 });
+      sl.rect(-5, lY + 11, 10, 16).fill({ color: T.sleeperColor });
+      sl.rect(-5, lY + 11, 10, 16).stroke({ width: 1, color: 0x000000, alpha: 0.25 });
       sl.x = x; trackLayer.addChild(sl); sleepers.push(sl);
     }
   }
@@ -1535,7 +1537,8 @@ function buildTrain() {
   // Task #60 — derived rail-anchor algorithm: wheel-bottom lands EXACTLY on rail surface.
   // Task #59 — per-train TRAIN_X = 5% of W (clamped to train's leftmost wheel safe-min).
   if (selectedTrain.isCharacter && window.CharacterTrain) {
-    const rzScale = (window.RZ && typeof RZ.trainScale === 'function') ? RZ.trainScale() : 1;
+    // v55.41 B-226 — 1.3× focus multiplier so the train character dominates.
+    const rzScale = ((window.RZ && typeof RZ.trainScale === 'function') ? RZ.trainScale() : 1) * 1.3;
     const scaledCfg = CharacterTrain.scaleConfig(selectedTrain, rzScale);
     // G15 rail surface — top of upper rail line drawn in buildTracks() at lY+14.
     // Wheel bottom must land here; engine.wheelAnchor(scaledCfg) returns the lowest

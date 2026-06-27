@@ -184,6 +184,52 @@
 .du-btn-sm    { padding: 8px 14px; font-size: 14px; border-radius: 12px; }
 .du-btn-lg    { padding: 16px 28px; font-size: 18px; border-radius: 18px; }
 
+/* ─── Jelly / candy buttons (v55.41 B-228) ────────────────────────────────
+   Owner reference: soft glossy rounded button — thick cream ring, glossy
+   top→bottom gradient body, two specular shine dots top-right, soft diffused
+   drop shadow + inner gloss. Replaces the "kasar" flat-gradient + hard-offset
+   shadow look on train-game controls. Compose: .du-btn .du-btn-jelly .du-jelly-<skin>
+*/
+.du-btn-jelly {
+  border-radius: 24px;
+  border: 4px solid rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.18),
+    inset 0 2px 5px rgba(255, 255, 255, 0.45),
+    inset 0 -5px 9px rgba(0, 0, 0, 0.12);
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  font-weight: 900;
+  transition: transform .08s ease-out, box-shadow .12s ease-out;
+}
+/* specular shine dots, top-right — the "renyah" candy glint */
+.du-btn-jelly::after {
+  content: '';
+  position: absolute;
+  top: 9px;
+  right: 13px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 15px 5px 0 -4px rgba(255, 255, 255, 0.72);
+  pointer-events: none;
+}
+.du-btn-jelly:active {
+  transform: translateY(2px) scale(0.97);
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.18),
+    inset 0 2px 5px rgba(255, 255, 255, 0.4);
+}
+/* glossy color skins — light top → rich bottom */
+.du-jelly-coral  { background: linear-gradient(180deg, #ff8a65, #ff7043 55%, #f4511e); }
+.du-jelly-green  { background: linear-gradient(180deg, #81e5a3, #4ade80 55%, #22c55e); }
+.du-jelly-purple { background: linear-gradient(180deg, #c4b5fd, #a78bfa 55%, #8b5cf6); }
+.du-jelly-blue   { background: linear-gradient(180deg, #93c5fd, #60a5fa 55%, #3b82f6); }
+.du-jelly-gold   { background: linear-gradient(180deg, #fde68a, #fcd34d 55%, #f59e0b); color: #5a3a00; }
+.du-jelly-gold::after { background: rgba(255,255,255,0.95); box-shadow: 15px 5px 0 -4px rgba(255,255,255,0.8); }
+
 /* ─── Card-style picker option (trains-db / Pokemon team) ──────────────── */
 .du-card-btn {
   background: var(--du-cream);

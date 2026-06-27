@@ -48,8 +48,13 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 /* Bottom controls */
 #ctrl-area{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:10px 14px 14px;background:linear-gradient(0deg,rgba(0,0,0,0.78) 0%,transparent 100%)}
 #ctrl-row{display:flex;gap:10px;align-items:stretch}
-.ctrl-btn{flex:1;padding:16px 0;border-radius:20px;border:2.5px solid rgba(196,181,253,0.4);background:rgba(139,92,246,0.25);color:#e9d5ff;font-size:22px;cursor:pointer;backdrop-filter:blur(6px);user-select:none;-webkit-user-select:none;transition:transform .08s,background .08s;font-family:inherit;-webkit-tap-highlight-color:transparent;box-shadow:0 3px 0 rgba(91,33,182,0.3)}
-.ctrl-btn:active{transform:scale(.91) translateY(2px);background:rgba(139,92,246,.45);box-shadow:0 1px 0 rgba(91,33,182,0.3)}
+/* v55.41 B-228 — soft glossy jelly buttons (owner reference). Thick cream ring,
+   glossy top→bottom gradient, specular shine dots, soft diffused shadow. */
+.ctrl-btn{flex:1;padding:16px 0;border-radius:24px;border:4px solid rgba(255,255,255,0.92);color:#fff;font-size:24px;font-weight:900;cursor:pointer;user-select:none;-webkit-user-select:none;transition:transform .08s,box-shadow .12s;font-family:inherit;-webkit-tap-highlight-color:transparent;position:relative;overflow:hidden;box-shadow:0 8px 18px rgba(0,0,0,0.18),inset 0 2px 5px rgba(255,255,255,0.45),inset 0 -5px 9px rgba(0,0,0,0.12)}
+.ctrl-btn::after{content:'';position:absolute;top:9px;right:13px;width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,0.9);box-shadow:15px 5px 0 -4px rgba(255,255,255,0.72);pointer-events:none}
+.ctrl-btn:active{transform:translateY(2px) scale(.97);box-shadow:0 4px 10px rgba(0,0,0,0.18),inset 0 2px 5px rgba(255,255,255,0.4)}
+#btn-up,#btn-dn{background:linear-gradient(180deg,#93c5fd,#60a5fa 55%,#3b82f6)}
+#btn-boost{background:linear-gradient(180deg,#ff8a65,#ff7043 55%,#f4511e)}
 #btn-boost{background:linear-gradient(135deg,rgba(251,191,36,0.35),rgba(249,115,22,0.35));border-color:rgba(251,191,36,0.6);flex:1.4;font-size:14px;padding:14px 6px;line-height:1.2;color:#fef3c7;box-shadow:0 3px 0 rgba(146,64,14,0.3);position:relative;overflow:hidden;--boost-pct:0deg}
 #btn-boost.cooldown{opacity:0.55;pointer-events:none}
 /* v54.0 (concern 9): cooldown circular arc — conic-gradient sweeping from
@@ -203,8 +208,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 .train-sub{font-size:9px;color:rgba(200,180,230,.45);margin-top:1px}
 .train-spd{font-size:10px;color:#fbbf24;font-weight:700;margin-top:2px}
 #go-btn-wrap{padding:12px 16px 20px;flex-shrink:0}
-#go-btn{width:100%;padding:16px 0;border-radius:18px;background:linear-gradient(160deg,#4ade80,#22c55e);border:none;color:#fff;font-size:17px;font-weight:900;cursor:pointer;box-shadow:0 4px 0 #15803d;font-family:inherit;display:none}
-#go-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #15803d}
+/* v55.41 B-228 — jelly green for the primary Mulai CTA */
+#go-btn{width:100%;padding:16px 0;border-radius:24px;background:linear-gradient(180deg,#81e5a3,#4ade80 55%,#22c55e);border:4px solid rgba(255,255,255,0.92);color:#fff;font-size:18px;font-weight:900;cursor:pointer;font-family:inherit;display:none;position:relative;overflow:hidden;box-shadow:0 8px 18px rgba(0,0,0,0.18),inset 0 2px 5px rgba(255,255,255,0.45),inset 0 -5px 9px rgba(0,0,0,0.12)}
+#go-btn::after{content:'';position:absolute;top:10px;right:15px;width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,0.9);box-shadow:15px 5px 0 -4px rgba(255,255,255,0.72);pointer-events:none}
+#go-btn:active{transform:translateY(2px) scale(.98);box-shadow:0 4px 10px rgba(0,0,0,0.18),inset 0 2px 5px rgba(255,255,255,0.4)}
 
 /* Back crumb */
 #sel-crumb{display:none;align-items:center;gap:6px;padding:0 16px 8px;cursor:pointer;color:rgba(200,180,230,.5);font-size:13px}
@@ -1402,7 +1409,8 @@ function buildMidScenery() {
 let trackTies = []
 // v55.5 — TIE_W shrunk (was 28→16), TIE_GAP widened (38→58) so sleepers
 // occupy less screen and scenery between rails reads as background. Closes B-202.
-const TIE_W = 16, TIE_H = 4, TIE_GAP = 58
+// v55.41 B-226 — further shrink so the train CHARACTER is the visual star.
+const TIE_W = 11, TIE_H = 3, TIE_GAP = 78
 
 function buildTracks() {
   const c = new PIXI.Container(); L.tracks = c; stage.addChild(c)
@@ -1413,7 +1421,7 @@ function buildTracks() {
   // (60% of train). Previously railOffset = laneH * 0.28 = ~67px (134px strip
   // on mobile) — dominated the lane. Now fixed-pixel railOffset 27 → 54px strip.
   // Rest of lane fills with grass + sparse fence + tree dots for breathing room.
-  const RAIL_HALF = 27  // 27 × 2 = 54px rail strip (≈ 60% of 90px train height)
+  const RAIL_HALF = 18  // v55.41 B-226 — 18 × 2 = 36px rail strip (~30% of bigger train) so the character dominates
   for (let ln = 0; ln < LANE_COUNT; ln++) {
     const cy = laneYs[ln]
     const railOffset = RAIL_HALF
@@ -1421,7 +1429,7 @@ function buildTracks() {
     // Grass fill (full lane height — was darker pattern; now flat soft green)
     const grass = new PIXI.Graphics()
     grass.rect(0, cy - laneH * 0.5, W, laneH).fill(ln === 1 ? TH.ground1 : TH.ground2)
-    grass.alpha = 0.45
+    grass.alpha = 0.22
     c.addChild(grass)
 
     // Lane separator (subtle line between lanes)
@@ -1445,7 +1453,7 @@ function buildTracks() {
     // Ballast strip (gravel under rails — gives rail strip definition)
     const ballast = new PIXI.Graphics()
     ballast.rect(0, cy - railOffset, W, railOffset * 2).fill(0x6b5b4a)
-    ballast.alpha = 0.55
+    ballast.alpha = 0.30
     c.addChild(ballast)
 
     // Steel rails — 2 thin lines at edges of rail strip
@@ -2329,7 +2337,7 @@ function updatePlayerEmoji() {
   if (S.trainCfg.isCharacter && S.trainCfg.spriteUrl) {
     const url = S.trainCfg.spriteUrl
     if (!L.playerCharImg || L.playerCharImg._url !== url) {
-      const targetH = S.trainCfg.spriteHeight || 90
+      const targetH = (S.trainCfg.spriteHeight || 90) * 1.35  // v55.41 B-226 — train is the visual star
       PIXI.Assets.load(url).then((tex) => {
         // Tear down any previous character sprite
         if (L.playerCharImg && L.playerCharImg.parent) {
@@ -2523,7 +2531,7 @@ function buildAI() {
     // v55.2 — AI character sprite via PIXI.Assets.load (mirrors player path).
     // Replaces v54.87 PIXI.Sprite.from which silently failed. Closes B-201 AI side.
     if (cfg.isCharacter && cfg.spriteUrl) {
-      const targetH = (cfg.spriteHeight || 90) * 0.85 // AI slightly smaller than player
+      const targetH = (cfg.spriteHeight || 90) * 1.35 * 0.85 // v55.41 B-226 — match player scale-up, AI slightly smaller
       PIXI.Assets.load(cfg.spriteUrl).then((tex) => {
         const img = new PIXI.Sprite(tex)
         img.anchor.set(0.5, 0.6)
