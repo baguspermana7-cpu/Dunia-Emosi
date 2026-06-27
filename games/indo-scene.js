@@ -26,8 +26,10 @@
   }
   function light(c, t) { return _lerp(c, 0xffffff, t) }   // toward white
   function dark(c, t) { return _lerp(c, 0x000000, t) }    // toward black
-  function gfx() { return new P.Graphics() }
-  function cont() { return new P.Container() }
+  // Resolve PIXI lazily — the game may load this module BEFORE pixi.min.js, so
+  // `P` can be undefined at load; bind it on first draw instead.
+  function gfx() { if (!P) P = window.PIXI; return new P.Graphics() }
+  function cont() { if (!P) P = window.PIXI; return new P.Container() }
 
   // ── soft warm-pastel palettes per time-of-day ───────────────────────────
   var PALETTES = {

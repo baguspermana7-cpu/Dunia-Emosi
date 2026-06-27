@@ -1,5 +1,17 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.55 "Balapan Kereta → Indonesian scene LIVE in-game" (A-311 Phase 3)
+
+The big one: `games/indo-scene.js` is now wired into **balapan-kereta (g14)**, so the actual game looks like the owner's reference.
+
+- **Layout** — the screen is split: the **scenery band** (sky + Merapi + hills + sawah) fills the upper ~44%, the **3 rail lanes** sit in the lower part (`railTop`), matching the reference's side-view proportions. Computed responsively in `initPixi` + the resize handler.
+- **Scenery swap** — `buildFarScenery` → Indonesian backdrop (light sky gradient, **Merapi volcano** + animated smoke plume nested in **green hills**, distant mountains, **terraced sawah**), masked to the band so it never covers the rails. `buildMidScenery` → **joglo houses / coconut palms / trees / telephone poles** standing at the field edge above the rails (scrolling = parallax). `buildForeScenery` → **tropical-foliage corner framing** + scrolling foreground bushes (fast = parallax-3D near layer). `buildTracks` → **reddish-brown ballast + steel rails + grain sleepers** palette.
+- **Parallax-3D** — far backdrop static, mid props scroll medium, foreground bushes scroll fast; volcano smoke in its own container.
+- **Module fix** — `indo-scene.js` resolved `PIXI` at load (undefined when the game loads it before pixi.min.js); now resolves **lazily** in the draw primitives.
+- **Kept intact:** lanes/AI/obstacles/pickups/boost/scoring + the v55.45 on-rail anchor + facing mirror (Thomas/Ashima verified on-rail + facing right).
+- Verified: real race at **412×915 (portrait)** + **1024×600 (landscape)** — 0 console errors, scene matches the reference, train on rail + facing right, responsive. sw `v55.54→v55.55` (indo-scene.js added to SHELL).
+- **Next:** time-of-day scenery recolor, HUD pastel restyle + power-up tray, g15 (+swipe), question easy-cap + sampling.
+
 ## 2026-06-27 — v55.54 "g14 — on-rail exactness + responsive dimensions" (A-311 Phase 2 begin)
 
 First integration ship for the train-game restyle — the owner's "tepat di rail" + "dimensi object+kereta responsive" must-haves (the volcano-scene backdrop swap is the next ship).

@@ -243,6 +243,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 <script src="settings-modal.js?v=55.5-20260626dd"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <script src="train-bgm.js?v=55.25-20260627dl"></script>
+<script src="indo-scene.js?v=2.0.0"></script>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
 <!-- v54.17 A1: 3-2-1-GO countdown overlay -->
@@ -887,7 +888,7 @@ let app, stage
 let L = {}   // named layers
 let playerSprite, playerGlow
 let laneYs = []  // pixel Y center of each lane (in game area)
-let gameTop, gameH, laneH
+let gameTop, gameH, laneH, railTop   // A-311 railTop = top of the rail band (scenery sits above it)
 let lastObsTime = 0, lastSteamTime = 0
 
 async function initPixi() {
@@ -909,13 +910,15 @@ async function initPixi() {
   gameTop = Math.round(Math.max(56, Math.min(H * 0.10, 92)))
   const gameBot = H - Math.round(Math.max(96, Math.min(H * 0.17, 134)))
   gameH = gameBot - gameTop
-  laneH = gameH / LANE_COUNT
-  laneYs = Array.from({length: LANE_COUNT}, (_, i) => gameTop + laneH * i + laneH / 2)
-  // train uniform height scales to the lane (stays the visual star) — clamped so it
-  // never gets cramped on tiny phones nor tiny on desktops.
-  G14_UNIFORM_H = Math.round(Math.max(96, Math.min(laneH * 1.05, H * 0.18)))
+  // A-311 — Indonesian layout: the SCENERY band (volcano/sawah/houses) fills the
+  // upper ~44%, the 3 rail lanes sit in the lower part (matches the reference).
+  railTop = Math.round(gameTop + gameH * 0.44)
+  laneH = (gameBot - railTop) / LANE_COUNT
+  laneYs = Array.from({length: LANE_COUNT}, (_, i) => railTop + laneH * i + laneH / 2)
+  // train uniform height scales to the lane (stays the visual star) — clamped.
+  G14_UNIFORM_H = Math.round(Math.max(72, Math.min(laneH * 1.02, H * 0.15)))
   // obstacle emoji size scales with the smaller viewport axis, ≥44px tap target.
-  OBS_SIZE = Math.round(Math.max(40, Math.min(Math.min(W, H) * 0.085, 56)))
+  OBS_SIZE = Math.round(Math.max(38, Math.min(Math.min(W, H) * 0.075, 52)))
 
   buildSky()
   buildClouds()
@@ -1375,78 +1378,73 @@ function tickKMMarkers(delta) {
   }
 }
 
-// ── Far scenery ───────────────────────────────────────────
+// A-311 — scene mood (kept 'day' = the bright reference panel; sky still recolors
+// dynamically via g14ApplyTimeOfDaySky). Hook for future time-of-day scenery.
+function g14SceneMood() { return 'day' }
+
+// ── Far scenery → Indonesian backdrop (volcano in hills + mountains + sawah) ──
 function buildFarScenery() {
   const c = new PIXI.Container(); L.far = c; stage.addChild(c)
-  const W = app.screen.width
-  // Mountain silhouettes
-  for (let i = 0; i < 12; i++) {
-    const g = new PIXI.Graphics()
-    const mW = 80 + Math.random() * 100
-    const mH = 50 + Math.random() * 80
-    g.moveTo(0, 0).lineTo(mW / 2, -mH).lineTo(mW, 0).fill(TH.mountain)
-    g.x = i * (W / 6) - 20 + Math.random() * 40
-    g.y = gameTop + 30 + Math.random() * 20
-    g._speed = 0.15
-    c.addChild(g)
+  const W = app.screen.width, H = app.screen.height
+  const IS = window.IndoScene
+  const pal = IS ? IS.palette(g14SceneMood()) : null
+  if (!IS || !pal) {
+    // legacy fallback (procedural mountains + haze) if the module fails to load
+    for (let i = 0; i < 12; i++) { const g = new PIXI.Graphics(); const mW = 80 + Math.random()*100, mH = 50 + Math.random()*80; g.moveTo(0,0).lineTo(mW/2,-mH).lineTo(mW,0).fill(TH.mountain); g.x = i*(W/6)-20; g.y = gameTop+30; g._speed = 0; c.addChild(g) }
+    c._speed = 0; return
   }
-  // v55.46 — 2.5D aerial-perspective haze. A soft sky-tinted band fading downward
-  // over the mountain bases pushes the far layer back, the way distance fades into
-  // atmosphere. Faked as 6 stacked low-alpha strips (Pixi Graphics has no gradient
-  // fill); cheap, static, no per-frame cost. Closes the "flat backdrop" feel.
-  const hazeTop = gameTop + 14, hazeH = 78, strips = 6
-  for (let s = 0; s < strips; s++) {
-    const hz = new PIXI.Graphics()
-    // strongest at the horizon line, fading up — classic depth cue
-    const a = 0.16 * (1 - s / strips)
-    hz.rect(0, hazeTop + (hazeH / strips) * s, W, hazeH / strips + 1).fill({ color: (TH.haze != null ? TH.haze : 0xbcd2e8), alpha: a })
-    hz._speed = 0   // haze is atmosphere — it does NOT parallax-scroll
-    c.addChild(hz)
-  }
-  c._speed = 0.15
+  const railY = railTop - 1               // scenery sits ABOVE the rail band
+  const bandH = Math.max(80, railY)       // full scenery band from screen top
+  const horizonY = Math.round(bandH * 0.62)   // sky above, ground below the horizon
+  const sceneH = Math.max(40, railY - horizonY)
+  // Indonesian sky gradient (the bright reference sky) covering the whole band,
+  // then green ground below the horizon — so the volcano sits against blue sky.
+  const sky = new PIXI.Graphics(); IS.paintSky(sky, W, railY, pal); sky._speed = 0; c.addChild(sky)
+  const ground = new PIXI.Graphics(); ground.rect(0, horizonY, W, railY - horizonY + 4).fill({ color: pal.grass }); ground._speed = 0; c.addChild(ground)
+  // distant mountains → far hills → volcano → near hills → sawah (static backdrop)
+  const add = (node) => { node._speed = 0; c.addChild(node) }
+  add(IS.mountains(W, horizonY + 6, pal))
+  add(IS.hills(W, horizonY, pal, 0))
+  const vol = IS.volcano(W, horizonY + 10, pal, Math.min(horizonY * 0.78, bandH * 0.5)); add(vol)
+  add(IS.hills(W, horizonY + 10, pal, 1))
+  add(IS.hills(W, horizonY + 24, pal, 2))
+  add(IS.sawahBand(W, horizonY + Math.min(sceneH * 0.3, 30), Math.min(sceneH * 0.7, 60), pal))
+  // mask the backdrop to the scenery band so hills/ground never draw over the rails
+  const mask = new PIXI.Graphics(); mask.rect(0, 0, W, railTop).fill(0xffffff); mask._speed = 0; c.addChild(mask); c.mask = mask
+  // smoke in its OWN container (so tickMid's far-scroll never moves the puffs)
+  if (L.smoke && L.smoke.parent) { L.smoke.parent.removeChild(L.smoke); L.smoke.destroy({children:true}) }
+  L.smoke = new PIXI.Container(); stage.addChild(L.smoke)
+  L._craterX = vol._craterX; L._craterY = vol._craterY
+  L._smoke = IS.makeSmoke(); L._scenePal = pal; L._smokeT = 0
+  c._speed = 0
 }
 
-// ── Mid scenery ───────────────────────────────────────────
+// ── Mid scenery → Indonesian props (houses/palms/trees/poles) at the field edge ──
 let midItems = []
 function buildMidScenery() {
   const c = new PIXI.Container(); L.mid = c; stage.addChild(c)
-  const W = app.screen.width, H = app.screen.height
-  const treeMap = {
-    forest:['🌲','🌳','🎋','🍂','🐿️','🦌','🍄','🌻'],
-    desert:['🌵','🏜️','☀️','🦎','🐪','🏺','💀','🪨'],
-    snow:['🌲','❄️','⛄','🏔️','🎿','🦌','🧊','☃️'],
-    coastal:['🌴','🌊','🐚','🦀','⛵','🏖️','🐬','🦩'],
-    urban:['🏢','🏗️','🏠','🏪','🚦','🏫','🏥','🏛️'],
-    volcano:['🔥','🌋','💨','🪨','🦇','💎','⚡','☄️']
-  }
-  const treeEmojis = treeMap[TH.name] || ['🌲','🌳','🌴']
-  // v55.45 B-231 — owner: "pemandangan...masak di atas doank. Itu tengah banyak
-  // space kosong." Scenery used to cluster near the 3 lane centers, leaving the
-  // inter-lane grass bands + the area above lane 0 and below lane 2 as empty void.
-  // Now distribute items across the FULL play band (gameTop..gameBot) so every gap
-  // has a tree / bush / tuft. Items farther from a rail are smaller + fainter so
-  // the rails stay readable and the train remains the focus.
-  const bandTop = gameTop + 8
-  const bandBot = (app.screen.height - 122) - 8
-  const bandH = Math.max(40, bandBot - bandTop)
-  const COUNT = 34
-  for (let i = 0; i < COUNT; i++) {
-    // Even vertical spread + jitter so rows don't line up into a grid.
-    const frac = (i + 0.5) / COUNT
-    const yPos = bandTop + bandH * frac + (Math.random() - 0.5) * (bandH / COUNT)
-    // How close is this item to the nearest rail line? Near-rail items render a
-    // touch smaller/fainter so they don't crowd the wheels; gap items are bigger.
-    const nearestRail = Math.min(...laneYs.map(ly => Math.abs(yPos - ly)))
-    const inGap = nearestRail > laneH * 0.22
-    const t = new PIXI.Text({ text: treeEmojis[i % treeEmojis.length], style: { fontSize: (inGap ? 22 : 16) + Math.random() * 10 } })
-    t.anchor.set(0.5, 1)
-    t.alpha = inGap ? 0.5 : 0.32
-    t.x = (i * W / (COUNT / 2.5)) % (W + 80) + Math.random() * 24
-    t.y = yPos
-    t._speed = inGap ? 0.42 : 0.34   // slight parallax variance for depth
-    t._laneY = yPos
-    c.addChild(t)
-    midItems.push(t)
+  const W = app.screen.width
+  const IS = window.IndoScene, pal = IS && IS.palette(g14SceneMood())
+  midItems = []
+  if (!IS || !pal) return   // backdrop already carries scenery; skip if module missing
+  // props stand on the horizon line, just above the rail band — like the reference
+  // (kampung houses + palms at the edge of the rice fields beside the track).
+  const baseY = railTop - 3
+  const kinds = ['house', 'palm', 'tree', 'pole', 'palm', 'house', 'tree', 'pole']
+  const N = Math.max(6, Math.round(W / 150))
+  const unit = Math.max(0.5, Math.min(W, app.screen.height) / 760)   // responsive prop scale
+  for (let i = 0; i < N; i++) {
+    const k = kinds[i % kinds.length]
+    const sc = (0.55 + ((i * 7) % 4) / 10) * unit
+    let pr
+    if (k === 'house') pr = IS.house(pal, sc)
+    else if (k === 'palm') pr = IS.palm(pal, sc)
+    else if (k === 'tree') pr = IS.tree(pal, sc)
+    else pr = IS.pole(pal, sc)
+    pr.x = 40 + i * (W / N) + ((i * 23) % 50) - 25
+    pr.y = baseY - (i % 2) * 4
+    pr._speed = 0.5
+    c.addChild(pr); midItems.push(pr)
   }
 }
 
@@ -1462,28 +1460,26 @@ function buildForeScenery() {
   foreItems = []   // reset so a re-init (resize/restart) doesn't keep stale sprite refs
   const c = new PIXI.Container(); L.fore = c; stage.addChild(c)  // after player → in front of train
   const W = app.screen.width, H = app.screen.height
-  const botY = H - 122          // bottom of the play band (below lane 2)
-  const topY = gameTop          // top of the play band (above lane 0)
-  // theme-tinted dark foliage; falls back to a deep green
-  const leaf = (TH.fore != null) ? TH.fore : 0x14331f
-  const mkBush = (x, baseY, scale, up) => {
+  const IS = window.IndoScene, pal = IS && IS.palette(g14SceneMood())
+  const leaf = (pal ? pal.foliage : ((TH.fore != null) ? TH.fore : 0x14331f))
+  const leafDk = (pal ? pal.foliageDk : 0x0e2418)
+  // A-311 — static tropical-foliage framing the bottom corners (the reference's
+  // lush front). Not in foreItems → stays put while the bushes scroll.
+  if (IS && pal) { const frame = IS.foliageFrame(W, H, pal); c.addChild(frame) }
+  const unit = Math.max(0.6, Math.min(W, H) / 760)
+  const mkBush = (x, baseY, scale) => {
     const g = new PIXI.Graphics()
-    // cluster of 3 overlapping ellipses = soft bush silhouette
-    const r = 26 * scale
-    g.ellipse(-r * 0.8, 0, r * 0.9, r * 0.7).fill({ color: leaf, alpha: 0.62 })
-    g.ellipse(r * 0.8, 0, r * 0.9, r * 0.7).fill({ color: leaf, alpha: 0.62 })
-    g.ellipse(0, -r * 0.35, r * 1.15, r * 0.95).fill({ color: leaf, alpha: 0.66 })
-    g.x = x
-    g.y = baseY + (up ? r * 0.5 : -r * 0.5)   // anchor toward the edge
-    g._speed = 1.5 + Math.random() * 0.3      // FAST = close to camera
-    g._baseY = g.y
-    g._bob = Math.random() * Math.PI * 2
-    c.addChild(g)
-    foreItems.push(g)
+    const r = 26 * scale * unit
+    g.ellipse(-r * 0.8, 0, r * 0.9, r * 0.7).fill({ color: leafDk, alpha: 0.9 })
+    g.ellipse(r * 0.8, 0, r * 0.9, r * 0.7).fill({ color: leafDk, alpha: 0.9 })
+    g.ellipse(0, -r * 0.35, r * 1.15, r * 0.95).fill({ color: leaf, alpha: 0.92 })
+    g.x = x; g.y = baseY
+    g._speed = 1.5 + Math.random() * 0.3      // FAST = close to camera (parallax-3D)
+    g._baseY = g.y; g._bob = Math.random() * Math.PI * 2
+    c.addChild(g); foreItems.push(g)
   }
-  // bottom row (5) + top row (4), spread across + past the right edge
-  for (let i = 0; i < 5; i++) mkBush((i * W / 4) + Math.random() * 60, botY, 1.0 + Math.random() * 0.5, false)
-  for (let i = 0; i < 4; i++) mkBush((i * W / 3) + 80 + Math.random() * 60, topY, 0.8 + Math.random() * 0.4, true)
+  // scrolling bushes along the very bottom edge, in front of the train
+  for (let i = 0; i < 6; i++) mkBush((i * W / 4) + Math.random() * 60, H - 2, 1.0 + Math.random() * 0.5)
 }
 
 function tickFore(delta) {
@@ -1507,6 +1503,10 @@ const TIE_W = 11, TIE_H = 3, TIE_GAP = 78
 function buildTracks() {
   const c = new PIXI.Container(); L.tracks = c; stage.addChild(c)
   const W = app.screen.width
+  // A-311 — Indonesian ballast palette (reddish-brown gravel, steel rails, grain ties)
+  const _is = window.IndoScene, _p = _is && _is.palette(g14SceneMood())
+  const C_GRASS = _p ? _p.grass : 0x4ade80, C_BALLAST = _p ? _p.ballast : 0x6b5b4a,
+        C_RAIL = _p ? _p.rail : 0x4b5563, C_SHINE = _p ? _p.railShine : 0x9ca3af, C_TIE = _p ? _p.tie : 0x4e342e
 
   // v55.5 — Per-lane track redesign (closes B-202). Owner: rail strip should be
   // LESS than 80% of train height. Train spriteHeight ~90px → rail strip ≈ 54px
@@ -1518,10 +1518,10 @@ function buildTracks() {
     const cy = laneYs[ln]
     const railOffset = RAIL_HALF
 
-    // Grass fill (full lane height — was darker pattern; now flat soft green)
+    // Grass fill (full lane height) — Indonesian field green
     const grass = new PIXI.Graphics()
-    grass.rect(0, cy - laneH * 0.5, W, laneH).fill(ln === 1 ? TH.ground1 : TH.ground2)
-    grass.alpha = 0.22
+    grass.rect(0, cy - laneH * 0.5, W, laneH).fill(C_GRASS)
+    grass.alpha = 0.55
     c.addChild(grass)
 
     // Lane separator (subtle line between lanes)
@@ -1542,21 +1542,21 @@ function buildTracks() {
     lowerGrass.alpha = 0.10
     c.addChild(lowerGrass)
 
-    // Ballast strip (gravel under rails — gives rail strip definition)
+    // Ballast strip (reddish-brown gravel under rails)
     const ballast = new PIXI.Graphics()
-    ballast.rect(0, cy - railOffset, W, railOffset * 2).fill(0x6b5b4a)
-    ballast.alpha = 0.30
+    ballast.rect(0, cy - railOffset, W, railOffset * 2).fill(C_BALLAST)
+    ballast.alpha = 0.75
     c.addChild(ballast)
 
     // Steel rails — 2 thin lines at edges of rail strip
     for (const sign of [-1, 1]) {
       const rail = new PIXI.Graphics()
-      rail.rect(0, cy + sign * railOffset - 1, W, 2).fill(0x4b5563)
+      rail.rect(0, cy + sign * railOffset - 1, W, 2.5).fill(C_RAIL)
       c.addChild(rail)
       // Subtle highlight on top edge
       const highlight = new PIXI.Graphics()
-      highlight.rect(0, cy + sign * railOffset - 1.5, W, 0.5).fill(0x9ca3af)
-      highlight.alpha = 0.6
+      highlight.rect(0, cy + sign * railOffset - 1.5, W, 0.8).fill(C_SHINE)
+      highlight.alpha = 0.85
       c.addChild(highlight)
     }
 
@@ -1564,7 +1564,7 @@ function buildTracks() {
     const numTies = Math.ceil(W / (TIE_W + TIE_GAP)) + 3
     for (let j = 0; j < numTies; j++) {
       const tie = new PIXI.Graphics()
-      tie.rect(-TIE_W / 2, cy - railOffset - 1, TIE_W, railOffset * 2 + 2).fill(0x4e342e)
+      tie.rect(-TIE_W / 2, cy - railOffset - 1, TIE_W, railOffset * 2 + 2).fill(C_TIE)
       tie.x = j * (TIE_W + TIE_GAP)
       c.addChild(tie)
       trackTies.push({ g: tie, ln })
@@ -3613,6 +3613,11 @@ function loop(ticker) {
   tickClouds(delta)
   tickBirds(delta)
   tickMid(delta)
+  // A-311 — volcano smoke plume (own container, so the parallax tick never moves it)
+  if (window.IndoScene && L._smoke && L.smoke && L._scenePal) {
+    L._smokeT = (L._smokeT || 0) + delta
+    IndoScene.tickSmoke(L.smoke, L._smoke, L._craterX, L._craterY, L._scenePal, delta, (L._smokeT % 5) < delta)
+  }
   tickSignalPosts(delta)
   tickKMMarkers(delta)  // v54.14
   tickTracks(delta)
@@ -4189,9 +4194,17 @@ window.addEventListener('resize', () => {
   _g14ResizeDebounce = setTimeout(() => {
     if (!app) return
     app.renderer.resize(Math.min(window.innerWidth, 1400), Math.min(window.innerHeight, 1000))
-    const H = app.screen.height
-    laneH = (H - gameTop) / LANE_COUNT
-    laneYs = Array.from({length: LANE_COUNT}, (_, i) => gameTop + laneH * i + laneH / 2)
+    const H = app.screen.height, W = app.screen.width
+    // A-311 — recompute the SAME responsive layout as initPixi so lanes/scenery/
+    // train/obstacle all stay consistent after a resize/rotate.
+    gameTop = Math.round(Math.max(56, Math.min(H * 0.10, 92)))
+    const gameBot = H - Math.round(Math.max(96, Math.min(H * 0.17, 134)))
+    gameH = gameBot - gameTop
+    railTop = Math.round(gameTop + gameH * 0.44)
+    laneH = (gameBot - railTop) / LANE_COUNT
+    laneYs = Array.from({length: LANE_COUNT}, (_, i) => railTop + laneH * i + laneH / 2)
+    G14_UNIFORM_H = Math.round(Math.max(72, Math.min(laneH * 1.02, H * 0.15)))
+    OBS_SIZE = Math.round(Math.max(38, Math.min(Math.min(W, H) * 0.075, 52)))
     // Rebuild track infrastructure to match new lane positions
     try {
       if (L.tracks && L.tracks.parent) { L.tracks.parent.removeChild(L.tracks); L.tracks.destroy({children:true}) }
