@@ -207,6 +207,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <script src="data/bg-events.js?v=54.67-20260626bt"></script>
 <!-- v54.83 — ObstacleEngine + Koleksi gallery available from G15 picker (Practice Mode) -->
 <script src="obstacle-engine.js?v=55.6-20260626de"></script>
+<script src="indo-scene.js?v=2.0.0"></script>
 <script src="data/kids-questions.js?v=54.83-20260626cj"></script>
 <script src="data/obstacles.js?v=54.83-20260626cj"></script>
 <script src="data/routes.js?v=54.83-20260626cj"></script>
@@ -1491,27 +1492,26 @@ function buildCloud(color, alpha) {
 
 // ── Tracks ────────────────────────────────────────────────────────────────────
 function buildTracks() {
-  // v55.41 B-226 — thinner rails + smaller, sparser sleepers so the train
-  // CHARACTER is the dominant element (owner: "fokus besarnya di karakter kereta").
+  // A-311 — Indonesian ballast rail (matches Balapan Kereta). Rail Y positions
+  // (lY+14 / lY+22) are UNCHANGED so the train stays exactly on the rail.
+  const _is = window.IndoScene, _p = _is && _is.palette('day')
+  const C_BALLAST = _p ? _p.ballast : 0x9c8463, C_RAIL = _p ? _p.rail : T.railColor,
+        C_SHINE = _p ? _p.railShine : 0x9ca3af, C_TIE = _p ? _p.tie : T.sleeperColor
   for (let lane = 0; lane < 3; lane++) {
     const lY = LANE_Y[lane];
-    const rail1 = new PIXI.Graphics();
-    rail1.rect(0, lY + 14, W, 3).fill({ color: T.railColor });
-    trackLayer.addChild(rail1);
-    const rail2 = new PIXI.Graphics();
-    rail2.rect(0, lY + 22, W, 3).fill({ color: T.railColor });
-    trackLayer.addChild(rail2);
-    // Rail glow (subtler)
-    const glow = new PIXI.Graphics();
-    glow.rect(0, lY + 11, W, 16).fill({ color: T.railShadow });
-    glow.alpha = 0.12; trackLayer.addChild(glow);
-    // Sleepers — smaller (10×16) + sparser (every 56px)
+    // reddish-brown ballast bed behind the rails
+    const ballast = new PIXI.Graphics();
+    ballast.rect(0, lY + 8, W, 22).fill({ color: C_BALLAST }); ballast.alpha = 0.7; trackLayer.addChild(ballast);
+    // sleepers (under the rails), sparse
     for (let x = 0; x < W + 56; x += 56) {
       const sl = new PIXI.Graphics();
-      sl.rect(-5, lY + 11, 10, 16).fill({ color: T.sleeperColor });
-      sl.rect(-5, lY + 11, 10, 16).stroke({ width: 1, color: 0x000000, alpha: 0.25 });
+      sl.rect(-6, lY + 10, 12, 19).fill({ color: C_TIE });
+      sl.rect(-6, lY + 10, 12, 4).fill({ color: 0xffffff, alpha: 0.08 });
       sl.x = x; trackLayer.addChild(sl); sleepers.push(sl);
     }
+    // steel rails on top + shine
+    const rail1 = new PIXI.Graphics(); rail1.rect(0, lY + 14, W, 3).fill({ color: C_RAIL }); rail1.rect(0, lY + 14, W, 1).fill({ color: C_SHINE, alpha: 0.8 }); trackLayer.addChild(rail1);
+    const rail2 = new PIXI.Graphics(); rail2.rect(0, lY + 22, W, 3).fill({ color: C_RAIL }); rail2.rect(0, lY + 22, W, 1).fill({ color: C_SHINE, alpha: 0.8 }); trackLayer.addChild(rail2);
   }
 }
 

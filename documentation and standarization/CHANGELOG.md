@@ -1,5 +1,9 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.57 "g15 ballast rail (matches Balapan Kereta)" (A-311)
+
+`lokomotif-pemberani.html` rail restyled to the Indonesian **ballast** look (reddish-brown gravel bed + steel rails + shine + grain sleepers), matching g14, via `indo-scene.js` palette. Rail Y positions UNCHANGED so the character train stays exactly on the rail. Verified: g15 race loads + runs, 0 console errors, train on rail + facing right. sw `v55.56→v55.57`. (Full g15 volcano-scenery backdrop = next.)
+
 ## 2026-06-27 — v55.56 "g15 swipe + boost easy-cap" (A-311 controls/questions)
 
 Two of the owner's must-haves, contained + verified (g15 full scene swap is the next dedicated ship).
