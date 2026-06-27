@@ -2378,8 +2378,14 @@ function startBattle(trainerId){
   };
   document.getElementById('trainer-name-enemy').textContent = trainer.name;
   const pp = document.getElementById('portrait-player');
-  pp.style.display = ''; pp.src = '../assets/Pokemon/trainer/player.webp';
-  pp.onerror = ()=>{ pp.src = TRAINER_SPRITE_REMOTE('red'); pp.onerror = ()=>{ pp.style.display='none'; }; };
+  pp.style.display = ''; pp.dataset.triedRemote = ''; pp.src = '../assets/Pokemon/trainer/player.webp';
+  // v55.48 B-238 — idempotent dataset guard (was a nested onerror reassignment that
+  // could fire twice / flash if both URLs failed within a frame). Matches the enemy
+  // portrait cascade above.
+  pp.onerror = ()=>{
+    if(!pp.dataset.triedRemote){ pp.dataset.triedRemote='1'; pp.src = TRAINER_SPRITE_REMOTE('red'); return }
+    pp.style.display = 'none';
+  };
 
   battle = {
     trainer,

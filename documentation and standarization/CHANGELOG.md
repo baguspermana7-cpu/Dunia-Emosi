@@ -1,5 +1,15 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.48 "Visual audit + 3 bug fixes" (B-236/B-237/B-238)
+
+Maintenance pass (owner: *"lanjutkan visual puppeteer audit appearance dan perbaiki bug2 dan error saat ini"*). A 3-agent read-only scan + live puppeteer audit surfaced three real bugs; all fixed.
+
+- **B-236** `balapan-kereta-side.html` — the AI opponent sprite still used the deprecated `PIXI.Sprite.from(url)` + RAF-poll (same 1×1-placeholder root cause as B-201, which was already fixed on the player path). Swapped to `PIXI.Assets.load(url).then(tex => new PIXI.Sprite(tex))` so the AI train always renders.
+- **B-237** `balapan-kereta.html` Web-Share — the share flow fetched the canvas `data:` URL **twice** with no guard. Deduped to a single fetch behind an `AbortController` (8s) so a slow `toDataURL`/blob conversion can never hang the share.
+- **B-238** `gym-pokemon.html` player portrait — replaced a nested `onerror` reassignment (could fire twice / flash if both URLs failed in a frame) with the same idempotent `dataset.triedRemote` guard the enemy portrait uses.
+
+Audit: obstacle 14/14, verify-v5545 nav+math PASS, perf-audit **15/15 in budget**, g14-side + gym-pokemon screenshots read — 0 page/console errors anywhere. sw `v55.46→v55.48`. (The v55.45/46 train edits scanned clean.)
+
 ## 2026-06-27 — v55.47 "RZ Parallax Engine — concept + live mockup (planb.html)" (A-306)
 
 Owner: *"buat engine parallax yang sangat2 keren. /ultraplan, konsep dan masukkan mock up di planb."*

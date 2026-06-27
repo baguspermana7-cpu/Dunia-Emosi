@@ -723,22 +723,18 @@ function buildAITrain() {
   S.aiTrain.alpha = 0.85
 
   if (aiCfg.spriteUrl) {
-    const img = PIXI.Sprite.from(aiCfg.spriteUrl)
-    img.anchor.set(0.5, 1.0)
+    // v55.48 B-236 — was PIXI.Sprite.from(url) + a RAF-poll, the deprecated
+    // pattern that leaves the texture at 1×1 in Pixi 8 (same root cause as B-201,
+    // already fixed on the player path above). Use PIXI.Assets.load for a
+    // fully-resolved texture so the AI opponent always renders.
     const targetH = (aiCfg.spriteHeight || 90) * 1.5
-    img.scale.set(0.5)
-    const onLoad = () => {
-      if (img.texture && img.texture.height > 1) img.scale.set(targetH / img.texture.height)
-    }
-    if (img.texture && img.texture.source && img.texture.source.loaded) onLoad()
-    else if (img.texture && img.texture.source && typeof img.texture.source.addEventListener === 'function') {
-      img.texture.source.addEventListener('load', onLoad)
-    } else {
-      let tries = 0
-      const tk = () => { if (img.texture && img.texture.height > 1) { onLoad(); return } if (tries++ < 60) requestAnimationFrame(tk) }
-      tk()
-    }
-    S.aiTrain.addChild(img)
+    PIXI.Assets.load(aiCfg.spriteUrl).then((tex) => {
+      if (!tex || S.disposed) return
+      const img = new PIXI.Sprite(tex)
+      img.anchor.set(0.5, 1.0)
+      img.scale.set(targetH / tex.height)
+      S.aiTrain.addChild(img)
+    }).catch((e) => console.warn('[g14-side] AI sprite load failed', aiCfg.spriteUrl, e))
   }
   // Insert BEHIND obstacle layer but BEFORE player container layering
   stage.addChildAt(S.aiTrain, stage.getChildIndex(trainContainer))

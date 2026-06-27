@@ -3380,10 +3380,20 @@ async function g14HandleShare(){
       title: 'Dunia Emosi — Balapan Kereta',
       text: `Aku raih ${S.position === 1 ? '🥇' : S.position === 2 ? '🥈' : '🥉'} ${Math.floor(S.distance)}m dengan ${(S.trainCfg && S.trainCfg.name) || 'kereta'} di Dunia Emosi! 🚂`
     }
-    if (dataUrl && navigator.canShare && navigator.canShare({ files: [new File([await (await fetch(dataUrl)).blob()], 'race.png', { type: 'image/png' })] })) {
-      const blob = await (await fetch(dataUrl)).blob()
-      const file = new File([blob], 'race.png', { type: 'image/png' })
-      await navigator.share({ ...payload, files: [file] })
+    // v55.48 B-237 — fetch the data-URL ONCE (was twice) behind an AbortController
+    // timeout so a slow/huge toDataURL blob conversion can never hang the share flow.
+    let _file = null
+    if (dataUrl) {
+      try {
+        const _ctrl = new AbortController()
+        const _to = setTimeout(() => _ctrl.abort(), 8000)
+        const _blob = await (await fetch(dataUrl, { signal: _ctrl.signal })).blob()
+        clearTimeout(_to)
+        _file = new File([_blob], 'race.png', { type: 'image/png' })
+      } catch(_) { _file = null }
+    }
+    if (_file && navigator.canShare && navigator.canShare({ files: [_file] })) {
+      await navigator.share({ ...payload, files: [_file] })
     } else if (navigator.share) {
       await navigator.share(payload)
     } else if (dataUrl) {
