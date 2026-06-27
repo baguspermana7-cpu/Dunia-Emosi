@@ -1,5 +1,95 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.25 "Thomas & Friends BGM swap (closes A-302 + A-303)"
+
+Owner ask 2026-06-27:
+- **A-302**: *"jika kereta char yang dipilih adalah thomas and friend, background soundnya ganti dengan ini. untuk semua game kereta... tapi volumenya nggak usah full 30-50% aja"*
+- **A-303**: *"awas, no bug, jangan suara saling nabrak2"*
+
+When a Thomas & Friends character is selected in any train game with BGM (g14, g15, g16), swap the looping background music to one of two Thomas tracks at 40% volume (mid of owner's 30-50% range).
+
+### Asset install
+
+Copy + safe-rename MP3s from `~/Downloads/` into:
+- `Sounds/train-bgm-thomas/all-engines-go-theme.mp3` (1.5MB, from `YTMP3GG_…128k.mp3`)
+- `Sounds/train-bgm-thomas/im-gonna-chug-song.mp3` (3.5MB, from `I'm Gonna Chug Song …mp3`)
+
+Safe filenames (lowercase + hyphens) avoid URL encoding noise for the apostrophes/spaces in the originals — same lesson as v55.18 SFX paths.
+
+### NEW `games/train-bgm.js` (~85 LOC)
+
+Single source of truth for BGM selection. Eliminates A-303 audio-collision risk.
+
+```js
+window.TrainBGM = {
+  setTrack(trainKey, fallbackVolume)  // pauses+loads new src cleanly
+  play() / pause() / stop()
+  isThomas(trainKey)  // helper for per-game volume tuning
+}
+```
+
+- **Detection**: any `trainKey.startsWith('aeg_')` → Thomas mode (26 AEG characters)
+- **Stable per-character track pick**: hash(trainKey) % 2 → each Thomas char always plays the same song (predictable feel, no Math.random)
+- **A-303 collision guard**: `pause() → src = … → load()` sequence before play. Idempotent — same src is a no-op (doesn't restart on every call).
+- **Fall-through**: any other key (PROTECTED chars Casey/Linus/Dragutin/Brave/Malivlak, etc.) → default `train-bgm.mp3` at per-game volume. Zero regression risk.
+
+### Per-game integration
+
+| Game | Audio element line | TrainBGM call site | Effective Thomas volume |
+|---|---|---|---|
+| `g14.html` | 226 | line 3618 race-start | 0.40 |
+| `g15-pixi.html` | 205 | line 920 ramp-in (target 0.40 for Thomas, 0.35 default) | 0.40 max |
+| `g16-pixi.html` | 156 | line 772 play + 980 duck | 0.40 idle, 0.20 ducked during quiz (was 0.10 — keeps Thomas in owner's 30-50% range) |
+
+g14-side.html intentionally untouched — currently silent, adding NEW BGM is out of scope.
+
+### NEW `tools/probe-train-bgm.mjs` — 5th operational probe
+
+7 acceptance checks per game × 3 games = **21/21 PASS** on first run:
+
+```
+B1 g14 top-down race
+  PASS  TrainBGM helper loaded = true
+  PASS  <audio id=game-bgm> count = 1
+  PASS  Casey JR → src ends train-bgm.mp3, vol 0.2  (no regression)
+  PASS  Thomas → src ends train-bgm-thomas/all-engines-go-theme.mp3
+  PASS  Thomas → vol 0.4 (owner's 0.30-0.50)
+  PASS  Percy → src ends train-bgm-thomas/im-gonna-chug-song.mp3 (different hash)
+  PASS  A-303 rapid swap → audio is paused (no overlap)
+[same 7 PASS for B2 g15 + B3 g16]
+PASS=21  FAIL=0
+```
+
+### Files touched
+
+- NEW `Sounds/train-bgm-thomas/` directory (2 MP3s)
+- NEW `games/train-bgm.js` (~85 LOC helper)
+- NEW `tools/probe-train-bgm.mjs` (~120 LOC functional probe)
+- `games/g14.html` — script include + 1-line race-start swap
+- `games/g15-pixi.html` — script include + ramp-target swap (Thomas 0.40 / default 0.35)
+- `games/g16-pixi.html` — script include + 2-site swap (play + duck function)
+- `sw.js` v55.24 → v55.25
+
+### Verification
+
+- `node tools/probe-train-bgm.mjs` → 21/21 PASS
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS
+- `node tools/visual-polish-audit.mjs` → 18 screens, 0 errors, 0 server 404s
+- All 4 existing probes (comprehensive, polish, deep, touch-target) confirmed clean — no regression
+
+### L210 — Audio collision is a non-negotiable; single-source-of-truth helper kills it
+
+Owner mandate A-303 "jangan suara saling nabrak2" forces the BGM module to own the entire `<audio>` element lifecycle. The pattern: `pause() → src = … → load()` sequence before any new `play()`. Compared to the alternative of letting each game manage its own audio swap, the helper is:
+- **Idempotent** — same src input is a no-op, so callers can fire it as often as they want without restarting the track.
+- **Single point of truth for the Thomas check** — `isThomas()` is exported so per-game volume tuning (g15 ramp target, g16 duck floor) stays consistent.
+- **Verifiable via probe** — `audio.paused === true` after rapid swap is the proof that no collision happened.
+
+When user-facing audio behavior must be reliable, route every read+write through one module. Don't scatter `bgm.src = …` calls across N call sites in N HTMLs.
+
+### Closes A-302, A-303
+
+---
+
 ## 2026-06-27 — v55.24 "Touch-target fixes — 25→0 sub-44px buttons across 12 games"
 
 Owner A-301 polish iteration. v55.23 baseline found 25 sub-44px touch targets that fail Apple HIG / Material Design minimums for child UX. v55.24 fixes all of them by adding `min-width:44px;min-height:44px` to each offending CSS rule + inline style — purely additive, no layout-flow changes.

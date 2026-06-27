@@ -224,6 +224,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 <script src="reward-gallery.js?v=55.5-20260626dd"></script>
 <script src="settings-modal.js?v=55.5-20260626dd"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
+<script src="train-bgm.js?v=55.25-20260627dl"></script>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
 <!-- v54.17 A1: 3-2-1-GO countdown overlay -->
@@ -3614,7 +3615,7 @@ function startRace() {
   // sequence finishes so the race actually STARTS at "GO!", not 1.5s earlier.
   g14RunCountdown(() => {
     S.running = true
-    try{const bgm=document.getElementById('game-bgm');bgm.volume=0.2;bgm.play().catch(()=>{})}catch(_){}
+    try{if(window.TrainBGM){TrainBGM.setTrack(S.trainCfg&&S.trainCfg.key,0.2);TrainBGM.play()}else{const bgm=document.getElementById('game-bgm');bgm.volume=0.2;bgm.play().catch(()=>{})}}catch(_){}
     try{const sfx=document.getElementById('train-sfx');if(sfx){sfx.currentTime=0;sfx.volume=0.7;sfx.play().catch(()=>{})}}catch(_){}
     // v54.19 B4: cab-window driver wave on race start for character trains only.
     try { g14ShowCabDriverWave() } catch(_){}

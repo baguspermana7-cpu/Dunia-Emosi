@@ -154,6 +154,7 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 <script src="reward-gallery.js?v=54.83-20260626cj"></script>
 <script src="settings-modal.js?v=54.85-20260626cl"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
+<script src="train-bgm.js?v=55.25-20260627dl"></script>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
 <!-- v54.21 D1: READY-SET-GO countdown -->
@@ -769,7 +770,7 @@ async function initPixi(){
   // v54.21 D1: defer S.running until READY-SET-GO ritual completes.
   g16RunCountdown(() => {
     S.startTime=performance.now(); S.running=true
-    try{const bgm=document.getElementById('game-bgm');bgm.volume=0.25;bgm.play().catch(()=>{})}catch(_){}
+    try{if(window.TrainBGM){const tk=(TRAIN_STYLES[selectedTrainIdx]||{}).key;TrainBGM.setTrack(tk,0.25);TrainBGM.play()}else{const bgm=document.getElementById('game-bgm');bgm.volume=0.25;bgm.play().catch(()=>{})}}catch(_){}
     try{const sfx=document.getElementById('train-sfx');if(sfx){sfx.currentTime=0;sfx.volume=0.7;sfx.play().catch(()=>{})}}catch(_){}
     // v54.21 D12: tutorial overlay on L1 first quiz only.
     g16TutorialState.shown = false
@@ -975,11 +976,15 @@ function g16HeartFallFromMercyDot(idx){
 }
 
 // D14: BGM sidechain duck during quiz panel
+// v55.25: Thomas BGM gets a higher floor (0.20/0.40) so it stays in owner's
+// 30-50% range even during the quiz duck. Default trains keep 0.10/0.25.
 function g16DuckBGM(active){
   try {
     const bgm = document.getElementById('game-bgm')
     if (!bgm) return
-    bgm.volume = active ? 0.10 : 0.25
+    const tk = (TRAIN_STYLES[selectedTrainIdx]||{}).key
+    const isThomas = window.TrainBGM && TrainBGM.isThomas(tk)
+    bgm.volume = isThomas ? (active ? 0.20 : 0.40) : (active ? 0.10 : 0.25)
   } catch(_){}
 }
 

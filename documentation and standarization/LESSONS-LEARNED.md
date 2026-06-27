@@ -4,6 +4,21 @@
 
 ---
 
+## 2026-06-27 — v55.25 Audio collision constraint & stable per-key track pick
+
+### L210 — Audio collision is non-negotiable; route every BGM swap through a single helper
+- Owner mandate A-303 "jangan suara saling nabrak2" forces the BGM module to own the entire `<audio>` element lifecycle. Pattern: `pause() → src = newSrc → load()` BEFORE `play()`. Skipping pause lets the browser briefly stream two buffers concurrently while the new src loads.
+- **Fix** (v55.25): `games/train-bgm.js` exposes `TrainBGM.setTrack(key, fallbackVolume)` which is idempotent (same src → no-op) and always pause-before-swap. Per-game code calls this instead of `bgm.src = …` directly.
+- **Verifiable**: `audio.paused === true` after a rapid swap is the proof that no collision happened. Probe `tools/probe-train-bgm.mjs` asserts this.
+- **Lesson**: when user-facing audio reliability matters, route every `<audio>` read+write through one module. Don't scatter `bgm.src = …` calls across N call sites in N HTMLs. The helper costs ~85 LOC and eliminates an entire class of bug.
+
+### L211 — Stable per-key hash beats Math.random for "always the same song" UX
+- Two Thomas tracks × 26 characters → 52 (char, track) combinations. Stable hash → each Thomas char ALWAYS plays the same song across reloads. Predictable, child-friendly. `Math.random()` would flicker between tracks on every game launch, which feels broken to a kid expecting "Thomas plays HIS song."
+- **Pattern**: `tracks[hash(key) % tracks.length]` where hash is a 32-bit FNV-style fold. Deterministic, side-effect-free, harness-rule-compatible (no `Math.random`).
+- **Lesson**: when randomization needs to be stable per-identity (per-character song, per-user color, per-team avatar), hash the identity key. Don't seed `Math.random()` either — bare-identifier hash is simpler and survives harness rules.
+
+---
+
 ## 2026-06-27 — v55.24 Touch-target sizing for child UX
 
 ### L209 — `min-width` + `min-height` is the cleanest touch-target fix
