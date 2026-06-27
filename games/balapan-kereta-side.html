@@ -21,7 +21,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 #hud-top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:6px;padding:max(14px,env(safe-area-inset-top)) 8px 8px;background:linear-gradient(180deg,rgba(0,0,0,0.55) 0%,transparent 100%);pointer-events:none;flex-wrap:nowrap}
 #btn-back{background:rgba(255,255,255,0.92);border:2px solid rgba(120,53,15,0.6);border-radius:12px;color:#5a2a00;padding:10px 14px;font-size:14px;cursor:pointer;font-family:inherit;pointer-events:all;flex-shrink:0;font-weight:900;min-width:88px;min-height:44px;box-shadow:0 3px 0 rgba(120,53,15,0.3)}
 #train-badge{background:linear-gradient(135deg,#fde68a,#fcd34d);border:2px solid #b45309;border-radius:10px;padding:7px 12px;color:#5a2a00;font-size:13px;font-weight:900;flex-shrink:0;pointer-events:none;box-shadow:0 3px 0 rgba(120,53,15,0.3);max-width:46vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#hud-mid{flex:1;text-align:center;min-width:0;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.5);pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center}
+/* B-257 — distance lifted OUT of the cramped top row (it was starved to ~0px by
+   the 6 other nowrap items and overflowed onto the train badge). Now a fixed
+   centred pill just under the progress bar, out of the flex flow. */
+#hud-mid{position:fixed;top:max(78px,calc(env(safe-area-inset-top) + 66px));left:50%;transform:translateX(-50%);z-index:49;text-align:center;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.5);pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,0.34);border-radius:13px;padding:3px 14px;backdrop-filter:none}
 #hud-dist{font-size:clamp(18px,4.8vw,22px);font-weight:900;white-space:nowrap;line-height:1}
 #hud-dist .target{font-size:0.55em;color:#fde047;font-weight:900;opacity:0.9;margin-left:2px}
 #hud-pos{font-size:clamp(10px,2.6vw,12px);color:#fde047;font-weight:900;margin-top:3px;white-space:nowrap;max-width:50vw;overflow:hidden;text-overflow:ellipsis}
@@ -147,6 +150,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <div id="hud-top">
   <button id="btn-back" type="button" onclick="goBack()">← Kembali</button>
   <div id="train-badge"><span id="train-name">Loading…</span></div>
+  <div style="flex:1;min-width:0"></div>
   <div id="hud-mid">
     <div id="hud-dist">0m<span class="target"> / 1000m</span></div>
     <div id="hud-pos">Mulai!</div>

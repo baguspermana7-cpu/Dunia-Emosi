@@ -1,5 +1,9 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.66 "g14-side HUD overlap fix" (B-257)
+
+- **B-257 g14-side HUD overlap.** Visual M-302 audit of a live run caught the distance read-out **"350m / 1000m" overlapping the "Thomas" train badge**: the top bar is a nowrap flex row of 7 items (back · badge · distance · hearts · pause · trophy · settings) and on a phone the flex:1 distance block was starved to ~0px, so its centred nowrap text spilled left over the badge. **Fix:** lifted the distance out of the row into a fixed centred pill just under the progress bar (out of the flex flow) + added a flex spacer so the row balances (back+badge left, hearts+buttons right). Verified: `getBoundingClientRect` overlap=false, HUD reads cleanly at 412px. sw `v55.64→v55.66`.
+
 ## 2026-06-27 — v55.65 "planb.html perf — kill the Canvas2D blur stall" (A-310)
 
 - **A-310 planb mockup very laggy → FIXED.** Profiled the three planb pages under a 4× CPU throttle (tablet-like): `planb-3d.html` 56fps + `planb-true3d.html` 60fps were fine, but **`planb.html` was frozen — 0fps with a single ~5900ms frame**. Root cause: the parallax demo set `ctx.filter='blur(Npx)'` (Canvas2D blur) per layer per frame; that filter path is O(area×radius) and hangs a throttled device. Capping the radius didn't help (any `ctx.filter` blur forces a full-canvas pass). **Fix:** dropped Canvas2D blur entirely and approximate depth-of-field with a cheap translucent wash folded into the existing haze (one `fillRect`, alpha ∝ layer blur). Result: **0fps → 26fps @4×CPU (worst frame 5900ms → 50ms)**, 0 console errors, scene still reads with atmospheric depth. (HTML is network-first, no sw bump needed.)
