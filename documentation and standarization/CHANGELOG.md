@@ -1,5 +1,42 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.44 "Smoke hard-cap + full 8-probe sweep on renamed games"
+
+Final hardening + verification pass.
+
+### B-227 — smoke particle hard cap (guarantee no "wajah terbang")
+
+`train-character-sprite.js` tick now only spawns a new smoke puff while `state.smokeParticles.length < 4`. Even in a worst-case render (throttled device, missed frames) the chimney shows at most **4 small soft circles** — never a cloud of shards. Belt-and-braces on top of the v55.39 dt-clamp + softened puffs. The "wajah terbang" mutilation is now structurally impossible.
+
+### perf-audit probe fix
+
+`tools/perf-audit.mjs` F06 (g15) readiness check was `typeof app !== 'undefined'` — wrong, because g15 gates PIXI behind the train picker, so `app` is undefined on the picker screen (false-negative timeout). Fixed to `.tcard` presence. Now 15/15 OK.
+
+### Full 8-probe acceptance sweep — ALL GREEN (renamed games)
+
+```
+obstacle-engine        14/14 PASS
+train-bgm              28/28 PASS
+comprehensive           7 PASS / 0 FAIL / 0 INFO
+touch-target            0 sub-44px (15 pages)
+perf-audit             15/15 OK (0 over budget)
+polish-audit           18/18 clean (0 console errors)
+deep-audit              9/9 clean (mid-gameplay)
+sprite-visual-audit     all train sprites clean + facing right
+server log              0 server-side 404s
+```
+
+Every one of the 14 renamed games loads, plays, and renders clean.
+
+### Files touched
+- `games/train-character-sprite.js` — smoke `< 4` spawn cap
+- `tools/perf-audit.mjs` — F06 readiness fix
+- `sw.js` v55.43 → v55.44
+
+### Closes the v55.x marathon. 8 probes, all green.
+
+---
+
 ## 2026-06-27 — v55.43 "Jelly buttons across ALL train games (B-228 parity)"
 
 v55.41 gave the jelly/candy buttons to g14 (balapan-kereta) only. Owner said *"Elemen button pada game kereta"* — train GAMES (plural). This ship extends the soft glossy jelly style to the other two train games for full consistency.

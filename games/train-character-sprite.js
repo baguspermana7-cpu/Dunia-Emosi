@@ -128,8 +128,12 @@
       // Wheel rotation — scale with speed
       const rot = s * dt * 0.12
       state.wheels.forEach(wc => { wc.rotation += rot })
-      // Auto-spawn smoke if parent assigned
-      if (state.smokeParent) {
+      // Auto-spawn smoke if parent assigned.
+      // v55.44 B-227 — HARD CAP active puffs at 4. Even in a worst-case render
+      // (throttled device, missed frames) the chimney can show at most 4 small
+      // soft circles — never a cloud of shards ("wajah terbang"). Belt-and-braces
+      // on top of the v55.39 dt-clamp + softened puffs.
+      if (state.smokeParent && state.smokeParticles.length < 4) {
         state.smokeTimer += dt
         if (state.smokeTimer >= state.smokeInterval) {
           state.smokeTimer = 0

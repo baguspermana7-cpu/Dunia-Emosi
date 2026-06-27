@@ -40,7 +40,7 @@ const TARGETS = [
   { id: 'F05', label: 'g14-side intro',      url: '/games/balapan-kereta-side.html',
     ready: () => !!document.querySelector('canvas') },
   { id: 'F06', label: 'g15 train picker',    url: '/games/lokomotif-pemberani.html',
-    ready: () => typeof app !== 'undefined' && app && app.renderer },
+    ready: () => document.querySelectorAll('.tcard').length > 0 },
   { id: 'F07', label: 'g16 train picker',    url: '/games/selamatkan-kereta.html',
     ready: () => document.querySelectorAll('#ts-trains .ts-card, #ts-trains > *').length > 0 },
   { id: 'F08', label: 'g17 intro',           url: '/games/jembatan-goyang.html',
