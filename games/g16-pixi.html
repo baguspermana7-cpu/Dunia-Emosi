@@ -123,9 +123,12 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0d102
 #ts-title{font-size:clamp(20px,5.5vw,28px);font-weight:900;color:#e0e7ff;text-align:center}
 #ts-subtitle{font-size:clamp(9px,2.5vw,12px);color:rgba(196,181,253,0.65);letter-spacing:1.5px;text-align:center}
 #ts-trains{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:clamp(6px,2vw,10px);justify-content:center;max-width:min(720px,96vw);max-height:58vh;overflow-y:auto;padding:6px 4px;scrollbar-width:thin;scrollbar-color:rgba(129,140,248,0.35) transparent}
-.ts-card{background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.13);border-radius:18px;padding:clamp(8px,2vh,13px) clamp(6px,1.5vw,12px);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s;width:min(116px,30vw);text-align:center;display:flex;flex-direction:column;align-items:center;gap:5px}
-.ts-card:active{transform:scale(.93)}
-.ts-card:hover,.ts-card.selected{border-color:#818cf8;background:rgba(129,140,248,0.14);box-shadow:0 0 18px rgba(129,140,248,0.25)}
+/* v55.37 B-218 — harmonized with g14 .train-card + g15 .tcard. 2.5px
+   lavender border default, purple accent on selected. */
+.ts-card{background:rgba(248,240,255,0.06);border:2.5px solid rgba(167,139,250,0.25);border-radius:14px;padding:clamp(8px,2vh,13px) clamp(6px,1.5vw,12px);min-height:44px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .08s,border-color .15s,background .15s,box-shadow .15s;width:min(116px,30vw);text-align:center;display:flex;flex-direction:column;align-items:center;gap:5px}
+.ts-card:active{transform:scale(.95)}
+.ts-card:hover{border-color:rgba(167,139,250,0.5);background:rgba(139,92,246,0.12)}
+.ts-card.selected{border-color:#a78bfa;background:rgba(139,92,246,0.22);box-shadow:0 0 14px rgba(139,92,246,0.4)}
 .ts-card-name{font-size:clamp(9px,2.8vw,12px);font-weight:700;color:#e0e7ff;line-height:1.2}
 .ts-card-desc{font-size:clamp(7px,2vw,9px);color:rgba(196,181,253,0.6)}
 canvas.ts-preview{border-radius:8px;max-width:100%}

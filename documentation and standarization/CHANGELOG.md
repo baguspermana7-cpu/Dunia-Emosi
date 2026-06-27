@@ -1,5 +1,78 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.37 "Button standardization phase 3 — train picker cards harmonized (B-218)"
+
+Phase 3 of B-218. The 3 train picker games (g14 / g15 / g16) all had similar dark-mode card pickers but used **different border tokens, different selected glows, different active scales**. Now they share one harmonized spec.
+
+### Canonical picker card spec
+
+All 3 games' picker cards now follow this template:
+
+```
+Default:
+  border:        2.5px solid rgba(167,139,250,0.25)   ← lavender 25%
+  background:    rgba(248,240,255,0.06)               ← cream-violet wash
+  border-radius: 14px
+  min-height:    44px
+  font-weight:   700-800
+  transition:    transform .08s, border-color .15s, background .15s, box-shadow .15s
+
+Active (mid-tap):
+  transform:     scale(.95)
+
+Hover / pressed:
+  border:        rgba(167,139,250,0.5)
+  background:    rgba(139,92,246,0.12)
+
+Selected (after pick):
+  border:        #a78bfa                              ← lavender 100%
+  background:    rgba(139,92,246,0.22)
+  box-shadow:    0 0 14px rgba(139,92,246,0.4)        ← purple glow
+```
+
+### Affected selectors
+
+| File | Selector | Role |
+|---|---|---|
+| `games/g14.html` | `.cat-btn` | Category buttons (Karakter Spesial, Steam, Diesel) |
+| `games/g14.html` | `.train-card` | Train picker tile (in the chosen category) |
+| `games/g15-pixi.html` | `.tfbtn` | Filter pill (All / Steam / Diesel / Electric) |
+| `games/g15-pixi.html` | `.tcard` | Train picker tile |
+| `games/g16-pixi.html` | `.ts-card` | Train picker tile (Selamatkan Kereta) |
+
+`.tcard.is-character` (gold ⭐ overlay for PROTECTED + AEG chars) preserved — semantic accent stays on top of the harmonized base.
+
+### What changed visually
+
+Before: g14 used `2px lavender 20%`, g15 used `1.5px lavender 20%`, g16 used `2px white 13%`. Different selected glows, different active scales (.93 vs .95 vs .97).
+
+After: all 3 use `2.5px lavender 25%` default, `#a78bfa` selected with `0 0 14px rgba(139,92,246,0.4)` glow, `.95` active scale.
+
+The selected purple glow is now the same across pickers — owner moves between g14/g15/g16 and the picker UX feels like one coherent app.
+
+### Files touched
+
+- `games/g14.html` — `.cat-btn` + `.train-card` rewrites
+- `games/g15-pixi.html` — `.tfbtn` + `.tcard` rewrites
+- `games/g16-pixi.html` — `.ts-card` rewrite
+- `sw.js` v55.36 → v55.37
+
+### Verification
+
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS
+- `node tools/visual-polish-audit.mjs` → 18 screens / 0 errors / 0 server 404s
+
+### Phase progress B-218
+
+| Phase | Scope | Status |
+|---|---|---|
+| v55.35 | Quiz answer rows (g13c math + g15 math + g14 quiz) | ✅ shipped |
+| v55.36 | g13c Pokemon (18 type moves + Fight/Switch + Pokemon list) | ✅ shipped |
+| **v55.37** | **Train picker cards (3 games)** | **✅ shipped** |
+| v55.38 | Rename obstacle-engine + game-modal classes to canonical `.du-*` | deferred |
+
+---
+
 ## 2026-06-27 — v55.36 "Button standardization phase 2 — Pokemon move + action + switch (B-218)"
 
 Phase 2 of B-218. Owner specifically called out "button di game pokemon" as an example of inconsistency. v55.35 fixed the math quiz; v55.36 closes the rest of g13c (Pokemon Pertarungan): the 18 type-specific move buttons + Fight/Switch action menu + Pokemon switch list.

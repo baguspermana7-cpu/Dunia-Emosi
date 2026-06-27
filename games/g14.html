@@ -177,8 +177,11 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 #sel-back:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(100,60,160,0.2)}
 #sel-title{font-size:16px;font-weight:900;color:#c4b5fd;flex:1;text-align:center}
 #select-body{flex:1;overflow-y:auto;padding:8px 14px 20px;-webkit-overflow-scrolling:touch}
-.cat-btn{width:100%;display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:16px;cursor:pointer;margin-bottom:10px;text-align:left;border:2px solid rgba(180,160,220,0.2);transition:all .15s;background:rgba(248,240,255,0.06);color:#e9d5ff;font-family:inherit}
-.cat-btn:active{transform:scale(.97);background:rgba(139,92,246,0.15)}
+/* v55.37 B-218 — picker cards harmonized across g14/g15/g16. Dark-mode
+   surface, lavender border default, purple accent on selected, same
+   active scale + shadow shape. Matches g15 .tcard + g16 .ts-card. */
+.cat-btn{width:100%;display:flex;align-items:center;gap:14px;padding:14px 16px;min-height:44px;border-radius:16px;cursor:pointer;margin-bottom:10px;text-align:left;border:2.5px solid rgba(167,139,250,0.25);transition:transform .08s,border-color .15s,background .15s;background:rgba(248,240,255,0.06);color:#e9d5ff;font-family:inherit;font-weight:700}
+.cat-btn:active{transform:scale(.97);background:rgba(139,92,246,0.18);border-color:#a78bfa}
 .cat-emoji{font-size:32px;flex-shrink:0}
 .cat-info{flex:1;min-width:0}
 .cat-name{font-size:14px;font-weight:900;color:#e9d5ff}
@@ -187,8 +190,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 .train-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
 @media(min-width:480px){.train-grid{grid-template-columns:repeat(4,1fr)}}
 @media(min-width:700px){.train-grid{grid-template-columns:repeat(5,1fr)}}
-.train-card{background:rgba(248,240,255,0.06);border:2px solid rgba(180,160,220,0.2);border-radius:12px;padding:8px 6px;cursor:pointer;text-align:center;transition:all .15s;font-family:inherit;color:#e9d5ff;overflow:hidden;position:relative}
-.train-card:active,.train-card.sel{border-color:#a78bfa;background:rgba(139,92,246,0.18)}
+/* v55.37 B-218 — train-card harmonized with g15 .tcard + g16 .ts-card. */
+.train-card{background:rgba(248,240,255,0.06);border:2.5px solid rgba(167,139,250,0.25);border-radius:14px;padding:8px 6px;min-height:44px;cursor:pointer;text-align:center;transition:transform .08s,border-color .15s,background .15s,box-shadow .15s;font-family:inherit;color:#e9d5ff;overflow:hidden;position:relative;font-weight:700}
+.train-card:active{transform:scale(.95)}
+.train-card.sel{border-color:#a78bfa;background:rgba(139,92,246,0.22);box-shadow:0 0 14px rgba(139,92,246,0.4)}
 /* v54.15 (B3): gold character treatment — distinguishes Casey/Linus/Dragutin/Malivlak. */
 .train-card.is-character{border-color:#fbbf24;background:linear-gradient(160deg,rgba(251,191,36,0.10),rgba(251,191,36,0.02))}
 .train-card.is-character::after{content:'⭐';position:absolute;top:4px;right:6px;font-size:14px;pointer-events:none}
