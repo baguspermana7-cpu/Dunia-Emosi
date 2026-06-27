@@ -1,0 +1,210 @@
+/* =============================================================================
+ * games/du-buttons.css   (v55.35)
+ * =============================================================================
+ * Dunia Emosi unified button system.
+ *
+ * Closes B-218 — owner: "Kamu itu nggak standard."
+ * Replaces ~20 scattered button classes across g13c, g14, g15, g16,
+ * obstacle-engine.js, and game-modal.js with one canonical set.
+ *
+ * Tokens — Dreamy Meadow palette (matches v55.6 pastel obstacle modal +
+ * v55.16-v55.27 design language).
+ *
+ * Variant ladder:
+ *   .du-btn               base (≥ 44×44, 700 weight, 16px font, 16px radius)
+ *   .du-btn-primary       purple CTA (linear gradient + 4px shadow + active translateY)
+ *   .du-btn-success       green CTA (Mulai / Lanjut)
+ *   .du-btn-warn          gold/amber CTA (Boost / Reward)
+ *   .du-btn-secondary     cream/gold soft (Pengaturan / Koleksi)
+ *   .du-btn-ghost         subtle outline (Kembali / Skip)
+ *   .du-btn-icon          square 44×44 icon-only (back/pause/settings)
+ *   .du-btn-choice        88×88 pastel puzzle/quiz answer (extends v55.6)
+ *     .correct            sage-green success state
+ *     .wrong              rose-red error state
+ *
+ * Modifiers (compose):
+ *   .du-btn-block         100% width
+ *   .du-btn-sm            smaller padding (12px 16px, 14px font)
+ *   .du-btn-lg            larger padding (16px 28px, 18px font)
+ * ========================================================================== */
+
+:root {
+  /* Brand */
+  --du-purple-light: #a78bfa;
+  --du-purple:       #8B5CF6;
+  --du-purple-dark:  #6d28d9;
+  /* Success / CTA */
+  --du-green-light:  #4ade80;
+  --du-green:        #22c55e;
+  --du-green-dark:   #15803d;
+  /* Warn / Reward */
+  --du-gold-light:   #fde68a;
+  --du-gold:         #f59e0b;
+  --du-gold-dark:    #b45309;
+  /* Pastel state */
+  --du-sage:         #a8d8a8;
+  --du-sage-bg:      #e8f5e8;
+  --du-sage-deep:    #4a7c4a;
+  --du-rose:         #f4a8a8;
+  --du-rose-bg:      #fce8e8;
+  --du-rose-deep:    #8a4a4a;
+  --du-powder:       #b4d4f0;
+  --du-powder-bg:    #fafcff;
+  --du-powder-deep:  #6b8eb8;
+  /* Surface */
+  --du-cream:        #fefdf7;
+  --du-cream-2:      #fef9e7;
+  --du-cream-3:      #fef3d4;
+  /* Text */
+  --du-ink:          #3b2a4a;
+  --du-muted:        #6b5b7a;
+  --du-on-dark:      #ffffff;
+}
+
+/* ─── Base ─────────────────────────────────────────────────────────────── */
+.du-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 16px;
+  font-family: inherit;
+  font-weight: 900;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  transition: transform .08s ease-out, box-shadow .12s ease-out, background .12s;
+  box-sizing: border-box;
+}
+.du-btn:focus-visible {
+  outline: 3px solid var(--du-gold);
+  outline-offset: 2px;
+}
+.du-btn:disabled,
+.du-btn[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ─── Variants ─────────────────────────────────────────────────────────── */
+.du-btn-primary {
+  background: linear-gradient(160deg, var(--du-purple-light), var(--du-purple));
+  color: var(--du-on-dark);
+  box-shadow: 0 4px 0 var(--du-purple-dark);
+}
+.du-btn-primary:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--du-purple-dark); }
+
+.du-btn-success {
+  background: linear-gradient(160deg, var(--du-green-light), var(--du-green));
+  color: var(--du-on-dark);
+  box-shadow: 0 4px 0 var(--du-green-dark);
+}
+.du-btn-success:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--du-green-dark); }
+
+.du-btn-warn {
+  background: linear-gradient(160deg, var(--du-gold-light), var(--du-gold));
+  color: var(--du-ink);
+  box-shadow: 0 4px 0 var(--du-gold-dark);
+}
+.du-btn-warn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--du-gold-dark); }
+
+.du-btn-secondary {
+  background: var(--du-cream-2);
+  color: var(--du-ink);
+  border: 2px solid var(--du-gold-light);
+  box-shadow: 0 4px 0 var(--du-gold-light);
+}
+.du-btn-secondary:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--du-gold-light); }
+
+.du-btn-ghost {
+  background: rgba(139, 92, 246, 0.06);
+  color: var(--du-muted);
+  border: 1.5px solid rgba(139, 92, 246, 0.22);
+}
+.du-btn-ghost:active { transform: scale(0.96); background: rgba(139, 92, 246, 0.12); }
+
+/* ─── Icon-only square (back, pause, settings) ─────────────────────────── */
+.du-btn-icon {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border-radius: 12px;
+  font-size: 18px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  color: var(--du-on-dark);
+}
+.du-btn-icon:active { transform: scale(0.92); }
+
+/* ─── Choice (puzzle/quiz answer — extends v55.6 pastel) ───────────────── */
+.du-btn-choice {
+  min-width: 88px;
+  min-height: 88px;
+  background: var(--du-powder-bg);
+  border: 5px solid var(--du-powder);
+  border-radius: 16px;
+  color: var(--du-powder-deep);
+  font-size: 48px;
+  font-weight: 900;
+  cursor: pointer;
+  margin: 6px;
+  transition: transform .18s ease-out, background .18s, border-color .18s;
+  -webkit-tap-highlight-color: transparent;
+}
+.du-btn-choice:active { transform: scale(0.94); }
+.du-btn-choice.correct {
+  background: var(--du-sage-bg);
+  border-color: var(--du-sage);
+  color: var(--du-sage-deep);
+}
+.du-btn-choice.wrong {
+  background: var(--du-rose-bg);
+  border-color: var(--du-rose);
+  color: var(--du-rose-deep);
+  animation: duChoiceShake .4s ease-in-out;
+}
+@keyframes duChoiceShake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-6px); }
+  40%      { transform: translateX( 6px); }
+  60%      { transform: translateX(-3px); }
+  80%      { transform: translateX( 3px); }
+}
+
+/* ─── Modifiers ────────────────────────────────────────────────────────── */
+.du-btn-block { width: 100%; }
+.du-btn-sm    { padding: 8px 14px; font-size: 14px; border-radius: 12px; }
+.du-btn-lg    { padding: 16px 28px; font-size: 18px; border-radius: 18px; }
+
+/* ─── Card-style picker option (trains-db / Pokemon team) ──────────────── */
+.du-card-btn {
+  background: var(--du-cream);
+  border: 2px solid var(--du-gold-light);
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--du-ink);
+  cursor: pointer;
+  min-width: 44px;
+  min-height: 44px;
+  text-align: center;
+  transition: transform .08s, box-shadow .15s, border-color .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.du-card-btn:active { transform: scale(0.96); }
+.du-card-btn.selected,
+.du-card-btn[aria-pressed="true"] {
+  border-color: var(--du-purple);
+  background: var(--du-cream-2);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.18);
+}

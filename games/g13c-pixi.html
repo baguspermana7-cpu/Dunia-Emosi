@@ -9,6 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
+<link rel="stylesheet" href="du-buttons.css?v=55.35-20260627dq">
 <title>Gym Pokémon ⚔️</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -223,14 +224,17 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 #math-label{color:rgba(233,213,255,0.75);font-size:10px;letter-spacing:1.8px;font-weight:700;text-align:center}
 #math-question{color:#fbbf24;font-size:26px;font-weight:900;text-shadow:0 0 16px rgba(251,191,36,0.5);text-align:center}
 #math-choices{display:flex;gap:8px;justify-content:center;width:100%}
-.math-btn{flex:1;max-width:72px;padding:13px 4px;border-radius:14px;color:#fff;font-size:20px;font-weight:900;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;transition:transform .1s,box-shadow .1s;border:2px solid rgba(255,255,255,0.3)}
-.math-btn:nth-child(1){background:linear-gradient(160deg,#7C3AED,#6D28D9);box-shadow:0 4px 0 #4C1D95}
-.math-btn:nth-child(2){background:linear-gradient(160deg,#E85A32,#C84020);box-shadow:0 4px 0 #9A2A10}
-.math-btn:nth-child(3){background:linear-gradient(160deg,#2DBF7E,#1A9E66);box-shadow:0 4px 0 #0A7A48}
-.math-btn:nth-child(4){background:linear-gradient(160deg,#F59E0B,#D97706);box-shadow:0 4px 0 #92400E}
-.math-btn:active{transform:translateY(3px) scale(0.93)}
-.math-btn.mq-correct{border-color:#4ade80!important;animation:mqCorrect .35s ease}
-.math-btn.mq-wrong{border-color:#ef4444!important;animation:mqWrong .4s ease}
+/* v55.35 B-218 — math-btn rewritten in pastel-soft palette matching v55.6
+   obstacle modal + du-buttons.css tokens. Per-position tint kept so kids
+   can visually distinguish the 4 answer slots, but no more saturated. */
+.math-btn{flex:1;max-width:80px;min-height:44px;padding:13px 4px;border-radius:14px;font-size:20px;font-weight:900;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;transition:transform .1s,box-shadow .1s,border-color .15s;border:2.5px solid}
+.math-btn:nth-child(1){background:#f0eaf6;color:#6d28d9;border-color:#c4a5e0;box-shadow:0 4px 0 #a48cc8}     /* lavender */
+.math-btn:nth-child(2){background:#fce8e8;color:#8a4a4a;border-color:#f4a8a8;box-shadow:0 4px 0 #d68888}     /* rose */
+.math-btn:nth-child(3){background:#e8f5e8;color:#4a7c4a;border-color:#a8d8a8;box-shadow:0 4px 0 #84b884}     /* sage */
+.math-btn:nth-child(4){background:#fef9e7;color:#92400e;border-color:#fde68a;box-shadow:0 4px 0 #f59e0b}     /* gold */
+.math-btn:active{transform:translateY(3px) scale(0.96);box-shadow:0 1px 0 rgba(0,0,0,0.18)}
+.math-btn.mq-correct{background:#e8f5e8!important;border-color:#a8d8a8!important;color:#4a7c4a!important;animation:mqCorrect .35s ease}
+.math-btn.mq-wrong{background:#fce8e8!important;border-color:#f4a8a8!important;color:#8a4a4a!important;animation:mqWrong .4s ease}
 @keyframes mqCorrect{0%{transform:scale(1)}50%{transform:scale(1.18)}100%{transform:scale(1)}}
 @keyframes mqWrong{0%{transform:translateX(0)}20%{transform:translateX(-8px)}50%{transform:translateX(8px)}80%{transform:translateX(-5px)}100%{transform:translateX(0)}}
 

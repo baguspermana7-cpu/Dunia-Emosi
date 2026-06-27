@@ -9,6 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
+<link rel="stylesheet" href="du-buttons.css?v=55.35-20260627dq">
 <title>Lokomotif Pemberani 🚂</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -84,12 +85,13 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 #math-timer-bar{height:6px;background:rgba(255,255,255,0.12);border-radius:4px;margin:8px 0 16px;overflow:hidden}
 #math-timer-fill{height:100%;background:linear-gradient(90deg,#4ade80,#22c55e);border-radius:4px;transition:width 0.1s linear}
 #math-choices{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.math-btn{padding:14px 8px;border-radius:16px;border:2px solid;color:#fff;font-size:20px;font-weight:900;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;transition:transform .08s}
-.math-btn:active{transform:scale(.91)}
-.math-btn:nth-child(1){background:linear-gradient(160deg,#6D28D9,#7C3AED);border-color:#A78BFA;box-shadow:0 4px 0 #4C1D95}
-.math-btn:nth-child(2){background:linear-gradient(160deg,#C2410C,#EA580C);border-color:#FB923C;box-shadow:0 4px 0 #9A3412}
-.math-btn:nth-child(3){background:linear-gradient(160deg,#0D9488,#14B8A6);border-color:#2DD4BF;box-shadow:0 4px 0 #0F766E}
-.math-btn:nth-child(4){background:linear-gradient(160deg,#D97706,#F59E0B);border-color:#FCD34D;box-shadow:0 4px 0 #B45309}
+/* v55.35 B-218 — pastel-soft palette matching g13c + obstacle modal. */
+.math-btn{padding:14px 8px;min-height:44px;border-radius:16px;border:2.5px solid;font-size:20px;font-weight:900;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;transition:transform .08s,border-color .15s}
+.math-btn:active{transform:translateY(3px) scale(.96)}
+.math-btn:nth-child(1){background:#f0eaf6;color:#6d28d9;border-color:#c4a5e0;box-shadow:0 4px 0 #a48cc8}
+.math-btn:nth-child(2){background:#fce8e8;color:#8a4a4a;border-color:#f4a8a8;box-shadow:0 4px 0 #d68888}
+.math-btn:nth-child(3){background:#e8f5e8;color:#4a7c4a;border-color:#a8d8a8;box-shadow:0 4px 0 #84b884}
+.math-btn:nth-child(4){background:#fef9e7;color:#92400e;border-color:#fde68a;box-shadow:0 4px 0 #f59e0b}
 #math-label{font-size:12px;color:#a5b4fc;letter-spacing:1.5px;margin-bottom:8px;font-weight:700}
 
 /* Overlays handled by game-modal.js */

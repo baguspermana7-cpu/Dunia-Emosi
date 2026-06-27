@@ -1,5 +1,87 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.35 "Button standardization phase 1 — pastel quiz answers (B-218 POC)"
+
+Owner mandate 2026-06-27: *"button, pilihan jawabannya itu bentuk dan colour pallet stylenya tidak sama dg yg game2 lain (contoh button di game pokemon atau game tebak huruf kata dll)... Kamu itu nggak standard."*
+
+Phase 1 of B-218. Establishes the shared CSS file + closes the **most visible** inconsistency: quiz/math answer buttons across 3 games used different saturated palettes (g13c saturated purple/orange/teal/gold; g15 similar; g14 transparent-white). Now all 3 share the **same pastel-soft 4-color palette** (lavender → rose → sage → gold) matching the v55.6 obstacle modal.
+
+### NEW `games/du-buttons.css` (single shared sheet)
+
+Canonical button system, ~150 LOC. Variant ladder:
+
+```
+.du-btn           base (≥44×44, 700 weight, 16px radius)
+.du-btn-primary   purple CTA (gradient + 4px shadow)
+.du-btn-success   green CTA
+.du-btn-warn      gold/amber CTA
+.du-btn-secondary cream/gold soft
+.du-btn-ghost     subtle outline
+.du-btn-icon      44×44 icon-only (back/pause/settings)
+.du-btn-choice    88×88 pastel puzzle/quiz (extends v55.6)
+  .correct        sage-green
+  .wrong          rose-red
+.du-card-btn      picker card (selected pseudo-class)
+```
+
+CSS custom properties:
+```
+:root {
+  --du-purple, --du-purple-light, --du-purple-dark
+  --du-green, --du-green-light, --du-green-dark
+  --du-gold, --du-gold-light, --du-gold-dark
+  --du-sage*, --du-rose*, --du-powder*
+  --du-cream*, --du-ink, --du-muted
+}
+```
+
+Linked from g13c, g14, g14-side, g15, g16 head blocks.
+
+### Phase 1 migration (this ship): the loudest 4-choice quiz row
+
+The single most-jarring inconsistency per the survey: 4-position quiz answer buttons. All 3 versions rewritten to share the SAME pastel palette:
+
+| Position | Background | Border | Text | Shadow |
+|---|---|---|---|---|
+| 1 (lavender) | `#f0eaf6` | `#c4a5e0` | `#6d28d9` | `#a48cc8` |
+| 2 (rose)     | `#fce8e8` | `#f4a8a8` | `#8a4a4a` | `#d68888` |
+| 3 (sage)     | `#e8f5e8` | `#a8d8a8` | `#4a7c4a` | `#84b884` |
+| 4 (gold)     | `#fef9e7` | `#fde68a` | `#92400e` | `#f59e0b` |
+
+Affected:
+- `games/g13c-pixi.html` — `.math-btn` (Pokemon battle math quiz)
+- `games/g15-pixi.html` — `.math-btn` (Lokomotif Pemberani math quiz)
+- `games/g14.html` — `.quiz-btn` (top-down race quiz row)
+
+`mq-correct` / `mq-wrong` / `qz-correct` / `qz-wrong` states use sage and rose tokens.
+
+Min-height bumped to 44px on all (touch-target compliance per v55.24).
+
+### What's deferred to v55.36+
+
+| Phase | Scope | Reason |
+|---|---|---|
+| v55.36 | g13c `.move-btn` (type gradients) + `.act-btn` (action menu) | Type-gradient is functionally meaningful (water = blue, fire = red) — needs careful design, not just palette swap. |
+| v55.37 | g14 `.train-card` + `.cat-btn` + g15 `.tcard` + `.tfbtn` | Picker cards — bigger layout change. Should use `.du-card-btn`. |
+| v55.38 | `obstacle-engine.js` shape buttons (already pastel; just rename to `.du-btn-choice` for consistency) + `game-modal.js` finish modal | Already inline-consistent across games, but rename to canonical class. |
+
+### Files touched
+
+- NEW `games/du-buttons.css` (~150 LOC)
+- 5 game HTMLs link the sheet: `g13c-pixi`, `g14`, `g14-side`, `g15-pixi`, `g16-pixi`
+- 3 game HTMLs migrate quiz buttons: `g13c-pixi`, `g14`, `g15-pixi`
+- `sw.js` v55.34 → v55.35
+
+### Verification
+
+- `curl localhost:8081/games/du-buttons.css` → 200
+- `node tools/probe-obstacle-engine.mjs` → 14/14 PASS
+- `node tools/visual-polish-audit.mjs` → 18 screens / 0 errors / 0 server 404s
+
+### POC partial-close B-218. Bulk migration continues v55.36-v55.38.
+
+---
+
 ## 2026-06-27 — v55.34 "Per-character sprite rotation map (closes B-217 + B-222)"
 
 Owner ask 2026-06-27 (after v55.32 sprite-rotation ship): *"rotation char kamu yang identify satu persatu. pastikan benar arahnya."*
