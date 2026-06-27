@@ -792,7 +792,9 @@ const LIVES_MAX = 3
 // v55.45 B-232 — single uniform rendered height for EVERY character train (player
 // + AI). Replaces the per-sprite spriteHeight×1.35 that produced 97-232px variance.
 // Aspect ratio is preserved by scaling both axes uniformly (UNIFORM_H / tex.height).
-const G14_UNIFORM_H = 120
+// A-311 — responsive: recomputed from the live viewport in initPixi/resize so the
+// train scales to ANY device (phone/tablet/desktop). Default until init runs.
+let G14_UNIFORM_H = 120
 // Difficulty-scaled obstacle interval. Previously only level-scaled → "easy"
 // level 1 spawned every 2.7s which is too dense for a 5-10yo on their first play.
 // Easy adds +60% spacing + raises floor from 900ms→1300ms + halves wave count.
@@ -902,11 +904,18 @@ async function initPixi() {
   stage = app.stage
 
   // Game area between top HUD (~70px) and controls (~120px)
-  gameTop = 74
-  const gameBot = H - 122
+  // A-311 — responsive layout: top HUD band + lane height + train + obstacle sizes
+  // all derive from the LIVE viewport so the game fits any device exactly.
+  gameTop = Math.round(Math.max(56, Math.min(H * 0.10, 92)))
+  const gameBot = H - Math.round(Math.max(96, Math.min(H * 0.17, 134)))
   gameH = gameBot - gameTop
   laneH = gameH / LANE_COUNT
   laneYs = Array.from({length: LANE_COUNT}, (_, i) => gameTop + laneH * i + laneH / 2)
+  // train uniform height scales to the lane (stays the visual star) — clamped so it
+  // never gets cramped on tiny phones nor tiny on desktops.
+  G14_UNIFORM_H = Math.round(Math.max(96, Math.min(laneH * 1.05, H * 0.18)))
+  // obstacle emoji size scales with the smaller viewport axis, ≥44px tap target.
+  OBS_SIZE = Math.round(Math.max(40, Math.min(Math.min(W, H) * 0.085, 56)))
 
   buildSky()
   buildClouds()
@@ -2862,7 +2871,7 @@ const OBS_PER_BIOME = {
   urban:   ['🚧','🛑','⚠️','🚖','🧱','🚸'],
   volcano: ['🪨','🔥','💥','⚠️','🛑','🪨']
 }
-const OBS_SIZE = 44
+let OBS_SIZE = 44   // A-311 — responsive: recomputed from viewport in initPixi
 
 function spawnObstacle() {
   // Spawn uniformly across all 3 lanes (including middle). Player gets reaction
@@ -4188,11 +4197,14 @@ window.addEventListener('resize', () => {
       if (L.tracks && L.tracks.parent) { L.tracks.parent.removeChild(L.tracks); L.tracks.destroy({children:true}) }
       if (typeof buildTracks === 'function') buildTracks()
     } catch(_){}
-    // Reposition player to new lane Y
+    // Reposition player to new lane Y.
+    // A-311 — was the STALE wheelOffset = laneH*0.22-19 (the old laneH-based rail
+    // formula), which re-floated the train off the rail on every resize/rotate.
+    // The build path uses wheelOffset=0 (wheels sit on the rail via the 0.86
+    // anchor); match it here so the train stays EXACTLY on the rail at any size.
     if (L.player) {
-      const wheelOffset = Math.max(0, laneH * 0.22 - 19)
-      L.player._wheelOffset = wheelOffset
-      L.player.y = laneYs[S.lane] + wheelOffset
+      L.player._wheelOffset = 0
+      L.player.y = laneYs[S.lane] + 0
     }
   }, 120)
 })

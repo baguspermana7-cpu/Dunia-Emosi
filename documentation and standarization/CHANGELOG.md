@@ -1,5 +1,13 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.54 "g14 — on-rail exactness + responsive dimensions" (A-311 Phase 2 begin)
+
+First integration ship for the train-game restyle — the owner's "tepat di rail" + "dimensi object+kereta responsive" must-haves (the volcano-scene backdrop swap is the next ship).
+
+- **On-rail exactness (B-230 follow-up):** `balapan-kereta.html` resize handler still set the **stale `wheelOffset = laneH*0.22-19`** (the old laneH-based rail formula), which re-floated the train off the rail on every resize/orientation change while the build path correctly used `0`. Fixed to `0` to match → the train stays exactly on the rail at any size.
+- **Responsive dimensions:** `gameTop`, `gameBot`, `G14_UNIFORM_H` (train height), and `OBS_SIZE` (obstacle emoji) were FIXED px. Now all derive from the live viewport in `initPixi`: `gameTop = clamp(56, H*0.10, 92)`, train `= clamp(96, laneH*1.05, H*0.18)` (stays the star, never cramped/tiny), obstacle `= clamp(40, min(W,H)*0.085, 56)` (≥44px tap). The 0.86 wheel anchor is a ratio, so on-rail holds automatically as the train scales.
+- Verified: g14 drives a real race at **412×915 (phone)** + **1280×800 (tablet)** — 0 console errors, Thomas on the rail + facing right at both sizes. sw `v55.51→v55.54`.
+
 ## 2026-06-27 — v55.53 "Indonesian scene — fidelity sharpened (Phase 1b)" (A-311)
 
 Owner: *"Yes, pertajam."* The v55.52 scene was faithful in content but flat/hard-vector. `games/indo-scene.js` → **v2**: every element is now 2-tone **shaded** (lit/shadow) for an illustrated look, with softer warm-pastel palettes.
