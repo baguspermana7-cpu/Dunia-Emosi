@@ -1,5 +1,13 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.60 "g15 pastel HUD + green field ground" (A-311)
+
+- **g15 HUD → soft pastel** (matches g14): light top gradient, cream `.slot` word tiles, cream `#station-chip`, cream `#g15-tts-toggle`. Bottom nav + lane-indicator were already pastel.
+- **Green field ground behind the rails** — the indo backdrop is masked to the upper scenery band, so g15's rail region showed the dark canvas background (black). Added a `_p.grass` ground fill across the rail band in `buildTracks` → the rails now sit on green fields, fully coherent with the scene.
+- Verified: g15 race at 412×915, 0 console errors, scene + HUD pastel + on-rail. sw `v55.59→v55.60`.
+
+**Both train games (Balapan Kereta + Lokomotif Pemberani) now fully match the reference**: Indonesian scene (Merapi/hills/sawah/kampung/ballast rail/foliage) + parallax-3D + pastel HUD + on-rail + facing + responsive + swipe + easy questions.
+
 ## 2026-06-27 — v55.59 "g14 HUD → soft pastel" (A-311)
 
 The g14 HUD used dark `rgba(0,0,0,.78)` pills (built for the old dark scenes) which clashed with the new bright Indonesian scene. Restyled to **soft-pastel cream rounded cards** (owner: *"hud pastell ok"*): cream `#fffdf6` chips with soft lavender/amber borders + soft drop-shadows, dark ink text, light top gradient. Back/pause/train-name/distance/position/speed all pastel; hearts kept with a soft drop-shadow. Verified: real race at 412×915, 0 console errors, HUD reads cleanly on the bright scene. sw `v55.58→v55.59`. (g15 HUD + power-up tray next.)

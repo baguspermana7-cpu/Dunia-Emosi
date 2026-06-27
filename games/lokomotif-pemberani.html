@@ -23,7 +23,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 
 /* ── HUD Top ── */
 /* v54.57: tighter gap + flex-wrap on mobile so hearts don't push past mute */
-#hud-top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:6px;padding:max(14px,env(safe-area-inset-top)) 12px 8px;background:linear-gradient(180deg,rgba(0,0,0,0.72) 0%,transparent 100%);pointer-events:none;flex-wrap:wrap}
+/* A-311 — soft-pastel HUD for the bright Indonesian scene */
+#hud-top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:6px;padding:max(14px,env(safe-area-inset-top)) 12px 8px;background:linear-gradient(180deg,rgba(255,250,240,0.5) 0%,rgba(255,250,240,0.1) 72%,transparent 100%);pointer-events:none;flex-wrap:wrap}
 #g15-word-cat{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(max-width:480px){#g15-word-cat{max-width:90px}}
 #btn-back{background:#fff3c4;border:2.5px solid #f59e0b;border-radius:8px;color:#3f2a08;padding:8px 12px;font-size:14px;cursor:pointer;font-family:inherit;pointer-events:all;flex-shrink:0;box-shadow:0 3px 0 #b45309;font-weight:900;min-width:96px;min-height:44px;text-align:center}
@@ -34,7 +35,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 #word-display{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;min-width:0}
 #word-emoji{font-size:24px;flex-shrink:0}
 #word-slots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center}
-.slot{display:inline-flex;align-items:center;justify-content:center;width:28px;height:32px;border-radius:8px;border:2px solid rgba(255,255,255,0.35);background:rgba(0,0,0,0.35);color:#fff;font-size:15px;font-weight:900;transition:all .2s;position:relative}
+.slot{display:inline-flex;align-items:center;justify-content:center;width:28px;height:32px;border-radius:10px;border:2px solid rgba(167,139,250,0.4);background:#fffdf6;color:#4a3a5e;font-size:15px;font-weight:900;transition:all .2s;position:relative;box-shadow:0 2px 5px rgba(0,0,0,0.1)}
 .slot.filled{border-color:#fbbf24;background:rgba(251,191,36,0.28);color:#fde68a;animation:slotFilledBounce .3s cubic-bezier(.34,1.56,.64,1)}
 .slot.done{border-color:#4ade80;background:rgba(74,222,128,0.28);color:#bbf7d0;animation:slotPop .3s cubic-bezier(.34,1.56,.64,1)}
 /* v54.13 — Slot polish: filled bounce (collect feedback) + next-slot pulse (visual cue for current target) */
@@ -119,7 +120,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 @keyframes g15Vignette{0%,100%{box-shadow:inset 0 0 80px 16px rgba(239,68,68,0.32)}50%{box-shadow:inset 0 0 160px 32px rgba(239,68,68,0.55)}}
 
 /* C5: TTS toggle button */
-#g15-tts-toggle{position:fixed;top:max(56px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:60;background:rgba(0,0,0,0.6);color:#fff;border:1.5px solid rgba(255,255,255,0.3);border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)}
+#g15-tts-toggle{position:fixed;top:max(56px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:60;background:#fffdf6;color:#4a3a5e;border:1.5px solid rgba(167,139,250,0.45);border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(0,0,0,0.12)}
 #g15-tts-toggle.muted{opacity:0.45}
 #g15-tts-toggle:active{transform:scale(0.9)}
 
@@ -190,7 +191,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 #sb-landmark{font-size:13px;color:rgba(233,213,255,0.65);text-align:center}
 
 /* ── Station chip in HUD ── */
-#station-chip{position:fixed;top:66px;right:10px;z-index:49;background:rgba(0,0,0,0.68);border:1.5px solid rgba(139,92,246,0.45);border-radius:10px;padding:3px 9px;pointer-events:none}
+#station-chip{position:fixed;top:66px;right:10px;z-index:49;background:#fffdf6;border:1.5px solid rgba(139,92,246,0.4);border-radius:12px;padding:3px 10px;pointer-events:none;box-shadow:0 2px 6px rgba(0,0,0,0.1)}
 .sc-label{font-size:8px;color:rgba(233,213,255,0.45);letter-spacing:1.2px;display:block}
 .sc-name{font-size:10px;font-weight:700;color:#e9d5ff;white-space:nowrap;display:block}
 </style>
@@ -1543,6 +1544,9 @@ function buildTracks() {
   const _is = window.IndoScene, _p = _is && _is.palette('day')
   const C_BALLAST = _p ? _p.ballast : 0x9c8463, C_RAIL = _p ? _p.rail : T.railColor,
         C_SHINE = _p ? _p.railShine : 0x9ca3af, C_TIE = _p ? _p.tie : T.sleeperColor
+  // A-311 — green field ground behind the rails (the indo backdrop is masked to the
+  // upper band, so without this the rail region shows the dark canvas background).
+  if (_p && g15RailTop) { const gnd = new PIXI.Graphics(); gnd.rect(0, g15RailTop - 2, W, H - g15RailTop + 6).fill({ color: _p.grass }); trackLayer.addChild(gnd) }
   for (let lane = 0; lane < 3; lane++) {
     const lY = LANE_Y[lane];
     // reddish-brown ballast bed behind the rails
