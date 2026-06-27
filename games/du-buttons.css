@@ -229,6 +229,13 @@
 .du-jelly-blue   { background: linear-gradient(180deg, #93c5fd, #60a5fa 55%, #3b82f6); }
 .du-jelly-gold   { background: linear-gradient(180deg, #fde68a, #fcd34d 55%, #f59e0b); color: #5a3a00; }
 .du-jelly-gold::after { background: rgba(255,255,255,0.95); box-shadow: 15px 5px 0 -4px rgba(255,255,255,0.8); }
+/* v55.45 B-234 — pastel soft-calm nav skins (up ≠ down). Owner: "navigasi bawa
+   atas jangan sama warnanya dan buat beda warnanya pastell soft calm colour."
+   Soft, low-saturation; dark ink text for legibility on the light body. */
+.du-jelly-mint   { background: linear-gradient(180deg, #e0f7ec, #b7ead0 55%, #95dcbb); color: #1f5b42; }
+.du-jelly-mint::after  { background: rgba(255,255,255,0.95); box-shadow: 15px 5px 0 -4px rgba(255,255,255,0.85); }
+.du-jelly-peach  { background: linear-gradient(180deg, #fff0e3, #ffd9bd 55%, #ffc6a0); color: #8a4a26; }
+.du-jelly-peach::after { background: rgba(255,255,255,0.95); box-shadow: 15px 5px 0 -4px rgba(255,255,255,0.85); }
 
 /* ─── Card-style picker option (trains-db / Pokemon team) ──────────────── */
 .du-card-btn {

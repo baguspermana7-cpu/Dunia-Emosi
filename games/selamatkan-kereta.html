@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=55.35-20260627dq">
+<link rel="stylesheet" href="du-buttons.css?v=55.45-20260627ea">
 <title>Selamatkan Kereta 🚂</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -417,6 +417,17 @@ function selectTrain(idx) {
 // Malivlak), load the REAL WebP sprite from assets/train/<slug>-body.webp
 // instead of drawing a procedural box-and-wheel placeholder. Procedural draw
 // remains for non-character styles (Sakura, Nocturne, Bima Express).
+// v55.45 B-229 — left-facing AEG characterKeys (mirrored RIGHT in the picker).
+// Mirrors the `faces:'left'` tags in trains-db.js for the same 19 chars. RIGHT
+// (ashima/bruno/sandy/salty/winston/troublesome) + PROTECTED + Toby(forward)
+// are NOT in this set, so they render native.
+const FACES_LEFT_G16 = new Set([
+  'aeg_thomas','aeg_percy','aeg_james','aeg_edward','aeg_henry','aeg_gordon',
+  'aeg_emily','aeg_duck','aeg_hiro','aeg_yong_bao','aeg_diesel','aeg_kenji',
+  'aeg_kana','aeg_nia','aeg_carly','aeg_trainiac','aeg_annie_clarabel',
+  'aeg_slip_coaches','aeg_farona_frederico'
+]);
+
 function drawPreview(canvasId, styleIdx) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
@@ -429,6 +440,11 @@ function drawPreview(canvasId, styleIdx) {
     const cfg = G16_CHAR_CONFIGS[TS.characterKey];
     if (cfg && cfg.spriteUrl) {
       const img = new Image();
+      // v55.45 B-229 — left-facing AEG chars must be mirrored so the picker
+      // shows every train facing RIGHT (consistent with the in-game direction
+      // of travel). Owner: "Lihat di menu page picker terlihat sangat jelas itu
+      // terbalik menghadapnya." g16 has no trains-db, so the left set is inline.
+      const _faceLeft = FACES_LEFT_G16.has(TS.characterKey);
       img.onload = () => {
         ctx.clearRect(0, 0, 116, 52);
         // Fit inside 116×52 keeping aspect ratio, anchored center
@@ -437,7 +453,14 @@ function drawPreview(canvasId, styleIdx) {
         if (drawH > 50) { drawH = 50; drawW = 50 * ar; }
         const dx = (116 - drawW) / 2;
         const dy = (52 - drawH) / 2 + 1;
-        ctx.drawImage(img, dx, dy, drawW, drawH);
+        if (_faceLeft) {
+          ctx.save();
+          ctx.translate(116, 0); ctx.scale(-1, 1);   // horizontal mirror
+          ctx.drawImage(img, 116 - dx - drawW, dy, drawW, drawH);
+          ctx.restore();
+        } else {
+          ctx.drawImage(img, dx, dy, drawW, drawH);
+        }
         // Soft rail line
         ctx.fillStyle = '#4ade80'; ctx.fillRect(0, 49, 116, 2);
       };
@@ -1527,7 +1550,9 @@ function buildTrain(W,H){
     // Per-train TRAIN_SCREEN_X (5% rule + wheel-safe clamp)
     TRAIN_SCREEN_X = CharacterTrain.computeTrainX(scaledCfg, W, 0.05)
     trainContainer.x = TRAIN_SCREEN_X
-    trainContainer.scale.x = 1 // sprite already faces right
+    // v55.45 B-229 — mirror left-facing AEG chars in-game too (train runs RIGHT
+    // toward the station). Keeps in-game + picker orientation consistent.
+    trainContainer.scale.x = FACES_LEFT_G16.has(TS_sel.characterKey) ? -1 : 1
     g16CharacterTrain = CharacterTrain.mount(trainContainer, scaledCfg);
     if (g16CharacterTrain) g16CharacterTrain.setSmokeParent(stage);
     stage.addChild(trainContainer);

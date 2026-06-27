@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=55.35-20260627dq">
+<link rel="stylesheet" href="du-buttons.css?v=55.45-20260627ea">
 <title>Balapan Kereta 🚂</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -53,7 +53,9 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 .ctrl-btn{flex:1;padding:16px 0;border-radius:24px;border:4px solid rgba(255,255,255,0.92);color:#fff;font-size:24px;font-weight:900;cursor:pointer;user-select:none;-webkit-user-select:none;transition:transform .08s,box-shadow .12s;font-family:inherit;-webkit-tap-highlight-color:transparent;position:relative;overflow:hidden;box-shadow:0 8px 18px rgba(0,0,0,0.18),inset 0 2px 5px rgba(255,255,255,0.45),inset 0 -5px 9px rgba(0,0,0,0.12)}
 .ctrl-btn::after{content:'';position:absolute;top:9px;right:13px;width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,0.9);box-shadow:15px 5px 0 -4px rgba(255,255,255,0.72);pointer-events:none}
 .ctrl-btn:active{transform:translateY(2px) scale(.97);box-shadow:0 4px 10px rgba(0,0,0,0.18),inset 0 2px 5px rgba(255,255,255,0.4)}
-#btn-up,#btn-dn{background:linear-gradient(180deg,#93c5fd,#60a5fa 55%,#3b82f6)}
+/* v55.45 B-234 — pastel soft-calm nav, up ≠ down (was both blue). */
+#btn-up{background:linear-gradient(180deg,#e0f7ec,#b7ead0 55%,#95dcbb);color:#1f5b42}
+#btn-dn{background:linear-gradient(180deg,#fff0e3,#ffd9bd 55%,#ffc6a0);color:#8a4a26}
 #btn-boost{background:linear-gradient(180deg,#ff8a65,#ff7043 55%,#f4511e)}
 #btn-boost{background:linear-gradient(135deg,rgba(251,191,36,0.35),rgba(249,115,22,0.35));border-color:rgba(251,191,36,0.6);flex:1.4;font-size:14px;padding:14px 6px;line-height:1.2;color:#fef3c7;box-shadow:0 3px 0 rgba(146,64,14,0.3);position:relative;overflow:hidden;--boost-pct:0deg}
 #btn-boost.cooldown{opacity:0.55;pointer-events:none}
@@ -787,6 +789,10 @@ try { const s = sessionStorage.getItem('g14Config'); if(s) Object.assign(cfg, JS
 const FINISH_M = 800 + cfg.level * 30
 const LANE_COUNT = 3
 const LIVES_MAX = 3
+// v55.45 B-232 — single uniform rendered height for EVERY character train (player
+// + AI). Replaces the per-sprite spriteHeight×1.35 that produced 97-232px variance.
+// Aspect ratio is preserved by scaling both axes uniformly (UNIFORM_H / tex.height).
+const G14_UNIFORM_H = 120
 // Difficulty-scaled obstacle interval. Previously only level-scaled → "easy"
 // level 1 spawned every 2.7s which is too dense for a 5-10yo on their first play.
 // Easy adds +60% spacing + raises floor from 900ms→1300ms + halves wave count.
@@ -1390,16 +1396,31 @@ function buildMidScenery() {
     volcano:['🔥','🌋','💨','🪨','🦇','💎','⚡','☄️']
   }
   const treeEmojis = treeMap[TH.name] || ['🌲','🌳','🌴']
-  for (let i = 0; i < 20; i++) {
-    const lane = i % LANE_COUNT
-    const yt = laneYs[lane] + laneH * 0.38 + (i % 2) * 8
-    // Top of lane (above rail)
-    const t = new PIXI.Text({ text: treeEmojis[i % treeEmojis.length], style: { fontSize: 20 + Math.random() * 10 } })
-    t.alpha = 0.55
-    t.x = (i * W / 8) + Math.random() * 30
-    t.y = yt - laneH * 0.3
-    t._speed = 0.4
-    t._laneY = yt - laneH * 0.3
+  // v55.45 B-231 — owner: "pemandangan...masak di atas doank. Itu tengah banyak
+  // space kosong." Scenery used to cluster near the 3 lane centers, leaving the
+  // inter-lane grass bands + the area above lane 0 and below lane 2 as empty void.
+  // Now distribute items across the FULL play band (gameTop..gameBot) so every gap
+  // has a tree / bush / tuft. Items farther from a rail are smaller + fainter so
+  // the rails stay readable and the train remains the focus.
+  const bandTop = gameTop + 8
+  const bandBot = (app.screen.height - 122) - 8
+  const bandH = Math.max(40, bandBot - bandTop)
+  const COUNT = 34
+  for (let i = 0; i < COUNT; i++) {
+    // Even vertical spread + jitter so rows don't line up into a grid.
+    const frac = (i + 0.5) / COUNT
+    const yPos = bandTop + bandH * frac + (Math.random() - 0.5) * (bandH / COUNT)
+    // How close is this item to the nearest rail line? Near-rail items render a
+    // touch smaller/fainter so they don't crowd the wheels; gap items are bigger.
+    const nearestRail = Math.min(...laneYs.map(ly => Math.abs(yPos - ly)))
+    const inGap = nearestRail > laneH * 0.22
+    const t = new PIXI.Text({ text: treeEmojis[i % treeEmojis.length], style: { fontSize: (inGap ? 22 : 16) + Math.random() * 10 } })
+    t.anchor.set(0.5, 1)
+    t.alpha = inGap ? 0.5 : 0.32
+    t.x = (i * W / (COUNT / 2.5)) % (W + 80) + Math.random() * 24
+    t.y = yPos
+    t._speed = inGap ? 0.42 : 0.34   // slight parallax variance for depth
+    t._laneY = yPos
     c.addChild(t)
     midItems.push(t)
   }
@@ -2314,10 +2335,12 @@ function buildPlayer() {
   drawTrainG(playerSprite, '#1e3a8a', '#3b82f6', 'diesel_id')  // default until train selected
   c.addChild(playerSprite)
 
-  // Wheel-to-rail offset: drawTrainG renders wheels at sprite-local y=+19 (bogie+radius).
-  // Rails sit at laneH*0.28 from lane center. Shift container down so wheels visually
-  // sit on the bottom rail instead of floating mid-lane.
-  const wheelOffset = Math.max(0, laneH * 0.22 - 19)
+  // v55.45 B-230 — the rail strip is now a FIXED 18px half-strip (RAIL_HALF, not
+  // the old laneH*0.28). The stale laneH-based wheelOffset pushed the container
+  // ~34px below the rail on tall lanes → train "floats off the rail." Container now
+  // sits AT lane center; the character sprite's 0.86 wheel-band anchor + procedural
+  // wheels (local +19) both land on the bottom rail (lane center +18).
+  const wheelOffset = 0
   c.y = laneYs[S.lane] + wheelOffset
   c._wheelOffset = wheelOffset
 
@@ -2337,7 +2360,11 @@ function updatePlayerEmoji() {
   if (S.trainCfg.isCharacter && S.trainCfg.spriteUrl) {
     const url = S.trainCfg.spriteUrl
     if (!L.playerCharImg || L.playerCharImg._url !== url) {
-      const targetH = (S.trainCfg.spriteHeight || 90) * 1.35  // v55.41 B-226 — train is the visual star
+      // v55.45 B-232 — owner: "ukuran keretanya tidak uniform, pastikan sama
+      // ketinggiannya, lock aspect ratio perkereta." Every train renders at one
+      // UNIFORM height; aspect is preserved (uniform scalar on both axes), so no
+      // distortion — wide trains stay wide, none are stretched.
+      const targetH = G14_UNIFORM_H
       PIXI.Assets.load(url).then((tex) => {
         // Tear down any previous character sprite
         if (L.playerCharImg && L.playerCharImg.parent) {
@@ -2346,11 +2373,11 @@ function updatePlayerEmoji() {
         }
         const img = new PIXI.Sprite(tex)
         img._url = url
-        img.anchor.set(0.5, 0.6)
-        // v55.38 B-223 — owner: "yang hadap kiri dibuat ke kanan=mirror.
-        // ini kenapa lo rotate semua." g14 is a HORIZONTAL 3-lane race;
-        // forward = RIGHT. Use horizontal MIRROR for left-facing assets;
-        // right + forward stay native. No rotation.
+        // v55.45 B-230 — owner: "Karakter tidak pas di rail." Anchor at the wheel
+        // band (~0.86 down) so the wheels — not the chimney — sit on the rail line.
+        img.anchor.set(0.5, 0.86)
+        // v55.38 B-223 — g14 is a HORIZONTAL 3-lane race; forward = RIGHT. Use
+        // horizontal MIRROR for left-facing assets; right + forward stay native.
         img.scale.set(targetH / tex.height)
         const _faces = (S.trainCfg && S.trainCfg.faces) || 'right'
         if (_faces === 'left') img.scale.x *= -1
@@ -2531,10 +2558,12 @@ function buildAI() {
     // v55.2 — AI character sprite via PIXI.Assets.load (mirrors player path).
     // Replaces v54.87 PIXI.Sprite.from which silently failed. Closes B-201 AI side.
     if (cfg.isCharacter && cfg.spriteUrl) {
-      const targetH = (cfg.spriteHeight || 90) * 1.35 * 0.85 // v55.41 B-226 — match player scale-up, AI slightly smaller
+      // v55.45 B-232 — uniform height (AI slightly smaller than player). B-230 —
+      // wheel-band anchor so AI wheels sit on the rail line too.
+      const targetH = G14_UNIFORM_H * 0.85
       PIXI.Assets.load(cfg.spriteUrl).then((tex) => {
         const img = new PIXI.Sprite(tex)
-        img.anchor.set(0.5, 0.6)
+        img.anchor.set(0.5, 0.86)
         // v55.38 B-223 — horizontal mirror, no rotation (see player above).
         img.scale.set(targetH / tex.height)
         const _faces = (cfg.faces) || 'right'
@@ -4153,38 +4182,27 @@ function buildQuiz() {
   let a, b, answer, op
   const ops = lv <= 6 ? ['+'] : lv <= 12 ? ['+', '-'] : ['+', '-', '*']
   op = ops[Math.floor(Math.random() * ops.length)]
+  // v55.45 B-233 — owner: "max angka 20. Dan jangan sampai 3 angka." Every
+  // operand is clamped to ≤ 20; products are capped so no answer reaches 3 digits.
   if (op === '+') {
-    const max = 10 + lv * 3
-    a = Math.floor(Math.random() * max) + 1
-    b = Math.floor(Math.random() * max) + 1
+    a = Math.floor(Math.random() * 20) + 1   // 1..20
+    b = Math.floor(Math.random() * 20) + 1   // 1..20  (sum ≤ 40 → 2 digits)
     answer = a + b
   } else if (op === '-') {
-    a = Math.floor(Math.random() * 20) + 10
-    b = Math.floor(Math.random() * a) + 1
+    a = Math.floor(Math.random() * 20) + 1   // 1..20
+    b = Math.floor(Math.random() * a) + 1    // 1..a  (never negative)
     answer = a - b
   } else {
-    a = Math.floor(Math.random() * 6) + 2
-    b = Math.floor(Math.random() * 6) + 2
+    a = Math.floor(Math.random() * 4) + 2    // 2..5
+    b = Math.floor(Math.random() * 3) + 2    // 2..4  (product ≤ 20)
     answer = a * b
   }
-  // v54.19 B2: train-themed word problems 50% of the time (adds STEM context without
-  // changing the arithmetic — kids practice math + see trains).
+  // v55.45 B-235 — owner: "Pertanyaan saat boost pertanyaan yg aneh. Buat
+  // pertanyaan yg seperti biasa aja matematika." The boost quiz now shows PLAIN
+  // arithmetic only — the v54.19 train-themed word-problem wrappers were the
+  // "aneh" prompts. Pure form keeps it readable for ages 4-7.
   const symbol = op === '*' ? '×' : op
-  let qText = `${a} ${symbol} ${b} = ?`
-  if (Math.random() < 0.5) {
-    const templates = op === '+'
-      ? [ `${a} penumpang naik di Bandung, ${b} naik di Bogor. Total?`,
-          `${a} gerbong + ${b} gerbong dirangkai = ?`,
-          `${a} km Yogya–Solo + ${b} km Solo–Madiun = ?` ]
-      : op === '-'
-      ? [ `Kereta bawa ${a} penumpang, ${b} turun di Cirebon. Sisanya?`,
-          `${a} menit perjalanan. Sudah ${b} menit lewat. Sisa?`,
-          `${a} gerbong, ${b} dilepas di depo. Sisa?` ]
-      : [ `${a} gerbong × ${b} penumpang per gerbong = ?`,
-          `${a} kereta × ${b} jam keberangkatan = ?`,
-          `${a} km/menit × ${b} menit = ? km` ]
-    qText = templates[Math.floor(Math.random() * templates.length)]
-  }
+  const qText = `${a} ${symbol} ${b} = ?`
   document.getElementById('quiz-q').textContent = qText
   const wrong = new Set()
   let safety = 0
@@ -4419,7 +4437,13 @@ function showTrainsForCat(cat) {
       img.alt = t.name
       img.loading = 'lazy'
       img.decoding = 'async'
-      img.style.cssText = 'display:block;margin:0 auto 4px;width:96px;height:48px;object-fit:contain'
+      // v55.45 B-229 — owner: "Lihat di menu page picker terlihat sangat jelas
+      // itu terbalik menghadapnya." The picker showed raw webp orientation, so
+      // left-facing AEG chars faced backwards vs the right-moving race. Mirror
+      // left-facing sprites so EVERY train faces RIGHT consistently in the picker
+      // (matches the in-game mirror). object-fit:contain already locks aspect.
+      const _mirror = (t.faces === 'left') ? 'transform:scaleX(-1);' : ''
+      img.style.cssText = 'display:block;margin:0 auto 4px;width:96px;height:48px;object-fit:contain;' + _mirror
       img.onerror = () => {
         // Defensive: WebP load failure falls back to procedural so the card still renders.
         const fb = document.createElement('canvas')

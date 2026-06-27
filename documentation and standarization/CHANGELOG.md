@@ -1,5 +1,39 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.45 "Train-game deep polish: 6 owner complaints" (B-229→B-235)
+
+Owner sent 5 screenshots of the train games with six concrete complaints. All fixed in one tranche.
+
+### B-229 — picker shows trains facing the wrong way (THE big one)
+
+The train pickers rendered the raw WebP orientation, so left-facing AEG chars (Thomas, Percy, Edward, Henry, James, Gordon, Emily, Duck, Hiro, Diesel, Kenji, Kana, Nia, Carly, Yong-Bao, Trainiac + the wagons) faced LEFT while right-facing ones (Ashima, Bruno, Sandy, Salty, Winston, Troublesome) faced RIGHT — inconsistent, which the owner read as "terbalik menghadapnya." In-game already mirrored; the **picker was the gap**. Now every picker mirrors left-facing sprites so ALL trains face RIGHT (direction of travel):
+- `balapan-kereta.html` picker `<img>` gets `transform:scaleX(-1)` when `t.faces==='left'`.
+- `lokomotif-pemberani.html` `.tcard` `<img>` same (entries carry `faces`).
+- `selamatkan-kereta.html` canvas preview flips the ctx for left-facing keys (new inline `FACES_LEFT_G16` set — g16 has no trains-db). g16 **in-game** train also mirrored for consistency.
+
+### B-230 + B-232 — train floats off the rail + non-uniform sizes
+
+After the v55.41 ×1.35 scale-up the per-sprite `spriteHeight` (72-172) produced 97-232px trains, and the stale `wheelOffset = laneH*0.22-19` (designed for the old `laneH*0.28` rail) pushed the container ~34px below the now-fixed 18px rail strip → "tidak pas di rail."
+- **Uniform height**: every character train (player + AI) renders at one `G14_UNIFORM_H = 120` (AI ×0.85). Aspect ratio preserved (uniform scalar on both axes) — no distortion.
+- **Wheels on rail**: sprite anchor `0.6 → 0.86` (wheel band at the container origin) + `wheelOffset → 0`, so wheels sit exactly on the bottom rail line.
+
+### B-231 — scenery only at the top, empty middle
+
+Mid-scenery used to cluster at the 3 lane centers, leaving the inter-lane bands + above lane 0 + below lane 2 as empty void. `buildMidScenery()` now distributes 34 items across the **full play band** (`gameTop..gameBot`); gap items are bigger/brighter, near-rail items smaller/fainter so the rails stay readable.
+
+### B-233 + B-235 — math too hard + weird boost questions
+
+- `math-rules.js` `_maxForLevel` hard cap **30 → 20** (every operand ≤ 20, every answer ≤ 2 digits across g25 / mario / gym).
+- g14 boost `buildQuiz()`: operands clamped ≤ 20; the v54.19 train-themed **word-problem wrappers removed** — the boost is now PLAIN arithmetic only ("8 + 15 = ?"), since those wrappers were the "aneh" prompts the owner flagged.
+
+### B-234 — nav up/down same color
+
+g14 up/down were both blue. New pastel soft-calm jelly skins `.du-jelly-mint` + `.du-jelly-peach` in `du-buttons.css`; up = mint, down = peach in both g14 and g15 (g15 was saturated green/coral). Distinct + pastel, jelly shape kept.
+
+### Verification (M-302 — VISUAL)
+
+`tools/verify-v5545.mjs` drives the REAL picker + race + boost: nav up≠down PASS, boost math (12 samples) PASS (all plain, ≤20), 0 page errors. Screenshots READ and confirmed: Thomas mirrored→right + Ashima native→right, wheels on rail, scenery fills the middle, uniform sizes, mint↑/peach↓. Regression: `probe-obstacle-engine` 14/14, `sprite-visual-audit` clean.
+
 ## 2026-06-27 — v55.44 "Smoke hard-cap + full 8-probe sweep on renamed games"
 
 Final hardening + verification pass.

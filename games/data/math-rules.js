@@ -226,8 +226,11 @@
   }
 
   function _maxForLevel (lv, diff) {
-    if (diff === 'hard')   return lv > 20 ? 30 : 20;
-    if (diff === 'medium') return lv > 20 ? 30 : (lv >= 15 ? 20 : 15);
+    // v55.45 B-233 — owner: "max angka 20. Dan jangan sampai 3 angka." Hard
+    // capped at 20 (was 30 at L>20). No operand exceeds 20 in any difficulty;
+    // sums stay ≤ 40 = 2 digits, products are sub-capped in _mathAtom.
+    if (diff === 'hard')   return 20;
+    if (diff === 'medium') return lv >= 15 ? 20 : 15;
     // easy
     return lv >= 15 ? 20 : (lv >= 11 ? 15 : 10);
   }

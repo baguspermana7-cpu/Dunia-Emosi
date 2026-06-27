@@ -4,6 +4,20 @@
 
 ---
 
+## 2026-06-27 — v55.45 Train-game deep polish (B-229→B-235)
+
+### L214 — A render fix often has TWO sites: the live view AND every preview/picker
+- **Symptom**: owner kept reporting "karakter belum bener menghadapnya salah hampir semua" even after the in-game sprite mirror (B-223) shipped. The in-game render was correct; the **picker** still showed raw orientation.
+- **Root cause**: the mirror logic lived only in the gameplay sprite path. Pickers/thumbnails/previews are a SEPARATE render path (an `<img>` with CSS, or a `ctx.drawImage` canvas) that nobody updated. So the menu showed left-facing trains while the race showed right-facing ones.
+- **Fix**: apply the same `faces`-driven mirror in all three pickers — CSS `transform:scaleX(-1)` for `<img>` previews (g14/g15), `ctx.translate+scale(-1,1)` for canvas previews (g16). For g16 (no trains-db) an inline `FACES_LEFT_G16` key set mirrors the trains-db `faces` tags.
+- **Lesson**: when you fix how an entity renders, grep for EVERY place it renders — live view, picker card, thumbnail, results screen, PDF. A direction/scale/tint fix that only touches the gameplay path leaves the menu lying. The owner sees the menu first.
+
+### L215 — Stale geometry constants float sprites when the layout they assumed changes
+- **Symptom**: "Karakter tidak pas di rail" — the train sat ~34px below the rail line after the v55.41 scale-up.
+- **Root cause**: `wheelOffset = laneH*0.22 - 19` was derived for a rail at `laneH*0.28` from lane center. A later change moved the rail to a FIXED `RAIL_HALF = 18`px strip, but the offset formula was never updated, so on tall lanes it pushed the container far below the new rail. Compounded by a non-uniform `spriteHeight×1.35` and an anchor (0.6) that put the wheel band well below the origin.
+- **Fix**: one uniform render height (`G14_UNIFORM_H`), wheel-band anchor (0.86), and `wheelOffset = 0` so wheels land on the fixed rail regardless of lane height or sprite.
+- **Lesson**: when you change a layout primitive (rail position, lane height, tile size), grep for every constant derived from the OLD value. Offsets computed against a moved anchor silently drift. Prefer anchoring to the new primitive directly over re-tuning magic numbers.
+
 ## 2026-06-27 — v55.39 Clamp dt + visual-audit mandate
 
 ### L213 — Always clamp `ticker.deltaTime`; verify visuals with a screenshot

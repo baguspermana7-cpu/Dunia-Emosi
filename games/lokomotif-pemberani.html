@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=55.35-20260627dq">
+<link rel="stylesheet" href="du-buttons.css?v=55.45-20260627ea">
 <title>Lokomotif Pemberani 🚂</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -65,11 +65,11 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 #hud-bottom{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:8px 14px calc(env(safe-area-inset-bottom,0px)+12px);max-height:clamp(80px,18vh,140px)}
 #ctrl-row{display:flex;gap:10px;align-items:stretch;height:100%}
 /* v55.43 B-228 — soft jelly buttons (parity with balapan-kereta). */
-#btn-up{flex:1;padding:clamp(8px,2vh,15px) 0;border-radius:24px;border:4px solid rgba(255,255,255,0.92);background:linear-gradient(180deg,#81e5a3,#4ade80 55%,#22c55e);color:#fff;font-size:clamp(14px,3.5vmin,22px);cursor:pointer;user-select:none;-webkit-user-select:none;transition:transform .08s,box-shadow .12s;font-family:inherit;-webkit-tap-highlight-color:transparent;line-height:1.2;position:relative;overflow:hidden;box-shadow:0 8px 18px rgba(0,0,0,0.18),inset 0 2px 5px rgba(255,255,255,0.45),inset 0 -5px 9px rgba(0,0,0,0.12);font-weight:900}
+#btn-up{flex:1;padding:clamp(8px,2vh,15px) 0;border-radius:24px;border:4px solid rgba(255,255,255,0.92);background:linear-gradient(180deg,#e0f7ec,#b7ead0 55%,#95dcbb);color:#1f5b42;font-size:clamp(14px,3.5vmin,22px);cursor:pointer;user-select:none;-webkit-user-select:none;transition:transform .08s,box-shadow .12s;font-family:inherit;-webkit-tap-highlight-color:transparent;line-height:1.2;position:relative;overflow:hidden;box-shadow:0 8px 18px rgba(0,0,0,0.18),inset 0 2px 5px rgba(255,255,255,0.45),inset 0 -5px 9px rgba(0,0,0,0.12);font-weight:900}
 #btn-up::after{content:'';position:absolute;top:9px;right:13px;width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,0.9);box-shadow:15px 5px 0 -4px rgba(255,255,255,0.72);pointer-events:none}
 #btn-up:active{transform:translateY(2px) scale(.97);box-shadow:0 4px 10px rgba(0,0,0,0.18),inset 0 2px 5px rgba(255,255,255,0.4)}
 #btn-up:active{transform:scale(.91) translateY(4px);box-shadow:0 1px 0 #0A7A48}
-#btn-dn{flex:1;padding:clamp(8px,2vh,15px) 0;border-radius:24px;border:4px solid rgba(255,255,255,0.92);background:linear-gradient(180deg,#ff8a65,#ff7043 55%,#f4511e);color:#fff;font-size:clamp(14px,3.5vmin,22px);cursor:pointer;user-select:none;-webkit-user-select:none;transition:transform .08s,box-shadow .12s;font-family:inherit;-webkit-tap-highlight-color:transparent;line-height:1.2;position:relative;overflow:hidden;box-shadow:0 8px 18px rgba(0,0,0,0.18),inset 0 2px 5px rgba(255,255,255,0.45),inset 0 -5px 9px rgba(0,0,0,0.12);font-weight:900}
+#btn-dn{flex:1;padding:clamp(8px,2vh,15px) 0;border-radius:24px;border:4px solid rgba(255,255,255,0.92);background:linear-gradient(180deg,#fff0e3,#ffd9bd 55%,#ffc6a0);color:#8a4a26;font-size:clamp(14px,3.5vmin,22px);cursor:pointer;user-select:none;-webkit-user-select:none;transition:transform .08s,box-shadow .12s;font-family:inherit;-webkit-tap-highlight-color:transparent;line-height:1.2;position:relative;overflow:hidden;box-shadow:0 8px 18px rgba(0,0,0,0.18),inset 0 2px 5px rgba(255,255,255,0.45),inset 0 -5px 9px rgba(0,0,0,0.12);font-weight:900}
 #btn-dn::after{content:'';position:absolute;top:9px;right:13px;width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,0.9);box-shadow:15px 5px 0 -4px rgba(255,255,255,0.72);pointer-events:none}
 #btn-dn:active{transform:translateY(2px) scale(.97);box-shadow:0 4px 10px rgba(0,0,0,0.18),inset 0 2px 5px rgba(255,255,255,0.4)}
 @media (orientation:landscape) and (min-aspect-ratio:16/10){#hud-bottom{max-height:90px}}
@@ -2959,7 +2959,11 @@ function buildTrainGrid() {
       // Sprites vary widely in aspect (1.37 .. 7.21). Use max-width with auto height
       // so tall trains (Casey JR, Linus) stay chunky and wide trains (JZ 711, Malivlak)
       // render at readable height instead of being squished into a 36px band.
-      img.style.cssText = 'width:auto;height:auto;max-width:120px;max-height:48px;object-fit:contain;display:block;margin:0 auto;';
+      // v55.45 B-229 — mirror left-facing AEG chars so every train faces RIGHT
+      // in the picker (matches the in-game CharacterTrain mirror). Owner saw the
+      // raw-orientation picker as "terbalik menghadapnya."
+      const _mirror = (entry.faces === 'left') ? 'transform:scaleX(-1);' : '';
+      img.style.cssText = 'width:auto;height:auto;max-width:120px;max-height:48px;object-fit:contain;display:block;margin:0 auto;' + _mirror;
       card.appendChild(img);
     } else {
       const canvas = document.createElement('canvas');
