@@ -1,5 +1,49 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-27 — v55.27 "g14-side joins Thomas BGM (closes 'untuk semua game kereta' gap)"
+
+v55.25 covered g14, g15, g16. Owner's A-302 ask was *"untuk semua game kereta"* — that includes g14-side. v55.27 closes the gap.
+
+### Behavior — conditional BGM
+
+`g14-side.html` has been intentionally silent since v54.x (rich parallax ambient + Pixi engine sounds). To honor owner's ask **without breaking that silence for non-Thomas users**, the BGM only fires when a Thomas character is selected:
+
+- **Casey JR / Linus / Dragutin / Brave / Malivlak (PROTECTED)** → **silent** (unchanged from pre-v55.27)
+- **Any `aeg_*` Thomas character** → swaps to Thomas BGM at 0.40 volume
+
+### Wiring
+
+- HTML head: empty `<audio id="game-bgm" loop preload="none">` placeholder + `<script src="train-bgm.js?v=…">` after the existing `bg-audio.js` line.
+- Race start (line 367): `if (TrainBGM.isThomas(S.trainCfg.key)) { setTrack(); play(); }` — guarded so non-Thomas paths skip the audio entirely.
+- Pause toggle (line 818): `TrainBGM.pause()` on enter pause, `TrainBGM.play()` on resume (if Thomas).
+- Race finish (line 1163): `TrainBGM.stop()` so the celebration tones (the `playTone` chord at 1170-1173) breathe.
+
+### Verification
+
+`tools/probe-train-bgm.mjs` extended with B4 covering g14-side. Run results:
+
+```
+B1 g14 top-down race    7/7 PASS
+B2 g15 Lokomotif        7/7 PASS
+B3 g16 Selamatkan       7/7 PASS
+B4 g14-side (v55.27)    7/7 PASS
+
+PASS=28  FAIL=0  TOTAL=28
+```
+
+Polish probe: 18 screens, 0 errors, 0 server 404s.
+Obstacle probe: 14/14 PASS.
+
+### Files touched
+
+- `games/g14-side.html` — head injection + 3 wire sites (race-start, pause, finish)
+- `tools/probe-train-bgm.mjs` — added B4 target
+- `sw.js` v55.25 → v55.27
+
+### Closes the "untuk semua game kereta" interpretation gap; A-302 fully addressed.
+
+---
+
 ## 2026-06-27 — v55.25 "Thomas & Friends BGM swap (closes A-302 + A-303)"
 
 Owner ask 2026-06-27:

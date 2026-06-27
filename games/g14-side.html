@@ -129,6 +129,9 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <script src="data/bg-renderers.js?v=54.64-20260626bq"></script>
 <script src="data/bg-npcs.js?v=54.64-20260626bq"></script>
 <script src="data/bg-audio.js?v=54.65-20260626br"></script>
+<!-- v55.27 — Thomas BGM (silent by default; only fires for aeg_* chars) -->
+<audio id="game-bgm" loop preload="none" style="display:none"></audio>
+<script src="train-bgm.js?v=55.25-20260627dl"></script>
 <script src="data/bg-events.js?v=54.67-20260626bt"></script>
 <script src="obstacle-engine.js?v=54.98-20260626cy"></script>
 <script src="data/kids-questions.js?v=54.98-20260626cy"></script>
@@ -366,6 +369,15 @@ const JUMP_VELOCITY = 720         // initial upward velocity
       runCountdown(() => {
         S.running = true
         S.frame = 0
+        // v55.27 — Thomas BGM only fires for aeg_* chars. Non-Thomas chars
+        // keep g14-side's existing silence (no BGM was here pre-v55.27).
+        try {
+          const tk = S.trainCfg && S.trainCfg.key
+          if (window.TrainBGM && TrainBGM.isThomas(tk)) {
+            TrainBGM.setTrack(tk, 0.40)
+            TrainBGM.play()
+          }
+        } catch (_) {}
         // v54.91 — Wire ObstacleEngine + schedule first puzzle
         try { g14sWireObstacleEngine() } catch(e) { console.warn('OE wire fail', e) }
       })
@@ -807,6 +819,8 @@ function g14sTogglePause() {
     S.running = true
     document.getElementById('pause-modal').style.display = 'none'
     document.getElementById('btn-pause').textContent = '⏸'
+    // v55.27 — resume Thomas BGM if it was playing
+    try { if (window.TrainBGM && TrainBGM.isThomas(S.trainCfg && S.trainCfg.key)) TrainBGM.play() } catch (_) {}
   } else {
     S.paused = true
     S.running = false
@@ -815,6 +829,8 @@ function g14sTogglePause() {
     if (tipEl) tipEl.textContent = G14S_PAUSE_TIPS[Math.floor(Math.random() * G14S_PAUSE_TIPS.length)]
     document.getElementById('pause-modal').style.display = 'flex'
     document.getElementById('btn-pause').textContent = '▶'
+    // v55.27 — pause Thomas BGM
+    try { if (window.TrainBGM) TrainBGM.pause() } catch (_) {}
   }
 }
 
@@ -1147,6 +1163,8 @@ function tick(tickerOrDelta) {
   if (S.distance >= S.targetDistance && !S.finished) {
     S.finished = true
     S.running = false
+    // v55.27 — stop Thomas BGM on finish (lets the celebration tones breathe)
+    try { if (window.TrainBGM) TrainBGM.stop() } catch (_) {}
     // v54.92 — Confetti burst around train + finish chime
     spawnConfetti(trainContainer.x, trainContainer.y - 40)
     try {
