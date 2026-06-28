@@ -10,6 +10,13 @@ const URL = 'http://localhost:8081/secondbrain.html'
 const OUT = 'tools/qa-out'
 fs.mkdirSync(OUT, { recursive: true })
 
+// Derive the expected node count straight from the RAW[] block so the probe
+// tracks enrichment automatically instead of hard-coding a stale number.
+const HTML_SRC = fs.readFileSync('secondbrain.html', 'utf8')
+const RAW_BLOCK = HTML_SRC.match(/const RAW=\[([\s\S]*?)\n\];/)
+const EXPECT_NODES = RAW_BLOCK ? (RAW_BLOCK[1].match(/\{id:'/g) || []).length : 0
+const EXPECT_JOURNEY = (HTML_SRC.match(/group:'journey'/g) || []).length
+
 const browser = await puppeteer.launch({
   headless: 'new',
   args: ['--no-sandbox', '--use-gl=swiftshader', '--enable-webgl', '--ignore-gpu-blocklist'],
@@ -37,9 +44,9 @@ async function run(label, vw, vh) {
   })
   ok(checks, 'vis-network canvas renders', hasCanvas)
 
-  // 2. node count badge == RAW length (43)
+  // 2. node count badge == RAW length (derived from source)
   const nodeStat = await page.evaluate(() => parseInt(document.getElementById('sN').textContent, 10))
-  ok(checks, 'node count == 43', nodeStat === 43, `got ${nodeStat}`)
+  ok(checks, `node count == RAW length (${EXPECT_NODES})`, nodeStat === EXPECT_NODES, `got ${nodeStat}`)
   const linkStat = await page.evaluate(() => parseInt(document.getElementById('sE').textContent, 10))
   ok(checks, 'link count > 0', linkStat > 0, `got ${linkStat}`)
 
@@ -48,7 +55,7 @@ async function run(label, vw, vh) {
   await page.type('#si', 'pokemon')
   await new Promise(r => setTimeout(r, 600))
   const afterSearch = await page.evaluate(() => parseInt(document.getElementById('sN').textContent, 10))
-  ok(checks, 'search filters (pokemon < 43)', afterSearch > 0 && afterSearch < 43, `got ${afterSearch}`)
+  ok(checks, `search filters (pokemon < ${EXPECT_NODES})`, afterSearch > 0 && afterSearch < EXPECT_NODES, `got ${afterSearch}`)
   // clear search
   await page.evaluate(() => { document.getElementById('si').value = '' })
   await page.click('#si'); await page.type('#si', ' '); await page.keyboard.press('Backspace')
@@ -61,6 +68,13 @@ async function run(label, vw, vh) {
   await new Promise(r => setTimeout(r, 700))
   const afterFilter = await page.evaluate(() => parseInt(document.getElementById('sN').textContent, 10))
   ok(checks, 'category filter GAMES == 14', afterFilter === 14, `got ${afterFilter}`)
+  // 4b. category filter includes the new JOURNEY group
+  await page.evaluate(() => {
+    const b = [...document.querySelectorAll('.fp')].find(x => x.dataset.g === 'journey'); b && b.click()
+  })
+  await new Promise(r => setTimeout(r, 700))
+  const afterJourney = await page.evaluate(() => parseInt(document.getElementById('sN').textContent, 10))
+  ok(checks, `category filter JOURNEY == ${EXPECT_JOURNEY}`, afterJourney === EXPECT_JOURNEY, `got ${afterJourney}`)
   // reset to ALL
   await page.evaluate(() => {
     const b = [...document.querySelectorAll('.fp')].find(x => x.dataset.g === 'all'); b && b.click()
@@ -90,6 +104,25 @@ async function run(label, vw, vh) {
   })
   ok(checks, 'node click opens detail panel', panel.open && panel.title.length > 0, `title="${panel.title}"`)
   ok(checks, 'detail panel shows page link', !!panel.href && /balapan-kereta\.html/.test(panel.href), `href=${panel.href}`)
+  await page.evaluate(() => window.closeSB && window.closeSB())
+  await new Promise(r => setTimeout(r, 300))
+
+  // 6b. clicking a journey leg node + a lesson node opens the detail panel
+  const jpanel = await page.evaluate(() => {
+    if (typeof window.focN === 'function') window.focN('leg-14')
+    const sb = document.getElementById('sb')
+    return { open: sb && sb.classList.contains('open'), title: document.getElementById('sbTi').textContent, badge: document.getElementById('sbBdg').textContent }
+  })
+  ok(checks, 'journey node opens detail panel', jpanel.open && /Surabaya/.test(jpanel.title) && jpanel.badge === 'journey', `title="${jpanel.title}" badge="${jpanel.badge}"`)
+  await page.evaluate(() => window.closeSB && window.closeSB())
+  await new Promise(r => setTimeout(r, 250))
+  const lpanel = await page.evaluate(() => {
+    if (typeof window.focN === 'function') window.focN('l116')
+    const sb = document.getElementById('sb')
+    const link = document.querySelector('#sbA a.sbbn-p')
+    return { open: sb && sb.classList.contains('open'), title: document.getElementById('sbTi').textContent, href: link ? link.getAttribute('href') : null }
+  })
+  ok(checks, 'lesson node opens detail panel w/ doc link', lpanel.open && /L116/.test(lpanel.title) && /LESSONS-LEARNED\.md/.test(lpanel.href || ''), `title="${lpanel.title}" href=${lpanel.href}`)
   // close panel
   await page.evaluate(() => window.closeSB && window.closeSB())
   await new Promise(r => setTimeout(r, 400))
@@ -123,13 +156,36 @@ async function run(label, vw, vh) {
   const realErrors = errors.filter(e => !/favicon|fonts\.g|net::ERR_ABORTED.*favicon/i.test(e))
   ok(checks, '0 console/page errors', realErrors.length === 0, realErrors.join(' | '))
 
-  await page.screenshot({ path: `${OUT}/secondbrain-${label}.png` })
+  await page.screenshot({ path: `${OUT}/secondbrain-enriched-${label}.png` })
   await page.close()
   return { label, vw, vh, checks }
 }
 
 results.push(await run('desktop', 1280, 800))
 results.push(await run('mobile', 390, 800))
+
+// index.html discoverability: the new secondbrain link exists, points correctly, 0 errors
+const idxChecks = []
+{
+  const page = await browser.newPage()
+  await page.setViewport({ width: 1280, height: 800, deviceScaleFactor: 1 })
+  const errors = []
+  page.on('console', m => { if (m.type() === 'error') errors.push(m.text()) })
+  page.on('pageerror', e => errors.push('PAGEERROR: ' + e.message))
+  try { await page.goto('http://localhost:8081/index.html', { waitUntil: 'networkidle2', timeout: 25000 }) }
+  catch (e) { errors.push('GOTO: ' + e.message) }
+  await new Promise(r => setTimeout(r, 1500))
+  const link = await page.evaluate(() => {
+    const a = [...document.querySelectorAll('a[href]')].find(x => /secondbrain\.html/.test(x.getAttribute('href')))
+    return a ? { href: a.getAttribute('href'), text: a.textContent.trim() } : null
+  })
+  ok(idxChecks, 'index.html has a secondbrain link', !!link && /secondbrain\.html/.test(link.href), link ? `href=${link.href} text="${link.text}"` : 'not found')
+  const realErrors = errors.filter(e => !/favicon|fonts\.g|net::ERR_ABORTED.*favicon/i.test(e))
+  ok(idxChecks, 'index.html 0 console/page errors', realErrors.length === 0, realErrors.slice(0, 3).join(' | '))
+  await page.close()
+}
+results.push({ label: 'index.html', vw: 1280, vh: 800, checks: idxChecks })
+
 await browser.close()
 
 let failed = 0
@@ -140,6 +196,6 @@ for (const r of results) {
     if (!c.pass) failed++
   }
 }
-console.log(`\nScreenshots: ${OUT}/secondbrain-desktop.png , ${OUT}/secondbrain-mobile.png`)
+console.log(`\nScreenshots: ${OUT}/secondbrain-enriched-desktop.png , ${OUT}/secondbrain-enriched-mobile.png`)
 console.log(failed ? `\n❌ ${failed} check(s) failed` : `\n✅ all checks passed (both viewports)`)
 process.exit(failed ? 1 : 0)

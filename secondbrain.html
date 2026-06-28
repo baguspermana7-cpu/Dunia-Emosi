@@ -408,7 +408,7 @@ html.dark #stars{opacity:.55}
   <div class="nstats">
     <div class="nstat"><div class="nval" id="sN">—</div><div class="nlbl">Nodes</div></div>
     <div class="nstat"><div class="nval" id="sE">—</div><div class="nlbl">Links</div></div>
-    <div class="nstat"><div class="nval" id="sC">9</div><div class="nlbl">Groups</div></div>
+    <div class="nstat"><div class="nval" id="sC">10</div><div class="nlbl">Groups</div></div>
     <div class="nstat" title="Graph density = 2E / N(N-1)"><div class="nval" id="sG">—</div><div class="nlbl">Density</div></div>
   </div>
 
@@ -441,6 +441,7 @@ html.dark #stars{opacity:.55}
     <button class="fp" data-g="standards"><div class="fd" style="background:#6366F1"></div>STANDARDS <span class="fc" id="c-standards">0</span></button>
     <button class="fp" data-g="audits"><div class="fd" style="background:#EC4899"></div>AUDITS <span class="fc" id="c-audits">0</span></button>
     <button class="fp" data-g="games"><div class="fd" style="background:#10B981"></div>GAMES <span class="fc" id="c-games">0</span></button>
+    <button class="fp" data-g="journey"><div class="fd" style="background:#06B6D4"></div>JOURNEY <span class="fc" id="c-journey">0</span></button>
   </div>
 
   <div class="tdv"></div>
@@ -549,6 +550,7 @@ html.dark #stars{opacity:.55}
   <div class="legr"><div class="legd" style="background:#6366F1"></div>Standards</div>
   <div class="legr"><div class="legd" style="background:#EC4899"></div>Audits</div>
   <div class="legr"><div class="legd" style="background:#10B981"></div>Games</div>
+  <div class="legr"><div class="legd" style="background:#06B6D4"></div>Journey</div>
   <div class="legdiv"></div>
   <div class="legt2">Top Connected</div>
   <div id="legtop"></div>
@@ -616,6 +618,7 @@ const G={
   standards:   {col:'#6366F1',brd:'#4338CA',sz:16,gl:'rgba(99,102,241,.4)'},
   audits:      {col:'#EC4899',brd:'#BE185D',sz:16,gl:'rgba(236,72,153,.4)'},
   games:       {col:'#10B981',brd:'#047857',sz:18,gl:'rgba(16,185,129,.45)'},
+  journey:     {col:'#06B6D4',brd:'#0891B2',sz:14,gl:'rgba(6,182,212,.45)'},
 };
 
 const D='documentation%20and%20standarization/';
@@ -668,20 +671,88 @@ const RAW=[
   {id:'lessons',label:'Lessons Learned',group:'audits',url:D+'LESSONS-LEARNED.md',desc:'Per-session anti-pattern log with symptom, root-cause, fix and lesson entries from L1 onward.',tags:['lessons','anti-patterns','debugging','postmortem'],path:'documentation and standarization/LESSONS-LEARNED.md'},
 
   /* ─ GAMES ─ */
-  {id:'balapan',label:'Balapan Kereta',group:'games',url:'games/balapan-kereta.html',desc:'The flagship side-scrolling train race with a moving parallax journey from Jakarta toward Bali.',tags:['game','train','race','pixi'],path:'games/balapan-kereta.html'},
-  {id:'balapanside',label:'Balapan Kereta Side',group:'games',url:'games/balapan-kereta-side.html',desc:'Side-view jump-and-run train race variant with terrain, gaps and a quiz finale.',tags:['game','train','side','jump'],path:'games/balapan-kereta-side.html'},
-  {id:'lokomotif',label:'Lokomotif Pemberani',group:'games',url:'games/lokomotif-pemberani.html',desc:'Brave-locomotive character train adventure with the protected loco roster.',tags:['game','train','characters'],path:'games/lokomotif-pemberani.html'},
-  {id:'museum',label:'Museum Kereta',group:'games',url:'games/museum-kereta.html',desc:'Standalone Museum Ambarawa train museum with 36 locomotive cards, quiz, gallery and passport.',tags:['game','museum','quiz','trains'],path:'games/museum-kereta.html'},
-  {id:'selamatkan',label:'Selamatkan Kereta',group:'games',url:'games/selamatkan-kereta.html',desc:'Save-the-train obstacle-clearing rescue game built on the obstacle engine.',tags:['game','train','obstacles','rescue'],path:'games/selamatkan-kereta.html'},
-  {id:'mariopok',label:'Mario Pokemon',group:'games',url:'games/mario-pokemon.html',desc:'Platformer crossover pairing NES Mario physics with Pokemon characters.',tags:['game','mario','pokemon','platformer'],path:'games/mario-pokemon.html'},
-  {id:'monster',label:'Monster Candy',group:'games',url:'games/monster-candy.html',desc:'Match-and-battle candy-monster game using the Pokemon balance and type rules.',tags:['game','candy','monster','battle'],path:'games/monster-candy.html'},
-  {id:'gym',label:'Gym Pokemon',group:'games',url:'games/gym-pokemon.html',desc:'Gym-ladder battle adventure with type effectiveness, evolution chains and math combat.',tags:['game','pokemon','battle','gym'],path:'games/gym-pokemon.html'},
-  {id:'pokrun',label:'Pokemon Run',group:'games',url:'games/pokemon-run.html',desc:'Endless runner with evolving Pokemon dodging obstacles.',tags:['game','pokemon','runner','obstacles'],path:'games/pokemon-run.html'},
-  {id:'pokbirds',label:'Pokemon Birds',group:'games',url:'games/pokemon-birds.html',desc:'Flappy-style flying bird Pokemon game with tap-to-fly control.',tags:['game','pokemon','birds','arcade'],path:'games/pokemon-birds.html'},
-  {id:'poksea',label:'Pokemon Bawah Laut',group:'games',url:'games/pokemon-bawah-laut.html',desc:'Underwater Pokemon swimming game with a dynamic ocean backdrop.',tags:['game','pokemon','underwater'],path:'games/pokemon-bawah-laut.html'},
-  {id:'ducky',label:'Ducky Volley',group:'games',url:'games/ducky-volley.html',desc:'Arcade volleyball mini-game with bouncy duck physics.',tags:['game','volley','arcade'],path:'games/ducky-volley.html'},
-  {id:'kuis',label:'Kuis Matematika',group:'games',url:'games/kuis-matematika.html',desc:'Math quiz game driven by the age-scaled math difficulty standard.',tags:['game','math','quiz','education'],path:'games/kuis-matematika.html'},
-  {id:'mobil',label:'Mobil',group:'games',url:'games/mobil.html',desc:'Car driving and obstacle-dodging arcade game.',tags:['game','car','obstacles','arcade'],path:'games/mobil.html'},
+  {id:'balapan',label:'Balapan Kereta',group:'games',emoji:'🚂',url:'games/balapan-kereta.html',desc:'The flagship side-scrolling train race with a moving parallax journey from Jakarta toward Bali.',tags:['game','train','race','pixi'],path:'games/balapan-kereta.html'},
+  {id:'balapanside',label:'Balapan Kereta Side',group:'games',emoji:'🚋',url:'games/balapan-kereta-side.html',desc:'Side-view jump-and-run train race variant with terrain, gaps and a quiz finale.',tags:['game','train','side','jump'],path:'games/balapan-kereta-side.html'},
+  {id:'lokomotif',label:'Lokomotif Pemberani',group:'games',emoji:'🚆',url:'games/lokomotif-pemberani.html',desc:'Brave-locomotive character train adventure with the protected loco roster.',tags:['game','train','characters'],path:'games/lokomotif-pemberani.html'},
+  {id:'museum',label:'Museum Kereta',group:'games',emoji:'🏛️',url:'games/museum-kereta.html',desc:'Standalone Museum Ambarawa train museum with 36 locomotive cards, quiz, gallery and passport.',tags:['game','museum','quiz','trains'],path:'games/museum-kereta.html'},
+  {id:'selamatkan',label:'Selamatkan Kereta',group:'games',emoji:'🚨',url:'games/selamatkan-kereta.html',desc:'Save-the-train obstacle-clearing rescue game built on the obstacle engine.',tags:['game','train','obstacles','rescue'],path:'games/selamatkan-kereta.html'},
+  {id:'mariopok',label:'Mario Pokemon',group:'games',emoji:'🍄',url:'games/mario-pokemon.html',desc:'Platformer crossover pairing NES Mario physics with Pokemon characters.',tags:['game','mario','pokemon','platformer'],path:'games/mario-pokemon.html'},
+  {id:'monster',label:'Monster Candy',group:'games',emoji:'🍬',url:'games/monster-candy.html',desc:'Match-and-battle candy-monster game using the Pokemon balance and type rules.',tags:['game','candy','monster','battle'],path:'games/monster-candy.html'},
+  {id:'gym',label:'Gym Pokemon',group:'games',emoji:'🏆',url:'games/gym-pokemon.html',desc:'Gym-ladder battle adventure with type effectiveness, evolution chains and math combat.',tags:['game','pokemon','battle','gym'],path:'games/gym-pokemon.html'},
+  {id:'pokrun',label:'Pokemon Run',group:'games',emoji:'🏃',url:'games/pokemon-run.html',desc:'Endless runner with evolving Pokemon dodging obstacles.',tags:['game','pokemon','runner','obstacles'],path:'games/pokemon-run.html'},
+  {id:'pokbirds',label:'Pokemon Birds',group:'games',emoji:'🐦',url:'games/pokemon-birds.html',desc:'Flappy-style flying bird Pokemon game with tap-to-fly control.',tags:['game','pokemon','birds','arcade'],path:'games/pokemon-birds.html'},
+  {id:'poksea',label:'Pokemon Bawah Laut',group:'games',emoji:'🐠',url:'games/pokemon-bawah-laut.html',desc:'Underwater Pokemon swimming game with a dynamic ocean backdrop.',tags:['game','pokemon','underwater'],path:'games/pokemon-bawah-laut.html'},
+  {id:'ducky',label:'Ducky Volley',group:'games',emoji:'🏐',url:'games/ducky-volley.html',desc:'Arcade volleyball mini-game with bouncy duck physics.',tags:['game','volley','arcade'],path:'games/ducky-volley.html'},
+  {id:'kuis',label:'Kuis Matematika',group:'games',emoji:'🔢',url:'games/kuis-matematika.html',desc:'Math quiz game driven by the age-scaled math difficulty standard.',tags:['game','math','quiz','education'],path:'games/kuis-matematika.html'},
+  {id:'mobil',label:'Mobil',group:'games',emoji:'🚗',url:'games/mobil.html',desc:'Car driving and obstacle-dodging arcade game.',tags:['game','car','obstacles','arcade'],path:'games/mobil.html'},
+  /* ─ AUDITS: changelog versions ─ */
+  {id:'cl-v5580',label:'v55.80: Train-games polish & journey cohesion',group:'audits',url:'documentation%20and%20standarization/CHANGELOG.md',desc:'Shared train-journey.js module so all 3 train games name the same 48-leg journey leg the painterly plate shows.',tags:['changelog','v55.80','journey','trains'],path:'documentation and standarization/CHANGELOG.md'},
+  {id:'cl-v5578',label:'v55.78: Backdrop tiers — sharper on tablet',group:'audits',url:'documentation%20and%20standarization/CHANGELOG.md',desc:'Re-tiered painterly backdrops to 640/1024/1600 WebP so hi-dpi 11-inch tablets get a crisp near-source tier.',tags:['changelog','v55.78','backdrop','tiers'],path:'documentation and standarization/CHANGELOG.md'},
+  {id:'cl-v5577',label:'v55.77: Shared painterly-backdrop engine across 3 games',group:'audits',url:'documentation%20and%20standarization/CHANGELOG.md',desc:'Lifted g14 parallax + speed FX into window.TrainBackdrop/TrainSpeedFX, adopted by all three train games.',tags:['changelog','v55.77','engine','parallax'],path:'documentation and standarization/CHANGELOG.md'},
+  {id:'cl-v5575',label:'v55.75: g14 PARALLAX backdrop — the scene MOVES',group:'audits',url:'documentation%20and%20standarization/CHANGELOG.md',desc:'Band-sliced one flat painterly plate into depth bands scrolled at per-band speed for 3D parallax.',tags:['changelog','v55.75','parallax','g14'],path:'documentation and standarization/CHANGELOG.md'},
+  {id:'cl-v5574',label:'v55.74: clean painterly backdrops via LaMa inpaint',group:'audits',url:'documentation%20and%20standarization/CHANGELOG.md',desc:'LaMa object-removal strips the painted train/obstacles/UI from AI mockups, leaving clean scenery + rails.',tags:['changelog','v55.74','inpaint','backdrop'],path:'documentation and standarization/CHANGELOG.md'},
+  {id:'cl-v5572',label:'v55.72: balapan PAINTERLY reskin + 30-station journey',group:'audits',url:'documentation%20and%20standarization/CHANGELOG.md',desc:'Raster painterly backdrops + candy HUD reskin + a 30-station Java west-to-east journey rewrite.',tags:['changelog','v55.72','reskin','journey'],path:'documentation and standarization/CHANGELOG.md'},
+  {id:'cl-v5570',label:'v55.70: Museum loco wheels spin on axle + Diesel',group:'audits',url:'documentation%20and%20standarization/CHANGELOG.md',desc:'Fixed museum locomotive wheels orbiting the SVG centre; new dunWheel spins on a real axle, plus owner Diesel art.',tags:['changelog','v55.70','museum','sprites'],path:'documentation and standarization/CHANGELOG.md'},
+  /* ─ AUDITS: lessons learned ─ */
+  {id:'l108',label:'L108: Pseudo-3D taper changes RENDER geometry only',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'A perspective taper must touch only the rendered rail/sprite layer, never the gameplay coordinates physics reads.',tags:['lessons','L108','pseudo-3d','render'],path:'documentation and standarization/LESSONS-LEARNED.md'},
+  {id:'l109',label:'L109: Parameterize a 40-level journey, do not hand-draw',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Content scale comes from one data table times a few reusable drawers, not N hand-built scenes.',tags:['lessons','L109','journey','data-driven'],path:'documentation and standarization/LESSONS-LEARNED.md'},
+  {id:'l110',label:'L110: SVG wheel spins on its axle only with explicit origin',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Set transform-origin in viewBox units + add spokes; never trust transform-box:fill-box on old webviews.',tags:['lessons','L110','svg','sprites'],path:'documentation and standarization/LESSONS-LEARNED.md'},
+  {id:'l111',label:'L111: vtracer flattens alpha — key-colour + path-strip',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Encode transparency as a sentinel key colour and strip those paths to get a transparent vector cutout.',tags:['lessons','L111','vector','pipeline'],path:'documentation and standarization/LESSONS-LEARNED.md'},
+  {id:'l112',label:'L112: Raster beats vector for painterly backgrounds',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Choose asset format by the art: raster wins for painterly/photographic (smaller AND faithful), vector for flat art.',tags:['lessons','L112','raster','backdrop'],path:'documentation and standarization/LESSONS-LEARNED.md'},
+  {id:'l113',label:'L113: LaMa inpainting strips painted game elements',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Object-removal inpainting cleanly erases painted train/obstacles from AI backdrops; run the torchscript model directly.',tags:['lessons','L113','inpaint','pipeline'],path:'documentation and standarization/LESSONS-LEARNED.md'},
+  {id:'l114',label:'L114: Parallax from one flat image = band-slice + speed',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Slice a flat plate into horizontal depth bands, tile and scroll each at a depth-scaled speed for convincing parallax.',tags:['lessons','L114','parallax','backdrop'],path:'documentation and standarization/LESSONS-LEARNED.md'},
+  {id:'l115',label:'L115: A rail bob must move the WHOLE stage uniformly',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Bob stage.y (backdrop + train children) uniformly so seams never tear and the train stays on the painted rails.',tags:['lessons','L115','parallax','g14'],path:'documentation and standarization/LESSONS-LEARNED.md'},
+  {id:'l116',label:'L116: Extract one verified engine into a shared module',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Migrate the source-of-truth game to the new module first and re-run its probe as the regression gate.',tags:['lessons','L116','engine','refactor'],path:'documentation and standarization/LESSONS-LEARNED.md'},
+  {id:'l117',label:'L117: Hi-dpi cover-fit sharpness = tier near SOURCE width',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Add a backdrop tier near the source width so hi-dpi devices stop upscaling; lowering quality alone will not help.',tags:['lessons','L117','backdrop','tiers'],path:'documentation and standarization/LESSONS-LEARNED.md'},
+  /* ─ JOURNEY: 48 train-journey legs ─ */
+  {id:'leg-01',label:'L1: Gambir → Bekasi',group:'journey',url:null,desc:'Jakarta leg — Gambir → Bekasi.',tags:['journey','jakarta'],path:null},
+  {id:'leg-02',label:'L2: Bekasi → Cikarang',group:'journey',url:null,desc:'Jawa Barat leg — Bekasi → Cikarang.',tags:['journey','jawa-barat'],path:null},
+  {id:'leg-03',label:'L3: Cikarang → Karawang',group:'journey',url:null,desc:'Jawa Barat leg — Cikarang → Karawang.',tags:['journey','jawa-barat'],path:null},
+  {id:'leg-04',label:'L4: Karawang → Cikampek',group:'journey',url:null,desc:'Jawa Barat leg — Karawang → Cikampek.',tags:['journey','jawa-barat'],path:null},
+  {id:'leg-05',label:'L5: Cikampek → Cirebon',group:'journey',url:null,desc:'Jawa Barat leg — Cikampek → Cirebon.',tags:['journey','jawa-barat'],path:null},
+  {id:'leg-06',label:'L6: Cirebon → Tegal',group:'journey',url:null,desc:'Jawa Tengah leg — Cirebon → Tegal.',tags:['journey','jawa-tengah'],path:null},
+  {id:'leg-07',label:'L7: Tegal → Pekalongan',group:'journey',url:null,desc:'Jawa Tengah leg — Tegal → Pekalongan.',tags:['journey','jawa-tengah'],path:null},
+  {id:'leg-08',label:'L8: Pekalongan → Semarang Tawang',group:'journey',url:null,desc:'Jawa Tengah leg — Pekalongan → Semarang Tawang.',tags:['journey','jawa-tengah'],path:null},
+  {id:'leg-09',label:'L9: Semarang Tawang → Ngrombo',group:'journey',url:null,desc:'Jawa Tengah leg — Semarang Tawang → Ngrombo.',tags:['journey','jawa-tengah'],path:null},
+  {id:'leg-10',label:'L10: Ngrombo → Cepu',group:'journey',url:null,desc:'Jawa Tengah leg — Ngrombo → Cepu.',tags:['journey','jawa-tengah'],path:null},
+  {id:'leg-11',label:'L11: Cepu → Bojonegoro',group:'journey',url:null,desc:'Jawa Timur leg — Cepu → Bojonegoro.',tags:['journey','jawa-timur'],path:null},
+  {id:'leg-12',label:'L12: Bojonegoro → Babat',group:'journey',url:null,desc:'Jawa Timur leg — Bojonegoro → Babat.',tags:['journey','jawa-timur'],path:null},
+  {id:'leg-13',label:'L13: Babat → Lamongan',group:'journey',url:null,desc:'Jawa Timur leg — Babat → Lamongan.',tags:['journey','jawa-timur'],path:null},
+  {id:'leg-14',label:'L14: Lamongan → Surabaya Pasarturi',group:'journey',url:null,desc:'Jawa Timur leg — Lamongan → Surabaya Pasarturi.',tags:['journey','jawa-timur'],path:null},
+  {id:'leg-15',label:'L15: Surabaya Gubeng → Sidoarjo',group:'journey',url:null,desc:'Jawa Timur leg — Surabaya Gubeng → Sidoarjo.',tags:['journey','jawa-timur'],path:null},
+  {id:'leg-16',label:'L16: Sidoarjo → Bangil',group:'journey',url:null,desc:'Jawa Timur leg — Sidoarjo → Bangil.',tags:['journey','jawa-timur'],path:null},
+  {id:'leg-17',label:'L17: Bangil → Pasuruan',group:'journey',url:null,desc:'Jawa Timur leg — Bangil → Pasuruan.',tags:['journey','jawa-timur'],path:null},
+  {id:'leg-18',label:'L18: Pasuruan → Probolinggo',group:'journey',url:null,desc:'Jawa Timur leg — Pasuruan → Probolinggo.',tags:['journey','jawa-timur'],path:null},
+  {id:'leg-19',label:'L19: Probolinggo → Klakah',group:'journey',url:null,desc:'Jawa Timur leg — Probolinggo → Klakah.',tags:['journey','jawa-timur'],path:null},
+  {id:'leg-20',label:'L20: Klakah → Tanggul',group:'journey',url:null,desc:'Jawa Timur leg — Klakah → Tanggul.',tags:['journey','jawa-timur'],path:null},
+  {id:'leg-21',label:'L21: Tanggul → Jember',group:'journey',url:null,desc:'Jawa Timur leg — Tanggul → Jember.',tags:['journey','jawa-timur'],path:null},
+  {id:'leg-22',label:'L22: Jember → Rambipuji',group:'journey',url:null,desc:'Jawa Timur leg — Jember → Rambipuji.',tags:['journey','jawa-timur'],path:null},
+  {id:'leg-23',label:'L23: Rambipuji → Kalibaru',group:'journey',url:null,desc:'Jawa Timur leg — Rambipuji → Kalibaru.',tags:['journey','jawa-timur'],path:null},
+  {id:'leg-24',label:'L24: Kalibaru → Kalisetail',group:'journey',url:null,desc:'Jawa Timur leg — Kalibaru → Kalisetail.',tags:['journey','jawa-timur'],path:null},
+  {id:'leg-25',label:'L25: Kalisetail → Rogojampi',group:'journey',url:null,desc:'Jawa Timur leg — Kalisetail → Rogojampi.',tags:['journey','jawa-timur'],path:null},
+  {id:'leg-26',label:'L26: Rogojampi → Banyuwangi Kota',group:'journey',url:null,desc:'Jawa Timur leg — Rogojampi → Banyuwangi Kota.',tags:['journey','jawa-timur'],path:null},
+  {id:'leg-27',label:'L27: Banyuwangi Kota → Ketapang',group:'journey',url:null,desc:'Jawa Timur leg — Banyuwangi Kota → Ketapang.',tags:['journey','jawa-timur'],path:null},
+  {id:'leg-28',label:'L28: Ketapang → Gilimanuk',group:'journey',url:null,desc:'Selat Bali leg — Ketapang → Gilimanuk.',tags:['journey','selat-bali'],path:null},
+  {id:'leg-29',label:'L29: Gilimanuk → Negara',group:'journey',url:null,desc:'Bali leg — Gilimanuk → Negara.',tags:['journey','bali'],path:null},
+  {id:'leg-30',label:'L30: Negara → Denpasar',group:'journey',url:null,desc:'Bali leg — Negara → Denpasar.',tags:['journey','bali'],path:null},
+  {id:'leg-31',label:'L31: Mojokerto → Krian',group:'journey',url:null,desc:'Jawa Timur leg — Mojokerto → Krian.',tags:['journey','jawa-timur'],path:null},
+  {id:'leg-32',label:'L32: Krian → Sidoarjo',group:'journey',url:null,desc:'Jawa Timur leg — Krian → Sidoarjo.',tags:['journey','jawa-timur'],path:null},
+  {id:'leg-33',label:'L33: Krian → Surabaya Gubeng',group:'journey',url:null,desc:'Jawa Timur leg — Krian → Surabaya Gubeng.',tags:['journey','jawa-timur'],path:null},
+  {id:'leg-34',label:'L34: Chur → St. Moritz',group:'journey',url:null,desc:'Swiss leg — Chur → St. Moritz.',tags:['journey','swiss'],path:null},
+  {id:'leg-35',label:'L35: Tirano → St. Moritz',group:'journey',url:null,desc:'Swiss leg — Tirano → St. Moritz.',tags:['journey','swiss'],path:null},
+  {id:'leg-36',label:'L36: München → Garmisch',group:'journey',url:null,desc:'Bavaria leg — München → Garmisch.',tags:['journey','bavaria'],path:null},
+  {id:'leg-37',label:'L37: Fort William → Mallaig',group:'journey',url:null,desc:'Skotlandia leg — Fort William → Mallaig.',tags:['journey','skotlandia'],path:null},
+  {id:'leg-38',label:'L38: Myrdal → Flåm',group:'journey',url:null,desc:'Norwegia leg — Myrdal → Flåm.',tags:['journey','norwegia'],path:null},
+  {id:'leg-39',label:'L39: Wina → Semmering',group:'journey',url:null,desc:'Austria leg — Wina → Semmering.',tags:['journey','austria'],path:null},
+  {id:'leg-40',label:'L40: Venesia → Firenze',group:'journey',url:null,desc:'Italia leg — Venesia → Firenze.',tags:['journey','italia'],path:null},
+  {id:'leg-41',label:'L41: Nice → Monako',group:'journey',url:null,desc:'Prancis leg — Nice → Monako.',tags:['journey','prancis'],path:null},
+  {id:'leg-42',label:'L42: Danau Baikal',group:'journey',url:null,desc:'Rusia leg — Danau Baikal.',tags:['journey','rusia'],path:null},
+  {id:'leg-43',label:'L43: Denver → Glenwood Springs',group:'journey',url:null,desc:'Amerika leg — Denver → Glenwood Springs.',tags:['journey','amerika'],path:null},
+  {id:'leg-44',label:'L44: Jasper → Vancouver',group:'journey',url:null,desc:'Kanada leg — Jasper → Vancouver.',tags:['journey','kanada'],path:null},
+  {id:'leg-45',label:'L45: Tokyo → Gunung Fuji',group:'journey',url:null,desc:'Jepang leg — Tokyo → Gunung Fuji.',tags:['journey','jepang'],path:null},
+  {id:'leg-46',label:'L46: Kyoto → Arashiyama',group:'journey',url:null,desc:'Jepang leg — Kyoto → Arashiyama.',tags:['journey','jepang'],path:null},
+  {id:'leg-47',label:'L47: Lhasa → Nyingchi',group:'journey',url:null,desc:'Tibet leg — Lhasa → Nyingchi.',tags:['journey','tibet'],path:null},
+  {id:'leg-48',label:'L48: Kalka → Shimla',group:'journey',url:null,desc:'India leg — Kalka → Shimla.',tags:['journey','india'],path:null},
 ];
 
 /* ── EDGES ── */
@@ -737,6 +808,33 @@ const E=[
   ['poksea','ideas'],['poksea','dynbg'],
   ['ducky','ideas'],
   ['mobil','obeng'],['mobil','ideas'],
+  /* changelog version nodes */
+  ['cl-v5580','changelog'],['cl-v5580','station'],['cl-v5580','balapan'],
+  ['cl-v5578','changelog'],['cl-v5578','dynbg'],
+  ['cl-v5577','changelog'],['cl-v5577','dynbg'],['cl-v5577','balapan'],['cl-v5577','lokomotif'],['cl-v5577','balapanside'],
+  ['cl-v5575','changelog'],['cl-v5575','dynbg'],['cl-v5575','balapan'],
+  ['cl-v5574','changelog'],['cl-v5574','dynbg'],
+  ['cl-v5572','changelog'],['cl-v5572','balapan'],['cl-v5572','station'],
+  ['cl-v5570','changelog'],['cl-v5570','museum'],['cl-v5570','chartrain'],
+  /* lessons-learned nodes */
+  ['l108','lessons'],['l108','balapan'],
+  ['l109','lessons'],['l109','station'],['l109','balapan'],
+  ['l110','lessons'],['l110','museum'],
+  ['l111','lessons'],['l111','dynbg'],
+  ['l112','lessons'],['l112','dynbg'],['l112','balapan'],
+  ['l113','lessons'],['l113','dynbg'],
+  ['l114','lessons'],['l114','balapan'],['l114','dynbg'],
+  ['l115','lessons'],['l115','balapan'],
+  ['l116','lessons'],['l116','balapan'],['l116','lokomotif'],['l116','balapanside'],
+  ['l117','lessons'],['l117','dynbg'],
+  /* journey chain + anchors */
+  ['leg-01','leg-02'],['leg-02','leg-03'],['leg-03','leg-04'],['leg-04','leg-05'],['leg-05','leg-06'],['leg-06','leg-07'],['leg-07','leg-08'],['leg-08','leg-09'],
+  ['leg-09','leg-10'],['leg-10','leg-11'],['leg-11','leg-12'],['leg-12','leg-13'],['leg-13','leg-14'],['leg-14','leg-15'],['leg-15','leg-16'],['leg-16','leg-17'],
+  ['leg-17','leg-18'],['leg-18','leg-19'],['leg-19','leg-20'],['leg-20','leg-21'],['leg-21','leg-22'],['leg-22','leg-23'],['leg-23','leg-24'],['leg-24','leg-25'],
+  ['leg-25','leg-26'],['leg-26','leg-27'],['leg-27','leg-28'],['leg-28','leg-29'],['leg-29','leg-30'],['leg-30','leg-31'],['leg-31','leg-32'],['leg-32','leg-33'],
+  ['leg-33','leg-34'],['leg-34','leg-35'],['leg-35','leg-36'],['leg-36','leg-37'],['leg-37','leg-38'],['leg-38','leg-39'],['leg-39','leg-40'],['leg-40','leg-41'],
+  ['leg-41','leg-42'],['leg-42','leg-43'],['leg-43','leg-44'],['leg-44','leg-45'],['leg-45','leg-46'],['leg-46','leg-47'],['leg-47','leg-48'],
+  ['station','leg-01'],['balapan','leg-01'],['lokomotif','leg-30'],['balapanside','leg-34'],['city','leg-01'],
 ];
 
 /* ── GRAPH ── */
@@ -744,6 +842,8 @@ let net=null,vN=null,vE=null,ag='all',q='',adj={},hoverId=null,pathMode=false,pa
 let navHistory=[],pinnedNodes=new Set(),particleOn=false,particles=[],partRaf=null,ctxNodeId=null;
 
 function isDark(){return document.documentElement.classList.contains('dark');}
+/* node emoji glyph — graceful fallback to a neutral bullet */
+function emo(n){return (n&&n.emoji)?n.emoji:'●';}
 
 function build(){
   let fil=RAW.filter(n=>{
@@ -889,7 +989,7 @@ function mkTip(n,d){
   dot.style.cssText=`width:9px;height:9px;border-radius:50%;background:${g.col};display:inline-block;box-shadow:0 0 8px ${g.col}`;
   const lbl=document.createElement('span');
   lbl.style.cssText=`color:${g.col};font-weight:800;font-family:'Fredoka One',cursive;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:195px`;
-  lbl.textContent=n.label;
+  lbl.textContent=(n.emoji?n.emoji+' ':'')+n.label;
   row.append(dot,lbl);
   const meta=document.createElement('div');
   meta.style.cssText=`font-family:Nunito,sans-serif;font-weight:800;font-size:10px;color:${g.col};text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;opacity:.8`;
@@ -927,7 +1027,7 @@ function openSB(id){
   bdg.textContent=r.group;
   bdg.style.cssText=`background:${g.col}1c;color:${g.col};border-color:${g.col}55;font-family:Nunito,sans-serif;font-size:.58rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;display:inline-flex;align-items:center;padding:3px 9px;border-radius:8px;border:1.5px solid`;
 
-  document.getElementById('sbTi').textContent=r.label;
+  document.getElementById('sbTi').innerHTML=`<span class="sbemo" style="opacity:${r.emoji?1:.4};margin-right:5px">${emo(r)}</span>`+r.label.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
   document.getElementById('sbDe').textContent=r.desc;
 
   document.getElementById('sbM').innerHTML=`
@@ -949,7 +1049,7 @@ function openSB(id){
     let s=`<div class="sbioc"><div class="sbioh"><span class="sbioarr">${label==='Out'?'→':'←'}</span>${label} (${arr.length})</div><div class="cns">`;
     arr.slice(0,8).forEach(c=>{
       const cg=G[c.group]||G.root;
-      s+=`<span class="cn" onclick="focN('${c.id}')"><span class="cd" style="background:${cg.col}"></span>${c.label}</span>`;
+      s+=`<span class="cn" onclick="focN('${c.id}')"><span class="cd" style="background:${cg.col}"></span>${c.emoji?c.emoji+' ':''}${c.label}</span>`;
     });
     if(arr.length>8)s+=`<span style="font-size:.62rem;color:var(--t3)">+${arr.length-8}</span>`;
     s+='</div></div>';return s;
@@ -1127,7 +1227,7 @@ document.querySelectorAll('.fp').forEach(b=>{
 /* update counts */
 const CK={all:'c-all',root:'c-root',architecture:'c-architecture',characters:'c-characters',
   gameplay:'c-gameplay',obstacles:'c-obstacles',pokemon:'c-pokemon',standards:'c-standards',
-  audits:'c-audits',games:'c-games'};
+  audits:'c-audits',games:'c-games',journey:'c-journey'};
 Object.entries(CK).forEach(([g,id])=>{
   const el=document.getElementById(id);
   if(el)el.textContent=g==='all'?RAW.length:RAW.filter(n=>n.group===g).length;
@@ -1210,7 +1310,7 @@ function updateTopNodes(deg){
     const g=G[raw.group]||G.root;
     return `<div class="legtp" onclick="focN('${id}')">
       <span style="width:7px;height:7px;border-radius:50%;background:${g.col};flex-shrink:0;display:inline-block"></span>
-      <span class="legtpn">${raw.label}</span>
+      <span class="legtpn">${raw.emoji?raw.emoji+' ':''}${raw.label}</span>
       <span class="legtpd">${d}</span>
     </div>`;
   }).join('');
@@ -1448,7 +1548,7 @@ document.getElementById('zO').addEventListener('click',()=>net&&net.moveTo({scal
 document.getElementById('zR').addEventListener('click',()=>net&&net.fit({animation:{duration:480,easingFunction:'easeInOutQuad'}}));
 
 /* ── KEYBOARD ── */
-const GROUP_KEYS=['all','root','architecture','characters','gameplay','obstacles','pokemon','standards','audits','games'];
+const GROUP_KEYS=['all','root','architecture','characters','gameplay','obstacles','pokemon','standards','audits','games','journey'];
 document.addEventListener('keydown',e=>{
   const inInput=document.activeElement.tagName==='INPUT'||document.activeElement.tagName==='TEXTAREA';
   if(e.key==='Escape'){

@@ -34,6 +34,7 @@ FOLDER_MAP = {
     'standards':    '06-Standards',
     'audits':       '07-Audits',
     'games':        '08-Games',
+    'journey':      '09-Journey',
 }
 
 # ── Parse RAW nodes from secondbrain.html ────────────────────────────────────
@@ -54,7 +55,7 @@ if d_const:
 
 # id, label, group, url(null|'..'), desc
 node_rx = re.compile(
-    r"\{id:'([^']+)',\s*label:'([^']+)',\s*group:'([^']+)',\s*url:(null|'[^']*'),\s*desc:'([^']*?)'",
+    r"\{id:'([^']+)',\s*label:'([^']+)',\s*group:'([^']+)',\s*(?:emoji:'[^']*',\s*)?url:(null|'[^']*'),\s*desc:'([^']*?)'",
     re.DOTALL,
 )
 nodes = node_rx.findall(raw_text)
