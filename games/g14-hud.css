@@ -1,31 +1,54 @@
 /* ───────────────────────────────────────────────────────────────
-   g14-hud.css — v55.73 — Painterly candy HUD reskin for balapan-kereta.
+   g14-hud.css — v55.76 — Pixel-exact painterly candy HUD for balapan-kereta.
    CSS-only (gradients + layered box-shadows, NO images). Loaded AFTER the
-   inline <style> so these rules override the legacy HUD. Matches the
-   ChatGPT painterly mockup (_hud_ref.png): cream cards, sky-blue + leaf-green
-   candy buttons, ticket capsule, segmented energy meter.
+   inline <style> so these rules override the legacy HUD. Colours are
+   eyedropped from the owner mockup (ChatGPT Image Jun 28, 2026, 10_15_24 AM):
+   cream ticket capsules with a warm-tan double bevel, glossy sky-blue + leaf
+   green candy buttons with a cream frame, gold coin with a star, a blue
+   pause + ORANGE mute circle, a heraldic shield, an always-on green station
+   rail (mini map) inside the ticket, a green-to-blue segmented energy meter,
+   plus a Peta (map) button + full journey map panel.
    NO em dashes in comments per house rule (ASCII hyphen only).
    ─────────────────────────────────────────────────────────────── */
 
 :root {
-  --g14-cream:        #f6e6cf;
-  --g14-cream-light:  #fbf1de;
-  --g14-cream-edge:   #d9b88a;
-  --g14-brown:        #4f2b11;
+  /* cream / tan (ticket + pills) */
+  --g14-cream:        #f8e7d2;
+  --g14-cream-light:  #fdf3e2;
+  --g14-cream-edge:   #e8c9a0;   /* warm tan border */
+  --g14-cream-edge2:  #d3a877;   /* deeper tan, bottom bevel */
+  --g14-frame:        #f6e3c8;   /* lane-button cream frame */
+  --g14-brown:        #2c1608;   /* ticket + coin number text */
   --g14-brown-mid:    #6b4a2c;
-  --g14-blue-face:    #6fc0e8;
-  --g14-blue-top:     #a8ddf4;
-  --g14-blue-edge:    #3f93c4;
-  --g14-green-face:   #8cc34a;
-  --g14-green-top:    #b6e07a;
-  --g14-green-edge:   #5d9233;
-  --g14-heart:        #ec5347;
-  --g14-coin:         #f6c64a;
-  --g14-coin-ring:    #d99a2e;
+  /* sky-blue circle buttons (pause) */
+  --g14-blue-face:    #3f9fce;
+  --g14-blue-top:     #8ad4f5;
+  --g14-blue-edge:    #1f6aa8;
+  /* orange circle button (mute) */
+  --g14-orange-face:  #ee9410;
+  --g14-orange-top:   #ffc44d;
+  --g14-orange-edge:  #b96807;
+  /* candy lane buttons */
+  --g14-lblue-face:   #2f7cac;
+  --g14-lblue-top:    #5aa8d8;
+  --g14-lblue-edge:   #205f86;
+  --g14-lgreen-face:  #9cc23a;
+  --g14-lgreen-top:   #c2dd66;
+  --g14-lgreen-edge:  #6f9a2a;
+  /* accents */
+  --g14-heart:        #d63a2c;
+  --g14-heart-deep:   #b02414;
+  --g14-coin:         #f3a81e;
+  --g14-coin-top:     #ffd76a;
+  --g14-coin-ring:    #c06808;
+  --g14-coin-star:    #ffe27a;
   --g14-bolt:         #ffd23f;
+  --g14-rail-green:   #8fbf38;
+  --g14-rail-dot:     #6f8f28;
   --g14-pin-green:    #52c06a;
-  --g14-pin-red:      #ef5a52;
-  --g14-shadow:       rgba(90,58,20,.22);
+  --g14-pin-red:      #e0452f;
+  --g14-subtitle:     #1a76a6;
+  --g14-shadow:       rgba(90,58,20,.24);
   --g14-shadow-soft:  rgba(90,58,20,.14);
 }
 
@@ -50,63 +73,74 @@
 .g14-hud-center{ flex: 1 1 auto; justify-content: center; min-width: 0; }
 .g14-hud-right { flex: 0 0 auto; }
 
-/* shared painterly card base: cream fill + warm border + soft shadow */
+/* shared cream card: fill + warm tan double bevel + soft drop shadow */
 .g14-card,
 #g14-coins,
+#lives-hud,
 #g14-ticket {
   background: linear-gradient(180deg, var(--g14-cream-light), var(--g14-cream));
-  border: 1px solid var(--g14-cream-edge);
-  box-shadow: 0 4px 10px var(--g14-shadow), inset 0 1px 0 rgba(255,255,255,.7);
+  border: 2px solid var(--g14-cream-edge);
+  box-shadow:
+    0 5px 11px var(--g14-shadow),
+    inset 0 2px 0 rgba(255,255,255,.75),
+    inset 0 -3px 0 var(--g14-cream-edge2);
   color: var(--g14-brown);
 }
 
-/* ── Hearts ── */
+/* ── Hearts: cream pill framing the glossy red hearts ── */
 #lives-hud {
-  font-size: clamp(16px, 4.4vw, 22px) !important;
+  display: inline-flex !important;
+  align-items: center;
+  gap: 1px;
+  padding: 3px clamp(8px, 2vw, 12px) !important;
+  border-radius: 16px;
+  font-size: clamp(15px, 4vw, 20px) !important;
   letter-spacing: 1px;
   line-height: 1;
-  filter: drop-shadow(0 2px 2px var(--g14-shadow));
+  filter: drop-shadow(0 2px 1px rgba(150,30,20,.35));
   pointer-events: none;
   flex-shrink: 0;
 }
 
-/* ── Coin chip: round gold coin + cream pill with number ── */
+/* ── Coin chip: gold coin + star + cream pill with brown number ── */
 #g14-coins {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 12px 4px 5px;
+  padding: 4px 13px 4px 5px;
   border-radius: 18px;
   font-weight: 900;
-  font-size: clamp(13px, 3.4vw, 16px);
+  font-size: clamp(13px, 3.6vw, 17px);
   pointer-events: auto;
   flex-shrink: 0;
 }
 .g14-coin-icon {
-  width: clamp(20px, 5.2vw, 26px);
-  height: clamp(20px, 5.2vw, 26px);
+  width: clamp(22px, 5.6vw, 28px);
+  height: clamp(22px, 5.6vw, 28px);
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #ffe79a, var(--g14-coin) 62%, var(--g14-coin-ring));
+  background: radial-gradient(circle at 36% 28%, var(--g14-coin-top), var(--g14-coin) 60%, var(--g14-coin-ring));
   border: 2px solid var(--g14-coin-ring);
-  box-shadow: inset 0 1px 2px rgba(255,255,255,.8), 0 1px 2px var(--g14-shadow-soft);
+  box-shadow: inset 0 1px 2px rgba(255,255,255,.85), 0 1px 2px var(--g14-shadow-soft);
   flex-shrink: 0;
   position: relative;
+  display: grid;
+  place-items: center;
 }
+/* gold star centered in the coin (mockup) */
 .g14-coin-icon::after {
-  content: '';
-  position: absolute;
-  inset: 4px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(217,154,46,.55);
-  box-shadow: inset 0 1px 1px rgba(255,255,255,.6);
+  content: '\2605';
+  font-size: clamp(11px, 3vw, 15px);
+  line-height: 1;
+  color: var(--g14-coin-star);
+  text-shadow: 0 1px 0 var(--g14-coin-ring), 0 0 2px rgba(255,255,255,.6);
 }
 #g14-coins-num { color: var(--g14-brown); }
 
 /* ── Back button: compact cream pill ── */
 #btn-back {
   background: linear-gradient(180deg, var(--g14-cream-light), var(--g14-cream)) !important;
-  border: 1px solid var(--g14-cream-edge) !important;
-  border-radius: 16px !important;
+  border: 2px solid var(--g14-cream-edge) !important;
+  border-radius: 15px !important;
   color: var(--g14-brown) !important;
   padding: 0 !important;
   width: 44px !important;
@@ -116,78 +150,130 @@
   font-size: 22px !important;
   font-weight: 900 !important;
   line-height: 1 !important;
-  box-shadow: 0 4px 10px var(--g14-shadow), inset 0 1px 0 rgba(255,255,255,.7) !important;
+  box-shadow: 0 5px 11px var(--g14-shadow), inset 0 2px 0 rgba(255,255,255,.75), inset 0 -3px 0 var(--g14-cream-edge2) !important;
   pointer-events: auto;
   flex-shrink: 0;
 }
 #btn-back:active { transform: translateY(2px); box-shadow: 0 2px 5px var(--g14-shadow) !important; }
 
-/* ── Ticket capsule ── */
+/* ── Ticket capsule: cream with tan double border, holds the station rail ── */
 #g14-ticket {
   display: inline-flex;
   align-items: center;
   gap: clamp(6px, 1.6vw, 10px);
-  padding: clamp(4px, 1.2vw, 7px) clamp(10px, 2.4vw, 16px);
-  border-radius: 20px;
+  padding: clamp(4px, 1.1vw, 7px) clamp(10px, 2.2vw, 16px);
+  border-radius: 18px;
   max-width: 100%;
   pointer-events: auto;
 }
 .g14-ticket-badge {
-  width: clamp(22px, 5.4vw, 30px);
-  height: clamp(22px, 5.4vw, 30px);
-  border-radius: 9px;
-  background: linear-gradient(180deg, var(--g14-blue-top), var(--g14-blue-face) 60%, var(--g14-blue-edge));
+  width: clamp(24px, 5.6vw, 32px);
+  height: clamp(24px, 5.6vw, 32px);
+  border-radius: 8px;
+  background: linear-gradient(180deg, var(--g14-blue-top), var(--g14-blue-face) 58%, var(--g14-blue-edge));
   border: 1.5px solid var(--g14-blue-edge);
-  box-shadow: inset 0 1px 1px rgba(255,255,255,.6), 0 1px 2px var(--g14-shadow-soft);
+  box-shadow: inset 0 1px 1px rgba(255,255,255,.7), 0 1px 2px var(--g14-shadow-soft);
   display: grid;
   place-items: center;
   font-size: clamp(13px, 3.2vw, 17px);
   flex-shrink: 0;
 }
-.g14-ticket-body { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.g14-ticket-body { min-width: 0; display: flex; flex-direction: column; gap: 2px; flex: 1 1 auto; }
 .g14-ticket-main {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   font-weight: 900;
   color: var(--g14-brown);
   font-size: clamp(13px, 3.6vw, 18px);
   line-height: 1.05;
   white-space: nowrap;
+  letter-spacing: .2px;
 }
 .g14-ticket-sub {
   font-weight: 800;
-  color: var(--g14-blue-edge);
+  color: var(--g14-subtitle);
   font-size: clamp(9px, 2.4vw, 12px);
   line-height: 1.1;
+  text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 42vw;
+  max-width: 46vw;
 }
-.g14-ticket-pins { display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; }
-.g14-pin {
-  width: 9px;
-  height: 9px;
-  border-radius: 50% 50% 50% 0;
-  transform: rotate(-45deg);
-  flex-shrink: 0;
-  box-shadow: inset 0 0 0 2px rgba(255,255,255,.45), 0 1px 1px var(--g14-shadow-soft);
-}
-.g14-pin-start { background: var(--g14-pin-green); }
-.g14-pin-end   { background: var(--g14-pin-red); }
 
-/* ── Circular glossy sky-blue icon buttons (pause + mute) ── */
+/* always-on station rail (mini map) inside the ticket */
+.g14-ticket-rail {
+  position: relative;
+  height: 12px;
+  margin: 1px 2px 0;
+  min-width: clamp(90px, 30vw, 240px);
+  display: flex;
+  align-items: center;
+}
+.g14-rail-base {
+  position: absolute;
+  left: 2px; right: 12px;
+  top: 50%;
+  height: 5px;
+  transform: translateY(-50%);
+  border-radius: 4px;
+  background: rgba(120,140,60,.30);
+  box-shadow: inset 0 1px 1px rgba(80,100,40,.35);
+}
+.g14-rail-fill {
+  position: absolute;
+  left: 2px;
+  top: 50%;
+  height: 5px;
+  transform: translateY(-50%);
+  border-radius: 4px;
+  background: linear-gradient(90deg, #a6cf4a, var(--g14-rail-green));
+  box-shadow: inset 0 1px 1px rgba(255,255,255,.5), 0 0 3px rgba(143,191,56,.5);
+  transition: width .3s ease;
+}
+.g14-rail-dot {
+  position: absolute;
+  top: 50%;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--g14-rail-dot);
+  box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.55);
+}
+.g14-rail-dot.done { background: var(--g14-rail-green); }
+.g14-rail-pin {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-58%);
+  width: 11px; height: 11px;
+  border-radius: 50% 50% 50% 0;
+  rotate: -45deg;
+  background: radial-gradient(circle at 40% 35%, #ff8a78, var(--g14-pin-red) 65%);
+  box-shadow: 0 1px 2px var(--g14-shadow-soft), inset 0 0 0 2px rgba(255,255,255,.4);
+}
+.g14-rail-train {
+  position: absolute;
+  top: 50%;
+  font-size: 12px;
+  line-height: 1;
+  transform: translate(-50%, -52%);
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,.3));
+  transition: left .3s ease;
+}
+
+/* ── Circular glossy candy icon buttons: pause (blue) / mute (orange) / map ── */
 #btn-pause,
-#btn-mute {
+#btn-mute,
+#btn-map {
   width: clamp(40px, 10vw, 48px) !important;
   height: clamp(40px, 10vw, 48px) !important;
   min-width: 44px;
   min-height: 44px;
   padding: 0 !important;
   border-radius: 50% !important;
-  border: 1.5px solid var(--g14-blue-edge) !important;
-  background: radial-gradient(circle at 50% 22%, var(--g14-blue-top), var(--g14-blue-face) 58%, var(--g14-blue-edge)) !important;
   color: #fff !important;
   font-size: clamp(16px, 4.4vw, 20px) !important;
   font-weight: 900;
@@ -197,11 +283,35 @@
   cursor: pointer;
   pointer-events: auto;
   flex-shrink: 0;
-  box-shadow: 0 4px 9px var(--g14-shadow), inset 0 2px 3px rgba(255,255,255,.55), inset 0 -3px 5px rgba(0,0,0,.12) !important;
-  text-shadow: 0 1px 2px rgba(0,0,0,.25);
+  text-shadow: 0 1px 2px rgba(0,0,0,.28);
+}
+/* shared cream ring around each circle (mockup tan rim) */
+#btn-pause::before,
+#btn-mute::before,
+#btn-map::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2.5px solid var(--g14-frame);
+  box-shadow: 0 4px 9px var(--g14-shadow);
+  pointer-events: none;
+}
+#btn-pause { position: relative; border: none !important;
+  background: radial-gradient(circle at 50% 26%, var(--g14-blue-top), var(--g14-blue-face) 56%, var(--g14-blue-edge)) !important;
+  box-shadow: inset 0 3px 4px rgba(255,255,255,.6), inset 0 -4px 6px rgba(0,30,60,.28) !important;
+}
+#btn-mute { position: relative; border: none !important;
+  background: radial-gradient(circle at 50% 26%, var(--g14-orange-top), var(--g14-orange-face) 56%, var(--g14-orange-edge)) !important;
+  box-shadow: inset 0 3px 4px rgba(255,255,255,.6), inset 0 -4px 6px rgba(90,40,0,.28) !important;
+}
+#btn-map { position: relative; border: none !important;
+  background: radial-gradient(circle at 50% 26%, var(--g14-lgreen-top), var(--g14-lgreen-face) 56%, var(--g14-lgreen-edge)) !important;
+  box-shadow: inset 0 3px 4px rgba(255,255,255,.6), inset 0 -4px 6px rgba(40,70,0,.28) !important;
 }
 #btn-pause:active,
-#btn-mute:active { transform: translateY(2px); box-shadow: 0 2px 5px var(--g14-shadow), inset 0 2px 3px rgba(255,255,255,.5) !important; }
+#btn-mute:active,
+#btn-map:active { transform: translateY(2px); }
 
 /* ── Bottom control area: 3 clusters on the grass, no dark bar ── */
 #ctrl-area {
@@ -216,7 +326,7 @@
 .g14-ctrl-center { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1 1 auto; min-width: 0; }
 .g14-ctrl-right  { display: flex; align-items: flex-end; flex-shrink: 0; }
 
-/* ── Candy lane buttons: chunky rounded squares with solid bottom edge ── */
+/* ── Candy lane buttons: cream frame + glossy candy face + solid bottom edge ── */
 .g14-lane-btn {
   width: clamp(58px, 16vw, 76px) !important;
   height: clamp(58px, 16vw, 76px) !important;
@@ -224,8 +334,8 @@
   min-height: 44px;
   flex: 0 0 auto !important;
   padding: 0 !important;
-  border: none !important;
-  border-radius: clamp(16px, 4vw, 22px) !important;
+  border: clamp(4px, 1.2vw, 6px) solid var(--g14-frame) !important;
+  border-radius: clamp(18px, 4.4vw, 24px) !important;
   color: #fff !important;
   font-size: clamp(26px, 7vw, 36px) !important;
   font-weight: 900;
@@ -235,34 +345,33 @@
   overflow: visible !important;
   position: relative;
   transition: transform .08s, box-shadow .12s;
+  text-shadow: 0 1px 2px rgba(0,0,0,.22);
 }
 .g14-lane-btn::after { content: none !important; }
 #btn-up {
-  background: linear-gradient(180deg, var(--g14-blue-top), var(--g14-blue-face) 55%, var(--g14-blue-face)) !important;
-  box-shadow: 0 6px 0 var(--g14-blue-edge), 0 10px 16px var(--g14-shadow),
-              inset 0 3px 4px rgba(255,255,255,.55) !important;
-  color: #fff !important;
+  background: linear-gradient(180deg, var(--g14-lblue-top), var(--g14-lblue-face) 60%, var(--g14-lblue-edge)) !important;
+  box-shadow: 0 6px 0 var(--g14-lblue-edge), 0 11px 16px var(--g14-shadow),
+              inset 0 4px 5px rgba(255,255,255,.55) !important;
 }
 #btn-dn {
-  background: linear-gradient(180deg, var(--g14-green-top), var(--g14-green-face) 55%, var(--g14-green-face)) !important;
-  box-shadow: 0 6px 0 var(--g14-green-edge), 0 10px 16px var(--g14-shadow),
-              inset 0 3px 4px rgba(255,255,255,.55) !important;
-  color: #fff !important;
+  background: linear-gradient(180deg, var(--g14-lgreen-top), var(--g14-lgreen-face) 60%, var(--g14-lgreen-edge)) !important;
+  box-shadow: 0 6px 0 var(--g14-lgreen-edge), 0 11px 16px var(--g14-shadow),
+              inset 0 4px 5px rgba(255,255,255,.55) !important;
 }
-#btn-up:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--g14-blue-edge), 0 4px 8px var(--g14-shadow), inset 0 3px 4px rgba(255,255,255,.5) !important; }
-#btn-dn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--g14-green-edge), 0 4px 8px var(--g14-shadow), inset 0 3px 4px rgba(255,255,255,.5) !important; }
+#btn-up:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--g14-lblue-edge), 0 4px 8px var(--g14-shadow), inset 0 4px 5px rgba(255,255,255,.5) !important; }
+#btn-dn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--g14-lgreen-edge), 0 4px 8px var(--g14-shadow), inset 0 4px 5px rgba(255,255,255,.5) !important; }
 .g14-lane-btn > span { font-size: inherit !important; line-height: 1 !important; }
 
-/* ── Status tip pill: cream with blue shield ── */
+/* ── Status tip pill: cream with heraldic blue shield + gold star ── */
 #g14-tip {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 7px 16px;
-  border-radius: 18px;
+  gap: 8px;
+  padding: 6px 16px 6px 9px;
+  border-radius: 16px;
   background: linear-gradient(180deg, var(--g14-cream-light), var(--g14-cream));
-  border: 1px solid var(--g14-cream-edge);
-  box-shadow: 0 4px 10px var(--g14-shadow), inset 0 1px 0 rgba(255,255,255,.7);
+  border: 2px solid var(--g14-cream-edge);
+  box-shadow: 0 5px 11px var(--g14-shadow), inset 0 2px 0 rgba(255,255,255,.75), inset 0 -3px 0 var(--g14-cream-edge2);
   color: var(--g14-brown);
   font-weight: 900;
   font-size: clamp(11px, 3vw, 15px);
@@ -271,17 +380,19 @@
   max-width: 100%;
 }
 #g14-tip .g14-shield {
-  width: 20px;
-  height: 20px;
-  border-radius: 7px 7px 9px 9px / 7px 7px 11px 11px;
-  background: linear-gradient(180deg, var(--g14-blue-top), var(--g14-blue-face) 60%, var(--g14-blue-edge));
-  border: 1.5px solid var(--g14-blue-edge);
+  position: relative;
+  width: 22px;
+  height: 24px;
   display: grid;
   place-items: center;
-  font-size: 11px;
-  color: #fff;
+  font-size: 12px;
+  color: var(--g14-coin-star);
   flex-shrink: 0;
-  box-shadow: inset 0 1px 1px rgba(255,255,255,.6);
+  background: linear-gradient(180deg, #4a83c4, #2f5fa0 55%, #1f4684);
+  border: 2px solid var(--g14-coin);
+  border-radius: 7px 7px 50% 50% / 7px 7px 60% 60%;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,.45), 0 1px 2px var(--g14-shadow-soft);
+  text-shadow: 0 1px 0 var(--g14-coin-ring);
 }
 
 /* ── Boost: keep playable, candy-orange, sits under the tip ── */
@@ -305,7 +416,7 @@
 #btn-boost.cooldown { opacity: .55; pointer-events: none; }
 #btn-boost.boosting { background: linear-gradient(180deg, #ff6f5e, #ef4d3c 55%, #d63a2a) !important; }
 
-/* ── Energy meter: bolt chip + cream container with green segments ── */
+/* ── Energy meter: bolt-in-blue-square + cream container + green->blue segs ── */
 #pressure-row {
   display: flex !important;
   align-items: center !important;
@@ -313,28 +424,29 @@
   margin-top: 0 !important;
 }
 .g14-energy-bolt {
-  width: clamp(30px, 8vw, 38px);
-  height: clamp(30px, 8vw, 38px);
+  position: relative;
+  width: clamp(32px, 8vw, 40px);
+  height: clamp(32px, 8vw, 40px);
   border-radius: clamp(9px, 2.4vw, 12px);
   background: linear-gradient(180deg, var(--g14-blue-top), var(--g14-blue-face) 58%, var(--g14-blue-edge));
-  border: 1.5px solid var(--g14-blue-edge);
+  border: 2px solid var(--g14-frame);
   display: grid;
   place-items: center;
   font-size: clamp(15px, 4vw, 20px);
   color: var(--g14-bolt);
   flex-shrink: 0;
-  box-shadow: inset 0 1px 2px rgba(255,255,255,.55), 0 3px 7px var(--g14-shadow);
-  text-shadow: 0 1px 1px rgba(0,0,0,.3);
+  box-shadow: inset 0 2px 2px rgba(255,255,255,.55), 0 4px 8px var(--g14-shadow);
+  text-shadow: 0 1px 1px rgba(0,0,0,.35);
 }
 #pressure-track {
   flex: 0 0 auto !important;
-  width: clamp(96px, 26vw, 150px) !important;
-  height: clamp(26px, 6.6vw, 34px) !important;
+  width: clamp(100px, 27vw, 156px) !important;
+  height: clamp(28px, 6.8vw, 36px) !important;
   padding: 4px !important;
-  background: linear-gradient(180deg, var(--g14-cream), var(--g14-cream-light)) !important;
-  border: 1px solid var(--g14-cream-edge) !important;
-  border-radius: 12px !important;
-  box-shadow: inset 0 2px 4px rgba(120,82,40,.22), 0 3px 7px var(--g14-shadow) !important;
+  background: linear-gradient(180deg, var(--g14-cream-light), var(--g14-cream)) !important;
+  border: 2.5px solid var(--g14-frame) !important;
+  border-radius: 13px !important;
+  box-shadow: inset 0 2px 4px rgba(120,82,40,.20), 0 4px 8px var(--g14-shadow) !important;
   position: relative;
 }
 #pressure-fill { display: none !important; }
@@ -346,18 +458,138 @@
 }
 .g14-energy-segs > span {
   flex: 1 1 0;
-  border-radius: 5px;
-  background: linear-gradient(180deg, rgba(160,130,90,.18), rgba(120,82,40,.12));
-  box-shadow: inset 0 1px 2px rgba(120,82,40,.2);
+  border-radius: 4px;
+  background: linear-gradient(180deg, rgba(160,130,90,.16), rgba(120,82,40,.10));
+  box-shadow: inset 0 1px 2px rgba(120,82,40,.18);
   transition: background .25s, box-shadow .25s;
 }
+/* lit segments run leaf-green -> sky-blue across the 5 cells (mockup) */
 .g14-energy-segs > span.lit {
-  background: linear-gradient(180deg, var(--g14-green-top), var(--g14-green-face) 60%, var(--g14-green-edge));
-  box-shadow: inset 0 1px 1px rgba(255,255,255,.5), 0 0 4px rgba(140,195,74,.5);
+  box-shadow: inset 0 2px 2px rgba(255,255,255,.55), 0 0 4px rgba(80,150,200,.4);
 }
+.g14-energy-segs > span:nth-child(1).lit { background: linear-gradient(180deg, #b6dd5e, #8fc63d 60%, #6f9a2a); }
+.g14-energy-segs > span:nth-child(2).lit { background: linear-gradient(180deg, #93d27a, #5fb56b 60%, #3f9152); }
+.g14-energy-segs > span:nth-child(3).lit { background: linear-gradient(180deg, #6fd0d6, #3fb0d6 60%, #2a86b0); }
+.g14-energy-segs > span:nth-child(4).lit { background: linear-gradient(180deg, #62b8ec, #2f8fdc 60%, #1f6aa8); }
+.g14-energy-segs > span:nth-child(5).lit { background: linear-gradient(180deg, #62b8ec, #2f8fdc 60%, #1f6aa8); }
+/* low-energy warning recolours the whole lit run to amber */
 .g14-energy-segs > span.lit.g14-seg-low {
-  background: linear-gradient(180deg, #ffd27a, #f6a23c 60%, #d97a1e);
+  background: linear-gradient(180deg, #ffd27a, #f6a23c 60%, #d97a1e) !important;
 }
+
+/* ── Journey MAP overlay (Peta) ── */
+#g14-map-ovl {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+  background: rgba(40,24,10,.46);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+#g14-map-ovl.open { display: flex; }
+#g14-map-panel {
+  width: min(420px, 94vw);
+  max-height: min(78vh, 560px);
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, var(--g14-cream-light), var(--g14-cream));
+  border: 3px solid var(--g14-cream-edge);
+  border-radius: 22px;
+  box-shadow: 0 18px 40px rgba(40,24,10,.45), inset 0 2px 0 rgba(255,255,255,.8), inset 0 -4px 0 var(--g14-cream-edge2);
+  overflow: hidden;
+}
+.g14-map-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 12px 10px 16px;
+  border-bottom: 2px dashed var(--g14-cream-edge2);
+}
+.g14-map-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight: 900;
+  color: var(--g14-brown);
+  font-size: clamp(13px, 3.6vw, 16px);
+  line-height: 1.2;
+}
+.g14-map-title small {
+  display: block;
+  font-weight: 800;
+  color: var(--g14-subtitle);
+  font-size: clamp(10px, 2.6vw, 12px);
+}
+#g14-map-close {
+  width: 38px; height: 38px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 900;
+  background: radial-gradient(circle at 50% 26%, var(--g14-orange-top), var(--g14-orange-face) 56%, var(--g14-orange-edge));
+  box-shadow: inset 0 2px 3px rgba(255,255,255,.55), 0 3px 6px var(--g14-shadow);
+}
+#g14-map-close:active { transform: translateY(2px); }
+.g14-map-list {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 10px 12px;
+  list-style: none;
+  margin: 0;
+}
+.g14-map-leg {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 12px;
+  margin: 2px 0;
+}
+.g14-map-leg .g14-leg-dot {
+  width: 14px; height: 14px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgba(120,140,60,.30);
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.5);
+}
+.g14-map-leg.done .g14-leg-dot { background: var(--g14-rail-green); }
+.g14-map-leg .g14-leg-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight: 800;
+  color: var(--g14-brown-mid);
+  font-size: clamp(12px, 3.2vw, 14px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.g14-map-leg .g14-leg-num {
+  flex-shrink: 0;
+  font-weight: 900;
+  color: var(--g14-cream-edge2);
+  font-size: clamp(10px, 2.6vw, 12px);
+  font-variant-numeric: tabular-nums;
+}
+.g14-map-leg.current {
+  background: linear-gradient(180deg, #fff6e3, #fbe7c6);
+  border: 2px solid var(--g14-coin);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.8), 0 2px 6px var(--g14-shadow-soft);
+}
+.g14-map-leg.current .g14-leg-dot {
+  width: 16px; height: 16px;
+  border-radius: 50% 50% 50% 0;
+  rotate: -45deg;
+  background: radial-gradient(circle at 40% 35%, #ff8a78, var(--g14-pin-red) 65%);
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.45);
+}
+.g14-map-leg.current .g14-leg-name { color: var(--g14-brown); font-weight: 900; }
+.g14-map-leg.current .g14-leg-num { color: var(--g14-pin-red); }
 
 /* ── Hide-but-keep legacy HUD elements (JS still writes them) ── */
 #race-info,

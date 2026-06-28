@@ -15,7 +15,7 @@
  * succeeded. Only cache same-origin assets.
  * ========================================================================== */
 
-const CACHE_VERSION = 'v55.75-20260628a'
+const CACHE_VERSION = 'v55.78-20260628a'
 const HTML_CACHE = `dunia-html-${CACHE_VERSION}`
 const ASSET_CACHE = `dunia-assets-${CACHE_VERSION}`
 
@@ -49,8 +49,10 @@ const SHELL = [
   './games/balapan-kereta-side.html',
   './games/museum-kereta.html',
   './games/indo-scene.js?v=2.1.0',
+  './games/train-backdrop.js?v=55.77-20260628a',
+  './games/train-speedfx.js?v=55.77-20260628a',
   './games/sw-reload.js?v=55.69-20260628a',
-  './games/g14-hud.css?v=55.73-20260628a',
+  './games/g14-hud.css?v=55.77-20260628a',
 ]
 
 self.addEventListener('install', (e) => {

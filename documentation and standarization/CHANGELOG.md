@@ -1,5 +1,70 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-28 — "Second Brain knowledge graph" (A-314, internal page)
+
+Owner: build `/secondbrain.html` with Obsidian + graphify. Ported the rz Second Brain app (vis-network 9.1.9 —
+force/hierarchical layout, search, 10 category filters, focus/spotlight, BFS shortest-path, minimap, PNG/JSON
+export, per-node notes, permalink) into Dunia Emosi, restyled to **Dreamy Meadow** (`#8B5CF6`, light+dark,
+Nunito + Fredoka One, ≥44px controls).
+- **Graph**: 43 nodes / 97 edges / 9 groups + root, built from the 28 doc specs + all 14 playable game HTMLs;
+  doc URLs link to the `.md`, game nodes to `games/*.html`; cross-links wired; no orphans.
+- **`obsidian-knowledge-vault/`** (9 group folders + 44 notes with frontmatter + `[[wikilinks]]`) + ported
+  **`tools/sync-graph.py`** validator (`0 dead · 0 isolated · 0 missing — HEALTHY`).
+- Verified: `tools/qa-secondbrain.mjs` 11/11 PASS at 1280×800 + 390×800 (renders, search/filter/theme/click,
+  no mobile overflow, 0 console errors). Standalone/internal (not wired into the app nav, not in the PWA shell).
+
+## 2026-06-28 — v55.79 "g14 declutter — calmer, more intuitive race" (B-279)
+
+Owner: balapan-kereta "terlalu banyak huruf yang keluar, jadi terasa kurang enak dan intuitif" (too many
+letters popping out → un-fun + unintuitive). NOT a speed issue. Cut/throttle the floating text, keep essentials:
+- **AI speech bubbles** — was rotating a filler phrase every ~2.5s (constant chatter). Now mostly **silent**
+  (30% chance of a brief line on each long cycle); the meaningful event reactions (Ngebut!/Pindah!/Ikut! on real
+  moves) still fire, so personality reads from racing, not text.
+- **Mini-quiz chip** — every 25s → **~60s** (learning beat kept, no constant interruption).
+- **Conductor pre-announce banner** — removed (kept the gentle "ting-tong" chime); the station-arrival cinema
+  already names the station.
+- **Forecast banner** — 2/race → **1**.
+- **Pickup toasts** — **icon-only** (🪙/⚡/❤️, dropped "+10"/"+5" text; the HUD counters show the numbers).
+- **Kept**: countdown, HUD live values, ticket Part-N/station, position badge, milestone banners (only 4),
+  station-arrival cinema, near-miss "+5⚡".
+- Verified: mid-race screenshot is calm (0 floating-text DOM nodes at the sampled frame), g14 parallax probe
+  stays green, 0 console errors, all handlers intact. (No pace change per owner.) Build stamp → v55.79.
+
+## 2026-06-28 — v55.78 "Backdrop tiers — sharper on tablet, lighter overall" (A-313)
+
+Owner: compress the backdrops a bit (CDN) WITHOUT losing quality on an 11" tablet; "yang terbaik perf+appearance".
+- **Root**: tiers capped at **1280px** but the source plate is **1672px**, so an 11" tablet (cover-fit needs
+  ~2388 device px at dpr2) **upscaled the 1280 → soft**. Re-compression alone can't fix sharpness.
+- **Fix** (`tools/bg-ref-build.py`): 3-tier set **640 / 1024 / 1600** (was 640/960/1280) at WebP **q80** (method 6).
+  The new **1600** (near-native) is served to the 11" tablet → crisp (1.49× upscale vs the old 1.86×); phones
+  auto-pick 640/1024 so their per-load stays light. Dropping the redundant 960/1280 mids + q80 keeps the total
+  **smaller** (24 MB for 48×3 tiers). No game-code change — the runtime picks `manifest.backdrop.tiers` live.
+- Verified: an 1194×834 @dpr2 tablet viewport loads the **1600** tier, backdrop mounts, 0 errors; g14 parallax
+  probe stays green. sw v55.77→v55.78. See [L117].
+
+## 2026-06-28 — v55.77 "Shared painterly-backdrop engine across 3 train games + speed overlay" (A-312)
+
+Owner: all 48 clean painterly plates are done; the backgrounds must work in **balapan-kereta, balapan-kereta-side,
+and lokomotif-pemberani**; + add a speed overlay so the train reads as fast; + perfect the 3-D parallax.
+- **Parallax "perfected" (v55.76):** every clean manifest + the pipeline default now carry a smooth **7-band depth
+  gradient** (sky+village 0.12 → rail bed eased 0.55→1.05 → foreground 1.12) for true perspective; a uniform
+  **rail bob** bobs the whole `stage` (clamped to cover-fit overscan → no seam, no train float); 1px seam-proof
+  tiling. Verified: far band ~8px vs near rail ~70px over 0.6s, bob ±1.6px, 0 errors (`tools/verify-v5576-parallax.mjs`).
+- **Journey → 48 legs** (`G14_JOURNEY`): 33 Indonesia (added Mojokerto→Krian, Krian→Sidoarjo, Krian→Surabaya
+  Gubeng) + 15 worldwide scenic routes (Swiss Glacier/Bernina, Bavaria, Scotland, Norway, Austria, Italy, Riviera,
+  Baikal, Rockies, Canadian Rockies, Japan/Fuji, Arashiyama, Tibet, Kalka–Shimla).
+- **Plates 35–48 built:** `tools/bg-ref-build.py --clean` flag forces the clean-parallax path for new levels
+  (no pre-seeded manifest needed); 48 manifests + 144 tiers + `index.json` 1–48.
+- **Shared engine** `games/train-backdrop.js` (`window.TrainBackdrop`: load/fit/mount/tick/refit + rail-bob) +
+  `games/train-speedfx.js` (`window.TrainSpeedFX`: always-on, speed-scaled motion streaks, replacing g14's
+  boost-only lines). All three games adopt them, each with a procedural fallback:
+  - **g14** migrated to both (re-verified green).
+  - **g15 lokomotif** mounts the plate (level→plate), pins the 3 lanes to the painted rails, skips procedural
+    sky/scenery/track; verified train-on-rails + bands scroll + 0 errors.
+  - **g14-side** mounts the plate **scenery-only** (sky+far bands, `fy1<=0.6`, railBob off) behind its own
+    undulating rail/foreground — no clashing double-rails; verified + screenshot.
+- sw v55.76→v55.77 (precache the 2 new modules). See [L115], [L116].
+
 ## 2026-06-28 — v55.75 "g14 PARALLAX backdrop engine — the painterly scene MOVES" (A-312)
 
 Owner: the clean backdrop must look like the train is TRAVELLING (3D parallax), not a static picture; + the

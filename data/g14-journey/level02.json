@@ -5,12 +5,12 @@
   "backdrop": {
     "tiers": [
       {
-        "w": 1280,
-        "src": "assets/train/backdrop/level02-1280.webp"
+        "w": 1600,
+        "src": "assets/train/backdrop/level02-1600.webp"
       },
       {
-        "w": 960,
-        "src": "assets/train/backdrop/level02-960.webp"
+        "w": 1024,
+        "src": "assets/train/backdrop/level02-1024.webp"
       },
       {
         "w": 640,
@@ -22,34 +22,54 @@
   "bands": [
     {
       "y0": 0.0,
-      "y1": 0.58,
-      "speed": 0.14
+      "y1": 0.48,
+      "speed": 0.12
     },
     {
-      "y0": 0.58,
-      "y1": 0.86,
-      "speed": 0.85
+      "y0": 0.48,
+      "y1": 0.568,
+      "speed": 0.55
     },
     {
-      "y0": 0.86,
-      "y1": 1.0,
+      "y0": 0.568,
+      "y1": 0.656,
+      "speed": 0.632
+    },
+    {
+      "y0": 0.656,
+      "y1": 0.744,
+      "speed": 0.753
+    },
+    {
+      "y0": 0.744,
+      "y1": 0.832,
+      "speed": 0.894
+    },
+    {
+      "y0": 0.832,
+      "y1": 0.92,
       "speed": 1.05
+    },
+    {
+      "y0": 0.92,
+      "y1": 1.0,
+      "speed": 1.12
     }
   ],
   "laneRatios": {
     "lanes": [
-      0.645,
-      0.725,
-      0.805
+      0.62,
+      0.74,
+      0.86
     ],
     "horizon": 0.46,
-    "foreTop": 0.8
+    "foreTop": 0.92
   },
   "laneRatiosRaw": {
     "lanes": [
-      0.645,
-      0.725,
-      0.805
+      0.62,
+      0.74,
+      0.86
     ]
   },
   "palette": {

@@ -1,4 +1,14 @@
-# G14 Balapan Kereta — 40-Level Station Journey Spec (v55.69, B-275)
+# G14 Balapan Kereta — 48-Leg Station Journey Spec (v55.77, A-312)
+
+> **v55.77 update:** `G14_JOURNEY` is now **48 legs** — 33 Indonesia (Gambir→…→Denpasar
+> Bali + East-Java extension Mojokerto→Krian→Sidoarjo/Surabaya Gubeng) + 15 worldwide
+> scenic rail routes (Swiss Glacier/Bernina, Bavaria, Scotland, Norway, Austria, Italy,
+> Riviera, Baikal, Rockies, Canadian Rockies, Japan/Fuji, Arashiyama, Tibet, Kalka–Shimla).
+> All 48 painterly plates are built (`data/g14-journey/level01..48.json` + tiers, `index.json`).
+> The parallax + speed overlay now run through the **shared** `games/train-backdrop.js`
+> (`window.TrainBackdrop`) + `games/train-speedfx.js` (`window.TrainSpeedFX`), reused by
+> **lokomotif-pemberani** (level→plate, lanes pinned) and **balapan-kereta-side**
+> (scenery-only far layer). See CHANGELOG v55.77 + LESSONS L115/L116.
 
 Each level of *Balapan Kereta* is one leg of a west→east journey. The background is
 **data-driven and unique per level** — no two levels share the same look.

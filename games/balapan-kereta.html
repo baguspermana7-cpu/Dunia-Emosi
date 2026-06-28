@@ -213,11 +213,11 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 /* Flash */
 #flash{position:fixed;inset:0;z-index:99;pointer-events:none;opacity:0;transition:opacity .05s}
 </style>
-<link rel="stylesheet" href="g14-hud.css?v=55.73-20260628a">
+<link rel="stylesheet" href="g14-hud.css?v=55.77-20260628a">
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.75</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.79</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="train-vfx.js?v=54.56-20260625bi"></script>
@@ -238,6 +238,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <script src="train-bgm.js?v=55.61-20260627em"></script>
 <script src="indo-scene.js?v=2.1.0"></script>
+<script src="train-backdrop.js?v=55.77-20260628a"></script>
+<script src="train-speedfx.js?v=55.77-20260628a"></script>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
 <!-- v54.17 A1: 3-2-1-GO countdown overlay -->
@@ -273,15 +275,22 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
   </div>
   <div class="g14-hud-cluster g14-hud-center">
     <div id="g14-ticket">
-      <span class="g14-ticket-badge">🎫</span>
+      <span class="g14-ticket-badge">🚆</span>
       <div class="g14-ticket-body">
         <div class="g14-ticket-main"><span id="g14-ticket-part">Part 1/30</span></div>
+        <!-- v55.76 always-on station rail (mini map): fill + dots + pin injected by g14RenderRail() -->
+        <div class="g14-ticket-rail" id="g14-ticket-rail">
+          <div class="g14-rail-base"></div>
+          <div class="g14-rail-fill" id="g14-rail-fill" style="width:0%"></div>
+          <span class="g14-rail-train" id="g14-rail-train" style="left:0%">🚂</span>
+          <span class="g14-rail-pin"></span>
+        </div>
         <div class="g14-ticket-sub" id="g14-ticket-station">—</div>
       </div>
-      <span class="g14-ticket-pins"><span class="g14-pin g14-pin-start"></span><span class="g14-pin g14-pin-end"></span></span>
     </div>
   </div>
   <div class="g14-hud-cluster g14-hud-right">
+    <button id="btn-map" type="button" onclick="g14ToggleMap()" aria-label="Peta perjalanan">🗺️</button>
     <button id="btn-pause" onclick="togglePause()" aria-label="Jeda">⏸</button>
     <button id="btn-mute" type="button" onclick="toggleMute()" aria-label="Bisukan suara">🔊</button>
   </div>
@@ -313,7 +322,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
   </div>
   <!-- CENTER: status tip + boost. -->
   <div class="g14-ctrl-center">
-    <div id="g14-tip"><span class="g14-shield">🛡️</span>Avoid hazards</div>
+    <div id="g14-tip"><span class="g14-shield">⭐</span>Avoid hazards</div>
     <button class="ctrl-btn" id="btn-boost" onclick="triggerBoost()">BOOST!</button>
   </div>
   <!-- RIGHT: segmented energy meter. -->
@@ -327,6 +336,17 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
       <span id="pressure-label">TEKANAN</span>
       <span id="pressure-pct">70%</span>
     </div>
+  </div>
+</div>
+
+<!-- v55.76 Journey MAP panel (Peta). Opened by #btn-map, dismissed by close/backdrop. -->
+<div id="g14-map-ovl" onclick="if(event.target===this)g14CloseMap()" role="dialog" aria-modal="true" aria-label="Peta perjalanan">
+  <div id="g14-map-panel">
+    <div class="g14-map-head">
+      <div class="g14-map-title" id="g14-map-title">Peta Perjalanan<small id="g14-map-sub">&mdash;</small></div>
+      <button id="g14-map-close" type="button" onclick="g14CloseMap()" aria-label="Tutup">✕</button>
+    </div>
+    <ul class="g14-map-list" id="g14-map-list"></ul>
   </div>
 </div>
 
@@ -939,29 +959,30 @@ const G14_JOURNEY = [
   { name:'Ketapang → Gilimanuk',            region:'Selat Bali', biome:'coastal',    landmark:'none'     },
   { name:'Gilimanuk → Negara',              region:'Bali',       biome:'coastal',    landmark:'none'     },
   { name:'Negara → Denpasar',               region:'Bali',       biome:'urbanID',    landmark:'none'     },
-  // ── L31-40 — Europe (bonus, international leg — owner: "lanjut nanti") ──
-  { name:'London',           region:'Inggris',    biome:'englishGrey',landmark:'clocktower'},
-  { name:'Paris',            region:'Prancis',    biome:'parisGold',  landmark:'eiffel'   },
-  { name:'Amsterdam',        region:'Belanda',    biome:'dutchFlat',  landmark:'windmill' },
-  { name:'Berlin',           region:'Jerman',     biome:'germanCrisp',landmark:'skyline'  },
-  { name:'Pegunungan Alpen', region:'Swiss',      biome:'alpine',     landmark:'alps'     },
-  { name:'Roma',             region:'Italia',     biome:'romanWarm',  landmark:'colosseum'},
-  { name:'Wina',             region:'Austria',    biome:'germanCrisp',landmark:'colonial' },
-  { name:'Praha',            region:'Ceko',       biome:'englishGrey',landmark:'clocktower'},
-  { name:'Madrid',           region:'Spanyol',    biome:'romanWarm',  landmark:'skyline'  },
-  { name:'Istanbul',         region:'Turki',      biome:'romanWarm',  landmark:'domes'    },
-  // ── L31-36 — America ──
-  { name:'New York',         region:'Amerika',    biome:'americaBlue',landmark:'skyline'  },
-  { name:'Chicago',          region:'Amerika',    biome:'americaBlue',landmark:'skyline'  },
-  { name:'Rocky Mountains',  region:'Amerika',    biome:'alpine',     landmark:'alps'     },
-  { name:'San Francisco',    region:'Amerika',    biome:'americaBlue',landmark:'bridge'   },
-  { name:'Grand Canyon',     region:'Amerika',    biome:'canyonRed',  landmark:'none'     },
-  { name:'Washington DC',    region:'Amerika',    biome:'americaBlue',landmark:'domes'    },
-  // ── L37-40 — Russia ──
-  { name:'Moskwa',           region:'Rusia',      biome:'russiaCold', landmark:'domes'    },
-  { name:'St. Petersburg',   region:'Rusia',      biome:'russiaCold', landmark:'domes'    },
-  { name:'Trans-Siberia',    region:'Rusia',      biome:'taiga',      landmark:'alps'     },
-  { name:'Vladivostok',      region:'Rusia',      biome:'russiaCold', landmark:'bridge'   },
+  // ── L31-33 — East Java extension: 3 more Indonesian legs the owner added
+  //    ("3 lagi yang saya suka" → 33 Indonesia total). Krian junction near Surabaya. ──
+  { name:'Mojokerto → Krian',               region:'Jawa Timur', biome:'javaLush',   landmark:'none'     },
+  { name:'Krian → Sidoarjo',                region:'Jawa Timur', biome:'javaLush',   landmark:'none'     },
+  { name:'Krian → Surabaya Gubeng',         region:'Jawa Timur', biome:'urbanID',    landmark:'skyline'  },
+  // ── L34-48 — "Keliling Dunia": 15 of the world's great scenic rail journeys
+  //    (owner's authoritative worldwide list). Backdrops land incrementally — L34
+  //    (Swiss) is already built; the rest use the procedural biome fallback until
+  //    their clean plate ships. biome/landmark chosen to evoke each route. ──
+  { name:'Chur → St. Moritz',               region:'Swiss',      biome:'alpine',     landmark:'alps'     }, // 34 Glacier Express
+  { name:'Tirano → St. Moritz',             region:'Swiss',      biome:'alpine',     landmark:'alps'     }, // 35 Bernina Express
+  { name:'München → Garmisch',              region:'Bavaria',    biome:'germanCrisp',landmark:'clocktower'}, // 36 Bavaria
+  { name:'Fort William → Mallaig',          region:'Skotlandia', biome:'englishGrey',landmark:'bridge'   }, // 37 Jacobite / Glenfinnan
+  { name:'Myrdal → Flåm',                   region:'Norwegia',   biome:'alpine',     landmark:'alps'     }, // 38 Flåmsbana fjord
+  { name:'Wina → Semmering',                region:'Austria',    biome:'germanCrisp',landmark:'alps'     }, // 39 Semmeringbahn
+  { name:'Venesia → Firenze',               region:'Italia',     biome:'romanWarm',  landmark:'domes'    }, // 40 Italy
+  { name:'Nice → Monako',                   region:'Prancis',    biome:'coastal',    landmark:'none'     }, // 41 Riviera coast
+  { name:'Danau Baikal',                    region:'Rusia',      biome:'taiga',      landmark:'bridge'   }, // 42 Circum-Baikal
+  { name:'Denver → Glenwood Springs',       region:'Amerika',    biome:'alpine',     landmark:'alps'     }, // 43 Rockies
+  { name:'Jasper → Vancouver',              region:'Kanada',     biome:'alpine',     landmark:'alps'     }, // 44 Canadian Rockies
+  { name:'Tokyo → Gunung Fuji',             region:'Jepang',     biome:'germanCrisp',landmark:'volcano'  }, // 45 Shinkansen + Fuji
+  { name:'Kyoto → Arashiyama',              region:'Jepang',     biome:'javaLush',   landmark:'none'     }, // 46 bamboo grove
+  { name:'Lhasa → Nyingchi',                region:'Tibet',      biome:'alpine',     landmark:'alps'     }, // 47 Tibet plateau
+  { name:'Kalka → Shimla',                  region:'India',      biome:'alpine',     landmark:'alps'     }, // 48 Himalayan toy train
 ]
 function g14Journey() {
   const lv = (cfg.level || 1)
@@ -1098,35 +1119,19 @@ async function g14AddBackdrop() {
     const tex = await PIXI.Assets.load('../' + pick.src)
     if (!tex || !stage) return
 
-    // v55.75 — PARALLAX: a clean plate is sliced into horizontal DEPTH BANDS; each
-    // band is tiled 2× and scrolled at its own speed (near fast, horizon slow) so
-    // the scene reads as MOVING (the train travelling), not a static picture.
-    if (m.clean && Array.isArray(m.bands) && m.bands.length) {
-      const baseW = (tex.source && tex.source.width) || tex.width
-      const baseH = (tex.source && tex.source.height) || tex.height
-      const bg = new PIXI.Container(); bg._speed = 0
-      stage.addChildAt(bg, 0)
-      L._pBands = []
-      for (const bd of m.bands) {
-        const fy0 = Math.max(0, bd.y0), fy1 = Math.min(1, bd.y1)
-        const frame = new PIXI.Rectangle(0, Math.round(fy0 * baseH), baseW, Math.max(1, Math.round((fy1 - fy0) * baseH)))
-        const bandTex = new PIXI.Texture({ source: tex.source, frame })
-        const screenH = (fy1 - fy0) * fit.scaledH
-        const tileW = fit.scaledW
-        const cont = new PIXI.Container()
-        for (let copy = 0; copy < 2; copy++) {
-          const s = new PIXI.Sprite(bandTex)
-          s.x = copy * tileW; s.y = 0; s.width = tileW; s.height = screenH + 1
-          cont.addChild(s)
-        }
-        cont.x = fit.leftX; cont.y = fit.topY + fy0 * fit.scaledH
-        cont._homeX = fit.leftX; cont._tileW = tileW; cont._pSpeed = bd.speed || 0
-        cont._fy0 = fy0; cont._fy1 = fy1; cont._bandTex = bandTex
-        bg.addChild(cont)   // bands added far→near in manifest order (near covers far)
-        L._pBands.push(cont)
+    // v55.77 — PARALLAX via the SHARED engine (games/train-backdrop.js): a clean plate
+    // is sliced into horizontal DEPTH BANDS, each tiled 2× + scrolled at its own speed
+    // (near fast, horizon slow) so the scene reads as MOVING. Same engine is reused by
+    // lokomotif-pemberani + balapan-kereta-side. tickMid/resize/startRace drive the handle.
+    if (m.clean && Array.isArray(m.bands) && m.bands.length && window.TrainBackdrop) {
+      const handle = await TrainBackdrop.mount(stage, app, m, { assetBase: '../', insertIndex: 0 })
+      if (handle) {
+        L._bdHandle = handle
+        L._pBands = handle.bands   // kept for any legacy reads
+        L._backdrop = handle.bg
+        return
       }
-      L._backdrop = bg
-      return
+      // mount failed → fall through to static sprite below
     }
 
     // static single sprite (non-clean mockup backdrops)
@@ -1376,7 +1381,9 @@ async function initPixi() {
   buildForeScenery()   // v55.46 — 2.5D foreground parallax (in front of the train)
 
   L.fx = new PIXI.Container(); stage.addChild(L.fx)
-  L.speedlines = new PIXI.Container(); stage.addChild(L.speedlines)
+  // v55.77 — shared always-on, speed-scaled motion overlay (games/train-speedfx.js).
+  // Replaces the old boost-only speed lines so the train always reads as moving fast.
+  L._speedfx = (window.TrainSpeedFX) ? TrainSpeedFX.mount(stage, app, { cap: 36 }) : null
   // v54.49: weather overlay — rain (forest/coastal), snow (snow), sandstorm
   // (desert), embers (volcano). Level-gated to >=3 so kids see clean biomes first.
   L.weather = new PIXI.Container(); stage.addChild(L.weather)
@@ -1669,13 +1676,10 @@ function g14CheckForecast() {
     snow:'⛄ Salju di depan!', coastal:'🌴 Pantai di depan!',
     urban:'🏙️ Kota di depan!', volcano:'🌋 Gunung api di depan!'
   }
+  // v55.78 B-279 declutter — ONE forecast banner per race (was 2: 200m + 500m).
   if (d >= 200 && d < 220 && !S._forecastFlags['200']) {
     S._forecastFlags['200'] = true
     g14ShowForecast(labels[TH.name] || '⛅')
-  }
-  if (d >= 500 && d < 520 && !S._forecastFlags['500']) {
-    S._forecastFlags['500'] = true
-    g14ShowForecast(labels[upcoming.name] || '⛅')
   }
 }
 function g14ShowForecast(text) {
@@ -2087,14 +2091,10 @@ function tickMid(delta) {
   const W = app.screen.width
   // v55.75 — PARALLAX backdrop bands: scroll each depth band at its own speed and
   // wrap seamlessly so the painterly scene MOVES (train travelling). dt-clamped.
-  if (L._pBands) {
-    const _d = Math.min(delta, 2)
-    for (const c of L._pBands) {
-      if (!c || c.destroyed) continue
-      c.x -= (c._pSpeed || 0) * S.speed * _d * 0.9
-      if (c.x <= c._homeX - c._tileW) c.x += c._tileW
-    }
-  }
+  // v55.77 — parallax band scroll + edge-safe rail bob now live in the SHARED engine
+  // (games/train-backdrop.js); the handle scrolls bands at per-depth speed and bobs the
+  // whole `stage` (clamped to overscan) so the painted world + train move as one.
+  if (L._bdHandle) L._bdHandle.tick(S.speed, delta, stage)
   for (const t of midItems) {
     t.x -= t._speed * S.speed * delta * 0.4
     if (t.x < -60) t.x = W + 20
@@ -3344,9 +3344,12 @@ function tickAI(delta) {
     if (ai.txt && ai.bubble){
       ai.intentTimer -= delta
       if (ai.intentTimer <= 0){
-        ai.intent = g14PickIntent()
-        ai.intentTimer = 150
-        ai.txt.text = ai.intent
+        // v55.78 B-279 declutter — idle chatter was rotating a filler phrase every
+        // ~2.5s (constant on-screen "letters"). Now it mostly stays SILENT with the
+        // odd brief line; the meaningful event reactions (Ngebut/Pindah/Ikut on real
+        // moves) still fire above, so personality reads from racing, not text spam.
+        if (Math.random() < 0.3) { ai.intent = g14PickIntent(); ai.txt.text = ai.intent; ai.intentTimer = 150 }
+        else { ai.intent = ''; ai.txt.text = ''; ai.intentTimer = 320 + Math.random() * 260 }
       }
       // Bubble visibility window: appears at start of intent, fades out at the end.
       const t = (150 - ai.intentTimer) / 150
@@ -3799,8 +3802,9 @@ function tickPickups(delta){
         if (S.hp < LIVES_MAX) { S.hp++; try { updateHUD() } catch(_){} }
         try { playTone(660, 0.10, 'sine'); setTimeout(()=>playTone(880, 0.12, 'sine'), 90); setTimeout(()=>playTone(1100, 0.14, 'sine'), 200) } catch(_){}
       }
-      // Floating "+N" toast at the pickup's screen position.
-      const labelMap = { coin: '+10 🪙', bolt: '+5 ⚡', heart: '+❤️' }
+      // Floating toast at the pickup's screen position. v55.78 B-279 declutter —
+      // ICON-ONLY (was "+10 🪙" etc.); the HUD coin/heart counters show the numbers.
+      const labelMap = { coin: '🪙', bolt: '⚡', heart: '❤️' }
       const lbl = document.createElement('div')
       lbl.className = 'g14-nearmiss'
       lbl.style.color = p._kind === 'coin' ? '#fbbf24' : p._kind === 'bolt' ? '#60a5fa' : '#f87171'
@@ -3895,16 +3899,10 @@ function g14CheckConductorAnnounce(){
   for (const m of upcoming) {
     if (S.distance >= m - 50 && S.distance < m - 48 && _lastConductorAnnounce < m) {
       _lastConductorAnnounce = m
-      const stationName = (typeof g14StationName === 'function' && g14StationName()) || G14_STATIONS[m % G14_STATIONS.length] || 'Stasiun'
+      // v55.78 B-279 declutter — keep the gentle "ting-tong" chime as the pre-station
+      // cue, but DROP the redundant text banner (the station-arrival cinema already
+      // names the station on arrival). Less on-screen text, same audio feedback.
       try { playTone(1320, 0.10, 'sine'); setTimeout(()=>playTone(880, 0.18, 'sine'), 120) } catch(_){}
-      // Brief overlay banner
-      const el = document.createElement('div')
-      el.className = 'g14-milestone'
-      el.style.top = '36%'
-      el.style.fontSize = '20px'
-      el.textContent = '🚉 ' + stationName
-      document.body.appendChild(el)
-      setTimeout(() => el.remove(), 1200)
       break
     }
   }
@@ -3966,9 +3964,10 @@ async function g14HandleShare(){
 let _miniQuizArmed = false
 function g14MaybeFloatMiniQuiz(){
   if (_miniQuizArmed || S.quizOpen || !S.running || S.gameOver) return
-  // Fire approximately every ~25s of race AFTER 150m to give the player some warmup.
+  // v55.78 B-279 declutter — fire ~every 60s (was 25s) AFTER 150m, so the learning
+  // beat stays but the screen isn't constantly interrupted by a quiz chip.
   if (S.distance < 150) return
-  if (S.frame % (60 * 25) !== 0) return
+  if (S.frame % (60 * 60) !== 0) return
   _miniQuizArmed = true
   const a = Math.floor(Math.random() * 9) + 1
   const b = Math.floor(Math.random() * 9) + 1
@@ -4063,27 +4062,16 @@ let OBS_INTERVAL_MS_CURRENT = 1100
 function g14CheckDailySpin(){ return false }
 
 // ── Speed Lines ───────────────────────────────────────────
-let spdLines = []
+// v55.77 — delegated to the shared always-on, speed-scaled overlay (train-speedfx.js).
+let spdLines = []   // kept (reset code references it) — unused now
 function tickSpeedLines(delta) {
-  if (!S.boosting) { L.speedlines.alpha *= 0.9; return }
-  L.speedlines.alpha = Math.min(1, L.speedlines.alpha + 0.1 * delta)
-
-  if (S.frame % 4 === 0) {
-    const W = app.screen.width
-    const g = new PIXI.Graphics()
-    const y = gameTop + Math.random() * gameH
-    const len = 60 + Math.random() * 120
-    g.rect(0, 0, len, 1.5).fill(0xffffff)
-    g.x = W; g.y = y; g.alpha = 0.4 + Math.random() * 0.4
-    g._vx = -(25 + Math.random() * 15)
-    L.speedlines.addChild(g)
-    spdLines.push(g)
-  }
-  for (let i = spdLines.length - 1; i >= 0; i--) {
-    const l = spdLines[i]
-    l.x += l._vx * delta
-    l.alpha -= 0.04 * delta
-    if (l.alpha <= 0 || l.x < -200) { L.speedlines.removeChild(l); spdLines.splice(i, 1) }
+  if (L._speedfx) {
+    L._speedfx.tick(S.speed, delta, {
+      boost: S.boosting,
+      maxSpeed: (S.maxSpeed || 6),
+      top: (typeof gameTop !== 'undefined' ? gameTop : 0),
+      height: (typeof gameH !== 'undefined' && gameH ? gameH : app.screen.height),
+    })
   }
 }
 
@@ -4255,6 +4243,7 @@ function startRace() {
   // v54.19 B12: if kid mode active, +1 HP buffer (applied AFTER reset above).
   if (S.kidMode) S.hp = Math.min(LIVES_MAX + 1, S.hp + 1)
   S.obstacles = []; S.steam = []; S.sparks = []; spdLines = []; S.frame = 0
+  if (L._bdHandle) L._bdHandle.resetBob(stage); else if (stage) stage.y = 0   // v55.77 reset rail-bob
   S.pickups = []  // v54.17 A17
   S.nextPickupAt = 180  // first floating pickup at 180m
   _lastConductorAnnounce = 0  // v54.19 B5 reset on race-start
@@ -4736,18 +4725,8 @@ window.addEventListener('resize', () => {
       railTop = Math.round(laneYs[0] - laneH * 0.5)
       G14_UNIFORM_H = Math.round(Math.max(72, Math.min(laneH * 1.02, H * 0.15)))
       OBS_SIZE = Math.round(Math.max(38, Math.min(Math.min(W, H) * 0.075, 52)))
-      if (L._pBands) {
-        // re-cover-fit each parallax band container on resize/rotate
-        for (const c of L._pBands) {
-          if (!c || c.destroyed) continue
-          const screenH = (c._fy1 - c._fy0) * fit.scaledH
-          c.x = fit.leftX; c._homeX = fit.leftX; c._tileW = fit.scaledW
-          c.y = fit.topY + c._fy0 * fit.scaledH
-          for (let i = 0; i < c.children.length; i++) {
-            const s = c.children[i]
-            s.x = i * fit.scaledW; s.width = fit.scaledW; s.height = screenH + 1
-          }
-        }
+      if (L._bdHandle) {
+        L._bdHandle.refit()   // v55.77 — shared engine re-cover-fits its bands
       } else if (L._backdrop && !L._backdrop.destroyed) {
         L._backdrop.x = fit.leftX; L._backdrop.y = fit.topY
         L._backdrop.width = fit.scaledW; L._backdrop.height = fit.scaledH
@@ -5038,6 +5017,7 @@ function updateHUD() {
   const partEl = document.getElementById('g14-ticket-part'); if (partEl) partEl.textContent = `Part ${lvNow}/30`
   const stationEl = document.getElementById('g14-ticket-station')
   if (stationEl) { const j = G14_JOURNEY[(lvNow - 1) % G14_JOURNEY.length]; if (j) stationEl.textContent = j.name }
+  try { g14RenderRail(lvNow) } catch (_) {}
   const segs = document.getElementById('g14-energy-segs')
   if (segs) {
     const lit = Math.max(0, Math.min(5, Math.ceil((S.pressure || 0) / 20)))
@@ -5101,6 +5081,74 @@ function toggleMute() {
   } catch (_) {}
   const btn = document.getElementById('btn-mute')
   if (btn) { btn.classList.toggle('muted', muted); btn.textContent = muted ? '🔇' : '🔊' }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  v55.76 — Journey rail (always-on mini map) + Peta map panel
+// ═══════════════════════════════════════════════════════════
+const G14_RAIL_DOTS = 5
+function g14RenderRail(lvNow) {
+  const total = G14_JOURNEY.length || 1
+  const lv = Math.max(1, Math.min(total, lvNow || (cfg.level || 1)))
+  const rail = document.getElementById('g14-ticket-rail')
+  if (!rail) return
+  // progress fraction across the whole journey (0..1)
+  const frac = (lv - 0.5) / total
+  const fill = document.getElementById('g14-rail-fill')
+  if (fill) fill.style.width = Math.max(4, Math.min(100, frac * 100)).toFixed(1) + '%'
+  const train = document.getElementById('g14-rail-train')
+  if (train) train.style.left = Math.max(0, Math.min(96, frac * 100)).toFixed(1) + '%'
+  // station dots: evenly spaced ticks, lit up to current progress (rebuilt once)
+  if (rail.getAttribute('data-dots') !== String(G14_RAIL_DOTS)) {
+    rail.querySelectorAll('.g14-rail-dot').forEach(function (d) { d.remove() })
+    for (let i = 0; i < G14_RAIL_DOTS; i++) {
+      const d = document.createElement('span')
+      d.className = 'g14-rail-dot'
+      d.style.left = (8 + (i + 0.5) * (84 / G14_RAIL_DOTS)) + '%'
+      rail.appendChild(d)
+    }
+    rail.setAttribute('data-dots', String(G14_RAIL_DOTS))
+  }
+  const dots = rail.querySelectorAll('.g14-rail-dot')
+  for (let i = 0; i < dots.length; i++) {
+    dots[i].classList.toggle('done', (i + 0.5) / G14_RAIL_DOTS <= frac)
+  }
+}
+function g14RenderMap() {
+  const total = G14_JOURNEY.length || 1
+  const lv = Math.max(1, Math.min(total, cfg.level || 1))
+  const cur = G14_JOURNEY[(lv - 1) % total] || G14_JOURNEY[0]
+  const titleSub = document.getElementById('g14-map-sub')
+  if (titleSub) titleSub.textContent = 'Part ' + lv + '/' + total + '  ·  ' + (cur ? cur.name : '')
+  const list = document.getElementById('g14-map-list')
+  if (!list) return
+  const frag = document.createDocumentFragment()
+  for (let i = 0; i < total; i++) {
+    const j = G14_JOURNEY[i]
+    const li = document.createElement('li')
+    li.className = 'g14-map-leg' + (i + 1 < lv ? ' done' : '') + (i + 1 === lv ? ' current' : '')
+    const dot = document.createElement('span'); dot.className = 'g14-leg-dot'
+    const nm = document.createElement('span'); nm.className = 'g14-leg-name'; nm.textContent = (j && j.name) || ('Leg ' + (i + 1))
+    const num = document.createElement('span'); num.className = 'g14-leg-num'; num.textContent = (i + 1) + '/' + total
+    li.appendChild(dot); li.appendChild(nm); li.appendChild(num)
+    frag.appendChild(li)
+  }
+  list.innerHTML = ''
+  list.appendChild(frag)
+  // scroll current leg into view
+  const curEl = list.querySelector('.g14-map-leg.current')
+  if (curEl) { try { curEl.scrollIntoView({ block: 'center' }) } catch (_) {} }
+}
+function g14ToggleMap() {
+  const ovl = document.getElementById('g14-map-ovl')
+  if (!ovl) return
+  if (ovl.classList.contains('open')) { g14CloseMap(); return }
+  try { g14RenderMap() } catch (_) {}
+  ovl.classList.add('open')
+}
+function g14CloseMap() {
+  const ovl = document.getElementById('g14-map-ovl')
+  if (ovl) ovl.classList.remove('open')
 }
 
 // ═══════════════════════════════════════════════════════════

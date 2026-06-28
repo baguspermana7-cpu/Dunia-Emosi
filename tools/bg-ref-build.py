@@ -37,7 +37,7 @@ DEFAULT_BAND = {"skyBot": 0.50, "bandTop": 0.42, "bandBot": 0.72, "skyKeyTol": 4
 # Y-centres of the 3 rail lanes as a fraction of the IMAGE height — aligned to the
 # painted rails in the painterly mockups (consistent template). Per-image tunable
 # via a levelNN.json `laneRatios` override before running.
-DEFAULT_LANES = {"lanes": [0.515, 0.625, 0.735], "horizon": 0.46, "foreTop": 0.80}
+DEFAULT_LANES = {"lanes": [0.62, 0.74, 0.86], "horizon": 0.46, "foreTop": 0.92}
 # Crop the painted-in UI bands off the top + bottom so only scenery + rails remain
 # (the real CSS HUD provides the UI). Keep rows [top*H .. bot*H]. Per-level override.
 DEFAULT_SCENE_CROP = {"top": 0.175, "bot": 0.795}
@@ -46,12 +46,21 @@ DEFAULT_SCENE_CROP = {"top": 0.175, "bot": 0.795}
 # by while the horizon drifts (3D-ish motion from one image). Boundaries sit on
 # natural ground lines (rails-top, foreground) to minimise tearing. y0/y1 = frac.
 DEFAULT_BANDS = [
-    {"y0": 0.00, "y1": 0.58, "speed": 0.14},   # sky + far scenery (drifts slow)
-    {"y0": 0.58, "y1": 0.86, "speed": 0.85},   # rail bed (rushes; tiles seamlessly)
-    {"y0": 0.86, "y1": 1.00, "speed": 1.05},   # foreground grass (fastest)
+    {"y0": 0.000, "y1": 0.480, "speed": 0.12},  # sky + far scenery + village (ONE band: no building tear)
+    {"y0": 0.480, "y1": 0.568, "speed": 0.55},  # rail bed, far  -.
+    {"y0": 0.568, "y1": 0.656, "speed": 0.63},  #               |  eased speed ramp =
+    {"y0": 0.656, "y1": 0.744, "speed": 0.75},  #               |  smooth perspective depth
+    {"y0": 0.744, "y1": 0.832, "speed": 0.89},  #               |  (far slow -> near fast)
+    {"y0": 0.832, "y1": 0.920, "speed": 1.05},  # rail bed, near-'
+    {"y0": 0.920, "y1": 1.000, "speed": 1.12},  # foreground grass (fastest)
 ]
-# RASTER backdrop tiers (px width). Runtime picks by screen.width*dpr (capped).
-RASTER_TIERS = [1280, 960, 640]
+# RASTER backdrop tiers (px width). Runtime picks the smallest tier ≥ screen.width*dpr,
+# else the largest. v55.78 A-313 — 3-tier set: 640 (small phones), 1024 (large phones /
+# mid), 1600 (near-native, source ≈1672 → crisp on an 11" tablet @dpr2 which needs ~2388px
+# and would otherwise upscale the old 1280). Dropping the redundant 960/1280 mids + q80
+# keeps the total smaller (owner: "compress a bit") while the tablet gets a sharper plate.
+RASTER_TIERS = [1600, 1024, 640]
+RASTER_QUALITY = 80   # WebP q80 method6 — visually lossless for painterly art, smaller than q82
 
 
 def _hex(rgb):
@@ -195,12 +204,12 @@ def raster_tiers(ref, level):
         h = round(ref.size[1] * w / ref.size[0])
         im = ref.convert("RGB").resize((w, h), Image.LANCZOS)
         out = os.path.join(BACK_DIR, "level%02d-%d.webp" % (level, w))
-        im.save(out, "WEBP", quality=82, method=6)
+        im.save(out, "WEBP", quality=RASTER_QUALITY, method=6)
         tiers.append({"w": w, "src": "assets/train/backdrop/level%02d-%d.webp" % (level, w)})
     return tiers
 
 
-def process(level, selftest=False, mode="raster"):
+def process(level, selftest=False, mode="raster", force_clean=False):
     from PIL import Image
     man_path = os.path.join(MAN_DIR, "level%02d.json" % level)
     band = dict(DEFAULT_BAND)
@@ -244,7 +253,10 @@ def process(level, selftest=False, mode="raster"):
         # ── CLEAN plate path (v55.75): the owner's "clean version" images are ALREADY
         # scenery + rails only (no UI, no train) → NO inpaint, NO crop. Feed the full
         # frame to the runtime PARALLAX engine, which slices it into depth bands. ──
-        if prev_cfg.get("clean"):
+        # v55.77 — --clean (force_clean) lets brand-new levels (no manifest yet, e.g.
+        # 35-48) take this path with DEFAULT_BANDS/DEFAULT_LANES instead of wrongly
+        # falling through to the inpaint/crop path meant for the old painted mockups.
+        if force_clean or prev_cfg.get("clean"):
             bands = prev_cfg.get("bands", DEFAULT_BANDS)
             lanes2 = dict(lanes)
             lanes2["lanes"] = prev_cfg.get("laneRatios", {}).get("lanes", DEFAULT_LANES["lanes"])
@@ -385,9 +397,10 @@ if __name__ == "__main__":
         sys.exit(1)
     selftest = "--selftest" in sys.argv
     mode = "vector" if "--vector" in sys.argv else "raster"   # raster = A/B winner (painterly)
+    force_clean = "--clean" in sys.argv   # v55.77 — force clean-parallax path for new plates
     levels = parse_levels([a for a in sys.argv[1:] if not a.startswith("--")][0])
     ok = 0
     for lv in levels:
-        if process(lv, selftest=selftest, mode=mode):
+        if process(lv, selftest=selftest, mode=mode, force_clean=force_clean):
             ok += 1
     print("\n%d/%d level(s) built (mode=%s)." % (ok, len(levels), mode))

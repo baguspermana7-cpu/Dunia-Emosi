@@ -221,6 +221,9 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <!-- v54.83 — ObstacleEngine + Koleksi gallery available from G15 picker (Practice Mode) -->
 <script src="obstacle-engine.js?v=55.63-20260627eo"></script>
 <script src="indo-scene.js?v=2.1.0"></script>
+<!-- v55.77 — SHARED painterly backdrop + depth-parallax engine + always-on speed overlay (parity with balapan-kereta / g14). Guarded: any miss → procedural bg. -->
+<script src="train-backdrop.js?v=55.77-20260628a"></script>
+<script src="train-speedfx.js?v=55.77-20260628a"></script>
 <script src="data/kids-questions.js?v=54.83-20260626cj"></script>
 <script src="data/obstacles.js?v=55.63-20260627eo"></script>
 <script src="data/routes.js?v=54.83-20260626cj"></script>
@@ -412,6 +415,8 @@ window.addEventListener('resize',()=>{
   g15RailTop = Math.round(topHUD + available * 0.46);
   { const _band = (H - botHUD) - g15RailTop;
     LANE_Y = [ g15RailTop + _band * 0.17, g15RailTop + _band * 0.50, g15RailTop + _band * 0.83 ]; }
+  // v55.77 — re-cover-fit the shared backdrop + re-pin lanes onto the painted rails.
+  if (typeof g15Backdrop !== 'undefined' && g15Backdrop) { g15Backdrop.refit(); LANE_Y = g15Backdrop.laneYs(); }
   if (selectedTrain && selectedTrain.isCharacter && typeof buildTrain === 'function') {
     try { buildTrain(); } catch(_) {}  // rebuild re-applies RZ.trainScale + rail-anchor + 5% clamp
   } else if (trainContainer) {
@@ -800,6 +805,8 @@ let rainbow = null;
 let LANE_Y = [];
 let g15RailTop = 0;   // A-311 — top of the rail band; Indonesian scenery sits above it
 let g15CharRailOffset = 0; // B-268: Y delta so character-train wheels land exactly on rail (trainContainer.y − LANE_Y[1])
+let g15Backdrop = null;  // v55.77 — shared painterly backdrop+parallax handle (null = procedural fallback)
+let g15SpeedFX = null;   // v55.77 — shared always-on speed overlay handle
 let g15Smoke = null, g15SmokeLayer = null, g15CraterX = 0, g15CraterY = 0, g15ScenePal = null, g15SmokeT = 0;
 let g15ParWrap = null;  // B-247: parallax far-scenery container (mountains + hills, 2-tile seamless)
 let g15Ambient = null;  // B-258: living-sky ambient engine (birds/clouds/kites)
@@ -923,9 +930,29 @@ async function initPixi() {
     }
   } catch (e) { console.warn('[BG] init failed', e) }
 
+  // v55.77 — SHARED painterly backdrop + depth-parallax engine (mirrors g14's
+  // g14AddBackdrop). A clean plate (level N → plate N, N≤30≤48) is sliced into
+  // horizontal depth bands scrolled at per-band speeds so the scene MOVES. Fully
+  // guarded: any miss (no manifest / texture fail) → g15Backdrop stays null and
+  // the procedural Indonesian background renders completely unchanged.
+  g15Backdrop = null;
+  try {
+    const _m = window.TrainBackdrop ? await TrainBackdrop.load(LEVEL) : null;
+    if (_m) g15Backdrop = await TrainBackdrop.mount(stage, app, _m, { assetBase: '../', insertIndex: 0 });
+  } catch(_) { g15Backdrop = null; }
+  if (g15Backdrop) {
+    // Pin the 3 lanes onto the plate's PAINTED rails so the train rides them.
+    LANE_Y = g15Backdrop.laneYs();
+  }
+  // v55.77 — always-on, speed-scaled motion-streak overlay (mirrors g14 L._speedfx).
+  g15SpeedFX = window.TrainSpeedFX ? TrainSpeedFX.mount(stage, app, { cap: 32 }) : null;
+
   buildBackground();
   buildTracks();
   buildTrain();
+  // v55.77 — with a painterly plate present, re-pin the train onto the painted
+  // rails (playerLane = 1 at start; +g15CharRailOffset set by buildTrain for chars).
+  if (g15Backdrop && trainContainer) trainContainer.y = LANE_Y[playerLane] + g15CharRailOffset;
   updateLivesHUD();
   updateLaneDots();
   refreshHUD();
@@ -982,6 +1009,10 @@ async function initPixi() {
     // every particle's velocity + scale into giant tessellated shards across
     // the screen ("wajah terbang" / mutilation). 2 = at most 2 frames of catch-up.
     const dt = Math.min(ticker.deltaTime, 2);
+
+    // v55.77 — shared painterly parallax scroll + rail-bob, then the speed overlay.
+    if (g15Backdrop) g15Backdrop.tick(gameSpeed, dt, stage);
+    if (g15SpeedFX) g15SpeedFX.tick(gameSpeed, dt, { maxSpeed: 2 + 30 * 0.15 + 2, top: 0, height: H });
 
     // A-311 — volcano smoke plume
     if (window.IndoScene && g15Smoke && g15SmokeLayer && g15ScenePal) {
@@ -1238,6 +1269,9 @@ function buildG15Indo() {
 }
 
 function buildBackground() {
+  // v55.77 — shared painterly plate present → skip ALL procedural sky/scenery so
+  // the painted backdrop shows through (lanes already pinned to its rails).
+  if (g15Backdrop) return;
   // A-311 — Indonesian scene path (gated). Falls through to the legacy background
   // only if the module is unavailable.
   if (buildG15Indo()) return;
@@ -1586,6 +1620,9 @@ function buildCloud(color, alpha) {
 
 // ── Tracks ────────────────────────────────────────────────────────────────────
 function buildTracks() {
+  // v55.77 — painterly plate present → its painted rails ARE the track, so skip
+  // the procedural ballast/sleepers/rails (they would paint over the plate).
+  if (g15Backdrop) return;
   // A-311 — Indonesian ballast rail (matches Balapan Kereta). Rail Y positions
   // (lY+14 / lY+22) are UNCHANGED so the train stays exactly on the rail.
   const _is = window.IndoScene, _p = _is && _is.palette('day')
