@@ -1,5 +1,23 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-28 — v55.71 "reference-accurate background pipeline (hybrid vector method) — scaffolding" (A-312)
+
+Infrastructure for the owner's "se akurat sepersis mungkin super detail" backgrounds (L1-30). Owner-locked
+method: **auto-trace the city band (monument + skyline) to a layered vector, cached to one sprite; sky/hills/
+rail stay procedural & animated** (light on the throttled tablet). Built the full pipeline + runtime hook + QA
+harness now so each level generates + verifies the moment its reference image arrives. **Fully guarded — with
+no reference, every level renders exactly as the v55.69 procedural journey (verified, 0 console errors).**
+- **Pipeline** `tools/bg-ref-build.py` (Python + ImageMagick + **vtracer**): samples a per-level palette from
+  the photo + vectorises the city band to a transparent-sky SVG (key-colour trick around vtracer's alpha
+  flattening) + writes `data/g14-journey/levelNN.json` and an `index.json`. Validated end-to-end via `--selftest`.
+- **Runtime** `games/balapan-kereta.html`: `g14LoadManifest()` (reads `index.json` first → no 404s on levels
+  without a manifest) + `g14Palette()` per-level override + `g14AddCityBand()` loads the SVG via `PIXI.Assets`
+  → one cached Sprite (1 draw call), masked to the scenery band, tinted by time-of-day. Falls back to the
+  procedural `g14Landmark()` drawer when no reference. Verified: a synthetic reference renders a vector skyline
+  in-band over the still-procedural animated sky/hills/rail; removing it reverts cleanly.
+- **QA** `tools/qa-bg-accuracy.mjs`: montages REFERENCE | RENDERED | DIFF (+ RMSE) per level for tuning.
+- Drop folder `assets/train/bg-ref/` (README inside). sw v55.70→v55.71. See [L111]. AWAITING owner's L1-30 images.
+
 ## 2026-06-28 — v55.70 "Museum loco wheels spin on their axle (not orbit) + correct Diesel sprite" (B-264, B-273)
 
 - **B-264 Diesel sprite replaced** with the owner's correct art — black BR Class 08 diesel with the smiling

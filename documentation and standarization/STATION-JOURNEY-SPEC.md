@@ -53,3 +53,47 @@ so palms/sawah never appear in Paris or Moscow. Gate: `(cfg.level||1) > 20`.
 `node tools/qa-g14-journey.mjs` renders levels 1/4/13/17/20/21/22/25/31/37/40, asserts
 0 console errors + journey data, and writes `tools/qa-out/g14-L*.png`. Confirm each
 sampled level shows a DISTINCT background + its signature landmark + station name.
+
+---
+
+# Reference-accurate backgrounds (A-312, v55.71) — HYBRID VECTOR method
+
+For L1-30 the owner supplies real reference art and wants the scene to match it
+"se persis mungkin, super detail". Locked approach: **auto-trace the city band to a
+layered vector + keep sky/hills/rail procedural & animated** (hybrid; light on the
+tablet). Fully GUARDED — with no reference for a level, it renders exactly as the
+procedural journey above.
+
+### Pipeline — `tools/bg-ref-build.py` (Python + ImageMagick + vtracer)
+`python3 tools/bg-ref-build.py 1-30` (or `--selftest` to validate with a synthetic).
+Per `assets/train/bg-ref/levelNN.png`:
+1. **Palette sample** per zone (sky/hills/ground) → a per-level override merged onto
+   the base `day` palette so the procedural sky/hills/rail match the photo.
+2. **City-band vectorise** — crop the band; paint the sky above the per-column skyline
+   a unique KEY colour (vtracer flattens alpha); `vtracer` → layered SVG; then STRIP
+   the key-colour paths so the sky is genuinely transparent → `assets/train/cityband/
+   levelNN.svg` (+ a transparent `.webp` fallback).
+3. **Manifest** `data/g14-journey/levelNN.json` `{palette, cityband, bandRatios}` and
+   append the level to `data/g14-journey/index.json`.
+Per-level tuning: pre-drop `data/g14-journey/levelNN.json` with `bandRatios`
+`{skyBot,bandTop,bandBot,skyKeyTol}` to override the auto crop before running.
+
+### Runtime — `games/balapan-kereta.html`
+- `g14LoadManifest()` (awaited before scene build) reads **index.json** first (so
+  levels WITHOUT a manifest never 404 / log a console error), then the level manifest.
+- `g14Palette()` precedence: base `day` → biome → **per-level reference palette**.
+- `buildFarScenery`: if the level has a `cityband`, `g14AddCityBand()` loads the SVG via
+  `PIXI.Assets.load` → ONE **cached Sprite** (crisp vector, single draw call), masked to
+  the scenery band, **tinted by time-of-day** (`g14CityTint`, also updated each sky tick).
+  No cityband → the procedural `g14Landmark()` drawer (unchanged fallback).
+
+### Accuracy QA — `tools/qa-bg-accuracy.mjs`
+`node tools/qa-bg-accuracy.mjs 1-30` renders each level, then montages
+**REFERENCE | RENDERED | DIFF** (+ RMSE via `magick compare`) to
+`tools/qa-out/bg-accuracy-LNN.png` — tune band-ratios / vtracer params / palette until
+each level is "persis". Perf is judged on the owner's device (headless FPS unreliable).
+
+### Workflow when images arrive
+drop `bg-ref/levelNN.png` → `bg-ref-build.py 1-30` → `qa-bg-accuracy.mjs 1-30` → review
+the montages, tune the misses, re-run → ship in batches (sw bump). L31-40 keep the
+procedural drawers unless references are supplied.

@@ -216,7 +216,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.69</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.71</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="train-vfx.js?v=54.56-20260625bi"></script>
@@ -948,12 +948,81 @@ const G14_BIOMES = {
   taiga:       { haze:0xdce2e8, mtnFar:0x8c98a4, hill1:0x4f6a54, hill2:0x5c7a5e, hill3:0x6f8a6c, grass:0xc6d2d6, grassDk:0xa2b0b4, ballast:0xb6bcc0, tie:0x5e5a54 },
 }
 // Per-level palette = base 'day' merged with this level's biome overrides.
+// v55.71 A-312 — REFERENCE-ACCURATE per-level override. When a reference image
+// was processed by tools/bg-ref-build.py, data/g14-journey/levelNN.json carries
+// (a) a palette sampled from the photo and (b) a vector city-band SVG. The
+// manifest is preloaded (g14LoadManifest) BEFORE the scene builds so the
+// procedural sky/hills/ground match the reference colours exactly; the city band
+// itself loads as one cached sprite (g14AddCityBand). All guarded — with NO
+// manifest the level renders exactly as before (procedural biome + g14Landmark).
+let G14_MANIFEST = null
+async function g14LoadManifest() {
+  G14_MANIFEST = null
+  try {
+    const lv = (cfg.level || 1)
+    // index.json lists which levels HAVE a reference manifest → avoids a 404
+    // (and the console-error it logs) on every level that has none.
+    const idxRes = await fetch('../data/g14-journey/index.json', { cache: 'no-cache' })
+    if (!idxRes.ok) return
+    const idx = await idxRes.json()
+    if (!idx || !Array.isArray(idx.levels) || idx.levels.indexOf(lv) < 0) return
+    const url = '../data/g14-journey/level' + String(lv).padStart(2, '0') + '.json'
+    const res = await fetch(url, { cache: 'no-cache' })
+    if (!res.ok) return
+    const j = await res.json()
+    if (j && j.palette) {
+      const p = {}
+      for (const k in j.palette) {
+        const v = j.palette[k]
+        p[k] = (typeof v === 'string') ? parseInt(v, 16) : v   // "0x85bceb" → int
+      }
+      j._paletteInt = p
+    }
+    G14_MANIFEST = j
+  } catch (_) { /* no manifest for this level → procedural fallback */ }
+}
 function g14Palette() {
   const IS = window.IndoScene
   if (!IS) return null
   const base = IS.palette('day')
   const ov = G14_BIOMES[g14Journey().biome] || {}
-  return Object.assign({}, base, ov)
+  // per-level reference palette (highest precedence) so colours track the photo
+  const refOv = (G14_MANIFEST && G14_MANIFEST._paletteInt) || {}
+  return Object.assign({}, base, ov, refOv)
+}
+// Grey tint derived from the current sky brightness so the city band darkens at
+// night / warms with the sky instead of looking pasted-on.
+function g14CityTint() {
+  try {
+    const sc = (typeof g14CurrentSkyColors === 'function') ? g14CurrentSkyColors() : null
+    if (!sc) return 0xffffff
+    const c = sc.skyBot, r = (c >> 16) & 255, g = (c >> 8) & 255, b = c & 255
+    const lum = Math.max(0.5, Math.min(1, (0.3 * r + 0.55 * g + 0.15 * b) / 255 + 0.12))
+    const v = Math.round(lum * 255)
+    return (v << 16) | (v << 8) | v
+  } catch (_) { return 0xffffff }
+}
+// v55.71 A-312 — load the reference city-band SVG as ONE cached sprite (crisp
+// vector → texture, single draw call). Static landmark behaviour; masked to the
+// scenery band by the far container's mask. Fails safe (no asset → nothing).
+async function g14AddCityBand(container, W, horizonY, railY, bandH) {
+  try {
+    if (!G14_MANIFEST || !G14_MANIFEST.cityband || !window.PIXI || !PIXI.Assets) return
+    const url = '../' + G14_MANIFEST.cityband
+    const tex = await PIXI.Assets.load(url)
+    if (!tex || !container || container.destroyed) return
+    const spr = new PIXI.Sprite(tex)
+    spr.anchor.set(0.5, 1)                       // bottom-centre sits on the hills line
+    const targetW = W * 1.04
+    spr.width = targetW
+    spr.height = targetW * (tex.height / tex.width)
+    spr.x = W * 0.5
+    spr.y = Math.min(railY - 2, horizonY + (railY - horizonY) * 0.66)
+    spr.tint = g14CityTint()
+    spr._speed = 0
+    container.addChild(spr)
+    L._cityBand = spr
+  } catch (_) { /* asset missing/failed → scene already has the procedural base */ }
 }
 
 // ── Landmark drawers (flat-fill silhouettes; cheap + batchable). Each returns a
@@ -1163,6 +1232,7 @@ async function initPixi() {
   // obstacle emoji size scales with the smaller viewport axis, ≥44px tap target.
   OBS_SIZE = Math.round(Math.max(38, Math.min(Math.min(W, H) * 0.075, 52)))
 
+  await g14LoadManifest()   // v55.71 A-312 — load ref palette BEFORE scene build (no-op if none)
   buildSky()
   buildClouds()
   buildFarScenery()
@@ -1229,6 +1299,8 @@ function g14ApplyTimeOfDaySky(){
   if (L.clouds && colors.cloudTint != null) {
     for (const cl of L.clouds.children) cl.tint = colors.cloudTint
   }
+  // v55.71 A-312 — keep the reference city band in sync with the sky brightness.
+  if (L._cityBand && !L._cityBand.destroyed) { try { L._cityBand.tint = g14CityTint() } catch (_) {} }
   // v54.11 — Sun / moon body sprite. Position via phase.sunY * gameTop (negative = below
   // horizon; positive = above). Only one body visible at a time. Pre-built once in
   // buildSky and re-positioned + re-tinted here.
@@ -1673,7 +1745,16 @@ function buildFarScenery() {
   // v55.69 B-275 — signature landmark for THIS level's station (volcano / Monas /
   // Eiffel / Big Ben / Kremlin domes / skyline / Alps / …) sits between the mid
   // and near hill bands. Volcano-type carries crater coords for the smoke plume.
-  const vol = g14Landmark(g14Journey().landmark, W, horizonY + 10, pal, Math.min(horizonY * 0.78, bandH * 0.5)); vol._speed = 0; c.addChild(vol)
+  // v55.71 A-312 — when a reference city-band SVG exists for this level, it
+  // REPLACES the procedural landmark (loaded async as one cached sprite); the
+  // procedural drawer stays the fallback when there's no reference.
+  let vol
+  if (G14_MANIFEST && G14_MANIFEST.cityband) {
+    vol = new PIXI.Container(); vol._speed = 0; c.addChild(vol)   // crater stays undefined → no volcano smoke
+    g14AddCityBand(c, W, horizonY, railY, bandH)
+  } else {
+    vol = g14Landmark(g14Journey().landmark, W, horizonY + 10, pal, Math.min(horizonY * 0.78, bandH * 0.5)); vol._speed = 0; c.addChild(vol)
+  }
   // v55.69 B-275 — rice paddies are an Indonesian signature; international legs
   // (L21-40) get plain rolling hills instead so the scene reads as Europe/US/Russia.
   const _intlScene = (cfg.level || 1) > 20
