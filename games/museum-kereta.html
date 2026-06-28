@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
+<link rel="stylesheet" href="du-buttons.css?v=55.74-20260628a">
+<title>Museum Kereta Ambarawa</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+/* B-272 standalone museum page. Extracted from index.html in-SPA overlay so the
+   museum has its own URL like every other game. Self-contained: no game.js. */
+
+/* WCAG 2.1 reduced-motion respect for kids with vestibular sensitivity. */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important}
+}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--font:'Fredoka One',cursive}
+html,body{width:100%;min-height:100%;min-height:100svh;background:#1a0e06;font-family:'Fredoka One',sans-serif;color:#fff;-webkit-tap-highlight-color:transparent}
+
+/* ===== Museum hall backdrop (B-274 polish) ===== */
+#museum-root{
+  position:relative;min-height:100svh;display:flex;flex-direction:column;
+  background:
+    radial-gradient(120% 70% at 50% -10%,rgba(255,193,100,0.16),transparent 60%),
+    radial-gradient(60% 40% at 18% 22%,rgba(255,170,80,0.10),transparent 70%),
+    radial-gradient(60% 40% at 82% 22%,rgba(255,170,80,0.10),transparent 70%),
+    linear-gradient(180deg,#1a0e06,#2d1a0a 55%,#3e2510);
+  overflow:hidden;
+}
+/* warm hanging-lamp glow band along the top of the hall */
+#museum-root::before{
+  content:'';position:absolute;inset:0 0 auto 0;height:160px;pointer-events:none;z-index:0;
+  background:radial-gradient(80% 100% at 50% 0%,rgba(255,214,140,0.12),transparent 70%);
+}
+/* subtle parquet floor sheen at the bottom */
+#museum-root::after{
+  content:'';position:absolute;left:0;right:0;bottom:0;height:120px;pointer-events:none;z-index:0;
+  background:linear-gradient(0deg,rgba(120,72,30,0.28),transparent);
+}
+
+/* ===== Header ===== */
+.game-header{display:flex;align-items:center;gap:8px;flex-shrink:0;z-index:10;position:relative;padding:max(10px,env(safe-area-inset-top)) 12px 8px;background:linear-gradient(135deg,rgba(62,39,35,0.96),rgba(93,57,34,0.96));backdrop-filter:blur(10px);box-shadow:0 4px 14px rgba(0,0,0,0.35)}
+.gh-back{background:rgba(255,255,255,0.16);color:#fff;border:none;border-radius:12px;padding:10px 14px;font-size:14px;font-weight:900;cursor:pointer;flex-shrink:0;min-height:44px;min-width:96px;font-family:inherit}
+.gh-back:active{transform:translateY(2px)}
+.gh-title{flex:1;font-size:14px;font-weight:900;font-family:'Fredoka One',cursive;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.gh-sound{background:rgba(255,255,255,0.16);color:#fff;border:none;border-radius:12px;min-width:44px;min-height:44px;font-size:18px;cursor:pointer;flex-shrink:0}
+
+/* ===== Gallery cards ===== */
+.g18-card{
+  background:linear-gradient(145deg,rgba(255,255,255,0.1),rgba(255,255,255,0.05));
+  border:2.5px solid rgba(255,255,255,0.22);border-radius:18px;padding:14px 10px 16px;
+  text-align:center;cursor:pointer;transition:all 0.22s;
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.1);
+  min-height:140px;justify-content:center;position:relative;overflow:hidden;
+}
+/* B-274 gleam sweep on hover */
+.g18-card::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,0.10) 50%,transparent 70%);transform:translateX(-120%);transition:transform 0.8s cubic-bezier(0.4,0,0.2,1);pointer-events:none}
+.g18-card:hover::after{transform:translateX(120%)}
+.g18-card:hover,.g18-card:active{transform:translateY(-3px) scale(1.03);border-color:rgba(255,215,140,0.6);background:rgba(255,255,255,0.16);box-shadow:0 12px 30px rgba(0,0,0,0.6)}
+.g18-card-name{color:white;font-size:13px;font-weight:900;font-family:'Fredoka One',cursive;line-height:1.2}
+.g18-card-country{color:rgba(255,255,255,0.7);font-size:11px;font-weight:700}
+.g18-speed-badge{background:linear-gradient(135deg,#7B1FA2,#AB47BC);color:white;border-radius:100px;padding:2px 8px;font-size:10px;font-weight:900;box-shadow:0 2px 0 #4A148C}
+
+/* ===== Detail modal ===== */
+.g18-modal-overlay{
+  display:flex;position:fixed;inset:0;background:rgba(0,0,0,0.88);
+  flex-direction:column;align-items:center;justify-content:center;z-index:200;padding:20px;
+  opacity:0;visibility:hidden;pointer-events:none;transition:opacity 0.22s ease,visibility 0.22s;
+}
+.g18-modal-overlay.open{opacity:1;visibility:visible;pointer-events:auto}
+.g18-modal-overlay .g18-modal-box{transform:scale(0.92) translateY(12px);transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1)}
+.g18-modal-overlay.open .g18-modal-box{transform:scale(1) translateY(0)}
+.g18-modal-box{
+  background:linear-gradient(135deg,#3E2723,#4E342E);
+  border:2px solid rgba(255,193,100,0.3);border-radius:20px;
+  padding:22px 22px 18px;max-width:560px;width:100%;text-align:center;
+  max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.6);
+}
+.g18-modal-box::-webkit-scrollbar{width:8px}
+.g18-modal-box::-webkit-scrollbar-thumb{background:rgba(255,193,100,0.35);border-radius:4px}
+.g18-modal-box::-webkit-scrollbar-track{background:rgba(0,0,0,0.2);border-radius:4px}
+@media (min-width:720px){.g18-modal-box{padding:28px 30px 24px}}
+#g18-modal-details{grid-template-columns:repeat(auto-fit, minmax(110px, 1fr)) !important}
+#g18-modal-fact{text-align:left !important;font-size:13px !important;line-height:1.6 !important;padding:12px 14px !important}
+#g18-modal-history{background:rgba(255,193,100,0.08);border-radius:10px;padding:10px 14px;color:rgba(255,255,255,0.85);font-size:12px;font-weight:600;line-height:1.6;text-align:left;margin-bottom:10px;border-left:3px solid rgba(255,193,100,0.5)}
+#g18-modal-history-title{color:#FFD700;font-size:11px;font-weight:900;letter-spacing:0.6px;margin-bottom:4px;display:block}
+
+/* ===== Quiz options ===== */
+.g18-quiz-option{
+  width:100%;background:#3E2723;border:3px solid #6D4C41;border-radius:16px;padding:14px 16px;
+  color:#FFF8E1;font-size:14px;font-weight:800;cursor:pointer;margin:5px 0;min-height:44px;
+  text-align:left;transition:transform 0.1s,box-shadow 0.1s;box-shadow:0 5px 0 #1A0A00;font-family:var(--font);
+}
+.g18-quiz-option:active{transform:translateY(4px);box-shadow:0 1px 0 #1A0A00}
+.g18-quiz-option.correct{background:#1B5E20;border-color:#4CAF50;box-shadow:0 5px 0 #0A3A0A}
+.g18-quiz-option.wrong{background:#7F1D1D;border-color:#EF5350;box-shadow:0 5px 0 #4A0000}
+
+/* ===== Procedural loco animation keyframes (copied from style.css ~3731) ===== */
+@keyframes wheelSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+/* dunWheel groups carry an inline transform-origin in viewBox units (no fill-box
+   dependency) so they spin on their real axle everywhere. */
+.train-wheel{transform-box:fill-box;transform-origin:center;animation:wheelSpin 0.48s linear infinite}
+.dun-wheel-spin{animation:wheelSpin 0.5s linear infinite}
+@keyframes smokePuff{0%{opacity:0.82;transform:translateY(0) scale(0.5)}100%{opacity:0;transform:translateY(-36px) scale(2.2)}}
+.train-smoke{transform-box:fill-box;transform-origin:center;animation:smokePuff 1.1s ease-out infinite}
+@keyframes dieselSmokePuff{0%{opacity:0.9;transform:translateY(0) scale(0.4)}100%{opacity:0;transform:translateY(-30px) scale(2.0)}}
+.diesel-smoke{transform-box:fill-box;transform-origin:center;animation:dieselSmokePuff 0.85s ease-out infinite}
+@keyframes sparkBlink{0%,100%{opacity:0}8%,12%{opacity:1}18%,22%{opacity:0.7}28%{opacity:0}}
+@keyframes sparkBlink2{0%,100%{opacity:0}15%,19%{opacity:1}25%,28%{opacity:0.5}35%{opacity:0}}
+.elec-spark{transform-box:fill-box;animation:sparkBlink 0.55s ease-in-out infinite}
+.elec-spark2{transform-box:fill-box;animation:sparkBlink2 0.7s ease-in-out infinite}
+
+/* ===== Quiz juice (lightweight standalone VFX) ===== */
+@keyframes g18Shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.g18-shake{animation:g18Shake 0.4s ease}
+@keyframes g18Pop{0%{transform:scale(1)}45%{transform:scale(1.05)}100%{transform:scale(1)}}
+.g18-pop{animation:g18Pop 0.35s ease}
+
+/* ===== Result overlay ===== */
+#g18-result{position:fixed;inset:0;z-index:9500;background:rgba(10,6,2,0.92);display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+#g18-result.show{display:flex}
+.g18-result-card{background:linear-gradient(135deg,#3E2723,#4E342E);border:2px solid rgba(255,193,100,0.4);border-radius:22px;padding:28px 24px;max-width:420px;width:100%;box-shadow:0 24px 60px rgba(0,0,0,0.6)}
+.g18-result-stars{font-size:30px;letter-spacing:4px;margin:10px 0}
+.g18-result-btn{display:block;width:100%;margin:8px 0 0;padding:14px;border-radius:14px;border:0;font-family:var(--font);font-size:15px;font-weight:900;color:#fff;cursor:pointer;min-height:44px}
+
+#du-build-stamp{position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none}
+</style>
+</head>
+<body>
+<div id="du-build-stamp">v55.74</div>
+<script src="sw-reload.js?v=55.69-20260628a"></script>
+
+<div id="museum-root">
+  <div class="game-header">
+    <button class="gh-back" onclick="goBack()">&#8592; Kembali</button>
+    <span class="gh-title">&#127963;&#65039; Museum Kereta Ambarawa</span>
+    <span id="g18-level" style="color:rgba(255,220,150,0.9);flex-shrink:0;font-weight:800;">Lv.1</span>
+    <span id="g18-stars-badge" style="background:linear-gradient(135deg,#8D6E63,#A1887F);border-radius:100px;padding:4px 10px;font-size:14px;font-weight:900;box-shadow:0 3px 0 #4E342E;color:white;flex-shrink:0;">&#127963;&#65039; 0</span>
+    <span id="g18-passport-chip" style="background:rgba(255,255,255,0.15);border-radius:100px;padding:4px 10px;font-size:13px;font-weight:900;color:#fde68a;flex-shrink:0;">&#128499;&#65039; 0</span>
+    <span id="g18-streak-pill" style="background:linear-gradient(135deg,#fb923c,#ef4444);border-radius:100px;padding:4px 10px;font-size:12px;font-weight:900;color:#fff;display:none;transition:transform 200ms;text-shadow:0 1px 2px rgba(0,0,0,0.4)"></span>
+    <button class="gh-sound" id="g18-sound-btn" onclick="g18ToggleSound()" title="Suara">&#128266;</button>
+  </div>
+
+  <!-- Gallery view -->
+  <div id="g18-gallery" style="flex:1;overflow-y:auto;padding:10px 12px;position:relative;z-index:1;">
+    <div style="background:linear-gradient(135deg,rgba(93,57,34,0.8),rgba(62,39,35,0.9));border:1px solid rgba(255,193,100,0.3);border-radius:14px;padding:10px 14px;margin-bottom:10px;text-align:center;">
+      <div style="color:#FFD082;font-size:13px;font-weight:900;letter-spacing:1px;">&#128205; AMBARAWA, KABUPATEN SEMARANG, JAWA TENGAH</div>
+      <div style="color:rgba(255,255,255,0.7);font-size:11px;font-weight:700;margin-top:2px;">Bekas Stasiun Willem I (1873) &middot; Ketuk kartu untuk info! &#128269;</div>
+    </div>
+    <div id="g18-card-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:440px;margin:0 auto;"></div>
+    <div style="text-align:center;margin-top:14px;padding-bottom:8px;">
+      <button onclick="g18StartQuiz()" style="background:linear-gradient(135deg,#5D3A1A,#8D6E63);color:white;border:none;border-radius:14px;padding:14px 28px;font-size:16px;font-weight:900;font-family:'Fredoka One',cursive;box-shadow:0 4px 0 #3E2723;cursor:pointer;min-height:44px;">&#128221; MULAI KUIS!</button>
+    </div>
+  </div>
+
+  <!-- Quiz view -->
+  <div id="g18-quiz-view" style="display:none;flex:1;overflow-y:auto;padding:12px;flex-direction:column;gap:12px;position:relative;z-index:1;max-width:480px;margin:0 auto;width:100%;">
+    <div style="height:10px;background:rgba(255,255,255,0.12);border-radius:5px;overflow:hidden;margin-bottom:4px;">
+      <div id="g18-quiz-fill" style="height:100%;background:linear-gradient(90deg,#f59e0b,#fcd34d);border-radius:5px;width:0%;transition:width 0.4s ease;"></div>
+    </div>
+    <div style="color:rgba(255,220,150,0.9);font-size:13px;font-weight:800;text-align:center;">
+      Pertanyaan <span id="g18-q-num">1</span> dari 8
+    </div>
+    <div style="background:rgba(255,255,255,0.08);border-radius:14px;padding:16px;text-align:center;">
+      <div id="g18-q-image" style="font-size:44px;margin-bottom:8px;"></div>
+      <div id="g18-q-text" style="color:white;font-size:15px;font-weight:800;line-height:1.5;"></div>
+    </div>
+    <div id="g18-q-options" style="display:flex;flex-direction:column;gap:6px;"></div>
+    <div id="g18-q-feedback" style="color:white;font-size:13px;font-weight:800;text-align:center;min-height:20px;"></div>
+    <div id="g18-q-next-wrap" style="text-align:center;display:none;">
+      <button id="g18-q-next-btn" onclick="g18NextQuestion()" style="background:linear-gradient(135deg,#5D3A1A,#8D6E63);color:white;border:none;border-radius:12px;padding:12px 28px;font-size:15px;font-weight:900;cursor:pointer;box-shadow:0 3px 0 #3E2723;min-height:44px;">&#9654; Lanjut</button>
+    </div>
+  </div>
+
+  <!-- Detail modal -->
+  <div id="g18-modal" class="g18-modal-overlay">
+    <div class="g18-modal-box">
+      <div id="g18-modal-emoji" style="font-size:56px;margin-bottom:8px;min-height:70px;display:flex;align-items:center;justify-content:center;"></div>
+      <div id="g18-modal-name" style="color:white;font-size:20px;font-weight:900;font-family:'Fredoka One',cursive;margin-bottom:4px;"></div>
+      <div id="g18-modal-country" style="color:rgba(255,255,255,0.7);font-size:13px;font-weight:700;margin-bottom:10px;"></div>
+      <div id="g18-modal-details" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;"></div>
+      <div id="g18-modal-fact" style="background:rgba(255,255,255,0.08);border-radius:10px;padding:10px;color:rgba(255,255,255,0.85);font-size:12px;font-weight:700;line-height:1.5;text-align:left;margin-bottom:12px;"></div>
+      <div id="g18-story-panel" style="display:none;background:rgba(255,255,255,0.06);border-radius:10px;padding:12px;color:rgba(255,255,255,0.9);font-size:12px;line-height:1.6;text-align:left;margin-bottom:12px;max-height:30vh;overflow-y:auto;border:1px solid rgba(255,255,255,0.1);">
+        <div style="font-size:14px;font-weight:900;color:#fbbf24;margin-bottom:6px;">&#128214; Cerita untuk Anak-anak</div>
+        <div id="g18-story-text">Memuat cerita...</div>
+      </div>
+      <div style="display:flex;gap:8px;width:100%;">
+        <button onclick="g18ShowStory()" id="g18-story-btn" style="flex:1;background:linear-gradient(135deg,#f59e0b,#d97706);color:white;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:900;cursor:pointer;min-height:44px;">&#128214; Cerita</button>
+        <button onclick="g18CloseModal()" style="flex:1;background:linear-gradient(135deg,#5D3A1A,#8D6E63);color:white;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:900;cursor:pointer;min-height:44px;">&#9989; Mengerti!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Result overlay -->
+  <div id="g18-result"><div class="g18-result-card">
+    <div id="g18-result-emoji" style="font-size:48px"></div>
+    <div id="g18-result-title" style="font-family:var(--font);font-size:18px;color:#fde68a;margin-top:6px"></div>
+    <div id="g18-result-stars" class="g18-result-stars"></div>
+    <div id="g18-result-msg" style="font-size:13px;line-height:1.5;color:rgba(255,255,255,0.85);white-space:pre-line"></div>
+    <div id="g18-result-buttons" style="margin-top:14px"></div>
+  </div></div>
+</div>
+
+<script>
+"use strict";
+/* ============================================================
+   Museum Kereta Ambarawa - standalone (B-272 extraction)
+   Procedural loco SVGs + data + gallery/modal/quiz, all copied
+   faithfully from game.js. SPA-only deps (TrainShared, game.js
+   audio/VFX/scoring) are reimplemented minimally below.
+   ============================================================ */
+
+/* ---- minimal audio (replaces game.js playTone/playClick/etc) ---- */
+let _g18SoundOn = true;
+let _g18AudioCtx = null;
+function _g18ac(){ if(!_g18AudioCtx){ try{ _g18AudioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(_){ } } return _g18AudioCtx; }
+function isSoundOn(){ return _g18SoundOn; }
+function playTone(freq, dur, type, vol){
+  if(!_g18SoundOn) return;
+  const ctx = _g18ac(); if(!ctx) return;
+  try{
+    if(ctx.state==='suspended') ctx.resume();
+    const o=ctx.createOscillator(), g=ctx.createGain();
+    o.type=type||'sine'; o.frequency.value=freq;
+    const v=vol||0.12; const t=ctx.currentTime;
+    o.connect(g); g.connect(ctx.destination);
+    g.gain.setValueAtTime(v, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t+(dur||0.15));
+    o.start(t); o.stop(t+(dur||0.15)+0.03);
+  }catch(_){ }
+}
+function playClick(){ playTone(660,0.05,'sine',0.07); }
+function playCorrect(){ [523,659,784].forEach((f,i)=>setTimeout(()=>playTone(f,0.12,'triangle',0.12),i*80)); }
+function playWrong(){ playTone(196,0.22,'sawtooth',0.10); }
+function g18ToggleSound(){
+  _g18SoundOn = !_g18SoundOn;
+  const b=document.getElementById('g18-sound-btn');
+  if(b) b.textContent = _g18SoundOn ? '🔊' : '🔇';
+  if(_g18SoundOn) playClick();
+}
+
+/* ---- TTS disabled project-wide: g18Speak is a no-op (do NOT call speechSynthesis) ---- */
+function g18Speak(){ /* no-op: TTS disabled */ }
+function g18SpeakCurrent(){ /* no-op: TTS disabled */ }
+
+/* ---- lightweight quiz juice (replaces game.js VFX helpers) ---- */
+function spawnCorrectCardJuice(el){ if(!el) return; el.classList.remove('g18-pop'); void el.offsetWidth; el.classList.add('g18-pop'); }
+function spawnWrongShake(el){ if(!el) return; el.classList.remove('g18-shake'); void el.offsetWidth; el.classList.add('g18-shake'); }
+function quizStreakHit(){ /* no-op */ }
+function quizStreakReset(){ /* no-op */ }
+
+/* ---- minimal scoring (mirrors game-modal.js GameScoring.calc) ---- */
+const GameScoring = {
+  calc(o){
+    const correct = o.correct||0, total = o.total||1, bonus = o.bonus||0;
+    if(total<=0) return 3;
+    if(correct<=0) return 0;
+    const acc = correct/total;
+    let stars;
+    if(acc>=1.0) stars=5; else if(acc>=0.85) stars=4; else if(acc>=0.65) stars=3; else if(acc>=0.40) stars=2; else stars=1;
+    return Math.min(5, Math.max(0, stars+bonus));
+  }
+};
+
+/* ---- standalone state stub (replaces SPA global `state`) ---- */
+const state = { currentPlayer:'p1', gameStars:{}, selectedLevelNum:1 };
+
+/* ---- navigation (replaces exitGame / endGameFromOverlay) ---- */
+function goBack(){
+  try{ g18Cleanup(); }catch(_){ }
+  if(history.length>1){ history.back(); }
+  else{ window.location.href='../index.html'; }
+}
+function endGameFromOverlay(){ goBack(); }
+
+/* ---- result overlay (replaces game.js showGameResult/hideGameResult) ---- */
+function showGameResult(cfg){
+  const root=document.getElementById('g18-result');
+  document.getElementById('g18-result-emoji').textContent = cfg.emoji||'🏆';
+  document.getElementById('g18-result-title').textContent = cfg.title||'';
+  const s = Math.max(0, Math.min(5, cfg.stars||0));
+  document.getElementById('g18-result-stars').textContent = '⭐'.repeat(s) + '☆'.repeat(5-s);
+  document.getElementById('g18-result-msg').textContent = cfg.msg||'';
+  const bw=document.getElementById('g18-result-buttons'); bw.innerHTML='';
+  const grads=['linear-gradient(135deg,#16a34a,#15803d)','linear-gradient(135deg,#5D3A1A,#8D6E63)'];
+  (cfg.buttons||[]).forEach((b,i)=>{
+    const el=document.createElement('button');
+    el.className='g18-result-btn'; el.textContent=b.label;
+    el.style.background = grads[i%grads.length];
+    el.onclick = ()=>{ hideGameResult(); if(typeof b.action==='function') b.action(); };
+    bw.appendChild(el);
+  });
+  root.classList.add('show');
+}
+function hideGameResult(){ const r=document.getElementById('g18-result'); if(r) r.classList.remove('show'); }
+
+/* ============================================================
+   Procedural locomotive SVG builders (copied from game.js)
+   ============================================================ */
+function dunWheel(cx, cy, r, wc, opts = {}) {
+  const { animate = true, rim = '#bbb', rimW = 2, hub = '#cfcfcf', spoke = 'rgba(232,232,238,0.66)' } = opts
+  const cls = animate ? ' class="dun-wheel-spin"' : ''
+  const sty = animate ? ` style="transform-origin:${cx}px ${cy}px"` : ''
+  const hubR = Math.max(2, r * 0.34)
+  const sw = Math.max(1, r * 0.13)
+  let spokes = ''
+  for (let i = 0; i < 3; i++) {           // 3 diameters = 6-spoke cue
+    const a = (i * Math.PI) / 3
+    const dx = Math.cos(a) * (r - rimW), dy = Math.sin(a) * (r - rimW)
+    spokes += `<line x1="${(cx - dx).toFixed(1)}" y1="${(cy - dy).toFixed(1)}" x2="${(cx + dx).toFixed(1)}" y2="${(cy + dy).toFixed(1)}" stroke="${spoke}" stroke-width="${sw.toFixed(1)}" stroke-linecap="round"/>`
+  }
+  return `<g${cls}${sty}>` +
+    `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${wc}" stroke="${rim}" stroke-width="${rimW}"/>` +
+    spokes +
+    `<circle cx="${cx}" cy="${cy}" r="${hubR.toFixed(1)}" fill="${hub}"/>` +
+    `</g>`
+}
+
+function buildSteamLocoSVG(cfg, opts = {}) {
+  const { animate = true, width = 148, height = 64 } = opts
+  const bc  = cfg.bodyColor  || '#1a1a2e'
+  const wc  = cfg.wheelColor || '#111130'
+  const hasTender = cfg.tender !== false
+
+  const smokeHtml = animate ? `
+    <circle class="train-smoke" cx="50" cy="6"   r="8"   fill="rgba(200,200,200,0.88)" style="animation-delay:0s"/>
+    <circle class="train-smoke" cx="44" cy="0"   r="6"   fill="rgba(215,215,215,0.70)" style="animation-delay:0.20s"/>
+    <circle class="train-smoke" cx="58" cy="-2"  r="7"   fill="rgba(185,185,185,0.60)" style="animation-delay:0.40s"/>
+    <circle class="train-smoke" cx="37" cy="-6"  r="5"   fill="rgba(220,220,220,0.45)" style="animation-delay:0.60s"/>
+    <circle class="train-smoke" cx="65" cy="-8"  r="6.5" fill="rgba(175,175,175,0.35)" style="animation-delay:0.80s"/>
+    <circle class="train-smoke" cx="52" cy="-12" r="4.5" fill="rgba(205,205,205,0.25)" style="animation-delay:1.0s"/>` : ''
+
+  const tenderHtml = hasTender ? `
+    <rect x="140" y="32" width="48" height="26" rx="5" fill="${bc}" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <rect x="142" y="28" width="44" height="10" rx="3" fill="${wc}"/>
+    <ellipse cx="164" cy="28" rx="20" ry="5.5" fill="#1a1a1a"/>
+    <rect x="186" y="46" width="12" height="5" rx="2.5" fill="#777"/>
+    ${dunWheel(153, 61, 9, wc, { animate, rim: '#aaa', rimW: 1.5 })}
+    ${dunWheel(171, 61, 9, wc, { animate, rim: '#aaa', rimW: 1.5 })}` : ''
+
+  const rackHtml = cfg.rack ? `
+    <rect x="32" y="65" width="90" height="5" rx="2" fill="#666" opacity="0.8"/>
+    <rect x="37"  y="65" width="3" height="8" rx="1" fill="#999"/>
+    <rect x="48"  y="65" width="3" height="8" rx="1" fill="#999"/>
+    <rect x="59"  y="65" width="3" height="8" rx="1" fill="#999"/>
+    <rect x="70"  y="65" width="3" height="8" rx="1" fill="#999"/>
+    <rect x="81"  y="65" width="3" height="8" rx="1" fill="#999"/>
+    <rect x="92"  y="65" width="3" height="8" rx="1" fill="#999"/>
+    <rect x="103" y="65" width="3" height="8" rx="1" fill="#999"/>` : ''
+
+  const totalW = hasTender ? 200 : 148
+  return `<svg viewBox="0 0 ${totalW} 74" width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="${hasTender ? 96 : 72}" cy="72" rx="${hasTender ? 84 : 66}" ry="4" fill="rgba(0,0,0,0.22)"/>
+  ${tenderHtml}
+  <rect x="18" y="44" width="${hasTender ? 126 : 114}" height="7" rx="3" fill="${wc}"/>
+  <rect x="22" y="24" width="${hasTender ? 118 : 106}" height="28" rx="11" fill="${bc}"/>
+  <rect x="26" y="26" width="${hasTender ? 110 : 98}"  height="9"  rx="5"  fill="rgba(255,255,255,0.09)"/>
+  <ellipse cx="24" cy="38" rx="11" ry="15" fill="${bc}"/>
+  <ellipse cx="22" cy="38" rx="7.5" ry="11" fill="${wc}" opacity="0.55"/>
+  <circle cx="18" cy="32" r="6.5" fill="#FFD166" opacity="0.92"/>
+  <circle cx="18" cy="32" r="4"   fill="white"   opacity="0.85"/>
+  <rect x="${hasTender ? 120 : 108}" y="12" width="26" height="40" rx="5" fill="${wc}"/>
+  <rect x="${hasTender ? 117 : 105}" y="10" width="32" height="7"  rx="3" fill="${bc}"/>
+  <rect x="${hasTender ? 124 : 112}" y="17" width="15" height="13" rx="3" fill="#87CEEB" opacity="0.88"/>
+  <rect x="42" y="7"  width="11" height="19" rx="3" fill="${wc}"/>
+  <rect x="38" y="5"  width="19" height="7"  rx="3" fill="${wc}"/>
+  ${smokeHtml}
+  <ellipse cx="80" cy="23" rx="15" ry="8" fill="${wc}"/>
+  <ellipse cx="${hasTender ? 106 : 94}" cy="23" rx="9" ry="6" fill="${wc}"/>
+  <rect    x="${hasTender ? 109 : 97}" y="19" width="4" height="9" rx="2" fill="#999"/>
+  ${dunWheel(36, 60, 9, wc, { animate, rim: '#999', rimW: 1.5 })}
+  ${dunWheel(60, 58, 14, wc, { animate, rim: '#bbb', rimW: 2 })}
+  ${dunWheel(86, 58, 14, wc, { animate, rim: '#bbb', rimW: 2 })}
+  ${dunWheel(112, 58, 14, wc, { animate, rim: '#bbb', rimW: 2 })}
+  <rect x="60" y="56" width="52" height="4" rx="2" fill="#888"/>
+  <rect x="18" y="54" width="46" height="5" rx="2.5" fill="#666"/>
+  <rect x="22" y="36" width="${hasTender ? 116 : 104}" height="4" rx="2" fill="${cfg.stripeColor || '#FFD166'}" opacity="0.80"/>
+  ${rackHtml}
+</svg>`
+}
+
+function buildDieselLocoSVG(cfg, opts = {}) {
+  const { animate = true, width = 148, height = 64 } = opts
+  const bc = cfg.bodyColor  || '#1B5E20'
+  const ac = cfg.accentColor || '#FFD166'
+  const dieselSmokeHtml = animate ? `
+    <circle class="diesel-smoke" cx="88" cy="13" r="7"   fill="rgba(20,20,20,0.92)" style="animation-delay:0s"/>
+    <circle class="diesel-smoke" cx="80" cy="8"  r="5.5" fill="rgba(30,30,30,0.78)" style="animation-delay:0.18s"/>
+    <circle class="diesel-smoke" cx="96" cy="5"  r="6.5" fill="rgba(10,10,10,0.65)" style="animation-delay:0.36s"/>
+    <circle class="diesel-smoke" cx="74" cy="0"  r="4.5" fill="rgba(40,40,40,0.50)" style="animation-delay:0.54s"/>
+    <circle class="diesel-smoke" cx="100" cy="-2" r="5" fill="rgba(15,15,15,0.38)" style="animation-delay:0.72s"/>` : ''
+  return `<svg viewBox="0 0 200 72" width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="100" cy="70" rx="88" ry="4" fill="rgba(0,0,0,0.22)"/>
+  <rect x="10"  y="32" width="120" height="28" rx="5"   fill="${bc}"/>
+  <rect x="10"  y="30" width="120" height="8"  rx="3"   fill="rgba(255,255,255,0.1)"/>
+  <rect x="130" y="18" width="52"  height="42" rx="7"   fill="${bc}"/>
+  <rect x="128" y="15" width="56"  height="9"  rx="4"   fill="${ac}" opacity="0.88"/>
+  <rect x="136" y="24" width="38"  height="22" rx="4"   fill="rgba(135,206,235,0.88)"/>
+  <circle cx="14" cy="40" r="5.5" fill="#FFD166" opacity="0.9"/>
+  <circle cx="14" cy="40" r="3.5" fill="white"   opacity="0.85"/>
+  <rect x="22"  y="34" width="3"  height="20" rx="1.5" fill="rgba(0,0,0,0.28)"/>
+  <rect x="30"  y="34" width="3"  height="20" rx="1.5" fill="rgba(0,0,0,0.28)"/>
+  <rect x="38"  y="34" width="3"  height="20" rx="1.5" fill="rgba(0,0,0,0.28)"/>
+  <rect x="46"  y="34" width="3"  height="20" rx="1.5" fill="rgba(0,0,0,0.28)"/>
+  <rect x="10"  y="44" width="120" height="5" rx="2"   fill="${ac}" opacity="0.65"/>
+  <rect x="84"  y="20" width="8"  height="16" rx="3"   fill="#333"/>
+  <rect x="80"  y="16" width="16" height="7"  rx="3"   fill="#555"/>
+  ${dieselSmokeHtml}
+  ${dunWheel(38, 62, 9, '#2a2a2a', { animate, rim: '#888', rimW: 1.5 })}
+  ${dunWheel(64, 62, 9, '#2a2a2a', { animate, rim: '#888', rimW: 1.5 })}
+  ${dunWheel(90, 62, 9, '#2a2a2a', { animate, rim: '#888', rimW: 1.5 })}
+  ${dunWheel(152, 62, 9, '#2a2a2a', { animate, rim: '#888', rimW: 1.5 })}
+  ${dunWheel(176, 62, 9, '#2a2a2a', { animate, rim: '#888', rimW: 1.5 })}
+  <rect x="10" y="56" width="168" height="5" rx="2.5" fill="rgba(0,0,0,0.3)"/>
+</svg>`
+}
+
+function buildElectricLocoSVG(cfg, opts = {}) {
+  const { animate = true, width = 148, height = 64 } = opts
+  const bc = cfg.bodyColor  || '#1a1a6b'
+  const ac = cfg.accentColor || '#00b4d8'
+  const sparkHtml = animate ? `
+    <polyline class="elec-spark"  points="25,6  18,1  26,4  19,-1" fill="none" stroke="#00f5ff" stroke-width="1.8" stroke-linecap="round"/>
+    <polyline class="elec-spark2" points="25,7  30,2  24,5  31,0"  fill="none" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"/>
+    <circle class="elec-spark"  cx="20" cy="-1" r="2" fill="#00f5ff" opacity="0.9"/>
+    <circle class="elec-spark2" cx="31" cy="0"  r="1.5" fill="#ffffff" opacity="0.7"/>
+    <polyline class="elec-spark"  points="23,7  17,3  25,5" fill="none" stroke="${ac}" stroke-width="1.5" stroke-linecap="round"/>` : ''
+  return `<svg viewBox="0 0 220 64" width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="110" cy="62" rx="96" ry="4" fill="rgba(0,0,0,0.2)"/>
+  <polygon points="10,52 2,38 2,22 10,12" fill="${bc}"/>
+  <rect x="10"  y="12" width="185" height="40" rx="6"  fill="${bc}"/>
+  <rect x="10"  y="12" width="185" height="12" rx="6"  fill="rgba(255,255,255,0.13)"/>
+  <rect x="195" y="12" width="20"  height="40" rx="6"  fill="${bc}"/>
+  <rect x="10"  y="32" width="185" height="5"  rx="2"  fill="${ac}" opacity="0.75"/>
+  <circle cx="5"  cy="28" r="5.5" fill="#FFD166" opacity="0.92"/>
+  <rect x="24"  y="18" width="30" height="18" rx="4"   fill="rgba(135,206,235,0.88)"/>
+  <rect x="68"  y="18" width="30" height="18" rx="4"   fill="rgba(135,206,235,0.88)"/>
+  <rect x="118" y="18" width="30" height="18" rx="4"   fill="rgba(135,206,235,0.88)"/>
+  <rect x="160" y="18" width="25" height="18" rx="4"   fill="rgba(135,206,235,0.88)"/>
+  <rect x="8"   y="8"  width="40" height="5"  rx="2.5" fill="#555"/>
+  <rect x="20"  y="5"  width="15" height="5"  rx="2"   fill="#777"/>
+  ${sparkHtml}
+  ${dunWheel(44, 54, 8, '#222', {animate, rim:'#999', rimW:1.5, hub:'#aaa'})}
+  ${dunWheel(84, 54, 8, '#222', {animate, rim:'#999', rimW:1.5, hub:'#aaa'})}
+  ${dunWheel(128, 54, 8, '#222', {animate, rim:'#999', rimW:1.5, hub:'#aaa'})}
+  ${dunWheel(170, 54, 8, '#222', {animate, rim:'#999', rimW:1.5, hub:'#aaa'})}
+</svg>`
+}
+
+function g18TrainSVG(t, w, h, animate) {
+  const a = !!animate   // gallery cards static; modal hero animated
+  if (t.isSteam) return buildSteamLocoSVG(t, {animate:a, width:w||120, height:h||52})
+  if (t.isDiesel) return buildDieselLocoSVG(t, {animate:a, width:w||120, height:h||52})
+  if (t.isElectric) return buildElectricLocoSVG(t, {animate:a, width:w||120, height:h||52})
+  return `<span style="font-size:40px;line-height:1;">${t.emoji}</span>`
+}
+</script>
+<script>
+"use strict";
+/* ============================================================
+   Museum data (G18_TRAINS + G18_QUESTIONS_BANK), copied verbatim
+   from game.js (~line 13385). Inlined to keep this page a single file.
+   ============================================================ */
+const G18_TRAINS = [
+  {
+    emoji:'🚂', name:'B 2507 — Kereta Bergerigi', country:'🇮🇩 Ambarawa, Jawa Tengah', year:1902,
+    fuel:'Batubara (Uap)', speed:30, type:'Lokomotif Rack (Bergerigi)', builder:'SLM Swiss', axles:'B-B',
+    isSteam:true, rack:true, tender:false, bodyColor:'#1a1a2e', wheelColor:'#0d0d1a',
+    fact:'Bintang utama Museum Ambarawa! B2507 dibuat di Swiss oleh SLM tahun 1902. Punya roda BERGERIGI (cogwheel) khusus untuk mendaki gunung terjal — salah satu dari sedikit kereta rack yang masih ada di dunia! ⛰️',
+    funFact:'🏔️ Jalur B2507 punya tanjakan 65‰ — artinya naik 65 meter setiap 1 km! Sangat curam!',
+    history:'B2507 dibuat pabrik SLM Winterthur di Swiss tahun 1902 🇨🇭. Memakai sistem gigi ABT — rel tengah bergerigi yang dicengkeram roda gigi lokomotif agar tidak tergelincir di tanjakan ekstrem. Jalur Ambarawa–Bedono resmi dibuka tahun 1905 untuk menghubungkan perkebunan kopi di lereng Gunung Merbabu. Kini B2507 jadi simbol Museum Ambarawa dan kebanggaan Indonesia 🚂🌄🇮🇩',
+    route:'Ambarawa ↔ Bedono via Jambu',
+    quizHint:'kereta bergerigi pendaki gunung di Ambarawa'
+  },
+  {
+    emoji:'🚂', name:'B 2521 — Rack Ambarawa-Bedono', country:'🇮🇩 Ambarawa, Jawa Tengah', year:1912,
+    fuel:'Batubara (Uap)', speed:25, type:'Lokomotif Uap Bergerigi', builder:'SLM Swiss',
+    isSteam:true, rack:true, tender:false, bodyColor:'#0d2a0d', wheelColor:'#061606',
+    fact:'B2521 melayani jalur Ambarawa–Bedono yang sangat terjal! Melewati perkebunan kopi dan teh di kaki Gunung Merbabu. Kemiringan jalurnya 65‰ — salah satu yang terextrim di dunia! 🌋',
+    funFact:'☕ Jalur ini dulu dipakai untuk mengangkut hasil perkebunan kopi & teh ke kota!',
+    route:'Ambarawa ↔ Bedono (tanjakan curam)',
+    quizHint:'kereta rack jalur Ambarawa-Bedono gunung'
+  },
+  {
+    emoji:'🚂', name:'C 5107 — Lok Tender Kolonial', country:'🇮🇩 Ambarawa, Jawa Tengah', year:1921,
+    fuel:'Batubara (Uap)', speed:60, type:'Lokomotif Uap Tender', builder:'Hartmann, Jerman',
+    isSteam:true, rack:false, tender:true, bodyColor:'#0f0f0f', wheelColor:'#050505',
+    fact:'C5107 buatan pabrik Hartmann, Jerman (1921). Di era Hindia Belanda, mengangkut penumpang & hasil bumi. Kini jadi bintang Kereta Wisata Ambarawa–Tuntang yang masih beroperasi! ☕🚂',
+    funFact:'🎉 Kamu bisa naiki kereta wisata ini! Rute Ambarawa–Tuntang sejauh ±5 km!',
+    route:'Ambarawa ↔ Tuntang (kereta wisata)',
+    quizHint:'kereta wisata uap Ambarawa-Tuntang'
+  },
+  {
+    emoji:'🚂', name:'D 1415 — Tender Hanomag', country:'🇮🇩 Ambarawa, Jawa Tengah', year:1908,
+    fuel:'Batubara (Uap)', speed:55, type:'Lokomotif Uap Tender', builder:'Hanomag, Jerman',
+    isSteam:true, rack:false, tender:true, bodyColor:'#2a1a0a', wheelColor:'#150a00',
+    fact:'D1415 buatan Hanomag, Jerman 1908. Punya tangki air besar (tender) di belakang untuk perjalanan panjang. Dulu mengangkut gula, kopi, dan teh dari perkebunan Jawa! 💨🌿',
+    funFact:'🪨 Tender di belakangnya menyimpan batubara untuk 5–6 jam perjalanan!',
+    route:'Jalur pegunungan Jawa Tengah',
+    quizHint:'kereta uap dengan tender besar di belakang'
+  },
+  {
+    emoji:'🚂', name:'C 1218 — Lokomotif Tertua RI', country:'🇮🇩 Ambarawa, Jawa Tengah', year:1891,
+    fuel:'Batubara (Uap)', speed:50, type:'Lokomotif Tank Uap', builder:'Beyer Peacock, Inggris',
+    isSteam:true, rack:false, tender:false, bodyColor:'#4a1515', wheelColor:'#2a0808',
+    fact:'C1218 adalah salah satu lokomotif TERTUA di Indonesia! Buatan Beyer Peacock, Inggris 1891 — sudah 130+ tahun! Masih terawat baik di Museum Ambarawa. Luar biasa! 🎩👑',
+    funFact:'📅 C1218 dibuat saat Indonesia masih bernama Hindia Belanda dan Presiden Soekarno belum lahir!',
+    history:'C1218 dioperasikan oleh Staats Spoorwegen (SS), perusahaan kereta pemerintah Hindia Belanda di masa kolonial. Lokomotif ini mengangkut penumpang dan hasil bumi di Pulau Jawa sejak 1891 🚂. C1218 SELAMAT dari dua Perang Dunia dan revolusi kemerdekaan RI — banyak lokomotif lain rusak atau dijarah. Kini jadi saksi bisu sejarah panjang perkeretaapian Indonesia 🇮🇩🎖️',
+    route:'Berbagai jalur Jawa era kolonial',
+    quizHint:'lokomotif tertua 1891 di Indonesia'
+  },
+  {
+    emoji:'🚂', name:'B 2801 — Rack SLM Merbabu', country:'🇮🇩 Ambarawa, Jawa Tengah', year:1907,
+    fuel:'Batubara (Uap)', speed:28, type:'Lokomotif Rack Gunung', builder:'SLM Swiss',
+    isSteam:true, rack:true, tender:false, bodyColor:'#0a1f0a', wheelColor:'#051005',
+    fact:'B2801 buatan Swiss Locomotive Works 1907. Mesin uap + roda gigi bergabung menaklukkan tanjakan 65‰ — naik 65 meter setiap 1 km! Satu-satunya di dunia yang masih beroperasi tourist! 😱⛰️',
+    funFact:'🇨🇭 SLM (Swiss Locomotive Works) juga membuat kereta gunung terkenal di Alpen Swiss!',
+    route:'Ambarawa ↔ Bedono (wisata gunung)',
+    quizHint:'kereta rack Swiss tanjakan paling curam'
+  },
+  {
+    emoji:'🚂', name:'B 2503 — Rack Pionir', country:'🇮🇩 Ambarawa, Jawa Tengah', year:1898,
+    fuel:'Batubara (Uap)', speed:22, type:'Lokomotif Rack Tua', builder:'SLM Swiss',
+    isSteam:true, rack:true, tender:false, bodyColor:'#1a0f00', wheelColor:'#0d0700',
+    fact:'B2503 adalah lokomotif rack tertua di koleksi Ambarawa! Dibuat SLM Swiss 1898, sudah 125+ tahun! Generasi pertama kereta bergigi di Indonesia yang membuka jalur gunung! 🎖️',
+    funFact:'🌄 Tanpa B2503 dan kawan-kawannya, kawasan Bedono & Jambu sulit dijangkau di era kolonial!',
+    route:'Ambarawa ↔ Bedono (jalur historis)',
+    quizHint:'lokomotif rack tertua Ambarawa 1898'
+  },
+  {
+    emoji:'🚂', name:'C 28 — Biru Malam Kolonial', country:'🇮🇩 Jawa', year:1920,
+    fuel:'Batubara (Uap)', speed:70, type:'Lokomotif Tender Cepat', builder:'Hartmann, Jerman',
+    isSteam:true, rack:false, tender:true, bodyColor:'#0f1540', wheelColor:'#070a25',
+    fact:'Kelas C28 Hindia Belanda 1920! Cat biru malam yang elegan di jalur perbukitan. Lokomotif ini melayani penumpang kelas satu — para tuan tanah dan pejabat Belanda! 🌙👒',
+    funFact:'💼 Dulu ada gerbong kelas 1 (pejabat Belanda), kelas 2 (pedagang), dan kelas 3 (rakyat biasa)!',
+    route:'Jalur Priangan & Jawa Tengah',
+    quizHint:'kereta biru malam C28 Hindia Belanda'
+  },
+  {
+    emoji:'🚃', name:'CC 200 — Setan Ijo', country:'🇮🇩 Indonesia', year:1953,
+    fuel:'Solar (Diesel)', speed:120, type:'Lokomotif Diesel Elektrik', builder:'General Electric, Amerika',
+    isDiesel:true, bodyColor:'#1a3a1a', accentColor:'#22c55e',
+    fact:'CC200 adalah lokomotif diesel PERTAMA Indonesia! General Electric, Amerika 1953. Masinis menjuluki "Setan Ijo" karena cat hijau dan tenaganya dahsyat! Revolusi kereta Indonesia! 🦾🇺🇸',
+    funFact:'🟢 "Setan Ijo" artinya Setan Hijau — para masinis takjub dengan kekuatan mesin GE yang luar biasa!',
+    history:'Di era Presiden Sukarno, pemerintah Indonesia memesan 27 unit CC200 dari General Electric Amerika tahun 1953 🇺🇸. Ini adalah langkah BESAR memodernisasi perkeretaapian RI — dari lokomotif uap berasap ke diesel bersih dan bertenaga. CC200 menjadi tulang punggung kereta ekspres Jakarta–Surabaya dan membuka era baru transportasi Indonesia. Satu unit masih terawat di Museum Ambarawa 🚆🎖️',
+    route:'Jakarta ↔ Surabaya (ekspres awal)',
+    quizHint:'diesel pertama Indonesia Setan Ijo GE'
+  },
+  {
+    emoji:'🚂', name:'E 1060 — Listrik Antik 1924', country:'🇮🇩 Indonesia', year:1924,
+    fuel:'Listrik', speed:90, type:'Lokomotif Listrik Antik', builder:'Belanda',
+    isElectric:true, bodyColor:'#1a1a4a', accentColor:'#ffd700',
+    fact:'E1060 membuktikan Indonesia sudah punya kereta LISTRIK sejak 1924 — 100 tahun lalu! Kini jadi koleksi langka di Ambarawa yang sangat berharga. Jarang sekali ada di dunia! ⚡🏆',
+    funFact:'💡 Jalur listrik pertama Indonesia: Batavia (Jakarta) – Buitenzorg (Bogor) 1925!',
+    route:'Jalur listrik Batavia era kolonial',
+    quizHint:'kereta listrik antik Indonesia 1924'
+  },
+  {
+    emoji:'🚂', name:'B 50 — Si Tua Jawa', country:'🇮🇩 Jawa', year:1880,
+    fuel:'Batubara (Uap)', speed:45, type:'Lokomotif Tank Tua', builder:'Krupp, Jerman',
+    isSteam:true, rack:false, tender:false, bodyColor:'#2a1e08', wheelColor:'#150f00',
+    fact:'B50 buatan Krupp Jerman 1880-an! Salah satu lokomotif tertua di Jawa. Lambat tapi legendaris — membangun fondasi perkeretaapian Indonesia di era awal kolonial! 🦕🎖️',
+    funFact:'⛏️ Jalur kereta pertama Indonesia dibuka 1867 rute Semarang–Tanggung, hanya 25 km!',
+    route:'Jalur Semarang & Jawa Tengah awal',
+    quizHint:'kereta tua B50 Krupp Jerman 1880'
+  },
+  {
+    emoji:'🚂', name:'Kereta Wisata Ambarawa', country:'🇮🇩 Ambarawa', year:2000,
+    fuel:'Batubara (Uap)', speed:30, type:'Kereta Wisata Heritage', builder:'Gabungan lok tua',
+    isSteam:true, rack:false, tender:true, bodyColor:'#5D3A1A', wheelColor:'#3a2010',
+    fact:'Kereta Wisata Ambarawa masih beroperasi menggunakan lokomotif uap tua! Rute Ambarawa–Tuntang ±5 km melewati sawah dan danau. Kamu bisa naiki dan rasakan serunya! ☁️🎉🚂',
+    funFact:'📸 Inilah satu-satunya jalur kereta bergigi yang masih aktif untuk wisata di Asia Tenggara!',
+    route:'Ambarawa ↔ Tuntang (wisata aktif)',
+    quizHint:'kereta wisata uap yang bisa dinaiki'
+  },
+  {
+    emoji:'🚂', name:'Shinkansen N700 — Peluru Jepang', country:'🇯🇵 Jepang', year:2007,
+    fuel:'Listrik', speed:320, type:'Kereta Cepat (Shinkansen)', builder:'Kawasaki Heavy Industries',
+    isElectric:true, bodyColor:'#1A1A6B', accentColor:'#0077cc',
+    fact:'Shinkansen dijuluki "Peluru" karena hidungnya seperti peluru! Tepat waktu hingga detik — keterlambatan rata-rata hanya 36 detik per tahun! Dibanding B2507 Ambarawa, 10× lebih cepat! ⚡🇯🇵',
+    funFact:'⏱️ Jika keterlambatan >1 menit, perusahaan minta MAAF resmi dan memberi surat keterlambatan!',
+    route:'Tokyo ↔ Osaka (515 km, 2,5 jam)',
+    quizHint:'kereta peluru Jepang 320 km/jam'
+  },
+  {
+    emoji:'🚃', name:'Argo Bromo Anggrek', country:'🇮🇩 Indonesia', year:1997,
+    fuel:'Solar (Diesel)', speed:120, type:'Kereta Ekspress', builder:'INKA Indonesia',
+    isDiesel:true, bodyColor:'#0a1a3a', accentColor:'#f59e0b',
+    fact:'Kereta ekspress terbaik Indonesia! Jakarta–Surabaya ±9 jam. Dinamai Gunung Bromo. CC204 sebagai lokomotifnya — 4× lebih cepat dari B2507 Ambarawa! 🌋🏆',
+    funFact:'🇮🇩 Gerbong keretanya buatan INKA di Madiun, Jawa Timur! Bangga produk lokal!',
+    route:'Jakarta Gambir ↔ Surabaya Gubeng',
+    quizHint:'kereta ekspress Jakarta-Surabaya Argo Bromo'
+  },
+  {
+    emoji:'🚂', name:'KRL Commuter Jabodetabek', country:'🇮🇩 Indonesia', year:2013,
+    fuel:'Listrik', speed:100, type:'Kereta Listrik Komuter', builder:'Tokyu/Kawasaki (bekas Jepang)',
+    isElectric:true, bodyColor:'#0D47A1', accentColor:'#e53935',
+    fact:'KRL mengangkut lebih dari 1 JUTA penumpang SETIAP HARI! Tanpa asap dan ramah lingkungan. Beda sekali dengan B2507 Ambarawa yang butuh batubara berkeranjang-keranjang! 🌿💙',
+    funFact:'♻️ KRL yang beroperasi di Jakarta dulunya adalah kereta bekas Jepang yang direkondisi ulang!',
+    history:'Modernisasi KRL Jabodetabek dimulai serius sejak 2013 ⚡. PT KAI Commuter mengimpor kereta bekas dari Jepang (seri JR 203, 205, 8000, dan Tokyu) lalu merekondisinya di Balai Yasa Manggarai. Jalur Jabodetabek dielektrifikasi penuh dengan listrik aliran atas 1500 VDC. Kini KRL jadi transportasi massal andalan ibu kota — ramah lingkungan dan bebas macet 🚆🌿🇮🇩',
+    route:'Bogor/Bekasi/Tangerang ↔ Jakarta',
+    quizHint:'kereta listrik 1 juta penumpang sehari Jabodetabek'
+  },
+  {
+    emoji:'🚂', name:'TGV — Kereta Cepat Prancis', country:'🇫🇷 Perancis', year:1981,
+    fuel:'Listrik (Nuklir)', speed:574, type:'Train à Grande Vitesse', builder:'Alstom, Perancis',
+    isElectric:true, bodyColor:'#003189', accentColor:'#e63946',
+    fact:'TGV rekor dunia kereta konvensional — 574 km/jam! Hampir secepat pesawat! Ambarawa ke Jakarta ±350 km: TGV 37 menit, kereta uap Ambarawa 4+ jam! 🚀🇫🇷',
+    funFact:'⚛️ Listrik TGV berasal dari energi nuklir Prancis — hijau dan sangat bertenaga!',
+    route:'Paris ↔ Lyon (400 km, 2 jam)',
+    quizHint:'kereta tercepat konvensional Perancis 574 km/jam'
+  },
+  {
+    emoji:'🚇', name:'MRT Jakarta — Kereta Bawah Tanah', country:'🇮🇩 Indonesia', year:2019,
+    fuel:'Listrik', speed:80, type:'Mass Rapid Transit', builder:'Sumitomo, Jepang',
+    isElectric:true, bodyColor:'#37474f', accentColor:'#26c6da',
+    fact:'MRT Jakarta adalah kereta bawah tanah PERTAMA Indonesia! 16 stasiun, dibangun 10+ tahun. Beda dengan B2507 mendaki gunung, MRT justru menyelam ke bawah tanah kota! 🏙️🚇',
+    funFact:'🔭 Stasiun MRT terdalam di Jakarta sampai 26 meter di bawah tanah — sedalam gedung 8 lantai!',
+    history:'Ide MRT Jakarta sudah ada sejak awal 1990-an, tapi terus tertunda karena krisis ekonomi 1998 dan banyaknya pergantian pemerintahan 🏙️. Konstruksi akhirnya dimulai 2013 dengan pendanaan dari JICA (Japan International Cooperation Agency) dan teknologi kereta Sumitomo-Nippon Sharyo Jepang 🇯🇵. Setelah 20+ tahun menunggu, MRT Fase 1 resmi beroperasi Maret 2019 — jadi lompatan besar transportasi ibu kota 🚇🇮🇩',
+    route:'Lebak Bulus ↔ Bundaran HI (16 km)',
+    quizHint:'kereta bawah tanah pertama Indonesia MRT'
+  },
+  {
+    emoji:'🚂', name:'SCMaglev L0 — Kereta Magnet', country:'🇯🇵 Jepang', year:2015,
+    fuel:'Magnet Superkonduktor', speed:603, type:'Maglev (Kereta Melayang)', builder:'JR Central, Jepang',
+    isElectric:true, bodyColor:'#1a1a2e', accentColor:'#00f5ff',
+    fact:'SCMaglev L0 tidak menyentuh rel sama sekali — melayang di atas magnet! 603 km/jam, rekor dunia! Kebalikan B2507 yang bergigi agar tidak tergelincir. Teknologi masa depan! 🧲🚀',
+    funFact:'🌡️ Magnet superkonduktor butuh didinginkan hingga −269°C — lebih dingin dari luar angkasa!',
+    route:'Tokyo ↔ Nagoya (target 2027, 40 menit)',
+    quizHint:'kereta magnet melayang tercepat dunia 603 km/jam'
+  },
+  {
+    emoji:'🚂', name:'CR400 Fuxing — Kereta Tercepat Beroperasi', country:'🇨🇳 China', year:2017,
+    fuel:'Listrik', speed:350, type:'High-Speed Rail', builder:'CRRC, China',
+    isElectric:true, bodyColor:'#b71c1c', accentColor:'#ffc107',
+    fact:'CR400 Fuxing adalah kereta penumpang TERCEPAT yang beroperasi reguler di dunia! 350 km/h setiap hari. China kini punya >40.000 km jalur HSR — lebih panjang dari keliling bumi! 🇨🇳🏆',
+    funFact:'🌏 Nama "Fuxing" artinya "Kebangkitan" — simbol kemajuan teknologi China modern!',
+    route:'Beijing ↔ Shanghai (1318 km, 4,5 jam)',
+    quizHint:'kereta terkencang beroperasi Fuxing China 350 km/jam'
+  },
+  {
+    emoji:'🚂', name:'Lori Tebu — Kereta Perkebunan', country:'🇮🇩 Jawa (Cirebon, Madiun, Jogja)', year:1880,
+    fuel:'Batubara (Uap)', speed:15, type:'Lokomotif Lori Perkebunan', builder:'Orenstein & Koppel, Jerman',
+    isSteam:true, rack:false, tender:false, bodyColor:'#14532D', wheelColor:'#052e16',
+    fact:'Lori Tebu adalah kereta KECIL khusus pabrik gula! Rel sempit hanya 60cm, bertugas mengangkut batang tebu dari kebun ke pabrik gula. Masih beroperasi di pabrik Sragi, Tasikmadu, dan Colomadu! 🎋🍬',
+    funFact:'🍭 Gula Indonesia dulu terkenal di Eropa — 1 kereta lori bisa mengangkut 4 ton tebu per perjalanan!',
+    route:'Kebun tebu ↔ Pabrik gula (rel sempit 600mm)',
+    quizHint:'kereta kecil pengangkut tebu pabrik gula'
+  },
+  {
+    emoji:'🚂', name:'CC201 — Diesel Legendaris PT KAI', country:'🇮🇩 Indonesia', year:1977,
+    fuel:'Solar (Diesel Elektrik)', speed:100, type:'Lokomotif Diesel Elektrik', builder:'General Electric, USA',
+    isDiesel:true, bodyColor:'#FF6B00', accentColor:'#FFD700',
+    fact:'CC201 adalah LOKOMOTIF DIESEL paling populer di Indonesia! Dibuat General Electric USA sejak 1977. Warna oranye-hitamnya khas — favorit anak-anak penggemar kereta! 🧡',
+    funFact:'🏆 Ada 140+ CC201 yang beroperasi. Satu lok bisa tarik 10-14 gerbong sekaligus!',
+    route:'Seluruh Jawa & Sumatera — penumpang & barang',
+    quizHint:'lokomotif diesel oranye populer Indonesia CC201'
+  },
+  {
+    emoji:'🚄', name:'KCIC400AF Whoosh — HSR Indonesia', country:'🇮🇩 Indonesia (Jakarta–Bandung)', year:2023,
+    fuel:'Listrik', speed:350, type:'High-Speed Rail', builder:'CRRC Qingdao Sifang',
+    isElectric:true, bodyColor:'#C8102E', accentColor:'#FFFFFF',
+    fact:'Whoosh adalah kereta cepat PERTAMA di Asia Tenggara! 🎉 Dari Jakarta ke Bandung cuma 45 menit (biasanya 3 jam naik mobil). Diresmikan Presiden Jokowi Oktober 2023! 🇮🇩⚡',
+    funFact:'💨 Nama "Whoosh" dipilih dari sayembara nasional — singkatan Waktu Hemat Operasi Optimal Sistem Hebat!',
+    history:'Proyek kereta cepat ini hasil kerjasama Indonesia–China (KCIC) senilai Rp 108 triliun. Awalnya bersaing dengan Shinkansen Jepang, pemerintah memilih teknologi CRH400 China karena skema pembiayaan lebih fleksibel 🇨🇳🇮🇩. Sempat terkendala pandemi COVID-19 dan pembebasan lahan, akhirnya Whoosh beroperasi Oktober 2023. Jadi simbol kemajuan teknologi Indonesia — tercepat di Asia Tenggara 🚄🏆',
+    route:'Halim (Jakarta) ↔ Tegalluar (Bandung) • 142 km',
+    quizHint:'kereta cepat pertama Asia Tenggara Jakarta Bandung'
+  },
+  {
+    emoji:'🚂', name:'Argo Parahyangan — Eksekutif Favorit', country:'🇮🇩 Indonesia (Jakarta–Bandung)', year:2010,
+    fuel:'Solar (Diesel) + Listrik', speed:120, type:'Kereta Eksekutif Penumpang', builder:'INKA, Madiun',
+    isDiesel:true, bodyColor:'#1E40AF', accentColor:'#FCD34D',
+    fact:'Argo Parahyangan adalah kereta EKSEKUTIF paling favorit di Pulau Jawa! Dibuat oleh INKA Madiun — industri kereta kebanggaan Indonesia. Melintasi terowongan Sasaksaat dan Jembatan Cisomang! 🏞️',
+    funFact:'🇮🇩 INKA Madiun juga ekspor kereta ke Bangladesh, Filipina, dan Selandia Baru!',
+    route:'Gambir (Jakarta) ↔ Bandung • 173 km, 3 jam',
+    quizHint:'kereta eksekutif Jakarta Bandung Argo Parahyangan INKA'
+  },
+  {
+    emoji:'🚋', name:'LRT Jabodebek — Tanpa Masinis', country:'🇮🇩 Jakarta (GoA Level 3)', year:2023,
+    fuel:'Listrik', speed:80, type:'Light Rail Transit (Otomatis)', builder:'INKA + Siemens',
+    isElectric:true, bodyColor:'#FF0000', accentColor:'#FFFFFF',
+    fact:'LRT Jabodebek adalah kereta TANPA MASINIS (driverless) pertama di Indonesia! 🤖 Dikendalikan komputer sepenuhnya — GoA Level 3. Juga kereta LRT pertama buatan INKA Madiun 🏭',
+    funFact:'🤖 Meski tanpa masinis, ada petugas di stasiun yang memantau via komputer pusat!',
+    route:'Dukuh Atas ↔ Harjamukti / Jatimulya • 44 km',
+    quizHint:'kereta tanpa masinis otomatis Jakarta LRT Jabodebek'
+  },
+  {
+    emoji:'🚂', name:'SS 1867 — Kereta Pertama Indonesia', country:'🇮🇩 Semarang, Jawa Tengah', year:1867,
+    fuel:'Batubara (Uap)', speed:40, type:'Lokomotif Uap Tender Pionir', builder:'Beyer Peacock, Inggris',
+    isSteam:true, rack:false, tender:true, bodyColor:'#3a1f0a', wheelColor:'#1a0f05',
+    fact:'Inilah kereta PERTAMA yang pernah berjalan di tanah Indonesia! 🎖️ Tanggal 10 Agustus 1867, lokomotif buatan Beyer Peacock Inggris melintas di rute Semarang–Tanggung sejauh 25 km. Penduduk takjub melihat "kuda besi" berasap untuk pertama kalinya! 🚂💨',
+    funFact:'🎉 Peresmiannya dihadiri Gubernur Jenderal Pieter Mijer dan disambut ribuan warga yang belum pernah melihat kereta!',
+    history:'Di era Hindia Belanda, perusahaan swasta Nederlandsch-Indische Spoorweg Maatschappij (NISM) membangun jalur kereta pertama Indonesia 🇳🇱. Rute Semarang–Tanggung dibuka 10 Agustus 1867 memakai lebar rel 1435mm (standar Eropa). Tujuan awal: mengangkut hasil bumi dan gula dari pedalaman Jawa ke pelabuhan Semarang. Jadi titik awal sejarah panjang perkeretaapian Indonesia 🚂🌏',
+    route:'Semarang ↔ Tanggung (25 km, rute pertama RI)',
+    quizHint:'kereta pertama Indonesia 1867 Semarang Tanggung'
+  },
+  {
+    emoji:'🚂', name:'SS 500 — Mogul Kolonial', country:'🇮🇩 Jawa', year:1896,
+    fuel:'Batubara (Uap)', speed:65, type:'Lokomotif Uap Mogul (2-6-0)', builder:'Werkspoor, Belanda',
+    isSteam:true, rack:false, tender:true, bodyColor:'#1a3a1a', wheelColor:'#0a1f0a',
+    fact:'SS 500 adalah lokomotif Mogul 2-6-0 buatan Werkspoor Belanda tahun 1896! Tiga pasang roda penggerak besar membuatnya kuat menarik gerbong panjang. Cat hijau tuanya khas kereta kolonial Hindia Belanda! 🟢🚂',
+    funFact:'🍬 SS 500 spesialis mengangkut gula — 1 kereta bisa tarik 20 gerbong gula dari pabrik ke pelabuhan!',
+    history:'SS 500 dipesan Staats Spoorwegen dari pabrik Werkspoor Amsterdam, Belanda 🇳🇱 di tahun 1896. Era itu Jawa dikenal sebagai "Gudang Gula Dunia" — 1/3 gula dunia datang dari Indonesia! SS 500 memainkan peran kunci mengangkut tebu dari perkebunan ke pabrik, lalu gula jadi ke pelabuhan untuk diekspor ke Eropa. Menjadi mesin penggerak ekonomi kolonial Hindia Belanda 🏭🍬',
+    route:'Jalur Jawa pengangkut gula',
+    quizHint:'lokomotif mogul SS500 pengangkut gula kolonial'
+  },
+  {
+    emoji:'🚂', name:'C51 — Dwipanggo Kepresidenan', country:'🇮🇩 Jawa', year:1917,
+    fuel:'Batubara (Uap)', speed:75, type:'Lokomotif Uap Ekspres Pacific', builder:'Hanomag, Jerman',
+    isSteam:true, rack:false, tender:true, bodyColor:'#4a1515', wheelColor:'#2a0808',
+    fact:'C51 "Dwipanggo" adalah lokomotif EKSPRES elegan buatan Hanomag Jerman 1917! Cat merah marunnya berkilau. Biasa menarik kereta kepresidenan dan pejabat tinggi — tampil mewah di zamannya! 👑🚂',
+    funFact:'🎩 "Dwipanggo" artinya "Dua Penguasa" — simbol kekuasaan yang diangkut kereta ini!',
+    history:'C51 dibuat oleh pabrik Hanomag di Hannover, Jerman tahun 1917 🇩🇪. Hindia Belanda mengimpor lokomotif ini khusus untuk kereta ekspres kelas satu yang mengangkut Gubernur Jenderal, pejabat kolonial, dan tamu penting. Setelah kemerdekaan 1945, C51 sempat dipakai sebagai kereta kepresidenan awal RI 🇮🇩. Kini jadi koleksi berharga pengingat kemewahan perkeretaapian era kolonial 👑',
+    route:'Jalur kelas satu Jawa (Jakarta–Surabaya)',
+    quizHint:'kereta kepresidenan awal C51 Dwipanggo maroon'
+  },
+  {
+    emoji:'🚂', name:'D52 — Djojobojo Pembangun', country:'🇮🇩 Indonesia', year:1954,
+    fuel:'Batubara (Uap)', speed:70, type:'Lokomotif Uap Tender Terakhir', builder:'Krupp, Jerman',
+    isSteam:true, rack:false, tender:true, bodyColor:'#0f1a40', wheelColor:'#070e25',
+    fact:'D52 "Djojobojo" adalah lokomotif UAP TERAKHIR yang dibeli Indonesia! Dibuat Krupp Jerman tahun 1954 atas pesanan Presiden Sukarno. Cat biru tua gagahnya jadi simbol ambisi pembangunan RI merdeka! 🇮🇩💪',
+    funFact:'📜 Nama "Djojobojo" diambil dari ramalan Raja Jayabaya — simbol kemakmuran yang dicita-citakan Sukarno!',
+    history:'Pasca-kemerdekaan, Presiden Sukarno ingin membangun kembali ekonomi RI yang hancur akibat perang 🏗️. Beliau memesan 100 unit D52 dari pabrik Krupp Essen, Jerman tahun 1954 — terbesar di dunia saat itu. D52 menjadi kelas lokomotif UAP TERAKHIR yang dibuat untuk Indonesia sebelum era diesel dimulai. Jadi simbol optimisme era Orde Lama dalam membangun bangsa 🇮🇩🎖️',
+    route:'Jalur utama Jawa era Orde Lama',
+    quizHint:'lokomotif uap terakhir Indonesia D52 Sukarno Krupp'
+  },
+  {
+    emoji:'🚃', name:'BB200 — Diesel Hidraulik Pertama', country:'🇮🇩 Indonesia', year:1957,
+    fuel:'Solar (Diesel Hidraulik)', speed:80, type:'Lokomotif Diesel Hidraulik', builder:'Esslingen, Jerman',
+    isDiesel:true, bodyColor:'#1a1a1a', accentColor:'#FFD600',
+    fact:'BB200 adalah lokomotif DIESEL HIDRAULIK pertama Indonesia! Dibuat pabrik Esslingen Jerman tahun 1957. Cat kuning-hitamnya mencolok — jadi primadona baru era Sukarno! 🟡⚫',
+    funFact:'⚙️ Beda dengan CC200 yang diesel-elektrik, BB200 pakai transmisi HIDRAULIK — mesinnya lebih ringkas!',
+    history:'Di tahun 1957, Presiden Sukarno melanjutkan modernisasi KAI dengan membeli BB200 dari pabrik Esslingen, Jerman 🇩🇪. Ini adalah lokomotif diesel hidraulik pertama di Indonesia — pelengkap CC200 yang diesel-elektrik. Keduanya menandai berakhirnya dominasi lokomotif uap di jalur utama. BB200 bertugas di jalur sekunder dan menarik kereta penumpang jarak menengah 🚂➡️🚃',
+    route:'Jalur sekunder Jawa (Cirebon, Madiun)',
+    quizHint:'diesel hidraulik pertama Indonesia BB200 kuning'
+  },
+  {
+    emoji:'🚃', name:'BB301 — Si Bulu Sikat', country:'🇮🇩 Indonesia', year:1964,
+    fuel:'Solar (Diesel Hidraulik)', speed:100, type:'Lokomotif Diesel Hidraulik', builder:'Krauss-Maffei, Jerman',
+    isDiesel:true, bodyColor:'#E65100', accentColor:'#FFFFFF',
+    fact:'BB301 dijuluki "Si Bulu Sikat" karena bentuk hidung kotaknya mirip sikat! 🪥 Buatan Krauss-Maffei Jerman tahun 1964, di era Ganefo. Cat oranye terangnya jadi ciri khas di jalur Sumatera dan Jawa! 🟠',
+    funFact:'🏆 Dipesan Sukarno untuk menyambut Ganefo 1963 — olimpiade tandingan yang digelar Indonesia!',
+    history:'BB301 dipesan dari pabrik Krauss-Maffei Munich, Jerman 🇩🇪 pada era Ganefo (Games of the New Emerging Forces) 1963–1964. Sukarno ingin menunjukkan kemajuan Indonesia ke negara-negara Non-Blok. Masinis menjuluki BB301 "Si Bulu Sikat" karena bentuk bagian depannya kotak seperti kepala sikat. Unit ini melayani jalur Jawa dan Sumatera selama puluhan tahun 🚃🇮🇩',
+    route:'Jalur Sumatera & Jawa Selatan',
+    quizHint:'kereta bulu sikat BB301 oranye Ganefo'
+  },
+  {
+    emoji:'🚃', name:'D301 — Pak Pos Pembawa Surat', country:'🇮🇩 Jawa', year:1962,
+    fuel:'Solar (Diesel Hidraulik)', speed:100, type:'Lokomotif Diesel Ringan', builder:'Krupp, Jerman',
+    isDiesel:true, bodyColor:'#B71C1C', accentColor:'#1a1a1a',
+    fact:'D301 dijuluki "Pak Pos" karena sering mengangkut surat dan paket ke pelosok Jawa! ✉️📦 Dibuat Krupp Jerman 1962, warna merah-hitamnya jadi pemandangan akrab di stasiun desa!',
+    funFact:'📮 1 gerbong pos bisa bawa 10.000+ surat dan paket sekaligus — jadi kurir cepat era 1960-an!',
+    history:'D301 diimpor dari pabrik Krupp, Jerman 🇩🇪 tahun 1962. Di era itu, kereta adalah tulang punggung pengiriman pos Indonesia — Kantor Pos bekerjasama erat dengan KAI. D301 menarik gerbong bagasi khusus berisi surat, paket, dan dokumen ke kota-kota kecil yang belum terjangkau mobil pos. Unit ini jadi penghubung penting sebelum era modernisasi pos dan kargo darat 🚃📬',
+    route:'Jalur Jawa (kereta pos & paket)',
+    quizHint:'kereta pos D301 merah pengangkut surat'
+  },
+  {
+    emoji:'🚃', name:'CC202 — Rajawali Pengangkut Berat', country:'🇮🇩 Sumatera & Jawa', year:1986,
+    fuel:'Solar (Diesel Elektrik)', speed:120, type:'Lokomotif Diesel Berat', builder:'General Electric, USA',
+    isDiesel:true, bodyColor:'#1565C0', accentColor:'#FFFFFF',
+    fact:'CC202 dijuluki "Rajawali" karena kekuatannya yang luar biasa! 🦅 Dibuat GE Amerika 1986, khusus menarik kereta barang BERAT di Sumatera dan Jawa. Satu CC202 bisa tarik 40+ gerbong batubara sekaligus! 💪',
+    funFact:'⛏️ CC202 adalah penarik utama kereta batubara Babaranjang Sumatera — 60 gerbong sepanjang 1 km!',
+    history:'CC202 diimpor dari General Electric Amerika 🇺🇸 mulai tahun 1986 untuk memperkuat armada kereta barang Indonesia. Keunggulannya: traksi sangat besar, cocok untuk jalur pegunungan dan muatan super berat. CC202 menjadi andalan PT KAI mengangkut batubara Bukit Asam di Sumatera Selatan dan kargo industri di Jawa. Jasanya menopang ekonomi energi dan logistik nasional 🚆⛏️',
+    route:'Tanjung Enim ↔ Tarahan (batubara Sumatera)',
+    quizHint:'kereta barang berat CC202 Rajawali GE biru'
+  },
+  {
+    emoji:'🚃', name:'Argo Bromo 1997 — Eksekutif Perdana', country:'🇮🇩 Jakarta–Surabaya', year:1997,
+    fuel:'Solar (Diesel)', speed:120, type:'Kereta Eksekutif Perintis', builder:'INKA Madiun',
+    isDiesel:true, bodyColor:'#0D47A1', accentColor:'#FF6F00',
+    fact:'Argo Bromo 1997 adalah kereta EKSEKUTIF perdana yang memulai era "Argo" di Indonesia! 🏆 Nama diambil dari Gunung Bromo. Gerbongnya buatan INKA Madiun — produk kebanggaan Indonesia! 🌋',
+    funFact:'✨ Gerbong kelas eksekutif ini punya AC, kursi reclining, dan TV — mewah di zamannya!',
+    history:'Argo Bromo diluncurkan 31 Juli 1997 di era Presiden Soeharto sebagai kereta eksekutif pertama kelas "Argo" 🇮🇩. Nama "Argo" jadi simbol prestise — setiap kereta Argo dinamai gunung di Indonesia (Bromo, Lawu, Muria, dll). Gerbongnya dirancang dan dibuat INKA Madiun, menandai kemandirian industri kereta nasional. Argo Bromo menjadi pionir rute premium Jakarta–Surabaya sebelum digantikan Argo Bromo Anggrek 🚄',
+    route:'Jakarta Gambir ↔ Surabaya Pasar Turi',
+    quizHint:'kereta argo pertama Indonesia Argo Bromo 1997'
+  },
+  {
+    emoji:'🚃', name:'Taksaka — Nagatatha Yogyakarta', country:'🇮🇩 Jakarta–Yogyakarta', year:1999,
+    fuel:'Solar (Diesel)', speed:110, type:'Kereta Eksekutif Malam', builder:'INKA Madiun',
+    isDiesel:true, bodyColor:'#1B5E20', accentColor:'#FDD835',
+    fact:'Taksaka adalah kereta eksekutif favorit rute Jakarta–Yogyakarta! 🏯 Nama "Taksaka" diambil dari senjata Arjuna dalam kisah Mahabharata — senjata ampuh sang pahlawan! Warna hijau-kuningnya khas! 🟢🟡',
+    funFact:'🏹 Dalam Mahabharata, Nagatatha/Taksaka adalah panah sakti Arjuna yang tidak pernah meleset!',
+    history:'Taksaka diluncurkan PT KAI tahun 1999 untuk melayani penumpang eksekutif rute Jakarta Gambir ↔ Yogyakarta Tugu 🏯. Gerbongnya diproduksi INKA di Madiun dengan desain elegan dan nyaman untuk perjalanan malam. Nama "Taksaka" dipilih dari khazanah wayang Jawa — merujuk senjata panah Arjuna — mencerminkan identitas budaya kota tujuan Yogyakarta sebagai pusat budaya Jawa 🇮🇩🎭',
+    route:'Jakarta Gambir ↔ Yogyakarta Tugu',
+    quizHint:'kereta eksekutif Taksaka Jakarta Yogyakarta'
+  },
+  {
+    emoji:'🚇', name:'KRL JR 205 — Hibah Jepang', country:'🇮🇩 Jabodetabek', year:2013,
+    fuel:'Listrik (1500 VDC)', speed:100, type:'Kereta Rel Listrik Retrofit', builder:'JR East Jepang (retrofit Indonesia)',
+    isElectric:true, bodyColor:'#FFC107', accentColor:'#D32F2F',
+    fact:'KRL JR 205 adalah kereta BEKAS dari Jepang yang jadi tulang punggung KRL Jabodetabek! ⚡ Awalnya beroperasi di jalur Yamanote Tokyo, kini setelah direkondisi jadi andalan pulang-pergi kerja warga Jakarta! 🇯🇵➡️🇮🇩',
+    funFact:'🗾 Dulu keretanya bertuliskan huruf Kanji Jepang — setelah direkondisi diganti huruf Latin Indonesia!',
+    history:'Sejak 2013, PT KAI Commuter mengimpor seri JR 205 bekas dari JR East Jepang 🇯🇵. Kereta ini sudah dipensiunkan di Tokyo, lalu direkondisi di Balai Yasa Manggarai — cat ulang, AC baru, sistem pintu diperbaiki. Hasilnya: armada KRL bertambah banyak dengan biaya jauh lebih murah dari beli baru. JR 205 jadi tulang punggung KRL Jabodetabek yang mengangkut 1 juta+ penumpang per hari 🚆⚡',
+    route:'Bogor/Bekasi/Tangerang ↔ Jakarta',
+    quizHint:'kereta bekas Jepang JR205 KRL Jabodetabek'
+  },
+  {
+    emoji:'🚋', name:'LRT Palembang — Asian Games 2018', country:'🇮🇩 Palembang, Sumatera Selatan', year:2018,
+    fuel:'Listrik', speed:85, type:'Light Rail Transit', builder:'INKA + LEN Indonesia',
+    isElectric:true, bodyColor:'#2E7D32', accentColor:'#FBC02D',
+    fact:'LRT Palembang adalah kereta LRT pertama di Sumatera! 🏆 Dibangun khusus untuk Asian Games 2018. Seluruh keretanya buatan anak bangsa — INKA Madiun dan LEN Bandung! 🇮🇩🏭',
+    funFact:'🏅 Di Asian Games 2018, LRT ini mengangkut ribuan atlet dan penonton ke Stadion Jakabaring!',
+    history:'LRT Palembang dibangun khusus menyambut Asian Games 2018 yang diselenggarakan di Jakarta dan Palembang 🏅. Proyek ini membanggakan karena dikerjakan sepenuhnya oleh BUMN Indonesia: gerbong dari PT INKA Madiun, sistem sinyal dari PT LEN Bandung, dan konstruksi oleh PT Waskita Karya. Diresmikan Presiden Jokowi Juli 2018, LRT ini jadi LRT pertama di Sumatera dan simbol kemandirian teknologi transportasi Indonesia 🇮🇩🚆',
+    route:'Bandara SMB II ↔ DJKA Jakabaring (23 km)',
+    quizHint:'LRT pertama Sumatera Palembang Asian Games'
+  }
+]
+
+const G18_QUESTIONS_BANK = [
+  { q:'Apa nama orang yang mengemudikan kereta?', emoji:'🧑‍✈️', answers:['Masinis','Pilot','Kapten','Sopir bus'], correct:0 },
+  { q:'Di mana kereta berjalan?', emoji:'🛤️', answers:['Di atas rel','Di atas jalan raya','Di atas air','Di udara'], correct:0 },
+  { q:'Apa gunanya roda kereta?', emoji:'🎡', answers:['Supaya bisa jalan di rel','Supaya bisa terbang','Supaya bisa berenang','Supaya bisa berputar di udara'], correct:0 },
+  { q:'Bagian kereta yang menghubungkan satu gerbong ke gerbong lain disebut apa?', emoji:'🔗', answers:['Sambungan/Kopling','Roda','Cerobong','Boiler'], correct:0 },
+  { q:'Apa nama tempat kereta berhenti untuk menaikkan penumpang?', emoji:'🏛️', answers:['Stasiun','Terminal bus','Bandara','Pelabuhan'], correct:0 },
+  { q:'Cerobong pada kereta uap berguna untuk apa?', emoji:'🏭', answers:['Tempat keluarnya asap','Tempat masuk penumpang','Menyimpan air','Sebagai roda cadangan'], correct:0 },
+  { q:'Apa yang membuat kereta uap bisa bergerak?', emoji:'♨️', answers:['Uap panas dari air yang dipanaskan','Bensin seperti mobil','Tenaga angin','Baterai besar'], correct:0 },
+  { q:'Boiler pada kereta uap berfungsi untuk apa?', emoji:'🫙', answers:['Memanaskan air menjadi uap','Menyimpan penumpang','Memberi cahaya di malam hari','Mengatur kecepatan'], correct:0 },
+  { q:'Kereta yang ditenagai oleh listrik disebut kereta apa?', emoji:'⚡', answers:['Kereta listrik','Kereta uap','Kereta balon','Kereta angin'], correct:0 },
+  { q:'Suara khas kereta yang sering kita dengar adalah?', emoji:'📢', answers:['Tuuut tuuut!','Wooosh!','Bzzz!','Splash!'], correct:0 },
+  { q:'Kereta api bergerak di atas apa?', emoji:'🛤️', answers:['Rel baja','Jalan aspal','Pasir','Rumput'], correct:0 },
+  { q:'Berapa jalur rel yang biasanya digunakan kereta?', emoji:'🔢', answers:['Dua jalur (kiri dan kanan)','Satu jalur saja','Empat jalur','Tidak ada jalur'], correct:0 },
+  { q:'Apa warna lampu merah di pintu perlintasan kereta artinya?', emoji:'🚦', answers:['Berhenti, kereta akan lewat!','Boleh jalan terus','Kereta sudah pergi','Masuk ke dalam kereta'], correct:0 },
+  { q:'Gerbong kereta yang khusus untuk mengangkut barang disebut?', emoji:'📦', answers:['Gerbong barang/kargo','Gerbong penumpang','Gerbong makan','Gerbong tidur'], correct:0 },
+  { q:'Kereta yang bisa naik ke gunung pakai rel bergerigi disebut?', emoji:'⛰️', answers:['Kereta gigi/bergigi','Kereta super cepat','Kereta selam','Kereta terbang'], correct:0 },
+  { q:'Apa yang harus kita lakukan saat kereta akan melintas di perlintasan?', emoji:'⚠️', answers:['Berhenti dan menunggu','Lari menyeberang cepat','Diam di tengah rel','Melambai ke masinis'], correct:0 },
+  { q:'Di Museum Kereta Ambarawa ada banyak kereta tua. Museum ini ada di mana?', emoji:'🗺️', answers:['Jawa Tengah, Indonesia','Bali','Jakarta','Surabaya'], correct:0 },
+  { q:'Kereta tercepat di dunia menggunakan teknologi apa?', emoji:'🧲', answers:['Magnet (Maglev)','Roda bergerigi','Baling-baling','Roket'], correct:0 },
+  { q:'Rel kereta biasanya terbuat dari apa?', emoji:'⚙️', answers:['Baja/besi','Kayu','Plastik','Karet'], correct:0 },
+  { q:'Apa nama tempat tidur di dalam kereta malam?', emoji:'🛏️', answers:['Sleeper / gerbong tidur','Kursi biasa','Bangku taman','Kasur melayang'], correct:0 },
+  { q:'Bahan bakar utama kereta uap zaman dulu adalah?', emoji:'🪨', answers:['Batu bara','Bensin','Angin','Listrik'], correct:0 },
+  { q:'Asap yang keluar dari cerobong kereta uap berasal dari?', emoji:'💨', answers:['Pembakaran batu bara','Mesin pendingin','Kipas angin','Uap air dingin'], correct:0 },
+  { q:'Mengapa roda kereta uap terbuat dari besi?', emoji:'⚙️', answers:['Supaya kuat dan tidak mudah rusak','Supaya ringan','Supaya bisa mengapung','Supaya bisa terbang'], correct:0 },
+  { q:'Selain batu bara, kereta uap juga bisa pakai bahan bakar apa?', emoji:'🪵', answers:['Kayu bakar','Gula','Air laut','Daun kering'], correct:0 },
+  { q:'Kereta uap mulai banyak digunakan sekitar abad ke berapa?', emoji:'📅', answers:['Abad ke-19 (1800-an)','Abad ke-21 (2000-an)','Abad ke-15 (1400-an)','Abad ke-10 (900-an)'], correct:0 },
+  { q:'Kereta diesel menggunakan bahan bakar apa?', emoji:'🛢️', answers:['Solar/diesel','Batu bara','Angin','Baterai saja'], correct:0 },
+  { q:'Kereta listrik mendapat aliran listrik dari mana?', emoji:'⚡', answers:['Kawat listrik di atas rel atau dari rel ketiga','Baterai di dalam gerbong saja','Panel surya di atap saja','Generator bensin'], correct:0 },
+  { q:'Kereta mana yang tidak mengeluarkan asap hitam sama sekali?', emoji:'🌿', answers:['Kereta listrik','Kereta uap','Kereta diesel','Kereta batu bara'], correct:0 },
+  { q:'Museum Kereta Api Ambarawa dulunya adalah sebuah?', emoji:'🏚️', answers:['Stasiun kereta','Pabrik baja','Sekolah masinis','Rumah sakit'], correct:0 },
+  { q:'Kereta wisata Ambarawa berjalan melewati daerah yang terkenal karena apa?', emoji:'🌄', answers:['Pemandangan alam yang indah dan pegunungan','Pantai yang panjang','Padang pasir','Hutan es'], correct:0 },
+  { q:'Saat naik kereta, kita harus berdiri di belakang garis kuning karena?', emoji:'🟡', answers:['Supaya aman dari kereta yang lewat','Supaya bisa naik lebih cepat','Garis itu untuk hiasan','Agar bisa melihat kereta dari dekat'], correct:0 },
+  { q:'Bolehkah kita bermain di atas rel kereta?', emoji:'❌', answers:['Tidak boleh, sangat berbahaya!','Boleh kalau tidak ada kereta','Boleh di malam hari','Boleh kalau bersama orang dewasa'], correct:0 },
+  { q:'Apa yang harus kita pegang saat naik tangga kereta?', emoji:'🤝', answers:['Pegangan tangan/handrail','Tas kita','Teman kita saja','Tidak perlu pegang apapun'], correct:0 },
+  { q:'Kapan kita boleh masuk ke dalam kereta?', emoji:'🚪', answers:['Setelah pintu terbuka dan penumpang keluar dulu','Langsung saja masuk','Sebelum kereta berhenti','Saat kereta masih berjalan'], correct:0 },
+  { q:'Kereta Shinkansen yang terkenal berasal dari negara mana?', emoji:'🇯🇵', answers:['Jepang','China','Prancis','Amerika'], correct:0 },
+  { q:'Kereta TGV yang super cepat berasal dari negara mana?', emoji:'🇫🇷', answers:['Prancis','Jepang','Jerman','Indonesia'], correct:0 },
+  { q:'Apa arti "Shinkansen" dalam bahasa Jepang?', emoji:'🚂', answers:['Jalur baru / kereta peluru','Kereta tua','Kereta angin','Kereta uap'], correct:0 },
+  { q:'Kereta Maglev bergerak dengan cara apa yang unik?', emoji:'🧲', answers:['Melayang di atas rel menggunakan magnet','Berjalan di atas air','Menggunakan roda biasa yang sangat cepat','Ditarik oleh pesawat'], correct:0 },
+  { q:'Kereta bawah tanah di kota besar biasa disebut apa?', emoji:'🚇', answers:['Subway atau MRT','Bus kota','Trem','Monorel'], correct:0 },
+  { q:'Berapa banyak rel yang dibutuhkan agar kereta bisa berjalan lurus?', emoji:'🛤️', answers:['Dua (kiri dan kanan)','Satu','Empat','Tiga'], correct:0 },
+  { q:'Kereta yang bergelantung di bawah rel atas disebut apa?', emoji:'🚡', answers:['Monorel gantung','Kereta selam','Kereta uap','Kereta angin'], correct:0 },
+  { q:'Warna tradisional lokomotif uap Ambarawa kebanyakan adalah?', emoji:'🎨', answers:['Hitam','Merah cerah','Kuning terang','Biru muda'], correct:0 },
+  { q:'Kereta barang bisa mengangkut benda-benda berat seperti?', emoji:'⛏️', answers:['Batu bara, kayu, kontainer','Makanan segar saja','Penumpang saja','Buku sekolah saja'], correct:0 },
+  { q:'Apa yang terdengar saat roda kereta melintasi sambungan rel?', emoji:'👂', answers:['Klak-klak klak-klak!','Vroom vroom!','Bip bip!','Ciut ciut!'], correct:0 },
+  { q:'Kenapa jendela kereta terbuat dari kaca tebal?', emoji:'🪟', answers:['Supaya kuat dan aman untuk penumpang','Supaya terlihat bagus saja','Supaya kereta lebih ringan','Karena kaca murah'], correct:0 },
+  { q:'Apa yang dimaksud dengan "kereta ekspres"?', emoji:'⚡', answers:['Kereta yang hanya berhenti di stasiun besar saja','Kereta yang membawa paket ekspedisi','Kereta yang selalu terlambat','Kereta yang berjalan sangat pelan'], correct:0 },
+  { q:'Siapa yang bertanggung jawab menjaga keamanan penumpang di dalam kereta?', emoji:'👮', answers:['Petugas/kondektur kereta','Penumpang sendiri','Anak-anak','Tidak ada yang bertanggung jawab'], correct:0 },
+  { q:'Apa fungsi klakson/sirine pada kereta?', emoji:'📯', answers:['Memberi peringatan kepada orang di depan kereta','Sebagai lagu pengiring','Untuk mengisi bahan bakar','Untuk membuka pintu'], correct:0 },
+  { q:'Kereta yang berjalan di atas satu rel disebut?', emoji:'🚝', answers:['Monorel','Kereta ganda','Kereta uap','Tramway'], correct:0 },
+  { q:'Apa yang biasanya dijual di gerbong restoran kereta?', emoji:'🍱', answers:['Makanan dan minuman','Baju dan sepatu','Mainan','Buku pelajaran'], correct:0 },
+  { q:'Berapa lama kereta uap zaman dulu biasanya mengisi ulang batu baranya?', emoji:'⏱️', answers:['Di setiap stasiun besar','Setiap 5 menit','Hanya sekali seumur hidup','Tidak perlu diisi ulang'], correct:0 },
+  { q:'Kereta api adalah kendaraan yang berjalan di atas...?', emoji:'🚂', answers:['Rel','Jalan raya','Lautan','Langit'], correct:0 },
+  { q:'Gerbong pertama yang ada mesinnya disebut?', emoji:'🚂', answers:['Lokomotif','Gerbong makan','Gerbong tidur','Gerbong barang'], correct:0 },
+  { q:'Apa warna api yang membakar batu bara di dalam kereta uap?', emoji:'🔥', answers:['Merah-oranye','Hijau','Biru dingin','Ungu'], correct:0 },
+  { q:'Jika kereta mau belok arah, apa yang diubah?', emoji:'🔀', answers:['Posisi rel (wesel)','Warna kereta','Jumlah penumpang','Nama stasiun'], correct:0 },
+  { q:'Kenapa kereta lebih ramah lingkungan daripada pesawat?', emoji:'🌿', answers:['Mengangkut banyak orang dengan bahan bakar lebih sedikit','Bisa terbang tanpa emisi','Kereta tidak menggunakan bahan bakar','Kereta berjalan lebih lambat'], correct:0 },
+  { q:'Apa nama baju resmi masinis kereta api?', emoji:'👔', answers:['Seragam masinis','Jas pesta','Baju renang','Baju olahraga'], correct:0 },
+  { q:'Museum Ambarawa menyimpan kereta-kereta bersejarah agar?', emoji:'🏛️', answers:['Kita bisa belajar sejarah dan menghargai kereta lama','Kereta bisa berlomba','Kereta bisa dijual kembali','Kereta bisa dipakai masak'], correct:0 },
+  { q:'Apa nama kereta komuter paling terkenal di Jakarta?', emoji:'🚆', answers:['KRL Commuter Line','Kereta Naga','Bus Kota Express','MRT Tanah Abang'], correct:0 },
+  { q:'KRL singkatan dari apa?', emoji:'⚡', answers:['Kereta Rel Listrik','Kereta Rel Lama','Kereta Roda Listrik','Kereta Rel Laut'], correct:0 },
+  { q:'MRT di Jakarta berjalan di atas dan di bawah apa?', emoji:'🚇', answers:['Di atas jalan (layang) dan di bawah tanah','Hanya di bawah tanah','Hanya di atas air','Di atas pegunungan'], correct:0 },
+  { q:'Lokomotif CC 201 adalah kereta jenis apa?', emoji:'🚂', answers:['Lokomotif diesel','Kereta uap','Kereta listrik','Kereta magnet'], correct:0 },
+  { q:'Kereta mana yang melayani rute Jakarta–Surabaya paling cepat?', emoji:'🏎️', answers:['Kereta Argo Bromo Anggrek','Kereta Barang','KRL Commuter','Kereta Gigi'], correct:0 },
+  { q:'PT KAI singkatan dari apa?', emoji:'🇮🇩', answers:['Kereta Api Indonesia','Kereta Angkut Indonesia','Kendaraan Antar Indonesia','Kapal Angkut Indonesia'], correct:0 },
+  { q:'LRT adalah singkatan dari?', emoji:'🚈', answers:['Light Rail Transit','Large Rail Train','Long Route Track','Light Road Train'], correct:0 },
+  { q:'Stasiun kereta terbesar dan terkenal di Jakarta adalah?', emoji:'🏛️', answers:['Stasiun Gambir','Stasiun Ambarawa','Stasiun Bogor','Stasiun Bandung'], correct:0 },
+  { q:'Kereta Argo dalam bahasa Indonesia berarti apa?', emoji:'⛰️', answers:['Gunung','Laut','Sungai','Angin'], correct:0 },
+  { q:'Berapakah kelas pelayanan utama kereta penumpang di Indonesia?', emoji:'🎫', answers:['Tiga kelas: Eksekutif, Bisnis, Ekonomi','Satu kelas saja','Dua kelas saja','Lima kelas'], correct:0 },
+  { q:'Jalur kereta api pertama di Indonesia dibangun oleh siapa?', emoji:'📜', answers:['Pemerintah Belanda','Pemerintah Jepang','Pemerintah Indonesia','Pemerintah Inggris'], correct:0 },
+  { q:'Kota mana yang terkenal dengan wisata kereta uap Ambarawa?', emoji:'🗺️', answers:['Ambarawa, Jawa Tengah','Yogyakarta','Surabaya','Medan'], correct:0 },
+  { q:'Kereta wisata Ambarawa terkenal karena bisa mendaki bukit dengan apa?', emoji:'⚙️', answers:['Rel bergerigi di tengah rel','Roda yang sangat besar','Mesin jet','Baling-baling di bawah'], correct:0 },
+  { q:'Di kota mana ada kereta gantung/cable car terkenal di Indonesia?', emoji:'🚡', answers:['Puncak, Jawa Barat','Bali','Lombok','Medan'], correct:0 },
+  { q:'Lokomotif D 301 adalah kereta uap yang berjalan di atas rel dengan lebar berapa?', emoji:'📏', answers:['1067 mm (rel sempit)','1435 mm (rel standar)','500 mm (rel mini)','2000 mm (rel lebar)'], correct:0 },
+  { q:'Mengapa roda kereta dan rel terbuat dari besi/baja?', emoji:'🔩', answers:['Karena besi sangat keras dan tahan lama','Karena besi murah sekali','Karena besi bisa mengapung','Karena besi ringan'], correct:0 },
+  { q:'Bagaimana kereta bisa berhenti jika tidak ada rem?', emoji:'🛑', answers:['Tidak bisa, makanya kereta pasti punya rem!','Dengan menabrak tembok','Dengan melompat dari rel','Dengan terbang ke atas'], correct:0 },
+  { q:'Kenapa rel kereta ada jarak kecil di setiap sambungannya?', emoji:'🌡️', answers:['Supaya rel bisa memuai saat panas tanpa melengkung','Supaya terlihat indah','Supaya lebih murah','Supaya kereta bisa melompat'], correct:0 },
+  { q:'Apa yang dimaksud dengan "trek lurus" pada rel kereta?', emoji:'📐', answers:['Jalur rel yang tidak memiliki tikungan','Rel yang sangat pendek','Rel untuk kereta tua','Rel yang bergelombang'], correct:0 },
+  { q:'Kereta Maglev bisa sangat cepat karena tidak ada apa?', emoji:'🧲', answers:['Tidak ada gesekan antara roda dan rel','Tidak ada penumpang','Tidak ada bahan bakar','Tidak ada masinis'], correct:0 },
+  { q:'Apa yang terjadi jika rel kereta terlalu panas?', emoji:'🌞', answers:['Rel bisa melengkung dan berbahaya','Kereta menjadi lebih cepat','Rel berubah warna menjadi merah','Kereta bisa terbang'], correct:0 },
+  { q:'Mengapa kereta lebih hemat bahan bakar daripada mobil?', emoji:'🌿', answers:['Karena satu kereta bisa angkut ratusan orang sekaligus','Karena kereta lebih kecil','Karena kereta tidak butuh energi','Karena kereta berjalan lebih pelan'], correct:0 },
+  { q:'Sistem pengereman kereta modern menggunakan apa?', emoji:'💨', answers:['Rem udara (pneumatik)','Rem tangan biasa','Air panas','Magnet saja'], correct:0 },
+  { q:'Apa yang dimaksud dengan "wesel" pada rel kereta?', emoji:'🔀', answers:['Alat untuk memindahkan kereta ke jalur lain','Nama masinis','Jenis bahan bakar','Bagian dari gerbong'], correct:0 },
+  { q:'Kereta dapat mengangkut banyak barang berat karena apa?', emoji:'💪', answers:['Karena gesekan roda besi di rel besi sangat kecil','Karena kereta punya sayap','Karena kereta terbuat dari plastik ringan','Karena kereta punya 100 roda'], correct:0 },
+  { q:'Panton atau "pantograph" pada kereta listrik berfungsi apa?', emoji:'⚡', answers:['Mengambil listrik dari kawat di atas kepala','Sebagai antena TV','Untuk memberi sinyal ke penumpang','Sebagai rem darurat'], correct:0 },
+  { q:'Apa itu "sinyal semaphore" yang digunakan di zaman kereta dulu?', emoji:'🚦', answers:['Alat sinyal berlengan yang memberi tanda aman atau bahaya','Nama stasiun di Jawa','Jenis kereta uap','Bahan bakar kereta'], correct:0 },
+  { q:'Mengapa kereta cepat (HSR) memiliki hidung yang sangat runcing?', emoji:'🔺', answers:['Supaya bisa membelah angin dengan lebih mudah','Supaya terlihat keren','Supaya bisa dipakai sebagai senjata','Supaya bisa mengangkut lebih banyak penumpang'], correct:0 },
+  { q:'Apa yang terjadi saat dua kereta bertemu di jalur yang sama dan berlawanan arah?', emoji:'😱', answers:['Sangat berbahaya! Itu sebabnya ada sistem sinyal khusus','Kereta saling melompati','Salah satu kereta terbang','Tidak mungkin terjadi'], correct:0 },
+  { q:'Apa nama alat yang mengukur kecepatan kereta?', emoji:'🖥️', answers:['Speedometer/tachometer','Termometer','Barometer','Kompas'], correct:0 },
+  { q:'Negara mana yang memiliki jaringan kereta cepat (HSR) terpanjang di dunia?', emoji:'🌏', answers:['China','Jepang','Prancis','Jerman'], correct:0 },
+  { q:'Kereta ICE yang terkenal berasal dari negara mana?', emoji:'🇩🇪', answers:['Jerman','Italia','Spanyol','Belgia'], correct:0 },
+  { q:'Kereta KTX berasal dari negara mana?', emoji:'🇰🇷', answers:['Korea Selatan','Korea Utara','Jepang','Taiwan'], correct:0 },
+  { q:'Apa nama kereta cepat terbaru China yang bisa melampaui 350 km/jam?', emoji:'🚂', answers:['CR400 Fuxing','Shinkansen N700','TGV Duplex','ICE 4'], correct:0 },
+  { q:'Trans-Siberia Railway adalah rute kereta terpanjang di dunia. Ada di negara mana?', emoji:'🇷🇺', answers:['Rusia','Amerika','Australia','India'], correct:0 },
+  { q:'Kereta Orient Express yang terkenal di buku cerita melayani rute di mana?', emoji:'🌍', answers:['Eropa (dari Paris ke Istanbul)','Asia (dari Tokyo ke Beijing)','Afrika (dari Kairo ke Capetown)','Amerika (dari New York ke Los Angeles)'], correct:0 },
+  { q:'Berapa kira-kira kecepatan maksimum Shinkansen saat ini?', emoji:'🚂', answers:['Sekitar 320 km/jam','Sekitar 100 km/jam','Sekitar 500 km/jam','Sekitar 50 km/jam'], correct:0 },
+  { q:'Apa nama stasiun kereta paling sibuk di dunia yang ada di Jepang?', emoji:'🏙️', answers:['Stasiun Shinjuku, Tokyo','Stasiun Grand Central, New York','Stasiun Waterloo, London','Stasiun Gare du Nord, Paris'], correct:0 },
+  { q:'Eurostar adalah kereta yang melintas di bawah laut antara negara mana?', emoji:'🌊', answers:['Inggris dan Prancis','Amerika dan Kanada','Jepang dan Korea','Swedia dan Denmark'], correct:0 },
+  { q:'Kereta yang terkenal melewati pegunungan Alpen ada di negara mana?', emoji:'🏔️', answers:['Swiss','Brasil','Australia','Meksiko'], correct:0 },
+  { q:'Negara manakah yang pertama kali membuat kereta uap di dunia?', emoji:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', answers:['Inggris','Amerika','Prancis','Jerman'], correct:0 },
+  { q:'Siapa penemu lokomotif uap pertama yang terkenal?', emoji:'👨‍🔬', answers:['George Stephenson','Albert Einstein','Thomas Edison','James Watt'], correct:0 },
+  { q:'Tahun berapa kereta uap pertama kali berjalan di lintasan penumpang?', emoji:'📅', answers:['Tahun 1825','Tahun 1900','Tahun 1750','Tahun 1950'], correct:0 },
+  { q:'Kereta Swiss yang terkenal melewati pegunungan tinggi disebut?', emoji:'⛰️', answers:['Glacier Express','Polar Express','Desert Express','Ocean Express'], correct:0 },
+  { q:'Kereta mana yang pernah jadi yang tercepat di dunia dengan 574 km/jam?', emoji:'🏆', answers:['TGV (Prancis)','Shinkansen (Jepang)','Maglev SCMaglev (Jepang)','ICE (Jerman)'], correct:0 },
+  { q:'Apa yang harus kamu lakukan jika ketinggalan kereta?', emoji:'😅', answers:['Tunggu kereta berikutnya dengan aman','Kejar kereta sambil berlari di rel','Coba naik ke kereta yang sudah jalan','Melompat ke atas kereta'], correct:0 },
+  { q:'Saat di dalam kereta yang penuh sesak, kamu harus?', emoji:'🚶', answers:['Tetap tenang dan berpegangan','Berteriak keras','Mendorong penumpang lain','Lari ke gerbong lain tanpa berpegangan'], correct:0 },
+  { q:'Apa yang TIDAK boleh kamu lempar ke luar jendela kereta?', emoji:'🚮', answers:['Semua benda apapun, termasuk sampah!','Hanya kertas','Hanya makanan','Hanya batu'], correct:0 },
+  { q:'Saat kereta darurat harus berhenti mendadak, apa yang sebaiknya kamu lakukan?', emoji:'🆘', answers:['Pegang pegangan erat-erat dan duduk','Berdiri dan berlari','Buka pintu dan keluar','Berteriak sekeras mungkin'], correct:0 },
+  { q:'Mengapa perlintasan kereta api memiliki palang (portal) yang turun?', emoji:'⛔', answers:['Untuk mencegah kendaraan melintas saat kereta lewat','Karena sedang diperbaiki','Untuk menghitung kendaraan yang lewat','Karena rel sedang basah'], correct:0 },
+  { q:'Berapa jauh jarak aman yang harus kamu jaga dari tepi peron kereta?', emoji:'🟡', answers:['Di belakang garis kuning yang ada di peron','Tepat di tepi peron','Satu langkah dari rel','Tidak perlu jaga jarak'], correct:0 },
+  { q:'Kereta barang terpanjang di dunia bisa mencapai panjang berapa kilometer?', emoji:'😲', answers:['Lebih dari 7 km panjangnya!','Hanya 100 meter','Tepat 1 km','Sekitar 500 meter'], correct:0 },
+  { q:'Apa nama suara khas yang dihasilkan roda kereta saat melewati sambungan rel?', emoji:'🎵', answers:['Klakson-klakson (clackety-clack)','Zing-zing','Boom-boom','Bip-bip'], correct:0 },
+  { q:'Kereta wisata mini yang sering ada di kebun binatang atau taman disebut?', emoji:'🎠', answers:['Kereta mini/kereta kecil','Kereta uap bersar','MRT','Monorel'], correct:0 },
+  { q:'Kereta di Disneyland yang mengelilingi taman menggunakan tenaga apa?', emoji:'🎡', answers:['Kereta uap (steam train)','Kereta listrik','Kereta diesel','Kereta angin'], correct:0 },
+  { q:'Apa nama kereta legendaris yang ada di film "Polar Express"?', emoji:'🎄', answers:['Kereta Natal ajaib yang pergi ke Kutub Utara','Shinkansen Kutub Utara','KRL Natal','TGV Salju'], correct:0 },
+  { q:'Kereta yang membawa susu dan hasil ladang dari desa ke kota biasa disebut?', emoji:'🐄', answers:['Kereta barang / freight train','Kereta penumpang kelas bisnis','Shinkansen perdesaan','MRT pertanian'], correct:0 },
+  { q:'Mengapa kereta wisata uap di Ambarawa sangat populer untuk wisata keluarga?', emoji:'❤️', answers:['Karena jarang bisa melihat kereta uap asli yang masih berjalan','Karena sangat cepat','Karena gratis untuk semua orang','Karena ada di semua kota'], correct:0 },
+  { q:'Di Eropa, kereta antar kota biasanya disebut apa?', emoji:'🇪🇺', answers:['InterCity atau Intercity Express','LocalCity','SlowCity','NightBus'], correct:0 },
+  { q:'Gerbong tidur (sleeper car) di kereta malam biasanya memiliki apa di dalamnya?', emoji:'🌙', answers:['Tempat tidur bersusun dan bantal','Hanya kursi biasa','Kolam renang kecil','Dapur dan kompor'], correct:0 },
+  { q:'Kenapa kereta api disebut "kereta api" padahal tidak selalu pakai api?', emoji:'🔥', answers:['Karena dulu kereta pertama menggunakan uap dari api untuk bergerak','Karena kereta terbuat dari besi yang panas','Karena kereta berjalan secepat api','Karena penumpang dilarang membawa api'], correct:0 },
+  { q:'Berapa berat sebuah lokomotif kereta uap besar kira-kira?', emoji:'⚖️', answers:['Bisa mencapai 100-200 ton lebih!','Hanya sekitar 1 ton','Sekitar 5 ton','Persis sama dengan truk biasa'], correct:0 },
+  { q:'Apa itu "gerbong restorasi" di kereta penumpang?', emoji:'🍽️', answers:['Gerbong tempat penumpang bisa makan dan minum','Gerbong yang sedang diperbaiki','Gerbong untuk menyimpan makanan saja','Gerbong khusus masinis'], correct:0 },
+  { q:'Mengapa membangun jalur kereta di pegunungan sangat sulit?', emoji:'🏔️', answers:['Karena harus membuat terowongan dan jembatan yang sangat besar','Karena tidak ada tanah datar','Karena gunung bergerak','Karena kereta tidak bisa naik turun'], correct:0 },
+  { q:'Terowongan kereta yang menembus gunung biasanya dibangun menggunakan apa?', emoji:'⛏️', answers:['Mesin bor raksasa (TBM) dan dinamit','Tangan manusia saja','Sihir','Air keras'], correct:0 },
+  { q:'Jembatan kereta yang sangat tinggi di atas lembah disebut apa?', emoji:'🌉', answers:['Viaduct','Overpass','Flyover','Causeway'], correct:0 },
+  { q:'Kereta yang bisa berjalan di atas air menggunakan apa?', emoji:'🌊', answers:['Jembatan atau terowongan bawah laut, bukan langsung di air','Pontoon / rakit besar','Roda khusus anti air','Kereta tidak bisa melewati air'], correct:0 },
+  { q:'Saat musim salju, rel kereta bisa tertutup salju. Apa yang dilakukan petugas?', emoji:'❄️', answers:['Membersihkan salju dengan snowplow khusus di kereta','Membiarkan kereta menabrak salju','Menutup semua stasiun permanen','Mengalihkan kereta ke jalan raya'], correct:0 },
+  { q:'Di daerah pegunungan yang sangat terjal, kereta bergerigi bisa naik karena?', emoji:'⛰️', answers:['Ada roda gigi yang mengait rel bergerigi di tengah rel','Ada sayap kecil di badan kereta','Mesin yang sangat kuat tanpa tanjakan','Ada perekat di roda kereta'], correct:0 },
+  { q:'Apa ciri khas bentuk kepala kereta uap zaman dulu?', emoji:'🚂', answers:['Memiliki cerobong asap besar di depan','Hidung sangat runcing','Berbentuk kotak persegi','Tidak memiliki kepala sama sekali'], correct:0 },
+  { q:'Kereta peluru (bullet train) mendapat namanya karena?', emoji:'🔫', answers:['Bentuk hidungnya yang runcing seperti peluru dan kecepatannya','Karena bisa menembak','Karena suaranya seperti tembakan','Karena terbuat dari bahan seperti peluru'], correct:0 },
+  { q:'Warna dominan Shinkansen seri N700 Jepang adalah?', emoji:'🎨', answers:['Putih dengan garis biru','Merah dan kuning','Hitam seluruhnya','Hijau dan emas'], correct:0 },
+  { q:'Apa yang ada di atas kepala kereta listrik yang menyentuh kabel listrik di atas?', emoji:'🔌', answers:['Pantograph (semacam tangan besi berbentuk V atau Z)','Antena radio','Kamera pengawas','Bendera nasional'], correct:0 },
+  { q:'Gerbong kereta yang paling di belakang sering disebut apa di zaman kereta uap?', emoji:'🔚', answers:['Caboose (gerbong belakang pengawas)','Tender (gerbong batu bara)','Bagasi','Restorasi'], correct:0 },
+  { q:'Tender pada kereta uap berfungsi untuk menyimpan apa?', emoji:'🛢️', answers:['Batu bara dan air untuk ketel uap','Penumpang kelas satu','Senjata api','Mesin cadangan'], correct:0 },
+  { q:'Energi apa yang menggerakkan kereta uap?', emoji:'🌡️', answers:['Energi panas yang diubah menjadi energi gerak (mekanik)','Energi cahaya matahari langsung','Energi kimia dari baterai','Energi angkasa luar'], correct:0 },
+  { q:'Mengapa jalur rel lebih ramah lingkungan dibanding jalan tol untuk angkutan barang?', emoji:'🌍', answers:['Kereta mengangkut lebih banyak barang dengan emisi lebih sedikit per ton','Rel tidak perlu perawatan','Kereta bisa terbang menghindari kemacetan','Rel terbuat dari bahan daur ulang'], correct:0 },
+  { q:'Apa yang membuat kereta lebih aman dari mobil saat hujan deras?', emoji:'🌧️', answers:['Kereta berjalan di rel khusus, tidak terganggu hujan seperti di jalan raya','Kereta punya payung raksasa','Kereta bisa berenang','Kereta tidak pernah hujan'], correct:0 },
+  { q:'Apa nama proses mengubah air menjadi uap dengan cara dipanaskan?', emoji:'♨️', answers:['Penguapan (evaporasi)','Pembekuan','Kristalisasi','Kondensasi'], correct:0 },
+  { q:'Ketika uap air mendingin dan berubah kembali menjadi air, proses ini disebut?', emoji:'💧', answers:['Kondensasi','Evaporasi','Sublimasi','Kristalisasi'], correct:0 },
+  { q:'Mengapa badan kereta terbuat dari baja bukan dari kayu?', emoji:'🔩', answers:['Baja lebih kuat, tahan api, dan tahan lama','Kayu lebih berat dari baja','Baja lebih murah dari kayu','Karena pohon langka'], correct:0 },
+  { q:'Kereta uap B 2507 di Museum Ambarawa dibuat di negara mana?', emoji:'🇨🇭', answers:['Swiss (SLM Winterthur)','Jerman','Belanda','Amerika'], correct:0 },
+  { q:'Jalur kereta bergerigi Ambarawa–Bedono dibangun pada tahun berapa?', emoji:'📅', answers:['Sekitar tahun 1900-an (zaman Belanda)','Tahun 1960-an','Tahun 1985','Tahun 2000'], correct:0 },
+  { q:'Siapa yang membangun jaringan kereta api pertama di Jawa?', emoji:'🏗️', answers:['Pemerintah Kolonial Belanda','Kerajaan Mataram','Pemerintah Indonesia merdeka','Perusahaan Inggris'], correct:0 },
+  { q:'Apa nama perusahaan kereta api Belanda yang pernah beroperasi di Jawa?', emoji:'🇳🇱', answers:['NIS (Nederlandsch-Indische Spoorweg Maatschappij)','VOC Express','Java Rail','Dutch Train Co.'], correct:0 },
+  { q:'Setelah Indonesia merdeka, kereta api di Indonesia dikelola oleh?', emoji:'🇮🇩', answers:['PT Kereta Api Indonesia (PT KAI)','Pemerintah Belanda','Perusahaan swasta asing','Tidak ada yang mengelola'], correct:0 },
+  { q:'Jalur kereta api pertama di Indonesia ada di kota mana?', emoji:'📍', answers:['Semarang–Tanggung, Jawa Tengah','Jakarta–Bogor','Surabaya–Malang','Bandung–Cimahi'], correct:0 },
+  { q:'Jika kamu jadi masinis, hal pertama apa yang harus kamu cek sebelum berangkat?', emoji:'✅', answers:['Rem, sinyal, dan kondisi jalur kereta','Warna baju penumpang','Berapa banyak snack di gerbong','Cuaca di luar negeri'], correct:0 },
+  { q:'Apa hadiah terbaik untuk seorang anak yang suka kereta api?', emoji:'🎁', answers:['Mainan kereta set atau buku kereta api','Mainan boneka','Sepatu bola','Ikan hias'], correct:0 },
+  { q:'Apakah ada kereta api di luar angkasa?', emoji:'🚀', answers:['Belum ada, tapi ada rencana lunar railway di masa depan!','Ya, ada di planet Mars sekarang','Ya, mengelilingi bulan','Tidak mungkin selamanya'], correct:0 },
+  { q:'Apa cita-citamu jika berhubungan dengan kereta api?', emoji:'💭', answers:['Jadi masinis, insinyur kereta, atau arsitek stasiun!','Tidak ada pilihan','Hanya bisa jadi penumpang','Tidak ada karir kereta api'], correct:0 },
+  { q:'Kenapa belajar tentang kereta api itu penting?', emoji:'📚', answers:['Karena kereta menghubungkan kota, membawa barang, dan ramah lingkungan!','Karena kereta sudah tidak ada lagi','Hanya untuk orang dewasa','Karena tidak ada transportasi lain'], correct:0 },
+]
+
+/* ============================================================
+   Quiz session + museum gallery / modal / quiz logic
+   (copied from game.js, SPA-only branches dropped or guarded)
+   ============================================================ */
+const G18_QUIZ_COUNT = 8
+let G18_QUIZ_SESSION = []
+
+function g18ShuffleQuiz() {
+  let pool = G18_QUESTIONS_BANK.slice()
+  try { if (typeof g18FilterRecent === 'function') pool = g18FilterRecent(pool) } catch(_){}
+  let shuffled
+  try {
+    shuffled = (typeof g18SeededShuffle === 'function') ? g18SeededShuffle(pool) : pool.slice()
+  } catch(_){ shuffled = pool.slice() }
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  G18_QUIZ_SESSION = shuffled.slice(0, G18_QUIZ_COUNT)
+  try { if (typeof g18RecordRecent === 'function') g18RecordRecent(G18_QUIZ_SESSION) } catch(_){}
+}
+
+let g18State = {}
+
+function initGame18() {
+  const lv = state.selectedLevelNum || 1
+  g18State = { lv, quizIdx: 0, quizScore: 0, quizActive: false, answeredCurrent: false }
+  document.getElementById('g18-level').textContent = `Lv.${lv}`
+  document.getElementById('g18-stars-badge').textContent = '🏛️ 0'
+  hideGameResult()
+  document.getElementById('g18-modal').classList.remove('open')
+  document.getElementById('g18-gallery').style.display = 'block'
+  document.getElementById('g18-quiz-view').style.display = 'none'
+  g18RenderGallery()
+  try { g18ShowDailyTrivia() } catch(_){}
+  try { g18UpdatePassportChip() } catch(_){}
+  g18Missed = []
+  // self-contained polish hooks (TrainShared word-of-day + TTS stay OFF)
+  try { g18MakeSectionsCollapsible() } catch(_){}
+  try { g18EnhanceHeroBanner() } catch(_){}
+  try { g18MaybeGlowStoryBtn() } catch(_){}
+  try { g18WireLongPressWhistle() } catch(_){}
+  try { g18ConductorWave() } catch(_){}
+  // FAB: only the self-contained timeline + Java-map (SPA garage/cosmetics/etc dropped)
+  try {
+    let fab = document.getElementById('g18-extra-fab')
+    if (!fab) {
+      fab = document.createElement('div')
+      fab.id = 'g18-extra-fab'
+      fab.style.cssText = 'position:fixed;right:14px;bottom:18px;z-index:60;display:flex;flex-direction:column;gap:8px'
+      fab.innerHTML = `
+        <button onclick="g18ShowTimeline()" style="width:50px;height:50px;border-radius:50%;border:0;background:linear-gradient(135deg,#fde047,#f59e0b);color:#451a03;font-size:20px;font-weight:900;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,0.4)" title="Timeline">📅</button>
+        <button onclick="g18ShowJavaMap()" style="width:50px;height:50px;border-radius:50%;border:0;background:linear-gradient(135deg,#06b6d4,#0891b2);color:#fff;font-size:20px;font-weight:900;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,0.4)" title="Peta">🗺️</button>`
+      document.body.appendChild(fab)
+    }
+    fab.style.display = 'flex'
+  } catch(_){}
+}
+
+function g18RenderGallery() {
+  const grid = document.getElementById('g18-card-grid')
+  grid.innerHTML = ''
+  const AMBARAWA_END = 12
+  const buckets = { ambarawa: [], modernID: [], world: [] }
+  G18_TRAINS.forEach((train, i) => {
+    if (i < AMBARAWA_END) buckets.ambarawa.push({ train, i })
+    else if (train.country && train.country.startsWith('🇮🇩')) buckets.modernID.push({ train, i })
+    else buckets.world.push({ train, i })
+  })
+  const sections = [
+    { items: buckets.ambarawa, title: '🏛️ KOLEKSI MUSEUM AMBARAWA', color: '#FFD082', borderCol: 'rgba(255,193,80,0.35)', ruleCol: 'rgba(255,193,100,0.35)' },
+    { items: buckets.modernID, title: '🇮🇩 KERETA MODERN INDONESIA',  color: '#FCA5A5', borderCol: 'rgba(252,165,165,0.4)',  ruleCol: 'rgba(252,165,165,0.35)' },
+    { items: buckets.world,    title: '🌍 KERETA TERKENAL DUNIA',    color: 'rgba(180,210,255,0.9)', borderCol: 'rgba(100,150,255,0.35)', ruleCol: 'rgba(150,200,255,0.25)' }
+  ]
+  sections.forEach(sec => {
+    if (!sec.items.length) return
+    const hdr = document.createElement('div')
+    hdr.style.cssText = `grid-column:1/-1;color:${sec.color};font-size:12px;font-weight:900;letter-spacing:1.5px;padding:10px 2px 2px;border-bottom:1.5px solid ${sec.ruleCol};margin-bottom:2px;`
+    hdr.textContent = sec.title
+    grid.appendChild(hdr)
+    sec.items.forEach(({ train, i }) => {
+      const card = document.createElement('div')
+      card.className = 'g18-card'
+      card.style.borderColor = sec.borderCol
+      const svgHtml = g18TrainSVG(train, 110, 48)
+      card.innerHTML = `
+        <div style="width:100%;height:56px;display:flex;align-items:center;justify-content:center;margin-bottom:4px;overflow:hidden;">${svgHtml}</div>
+        <div class="g18-card-name" style="font-size:11px;">${train.name}</div>
+        <div class="g18-card-country" style="font-size:9px;">${train.country.split(',')[0]}</div>
+        ${g18SpeedBadge(train.speed)}
+        <div style="color:rgba(255,255,255,0.5);font-size:9px;font-weight:700;margin-top:2px;">${train.year}</div>
+      `
+      card.onclick = () => g18ShowDetail(i)
+      grid.appendChild(card)
+    })
+  })
+}
+
+let _g18CurrentTrainIdx = -1
+
+function g18ShowDetail(idx) {
+  _g18CurrentTrainIdx = idx
+  const train = G18_TRAINS[idx]
+  const emojiEl = document.getElementById('g18-modal-emoji')
+  emojiEl.innerHTML = g18TrainSVG(train, 160, 70, true)   // animate the hero loco (spoked wheels via dunWheel)
+  if (!document.getElementById('g18-train-anim-kf')) {
+    const s = document.createElement('style'); s.id = 'g18-train-anim-kf'
+    s.textContent = '#g18-modal-emoji{animation:g18TrainAnim 2.4s ease-in-out infinite}@keyframes g18TrainAnim{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}'
+    document.head.appendChild(s)
+  }
+  document.getElementById('g18-modal-name').textContent = train.name
+  document.getElementById('g18-modal-country').textContent = `${train.country} • ${train.year}`
+  const details = document.getElementById('g18-modal-details')
+  const cell = (label, val, emoji='') => `<div style="background:rgba(255,255,255,0.08);border-radius:10px;padding:8px;text-align:center;">
+    <div style="color:rgba(255,255,255,0.55);font-size:9px;font-weight:700;letter-spacing:0.5px;">${label}</div>
+    <div style="color:white;font-size:12px;font-weight:900;line-height:1.3;margin-top:2px;">${emoji}${val}</div>
+  </div>`
+  details.innerHTML =
+    cell('KECEPATAN MAX', `${train.speed} km/j`, '⚡ ') +
+    cell('TAHUN DIBUAT', train.year, '📅 ') +
+    cell('BAHAN BAKAR', train.fuel, '⛽ ') +
+    cell('TIPE', train.type, '') +
+    (train.builder ? cell('PEMBUAT', train.builder, '🏭 ') : '') +
+    (train.route ? cell('RUTE', train.route, '🗺️ ') : '') +
+    (train.axles ? cell('RODA', train.axles, '⚙️ ') : '')
+  let histEl = document.getElementById('g18-modal-history')
+  const factEl = document.getElementById('g18-modal-fact')
+  if (!histEl && train.history) {
+    histEl = document.createElement('div')
+    histEl.id = 'g18-modal-history'
+    histEl.innerHTML = '<span id="g18-modal-history-title">📜 SEJARAH & MAKNA</span><div id="g18-modal-history-text"></div>'
+    factEl.parentNode.insertBefore(histEl, factEl)
+  }
+  if (histEl) {
+    if (train.history) {
+      histEl.style.display = 'block'
+      const txt = document.getElementById('g18-modal-history-text')
+      if (txt) txt.textContent = train.history
+    } else {
+      histEl.style.display = 'none'
+    }
+  }
+  factEl.innerHTML =
+    `<div style="margin-bottom:6px;">💡 ${train.fact}</div>` +
+    (train.funFact ? `<div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.12);">${train.funFact}</div>` : '')
+  document.getElementById('g18-modal').classList.add('open')
+  try { g18WireModalClose() } catch(_){}
+  try { g18ChunkedHistoryRender(train) } catch(_){}
+  try { g18PassportStamp(idx) } catch(_){}
+  // Storybook + rod-kinematics buttons (AR/Codex dropped: needed SPA TrainShared)
+  try {
+    const factEl2 = document.getElementById('g18-modal-fact')
+    if (factEl2 && !document.getElementById('g18-extra-btns')) {
+      const extra = document.createElement('div')
+      extra.id = 'g18-extra-btns'
+      extra.style.cssText = 'display:flex;gap:6px;margin:8px 0;flex-wrap:wrap'
+      extra.innerHTML = `
+        <button onclick="g18ShowStorybook(_g18CurrentTrainIdx)" style="flex:1;min-width:120px;padding:10px;border-radius:10px;border:0;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer;font-size:12px">📕 Storybook</button>
+        <button onclick="g18ShowRodKinematics()" style="flex:1;min-width:120px;padding:10px;border-radius:10px;border:0;background:linear-gradient(135deg,#0891b2,#0e7490);color:#fff;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer;font-size:12px">⚙️ Mesin</button>`
+      factEl2.parentNode.insertBefore(extra, factEl2)
+    }
+  } catch(_){}
+  playClick()
+}
+
+function g18CloseModal() {
+  document.getElementById('g18-modal').classList.remove('open')
+  document.getElementById('g18-story-panel').style.display = 'none'
+}
+
+/* ---- streak pill ---- */
+let g18Streak = 0
+let g18StreakBest = 0
+let g18Missed = []
+function g18AddStreak() {
+  g18Streak++
+  if (g18Streak > g18StreakBest) g18StreakBest = g18Streak
+  const pill = document.getElementById('g18-streak-pill')
+  if (pill) {
+    pill.style.display = 'inline-flex'
+    pill.textContent = '🔥 x' + g18Streak + (g18Streak >= 5 ? ' (2× Bintang!)' : '')
+    pill.style.transform = 'scale(1.25)'; setTimeout(() => { pill.style.transform = 'scale(1)' }, 200)
+  }
+}
+function g18ResetStreak() {
+  g18Streak = 0
+  const pill = document.getElementById('g18-streak-pill')
+  if (pill) pill.style.display = 'none'
+}
+
+/* ---- modal close wiring ---- */
+function g18WireModalClose() {
+  const modal = document.getElementById('g18-modal')
+  if (!modal || modal.dataset.bound === '1') return
+  modal.dataset.bound = '1'
+  modal.setAttribute('role', 'dialog')
+  modal.setAttribute('aria-modal', 'true')
+  modal.setAttribute('aria-live', 'polite')
+  modal.addEventListener('click', (e) => { if (e.target === modal) g18CloseModal() })
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('open')) g18CloseModal()
+  })
+  let touchStartY = 0
+  modal.addEventListener('touchstart', (e) => { if (e.touches[0]) touchStartY = e.touches[0].clientY }, { passive: true })
+  modal.addEventListener('touchend', (e) => {
+    const dy = (e.changedTouches[0] ? e.changedTouches[0].clientY : 0) - touchStartY
+    if (dy > 80) g18CloseModal()
+  }, { passive: true })
+}
+
+/* ---- chunked history ---- */
+function g18ChunkedHistoryRender(train) {
+  const histText = document.getElementById('g18-modal-history-text')
+  if (!histText || !train.history) return
+  const sentences = train.history.split(/(?<=\. )/).filter(s => s.trim())
+  if (sentences.length <= 2) { histText.textContent = train.history; return }
+  let shown = 2
+  function render() {
+    histText.innerHTML = sentences.slice(0, shown).join('') +
+      (shown < sentences.length ? '<button onclick="g18RevealMoreHistory(' + (sentences.length) + ', ' + shown + ')" id="g18-more-btn" style="margin-top:6px;padding:5px 10px;border-radius:8px;border:0;background:#f59e0b;color:#451a03;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer;font-size:11px">📖 Baca lebih →</button>' : '')
+    histText.dataset.shown = shown
+    histText.dataset.total = sentences.length
+    histText.dataset.fullText = train.history
+  }
+  render()
+}
+function g18RevealMoreHistory(total, current) {
+  const histText = document.getElementById('g18-modal-history-text')
+  if (!histText) return
+  const sentences = (histText.dataset.fullText || '').split(/(?<=\. )/).filter(s => s.trim())
+  const next = Math.min(sentences.length, current + 2)
+  histText.innerHTML = sentences.slice(0, next).join('') +
+    (next < sentences.length ? '<button onclick="g18RevealMoreHistory(' + sentences.length + ', ' + next + ')" style="margin-top:6px;padding:5px 10px;border-radius:8px;border:0;background:#f59e0b;color:#451a03;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer;font-size:11px">📖 Baca lebih →</button>' : '')
+}
+
+/* ---- passport ---- */
+const G18_PASSPORT_KEY = 'dunia-g18-passport'
+function g18PassportGet() {
+  try { return new Set(JSON.parse(localStorage.getItem(G18_PASSPORT_KEY) || '[]')) } catch(_){ return new Set() }
+}
+function g18PassportStamp(trainIdx) {
+  try {
+    const set = g18PassportGet()
+    set.add(trainIdx)
+    localStorage.setItem(G18_PASSPORT_KEY, JSON.stringify([...set]))
+    g18UpdatePassportChip()
+  } catch(_){}
+}
+function g18UpdatePassportChip() {
+  const chip = document.getElementById('g18-passport-chip')
+  if (!chip) return
+  const set = g18PassportGet()
+  chip.textContent = '🛂 ' + set.size + ' / ' + (typeof G18_TRAINS !== 'undefined' ? G18_TRAINS.length : 23)
+}
+
+function g18SpeedBadge(speed) {
+  const max = 603
+  const pct = Math.min(100, Math.round((speed / max) * 100))
+  const icon = speed < 80 ? '🐢' : speed < 200 ? '🚆' : speed < 400 ? '🚀' : '🚀⚡'
+  return `<div class="g18-speed-badge" title="Max ${speed} km/j" style="display:flex;align-items:center;gap:4px;font-size:10px;font-weight:900;color:#fde68a;background:rgba(0,0,0,0.4);border-radius:8px;padding:2px 6px;margin-top:2px"><span>${icon}</span><span style="display:inline-block;width:40px;height:5px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden"><span style="display:block;height:100%;background:linear-gradient(90deg,#86efac,#fbbf24,#ef4444);width:${pct}%"></span></span><span>${speed}</span></div>`
+}
+
+/* ---- storybook ---- */
+function g18ShowStorybook(idx) {
+  const train = G18_TRAINS[idx]; if (!train) return
+  let overlay = document.getElementById('g18-storybook')
+  if (!overlay) {
+    overlay = document.createElement('div')
+    overlay.id = 'g18-storybook'
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:9000;background:linear-gradient(135deg,#1a1028,#2a1848);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;color:#fff;font-family:Inter,system-ui,sans-serif'
+    document.body.appendChild(overlay)
+  }
+  const pages = [
+    `<div style="text-align:center"><div style="font-size:42px;margin-bottom:8px">📖</div><h2 style="font-family:Fredoka One,cursive;margin:0 0 8px;color:#fde68a">${train.name}</h2><div style="opacity:0.7;margin-bottom:14px">${train.country || ''}</div><div style="margin:0 auto;max-width:280px;background:rgba(0,0,0,0.3);border-radius:14px;padding:14px">${g18TrainSVG(train, 240, 100)}</div><div style="margin-top:14px;line-height:1.55;max-width:380px;text-align:center;opacity:0.85">${train.fact || ''}</div></div>`,
+    `<div style="text-align:center"><div style="font-size:36px;margin-bottom:6px">💡</div><h3 style="font-family:Fredoka One,cursive;color:#fde68a">Fakta Seru</h3><div style="background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.35);border-radius:14px;padding:18px;max-width:380px;line-height:1.6">${train.funFact || train.fact}</div></div>`,
+    `<div style="text-align:center"><div style="font-size:36px;margin-bottom:6px">🎓</div><h3 style="font-family:Fredoka One,cursive;color:#fde68a">Yuk Belajar</h3><div style="line-height:1.6;max-width:380px;opacity:0.85">${train.quizHint || 'Lihat detail trainnya dan coba kuis museum di bagian akhir!'}</div><button onclick="document.getElementById('g18-storybook').remove();g18StartQuiz()" style="margin-top:18px;padding:12px 28px;border-radius:14px;border:0;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-family:Fredoka One,cursive;font-size:16px;font-weight:900;cursor:pointer;box-shadow:0 5px 0 #92400e">🎯 Mulai Kuis!</button></div>`,
+  ]
+  let page = 0
+  function render() {
+    overlay.innerHTML = `
+      <button onclick="document.getElementById('g18-storybook').remove()" style="position:absolute;top:18px;right:18px;background:rgba(0,0,0,0.5);color:#fff;border:0;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:18px">✕</button>
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;width:100%">${pages[page]}</div>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:12px">
+        <button onclick="window._g18BookPrev()" style="padding:8px 14px;border-radius:10px;border:0;background:rgba(255,255,255,0.1);color:#fff;cursor:pointer">◀</button>
+        <span style="color:#fde68a;font-family:Fredoka One,cursive">${page + 1} / ${pages.length}</span>
+        <button onclick="window._g18BookNext()" style="padding:8px 14px;border-radius:10px;border:0;background:rgba(255,255,255,0.1);color:#fff;cursor:pointer">▶</button>
+      </div>`
+  }
+  window._g18BookPrev = () => { page = Math.max(0, page - 1); render() }
+  window._g18BookNext = () => { page = Math.min(pages.length - 1, page + 1); render() }
+  render()
+  let sx = 0
+  overlay.ontouchstart = (e) => { sx = e.touches[0]?.clientX || 0 }
+  overlay.ontouchend = (e) => {
+    const dx = (e.changedTouches[0]?.clientX || 0) - sx
+    if (dx > 60) window._g18BookPrev(); else if (dx < -60) window._g18BookNext()
+  }
+}
+
+/* ---- mastery 8/8 confetti ---- */
+function g18Mastery8of8() {
+  for (let i = 0; i < 48; i++) {
+    const c = document.createElement('span')
+    c.style.cssText = 'position:fixed;top:-20px;left:' + (Math.random()*100) + 'vw;width:8px;height:14px;background:hsl(' + (Math.random()*360) + ',80%,55%);z-index:9090;pointer-events:none;border-radius:' + (Math.random() < 0.5 ? '50%' : '2px') + ';animation:g18ConfettiFall 2.4s linear forwards'
+    c.style.animationDelay = (i * 0.04) + 's'
+    document.body.appendChild(c)
+    setTimeout(() => c.remove(), 5000 + i * 30)
+  }
+  if (!document.getElementById('g18-confetti-kf')) {
+    const s = document.createElement('style'); s.id = 'g18-confetti-kf'
+    s.textContent = '@keyframes g18ConfettiFall{0%{transform:translateY(-30px) rotate(0)}100%{transform:translateY(110vh) rotate(720deg);opacity:0.6}}'
+    document.head.appendChild(s)
+  }
+  try { [523, 659, 784, 988].forEach((f, i) => setTimeout(() => playTone(f, 0.18, 'triangle', 0.18), i * 110)) } catch(_){}
+  try { localStorage.setItem('dunia-g18-master', '1') } catch(_){}
+}
+
+/* ---- seeded quiz + no-repeat-last-3 ---- */
+function g18SeededShuffle(arr) {
+  let x = 0; const day = new Date().toDateString()
+  for (let i = 0; i < day.length; i++) x = (x ^ day.charCodeAt(i)) >>> 0
+  x ^= x << 13; x ^= x >>> 17; x ^= x << 5; x >>>= 0
+  const out = arr.slice()
+  for (let i = out.length - 1; i > 0; i--) {
+    x ^= x << 13; x ^= x >>> 17; x ^= x << 5; x >>>= 0
+    const j = x % (i + 1)
+    ;[out[i], out[j]] = [out[j], out[i]]
+  }
+  return out
+}
+function g18FilterRecent(arr) {
+  try {
+    const recent = JSON.parse(localStorage.getItem('dunia-g18-recent') || '[]')
+    const recentSet = new Set(recent.flat())
+    const out = arr.filter(q => !recentSet.has(q.id || q.q || JSON.stringify(q)))
+    return out.length ? out : arr
+  } catch(_) { return arr }
+}
+function g18RecordRecent(qs) {
+  try {
+    const keys = qs.map(q => q.id || q.q || JSON.stringify(q))
+    const prior = JSON.parse(localStorage.getItem('dunia-g18-recent') || '[]')
+    prior.push(keys)
+    while (prior.length > 3) prior.shift()
+    localStorage.setItem('dunia-g18-recent', JSON.stringify(prior))
+  } catch(_){}
+}
+
+/* ---- quiz bar tint by accuracy ---- */
+function g18TintQuizBar() {
+  const fill = document.getElementById('g18-quiz-fill'); if (!fill) return
+  const answered = g18State.quizIdx
+  if (answered <= 0) return
+  const acc = g18State.quizScore / answered
+  fill.style.background = acc >= 0.8 ? 'linear-gradient(90deg,#22c55e,#86efac)'
+    : acc >= 0.5 ? 'linear-gradient(90deg,#fbbf24,#fcd34d)'
+    : 'linear-gradient(90deg,#ef4444,#fb7185)'
+}
+
+/* ---- first-tap glow on Cerita button ---- */
+function g18MaybeGlowStoryBtn() {
+  try {
+    if (localStorage.getItem('dunia-g18-cerita-seen')) return
+    const btn = document.getElementById('g18-story-btn'); if (!btn) return
+    btn.style.boxShadow = '0 0 0 4px rgba(251,191,36,0.4)'
+    btn.style.animation = 'g18CeritaPulse 1.6s ease-in-out infinite'
+    if (!document.getElementById('g18-cerita-kf')) {
+      const s = document.createElement('style'); s.id = 'g18-cerita-kf'
+      s.textContent = '@keyframes g18CeritaPulse{0%,100%{box-shadow:0 0 0 4px rgba(251,191,36,0.4)}50%{box-shadow:0 0 0 12px rgba(251,191,36,0)}}'
+      document.head.appendChild(s)
+    }
+  } catch(_){}
+}
+
+/* ---- collapsible section chapters ---- */
+function g18MakeSectionsCollapsible() {
+  const grid = document.getElementById('g18-card-grid')
+  if (!grid) return
+  const headers = [...grid.children].filter(c => c.style && c.style.gridColumn === '1/-1' && c.style.color)
+  headers.forEach((h) => {
+    if (h.dataset.collapsibleBound === '1') return
+    h.dataset.collapsibleBound = '1'
+    h.style.cursor = 'pointer'
+    h.style.userSelect = 'none'
+    h.dataset.collapseState = 'open'
+    const chevron = document.createElement('span')
+    chevron.textContent = ' ▼'
+    chevron.style.color = '#fbbf24'
+    chevron.style.fontWeight = '900'
+    h.appendChild(chevron)
+    h.addEventListener('click', () => {
+      const next = []
+      let n = h.nextElementSibling
+      while (n && !(n.style && n.style.gridColumn === '1/-1' && n.style.color)) { next.push(n); n = n.nextElementSibling }
+      const open = h.dataset.collapseState === 'open'
+      next.forEach(c => c.style.display = open ? 'none' : '')
+      h.dataset.collapseState = open ? 'closed' : 'open'
+      chevron.textContent = open ? ' ▶' : ' ▼'
+      try { playTone(660, 0.05, 'sine') } catch(_){}
+    })
+  })
+}
+
+/* ---- long-press steam loco whistle ---- */
+let _g18LongPressTimer = null
+function g18WireLongPressWhistle() {
+  const modal = document.getElementById('g18-modal'); if (!modal || modal.dataset.lpBound === '1') return
+  modal.dataset.lpBound = '1'
+  modal.addEventListener('pointerdown', () => {
+    const train = G18_TRAINS[_g18CurrentTrainIdx]
+    if (!train || !/(uap|steam)/i.test(train.fuel || '')) return
+    _g18LongPressTimer = setTimeout(() => {
+      try { playTone(1100, 0.40, 'sine', 0.16); setTimeout(()=>playTone(880, 0.50, 'sine', 0.14), 380); setTimeout(()=>playTone(660, 0.40, 'sine', 0.12), 800) } catch(_){}
+      if (navigator.vibrate) { try { navigator.vibrate(60) } catch(_){} }
+    }, 800)
+  })
+  ;['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => modal.addEventListener(ev, () => { if (_g18LongPressTimer) { clearTimeout(_g18LongPressTimer); _g18LongPressTimer = null } }))
+}
+
+/* ---- hero banner: Stasiun Willem I 1873 ---- */
+function g18EnhanceHeroBanner() {
+  const gallery = document.getElementById('g18-gallery'); if (!gallery) return
+  const banner = gallery.querySelector('div[style*="rgba(93,57,34"]')
+  if (!banner || banner.dataset.willem === '1') return
+  banner.dataset.willem = '1'
+  banner.style.position = 'relative'
+  banner.style.overflow = 'hidden'
+  banner.innerHTML = `
+    <div style="position:absolute;inset:0;background:radial-gradient(circle at 30% 70%,rgba(251,191,36,0.18),transparent 60%);pointer-events:none"></div>
+    <div style="position:relative;z-index:1">
+      <div style="color:#FFD082;font-size:13px;font-weight:900;letter-spacing:1px">🏛️ STASIUN WILLEM I · 1873</div>
+      <div style="color:rgba(255,255,255,0.7);font-size:11px;font-weight:700;margin-top:2px">Ambarawa · Bekas stasiun militer Kolonial · Sekarang Museum Kereta Api</div>
+      <div style="color:rgba(255,193,80,0.7);font-size:10px;letter-spacing:1px;margin-top:6px">📅 GROUNDBREAKING 1873 · 🚂 RACK & PINION · 🇮🇩 INDONESIA</div>
+    </div>`
+}
+
+/* ---- conductor avatar (Pak Masinis) wave ---- */
+function g18ConductorWave() {
+  let av = document.getElementById('g18-pak-masinis')
+  if (!av) {
+    av = document.createElement('div')
+    av.id = 'g18-pak-masinis'
+    av.style.cssText = 'position:fixed;left:14px;bottom:18px;z-index:65;font-size:40px;pointer-events:none;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.4))'
+    av.textContent = '👨‍✈️'
+    document.body.appendChild(av)
+  }
+  av.style.animation = 'g18MasinisWave 1.4s ease-in-out'
+  if (!document.getElementById('g18-masinis-kf')) {
+    const s = document.createElement('style'); s.id = 'g18-masinis-kf'
+    s.textContent = '@keyframes g18MasinisWave{0%,100%{transform:rotate(0)}25%{transform:rotate(-12deg) scale(1.1)}75%{transform:rotate(12deg) scale(1.1)}}'
+    document.head.appendChild(s)
+  }
+  setTimeout(() => { av.style.animation = '' }, 1400)
+}
+
+/* ---- steam rod kinematics teaching overlay ---- */
+function g18ShowRodKinematics() {
+  const train = G18_TRAINS[_g18CurrentTrainIdx]
+  if (!train || !/(uap|steam)/i.test(train.fuel || '')) return
+  let ov = document.getElementById('g18-rod-overlay')
+  if (!ov) {
+    ov = document.createElement('div')
+    ov.id = 'g18-rod-overlay'
+    ov.style.cssText = 'position:fixed;inset:0;z-index:9100;background:rgba(15,23,42,0.94);color:#fff;display:flex;flex-direction:column;padding:24px;align-items:center;justify-content:center;text-align:center'
+    document.body.appendChild(ov)
+  }
+  ov.innerHTML = `
+    <div style="font-family:Fredoka One,cursive;color:#fde68a;font-size:20px;margin-bottom:6px">⚙️ Bagaimana Kereta Uap Bergerak?</div>
+    <div style="opacity:0.75;font-size:13px;max-width:380px;line-height:1.55;margin-bottom:14px">Piston dorong-tarik di silinder mengubah uap menjadi gerak putar lewat <b>main rod</b> dan <b>side rods</b>. Klik tutup untuk kembali.</div>
+    <div style="width:260px;background:rgba(255,255,255,0.06);border-radius:14px;padding:14px;margin-bottom:14px">
+      <div style="font-size:11px;color:#fbbf24">Bagian utama:</div>
+      <ul style="text-align:left;font-size:12px;line-height:1.6;padding-left:18px;color:rgba(255,255,255,0.85)">
+        <li>🔥 Boiler — menampung air panas</li>
+        <li>💨 Cylinder — tempat uap dorong piston</li>
+        <li>⚙️ Main rod — dorong roda penggerak</li>
+        <li>🔧 Side rods — sinkronkan roda</li>
+      </ul>
+    </div>
+    <button onclick="document.getElementById('g18-rod-overlay').remove()" style="padding:12px 24px;border-radius:14px;border:0;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer">Tutup</button>`
+}
+
+/* ---- timeline ---- */
+function g18ShowTimeline() {
+  let ov = document.getElementById('g18-timeline')
+  if (!ov) {
+    ov = document.createElement('div')
+    ov.id = 'g18-timeline'
+    ov.style.cssText = 'position:fixed;inset:0;z-index:9000;background:linear-gradient(180deg,#0c0a22,#1a1028);color:#fff;display:flex;flex-direction:column;padding:18px'
+    document.body.appendChild(ov)
+  }
+  const sorted = [...G18_TRAINS].map((t, i) => ({ t, i })).sort((a, b) => (a.t.year || 0) - (b.t.year || 0))
+  const minY = sorted[0]?.t.year || 1880, maxY = sorted[sorted.length - 1]?.t.year || 2023
+  const yearsHTML = sorted.map(s => {
+    const pct = ((s.t.year || 1900) - minY) / Math.max(1, maxY - minY) * 100
+    return `<div style="position:absolute;left:${pct}%;top:50%;transform:translate(-50%,-50%);cursor:pointer" onclick="g18ShowDetail(${s.i})">
+      <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:6px">${g18TrainSVG(s.t, 60, 28)}</div>
+      <div style="color:#fde68a;font-size:9px;text-align:center;margin-top:4px">${s.t.year}</div>
+    </div>`
+  }).join('')
+  ov.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <span style="font-family:Fredoka One,cursive;font-size:18px;color:#fde68a">📅 Timeline ${minY}—${maxY}</span>
+      <button onclick="document.getElementById('g18-timeline').remove()" style="padding:8px 14px;border-radius:10px;border:0;background:#fbbf24;color:#451a03;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer">Tutup ✕</button>
+    </div>
+    <div style="flex:1;overflow-x:auto;overflow-y:hidden;position:relative">
+      <div style="position:relative;width:max(${G18_TRAINS.length * 88}px,100%);height:100%;background:linear-gradient(180deg,transparent,rgba(255,255,255,0.04));border-radius:14px;border:1px dashed rgba(251,191,36,0.3)">
+        ${yearsHTML}
+      </div>
+    </div>`
+}
+
+/* ---- Java route map ---- */
+function g18ShowJavaMap() {
+  let ov = document.getElementById('g18-javamap')
+  if (!ov) {
+    ov = document.createElement('div')
+    ov.id = 'g18-javamap'
+    ov.style.cssText = 'position:fixed;inset:0;z-index:9000;background:linear-gradient(180deg,#0c0a22,#1a1028);color:#fff;display:flex;flex-direction:column;padding:18px'
+    document.body.appendChild(ov)
+  }
+  const itemsHTML = G18_TRAINS.filter(t => t.route).map((t) => `
+    <div onclick="g18ShowDetail(${G18_TRAINS.indexOf(t)})" style="background:rgba(255,255,255,0.05);border:1px solid rgba(251,191,36,0.3);border-radius:14px;padding:12px;cursor:pointer;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:10px"><span style="font-size:24px">🚂</span><div><div style="font-family:Fredoka One,cursive;color:#fde68a">${t.name}</div><div style="font-size:11px;opacity:0.7">🗺️ ${t.route}</div></div></div>
+    </div>`).join('')
+  ov.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <span style="font-family:Fredoka One,cursive;font-size:18px;color:#fde68a">🗺️ Peta Rute Pulau Jawa</span>
+      <button onclick="document.getElementById('g18-javamap').remove()" style="padding:8px 14px;border-radius:10px;border:0;background:#fbbf24;color:#451a03;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer">Tutup ✕</button>
+    </div>
+    <div style="flex:1;overflow-y:auto">${itemsHTML}</div>`
+}
+
+/* ---- daily trivia card ---- */
+function g18ShowDailyTrivia() {
+  const grid = document.getElementById('g18-card-grid')
+  if (!grid || document.getElementById('g18-daily-trivia')) return
+  const day = new Date().toDateString()
+  let h = 0
+  for (let i = 0; i < day.length; i++) h = (h * 31 + day.charCodeAt(i)) >>> 0
+  const idx = h % G18_TRAINS.length
+  const train = G18_TRAINS[idx]
+  if (!train || !train.funFact) return
+  const card = document.createElement('div')
+  card.id = 'g18-daily-trivia'
+  card.style.cssText = 'grid-column:1/-1;background:linear-gradient(135deg,#fde047,#f59e0b);border-radius:14px;padding:12px;font-family:Fredoka One,cursive;font-size:12px;color:#451a03;cursor:pointer;animation:g18TriviaPulse 2.4s ease-in-out infinite;line-height:1.4'
+  card.innerHTML = `<div style="font-size:11px;letter-spacing:1.5px;color:#92400e;margin-bottom:4px">🌟 TRIVIA HARI INI</div><div>${train.funFact}</div>`
+  card.onclick = () => g18ShowDetail(idx)
+  if (!document.getElementById('g18-trivia-kf')) {
+    const s = document.createElement('style')
+    s.id = 'g18-trivia-kf'
+    s.textContent = '@keyframes g18TriviaPulse{0%,100%{box-shadow:0 0 0 0 rgba(251,191,36,0.6)}50%{box-shadow:0 0 0 14px rgba(251,191,36,0)}}'
+    document.head.appendChild(s)
+  }
+  grid.insertBefore(card, grid.firstChild)
+}
+
+/* ---- child-friendly story panel ---- */
+function g18ShowStory() {
+  try { localStorage.setItem('dunia-g18-cerita-seen', '1') } catch(_){}
+  const sbtn = document.getElementById('g18-story-btn')
+  if (sbtn) { sbtn.style.animation = ''; sbtn.style.boxShadow = '' }
+  const panel = document.getElementById('g18-story-panel')
+  if (panel.style.display !== 'none') { panel.style.display = 'none'; return }
+  panel.style.display = 'block'
+  const train = G18_TRAINS[_g18CurrentTrainIdx]
+  if (!train) return
+  const stories = [
+    `Tahukah kamu? ${train.name} adalah kereta yang dibuat pada tahun ${train.year}. Kereta ini bisa melaju sampai ${train.speed} km/jam! ${train.fact}`,
+    `Bayangkan kamu hidup di tahun ${train.year}. Saat itu, ${train.name} adalah kereta yang sangat hebat! Kereta ini menggunakan ${train.fuel} sebagai bahan bakar. ${train.funFact || ''}`,
+    `Ayo kita berkenalan dengan ${train.name}! Kereta ini berasal dari ${train.country} dan dibuat tahun ${train.year}. ${train.builder ? 'Kereta ini dibuat oleh ' + train.builder + '.' : ''} ${train.fact}`,
+  ]
+  const story = stories[Math.floor(Math.random() * stories.length)]
+  const extra = train.route ? `\n\n🗺️ Rute: ${train.route}` : ''
+  document.getElementById('g18-story-text').textContent = story + extra
+}
+
+/* ---- cleanup overlays/avatars on leave ---- */
+function g18Cleanup(){
+  try {
+    ;['g18-extra-fab', 'g18-pak-masinis', 'g18-storybook', 'g18-timeline', 'g18-javamap',
+      'g18-rod-overlay', 'g18-daily-trivia'].forEach(id => {
+      const e = document.getElementById(id); if (e) e.remove()
+    })
+  } catch(_){}
+}
+
+/* ============================================================
+   Quiz flow
+   ============================================================ */
+function g18StartQuiz() {
+  g18Streak = 0; g18StreakBest = 0
+  g18ShuffleQuiz()
+  g18State.quizIdx = 0
+  g18State.quizScore = 0
+  g18State.quizActive = true
+  document.getElementById('g18-gallery').style.display = 'none'
+  document.getElementById('g18-quiz-view').style.display = 'flex'
+  g18RenderQuestion()
+}
+
+function g18RenderQuestion() {
+  const q = G18_QUIZ_SESSION[g18State.quizIdx]
+  g18State.answeredCurrent = false
+  document.getElementById('g18-q-num').textContent = g18State.quizIdx + 1
+  const pct=(g18State.quizIdx/G18_QUIZ_SESSION.length)*100
+  const fillEl=document.getElementById('g18-quiz-fill');if(fillEl)fillEl.style.width=pct+'%'
+  const imgEl = document.getElementById('g18-q-image')
+  if (q.subjectTrainId != null && typeof g18TrainSVG === 'function' && G18_TRAINS[q.subjectTrainId]) {
+    imgEl.innerHTML = g18TrainSVG(G18_TRAINS[q.subjectTrainId], 120, 56)
+  } else {
+    imgEl.textContent = q.emoji
+  }
+  document.getElementById('g18-q-text').textContent = q.q
+  try { g18TintQuizBar() } catch(_){}
+  document.getElementById('g18-q-feedback').textContent = ''
+  document.getElementById('g18-q-next-wrap').style.display = 'none'
+  const opts = document.getElementById('g18-q-options')
+  opts.innerHTML = ''
+  const indices = q.answers.map((_,i) => i).sort(() => Math.random() - 0.5)
+  indices.forEach(idx => {
+    const btn = document.createElement('button')
+    btn.className = 'g18-quiz-option'
+    btn.textContent = q.answers[idx]
+    btn.dataset.ansIdx = idx
+    btn.onclick = () => g18AnswerQuestion(idx, q.correct, btn)
+    opts.appendChild(btn)
+  })
+}
+
+function g18AnswerQuestion(picked, correct, btn) {
+  if (g18State.answeredCurrent) return
+  g18State.answeredCurrent = true
+  const opts = document.getElementById('g18-q-options')
+  opts.querySelectorAll('.g18-quiz-option').forEach(b => b.style.pointerEvents = 'none')
+  const q = G18_QUIZ_SESSION[g18State.quizIdx]
+  if (picked === correct) {
+    btn.classList.add('correct')
+    spawnCorrectCardJuice(btn)
+    quizStreakHit(btn)
+    g18State.quizScore++
+    try { g18AddStreak() } catch(_){}
+    document.getElementById('g18-q-feedback').textContent = '✅ Benar! Kamu pintar!'
+    document.getElementById('g18-q-feedback').style.color = '#A5D6A7'
+    playCorrect()
+  } else {
+    btn.classList.add('wrong')
+    spawnWrongShake(btn)
+    quizStreakReset()
+    try { g18ResetStreak(); g18Missed.push({ q, picked, correct, idx: g18State.quizIdx }) } catch(_){}
+    opts.querySelectorAll('.g18-quiz-option').forEach(b => {
+      if (parseInt(b.dataset.ansIdx) === correct) {
+        b.classList.add('correct')
+        spawnCorrectCardJuice(b)
+      }
+    })
+    document.getElementById('g18-q-feedback').textContent = `❌ Jawaban: ${q.answers[correct]}`
+    document.getElementById('g18-q-feedback').style.color = '#FFCDD2'
+    playWrong()
+  }
+  document.getElementById('g18-stars-badge').textContent = `🏛️ ${g18State.quizScore}`
+  const nextWrap = document.getElementById('g18-q-next-wrap')
+  nextWrap.style.display = 'block'
+  const nextBtn = document.getElementById('g18-q-next-btn')
+  nextBtn.textContent = g18State.quizIdx >= G18_QUIZ_SESSION.length - 1 ? '🏆 Lihat Hasil!' : '▶ Lanjut'
+}
+
+function g18NextQuestion() {
+  g18State.quizIdx++
+  if (g18State.quizIdx >= G18_QUIZ_SESSION.length) {
+    g18FinishQuiz()
+  } else {
+    g18RenderQuestion()
+  }
+}
+
+function g18FinishQuiz() {
+  const score = g18State.quizScore
+  const total = G18_QUIZ_SESSION.length
+  let perfStars = GameScoring.calc({ correct: score, total })
+  if (g18StreakBest >= 5) perfStars = Math.min(5, perfStars + 1)
+  state.gameStars[state.currentPlayer] = perfStars
+  try {
+    const prevBest = parseInt(localStorage.getItem('dunia-g18-best-stars') || '0', 10)
+    if (perfStars > prevBest) localStorage.setItem('dunia-g18-best-stars', String(perfStars))
+  } catch(_){}
+  if (score === G18_QUIZ_COUNT) { try { g18Mastery8of8() } catch(_){} }
+  let reviewLine = ''
+  try {
+    if (g18Missed && g18Missed.length) {
+      reviewLine = `\n📚 ${g18Missed.length} soal terlewat — coba lagi untuk belajar!`
+    }
+  } catch(_){}
+  // true museum mastery: visited every train in passport AND 8/8 quiz
+  let isSarjana = false
+  try {
+    if (score === G18_QUIZ_COUNT) {
+      const visited = g18PassportGet()
+      if (visited.size >= G18_TRAINS.length) isSarjana = true
+    }
+  } catch(_){}
+  const gradeEmoji = isSarjana ? '🎓' : score === G18_QUIZ_COUNT ? '🏆' : score >= Math.ceil(G18_QUIZ_COUNT * 0.5) ? '⭐' : '📚'
+  const gradeMsg = isSarjana
+    ? 'SARJANA MUSEUM! Kamu kunjungi semua kereta DAN jawab semua benar!'
+    : score === G18_QUIZ_COUNT ? 'SEMPURNA! Kamu ahli kereta!'
+    : score >= Math.ceil(G18_QUIZ_COUNT * 0.5) ? 'Bagus! Terus belajar!'
+    : 'Jangan lupa baca kartu museumnya ya!'
+  document.getElementById('g18-quiz-view').style.display = 'none'
+  showGameResult({
+    emoji:gradeEmoji, title:gradeMsg, stars:perfStars,
+    msg:`Skor kuis: ${score} / ${total} benar\nAda ${G18_TRAINS.length} kereta di museum — sudah kamu pelajari semua?${reviewLine}\nSoal berubah setiap main, coba lagi!`,
+    buttons:[{label:'Main Lagi 🔄', action:()=>initGame18()},{label:'Kembali ⌂', action:()=>goBack()}]
+  })
+  if (score >= 3) playCorrect(); else playWrong()
+}
+
+/* ---- boot ---- */
+window.addEventListener('DOMContentLoaded', () => {
+  try { initGame18() } catch(e){ console.error('[museum] init failed', e) }
+})
+window.addEventListener('pagehide', () => { try { g18Cleanup() } catch(_){} })
+</script>
+</body>
+</html>

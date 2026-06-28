@@ -15,7 +15,7 @@
  * succeeded. Only cache same-origin assets.
  * ========================================================================== */
 
-const CACHE_VERSION = 'v55.74-20260628b'
+const CACHE_VERSION = 'v55.74-20260628c'
 const HTML_CACHE = `dunia-html-${CACHE_VERSION}`
 const ASSET_CACHE = `dunia-assets-${CACHE_VERSION}`
 
@@ -47,6 +47,7 @@ const SHELL = [
   './assets/g23-icon.png',
   './games/lib/pixi.min.js?v=8',
   './games/balapan-kereta-side.html',
+  './games/museum-kereta.html',
   './games/indo-scene.js?v=2.1.0',
   './games/sw-reload.js?v=55.69-20260628a',
   './games/g14-hud.css?v=55.73-20260628a',

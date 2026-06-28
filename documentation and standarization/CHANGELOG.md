@@ -1,5 +1,17 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-28 — v55.74b "Museum Kereta Ambarawa → own standalone page" (B-272 / B-274)
+
+Owner B-272: the museum was an in-SPA overlay (URL = index.html); it should be its own page like every other
+game. Extracted Game 18 into a self-contained **`games/museum-kereta.html`** (no dependency on game.js): the
+SVG loco builders (`dunWheel` spoked wheels + steam/diesel/electric) + `G18_TRAINS` (36 locos) +
+`G18_QUESTIONS_BANK` + the gallery / detail-modal / quiz / passport / storybook / timeline / Java-route-map,
+with in-page audio + a minimal scoring/result overlay. **B-274 polish:** warm museum-hall backdrop, Willem-I
+1873 hero banner, daily-trivia, card hover gleam, animated hero loco (spoked wheels) in the modal, conductor
+avatar. TTS off (g18Speak no-op); SPA-only bits (AR/Codex via TrainShared) dropped cleanly (were guarded).
+The world-map tile (`#gtile-18` in index.html) now navigates to the standalone page (the only live-app edit);
+the old in-SPA museum code stays but is unreached. Verified: 36 cards, modal, quiz, 0 console errors. sw bump.
+
 ## 2026-06-28 — v55.74 "clean painterly backdrops: LaMa-inpaint the painted train/obstacles + crop the UI" (A-312)
 
 Owner: the reference backgrounds must contain ONLY scenery + rails — every baked-in element gone (UI bars AND
