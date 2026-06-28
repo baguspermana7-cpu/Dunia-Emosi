@@ -38,6 +38,9 @@ DEFAULT_BAND = {"skyBot": 0.50, "bandTop": 0.42, "bandBot": 0.72, "skyKeyTol": 4
 # painted rails in the painterly mockups (consistent template). Per-image tunable
 # via a levelNN.json `laneRatios` override before running.
 DEFAULT_LANES = {"lanes": [0.515, 0.625, 0.735], "horizon": 0.46, "foreTop": 0.80}
+# Crop the painted-in UI bands off the top + bottom so only scenery + rails remain
+# (the real CSS HUD provides the UI). Keep rows [top*H .. bot*H]. Per-level override.
+DEFAULT_SCENE_CROP = {"top": 0.140, "bot": 0.800}
 # RASTER backdrop tiers (px width). Runtime picks by screen.width*dpr (capped).
 RASTER_TIERS = [1280, 960, 640]
 
@@ -197,30 +200,56 @@ def process(level, selftest=False, mode="raster"):
         try:
             prev = json.load(open(man_path))
             band.update(prev.get("bandRatios", {}))
-            lanes.update(prev.get("laneRatios", {}))
+            # read the RAW (uncropped) lane ratios so re-runs are idempotent — the
+            # cropped `laneRatios` the runtime uses is derived fresh each build.
+            lanes.update(prev.get("laneRatiosRaw", prev.get("laneRatios", {})))
         except Exception:
             pass
 
     if selftest:
         ref = _synth_ref()
     else:
-        hits = []
+        # prefer the LaMa-cleaned plate (painted train/obstacles removed) if it
+        # exists; else the raw owner reference.
+        clean = os.path.join(ROOT, "assets/train/bg-clean", "level%02d.png" % level)
+        hits = [clean] if os.path.exists(clean) else []
         for ext in ("png", "webp", "jpg", "jpeg"):
             hits += glob.glob(os.path.join(REF_DIR, "level%02d.%s" % (level, ext)))
             hits += glob.glob(os.path.join(REF_DIR, "level%d.%s" % (level, ext)))
         if not hits:
             print("L%02d: no reference image in assets/train/bg-ref/ — skipped" % level)
             return False
-        ref = Image.open(sorted(hits)[0]).convert("RGBA")
+        ref = Image.open(hits[0]).convert("RGBA")   # hits[0] = cleaned plate if present, else raw ref
 
     # ── RASTER mode (default; A/B-chosen for painterly art) ──
     if mode == "raster":
         palette = sample_palette(ref, band)
+        # v55.74 — the owner's mockups have the game UI (HUD, controls, station
+        # progress bar) PAINTED into the top + bottom bands. Crop to the clean
+        # gameplay band so ONLY scenery + rails remain (the real CSS HUD overlays
+        # the screen edges). Per-level override: levelNN.json "sceneCrop".
+        sc = dict(DEFAULT_SCENE_CROP)
+        if os.path.exists(man_path):
+            try:
+                sc.update(json.load(open(man_path)).get("sceneCrop", {}))
+            except Exception:
+                pass
+        W0, H0 = ref.size
+        ct, cb = max(0.0, sc["top"]), min(1.0, sc["bot"])
+        if cb - ct < 0.3:
+            ct, cb = DEFAULT_SCENE_CROP["top"], DEFAULT_SCENE_CROP["bot"]
+        ref = ref.crop((0, int(H0 * ct), W0, int(H0 * cb)))
+        # remap the RAW lane Y-ratios into the cropped frame so the rails still
+        # align; store both (raw = stable source for idempotent re-runs).
+        span = cb - ct
+        raw_lanes = list(lanes.get("lanes", DEFAULT_LANES["lanes"]))
+        cropped = dict(lanes)
+        cropped["lanes"] = [round((r - ct) / span, 4) for r in raw_lanes]
         tiers = raster_tiers(ref, level)
         manifest = {
             "level": level, "mode": "raster",
             "backdrop": {"tiers": tiers, "aspect": round(ref.size[0] / ref.size[1], 4)},
-            "laneRatios": lanes,
+            "laneRatios": cropped, "laneRatiosRaw": {"lanes": raw_lanes},
             "palette": palette,
         }
         json.dump(manifest, open(man_path, "w"), indent=2)

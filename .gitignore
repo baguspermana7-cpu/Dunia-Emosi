@@ -17,3 +17,7 @@ assets/train/train bg/
 assets/train/bg-ref/*.png
 assets/train/bg-ref/*.jpg
 tools/qa-out/
+
+# A-312 inpainting — heavy intermediates (served WebP tiers ARE tracked)
+assets/train/bg-clean/
+tools/models/

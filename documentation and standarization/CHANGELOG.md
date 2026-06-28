@@ -1,5 +1,22 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-28 — v55.74 "clean painterly backdrops: LaMa-inpaint the painted train/obstacles + crop the UI" (A-312)
+
+Owner: the reference backgrounds must contain ONLY scenery + rails — every baked-in element gone (UI bars AND
+the train + cones + stars + "Quiz!" bubble painted into the scene), cleanly, done by me. Cropping handled the
+UI bars; the mid-scene painted elements needed real object-removal **inpainting**.
+- **`tools/bg-inpaint.py` (NEW)** — runs **LaMa** (the `big-lama.pt` TorchScript model loaded directly on the
+  present torch+CUDA; the pip wrapper failed to build on py3.13). Per level, the mask = manual element rects
+  (`data/g14-journey/levelNN.mask.json`, authored by inspecting each image) + an auto orange/yellow threshold
+  (cones/stars) inside the rail band. LaMa erases them and fills convincing rails + scenery → clean plate
+  `assets/train/bg-clean/levelNN.png`.
+- **`tools/bg-ref-build.py`** — sources from the cleaned plate when present, then the existing `sceneCrop`
+  (top/bottom UI bars) + multi-res WebP tiers run on it. So the final backdrop = painterly scenery + rails only.
+- **Result (levels 2-12):** the painted train/obstacles/UI are GONE; the real game train + obstacles + the new
+  candy HUD render on top. Verified in-game L3/7/12, 0 console errors; lanes still aligned.
+- Heavy intermediates (the 206MB model, the clean PNGs, the source PNGs) gitignored; only the served WebP tiers
+  + the small mask recipes are tracked. sw v55.73→v55.74. See [L113].
+
 ## 2026-06-28 — v55.73 "g14 painterly HUD reskin · TTS off · side-scroller longer+smaller"
 
 - **g14 HUD reskin (A-312 follow-on)** — the in-game HUD now matches the owner's painterly mockup: gold coin

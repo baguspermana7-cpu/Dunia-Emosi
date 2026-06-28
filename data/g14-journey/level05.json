@@ -16,25 +16,32 @@
         "src": "assets/train/backdrop/level05-640.webp"
       }
     ],
-    "aspect": 1.7768
+    "aspect": 2.6924
   },
   "laneRatios": {
     "lanes": [
-      0.515,
-      0.625,
-      0.735
+      0.5682,
+      0.7348,
+      0.9015
     ],
     "horizon": 0.46,
     "foreTop": 0.8
   },
+  "laneRatiosRaw": {
+    "lanes": [
+      0.515,
+      0.625,
+      0.735
+    ]
+  },
   "palette": {
     "skyTop": "0x99d3ef",
     "skyMid": "0xb7dfeb",
-    "skyBot": "0x727359",
-    "haze": "0x727359",
-    "mtnFar": "0x64674a",
-    "hill1": "0x6d6542",
-    "hill2": "0x7a714a",
+    "skyBot": "0x696d5a",
+    "haze": "0x696d5a",
+    "mtnFar": "0x5d5e4c",
+    "hill1": "0x6c6543",
+    "hill2": "0x78714b",
     "hill3": "0x6a864f",
     "grass": "0x6a864f",
     "grassDk": "0x52683d"
