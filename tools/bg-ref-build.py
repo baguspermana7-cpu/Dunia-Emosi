@@ -227,10 +227,15 @@ def process(level, selftest=False, mode="raster", force_clean=False):
     if selftest:
         ref = _synth_ref()
     else:
-        # prefer the LaMa-cleaned plate (painted train/obstacles removed) if it
-        # exists; else the raw owner reference.
-        clean = os.path.join(ROOT, "assets/train/bg-clean", "level%02d.png" % level)
-        hits = [clean] if os.path.exists(clean) else []
+        # v55.84 — when building from the owner's CLEAN VERSION (force_clean), source the
+        # plate from bg-ref/ ONLY (= the clean version). The old LaMa-inpainted bg-clean/
+        # plates are REFERENCE ONLY and must never be used (owner: "gambar lama jangan
+        # dipakai lagi"). Only the legacy mockup pipeline consults bg-clean.
+        hits = []
+        if not force_clean:
+            clean = os.path.join(ROOT, "assets/train/bg-clean", "level%02d.png" % level)
+            if os.path.exists(clean):
+                hits = [clean]
         for ext in ("png", "webp", "jpg", "jpeg"):
             hits += glob.glob(os.path.join(REF_DIR, "level%02d.%s" % (level, ext)))
             hits += glob.glob(os.path.join(REF_DIR, "level%d.%s" % (level, ext)))

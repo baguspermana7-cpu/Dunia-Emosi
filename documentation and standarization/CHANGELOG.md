@@ -1,5 +1,21 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-28 — v55.84 "g14 clean backdrops + ZERO-TOLERANCE on-rail + proportional layout + bigger controls"
+
+Owner (with screenshots): backdrop was the WRONG (old, non-clean) image; train tiny / dropped under controls;
+controls too small; player + NPC trains must sit PERFECTLY on the rail — **zero tolerance** — proportional + dynamic;
+and the OTHER train games must not have the same issues.
+- **Backdrop = clean version ONLY**: `tools/bg-ref-build.py --clean` now sources from `bg-ref/` (owner clean plates)
+  ONLY — the old inpainted `bg-clean/` (L2-12) was wrongly PREFERRED. Rebuilt 48; old plates moved aside. L3 verified.
+- **ZERO-TOLERANCE on-rail** (player + NPC, all 3 train games): generic `anchor 0.86` (sank wheels ~0.19xlaneH) ->
+  MEASURED per-sprite wheel-baseline (`tools/measure-wheel-anchors.py` -> `games/data/train-wheel-anchors.js`, via
+  `g14WheelAnchor`); player asymptotic ease (~2px) -> SNAP to lane; removed player +-0.4px bob, NPC +-0.5px float
+  (g14), g15 +-1.4px bob, g14-side +-2.8px chuff bob. Every train rests exactly on its rail.
+- **Proportional + dynamic layout**: train ~1.45xlaneH, obstacles ~0.85xlaneH, PLAY BAND reserving the real control
+  height ("sampai kebawah" fixed); all laneH-derived -> responsive (initPixi + resize). **Bigger controls**.
+- **Gate** `tools/qa-g14-railalign.mjs`: player(all lanes)+NPC <=1px, no float, prominent, 4 viewports -> PASS, 0 err.
+  g15 + g14-side + whole-app sweep + parallax green. sw v55.83->v55.84; stamps g14/g15/g14-side -> v55.84.
+
 ## 2026-06-28 — v55.83 "g15 full journey unification" (owner: shared journey everywhere)
 
 Owner chose: g15 adopts the shared 48-leg journey EVERYWHERE. `getCurrentStation()` now derives the station from

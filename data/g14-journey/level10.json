@@ -73,15 +73,15 @@
     ]
   },
   "palette": {
-    "skyTop": "0x98cfea",
-    "skyMid": "0xabd6e3",
-    "skyBot": "0x74785f",
-    "haze": "0x74785f",
-    "mtnFar": "0x6a6b55",
-    "hill1": "0x5d5244",
-    "hill2": "0x685c4c",
-    "hill3": "0x6e907c",
-    "grass": "0x6e907c",
-    "grassDk": "0x557060"
+    "skyTop": "0x70687e",
+    "skyMid": "0x5b4e4b",
+    "skyBot": "0x46403b",
+    "haze": "0x46403b",
+    "mtnFar": "0x413a33",
+    "hill1": "0x5e4337",
+    "hill2": "0x694b3e",
+    "hill3": "0x433625",
+    "grass": "0x433625",
+    "grassDk": "0x342a1c"
   }
 }

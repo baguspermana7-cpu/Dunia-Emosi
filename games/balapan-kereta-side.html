@@ -1168,12 +1168,11 @@ function tick(tickerOrDelta) {
     }
   }
 
-  // v54.99 — Train bob (chuff rhythm). Amplitude raised 1.4 → 2.8 so the lift
-  // actually reads on screen at the smaller sprite scale.
-  // B-250: add terrainOffset so train rides the rolling hills visually.
+  // v55.84 — ZERO-TOLERANCE on-rail (owner: ensure the other train games don't float):
+  // the train rides its undulating terrain rail EXACTLY (removed the ±2.8px chuff bob that
+  // lifted it off the rail). Motion now reads from wheel-spin + smoke, not a vertical float.
   if (!S.jumping) {
-    const bob = REDUCED_MOTION ? 0 : Math.sin(S.frame * 0.18) * 2.8
-    trainContainer.y = H * RAIL_Y_FRAC + S.terrainOffset - 4 + bob
+    trainContainer.y = H * RAIL_Y_FRAC + S.terrainOffset - 4
   }
 
   // Jump physics
@@ -1846,6 +1845,6 @@ window.addEventListener('keydown', e => {
   if (e.code === 'Escape') goBack()
 })
 </script>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.81</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.84</div>
 </body>
 </html>
