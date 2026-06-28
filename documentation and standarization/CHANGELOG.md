@@ -1,5 +1,27 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-28 — v55.70 "Museum loco wheels spin on their axle (not orbit) + correct Diesel sprite" (B-264, B-273)
+
+- **B-264 Diesel sprite replaced** with the owner's correct art — black BR Class 08 diesel with the smiling
+  face, facing right. Processed the transparent PNG → `assets/train/aeg/diesel.webp` (396×260, trimmed to
+  content; `trains-db` already `faces:'right'`). The old wide/wrong 525×145 sprite is gone. In-game verified.
+- **B-273 wheels rotate on their own axle (was "revolution mutar tanpa poros").** Two bugs: (1) the museum
+  modal injected `#g18-modal-emoji svg circle{transform-origin:center;animation:spin}` — that spun **every
+  circle** (wheels, smoke, headlight, dome highlights) around the SVG **viewBox centre** with no
+  `transform-box:fill-box`, so everything orbited; (2) the shared `.train-wheel` rule relied on `fill-box`,
+  which the owner's tablet webview ignores → bare `<circle>` wheels orbited too, and a plain circle shows no
+  visible spin anyway. **Fix:** new shared **`dunWheel()`** renderer emits each wheel as a `<g>` with a rim +
+  hub + **spokes** (rotation now visible) and an inline `transform-origin` in **viewBox units** (no fill-box
+  dependency) so it spins on its real axle everywhere. Rolled through **all 9 loco SVG builders** (steam /
+  diesel / electric / hood-diesel / dual-cab / EMU / Shinkansen / high-speed), and the museum hero loco now
+  animates with proper spoked wheels. Removed the broken blanket circle-spin. Screenshot-verified. See [L110].
+
+### Still pending (separate)
+- **B-272 / B-274 Museum (Game 18)** — extract to its own page (currently URL = index.html) + expand the
+  concept (more interactive/cooler). A dedicated pass; benefits from owner direction on the new vision.
+- **A-312** — owner will supply per-level background reference art (L1-30); hybrid plan (detailed landmark +
+  procedural sky/hills) locked in.
+
 ## 2026-06-28 — v55.69 "balapan-kereta: cache-visibility · smaller sizing · one soundscape · pseudo-3D · 40-level station journey" (B-275→B-278)
 
 Owner replayed g14 and reported several fixes "tidak berubah" + a new vision for the levels. Root insight:

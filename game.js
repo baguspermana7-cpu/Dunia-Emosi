@@ -11439,6 +11439,31 @@ function hideGameResult() {
 // ============================================================
 
 // Inline SVG steam locomotive builder — used for animated train in G14 + G17
+// v55.70 B-273 — shared loco-wheel renderer. Returns an SVG <g> with a rim, hub,
+// and SPOKES (so rotation is VISIBLE on a plain wheel) and, when animated, an
+// inline `transform-origin` in viewBox units so the wheel spins on its OWN axle
+// on every browser. The old bare-<circle> wheels relied on `transform-box:fill-box`
+// which the owner's tablet webview ignores → they orbited the viewBox centre
+// ("revolution mutar tanpa poros"). This fixes both: spokes + correct origin.
+function dunWheel(cx, cy, r, wc, opts = {}) {
+  const { animate = true, rim = '#bbb', rimW = 2, hub = '#cfcfcf', spoke = 'rgba(232,232,238,0.66)' } = opts
+  const cls = animate ? ' class="dun-wheel-spin"' : ''
+  const sty = animate ? ` style="transform-origin:${cx}px ${cy}px"` : ''
+  const hubR = Math.max(2, r * 0.34)
+  const sw = Math.max(1, r * 0.13)
+  let spokes = ''
+  for (let i = 0; i < 3; i++) {           // 3 diameters = 6-spoke cue
+    const a = (i * Math.PI) / 3
+    const dx = Math.cos(a) * (r - rimW), dy = Math.sin(a) * (r - rimW)
+    spokes += `<line x1="${(cx - dx).toFixed(1)}" y1="${(cy - dy).toFixed(1)}" x2="${(cx + dx).toFixed(1)}" y2="${(cy + dy).toFixed(1)}" stroke="${spoke}" stroke-width="${sw.toFixed(1)}" stroke-linecap="round"/>`
+  }
+  return `<g${cls}${sty}>` +
+    `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${wc}" stroke="${rim}" stroke-width="${rimW}"/>` +
+    spokes +
+    `<circle cx="${cx}" cy="${cy}" r="${hubR.toFixed(1)}" fill="${hub}"/>` +
+    `</g>`
+}
+
 function buildSteamLocoSVG(cfg, opts = {}) {
   const { animate = true, width = 148, height = 64 } = opts
   const bc  = cfg.bodyColor  || '#1a1a2e'
@@ -11459,10 +11484,8 @@ function buildSteamLocoSVG(cfg, opts = {}) {
     <rect x="142" y="28" width="44" height="10" rx="3" fill="${wc}"/>
     <ellipse cx="164" cy="28" rx="20" ry="5.5" fill="#1a1a1a"/>
     <rect x="186" y="46" width="12" height="5" rx="2.5" fill="#777"/>
-    <circle${wa} cx="153" cy="61" r="9"  fill="${wc}" stroke="#aaa" stroke-width="1.5"/>
-    <circle       cx="153" cy="61" r="3"  fill="#aaa"/>
-    <circle${wa} cx="171" cy="61" r="9"  fill="${wc}" stroke="#aaa" stroke-width="1.5"/>
-    <circle       cx="171" cy="61" r="3"  fill="#aaa"/>` : ''
+    ${dunWheel(153, 61, 9, wc, { animate, rim: '#aaa', rimW: 1.5 })}
+    ${dunWheel(171, 61, 9, wc, { animate, rim: '#aaa', rimW: 1.5 })}` : ''
 
   const rackHtml = cfg.rack ? `
     <rect x="32" y="65" width="90" height="5" rx="2" fill="#666" opacity="0.8"/>
@@ -11494,14 +11517,10 @@ function buildSteamLocoSVG(cfg, opts = {}) {
   <ellipse cx="80" cy="23" rx="15" ry="8" fill="${wc}"/>
   <ellipse cx="${hasTender ? 106 : 94}" cy="23" rx="9" ry="6" fill="${wc}"/>
   <rect    cx="${hasTender ? 109 : 97}" y="19" width="4" height="9" rx="2" fill="#999"/>
-  <circle${wa} cx="36"  cy="60" r="9"  fill="${wc}" stroke="#999" stroke-width="1.5"/>
-  <circle       cx="36"  cy="60" r="3"  fill="#aaa"/>
-  <circle${wa} cx="60"  cy="58" r="14" fill="${wc}" stroke="#bbb" stroke-width="2"/>
-  <circle       cx="60"  cy="58" r="5"  fill="#bbb"/>
-  <circle${wa} cx="86"  cy="58" r="14" fill="${wc}" stroke="#bbb" stroke-width="2"/>
-  <circle       cx="86"  cy="58" r="5"  fill="#bbb"/>
-  <circle${wa} cx="112" cy="58" r="14" fill="${wc}" stroke="#bbb" stroke-width="2"/>
-  <circle       cx="112" cy="58" r="5"  fill="#bbb"/>
+  ${dunWheel(36, 60, 9, wc, { animate, rim: '#999', rimW: 1.5 })}
+  ${dunWheel(60, 58, 14, wc, { animate, rim: '#bbb', rimW: 2 })}
+  ${dunWheel(86, 58, 14, wc, { animate, rim: '#bbb', rimW: 2 })}
+  ${dunWheel(112, 58, 14, wc, { animate, rim: '#bbb', rimW: 2 })}
   <rect x="60" y="56" width="52" height="4" rx="2" fill="#888"/>
   <rect x="18" y="54" width="46" height="5" rx="2.5" fill="#666"/>
   <!-- Contrasting body stripe for visibility -->
@@ -11543,16 +11562,11 @@ function buildDieselLocoSVG(cfg, opts = {}) {
   <rect x="84"  y="20" width="8"  height="16" rx="3"   fill="#333"/>
   <rect x="80"  y="16" width="16" height="7"  rx="3"   fill="#555"/>
   ${dieselSmokeHtml}
-  <circle${wa} cx="38"  cy="62" r="9"  fill="#2a2a2a" stroke="#888" stroke-width="1.5"/>
-  <circle       cx="38"  cy="62" r="3.5" fill="#aaa"/>
-  <circle${wa} cx="64"  cy="62" r="9"  fill="#2a2a2a" stroke="#888" stroke-width="1.5"/>
-  <circle       cx="64"  cy="62" r="3.5" fill="#aaa"/>
-  <circle${wa} cx="90"  cy="62" r="9"  fill="#2a2a2a" stroke="#888" stroke-width="1.5"/>
-  <circle       cx="90"  cy="62" r="3.5" fill="#aaa"/>
-  <circle${wa} cx="152" cy="62" r="9"  fill="#2a2a2a" stroke="#888" stroke-width="1.5"/>
-  <circle       cx="152" cy="62" r="3.5" fill="#aaa"/>
-  <circle${wa} cx="176" cy="62" r="9"  fill="#2a2a2a" stroke="#888" stroke-width="1.5"/>
-  <circle       cx="176" cy="62" r="3.5" fill="#aaa"/>
+  ${dunWheel(38, 62, 9, '#2a2a2a', { animate, rim: '#888', rimW: 1.5 })}
+  ${dunWheel(64, 62, 9, '#2a2a2a', { animate, rim: '#888', rimW: 1.5 })}
+  ${dunWheel(90, 62, 9, '#2a2a2a', { animate, rim: '#888', rimW: 1.5 })}
+  ${dunWheel(152, 62, 9, '#2a2a2a', { animate, rim: '#888', rimW: 1.5 })}
+  ${dunWheel(176, 62, 9, '#2a2a2a', { animate, rim: '#888', rimW: 1.5 })}
   <rect x="10" y="56" width="168" height="5" rx="2.5" fill="rgba(0,0,0,0.3)"/>
 </svg>`
 }
@@ -11584,14 +11598,10 @@ function buildElectricLocoSVG(cfg, opts = {}) {
   <rect x="8"   y="8"  width="40" height="5"  rx="2.5" fill="#555"/>
   <rect x="20"  y="5"  width="15" height="5"  rx="2"   fill="#777"/>
   ${sparkHtml}
-  <circle${wa} cx="44"  cy="54" r="8" fill="#222" stroke="#999" stroke-width="1.5"/>
-  <circle       cx="44"  cy="54" r="3" fill="#aaa"/>
-  <circle${wa} cx="84"  cy="54" r="8" fill="#222" stroke="#999" stroke-width="1.5"/>
-  <circle       cx="84"  cy="54" r="3" fill="#aaa"/>
-  <circle${wa} cx="128" cy="54" r="8" fill="#222" stroke="#999" stroke-width="1.5"/>
-  <circle       cx="128" cy="54" r="3" fill="#aaa"/>
-  <circle${wa} cx="170" cy="54" r="8" fill="#222" stroke="#999" stroke-width="1.5"/>
-  <circle       cx="170" cy="54" r="3" fill="#aaa"/>
+  ${dunWheel(44, 54, 8, '#222', {animate, rim:'#999', rimW:1.5, hub:'#aaa'})}
+  ${dunWheel(84, 54, 8, '#222', {animate, rim:'#999', rimW:1.5, hub:'#aaa'})}
+  ${dunWheel(128, 54, 8, '#222', {animate, rim:'#999', rimW:1.5, hub:'#aaa'})}
+  ${dunWheel(170, 54, 8, '#222', {animate, rim:'#999', rimW:1.5, hub:'#aaa'})}
 </svg>`
 }
 
@@ -11644,14 +11654,14 @@ function buildHoodDieselSVG(cfg, opts = {}) {
   <rect x="204" y="46" width="9" height="8" rx="2" fill="#555"/>
   <!-- C bogie 1 (3 axles) -->
   <rect x="10" y="56" width="78" height="10" rx="4" fill="#181818" stroke="#555" stroke-width="1"/>
-  <circle${wa} cx="22"  cy="63" r="7" fill="#282828" stroke="#888" stroke-width="1.5"/><circle cx="22"  cy="63" r="2.5" fill="#aaa"/>
-  <circle${wa} cx="42"  cy="63" r="7" fill="#282828" stroke="#888" stroke-width="1.5"/><circle cx="42"  cy="63" r="2.5" fill="#aaa"/>
-  <circle${wa} cx="62"  cy="63" r="7" fill="#282828" stroke="#888" stroke-width="1.5"/><circle cx="62"  cy="63" r="2.5" fill="#aaa"/>
+  ${dunWheel(22, 63, 7, '#282828', {animate, rim:'#888', rimW:1.5, hub:'#aaa'})}
+  ${dunWheel(42, 63, 7, '#282828', {animate, rim:'#888', rimW:1.5, hub:'#aaa'})}
+  ${dunWheel(62, 63, 7, '#282828', {animate, rim:'#888', rimW:1.5, hub:'#aaa'})}
   <!-- C bogie 2 (3 axles) -->
   <rect x="125" y="56" width="78" height="10" rx="4" fill="#181818" stroke="#555" stroke-width="1"/>
-  <circle${wa} cx="137" cy="63" r="7" fill="#282828" stroke="#888" stroke-width="1.5"/><circle cx="137" cy="63" r="2.5" fill="#aaa"/>
-  <circle${wa} cx="157" cy="63" r="7" fill="#282828" stroke="#888" stroke-width="1.5"/><circle cx="157" cy="63" r="2.5" fill="#aaa"/>
-  <circle${wa} cx="177" cy="63" r="7" fill="#282828" stroke="#888" stroke-width="1.5"/><circle cx="177" cy="63" r="2.5" fill="#aaa"/>
+  ${dunWheel(137, 63, 7, '#282828', {animate, rim:'#888', rimW:1.5, hub:'#aaa'})}
+  ${dunWheel(157, 63, 7, '#282828', {animate, rim:'#888', rimW:1.5, hub:'#aaa'})}
+  ${dunWheel(177, 63, 7, '#282828', {animate, rim:'#888', rimW:1.5, hub:'#aaa'})}
   <rect x="80" y="52" width="42" height="8" rx="3" fill="#080808"/>
 </svg>`
 }
@@ -11706,14 +11716,14 @@ function buildDualCabSVG(cfg, opts = {}) {
   <rect x="218" y="46" width="10" height="8" rx="2" fill="#555"/>
   <!-- Bogie 1 — C (left) -->
   <rect x="10" y="55" width="90" height="10" rx="4" fill="#181818" stroke="#444" stroke-width="1"/>
-  <circle${wa} cx="22"  cy="62" r="7" fill="#222" stroke="#888" stroke-width="1.5"/><circle cx="22"  cy="62" r="2.5" fill="#aaa"/>
-  <circle${wa} cx="42"  cy="62" r="7" fill="#222" stroke="#888" stroke-width="1.5"/><circle cx="42"  cy="62" r="2.5" fill="#aaa"/>
-  <circle${wa} cx="62"  cy="62" r="7" fill="#222" stroke="#888" stroke-width="1.5"/><circle cx="62"  cy="62" r="2.5" fill="#aaa"/>
+  ${dunWheel(22, 62, 7, '#222', {animate, rim:'#888', rimW:1.5, hub:'#aaa'})}
+  ${dunWheel(42, 62, 7, '#222', {animate, rim:'#888', rimW:1.5, hub:'#aaa'})}
+  ${dunWheel(62, 62, 7, '#222', {animate, rim:'#888', rimW:1.5, hub:'#aaa'})}
   <!-- Bogie 2 — C (right) -->
   <rect x="130" y="55" width="90" height="10" rx="4" fill="#181818" stroke="#444" stroke-width="1"/>
-  <circle${wa} cx="142" cy="62" r="7" fill="#222" stroke="#888" stroke-width="1.5"/><circle cx="142" cy="62" r="2.5" fill="#aaa"/>
-  <circle${wa} cx="162" cy="62" r="7" fill="#222" stroke="#888" stroke-width="1.5"/><circle cx="162" cy="62" r="2.5" fill="#aaa"/>
-  <circle${wa} cx="182" cy="62" r="7" fill="#222" stroke="#888" stroke-width="1.5"/><circle cx="182" cy="62" r="2.5" fill="#aaa"/>
+  ${dunWheel(142, 62, 7, '#222', {animate, rim:'#888', rimW:1.5, hub:'#aaa'})}
+  ${dunWheel(162, 62, 7, '#222', {animate, rim:'#888', rimW:1.5, hub:'#aaa'})}
+  ${dunWheel(182, 62, 7, '#222', {animate, rim:'#888', rimW:1.5, hub:'#aaa'})}
 </svg>`
 }
 
@@ -11760,15 +11770,15 @@ function buildEmuSVG(cfg, opts = {}) {
   ${spk}
   <!-- Bogies — front car -->
   <rect x="14" y="50" width="50" height="8" rx="3" fill="#111" stroke="#444" stroke-width="1"/>
-  <circle${wa} cx="24" cy="56" r="6" fill="#222" stroke="#888" stroke-width="1.5"/><circle cx="24" cy="56" r="2" fill="#aaa"/>
-  <circle${wa} cx="52" cy="56" r="6" fill="#222" stroke="#888" stroke-width="1.5"/><circle cx="52" cy="56" r="2" fill="#aaa"/>
+  ${dunWheel(24, 56, 6, '#222', {animate, rim:'#888', rimW:1.5, hub:'#aaa'})}
+  ${dunWheel(52, 56, 6, '#222', {animate, rim:'#888', rimW:1.5, hub:'#aaa'})}
   <rect x="82" y="50" width="50" height="8" rx="3" fill="#111" stroke="#444" stroke-width="1"/>
-  <circle${wa} cx="92"  cy="56" r="6" fill="#222" stroke="#888" stroke-width="1.5"/><circle cx="92"  cy="56" r="2" fill="#aaa"/>
-  <circle${wa} cx="120" cy="56" r="6" fill="#222" stroke="#888" stroke-width="1.5"/><circle cx="120" cy="56" r="2" fill="#aaa"/>
+  ${dunWheel(92, 56, 6, '#222', {animate, rim:'#888', rimW:1.5, hub:'#aaa'})}
+  ${dunWheel(120, 56, 6, '#222', {animate, rim:'#888', rimW:1.5, hub:'#aaa'})}
   <!-- Bogies — rear car -->
   <rect x="164" y="50" width="62" height="8" rx="3" fill="#111" stroke="#444" stroke-width="1"/>
-  <circle${wa} cx="176" cy="56" r="6" fill="#222" stroke="#888" stroke-width="1.5"/><circle cx="176" cy="56" r="2" fill="#aaa"/>
-  <circle${wa} cx="212" cy="56" r="6" fill="#222" stroke="#888" stroke-width="1.5"/><circle cx="212" cy="56" r="2" fill="#aaa"/>
+  ${dunWheel(176, 56, 6, '#222', {animate, rim:'#888', rimW:1.5, hub:'#aaa'})}
+  ${dunWheel(212, 56, 6, '#222', {animate, rim:'#888', rimW:1.5, hub:'#aaa'})}
 </svg>`
 }
 
@@ -11816,14 +11826,14 @@ function buildShinkansen0SVG(cfg, opts = {}) {
   ${spk}
   <!-- Bogies (4 shown for 0-series 16-car train feel) -->
   <rect x="42"  y="50" width="50" height="8" rx="3" fill="#2a2a2a" stroke="#555" stroke-width="1"/>
-  <circle${wa} cx="52"  cy="56" r="6" fill="#1a1a1a" stroke="#999" stroke-width="1.5"/><circle cx="52"  cy="56" r="2" fill="#ccc"/>
-  <circle${wa} cx="80"  cy="56" r="6" fill="#1a1a1a" stroke="#999" stroke-width="1.5"/><circle cx="80"  cy="56" r="2" fill="#ccc"/>
+  ${dunWheel(52, 56, 6, '#1a1a1a', {animate, rim:'#999', rimW:1.5, hub:'#ccc'})}
+  ${dunWheel(80, 56, 6, '#1a1a1a', {animate, rim:'#999', rimW:1.5, hub:'#ccc'})}
   <rect x="110" y="50" width="50" height="8" rx="3" fill="#2a2a2a" stroke="#555" stroke-width="1"/>
-  <circle${wa} cx="120" cy="56" r="6" fill="#1a1a1a" stroke="#999" stroke-width="1.5"/><circle cx="120" cy="56" r="2" fill="#ccc"/>
-  <circle${wa} cx="148" cy="56" r="6" fill="#1a1a1a" stroke="#999" stroke-width="1.5"/><circle cx="148" cy="56" r="2" fill="#ccc"/>
+  ${dunWheel(120, 56, 6, '#1a1a1a', {animate, rim:'#999', rimW:1.5, hub:'#ccc'})}
+  ${dunWheel(148, 56, 6, '#1a1a1a', {animate, rim:'#999', rimW:1.5, hub:'#ccc'})}
   <rect x="178" y="50" width="50" height="8" rx="3" fill="#2a2a2a" stroke="#555" stroke-width="1"/>
-  <circle${wa} cx="188" cy="56" r="6" fill="#1a1a1a" stroke="#999" stroke-width="1.5"/><circle cx="188" cy="56" r="2" fill="#ccc"/>
-  <circle${wa} cx="216" cy="56" r="6" fill="#1a1a1a" stroke="#999" stroke-width="1.5"/><circle cx="216" cy="56" r="2" fill="#ccc"/>
+  ${dunWheel(188, 56, 6, '#1a1a1a', {animate, rim:'#999', rimW:1.5, hub:'#ccc'})}
+  ${dunWheel(216, 56, 6, '#1a1a1a', {animate, rim:'#999', rimW:1.5, hub:'#ccc'})}
 </svg>`
 }
 
@@ -11866,11 +11876,11 @@ function buildHighSpeedSVG(cfg, opts = {}) {
   ${spk}
   <!-- Bogies -->
   <rect x="${nl+4}"  y="50" width="58" height="8" rx="3" fill="#1a1a1a" stroke="#444" stroke-width="1"/>
-  <circle${wa} cx="${nl+16}" cy="56" r="6" fill="#111" stroke="#888" stroke-width="1.5"/><circle cx="${nl+16}" cy="56" r="2" fill="#bbb"/>
-  <circle${wa} cx="${nl+48}" cy="56" r="6" fill="#111" stroke="#888" stroke-width="1.5"/><circle cx="${nl+48}" cy="56" r="2" fill="#bbb"/>
+  ${dunWheel(nl+16, 56, 6, '#111', {animate, rim:'#888', rimW:1.5, hub:'#bbb'})}
+  ${dunWheel(nl+48, 56, 6, '#111', {animate, rim:'#888', rimW:1.5, hub:'#bbb'})}
   <rect x="${nl+80}" y="50" width="58" height="8" rx="3" fill="#1a1a1a" stroke="#444" stroke-width="1"/>
-  <circle${wa} cx="${nl+92}"  cy="56" r="6" fill="#111" stroke="#888" stroke-width="1.5"/><circle cx="${nl+92}"  cy="56" r="2" fill="#bbb"/>
-  <circle${wa} cx="${nl+124}" cy="56" r="6" fill="#111" stroke="#888" stroke-width="1.5"/><circle cx="${nl+124}" cy="56" r="2" fill="#bbb"/>
+  ${dunWheel(nl+92, 56, 6, '#111', {animate, rim:'#888', rimW:1.5, hub:'#bbb'})}
+  ${dunWheel(nl+124, 56, 6, '#111', {animate, rim:'#888', rimW:1.5, hub:'#bbb'})}
 </svg>`
 }
 
@@ -13364,10 +13374,11 @@ function g17EndGame(won) {
 // Koleksi Museum Kereta Api Ambarawa + kereta-kereta terkenal dunia
 // ============================================================
 // G18 inline SVG builder — context-aware for museum gallery
-function g18TrainSVG(t, w, h) {
-  if (t.isSteam) return buildSteamLocoSVG(t, {animate:false, width:w||120, height:h||52})
-  if (t.isDiesel) return buildDieselLocoSVG(t, {animate:false, width:w||120, height:h||52})
-  if (t.isElectric) return buildElectricLocoSVG(t, {animate:false, width:w||120, height:h||52})
+function g18TrainSVG(t, w, h, animate) {
+  const a = !!animate   // v55.70 B-273 — gallery cards static; modal hero animated
+  if (t.isSteam) return buildSteamLocoSVG(t, {animate:a, width:w||120, height:h||52})
+  if (t.isDiesel) return buildDieselLocoSVG(t, {animate:a, width:w||120, height:h||52})
+  if (t.isElectric) return buildElectricLocoSVG(t, {animate:a, width:w||120, height:h||52})
   return `<span style="font-size:40px;line-height:1;">${t.emoji}</span>`
 }
 
@@ -14094,11 +14105,15 @@ function g18ShowDetail(idx) {
   _g18CurrentTrainIdx = idx
   const train = G18_TRAINS[idx]
   const emojiEl = document.getElementById('g18-modal-emoji')
-  emojiEl.innerHTML = g18TrainSVG(train, 160, 70)
-  // v54.22 E13: animate locomotive SVG — gentle horizontal bob + wheel sweep via CSS
+  emojiEl.innerHTML = g18TrainSVG(train, 160, 70, true)   // v55.70 B-273 — animate the hero loco (proper spoked wheels via dunWheel)
+  // v54.22 E13 / v55.70 B-273: gentle horizontal bob only. The OLD rule also did
+  // `#g18-modal-emoji svg circle{transform-origin:center;animation:spin}` which
+  // spun EVERY circle (smoke, headlight, dome) around the SVG viewBox centre with
+  // no fill-box → "revolution mutar tanpa poros". Wheels now spin themselves via
+  // dunWheel's per-wheel transform-origin, so this blanket circle-spin is removed.
   if (!document.getElementById('g18-train-anim-kf')) {
     const s = document.createElement('style'); s.id = 'g18-train-anim-kf'
-    s.textContent = '#g18-modal-emoji{animation:g18TrainAnim 2.4s ease-in-out infinite}@keyframes g18TrainAnim{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}#g18-modal-emoji svg circle{transform-origin:center;animation:g18WheelSpin 3s linear infinite}@keyframes g18WheelSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}'
+    s.textContent = '#g18-modal-emoji{animation:g18TrainAnim 2.4s ease-in-out infinite}@keyframes g18TrainAnim{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}'
     document.head.appendChild(s)
   }
   document.getElementById('g18-modal-name').textContent = train.name

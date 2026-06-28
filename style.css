@@ -3729,7 +3729,16 @@ body.g16-slowmo #g16-rope { transition:transform 1.5s, opacity 1.5s !important; 
 
 /* ===== TRAIN WHEEL + SMOKE ANIMATION (shared by G14/G17) ===== */
 @keyframes wheelSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+/* v55.70 B-273 — the OLD rule relied on `transform-box:fill-box` so a wheel would
+   spin on its own centre. On the owner's tablet webview fill-box isn't honoured →
+   transform-origin:center resolves to the SVG VIEWBOX centre, so every wheel
+   ORBITED that point ("mutar tanpa poros"). Wheels emitted by `dunWheel()` now
+   carry an inline `transform-origin` in viewBox units (no fill-box dependency) +
+   visible spokes, so they spin on their real axle everywhere. This shared rule is
+   kept (fill-box where supported) for any legacy bare-<circle> wheels. */
 .train-wheel { transform-box:fill-box;transform-origin:center;animation:wheelSpin 0.48s linear infinite; }
+/* dunWheel groups set their own origin inline; this just carries the spin. */
+.dun-wheel-spin { animation:wheelSpin 0.5s linear infinite; }
 @keyframes smokePuff {
   0%   { opacity:0.82;transform:translateY(0)   scale(0.5); }
   100% { opacity:0;   transform:translateY(-36px) scale(2.2); }
