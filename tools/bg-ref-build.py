@@ -40,7 +40,7 @@ DEFAULT_BAND = {"skyBot": 0.50, "bandTop": 0.42, "bandBot": 0.72, "skyKeyTol": 4
 DEFAULT_LANES = {"lanes": [0.515, 0.625, 0.735], "horizon": 0.46, "foreTop": 0.80}
 # Crop the painted-in UI bands off the top + bottom so only scenery + rails remain
 # (the real CSS HUD provides the UI). Keep rows [top*H .. bot*H]. Per-level override.
-DEFAULT_SCENE_CROP = {"top": 0.140, "bot": 0.800}
+DEFAULT_SCENE_CROP = {"top": 0.175, "bot": 0.795}
 # RASTER backdrop tiers (px width). Runtime picks by screen.width*dpr (capped).
 RASTER_TIERS = [1280, 960, 640]
 

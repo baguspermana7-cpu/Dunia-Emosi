@@ -5244,7 +5244,9 @@ function applyRdeScaling() {
   // v54.25 H9: Garage pre-select. If sessionStorage carries a chosen train, jump to picker pre-selected.
   try {
     if (window.TrainShared) {
-      TrainShared.wordOfDay.showBanner()
+      // v55.74 — word-of-day banner suppressed in g14: it overlapped the new
+      // painterly HUD ticket at the top and clutters the clean look (TTS already off).
+      // TrainShared.wordOfDay.showBanner()
       const garageKey = sessionStorage.getItem('garageTrainKey')
       if (garageKey) {
         sessionStorage.removeItem('garageTrainKey')
