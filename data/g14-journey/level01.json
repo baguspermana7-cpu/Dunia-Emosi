@@ -1,20 +1,20 @@
 {
-  "level": 6,
+  "level": 1,
   "mode": "raster",
   "clean": true,
   "backdrop": {
     "tiers": [
       {
         "w": 1280,
-        "src": "assets/train/backdrop/level06-1280.webp"
+        "src": "assets/train/backdrop/level01-1280.webp"
       },
       {
         "w": 960,
-        "src": "assets/train/backdrop/level06-960.webp"
+        "src": "assets/train/backdrop/level01-960.webp"
       },
       {
         "w": 640,
-        "src": "assets/train/backdrop/level06-640.webp"
+        "src": "assets/train/backdrop/level01-640.webp"
       }
     ],
     "aspect": 1.7768
@@ -53,15 +53,15 @@
     ]
   },
   "palette": {
-    "skyTop": "0x9dd1ea",
-    "skyMid": "0x9aa6a0",
-    "skyBot": "0x72705d",
-    "haze": "0x72705d",
-    "mtnFar": "0x6b6356",
-    "hill1": "0x6d6448",
-    "hill2": "0x7a7051",
-    "hill3": "0x849056",
-    "grass": "0x849056",
-    "grassDk": "0x667043"
+    "skyTop": "0xc5c7c2",
+    "skyMid": "0xc6a790",
+    "skyBot": "0x584e42",
+    "haze": "0x584e42",
+    "mtnFar": "0x4d463f",
+    "hill1": "0x47382e",
+    "hill2": "0x4f3f34",
+    "hill3": "0x404a2a",
+    "grass": "0x404a2a",
+    "grassDk": "0x313920"
   }
 }

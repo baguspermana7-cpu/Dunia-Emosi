@@ -1,6 +1,7 @@
 {
   "level": 3,
   "mode": "raster",
+  "clean": true,
   "backdrop": {
     "tiers": [
       {
@@ -16,22 +17,39 @@
         "src": "assets/train/backdrop/level03-640.webp"
       }
     ],
-    "aspect": 2.863
+    "aspect": 1.7768
   },
+  "bands": [
+    {
+      "y0": 0.0,
+      "y1": 0.58,
+      "speed": 0.14
+    },
+    {
+      "y0": 0.58,
+      "y1": 0.86,
+      "speed": 0.85
+    },
+    {
+      "y0": 0.86,
+      "y1": 1.0,
+      "speed": 1.05
+    }
+  ],
   "laneRatios": {
     "lanes": [
-      0.5484,
-      0.7258,
-      0.9032
+      0.645,
+      0.725,
+      0.805
     ],
     "horizon": 0.46,
     "foreTop": 0.8
   },
   "laneRatiosRaw": {
     "lanes": [
-      0.515,
-      0.625,
-      0.735
+      0.645,
+      0.725,
+      0.805
     ]
   },
   "palette": {

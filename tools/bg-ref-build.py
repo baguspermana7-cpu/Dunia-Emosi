@@ -41,6 +41,15 @@ DEFAULT_LANES = {"lanes": [0.515, 0.625, 0.735], "horizon": 0.46, "foreTop": 0.8
 # Crop the painted-in UI bands off the top + bottom so only scenery + rails remain
 # (the real CSS HUD provides the UI). Keep rows [top*H .. bot*H]. Per-level override.
 DEFAULT_SCENE_CROP = {"top": 0.175, "bot": 0.795}
+# v55.75 PARALLAX bands for clean plates: horizontal depth slices of the flat
+# painterly image, each scrolled at `speed` × S.speed so the near ground rushes
+# by while the horizon drifts (3D-ish motion from one image). Boundaries sit on
+# natural ground lines (rails-top, foreground) to minimise tearing. y0/y1 = frac.
+DEFAULT_BANDS = [
+    {"y0": 0.00, "y1": 0.58, "speed": 0.14},   # sky + far scenery (drifts slow)
+    {"y0": 0.58, "y1": 0.86, "speed": 0.85},   # rail bed (rushes; tiles seamlessly)
+    {"y0": 0.86, "y1": 1.00, "speed": 1.05},   # foreground grass (fastest)
+]
 # RASTER backdrop tiers (px width). Runtime picks by screen.width*dpr (capped).
 RASTER_TIERS = [1280, 960, 640]
 
@@ -224,6 +233,33 @@ def process(level, selftest=False, mode="raster"):
     # ── RASTER mode (default; A/B-chosen for painterly art) ──
     if mode == "raster":
         palette = sample_palette(ref, band)
+        # read per-level config (clean flag + parallax bands + laneRatios)
+        prev_cfg = {}
+        if os.path.exists(man_path):
+            try:
+                prev_cfg = json.load(open(man_path))
+            except Exception:
+                prev_cfg = {}
+
+        # ── CLEAN plate path (v55.75): the owner's "clean version" images are ALREADY
+        # scenery + rails only (no UI, no train) → NO inpaint, NO crop. Feed the full
+        # frame to the runtime PARALLAX engine, which slices it into depth bands. ──
+        if prev_cfg.get("clean"):
+            bands = prev_cfg.get("bands", DEFAULT_BANDS)
+            lanes2 = dict(lanes)
+            lanes2["lanes"] = prev_cfg.get("laneRatios", {}).get("lanes", DEFAULT_LANES["lanes"])
+            tiers = raster_tiers(ref, level)
+            manifest = {
+                "level": level, "mode": "raster", "clean": True,
+                "backdrop": {"tiers": tiers, "aspect": round(ref.size[0] / ref.size[1], 4)},
+                "bands": bands, "laneRatios": lanes2, "laneRatiosRaw": {"lanes": lanes2["lanes"]},
+                "palette": palette,
+            }
+            json.dump(manifest, open(man_path, "w"), indent=2)
+            _index_add(level)
+            print("L%02d: CLEAN parallax backdrop (%d bands) + manifest" % (level, len(bands)))
+            return True
+
         # v55.74 — the owner's mockups have the game UI (HUD, controls, station
         # progress bar) PAINTED into the top + bottom bands. Crop to the clean
         # gameplay band so ONLY scenery + rails remain (the real CSS HUD overlays

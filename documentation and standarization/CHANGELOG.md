@@ -1,5 +1,22 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-28 — v55.75 "g14 PARALLAX backdrop engine — the painterly scene MOVES" (A-312)
+
+Owner: the clean backdrop must look like the train is TRAVELLING (3D parallax), not a static picture; + the
+authoritative 30-leg route (Jakarta Gambir → Surabaya → Banyuwangi → FERRY → Bali/Denpasar); + 5 CLEAN plates.
+- **`G14_JOURNEY` rewritten** to the owner's exact 30 legs (`name` = "A → B", shown on the HUD ticket).
+- **Parallax engine:** a clean plate (`manifest.clean`) is sliced into horizontal DEPTH BANDS (sky+far / rail
+  bed / foreground), each tiled 2× and scrolled at its own speed (far 0.14 · rail 0.85 · fore 1.05 × S.speed)
+  and wrapped seamlessly in `tickMid` — so the near ground rushes by while the horizon drifts = a moving 3-D
+  scene from ONE flat image. `g14AddBackdrop` slices sub-frame textures (shared base, ~6-10 draw calls,
+  dt-clamped); `laneYs` pinned to the rail-bed band. Resize re-cover-fits the bands. Guarded: non-clean
+  backdrops keep the single static sprite; no backdrop → procedural journey.
+- **Pipeline:** `tools/bg-ref-build.py` clean-plate path — clean images skip inpaint + skip UI-crop (already
+  scenery+rails only), feed straight to the engine; manifest carries `bands` + `laneRatios`.
+- **5 clean plates live (levels 1, 2, 3, 4, 6)** — verified in-game: distinct painterly scenes, depth-parallax
+  motion (far band shifts ~5px while rail band shifts ~29px over 1s), train on rails, 0 console errors.
+- sw v55.74→v55.75. See [L114]. PENDING: HUD pixel-exact match pass + journey map element + remaining plates.
+
 ## 2026-06-28 — v55.74b "Museum Kereta Ambarawa → own standalone page" (B-272 / B-274)
 
 Owner B-272: the museum was an in-SPA overlay (URL = index.html); it should be its own page like every other

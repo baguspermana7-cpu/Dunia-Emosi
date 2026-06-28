@@ -217,7 +217,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.74</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.75</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="train-vfx.js?v=54.56-20260625bi"></script>
@@ -905,41 +905,40 @@ const TH = THEMES[((cfg.level || 1) - 1) % THEMES.length]
 //  The day/night sky still cycles by race progress on top of this.
 // ═══════════════════════════════════════════════════════════════════════════
 const G14_JOURNEY = [
-  // ── L1-30 — Indonesia, the "Petualangan Rel Nusantara" round-trip from the
-  //    owner's mockup: Jakarta Gambir → Surabaya Gubeng (north line) then back to
-  //    Gambir via the southern line (702 km, "Part X/30"). Painterly raster
-  //    backdrops drive levels with a manifest; biome/landmark below is the
-  //    procedural fallback for levels still awaiting a reference image.
-  { name:'Jakarta Gambir',   region:'Jakarta',    biome:'urbanID',    landmark:'monas'    },
-  { name:'Bekasi',           region:'Jawa Barat', biome:'urbanID',    landmark:'skyline'  },
-  { name:'Cikarang',         region:'Jawa Barat', biome:'javaLush',   landmark:'none'     },
-  { name:'Jatinegara',       region:'Jakarta',    biome:'urbanID',    landmark:'colonial' },
-  { name:'Cirebon Prujakan', region:'Jawa Barat', biome:'coastal',    landmark:'colonial' },
-  { name:'Tegal',            region:'Jawa Tengah',biome:'coastal',    landmark:'none'     },
-  { name:'Pekalongan',       region:'Jawa Tengah',biome:'javaLush',   landmark:'colonial' },
-  { name:'Semarang Tawang',  region:'Jawa Tengah',biome:'urbanID',    landmark:'colonial' },
-  { name:'Cepu',             region:'Jawa Tengah',biome:'javaLush',   landmark:'none'     },
-  { name:'Bojonegoro',       region:'Jawa Timur', biome:'javaLush',   landmark:'none'     },
-  { name:'Lamongan',         region:'Jawa Timur', biome:'javaLush',   landmark:'none'     },
-  { name:'Surabaya Gubeng',  region:'Jawa Timur', biome:'urbanID',    landmark:'skyline'  },
-  { name:'Mojokerto',        region:'Jawa Timur', biome:'javaLush',   landmark:'volcano'  },
-  { name:'Jombang',          region:'Jawa Timur', biome:'javaLush',   landmark:'none'     },
-  { name:'Kertosono',        region:'Jawa Timur', biome:'javaLush',   landmark:'none'     },
-  { name:'Madiun',           region:'Jawa Timur', biome:'javaLush',   landmark:'volcano'  },
-  { name:'Ngawi',            region:'Jawa Timur', biome:'javaLush',   landmark:'none'     },
-  { name:'Solo Balapan',     region:'Jawa Tengah',biome:'urbanID',    landmark:'colonial' },
-  { name:'Yogyakarta',       region:'DIY',        biome:'highlandID', landmark:'tugu'     },
-  { name:'Kutoarjo',         region:'Jawa Tengah',biome:'javaLush',   landmark:'none'     },
-  { name:'Kebumen',          region:'Jawa Tengah',biome:'highlandID', landmark:'volcano'  },
-  { name:'Purwokerto',       region:'Jawa Tengah',biome:'highlandID', landmark:'volcano'  },
-  { name:'Kroya',            region:'Jawa Tengah',biome:'javaLush',   landmark:'none'     },
-  { name:'Bumiayu',          region:'Jawa Tengah',biome:'highlandID', landmark:'volcano'  },
-  { name:'Cirebon',          region:'Jawa Barat', biome:'coastal',    landmark:'colonial' },
-  { name:'Tasikmalaya',      region:'Jawa Barat', biome:'highlandID', landmark:'volcano'  },
-  { name:'Banjar',           region:'Jawa Barat', biome:'javaLush',   landmark:'none'     },
-  { name:'Kiaracondong',     region:'Jawa Barat', biome:'highlandID', landmark:'skyline'  },
-  { name:'Bandung',          region:'Jawa Barat', biome:'highlandID', landmark:'colonial' },
-  { name:'Gambir',           region:'Jakarta',    biome:'urbanID',    landmark:'monas'    },
+  // ── L1-30 — "Petualangan Rel Nusantara": the owner's authoritative 30-leg route
+  //    Jakarta Gambir → Surabaya → Banyuwangi → FERRY → Bali → Denpasar (grand
+  //    finale). `name` is the leg "A → B" (shown on the HUD ticket + cinematic).
+  //    biome/landmark = procedural fallback for legs still awaiting a backdrop.
+  { name:'Gambir → Bekasi',                 region:'Jakarta',    biome:'urbanID',    landmark:'monas'    },
+  { name:'Bekasi → Cikarang',               region:'Jawa Barat', biome:'urbanID',    landmark:'skyline'  },
+  { name:'Cikarang → Karawang',             region:'Jawa Barat', biome:'javaLush',   landmark:'none'     },
+  { name:'Karawang → Cikampek',             region:'Jawa Barat', biome:'javaLush',   landmark:'none'     },
+  { name:'Cikampek → Cirebon',              region:'Jawa Barat', biome:'coastal',    landmark:'colonial' },
+  { name:'Cirebon → Tegal',                 region:'Jawa Tengah',biome:'coastal',    landmark:'none'     },
+  { name:'Tegal → Pekalongan',              region:'Jawa Tengah',biome:'coastal',    landmark:'none'     },
+  { name:'Pekalongan → Semarang Tawang',    region:'Jawa Tengah',biome:'urbanID',    landmark:'colonial' },
+  { name:'Semarang Tawang → Ngrombo',       region:'Jawa Tengah',biome:'javaLush',   landmark:'none'     },
+  { name:'Ngrombo → Cepu',                  region:'Jawa Tengah',biome:'javaLush',   landmark:'none'     },
+  { name:'Cepu → Bojonegoro',               region:'Jawa Timur', biome:'javaLush',   landmark:'none'     },
+  { name:'Bojonegoro → Babat',              region:'Jawa Timur', biome:'javaLush',   landmark:'none'     },
+  { name:'Babat → Lamongan',                region:'Jawa Timur', biome:'javaLush',   landmark:'none'     },
+  { name:'Lamongan → Surabaya Pasarturi',   region:'Jawa Timur', biome:'urbanID',    landmark:'skyline'  },
+  { name:'Surabaya Gubeng → Sidoarjo',      region:'Jawa Timur', biome:'urbanID',    landmark:'skyline'  },
+  { name:'Sidoarjo → Bangil',               region:'Jawa Timur', biome:'javaLush',   landmark:'none'     },
+  { name:'Bangil → Pasuruan',               region:'Jawa Timur', biome:'coastal',    landmark:'none'     },
+  { name:'Pasuruan → Probolinggo',          region:'Jawa Timur', biome:'coastal',    landmark:'none'     },
+  { name:'Probolinggo → Klakah',            region:'Jawa Timur', biome:'highlandID', landmark:'volcano'  },
+  { name:'Klakah → Tanggul',                region:'Jawa Timur', biome:'javaLush',   landmark:'volcano'  },
+  { name:'Tanggul → Jember',                region:'Jawa Timur', biome:'javaLush',   landmark:'none'     },
+  { name:'Jember → Rambipuji',              region:'Jawa Timur', biome:'javaLush',   landmark:'none'     },
+  { name:'Rambipuji → Kalibaru',            region:'Jawa Timur', biome:'highlandID', landmark:'volcano'  },
+  { name:'Kalibaru → Kalisetail',           region:'Jawa Timur', biome:'highlandID', landmark:'volcano'  },
+  { name:'Kalisetail → Rogojampi',          region:'Jawa Timur', biome:'javaLush',   landmark:'none'     },
+  { name:'Rogojampi → Banyuwangi Kota',     region:'Jawa Timur', biome:'coastal',    landmark:'none'     },
+  { name:'Banyuwangi Kota → Ketapang',      region:'Jawa Timur', biome:'coastal',    landmark:'none'     },
+  { name:'Ketapang → Gilimanuk',            region:'Selat Bali', biome:'coastal',    landmark:'none'     },
+  { name:'Gilimanuk → Negara',              region:'Bali',       biome:'coastal',    landmark:'none'     },
+  { name:'Negara → Denpasar',               region:'Bali',       biome:'urbanID',    landmark:'none'     },
   // ── L31-40 — Europe (bonus, international leg — owner: "lanjut nanti") ──
   { name:'London',           region:'Inggris',    biome:'englishGrey',landmark:'clocktower'},
   { name:'Paris',            region:'Prancis',    biome:'parisGold',  landmark:'eiffel'   },
@@ -1098,6 +1097,39 @@ async function g14AddBackdrop() {
     if (!pick) return
     const tex = await PIXI.Assets.load('../' + pick.src)
     if (!tex || !stage) return
+
+    // v55.75 — PARALLAX: a clean plate is sliced into horizontal DEPTH BANDS; each
+    // band is tiled 2× and scrolled at its own speed (near fast, horizon slow) so
+    // the scene reads as MOVING (the train travelling), not a static picture.
+    if (m.clean && Array.isArray(m.bands) && m.bands.length) {
+      const baseW = (tex.source && tex.source.width) || tex.width
+      const baseH = (tex.source && tex.source.height) || tex.height
+      const bg = new PIXI.Container(); bg._speed = 0
+      stage.addChildAt(bg, 0)
+      L._pBands = []
+      for (const bd of m.bands) {
+        const fy0 = Math.max(0, bd.y0), fy1 = Math.min(1, bd.y1)
+        const frame = new PIXI.Rectangle(0, Math.round(fy0 * baseH), baseW, Math.max(1, Math.round((fy1 - fy0) * baseH)))
+        const bandTex = new PIXI.Texture({ source: tex.source, frame })
+        const screenH = (fy1 - fy0) * fit.scaledH
+        const tileW = fit.scaledW
+        const cont = new PIXI.Container()
+        for (let copy = 0; copy < 2; copy++) {
+          const s = new PIXI.Sprite(bandTex)
+          s.x = copy * tileW; s.y = 0; s.width = tileW; s.height = screenH + 1
+          cont.addChild(s)
+        }
+        cont.x = fit.leftX; cont.y = fit.topY + fy0 * fit.scaledH
+        cont._homeX = fit.leftX; cont._tileW = tileW; cont._pSpeed = bd.speed || 0
+        cont._fy0 = fy0; cont._fy1 = fy1; cont._bandTex = bandTex
+        bg.addChild(cont)   // bands added far→near in manifest order (near covers far)
+        L._pBands.push(cont)
+      }
+      L._backdrop = bg
+      return
+    }
+
+    // static single sprite (non-clean mockup backdrops)
     const spr = new PIXI.Sprite(tex)
     spr.x = fit.leftX; spr.y = fit.topY; spr.width = fit.scaledW; spr.height = fit.scaledH
     spr._speed = 0
@@ -2053,6 +2085,16 @@ function tickTracks(delta) {
 // ── Mid items scroll ─────────────────────────────────────
 function tickMid(delta) {
   const W = app.screen.width
+  // v55.75 — PARALLAX backdrop bands: scroll each depth band at its own speed and
+  // wrap seamlessly so the painterly scene MOVES (train travelling). dt-clamped.
+  if (L._pBands) {
+    const _d = Math.min(delta, 2)
+    for (const c of L._pBands) {
+      if (!c || c.destroyed) continue
+      c.x -= (c._pSpeed || 0) * S.speed * _d * 0.9
+      if (c.x <= c._homeX - c._tileW) c.x += c._tileW
+    }
+  }
   for (const t of midItems) {
     t.x -= t._speed * S.speed * delta * 0.4
     if (t.x < -60) t.x = W + 20
@@ -4694,7 +4736,19 @@ window.addEventListener('resize', () => {
       railTop = Math.round(laneYs[0] - laneH * 0.5)
       G14_UNIFORM_H = Math.round(Math.max(72, Math.min(laneH * 1.02, H * 0.15)))
       OBS_SIZE = Math.round(Math.max(38, Math.min(Math.min(W, H) * 0.075, 52)))
-      if (L._backdrop && !L._backdrop.destroyed) {
+      if (L._pBands) {
+        // re-cover-fit each parallax band container on resize/rotate
+        for (const c of L._pBands) {
+          if (!c || c.destroyed) continue
+          const screenH = (c._fy1 - c._fy0) * fit.scaledH
+          c.x = fit.leftX; c._homeX = fit.leftX; c._tileW = fit.scaledW
+          c.y = fit.topY + c._fy0 * fit.scaledH
+          for (let i = 0; i < c.children.length; i++) {
+            const s = c.children[i]
+            s.x = i * fit.scaledW; s.width = fit.scaledW; s.height = screenH + 1
+          }
+        }
+      } else if (L._backdrop && !L._backdrop.destroyed) {
         L._backdrop.x = fit.leftX; L._backdrop.y = fit.topY
         L._backdrop.width = fit.scaledW; L._backdrop.height = fit.scaledH
       }
