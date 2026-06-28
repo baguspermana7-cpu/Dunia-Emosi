@@ -1,5 +1,13 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-28 — v55.83 "g15 full journey unification" (owner: shared journey everywhere)
+
+Owner chose: g15 adopts the shared 48-leg journey EVERYWHERE. `getCurrentStation()` now derives the station from
+`window.TrainJourney.leg(LEVEL)` (guarded fallback to JAVA_STATIONS), so the select card, the in-game station
+banner, and the chip all name the SAME leg as the painterly backdrop + leg label (was g15's own JAVA route on the
+banner). The v55.82 select-card special-case was folded back into `getCurrentStation` (DRY). Verified: card +
+in-game both show "Cikampek → Cirebon / Jawa Barat" @L5, no overflow, 0 errors. sw v55.82→v55.83; g15 stamp v55.83.
+
 ## 2026-06-28 — v55.82 "Whole-app quality gate + g15 journey cohesion" (A-301)
 
 Owner: "keep refining, finish all." A whole-app quality gate closing the standing A-301 ("no bug + tampilan bagus").
