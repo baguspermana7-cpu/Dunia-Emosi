@@ -1,5 +1,20 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-28 — v55.80 "Train-games polish & journey cohesion"
+
+Owner: "keep refining and improve, finish all." A tight cohesion pass tying the shared-backdrop work together.
+- **Shared journey module** `games/train-journey.js` (`window.TRAIN_JOURNEY` + `TrainJourney.name(level)`): the
+  48-leg table extracted out of balapan-kereta.html so all three train games name the SAME leg the painterly plate
+  is showing. g14 reads it with its inline array as a frozen fallback (probe stays green).
+- **Cross-game leg labels**: g15 (lokomotif-pemberani) + balapan-kereta-side now show the current journey leg name
+  matching their backdrop; g15's journey-map modal is now dynamic from `TRAIN_JOURNEY` (was a static 6-city list).
+- **Build-stamp parity** (B-276): g15 v55.72→v55.80; balapan-kereta-side gets a build stamp (had none).
+- **Worldwide-plate lane audit (34–48)**: swept all 15 worldwide plates — every one frames the rail bed in the
+  same band, so the train rides the painted rails with the default `[0.62,0.74,0.86]`; NO per-level overrides
+  needed. 0 console errors across the sweep.
+- Verified: g14 parallax probe green after the journey extraction; g15 + g14-side leg labels correct; speed FX
+  visible per game; all three + secondbrain 0 errors. sw v55.78→v55.80.
+
 ## 2026-06-28 — "Second Brain knowledge graph" (A-314, internal page)
 
 Owner: build `/secondbrain.html` with Obsidian + graphify. Ported the rz Second Brain app (vis-network 9.1.9 —

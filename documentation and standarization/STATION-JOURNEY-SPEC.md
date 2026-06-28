@@ -5,7 +5,11 @@
 > scenic rail routes (Swiss Glacier/Bernina, Bavaria, Scotland, Norway, Austria, Italy,
 > Riviera, Baikal, Rockies, Canadian Rockies, Japan/Fuji, Arashiyama, Tibet, Kalka–Shimla).
 > All 48 painterly plates are built (`data/g14-journey/level01..48.json` + tiers, `index.json`).
-> The parallax + speed overlay now run through the **shared** `games/train-backdrop.js`
+> **v55.80:** the 48-leg table is now a shared module `games/train-journey.js` (`window.TRAIN_JOURNEY` +
+> `TrainJourney.name(level)`) so all three train games name the SAME leg their backdrop shows — g14 reads it
+> (inline fallback), g15 + balapan-kereta-side show a current-leg HUD label and g15's journey-map modal is
+> dynamic from it.
+> The parallax + speed overlay run through the **shared** `games/train-backdrop.js`
 > (`window.TrainBackdrop`) + `games/train-speedfx.js` (`window.TrainSpeedFX`), reused by
 > **lokomotif-pemberani** (level→plate, lanes pinned) and **balapan-kereta-side**
 > (scenery-only far layer). See CHANGELOG v55.77 + LESSONS L115/L116.

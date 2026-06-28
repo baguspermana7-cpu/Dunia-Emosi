@@ -208,7 +208,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.72</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.80</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="train-vfx.js?v=54.56-20260625bi"></script>
@@ -220,6 +220,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <script src="data/bg-events.js?v=54.67-20260626bt"></script>
 <!-- v54.83 — ObstacleEngine + Koleksi gallery available from G15 picker (Practice Mode) -->
 <script src="obstacle-engine.js?v=55.63-20260627eo"></script>
+<script src="train-journey.js?v=55.80-20260628a"></script>
 <script src="indo-scene.js?v=2.1.0"></script>
 <!-- v55.77 — SHARED painterly backdrop + depth-parallax engine + always-on speed overlay (parity with balapan-kereta / g14). Guarded: any miss → procedural bg. -->
 <script src="train-backdrop.js?v=55.77-20260628a"></script>
@@ -354,6 +355,12 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <div id="station-chip" style="display:none">
   <span class="sc-label">📍 STASIUN</span>
   <span class="sc-name" id="sc-name">Surabaya Kota</span>
+</div>
+
+<!-- v55.80 — shared 48-leg journey label (names the painterly backdrop leg) -->
+<div id="g15-leg-label" style="display:none;position:fixed;top:66px;left:10px;z-index:49;background:#fffdf6;border:1.5px solid rgba(139,92,246,0.4);border-radius:12px;padding:3px 10px;pointer-events:none;box-shadow:0 2px 6px rgba(0,0,0,0.1);max-width:62vw">
+  <span style="font-size:8px;color:rgba(139,92,246,0.7);letter-spacing:1.2px;display:block">🚆 PERJALANAN</span>
+  <span id="g15-leg-name" style="font-size:12px;font-weight:800;color:#5b21b6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:58vw"></span>
 </div>
 
 <script src="lib/pixi.min.js?v=8"></script>
@@ -870,6 +877,13 @@ async function initPixi() {
     resolution: window.devicePixelRatio || 1, autoDensity: true
   });
   W = app.screen.width; H = app.screen.height;
+  // v55.80 — show the shared 48-leg journey leg name matching this plate's backdrop.
+  try {
+    const _legEl = document.getElementById('g15-leg-label');
+    const _legNm = document.getElementById('g15-leg-name');
+    const _legTxt = (window.TrainJourney ? window.TrainJourney.name(LEVEL) : '');
+    if (_legEl && _legNm && _legTxt) { _legNm.textContent = _legTxt; _legEl.style.display = 'block'; }
+  } catch (_) {}
   // Task #59 — TRAIN_X defaults to 5% of viewport (per-train clamp happens inside
   // buildTrain via CharacterTrain.computeTrainX for character trains).
   TRAIN_X = Math.max(40, Math.round(W * 0.05));
@@ -2342,32 +2356,56 @@ function g15ShowJourneyMap() {
   const route = document.getElementById('g15-journey-route');
   const info = document.getElementById('g15-journey-info');
   if (!m) return;
-  // Build a simple horizontal route Surabaya → Merak with markers.
-  const stations = ['Surabaya','Solo','Yogya','Cirebon','Jakarta','Merak'];
+  // v55.80 — DYNAMIC: build the route from the shared 48-leg journey, showing a
+  // window of legs around the current LEVEL (highlight current). Fallback to the
+  // old static Surabaya→Merak list if TRAIN_JOURNEY is absent.
+  let stations, curIdx;
+  if (window.TRAIN_JOURNEY && window.TRAIN_JOURNEY.length) {
+    const LEGS = window.TRAIN_JOURNEY, N = LEGS.length;
+    // window of legs: LEVEL-2 .. LEVEL+3, clamped to 1..N (1-based).
+    let lo = Math.max(1, LEVEL - 2), hi = Math.min(N, LEVEL + 3);
+    // each leg name is "A → B"; chain station labels (dest of leg i = start of i+1).
+    const labelOf = (legName, end) => {
+      const parts = String(legName || '').split('→').map(s => s.trim());
+      return end ? (parts[1] || parts[0] || '') : (parts[0] || '');
+    };
+    stations = [];
+    for (let lv = lo; lv <= hi; lv++) {
+      const nm = LEGS[lv - 1].name;
+      if (lv === lo) stations.push({ label: labelOf(nm, false), lv: lv - 1 });
+      stations.push({ label: labelOf(nm, true), lv });
+    }
+    // index of the marker for the CURRENT leg's destination within stations[]
+    curIdx = stations.findIndex(s => s.lv === LEVEL);
+    if (curIdx < 0) curIdx = 0;
+  } else {
+    stations = ['Surabaya','Solo','Yogya','Cirebon','Jakarta','Merak'].map((s, i) => ({ label: s, lv: i + 1 }));
+    curIdx = 0;
+  }
   if (route) {
     route.innerHTML = '';
     stations.forEach((s, i) => {
+      const isCur = (i === curIdx);
       const dot = document.createElement('div');
-      dot.style.cssText = `position:absolute;left:${(i / (stations.length - 1)) * 100}%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px`;
-      dot.innerHTML = `<div style="width:14px;height:14px;border-radius:50%;background:#fbbf24;box-shadow:0 0 8px rgba(251,191,36,0.6)"></div><div style="font-size:9px;color:#fde68a">${s}</div>`;
+      dot.style.cssText = `position:absolute;left:${(i / Math.max(1, stations.length - 1)) * 100}%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px`;
+      const dotSize = isCur ? 18 : 12;
+      const dotColor = isCur ? '#fde047' : '#fbbf24';
+      const txtColor = isCur ? '#fef9c3' : '#fde68a';
+      const txtWeight = isCur ? '900' : '400';
+      dot.innerHTML = `<div style="width:${dotSize}px;height:${dotSize}px;border-radius:50%;background:${dotColor};box-shadow:0 0 ${isCur ? 12 : 8}px rgba(251,191,36,0.7)${isCur ? ';border:2px solid #fff' : ''}"></div><div style="font-size:9px;color:${txtColor};font-weight:${txtWeight};max-width:64px;text-align:center;line-height:1.1">${s.label}</div>`;
       route.appendChild(dot);
     });
-    // chuffing marker at left
+    // chuffing marker parked at the current leg
     const marker = document.createElement('div');
     marker.id = 'g15-route-marker';
-    marker.style.cssText = 'position:absolute;left:0%;top:50%;transform:translate(-50%,-50%);font-size:18px;animation:g15RouteChuff 4s linear infinite';
+    const markerLeft = (curIdx / Math.max(1, stations.length - 1)) * 100;
+    marker.style.cssText = `position:absolute;left:${markerLeft}%;top:50%;transform:translate(-50%,-115%);font-size:18px`;
     marker.textContent = '🚂';
     route.appendChild(marker);
-    // inject keyframes once
-    if (!document.getElementById('g15-route-kf')) {
-      const s = document.createElement('style');
-      s.id = 'g15-route-kf';
-      s.textContent = '@keyframes g15RouteChuff{0%{left:0%}100%{left:100%}}';
-      document.head.appendChild(s);
-    }
   }
   if (info) {
-    info.innerHTML = '<p>Klik kereta favoritmu di pemilih untuk mulai dari sini. Setiap kota punya kereta khasnya sendiri! 🚂✨</p>';
+    const curName = (window.TrainJourney ? window.TrainJourney.name(LEVEL) : '');
+    info.innerHTML = `<p><b style="color:#fde047">Etape ${LEVEL}${window.TRAIN_JOURNEY ? ' / ' + window.TRAIN_JOURNEY.length : ''}:</b> ${curName || ''}</p><p>Klik kereta favoritmu di pemilih untuk mulai dari sini. Setiap etape punya pemandangannya sendiri! 🚂✨</p>`;
   }
   m.style.display = 'block';
 }

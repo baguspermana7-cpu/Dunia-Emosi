@@ -149,6 +149,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <!-- v55.77 — shared painterly backdrop (scenery-only far layer) + speed overlay -->
 <script src="train-backdrop.js?v=55.77-20260628a"></script>
 <script src="train-speedfx.js?v=55.77-20260628a"></script>
+<script src="train-journey.js?v=55.80-20260628a"></script>
 
 <div id="hud-top">
   <button id="btn-back" type="button" onclick="goBack()">← Kembali</button>
@@ -157,6 +158,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
   <div id="hud-mid">
     <div id="hud-dist">0m<span class="target"> / 1000m</span></div>
     <div id="hud-pos">Mulai!</div>
+    <!-- v55.80 — shared 48-leg journey label (names the painterly backdrop leg) -->
+    <div id="g14s-leg-label" style="display:none;font-size:10px;font-weight:700;color:#fff;opacity:0.92;margin-top:2px;letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60vw;pointer-events:none">🚆 <span id="g14s-leg-name"></span></div>
   </div>
   <div id="hud-hp">❤️×3</div>
   <button id="btn-pause" type="button" onclick="g14sTogglePause()">⏸</button>
@@ -390,6 +393,13 @@ const JUMP_VELOCITY = 1080        // B-251: 1.5× jump — was 720, new airtime 
     const _bgLeg = (parseInt(localStorage['dunia-side-bgleg'] || '0', 10) || 0) % 48
     try { localStorage['dunia-side-bgleg'] = String(_bgLeg + 1) } catch (_) {}
     const _level = _bgLeg + 1
+    // v55.80 — name the journey leg matching this plate's backdrop.
+    try {
+      const _legEl = document.getElementById('g14s-leg-label');
+      const _legNm = document.getElementById('g14s-leg-name');
+      const _legTxt = (window.TrainJourney ? window.TrainJourney.name(_bgLeg + 1) : '');
+      if (_legEl && _legNm && _legTxt) { _legNm.textContent = _legTxt; _legEl.style.display = 'block'; }
+    } catch (_) {}
     const _m = window.TrainBackdrop ? await TrainBackdrop.load(_level) : null
     if (_m) {
       sideBackdrop = await TrainBackdrop.mount(stage, app, _m, {
@@ -1830,5 +1840,6 @@ window.addEventListener('keydown', e => {
   if (e.code === 'Escape') goBack()
 })
 </script>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.80</div>
 </body>
 </html>
