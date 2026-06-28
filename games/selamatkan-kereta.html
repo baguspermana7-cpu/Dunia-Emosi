@@ -1115,15 +1115,9 @@ function g16PlayCharacterBark(){
   const TS = TRAIN_STYLES[selectedTrainIdx]
   if (!TS || !TS.character || !TS.characterKey) return
   const line = G16_CHAR_BARKS[TS.characterKey] || 'Hore!'
-  // Voice via speechSynthesis (id-ID)
-  try {
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel()
-      const u = new SpeechSynthesisUtterance(line)
-      u.lang = 'id-ID'; u.rate = 0.95; u.pitch = 1.15
-      window.speechSynthesis.speak(u)
-    }
-  } catch(_){}
+  // v55.74 — TTS DISABLED (owner: "nggak usah pakai tts"). No speech.
+  void line
+  try { if (window.speechSynthesis) window.speechSynthesis.cancel() } catch(_){}
   // Visual text bubble above train
   const bubble = document.createElement('div')
   bubble.style.cssText = 'position:fixed;left:50%;top:30%;transform:translateX(-50%);z-index:80;background:#fff;color:#1f2937;font-family:Fredoka One,cursive;font-size:16px;padding:10px 18px;border-radius:18px;box-shadow:0 8px 24px rgba(0,0,0,0.4);animation:g16BubbleIn 400ms cubic-bezier(.34,1.56,.64,1) forwards;pointer-events:none'

@@ -1,5 +1,21 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-28 — v55.73 "g14 painterly HUD reskin · TTS off · side-scroller longer+smaller"
+
+- **g14 HUD reskin (A-312 follow-on)** — the in-game HUD now matches the owner's painterly mockup: gold coin
+  chip + heart row, cream "Part N/30 · station" ticket capsule, circular glossy pause + **new mute** button,
+  chunky candy lane buttons (blue ↑ / green ↓), "Avoid hazards" pill, and a segmented energy meter — all
+  CSS-only (`games/g14-hud.css`), color-matched to the mockup, fully responsive (clamp 320→1400, ≥44px taps,
+  safe-area). `updateHUD()` wired (coins / ticket from `G14_JOURNEY` / energy segments from `S.pressure`);
+  `toggleMute()` added; all gameplay handlers preserved. Verified 0 console errors at 360/768/1280 + portrait.
+- **TTS DISABLED everywhere** (owner: *"ada tts soal aneh bahasanya, nggak usah pakai tts"*) — neutered every
+  Web-Speech path across the train games: `train-shared.js` (`Voice.speak` + word-of-day), `obstacle-engine.js`
+  (`speak`), g15 `lokomotif-pemberani.html` (×2 + `g15TTSOn=false`), g16 `selamatkan-kereta.html`. No speech.
+- **Side-scroller `balapan-kereta-side.html`** (owner: separate game) — race lengthened from ~10s to **~64s**
+  (`targetDistance 1000→6500`, milestones rescaled, speed-ramp cap +20%→+10%, finish flag tied to the target),
+  and the **player character shrunk to 0.4×** (was too big; sized `(spriteHeight)*1.1*0.4`).
+- sw v55.72→v55.73. (Painterly-backdrop cleanup — inpainting the painted train/obstacles out — is the next ship.)
+
 ## 2026-06-28 — v55.72 "balapan-kereta PAINTERLY reskin: raster backdrops + 30-station Java journey" (A-312)
 
 Owner provided painterly full-screen game mockups (Jakarta Gambir → Surabaya → back, "Part X/30", 702 km) — a

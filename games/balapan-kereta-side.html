@@ -278,7 +278,7 @@ const S = {
   paused: false,
   gameOver: false,
   distance: 0,
-  targetDistance: 1000,
+  targetDistance: 6500,   // v55.74 — owner: race "terlalu cepet, lamakan ≥1 menit". ~6500m / ~100m·s⁻¹ ≈ 64s (was 1000m ≈ 10s)
   speed: 4.0,            // px per tick at 60fps
   baseSpeed: 4.0,
   jumping: false,
@@ -302,7 +302,7 @@ const S = {
   smokeTimer: 0,
   nextBirdAt: 8,
   timeOfDay: 'pagi',     // 'pagi'|'siang'|'sore' — set at init
-  milestones: [200, 400, 600, 800],
+  milestones: [1300, 2600, 3900, 5200],   // v55.74 — rescaled to the 6500m race
   milestonesPassed: 0,
   // v54.90 — race + pickups
   aiTrain: null,         // PIXI.Container — behind player ghost
@@ -657,7 +657,7 @@ function buildTrain() {
     // rendered as 0.5px dot). Assets.load returns a fully-resolved texture.
     // v54.99 — Reduced from *1.5 to *1.1 so sprite fills ~18-22% of screen width
     // instead of ~30%+. Keeps train proportional to scene; lets background read.
-    const targetH = (cfg.spriteHeight || 90) * 1.1
+    const targetH = (cfg.spriteHeight || 90) * 1.1 * 0.4   // v55.74 — owner: char 0.4× (was too big; tested w/ Kana)
     PIXI.Assets.load(cfg.spriteUrl).then((tex) => {
       try {
         const sprite = new PIXI.Sprite(tex)
@@ -1015,9 +1015,10 @@ function tick(tickerOrDelta) {
   if (S.milestonesPassed < S.milestones.length && S.distance >= S.milestones[S.milestonesPassed]) {
     spawnMilestone(S.milestonesPassed + 1)
     S.milestonesPassed++
-    // v54.93 — Difficulty curve: speed +5% per milestone (caps at +20% over baseline)
-    if (S.speed < S.baseSpeed * 1.20) {
-      S.speed = Math.min(S.baseSpeed * 1.20, S.speed * 1.05)
+    // v54.93 — Difficulty curve: speed +5% per milestone. v55.74 — cap lowered
+    // +20%→+10% so the longer ≥1-minute race stays a calm, steady pace.
+    if (S.speed < S.baseSpeed * 1.10) {
+      S.speed = Math.min(S.baseSpeed * 1.10, S.speed * 1.05)
       // Show a brief "+SPEED" badge
       try {
         // v54.97 — Position toast ABOVE the LOMPAT button (not top-right gutter)
@@ -1071,8 +1072,9 @@ function tick(tickerOrDelta) {
     }
   }
 
-  // v54.92 — Finish flag at 980m (slightly before 1000m so it scrolls past as we win)
-  if (S.distance >= 980 && !S.finishFlagSpawned && !S.finished) {
+  // v54.92 — Finish flag just before the goal so it scrolls past as we win.
+  // v55.74 — tied to targetDistance (was hardcoded 980) now the race is 6500m.
+  if (S.distance >= S.targetDistance - 20 && !S.finishFlagSpawned && !S.finished) {
     S.finishFlagSpawned = true
     spawnFinishFlag()
   }

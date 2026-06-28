@@ -1,0 +1,389 @@
+/* ───────────────────────────────────────────────────────────────
+   g14-hud.css — v55.73 — Painterly candy HUD reskin for balapan-kereta.
+   CSS-only (gradients + layered box-shadows, NO images). Loaded AFTER the
+   inline <style> so these rules override the legacy HUD. Matches the
+   ChatGPT painterly mockup (_hud_ref.png): cream cards, sky-blue + leaf-green
+   candy buttons, ticket capsule, segmented energy meter.
+   NO em dashes in comments per house rule (ASCII hyphen only).
+   ─────────────────────────────────────────────────────────────── */
+
+:root {
+  --g14-cream:        #f6e6cf;
+  --g14-cream-light:  #fbf1de;
+  --g14-cream-edge:   #d9b88a;
+  --g14-brown:        #4f2b11;
+  --g14-brown-mid:    #6b4a2c;
+  --g14-blue-face:    #6fc0e8;
+  --g14-blue-top:     #a8ddf4;
+  --g14-blue-edge:    #3f93c4;
+  --g14-green-face:   #8cc34a;
+  --g14-green-top:    #b6e07a;
+  --g14-green-edge:   #5d9233;
+  --g14-heart:        #ec5347;
+  --g14-coin:         #f6c64a;
+  --g14-coin-ring:    #d99a2e;
+  --g14-bolt:         #ffd23f;
+  --g14-pin-green:    #52c06a;
+  --g14-pin-red:      #ef5a52;
+  --g14-shadow:       rgba(90,58,20,.22);
+  --g14-shadow-soft:  rgba(90,58,20,.14);
+}
+
+/* ── Top bar: 3 flex clusters over the painterly backdrop ── */
+#hud-top {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: clamp(6px, 1.6vw, 14px) !important;
+  background: none !important;
+  padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right))
+            6px max(10px, env(safe-area-inset-left)) !important;
+}
+.g14-hud-cluster {
+  display: flex;
+  align-items: center;
+  gap: clamp(5px, 1.4vw, 10px);
+  pointer-events: none;
+  min-width: 0;
+}
+.g14-hud-left  { flex: 0 1 auto; }
+.g14-hud-center{ flex: 1 1 auto; justify-content: center; min-width: 0; }
+.g14-hud-right { flex: 0 0 auto; }
+
+/* shared painterly card base: cream fill + warm border + soft shadow */
+.g14-card,
+#g14-coins,
+#g14-ticket {
+  background: linear-gradient(180deg, var(--g14-cream-light), var(--g14-cream));
+  border: 1px solid var(--g14-cream-edge);
+  box-shadow: 0 4px 10px var(--g14-shadow), inset 0 1px 0 rgba(255,255,255,.7);
+  color: var(--g14-brown);
+}
+
+/* ── Hearts ── */
+#lives-hud {
+  font-size: clamp(16px, 4.4vw, 22px) !important;
+  letter-spacing: 1px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 2px var(--g14-shadow));
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+/* ── Coin chip: round gold coin + cream pill with number ── */
+#g14-coins {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px 4px 5px;
+  border-radius: 18px;
+  font-weight: 900;
+  font-size: clamp(13px, 3.4vw, 16px);
+  pointer-events: auto;
+  flex-shrink: 0;
+}
+.g14-coin-icon {
+  width: clamp(20px, 5.2vw, 26px);
+  height: clamp(20px, 5.2vw, 26px);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffe79a, var(--g14-coin) 62%, var(--g14-coin-ring));
+  border: 2px solid var(--g14-coin-ring);
+  box-shadow: inset 0 1px 2px rgba(255,255,255,.8), 0 1px 2px var(--g14-shadow-soft);
+  flex-shrink: 0;
+  position: relative;
+}
+.g14-coin-icon::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(217,154,46,.55);
+  box-shadow: inset 0 1px 1px rgba(255,255,255,.6);
+}
+#g14-coins-num { color: var(--g14-brown); }
+
+/* ── Back button: compact cream pill ── */
+#btn-back {
+  background: linear-gradient(180deg, var(--g14-cream-light), var(--g14-cream)) !important;
+  border: 1px solid var(--g14-cream-edge) !important;
+  border-radius: 16px !important;
+  color: var(--g14-brown) !important;
+  padding: 0 !important;
+  width: 44px !important;
+  min-width: 44px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  font-size: 22px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  box-shadow: 0 4px 10px var(--g14-shadow), inset 0 1px 0 rgba(255,255,255,.7) !important;
+  pointer-events: auto;
+  flex-shrink: 0;
+}
+#btn-back:active { transform: translateY(2px); box-shadow: 0 2px 5px var(--g14-shadow) !important; }
+
+/* ── Ticket capsule ── */
+#g14-ticket {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(6px, 1.6vw, 10px);
+  padding: clamp(4px, 1.2vw, 7px) clamp(10px, 2.4vw, 16px);
+  border-radius: 20px;
+  max-width: 100%;
+  pointer-events: auto;
+}
+.g14-ticket-badge {
+  width: clamp(22px, 5.4vw, 30px);
+  height: clamp(22px, 5.4vw, 30px);
+  border-radius: 9px;
+  background: linear-gradient(180deg, var(--g14-blue-top), var(--g14-blue-face) 60%, var(--g14-blue-edge));
+  border: 1.5px solid var(--g14-blue-edge);
+  box-shadow: inset 0 1px 1px rgba(255,255,255,.6), 0 1px 2px var(--g14-shadow-soft);
+  display: grid;
+  place-items: center;
+  font-size: clamp(13px, 3.2vw, 17px);
+  flex-shrink: 0;
+}
+.g14-ticket-body { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.g14-ticket-main {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 900;
+  color: var(--g14-brown);
+  font-size: clamp(13px, 3.6vw, 18px);
+  line-height: 1.05;
+  white-space: nowrap;
+}
+.g14-ticket-sub {
+  font-weight: 800;
+  color: var(--g14-blue-edge);
+  font-size: clamp(9px, 2.4vw, 12px);
+  line-height: 1.1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 42vw;
+}
+.g14-ticket-pins { display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.g14-pin {
+  width: 9px;
+  height: 9px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.45), 0 1px 1px var(--g14-shadow-soft);
+}
+.g14-pin-start { background: var(--g14-pin-green); }
+.g14-pin-end   { background: var(--g14-pin-red); }
+
+/* ── Circular glossy sky-blue icon buttons (pause + mute) ── */
+#btn-pause,
+#btn-mute {
+  width: clamp(40px, 10vw, 48px) !important;
+  height: clamp(40px, 10vw, 48px) !important;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  border: 1.5px solid var(--g14-blue-edge) !important;
+  background: radial-gradient(circle at 50% 22%, var(--g14-blue-top), var(--g14-blue-face) 58%, var(--g14-blue-edge)) !important;
+  color: #fff !important;
+  font-size: clamp(16px, 4.4vw, 20px) !important;
+  font-weight: 900;
+  line-height: 1 !important;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  pointer-events: auto;
+  flex-shrink: 0;
+  box-shadow: 0 4px 9px var(--g14-shadow), inset 0 2px 3px rgba(255,255,255,.55), inset 0 -3px 5px rgba(0,0,0,.12) !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.25);
+}
+#btn-pause:active,
+#btn-mute:active { transform: translateY(2px); box-shadow: 0 2px 5px var(--g14-shadow), inset 0 2px 3px rgba(255,255,255,.5) !important; }
+
+/* ── Bottom control area: 3 clusters on the grass, no dark bar ── */
+#ctrl-area {
+  background: none !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: space-between !important;
+  gap: clamp(6px, 1.8vw, 14px) !important;
+  padding: 8px max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)) !important;
+}
+.g14-ctrl-left   { display: flex; gap: clamp(8px, 2.2vw, 14px); flex-shrink: 0; }
+.g14-ctrl-center { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1 1 auto; min-width: 0; }
+.g14-ctrl-right  { display: flex; align-items: flex-end; flex-shrink: 0; }
+
+/* ── Candy lane buttons: chunky rounded squares with solid bottom edge ── */
+.g14-lane-btn {
+  width: clamp(58px, 16vw, 76px) !important;
+  height: clamp(58px, 16vw, 76px) !important;
+  min-width: 44px;
+  min-height: 44px;
+  flex: 0 0 auto !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: clamp(16px, 4vw, 22px) !important;
+  color: #fff !important;
+  font-size: clamp(26px, 7vw, 36px) !important;
+  font-weight: 900;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  overflow: visible !important;
+  position: relative;
+  transition: transform .08s, box-shadow .12s;
+}
+.g14-lane-btn::after { content: none !important; }
+#btn-up {
+  background: linear-gradient(180deg, var(--g14-blue-top), var(--g14-blue-face) 55%, var(--g14-blue-face)) !important;
+  box-shadow: 0 6px 0 var(--g14-blue-edge), 0 10px 16px var(--g14-shadow),
+              inset 0 3px 4px rgba(255,255,255,.55) !important;
+  color: #fff !important;
+}
+#btn-dn {
+  background: linear-gradient(180deg, var(--g14-green-top), var(--g14-green-face) 55%, var(--g14-green-face)) !important;
+  box-shadow: 0 6px 0 var(--g14-green-edge), 0 10px 16px var(--g14-shadow),
+              inset 0 3px 4px rgba(255,255,255,.55) !important;
+  color: #fff !important;
+}
+#btn-up:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--g14-blue-edge), 0 4px 8px var(--g14-shadow), inset 0 3px 4px rgba(255,255,255,.5) !important; }
+#btn-dn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--g14-green-edge), 0 4px 8px var(--g14-shadow), inset 0 3px 4px rgba(255,255,255,.5) !important; }
+.g14-lane-btn > span { font-size: inherit !important; line-height: 1 !important; }
+
+/* ── Status tip pill: cream with blue shield ── */
+#g14-tip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 16px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, var(--g14-cream-light), var(--g14-cream));
+  border: 1px solid var(--g14-cream-edge);
+  box-shadow: 0 4px 10px var(--g14-shadow), inset 0 1px 0 rgba(255,255,255,.7);
+  color: var(--g14-brown);
+  font-weight: 900;
+  font-size: clamp(11px, 3vw, 15px);
+  white-space: nowrap;
+  pointer-events: none;
+  max-width: 100%;
+}
+#g14-tip .g14-shield {
+  width: 20px;
+  height: 20px;
+  border-radius: 7px 7px 9px 9px / 7px 7px 11px 11px;
+  background: linear-gradient(180deg, var(--g14-blue-top), var(--g14-blue-face) 60%, var(--g14-blue-edge));
+  border: 1.5px solid var(--g14-blue-edge);
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: inset 0 1px 1px rgba(255,255,255,.6);
+}
+
+/* ── Boost: keep playable, candy-orange, sits under the tip ── */
+#btn-boost {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: 96px;
+  min-height: 44px;
+  padding: 10px 18px !important;
+  border: none !important;
+  border-radius: 18px !important;
+  font-size: clamp(13px, 3.4vw, 16px) !important;
+  font-weight: 900;
+  color: #fff !important;
+  background: linear-gradient(180deg, #ffb070, #ff8a3c 55%, #f4732a) !important;
+  box-shadow: 0 5px 0 #c2541a, 0 9px 14px var(--g14-shadow), inset 0 2px 3px rgba(255,255,255,.5) !important;
+  overflow: hidden;
+}
+#btn-boost::after { content: none !important; }
+#btn-boost:active { transform: translateY(3px); box-shadow: 0 2px 0 #c2541a, 0 4px 8px var(--g14-shadow) !important; }
+#btn-boost.cooldown { opacity: .55; pointer-events: none; }
+#btn-boost.boosting { background: linear-gradient(180deg, #ff6f5e, #ef4d3c 55%, #d63a2a) !important; }
+
+/* ── Energy meter: bolt chip + cream container with green segments ── */
+#pressure-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-top: 0 !important;
+}
+.g14-energy-bolt {
+  width: clamp(30px, 8vw, 38px);
+  height: clamp(30px, 8vw, 38px);
+  border-radius: clamp(9px, 2.4vw, 12px);
+  background: linear-gradient(180deg, var(--g14-blue-top), var(--g14-blue-face) 58%, var(--g14-blue-edge));
+  border: 1.5px solid var(--g14-blue-edge);
+  display: grid;
+  place-items: center;
+  font-size: clamp(15px, 4vw, 20px);
+  color: var(--g14-bolt);
+  flex-shrink: 0;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,.55), 0 3px 7px var(--g14-shadow);
+  text-shadow: 0 1px 1px rgba(0,0,0,.3);
+}
+#pressure-track {
+  flex: 0 0 auto !important;
+  width: clamp(96px, 26vw, 150px) !important;
+  height: clamp(26px, 6.6vw, 34px) !important;
+  padding: 4px !important;
+  background: linear-gradient(180deg, var(--g14-cream), var(--g14-cream-light)) !important;
+  border: 1px solid var(--g14-cream-edge) !important;
+  border-radius: 12px !important;
+  box-shadow: inset 0 2px 4px rgba(120,82,40,.22), 0 3px 7px var(--g14-shadow) !important;
+  position: relative;
+}
+#pressure-fill { display: none !important; }
+.g14-energy-segs {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+  height: 100%;
+}
+.g14-energy-segs > span {
+  flex: 1 1 0;
+  border-radius: 5px;
+  background: linear-gradient(180deg, rgba(160,130,90,.18), rgba(120,82,40,.12));
+  box-shadow: inset 0 1px 2px rgba(120,82,40,.2);
+  transition: background .25s, box-shadow .25s;
+}
+.g14-energy-segs > span.lit {
+  background: linear-gradient(180deg, var(--g14-green-top), var(--g14-green-face) 60%, var(--g14-green-edge));
+  box-shadow: inset 0 1px 1px rgba(255,255,255,.5), 0 0 4px rgba(140,195,74,.5);
+}
+.g14-energy-segs > span.lit.g14-seg-low {
+  background: linear-gradient(180deg, #ffd27a, #f6a23c 60%, #d97a1e);
+}
+
+/* ── Hide-but-keep legacy HUD elements (JS still writes them) ── */
+#race-info,
+#position-badge,
+#distance-text,
+#train-name-badge,
+#speed-hud,
+#g14-position-gap,
+#pressure-label,
+#pressure-pct {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* ── Landscape: keep the bars tight so they never crowd the lanes ── */
+@media (orientation: landscape) and (max-height: 480px) {
+  .g14-lane-btn { width: clamp(50px, 11vh, 64px) !important; height: clamp(50px, 11vh, 64px) !important; font-size: clamp(24px, 6vh, 32px) !important; }
+  #pressure-track { width: clamp(96px, 18vw, 150px) !important; }
+  #hud-top { padding-top: max(6px, env(safe-area-inset-top)) !important; }
+}

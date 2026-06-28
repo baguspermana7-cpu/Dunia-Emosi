@@ -651,18 +651,11 @@
   // ── Voice prompt (Web Speech, silent fallback) ─────────────────────────────
 
   function speak(text) {
-    try {
-      // v54.84: voice-on toggle (default: true). Skip if user muted via settings.
-      const voiceOn = localStorage.getItem('train-voice-on')
-      if (voiceOn === '0' || voiceOn === 'false') return
-      if (!window.speechSynthesis || !text) return
-      const u = new SpeechSynthesisUtterance(text)
-      u.lang = 'id-ID'
-      u.rate = 0.9
-      u.pitch = 1.1
-      window.speechSynthesis.cancel()
-      window.speechSynthesis.speak(u)
-    } catch {}
+    // v55.74 — TTS DISABLED (owner: "ada tts soal aneh bahasanya, nggak usah
+    // pakai tts"). The Web-Speech voice mispronounced the obstacle/quiz text, so
+    // it never speaks now. No-op kept so callers stay valid.
+    void text
+    try { if (window.speechSynthesis) window.speechSynthesis.cancel() } catch (e) {}
   }
 
   // ── Expose ─────────────────────────────────────────────────────────────────

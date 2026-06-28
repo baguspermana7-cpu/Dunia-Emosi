@@ -213,10 +213,11 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 /* Flash */
 #flash{position:fixed;inset:0;z-index:99;pointer-events:none;opacity:0;transition:opacity .05s}
 </style>
+<link rel="stylesheet" href="g14-hud.css?v=55.73-20260628a">
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.72</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.73</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="train-vfx.js?v=54.56-20260625bi"></script>
@@ -263,17 +264,34 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 
 <!-- v55.61 B-253: Daily login spin ("Roda Harian") overlay removed per owner request. -->
 
-<!-- HUD Top -->
+<!-- HUD Top — v55.73 painterly candy reskin (3 clusters). -->
 <div id="hud-top">
-  <button id="btn-back" type="button" onclick="confirmBack()">← Kembali</button>
+  <div class="g14-hud-cluster g14-hud-left">
+    <button id="btn-back" type="button" onclick="confirmBack()" aria-label="Kembali">←</button>
+    <div id="lives-hud">❤️❤️❤️</div>
+    <div id="g14-coins"><span class="g14-coin-icon"></span><span id="g14-coins-num">0</span></div>
+  </div>
+  <div class="g14-hud-cluster g14-hud-center">
+    <div id="g14-ticket">
+      <span class="g14-ticket-badge">🎫</span>
+      <div class="g14-ticket-body">
+        <div class="g14-ticket-main"><span id="g14-ticket-part">Part 1/30</span></div>
+        <div class="g14-ticket-sub" id="g14-ticket-station">—</div>
+      </div>
+      <span class="g14-ticket-pins"><span class="g14-pin g14-pin-start"></span><span class="g14-pin g14-pin-end"></span></span>
+    </div>
+  </div>
+  <div class="g14-hud-cluster g14-hud-right">
+    <button id="btn-pause" onclick="togglePause()" aria-label="Jeda">⏸</button>
+    <button id="btn-mute" type="button" onclick="toggleMute()" aria-label="Bisukan suara">🔊</button>
+  </div>
+  <!-- Legacy HUD elements kept in DOM (hidden) — JS still writes them. -->
   <div id="train-name-badge">🚂 —</div>
   <div id="race-info">
     <div id="distance-text">0 m</div>
     <div id="position-badge">🏁 Mulai!</div>
     <div id="g14-position-gap"></div>
   </div>
-  <button id="btn-pause" onclick="togglePause()" style="pointer-events:all;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.25);border-radius:10px;color:#fff;padding:5px 8px;font-size:14px;cursor:pointer;font-family:inherit;flex-shrink:0">⏸</button>
-  <div id="lives-hud">❤️❤️❤️</div>
   <div id="speed-hud"><span id="speed-hud-num">0 km/h</span><span id="g14-speed-needle" style="--gns:0"><span class="gsn-arc"></span><span class="gsn-needle"></span></span></div>
 </div>
 <div id="prog-strip"><div id="prog-fill"></div></div>
@@ -284,20 +302,31 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
   <span class="cp-dot" id="cp3">🏁</span>
 </div>
 
-<!-- Controls -->
+<!-- Controls — v55.73 painterly candy reskin. -->
 <div id="ctrl-area">
-  <div id="ctrl-row">
-    <!-- v55.8 — Atas/Bawah replaced with ↑/↓ arrow symbols (closes B-205). -->
-    <button class="ctrl-btn" id="btn-up" aria-label="Atas"
-      ontouchstart="laneUp();event.preventDefault()" onclick="laneUp()"><span style="font-size:32px;font-weight:900;line-height:1">↑</span></button>
-    <button class="ctrl-btn" id="btn-boost" onclick="triggerBoost()">BOOST!</button>
-    <button class="ctrl-btn" id="btn-dn" aria-label="Bawah"
-      ontouchstart="laneDn();event.preventDefault()" onclick="laneDn()"><span style="font-size:32px;font-weight:900;line-height:1">↓</span></button>
+  <!-- LEFT: candy lane buttons (UP blue / DOWN green). -->
+  <div class="g14-ctrl-left">
+    <button class="ctrl-btn g14-lane-btn" id="btn-up" aria-label="Atas"
+      ontouchstart="laneUp();event.preventDefault()" onclick="laneUp()"><span>↑</span></button>
+    <button class="ctrl-btn g14-lane-btn" id="btn-dn" aria-label="Bawah"
+      ontouchstart="laneDn();event.preventDefault()" onclick="laneDn()"><span>↓</span></button>
   </div>
-  <div id="pressure-row">
-    <span id="pressure-label">TEKANAN</span>
-    <div id="pressure-track"><div id="pressure-fill" style="width:70%"></div></div>
-    <span id="pressure-pct">70%</span>
+  <!-- CENTER: status tip + boost. -->
+  <div class="g14-ctrl-center">
+    <div id="g14-tip"><span class="g14-shield">🛡️</span>Avoid hazards</div>
+    <button class="ctrl-btn" id="btn-boost" onclick="triggerBoost()">BOOST!</button>
+  </div>
+  <!-- RIGHT: segmented energy meter. -->
+  <div class="g14-ctrl-right">
+    <div id="pressure-row">
+      <span class="g14-energy-bolt">⚡</span>
+      <div id="pressure-track">
+        <div id="pressure-fill" style="width:70%"></div>
+        <div class="g14-energy-segs" id="g14-energy-segs"><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+      <span id="pressure-label">TEKANAN</span>
+      <span id="pressure-pct">70%</span>
+    </div>
   </div>
 </div>
 
@@ -4946,9 +4975,25 @@ _g14SwipeTarget.addEventListener('touchend', e => {
 // ═══════════════════════════════════════════════════════════
 function updateHUD() {
   const frac = Math.min(1, S.distance / S.finishLine)
-  document.getElementById('prog-fill').style.width = (frac * 100).toFixed(1) + '%'
-  document.getElementById('distance-text').textContent = `${Math.floor(S.distance)} / ${S.finishLine}m`
-  document.getElementById('lives-hud').textContent = '❤️'.repeat(S.hp) + '🖤'.repeat(LIVES_MAX - S.hp)
+  const progEl = document.getElementById('prog-fill'); if (progEl) progEl.style.width = (frac * 100).toFixed(1) + '%'
+  const distEl = document.getElementById('distance-text'); if (distEl) distEl.textContent = `${Math.floor(S.distance)} / ${S.finishLine}m`
+  const livesEl = document.getElementById('lives-hud'); if (livesEl) livesEl.textContent = '❤️'.repeat(S.hp) + '🖤'.repeat(LIVES_MAX - S.hp)
+  // v55.73 — painterly HUD: coin chip + ticket capsule + segmented energy.
+  const coinEl = document.getElementById('g14-coins-num'); if (coinEl) coinEl.textContent = (S.coins || 0)
+  const lvNow = (cfg.level || 1)
+  const partEl = document.getElementById('g14-ticket-part'); if (partEl) partEl.textContent = `Part ${lvNow}/30`
+  const stationEl = document.getElementById('g14-ticket-station')
+  if (stationEl) { const j = G14_JOURNEY[(lvNow - 1) % G14_JOURNEY.length]; if (j) stationEl.textContent = j.name }
+  const segs = document.getElementById('g14-energy-segs')
+  if (segs) {
+    const lit = Math.max(0, Math.min(5, Math.ceil((S.pressure || 0) / 20)))
+    const low = (S.pressure || 0) < 20
+    const cells = segs.children
+    for (let i = 0; i < cells.length; i++) {
+      cells[i].classList.toggle('lit', i < lit)
+      cells[i].classList.toggle('g14-seg-low', i < lit && low)
+    }
+  }
   if (S.trainCfg) {
     const displayKmh = Math.round(S.trainCfg.kmh * (S.speed / S.baseSpeed) * (S.boosting ? S.trainCfg.boostMult : 1))
     // v54.19 B10: needle gauge — update num + var(--gns) which conic-arc + needle read.
@@ -4965,12 +5010,43 @@ function updateHUD() {
 }
 function updatePressure() {
   const pct = Math.round(S.pressure)
-  document.getElementById('pressure-fill').style.width = pct + '%'
-  document.getElementById('pressure-pct').textContent = pct + '%'
-  document.getElementById('pressure-fill').style.background =
-    pct < 20 ? 'linear-gradient(90deg,#ef4444,#f97316)' :
-    pct < 50 ? 'linear-gradient(90deg,#f97316,#fbbf24)' :
-    'linear-gradient(90deg,#22d3ee,#86efac)'
+  const fillEl = document.getElementById('pressure-fill')
+  if (fillEl) {
+    fillEl.style.width = pct + '%'
+    fillEl.style.background =
+      pct < 20 ? 'linear-gradient(90deg,#ef4444,#f97316)' :
+      pct < 50 ? 'linear-gradient(90deg,#f97316,#fbbf24)' :
+      'linear-gradient(90deg,#22d3ee,#86efac)'
+  }
+  const pctEl = document.getElementById('pressure-pct'); if (pctEl) pctEl.textContent = pct + '%'
+  // v55.73 — keep the segmented meter in sync on every pressure change.
+  const segs = document.getElementById('g14-energy-segs')
+  if (segs) {
+    const lit = Math.max(0, Math.min(5, Math.ceil(pct / 20)))
+    const low = pct < 20
+    const cells = segs.children
+    for (let i = 0; i < cells.length; i++) {
+      cells[i].classList.toggle('lit', i < lit)
+      cells[i].classList.toggle('g14-seg-low', i < lit && low)
+    }
+  }
+}
+// v55.73 — mute toggle wired to #btn-mute. Flips window.__g14Muted and
+// pauses/resumes TrainBGM (or the #game-bgm element fallback).
+function toggleMute() {
+  window.__g14Muted = !window.__g14Muted
+  const muted = window.__g14Muted
+  try {
+    if (window.TrainBGM && typeof TrainBGM.pause === 'function') {
+      if (muted) TrainBGM.pause()
+      else if (S.running) TrainBGM.play()
+    } else {
+      const bgm = document.getElementById('game-bgm')
+      if (bgm) { if (muted) bgm.pause(); else if (S.running) bgm.play().catch(() => {}) }
+    }
+  } catch (_) {}
+  const btn = document.getElementById('btn-mute')
+  if (btn) { btn.classList.toggle('muted', muted); btn.textContent = muted ? '🔇' : '🔊' }
 }
 
 // ═══════════════════════════════════════════════════════════

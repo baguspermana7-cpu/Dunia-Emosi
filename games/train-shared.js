@@ -349,6 +349,11 @@
   }
   const Voice = {
     speak(trainKey, event) {
+      // v55.74 — TTS DISABLED (owner: "ada tts soal aneh bahasanya, nggak usah
+      // pakai tts"). The Web-Speech voice mispronounced quiz/station text, so no
+      // speech is ever produced now. Kept the method so callers stay valid.
+      return
+      // eslint-disable-next-line no-unreachable
       const lang = getSettings().lang || 'id'
       const lines = VOICE_LINES[trainKey] || {}
       const text = lines[event + '_' + lang] || lines[event + '_id'] || ''
@@ -406,12 +411,9 @@
         document.body.appendChild(banner)
       }
       banner.textContent = `📚 Kata Hari Ini: ${w.id} = ${w.en}`
-      banner.onclick = () => {
-        try {
-          const u = new SpeechSynthesisUtterance(w.id + '. ' + w.en)
-          u.lang = 'id-ID'; window.speechSynthesis.speak(u)
-        } catch(_){}
-      }
+      // v55.74 — TTS disabled (owner request). Banner stays informational, no speech.
+      banner.onclick = null
+      banner.style.cursor = 'default'
     },
   }
 

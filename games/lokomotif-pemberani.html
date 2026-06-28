@@ -2110,7 +2110,7 @@ function g15UpdateVignette() {
 }
 
 // C5: voice-readout of target letter (id-ID TTS). Default ON in easy mode.
-let g15TTSOn = (typeof getDifficulty === 'function' && getDifficulty() === 'easy');
+let g15TTSOn = false;   // v55.74 — TTS DISABLED (owner: "nggak usah pakai tts")
 function g15SpeakLetter(letter) {
   if (!g15TTSOn || !window.speechSynthesis || !letter) return;
   try {
@@ -2634,14 +2634,9 @@ function g15SpeakWord(wordObj) {
       if (s && s.sfx === false) return
     }
   } catch(_){}
-  try { window.speechSynthesis.cancel() } catch(_){}
-  const letters = wordObj.word.toUpperCase().split('')
-  const spellText = letters.join(' . ') + ', ' + wordObj.word.toLowerCase() + '!'
-  const u = new SpeechSynthesisUtterance(spellText)
-  u.lang = 'id-ID'
-  u.rate = 0.85
-  u.volume = 0.7
-  try { window.speechSynthesis.speak(u) } catch(_){}
+  // v55.74 — TTS DISABLED (owner: "nggak usah pakai tts"). No spelling-out speech.
+  try { if (window.speechSynthesis) window.speechSynthesis.cancel() } catch(_){}
+  void wordObj
 }
 
 // ── Word Complete / Game Logic ─────────────────────────────────────────────────
