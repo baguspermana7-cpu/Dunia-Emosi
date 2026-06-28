@@ -1626,3 +1626,19 @@ Owner-locked: every Dunia Emosi ship MUST update CHANGELOG.md + LESSONS-LEARNED.
 - **Root cause**: `buildTrain` set `trainContainer.y = LANE_Y[1] + 14 − wheelAnchor`, but the per-frame lane tween drove Y back toward plain `LANE_Y[lane]` (no anchor) → float.
 - **Fix**: capture `g15CharRailOffset = containerY − LANE_Y[1]` and add it to the tween target for every lane.
 - **Lesson**: if an init-time vertical correction "disappears" once the game loop runs, a tween/animation is overwriting it — fold the offset into the tween's target, don't just set it once.
+
+### L107 — A shipped fix is INVISIBLE to a standalone page that never listens for SW updates (v55.69)
+- **Symptom**: owner repeatedly reported "dimensi karakter tidak berubah" though `curl` confirmed the server already served the new `g14TrainScale`. Every fix this session looked un-shipped.
+- **Root cause**: the SW (sw.js) broadcasts `SW_UPDATED` from `activate`, but only `index.html` (via game.js) listened. The **standalone game pages** (`games/*.html`) the owner actually plays had NO listener → an open game tab kept running the OLD cached bytes after a deploy.
+- **Fix**: shared `games/sw-reload.js` (loaded by every train page) listens for `SW_UPDATED` + `controllerchange` and reloads once per new build; plus a visible build-stamp (`v55.69`) so the owner can confirm the live build at a glance.
+- **Lesson**: network-first HTML is not enough — an ALREADY-OPEN page won't refetch itself. Any page that can outlive a deploy needs an explicit SW-update→reload listener. Add a visible build-stamp so "is it even deployed?" is answerable in one look, not a `curl`.
+
+### L108 — Pseudo-3D taper must change RENDER geometry only, never gameplay coords (g14 v55.69)
+- **Symptom (avoided)**: owner wanted a stronger "kesan 3D"; a naive perspective road would move the lane centers and break on-rail alignment + collisions.
+- **Fix**: keep `laneYs` (gameplay) untouched; taper only the RENDERED rail gauge + sleeper width by a per-lane depth factor (`g14LaneDepth`, far≈0.78 → near≈1.22) and scale the train SPRITES by lane (`g14SpriteDepth`, far≈0.92× → near≈1.08×, continuous from live Y so it eases through a switch). Facing mirror preserved via a stored `_baseScale` + `_faceSign`.
+- **Lesson**: depth cues (Pole-Position taper, OutRun sprite-scale) are cheap and convincing when applied to a separate RENDER layer. Never let a visual taper touch the coordinate the physics reads — store a base scale + sign so per-frame rescaling can't corrupt the mirror.
+
+### L109 — Parameterize a 40-level journey (palette + landmark + props), don't hand-draw 40 scenes (g14 v55.69)
+- **Symptom**: owner wanted a unique background per level — L1-20 Java west→east (→Surabaya), L21-40 Europe/America/Russia — but 40 bespoke scenes is unmaintainable.
+- **Fix**: one `G14_JOURNEY[40]` data table (`{name, region, biome, landmark}`) drives everything: `g14Palette()` merges a per-biome override onto the base `day` palette; `g14Landmark(key,…)` dispatches flat-fill silhouette drawers (volcano/Monas/Eiffel/Big Ben/Kremlin domes/skyline/Alps/bridge/windmill/colosseum/…); props + rice paddies gate to Indonesia-only so palms/sawah don't appear in Paris/Moscow. Station cinematic + conductor announce read the level's real station name.
+- **Lesson**: content scale comes from a data table × a handful of reusable drawers, not N hand-built scenes. Verify a representative SAMPLE (1/4/13/20/21/25/31/37/40) renders distinct, not all 40.

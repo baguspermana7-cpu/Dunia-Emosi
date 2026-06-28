@@ -216,6 +216,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.69</div>
+<script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="train-vfx.js?v=54.56-20260625bi"></script>
 <script src="train-bg-engine.js?v=54.67-20260626bt"></script>
@@ -812,9 +814,32 @@ let G14_UNIFORM_H = 120
 function g14TrainScale(tex) {
   const W = app.screen.width, H = app.screen.height
   const lh = (typeof laneH !== 'undefined' && laneH) ? laneH : H * 0.16
-  const maxH = Math.max(40, Math.min(lh * 0.70, H * 0.105))   // ≤70% of a lane, ≤10.5% of screen height
-  const maxW = W * 0.22                                        // ≤22% of screen width — kills the screen-spanning overspill
+  const maxH = Math.max(34, Math.min(lh * 0.58, H * 0.088))   // v55.69 B-276 — ≤58% of a lane, ≤8.8% of screen height (a notch smaller; loco sits IN the lane with margin)
+  const maxW = W * 0.19                                        // v55.69 B-276 — ≤19% of screen width — kills the screen-spanning overspill
   return Math.min(maxH / tex.height, maxW / tex.width)         // fit-inside-box, aspect preserved
+}
+// v55.69 B-278 — PSEUDO-3D DEPTH CUES (OutRun-style). The 3 lanes read as a
+// receding road: the TOP lane (index 0) is FAR, the BOTTOM lane (LANE_COUNT-1)
+// is NEAR. g14LaneDepth returns a per-lane factor used to TAPER the rendered
+// rail/sleeper width (Pole-Position) and SCALE the train sprites (near=bigger,
+// far=smaller). Gameplay coords (laneYs, collisions) are NEVER touched — these
+// only affect VISUAL width/scale, so on-rail alignment + hit-tests are intact.
+function g14LaneDepth(ln) {
+  const n = LANE_COUNT > 1 ? LANE_COUNT - 1 : 1
+  return 0.78 + (ln / n) * 0.44            // far lane ~0.78 → near lane ~1.22 (rail/sleeper taper)
+}
+function g14SpriteDepth(ln) {
+  const n = LANE_COUNT > 1 ? LANE_COUNT - 1 : 1
+  return 0.92 + (ln / n) * 0.16            // far ~0.92× → near ~1.08× (sprite depth scale)
+}
+// Apply a train sprite's base scale × its lane depth, preserving the facing
+// mirror (img.scale.x sign). Call on build + whenever the train changes lane.
+function g14ApplyDepthScale(img, ln) {
+  if (!img || img.destroyed || img._baseScale == null) return
+  const d = g14SpriteDepth(typeof ln === 'number' ? ln : 1)
+  const s = img._baseScale * d
+  img.scale.set(s)
+  img.scale.x = s * (img._faceSign || 1)
 }
 // Difficulty-scaled obstacle interval. Previously only level-scaled → "easy"
 // level 1 spawned every 2.7s which is too dense for a 5-10yo on their first play.
@@ -840,6 +865,203 @@ const THEMES = [
   { name:'volcano', skyTop:0x991b1b, skyBot:0xea580c, mountain:0xb91c1c, tree:'🔥', ground1:0x7c2d12, ground2:0x451a03, rail:0xfbbf24, stars:false },
 ]
 const TH = THEMES[((cfg.level || 1) - 1) % THEMES.length]
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  v55.69 B-275 — 40-LEVEL STATION JOURNEY (owner: "per level dari stasiun ujung
+//  barat ke timur … level 20 = Surabaya; level 21-40 Eropa/Amerika/Rusia;
+//  background unique tiap level"). Each level is a leg of a west→east journey:
+//  L1-20 cross Java (Merak → Surabaya), L21-40 travel Europe → America → Russia.
+//  Every level pairs a BIOME palette (land/hill/grass/haze colors) with a
+//  signature LANDMARK drawer + its real station name → no two levels look alike.
+//  The day/night sky still cycles by race progress on top of this.
+// ═══════════════════════════════════════════════════════════════════════════
+const G14_JOURNEY = [
+  // ── L1-20 — Indonesia, west → east across Java ──
+  { name:'Merak',            region:'Banten',     biome:'coastal',    landmark:'none'     },
+  { name:'Rangkasbitung',    region:'Banten',     biome:'javaLush',   landmark:'volcano'  },
+  { name:'Jakarta Kota',     region:'Jakarta',    biome:'urbanID',    landmark:'colonial' },
+  { name:'Gambir',           region:'Jakarta',    biome:'urbanID',    landmark:'monas'    },
+  { name:'Bekasi',           region:'Jawa Barat', biome:'urbanID',    landmark:'skyline'  },
+  { name:'Karawang',         region:'Jawa Barat', biome:'javaLush',   landmark:'volcano'  },
+  { name:'Cikampek',         region:'Jawa Barat', biome:'javaLush',   landmark:'none'     },
+  { name:'Cirebon',          region:'Jawa Barat', biome:'coastal',    landmark:'colonial' },
+  { name:'Brebes',           region:'Jawa Tengah',biome:'arid',       landmark:'none'     },
+  { name:'Tegal',            region:'Jawa Tengah',biome:'coastal',    landmark:'none'     },
+  { name:'Pekalongan',       region:'Jawa Tengah',biome:'javaLush',   landmark:'colonial' },
+  { name:'Semarang',         region:'Jawa Tengah',biome:'urbanID',    landmark:'colonial' },
+  { name:'Ambarawa',         region:'Jawa Tengah',biome:'highlandID', landmark:'volcano'  },
+  { name:'Salatiga',         region:'Jawa Tengah',biome:'highlandID', landmark:'volcano'  },
+  { name:'Solo Balapan',     region:'Jawa Tengah',biome:'javaLush',   landmark:'colonial' },
+  { name:'Klaten',           region:'Jawa Tengah',biome:'highlandID', landmark:'volcano'  },
+  { name:'Yogyakarta',       region:'DIY',        biome:'highlandID', landmark:'tugu'     },
+  { name:'Madiun',           region:'Jawa Timur', biome:'javaLush',   landmark:'none'     },
+  { name:'Mojokerto',        region:'Jawa Timur', biome:'javaLush',   landmark:'volcano'  },
+  { name:'Surabaya Gubeng',  region:'Jawa Timur', biome:'urbanID',    landmark:'skyline'  },
+  // ── L21-30 — Europe ──
+  { name:'London',           region:'Inggris',    biome:'englishGrey',landmark:'clocktower'},
+  { name:'Paris',            region:'Prancis',    biome:'parisGold',  landmark:'eiffel'   },
+  { name:'Amsterdam',        region:'Belanda',    biome:'dutchFlat',  landmark:'windmill' },
+  { name:'Berlin',           region:'Jerman',     biome:'germanCrisp',landmark:'skyline'  },
+  { name:'Pegunungan Alpen', region:'Swiss',      biome:'alpine',     landmark:'alps'     },
+  { name:'Roma',             region:'Italia',     biome:'romanWarm',  landmark:'colosseum'},
+  { name:'Wina',             region:'Austria',    biome:'germanCrisp',landmark:'colonial' },
+  { name:'Praha',            region:'Ceko',       biome:'englishGrey',landmark:'clocktower'},
+  { name:'Madrid',           region:'Spanyol',    biome:'romanWarm',  landmark:'skyline'  },
+  { name:'Istanbul',         region:'Turki',      biome:'romanWarm',  landmark:'domes'    },
+  // ── L31-36 — America ──
+  { name:'New York',         region:'Amerika',    biome:'americaBlue',landmark:'skyline'  },
+  { name:'Chicago',          region:'Amerika',    biome:'americaBlue',landmark:'skyline'  },
+  { name:'Rocky Mountains',  region:'Amerika',    biome:'alpine',     landmark:'alps'     },
+  { name:'San Francisco',    region:'Amerika',    biome:'americaBlue',landmark:'bridge'   },
+  { name:'Grand Canyon',     region:'Amerika',    biome:'canyonRed',  landmark:'none'     },
+  { name:'Washington DC',    region:'Amerika',    biome:'americaBlue',landmark:'domes'    },
+  // ── L37-40 — Russia ──
+  { name:'Moskwa',           region:'Rusia',      biome:'russiaCold', landmark:'domes'    },
+  { name:'St. Petersburg',   region:'Rusia',      biome:'russiaCold', landmark:'domes'    },
+  { name:'Trans-Siberia',    region:'Rusia',      biome:'taiga',      landmark:'alps'     },
+  { name:'Vladivostok',      region:'Rusia',      biome:'russiaCold', landmark:'bridge'   },
+]
+function g14Journey() {
+  const lv = (cfg.level || 1)
+  return G14_JOURNEY[(lv - 1) % G14_JOURNEY.length] || G14_JOURNEY[0]
+}
+function g14StationName() { return g14Journey().name }
+
+// Biome palette OVERRIDES merged onto the base IndoScene 'day' palette. Only the
+// land-defining colors change (sky gradient stays time-of-day driven); snow
+// biomes also whiten grass + ballast. Missing keys inherit the lush base.
+const G14_BIOMES = {
+  javaLush:    {},
+  coastal:     { haze:0xdcf0ef, mtnFar:0x8fb6cf, hill1:0x74ad6a, hill2:0x86bd78, hill3:0x9bcf86, grass:0x86c884, sawahB:0x7fc6a0 },
+  urbanID:     { haze:0xe6ebee, mtnFar:0x9aa3ad, hill1:0x7f8a82, hill2:0x8d968b, hill3:0x9aa39a, grass:0x8a9a78, grassDk:0x687a58 },
+  highlandID:  { haze:0xe2f1ef, mtnFar:0x97add0, hill1:0x4f9a55, hill2:0x5fab60, hill3:0x73bd72, grass:0x5fae5a, grassDk:0x47863f },
+  arid:        { haze:0xeee3c2, mtnFar:0xb5a888, hill1:0x9aa05f, hill2:0xa9ae6c, hill3:0xb8bd7c, grass:0x9aa05f, grassDk:0x787c45, sawahA:0xb6b06a, sawahB:0xa29a58, sawahC:0xc6c07a },
+  englishGrey: { haze:0xcdd6db, mtnFar:0x78838f, hill1:0x4f7a52, hill2:0x5c8a5e, hill3:0x6f9a6c, grass:0x5f8c5a, grassDk:0x466e44 },
+  parisGold:   { haze:0xf0e2cb, mtnFar:0xb6a9bf, hill1:0x7fa86a, hill2:0x8eb877, hill3:0xa1c98a, grass:0x86bc74 },
+  dutchFlat:   { haze:0xe2f0ef, mtnFar:0x9fc0d2, hill1:0x6fb060, hill2:0x80c070, hill3:0x94cf86, grass:0x74c06a, grassDk:0x55964e },
+  alpine:      { haze:0xe6f1f6, mtnFar:0xc6d2e0, hill1:0x9aa6b2, hill2:0xb4bec8, hill3:0xd2dae2, grass:0xdfe8ee, grassDk:0xbcc8d2, sawahA:0xe4ecf0, sawahB:0xd2dce4, sawahC:0xf0f5f8, ballast:0xc8cdd2, ballastDk:0xa6acb2, tie:0x6a6258 },
+  germanCrisp: { haze:0xdcecf2, mtnFar:0x8c9aac, hill1:0x6f8a72, hill2:0x7d9a80, hill3:0x8eaa90, grass:0x789a6c, grassDk:0x587650 },
+  romanWarm:   { haze:0xf0dcbe, mtnFar:0xbaa896, hill1:0x9aa05f, hill2:0xa9ad6c, hill3:0xb6ba7c, grass:0x9aa860, grassDk:0x787c45 },
+  americaBlue: { haze:0xdcecf4, mtnFar:0x8c9aae, hill1:0x6f8a78, hill2:0x7d9a84, hill3:0x90aa94, grass:0x789a72, grassDk:0x577653 },
+  canyonRed:   { haze:0xeed2ad, mtnFar:0xc08858, hill1:0xb56b3a, hill2:0xc47c45, hill3:0xd28e54, grass:0xb07a44, grassDk:0x8a5a30, sawahA:0xc28a4e, sawahB:0xb07a42, sawahC:0xd29a5e, ballast:0xc28a52, tie:0x7a4a28 },
+  russiaCold:  { haze:0xd6dee6, mtnFar:0x8c98a8, hill1:0x6f8090, hill2:0x84929e, hill3:0x9aa6b0, grass:0xd2dae2, grassDk:0xb0bac4, sawahA:0xdce4ea, sawahB:0xc8d2da, sawahC:0xe8eef2, ballast:0xb6bcc2, ballastDk:0x969ca2, tie:0x5e5a58 },
+  taiga:       { haze:0xdce2e8, mtnFar:0x8c98a4, hill1:0x4f6a54, hill2:0x5c7a5e, hill3:0x6f8a6c, grass:0xc6d2d6, grassDk:0xa2b0b4, ballast:0xb6bcc0, tie:0x5e5a54 },
+}
+// Per-level palette = base 'day' merged with this level's biome overrides.
+function g14Palette() {
+  const IS = window.IndoScene
+  if (!IS) return null
+  const base = IS.palette('day')
+  const ov = G14_BIOMES[g14Journey().biome] || {}
+  return Object.assign({}, base, ov)
+}
+
+// ── Landmark drawers (flat-fill silhouettes; cheap + batchable). Each returns a
+//    PIXI.Container. Volcano-type carries _craterX/_craterY for the smoke plume;
+//    all others leave them undefined so the volcano smoke stays off. ──
+function g14Landmark(key, W, baseY, pal, h) {
+  const IS = window.IndoScene
+  if (!key || key === 'none') { const e = new PIXI.Container(); return e }
+  if (key === 'volcano') return IS.volcano(W, baseY, pal, h)
+  const C = new PIXI.Container()
+  const g = new PIXI.Graphics()
+  const cx = W * 0.52
+  const STONE = 0xcdbfa6, STONE_SH = 0xa89a82, STEEL = 0x8c98a4, STEEL_DK = 0x66707b,
+        GOLD = 0xe3b24a, REDROOF = 0xb5482e, WHITE = 0xeef0ee, COPPER = 0x6fae9a, BRICK = 0xb06a4a
+  if (key === 'monas') {
+    const H = h, bw = W * 0.05
+    g.rect(cx - bw * 1.4, baseY - H * 0.10, bw * 2.8, H * 0.10).fill({ color: STONE })   // base
+    g.moveTo(cx - bw * 0.5, baseY - H * 0.10).lineTo(cx - bw * 0.18, baseY - H * 0.86).lineTo(cx + bw * 0.18, baseY - H * 0.86).lineTo(cx + bw * 0.5, baseY - H * 0.10).closePath().fill({ color: WHITE })  // obelisk
+    g.moveTo(cx - bw * 0.18, baseY - H * 0.86).lineTo(cx, baseY - H * 0.96).lineTo(cx + bw * 0.18, baseY - H * 0.86).closePath().fill({ color: STONE_SH })  // cup
+    g.ellipse(cx, baseY - H * 0.99, bw * 0.22, H * 0.05).fill({ color: GOLD })   // flame
+  } else if (key === 'tugu') {
+    const H = h, bw = W * 0.035
+    g.rect(cx - bw * 1.2, baseY - H * 0.08, bw * 2.4, H * 0.08).fill({ color: STONE_SH })
+    g.rect(cx - bw * 0.45, baseY - H * 0.82, bw * 0.9, H * 0.74).fill({ color: WHITE })   // pillar
+    g.ellipse(cx, baseY - H * 0.88, bw * 0.6, H * 0.07).fill({ color: GOLD })             // gold ball
+    g.moveTo(cx - bw * 0.18, baseY - H * 0.90).lineTo(cx, baseY - H * 0.99).lineTo(cx + bw * 0.18, baseY - H * 0.90).closePath().fill({ color: GOLD })  // spire
+  } else if (key === 'eiffel') {
+    const H = h, tw = W * 0.17
+    // legs + body silhouette
+    g.moveTo(cx - tw / 2, baseY).lineTo(cx - tw * 0.16, baseY - H * 0.42).lineTo(cx - tw * 0.05, baseY - H * 0.86).lineTo(cx - tw * 0.02, baseY - H).lineTo(cx + tw * 0.02, baseY - H).lineTo(cx + tw * 0.05, baseY - H * 0.86).lineTo(cx + tw * 0.16, baseY - H * 0.42).lineTo(cx + tw / 2, baseY).closePath().fill({ color: STEEL })
+    g.rect(cx - tw * 0.42, baseY - H * 0.30, tw * 0.84, H * 0.03).fill({ color: STEEL_DK })   // 1st platform
+    g.rect(cx - tw * 0.20, baseY - H * 0.62, tw * 0.40, H * 0.025).fill({ color: STEEL_DK })  // 2nd platform
+    g.moveTo(cx - tw * 0.30, baseY).lineTo(cx + tw * 0.30, baseY).lineTo(cx + tw * 0.16, baseY - H * 0.24).lineTo(cx - tw * 0.16, baseY - H * 0.24).closePath().fill({ color: STEEL_DK, alpha: 0.5 })  // base arch shade
+  } else if (key === 'clocktower') {
+    const H = h, tw = W * 0.05
+    g.rect(cx - tw, baseY - H * 0.80, tw * 2, H * 0.80).fill({ color: STONE })             // tower
+    g.rect(cx - tw, baseY - H * 0.80, tw * 0.5, H * 0.80).fill({ color: STONE_SH })        // shade
+    g.circle(cx, baseY - H * 0.66, tw * 0.62).fill({ color: WHITE })                       // clock
+    g.circle(cx, baseY - H * 0.66, tw * 0.20).fill({ color: STONE_SH })
+    g.moveTo(cx - tw, baseY - H * 0.80).lineTo(cx, baseY - H).lineTo(cx + tw, baseY - H * 0.80).closePath().fill({ color: REDROOF })  // spire
+  } else if (key === 'skyline') {
+    const H = h
+    const cols = [[-0.30,0.62,0.10],[-0.18,0.92,0.09],[-0.05,0.74,0.11],[0.08,1.0,0.10],[0.22,0.80,0.09],[0.34,0.58,0.10]]
+    for (const [ox, hh, ww] of cols) {
+      const bx = cx + W * ox, bw = W * ww, bh = H * hh
+      g.rect(bx - bw / 2, baseY - bh, bw, bh).fill({ color: STEEL })
+      g.rect(bx - bw / 2, baseY - bh, bw * 0.35, bh).fill({ color: STEEL_DK })
+      for (let wy = 0; wy < 5; wy++) for (let wx = 0; wx < 3; wx++)
+        g.rect(bx - bw * 0.30 + wx * bw * 0.28, baseY - bh + 6 + wy * (bh / 6), bw * 0.14, bh * 0.06).fill({ color: 0xffe9a8, alpha: 0.55 })
+    }
+  } else if (key === 'windmill') {
+    const H = h, tw = W * 0.045
+    g.moveTo(cx - tw, baseY).lineTo(cx - tw * 0.55, baseY - H * 0.62).lineTo(cx + tw * 0.55, baseY - H * 0.62).lineTo(cx + tw, baseY).closePath().fill({ color: STONE })  // body
+    g.moveTo(cx - tw * 0.7, baseY - H * 0.62).lineTo(cx, baseY - H * 0.74).lineTo(cx + tw * 0.7, baseY - H * 0.62).closePath().fill({ color: REDROOF })  // cap
+    const hubY = baseY - H * 0.60
+    for (const a of [0.6, 2.17, 3.74, 5.31]) {   // 4 sails
+      g.moveTo(cx, hubY).lineTo(cx + Math.cos(a) * H * 0.42, hubY + Math.sin(a) * H * 0.42).stroke({ color: STONE_SH, width: 4 })
+    }
+    g.circle(cx, hubY, tw * 0.25).fill({ color: STONE_SH })
+  } else if (key === 'alps') {
+    const H = h
+    const peaks = [[-0.26, 0.74, 0.30], [0.0, 1.0, 0.36], [0.26, 0.80, 0.30]]
+    for (const [ox, hh, ww] of peaks) {
+      const px = cx + W * ox, pw = W * ww, ph = H * hh
+      g.moveTo(px - pw / 2, baseY).lineTo(px, baseY - ph).lineTo(px + pw / 2, baseY).closePath().fill({ color: STEEL })
+      g.moveTo(px - pw * 0.18, baseY - ph * 0.72).lineTo(px, baseY - ph).lineTo(px + pw * 0.18, baseY - ph * 0.72).lineTo(px + pw * 0.06, baseY - ph * 0.64).lineTo(px - pw * 0.05, baseY - ph * 0.70).closePath().fill({ color: WHITE })  // snow cap
+    }
+  } else if (key === 'domes') {
+    const H = h, bw = W * 0.20
+    g.rect(cx - bw / 2, baseY - H * 0.34, bw, H * 0.34).fill({ color: STONE })             // wall
+    g.rect(cx - bw / 2, baseY - H * 0.34, bw, H * 0.05).fill({ color: STONE_SH })
+    const domes = [[-0.30, 0.5], [0.0, 0.72], [0.30, 0.5]]
+    for (const [ox, ds] of domes) {
+      const dx = cx + bw * ox, dh = H * 0.30 * ds + H * 0.18, dw = bw * 0.26
+      const col = ox === 0 ? GOLD : COPPER
+      g.ellipse(dx, baseY - H * 0.34, dw, dh * 0.55).fill({ color: col })                  // onion (lower bulge)
+      g.moveTo(dx - dw, baseY - H * 0.34).bezierCurveTo(dx - dw, baseY - H * 0.34 - dh, dx + dw, baseY - H * 0.34 - dh, dx + dw, baseY - H * 0.34).closePath().fill({ color: col })
+      g.moveTo(dx - dw * 0.3, baseY - H * 0.34 - dh * 0.9).lineTo(dx, baseY - H * 0.34 - dh * 1.25).lineTo(dx + dw * 0.3, baseY - H * 0.34 - dh * 0.9).closePath().fill({ color: GOLD })  // tip
+    }
+  } else if (key === 'colosseum') {
+    const H = h, bw = W * 0.26, bh = H * 0.46
+    g.ellipse(cx, baseY - bh * 0.5, bw, bh * 0.5).fill({ color: STONE })
+    g.ellipse(cx, baseY - bh * 0.5, bw * 0.78, bh * 0.42).fill({ color: STONE_SH, alpha: 0.5 })
+    g.ellipse(cx, baseY - bh * 0.5, bw * 0.66, bh * 0.34).fill({ color: pal.grass || 0x82c06c })  // hollow centre = sky/grass behind
+    for (let r = 0; r < 2; r++) for (let a = -5; a <= 5; a++) {   // arch holes around the rim
+      const ang = a * 0.16
+      g.ellipse(cx + Math.sin(ang) * bw * 0.86, baseY - bh * (0.5 + r * 0.22) + Math.cos(ang) * 2, bw * 0.03, bh * 0.07).fill({ color: STONE_SH })
+    }
+  } else if (key === 'bridge') {
+    const H = h, span = W * 0.42, towerW = W * 0.02
+    const tY = baseY - H * 0.10
+    for (const sgn of [-1, 1]) {
+      const tx = cx + sgn * span * 0.42
+      g.rect(tx - towerW / 2, baseY - H * 0.84, towerW, H * 0.74).fill({ color: REDROOF })  // tower (golden-gate red)
+      g.rect(tx - towerW * 1.2, baseY - H * 0.62, towerW * 2.4, towerW).fill({ color: REDROOF })  // cross beam
+    }
+    g.rect(cx - span / 2, tY, span, H * 0.03).fill({ color: STEEL_DK })                      // deck
+    // suspension cables (dip between towers + down to deck ends)
+    g.moveTo(cx - span * 0.5, tY).bezierCurveTo(cx - span * 0.2, baseY - H * 0.78, cx + span * 0.2, baseY - H * 0.78, cx + span * 0.5, tY).stroke({ color: REDROOF, width: 2.5 })
+    for (let i = -8; i <= 8; i++) {   // vertical hangers
+      const hx = cx + (span * 0.46) * (i / 8)
+      const top = tY - (H * 0.74) * (1 - Math.pow(i / 8, 2)) * 0.5
+      g.moveTo(hx, tY).lineTo(hx, top).stroke({ color: REDROOF, width: 1, alpha: 0.7 })
+    }
+  }
+  C.addChild(g)
+  return C
+}
 
 // v54.8 (concern 10): TIME_OF_DAY dynamic sky system. 6 time phases lerp via
 // race progress (S.distance / S.finishLine). Each phase has skyTop/skyBot
@@ -936,6 +1158,7 @@ async function initPixi() {
   laneH = (gameBot - railTop) / LANE_COUNT
   laneYs = Array.from({length: LANE_COUNT}, (_, i) => railTop + laneH * i + laneH / 2)
   // train uniform height scales to the lane (stays the visual star) — clamped.
+  // (depth helpers below are pure functions of lane index — see g14LaneDepth.)
   G14_UNIFORM_H = Math.round(Math.max(72, Math.min(laneH * 1.02, H * 0.15)))
   // obstacle emoji size scales with the smaller viewport axis, ≥44px tap target.
   OBS_SIZE = Math.round(Math.max(38, Math.min(Math.min(W, H) * 0.075, 52)))
@@ -1407,7 +1630,7 @@ function buildFarScenery() {
   const c = new PIXI.Container(); L.far = c; stage.addChild(c)
   const W = app.screen.width, H = app.screen.height
   const IS = window.IndoScene
-  const pal = IS ? IS.palette(g14SceneMood()) : null
+  const pal = IS ? g14Palette() : null
   if (!IS || !pal) {
     // legacy fallback (procedural mountains + haze) if the module fails to load
     for (let i = 0; i < 12; i++) { const g = new PIXI.Graphics(); const mW = 80 + Math.random()*100, mH = 50 + Math.random()*80; g.moveTo(0,0).lineTo(mW/2,-mH).lineTo(mW,0).fill(TH.mountain); g.x = i*(W/6)-20; g.y = gameTop+30; g._speed = 0; c.addChild(g) }
@@ -1440,13 +1663,24 @@ function buildFarScenery() {
   // strongest pseudo-3D depth cue and is ~free (one flat rect, batched).
   const _hazeC = (pal.haze != null) ? pal.haze : 0xdfeef2
   const hazeWash = (alpha, yTop) => { const hz = new PIXI.Graphics(); hz.rect(0, yTop, W, railY - yTop + 4).fill({ color: _hazeC, alpha: alpha }); hz._speed = 0; c.addChild(hz) }
+  // v55.69 B-278 — DEEPER aerial perspective: a graded 3-step haze stack (heaviest
+  // at the horizon, fading toward the foreground) reads as real atmospheric depth.
   makeBand(0.05, [() => IS.mountains(W, horizonY + 6, pal)])                          // distant range (slowest)
-  hazeWash(0.22, horizonY - 4)                                                        // heavy haze veils the far mountains
+  hazeWash(0.30, horizonY - 6)                                                        // step 1 — heaviest haze veils the far mountains
   makeBand(0.14, [() => IS.hills(W, horizonY, pal, 0), () => IS.hills(W, horizonY + 10, pal, 1)])
-  hazeWash(0.12, horizonY + 8)                                                        // lighter haze over the mid hills
-  // volcano = fixed landmark (static) sits between the mid and near hill bands
-  const vol = IS.volcano(W, horizonY + 10, pal, Math.min(horizonY * 0.78, bandH * 0.5)); vol._speed = 0; c.addChild(vol)
-  makeBand(0.40, [() => IS.hills(W, horizonY + 24, pal, 2), () => IS.sawahBand(W, horizonY + Math.min(sceneH * 0.3, 30), Math.min(sceneH * 0.7, 60), pal)])
+  hazeWash(0.16, horizonY + 8)                                                        // step 2 — medium haze over the mid hills
+  hazeWash(0.07, horizonY + Math.max(20, sceneH * 0.45))                              // step 3 — faint near-ground veil (atmosphere thins toward us)
+  // v55.69 B-275 — signature landmark for THIS level's station (volcano / Monas /
+  // Eiffel / Big Ben / Kremlin domes / skyline / Alps / …) sits between the mid
+  // and near hill bands. Volcano-type carries crater coords for the smoke plume.
+  const vol = g14Landmark(g14Journey().landmark, W, horizonY + 10, pal, Math.min(horizonY * 0.78, bandH * 0.5)); vol._speed = 0; c.addChild(vol)
+  // v55.69 B-275 — rice paddies are an Indonesian signature; international legs
+  // (L21-40) get plain rolling hills instead so the scene reads as Europe/US/Russia.
+  const _intlScene = (cfg.level || 1) > 20
+  const _nearBand = _intlScene
+    ? [() => IS.hills(W, horizonY + 24, pal, 2)]
+    : [() => IS.hills(W, horizonY + 24, pal, 2), () => IS.sawahBand(W, horizonY + Math.min(sceneH * 0.3, 30), Math.min(sceneH * 0.7, 60), pal)]
+  makeBand(0.40, _nearBand)
   // v55.61 B-258 — living sky (bird flocks / clouds / kites), seeded variety + perf cap
   if (IS.ambient) {
     const _seed = (((typeof cfg !== 'undefined' && cfg.level) || 1) * 7919 + Math.floor(Math.random() * 997)) >>> 0
@@ -1458,8 +1692,11 @@ function buildFarScenery() {
   // smoke in its OWN container (so tickMid's far-scroll never moves the puffs)
   if (L.smoke && L.smoke.parent) { L.smoke.parent.removeChild(L.smoke); L.smoke.destroy({children:true}) }
   L.smoke = new PIXI.Container(); stage.addChild(L.smoke)
+  // v55.69 B-275 — only volcano landmarks emit a smoke plume; non-volcano
+  // landmarks (Eiffel/Big Ben/Kremlin/…) leave crater coords undefined → no smoke.
   L._craterX = vol._craterX; L._craterY = vol._craterY
-  L._smoke = IS.makeSmoke(); L._scenePal = pal; L._smokeT = 0
+  L._smoke = (vol._craterX != null) ? IS.makeSmoke() : null
+  L._scenePal = pal; L._smokeT = 0
   c._speed = 0
 }
 
@@ -1468,13 +1705,19 @@ let midItems = []
 function buildMidScenery() {
   const c = new PIXI.Container(); L.mid = c; stage.addChild(c)
   const W = app.screen.width
-  const IS = window.IndoScene, pal = IS && IS.palette(g14SceneMood())
+  const IS = window.IndoScene, pal = IS && g14Palette()
   midItems = []
   if (!IS || !pal) return   // backdrop already carries scenery; skip if module missing
   // props stand on the horizon line, just above the rail band — like the reference
   // (kampung houses + palms at the edge of the rice fields beside the track).
   const baseY = railTop - 3
-  const kinds = ['house', 'palm', 'tree', 'pole', 'palm', 'house', 'tree', 'pole']
+  // v55.69 B-275 — regional props: Indonesia (L1-20) keeps palms + kampung houses;
+  // international legs (L21-40) use roadside trees + telegraph poles (palms in Paris
+  // / Moscow broke the illusion). Trees + poles read neutral worldwide.
+  const _intl = (cfg.level || 1) > 20
+  const kinds = _intl
+    ? ['tree', 'pole', 'tree', 'pole', 'tree', 'house', 'pole', 'tree']
+    : ['house', 'palm', 'tree', 'pole', 'palm', 'house', 'tree', 'pole']
   const N = Math.max(6, Math.round(W / 150))
   const unit = Math.max(0.5, Math.min(W, app.screen.height) / 760)   // responsive prop scale
   for (let i = 0; i < N; i++) {
@@ -1504,7 +1747,7 @@ function buildForeScenery() {
   foreItems = []   // reset so a re-init (resize/restart) doesn't keep stale sprite refs
   const c = new PIXI.Container(); L.fore = c; stage.addChild(c)  // after player → in front of train
   const W = app.screen.width, H = app.screen.height
-  const IS = window.IndoScene, pal = IS && IS.palette(g14SceneMood())
+  const IS = window.IndoScene, pal = IS && g14Palette()
   const leaf = (pal ? pal.foliage : ((TH.fore != null) ? TH.fore : 0x14331f))
   const leafDk = (pal ? pal.foliageDk : 0x0e2418)
   // A-311 — static tropical-foliage framing the bottom corners (the reference's
@@ -1549,7 +1792,7 @@ function buildTracks() {
   trackTies = []   // v55.61 — drop stale (destroyed) tie refs from a previous build (resize) so tickTracks never reads a null sprite
   const W = app.screen.width
   // A-311 — Indonesian ballast palette (reddish-brown gravel, steel rails, grain ties)
-  const _is = window.IndoScene, _p = _is && _is.palette(g14SceneMood())
+  const _is = window.IndoScene, _p = _is && g14Palette()
   const C_GRASS = _p ? _p.grass : 0x4ade80, C_BALLAST = _p ? _p.ballast : 0x6b5b4a,
         C_RAIL = _p ? _p.rail : 0x4b5563, C_SHINE = _p ? _p.railShine : 0x9ca3af, C_TIE = _p ? _p.tie : 0x4e342e
 
@@ -1561,7 +1804,11 @@ function buildTracks() {
   const RAIL_HALF = 18  // v55.41 B-226 — 18 × 2 = 36px rail strip (~30% of bigger train) so the character dominates
   for (let ln = 0; ln < LANE_COUNT; ln++) {
     const cy = laneYs[ln]
-    const railOffset = RAIL_HALF
+    // v55.69 B-278 — Pole-Position taper: far (top) lane has a NARROWER rail
+    // gauge + thinner sleepers, near (bottom) lane WIDER → strong forward-depth.
+    const _depth = g14LaneDepth(ln)
+    const railOffset = RAIL_HALF * _depth
+    const tieDrawW = TIE_W * _depth   // sleeper visual width tapers; x-SPACING stays global (wrap math unchanged)
 
     // Grass fill (full lane height) — Indonesian field green
     const grass = new PIXI.Graphics()
@@ -1609,7 +1856,7 @@ function buildTracks() {
     const numTies = Math.ceil(W / (TIE_W + TIE_GAP)) + 3
     for (let j = 0; j < numTies; j++) {
       const tie = new PIXI.Graphics()
-      tie.rect(-TIE_W / 2, cy - railOffset - 1, TIE_W, railOffset * 2 + 2).fill(C_TIE)
+      tie.rect(-tieDrawW / 2, cy - railOffset - 1, tieDrawW, railOffset * 2 + 2).fill(C_TIE)
       tie.x = j * (TIE_W + TIE_GAP)
       c.addChild(tie)
       trackTies.push({ g: tie, ln })
@@ -2510,7 +2757,11 @@ function updatePlayerEmoji() {
         img.scale.set(g14TrainScale(tex))   // v55.67 B-259 — bounding-box %, fits any train in its lane
         void targetH
         const _faces = (S.trainCfg && S.trainCfg.faces) || 'right'
-        if (_faces === 'left') img.scale.x *= -1
+        // v55.69 B-278 — record base scale + facing sign so depth-scaling can
+        // rebuild the scale per lane without losing the mirror.
+        img._baseScale = g14TrainScale(tex)
+        img._faceSign = (_faces === 'left') ? -1 : 1
+        g14ApplyDepthScale(img, S.lane)
         L.playerCharImg = img
         L.player.addChild(img) // TOP of z-stack — covers cleared procedural Graphics
         try { playerSprite.clear() } catch(_){}
@@ -2570,6 +2821,14 @@ function tickPlayer(delta) {
 
   // Bob
   L.player.y += Math.sin(S.frame * 0.12) * 0.4
+
+  // v55.69 B-278 — continuous depth-scale: derive a fractional lane from the
+  // train's live Y and rescale the sprite (near=bigger, far=smaller) so the
+  // size eases smoothly through a lane switch. Render-only; gameplay untouched.
+  if (L.playerCharImg && laneH) {
+    const effLane = Math.max(0, Math.min(LANE_COUNT - 1, (L.player.y - railTop - laneH / 2) / laneH))
+    g14ApplyDepthScale(L.playerCharImg, effLane)
+  }
 
   // Glow pulse
   if (playerGlow) playerGlow.alpha = 0.18 + Math.sin(S.frame * 0.08) * 0.1
@@ -2698,7 +2957,10 @@ function buildAI() {
         img.scale.set(g14TrainScale(tex) * 0.85)   // v55.67 B-259 — AI uses the same bounding-box engine, 0.85×
         void targetH
         const _faces = (cfg.faces) || 'right'
-        if (_faces === 'left') img.scale.x *= -1
+        // v55.69 B-278 — depth-scale support (AI base is 0.85× the player engine).
+        img._baseScale = g14TrainScale(tex) * 0.85
+        img._faceSign = (_faces === 'left') ? -1 : 1
+        c._charImg = img
         c.addChild(img)
         try { spr.clear() } catch(_){}
       }).catch((e) => {
@@ -2855,6 +3117,11 @@ function tickAI(delta) {
     ai.container.visible = screenX > -80 && screenX < W + 80
     // Bob
     ai.container.y = laneYs[ai.lane] + Math.sin(S.frame * 0.1 + ai.lane) * 0.5
+    // v55.69 B-278 — depth-scale the AI sprite to its lane (near=bigger, far=smaller).
+    if (ai.container._charImg && laneH) {
+      const _el = Math.max(0, Math.min(LANE_COUNT - 1, (ai.container.y - railTop - laneH / 2) / laneH))
+      g14ApplyDepthScale(ai.container._charImg, _el)
+    }
     // v54.12 — Update thought bubble: rotate intent every ~2.5s (60 frames *
     // 2.5 = 150 frames), fade in for 30 frames, fade out after 120 frames.
     if (ai.txt && ai.bubble){
@@ -3411,7 +3678,7 @@ function g14CheckConductorAnnounce(){
   for (const m of upcoming) {
     if (S.distance >= m - 50 && S.distance < m - 48 && _lastConductorAnnounce < m) {
       _lastConductorAnnounce = m
-      const stationName = G14_STATIONS[m % G14_STATIONS.length] || 'Stasiun'
+      const stationName = (typeof g14StationName === 'function' && g14StationName()) || G14_STATIONS[m % G14_STATIONS.length] || 'Stasiun'
       try { playTone(1320, 0.10, 'sine'); setTimeout(()=>playTone(880, 0.18, 'sine'), 120) } catch(_){}
       // Brief overlay banner
       const el = document.createElement('div')
@@ -3716,7 +3983,10 @@ function loop(ticker) {
     if (frac >= th && !el.classList.contains('reached')) {
       el.classList.add('reached')
       // v54.19 B3: mini-station cinematic on each checkpoint pass.
-      const name = G14_STATIONS[(sIdx - 1) % G14_STATIONS.length]
+      // v55.69 B-275 — the last waypoint announces THIS level's destination station.
+      const name = (sIdx === 3 && typeof g14StationName === 'function')
+        ? g14StationName()
+        : G14_STATIONS[(sIdx - 1) % G14_STATIONS.length]
       g14StationCinema(name, 'Pos ' + sIdx + ' tercapai')
     }
   })
@@ -3807,7 +4077,15 @@ function startRace() {
   g14RunCountdown(() => {
     S.running = true
     try{if(window.TrainBGM){TrainBGM.setTrack(S.trainCfg&&S.trainCfg.key,0.2);TrainBGM.play()}else{const bgm=document.getElementById('game-bgm');bgm.volume=0.2;bgm.play().catch(()=>{})}}catch(_){}
-    try{const sfx=document.getElementById('train-sfx');if(sfx){sfx.currentTime=0;sfx.volume=0.7;sfx.play().catch(()=>{})}}catch(_){}
+    // v55.69 B-277 — ONE soundscape. Owner: "masih ada 2 sound sfx: kereta +
+    // thomas and friends." When a Thomas char (aeg_*) is selected its BGM theme
+    // plays, so the crossing-bell SFX must NOT also fire (two competing sounds).
+    // Only ring the crossing bell for non-Thomas trains (default bgm soundscape).
+    try{
+      const _key = S.trainCfg && S.trainCfg.key
+      const _isThomas = window.TrainBGM && TrainBGM.isThomas && TrainBGM.isThomas(_key)
+      if(!_isThomas){const sfx=document.getElementById('train-sfx');if(sfx){sfx.currentTime=0;sfx.volume=0.7;sfx.play().catch(()=>{})}}
+    }catch(_){}
     // v54.19 B4: cab-window driver wave on race start for character trains only.
     try { g14ShowCabDriverWave() } catch(_){}
     // v54.69 — ObstacleEngine wiring: attach game API + schedule first puzzle.

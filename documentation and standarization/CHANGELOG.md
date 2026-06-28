@@ -1,5 +1,41 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-28 — v55.69 "balapan-kereta: cache-visibility · smaller sizing · one soundscape · pseudo-3D · 40-level station journey" (B-275→B-278)
+
+Owner replayed g14 and reported several fixes "tidak berubah" + a new vision for the levels. Root insight:
+the server already served the new code, so "nothing changed" was **stale browser/SW cache** on the standalone
+game pages. This tranche makes shipped work visible, then delivers the new asks. Screenshot-verified across
+11 sample levels (1/4/13/17/20/21/22/25/31/37/40), 0 console errors. sw v55.68→v55.69.
+
+- **B-276 CACHE VISIBILITY + smaller sizing (shipped first).** The SW broadcasts `SW_UPDATED` but only
+  index.html listened — the standalone train pages never refreshed after a deploy, so every fix stayed
+  invisible. Added shared **`games/sw-reload.js`** (listens for `SW_UPDATED` + `controllerchange` → one
+  guarded reload) to balapan-kereta / lokomotif-pemberani / selamatkan-kereta, plus a visible **build-stamp
+  (`v55.69`, bottom-left)**. Also reduced `g14TrainScale` a notch: `maxH min(laneH*0.70,H*0.105)→min(laneH*0.58,
+  H*0.088)`, `maxW 0.22→0.19` so the loco sits clearly IN its lane. (Owner: hard-refresh/incognito ONCE to
+  break the old SW; the auto-reload handles every deploy after that.) See [L107].
+- **B-277 ONE soundscape.** Owner: *"masih ada 2 sound sfx: kereta + thomas and friends."* At race start both
+  the Thomas BGM and the level-crossing bell SFX fired. Now the crossing bell is gated off when a Thomas
+  (`aeg_*`) character is selected (Thomas BGM owns the soundscape); non-Thomas trains still get the bell over
+  the default BGM. Uses `TrainBGM.isThomas()`.
+- **B-278 advanced pseudo-3D.** Owner: *"effect parallax 3d masih sangat kurang … adopt trick2 popular."*
+  Added Pole-Position **rail taper** (far/top lane = narrower gauge + thinner sleepers, near/bottom = wider —
+  RENDER only, `laneYs` gameplay untouched), OutRun **depth sprite-scale** (`g14SpriteDepth` far≈0.92×→near≈1.08×,
+  continuous from live Y so it eases through a lane switch, facing-mirror preserved), and a **deeper 3-step
+  aerial haze** stack. All flat fills (batched). See [L108].
+- **B-275 40-LEVEL STATION JOURNEY.** Owner: *"per level dari stasiun barat ke timur … level 20 = Surabaya;
+  level 21-40 Eropa/Amerika/Rusia; background unique tiap level."* New **`G14_JOURNEY[40]`** table drives a
+  per-level **biome palette** (`g14Palette()` merges a biome override onto base day) + a signature **landmark**
+  (`g14Landmark()` flat-fill drawers: volcano · Monas · Eiffel · Big Ben · Kremlin onion-domes · skyline ·
+  Alps · Golden-Gate bridge · windmill · Colosseum) + the real **station name** in the cinematic. L1-20 cross
+  Java west→east (Merak→…→Surabaya Gubeng); L21-40 Europe→America→Russia. International legs drop the
+  Indonesian palms + rice paddies (snow-toned ground + grey peaks for Alpine/Russia). No two sampled levels
+  look alike. See [L109].
+
+### Still pending (separate)
+- **B-264 Diesel art** — BLOCKED on the owner's clean transparent Diesel PNG (not on disk).
+- **B-272/273/274 Museum (Game 18)** — extract to own page + fix orbiting wheels + expand (needs a live browser).
+
 ## 2026-06-28 — v55.68 "advanced parallax — kesan 3D (aerial-perspective haze)" (B-260 partial)
 
 Owner: *"implement trick kesan 3d, parallax lebih advance."* Added the strongest pseudo-3D depth cue —
