@@ -1204,6 +1204,10 @@ function buildG15Indo() {
   const _h1b = IS.hills(W, horizonY + 10, pal, 1); _h1b.x = W; g15ParWrap.addChild(_h1b)
   const _h2b = IS.hills(W, horizonY + 24, pal, 2); _h2b.x = W; g15ParWrap.addChild(_h2b)
   c.addChild(g15ParWrap)
+  // v55.68 — "kesan 3D": aerial-perspective haze veiling the far mountains/hills
+  // (the strongest pseudo-3D depth cue, ~free flat fill). Static (drawn over the
+  // far backdrop, under the volcano/sawah/props).
+  { const _hz = (pal.haze != null) ? pal.haze : 0xdfeef2; const hg = new PIXI.Graphics(); hg.rect(0, horizonY - 4, W, railY - horizonY + 8).fill({ color: _hz, alpha: 0.20 }); c.addChild(hg) }
   const vol = IS.volcano(W, horizonY + 10, pal, Math.min(horizonY * 0.78, bandH * 0.5)); c.addChild(vol)
   c.addChild(IS.sawahBand(W, horizonY + Math.min(sceneH * 0.3, 30), Math.min(sceneH * 0.7, 60), pal))
   const mask = new PIXI.Graphics(); mask.rect(0, 0, W, railY).fill(0xffffff); c.addChild(mask); c.mask = mask

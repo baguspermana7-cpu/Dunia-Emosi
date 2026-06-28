@@ -1435,11 +1435,18 @@ function buildFarScenery() {
     }
     c.addChild(band); L._farBands.push(band); return band
   }
-  makeBand(0.10, [() => IS.mountains(W, horizonY + 6, pal)])                         // distant range (slowest)
-  makeBand(0.20, [() => IS.hills(W, horizonY, pal, 0), () => IS.hills(W, horizonY + 10, pal, 1)])
+  // v55.68 — "kesan 3D": AERIAL-PERSPECTIVE haze (a static translucent wash that
+  // fades the distance) + WIDER depth-speed separation. Aerial haze is the single
+  // strongest pseudo-3D depth cue and is ~free (one flat rect, batched).
+  const _hazeC = (pal.haze != null) ? pal.haze : 0xdfeef2
+  const hazeWash = (alpha, yTop) => { const hz = new PIXI.Graphics(); hz.rect(0, yTop, W, railY - yTop + 4).fill({ color: _hazeC, alpha: alpha }); hz._speed = 0; c.addChild(hz) }
+  makeBand(0.05, [() => IS.mountains(W, horizonY + 6, pal)])                          // distant range (slowest)
+  hazeWash(0.22, horizonY - 4)                                                        // heavy haze veils the far mountains
+  makeBand(0.14, [() => IS.hills(W, horizonY, pal, 0), () => IS.hills(W, horizonY + 10, pal, 1)])
+  hazeWash(0.12, horizonY + 8)                                                        // lighter haze over the mid hills
   // volcano = fixed landmark (static) sits between the mid and near hill bands
   const vol = IS.volcano(W, horizonY + 10, pal, Math.min(horizonY * 0.78, bandH * 0.5)); vol._speed = 0; c.addChild(vol)
-  makeBand(0.38, [() => IS.hills(W, horizonY + 24, pal, 2), () => IS.sawahBand(W, horizonY + Math.min(sceneH * 0.3, 30), Math.min(sceneH * 0.7, 60), pal)])
+  makeBand(0.40, [() => IS.hills(W, horizonY + 24, pal, 2), () => IS.sawahBand(W, horizonY + Math.min(sceneH * 0.3, 30), Math.min(sceneH * 0.7, 60), pal)])
   // v55.61 B-258 — living sky (bird flocks / clouds / kites), seeded variety + perf cap
   if (IS.ambient) {
     const _seed = (((typeof cfg !== 'undefined' && cfg.level) || 1) * 7919 + Math.floor(Math.random() * 997)) >>> 0
