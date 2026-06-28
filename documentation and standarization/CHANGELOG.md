@@ -1,5 +1,16 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-28 — v55.68 "advanced parallax — kesan 3D (aerial-perspective haze)" (B-260 partial)
+
+Owner: *"implement trick kesan 3d, parallax lebih advance."* Added the strongest pseudo-3D depth cue —
+**aerial-perspective haze**: static translucent washes that veil the distance (far mountains heavily,
+mid hills lightly), so the layers recede into atmosphere. Plus **wider depth-speed separation** between
+the parallax bands (g14 far 0.05 / mid 0.14 / near 0.40, mid-props 0.5, foreground 1.5). Applied to g14
+(depth bands) + g15 (far backdrop). **All FLAT fills (batched) — deliberately NOT Pixi gradients**, which
+break draw-call batching and can't be perf-verified headless (Pixi renders at 3fps in headless software-GL
+regardless). Screenshot-verified stronger depth, 0 console errors. sw v55.67→v55.68. NOTE: a richer
+gradient/RenderTexture HD pass (B-260 full) still wants on-device perf testing.
+
 ## 2026-06-28 — v55.67 "train polish batch v2: sizing engine · facing · easy quiz · g15 engine · g16 packages" (B-259→B-271)
 
 Owner playtested all the train games and filed a large batch. This tranche (verified headless, M-302):
