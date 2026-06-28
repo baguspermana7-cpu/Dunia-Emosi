@@ -1,5 +1,18 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-28 — v55.82 "Whole-app quality gate + g15 journey cohesion" (A-301)
+
+Owner: "keep refining, finish all." A whole-app quality gate closing the standing A-301 ("no bug + tampilan bagus").
+- **`tools/qa-app-sweep.mjs`** (NEW, permanent gate): boots all **14 games + index + secondbrain** at desktop
+  (1280×800) + phone (390×800), asserts each loads + renders + **0 console/page errors** + no 390px horizontal
+  overflow (ignoring known external sprite-CDN noise), screenshots each. Result: **16/16 pages green** — the app
+  is clean end-to-end.
+- **g15 journey cohesion**: the train-select departure card showed g15's own `JAVA_STATIONS` route ("Jombang")
+  while the backdrop + in-game leg label show the shared 48-leg journey ("Cikampek → Cirebon"). `showTrainSelect()`
+  now derives the card from `window.TrainJourney.leg(LEVEL)` when present (guarded fallback) so the select screen
+  matches the painterly plate the kid is about to play. No overflow, 0 errors.
+- sw v55.81→v55.82; g15 stamp → v55.82. All train-suite + secondbrain probes stay green.
+
 ## 2026-06-28 — v55.81 "Train-suite refinement: HUD consistency · responsive · gameplay · secondbrain"
 
 Owner: "keep refining and improve, finish all" — picked all four directions. Conservative polish across the suite.
