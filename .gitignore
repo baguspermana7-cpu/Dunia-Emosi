@@ -11,3 +11,9 @@ assets/Pokemon/trainer/pokemontrainer*.webp
 # Original large audio (renamed copies already committed)
 assets/Pokemon/sound/Pokemon*
 assets/Pokemon/sound/Voicy*
+
+# A-312 — heavy owner-provided bg source images (served WebP tiers in assets/train/backdrop ARE tracked)
+assets/train/train bg/
+assets/train/bg-ref/*.png
+assets/train/bg-ref/*.jpg
+tools/qa-out/

@@ -1,0 +1,42 @@
+{
+  "level": 10,
+  "mode": "raster",
+  "backdrop": {
+    "tiers": [
+      {
+        "w": 1280,
+        "src": "assets/train/backdrop/level10-1280.webp"
+      },
+      {
+        "w": 960,
+        "src": "assets/train/backdrop/level10-960.webp"
+      },
+      {
+        "w": 640,
+        "src": "assets/train/backdrop/level10-640.webp"
+      }
+    ],
+    "aspect": 1.7768
+  },
+  "laneRatios": {
+    "lanes": [
+      0.515,
+      0.625,
+      0.735
+    ],
+    "horizon": 0.46,
+    "foreTop": 0.8
+  },
+  "palette": {
+    "skyTop": "0x98cfea",
+    "skyMid": "0xabd6e3",
+    "skyBot": "0x7f825e",
+    "haze": "0x7f825e",
+    "mtnFar": "0x787a52",
+    "hill1": "0x72644a",
+    "hill2": "0x7f7053",
+    "hill3": "0x6e907c",
+    "grass": "0x6e907c",
+    "grassDk": "0x557060"
+  }
+}

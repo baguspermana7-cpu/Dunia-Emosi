@@ -216,7 +216,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.71</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.72</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="train-vfx.js?v=54.56-20260625bi"></script>
@@ -876,28 +876,42 @@ const TH = THEMES[((cfg.level || 1) - 1) % THEMES.length]
 //  The day/night sky still cycles by race progress on top of this.
 // ═══════════════════════════════════════════════════════════════════════════
 const G14_JOURNEY = [
-  // ── L1-20 — Indonesia, west → east across Java ──
-  { name:'Merak',            region:'Banten',     biome:'coastal',    landmark:'none'     },
-  { name:'Rangkasbitung',    region:'Banten',     biome:'javaLush',   landmark:'volcano'  },
-  { name:'Jakarta Kota',     region:'Jakarta',    biome:'urbanID',    landmark:'colonial' },
-  { name:'Gambir',           region:'Jakarta',    biome:'urbanID',    landmark:'monas'    },
+  // ── L1-30 — Indonesia, the "Petualangan Rel Nusantara" round-trip from the
+  //    owner's mockup: Jakarta Gambir → Surabaya Gubeng (north line) then back to
+  //    Gambir via the southern line (702 km, "Part X/30"). Painterly raster
+  //    backdrops drive levels with a manifest; biome/landmark below is the
+  //    procedural fallback for levels still awaiting a reference image.
+  { name:'Jakarta Gambir',   region:'Jakarta',    biome:'urbanID',    landmark:'monas'    },
   { name:'Bekasi',           region:'Jawa Barat', biome:'urbanID',    landmark:'skyline'  },
-  { name:'Karawang',         region:'Jawa Barat', biome:'javaLush',   landmark:'volcano'  },
-  { name:'Cikampek',         region:'Jawa Barat', biome:'javaLush',   landmark:'none'     },
-  { name:'Cirebon',          region:'Jawa Barat', biome:'coastal',    landmark:'colonial' },
-  { name:'Brebes',           region:'Jawa Tengah',biome:'arid',       landmark:'none'     },
+  { name:'Cikarang',         region:'Jawa Barat', biome:'javaLush',   landmark:'none'     },
+  { name:'Jatinegara',       region:'Jakarta',    biome:'urbanID',    landmark:'colonial' },
+  { name:'Cirebon Prujakan', region:'Jawa Barat', biome:'coastal',    landmark:'colonial' },
   { name:'Tegal',            region:'Jawa Tengah',biome:'coastal',    landmark:'none'     },
   { name:'Pekalongan',       region:'Jawa Tengah',biome:'javaLush',   landmark:'colonial' },
-  { name:'Semarang',         region:'Jawa Tengah',biome:'urbanID',    landmark:'colonial' },
-  { name:'Ambarawa',         region:'Jawa Tengah',biome:'highlandID', landmark:'volcano'  },
-  { name:'Salatiga',         region:'Jawa Tengah',biome:'highlandID', landmark:'volcano'  },
-  { name:'Solo Balapan',     region:'Jawa Tengah',biome:'javaLush',   landmark:'colonial' },
-  { name:'Klaten',           region:'Jawa Tengah',biome:'highlandID', landmark:'volcano'  },
-  { name:'Yogyakarta',       region:'DIY',        biome:'highlandID', landmark:'tugu'     },
-  { name:'Madiun',           region:'Jawa Timur', biome:'javaLush',   landmark:'none'     },
-  { name:'Mojokerto',        region:'Jawa Timur', biome:'javaLush',   landmark:'volcano'  },
+  { name:'Semarang Tawang',  region:'Jawa Tengah',biome:'urbanID',    landmark:'colonial' },
+  { name:'Cepu',             region:'Jawa Tengah',biome:'javaLush',   landmark:'none'     },
+  { name:'Bojonegoro',       region:'Jawa Timur', biome:'javaLush',   landmark:'none'     },
+  { name:'Lamongan',         region:'Jawa Timur', biome:'javaLush',   landmark:'none'     },
   { name:'Surabaya Gubeng',  region:'Jawa Timur', biome:'urbanID',    landmark:'skyline'  },
-  // ── L21-30 — Europe ──
+  { name:'Mojokerto',        region:'Jawa Timur', biome:'javaLush',   landmark:'volcano'  },
+  { name:'Jombang',          region:'Jawa Timur', biome:'javaLush',   landmark:'none'     },
+  { name:'Kertosono',        region:'Jawa Timur', biome:'javaLush',   landmark:'none'     },
+  { name:'Madiun',           region:'Jawa Timur', biome:'javaLush',   landmark:'volcano'  },
+  { name:'Ngawi',            region:'Jawa Timur', biome:'javaLush',   landmark:'none'     },
+  { name:'Solo Balapan',     region:'Jawa Tengah',biome:'urbanID',    landmark:'colonial' },
+  { name:'Yogyakarta',       region:'DIY',        biome:'highlandID', landmark:'tugu'     },
+  { name:'Kutoarjo',         region:'Jawa Tengah',biome:'javaLush',   landmark:'none'     },
+  { name:'Kebumen',          region:'Jawa Tengah',biome:'highlandID', landmark:'volcano'  },
+  { name:'Purwokerto',       region:'Jawa Tengah',biome:'highlandID', landmark:'volcano'  },
+  { name:'Kroya',            region:'Jawa Tengah',biome:'javaLush',   landmark:'none'     },
+  { name:'Bumiayu',          region:'Jawa Tengah',biome:'highlandID', landmark:'volcano'  },
+  { name:'Cirebon',          region:'Jawa Barat', biome:'coastal',    landmark:'colonial' },
+  { name:'Tasikmalaya',      region:'Jawa Barat', biome:'highlandID', landmark:'volcano'  },
+  { name:'Banjar',           region:'Jawa Barat', biome:'javaLush',   landmark:'none'     },
+  { name:'Kiaracondong',     region:'Jawa Barat', biome:'highlandID', landmark:'skyline'  },
+  { name:'Bandung',          region:'Jawa Barat', biome:'highlandID', landmark:'colonial' },
+  { name:'Gambir',           region:'Jakarta',    biome:'urbanID',    landmark:'monas'    },
+  // ── L31-40 — Europe (bonus, international leg — owner: "lanjut nanti") ──
   { name:'London',           region:'Inggris',    biome:'englishGrey',landmark:'clocktower'},
   { name:'Paris',            region:'Prancis',    biome:'parisGold',  landmark:'eiffel'   },
   { name:'Amsterdam',        region:'Belanda',    biome:'dutchFlat',  landmark:'windmill' },
@@ -1023,6 +1037,44 @@ async function g14AddCityBand(container, W, horizonY, railY, bandH) {
     container.addChild(spr)
     L._cityBand = spr
   } catch (_) { /* asset missing/failed → scene already has the procedural base */ }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  v55.72 A-312 — PAINTERLY RASTER BACKDROP (A/B winner over vector: 163KB vs
+//  6.4MB/14k-paths, and pixel-perfect vs posterised). When a level's manifest is
+//  mode:'raster', the whole painted scene is ONE cover-fit Sprite behind
+//  everything (1 draw call), the procedural sky/hills/rail VISUALS are skipped,
+//  and the functional laneYs are aligned to the painting's rail band so the train
+//  rides the painted rails. Guarded — no backdrop ⇒ procedural journey unchanged.
+// ═══════════════════════════════════════════════════════════════════════════
+function g14HasBackdrop() { return !!(G14_MANIFEST && G14_MANIFEST.mode === 'raster' && G14_MANIFEST.backdrop) }
+// Cover-fit transform from the manifest ASPECT alone (no image needed) so lane
+// geometry can be computed synchronously before gameplay objects are built.
+function g14BackdropFit() {
+  const W = app.screen.width, H = app.screen.height
+  const asp = (G14_MANIFEST && G14_MANIFEST.backdrop && G14_MANIFEST.backdrop.aspect) || (16 / 9)
+  const scaledH = Math.max(H, W / asp)
+  const scaledW = scaledH * asp
+  return { W, H, scaledW, scaledH, leftX: (W - scaledW) / 2, topY: (H - scaledH) / 2, asp }
+}
+async function g14AddBackdrop() {
+  try {
+    const m = G14_MANIFEST
+    if (!g14HasBackdrop() || !window.PIXI || !PIXI.Assets) return
+    const fit = g14BackdropFit()
+    const need = fit.W * Math.min(window.devicePixelRatio || 1, 2)
+    const tiers = (m.backdrop.tiers || []).slice().sort((a, b) => a.w - b.w)
+    let pick = tiers[tiers.length - 1]
+    for (const t of tiers) { if (t.w >= need) { pick = t; break } }   // smallest tier ≥ device px
+    if (!pick) return
+    const tex = await PIXI.Assets.load('../' + pick.src)
+    if (!tex || !stage) return
+    const spr = new PIXI.Sprite(tex)
+    spr.x = fit.leftX; spr.y = fit.topY; spr.width = fit.scaledW; spr.height = fit.scaledH
+    spr._speed = 0
+    stage.addChildAt(spr, 0)   // behind everything (gameplay sprites on top)
+    L._backdrop = spr
+  } catch (_) { /* backdrop load failed → blank bg; gameplay still runs */ }
 }
 
 // ── Landmark drawers (flat-fill silhouettes; cheap + batchable). Each returns a
@@ -1232,15 +1284,28 @@ async function initPixi() {
   // obstacle emoji size scales with the smaller viewport axis, ≥44px tap target.
   OBS_SIZE = Math.round(Math.max(38, Math.min(Math.min(W, H) * 0.075, 52)))
 
-  await g14LoadManifest()   // v55.71 A-312 — load ref palette BEFORE scene build (no-op if none)
-  buildSky()
-  buildClouds()
-  buildFarScenery()
-  buildBirds()
-  buildMidScenery()
-  buildSignalPosts()
-  buildKMMarkers()  // v54.14 — scrolling distance signs
-  buildTracks()
+  await g14LoadManifest()   // v55.71 A-312 — load ref palette/backdrop BEFORE scene build (no-op if none)
+  if (g14HasBackdrop()) {
+    // v55.72 A-312 — RASTER painterly backdrop: align the 3 functional lanes to the
+    // painting's rail band (cover-fit), then place the scene as one full-bleed
+    // sprite. Procedural sky/hills/rail VISUALS are skipped (the painting has them).
+    const fit = g14BackdropFit()
+    const lr = (G14_MANIFEST.laneRatios && G14_MANIFEST.laneRatios.lanes) || [0.515, 0.625, 0.735]
+    laneYs = lr.map(r => Math.round(fit.topY + r * fit.scaledH))
+    laneH = Math.max(40, Math.round(laneYs[1] - laneYs[0]))
+    railTop = Math.round(laneYs[0] - laneH * 0.5)
+    G14_UNIFORM_H = Math.round(Math.max(72, Math.min(laneH * 1.02, H * 0.15)))
+    await g14AddBackdrop()
+  } else {
+    buildSky()
+    buildClouds()
+    buildFarScenery()
+    buildBirds()
+    buildMidScenery()
+    buildSignalPosts()
+    buildKMMarkers()  // v54.14 — scrolling distance signs
+    buildTracks()
+  }
 
   L.obstacles = new PIXI.Container(); stage.addChild(L.obstacles)
   L.ai = new PIXI.Container(); stage.addChild(L.ai)
@@ -4590,6 +4655,23 @@ window.addEventListener('resize', () => {
     if (!app) return
     app.renderer.resize(Math.min(window.innerWidth, 1400), Math.min(window.innerHeight, 1000))
     const H = app.screen.height, W = app.screen.width
+    // v55.72 A-312 — RASTER backdrop: re-cover-fit the painting + re-derive the
+    // lane Ys from its rail band (no procedural scenery to rebuild).
+    if (g14HasBackdrop()) {
+      const fit = g14BackdropFit()
+      const lr = (G14_MANIFEST.laneRatios && G14_MANIFEST.laneRatios.lanes) || [0.515, 0.625, 0.735]
+      laneYs = lr.map(r => Math.round(fit.topY + r * fit.scaledH))
+      laneH = Math.max(40, Math.round(laneYs[1] - laneYs[0]))
+      railTop = Math.round(laneYs[0] - laneH * 0.5)
+      G14_UNIFORM_H = Math.round(Math.max(72, Math.min(laneH * 1.02, H * 0.15)))
+      OBS_SIZE = Math.round(Math.max(38, Math.min(Math.min(W, H) * 0.075, 52)))
+      if (L._backdrop && !L._backdrop.destroyed) {
+        L._backdrop.x = fit.leftX; L._backdrop.y = fit.topY
+        L._backdrop.width = fit.scaledW; L._backdrop.height = fit.scaledH
+      }
+      if (L.player) { L.player._wheelOffset = 0; L.player.y = laneYs[S.lane] }
+      return
+    }
     // A-311 — recompute the SAME responsive layout as initPixi so lanes/scenery/
     // train/obstacle all stay consistent after a resize/rotate.
     gameTop = Math.round(Math.max(56, Math.min(H * 0.10, 92)))

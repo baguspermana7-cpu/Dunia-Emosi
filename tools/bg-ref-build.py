@@ -28,11 +28,18 @@ import sys, os, json, glob, tempfile
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REF_DIR = os.path.join(ROOT, "assets/train/bg-ref")
 CITY_DIR = os.path.join(ROOT, "assets/train/cityband")
+BACK_DIR = os.path.join(ROOT, "assets/train/backdrop")
 MAN_DIR = os.path.join(ROOT, "data/g14-journey")
-for d in (REF_DIR, CITY_DIR, MAN_DIR):
+for d in (REF_DIR, CITY_DIR, BACK_DIR, MAN_DIR):
     os.makedirs(d, exist_ok=True)
 
 DEFAULT_BAND = {"skyBot": 0.50, "bandTop": 0.42, "bandBot": 0.72, "skyKeyTol": 42}
+# Y-centres of the 3 rail lanes as a fraction of the IMAGE height — aligned to the
+# painted rails in the painterly mockups (consistent template). Per-image tunable
+# via a levelNN.json `laneRatios` override before running.
+DEFAULT_LANES = {"lanes": [0.515, 0.625, 0.735], "horizon": 0.46, "foreTop": 0.80}
+# RASTER backdrop tiers (px width). Runtime picks by screen.width*dpr (capped).
+RASTER_TIERS = [1280, 960, 640]
 
 
 def _hex(rgb):
@@ -165,14 +172,32 @@ def vectorise(in_png_key, out_svg):
     return True
 
 
-def process(level, selftest=False):
+def raster_tiers(ref, level):
+    """A/B winner for PAINTERLY art: emit multi-resolution WebP tiers (full scene,
+    pixel-perfect, 1 sprite at runtime). Returns the tier list for the manifest."""
+    from PIL import Image
+    tiers = []
+    for w in RASTER_TIERS:
+        if w > ref.size[0]:
+            continue
+        h = round(ref.size[1] * w / ref.size[0])
+        im = ref.convert("RGB").resize((w, h), Image.LANCZOS)
+        out = os.path.join(BACK_DIR, "level%02d-%d.webp" % (level, w))
+        im.save(out, "WEBP", quality=82, method=6)
+        tiers.append({"w": w, "src": "assets/train/backdrop/level%02d-%d.webp" % (level, w)})
+    return tiers
+
+
+def process(level, selftest=False, mode="raster"):
     from PIL import Image
     man_path = os.path.join(MAN_DIR, "level%02d.json" % level)
     band = dict(DEFAULT_BAND)
+    lanes = dict(DEFAULT_LANES)
     if os.path.exists(man_path):
         try:
             prev = json.load(open(man_path))
             band.update(prev.get("bandRatios", {}))
+            lanes.update(prev.get("laneRatios", {}))
         except Exception:
             pass
 
@@ -188,6 +213,22 @@ def process(level, selftest=False):
             return False
         ref = Image.open(sorted(hits)[0]).convert("RGBA")
 
+    # ── RASTER mode (default; A/B-chosen for painterly art) ──
+    if mode == "raster":
+        palette = sample_palette(ref, band)
+        tiers = raster_tiers(ref, level)
+        manifest = {
+            "level": level, "mode": "raster",
+            "backdrop": {"tiers": tiers, "aspect": round(ref.size[0] / ref.size[1], 4)},
+            "laneRatios": lanes,
+            "palette": palette,
+        }
+        json.dump(manifest, open(man_path, "w"), indent=2)
+        _index_add(level)
+        print("L%02d: RASTER backdrop (%d tiers) + manifest" % (level, len(tiers)))
+        return True
+
+    # ── VECTOR mode (city-band cutout; kept for flat-art levels) ──
     palette = sample_palette(ref, band)
     webp = os.path.join(CITY_DIR, "level%02d.webp" % level)
     svg = os.path.join(CITY_DIR, "level%02d.svg" % level)
@@ -278,9 +319,10 @@ if __name__ == "__main__":
         print(__doc__)
         sys.exit(1)
     selftest = "--selftest" in sys.argv
+    mode = "vector" if "--vector" in sys.argv else "raster"   # raster = A/B winner (painterly)
     levels = parse_levels([a for a in sys.argv[1:] if not a.startswith("--")][0])
     ok = 0
     for lv in levels:
-        if process(lv, selftest=selftest):
+        if process(lv, selftest=selftest, mode=mode):
             ok += 1
-    print("\n%d/%d level(s) built." % (ok, len(levels)))
+    print("\n%d/%d level(s) built (mode=%s)." % (ok, len(levels), mode))

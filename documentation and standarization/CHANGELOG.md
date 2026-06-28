@@ -1,5 +1,28 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-28 — v55.72 "balapan-kereta PAINTERLY reskin: raster backdrops + 30-station Java journey" (A-312)
+
+Owner provided painterly full-screen game mockups (Jakarta Gambir → Surabaya → back, "Part X/30", 702 km) — a
+visual redesign. Decisions: painterly scene = full background, current engine sprites on top; 30 Indonesian
+stations first (international later); **must be super-responsive** + try BOTH raster & vector, pick the best.
+- **A/B settled — RASTER wins decisively** (both axes): for a painterly scene, raster WebP = **163 KB / 1
+  sprite / 1 draw call** and **pixel-perfect**; vtracer = **6.4 MB / 14,098 paths** AND posterised (gradients
+  flatten). Vector is wrong for painterly art. See [L112]. (`tools/qa-out/ab/_compare.png`.)
+- **Pipeline** `tools/bg-ref-build.py --raster` (now default): per reference → **multi-resolution WebP tiers**
+  (1280/960/640w) + manifest `{mode:'raster', backdrop.tiers, laneRatios, aspect}` + index. Vector mode kept
+  (`--vector`) for any flat-art level.
+- **Runtime** `games/balapan-kereta.html`: `g14AddBackdrop()` picks the tier by `screen.width×dpr`, **cover-fits**
+  the scene as ONE full-bleed sprite behind everything, **skips the procedural sky/hills/rail visuals**, and
+  **aligns the 3 functional lanes to the painting's rail band** (`laneRatios`) so the train rides the painted
+  rails. Resize re-cover-fits + re-derives lanes. Guarded: no backdrop ⇒ procedural journey unchanged.
+- **Journey** rewritten to the **30-station Java round-trip** from the mockup bar (Jakarta Gambir → Surabaya
+  Gubeng → back via the southern line → Gambir); international kept as bonus L31+.
+- **11 painterly backdrops live (levels 2-12)** from the owner's available refs; screenshot-verified (3/7/12),
+  0 console errors. sw v55.71→v55.72.
+- **Temporary (owner: "pakai ref yang ada dulu, nanti saya update"):** the current refs have UI/labels painted
+  in (so some doubled UI + painted station labels not yet matching the level number) — to be replaced with
+  clean UI-free versions; per-level `laneRatios` to be fine-tuned so the train sits exactly on each painted rail.
+
 ## 2026-06-28 — v55.71 "reference-accurate background pipeline (hybrid vector method) — scaffolding" (A-312)
 
 Infrastructure for the owner's "se akurat sepersis mungkin super detail" backgrounds (L1-30). Owner-locked
