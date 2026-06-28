@@ -217,7 +217,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.84</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.85</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="train-vfx.js?v=54.56-20260625bi"></script>
@@ -868,9 +868,18 @@ function g14TrainScale(tex) {
   // G14_UNIFORM_H so the loco fills its lane and reads as the focus (≈1.45× laneH tall,
   // wheels on the rail via the 0.86 anchor, body grows UPWARD). Bounded by width so wide
   // articulated trains never span the screen. Aspect preserved (uniform scalar on both).
-  const maxH = (typeof G14_UNIFORM_H !== 'undefined' && G14_UNIFORM_H) ? G14_UNIFORM_H : H * 0.14
-  const maxW = W * 0.36   // wide enough that compact locos stay height-bound on narrow phones; still bounds ultra-wide articulated trains
-  return Math.min(maxH / tex.height, maxW / tex.width)         // fit-inside-box, aspect preserved
+  // v55.85 — HEIGHT-LOCKED uniform sizing (owner: "dimensinya harus sama, presisi,
+  // proportional, dynamic"). EVERY train renders at EXACTLY G14_UNIFORM_H tall (laneH-
+  // derived → responsive), so player + NPC + every loco are the SAME height regardless of
+  // their art aspect. The old min(h,w) let WIDE sprites (annie 4.33, henry 3.89) hit the
+  // width cap → shorter than target. Wide trains now extend HORIZONTALLY at full height;
+  // a LOOSE width clamp only catches an absurdly long articulated train so it never spans
+  // the whole screen. Aspect preserved (uniform scalar on both axes).
+  const tgtH = (typeof G14_UNIFORM_H !== 'undefined' && G14_UNIFORM_H) ? G14_UNIFORM_H : H * 0.14
+  let s = tgtH / tex.height
+  const maxW = W * 0.62
+  if (s * tex.width > maxW) s = maxW / tex.width   // safety: only a very long train clamps
+  return s
 }
 // v55.84 — ZERO-TOLERANCE wheel anchor. Each loco sprite's wheels sit at a DIFFERENT
 // fraction down its art (measured offline → window.TRAIN_WHEEL_ANCHORS, keyed by file).
@@ -896,7 +905,10 @@ function g14LaneDepth(ln) {
 }
 function g14SpriteDepth(ln) {
   const n = LANE_COUNT > 1 ? LANE_COUNT - 1 : 1
-  return 0.92 + (ln / n) * 0.16            // far ~0.92× → near ~1.08× (sprite depth scale)
+  // v55.85 — SOFTENED (was 0.92→1.08) so trains read as the SAME size across lanes
+  // ("dimensinya sama"); only a faint depth hint. The road-perspective 3-D comes from
+  // g14LaneDepth (rail/sleeper taper) + the parallax bands, not from resizing the trains.
+  return 0.96 + (ln / n) * 0.08            // far ~0.96× → near ~1.04× (near-uniform)
 }
 // Apply a train sprite's base scale × its lane depth, preserving the facing
 // mirror (img.scale.x sign). Call on build + whenever the train changes lane.
@@ -3228,11 +3240,10 @@ function buildAI() {
         const img = new PIXI.Sprite(tex)
         img.anchor.set(0.5, g14WheelAnchor(cfg.spriteUrl))   // v55.84 — zero-tolerance: measured wheel baseline (NPC matches player)
         // v55.38 B-223 — horizontal mirror, no rotation (see player above).
-        img.scale.set(g14TrainScale(tex) * 0.85)   // v55.67 B-259 — AI uses the same bounding-box engine, 0.85×
+        img.scale.set(g14TrainScale(tex))   // v55.85 — NPC = PLAYER size (dropped the 0.85×) so dimensions are UNIFORM
         void targetH
         const _faces = (cfg.faces) || 'right'
-        // v55.69 B-278 — depth-scale support (AI base is 0.85× the player engine).
-        img._baseScale = g14TrainScale(tex) * 0.85
+        img._baseScale = g14TrainScale(tex)
         img._faceSign = (_faces === 'left') ? -1 : 1
         c._charImg = img
         c.addChild(img)

@@ -45,14 +45,18 @@ DEFAULT_SCENE_CROP = {"top": 0.175, "bot": 0.795}
 # painterly image, each scrolled at `speed` × S.speed so the near ground rushes
 # by while the horizon drifts (3D-ish motion from one image). Boundaries sit on
 # natural ground lines (rails-top, foreground) to minimise tearing. y0/y1 = frac.
+# v55.85 — STEEPER depth gradient = more pronounced 3-D (owner: "enhance parallax 3d").
+# The horizon barely drifts (0.06) while the near ground + foreground RUSH (up to 1.45);
+# the train-lane band stays ~1.0 so the gameplay ground-feel is unchanged. Bigger near/far
+# speed RATIO (0.06:1.45 ≈ 1:24, was 0.12:1.12 ≈ 1:9) reads as much deeper perspective.
 DEFAULT_BANDS = [
-    {"y0": 0.000, "y1": 0.480, "speed": 0.12},  # sky + far scenery + village (ONE band: no building tear)
-    {"y0": 0.480, "y1": 0.568, "speed": 0.55},  # rail bed, far  -.
-    {"y0": 0.568, "y1": 0.656, "speed": 0.63},  #               |  eased speed ramp =
-    {"y0": 0.656, "y1": 0.744, "speed": 0.75},  #               |  smooth perspective depth
-    {"y0": 0.744, "y1": 0.832, "speed": 0.89},  #               |  (far slow -> near fast)
-    {"y0": 0.832, "y1": 0.920, "speed": 1.05},  # rail bed, near-'
-    {"y0": 0.920, "y1": 1.000, "speed": 1.12},  # foreground grass (fastest)
+    {"y0": 0.000, "y1": 0.480, "speed": 0.06},  # sky + far scenery + village (ONE band: no building tear) — barely moves
+    {"y0": 0.480, "y1": 0.568, "speed": 0.40},  # rail bed, far  -.
+    {"y0": 0.568, "y1": 0.656, "speed": 0.55},  #               |  eased speed ramp =
+    {"y0": 0.656, "y1": 0.744, "speed": 0.72},  #               |  smooth perspective depth
+    {"y0": 0.744, "y1": 0.832, "speed": 0.92},  #               |  (far slow -> near fast)
+    {"y0": 0.832, "y1": 0.920, "speed": 1.14},  # rail bed, near-'
+    {"y0": 0.920, "y1": 1.000, "speed": 1.45},  # foreground grass (fastest — rushes past)
 ]
 # RASTER backdrop tiers (px width). Runtime picks the smallest tier ≥ screen.width*dpr,
 # else the largest. v55.78 A-313 — 3-tier set: 640 (small phones), 1024 (large phones /

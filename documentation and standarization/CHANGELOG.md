@@ -1,5 +1,22 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-28 — v55.85 "g14 uniform/precise train dimensions + enhanced parallax-3D"
+
+Owner (screenshot): NPC train too small, dimensions still not the same — must be precise + proportional + dynamic;
+and enhance the parallax 3-D.
+- **HEIGHT-LOCKED uniform sizing**: `g14TrainScale()` now locks every train to exactly `G14_UNIFORM_H` (laneH-derived
+  = dynamic) — the old `min(height, W*0.36 width)` let WIDE sprites (annie aspect 4.33, henry 3.89) hit the width cap
+  and render SHORTER. Wide trains now extend horizontally at full height; a loose `W*0.62` clamp only catches an
+  absurdly long train. Player + every NPC = the SAME height.
+- **NPC = player size**: dropped the AI `*0.85` so NPCs match the player (was "npcnya terlalu kecil").
+- **Near-uniform sprite depth**: `g14SpriteDepth` 0.92-1.08 -> 0.96-1.04 so trains read the same size across lanes;
+  the road-perspective 3-D stays via the rail/sleeper taper + parallax bands.
+- **Enhanced parallax 3-D**: steeper depth-speed gradient (DEFAULT_BANDS + all 48 manifests): sky 0.12->0.06,
+  foreground 1.12->1.45 (near/far ratio ~1:24 vs 1:9) — much deeper perspective; train-lane band kept ~1.0 so the
+  gameplay ground-feel is unchanged.
+- Verified: `tools/qa-g14-dimensions.mjs` (player height == G14_UNIFORM_H, 3 viewports), zero-tolerance rail-align,
+  parallax depth, whole-app sweep — all green, 0 errors. sw v55.84->v55.85.
+
 ## 2026-06-28 — v55.84 "g14 clean backdrops + ZERO-TOLERANCE on-rail + proportional layout + bigger controls"
 
 Owner (with screenshots): backdrop was the WRONG (old, non-clean) image; train tiny / dropped under controls;
