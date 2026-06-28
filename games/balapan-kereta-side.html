@@ -10,6 +10,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
 <link rel="stylesheet" href="du-buttons.css?v=55.35-20260627dq">
+<link rel="stylesheet" href="du-hud.css?v=55.81-20260628a">
 <title>🏁 Balapan Kereta — Side Race (Beta)</title>
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <style>
@@ -19,7 +20,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 
 /* HUD top */
 #hud-top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:6px;padding:max(14px,env(safe-area-inset-top)) 8px 8px;background:linear-gradient(180deg,rgba(0,0,0,0.55) 0%,transparent 100%);pointer-events:none;flex-wrap:nowrap}
-#btn-back{background:rgba(255,255,255,0.92);border:2px solid rgba(120,53,15,0.6);border-radius:12px;color:#5a2a00;padding:10px 14px;font-size:14px;cursor:pointer;font-family:inherit;pointer-events:all;flex-shrink:0;font-weight:900;min-width:88px;min-height:44px;box-shadow:0 3px 0 rgba(120,53,15,0.3)}
+/* v55.81 — visual look now owned by du-hud.css .du-hud-pill; keep layout only */
+#btn-back{font-size:14px;cursor:pointer;font-family:inherit;pointer-events:all;flex-shrink:0;font-weight:900;min-width:44px;min-height:44px}
 #train-badge{background:linear-gradient(135deg,#fde68a,#fcd34d);border:2px solid #b45309;border-radius:10px;padding:7px 12px;color:#5a2a00;font-size:13px;font-weight:900;flex-shrink:0;pointer-events:none;box-shadow:0 3px 0 rgba(120,53,15,0.3);max-width:46vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* B-257 — distance lifted OUT of the cramped top row (it was starved to ~0px by
    the 6 other nowrap items and overflowed onto the train badge). Now a fixed
@@ -34,16 +36,20 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 #hud-progress{position:fixed;top:max(60px,calc(env(safe-area-inset-top) + 48px));left:10px;right:10px;z-index:49;height:12px;background:rgba(0,0,0,0.42);border:2px solid rgba(255,255,255,0.85);border-radius:10px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.35);pointer-events:none}
 #hud-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#22c55e 0%,#84cc16 55%,#fbbf24 100%);border-radius:6px 0 0 6px;transition:width 0.35s ease-out;box-shadow:inset 0 -2px 0 rgba(0,0,0,0.18)}
 @media (prefers-reduced-motion: reduce){#hud-progress-fill{transition:none}}
-#btn-pause,#btn-koleksi,#btn-settings{pointer-events:all;flex-shrink:0;border-radius:10px;padding:7px 10px;font-size:14px;cursor:pointer;font-family:inherit;font-weight:900;min-height:44px;min-width:44px;box-shadow:0 3px 0 rgba(0,0,0,0.3)}
-#btn-pause{background:linear-gradient(135deg,#e0e7ff,#a5b4fc);border:2px solid #3730a3;color:#1e1b4b}
-#btn-koleksi{background:linear-gradient(135deg,#fcd34d,#f59e0b);border:2px solid #b45309;color:#5a2a00}
-#btn-settings{background:linear-gradient(135deg,#dbeafe,#60a5fa);border:2px solid #1e3a8a;color:#1e3a8a}
+/* v55.81 — glossy circle look now owned by du-hud.css .du-hud-circle; layout only */
+#btn-pause,#btn-koleksi,#btn-settings{pointer-events:all;flex-shrink:0;cursor:pointer;font-family:inherit;font-weight:900;min-height:44px;min-width:44px}
 
 /* JUMP button at bottom */
 #jump-wrap{position:fixed;bottom:0;left:0;right:0;z-index:60;padding:14px max(20px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));display:flex;justify-content:center;pointer-events:none}
 #btn-jump{pointer-events:all;background:linear-gradient(135deg,#bbf7d0,#22c55e);border:4px solid #166534;border-radius:24px;color:#052e16;padding:18px 56px;font-size:clamp(20px,5vw,28px);font-family:inherit;font-weight:900;cursor:pointer;box-shadow:0 6px 0 #14532d, 0 10px 24px rgba(0,0,0,0.4);text-shadow:0 2px 0 rgba(255,255,255,0.3);transition:transform 0.1s, box-shadow 0.1s;min-width:240px;min-height:84px}
 #btn-jump:active{transform:translateY(4px);box-shadow:0 2px 0 #14532d, 0 6px 14px rgba(0,0,0,0.4)}
 #btn-jump.disabled{opacity:0.5;cursor:not-allowed}
+/* v55.81 — small phones: the 240px jump button + 6-item top bar must not overflow */
+@media(max-width:480px){
+  #btn-jump{min-width:0;width:min(72vw,300px);padding:16px 0}
+  #hud-top{gap:4px}
+  #hud-top button{padding:8px 10px}
+}
 
 /* Countdown overlay */
 #countdown{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:radial-gradient(circle at center,rgba(15,23,42,0.5) 0%,rgba(15,23,42,0.85) 100%);pointer-events:none}
@@ -152,7 +158,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <script src="train-journey.js?v=55.80-20260628a"></script>
 
 <div id="hud-top">
-  <button id="btn-back" type="button" onclick="goBack()">← Kembali</button>
+  <button id="btn-back" class="du-hud-pill" type="button" onclick="goBack()">← Kembali</button>
   <div id="train-badge"><span id="train-name">Loading…</span></div>
   <div style="flex:1;min-width:0"></div>
   <div id="hud-mid">
@@ -162,9 +168,9 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
     <div id="g14s-leg-label" style="display:none;font-size:10px;font-weight:700;color:#fff;opacity:0.92;margin-top:2px;letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60vw;pointer-events:none">🚆 <span id="g14s-leg-name"></span></div>
   </div>
   <div id="hud-hp">❤️×3</div>
-  <button id="btn-pause" type="button" onclick="g14sTogglePause()">⏸</button>
-  <button id="btn-koleksi" type="button" onclick="if(window.RewardGallery) RewardGallery.open()">🏆</button>
-  <button id="btn-settings" type="button" onclick="if(window.SettingsModal) SettingsModal.open()">⚙️</button>
+  <button id="btn-pause" class="du-hud-circle is-blue" type="button" onclick="g14sTogglePause()">⏸</button>
+  <button id="btn-koleksi" class="du-hud-circle is-gold" type="button" onclick="if(window.RewardGallery) RewardGallery.open()">🏆</button>
+  <button id="btn-settings" class="du-hud-circle is-blue" type="button" onclick="if(window.SettingsModal) SettingsModal.open()">⚙️</button>
 </div>
 
 <!-- v55.0 — Progress bar under HUD top -->
@@ -1840,6 +1846,6 @@ window.addEventListener('keydown', e => {
   if (e.code === 'Escape') goBack()
 })
 </script>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.80</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.81</div>
 </body>
 </html>

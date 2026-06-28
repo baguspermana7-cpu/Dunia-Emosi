@@ -1,0 +1,135 @@
+/* =============================================================================
+ * games/du-hud.css   (v55.81)
+ * =============================================================================
+ * Dunia Emosi SHARED glossy HUD utility-button system.
+ *
+ * Harmonizes the FLAT inline-styled utility buttons of the standalone train
+ * games (lokomotif-pemberani / balapan-kereta-side) to the premium "candy"
+ * HUD language already shipped in g14 (games/g14-hud.css): cream/tan glossy
+ * text pills + glossy circular candy icon buttons with a cream frame ring.
+ *
+ * Colour tokens are mirrored from g14-hud.css (eyedropped from the owner
+ * mockup) so the two games read as one set.
+ *
+ * Classes:
+ *   .du-hud-pill                 cream glossy text pill (BACK / Kembali)
+ *   .du-hud-circle               glossy circular icon button base
+ *     .is-blue                   sky-blue face  (pause / settings)
+ *     .is-orange                 orange face    (mute)
+ *     .is-gold                   gold face      (koleksi / settings alt)
+ *
+ * All targets are >=44x44 (WCAG kid-touch). Load AFTER du-buttons.css.
+ * NO em dashes in comments (ASCII hyphen only, house rule).
+ * ========================================================================== */
+
+:root {
+  /* cream / tan (pill body) */
+  --duh-cream:       #f8e7d2;
+  --duh-cream-light: #fdf3e2;
+  --duh-cream-edge:  #e8c9a0;   /* warm tan border */
+  --duh-cream-edge2: #d3a877;   /* deeper tan, bottom bevel */
+  --duh-frame:       #f6e3c8;   /* circle cream ring */
+  --duh-ink:         #2c1608;   /* pill text */
+  /* sky-blue circle (pause / settings) */
+  --duh-blue-face:   #3f9fce;
+  --duh-blue-top:    #8ad4f5;
+  --duh-blue-edge:   #1f6aa8;
+  /* orange circle (mute) */
+  --duh-orange-face: #ee9410;
+  --duh-orange-top:  #ffc44d;
+  --duh-orange-edge: #b96807;
+  /* gold circle (koleksi) */
+  --duh-gold-face:   #f3a81e;
+  --duh-gold-top:    #ffd76a;
+  --duh-gold-edge:   #c06808;
+  /* shadows */
+  --duh-shadow:      rgba(90,58,20,.24);
+  --duh-shadow-soft: rgba(90,58,20,.14);
+}
+
+/* === Cream glossy text pill (BACK) ======================================= */
+.du-hud-pill {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 16px !important;
+  background: linear-gradient(180deg, var(--duh-cream-light), var(--duh-cream)) !important;
+  border: 2px solid var(--duh-cream-edge) !important;
+  border-radius: 15px !important;
+  color: var(--duh-ink) !important;
+  font-family: inherit;
+  font-weight: 900;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  pointer-events: auto;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  text-shadow: none;
+  box-shadow:
+    0 5px 11px var(--duh-shadow),
+    inset 0 2px 0 rgba(255,255,255,.75),
+    inset 0 -3px 0 var(--duh-cream-edge2) !important;
+  transition: transform .08s ease-out, box-shadow .12s ease-out;
+}
+.du-hud-pill:active {
+  transform: translateY(2px);
+  box-shadow:
+    0 2px 5px var(--duh-shadow),
+    inset 0 2px 0 rgba(255,255,255,.6) !important;
+}
+
+/* === Glossy circular candy icon button =================================== */
+.du-hud-circle {
+  position: relative;
+  width: clamp(44px, 11vw, 48px) !important;
+  height: clamp(44px, 11vw, 48px) !important;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 50% !important;
+  color: #fff !important;
+  font-size: clamp(16px, 4.4vw, 20px);
+  font-weight: 900;
+  line-height: 1 !important;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  pointer-events: auto;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  text-shadow: 0 1px 2px rgba(0,0,0,.28);
+  transition: transform .08s ease-out;
+}
+/* shared cream frame ring (mockup tan rim) */
+.du-hud-circle::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2.5px solid var(--duh-frame);
+  box-shadow: 0 4px 9px var(--duh-shadow);
+  pointer-events: none;
+}
+.du-hud-circle:active { transform: translateY(2px); }
+
+.du-hud-circle.is-blue {
+  background: radial-gradient(circle at 50% 26%, var(--duh-blue-top), var(--duh-blue-face) 56%, var(--duh-blue-edge)) !important;
+  box-shadow: inset 0 3px 4px rgba(255,255,255,.6), inset 0 -4px 6px rgba(0,30,60,.28) !important;
+}
+.du-hud-circle.is-orange {
+  background: radial-gradient(circle at 50% 26%, var(--duh-orange-top), var(--duh-orange-face) 56%, var(--duh-orange-edge)) !important;
+  box-shadow: inset 0 3px 4px rgba(255,255,255,.6), inset 0 -4px 6px rgba(90,40,0,.28) !important;
+}
+.du-hud-circle.is-gold {
+  background: radial-gradient(circle at 50% 26%, var(--duh-gold-top), var(--duh-gold-face) 56%, var(--duh-gold-edge)) !important;
+  box-shadow: inset 0 3px 4px rgba(255,255,255,.6), inset 0 -4px 6px rgba(90,60,0,.28) !important;
+  color: #5a3a00 !important;
+  text-shadow: 0 1px 1px rgba(255,255,255,.45);
+}

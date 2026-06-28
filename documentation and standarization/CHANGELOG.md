@@ -1,5 +1,26 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-28 — v55.81 "Train-suite refinement: HUD consistency · responsive · gameplay · secondbrain"
+
+Owner: "keep refining and improve, finish all" — picked all four directions. Conservative polish across the suite.
+- **HUD consistency**: new shared `games/du-hud.css` (glossy cream pill `.du-hud-pill` + glossy circle
+  `.du-hud-circle .is-blue/.is-gold/.is-orange`, all ≥44px) derived from g14's candy tokens. g15 + balapan-kereta-side
+  utility buttons (back/pause/koleksi/settings) now match g14; the owner-chosen game buttons (g15 jelly lanes,
+  g14-side green jump, gold badge) + g14 itself are untouched.
+- **Responsive**: g14-side gains `@media(max-width:480px)` (caps the 240px jump button to `min(72vw,300px)`,
+  tightens the top bar) so nothing overflows at 360px; g15 enforces 44px tap targets at ≤400px + a `≤380px`
+  train-grid reflow. Probe `tools/qa-hud-responsive.mjs`: 0 overflow, all buttons ≥44px, 0 errors at 360/768/1280.
+- **Gameplay (g14, VISUAL/AUDIO only — no new text, declutter preserved)**: combo/**streak** system (escalating
+  existing sparkle/star FX + rising arpeggio at 3/5/10 clean dodges; silent coin multiplier ×1.5/×2 **capped**);
+  **biome-specific obstacle pools** (`OBSTACLE_BIOME_AFFINITY` weighting in `spawnObstacle` — forest/coastal favor
+  animals+water, desert/volcano rocks, urban signals/cargo; backward-compatible); **AI rival variety** (new
+  `strategic`+`aggressive` personas + obstacle-reaction boost). Soft-fail + PROTECTED chars intact. 20/20 probe,
+  verify-v5576 still green.
+- **secondbrain enrichment** (internal): graph 43→**108 nodes** / 97→195 edges — a `journey` group with all 48
+  legs (chained + anchored to the games), 7 changelog + 10 lesson (L108–L117) nodes, game emojis; vault +65 notes,
+  `sync-graph.py` HEALTHY; one discreet "🧠 Peta Pengetahuan" link in index.html settings. qa-secondbrain 30/30.
+- sw v55.80→v55.81. Build stamps g14/g15/g14-side → v55.81.
+
 ## 2026-06-28 — v55.80 "Train-games polish & journey cohesion"
 
 Owner: "keep refining and improve, finish all." A tight cohesion pass tying the shared-backdrop work together.

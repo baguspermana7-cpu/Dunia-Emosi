@@ -22,6 +22,51 @@
 ;(function (global) {
   'use strict'
 
+  // ── v55.79 — biome-affinity catalog for the dodge-obstacle spawner ──────────
+  // The side-scroller spawns visual emoji hazards (balapan-kereta.html
+  // OBS_PER_BIOME / spawnObstacle). This catalog tags each hazard emoji with an
+  // OPTIONAL `biomeAffinity` map = per-biome spawn-weight multiplier vs the
+  // default weight of 1. Biome keys match the THEMES names (forest / desert /
+  // snow / coastal / urban / volcano). Missing emoji ⇒ uniform 1 everywhere, so
+  // the spawner stays 100% backward-compatible. Scheme (per task):
+  //   • animals + water/coastal life  → favour forest + coastal
+  //   • falling-rocks / arid / volcanic → favour desert + volcano (highland)
+  //   • signal / cargo / station / city → favour urban
+  // Most weights left near 1 so variety stays gentle for ages 5-10.
+  var OBSTACLE_BIOME_AFFINITY = {
+    // ── animals (forest + coastal life) ──
+    '🐄': { forest: 1.6, coastal: 1.2, desert: 0.3, urban: 0.4 },
+    '🐔': { forest: 1.6, coastal: 1.1, desert: 0.3, urban: 0.4 },
+    '🦌': { forest: 1.6, snow: 1.4, coastal: 1.0, desert: 0.3 },
+    '🐍': { desert: 1.7, forest: 0.7, urban: 0.3 },
+    '🦂': { desert: 1.8, forest: 0.4, urban: 0.3 },
+    '🦀': { coastal: 1.8, desert: 0.3, urban: 0.4 },
+    '🐚': { coastal: 1.8, desert: 0.3, urban: 0.4 },
+    // ── water / coastal props ──
+    '⚓': { coastal: 1.9, desert: 0.2, urban: 0.6 },
+    '🌴': { coastal: 1.6, desert: 0.4, urban: 0.4 },
+    // ── rocks / arid / volcanic hazards ──
+    '🪨': { desert: 1.4, volcano: 1.5, snow: 1.1, urban: 0.6 },
+    '🌵': { desert: 1.9, forest: 0.2, coastal: 0.4 },
+    '🔥': { volcano: 1.8, desert: 1.0, forest: 0.4 },
+    '💥': { volcano: 1.8, desert: 0.8 },
+    '🧊': { snow: 1.8, desert: 0.1 },
+    '⛄': { snow: 1.9, desert: 0.1 },
+    // ── signal / cargo / station / city infrastructure ──
+    '🚧': { urban: 1.8, coastal: 0.6, forest: 0.4 },
+    '🚖': { urban: 1.9, forest: 0.3 },
+    '🧱': { urban: 1.7, forest: 0.5 },
+    '🚸': { urban: 1.8, forest: 0.4 },
+    '🛑': { urban: 1.3, desert: 0.9, coastal: 0.9 },
+    '⚠️': { urban: 1.3, volcano: 1.1, desert: 0.9 },
+    // ── woodland flora (neutral-ish, forest-leaning) ──
+    '🪵': { forest: 1.5, coastal: 0.6 },
+    '🌲': { forest: 1.6, snow: 1.2, desert: 0.1 },
+    '🍄': { forest: 1.7, desert: 0.1 },
+  }
+  // Expose for the spawner. Frozen so it's read-only at runtime.
+  try { global.G14_OBSTACLE_AFFINITY = Object.freeze(OBSTACLE_BIOME_AFFINITY) } catch (e) {}
+
   // ── B-254 — clean inline-SVG track/bridge pieces (replaces crude Unicode
   // glyphs ◯ ▢ ▲ ➤ ↰ ↱ ↗ the owner called "sangat payah"). Deliberately-drawn,
   // soft-pastel, kid-friendly. Geometric kinds = solid shapes (shape-matching);

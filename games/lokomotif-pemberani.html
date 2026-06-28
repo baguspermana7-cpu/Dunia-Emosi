@@ -10,6 +10,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
 <link rel="stylesheet" href="du-buttons.css?v=55.45-20260627ea">
+<link rel="stylesheet" href="du-hud.css?v=55.81-20260628a">
 <title>Lokomotif Pemberani 🚂</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -27,10 +28,11 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 #hud-top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:6px;padding:max(14px,env(safe-area-inset-top)) 12px 8px;background:linear-gradient(180deg,rgba(255,250,240,0.5) 0%,rgba(255,250,240,0.1) 72%,transparent 100%);pointer-events:none;flex-wrap:wrap}
 #g15-word-cat{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(max-width:480px){#g15-word-cat{max-width:90px}}
-#btn-back{background:#fff3c4;border:2.5px solid #f59e0b;border-radius:8px;color:#3f2a08;padding:8px 12px;font-size:14px;cursor:pointer;font-family:inherit;pointer-events:all;flex-shrink:0;box-shadow:0 3px 0 #b45309;font-weight:900;min-width:96px;min-height:44px;text-align:center}
-#btn-back:active{transform:translateY(2px);box-shadow:0 1px 0 #D4956A}
+/* v55.81 — visual look now owned by du-hud.css .du-hud-pill; keep layout only */
+#btn-back{font-size:14px;cursor:pointer;font-family:inherit;pointer-events:all;flex-shrink:0;font-weight:900;min-width:44px;min-height:44px;text-align:center}
 /* v54.54: tap-target audit fix — pause was 25×30, TTS toggle was 38×38, filter tabs were 86×30. All lifted to 44px minimum per WCAG kid-touch standard. */
-#btn-pause{min-width:44px;min-height:44px;padding:8px 12px!important;font-size:18px!important}
+/* v55.81 — circle look owned by du-hud.css; drop padding override so radial fits */
+#btn-pause{min-width:44px;min-height:44px;font-size:18px!important}
 #g15-tts-toggle{min-width:44px;min-height:44px;padding:8px!important;font-size:18px!important}
 #word-display{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;min-width:0}
 /* B-257 — on small phones (≤400px) the nowrap-wrapping top HUD (back + pause +
@@ -38,11 +40,14 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
    button padding + emoji so the row fits cleanly. Tablet view (>400px) unchanged. */
 @media (max-width:400px){
   #hud-top{gap:3px;padding-left:6px;padding-right:6px;flex-wrap:nowrap}
-  #btn-back{padding:8px 9px;min-width:auto}
-  #g15-koleksi-btn,#g15-settings-btn,#btn-pause{padding:5px 6px!important}
+  /* v55.81 — keep the harmonized HUD buttons >=44px (du-hud.css) instead of shrinking */
+  #btn-back{padding:0 10px!important;min-width:44px;min-height:44px}
+  #g15-koleksi-btn,#g15-settings-btn,#btn-pause{padding:0!important;min-width:44px;min-height:44px}
   #word-emoji{font-size:20px}
   #word-display{gap:3px}
 }
+/* v55.81 — narrow phones: tighten the train picker grid so cards do not overflow */
+@media(max-width:380px){ #train-grid{grid-template-columns:repeat(auto-fill,minmax(90px,1fr))} }
 #word-emoji{font-size:24px;flex-shrink:0}
 #word-slots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center}
 .slot{display:inline-flex;align-items:center;justify-content:center;width:28px;height:32px;border-radius:10px;border:2px solid rgba(167,139,250,0.4);background:#fffdf6;color:#4a3a5e;font-size:15px;font-weight:900;transition:all .2s;position:relative;box-shadow:0 2px 5px rgba(0,0,0,0.1)}
@@ -208,7 +213,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.80</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.81</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="train-vfx.js?v=54.56-20260625bi"></script>
@@ -245,16 +250,17 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 
 <!-- HUD Top -->
 <div id="hud-top">
-  <button id="btn-back" type="button" onclick="goBack()">← Kembali</button>
-  <button id="btn-pause" onclick="togglePause()" style="pointer-events:all;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.25);border-radius:10px;color:#fff;padding:5px 8px;font-size:14px;cursor:pointer;font-family:inherit;flex-shrink:0;min-width:44px;min-height:44px">⏸</button>
+  <button id="btn-back" class="du-hud-pill" type="button" onclick="goBack()">← Kembali</button>
+  <!-- v55.81 — glossy look now from du-hud.css .du-hud-circle; inline keeps only behaviour -->
+  <button id="btn-pause" class="du-hud-circle is-blue" onclick="togglePause()" style="pointer-events:all;flex-shrink:0">⏸</button>
   <!-- v54.83 — Koleksi gallery (Practice Mode) trigger -->
-  <button id="g15-koleksi-btn" type="button" onclick="if(window.RewardGallery) RewardGallery.open()" aria-label="Buka koleksi stiker"
-          style="pointer-events:all;background:linear-gradient(135deg,#fbbf24,#f59e0b);border:2px solid #b45309;border-radius:10px;color:#5a2a00;padding:6px 10px;font-size:14px;cursor:pointer;font-family:inherit;font-weight:900;flex-shrink:0;box-shadow:0 3px 0 rgba(120,53,15,0.4);min-width:44px;min-height:44px">
+  <button id="g15-koleksi-btn" class="du-hud-circle is-gold" type="button" onclick="if(window.RewardGallery) RewardGallery.open()" aria-label="Buka koleksi stiker"
+          style="pointer-events:all;flex-shrink:0">
     🏆
   </button>
   <!-- v54.85 — Pengaturan modal trigger -->
-  <button id="g15-settings-btn" type="button" onclick="if(window.SettingsModal) SettingsModal.open()" aria-label="Pengaturan"
-          style="pointer-events:all;background:linear-gradient(135deg,#dbeafe,#60a5fa);border:2px solid #1e3a8a;border-radius:10px;color:#1e3a8a;padding:6px 10px;font-size:14px;cursor:pointer;font-family:inherit;font-weight:900;flex-shrink:0;box-shadow:0 3px 0 rgba(30,58,138,0.4);min-width:44px;min-height:44px">
+  <button id="g15-settings-btn" class="du-hud-circle is-blue" type="button" onclick="if(window.SettingsModal) SettingsModal.open()" aria-label="Pengaturan"
+          style="pointer-events:all;flex-shrink:0">
     ⚙️
   </button>
   <div id="word-display">
