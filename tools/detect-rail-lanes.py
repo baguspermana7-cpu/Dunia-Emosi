@@ -20,25 +20,34 @@ PLATE = "assets/train/backdrop/level{:02d}-1024.webp"
 OVL = "tools/qa-out/lanecal"
 
 def bed_scores(path):
+    # v55.93 — the train must sit on a RAIL = a DARK horizontal line (val minimum), NOT the bright
+    # ballast between rails. Return the per-row brightness `val` (smoothed); rails are its minima.
     im = Image.open(path).convert("RGB")
     a = np.asarray(im).astype(float); H, W = a.shape[:2]
-    mx = a.max(2); mn = a.min(2); sat = (mx - mn) / (mx + 1e-6); val = mx / 255.0
-    bed = ((sat < 0.32) & (val > 0.40)).astype(float).mean(1)
-    bed = np.convolve(bed, np.ones(3) / 3, "same")
-    return bed, H
+    val = (a.max(2) / 255.0).mean(1)
+    val = np.convolve(val, np.ones(3) / 3, "same")
+    return val, H
 
-def all_peaks(bed, H, lo=0.46, hi=0.94, thr=0.12):
-    out = []
+def all_peaks(val, H, lo=0.46, hi=0.90, thr=0.42):
+    # RAIL line = a THIN dark minimum (below thr) flanked by BRIGHT ballast above AND below
+    # (val>0.45 within ~5 rows each side). The wide dark FOREGROUND vegetation has no bright
+    # ballast below it → excluded. Strength = how dark (thr - val).
+    out = []; r = max(3, int(0.012 * H))
     for y in range(int(lo * H), int(hi * H)):
-        if bed[y] >= thr and bed[y] >= bed[y - 2] and bed[y] >= bed[y + 2]:
-            if out and (y - out[-1][0]) < int(0.025 * H):
-                if bed[y] > out[-1][1]: out[-1] = (y, bed[y])
-                continue
-            out.append((y, bed[y]))
-    return [(y / H, float(s)) for y, s in out]
+        if not (val[y] <= thr and val[y] <= val[y - 2] and val[y] <= val[y + 2]):
+            continue
+        up = val[max(0, y - 3 * r):y - 1].max() if y - 1 > 0 else 0
+        dn = val[y + 1:y + 3 * r].max() if y + 1 < len(val) else 0
+        if up < 0.45 or dn < 0.45:           # must be a thin line between ballast, not a wide dark
+            continue
+        if out and (y - out[-1][0]) < int(0.025 * H):
+            if val[y] < out[-1][2]: out[-1] = (y, y / H, val[y])
+            continue
+        out.append((y, y / H, val[y]))
+    return [(f, thr - v) for (_, f, v) in out]   # (frac, strength)
 
 def pick_spread(pk):
-    """3 SPREAD rails: strongest peak in each of the 3 zones of the rail-area span."""
+    """3 SPREAD rails: in each of 3 zones pick the LOWER (besi bawah) strong rail line."""
     if len(pk) < 3:
         return None
     fr = [p[0] for p in pk]
@@ -49,11 +58,12 @@ def pick_spread(pk):
     chosen = []
     for z in range(3):
         z0, z1 = pmin + z * band, pmin + (z + 1) * band + (1e-6 if z == 2 else 0)
-        cands = [p for p in pk if z0 <= p[0] <= z1]
-        if not cands:                       # empty zone → nearest peak to the zone centre
+        cands = [p for p in pk if z0 <= p[0] <= z1 and p[1] > 0.04]   # reasonably dark rails
+        if not cands:
             zc = (z0 + z1) / 2
             cands = [min(pk, key=lambda p: abs(p[0] - zc))]
-        chosen.append(max(cands, key=lambda p: p[1])[0])
+        # besi BAWAH: prefer the LOWEST rail in the zone (tie-break toward darker)
+        chosen.append(max(cands, key=lambda p: (p[0], p[1]))[0])
     chosen = sorted(set(round(c, 3) for c in chosen))
     return chosen if len(chosen) == 3 else None
 
@@ -68,24 +78,36 @@ def overlay(plate, lanes, out):
     os.makedirs(os.path.dirname(out), exist_ok=True)
     im.save(out)
 
+def snap_lower_rail(val, H, f, window=0.055):
+    # v55.93 — REFINE: snap a lane (currently near the bright ballast / besi ATAS) DOWN onto its
+    # track's LOWER rail (besi BAWAH) = the LOWEST thin dark minimum within `window` below it that
+    # has bright ballast just above (a real rail under the band the loco was on). Keep f if none.
+    # The bottom (near/foreground) lane uses a WIDER window so it reaches the foreground-most rail.
+    y0 = max(2, int((f - 0.006) * H)); y1 = min(int(0.91 * H), int((f + window) * H))
+    best = None
+    for y in range(y0, y1):
+        if val[y] <= 0.43 and val[y] <= val[y - 2] and val[y] <= val[y + 2]:
+            if val[max(0, y - int(0.03 * H)):y - 1].max() > 0.45:   # bright ballast just above
+                best = y                                            # keep last (lowest) qualifier
+    return round((best / H) if best is not None else f, 3)
+
 def process(level, dry):
     plate = PLATE.format(level); mpath = os.path.join(DATA, f"level{level:02d}.json")
     if not (os.path.exists(plate) and os.path.exists(mpath)):
         return None
-    bed, H = bed_scores(plate)
-    pk = all_peaks(bed, H)
-    lanes = pick_spread(pk)
-    fell = False
-    if not lanes:
-        lanes = [0.56, 0.70, 0.84]; fell = True     # spread fallback (dark/water plates)
-    if dry:
-        print(f"L{level:02d}: peaks={[(round(f,2),round(s,2)) for f,s in pk]}\n        lanes={lanes}{' (fallback)' if fell else ''}")
-        return lanes
+    val, H = bed_scores(plate)
     m = json.load(open(mpath, encoding="utf-8"))
+    cur = sorted((m.get("laneRatios") or {}).get("lanes") or [0.56, 0.70, 0.84])
+    # bottom (near/foreground) lane gets a WIDER drop so it reaches the foreground-most rail.
+    lanes = sorted(round(snap_lower_rail(val, H, f, 0.11 if i == len(cur) - 1 else 0.055), 3)
+                   for i, f in enumerate(cur))
+    if dry:
+        print(f"L{level:02d}: {cur} → {lanes}")
+        return lanes
     m.setdefault("laneRatios", {})["lanes"] = lanes
     json.dump(m, open(mpath, "w", encoding="utf-8"), ensure_ascii=False, indent=0)
     overlay(plate, lanes, os.path.join(OVL, f"level{level:02d}.png"))
-    print(f"L{level:02d}: lanes={lanes}{' (fallback)' if fell else ''}")
+    print(f"L{level:02d}: {cur} → {lanes}")
     return lanes
 
 def main():

@@ -1,5 +1,15 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-29 — v55.93 "g14 lanes snapped to the LOWER rail (besi bawah); bottom lane to the foreground rail"
+
+Owner: "lane 1 itu bukan di besi bawah tapi nempel di besi atas" + lane 1 still kurang tepat.
+- `tools/detect-rail-lanes.py` REFINE mode: brightness profile → each lane (was near the bright
+  ballast / besi atas) snaps DOWN onto its track's LOWER rail (besi bawah) = the lowest thin dark
+  minimum flanked by bright ballast above. The bottom (near/foreground) lane uses a WIDER search
+  window so it reaches the foreground-most rail. Built on the approved v55.92 spread base; re-run on
+  all 48. Lanes 2/3 barely move (owner: already ok), lane 1 drops onto its lower/foreground rail.
+- Verified L5/L30: trains sit on the dark rail lines; dims + railalign + parallax green. sw v55.93.
+
 ## 2026-06-29 — v55.92 "g14 CONSISTENT + ACCURATE rail lanes (spread top/mid/bottom) + decoupled train size"
 
 Owner (level-5 photos): positioning the WORST issue — train on "lane 3" appeared at lane 2, on lane 2 sat BETWEEN
