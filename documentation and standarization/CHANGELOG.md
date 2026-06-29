@@ -1,5 +1,28 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-29 — v55.89 "g14 — 275 real-sprite WORLD trains, categorized picker, white outline"
+
+Owner: replace the procedural in-game trains with the 275 real train sprites (assets/train/train
+char world/index, faces LEFT), categorize the picker into packages (name + model + year), add a
+thin white sticker outline like Casey JR, mirror so they face right, keep size/positioning proper.
+- **Sprite pipeline** `tools/build-train-world-sprites.py`: bakes a ~3px white outline (dilate
+  alpha → white fill → composite) + WebP → `assets/train/world/NNN.webp` (275 files, 2.7MB total).
+- **Roster** `tools/build-train-world.py` → `games/data/train-world.js` (window.TRAIN_WORLD):
+  275 trains in 7 categories from the crop-manifest CSV — Uap Klasik(36)/Uap Modern(61)/Diesel(25)/
+  Listrik(28)/Kereta Cepat(54)/Komuter & Tram(46)/Indonesia(25). Each: name + model·year sub,
+  isCharacter sprite, faces:'left' (engine mirrors → faces RIGHT), balanced gameplay stats.
+- **g14 wiring** (balapan-kereta.html): load train-world.js; TRAIN_CATS now = [Karakter Spesial
+  (Casey dkk), Thomas AEG, …7 world categories] — the old procedural world rosters are dropped from
+  the picker (kept only the two character packages, per owner). NPC pool = the 275 world trains.
+- **Size/positioning** (the #1 concern) reuses the v55.88 engine: every world train (player + NPC)
+  renders at G14_UNIFORM_H = 1.1× the rail band, base/wheels ON the rail line, uniform, mirrored to
+  face right. Probe-measured: w078 Big Boy = 175px = 1.1× obstacle, faceSign -1, base Δ3px, NPC
+  uniform, 0 errors @ portrait/landscape/phone.
+- Verified: g14 dimensions + railalign + 16-page app-sweep green (g15/g16 unaffected — still on
+  trains-db.js). Heavy raw source PNGs/JPGs gitignored; served WebP + roster + CSV tracked. sw v55.89.
+- PENDING (next): migrate g15/g16 to the world roster, then delete the now-legacy procedural train
+  assets (others/, trains-database.json) — deferred because g15/g16 still consume them.
+
 ## 2026-06-28 — v55.88 "g14 train sized to the RAIL band (1.1×), base on the rail line + BOOST no longer covered by selfie FAB"
 
 Owner (screenshot): the train was ~2× the rail — "keretanya itu dibuat 1.1x dari tinggi rail, dan batas roda bawah/base

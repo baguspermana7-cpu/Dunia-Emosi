@@ -1,0 +1,276 @@
+index,file,source_sheet,source_tile_1_based,year,name,model_type,width,height
+1,001.png,1.png,1,1804,Penydarren Locomotive,Early steam locomotive,267,180
+2,002.png,1.png,2,1812,Salamanca,Rack steam locomotive,275,173
+3,003.png,1.png,3,1813,Puffing Billy,Early steam locomotive,259,179
+4,004.png,1.png,4,1814,Blücher,Early steam locomotive,274,174
+5,005.png,1.png,5,1825,Locomotion No. 1,Steam locomotive,290,173
+6,006.png,1.png,6,1829,Stephenson’s Rocket,Steam locomotive,285,185
+7,007.png,1.png,7,1830,Planet,2-2-0 steam locomotive,270,158
+8,008.png,1.png,8,1831,John Bull,2-4-0 steam locomotive,270,152
+9,009.png,1.png,9,1835,Adler,2-2-2 steam locomotive,275,149
+10,010.png,1.png,10,1837,North Star,2-2-2 steam locomotive,310,157
+11,011.png,1.png,11,1838,Lion,0-4-2 steam locomotive,288,150
+12,012.png,1.png,12,1841,Firefly Class,2-2-2 steam locomotive,273,139
+13,013.png,1.png,13,1845,Patentee Type,2-2-2 steam locomotive,264,144
+14,014.png,1.png,14,1847,Jenny Lind,2-2-2 steam locomotive,290,143
+15,015.png,1.png,15,1851,Crampton Locomotive,4-2-0 steam locomotive,306,141
+16,016.png,1.png,16,1855,Bury Bar-Frame Type,4-2-0 / 2-2-0 steam locomotive,287,136
+17,017.png,1.png,17,1862,Stirling Single Precursor,4-2-2 steam locomotive,277,141
+18,018.png,1.png,18,1863,Metropolitan Railway A Class,4-4-0T condensing steam locomotive,300,137
+19,019.png,1.png,19,1868,Union Pacific No. 119,4-4-0 steam locomotive,310,137
+20,020.png,1.png,20,1868,Central Pacific Jupiter No. 60,4-4-0 steam locomotive,320,134
+21,021.png,1.png,21,1869,Le Général / American 4-4-0 Type,4-4-0 steam locomotive,276,143
+22,022.png,1.png,22,1870,Fairlie Double-Ended Locomotive,0-4-4-0T articulated steam locomotive,283,127
+23,023.png,1.png,23,1873,Mason Bogie,2-6-6T articulated steam locomotive,279,129
+24,024.png,1.png,24,1875,Baldwin Narrow-Gauge Mogul,2-6-0 steam locomotive,298,127
+25,025.png,1.png,25,1885,Webb Compound Type,Compound steam locomotive,301,123
+26,026.png,2.png,1,1889,Consolidation Type,2-8-0 steam locomotive,323,123
+27,027.png,2.png,2,1890,Decapod Type,2-10-0 steam locomotive,303,108
+28,028.png,2.png,3,1891,Atlantic Type,4-4-2 steam locomotive,296,108
+29,029.png,2.png,4,1892,Prairie Type,2-6-2 steam locomotive,272,109
+30,030.png,2.png,5,1893,Ten-Wheeler Type,4-6-0 steam locomotive,271,108
+31,031.png,2.png,6,1894,Mogul Type,2-6-0 steam locomotive,279,104
+32,032.png,2.png,7,1895,Heisler Geared Locomotive,Geared steam locomotive,297,102
+33,033.png,2.png,8,1896,Climax Geared Locomotive,Geared steam locomotive,260,94
+34,034.png,2.png,9,1897,Mallet Articulated Type,Compound articulated steam locomotive,285,99
+35,035.png,2.png,10,1898,Garratt Articulated Type,Articulated steam locomotive,306,97
+36,036.png,2.png,11,1899,Camelback Locomotive,Steam locomotive,278,95
+37,037.png,2.png,12,1900,Buffalo Creek & Gauley 2-8-0,Consolidation steam locomotive,291,99
+38,038.png,2.png,13,1901,Mountain Type,4-8-2 steam locomotive,320,98
+39,039.png,2.png,14,1902,Pacific Type,4-6-2 steam locomotive,303,95
+40,040.png,2.png,15,1903,Steam Railmotor / Steam Trolley,Self-propelled steam railcar,253,111
+41,041.png,2.png,16,1904,Lima Superheated Type,2-6-0 / 2-8-0 steam locomotive,265,101
+42,042.png,2.png,17,1905,Mikado Type,2-8-2 steam locomotive,305,90
+43,043.png,2.png,18,1906,USRA Consolidation Prototype,2-8-0 steam locomotive,305,89
+44,044.png,2.png,19,1907,Express Pacific Type,4-6-2 steam locomotive,307,83
+45,045.png,2.png,20,1908,New York Central K-Class,4-6-2 steam locomotive,284,89
+46,046.png,2.png,21,1909,Southern Railway Ps-4,4-6-2 steam locomotive,295,90
+47,047.png,2.png,22,1910,Virginian Railway Class G,4-6-2 steam locomotive,277,85
+48,048.png,2.png,23,1911,Milwaukee Road H-3,2-8-2 steam locomotive,293,85
+49,049.png,2.png,24,1912,Reading T-1 Precursor,4-8-4 steam locomotive,321,78
+50,050.png,2.png,25,1913,Canadian Pacific G3,4-6-2 steam locomotive,302,79
+51,051.png,2.png,26,1914,Pennsylvania Railroad K4s,4-6-2 steam locomotive,278,85
+52,052.png,2.png,27,1915,Santa Fe 5011 Class,2-10-4 steam locomotive,299,81
+53,053.png,2.png,28,1916,Chesapeake & Ohio H-8 Precursor,2-6-6-2 steam locomotive,299,75
+54,054.png,2.png,29,1917,Nickel Plate Road Berkshire Precursor,2-8-4 steam locomotive,310,82
+55,055.png,2.png,30,1918,Western Maryland 2-6-6-2,Articulated steam locomotive,313,72
+56,056.png,3.png,1,1919,Erie J-1,2-10-4 steam locomotive,323,96
+57,057.png,3.png,2,1920,Pere Marquette N-1,2-8-4 steam locomotive,276,87
+58,058.png,3.png,3,1921,GWR King George V,4-6-0 steam locomotive,299,88
+59,059.png,3.png,4,1922,Pennsylvania Railroad T1 Precursor,4-4-4-4 steam locomotive,301,89
+60,060.png,3.png,5,1923,LMS Princess Royal,4-6-2 steam locomotive,303,86
+61,061.png,3.png,6,1924,New York Central J-3a Hudson,4-6-4 steam locomotive,315,93
+62,062.png,3.png,7,1925,Frisco 1522,4-8-2 steam locomotive,289,93
+63,063.png,3.png,8,1926,B&O P-7 President Class,4-6-2 steam locomotive,288,97
+64,064.png,3.png,9,1927,Canadian National U-1-a,4-8-4 steam locomotive,293,91
+65,065.png,3.png,10,1928,Norfolk & Western J Class Precursor,4-8-4 steam locomotive,318,91
+66,066.png,3.png,11,1929,LNER A1 Flying Scotsman,4-6-2 steam locomotive,305,96
+67,067.png,3.png,12,1930,Union Pacific M-6,4-8-2 steam locomotive,295,82
+68,068.png,3.png,13,1931,LNER A3 Blue Peter Lineage,4-6-2 steam locomotive,295,83
+69,069.png,3.png,14,1932,ATSF 3751 Class,4-8-4 steam locomotive,307,90
+70,070.png,3.png,15,1933,Canadian Pacific 2816,4-6-4 steam locomotive,309,86
+71,071.png,3.png,16,1934,Southern Railway 1401,4-6-2 steam locomotive,297,82
+72,072.png,3.png,17,1935,Nickel Plate Road Berkshire,2-8-4 steam locomotive,290,84
+73,073.png,3.png,18,1936,NYC 20th Century Limited Hudson,4-6-4 steam locomotive,299,82
+74,074.png,3.png,19,1937,LMS Coronation / Duchess Class,4-6-2 steam locomotive,292,82
+75,075.png,3.png,20,1938,Norfolk & Western Class J,4-8-4 steam locomotive,317,82
+76,076.png,3.png,21,1939,PRR K4s Streamlined,4-6-2 steam locomotive,292,81
+77,077.png,3.png,22,1940,Reading T-1,4-8-4 steam locomotive,287,79
+78,078.png,3.png,23,1941,Union Pacific Big Boy,4-8-8-4 articulated steam locomotive,313,77
+79,079.png,3.png,24,1942,LNER A4 Mallard Lineage,4-6-2 steam locomotive,309,76
+80,080.png,3.png,25,1943,Chesapeake & Ohio H-7,2-6-6-6 steam locomotive,292,80
+81,081.png,3.png,26,1944,Pennsylvania Railroad S1,6-4-4-6 steam locomotive,297,83
+82,082.png,3.png,27,1945,Virginian Class AG,2-6-6-6 steam locomotive,293,84
+83,083.png,3.png,28,1946,B&O Royal Blue Pacific,4-6-2 steam locomotive,297,76
+84,084.png,3.png,29,1947,Norfolk & Western Class A,2-6-6-4 steam locomotive,305,77
+85,085.png,3.png,30,1948,Southern Pacific GS-4,4-8-4 steam locomotive,312,81
+86,086.png,4.png,1,1949,Union Pacific FEF-3,4-8-4 steam locomotive,339,89
+87,087.png,4.png,2,1950,BR Standard Class 9F,2-10-0 steam locomotive,295,86
+88,088.png,4.png,3,1951,DB Class 03,4-6-2 steam locomotive,308,85
+89,089.png,4.png,4,1952,Garratt NGG16,2-6-2+2-6-2 Garratt steam locomotive,284,85
+90,090.png,4.png,5,1953,Union Pacific EMD E6,Diesel-electric passenger locomotive,272,80
+91,091.png,4.png,6,1954,SNCF CC 7100,Electric locomotive,292,103
+92,092.png,4.png,7,1955,Soviet TE3,Diesel-electric locomotive,278,84
+93,093.png,4.png,8,1956,JNR C62,4-6-4 steam locomotive,332,84
+94,094.png,4.png,9,1957,DB V 200,Diesel-hydraulic locomotive,286,82
+95,095.png,4.png,10,1958,SJ Dm3,Electric locomotive,271,81
+96,096.png,4.png,11,1959,GE GTEL,Gas turbine-electric locomotive,269,79
+97,097.png,4.png,12,1960,Canadian National U-2-a,4-8-4 steam locomotive,348,84
+98,098.png,4.png,13,1961,FS E.444 Prototype,Electric locomotive,284,112
+99,099.png,4.png,14,1962,British Rail Class 55 Deltic,Diesel-electric locomotive,313,82
+100,100.png,4.png,15,1963,NZR DC Class Lineage,Diesel-electric locomotive,281,73
+101,101.png,4.png,16,1964,Shinkansen 0 Series,Electric high-speed EMU,265,77
+102,102.png,4.png,17,1965,TGV 001 Prototype,Gas turbine high-speed train,307,74
+103,103.png,4.png,18,1966,DB Class 103 Prototype,Electric locomotive,263,107
+104,104.png,4.png,19,1967,EMD SDP40F / Passenger Diesel Lineage,Diesel-electric locomotive,306,78
+105,105.png,4.png,20,1968,NSW 80 Class / Heavy Electric Era,Electric locomotive,316,92
+106,106.png,4.png,21,1969,Soviet VL80K,Electric locomotive,266,80
+107,107.png,4.png,22,1970,British InterCity 125 HST Prototype,Diesel high-speed train,280,73
+108,108.png,4.png,23,1971,JNR 485 Series,Electric multiple unit,289,72
+109,109.png,4.png,24,1972,Soviet 2TE10M,Diesel-electric locomotive,287,82
+110,110.png,4.png,25,1973,RENFE Class 333,Diesel-electric locomotive,320,85
+111,111.png,4.png,26,1974,South African Class 5E1,Electric locomotive,260,95
+112,112.png,4.png,27,1975,China DF4,Diesel-electric locomotive,297,79
+113,113.png,4.png,28,1976,SNCF BB 15000,Electric locomotive,274,105
+114,114.png,4.png,29,1977,JNR DD51,Diesel-hydraulic locomotive,275,82
+115,115.png,4.png,30,1978,ICE-V / InterCityExperimental,Electric high-speed train,331,81
+116,116.png,5.png,1,1979,SJ Rc4,Electric locomotive,263,114
+117,117.png,5.png,2,1980,FS ETR 450,Electric tilting high-speed train,298,71
+118,118.png,5.png,3,1981,JNR 583 Series,Electric multiple unit,292,77
+119,119.png,5.png,4,1982,South African Class 6E1,Electric locomotive,264,113
+120,120.png,5.png,5,1983,TGV Sud-Est,Electric high-speed train,315,74
+121,121.png,5.png,6,1984,EMD SD70MAC Lineage,Diesel-electric locomotive,279,78
+122,122.png,5.png,7,1985,Soviet/Russian 2TE116,Diesel-electric locomotive,291,81
+123,123.png,5.png,8,1986,British Rail Class 91,Electric locomotive,288,83
+124,124.png,5.png,9,1987,Shinkansen 100 Series,Electric high-speed EMU,275,74
+125,125.png,5.png,10,1988,EMD SD60MAC Prototype,Diesel-electric locomotive,315,77
+126,126.png,5.png,11,1989,DB Class 120,Electric locomotive,266,85
+127,127.png,5.png,12,1990,KTX Prototype / HSR-350x Lineage,Electric high-speed train,289,74
+128,128.png,5.png,13,1991,AVE Class 100,Electric high-speed train,271,68
+129,129.png,5.png,14,1992,VIA Rail LRC,Diesel-electric passenger train,298,68
+130,130.png,5.png,15,1993,China DF8B,Diesel-electric locomotive,295,78
+131,131.png,5.png,16,1994,Eurostar Class 373,Electric high-speed train,273,77
+132,132.png,5.png,17,1995,JR East E217 Series,Electric multiple unit,290,75
+133,133.png,5.png,18,1996,ICE 1,Electric high-speed train,277,76
+134,134.png,5.png,19,1997,Bombardier Talent,Diesel/electric multiple unit,309,75
+135,135.png,5.png,20,1998,EMD SD90MAC,Diesel-electric locomotive,299,74
+136,136.png,5.png,21,1999,Taiwan THSR 700T Development,Electric high-speed train,272,67
+137,137.png,5.png,22,2000,Alstom Prima,Electric locomotive,293,71
+138,138.png,5.png,23,2001,Siemens Desiro,Electric/diesel multiple unit,268,71
+139,139.png,5.png,24,2002,China DF11G,Diesel locomotive,295,75
+140,140.png,5.png,25,2003,TGV Duplex,Electric high-speed train,304,70
+141,141.png,5.png,26,2004,Russian EP20 Development Lineage,Electric locomotive,259,88
+142,142.png,5.png,27,2005,KTX-II / KTX-Sancheon Development,Electric high-speed train,289,74
+143,143.png,5.png,28,2006,Siemens Velaro,Electric high-speed train,293,70
+144,144.png,5.png,29,2007,Indian WAP-5,Electric locomotive,297,85
+145,145.png,5.png,30,2008,China CRH2,Electric high-speed EMU,307,69
+146,146.png,6.png,1,2009,KORAIL KTX-Sancheon,Electric high-speed train,328,82
+147,147.png,6.png,2,2010,China CRH380A,Electric high-speed train,304,77
+148,148.png,6.png,3,2011,ICE 3 Class 407,Electric high-speed train,291,78
+149,149.png,6.png,4,2011,FS ETR 600,Electric tilting high-speed train,277,72
+150,150.png,6.png,5,2012,Amtrak ACS-64,Electric locomotive,249,83
+151,151.png,6.png,6,2012,Eurostar e320,Electric high-speed train,305,75
+152,152.png,6.png,7,2013,ÖBB Railjet,Push-pull passenger trainset,312,77
+153,153.png,6.png,8,2013,BLS Re 465,Electric locomotive,268,76
+154,154.png,6.png,9,2013,China CRH380B,Electric high-speed train,279,65
+155,155.png,6.png,10,2014,TGV Duplex Océane / POS Lineage,Electric high-speed train,278,66
+156,156.png,6.png,11,2015,LNER Class 800 Azuma,Bi-mode/electric multiple unit,291,72
+157,157.png,6.png,12,2015,Siemens Velaro E / AVE S-103,Electric high-speed train,292,69
+158,158.png,6.png,13,2015,Metra MP36PH-3C,Diesel-electric locomotive,280,75
+159,159.png,6.png,14,2016,KiwiRail DF Class,Diesel-electric locomotive,269,74
+160,160.png,6.png,15,2016,Freightliner Class 70,Diesel-electric locomotive,280,71
+161,161.png,6.png,16,2016,China CR400AF Fuxing,Electric high-speed train,306,65
+162,162.png,6.png,17,2017,Stadler FLIRT,Electric multiple unit,287,71
+163,163.png,6.png,18,2017,Amtrak Charger SC-44,Diesel-electric locomotive,268,74
+164,164.png,6.png,19,2017,South Western Railway Class 707,Electric multiple unit,273,65
+165,165.png,6.png,20,2017,Talgo Avril Prototype,Electric high-speed train,298,65
+166,166.png,6.png,21,2018,Siemens Vectron,Electric locomotive,264,83
+167,167.png,6.png,22,2018,Indian WAG-12B,Electric locomotive,260,75
+168,168.png,6.png,23,2019,ÖBB 1216 Taurus,Electric locomotive,282,78
+169,169.png,6.png,24,2019,China CR300AF,Electric high-speed train,262,80
+170,170.png,6.png,25,2019,Hitachi A-Train,Electric multiple unit,315,62
+171,171.png,6.png,26,2020,ICE 4,Electric high-speed train,288,71
+172,172.png,6.png,27,2020,LNER Class 801 Azuma,Electric multiple unit,301,66
+173,173.png,6.png,28,2020,Siemens Vectron MS,Multi-system electric locomotive,277,64
+174,174.png,6.png,29,2020,ÖBB Taurus 1293,Electric locomotive,261,70
+175,175.png,6.png,30,2021,Hitachi ETR 1000 / Frecciarossa 1000,Electric high-speed train,296,67
+176,176.png,7.png,1,2021,Siemens Vectron Dual Mode,Dual-mode locomotive,288,101
+177,177.png,7.png,2,2021,China CR400BF Fuxing,Electric high-speed train,297,83
+178,178.png,7.png,3,2021,Siemens Smartron,Electric locomotive,286,79
+179,179.png,7.png,4,2021,Freightliner Class 99,Bi-mode locomotive,286,83
+180,180.png,7.png,5,2022,Alstom Avelia Horizon,Electric high-speed train,288,72
+181,181.png,7.png,6,2022,Avanti West Coast Class 805,Bi-mode multiple unit,286,87
+182,182.png,7.png,7,2022,Wabtec FLXdrive,Battery-electric locomotive,293,74
+183,183.png,7.png,8,2022,RENFE AVE S-106,Electric high-speed train,289,73
+184,184.png,7.png,9,2022,Eurostar e320neo Concept,Electric high-speed train,279,71
+185,185.png,7.png,10,2022,Trenitalia Rock,Electric multiple unit,296,73
+186,186.png,7.png,11,2023,KTX-Cheongryong,Electric high-speed train,283,70
+187,187.png,7.png,12,2023,Stadler EuroDual,Dual-mode locomotive,289,74
+188,188.png,7.png,13,2023,Stadler FLIRT Akku,Battery electric multiple unit,290,71
+189,189.png,7.png,14,2023,Alstom Coradia iLint,Hydrogen multiple unit,286,73
+190,190.png,7.png,15,2023,Iryo ETR 1000,Electric high-speed train,285,69
+191,191.png,7.png,16,2023,Siemens Vectron Dual Mode,Dual-mode locomotive,285,85
+192,192.png,7.png,17,2023,Alstom Coradia Stream,Electric multiple unit,282,72
+193,193.png,7.png,18,2023,CAF Civity,Electric multiple unit,298,73
+194,194.png,7.png,19,2024,China CR450 Prototype,Electric high-speed train,281,72
+195,195.png,7.png,20,2024,LNER Azuma New Livery,Electric multiple unit,288,74
+196,196.png,7.png,21,2024,Thai SRT Red Line EMU,Electric multiple unit,275,69
+197,197.png,7.png,22,2024,CRRC CDD6A1,Diesel-electric locomotive,283,73
+198,198.png,7.png,23,2024,Fuxing CR400AF-S,Electric high-speed train,288,71
+199,199.png,7.png,24,2024,KCIC Whoosh KCIC400AF,Electric high-speed train,276,70
+200,200.png,7.png,25,2024,Hitachi Aurora,Electric multiple unit,291,66
+201,201.png,7.png,26,2024,SNCF Régiolis New Generation,Electric multiple unit,287,69
+202,202.png,7.png,27,2024,BLS Re 475,Electric locomotive,270,75
+203,203.png,7.png,28,2024,Stadler Euro9000,Hybrid/electric locomotive,286,70
+204,204.png,7.png,29,2024,CAF Oaris H,Hydrogen multiple unit,281,71
+205,205.png,7.png,30,2024,Hitachi Blues,Battery/electric multiple unit,295,75
+206,206.png,8.png,1,2024,Siemens Mireo Plus B,Battery electric multiple unit,289,82
+207,207.png,8.png,2,2024,CRRC Zhuzhou CDD6A1,Diesel-electric locomotive,282,74
+208,208.png,8.png,3,2024,Alstom Coradia Stream HC,Electric multiple unit,280,75
+209,209.png,8.png,4,2024,Talgo Avril New Generation,Electric high-speed train,296,72
+210,210.png,8.png,5,2024,ÖBB Cityjet eco,Battery electric multiple unit,288,84
+211,211.png,8.png,6,2024,Stadler MIKA,Electric multiple unit,286,73
+212,212.png,8.png,7,2024,Siemens Vectron AC,Electric locomotive,278,70
+213,213.png,8.png,8,2024,Hitachi E500 Series Shinkansen,Electric high-speed train,274,71
+214,214.png,8.png,9,2024,KTX-I Cheongryong,Electric high-speed train,296,73
+215,215.png,8.png,10,2024,Siemens Avelia Liberty,Electric high-speed train,285,74
+216,216.png,8.png,11,2024,CAF Civity UK,Electric multiple unit,290,70
+217,217.png,8.png,12,2024,Stadler EURODUAL,Dual-mode locomotive,271,67
+218,218.png,8.png,13,2024,CR450BF Fuxing Prototype,Electric high-speed train,281,68
+219,219.png,8.png,14,2024,Alstom Airo,Battery/electric multiple unit,302,69
+220,220.png,8.png,15,2024,Siemens Desiro HC,Electric multiple unit,272,70
+221,221.png,8.png,16,2024,PESA Elf 3,Electric multiple unit,284,73
+222,222.png,8.png,17,2025,Hyundai Rotem HEMU-430X Lineage,Electric high-speed train,283,69
+223,223.png,8.png,18,2025,Škoda 26Ev,Electric multiple unit,279,68
+224,224.png,8.png,19,2025,Transmashholding EP2D,Electric multiple unit,287,67
+225,225.png,8.png,20,2025,CRRC Qingdao Sifang CETV,Electric multiple unit,274,64
+226,226.png,8.png,21,2025,Hitachi ETR675,Electric multiple unit,284,66
+227,227.png,8.png,22,2025,Alstom Citadis X05,Light rail vehicle,272,66
+228,228.png,8.png,23,2025,CAF Urbos 100,Light rail vehicle,275,68
+229,229.png,8.png,24,2025,Stadler Tango,Light rail vehicle,288,66
+230,230.png,8.png,25,2025,CRRC Low-Floor EMU,Electric multiple unit,276,68
+231,231.png,8.png,26,2025,Siemens Smartron,Electric locomotive,281,67
+232,232.png,8.png,27,2025,Wabtec Evolution Series,Diesel-electric locomotive,260,66
+233,233.png,8.png,28,2025,Alstom Prima H4,Hydrogen locomotive / train concept,265,65
+234,234.png,8.png,29,2025,Siemens Velaro Novo,Electric high-speed train,280,65
+235,235.png,8.png,30,2025,CRRC Maglev 600 km/h,Maglev train,272,62
+236,236.png,8.png,31,2026,Alstom Avelia Stream,Electric high-speed train,264,59
+237,237.png,8.png,32,2026,Siemens Mireo Plus H,Hydrogen multiple unit,290,61
+238,238.png,8.png,33,2026,Stadler FLIRT H2,Hydrogen multiple unit,281,61
+239,239.png,8.png,34,2026,Hitachi Battery Regional Train,Battery electric multiple unit,287,52
+240,240.png,8.png,35,2026,CRRC Autonomous Metro Train,Electric multiple unit,272,53
+241,241.png,9.png,1,2026,JR Central L0 Series SCMaglev,Maglev train,310,78
+242,242.png,9.png,2,2026,TGV M / Avelia Horizon Production,Electric high-speed train,293,73
+243,243.png,9.png,3,2026,Talgo Avril S106 Production,Electric high-speed train,280,77
+244,244.png,9.png,4,2026,Amtrak Avelia Liberty,Electric high-speed train,277,74
+245,245.png,9.png,5,2026,DB ICE 3neo,Electric high-speed train,285,74
+246,246.png,9.png,6,2026,Stadler FLIRT Akku Production,Battery electric multiple unit,305,70
+247,247.png,9.png,7,2026,Siemens Mireo Plus B Production,Battery electric multiple unit,277,79
+248,248.png,9.png,8,2026,Alstom Coradia Max,Electric multiple unit,283,75
+249,249.png,9.png,9,2026,CRRC Fuxing Intelligent EMU,Electric high-speed train,279,79
+250,250.png,9.png,10,2026,Next-Generation Autonomous High-Speed Train,Electric high-speed train concept,287,69
+251,251.png,11.png,1,1896,C12,2-6-0T steam locomotive,232,104
+252,252.png,11.png,2,1902,B25,0-4-2RT rack steam locomotive,214,106
+253,253.png,11.png,3,1902,B51,4-4-0 steam locomotive,224,92
+254,254.png,11.png,4,1921,D14 / D1410,2-8-2T steam locomotive,233,92
+255,255.png,11.png,5,1952,D52,2-8-2 steam locomotive,225,89
+256,256.png,11.png,6,1966,E10 / Mak Itam E1060,0-10-0RT rack steam locomotive,253,92
+257,257.png,11.png,7,1953,CC200,GE-ALCO UM106T diesel-electric locomotive,221,91
+258,258.png,11.png,8,1954,D301,Diesel-hydraulic locomotive,219,84
+259,259.png,11.png,9,1977,CC201,GE U18C diesel-electric locomotive,236,88
+260,260.png,11.png,10,1978,BB203,GE U18A1A diesel-electric locomotive,259,88
+261,261.png,11.png,11,1982,BB204,SLM HGm4/6 diesel-hydraulic locomotive,213,84
+262,262.png,11.png,12,1986,CC202,EMD G26MC-2U diesel-electric locomotive,255,86
+263,263.png,11.png,13,1995,CC203,GE U20C diesel-electric locomotive,243,72
+264,264.png,11.png,14,2003,CC204,GE C18MMi / C20EMP diesel-electric locomotive,241,73
+265,265.png,11.png,15,2011,CC205,EMD GT38ACe diesel-electric locomotive,246,72
+266,266.png,11.png,16,2013,CC206,GE CM20EMP diesel-electric locomotive,251,72
+267,267.png,11.png,17,1976,KRL Rheostatic / ex-JNR 103 Lineage,Electric multiple unit,239,72
+268,268.png,11.png,18,1986,KRL BN-Holec,Electric multiple unit,251,73
+269,269.png,11.png,19,1998,KRL Seri 6000,Electric multiple unit,247,80
+270,270.png,11.png,20,2010,KRL Seri 7000 / 05 Lineage,Electric multiple unit,249,80
+271,271.png,11.png,21,2013,KRL Seri 205,Electric multiple unit,248,80
+272,272.png,11.png,22,2018,EA203 Railink Airport Train,Electric multiple unit,250,91
+273,273.png,11.png,23,2021,KRDE ME204 / KRD New Generation,Diesel multiple unit,246,79
+274,274.png,11.png,24,2023,LRT Jabodebek TS-01,Electric multiple unit,245,80
+275,275.png,11.png,25,2023,KCIC400AF Whoosh,Electric high-speed train,240,76

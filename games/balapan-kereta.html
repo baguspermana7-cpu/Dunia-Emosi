@@ -217,9 +217,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.88</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.89</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
+<script src="data/train-world.js?v=55.89"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
 <script src="train-vfx.js?v=54.56-20260625bi"></script>
 <script src="train-bg-engine.js?v=54.67-20260626bt"></script>
 <script src="data/bg-themes.js?v=54.64-20260626bq"></script>
@@ -791,6 +792,18 @@ const TRAIN_CATS = [
     ]
   },
 ]
+
+// v55.89 — REPLACE the old procedural world rosters with the 275 real-sprite WORLD trains
+// (owner: swap all in-game trains for the new sprites; KEEP only the Casey-dkk + Thomas-AEG
+// packages). Mutate the const array in place: keep the two character packages, then append the
+// 7 categorized world packages (built by tools/build-train-world.py → data/train-world.js).
+;(function () {
+  if (window.TRAIN_WORLD && Array.isArray(window.TRAIN_WORLD.categories)) {
+    const keep = TRAIN_CATS.filter(c => c.key === 'characters' || c.key === 'thomas_aeg')
+    TRAIN_CATS.length = 0
+    TRAIN_CATS.push.apply(TRAIN_CATS, keep.concat(window.TRAIN_WORLD.categories))
+  }
+})()
 
 // v55.61 B-239 — FACING SOURCE OF TRUTH (g14 only).
 // The inline TRAIN_CATS above carries no `faces` field, so the player + AI

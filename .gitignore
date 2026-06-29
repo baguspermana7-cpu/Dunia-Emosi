@@ -21,3 +21,9 @@ tools/qa-out/
 # A-312 inpainting — heavy intermediates (served WebP tiers ARE tracked)
 assets/train/bg-clean/
 tools/models/
+
+# v55.89 — heavy owner-provided WORLD train source (served outlined WebP in assets/train/world ARE tracked)
+assets/train/train char world/index/*.png
+assets/train/train char world/index/*.jpg
+assets/train/extract_train_char_world_crops.py
+assets/train/__pycache__/
