@@ -4,6 +4,14 @@
 
 ---
 
+## 2026-06-29 — v55.94/95 g15+g16 world roster + g14 diorama
+
+### L224 — A delegated agent can die mid-task; recover by VERIFYING the working tree, not assuming
+- A fork migrating g15+g16 + deleting 496 assets hit a rate-limit and ended with an error, not a summary — migration done + deletions staged but uncommitted, tangled with my WIP. Recovery: inspect git status/diff, grep every deleted path for live refs, run app-sweep + boot the games, then commit the verified subset separately. Lesson: a background agent's result may be an error; treat the working tree as truth, verify risky changes (esp. deletions) before committing, scope the commit so unrelated WIP isn't swept in, and don't edit the same files while a fork runs in your tree.
+
+### L225 — For cut-out 2D sprites, a CONTACT SHADOW is the cheapest, highest-impact grounding
+- Real-photo trains + emoji obstacles looked pasted/floating. Fix = a soft dark oval at each object's base (lowest child) + a consistent thin white sticker outline on every moving object + far-lane haze tint → pop-up/diorama that sits on the board. All tint/alpha/ellipse — zero geometry change, so it can't disturb tuned positioning. Reach for grounding+outline before color-grading or re-cutting art.
+
 ## 2026-06-28 — v55.88 g14 size to the rail the USER points at
 
 ### L220 — Size to the RENDERED reference the user names, not an internal constant that's loosely related
