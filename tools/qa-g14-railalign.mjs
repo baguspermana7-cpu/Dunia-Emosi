@@ -22,23 +22,37 @@ for (const [w,h,tag] of VPS) {
   for (const ln of [0,2,1]) {
     await page.evaluate((target)=>{ S.targetLane=target; }, ln)
     await sleep(700)
-    const d = await page.evaluate(()=>Math.abs(L.player.y - laneYs[S.targetLane]))
+    // v55.88 — the train base sits ON the rail line (laneY); g14WheelMargin()==0. Zero-tolerance
+    // is measured against laneY − margin (the intended wheel position).
+    const d = await page.evaluate(()=>Math.abs(L.player.y - (laneYs[S.targetLane] - (typeof g14WheelMargin==='function'?g14WheelMargin():0))))
     laneDevs.push(Math.round(d*100)/100)
   }
-  // sizing + AI exactness + float
+  // sizing + AI exactness + float + ABSOLUTE prominence (v55.86 — catches portrait shrink)
   const info = await page.evaluate(()=>{
     const charH = (L.playerCharImg ? L.playerCharImg.height : 0)
-    const ai1 = (L.ai&&L.ai.children)?L.ai.children.map(a=>({y:a.y, lane:a._aiLane})):[]
+    const H = app.screen.height
+    const pb = (typeof g14PlayBand==='function') ? g14PlayBand() : null
+    const bandH = pb ? (pb.bandBot - pb.bandTop) : H
+    const mg = (typeof g14WheelMargin==='function')?g14WheelMargin():0
+    const ai1 = (L.ai&&L.ai.children)?L.ai.children.map(a=>a.y):[]
+    // v55.87 — an AI may have SWITCHED lanes since build, so assert it sits EXACTLY on its
+    // CURRENT (nearest) lane − margin, not its stale build lane.
+    const nearDev = y => Math.min(...laneYs.map(ly => Math.abs(y - (ly - mg))))
     return { charRatio: laneH?charH/laneH:0, laneH:Math.round(laneH), nAI:ai1.length,
-      aiDev: ai1.map(a=> a.lane!=null ? Math.round(Math.abs(a.y-laneYs[a.lane])*100)/100 : null) }
+      charH:Math.round(charH), screenFrac: H?charH/H:0, bandFrac: bandH?charH/bandH:0,
+      aiDev: ai1.map(y=> Math.round(nearDev(y)*100)/100) }
   })
   await sleep(300)
   const aiFloat = await page.evaluate((prev)=>{ const now=(L.ai&&L.ai.children)?L.ai.children.map(a=>a.y):[]; return JSON.stringify(now)!==JSON.stringify(prev) }, await page.evaluate(()=>(L.ai&&L.ai.children)?L.ai.children.map(a=>a.y):[]))
   await page.screenshot({path:`${OUT}/railalign-${tag}.png`})
   const maxLaneDev = Math.max(...laneDevs, 0)
   const maxAiDev = Math.max(0, ...info.aiDev.filter(x=>x!=null))
-  const ok = maxLaneDev<=1 && maxAiDev<=1 && !aiFloat && info.charRatio>=1.25 && info.charRatio<=1.7 && errs.filter(e=>!IGNORE.test(e)).length===0
-  rows.push({vp:`${w}x${h}`, laneDevs, maxLaneDev, aiDev:info.aiDev, maxAiDev, aiFloat, charRatio:Math.round(info.charRatio*100)/100, errors:errs.filter(e=>!IGNORE.test(e)).length, ok})
+  // PROMINENCE: train must be ≥12% of the screen height (catches portrait lane-collapse)
+  // AND a sane ceiling so it never balloons; ratio-to-lane stays ~1.45.
+  const prominent = info.screenFrac>=0.06 && info.screenFrac<=0.30
+  // v55.88 — train == 1.1× rail unit (0.70×laneH) ⇒ ≈0.77×laneH. base ON the rail (margin 0).
+  const ok = maxLaneDev<=1 && maxAiDev<=1 && !aiFloat && info.charRatio>=0.66 && info.charRatio<=0.90 && prominent && errs.filter(e=>!IGNORE.test(e)).length===0
+  rows.push({vp:`${w}x${h}`, laneDevs, maxLaneDev, aiDev:info.aiDev, maxAiDev, aiFloat, charRatio:Math.round(info.charRatio*100)/100, charH:info.charH, screenFrac:Math.round(info.screenFrac*1000)/1000, bandFrac:Math.round(info.bandFrac*1000)/1000, prominent, errors:errs.filter(e=>!IGNORE.test(e)).length, ok})
   await page.close()
 }
 await browser.close()

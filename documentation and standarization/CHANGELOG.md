@@ -1,5 +1,75 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-28 — v55.88 "g14 train sized to the RAIL band (1.1×), base on the rail line + BOOST no longer covered by selfie FAB"
+
+Owner (screenshot): the train was ~2× the rail — "keretanya itu dibuat 1.1x dari tinggi rail, dan batas roda bawah/base
+gambar file itu pas di rail sisi bawah… itu mah 2x dari rail. spawn object aja bisa pas di rail." + "tombol boost itu
+kadang tertutup tombol selfie ke mama".
+- **ROOT CAUSE (size)**: the loco was sized `1.15×laneH`, but `laneH` (the lane SPACING after the v55.86 scene-fit) is
+  ~1.5× the painted RAIL band — so the train read ~1.7× the rail (owner: 2×). The owner's unit is the painted rail band,
+  which the obstacle already fits.
+- **FIX (size)**: new `g14RailUnit() = 0.70×laneH` (one painted rail band ≈ the obstacle). `OBS_SIZE = railUnit`;
+  **`G14_UNIFORM_H = 1.1×railUnit`** (owner spec). Player == every NPC (v55.87 engine). Portrait loco 261→175px =
+  exactly 1.1× the obstacle (probe-measured 1.10×). Identical at init + resize; `g14FitProceduralToRail` propagates it.
+- **FIX (base on rail)**: `g14WheelMargin()` → 0 — the train's image BASE (wheels) sits dead-on the lane's rail line
+  (laneY), like the obstacle's footing (was a 10% lift in v55.87). Probe: base-on-rail Δ≤1px, all lanes/viewports.
+- **FIX (BOOST overlap)**: the result-screen photo FAB (`.g14-share-fab` "📸 Tunjukkan Mama", bottom-center z-9999) was
+  only hidden on the select screen, so after "Main lagi" it lingered over BOOST. Now `g14HideShareButton()` is called at
+  the top of `startRace()` → never covers BOOST in live play. (On the result modal it's unchanged; BOOST is behind the
+  modal there anyway.)
+- **Probes updated**: `qa-g14-dimensions.mjs` now asserts `train ≈ 1.1× OBS_SIZE` (the rail unit) + base-on-rail
+  (margin 0); `qa-g14-railalign.mjs` ratio range + margin made v55.88-aware. Both green @ portrait/landscape/phone.
+  parallax + g15 + g14-side + 16-page app-sweep green. sw → v55.88-20260628a.
+- Kept v55.86 scene fit, v55.87 uniform engine, PROTECTED chars, g15/g14-side untouched.
+
+## 2026-06-28 — v55.87 "g14 player == NPC uniform size + on-rail margin + a REAL evaluating probe"
+
+Owner (angry, portrait): "dimensinya masih sama aja. Kebesaran dan npc nya kekecilan. Dan nggak berada ditengah lane
+rail" + "puppeteer itu ada feedback dan bisa evaluasi". MEASURED LIVE: player Thomas = 329px, NPCs = 58px (5.6× off).
+- **ROOT CAUSE**: `NPC_TRAINS` excludes PROTECTED/AEG chars (B-221) → every NPC is a PROCEDURAL `drawTrainG` drawing
+  added at its raw ~58px native size and **never scaled**; only the player's character sprite was scaled to
+  `G14_UNIFORM_H`. The probes never caught it (`qa-g14-dimensions` reported `aiH:[]` — it never measured an NPC).
+- **FIX — uniform size**: new `g14FitProceduralToRail(g, targetH, faceSign)` scales every procedural NPC so its rendered
+  height == `G14_UNIFORM_H` (wheels at the local origin). Character-NPC path keeps the same target (dropped the dead
+  `*0.85`). `g14SpriteDepth` → 1.0 so the faint ±4% lane-depth can't break strict equality. Result (probe-measured):
+  player == every NPC, size-spread 0px, all viewports.
+- **FIX — moderate size**: `G14_UNIFORM_H = laneH × 1.15` (was 1.45 — owner "kebesaran"). Player drops ~20%, NPC rises
+  to match.
+- **FIX — on-rail margin**: owner "roda pas di garis rail + margin kecil 10%". `g14WheelMargin() = 10%·laneH`; the
+  player container (`_wheelOffset`), every NPC container, the per-frame `tickAI` Y, and both resize handlers now seat the
+  wheels at `laneY − margin`. Intent bubbles lifted above the now-taller train.
+- **THE EVALUATING PROBE (M-302, owner mandate)**: `tools/qa-g14-dimensions.mjs` rewritten — it boots a race, WAITS for
+  NPCs to load, MEASURES the rendered bounds of the player AND every NPC (the train node, not a code constant / not the
+  container), and FAILS on size-mismatch or off-rail, printing a per-train PASS/FAIL table + an ANNOTATED screenshot
+  (lane lines + heights) to `tools/qa-out/`. `qa-g14-railalign.mjs` made margin-aware + nearest-lane (an AI may switch
+  lanes) + the new uniform ratio. Both green: player==NPC, ≤1px on-rail, 0 errors @ portrait/landscape/phone.
+- Kept v55.86 rail-anchored scene fit, v55.84 wheel anchors, PROTECTED chars, g15 / balapan-kereta-side untouched.
+  parallax + g15 + g14-side + 16-page app-sweep all green. sw → v55.87-20260628a.
+
+## 2026-06-28 — v55.86 "g14 rail-anchored backdrop fit — prominent + on-rail train on portrait"
+
+Owner (portrait-tablet screenshot): "Masih parah ini dimensi size characternya" — the train was STILL tiny on a tall
+portrait screen; then "positioningnya membingungkan tidak tepat di rail lane" — the layout was confusing / not on the
+rail. Root cause: a plain cover-fit let the painted rail bed compress into a thin strip on portrait → the 3 lanes (and
+the train) collapsed to ~0.09·H. A naive "zoom the rail bed to fill the screen" over-corrected into a disorienting
+"wall of rails" with no scene context.
+- **RAIL-ANCHORED fit (single source of truth)**: `TrainBackdrop.fit(app, aspect, railOpts)` (games/train-backdrop.js)
+  now optionally zooms + positions the plate so a SCENE region (just above the horizon → foreground, from the
+  manifest's `horizon`/`foreTop` markers) fills the play band on EVERY orientation. `g14BackdropFit()` delegates to it,
+  and the parallax mount receives the same `railFit`, so the lanes and the depth bands stay locked together (no desync).
+  g15 / balapan-kereta-side do NOT pass `railFit` → unchanged plain cover-fit.
+- **Result**: portrait train prominence ~0.09·H → **~0.24·H** (landscape ~0.19·H), skyline + fields stay visible as
+  context up top, the 3 rail lanes group clearly in the lower band riding the painted rails. Fully dynamic (re-zooms on
+  resize/rotate). Coverage is clamped so top/bottom never gap.
+- **Loose width clamp** `g14TrainScale()` 0.62→0.86·W so a narrow phone can still reach the uniform target height (the
+  loco was width-bound on a 390px screen); the owner's wide tablet was already unclamped (every train = `G14_UNIFORM_H`).
+- **Obstacle rebalance** `OBS_SIZE` laneH·0.85 → **0.70** so the loco clearly dominates the hazards.
+- Kept v55.84 zero-tolerance wheel anchors + v55.85 height-locked uniform sizing + the parallax-3D depth gradient.
+- **Verify**: `tools/qa-g14-railalign.mjs` extended with an absolute screen-fraction PROMINENCE gate (0.12–0.42·H) —
+  player(all lanes)+NPC ≤1px, train prominent, 0 errors across portrait 1024×1366 + landscape 1280×720/1024×768 + phone
+  390×800. `qa-g14-dimensions` (uniform), `verify-v5576-parallax`, `qa-g15-backdrop`, `qa-g14-side-backdrop`,
+  `qa-app-sweep` (16 pages) all green. sw → v55.86-20260628a.
+
 ## 2026-06-28 — v55.85 "g14 uniform/precise train dimensions + enhanced parallax-3D"
 
 Owner (screenshot): NPC train too small, dimensions still not the same — must be precise + proportional + dynamic;

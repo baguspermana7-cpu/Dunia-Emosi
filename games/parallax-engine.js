@@ -47,6 +47,7 @@
       maxBlur:       opts.maxBlur       != null ? opts.maxBlur       : 4.0,  // px blur at the extremes
       hazeColor:     opts.hazeColor     || '#bcd2e8',
       hazeMax:       opts.hazeMax       != null ? opts.hazeMax       : 0.5,  // far-layer haze alpha
+      chromaMax:     opts.chromaMax     != null ? opts.chromaMax     : 0,    // px of R/B channel split at the far extreme (0 = off). Refraction/underwater cue.
       scaleSpread:   opts.scaleSpread   != null ? opts.scaleSpread   : 0.5,  // near grows up to +50%
       autoScroll:    opts.autoScroll    != null ? opts.autoScroll    : 0,    // world px/sec at depth 1 (0 = off)
       ease:          opts.ease          != null ? opts.ease          : 9,    // damping lambda (higher = snappier)

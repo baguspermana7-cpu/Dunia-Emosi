@@ -217,7 +217,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.85</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.88</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="train-vfx.js?v=54.56-20260625bi"></script>
@@ -877,8 +877,12 @@ function g14TrainScale(tex) {
   // the whole screen. Aspect preserved (uniform scalar on both axes).
   const tgtH = (typeof G14_UNIFORM_H !== 'undefined' && G14_UNIFORM_H) ? G14_UNIFORM_H : H * 0.14
   let s = tgtH / tex.height
-  const maxW = W * 0.62
-  if (s * tex.width > maxW) s = maxW / tex.width   // safety: only a very long train clamps
+  // v55.86 — LOOSE width clamp (0.86×W). On a WIDE tablet (the owner's device) a normal
+  // loco never clamps → every train holds EXACTLY G14_UNIFORM_H (uniform). The clamp only
+  // bites on a NARROW phone or a freakishly long articulated train so it can't span the
+  // whole screen. Was 0.62×W — too tight on portrait phones (train couldn't reach height).
+  const maxW = W * 0.86
+  if (s * tex.width > maxW) s = maxW / tex.width
   return s
 }
 // v55.84 — ZERO-TOLERANCE wheel anchor. Each loco sprite's wheels sit at a DIFFERENT
@@ -893,6 +897,34 @@ function g14WheelAnchor(spriteUrl) {
   } catch (_) {}
   return 0.99   // fallback: wheels at the sprite bottom (measured mean)
 }
+// v55.88 — owner: "batas roda bawah/base gambar file itu pas di rail sisi bawah". The train's
+// image BASE (wheels) sits EXACTLY on the lane's rail line (laneY) — no lift. (Was a 10%
+// margin in v55.87; owner now wants the base dead-on the rail, like the obstacle's footing.)
+function g14WheelMargin() {
+  return 0
+}
+// v55.88 — ONE painted RAIL band ≈ 0.70×laneH: the unit the obstacle already fits the rail
+// with (owner's "tinggi rail"). The train is sized 1.1× THIS, NOT 1.1×laneH — laneH is the
+// (wider) lane SPACING, which made the loco ~1.7× the rail ("2x dari rail").
+function g14RailUnit() {
+  const lh = (typeof laneH !== 'undefined' && laneH) ? laneH : 60
+  return Math.round(lh * 0.70)
+}
+// v55.87 — scale a PROCEDURAL train (PIXI.Graphics from drawTrainG) so its rendered height ==
+// targetH (== G14_UNIFORM_H, the SAME as the player), then offset it so its drawn BOTTOM
+// (wheels) sits at the local origin = the rail line. This is the fix for "npc kekecilan":
+// NPCs were left at drawTrainG's raw ~58px while the player sprite was 329px. Aspect
+// preserved (uniform scalar). faceSign preserved for any mirrored procedural art.
+function g14FitProceduralToRail(g, targetH, faceSign) {
+  if (!g || g.destroyed) return
+  let lb
+  try { lb = g.getLocalBounds() } catch (_) { return }
+  if (!lb || lb.height <= 1) return
+  const k = targetH / lb.height
+  g.scale.set(k)
+  if (faceSign === -1) g.scale.x = -k
+  g.y = -(lb.y + lb.height) * k          // drawing bottom (wheels) → local 0 (the rail)
+}
 // v55.69 B-278 — PSEUDO-3D DEPTH CUES (OutRun-style). The 3 lanes read as a
 // receding road: the TOP lane (index 0) is FAR, the BOTTOM lane (LANE_COUNT-1)
 // is NEAR. g14LaneDepth returns a per-lane factor used to TAPER the rendered
@@ -904,11 +936,12 @@ function g14LaneDepth(ln) {
   return 0.78 + (ln / n) * 0.44            // far lane ~0.78 → near lane ~1.22 (rail/sleeper taper)
 }
 function g14SpriteDepth(ln) {
-  const n = LANE_COUNT > 1 ? LANE_COUNT - 1 : 1
-  // v55.85 — SOFTENED (was 0.92→1.08) so trains read as the SAME size across lanes
-  // ("dimensinya sama"); only a faint depth hint. The road-perspective 3-D comes from
-  // g14LaneDepth (rail/sleeper taper) + the parallax bands, not from resizing the trains.
-  return 0.96 + (ln / n) * 0.08            // far ~0.96× → near ~1.04× (near-uniform)
+  // v55.87 — UNIFORM: owner "dimensinya harus SAMA" (player kebesaran, NPC kekecilan was the
+  // real bug, but even the faint ±4% lane-depth broke strict equality). Return 1.0 so EVERY
+  // train (player + NPC, all lanes) renders at EXACTLY G14_UNIFORM_H. The road-perspective
+  // 3-D still comes from g14LaneDepth (rail/sleeper taper) + the parallax depth bands.
+  void ln
+  return 1.0
 }
 // Apply a train sprite's base scale × its lane depth, preserving the facing
 // mirror (img.scale.x sign). Call on build + whenever the train changes lane.
@@ -1129,13 +1162,44 @@ async function g14AddCityBand(container, W, horizonY, railY, bandH) {
 //  rides the painted rails. Guarded — no backdrop ⇒ procedural journey unchanged.
 // ═══════════════════════════════════════════════════════════════════════════
 function g14HasBackdrop() { return !!(G14_MANIFEST && G14_MANIFEST.mode === 'raster' && G14_MANIFEST.backdrop) }
-// Cover-fit transform from the manifest ASPECT alone (no image needed) so lane
-// geometry can be computed synchronously before gameplay objects are built.
+// v55.86 — the plate SCENE region anchored into the play band. NOT the bare rail bed
+// (that zoomed so hard it became a disorienting "wall of rails" with the lanes lost among
+// identical tracks). Instead anchor from just ABOVE the horizon (so the skyline + fields
+// stay visible as context) DOWN to the foreground → the 3 rail lanes group clearly in the
+// lower band riding the painted rails, the train is prominent (~0.2-0.25·H), and the scene
+// reads correctly. Uses the manifest's horizon/foreTop markers (per-plate), with fallbacks.
+function g14RailFracs() {
+  const m = G14_MANIFEST || {}
+  const lr = (m.laneRatios && m.laneRatios.lanes) || [0.62, 0.74, 0.86]
+  const horizon = (m.laneRatios && typeof m.laneRatios.horizon === 'number') ? m.laneRatios.horizon : (lr[0] - 0.16)
+  const foreTop = (m.laneRatios && typeof m.laneRatios.foreTop === 'number') ? m.laneRatios.foreTop : (lr[lr.length - 1] + 0.06)
+  // a touch of scene above the horizon (context) → foreground bottom. Clamped so the top
+  // lane always stays inside the anchored region and the bottom rail reaches the band base.
+  const railTopFrac = Math.max(0.02, Math.min(horizon - 0.12, lr[0] - 0.10))
+  const railBotFrac = Math.min(0.99, Math.max(foreTop, lr[lr.length - 1] + 0.05))
+  return { railTopFrac, railBotFrac }
+}
+// Rail-anchor config consumed by TrainBackdrop.fit (single source of truth for the fit
+// math). playBand returns the live band so a resize/rotate re-zooms automatically.
+function g14RailFit() {
+  const fr = g14RailFracs()
+  return {
+    playBand: () => { const b = g14PlayBand(); return { bandTop: b.bandTop, bandBot: b.bandBot } },
+    railTopFrac: fr.railTopFrac, railBotFrac: fr.railBotFrac,
+  }
+}
+// RAIL-ANCHORED cover-fit (v55.86): delegates to the shared engine so the lanes (here) and
+// the parallax bands (TrainBackdrop.mount) use IDENTICAL math → zero desync. The plate is
+// zoomed so its painted rail bed fills the play band → prominent, proportional, on-rail
+// train + lanes on portrait AND landscape. Falls back to plain cover-fit if the engine is
+// unavailable. (No image needed — lane geometry is computed synchronously from aspect.)
 function g14BackdropFit() {
   const W = app.screen.width, H = app.screen.height
   const asp = (G14_MANIFEST && G14_MANIFEST.backdrop && G14_MANIFEST.backdrop.aspect) || (16 / 9)
-  const scaledH = Math.max(H, W / asp)
-  const scaledW = scaledH * asp
+  if (window.TrainBackdrop && typeof TrainBackdrop.fit === 'function') {
+    return TrainBackdrop.fit(app, asp, g14RailFit())
+  }
+  const scaledH = Math.max(H, W / asp), scaledW = scaledH * asp
   return { W, H, scaledW, scaledH, leftX: (W - scaledW) / 2, topY: (H - scaledH) / 2, asp }
 }
 // v55.8x A-312 — PLAY BAND. The owner's "kereta proper, on the rails, never under the
@@ -1149,11 +1213,13 @@ function g14PlayBand() {
   const ch = ctrl ? Math.round(ctrl.getBoundingClientRect().height) : 0
   const ctrlH = ch > 24 ? ch : Math.round(Math.min(H * 0.20, 150))   // fallback if not laid out yet
   const topHud = Math.round(Math.max(54, Math.min(H * 0.12, 104)))
-  const fit = g14BackdropFit()
-  // the loco hangs ~0.2×charH below the wheel line (sprite anchor 0.86 + ground glow);
-  // reserve it so the BOTTOM lane's train always clears the control bar.
-  const tail = Math.round(0.035 * fit.scaledH + 12)
-  return { W, H, fit, ctrlH, bandTop: topHud, bandBot: H - ctrlH - tail }
+  // tail = small reserve so the BOTTOM lane's loco (hangs ~0.2×charH below the wheel line)
+  // always clears the control bar. Uses a PLAIN cover-fit scaledH — must NOT call
+  // g14BackdropFit() here (it is rail-anchored FROM this band → infinite recursion).
+  const asp = (G14_MANIFEST && G14_MANIFEST.backdrop && G14_MANIFEST.backdrop.aspect) || (16 / 9)
+  const plainScaledH = Math.max(H, W / asp)
+  const tail = Math.round(0.035 * plainScaledH + 12)
+  return { W, H, ctrlH, bandTop: topHud, bandBot: H - ctrlH - tail }
 }
 // Place 3 lanes on the plate's painted rail bed (top lane anchored to the painted top
 // rail lr[0]), then HARD-CLAMP the bottom lane to the band so it + its train never dip
@@ -1161,7 +1227,7 @@ function g14PlayBand() {
 // laneH, railTop. When the plate fits (tall screens) the lanes land EXACTLY on the
 // painted rails; on wide/short screens they compress upward off the lowest rail.
 function g14BackdropLanes() {
-  const b = g14PlayBand(), fit = b.fit
+  const b = g14PlayBand(), fit = g14BackdropFit()   // rail-anchored fit (v55.86)
   const lr = (G14_MANIFEST && G14_MANIFEST.laneRatios && G14_MANIFEST.laneRatios.lanes) || [0.62, 0.74, 0.86]
   const railTopY = fit.topY + lr[0] * fit.scaledH                 // painted top rail
   const railBotY = fit.topY + lr[lr.length - 1] * fit.scaledH     // painted bottom rail
@@ -1189,7 +1255,7 @@ async function g14AddBackdrop() {
     // (near fast, horizon slow) so the scene reads as MOVING. Same engine is reused by
     // lokomotif-pemberani + balapan-kereta-side. tickMid/resize/startRace drive the handle.
     if (m.clean && Array.isArray(m.bands) && m.bands.length && window.TrainBackdrop) {
-      const handle = await TrainBackdrop.mount(stage, app, m, { assetBase: '../', insertIndex: 0 })
+      const handle = await TrainBackdrop.mount(stage, app, m, { assetBase: '../', insertIndex: 0, railFit: g14RailFit() })
       if (handle) {
         L._bdHandle = handle
         L._pBands = handle.bands   // kept for any legacy reads
@@ -1423,10 +1489,11 @@ async function initPixi() {
     // sprite. Procedural sky/hills/rail VISUALS are skipped (the painting has them).
     const L0 = g14BackdropLanes()
     laneYs = L0.laneYs; laneH = L0.laneH; railTop = L0.railTop
-    // v55.8x A-312 — ONE laneH-based rule: loco ≈1.45× laneH (prominent, fills its lane),
-    // obstacle ≈0.85× laneH (proportional). Computed identically in the resize handler.
-    G14_UNIFORM_H = Math.round(laneH * 1.45)
-    OBS_SIZE = Math.round(Math.max(40, laneH * 0.85))
+    // v55.88 A-312 — size to the RAIL UNIT (one painted rail band), NOT the wider lane spacing.
+    // obstacle == rail unit (fits the rail); loco == 1.1× rail unit (owner spec). Player == NPC.
+    const _ru = g14RailUnit()
+    OBS_SIZE = Math.max(38, _ru)
+    G14_UNIFORM_H = Math.round(_ru * 1.1)
     await g14AddBackdrop()
   } else {
     buildSky()
@@ -2999,7 +3066,9 @@ function buildPlayer() {
   // ~34px below the rail on tall lanes → train "floats off the rail." Container now
   // sits AT lane center; the character sprite's 0.86 wheel-band anchor + procedural
   // wheels (local +19) both land on the bottom rail (lane center +18).
-  const wheelOffset = 0
+  // v55.87 — owner: wheels on the rail + a 10% margin of laneH (sits ON the rail, not jammed
+  // at the very bottom). Applied via _wheelOffset so tickPlayer's lane-snap honours it too.
+  const wheelOffset = -g14WheelMargin()
   c.y = laneYs[S.lane] + wheelOffset
   c._wheelOffset = wheelOffset
 
@@ -3228,23 +3297,23 @@ function buildAI() {
     // safety placeholder (in case sprite fails to load); sprite covers it.
     drawTrainG(spr, cfg.bodyColor || '#374151', cfg.accColor || '#9ca3af', cfg.category)
     if (!cfg.isCharacter && typeof g14PolishOverlay === 'function') g14PolishOverlay(spr)
+    // v55.87 ROOT FIX — the procedural NPC was added at drawTrainG's raw ~58px while the
+    // player sprite was ~329px ("npc kekecilan"). Scale it to the SAME G14_UNIFORM_H, wheels
+    // on the rail line (local origin). This is what makes player == NPC.
+    g14FitProceduralToRail(spr, G14_UNIFORM_H, (cfg.faces === 'left') ? -1 : 1)
     c.addChild(spr)
 
     // v55.2 — AI character sprite via PIXI.Assets.load (mirrors player path).
     // Replaces v54.87 PIXI.Sprite.from which silently failed. Closes B-201 AI side.
     if (cfg.isCharacter && cfg.spriteUrl) {
-      // v55.45 B-232 — uniform height (AI slightly smaller than player). B-230 —
-      // wheel-band anchor so AI wheels sit on the rail line too.
-      const targetH = G14_UNIFORM_H * 0.85
       PIXI.Assets.load(cfg.spriteUrl).then((tex) => {
         const img = new PIXI.Sprite(tex)
         img.anchor.set(0.5, g14WheelAnchor(cfg.spriteUrl))   // v55.84 — zero-tolerance: measured wheel baseline (NPC matches player)
-        // v55.38 B-223 — horizontal mirror, no rotation (see player above).
-        img.scale.set(g14TrainScale(tex))   // v55.85 — NPC = PLAYER size (dropped the 0.85×) so dimensions are UNIFORM
-        void targetH
-        const _faces = (cfg.faces) || 'right'
-        img._baseScale = g14TrainScale(tex)
-        img._faceSign = (_faces === 'left') ? -1 : 1
+        const _faceSign = (cfg.faces === 'left') ? -1 : 1
+        const _s = g14TrainScale(tex)                        // v55.87 — NPC == PLAYER height (G14_UNIFORM_H), uniform
+        img.scale.set(_s); img.scale.x = _s * _faceSign      // v55.38 B-223 — horizontal mirror, no rotation
+        img._baseScale = _s
+        img._faceSign = _faceSign
         c._charImg = img
         c.addChild(img)
         try { spr.clear() } catch(_){}
@@ -3260,7 +3329,20 @@ function buildAI() {
     c.addChild(glow)
 
     const aiLane = [0, 1, 2].filter(l => l !== S.lane)[i % 2]
-    c.y = laneYs[aiLane]
+    c.y = laneYs[aiLane] - g14WheelMargin()   // v55.87 — same 10% rail margin as the player
+    c._aiLane = aiLane; c._aiKey = cfg.key || cfg.name || ''
+    // v55.87 — re-fit on resize/rotate (called from the resize handler) so the NPC keeps the
+    // uniform height + rail margin at any viewport.
+    c._g14RefitRail = function () {
+      if (c._charImg && !c._charImg.destroyed && c._charImg.texture) {
+        const s = g14TrainScale(c._charImg.texture)
+        c._charImg.scale.set(s); c._charImg.scale.x = s * (c._charImg._faceSign || 1)
+      } else if (spr && !spr.destroyed) {
+        spr.scale.set(1); spr.y = 0
+        g14FitProceduralToRail(spr, G14_UNIFORM_H, (cfg.faces === 'left') ? -1 : 1)
+      }
+      c.y = laneYs[c._aiLane] - g14WheelMargin()
+    }
     // 2026-06-21 fairness pass — owner: "AI rubber-band + head start makes it
     // un-winnable". Equal starting grid (was: 0.55-0.70 head start at width).
     // Deterministic per-AI speed tier (was: 0.96 + Math.random() * 0.08).
@@ -3281,6 +3363,10 @@ function buildAI() {
     // tail
     bubble.poly([-3, -18, 0, -10, 3, -18]).fill({ color: 0xffffff, alpha: 0.92 })
     bubble.alpha = 0
+    // v55.87 — float the intent overlays ABOVE the now-taller uniform train (was drawn at
+    // ~-36, which is now inside the loco body). Lift the whole intent group by the train height.
+    const _ovLift = -(G14_UNIFORM_H - 18)
+    bubble.y = _ovLift
     c.addChild(bubble)
     // v54.17 A8: tiny tinted train silhouette (12×6 box + dot wheels) using cfg's bodyColor.
     const sil = new PIXI.Graphics()
@@ -3291,10 +3377,11 @@ function buildAI() {
     sil.circle(-22, -25, 1.4).fill({ color: 0x1f2937 })
     sil.circle(-16, -25, 1.4).fill({ color: 0x1f2937 })
     sil.alpha = 0
+    sil.y = _ovLift
     c.addChild(sil)
     const txt = new PIXI.Text({ text: '...', style: { fontFamily: 'Fredoka One, sans-serif', fontSize: 11, fill: 0x1f2937, align: 'center' } })
     txt.anchor.set(0.5)
-    txt.x = 5; txt.y = -27  // shifted +5 to make room for silhouette on the left
+    txt.x = 5; txt.y = -27 + _ovLift  // shifted +5 for silhouette; lifted above the train (v55.87)
     txt.alpha = 0
     c.addChild(txt)
     // v54.52: assign one of 3 personality archetypes per AI train. Persona drives
@@ -3432,8 +3519,9 @@ function tickAI(delta) {
     ai.container.x = screenX
     ai.container.visible = screenX > -80 && screenX < W + 80
     // v55.84 — ZERO-TOLERANCE: NPC sits EXACTLY on its lane (removed the ±0.5px sin float).
-    ai.container.y = laneYs[ai.lane]
-    // v55.69 B-278 — depth-scale the AI sprite to its lane (near=bigger, far=smaller).
+    // v55.87 — honour the same 10% rail margin as the player (was overriding it each frame).
+    ai.container.y = laneYs[ai.lane] - g14WheelMargin()
+    // v55.69 B-278 — depth-scale the AI sprite to its lane (depth == 1.0 since v55.87 → uniform).
     if (ai.container._charImg && laneH) {
       const _el = Math.max(0, Math.min(LANE_COUNT - 1, (ai.container.y - railTop - laneH / 2) / laneH))
       g14ApplyDepthScale(ai.container._charImg, _el)
@@ -4371,6 +4459,10 @@ function startRace() {
   if (!S.trainCfg) return
   document.getElementById('select-ovl').style.display = 'none'
   document.getElementById('go-btn').style.display = 'none'
+  // v55.88 — owner: BOOST "kadang tertutup tombol selfie ke mama". The result-screen photo FAB
+  // (bottom-center, z-9999) was only hidden on the select screen, so after "Main lagi" it
+  // lingered over the BOOST button. Always hide it when a race starts.
+  try { g14HideShareButton() } catch(_){}
 
   // v54.48: surface today's daily mission via Pak Stasiun mascot (once per day,
   // across all train games — keyed on today's date). Skips if mission already
@@ -4881,8 +4973,9 @@ window.addEventListener('resize', () => {
       // v55.8x A-312 — recompute the SAME play-band layout as initPixi (one source of truth).
       const L0 = g14BackdropLanes()
       laneYs = L0.laneYs; laneH = L0.laneH; railTop = L0.railTop
-      G14_UNIFORM_H = Math.round(laneH * 1.45)
-      OBS_SIZE = Math.round(Math.max(40, laneH * 0.85))
+      const _ru = g14RailUnit()                  // v55.88 — size to the rail unit, base on rail
+      OBS_SIZE = Math.max(38, _ru)
+      G14_UNIFORM_H = Math.round(_ru * 1.1)
       if (L._bdHandle) {
         L._bdHandle.refit()   // v55.77 — shared engine re-cover-fits its bands
       } else if (L._backdrop && !L._backdrop.destroyed) {
@@ -4890,12 +4983,16 @@ window.addEventListener('resize', () => {
         L._backdrop.width = fit.scaledW; L._backdrop.height = fit.scaledH
       }
       if (L.player) {
-        L.player._wheelOffset = 0; L.player.y = laneYs[S.lane]
+        L.player._wheelOffset = -g14WheelMargin(); L.player.y = laneYs[S.lane] + L.player._wheelOffset
         // v55.8x — re-fit the loco to the new laneH so it stays prominent + on-rail.
         if (L.playerCharImg && !L.playerCharImg.destroyed && L.playerCharImg.texture) {
           L.playerCharImg._baseScale = g14TrainScale(L.playerCharImg.texture)
           g14ApplyDepthScale(L.playerCharImg, S.lane)
+        } else if (playerSprite) {
+          g14FitProceduralToRail(playerSprite, G14_UNIFORM_H)   // v55.87 — procedural player matches NPC size
         }
+        // v55.87 — re-fit every NPC procedural/sprite to the new uniform height + rail margin.
+        if (L.ai && L.ai.children) { L.ai.children.forEach(c => { if (c && c._g14RefitRail) c._g14RefitRail() }) }
       }
       return
     }

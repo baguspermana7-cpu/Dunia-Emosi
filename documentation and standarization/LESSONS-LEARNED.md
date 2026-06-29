@@ -4,6 +4,45 @@
 
 ---
 
+## 2026-06-28 — v55.88 g14 size to the rail the USER points at
+
+### L220 — Size to the RENDERED reference the user names, not an internal constant that's loosely related
+- **Symptom**: owner kept saying the train was too big even after "uniform" + "1.15× lane" shipped. Their screenshot: train ~2× the rail; "spawn object aja bisa pas di rail ini gambar keretanya tidak bisa pas di rail."
+- **Root cause**: I sized the train to `laneH` (the game LANE spacing), assuming lane == rail. But the v55.86 scene-fit spreads the 3 lanes across the rail bed, so `laneH ≈ 1.5× the painted rail band`. `1.15×laneH` therefore rendered ~1.7× the actual painted rail. The owner's unit was the painted rail band — the exact thing the OBSTACLE already fits.
+- **Fix**: define the size unit as the rail band (`g14RailUnit = 0.70×laneH`, == the obstacle), set `train = 1.1×railUnit`, base (wheels) dead-on the rail line. The probe now asserts `train ≈ 1.1× OBS_SIZE` so the owner's reference ("a bit bigger than the obstacle that fits the rail") is encoded, not an abstract lane ratio.
+- **Lesson**: when a user describes a size relative to a thing they SEE ("1.1× the rail", "like the obstacle"), measure that thing and tie to it — don't substitute an internal constant (laneH) that you *believe* equals it. The substitution silently drifts when geometry (the scene-fit) changes the relationship. Anchor to the on-screen reference the user pointed at.
+
+### L221 — A result-screen FAB that isn't hidden on restart leaks into gameplay
+- **Symptom**: "tombol boost itu kadang tertutup tombol selfie ke mama" — the photo-share FAB covered BOOST mid-race.
+- **Root cause**: `.g14-share-fab` (bottom-center, z-9999) was shown at game-over and only hidden on the SELECT screen. The "Main lagi" path (`onAgain→startRace`) skipped the select screen, so the FAB lingered over the live BOOST button.
+- **Lesson**: any overlay shown on an end/result state must be explicitly cleared on EVERY path that returns to the active state — especially the "play again" shortcut that bypasses the menu. Hide-on-enter (`startRace`) is more robust than hide-on-one-exit-path.
+
+## 2026-06-28 — v55.87 g14 uniform player==NPC + an evaluating probe
+
+### L218 — A probe that doesn't measure what the USER SEES is worse than no probe — it manufactures false confidence
+- **Symptom**: shipped "✅ UNIFORM dimensions" while the screenshot plainly showed the player ~5.6× the NPC. Owner: "Tolol… dimensinya masih sama aja" + "puppeteer itu ada feedback dan bisa evaluasi".
+- **Root cause (two layers)**: (1) the BUG — `NPC_TRAINS` are procedural `drawTrainG` drawings (~58px native) that were never scaled, while the player char sprite was scaled to `G14_UNIFORM_H` (329px). (2) the PROBE LIE — `qa-g14-dimensions` measured a CODE CONSTANT (`G14_UNIFORM_H`) + the player's `charRatio`, and its NPC capture returned `[]`. It asserted on values that were correct in code while the RENDER was wrong. `getBounds()` of the player vs the NPC train node was never compared.
+- **Fix**: rewrote the probe to MEASURE the rendered bounds of the player AND every NPC train node (not the container — that includes the alpha-0 intent bubble), assert |maxH−minH| ≤ tol, assert each train's wheel-bottom on its nearest lane − margin, print a per-train PASS/FAIL table + an annotated screenshot. Then fixed the actual bug (`g14FitProceduralToRail` scales every procedural NPC to `G14_UNIFORM_H`).
+- **Lesson**: assert on the RENDERED OUTPUT the user sees (`getBounds`, pixels, a screenshot a human can read), never on a code constant that is "correct by construction". Measure EVERY actor of a class (player AND each NPC), not just the one you control. If a probe's measurement array is empty, that's a FAIL, not a pass. An ✅ that contradicts the screenshot is a probe bug — fix the probe first.
+
+### L219 — Two render paths for "the same thing" drift unless they share ONE sizing rule
+- **Symptom**: player and NPC are both "trains" but only the player obeyed `G14_UNIFORM_H`; the NPC procedural branch had no sizing at all.
+- **Lesson**: when an entity has multiple construction paths (character sprite vs procedural Graphics, live vs picker), route ALL of them through one sizing/positioning helper. A uniform-size invariant enforced in only one branch is not an invariant. (See also [L214] — fix EVERY render path.)
+
+## 2026-06-28 — v55.86 g14 rail-anchored backdrop fit
+
+### L216 — On a TALL screen, a wide cover-fit plate collapses the gameplay band — anchor the SCENE, not the screen
+- **Symptom**: owner (portrait tablet) "masih parah ini dimensi size characternya" — the train was tiny (~0.09·H) on portrait even though the per-sprite sizing math was correct; landscape looked fine.
+- **Root cause**: the 3 lanes were placed between the plate's painted top/bottom rail, but on PORTRAIT a plain cover-fit (`scaledH=max(H,W/asp)`) plus a hard clamp to the control bar squeezed the painted rail bed into a thin strip → `laneH≈0.065·H` → tiny train. The *lane spacing* collapsed, not the sprite scale. Landscape's small H kept the band roomy, hiding the bug.
+- **Fix**: RAIL-ANCHORED fit — zoom + position the plate so a SCENE region (just above the horizon → foreground, via the manifest `horizon`/`foreTop` markers) fills the play band on every orientation. Train prominence 0.09·H → ~0.24·H portrait.
+- **Lesson**: when gameplay geometry is derived from a background image, the *fit* of that image is a gameplay parameter, not just decoration. A cover-fit tuned on landscape silently compresses the playfield on portrait. Anchor the fit to the band you actually play in.
+
+### L217 — "Make it big" has a failure mode at BOTH ends: tiny AND a context-less wall
+- **Symptom**: the first rail-anchor (zoom the bare rail bed to fill the screen) fixed the size but produced "positioningnya membingungkan tidak tepat di rail lane" — a disorienting wall of near-identical rails, lanes lost among them, no scene to orient by.
+- **Root cause**: anchoring only the narrow rail bed (span ~0.36) maximised zoom → the skyline/fields were cropped entirely, leaving a repetitive ballast texture with no landmarks. A rail detector confirmed these painterly plates are *perspective* scenes (one dominant rail band, faint receding tracks) — there is no clean 3-rail grid to snap to.
+- **Fix**: widen the anchored region to include scene context above the horizon (span ~0.55) → skyline + fields stay visible up top, the 3 lanes group in the lower band, train still prominent (~0.2·H). Balance, not maximum.
+- **Lesson**: "prominent" is a band, not a maximum. Over-zoom destroys the spatial context players use to read position. Keep landmarks in frame; size the subject to ~0.2·H, not to fill. Don't chase pixel-exact lane-to-rail snapping on perspective art — frame the scene so the lanes read as on-rail.
+
 ## 2026-06-27 — v55.45 Train-game deep polish (B-229→B-235)
 
 ### L214 — A render fix often has TWO sites: the live view AND every preview/picker

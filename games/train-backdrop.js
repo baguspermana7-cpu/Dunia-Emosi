@@ -27,12 +27,34 @@
 
   // Cover-fit transform from the manifest ASPECT alone (no image needed) — scaledH ≥ H
   // so the plate always over-covers vertically (topY ≤ 0 = overscan the rail bob uses).
-  function fit(app, aspect) {
+  //
+  // v55.86 — OPTIONAL RAIL-ANCHORED fit (railOpts). On a TALL/portrait screen a plain
+  // cover-fit leaves the painted rail bed compressed into a thin strip (the 3 lanes +
+  // train collapse → tiny train). When railOpts is supplied the plate is instead zoomed
+  // + positioned so its PAINTED RAIL BED (fraction [railTopFrac..railBotFrac]) exactly
+  // fills the play band [bandTop..bandBot] → rails + lanes + train stay prominent and
+  // proportional on every orientation. Coverage is clamped so top+bottom never gap. When
+  // railOpts is absent (g15 / g14-side) the behaviour is the original plain cover-fit.
+  //   railOpts = { playBand:()=>({bandTop,bandBot}), railTopFrac, railBotFrac }
+  function fit(app, aspect, railOpts) {
     const W = app.screen.width, H = app.screen.height
     const asp = aspect || (16 / 9)
-    const scaledH = Math.max(H, W / asp)
+    let scaledH = Math.max(H, W / asp)
+    let topY = (H - scaledH) / 2
+    if (railOpts && typeof railOpts.playBand === 'function') {
+      const pb = railOpts.playBand()
+      const rTop = railOpts.railTopFrac, rBot = railOpts.railBotFrac
+      const span = rBot - rTop
+      if (span > 0.05 && pb && (pb.bandBot - pb.bandTop) > 40) {
+        const needH = (pb.bandBot - pb.bandTop) / span    // zoom until rail bed spans the band
+        scaledH = Math.max(scaledH, needH)
+        topY = pb.bandTop - rTop * scaledH                // map railTopFrac → bandTop
+        if (topY > 0) topY = 0                            // never gap at top (sky overscans)
+        if (topY + scaledH < H) scaledH = H - topY        // never gap at bottom (foreground overscans)
+      }
+    }
     const scaledW = scaledH * asp
-    return { W, H, scaledW, scaledH, leftX: (W - scaledW) / 2, topY: (H - scaledH) / 2, asp }
+    return { W, H, scaledW, scaledH, leftX: (W - scaledW) / 2, topY, asp }
   }
 
   function hasBackdrop(m) { return !!(m && m.mode === 'raster' && m.backdrop) }
@@ -65,7 +87,8 @@
       if (!hasBackdrop(m) || !window.PIXI || !PIXI.Assets) return null
       if (!(m.clean && Array.isArray(m.bands) && m.bands.length)) return null
       const aspect = (m.backdrop && m.backdrop.aspect) || (16 / 9)
-      const f = fit(app, aspect)
+      const railOpts = opts.railFit || null   // v55.86 — rail-anchored fit when supplied (g14)
+      const f = fit(app, aspect, railOpts)
       // smallest tier ≥ device px
       const need = f.W * Math.min(window.devicePixelRatio || 1, 2)
       const tiers = (m.backdrop.tiers || []).slice().sort((a, b) => a.w - b.w)
@@ -123,7 +146,7 @@
             if (c.x <= c._homeX - c._tileW) c.x += c._tileW
           }
           if (railBob && stageRef) {
-            const ff = fit(app, aspect)
+            const ff = fit(app, aspect, railOpts)
             const amp = Math.min(railBobAmp, Math.max(0, -ff.topY) * 0.6)
             if (amp > 0.15) {
               bobPhase += worldSpeed * _d * 0.025
@@ -134,7 +157,7 @@
         resetBob(stageRef) { bobPhase = 0; if (stageRef) stageRef.y = 0 },
         // Re-cover-fit every band on resize/rotate.
         refit() {
-          const ff = fit(app, aspect)
+          const ff = fit(app, aspect, railOpts)
           for (const c of bands) {
             if (!c || c.destroyed) continue
             const screenH = (c._fy1 - c._fy0) * ff.scaledH
