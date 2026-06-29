@@ -217,7 +217,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.95</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.96</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="data/train-world.js?v=55.89"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
@@ -3208,7 +3208,10 @@ function tickPlayer(delta) {
     S.switchFrame = (S.switchFrame | 0) + 1
     L.player._switchDySign = Math.sign(dy)
     L.player.y += dy * 0.22 * delta
-    L.player.rotation = Math.sin(S.switchFrame * 0.18) * 0.05 * L.player._switchDySign
+    // v55.96 — BANKED lane-change tilt (owner juice #4): lean ~7° toward the target lane (eased)
+    // then settle upright in the else-branch. More "weight"/maneuver feel than the old 3° wobble.
+    const _bank = 0.12 * (L.player._switchDySign || 0)
+    L.player.rotation += (_bank - L.player.rotation) * Math.min(1, 0.28 * delta)
     if (S.switchFrame <= 18 && S.switchFrame % 6 === 0 && L.fx) g14SpawnLaneDust()
   } else {
     // v55.84 — ZERO-TOLERANCE: SNAP exactly onto the lane once close (the asymptotic

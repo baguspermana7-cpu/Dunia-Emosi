@@ -1,5 +1,13 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-29 — v55.96 "g14 juice — banked lane-change tilt"
+
+Completes the owner's diorama concept #4 (juice). The boost spark burst (spawnBoostFX, 36 gold/orange
+particles + shake) + lane-dust were already present; the one missing refinement was the lane-change
+tilt. `tickPlayer` now eases the loco into a ~7° BANK toward the target lane during a switch, then
+settles upright — more "weight"/maneuver feel than the old 3° sin wobble. Rotation-only (no geometry
+change); railalign ≤1px stays green. sw v55.96.
+
 ## 2026-06-29 — v55.95 "g14 DIORAMA polish — grounding contact shadows, outlined hazard obstacles, atmospheric haze"
 
 Owner concept (Approach A: pop-up/diorama) — lean into the cut-out look + ground every object.
