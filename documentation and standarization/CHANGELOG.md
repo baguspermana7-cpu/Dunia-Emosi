@@ -1,5 +1,19 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-29 — v55.95 "g14 DIORAMA polish — grounding contact shadows, outlined hazard obstacles, atmospheric haze"
+
+Owner concept (Approach A: pop-up/diorama) — lean into the cut-out look + ground every object.
+- **Contact shadow** (`g14ContactShadow`): a soft flattened dark oval at the wheel/base line under the player, every
+  NPC, and every obstacle (lowest child, behind the sprite) → trains & rocks SIT on the ballast instead of floating
+  (owner's #3, the key fix). Shadow width matches the loaded sprite's footprint; old green glow dimmed to a faint rim.
+- **Obstacles**: emoji now carry a thin WHITE sticker outline (PIXI.Text stroke) to match the trains' diorama look, sit
+  with their base on the rail, + a soft pastel amber HAZARD glow on the RAIL surface (owner's "Hologram Danger Zone" —
+  the lane signals danger, the rock keeps its style) replacing the flat red circle.
+- **Atmospheric haze** (`g14ApplyDepthScale`): far/top-lane sprites tint toward the biome haze colour + fade slightly;
+  near/bottom stay sharp → reinforces the 3-D parallax. Tint/alpha only — geometry untouched.
+- Lane-tilt + speed dust juice already present (kept). Verified: railalign ≤1px + dimensions (uniform, on-rail,
+  train≈1.1×obstacle) + 16-page app-sweep green; 0 errors; positioning/size from v55.92/93 unchanged. sw v55.95.
+
 ## 2026-06-29 — v55.94 "g15 + g16 migrated to the 275 WORLD roster + legacy train assets deleted"
 
 Owner: use the same 275 real-sprite roster in Lokomotif Pemberani (g15) & Selamatkan Kereta (g16), then delete the old

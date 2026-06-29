@@ -217,7 +217,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.93</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.95</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="data/train-world.js?v=55.89"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
@@ -924,6 +924,19 @@ function g14RailUnit() {
   const lh = (typeof laneH !== 'undefined' && laneH) ? laneH : 60
   return Math.round(lh)
 }
+// v55.95 DIORAMA — CONTACT SHADOW: a soft flattened dark oval at the wheel/base line so a train
+// or obstacle visibly "sits on" the ballast (pop-up/cardboard look) instead of floating. Added as
+// the LOWEST child (behind the sprite). `_shadow` is kept so the width can be matched to the loaded
+// sprite + scaled by lane depth. Owner concept #3 (grounding) — the key fix.
+function g14ContactShadow(container, baseW) {
+  const w = Math.max(28, baseW || 60)
+  const sh = new PIXI.Graphics()
+  sh.ellipse(0, 3, w * 0.5, Math.max(5, w * 0.12)).fill({ color: 0x07120a, alpha: 0.30 })
+  sh._baseW = w
+  container.addChildAt(sh, 0)
+  container._shadow = sh
+  return sh
+}
 // v55.87 — scale a PROCEDURAL train (PIXI.Graphics from drawTrainG) so its rendered height ==
 // targetH (== G14_UNIFORM_H, the SAME as the player), then offset it so its drawn BOTTOM
 // (wheels) sits at the local origin = the rail line. This is the fix for "npc kekecilan":
@@ -965,6 +978,17 @@ function g14ApplyDepthScale(img, ln) {
   const s = img._baseScale * d
   img.scale.set(s)
   img.scale.x = s * (img._faceSign || 1)
+  // v55.95 DIORAMA — ATMOSPHERIC HAZE: far/top lane (ln 0) is tinted toward the biome haze colour
+  // + slightly faded; near/bottom lane stays sharp+full. Reinforces the 3-D parallax (tint only —
+  // no size/position change, so the v55.92/93 calibration is untouched).
+  const n = LANE_COUNT > 1 ? LANE_COUNT - 1 : 1
+  const far = 1 - Math.max(0, Math.min(1, (typeof ln === 'number' ? ln : 1) / n))   // 1=far/top, 0=near
+  const amt = far * 0.32
+  const haze = (typeof TH !== 'undefined' && TH.haze != null) ? TH.haze : 0xdfeaf2
+  const lerp = (a, b, t) => Math.round(a + (b - a) * t)
+  const r = lerp(0xff, (haze >> 16) & 0xff, amt), g = lerp(0xff, (haze >> 8) & 0xff, amt), b = lerp(0xff, haze & 0xff, amt)
+  img.tint = (r << 16) | (g << 8) | b
+  img.alpha = 1 - far * 0.12
 }
 // Difficulty-scaled obstacle interval. Previously only level-scaled → "easy"
 // level 1 spawned every 2.7s which is too dense for a 5-10yo on their first play.
@@ -3068,10 +3092,12 @@ function buildPlayer() {
   c.scale.x = 1
   c.x = app.screen.width * PLAYER_X
 
-  // Glow ellipse
+  // v55.95 DIORAMA — contact shadow under the loco (grounds it on the ballast). Behind everything.
+  g14ContactShadow(c, (typeof G14_UNIFORM_H !== 'undefined' ? G14_UNIFORM_H : 120) * 1.5)
+  // Glow ellipse (v55.95 — dimmed to a faint rim; the dark contact shadow now does the grounding)
   playerGlow = new PIXI.Graphics()
   playerGlow.ellipse(0, 8, 38, 12).fill(0x86efac)
-  playerGlow.alpha = 0.25
+  playerGlow.alpha = 0.12
   c.addChild(playerGlow)
 
   // Train graphic (replaces emoji Text for cross-device compatibility)
@@ -3134,6 +3160,8 @@ function updatePlayerEmoji() {
         g14ApplyDepthScale(img, S.lane)
         L.playerCharImg = img
         L.player.addChild(img) // TOP of z-stack — covers cleared procedural Graphics
+        // v55.95 — match the contact shadow to the loaded loco's footprint width.
+        if (L.player._shadow) { try { L.player._shadow.scale.x = Math.max(0.5, (img.width * 0.82) / L.player._shadow._baseW) } catch(_){} }
         try { playerSprite.clear() } catch(_){}
       }).catch((e) => {
         console.warn('[g14] sprite load failed; falling back to procedural', url, e)
@@ -3310,6 +3338,7 @@ function buildAI() {
   const pool = shuffle([...NPC_TRAINS]).slice(0, AI_COUNT)
   pool.forEach((cfg, i) => {
     const c = new PIXI.Container()
+    g14ContactShadow(c, G14_UNIFORM_H * 1.5)   // v55.95 DIORAMA — grounding shadow (behind train)
     const spr = new PIXI.Graphics()
     // v54.87 — Character AI also uses WebP sprite. Procedural drawn behind as
     // safety placeholder (in case sprite fails to load); sprite covers it.
@@ -3334,6 +3363,7 @@ function buildAI() {
         img._faceSign = _faceSign
         c._charImg = img
         c.addChild(img)
+        if (c._shadow) { try { c._shadow.scale.x = Math.max(0.5, (img.width * 0.82) / c._shadow._baseW) } catch(_){} }
         try { spr.clear() } catch(_){}
       }).catch((e) => {
         console.warn('[g14] AI sprite load fail; keeping procedural', cfg.key, e)
@@ -3343,7 +3373,7 @@ function buildAI() {
     // Glow
     const glow = new PIXI.Graphics()
     glow.ellipse(0, 8, 28, 9).fill(0x86efac)
-    glow.alpha = 0.18
+    glow.alpha = 0.08   // v55.95 — dimmed; the dark contact shadow now does the grounding
     c.addChild(glow)
 
     const aiLane = [0, 1, 2].filter(l => l !== S.lane)[i % 2]
@@ -3658,15 +3688,17 @@ function spawnObstacle() {
   const emoji = g14PickWeightedObstacle(_pool, TH.name)
 
   const c = new PIXI.Container()
-  const txt = new PIXI.Text({ text: emoji, style: { fontSize: OBS_SIZE, fontFamily: 'Arial' } })
-  txt.anchor.set(0.5)
-  c.addChild(txt)
-
-  // Warning glow
+  // v55.95 DIORAMA — soft pastel HAZARD glow on the RAIL surface (calm amber, low opacity) so the
+  // lane signals danger without recolouring the obstacle (owner's "Hologram Danger Zone").
   const wg = new PIXI.Graphics()
-  wg.circle(0, 0, OBS_SIZE * 0.65).fill(0xef4444)
-  wg.alpha = 0.15
+  wg.ellipse(0, 4, OBS_SIZE * 0.95, OBS_SIZE * 0.34).fill({ color: 0xffcf6b, alpha: 0.30 })
   c.addChild(wg)
+  // contact shadow (grounds the obstacle on the ballast) — under the emoji.
+  g14ContactShadow(c, OBS_SIZE * 1.15)
+  // emoji with a thin WHITE sticker outline (matches the trains' diorama look).
+  const txt = new PIXI.Text({ text: emoji, style: { fontSize: OBS_SIZE, fontFamily: 'Arial', stroke: { color: 0xffffff, width: Math.max(3, OBS_SIZE * 0.09), join: 'round' } } })
+  txt.anchor.set(0.5, 0.85)   // sit the emoji's base near the rail line
+  c.addChild(txt)
 
   c.x = W + OBS_SIZE
   c.y = laneYs[lane]
