@@ -217,7 +217,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.89</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.90</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="data/train-world.js?v=55.89"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
@@ -916,12 +916,13 @@ function g14WheelAnchor(spriteUrl) {
 function g14WheelMargin() {
   return 0
 }
-// v55.88 — ONE painted RAIL band ≈ 0.70×laneH: the unit the obstacle already fits the rail
-// with (owner's "tinggi rail"). The train is sized 1.1× THIS, NOT 1.1×laneH — laneH is the
-// (wider) lane SPACING, which made the loco ~1.7× the rail ("2x dari rail").
+// v55.90 — ONE painted RAIL band == laneH. tools/detect-rail-lanes.py now snaps the 3 lanes onto
+// 3 ADJACENT painted track beds, so laneH IS the track-bed pitch (the owner's "tinggi rail").
+// Train = 1.1× this; obstacle = 1× this. (v55.88 used 0.70×laneH because the lanes were spread
+// ~1.5 beds apart; now they sit one bed apart so the factor is 1.0.)
 function g14RailUnit() {
   const lh = (typeof laneH !== 'undefined' && laneH) ? laneH : 60
-  return Math.round(lh * 0.70)
+  return Math.round(lh)
 }
 // v55.87 — scale a PROCEDURAL train (PIXI.Graphics from drawTrainG) so its rendered height ==
 // targetH (== G14_UNIFORM_H, the SAME as the player), then offset it so its drawn BOTTOM

@@ -1,87 +1,87 @@
 {
-  "level": 11,
-  "mode": "raster",
-  "clean": true,
-  "backdrop": {
-    "tiers": [
-      {
-        "w": 1600,
-        "src": "assets/train/backdrop/level11-1600.webp"
-      },
-      {
-        "w": 1024,
-        "src": "assets/train/backdrop/level11-1024.webp"
-      },
-      {
-        "w": 640,
-        "src": "assets/train/backdrop/level11-640.webp"
-      }
-    ],
-    "aspect": 1.7768
-  },
-  "bands": [
-    {
-      "y0": 0.0,
-      "y1": 0.48,
-      "speed": 0.06
-    },
-    {
-      "y0": 0.48,
-      "y1": 0.568,
-      "speed": 0.4
-    },
-    {
-      "y0": 0.568,
-      "y1": 0.656,
-      "speed": 0.55
-    },
-    {
-      "y0": 0.656,
-      "y1": 0.744,
-      "speed": 0.72
-    },
-    {
-      "y0": 0.744,
-      "y1": 0.832,
-      "speed": 0.92
-    },
-    {
-      "y0": 0.832,
-      "y1": 0.92,
-      "speed": 1.14
-    },
-    {
-      "y0": 0.92,
-      "y1": 1.0,
-      "speed": 1.45
-    }
-  ],
-  "laneRatios": {
-    "lanes": [
-      0.62,
-      0.74,
-      0.86
-    ],
-    "horizon": 0.46,
-    "foreTop": 0.92
-  },
-  "laneRatiosRaw": {
-    "lanes": [
-      0.62,
-      0.74,
-      0.86
-    ]
-  },
-  "palette": {
-    "skyTop": "0x01338a",
-    "skyMid": "0x06489d",
-    "skyBot": "0x0e394b",
-    "haze": "0x0e394b",
-    "mtnFar": "0x0d4343",
-    "hill1": "0x121b32",
-    "hill2": "0x151f38",
-    "hill3": "0x092725",
-    "grass": "0x092725",
-    "grassDk": "0x071e1c"
-  }
+"level": 11,
+"mode": "raster",
+"clean": true,
+"backdrop": {
+"tiers": [
+{
+"w": 1600,
+"src": "assets/train/backdrop/level11-1600.webp"
+},
+{
+"w": 1024,
+"src": "assets/train/backdrop/level11-1024.webp"
+},
+{
+"w": 640,
+"src": "assets/train/backdrop/level11-640.webp"
+}
+],
+"aspect": 1.7768
+},
+"bands": [
+{
+"y0": 0.0,
+"y1": 0.48,
+"speed": 0.06
+},
+{
+"y0": 0.48,
+"y1": 0.568,
+"speed": 0.4
+},
+{
+"y0": 0.568,
+"y1": 0.656,
+"speed": 0.55
+},
+{
+"y0": 0.656,
+"y1": 0.744,
+"speed": 0.72
+},
+{
+"y0": 0.744,
+"y1": 0.832,
+"speed": 0.92
+},
+{
+"y0": 0.832,
+"y1": 0.92,
+"speed": 1.14
+},
+{
+"y0": 0.92,
+"y1": 1.0,
+"speed": 1.45
+}
+],
+"laneRatios": {
+"lanes": [
+0.566,
+0.66,
+0.734
+],
+"horizon": 0.46,
+"foreTop": 0.92
+},
+"laneRatiosRaw": {
+"lanes": [
+0.62,
+0.74,
+0.86
+]
+},
+"palette": {
+"skyTop": "0x01338a",
+"skyMid": "0x06489d",
+"skyBot": "0x0e394b",
+"haze": "0x0e394b",
+"mtnFar": "0x0d4343",
+"hill1": "0x121b32",
+"hill2": "0x151f38",
+"hill3": "0x092725",
+"grass": "0x092725",
+"grassDk": "0x071e1c"
+}
 }

@@ -1,5 +1,21 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-29 — v55.90 "g14 lanes snapped onto the painted track beds (wheels on the rail)"
+
+Owner (screenshot): "ini belum tepat di rel… roda terbawah menyentuh rel terbawah" — trains floated
+in the ballast gaps between tracks. Root cause: the generic laneRatios [0.62,0.74,0.86] landed lane
+0 in a DARK GAP (rail-score 0.064) instead of on a painted track bed.
+- **`tools/detect-rail-lanes.py`**: scores each plate row for "track bed" (bright + low-saturation
+  band), finds bed peaks, picks 3 consecutive evenly-spaced beds → writes laneRatios.lanes per
+  plate. Ran on all 48 (43 detected, 5 dark/water/tunnel plates → tight foreground fallback
+  [0.66,0.74,0.82] — never the old spread that oversized the loco). Level 3: [0.62,0.74,0.86] →
+  [0.58,0.66,0.74] (the actual beds, shifted up).
+- **Rail unit = laneH** now (g14RailUnit, was 0.70×laneH): the 3 lanes sit one bed apart, so laneH
+  IS the track-bed pitch. Train = 1.1× laneH, obstacle = 1× laneH, base/wheels ON the bed.
+- Result (probe + screenshot): every train rests on a painted track bed, wheels on the rail; w078
+  Big Boy 165px = 1.1× obstacle, base Δ-1px, uniform player==NPC, faces right.
+- Verified: dims + railalign (ratio range → 1.0-1.25) + parallax + 16-page app-sweep green. sw v55.90.
+
 ## 2026-06-29 — v55.89 "g14 — 275 real-sprite WORLD trains, categorized picker, white outline"
 
 Owner: replace the procedural in-game trains with the 275 real train sprites (assets/train/train
