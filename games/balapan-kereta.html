@@ -217,7 +217,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.90</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.91</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="data/train-world.js?v=55.89"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
@@ -1248,7 +1248,16 @@ function g14BackdropLanes() {
   const lo = Math.max(railTopY, b.bandTop)
   const hi = Math.min(railBotY, b.bandBot)                        // HARD clamp: never below the band
   const lh = Math.max(38, (hi - lo) / (LANE_COUNT - 1))
-  const ys = Array.from({ length: LANE_COUNT }, (_, i) => Math.round(lo + lh * i))
+  // v55.91 — PERSPECTIVE nudge: the NEAR (lower) lanes sit on a TALLER painted bed, so their
+  // wheels must drop further to reach the bed's LOWER rail (owner: bottom lane "roda di rail
+  // bawah bukan rail atas"). Shift each lane DOWN by a quadratic-in-depth amount: top lane 0,
+  // bottom lane most. Clamped so the bottom lane + loco still clear the control bar. (laneH is
+  // taken BEFORE the nudge so train size is unchanged; only the seating position shifts.)
+  const nMax = Math.max(1, LANE_COUNT - 1)
+  const ys = Array.from({ length: LANE_COUNT }, (_, i) => {
+    const nudge = lh * 0.45 * Math.pow(i / nMax, 2)
+    return Math.round(Math.min(lo + lh * i + nudge, b.bandBot - 2))
+  })
   return { laneYs: ys, laneH: Math.round(lh), railTop: Math.round(lo - lh * 0.5) }
 }
 async function g14AddBackdrop() {
@@ -1503,11 +1512,11 @@ async function initPixi() {
     // sprite. Procedural sky/hills/rail VISUALS are skipped (the painting has them).
     const L0 = g14BackdropLanes()
     laneYs = L0.laneYs; laneH = L0.laneH; railTop = L0.railTop
-    // v55.88 A-312 — size to the RAIL UNIT (one painted rail band), NOT the wider lane spacing.
-    // obstacle == rail unit (fits the rail); loco == 1.1× rail unit (owner spec). Player == NPC.
+    // v55.91 A-312 — size to the RAIL UNIT (= laneH = bed pitch). Owner: "kecilkan jadi 70%" →
+    // loco == 0.77× rail unit (70% of the v55.90 1.1×). Obstacle just under the loco. Player==NPC.
     const _ru = g14RailUnit()
-    OBS_SIZE = Math.max(38, _ru)
-    G14_UNIFORM_H = Math.round(_ru * 1.1)
+    OBS_SIZE = Math.max(34, Math.round(_ru * 0.70))
+    G14_UNIFORM_H = Math.round(_ru * 0.77)
     await g14AddBackdrop()
   } else {
     buildSky()
@@ -4987,9 +4996,9 @@ window.addEventListener('resize', () => {
       // v55.8x A-312 — recompute the SAME play-band layout as initPixi (one source of truth).
       const L0 = g14BackdropLanes()
       laneYs = L0.laneYs; laneH = L0.laneH; railTop = L0.railTop
-      const _ru = g14RailUnit()                  // v55.88 — size to the rail unit, base on rail
-      OBS_SIZE = Math.max(38, _ru)
-      G14_UNIFORM_H = Math.round(_ru * 1.1)
+      const _ru = g14RailUnit()                  // v55.91 — loco 70% (0.77× rail unit), base on rail
+      OBS_SIZE = Math.max(34, Math.round(_ru * 0.70))
+      G14_UNIFORM_H = Math.round(_ru * 0.77)
       if (L._bdHandle) {
         L._bdHandle.refit()   // v55.77 — shared engine re-cover-fits its bands
       } else if (L._backdrop && !L._backdrop.destroyed) {

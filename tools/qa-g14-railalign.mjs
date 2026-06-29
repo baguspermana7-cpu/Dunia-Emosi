@@ -50,8 +50,8 @@ for (const [w,h,tag] of VPS) {
   // PROMINENCE: train must be ≥12% of the screen height (catches portrait lane-collapse)
   // AND a sane ceiling so it never balloons; ratio-to-lane stays ~1.45.
   const prominent = info.screenFrac>=0.06 && info.screenFrac<=0.30
-  // v55.90 — lanes snapped onto adjacent track beds ⇒ laneH == bed pitch; train == 1.1× laneH.
-  const ok = maxLaneDev<=1 && maxAiDev<=1 && !aiFloat && info.charRatio>=1.0 && info.charRatio<=1.25 && prominent && errs.filter(e=>!IGNORE.test(e)).length===0
+  // v55.91 — train == 0.77× laneH (owner: 70% of v55.90). lanes on beds (laneH == bed pitch).
+  const ok = maxLaneDev<=1 && maxAiDev<=1 && !aiFloat && info.charRatio>=0.70 && info.charRatio<=0.90 && prominent && errs.filter(e=>!IGNORE.test(e)).length===0
   rows.push({vp:`${w}x${h}`, laneDevs, maxLaneDev, aiDev:info.aiDev, maxAiDev, aiFloat, charRatio:Math.round(info.charRatio*100)/100, charH:info.charH, screenFrac:Math.round(info.screenFrac*1000)/1000, bandFrac:Math.round(info.bandFrac*1000)/1000, prominent, errors:errs.filter(e=>!IGNORE.test(e)).length, ok})
   await page.close()
 }

@@ -61,10 +61,12 @@ def process(level, dry):
     bed, H = bed_scores(plate)
     pk = peaks(bed, H)
     lanes = pick3(pk)
-    FALLBACK = [0.66, 0.74, 0.82]   # tight foreground triple (≈ one bed pitch apart) when beds
-    fell_back = False                # can't be detected (dark/water/tunnel plates) — never the
-    if not lanes:                    # old 0.62/0.74/0.86 spread (that oversizes the loco).
+    FALLBACK = [0.66, 0.74, 0.82]   # tight foreground triple when beds can't be detected
+    fell_back = False                # (dark/water/tunnel plates) — never the old 0.62/0.74/0.86
+    if not lanes:                    # spread (that oversized the loco).
         lanes = FALLBACK; fell_back = True
+    # NB: lanes are bed CENTERS; the game (g14BackdropLanes) applies a perspective downward
+    # nudge so the near/bottom lane's wheels reach its LOWER rail (v55.91).
     m = json.load(open(mpath, encoding="utf-8"))
     old = (m.get("laneRatios") or {}).get("lanes")
     if dry:

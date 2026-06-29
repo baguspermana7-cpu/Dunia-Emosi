@@ -1,5 +1,16 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-29 — v55.91 "g14 train 70% + wheels on the LOWER rail (perspective nudge)"
+
+Owner: "lane terbawah rodanya di rail ATAS bukan rail bawah; dimensinya kecilkan jadi 70%."
+- **70% size**: G14_UNIFORM_H = 0.77× rail unit (was 1.1×); OBS_SIZE = 0.70× (obstacle just under the loco). Both
+  init + resize sites.
+- **Wheels on the LOWER rail**: g14BackdropLanes adds a quadratic-in-depth PERSPECTIVE nudge — the near/bottom lane
+  (on a taller foreground bed) drops down onto its lower rail; the far/top lane is unchanged, middle barely moves.
+  laneH is read BEFORE the nudge so train size is unaffected; only the seating position shifts. Owner confirmed lane 3
+  positioning + landscape size OK.
+- Verified: dims + railalign (ratio→0.70–0.90) + parallax + 16-page app-sweep green. sw v55.91.
+
 ## 2026-06-29 — v55.90 "g14 lanes snapped onto the painted track beds (wheels on the rail)"
 
 Owner (screenshot): "ini belum tepat di rel… roda terbawah menyentuh rel terbawah" — trains floated
