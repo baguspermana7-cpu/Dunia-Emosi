@@ -711,6 +711,10 @@ function buildTrain() {
         const sprite = new PIXI.Sprite(tex)
         sprite.anchor.set(0.5, 1.0) // bottom-center
         sprite.scale.set(targetH / tex.height)
+        // v55.97 B-281 — the side-scroller runs RIGHT, so a sprite whose art faces LEFT
+        // must be mirrored to face the travel direction (owner: "salah menghadap").
+        // faces:'right' art (Casey JR, Diesel, Kana, Ashima…) is already correct.
+        if (cfg.faces === 'left') sprite.scale.x = -Math.abs(sprite.scale.x)
         trainContainer.removeChild(placeholder)
         try { placeholder.destroy() } catch {}
         trainContainer.addChild(sprite)
@@ -800,6 +804,8 @@ function buildAITrain() {
       const img = new PIXI.Sprite(tex)
       img.anchor.set(0.5, 1.0)
       img.scale.set(targetH / tex.height)
+      // v55.97 B-281 — face the travel direction (right), mirror left-facing art.
+      if (aiCfg.faces === 'left') img.scale.x = -Math.abs(img.scale.x)
       S.aiTrain.addChild(img)
     }).catch((e) => console.warn('[g14-side] AI sprite load failed', aiCfg.spriteUrl, e))
   }
@@ -1023,17 +1029,20 @@ function tick(tickerOrDelta) {
     })
   }
 
-  // v54.89 — Smoke trail behind train (steam locos only — smokePos populated)
+  // v55.97 B-281 — Smoke now puffs FROM THE FUNNEL (train top) and trails back, instead
+  // of floating ~30px above a ~40px-tall train (owner: "asapnya salah penempatan"). The
+  // train faces RIGHT, so the funnel is near the front-top → emit there + drift up & back.
   S.smokeTimer += dt
   if (S.smokeTimer >= 0.12 && S.trainCfg && S.trainCfg.smokePos) {
     S.smokeTimer = 0
+    const th = (trainSprite && trainSprite.height) ? trainSprite.height : 40   // actual rendered height
     const puff = new PIXI.Graphics()
-    puff.circle(0, 0, 6 + Math.random() * 4).fill(0xeeeeee)
-    puff.x = trainContainer.x - 30
-    puff.y = trainContainer.y - 70 + S.jumpY
-    puff.alpha = 0.85
+    puff.circle(0, 0, 5 + Math.random() * 3).fill(0xeeeeee)
+    puff.x = trainContainer.x + th * 0.22                 // funnel ≈ front-of-centre (faces right)
+    puff.y = trainContainer.y - th * 0.92 + S.jumpY       // at the top of the loco, not floating above
+    puff.alpha = 0.8
     particleLayer.addChild(puff)
-    S.smokePuffs.push({ sprite: puff, vy: -8, vx: -1.2, life: 1.6 })
+    S.smokePuffs.push({ sprite: puff, vy: -8, vx: -1.0, life: 1.5 })   // up + trail back (left)
   }
   // Update smoke puffs
   for (let i = S.smokePuffs.length - 1; i >= 0; i--) {
@@ -1845,6 +1854,6 @@ window.addEventListener('keydown', e => {
   if (e.code === 'Escape') goBack()
 })
 </script>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.84</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.97</div>
 </body>
 </html>

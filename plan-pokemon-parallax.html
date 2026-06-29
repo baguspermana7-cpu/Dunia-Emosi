@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<title>Plan — Pokémon Parallax 2.5D · Dunia Emosi</title>
+<style>
+  :root{
+    --bg:#0d1020; --bg2:#141a33; --panel:#171d38; --line:rgba(180,196,255,.12);
+    --ink:#eef1ff; --muted:#9aa6d4; --faint:#6b76a8;
+    --amber:#ffb454; --amber-deep:#e08a2c;
+    --mint:#7ee0b8; --violet:#a98bf0; --sky:#7db8f0; --rose:#f4a6c0;
+    --focus:#ffd18a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:radial-gradient(120% 90% at 50% -10%, #1a2148 0%, var(--bg) 55%) fixed, var(--bg);
+    color:var(--ink);
+    font-family:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  a{color:var(--sky);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* ── Top bar ── */
+  .top{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;max-width:1080px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.2px}
+  .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--amber);box-shadow:0 0 14px var(--amber)}
+  .tag{font-size:12px;color:var(--faint);border:1px solid var(--line);border-radius:999px;padding:4px 11px}
+  .back{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:5px 13px}
+  .back:hover{border-color:rgba(180,196,255,.32);text-decoration:none}
+
+  /* ── Hero canvas ── */
+  .stage-wrap{position:relative;max-width:1080px;margin:8px auto 0;padding:0 20px}
+  .stage{
+    position:relative;width:100%;aspect-ratio:2/1;border-radius:20px;overflow:hidden;
+    border:1px solid var(--line);
+    box-shadow:0 30px 80px -30px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.05);
+    background:#0a0d1c;cursor:grab;touch-action:none;
+  }
+  .stage:active{cursor:grabbing}
+  .stage canvas{display:block;width:100%;height:100%}
+  .stage .hint{
+    position:absolute;left:0;right:0;bottom:14px;text-align:center;color:rgba(255,255,255,.82);
+    font-size:13px;letter-spacing:.3px;pointer-events:none;text-shadow:0 2px 8px rgba(0,0,0,.6);
+    transition:opacity .5s;
+  }
+  .stage .badge{
+    position:absolute;top:13px;left:13px;display:flex;gap:7px;align-items:center;
+    font-size:11px;font-weight:700;color:#0a0d1c;background:var(--focus);
+    padding:5px 10px;border-radius:999px;letter-spacing:.4px;
+  }
+  /* scene switcher */
+  .scenes{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:14px 0 2px}
+  .scene-btn{
+    font:inherit;font-size:13px;font-weight:700;color:var(--muted);
+    background:var(--panel);border:1px solid var(--line);border-radius:999px;
+    padding:8px 16px;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;
+  }
+  .scene-btn:hover{border-color:rgba(180,196,255,.32);color:var(--ink)}
+  .scene-btn.on{background:rgba(255,180,84,.16);border-color:var(--amber);color:var(--focus)}
+  .ctrls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;margin:12px 0 4px}
+  .chip{
+    font:inherit;font-size:13px;font-weight:600;color:var(--ink);
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:9px 15px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+    transition:border-color .15s, transform .08s, background .15s;-webkit-tap-highlight-color:transparent;
+  }
+  .chip:hover{border-color:rgba(180,196,255,.32)}
+  .chip:active{transform:translateY(1px)}
+  .chip.on{background:rgba(255,180,84,.14);border-color:var(--amber);color:var(--focus)}
+  .chip .sw{width:9px;height:9px;border-radius:50%;background:var(--faint)}
+  .chip.on .sw{background:var(--amber);box-shadow:0 0 8px var(--amber)}
+  .slider{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+  .slider input{accent-color:var(--amber);width:120px}
+
+  /* ── Sections ── */
+  section{padding:54px 0 8px}
+  h1{font-size:clamp(30px,5.5vw,50px);line-height:1.05;margin:18px 0 10px;letter-spacing:-.02em;font-weight:850}
+  h1 .sub{display:block;font-size:clamp(15px,2.4vw,19px);font-weight:600;color:var(--muted);margin-top:14px;letter-spacing:0}
+  h2{font-size:clamp(22px,3.4vw,30px);margin:6px 0 6px;letter-spacing:-.01em;font-weight:800}
+  h2 .n{color:var(--amber);font-variant-numeric:tabular-nums;margin-right:12px;font-size:.7em;vertical-align:2px}
+  .lead{font-size:17px;color:var(--muted);max-width:68ch}
+  p{max-width:70ch;color:#c7cdf0}
+  .quote{border-left:3px solid var(--amber);padding:6px 0 6px 16px;margin:18px 0;color:var(--ink);font-style:italic;background:linear-gradient(90deg,rgba(255,180,84,.06),transparent)}
+
+  /* before / after */
+  .ba{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0}
+  @media(max-width:680px){.ba{grid-template-columns:1fr}}
+  .ba .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .ba .card.bad{border-color:rgba(244,166,192,.3)}
+  .ba .card.good{border-color:rgba(126,224,184,.32)}
+  .ba .lbl{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.5px;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+  .ba .bad .lbl{color:var(--rose);background:rgba(244,166,192,.12);border:1px solid rgba(244,166,192,.3)}
+  .ba .good .lbl{color:var(--mint);background:rgba(126,224,184,.12);border:1px solid rgba(126,224,184,.3)}
+  .ba h3{margin:0 0 8px;font-size:17px}
+  .ba ul{margin:0;padding-left:18px}
+  .ba li{font-size:14px;color:var(--muted);margin:5px 0}
+
+  /* depth-cue list */
+  .cues{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:26px 0}
+  .cue{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .cue .k{display:flex;align-items:center;gap:10px;font-weight:800;margin-bottom:6px}
+  .cue .k b{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:14px;color:#0a0d1c}
+  .cue p{font-size:14px;color:var(--muted);margin:0}
+
+  /* layer table */
+  .ltable{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;overflow:hidden;border-radius:14px;border:1px solid var(--line)}
+  .ltable th,.ltable td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line)}
+  .ltable th{background:var(--bg2);color:var(--muted);font-weight:700;font-size:12px;letter-spacing:.5px;text-transform:uppercase}
+  .ltable td{color:#cdd3f4}
+  .ltable tr:last-child td{border-bottom:none}
+  .ltable .d{font-variant-numeric:tabular-nums;color:var(--focus);font-weight:700}
+
+  .road{display:grid;gap:12px;margin:22px 0}
+  .step{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+  .step .ph{font-weight:800;font-size:13px;color:#0a0d1c;background:var(--mint);border-radius:8px;padding:4px 10px;white-space:nowrap;height:fit-content}
+  .step.next .ph{background:var(--amber)} .step.later .ph{background:var(--faint);color:#0a0d1c}
+  .step h3{margin:0 0 4px;font-size:16px}
+  .step p{margin:0;font-size:14px;color:var(--muted)}
+
+  .perf{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:20px 0}
+  .perf div{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .perf .big{font-size:26px;font-weight:850;color:var(--focus)}
+  .perf small{color:var(--muted);font-size:13px}
+
+  .cta{display:flex;flex-wrap:wrap;gap:12px;margin:22px 0 4px}
+  .cta a{display:inline-flex;align-items:center;gap:9px;font-weight:800;font-size:14px;padding:12px 20px;border-radius:13px}
+  .cta .yes{color:#0a0d1c;background:var(--mint)}
+  .cta .alt{color:var(--ink);background:var(--panel);border:1px solid var(--line)}
+  .cta a:hover{text-decoration:none;filter:brightness(1.06)}
+
+  footer{padding:46px 0 60px;color:var(--faint);font-size:13px;border-top:1px solid var(--line);margin-top:40px}
+  .pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--mint);
+    background:rgba(126,224,184,.12);border:1px solid rgba(126,224,184,.3);padding:3px 10px;border-radius:999px}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand"><span class="dot"></span> Dunia Emosi · Pokémon Parallax</div>
+  <a class="back" href="planb.html">← kembali ke Plan B</a>
+</div>
+
+<div class="wrap">
+  <h1>Pokémon Parallax 2.5D
+    <span class="sub">Bukan "tempelan 2D tipis" — Pokémon-nya berdiri di dalam dunia berlapis yang bergerak, terasa punya kedalaman. Tetap ringan di tablet anak.</span>
+  </h1>
+</div>
+
+<!-- ── LIVE MOCKUP ────────────────────────────────────────── -->
+<div class="stage-wrap">
+  <div class="stage" id="stage">
+    <span class="badge">● LIVE MOCKUP</span>
+    <canvas id="px" width="1200" height="600"></canvas>
+    <div class="hint" id="hint">Gerakkan mouse / drag — atau tap "Sensor Miring HP". Ganti scene di atas.</div>
+  </div>
+  <div class="scenes" id="scenes">
+    <button class="scene-btn on" data-scene="0">🌳 Pokémon Run</button>
+    <button class="scene-btn" data-scene="1">🌊 Bawah Laut</button>
+    <button class="scene-btn" data-scene="2">⚔️ Gym Battle</button>
+  </div>
+  <div class="ctrls">
+    <button class="chip on" id="t-auto"><span class="sw"></span>Auto-scroll</button>
+    <button class="chip on" id="t-dof"><span class="sw"></span>Depth-of-field</button>
+    <button class="chip on" id="t-haze"><span class="sw"></span>Aerial haze</button>
+    <button class="chip" id="t-tilt"><span class="sw"></span>Sensor Miring HP</button>
+    <label class="slider">Kedalaman <input type="range" id="s-str" min="6" max="60" value="32"></label>
+  </div>
+  <p style="text-align:center;color:var(--faint);font-size:13px;margin:2px 0 0">
+    Pokémon asli (sprite HD lokal) ditaruh di bidang fokus; latar &amp; depan digerakkan oleh <code>RZParallax</code> dengan kecepatan + skala + kabut berbeda per kedalaman.
+  </p>
+</div>
+
+<div class="wrap">
+
+  <!-- ── §1 why ── -->
+  <section>
+    <h2><span class="n">01</span>Kenapa mockup 3D yang lama ditolak</h2>
+    <div class="quote">"Jelek sekali planb utk pokemon reject. Karena jadi terlihat seperti 2D tempelan (tipis). Effect parallax aja."</div>
+    <p class="lead">Mockup <code>pokemon-3d.html</code> mencoba memutar/menumpuk sprite seolah 3D — hasilnya sprite datar yang dimiringkan terlihat seperti <b>stiker yang ditempel</b>, tipis dan kaku. Sprite Pokémon memang gambar datar; memaksanya jadi 3D justru menonjolkan kepipihannya.</p>
+    <div class="ba">
+      <div class="card bad">
+        <span class="lbl">DITOLAK · pokemon-3d.html</span>
+        <h3>Fake-3D / tilt sprite</h3>
+        <ul>
+          <li>Sprite datar diputar → terlihat "kertas ditempel"</li>
+          <li>Tak ada dunia di belakangnya — cuma objek melayang</li>
+          <li>Makin diputar, makin terasa tipis</li>
+          <li>Tak skalabel ke 6 game Pokémon</li>
+        </ul>
+      </div>
+      <div class="card good">
+        <span class="lbl">USULAN · parallax 2.5D</span>
+        <h3>Dunia berlapis bergerak</h3>
+        <ul>
+          <li>Sprite dibiarkan datar &amp; tajam — tapi berdiri di dalam scene</li>
+          <li>Latar berlapis bergerak beda kecepatan → otak baca kedalaman</li>
+          <li>Bayangan kontak + kabut → Pokémon "menapak", bukan melayang</li>
+          <li>Satu engine, dipakai semua game Pokémon</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── §2 6 cues ── -->
+  <section>
+    <h2><span class="n">02</span>Sinyal kedalaman yang dipakai</h2>
+    <p class="lead">Tanpa mengubah sprite jadi 3D, enam sinyal ini membuat scene terasa dalam — Pokémon-nya tetap gambar datar yang tajam.</p>
+    <div class="cues">
+      <div class="cue"><div class="k"><b style="background:var(--amber)">↔</b>Parallax</div><p>Lapisan dekat bergerak jauh lebih cepat dari yang jauh. Sinyal kedalaman terkuat.</p></div>
+      <div class="cue"><div class="k"><b style="background:var(--violet)">⤢</b>Skala</div><p>Pokémon di bidang fokus besar &amp; tajam; yang jauh (flyer/ikan) kecil &amp; redup.</p></div>
+      <div class="cue"><div class="k"><b style="background:var(--sky)">≈</b>Kabut udara</div><p>Yang jauh memudar ke warna latar. Mendorong background mundur.</p></div>
+      <div class="cue"><div class="k"><b style="background:var(--mint)">◉</b>Depth-of-field</div><p>Hanya bidang Pokémon yang tajam; depan &amp; belakang sedikit berkabut — kesan lensa.</p></div>
+      <div class="cue"><div class="k"><b style="background:var(--rose)">◐</b>Bayangan kontak</div><p>Oval bayangan di kaki tiap Pokémon → menapak tanah/dasar, tidak melayang.</p></div>
+      <div class="cue"><div class="k"><b style="background:var(--focus)">↑</b>Look-around</div><p>Geser mouse / miringkan HP → semua lapisan menyapu sesuai kedalaman. "Kamera 3D" semu.</p></div>
+    </div>
+  </section>
+
+  <!-- ── §3 layer model ── -->
+  <section>
+    <h2><span class="n">03</span>Model lapisan — scene Pokémon Run</h2>
+    <p>Tiap lapisan punya satu angka <b>depth ∈ [0..1]</b> (0 = jauh tak terhingga, 1 = tepat di kamera). Engine menurunkan semua transform dari angka itu — sama persis seperti engine kereta.</p>
+    <table class="ltable">
+      <tr><th>Lapisan</th><th>Depth</th><th>Isi</th></tr>
+      <tr><td>Langit + matahari + awan</td><td class="d">0.00</td><td>Gradien, nyaris diam. Latar paling jauh.</td></tr>
+      <tr><td>Pegunungan berkabut</td><td class="d">0.14</td><td>Siluet berlapis, paling berkabut.</td></tr>
+      <tr><td>Pokémon terbang jauh</td><td class="d">0.22</td><td>Sprite kecil &amp; redup (Dragonite/Charizard) — aerial perspective.</td></tr>
+      <tr><td>Bukit + barisan pohon</td><td class="d">0.40</td><td>Detail menengah, mulai bergerak.</td></tr>
+      <tr><td><b>Pokémon utama + tanah</b> <span class="pill">FOKUS</span></td><td class="d">0.62</td><td>Sprite besar &amp; tajam berlari — subjek utama.</td></tr>
+      <tr><td>Rumput / semak depan</td><td class="d">1.00</td><td>Menyapu cepat di DEPAN Pokémon. Sinyal "dekat kamera" terkuat.</td></tr>
+    </table>
+  </section>
+
+  <!-- ── §4 API ── -->
+  <section>
+    <h2><span class="n">04</span>Engine yang sama — <code>games/parallax-engine.js</code></h2>
+    <p>Mockup ini menyetir sprite Pokémon dengan <b>instance RZParallax yang sama</b> yang sudah dipakai game kereta. Murni matematika; tinggal daftarkan lapisan + tempel gambar Pokémon di bidang fokus.</p>
+    <p style="color:var(--muted);font-size:14px">Karena portabel, satu engine ini bisa menyetir <b>semua</b> game Pokémon: Pokémon Run, Bawah Laut, Gym Battle, Mario-Pokémon, Monster Candy, Pokémon Birds — tiap game cuma mendaftarkan lapisannya sendiri.</p>
+  </section>
+
+  <!-- ── §5 perf ── -->
+  <section>
+    <h2><span class="n">05</span>Kenapa tetap ngebut di tablet anak</h2>
+    <div class="perf">
+      <div><div class="big">≤ 6</div><small>lapisan per scene — bukan ratusan objek 3D</small></div>
+      <div><div class="big">dt-clamp</div><small>tiap easing &amp; scroll di-batasi <code>min(dt, 3)</code> — frame spike tablet tak meledak</small></div>
+      <div><div class="big">sprite 2D</div><small>pakai gambar HD Pokémon yang sudah ada — 0 model/tekstur 3D</small></div>
+      <div><div class="big">~300KB</div><small>tetap engine 2D ringan; bukan 5–10MB bundle WebGL 3D</small></div>
+    </div>
+  </section>
+
+  <!-- ── §6 approval ── -->
+  <section>
+    <h2><span class="n">06</span>Keputusan</h2>
+    <p class="lead">Coba ketiga scene di atas (Run / Bawah Laut / Gym), mainkan slider kedalaman + toggle. Kalau arah ini oke, saya angkat efek parallax ini ke semua game Pokémon.</p>
+    <div class="cta">
+      <a class="yes" href="planb.html">✓ Setuju arah parallax — lanjut</a>
+      <a class="alt" href="pokemon-3d.html">Lihat versi 3D yang ditolak</a>
+    </div>
+  </section>
+
+  <footer>
+    <span class="pill">APPROVAL PAGE</span> &nbsp; Internal · Dunia Emosi · Pokémon Parallax 2.5D · 2026-06-29 ·
+    engine: <code>games/parallax-engine.js</code> · sprite: <code>assets/Pokemon/pokemondb_hd_alt2/</code><br>
+    Geser mockup, ganti scene, atur slider — lalu kabari setuju atau perlu revisi.
+  </footer>
+</div>
+
+<script src="games/parallax-engine.js?v=1.1.0"></script>
+<script>
+(function(){
+  'use strict'
+  var cv = document.getElementById('px'), ctx = cv.getContext('2d')
+  var W = cv.width, H = cv.height
+  var hint = document.getElementById('hint')
+
+  // ── engine (same instance that drives the train games) ──
+  var px = RZParallax.create({ strength: 32, autoScroll: 48, depthFocus: 0.62, maxBlur: 3.5, hazeMax: 0.55, vertical: 0.55 })
+  px.bindPointer(document.getElementById('stage'))
+
+  // ── real Pokémon HD sprites (local) ──
+  var DIR = 'assets/Pokemon/pokemondb_hd_alt2/'
+  var IMG = {}
+  function load(file){ var i = new Image(); i.src = DIR + file; IMG[file] = i; return i }
+  ;['0025_pikachu.webp','0006_charizard.webp','0448_lucario.webp','0149_dragonite.webp',
+    '0131_lapras.webp','0658_greninja.webp','0130_gyarados.webp','0009_blastoise.webp',
+    '0445_garchomp.webp','0282_gardevoir.webp'].forEach(load)
+
+  // ── toggles ──
+  var opt = { auto:true, dof:true, haze:true }
+  function bindToggle(id, key, onChange){
+    var el = document.getElementById(id)
+    el.addEventListener('click', function(){
+      var on = !el.classList.contains('on')
+      el.classList.toggle('on', on); opt[key] = on; if(onChange) onChange(on)
+    })
+  }
+  bindToggle('t-auto','auto', function(on){ px.set('autoScroll', on ? 48 : 0) })
+  bindToggle('t-dof','dof')
+  bindToggle('t-haze','haze')
+  document.getElementById('s-str').addEventListener('input', function(e){ px.set('strength', +e.target.value) })
+  document.getElementById('t-tilt').addEventListener('click', function(){
+    var el = this
+    px.bindTilt().then(function(ok){ if(ok){ el.classList.add('on'); if(hint) hint.style.opacity = 0 } })
+  })
+  document.getElementById('stage').addEventListener('pointerdown', function(){ if(hint) hint.style.opacity = 0 })
+
+  // scene switcher
+  var scene = 0
+  var sbtns = Array.prototype.slice.call(document.querySelectorAll('.scene-btn'))
+  sbtns.forEach(function(b){ b.addEventListener('click', function(){
+    scene = +b.getAttribute('data-scene')
+    sbtns.forEach(function(x){ x.classList.toggle('on', x === b) })
+  }) })
+
+  // ── helpers ──
+  function lerp(a,b,t){ return a+(b-a)*t }
+  function tile(offset, tileW, paint){
+    var start = -((offset % tileW) + tileW) % tileW
+    for(var x = start; x < W + tileW; x += tileW) paint(x)
+  }
+  // A-310 perf: NEVER use Canvas2D ctx.filter='blur()' in a frame loop (froze a tablet
+  // for ~5.9s). Approximate depth-of-field with a cheap translucent wash folded into haze.
+  function applyHaze(t){
+    var a = (opt.haze ? t.haze : 0)
+    if(opt.dof && t.blur > 0.2) a += Math.min(t.blur, 10) * 0.02
+    if(a <= 0.01) return
+    ctx.globalAlpha = Math.min(a, 0.6); ctx.fillStyle = t.hazeColor || 'rgba(120,110,150,1)'
+    ctx.fillRect(-60,-60,W+120,H+120); ctx.globalAlpha = 1
+  }
+
+  // draw a sprite with parallax transform + contact shadow.
+  // cxF/cyF are screen fractions of the sprite's FEET (base) position.
+  function drawMon(file, cxF, cyF, targetHF, t, o){
+    o = o || {}
+    var img = IMG[file]; if(!img || !img.complete || !img.naturalWidth) return
+    var scale = (targetHF * H / img.naturalHeight) * (t.scale || 1) * (o.scale || 1)
+    var w = img.naturalWidth * scale, h = img.naturalHeight * scale
+    var bx = cxF * W + t.x * (o.par == null ? 1 : o.par)
+    var by = cyF * H + t.y * (o.par == null ? 1 : o.par)
+    var bob = o.bob ? Math.sin(px.get('scroll') * o.bobF + (o.phase || 0)) * o.bob * H : 0
+    by += bob
+    // contact shadow (skip for flying / underwater far)
+    if(o.shadow !== false){
+      ctx.globalAlpha = 0.30; ctx.fillStyle = o.shadowCol || '#06140a'
+      ctx.beginPath(); ctx.ellipse(bx, cyF * H + t.y * (o.par == null ? 1 : o.par) + 2, w * 0.40, Math.max(5, h * 0.07), 0, 0, 7); ctx.fill()
+      ctx.globalAlpha = 1
+    }
+    ctx.save(); ctx.translate(bx, by - h)
+    if(o.flip) ctx.scale(-1, 1)
+    ctx.drawImage(img, -w / 2, 0, w, h)
+    ctx.restore()
+    // far/hazy sprites get a wash toward the scene tint for aerial perspective
+    if(o.far && (opt.haze || opt.dof)){
+      var a = (opt.haze ? t.haze : 0) + (opt.dof ? Math.min(t.blur, 8) * 0.02 : 0)
+      if(a > 0.01){ ctx.globalAlpha = Math.min(a, 0.5); ctx.fillStyle = o.hazeCol || 'rgba(150,170,210,1)'
+        ctx.fillRect(bx - w * 0.7, by - h * 1.1, w * 1.4, h * 1.2); ctx.globalAlpha = 1 }
+    }
+  }
+
+  // ════════════ SCENE 0 — POKÉMON RUN (forest, day) ════════════
+  function paintRunSky(){
+    var g = ctx.createLinearGradient(0,0,0,H)
+    g.addColorStop(0,'#bfe6ff'); g.addColorStop(.5,'#e9f6ff'); g.addColorStop(.78,'#dff3e2'); g.addColorStop(1,'#bfe6c2')
+    ctx.fillStyle = g; ctx.fillRect(0,0,W,H)
+    // sun
+    var t = px.layer(0.0)
+    ctx.save(); ctx.translate(W*0.80 + t.x, H*0.20 + t.y)
+    var sg = ctx.createRadialGradient(0,0,6,0,0,90); sg.addColorStop(0,'rgba(255,248,210,.95)'); sg.addColorStop(1,'rgba(255,248,210,0)')
+    ctx.fillStyle=sg; ctx.beginPath(); ctx.arc(0,0,90,0,7); ctx.fill()
+    ctx.fillStyle='#fff4cf'; ctx.beginPath(); ctx.arc(0,0,34,0,7); ctx.fill(); ctx.restore()
+  }
+  function paintClouds(t, scrollX){
+    ctx.save(); ctx.translate(t.x, t.y); ctx.fillStyle='rgba(255,255,255,.82)'
+    tile(scrollX, 460, function(ox){
+      ;[[60,90,30],[120,80,40],[190,96,26]].forEach(function(c){
+        ctx.beginPath(); ctx.ellipse(ox+c[0], c[1], c[2]*1.4, c[2], 0,0,7); ctx.fill() })
+    })
+    applyHaze(t); ctx.restore()
+  }
+  function paintMountains(t, scrollX, col, baseY, amp){
+    ctx.save(); ctx.translate(t.x, t.y)
+    tile(scrollX, 520, function(ox){
+      ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(ox, baseY)
+      ctx.lineTo(ox+130, baseY-amp); ctx.lineTo(ox+250, baseY-amp*0.55)
+      ctx.lineTo(ox+360, baseY-amp*1.05); ctx.lineTo(ox+520, baseY-amp*0.3); ctx.lineTo(ox+520, H); ctx.lineTo(ox, H); ctx.closePath(); ctx.fill()
+    })
+    applyHaze(t); ctx.restore()
+  }
+  function paintTreeRow(t, scrollX, baseY){
+    ctx.save(); ctx.translate(t.x, t.y)
+    // rolling hill band
+    ctx.fillStyle='#5aa36a'; ctx.beginPath(); ctx.moveTo(0,H)
+    for(var i=0;i<=W;i+=24){ ctx.lineTo(i, baseY - Math.sin((i+scrollX)/130)*22) }
+    ctx.lineTo(W,H); ctx.closePath(); ctx.fill()
+    tile(scrollX, 140, function(ox){
+      var h = 60 + ((ox%3)*10)
+      ctx.fillStyle='#2f6b3d'; ctx.beginPath(); ctx.moveTo(ox+12,baseY+6); ctx.lineTo(ox+12+22,baseY-h); ctx.lineTo(ox+12+44,baseY+6); ctx.closePath(); ctx.fill()
+      ctx.fillStyle='#3c814c'; ctx.beginPath(); ctx.moveTo(ox+12,baseY-14); ctx.lineTo(ox+12+22,baseY-h-16); ctx.lineTo(ox+12+44,baseY-14); ctx.closePath(); ctx.fill()
+    })
+    applyHaze(t); ctx.restore()
+  }
+  function paintRunGround(t, scrollX){
+    ctx.save(); ctx.translate(t.x, t.y)
+    var gy = H*0.80
+    var gg = ctx.createLinearGradient(0,gy-10,0,H); gg.addColorStop(0,'#74b86a'); gg.addColorStop(1,'#4d8f49'); ctx.fillStyle=gg; ctx.fillRect(0,gy-6,W,H)
+    // path
+    ctx.fillStyle='#cdab73'; ctx.fillRect(0, gy+30, W, 46)
+    tile(scrollX, 56, function(ox){ ctx.fillStyle='rgba(150,120,70,.5)'; ctx.fillRect(ox, gy+30, 22, 46) })
+    ctx.restore()
+  }
+  function paintRunForeground(t, scrollX){
+    ctx.save(); ctx.translate(t.x, t.y)
+    tile(scrollX, 250, function(ox){
+      ctx.fillStyle='#1f5230'
+      ;[0,95,175].forEach(function(dx){ var bx=ox+dx, by=H-4, r=38+(dx%42)
+        ctx.beginPath(); ctx.ellipse(bx-r*0.7,by,r*0.9,r*0.7,0,0,7); ctx.fill()
+        ctx.beginPath(); ctx.ellipse(bx+r*0.7,by,r*0.9,r*0.7,0,0,7); ctx.fill()
+        ctx.beginPath(); ctx.ellipse(bx,by-r*0.35,r*1.1,r*0.95,0,0,7); ctx.fill() })
+      ctx.strokeStyle='#173f23'; ctx.lineWidth=6
+      for(var b=0;b<5;b++){ var gx=ox+34+b*48; ctx.beginPath(); ctx.moveTo(gx,H); ctx.quadraticCurveTo(gx+7,H-50,gx+18,H-66); ctx.stroke() }
+    })
+    ctx.restore()
+  }
+  function drawRun(){
+    paintRunSky()
+    paintClouds(px.layer(0.07), px.scrollFor(0.07,1.0))
+    paintMountains(px.layer(0.14), px.scrollFor(0.14,1.0), '#9fc6a8', H*0.60, 150)
+    paintMountains(px.layer(0.20), px.scrollFor(0.20,1.0), '#86b794', H*0.68, 110)
+    // distant flyer (far, hazy, small)
+    var tf = px.layer(0.22)
+    drawMon('0149_dragonite.webp', 0.62, 0.30, 0.10, tf, { far:true, shadow:false, scale:1, bob:0.012, bobF:0.02, hazeCol:'rgba(190,210,170,1)' })
+    paintTreeRow(px.layer(0.40), px.scrollFor(0.40,1.0), H*0.74)
+    paintRunGround(px.layer(0.62), px.scrollFor(0.62,1.0))
+    // focus runners — sharp, big, on the ground line, slight run-bob
+    var t = px.layer(0.62)
+    drawMon('0006_charizard.webp', 0.30, 0.86, 0.34, t, { bob:0.018, bobF:0.05, phase:0.0, par:1.0 })
+    drawMon('0025_pikachu.webp',   0.54, 0.88, 0.20, t, { bob:0.022, bobF:0.07, phase:1.3, par:1.0 })
+    drawMon('0448_lucario.webp',   0.74, 0.87, 0.30, t, { bob:0.018, bobF:0.05, phase:2.4, par:1.0 })
+    paintRunForeground(px.layer(1.0), px.scrollFor(1.0,1.0))
+  }
+
+  // ════════════ SCENE 1 — BAWAH LAUT (underwater) ════════════
+  function paintSeaWater(){
+    var g = ctx.createLinearGradient(0,0,0,H)
+    g.addColorStop(0,'#1d6ea8'); g.addColorStop(.5,'#13578f'); g.addColorStop(1,'#0a3a66')
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H)
+    // god rays
+    var t = px.layer(0.05)
+    ctx.save(); ctx.globalAlpha=0.10; ctx.fillStyle='#bfe9ff'
+    ;[0,0.3,0.62,0.85].forEach(function(fx,i){ ctx.save(); ctx.translate(fx*W + t.x*0.5, -40)
+      ctx.transform(1,0,-0.4,1,0,0); ctx.fillRect(0,0,70,H+120); ctx.restore() })
+    ctx.globalAlpha=1; ctx.restore()
+  }
+  function paintSeabedFar(t, scrollX){
+    ctx.save(); ctx.translate(t.x, t.y)
+    tile(scrollX, 360, function(ox){
+      ctx.fillStyle='#0d3f5e'; ctx.beginPath(); ctx.moveTo(ox,H)
+      ctx.lineTo(ox+90,H*0.66); ctx.lineTo(ox+200,H*0.78); ctx.lineTo(ox+300,H*0.62); ctx.lineTo(ox+360,H*0.74); ctx.lineTo(ox+360,H); ctx.closePath(); ctx.fill()
+    })
+    applyHaze(t); ctx.restore()
+  }
+  function paintKelp(t, scrollX, baseY, col){
+    ctx.save(); ctx.translate(t.x, t.y); ctx.strokeStyle=col; ctx.lineWidth=14; ctx.lineCap='round'
+    tile(scrollX, 150, function(ox){
+      var sway = Math.sin((ox+px.get('scroll'))/70)*16
+      ctx.beginPath(); ctx.moveTo(ox+30, H); ctx.quadraticCurveTo(ox+30+sway, baseY+40, ox+30+sway*1.6, baseY); ctx.stroke()
+    })
+    applyHaze(t); ctx.restore()
+  }
+  function paintBubbles(t){
+    ctx.save(); ctx.translate(t.x, t.y); ctx.strokeStyle='rgba(220,245,255,.5)'; ctx.lineWidth=2
+    for(var i=0;i<26;i++){ var bx=(i*149.3)%W, base=(i*83.1)%H
+      var by=(base - px.get('scroll')*0.5*((i%3)+1)) % H; if(by<0) by+=H
+      var r=(i%4===0)?6:3; ctx.beginPath(); ctx.arc(bx, H-by, r, 0, 7); ctx.stroke() }
+    ctx.restore()
+  }
+  function drawSea(){
+    paintSeaWater()
+    paintSeabedFar(px.layer(0.16), px.scrollFor(0.16,1.0))
+    // far swimmer
+    var tf = px.layer(0.24)
+    drawMon('0009_blastoise.webp', 0.30, 0.40, 0.13, tf, { far:true, shadow:false, bob:0.02, bobF:0.03, phase:1.0, hazeCol:'rgba(120,170,210,1)' })
+    paintKelp(px.layer(0.40), px.scrollFor(0.40,1.0), H*0.40, '#1e6e5a')
+    // focus swimmers — float-bob, no ground shadow (use soft blue shadow oval below)
+    var t = px.layer(0.62)
+    drawMon('0130_gyarados.webp', 0.62, 0.58, 0.30, t, { bob:0.03, bobF:0.04, phase:0.0, shadow:false })
+    drawMon('0131_lapras.webp',   0.32, 0.74, 0.30, t, { bob:0.026, bobF:0.045, phase:1.6, shadowCol:'#06283a' })
+    drawMon('0658_greninja.webp', 0.78, 0.78, 0.26, t, { bob:0.03, bobF:0.06, phase:2.7, shadowCol:'#06283a' })
+    paintKelp(px.layer(1.0), px.scrollFor(1.0,1.0), H*0.66, '#11543f')
+    paintBubbles(px.layer(0.9))
+  }
+
+  // ════════════ SCENE 2 — GYM BATTLE (arena) ════════════
+  function paintGymHall(){
+    var g = ctx.createLinearGradient(0,0,0,H)
+    g.addColorStop(0,'#241a3a'); g.addColorStop(.55,'#3a2754'); g.addColorStop(1,'#1c1430')
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H)
+    // back wall glow / spotlight
+    var t = px.layer(0.05)
+    ctx.save(); ctx.translate(W*0.5 + t.x, -30)
+    var sg = ctx.createRadialGradient(0,H*0.3,40,0,H*0.3,W*0.6); sg.addColorStop(0,'rgba(255,210,140,.22)'); sg.addColorStop(1,'rgba(255,210,140,0)')
+    ctx.fillStyle=sg; ctx.fillRect(-W,0,W*2,H); ctx.restore()
+  }
+  function paintCrowd(t, scrollX, baseY, col){
+    ctx.save(); ctx.translate(t.x, t.y); ctx.fillStyle=col
+    tile(scrollX, 46, function(ox){
+      ctx.beginPath(); ctx.arc(ox+14, baseY, 12, 0, 7); ctx.fill()
+      ctx.fillRect(ox+4, baseY+8, 20, 26)
+    })
+    // small light specks
+    ctx.fillStyle='rgba(255,225,150,.5)'
+    tile(scrollX*0.6, 90, function(ox){ ctx.beginPath(); ctx.arc(ox+30, baseY-26, 2.4, 0, 7); ctx.fill() })
+    applyHaze(t); ctx.restore()
+  }
+  function paintArenaFloor(t, scrollX){
+    ctx.save(); ctx.translate(t.x, t.y)
+    var fy = H*0.74
+    var gg = ctx.createLinearGradient(0,fy,0,H); gg.addColorStop(0,'#5b4b7a'); gg.addColorStop(1,'#39305a'); ctx.fillStyle=gg; ctx.fillRect(0,fy,W,H)
+    // battle line
+    ctx.strokeStyle='rgba(255,210,140,.5)'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(W*0.5+(scrollX%1),fy); ctx.lineTo(W*0.5,H); ctx.stroke()
+    // grid
+    ctx.strokeStyle='rgba(255,255,255,.06)'; ctx.lineWidth=2
+    tile(scrollX, 80, function(ox){ ctx.beginPath(); ctx.moveTo(ox,fy); ctx.lineTo(ox-40,H); ctx.stroke() })
+    ctx.restore()
+  }
+  function drawGym(){
+    paintGymHall()
+    paintCrowd(px.layer(0.16), px.scrollFor(0.16,1.0), H*0.50, '#2a2040')
+    paintCrowd(px.layer(0.26), px.scrollFor(0.26,1.0), H*0.58, '#352a52')
+    paintArenaFloor(px.layer(0.62), px.scrollFor(0.62,1.0))
+    // two combatants facing off on the focus plane
+    var t = px.layer(0.62)
+    drawMon('0006_charizard.webp', 0.27, 0.86, 0.40, t, { bob:0.012, bobF:0.04, phase:0.0, flip:false })
+    drawMon('0009_blastoise.webp', 0.73, 0.86, 0.38, t, { bob:0.012, bobF:0.04, phase:1.8, flip:true })
+    // foreground arena rail (near, fast)
+    var f = px.layer(1.0)
+    ctx.save(); ctx.translate(f.x, f.y)
+    ctx.fillStyle='#15102a'; ctx.fillRect(0, H-30, W, 30)
+    ctx.fillStyle='rgba(255,210,140,.16)'; ctx.fillRect(0, H-34, W, 4)
+    ctx.restore()
+  }
+
+  // ── frame loop ──
+  var last = 0
+  function frame(ts){
+    var dtF = last ? Math.min(3,(ts-last)/16.67) : 1; last = ts
+    px.update(dtF)
+    ctx.filter = 'none'
+    if(scene === 1) drawSea()
+    else if(scene === 2) drawGym()
+    else drawRun()
+    requestAnimationFrame(frame)
+  }
+  requestAnimationFrame(frame)
+})();
+</script>
+</body>
+</html>

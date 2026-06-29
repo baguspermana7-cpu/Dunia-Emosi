@@ -283,10 +283,17 @@
   }
   function foliageFrame(W, H, pal) {
     var c = cont(), g = gfx()
-    // bottom-left cluster of big palm fronds
-    for (var a = 0; a < 5; a++) frond(g, -10, H + 10, 150 - a * 8, -Math.PI * (0.18 + a * 0.12), 34 - a * 3, a % 2 ? pal.foliage : pal.foliageDk)
+    // v55.97 B-283 — frond size SCALES with the shorter screen dim. Was a fixed 150px
+    // length + 34px width, which ballooned into the play area on phones / short
+    // landscape (owner: "kacau parah, tidak responsive" — giant green leaves mid-scene).
+    // Cap keeps the lush look on tablets; floor keeps a corner accent on tiny screens.
+    var base = Math.max(60, Math.min(150, Math.min(W, H) * 0.2))
+    var wide = base * 0.22
+    var n = base < 100 ? 4 : 5
+    // bottom-left cluster of palm fronds (hugs the corner)
+    for (var a = 0; a < n; a++) frond(g, -8, H + 10, base * (1 - a * 0.06), -Math.PI * (0.18 + a * 0.12), wide * (1 - a * 0.09), a % 2 ? pal.foliage : pal.foliageDk)
     // bottom-right cluster
-    for (var b = 0; b < 5; b++) frond(g, W + 10, H + 10, 150 - b * 8, -Math.PI * (0.82 - b * 0.12), 34 - b * 3, b % 2 ? pal.foliage : pal.foliageDk)
+    for (var b = 0; b < n; b++) frond(g, W + 8, H + 10, base * (1 - b * 0.06), -Math.PI * (0.82 - b * 0.12), wide * (1 - b * 0.09), b % 2 ? pal.foliage : pal.foliageDk)
     c.addChild(g); return c
   }
 

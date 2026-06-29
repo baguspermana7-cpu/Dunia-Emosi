@@ -98,7 +98,9 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 @keyframes g14LowFuel{0%,100%{box-shadow:inset 0 0 0 2px rgba(239,68,68,0)}50%{box-shadow:inset 0 0 24px 2px rgba(239,68,68,0.5)}}
 
 /* A10: Milestone banner */
-.g14-milestone{position:fixed;top:30%;left:50%;transform:translate(-50%,0);z-index:65;font-family:'Fredoka One',cursive;font-size:32px;font-weight:900;color:#fde047;text-shadow:0 0 18px rgba(253,224,71,0.7),0 4px 12px rgba(0,0,0,0.6);padding:8px 22px;background:linear-gradient(135deg,rgba(0,0,0,0.65),rgba(15,23,42,0.55));border:2px solid #fde047;border-radius:20px;pointer-events:none;animation:g14MilestonePop 1400ms cubic-bezier(.34,1.56,.64,1) forwards;white-space:nowrap}
+/* v55.97 B-283 — responsive: clamp font + sit clear below the HUD ticket on short
+   landscape (was fixed 32px at top:30% → collided with the "Part N/30" banner). */
+.g14-milestone{position:fixed;top:clamp(76px,30%,38%);left:50%;transform:translate(-50%,0);z-index:65;font-family:'Fredoka One',cursive;font-size:clamp(18px,4.6vw,32px);font-weight:900;color:#fde047;text-shadow:0 0 18px rgba(253,224,71,0.7),0 4px 12px rgba(0,0,0,0.6);padding:7px clamp(14px,3vw,22px);background:linear-gradient(135deg,rgba(0,0,0,0.65),rgba(15,23,42,0.55));border:2px solid #fde047;border-radius:20px;pointer-events:none;animation:g14MilestonePop 1400ms cubic-bezier(.34,1.56,.64,1) forwards;white-space:nowrap;max-width:88vw}
 @keyframes g14MilestonePop{0%{transform:translate(-50%,20px) scale(0.4) rotate(-3deg);opacity:0}18%{transform:translate(-50%,-6px) scale(1.2) rotate(2deg);opacity:1}30%{transform:translate(-50%,0) scale(1) rotate(0);opacity:1}78%{transform:translate(-50%,0) scale(1);opacity:1}100%{transform:translate(-50%,-30px) scale(0.85);opacity:0}}
 
 /* A12: Confetti for P1 finish */
@@ -124,10 +126,9 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 #g14-mini-quiz{position:fixed;left:max(56px,env(safe-area-inset-left));top:50%;transform:translateY(-50%);z-index:210;width:min(240px,40vw);background:linear-gradient(135deg,rgba(15,23,42,0.96),rgba(45,12,75,0.92));border:2px solid #fbbf24;border-radius:18px;padding:12px;font-family:'Fredoka One',cursive;color:#fff;box-shadow:0 12px 36px rgba(0,0,0,0.6);display:none}
 #g14-mini-quiz.show{display:block;animation:g14MiniIn 280ms cubic-bezier(.34,1.56,.64,1)}
 @keyframes g14MiniIn{0%{opacity:0;transform:translateY(-50%) translateX(-40px)}100%{opacity:1;transform:translateY(-50%) translateX(0)}}
-#g14-mini-quiz .gmq-q{text-align:center;font-size:18px;font-weight:900;margin-bottom:8px;color:#fde68a}
-#g14-mini-quiz .gmq-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-#g14-mini-quiz .gmq-btn{padding:10px 4px;border:1.5px solid rgba(255,255,255,0.18);border-radius:12px;background:rgba(255,255,255,0.07);color:#fff;font-family:inherit;font-size:15px;font-weight:900;cursor:pointer}
-#g14-mini-quiz .gmq-btn:active{background:rgba(255,255,255,0.18)}
+/* v55.97 M-303 — question + pills owned by shared quiz-engine.js (.qz-*). Mini panel
+   only shrinks the shared gold question to fit the 240px chip. */
+#g14-mini-quiz .qz-question{font-size:20px;margin-bottom:10px}
 
 /* B10: Dynamic kmh needle gauge */
 #g14-speed-needle{display:inline-block;width:44px;height:24px;position:relative;vertical-align:middle;margin-left:4px}
@@ -158,13 +159,9 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 /* ── Math Quiz overlay ── */
 #quiz-ovl{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(5,12,2,0.97);backdrop-filter:blur(10px);border-top:3px solid #ef4444;padding:14px 16px 20px;display:none}
 #quiz-label{text-align:center;color:rgba(251,191,36,0.8);font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:6px}
-#quiz-q{text-align:center;color:white;font-size:26px;font-weight:900;margin-bottom:12px}
-#quiz-choices{display:flex;gap:10px;justify-content:center}
-/* v55.35 B-218 — pastel-soft quiz buttons matching obstacle modal + g13c/g15. */
-.quiz-btn{flex:1;max-width:88px;min-height:44px;padding:14px 4px;border:2.5px solid #c4a5e0;border-radius:14px;background:#f0eaf6;color:#6d28d9;font-size:20px;font-weight:900;cursor:pointer;transition:transform .08s,border-color .15s,background .15s;font-family:inherit;-webkit-tap-highlight-color:transparent;box-shadow:0 4px 0 #a48cc8}
-.quiz-btn:active{transform:translateY(3px) scale(.96);box-shadow:0 1px 0 #a48cc8}
-.quiz-btn.qz-correct{background:#e8f5e8;color:#4a7c4a;border-color:#a8d8a8;box-shadow:0 4px 0 #84b884}
-.quiz-btn.qz-wrong{background:#fce8e8;color:#8a4a4a;border-color:#f4a8a8;box-shadow:0 4px 0 #d68888}
+/* v55.97 B-282/M-303 — quiz styling now owned by the SHARED games/quiz-engine.js
+   (.qz-question + .qz-pill). Keep only the choices-row layout slot here. */
+#quiz-choices{display:flex;gap:8px;justify-content:center}
 
 /* Overlays handled by game-modal.js */
 
@@ -217,7 +214,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.96</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.97</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="data/train-world.js?v=55.89"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
@@ -231,6 +228,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 <!-- v54.69 — ObstacleEngine foundation (modular obstacle system, soft-fail, kids-friendly) -->
 <script src="obstacle-engine.js?v=55.63-20260627eo"></script>
 <script src="data/kids-questions.js?v=55.5-20260626dd"></script>
+<!-- v55.97 M-303 — SHARED quiz engine (question + answer-choices) for all games -->
+<script src="quiz-engine.js?v=55.97-20260629a"></script>
 <script src="data/obstacles.js?v=55.63-20260627eo"></script>
 <script src="data/routes.js?v=55.5-20260626dd"></script>
 <script src="data/reward-catalog.js?v=55.5-20260626dd"></script>
@@ -4268,27 +4267,13 @@ function g14MaybeFloatMiniQuiz(){
   if (S.distance < 150) return
   if (S.frame % (60 * 60) !== 0) return
   _miniQuizArmed = true
-  const a = Math.floor(Math.random() * 9) + 1
-  const b = Math.floor(Math.random() * 9) + 1
-  const ans = a + b
   const qEl = document.getElementById('gmq-q')
   const grid = document.getElementById('gmq-grid')
   const ovl = document.getElementById('g14-mini-quiz')
   if (!qEl || !grid || !ovl) { _miniQuizArmed = false; return }
-  qEl.textContent = `${a} + ${b} = ?`
-  const wrongs = new Set()
-  while (wrongs.size < 3) {
-    const w = ans + (Math.random() < 0.5 ? -1 : 1) * (Math.floor(Math.random() * 5) + 1)
-    if (w !== ans && w > 0) wrongs.add(w)
-  }
-  const choices = [ans, ...wrongs].sort(() => Math.random() - 0.5)
-  grid.innerHTML = ''
-  choices.forEach(c => {
-    const btn = document.createElement('button')
-    btn.className = 'gmq-btn'
-    btn.textContent = c
-    btn.onclick = () => g14CloseMiniQuiz(c === ans)
-    grid.appendChild(btn)
+  // v55.97 M-303 — SHARED QuizEngine builds the question + coloured pills (mini variant).
+  QuizEngine.fill(qEl, grid, { maxN: 9, useMinus: false, variant: 'mini' }, (res) => {
+    g14CloseMiniQuiz(res.correct)
   })
   ovl.classList.add('show')
   // v54.27 I5: while the chip is open, drop speed to 0.4× baseSpeed and freeze
@@ -5047,6 +5032,12 @@ window.addEventListener('resize', () => {
         // v55.87 — re-fit every NPC procedural/sprite to the new uniform height + rail margin.
         if (L.ai && L.ai.children) { L.ai.children.forEach(c => { if (c && c._g14RefitRail) c._g14RefitRail() }) }
       }
+      // v55.97 B-283 — rebuild foreground foliage so the corner fronds re-scale to the
+      // new viewport (were fixed-size → ballooned after a rotate). Cheap (one container).
+      try {
+        if (L.fore && L.fore.parent) { L.fore.parent.removeChild(L.fore); L.fore.destroy({ children: true }) }
+        if (typeof buildForeScenery === 'function') buildForeScenery()
+      } catch(_){}
       return
     }
     // A-311 — recompute the SAME responsive layout as initPixi so lanes/scenery/
@@ -5133,68 +5124,20 @@ function g14StartQuizCountdown(){
 }
 
 function buildQuiz() {
-  const lv = cfg.level || 1   // v55.67 B-261 — default to EASIEST when level unset (was 5)
-  let a, b, answer, op
-  // v55.67 B-261 — owner: "soal saat boost masih terlalu sulit padahal baru level awal."
-  // Difficulty now SCALES BY LEVEL so level-1 kids get trivial single-digit sums, never
-  // two-digit carrying. Always +/− only (no ×), single-step, answer ≤ 2 digits.
-  const rnd = (n) => Math.floor(Math.random() * n) + 1
-  let maxN, useMinus
-  if (lv <= 2)      { maxN = 5;  useMinus = false }   // L1-2: 1..5  (sum ≤ 10) — trivial
-  else if (lv <= 5) { maxN = 10; useMinus = false }   // L3-5: 1..10
-  else if (lv <= 10){ maxN = 20; useMinus = false }   // L6-10: 1..20, still + only
-  else              { maxN = 20; useMinus = true }     // L11+: add subtraction
-  op = (useMinus && Math.random() < 0.5) ? '-' : '+'
-  if (op === '+') {
-    a = rnd(maxN); b = rnd(maxN); answer = a + b
-  } else {
-    a = rnd(maxN); b = Math.floor(Math.random() * a) + 1; answer = a - b   // b ≤ a → never negative
-  }
-  // v55.45 B-235 — owner: "Pertanyaan saat boost pertanyaan yg aneh. Buat
-  // pertanyaan yg seperti biasa aja matematika." The boost quiz now shows PLAIN
-  // arithmetic only — the v54.19 train-themed word-problem wrappers were the
-  // "aneh" prompts. Pure form keeps it readable for ages 4-7.
-  const symbol = op === '*' ? '×' : op
-  const qText = `${a} ${symbol} ${b} = ?`
-  document.getElementById('quiz-q').textContent = qText
-  const wrong = new Set()
-  let safety = 0
-  while (wrong.size < 3 && safety++ < 30) {
-    const d = Math.floor(Math.random() * 8) + 1
-    const w = answer + (Math.random() < 0.5 ? d : -d)
-    if (w !== answer && w > 0) wrong.add(w)
-  }
-  // Pad with sequential always-advancing values (defensive cap).
-  // See 2026-05-04 commit 410597c for the original bug pattern.
-  let pad = 1
-  while (wrong.size < 3 && pad < 100) {
-    const v = answer + pad
-    if (v !== answer && v > 0) wrong.add(v)
-    pad++
-  }
-  const choices = [answer, ...[...wrong]].slice(0, 4).sort(() => Math.random() - 0.5)
-  const el = document.getElementById('quiz-choices')
-  el.innerHTML = ''
-  choices.forEach(c => {
-    const btn = document.createElement('button')
-    btn.className = 'quiz-btn'
-    btn.textContent = c
-    btn.onclick = () => answerQuiz(c, answer)
-    el.appendChild(btn)
+  // v55.97 M-303 — generation + styling + answer handling now owned by the SHARED
+  // QuizEngine (was hand-rolled here). Level-scaled kid arithmetic lives in the engine.
+  const lv = cfg.level || 1   // v55.67 B-261 — default to EASIEST when level unset
+  QuizEngine.fill('quiz-q', 'quiz-choices', { level: lv }, (res) => {
+    document.getElementById('quiz-ovl').style.display = 'none'
+    S.quizOpen = false
+    if (res.correct) {
+      try { g14Vibrate(40) } catch(_){}  // v54.19 B9
+      executeBoost()
+    } else {
+      playTone(200, 0.15, 'square')
+      screenFlash('rgba(255,60,60,0.2)')
+    }
   })
-  S.boostQ = { answer }
-}
-
-function answerQuiz(val, correct) {
-  document.getElementById('quiz-ovl').style.display = 'none'
-  S.quizOpen = false
-  if (val === correct) {
-    try { g14Vibrate(40) } catch(_){}  // v54.19 B9
-    executeBoost()
-  } else {
-    playTone(200, 0.15, 'square')
-    screenFlash('rgba(255,60,60,0.2)')
-  }
 }
 
 function executeBoost() {

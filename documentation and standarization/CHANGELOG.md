@@ -1,5 +1,35 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-30 — v55.97 "shared QuizEngine + g14 responsive + rail recalibration + side facing/smoke"
+
+A four-part batch closing B-280..B-283 + M-303.
+
+- **M-303 / B-282 — shared `games/quiz-engine.js` (`window.QuizEngine`).** Owner: "quiz/question
+  harusnya ada engine tersendiri yang shared among all the game. jangan per-game membuat engine/algo
+  sendiri." One engine now owns question generation (kid-friendly level-scaled arithmetic — single
+  source, was duplicated in g14 `buildQuiz` + g13c `genMathQuestion`), the gym-pokemon styled render
+  (gold question + 4 per-position coloured pills `.qz-pill`, injected CSS), and answer handling
+  (tap → lock → reveal → callback). Adopted in `gym-pokemon` (render+answer) and `balapan-kereta`
+  (BOOST quiz + mini-quiz); per-game `.math-btn` / `.quiz-btn` / `.gmq-btn` CSS + algos deleted.
+- **B-283 — g14 fully responsive ("kacau parah, tidak responsive").** Root: `IndoScene.foliageFrame`
+  drew fixed 150px palm fronds → giant green leaves invading the play area on phones/short landscape.
+  Fronds now scale with `min(W,H)` (cap for tablets, floor for tiny screens) + rebuild on
+  resize/rotate. `.g14-milestone` banner ("Kota di depan!") clamped + repositioned so it never
+  collides with the "Part N/30" ticket.
+- **B-280 — g14 rail floating ("level 1 ok, level lain floating diatas rail").** The per-plate lane
+  auto-detector mis-fired on vegetation (top lane drifted into the grass above the tracks — L2 0.495,
+  L24 0.474) and collapsed lanes onto one rail. New coherence detector `tools/detect-rail-lanes2.py`
+  scores rows by horizontal dark-line coherence (a real steel rail spans the full width; vegetation
+  doesn't), enforces min lane separation, spreads top/mid/bottom. All 48 plates recalibrated + visually
+  verified via montage; `qa-g14-railalign` ≤1px.
+- **B-281 — balapan-kereta-side facing + smoke.** Owner: "salah menghadap karakternya, asapnya salah
+  penempatan." The side-scroller runs RIGHT, so `faces:'left'` sprites (Thomas + most AEG + world
+  trains) are now mirrored to face travel; `faces:'right'` art (Casey JR, Diesel, Kana…) untouched.
+  Smoke now puffs from the funnel (train top, front) and trails up-back, instead of floating ~30px
+  above a ~40px-tall loco.
+- Also: built `plan-pokemon-parallax.html` (parallax mockup, 3 live scenes, linked from planb.html).
+  sw → v55.97-20260630a (+ quiz-engine.js precache). All 16 pages pass app-sweep (0 errors).
+
 ## 2026-06-29 — v55.96 "g14 juice — banked lane-change tilt"
 
 Completes the owner's diorama concept #4 (juice). The boost spark burst (spawnBoostFX, 36 gold/orange

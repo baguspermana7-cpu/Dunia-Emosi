@@ -12,6 +12,20 @@
 ### L225 — For cut-out 2D sprites, a CONTACT SHADOW is the cheapest, highest-impact grounding
 - Real-photo trains + emoji obstacles looked pasted/floating. Fix = a soft dark oval at each object's base (lowest child) + a consistent thin white sticker outline on every moving object + far-lane haze tint → pop-up/diorama that sits on the board. All tint/alpha/ellipse — zero geometry change, so it can't disturb tuned positioning. Reach for grounding+outline before color-grading or re-cutting art.
 
+## 2026-06-30 — v55.97 shared QuizEngine + responsive + rail recalibration + side facing/smoke
+
+### L226 — When the same UI/algo is hand-rolled in N games, the owner WILL notice the drift — extract a shared engine
+- Quiz question + answer-choices were re-implemented per game (g13c `genMathQuestion`/`.math-btn`, g14 `buildQuiz`/`.quiz-btn` + a separate mini-quiz). They diverged in style and difficulty. Owner: "harusnya ada engine tersendiri yang shared… jangan per-game di-hardcode, tidak scalable." Pattern: one `window.QuizEngine` owning generation + render (injected `.qz-*` CSS) + answer handling; games provide a host element + a result callback. Same shape as TrainBackdrop/TrainSpeedFX/TrainJourney/RZParallax. Keep a game-specific wrapper ONLY where it carries real game logic (gym's badge→level mapping feeds the shared generator).
+
+### L227 — Procedural rail detection must reject vegetation by HORIZONTAL COHERENCE, not just "dark line flanked by bright"
+- The v1 g14 lane detector found "a dark row between bright ballast" — which also fires on the grass strip ABOVE the tracks, so the top lane floated off-rail on many painterly plates (level 1 was luck). A real steel rail is a thin dark line spanning the FULL width → most columns at that row are a vertical-local-minimum. Vegetation dark spots are localised → low coherence. Score rows by that coherence, restrict to the lower band, enforce min lane separation, spread top/mid/bottom. Then VISUALLY verify all plates via a thick-line montage — auto-detection on hand-painted art is never blind-trustable.
+
+### L228 — Fixed-pixel decorative scenery is the #1 cause of "tidak responsive" in a canvas game
+- `IndoScene.foliageFrame` drew 150px palm fronds regardless of viewport → giant green leaves invading the play area on phones / short landscape ("kacau parah"). Scale decorative sizes to `min(W,H)` with a cap (tablet) + floor (tiny), and REBUILD on resize/rotate. Same trap as the smoke that floated 30px above a 40px-tall side-scroller loco — anchor FX to the actual rendered sprite height, not a magic constant.
+
+### L229 — A side-scroller sprite must face the travel direction; mirror by the art's `faces` field, not blindly
+- balapan-kereta-side runs RIGHT but never mirrored the sprite, so `faces:'left'` art (Thomas + most AEG + all world trains) ran backward ("salah menghadap"). Flip `scale.x` negative only when `cfg.faces==='left'`; `faces:'right'` art (Casey JR, Diesel, Kana, Ashima) stays. Fixing the facing also fixed the "smoke salah penempatan" — once the loco faced right, the trailing puff read as funnel smoke instead of a cloud floating in front.
+
 ## 2026-06-28 — v55.88 g14 size to the rail the USER points at
 
 ### L220 — Size to the RENDERED reference the user names, not an internal constant that's loosely related

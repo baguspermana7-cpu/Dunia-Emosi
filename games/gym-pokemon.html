@@ -233,20 +233,9 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 #math-panel{display:none;flex-direction:column;align-items:center;gap:8px;padding:2px 0 4px}
 #math-label{color:rgba(233,213,255,0.75);font-size:10px;letter-spacing:1.8px;font-weight:700;text-align:center}
 #math-question{color:#fbbf24;font-size:26px;font-weight:900;text-shadow:0 0 16px rgba(251,191,36,0.5);text-align:center}
+/* v55.97 M-303 — math answer pills now owned by the SHARED games/quiz-engine.js
+   (.qz-question + .qz-pill). #math-choices keeps only the row-layout slot. */
 #math-choices{display:flex;gap:8px;justify-content:center;width:100%}
-/* v55.35 B-218 — math-btn rewritten in pastel-soft palette matching v55.6
-   obstacle modal + du-buttons.css tokens. Per-position tint kept so kids
-   can visually distinguish the 4 answer slots, but no more saturated. */
-.math-btn{flex:1;max-width:80px;min-height:44px;padding:13px 4px;border-radius:14px;font-size:20px;font-weight:900;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;transition:transform .1s,box-shadow .1s,border-color .15s;border:2.5px solid}
-.math-btn:nth-child(1){background:#f0eaf6;color:#6d28d9;border-color:#c4a5e0;box-shadow:0 4px 0 #a48cc8}     /* lavender */
-.math-btn:nth-child(2){background:#fce8e8;color:#8a4a4a;border-color:#f4a8a8;box-shadow:0 4px 0 #d68888}     /* rose */
-.math-btn:nth-child(3){background:#e8f5e8;color:#4a7c4a;border-color:#a8d8a8;box-shadow:0 4px 0 #84b884}     /* sage */
-.math-btn:nth-child(4){background:#fef9e7;color:#92400e;border-color:#fde68a;box-shadow:0 4px 0 #f59e0b}     /* gold */
-.math-btn:active{transform:translateY(3px) scale(0.96);box-shadow:0 1px 0 rgba(0,0,0,0.18)}
-.math-btn.mq-correct{background:#e8f5e8!important;border-color:#a8d8a8!important;color:#4a7c4a!important;animation:mqCorrect .35s ease}
-.math-btn.mq-wrong{background:#fce8e8!important;border-color:#f4a8a8!important;color:#8a4a4a!important;animation:mqWrong .4s ease}
-@keyframes mqCorrect{0%{transform:scale(1)}50%{transform:scale(1.18)}100%{transform:scale(1)}}
-@keyframes mqWrong{0%{transform:translateX(0)}20%{transform:translateX(-8px)}50%{transform:translateX(8px)}80%{transform:translateX(-5px)}100%{transform:translateX(0)}}
 
 /* ── Gym Select ── */
 #gym-select{position:fixed;inset:0;z-index:800;background:linear-gradient(180deg,#0e0220 0%,#1a0535 60%,#0e0220 100%);display:flex;flex-direction:column;overflow:hidden}
@@ -573,6 +562,8 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/save-engine.js?v=20260501e"></script>
 <script src="data/math-rules.js?v=55.45-20260627ea"></script>
+<!-- v55.97 M-303 — SHARED quiz engine (question + answer-choices) for all games -->
+<script src="quiz-engine.js?v=55.97-20260629a"></script>
 <script src="data/move-id-translations.js?v=20260505k"></script>
 <script src="data/sfx-engine.js?v=20260621f"></script>
 <script src="data/weather-fx.js?v=20260621f"></script>
@@ -1981,32 +1972,16 @@ let _mathLocked = false;
 
 function showMathQuiz(moveIdx){
   _pendingMoveIdx = moveIdx;
-  _mathLocked = false;
   showBattleUI('math');
+  // v55.97 M-303 — render + answer handling now owned by the SHARED QuizEngine.
+  // Generation stays via genMathQuestion (which delegates to shared math-rules.js)
+  // so the gym's badge→level difficulty mapping is preserved.
   const q = genMathQuestion();
-  document.getElementById('math-question').textContent = q.question;
-  const choices = document.getElementById('math-choices');
-  choices.innerHTML = q.options.map(opt=>
-    `<button class="math-btn" onclick="answerMath(${opt},${q.answer})">${opt}</button>`
-  ).join('');
-}
-
-function answerMath(chosen, correct){
-  if(_mathLocked) return;
-  _mathLocked = true;
-  const btns = document.querySelectorAll('.math-btn');
-  btns.forEach(b=>{
-    const v = parseInt(b.textContent);
-    if(v===correct) b.classList.add('mq-correct');
-    else if(v===chosen && chosen!==correct) b.classList.add('mq-wrong');
-    b.style.pointerEvents='none';
-  });
-  const isCorrect = chosen===correct;
-  if(isCorrect) flashColor('yellow');
-  setTimeout(()=>{
+  QuizEngine.fill('math-question', 'math-choices', q, function(res){
+    if(res.correct) flashColor('yellow');
     showBattleUI('none');
-    executeMove(_pendingMoveIdx, isCorrect);
-  }, isCorrect ? 420 : 720);
+    executeMove(_pendingMoveIdx, res.correct);
+  });
 }
 
 // ─── CANONICAL GYM BADGE IMAGES (from Bulbapedia) ───────────────────────────
