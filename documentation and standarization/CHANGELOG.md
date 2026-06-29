@@ -1,5 +1,20 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-29 — v55.94 "g15 + g16 migrated to the 275 WORLD roster + legacy train assets deleted"
+
+Owner: use the same 275 real-sprite roster in Lokomotif Pemberani (g15) & Selamatkan Kereta (g16), then delete the old
+train assets (keep Casey-dkk + Thomas-AEG).
+- **g15 (lokomotif-pemberani.html)**: loads data/train-world.js; its TRAIN_CATS now = [Karakter Spesial, Thomas AEG, +7
+  world categories] → TRAIN_MODELS = 305 (275 world + characters/AEG). World sprites mirror to face right (faces:left).
+- **g16 (selamatkan-kereta.html)**: appends the 275 world trains into its parallel roster (TRAIN_STYLES + G16_CHAR_CONFIGS
+  + G16_CARD_META + FACES_LEFT_G16 mirror + G16_PKGS category tabs), keeping Casey + AEG.
+- **Deleted 496 legacy train-character assets** (assets/train/others/ [488], assets/train/linus casey/, trains-database.json)
+  — grep-verified ZERO live references in any served .html/.js (only a stale code comment). KEPT: caseyjr/linus/jz711/
+  malivlak webps, aeg/, backdrop/, world/, train bg/, audio, cityband. trains-db.js untouched.
+- Verified: 16-page app-sweep + g15 (305 trains, 0 err) + g16 (275 world loaded, 0 err) green. sw v55.94.
+- (Built by a delegated fork; it migrated + staged the deletions before a rate-limit cut it off pre-commit — I verified
+  everything green and committed.)
+
 ## 2026-06-29 — v55.93 "g14 lanes snapped to the LOWER rail (besi bawah); bottom lane to the foreground rail"
 
 Owner: "lane 1 itu bukan di besi bawah tapi nempel di besi atas" + lane 1 still kurang tepat.

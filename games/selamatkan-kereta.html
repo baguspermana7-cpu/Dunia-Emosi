@@ -158,6 +158,7 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.72</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
+<script src="data/train-world.js?v=55.94"></script><!-- v55.94 — 275 real-sprite world trains -->
 <script src="train-vfx.js?v=54.56-20260625bi"></script>
 <script src="train-bg-engine.js?v=54.67-20260626bt"></script>
 <script src="data/bg-themes.js?v=54.64-20260626bq"></script>
@@ -1580,6 +1581,28 @@ const G16_CHAR_CONFIGS = {
   aeg_troublesome_tankers:{spriteUrl:'../assets/train/aeg/troublesome-tankers.webp',spriteHeight:105, wheelPositions:[], smokePos:null,    bodyBobFreq:0.09, bodyBobAmp:1.1, smokeInterval:12, bottomPaddingOffset:0},
   aeg_farona_frederico: {spriteUrl:'../assets/train/aeg/farona-and-frederico.webp',spriteHeight:105, wheelPositions:[], smokePos:null,     bodyBobFreq:0.09, bodyBobAmp:1.1, smokeInterval:12, bottomPaddingOffset:0}
 };
+
+// v55.94 — APPEND the 275 real-sprite WORLD trains to g16's picker + roster (keep Casey dkk +
+// Thomas AEG). Builds the parallel structures (TRAIN_STYLES card + G16_CHAR_CONFIGS sprite +
+// G16_CARD_META label + FACES_LEFT_G16 mirror + G16_PKGS category tab) from window.TRAIN_WORLD.
+;(function () {
+  if (!window.TRAIN_WORLD || !Array.isArray(window.TRAIN_WORLD.categories)) return
+  if (typeof TRAIN_STYLES === 'undefined' || typeof G16_PKGS === 'undefined') return
+  window.TRAIN_WORLD.categories.forEach(cat => {
+    const idxs = []
+    cat.trains.forEach(t => {
+      idxs.push(TRAIN_STYLES.length)
+      TRAIN_STYLES.push({ character: true, characterKey: t.key,
+        locoBody: 0x475569, locoCab: 0x334155, locoAccent: 0xcbd5e1, carBody: 0x475569,
+        carWindow: 0xcbd5e1, carStripe: 0xcbd5e1, cabColor: 0x1e293b, chimney: 0x212121,
+        wheelRim: 0xe2e8f0, caboose: 0x475569, cabooseLight: 0xcbd5e1, smokeCol: 0xbbbbbb })
+      G16_CHAR_CONFIGS[t.key] = { spriteUrl: t.spriteUrl, spriteHeight: 90, wheelPositions: [], smokePos: null, bottomPaddingOffset: 0 }
+      G16_CARD_META[t.key] = { name: t.name, desc: t.sub || t.model || '' }
+      if (typeof FACES_LEFT_G16 !== 'undefined' && FACES_LEFT_G16.add) FACES_LEFT_G16.add(t.key)  // world faces LEFT → mirror RIGHT
+    })
+    G16_PKGS.push({ id: cat.key, name: cat.name, color: cat.color, desc: cat.desc, indices: idxs })
+  })
+})();
 
 // ── Train (detailed) ──────────────────────────────────────────────────────────
 function buildTrain(W,H){
