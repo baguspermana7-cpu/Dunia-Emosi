@@ -17,6 +17,21 @@
 - **Root cause**: `.g14-share-fab` (bottom-center, z-9999) was shown at game-over and only hidden on the SELECT screen. The "Main lagi" path (`onAgain→startRace`) skipped the select screen, so the FAB lingered over the live BOOST button.
 - **Lesson**: any overlay shown on an end/result state must be explicitly cleared on EVERY path that returns to the active state — especially the "play again" shortcut that bypasses the menu. Hide-on-enter (`startRace`) is more robust than hide-on-one-exit-path.
 
+---
+
+## 2026-06-29 — v55.89–v55.92 g14 real-sprite roster + rail calibration
+
+### L222 — Match gameplay geometry to the RENDERED reference per asset, not one global constant
+- **Symptom**: trains floated in ballast / sat between rails / appeared on the wrong lane, "sangat nggak konsisten antar gambar berbeda2". Generic laneRatios [0.62,0.74,0.86] + auto-bed-center detection + a perspective nudge all produced lanes that didn't match each painterly plate's actual painted tracks.
+- **Root cause**: the 48 plates are hand-painted with rails at DIFFERENT fractions; any single formula (fixed ratios, or even "snap to bed center") drifts per plate, and even-interpolating 3 lanes between two endpoints puts the middle lane in a gap.
+- **Fix**: per-plate CALIBRATION — score each plate's bright track rows, pick 3 SPREAD rails (top/mid/bottom zone), store per plate, place each lane DIRECTLY on its calibrated rail, and VERIFY with an overlay image per plate. The train's bottom edge (anchor) then matches the rail Y → accurate + consistent.
+- **Lesson**: when gameplay objects must align to per-asset art that VARIES, calibrate per asset (with visual verification), don't hunt for one clever global rule. The owner said it plainly: "ada garis bawah gambar sebagai reference anchor dan disamakan dg rail position" — anchor = the thing's own edge, matched to the per-asset target.
+
+### L223 — Decouple an object's SIZE from a spacing that you also need to vary
+- **Symptom**: train size was `0.77×laneH`; spreading the 3 lanes (to span top/mid/bottom) made laneH large → the loco re-oversized. Couldn't satisfy "spread lanes" AND "70% size" together.
+- **Fix**: size the loco to a FIXED fraction of the play band (`clamp(0.11×playBandH,…)`), independent of lane spacing. Now lane layout and loco size are tuned independently.
+- **Lesson**: if one quantity (lane spacing) must change for layout AND another (sprite size) must stay put, don't derive the second from the first — give each its own basis.
+
 ## 2026-06-28 — v55.87 g14 uniform player==NPC + an evaluating probe
 
 ### L218 — A probe that doesn't measure what the USER SEES is worse than no probe — it manufactures false confidence
