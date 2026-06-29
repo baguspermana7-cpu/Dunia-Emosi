@@ -1,5 +1,23 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-29 — v55.92 "g14 CONSISTENT + ACCURATE rail lanes (spread top/mid/bottom) + decoupled train size"
+
+Owner (level-5 photos): positioning the WORST issue — train on "lane 3" appeared at lane 2, on lane 2 sat BETWEEN
+rails, inconsistent across plates. Owner's prescription: train image BOTTOM EDGE = anchor, matched to the rail Y.
+- **Per-plate rail calibration** (`tools/detect-rail-lanes.py` rewritten): scores each plate's bright track rows, finds
+  the rail-area span, and picks the STRONGEST peak in each of 3 zones → 3 SPREAD rails (lane 3 = top track, lane 2 =
+  middle, lane 1 = bottom). Written to all 48 `data/g14-journey/levelNN.json laneRatios.lanes` + an overlay PNG per
+  plate for visual verification.
+- **Lanes placed DIRECTLY** on each calibrated rail (`g14BackdropLanes`): removed the even-interpolation between lr[0]
+  and lr[2] (which drifted the middle lane off-rail) and the v55.91 perspective nudge (the calibrated fractions already
+  encode the real perspective positions). laneH = the min adjacent gap (depth cue only).
+- **Train size DECOUPLED** from lane spacing: `G14_UNIFORM_H = clamp(0.11×playBandH, 64, 175)` (was 0.77×laneH) — so the
+  3 lanes can spread without re-oversizing the loco. Obstacle = 0.9× train. Base/wheels ON the rail (margin 0). Owner
+  confirmed.
+- Verified across levels 3/5/13/30: lane 3 = top, lane 1 = bottom, every train's base on its rail, ~70% size, consistent
+  plate-to-plate. dims + railalign (now absolute-prominence, size decoupled) + parallax green. sw v55.92.
+- PENDING: g15/g16 world-roster migration + legacy-asset deletion; index level-select/progress for balapan-kereta.
+
 ## 2026-06-29 — v55.91 "g14 train 70% + wheels on the LOWER rail (perspective nudge)"
 
 Owner: "lane terbawah rodanya di rail ATAS bukan rail bawah; dimensinya kecilkan jadi 70%."

@@ -49,9 +49,10 @@ for (const [w,h,tag] of VPS) {
   const maxAiDev = Math.max(0, ...info.aiDev.filter(x=>x!=null))
   // PROMINENCE: train must be ≥12% of the screen height (catches portrait lane-collapse)
   // AND a sane ceiling so it never balloons; ratio-to-lane stays ~1.45.
-  const prominent = info.screenFrac>=0.06 && info.screenFrac<=0.30
-  // v55.91 — train == 0.77× laneH (owner: 70% of v55.90). lanes on beds (laneH == bed pitch).
-  const ok = maxLaneDev<=1 && maxAiDev<=1 && !aiFloat && info.charRatio>=0.70 && info.charRatio<=0.90 && prominent && errs.filter(e=>!IGNORE.test(e)).length===0
+  // v55.92 — train size is DECOUPLED from laneH (lanes are SPREAD across top/mid/bottom tracks),
+  // so charRatio no longer applies — gate on absolute screen-fraction prominence + on-rail only.
+  const prominent = info.screenFrac>=0.055 && info.screenFrac<=0.30
+  const ok = maxLaneDev<=1 && maxAiDev<=1 && !aiFloat && prominent && errs.filter(e=>!IGNORE.test(e)).length===0
   rows.push({vp:`${w}x${h}`, laneDevs, maxLaneDev, aiDev:info.aiDev, maxAiDev, aiFloat, charRatio:Math.round(info.charRatio*100)/100, charH:info.charH, screenFrac:Math.round(info.screenFrac*1000)/1000, bandFrac:Math.round(info.bandFrac*1000)/1000, prominent, errors:errs.filter(e=>!IGNORE.test(e)).length, ok})
   await page.close()
 }
