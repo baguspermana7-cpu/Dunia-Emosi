@@ -1,5 +1,13 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-30 — v55.98 "balapan-kereta-side painterly retone"
+
+Follows up B-281: the side game's flat saturated-green ground + cartoon trees clashed with the
+painterly photo backdrop ("kok beda dengan style game balapan kereta"). The ground is now a muted
+sage→olive multi-band gradient + sparse grass-tuft speckle (new `lerpHex` + `groundTop`/`groundBot`
+palette tones), and the trees are muted painterly greens. Reads cohesive with the backdrop while
+keeping the side-scroller mechanic. sw → v55.98-20260630a; 16/16 app-sweep.
+
 ## 2026-06-30 — v55.97 "shared QuizEngine + g14 responsive + rail recalibration + side facing/smoke"
 
 A four-part batch closing B-280..B-283 + M-303.

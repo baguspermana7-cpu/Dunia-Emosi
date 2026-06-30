@@ -458,10 +458,19 @@ function pickTimeOfDay() {
   return 'sore'                 // 20% afternoon (warm)
 }
 
+// v55.98 B-281 — groundTop/groundBot = MUTED painterly tones (sage→olive) so the
+// procedural ground reads cohesive with the painterly photo backdrop, instead of one
+// flat saturated green slab that clashed (owner: "beda dengan style game balapan kereta").
 const TIME_PALETTES = {
-  pagi:  { skyTop: [135,206,235], skyBot: [200,234,250], ground: 0x2e7d32, hillNear: 0x66bb6a, hillFar: 0x90a4ae, sunColor: 0xfff7c0, sunGlow: 0xfde047 },
-  siang: { skyTop: [110,190,235], skyBot: [185,225,250], ground: 0x388e3c, hillNear: 0x4caf50, hillFar: 0x9ba8b3, sunColor: 0xfff9c4, sunGlow: 0xfff176 },
-  sore:  { skyTop: [255,170,110], skyBot: [255,213,168], ground: 0x5d4037, hillNear: 0x8d6e63, hillFar: 0xa1887f, sunColor: 0xffab40, sunGlow: 0xff7043 },
+  pagi:  { skyTop: [135,206,235], skyBot: [200,234,250], ground: 0x5d8a4e, groundTop: 0x86a96b, groundBot: 0x4e7a47, hillNear: 0x6f9a5c, hillFar: 0x90a4ae, sunColor: 0xfff7c0, sunGlow: 0xfde047 },
+  siang: { skyTop: [110,190,235], skyBot: [185,225,250], ground: 0x638f4a, groundTop: 0x8fb070, groundBot: 0x52803f, hillNear: 0x6f9a55, hillFar: 0x9ba8b3, sunColor: 0xfff9c4, sunGlow: 0xfff176 },
+  sore:  { skyTop: [255,170,110], skyBot: [255,213,168], ground: 0x6b5a37, groundTop: 0x9c8a5f, groundBot: 0x6b5a37, hillNear: 0x8a7a52, hillFar: 0xa1887f, sunColor: 0xffab40, sunGlow: 0xff7043 },
+}
+// small int-hex lerp for painterly multi-band gradients
+function lerpHex(a, b, t) {
+  const ar=(a>>16)&255, ag=(a>>8)&255, ab=a&255
+  const br=(b>>16)&255, bg=(b>>8)&255, bb=b&255
+  return ((Math.round(ar+(br-ar)*t)<<16) | (Math.round(ag+(bg-ag)*t)<<8) | Math.round(ab+(bb-ab)*t))
 }
 
 function pickTrain() {
@@ -579,9 +588,10 @@ function buildBackground() {
     const variant = i % 3 // 0 = small, 1 = medium, 2 = tall
     const size = variant === 0 ? 6 : variant === 1 ? 9 : 12
     const stemH = variant === 0 ? 8 : variant === 1 ? 13 : 18
+    // v55.98 B-281 — muted painterly foliage greens (were saturated cartoon greens)
     const tint = S.timeOfDay === 'sore' ?
       (variant === 2 ? 0x8b6f3f : 0x6d4c41) :
-      (variant === 2 ? 0x2e7d32 : variant === 1 ? 0x388e3c : 0x43a047)
+      (variant === 2 ? 0x4f7a44 : variant === 1 ? 0x5a8a4e : 0x6b9a5a)
     const ty = treeBaseY + (variant === 0 ? 4 : 0)
     hillG.rect(tx - 2, ty, 4, stemH).fill(0x6d4c41)
     if (i % 4 === 0) {
@@ -638,10 +648,25 @@ function buildBackground() {
   bgContainer._fence = fence
   bgContainer._fenceY = fenceY
 
-  // Grass ground
+  // v55.98 B-281 — painterly ground: a muted sage→olive multi-band gradient + sparse
+  // grass-tuft speckle, instead of one flat saturated slab. Blends with the painterly
+  // photo backdrop so the side game reads in the same style as the main game.
   const ground = new PIXI.Graphics()
-  ground.rect(0, H * SKY_FRAC, W, H - H * SKY_FRAC).fill(pal.ground)
-  ground.rect(0, H * SKY_FRAC, W, 4).fill(0x4caf50)
+  const gy0 = H * SKY_FRAC, gh = H - gy0
+  const gTop = pal.groundTop || 0x86a96b, gBot = pal.groundBot || 0x4e7a47
+  const BANDS = 12
+  for (let i = 0; i < BANDS; i++) {
+    ground.rect(0, gy0 + gh * i / BANDS, W, gh / BANDS + 1).fill(lerpHex(gTop, gBot, i / (BANDS - 1)))
+  }
+  // soft highlight rim at the horizon edge
+  ground.rect(0, gy0, W, 3).fill({ color: lerpHex(gTop, 0xffffff, 0.35), alpha: 0.5 })
+  // painterly grass-tuft speckle (sparse, deterministic-ish via index)
+  for (let i = 0; i < 90; i++) {
+    const sx = (i * 137.5) % W
+    const sy = gy0 + 8 + ((i * 53.1) % (gh - 12))
+    const dark = (i % 2 === 0)
+    ground.ellipse(sx, sy, 6 + (i % 3) * 2, 2.4).fill({ color: dark ? gBot : lerpHex(gTop, 0xffffff, 0.25), alpha: 0.18 })
+  }
   bgContainer.addChildAt(ground, 0)
 }
 
@@ -1854,6 +1879,6 @@ window.addEventListener('keydown', e => {
   if (e.code === 'Escape') goBack()
 })
 </script>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.97</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.98</div>
 </body>
 </html>
