@@ -1,5 +1,17 @@
 # Changelog — Dunia Emosi
 
+## 2026-06-30 — v55.99 "shared SceneryEngine — rich atmospheric side-game pemandangan"
+
+Owner: the retoned side game was still "terlalu biasa, kurang detail dan HD" — wanted the true-3D
+mockup's nice scenery (grass, mountains, artificial sun). New shared `games/scenery-engine.js`
+(`window.SceneryEngine`, M-303) renders a rich multi-layer parallax nature scene in crisp VECTOR
+(HD at any resolution, lightweight — no pixel-art, no three.js): sky gradient · glowing sun + halo +
+god-rays (matahari buatan) · far mountains (aerial-haze) · near mountains · rolling hills · soft
+clouds · tree line · detailed swaying grass + flowers. Per time-of-day palette (dusk = the mockup
+look). `balapan-kereta-side` mounts it in place of the plain procedural sky/mountains/trees/flat
+ground (photo plate kept only as fallback); dt-clamped parallax, rebuilds on resize. sw →
+v55.99-20260630a; 16/16 app-sweep.
+
 ## 2026-06-30 — v55.98 "balapan-kereta-side painterly retone"
 
 Follows up B-281: the side game's flat saturated-green ground + cartoon trees clashed with the

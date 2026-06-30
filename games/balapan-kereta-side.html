@@ -152,6 +152,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <script src="settings-modal.js?v=54.98-20260626cy"></script>
 <script src="trains-db.js?v=55.67-20260628a"></script>
 <script src="game-modal.js?v=54.47-20260625az"></script>
+<!-- v55.99 B-284 — shared rich atmospheric scenery engine (sun + layered mountains + grass) -->
+<script src="scenery-engine.js?v=55.99-20260630a"></script>
 <!-- v55.77 — shared painterly backdrop (scenery-only far layer) + speed overlay -->
 <script src="train-backdrop.js?v=55.77-20260628a"></script>
 <script src="train-speedfx.js?v=55.77-20260628a"></script>
@@ -286,6 +288,7 @@ let particleLayer = null
 // v55.77 — shared painterly backdrop (scenery-only) + speed overlay handles
 let sideBackdrop = null
 let sideSpeedFX = null
+let sideScenery = null   // v55.99 B-284 — shared rich atmospheric scenery handle
 
 // Game state
 const S = {
@@ -384,39 +387,46 @@ const JUMP_VELOCITY = 1080        // B-251: 1.5× jump — was 720, new airtime 
   }
   S.timeOfDay = pickTimeOfDay() // v54.89 — random pagi/siang/sore per race
   buildLayers()
-  buildBackground()
-  buildClouds()  // v54.89
+  // v55.99 B-284 — RICH atmospheric scenery (glowing sun + layered hazy mountains +
+  // rolling hills + tree line + detailed grass) from the SHARED SceneryEngine, replacing
+  // the plain procedural sky/mountains/trees/flat-green that read "terlalu biasa".
+  if (window.SceneryEngine) {
+    try {
+      const _seed = (parseInt(localStorage['dunia-side-bgleg'] || '0', 10) || 0) + 1
+      sideScenery = SceneryEngine.mount(stage, app, { timeOfDay: S.timeOfDay, seed: _seed, insertIndex: 0 })
+    } catch (_) { sideScenery = null }
+  }
+  if (!sideScenery) { buildBackground(); buildClouds() }   // guarded fallback to procedural
   buildRail()
   buildTrain()
   buildAITrain() // v54.90
   setupInput()
 
-  // v55.77 — SHARED painterly backdrop as a SCENERY-ONLY far layer (sky + distant
-  // scenery only; the side game keeps its OWN undulating rail + foreground, so no
-  // clashing double-rails). Rotates one journey leg per play. Guarded → a fetch miss
-  // leaves the procedural background untouched.
+  // v55.99 B-284 — the rich SceneryEngine is now the scene; the painterly photo plate
+  // is only mounted as a fallback when SceneryEngine is unavailable (keeps journey-leg
+  // art). Either way, advance the leg counter + name the leg in the HUD.
   try {
     const _bgLeg = (parseInt(localStorage['dunia-side-bgleg'] || '0', 10) || 0) % 48
     try { localStorage['dunia-side-bgleg'] = String(_bgLeg + 1) } catch (_) {}
-    const _level = _bgLeg + 1
-    // v55.80 — name the journey leg matching this plate's backdrop.
+    // v55.80 — name the journey leg in the HUD.
     try {
       const _legEl = document.getElementById('g14s-leg-label');
       const _legNm = document.getElementById('g14s-leg-name');
       const _legTxt = (window.TrainJourney ? window.TrainJourney.name(_bgLeg + 1) : '');
       if (_legEl && _legNm && _legTxt) { _legNm.textContent = _legTxt; _legEl.style.display = 'block'; }
     } catch (_) {}
-    const _m = window.TrainBackdrop ? await TrainBackdrop.load(_level) : null
-    if (_m) {
-      sideBackdrop = await TrainBackdrop.mount(stage, app, _m, {
-        assetBase: '../', insertIndex: 0, railBob: false, scrollMult: 0.5,
-        bandFilter: (fy0, fy1) => fy1 <= 0.6,   // sky + far scenery only (rails at 0.62+ excluded)
-      })
-      if (sideBackdrop) {
-        // the plate now provides sky + distant mountains → hide the procedural ones
-        if (bgContainer._sky) bgContainer._sky.visible = false
-        if (bgContainer._mtnFar) bgContainer._mtnFar.visible = false
-        if (bgContainer._cloudLayer) bgContainer._cloudLayer.visible = false
+    if (!sideScenery && window.TrainBackdrop) {
+      const _m = await TrainBackdrop.load(_bgLeg + 1)
+      if (_m) {
+        sideBackdrop = await TrainBackdrop.mount(stage, app, _m, {
+          assetBase: '../', insertIndex: 0, railBob: false, scrollMult: 0.5,
+          bandFilter: (fy0, fy1) => fy1 <= 0.6,
+        })
+        if (sideBackdrop) {
+          if (bgContainer._sky) bgContainer._sky.visible = false
+          if (bgContainer._mtnFar) bgContainer._mtnFar.visible = false
+          if (bgContainer._cloudLayer) bgContainer._cloudLayer.visible = false
+        }
       }
     }
   } catch (_) { sideBackdrop = null }
@@ -973,6 +983,7 @@ function tick(tickerOrDelta) {
   // (the shared ticks dt-clamp at 2 internally; railBob is off so passing stage is inert).
   {
     const fdelta = Math.min(deltaMS / 16.67, 2)
+    if (sideScenery) sideScenery.tick(S.speed, fdelta)   // v55.99 B-284 — parallax the rich scene
     if (sideBackdrop) sideBackdrop.tick(S.speed, fdelta, stage)
     if (sideSpeedFX) sideSpeedFX.tick(S.speed, fdelta, { boost: !!S.boosting, maxSpeed: (S.maxSpeed || 8), top: 0, height: H * 0.7 })
   }
@@ -1873,12 +1884,13 @@ function onResize() {
   // (production would do proper resize handling; v54.88 MVP keeps it simple)
   // Don't reload during active race; just let canvas reflow.
   if (sideBackdrop) { try { sideBackdrop.refit() } catch (_) {} }   // v55.77 re-cover-fit plate
+  if (sideScenery) { try { sideScenery.resize() } catch (_) {} }    // v55.99 B-284 — rebuild rich scene to new viewport
 }
 
 window.addEventListener('keydown', e => {
   if (e.code === 'Escape') goBack()
 })
 </script>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.98</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.99</div>
 </body>
 </html>
