@@ -12,7 +12,7 @@ const rows = []
 for (const [w,h,tag] of VPS) {
   const page = await browser.newPage(); await page.setViewport({width:w,height:h,deviceScaleFactor:1})
   const errs=[]; page.on('console',m=>{if(m.type()==='error')errs.push(m.text())}); page.on('pageerror',e=>errs.push('PE:'+e.message))
-  await page.evaluateOnNewDocument(()=>sessionStorage.setItem('g14Config',JSON.stringify({level:3,trainKey:'aeg_thomas',train:'aeg_thomas',difficulty:'easy'})))
+  await page.evaluateOnNewDocument(()=>{ localStorage.setItem('g14-tutorial-seen','1'); sessionStorage.setItem('g14-hinted','1'); sessionStorage.setItem('g14Config',JSON.stringify({level:3,trainKey:'aeg_thomas',train:'aeg_thomas',difficulty:'easy'})) })
   try { await page.goto('http://localhost:8081/games/balapan-kereta.html',{waitUntil:'domcontentloaded',timeout:30000}) } catch(e){ errs.push('GOTO '+e.message) }
   await sleep(1800)
   await page.evaluate(()=>{try{const t=(typeof TRAIN_MAP!=='undefined'&&TRAIN_MAP['aeg_thomas'])||null;if(t){S.trainCfg={...t,variant:1};window.selectedTrainKey=t.key}if(typeof startRace==='function')startRace()}catch(e){}})

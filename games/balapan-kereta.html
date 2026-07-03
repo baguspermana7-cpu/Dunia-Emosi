@@ -58,6 +58,11 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 #btn-boost{background:linear-gradient(180deg,#ff8a65,#ff7043 55%,#f4511e)}
 #btn-boost{background:linear-gradient(135deg,rgba(251,191,36,0.35),rgba(249,115,22,0.35));border-color:rgba(251,191,36,0.6);flex:1.4;font-size:14px;padding:14px 6px;line-height:1.2;color:#fef3c7;box-shadow:0 3px 0 rgba(146,64,14,0.3);position:relative;overflow:hidden;--boost-pct:0deg}
 #btn-boost.cooldown{opacity:0.55;pointer-events:none}
+/* v56.6 C3 B-287 — BOOST readiness affordance */
+#btn-boost.g14-boost-ready{animation:g14BoostReady 1.4s ease-in-out infinite}
+@keyframes g14BoostReady{0%,100%{box-shadow:0 3px 0 rgba(146,64,14,0.3)}50%{box-shadow:0 3px 0 rgba(146,64,14,0.3),0 0 18px rgba(251,191,36,0.75)}}
+.g14-boost-siap{position:absolute;top:-9px;right:8px;font-size:9px;font-weight:900;color:#7c2d12;background:linear-gradient(180deg,#fde68a,#fbbf24);border-radius:8px;padding:1px 6px;letter-spacing:.4px;box-shadow:0 2px 5px rgba(0,0,0,0.25);pointer-events:none}
+@media (prefers-reduced-motion: reduce){#btn-boost.g14-boost-ready{animation:none}}
 /* v54.0 (concern 9): cooldown circular arc — conic-gradient sweeping from
    100% → 0% over 3s while boost regenerates. --boost-pct is JS-driven. */
 #btn-boost.cooldown::before{content:'';position:absolute;inset:-2px;border-radius:inherit;background:conic-gradient(from -90deg,rgba(251,191,36,0.55) var(--boost-pct),rgba(0,0,0,0) var(--boost-pct));pointer-events:none;z-index:0;mask:radial-gradient(circle,transparent 64%,#000 65%);-webkit-mask:radial-gradient(circle,transparent 64%,#000 65%)}
@@ -1558,6 +1563,18 @@ async function initPixi() {
 
   buildForeScenery()   // v55.46 — 2.5D foreground parallax (in front of the train)
 
+  // v56.6 B-286/B3 — revive the LIVING SKY over the painterly plate: IndoScene.ambient
+  // (bird V-flocks, kites, drifting clouds — capped ~9 sprites, dt-clamped) was built in
+  // v55.61 but only ran on the procedural path, i.e. DEAD on all 48 backdrop levels.
+  try {
+    if (window.IndoScene && IndoScene.ambient && !g14ReducedMotion()) {
+      const _pal = g14Palette() || {}
+      L._amb = IndoScene.ambient(app.screen.width, railTop || app.screen.height * 0.5, _pal,
+        { seed: (cfg.level || 1) * 7919, density: 0.8 })
+      if (L._amb && L._amb.container) stage.addChildAt(L._amb.container, Math.min(1, stage.children.length))
+    }
+  } catch (_) { L._amb = null }
+
   L.fx = new PIXI.Container(); stage.addChild(L.fx)
   // v55.77 — shared always-on, speed-scaled motion overlay (games/train-speedfx.js).
   // Replaces the old boost-only speed lines so the train always reads as moving fast.
@@ -2296,6 +2313,8 @@ function tickMid(delta) {
   if (L._ambient) { try { L._ambient.tick(delta) } catch(_){} }
   // v55.46 — foreground parallax (fast, in front of the train) for 2.5D depth
   tickFore(delta)
+  // v56.6 B-286/B3 — tick the revived ambient living-sky layer (dt-clamped inside)
+  if (L._amb && L._amb.tick) { try { L._amb.tick(delta) } catch (_) {} }
 }
 
 // ── Player train ──────────────────────────────────────────
@@ -3743,12 +3762,28 @@ function spawnObstacle() {
   S.obstacles.push(c)
 
   // Lane warning
-  const warnBtns = ['btn-up','btn-boost','btn-dn']
-  // Flash the lane change button
-  const btnId = lane === 0 ? 'btn-dn' : lane === 2 ? 'btn-up' : null
-  if (btnId) {
-    const btn = document.getElementById(btnId)
+  // v56.6 C2 B-287 — MIDDLE-lane spawns previously got NO warning at all (only
+  // top/bottom flashed a lane button). Now: middle lane flashes BOTH lane buttons
+  // (either move escapes), and every spawn in the PLAYER's lane also pops an on-rail
+  // "❗" chip ahead of the obstacle so the kid sees danger in the scene, not just the HUD.
+  const btnIds = lane === 0 ? ['btn-dn'] : lane === 2 ? ['btn-up'] : ['btn-up', 'btn-dn']
+  for (const _id of btnIds) {
+    const btn = document.getElementById(_id)
     if (btn) { btn.style.borderColor = '#ef4444'; btn.style.boxShadow = '0 0 12px rgba(239,68,68,0.6)'; setTimeout(() => { btn.style.borderColor = ''; btn.style.boxShadow = '' }, 600) }
+  }
+  if (lane === S.lane && L.fx) {
+    try {
+      const bang = new PIXI.Text({ text: '❗', style: { fontSize: Math.round(OBS_SIZE * 0.6), fontFamily: 'Arial' } })
+      bang.anchor.set(0.5, 1)
+      bang.x = c.x - OBS_SIZE * 1.6; bang.y = laneYs[lane] - OBS_SIZE * 0.6
+      bang.alpha = 0.95
+      L.fx.addChild(bang)
+      let _bt = 0
+      const _bi = setInterval(() => {
+        _bt += 90; bang.alpha = (Math.floor(_bt / 180) % 2) ? 0.25 : 0.95
+        if (_bt > 900) { clearInterval(_bi); try { L.fx.removeChild(bang); bang.destroy() } catch (_) {} }
+      }, 90)
+    } catch (_) {}
   }
 }
 
@@ -4543,8 +4578,41 @@ function loop(ticker) {
 // ═══════════════════════════════════════════════════════════
 function startRace() {
   if (!S.trainCfg) return
+  // v56.6 C1 B-287 — FIRST-RUN tutorial (g14 had NONE; the side game's v54.95 pattern):
+  // 3 pictorial cards, localStorage-gated, then the race proceeds normally.
+  try {
+    if (!localStorage.getItem('g14-tutorial-seen') && !document.getElementById('g14-tut')) {
+      localStorage.setItem('g14-tutorial-seen', '1')
+      const tut = document.createElement('div')
+      tut.id = 'g14-tut'
+      tut.style.cssText = 'position:fixed;inset:0;z-index:900;display:flex;align-items:center;justify-content:center;background:rgba(15,23,42,0.78);backdrop-filter:blur(4px)'
+      tut.innerHTML = '<div style="max-width:340px;background:linear-gradient(180deg,#fefdf7,#fef3d4);border:4px solid #fde68a;border-radius:24px;padding:20px 22px;text-align:center;font-family:\'Fredoka One\',cursive;color:#5a3a08">'
+        + '<div style="font-size:20px;margin-bottom:12px">🚂 Cara Bermain</div>'
+        + '<div style="font-size:15px;line-height:2.1;text-align:left">'
+        + '<div>🔵 <b>↑ ↓</b> pindah jalur kereta</div>'
+        + '<div>⚠️ Hindari rintangan di rel</div>'
+        + '<div>🪙 Ambil koin & ⚡ petir</div>'
+        + '<div>🔥 Penuh ⚡? Tekan <b>BOOST!</b> + jawab soal</div>'
+        + '</div>'
+        + '<button id="g14-tut-go" style="margin-top:14px;font-family:inherit;font-size:17px;font-weight:900;color:#fff;background:linear-gradient(180deg,#4ade80,#16a34a);border:3px solid rgba(255,255,255,0.9);border-radius:16px;padding:10px 28px;cursor:pointer;min-height:44px">🏁 Mulai!</button></div>'
+      document.body.appendChild(tut)
+      document.getElementById('g14-tut-go').onclick = () => { tut.remove(); startRace() }
+      return
+    }
+  } catch (_) {}
   document.getElementById('select-ovl').style.display = 'none'
   document.getElementById('go-btn').style.display = 'none'
+  // v56.6 C4 B-287 — first race per SESSION: pulse the lane buttons for 3s so the kid's
+  // eye lands on the controls immediately.
+  try {
+    if (!sessionStorage.getItem('g14-hinted')) {
+      sessionStorage.setItem('g14-hinted', '1')
+      for (const id of ['btn-up', 'btn-dn']) {
+        const b = document.getElementById(id)
+        if (b) { b.style.animation = 'g14BoostReady 0.9s ease-in-out 3'; setTimeout(() => { b.style.animation = '' }, 3000) }
+      }
+    }
+  } catch (_) {}
   // v55.88 — owner: BOOST "kadang tertutup tombol selfie ke mama". The result-screen photo FAB
   // (bottom-center, z-9999) was only hidden on the select screen, so after "Main lagi" it
   // lingered over the BOOST button. Always hide it when a race starts.
@@ -5359,6 +5427,19 @@ function updatePressure() {
       'linear-gradient(90deg,#22d3ee,#86efac)'
   }
   const pctEl = document.getElementById('pressure-pct'); if (pctEl) pctEl.textContent = pct + '%'
+  // v56.6 C3 B-287 — BOOST affordance: gold pulse + "SIAP!" when ready (pressure ≥ 20),
+  // dim + lock look when not. Pre-readers see readiness at a glance.
+  try {
+    const bb = document.getElementById('btn-boost')
+    if (bb && !S.boosting && !S.boostCooldown) {
+      const ready = pct >= 20
+      bb.classList.toggle('g14-boost-ready', ready)
+      bb.style.opacity = ready ? '' : '0.55'
+      const rl = bb.querySelector('.g14-boost-siap')
+      if (ready && !rl) { const s = document.createElement('span'); s.className = 'g14-boost-siap'; s.textContent = '✨SIAP!'; bb.appendChild(s) }
+      else if (!ready && rl) rl.remove()
+    }
+  } catch (_) {}
   // v55.73 — keep the segmented meter in sync on every pressure change.
   const segs = document.getElementById('g14-energy-segs')
   if (segs) {
