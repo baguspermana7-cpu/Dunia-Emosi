@@ -455,12 +455,91 @@ function buildElectricLocoSVG(cfg, opts = {}) {
 </svg>`
 }
 
+/* ============================================================
+   B-290 — real character art from the owner's TRAIN_WORLD database
+   (games/data/train-world.js → assets/train/world/NNN.webp sprites).
+   G18_ART_MAP maps each museum exhibit (keyed by its exact
+   G18_TRAINS name) to the best-matching real sprite. Matching
+   priority: exact class designation (B25/C12/D14/D52/CC20x/...) >
+   type words (rack/tender/mogul/diesel-hidraulik) > era proximity.
+   Every candidate webp was visually inspected before mapping.
+   Exhibits with NO confident match keep the procedural SVG
+   (accuracy beats coverage), and any <img> load error also falls
+   back to the procedural SVG via g18ArtFallback(). All world
+   sprites face LEFT → mirrored with scaleX(-1) to face right,
+   same convention as the games. Sprites carry their own baked-in
+   white sticker outline (diorama look).
+   ============================================================ */
+const G18_ART_MAP = {
+  'B 2507 — Kereta Bergerigi':               '252', // w252 B25 0-4-2RT rack steam 1902 SLM — B2507 IS a B25-class loco (exact class + year)
+  'B 2521 — Rack Ambarawa-Bedono':           '252', // w252 B25 — B2521 is the same SLM B25 rack class
+  'C 5107 — Lok Tender Kolonial':            '039', // w039 Pacific Type 4-6-2 tender steam 1902 — C51 class = colonial Pacific tender loco
+  'D 1415 — Tender Hanomag':                 '254', // w254 D14 / D1410 2-8-2T 1921 — exact class match (D14)
+  'C 1218 — Lokomotif Tertua RI':            '251', // w251 C12 2-6-0T tank steam 1896 — C1218 IS a C12-class loco (exact class)
+  'B 2801 — Rack SLM Merbabu':               '252', // w252 B25 — B28 is the sister SLM rack class, visually near-identical rack tank
+  'B 2503 — Rack Pionir':                    '252', // w252 B25 — B2503 IS a B25-class loco (exact class)
+  // 'C 28 — Biru Malam Kolonial'            → no C28 in DB; candidates carry foreign lettering / wrong colour — keep procedural SVG
+  'CC 200 — Setan Ijo':                      '257', // w257 CC200 GE-ALCO 1953 — exact class (diesel pertama Indonesia)
+  // 'E 1060 — Listrik Antik 1924'           → DB's E1060 (w256 Mak Itam) is a STEAM rack loco; exhibit is billed electric — keep procedural SVG
+  'B 50 — Si Tua Jawa':                      '253', // w253 B51 4-4-0 1902 — adjacent B5x colonial steam class, same era Java
+  'Kereta Wisata Ambarawa':                  '251', // w251 C12 — the Ambarawa–Tuntang tourist train is hauled by a C12-class loco
+  'Shinkansen N700 — Peluru Jepang':         '124', // w124 Shinkansen 100 Series — closest Shinkansen art in DB (white body, blue stripe; no N700)
+  'Argo Bromo Anggrek':                      '264', // w264 CC204 entry — the exhibit's own fact names CC204 as its locomotive
+  'KRL Commuter Jabodetabek':                '270', // w270 KRL Seri 7000/05 (Tokyu lineage) — exhibit says "Tokyu/Kawasaki (bekas Jepang)"
+  'TGV — Kereta Cepat Prancis':              '120', // w120 TGV Sud-Est 1983 — exact type, original orange livery
+  // 'MRT Jakarta — Kereta Bawah Tanah'      → no MRT/metro EMU match in DB — keep procedural SVG
+  'SCMaglev L0 — Kereta Magnet':             '241', // w241 JR Central L0 Series SCMaglev — exact match
+  'CR400 Fuxing — Kereta Tercepat Beroperasi':'161', // w161 China CR400AF Fuxing 2016 — exact match
+  'Lori Tebu — Kereta Perkebunan':           '032', // w032 Heisler geared industrial steam — closest small plantation/industrial loco
+  'CC201 — Diesel Legendaris PT KAI':        '259', // w259 CC201 GE U18C 1977 — exact class
+  'KCIC400AF Whoosh — HSR Indonesia':        '275', // w275 KCIC400AF Whoosh — exact match
+  'Argo Parahyangan — Eksekutif Favorit':    '263', // w263 CC203-era executive service art (kereta eksekutif)
+  'LRT Jabodebek — Tanpa Masinis':           '274', // w274 LRT Jabodebek TS-01 — exact match
+  'SS 1867 — Kereta Pertama Indonesia':      '016', // w016 Bury Bar-Frame 1855 — British Victorian tender loco, era of NIS 1867 pioneer
+  'SS 500 — Mogul Kolonial':                 '031', // w031 Mogul Type 2-6-0 1894 — exact wheel arrangement + era (SS500 = 2-6-0 mogul)
+  'C51 — Dwipanggo Kepresidenan':            '044', // w044 Express Pacific 4-6-2 1907 — C51 = express Pacific tender loco
+  'D52 — Djojobojo Pembangun':               '255', // w255 D52 2-8-2 1952 Krupp — exact class
+  'BB200 — Diesel Hidraulik Pertama':        '260', // w260 BB203 hood-unit diesel — same Indonesian BB hood-unit family/profile as BB200
+  'BB301 — Si Bulu Sikat':                   '094', // w094 DB V200 diesel-hydraulic — BB301's double-cab body design derives from the V200
+  'D301 — Pak Pos Pembawa Surat':            '258', // w258 D301 diesel-hydraulic — exact class
+  'CC202 — Rajawali Pengangkut Berat':       '262', // w262 CC202 EMD G26MC-2U 1986 — exact class
+  'Argo Bromo 1997 — Eksekutif Perdana':     '264', // w264 — same Argo Bromo service lineage as Anggrek (consistent art)
+  'Taksaka — Nagatatha Yogyakarta':          '266', // w266 CC206-era executive service art (kereta eksekutif malam)
+  'KRL JR 205 — Hibah Jepang':               '271', // w271 KRL Seri 205 2013 — exact match (JR East 205 hibah)
+  'LRT Palembang — Asian Games 2018':        '274'  // w274 INKA LRT — Palembang LRT is the same INKA 3-car LRT family
+}
+
 function g18TrainSVG(t, w, h, animate) {
+  const W = w || 120, H = h || 52
+  const art = t && t.name ? G18_ART_MAP[t.name] : null
+  if (art) {
+    const idx = (typeof G18_TRAINS !== 'undefined') ? G18_TRAINS.indexOf(t) : -1
+    const alt = String(t.name || 'kereta').replace(/"/g, '&quot;')
+    return `<span class="g18-art" style="display:inline-flex;width:${W}px;height:${H}px;align-items:center;justify-content:center;">` +
+      `<img src="../assets/train/world/${art}.webp" alt="${alt}" loading="lazy" decoding="async" ` +
+      `style="max-width:100%;max-height:100%;object-fit:contain;transform:scaleX(-1);filter:drop-shadow(0 3px 5px rgba(0,0,0,0.35));" ` +
+      `onerror="g18ArtFallback(this,${idx},${W},${H},${animate ? 1 : 0})"></span>`
+  }
+  return g18ProcTrainSVG(t, W, H, animate)
+}
+
+/* procedural SVG loco — used for unmapped exhibits + as img-error fallback */
+function g18ProcTrainSVG(t, w, h, animate) {
   const a = !!animate   // gallery cards static; modal hero animated
   if (t.isSteam) return buildSteamLocoSVG(t, {animate:a, width:w||120, height:h||52})
   if (t.isDiesel) return buildDieselLocoSVG(t, {animate:a, width:w||120, height:h||52})
   if (t.isElectric) return buildElectricLocoSVG(t, {animate:a, width:w||120, height:h||52})
   return `<span style="font-size:40px;line-height:1;">${t.emoji}</span>`
+}
+
+/* swap a broken real-art <img> back to the procedural SVG */
+function g18ArtFallback(img, idx, w, h, animate) {
+  try {
+    const t = (idx >= 0 && typeof G18_TRAINS !== 'undefined') ? G18_TRAINS[idx] : null
+    const span = (img.closest && img.closest('.g18-art')) || img.parentNode
+    if (!span) return
+    span.outerHTML = t ? g18ProcTrainSVG(t, w, h, !!animate) : '<span style="font-size:40px;line-height:1;">🚂</span>'
+  } catch(_) {}
 }
 </script>
 <script>
@@ -1396,7 +1475,8 @@ function g18EnhanceHeroBanner() {
   banner.style.overflow = 'hidden'
   banner.innerHTML = `
     <div style="position:absolute;inset:0;background:radial-gradient(circle at 30% 70%,rgba(251,191,36,0.18),transparent 60%);pointer-events:none"></div>
-    <div style="position:relative;z-index:1">
+    <img src="../assets/train/world/252.webp" alt="B 2507 kereta bergerigi" loading="lazy" decoding="async" style="position:absolute;right:6px;bottom:2px;height:68px;max-width:42%;object-fit:contain;transform:scaleX(-1);opacity:0.95;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.45));pointer-events:none">
+    <div style="position:relative;z-index:1;max-width:62%">
       <div style="color:#FFD082;font-size:13px;font-weight:900;letter-spacing:1px">🏛️ STASIUN WILLEM I · 1873</div>
       <div style="color:rgba(255,255,255,0.7);font-size:11px;font-weight:700;margin-top:2px">Ambarawa · Bekas stasiun militer Kolonial · Sekarang Museum Kereta Api</div>
       <div style="color:rgba(255,193,80,0.7);font-size:10px;letter-spacing:1px;margin-top:6px">📅 GROUNDBREAKING 1873 · 🚂 RACK & PINION · 🇮🇩 INDONESIA</div>
