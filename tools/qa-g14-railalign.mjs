@@ -42,8 +42,27 @@ for (const [w,h,tag] of VPS) {
       charH:Math.round(charH), screenFrac: H?charH/H:0, bandFrac: bandH?charH/bandH:0,
       aiDev: ai1.map(y=> Math.round(nearDev(y)*100)/100) }
   })
+  // v56.6 — AI lane changes now TWEEN (Motion.damp) instead of teleporting, so a
+  // snapshot can catch an AI mid-transition (legit motion, not float). Contract stays:
+  // a RESTING AI must sit ≤1px on a lane and not drift. So: settle 900ms, re-sample
+  // deviation (per-AI MIN of the two samples), THEN check drift over a further 300ms
+  // window only for AIs that are already settled (≤1px).
+  await sleep(900)
+  const aiDev2 = await page.evaluate(()=>{
+    const mg = (typeof g14WheelMargin==='function')?g14WheelMargin():0
+    const nearDev = y => Math.min(...laneYs.map(ly => Math.abs(y - (ly - mg))))
+    return (L.ai&&L.ai.children)?L.ai.children.map(a=>Math.round(nearDev(a.y)*100)/100):[]
+  })
+  info.aiDev = info.aiDev.map((d,i)=> Math.min(d, (aiDev2[i]!=null?aiDev2[i]:d)))
+  const snap1 = await page.evaluate(()=>(L.ai&&L.ai.children)?L.ai.children.map(a=>a.y):[])
   await sleep(300)
-  const aiFloat = await page.evaluate((prev)=>{ const now=(L.ai&&L.ai.children)?L.ai.children.map(a=>a.y):[]; return JSON.stringify(now)!==JSON.stringify(prev) }, await page.evaluate(()=>(L.ai&&L.ai.children)?L.ai.children.map(a=>a.y):[]))
+  const aiFloat = await page.evaluate((prev)=>{
+    const now=(L.ai&&L.ai.children)?L.ai.children.map(a=>a.y):[]
+    const mg = (typeof g14WheelMargin==='function')?g14WheelMargin():0
+    const nearDev = y => Math.min(...laneYs.map(ly => Math.abs(y - (ly - mg))))
+    // drift = settled AI (≤1px of a lane at BOTH samples) whose y still changed
+    return now.some((y,i)=> prev[i]!=null && nearDev(prev[i])<=1 && nearDev(y)<=1 && Math.abs(y-prev[i])>0.01)
+  }, snap1)
   await page.screenshot({path:`${OUT}/railalign-${tag}.png`})
   const maxLaneDev = Math.max(...laneDevs, 0)
   const maxAiDev = Math.max(0, ...info.aiDev.filter(x=>x!=null))

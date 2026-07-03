@@ -54,6 +54,7 @@ const SHELL = [
   './games/train-backdrop.js?v=55.77-20260628a',
   './games/train-speedfx.js?v=55.77-20260628a',
   './games/quiz-engine.js?v=55.97-20260630a',
+  './games/motion.js?v=56.6-20260703a',
   './games/scenery-engine.js?v=55.99-20260630a',
   './games/sw-reload.js?v=55.69-20260628a',
   './games/g14-hud.css?v=55.77-20260628a',

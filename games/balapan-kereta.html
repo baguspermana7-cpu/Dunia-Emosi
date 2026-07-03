@@ -230,6 +230,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 <script src="data/kids-questions.js?v=55.5-20260626dd"></script>
 <!-- v55.97 M-303 — SHARED quiz engine (question + answer-choices) for all games -->
 <script src="quiz-engine.js?v=55.97-20260629a"></script>
+<!-- v56.6 M-303/A-315 — SHARED motion/game-feel engine (frame-rate-independent easing) -->
+<script src="motion.js?v=56.6-20260703a"></script>
 <script src="data/obstacles.js?v=55.63-20260627eo"></script>
 <script src="data/routes.js?v=55.5-20260626dd"></script>
 <script src="data/reward-catalog.js?v=55.5-20260626dd"></script>
@@ -3205,22 +3207,35 @@ function tickPlayer(delta) {
   //   - Cache _switchDySign so camera tilt (below) uses a stable sign even after dy
   //     near-zeroes at the end of the move.
   const dyAbs = Math.abs(dy)
-  if (dyAbs > 4) {
+  // v56.6 E2 A-315 — FRAME-RATE-INDEPENDENT lane switch via Motion.damp (the old
+  // `dy*0.22*delta` frame-lerp converged HALF as fast at 30fps — the owner's "kasar"
+  // on the throttled tablet — and ended in a visible 4px terminal SNAP). Rate 11 ≈
+  // the same 60fps feel; sub-pixel landing keeps the v55.84 zero-tolerance (wheels
+  // settle EXACTLY on targetY once within 0.5px, imperceptible).
+  const _dtSec = (delta || 1) / 60
+  if (dyAbs > 0.5) {
     S.switchFrame = (S.switchFrame | 0) + 1
     L.player._switchDySign = Math.sign(dy)
-    L.player.y += dy * 0.22 * delta
-    // v55.96 — BANKED lane-change tilt (owner juice #4): lean ~7° toward the target lane (eased)
-    // then settle upright in the else-branch. More "weight"/maneuver feel than the old 3° wobble.
+    L.player.y = (window.Motion) ? Motion.damp(L.player.y, targetY, 11, _dtSec)
+                                 : L.player.y + dy * 0.22 * delta
+    // v55.96 — BANKED lane-change tilt (owner juice #4), now dt-correct too.
     const _bank = 0.12 * (L.player._switchDySign || 0)
-    L.player.rotation += (_bank - L.player.rotation) * Math.min(1, 0.28 * delta)
+    L.player.rotation = (window.Motion) ? Motion.damp(L.player.rotation, _bank, 10, _dtSec)
+                                        : L.player.rotation + (_bank - L.player.rotation) * Math.min(1, 0.28 * delta)
     if (S.switchFrame <= 18 && S.switchFrame % 6 === 0 && L.fx) g14SpawnLaneDust()
+    // follow-through settle squash on arrival (once, when nearly there)
+    if (dyAbs < 3 && !L.player._settled && window.Motion && L.playerCharImg) {
+      L.player._settled = true
+      Motion.squash(L.playerCharImg.scale, 0.06, 180)
+    }
   } else {
-    // v55.84 — ZERO-TOLERANCE: SNAP exactly onto the lane once close (the asymptotic
-    // ease left a ~2px residual that floated the wheels off the rail).
+    // zero-tolerance landing (sub-pixel → exact; no visible jump)
     L.player.y = targetY
-    if (L.player.rotation) L.player.rotation *= 0.85
+    L.player.rotation = (window.Motion) ? Motion.damp(L.player.rotation, 0, 12, _dtSec) : L.player.rotation * 0.85
+    if (Math.abs(L.player.rotation) < 0.002) L.player.rotation = 0
     S.switchFrame = 0
     L.player._switchDySign = 0
+    L.player._settled = false
   }
 
   // v55.84 — removed the ±0.4px vertical sin-bob (it lifted the wheels off the rail).
@@ -3572,7 +3587,19 @@ function tickAI(delta) {
     ai.container.visible = screenX > -80 && screenX < W + 80
     // v55.84 — ZERO-TOLERANCE: NPC sits EXACTLY on its lane (removed the ±0.5px sin float).
     // v55.87 — honour the same 10% rail margin as the player (was overriding it each frame).
-    ai.container.y = laneYs[ai.lane] - g14WheelMargin()
+    // v56.6 E2 A-315 — AI lane changes TWEEN like the player (was an instant teleport):
+    // frame-rate-independent damp toward the lane, sub-pixel snap keeps zero-tolerance.
+    {
+      const _aiTgt = laneYs[ai.lane] - g14WheelMargin()
+      if (window.Motion && Math.abs(ai.container.y - _aiTgt) > 0.5) {
+        ai.container.y = Motion.damp(ai.container.y, _aiTgt, 11, (delta || 1) / 60)
+        const _lean = 0.10 * Math.sign(_aiTgt - ai.container.y)
+        ai.container.rotation = Motion.damp(ai.container.rotation || 0, _lean, 10, (delta || 1) / 60)
+      } else {
+        ai.container.y = _aiTgt
+        if (ai.container.rotation) { ai.container.rotation *= 0.8; if (Math.abs(ai.container.rotation) < 0.002) ai.container.rotation = 0 }
+      }
+    }
     // v55.69 B-278 — depth-scale the AI sprite to its lane (depth == 1.0 since v55.87 → uniform).
     if (ai.container._charImg && laneH) {
       const _el = Math.max(0, Math.min(LANE_COUNT - 1, (ai.container.y - railTop - laneH / 2) / laneH))
@@ -4091,6 +4118,18 @@ function tickPickups(delta){
     // Spin halo subtly
     p.children[0].rotation += 0.04 * delta
     if (p.x < -60) { p._alive = false; continue }
+    // v56.6 E2 A-315 — GENEROUS radius + MAGNET ease-in: kids' aim is imprecise;
+    // within 64px on the same lane the pickup visibly STREAMS into the train
+    // (research: misses feel broken to 4-7yo; magnet ease > teleport).
+    if (window.Motion && p._lane === S.lane && !p._magnet &&
+        p.x > playerX - 64 && p.x < playerX + 64) p._magnet = true
+    if (p._magnet && L.player) {
+      const _ds = (delta || 1) / 60
+      p.x = Motion.damp(p.x, playerX, 14, _ds)
+      p.y = Motion.damp(p.y, L.player.y - 20, 14, _ds)
+      const sc = Math.max(0.55, (p.scale && p.scale.x || 1) - 0.03 * (delta || 1))
+      if (p.scale) p.scale.set(sc)
+    }
     // Collection — player must be in same lane + overlapping column.
     if (p._lane === S.lane && p.x > playerX - 28 && p.x < playerX + 28) {
       p._alive = false
