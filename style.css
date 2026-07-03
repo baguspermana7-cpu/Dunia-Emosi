@@ -8034,3 +8034,71 @@ button:disabled, [aria-disabled="true"] {
 #screen-level.lvl-clay .lvl-tier-body { background:rgba(255,255,255,0.42) !important; border:0 !important;
   border-radius:18px; box-shadow:inset 0 2px 5px rgba(255,255,255,0.8), inset 0 -3px 6px rgba(150,110,90,0.12); }
 #screen-level.lvl-clay .lvl-stn-name { font-size:9px; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   v56.7 A-321 — CLAY FIDELITY PASS (closer to the reference mockups)
+   ═══════════════════════════════════════════════════════════════════ */
+/* K1 — game tiles are WHITE clay (reference): icon keeps its colour, the tile doesn't */
+.wmap-node-bldg {
+  background:linear-gradient(160deg,#ffffff 0%,#f3ece2 100%) !important;
+  filter:none !important;
+  box-shadow:0 6px 0 #d9c9b4, 0 12px 18px rgba(150,120,95,0.22), inset 0 3px 7px rgba(255,255,255,0.95), inset 0 -4px 8px rgba(160,130,100,0.18) !important;
+}
+.wmap-node-bldg .wn-icon { filter:none; }
+/* node name = small coloured clay chip under the tile (per-category tone) */
+.wmap-node-name {
+  background:rgba(255,255,255,0.75); border-radius:9px; padding:2px 7px; margin-top:4px;
+  box-shadow:inset 0 1px 3px rgba(255,255,255,0.9), inset 0 -2px 3px rgba(150,110,90,0.15), 0 2px 4px rgba(150,110,90,0.12);
+}
+.wmap-zone--emosi  .wmap-node-name { background:#f3c3d2; }
+.wmap-zone--huruf  .wmap-node-name { background:#b9e4c3; }
+.wmap-zone--angka  .wmap-node-name { background:#ffd6a8; }
+.wmap-zone--memori .wmap-node-name { background:#d4c6f2; }
+.wmap-zone--mobil  .wmap-node-name { background:#bcd9f4; }
+.wmap-zone--pokemon .wmap-node-name { background:#ffc6ae; }
+.wmap-zone--sains  .wmap-node-name { background:#c2cff0; }
+.wmap-zone--kereta .wmap-node-name { background:#ecd9ae; }
+/* K2 — puffier clay cards + banner icon on a white circular chip */
+.wmap-zone { border-radius:38px; padding:14px 12px 18px; margin:9px 6px; }
+.wmap-zone::after { border-radius:40px; }
+.wmap-zone::before { width:32px; height:32px; right:-14px; }
+.wmap-zone-banner { border-radius:18px; padding:6px 11px; }
+.wmap-zone-icon {
+  display:grid; place-items:center; width:26px; height:26px; border-radius:50%;
+  background:#fff; box-shadow:inset 0 1px 3px rgba(255,255,255,0.95), inset 0 -2px 3px rgba(150,110,90,0.18), 0 2px 4px rgba(150,110,90,0.15);
+  font-size:15px;
+}
+/* K3 — floating clay balls/planets in the sky strip */
+.wmap-sky::before, .wmap-sky::after {
+  content:''; position:absolute; border-radius:50%; pointer-events:none;
+  animation:wmapClayFloat 7s ease-in-out infinite alternate;
+}
+.wmap-sky::before {
+  width:46px; height:46px; left:9%; top:18px;
+  background:linear-gradient(160deg,#f8d3de,#f0b9ca);
+  box-shadow:0 6px 12px rgba(200,120,150,0.3), inset 0 3px 6px rgba(255,255,255,0.85), inset 0 -4px 7px rgba(200,120,150,0.25);
+}
+.wmap-sky::after {
+  width:30px; height:30px; right:12%; top:30px;
+  background:linear-gradient(160deg,#cfe4f8,#b3d3ef);
+  box-shadow:0 5px 10px rgba(90,140,190,0.3), inset 0 2px 5px rgba(255,255,255,0.85), inset 0 -3px 6px rgba(90,140,190,0.25);
+  animation-delay:-3s;
+}
+@keyframes wmapClayFloat { from{transform:translateY(0)} to{transform:translateY(10px)} }
+@media (prefers-reduced-motion: reduce){ .wmap-sky::before,.wmap-sky::after{animation:none} }
+/* K4 — level-select header lightened + tier icon chip + station house roof */
+#screen-level.lvl-clay #level-game-banner { position:relative; }
+#screen-level.lvl-clay #level-game-banner::after {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,0.06) 0%,rgba(247,239,226,0.55) 88%,rgba(247,239,226,0.95) 100%);
+}
+#screen-level.lvl-clay .lvl-tier-hdr-icon, #screen-level.lvl-clay .lvl-tier-hdr .tier-ico {
+  display:grid; place-items:center; width:24px; height:24px; border-radius:50%;
+  background:#fff; box-shadow:inset 0 1px 3px rgba(255,255,255,0.95), inset 0 -2px 3px rgba(150,110,90,0.18), 0 2px 4px rgba(150,110,90,0.15);
+}
+.lvl-stn-house { position:relative; overflow:visible; }
+.lvl-stn-house::before {
+  content:''; position:absolute; top:-11px; left:4px; right:4px; height:14px;
+  background:linear-gradient(180deg,#ff9d6b,#f07f4b); border-radius:7px 7px 3px 3px;
+  box-shadow:inset 0 2px 3px rgba(255,255,255,0.55), 0 2px 4px rgba(180,90,40,0.3);
+}
