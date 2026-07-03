@@ -58,12 +58,13 @@
 ],
 "laneRatios": {
 "lanes": [
-0.524,
-0.731,
-0.898
+0.557,
+0.661,
+0.804
 ],
 "horizon": 0.46,
-"foreTop": 0.92
+"foreTop": 0.92,
+"lanesVerified": true
 },
 "laneRatiosRaw": {
 "lanes": [

@@ -60,10 +60,11 @@
 "lanes": [
 0.606,
 0.771,
-0.88
+0.891
 ],
 "horizon": 0.46,
-"foreTop": 0.92
+"foreTop": 0.92,
+"lanesVerified": true
 },
 "laneRatiosRaw": {
 "lanes": [

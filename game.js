@@ -1653,11 +1653,13 @@ function openLevelSelect(gameNum) {
   document.getElementById('level-total-stars').textContent = '⭐ ' + totalStars
 
   // Per-tier dot colors + star count
-  const numTiers = (state.currentGame === 13 || state.currentGame === 16 || state.currentGame === 24) ? 8 : (state.currentGame === 19 || state.currentGame === 20) ? 6 : 4
+  // v56.5 B-291 — g14 (Balapan Kereta) claims "x/40 level selesai" but only rendered
+  // 4 tiers (20 bubbles). It now shows all 8 tiers = 40 levels like the header says.
+  const numTiers = (state.currentGame === 13 || state.currentGame === 14 || state.currentGame === 16 || state.currentGame === 24) ? 8 : (state.currentGame === 19 || state.currentGame === 20) ? 6 : 4
   // Show/hide extended tiers
   for (let t = 5; t <= 8; t++) {
     const tc2 = document.getElementById('level-tier-'+t)
-    if (tc2) tc2.style.display = (state.currentGame === 13 || state.currentGame === 16 || state.currentGame === 19 || state.currentGame === 20 || state.currentGame === 24) ? '' : 'none'
+    if (tc2) tc2.style.display = (state.currentGame === 13 || state.currentGame === 14 || state.currentGame === 16 || state.currentGame === 19 || state.currentGame === 20 || state.currentGame === 24) ? '' : 'none'
   }
   for (let tier = 1; tier <= numTiers; tier++) {
     const dotsEl = document.getElementById('level-dots-'+tier)
