@@ -755,6 +755,10 @@
       return location.pathname.indexOf('/Dunia-Emosi/') === 0 ? '/Dunia-Emosi/' : '/';
     } catch (e) { return '/'; }
   })();
+  // v56.0 B-289 — the CDN uses HYPHENATED slugs (chien-pao.png); this file's slugs are
+  // already underscored for LOCAL filenames. Underscores leaking into CDN URLs made all
+  // 26 hyphenated Gen-9 species 404 → giant 🎲 emoji fallback (owner screenshot).
+  function cdnSlug (slug) { return String(slug || '').replace(/_/g, '-'); }
   function spritePath (id, slug) {
     // v54.29: owner reported name/sprite mismatch (Dolliv labeled, Growlithe/Dolliv
     // hybrid rendered) — root cause is the LOCAL asset bundle has corrupted /
@@ -763,39 +767,44 @@
     // for everything else. The onerror handlers throughout the file already
     // catch 404s and replace with the emoji span.
     if (LOCAL_SPRITE_BLOCKLIST.has(id)) {
-      return 'https://img.pokemondb.net/sprites/home/normal/' + slug + '.png';
+      return 'https://img.pokemondb.net/sprites/home/normal/' + cdnSlug(slug) + '.png';
     }
     var padded = String(id).padStart(4, '0');
     return _ASSET_BASE + 'assets/Pokemon/pokemondb_hd_alt2/' + padded + '_' + slug + '.webp';
   }
   // Ids whose LOCAL .webp is mis-named or mis-content per audit. Anything in here
   // bypasses the local bundle entirely.
-  // v54.31 expansion: ALL Gen 9 (924-1025, 102 ids) confirmed corrupted via
-  // bundle audit — every Gen 9 id has DUPLICATE id-prefix files
-  // (e.g. `0927_dolliv.webp` AND `0927_dachsbun.webp`), evidence of an
-  // off-by-2 numbering scheme merge that scrambled the slug↔id mapping for
-  // the entire generation. Safest mitigation: route every Gen 9 id straight
-  // to the PokemonDB CDN. Owner-visible name/sprite mismatches go away;
-  // first-paint of Gen 9 sprites is now CDN-bound (1-3s) — accepted trade
-  // for correctness. Pre-v54.31 we shipped 29 blocklisted ids, leaving 73
-  // Gen 9 species still rendering wrong content.
-  const LOCAL_SPRITE_BLOCKLIST = new Set([
-    // Gen 9 — entire range 924..1025 blocked (bundle corruption)
-    ...Array.from({length: 1025 - 924 + 1}, (_, i) => 924 + i),
-    // Tirtouga / Carracosta — also mismatched in city-pack audit
-    564, 565,
-  ]);
+  // v56.0 B-289 — EMPTY again: tools/fix-gen9-sprites.py re-downloaded all 104 corrupt
+  // ids (Gen 9 924-1025 + 564/565) from the canonical CDN, deleted the off-by-2 scheme
+  // duplicates (0 dup id-prefixes remain), and the fake bloodmoon-ursaluna roster dupe
+  // was removed. Local-first restored → Gen 9 first-paint is instant again on the
+  // tablet (was CDN-bound 1-3s). Mechanism kept for any future bad id.
+  const LOCAL_SPRITE_BLOCKLIST = new Set([]);
 
   // v54.29 onerror chain: try CDN once if local 404s; then replace with the
   // emoji/star span. Without the CDN step, ALL non-blocklisted corrupted files
   // would silently render their wrong content (no 404 to catch). This catches
   // 404s only (corruption-but-loads stays a manual fix via the blocklist above).
   if (typeof window !== 'undefined' && !window._bmSpriteOnError) {
+    // v56.0 B-289 — fallback chain: pokemondb CDN (HYPHENATED slug — was leaking
+    // underscores → guaranteed 404) → Pokemon Showdown gen5 (strips separators) →
+    // pokeball placeholder image → emoji span only as the absolute last resort.
     window._bmSpriteOnError = function(img, slug, emoji, cls) {
       try {
         if (!img.dataset.bmCdnTried) {
           img.dataset.bmCdnTried = '1';
-          img.src = 'https://img.pokemondb.net/sprites/home/normal/' + slug + '.png';
+          img.src = 'https://img.pokemondb.net/sprites/home/normal/' + cdnSlug(slug) + '.png';
+          return;
+        }
+        if (!img.dataset.bmSdTried) {
+          img.dataset.bmSdTried = '1';
+          img.src = 'https://play.pokemonshowdown.com/sprites/gen5/' +
+            cdnSlug(slug).replace(/-/g, '') + '.png';
+          return;
+        }
+        if (!img.dataset.bmBallTried) {
+          img.dataset.bmBallTried = '1';
+          img.src = _ASSET_BASE + 'assets/Pokemon/pokeballs-png/pokeball.png';
           return;
         }
       } catch(_) {}
@@ -1699,7 +1708,7 @@
       });
       html += `</div>`;
     });
-    html += `<div class="bm-section-label" id="bm-anchor-random">🎲 Tim Acak · per Region (1025 Pokemon)</div>`;
+    html += `<div class="bm-section-label" id="bm-anchor-random">🎲 Tim Acak · per Region (1024 Pokemon)</div>`;
     html += `<div class="bm-pkg-grid">`;
     RANDOM_REGIONS.forEach(reg => {
       html += `

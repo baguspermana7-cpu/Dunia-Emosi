@@ -44,7 +44,10 @@
       urls.push(`${basePath}/svg/${id}.svg`);
     }
     urls.push(`https://img.pokemondb.net/sprites/home/normal/${slug}.png`);
-    if (id) urls.push(`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`);
+    // v56.0 B-289 — Showdown fallback BY NAME (separators stripped), not PokeAPI BY ID:
+    // the app's internal Gen-9 ids diverge from the National Dex, so an id-keyed PokeAPI
+    // URL fetched the WRONG SPECIES for every Gen-9 Pokemon. Name-keyed never mismatches.
+    urls.push(`https://play.pokemonshowdown.com/sprites/gen5/${String(slug).replace(/-/g, '')}.png`);
     return urls;
   }
 

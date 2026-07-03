@@ -1,5 +1,28 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-03 — v56.0 "Pokemon sprite/database TOTAL fix" (B-289)
+
+Owner screenshot: PvP battle rendered a giant 🎲 instead of Chien-Pao. Root chain
+(games/data/battle-modes.js): all Gen 9 was blocklisted to the pokemondb CDN, but the CDN URL was
+built with the UNDERSCORED local-filename slug (chien_pao.png — the CDN needs hyphens) → guaranteed
+404 for all 26 hyphenated Gen-9 species → the "Tim Acak" 🎲 team emoji as the fallback.
+
+- battle-modes: `cdnSlug()` hyphenates CDN URLs; fallback chain now pokemondb → Showdown gen5 →
+  pokeball placeholder → emoji (last resort only).
+- **Local Gen-9 bundle REBUILT** (`tools/fix-gen9-sprites.py`): 104 corrupt ids (924-1025 + 564/565,
+  the off-by-2 scheme merge with duplicate id-prefix files) re-downloaded from the canonical CDN,
+  scheme-duplicates deleted — 0 duplicate prefixes remain. LOCAL_SPRITE_BLOCKLIST emptied →
+  local-first Gen 9 (instant paint on the tablet, was CDN-bound 1-3s).
+- Fake roster dupe `bloodmoon-ursaluna` (id 1023, reversed slug of 1022 ursaluna-bloodmoon) removed
+  from pokemon-db.json + POKE_IDS + game.js POKEMON_DB (+ its stale file).
+- poke-sprite-loader: PokeAPI-BY-ID fallback (wrong species for Gen 9 — internal ids ≠ National
+  Dex) → Showdown BY-NAME fallback.
+- NEW gate `tools/audit-pokemon-sprites.py`: roster ↔ POKE_IDS ↔ game.js ↔ local files —
+  1024/1024/1024 consistent, every entry exactly one correct sprite. NEW probe
+  `tools/qa-pokemon-gen9.mjs`: all 25 hyphenated Gen-9 render from the local bundle (0 errors).
+- qa-app-sweep hardened: one browser per page (16 sequential WebGL pages intermittently crashed the
+  shared renderer → "detached Frame" killed the sweep); crashes now report per-page. 16/16 green.
+
 ## 2026-06-30 — v55.99 "shared SceneryEngine — rich atmospheric side-game pemandangan"
 
 Owner: the retoned side game was still "terlalu biasa, kurang detail dan HD" — wanted the true-3D

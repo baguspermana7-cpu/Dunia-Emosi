@@ -5947,7 +5947,6 @@ const POKEMON_DB=[
   {id:1020,name:'Terapagos',slug:'terapagos',type:'normal',gen:9,tier:4},
   {id:1021,name:'Pecharunt',slug:'pecharunt',type:'poison',type2:'ghost',gen:9,tier:3},
   {id:1022,name:'Ursaluna (Bloodmoon)',slug:'ursaluna-bloodmoon',type:'ground',type2:'normal',gen:9,tier:3},
-  {id:1023,name:'Bloodmoon Ursaluna',slug:'bloodmoon-ursaluna',type:'ground',type2:'normal',gen:9,tier:3},
   {id:1024,name:'Archaludon',slug:'archaludon',type:'steel',type2:'dragon',gen:9,tier:3},
   {id:1025,name:'Hydrapple',slug:'hydrapple',type:'grass',type2:'dragon',gen:9,tier:3}
 ]
