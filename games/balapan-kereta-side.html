@@ -134,6 +134,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <script src="lib/pixi.min.js?v=8"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="train-vfx.js?v=54.56-20260625bi"></script>
+<script src="motion.js?v=56.6-20260703a"></script><!-- A-315 E5 — shared motion engine (frame-rate-independent easing) -->
 <script src="train-bg-engine.js?v=54.67-20260626bt"></script>
 <script src="data/bg-themes.js?v=54.64-20260626bq"></script>
 <script src="data/bg-renderers.js?v=54.64-20260626bq"></script>
@@ -1166,8 +1167,8 @@ function tick(tickerOrDelta) {
         hp.scored = true
         if (S.hp < S.maxHp) S.hp++
         try { if (typeof playTone === 'function') { playTone({ freq: 880, dur: 0.10, vol: 0.10 }); setTimeout(() => playTone({ freq: 1320, dur: 0.14, vol: 0.10 }), 80) } } catch {}
-        hp.sprite.alpha = 0.3
-        setTimeout(() => { try { particleLayer.removeChild(hp.sprite); const idx = S.hearts.indexOf(hp); if (idx >= 0) S.hearts.splice(idx, 1) } catch {} }, 100)
+        // A-315 E5 — fly-to-HUD collect into the ❤️ pill (was alpha + 100ms removal).
+        g14sFlyToHud(hp.sprite, 'hud-hp', S.hearts, hp)
       }
     }
   }
@@ -1203,12 +1204,10 @@ function tick(tickerOrDelta) {
         c.scored = true
         S.coinScore++
         try { if (typeof playTone === 'function') playTone({ freq: 1175, dur: 0.10, vol: 0.10 }) } catch {}
-        // Visual collect
+        // A-315 E5 — fly-to-HUD collect (scale-pop then arc into the 🪙 counter);
+        // was alpha=0.3 + 100ms removal.
         c.sprite.tint = 0xfff7c0
-        c.sprite.alpha = 0.3
-        setTimeout(() => {
-          try { particleLayer.removeChild(c.sprite); const idx = S.coins.indexOf(c); if (idx >= 0) S.coins.splice(idx, 1) } catch {}
-        }, 100)
+        g14sFlyToHud(c.sprite, 'hud-pos', S.coins, c)
       }
     }
   }
@@ -1231,6 +1230,10 @@ function tick(tickerOrDelta) {
       S.jumping = false
       // v54.90 — Landing dust puff
       spawnLandingDust()
+      // A-315 E5 — squash-settle on the landing frame (scale-only; the train's
+      // Y placement math is untouched — zero-tolerance on-rail mandate).
+      // Motion.squash honors reduced-motion internally.
+      try { if (window.Motion && trainSprite && trainSprite.scale) Motion.squash(trainSprite.scale, 0.10, 200) } catch {}
       try { if (typeof playTone === 'function') playTone({ freq: 200, dur: 0.08, vol: 0.10 }) } catch {}
     }
   }
@@ -1328,6 +1331,9 @@ function tick(tickerOrDelta) {
         S.hp = Math.max(0, S.hp - 1)
         S.invincible = 2.4  // 2.4s invincibility — enough to cross any gap safely
         try { if (typeof playTone === 'function') playTone({ freq: 200, dur: 0.22, vol: 0.14 }) } catch {}
+        // A-315 E5 — trauma screen shake (applied via Motion.shakeOffset on the
+        // stage in this tick; kid-safe amp, fast decay, honors reduced-motion).
+        try { if (window.Motion) Motion.shake(0.35) } catch {}
         const gapFlash = document.createElement('div')
         gapFlash.style.cssText = 'position:fixed;inset:0;background:radial-gradient(circle,rgba(239,68,68,0.4) 0%,rgba(239,68,68,0.1) 70%,transparent 100%);pointer-events:none;z-index:150;animation:g14sFlash 0.45s ease-out forwards;'
         document.body.appendChild(gapFlash)
@@ -1353,6 +1359,14 @@ function tick(tickerOrDelta) {
 
   // Decrement invincible
   if (S.invincible > 0) S.invincible -= dt
+
+  // A-315 E5 — apply trauma shake to the whole stage (dt already clamped to
+  // 0.10s above; shakeOffset re-clamps internally). Returns zeros when there
+  // is no trauma, so the stage rests at exactly (0,0,0) — no drift.
+  if (window.Motion && stage) {
+    const _shk = Motion.shakeOffset(dt, Math.min(W, H))
+    stage.x = _shk.x; stage.y = _shk.y; stage.rotation = _shk.rot
+  }
 
   // Finish check
   if (S.distance >= S.targetDistance && !S.finished) {
@@ -1672,6 +1686,32 @@ function spawnObstacle() {
   if (typeof type.build === 'function') type.build(container)
   obstacleLayer.addChild(container)
   S.obstacles.push({ sprite: container, type, height: type.height })
+}
+
+// A-315 E5 — fly-to-HUD collect: the picked sprite is spliced out of its sim
+// array immediately (pure visual from here), gets a small scale-pop, then arcs
+// into the HUD counter shrinking + fading via Motion.flyTo. Reduced-motion or
+// missing Motion ⇒ instant removal (legacy behavior, minus the 100ms alpha lag).
+function g14sFlyToHud(sprite, hudId, arr, item) {
+  const drop = () => { const idx = arr.indexOf(item); if (idx >= 0) arr.splice(idx, 1) }
+  const kill = () => { try { particleLayer.removeChild(sprite) } catch {} }
+  try {
+    drop()
+    if (!window.Motion || Motion.reduced()) { kill(); return }
+    const el = document.getElementById(hudId)
+    const r = el ? el.getBoundingClientRect() : null
+    const toX = r ? (r.left + r.width / 2) : 40
+    const toY = r ? (r.top + r.height / 2) : 30
+    const sx = sprite.scale.x, sy = sprite.scale.y
+    Motion.flyTo(sprite.x, sprite.y, toX, toY, 460, (x, y, t) => {
+      sprite.x = x; sprite.y = y
+      // scale-pop in the first quarter, then shrink toward the HUD
+      const pop = t < 0.25 ? 1 + 0.35 * Math.sin((t / 0.25) * Math.PI) : 1
+      const k = pop * (1 - t * 0.7)
+      sprite.scale.set(sx * k, sy * k)
+      sprite.alpha = 1 - t * 0.35
+    }, kill)
+  } catch (_) { drop(); kill() }
 }
 
 function crashOn(o) {

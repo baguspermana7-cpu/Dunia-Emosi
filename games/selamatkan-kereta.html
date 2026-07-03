@@ -160,6 +160,7 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="data/train-world.js?v=55.94"></script><!-- v55.94 — 275 real-sprite world trains -->
 <script src="train-vfx.js?v=54.56-20260625bi"></script>
+<script src="motion.js?v=56.6-20260703a"></script><!-- A-315 E4 — shared motion engine (frame-rate-independent easing) -->
 <script src="train-bg-engine.js?v=54.67-20260626bt"></script>
 <script src="data/bg-themes.js?v=54.64-20260626bq"></script>
 <script src="data/bg-renderers.js?v=54.64-20260626bq"></script>
@@ -2141,6 +2142,18 @@ function updateTrain(dt){
     }
   }
 
+  // A-315 E4 — smooth exponential speed ease (kills the visible piecewise-linear
+  // "steps" of the brake ramps). The state machine above computes the TARGET
+  // speed; the simulated speed exp-eases toward it (faster rate when slowing so
+  // stops stay tight). The positional guards below (creep floor, stop-point ease,
+  // arrival snap) still OWN the stop contract — gameplay positions unchanged.
+  if (window.Motion && !Motion.reduced()) {
+    if (S._smSpeed == null) S._smSpeed = speed
+    S._smSpeed = Motion.damp(S._smSpeed, speed, speed < S._smSpeed ? 9 : 5, dt)
+    if (Math.abs(S._smSpeed - speed) < 0.5) S._smSpeed = speed
+    speed = S._smSpeed
+  }
+
   // Task #40 — 4-part overshoot hard-guard
   // Part 3: absolute per-frame cap (~70px at level 1) — dt-spike / tab-switch can't teleport train.
   let rawStep = Math.min(speed*dt, baseSpeed/2)
@@ -2164,15 +2177,31 @@ function updateTrain(dt){
       // celebrationFrame counter in this function.
     }
   } else if(nextObs && !nextObs.cleared && S.worldX + maxStep > nextObs.worldX + 5){
-    // Part 2: hard clamp — if this step would cross the obstacle, snap just before it and force quiz.
+    // Part 2: hard clamp — if this step would cross the obstacle, stop just before it and force quiz.
+    // A-315 E4 — was a 1-frame TELEPORT (`S.worldX = nextObs.worldX - 1`); now the
+    // stop point is marked and the ease block below exp-damps worldX toward it,
+    // snapping only when <0.5px. Same final position + STOPPED/quiz contract.
     const wasMoving = S.trainState !== 'STOPPED'
-    S.worldX = nextObs.worldX - 1
+    S._easeStopX = nextObs.worldX - 1
     S.trainState = 'STOPPED'
     S.currentObstacleIdx = S.obstacles.indexOf(nextObs)
     if(wasMoving) playSfxCrash() // Task #35 — crash SFX on train slam (rate-limited internally)
     if(!quizActive) showQuizPanel(nextObs)
   } else {
     S.worldX += maxStep
+  }
+  // A-315 E4 — final-approach ease toward the marked stop point (replaces the
+  // teleport). Converges to EXACTLY nextObs.worldX-1 (sub-pixel snap); aborts
+  // the moment the train is released (state leaves STOPPED via clearObstacle).
+  if (S._easeStopX != null) {
+    if (S.trainState !== 'STOPPED') {
+      S._easeStopX = null
+    } else if (window.Motion && !Motion.reduced()) {
+      S.worldX = Motion.damp(S.worldX, S._easeStopX, 12, dt)
+      if (Math.abs(S._easeStopX - S.worldX) < 0.5) { S.worldX = S._easeStopX; S._easeStopX = null }
+    } else {
+      S.worldX = S._easeStopX; S._easeStopX = null   // no-Motion / reduced ⇒ legacy snap
+    }
   }
   // Task #49 — force-arrival proximity: once worldX is within STATION_PROXIMITY_FORCE
   // of STATION_X, regardless of cleared count OR trainState, force triggerArrival.
@@ -2220,7 +2249,17 @@ function updateTrain(dt){
     if(S.worldX>STATION_X-W*0.8){triggerArrival();return}
   }
 
-  const cameraX=Math.max(0,S.worldX-TRAIN_SCREEN_X)
+  // A-315 E4 — camera smoothing + small speed lookahead (presentation-only:
+  // all sim/collision logic reads S.worldX directly, never cameraX). Settles
+  // exactly on the rigid target when stopped. Reduced-motion ⇒ rigid lock.
+  const camTarget=Math.max(0,S.worldX-TRAIN_SCREEN_X)
+  let cameraX=camTarget
+  if (window.Motion && !Motion.reduced()) {
+    if (S._camX == null) S._camX = camTarget
+    S._camX = Motion.damp(S._camX, camTarget + speed*0.15, 8, dt)
+    if (Math.abs(speed) < 1 && Math.abs(S._camX - camTarget) < 0.5) S._camX = camTarget
+    cameraX = Math.max(0, S._camX)
+  }
   worldContainer.x=-cameraX
   hillContainer.x=-cameraX*0.18
   bgContainer.x=-cameraX*0.04
@@ -2867,6 +2906,15 @@ function startArrivalCelebration(W,H){
   document.getElementById('danger-fill').style.background='linear-gradient(90deg,#4ade80,#22c55e)'
   if(npcArmsUp)npcArmsUp.visible=true
   if(npcArmsDown)npcArmsDown.visible=false
+  // A-315 E4 — TrainVFX celebration burst on ARRIVED (the engine was loaded on
+  // this page but never called). Confetti + sparkles from the train; TrainVFX
+  // self-ticks via rAF and honors reduced-motion (halves counts) internally.
+  try {
+    if (window.TrainVFX && window.PIXI && typeof stage !== 'undefined' && stage && trainContainer) {
+      TrainVFX.particles.spawn({ type:'confetti', parent: stage, x: trainContainer.x + 20, y: trainContainer.y - 90, count: 26, speed: 4.5, upBias: 1.4, ttl: 85, spread: 140, gravity: 0.06 })
+      TrainVFX.particles.spawn({ type:'sparkle',  parent: stage, x: trainContainer.x + 60, y: trainContainer.y - 50, count: 14, speed: 3,   ttl: 65, spread: 100 })
+    }
+  } catch(_){}
   // Fireworks — burst emojis in sky
   spawnFireworks(W, H)
 }

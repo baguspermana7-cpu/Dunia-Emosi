@@ -217,6 +217,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="train-vfx.js?v=54.56-20260625bi"></script>
+<script src="motion.js?v=56.6-20260703a"></script><!-- A-315 E3 — shared motion engine (frame-rate-independent easing) -->
 <script src="train-bg-engine.js?v=54.67-20260626bt"></script>
 <script src="data/bg-themes.js?v=54.64-20260626bq"></script>
 <script src="data/bg-renderers.js?v=54.64-20260626bq"></script>
@@ -1201,8 +1202,18 @@ async function initPixi() {
     const targetLaneY = LANE_Y[playerLane] + g15CharRailOffset;
     if (trainContainer._tweenY == null) trainContainer._tweenY = targetLaneY;
     const ldy = targetLaneY - trainContainer._tweenY;
-    if (Math.abs(ldy) > 0.5) trainContainer._tweenY += ldy * 0.22 * dt;
-    else trainContainer._tweenY = targetLaneY;
+    // A-315 E3 — frame-rate-INDEPENDENT lane ease via Motion.damp (the old
+    // `+= ldy*0.22*dt` frame-lerp converged half as fast on the owner's
+    // throttled ~30fps tablet). Final sub-pixel snap kept: the train MUST
+    // land EXACTLY on the rail (v55.84 zero-tolerance mandate).
+    if (Math.abs(ldy) <= 0.5 || (window.Motion && Motion.reduced())) {
+      trainContainer._tweenY = targetLaneY;                     // exact rail snap
+    } else if (window.Motion) {
+      trainContainer._tweenY = Motion.damp(trainContainer._tweenY, targetLaneY, 11, dt / 60);
+      if (Math.abs(targetLaneY - trainContainer._tweenY) <= 0.5) trainContainer._tweenY = targetLaneY;
+    } else {
+      trainContainer._tweenY += ldy * 0.22 * dt;                // legacy fallback
+    }
 
     if (trainContainer._bounceT > 0) {
       trainContainer._bounceT -= 0.1 * dt;
@@ -2469,22 +2480,36 @@ function g15MathIrisOut() {
 }
 
 // ── Box Collection ────────────────────────────────────────────────────────────
+// A-315 E3 — small collect pop: scale-up + fade via TrainVFX.tween, then remove.
+// The box is spliced from letterBoxes BEFORE calling this (no further sim /
+// collision), so the ~180ms pop is presentation-only. Reduced-motion or
+// missing TrainVFX ⇒ instant removal exactly as before.
+function g15CollectPop(c) {
+  const kill = () => { try { boxLayer.removeChild(c) } catch(_){} };
+  try {
+    if (!window.TrainVFX || !TrainVFX.tween || (window.Motion && Motion.reduced())) { kill(); return }
+    TrainVFX.tween(c.scale, { x: c.scale.x * 1.35, y: c.scale.y * 1.35 }, 80, TrainVFX.ease && TrainVFX.ease.outQuart, () => {
+      TrainVFX.tween(c, { alpha: 0 }, 100, null, kill);
+    });
+  } catch(_) { kill() }
+}
+
 function collectBox(box, idx) {
   if (box.type === 'heart') {
     lives = Math.min(MAX_LIVES, lives + 1);
     spawnCollectParticles(box.container.x, box.container.y, 0x4ade80);
     updateLivesHUD();
     flashScreen('green');
-    boxLayer.removeChild(box.container);
     letterBoxes.splice(idx, 1);
+    g15CollectPop(box.container);   // A-315 E3
     g15ShowHeartBanner();   // v54.20 C10
     g15UpdateVignette();
     return;
   }
 
   if (box.type === 'math') {
-    boxLayer.removeChild(box.container);
     letterBoxes.splice(idx, 1);
+    g15CollectPop(box.container);   // A-315 E3
     // v54.20 C19: iris-wipe cinematic before math quiz appears.
     g15MathIrisIn(() => showMathQuiz());
     return;
@@ -2496,8 +2521,8 @@ function collectBox(box, idx) {
   const isCorrect = box.letter === liveTarget;
   if (isCorrect) {
     spawnCollectParticles(box.container.x, box.container.y, 0xfbbf24);
-    boxLayer.removeChild(box.container);
     letterBoxes.splice(idx, 1);
+    g15CollectPop(box.container);   // A-315 E3
     // v54.20 C3: per-letter pitch ladder chime; C2: streak inc
     g15LetterChime(currentLetterIdx);
     g15StreakAdd();
@@ -3060,7 +3085,7 @@ function showWin() {
     finalStars >= 5 ? 'Sempurna!' : finalStars >= 4 ? 'Hebat!' : finalStars >= 3 ? 'Bagus!' : finalStars >= 1 ? 'Coba Lagi' : 'Gagal! Coba Lagi';
   const emoji = isFinalMastery ? '🎓' :
     finalStars >= 5 ? '🏆' : finalStars >= 4 ? '🌟' : finalStars >= 3 ? '⭐' : finalStars >= 1 ? '💪' : '😞';
-  const nextLevel = LEVEL < 30 ? () => { sessionStorage.setItem('g15Config', JSON.stringify({level: LEVEL + 1})); location.reload(); } : null;
+  const nextLevel = LEVEL < 30 ? () => { sessionStorage.setItem('g15Config', JSON.stringify({level: LEVEL + 1})); g15FadeReload(); } : null;
   if (isFinalMastery) {
     try { window.TrainShared && TrainShared.achievements && TrainShared.achievements.unlock('lulus_akademi_g15') } catch(_){}
   }
@@ -3070,6 +3095,20 @@ function showWin() {
     // v54.47: 🏆 Pencapaian — opens TrainShared Achievement Wall in-place.
     onAchievements: () => { try { window.TrainShared && TrainShared.achievements.showWall() } catch(_){} }
   });
+}
+
+// A-315 E3 — 350ms fade-to-black overlay before the level-transition reload
+// (perceived smoothness; a full state-reset refactor is out of scope).
+// Reduced-motion ⇒ instant reload as before.
+function g15FadeReload() {
+  try {
+    if (window.Motion && Motion.reduced()) { location.reload(); return }
+    const ov = document.createElement('div');
+    ov.style.cssText = 'position:fixed;inset:0;background:#000;opacity:0;z-index:100000;transition:opacity 350ms ease;pointer-events:auto';
+    document.body.appendChild(ov);
+    requestAnimationFrame(() => { ov.style.opacity = '1'; });
+    setTimeout(() => location.reload(), 380);
+  } catch(_) { location.reload() }
 }
 
 function showLose() {
