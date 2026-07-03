@@ -120,6 +120,12 @@ def process(level, dry):
     mpath = os.path.join(DATA, f"level{level:02d}.json")
     if not (os.path.exists(plate) and os.path.exists(mpath)):
         return None
+    # v56.3 B-285/A2 — NEVER overwrite hand-verified lanes (the missing override flag
+    # that let this tool clobber manual fixes on every run). --force bypasses.
+    m0 = json.load(open(mpath, encoding="utf-8"))
+    if (m0.get("laneRatios") or {}).get("lanesVerified") and "--force" not in sys.argv:
+        print(f"L{level:02d}: lanesVerified — skipped")
+        return (m0.get("laneRatios") or {}).get("lanes")
     val, coh, H = rail_scores(plate)
     pk = peaks(val, coh, H)
     lanes = pick_spread(pk, H)

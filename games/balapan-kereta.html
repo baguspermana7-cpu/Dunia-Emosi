@@ -1267,11 +1267,13 @@ function g14BackdropLanes() {
   const b = g14PlayBand(), fit = g14BackdropFit()   // rail-anchored fit (v55.86)
   const lr = (G14_MANIFEST && G14_MANIFEST.laneRatios && G14_MANIFEST.laneRatios.lanes) || [0.56, 0.70, 0.84]
   // v55.92 — place EACH lane on its OWN calibrated painted rail (lr[0]=top, lr[1]=mid, lr[2]=
-  // bottom) DIRECTLY — no even-interpolation, no perspective nudge. The per-plate fractions
-  // (tools/detect-rail-lanes.py, verified) already ARE the real spread track positions. Clamp
-  // into the play band so the bottom lane + loco clear the controls. Owner: lanes must be
-  // consistent + accurate, lane 3 = top track … lane 1 = bottom track.
-  const ys = lr.map(f => Math.round(Math.min(Math.max(fit.topY + f * fit.scaledH, b.bandTop), b.bandBot - 2)))
+  // bottom) DIRECTLY — no even-interpolation, no perspective nudge.
+  // v56.3 B-285 — the old BOTH-SIDED clamp here moved lanes off their painted rails on
+  // ~18 deep-bottom levels (the plate wasn't moved with them) = the owner's "masih di
+  // atas". The fit is now EXACT-MAP (train-backdrop.js): rails land inside the play band
+  // by construction, so lanes are pure plate math. A SAFETY-ONLY bottom clamp remains
+  // for the bottomAnchor fallback mode (never engages in exact mode — QA asserts this).
+  const ys = lr.map(f => Math.round(Math.min(fit.topY + f * fit.scaledH, b.bandBot - 2)))
   // laneH = smaller adjacent gap (used only for depth/spacing cues now — NOT train size, which
   // is decoupled to a play-band fraction in v55.92).
   const lh = Math.max(38, Math.min(ys[1] - ys[0], ys[2] - ys[1]))
@@ -4061,7 +4063,12 @@ function spawnPickup(){
   t.anchor.set(0.5)
   g.addChild(t)
   g.x = W + 60
-  g.y = laneYs[lane]
+  // v56.3 B-288 — hover the WHOLE pickup ABOVE the rail line (laneY = where wheels sit).
+  // Center-anchored at laneY, half the icon + the ±6 bob dipped BELOW the rail (owner:
+  // "petir icon dan coin itu di bawah rail lane"). Base = laneY − (radius + margin);
+  // the bob range in tickPickups stays fully above the rail.
+  g._hoverY = laneYs[lane] - (PK + 6)
+  g.y = g._hoverY
   g._lane = lane
   g._kind = type.kind
   g._phase = Math.random() * Math.PI * 2
@@ -4077,8 +4084,10 @@ function tickPickups(delta){
     const p = S.pickups[i]
     if (!p._alive) { L.fx.removeChild(p); S.pickups.splice(i, 1); continue }
     p.x -= S.speed * delta * 0.9
-    p._phase += 0.10
-    p.y = laneYs[p._lane] + Math.sin(p._phase) * 6
+    // v56.3 B-288 — dt-scaled bob (was frame-rate dependent) in a range FULLY ABOVE the
+    // rail: hoverY-4 .. hoverY (sin mapped 0..1), never crossing the rail line.
+    p._phase += 0.08 * delta
+    p.y = (p._hoverY != null ? p._hoverY : laneYs[p._lane] - 26) - (Math.sin(p._phase) * 0.5 + 0.5) * 4
     // Spin halo subtly
     p.children[0].rotation += 0.04 * delta
     if (p.x < -60) { p._alive = false; continue }
