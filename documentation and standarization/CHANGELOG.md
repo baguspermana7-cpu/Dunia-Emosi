@@ -1,5 +1,21 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-03 — v56.6 "Motion everywhere + real depth + intuitive g14" (E2/E7 + B-286/B-287)
+
+- **E2**: g14 adopts the shared Motion engine — lane switch is frame-rate-independent
+  (Motion.damp, identical feel 30/60fps; kills the 4px terminal snap) with a settle squash;
+  AI lane changes TWEEN with a lean (was instant teleport); pickups get a generous 64px radius +
+  magnet ease-in stream. Zero-tolerance kept (sub-pixel landings); railalign gate made tween-aware.
+- **B-286**: REAL parallax depth — per-level band tables regenerated for all 48 manifests (top 48%
+  split into sky/far/near depth bands on low-edge-energy cut rows; rail-strip speed spread widened
+  to 0.45→1.60) + the IndoScene.ambient living sky (bird flocks/kites) revived over the plate
+  (dead code since the backdrop migration). Bands-only patch; hand-verified lanes untouched.
+- **B-287**: intuitive g14 — first-run 3-step pictorial tutorial (had none), middle-lane hazard
+  warnings + on-rail bang chip in the player's lane, BOOST "SIAP!" gold-pulse affordance,
+  3s lane-button hint on the first race per session.
+- **E7**: dead g17 redirect (removed game) now returns to the world map instead of a 404.
+- **E3/E4/E5**: g15/g16/side smoothness adoption (Motion engine) — see per-game notes in commit.
+
 ## 2026-07-03 — v56.5 "ALL-48 rails hand-verified + 40 levels + claymorphism station map" (B-285/B-288/B-291/A-318/E1)
 
 - **B-285 "100% bener2 pas"**: EXACT-MAP fit in train-backdrop.js (rails→play band by construction

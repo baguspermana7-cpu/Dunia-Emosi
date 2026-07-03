@@ -12,6 +12,20 @@
 ### L225 — For cut-out 2D sprites, a CONTACT SHADOW is the cheapest, highest-impact grounding
 - Real-photo trains + emoji obstacles looked pasted/floating. Fix = a soft dark oval at each object's base (lowest child) + a consistent thin white sticker outline on every moving object + far-lane haze tint → pop-up/diorama that sits on the board. All tint/alpha/ellipse — zero geometry change, so it can't disturb tuned positioning. Reach for grounding+outline before color-grading or re-cutting art.
 
+## 2026-07-03 — v56.x mega-overhaul (pokemon DB, claymorphism, BattleArena, exact rails, Motion)
+
+### L230 — A blocklist that papers over corrupt DATA rots: fix the data, then delete the blocklist
+- The Gen-9 sprite corruption was "solved" in v54.31 by routing 102 ids to a CDN — which then broke DIFFERENTLY (underscored slug in the CDN URL → guaranteed 404 → giant 🎲 fallback). Rebuilding the 104 corrupt files from the canonical source + deleting the blocklist fixed both failure modes at once and restored instant local loads. A mitigation that leaves bad data in place becomes the next bug's foundation.
+
+### L231 — When a mapping must hold exactly, make it hold BY CONSTRUCTION, then verify the residual
+- Trains floated because the rail→screen mapping was mutated for screen coverage and then lanes were CLAMPED (two competing corrections). The fix: exact-map fit (rails→play band always), coverage solved independently (texture skirts), clamp demoted to an asserted-never-fires safety. Auto-detection of hand-painted art failed twice; only per-level HAND verification with a machine-respected lock flag (lanesVerified) closed it.
+
+### L232 — Session-limited subagents: values may land while flags don't — verify state, not reports
+- Two lane-verify agents died at their session limits mid-run. One left corrected values WITHOUT its verification flags; its "result" was just the limit error. Reconstructing truth required inspecting the working tree (git diff + montage re-review), not trusting the last agent message. Checkpoint-commit early; make every delegated loop idempotent and resumable.
+
+### L233 — Behavior changes invalidate probes: teleport→tween broke the snapshot gate, tutorial broke the boot drive
+- Making AI lane changes tween turned the single-snapshot ≤1px gate into a false-failure (mid-transition ≠ floating); adding a first-run tutorial made every probe's startRace() a no-op. When presentation semantics change, update the GATES' sampling model in the same commit (settle-then-sample, min-of-two, pre-seeded flags) — a red gate after a feature is not always a regression, and a probe that still passes may be testing the old flow.
+
 ## 2026-06-30 — v55.97 shared QuizEngine + responsive + rail recalibration + side facing/smoke
 
 ### L226 — When the same UI/algo is hand-rolled in N games, the owner WILL notice the drift — extract a shared engine
