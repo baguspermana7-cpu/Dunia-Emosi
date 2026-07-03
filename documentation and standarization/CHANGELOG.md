@@ -1,5 +1,23 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-03 — v56.5 "ALL-48 rails hand-verified + 40 levels + claymorphism station map" (B-285/B-288/B-291/A-318/E1)
+
+- **B-285 "100% bener2 pas"**: EXACT-MAP fit in train-backdrop.js (rails→play band by construction
+  on every viewport; coverage via texture skirts, not mapping mutations; texel-snapped bands;
+  g14 lane clamp demoted to safety-only) + ALL 48 levels' lane data HAND-verified on the painted
+  rails (10 fixed: L07/08/10/11/12/14/15/17/18/20 — detector had put mid lanes between tracks and
+  bottom lanes in vegetation; L25-48 corrected + montage-verified). Every level now carries
+  laneRatios.lanesVerified which detect-rail-lanes2.py refuses to overwrite. Gate: qa-g14-railalign
+  0px deviation × 4 viewports.
+- **B-288**: pickups (petir/coin/heart) hover fully ABOVE the rail line, dt-scaled bob.
+- **B-291**: g14 level select renders all 8 tiers = 40 levels (was 20 while header said x/40).
+- **A-318**: g14 level select reskinned as the owner's claymorphism STATION MAP — pastel clay tier
+  cards, each level a clay station house labeled "STN <name>" from the authoritative TrainJourney
+  route (Gambir, Bekasi, Cikarang, …); locks/stars preserved; scoped .lvl-clay (other games keep
+  their bubbles). train-journey.js now loaded by index.html.
+- **E1**: NEW games/motion.js (window.Motion, M-303) — frame-rate-independent damping, squash &
+  stretch, hit-stop, trauma-model shake, fly-to-HUD arcs. Adoption across games = next tranche.
+
 ## 2026-07-03 — v56.1 "BattleArena — video-concept battle scene for gym + PvP + tournament" (A-317)
 
 Owner supplied a 10s concept video; the battles now match it. NEW shared `games/battle-arena.js`

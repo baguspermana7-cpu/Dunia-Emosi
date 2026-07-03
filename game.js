@@ -1574,6 +1574,8 @@ function openLevelSelect(gameNum) {
   const meta = GAME_META[gameNum]
   const info = GAME_INFO[gameNum] || {}
   const gp = getLevelProgress(gameNum)
+  // v56.5 A-318 — claymorphism station-map skin for the Balapan Kereta level select only
+  try { document.getElementById('screen-level').classList.toggle('lvl-clay', gameNum === 14) } catch(_) {}
 
   // Banner — set CSS vars for theme coloring
   const banner = document.getElementById('level-game-banner')
@@ -1683,9 +1685,24 @@ function openLevelSelect(gameNum) {
       dot.style.setProperty('--bd', glowAlpha('0.98'))
       dot.style.setProperty('--bb', glowAlpha('0.65'))
       dot.style.setProperty('--bs', glow)
+      // v56.5 A-318 — g14 claymorphism STATION MAP (owner reference): each level is a
+      // little clay station house labeled "STN <name>" from the authoritative 48-leg
+      // TrainJourney route (leg N's origin station). Other games keep the round bubbles.
+      if (state.currentGame === 14 && window.TrainJourney) {
+        let stn = ''
+        try { stn = (TrainJourney.name(lvNum) || '').split('→')[0].trim() } catch(_) {}
+        dot.classList.add('lvl-station')
+        dot.innerHTML = (isUnlocked||isCompleted)
+          ? `<span class="lvl-stn-house">🏠<span class="lvl-stn-num">${lvNum}</span></span>`
+            + `<span class="lvl-stn-name">STN ${stn.toUpperCase()}</span>`
+            + `<div class="lvl-stars-row">${starsStr}</div>`
+          : `<span class="lvl-stn-house is-locked">🔒</span>`
+            + `<span class="lvl-stn-name">STN ${stn.toUpperCase()}</span>`
+      } else {
       dot.innerHTML = isUnlocked||isCompleted
         ? `<span class="lvl-num">${lvNum}</span><div class="lvl-stars-row">${starsStr}</div>`
         : `<span class="lvl-lock-icon">🔒</span>`
+      }
       if (!dot.classList.contains('locked')) {
         dot.onclick = () => { playClick(); startGameWithLevel(lvNum) }
       }
