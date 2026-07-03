@@ -49,9 +49,16 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 #trainer-name-enemy{position:fixed;top:calc(52px + min(82px,17vw) + 2px);right:0;z-index:16;background:rgba(0,0,0,0.72);color:#fde68a;font-size:9px;font-weight:700;padding:2px 6px;border-radius:0 0 0 6px;max-width:min(68px,14vw);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0.5px}
 #trainer-name-player{position:fixed;top:calc(100svh - 240px - min(90px,18vw) - 14px);left:0;z-index:16;background:rgba(0,0,0,0.72);color:#86efac;font-size:9px;font-weight:700;padding:2px 6px;border-radius:0 0 6px 0;max-width:min(62px,13vw);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0.5px}
 
-/* Pokemon sprites — shifted toward center, away from trainer */
-#poke-enemy{position:fixed;top:min(100px,20vw);right:min(50px,12vw);z-index:20;width:min(140px,30vw);height:min(140px,30vw);object-fit:contain;filter:drop-shadow(0 8px 22px rgba(0,0,0,0.55));transition:opacity 0.3s,transform 0.3s;image-rendering:auto}
-#poke-player{position:fixed;top:calc(100svh - 220px - min(148px,32vw));left:min(50px,12vw);z-index:20;width:min(148px,32vw);height:min(148px,32vw);object-fit:contain;filter:drop-shadow(0 8px 22px rgba(0,0,0,0.55));transition:opacity 0.3s,transform 0.3s;image-rendering:auto;transform:scaleX(-1)}
+/* v56.1 A-317 — Pokemon sprites now live in the SHARED BattleArena field
+   (games/battle-arena.js): player LEFT large / enemy RIGHT, ground level,
+   white sticker outline + idle bob. The #poke-enemy/#poke-player imgs are
+   CREATED by BattleArena.setFighter (same ids so every FX call site —
+   projectile/aura/hit-shake/sparkles — keeps working unchanged).
+   Legacy presentation (trainer portraits, floating HP cards, platforms,
+   bottom msg box) is replaced by BattleArena cards/narration per the owner's
+   concept video. Elements stay in DOM for the untouched battle logic. */
+#portrait-enemy,#portrait-player,#portrait-enemy-fb,#trainer-name-enemy,#trainer-name-player,
+#hp-float-enemy,#hp-float-player,#platform-enemy,#platform-player,#msg-box{display:none!important}
 
 /* Battle platform shadows under pokemon */
 .poke-platform{position:fixed;z-index:19;pointer-events:none}
@@ -477,9 +484,8 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
 <div class="poke-platform" id="platform-enemy"></div>
 <div class="poke-platform" id="platform-player"></div>
 
-<!-- Pokemon sprites -->
-<img id="poke-enemy" src="" alt="">
-<img id="poke-player" src="" alt="">
+<!-- Pokemon sprites: created by BattleArena.setFighter (v56.1 A-317) with the
+     same #poke-enemy / #poke-player ids so all FX call sites keep working. -->
 
 <!-- Battle UI -->
 <div id="battle-ui">
@@ -564,11 +570,14 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
 <script src="data/math-rules.js?v=55.45-20260627ea"></script>
 <!-- v55.97 M-303 — SHARED quiz engine (question + answer-choices) for all games -->
 <script src="quiz-engine.js?v=55.97-20260629a"></script>
+<!-- v56.1 A-317 — SHARED battle-presentation engine (field sprites, HP cards,
+     narration pill, floating quiz, lunge/projectile/damage-pop FX) -->
+<script src="battle-arena.js?v=56.1-20260703a"></script>
 <script src="data/move-id-translations.js?v=20260505k"></script>
 <script src="data/sfx-engine.js?v=20260621f"></script>
 <script src="data/weather-fx.js?v=20260621f"></script>
 <script src="data/poke-packages.js?v=53.9-20260624f"></script>
-<script src="data/battle-modes.js?v=54.35-20260625an"></script>
+<script src="data/battle-modes.js?v=56.1-20260703a"></script>
 <script src="data/poke-type-chart.js?v=20260506z"></script>
 <script>
   // Licensed Pokemon SFX + battle weather — lazy init, silent failure.
@@ -1701,7 +1710,12 @@ function renderDots(containerId, team){
   el.innerHTML = team.map(p=>`<div class="hp-poke-dot ${p.hp<=0?'fainted':''}" title="${p.name}"></div>`).join('');
 }
 
-function setMsg(text){ document.getElementById('msg-text').textContent = text; }
+function setMsg(text){
+  document.getElementById('msg-text').textContent = text;
+  // v56.1 A-317 — narration now shown as the BattleArena bottom-left pill
+  // ("<Pokemon> bersiap menggunakan <Move>!") per the owner's concept video.
+  try { if (window.BattleArena) BattleArena.narrate(text); } catch(_){}
+}
 
 // ─── VFX ─────────────────────────────────────────────────────────────────────
 function spawnSparkles(x, y, color){
@@ -1835,9 +1849,13 @@ function addHitEffect(el, isFlipped){
   el.addEventListener('animationend',()=>el.classList.remove(cls),{once:true});
 }
 
-// Trainer shout ripple
+// Trainer shout ripple — skipped when the portrait is hidden (v56.1 A-317:
+// portraits are display:none in the BattleArena presentation; a 0-rect ripple
+// would flash in the screen corner).
 function spawnRipple(portraitEl){
+  if(!portraitEl) return;
   const r = portraitEl.getBoundingClientRect();
+  if(r.width < 2 && r.height < 2) return;
   const cx = r.left+r.width/2, cy = r.top+r.height/2;
   const sz = Math.max(r.width, r.height);
   const el = document.createElement('div');
@@ -1916,12 +1934,16 @@ function setPokeSpriteWithCascade(img, slug){
 }
 function setPokeSpriteEnemy(slug){
   const img = document.getElementById('poke-enemy');
+  if(!img) return;
+  try { if (window.BattleArena) BattleArena.revive('enemy'); } catch(_){} // clear faint pose (v56.1 A-317)
   setPokeSpriteWithCascade(img, slug);
   const flip = pokeFlipForRole(slug, 'enemy');
   img.style.transform = (flip ? flip + ' ' : '') + 'scale(' + pokeFinalScale(slug) + ')';
 }
 function setPokeSpritePlayer(slug){
   const img = document.getElementById('poke-player');
+  if(!img) return;
+  try { if (window.BattleArena) BattleArena.revive('player'); } catch(_){} // clear faint pose (v56.1 A-317)
   setPokeSpriteWithCascade(img, slug);
   const flip = pokeFlipForRole(slug, 'player');
   img.style.transform = (flip ? flip + ' ' : '') + 'scale(' + pokeFinalScale(slug) + ')';
@@ -1972,16 +1994,25 @@ let _mathLocked = false;
 
 function showMathQuiz(moveIdx){
   _pendingMoveIdx = moveIdx;
-  showBattleUI('math');
-  // v55.97 M-303 — render + answer handling now owned by the SHARED QuizEngine.
+  // v55.97 M-303 — render + answer handling owned by the SHARED QuizEngine.
   // Generation stays via genMathQuestion (which delegates to shared math-rules.js)
   // so the gym's badge→level difficulty mapping is preserved.
+  // v56.1 A-317 — presentation routed through the SHARED BattleArena: question
+  // floats BIG in the arena center, 4 glassy pills across the bottom (concept
+  // video). BattleArena wraps QuizEngine.fill — no fork of the quiz engine.
   const q = genMathQuestion();
-  QuizEngine.fill('math-question', 'math-choices', q, function(res){
-    if(res.correct) flashColor('yellow');
+  const done = function(res){
+    if(res && res.correct) flashColor('yellow');
     showBattleUI('none');
-    executeMove(_pendingMoveIdx, res.correct);
-  });
+    executeMove(_pendingMoveIdx, !!(res && res.correct));
+  };
+  if (window.BattleArena && window.QuizEngine) {
+    showBattleUI('none');
+    BattleArena.showQuiz(Object.assign({label:'⚡ JAWAB UNTUK MENYERANG!'}, q), done);
+  } else {
+    showBattleUI('math');
+    QuizEngine.fill('math-question', 'math-choices', q, done);
+  }
 }
 
 // ─── CANONICAL GYM BADGE IMAGES (from Bulbapedia) ───────────────────────────
@@ -2424,9 +2455,19 @@ function updateHpUI(){
       if (pName && pp.type) pName.textContent = window.typeEmojiPrefix(pp.type) + ' ' + pp.name;
     }
   } catch(_){}
-  // Weakness sticker — show 2 strongest counter types vs current enemy
+  // Weakness sticker — show 2 strongest counter types vs current enemy.
+  // v56.1 A-317: rendered into the BattleArena corner card's extra slot.
   try { if (typeof window.renderWeaknessSticker === 'function' && ep && ep.type) {
-    window.renderWeaknessSticker(document.getElementById('hpf-enemy-weakness-wrap'), ep.type)
+    const _wWrap = (window.BattleArena && BattleArena.cardExtra('enemy')) ||
+                   document.getElementById('hpf-enemy-weakness-wrap')
+    window.renderWeaknessSticker(_wWrap, ep.type)
+  }} catch(_){}
+  // v56.1 A-317 — SHARED BattleArena corner HP cards (name + type chip + Lv
+  // chip + tweened green HP bar + "95/95" + pokeball team dots).
+  try { if (window.BattleArena) {
+    const _lv = Math.max(1, Math.floor(Object.keys(badges).length / 4) + 1);
+    BattleArena.updateHP('player', {name: pp.name, type: pp.type, level: _lv, hp: pp.hp, maxHp: pp.maxHp, team: battle.playerTeam});
+    BattleArena.updateHP('enemy',  {name: ep.name, type: ep.type, level: _lv, hp: ep.hp, maxHp: ep.maxHp, team: battle.enemyTeam});
   }} catch(_){}
 }
 
@@ -2511,11 +2552,17 @@ function executeMove(moveIdx, mathCorrect){
     spawnTypeHitFX(ppEl, 'normal');
     pp.hp = Math.max(0, pp.hp - selfDmg);
     updateHpUI();
+    // v56.1 A-317 — wrong answer: attacker stumbles + small self-damage pop.
+    try { if (window.BattleArena) {
+      BattleArena.stumble('player');
+      BattleArena.damagePop('player', selfDmg, {self:true});
+    }} catch(_){}
     const r = ppEl.getBoundingClientRect();
     spawnSparkles(r.left+r.width/2, r.top+r.height/2, '#ef4444');
 
     const msgs = [`Jawaban salah! ${pp.name} terluka!`];
     if(pp.hp<=0){
+      try { if (window.BattleArena) BattleArena.faintDrop('player'); } catch(_){}
       // v53.7 polish parity: bookkeeping for sweep + comeback achievements.
       battle.playerFainted = (battle.playerFainted|0) + 1;
       battle.maxFainted = Math.max(battle.maxFainted, battle.playerFainted);
@@ -2554,16 +2601,26 @@ function executeMove(moveIdx, mathCorrect){
   setTimeout(()=>{
     removeAura(ppEl);
     playAttackSound(move.type);
-    spawnProjectile(ppEl, epEl, move.type, ()=>{
+    // v56.1 A-317 — attack presentation via SHARED BattleArena: attacker LUNGES
+    // toward the enemy (ease-out ~250ms) + type-colored glowing orb projectile
+    // with trail; legacy emoji projectile kept as fallback.
+    const _playerStrike = window.BattleArena
+      ? (cb)=>BattleArena.attack('player', {color:getTypeColor(move.type)}, cb)
+      : (cb)=>spawnProjectile(ppEl, epEl, move.type, cb);
+    _playerStrike(()=>{
       addHitEffect(epEl, false);
       spawnTypeHitFX(epEl, move.type);
       ep.hp = Math.max(0, ep.hp-dmg);
       updateHpUI();
+      // v56.1 A-317 — BIG staggered damage numbers pop around the target
+      // (BattleArena). applyHitFeedback keeps effectiveness text/VFX/SFX but
+      // its small -X number is suppressed to avoid a duplicate.
+      try { if (window.BattleArena) BattleArena.damagePop('enemy', dmg, {mult: eff}); } catch(_){}
       // Floating "Super Efektif!" / "Kurang Efektif…" text + VFX + sfx
       // 4th arg = moveType enables CRITICAL detection on super+STAB combo
       // 5th arg = damage value renders the animated -X HP number
       try { if (typeof window.applyHitFeedback === 'function') {
-        window.applyHitFeedback(epEl, pp.type, ep.type, move.type, dmg, (pp && pp.id) || null)
+        window.applyHitFeedback(epEl, pp.type, ep.type, move.type, window.BattleArena ? null : dmg, (pp && pp.id) || null)
       }} catch(_){}
 
       const r = epEl.getBoundingClientRect();
@@ -2587,6 +2644,7 @@ function executeMove(moveIdx, mathCorrect){
         // v53.7 polish parity: enemy-KO count drives First Blood + final stats.
         battle.enemyKOs = (battle.enemyKOs|0) + 1;
         if (battle.enemyKOs === 1) advSpawnAchievement('firstBlood');
+        try { if (window.BattleArena) BattleArena.faintDrop('enemy'); } catch(_){} // v56.1 A-317
         msgs.push(`${ep.name} pingsan!`);
         const nextIdx = battle.enemyTeam.findIndex((p,i)=>i>battle.enemyIdx&&p.hp>0);
         if(nextIdx===-1){
@@ -2669,16 +2727,24 @@ function enemyTurn(){
   setTimeout(()=>{
     removeAura(epEl);
     playAttackSound(moveType);
-    spawnProjectile(epEl, ppEl, moveType, ()=>{
+    // v56.1 A-317 — enemy attack routed through the SHARED BattleArena
+    // (lunge + glowing orb projectile), legacy emoji projectile as fallback.
+    const _enemyStrike = window.BattleArena
+      ? (cb)=>BattleArena.attack('enemy', {color:getTypeColor(moveType)}, cb)
+      : (cb)=>spawnProjectile(epEl, ppEl, moveType, cb);
+    _enemyStrike(()=>{
       addHitEffect(ppEl, true); // player has scaleX(-1)
       spawnTypeHitFX(ppEl, moveType);
       pp.hp = Math.max(0, pp.hp-dmg);
       updateHpUI();
       flashColor(moveType);
+      // v56.1 A-317 — big damage pop on the player (BattleArena); the small
+      // applyHitFeedback -X number is suppressed to avoid duplicates.
+      try { if (window.BattleArena) BattleArena.damagePop('player', dmg, {mult: eff}); } catch(_){}
       // Floating effectiveness text + VFX + sfx for enemy → player attack
       // 4th arg enables CRITICAL detection; 5th arg renders damage number
       try { if (typeof window.applyHitFeedback === 'function') {
-        window.applyHitFeedback(ppEl, ep.type, pp.type, moveType, dmg, (ep && ep.id) || null)
+        window.applyHitFeedback(ppEl, ep.type, pp.type, moveType, window.BattleArena ? null : dmg, (ep && ep.id) || null)
       }} catch(_){}
 
       const r = ppEl.getBoundingClientRect();
@@ -2689,6 +2755,7 @@ function enemyTurn(){
       const msgs = [`${ep.name} menggunakan ${moveName}!${effMsg}`];
 
       if(pp.hp<=0){
+        try { if (window.BattleArena) BattleArena.faintDrop('player'); } catch(_){} // v56.1 A-317
         msgs.push(`${pp.name} pingsan!`);
         const anyAlive = battle.playerTeam.findIndex(p=>p.hp>0);
         if(anyAlive===-1){
@@ -2979,6 +3046,22 @@ function playAttackSound(type){
 window.addEventListener('resize',()=>{if(app)app.renderer.resize(Math.min(window.innerWidth,1400),Math.min(window.innerHeight,1000))})
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
+// v56.1 A-317 — mount the SHARED BattleArena scene once. The painterly gym
+// backdrop stays on the existing #battle-bg layer (set per trainer in
+// startBattle); BattleArena owns field sprites, corner HP cards, narration
+// pill, floating quiz and the lunge/orb/damage-pop FX.
+try {
+  if (window.BattleArena) {
+    BattleArena.mountScene(document.body, {
+      ground: '27%',
+      cardTop: 'calc(env(safe-area-inset-top,0px) + 60px)',
+      narrateBottom: 'calc(env(safe-area-inset-bottom,0px) + 172px)',
+      onNarrateTap: function(){ if (waitingForTap) advanceMsg(); }
+    });
+    BattleArena.setFighter('player', { id: 'poke-player' });
+    BattleArena.setFighter('enemy',  { id: 'poke-enemy' });
+  }
+} catch(e) { console.warn('[G13C] BattleArena mount failed', e); }
 buildGymSelect();
 document.getElementById('gym-select').style.display='flex';
 // Auto-open team selector on first visit (no package saved yet)

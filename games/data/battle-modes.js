@@ -2371,11 +2371,16 @@
     }
 
     function renderArena (p1, p2) {
+      // v56.1 A-317 — SHARED BattleArena skin classes (games/battle-arena.js):
+      // .ba-cardskin = white rounded HP card, .ba-outline = white sticker
+      // outline on the field sprites. Skin-only: layout, P2 180° rotation,
+      // selectors (.bm-*) and the cdnSlug/spritePath/_bmSpriteOnError sprite
+      // resolution (v56.0 B-289) are all preserved exactly.
       return `
         <section class="bm-arena">
           <!-- Opponent quadrant (P2) — top-right, mirrors .g10-espr-wrap -->
           <div class="bm-arena-opp">
-            <div class="bm-info-card">
+            <div class="bm-info-card ba-cardskin">
               <div class="bm-info-name">${escapeHtml(p2.name)}</div>
               <div class="bm-info-chips">
                 <span class="bm-type-chip" style="background:${p2.color};">${TYPE_ICON[p2.type] || ''} ${p2.type}</span>
@@ -2389,13 +2394,13 @@
               <div class="bm-hp-text">${p2.hp}/${p2.hpMax}</div>
               ${renderBenchDots(1)}
             </div>
-            <img class="bm-arena-opp-img" alt="${escapeHtml(p2.name)}" src="${spritePath(p2.id, spriteSlug(p2.slug))}" onerror="window._bmSpriteOnError(this,'${spriteSlug(p2.slug)}','${p2.emoji}','bm-arena-opp-sprite')">
+            <img class="bm-arena-opp-img ba-outline" alt="${escapeHtml(p2.name)}" src="${spritePath(p2.id, spriteSlug(p2.slug))}" onerror="window._bmSpriteOnError(this,'${spriteSlug(p2.slug)}','${p2.emoji}','bm-arena-opp-sprite')">
           </div>
 
           <!-- Self quadrant (P1) — bottom-left, mirrors .g10-pspr-wrap -->
           <div class="bm-arena-self">
-            <img class="bm-arena-self-img" alt="${escapeHtml(p1.name)}" src="${spritePath(p1.id, spriteSlug(p1.slug))}" onerror="window._bmSpriteOnError(this,'${spriteSlug(p1.slug)}','${p1.emoji}','bm-arena-self-sprite')">
-            <div class="bm-info-card">
+            <img class="bm-arena-self-img ba-outline" alt="${escapeHtml(p1.name)}" src="${spritePath(p1.id, spriteSlug(p1.slug))}" onerror="window._bmSpriteOnError(this,'${spriteSlug(p1.slug)}','${p1.emoji}','bm-arena-self-sprite')">
+            <div class="bm-info-card ba-cardskin">
               <div class="bm-info-name">${escapeHtml(p1.name)}</div>
               <div class="bm-info-chips">
                 <span class="bm-type-chip" style="background:${p1.color};">${TYPE_ICON[p1.type] || ''} ${p1.type}</span>
@@ -2437,9 +2442,12 @@
           <div class="bm-q-row">
             <!-- A5: 10-second answer countdown — RAF-driven width update -->
             <div class="bm-timer-bar"><div class="bm-timer-fill" style="width:100%;"></div></div>
-            <div class="bm-q-text">${escapeHtml(q.q)}</div>
+            <!-- v56.1 A-317 — ba-qskin/ba-glass = SHARED BattleArena skin (glow
+                 question + glassy answer pills, concept video). Logic classes
+                 (.bm-q-text/.bm-choice/data-c) untouched. -->
+            <div class="bm-q-text ba-qskin">${escapeHtml(q.q)}</div>
             <div class="bm-choices" data-pidx="${playerIdx}">
-              ${q.choices.map(c => `<button class="bm-choice" data-c="${escapeHtml(String(c))}">${escapeHtml(String(c))}</button>`).join('')}
+              ${q.choices.map(c => `<button class="bm-choice ba-glass" data-c="${escapeHtml(String(c))}">${escapeHtml(String(c))}</button>`).join('')}
             </div>
           </div>
         `;
@@ -2459,7 +2467,7 @@
         const aliveBench = state.teams[playerIdx].filter((p, i) => i !== state.activeIdx[playerIdx] && p.hp > 0).length;
         return `
           <div class="bm-action-row">
-            <div class="bm-action-prompt">Aksi giliranmu, <b>${escapeHtml(meName)}</b>?</div>
+            <div class="bm-action-prompt ba-pillskin">Aksi giliranmu, <b>${escapeHtml(meName)}</b>?</div>
             <div class="bm-action-grid">
               <button class="bm-action-card bm-action-attack" data-action="attack">
                 <span class="bm-action-emoji">⚔️</span>
@@ -2791,7 +2799,13 @@
           const r = defenderPanel.getBoundingClientRect();
           const cx = r.left + r.width * 0.7;
           const cy = r.top + r.height * 0.5;
-          spawnDamageNumber(cx, cy, dmg, tm, timeMult);
+          // v56.1 A-317 — damage numbers routed through the SHARED BattleArena
+          // pop (scale-in + rise + fade, staggered echoes); legacy fallback kept.
+          if (window.BattleArena && window.BattleArena.damagePopAt) {
+            window.BattleArena.damagePopAt(cx, cy, dmg, { mult: tm, sub: effLabel(tm), timeMult: timeMult });
+          } else {
+            spawnDamageNumber(cx, cy, dmg, tm, timeMult);
+          }
           // Type-emoji particles burst at defender (8 particles, type-specific keyframe)
           spawnTypeParticles(cx, cy, move.type);
           // Effectiveness rise-text (Super Efektif / Tidak Efektif / Seimbang)
