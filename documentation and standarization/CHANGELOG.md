@@ -1,5 +1,20 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-03 — v56.1 "BattleArena — video-concept battle scene for gym + PvP + tournament" (A-317)
+
+Owner supplied a 10s concept video; the battles now match it. NEW shared `games/battle-arena.js`
+(`window.BattleArena`, M-303) consumed by gym-pokemon classic + battle-modes PvP/tournament:
+full-scene painterly arena, both Pokémon standing ON the field with sticker outlines, corner HP
+cards (name + type/Lv chips + tweened HP bar + pokeball team dots), "Serang!/Ganti" pill intro,
+math question floating BIG center-arena ("JAWAB UNTUK MENYERANG!") with glassy bottom answer pills
+(wraps the shared QuizEngine), narration banner ("Pikachu bersiap menggunakan Thunder Shock!"),
+lunge + projectile attack, big orange damage pops + type-effectiveness banner, eased faint drop.
+Smoothness: dt-clamped (0.05s cap) rAF exp-decay tweens (frame-rate independent on the throttled
+tablet), cubic-bezier pops, full prefers-reduced-motion block. VERIFIED end-to-end via
+tools/qa-gym-drive.mjs + qa-battle-anim.mjs (full battle turn: quiz → attack → damage → settle,
+both orientations, 0 errors); app-sweep 16/16. (Engine authored by a delegated implementer that
+died at its session limit mid-verify; verification completed by the coordinator.)
+
 ## 2026-07-03 — v56.2 "claymorphism landing" (A-316)
 
 Owner reference mockup: pastel clay puzzle cards on a dreamy light sky. Implemented as a pure CSS

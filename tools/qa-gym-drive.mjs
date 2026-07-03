@@ -1,24 +1,30 @@
+// A-317 drive: gym flow → live BattleArena screenshot (landscape + portrait)
 import puppeteer from 'puppeteer'
+const sleep=ms=>new Promise(r=>setTimeout(r,ms))
 const b=await puppeteer.launch({headless:'new',args:['--no-sandbox']})
-const p=await b.newPage(); await p.setViewport({width:844,height:390})
-const errs=[]; p.on('console',m=>{if(m.type()==='error')errs.push(m.text())}); p.on('pageerror',e=>errs.push('PE:'+e.message))
-await p.goto('http://localhost:8081/games/gym-pokemon.html',{waitUntil:'domcontentloaded'})
-await new Promise(r=>setTimeout(r,2500))
-await p.evaluate(()=>{ const c=document.querySelector('.trainer-card:not(.locked)'); if(c)c.click() })
-await new Promise(r=>setTimeout(r,2000))
-// pick the first team card in the picker, then any confirm buttons that appear
-for(const sel of ['#team-picker .tp-card, .tp-team, [id^=team-] .card, #team-picker div[onclick], .tim-card', '#tcf-go', '.tcf-cta-primary']){
-  await p.evaluate((s)=>{ const el=document.querySelector(s); if(el) el.click() }, sel)
-  await new Promise(r=>setTimeout(r,2000))
+for(const [w,h,tag] of [[844,390,'land'],[390,844,'port']]){
+  const p=await b.newPage(); await p.setViewport({width:w,height:h})
+  const errs=[]; p.on('console',m=>{if(m.type()==='error')errs.push(m.text())}); p.on('pageerror',e=>errs.push('PE:'+e.message))
+  await p.goto('http://localhost:8081/games/gym-pokemon.html',{waitUntil:'domcontentloaded'})
+  await sleep(2500)
+  await p.evaluate(()=>{ const c=document.querySelector('.trainer-card:not(.locked)'); if(c)c.click() })
+  await sleep(1500)
+  await p.evaluate(()=>{ const c=document.querySelector('.pkg-card'); if(c&&c.offsetParent)c.click() })
+  await sleep(1500)
+  await p.evaluate(()=>{ const f=document.getElementById('gw-fight'); if(f&&f.offsetParent)f.click() })
+  await sleep(1500)
+  await p.evaluate(()=>{ const g=document.getElementById('tcf-go'); if(g&&g.offsetParent)g.click() })
+  await sleep(6500)   // VS card 3-2-1-FIGHT countdown → mode modal intercepts startBattle
+  await p.evaluate(()=>{ const a=document.querySelector('.bm-card[data-mode="adventure"]'); if(a&&a.offsetParent)a.click() })
+  await sleep(5000)   // battle boots
+  await p.screenshot({path:`tools/qa-out/battle-live-${tag}.png`})
+  // battle state probe
+  const st=await p.evaluate(()=>({
+    baScene: !!document.querySelector('[class*="ba-"]'),
+    imgs: [...document.querySelectorAll('img')].filter(i=>i.offsetParent&&i.naturalWidth>10&&/pokemon|showdown|pokemondb/i.test(i.src)).length,
+    mathVisible: (()=>{const q=document.getElementById('math-question');return q&&q.offsetParent?q.textContent:null})(),
+  }))
+  console.log(tag, JSON.stringify(st), 'errors:', errs.filter(e=>!/favicon|net::ERR|Failed to load/i.test(e)).slice(0,3))
+  await p.close()
 }
-// fallback: click first visible clickable card containing 'Tim'
-await p.evaluate(()=>{ const els=[...document.querySelectorAll('div,button')].filter(e=>/Tim Ash Kanto Awal/.test(e.innerText||'')&&e.offsetParent); const c=els[els.length-1]; if(c)c.click() })
-await new Promise(r=>setTimeout(r,1800))
-await p.evaluate(()=>{ const go=document.getElementById('tcf-go'); if(go&&go.offsetParent) go.click() })
-await new Promise(r=>setTimeout(r,4000))
-// dismiss any VS card / continue prompts
-await p.evaluate(()=>{ const btns=[...document.querySelectorAll('button')].filter(b=>/mulai|lanjut|fight|maju/i.test(b.innerText)&&b.offsetParent); if(btns[0])btns[0].click() })
-await new Promise(r=>setTimeout(r,3500))
-await p.screenshot({path:'tools/qa-out/battle-arena-live.png'})
-console.log('errors:',errs.filter(e=>!/favicon|net::ERR|Failed to load/i.test(e)).slice(0,4))
 await b.close()
