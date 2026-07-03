@@ -1575,6 +1575,11 @@ async function initPixi() {
     }
   } catch (_) { L._amb = null }
 
+  // v56.7 A-320/J3 — AERIAL PERSPECTIVE: translucent sky wash over the far scenic bands
+  // (recedes the distance) + a warm bottom vignette (pops the near ground). Static fills,
+  // rebuilt on resize — zero per-frame cost.
+  try { g14BuildHaze() } catch (_) {}
+
   L.fx = new PIXI.Container(); stage.addChild(L.fx)
   // v55.77 — shared always-on, speed-scaled motion overlay (games/train-speedfx.js).
   // Replaces the old boost-only speed lines so the train always reads as moving fast.
@@ -2173,6 +2178,52 @@ function buildForeScenery() {
   }
   // scrolling bushes along the very bottom edge, in front of the train
   for (let i = 0; i < 6; i++) mkBush((i * W / 4) + Math.random() * 60, H - 2, 1.0 + Math.random() * 0.5)
+  // v56.7 A-320/J1 — FOREGROUND OCCLUSION PLANE: telegraph poles + signal posts whipping
+  // past at 2.1-2.3× IN FRONT of the train. Occlusion is the strongest near-camera depth
+  // cue — the scene stops reading flat the moment near objects pass over it.
+  const mkPole = (x, kind) => {
+    const g = new PIXI.Graphics()
+    const ph = Math.max(120, H * 0.34)
+    if (kind === 'signal') {
+      g.rect(-3, -ph, 6, ph).fill({ color: 0x2e2a26, alpha: 0.92 })
+      g.rect(-13, -ph, 26, 16).fill({ color: 0x3a332c, alpha: 0.92 })
+      g.circle(-5, -ph + 8, 4.4).fill({ color: 0x67e05f, alpha: 0.95 })
+      g.circle(6, -ph + 8, 4.4).fill({ color: 0x8a2f24, alpha: 0.9 })
+    } else {
+      g.rect(-2.5, -ph, 5, ph).fill({ color: 0x241f1a, alpha: 0.9 })
+      g.rect(-16, -ph + 6, 32, 4).fill({ color: 0x241f1a, alpha: 0.9 })
+      g.rect(-11, -ph + 16, 22, 3.4).fill({ color: 0x241f1a, alpha: 0.9 })
+    }
+    g.x = x; g.y = H + 4
+    g._speed = 2.1 + Math.random() * 0.2   // near-camera: fastest layer in the scene
+    g._baseY = g.y; g._bob = 0; g._pole = true
+    c.addChild(g); foreItems.push(g)
+  }
+  mkPole(W * 0.55, 'pole'); mkPole(W * 1.25, 'signal'); mkPole(W * 1.9, 'pole')
+}
+
+// v56.7 A-320/J3 — aerial haze + ground vignette (depth contrast cues; rebuilt on resize)
+function g14BuildHaze() {
+  const W = app.screen.width, H = app.screen.height
+  if (L._haze && L._haze.parent) { L._haze.parent.removeChild(L._haze); L._haze.destroy() }
+  const g = new PIXI.Graphics()
+  const bh = L._bdHandle
+  const fi = (bh && bh.fitInfo) ? bh.fitInfo() : null
+  const farTop = fi ? Math.max(0, fi.topY) : 0
+  const farBot = fi ? (fi.topY + 0.48 * fi.scaledH) : H * 0.45
+  if (farBot > farTop) {
+    const steps = 6
+    for (let i = 0; i < steps; i++) {   // stronger at the horizon, fading downward
+      const a = 0.16 * (1 - i / steps)
+      g.rect(0, farTop + (farBot - farTop) * i / steps, W, (farBot - farTop) / steps + 1)
+        .fill({ color: 0xdfeef8, alpha: a })
+    }
+  }
+  g.rect(0, H * 0.88, W, H * 0.12).fill({ color: 0x2b1c0d, alpha: 0.08 })
+  L._haze = g
+  // sit right above the backdrop, below tracks/trains
+  const idx = (bh && bh.bg && bh.bg.parent === stage) ? stage.getChildIndex(bh.bg) + 1 : 1
+  stage.addChildAt(g, Math.min(idx, stage.children.length))
 }
 
 function tickFore(delta) {
@@ -2180,9 +2231,31 @@ function tickFore(delta) {
   const W = app.screen.width
   for (const g of foreItems) {
     g.x -= g._speed * S.speed * delta * 0.4
-    g._bob += 0.04 * delta
-    g.y = g._baseY + Math.sin(g._bob) * 1.5   // subtle sway = parallax life
+    if (!g._pole) { g._bob += 0.04 * delta; g.y = g._baseY + Math.sin(g._bob) * 1.5 }
     if (g.x < -90) g.x = W + 60 + Math.random() * 40
+  }
+  // v56.7 A-320/J2 — LOOK-AROUND PARALLAX on every lane switch: the camera follows the
+  // train, so SCENIC layers shift opposite the move, scaled by depth (far shifts least,
+  // the foreground plane most). Rail-strip bands are NEVER offset — trains stay glued to
+  // their verified rails (zero-tolerance). Frame-rate-independent ease; reduced-motion off.
+  if (window.Motion && !g14ReducedMotion()) {
+    const dtSec = (delta || 1) / 60
+    const tgt = (L.player && L.player._switchDySign) ? -L.player._switchDySign : 0
+    S._look = Motion.damp(S._look || 0, tgt, 6, dtSec)
+    const lk = S._look
+    if (Math.abs(lk) > 0.01 || S._lookApplied) {
+      S._lookApplied = Math.abs(lk) > 0.01
+      const bh = L._bdHandle
+      if (bh && bh.bands && bh.fitInfo) {
+        const fi = bh.fitInfo()
+        for (const c of bh.bands) {
+          if (!c || c.destroyed || c._fy1 > 0.48) continue      // scenic bands only
+          const depth = 1 - (c._fy0 / 0.48)                     // far=1 … near-scenic=0
+          c.y = fi.topY + c._fy0 * fi.scaledH + lk * 6 * depth
+        }
+      }
+      L.fore.y = lk * 16                                        // nearest layer moves most
+    }
   }
 }
 
@@ -3809,6 +3882,17 @@ function tickObstacles(delta) {
     if (!o._alive) { L.obstacles.removeChild(o); S.obstacles.splice(i, 1); continue }
 
     o.x -= S.speed * delta * _G14_OBS_LEVEL_MULT
+    // v56.7 A-320/J4 — APPROACH PERSPECTIVE (render-only): obstacles arrive from the
+    // distance — 0.8× scale + slightly high, easing to full size + EXACT lane Y across
+    // the first ~35% of the approach. By the time they can collide (left half of the
+    // screen) apr === 1 → contact geometry identical to the verified rail line.
+    {
+      const _W = app.screen.width
+      const apr = Math.max(0, Math.min(1, (_W + 60 - o.x) / (_W * 0.35)))
+      const s = 0.8 + 0.2 * apr
+      o.scale.set(s)
+      o.y = laneYs[o._lane != null ? o._lane : 0] - (1 - apr) * 10
+    }
     // Pulse warning
     o.children[1].alpha = 0.1 + Math.sin(S.frame * 0.2) * 0.1
 
@@ -5154,6 +5238,7 @@ window.addEventListener('resize', () => {
         if (L.fore && L.fore.parent) { L.fore.parent.removeChild(L.fore); L.fore.destroy({ children: true }) }
         if (typeof buildForeScenery === 'function') buildForeScenery()
       } catch(_){}
+      try { g14BuildHaze() } catch(_){}   // v56.7 J3 — re-fit the aerial haze bands
       return
     }
     // A-311 — recompute the SAME responsive layout as initPixi so lanes/scenery/
