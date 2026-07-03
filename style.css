@@ -7886,3 +7886,94 @@ button:disabled, [aria-disabled="true"] {
   width: 28px !important;
   height: 28px !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   v56.2 A-316 — CLAYMORPHISM LANDING (owner reference mockup)
+   Pastel clay puzzle cards on a dreamy light sky. Pure override block:
+   markup + handlers untouched, every category + game tile preserved.
+   ═══════════════════════════════════════════════════════════════════ */
+.wmap-root {
+  background:linear-gradient(180deg,#cfe9fa 0%,#dcebf8 22%,#e9e2f4 48%,#f4e7e2 74%,#f7ecdf 100%);
+}
+.wmap-sky { background:linear-gradient(180deg,rgba(207,233,250,0.95) 0%,rgba(207,233,250,0.55) 70%,transparent 100%); }
+.wmap-star { opacity:0 !important; animation:none; }
+.wmap-cloud { background:rgba(255,255,255,0.75); filter:blur(6px); }
+/* soft clay blobs drifting in the sky strip */
+.wmap-cloud-2 { background:rgba(246,207,216,0.65); }
+.wmap-cloud-4 { background:rgba(215,205,244,0.6); }
+.wmap-path-vert::before { background:repeating-linear-gradient(to bottom,#d9b98c 0,#d9b98c 10px,transparent 10px,transparent 18px); opacity:0.8; }
+.wmap-path-vert::after { color:rgba(160,120,80,0.5); }
+
+/* clay recipe: big radius, thick colored base edge, soft drop, pressed inner light */
+.wmap-zone { border-radius:34px; overflow:visible; }
+.wmap-zone::after { border-radius:36px; }
+.wmap-zone:hover::after { border-color:rgba(255,255,255,0.7); box-shadow:0 0 24px rgba(255,255,255,0.5); }
+/* puzzle outie tab on the right edge (clay, per-zone tone) */
+.wmap-zone::before {
+  content:''; position:absolute; right:-12px; top:44%; width:26px; height:26px;
+  border-radius:50%; z-index:-1;
+  box-shadow:inset 0 3px 5px rgba(255,255,255,0.7), 0 4px 8px rgba(120,90,70,0.25);
+}
+.wmap-zone--emosi {
+  background:linear-gradient(160deg,#f8d3de 0%,#f2bfce 100%); border:0;
+  box-shadow:0 9px 0 #dd9fb4, 0 20px 34px rgba(200,120,150,0.28), inset 0 4px 10px rgba(255,255,255,0.85), inset 0 -6px 12px rgba(200,120,150,0.22);
+}
+.wmap-zone--emosi::before { background:#f2bfce; }
+.wmap-zone--huruf {
+  background:linear-gradient(160deg,#c9ecd3 0%,#b2e2c1 100%); border:0;
+  box-shadow:0 9px 0 #8fcf9f, 0 20px 34px rgba(90,170,120,0.26), inset 0 4px 10px rgba(255,255,255,0.85), inset 0 -6px 12px rgba(90,170,120,0.22);
+}
+.wmap-zone--huruf::before { background:#b2e2c1; }
+.wmap-zone--angka {
+  background:linear-gradient(160deg,#ffe1bd 0%,#ffd2a3 100%); border:0;
+  box-shadow:0 9px 0 #eab27a, 0 20px 34px rgba(210,140,80,0.26), inset 0 4px 10px rgba(255,255,255,0.85), inset 0 -6px 12px rgba(210,140,80,0.22);
+}
+.wmap-zone--angka::before { background:#ffd2a3; }
+.wmap-zone--memori {
+  background:linear-gradient(160deg,#ded4f6 0%,#cfc2f0 100%); border:0;
+  box-shadow:0 9px 0 #ab98e0, 0 20px 34px rgba(140,110,200,0.26), inset 0 4px 10px rgba(255,255,255,0.85), inset 0 -6px 12px rgba(140,110,200,0.22);
+}
+.wmap-zone--memori::before { background:#cfc2f0; }
+.wmap-zone--mobil {
+  background:linear-gradient(160deg,#c8e3f8 0%,#b3d6f2 100%); border:0;
+  box-shadow:0 9px 0 #8db8de, 0 20px 34px rgba(90,140,190,0.26), inset 0 4px 10px rgba(255,255,255,0.85), inset 0 -6px 12px rgba(90,140,190,0.22);
+}
+.wmap-zone--mobil::before { background:#b3d6f2; }
+.wmap-zone--pokemon {
+  background:linear-gradient(160deg,#ffd4c2 0%,#ffc2ab 100%); border:0;
+  box-shadow:0 9px 0 #e89a7f, 0 20px 34px rgba(210,110,80,0.28), inset 0 4px 10px rgba(255,255,255,0.85), inset 0 -6px 12px rgba(210,110,80,0.22);
+}
+.wmap-zone--pokemon::before { background:#ffc2ab; }
+.wmap-zone--sains {
+  background:linear-gradient(160deg,#ccd8f4 0%,#bccbee 100%); border:0;
+  box-shadow:0 9px 0 #97a8d8, 0 20px 34px rgba(110,130,190,0.26), inset 0 4px 10px rgba(255,255,255,0.85), inset 0 -6px 12px rgba(110,130,190,0.22);
+}
+.wmap-zone--sains::before { background:#bccbee; }
+.wmap-zone--kereta {
+  background:linear-gradient(160deg,#f3e6ca 0%,#ecdab3 100%); border:0;
+  box-shadow:0 9px 0 #cdb98e, 0 20px 34px rgba(170,140,90,0.26), inset 0 4px 10px rgba(255,255,255,0.85), inset 0 -6px 12px rgba(170,140,90,0.22);
+}
+.wmap-zone--kereta::before { background:#ecdab3; }
+
+/* banner → clay pill, warm-brown label (no dark glass) */
+.wmap-zone-banner {
+  background:rgba(255,255,255,0.6); backdrop-filter:none; border:0; border-radius:16px;
+  box-shadow:inset 0 2px 5px rgba(255,255,255,0.9), inset 0 -3px 6px rgba(150,110,90,0.14), 0 3px 8px rgba(150,110,90,0.12);
+}
+.wmap-zone-name { color:#5d4a42; text-shadow:none; }
+.wmap-zone-stars-total { color:#d97706; text-shadow:none; }
+.wmap-zone-icon { filter:none; animation:none; }
+
+/* game tiles → mini clay tiles: keep each tile's own colour, soften + emboss */
+.wmap-node-bldg {
+  border-radius:24px !important; border:0 !important;
+  filter:saturate(0.72) brightness(1.16);
+  box-shadow:0 6px 0 rgba(120,90,75,0.28), 0 12px 18px rgba(120,90,75,0.2), inset 0 3px 7px rgba(255,255,255,0.65), inset 0 -4px 8px rgba(90,60,50,0.2) !important;
+}
+.wmap-node-bldg::before { opacity:0.5; }
+.wmap-node-name { color:#6a564c !important; text-shadow:none !important; }
+.wmap-node-stars { text-shadow:none; }
+.wmap-node.locked .wmap-node-bldg { filter:saturate(0.3) brightness(1.1); }
+.wmap-heart { opacity:0.5; }
+/* the dark app-shell override at ~:4224 uses !important — beat it for the clay theme */
+#screen-menu { background:linear-gradient(180deg,#cfe9fa 0%,#e9e2f4 55%,#f7ecdf 100%) !important; }

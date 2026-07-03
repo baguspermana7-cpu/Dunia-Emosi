@@ -1,5 +1,16 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-03 — v56.2 "claymorphism landing" (A-316)
+
+Owner reference mockup: pastel clay puzzle cards on a dreamy light sky. Implemented as a pure CSS
+override block at the end of style.css (`v56.2 A-316`): light sky gradient page + soft clay-blob
+clouds (stars off), each `.wmap-zone--*` becomes a pastel clay slab (rose/mint/peach/lavender/
+blue/coral/periwinkle/sand) with the clay recipe (thick colored base edge + soft drop + pressed
+inner highlight), puzzle outie tab on the right edge, banners → white clay pills with warm-brown
+labels, game tiles keep their own colours but soften + emboss as mini clay tiles. The dark
+app-shell `#screen-menu` !important gradient is overridden. HARD CONSTRAINT verified: 8 zones,
+28/28 game tiles present and visible (probe tools/qa-clay-shot.mjs), handlers untouched.
+
 ## 2026-07-03 — v56.0 "Pokemon sprite/database TOTAL fix" (B-289)
 
 Owner screenshot: PvP battle rendered a giant 🎲 instead of Chien-Pao. Root chain
