@@ -13116,14 +13116,12 @@ function g16EndGame(won) {
 let g17State = {}
 
 function initGame17() {
-  // v54.7 REVAMP: G17 is now the Rope Swing Pikachu game. Redirect to the
-  // standalone Pixi page that replaces the legacy whack-a-mole. The old
-  // tap-the-glowing-block code below is kept temporarily for reference but
-  // never executed (early return guards). Will be stripped in v54.7.1.
+  // v56.6 E7 — G17 (Jembatan Goyang) was REMOVED at owner request (v55.67, "konsepnya
+  // nggak ada"); games/jembatan-goyang.html does not exist, so the old redirect 404'd.
+  // The map tile is gone, so this should be unreachable — if anything still calls it,
+  // return to the world map instead of a dead page.
   battleBgmStop()
-  const lv = state.selectedLevelNum || 1
-  try { sessionStorage.setItem('g17Config', JSON.stringify({ level: lv })) } catch(_){}
-  window.location.href = 'games/jembatan-goyang.html'
+  try { showScreen('screen-menu') } catch(_){}
   return  // hard-exit — legacy code below is dead.
   // ── LEGACY (whack-a-mole, removed in v54.7) ────────────────────────────
   const diff = lv <= 7 ? 'easy' : lv <= 14 ? 'medium' : 'hard'
