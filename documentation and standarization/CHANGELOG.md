@@ -1,5 +1,28 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-04 — v56.8 "Trainer portraits restored + PvP keeps its per-player zones" (B-292/B-293)
+
+Owner: "Gambar trainernya player 1 kok g ada, dan trainer gym jadi hilang — tambahkan balik. Layout
+ini itu saat mode adventure; utk mode pvp pertanyaannya harus seperti sebelumnya bergantian —
+sempurnakan." Visual-only — battle logic untouched.
+- **B-292 portraits back**: the A-317 reskin CSS had hidden #portrait-player/#portrait-enemy
+  wholesale. Restored as round avatar badges hugging the top corner of each fighter's HP card
+  (40px, white ring, z65) with the trainer-name chips (Kamu / gym-leader) tucked inward beside
+  them; card names get corner padding so "Pikachu"/"Staryu" stay readable. Population logic +
+  spawnRipple targets untouched. hp-float/platforms/msg-box stay hidden (replaced by BattleArena).
+- **B-293 PvP/Tournament isolation**: NEW BattleArena.setSceneVisible(v) (battle-arena.js v1.1.1) —
+  battle-modes parks the mounted Adventure scene (backdrop/motes/fg/VS/cards/narrate) when its
+  full-screen root mounts and restores it on teardown, so the centered floating-question layout is
+  Adventure-ONLY and nothing animates underneath PvP on the tablet. PvP keeps its per-player
+  alternating Q-zones exactly as before (top zone rotated 180° for P2, anti-peek "Tunggu giliran").
+- **B-293 sempurnakan (landscape)**: the 18/20vh q-zones were ~75px tall in landscape — question +
+  answer pills overflowed off-screen (unplayable). Landscape now gets taller zones (25/47/28vh) +
+  a compact single-row layout (4-across choices/moves, horizontal Serang/Ganti cards); the PvP
+  question inherits the new cream + brown-outline skin (.ba-qskin).
+- Probes: tools/qa-pvp-drive.mjs (mode→names→size→pick→battle→question→answer→turn-swap→exit;
+  asserts scene parked + zero zone overflow + scene restored) + qa-tour-sanity.mjs + portrait
+  asserts in qa-gym-drive.mjs. Both orientations, 0 errors. sw → v56.8-20260704b.
+
 ## 2026-07-04 — v56.7 "FIDELITY ROUND — battle = the video, layered depth everywhere, clay polish" (A-319/A-320/A-321)
 
 Owner review: battle/train/clay were directionally right but visibly short of the references, and

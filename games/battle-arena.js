@@ -1,5 +1,9 @@
 /* =============================================================================
- * battle-arena.js — window.BattleArena  (v1.1.0, 2026-07-03, A-317 + A-319)
+ * battle-arena.js — window.BattleArena  (v1.1.1, 2026-07-04, A-317 + A-319 + B-293)
+ * =============================================================================
+ * v1.1.1 B-293: setSceneVisible(visible) — battle-modes (PvP/Tournament) parks
+ * the mounted Adventure scene while its own full-screen root runs, restores it
+ * on teardown. .ba-qskin restyled to the cream + brown-outline question look.
  * =============================================================================
  * A-319 screen-by-screen video fidelity (VISUAL ONLY — logic untouched):
  *   - stadium backdrop (assets/background/gym/stadium-video.webp) is the
@@ -206,8 +210,12 @@
     '.ba-glass.ba-glass{background:rgba(255,255,255,.30);border:2px solid rgba(255,255,255,.75);color:#fff;',
     'text-shadow:0 2px 4px rgba(0,0,0,.45);border-radius:18px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);',
     'box-shadow:0 6px 16px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.55)}',
-    '.ba-qskin.ba-qskin{color:#fff;font-weight:900;',
-    'text-shadow:0 0 18px rgba(255,170,60,.9),0 0 36px rgba(255,140,40,.5),0 2px 8px rgba(0,0,0,.6)}',
+    /* v1.1.1 B-293 — question skin matched to the NEW Adventure look (cream
+       digits + dark-brown outline) instead of the old warm glow; stroke scaled
+       down for the smaller PvP-zone font. */
+    '.ba-qskin.ba-qskin{color:#fff6df;font-weight:900;font-family:"Fredoka One",cursive,sans-serif;',
+    '-webkit-text-stroke:2px #5b3a1e;paint-order:stroke fill;',
+    'text-shadow:0 2px 0 #5b3a1e,0 4px 10px rgba(0,0,0,.4)}',
     '.ba-pillskin.ba-pillskin{background:rgba(255,255,255,.94);color:#1f2937;border-radius:999px;',
     'padding:8px 16px;box-shadow:0 5px 14px rgba(0,0,0,.28);display:inline-block}',
     /* ── reduced motion: kill decorative loops, keep state visible ── */
@@ -346,6 +354,26 @@
       S.field.style.transform = ''
       setDof(S.quiz ? 2 : 0)
     }, 900)
+  }
+
+  // v1.1.1 B-293 — hide/show the whole mounted Adventure scene without tearing
+  // it down: battle-modes (PvP/Tournament) calls setSceneVisible(false) when its
+  // own full-screen root mounts so the scene's fixed layers stop animating/
+  // painting underneath (throttled-tablet perf) and can never bleed through,
+  // then setSceneVisible(true) on teardown — Adventure resumes untouched.
+  function setSceneVisible (visible) {
+    if (!S) return
+    if (!visible && S.quiz) closeQuiz()
+    var d = visible ? '' : 'none'
+    var els = [S.backdrop, S.field, S.fgL, S.fgR, S.vsChip, S.narrateEl]
+    ;['player', 'enemy'].forEach(function (side) {
+      var f = S.fighters[side]
+      if (f) els.push(f.card)
+    })
+    if (S.motes) els = els.concat(S.motes)
+    for (var i = 0; i < els.length; i++) {
+      if (els[i]) els[i].style.display = d
+    }
   }
 
   function setBackdrop (url) {
@@ -692,7 +720,8 @@
   }
 
   global.BattleArena = {
-    version: '1.1.0',
+    version: '1.1.1',
+    setSceneVisible: setSceneVisible,
     setDof: setDof,
     punchIn: punchIn,
     parallaxKick: parallaxKick,

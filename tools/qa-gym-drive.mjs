@@ -23,6 +23,10 @@ for(const [w,h,tag] of [[844,390,'land'],[390,844,'port']]){
     baScene: !!document.querySelector('[class*="ba-"]'),
     imgs: [...document.querySelectorAll('img')].filter(i=>i.offsetParent&&i.naturalWidth>10&&/pokemon|showdown|pokemondb/i.test(i.src)).length,
     mathVisible: (()=>{const q=document.getElementById('math-question');return q&&q.offsetParent?q.textContent:null})(),
+    // v56.8 B-292 — trainer portraits restored: both must be visible w/ >0 rect
+    portraitPlayer: (()=>{const e=document.getElementById('portrait-player');if(!e)return null;const r=e.getBoundingClientRect();const cs=getComputedStyle(e);return {w:Math.round(r.width),h:Math.round(r.height),shown:cs.display!=='none'&&r.width>0,loaded:e.naturalWidth>10}})(),
+    portraitEnemy: (()=>{const e=document.getElementById('portrait-enemy'),fb=document.getElementById('portrait-enemy-fb');const pick=(el)=>{if(!el)return null;const r=el.getBoundingClientRect();const cs=getComputedStyle(el);return cs.display!=='none'&&r.width>0?{w:Math.round(r.width),h:Math.round(r.height)}:null};return pick(e)||pick(fb)})(),
+    nameEnemy: (()=>{const e=document.getElementById('trainer-name-enemy');if(!e)return null;const r=e.getBoundingClientRect();return getComputedStyle(e).display!=='none'&&r.width>0?e.textContent:null})(),
   }))
   console.log(tag, JSON.stringify(st), 'errors:', errs.filter(e=>!/favicon|net::ERR|Failed to load/i.test(e)).slice(0,3))
   await p.close()

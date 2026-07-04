@@ -43,22 +43,38 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 #flash{position:fixed;inset:0;z-index:500;pointer-events:none;opacity:0;transition:opacity 0.15s}
 
 /* Trainer portraits — solid, far corners, behind pokemon */
-#portrait-enemy{position:fixed;top:52px;right:-2px;z-index:15;width:min(68px,14vw);height:min(82px,17vw);object-fit:cover;object-position:top center;filter:drop-shadow(-2px 2px 8px rgba(0,0,0,0.7));transform:scaleX(-1)}
-#portrait-player{position:fixed;top:calc(100svh - 240px - min(90px,18vw));left:-2px;z-index:15;width:min(62px,13vw);height:min(76px,16vw);object-fit:cover;object-position:top center;filter:drop-shadow(2px 2px 8px rgba(0,0,0,0.7))}
-/* Trainer name badges */
-#trainer-name-enemy{position:fixed;top:calc(52px + min(82px,17vw) + 2px);right:0;z-index:16;background:rgba(0,0,0,0.72);color:#fde68a;font-size:9px;font-weight:700;padding:2px 6px;border-radius:0 0 0 6px;max-width:min(68px,14vw);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0.5px}
-#trainer-name-player{position:fixed;top:calc(100svh - 240px - min(90px,18vw) - 14px);left:0;z-index:16;background:rgba(0,0,0,0.72);color:#86efac;font-size:9px;font-weight:700;padding:2px 6px;border-radius:0 0 6px 0;max-width:min(62px,13vw);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0.5px}
+/* v56.8 B-292 — legacy corner-portrait geometry removed; the restored avatar
+   rules live in the v56.8 block below (they'd collide with the BattleArena
+   HP cards here). */
+/* Trainer name badges — v56.8 B-292: restyled as chips in the v56.8 block below. */
 
 /* v56.1 A-317 — Pokemon sprites now live in the SHARED BattleArena field
    (games/battle-arena.js): player LEFT large / enemy RIGHT, ground level,
    white sticker outline + idle bob. The #poke-enemy/#poke-player imgs are
    CREATED by BattleArena.setFighter (same ids so every FX call site —
    projectile/aura/hit-shake/sparkles — keeps working unchanged).
-   Legacy presentation (trainer portraits, floating HP cards, platforms,
-   bottom msg box) is replaced by BattleArena cards/narration per the owner's
-   concept video. Elements stay in DOM for the untouched battle logic. */
-#portrait-enemy,#portrait-player,#portrait-enemy-fb,#trainer-name-enemy,#trainer-name-player,
+   Legacy presentation (floating HP cards, platforms, bottom msg box) is
+   replaced by BattleArena cards/narration per the owner's concept video.
+   Elements stay in DOM for the untouched battle logic. */
 #hp-float-enemy,#hp-float-player,#platform-enemy,#platform-player,#msg-box{display:none!important}
+
+/* v56.8 B-292 — trainer portraits RESTORED (owner: "Gambar trainernya player 1
+   kok g ada, dan trainer gym jadi hilang. Tambahkan balik.") as round avatar
+   badges at the top corners: the old full-bleed corner positions now collide
+   with the BattleArena HP cards (top env+60, z60), so each avatar sits just
+   above its own card (z65) with the trainer-name chip tucked inward beside it
+   in the hud-gradient tail band. Population logic (startBattle src cascade +
+   spawnRipple targets) untouched. */
+#portrait-enemy,#portrait-player{position:fixed;top:calc(env(safe-area-inset-top,0px) + 44px);width:40px;height:40px;border-radius:50%;object-fit:cover;object-position:top center;border:2.5px solid #fff;background:rgba(30,32,40,.85);box-shadow:0 4px 10px rgba(0,0,0,.4);z-index:65}
+#portrait-enemy{right:4px;transform:scaleX(-1)}
+#portrait-player{left:4px}
+#portrait-enemy-fb{position:fixed;top:calc(env(safe-area-inset-top,0px) + 44px);right:4px;width:40px;height:40px;border-radius:50%;border:2.5px solid #fff;background:rgba(30,32,40,.85);box-shadow:0 4px 10px rgba(0,0,0,.4);z-index:65;display:none;align-items:center;justify-content:center;font-size:20px;color:#fde68a;font-family:'Fredoka One',cursive}
+#trainer-name-enemy,#trainer-name-player{position:fixed;top:calc(env(safe-area-inset-top,0px) + 47px);z-index:66;background:rgba(30,32,40,.88);border-radius:999px;font-size:9px;font-weight:800;padding:2px 8px;max-width:min(92px,24vw);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.4px;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+#trainer-name-enemy{right:46px;color:#fde68a}
+#trainer-name-player{left:46px;color:#86efac}
+/* Reserve the card corner the avatar overlaps so the Pokemon name stays readable */
+.ba-card-player .ba-card-name{padding-left:26px}
+.ba-card-enemy .ba-card-name{padding-right:26px}
 
 /* Battle platform shadows under pokemon */
 .poke-platform{position:fixed;z-index:19;pointer-events:none}
@@ -269,7 +285,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0a021
 /* Fallback avatar when trainer sprite fails to load */
 .trainer-avatar-fb{width:64px;height:64px;display:flex;align-items:center;justify-content:center;font-size:34px;background:radial-gradient(circle,rgba(139,92,246,0.28),rgba(0,0,0,0.5));border-radius:50%;border:2px solid rgba(139,92,246,0.5);flex-shrink:0}
 /* Battle portrait fallback */
-#portrait-enemy-fb{position:fixed;top:52px;right:-2px;z-index:15;width:min(68px,14vw);height:min(82px,17vw);display:none;align-items:center;justify-content:center;font-size:min(36px,8vw);background:rgba(0,0,0,0.32);border-radius:0 0 0 12px}
+/* v56.8 B-292 — #portrait-enemy-fb geometry moved to the v56.8 avatar block
+   (this later rule would otherwise override it). */
 
 /* Badge zoom animation on win */
 #badge-overlay{position:fixed;inset:0;z-index:900;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(0,0,0,0);transition:background 0.8s}
@@ -572,12 +589,12 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
 <script src="quiz-engine.js?v=55.97-20260629a"></script>
 <!-- v56.1 A-317 — SHARED battle-presentation engine (field sprites, HP cards,
      narration pill, floating quiz, lunge/projectile/damage-pop FX) -->
-<script src="battle-arena.js?v=56.7-20260704a"></script>
+<script src="battle-arena.js?v=56.8-20260704b"></script>
 <script src="data/move-id-translations.js?v=20260505k"></script>
 <script src="data/sfx-engine.js?v=20260621f"></script>
 <script src="data/weather-fx.js?v=20260621f"></script>
 <script src="data/poke-packages.js?v=53.9-20260624f"></script>
-<script src="data/battle-modes.js?v=56.1-20260703a"></script>
+<script src="data/battle-modes.js?v=56.8-20260704b"></script>
 <script src="data/poke-type-chart.js?v=20260506z"></script>
 <script>
   // Licensed Pokemon SFX + battle weather — lazy init, silent failure.
@@ -3077,4 +3094,4 @@ document.getElementById('gym-select').style.display='flex';
 </script>
 </body>
 </html>
-<!-- g13c-pixi v20260505l -->
+<!-- g13c-pixi v56.8-20260704b -->

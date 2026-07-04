@@ -1851,6 +1851,10 @@
     // keeps playing across matches.
     if (opts._noBgm) root.dataset.noBgm = '1';
     document.body.appendChild(root);
+    // v56.8 B-293 — PvP owns the whole screen: park the host page's mounted
+    // BattleArena Adventure scene (backdrop/motes/cards/VS keep animating
+    // underneath otherwise). Restored in teardown(). No-op outside gym-pokemon.
+    try { if (window.BattleArena && window.BattleArena.setSceneVisible) window.BattleArena.setSceneVisible(false); } catch (e) {}
 
     // Default Pokemon (deterministic, fair): P1 = Pikachu, P2 = Charmander.
     // Demo matchup: Squirtle (water) vs Charmander (fire). Water→fire = SUPER (✨),
@@ -4735,6 +4739,33 @@
           transition: none !important;
         }
       }
+
+      /* ── v56.8 B-293 sempurnakan — LANDSCAPE fit ──
+         The portrait 18vh/20vh q-zones are ~70-78px tall on a landscape tablet:
+         the question row + choices overflowed off-screen (answer buttons cut
+         off = unplayable). Landscape gets taller zones + a compact single-row
+         question layout. Zone alternation / rotation logic untouched. */
+      @media (orientation: landscape) and (max-height: 520px) {
+        .bm-stage-grid { grid-template-rows: 25vh 47vh 28vh; }
+        .bm-qzone { overflow-y: auto; padding: 2px 4px 4px; }
+        .bm-qzone-inner { max-width: 660px; }
+        .bm-q-row { gap: 3px; }
+        .bm-timer-bar { height: 4px; margin-bottom: 0; }
+        .bm-q-text { font-size: clamp(14px, 5.5vh, 20px); }
+        .bm-choices { grid-template-columns: repeat(4, 1fr); max-width: 660px; gap: 5px; }
+        .bm-choice { padding: 5px 4px; font-size: clamp(14px, 5vh, 20px); box-shadow: 0 3px 0 var(--btn-shadow); }
+        .bm-moves { grid-template-columns: repeat(4, 1fr); max-width: 660px; gap: 5px; }
+        .bm-move { padding: 4px 4px; }
+        .bm-move-name { font-size: 11px; }
+        .bm-action-row { gap: 2px; }
+        .bm-action-prompt { font-size: clamp(12px, 4.5vh, 15px); }
+        .bm-action-grid { max-width: 430px; gap: 6px; }
+        .bm-action-card { flex-direction: row; gap: 7px; padding: 5px 8px; }
+        .bm-action-emoji { font-size: 20px; }
+        .bm-action-label { font-size: clamp(13px, 4.5vh, 16px); }
+        .bm-action-sub { display: none; }
+        .bm-qzone-wait { font-size: clamp(13px, 5.5vh, 18px); }
+      }
     `;
     const st = document.createElement('style');
     st.setAttribute('data-bm-real', 'v2');
@@ -4760,6 +4791,8 @@
     const root = document.createElement('div');
     root.className = 'bm-tour';
     document.body.appendChild(root);
+    // v56.8 B-293 — same scene-park as startPvP (see comment there).
+    try { if (window.BattleArena && window.BattleArena.setSceneVisible) window.BattleArena.setSceneVisible(false); } catch (e) {}
 
     // Tournament steps: count → names → size (3 or 6) → pick (per player) → bracket
     let step = 'count';
@@ -5465,6 +5498,10 @@
       }
       root.remove();
     } catch (e) {}
+    // v56.8 B-293 — un-park the host page's BattleArena Adventure scene.
+    // Idempotent; intermediate teardowns (name step, per-match roots) restore
+    // it a beat early but the next opaque z9100 root re-hides it before paint.
+    try { if (window.BattleArena && window.BattleArena.setSceneVisible) window.BattleArena.setSceneVisible(true); } catch (e) {}
   }
 
   function escapeHtml (s) {
