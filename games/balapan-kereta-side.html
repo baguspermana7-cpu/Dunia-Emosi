@@ -275,8 +275,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
  * Shares modules with balapan-kereta.html — single source of truth for trains-db + obstacles.
  * ========================================================================== */
 
-const W = window.innerWidth
-const H = window.innerHeight
+// v57 — mutable so onResize can reflow every layer on rotate (was `const` → the whole
+// scene stayed frozen at load-time size because renderer.resize was never called).
+let W = window.innerWidth
+let H = window.innerHeight
 
 const app = new PIXI.Application()
 let stage = null
@@ -1919,12 +1921,25 @@ function goBack() {
   }
 }
 
+let _sideResizeT = null
 function onResize() {
-  // Simplified — just reload on big resize to avoid mid-race layout corruption
-  // (production would do proper resize handling; v54.88 MVP keeps it simple)
-  // Don't reload during active race; just let canvas reflow.
-  if (sideBackdrop) { try { sideBackdrop.refit() } catch (_) {} }   // v55.77 re-cover-fit plate
-  if (sideScenery) { try { sideScenery.resize() } catch (_) {} }    // v55.99 B-284 — rebuild rich scene to new viewport
+  // v57 — REAL debounced viewport reflow on rotate/resize. Was frozen: W/H captured
+  // once as consts + renderer.resize never called, so every layer stayed at load-time
+  // size (matches the g14/g15/g16 relayout pattern now).
+  if (!app) return
+  if (_sideResizeT) clearTimeout(_sideResizeT)
+  _sideResizeT = setTimeout(() => {
+    if (!app) return
+    try { app.renderer.resize(window.innerWidth, window.innerHeight) } catch (_) {}
+    W = app.screen.width; H = app.screen.height
+    // per-frame redraws (rail, train x/y, speed streaks) already read the live W/H;
+    // rebuild the parallax layers to the new viewport here:
+    if (sideBackdrop) { try { sideBackdrop.refit() } catch (_) {} }   // re-cover-fit plate
+    if (sideScenery) { try { sideScenery.resize() } catch (_) {} }    // rebuild rich scene
+    // re-anchor trains that are positioned only at build time
+    if (trainContainer) { trainContainer.x = W * PLAYER_X_FRAC; trainContainer.y = H * RAIL_Y_FRAC - 4 }
+    if (S.aiTrain) { S.aiTrain.x = W * 0.10; S.aiTrain.y = H * RAIL_Y_FRAC - 26 }
+  }, 140)
 }
 
 window.addEventListener('keydown', e => {

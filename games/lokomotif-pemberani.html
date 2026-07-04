@@ -935,8 +935,23 @@ async function initPixi() {
   //   L13-18: id_bandung
   //   L19-24: id_yogyakarta
   //   L25-30: id_semarang
+  // v57 — PARALLAX cleanup: load the shared painterly plate FIRST. When it mounts,
+  // its OWN 9-band depth parallax IS the background, so the procedural TrainBG engine
+  // (sky/far/mid/weather) is a redundant 3rd stack that only wastes frames (and can
+  // muddy) ON TOP of the plate — skip it entirely. Full fallback to TrainBG +
+  // buildBackground when no plate exists (level>48 / texture fail).
+  g15Backdrop = null;
   try {
-    if (window.TrainBG && window.PIXI) {
+    const _m = window.TrainBackdrop ? await TrainBackdrop.load(LEVEL) : null;
+    if (_m) g15Backdrop = await TrainBackdrop.mount(stage, app, _m, { assetBase: '../', insertIndex: 0 });
+  } catch (_) { g15Backdrop = null; }
+  if (g15Backdrop) {
+    // Pin the 3 lanes onto the plate's PAINTED rails so the train rides them.
+    LANE_Y = g15Backdrop.laneYs();
+  }
+
+  try {
+    if (!g15Backdrop && window.TrainBG && window.PIXI) {
       // Create a dedicated container BELOW bgLayer so the engine's layers sit
       // behind the existing buildBackground content. The engine container will
       // host sky/farFar/far/mid/weather/lighting; the legacy bgLayer keeps
@@ -972,20 +987,8 @@ async function initPixi() {
     }
   } catch (e) { console.warn('[BG] init failed', e) }
 
-  // v55.77 — SHARED painterly backdrop + depth-parallax engine (mirrors g14's
-  // g14AddBackdrop). A clean plate (level N → plate N, N≤30≤48) is sliced into
-  // horizontal depth bands scrolled at per-band speeds so the scene MOVES. Fully
-  // guarded: any miss (no manifest / texture fail) → g15Backdrop stays null and
-  // the procedural Indonesian background renders completely unchanged.
-  g15Backdrop = null;
-  try {
-    const _m = window.TrainBackdrop ? await TrainBackdrop.load(LEVEL) : null;
-    if (_m) g15Backdrop = await TrainBackdrop.mount(stage, app, _m, { assetBase: '../', insertIndex: 0 });
-  } catch(_) { g15Backdrop = null; }
-  if (g15Backdrop) {
-    // Pin the 3 lanes onto the plate's PAINTED rails so the train rides them.
-    LANE_Y = g15Backdrop.laneYs();
-  }
+  // (v57 — painterly backdrop is now loaded ABOVE, before the TrainBG gate, so the
+  // redundant procedural engine is skipped whenever a plate mounts.)
   // v55.77 — always-on, speed-scaled motion-streak overlay (mirrors g14 L._speedfx).
   g15SpeedFX = window.TrainSpeedFX ? TrainSpeedFX.mount(stage, app, { cap: 32 }) : null;
 
@@ -1254,7 +1257,7 @@ async function initPixi() {
     // G15 so journey progress is approximated by elapsed-time-vs-level-budget.
     // Word completions push it forward in big steps below (see onWordComplete).
     try {
-      if (window.TrainBG) {
+      if (window.TrainBG && !g15Backdrop) {   // v57 — skip when the painterly plate owns the bg
         const totalWords = (WORDS_LIST && WORDS_LIST.length) || 8
         const progress = Math.max(0, Math.min(1, (currentWordIdx + (currentLetterIdx / 6)) / totalWords))
         TrainBG.tick(dt, progress)
