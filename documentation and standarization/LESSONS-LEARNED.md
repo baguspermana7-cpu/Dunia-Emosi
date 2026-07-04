@@ -12,6 +12,17 @@
 ### L225 — For cut-out 2D sprites, a CONTACT SHADOW is the cheapest, highest-impact grounding
 - Real-photo trains + emoji obstacles looked pasted/floating. Fix = a soft dark oval at each object's base (lowest child) + a consistent thin white sticker outline on every moving object + far-lane haze tint → pop-up/diorama that sits on the board. All tint/alpha/ellipse — zero geometry change, so it can't disturb tuned positioning. Reach for grounding+outline before color-grading or re-cutting art.
 
+## 2026-07-04 — v56.9 museum 275 + PvP style/balance
+
+### L236 — Scaling a curated view to a full DB: keep the deep dives, template the long tail from real facts
+- Museum grew 36 → 275 trains. The 275-DB (`train-world.js`) had no story text — but a real one-line fact per train already existed in the sprite-index MD table (never consumed by JS). Extracting that (build-museum-lore.py → museum-lore.js) let the 239 non-curated trains get a warm TEMPLATED cerita from {name, year, category, fact} while the 36 hand-written entries kept their rich modal/route/timeline. Lesson: before hand-authoring content at scale or dropping the depth you have, hunt for a latent real-fact source already on disk, then split "featured (deep) + light (templated)".
+
+### L237 — "Make it the same style" fails silently when a per-instance override shadows the new default
+- Pointing the PvP arena at the stadium plate via the CSS default did nothing — `applyArenaBg()` re-set `--bm-arena-bg` inline to a per-region gym bg on every render, so the default never showed (probe caught `arenaBgStadium:false` despite the card restyle landing). Fix = neutralize the override (stop setting the per-region bg; keep the region weather layer). Lesson: when a "default" change doesn't take, grep for an inline/JS setter of the same property — specificity/inline always wins; verify the COMPUTED value, not the stylesheet.
+
+### L238 — Turn-order fairness = re-decide initiative each round + a comeback term UNDER the existing cap
+- Fixed first-mover (decide once, then strict `1-turn`) gave the starter a permanent last-hit edge. Fair fix without touching the sequential zone flow: track who acted this round (`roundActed`); when the round closes, re-pick the leader by active-Pokemon Speed (tie → side behind on team-HP), and soften incoming damage ~0.90× when the defender is behind — layered UNDER the 40%-hpMax per-hit cap so "no one-shot" still holds, and gated to the single PvP caller so Adventure is untouched. Verify by auto-playing a match and asserting the leader sequence isn't P1-locked (a champion screen isn't required — a non-rigid multi-round sequence proves the paths run).
+
 ## 2026-07-04 — v56.7 fidelity round
 
 ### L234 — When the owner supplies a reference VIDEO, the video IS an asset source, not just a spec

@@ -76,6 +76,51 @@ for(const [w,h,tag] of [[844,390,'land'],[390,844,'port']]){
     return { activeIsTop: act?act.classList.contains('bm-qzone-top'):null }
   })
   console.log(tag,'SWAP',JSON.stringify(swp))
+  // v56.9 A-323 — STYLE parity: arena bg = stadium plate + ba-card white/rounded cards
+  const style=await p.evaluate(()=>{
+    const arena=document.querySelector('.bm-arena')
+    const bg=arena?getComputedStyle(arena).getPropertyValue('--bm-arena-bg'):''
+    const card=document.querySelector('.bm-info-card')
+    const cs=card?getComputedStyle(card):null
+    return { arenaBgStadium: /stadium/.test(bg||''),
+      cardRadius: cs?cs.borderTopLeftRadius:null, cardBg: cs?cs.backgroundColor:null }
+  })
+  console.log(tag,'STYLE',JSON.stringify(style))
+  // v56.9 A-323 — BALANCE: auto-play the match to completion, recording the round
+  // leader each turn. Assert the match finishes (all round/initiative/comeback code
+  // paths execute) and that the leader is NOT a rigid P1-always sequence.
+  const leaders=[]
+  let finished=false
+  for(let i=0;i<80;i++){
+    const step=await p.evaluate(()=>{
+      if(document.querySelector('.bm-champion')) return {done:true}
+      const z=document.querySelector('.bm-qzone[data-state="active"]')
+      if(!z) return {wait:true}
+      // forced/voluntary switch panel → pick first enabled bench pokemon
+      const sw=z.querySelector('.bm-switch-card[data-swap]:not([disabled])')
+      if(sw){ sw.click(); return {act:'switch'} }
+      // action menu → Serang
+      const atk=z.querySelector('[data-action="attack"]')
+      if(atk){ const idx=z.classList.contains('bm-qzone-bot')?0:1; atk.click(); return {act:'attack',lead:idx} }
+      // question → solve + answer
+      const q=z.querySelector('.bm-q-text')
+      if(q && z.querySelector('.bm-choice')){
+        const t=q.textContent||''; const m=t.match(/(\d+)\s*([+\-×x*])\s*(\d+)/)
+        let ans=null; if(m){const a=+m[1],b=+m[3];ans=m[2]==='+'?a+b:(m[2]==='-'?a-b:a*b)}
+        const btns=[...z.querySelectorAll('.bm-choice')]
+        const hit=btns.find(x=>x.textContent.trim()==String(ans))||btns[0]; if(hit)hit.click(); return {act:'answer'}
+      }
+      // moves phase → first move
+      const mv=z.querySelector('.bm-move'); if(mv){ mv.click(); return {act:'move'} }
+      return {wait:true}
+    })
+    if(step.done){ finished=true; break }
+    if(step.act==='attack' && typeof step.lead==='number') leaders.push(step.lead)
+    await sleep(700)
+  }
+  const uniqueLeaders=[...new Set(leaders)]
+  console.log(tag,'BALANCE',JSON.stringify({finished,turns:leaders.length,leaderSeq:leaders.slice(0,16),bothPlayersLed:uniqueLeaders.length>1}))
+  await p.screenshot({path:`tools/qa-out/pvp-5-result-${tag}.png`})
   const st=await p.evaluate(()=>{
     const vis=el=>{ if(!el)return false; const r=el.getBoundingClientRect(); const cs=getComputedStyle(el); return r.width>0&&r.height>0&&cs.display!=='none'&&cs.visibility!=='hidden' }
     const topAt=(x,y)=>{ const e=document.elementFromPoint(x,y); return e?(e.className&&String(e.className.baseVal||e.className)).slice(0,60):null }

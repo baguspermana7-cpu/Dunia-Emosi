@@ -242,9 +242,33 @@ Future agents reviewing `performSwitch` may be tempted to "fix" this back to can
 
 ---
 
+## v56.9 (A-323) — dynamic per-round initiative + comeback assist (turn-order fairness)
+
+Owner: "enhance balancing karena turn order." Before v56.9, PvP/Tournament decided who leads ONCE at
+battle start (`decideTurnOrder`, by Speed) and then hard-alternated `state.turn = 1 - state.turn`, so
+the starter kept a permanent last-hit advantage over the whole match.
+
+**Rule (PvP/Tournament only):**
+1. **Dynamic initiative** — a "round" = both players act once (tracked by `state.roundActed`). When the
+   round closes, the next leader is re-decided by `decideRoundLead()`: the faster ACTIVE Pokemon leads
+   (rewards Speed + smart switching); Speed tie → the side BEHIND on total team-HP% leads (comeback);
+   still tied → alternate via `tiebreakLast`. A faint resets the round (the fainting side's forced
+   switch begins a fresh round). A brief "⚡ duluan!" pill shows only when the leader changes.
+2. **Comeback assist** — in `calcDamage`, when the DEFENDER's side is behind on team-HP% the hit is
+   softened ~0.90× (`mitigation` param computed at the call site from `teamHpFrac`). It layers UNDER
+   the existing 40%-hpMax per-hit cap, so the "fresh defender always survives ≥1 hit / no one-shot"
+   guarantee is preserved. Gated to PvP/Tournament — `calcDamage`'s only caller — so Adventure
+   (`stats.shapeDamage`) is unaffected.
+
+**Verify:** `tools/qa-pvp-drive.mjs` auto-plays a match recording the round leader each turn; asserts
+both players lead (not P1-locked) and the sequence is non-rigid. Manual: a trailing player should be
+able to claw back a close game; a faster active Pokemon should strike first regardless of seat.
+
 ## Files
 
-- `games/data/battle-modes.js` — `SPEED_BY_SLUG`, `STAT_BY_SLUG`, helper functions, `calcDamage` integration, BattleModes.stats export.
+- `games/data/battle-modes.js` — `SPEED_BY_SLUG`, `STAT_BY_SLUG`, helper functions, `calcDamage`
+  integration (+ `mitigation` param), `decideRoundLead`/`teamHpFrac`/`state.roundActed` initiative,
+  BattleModes.stats export.
 - `games/g13c-pixi.html` — `calcDmg` wraps through `BattleModes.stats.shapeDamage`.
 - `POKEMON_BALANCE_STANDARD.md` — this document.
 

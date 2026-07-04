@@ -69,6 +69,30 @@ html,body{width:100%;min-height:100%;min-height:100svh;background:#1a0e06;font-f
 .g18-card-country{color:rgba(255,255,255,0.7);font-size:11px;font-weight:700}
 .g18-speed-badge{background:linear-gradient(135deg,#7B1FA2,#AB47BC);color:white;border-radius:100px;padding:2px 8px;font-size:10px;font-weight:900;box-shadow:0 2px 0 #4A148C}
 
+/* ===== A-322 collection: tabs, star badge, category accents ===== */
+#g18-tabs::-webkit-scrollbar{display:none}
+.g18-tab{flex-shrink:0;display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.16);border-radius:100px;padding:7px 12px;color:rgba(255,255,255,0.82);font-family:inherit;font-size:12px;font-weight:900;cursor:pointer;white-space:nowrap;min-height:38px;transition:all 0.18s}
+.g18-tab .g18-tab-count{font-size:10px;font-weight:900;opacity:0.7;background:rgba(0,0,0,0.3);border-radius:100px;padding:1px 6px}
+.g18-tab.active{color:#1a0e06;box-shadow:0 3px 0 rgba(0,0,0,0.3)}
+.g18-tab.active .g18-tab-count{background:rgba(0,0,0,0.18);opacity:0.85}
+.g18-card{--cat:rgba(255,193,100,0.5)}
+.g18-card.g18-cat-accent{border-top:3px solid var(--cat)}
+.g18-star-badge{position:absolute;top:6px;right:6px;font-size:14px;line-height:1;z-index:2;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.6))}
+.g18-cat-chip{display:inline-block;font-size:8.5px;font-weight:900;letter-spacing:0.3px;color:#1a0e06;border-radius:100px;padding:1px 7px;margin-top:2px}
+.g18-visited-tick{position:absolute;top:6px;left:6px;font-size:12px;line-height:1;z-index:2;opacity:0.9;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.6))}
+
+/* ===== A-322 light modal (non-featured trains) ===== */
+#g18-light-modal{display:none;position:fixed;inset:0;z-index:210;background:rgba(0,0,0,0.88);align-items:center;justify-content:center;padding:20px}
+#g18-light-modal.open{display:flex}
+.g18-light-box{background:linear-gradient(135deg,#3E2723,#4E342E);border:2px solid rgba(255,193,100,0.3);border-radius:20px;padding:22px 22px 18px;max-width:440px;width:100%;text-align:center;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.6)}
+.g18-light-hero{width:100%;height:96px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;background:radial-gradient(60% 90% at 50% 60%,rgba(255,193,100,0.14),transparent 70%)}
+.g18-light-name{color:#fff;font-size:19px;font-weight:900;font-family:'Fredoka One',cursive;line-height:1.2;margin-bottom:8px}
+.g18-light-chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:12px}
+.g18-light-chip{background:rgba(255,255,255,0.09);border-radius:100px;padding:5px 11px;color:#fde68a;font-size:11px;font-weight:900}
+.g18-cerita{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:14px;color:rgba(255,255,255,0.9);font-size:13px;font-weight:600;line-height:1.65;text-align:left;margin-bottom:14px}
+.g18-cerita-h{font-size:13px;font-weight:900;color:#fbbf24;margin-bottom:6px;font-family:'Fredoka One',cursive}
+.g18-light-close{width:100%;background:linear-gradient(135deg,#5D3A1A,#8D6E63);color:#fff;border:0;border-radius:12px;padding:13px;font-size:14px;font-weight:900;font-family:inherit;cursor:pointer;min-height:44px}
+
 /* ===== Detail modal ===== */
 .g18-modal-overlay{
   display:flex;position:fixed;inset:0;background:rgba(0,0,0,0.88);
@@ -135,8 +159,11 @@ html,body{width:100%;min-height:100%;min-height:100svh;background:#1a0e06;font-f
 </style>
 </head>
 <body>
-<div id="du-build-stamp">v55.74</div>
+<div id="du-build-stamp">v56.9</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
+<!-- A-322 — full 275-train world DB + real-fact lore for the expanded museum -->
+<script src="data/train-world.js?v=56.9-20260704c"></script>
+<script src="data/museum-lore.js?v=56.9-20260704c"></script>
 
 <div id="museum-root">
   <div class="game-header">
@@ -155,7 +182,29 @@ html,body{width:100%;min-height:100%;min-height:100svh;background:#1a0e06;font-f
       <div style="color:#FFD082;font-size:13px;font-weight:900;letter-spacing:1px;">&#128205; AMBARAWA, KABUPATEN SEMARANG, JAWA TENGAH</div>
       <div style="color:rgba(255,255,255,0.7);font-size:11px;font-weight:700;margin-top:2px;">Bekas Stasiun Willem I (1873) &middot; Ketuk kartu untuk info! &#128269;</div>
     </div>
+    <!-- A-322 collection controls: hero stat + category tabs + search + random -->
+    <div id="g18-collection" style="max-width:440px;margin:0 auto 8px;">
+      <div id="g18-hero-stat" style="display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(93,57,34,0.7),rgba(62,39,35,0.85));border:1px solid rgba(255,193,100,0.28);border-radius:14px;padding:9px 12px;margin-bottom:8px;">
+        <div style="font-size:26px;line-height:1;flex-shrink:0;">&#127749;</div>
+        <div style="flex:1;min-width:0;">
+          <div style="color:#FFD082;font-size:12px;font-weight:900;letter-spacing:0.5px;">KOLEKSI MUSEUM DUNIA</div>
+          <div style="height:8px;background:rgba(0,0,0,0.35);border-radius:5px;overflow:hidden;margin-top:5px;">
+            <div id="g18-collect-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#86efac,#fbbf24,#ef4444);border-radius:5px;transition:width 0.6s ease;"></div>
+          </div>
+        </div>
+        <div id="g18-collect-count" style="color:#fde68a;font-size:15px;font-weight:900;flex-shrink:0;white-space:nowrap;">0 / 275</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+        <input id="g18-search" type="search" placeholder="&#128269; Cari nama kereta…" autocomplete="off"
+          style="flex:1;min-width:0;background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,193,100,0.3);border-radius:12px;padding:10px 12px;color:#fff;font-family:inherit;font-size:13px;font-weight:700;min-height:44px;">
+        <button id="g18-random-btn" onclick="g18RandomTrain()" title="Kereta Acak"
+          style="flex-shrink:0;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;border:0;border-radius:12px;padding:10px 14px;font-size:14px;font-weight:900;font-family:inherit;cursor:pointer;min-height:44px;box-shadow:0 4px 0 #5b21b6;">&#127922;</button>
+      </div>
+      <div id="g18-tabs" style="display:flex;gap:6px;overflow-x:auto;padding:2px 2px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:none;"></div>
+      <div id="g18-daily-trivia-slot"></div>
+    </div>
     <div id="g18-card-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:440px;margin:0 auto;"></div>
+    <div id="g18-empty-note" style="display:none;text-align:center;color:rgba(255,255,255,0.6);font-size:13px;font-weight:700;padding:24px 12px;">Tidak ada kereta yang cocok. Coba kata lain! &#128269;</div>
     <div style="text-align:center;margin-top:14px;padding-bottom:8px;">
       <button onclick="g18StartQuiz()" style="background:linear-gradient(135deg,#5D3A1A,#8D6E63);color:white;border:none;border-radius:14px;padding:14px 28px;font-size:16px;font-weight:900;font-family:'Fredoka One',cursive;box-shadow:0 4px 0 #3E2723;cursor:pointer;min-height:44px;">&#128221; MULAI KUIS!</button>
     </div>
@@ -196,6 +245,20 @@ html,body{width:100%;min-height:100%;min-height:100svh;background:#1a0e06;font-f
         <button onclick="g18ShowStory()" id="g18-story-btn" style="flex:1;background:linear-gradient(135deg,#f59e0b,#d97706);color:white;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:900;cursor:pointer;min-height:44px;">&#128214; Cerita</button>
         <button onclick="g18CloseModal()" style="flex:1;background:linear-gradient(135deg,#5D3A1A,#8D6E63);color:white;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:900;cursor:pointer;min-height:44px;">&#9989; Mengerti!</button>
       </div>
+    </div>
+  </div>
+
+  <!-- A-322 light modal (non-featured trains) -->
+  <div id="g18-light-modal" onclick="if(event.target===this)g18CloseLight()">
+    <div class="g18-light-box">
+      <div class="g18-light-hero" id="g18-light-hero"></div>
+      <div class="g18-light-name" id="g18-light-name"></div>
+      <div class="g18-light-chips" id="g18-light-chips"></div>
+      <div class="g18-cerita">
+        <div class="g18-cerita-h">&#128214; Cerita untuk Anak-anak</div>
+        <div id="g18-light-cerita"></div>
+      </div>
+      <button class="g18-light-close" onclick="g18CloseLight()">&#9989; Mengerti!</button>
     </div>
   </div>
 
@@ -1079,6 +1142,7 @@ function initGame18() {
   document.getElementById('g18-modal').classList.remove('open')
   document.getElementById('g18-gallery').style.display = 'block'
   document.getElementById('g18-quiz-view').style.display = 'none'
+  try { g18SetupCollection() } catch(_){}
   g18RenderGallery()
   try { g18ShowDailyTrivia() } catch(_){}
   try { g18UpdatePassportChip() } catch(_){}
@@ -1105,42 +1169,233 @@ function initGame18() {
   } catch(_){}
 }
 
+/* ============================================================
+   A-322 — expanded museum over ALL 275 world trains.
+   Builds a flat browse model from window.TRAIN_WORLD + window.MUSEUM_LORE.
+   The original 36 G18_TRAINS stay "featured" (⭐, rich modal); the rest
+   open a lighter modal with a templated kid-friendly cerita.
+   ============================================================ */
+let MUSEUM_ITEMS = null            // [{idx,name,year,type,note,catKey,catLabel,catColor,catEmoji,spriteUrl,featuredIdx}]
+let WORLD_FEATURED = null          // { worldIdx(number): featuredG18Index }
+let g18Filter = 'all'
+let g18Query = ''
+const G18_TAB_LABELS = { uap_klasik:'Uap Klasik', uap_modern:'Uap Modern', diesel:'Diesel', listrik:'Listrik', cepat:'Cepat', komuter:'Komuter', indonesia:'Indonesia' }
+
+function g18BuildItems() {
+  if (MUSEUM_ITEMS) return MUSEUM_ITEMS
+  // reverse-map featured sprites: G18_TRAINS name → world sprite number (via G18_ART_MAP)
+  WORLD_FEATURED = {}
+  try {
+    if (typeof G18_TRAINS !== 'undefined' && typeof G18_ART_MAP !== 'undefined') {
+      G18_TRAINS.forEach((t, gi) => {
+        const n = t && t.name ? G18_ART_MAP[t.name] : null
+        if (n != null) { const wi = parseInt(n, 10); if (wi && WORLD_FEATURED[wi] == null) WORLD_FEATURED[wi] = gi }
+      })
+    }
+  } catch(_){}
+  const items = []
+  const lore = (window.MUSEUM_LORE || {})
+  const cats = (window.TRAIN_WORLD && window.TRAIN_WORLD.categories) || []
+  cats.forEach(cat => {
+    (cat.trains || []).forEach(t => {
+      const l = lore[String(t.idx)] || {}
+      items.push({
+        idx: t.idx,
+        name: l.name || t.name,
+        year: t.year || l.year || 0,
+        type: l.type || t.model || '',
+        note: l.note || '',
+        catKey: cat.key,
+        catLabel: G18_TAB_LABELS[cat.key] || cat.name,
+        catColor: cat.color || '#fbbf24',
+        catEmoji: cat.emoji || '🚂',
+        spriteUrl: t.spriteUrl,
+        featuredIdx: (WORLD_FEATURED[t.idx] != null) ? WORLD_FEATURED[t.idx] : -1
+      })
+    })
+  })
+  items.sort((a, b) => a.idx - b.idx)
+  MUSEUM_ITEMS = items
+  return items
+}
+
+/* world sprite <img> (faces LEFT → mirror to face RIGHT), emoji fallback if load fails */
+function g18WorldImg(idx, w, h) {
+  const n = String(idx).padStart(3, '0')
+  return `<span class="g18-art" style="display:inline-flex;width:${w}px;height:${h}px;align-items:center;justify-content:center;">` +
+    `<img src="../assets/train/world/${n}.webp" alt="kereta ${idx}" loading="lazy" decoding="async" ` +
+    `style="max-width:100%;max-height:100%;object-fit:contain;transform:scaleX(-1);filter:drop-shadow(0 3px 5px rgba(0,0,0,0.35));" ` +
+    `onerror="this.parentNode.innerHTML='<span style=&quot;font-size:34px;line-height:1&quot;>🚂</span>'"></span>`
+}
+
+/* soften an English livery/note into a warm kid-friendly tail (proper nouns kept) */
+function g18SoftenNote(note) {
+  let s = (note || '').trim()
+  if (!s) return ''
+  s = s.replace(/\s*;\s*/g, ' — ')          // semicolons read awkwardly to kids
+  if (!/[.!?]$/.test(s)) s += '.'
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
+/* templated Indonesian cerita per category (never blank) */
+function g18BuildCerita(item) {
+  const y = item.year || '—'
+  const phrase = {
+    uap_klasik: 'kereta uap klasik', uap_modern: 'kereta uap', diesel: 'kereta diesel bertenaga mesin',
+    listrik: 'kereta listrik', cepat: 'kereta super cepat', komuter: 'kereta komuter sehari-hari',
+    indonesia: 'kereta kebanggaan Indonesia'
+  }[item.catKey] || 'kereta hebat'
+  const flavor = {
+    uap_klasik: 'salah satu lokomotif paling awal di dunia', uap_modern: 'raksasa uap yang gagah dan bertenaga',
+    diesel: 'kuat menarik gerbong yang panjang', listrik: 'cepat, bersih, dan tenang tanpa asap',
+    cepat: 'salah satu kereta tercepat di dunia', komuter: 'setia mengantar penumpang setiap hari',
+    indonesia: 'bagian penting dari sejarah kereta api Indonesia'
+  }[item.catKey] || 'kereta yang menakjubkan'
+  const emoji = item.catEmoji || '🚂'
+  let cerita = `${emoji} ${item.name} dibuat tahun ${y}. Ini termasuk ${phrase} — ${flavor}!`
+  const note = g18SoftenNote(item.note)
+  if (note) {
+    cerita += ` Tahukah kamu? ${note}`
+  } else {
+    const fallback = {
+      uap_klasik: 'Kereta seperti ini membakar batubara untuk membuat uap yang menggerakkan rodanya.',
+      uap_modern: 'Lokomotif uap besar ini bisa menarik gerbong yang sangat berat menempuh jarak jauh.',
+      diesel: 'Mesin dieselnya kuat dan bisa jalan tanpa perlu kabel listrik di atas.',
+      listrik: 'Kereta ini digerakkan listrik dari kabel di atas rel, jadi bersih dan cepat.',
+      cepat: 'Kereta secepat ini bisa membawa orang antar kota dalam waktu singkat sekali!',
+      komuter: 'Kereta ini membawa banyak orang pergi bekerja dan sekolah setiap hari.',
+      indonesia: 'Kereta ini pernah atau masih melaju di rel-rel Nusantara. Bangga jadi anak Indonesia! 🇮🇩'
+    }[item.catKey] || 'Setiap kereta punya cerita seru tentang bagaimana ia dibuat dan ke mana ia pergi.'
+    cerita += ` ${fallback}`
+  }
+  return cerita
+}
+
+/* the world sprite number a featured G18_TRAINS entry maps to (or -1) */
+function g18WorldIdxOfFeatured(gi) {
+  try {
+    const t = G18_TRAINS[gi]
+    const n = t && t.name ? G18_ART_MAP[t.name] : null
+    return n != null ? parseInt(n, 10) : -1
+  } catch(_) { return -1 }
+}
+
+/* route click: featured → rich modal, else → light modal (both stamp passport by world idx) */
+function g18OpenCard(worldIdx) {
+  const items = g18BuildItems()
+  const item = items.find(x => x.idx === worldIdx)
+  if (!item) return
+  if (item.featuredIdx >= 0) { g18ShowDetail(item.featuredIdx); return }
+  g18ShowLightDetail(worldIdx)
+}
+
+function g18ShowLightDetail(worldIdx) {
+  const items = g18BuildItems()
+  const item = items.find(x => x.idx === worldIdx)
+  if (!item) return
+  document.getElementById('g18-light-hero').innerHTML = g18WorldImg(item.idx, 200, 88)
+  document.getElementById('g18-light-name').textContent = item.name
+  const chip = (v) => `<span class="g18-light-chip">${v}</span>`
+  document.getElementById('g18-light-chips').innerHTML =
+    chip('📅 ' + (item.year || '—')) +
+    (item.type ? chip('🚆 ' + item.type) : '') +
+    `<span class="g18-light-chip" style="background:${item.catColor};color:#1a0e06;">${item.catEmoji} ${item.catLabel}</span>`
+  document.getElementById('g18-light-cerita').textContent = g18BuildCerita(item)
+  const modal = document.getElementById('g18-light-modal')
+  modal.classList.add('open')
+  try { g18PassportStamp(worldIdx) } catch(_){}
+  try { playClick() } catch(_){}
+}
+function g18CloseLight() { const m = document.getElementById('g18-light-modal'); if (m) m.classList.remove('open') }
+
+function g18RandomTrain() {
+  const items = g18BuildItems()
+  if (!items.length) return
+  const it = items[Math.floor(Math.random() * items.length)]
+  try { playClick() } catch(_){}
+  g18OpenCard(it.idx)
+}
+
+/* category tabs (All + 7 categories + Featured) */
+function g18RenderTabs() {
+  const bar = document.getElementById('g18-tabs')
+  if (!bar) return
+  const items = g18BuildItems()
+  const featCount = items.filter(x => x.featuredIdx >= 0).length
+  const catCounts = {}
+  items.forEach(x => { catCounts[x.catKey] = (catCounts[x.catKey] || 0) + 1 })
+  const cats = (window.TRAIN_WORLD && window.TRAIN_WORLD.categories) || []
+  const tabs = [{ key: 'all', label: 'Semua', emoji: '🗂️', color: '#fbbf24', count: items.length }]
+  cats.forEach(c => tabs.push({ key: c.key, label: G18_TAB_LABELS[c.key] || c.name, emoji: c.emoji || '🚂', color: c.color || '#fbbf24', count: catCounts[c.key] || 0 }))
+  tabs.push({ key: 'featured', label: 'Unggulan', emoji: '⭐', color: '#f59e0b', count: featCount })
+  bar.innerHTML = ''
+  tabs.forEach(tb => {
+    const btn = document.createElement('button')
+    btn.className = 'g18-tab' + (g18Filter === tb.key ? ' active' : '')
+    if (g18Filter === tb.key) btn.style.background = tb.color
+    else btn.style.background = ''
+    btn.innerHTML = `<span>${tb.emoji}</span><span>${tb.label}</span><span class="g18-tab-count">${tb.count}</span>`
+    btn.onclick = () => g18SetFilter(tb.key)
+    bar.appendChild(btn)
+  })
+}
+function g18SetFilter(key) {
+  g18Filter = key
+  try { playClick() } catch(_){}
+  g18RenderTabs()
+  g18RenderGallery()
+}
+
+let _g18SearchWired = false
+function g18SetupCollection() {
+  g18BuildItems()
+  g18RenderTabs()
+  g18UpdateCollectStat()
+  if (!_g18SearchWired) {
+    const inp = document.getElementById('g18-search')
+    if (inp) {
+      inp.addEventListener('input', () => { g18Query = (inp.value || '').trim().toLowerCase(); g18RenderGallery() })
+      _g18SearchWired = true
+    }
+  }
+}
+
+function g18UpdateCollectStat() {
+  const visited = g18PassportGet()
+  const total = g18BuildItems().length || 275
+  const n = visited.size
+  const cnt = document.getElementById('g18-collect-count')
+  if (cnt) cnt.textContent = n + ' / ' + total
+  const bar = document.getElementById('g18-collect-bar')
+  if (bar) bar.style.width = Math.min(100, Math.round((n / total) * 100)) + '%'
+}
+
 function g18RenderGallery() {
   const grid = document.getElementById('g18-card-grid')
+  if (!grid) return
+  const all = g18BuildItems()
+  const visited = g18PassportGet()
+  let items = all
+  if (g18Filter === 'featured') items = items.filter(x => x.featuredIdx >= 0)
+  else if (g18Filter !== 'all') items = items.filter(x => x.catKey === g18Filter)
+  if (g18Query) items = items.filter(x => (x.name || '').toLowerCase().includes(g18Query))
   grid.innerHTML = ''
-  const AMBARAWA_END = 12
-  const buckets = { ambarawa: [], modernID: [], world: [] }
-  G18_TRAINS.forEach((train, i) => {
-    if (i < AMBARAWA_END) buckets.ambarawa.push({ train, i })
-    else if (train.country && train.country.startsWith('🇮🇩')) buckets.modernID.push({ train, i })
-    else buckets.world.push({ train, i })
-  })
-  const sections = [
-    { items: buckets.ambarawa, title: '🏛️ KOLEKSI MUSEUM AMBARAWA', color: '#FFD082', borderCol: 'rgba(255,193,80,0.35)', ruleCol: 'rgba(255,193,100,0.35)' },
-    { items: buckets.modernID, title: '🇮🇩 KERETA MODERN INDONESIA',  color: '#FCA5A5', borderCol: 'rgba(252,165,165,0.4)',  ruleCol: 'rgba(252,165,165,0.35)' },
-    { items: buckets.world,    title: '🌍 KERETA TERKENAL DUNIA',    color: 'rgba(180,210,255,0.9)', borderCol: 'rgba(100,150,255,0.35)', ruleCol: 'rgba(150,200,255,0.25)' }
-  ]
-  sections.forEach(sec => {
-    if (!sec.items.length) return
-    const hdr = document.createElement('div')
-    hdr.style.cssText = `grid-column:1/-1;color:${sec.color};font-size:12px;font-weight:900;letter-spacing:1.5px;padding:10px 2px 2px;border-bottom:1.5px solid ${sec.ruleCol};margin-bottom:2px;`
-    hdr.textContent = sec.title
-    grid.appendChild(hdr)
-    sec.items.forEach(({ train, i }) => {
-      const card = document.createElement('div')
-      card.className = 'g18-card'
-      card.style.borderColor = sec.borderCol
-      const svgHtml = g18TrainSVG(train, 110, 48)
-      card.innerHTML = `
-        <div style="width:100%;height:56px;display:flex;align-items:center;justify-content:center;margin-bottom:4px;overflow:hidden;">${svgHtml}</div>
-        <div class="g18-card-name" style="font-size:11px;">${train.name}</div>
-        <div class="g18-card-country" style="font-size:9px;">${train.country.split(',')[0]}</div>
-        ${g18SpeedBadge(train.speed)}
-        <div style="color:rgba(255,255,255,0.5);font-size:9px;font-weight:700;margin-top:2px;">${train.year}</div>
-      `
-      card.onclick = () => g18ShowDetail(i)
-      grid.appendChild(card)
-    })
+  const empty = document.getElementById('g18-empty-note')
+  if (empty) empty.style.display = items.length ? 'none' : 'block'
+  items.forEach(item => {
+    const card = document.createElement('div')
+    card.className = 'g18-card g18-cat-accent'
+    card.style.setProperty('--cat', item.catColor)
+    const star = item.featuredIdx >= 0 ? '<div class="g18-star-badge" title="Koleksi unggulan">⭐</div>' : ''
+    const tick = visited.has(item.idx) ? '<div class="g18-visited-tick" title="Sudah dikunjungi">🛂</div>' : ''
+    card.innerHTML =
+      star + tick +
+      `<div style="width:100%;height:56px;display:flex;align-items:center;justify-content:center;margin-bottom:2px;overflow:hidden;">${g18WorldImg(item.idx, 108, 50)}</div>` +
+      `<div class="g18-card-name" style="font-size:11px;">${item.name}</div>` +
+      `<span class="g18-cat-chip" style="background:${item.catColor};">${item.catEmoji} ${item.catLabel}</span>` +
+      `<div style="color:rgba(255,255,255,0.55);font-size:9px;font-weight:700;margin-top:2px;">${item.year || ''}</div>`
+    card.onclick = () => g18OpenCard(item.idx)
+    grid.appendChild(card)
   })
 }
 
@@ -1194,7 +1449,7 @@ function g18ShowDetail(idx) {
   document.getElementById('g18-modal').classList.add('open')
   try { g18WireModalClose() } catch(_){}
   try { g18ChunkedHistoryRender(train) } catch(_){}
-  try { g18PassportStamp(idx) } catch(_){}
+  try { g18PassportStamp(g18WorldIdxOfFeatured(idx)) } catch(_){}
   // Storybook + rod-kinematics buttons (AR/Codex dropped: needed SPA TrainShared)
   try {
     const factEl2 = document.getElementById('g18-modal-fact')
@@ -1286,19 +1541,23 @@ const G18_PASSPORT_KEY = 'dunia-g18-passport'
 function g18PassportGet() {
   try { return new Set(JSON.parse(localStorage.getItem(G18_PASSPORT_KEY) || '[]')) } catch(_){ return new Set() }
 }
-function g18PassportStamp(trainIdx) {
+function g18PassportStamp(worldIdx) {
   try {
+    const wi = Number(worldIdx)
+    if (!wi || wi < 1) return                 // featured trains w/o a world sprite: skip
     const set = g18PassportGet()
-    set.add(trainIdx)
+    set.add(wi)
     localStorage.setItem(G18_PASSPORT_KEY, JSON.stringify([...set]))
     g18UpdatePassportChip()
+    try { g18UpdateCollectStat() } catch(_){}
   } catch(_){}
 }
 function g18UpdatePassportChip() {
   const chip = document.getElementById('g18-passport-chip')
   if (!chip) return
   const set = g18PassportGet()
-  chip.textContent = '🛂 ' + set.size + ' / ' + (typeof G18_TRAINS !== 'undefined' ? G18_TRAINS.length : 23)
+  const total = (typeof MUSEUM_ITEMS !== 'undefined' && MUSEUM_ITEMS) ? MUSEUM_ITEMS.length : 275
+  chip.textContent = '🛂 ' + set.size + ' / ' + total
 }
 
 function g18SpeedBadge(speed) {
@@ -1537,22 +1796,23 @@ function g18ShowTimeline() {
     ov.style.cssText = 'position:fixed;inset:0;z-index:9000;background:linear-gradient(180deg,#0c0a22,#1a1028);color:#fff;display:flex;flex-direction:column;padding:18px'
     document.body.appendChild(ov)
   }
-  const sorted = [...G18_TRAINS].map((t, i) => ({ t, i })).sort((a, b) => (a.t.year || 0) - (b.t.year || 0))
-  const minY = sorted[0]?.t.year || 1880, maxY = sorted[sorted.length - 1]?.t.year || 2023
+  const sorted = g18BuildItems().slice().sort((a, b) => (a.year || 0) - (b.year || 0))
+  const minY = sorted[0]?.year || 1804, maxY = sorted[sorted.length - 1]?.year || 2023
   const yearsHTML = sorted.map(s => {
-    const pct = ((s.t.year || 1900) - minY) / Math.max(1, maxY - minY) * 100
-    return `<div style="position:absolute;left:${pct}%;top:50%;transform:translate(-50%,-50%);cursor:pointer" onclick="g18ShowDetail(${s.i})">
-      <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:6px">${g18TrainSVG(s.t, 60, 28)}</div>
-      <div style="color:#fde68a;font-size:9px;text-align:center;margin-top:4px">${s.t.year}</div>
+    const pct = ((s.year || 1900) - minY) / Math.max(1, maxY - minY) * 100
+    const ring = s.featuredIdx >= 0 ? 'border:1.5px solid rgba(251,191,36,0.7);' : ''
+    return `<div style="position:absolute;left:${pct}%;top:50%;transform:translate(-50%,-50%);cursor:pointer" onclick="g18OpenCard(${s.idx})">
+      <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:6px;${ring}">${g18WorldImg(s.idx, 60, 28)}</div>
+      <div style="color:#fde68a;font-size:9px;text-align:center;margin-top:4px">${s.year || ''}</div>
     </div>`
   }).join('')
   ov.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <span style="font-family:Fredoka One,cursive;font-size:18px;color:#fde68a">📅 Timeline ${minY}—${maxY}</span>
+      <span style="font-family:Fredoka One,cursive;font-size:18px;color:#fde68a">📅 Timeline ${minY}—${maxY} · ${sorted.length} kereta</span>
       <button onclick="document.getElementById('g18-timeline').remove()" style="padding:8px 14px;border-radius:10px;border:0;background:#fbbf24;color:#451a03;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer">Tutup ✕</button>
     </div>
     <div style="flex:1;overflow-x:auto;overflow-y:hidden;position:relative">
-      <div style="position:relative;width:max(${G18_TRAINS.length * 88}px,100%);height:100%;background:linear-gradient(180deg,transparent,rgba(255,255,255,0.04));border-radius:14px;border:1px dashed rgba(251,191,36,0.3)">
+      <div style="position:relative;width:max(${sorted.length * 84}px,100%);height:100%;background:linear-gradient(180deg,transparent,rgba(255,255,255,0.04));border-radius:14px;border:1px dashed rgba(251,191,36,0.3)">
         ${yearsHTML}
       </div>
     </div>`
@@ -1581,8 +1841,8 @@ function g18ShowJavaMap() {
 
 /* ---- daily trivia card ---- */
 function g18ShowDailyTrivia() {
-  const grid = document.getElementById('g18-card-grid')
-  if (!grid || document.getElementById('g18-daily-trivia')) return
+  const slot = document.getElementById('g18-daily-trivia-slot') || document.getElementById('g18-card-grid')
+  if (!slot || document.getElementById('g18-daily-trivia')) return
   const day = new Date().toDateString()
   let h = 0
   for (let i = 0; i < day.length; i++) h = (h * 31 + day.charCodeAt(i)) >>> 0
@@ -1600,7 +1860,7 @@ function g18ShowDailyTrivia() {
     s.textContent = '@keyframes g18TriviaPulse{0%,100%{box-shadow:0 0 0 0 rgba(251,191,36,0.6)}50%{box-shadow:0 0 0 14px rgba(251,191,36,0)}}'
     document.head.appendChild(s)
   }
-  grid.insertBefore(card, grid.firstChild)
+  slot.appendChild(card)
 }
 
 /* ---- child-friendly story panel ---- */

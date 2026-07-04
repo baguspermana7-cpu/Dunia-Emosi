@@ -1,5 +1,37 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-04 — v56.9 "Museum = all 275 trains + PvP looks like Adventure + fair turns" (A-322/A-323)
+
+Owner: "Utk museum kereta enhance lbh menarik uiux dan ceritanya pakai kereta database 275 jangan hanya
+39." + "Pokemon pvp dan tournament stylenya sama. Dan enhance balancing karena turn order." Approved
+approach: museum = featured+light; PvP = dynamic initiative + comeback assist.
+- **A-322 Museum → 275**: `games/museum-kereta.html` now browses the FULL 275-train database
+  (`games/data/train-world.js`) instead of 36. NEW `tools/build-museum-lore.py` parses the real
+  per-train facts from the sprite-index MD table → `games/data/museum-lore.js`
+  (`window.MUSEUM_LORE`, 275 entries). Gallery gains 9 tabs (All + 7 categories + Featured ⭐), a name
+  search, and a 🎲 Kereta Acak button; cards are category-colored with ⭐/🛂 badges. The 36 curated
+  trains stay "featured" (rich modal: chunked history, funfact, route, Java map, timeline); the other
+  ~239 open a light modal with a warm templated Indonesian **cerita** built from {name, year, category,
+  real fact} via `g18BuildCerita()`. Passport + hero stat rescaled to /275. Gate: NEW
+  `tools/qa-museum-drive.mjs` (both orientations: 275 cards, tabs filter, /275 chip, featured history +
+  light cerita non-empty, 0 errors).
+- **A-323 PvP/Tournament style = Adventure**: `games/data/battle-modes.js` arena now uses the SAME
+  stadium plate as the BattleArena Adventure scene (`assets/background/gym/stadium-video.webp`, slow
+  drift) with white rounded `.ba-card`-style info cards (was DS beige) + the already-bridged
+  sticker-outline sprites / cream-brown question / glass pills; the mode-select + pre-battle shells
+  share the stadium backdrop. `applyArenaBg` drops the per-region gym bg (keeps the region weather
+  layer). Visual only — zones / P2-180° rotation / state machine untouched.
+- **A-323 turn-order balancing**: was fixed first-mover (decided once, then strict `1-turn`
+  alternation) → **dynamic per-round initiative**: after both players act, the next round's leader is
+  re-decided by the ACTIVE Pokemon's Speed (`decideRoundLead`; tie → side behind on team HP, else
+  alternate) via `state.roundActed` tracking, with a brief "⚡ duluan!" pill when the lead changes.
+  Plus a **comeback assist**: `calcDamage` softens incoming damage ~0.90× when the defender's side is
+  behind on team HP — gated to PvP/Tournament (its only caller; g13c's `stats.shapeDamage` untouched)
+  and layered UNDER the existing 40%-hpMax per-hit cap so "no one-shot" holds. Gate: extended
+  `tools/qa-pvp-drive.mjs` (stadium bg + ba-card style asserts; auto-plays the match recording round
+  leaders — confirms both players lead and the sequence is not P1-locked; 0 errors).
+- sw → v56.9-20260704c; cache-busts on battle-modes.js + museum includes; app-sweep 16/16.
+
 ## 2026-07-04 — v56.8 "Trainer portraits restored + PvP keeps its per-player zones" (B-292/B-293)
 
 Owner: "Gambar trainernya player 1 kok g ada, dan trainer gym jadi hilang — tambahkan balik. Layout

@@ -65,8 +65,10 @@
       .bm-modal::before, .bm-pvp::before, .bm-tour::before {
         content: '';
         position: fixed; inset: -10% -5%;
-        background: url('${_ASSET_BASE}assets/bg-pokemon-battle.webp') center center/cover no-repeat;
-        opacity: 0.40;
+        /* v56.9 A-323: same stadium plate as the Adventure BattleArena so the
+           whole PvP/Tournament flow reads as one style. */
+        background: url('${_ASSET_BASE}assets/background/gym/stadium-video.webp') center center/cover no-repeat;
+        opacity: 0.35;
         pointer-events: none; z-index: 0;
       }
       .bm-modal > *, .bm-pvp > *, .bm-tour > * { position: relative; z-index: 1; }
@@ -936,12 +938,11 @@
   function applyArenaBg (root, team1, team2, matchSeed) {
     const arena = root && root.querySelector('.bm-arena');
     if (!arena) return;
-    const file = pickArenaBg(team1, team2, matchSeed);
-    if (file) {
-      arena.style.setProperty('--bm-arena-bg', "url('" + _ASSET_BASE + "assets/background/Gym pokemon/" + file + "')");
-    } else {
-      arena.style.removeProperty('--bm-arena-bg');
-    }
+    // v56.9 A-323 — "stylenya sama": the PvP/Tournament arena now uses the SAME
+    // stadium plate as the Adventure BattleArena (the CSS default), instead of a
+    // per-matchup gym background — so the two battle modes read as one style. The
+    // region-themed weather layer below is KEPT for ambiance/variety.
+    arena.style.removeProperty('--bm-arena-bg');
     // v53.1: pair the BG swap with a matching weather layer (rain on water gyms,
     // embers on volcano, leaves on forest, sparkle on psychic). regionFromTeam
     // is defined alongside REGION_BG; weather catalog is in WEATHER_BY_REGION.
@@ -1757,7 +1758,7 @@
     const t = (TYPE_CHART[moveType] || {})[defType];
     return t == null ? 1.0 : t;
   }
-  function calcDamage (atk, move, def, timeMult) {
+  function calcDamage (atk, move, def, timeMult, mitigation) {
     const stab = move.type === atk.type ? 1.25 : 1.0;
     const tm   = typeMult(move.type, def.type);
     const tMul = (typeof timeMult === 'number' && timeMult > 0) ? timeMult : 1.0;
@@ -1779,7 +1780,13 @@
     // alive — Malamar (Acak Kalos, default 70/70 stats) one-shotting Hoenn
     // Starter base team. New rule: a fresh defender ALWAYS survives ≥1 hit.
     // Cap scales per defender — final-tier 110 HP caps at 44, base 90 caps at 36.
-    const raw = Math.floor(move.pwr * stab * tm * tMul * statRatio * spdMod);
+    // v56.9 A-323 balance: COMEBACK ASSIST — when the defender's side is behind
+    // (computed at the call site from team-HP%), incoming damage is softened
+    // (~0.90×) so a near-loss can be clawed back. Gated to PvP/Tournament (the
+    // only calcDamage caller); layers UNDER the 40%-hpMax per-hit cap so the
+    // "no one-shot" guarantee is untouched. Default 1.0 = no change.
+    const mit = (typeof mitigation === 'number' && mitigation > 0 && mitigation <= 1) ? mitigation : 1.0;
+    const raw = Math.floor(move.pwr * stab * tm * tMul * statRatio * spdMod * mit);
     const cap = Math.floor(((def && def.hpMax) || 90) * 0.40);
     return Math.max(1, Math.min(raw, cap));
   }
@@ -1890,7 +1897,13 @@
       phase: 'action',     // 'action' | 'question' | 'moves' | 'animating'
       questionStartedAt: 0,
       lastAnswerElapsed: [null, null],
-      comboCount: [0, 0]
+      comboCount: [0, 0],
+      // v56.9 A-323 balance: DYNAMIC per-round initiative. roundActed tracks who
+      // has acted in the current round; when both have, the next round's leader is
+      // re-decided by the ACTIVE Pokemon's Speed (decideRoundLead) instead of a
+      // blind alternation — breaking the permanent first-mover advantage.
+      roundActed: [],
+      _lastLead: null
     };
     // v54.30 balance: PvP HP floor — every Pokemon in PvP/Tournament has
     // hpMax ≥ 95 so a Kalos-random team never towers over a Hoenn-Starter
@@ -1917,12 +1930,62 @@
       return state.teams[playerIdx][state.activeIdx[playerIdx]];
     }
 
+    // v56.9 A-323 balance helpers.
+    // teamHpFrac — a side's remaining team health as a fraction (0..1) across the
+    // WHOLE team (fainted count as 0). Drives both the comeback assist and the
+    // round-lead speed tiebreak.
+    function teamHpFrac (idx) {
+      const t = state.teams[idx] || [];
+      let hp = 0, mx = 0;
+      t.forEach(p => { if (p) { hp += Math.max(0, p.hp || 0); mx += (p.hpMax || 0); } });
+      return mx > 0 ? hp / mx : 1;
+    }
+    // decideRoundLead — who leads the NEXT round: faster ACTIVE Pokemon first
+    // (rewards Speed + smart switching). Speed tie → the side BEHIND on team HP
+    // leads (comeback); still tied → alternate via tiebreakLast.
+    function decideRoundLead () {
+      const a0 = activePoke(0), a1 = activePoke(1);
+      const s0 = (a0 && typeof a0.speed === 'number') ? a0.speed : 70;
+      const s1 = (a1 && typeof a1.speed === 'number') ? a1.speed : 70;
+      if (s0 > s1) return 0;
+      if (s1 > s0) return 1;
+      const h0 = teamHpFrac(0), h1 = teamHpFrac(1);
+      if (h0 < h1 - 0.001) return 0;
+      if (h1 < h0 - 0.001) return 1;
+      state.tiebreakLast = (state.tiebreakLast === 0) ? 1 : 0;
+      return state.tiebreakLast;
+    }
+    // announceRoundLead — brief pill when the round leader CHANGES (reuses the
+    // .bm-init-banner styling). Skipped on the very first round (the VS/initiative
+    // banner already covers it) and when the leader is unchanged (no spam).
+    function announceRoundLead (leaderIdx) {
+      if (state._lastLead === leaderIdx) return;
+      state._lastLead = leaderIdx;
+      if (!state._initiativeShown) return; // round 1 handled by the initiative banner
+      try {
+        const host = document.querySelector('.bm-pvp-real, .bm-tour');
+        if (!host) return;
+        const who = activePoke(leaderIdx);
+        const nm = (who && who.name) || (opts.players && opts.players[leaderIdx] && opts.players[leaderIdx].name) || ('P' + (leaderIdx + 1));
+        const b = document.createElement('div');
+        b.className = 'bm-init-banner bm-round-lead';
+        b.innerHTML = '<span>⚡</span> <b>' + escapeHtml(nm) + '</b> duluan!';
+        host.appendChild(b);
+        setTimeout(() => { try { b.classList.add('out'); } catch (e) {} }, 1100);
+        setTimeout(() => { try { b.remove(); } catch (e) {} }, 1600);
+      } catch (e) {}
+    }
+
     // v53.0 (concern 4): reveal who acts first based on Speed, with a brief
     // banner. Called on transition into the battle phase (both Tournament's
     // direct-to-battle and PvP picker's advancePickStep).
     function revealInitiative () {
       const p1 = activePoke(0), p2 = activePoke(1);
       state.turn = decideTurnOrder(p1, p2, state);
+      // v56.9 A-323: seed round-1 leader + clear round tracking so the round-lead
+      // pill only fires when the leader actually CHANGES on later rounds.
+      state.roundActed = [];
+      state._lastLead = state.turn;
       // v53.4 bug fix: re-render so the active q-zone matches the new turn.
       // Previously the initial renderRoot painted with the default turn=0;
       // when Speed flipped the turn to 1 the DOM stayed stale until the next
@@ -2695,7 +2758,12 @@
       const def = activePoke(1 - state.turn);
       // A5: time-mult derived from the answer elapsed captured in onAnswer.
       const timeMult = timeMultFromElapsed(state.lastAnswerElapsed[state.turn]);
-      const dmg = calcDamage(atk, move, def, timeMult);
+      // v56.9 A-323 balance: COMEBACK ASSIST — if the DEFENDER's side is behind on
+      // team HP, soften this hit (~0.90×). Combined with dynamic initiative this
+      // keeps close games close without ever producing a one-shot (cap unchanged).
+      const _defIdx = 1 - state.turn;
+      const _mit = (teamHpFrac(_defIdx) < teamHpFrac(state.turn) - 0.001) ? 0.90 : 1.0;
+      const dmg = calcDamage(atk, move, def, timeMult, _mit);
       const tm  = typeMult(move.type, def.type);
       // Attack animation FIRST, then apply damage at impact.
       runAttackAnimation(state.turn, move, dmg, tm, timeMult, () => {
@@ -2738,14 +2806,32 @@
               state.turn = defIdx;
               state._moveLock = false;  // v53.4: defender's switch-then-attack moves re-enable
               state.phase = 'action';
+              // v56.9 A-323: a faint restarts round tracking — the defender's
+              // forced switch+turn begins a fresh initiative round.
+              state.roundActed = [];
+              state._lastLead = defIdx;
               renderRoot();
             });
             return;
           }
-          // Turn passes — next player starts at action menu
+          // Turn passes — next player starts at action menu.
           root._questions = null;
           state._moveLock = false;  // v53.4: opponent's moves re-enable next turn
-          state.turn = 1 - state.turn;
+          // v56.9 A-323: DYNAMIC per-round initiative. Mark this attacker as having
+          // acted; if the other player still owes an action this round, they go
+          // now; once BOTH have acted the round closes and the next leader is
+          // re-decided by active-Pokemon Speed (decideRoundLead) — no permanent
+          // first-mover lock.
+          if (!Array.isArray(state.roundActed)) state.roundActed = [];
+          if (state.roundActed.indexOf(state.turn) < 0) state.roundActed.push(state.turn);
+          const _other = 1 - state.turn;
+          if (state.roundActed.indexOf(_other) < 0) {
+            state.turn = _other;                 // finish this round with the other player
+          } else {
+            state.roundActed = [];               // round complete → new initiative
+            state.turn = decideRoundLead();
+            announceRoundLead(state.turn);
+          }
           state.phase = 'action';
           // v53.3 polish: turn counter drives win-predictor visibility.
           state.turnsPlayed = (state.turnsPlayed | 0) + 1;
@@ -3951,13 +4037,14 @@
       }
 
       /* ── SHARED ARENA — both Pokemon in one view ── */
-      /* v52 (concern 1): --bm-arena-bg drives the gym-themed background image
-         per package region. renderArena() sets it via inline style; default
-         fallback is the legacy bg-pokemon-battle.webp. */
+      /* v56.9 A-323: PvP/Tournament arena now uses the SAME stadium plate as the
+         Adventure BattleArena (assets/background/gym/stadium-video.webp) with a
+         slow idle drift — "stylenya sama". applyArenaBg() may still override
+         --bm-arena-bg per region for variety. */
       .bm-arena {
         position: relative; overflow: hidden;
         background: linear-gradient(180deg,#6bbfee 0%,#a8d8f8 32%,#a0d870 46%,#5a9e3a 65%,#3e7028 100%);
-        --bm-arena-bg: url('${_ASSET_BASE}assets/bg-pokemon-battle.webp');
+        --bm-arena-bg: url('${_ASSET_BASE}assets/background/gym/stadium-video.webp');
       }
       .bm-arena::before {
         content: ''; position: absolute; inset: -10% -5%;
@@ -3965,8 +4052,14 @@
         background-position: center center;
         background-size: cover;
         background-repeat: no-repeat;
-        opacity: 0.65; pointer-events: none;
+        opacity: 0.9; pointer-events: none;
+        animation: bmArenaDrift 14s ease-in-out infinite alternate;
       }
+      @keyframes bmArenaDrift {
+        from { transform: translate(-1.2%, 0) scale(1.03); }
+        to   { transform: translate(1.2%, -1%) scale(1.03); }
+      }
+      @media (prefers-reduced-motion: reduce) { .bm-arena::before { animation: none; } }
       /* v52 (concern 2): P2 HP card rotated 180° so the player sitting
          opposite the device reads HP / name / chips right-side-up.
          Bench-dot row counter-rotates so slot order remains L→R from
@@ -4011,16 +4104,18 @@
       }
 
       /* DS-style info card (mirrors .g10-infobox @ style.css:2564) */
+      /* v56.9 A-323: match the Adventure BattleArena HP card (.ba-card) — white,
+         soft-rounded, drop-shadow (was the DS beige/hard-border card). */
       .bm-info-card {
-        background: rgba(248,248,240,0.97);
-        border: 2.5px solid #444; border-radius: 10px;
-        padding: 5px 9px 6px;
-        box-shadow: 3px 3px 0 rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.9);
-        min-width: 138px; max-width: 175px;
-        color: #111;
+        background: rgba(255,255,255,0.96);
+        border: none; border-radius: 16px;
+        padding: 7px 11px 8px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.28), inset 0 1px 0 #fff;
+        min-width: 138px; max-width: 178px;
+        color: #1f2937;
       }
       .bm-info-name {
-        font-family: 'Fredoka One', cursive; font-size: 13px; color: #111;
+        font-family: 'Fredoka One', cursive; font-size: 13px; color: #111827;
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       }
       .bm-info-chips { display: flex; flex-wrap: wrap; gap: 3px; margin: 3px 0 4px; }
