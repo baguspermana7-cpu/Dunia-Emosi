@@ -1,0 +1,13 @@
+import puppeteer from 'puppeteer'
+const sleep=ms=>new Promise(r=>setTimeout(r,ms))
+const b=await puppeteer.launch({headless:'new',args:['--no-sandbox']})
+const p=await b.newPage(); await p.setViewport({width:390,height:844})
+const errs=[]; p.on('console',m=>{if(m.type()==='error')errs.push(m.text())}); p.on('pageerror',e=>errs.push('PE:'+e.message))
+await p.goto('http://localhost:8081/games/museum-kereta.html',{waitUntil:'domcontentloaded'})
+await sleep(2000)
+await p.evaluate(()=>{ const t=[...document.querySelectorAll('.g18-tab,[data-tab]')].find(x=>/Unggulan|⭐/.test(x.textContent)); if(t)t.click() })
+await sleep(1000)
+const info=await p.evaluate(()=>({ cards:document.querySelectorAll('#g18-card-grid .g18-card').length, procImgs:document.querySelectorAll('#g18-card-grid svg').length }))
+await p.screenshot({path:'tools/qa-out/museum-featured-tab.png'})
+console.log('FEATURED',JSON.stringify(info),'errors:',errs.filter(e=>!/favicon|net::ERR|Failed to load/i.test(e)).slice(0,3))
+await b.close()

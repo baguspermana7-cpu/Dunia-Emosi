@@ -1214,6 +1214,38 @@ function g18BuildItems() {
       })
     })
   })
+  // A-322 fix: a few featured G18_TRAINS have NO world sprite (unmapped in
+  // G18_ART_MAP) and would otherwise vanish from the gallery. Append them as
+  // PROCEDURAL-art cards (synthetic idx 900+gi never collides with world 1..275
+  // and is excluded from the /275 collection stat) so the full featured
+  // collection stays visible. catKey inferred from the loco's fuel booleans so
+  // they also show under the right category tab.
+  try {
+    if (typeof G18_TRAINS !== 'undefined') {
+      const shownGi = new Set(Object.values(WORLD_FEATURED))
+      const catMeta = {}
+      cats.forEach(c => { catMeta[c.key] = { color: c.color || '#fbbf24', emoji: c.emoji || '🚂' } })
+      G18_TRAINS.forEach((t, gi) => {
+        if (!t || shownGi.has(gi)) return
+        const ck = t.isElectric ? 'listrik' : (t.isDiesel ? 'diesel' : 'uap_klasik')
+        const meta = catMeta[ck] || { color: '#f59e0b', emoji: '⭐' }
+        items.push({
+          idx: 900 + gi,
+          name: t.name,
+          year: t.year || 0,
+          type: t.type || t.fuel || '',
+          note: t.funFact || '',
+          catKey: ck,
+          catLabel: G18_TAB_LABELS[ck] || 'Unggulan',
+          catColor: meta.color,
+          catEmoji: meta.emoji,
+          spriteUrl: null,
+          featuredIdx: gi,
+          proc: true
+        })
+      })
+    }
+  } catch(_){}
   items.sort((a, b) => a.idx - b.idx)
   MUSEUM_ITEMS = items
   return items
@@ -1362,8 +1394,10 @@ function g18SetupCollection() {
 
 function g18UpdateCollectStat() {
   const visited = g18PassportGet()
-  const total = g18BuildItems().length || 275
-  const n = visited.size
+  // A-322: collection stat counts the 275 WORLD trains only (proc-only featured
+  // extras use synthetic idx 900+ and never stamp the passport).
+  const total = g18BuildItems().filter(x => x.idx <= 275).length || 275
+  const n = [...visited].filter(i => i <= 275).length
   const cnt = document.getElementById('g18-collect-count')
   if (cnt) cnt.textContent = n + ' / ' + total
   const bar = document.getElementById('g18-collect-bar')
@@ -1390,7 +1424,7 @@ function g18RenderGallery() {
     const tick = visited.has(item.idx) ? '<div class="g18-visited-tick" title="Sudah dikunjungi">🛂</div>' : ''
     card.innerHTML =
       star + tick +
-      `<div style="width:100%;height:56px;display:flex;align-items:center;justify-content:center;margin-bottom:2px;overflow:hidden;">${g18WorldImg(item.idx, 108, 50)}</div>` +
+      `<div style="width:100%;height:56px;display:flex;align-items:center;justify-content:center;margin-bottom:2px;overflow:hidden;">${item.proc ? g18TrainSVG(G18_TRAINS[item.featuredIdx], 108, 50, false) : g18WorldImg(item.idx, 108, 50)}</div>` +
       `<div class="g18-card-name" style="font-size:11px;">${item.name}</div>` +
       `<span class="g18-cat-chip" style="background:${item.catColor};">${item.catEmoji} ${item.catLabel}</span>` +
       `<div style="color:rgba(255,255,255,0.55);font-size:9px;font-weight:700;margin-top:2px;">${item.year || ''}</div>`
@@ -1556,8 +1590,12 @@ function g18UpdatePassportChip() {
   const chip = document.getElementById('g18-passport-chip')
   if (!chip) return
   const set = g18PassportGet()
-  const total = (typeof MUSEUM_ITEMS !== 'undefined' && MUSEUM_ITEMS) ? MUSEUM_ITEMS.length : 275
-  chip.textContent = '🛂 ' + set.size + ' / ' + total
+  // A-322: passport counts the 275 WORLD trains only (proc-only featured extras
+  // use synthetic idx 900+ and never stamp the passport).
+  const total = (typeof MUSEUM_ITEMS !== 'undefined' && MUSEUM_ITEMS)
+    ? MUSEUM_ITEMS.filter(x => x.idx <= 275).length : 275
+  const n = [...set].filter(i => i <= 275).length
+  chip.textContent = '🛂 ' + n + ' / ' + total
 }
 
 function g18SpeedBadge(speed) {
