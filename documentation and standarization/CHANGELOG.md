@@ -1,5 +1,34 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-05 — v57.1 "Balapan Kereta: Adventure/PvP/Tournament + split-screen race + pastel-clay buttons" (A-326/A-327)
+
+Owner: add a mode-select to Balapan Kereta like the Pokémon game (Adventure/PvP/Tournament), build a
+landscape split-screen 2-player race (reference: P2-left / P1-right controls, per-player question in
+each bottom corner), and style the buttons/nav with the current claymorphism concept + soft pastel.
+- **Mode-select**: pressing "Mulai Balapan!" now opens a soft-pastel-clay 3-card modal
+  (`g14GoRace()` → Adventure / PvP 1v1 / Tournament). Adventure = the original `startRace()`, unchanged.
+  Built as its own modal (not `BattleModes.show`, whose PvP/Tournament cards hardcode the Pokémon HP
+  engine); `battle-modes.js` is loaded only for its name-entry helper. The train race is fully decoupled
+  from the Pokémon battle engine.
+- **PvP split-screen (`#g14vs`, own coords — Adventure scene / `S` / rail JSON untouched)**: landscape,
+  two horizontal bands (P2 top / P1 bottom), each a light CSS-parallax race track with a DB train sprite
+  + finish flag + progress bar. A shared `QuizEngine` question sits in each bottom corner (P2 left /
+  P1 right); **correct → that train surges, wrong → 1s slow, constant auto-creep so nobody is stuck,
+  first to 100% wins** (owner-approved BOOST-fuel model). Optional pooled hazards dodged with the edge
+  NAIK/TURUN buttons. Single dt-clamped rAF loop, reduced-motion aware. Win banner → Main Lagi / Ganti
+  Mode / Keluar.
+- **Tournament**: 2–4 player single-elimination bracket (byes handled) reusing the PvP race, with a
+  next-match/bracket screen and a champion screen.
+- **A-327 pastel-clay restyle**: mode cards, name entry, PvP corners/pills/lane buttons/win banner, and
+  the picker buttons (Kembali/Mudah/Pengaturan/Koleksi/Side-Race/go) + in-race NAIK/TURUN + BOOST all
+  use the soft-pastel claymorphism language (mint/lavender/peach/blue/cream/rose, puffy, soft base-edge
+  shadow), tap targets ≥44px.
+- Verified: `qa-g14-railalign` 0px all viewports (Adventure rails unaffected, no g14-journey JSON
+  edits); `qa-g14-versus-drive` (landscape + portrait) — mode modal, 2-name entry, split-screen with a
+  `.qz-pill` question in each bottom corner, answering advances only that band, first-to-finish banner,
+  0 errors; app-sweep 16/16. Built by a general-purpose subagent, screenshots verified by me.
+  sw → v57.0-20260705b.
+
 ## 2026-07-05 — v57.0b "Balapan Kereta obstacle challenges = Pokémon-style questions (no more leaf-clicking)" (A-326 pt1)
 
 Owner: "yg soal2 rintangan di balapan kereta jangan dipakai … pakai style pertanyaan yg di pokemon
