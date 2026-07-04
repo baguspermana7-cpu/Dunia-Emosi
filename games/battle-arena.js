@@ -165,6 +165,17 @@
     '@keyframes baAuraSpin{to{rotate:360deg}}',
     /* v1.1.0 A-319: layered depth — bg idle drift, corner flower FOREGROUND, sparkle motes */
     '.ba-backdrop{transition:filter .35s ease;will-change:transform}',
+    /* v56.9 parallax depth bands — a SKY wash on top + a GRASS/field wash on the
+       bottom that blend into the stadium plate's own sky/field, so the cover-crop
+       stops reading as a chopped photo ("terpotong2 cacat"). They parallax on
+       lunge/hit for layered depth. Base plate is left untouched. z1 = over the
+       plate (z0), under the fighters (z20). */
+    '.ba-sky{position:fixed;top:-8px;left:-8px;right:-8px;height:44%;z-index:1;pointer-events:none;',
+    'background:linear-gradient(180deg,#bfe3fb 0%,rgba(155,208,246,.6) 34%,rgba(160,210,246,.16) 70%,transparent 100%);',
+    'transition:transform .5s cubic-bezier(.22,.9,.4,1);will-change:transform}',
+    '.ba-fieldband{position:fixed;bottom:-8px;left:-8px;right:-8px;height:36%;z-index:1;pointer-events:none;',
+    'background:linear-gradient(0deg,#4c8f33 0%,rgba(86,158,58,.62) 32%,rgba(126,182,74,.2) 68%,transparent 100%);',
+    'transition:transform .5s cubic-bezier(.22,.9,.4,1);will-change:transform}',
     '.ba-drift{animation:baDrift 14s ease-in-out infinite alternate}',
     '@keyframes baDrift{from{transform:translate(-3px,0) scale(1.02)}to{transform:translate(3px,-2px) scale(1.02)}}',
     '.ba-fg{position:fixed;bottom:0;z-index:40;pointer-events:none;width:min(34vw,330px);',
@@ -270,6 +281,12 @@
     var backdrop = el('div', 'ba-backdrop' + (REDUCED ? '' : ' ba-drift'), host)
     backdrop.style.cssText = 'position:fixed;inset:-8px;z-index:0;background-size:cover;background-position:center;' +
       'background-image:url("' + bgUrl + '")'
+    // v56.9 parallax depth bands framing the plate's crop (sky top / field bottom).
+    var sky = null, fieldBand = null
+    if (opts.depthBands !== false) {
+      sky = el('div', 'ba-sky', host)
+      fieldBand = el('div', 'ba-fieldband', host)
+    }
     var field = el('div', 'ba-field ba-punch', host)
     if (opts.ground) field.style.setProperty('--ba-ground', opts.ground)
     // foreground flower/grass corners (from the video) — IN FRONT of the fighters,
@@ -303,6 +320,8 @@
     S = {
       host: host,
       backdrop: backdrop,
+      sky: sky,
+      fieldBand: fieldBand,
       field: field,
       fgL: fgL,
       fgR: fgR,
@@ -330,11 +349,16 @@
     if (!S || REDUCED) return
     var d = dirX < 0 ? -1 : 1
     if (S.backdrop) S.backdrop.style.transform = 'translate(' + (-d * 6) + 'px,0) scale(1.02)'
+    // v56.9 layered parallax: sky drifts least (far), field band more, fg corners most.
+    if (S.sky) S.sky.style.transform = 'translate(' + (-d * 3) + 'px,0)'
+    if (S.fieldBand) S.fieldBand.style.transform = 'translate(' + (d * 8) + 'px,0)'
     if (S.fgL) S.fgL.style.transform = 'translate(' + (d * 12) + 'px,0)'
     if (S.fgR) S.fgR.style.transform = 'translate(' + (d * 12) + 'px,0)'
     setTimeout(function () {
       if (!S) return
       if (S.backdrop) S.backdrop.style.transform = ''
+      if (S.sky) S.sky.style.transform = ''
+      if (S.fieldBand) S.fieldBand.style.transform = ''
       if (S.fgL) S.fgL.style.transform = ''
       if (S.fgR) S.fgR.style.transform = ''
     }, 460)
@@ -365,7 +389,7 @@
     if (!S) return
     if (!visible && S.quiz) closeQuiz()
     var d = visible ? '' : 'none'
-    var els = [S.backdrop, S.field, S.fgL, S.fgR, S.vsChip, S.narrateEl]
+    var els = [S.backdrop, S.sky, S.fieldBand, S.field, S.fgL, S.fgR, S.vsChip, S.narrateEl]
     ;['player', 'enemy'].forEach(function (side) {
       var f = S.fighters[side]
       if (f) els.push(f.card)
@@ -711,6 +735,8 @@
     try { S.field.remove() } catch (_) {}
     try { S.narrateEl.remove() } catch (_) {}
     if (S.backdrop) { try { S.backdrop.remove() } catch (_) {} }
+    if (S.sky) { try { S.sky.remove() } catch (_) {} }
+    if (S.fieldBand) { try { S.fieldBand.remove() } catch (_) {} }
     // v1.1.0 A-319 layers
     if (S.fgL) { try { S.fgL.remove() } catch (_) {} }
     if (S.fgR) { try { S.fgR.remove() } catch (_) {} }
@@ -720,7 +746,7 @@
   }
 
   global.BattleArena = {
-    version: '1.1.1',
+    version: '1.1.2',
     setSceneVisible: setSceneVisible,
     setDof: setDof,
     punchIn: punchIn,
