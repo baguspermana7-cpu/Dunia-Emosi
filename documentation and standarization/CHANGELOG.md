@@ -1,5 +1,25 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-04 — v56.7 "FIDELITY ROUND — battle = the video, layered depth everywhere, clay polish" (A-319/A-320/A-321)
+
+Owner review: battle/train/clay were directionally right but visibly short of the references, and
+both games read FLAT (missing parallax/layer separation). Visual-only round — zero gameplay changes.
+- **A-319 battle (screen-by-screen vs the video)**: the arena bg is now the video's own STADIUM
+  (clean plate tile-inpainted out of frame 2 → assets/background/gym/stadium-video.webp) with
+  3-layer depth — drifting bg ← fighters ← corner flower FOREGROUND (also cut from the video)
+  that counter-shifts on every lunge/hit. Cream chunky question w/ thick brown outline, dark
+  charcoal narration pill, green ✓-ring correct pill, orange attacker aura during the quiz,
+  camera PUNCH-IN + bg blur on the damage close-up, sparkle motes, VS chip. Verified end-to-end
+  (qa-battle-anim/qa-gym-drive, both orientations, 0 errors).
+- **A-320 train depth**: foreground OCCLUSION plane (poles/signals whipping past in front of the
+  train), look-around parallax on every lane switch (bands shift by depth; rails never move),
+  aerial-perspective haze + ground vignette, obstacles arrive from the distance (approach scaling,
+  render-only). Railalign 0px × 4 viewports.
+- **A-321 clay**: white clay game tiles + per-category label chips, puffier cards, floating clay
+  sky balls, orange station-house roofs, airy level-select header. Inventory gates intact
+  (8 zones / 28 tiles / 40 stations).
+- sw → v56.7-20260704a; app-sweep 16/16.
+
 ## 2026-07-03 — v56.6 "Motion everywhere + real depth + intuitive g14" (E2/E7 + B-286/B-287)
 
 - **E2**: g14 adopts the shared Motion engine — lane switch is frame-rate-independent

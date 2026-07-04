@@ -12,6 +12,14 @@
 ### L225 — For cut-out 2D sprites, a CONTACT SHADOW is the cheapest, highest-impact grounding
 - Real-photo trains + emoji obstacles looked pasted/floating. Fix = a soft dark oval at each object's base (lowest child) + a consistent thin white sticker outline on every moving object + far-lane haze tint → pop-up/diorama that sits on the board. All tint/alpha/ellipse — zero geometry change, so it can't disturb tuned positioning. Reach for grounding+outline before color-grading or re-cutting art.
 
+## 2026-07-04 — v56.7 fidelity round
+
+### L234 — When the owner supplies a reference VIDEO, the video IS an asset source, not just a spec
+- The battle scene only converged once the arena background and foreground flower layers were extracted FROM the reference video itself (tile-inpainting the subjects out of a clean frame) instead of approximating with existing art. Median-stacking failed (subjects static across frames); a featureless-strip tile fill on one frame worked. Matching "sama persis" is much cheaper when you reuse the reference's own pixels.
+
+### L235 — "More 3D" feedback usually means MISSING DEPTH CUES, not missing effects
+- Two rounds of "kurang 3D" were resolved not by adding decoration but by adding the classic depth cues: foreground OCCLUSION (objects passing in front), input-coupled look-around parallax (layers shifting by depth on every action), aerial perspective (haze), and approach scaling (objects arriving from the distance). If a layered scene still reads flat, check which of the 6 cues are absent before adding effects.
+
 ## 2026-07-03 — v56.x mega-overhaul (pokemon DB, claymorphism, BattleArena, exact rails, Motion)
 
 ### L230 — A blocklist that papers over corrupt DATA rots: fix the data, then delete the blocklist
