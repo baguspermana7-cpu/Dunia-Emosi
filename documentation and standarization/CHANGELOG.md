@@ -1,5 +1,15 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-05 — v57.0 "Installed app follows device rotation" (A-325)
+
+Owner: the installed PWA only opened in portrait, but the games are best in landscape. Root cause was a
+single line — `manifest.json` `"orientation": "portrait-primary"` locked the installed app to portrait
+regardless of how the phone is held. Changed to `"any"` so the app follows device rotation (portrait OR
+landscape). No other lock existed (no `screen.orientation.lock`, no rotate-overlay, no portrait-only CSS
+gate — verified across all HTML/JS). sw → v57.0-20260705a (it precaches manifest.json, so the old one
+would serve stale otherwise). Landscape sanity: index + balapan-kereta + gym-pokemon at 900×500 → no
+horizontal overflow, 0 errors, nothing hidden.
+
 ## 2026-07-04 — v56.9f "PvP type chart covers all 18 types" (B-296, review #41/#42)
 
 PvP/Tournament combat used a local 6-type `TYPE_CHART` (fire/water/grass/electric only), so random
