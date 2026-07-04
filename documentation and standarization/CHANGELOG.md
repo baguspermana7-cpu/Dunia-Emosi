@@ -1,5 +1,16 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-04 — v56.9f "PvP type chart covers all 18 types" (B-296, review #41/#42)
+
+PvP/Tournament combat used a local 6-type `TYPE_CHART` (fire/water/grass/electric only), so random
+full-Pokédex teams — whose signature moves are often rock/psychic/bug/ghost/etc — got neutral damage on
+every hit and "Super/Tidak Efektif" never fired; the weakness chip also advertised weaknesses combat
+ignored. `typeMult` now delegates to the shared `window.calcTypeMult` (games/data/poke-type-chart.js,
+full 18-type, M-303), clamped into the kid range [0.6, 1.2] so the owner's 1.2× cap + tuned balance are
+preserved (super→1.2, resist→0.75/0.6). `weaknessChipHtml` derives from the same `getWeaknesses` so the
+chip can't lie. Local 6-type table kept as fallback. battle-modes cache-bust bumped (it had changed in
+the parallax commit without a `?v=` bump — plan #92). sw → v56.9-20260704f; PvP drive + app-sweep green.
+
 ## 2026-07-04 — v56.9e "Parallax depth program — all Pokémon + train games" (A-324)
 
 Owner directive: "especially parallax effect enhancement for all game pokemon and train" + "foto

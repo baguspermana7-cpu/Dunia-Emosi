@@ -1755,6 +1755,18 @@
     return Math.max(1.0, Math.min(1.2, raw));
   }
   function typeMult (moveType, defType) {
+    // v56.9 review #41 — cover the FULL 18-type roster by delegating to the shared
+    // kid-friendly chart (games/data/poke-type-chart.js `calcTypeMult`, M-303)
+    // instead of the local 6-type table, so random full-dex teams actually get
+    // Super/Tidak-Efektif. Clamp into battle-modes' kid range [0.6,1.2] so the
+    // owner's "elemen 1.2x max" cap + the tuned balance are preserved. Falls back
+    // to the local table if the shared module isn't loaded.
+    try {
+      if (typeof global.calcTypeMult === 'function') {
+        var m = global.calcTypeMult(moveType, defType);
+        if (typeof m === 'number' && m > 0) return Math.min(1.2, Math.max(0.6, m));
+      }
+    } catch (e) {}
     const t = (TYPE_CHART[moveType] || {})[defType];
     return t == null ? 1.0 : t;
   }
@@ -1829,8 +1841,13 @@
     steel:    ['fire', 'fighting', 'ground']
   };
   function weaknessChipHtml (type) {
-    const ws = WEAKNESS[type] || [];
-    if (!ws.length) return '<span class="bm-weak-chip bm-weak-none">⚖ Seimbang</span>';
+    // v56.9 review #42 — derive the chip from the SAME source combat now uses
+    // (shared getWeaknesses), so it can't advertise a weakness the engine ignores.
+    var ws;
+    try {
+      ws = (typeof global.getWeaknesses === 'function') ? global.getWeaknesses(type, 2) : (WEAKNESS[type] || []);
+    } catch (e) { ws = WEAKNESS[type] || []; }
+    if (!ws || !ws.length) return '<span class="bm-weak-chip bm-weak-none">⚖ Seimbang</span>';
     const inner = ws.map(t => (TYPE_ICON[t] || '') + ' ' + t).join(' · ');
     return `<span class="bm-weak-chip">🔻 Lemah: ${inner}</span>`;
   }
