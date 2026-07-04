@@ -1,5 +1,25 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-04 — v56.9d "P0 edge-cutoff + tracing-bottom fixes" (B-294/B-295)
+
+Owner-reported (screenshots), fixed first out of the 100-item review plan:
+- **B-295 PvP/Tournament cut off + can't scroll**: the battle stage grid consumed a full 100vh with no
+  allowance for the tablet's browser chrome / rounded corners / gesture bar, so the bottom action/
+  question zone (Serang/Ganti) clipped off the edge and there was no way to scroll to it. Fix in
+  `games/data/battle-modes.js`: `.bm-stage-grid` now uses `box-sizing:border-box` + FRACTIONAL rows
+  (20fr/56fr/24fr) that fill the PADDED height, with `padding: max(6px,env(safe-area-inset-top)) 0
+  max(12px,env(safe-area-inset-bottom))` reserving safe margins; each `.bm-qzone` is `overflow-y:auto`
+  (was hidden) so a too-tall zone scrolls instead of dead-ending; landscape MQ widened to `max-height:
+  600px` with fr rows. Zones/rotation/logic untouched.
+- **B-294 Jejak Huruf can't trace to the letter bottom**: the guide dots span y≈0.05–0.95 but the ghost
+  glyph (`game.js` `g9Clear`) was `fillText` middle-baselined spanning only ~0.26–0.77, so the foot
+  dots sat below the visible letter → unreachable. Fix: render the ghost glyph to fill the guide-dot
+  bounding box (alphabetic baseline at the foot dots, cap sized to the dot span, width-clamped for
+  M/W). Verified (`tools/qa-g9-trace.mjs`): glyph now spans 0.14→0.96, all 5 dots reachable, both
+  orientations, 0 errors.
+- Cache-bust hygiene (plan #92): `game.js` was frozen at `?v=54.48` despite Jul-3 edits → bumped to
+  56.9-20260704d; battle-modes + sw bumped to match. app-sweep 16/16.
+
 ## 2026-07-04 — v56.9 "Museum = all 275 trains + PvP looks like Adventure + fair turns" (A-322/A-323)
 
 Owner: "Utk museum kereta enhance lbh menarik uiux dan ceritanya pakai kereta database 275 jangan hanya

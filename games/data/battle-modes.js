@@ -4029,11 +4029,18 @@
          banyak black space" — pulled top down to 18vh (less wasted dark zone),
          arena up to 62vh (more action), bottom 20vh + safe-area padding so
          choice buttons don't get clipped by the device nav bar. */
+      /* v56.9 B-295 (owner: "malah kamu taruh di bawah jadi terpotong … margin
+         thp tepi layar itu naikkan"): reserve top+bottom safe-area margins and
+         use FRACTIONAL rows (not vh) that fill the PADDED height, so the bottom
+         action/question zone can never clip under the browser chrome / rounded
+         corners / gesture bar. box-sizing:border-box makes the padding subtract
+         from the 100dvh instead of overflowing it. */
       .bm-stage-grid {
         display: grid;
-        grid-template-rows: 18vh 62vh 20vh;
+        grid-template-rows: 20fr 56fr 24fr;
         height: 100dvh; max-height: 100svh;
-        padding-bottom: env(safe-area-inset-bottom, 0px);
+        box-sizing: border-box;
+        padding: max(6px, env(safe-area-inset-top)) 0 max(12px, env(safe-area-inset-bottom));
       }
 
       /* ── SHARED ARENA — both Pokemon in one view ── */
@@ -4188,7 +4195,11 @@
 
       /* ── Q-ZONE (top + bottom) — softer gradient so the inactive zone doesn't read as dead black ── */
       .bm-qzone {
-        position: relative; overflow: hidden;
+        position: relative;
+        /* v56.9 B-295: overflow-y AUTO (was hidden) so a zone that is still too
+           tall for its row SCROLLS instead of clipping into a dead end
+           (owner: "nggak bisa di scroll lagi layarnya"). */
+        overflow-y: auto; overflow-x: hidden;
         background: linear-gradient(180deg, rgba(20,20,40,0.92), rgba(14,14,30,0.96));
         border-top: 2px solid rgba(255,255,255,0.07);
         display: grid; place-items: center;
@@ -4840,9 +4851,9 @@
          the question row + choices overflowed off-screen (answer buttons cut
          off = unplayable). Landscape gets taller zones + a compact single-row
          question layout. Zone alternation / rotation logic untouched. */
-      @media (orientation: landscape) and (max-height: 520px) {
-        .bm-stage-grid { grid-template-rows: 25vh 47vh 28vh; }
-        .bm-qzone { overflow-y: auto; padding: 2px 4px 4px; }
+      @media (orientation: landscape) and (max-height: 600px) {
+        .bm-stage-grid { grid-template-rows: 26fr 44fr 30fr; }
+        .bm-qzone { padding: 2px 4px 4px; }
         .bm-qzone-inner { max-width: 660px; }
         .bm-q-row { gap: 3px; }
         .bm-timer-bar { height: 4px; margin-bottom: 0; }

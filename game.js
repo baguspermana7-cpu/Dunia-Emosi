@@ -4283,9 +4283,28 @@ function renderG9GuideDots(){
 function g9Clear(){
   if(!g9Ctx)return; const sz=g9Canvas.width||300; g9Ctx.clearRect(0,0,sz,sz); g9UserPath=[]
   const letter=g9State.currentLetter; if(!letter)return
-  const fontSize=g9State.mode==='angka'?Math.round(sz*0.8):Math.round(sz*0.73)
-  g9Ctx.font=`bold ${fontSize}px Nunito`; g9Ctx.fillStyle='rgba(132,204,22,0.12)'
-  g9Ctx.textAlign='center'; g9Ctx.textBaseline='middle'; g9Ctx.fillText(letter,sz/2,sz/2+sz*0.018)
+  // v56.9 B-294 (owner: "nggak bisa di write sampai bawah") — the ghost glyph
+  // must fill the SAME bounding box as the guide dots so the letter's apex/feet
+  // line up with the top/bottom dots and the child can trace all the way down to
+  // them. Previously fillText drew a middle-baselined glyph spanning only
+  // ~0.26–0.77 of the canvas while foot dots sat at y≈0.95 → unreachable.
+  const guides=getG9Guides(letter)
+  let minX=0.12,maxX=0.88,minY=0.06,maxY=0.94
+  if(guides && guides.length){
+    minX=1;maxX=0;minY=1;maxY=0
+    guides.forEach(g=>{minX=Math.min(minX,g.x);maxX=Math.max(maxX,g.x);minY=Math.min(minY,g.y);maxY=Math.max(maxY,g.y)})
+  }
+  const bboxW=Math.max(0.001,(maxX-minX))*sz, bboxH=Math.max(0.001,(maxY-minY))*sz
+  // cap-height ≈ 0.72×fontSize for Nunito bold; size to the dot span, then clamp
+  // by width so wide glyphs (M/W) don't overflow the canvas horizontally.
+  let fontSize=bboxH/0.72
+  g9Ctx.font=`bold ${Math.round(fontSize)}px Nunito`
+  const w=g9Ctx.measureText(letter).width||bboxW
+  const maxW=Math.min(sz*0.92, bboxW*1.4)
+  if(w>maxW){ fontSize*=maxW/w; g9Ctx.font=`bold ${Math.round(fontSize)}px Nunito` }
+  g9Ctx.fillStyle='rgba(132,204,22,0.14)'
+  g9Ctx.textAlign='center'; g9Ctx.textBaseline='alphabetic'
+  g9Ctx.fillText(letter,(minX+maxX)/2*sz,maxY*sz)
   document.querySelectorAll('.g9-dot').forEach(d=>d.classList.remove('hit'))
 }
 function g9GetPos(e,canvas){const rect=canvas.getBoundingClientRect(),scaleX=canvas.width/rect.width,scaleY=canvas.height/rect.height;return{x:(e.clientX-rect.left)*scaleX,y:(e.clientY-rect.top)*scaleY}}
