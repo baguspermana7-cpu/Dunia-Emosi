@@ -1,5 +1,19 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-05 — v57.0b "Balapan Kereta obstacle challenges = Pokémon-style questions (no more leaf-clicking)" (A-326 pt1)
+
+Owner: "yg soal2 rintangan di balapan kereta jangan dipakai … pakai style pertanyaan yg di pokemon
+walaupun itu rintangan" + "pop up kotak pertanyaannya aneh kayak bersihkan semua daun dg klik2 gambar
+daun." The periodic obstacle challenge in `games/balapan-kereta.html` spawned ObstacleEngine DIALOG
+mini-games (`station_clean_leaves_track` leaf-clearing, `muddy_track_cleaning`, drag-repair, sort,
+memory, etc — `games/data/obstacles.js`). Replaced the `ObstacleEngine.spawn()` call in the obstacle
+scheduler with a new `g14ObstacleQuiz()` that shows the SHARED Pokémon-style `QuizEngine` pill question
+in the existing quiz overlay ("🚧 RINTANGAN — JAWAB SOAL!", 6s timer, correct → pass, wrong → −8
+pressure). The physical dodge-hazards (spawnObstacle/crashHit) are a separate system and are unchanged;
+`obstacles.js` is untouched so the side game is unaffected. Verified `tools/qa-g14-obstacle-quiz.mjs`:
+overlay shows 4 QuizEngine pills, no dialog mini-game, 0 errors; app-sweep 16/16. (Part of A-326 — mode
+select + PvP/Tournament split-screen still to come.)
+
 ## 2026-07-05 — v57.0 "Installed app follows device rotation" (A-325)
 
 Owner: the installed PWA only opened in portrait, but the games are best in landscape. Root cause was a

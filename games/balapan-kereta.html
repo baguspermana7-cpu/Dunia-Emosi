@@ -4861,15 +4861,16 @@ function g14WireObstacleEngine(){
       // v54.80 bug-fix: also gate on S.quizOpen + S.gameOver to avoid overlap
       // with the existing mini-quiz (g14-mini-quiz) or after race ends.
       if (!S.running || S.quizOpen || S.gameOver) return
-      const id = _pickObstacleId()
+      // v57.0 A-326 — route the periodic obstacle challenge through the SHARED
+      // Pokémon-style QuizEngine question (was ObstacleEngine dialog mini-games).
       try {
-        window.ObstacleEngine.spawn(id).then((outcome) => {
+        g14ObstacleQuiz().then((outcome) => {
           // v55.7 — engagement counter for star gate (B-203)
           if (outcome === 'success') S.puzzlesSolved = (S.puzzlesSolved || 0) + 1
           _scheduleNext()
         })
       } catch(e) {
-        console.warn('[g14] OE.spawn failed', e)
+        console.warn('[g14] obstacle quiz failed', e)
         _scheduleNext()
       }
     }, delayMs)
@@ -5322,6 +5323,55 @@ function g14StartQuizCountdown(){
     requestAnimationFrame(_tick)
   }
   requestAnimationFrame(_tick)
+}
+
+// v57.0 A-326 — obstacle challenges now use the SHARED Pokémon-style QuizEngine
+// (were ObstacleEngine DIALOG mini-games: "bersihkan daun" leaf-clearing, mud,
+// drag-repair, sort, etc). Owner: "yg soal2 rintangan jangan dipakai … pakai style
+// pertanyaan yg di pokemon walaupun itu rintangan." The physical dodge-hazards
+// (spawnObstacle/crashHit) are a SEPARATE system and are unaffected. Returns a
+// promise resolving 'success' | 'fail' | 'skip'.
+function g14ObstacleQuiz(){
+  return new Promise(function(resolve){
+    if (!S.running || S.gameOver){ resolve('skip'); return }
+    S.quizOpen = true
+    var lbl = document.getElementById('quiz-label')
+    var prevLbl = lbl ? lbl.textContent : null
+    if (lbl) lbl.textContent = '🚧 RINTANGAN — JAWAB SOAL!'
+    var lv = cfg.level || 1
+    var done = false
+    function finish(ok){
+      if (done) return; done = true
+      document.getElementById('quiz-ovl').style.display = 'none'
+      S.quizOpen = false
+      if (lbl && prevLbl != null) lbl.textContent = prevLbl
+      resolve(ok ? 'success' : 'fail')
+    }
+    QuizEngine.fill('quiz-q', 'quiz-choices', { level: lv }, function(res){
+      if (res.correct){ try{ g14Vibrate(30) }catch(_){}; try{ playTone(660,0.08) }catch(_){}; finish(true) }
+      else { try{ playTone(200,0.15,'square') }catch(_){}; try{ screenFlash('rgba(255,60,60,0.2)') }catch(_){};
+             S.pressure = Math.max(0, (S.pressure||0) - 8); try{ updatePressure() }catch(_){}; finish(false) }
+    })
+    document.getElementById('quiz-ovl').style.display = 'block'
+    // Reuse the same countdown affordance as the BOOST quiz (auto-fail on timeout).
+    var COUNT_MS = 6000, t0 = performance.now()
+    var bar = document.getElementById('quiz-countdown')
+    if (!bar){
+      bar = document.createElement('div'); bar.id = 'quiz-countdown'
+      bar.style.cssText = 'position:absolute;left:0;right:0;bottom:0;height:6px;background:rgba(255,255,255,0.12);border-radius:3px;overflow:hidden'
+      var inner = document.createElement('div'); inner.id = 'quiz-countdown-fill'
+      inner.style.cssText = 'height:100%;background:#4ade80;width:100%'
+      bar.appendChild(inner); var ovl = document.getElementById('quiz-ovl'); if (ovl) ovl.appendChild(bar)
+    }
+    var fill = document.getElementById('quiz-countdown-fill'); if (fill){ fill.style.width='100%'; fill.style.background='#4ade80' }
+    ;(function tick(){
+      if (!S.quizOpen || done) return
+      var rem = Math.max(0, 1 - (performance.now()-t0)/COUNT_MS)
+      if (fill){ fill.style.width=(rem*100).toFixed(1)+'%'; fill.style.background = rem<0.4?'#ef4444':(rem<0.7?'#fbbf24':'#4ade80') }
+      if (rem<=0){ finish(false); return }
+      requestAnimationFrame(tick)
+    })()
+  })
 }
 
 function buildQuiz() {
