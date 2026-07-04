@@ -1,5 +1,29 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-04 — v56.9e "Parallax depth program — all Pokémon + train games" (A-324)
+
+Owner directive: "especially parallax effect enhancement for all game pokemon and train" + "foto
+background jelek terpotong2 kayak cacat — fokus parallax layer2, background DASAR biarkan." Every game's
+base background is KEPT; parallax depth LAYERS were added on top so flat/cover-cropped photos read as
+depth. Frame-rate-independent, reduced-motion-aware, torn down cleanly, verified per game (screenshots
+both orientations) + app-sweep 16/16.
+- **BattleArena** (gym Adventure + PvP + Tournament): sky wash on top + grass/field wash on the bottom
+  that blend into the stadium plate's own colors (disguise the crop) + 3-layer parallax drift on
+  lunge/hit (sky<field<fg). battle-arena v1.1.2.
+- **Train**: g15 removed a redundant background engine stacking behind the painted plate (the plate's
+  own 9-band graduated parallax is now sole); g16 gained a distant hazy ridge (0.11×) + a foreground
+  occlusion plane (poles/foliage passing in front, 1.22×); g14-side's frozen-viewport bug fixed so its
+  multi-layer scenery parallax reflows on rotate. g14 untouched (quality bar); rails verified unmoved.
+- **Pokémon/arcade** (3–4 PIXI layers each, behind gameplay): pokemon-bawah-laut = god-ray shafts +
+  depth fish + foreground kelp; pokemon-run = far hills/mid treeline/near grass; pokemon-birds = far
+  skyline + multi-depth clouds; mario-pokemon = added a near camera-parallax layer; monster-candy =
+  candy-hill/lollipop/candy-cane tiers; ducky-volley = drifting cloud + horizon haze.
+  Bonus fix: pokemon-bawah-laut + pokemon-birds hid their whole canvas when the WebGL probe failed —
+  the render check now also accepts Canvas2D, so the scene stays visible on low-end renderers.
+- **PvP leak fixes** (review #23/#24): the per-turn question-timer RAF and the low-HP heartbeat
+  interval never self-stopped on exit/match-end — now stopped in exitMatch + finishMatch.
+- sw → v56.9-20260704e. New QA probes: qa-parallax + per-game qa-*-parallax.
+
 ## 2026-07-04 — v56.9d "P0 edge-cutoff + tracing-bottom fixes" (B-294/B-295)
 
 Owner-reported (screenshots), fixed first out of the 100-item review plan:

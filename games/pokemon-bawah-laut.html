@@ -403,7 +403,7 @@ let   CLIFF_SPEED = 2.0 + (cfg.level-1) * 0.13
 const CLIFF_SPACE = Math.max(340, 460 - (cfg.level-1) * 3)
 
 let W, H, FLOOR_Y, SWIM_X
-let app, swimContainer, swimGfx, worldContainer, bgContainer, floorContainer
+let app, swimContainer, swimGfx, worldContainer, bgContainer, floorContainer, parallaxContainer, fgKelpContainer
 
 // ══════════════════════════════════════════════════════════════
 //  AUDIO
@@ -439,7 +439,7 @@ function updateVolumes() {
     backgroundAlpha: 1, backgroundColor: THEME.skyTop,
     antialias: true,
     resolution: Math.min(window.devicePixelRatio, 2),
-    preference:'webgl', preferWebGLVersion:1
+    preference:'webgl'
   })
   W = app.screen.width; H = app.screen.height
   FLOOR_Y = H * 0.87; SWIM_X = W * 0.22
@@ -447,15 +447,18 @@ function updateVolumes() {
   S.totalCliffs = CLIFF_COUNT
   S.questions = pickQuestions(cfg.level)
 
-  bgContainer    = new PIXI.Container(); app.stage.addChild(bgContainer)
-  worldContainer = new PIXI.Container(); app.stage.addChild(worldContainer)
-  floorContainer = new PIXI.Container(); app.stage.addChild(floorContainer)
+  bgContainer       = new PIXI.Container(); app.stage.addChild(bgContainer)
+  parallaxContainer = new PIXI.Container(); app.stage.addChild(parallaxContainer)
+  worldContainer    = new PIXI.Container(); app.stage.addChild(worldContainer)
+  fgKelpContainer   = new PIXI.Container(); app.stage.addChild(fgKelpContainer)
+  floorContainer    = new PIXI.Container(); app.stage.addChild(floorContainer)
 
   try { drawBackground() } catch(e) { console.error('BG fail',e) }
   try { drawFloor() }      catch(e) { console.error('Floor fail',e) }
   try { initBubbles() }    catch(e) { console.error('Bubble fail',e) }
-  try { initSeaweed() }    catch(e) { console.error('Seaweed fail',e) }
-  try { buildCliffs() }    catch(e) { console.error('Cliff fail',e) }
+  try { initSeaweed() }        catch(e) { console.error('Seaweed fail',e) }
+  try { initParallaxLayers() } catch(e) { console.error('Parallax fail',e) }
+  try { buildCliffs() }        catch(e) { console.error('Cliff fail',e) }
   try { createSwimmer() }  catch(e) { console.error('Swimmer fail',e) }
 
   updateHUD()
@@ -474,9 +477,13 @@ function updateVolumes() {
   spawnNPCLoop()
 
   setTimeout(()=>{
+    // Check that any rendering context is active. Accept WebGL1, WebGL2, or Canvas2D
+    // (PIXI may fall back to Canvas2D in low-end / headless environments — canvas
+    // is still usable, just slower, so keep it visible rather than hiding it).
     try {
-      const gl = document.getElementById('pixi-canvas').getContext('webgl')||document.getElementById('pixi-canvas').getContext('webgl2')
-      if (!gl) throw new Error('No WebGL')
+      const cv = document.getElementById('pixi-canvas')
+      const ok = cv.getContext('webgl') || cv.getContext('webgl2') || cv.getContext('2d')
+      if (!ok) throw new Error('No renderer')
     } catch(_){ document.getElementById('pixi-canvas').style.opacity='0' }
   }, 500)
 })().catch(e=>{
@@ -594,6 +601,189 @@ function updateSeaweed() {
     sw._phase += 0.022
     sw.skew.x = Math.sin(sw._phase) * sw._amp
   }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PARALLAX DEPTH LAYERS — 3 layers in parallaxContainer
+//  (sits between bgContainer and worldContainer in z-order)
+//
+//  FAR  (speed × 0.08) : slow god-ray light shafts + large bubbles
+//  MID  (speed × 0.33) : drifting fish silhouettes
+//  FG   (speed × 0.72) : swaying kelp / coral along bottom
+//
+//  Honors prefers-reduced-motion: layers render but do NOT drift.
+//  NO per-frame allocations: all objects created once, reused.
+//  Responsive: _rebuildParallaxLayers() called on resize.
+// ══════════════════════════════════════════════════════════════
+const REDUCED_MOTION = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+const _pxFarBeams   = []  // {gfx,x,bw,bh,speed,phase}
+const _pxFarBubbles = []  // {gfx,x,y,r,vy,swayPhase,swayAmp}
+const _pxMidFish    = []  // {gfx,x,y,sz,speed,bobPhase,bobAmp}
+const _pxFgKelp     = []  // {gfx,x,phase,amp}
+
+function initParallaxLayers() {
+  if (!parallaxContainer) return
+
+  // ── FAR: tiled god-ray light shafts ────────────────────────
+  // 6 beams drawn in LOCAL coords (centered at 0,0 horizontally)
+  // so gfx.x positions each beam independently for scrolling.
+  for (let i = 0; i < 6; i++) {
+    const bw    = 55 + Math.random() * 65
+    const bh    = H * (0.55 + Math.random() * 0.32)
+    const slant = (Math.random() - 0.5) * 0.17
+    const g     = new PIXI.Graphics()
+    g.poly([
+      -bw / 2, 0,
+       bw / 2, 0,
+       bw / 2 + bh * slant, bh,
+      -bw / 2 + bh * slant, bh
+    ]).fill({ color: THEME.lightColor, alpha: 0.25 + Math.random() * 0.15 })
+    const startX = (W * 1.5 / 6) * i + (Math.random() - 0.5) * 55
+    g.x = startX; g.y = 0
+    parallaxContainer.addChild(g)
+    _pxFarBeams.push({ gfx: g, x: startX, bw, bh, speed: 0.08, phase: Math.random() * Math.PI * 2 })
+  }
+
+  // ── FAR: large slowly-rising bubbles (behind mid and fg) ───
+  for (let j = 0; j < 7; j++) {
+    const r  = 7 + Math.random() * 13
+    const bg = new PIXI.Graphics()
+    bg.circle(0, 0, r).stroke({ color: THEME.ambientBubble, width: 2, alpha: 0.55 })
+    bg.circle(0, 0, r * 0.55).fill({ color: THEME.ambientBubble, alpha: 0.22 })
+    bg.circle(-r * 0.30, -r * 0.33, r * 0.25).fill({ color: 0xffffff, alpha: 0.40 })
+    const bx = Math.random() * W * 1.4
+    const by = H * 0.18 + Math.random() * (FLOOR_Y - H * 0.23)
+    bg.x = bx; bg.y = by
+    parallaxContainer.addChild(bg)
+    _pxFarBubbles.push({
+      gfx: bg, x: bx, y: by, r,
+      vy: 0.22 + Math.random() * 0.38,
+      swayPhase: Math.random() * Math.PI * 2,
+      swayAmp: 8 + Math.random() * 12
+    })
+  }
+
+  // ── MID: drifting fish silhouettes ─────────────────────────
+  // Dark-navy silhouettes — appear as clear shadows against the lit teal water.
+  // 6 fish: first 4 pre-seeded across the screen so they're visible immediately;
+  // last 2 start off-screen right and scroll in naturally.
+  const _fishSilColor = 0x001933
+  for (let k = 0; k < 6; k++) {
+    // Large fish bodies — sz=50-90px so they're clearly visible as distinct shapes.
+    // Dark navy against the lit teal creates a strong underwater-silhouette effect.
+    const sz = 50 + Math.random() * 40
+    const fg = new PIXI.Graphics()
+    fg.ellipse(0, 0, sz, sz * 0.40).fill({ color: _fishSilColor, alpha: 0.52 })
+    // Eye highlight — bright dot gives the silhouette recognisable form
+    fg.circle(sz * 0.58, -sz * 0.09, sz * 0.09).fill({ color: 0x90E0EF, alpha: 0.80 })
+    // Tail fin
+    fg.poly([
+      -sz * 0.95, 0,
+      -sz * 1.45, -sz * 0.36,
+      -sz * 1.45,  sz * 0.36
+    ]).fill({ color: _fishSilColor, alpha: 0.45 })
+    // Dorsal fin
+    fg.poly([
+      0, -sz * 0.38,
+      sz * 0.25, -sz * 0.65,
+      sz * 0.55, -sz * 0.38
+    ]).fill({ color: _fishSilColor, alpha: 0.40 })
+    // On-screen pre-seed for first 4 fish (spread across screen), off-screen for last 2
+    const fx = k < 4
+      ? W * 0.08 + k * (W * 0.24) + Math.random() * W * 0.08
+      : W + k * (W * 0.25) + Math.random() * 60
+    const fy = H * 0.15 + Math.random() * (FLOOR_Y * 0.62)
+    fg.x = fx; fg.y = fy
+    parallaxContainer.addChild(fg)
+    _pxMidFish.push({
+      gfx: fg, x: fx, y: fy, sz,
+      speed: 0.28 + Math.random() * 0.10,
+      bobPhase: Math.random() * Math.PI * 2,
+      bobAmp: 10 + Math.random() * 14
+    })
+  }
+
+  // ── FG: swaying kelp / coral band at bottom ─────────────────
+  // 12 stalks spread over 1.5× screen width → seamless tiling.
+  // Drawn UP from (0,0); gfx.y = FLOOR_Y plants them at seabed.
+  // Added to fgKelpContainer (above worldContainer cliffs, below floorContainer)
+  // so the swaying stalks are clearly visible above the rocky cliff graphics.
+  for (let m = 0; m < 12; m++) {
+    const kh  = 55 + Math.random() * 70
+    const col = THEME.seaweed
+    const kg  = new PIXI.Graphics()
+    for (let s = 0; s < kh; s += 7) {
+      const off = Math.sin(s * 0.42) * 3.5
+      kg.rect(off - 3, -kh + s, 7, 7.5).fill({ color: col, alpha: 0.88 })
+    }
+    // Leaf tip blob
+    kg.ellipse(0, -kh, 9, 5).fill({ color: col, alpha: 0.92 })
+    const kx = (W * 1.5 / 12) * m + (Math.random() - 0.5) * 18
+    kg.x = kx; kg.y = FLOOR_Y
+    fgKelpContainer.addChild(kg)
+    _pxFgKelp.push({ gfx: kg, x: kx, phase: Math.random() * Math.PI * 2, amp: 0.10 + Math.random() * 0.08 })
+  }
+}
+
+function updateParallaxLayers(dt) {
+  if (REDUCED_MOTION) return
+  const scrollDelta = CLIFF_SPEED * dt
+
+  // FAR beams — very slow scroll + alpha pulse (barely moves, feels distant)
+  for (let i = 0; i < _pxFarBeams.length; i++) {
+    const b = _pxFarBeams[i]
+    b.phase += 0.016 * dt
+    b.x -= scrollDelta * b.speed
+    if (b.x < -(b.bw * 0.5 + 25)) b.x += W * 1.5
+    b.gfx.x = b.x
+    b.gfx.alpha = 0.72 + Math.sin(b.phase) * 0.28
+  }
+
+  // FAR bubbles — very slow horizontal drift + gentle rise
+  for (let j = 0; j < _pxFarBubbles.length; j++) {
+    const bb = _pxFarBubbles[j]
+    bb.swayPhase += 0.020 * dt
+    bb.x -= scrollDelta * 0.08
+    bb.y -= bb.vy * dt
+    bb.x += Math.sin(bb.swayPhase) * bb.swayAmp * 0.055
+    if (bb.y < -bb.r * 2) { bb.y = FLOOR_Y + bb.r; bb.x = Math.random() * W * 1.4 }
+    if (bb.x < -bb.r * 3) { bb.x = W + bb.r * 2 }
+    bb.gfx.x = bb.x; bb.gfx.y = bb.y
+  }
+
+  // MID fish — medium scroll speed (0.33×) + vertical sinusoidal bob
+  for (let k = 0; k < _pxMidFish.length; k++) {
+    const f = _pxMidFish[k]
+    f.bobPhase += 0.022 * dt
+    f.x -= scrollDelta * f.speed
+    f.gfx.x = f.x
+    f.gfx.y = f.y + Math.sin(f.bobPhase) * f.bobAmp
+    if (f.x < -(f.sz * 3)) {
+      f.x = W + f.sz * 3 + Math.random() * W * 0.4
+      f.y = H * 0.12 + Math.random() * (FLOOR_Y * 0.72)
+    }
+  }
+
+  // FG kelp — fast scroll (0.72×) + sway (fastest layer = feels closest)
+  for (let m = 0; m < _pxFgKelp.length; m++) {
+    const kp = _pxFgKelp[m]
+    kp.phase += 0.024 * dt
+    kp.x -= scrollDelta * 0.72
+    if (kp.x < -60) kp.x += W * 1.5 + 60
+    kp.gfx.x = kp.x
+    kp.gfx.skew.x = Math.sin(kp.phase) * kp.amp
+  }
+}
+
+function _rebuildParallaxLayers() {
+  if (!parallaxContainer) return
+  parallaxContainer.removeChildren()
+  if (fgKelpContainer) fgKelpContainer.removeChildren()
+  _pxFarBeams.length = 0
+  _pxFarBubbles.length = 0
+  _pxMidFish.length = 0
+  _pxFgKelp.length = 0
+  initParallaxLayers()
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -970,6 +1160,7 @@ function gameLoop(ticker) {
   // Animate background
   updateBubbles(dt)
   updateSeaweed()
+  updateParallaxLayers(dt)
   updateNPCs(dt)
   updateMegaNPCs(dt)
 
@@ -1443,6 +1634,8 @@ function _g24Resize(){
     floorContainer.removeChildren()
     drawFloor()
   }
+  // Rebuild parallax layers so their FLOOR_Y / W references are fresh
+  if (parallaxContainer) { _rebuildParallaxLayers() }
   // Re-anchor swimmer X (Y is updated per-frame by gameLoop)
   if (swimContainer) { swimContainer.x = SWIM_X }
 }

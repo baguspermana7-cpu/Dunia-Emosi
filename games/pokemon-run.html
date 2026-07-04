@@ -732,6 +732,11 @@ let app, worldContainer, groundContainer, auraContainer, fxContainer, speedLineG
 // Parallax clouds / deco / speed lines
 let cloudGfx = [], groundDeco = [], speedLineDeco = []
 
+// ── PIXI depth parallax strips (behind gameplay, 3 layers) ──
+var _plxContainer = null, _plxLayers = [], _plxW = 0, _plxH = 0
+var _plxReduced = false
+try { _plxReduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches) } catch(_){}
+
 // ── Particle pools (shared, updated once per frame in gameLoop) ──
 const _burstParticles = []   // burst() dots
 const _ftParticles    = []   // spawnFT() floating text
@@ -883,6 +888,9 @@ const S = {
   // Pre-generate scrolling speed-line pool
   for(let i=0;i<18;i++) speedLineDeco.push({x:Math.random()*W,y:(0.08+Math.random()*0.72)*H,len:28+Math.random()*58,alpha:0.05+Math.random()*0.09})
 
+  // ── PIXI depth parallax layers (behind worldContainer) ──
+  try { _plxInit() } catch(e){ console.warn('PLX init failed', e) }
+
   initBgLayers()
   try { drawGround()     } catch(e){}
   try { addClouds()      } catch(e){}
@@ -933,6 +941,115 @@ function addClouds(){
     cl.ellipse(0,0,cw,cw*0.38).fill({color:0xffffff,alpha:0.3})
     cl.x=Math.random()*W*1.5; cl.y=H*0.06+Math.random()*H*0.2
     worldContainer.addChild(cl); cloudGfx.push(cl)
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PIXI PARALLAX DEPTH LAYERS
+// ═══════════════════════════════════════════════════════════
+// Three tiled-strip layers (FAR hills / MID treeline / NEAR tufts) drawn
+// ONCE via PIXI.Graphics, scrolled per-frame with 2-copy modulo wrap.
+// Sits behind worldContainer in the stage. Honors prefers-reduced-motion.
+
+function _plxDrawFar(g, w, h){
+  // Seamless: sin/cos with period=w → f(0)=f(w), no seam on wrap.
+  var baseY = h * 0.51, amp1 = h * 0.055, amp2 = h * 0.027
+  var STEPS = 64, pts = []
+  for(var i = 0; i <= STEPS; i++){
+    var t = i / STEPS
+    pts.push(t * w, baseY + amp1*Math.sin(t*Math.PI*2) + amp2*Math.sin(t*Math.PI*4+0.9))
+  }
+  pts.push(w, h, 0, h)
+  g.poly(pts).fill({color: BG.groundTop, alpha: 0.14})
+  // Second hill ridge, slightly lower + different phase
+  var baseY2 = h * 0.60, pts2 = []
+  for(var j = 0; j <= STEPS; j++){
+    var t2 = j / STEPS
+    pts2.push(t2 * w, baseY2 + amp1*0.60*Math.sin(t2*Math.PI*2+1.3) + amp2*0.80*Math.sin(t2*Math.PI*4+2.2))
+  }
+  pts2.push(w, h, 0, h)
+  g.poly(pts2).fill({color: BG.groundTop, alpha: 0.09})
+}
+
+function _plxDrawMid(g, w, h){
+  // Discrete trees; start at 45px, end before w-45 → no edge seam on wrap.
+  var gY = h * 0.82, seed = 0x4A17
+  var tx = 45
+  while(tx < w - 45){
+    seed = (seed * 1103515245 + 12345) & 0x7fffffff
+    var tH = h * 0.085 + (seed & 0x3F) * (h * 0.00065)
+    var tW = 18 + ((seed >> 6) & 0x1F)
+    // Canopy triangle
+    g.poly([tx - tW/2, gY, tx, gY - tH, tx + tW/2, gY]).fill({color: BG.groundTop, alpha: 0.21})
+    // Trunk
+    g.poly([tx - 2, gY, tx + 2, gY, tx + 2, gY - tH*0.28, tx - 2, gY - tH*0.28]).fill({color: BG.ground, alpha: 0.28})
+    tx += 50 + ((seed >> 14) & 0x2F)
+  }
+}
+
+function _plxDrawNear(g, w, h){
+  // Grass tufts + pebbles just above ground line; start/end at 20px from edges.
+  var gY = h * 0.82, seed = 0x7B3F
+  var nx = 20
+  while(nx < w - 20){
+    seed = (seed * 1664525 + 1013904223) & 0x7fffffff
+    var r = seed & 3
+    if(r < 2){
+      // Grass tuft: 3 blades
+      for(var b = 0; b < 3; b++){
+        var bx = nx + b * 6 - 6
+        var bH = 8 + ((seed >> (b*3+2)) & 7)
+        g.poly([bx, gY, bx+2, gY-bH, bx+4, gY]).fill({color: BG.groundTop, alpha: 0.40})
+      }
+    } else {
+      // Pebble
+      g.ellipse(nx, gY - 4, 7 + ((seed>>4)&7), 4 + ((seed>>8)&5)).fill({color: BG.ground, alpha: 0.42})
+    }
+    nx += 25 + ((seed >> 18) & 0x1F)
+  }
+}
+
+function _plxMakeLayer(drawFn, speed){
+  var gA = new PIXI.Graphics(), gB = new PIXI.Graphics()
+  drawFn(gA, _plxW, _plxH)
+  drawFn(gB, _plxW, _plxH)
+  gB.x = _plxW
+  _plxContainer.addChild(gA)
+  _plxContainer.addChild(gB)
+  return {gA:gA, gB:gB, offset:0, speed:speed, drawFn:drawFn}
+}
+
+function _plxInit(){
+  _plxW = W; _plxH = H
+  _plxContainer = new PIXI.Container()
+  app.stage.addChildAt(_plxContainer, 0)   // behind worldContainer (index 0 → world shifts to 1)
+  _plxLayers = []
+  _plxLayers.push(_plxMakeLayer(_plxDrawFar,  0.15))
+  _plxLayers.push(_plxMakeLayer(_plxDrawMid,  0.38))
+  _plxLayers.push(_plxMakeLayer(_plxDrawNear, 0.76))
+}
+
+function _plxRebuild(){
+  if(!_plxContainer) return
+  _plxW = W; _plxH = H
+  for(var _li = 0; _li < _plxLayers.length; _li++){
+    var _lay = _plxLayers[_li]
+    _lay.offset = 0
+    _lay.gA.clear(); _lay.gA.x = 0
+    _lay.gB.clear(); _lay.gB.x = _plxW
+    _lay.drawFn(_lay.gA, _plxW, _plxH)
+    _lay.drawFn(_lay.gB, _plxW, _plxH)
+  }
+}
+
+function _plxTick(dt){
+  if(_plxReduced || !_plxLayers.length) return
+  for(var _li = 0; _li < _plxLayers.length; _li++){
+    var _lay = _plxLayers[_li]
+    _lay.offset -= gameSpeed * _lay.speed * dt
+    if(_lay.offset <= -_plxW) _lay.offset += _plxW
+    _lay.gA.x = _lay.offset
+    _lay.gB.x = _lay.offset + _plxW
   }
 }
 
@@ -2330,6 +2447,8 @@ function _g23Resize(){
     groundDeco.length = 0
     drawGround()
   }
+  // Rebuild PIXI parallax strips for new viewport.
+  try { _plxRebuild() } catch(_) {}
 }
 window.addEventListener('resize', _g23Resize)
 window.addEventListener('orientationchange', _g23Resize)
@@ -2426,6 +2545,7 @@ function gameLoop(ticker){
 
   // ── Parallax scroll ──
   scrollBgLayers(gameSpeed*dt)
+  _plxTick(dt)   // PIXI depth strips (FAR/MID/NEAR behind gameplay)
 
   // ── Player physics ──
   // v54.0 (concern 12): Nature low-gravity float. natureGravMul=0.55 while

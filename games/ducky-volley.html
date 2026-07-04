@@ -251,8 +251,14 @@ function sfxSwoosh(vol){const n=Date.now();if(n-_lastSwoosh<140)return;_lastSwoo
 // ═══════════════════════════════════════════════════════════
 //  PIXI INIT
 // ═══════════════════════════════════════════════════════════
-let app, bgLayer, courtLayer, entityLayer, fxLayer
+let app, bgLayer, parallaxLayer, courtLayer, entityLayer, fxLayer
 const particles = [], trails = []
+
+// ── PARALLAX STATE ──────────────────────────────────────────
+let farClouds = []  // FAR: very slow translucent puffs in upper sky
+let midHaze = null  // MID: horizon atmospheric haze container (tiled)
+let _midHazeX = 0  // MID: accumulated x-offset for horizon drift
+const _reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 ;(async function init(){
   app = new PIXI.Application()
@@ -266,11 +272,13 @@ const particles = [], trails = []
   GROUND_Y = H * 0.75; NET_X = W / 2; NET_H = H * 0.22; NET_TOP = GROUND_Y - NET_H
 
   bgLayer = new PIXI.Container(); app.stage.addChild(bgLayer)
+  parallaxLayer = new PIXI.Container(); app.stage.addChild(parallaxLayer) // depth: above bg, below court
   courtLayer = new PIXI.Container(); app.stage.addChild(courtLayer)
   entityLayer = new PIXI.Container(); app.stage.addChild(entityLayer)
   fxLayer = new PIXI.Container(); app.stage.addChild(fxLayer)
 
   drawBackground()
+  initParallax()
   drawCourt()
   createEntities()
   resetRound('player')
@@ -511,6 +519,59 @@ function drawBackground(){
   bgLayer.addChild(kite)
 }
 
+// ═══════════════════════════════════════════════════════════
+//  PARALLAX BACKDROP (depth layers BEHIND gameplay)
+//  Built once, looped by modulo — no per-frame allocations.
+//  HONOUR prefers-reduced-motion: static when reduced.
+// ═══════════════════════════════════════════════════════════
+function initParallax(){
+  // Reset any previously built parallax objects (e.g. on resize)
+  farClouds = []; midHaze = null; _midHazeX = 0
+  if(parallaxLayer){ while(parallaxLayer.children.length) parallaxLayer.removeChildAt(0) }
+
+  if(_reducedMotion) return // static — honour prefers-reduced-motion
+
+  // MID: soft atmospheric haze band near horizon — tiled 3× for seamless horizontal wrap.
+  // Very translucent (alpha 0.07) so the base bg sky + ocean always reads through.
+  const hazeC = new PIXI.Container()
+  const hy = GROUND_Y - H * 0.065 // just above court level — near the ocean horizon
+  for(let t = 0; t < 3; t++){
+    const g = new PIXI.Graphics()
+    const ox = t * W
+    // Sine-wave top edge for an organic atmospheric look
+    g.moveTo(ox, hy + H * 0.055)
+    for(let x = 0; x <= W + 15; x += 14){
+      const ty = hy + Math.sin((x + ox) * 0.022) * 7 + Math.sin((x + ox) * 0.055) * 3
+      g.lineTo(ox + x, ty)
+    }
+    g.lineTo(ox + W, hy + H * 0.055).closePath()
+    g.fill({color:0x7dd3fc, alpha:0.07}) // sky-blue haze, almost invisible — depth hint
+    hazeC.addChild(g)
+  }
+  midHaze = hazeC
+  parallaxLayer.addChild(midHaze)
+
+  // FAR: translucent cloud puffs placed high in sky, drifting at ≈0.25× near-cloud speed.
+  // Creates visible depth separation vs the existing near-clouds in bgLayer.
+  const NFAR = 6
+  const _cwSizes  = [65, 52, 82, 58, 74, 60]
+  const _ySpreads = [0.012, 0.042, 0.022, 0.058, 0.030, 0.048]
+  const _speeds   = [0.048, 0.072, 0.038, 0.065, 0.055, 0.045]
+  for(let i = 0; i < NFAR; i++){
+    const cl = new PIXI.Graphics()
+    const cw = _cwSizes[i]
+    // Multi-puff cloud: 3 overlapping ellipses — matches style of existing near-clouds
+    cl.ellipse(0, 0, cw, cw * 0.28).fill({color:0xffffff, alpha:0.17})
+    cl.ellipse(cw * 0.42, -cw * 0.10, cw * 0.57, cw * 0.24).fill({color:0xffffff, alpha:0.12})
+    cl.ellipse(-cw * 0.37, -cw * 0.08, cw * 0.50, cw * 0.21).fill({color:0xffffff, alpha:0.10})
+    cl.x = (i / NFAR) * (W + 100) + 15 // spread evenly across + slightly beyond width
+    cl.y = H * _ySpreads[i]             // confined to upper ~6% of screen (sky only)
+    cl._speed = _speeds[i]
+    parallaxLayer.addChild(cl)
+    farClouds.push(cl)
+  }
+}
+
 // Dolphins jumping (animated in gameLoop)
 let dolphins=[]
 function spawnDolphin(){
@@ -732,8 +793,23 @@ function gameLoop(ticker){
     app.stage.x=S.shakeX; app.stage.y=S.shakeY
   } else { app.stage.x*=0.8; app.stage.y*=0.8 }
 
-  // Clouds scroll
+  // Clouds scroll (existing near-clouds in bgLayer)
   for(const cl of clouds){cl.x-=cl._speed*dt; if(cl.x<-80)cl.x=W+80}
+
+  // Parallax depth layers — frame-rate independent (ticker.deltaTime)
+  if(!_reducedMotion){
+    // FAR clouds: drift at ~0.25× near-cloud speed → perceivable depth separation
+    for(const cl of farClouds){
+      cl.x -= cl._speed * dt
+      if(cl.x < -160) cl.x = W + 100
+    }
+    // MID atmospheric haze: distinct slow drift — reinforces horizon depth
+    if(midHaze){
+      _midHazeX -= 0.022 * dt
+      if(_midHazeX < -W) _midHazeX += W
+      midHaze.x = _midHazeX
+    }
+  }
 
   // Player movement — lerp-smoothed horizontal with damping
   const spd = MOVE_SPD * (S.powerup==='speed'?1.5:1)
@@ -1380,7 +1456,16 @@ function updateG20Vol(){
   // Apply to any future audio elements
   window._g20MasterVol=m
 }
-window.addEventListener('resize',()=>{if(app)app.renderer.resize(Math.min(window.innerWidth,1400),Math.min(window.innerHeight,1000))})
+window.addEventListener('resize',()=>{
+  if(!app) return
+  const nw = Math.min(window.innerWidth, 1400), nh = Math.min(window.innerHeight, 1000)
+  app.renderer.resize(nw, nh)
+  // Update layout constants so initParallax() uses fresh W/H
+  W = app.screen.width; H = app.screen.height
+  GROUND_Y = H * 0.75; NET_X = W / 2; NET_H = H * 0.2; NET_TOP = GROUND_Y - NET_H
+  // Rebuild parallax so elements cover the new screen dimensions without gaps
+  initParallax()
+})
 </script>
 </body>
 </html>

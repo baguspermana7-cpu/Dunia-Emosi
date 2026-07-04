@@ -2098,6 +2098,11 @@
         // v52 (concerns 5+7): silence BGM only when the user truly exits PvP.
         // Tournament's per-match exit (winner advances) keeps BGM playing.
         if (!opts._noBgm) bmBgmStop();
+        // v56.9 review #23/#24: kill the per-turn question-timer RAF and the
+        // low-HP heartbeat interval on exit — neither self-stops once the root is
+        // detached, so they leaked one loop / one beeping interval per exit.
+        try { stopQuestionTimer(); } catch (e) {}
+        try { sfxLowHPStop(); } catch (e) {}
         teardown(root);
         opts.onCancel && opts.onCancel();
       }
@@ -3510,6 +3515,10 @@
     }
 
     function finishMatch (winnerIdx) {
+      // v56.9 review #23/#24: stop the question-timer RAF + low-HP heartbeat the
+      // moment the match ends, so neither bleeds into the champion screen / next match.
+      try { stopQuestionTimer(); } catch (e) {}
+      try { sfxLowHPStop(); } catch (e) {}
       sfxKO();
       // v53.0 polish #14: 5-burst fanfare haptic for match-win.
       bmHaptic([80, 40, 80, 40, 120]);

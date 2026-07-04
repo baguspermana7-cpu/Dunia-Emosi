@@ -307,7 +307,7 @@ const S = {
 }
 
 // ── Pixi app ──
-let app, world, bgLayer, parallaxFar, parallaxMid, fgLayer, hudParticles
+let app, world, bgLayer, parallaxFar, parallaxMid, parallaxNear, fgLayer, hudParticles
 let solidTiles = []
 let textures = {}
 let levelData = null
@@ -717,10 +717,11 @@ async function initPixi() {
   bgLayer = new PIXI.Container()
   parallaxFar = new PIXI.Container()
   parallaxMid = new PIXI.Container()
+  parallaxNear = new PIXI.Container()    // near foreground band — 0.8× camera
   world = new PIXI.Container()
   fgLayer = new PIXI.Container()
   hudParticles = new PIXI.Container()
-  app.stage.addChild(bgLayer, parallaxFar, parallaxMid, world, fgLayer, hudParticles)
+  app.stage.addChild(bgLayer, parallaxFar, parallaxMid, parallaxNear, world, fgLayer, hudParticles)
 
   buildBackground()
   loadLevel(S.level)
@@ -755,9 +756,12 @@ function buildBackground() {
   const PIXI = window.PIXI
   parallaxFar.removeChildren()
   parallaxMid.removeChildren()
+  if (parallaxNear) parallaxNear.removeChildren()
+  _g21NearPool.length = 0
   const theme = (levelData && levelData.theme) || 'default'
   buildFarLayer(theme, PIXI)
   buildMidLayer(theme, PIXI)
+  buildNearLayer(theme, PIXI)  // new: 0.8× camera ground-level band
 }
 
 function buildFarLayer(theme, PIXI) {
@@ -970,6 +974,84 @@ function buildMidLayer(theme, PIXI) {
       }
     }
   }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  PARALLAX NEAR LAYER (0.8× camera) — ground-level decorative band
+//  Sits between parallaxMid (0.45×) and the gameplay world (1×).
+//  30 elements × 220px = 6600px coverage — no wrapping needed since
+//  the near layer only scrolls 0.8× as far as the world (max ~4800px
+//  on a 100-tile level). Built ONCE per level load; container.x drives
+//  all movement so there are ZERO per-frame allocations here.
+//  prefers-reduced-motion: camera-following is gameplay, not decorative —
+//  the layer always follows the camera. No independent idle drift added.
+// ═══════════════════════════════════════════════════════════════════
+var _g21NearPool = []   // pool of near-layer Graphics objects
+var _g21NearTileW = 220 // spacing between elements (px, world coords)
+
+function buildNearLayer(theme, PIXI) {
+  if (!parallaxNear) return
+  parallaxNear.removeChildren()
+  _g21NearPool.length = 0
+  var tileW = 220
+  var count = 30   // 30 × 220 = 6600px — covers all levels at 0.8× factor
+  var groundY = 10 * TILE   // top of ground tile row (world coords)
+  for (var i = 0; i < count; i++) {
+    var elem = _g21MakeNearElem(theme, PIXI, i, groundY)
+    elem.x = i * tileW
+    parallaxNear.addChild(elem)
+    _g21NearPool.push(elem)
+  }
+  _g21NearTileW = tileW
+}
+
+// Build one near-layer element, themed to match the level's parallax palette.
+// Elements are ground-anchored silhouettes, semi-transparent so the CSS sky
+// gradient (body background) reads through the transparent canvas.
+function _g21MakeNearElem(theme, PIXI, seed, groundY) {
+  var g = new PIXI.Graphics()
+  var r = (seed * 7 + 3) & 3   // 0..3, deterministic variety per seed index
+  if (theme === 'cave') {
+    // Stalactites rising from the ground floor (mirrored from ceiling ones)
+    var h = 38 + r * 18
+    g.poly([-12, 0, 12, 0, 0, -h]).fill({ color: 0x374151, alpha: 0.72 })
+    g.poly([-5, 0, 5, 0, 0, -h * 0.6]).fill({ color: 0x9CA3AF, alpha: 0.4 })
+  } else if (theme === 'lava') {
+    // Lava puddle with bright core
+    var fw = 52 + r * 22
+    g.ellipse(0, -8, fw, 18).fill({ color: 0xDC2626, alpha: 0.78 })
+    g.ellipse(-fw * 0.25, -12, fw * 0.32, 10).fill({ color: 0xFBBF24, alpha: 0.62 })
+  } else if (theme === 'ice') {
+    // Ice crystal shard
+    var ic = 44 + r * 20
+    g.poly([-9, 0, 9, 0, 6, -ic * 0.55, 0, -ic, -6, -ic * 0.55]).fill({ color: 0xBAE6FD, alpha: 0.72 })
+    g.poly([-3, 0, 3, 0, 0, -ic * 0.7]).fill({ color: 0xFFFFFF, alpha: 0.42 })
+  } else if (theme === 'desert') {
+    // Sand dune mound
+    var dw = 74 + r * 26
+    g.ellipse(0, -10, dw, 22).fill({ color: 0xFDE68A, alpha: 0.68 })
+    g.ellipse(-dw * 0.22, -14, dw * 0.35, 12).fill({ color: 0xFEF9C3, alpha: 0.52 })
+  } else if (theme === 'castle' || theme === 'final') {
+    // Stone slab parapet
+    var sw = 50 + r * 16
+    g.rect(-sw / 2, -22, sw, 22).fill({ color: 0x374151, alpha: 0.72 })
+    g.rect(-sw / 2 + 2, -20, sw - 4, 6).fill({ color: 0x6B7280, alpha: 0.48 })
+  } else if (theme === 'sky') {
+    // Fluffy ground-level cloud puff
+    var cr = 18 + r * 6
+    g.circle(0, -cr, cr).fill({ color: 0xFFFFFF, alpha: 0.62 })
+    g.circle(-cr * 0.55, -cr * 0.62, cr * 0.72).fill({ color: 0xE0F2FE, alpha: 0.52 })
+    g.circle(cr * 0.55, -cr * 0.62, cr * 0.72).fill({ color: 0xE0F2FE, alpha: 0.52 })
+  } else {
+    // Default — 3-blade grass tuft (SMB1 style ground detail)
+    for (var b = -1; b <= 1; b++) {
+      var bh = 14 + ((seed * 3 + b + 7) & 3) * 5
+      var bx = b * 8
+      g.poly([bx - 4, 0, bx + 4, 0, bx, -bh]).fill({ color: 0x22C55E, alpha: 0.68 })
+    }
+  }
+  g.y = groundY
+  return g
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1664,6 +1746,10 @@ function gameLoop() {
   world.x = -S.camX
   parallaxMid.x = -S.camX * 0.45
   parallaxFar.x = -S.camX * 0.18
+  // Near layer: 0.8× camera — closer than mid but behind gameplay world.
+  // Camera-driven (gameplay), not idle drift → always active regardless of
+  // prefers-reduced-motion (per spec). No per-frame allocations.
+  if (parallaxNear) parallaxNear.x = -S.camX * 0.8
 
   // Sync DOM Pikachu position
   syncPikachuSprite()

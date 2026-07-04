@@ -389,8 +389,12 @@ function sfxWrong() { playTone(400, 120, 'sawtooth', 0.1); setTimeout(() => play
   // Check if WebGL actually rendered (detect black canvas)
   setTimeout(() => {
     try {
-      const gl = document.getElementById('pixi-canvas').getContext('webgl') || document.getElementById('pixi-canvas').getContext('webgl2')
-      if (!gl) throw new Error('No WebGL')
+      // Accept WebGL1, WebGL2, or Canvas2D — PIXI may fall back to Canvas2D on
+      // low-end / headless renderers; the canvas is still rendering the scene,
+      // so it must stay visible (hiding it would drop all parallax + gameplay art).
+      const cv = document.getElementById('pixi-canvas')
+      const ok = cv.getContext('webgl') || cv.getContext('webgl2') || cv.getContext('2d')
+      if (!ok) throw new Error('No renderer')
     } catch(_) {
       console.warn('WebGL may have failed — using CSS fallback background')
       document.getElementById('pixi-canvas').style.opacity = '0'
@@ -459,6 +463,9 @@ function sfxWrong() { playTone(400, 120, 'sawtooth', 0.1); setTimeout(() => play
 //  BACKGROUND
 // ═══════════════════════════════════════════════════════════
 let cloudGfx = [], starGfx = []
+var parallaxFarSkyline = [], parallaxFarClouds = [], parallaxNearClouds = [] // var = window-accessible for QA probe
+var REDUCED_MOTION = false
+try { REDUCED_MOTION = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) } catch(_){}
 function drawBackground() {
   // Sky gradient
   const sky = new PIXI.Graphics()
@@ -492,6 +499,47 @@ function drawBackground() {
       starGfx.push(st)
     }
   }
+  // Per-theme parallax colors — chosen for clear contrast against each sky
+  const _plx = {
+    meadow: { sl: 0x4a7096, slA: 0.62, fc: 0xffffff, fcA: 0.50, nc: 0xffffff, ncA: 0.78 },
+    sunset: { sl: 0x3a1808, slA: 0.70, fc: 0xfff0d8, fcA: 0.55, nc: 0xfff8ec, ncA: 0.72 },
+    night:  { sl: 0x0d1a40, slA: 0.72, fc: 0x2a3870, fcA: 0.48, nc: 0x2e3e80, ncA: 0.58 },
+    sakura: { sl: 0x4a1e68, slA: 0.68, fc: 0xffe8f8, fcA: 0.58, nc: 0xfff0fc, ncA: 0.80 },
+    storm:  { sl: 0x060418, slA: 0.82, fc: 0x201840, fcA: 0.52, nc: 0x221c44, ncA: 0.62 },
+    aurora: { sl: 0x010d06, slA: 0.78, fc: 0x042818, fcA: 0.48, nc: 0x053020, ncA: 0.55 },
+  }
+  const _p = _plx[BG.name] || _plx.meadow
+
+  // ── Parallax FAR: distant mountain silhouette + small far clouds ──
+  if (!REDUCED_MOTION) {
+    for (let si = 0; si < 2; si++) {
+      const sl = new PIXI.Graphics()
+      const PI2W = Math.PI * 2 / W
+      sl.moveTo(0, H).lineTo(0, H * 0.44)
+      for (let x = 0; x <= W; x += 8) {
+        const y = H * 0.35
+          + Math.sin(x * PI2W * 0.8) * H * 0.09
+          + Math.sin(x * PI2W * 2.4) * H * 0.048
+          + Math.sin(x * PI2W * 5.5) * H * 0.022
+        sl.lineTo(x, y)
+      }
+      sl.lineTo(W, H * 0.44).lineTo(W, H).closePath().fill({ color: _p.sl, alpha: _p.slA })
+      sl.x = si * W
+      bgContainer.addChild(sl)
+      parallaxFarSkyline.push(sl)
+    }
+    for (let fi = 0; fi < 7; fi++) {
+      const fc = new PIXI.Graphics()
+      const fcw = 18 + Math.random() * 38
+      // Base body + two bumps for puffy cloud shape
+      fc.ellipse(0, 0, fcw, fcw * 0.38).fill({ color: _p.fc, alpha: _p.fcA })
+      fc.ellipse(-fcw * 0.30, -fcw * 0.18, fcw * 0.52, fcw * 0.34).fill({ color: _p.fc, alpha: _p.fcA * 0.90 })
+      fc.ellipse(fcw * 0.24, -fcw * 0.20, fcw * 0.46, fcw * 0.32).fill({ color: _p.fc, alpha: _p.fcA * 0.85 })
+      fc.x = Math.random() * W * 2.2; fc.y = H * 0.04 + Math.random() * H * 0.16
+      bgContainer.addChild(fc)
+      parallaxFarClouds.push(fc)
+    }
+  }
   // Clouds
   for (let i = 0; i < 5; i++) {
     const cl = new PIXI.Graphics()
@@ -512,6 +560,51 @@ function drawBackground() {
     }
     h.lineTo(W, H).closePath().fill(color)
     bgContainer.addChild(h)
+  }
+  // ── Parallax NEAR: large foreground clouds (above hills in z-order) ──
+  if (!REDUCED_MOTION) {
+    for (let ni = 0; ni < 4; ni++) {
+      const nc = new PIXI.Graphics()
+      const ncw = 65 + Math.random() * 90
+      // Subtle shadow base underneath
+      nc.ellipse(0, ncw * 0.08, ncw * 1.05, ncw * 0.36).fill({ color: 0x000000, alpha: 0.06 })
+      // Main body
+      nc.ellipse(0, 0, ncw, ncw * 0.44).fill({ color: _p.nc, alpha: _p.ncA })
+      // Left bump
+      nc.ellipse(-ncw * 0.30, -ncw * 0.22, ncw * 0.68, ncw * 0.44).fill({ color: _p.nc, alpha: _p.ncA * 0.94 })
+      // Right bump
+      nc.ellipse(ncw * 0.26, -ncw * 0.18, ncw * 0.60, ncw * 0.38).fill({ color: _p.nc, alpha: _p.ncA * 0.90 })
+      // Top center peak
+      nc.ellipse(-ncw * 0.04, -ncw * 0.36, ncw * 0.40, ncw * 0.28).fill({ color: _p.nc, alpha: _p.ncA * 0.86 })
+      nc.x = Math.random() * W * 2.2; nc.y = H * 0.05 + Math.random() * H * 0.22
+      bgContainer.addChild(nc)
+      parallaxNearClouds.push(nc)
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PARALLAX TICK
+// ═══════════════════════════════════════════════════════════
+function tickParallax(dt) {
+  if (REDUCED_MOTION) return
+  // FAR skyline — 0.05× pipe speed, seamless 2-panel wrap
+  const farSpd = PIPE_SPEED * 0.05 * dt
+  for (const sl of parallaxFarSkyline) sl.x -= farSpd
+  if (parallaxFarSkyline.length === 2) {
+    const sl0 = parallaxFarSkyline[0], sl1 = parallaxFarSkyline[1]
+    if (sl0.x + W < 0) sl0.x = sl1.x + W
+    if (sl1.x + W < 0) sl1.x = sl0.x + W
+  }
+  // FAR clouds — 0.12×
+  for (const fc of parallaxFarClouds) {
+    fc.x -= PIPE_SPEED * 0.12 * dt
+    if (fc.x < -100) fc.x = W + Math.random() * W * 0.6
+  }
+  // NEAR clouds — 0.65×
+  for (const nc of parallaxNearClouds) {
+    nc.x -= PIPE_SPEED * 0.65 * dt
+    if (nc.x < -200) nc.x = W + Math.random() * W * 0.4
   }
 }
 
@@ -677,6 +770,7 @@ async function createBird() {
 // ═══════════════════════════════════════════════════════════
 function gameLoop(ticker) {
   S.frame++
+  tickParallax(ticker.deltaTime) // runs every frame — idle, paused, and running
   if (!S.running || S.paused || S.gameOver) {
     // Idle bob before start
     if (!S.started && birdContainer) {

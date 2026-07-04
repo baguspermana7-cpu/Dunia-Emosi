@@ -262,16 +262,45 @@ let bgLayer, gameLayer, fxLayer
 //  BACKGROUND
 // ═══════════════════════════════════════════════════════════
 // Parallax NPCs — updated each frame for drift
-let _bgParallax = { clouds: [], birds: [], mountains: [] }
+let _bgParallax = { clouds: [], birds: [], mountains: [], candyFar: [], candyMid: [], candyFore: [] }
+let _candyReducedMotion = false
+try { _candyReducedMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) } catch(_) {}
 
 function drawBackground() {
-  _bgParallax = { clouds: [], birds: [], mountains: [] }
+  _bgParallax = { clouds: [], birds: [], mountains: [], candyFar: [], candyMid: [], candyFore: [] }
 
   // Sky gradient
   const sky = new PIXI.Graphics()
   sky.rect(0, 0, W, H * 0.7).fill(0xB4D9E7)
   sky.rect(0, H * 0.5, W, H * 0.2).fill({ color: 0x87CEEB, alpha: 0.3 })
   bgLayer.addChild(sky)
+
+  // ── FAR candy hill silhouettes — 2 tiled Graphics tiles looping horizontally ──
+  // Pink / lavender / yellow pastel hills peek behind the existing grey mountains,
+  // creating a soft candy-landscape depth. Very slow drift (0.08 px/tick at 60fps).
+  // Built once per drawBackground call; zero per-frame allocations.
+  ;(function buildCandyFar() {
+    var tileW = Math.ceil(W) + 20
+    var layerDefs = [
+      { col: 0xf9a8d4, alpha: 0.36, baseR: 0.600, ampR: 0.065, freq: 0.0060 },
+      { col: 0xc4b5fd, alpha: 0.28, baseR: 0.628, ampR: 0.050, freq: 0.0090 },
+      { col: 0xfde68a, alpha: 0.24, baseR: 0.652, ampR: 0.038, freq: 0.0140 },
+    ]
+    for (var ti = 0; ti < 2; ti++) {
+      var cf = new PIXI.Graphics()
+      layerDefs.forEach(function(l) {
+        var baseY = H * l.baseR, amp = H * l.ampR
+        for (var x = 0; x <= tileW + 2; x += 6) {
+          var y = baseY - Math.sin(x * l.freq) * amp - Math.sin(x * l.freq * 2.3 + 1.2) * amp * 0.35
+          if (x === 0) cf.moveTo(x, y); else cf.lineTo(x, y)
+        }
+        cf.lineTo(tileW, H).lineTo(0, H).closePath().fill({ color: l.col, alpha: l.alpha })
+      })
+      cf.x = ti * tileW
+      bgLayer.addChild(cf)
+      _bgParallax.candyFar.push({ g: cf, tileW: tileW })
+    }
+  })()
 
   // Distant mountains (slowest parallax layer, 0.05 px/frame)
   for (let i = 0; i < 3; i++) {
@@ -338,6 +367,48 @@ function drawBackground() {
     })
   }
 
+  // ── MID candy floaters — lollipops + gumdrops drifting below the bird layer ──
+  // Positioned in the H*0.34-0.50 zone (below clouds/birds, above green hills).
+  // Alternating left/right drift. Gentle sine bob. alpha=0.50 = reads as depth, not foreground.
+  ;(function buildCandyMid() {
+    var defs = [
+      { type:'lolly', x:W*0.07, y:H*0.36, r:16, c1:0xf43f5e, c2:0xfde68a, spd:0.18, dir:1  },
+      { type:'drop',  x:W*0.24, y:H*0.44, r:18, c1:0xa855f7, c2:null,     spd:0.22, dir:-1 },
+      { type:'lolly', x:W*0.42, y:H*0.38, r:14, c1:0x22d3ee, c2:0xfbbf24, spd:0.20, dir:1  },
+      { type:'drop',  x:W*0.60, y:H*0.48, r:16, c1:0x4ade80, c2:null,     spd:0.25, dir:-1 },
+      { type:'lolly', x:W*0.78, y:H*0.40, r:15, c1:0xf97316, c2:0xffffff, spd:0.17, dir:1  },
+      { type:'drop',  x:W*0.90, y:H*0.34, r:14, c1:0x38bdf8, c2:null,     spd:0.21, dir:-1 },
+    ]
+    defs.forEach(function(def, i) {
+      var mc = new PIXI.Container()
+      var mg = new PIXI.Graphics()
+      if (def.type === 'lolly') {
+        // Candy circle
+        mg.circle(0, 0, def.r).fill({ color: def.c1, alpha: 0.82 })
+        // Horizontal stripe across middle
+        if (def.c2) mg.moveTo(-def.r * 0.65, 0).lineTo(def.r * 0.65, 0).stroke({ color: def.c2, width: def.r * 0.28, alpha: 0.62 })
+        // Gloss highlight
+        mg.ellipse(-def.r * 0.28, -def.r * 0.30, def.r * 0.24, def.r * 0.13).fill({ color: 0xffffff, alpha: 0.40 })
+        // Stick
+        mg.moveTo(0, def.r).lineTo(0, def.r * 3.0).stroke({ color: 0xd4a574, width: 3 })
+      } else {
+        // Gumdrop dome — arc(π→0) is upper semicircle in PIXI (y-down coords)
+        mg.moveTo(-def.r, 0)
+        mg.arc(0, 0, def.r, Math.PI, 0)
+        mg.lineTo(def.r, def.r * 0.40).lineTo(-def.r, def.r * 0.40).closePath()
+          .fill({ color: def.c1, alpha: 0.78 })
+        // Gloss
+        mg.ellipse(-def.r * 0.26, -def.r * 0.32, def.r * 0.28, def.r * 0.15).fill({ color: 0xffffff, alpha: 0.36 })
+        // Oval base shadow
+        mg.ellipse(0, def.r * 0.40, def.r * 0.88, def.r * 0.18).fill({ color: def.c1, alpha: 0.42 })
+      }
+      mc.addChild(mg)
+      mc.x = def.x; mc.y = def.y; mc.alpha = 0.50
+      bgLayer.addChild(mc)
+      _bgParallax.candyMid.push({ g: mc, speed: def.spd, dir: def.dir, bobPhase: i * 0.65, bobAmp: 4 + def.r * 0.28, baseY: def.y })
+    })
+  })()
+
   // Hills (mid-ground)
   const hills = new PIXI.Graphics()
   hills.moveTo(0, H * 0.7)
@@ -377,6 +448,41 @@ function drawBackground() {
     fl.alpha = 0.55 + Math.random() * 0.35
     bgLayer.addChild(fl)
   }
+
+  // ── FORE candy posts — striped candy-cane posts at ground edge (fastest layer) ──
+  // These are rendered LAST in bgLayer so they appear in front of trees/flowers
+  // but behind gameplay sprites (which live in gameLayer above bgLayer).
+  // Alternating left/right drift; alpha 0.64 = clearly present but not garish.
+  ;(function buildCandyFore() {
+    var foreDefs = [
+      { x: W*0.06, col: 0xef4444, col2: 0xffffff, r: 13, spd: 0.40, dir:  1 },
+      { x: W*0.30, col: 0x22c55e, col2: 0xfde68a, r: 11, spd: 0.44, dir: -1 },
+      { x: W*0.54, col: 0x3b82f6, col2: 0xffffff, r: 14, spd: 0.38, dir:  1 },
+      { x: W*0.76, col: 0xf97316, col2: 0xa855f7, r: 12, spd: 0.46, dir: -1 },
+      { x: W*0.93, col: 0xec4899, col2: 0xfbbf24, r: 12, spd: 0.42, dir:  1 },
+    ]
+    var foreBaseY = H * 0.74
+    foreDefs.forEach(function(def) {
+      var fc = new PIXI.Container()
+      var fg = new PIXI.Graphics()
+      var postH = def.r * 5.0
+      // Post body — main color fill
+      fg.rect(-def.r * 0.40, -postH, def.r * 0.80, postH).fill({ color: def.col, alpha: 0.80 })
+      // Stripe bands across the post
+      for (var s = 0; s < 5; s++) {
+        fg.rect(-def.r * 0.40, -postH + s * (postH / 5) + postH * 0.07, def.r * 0.80, postH * 0.08)
+          .fill({ color: def.col2, alpha: 0.55 })
+      }
+      // Candy ball on top of post
+      fg.circle(0, -postH - def.r, def.r).fill({ color: def.col, alpha: 0.88 })
+      // Ball gloss highlight
+      fg.ellipse(-def.r * 0.28, -postH - def.r * 1.36, def.r * 0.25, def.r * 0.14).fill({ color: 0xffffff, alpha: 0.50 })
+      fc.addChild(fg)
+      fc.x = def.x; fc.y = foreBaseY; fc.alpha = 0.64
+      bgLayer.addChild(fc)
+      _bgParallax.candyFore.push({ g: fc, speed: def.spd, dir: def.dir })
+    })
+  })()
 }
 
 // Parallax tick — called each frame from gameLoop
@@ -400,6 +506,30 @@ function updateParallax(dt) {
     m.g.x -= m.speed * dt
     if (m.g.x < -W2) m.g.x = 0
   })
+  // ── Candy parallax layers — skipped when prefers-reduced-motion ──
+  // Frame-rate independent: all motion driven by deltaTime (ticker.deltaTime).
+  if (!_candyReducedMotion) {
+    // FAR hills — very slow leftward loop (2 tiles)
+    var cfTotal = _bgParallax.candyFar.length
+    _bgParallax.candyFar.forEach(function(cf) {
+      cf.g.x -= 0.08 * dt
+      if (cf.g.x + cf.tileW < 0) cf.g.x += cf.tileW * cfTotal
+    })
+    // MID floaters — drift + gentle sine bob
+    _bgParallax.candyMid.forEach(function(cm) {
+      cm.g.x += cm.speed * cm.dir * dt
+      cm.bobPhase += 0.028 * dt
+      cm.g.y = cm.baseY + Math.sin(cm.bobPhase) * cm.bobAmp
+      if (cm.dir > 0 && cm.g.x > W2 + 70) cm.g.x = -70
+      if (cm.dir < 0 && cm.g.x < -70) cm.g.x = W2 + 70
+    })
+    // FORE posts — faster drift, wrap at screen edges
+    _bgParallax.candyFore.forEach(function(cf) {
+      cf.g.x += cf.speed * cf.dir * dt
+      if (cf.dir > 0 && cf.g.x > W2 + 80) cf.g.x = -80
+      if (cf.dir < 0 && cf.g.x < -80) cf.g.x = W2 + 80
+    })
+  }
 }
 
 // ═══════════════════════════════════════════════════════════
