@@ -1,5 +1,21 @@
 /* =============================================================================
- * battle-arena.js — window.BattleArena  (v1.0.0, 2026-07-03, A-317)
+ * battle-arena.js — window.BattleArena  (v1.1.0, 2026-07-03, A-317 + A-319)
+ * =============================================================================
+ * A-319 screen-by-screen video fidelity (VISUAL ONLY — logic untouched):
+ *   - stadium backdrop (assets/background/gym/stadium-video.webp) is the
+ *     DEFAULT arena bg, mounted in a LAYERED stage: bg (slow idle drift)
+ *     → sparkle motes → fighters → flower/grass FOREGROUND corners in front.
+ *     bg/fg counter-shift on lunge + punch-in (transform-only parallax).
+ *   - heroMode(on): action-select close-up — bg gets STATIC blur(2px)
+ *     brightness(1.05) DOF, player fighter grows, enemy fades (f12).
+ *   - quiz (f19): cream chunky question w/ thick brown outline, DARK charcoal
+ *     narration pill, white glass answer pills w/ dark numbers, orange energy
+ *     AURA behind the attacker while the quiz is open.
+ *   - answer (f24): .qz-correct pill gets green glow ring + ✓ badge.
+ *   - damage (f29): CAMERA PUNCH-IN to ~1.55 at the hit fighter (280ms out /
+ *     ~650ms hold / 300ms back) + bg blur(4px) + chunky ORANGE brown-outlined
+ *     damage numbers. Reduced-motion: punch-in skipped, pops kept.
+ *   - center-top VS scoreboard chip (cosmetic).
  * =============================================================================
  * SHARED battle-presentation engine for ALL Pokemon battles (M-303 mandate:
  * cross-game concerns live in ONE shared engine — never per-game hardcoded).
@@ -101,9 +117,10 @@
     '.ba-dot.ba-fainted::after{background:#d1d5db;border-color:#6b7280}',
     '.ba-card-extra:empty{display:none}',
     /* ── narration pill (bottom-left) ── */
+    /* v1.1.0 A-319 (f19): DARK charcoal narration pill w/ white text — the video look. */
     '.ba-narrate{position:fixed;left:10px;bottom:var(--ba-narrate-bottom,12px);z-index:120;max-width:min(78vw,420px);',
-    'background:rgba(255,255,255,.94);color:#1f2937;border-radius:999px;padding:10px 18px;font-size:15px;font-weight:800;',
-    'box-shadow:0 6px 16px rgba(0,0,0,.3),inset 0 1px 0 #fff;line-height:1.3;pointer-events:auto;cursor:pointer;',
+    'background:rgba(30,32,40,.92);color:#fff;border-radius:16px;padding:10px 18px;font-size:15px;font-weight:800;',
+    'box-shadow:0 6px 16px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.12);line-height:1.3;pointer-events:auto;cursor:pointer;',
     'transition:opacity .18s,transform .18s;transform-origin:left bottom}',
     '.ba-narrate.ba-hidden{opacity:0;transform:scale(.9);pointer-events:none}',
     '.ba-narrate-pop{animation:baNarratePop .22s ease-out}',
@@ -113,15 +130,49 @@
     '.ba-quiz-center{position:absolute;left:0;right:0;top:20%;display:flex;flex-direction:column;align-items:center;gap:8px;padding:0 12px}',
     '.ba-quiz-label{background:rgba(255,255,255,.88);color:#7c3aed;border-radius:999px;padding:4px 14px;',
     'font-size:11px;font-weight:900;letter-spacing:1.6px;box-shadow:0 3px 10px rgba(0,0,0,.25)}',
-    '.ba-quiz .qz-question{color:#fff;font-size:clamp(38px,10vw,72px);font-weight:900;margin-bottom:0;line-height:1.05;',
-    'text-shadow:0 0 22px rgba(255,170,60,.95),0 0 48px rgba(255,140,40,.55),0 3px 10px rgba(0,0,0,.6);',
-    '-webkit-text-stroke:2px rgba(146,64,14,.28)}',
+    /* v1.1.0 A-319 (f19): CREAM chunky digits with a THICK dark-brown outline — the
+       video look — instead of the warm glow. Fredoka carries a 3px stroke cleanly. */
+    '.ba-quiz .qz-question{color:#fff6df;font-family:"Fredoka One",cursive,sans-serif;',
+    'font-size:clamp(38px,10vw,72px);font-weight:900;margin-bottom:0;line-height:1.05;',
+    '-webkit-text-stroke:3px #5b3a1e;paint-order:stroke fill;',
+    'text-shadow:0 3px 0 #5b3a1e,0 6px 14px rgba(0,0,0,.45)}',
     '.ba-quiz .qz-choices{position:absolute;left:50%;transform:translateX(-50%);width:min(94vw,600px);',
     'bottom:calc(12px + env(safe-area-inset-bottom,0px));pointer-events:auto;gap:10px}',
     '.ba-quiz .qz-choices .qz-pill{max-width:none;min-height:56px;border-radius:20px;font-size:clamp(20px,5.4vw,28px);',
     'background:rgba(255,255,255,.30);border:2px solid rgba(255,255,255,.75);color:#fff;',
     'text-shadow:0 2px 4px rgba(0,0,0,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);',
     'box-shadow:0 8px 20px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.55)}',
+    /* v1.1.0 A-319 (f24): correct answer = green pill + glow ring + ✓ badge */
+    '.ba-quiz .qz-choices .qz-pill.qz-correct{background:rgba(74,222,128,.55)!important;border-color:#4ade80!important;',
+    'color:#fff!important;box-shadow:0 0 0 4px rgba(74,222,128,.45),0 0 26px rgba(74,222,128,.75),0 8px 20px rgba(0,0,0,.3)!important;',
+    'position:relative}',
+    '.ba-quiz .qz-choices .qz-pill.qz-correct::after{content:"✓";position:absolute;top:-12px;right:-8px;width:26px;height:26px;',
+    'border-radius:50%;background:#22c55e;color:#fff;font-size:17px;font-weight:900;display:grid;place-items:center;',
+    'box-shadow:0 2px 6px rgba(0,0,0,.35);-webkit-text-stroke:0;text-shadow:none}',
+    /* v1.1.0 A-319 (f24): orange energy AURA behind the attacker while the quiz is open */
+    '.ba-aura{position:absolute;left:50%;top:52%;width:130%;height:120%;transform:translate(-50%,-50%);z-index:-1;',
+    'pointer-events:none;background:radial-gradient(ellipse at 50% 60%,rgba(255,150,40,.42) 0%,rgba(255,110,20,.20) 42%,transparent 68%);',
+    'animation:baAura 1.1s ease-in-out infinite alternate}',
+    '.ba-aura::before,.ba-aura::after{content:"";position:absolute;border-radius:50%;border:3px solid rgba(255,170,60,.5);',
+    'inset:12% 18%;border-left-color:transparent;border-bottom-color:transparent;animation:baAuraSpin 2.4s linear infinite}',
+    '.ba-aura::after{inset:22% 26%;border-color:rgba(255,210,120,.45);border-right-color:transparent;border-top-color:transparent;',
+    'animation-duration:1.7s;animation-direction:reverse}',
+    '@keyframes baAura{from{opacity:.55;transform:translate(-50%,-50%) scale(.96)}to{opacity:.95;transform:translate(-50%,-50%) scale(1.05)}}',
+    '@keyframes baAuraSpin{to{rotate:360deg}}',
+    /* v1.1.0 A-319: layered depth — bg idle drift, corner flower FOREGROUND, sparkle motes */
+    '.ba-backdrop{transition:filter .35s ease;will-change:transform}',
+    '.ba-drift{animation:baDrift 14s ease-in-out infinite alternate}',
+    '@keyframes baDrift{from{transform:translate(-3px,0) scale(1.02)}to{transform:translate(3px,-2px) scale(1.02)}}',
+    '.ba-fg{position:fixed;bottom:0;z-index:40;pointer-events:none;width:min(34vw,330px);',
+    'transition:transform .45s cubic-bezier(.22,.9,.4,1);will-change:transform}',
+    '.ba-fg-l{left:0}','.ba-fg-r{right:0}','.ba-fg img{display:block;width:100%;height:auto}',
+    '.ba-mote{position:fixed;z-index:30;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.85);',
+    'box-shadow:0 0 6px rgba(255,255,255,.8);pointer-events:none;animation:baMote linear infinite}',
+    '@keyframes baMote{from{transform:translateY(-4vh)}to{transform:translateY(104vh)}}',
+    '.ba-vs{position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:55;background:rgba(30,32,40,.88);',
+    'color:#fff;border-radius:12px;padding:5px 14px;font-size:13px;font-weight:900;letter-spacing:1.5px;',
+    'box-shadow:0 4px 10px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.15);pointer-events:none}',
+    '.ba-punch{transition:transform .28s cubic-bezier(.22,.9,.3,1);will-change:transform}',
     /* ── projectile orb + trail ── */
     '.ba-orb{position:fixed;width:26px;height:26px;border-radius:50%;z-index:9210;pointer-events:none;',
     'background:radial-gradient(circle at 35% 32%,#fff 0%,var(--ba-c,#fbbf24) 58%,var(--ba-c,#fbbf24) 100%);',
@@ -161,8 +212,9 @@
     'padding:8px 16px;box-shadow:0 5px 14px rgba(0,0,0,.28);display:inline-block}',
     /* ── reduced motion: kill decorative loops, keep state visible ── */
     '@media (prefers-reduced-motion: reduce){',
-    '.ba-bob,.ba-knock-l,.ba-knock-r,.ba-hitflash,.ba-stumble,.ba-narrate-pop{animation:none!important}',
+    '.ba-bob,.ba-knock-l,.ba-knock-r,.ba-hitflash,.ba-stumble,.ba-narrate-pop,.ba-aura,.ba-drift,.ba-mote{animation:none!important}',
     '.ba-fighter.ba-faint{transition:none}',
+    '.ba-punch,.ba-fg{transition:none}',
     '.ba-dmg{animation-duration:.6s}}'
   ].join('')
 
@@ -193,19 +245,48 @@
   // ── scene state ────────────────────────────────────────────────────────────
   var S = null // { host, backdrop, field, narrateEl, fighters:{player,enemy}, quiz, opts }
 
+  // v1.1.0 A-319 — asset base: gym-pokemon lives under /games/, index at the root.
+  function assetBase () {
+    try { return location.pathname.indexOf('/games/') >= 0 ? '../' : '' } catch (_) { return '' }
+  }
+
   function mountScene (hostEl, opts) {
     injectCSS()
     opts = opts || {}
     destroyScene()
     var host = hostEl || document.body
-    var backdrop = null
-    if (opts.bg) {
-      backdrop = el('div', 'ba-backdrop', host)
-      backdrop.style.cssText = 'position:fixed;inset:0;z-index:0;background-size:cover;background-position:center;' +
-        'background-image:url("' + opts.bg + '")'
-    }
-    var field = el('div', 'ba-field', host)
+    // v1.1.0 A-319 — the video's outdoor STADIUM (extracted from the owner's reference)
+    // is the DEFAULT arena; callers may still pass a themed bg. Backdrop always exists
+    // (DOF + drift + parallax need the layer).
+    var bgUrl = opts.bg || (assetBase() + 'assets/background/gym/stadium-video.webp')
+    var backdrop = el('div', 'ba-backdrop' + (REDUCED ? '' : ' ba-drift'), host)
+    backdrop.style.cssText = 'position:fixed;inset:-8px;z-index:0;background-size:cover;background-position:center;' +
+      'background-image:url("' + bgUrl + '")'
+    var field = el('div', 'ba-field ba-punch', host)
     if (opts.ground) field.style.setProperty('--ba-ground', opts.ground)
+    // foreground flower/grass corners (from the video) — IN FRONT of the fighters,
+    // counter-shifting on lunge/punch-in = visible layer separation on every action.
+    var fgL = null, fgR = null
+    if (opts.foreground !== false) {
+      fgL = el('div', 'ba-fg ba-fg-l', host)
+      fgL.innerHTML = '<img alt="" src="' + assetBase() + 'assets/background/gym/stadium-fg-left.webp">'
+      fgR = el('div', 'ba-fg ba-fg-r', host)
+      fgR.innerHTML = '<img alt="" src="' + assetBase() + 'assets/background/gym/stadium-fg-right.webp">'
+    }
+    // slow-falling sparkle motes (≤8; pure CSS animation; off under reduced motion)
+    var motes = []
+    if (!REDUCED && opts.motes !== false) {
+      for (var mi = 0; mi < 8; mi++) {
+        var m = el('div', 'ba-mote', host)
+        m.style.left = (6 + (mi * 12.3) % 88) + 'vw'
+        m.style.animationDuration = (9 + (mi % 4) * 3) + 's'
+        m.style.animationDelay = (-mi * 2.1) + 's'
+        m.style.opacity = String(0.35 + (mi % 3) * 0.2)
+        motes.push(m)
+      }
+    }
+    var vsChip = null
+    if (opts.vs !== false) { vsChip = el('div', 'ba-vs', host); vsChip.textContent = opts.vsText || 'VS' }
     var narrateEl = el('div', 'ba-narrate ba-hidden', host)
     if (opts.narrateBottom) narrateEl.style.setProperty('--ba-narrate-bottom', opts.narrateBottom)
     if (typeof opts.onNarrateTap === 'function') {
@@ -215,13 +296,56 @@
       host: host,
       backdrop: backdrop,
       field: field,
+      fgL: fgL,
+      fgR: fgR,
+      motes: motes,
+      vsChip: vsChip,
       narrateEl: narrateEl,
       fighters: { player: null, enemy: null },
       quiz: null,
+      aura: null,
       opts: opts,
       raf: []
     }
     return S
+  }
+
+  // v1.1.0 A-319 — depth-of-field: static blur on the (static) backdrop only — cheap.
+  function setDof (px) {
+    if (!S || !S.backdrop) return
+    S.backdrop.style.filter = px > 0 ? ('blur(' + px + 'px) brightness(1.05)') : ''
+  }
+
+  // v1.1.0 A-319 — parallax kick: bg shifts OPPOSITE the action, foreground WITH it,
+  // amplified — visible layer separation (transform-only; springs back via CSS transition).
+  function parallaxKick (dirX) {
+    if (!S || REDUCED) return
+    var d = dirX < 0 ? -1 : 1
+    if (S.backdrop) S.backdrop.style.transform = 'translate(' + (-d * 6) + 'px,0) scale(1.02)'
+    if (S.fgL) S.fgL.style.transform = 'translate(' + (d * 12) + 'px,0)'
+    if (S.fgR) S.fgR.style.transform = 'translate(' + (d * 12) + 'px,0)'
+    setTimeout(function () {
+      if (!S) return
+      if (S.backdrop) S.backdrop.style.transform = ''
+      if (S.fgL) S.fgL.style.transform = ''
+      if (S.fgR) S.fgR.style.transform = ''
+    }, 460)
+  }
+
+  // v1.1.0 A-319 (f29) — camera PUNCH-IN toward the hit fighter: field scales ~1.35 at
+  // the fighter's screen position, holds, eases back; bg blurs during the close-up.
+  function punchIn (side) {
+    if (!S || REDUCED || !S.fighters[side]) return
+    var c = centerOf(S.fighters[side].img)
+    var f = S.field
+    f.style.transformOrigin = c.x + 'px ' + c.y + 'px'
+    f.style.transform = 'scale(1.35)'
+    setDof(4)
+    setTimeout(function () {
+      if (!S) return
+      S.field.style.transform = ''
+      setDof(S.quiz ? 2 : 0)
+    }, 900)
   }
 
   function setBackdrop (url) {
@@ -361,14 +485,23 @@
     var qEl = el('div', '', center)
     var cEl = el('div', '', ov)
     S.quiz = ov
+    // v1.1.0 A-319 (f12/f19): depth-of-field on the backdrop while the quiz/close-up is
+    // open + an orange energy AURA behind the attacker (defaults to the player).
+    setDof(2)
+    var auraSide = (opts.auraSide === false) ? null : (opts.auraSide || 'player')
+    if (auraSide && S.fighters[auraSide] && !REDUCED) {
+      S.aura = el('div', 'ba-aura', S.fighters[auraSide].wrap)
+    }
     global.QuizEngine.fill(qEl, cEl, opts, function (res) {
-      closeQuiz()
-      if (cb) cb(res)
+      // brief hold so the kid SEES the green ✓ ring before the scene moves on (f24)
+      setTimeout(function () { closeQuiz(); if (cb) cb(res) }, 60)
     })
     return { close: closeQuiz }
   }
   function closeQuiz () {
     if (S && S.quiz) { try { S.quiz.remove() } catch (_) {} S.quiz = null }
+    if (S && S.aura) { try { S.aura.remove() } catch (_) {} S.aura = null }
+    setDof(0)
   }
 
   // ── attack: lunge + glowing orb projectile (element-based core) ────────────
@@ -420,6 +553,8 @@
     void f.wrap.offsetWidth
     f.wrap.classList.add('ba-knock-' + dir)
     f.img.classList.add('ba-hitflash')
+    punchIn(side)                                  // v1.1.0 A-319 (f29) camera close-up
+    parallaxKick(side === 'enemy' ? 1 : -1)        // layers separate on the impact
     setTimeout(function () {
       f.wrap.classList.remove('ba-knock-' + dir)
       f.img.classList.remove('ba-hitflash')
@@ -447,6 +582,7 @@
     var dist = Math.min(64, len * 0.16)
     var ux = dx / len * dist
     var uy = dy / len * dist * 0.35
+    parallaxKick(dx >= 0 ? 1 : -1)   // v1.1.0 A-319 — layers separate on the lunge
     var OUT = 250
     var BACK = 230
     var start = performance.now()
@@ -547,11 +683,19 @@
     try { S.field.remove() } catch (_) {}
     try { S.narrateEl.remove() } catch (_) {}
     if (S.backdrop) { try { S.backdrop.remove() } catch (_) {} }
+    // v1.1.0 A-319 layers
+    if (S.fgL) { try { S.fgL.remove() } catch (_) {} }
+    if (S.fgR) { try { S.fgR.remove() } catch (_) {} }
+    if (S.vsChip) { try { S.vsChip.remove() } catch (_) {} }
+    if (S.motes) for (var i = 0; i < S.motes.length; i++) { try { S.motes[i].remove() } catch (_) {} }
     S = null
   }
 
   global.BattleArena = {
-    version: '1.0.0',
+    version: '1.1.0',
+    setDof: setDof,
+    punchIn: punchIn,
+    parallaxKick: parallaxKick,
     injectCSS: injectCSS,
     mountScene: mountScene,
     setBackdrop: setBackdrop,
