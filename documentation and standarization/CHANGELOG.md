@@ -1,5 +1,14 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-05 — v57.8 "Balapan Kereta PvP — compact HUD/banner on narrow + portrait (no overlap)" (A-333)
+
+Continuing the responsive pass: the PvP scene had NO breakpoint, so on narrow/portrait phones the two
+HUD cards (min-width 140px) and the top-center "PVP MODE" banner overlapped. Added a `@media
+(max-width:600px)` block in the `#g14vs` CSS that compacts the HUD (min-width 88px, smaller avatar/
+speed/hearts, `.p2/.p1` hug the edges), shrinks the banner (max-width 38%, hides the tagline line), and
+tightens the foot bars. Verified at 390 / 414 / 1024: zero HUD↔banner overlap, no horizontal overflow,
+0 errors; `qa-g14-versus-drive` ALL PASS. sw `v57.7`→`v57.8`.
+
 ## 2026-07-05 — v57.7 "Balapan Kereta PvP — moving seamless world + correct facing + responsive rail-fit" (A-329 finish + A-332)
 
 Owner (angry — "jalannya yg bergerak, menghadap salah, phisic beda dg originalnya… samakan dg
