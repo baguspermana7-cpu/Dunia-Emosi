@@ -219,7 +219,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v56.7</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v57.7</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="data/train-world.js?v=55.89"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
@@ -5966,10 +5966,19 @@ function applyRdeScaling() {
     // ---- shared PvP racing scene (v57.3 — one landscape scene, no bands) ────
     + '.gvs-scene{position:relative;flex:1;min-height:0;overflow:hidden}'
     + '.gvs-scene.gvs-fallback{background:linear-gradient(180deg,#bfe0f5 0%,#d7ecc6 58%,#c7e0a8 100%)}'
-    + '.gvs-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 62%;z-index:0}'
+    // v57.7 — the world SCROLLS like the original Adventure scene. A mirror-tiled track
+    // (each tile = one viewport-wide "cover" of the plate; alternate tiles flipped) makes
+    // the scroll SEAMLESS — a flipped tile's edge always matches its neighbour, so there is
+    // NO wrap seam ("terpotong/cacat"). The track is driven per-frame by the race pace.
+    + '.gvs-bg{position:absolute;inset:0;z-index:0;overflow:hidden}'
+    + '.gvs-bgtrack{position:absolute;top:0;bottom:0;left:0;width:300%;display:flex;will-change:transform}'
+    + '.gvs-tile{flex:0 0 33.3333%;height:100%;background-position:center 58%;background-size:cover;background-repeat:no-repeat}'
+    + '.gvs-tile.mir{transform:scaleX(-1)}'
+    // soft edge vignette adds depth
+    + '.gvs-vig{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(18,20,30,.16),transparent 12%,transparent 88%,rgba(18,20,30,.16))}'
     + '.gvs-fg{position:absolute;left:0;right:0;bottom:0;height:20%;z-index:1;pointer-events:none;'
     +   'background:repeating-linear-gradient(90deg,rgba(80,58,38,.12) 0 44px,transparent 44px 96px)}'
-    + '.gvs-anim .gvs-fg{animation:gvsScroll 1.5s linear infinite}'
+    + '.gvs-anim .gvs-fg{animation:gvsScroll 1.1s linear infinite}'
     + '@keyframes gvsScroll{from{transform:translateX(0)}to{transform:translateX(-96px)}}'
     // exit button (float, top-left)
     + '.gvs-x-float{position:absolute;top:6px;left:6px;z-index:8;width:34px;height:34px;font-size:16px;border-radius:11px}'
@@ -6006,15 +6015,22 @@ function applyRdeScaling() {
     + '.gvs-slane small{font-size:8px;font-weight:900;letter-spacing:.4px;margin-top:1px}'
     + '.gvs-slane:active{transform:translateY(3px);box-shadow:0 1px 0 var(--e)}'
     // trains — bigger, center-anchored, player-neon outline (P1 green / P2 blue)
-    + '.gvs-train{position:absolute;top:72%;z-index:3;height:clamp(46px,13vh,92px);width:auto;transform:translate(-50%,-50%);'
+    // v57.7 — bottom-anchored (translate -100%) so the WHEELS sit on the near/lower steel
+    // rail of the lane; height is set inline from the rail gap (responsive), CSS is fallback.
+    + '.gvs-train{position:absolute;top:72%;z-index:3;height:clamp(40px,11vh,86px);width:auto;transform:translate(-50%,-100%);'
     +   'transition:top .16s ease;pointer-events:none}'
-    + '.gvs-train.emoji{font-size:clamp(38px,11vh,74px);line-height:1;height:auto}'
+    + '.gvs-train.emoji{height:auto}'
+    // inner sprite carries the facing mirror so it survives the wrapper animations
+    // (v57.7 — every train faces RIGHT = travel direction, like the original game).
+    + '.gvs-tsprite{display:block;height:100%;width:auto}'
+    + '.gvs-train.emoji .gvs-tsprite{font-size:clamp(38px,11vh,74px);line-height:1}'
+    + '.gvs-train.faceL .gvs-tsprite{transform:scaleX(-1)}'
     + '.gvs-train.p1{filter:drop-shadow(1px 0 0 #39ff14) drop-shadow(-1px 0 0 #39ff14) drop-shadow(0 1px 0 #39ff14) drop-shadow(0 -1px 0 #39ff14) drop-shadow(0 0 8px rgba(57,255,20,.95)) drop-shadow(0 6px 5px rgba(0,0,0,.32))}'
     + '.gvs-train.p2{filter:drop-shadow(1px 0 0 #3aa0ff) drop-shadow(-1px 0 0 #3aa0ff) drop-shadow(0 1px 0 #3aa0ff) drop-shadow(0 -1px 0 #3aa0ff) drop-shadow(0 0 8px rgba(58,160,255,.95)) drop-shadow(0 6px 5px rgba(0,0,0,.32))}'
     + '.gvs-train.boost{animation:gvsBoost .5s ease}'
     + '@keyframes gvsBoost{0%{}40%{filter:drop-shadow(0 0 16px rgba(255,180,60,.98)) brightness(1.14)}100%{}}'
     + '.gvs-train.grab{animation:gvsGrab .35s ease}'
-    + '@keyframes gvsGrab{0%,100%{transform:translate(-50%,-50%) scale(1)}45%{transform:translate(-50%,-56%) scale(1.12)}}'
+    + '@keyframes gvsGrab{0%,100%{transform:translate(-50%,-100%) scale(1)}45%{transform:translate(-50%,-108%) scale(1.12)}}'
     + '.gvs-train.slow{animation:gvsShake .4s ease}'
     + '@keyframes gvsShake{0%,100%{margin-left:0}25%{margin-left:-6px}75%{margin-left:6px}}'
     // player-tinted tokens (⚡/coin) + emoji hazards
@@ -6099,8 +6115,10 @@ function applyRdeScaling() {
   // ── train visuals (reuse the picker / world DB) ─────────────────────────
   var CHAR_POOL = ['aeg_thomas','aeg_percy','aeg_james','aeg_gordon','aeg_emily','aeg_hiro','aeg_edward','aeg_henry'];
   function visFromTrain (t) {
-    if (!t) return { name:'Kereta', spriteUrl:null, emoji:'🚂' };
-    return { name: t.name || 'Kereta', spriteUrl: t.spriteUrl || null, emoji: t.emoji || '🚂' };
+    if (!t) return { name:'Kereta', spriteUrl:null, emoji:'🚂', faces:'right' };
+    // carry `faces` so the racing scene can mirror left-facing sprites → face RIGHT
+    // (the travel direction), exactly like the Adventure renderer does.
+    return { name: t.name || 'Kereta', spriteUrl: t.spriteUrl || null, emoji: t.emoji || '🚂', faces: t.faces || 'right' };
   }
   function visFromKey (key) { try { if (key && typeof TRAIN_MAP !== 'undefined' && TRAIN_MAP[key]) return visFromTrain(TRAIN_MAP[key]); } catch (_) {} return { name:'Kereta', spriteUrl:null, emoji:'🚂' }; }
   function selectedVis () { try { if (typeof S !== 'undefined' && S && S.trainCfg) return visFromTrain(S.trainCfg); } catch (_) {} return visFromKey('aeg_thomas'); }
@@ -6112,10 +6130,25 @@ function applyRdeScaling() {
     return out;
   }
   function trainNode (vis) {
-    var t;
-    if (vis && vis.spriteUrl) { t = el('img', 'gvs-train'); t.src = vis.spriteUrl; t.alt = vis.name || 'kereta'; t.onerror = function () { var s = el('span', 'gvs-train emoji'); s.textContent = (vis && vis.emoji) || '🚂'; if (t.parentNode) t.parentNode.replaceChild(s, t); }; }
-    else { t = el('span', 'gvs-train emoji'); t.textContent = (vis && vis.emoji) || '🚂'; }
-    return t;
+    // wrapper handles positioning + boost/grab/slow animations + player neon; the
+    // inner sprite carries the horizontal mirror so facing never drops mid-animation.
+    var w = el('div', 'gvs-train');
+    var faceL = !!(vis && vis.faces === 'left');
+    var inner;
+    if (vis && vis.spriteUrl) {
+      inner = el('img', 'gvs-tsprite'); inner.src = vis.spriteUrl; inner.alt = vis.name || 'kereta';
+      inner.onerror = function () {
+        w.classList.add('emoji', 'faceL');   // 🚂 emoji faces left → mirror to face right
+        var s = el('span', 'gvs-tsprite'); s.textContent = (vis && vis.emoji) || '🚂';
+        if (inner.parentNode) inner.parentNode.replaceChild(s, inner);
+      };
+    } else {
+      w.classList.add('emoji'); faceL = true;   // 🚂 emoji natively faces left
+      inner = el('span', 'gvs-tsprite'); inner.textContent = (vis && vis.emoji) || '🚂';
+    }
+    if (faceL) w.classList.add('faceL');
+    w.appendChild(inner);
+    return w;
   }
 
   // ── overlay lifecycle ───────────────────────────────────────────────────
@@ -6331,12 +6364,15 @@ function applyRdeScaling() {
   var SLOW_MULT = 0.35;    // speed ×multiplier while slowed by a hazard
   var SLOW_MS = 800;       // hazard slow duration (ms)
   var ITEM_SPEED = 32;     // %/sec token+hazard travel (right → left)
+  var WORLD_PX = 230;      // px/sec backdrop scroll at normal pace (×mult on boost/slow)
   var ENERGY_MAX = 100;    // energy bar cap
   var BOOST_COST = 100;    // energy needed to trigger BOOST
   var TOKEN_ENERGY = 25;   // energy gained per token grabbed
   var SPEED_K = 38;        // km/h display factor (rate × K)
   var TRAIN_X = { p2: 40, p1: 60 };   // fixed float x per player (%)
   var LANE_FALLBACK = [0.55, 0.72, 0.86];
+  var NEAR_RAIL_NUDGE = 0.025;        // drop the bottom-anchored train onto the LOWER steel rail
+  var TRAIN_H_MIN = 38, TRAIN_H_MAX = 96, TRAIN_H_GAP_K = 1.5;  // responsive train height = gap×K
 
   function zeroPad2 (n) { n = String(n); return n.length < 2 ? '0' + n : n; }
   function platePath () { return '../assets/train/backdrop/level' + zeroPad2(qlevel()) + '-1600.webp'; }
@@ -6368,7 +6404,8 @@ function applyRdeScaling() {
     if (!reduce) host.className = 'gvs-anim';
     host.innerHTML =
       '<div class="gvs-scene" data-scene>'
-      + '<img class="gvs-bg" alt="" />'
+      + '<div class="gvs-bg"><div class="gvs-bgtrack"><div class="gvs-tile"></div><div class="gvs-tile mir"></div><div class="gvs-tile"></div></div></div>'
+      + '<div class="gvs-vig"></div>'
       + '<div class="gvs-fg"></div>'
       + '<button class="gvs-x gvs-x-float" data-x aria-label="Keluar">✕</button>'
       + '<div class="gvs-banner"><div class="t1">🏁 PVP MODE</div><div class="t2" data-leg></div><div class="t3">First to the finish line!</div></div>'
@@ -6376,12 +6413,19 @@ function applyRdeScaling() {
     document.body.appendChild(host);
     var scene = host.querySelector('.gvs-scene');
     scene.querySelector('[data-leg]').textContent = legName();
-    var bg = scene.querySelector('.gvs-bg');
-    bg.onerror = function () { bg.style.display = 'none'; scene.classList.add('gvs-fallback'); };
-    bg.src = platePath();
+    var bgTrack = scene.querySelector('.gvs-bgtrack');
+    var bgTiles = scene.querySelectorAll('.gvs-tile');
+    // paint the plate onto every mirror-tile; fall back to the gradient sky if it 404s.
+    (function () {
+      var plate = platePath();
+      for (var i = 0; i < bgTiles.length; i++) bgTiles[i].style.backgroundImage = "url('" + plate + "')";
+      var pre = new Image();
+      pre.onerror = function () { if (bgTrack) bgTrack.style.display = 'none'; scene.classList.add('gvs-fallback'); };
+      pre.src = plate;
+    })();
     host.querySelector('[data-x]').addEventListener('click', function () { stop(); host.remove(); closeToPicker(); });
 
-    var race = { alive: true, raf: 0, last: 0, players: null, lanes: LANE_FALLBACK.slice() };
+    var race = { alive: true, raf: 0, last: 0, players: null, lanes: LANE_FALLBACK.slice(), worldX: 0 };
 
     // shared BOOST medallion (bottom-center)
     var medallion = el('button', 'gvs-boost'); medallion.type = 'button';
@@ -6458,7 +6502,7 @@ function applyRdeScaling() {
         efill: foot.querySelector('.efill'), tokEl: foot.querySelector('.tok'), sb: sb,
         nextTok: performance.now() + 700 + Math.random() * 900, nextHaz: performance.now() + 1900 + Math.random() * 1400
       };
-      function setLane () { var li = Math.min(P.lane, race.lanes.length - 1); train.style.top = (race.lanes[li] * 100) + '%'; }
+      function setLane () { var li = Math.min(P.lane, race.lanes.length - 1); train.style.top = ((race.lanes[li] + NEAR_RAIL_NUDGE) * 100) + '%'; }
       P._setLane = setLane; setLane();
       up.addEventListener('click', function () { if (P.lane > 0) { P.lane--; setLane(); } });                       // NAIK → up screen
       dn.addEventListener('click', function () { if (P.lane < race.lanes.length - 1) { P.lane++; setLane(); } });   // TURUN → down screen
@@ -6467,7 +6511,27 @@ function applyRdeScaling() {
       return P;
     }
 
-    function stop () { race.alive = false; if (race.raf) { cancelAnimationFrame(race.raf); race.raf = 0; } }
+    // v57.7 A-332 — size every train (and the items) from the RAIL GAP so the loco is a
+    // consistent fraction of the lane spacing on any display (no more oversized trains on
+    // odd aspect ratios); re-run on resize/orientation change.
+    function fitTrains () {
+      var sceneH = scene.clientHeight || 300;
+      var ls = race.lanes, gaps = [], i;
+      for (i = 1; i < ls.length; i++) gaps.push(Math.abs(ls[i] - ls[i - 1]));
+      gaps.sort(function (a, b) { return a - b; });
+      var gap = gaps.length ? gaps[(gaps.length - 1) >> 1] : 0.16;   // median inter-lane gap (ratio)
+      var h = Math.max(TRAIN_H_MIN, Math.min(TRAIN_H_MAX, gap * sceneH * TRAIN_H_GAP_K));
+      race.trainH = h;
+      if (race.players) for (i = 0; i < race.players.length; i++) { var t = race.players[i].train; if (t && !t.classList.contains('emoji')) t.style.height = h + 'px'; }
+      var itemPx = Math.max(16, Math.min(36, h * 0.5));
+      var items = scene.querySelectorAll('.gvs-token,.gvs-haz');
+      for (i = 0; i < items.length; i++) items[i].style.fontSize = itemPx + 'px';
+    }
+
+    function stop () {
+      race.alive = false; if (race.raf) { cancelAnimationFrame(race.raf); race.raf = 0; }
+      if (race.onResize) { window.removeEventListener('resize', race.onResize); race.onResize = null; }
+    }
 
     function spawnFrom (pool, now) {
       var slot = null;
@@ -6482,13 +6546,14 @@ function applyRdeScaling() {
       if (!race.alive) return;
       var dt = race.last ? (now - race.last) / 1000 : 0.016; race.last = now;
       if (dt > 0.05) dt = 0.05;
-      var players = race.players, i, j;
+      var players = race.players, i, j, maxMult = 0;
       for (i = 0; i < players.length; i++) {
         var P = players[i];
         if (P.dist >= 100) continue;
         var boosting = now < P.boostUntil;
         var slowed = now < P.slowUntil;
         var mult = boosting ? BOOST_MULT : (slowed ? SLOW_MULT : 1);
+        if (mult > maxMult) maxMult = mult;
         var rate = AUTO * mult;
         P.dist += rate * dt; if (P.dist > 100) P.dist = 100;
         P.pfill.style.width = P.dist + '%';
@@ -6499,7 +6564,7 @@ function applyRdeScaling() {
         // tokens (grab if same lane at the train's x)
         for (j = 0; j < P.tk.length; j++) {
           var T = P.tk[j]; if (!T.on) continue;
-          var px = T.x; T.x -= ITEM_SPEED * dt; T.el.style.left = T.x + '%';
+          var px = T.x; T.x -= ITEM_SPEED * mult * dt; T.el.style.left = T.x + '%';
           if (!T.scored && px > P.trainX && T.x <= P.trainX) {
             T.scored = true;
             if (T.lane === P.lane) { collectToken(P); T.on = false; T.el.classList.remove('on'); }
@@ -6508,13 +6573,21 @@ function applyRdeScaling() {
         // hazards (slow if same lane at the train's x, unless boosting)
         for (j = 0; j < P.hz.length; j++) {
           var H = P.hz[j]; if (!H.on) continue;
-          var hx = H.x; H.x -= ITEM_SPEED * dt; H.el.style.left = H.x + '%';
+          var hx = H.x; H.x -= ITEM_SPEED * mult * dt; H.el.style.left = H.x + '%';
           if (!H.scored && hx > P.trainX && H.x <= P.trainX) {
             H.scored = true;
             if (H.lane === P.lane && !boosting) { hitHazard(P, now); H.on = false; H.el.classList.remove('on'); }
           } else if (H.x < -6) { H.on = false; H.el.classList.remove('on'); }
         }
         if (P.dist >= 100) { finish(P); return; }
+      }
+      // v57.7 — scroll the whole world (rails/ground) at the leading pace, like the
+      // original Adventure scene; BOOST visibly rushes it, a hazard-slow drags it. The
+      // mirror-tiled track recycles every 2 viewport-widths → perfectly seamless.
+      if (bgTrack && maxMult > 0) {
+        var vw = scene.clientWidth || 1;
+        race.worldX += WORLD_PX * maxMult * dt;
+        bgTrack.style.transform = 'translateX(' + (-(race.worldX % (2 * vw))) + 'px)';
       }
       race.raf = requestAnimationFrame(frame);
     }
@@ -6527,12 +6600,17 @@ function applyRdeScaling() {
     // v57.3 — P2 = vibrant blue (left) / P1 = green (right); identity carried
     // across HUD, side controls, foot, progress bar + neon train outline.
     race.players = [ buildPlayer('p2', opts.p2, CLAY.plB), buildPlayer('p1', opts.p1, CLAY.pl1) ];
+    fitTrains();
+    // responsive: re-fit train/item sizes + re-anchor lanes on resize / orientation change
+    race.onResize = function () { fitTrains(); for (var i = 0; i < race.players.length; i++) race.players[i]._setLane(); };
+    window.addEventListener('resize', race.onResize);
     loadLanes(function (lanes) {
       if (!race.alive) return;
       if (lanes && lanes.length >= 2) {
         race.lanes = lanes.slice();
         for (var i = 0; i < race.players.length; i++) { var P = race.players[i]; if (P.lane >= race.lanes.length) P.lane = race.lanes.length - 1; P._setLane(); }
       }
+      fitTrains();   // gap now known → final proportional size
     });
     // debug handle for the QA probe
     try {

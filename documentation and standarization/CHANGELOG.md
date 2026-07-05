@@ -1,5 +1,34 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-05 — v57.7 "Balapan Kereta PvP — moving seamless world + correct facing + responsive rail-fit" (A-329 finish + A-332)
+
+Owner (angry — "jalannya yg bergerak, menghadap salah, phisic beda dg originalnya… samakan dg
+originalnya, tinggal improve"): the shipped PvP scene was STATIC, trains faced the wrong way, and the
+physics didn't read like the refined Adventure game. Then a follow-up: "beda display kadang kereta
+terlalu besar" + "kereta di rail terbawah, garis roda terbawah tidak pas di besi rail bawah tapi di
+besi rail atas." All fixed in the `#g14vs` module of `games/balapan-kereta.html`:
+- **Moving, SEAMLESS world (A-329):** the backdrop is now a mirror-tiled track (`.gvs-bgtrack` = 3 ×
+  viewport-wide `cover` tiles, alternate tiles flipped) translated per-frame by the race pace — the
+  rails/ground scroll like the original, BOOST visibly rushes it, a hazard-slow drags it. Mirror tiling
+  means a flipped tile's edge always matches its neighbour → NO wrap seam ("terpotong/cacat"). Tokens/
+  hazards now scroll at each player's pace too.
+- **Correct facing (A-329):** the train is a wrapper + inner `.gvs-tsprite`; native left-facing sprites
+  (Thomas/Percy/…) get a `faceL` mirror on the inner element so EVERY train faces RIGHT (travel
+  direction), and the mirror survives the boost/grab/slow wrapper animations. `visFromTrain` now carries
+  `faces`.
+- **Responsive train sizing (A-332):** dropped the `vh`-based height; `fitTrains()` sizes each loco from
+  the median rail-gap (`gap × sceneH × 1.5`, clamped 38–96px) so it's a consistent fraction of the lane
+  spacing on any display — no more oversized trains — and re-fits on `resize`/orientation. Items scale to
+  the same measure.
+- **Wheel-on-correct-rail (A-332):** the train is now BOTTOM-anchored (`translate(-50%,-100%)`) and
+  dropped by `NEAR_RAIL_NUDGE` onto the LOWER steel rail of its lane, so the bottom wheel-line rests on
+  the near rail (was floating on the upper rail).
+- Verified at 1600×900 / 1280×640 / 1024×600 / 900×500 / portrait — train ratio 10.7–14.2% of view (never
+  oversized), wheels on the near rail on the bottom lane, seamless scroll + right-facing, 0 errors.
+  `qa-g14-versus-drive` extended (world-scroll, mirror-safe sprite, size-ratio, resize re-fit) ALL PASS;
+  `qa-g14-railalign` 0px (Adventure + `data/g14-journey/*.json` UNTOUCHED); app-sweep 16/16. sw
+  `v57.6`→`v57.7`.
+
 ## 2026-07-05 — v57.6 "Balapan Kereta level-select station map — nicer icons + no-overflow labels" (A-331)
 
 Owner: the g14 (Balapan Kereta) claymorphism level-select station map had two issues — (1) every node

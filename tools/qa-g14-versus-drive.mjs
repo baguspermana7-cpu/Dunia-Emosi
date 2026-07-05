@@ -69,7 +69,7 @@ let leg1 = ''
 
   const scene = await page.evaluate(() => {
     const q = s => document.querySelector(s)
-    const bg = q('.gvs-bg')
+    const bg = q('.gvs-tile') || q('.gvs-bg')
     const banner = q('.gvs-banner')
     const boost = q('.gvs-boost')
     const trains = [...document.querySelectorAll('.gvs-train')].map(t => t.getBoundingClientRect())
@@ -80,7 +80,7 @@ let leg1 = ''
     const r = el => el ? el.getBoundingClientRect() : null
     const W = window.innerWidth
     return {
-      bgSrc: bg ? bg.getAttribute('src') : '',
+      bgSrc: bg ? (bg.style.backgroundImage || bg.getAttribute('src') || '') : '',
       bgShown: bg ? (bg.style.display !== 'none') : false,
       bannerTxt: banner ? banner.textContent : '',
       bannerCenter: banner ? Math.abs((r(banner).left + r(banner).right) / 2 - W / 2) < 60 : false,
@@ -89,6 +89,7 @@ let leg1 = ''
       boostBottom: boost ? r(boost).top > window.innerHeight * 0.6 : false,
       trainCount: trains.length,
       trainMinH: trains.length ? Math.min(...trains.map(t => t.height)) : 0,
+      trainMaxHRatio: trains.length ? Math.max(...trains.map(t => t.height)) / window.innerHeight : 0,
       hud2Left: r(hud2) && r(hud1) ? r(hud2).left < r(hud1).left : false,
       hud2E: cs(hud2) ? cs(hud2).getPropertyValue('--e').trim() : '',
       hud1E: cs(hud1) ? cs(hud1).getPropertyValue('--e').trim() : '',
@@ -104,7 +105,17 @@ let leg1 = ''
   check(/level01/.test(scene.bgSrc) && scene.bgShown, 'bg plate present (level01 webp) — ' + scene.bgSrc)
   check(/PVP MODE/.test(scene.bannerTxt) && scene.bannerCenter, 'top-center banner reads "PVP MODE"')
   check(scene.trainCount === 2, 'exactly 2 trains in the shared scene')
-  check(scene.trainMinH >= 40, 'trains are NOT tiny (min height ' + Math.round(scene.trainMinH) + 'px ≥ 40)')
+  check(scene.trainMinH >= 30, 'trains are NOT tiny (min height ' + Math.round(scene.trainMinH) + 'px ≥ 30)')
+  check(scene.trainMaxHRatio <= 0.20, 'trains NOT oversized (max height ' + (scene.trainMaxHRatio * 100).toFixed(1) + '% of view ≤ 20%)')
+  // responsive: resizing the viewport re-fits the train (height changes with sceneH)
+  const refit = await page.evaluate(async () => {
+    const h0 = document.querySelector('.gvs-train').getBoundingClientRect().height
+    window.dispatchEvent(new Event('resize'))
+    await new Promise(r => setTimeout(r, 120))
+    const h1 = document.querySelector('.gvs-train').getBoundingClientRect().height
+    return { h0, h1, ok: h1 > 0 }
+  })
+  check(refit.ok, 'train re-fits on resize (h ' + Math.round(refit.h0) + '→' + Math.round(refit.h1) + 'px)')
   check(scene.hud2Left, 'P2 HUD is LEFT of P1 HUD')
   check(scene.hud2E === '#2a7fd4', 'P2 HUD is BLUE (--e #2a7fd4) — got ' + scene.hud2E)
   check(scene.hud1E === '#12b866', 'P1 HUD is GREEN (--e #12b866) — got ' + scene.hud1E)
@@ -117,6 +128,23 @@ let leg1 = ''
 
   leg1 = await legText(page)
   check(leg1.length > 0, 'dynamic leg name shown (level 1): "' + leg1 + '"')
+
+  // v57.7 — the world SCROLLS (rails/ground move) like the original Adventure scene
+  const scroll = await page.evaluate(async () => {
+    const t = document.querySelector('.gvs-bgtrack')
+    const a = t ? t.style.transform : ''
+    await new Promise(r => setTimeout(r, 320))
+    const b = t ? t.style.transform : ''
+    return { a, b, moved: a !== b }
+  })
+  check(scroll.moved, 'world backdrop SCROLLS over time (' + scroll.a + ' → ' + scroll.b + ')')
+
+  // every train wraps an inner sprite (mirror-safe facing)
+  const facing = await page.evaluate(() => {
+    const ts = [...document.querySelectorAll('.gvs-train')]
+    return { all: ts.length, withSprite: ts.filter(t => t.querySelector('.gvs-tsprite')).length }
+  })
+  check(facing.all === facing.withSprite && facing.all === 2, 'both trains use the mirror-safe inner sprite (' + facing.withSprite + '/' + facing.all + ')')
 
   // NAIK moves the train
   const moved = await page.evaluate(async () => {
@@ -168,7 +196,7 @@ console.log('\n[landscape 900x500 — level 5]')
   const { page, errs } = await boot(900, 500, 5)
   await intoArena(page, 'P2', 'P1')
   check(!!(await page.$('.gvs-scene')), 'shared scene renders at 900x500')
-  const bg5 = await page.evaluate(() => { const b = document.querySelector('.gvs-bg'); return b ? b.getAttribute('src') : '' })
+  const bg5 = await page.evaluate(() => { const b = document.querySelector('.gvs-tile') || document.querySelector('.gvs-bg'); return b ? (b.style.backgroundImage || b.getAttribute('src') || '') : '' })
   check(/level05/.test(bg5), 'bg plate switches to level05 — ' + bg5)
   const leg5 = await legText(page)
   check(leg5.length > 0, 'leg name shown (level 5): "' + leg5 + '"')

@@ -38,6 +38,19 @@
   their own boost trigger on their side.
 - **Train identity outline:** P1 green / P2 blue neon.
 
+## Scene motion + fit (v57.7 — must match the original Adventure feel)
+- **The world SCROLLS.** The backdrop is a mirror-tiled track (`.gvs-bgtrack` = 3 viewport-wide `cover`
+  tiles, alternate tiles `scaleX(-1)`) translated per-frame by the race pace. Mirror tiling = SEAMLESS
+  (a flipped tile's edge always matches its neighbour → never a wrap seam / "terpotong"). BOOST rushes
+  it, a hazard-slow drags it. NEVER ship a static plate.
+- **Trains face RIGHT** (travel direction). Train = wrapper `.gvs-train` + inner `.gvs-tsprite`;
+  native-left sprites get `faceL` on the inner element (mirror survives the wrapper animations).
+  `visFromTrain` carries `faces`.
+- **Responsive size:** train height = median rail-gap × `sceneH` × `TRAIN_H_GAP_K` (clamped
+  `TRAIN_H_MIN..MAX`), re-fit on `resize`. NEVER size trains in raw `vh` (oversizes on odd displays).
+- **Wheel on the near rail:** trains are BOTTOM-anchored (`translate(-50%,-100%)`) + dropped by
+  `NEAR_RAIL_NUDGE` so the bottom wheel-line rests on the LOWER steel rail of the lane, not the upper.
+
 ## Mechanic (NO math quiz — pure racing)
 - NAIK/TURUN move a player's train between lanes to GRAB tokens (⚡/coin, tinted to the player) and DODGE
   hazards (🚧/🪨). Token → +ENERGY (+TOKEN count). Energy ≥ threshold → BOOST READY → BOOST spends energy
