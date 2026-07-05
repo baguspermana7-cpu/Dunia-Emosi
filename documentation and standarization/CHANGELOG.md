@@ -1,5 +1,22 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-05 — v57.9 "Balapan Kereta PvP — code-review hardening (3 fixes)" (A-334)
+
+Ran a code-review pass over the recent PvP (`#g14vs`) + level-select station-map code; fixed the 3 real
+findings (0 critical/high):
+- **[MED] Emoji-fallback mispositioned on a sprite 404** — `fitTrains()` writes an inline `height` px on
+  each `.gvs-train`, but the `onerror` that swaps a broken sprite for the 🚂 emoji never cleared it, so
+  `.gvs-train.emoji{height:auto}` couldn't win and the fallback floated off the lane. Now the onerror
+  does `w.style.height=''` first.
+- **[MED] Backdrop phase-jump on device rotation** — `race.worldX` grew unbounded and the visual offset
+  was `worldX % (2·vw)`; when `vw` changed on rotate (PWA is orientation:any), the modulo produced a
+  one-frame jump. `worldX` is now normalised to `[0, 2·vw)` every frame (also kills float drift). Verified:
+  rotating 1024→600 mid-race keeps worldX < 2·vw, no jump.
+- **[LOW] Unescaped station name** — the g14 level-select spliced the route station name into
+  `innerHTML`/`title` unescaped; now HTML-escaped (`&`/`<`/`>`/`"`). Names are trusted today but a `"`
+  would have silently broken the `title`.
+- `qa-g14-versus-drive` ALL PASS, app-sweep 16/16. sw `v57.8`→`v57.9`.
+
 ## 2026-07-05 — v57.8 "Balapan Kereta PvP — compact HUD/banner on narrow + portrait (no overlap)" (A-333)
 
 Continuing the responsive pass: the PvP scene had NO breakpoint, so on narrow/portrait phones the two

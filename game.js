@@ -1694,15 +1694,16 @@ function openLevelSelect(gameNum) {
       if (state.currentGame === 14 && window.TrainJourney) {
         let stn = ''
         try { stn = (TrainJourney.name(lvNum) || '').split('→')[0].trim() } catch(_) {}
+        const stnE = stn.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
         const isCurrent = (isUnlocked && !isCompleted)
         dot.classList.add('lvl-station')
         if (isCurrent) dot.classList.add('lvl-station-current')
         dot.innerHTML = (isUnlocked||isCompleted)
           ? `<span class="lvl-stn-house">🚉<span class="lvl-stn-num">${lvNum}</span></span>`
-            + `<span class="lvl-stn-name" title="${stn}">${stn}</span>`
+            + `<span class="lvl-stn-name" title="${stnE}">${stnE}</span>`
             + `<div class="lvl-stars-row">${starsStr}</div>`
           : `<span class="lvl-stn-house is-locked">🔒</span>`
-            + `<span class="lvl-stn-name" title="${stn}">${stn}</span>`
+            + `<span class="lvl-stn-name" title="${stnE}">${stnE}</span>`
       } else {
       dot.innerHTML = isUnlocked||isCompleted
         ? `<span class="lvl-num">${lvNum}</span><div class="lvl-stars-row">${starsStr}</div>`

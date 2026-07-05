@@ -219,7 +219,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v57.8</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v57.9</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="data/train-world.js?v=55.89"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
@@ -6153,6 +6153,7 @@ function applyRdeScaling() {
     if (vis && vis.spriteUrl) {
       inner = el('img', 'gvs-tsprite'); inner.src = vis.spriteUrl; inner.alt = vis.name || 'kereta';
       inner.onerror = function () {
+        w.style.height = '';                  // drop the fitTrains px height so .emoji{height:auto} wins
         w.classList.add('emoji', 'faceL');   // 🚂 emoji faces left → mirror to face right
         var s = el('span', 'gvs-tsprite'); s.textContent = (vis && vis.emoji) || '🚂';
         if (inner.parentNode) inner.parentNode.replaceChild(s, inner);
@@ -6601,8 +6602,10 @@ function applyRdeScaling() {
       // mirror-tiled track recycles every 2 viewport-widths → perfectly seamless.
       if (bgTrack && maxMult > 0) {
         var vw = scene.clientWidth || 1;
-        race.worldX += WORLD_PX * maxMult * dt;
-        bgTrack.style.transform = 'translateX(' + (-(race.worldX % (2 * vw))) + 'px)';
+        // keep worldX normalised to [0, 2·vw) every frame so a device rotation (orientation:any,
+        // A-325) can't cause a one-frame phase-jump, and avoid float drift over long sessions.
+        race.worldX = (race.worldX + WORLD_PX * maxMult * dt) % (2 * vw);
+        bgTrack.style.transform = 'translateX(' + (-race.worldX) + 'px)';
       }
       race.raf = requestAnimationFrame(frame);
     }
