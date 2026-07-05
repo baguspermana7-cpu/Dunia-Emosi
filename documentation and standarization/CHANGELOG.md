@@ -1,5 +1,18 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-05 — v58.5 "PvP tuning: trains on the rails + slower obstacles + start further left" (A-339 P3)
+
+Owner review of the PvP: obstacles too fast, trains too centered, and trains not on the rails (one
+floated, one sank below the bottom rail). Fixed in the `#g14vs` scene:
+- **Rail alignment** — the tiles used `background-size:cover`, which crops the plate so `laneRatios`
+  didn't land on the painted rails. Now `background-size:100% 100%` (plate fills the scene 1:1) →
+  `laneRatios.lanes` map exactly onto the painted rails; `NEAR_RAIL_NUDGE` 0.025→0.006. Trains now sit
+  on their rails.
+- **Slower obstacles + more reaction time** — `TRAIN_X` moved from centre `{p2:40,p1:60}` to the left
+  `{p2:18,p1:33}` (clear of the edge controls) so obstacles have a long runway, and `ITEM_SPEED` 32→23.
+- Verified at level 5: both trains on the rails, sitting left with room to react; `qa-g14-versus-drive`
+  ALL PASS, 0 errors. sw `v58.4`→`v58.5`.
+
 ## 2026-07-05 — v58.4 "Shared train-backdrop: kill the stretched bottom + the wrap seam (g14 + g15)" (A-339 P1)
 
 Owner review: the Adventure (g14) backdrop had a stretched low-res band at the very bottom, and Lokomotif

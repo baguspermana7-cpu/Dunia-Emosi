@@ -219,7 +219,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v58.4</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v58.5</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="data/train-world.js?v=55.89"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
@@ -5972,7 +5972,7 @@ function applyRdeScaling() {
     // NO wrap seam ("terpotong/cacat"). The track is driven per-frame by the race pace.
     + '.gvs-bg{position:absolute;inset:0;z-index:0;overflow:hidden}'
     + '.gvs-bgtrack{position:absolute;top:0;bottom:0;left:0;width:300%;display:flex;will-change:transform}'
-    + '.gvs-tile{flex:0 0 33.3333%;height:100%;background-position:center 58%;background-size:cover;background-repeat:no-repeat}'
+    + '.gvs-tile{flex:0 0 33.3333%;height:100%;background-position:center top;background-size:100% 100%;background-repeat:no-repeat}'
     + '.gvs-tile.mir{transform:scaleX(-1)}'
     // soft edge vignette adds depth
     + '.gvs-vig{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(18,20,30,.16),transparent 12%,transparent 88%,rgba(18,20,30,.16))}'
@@ -6408,15 +6408,15 @@ function applyRdeScaling() {
   var BOOST_MS = 1500;     // boost duration (ms)
   var SLOW_MULT = 0.35;    // speed ×multiplier while slowed by a hazard
   var SLOW_MS = 800;       // hazard slow duration (ms)
-  var ITEM_SPEED = 32;     // %/sec token+hazard travel (right → left)
+  var ITEM_SPEED = 23;     // %/sec token+hazard travel (right → left) — v58.5: slower, matches original feel
   var WORLD_PX = 230;      // px/sec backdrop scroll at normal pace (×mult on boost/slow)
   var ENERGY_MAX = 100;    // energy bar cap
   var BOOST_COST = 100;    // energy needed to trigger BOOST
   var TOKEN_ENERGY = 25;   // energy gained per token grabbed
   var SPEED_K = 38;        // km/h display factor (rate × K)
-  var TRAIN_X = { p2: 40, p1: 60 };   // fixed float x per player (%)
+  var TRAIN_X = { p2: 18, p1: 33 };   // v58.5 — start LEFT (long obstacle runway = slower feel), clear of edge controls
   var LANE_FALLBACK = [0.55, 0.72, 0.86];
-  var NEAR_RAIL_NUDGE = 0.025;        // drop the bottom-anchored train onto the LOWER steel rail
+  var NEAR_RAIL_NUDGE = 0.006;        // v58.5 — lanes now map 1:1 (bg 100% 100%) → tiny nudge onto the near rail
   var TRAIN_H_MIN = 38, TRAIN_H_MAX = 96, TRAIN_H_GAP_K = 1.5;  // responsive train height = gap×K
 
   function zeroPad2 (n) { n = String(n); return n.length < 2 ? '0' + n : n; }
