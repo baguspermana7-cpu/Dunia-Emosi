@@ -1,5 +1,15 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-05 — v58.1 "Balapan Kereta PvP — winner celebration (confetti + trophy pop)" (A-336)
+
+Owner "enhance more" → the win/champion payoff was a plain trophy + title. Now `showResult`:
+- **Confetti burst** — 26 pure-CSS pieces (mixed colours + circles) fall behind the panel content
+  (`z-index` layered so the title stays crisp). Skipped under `prefers-reduced-motion`.
+- **Trophy pop** — the medal/🏆 springs in (`gvsTrophy`); the Tournament champion's 🏆 also gently
+  floats (`champ` flag → `gvsTrophyFloat`).
+- Verified at 1024×600: win panel → 26 confetti pieces + animated trophy, title readable, 0 errors;
+  `qa-g14-versus-drive` (confetti assert) ALL PASS, app-sweep 16/16. sw `v58.0`→`v58.1`.
+
 ## 2026-07-05 — v58.0 "Balapan Kereta PvP — race juice: 3·2·1·GO + leader crown + finish line" (A-335)
 
 Owner "enhance more" → added real racing-game juice to the PvP that delivers on the banner's "First to

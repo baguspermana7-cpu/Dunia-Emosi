@@ -200,6 +200,8 @@ let leg1 = ''
   const win = await page.$('.gvs-panel'); check(!!win, 'dist→99 shows the win banner')
   const title = win ? await page.$eval('.gvs-panel h1', e => e.textContent) : ''
   check(/Menang/.test(title), 'win banner reads "<name> Menang!" — got ' + JSON.stringify(title))
+  const confetti = await page.evaluate(() => document.querySelectorAll('.gvs-confetti i').length)
+  check(confetti >= 10, 'winner confetti fires (' + confetti + ' pieces)')
   await page.screenshot({ path: `${OUT}/pvp-4-win-1024.png` })
 
   check(errs.length === 0, 'no console/page errors (1024) — ' + JSON.stringify(errs.slice(0, 4)))

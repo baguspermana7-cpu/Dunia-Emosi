@@ -219,7 +219,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v58.0</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v58.1</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="data/train-world.js?v=55.89"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
@@ -6068,7 +6068,15 @@ function applyRdeScaling() {
     + '.gvs-panel{position:absolute;inset:0;z-index:9700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;'
     +   'padding:24px;text-align:center;background:linear-gradient(180deg,rgba(207,233,250,.96),rgba(247,236,223,.97))}'
     + '.gvs-panel h1{margin:0;font-size:clamp(26px,7vw,44px);color:#5d4a42}'
-    + '.gvs-trophy{font-size:clamp(48px,14vw,84px);filter:drop-shadow(0 6px 8px rgba(0,0,0,.18))}'
+    + '.gvs-trophy{font-size:clamp(48px,14vw,84px);filter:drop-shadow(0 6px 8px rgba(0,0,0,.18));animation:gvsTrophy .7s cubic-bezier(.3,1.5,.5,1) both}'
+    + '@keyframes gvsTrophy{0%{transform:scale(0) rotate(-25deg);opacity:0}60%{transform:scale(1.18) rotate(8deg)}100%{transform:scale(1) rotate(0)}}'
+    + '.gvs-trophy.champ{animation:gvsTrophy .7s cubic-bezier(.3,1.5,.5,1) both,gvsTrophyFloat 2.4s ease-in-out .7s infinite}'
+    + '@keyframes gvsTrophyFloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-8px) rotate(3deg)}}'
+    // v58.1 — winner confetti burst (self-contained, pure CSS pieces)
+    + '.gvs-confetti{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}'
+    + '.gvs-confetti i{position:absolute;top:-12px;width:9px;height:14px;border-radius:2px;opacity:0;animation:gvsFall linear forwards}'
+    + '@keyframes gvsFall{0%{opacity:0;transform:translateY(-10px) rotate(0)}8%{opacity:1}100%{opacity:.9;transform:translateY(112vh) rotate(720deg)}}'
+    + '.gvs-panel > .gvs-trophy,.gvs-panel > h1,.gvs-panel > .row{position:relative;z-index:2}'
     + '.gvs-panel .row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}'
     + '.gvs-bracket{display:flex;flex-direction:column;gap:10px;width:100%;max-width:440px}'
     + '.gvs-match{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 16px;border-radius:18px;'
@@ -6368,7 +6376,7 @@ function applyRdeScaling() {
     document.body.appendChild(host);
     showResult(host, {
       title: winner.name + ' Juara!',
-      trophy: '🏆',
+      trophy: '🏆', champ: true,
       buttons: [
         { label: '▶ Main Lagi', pal: CLAY.go, cb: function () {
             host.remove();
@@ -6691,16 +6699,31 @@ function applyRdeScaling() {
   }
 
   // ── result / champion banner ────────────────────────────────────────────
+  function spawnConfetti (panel) {
+    var wrap = el('div', 'gvs-confetti');
+    var cols = ['#ff5a5a', '#ffd23f', '#3aa0ff', '#39ff14', '#ff8adf', '#a855f7', '#ffffff'];
+    for (var i = 0; i < 26; i++) {
+      var p = document.createElement('i');
+      p.style.left = (Math.random() * 100) + '%';
+      p.style.background = cols[i % cols.length];
+      p.style.animationDuration = (1.8 + Math.random() * 1.6) + 's';
+      p.style.animationDelay = (Math.random() * 0.5) + 's';
+      if (i % 3 === 0) p.style.borderRadius = '50%';
+      wrap.appendChild(p);
+    }
+    panel.insertBefore(wrap, panel.firstChild);
+  }
   function showResult (host, opts) {
     injectCSS();
     var panel = el('div', 'gvs-panel');
     var btns = '';
     (opts.buttons || []).forEach(function (b, i) { btns += '<button class="gvs-btn" data-i="' + i + '">' + esc(b.label) + '</button>'; });
     panel.innerHTML =
-      '<div class="gvs-trophy">' + (opts.trophy || '🥇') + '</div>'
+      '<div class="gvs-trophy' + (opts.champ ? ' champ' : '') + '">' + (opts.trophy || '🥇') + '</div>'
       + '<h1>' + esc(opts.title) + '</h1>'
       + '<div class="row">' + btns + '</div>';
     host.appendChild(panel);
+    if (!reduced()) spawnConfetti(panel);   // celebratory confetti (respects reduced-motion)
     var nodes = panel.querySelectorAll('.gvs-btn');
     (opts.buttons || []).forEach(function (b, i) { styleVars(nodes[i], b.pal || CLAY.go); nodes[i].addEventListener('click', b.cb); });
   }
