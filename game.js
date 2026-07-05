@@ -1686,18 +1686,23 @@ function openLevelSelect(gameNum) {
       dot.style.setProperty('--bb', glowAlpha('0.65'))
       dot.style.setProperty('--bs', glow)
       // v56.5 A-318 — g14 claymorphism STATION MAP (owner reference): each level is a
-      // little clay station house labeled "STN <name>" from the authoritative 48-leg
-      // TrainJourney route (leg N's origin station). Other games keep the round bubbles.
+      // little clay station node labelled with the destination station from the
+      // authoritative 48-leg TrainJourney route (leg N's origin station). Other games
+      // keep the round bubbles.
+      // v57.6 — nicer station icon (🚉 not 🏠/jar), drop the "STN " prefix, and let the
+      // name wrap to 2 lines (Title-Case) so long names read fully without overflow.
       if (state.currentGame === 14 && window.TrainJourney) {
         let stn = ''
         try { stn = (TrainJourney.name(lvNum) || '').split('→')[0].trim() } catch(_) {}
+        const isCurrent = (isUnlocked && !isCompleted)
         dot.classList.add('lvl-station')
+        if (isCurrent) dot.classList.add('lvl-station-current')
         dot.innerHTML = (isUnlocked||isCompleted)
-          ? `<span class="lvl-stn-house">🏠<span class="lvl-stn-num">${lvNum}</span></span>`
-            + `<span class="lvl-stn-name">STN ${stn.toUpperCase()}</span>`
+          ? `<span class="lvl-stn-house">🚉<span class="lvl-stn-num">${lvNum}</span></span>`
+            + `<span class="lvl-stn-name" title="${stn}">${stn}</span>`
             + `<div class="lvl-stars-row">${starsStr}</div>`
           : `<span class="lvl-stn-house is-locked">🔒</span>`
-            + `<span class="lvl-stn-name">STN ${stn.toUpperCase()}</span>`
+            + `<span class="lvl-stn-name" title="${stn}">${stn}</span>`
       } else {
       dot.innerHTML = isUnlocked||isCompleted
         ? `<span class="lvl-num">${lvNum}</span><div class="lvl-stars-row">${starsStr}</div>`

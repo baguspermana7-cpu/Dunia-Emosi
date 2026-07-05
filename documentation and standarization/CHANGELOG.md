@@ -1,5 +1,23 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-05 — v57.6 "Balapan Kereta level-select station map — nicer icons + no-overflow labels" (A-331)
+
+Owner: the g14 (Balapan Kereta) claymorphism level-select station map had two issues — (1) every node
+was labelled "STN <name>", and with the prefix the destination-station names overflowed their cell and
+got truncated/overlapped ("STN KARAWA…", "STN CIKARANGSTN KARAWA…"); (2) the node icons (🏠 + an orange
+roof pseudo-element) read like a jam-jar. "Enhance landing page levelnya. Pakai icon yg lebih bagus."
+- `game.js` (station node render): dropped the "STN " prefix; the label is now the plain Title-Case
+  station name (e.g. "Gambir", "Semarang Tawang"). Icon 🏠 → 🚉 (literal train-station glyph). The
+  current playable level gets a `lvl-station-current` class.
+- `style.css`: each station node is now `flex:1 1 0; min-width:0` so it is bounded to an EQUAL row slot —
+  a label can never overhang into its neighbour. `.lvl-stn-name` wraps to 2 lines (`-webkit-line-clamp:2`,
+  `word-break`) instead of `nowrap`+ellipsis, so long names read fully. Removed the jar-lid roof
+  pseudo-element; refined the clay tile + number badge; added a soft `stnCurrentPulse` halo on the
+  current station (honours `prefers-reduced-motion`). Locked tiles get a muted grey clay.
+- Verified: rendered the map at 412px and 360px — 40 labels, ZERO neighbour overlaps, no body overflow,
+  0 console errors; app-sweep 16/16. Scope is `#screen-level.lvl-clay .lvl-station` / `.lvl-stn-*` only —
+  other games' round level bubbles are untouched. sw `v57.5`→`v57.6`, `style.css`/`game.js` cache-bust.
+
 ## 2026-07-05 — v57.4 "Balapan Kereta PvP REDESIGN → shared-scene racing HUD (matches owner reference)" (A-329)
 
 Owner (angry — the PvP had been built twice with the WRONG layout: stacked bands + quiz panels): rebuild
