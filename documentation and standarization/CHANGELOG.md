@@ -1,5 +1,19 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-05 — v58.0 "Balapan Kereta PvP — race juice: 3·2·1·GO + leader crown + finish line" (A-335)
+
+Owner "enhance more" → added real racing-game juice to the PvP that delivers on the banner's "First to
+the finish line!" promise:
+- **3·2·1·GO! start countdown** — a big popping overlay; the simulation is held (`race.go`) until GO, so
+  both trains launch fairly together. Skipped under `prefers-reduced-motion`.
+- **Live leader crown** — a 👑 hops onto whoever's currently ahead (updates only when the lead changes,
+  guarded by a 0.6% gap so it doesn't flicker at the start).
+- **Checkered finish line** — a black/white ribbon with a 🏁 sweeps in from the right edge once the
+  leader passes 80%, making the goal tangible.
+- Verified at 1024×600: countdown → crown-on-front-runner → finish-line reveal, all with 0 errors;
+  `qa-g14-versus-drive` extended (crown + finish asserts) ALL PASS, app-sweep 16/16. The probe forces
+  `race.go` to skip the countdown for its timing. sw `v57.9`→`v58.0`.
+
 ## 2026-07-05 — v57.9 "Balapan Kereta PvP — code-review hardening (3 fixes)" (A-334)
 
 Ran a code-review pass over the recent PvP (`#g14vs`) + level-select station-map code; fixed the 3 real

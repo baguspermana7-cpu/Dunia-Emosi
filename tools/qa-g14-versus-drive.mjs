@@ -45,6 +45,9 @@ async function intoArena (page, n1, n2) {
   await page.type('.gvs-input[data-idx="1"]', n2)
   await page.evaluate(() => document.querySelector('#gvs-go').click())
   await sleep(700)
+  // v58.0 — skip the 3·2·1·GO countdown so the movement assertions run immediately
+  await page.evaluate(() => { try { if (window.__g14pvp) { window.__g14pvp.race.go = true; const o = document.querySelector('.gvs-countdown'); if (o) o.remove(); } } catch (e) {} })
+  await sleep(60)
 }
 
 async function legText (page) {
@@ -177,6 +180,19 @@ let leg1 = ''
   })
   check(surge.s1 > surge.s2 + 20, 'BOOST surges ONLY P1 (P1 ' + surge.s1 + ' km/h > P2 ' + surge.s2 + ')')
   await page.screenshot({ path: `${OUT}/pvp-3-boost-1024.png` })
+
+  // v58.0 — leader crown follows the front-runner + finish line reveals near the end
+  const juice = await page.evaluate(async () => {
+    window.__g14pvp.setDist('p1', 85); window.__g14pvp.setDist('p2', 55)
+    await new Promise(r => setTimeout(r, 220))
+    return {
+      crownP1: !!document.querySelector('.gvs-hud.p1 .gvs-crown'),
+      crownP2: !!document.querySelector('.gvs-hud.p2 .gvs-crown'),
+      finish: !!(document.querySelector('.gvs-finish') && document.querySelector('.gvs-finish').classList.contains('show'))
+    }
+  })
+  check(juice.crownP1 && !juice.crownP2, 'leader crown 👑 on the front-runner only (P1 leads)')
+  check(juice.finish, 'checkered finish line reveals when leader ≥ 80%')
 
   // dist→99 → win banner
   await page.evaluate(() => window.__g14pvp.setDist('p1', 99))

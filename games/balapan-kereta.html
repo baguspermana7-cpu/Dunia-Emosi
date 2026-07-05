@@ -219,7 +219,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v57.9</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v58.0</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="data/train-world.js?v=55.89"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
@@ -6076,7 +6076,22 @@ function applyRdeScaling() {
     + '.gvs-match.done{opacity:.6}'
     + '.gvs-match .vs{font-size:12px;color:#b08968}'
     + '.gvs-match .win{color:#1f6b3a}'
-    + '@media (prefers-reduced-motion:reduce){.gvs-anim .gvs-fg,.gvs-train.boost,.gvs-train.slow,.gvs-train.grab,.gvs-boost.ready{animation:none}}'
+    // ── v58.0 race juice: start countdown, leader crown, finish line ──────────
+    + '.gvs-countdown{position:absolute;inset:0;z-index:9600;display:flex;align-items:center;justify-content:center;pointer-events:none}'
+    + '.gvs-cnum{font-family:inherit;font-weight:900;color:#fff;font-size:clamp(64px,20vh,150px);line-height:1;'
+    +   'text-shadow:0 4px 0 rgba(120,60,20,.55),0 0 26px rgba(255,190,70,.9);animation:gvsCount .9s cubic-bezier(.3,1.4,.5,1)}'
+    + '.gvs-cnum.go{color:#c9ffd6;text-shadow:0 4px 0 rgba(20,110,60,.55),0 0 30px rgba(80,255,150,.95)}'
+    + '@keyframes gvsCount{0%{transform:scale(2.4);opacity:0}30%{transform:scale(1);opacity:1}70%{opacity:1}100%{transform:scale(.6);opacity:0}}'
+    + '.gvs-crown{display:inline-block;margin:0 3px;animation:gvsCrown 1.1s ease-in-out infinite}'
+    + '@keyframes gvsCrown{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-2px) rotate(6deg)}}'
+    // checkered finish line — sweeps in from the right as the leader nears 100%
+    + '.gvs-finish{position:absolute;top:0;bottom:0;right:0;width:34px;z-index:4;transform:translateX(120%);opacity:0;'
+    +   'transition:transform .5s ease,opacity .5s ease;pointer-events:none;'
+    +   'background-image:repeating-conic-gradient(#1a1a1a 0 25%,#fff 0 50%);background-size:17px 17px;'
+    +   'box-shadow:-6px 0 16px rgba(0,0,0,.28)}'
+    + '.gvs-finish.show{transform:translateX(0);opacity:1}'
+    + '.gvs-finish::before{content:"🏁";position:absolute;top:6px;left:50%;transform:translateX(-50%);font-size:22px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}'
+    + '@media (prefers-reduced-motion:reduce){.gvs-anim .gvs-fg,.gvs-train.boost,.gvs-train.slow,.gvs-train.grab,.gvs-boost.ready,.gvs-cnum,.gvs-crown{animation:none}}'
     // v57.8 — compact layout on narrow/portrait so the HUD cards + top-center banner
     // never overlap (2×HUD + banner must fit the top strip below ~600px wide).
     + '@media (max-width:600px){'
@@ -6515,6 +6530,7 @@ function applyRdeScaling() {
         side: sideKey, name: info.name, trainX: trainX, dist: 0, energy: 0, tokens: 0, hearts: 3, lane: 1,
         boostUntil: 0, slowUntil: 0, train: train, tk: tk, hz: hz,
         pfill: pfill, spdv: hud.querySelector('.spdv'), heartsEl: hud.querySelector('.hearts'),
+        nmEl: hud.querySelector('.nm'), baseName: info.name,
         efill: foot.querySelector('.efill'), tokEl: foot.querySelector('.tok'), sb: sb,
         nextTok: performance.now() + 700 + Math.random() * 900, nextHaz: performance.now() + 1900 + Math.random() * 1400
       };
@@ -6562,6 +6578,8 @@ function applyRdeScaling() {
       if (!race.alive) return;
       var dt = race.last ? (now - race.last) / 1000 : 0.016; race.last = now;
       if (dt > 0.05) dt = 0.05;
+      // hold the simulation still until the 3·2·1·GO countdown finishes
+      if (!race.go) { race.raf = requestAnimationFrame(frame); return; }
       var players = race.players, i, j, maxMult = 0;
       for (i = 0; i < players.length; i++) {
         var P = players[i];
@@ -6597,6 +6615,12 @@ function applyRdeScaling() {
         }
         if (P.dist >= 100) { finish(P); return; }
       }
+      // v58.0 — live leader crown + finish-line reveal
+      var lead = players[0], md = players[0].dist, gap = 0;
+      for (i = 1; i < players.length; i++) { if (players[i].dist > lead.dist) lead = players[i]; if (players[i].dist > md) md = players[i].dist; }
+      if (players.length === 2) gap = Math.abs(players[0].dist - players[1].dist);
+      if (gap > 0.6 && race.leaderSide !== lead.side) { race.leaderSide = lead.side; for (i = 0; i < players.length; i++) setCrown(players[i], players[i] === lead); }
+      if (md >= 80 && race._finishEl && !race.finishShown) { race.finishShown = true; race._finishEl.classList.add('show'); }
       // v57.7 — scroll the whole world (rails/ground) at the leading pace, like the
       // original Adventure scene; BOOST visibly rushes it, a hazard-slow drags it. The
       // mirror-tiled track recycles every 2 viewport-widths → perfectly seamless.
@@ -6641,6 +6665,29 @@ function applyRdeScaling() {
       };
     } catch (_) {}
     race.raf = requestAnimationFrame(frame);
+    runCountdown();
+
+    // v58.0 — checkered finish line (revealed near the end) + leader crown + 3·2·1·GO
+    function ensureFinish () { if (!race._finishEl) { race._finishEl = el('div', 'gvs-finish'); scene.appendChild(race._finishEl); } return race._finishEl; }
+    function setCrown (P, on) {
+      if (P._crown === on) return; P._crown = on;
+      P.nmEl.innerHTML = (on ? '<span class="gvs-crown">👑</span>' : '') + esc(P.baseName);
+    }
+    function runCountdown () {
+      var finishEl = ensureFinish(); void finishEl;   // create it up-front so frame() can reveal it
+      if (reduce) { race.go = true; return; }          // no countdown under reduced-motion
+      var steps = ['3', '2', '1', 'GO!'], k = 0;
+      var ov = el('div', 'gvs-countdown'); scene.appendChild(ov);
+      (function tick () {
+        if (!race.alive) { if (ov.parentNode) ov.remove(); return; }
+        ov.innerHTML = '';
+        var n = el('div', 'gvs-cnum' + (steps[k] === 'GO!' ? ' go' : '')); n.textContent = steps[k]; ov.appendChild(n);
+        if (steps[k] === 'GO!') race.go = true;
+        k++;
+        if (k < steps.length) setTimeout(tick, 800);
+        else setTimeout(function () { if (ov.parentNode) ov.remove(); }, 700);
+      })();
+    }
   }
 
   // ── result / champion banner ────────────────────────────────────────────
