@@ -1,5 +1,22 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-05 — v57.3 "Clean white-background remnants + AEG border artifact on train sprites" (A-330)
+
+Owner: train sprites still showed leftover white background ("putih2 sisa background") and the Thomas AEG
+sprites had a leftover line from the border ("garis sisa dari border"). Alpha inspection confirmed
+fully-opaque near-white background remnants (e.g. world/001 ~1900 px) + a thin opaque blue/cyan strip
+baked along the bottom edge of thomas (rows y111–113). NEW `tools/clean-train-sprites.py`: (1) edge
+flood-fill de-background (BFS from the border through near-white/low-sat pixels → alpha 0; a dark/coloured
+train edge stops it, so interior whites — windows/lights/steam/white bodies — are preserved), (2) isolated
+thin edge-rim trim (clears a ≤3px opaque band flush to an edge followed by transparency — catches the
+thomas blue strip / coloured leftover lines), (3) 1px de-fringe, canvas size UNCHANGED (no re-crop → sprite
+anchors/positioning unaffected). Safety guard: skip any sprite that would lose >18% of its opaque pixels.
+Ran on `assets/train/aeg/*.webp` (26) + `assets/train/world/*.webp` (275) → 273 cleaned in place, 2 skipped
+by the guard (040/252, white-heavy — left untouched, flagged for manual). Verified: all 4 corners → 0
+alpha on cleaned sprites; before/after + after-sample montages on magenta (train silhouettes intact, no
+eaten parts, no white halo/strip). The games already apply a CSS white sticker outline so cutouts stay
+crisp. sw → v57.3-20260705e.
+
 ## 2026-07-05 — v57.2 "PvP/Tournament trains: green(P1)/red(P2) neon player-identity" (A-328)
 
 Owner: in PvP/Tournament every train shared a neutral outline — hard to tell whose is whose. Now each
