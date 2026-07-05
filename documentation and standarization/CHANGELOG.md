@@ -1,5 +1,20 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-05 — v58.4 "Shared train-backdrop: kill the stretched bottom + the wrap seam (g14 + g15)" (A-339 P1)
+
+Owner review: the Adventure (g14) backdrop had a stretched low-res band at the very bottom, and Lokomotif
+Pemberani (g15) showed a fragmented backdrop with a hard seam — while the PvP scene is clean. Both share
+`games/train-backdrop.js`, so fixed there once:
+- **Stretched bottom band** — `buildSkirts()` was upscaling a ~14px source crop to fill the gap below the
+  plate. Now it samples the plate's real top/bottom EDGE colour once and fills any gap with a SOLID
+  clay-blend rect (sky above / ground below) — no stretch, no low-res, blends seamlessly.
+- **Wrap seam** — the bands tiled 2× and wrapped, exposing the plate's non-tileable wrap edge (the g15
+  seam). Now MIRROR-tiled (normal|mirror|normal, wrap period 2 tiles), so a flipped copy's edge always
+  matches its neighbour → seamless scroll (same idea as the PvP scene). Fixes g14 + g15 together.
+- Verified: Adventure level 5 renders clean (no stretch, seamless), `qa-g14-railalign` 0px (rails
+  untouched), 0 console errors. sw `v58.2`→`v58.4`; `train-backdrop.js?v=` bumped across the 3 train games.
+  (Part of the 7-phase review sweep A-339; picker/PvP-tune/projectiles/tracing/museum follow.)
+
 ## 2026-07-05 — v58.3 "plb.html — 1000 development ideas for the non-train/non-Pokémon games" (A-338)
 
 Owner: "lakukan pengembangan pada game2 lain tidak hanya kereta dan pokemon … berikan 1000 ide … taruh

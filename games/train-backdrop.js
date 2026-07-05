@@ -145,11 +145,15 @@
         const screenH = (fy1 - fy0) * f.scaledH
         const tileW = f.scaledW
         const cont = new PIXI.Container()
-        for (let copy = 0; copy < 2; copy++) {
+        // v58.4 A-339 — MIRROR-TILE (normal|mirror|normal): a flipped middle copy's edge
+        // always matches its neighbours, so a non-tileable plate scrolls with NO wrap seam
+        // (owner: g15 "backdrop terpecah/potongan"). Same seamless idea as the PvP scene.
+        for (let copy = 0; copy < 3; copy++) {
           const s = new PIXI.Sprite(bandTex)
-          // width tileW+1 → the two copies overlap 1px = no hairline seam mid-scroll
-          s.x = copy * tileW; s.y = 0; s.width = tileW + 1
-          s.height = screenH * (rows + bleed) / rows   // bleed row at native scale
+          s.y = 0; s.width = tileW + 1                  // sets +scale.x
+          s.height = screenH * (rows + bleed) / rows    // bleed row at native scale
+          if (copy % 2 === 1) { s.scale.x = -Math.abs(s.scale.x); s.x = copy * tileW + tileW + 1 }  // mirror
+          else { s.x = copy * tileW }
           cont.addChild(s)
         }
         cont.x = f.leftX; cont.y = f.topY + fy0 * f.scaledH
@@ -160,25 +164,37 @@
       }
       if (!bands.length) { try { stage.removeChild(bg) } catch (_) {} return null }
 
-      // v56.3 B-285/A1 — SKIRTS: with the exact-map fit the plate may not cover the full
-      // screen vertically. Fill any top/bottom gap with 1-row texture-slice skirts
-      // (stretched real content) so no bare canvas ever shows — WITHOUT touching the
-      // rail mapping. Recreated on refit().
+      // v58.4 A-339 — SKIRTS: with the exact-map fit the plate may not cover the full
+      // screen vertically. The old fix STRETCHED a ~14px source crop to fill the gap →
+      // a visibly stretched, low-res band under the last rail (owner: "gambar stretch").
+      // NEW: sample the plate's actual top/bottom EDGE colour ONCE and fill any gap with a
+      // SOLID clay-blend rect (no stretch, no low-res). Blends seamlessly with the plate
+      // (sky above, ground below) — WITHOUT touching the rail mapping. Recreated on refit().
+      let skyHex = 0x9fd0f0, groundHex = 0x34502a
+      try {
+        const img = tex.source && (tex.source.resource || tex.source._resource || tex.source.source)
+        if (img && (img.width || img.naturalWidth)) {
+          const cvs = document.createElement('canvas'); cvs.width = 8; cvs.height = 8
+          const cx = cvs.getContext('2d', { willReadFrequently: true })
+          const avg = (d) => { let r = 0, g = 0, b = 0, n = d.length / 4; for (let i = 0; i < d.length; i += 4) { r += d[i]; g += d[i + 1]; b += d[i + 2] } return ((r / n) & 255) << 16 | ((g / n) & 255) << 8 | ((b / n) & 255) }
+          const strip = Math.max(1, Math.round(baseH * 0.03))
+          cx.drawImage(img, 0, 0, baseW, strip, 0, 0, 8, 8); skyHex = avg(cx.getImageData(0, 0, 8, 8).data)
+          cx.clearRect(0, 0, 8, 8)
+          cx.drawImage(img, 0, baseH - strip, baseW, strip, 0, 0, 8, 8); groundHex = avg(cx.getImageData(0, 0, 8, 8).data)
+        }
+      } catch (_) {}
       const skirts = []
       function buildSkirts(ff) {
         for (const sk of skirts.splice(0)) { try { bg.removeChild(sk); sk.destroy() } catch (_) {} }
         const margin = 4
         if (ff.topY > 0) {
-          const st = new PIXI.Sprite(new PIXI.Texture({ source: tex.source, frame: new PIXI.Rectangle(0, 0, baseW, 1) }))
-          st.x = ff.leftX; st.y = -margin; st.width = ff.scaledW + 1; st.height = ff.topY + margin + 1
+          const st = new PIXI.Graphics().rect(ff.leftX, -margin, ff.scaledW + 1, ff.topY + margin + 1).fill({ color: skyHex })
           st._isSkirt = true; bg.addChildAt(st, 0); skirts.push(st)
         }
         const botEdge = ff.topY + ff.scaledH
         if (botEdge < ff.H) {
-          const rows2 = Math.max(1, Math.round(baseH * 0.015))
-          const sb = new PIXI.Sprite(new PIXI.Texture({ source: tex.source, frame: new PIXI.Rectangle(0, baseH - rows2, baseW, rows2) }))
-          sb.x = ff.leftX; sb.y = botEdge - 1; sb.width = ff.scaledW + 1; sb.height = (ff.H - botEdge) + margin + 1
-          sb._isSkirt = true; bg.addChildAt(sb, 0); skirts.push(sb)
+          const gb = new PIXI.Graphics().rect(ff.leftX, botEdge - 1, ff.scaledW + 1, (ff.H - botEdge) + margin + 1).fill({ color: groundHex })
+          gb._isSkirt = true; bg.addChildAt(gb, 0); skirts.push(gb)
         }
       }
       buildSkirts(f)
@@ -197,7 +213,7 @@
           for (const c of bands) {
             if (!c || c.destroyed) continue
             c.x -= (c._pSpeed || 0) * worldSpeed * _d * scrollMult
-            if (c.x <= c._homeX - c._tileW) c.x += c._tileW
+            if (c.x <= c._homeX - 2 * c._tileW) c.x += 2 * c._tileW   // mirror pattern period = 2 tiles
           }
           if (railBob && stageRef) {
             const ff = fit(app, aspect, railOpts)
@@ -219,8 +235,10 @@
             c.y = ff.topY + c._fy0 * ff.scaledH
             for (let i = 0; i < c.children.length; i++) {
               const s = c.children[i]
-              s.x = i * ff.scaledW; s.width = ff.scaledW + 1
+              s.width = ff.scaledW + 1
               s.height = screenH * (c._rows + c._bleed) / c._rows
+              if (i % 2 === 1) { s.scale.x = -Math.abs(s.scale.x); s.x = i * ff.scaledW + ff.scaledW + 1 }  // mirror
+              else { s.scale.x = Math.abs(s.scale.x); s.x = i * ff.scaledW }
             }
           }
           buildSkirts(ff)
