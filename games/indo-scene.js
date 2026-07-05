@@ -75,7 +75,7 @@
       treeLeaf: 0x3c6642, treeDk: 0x2c4d34, foliage: 0x1f3a28, foliageDk: 0x142a1c,
       pole: 0x504c5e, wire: 0x2a2838,
       ballast: 0x5a544f, ballastDk: 0x423c38, tie: 0x352a22, tieDk: 0x241c16, rail: 0x7e8a98, railShine: 0xb0bcc8,
-      cloud: 0x3c426440 ? 0x3c4264 : 0x3c4264, cloudSh: 0x2a3050, cloudA: 0.8,
+      cloud: 0x3c4264, cloudSh: 0x2a3050, cloudA: 0.8,
       light: 0x5a6aa0, lightA: 0.0, dim: 0.34, stars: true, rain: false
     },
     rain: {
@@ -354,7 +354,7 @@
     var weather = opts.weather || WEATHERS[Math.floor(rand() * WEATHERS.length)]
     var skyH = Math.max(40, railY)
     var c = cont()
-    var birdCol = dark(pal.mountain || 0x6a7a86, 0.32)
+    var birdCol = dark(pal.mtnFar || 0x6a7a86, 0.32)
     var ents = []
     var CAP = Math.max(4, Math.round(9 * density))   // throttled-tablet budget
     var t = 0, spawnT = 0
