@@ -91,9 +91,20 @@ a{color:inherit}
 .card .tags{display:flex;gap:5px;flex-wrap:wrap}
 .tag{font-size:10px;font-weight:900;padding:2px 8px;border-radius:999px;color:#4a3b33;background:rgba(255,255,255,.66)}
 .tag.facet{background:var(--fc,#ddd)}
-.field{font-size:12.5px;line-height:1.4;color:var(--ink)}
+.field{font-size:12.5px;line-height:1.42;color:var(--ink)}
 .field b{font-family:var(--disp);font-weight:400;color:#a3572f;font-size:11px;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:1px}
 .field.learn{color:#0a6b47}
+.hook{font-size:13px;font-weight:900;color:#c2410c;line-height:1.3;margin:1px 0 2px}
+.usia{display:inline-block;font-size:10px;font-weight:900;color:#4a3b33;background:rgba(255,255,255,.7);padding:3px 9px;border-radius:999px;box-shadow:inset 0 1px 2px rgba(255,255,255,.8),0 1px 3px rgba(150,110,90,.12)}
+.contoh{font-size:12.5px;line-height:1.45;color:#5a3a1e;background:linear-gradient(160deg,#fff7e9,#ffeccf);
+  border-radius:13px;padding:9px 11px;box-shadow:inset 0 1px 3px rgba(255,255,255,.85),inset 0 -2px 4px rgba(200,150,90,.14)}
+.contoh b{font-family:var(--disp);font-weight:400;color:#d1691a;font-size:11px;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:1px}
+.more{align-self:flex-start;font-family:var(--disp);font-size:11.5px;color:#7c6aa0;background:rgba(255,255,255,.6);
+  border:0;border-radius:10px;padding:5px 11px;cursor:pointer;box-shadow:inset 0 1px 2px rgba(255,255,255,.8),0 2px 4px rgba(150,110,90,.1)}
+.detail{display:none;flex-direction:column;gap:7px}
+.card.open .detail{display:flex}
+.card.open .more{color:#e06a2c}
+.foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:2px}
 .meters{display:flex;gap:14px;margin-top:2px}
 .meter{font-size:10px;font-weight:900;color:var(--ink-soft);display:flex;align-items:center;gap:4px}
 .dots{display:inline-flex;gap:3px}
@@ -302,12 +313,20 @@ function cardHTML(it){
     +'<span class="idn">#'+it.id+'</span>'
     +'<div class="top"><div class="ic">'+g.emoji+'</div><div><h3>'+esc(it.title)+'</h3>'
     +'<div class="tags"><span class="tag">'+esc(g.n)+'</span><span class="tag facet" style="--fc:'+f.c+'">'+f.ic+' '+f.l+'</span></div></div></div>'
-    +'<div class="field"><b>Mekanik</b>'+esc(it.mechanic)+'</div>'
-    +'<div class="field"><b>Gameplay</b>'+esc(it.gameplay)+'</div>'
-    +'<div class="field"><b>Tampilan</b>'+esc(it.visual)+'</div>'
-    +'<div class="field learn"><b>Nilai belajar</b>'+esc(it.learning)+'</div>'
-    +'<div class="meters"><span class="meter">Effort '+dotRow(it.effort,'')+'</span><span class="meter">Impact '+dotRow(it.impact,'imp')+'</span></div>'
-    +(hasMock?'<button class="demolink" data-mock="'+GAME_MOCK[it.game]+'">▶ Lihat demo visual</button>':'')
+    +(it.hook?'<p class="hook">✦ '+esc(it.hook)+'</p>':'')
+    +'<div class="field"><b>Cara main</b>'+esc(it.gameplay)+'</div>'
+    +(it.contoh?'<div class="contoh"><b>Contoh nyata</b>'+esc(it.contoh)+'</div>':'')
+    +'<button class="more">▾ Detail lengkap</button>'
+    +'<div class="detail">'
+      +'<div class="field"><b>Mekanik</b>'+esc(it.mechanic)+'</div>'
+      +'<div class="field"><b>Tampilan</b>'+esc(it.visual)+'</div>'
+      +'<div class="field learn"><b>Nilai belajar</b>'+esc(it.learning)+'</div>'
+    +'</div>'
+    +'<div class="foot">'
+      +(it.usia?'<span class="usia">👶 '+esc(it.usia)+'</span>':'')
+      +'<span class="meter">Effort '+dotRow(it.effort,'')+'</span><span class="meter">Impact '+dotRow(it.impact,'imp')+'</span>'
+      +(hasMock?'<button class="demolink" data-mock="'+GAME_MOCK[it.game]+'">▶ Demo</button>':'')
+    +'</div>'
     +'</div>';
 }
 function esc(s){return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
@@ -344,7 +363,8 @@ function openModal(key){const m=MOCKS[key];if(!m)return;$('#mtitle').textContent
   if(modalCtrl){modalCtrl.stop();}modalCtrl=m.run($('#mcanvas'));}
 function closeModal(){$('#modal').classList.remove('on');if(modalCtrl){modalCtrl.stop();modalCtrl=null;}}
 $('#mclose').onclick=closeModal;$('#modal').addEventListener('click',e=>{if(e.target===$('#modal'))closeModal();});
-document.addEventListener('click',e=>{const b=e.target.closest('.demolink');if(b)openModal(b.dataset.mock);});
+document.addEventListener('click',e=>{const b=e.target.closest('.demolink');if(b){openModal(b.dataset.mock);return;}
+  const m=e.target.closest('.more');if(m){const c=m.closest('.card');c.classList.toggle('open');m.textContent=c.classList.contains('open')?'▴ Tutup detail':'▾ Detail lengkap';}});
 
 /* search */
 let qt;$('#q').addEventListener('input',e=>{clearTimeout(qt);qt=setTimeout(()=>{query=e.target.value.trim();applyFilter();},160);});
