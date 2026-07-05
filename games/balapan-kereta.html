@@ -219,7 +219,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v58.1</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v58.2</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="data/train-world.js?v=55.89"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
@@ -6029,6 +6029,12 @@ function applyRdeScaling() {
     + '.gvs-train.p2{filter:drop-shadow(1px 0 0 #3aa0ff) drop-shadow(-1px 0 0 #3aa0ff) drop-shadow(0 1px 0 #3aa0ff) drop-shadow(0 -1px 0 #3aa0ff) drop-shadow(0 0 8px rgba(58,160,255,.95)) drop-shadow(0 6px 5px rgba(0,0,0,.32))}'
     + '.gvs-train.boost{animation:gvsBoost .5s ease}'
     + '@keyframes gvsBoost{0%{}40%{filter:drop-shadow(0 0 16px rgba(255,180,60,.98)) brightness(1.14)}100%{}}'
+    // v58.2 — BOOST speed-trail: a warm streak whooshes behind the train while boosting
+    + '.gvs-train.boosting::before{content:"";position:absolute;right:100%;top:50%;transform:translateY(-50%);'
+    +   'width:clamp(46px,9vw,90px);height:64%;margin-right:-6px;pointer-events:none;border-radius:40% 0 0 40%;'
+    +   'background:linear-gradient(90deg,transparent,rgba(255,196,72,.15) 30%,rgba(255,150,40,.6));filter:blur(1.5px);'
+    +   'animation:gvsTrail .28s linear infinite}'
+    + '@keyframes gvsTrail{0%{opacity:.5;transform:translateY(-50%) scaleX(.82)}50%{opacity:.95;transform:translateY(-50%) scaleX(1.08)}100%{opacity:.5;transform:translateY(-50%) scaleX(.82)}}'
     + '.gvs-train.grab{animation:gvsGrab .35s ease}'
     + '@keyframes gvsGrab{0%,100%{transform:translate(-50%,-100%) scale(1)}45%{transform:translate(-50%,-108%) scale(1.12)}}'
     + '.gvs-train.slow{animation:gvsShake .4s ease}'
@@ -6099,7 +6105,7 @@ function applyRdeScaling() {
     +   'box-shadow:-6px 0 16px rgba(0,0,0,.28)}'
     + '.gvs-finish.show{transform:translateX(0);opacity:1}'
     + '.gvs-finish::before{content:"🏁";position:absolute;top:6px;left:50%;transform:translateX(-50%);font-size:22px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}'
-    + '@media (prefers-reduced-motion:reduce){.gvs-anim .gvs-fg,.gvs-train.boost,.gvs-train.slow,.gvs-train.grab,.gvs-boost.ready,.gvs-cnum,.gvs-crown{animation:none}}'
+    + '@media (prefers-reduced-motion:reduce){.gvs-anim .gvs-fg,.gvs-train.boost,.gvs-train.slow,.gvs-train.grab,.gvs-boost.ready,.gvs-cnum,.gvs-crown,.gvs-train.boosting::before{animation:none}}'
     // v57.8 — compact layout on narrow/portrait so the HUD cards + top-center banner
     // never overlap (2×HUD + banner must fit the top strip below ~600px wide).
     + '@media (max-width:600px){'
@@ -6593,6 +6599,7 @@ function applyRdeScaling() {
         var P = players[i];
         if (P.dist >= 100) continue;
         var boosting = now < P.boostUntil;
+        if (P._boostTrail !== boosting) { P._boostTrail = boosting; P.train.classList.toggle('boosting', boosting); }
         var slowed = now < P.slowUntil;
         var mult = boosting ? BOOST_MULT : (slowed ? SLOW_MULT : 1);
         if (mult > maxMult) maxMult = mult;

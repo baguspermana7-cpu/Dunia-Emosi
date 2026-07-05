@@ -1,5 +1,14 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-05 — v58.2 "Balapan Kereta PvP — BOOST speed-trail" (A-337)
+
+Owner "enhance more" → BOOST now *feels* fast: while a train is boosting, a warm streak whooshes behind
+it (`.gvs-train.boosting::before`, a blurred gradient with a `gvsTrail` scale-pulse). The class is
+toggled in the frame loop on the real boost window (`now < boostUntil`), only on transition (no per-frame
+DOM churn), and is suppressed under `prefers-reduced-motion`. Verified at 1024×600: both trains show the
+trail at 159 km/h while boosting, 0 errors; `qa-g14-versus-drive` ALL PASS, app-sweep 16/16. sw
+`v58.1`→`v58.2`.
+
 ## 2026-07-05 — v58.1 "Balapan Kereta PvP — winner celebration (confetti + trophy pop)" (A-336)
 
 Owner "enhance more" → the win/champion payoff was a plain trophy + title. Now `showResult`:
