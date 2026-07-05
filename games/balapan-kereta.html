@@ -5906,7 +5906,8 @@ function applyRdeScaling() {
     p2:    { t:'#cfe4f8', b:'#bcd8f2', e:'#8db8de', ink:'#1e3a5f', soft:'rgba(141,184,222,.5)' }, // blue
     // v57.2 — vibrant PLAYER-IDENTITY colours for PvP/Tournament: P1 green, P2 red.
     pl1:   { t:'#8ef2b0', b:'#3ddc84', e:'#12b866', ink:'#06351d', soft:'rgba(45,255,136,.5)' },  // green (P1)
-    pl2:   { t:'#ff9db0', b:'#ff5a6e', e:'#e01e37', ink:'#4a0812', soft:'rgba(255,45,85,.5)' },   // red (P2)
+    pl2:   { t:'#ff9db0', b:'#ff5a6e', e:'#e01e37', ink:'#4a0812', soft:'rgba(255,45,85,.5)' },   // red (legacy)
+    plB:   { t:'#a9d4ff', b:'#6db3f7', e:'#2a7fd4', ink:'#0b2b52', soft:'rgba(58,160,255,.5)' },  // vibrant blue (P2)
     go:    { t:'#c9ecd3', b:'#b2e2c1', e:'#8fcf9f', ink:'#1f6b3a', soft:'rgba(143,207,159,.5)' }, // mint
     pvp:   { t:'#ded4f6', b:'#cfc2f0', e:'#ab98e0', ink:'#4c3a7a', soft:'rgba(171,152,224,.5)' }, // lavender
     tour:  { t:'#f3e6ca', b:'#ecdab3', e:'#cdb98e', ink:'#6b4e1e', soft:'rgba(205,185,142,.5)' }, // cream
@@ -5962,61 +5963,87 @@ function applyRdeScaling() {
     + '.gvs-count{display:flex;justify-content:center;gap:10px;margin:2px 0 6px}'
     + '.gvs-count .gvs-btn.sm{min-width:56px}'
     + '.gvs-count .gvs-btn.sel{filter:brightness(.97);box-shadow:0 2px 0 var(--e),inset 0 3px 8px rgba(255,255,255,.85),inset 0 0 0 3px rgba(255,255,255,.6)}'
-    // ---- race arena --------------------------------------------------------
-    + '.gvs-topbar{display:flex;align-items:center;gap:10px;padding:8px 12px;flex-shrink:0}'
-    + '.gvs-topbar .gvs-lbl{flex:1;text-align:center;font-weight:900;color:#5d4a42;font-size:clamp(13px,3vw,17px)}'
-    + '.gvs-arena{flex:1;display:flex;flex-direction:column;gap:8px;padding:0 8px;min-height:0}'
-    + '.gvs-band{flex:1;position:relative;border-radius:22px;overflow:hidden;min-height:0;'
-    +   'box-shadow:0 8px 0 rgba(120,90,70,.14),inset 0 3px 10px rgba(255,255,255,.55),inset 0 -8px 18px rgba(90,70,55,.10)}'
-    + '.gvs-band.p2{background:linear-gradient(180deg,#bfe0f5 0%,#d7ecc6 62%,#c7e0a8 100%)}'
-    + '.gvs-band.p1{background:linear-gradient(180deg,#ffe6c8 0%,#ffe0b0 46%,#d7e6a6 100%)}'
-    + '.gvs-hills{position:absolute;left:0;right:0;bottom:34%;height:38%;'
-    +   'background:radial-gradient(60% 100% at 20% 100%,rgba(150,200,150,.55),transparent 70%),radial-gradient(55% 100% at 65% 100%,rgba(170,210,160,.5),transparent 72%);'
-    +   'background-repeat:repeat-x;background-size:340px 100%}'
-    + '.gvs-ground{position:absolute;left:0;bottom:0;height:34%;width:200%;'
-    +   'background:linear-gradient(180deg,#e7d3a6,#d8bf86);'
-    +   'box-shadow:inset 0 6px 12px rgba(255,255,255,.4)}'
-    + '.gvs-ground::before{content:"";position:absolute;top:20%;left:0;right:0;height:5px;'
-    +   'background:repeating-linear-gradient(90deg,rgba(120,90,60,.55) 0 30px,transparent 30px 66px)}'
-    + '.gvs-anim .gvs-ground{animation:gvsScroll 1.1s linear infinite}'
-    + '.gvs-anim .gvs-hills{animation:gvsScrollSlow 6s linear infinite}'
-    + '@keyframes gvsScroll{from{transform:translateX(0)}to{transform:translateX(-66px)}}'
-    + '@keyframes gvsScrollSlow{from{background-position-x:0}to{background-position-x:-340px}}'
-    + '.gvs-rail{position:absolute;left:0;right:0;height:3px;background:repeating-linear-gradient(90deg,rgba(90,66,45,.5) 0 16px,transparent 16px 30px)}'
-    + '.gvs-rail.r0{bottom:20%}.gvs-rail.r1{bottom:46%}'
-    + '.gvs-train{position:absolute;left:6%;bottom:20%;height:clamp(34px,8vh,54px);width:auto;transform:translate(-6%,50%);'
-    +   'transition:bottom .18s ease;pointer-events:none;filter:drop-shadow(0 5px 4px rgba(0,0,0,.28));z-index:3}'
-    // v57.2 — thin vibrant-neon player-identity outline on the racer's train: P1 green / P2 red.
-    + '.gvs-band.p1 .gvs-train{filter:drop-shadow(1px 0 0 #39ff14) drop-shadow(-1px 0 0 #39ff14) drop-shadow(0 1px 0 #39ff14) drop-shadow(0 -1px 0 #39ff14) drop-shadow(0 0 7px rgba(57,255,20,.95)) drop-shadow(0 5px 4px rgba(0,0,0,.3))}'
-    + '.gvs-band.p2 .gvs-train{filter:drop-shadow(1px 0 0 #ff2d2d) drop-shadow(-1px 0 0 #ff2d2d) drop-shadow(0 1px 0 #ff2d2d) drop-shadow(0 -1px 0 #ff2d2d) drop-shadow(0 0 7px rgba(255,45,45,.95)) drop-shadow(0 5px 4px rgba(0,0,0,.3))}'
-    + '.gvs-train.emoji{font-size:clamp(30px,7vh,46px);line-height:1;height:auto}'
+    // ---- shared PvP racing scene (v57.3 — one landscape scene, no bands) ────
+    + '.gvs-scene{position:relative;flex:1;min-height:0;overflow:hidden}'
+    + '.gvs-scene.gvs-fallback{background:linear-gradient(180deg,#bfe0f5 0%,#d7ecc6 58%,#c7e0a8 100%)}'
+    + '.gvs-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 62%;z-index:0}'
+    + '.gvs-fg{position:absolute;left:0;right:0;bottom:0;height:20%;z-index:1;pointer-events:none;'
+    +   'background:repeating-linear-gradient(90deg,rgba(80,58,38,.12) 0 44px,transparent 44px 96px)}'
+    + '.gvs-anim .gvs-fg{animation:gvsScroll 1.5s linear infinite}'
+    + '@keyframes gvsScroll{from{transform:translateX(0)}to{transform:translateX(-96px)}}'
+    // exit button (float, top-left)
+    + '.gvs-x-float{position:absolute;top:6px;left:6px;z-index:8;width:34px;height:34px;font-size:16px;border-radius:11px}'
+    // banner (top-center): PVP MODE + dynamic leg + tagline
+    + '.gvs-banner{position:absolute;top:6px;left:50%;transform:translateX(-50%);z-index:6;text-align:center;'
+    +   'padding:5px 16px;border-radius:15px;max-width:52%;'
+    +   'background:linear-gradient(160deg,rgba(255,255,255,.94),rgba(255,246,234,.9));'
+    +   'box-shadow:0 4px 0 rgba(120,90,70,.2),inset 0 2px 5px rgba(255,255,255,.85)}'
+    + '.gvs-banner .t1{font-weight:900;color:#c23a12;font-size:clamp(12px,2.9vw,17px);line-height:1.12}'
+    + '.gvs-banner .t2{font-weight:800;color:#5d4a42;font-size:clamp(10px,2.3vw,13px)}'
+    + '.gvs-banner .t3{color:#7a675c;font-size:clamp(9px,1.9vw,11px)}'
+    // HUD cards — P2 top-left (blue) / P1 top-right (green)
+    + '.gvs-hud{position:absolute;top:7px;z-index:6;min-width:118px;max-width:38%;padding:6px 9px;border-radius:15px;'
+    +   'background:linear-gradient(160deg,var(--t),var(--b));box-shadow:0 5px 0 var(--e),inset 0 2px 6px rgba(255,255,255,.8)}'
+    + '.gvs-hud.p2{left:44px}.gvs-hud.p1{right:8px;text-align:right}'
+    + '.gvs-hud .row1{display:flex;align-items:center;gap:6px;font-weight:900;color:var(--ink);font-size:13px}'
+    + '.gvs-hud.p1 .row1{flex-direction:row-reverse}'
+    + '.gvs-hud .av{width:26px;height:26px;border-radius:9px;display:grid;place-items:center;font-size:16px;background:rgba(255,255,255,.6);flex-shrink:0}'
+    + '.gvs-hud .nm{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
+    + '.gvs-hud .spd{font-size:11px;font-weight:800;color:var(--ink);opacity:.92;margin-top:2px}'
+    + '.gvs-hud .hearts{font-size:12px;letter-spacing:1px;margin-top:1px}'
+    + '.gvs-hud .pbar{margin-top:4px;height:9px;border-radius:6px;background:rgba(255,255,255,.5);overflow:hidden;box-shadow:inset 0 1px 3px rgba(120,90,70,.25)}'
+    + '.gvs-hud .pfill{height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,var(--t),var(--e))}'
+    // far-edge NAIK/TURUN side controls (>=44px)
+    + '.gvs-side{position:absolute;top:52%;transform:translateY(-50%);z-index:7;display:flex;flex-direction:column;gap:8px}'
+    + '.gvs-side.p2{left:6px}.gvs-side.p1{right:6px}'
+    + '.gvs-slane{width:48px;height:50px;min-height:48px;border:0;border-radius:15px;font-size:17px;font-weight:900;cursor:pointer;color:var(--ink);'
+    +   'background:linear-gradient(160deg,#fff,var(--t));box-shadow:0 4px 0 var(--e),inset 0 2px 5px rgba(255,255,255,.85);'
+    +   'display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;-webkit-tap-highlight-color:transparent}'
+    + '.gvs-slane small{font-size:8px;font-weight:900;letter-spacing:.4px;margin-top:1px}'
+    + '.gvs-slane:active{transform:translateY(3px);box-shadow:0 1px 0 var(--e)}'
+    // trains — bigger, center-anchored, player-neon outline (P1 green / P2 blue)
+    + '.gvs-train{position:absolute;top:72%;z-index:3;height:clamp(46px,13vh,92px);width:auto;transform:translate(-50%,-50%);'
+    +   'transition:top .16s ease;pointer-events:none}'
+    + '.gvs-train.emoji{font-size:clamp(38px,11vh,74px);line-height:1;height:auto}'
+    + '.gvs-train.p1{filter:drop-shadow(1px 0 0 #39ff14) drop-shadow(-1px 0 0 #39ff14) drop-shadow(0 1px 0 #39ff14) drop-shadow(0 -1px 0 #39ff14) drop-shadow(0 0 8px rgba(57,255,20,.95)) drop-shadow(0 6px 5px rgba(0,0,0,.32))}'
+    + '.gvs-train.p2{filter:drop-shadow(1px 0 0 #3aa0ff) drop-shadow(-1px 0 0 #3aa0ff) drop-shadow(0 1px 0 #3aa0ff) drop-shadow(0 -1px 0 #3aa0ff) drop-shadow(0 0 8px rgba(58,160,255,.95)) drop-shadow(0 6px 5px rgba(0,0,0,.32))}'
     + '.gvs-train.boost{animation:gvsBoost .5s ease}'
-    + '@keyframes gvsBoost{0%{filter:drop-shadow(0 5px 4px rgba(0,0,0,.28))}40%{filter:drop-shadow(0 0 14px rgba(255,170,60,.95)) brightness(1.12)}100%{filter:drop-shadow(0 5px 4px rgba(0,0,0,.28))}}'
+    + '@keyframes gvsBoost{0%{}40%{filter:drop-shadow(0 0 16px rgba(255,180,60,.98)) brightness(1.14)}100%{}}'
+    + '.gvs-train.grab{animation:gvsGrab .35s ease}'
+    + '@keyframes gvsGrab{0%,100%{transform:translate(-50%,-50%) scale(1)}45%{transform:translate(-50%,-56%) scale(1.12)}}'
     + '.gvs-train.slow{animation:gvsShake .4s ease}'
-    + '@keyframes gvsShake{0%,100%{margin-left:0}25%{margin-left:-5px}75%{margin-left:5px}}'
-    + '.gvs-flag{position:absolute;right:3%;bottom:14%;font-size:clamp(24px,6vh,40px);z-index:2;filter:drop-shadow(0 3px 3px rgba(0,0,0,.2))}'
-    + '.gvs-haz{position:absolute;bottom:20%;left:104%;font-size:clamp(20px,5vh,32px);transform:translate(-50%,50%);z-index:3;display:none;filter:drop-shadow(0 3px 3px rgba(0,0,0,.25))}'
+    + '@keyframes gvsShake{0%,100%{margin-left:0}25%{margin-left:-6px}75%{margin-left:6px}}'
+    // player-tinted tokens (⚡/coin) + emoji hazards
+    + '.gvs-token{position:absolute;z-index:2;font-size:clamp(20px,5vh,32px);transform:translate(-50%,-50%);display:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}'
+    + '.gvs-token.on{display:block}'
+    + '.gvs-token.p1{text-shadow:0 0 8px rgba(57,255,20,.95)}'
+    + '.gvs-token.p2{text-shadow:0 0 8px rgba(58,160,255,.95)}'
+    + '.gvs-haz{position:absolute;z-index:2;font-size:clamp(20px,5vh,32px);transform:translate(-50%,-50%);display:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}'
     + '.gvs-haz.on{display:block}'
-    + '.gvs-name{position:absolute;top:8px;left:10px;z-index:4;display:flex;align-items:center;gap:6px;'
-    +   'padding:5px 12px;border-radius:14px;font-weight:900;font-size:13px;color:var(--ink);'
-    +   'background:linear-gradient(160deg,var(--t),var(--b));box-shadow:0 3px 0 var(--e),inset 0 2px 4px rgba(255,255,255,.8)}'
-    + '.gvs-progwrap{position:absolute;top:9px;right:10px;left:auto;width:44%;max-width:260px;z-index:4;'
-    +   'height:12px;border-radius:8px;background:rgba(255,255,255,.55);box-shadow:inset 0 2px 4px rgba(120,90,70,.22);overflow:hidden}'
-    + '.gvs-progfill{height:100%;width:0;border-radius:8px;background:linear-gradient(90deg,var(--t),var(--e))}'
-    + '.gvs-pct{position:absolute;top:8px;right:12px;z-index:5;font-weight:900;font-size:11px;color:var(--ink);opacity:.9;margin-top:14px}'
-    // ---- dock (question corners + controls) --------------------------------
-    + '.gvs-dock{flex-shrink:0;display:flex;gap:8px;padding:8px;align-items:stretch}'
-    + '.gvs-corner{flex:1;display:flex;gap:8px;align-items:stretch;border-radius:22px;padding:10px;min-width:0;'
-    +   'background:linear-gradient(160deg,var(--t),var(--b));box-shadow:0 6px 0 var(--e),inset 0 3px 8px rgba(255,255,255,.8)}'
-    + '.gvs-corner.p1{flex-direction:row-reverse}'   // P1 controls hug the RIGHT edge
-    + '.gvs-ctrls{display:flex;flex-direction:column;gap:6px;justify-content:center;flex-shrink:0}'
-    + '.gvs-lane{width:52px;height:52px;border:0;border-radius:16px;font-size:20px;font-weight:900;cursor:pointer;color:var(--ink);'
-    +   'background:linear-gradient(160deg,#ffffff,var(--t));box-shadow:0 4px 0 var(--e),inset 0 2px 5px rgba(255,255,255,.85)}'
-    + '.gvs-lane:active{transform:translateY(3px);box-shadow:0 1px 0 var(--e)}'
-    + '.gvs-qhost{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:6px}'
-    + '.gvs-qhost .qz-question{font-size:clamp(16px,3.6vw,22px);margin-bottom:6px;color:var(--ink);text-shadow:none}'
-    + '.gvs-qhost .qz-choices.qz-grid{gap:6px}'
-    + '.gvs-qhost .qz-pill{min-height:44px;font-size:16px;padding:9px 4px}'
+    // BOOST medallion — bottom-center, glossy round
+    + '.gvs-boost{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);z-index:7;'
+    +   'width:clamp(66px,15vh,86px);height:clamp(66px,15vh,86px);border:0;border-radius:50%;cursor:pointer;'
+    +   'font-weight:900;color:#7a3a08;line-height:1.05;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;'
+    +   'background:radial-gradient(circle at 38% 30%,#fff2cf,#ffcf7a 58%,#f2a63f);'
+    +   'box-shadow:0 6px 0 #d98f3a,0 10px 18px rgba(150,90,30,.34),inset 0 3px 8px rgba(255,255,255,.85),inset 0 -6px 12px rgba(180,110,40,.3);'
+    +   '-webkit-tap-highlight-color:transparent}'
+    + '.gvs-boost .bi{font-size:22px;line-height:1}'
+    + '.gvs-boost .bt{font-size:11px}'
+    + '.gvs-boost .bl{font-size:9px;opacity:.85}'
+    + '.gvs-boost:active{transform:translateX(-50%) translateY(3px);box-shadow:0 3px 0 #d98f3a,inset 0 3px 8px rgba(255,255,255,.85)}'
+    + '.gvs-boost.ready{animation:gvsPulse 1s ease-in-out infinite}'
+    + '@keyframes gvsPulse{0%,100%{box-shadow:0 6px 0 #d98f3a,0 10px 18px rgba(150,90,30,.34),inset 0 3px 8px rgba(255,255,255,.85),inset 0 -6px 12px rgba(180,110,40,.3)}50%{box-shadow:0 6px 0 #d98f3a,0 0 24px rgba(255,190,70,.98),inset 0 3px 8px rgba(255,255,255,.9),inset 0 -6px 12px rgba(180,110,40,.3)}}'
+    // foot — bottom-left (P2 energy+token) / bottom-right (P1 token+energy) + per-side BOOST
+    + '.gvs-foot{position:absolute;bottom:10px;z-index:6;display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:14px;'
+    +   'background:linear-gradient(160deg,var(--t),var(--b));box-shadow:0 4px 0 var(--e),inset 0 2px 5px rgba(255,255,255,.8)}'
+    + '.gvs-foot.p2{left:60px}.gvs-foot.p1{right:60px;flex-direction:row-reverse}'
+    + '.gvs-foot .ewrap{width:60px;height:12px;border-radius:7px;background:rgba(255,255,255,.5);overflow:hidden;box-shadow:inset 0 1px 3px rgba(120,90,70,.25)}'
+    + '.gvs-foot .efill{height:100%;width:0;border-radius:7px;background:linear-gradient(90deg,#ffe08a,#ff9a3c)}'
+    + '.gvs-foot .tok{font-weight:900;color:var(--ink);font-size:13px;white-space:nowrap}'
+    + '.gvs-foot .sb{border:0;border-radius:12px;min-height:40px;padding:6px 11px;font-weight:900;font-size:12px;cursor:pointer;color:var(--ink);'
+    +   'background:linear-gradient(160deg,#fff,var(--t));box-shadow:0 3px 0 var(--e),inset 0 2px 4px rgba(255,255,255,.85);-webkit-tap-highlight-color:transparent}'
+    + '.gvs-foot .sb:active{transform:translateY(2px);box-shadow:0 1px 0 var(--e)}'
+    + '.gvs-foot .sb:disabled{opacity:.5;cursor:default}'
     // ---- win / bracket screens --------------------------------------------
     + '.gvs-panel{position:absolute;inset:0;z-index:9700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;'
     +   'padding:24px;text-align:center;background:linear-gradient(180deg,rgba(207,233,250,.96),rgba(247,236,223,.97))}'
@@ -6029,7 +6056,7 @@ function applyRdeScaling() {
     + '.gvs-match.done{opacity:.6}'
     + '.gvs-match .vs{font-size:12px;color:#b08968}'
     + '.gvs-match .win{color:#1f6b3a}'
-    + '@media (prefers-reduced-motion:reduce){.gvs-anim .gvs-ground,.gvs-anim .gvs-hills,.gvs-train.boost,.gvs-train.slow{animation:none}}'
+    + '@media (prefers-reduced-motion:reduce){.gvs-anim .gvs-fg,.gvs-train.boost,.gvs-train.slow,.gvs-train.grab,.gvs-boost.ready{animation:none}}'
     // ═══ A-327 pastel-clay restyle of the EXISTING train-game buttons ═══════
     + '#go-btn{background:linear-gradient(160deg,#c9ecd3,#b2e2c1)!important;border:0!important;color:#1f6b3a!important;'
     +   'box-shadow:0 8px 0 #8fcf9f,0 16px 24px rgba(90,170,120,.24),inset 0 4px 10px rgba(255,255,255,.85),inset 0 -6px 12px rgba(90,170,120,.16)!important}'
@@ -6115,7 +6142,7 @@ function applyRdeScaling() {
       + '<div class="gvs-cards">'
       + '<div class="gvs-intro"><h1>Pilih Cara Main</h1><p>Adventure sendiri · PvP berdua · Tournament sekeluarga</p></div>'
       + '<button class="gvs-card" data-mode="adventure"><span class="em">🎮</span><div class="bd"><h3>Adventure</h3><p>Main sendiri, kumpulkan koin & bintang.</p></div><span class="cta">Main →</span></button>'
-      + '<button class="gvs-card" data-mode="pvp"><span class="em">👥</span><div class="bd"><h3>PvP 1 vs 1</h3><p>Balapan layar-belah. Jawab soal, kereta melaju!</p></div><span class="cta">Berdua →</span></button>'
+      + '<button class="gvs-card" data-mode="pvp"><span class="em">👥</span><div class="bd"><h3>PvP 1 vs 1</h3><p>Satu arena berdua. Naik-turun jalur, rebut token, boost!</p></div><span class="cta">Berdua →</span></button>'
       + '<button class="gvs-card" data-mode="tournament"><span class="em">🏆</span><div class="bd"><h3>Tournament</h3><p>2–4 pemain. Menang lanjut sampai juara.</p></div><span class="cta">Keluarga →</span></button>'
       + '</div>';
     document.body.appendChild(root);
@@ -6287,15 +6314,47 @@ function applyRdeScaling() {
     });
   }
 
-  // ── the actual split-screen race ────────────────────────────────────────
-  //   Two independent horizontal bands (P2 top, P1 bottom). BOOST-fuel: a
-  //   correct QuizEngine answer surges THAT train; wrong = brief slow. Gentle
-  //   constant auto-advance. First to 100% wins. Frame-rate independent.
-  var AUTO = 1.2;        // %/sec baseline creep
-  var BOOST = 17;        // %/sec surge set on a correct answer (decays)
-  var BOOST_HALF = 0.5;  // surge half-life (s)
-  var HAZ_SPEED = 44;    // %/sec hazard travel
-  var LANE_Y = ['20%', '46%'];
+  // ── the actual shared-scene race (v57.3 — ONE landscape arena, no quiz) ───
+  //   Both trains float over the selected level's real backdrop plate on
+  //   parallel rails. NAIK/TURUN shifts a train between lanes to GRAB tinted
+  //   tokens (+energy) and DODGE hazards (brief slow). energy≥threshold →
+  //   BOOST ready → spend energy → ~1.5s ×1.9 surge. Both auto-creep; race
+  //   standing shows on the HUD progress bars. First dist≥100 wins.
+  //   Frame-rate independent. Same onFinish contract (Tournament unaffected).
+  var AUTO = 2.2;          // %/sec baseline creep
+  var BOOST_MULT = 1.9;    // speed ×multiplier while boosting
+  var BOOST_MS = 1500;     // boost duration (ms)
+  var SLOW_MULT = 0.35;    // speed ×multiplier while slowed by a hazard
+  var SLOW_MS = 800;       // hazard slow duration (ms)
+  var ITEM_SPEED = 32;     // %/sec token+hazard travel (right → left)
+  var ENERGY_MAX = 100;    // energy bar cap
+  var BOOST_COST = 100;    // energy needed to trigger BOOST
+  var TOKEN_ENERGY = 25;   // energy gained per token grabbed
+  var SPEED_K = 38;        // km/h display factor (rate × K)
+  var TRAIN_X = { p2: 40, p1: 60 };   // fixed float x per player (%)
+  var LANE_FALLBACK = [0.55, 0.72, 0.86];
+
+  function zeroPad2 (n) { n = String(n); return n.length < 2 ? '0' + n : n; }
+  function platePath () { return '../assets/train/backdrop/level' + zeroPad2(qlevel()) + '-1600.webp'; }
+  function legName () { try { if (typeof g14StationName === 'function') { var s = g14StationName(); if (s) return s; } } catch (_) {} return 'Perjalanan Rel'; }
+  function heartStr (n) { var s = ''; for (var i = 0; i < 3; i++) s += (i < n) ? '❤' : '🤍'; return s; }
+
+  // Non-blocking lane read: prefer the already-loaded manifest, else fetch the
+  // read-only levelNN.json, else the safe fallback. NEVER writes the JSON.
+  function loadLanes (cb) {
+    try {
+      if (typeof G14_MANIFEST !== 'undefined' && G14_MANIFEST && G14_MANIFEST.laneRatios
+        && G14_MANIFEST.laneRatios.lanes && G14_MANIFEST.laneRatios.lanes.length >= 2) {
+        cb(G14_MANIFEST.laneRatios.lanes.slice()); return;
+      }
+    } catch (_) {}
+    try {
+      fetch('../data/g14-journey/level' + zeroPad2(qlevel()) + '.json')
+        .then(function (r) { return r.json(); })
+        .then(function (j) { var l = j && j.laneRatios && j.laneRatios.lanes; cb((l && l.length >= 2) ? l.slice() : LANE_FALLBACK.slice()); })
+        .catch(function () { cb(LANE_FALLBACK.slice()); });
+    } catch (_) { cb(LANE_FALLBACK.slice()); }
+  }
 
   function runMatch (opts, onFinish) {
     injectCSS();
@@ -6304,73 +6363,116 @@ function applyRdeScaling() {
     var host = el('div'); host.id = 'g14vs';
     if (!reduce) host.className = 'gvs-anim';
     host.innerHTML =
-      '<div class="gvs-topbar"><button class="gvs-x" data-x aria-label="Keluar">✕</button>'
-      + '<div class="gvs-lbl">🏁 ' + esc(opts.label || 'Balapan') + ' — Duluan sampai finish menang!</div><div style="width:44px"></div></div>'
-      + '<div class="gvs-arena"><div class="gvs-band p2" data-band="p2"></div><div class="gvs-band p1" data-band="p1"></div></div>'
-      + '<div class="gvs-dock"><div class="gvs-corner p2" data-dock="p2"></div><div class="gvs-corner p1" data-dock="p1"></div></div>';
+      '<div class="gvs-scene" data-scene>'
+      + '<img class="gvs-bg" alt="" />'
+      + '<div class="gvs-fg"></div>'
+      + '<button class="gvs-x gvs-x-float" data-x aria-label="Keluar">✕</button>'
+      + '<div class="gvs-banner"><div class="t1">🏁 PVP MODE</div><div class="t2" data-leg></div><div class="t3">First to the finish line!</div></div>'
+      + '</div>';
     document.body.appendChild(host);
+    var scene = host.querySelector('.gvs-scene');
+    scene.querySelector('[data-leg]').textContent = legName();
+    var bg = scene.querySelector('.gvs-bg');
+    bg.onerror = function () { bg.style.display = 'none'; scene.classList.add('gvs-fallback'); };
+    bg.src = platePath();
     host.querySelector('[data-x]').addEventListener('click', function () { stop(); host.remove(); closeToPicker(); });
 
-    var race = { alive: true, raf: 0, last: 0, players: null };
+    var race = { alive: true, raf: 0, last: 0, players: null, lanes: LANE_FALLBACK.slice() };
+
+    // shared BOOST medallion (bottom-center)
+    var medallion = el('button', 'gvs-boost'); medallion.type = 'button';
+    medallion.innerHTML = '<span class="bi">🚀</span><b class="bt">BOOST</b><span class="bl">READY!</span>';
+    scene.appendChild(medallion);
+    medallion.addEventListener('click', function () {
+      for (var i = 0; i < race.players.length; i++) { if (race.players[i].energy >= BOOST_COST) tryBoost(race.players[i]); }
+    });
+
+    function positionItem (it) { it.el.style.left = it.x + '%'; it.el.style.top = (race.lanes[it.lane] * 100) + '%'; }
+
+    function refreshFoot (P) {
+      P.efill.style.width = (P.energy / ENERGY_MAX * 100) + '%';
+      P.tokEl.textContent = '⚡' + P.tokens;
+      var ready = P.energy >= BOOST_COST;
+      P.sb.disabled = !ready; P.sb.textContent = ready ? 'BOOST!' : 'BOOST';
+    }
+    function refreshMedallion () {
+      var any = false;
+      for (var i = 0; i < race.players.length; i++) { if (race.players[i].dist < 100 && race.players[i].energy >= BOOST_COST) any = true; }
+      medallion.classList.toggle('ready', any);
+    }
+    function tryBoost (P) {
+      if (P.dist >= 100 || P.energy < BOOST_COST) return;
+      P.energy = 0; P.boostUntil = performance.now() + BOOST_MS;
+      P.train.classList.remove('boost'); void P.train.offsetWidth; P.train.classList.add('boost');
+      refreshFoot(P); refreshMedallion();
+    }
+    function collectToken (P) {
+      P.tokens++; P.energy = Math.min(ENERGY_MAX, P.energy + TOKEN_ENERGY);
+      P.train.classList.remove('grab'); void P.train.offsetWidth; P.train.classList.add('grab');
+      refreshFoot(P); refreshMedallion();
+    }
+    function hitHazard (P, now) {
+      P.slowUntil = now + SLOW_MS;
+      if (P.hearts > 0) { P.hearts--; P.heartsEl.textContent = heartStr(P.hearts); }
+      P.train.classList.remove('slow'); void P.train.offsetWidth; P.train.classList.add('slow');
+    }
 
     function buildPlayer (sideKey, info, pal) {
-      var band = host.querySelector('.gvs-band.' + sideKey);
-      styleVars(band, pal);
-      band.innerHTML =
-        '<div class="gvs-hills"></div><div class="gvs-ground"></div>'
-        + '<div class="gvs-rail r0"></div><div class="gvs-rail r1"></div>'
-        + '<div class="gvs-name"><span>' + ((info.vis && info.vis.spriteUrl) ? '🚆' : (info.vis && info.vis.emoji) || '🚂') + '</span>' + esc(info.name) + '</div>'
-        + '<div class="gvs-progwrap"><div class="gvs-progfill"></div></div><div class="gvs-pct">0%</div>'
-        + '<div class="gvs-flag">🏁</div>';
-      var nameChip = band.querySelector('.gvs-name'); styleVars(nameChip, pal);
-      var pw = band.querySelector('.gvs-progwrap'); var pf = band.querySelector('.gvs-progfill'); styleVars(pf, pal);
-      var pct = band.querySelector('.gvs-pct'); pct.style.color = pal.ink;
-      var train = trainNode(info.vis); band.appendChild(train);
-      // hazard pool (2, reused — no per-frame allocation)
-      var haz = [];
-      for (var h = 0; h < 2; h++) { var hz = el('span', 'gvs-haz'); hz.textContent = (h % 2) ? '🚧' : '🪨'; band.appendChild(hz); haz.push({ el: hz, on: false, x: 104, lane: 0 }); }
-
-      // dock: question host + lane controls
-      var dock = host.querySelector('.gvs-corner.' + sideKey); styleVars(dock, pal);
-      var ctrls = el('div', 'gvs-ctrls');
-      var up = el('button', 'gvs-lane'); up.type = 'button'; up.textContent = '▲'; styleVars(up, pal);
-      var dn = el('button', 'gvs-lane'); dn.type = 'button'; dn.textContent = '▼'; styleVars(dn, pal);
-      ctrls.appendChild(up); ctrls.appendChild(dn);
-      var qhost = el('div', 'gvs-qhost');
-      var qEl = el('div'); var cEl = el('div'); qhost.appendChild(qEl); qhost.appendChild(cEl);
-      dock.appendChild(ctrls); dock.appendChild(qhost);
+      var trainX = TRAIN_X[sideKey];
+      var av = (info.vis && info.vis.emoji) || '🚂';
+      // HUD
+      var hud = el('div', 'gvs-hud ' + sideKey); styleVars(hud, pal);
+      hud.innerHTML =
+        '<div class="row1"><span class="av">' + av + '</span><span class="nm">' + esc(info.name) + '</span></div>'
+        + '<div class="spd">SPEED <b class="spdv">0</b> KM/H</div>'
+        + '<div class="hearts">' + heartStr(3) + '</div>'
+        + '<div class="pbar"><div class="pfill"></div></div>';
+      scene.appendChild(hud);
+      var pfill = hud.querySelector('.pfill'); styleVars(pfill, pal);
+      // side controls
+      var side = el('div', 'gvs-side ' + sideKey);
+      var up = el('button', 'gvs-slane'); up.type = 'button'; up.innerHTML = '▲<small>NAIK</small>'; styleVars(up, pal);
+      var dn = el('button', 'gvs-slane'); dn.type = 'button'; dn.innerHTML = '▼<small>TURUN</small>'; styleVars(dn, pal);
+      side.appendChild(up); side.appendChild(dn); scene.appendChild(side);
+      // foot
+      var foot = el('div', 'gvs-foot ' + sideKey); styleVars(foot, pal);
+      foot.innerHTML = '<div class="ewrap"><div class="efill"></div></div><span class="tok">⚡0</span>'
+        + '<button class="sb" type="button" disabled>BOOST</button>';
+      scene.appendChild(foot);
+      var sb = foot.querySelector('.sb'); styleVars(sb, pal);
+      // train
+      var train = trainNode(info.vis); train.classList.add(sideKey); train.style.left = trainX + '%'; scene.appendChild(train);
+      // token + hazard pools (2 each, reused — no per-frame allocation)
+      var tk = [], hz = [], q;
+      for (q = 0; q < 2; q++) { var t = el('span', 'gvs-token ' + sideKey); t.textContent = (q % 2) ? '⚡' : '🪙'; scene.appendChild(t); tk.push({ el: t, on: false, x: 100, lane: 0, scored: false }); }
+      for (q = 0; q < 2; q++) { var h = el('span', 'gvs-haz'); h.textContent = (q % 2) ? '🚧' : '🪨'; scene.appendChild(h); hz.push({ el: h, on: false, x: 100, lane: 0, scored: false }); }
 
       var P = {
-        side: sideKey, name: info.name, dist: 0, boost: 0, slowUntil: 0, lane: 0,
-        train: train, pf: pf, pct: pct, haz: haz, band: band, nextHaz: performance.now() + 1500 + Math.random() * 1500,
-        qEl: qEl, cEl: cEl
+        side: sideKey, name: info.name, trainX: trainX, dist: 0, energy: 0, tokens: 0, hearts: 3, lane: 1,
+        boostUntil: 0, slowUntil: 0, train: train, tk: tk, hz: hz,
+        pfill: pfill, spdv: hud.querySelector('.spdv'), heartsEl: hud.querySelector('.hearts'),
+        efill: foot.querySelector('.efill'), tokEl: foot.querySelector('.tok'), sb: sb,
+        nextTok: performance.now() + 700 + Math.random() * 900, nextHaz: performance.now() + 1900 + Math.random() * 1400
       };
-      up.addEventListener('click', function () { if (P.lane < 1) { P.lane++; train.style.bottom = LANE_Y[P.lane]; } });
-      dn.addEventListener('click', function () { if (P.lane > 0) { P.lane--; train.style.bottom = LANE_Y[P.lane]; } });
-      loadQuestion(P);
+      function setLane () { var li = Math.min(P.lane, race.lanes.length - 1); train.style.top = (race.lanes[li] * 100) + '%'; }
+      P._setLane = setLane; setLane();
+      up.addEventListener('click', function () { if (P.lane > 0) { P.lane--; setLane(); } });                       // NAIK → up screen
+      dn.addEventListener('click', function () { if (P.lane < race.lanes.length - 1) { P.lane++; setLane(); } });   // TURUN → down screen
+      sb.addEventListener('click', function () { tryBoost(P); });
+      P._forceToken = function () { var s = P.tk[0].on ? P.tk[1] : P.tk[0]; s.on = true; s.scored = false; s.lane = P.lane; s.x = P.trainX + 6; s.el.classList.add('on'); positionItem(s); };
       return P;
     }
 
-    function loadQuestion (P) {
-      if (!race.alive) return;
-      try {
-        if (window.QuizEngine) {
-          QuizEngine.fill(P.qEl, P.cEl, { level: qlevel(), variant: 'mini' }, function (res) {
-            if (!race.alive) return;
-            if (res && res.correct) {
-              P.boost = BOOST;
-              P.train.classList.remove('boost'); void P.train.offsetWidth; P.train.classList.add('boost');
-            } else {
-              P.slowUntil = performance.now() + 1000;
-              P.train.classList.remove('slow'); void P.train.offsetWidth; P.train.classList.add('slow');
-            }
-            loadQuestion(P);
-          });
-        }
-      } catch (_) {}
-    }
-
     function stop () { race.alive = false; if (race.raf) { cancelAnimationFrame(race.raf); race.raf = 0; } }
+
+    function spawnFrom (pool, now) {
+      var slot = null;
+      for (var k = 0; k < pool.length; k++) { if (!pool[k].on) { slot = pool[k]; break; } }
+      if (!slot) return;
+      slot.on = true; slot.scored = false; slot.x = 100;
+      slot.lane = (Math.random() * race.lanes.length) | 0;
+      slot.el.classList.add('on'); positionItem(slot);
+    }
 
     function frame (now) {
       if (!race.alive) return;
@@ -6380,31 +6482,33 @@ function applyRdeScaling() {
       for (i = 0; i < players.length; i++) {
         var P = players[i];
         if (P.dist >= 100) continue;
+        var boosting = now < P.boostUntil;
         var slowed = now < P.slowUntil;
-        var rate = AUTO * (slowed ? 0.3 : 1) + P.boost;
-        P.boost *= Math.exp(-dt / BOOST_HALF); if (P.boost < 0.02) P.boost = 0;
+        var mult = boosting ? BOOST_MULT : (slowed ? SLOW_MULT : 1);
+        var rate = AUTO * mult;
         P.dist += rate * dt; if (P.dist > 100) P.dist = 100;
-        // position (percentage-based, no layout reads)
-        var leftPct = 6 + (P.dist / 100) * 80;
-        P.train.style.left = leftPct + '%';
-        P.pf.style.width = P.dist + '%';
-        P.pct.textContent = Math.floor(P.dist) + '%';
-        // hazards
-        if (!P.haz[0].on && !P.haz[1].on && now > P.nextHaz) {
-          var slot = P.haz[0].on ? P.haz[1] : P.haz[0];
-          slot.on = true; slot.x = 104; slot.lane = Math.random() < 0.5 ? 0 : 1;
-          slot.el.style.bottom = LANE_Y[slot.lane]; slot.el.classList.add('on');
-          P.nextHaz = now + 2800 + Math.random() * 1800;
+        P.pfill.style.width = P.dist + '%';
+        P.spdv.textContent = Math.round(rate * SPEED_K);
+        // spawn
+        if (now > P.nextTok) { spawnFrom(P.tk, now); P.nextTok = now + 1400 + Math.random() * 1400; }
+        if (now > P.nextHaz) { spawnFrom(P.hz, now); P.nextHaz = now + 2600 + Math.random() * 1800; }
+        // tokens (grab if same lane at the train's x)
+        for (j = 0; j < P.tk.length; j++) {
+          var T = P.tk[j]; if (!T.on) continue;
+          var px = T.x; T.x -= ITEM_SPEED * dt; T.el.style.left = T.x + '%';
+          if (!T.scored && px > P.trainX && T.x <= P.trainX) {
+            T.scored = true;
+            if (T.lane === P.lane) { collectToken(P); T.on = false; T.el.classList.remove('on'); }
+          } else if (T.x < -6) { T.on = false; T.el.classList.remove('on'); }
         }
-        for (j = 0; j < P.haz.length; j++) {
-          var H = P.haz[j]; if (!H.on) continue;
-          H.x -= HAZ_SPEED * dt;
-          H.el.style.left = H.x + '%';
-          if (H.x <= leftPct + 3 && H.x >= leftPct - 3 && H.lane === P.lane && !slowed) {
-            P.slowUntil = now + 900;
-            P.train.classList.remove('slow'); void P.train.offsetWidth; P.train.classList.add('slow');
-            H.on = false; H.el.classList.remove('on');
-          } else if (H.x < -8) { H.on = false; H.el.classList.remove('on'); }
+        // hazards (slow if same lane at the train's x, unless boosting)
+        for (j = 0; j < P.hz.length; j++) {
+          var H = P.hz[j]; if (!H.on) continue;
+          var hx = H.x; H.x -= ITEM_SPEED * dt; H.el.style.left = H.x + '%';
+          if (!H.scored && hx > P.trainX && H.x <= P.trainX) {
+            H.scored = true;
+            if (H.lane === P.lane && !boosting) { hitHazard(P, now); H.on = false; H.el.classList.remove('on'); }
+          } else if (H.x < -6) { H.on = false; H.el.classList.remove('on'); }
         }
         if (P.dist >= 100) { finish(P); return; }
       }
@@ -6416,8 +6520,26 @@ function applyRdeScaling() {
       onFinish({ side: winner.side, name: winner.name }, host);
     }
 
-    // v57.2 — P1 = green, P2 = red (player-identity colour across badge/progress/corner/lane + train neon outline).
-    race.players = [ buildPlayer('p2', opts.p2, CLAY.pl2), buildPlayer('p1', opts.p1, CLAY.pl1) ];
+    // v57.3 — P2 = vibrant blue (left) / P1 = green (right); identity carried
+    // across HUD, side controls, foot, progress bar + neon train outline.
+    race.players = [ buildPlayer('p2', opts.p2, CLAY.plB), buildPlayer('p1', opts.p1, CLAY.pl1) ];
+    loadLanes(function (lanes) {
+      if (!race.alive) return;
+      if (lanes && lanes.length >= 2) {
+        race.lanes = lanes.slice();
+        for (var i = 0; i < race.players.length; i++) { var P = race.players[i]; if (P.lane >= race.lanes.length) P.lane = race.lanes.length - 1; P._setLane(); }
+      }
+    });
+    // debug handle for the QA probe
+    try {
+      window.__g14pvp = {
+        race: race, players: race.players,
+        byside: function (s) { for (var i = 0; i < race.players.length; i++) if (race.players[i].side === s) return race.players[i]; return null; },
+        spawnToken: function (s) { var P = this.byside(s); if (P) P._forceToken(); },
+        boost: function (s) { var P = this.byside(s); if (P) { P.energy = BOOST_COST; tryBoost(P); } },
+        setDist: function (s, v) { var P = this.byside(s); if (P) P.dist = v; }
+      };
+    } catch (_) {}
     race.raf = requestAnimationFrame(frame);
   }
 

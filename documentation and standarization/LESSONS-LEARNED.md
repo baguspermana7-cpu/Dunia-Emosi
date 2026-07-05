@@ -4,6 +4,11 @@
 
 ---
 
+## 2026-07-05 — v57.x train PvP
+
+### L239 — When the owner gives a reference mockup/spec, build to it EXACTLY; verify the render against the reference, never substitute a layout
+- The train PvP was built (twice, once by me, once by a subagent from a paraphrased spec) as two stacked top/bottom bands with quiz panels — but the owner's reference was a single shared racing scene with edge NAIK/TURUN controls (P2 left/blue, P1 right/green), a center energy/token BOOST, and NO quiz. Root cause: I planned from my own paraphrase and let a subagent build from it, then verified only "renders + 0 errors" instead of "matches the reference image". Owner (angry, twice): "kok mengulangi ketololan — sudah ada doc standardization + lessons agar tidak mengulangi." Lesson: (1) the owner's reference IMAGE is the acceptance bar — build that layout, do not substitute a simpler/different one; (2) hand a build subagent the ACTUAL reference + a STRICT-AVOID list, never a paraphrase; (3) verify by listing EVERY reference element and confirming its presence + position in a screenshot side-by-side, not just that the page renders; (4) lock recurring layouts as a standard doc (see TRAIN_PVP_LAYOUT.md) so they can't be re-broken. Read the standardization + lessons BEFORE building, which is their whole purpose.
+
 ## 2026-06-29 — v55.94/95 g15+g16 world roster + g14 diorama
 
 ### L224 — A delegated agent can die mid-task; recover by VERIFYING the working tree, not assuming

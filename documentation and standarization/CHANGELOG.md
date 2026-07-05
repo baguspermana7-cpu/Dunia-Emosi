@@ -1,5 +1,29 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-05 — v57.4 "Balapan Kereta PvP REDESIGN → shared-scene racing HUD (matches owner reference)" (A-329)
+
+Owner (angry — the PvP had been built twice with the WRONG layout: stacked bands + quiz panels): rebuild
+to the reference — ONE shared racing scene, Player-2 HUD+controls on the LEFT (blue), Player-1 on the
+RIGHT (green), center energy/token BOOST, NO quiz. Approved mechanic: collect ⚡/coin tokens → fills
+ENERGY → BOOST surge; dodge hazards with NAIK/TURUN; first to finish wins; no math.
+- The `#g14vs` module in `games/balapan-kereta.html` was rewritten end-to-end: deleted the two stacked
+  `.gvs-band` + the QuizEngine question corners; ONE `.gvs-scene` = the selected level's real backdrop
+  plate (`assets/train/backdrop/levelNN-1600.webp`, dynamic per `cfg.level`, onerror→gradient) +
+  reduced-motion parallax; top-center "🏁 PVP MODE" + dynamic journey leg + tagline; P2 HUD top-LEFT
+  (blue) / P1 top-RIGHT (green) with avatar·name·SPEED km/h·hearts·progress; far-edge NAIK/TURUN (48px);
+  bottom-center glossy BOOST medallion + per-side ENERGY/TOKEN with each player's own boost trigger;
+  two center-anchored trains (P2 blue / P1 green neon). NAIK/TURUN lane-shift to grab tinted tokens
+  (+energy) / dodge hazards (slow + heart); energy≥100 → BOOST (~1.5s ×1.9 surge); first dist≥100 →
+  win banner. `loadQuestion`/QuizEngine deleted. Tournament unaffected (same `runMatch`/`onFinish`).
+- Lanes read from `laneRatios.lanes` (read-only), leg name from `g14StationName()`; Adventure /
+  `startRace` / `data/g14-journey/*.json` UNTOUCHED. This supersedes the P2-red identity (A-328) → P2 blue.
+- PROCESS (owner: "kok mengulangi ketololan — sudah ada docs + lessons"): NEW
+  `standarization/TRAIN_PVP_LAYOUT.md` locks this layout as a contract; NEW LESSON L239 (build to the
+  reference image, verify side-by-side, never let a subagent build from a paraphrase).
+- Verified (screenshots read side-by-side vs the reference): shared scene over real plate, dynamic level
+  (L1 city vs L5 rice fields), left/right split, center BOOST, per-side energy/token, no quiz.
+  `qa-g14-versus-drive` 33/33, railalign 0px, journey JSON clean, app-sweep 16/16. sw → v57.4-20260705f.
+
 ## 2026-07-05 — v57.3 "Clean white-background remnants + AEG border artifact on train sprites" (A-330)
 
 Owner: train sprites still showed leftover white background ("putih2 sisa background") and the Thomas AEG
