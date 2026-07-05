@@ -244,7 +244,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 <script src="settings-modal.js?v=55.5-20260626dd"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
 <script src="train-bgm.js?v=55.61-20260627em"></script>
-<script src="indo-scene.js?v=2.1.0"></script>
+<script src="indo-scene.js?v=2.1.1"></script>
 <script src="data/train-wheel-anchors.js?v=55.84-20260628a"></script>
 <script src="train-journey.js?v=55.80-20260628a"></script>
 <script src="train-backdrop.js?v=55.77-20260628a"></script>
@@ -5904,6 +5904,9 @@ function applyRdeScaling() {
   var CLAY = {
     p1:    { t:'#ffe1bd', b:'#ffd2a3', e:'#eab27a', ink:'#8a4a12', soft:'rgba(234,178,122,.5)' }, // peach
     p2:    { t:'#cfe4f8', b:'#bcd8f2', e:'#8db8de', ink:'#1e3a5f', soft:'rgba(141,184,222,.5)' }, // blue
+    // v57.2 — vibrant PLAYER-IDENTITY colours for PvP/Tournament: P1 green, P2 red.
+    pl1:   { t:'#8ef2b0', b:'#3ddc84', e:'#12b866', ink:'#06351d', soft:'rgba(45,255,136,.5)' },  // green (P1)
+    pl2:   { t:'#ff9db0', b:'#ff5a6e', e:'#e01e37', ink:'#4a0812', soft:'rgba(255,45,85,.5)' },   // red (P2)
     go:    { t:'#c9ecd3', b:'#b2e2c1', e:'#8fcf9f', ink:'#1f6b3a', soft:'rgba(143,207,159,.5)' }, // mint
     pvp:   { t:'#ded4f6', b:'#cfc2f0', e:'#ab98e0', ink:'#4c3a7a', soft:'rgba(171,152,224,.5)' }, // lavender
     tour:  { t:'#f3e6ca', b:'#ecdab3', e:'#cdb98e', ink:'#6b4e1e', soft:'rgba(205,185,142,.5)' }, // cream
@@ -5983,6 +5986,9 @@ function applyRdeScaling() {
     + '.gvs-rail.r0{bottom:20%}.gvs-rail.r1{bottom:46%}'
     + '.gvs-train{position:absolute;left:6%;bottom:20%;height:clamp(34px,8vh,54px);width:auto;transform:translate(-6%,50%);'
     +   'transition:bottom .18s ease;pointer-events:none;filter:drop-shadow(0 5px 4px rgba(0,0,0,.28));z-index:3}'
+    // v57.2 — thin vibrant-neon player-identity outline on the racer's train: P1 green / P2 red.
+    + '.gvs-band.p1 .gvs-train{filter:drop-shadow(1px 0 0 #39ff14) drop-shadow(-1px 0 0 #39ff14) drop-shadow(0 1px 0 #39ff14) drop-shadow(0 -1px 0 #39ff14) drop-shadow(0 0 7px rgba(57,255,20,.95)) drop-shadow(0 5px 4px rgba(0,0,0,.3))}'
+    + '.gvs-band.p2 .gvs-train{filter:drop-shadow(1px 0 0 #ff2d2d) drop-shadow(-1px 0 0 #ff2d2d) drop-shadow(0 1px 0 #ff2d2d) drop-shadow(0 -1px 0 #ff2d2d) drop-shadow(0 0 7px rgba(255,45,45,.95)) drop-shadow(0 5px 4px rgba(0,0,0,.3))}'
     + '.gvs-train.emoji{font-size:clamp(30px,7vh,46px);line-height:1;height:auto}'
     + '.gvs-train.boost{animation:gvsBoost .5s ease}'
     + '@keyframes gvsBoost{0%{filter:drop-shadow(0 5px 4px rgba(0,0,0,.28))}40%{filter:drop-shadow(0 0 14px rgba(255,170,60,.95)) brightness(1.12)}100%{filter:drop-shadow(0 5px 4px rgba(0,0,0,.28))}}'
@@ -6410,7 +6416,8 @@ function applyRdeScaling() {
       onFinish({ side: winner.side, name: winner.name }, host);
     }
 
-    race.players = [ buildPlayer('p2', opts.p2, CLAY.p2), buildPlayer('p1', opts.p1, CLAY.p1) ];
+    // v57.2 — P1 = green, P2 = red (player-identity colour across badge/progress/corner/lane + train neon outline).
+    race.players = [ buildPlayer('p2', opts.p2, CLAY.pl2), buildPlayer('p1', opts.p1, CLAY.pl1) ];
     race.raf = requestAnimationFrame(frame);
   }
 

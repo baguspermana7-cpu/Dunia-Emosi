@@ -1,5 +1,18 @@
 # Changelog — Dunia Emosi
 
+## 2026-07-05 — v57.2 "PvP/Tournament trains: green(P1)/red(P2) neon player-identity" (A-328)
+
+Owner: in PvP/Tournament every train shared a neutral outline — hard to tell whose is whose. Now each
+racer's train gets a thin vibrant-neon identity outline (**P1 = green, P2 = red**) and the rest of that
+player's UI matches. In `games/balapan-kereta.html` (#g14vs): new `CLAY.pl1` (green) / `CLAY.pl2` (red)
+palettes; `buildPlayer` uses `pl1` for the P1 slot and `pl2` for the P2 slot, so the name badge, progress
+bar, question corner, and lane buttons all read the player's colour; band-scoped
+`.gvs-band.p1 .gvs-train` / `.gvs-band.p2 .gvs-train` add a 4× 1px neon drop-shadow line + soft glow
+(green `#39ff14` / red `#ff2d2d`) over the ground shadow. Band scenery gradients stay soft. Applies to
+Tournament automatically (shared `runMatch`); Adventure trains keep their white sticker outline.
+Verified `qa-g14-versus-drive` (P2-top red, P1-bottom green, all checks pass, 0 errors); railalign 0px;
+app-sweep 16/16. sw → v57.2-20260705d.
+
 ## 2026-07-05 — v57.1 "Balapan Kereta: Adventure/PvP/Tournament + split-screen race + pastel-clay buttons" (A-326/A-327)
 
 Owner: add a mode-select to Balapan Kereta like the Pokémon game (Adventure/PvP/Tournament), build a
