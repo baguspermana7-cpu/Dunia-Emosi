@@ -2100,12 +2100,11 @@ function clearTimers() {
   if(g6State && g6State.animFrame){cancelAnimationFrame(g6State.animFrame);g6State.running=false}
   if(g13ResultTimeout){clearTimeout(g13ResultTimeout);g13ResultTimeout=null;hideGameResult()}
   if(g9Canvas){
-    g9Canvas.removeEventListener('mousedown',g9StartDraw)
-    g9Canvas.removeEventListener('mousemove',g9Draw)
-    g9Canvas.removeEventListener('mouseup',g9EndDraw)
-    g9Canvas.removeEventListener('touchstart',g9TouchStart)
-    g9Canvas.removeEventListener('touchmove',g9TouchMove)
-    g9Canvas.removeEventListener('touchend',g9EndDraw)
+    // A-339 P5 — unified Pointer Events (replaced dual mouse+touch listeners)
+    g9Canvas.removeEventListener('pointerdown',g9PointerDown)
+    g9Canvas.removeEventListener('pointermove',g9PointerMove)
+    g9Canvas.removeEventListener('pointerup',g9PointerUp)
+    g9Canvas.removeEventListener('pointercancel',g9PointerUp)
   }
 }
 
@@ -4253,19 +4252,21 @@ function initGame9(){
     g9Canvas.width = _g9sz; g9Canvas.height = _g9sz
     g9Clear(); renderG9GuideDots()
   }, 100)
-  // Remove old listeners first (in case re-init)
-  g9Canvas.removeEventListener('mousedown',g9StartDraw)
-  g9Canvas.removeEventListener('mousemove',g9Draw)
-  g9Canvas.removeEventListener('mouseup',g9EndDraw)
-  g9Canvas.removeEventListener('touchstart',g9TouchStart)
-  g9Canvas.removeEventListener('touchmove',g9TouchMove)
-  g9Canvas.removeEventListener('touchend',g9EndDraw)
-  g9Canvas.addEventListener('mousedown',g9StartDraw)
-  g9Canvas.addEventListener('mousemove',g9Draw)
-  g9Canvas.addEventListener('mouseup',g9EndDraw)
-  g9Canvas.addEventListener('touchstart',g9TouchStart,{passive:false})
-  g9Canvas.addEventListener('touchmove',g9TouchMove,{passive:false})
-  g9Canvas.addEventListener('touchend',g9EndDraw)
+  // A-339 P5 — unified POINTER EVENTS (one stream for mouse+touch+pen). Root cause of
+  // owner's "tidak bisa ditulis": the old dual mouse+touch listeners let the browser's
+  // synthesized mouse events (fired after a touch) flip g9Drawing=false mid-gesture, and
+  // an edge-release lost 'mouseup' → later touchmove drew nothing. setPointerCapture keeps
+  // the whole stroke flowing even if the finger strays off the canvas; touch-action:none
+  // kills scroll/gesture interference + the synthesized-mouse duplication entirely.
+  g9Canvas.removeEventListener('pointerdown',g9PointerDown)
+  g9Canvas.removeEventListener('pointermove',g9PointerMove)
+  g9Canvas.removeEventListener('pointerup',g9PointerUp)
+  g9Canvas.removeEventListener('pointercancel',g9PointerUp)
+  g9Canvas.addEventListener('pointerdown',g9PointerDown)
+  g9Canvas.addEventListener('pointermove',g9PointerMove)
+  g9Canvas.addEventListener('pointerup',g9PointerUp)
+  g9Canvas.addEventListener('pointercancel',g9PointerUp)
+  g9Canvas.style.touchAction='none'
   updateGameStarDisplay(); nextG9Round()
 }
 function nextG9Round(){
@@ -4331,8 +4332,12 @@ function g9Draw(e){
   if(!g9Drawing)return; const pos=g9GetPos(e,g9Canvas); g9UserPath.push(pos)
   g9Ctx.lineTo(pos.x,pos.y); g9Ctx.stroke(); g9Ctx.beginPath(); g9Ctx.moveTo(pos.x,pos.y); checkGuideHits(pos)
 }
-function g9TouchStart(e){e.preventDefault();if(e.touches[0])g9StartDraw(e.touches[0])}
-function g9TouchMove(e){e.preventDefault();if(e.touches[0])g9Draw(e.touches[0])}
+// A-339 P5 — Pointer Event wrappers. e carries clientX/clientY directly (no e.touches[0]),
+// so g9StartDraw/g9Draw/g9EndDraw are reused unchanged. Capture the pointer so a stroke
+// that wanders past the canvas edge keeps delivering move events to us.
+function g9PointerDown(e){e.preventDefault();try{g9Canvas.setPointerCapture(e.pointerId)}catch(_){}g9StartDraw(e)}
+function g9PointerMove(e){if(!g9Drawing)return;e.preventDefault();g9Draw(e)}
+function g9PointerUp(e){try{g9Canvas.releasePointerCapture(e.pointerId)}catch(_){}g9EndDraw()}
 // 2026-05-04 FIX: REMOVE auto-evaluate timer. Was triggering setTimeout(evaluateG9Trace,500)
 // every time kid lifted finger → multi-stroke letters (A/B/E/F/H/T) impossible to
 // complete. NOW: kid taps explicit "✅ Selesai" button to evaluate.
