@@ -589,7 +589,7 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
 <script src="quiz-engine.js?v=55.97-20260629a"></script>
 <!-- v56.1 A-317 — SHARED battle-presentation engine (field sprites, HP cards,
      narration pill, floating quiz, lunge/projectile/damage-pop FX) -->
-<script src="battle-arena.js?v=56.9-20260704d"></script>
+<script src="battle-arena.js?v=58.7-20260705r"></script>
 <script src="data/move-id-translations.js?v=20260505k"></script>
 <script src="data/sfx-engine.js?v=20260621f"></script>
 <script src="data/weather-fx.js?v=20260621f"></script>
@@ -2622,7 +2622,7 @@ function executeMove(moveIdx, mathCorrect){
     // toward the enemy (ease-out ~250ms) + type-colored glowing orb projectile
     // with trail; legacy emoji projectile kept as fallback.
     const _playerStrike = window.BattleArena
-      ? (cb)=>BattleArena.attack('player', {color:getTypeColor(move.type)}, cb)
+      ? (cb)=>BattleArena.attack('player', {color:getTypeColor(move.type),type:move.type}, cb)  // A-339 P4 — type-themed projectile + wind-up
       : (cb)=>spawnProjectile(ppEl, epEl, move.type, cb);
     _playerStrike(()=>{
       addHitEffect(epEl, false);
@@ -2747,7 +2747,7 @@ function enemyTurn(){
     // v56.1 A-317 — enemy attack routed through the SHARED BattleArena
     // (lunge + glowing orb projectile), legacy emoji projectile as fallback.
     const _enemyStrike = window.BattleArena
-      ? (cb)=>BattleArena.attack('enemy', {color:getTypeColor(moveType)}, cb)
+      ? (cb)=>BattleArena.attack('enemy', {color:getTypeColor(moveType),type:moveType}, cb)  // A-339 P4 — type-themed projectile + wind-up
       : (cb)=>spawnProjectile(epEl, ppEl, moveType, cb);
     _enemyStrike(()=>{
       addHitEffect(ppEl, true); // player has scaleX(-1)

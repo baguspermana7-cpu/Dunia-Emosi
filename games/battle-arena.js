@@ -196,6 +196,23 @@
     '.ba-orb-trail{position:fixed;width:12px;height:12px;border-radius:50%;z-index:9209;pointer-events:none;',
     'background:var(--ba-c,#fbbf24);box-shadow:0 0 10px var(--ba-c,#fbbf24);opacity:.7;transform:translate(-50%,-50%);',
     'transition:opacity .3s ease,width .3s,height .3s}',
+    /* A-339 P4 — TYPE-themed spinning projectile (grass=🍃, fire=🔥 …) attacker→defender */
+    '.ba-proj{position:fixed;z-index:9211;pointer-events:none;font-size:34px;line-height:1;',
+    'transform:translate(-50%,-50%) rotate(0deg);filter:drop-shadow(0 0 8px var(--ba-c,#fbbf24));',
+    'animation:baProjSpin .5s linear infinite}',
+    '@keyframes baProjSpin{to{transform:translate(-50%,-50%) rotate(360deg)}}',
+    /* A-339 P4 — WIND-UP charge: type-colored ring pulses + motes swirl around the',
+       attacker for ~0.4s before it launches (video: "efek api mengitari badan"). */
+    '.ba-charge{position:absolute;left:50%;top:50%;width:118%;height:118%;z-index:5;pointer-events:none;',
+    'transform:translate(-50%,-50%);border-radius:50%;border:4px solid var(--ba-c,#fbbf24);',
+    'border-right-color:transparent;border-bottom-color:transparent;',
+    'box-shadow:0 0 22px var(--ba-c,#fbbf24),inset 0 0 18px var(--ba-c,#fbbf24);',
+    'animation:baChargeSpin .5s linear infinite,baChargePulse .42s ease-out forwards}',
+    '@keyframes baChargeSpin{to{transform:translate(-50%,-50%) rotate(360deg)}}',
+    '@keyframes baChargePulse{0%{opacity:0;width:150%;height:150%}30%{opacity:1}100%{opacity:.85;width:96%;height:96%}}',
+    '.ba-charge-mote{position:fixed;z-index:9208;pointer-events:none;font-size:20px;line-height:1;',
+    'transform:translate(-50%,-50%);filter:drop-shadow(0 0 6px var(--ba-c,#fbbf24));',
+    'transition:left .4s ease-in,top .4s ease-in,opacity .4s ease-in,font-size .4s}',
     /* ── damage number pops ── */
     '.ba-dmg{position:fixed;z-index:9300;pointer-events:none;font-family:"Fredoka One",cursive,sans-serif;font-weight:900;',
     'line-height:1;transform:translate(-50%,-50%);animation:baDmgPop .95s cubic-bezier(.22,.9,.4,1) forwards;',
@@ -231,7 +248,7 @@
     'padding:8px 16px;box-shadow:0 5px 14px rgba(0,0,0,.28);display:inline-block}',
     /* ── reduced motion: kill decorative loops, keep state visible ── */
     '@media (prefers-reduced-motion: reduce){',
-    '.ba-bob,.ba-knock-l,.ba-knock-r,.ba-hitflash,.ba-stumble,.ba-narrate-pop,.ba-aura,.ba-drift,.ba-mote{animation:none!important}',
+    '.ba-bob,.ba-knock-l,.ba-knock-r,.ba-hitflash,.ba-stumble,.ba-narrate-pop,.ba-aura,.ba-drift,.ba-mote,.ba-proj,.ba-charge,.ba-charge-mote{animation:none!important}',
     '.ba-fighter.ba-faint{transition:none}',
     '.ba-punch,.ba-fg{transition:none}',
     '.ba-dmg{animation-duration:.6s}}'
@@ -556,7 +573,16 @@
     setDof(0)
   }
 
-  // ── attack: lunge + glowing orb projectile (element-based core) ────────────
+  // A-339 P4 — type → projectile emoji (owner: "razor leaf = daun berputar dari
+  // penyerang ke yang diserang"). Used by orbFly + the wind-up charge.
+  var BA_TYPE_EMOJI = {
+    fire: '🔥', water: '💧', grass: '🍃', electric: '⚡', psychic: '🔮', ghost: '👻',
+    ice: '❄️', dragon: '🐉', dark: '🌑', fighting: '👊', rock: '🪨', poison: '☠️',
+    steel: '⚔️', bug: '🐛', fairy: '✨', flying: '🌪️', ground: '💨', normal: '💥'
+  }
+  function baTypeEmoji (type) { return BA_TYPE_EMOJI[type] || null }
+
+  // ── attack: lunge + projectile (type-themed spinning emoji, or glowing orb) ──
   function orbFly (fromEl, toEl, opts, onHit) {
     opts = opts || {}
     var color = opts.color || '#fbbf24'
@@ -566,8 +592,27 @@
     }
     var a = centerOf(fromEl)
     var b = centerOf(toEl)
-    var orb = el('div', 'ba-orb', document.body)
-    orb.style.setProperty('--ba-c', color)
+    // A-339 P4 — if a type/emoji is given, fly N spinning type-emoji particles
+    // (leaves/embers/…) instead of the generic orb. Falls back to the orb.
+    var emoji = opts.emoji || baTypeEmoji(opts.type)
+    var orb, motes = []
+    if (emoji) {
+      orb = el('div', 'ba-proj', document.body)
+      orb.textContent = emoji
+      orb.style.setProperty('--ba-c', color)
+      // two smaller companion particles for a fuller "spread" of the attack
+      for (var m = 0; m < 2; m++) {
+        var mo = el('div', 'ba-proj', document.body)
+        mo.textContent = emoji
+        mo.style.setProperty('--ba-c', color)
+        mo.style.fontSize = '22px'
+        mo.style.opacity = '0.85'
+        motes.push({ el: mo, off: (m === 0 ? -18 : 18), ph: (m === 0 ? 0.5 : 1.4) })
+      }
+    } else {
+      orb = el('div', 'ba-orb', document.body)
+      orb.style.setProperty('--ba-c', color)
+    }
     var dur = opts.duration || 300
     var start = performance.now()
     var lastTrail = 0
@@ -578,7 +623,11 @@
       var y = a.y + (b.y - a.y) * e - Math.sin(t * Math.PI) * 26 // gentle arc
       orb.style.left = x + 'px'
       orb.style.top = y + 'px'
-      if (now - lastTrail > 42) { // trail dot
+      for (var i = 0; i < motes.length; i++) {
+        motes[i].el.style.left = (x + motes[i].off * (1 - t)) + 'px'
+        motes[i].el.style.top = (y + Math.sin(t * Math.PI * 2 + motes[i].ph) * 12) + 'px'
+      }
+      if (!emoji && now - lastTrail > 42) { // orb trail dot (emoji leaves its own spin trail)
         lastTrail = now
         var d = el('div', 'ba-orb-trail', document.body)
         d.style.setProperty('--ba-c', color)
@@ -590,10 +639,48 @@
       if (t < 1) requestAnimationFrame(step)
       else {
         try { orb.remove() } catch (_) {}
+        motes.forEach(function (mm) { try { mm.el.remove() } catch (_) {} })
         if (onHit) onHit()
       }
     }
     requestAnimationFrame(step)
+  }
+
+  // A-339 P4 — WIND-UP: swirl a type-colored charge ring + a few type-emoji motes
+  // around the attacker for ~0.4s, THEN call done() to launch (video's "charge"
+  // beat before the projectile). No-op under reduced motion.
+  function chargeUp (fighter, opts, done) {
+    opts = opts || {}
+    if (REDUCED || !fighter || !fighter.wrap) { if (done) done(); return }
+    var color = opts.color || '#fbbf24'
+    var ring = el('div', 'ba-charge', fighter.wrap)
+    ring.style.setProperty('--ba-c', color)
+    var emoji = opts.emoji || baTypeEmoji(opts.type)
+    var motes = []
+    if (emoji) {
+      var c = centerOf(fighter.img)
+      for (var i = 0; i < 5; i++) {
+        var mo = el('div', 'ba-charge-mote', document.body)
+        mo.textContent = emoji
+        mo.style.setProperty('--ba-c', color)
+        var ang = (i / 5) * Math.PI * 2
+        mo.style.left = (c.x + Math.cos(ang) * 46) + 'px'
+        mo.style.top = (c.y + Math.sin(ang) * 46) + 'px'
+        mo.style.opacity = '0'
+        motes.push({ el: mo, cx: c.x, cy: c.y })
+        // pull each mote inward toward the body (converging charge)
+        ;(function (el2, cx, cy) {
+          requestAnimationFrame(function () { requestAnimationFrame(function () {
+            el2.style.opacity = '1'; el2.style.left = cx + 'px'; el2.style.top = cy + 'px'; el2.style.fontSize = '13px'
+          }) })
+        })(mo, c.x, c.y)
+      }
+    }
+    setTimeout(function () {
+      try { ring.remove() } catch (_) {}
+      motes.forEach(function (mm) { try { mm.el.remove() } catch (_) {} })
+      if (done) done()
+    }, 400)
   }
 
   function hitReact (side) {
@@ -625,6 +712,10 @@
       if (onHit) onHit()
     }
     if (REDUCED) { setTimeout(land, 60); return }
+    // A-339 P4 — WIND-UP charge first (type aura swirls around the attacker ~0.4s),
+    // THEN the lunge + projectile launch. Matches the reference video's attack beat.
+    chargeUp(atk, opts, function () { doLunge() })
+    function doLunge () {
     // lunge: parametric out-and-back toward the target, ease-out, ~250ms out
     var A = centerOf(atk.img)
     var B = centerOf(tgt.img)
@@ -654,6 +745,7 @@
       else atk.wrap.style.transform = ''
     }
     requestAnimationFrame(step)
+    } // end doLunge (A-339 P4)
   }
 
   function stumble (side) {
