@@ -146,7 +146,9 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 /* B-269 — categorised package-tab picker (replaces flat single-column list) */
 #g16-tab-row{display:flex;gap:6px;flex-wrap:nowrap;justify-content:center;width:100%;max-width:min(720px,96vw);overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
 #g16-tab-row::-webkit-scrollbar{display:none}
-.g16-tab-btn{flex:1 1 0;min-width:80px;min-height:44px;padding:8px 10px;border-radius:16px;border:2px solid rgba(167,139,250,0.30);background:rgba(248,240,255,0.06);color:#c4b5fd;font-family:inherit;font-size:clamp(10px,2.8vw,12px);font-weight:900;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color .15s,background .15s,box-shadow .15s;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;line-height:1.2;text-align:center}
+/* A-339 P2 — flex:0 0 auto so each chip sizes to its FULL label (was flex:1 1 0 →
+   10 chips crammed + truncated to "Uap Kla…"). Row scrolls-x (TrainPicker.markSlidable). */
+.g16-tab-btn{flex:0 0 auto;min-height:44px;padding:8px 14px;border-radius:16px;border:2px solid rgba(167,139,250,0.30);background:rgba(248,240,255,0.06);color:#c4b5fd;font-family:inherit;font-size:clamp(11px,2.9vw,13px);font-weight:900;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color .15s,background .15s,box-shadow .15s;white-space:nowrap;line-height:1.2;text-align:center}
 .g16-tab-btn:active{transform:scale(.96)}
 .g16-tab-btn.active{background:rgba(139,92,246,0.24);color:#e9d5ff;box-shadow:0 0 10px rgba(139,92,246,0.35)}
 
@@ -155,10 +157,11 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.72</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v58.6</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="data/train-world.js?v=55.94"></script><!-- v55.94 — 275 real-sprite world trains -->
+<script src="train-picker.js?v=58.6-20260705q"></script><!-- A-339 P2 — shared picker: lazy previews + slidable chip row -->
 <script src="train-vfx.js?v=54.56-20260625bi"></script>
 <script src="motion.js?v=56.6-20260703a"></script><!-- A-315 E4 — shared motion engine (frame-rate-independent easing) -->
 <script src="train-bg-engine.js?v=54.67-20260626bt"></script>
@@ -620,6 +623,7 @@ function g16RenderCards() {
   if (!root) return;
   try { g16StopPreviewBob() } catch(_){}
   root.innerHTML = '';
+  root.scrollTop = 0;
   const pkg = G16_PKGS[g16ActivePkg];
   pkg.indices.forEach(i => {
     const TS = TRAIN_STYLES[i];
@@ -631,6 +635,7 @@ function g16RenderCards() {
     const cv = document.createElement('canvas');
     cv.className = 'ts-preview';
     cv.width = 116; cv.height = 52; cv.id = 'prev-' + i;
+    cv.dataset.lazykey = i;               // A-339 P2 — lazy-drawn when scrolled into view
     card.appendChild(cv);
     const meta = (TS.characterKey && G16_CARD_META[TS.characterKey]) || G16_CARD_INDEX_META[i] || { name: 'Kereta ' + i, desc: '' };
     const nameEl = document.createElement('div');
@@ -643,9 +648,15 @@ function g16RenderCards() {
     card.appendChild(descEl);
     root.appendChild(card);
   });
-  // Draw previews after DOM insertion
-  pkg.indices.forEach(i => drawPreview('prev-' + i, i));
-  try { g16StartPreviewBob() } catch(_){}
+  // A-339 P2 — draw previews lazily (only cards scrolled into view) so the "Semua"
+  // tab's 300+ canvases don't all decode their WebP at once. Falls back to eager.
+  if (window.TrainPicker) {
+    TrainPicker.lazyPreview(root, (cv, key) => drawPreview(cv.id, +key));
+  } else {
+    pkg.indices.forEach(i => drawPreview('prev-' + i, i));
+  }
+  // Idle bob only for small tabs — 300+ per-frame transform writes would jank the tablet.
+  if (pkg.indices.length <= 40) { try { g16StartPreviewBob() } catch(_){} }
 }
 
 function g16RenderPicker () {
@@ -669,6 +680,9 @@ function g16RenderPicker () {
       };
       tabRow.appendChild(btn);
     });
+    // A-339 P2 — left-align + momentum scroll + right-edge fade so the chip row
+    // is obviously slidable (owner: "terpotong tidak bisa di slide").
+    try { window.TrainPicker && TrainPicker.markSlidable(tabRow) } catch(_){}
   }
   const countEl = document.getElementById('ts-count');
   if (countEl) countEl.textContent = TRAIN_STYLES.length;
@@ -1679,6 +1693,17 @@ const G16_CHAR_CONFIGS = {
     })
     G16_PKGS.push({ id: cat.key, name: cat.name, color: cat.color, desc: cat.desc, indices: idxs })
   })
+})();
+
+// A-339 P2 — "Semua" tab at the FRONT: one scrollable grid of EVERY train, so the
+// picker opens on the full roster (owner: "only 4 trains, can't slide"). Lazy canvas
+// previews (TrainPicker) keep 300+ cards smooth. Default the picker to this tab.
+;(function () {
+  if (typeof G16_PKGS === 'undefined' || typeof TRAIN_STYLES === 'undefined') return
+  var all = TRAIN_STYLES.map(function (_, i) { return i })
+  G16_PKGS.unshift({ id: 'all', name: '🚂 Semua', color: '#a78bfa',
+    desc: 'Semua ' + all.length + ' kereta', indices: all })
+  if (typeof g16ActivePkg !== 'undefined') g16ActivePkg = 0
 })();
 
 // ── Train (detailed) ──────────────────────────────────────────────────────────

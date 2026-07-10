@@ -15,7 +15,7 @@
  * succeeded. Only cache same-origin assets.
  * ========================================================================== */
 
-const CACHE_VERSION = 'v58.5-20260705p'
+const CACHE_VERSION = 'v58.6-20260705q'
 const HTML_CACHE = `dunia-html-${CACHE_VERSION}`
 const ASSET_CACHE = `dunia-assets-${CACHE_VERSION}`
 
@@ -52,6 +52,7 @@ const SHELL = [
   './games/train-journey.js?v=55.80-20260628a',
   './games/data/train-wheel-anchors.js?v=55.84-20260628a',
   './games/train-backdrop.js?v=58.4-20260705o',
+  './games/train-picker.js?v=58.6-20260705q',
   './games/train-speedfx.js?v=55.77-20260628a',
   './games/quiz-engine.js?v=55.97-20260630a',
   './games/motion.js?v=56.6-20260703a',
