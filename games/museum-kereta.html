@@ -159,7 +159,7 @@ html,body{width:100%;min-height:100%;min-height:100svh;background:#1a0e06;font-f
 </style>
 </head>
 <body>
-<div id="du-build-stamp">v56.9</div>
+<div id="du-build-stamp">v58.7</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <!-- A-322 — full 275-train world DB + real-fact lore for the expanded museum -->
 <script src="data/train-world.js?v=56.9-20260704c"></script>
@@ -1270,37 +1270,96 @@ function g18SoftenNote(note) {
 }
 
 /* templated Indonesian cerita per category (never blank) */
+// A-339 P7 — rich, multi-part, kid-engaging cerita for EVERY (non-featured) train.
+// Owner: "panel ceritanya sangat payah, terlalu singkat, tidak seru." Now returns
+// formatted HTML with 4 sections (Kenalan / Cara Kerja / Tahukah Kamu / Perjalanan)
+// + a warm closing. Deterministic per-train variety so 239 trains don't read alike.
+function g18Pick(arr, seed) { const n = arr.length; return arr[(((seed | 0) % n) + n) % n] }
+function g18EraStory(y) {
+  const yr = parseInt(y, 10)
+  if (!yr) return 'Kereta ini menyimpan cerita dari masa lampau yang seru sekali untuk dijelajahi. Setiap goresan catnya seolah berbisik tentang perjalanan panjang yang pernah ia tempuh 🚂.'
+  if (yr < 1900) return `Ia sudah ada sejak tahun ${yr} — zaman ketika kereta api baru mulai menjelajah dunia. Bayangkan, waktu itu belum ada mobil apalagi pesawat! Kereta adalah kendaraan tercepat yang pernah dilihat orang 😮.`
+  if (yr < 1945) return `Dibuat tahun ${yr}, di masa Hindia Belanda. Kala itu kereta jadi kendaraan paling hebat untuk mengangkut orang, gula, dan hasil kebun melintasi Pulau Jawa dari pegunungan sampai ke pelabuhan 🌏.`
+  if (yr < 1970) return `Lahir tahun ${yr}, tak lama setelah Indonesia merdeka 🇮🇩. Bangsa kita sedang bersemangat membangun negeri, dan kereta gagah seperti ini menjadi salah satu kebanggaan rakyat.`
+  if (yr < 2000) return `Muncul tahun ${yr}, saat teknologi kereta makin modern. Perjalanan pun jadi lebih cepat, halus, dan nyaman untuk semua penumpang 😊.`
+  return `Hadir tahun ${yr} — kereta masa kini yang canggih, cepat, dan ramah lingkungan 🌿. Anak-anak sekarang beruntung bisa naik kereta sehebat ini!`
+}
 function g18BuildCerita(item) {
-  const y = item.year || '—'
-  const phrase = {
-    uap_klasik: 'kereta uap klasik', uap_modern: 'kereta uap', diesel: 'kereta diesel bertenaga mesin',
-    listrik: 'kereta listrik', cepat: 'kereta super cepat', komuter: 'kereta komuter sehari-hari',
-    indonesia: 'kereta kebanggaan Indonesia'
-  }[item.catKey] || 'kereta hebat'
-  const flavor = {
-    uap_klasik: 'salah satu lokomotif paling awal di dunia', uap_modern: 'raksasa uap yang gagah dan bertenaga',
-    diesel: 'kuat menarik gerbong yang panjang', listrik: 'cepat, bersih, dan tenang tanpa asap',
-    cepat: 'salah satu kereta tercepat di dunia', komuter: 'setia mengantar penumpang setiap hari',
-    indonesia: 'bagian penting dari sejarah kereta api Indonesia'
-  }[item.catKey] || 'kereta yang menakjubkan'
+  const seed = (item.idx != null ? item.idx : (item.name || '').length)
   const emoji = item.catEmoji || '🚂'
-  let cerita = `${emoji} ${item.name} dibuat tahun ${y}. Ini termasuk ${phrase} — ${flavor}!`
+  const y = item.year || '—'
+  const kind = {
+    uap_klasik: 'lokomotif uap klasik — salah satu kereta paling tua di dunia',
+    uap_modern: 'lokomotif uap yang gagah dan bertenaga besar',
+    diesel: 'lokomotif diesel yang kuat menggerakkan mesin raksasa',
+    listrik: 'kereta listrik yang cepat, bersih, dan tenang',
+    cepat: 'kereta super cepat kebanggaan zaman modern',
+    komuter: 'kereta komuter yang setia mengantar penumpang tiap hari',
+    indonesia: 'kereta istimewa dalam sejarah kereta api Indonesia'
+  }[item.catKey] || 'kereta yang menakjubkan'
+  const HOW = {
+    uap_klasik: [
+      'Di dalam perutnya ada tungku api yang membakar batu bara sampai membara 🔥. Panasnya mendidihkan air menjadi uap, dan uap kuat itulah yang mendorong roda-roda besinya berputar. Ces… ces… ces… begitu suaranya!',
+      'Ia "minum" air dan "makan" batu bara! Airnya dipanaskan hingga jadi uap panas, lalu uap mendorong tuas besar yang memutar roda. Asap putih mengepul lucu dari cerobongnya ☁️.'
+    ],
+    uap_modern: [
+      'Ketel raksasanya mengubah air jadi uap bertekanan tinggi 💨. Tenaganya luar biasa besar — sanggup menarik belasan gerbong berat menanjak gunung tanpa lelah!',
+      'Lihat cerobong tingginya! Dari sanalah asap tebal mengepul saat ia mengerahkan seluruh tenaga uapnya untuk melaju kencang membawa muatan berat.'
+    ],
+    diesel: [
+      'Di dalamnya bekerja mesin diesel yang besar dan bertenaga 🛠️. Ia tak butuh kabel listrik di atas rel — cukup bahan bakar solar, dan ia siap menempuh perjalanan jauh ke mana saja.',
+      'Mesin dieselnya menderu gagah "brum… brum…" 🔊. Karena membawa bahan bakarnya sendiri, ia bisa melaju bebas bahkan di jalur terpencil yang belum ada listriknya.'
+    ],
+    listrik: [
+      'Ia mengambil tenaga listrik dari kabel di atas rel ⚡, lalu meluncur mulus tanpa asap sama sekali. Karena itu ia bersih, sunyi, dan sangat ramah untuk udara kita 🌿.',
+      'Tanpa api, tanpa asap — hanya listrik! Dengan tenaga dari kawat di atasnya, kereta ini melesat halus dan tenang, cocok mengantar orang-orang kota setiap hari.'
+    ],
+    cepat: [
+      'Bentuk hidungnya dibuat runcing seperti peluru agar bisa membelah angin 💨. Berkat itu ia melaju sangat kencang — kota-kota yang jauh terasa jadi dekat sekali!',
+      'Kereta ini secepat kilat! Rodanya nyaris terbang di atas rel khusus, membawa penumpang antar kota dalam waktu singkat sambil tetap nyaman dan aman.'
+    ],
+    komuter: [
+      'Setiap pagi ia sudah siap di stasiun, membawa ribuan orang pergi bekerja dan sekolah 🏙️. Pintunya membuka-menutup rapi, lalu ia meluncur dari stasiun ke stasiun tanpa lelah.',
+      'Ia sahabat setia warga kota! Dengan tenang mengangkut banyak penumpang tiap hari, membuat perjalanan jadi mudah dan bebas dari macet.'
+    ],
+    indonesia: [
+      'Ia melaju di rel-rel Nusantara membawa cerita kebanggaan bangsa kita 🇮🇩. Dari Sabang sampai Merauke, kereta seperti ini ikut membangun negeri.',
+      'Kereta ini bagian dari sejarah kita! Ia menjadi saksi bisu perjalanan Indonesia dari masa ke masa di atas rel yang membentang panjang.'
+    ]
+  }[item.catKey] || [
+    'Setiap bagiannya dirancang dengan teliti — dari roda, mesin, hingga gerbongnya — agar bisa membawa penumpang dan barang dengan selamat sampai tujuan.'
+  ]
+  const FUN = {
+    uap_klasik: ['Masinis zaman dulu harus menyekop batu bara sendiri ke tungku — capek tapi seru! 💪', 'Peluitnya yang nyaring dipakai memberi tanda kepada orang di dekat rel agar hati-hati 📣.'],
+    uap_modern: ['Lokomotif uap besar butuh air sangat banyak, jadi ia sering berhenti "minum" di menara air 🚰.', 'Roda penggeraknya kadang lebih tinggi dari orang dewasa! 🧍'],
+    diesel: ['Satu lokomotif diesel bisa menarik puluhan gerbong barang sekaligus 🚃🚃🚃.', 'Mesinnya mirip mesin truk atau kapal, tapi jaaauh lebih besar dan kuat 🛳️.'],
+    listrik: ['Karena tak berasap, kereta listrik boleh masuk ke terowongan bawah tanah 🚇.', 'Saat mengerem, sebagian tenaganya bisa diubah kembali jadi listrik — hemat energi! 🔋'],
+    cepat: ['Beberapa kereta cepat melaju lebih kencang dari mobil balap di jalan tol 🏎️!', 'Relnya dibuat sangat mulus dan lurus supaya perjalanannya terasa halus meski sangat cepat.'],
+    komuter: ['Dalam sehari, satu jalur komuter bisa mengangkut ratusan ribu orang! 👨‍👩‍👧‍👦', 'Ada layar dan pengumuman suara supaya penumpang tahu stasiun berikutnya 🔔.'],
+    indonesia: ['Banyak gerbong kereta kita dibuat sendiri oleh pabrik INKA di Madiun 🏭🇮🇩.', 'Rel pertama di Indonesia dibangun tahun 1867, sudah lama sekali ya! 📜']
+  }[item.catKey] || ['Setiap kereta punya kisah seru tersendiri tentang bagaimana ia dibuat dan ke mana ia pergi 🌟.']
+
   const note = g18SoftenNote(item.note)
-  if (note) {
-    cerita += ` Tahukah kamu? ${note}`
-  } else {
-    const fallback = {
-      uap_klasik: 'Kereta seperti ini membakar batubara untuk membuat uap yang menggerakkan rodanya.',
-      uap_modern: 'Lokomotif uap besar ini bisa menarik gerbong yang sangat berat menempuh jarak jauh.',
-      diesel: 'Mesin dieselnya kuat dan bisa jalan tanpa perlu kabel listrik di atas.',
-      listrik: 'Kereta ini digerakkan listrik dari kabel di atas rel, jadi bersih dan cepat.',
-      cepat: 'Kereta secepat ini bisa membawa orang antar kota dalam waktu singkat sekali!',
-      komuter: 'Kereta ini membawa banyak orang pergi bekerja dan sekolah setiap hari.',
-      indonesia: 'Kereta ini pernah atau masih melaju di rel-rel Nusantara. Bangga jadi anak Indonesia! 🇮🇩'
-    }[item.catKey] || 'Setiap kereta punya cerita seru tentang bagaimana ia dibuat dan ke mana ia pergi.'
-    cerita += ` ${fallback}`
-  }
-  return cerita
+  const kenalan = `${emoji} Kenalkan, <b>${item.name}</b>! Ia adalah ${kind}${item.type ? `, jenis ${item.type}` : ''}.`
+  const how = g18Pick(HOW, seed)
+  const fun = note ? note : g18Pick(FUN, seed + 1)
+  const era = g18EraStory(y)
+  const closing = g18Pick([
+    'Yuk, kita jaga sejarah kereta api bersama-sama! 🚂💛',
+    'Hebat sekali, ya? Terima kasih sudah berkunjung ke museum kami! 🎉',
+    'Semoga kamu makin sayang pada kereta api Indonesia! 🇮🇩✨'
+  ], seed + 2)
+
+  const sec = (icon, title, body) =>
+    `<div style="margin-bottom:12px;">` +
+      `<div style="font-size:12px;font-weight:900;color:#fbbf24;font-family:'Fredoka One',cursive;margin-bottom:3px;">${icon} ${title}</div>` +
+      `<div style="font-size:13px;line-height:1.65;color:rgba(255,255,255,0.92);">${body}</div>` +
+    `</div>`
+  return sec('👋', 'Kenalan Dulu', kenalan) +
+         sec('⚙️', 'Bagaimana Ia Bekerja', how) +
+         sec('💡', 'Tahukah Kamu?', fun) +
+         sec('🗺️', 'Perjalanan & Zamannya', era) +
+         `<div style="font-size:13px;font-weight:700;color:#fde68a;line-height:1.6;">${closing}</div>`
 }
 
 /* the world sprite number a featured G18_TRAINS entry maps to (or -1) */
@@ -1332,7 +1391,7 @@ function g18ShowLightDetail(worldIdx) {
     chip('📅 ' + (item.year || '—')) +
     (item.type ? chip('🚆 ' + item.type) : '') +
     `<span class="g18-light-chip" style="background:${item.catColor};color:#1a0e06;">${item.catEmoji} ${item.catLabel}</span>`
-  document.getElementById('g18-light-cerita').textContent = g18BuildCerita(item)
+  document.getElementById('g18-light-cerita').innerHTML = g18BuildCerita(item)  // A-339 P7 — rich HTML cerita
   const modal = document.getElementById('g18-light-modal')
   modal.classList.add('open')
   try { g18PassportStamp(worldIdx) } catch(_){}
