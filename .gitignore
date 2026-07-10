@@ -27,3 +27,23 @@ assets/train/train char world/index/*.png
 assets/train/train char world/index/*.jpg
 assets/train/extract_train_char_world_crops.py
 assets/train/__pycache__/
+# top-level WORLD source PNGs (served outlined WebP in assets/train/world ARE tracked; these raw dumps are not referenced by app code)
+assets/train/train char world/*.png
+
+# Agent worktrees + local Claude state — never commit
+.claude/
+
+# Python bytecode caches
+tools/__pycache__/
+**/__pycache__/
+
+# Throwaway debug/verification artifacts (not part of the app or the QA gate suite)
+dbg*.png
+tools/_g15v.mjs
+tools/dbg-*.mjs
+
+# Thomas & Friends raw source sprite sheets (app renders from assets/train/aeg WebP; Thomas/ is source-only, not fetched at runtime)
+assets/train/Thomas/
+
+# Deprecated backdrop reference dump (literally "OLD reference only"; not referenced by app code)
+assets/train/_bg-clean-OLD-reference-only/

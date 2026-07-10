@@ -1,0 +1,16 @@
+import puppeteer from 'puppeteer'
+const b=await puppeteer.launch({headless:'new',args:['--no-sandbox','--use-gl=swiftshader']})
+const sleep=ms=>new Promise(r=>setTimeout(r,ms))
+// g14 BOOST quiz
+const p=await b.newPage(); await p.setViewport({width:844,height:390,deviceScaleFactor:1})
+await p.evaluateOnNewDocument(()=>sessionStorage.setItem('g14Config',JSON.stringify({level:3,trainKey:'aeg_thomas',train:'aeg_thomas',difficulty:'easy'})))
+await p.goto('http://localhost:8081/games/balapan-kereta.html',{waitUntil:'domcontentloaded',timeout:30000})
+await sleep(1800)
+await p.evaluate(()=>{try{const t=(typeof TRAIN_MAP!=='undefined'&&TRAIN_MAP['aeg_thomas'])||null;if(t){S.trainCfg={...t,variant:1}}if(typeof startRace==='function')startRace()}catch(e){}})
+await sleep(2500)
+await p.evaluate(()=>{ try{ S.quizOpen=true; buildQuiz(); document.getElementById('quiz-ovl').style.display='block' }catch(e){console.error(e)} })
+await sleep(600)
+await p.screenshot({path:'tools/qa-out/quiz-g14-boost.png'})
+await p.close()
+await b.close()
+console.log('done')
