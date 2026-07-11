@@ -219,7 +219,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v59.0</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v59.1</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="data/train-world.js?v=55.89"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
@@ -4738,6 +4738,7 @@ function startRace() {
   // the render loop never fires → game appears frozen after "Main Lagi".
   try { if (app && app.ticker && !app.ticker.started) app.ticker.start() } catch(_){}
   S.distance = 0; S.hp = LIVES_MAX; S.pressure = 70
+  S._hud = null; S._presPct = undefined; S._presBoost = undefined   // A-342 — reset HUD guards so a fresh race re-renders
   // v54.19 B12: if kid mode active, +1 HP buffer (applied AFTER reset above).
   if (S.kidMode) S.hp = Math.min(LIVES_MAX + 1, S.hp + 1)
   S.obstacles = []; S.steam = []; S.sparks = []; spdLines = []; S.frame = 0
@@ -5527,43 +5528,55 @@ _g14SwipeTarget.addEventListener('touchend', e => {
 //  HUD
 // ═══════════════════════════════════════════════════════════
 function updateHUD() {
-  const frac = Math.min(1, S.distance / S.finishLine)
-  const progEl = document.getElementById('prog-fill'); if (progEl) progEl.style.width = (frac * 100).toFixed(1) + '%'
-  const distEl = document.getElementById('distance-text'); if (distEl) distEl.textContent = `${Math.floor(S.distance)} / ${S.finishLine}m`
-  const livesEl = document.getElementById('lives-hud'); if (livesEl) livesEl.textContent = '❤️'.repeat(S.hp) + '🖤'.repeat(LIVES_MAX - S.hp)
-  // v55.73 — painterly HUD: coin chip + ticket capsule + segmented energy.
-  const coinEl = document.getElementById('g14-coins-num'); if (coinEl) coinEl.textContent = (S.coins || 0)
+  // A-342 super-smooth — the loop calls updateHUD every frame, but most HUD values change
+  // rarely. Guard EACH DOM write on its last value so we stop rewriting gradient/text/classes
+  // + running g14RenderRail's querySelectorAll every frame (was the residual per-frame recalc).
+  const H = S._hud || (S._hud = {})
+  const fracPct = (Math.min(1, S.distance / S.finishLine) * 100).toFixed(1)
+  if (fracPct !== H.frac) { H.frac = fracPct; const progEl = document.getElementById('prog-fill'); if (progEl) progEl.style.width = fracPct + '%' }
+  const distStr = `${Math.floor(S.distance)} / ${S.finishLine}m`
+  if (distStr !== H.dist) { H.dist = distStr; const distEl = document.getElementById('distance-text'); if (distEl) distEl.textContent = distStr }
+  if (S.hp !== H.hp) { H.hp = S.hp; const livesEl = document.getElementById('lives-hud'); if (livesEl) livesEl.textContent = '❤️'.repeat(S.hp) + '🖤'.repeat(LIVES_MAX - S.hp) }
+  const coins = (S.coins || 0)
+  if (coins !== H.coins) { H.coins = coins; const coinEl = document.getElementById('g14-coins-num'); if (coinEl) coinEl.textContent = coins }
   const lvNow = (cfg.level || 1)
-  const partEl = document.getElementById('g14-ticket-part'); if (partEl) partEl.textContent = `Part ${lvNow}/30`
-  const stationEl = document.getElementById('g14-ticket-station')
-  if (stationEl) { const j = G14_JOURNEY[(lvNow - 1) % G14_JOURNEY.length]; if (j) stationEl.textContent = j.name }
-  try { g14RenderRail(lvNow) } catch (_) {}
-  const segs = document.getElementById('g14-energy-segs')
-  if (segs) {
-    const lit = Math.max(0, Math.min(5, Math.ceil((S.pressure || 0) / 20)))
-    const low = (S.pressure || 0) < 20
-    const cells = segs.children
-    for (let i = 0; i < cells.length; i++) {
-      cells[i].classList.toggle('lit', i < lit)
-      cells[i].classList.toggle('g14-seg-low', i < lit && low)
-    }
+  if (lvNow !== H.lv) {
+    H.lv = lvNow
+    const partEl = document.getElementById('g14-ticket-part'); if (partEl) partEl.textContent = `Part ${lvNow}/30`
+    const stationEl = document.getElementById('g14-ticket-station')
+    if (stationEl) { const j = G14_JOURNEY[(lvNow - 1) % G14_JOURNEY.length]; if (j) stationEl.textContent = j.name }
+    try { g14RenderRail(lvNow) } catch (_) {}
+  }
+  const lit = Math.max(0, Math.min(5, Math.ceil((S.pressure || 0) / 20)))
+  const segSig = lit * 2 + ((S.pressure || 0) < 20 ? 1 : 0)
+  if (segSig !== H.seg) {
+    H.seg = segSig; const low = (S.pressure || 0) < 20
+    const segs = document.getElementById('g14-energy-segs')
+    if (segs) { const cells = segs.children; for (let i = 0; i < cells.length; i++) { cells[i].classList.toggle('lit', i < lit); cells[i].classList.toggle('g14-seg-low', i < lit && low) } }
   }
   if (S.trainCfg) {
     const displayKmh = Math.round(S.trainCfg.kmh * (S.speed / S.baseSpeed) * (S.boosting ? S.trainCfg.boostMult : 1))
-    // v54.19 B10: needle gauge — update num + var(--gns) which conic-arc + needle read.
-    const numEl = document.getElementById('speed-hud-num')
-    if (numEl) numEl.textContent = displayKmh + ' km/h'
-    else document.getElementById('speed-hud').textContent = displayKmh + ' km/h'
-    const needleEl = document.getElementById('g14-speed-needle')
-    if (needleEl) {
-      const ratio = Math.max(0, Math.min(1, displayKmh / Math.max(1, S.trainCfg.kmh * S.trainCfg.boostMult)))
-      needleEl.style.setProperty('--gns', ratio.toFixed(3))
-      needleEl.classList.toggle('boost', !!S.boosting)
+    const boost = !!S.boosting
+    if (displayKmh !== H.kmh || boost !== H.boost) {
+      H.kmh = displayKmh; H.boost = boost
+      const numEl = document.getElementById('speed-hud-num')
+      if (numEl) numEl.textContent = displayKmh + ' km/h'
+      else { const sh = document.getElementById('speed-hud'); if (sh) sh.textContent = displayKmh + ' km/h' }
+      const needleEl = document.getElementById('g14-speed-needle')
+      if (needleEl) {
+        const ratio = Math.max(0, Math.min(1, displayKmh / Math.max(1, S.trainCfg.kmh * S.trainCfg.boostMult)))
+        needleEl.style.setProperty('--gns', ratio.toFixed(3))
+        needleEl.classList.toggle('boost', boost)
+      }
     }
   }
 }
 function updatePressure() {
   const pct = Math.round(S.pressure)
+  // A-342 super-smooth — skip the whole DOM update when the rounded pressure is unchanged
+  // (was rewriting a gradient string + meter cells EVERY frame). Boosting always re-renders.
+  if (pct === S._presPct && S.boosting === S._presBoost) return
+  S._presPct = pct; S._presBoost = S.boosting
   const fillEl = document.getElementById('pressure-fill')
   if (fillEl) {
     fillEl.style.width = pct + '%'
