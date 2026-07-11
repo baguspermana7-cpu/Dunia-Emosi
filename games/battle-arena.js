@@ -291,25 +291,31 @@
     opts = opts || {}
     destroyScene()
     var host = hostEl || document.body
-    // v1.1.0 A-319 — the video's outdoor STADIUM (extracted from the owner's reference)
-    // is the DEFAULT arena; callers may still pass a themed bg. Backdrop always exists
-    // (DOF + drift + parallax need the layer).
-    var bgUrl = opts.bg || (assetBase() + 'assets/background/gym/stadium-video.webp')
+    // A-339 — the DEFAULT arena is a CLEAN, orientation-matched gym plate. The old
+    // stadium-video.webp extraction was MUTILATED (baked seams + duplicated cloud
+    // tiles + a mismatched right half); owner: "backdrop nggak boleh termutilasi,
+    // harus perfect." These two plates are seamless (landscape 16:9 / portrait 9:16).
+    var usingDefault = !opts.bg
+    function pickCleanBg () {
+      var land = (window.innerWidth || 0) >= (window.innerHeight || 1)
+      return assetBase() + 'assets/background/gym/' + (land ? 'g13c-bg-gym-p.webp' : 'g13c-bg-gym2-m.webp')
+    }
+    var bgUrl = opts.bg || pickCleanBg()
     var backdrop = el('div', 'ba-backdrop' + (REDUCED ? '' : ' ba-drift'), host)
     backdrop.style.cssText = 'position:fixed;inset:-8px;z-index:0;background-size:cover;background-position:center;' +
       'background-image:url("' + bgUrl + '")'
-    // v56.9 parallax depth bands framing the plate's crop (sky top / field bottom).
+    // Clean plates are self-framed (baked sky + trees + field), so the masking
+    // sky/field bands + flower foreground — which ONLY existed to hide the old
+    // plate's chopped crop — are skipped for the default (kept for themed bg).
     var sky = null, fieldBand = null
-    if (opts.depthBands !== false) {
+    if (opts.depthBands !== false && !usingDefault) {
       sky = el('div', 'ba-sky', host)
       fieldBand = el('div', 'ba-fieldband', host)
     }
     var field = el('div', 'ba-field ba-punch', host)
     if (opts.ground) field.style.setProperty('--ba-ground', opts.ground)
-    // foreground flower/grass corners (from the video) — IN FRONT of the fighters,
-    // counter-shifting on lunge/punch-in = visible layer separation on every action.
     var fgL = null, fgR = null
-    if (opts.foreground !== false) {
+    if (opts.foreground !== false && !usingDefault) {
       fgL = el('div', 'ba-fg ba-fg-l', host)
       fgL.innerHTML = '<img alt="" src="' + assetBase() + 'assets/background/gym/stadium-fg-left.webp">'
       fgR = el('div', 'ba-fg ba-fg-r', host)
@@ -350,6 +356,12 @@
       aura: null,
       opts: opts,
       raf: []
+    }
+    // A-339 — re-pick the orientation-matched clean plate when the device rotates
+    // (A-325: the PWA follows rotation), so the backdrop stays perfect either way.
+    if (usingDefault) {
+      S._bgResize = function () { if (S && S.backdrop) S.backdrop.style.backgroundImage = 'url("' + pickCleanBg() + '")' }
+      try { window.addEventListener('resize', S._bgResize) } catch (_) {}
     }
     return S
   }
@@ -834,6 +846,7 @@
     if (S.fgR) { try { S.fgR.remove() } catch (_) {} }
     if (S.vsChip) { try { S.vsChip.remove() } catch (_) {} }
     if (S.motes) for (var i = 0; i < S.motes.length; i++) { try { S.motes[i].remove() } catch (_) {} }
+    if (S._bgResize) { try { window.removeEventListener('resize', S._bgResize) } catch (_) {} }
     S = null
   }
 

@@ -67,7 +67,7 @@
         position: fixed; inset: -10% -5%;
         /* v56.9 A-323: same stadium plate as the Adventure BattleArena so the
            whole PvP/Tournament flow reads as one style. */
-        background: url('${_ASSET_BASE}assets/background/gym/stadium-video.webp') center center/cover no-repeat;
+        background: url('${_ASSET_BASE}assets/background/gym/g13c-bg-gym-p.webp') center center/cover no-repeat;
         opacity: 0.35;
         pointer-events: none; z-index: 0;
       }
@@ -4071,13 +4071,13 @@
 
       /* ── SHARED ARENA — both Pokemon in one view ── */
       /* v56.9 A-323: PvP/Tournament arena now uses the SAME stadium plate as the
-         Adventure BattleArena (assets/background/gym/stadium-video.webp) with a
+         Adventure BattleArena (assets/background/gym/g13c-bg-gym-p.webp) with a
          slow idle drift — "stylenya sama". applyArenaBg() may still override
          --bm-arena-bg per region for variety. */
       .bm-arena {
         position: relative; overflow: hidden;
         background: linear-gradient(180deg,#6bbfee 0%,#a8d8f8 32%,#a0d870 46%,#5a9e3a 65%,#3e7028 100%);
-        --bm-arena-bg: url('${_ASSET_BASE}assets/background/gym/stadium-video.webp');
+        --bm-arena-bg: url('${_ASSET_BASE}assets/background/gym/g13c-bg-gym-p.webp');
       }
       .bm-arena::before {
         content: ''; position: absolute; inset: -10% -5%;
