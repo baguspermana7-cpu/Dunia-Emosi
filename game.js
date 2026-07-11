@@ -974,6 +974,53 @@ const LETTER_SEQ_CILIK  = ['A','B','C','D','E','F']
 const LETTER_SEQ_TUMBUH = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N']
 const LETTER_SEQ_PINTAR = Object.keys(LETTER_GUIDES)
 
+// A-339 P5 — Jejak Huruf WORD mode (level > 20): trace whole simple Indonesian kid
+// words instead of single letters. Short (3-4 letters), all uppercase, letters that
+// exist in LETTER_GUIDES. Owner: "di level diatas 20 bukan huruf tapi kata."
+const WORD_LIST_G9 = [
+  'IBU','API','SAPI','BOLA','MEJA','KAKI','MATA','BAJU','SUSU','BUKU',
+  'KUDA','NASI','TOPI','ROTI','GIGI','DADU','PAGI','JARI','DUKU','SORE',
+  'AYAM','BEBEK','GAJAH','KUCING','RUMAH','BUNGA','MOBIL','PISANG','APEL','DAUN'
+]
+// Build a whole-word trace layout: each letter's normalized guide dots are packed
+// into its own horizontal slot (i/L .. (i+1)/L) so the dots line up letter-by-letter
+// across a wide canvas; the ghost glyph for each letter is filled into that same slot.
+function g9BuildWordLayout (word) {
+  const L = Math.max(1, word.length)
+  const my = 0.10          // vertical margin (top/bottom)
+  const px = 0.16          // horizontal padding inside each letter slot
+  const letters = [], all = []
+  for (let i = 0; i < L; i++) {
+    const ch = word[i]
+    const base = LETTER_GUIDES[ch] || LETTER_GUIDES['I']
+    const g2 = base.map(g => ({
+      x: (i + px + g.x * (1 - 2 * px)) / L,
+      y: my + g.y * (1 - 2 * my)
+    }))
+    letters.push({ ch, guides: g2 })
+    for (const g of g2) all.push(g)
+  }
+  return { letters, guides: all }
+}
+// Fill one ghost glyph into the bbox implied by its (already-positioned) guide dots.
+// W,H = canvas pixel dims (word canvas is wide, single-letter is square).
+function g9FillGlyph (ctx, ch, guides, W, H) {
+  let minX = 0.12, maxX = 0.88, minY = 0.06, maxY = 0.94
+  if (guides && guides.length) {
+    minX = 1; maxX = 0; minY = 1; maxY = 0
+    guides.forEach(g => { minX = Math.min(minX, g.x); maxX = Math.max(maxX, g.x); minY = Math.min(minY, g.y); maxY = Math.max(maxY, g.y) })
+  }
+  const bboxW = Math.max(0.001, (maxX - minX)) * W, bboxH = Math.max(0.001, (maxY - minY)) * H
+  let fontSize = bboxH / 0.72
+  ctx.font = `bold ${Math.round(fontSize)}px Nunito`
+  const w = ctx.measureText(ch).width || bboxW
+  const maxW = Math.min(W * 0.92, bboxW * 1.6)
+  if (w > maxW) { fontSize *= maxW / w; ctx.font = `bold ${Math.round(fontSize)}px Nunito` }
+  ctx.fillStyle = 'rgba(132,204,22,0.14)'
+  ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic'
+  ctx.fillText(ch, (minX + maxX) / 2 * W, maxY * H)
+}
+
 // Game 9 number guides (digit dot paths)
 const ANGKA_GUIDES = {
   '0':[{x:0.5,y:0.05},{x:0.2,y:0.2},{x:0.1,y:0.5},{x:0.2,y:0.8},{x:0.5,y:0.95},{x:0.8,y:0.8},{x:0.9,y:0.5},{x:0.8,y:0.2},{x:0.5,y:0.05}],
@@ -4236,20 +4283,34 @@ function setG9Mode(mode, btn) {
 function initGame9(){
   const diff=state.selectedLevel||'medium'
   const tier=state.players[state.currentPlayer].ageTier||'tumbuh'
+  // A-339 P5 — WORD mode above level 20 (huruf only; angka stays single digits).
+  const wordMode = (g9TraceMode==='huruf') && ((state.selectedLevelNum||1) > 20)
   let seq
   if(g9TraceMode==='angka'){
     seq=LETTER_SEQ_ANGKA
+  } else if(wordMode){
+    seq=WORD_LIST_G9
   } else {
     seq=tier==='cilik'?LETTER_SEQ_CILIK:tier==='tumbuh'?LETTER_SEQ_TUMBUH:LETTER_SEQ_PINTAR
   }
-  g9State={round:0,maxRound:Math.min(DIFF[diff].rounds,seq.length),sequence:seq,currentLetter:'A',mode:g9TraceMode}
+  g9State={round:0,maxRound:Math.min(DIFF[diff].rounds,seq.length),sequence:seq,currentLetter:'A',mode:g9TraceMode,wordMode:wordMode,word:'',layout:null}
   state.currentPlayer=0
   g9Canvas=document.getElementById('g9-canvas')
   g9Ctx=g9Canvas.getContext('2d')
-  // Sync canvas buffer size to CSS display size — must be done after screen is visible
+  // Sync canvas buffer size to CSS display size — must be done after screen is visible.
+  // A-339 P5 — word mode uses a WIDE canvas (g9-word class), so read BOTH dims.
   setTimeout(()=>{
-    const _g9sz = g9Canvas.offsetWidth || g9Canvas.clientWidth || 300
-    g9Canvas.width = _g9sz; g9Canvas.height = _g9sz
+    const wrap = g9Canvas.parentElement
+    if(wrap) wrap.classList.toggle('g9-word', !!wordMode)
+    const _disp = document.getElementById('g9-letter-display'); if(_disp) _disp.classList.toggle('g9-word-label', !!wordMode)
+    let _w = g9Canvas.offsetWidth || g9Canvas.clientWidth || 0
+    let _h = g9Canvas.offsetHeight || g9Canvas.clientHeight || 0
+    if(!_w || !_h){
+      // layout not ready — use intended dims (word canvas is WIDE, single is square)
+      if(wordMode){ _w = Math.min(560, Math.round((window.innerWidth||360)*0.94)); _h = Math.round(_w*0.4) }
+      else { _w = _h = 300 }
+    }
+    g9Canvas.width = _w; g9Canvas.height = _h
     g9Clear(); renderG9GuideDots()
   }, 100)
   // A-339 P5 — unified POINTER EVENTS (one stream for mouse+touch+pen). Root cause of
@@ -4270,9 +4331,12 @@ function initGame9(){
   updateGameStarDisplay(); nextG9Round()
 }
 function nextG9Round(){
-  if(g9State.round>=g9State.maxRound){showResult('✍️','Jejak Huruf Selesai!',`Kamu berhasil menulis ${g9State.round} huruf! ✍️`);return}
-  g9State.currentLetter=g9State.sequence[g9State.round]; g9UserPath=[]
-  document.getElementById('g9-letter-display').textContent=g9State.currentLetter
+  if(g9State.round>=g9State.maxRound){const _u=g9State.wordMode?'kata':(g9State.mode==='angka'?'angka':'huruf');showResult('✍️','Jejak Huruf Selesai!',`Kamu berhasil menulis ${g9State.round} ${_u}! ✍️`);return}
+  const _item=g9State.sequence[g9State.round]
+  g9State.currentLetter=_item; g9UserPath=[]
+  // A-339 P5 — word mode: build the per-letter slot layout for this word
+  if(g9State.wordMode){ g9State.word=_item; g9State.layout=g9BuildWordLayout(_item) }
+  document.getElementById('g9-letter-display').textContent=_item
   document.getElementById('g9-result').style.display='none'
   document.getElementById('g9-next-btn').style.display='none'
   // Re-show "Selesai" button when starting new letter
@@ -4281,6 +4345,7 @@ function nextG9Round(){
   g9Clear(); renderG9GuideDots(); g9State.round++
 }
 function getG9Guides(letter) {
+  if(g9State.wordMode && g9State.layout) return g9State.layout.guides   // A-339 P5 — whole-word dots
   return (g9State.mode==='angka' ? ANGKA_GUIDES : LETTER_GUIDES)[letter] || []
 }
 function renderG9GuideDots(){
@@ -4288,30 +4353,15 @@ function renderG9GuideDots(){
   guides.forEach((g,i)=>{const dot=document.createElement('div');dot.className='g9-dot';dot.id=`g9-dot-${i}`;dot.style.left=(g.x*100)+'%';dot.style.top=(g.y*100)+'%';dot.textContent=String(i+1);dot.style.cssText+=';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:rgba(255,255,255,0.9);';container.appendChild(dot)})
 }
 function g9Clear(){
-  if(!g9Ctx)return; const sz=g9Canvas.width||300; g9Ctx.clearRect(0,0,sz,sz); g9UserPath=[]
-  const letter=g9State.currentLetter; if(!letter)return
-  // v56.9 B-294 (owner: "nggak bisa di write sampai bawah") — the ghost glyph
-  // must fill the SAME bounding box as the guide dots so the letter's apex/feet
-  // line up with the top/bottom dots and the child can trace all the way down to
-  // them. Previously fillText drew a middle-baselined glyph spanning only
-  // ~0.26–0.77 of the canvas while foot dots sat at y≈0.95 → unreachable.
-  const guides=getG9Guides(letter)
-  let minX=0.12,maxX=0.88,minY=0.06,maxY=0.94
-  if(guides && guides.length){
-    minX=1;maxX=0;minY=1;maxY=0
-    guides.forEach(g=>{minX=Math.min(minX,g.x);maxX=Math.max(maxX,g.x);minY=Math.min(minY,g.y);maxY=Math.max(maxY,g.y)})
+  if(!g9Ctx)return; const W=g9Canvas.width||300, H=g9Canvas.height||300; g9Ctx.clearRect(0,0,W,H); g9UserPath=[]
+  // v56.9 B-294 — the ghost glyph fills the SAME bbox as the guide dots so apex/feet
+  // line up and the child can trace all the way to the bottom dots. A-339 P5 — in
+  // word mode, fill EACH letter's ghost into its own slot (aligns with the packed dots).
+  if(g9State.wordMode && g9State.layout){
+    g9State.layout.letters.forEach(L => g9FillGlyph(g9Ctx, L.ch, L.guides, W, H))
+  } else {
+    const letter=g9State.currentLetter; if(letter) g9FillGlyph(g9Ctx, letter, getG9Guides(letter), W, H)
   }
-  const bboxW=Math.max(0.001,(maxX-minX))*sz, bboxH=Math.max(0.001,(maxY-minY))*sz
-  // cap-height ≈ 0.72×fontSize for Nunito bold; size to the dot span, then clamp
-  // by width so wide glyphs (M/W) don't overflow the canvas horizontally.
-  let fontSize=bboxH/0.72
-  g9Ctx.font=`bold ${Math.round(fontSize)}px Nunito`
-  const w=g9Ctx.measureText(letter).width||bboxW
-  const maxW=Math.min(sz*0.92, bboxW*1.4)
-  if(w>maxW){ fontSize*=maxW/w; g9Ctx.font=`bold ${Math.round(fontSize)}px Nunito` }
-  g9Ctx.fillStyle='rgba(132,204,22,0.14)'
-  g9Ctx.textAlign='center'; g9Ctx.textBaseline='alphabetic'
-  g9Ctx.fillText(letter,(minX+maxX)/2*sz,maxY*sz)
   document.querySelectorAll('.g9-dot').forEach(d=>d.classList.remove('hit'))
 }
 function g9GetPos(e,canvas){const rect=canvas.getBoundingClientRect(),scaleX=canvas.width/rect.width,scaleY=canvas.height/rect.height;return{x:(e.clientX-rect.left)*scaleX,y:(e.clientY-rect.top)*scaleY}}
@@ -4348,22 +4398,24 @@ function g9EndDraw(){
   // NO MORE auto-eval — explicit "Selesai" button replaces this
 }
 function checkGuideHits(pos){
-  const sz=g9Canvas.width||300; const guides=getG9Guides(g9State.currentLetter)
-  guides.forEach((g,i)=>{const gx=g.x*sz,gy=g.y*sz,d=Math.hypot(pos.x-gx,pos.y-gy);if(d<sz*0.18){const dot=document.getElementById(`g9-dot-${i}`);if(dot)dot.classList.add('hit')}})
+  const W=g9Canvas.width||300, H=g9Canvas.height||300; const guides=getG9Guides(g9State.currentLetter)  // A-339 P5 — W/H aware (wide word canvas)
+  const r=Math.min(W,H)*0.18
+  guides.forEach((g,i)=>{const gx=g.x*W,gy=g.y*H,d=Math.hypot(pos.x-gx,pos.y-gy);if(d<r){const dot=document.getElementById(`g9-dot-${i}`);if(dot)dot.classList.add('hit')}})
 }
 function evaluateG9Trace(){
-  const sz=g9Canvas.width||300; const guides=getG9Guides(g9State.currentLetter)
+  const W=g9Canvas.width||300, H=g9Canvas.height||300; const guides=getG9Guides(g9State.currentLetter)  // A-339 P5 — W/H aware
   // Filter out stroke-boundary sentinels {_break:true} before evaluating
   const pathPoints = g9UserPath.filter(p => p && !p._break && typeof p.x === 'number')
   if(guides.length===0||pathPoints.length<5){
     // Show "coba lagi" hint
     const resultEl=document.getElementById('g9-result'); resultEl.style.display='block'
     document.getElementById('g9-stars-result').textContent='💪'
-    document.getElementById('g9-result-msg').textContent='Belum cukup! Coba ikuti garis huruf 😊'
+    document.getElementById('g9-result-msg').textContent='Belum cukup! Coba ikuti garisnya 😊'
     return
   }
   let hits=0
-  guides.forEach(g=>{const gx=g.x*sz,gy=g.y*sz,nearest=pathPoints.reduce((best,p)=>Math.min(best,Math.hypot(p.x-gx,p.y-gy)),Infinity);if(nearest<sz*0.22)hits++})
+  const _r=Math.min(W,H)*0.22
+  guides.forEach(g=>{const gx=g.x*W,gy=g.y*H,nearest=pathPoints.reduce((best,p)=>Math.min(best,Math.hypot(p.x-gx,p.y-gy)),Infinity);if(nearest<_r)hits++})
   const score=hits/guides.length
   let stars=0,msg=''
   if(score>=0.85){stars=3;msg='Sempurna! Tulisanmu bagus sekali! 🌟'}
