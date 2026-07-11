@@ -266,7 +266,7 @@ const _reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').mat
     canvas: document.getElementById('pixi-canvas'),
     width: window.innerWidth, height: window.innerHeight,
     backgroundAlpha:1, backgroundColor:0x38bdf8,
-    antialias:true, resolution: Math.min(window.devicePixelRatio,2)
+    antialias:true, resolution: Math.min(window.devicePixelRatio,1.5)
   })
   W = app.screen.width; H = app.screen.height
   GROUND_Y = H * 0.75; NET_X = W / 2; NET_H = H * 0.22; NET_TOP = GROUND_Y - NET_H

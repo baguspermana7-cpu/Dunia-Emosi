@@ -361,7 +361,7 @@ function sfxWrong() { playTone(400, 120, 'sawtooth', 0.1); setTimeout(() => play
     width: window.innerWidth, height: window.innerHeight,
     backgroundAlpha: 1, backgroundColor: BG.sky,
     antialias: true,
-    resolution: Math.min(window.devicePixelRatio, 2),
+    resolution: Math.min(window.devicePixelRatio, 1.5),
     preference: 'webgl',
     preferWebGLVersion: 1 // WebGL 1 is more widely supported
   })

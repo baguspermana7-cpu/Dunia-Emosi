@@ -850,7 +850,7 @@ async function initPixi(){
   await app.init({
     canvas:document.getElementById('pixi-canvas'),
     width:W,height:H,backgroundAlpha:0,antialias:true,
-    resolution:Math.min(window.devicePixelRatio||1,2),autoDensity:true,
+    resolution:Math.min(window.devicePixelRatio||1,1.5),autoDensity:true,
   })
   stage=app.stage; S.trackLength=WORLD_LENGTH; S.worldX=0
   bgContainer=new PIXI.Container()

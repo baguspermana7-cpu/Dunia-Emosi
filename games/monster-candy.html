@@ -231,7 +231,7 @@ let bgLayer, gameLayer, fxLayer
     canvas: document.getElementById('pixi-canvas'),
     width: window.innerWidth, height: window.innerHeight,
     backgroundAlpha: 1, backgroundColor: 0xB4D9E7,
-    antialias: true, resolution: Math.min(window.devicePixelRatio, 2),
+    antialias: true, resolution: Math.min(window.devicePixelRatio, 1.5),
     preference: 'webgl', preferWebGLVersion: 1
   })
   W = app.screen.width; H = app.screen.height

@@ -902,7 +902,7 @@ async function initPixi() {
     canvas: document.getElementById('pixi-canvas'),
     width: window.innerWidth, height: window.innerHeight,
     backgroundColor: T.sky, antialias: true,
-    resolution: Math.min(window.devicePixelRatio || 1, 2), autoDensity: true
+    resolution: Math.min(window.devicePixelRatio || 1, 1.5), autoDensity: true
   });
   W = app.screen.width; H = app.screen.height;
   // v55.80 — show the shared 48-leg journey leg name matching this plate's backdrop.
