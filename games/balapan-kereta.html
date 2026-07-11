@@ -219,7 +219,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
-<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v58.5</div>
+<div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v59.0</div>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="data/train-world.js?v=55.89"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
@@ -1252,10 +1252,19 @@ function g14BackdropFit() {
 // to just above the REAL control-bar height (read live from #ctrl-area). Everything
 // (laneH, train, obstacle) derives from this band so it is fully responsive — no magic
 // H% caps. Used IDENTICALLY by initPixi + the resize handler.
+let _g14CtrlHCache = -1   // A-342 — cache ctrl-area height (only changes on resize).
 function g14PlayBand() {
   const W = app.screen.width, H = app.screen.height
-  const ctrl = document.getElementById('ctrl-area')
-  const ch = ctrl ? Math.round(ctrl.getBoundingClientRect().height) : 0
+  // A-342 SMOOTHNESS — g14PlayBand runs PER FRAME (TrainBackdrop.fit → playBand()); the
+  // old getBoundingClientRect() forced a synchronous layout every frame (~224ms/4s under
+  // throttle = the "nyendat" hitching). Read the ctrl height ONCE and cache it until the
+  // next resize (invalidated in the resize handler), eliminating the per-frame layout thrash.
+  let ch = _g14CtrlHCache
+  if (ch < 0) {
+    const ctrl = document.getElementById('ctrl-area')
+    ch = ctrl ? Math.round(ctrl.getBoundingClientRect().height) : 0
+    if (ch > 24) _g14CtrlHCache = ch   // only cache a valid, laid-out height
+  }
   const ctrlH = ch > 24 ? ch : Math.round(Math.min(H * 0.20, 150))   // fallback if not laid out yet
   const topHud = Math.round(Math.max(54, Math.min(H * 0.12, 104)))
   // tail = small reserve so the BOTTOM lane's loco (hangs ~0.2×charH below the wheel line)
@@ -5199,6 +5208,7 @@ function confirmBack() {   // RACE "Kembali" → return to the in-page train pic
 let _g14ResizeDebounce = null
 window.addEventListener('resize', () => {
   if (!app) return
+  _g14CtrlHCache = -1   // A-342 — ctrl-area height may change on resize/rotate; re-read once
   if (_g14ResizeDebounce) clearTimeout(_g14ResizeDebounce)
   // Debounce 120ms so rapid rotations don't rebuild multiple times → no
   // duplicate sprite risk
