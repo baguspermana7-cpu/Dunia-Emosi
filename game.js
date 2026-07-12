@@ -4091,9 +4091,18 @@ function updateCarPosition(){const positions=['16.6%','50%','83.3%'];document.ge
 // GAME 7: TEBAK GAMBAR
 // ================================================================
 let g7State = {}
+function g7BuildPool(){
+  // base emoji pool + the labeled assets/db sprites (owner: 100 hewan/buah jadi
+  // question) as rich illustrated image→word items. Guarded: no DB → emoji only.
+  let pool=[...WORD_IMAGES]
+  try{ if(window.DBLabeled&&window.DBLabeled.all){ window.DBLabeled.all().forEach(it=>{
+    pool.push({id:it.id, word:String(it.name).toUpperCase(), dbsrc:it.src, group:it.group, emoji:''})
+  }); } }catch(e){}
+  return pool
+}
 function initGame7() {
   const diff = state.selectedLevel||'medium'
-  g7State = {round:0,maxRound:DIFF[diff].rounds,mode:'img2word',answered:false,shuffled:[...WORD_IMAGES].sort(()=>Math.random()-0.5),usedIds:new Set()}
+  g7State = {round:0,maxRound:DIFF[diff].rounds,mode:'img2word',answered:false,shuffled:g7BuildPool().sort(()=>Math.random()-0.5),usedIds:new Set()}
   state.currentPlayer = 0; updateGameStarDisplay(); nextG7Round()
 }
 function nextG7Round() {
@@ -4110,14 +4119,23 @@ function nextG7Round() {
   let pool = g7State.shuffled.filter(w => !g7State.usedIds.has(w.id))
   if (!pool.length) { g7State.usedIds = new Set(); pool = [...g7State.shuffled] }
   const correct = pool[0]; g7State.usedIds.add(correct.id)
-  const decoys = [...WORD_IMAGES].filter(w=>w.id!==correct.id).sort(()=>Math.random()-0.5).slice(0,3)
+  // DB-sprite items only work as image→word (we have the picture, not word→picture
+  // choices), and their decoys come from the SAME group so the words stay related.
+  let decoyPool
+  if(correct.dbsrc){ g7State.mode='img2word'; decoyPool=g7State.shuffled.filter(w=>w.group===correct.group&&w.id!==correct.id); if(decoyPool.length<3) decoyPool=g7State.shuffled.filter(w=>w.id!==correct.id) }
+  else decoyPool=[...WORD_IMAGES].filter(w=>w.id!==correct.id)
+  const decoys = decoyPool.sort(()=>Math.random()-0.5).slice(0,3)
   const choices = [correct,...decoys].sort(()=>Math.random()-0.5)
   document.getElementById('g7-mode-badge').textContent = g7State.mode==='img2word'?'Mode: Gambar → Kata 🔤':'Mode: Kata → Gambar 🖼️'
   document.getElementById('g7-progress-bar').style.width = ((roundInSet/g7State.maxRound)*100)+'%'
   const displayEl=document.getElementById('g7-display'),questionEl=document.getElementById('g7-question')
   displayEl.classList.remove('anim-correct')
   if(g7State.mode==='img2word'){
-    displayEl.innerHTML=`<span style="font-size:min(28vw,min(28vh,140px));line-height:1.1;display:flex;align-items:center;justify-content:center;padding:8%">${correct.emoji}</span>`
+    if(correct.dbsrc){
+      displayEl.innerHTML=`<img src="${correct.dbsrc}" alt="" style="height:min(30vh,180px);max-width:80%;object-fit:contain;filter:drop-shadow(0 8px 12px rgba(0,0,0,.25))" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'🖼️',style:'font-size:120px'}))">`
+    } else {
+      displayEl.innerHTML=`<span style="font-size:min(28vw,min(28vh,140px));line-height:1.1;display:flex;align-items:center;justify-content:center;padding:8%">${correct.emoji}</span>`
+    }
     questionEl.textContent='Ayo tebak, ini apa ya? 🤔'
     renderG7WordChoices(choices,correct)
   } else {
