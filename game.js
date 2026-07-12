@@ -36,10 +36,12 @@ function emoFaceSrc(name){ try{ if(window.DBSprites) return DBSprites.path('face
 // objects+name via DBLabeled; kendaraan→distinct vehicle sprites). [] if unavailable.
 function g5DbCards(mode,k){
   try{
-    if((mode==='hewan'||mode==='buah') && window.DBLabeled){
+    // any labeled group (hewan/buah/makanan/benda/kendaraan/sains) → sprite + name
+    if(window.DBLabeled && DBLabeled.groups().indexOf(mode)>=0){
       const pool=DBLabeled.all().filter(x=>x.group===mode).sort(()=>Math.random()-0.5).slice(0,k);
       return pool.map(x=>({id:'db-'+x.id,dbsrc:x.src,label:x.name}));
     }
+    // kendaraan without labels → distinct vehicle sprites (visual match)
     if(mode==='kendaraan' && window.DBSprites){
       const srcs=DBSprites.pickN('vehicles',k);
       return srcs.map((s,i)=>({id:'veh-'+i,dbsrc:s,label:''}));
@@ -3464,7 +3466,7 @@ function initG5Visual(){
   const flat=[]
   // illustrated db-sprite cards for hewan/buah/kendaraan (owner); fall through to
   // the emoji sets if the DB isn't available or hasn't enough items.
-  const _g5db=['hewan','buah','kendaraan'].includes(g5SubMode)?g5DbCards(g5SubMode,totalPairs):[]
+  const _g5db=['hewan','buah','kendaraan','makanan','benda'].includes(g5SubMode)?g5DbCards(g5SubMode,totalPairs):[]
   if(g5SubMode==='pokemon'){
     // Sprite (A) ↔ Name text (B) — educational matching
     MATCH_PAIRS_POKE.slice(0,totalPairs).forEach(p=>{
