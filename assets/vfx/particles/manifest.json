@@ -1,0 +1,98 @@
+{
+  "fire-sparks": {
+    "frames": 19,
+    "w": 49,
+    "h": 78,
+    "kind": "aura"
+  },
+  "flamethrower": {
+    "frames": 10,
+    "w": 79,
+    "h": 28,
+    "kind": "projectile"
+  },
+  "rocket-fire": {
+    "frames": 24,
+    "w": 43,
+    "h": 58,
+    "kind": "projectile"
+  },
+  "electric-a": {
+    "frames": 10,
+    "w": 96,
+    "h": 96,
+    "kind": "projectile"
+  },
+  "electric-aura": {
+    "frames": 7,
+    "w": 96,
+    "h": 96,
+    "kind": "aura"
+  },
+  "spark1": {
+    "frames": 24,
+    "w": 78,
+    "h": 112,
+    "kind": "burst"
+  },
+  "sparks": {
+    "frames": 8,
+    "w": 96,
+    "h": 96,
+    "kind": "burst"
+  },
+  "water-vortex": {
+    "frames": 24,
+    "w": 86,
+    "h": 85,
+    "kind": "aura"
+  },
+  "leaves": {
+    "frames": 19,
+    "w": 128,
+    "h": 128,
+    "kind": "projectile"
+  },
+  "sakuras": {
+    "frames": 8,
+    "w": 96,
+    "h": 96,
+    "kind": "aura"
+  },
+  "poison-cloud": {
+    "frames": 19,
+    "w": 61,
+    "h": 117,
+    "kind": "aura"
+  },
+  "holy-light": {
+    "frames": 7,
+    "w": 96,
+    "h": 96,
+    "kind": "aura"
+  },
+  "gravity": {
+    "frames": 20,
+    "w": 78,
+    "h": 62,
+    "kind": "aura"
+  },
+  "regen": {
+    "frames": 8,
+    "w": 96,
+    "h": 96,
+    "kind": "aura"
+  },
+  "smoke-puff": {
+    "frames": 19,
+    "w": 49,
+    "h": 78,
+    "kind": "burst"
+  },
+  "smoke-cloud": {
+    "frames": 24,
+    "w": 128,
+    "h": 128,
+    "kind": "aura"
+  }
+}

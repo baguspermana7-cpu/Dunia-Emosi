@@ -1,3 +1,18 @@
-Explosion animation frames in assets/vfx/explosion/ are from the "Explosion Pack"
-by Luis Zuno (@ansimuz). Licensed CC0 (Creative Commons Zero / public domain) —
-free for any use, no attribution required. Thank you, Ansimuz!
+Animated VFX frame databases in assets/vfx/ — served by games/vfx-engine.js (window.VFX).
+
+────────────────────────────────────────────────────────────────────────────
+assets/vfx/explosion/  (smoke, boom, pop)
+  "Explosion Pack" by Luis Zuno (@ansimuz).
+  Licensed CC0 (Creative Commons Zero / public domain) — free for any use, no
+  attribution required. Thank you, Ansimuz!
+
+────────────────────────────────────────────────────────────────────────────
+assets/vfx/particles/  (fire-sparks, flamethrower, rocket-fire, electric-a,
+  electric-aura, spark1, sparks, water-vortex, leaves, sakuras, poison-cloud,
+  holy-light, gravity, regen, smoke-puff, smoke-cloud)
+  "Particle FX 1.3 (Free)" by Raphael Hatencia (@RaphaelHatencia) at RagnaPixel
+  Studio (@ragnapixel).
+  Licensed CC-BY 4.0 (Creative Commons Attribution 4.0 International) — free for
+  commercial + personal use; CREDIT REQUIRED. Credited here and in-app docs.
+  A kid-safe subset was extracted (Blood Splat + Splatter excluded), downscaled,
+  and converted to WebP. Terima kasih, Raphael Hatencia!

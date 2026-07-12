@@ -20,7 +20,7 @@ const PAGES = [
   { pg:'games/selamatkan-kereta.html', kind:'train'   },
   { pg:'games/museum-kereta.html',     kind:'train'   },
 ];
-const CHANGED = /sfx-engine\.js|quiz-engine\.js|math-rules\.js|assets\/sfx\/crash\.mp3/;
+const CHANGED = /sfx-engine\.js|quiz-engine\.js|math-rules\.js|vfx-engine\.js|explosion-fx\.js|assets\/sfx\/crash\.mp3|assets\/vfx\//;
 // noise we ignore (pre-existing, cross-origin, optional assets)
 const NOISE = /favicon|deviceorientation|pokemondb|play\.pokemonshowdown|showdown|net::ERR_(BLOCKED|CONNECTION|NAME|INTERNET)|ERR_CACHE|Failed to load resource: the server responded with a status of 404.*\.(png|webp|mp3|json)|ipapi|googleapis|gstatic/;
 
