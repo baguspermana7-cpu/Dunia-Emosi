@@ -43,10 +43,21 @@
       [49,'Payung'],[50,'Tas'],[51,'Topi'],[52,'Sepatu'],[53,'Baju'],[54,'Kacamata'],
       [56,'Gunting'],[57,'Pensil'],[59,'Balon'],[60,'Kado'],[63,'Kursi'],[64,'Meja'],
       [68,'Boneka Beruang'],[71,'Palu'],[73,'Gergaji'],[82,'Robot'],[92,'Bunga'],[98,'Pohon']
+    ]},
+    kendaraan: { cat: 'vehicles', items: [
+      [4,'Taksi'],[10,'Ambulans'],[18,'Mobil Polisi'],[19,'Mobil Pemadam'],[23,'Traktor'],
+      [28,'Sepeda'],[30,'Sepeda Motor'],[41,'Mobil'],[46,'Truk'],[47,'Truk Molen'],
+      [50,'Ekskavator'],[51,'Kereta Api'],[54,'Perahu Layar'],[55,'Kapal'],[56,'Kapal Selam'],
+      [57,'Pesawat'],[58,'Helikopter'],[59,'Balon Udara'],[60,'Roket']
+    ]},
+    sains: { cat: 'science', items: [
+      [1,'Matahari'],[2,'Bulan'],[3,'Bintang'],[4,'Bumi'],[8,'Teleskop'],[10,'Magnet'],
+      [11,'Baterai'],[16,'Gunung Berapi'],[17,'Gunung'],[18,'Pelangi'],[19,'Awan'],
+      [22,'Salju'],[26,'Api'],[27,'Es'],[34,'Kaktus'],[35,'Jamur']
     ]}
   }
 
-  var GROUP_LABEL = { hewan: 'Hewan', buah: 'Buah', makanan: 'Makanan', benda: 'Benda' }
+  var GROUP_LABEL = { hewan: 'Hewan', buah: 'Buah', makanan: 'Makanan', benda: 'Benda', kendaraan: 'Kendaraan', sains: 'Sains' }
 
   function groups () { var k = []; for (var g in DATA) if (DATA.hasOwnProperty(g)) k.push(g); return k }
   function label (g) { return GROUP_LABEL[g] || g }
