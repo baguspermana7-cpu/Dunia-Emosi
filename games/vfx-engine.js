@@ -135,6 +135,7 @@
       try { spr = new PIXI.AnimatedSprite(t) } catch (e) { _flash(container, x, y, scale, done); return }
       try {
         spr.anchor.set(0.5); spr.x = x; spr.y = y; spr.scale.set(scale); spr.loop = false
+        if (opts.additive) { try { spr.blendMode = 'add' } catch (e) {} }   // A-355b glow
         var fps = Math.max(14, Math.min(30, t.length / 0.5))
         spr.animationSpeed = (fps / 60) * (opts.speed || 1)
         spr.onComplete = function () { _kill(spr); done() }
@@ -267,6 +268,7 @@
     var parent = opts.parent || document.body
     if (!parent) { done(); return }
     var el = _domEl(fx, size, parent)
+    if (opts.blend) el.style.mixBlendMode = opts.blend   // A-355b caller-opt-in glow
     el.style.left = (x - size / 2) + 'px'; el.style.top = (y - size / 2) + 'px'
     if (reduced()) {
       el.style.background = 'radial-gradient(circle,rgba(255,207,90,.85) 0%,rgba(255,120,40,.5) 45%,transparent 70%)'
@@ -310,7 +312,13 @@
     var rect0 = targetEl.getBoundingClientRect()
     var size = Math.max(90, rect0.width * mult)
     var el = _domEl(fx, size, parent)
-    el.style.zIndex = '9207'          // under the fighter sprite (which is higher)
+    el.style.zIndex = '9207'
+    // A-355b — glow onto the body (screen drops the dark/smoky pixels so the fire
+    // wraps the Pokémon instead of occluding it) + a subtle drop-shadow halo.
+    el.style.mixBlendMode = (opts.blend || 'screen')
+    el.style.filter = 'drop-shadow(0 0 6px rgba(255,150,40,.6))'
+    el.style.transformOrigin = '50% 50%'
+    var spin = (opts.spin === false) ? 0 : 360 / (opts.spinMs || 1100)  // deg per ms — "api berputar"
     var i = 0, total = urls.length, per = Math.max(40, Math.round(600 / total))
     var dead = false, t0 = now()
     var place = function () {
@@ -326,9 +334,13 @@
       el.style.backgroundImage = 'url("' + urls[i % total] + '")'
       i++
       place()
-      var k = (now() - t0) / dur
+      var t = now() - t0, k = t / dur
       if (k >= 1) { try { el.remove() } catch (e) {} return }
-      el.style.opacity = k > 0.7 ? String(1 - (k - 0.7) / 0.3) : '0.9'
+      // rotate the whole aura so the flames visibly swirl around the body
+      var rot = spin * t
+      var pulse = 1 + Math.sin(t / 90) * 0.05      // gentle breathing
+      el.style.transform = 'rotate(' + rot + 'deg) scale(' + pulse + ')'
+      el.style.opacity = k < 0.15 ? String(k / 0.15) : (k > 0.75 ? String(1 - (k - 0.75) / 0.25) : '1')
       setTimeout(tick, per)
     }
     tick()
@@ -352,6 +364,9 @@
     }
     urls.forEach(function (u) { var im = new Image(); im.src = u })
     var el = _domEl(fx, size, parent)
+    // A-355b — thrown fire glows (screen) instead of a flat sticker
+    el.style.mixBlendMode = (opts.blend || 'screen')
+    el.style.filter = 'drop-shadow(0 0 5px rgba(255,140,40,.55))'
     var i = 0, total = urls.length, per = Math.max(28, Math.round(dur / total))
     var t0 = now(), dx = to.x - from.x, dy = to.y - from.y
     var ang = Math.atan2(dy, dx) * 180 / Math.PI
@@ -359,7 +374,7 @@
       var k = (now() - t0) / dur
       if (k >= 1) {
         try { el.remove() } catch (e) {}
-        dom(to.x, to.y, { fx: 'sparks', size: size * 1.1 })
+        dom(to.x, to.y, { fx: 'sparks', size: size * 1.2, blend: 'screen' })
         onHit(); return
       }
       var x = from.x + dx * k, y = from.y + dy * k
