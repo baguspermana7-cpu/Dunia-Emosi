@@ -604,6 +604,14 @@
     }
     var a = centerOf(fromEl)
     var b = centerOf(toEl)
+    // A-355 — layer the real "lempar api" particle projectile alongside the emoji
+    // orb, attacker→defender, type-matched (visual-only; onHit still fires below).
+    try {
+      if (global.VFX && opts.type) {
+        global.VFX.domProjectile({ x: a.x, y: a.y }, { x: b.x, y: b.y },
+          { fx: global.VFX.typeFx(opts.type).proj, size: 76, duration: opts.duration || 300 })
+      }
+    } catch (_) {}
     // A-339 P4 — if a type/emoji is given, fly N spinning type-emoji particles
     // (leaves/embers/…) instead of the generic orb. Falls back to the orb.
     var emoji = opts.emoji || baTypeEmoji(opts.type)
@@ -667,6 +675,14 @@
     var color = opts.color || '#fbbf24'
     var ring = el('div', 'ba-charge', fighter.wrap)
     ring.style.setProperty('--ba-c', color)
+    // A-355 — layer the real particle AURA ("api berputar") on the body during
+    // wind-up, on top of the emoji ring/motes. Type-matched, visual-only.
+    var _vfxAura = null
+    try {
+      if (global.VFX && fighter.img) {
+        _vfxAura = global.VFX.domAura(fighter.img, { fx: global.VFX.typeFx(opts.type).aura, duration: 420, scale: 1.35 })
+      }
+    } catch (_) {}
     var emoji = opts.emoji || baTypeEmoji(opts.type)
     var motes = []
     if (emoji) {
@@ -690,6 +706,7 @@
     }
     setTimeout(function () {
       try { ring.remove() } catch (_) {}
+      try { if (_vfxAura && _vfxAura.stop) _vfxAura.stop() } catch (_) {}
       motes.forEach(function (mm) { try { mm.el.remove() } catch (_) {} })
       if (done) done()
     }, 400)

@@ -336,6 +336,41 @@
     return handle
   }
 
+  // travelling DOM particle from→to (viewport px) then an impact burst — DOM twin
+  // of VFX.projectile, for DOM-scene games (BattleArena). from/to = {x,y}.
+  function domProjectile (from, to, opts) {
+    opts = opts || {}
+    var onHit = function () { if (opts.onHit) try { opts.onHit() } catch (e) {} }
+    if (typeof document === 'undefined' || !from || !to) { onHit(); return }
+    var fx = meta(opts.fx) ? opts.fx : 'flamethrower'
+    var size = opts.size || 72
+    var dur = opts.duration || 320
+    var parent = opts.parent || document.body
+    var urls = frameUrls(fx)
+    if (!urls.length || reduced()) {
+      dom(to.x, to.y, { fx: fx, size: size }); onHit(); return
+    }
+    urls.forEach(function (u) { var im = new Image(); im.src = u })
+    var el = _domEl(fx, size, parent)
+    var i = 0, total = urls.length, per = Math.max(28, Math.round(dur / total))
+    var t0 = now(), dx = to.x - from.x, dy = to.y - from.y
+    var ang = Math.atan2(dy, dx) * 180 / Math.PI
+    var step = function () {
+      var k = (now() - t0) / dur
+      if (k >= 1) {
+        try { el.remove() } catch (e) {}
+        dom(to.x, to.y, { fx: 'sparks', size: size * 1.1 })
+        onHit(); return
+      }
+      var x = from.x + dx * k, y = from.y + dy * k
+      el.style.left = (x - size / 2) + 'px'; el.style.top = (y - size / 2) + 'px'
+      el.style.transform = 'rotate(' + ang + 'deg)'
+      el.style.backgroundImage = 'url("' + urls[i % total] + '")'; i++
+      raf(step)
+    }
+    raf(step)
+  }
+
   function preload (fx) { return loadTex(meta(fx) ? fx : 'boom') }
   function typeFx (type) { return TYPE_FX[(type || '').toLowerCase()] || DEFAULT_FX }
 
@@ -345,6 +380,7 @@
     projectile: projectile,
     dom: dom,
     domAura: domAura,
+    domProjectile: domProjectile,
     preload: preload,
     typeFx: typeFx,
     TYPE_FX: TYPE_FX,
