@@ -1,0 +1,23 @@
+# Dunia Emosi — exclude non-served / dev-only weight from Vercel deploys.
+# These are NOT referenced by any served page; keeping them out of the deploy
+# bundle cuts ~475 MB (source art scratch + QA screenshots + tooling).
+
+# Source-art scratch + AI-generation inputs (never served)
+prompt/
+Documents/
+Sounds/
+
+# Dev tooling + QA artifacts (never served)
+tools/qa-screenshots/
+tools/*.mjs
+tools/*.py
+node_modules/
+
+# Agent / editor / VCS scaffolding
+.claude/
+.git/
+.github/
+
+# Planning + docs that are not part of the runtime app
+documentation and standarization/
+"documentation and standarization"/

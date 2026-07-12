@@ -620,51 +620,51 @@ async function loadAssets() {
 
   // Pixi 8: Assets API
   const baseUrl = '../assets/mario-pokemon/sprites/'
-  const _v = '?v=20260503l'
+  const _v = '?v=59.16-20260712a'
   const manifest = {
     // Pikachu overlays (DOM <img> but loaded so browser pre-caches)
-    pikachu_small: baseUrl + 'pikachu-small-cropped.png' + _v,
-    pikachu_big:   baseUrl + 'pikachu-big-cropped.png' + _v,
-    pikachu_fire:  baseUrl + 'pikachu-fire.png' + _v,
+    pikachu_small: baseUrl + 'pikachu-small-cropped.webp' + _v,
+    pikachu_big:   baseUrl + 'pikachu-big-cropped.webp' + _v,
+    pikachu_fire:  baseUrl + 'pikachu-fire.webp' + _v,
     // ── Hotfix #120: Regenerated SMB1 sprites (proper pixel art) ──
     // Tiles
-    ref_block:    baseUrl + 'ref-block.png' + _v,
-    ref_ground:   baseUrl + 'ref-ground.png' + _v,
-    ref_brick:    baseUrl + 'ref-brick.png' + _v,
-    ref_qblock:   baseUrl + 'ref-qblock.png' + _v,
-    ref_qblock0:  baseUrl + 'ref-qblock-anim0.png' + _v,
-    ref_qblock1:  baseUrl + 'ref-qblock-anim1.png' + _v,
+    ref_block:    baseUrl + 'ref-block.webp' + _v,
+    ref_ground:   baseUrl + 'ref-ground.webp' + _v,
+    ref_brick:    baseUrl + 'ref-brick.webp' + _v,
+    ref_qblock:   baseUrl + 'ref-qblock.webp' + _v,
+    ref_qblock0:  baseUrl + 'ref-qblock-anim0.webp' + _v,
+    ref_qblock1:  baseUrl + 'ref-qblock-anim1.webp' + _v,
     // Enemies
-    ref_goomba0:  baseUrl + 'ref-goomba0.png' + _v,
-    ref_goomba1:  baseUrl + 'ref-goomba1.png' + _v,
+    ref_goomba0:  baseUrl + 'ref-goomba0.webp' + _v,
+    ref_goomba1:  baseUrl + 'ref-goomba1.webp' + _v,
     // Items
-    ref_coin0:    baseUrl + 'ref-coin0.png' + _v,
-    ref_coin1:    baseUrl + 'ref-coin1.png' + _v,
-    ref_coin2:    baseUrl + 'ref-coin2.png' + _v,
-    ref_mushroom: baseUrl + 'ref-mushroom.png' + _v,
-    ref_starman:  baseUrl + 'ref-starman.png' + _v,
-    ref_1up:      baseUrl + 'ref-1up.png' + _v,
-    ref_fireflower: baseUrl + 'ref-fireflower.png' + _v,
+    ref_coin0:    baseUrl + 'ref-coin0.webp' + _v,
+    ref_coin1:    baseUrl + 'ref-coin1.webp' + _v,
+    ref_coin2:    baseUrl + 'ref-coin2.webp' + _v,
+    ref_mushroom: baseUrl + 'ref-mushroom.webp' + _v,
+    ref_starman:  baseUrl + 'ref-starman.webp' + _v,
+    ref_1up:      baseUrl + 'ref-1up.webp' + _v,
+    ref_fireflower: baseUrl + 'ref-fireflower.webp' + _v,
     // Props
-    ref_pipe:     baseUrl + 'ref-pipe.png' + _v,
-    ref_bush:     baseUrl + 'ref-bush.png' + _v,
-    ref_cloud:    baseUrl + 'ref-cloud.png' + _v,
-    ref_hill:     baseUrl + 'ref-hill.png' + _v,
-    ref_flagpole: baseUrl + 'ref-flagpole.png' + _v,
+    ref_pipe:     baseUrl + 'ref-pipe.webp' + _v,
+    ref_bush:     baseUrl + 'ref-bush.webp' + _v,
+    ref_cloud:    baseUrl + 'ref-cloud.webp' + _v,
+    ref_hill:     baseUrl + 'ref-hill.webp' + _v,
+    ref_flagpole: baseUrl + 'ref-flagpole.webp' + _v,
     // Castle
-    ref_castlewall:  baseUrl + 'ref-castlewall.png' + _v,
-    ref_castlebrick: baseUrl + 'ref-castlebrick.png' + _v,
-    ref_castledoor:  baseUrl + 'ref-castledoor.png' + _v,
+    ref_castlewall:  baseUrl + 'ref-castlewall.webp' + _v,
+    ref_castlebrick: baseUrl + 'ref-castlebrick.webp' + _v,
+    ref_castledoor:  baseUrl + 'ref-castledoor.webp' + _v,
     // Legacy fallbacks (existing files, kept for compat)
-    goomba: baseUrl + 'goomba.png' + _v,
-    coin:   baseUrl + 'coin.png' + _v,
-    mushroom: baseUrl + 'mushroom.png' + _v,
-    star:   baseUrl + 'star.png' + _v,
-    brick:  baseUrl + 'brick.png' + _v,
-    block:  baseUrl + 'block.png' + _v,
-    qblock: baseUrl + 'qblock.png' + _v,
-    cloud:  baseUrl + 'cloud.png' + _v,
-    bush:   baseUrl + 'bush.png' + _v,
+    goomba: baseUrl + 'goomba.webp' + _v,
+    coin:   baseUrl + 'coin.webp' + _v,
+    mushroom: baseUrl + 'mushroom.webp' + _v,
+    star:   baseUrl + 'star.webp' + _v,
+    brick:  baseUrl + 'brick.webp' + _v,
+    block:  baseUrl + 'block.webp' + _v,
+    qblock: baseUrl + 'qblock.webp' + _v,
+    cloud:  baseUrl + 'cloud.webp' + _v,
+    bush:   baseUrl + 'bush.webp' + _v,
   }
   const out = {}
   for (const [key, url] of Object.entries(manifest)) {
