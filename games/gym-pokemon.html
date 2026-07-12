@@ -645,9 +645,20 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
           questionType: 'math',
           questionLevel: 5,
           onAdventure: function () {
-            _modeLocked = true;
-            try { _origForModes(tid); }
-            finally { setTimeout(function () { _modeLocked = false; }, 100); }
+            // A-343 — Adventure prep now runs AFTER the mode pick (was BEFORE, in gw-fight,
+            // giving the incoherent order team+VS → mode-menu). Flow: mode → team-confirm →
+            // VS card → battle. _modeLocked makes the final startBattle skip a 2nd mode modal.
+            var _trainer = (typeof TRAINERS !== 'undefined') ? TRAINERS.find(function (t) { return t.id === tid; }) : null;
+            var _go = function () {
+              _modeLocked = true;
+              try { _origForModes(tid); }
+              finally { setTimeout(function () { _modeLocked = false; }, 100); }
+            };
+            if (typeof showTeamConfirm === 'function' && _trainer) {
+              showTeamConfirm(_trainer, function () {
+                if (typeof showAdvVsCard === 'function') showAdvVsCard(_trainer, _go); else _go();
+              });
+            } else { _go(); }
           },
           onCancel: function () { /* stay on gym select */ }
         });
@@ -2188,11 +2199,10 @@ function showGymWelcome(trainerId) {
   spr.onerror = () => { if (!spr.dataset.tried) { spr.dataset.tried = '1'; spr.src = TRAINER_SPRITE_REMOTE(trainer.sprite) } else { spr.style.display = 'none' } }
   document.getElementById('gw-fight').onclick = () => {
     closeWelcome();
-    // v54.15 (B1): insert team-confirm step BEFORE VS card. Owner: VS choreography
-    // should follow team commitment, not trainer pick. Maju! → VS card → battle.
-    showTeamConfirm(trainer, () => {
-      showAdvVsCard(trainer, () => startBattle(trainerId));
-    });
+    // A-343 — pick the MODE first (Adventure/PvP/Tournament). The Adventure prep
+    // (team-confirm → VS card → battle) now lives in the mode wrapper's onAdventure,
+    // so the order is coherent: mode → team → VS → battle (was team → VS → mode).
+    startBattle(trainerId);
   }
   document.getElementById('gym-welcome').classList.add('show')
 }
