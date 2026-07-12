@@ -3284,6 +3284,10 @@ function nextG4Round(){
   g4State.catIdx=catIdx
   const catPool=[ANIMALS_G4,FRUITS_G4,OBJECTS_G4][catIdx]
   g4State.currentAnimal=catPool[Math.floor(Math.random()*catPool.length)]
+  // DB sprites (A-356) — richer illustrated art to count: hewan→creatures,
+  // benda→objects. Fruits keep emoji (no fruit category). Count logic unchanged.
+  g4State.currentDbSprite=null
+  try{ if(window.DBSprites){ if(catIdx===0) g4State.currentDbSprite=DBSprites.pick('creatures'); else if(catIdx===2) g4State.currentDbSprite=DBSprites.pick('objects') } }catch(e){}
   // Pokemon mode: pick target + 2 distractor types, each 1-2 copies
   const pokeIdx=Math.floor(Math.random()*POKEMON_G4.length)
   g4State.currentPoke=POKEMON_G4[pokeIdx]
@@ -3326,7 +3330,19 @@ function renderG4Content(){
     })
     document.getElementById('g4-question').textContent=`Ada berapa "${currentPoke.name}"? ⚡`
   } else {
-    for(let i=0;i<count;i++){const s=document.createElement('span');s.className='g4-animal-item';s.textContent=currentAnimal;s.style.animationDelay=(i*55)+'ms';grid.appendChild(s)}
+    const dbSpr=g4State.currentDbSprite
+    // dynamic size: shrink when many items so the grid stays tidy
+    const _sz = count>12?'clamp(30px,8vw,46px)':count>8?'clamp(38px,10vw,56px)':'clamp(46px,13vw,68px)'
+    for(let i=0;i<count;i++){
+      if(dbSpr){
+        const img=document.createElement('img'); img.className='g4-animal-item'; img.src=dbSpr; img.alt=''
+        img.style.width=_sz; img.style.height=_sz; img.style.objectFit='contain'; img.style.animationDelay=(i*55)+'ms'
+        img.onerror=function(){ this.replaceWith(Object.assign(document.createElement('span'),{className:'g4-animal-item',textContent:currentAnimal})) }
+        grid.appendChild(img)
+      } else {
+        const s=document.createElement('span');s.className='g4-animal-item';s.textContent=currentAnimal;s.style.animationDelay=(i*55)+'ms';grid.appendChild(s)
+      }
+    }
     // Category-aware label matches the rotating catPool (hewan → buah → benda)
     const _g4CatLabels=['binatang','buah','benda']
     const _g4CatLabel=_g4CatLabels[g4State.catIdx]||'barang'
