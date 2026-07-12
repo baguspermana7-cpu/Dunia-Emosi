@@ -152,6 +152,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <script src="reward-gallery.js?v=54.98-20260626cy"></script>
 <script src="settings-modal.js?v=54.98-20260626cy"></script>
 <script src="trains-db.js?v=55.67-20260628a"></script>
+<script src="data/sfx-engine.js?v=59.8-20260712a"></script><!-- A-347 shared coin/crash cues (owner) -->
 <script src="game-modal.js?v=54.47-20260625az"></script>
 <!-- v55.99 B-284 — shared rich atmospheric scenery engine (sun + layered mountains + grass) -->
 <script src="scenery-engine.js?v=55.99-20260630a"></script>
@@ -1212,7 +1213,7 @@ function tick(tickerOrDelta) {
       if (Math.abs(c.sprite.y - trainY) < 40) {
         c.scored = true
         S.coinScore++
-        try { if (typeof playTone === 'function') playTone({ freq: 1175, dur: 0.10, vol: 0.10 }) } catch {}
+        try { if (window.SFXEngine && SFXEngine.coin) SFXEngine.coin(); else if (typeof playTone === 'function') playTone({ freq: 1175, dur: 0.10, vol: 0.10 }) } catch {}
         // A-315 E5 — fly-to-HUD collect (scale-pop then arc into the 🪙 counter);
         // was alpha=0.3 + 100ms removal.
         c.sprite.tint = 0xfff7c0
@@ -1339,7 +1340,7 @@ function tick(tickerOrDelta) {
       if (S.distance > g.worldStart + 4 && S.distance < g.worldEnd - 4) {
         S.hp = Math.max(0, S.hp - 1)
         S.invincible = 2.4  // 2.4s invincibility — enough to cross any gap safely
-        try { if (typeof playTone === 'function') playTone({ freq: 200, dur: 0.22, vol: 0.14 }) } catch {}
+        try { if (window.SFXEngine && SFXEngine.crash) SFXEngine.crash(); else if (typeof playTone === 'function') playTone({ freq: 200, dur: 0.22, vol: 0.14 }) } catch {}
         // A-315 E5 — trauma screen shake (applied via Motion.shakeOffset on the
         // stage in this tick; kid-safe amp, fast decay, honors reduced-motion).
         try { if (window.Motion) Motion.shake(0.35) } catch {}
@@ -1727,7 +1728,8 @@ function crashOn(o) {
   S.hp = Math.max(0, S.hp - 1)
   S.invincible = 1.2 // 1.2s grace
   // Visual: red shake + flash
-  try { if (typeof playTone === 'function') playTone({ freq: 220, dur: 0.18, vol: 0.14 }) } catch {}
+  // A-347: owner's shared car-crash cue on "nabrak" (falls back to synth tone if absent)
+  try { if (window.SFXEngine && SFXEngine.crash) SFXEngine.crash(); else if (typeof playTone === 'function') playTone({ freq: 220, dur: 0.18, vol: 0.14 }) } catch {}
 
   // v54.91 — Red screen flash overlay
   const flash = document.createElement('div')
