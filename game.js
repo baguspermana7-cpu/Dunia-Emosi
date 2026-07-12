@@ -28,6 +28,11 @@ const EMOTIONS = [
   { emoji:'🤩',name:'Kagum',    color:'#22D3EE',animal:'🦄',tip:'💡 Rasa kagum itu indah! Eksplorasi hal baru setiap hari.',       scenario:'Kamu melihat pelangi besar setelah hujan deras.',           bodyCue:'Mata berbinar, mulut terbuka kagum',  safeAction:'Tunjukkan ke orang lain, tanya kenapa bisa terjadi' }
 ]
 
+// emotion name → assets/db/faces sprite id (illustrated expression faces, A-356).
+// Hand-verified from the faces montage; used by g1 Aku Merasa + g5 Cocokkan Emosi.
+const EMOTION_FACE = { Senang:1, Sedih:3, Marah:4, Takut:13, Terkejut:12, Malu:14, Bahagia:8, Bosan:20, Kesal:30, Kagum:22 }
+function emoFaceSrc(name){ try{ if(window.DBSprites) return DBSprites.path('faces', EMOTION_FACE[name]||1); }catch(e){} return ''; }
+
 const ANIMAL_LETTERS = [
   {animal:'🐓',word:'AYAM',      letter:'A',num:1, hint:'Unggas yang berkokok saat matahari terbit setiap pagi'},
   {animal:'🦆',word:'BEBEK',     letter:'B',num:2, hint:'Unggas gempal yang pandai berenang dan berbunyi kwek-kwek'},
@@ -3009,7 +3014,13 @@ function nextG1Round(){
   // (cry-droop for sedih, jump-rotate for senang, etc.) so kids learn body-language
   // association by mirroring instead of just labeling.
   const _emoClass = 'g1-emo-' + (correct.name||'').toLowerCase()
-  document.getElementById('g1-animal').innerHTML=`<span class="g1-char ${_emoClass}" style="filter:drop-shadow(0 0 28px ${moodColor}99) drop-shadow(0 8px 16px rgba(0,0,0,0.18));">${correct.animal}</span><span class="g1-emot-bubble">${correct.emoji}</span>`
+  // db/faces illustrated expression in the bubble (owner: wire faces into emotion
+  // games); falls back to the emoji if the sprite is unavailable.
+  const _faceSrc = emoFaceSrc(correct.name)
+  const _bubble = _faceSrc
+    ? `<img class="g1-emot-bubble" src="${_faceSrc}" alt="" style="object-fit:contain" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'g1-emot-bubble',textContent:'${correct.emoji}'}))">`
+    : `<span class="g1-emot-bubble">${correct.emoji}</span>`
+  document.getElementById('g1-animal').innerHTML=`<span class="g1-char ${_emoClass}" style="filter:drop-shadow(0 0 28px ${moodColor}99) drop-shadow(0 8px 16px rgba(0,0,0,0.18));">${correct.animal}</span>${_bubble}`
   document.getElementById('g1-progress-bar').style.width=((roundInSet/g1State.maxRound)*100)+'%'
   const choicesEl=document.getElementById('g1-choices')
   choicesEl.style.gridTemplateColumns=numChoices<=3?'1fr 1fr 1fr':(numChoices<=4?'1fr 1fr':'1fr 1fr 1fr')
@@ -3453,6 +3464,13 @@ function initG5Visual(){
       flat.push({...item,flipped:false,matched:false,cardSide:'A'})
       flat.push({...item,flipped:false,matched:false,cardSide:'B'})
     })
+  } else if(g5SubMode==='emosi' && window.DBSprites){
+    // Emotion faces (illustrated db/faces) + name — match the matching pairs.
+    EMOTIONS.slice().sort(()=>Math.random()-0.5).slice(0,totalPairs).forEach(e=>{
+      const c={id:'emo-'+e.name,label:e.name,faceSrc:emoFaceSrc(e.name),emoji:e.emoji}
+      flat.push({...c,flipped:false,matched:false,cardSide:'A'})
+      flat.push({...c,flipped:false,matched:false,cardSide:'B'})
+    })
   } else {
     let pool
     if(diff==='easy') pool=MATCH_PAIRS.slice(0,totalPairs)
@@ -3496,6 +3514,8 @@ function renderG5Grid(){
       } else {
         back=`<span style="font-size:52px;line-height:1">${card.emoji}</span>`
       }
+    } else if(g5SubMode==='emosi' && card.faceSrc){
+      back=`<img src="${card.faceSrc}" alt="" style="width:60px;height:60px;object-fit:contain" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'card-emoji',textContent:'${card.emoji}'}))"><span class="card-label" style="font-size:13px">${card.label}</span>`
     } else {
       const isLetter=card.cardSide==='A'&&typeof card.id==='string'&&card.id.startsWith('l')
       const eStyle=isLetter?'font-size:48px;font-weight:900;color:#8B5CF6;font-family:var(--font);line-height:1':''
