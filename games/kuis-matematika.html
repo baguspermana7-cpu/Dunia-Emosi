@@ -449,6 +449,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 </section>
 
 <!-- ═════ GAMEPLAY ═════ -->
+<audio id="math-bgm" src="../assets/audio/math-bgm.mp3?v=59.23" loop preload="none" style="display:none"></audio>
 <section id="scr-game" class="scr">
   <img class="bgimg" src="../assets/math/bg-battle.webp" alt="">
   <!-- dynamic parallax layers (perf-safe: transforms driven by ONE rAF loop) -->
@@ -599,6 +600,10 @@ function qCountFor(g){ var t=tierFor(g); return t==='easy'?6:(t==='medium'?8:10)
 /* ── SFX helpers (shared engine, synth fallback built-in) ── */
 var S=window.SFXEngine;
 function sfx(name){ if(S&&S.cue) try{ S.cue(name); }catch(e){} }
+// ── looping backsound (Forest Adventure) — plays during gameplay, honours mute ──
+function bgmMuted(){ try{ return !!(S&&S.getMute&&S.getMute()); }catch(e){ return false; } }
+function bgmPlay(){ try{ var a=byId('math-bgm'); if(!a||bgmMuted()) return; a.volume=0.42; var p=a.play(); if(p&&p.catch) p.catch(function(){}); }catch(e){} }
+function bgmStop(){ try{ var a=byId('math-bgm'); if(a){ a.pause(); a.currentTime=0; } }catch(e){} }
 
 /* ── HUD ── */
 function refreshHUD(){
@@ -730,7 +735,7 @@ function startGame(forceOp){
   set('foe-name','👾 Monster '+curWorld+'-'+curSub);
   byId('foe-holder').innerHTML='<img class="mon-sprite" src="'+monSrc(g)+'" alt="" onerror="this.outerHTML=\'<span class=&quot;slime&quot;>'+monFallbackEmoji(g)+'</span>\'">';
   byId('foe-hp').style.width='100%';
-  show('game');
+  show('game'); bgmPlay();
   playIntro(function(){ renderQ(); });
 }
 function renderHearts(){
@@ -839,7 +844,7 @@ function useBomb(){
   wrong.slice(0,2).forEach(function(b){ b.disabled=true; b.style.opacity='.25'; });
   toast('💣 2 jawaban salah dihapus!');
 }
-function quitGame(){ if(game&&game.idx>0&&game.hearts>0&&game.idx<game.pool.length){ if(!confirm('Keluar? Progress level ini hilang.')) return; } backToSub(); }
+function quitGame(){ if(game&&game.idx>0&&game.hearts>0&&game.idx<game.pool.length){ if(!confirm('Keluar? Progress level ini hilang.')) return; } bgmStop(); backToSub(); }
 
 function finish(failed){
   var total=game.pool.length, ratio=game.correct/total;
@@ -1021,7 +1026,7 @@ function renderProfil(){
 }
 function stat(l,v){ return '<div class="pstat"><b>'+v+'</b><small>'+l+'</small></div>'; }
 function editName(){ var n=prompt('Nama pahlawanmu:',econ.name); if(n&&n.trim()){ econ.name=n.trim().slice(0,16); saveEcon(); renderProfil(); } }
-function toggleMute(){ if(S&&S.setMute){ var m=!S.getMute(); S.setMute(m); } renderProfil(); }
+function toggleMute(){ if(S&&S.setMute){ var m=!S.getMute(); S.setMute(m); if(m) bgmStop(); else if(game) bgmPlay(); } renderProfil(); }
 function escapeHtml(s){ return String(s).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 
 function goHome(){ window.location.href='../index.html'; }
