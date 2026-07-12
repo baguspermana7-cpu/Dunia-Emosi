@@ -2381,9 +2381,11 @@ function startBattle(trainerId){
   if(!trainer) return;
   bgmPlay()
   document.getElementById('gym-select').style.display='none';
-  // Keep #btn-pkg visible during battle — user can swap teams mid-fight
+  // A-343 — HIDE the team/package button during a battle. The team is fixed the moment
+  // the fight starts (chosen at the start via the pre-battle team-confirm, like PvP), so
+  // there's no mid-fight team swap. Change your team on the gym-select / pre-battle screen.
   const pkgBtn = document.getElementById('btn-pkg')
-  if (pkgBtn) pkgBtn.style.display = ''
+  if (pkgBtn) pkgBtn.style.display = 'none'
   document.getElementById('battle-bg').style.backgroundImage = `url('${BG_BASE}${trainer.bg}')`;
   // v53.9 polish parity: spawn the per-region weather overlay matching this gym.
   try { advSpawnWeather(trainer.group); } catch (e) {}
@@ -2965,15 +2967,10 @@ function openPackageSelector() {
       PLAYER_TEAM = getCurrentPackage().team;
       grid.querySelectorAll('.pkg-card').forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
-      if (typeof battle !== 'undefined' && battle && !battle.ended) {
-        try {
-          battle.playerTeam = deepCloneTeam(getCurrentPackage().team);
-          battle.playerIdx = 0;
-          if (typeof updateHpUI === 'function') updateHpUI();
-          if (typeof setPokeSpritePlayer === 'function') setPokeSpritePlayer(battle.playerTeam[0].slug);
-          if (typeof queueMsg === 'function') queueMsg(`Tim diganti! ${battle.playerTeam[0].name}, maju!`);
-        } catch(_) {}
-      }
+      // A-343 — the team is LOCKED once a battle begins (chosen at the start via the
+      // pre-battle team-confirm, like PvP). Picking a package here only ARMS it for the
+      // NEXT battle — it must NEVER re-clone a fresh full team into a fight in progress
+      // (that reset the player to 6 Pokémon while the enemy stayed reduced = unfair).
       setTimeout(() => { document.getElementById('pkg-overlay').style.display = 'none'; }, 280);
     });
   });
