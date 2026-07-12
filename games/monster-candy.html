@@ -1135,6 +1135,7 @@ function endGame() {
   S.running = false; S.gameOver = true
   try{document.getElementById('game-bgm').pause()}catch(_){}
   const stars = GameScoring.calc({correct:S.totalCaught, total:S.totalCaught+S.totalMissed, wrong:S.totalMissed, lives:S.lives, maxLives:S.maxLives})
+  try { if (stars >= 1 && window.SFXEngine && SFXEngine.levelup) SFXEngine.levelup() } catch(_){}
 
   // Save progress — Hotfix #115: prefer shared save-engine (avatar-keyed).
   try { sessionStorage.setItem('g22Result', JSON.stringify({ stars, level: cfg.level })) } catch(_){}

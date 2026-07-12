@@ -1205,6 +1205,7 @@ function endMatch(){
   try{document.getElementById('game-bgm').pause()}catch(_){}
   const won=S.pRounds>S.cRounds
   const stars=GameScoring.calc({correct:S.correctQ,total:S.correctQ+S.wrongQ,wrong:S.wrongQ,bonus:won?1:0})
+  try{ if(won && window.SFXEngine && SFXEngine.levelup) SFXEngine.levelup() }catch(_){}
   try{sessionStorage.setItem('g20Result',JSON.stringify({stars,level:cfg.level}))}catch(_){}
   saveG20Progress(stars)
 

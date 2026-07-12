@@ -997,7 +997,8 @@ function startWord() {
 function wordComplete() {
   S.running = false
   S.wordsDone++
-  playTone(523, 0.1); playTone(659, 0.1); setTimeout(()=>playTone(784, 0.15), 80)
+  if (window.SFXEngine && SFXEngine.levelup) { SFXEngine.levelup() }
+  else { playTone(523, 0.1); playTone(659, 0.1); setTimeout(()=>playTone(784, 0.15), 80) }
   screenFlash('rgba(139,92,246,0.35)')
 
   const o = document.getElementById('ovl-wc')
