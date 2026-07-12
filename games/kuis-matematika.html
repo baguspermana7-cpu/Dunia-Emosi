@@ -475,6 +475,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <script src="data/math-rules.js?v=59.6-20260712a"></script>
 <script src="data/save-engine.js?v=59.6-20260712a"></script>
 <script src="data/sfx-engine.js?v=59.6-20260712a"></script>
+<script src="vfx-engine.js?v=59.18-20260712a"></script><!-- shared VFX (monster defeat explosion) -->
 <script>
 (function(){
 'use strict';
@@ -740,6 +741,7 @@ function answer(btn,picked,q){
     var earn=(3+Math.floor(game.streak/2))*mult+superBonus; econ.coins+=earn; saveEcon();
     if(game.bonus&&game.bonus.fever&&game.streak>=3) byId('qcard').style.boxShadow='0 10px 0 rgba(0,0,0,.16),0 0 24px 4px rgba(255,138,61,.6),inset 0 3px 0 rgba(255,255,255,.7)';
     dmgPop('fh-foe','-1'); var foeLeft=Math.max(0,game.foeMax-game.correct); byId('foe-hp').style.width=(foeLeft/game.foeMax*100)+'%';
+    if(foeLeft===0) fxFoe('boom',1.35);   // monster "meledak" when defeated
   }else{
     btn.classList.add('wrongc'); sfx('wrong');
     Array.prototype.forEach.call(byId('choices').children,function(b){ if(String(b.textContent)===String(q.ans)) b.classList.add('right'); });
@@ -758,6 +760,8 @@ function heroAttack(){ var h=byId('fh-hero'); h.classList.remove('attack-hero');
 function foeAttack(){ var f=byId('fh-foe'); f.classList.remove('attack-foe'); void f.offsetWidth; f.classList.add('attack-foe');
   var h=byId('fh-hero'); setTimeout(function(){ h.classList.remove('hurt'); void h.offsetWidth; h.classList.add('hurt'); },180); }
 function dmgPop(host,txt){ var p=document.createElement('div'); p.className='dmg-pop'; p.textContent=txt; byId(host).appendChild(p); setTimeout(function(){ try{p.remove();}catch(e){} },820); }
+// shared VFX burst centered on the foe (defeat explosion / super strike)
+function fxFoe(variant,scale){ try{ if(window.VFX){ var f=byId('fh-foe'); if(!f) return; var r=f.getBoundingClientRect(); VFX.dom(r.left+r.width/2, r.top+r.height/2, {fx:variant, size:Math.max(120, r.width*(scale||1.2)), blend:'screen'}); } }catch(e){} }
 function updateSuper(){
   if(!game) return;
   var w=byId('super-wrap'), f=byId('super-fill'), l=byId('super-lbl');
@@ -771,7 +775,7 @@ function superStrike(){
   var fl=document.createElement('div'); fl.className='super-flash'; document.body.appendChild(fl); setTimeout(function(){ try{fl.remove();}catch(e){} },600);
   var tx=document.createElement('div'); tx.className='super-txt'; tx.textContent='SUPER!'; document.body.appendChild(tx); setTimeout(function(){ try{tx.remove();}catch(e){} },850);
   var g=byId('scr-game'); if(g){ g.classList.remove('shake-lg'); void g.offsetWidth; g.classList.add('shake-lg'); }
-  dmgPop('fh-foe','SUPER!'); confetti(24);
+  dmgPop('fh-foe','SUPER!'); confetti(24); fxFoe('boom',1.6);
   if(navigator.vibrate) try{ navigator.vibrate([20,30,20,30,40]); }catch(e){}
 }
 function juiceHit(good,streak){
