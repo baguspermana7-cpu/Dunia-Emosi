@@ -143,6 +143,7 @@ if(!('ontouchstart' in window)){
 <script src="data/poke-sprite-loader.js?v=20260502r"></script>
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/save-engine.js?v=20260501h"></script>
+<script src="data/sfx-engine.js?v=59.9-20260712a"></script><!-- shared answer cues (owner) -->
 <script>
 // ═══════════════════════════════════════════════════════════
 //  CONFIG
@@ -1245,8 +1246,8 @@ function showQuiz(){
     const b=document.createElement('button'); b.className='qbtn'; b.textContent=c
     b.onclick=()=>{
       if(done)return; done=true
-      if(c===q.ans){b.classList.add('correct');S.correctQ++;sfxScore()}
-      else{b.classList.add('wrong');S.wrongQ++;ch.querySelectorAll('.qbtn').forEach(x=>{if(x.textContent===q.ans)x.classList.add('correct')})}
+      if(c===q.ans){b.classList.add('correct');S.correctQ++;if(window.SFXEngine&&SFXEngine.correct){SFXEngine.correct()}else{sfxScore()}}
+      else{b.classList.add('wrong');S.wrongQ++;if(window.SFXEngine&&SFXEngine.wrong){SFXEngine.wrong()}ch.querySelectorAll('.qbtn').forEach(x=>{if(x.textContent===q.ans)x.classList.add('correct')})}
       setTimeout(()=>{
         document.getElementById('quiz-panel').classList.remove('show')
         S.quizActive=false

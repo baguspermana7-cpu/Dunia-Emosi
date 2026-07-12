@@ -120,6 +120,7 @@ canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/save-engine.js?v=20260501h"></script>
 <script src="question-bank.js"></script>
+<script src="data/sfx-engine.js?v=59.9-20260712a"></script><!-- shared coin/answer cues (owner) -->
 <script>
 // ═══════════════════════════════════════════════════════════
 //  CONFIG
@@ -619,7 +620,7 @@ function catchCandy(candy) {
   if (!candy.alive || S.quizActive || !S.running || S.paused) return
   candy.alive = false
   candy.caught = true
-  sfxCatch()
+  if (window.SFXEngine && SFXEngine.coin) { SFXEngine.coin() } else { sfxCatch() }
   sfxWhoosh(0.5) // Task #33: ball throw/capture impact whoosh
 
   // Instant visual feedback — particle burst at impact point + monster pop
@@ -750,7 +751,7 @@ function showCandyQuiz(candy) {
         const comboBonus = S.combo >= 5 ? 3 : S.combo >= 3 ? 2 : 1
         S.score += comboBonus
         S.totalCaught++
-        sfxCorrect()
+        if (window.SFXEngine && SFXEngine.correct) { SFXEngine.correct() } else { sfxCorrect() }
         spawnCatchFX(candy.x, candy.y, candy.color)
         spawnBubblePop(candy.x, candy.y)
         spawnCategoryFX(candy.x, candy.y, candy.ballType, candy.catName)
@@ -776,7 +777,7 @@ function showCandyQuiz(candy) {
         if (S.combo === 10 && S.lives < S.maxLives) { S.lives++; spawnCatchFX(W/2, H*0.4, 0xef4444) }
       } else {
         S.combo = 0
-        sfxWrong()
+        if (window.SFXEngine && SFXEngine.wrong) { SFXEngine.wrong() } else { sfxWrong() }
         bg.tint = 0xef4444
         const wrongText = new PIXI.Text({ text: '❌ = ' + correct, style: { fontSize: _rz ? _rz.fontScale(16) : 16, fontWeight: '700', fill: 0xef4444, fontFamily: 'Fredoka One' } })
         wrongText.anchor.set(0.5); wrongText.x = candy.x; wrongText.y = candy.y - 50
