@@ -2873,12 +2873,25 @@
       if (attackerSprite) {
         attackerSprite.classList.add('bm-attack-lunge');
         setTimeout(() => attackerSprite.classList.remove('bm-attack-lunge'), 600);
+        // PvP/Tournament VFX parity with Adventure: swirling type-matched charge
+        // aura on the attacking Pokémon (owner: "belum ada aura"). Guarded/additive.
+        try { if (window.VFX && VFX.domAura) VFX.domAura(attackerSprite, { fx: VFX.typeFx(move.type).aura, duration: 420, scale: 1.3 }); } catch (e) {}
       }
       // Projectile flies attacker → defender (~320ms). Lands at the start of
       // the defender shake / damage frame. Per-move unique projectile via
       // MOVE_PROJECTILE map (Flamethrower differs from Fire Blast, etc.).
       setTimeout(() => {
         spawnProjectile(attackerSprite, defenderPanel, move);
+        // …layered with the shared vfx-engine particle projectile (rich fire/
+        // electric/leaf flung attacker→defender), matching Adventure mode.
+        try {
+          if (window.VFX && VFX.domProjectile && attackerSprite && defenderPanel) {
+            const a = attackerSprite.getBoundingClientRect(), d = defenderPanel.getBoundingClientRect();
+            VFX.domProjectile({ x: a.left + a.width * 0.5, y: a.top + a.height * 0.4 },
+                              { x: d.left + d.width * 0.5, y: d.top + d.height * 0.45 },
+                              { fx: VFX.typeFx(move.type).proj, size: 78, duration: 300 });
+          }
+        } catch (e) {}
       }, 40);
       if (defenderPanel) {
         setTimeout(() => {
@@ -2920,6 +2933,9 @@
           }
           // Type-emoji particles burst at defender (8 particles, type-specific keyframe)
           spawnTypeParticles(cx, cy, move.type);
+          // shared vfx-engine glowing impact burst ON the defender (bigger on
+          // super-effective) — Adventure-parity "boom" landing the hit.
+          try { if (window.VFX && VFX.dom) VFX.dom(cx, cy, { fx: 'boom', size: (tm >= 1.15 ? 150 : 118), blend: 'screen' }); } catch (e) {}
           // Effectiveness rise-text (Super Efektif / Tidak Efektif / Seimbang)
           spawnEffectivenessText(cx, cy - 30, tm);
           // v53.0 polish #2: BIG type-effectiveness splash banner in the arena
