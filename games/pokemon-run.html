@@ -402,6 +402,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <script src="lib/pixi.min.js?v=8"></script>
 <script src="data/poke-sprite-cdn.js?v=20260506t"></script>
 <script src="data/sfx-engine.js?v=20260621"></script>
+<script src="explosion-fx.js?v=59.14-20260712a"></script><!-- A-353 shared explosion VFX (obstacle hit) -->
 <script src="data/weather-fx.js?v=20260621"></script>
 <script src="data/poke-type-chart.js?v=20260506z"></script>
 <script>
@@ -1609,6 +1610,8 @@ function hitPlayer(obs){
   flashScreen('#ef4444')
   burst(PLAYER_X,S.playerY-PLAYER_H*.6,0xEF4444,22)
   burst(PLAYER_X,S.playerY-PLAYER_H*.6,0xFCA5A5,10)
+  // A-353 — shared explosion burst on obstacle impact (visual only)
+  try { if (window.ExplosionFX) ExplosionFX.pixi(fxContainer, PLAYER_X, S.playerY-PLAYER_H*.55, { variant:'boom', scale:1.1 }) } catch(_){}
   spawnFT('💥',PLAYER_X,S.playerY-PLAYER_H,0xEF4444)
   const canvas=document.getElementById('pixi-canvas')
   canvas.classList.remove('hit-shake'); void canvas.offsetWidth

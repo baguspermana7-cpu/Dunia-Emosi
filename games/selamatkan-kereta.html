@@ -2762,7 +2762,10 @@ function playSfxCrash(){
 
 function hideQuizPanel(){quizActive=false;quizLocked=false;document.getElementById('quiz-panel').classList.remove('show')}
 
-function triggerDeath(){S.trainState='DEAD';S.deadTimer=1.2;S.gameOver=true;hideQuizPanel();flashScreen('#ff0000',0.55)}
+function triggerDeath(){S.trainState='DEAD';S.deadTimer=1.2;S.gameOver=true;hideQuizPanel();flashScreen('#ff0000',0.55);
+  // A-353 — shared explosion burst on the crashing loco (visual only)
+  try{ if(window.ExplosionFX && trainContainer) ExplosionFX.pixi(stage, trainContainer.x, trainContainer.y-20, {variant:'smoke', scale:1.35}) }catch(_){}
+}
 function triggerArrival(){
   if(S.trainState==='ARRIVING'||S.trainState==='ARRIVED'||S.gameOver)return
   S.trainState='ARRIVING'

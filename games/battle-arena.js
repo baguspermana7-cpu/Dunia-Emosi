@@ -815,6 +815,14 @@
   function faintDrop (side) {
     if (!S || !S.fighters[side]) return
     var f = S.fighters[side]
+    // A-353 — the fainting Pokémon "meledak dulu": a boom burst over its sprite
+    // BEFORE the drop pose settles (visual only — battle state is untouched).
+    try {
+      if (global.ExplosionFX && f.img) {
+        var c = centerOf(f.img)
+        global.ExplosionFX.dom(c.x, c.y - c.h * 0.12, { variant: 'boom', size: Math.max(96, c.w * 0.9) })
+      }
+    } catch (_) {}
     f.wrap.style.transform = ''
     f.wrap.classList.add('ba-faint')
   }

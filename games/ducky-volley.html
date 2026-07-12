@@ -144,6 +144,7 @@ if(!('ontouchstart' in window)){
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/save-engine.js?v=20260501h"></script>
 <script src="data/sfx-engine.js?v=59.9-20260712a"></script><!-- shared answer cues (owner) -->
+<script src="explosion-fx.js?v=59.14-20260712a"></script><!-- A-353 shared explosion VFX (smash burst) -->
 <script>
 // ═══════════════════════════════════════════════════════════
 //  CONFIG
@@ -994,6 +995,8 @@ function checkHit(dx,dy,dvx,dvy,onGnd,who){
   // Hit effect — spawn colored particles at ball position
   const hitColors = {set:0x4ade80, shot:0x3b82f6, smash:0xfbbf24}
   const hc = hitColors[hitType] || 0xffffff
+  // A-353 — shared "pop" burst on a powerful smash strike (the big volley hit)
+  if(hitType==='smash'){ try{ if(window.ExplosionFX) ExplosionFX.pixi(fxLayer, S.bx, S.by, {variant:'pop', scale:1.0}) }catch(_){} }
   for(let i=0;i<6;i++){
     const g=new PIXI.Graphics()
     g.circle(0,0,2+Math.random()*3).fill(hc)

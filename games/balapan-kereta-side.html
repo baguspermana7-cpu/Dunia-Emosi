@@ -153,6 +153,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <script src="settings-modal.js?v=54.98-20260626cy"></script>
 <script src="trains-db.js?v=55.67-20260628a"></script>
 <script src="data/sfx-engine.js?v=59.8-20260712a"></script><!-- A-347 shared coin/crash cues (owner) -->
+<script src="explosion-fx.js?v=59.14-20260712a"></script><!-- A-353 shared explosion/impact VFX -->
 <script src="game-modal.js?v=54.47-20260625az"></script>
 <!-- v55.99 B-284 — shared rich atmospheric scenery engine (sun + layered mountains + grass) -->
 <script src="scenery-engine.js?v=55.99-20260630a"></script>
@@ -1344,6 +1345,7 @@ function tick(tickerOrDelta) {
         // A-315 E5 — trauma screen shake (applied via Motion.shakeOffset on the
         // stage in this tick; kid-safe amp, fast decay, honors reduced-motion).
         try { if (window.Motion) Motion.shake(0.35) } catch {}
+        try { if (window.ExplosionFX) ExplosionFX.pixi(particleLayer, trainContainer.x, trainContainer.y - 6, { variant: 'smoke', scale: 1.1 }) } catch {}
         const gapFlash = document.createElement('div')
         gapFlash.style.cssText = 'position:fixed;inset:0;background:radial-gradient(circle,rgba(239,68,68,0.4) 0%,rgba(239,68,68,0.1) 70%,transparent 100%);pointer-events:none;z-index:150;animation:g14sFlash 0.45s ease-out forwards;'
         document.body.appendChild(gapFlash)
@@ -1730,6 +1732,13 @@ function crashOn(o) {
   // Visual: red shake + flash
   // A-347: owner's shared car-crash cue on "nabrak" (falls back to synth tone if absent)
   try { if (window.SFXEngine && SFXEngine.crash) SFXEngine.crash(); else if (typeof playTone === 'function') playTone({ freq: 220, dur: 0.18, vol: 0.14 }) } catch {}
+
+  // A-353 — shared explosion burst on the loco (smoke variant), pairs with crash SFX
+  try {
+    if (window.ExplosionFX) {
+      ExplosionFX.pixi(particleLayer, trainContainer.x, trainContainer.y - 18, { variant: 'smoke', scale: 1.25 })
+    }
+  } catch {}
 
   // v54.91 — Red screen flash overlay
   const flash = document.createElement('div')

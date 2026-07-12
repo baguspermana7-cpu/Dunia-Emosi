@@ -1,0 +1,3 @@
+Explosion animation frames in assets/vfx/explosion/ are from the "Explosion Pack"
+by Luis Zuno (@ansimuz). Licensed CC0 (Creative Commons Zero / public domain) —
+free for any use, no attribution required. Thank you, Ansimuz!
