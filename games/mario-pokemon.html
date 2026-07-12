@@ -227,6 +227,7 @@ body.shake{animation:screenShake .35s ease}
 
 <!-- Pixi.js 8 -->
 <script src="lib/pixi.min.js?v=8"></script>
+<script src="vfx-engine.js?v=59.15-20260712a"></script><!-- A-355 unified shared VFX (electric bolt muzzle/hit) -->
 <!-- Shared modules -->
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/math-rules.js?v=55.45-20260627ea"></script>
@@ -2384,6 +2385,8 @@ function spawnBolt(x, y, dir) {
   g._g21TTL = 70
   world.addChild(g)
   S.bolts.push(g)
+  // A-355 — electric muzzle flash at the bolt origin + a brief aura on Pikachu
+  try { if (window.VFX){ VFX.burst(world, x, y, {fx:'electric-a', scale:0.6}); VFX.burst(world, S.x, S.y-50, {fx:'electric-aura', scale:0.8}) } } catch(_){}
   sfx('sfx-jump')
   // Trailing emoji label
   const trail = document.createElement('span')
@@ -2415,6 +2418,7 @@ function updateBolts() {
         sfx('sfx-stomp')
         spawnScorePopup(g.x, g.y - 40, '+200', 'heal')
         spawnParticles(g.x, g.y - 20, 'lightning', 8)
+        try { if (window.VFX) VFX.burst(world, g.x, g.y - 20, {fx:'sparks', scale:0.9}) } catch(_){}
         hit = true; break
       }
     }

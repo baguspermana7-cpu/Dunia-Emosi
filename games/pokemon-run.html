@@ -550,6 +550,14 @@ function spawnProjectile(fromEl, toEl, type, cb){
   const sfxFreqs={fire:700,water:450,electric:1100,grass:550,psychic:900,ghost:380,ice:650,dragon:280,dark:250,fighting:400,rock:380,poison:700,ground:320,bug:600,steel:500,normal:480,flying:650,fairy:800}
   const freq=sfxFreqs[type]||500
   playTone(freq,80,'sine',0.1); setTimeout(()=>playTone(freq*1.2,60,'sine',0.08),50)
+  // A-355 — layer real particle: brief type aura on the shooter + a "lempar api"
+  // particle projectile alongside the emoji orb (visual-only, guarded).
+  try {
+    if (window.VFX){
+      VFX.domAura(fromEl, { fx: VFX.typeFx(type).aura, duration: 300, scale: 1.25 })
+      VFX.domProjectile({x:sx,y:sy}, {x:ex,y:ey}, { fx: VFX.typeFx(type).proj, size: 68, duration: 320 })
+    }
+  } catch(_){}
   const proj=document.createElement('div')
   proj.className='type-proj'; proj.textContent=emoji
   proj.style.left=sx+'px'; proj.style.top=sy+'px'
