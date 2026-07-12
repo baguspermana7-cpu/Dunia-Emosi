@@ -32,6 +32,21 @@ const EMOTIONS = [
 // Hand-verified from the faces montage; used by g1 Aku Merasa + g5 Cocokkan Emosi.
 const EMOTION_FACE = { Senang:1, Sedih:3, Marah:4, Takut:13, Terkejut:12, Malu:14, Bahagia:8, Bosan:20, Kesal:30, Kagum:22 }
 function emoFaceSrc(name){ try{ if(window.DBSprites) return DBSprites.path('faces', EMOTION_FACE[name]||1); }catch(e){} return ''; }
+// g5 match cards from the illustrated db sprites (hewan→creatures+name, buah→
+// objects+name via DBLabeled; kendaraan→distinct vehicle sprites). [] if unavailable.
+function g5DbCards(mode,k){
+  try{
+    if((mode==='hewan'||mode==='buah') && window.DBLabeled){
+      const pool=DBLabeled.all().filter(x=>x.group===mode).sort(()=>Math.random()-0.5).slice(0,k);
+      return pool.map(x=>({id:'db-'+x.id,dbsrc:x.src,label:x.name}));
+    }
+    if(mode==='kendaraan' && window.DBSprites){
+      const srcs=DBSprites.pickN('vehicles',k);
+      return srcs.map((s,i)=>({id:'veh-'+i,dbsrc:s,label:''}));
+    }
+  }catch(e){}
+  return [];
+}
 
 const ANIMAL_LETTERS = [
   {animal:'🐓',word:'AYAM',      letter:'A',num:1, hint:'Unggas yang berkokok saat matahari terbit setiap pagi'},
@@ -3447,11 +3462,19 @@ function initG5Visual(){
   else{totalPairs=8;gridClass=''}
   g5State={cards:[],flipped:[],matched:0,totalPairs,scores:[0,0],currentPlayer:state.currentPlayer,locked:false}
   const flat=[]
+  // illustrated db-sprite cards for hewan/buah/kendaraan (owner); fall through to
+  // the emoji sets if the DB isn't available or hasn't enough items.
+  const _g5db=['hewan','buah','kendaraan'].includes(g5SubMode)?g5DbCards(g5SubMode,totalPairs):[]
   if(g5SubMode==='pokemon'){
     // Sprite (A) ↔ Name text (B) — educational matching
     MATCH_PAIRS_POKE.slice(0,totalPairs).forEach(p=>{
       flat.push({id:p.id,slug:p.slug,label:p.name,flipped:false,matched:false,cardSide:'A'})
       flat.push({id:p.id,slug:p.slug,label:p.name,flipped:false,matched:false,cardSide:'B'})
+    })
+  } else if(_g5db.length>=totalPairs){
+    _g5db.forEach(it=>{
+      flat.push({...it,flipped:false,matched:false,cardSide:'A'})
+      flat.push({...it,flipped:false,matched:false,cardSide:'B'})
     })
   } else if(['hewan','buah','sayur','kendaraan','warna','benda','profesi','alam','cuaca','makanan','sekolah'].includes(g5SubMode)){
     // Emoji (A) ↔ Name word (B) — educational matching
@@ -3508,7 +3531,7 @@ function renderG5Grid(){
         const fbSrc2=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${card.id}.png`
         back=`<img class="g5-poke-img" style="width:72px;height:72px;image-rendering:auto;object-fit:contain" src="${hdSrc2}" onerror="this.src='${fbSrc2}'" alt="${card.label}" loading="lazy">`
       }
-    } else if(['hewan','buah','sayur','kendaraan','warna','benda','profesi','alam','cuaca','makanan','sekolah'].includes(g5SubMode)){
+    } else if(!card.dbsrc && ['hewan','buah','sayur','kendaraan','warna','benda','profesi','alam','cuaca','makanan','sekolah'].includes(g5SubMode)){
       if(card.cardSide==='A'){
         back=`<span style="font-size:52px;line-height:1">${card.emoji}</span>`
       } else {
@@ -3516,6 +3539,8 @@ function renderG5Grid(){
       }
     } else if(g5SubMode==='emosi' && card.faceSrc){
       back=`<img src="${card.faceSrc}" alt="" style="width:60px;height:60px;object-fit:contain" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'card-emoji',textContent:'${card.emoji}'}))"><span class="card-label" style="font-size:13px">${card.label}</span>`
+    } else if(card.dbsrc){
+      back=`<img src="${card.dbsrc}" alt="" style="width:64px;height:64px;object-fit:contain">${card.label?`<span class="card-label" style="font-size:12px">${card.label}</span>`:''}`
     } else {
       const isLetter=card.cardSide==='A'&&typeof card.id==='string'&&card.id.startsWith('l')
       const eStyle=isLetter?'font-size:48px;font-weight:900;color:#8B5CF6;font-family:var(--font);line-height:1':''
