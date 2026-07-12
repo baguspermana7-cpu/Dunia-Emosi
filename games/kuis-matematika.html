@@ -237,6 +237,22 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @keyframes comboPop{0%{opacity:0;transform:translateX(-50%) scale(.4)}40%{opacity:1;transform:translateX(-50%) scale(1.15)}100%{opacity:0;transform:translateX(-50%) scale(1) translateY(-22px)}}
 .wrong-vig{position:fixed;inset:0;z-index:38;pointer-events:none;box-shadow:inset 0 0 90px 24px rgba(232,80,63,.55);opacity:0;animation:wrongVig .5s ease}
 @keyframes wrongVig{0%,100%{opacity:0}30%{opacity:1}}
+/* R2 super meter */
+.super-wrap{position:relative;height:15px;border-radius:9px;background:rgba(0,0,0,.34);border:2px solid rgba(255,255,255,.42);overflow:hidden;margin:0 2px 6px}
+.super-fill{height:100%;width:0;background:linear-gradient(90deg,#ffd54a,#ff8a3d);transition:width .3s cubic-bezier(.22,.61,.36,1)}
+.super-wrap.ready{animation:superReady .8s ease-in-out infinite}
+.super-wrap.ready .super-fill{width:100%!important;background:linear-gradient(90deg,#fff0a0,#ffcf3f,#ff8a3d)}
+@keyframes superReady{0%,100%{box-shadow:inset 0 0 0 0 rgba(255,207,63,.7)}50%{box-shadow:0 0 12px 3px rgba(255,207,63,.65),inset 0 0 8px rgba(255,240,160,.6)}}
+.super-lbl{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;font-size:9.5px;font-family:var(--disp);font-weight:800;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.7);letter-spacing:.5px}
+.super-flash{position:fixed;inset:0;z-index:42;pointer-events:none;background:radial-gradient(circle,rgba(255,244,180,.9),rgba(255,180,60,.25) 55%,transparent);opacity:0;animation:superFlash .6s ease}
+@keyframes superFlash{0%,100%{opacity:0}22%{opacity:1}}
+.super-txt{position:fixed;left:50%;top:24%;transform:translateX(-50%);z-index:43;font-family:var(--disp);font-weight:800;font-size:clamp(40px,12vw,82px);color:#fff;-webkit-text-stroke:3px #e2661a;text-shadow:0 6px 16px rgba(0,0,0,.5);pointer-events:none;animation:comboPop .85s cubic-bezier(.34,1.56,.64,1)}
+/* R3 screen transition + unlock banner */
+.scr.active{animation:scrIn .34s cubic-bezier(.22,.61,.36,1)}
+@keyframes scrIn{0%{opacity:0;transform:translateY(10px) scale(.995)}100%{opacity:1;transform:translateY(0) scale(1)}}
+#scr-beranda.active .br-title{animation:titleDrop .6s cubic-bezier(.34,1.56,.64,1) backwards}
+@keyframes titleDrop{0%{opacity:0;transform:translateY(-26px) scale(.8)}60%{opacity:1;transform:translateY(4px) scale(1.04)}100%{transform:translateY(0) scale(1)}}
+.unlock-banner{display:inline-flex;align-items:center;gap:6px;margin:0 auto 10px;background:linear-gradient(180deg,#c3a6ef,var(--purple-d));color:#fff;font-family:var(--disp);font-weight:800;font-size:14px;padding:7px 18px;border-radius:999px;border:2px solid #fff;box-shadow:0 5px 0 rgba(0,0,0,.2);animation:playPulse 1.4s ease-in-out infinite}
 
 /* ═════ HASIL ═════ */
 #scr-hasil{background:radial-gradient(120% 90% at 50% 0%,#3a74d8,#16305f);align-items:center;justify-content:center}
@@ -418,6 +434,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   </div>
   <div class="qpanel">
     <div class="qprog"><i id="qprog"></i></div>
+    <div class="super-wrap" id="super-wrap"><div class="super-fill" id="super-fill"></div><span class="super-lbl" id="super-lbl">⚡ SUPER</span></div>
     <div class="qcard" id="qcard">…</div>
     <div class="choices" id="choices"></div>
     <div class="game-tools">
@@ -429,6 +446,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <!-- ═════ HASIL ═════ -->
 <section id="scr-hasil" class="scr">
   <div class="result-card">
+    <div id="res-unlock"></div>
     <h2 id="res-title">Hebat!</h2>
     <div class="res-stars" id="res-stars"></div>
     <div class="res-detail" id="res-detail"></div>
@@ -558,6 +576,7 @@ setInterval(function(){ if(byId('scr-beranda').classList.contains('active')||byI
 function byId(id){ return document.getElementById(id); }
 function set(id,v){ var e=byId(id); if(e) e.textContent=v; }
 function toast(msg){ var t=byId('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(function(){ t.classList.remove('show'); },1600); }
+function countUp(id,to,dur){ var el=byId(id); if(!el) return; var t0=null; function step(ts){ if(!t0)t0=ts; var p=Math.min(1,(ts-t0)/(dur||600)); el.textContent=Math.round(to*(p<1?1-Math.pow(1-p,3):1)); if(p<1) requestAnimationFrame(step); } requestAnimationFrame(step); }
 
 /* ── navigation ── */
 var curWorld=1, curSub=1, curSkill=null;
@@ -666,7 +685,8 @@ function startGame(forceOp){
     var q=window.makeMathQuestionV2(g,MAX_LEVEL,tier,sh,{maxNum:mn,forceOp:forceOp});
     pool.push(q);
   }
-  game={g:g,pool:pool,idx:0,correct:0,wrong:0,streak:0,best:0,hearts:HEARTS_BASE+Math.min(2,econ.extraHearts),foeMax:n,bonus:bonusFor(g)};
+  game={g:g,pool:pool,idx:0,correct:0,wrong:0,streak:0,best:0,hearts:HEARTS_BASE+Math.min(2,econ.extraHearts),foeMax:n,bonus:bonusFor(g),super:0,superReady:false};
+  updateSuper();
   curSkill=forceOp;
   set('foe-name','👾 Monster '+curWorld+'-'+curSub);
   byId('foe-holder').innerHTML='<img class="mon-sprite" src="'+monSrc(g)+'" alt="" onerror="this.outerHTML=\'<span class=&quot;slime&quot;>'+monFallbackEmoji(g)+'</span>\'">';
@@ -711,13 +731,18 @@ function answer(btn,picked,q){
     game.correct++; game.streak++; if(game.streak>game.best) game.best=game.streak;
     heroAttack(); coinBurst(); juiceHit(true,game.streak);
     var mult=(game.bonus&&game.bonus.coin)||1;
-    var earn=(3+Math.floor(game.streak/2))*mult; econ.coins+=earn; saveEcon();
+    var superBonus=0;
+    if(game.superReady){ superStrike(); game.super=0; game.superReady=false; superBonus=15; }
+    else { game.super=Math.min(1,game.super+0.25); if(game.super>=1) game.superReady=true; }
+    updateSuper();
+    var earn=(3+Math.floor(game.streak/2))*mult+superBonus; econ.coins+=earn; saveEcon();
     if(game.bonus&&game.bonus.fever&&game.streak>=3) byId('qcard').style.boxShadow='0 10px 0 rgba(0,0,0,.16),0 0 24px 4px rgba(255,138,61,.6),inset 0 3px 0 rgba(255,255,255,.7)';
     dmgPop('fh-foe','-1'); var foeLeft=Math.max(0,game.foeMax-game.correct); byId('foe-hp').style.width=(foeLeft/game.foeMax*100)+'%';
   }else{
     btn.classList.add('wrongc'); sfx('wrong');
     Array.prototype.forEach.call(byId('choices').children,function(b){ if(String(b.textContent)===String(q.ans)) b.classList.add('right'); });
     game.wrong++; game.streak=0; game.hearts--;
+    game.super=0; game.superReady=false; updateSuper();
     foeAttack(); renderHearts(); juiceHit(false,0);
     if(navigator.vibrate) try{ navigator.vibrate([15,40,15]); }catch(e){}
     if(game.hearts<=0){ setTimeout(function(){ finish(true); },900); return; }
@@ -731,6 +756,22 @@ function heroAttack(){ var h=byId('fh-hero'); h.classList.remove('attack-hero');
 function foeAttack(){ var f=byId('fh-foe'); f.classList.remove('attack-foe'); void f.offsetWidth; f.classList.add('attack-foe');
   var h=byId('fh-hero'); setTimeout(function(){ h.classList.remove('hurt'); void h.offsetWidth; h.classList.add('hurt'); },180); }
 function dmgPop(host,txt){ var p=document.createElement('div'); p.className='dmg-pop'; p.textContent=txt; byId(host).appendChild(p); setTimeout(function(){ try{p.remove();}catch(e){} },820); }
+function updateSuper(){
+  if(!game) return;
+  var w=byId('super-wrap'), f=byId('super-fill'), l=byId('super-lbl');
+  if(!w) return;
+  f.style.width=Math.round(game.super*100)+'%';
+  if(game.superReady){ w.classList.add('ready'); l.textContent='⚡ SUPER SIAP!'; }
+  else { w.classList.remove('ready'); l.textContent='⚡ SUPER'; }
+}
+function superStrike(){
+  sfx('levelup');
+  var fl=document.createElement('div'); fl.className='super-flash'; document.body.appendChild(fl); setTimeout(function(){ try{fl.remove();}catch(e){} },600);
+  var tx=document.createElement('div'); tx.className='super-txt'; tx.textContent='SUPER!'; document.body.appendChild(tx); setTimeout(function(){ try{tx.remove();}catch(e){} },850);
+  var g=byId('scr-game'); if(g){ g.classList.remove('shake-lg'); void g.offsetWidth; g.classList.add('shake-lg'); }
+  dmgPop('fh-foe','SUPER!'); confetti(24);
+  if(navigator.vibrate) try{ navigator.vibrate([20,30,20,30,40]); }catch(e){}
+}
 function juiceHit(good,streak){
   var g=byId('scr-game'); if(g){ g.classList.remove('shake-sm','shake-lg'); void g.offsetWidth; g.classList.add(good?'shake-sm':'shake-lg'); }
   if(!good){ var v=document.createElement('div'); v.className='wrong-vig'; document.body.appendChild(v); setTimeout(function(){ try{v.remove();}catch(e){} },520); }
@@ -768,8 +809,13 @@ function finish(failed){
   var sr=byId('res-stars'); sr.innerHTML='';
   for(var i=0;i<3;i++){ var sp=document.createElement('span'); sp.textContent=i<stars?'⭐':'☆'; sr.appendChild(sp); if(i<stars) setTimeout(function(){ sfx('star'); },200+i*200); }
   set('res-detail','Benar '+game.correct+' dari '+total+(game.best>=3?'  ·  🔥 streak '+game.best:''));
-  var rw=byId('res-rewards'); rw.innerHTML='<div class="rr"><img src="'+IC+'icon-coin.webp">+'+coinReward+'</div>'+(gemReward>0?'<div class="rr"><img src="'+IC+'icon-gem.webp">+'+gemReward+'</div>':'');
+  var rw=byId('res-rewards'); rw.innerHTML='<div class="rr"><img src="'+IC+'icon-coin.webp">+<span id="rr-coin">0</span></div>'+(gemReward>0?'<div class="rr"><img src="'+IC+'icon-gem.webp">+'+gemReward+'</div>':'');
   econ.coins+=coinReward; saveEcon(); refreshHUD();
+  countUp('rr-coin',coinReward,700);
+  // R3: "Dunia baru terbuka!" banner when a world boundary (sub-10) is cleared
+  var ub=byId('res-unlock');
+  if(!failed && stars>=1 && game.g%SUBS===0 && game.g<MAX_LEVEL) ub.innerHTML='<span class="unlock-banner">🌟 Dunia '+(game.g/SUBS+1)+' Terbuka!</span>';
+  else ub.innerHTML='';
   var nextBtn=byId('res-next');
   if(failed||game.g>=MAX_LEVEL){ nextBtn.style.display=failed?'none':'none'; } else nextBtn.style.display='';
   show('hasil');
