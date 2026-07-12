@@ -1,0 +1,12 @@
+Icon assets in this folder (assets/icons/) are from:
+
+  "Free Icon Pack v3.1 (Basic)" by @gvesster
+  https://linktr.ee/gvesster  ·  X: @gvesster
+
+Used under the pack's license (see the original download's License.txt):
+  - Free for use in commercial and personal/non-commercial projects.
+  - Editing/recolouring for use in this project is permitted.
+  - NOT resold, NOT redistributed as an asset pack, NOT claimed as our own.
+
+Only a curated subset was extracted, downscaled, and converted to WebP for the
+Dunia Emosi educational games. Terima kasih @gvesster!

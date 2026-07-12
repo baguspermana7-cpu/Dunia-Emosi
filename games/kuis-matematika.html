@@ -365,10 +365,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
     <img class="br-hero" src="../assets/math/hero-mathhero.webp" alt="MathHero">
     <button class="br-play clay gold" onclick="MP.openPeta()">▶ MAIN</button>
     <div class="br-menu">
-      <button onclick="MP.openModal('shop')"><img src="../assets/math/icons/cat-practice.webp" alt="">Toko</button>
-      <button onclick="MP.openModal('daily')"><img src="../assets/math/icons/cat-daily.webp" alt="">Harian</button>
-      <button onclick="MP.openModal('turnamen')"><img src="../assets/math/icons/cat-tournament.webp" alt="">Turnamen</button>
-      <button onclick="MP.openModal('rank')"><img src="../assets/math/icons/cat-adventure.webp" alt="">Peringkat</button>
+      <button onclick="MP.openModal('shop')"><img src="../assets/icons/main/cart.webp" alt="" onerror="this.src='../assets/math/icons/cat-practice.webp'">Toko</button>
+      <button onclick="MP.openModal('daily')"><img src="../assets/icons/item/calendar.webp" alt="" onerror="this.src='../assets/math/icons/cat-daily.webp'">Harian</button>
+      <button onclick="MP.openModal('turnamen')"><img src="../assets/icons/item/trophy.webp" alt="" onerror="this.src='../assets/math/icons/cat-tournament.webp'">Turnamen</button>
+      <button onclick="MP.openModal('rank')"><img src="../assets/icons/item/medal.webp" alt="" onerror="this.src='../assets/math/icons/cat-adventure.webp'">Peringkat</button>
       <button onclick="MP.openModal('profil')"><img src="../assets/math/hero-mathhero.webp" alt="" style="border-radius:50%;background:rgba(255,255,255,.25)">Profil</button>
     </div>
   </div>
@@ -480,6 +480,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 'use strict';
 var GAME_ID='g25', WORLDS=10, SUBS=10, MAX_LEVEL=WORLDS*SUBS;
 var A='../assets/math/', IC=A+'icons/', MON=A+'monsters/', MON_COUNT=81;
+var PK='../assets/icons/'; // Free Icon Pack v3.1 (@gvesster) — crisp UI/economy icons
+function pkIcon(p,sz){ return '<img src="'+PK+p+'.webp" style="width:'+(sz||20)+'px;height:'+(sz||20)+'px;vertical-align:-4px" alt="" onerror="this.style.display=\'none\'">'; }
 function monSrc(g){ return MON+'mon-'+(((g-1)%MON_COUNT)+1)+'.webp'; }
 function monFallbackEmoji(g){ var e=['👾','👹','🐲','🦊','👻','🧟','🐙','🍄','⭐','🐉']; return e[(g-1)%e.length]; }
 
@@ -933,7 +935,7 @@ function endTournament(){
   var tr=Math.max(1,Math.floor(tourn.score/3)); econ.trophies+=tr;
   postLeaderboard(tourn.score); econ.stats.played++; saveEcon(); refreshHUD();
   byId('tourn-body').innerHTML='<div class="tourn-run"><div class="tourn-timer" style="color:var(--purple-d)">Selesai!</div>'+
-    '<p style="font-weight:800;font-size:18px;margin:8px 0">Skor '+tourn.score+' → <img src="'+IC+'cat-tournament.webp" style="width:24px;vertical-align:-6px"> +'+tr+' trofi</p>'+
+    '<p style="font-weight:800;font-size:18px;margin:8px 0">Skor '+tourn.score+' → '+pkIcon('item/trophy',24)+' +'+tr+' trofi</p>'+
     '<button class="clay green" style="padding:12px 26px" onclick="MP.openModal(\'rank\')">🏅 Lihat Peringkat</button></div>';
   sfx('levelup'); confetti(40); tourn=null;
 }
@@ -951,7 +953,7 @@ function renderRank(){
   rows.forEach(function(r,i){
     var row=document.createElement('div'); row.className='rank-row'+(r.me?' me':'');
     var medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);
-    row.innerHTML='<span class="rk">'+medal+'</span><span class="rn">'+r.n+'</span><span class="rs"><img src="'+IC+'cat-tournament.webp">'+r.s+'</span>';
+    row.innerHTML='<span class="rk">'+medal+'</span><span class="rn">'+r.n+'</span><span class="rs">'+pkIcon('item/medal',20)+r.s+'</span>';
     l.appendChild(row);
   });
 }
@@ -961,9 +963,9 @@ function renderProfil(){
   var acc=econ.stats.correct+econ.stats.wrong>0?Math.round(econ.stats.correct/(econ.stats.correct+econ.stats.wrong)*100):0;
   var cleared=Math.max(0,maxUnlocked()-1);
   byId('prof-stats').innerHTML=
-    stat('⭐ Bintang',totalStars())+stat('🗺️ Level',cleared+'/'+MAX_LEVEL)+
-    stat('🎯 Akurasi',acc+'%')+stat('🔥 Streak',econ.stats.bestStreak)+
-    stat('🪙 Koin',econ.coins)+stat('🏆 Trofi',econ.trophies);
+    stat(pkIcon('main/star',15)+' Bintang',totalStars())+stat(pkIcon('main/stats',15)+' Level',cleared+'/'+MAX_LEVEL)+
+    stat(pkIcon('item/target',15)+' Akurasi',acc+'%')+stat(pkIcon('main/fire',15)+' Streak',econ.stats.bestStreak)+
+    stat(pkIcon('currency/coin',15)+' Koin',econ.coins)+stat(pkIcon('item/trophy',15)+' Trofi',econ.trophies);
   byId('mute-btn').textContent=(S&&S.getMute&&S.getMute())?'BISU 🔇':'AKTIF 🔊';
   byId('mute-btn').style.background=(S&&S.getMute&&S.getMute())?'var(--red)':'var(--green)';
 }
