@@ -362,7 +362,9 @@ const GROUND_FILL_COLOR = 0x2e7d32 // grass green
 
 // Physics
 const GRAVITY = 1500              // px/s²
-const JUMP_VELOCITY = 1080        // B-251: 1.5× jump — was 720, new airtime ~1.44s
+// A-347: owner "lompatan terlalu tinggi, X pendek" → lower peak + broader forward
+// arc. 880 → peak ≈258px (was 388), airtime ≈1.17s; arc multiplier raised below.
+const JUMP_VELOCITY = 880
 
 // ── INIT ────────────────────────────────────────────────────────────────────
 ;(async () => {
@@ -487,20 +489,25 @@ function lerpHex(a, b, t) {
 }
 
 function pickTrain() {
-  const key = sessionStorage.getItem('g14-side-train') || 'aeg_thomas'
+  // A-347: read the DURABLE choice first (localStorage survives navigation),
+  // then the session hand-off, then Thomas. Owner reported it always showed
+  // Casey — that only happened when the stored key wasn't found and the old
+  // fallback returned the FIRST isCharacter train (Casey JR). Fix: find-by-key,
+  // else default explicitly to Thomas — never silently fall back to Casey.
+  let key = null
+  try { key = localStorage.getItem('dunia_side_train') } catch (e) {}
+  if (!key) { try { key = sessionStorage.getItem('g14-side-train') } catch (e) {} }
+  if (!key) key = 'aeg_thomas'
   if (!window.TRAIN_CATS) return null
-  for (const cat of window.TRAIN_CATS) {
-    for (const t of (cat.trains || [])) {
-      if (t.key === key) return { ...t, category: cat.key }
+  const findKey = (k) => {
+    for (const cat of window.TRAIN_CATS) {
+      for (const t of (cat.trains || [])) {
+        if (t.key === k) return { ...t, category: cat.key }
+      }
     }
+    return null
   }
-  // Fallback to first character train
-  for (const cat of window.TRAIN_CATS) {
-    for (const t of (cat.trains || [])) {
-      if (t.isCharacter && t.spriteUrl) return { ...t, category: cat.key }
-    }
-  }
-  return null
+  return findKey(key) || findKey('aeg_thomas') || null
 }
 
 function buildLayers() {
@@ -1252,12 +1259,12 @@ function tick(tickerOrDelta) {
 
   // v54.99 — Horizontal sway overlay when boosting (post-milestone speed bump)
   // and a starting puff at race begin from the chimney.
-  // B-251: forward arc while airborne — train visually travels over gaps.
-  // jumpY is negative at peak (−388px at JUMP_VELOCITY=1080 / GRAVITY=1500),
-  // so -jumpY*0.09 pushes train forward (right) at peak, creating a natural arc.
+  // B-251 / A-347: forward arc while airborne — train visually travels over gaps.
+  // Owner wanted the jump to reach FARTHER horizontally, not just tall. Multiplier
+  // raised 0.09→0.24 so the sprite broad-jumps forward (~62px at the ~258px peak).
   {
     const baseX = W * PLAYER_X_FRAC
-    const jumpArcX = (S.jumping && !REDUCED_MOTION) ? (-S.jumpY * 0.09) : 0  // max ~35px at peak
+    const jumpArcX = (S.jumping && !REDUCED_MOTION) ? (-S.jumpY * 0.24) : 0  // broad forward arc
     if (!REDUCED_MOTION && !S.jumping && S.speed > S.baseSpeed + 0.001) {
       trainContainer.x = baseX + Math.sin(S.frame * 0.4) * 1.0
     } else {

@@ -96,7 +96,19 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* ═════ MAP (peta + sub) ═════ */
 .map-wrap{position:absolute;inset:0;z-index:1;overflow:hidden}
 .map-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.map-scrim{position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 40%,transparent 55%,rgba(8,20,45,.45));z-index:2}
+/* A-346 R1: stronger tint + vignette so the owner's baked map markers recede →
+   our own clean node layer + golden path is unambiguously the interactive hero. */
+.map-scrim{position:absolute;inset:0;z-index:2;background:
+  linear-gradient(rgba(7,16,40,.34),rgba(7,16,40,.44)),
+  radial-gradient(125% 95% at 50% 42%,transparent 40%,rgba(5,12,32,.66))}
+/* current-node hero "kamu di sini" pin */
+.node-pin{position:absolute;left:50%;top:-46px;transform:translateX(-50%);width:40px;height:40px;
+  border-radius:50%;overflow:hidden;border:3px solid #fff;background:radial-gradient(circle,#bfe0ff,#6ba7ee);
+  box-shadow:0 4px 10px rgba(0,0,0,.4);animation:pinBob 1.3s ease-in-out infinite;z-index:6}
+.node-pin img{width:100%;height:100%;object-fit:cover;object-position:top}
+.node-pin::after{content:'';position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);
+  border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #fff}
+@keyframes pinBob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-6px)}}
 .map-topbar{position:relative;z-index:6;display:flex;align-items:center;gap:8px;
   padding:calc(env(safe-area-inset-top,0) + 8px) 12px 8px}
 .map-title{flex:1;text-align:center;font-family:var(--disp);font-weight:800;font-size:clamp(16px,4.6vw,24px);
@@ -213,6 +225,18 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   border-radius:14px;padding:6px 12px;color:#fff;font-family:var(--disp);font-weight:700;font-size:13px}
 .tool-btn img{width:22px;height:22px}
 .tool-btn:disabled{opacity:.45}
+
+/* A-346 R2 — battle juice: screen shake + combo flash */
+.shake-sm{animation:shakeSm .28s ease}
+.shake-lg{animation:shakeLg .42s ease}
+@keyframes shakeSm{0%,100%{transform:translate(0,0)}25%{transform:translate(-3px,2px)}50%{transform:translate(3px,-2px)}75%{transform:translate(-2px,1px)}}
+@keyframes shakeLg{0%,100%{transform:translate(0,0)}20%{transform:translate(-7px,3px)}40%{transform:translate(6px,-4px)}60%{transform:translate(-5px,2px)}80%{transform:translate(4px,-2px)}}
+.combo-pop{position:fixed;left:50%;top:30%;transform:translateX(-50%);z-index:40;font-family:var(--disp);
+  font-weight:800;font-size:clamp(28px,9vw,54px);color:#ffe884;-webkit-text-stroke:2px #e2661a;
+  text-shadow:0 4px 10px rgba(0,0,0,.45);pointer-events:none;animation:comboPop .75s cubic-bezier(.34,1.56,.64,1)}
+@keyframes comboPop{0%{opacity:0;transform:translateX(-50%) scale(.4)}40%{opacity:1;transform:translateX(-50%) scale(1.15)}100%{opacity:0;transform:translateX(-50%) scale(1) translateY(-22px)}}
+.wrong-vig{position:fixed;inset:0;z-index:38;pointer-events:none;box-shadow:inset 0 0 90px 24px rgba(232,80,63,.55);opacity:0;animation:wrongVig .5s ease}
+@keyframes wrongVig{0%,100%{opacity:0}30%{opacity:1}}
 
 /* ═════ HASIL ═════ */
 #scr-hasil{background:radial-gradient(120% 90% at 50% 0%,#3a74d8,#16305f);align-items:center;justify-content:center}
@@ -560,7 +584,8 @@ function renderPeta(){
     var n=document.createElement('div'); n.className=cls;
     n.style.left=PETA_POS[w-1][0]+'%'; n.style.top=PETA_POS[w-1][1]+'%';
     n.innerHTML='<span class="node-lbl">'+w+'</span>'+(w===WORLDS?'<span class="boss">👹</span>':'')+
-      (wStars>0?'<span class="stars">'+starRow(wStars,SUBS*3)+'</span>':'');
+      (wStars>0?'<span class="stars">'+starRow(wStars,SUBS*3)+'</span>':'')+
+      (isCurrent?'<div class="node-pin"><img src="'+A+'hero-mathhero.webp" alt=""></div>':'');
     (function(world,unlocked){ n.onclick=function(){ sfx('click'); if(!unlocked){ toast('Selesaikan dunia sebelumnya!'); return; } openSub(world); }; })(w,anyUnlocked);
     host.appendChild(n);
   }
@@ -583,7 +608,8 @@ function renderSub(){
     var n=document.createElement('div'); n.className=cls;
     n.style.left=SUB_POS[s-1][0]+'%'; n.style.top=SUB_POS[s-1][1]+'%';
     n.innerHTML='<span class="node-lbl">'+curWorld+'-'+s+'</span>'+(s===SUBS?'<span class="boss">👑</span>':'')+
-      (st>0?'<span class="stars">'+'⭐'.repeat(st)+'</span>':'');
+      (st>0?'<span class="stars">'+'⭐'.repeat(st)+'</span>':'')+
+      (isCurrent?'<div class="node-pin"><img src="'+A+'hero-mathhero.webp" alt=""></div>':'');
     (function(sub,unl){ n.onclick=function(){ sfx('click'); if(!unl){ toast('Terkunci 🔒'); return; } openSkill(sub); }; })(s,unlocked);
     host.appendChild(n);
   }
@@ -683,7 +709,7 @@ function answer(btn,picked,q){
   if(correct){
     btn.classList.add('right'); sfx('correct');
     game.correct++; game.streak++; if(game.streak>game.best) game.best=game.streak;
-    heroAttack(); coinBurst();
+    heroAttack(); coinBurst(); juiceHit(true,game.streak);
     var mult=(game.bonus&&game.bonus.coin)||1;
     var earn=(3+Math.floor(game.streak/2))*mult; econ.coins+=earn; saveEcon();
     if(game.bonus&&game.bonus.fever&&game.streak>=3) byId('qcard').style.boxShadow='0 10px 0 rgba(0,0,0,.16),0 0 24px 4px rgba(255,138,61,.6),inset 0 3px 0 rgba(255,255,255,.7)';
@@ -692,7 +718,7 @@ function answer(btn,picked,q){
     btn.classList.add('wrongc'); sfx('wrong');
     Array.prototype.forEach.call(byId('choices').children,function(b){ if(String(b.textContent)===String(q.ans)) b.classList.add('right'); });
     game.wrong++; game.streak=0; game.hearts--;
-    foeAttack(); renderHearts();
+    foeAttack(); renderHearts(); juiceHit(false,0);
     if(navigator.vibrate) try{ navigator.vibrate([15,40,15]); }catch(e){}
     if(game.hearts<=0){ setTimeout(function(){ finish(true); },900); return; }
   }
@@ -705,6 +731,11 @@ function heroAttack(){ var h=byId('fh-hero'); h.classList.remove('attack-hero');
 function foeAttack(){ var f=byId('fh-foe'); f.classList.remove('attack-foe'); void f.offsetWidth; f.classList.add('attack-foe');
   var h=byId('fh-hero'); setTimeout(function(){ h.classList.remove('hurt'); void h.offsetWidth; h.classList.add('hurt'); },180); }
 function dmgPop(host,txt){ var p=document.createElement('div'); p.className='dmg-pop'; p.textContent=txt; byId(host).appendChild(p); setTimeout(function(){ try{p.remove();}catch(e){} },820); }
+function juiceHit(good,streak){
+  var g=byId('scr-game'); if(g){ g.classList.remove('shake-sm','shake-lg'); void g.offsetWidth; g.classList.add(good?'shake-sm':'shake-lg'); }
+  if(!good){ var v=document.createElement('div'); v.className='wrong-vig'; document.body.appendChild(v); setTimeout(function(){ try{v.remove();}catch(e){} },520); }
+  if(good&&streak>=3){ var c=document.createElement('div'); c.className='combo-pop'; c.textContent='COMBO ×'+streak+'!'; document.body.appendChild(c); setTimeout(function(){ try{c.remove();}catch(e){} },780); }
+}
 function coinBurst(){ /* small coin sparkle */ }
 function useBomb(){
   if(!game||econ.bombs<=0){ toast('Bom habis!'); return; }

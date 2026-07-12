@@ -419,6 +419,7 @@ function g14LaunchSideRace() {
     return
   }
   sessionStorage.setItem('g14-side-train', key)
+  try { localStorage.setItem('dunia_side_train', key) } catch (e) {}  // A-347 durable
   location.href = 'balapan-kereta-side.html'
 }
 </script>
@@ -5770,6 +5771,7 @@ function showTrainsForCat(cat) {
       card.classList.add('sel')
       S.trainCfg = { ...t, category: cat.key, variant: trainV }
       window.selectedTrainKey = t.key  // v55.9 — expose for g14LaunchSideRace (B-206)
+      try { localStorage.setItem('dunia_side_train', t.key) } catch (e) {}  // A-347 durable side-race choice
       document.getElementById('train-name-badge').textContent = t.name
       document.getElementById('go-btn').style.display = 'block'
       // v54.17 A7: 0.4s engine-rev SFX preview keyed by train category.
