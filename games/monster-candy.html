@@ -121,6 +121,7 @@ canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
 <script src="data/save-engine.js?v=20260501h"></script>
 <script src="question-bank.js"></script>
 <script src="data/sfx-engine.js?v=59.9-20260712a"></script><!-- shared coin/answer cues (owner) -->
+<script src="vfx-engine.js?v=59.17-20260712a"></script><!-- shared VFX (combo-milestone pop) -->
 <script>
 // ═══════════════════════════════════════════════════════════
 //  CONFIG
@@ -755,6 +756,8 @@ function showCandyQuiz(candy) {
         spawnCatchFX(candy.x, candy.y, candy.color)
         spawnBubblePop(candy.x, candy.y)
         spawnCategoryFX(candy.x, candy.y, candy.ballType, candy.catName)
+        // shared VFX — extra pop burst at combo milestones (3+ = pop, 5+ = boom)
+        try { if (window.VFX && fxLayer && S.combo >= 3) VFX.pixi(fxLayer, candy.x, candy.y, { variant: S.combo >= 5 ? 'boom' : 'pop', scale: S.combo >= 5 ? 1.2 : 0.95, additive: true }) } catch(_){}
         // Flash button green briefly
         bg.tint = 0x22c55e
         // Combo feedback text
