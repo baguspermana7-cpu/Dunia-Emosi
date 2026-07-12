@@ -157,7 +157,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .hp-fill.foe{background:linear-gradient(90deg,#ff8a6a,var(--red))}
 .hearts{display:flex;gap:2px;justify-content:flex-end}
 .hearts img{width:26px;height:26px}
-.arena{position:relative;z-index:3;flex:0 0 34%;display:flex;align-items:flex-end;justify-content:space-between;padding:0 8%}
+.arena{position:relative;z-index:3;flex:0 0 clamp(44%,50%,56%);display:flex;align-items:flex-end;justify-content:space-between;padding:0 5% 0 6%}
 .fighter{position:relative;text-align:center}
 .fighter::after{content:'';position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);
   width:78%;height:16px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,0,0,.32),transparent 70%);z-index:-1}
@@ -169,12 +169,42 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .hero-side::before{background:linear-gradient(90deg,transparent,rgba(140,220,120,.9),transparent);box-shadow:0 0 12px 2px rgba(120,210,90,.5)}
 #fh-foe::before{background:linear-gradient(90deg,transparent,rgba(255,150,120,.9),transparent);box-shadow:0 0 12px 2px rgba(255,120,90,.5)}
 @keyframes hlPulse{0%,100%{opacity:.55;width:60%}50%{opacity:1;width:70%}}
-.fighter img.sprite,.fighter img.mon-sprite{height:120px;max-height:22vh;filter:drop-shadow(0 10px 12px rgba(0,0,0,.4))}
-.fighter img.mon-sprite{animation:slimeWob 2.2s ease-in-out infinite;transform-origin:50% 100%}
-.fighter .slime{font-size:96px;line-height:1;filter:drop-shadow(0 10px 12px rgba(0,0,0,.4));animation:slimeWob 2s ease-in-out infinite;display:inline-block}
+/* owner: ksatria ≥2×, monster ≥3×. Scale from the feet (transform-origin bottom)
+   so bigger sprites stay grounded. clamp keeps it responsive across tablet/phone. */
+.fighter img.sprite{height:clamp(150px,34vh,300px);max-height:44vh;filter:drop-shadow(0 12px 14px rgba(0,0,0,.45));transform-origin:50% 100%}
+.fighter img.mon-sprite{height:clamp(210px,50vh,420px);max-height:62vh;filter:drop-shadow(0 16px 18px rgba(0,0,0,.5));animation:slimeWob 2.2s ease-in-out infinite;transform-origin:50% 100%}
+.fighter .slime{font-size:clamp(150px,42vh,300px);line-height:1;filter:drop-shadow(0 14px 16px rgba(0,0,0,.45));animation:slimeWob 2s ease-in-out infinite;display:inline-block;transform-origin:50% 100%}
 @keyframes slimeWob{0%,100%{transform:scaleY(1) translateY(0)}50%{transform:scaleY(.94) translateY(-6px)}}
 /* subtle background parallax — driven by one cheap rAF loop (no canvas blur) */
 .bgimg,.map-img{will-change:transform;transform:scale(1.1)}
+/* ── dynamic layered parallax (all transforms, one rAF loop, reduced-motion safe) ── */
+.mp-clouds,.mp-embers,.mp-fg{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.mp-clouds{z-index:2}.mp-embers{z-index:2}.mp-fg{z-index:4}
+.mp-clouds i{position:absolute;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.92),rgba(255,255,255,0));filter:blur(1px);will-change:transform}
+.mp-clouds i:nth-child(1){left:8%;top:12%;width:26%;height:16%}
+.mp-clouds i:nth-child(2){left:52%;top:6%;width:34%;height:20%;opacity:.85}
+.mp-clouds i:nth-child(3){left:30%;top:22%;width:20%;height:12%;opacity:.7}
+.mp-fg .mp-bush{position:absolute;bottom:-3%;width:38%;height:34%;filter:blur(3px);
+  background:radial-gradient(ellipse at 50% 100%,rgba(24,70,36,.6),rgba(24,70,36,0) 68%);will-change:transform}
+.mp-fg .mp-bush.l{left:-8%}.mp-fg .mp-bush.r{right:-8%}
+.mp-embers i{position:absolute;bottom:-4%;width:8px;height:8px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,224,140,.95),rgba(255,170,60,0) 70%);
+  animation:mpEmber linear infinite;will-change:transform,opacity}
+.mp-embers i:nth-child(1){left:18%;animation-duration:7s;animation-delay:0s}
+.mp-embers i:nth-child(2){left:34%;animation-duration:9s;animation-delay:1.4s;width:6px;height:6px}
+.mp-embers i:nth-child(3){left:60%;animation-duration:8s;animation-delay:.7s}
+.mp-embers i:nth-child(4){left:74%;animation-duration:10s;animation-delay:2.2s;width:5px;height:5px}
+.mp-embers i:nth-child(5){left:46%;animation-duration:8.5s;animation-delay:3s}
+.mp-embers i:nth-child(6){left:86%;animation-duration:9.5s;animation-delay:1s;width:6px;height:6px}
+@keyframes mpEmber{0%{transform:translateY(0) scale(.6);opacity:0}
+  12%{opacity:.9}80%{opacity:.7}100%{transform:translateY(-78vh) scale(1);opacity:0}}
+/* menacing soft aura behind the monster (always-on, cheap) */
+#fh-foe{isolation:isolate}
+#fh-foe .mon-aura{position:absolute;left:50%;bottom:6%;transform:translateX(-50%);
+  width:120%;height:78%;z-index:-1;pointer-events:none;border-radius:50%;
+  background:radial-gradient(ellipse at 50% 60%,rgba(168,80,220,.42),rgba(120,40,180,.14) 55%,transparent 72%);
+  filter:blur(6px);animation:monAura 2.8s ease-in-out infinite}
+@keyframes monAura{0%,100%{opacity:.55;transform:translateX(-50%) scale(1)}50%{opacity:.9;transform:translateX(-50%) scale(1.08)}}
 /* per-level bonus banner */
 .bonus-banner{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(180deg,#ffe07a,var(--gold-d));
   color:#5a3d00;font-family:var(--disp);font-weight:800;font-size:14px;padding:6px 16px;border-radius:999px;
@@ -344,7 +374,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @keyframes conf{0%{opacity:1;transform:translateY(0) rotate(0)}100%{opacity:0;transform:translateY(94vh) rotate(720deg)}}
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001s!important;transition-duration:.05s!important}}
-@media (max-width:420px){.br-hero{height:52%}.fighter img.sprite{height:96px}.fighter .slime{font-size:78px}}
+@media (max-width:420px){.br-hero{height:52%}.fighter img.sprite{height:clamp(120px,26vh,220px)}.fighter img.mon-sprite{height:clamp(170px,38vh,300px)}.fighter .slime{font-size:clamp(120px,32vh,220px)}}
+/* short landscape (tablet): keep fighters big but leave room for the qpanel */
+@media (max-height:560px){.arena{flex:0 0 46%}.fighter img.sprite{height:clamp(140px,40vh,260px)}.fighter img.mon-sprite{height:clamp(190px,58vh,360px)}}
 </style>
 </head>
 <body>
@@ -419,7 +451,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <!-- ═════ GAMEPLAY ═════ -->
 <section id="scr-game" class="scr">
   <img class="bgimg" src="../assets/math/bg-battle.webp" alt="">
+  <!-- dynamic parallax layers (perf-safe: transforms driven by ONE rAF loop) -->
+  <div class="mp-clouds" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="mp-embers" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
   <div class="bg-scrim"></div>
+  <div class="mp-fg" aria-hidden="true"><i class="mp-bush l"></i><i class="mp-bush r"></i></div>
   <div class="game-top">
     <button class="icon-btn" onclick="MP.quitGame()">←</button>
     <div class="hp-col">
@@ -430,7 +466,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   </div>
   <div class="arena">
     <div class="fighter hero-side" id="fh-hero"><img class="sprite" src="../assets/math/hero-mathhero.webp" alt=""></div>
-    <div class="fighter" id="fh-foe"><div id="foe-holder"><span class="slime">👾</span></div></div>
+    <div class="fighter" id="fh-foe"><div class="mon-aura"></div><div id="foe-holder"><span class="slime">👾</span></div></div>
   </div>
   <div class="qpanel">
     <div class="qprog"><i id="qprog"></i></div>
@@ -755,10 +791,20 @@ function answer(btn,picked,q){
   game.idx++;
   setTimeout(renderQ,850);
 }
+function elCenter(el){ var r=el.getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height/2}; }
 function heroAttack(){ var h=byId('fh-hero'); h.classList.remove('attack-hero'); void h.offsetWidth; h.classList.add('attack-hero');
-  var f=byId('fh-foe'); setTimeout(function(){ f.classList.remove('hurt'); void f.offsetWidth; f.classList.add('hurt'); },180); }
+  var f=byId('fh-foe');
+  // owner: "efek serangan kepada monster" — swirling charge aura on the knight, a
+  // thrown flame from hero→monster, then a boom bursting ON the monster.
+  try{ if(window.VFX){
+    var hi=h.querySelector('img')||h; VFX.domAura(hi,{fx:'fire-sparks',duration:340,scale:1.25});
+    VFX.domProjectile(elCenter(h),elCenter(f),{fx:'flamethrower',size:70,duration:200,onHit:function(){ fxFoe('boom',1.2); }});
+  } }catch(e){}
+  setTimeout(function(){ f.classList.remove('hurt'); void f.offsetWidth; f.classList.add('hurt'); },180); }
 function foeAttack(){ var f=byId('fh-foe'); f.classList.remove('attack-foe'); void f.offsetWidth; f.classList.add('attack-foe');
-  var h=byId('fh-hero'); setTimeout(function(){ h.classList.remove('hurt'); void h.offsetWidth; h.classList.add('hurt'); },180); }
+  var h=byId('fh-hero');
+  try{ if(window.VFX){ var r=h.getBoundingClientRect(); VFX.dom(r.left+r.width/2,r.top+r.height*0.5,{fx:'sparks',size:Math.max(90,r.width*0.7),blend:'screen'}); } }catch(e){}
+  setTimeout(function(){ h.classList.remove('hurt'); void h.offsetWidth; h.classList.add('hurt'); },180); }
 function dmgPop(host,txt){ var p=document.createElement('div'); p.className='dmg-pop'; p.textContent=txt; byId(host).appendChild(p); setTimeout(function(){ try{p.remove();}catch(e){} },820); }
 // shared VFX burst centered on the foe (defeat explosion / super strike)
 function fxFoe(variant,scale){ try{ if(window.VFX){ var f=byId('fh-foe'); if(!f) return; var r=f.getBoundingClientRect(); VFX.dom(r.left+r.width/2, r.top+r.height/2, {fx:variant, size:Math.max(120, r.width*(scale||1.2)), blend:'screen'}); } }catch(e){} }
@@ -991,6 +1037,16 @@ function goHome(){ window.location.href='../index.html'; }
     var bx=Math.sin(t)*1.1, by=Math.cos(t*.8)*.9;
     var imgs=document.querySelectorAll('.scr.active .bgimg, .scr.active .map-img');
     for(var i=0;i<imgs.length;i++){ imgs[i].style.transform='scale(1.11) translate('+(bx-px*2.4).toFixed(2)+'%,'+(by-py*1.8).toFixed(2)+'%)'; }
+    // A-355c dynamic layered parallax: each depth moves at its own factor
+    var g=document.getElementById('scr-game');
+    if(g&&g.classList.contains('active')){
+      var cx=Math.sin(t*.5)*1.6;                       // slow cloud drift
+      var cl=g.querySelector('.mp-clouds'); if(cl) cl.style.transform='translate('+(cx-px*1.2).toFixed(2)+'%,'+(-py*.8).toFixed(2)+'%)';
+      var fg=g.querySelector('.mp-fg');     if(fg) fg.style.transform='translate('+(-px*5).toFixed(2)+'%,'+(-py*2.2).toFixed(2)+'%)';   // near = strong
+      var em=g.querySelector('.mp-embers'); if(em) em.style.transform='translate('+(-px*3.2).toFixed(2)+'%,0)';
+      // arena gets a gentle counter-tilt for depth (the fighters keep their own bob anims)
+      var ar=g.querySelector('.arena'); if(ar) ar.style.transform='translate('+(px*1.4).toFixed(2)+'%,'+(py*.9).toFixed(2)+'%)';
+    }
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
