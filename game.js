@@ -2716,7 +2716,7 @@ function isVibrateOn(){return localStorage.getItem('dunia-emosi-vibrate')!=='off
 function vibrate(pattern){if(isVibrateOn()&&navigator.vibrate)navigator.vibrate(pattern)}
 function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx}
 function playTone(freq,dur,type='sine',vol=0.2){if(!isSoundOn())return;try{const ctx=getAudio(),osc=ctx.createOscillator(),gain=ctx.createGain();osc.connect(gain);gain.connect(ctx.destination);osc.type=type;osc.frequency.value=freq;gain.gain.setValueAtTime(vol,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);osc.start();osc.stop(ctx.currentTime+dur)}catch(e){}}
-function playCorrect(){playTone(523,0.1,'sine',0.2);setTimeout(()=>playTone(659,0.1,'sine',0.2),100);setTimeout(()=>playTone(784,0.2,'sine',0.25),200);setTimeout(()=>playTone(1047,0.3,'sine',0.2),340);vibrate([20,40,20]);try{spawnCorrectConfetti()}catch(_){}/* Task #87: haptic parity per AUDIT-2026-04-25 P2-6 — double-tap pattern for correct answer engagement */}
+function playCorrect(){if(isSoundOn()&&window.SFXEngine&&SFXEngine.correct){try{SFXEngine.correct()}catch(_){}}else{playTone(523,0.1,'sine',0.2);setTimeout(()=>playTone(659,0.1,'sine',0.2),100);setTimeout(()=>playTone(784,0.2,'sine',0.25),200);setTimeout(()=>playTone(1047,0.3,'sine',0.2),340)}vibrate([20,40,20]);try{spawnCorrectConfetti()}catch(_){}/* Task #87: haptic parity per AUDIT-2026-04-25 P2-6 — double-tap pattern for correct answer engagement */}
 
 // ── Toast notification helper (universal UX feedback pattern) ──
 // Usage: showToast('Saved!', 'success') or showToast('Network error', 'error')
@@ -2791,7 +2791,7 @@ function spawnCorrectConfetti(){
   document.body.appendChild(wrap)
   setTimeout(() => { try { wrap.remove() } catch(_){} }, 2200)
 }
-let _wrongAudio=null;function playWrong(){if(!isSoundOn())return;try{if(!_wrongAudio){_wrongAudio=new Audio('assets/wrong-buzzer.mp3');_wrongAudio.volume=0.7}const a=_wrongAudio.cloneNode();a.volume=0.7;a.play().catch(()=>{playTone(280,0.35,'sawtooth',0.1);setTimeout(()=>playTone(220,0.3,'sawtooth',0.08),150)})}catch(e){playTone(280,0.35,'sawtooth',0.1);setTimeout(()=>playTone(220,0.3,'sawtooth',0.08),150)}}
+let _wrongAudio=null;function playWrong(){if(!isSoundOn())return;if(window.SFXEngine&&SFXEngine.wrong){try{SFXEngine.wrong();return}catch(_){}}try{if(!_wrongAudio){_wrongAudio=new Audio('assets/wrong-buzzer.mp3');_wrongAudio.volume=0.7}const a=_wrongAudio.cloneNode();a.volume=0.7;a.play().catch(()=>{playTone(280,0.35,'sawtooth',0.1);setTimeout(()=>playTone(220,0.3,'sawtooth',0.08),150)})}catch(e){playTone(280,0.35,'sawtooth',0.1);setTimeout(()=>playTone(220,0.3,'sawtooth',0.08),150)}}
 function playClick(){playTone(440,0.06,'sine',0.1)}
 
 // ════════════════════════════════════════════════════════════════════
