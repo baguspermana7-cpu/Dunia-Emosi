@@ -225,7 +225,17 @@
     return opsWeighted[0].op;
   }
 
-  function _maxForLevel (lv, diff) {
+  // Normalize a display operator ('×','÷','−') to an internal op token.
+  function _normOp (op) {
+    if (op === '×') return '*';
+    if (op === '−') return '-';
+    return op; // '+','-','*','÷' pass through
+  }
+
+  function _maxForLevel (lv, diff, override) {
+    // A-344 (2026-07-12): optional per-call cap override (Matematika
+    // Petualangan difficulty ramp). Backward-compatible — undefined = old caps.
+    if (override != null && isFinite(override) && override > 0) return Math.round(override);
     // v55.45 B-233 — owner: "max angka 20. Dan jangan sampai 3 angka." Hard
     // capped at 20 (was 30 at L>20). No operand exceeds 20 in any difficulty;
     // sums stay ≤ 40 = 2 digits, products are sub-capped in _mathAtom.
@@ -237,10 +247,13 @@
 
   // Helper to produce one pure-math (a op b = ans) atom.
   // Returns { a, b, op, ans }. Caller wraps into question shape.
-  function _mathAtom (lv, diff) {
+  function _mathAtom (lv, diff, opts) {
+    var override = opts && opts.maxNum;
+    var forceOp  = opts && opts.forceOp ? _normOp(opts.forceOp) : null;
     var opsWeighted = _opsForLevel(lv, diff);
-    var max = _maxForLevel(lv, diff);
-    var op  = _pickWeightedOp(opsWeighted);
+    var max = _maxForLevel(lv, diff, override);
+    // A-344: Pilih Skill screen can force a single operation to drill.
+    var op  = forceOp || _pickWeightedOp(opsWeighted);
     var a, b, ans;
     if (op === '+') {
       a = _randInt(1, Math.max(1, max - 1));
@@ -338,11 +351,11 @@
 
   // Public V2 entry — `shape` ∈ 'standard' | 'missingOperand' | 'missingOperator'
   // | 'comparison' | 'word' | 'auto' (caller cycles).
-  function makeMathQuestionV2 (level, maxLevel, difficulty, shape) {
+  function makeMathQuestionV2 (level, maxLevel, difficulty, shape, opts) {
     var lv = Math.max(1, parseInt(level) || 1);
     var diff = (difficulty || 'easy').toLowerCase();
     var sh = shape || 'standard';
-    var atom = _mathAtom(lv, diff);
+    var atom = _mathAtom(lv, diff, opts);
 
     if (sh === 'standard') {
       return {
@@ -380,7 +393,7 @@
       // Owner spec: ? at end. Replace with CHAINED 3-operand standard form.
       // a op1 b op2 c = ?  (left-to-right evaluation, integer-only result).
       // Keep the second operator weighted (× stays ~10–15%).
-      var atom2 = _mathAtom(lv, diff);
+      var atom2 = _mathAtom(lv, diff, opts);
       var op2 = atom2.op;
       var c = atom2.b;
       var mid;
@@ -396,11 +409,11 @@
       else if (op2 === '÷') chainedAns = (c === 0) ? NaN : mid / c;
       else chainedAns = mid + c;
       // Validate: integer-only, non-negative, within cap.
-      var capMax = _maxForLevel(lv, diff);
+      var capMax = _maxForLevel(lv, diff, opts && opts.maxNum);
       if (!Number.isFinite(chainedAns) || !Number.isInteger(chainedAns) ||
           chainedAns < 0 || chainedAns > capMax || mid < 0) {
         // Fallback to standard if the chain is messy at this difficulty.
-        return makeMathQuestionV2(level, maxLevel, difficulty, 'standard');
+        return makeMathQuestionV2(level, maxLevel, difficulty, 'standard', opts);
       }
       return {
         shape: 'chained',

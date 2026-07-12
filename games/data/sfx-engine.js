@@ -398,12 +398,105 @@
     }
   }
 
+  // ─── Generic UI-cue subsystem (shared, owner mandate 2026-07-12) ──────
+  // Real cues live at /assets/sfx/*.mp3. Adopted by the math game + the
+  // shared QuizEngine answer handler. SCOPE: question/answer feedback +
+  // general UI ONLY — Pokémon BATTLE SFX (cries + move sounds) stay on the
+  // playPokemonAttack / playMoveByType / playHitFeedback API above. If a
+  // file 404s, a kid-safe WebAudio synth tone is used instead so no game
+  // is left silent. Honours setMute / setVolume. Works without init().
+  var CUE_BASE = (function () {
+    try {
+      var base = (location.pathname.indexOf('/Dunia-Emosi/') === 0) ? '/Dunia-Emosi/' : '/'
+      return base + 'assets/sfx/'
+    } catch (e) { return '/assets/sfx/' }
+  })()
+  var CUE_FILES = {
+    click: 'click.mp3', coin: 'coin.mp3', levelup: 'levelup.mp3',
+    star: 'star.mp3', correct: 'correct.mp3', wrong: 'wrong.mp3',
+    // general gameplay cues (train games: coin pickup, collision, whoosh)
+    crash: 'crash.mp3', swoosh: 'swoosh.mp3', whoosh: 'whoosh.mp3'
+  }
+  var CUE_VOL = {
+    click: 0.5, coin: 0.7, levelup: 0.85, star: 0.72, correct: 0.85, wrong: 0.8,
+    crash: 0.7, swoosh: 0.55, whoosh: 0.55
+  }
+  var _cueFailed = {}      // name → true once the file 404s → synth thereafter
+  var _cueCtx = null
+
+  function _cctx () {
+    if (_cueCtx) return _cueCtx
+    try { _cueCtx = new (window.AudioContext || window.webkitAudioContext)() }
+    catch (e) { _cueCtx = null }
+    return _cueCtx
+  }
+  function _beep (freq, dur, type, vol) {
+    var c = _cctx(); if (!c) return
+    try {
+      var o = c.createOscillator(), g = c.createGain()
+      o.type = type || 'sine'; o.frequency.value = freq
+      g.gain.setValueAtTime(0, c.currentTime)
+      g.gain.linearRampToValueAtTime((vol == null ? 0.15 : vol) * state.volume, c.currentTime + 0.01)
+      g.gain.linearRampToValueAtTime(0, c.currentTime + (dur || 0.15))
+      o.connect(g); g.connect(c.destination)
+      o.start(); o.stop(c.currentTime + (dur || 0.15) + 0.02)
+    } catch (e) {}
+  }
+  function _cueSynth (name) {
+    if (state.muted) return
+    if (name === 'correct') {
+      _beep(523, 0.1, 'triangle', 0.16)
+      setTimeout(function () { _beep(659, 0.1, 'triangle', 0.16) }, 80)
+      setTimeout(function () { _beep(784, 0.16, 'triangle', 0.18) }, 160)
+    } else if (name === 'wrong') {
+      _beep(311, 0.14, 'sawtooth', 0.12)
+      setTimeout(function () { _beep(196, 0.22, 'sawtooth', 0.10) }, 100)
+    } else if (name === 'coin') {
+      _beep(988, 0.06, 'square', 0.12)
+      setTimeout(function () { _beep(1319, 0.10, 'square', 0.12) }, 55)
+    } else if (name === 'levelup') {
+      [523, 659, 784, 1047].forEach(function (f, i) {
+        setTimeout(function () { _beep(f, 0.16, 'triangle', 0.16) }, i * 90)
+      })
+    } else if (name === 'star') {
+      _beep(1047, 0.12, 'triangle', 0.16)
+    } else { // click / unknown
+      _beep(660, 0.05, 'square', 0.10)
+    }
+  }
+
+  function cue (name, opts) {
+    if (state.muted) return null
+    opts = opts || {}
+    attachGestureUnlock()
+    var file = CUE_FILES[name]
+    if (!file || _cueFailed[name]) { _cueSynth(name); return null }
+    var src = CUE_BASE + file
+    var vol = (opts.volume == null) ? (CUE_VOL[name] || 0.7) : opts.volume
+    var a = playAudio(src, vol)
+    if (a) {
+      a.addEventListener('error', function () {
+        _cueFailed[name] = true; _cueSynth(name)
+      }, { once: true })
+    }
+    return a
+  }
+
   // ─── Export ──────────────────────────────────────────────────────────
   global.SFXEngine = {
     init: init,
     playPokemonAttack: playPokemonAttack,
     playMoveByType: playMoveByType,
     playHitFeedback: playHitFeedback,
+    // shared UI cues (question/answer + general UI)
+    cue: cue,
+    click:   function (o) { return cue('click', o) },
+    coin:    function (o) { return cue('coin', o) },
+    levelup: function (o) { return cue('levelup', o) },
+    star:    function (o) { return cue('star', o) },
+    correct: function (o) { return cue('correct', o) },
+    wrong:   function (o) { return cue('wrong', o) },
+    crash:   function (o) { return cue('crash', o) },
     setMute: setMute,
     getMute: getMute,
     setVolume: setVolume,

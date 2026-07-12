@@ -133,6 +133,11 @@
         locked = true
         var chosen = btn.textContent
         var correct = String(chosen) === String(answer)
+        // Shared question/answer SFX cue (owner mandate 2026-07-12). Guarded —
+        // no-op if the SFX engine isn't present. Does NOT touch battle SFX.
+        if (global.SFXEngine && typeof global.SFXEngine.cue === 'function') {
+          try { global.SFXEngine[correct ? 'correct' : 'wrong']() } catch (e) {}
+        }
         Array.prototype.forEach.call(choicesEl.children, function (b) {
           if (String(b.textContent) === String(answer)) b.classList.add('qz-correct')
           else if (b === btn && !correct) b.classList.add('qz-wrong')
