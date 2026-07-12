@@ -7933,7 +7933,23 @@ function initGame12(){
   const p=state.players[state.currentPlayer]
   document.getElementById('g12-player-icon').textContent=p.animal
   document.getElementById('g12-stars').textContent='⭐ 0'
-  const pool=[...SHADOW_ITEMS].sort(()=>Math.random()-0.5).slice(0,DIFF[state.selectedLevel].rounds)
+  const rounds=DIFF[state.selectedLevel].rounds
+  // Mix DB-silhouette picture questions (from DBLabeled) into the emoji shadows —
+  // question shows a black silhouette of real art, choices are readable names.
+  const dbQs=[]
+  try{
+    if(window.DBLabeled){
+      const groups=DBLabeled.groups()
+      const want=Math.max(1,Math.floor(rounds/2)); let guard=0
+      while(dbQs.length<want && guard++<50){
+        const q=DBLabeled.question(groups[Math.floor(Math.random()*groups.length)])
+        if(q) dbQs.push({dbShadow:true,src:q.src,ans:q.answer,choices:q.choices,desc:'Bayangan apa ini?'})
+      }
+    }
+  }catch(e){}
+  const emojiN=Math.max(0,rounds-dbQs.length)
+  const emojiQs=[...SHADOW_ITEMS].sort(()=>Math.random()-0.5).slice(0,emojiN)
+  const pool=[...emojiQs,...dbQs].sort(()=>Math.random()-0.5).slice(0,rounds)
   g12State={pool,idx:0,stars:0,total:pool.length,locked:false}
   document.getElementById('g12-progress-bar').style.width='0%'
   g12ShowQuestion()
@@ -7943,13 +7959,27 @@ function g12ShowQuestion(){
   if(s.idx>=s.pool.length){endGame(s.stars);return}
   const q=s.pool[s.idx]
   s.locked=false
-  document.getElementById('g12-question').textContent=q.desc
   document.getElementById('g12-progress').textContent=`Soal ${s.idx+1}/${s.total}`
   document.getElementById('g12-progress-bar').style.width=`${(s.idx/s.total)*100}%`
-
-  const choices=[{emoji:q.ans,correct:true},...q.wrong.slice(0,3).map(e=>({emoji:e,correct:false}))].sort(()=>Math.random()-0.5)
   const grid=document.getElementById('g12-choices')
   grid.innerHTML=''
+
+  if(q.dbShadow){
+    // DB-silhouette question: black-out the real sprite in the question area, choices are names.
+    const qEl=document.getElementById('g12-question')
+    qEl.innerHTML=`<div style="margin-bottom:8px">${q.desc}</div><img id="g12-shadow-img" src="${q.src}" alt="" style="height:min(24vh,140px);max-width:70%;object-fit:contain;filter:brightness(0);transition:filter .45s ease" onerror="this.style.display='none'">`
+    q.choices.forEach(name=>{
+      const btn=document.createElement('button')
+      btn.className='shadow-btn'
+      btn.innerHTML=`<span style="filter:none;font-size:15px;font-weight:800;line-height:1.15;padding:2px 4px">${name}</span>`
+      btn.onclick=()=>g12Answer(name===q.ans,btn,grid)
+      grid.appendChild(btn)
+    })
+    return
+  }
+
+  document.getElementById('g12-question').textContent=q.desc
+  const choices=[{emoji:q.ans,correct:true},...q.wrong.slice(0,3).map(e=>({emoji:e,correct:false}))].sort(()=>Math.random()-0.5)
   choices.forEach(c=>{
     const btn=document.createElement('button')
     btn.className='shadow-btn'
@@ -7961,6 +7991,8 @@ function g12ShowQuestion(){
 function g12Answer(correct,btn,grid){
   const s=g12State; if(s.locked)return; s.locked=true
   const q=s.pool[s.idx]  // current question (before idx increment)
+  // DB-silhouette: reveal the real coloured art regardless of answer (learning moment)
+  const simg=document.getElementById('g12-shadow-img'); if(simg) simg.style.filter='none'
   grid.querySelectorAll('.shadow-btn').forEach(b=>{
     b.classList.add('revealed')
     const icon=b.querySelector('.shadow-icon')
@@ -7981,9 +8013,15 @@ function g12Answer(correct,btn,grid){
     // Highlight correct answer with card juice (no burst — less celebratory for wrong case)
     const correctBtn = Array.from(grid.querySelectorAll('.shadow-btn.correct'))[0]
     if (correctBtn && correctBtn !== btn) spawnCorrectCardJuice(correctBtn, { burst:false })
-    // Show clue hint in question area
+    // Show clue hint in question area (keep the revealed silhouette img for dbShadow)
     const qEl=document.getElementById('g12-question')
-    if(qEl) qEl.innerHTML=`${q.desc}<br><span style="color:#FBBF24;font-size:12px;font-weight:700">💡 Jawaban: ${q.ans}</span>`
+    if(qEl){
+      if(q.dbShadow){
+        const cap=qEl.querySelector('div'); if(cap) cap.innerHTML=`Bayangan apa ini? <span style="color:#FBBF24;font-size:12px;font-weight:700">💡 ${q.ans}</span>`
+      } else {
+        qEl.innerHTML=`${q.desc}<br><span style="color:#FBBF24;font-size:12px;font-weight:700">💡 Jawaban: ${q.ans}</span>`
+      }
+    }
   }
   s.idx++
   setTimeout(()=>g12ShowQuestion(),1300)
