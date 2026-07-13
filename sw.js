@@ -122,6 +122,24 @@ self.addEventListener('fetch', (e) => {
     return
   }
 
+  // Web App Manifest: NETWORK-FIRST so Chrome's WebAPK update check always sees
+  // the live orientation/display (a stale-cached manifest kept the installed PWA
+  // portrait-locked even after manifest.orientation was set to "any" — P9).
+  if (req.destination === 'manifest' || url.pathname.endsWith('manifest.json')) {
+    e.respondWith(
+      fetch(req)
+        .then((res) => {
+          if (res && res.status === 200 && res.type === 'basic') {
+            const clone = res.clone()
+            caches.open(ASSET_CACHE).then((c) => c.put(req, clone))
+          }
+          return res
+        })
+        .catch(() => caches.match(req))
+    )
+    return
+  }
+
   // Static assets: CACHE-FIRST with stale-while-revalidate
   e.respondWith(
     caches.match(req).then((cached) => {
