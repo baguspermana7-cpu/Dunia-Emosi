@@ -4127,9 +4127,13 @@
         display: flex; flex-direction: column-reverse; align-items: flex-end;
         gap: 4px; max-width: 56%;
       }
-      /* Self (P1) — bottom-left (mirrors .g10-pspr-wrap) */
+      /* Self (P1) — bottom-left (mirrors .g10-pspr-wrap).
+         v59.x P1-clip fix: lift the whole P1 quadrant a bit higher off the arena
+         floor (bottom 4% → 7%) so the sprite + HP card clear the row-3 question
+         zone / dark "Tunggu giliran" overlay instead of jamming against it.
+         Owner: "portrait pokemon 1 tertutup/terpotong area bawah". */
       .bm-arena-self {
-        position: absolute; bottom: 4%; left: 3%; z-index: 2;
+        position: absolute; bottom: 7%; left: 3%; z-index: 4;
         display: flex; flex-direction: column; align-items: flex-start;
         gap: 4px; max-width: 60%;
       }
@@ -4913,6 +4917,18 @@
         .bm-action-label { font-size: clamp(13px, 4.5vh, 16px); }
         .bm-action-sub { display: none; }
         .bm-qzone-wait { font-size: clamp(13px, 5.5vh, 18px); }
+        /* v59.x P1-clip fix (landscape): the arena row is only ~44fr of a short
+           screen, so the full-size sprite + HP card overflowed the arena floor
+           into the bottom question zone / dark overlay. Cap the sprites smaller
+           and lift the P1 quadrant higher so both fighters sit fully inside the
+           arena, clear of both q-zones. Symmetric cap keeps P2 balanced. */
+        .bm-arena-opp-img, .bm-arena-self-img {
+          width: min(30vw, 15vh); height: min(30vw, 15vh);
+        }
+        .bm-arena-opp-sprite, .bm-arena-self-sprite { font-size: clamp(64px, 14vh, 120px); }
+        .bm-arena-self { bottom: 9%; }
+        .bm-arena-opp { top: 9%; }
+        .bm-info-card { min-width: 118px; max-width: 150px; padding: 5px 9px 6px; }
       }
     `;
     const st = document.createElement('style');
