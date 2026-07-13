@@ -102,8 +102,29 @@
     return out
   }
 
+  // P7 — additive helpers (no change to existing API): name lookup, cross-group
+  // search, and a shadow-flagged question for silhouette games (g12).
+  function byName (g, name) {
+    var grp = DATA[g]; if (!grp) return null
+    for (var i = 0; i < grp.items.length; i++) if (grp.items[i][1] === name) {
+      return { cat: grp.cat, n: grp.items[i][0], name: name, src: _src(grp.cat, grp.items[i][0]) }
+    }
+    return null
+  }
+  function find (name) {
+    for (var g in DATA) { if (!DATA.hasOwnProperty(g)) continue
+      var r = byName(g, name); if (r) { r.group = g; return r }
+    }
+    return null
+  }
+  function silhouette (g) {
+    var q = question(g); if (!q) return null
+    q.shadow = true; return q
+  }
+
   W.DBLabeled = {
     groups: groups, label: label, pick: pick, question: question, all: all,
+    byName: byName, find: find, silhouette: silhouette,
     count: function (g) { return DATA[g] ? DATA[g].items.length : 0 },
     total: function () { var t = 0; for (var g in DATA) if (DATA.hasOwnProperty(g)) t += DATA[g].items.length; return t },
     _data: DATA

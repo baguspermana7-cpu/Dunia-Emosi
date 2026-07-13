@@ -86,10 +86,17 @@
     else if (lv <= 5) { maxN = 10; useMinus = false }      // L3-5: 1..10
     else if (lv <= 10) { maxN = 20; useMinus = false }     // L6-10: 1..20, + only
     else { maxN = 20; useMinus = true }                    // L11+: add subtraction
-    var op = (useMinus && Math.random() < 0.5) ? '-' : '+'
+    // P7: opts.ops (array of '+','-','*','÷') lets any adopter offer multi-op /
+    // times-tables while the default stays kid-safe +/-. Unknown ops fall back to '+'.
+    var op
+    if (opts.ops && opts.ops.length) { op = opts.ops[Math.floor(Math.random() * opts.ops.length)] }
+    else { op = (useMinus && Math.random() < 0.5) ? '-' : '+' }
     var a, b, ans
     if (op === '+') { a = randInt(1, maxN); b = randInt(1, maxN); ans = a + b }
-    else { a = randInt(2, maxN); b = randInt(1, a); ans = a - b }   // b ≤ a → never negative
+    else if (op === '-') { a = randInt(2, maxN); b = randInt(1, a); ans = a - b }   // b ≤ a → never negative
+    else if (op === '*' || op === '×') { op = '×'; a = randInt(2, Math.min(9, Math.max(2, Math.round(maxN / 3)))); b = randInt(2, 5); ans = a * b }
+    else if (op === '/' || op === '÷') { op = '÷'; b = randInt(2, 5); ans = randInt(2, Math.min(9, Math.max(2, Math.round(maxN / 3)))); a = ans * b }
+    else { op = '+'; a = randInt(1, maxN); b = randInt(1, maxN); ans = a + b }
     var question = a + ' ' + op + ' ' + b + ' = ?'
     // 3 distractors near the answer (never negative, never duplicate)
     var wrong = {}
