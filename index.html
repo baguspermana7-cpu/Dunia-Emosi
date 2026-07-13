@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dunia Emosi 🐾</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Fredoka+One&family=Baloo+2:wght@600;700;800&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="style.css?v=20260705s">
 
@@ -21,6 +21,257 @@
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+
+<!-- ══════════════════════════════════════════════════════════════════
+     P6 — Claymorphism reskin for learning games g1-g8 GAMEPLAY screens.
+     Matches games/kuis-matematika.html (MATH GAME) theme. ADDITIVE + SCOPED:
+     every rule is nested under #screen-game1 … #screen-game8 so it CANNOT
+     leak into g9-g12, landing, level-select, or any shared component.
+     Landing + level-select are already claymorphism (A-316) — untouched.
+     ══════════════════════════════════════════════════════════════════ -->
+<style id="clay-g1g8">
+:root{
+  --clay-navy:#0e2447;
+  --clay-blue:#2f6bd8; --clay-blue-d:#1e4fa8;
+  --clay-green:#4caf50; --clay-green-d:#2f8f43;
+  --clay-gold:#ffcf3f; --clay-gold-d:#e8a900;
+  --clay-orange:#ff8a3d; --clay-orange-d:#e2661a;
+  --clay-purple:#7b53c9; --clay-purple-d:#5b39a0;
+  --clay-red:#e8503f; --clay-red-d:#b83a2c;
+  --clay-disp:'Baloo 2','Fredoka','Fredoka One',cursive;
+  --clay-body:'Nunito',system-ui,sans-serif;
+}
+
+/* ── Soft radial-navy backdrop on every g1-g8 gameplay screen.
+      Kept as a translucent overlay ON TOP of the existing bg image so the
+      painterly art stays but reads darker/calmer like the math game. ── */
+#screen-game1::after,#screen-game2::after,#screen-game3::after,
+#screen-game4::after,#screen-game5::after,#screen-game6::after,
+#screen-game7::after,#screen-game8::after{
+  content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(120% 90% at 50% 0%,rgba(58,116,216,.30),rgba(14,36,71,.62) 62%,rgba(9,22,50,.78));
+}
+/* keep real content above the wash */
+#screen-game1>*,#screen-game2>*,#screen-game3>*,#screen-game4>*,
+#screen-game5>*,#screen-game6>*,#screen-game7>*,#screen-game8>*{
+  position:relative;z-index:1;
+}
+
+/* ── Shared HUD/header — translucent dark chips + Baloo title ── */
+#screen-game1 .game-header .gh-back,#screen-game1 .game-header .gh-pause,
+#screen-game2 .game-header .gh-back,#screen-game2 .game-header .gh-pause,
+#screen-game3 .game-header .gh-back,#screen-game3 .game-header .gh-pause,
+#screen-game4 .game-header .gh-back,#screen-game4 .game-header .gh-pause,
+#screen-game5 .game-header .gh-back,#screen-game5 .game-header .gh-pause,
+#screen-game6 .game-header .gh-back,#screen-game6 .game-header .gh-pause,
+#screen-game7 .game-header .gh-back,#screen-game7 .game-header .gh-pause,
+#screen-game8 .game-header .gh-back,#screen-game8 .game-header .gh-pause{
+  background:rgba(20,30,55,.60)!important;color:#fff!important;
+  border:2px solid rgba(255,255,255,.30)!important;border-radius:16px!important;
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.2)!important;
+}
+#screen-game1 .gh-title,#screen-game2 .gh-title,#screen-game3 .gh-title,
+#screen-game4 .gh-title,#screen-game5 .gh-title,#screen-game6 .gh-title,
+#screen-game7 .gh-title,#screen-game8 .gh-title{
+  font-family:var(--clay-disp)!important;color:#fff!important;
+  text-shadow:0 2px 6px rgba(0,0,0,.45);
+}
+#screen-game1 .gh-level,#screen-game2 .gh-level,#screen-game3 .gh-level,
+#screen-game4 .gh-level,#screen-game5 .gh-level,#screen-game6 .gh-level,
+#screen-game7 .gh-level,#screen-game8 .gh-level{
+  background:rgba(20,30,55,.60)!important;border:2px solid rgba(255,255,255,.30)!important;
+  color:#fff!important;font-family:var(--clay-disp)!important;
+}
+#screen-game1 .gh-stars,#screen-game2 .gh-stars,#screen-game3 .gh-stars,
+#screen-game4 .gh-stars,#screen-game5 .gh-stars,#screen-game6 .gh-stars,
+#screen-game7 .gh-stars,#screen-game8 .gh-stars{
+  background:linear-gradient(180deg,#ffe07a,var(--clay-gold) 60%,var(--clay-gold-d))!important;
+  color:#5a3d00!important;border:2px solid rgba(255,255,255,.5)!important;
+  box-shadow:0 6px 0 rgba(0,0,0,.20),inset 0 2px 0 rgba(255,255,255,.45)!important;
+  font-family:var(--clay-disp)!important;text-shadow:0 1px 0 rgba(255,255,255,.5);
+}
+
+/* ── Mascot speech bubble → translucent dark chip, white text ── */
+#screen-game1 .mg-bubble,#screen-game2 .mg-bubble,#screen-game3 .mg-bubble,
+#screen-game4 .mg-bubble,#screen-game5 .mg-bubble,#screen-game6 .mg-bubble,
+#screen-game7 .mg-bubble,#screen-game8 .mg-bubble{
+  background:rgba(20,30,55,.62)!important;color:#fff!important;
+  border:2px solid rgba(255,255,255,.30)!important;
+  box-shadow:0 6px 16px rgba(0,0,0,.30),inset 0 2px 0 rgba(255,255,255,.18)!important;
+  font-family:var(--clay-body)!important;
+}
+#screen-game1 .mg-bubble::before,#screen-game2 .mg-bubble::before,
+#screen-game3 .mg-bubble::before,#screen-game4 .mg-bubble::before,
+#screen-game5 .mg-bubble::before,#screen-game6 .mg-bubble::before,
+#screen-game7 .mg-bubble::before,#screen-game8 .mg-bubble::before{
+  border-right-color:rgba(20,30,55,.62)!important;filter:none!important;
+}
+
+/* ── Progress bars / dots → readable on navy ── */
+#screen-game1 .progress-bar-wrap,#screen-game3 .progress-bar-wrap,
+#screen-game4 .progress-bar-wrap,#screen-game7 .progress-bar-wrap,
+#screen-game8 .progress-bar-wrap{
+  background:rgba(20,30,55,.55)!important;border:1.5px solid rgba(255,255,255,.22);
+}
+
+/* ══ Clay choice-button base (shared look for all g1-g8 answer buttons) ══ */
+#screen-game1 .g1-choice-btn,
+#screen-game3 .g3-choice-btn,
+#screen-game4 .g4-choice-btn,
+#screen-game7 .g7-choice-btn{
+  border-radius:20px!important;font-family:var(--clay-disp)!important;color:#fff!important;
+  border:3px solid rgba(255,255,255,.55)!important;
+  box-shadow:0 8px 0 rgba(0,0,0,.20),inset 0 3px 0 rgba(255,255,255,.42),inset 0 -6px 10px rgba(0,0,0,.14)!important;
+  min-height:56px;
+  transition:transform .12s cubic-bezier(.34,1.56,.64,1),box-shadow .12s!important;
+}
+#screen-game1 .g1-choice-btn:active,
+#screen-game3 .g3-choice-btn:active,
+#screen-game4 .g4-choice-btn:active,
+#screen-game7 .g7-choice-btn:active{
+  transform:translateY(5px)!important;
+  box-shadow:0 3px 0 rgba(0,0,0,.20),inset 0 2px 0 rgba(255,255,255,.4)!important;
+}
+
+/* per-position clay colour rotation (blue / green / gold / purple / orange) */
+#screen-game1 .g1-choice-btn:nth-child(4n+1),
+#screen-game3 .g3-choice-btn:nth-child(4n+1),
+#screen-game7 .g7-choice-btn:nth-child(4n+1){
+  background:linear-gradient(180deg,#8cc4ff,var(--clay-blue) 62%,var(--clay-blue-d))!important;}
+#screen-game1 .g1-choice-btn:nth-child(4n+2),
+#screen-game3 .g3-choice-btn:nth-child(4n+2),
+#screen-game7 .g7-choice-btn:nth-child(4n+2){
+  background:linear-gradient(180deg,#a4e07a,var(--clay-green) 60%,var(--clay-green-d))!important;}
+#screen-game1 .g1-choice-btn:nth-child(4n+3),
+#screen-game3 .g3-choice-btn:nth-child(4n+3),
+#screen-game7 .g7-choice-btn:nth-child(4n+3){
+  background:linear-gradient(180deg,#ffe07a,var(--clay-gold) 60%,var(--clay-gold-d))!important;color:#5a3d00!important;text-shadow:0 1px 0 rgba(255,255,255,.5);}
+#screen-game1 .g1-choice-btn:nth-child(4n+4),
+#screen-game3 .g3-choice-btn:nth-child(4n+4),
+#screen-game7 .g7-choice-btn:nth-child(4n+4){
+  background:linear-gradient(180deg,#c3a6ef,var(--clay-purple) 60%,var(--clay-purple-d))!important;}
+
+/* g4 count buttons — clay rotation (override its nth-child solid fills) */
+#screen-game4 .g4-choice-btn:nth-child(1){background:linear-gradient(180deg,#8cc4ff,var(--clay-blue) 62%,var(--clay-blue-d))!important;color:#fff!important;border-color:rgba(255,255,255,.55)!important;box-shadow:0 8px 0 rgba(0,0,0,.20),inset 0 3px 0 rgba(255,255,255,.42),inset 0 -6px 10px rgba(0,0,0,.14)!important;}
+#screen-game4 .g4-choice-btn:nth-child(2){background:linear-gradient(180deg,#a4e07a,var(--clay-green) 60%,var(--clay-green-d))!important;color:#fff!important;border-color:rgba(255,255,255,.55)!important;box-shadow:0 8px 0 rgba(0,0,0,.20),inset 0 3px 0 rgba(255,255,255,.42),inset 0 -6px 10px rgba(0,0,0,.14)!important;}
+#screen-game4 .g4-choice-btn:nth-child(3){background:linear-gradient(180deg,#ffe07a,var(--clay-gold) 60%,var(--clay-gold-d))!important;color:#5a3d00!important;border-color:rgba(255,255,255,.55)!important;box-shadow:0 8px 0 rgba(0,0,0,.20),inset 0 3px 0 rgba(255,255,255,.42),inset 0 -6px 10px rgba(0,0,0,.14)!important;}
+#screen-game4 .g4-choice-btn:nth-child(4){background:linear-gradient(180deg,#c3a6ef,var(--clay-purple) 60%,var(--clay-purple-d))!important;color:#fff!important;border-color:rgba(255,255,255,.55)!important;box-shadow:0 8px 0 rgba(0,0,0,.20),inset 0 3px 0 rgba(255,255,255,.42),inset 0 -6px 10px rgba(0,0,0,.14)!important;}
+#screen-game4 .g4-choice-btn:nth-child(5){background:linear-gradient(180deg,#ffc38a,var(--clay-orange) 60%,var(--clay-orange-d))!important;color:#fff!important;border-color:rgba(255,255,255,.55)!important;box-shadow:0 8px 0 rgba(0,0,0,.20),inset 0 3px 0 rgba(255,255,255,.42),inset 0 -6px 10px rgba(0,0,0,.14)!important;}
+
+/* correct/wrong feedback stays legible on clay */
+#screen-game1 .g1-choice-btn.correct,#screen-game3 .g3-choice-btn.correct,
+#screen-game4 .g4-choice-btn.correct,#screen-game7 .g7-choice-btn.correct{
+  background:linear-gradient(180deg,#a4e07a,var(--clay-green) 60%,var(--clay-green-d))!important;
+  color:#fff!important;border-color:#eaffd6!important;
+  box-shadow:0 8px 0 rgba(0,0,0,.20),0 0 22px rgba(76,175,80,.55),inset 0 3px 0 rgba(255,255,255,.42)!important;}
+#screen-game1 .g1-choice-btn.wrong,#screen-game3 .g3-choice-btn.wrong,
+#screen-game4 .g4-choice-btn.wrong,#screen-game7 .g7-choice-btn.wrong{
+  background:linear-gradient(180deg,#ff9b8f,var(--clay-red) 60%,var(--clay-red-d))!important;
+  color:#fff!important;border-color:#ffd9d3!important;}
+#screen-game1 .g1-choice-btn .choice-label,#screen-game7 .g7-choice-text{color:inherit!important;}
+
+/* ── G1 scenario / tip cards ── */
+#screen-game1 .g1-tip{
+  background:rgba(20,30,55,.62)!important;border-left:6px solid var(--clay-gold)!important;
+  color:#fff!important;border-radius:22px!important;}
+#screen-game1 .g1-tip .tip-text{color:#fff!important;}
+#screen-game1 .g1-question{color:#fff!important;font-family:var(--clay-disp)!important;text-shadow:0 2px 8px rgba(0,0,0,.5);}
+#screen-game1 .g1-progress,#screen-game3 .g3-progress,#screen-game4 .g4-progress,
+#screen-game7 .g7-progress,#screen-game8 .g8-progress{color:rgba(255,255,255,.9)!important;}
+
+/* ── G2 Napas Pelangi ── */
+#screen-game2 .breathe-instruction{color:#fff!important;font-family:var(--clay-disp)!important;text-shadow:0 2px 8px rgba(0,0,0,.5);}
+#screen-game2 .breathe-sub{color:rgba(255,255,255,.85)!important;}
+#screen-game2 .breathe-timer{color:#fff!important;}
+#screen-game2 .breathe-timer-bg{background:rgba(20,30,55,.5)!important;}
+#screen-game2 #g2-start-btn{
+  background:linear-gradient(180deg,#8cc4ff,var(--clay-blue) 62%,var(--clay-blue-d))!important;
+  border:3px solid rgba(255,255,255,.55)!important;border-radius:22px!important;
+  font-family:var(--clay-disp)!important;color:#fff!important;
+  box-shadow:0 8px 0 rgba(0,0,0,.20),inset 0 3px 0 rgba(255,255,255,.42)!important;min-height:56px;}
+#screen-game2 #g2-start-btn:active{transform:translateY(5px)!important;box-shadow:0 3px 0 rgba(0,0,0,.20)!important;}
+
+/* ── G3 Huruf Hutan ── */
+#screen-game3 .g3-word{
+  -webkit-text-fill-color:#fff!important;color:#fff!important;background:none!important;
+  text-shadow:0 2px 8px rgba(0,0,0,.5);font-family:var(--clay-disp)!important;}
+#screen-game3 .g3-hint{color:rgba(255,255,255,.9)!important;}
+#screen-game3 .g3-mode-badge{
+  background:linear-gradient(180deg,#a4e07a,var(--clay-green) 60%,var(--clay-green-d))!important;
+  border:2px solid rgba(255,255,255,.45)!important;box-shadow:0 5px 0 rgba(0,0,0,.20)!important;
+  font-family:var(--clay-disp)!important;}
+
+/* ── G4 Hitung Binatang ── */
+#screen-game4 .g4-question{
+  -webkit-text-fill-color:#fff!important;color:#fff!important;background:none!important;
+  text-shadow:0 2px 8px rgba(0,0,0,.5);font-family:var(--clay-disp)!important;}
+#screen-game4 .g4-animals-grid{
+  background:rgba(20,30,55,.42)!important;border:2px solid rgba(255,255,255,.25)!important;
+  border-radius:22px!important;}
+#screen-game4 .g4-timer-text{color:rgba(255,255,255,.9)!important;}
+#screen-game4 .g4-timer-track{background:rgba(20,30,55,.5)!important;}
+#screen-game4 .g4-mode-btn.active{
+  background:linear-gradient(180deg,#ffe07a,var(--clay-gold) 60%,var(--clay-gold-d))!important;
+  color:#5a3d00!important;border-color:rgba(255,255,255,.55)!important;box-shadow:0 4px 0 rgba(0,0,0,.20)!important;
+  font-family:var(--clay-disp)!important;}
+
+/* ── G5 Memory Pintar ── */
+#screen-game5 .g5-turn-text{color:#fff!important;}
+#screen-game5 .g5-mode-tab,#screen-game5 .g5-sub-tab{font-family:var(--clay-disp)!important;}
+#screen-game5 .g5-mode-tab.active{
+  background:linear-gradient(180deg,#8cc4ff,var(--clay-blue) 62%,var(--clay-blue-d))!important;
+  border:2px solid rgba(255,255,255,.5)!important;box-shadow:0 4px 0 rgba(0,0,0,.22)!important;color:#fff!important;}
+
+/* ── G6 (legacy SPA screen — real g6 lives in games/mobil.html) ── */
+#screen-game6 .g6-map-btn.active{
+  background:linear-gradient(180deg,#ffe07a,var(--clay-gold) 60%,var(--clay-gold-d))!important;
+  color:#5a3d00!important;border-color:rgba(255,255,255,.5)!important;font-family:var(--clay-disp)!important;}
+#screen-game6 .g6-target-word{color:#ffe884!important;font-family:var(--clay-disp)!important;}
+#screen-game6 .g6-score-mid,#screen-game6 .g6-ctrl-btn{font-family:var(--clay-disp)!important;}
+#screen-game6 .g6-ctrl-btn{
+  background:linear-gradient(180deg,#8cc4ff,var(--clay-blue) 62%,var(--clay-blue-d))!important;
+  border:3px solid rgba(255,255,255,.5)!important;color:#fff!important;
+  box-shadow:0 6px 0 rgba(0,0,0,.22)!important;}
+
+/* ── G7 Tebak Gambar ── */
+#screen-game7 .g7-question{
+  -webkit-text-fill-color:#fff!important;color:#fff!important;background:none!important;
+  text-shadow:0 2px 8px rgba(0,0,0,.5);font-family:var(--clay-disp)!important;}
+#screen-game7 .g7-display{
+  background:rgba(255,255,255,.96)!important;border:4px solid rgba(255,255,255,.6)!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.35)!important;border-radius:26px!important;}
+#screen-game7 .g7-mode-badge{
+  background:linear-gradient(180deg,#8cc4ff,var(--clay-blue) 62%,var(--clay-blue-d))!important;
+  border:2px solid rgba(255,255,255,.45)!important;box-shadow:0 4px 0 rgba(0,0,0,.20)!important;
+  font-family:var(--clay-disp)!important;}
+
+/* ── G8 Susun Kata ── */
+#screen-game8 .g8-hint-img{
+  background:rgba(255,255,255,.96)!important;border:4px solid rgba(255,255,255,.6)!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.35)!important;border-radius:28px!important;}
+#screen-game8 .g8-hint-text{color:rgba(255,255,255,.9)!important;}
+#screen-game8 .g8-slot{
+  background:rgba(20,30,55,.55)!important;border:3px solid rgba(255,255,255,.35)!important;
+  color:#fff!important;box-shadow:0 4px 0 rgba(0,0,0,.22)!important;border-radius:16px!important;
+  font-family:var(--clay-disp)!important;}
+#screen-game8 .g8-slot.filled{
+  background:linear-gradient(180deg,#8cc4ff,var(--clay-blue) 62%,var(--clay-blue-d))!important;
+  border-color:rgba(255,255,255,.55)!important;}
+#screen-game8 .g8-slot.correct-flash{
+  background:linear-gradient(180deg,#a4e07a,var(--clay-green) 60%,var(--clay-green-d))!important;
+  color:#fff!important;border-color:#eaffd6!important;}
+#screen-game8 .g8-letter-btn{
+  background:linear-gradient(180deg,#ffe07a,var(--clay-gold) 60%,var(--clay-gold-d))!important;
+  border:3px solid rgba(255,255,255,.55)!important;color:#5a3d00!important;
+  box-shadow:0 6px 0 rgba(0,0,0,.22),inset 0 2px 0 rgba(255,255,255,.45)!important;border-radius:18px!important;
+  font-family:var(--clay-disp)!important;text-shadow:0 1px 0 rgba(255,255,255,.5);}
+#screen-game8 .g8-letter-btn:active{transform:translateY(4px)!important;box-shadow:0 2px 0 rgba(0,0,0,.22)!important;}
+#screen-game8 .g8-backspace-btn{
+  background:linear-gradient(180deg,#ff9b8f,var(--clay-red) 60%,var(--clay-red-d))!important;
+  border:3px solid rgba(255,255,255,.5)!important;color:#fff!important;border-radius:18px!important;
+  box-shadow:0 6px 0 rgba(0,0,0,.22)!important;font-family:var(--clay-disp)!important;}
+</style>
 </head>
 <body>
 <!-- Loading indicator — hidden by JS after page loads -->
