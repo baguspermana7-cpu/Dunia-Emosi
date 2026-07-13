@@ -229,7 +229,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @keyframes dmgFly{0%{opacity:0;transform:translate(-50%,0) scale(.5)}30%{opacity:1;transform:translate(-50%,-30px) scale(1.2)}100%{opacity:0;transform:translate(-50%,-70px)}}
 .qpanel{position:relative;z-index:4;flex:1;display:flex;flex-direction:column;justify-content:flex-start;
   gap:10px;padding:8px 14px calc(env(safe-area-inset-bottom,0) + 14px);
-  background:linear-gradient(180deg,rgba(255,246,223,0),rgba(255,246,223,.0));min-height:0}
+  background:linear-gradient(180deg,rgba(255,246,223,0),rgba(255,246,223,.0));min-height:0;overflow-y:auto}
 .qprog{height:7px;border-radius:5px;background:rgba(255,255,255,.25);overflow:hidden;margin:0 2px}
 .qprog>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--lime),var(--gold),var(--orange));transition:width .35s}
 .qcard{background:var(--cream);border:3px solid #fff;border-radius:22px;padding:14px 18px;text-align:center;
@@ -377,6 +377,27 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @media (max-width:420px){.br-hero{height:52%}.fighter img.sprite{height:clamp(120px,26vh,220px)}.fighter img.mon-sprite{height:clamp(170px,38vh,300px)}.fighter .slime{font-size:clamp(120px,32vh,220px)}}
 /* short landscape (tablet): keep fighters big but leave room for the qpanel */
 @media (max-height:560px){.arena{flex:0 0 46%}.fighter img.sprite{height:clamp(140px,40vh,260px)}.fighter img.mon-sprite{height:clamp(190px,58vh,360px)}}
+/* P3 — landscape: fit the whole question + ALL answer choices on-screen (owner:
+   baris bawah tidak terlihat). Shrink arena + scale fonts to viewport HEIGHT. */
+@media (orientation:landscape) and (max-height:620px){
+  #scr-game .arena{flex:0 0 30%}
+  #scr-game .fighter img.sprite{height:clamp(70px,24vh,140px)}
+  #scr-game .fighter img.mon-sprite{height:clamp(90px,34vh,180px)}
+  #scr-game .fighter .slime{font-size:clamp(72px,28vh,150px)}
+  .qpanel{gap:5px;padding:4px 12px 6px}
+  .super-wrap{height:10px;margin-bottom:3px}
+  .qcard{padding:5px 14px;font-size:clamp(17px,4vh,30px);box-shadow:0 5px 0 rgba(0,0,0,.16),inset 0 3px 0 rgba(255,255,255,.7)}
+  .qcard.word{font-size:clamp(12px,2.8vh,18px)}
+  .choices{gap:6px}
+  .choice{min-height:0;padding:7px 8px;font-size:clamp(15px,3.6vh,24px)}
+  .game-tools{margin-top:0}
+}
+/* very short landscape (≤400px tall phone) — squeeze arena further */
+@media (orientation:landscape) and (max-height:400px){
+  #scr-game .arena{flex:0 0 24%}
+  .qcard{padding:4px 12px;font-size:clamp(15px,3.4vh,24px)}
+  .choice{padding:6px 6px;font-size:clamp(14px,3.2vh,20px)}
+}
 </style>
 </head>
 <body>
@@ -594,7 +615,17 @@ function persist(g,stars){
 
 /* ── difficulty ── */
 function tierFor(g){ if(g<=34) return 'easy'; if(g<=67) return 'medium'; return 'hard'; }
-function maxNumFor(g){ if(g<=20) return 20; if(g<=30) return 25; if(g<=40) return Math.round(25+(g-30)*2.5); return 50; }
+// P8: owner "level 2 udah angka 20an — harusnya ~80% level masih <20". Gentle ramp
+// over the 100 levels (10 worlds × 10 subs): first ~80 stay under 20.
+function maxNumFor(g){
+  if(g<=20) return 10;   // worlds 1-2
+  if(g<=45) return 12;   // worlds 3-4(+)
+  if(g<=65) return 15;   // worlds 5-6(+)
+  if(g<=80) return 18;   // worlds 7-8 — still <20 (≈80% of levels)
+  if(g<=90) return 25;   // world 9
+  if(g<=96) return 40;   // world 10 early
+  return 60;             // Raja Iblis finale
+}
 function qCountFor(g){ var t=tierFor(g); return t==='easy'?6:(t==='medium'?8:10); }
 
 /* ── SFX helpers (shared engine, synth fallback built-in) ── */
@@ -690,12 +721,13 @@ var SKILLS=[
   {op:'*',img:IC+'skill-mul.webp',cap:'Kali'},
   {op:'÷',img:IC+'skill-div.webp',cap:'Bagi'}
 ];
+var skillSel=[];  // P8 — multi-select: chosen operators for this level
 function openSkill(sub){
   curSub=sub; var g=(curWorld-1)*SUBS+sub;
   set('skill-lvl','Level '+curWorld+'-'+sub+'  ·  angka ≤'+maxNumFor(g));
   var mimg=byId('skill-mon'); mimg.style.display=''; mimg.src=monSrc(g);
   var bn=bonusFor(g); byId('skill-bonus').innerHTML=bn.label?('<span class="bonus-banner">'+bn.label+'</span>'):'';
-  var grid=byId('skill-grid'); grid.innerHTML='';
+  var grid=byId('skill-grid'); grid.innerHTML=''; skillSel=[];
   var tier=tierFor(g);
   SKILLS.forEach(function(sk){
     // gate ×/÷ by tier unless the player has reached those worlds
@@ -703,35 +735,54 @@ function openSkill(sub){
     var b=document.createElement('button'); b.className='skill-card clay '+(sk.op==='+'?'green':sk.op==='-'?'blue':sk.op==='*'?'orange':'purple');
     b.innerHTML='<img src="'+sk.img+'" alt=""><span class="cap">'+sk.cap+'</span>';
     if(locked){ b.disabled=true; b.innerHTML+='<span class="cap" style="font-size:10px">🔒 nanti</span>'; }
-    else b.onclick=function(){ sfx('click'); startGame(sk.op); };
+    else b.onclick=function(){ sfx('click'); toggleSkill(sk.op,b); };
     grid.appendChild(b);
   });
-  var mix=document.createElement('button'); mix.className='skill-card clay gold'; mix.style.gridColumn='1 / -1';
+  // P8 — multi-select: pick one or more ops, then Mulai. Campur = all ops.
+  var start=document.createElement('button'); start.id='skill-start'; start.className='skill-card clay gold'; start.style.gridColumn='1 / -1'; start.disabled=true; start.style.opacity='.55';
+  start.innerHTML='<span class="mix">▶</span><span class="cap">Pilih skill dulu</span>';
+  start.onclick=function(){ if(!skillSel.length)return; sfx('click'); startGame(skillSel.slice()); };
+  grid.appendChild(start);
+  var mix=document.createElement('button'); mix.className='skill-card clay purple'; mix.style.gridColumn='1 / -1';
   mix.innerHTML='<span class="mix">🎲</span><span class="cap">Campur (Semua)</span>';
   mix.onclick=function(){ sfx('click'); startGame(null); };
   grid.appendChild(mix);
   show('skill');
 }
+function toggleSkill(op,btn){
+  var i=skillSel.indexOf(op);
+  if(i>=0){ skillSel.splice(i,1); btn.style.outline=''; btn.style.boxShadow=''; }
+  else { skillSel.push(op); btn.style.outline='3px solid #fff'; btn.style.boxShadow='0 0 0 5px rgba(255,255,255,.35)'; }
+  var s=byId('skill-start'); var cap=s.querySelector('.cap');
+  if(skillSel.length){ s.disabled=false; s.style.opacity='1'; cap.textContent='▶ Mulai ('+skillSel.length+' skill)'; }
+  else { s.disabled=true; s.style.opacity='.55'; cap.textContent='Pilih skill dulu'; }
+}
 function backToSub(){ openSub(curWorld); }
 
 /* ── Gameplay ── */
 var game=null;
-function startGame(forceOp){
+function startGame(ops){  // P8: ops = array of chosen operators, or null = campur (all)
+  if(ops&&!(ops instanceof Array)) ops=[ops];  // tolerate a bare op string
   regenEnergy();
   if(econ.energy<LEVEL_COST){ toast('⚡ Energi habis! Tunggu isi ulang atau beli di Toko.'); openModal('shop'); return; }
   econ.energy-=LEVEL_COST; econ.energyTs=(econ.energy===ENERGY_MAX-1)?Date.now():econ.energyTs; saveEcon(); refreshHUD();
   var g=(curWorld-1)*SUBS+curSub, tier=tierFor(g), n=qCountFor(g), mn=maxNumFor(g);
-  var shapes=['standard','missingOperand','missingOperator','comparison','word'];
+  var specific=!!(ops&&ops.length);
+  // P8: when a specific op-set is chosen, drop the inverse shape — its display flips
+  // the operator (+ shown as −, × as ÷) which reads as a different operation and
+  // leaked "pengurangan" into a "Tambah" drill. Campur keeps all shapes.
+  var shapes=specific
+    ? ['standard','missingOperator','comparison','word']
+    : ['standard','missingOperand','missingOperator','comparison','word'];
   var pool=[];
   for(var i=0;i<n;i++){
     var sh=shapes[i%shapes.length];
-    // comparison/word ignore forceOp gracefully inside engine; forced op still honored for arithmetic
-    var q=window.makeMathQuestionV2(g,MAX_LEVEL,tier,sh,{maxNum:mn,forceOp:forceOp});
+    var q=window.makeMathQuestionV2(g,MAX_LEVEL,tier,sh,{maxNum:mn,forceOps:specific?ops:null});
     pool.push(q);
   }
   game={g:g,pool:pool,idx:0,correct:0,wrong:0,streak:0,best:0,hearts:HEARTS_BASE+Math.min(2,econ.extraHearts),foeMax:n,bonus:bonusFor(g),super:0,superReady:false};
   updateSuper();
-  curSkill=forceOp;
+  curSkill=specific?ops.slice():null;
   set('foe-name','👾 Monster '+curWorld+'-'+curSub);
   byId('foe-holder').innerHTML='<img class="mon-sprite" src="'+monSrc(g)+'" alt="" onerror="this.outerHTML=\'<span class=&quot;slime&quot;>'+monFallbackEmoji(g)+'</span>\'">';
   byId('foe-hp').style.width='100%';
@@ -1065,7 +1116,7 @@ document.addEventListener('pointerdown',function armed(){ try{ if(S&&S.cue) S.cu
 window.MP={ show:show, goHome:goHome, openPeta:openPeta, openSub:openSub, openSkill:openSkill, backToSub:backToSub,
   startGame:startGame, useBomb:useBomb, quitGame:quitGame, nextLevel:nextLevel,
   openModal:openModal, closeModal:closeModal, closeTournament:closeTournament, buy:buy,
-  editName:editName, toggleMute:toggleMute };
+  editName:editName, toggleMute:toggleMute, maxNumFor:maxNumFor };
 })();
 </script>
 </body>

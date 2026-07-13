@@ -250,10 +250,17 @@
   function _mathAtom (lv, diff, opts) {
     var override = opts && opts.maxNum;
     var forceOp  = opts && opts.forceOp ? _normOp(opts.forceOp) : null;
+    // P8: multi-select skills — opts.forceOps is an array of chosen operators
+    // (a bare string is tolerated); each atom picks uniformly from the set.
+    var _fo = opts && opts.forceOps;
+    if (_fo && !(_fo instanceof Array)) _fo = [_fo];
+    var forceOps = (_fo && _fo.length) ? _fo.map(_normOp) : null;
     var opsWeighted = _opsForLevel(lv, diff);
     var max = _maxForLevel(lv, diff, override);
-    // A-344: Pilih Skill screen can force a single operation to drill.
-    var op  = forceOp || _pickWeightedOp(opsWeighted);
+    // A-344/P8: Pilih Skill screen can force one op or a chosen set to drill.
+    var op  = forceOp
+      || (forceOps ? forceOps[Math.floor(Math.random() * forceOps.length)] : null)
+      || _pickWeightedOp(opsWeighted);
     var a, b, ans;
     if (op === '+') {
       a = _randInt(1, Math.max(1, max - 1));

@@ -57,11 +57,28 @@ async function run(label, w, h){
   await page.evaluate(()=>MP.openSkill(1));
   await new Promise(r=>setTimeout(r,300));
   const skill = await page.evaluate(()=>({ cards: document.querySelectorAll('#skill-grid .skill-card').length, monShown: document.getElementById('skill-mon').style.display!=='none' }));
-  ok(label+' skill: 5 cards + monster preview', skill.cards===5 && skill.monShown, `cards=${skill.cards}`);
+  ok(label+' skill: 6 cards (4 op + Mulai + Campur) + monster preview', skill.cards===6 && skill.monShown, `cards=${skill.cards}`);
   await page.screenshot({ path:`${OUT}/${label}-4-skill.png` });
 
-  // start game with forced '+' and speed through intro
-  await page.evaluate(()=>MP.startGame('+'));
+  // P8 — op-filter: choosing only '+' must NEVER surface a subtraction display,
+  // and the difficulty ramp keeps ~80% of the 100 levels under maxNum 20.
+  const p8 = await page.evaluate(()=>{
+    let subLeak=0;
+    for(let i=0;i<200;i++){
+      const q=window.makeMathQuestionV2(11,100,'easy',['standard','missingOperator','comparison','word'][i%4],{maxNum:10,forceOps:['+']});
+      // check the OPERATOR field (display text can carry hyphens in Indonesian words)
+      if(/[-−*×÷]/.test(String(q.op||''))) subLeak++;
+    }
+    const mnf=(window.MP&&window.MP.maxNumFor)?window.MP.maxNumFor:null;
+    const ramp=mnf?[10,40,80,90,100].map(g=>mnf(g)):[];
+    let under20=0; if(mnf){ for(let g=1;g<=100;g++){ if(mnf(g)<20) under20++; } }
+    return { subLeak, ramp, under20 };
+  });
+  ok(label+' op-filter: add-only drill has 0 subtraction leak', p8.subLeak===0, `leaks=${p8.subLeak}`);
+  ok(label+' difficulty: ≥80/100 levels keep numbers <20', p8.under20>=80, `under20=${p8.under20} ramp=${p8.ramp}`);
+
+  // start game with forced '+' and speed through intro (array API)
+  await page.evaluate(()=>MP.startGame(['+']));
   await new Promise(r=>setTimeout(r,3400)); // wait full intro (Siap 3 2 1 Mulai ≈2.65s) + renderQ
   const gameState = await page.evaluate(()=>({ choices: document.querySelectorAll('#choices .choice').length, foeImg: !!document.querySelector('#foe-holder img, #foe-holder span'), q: document.getElementById('qcard').textContent, hearts: document.querySelectorAll('#hearts img').length }));
   ok(label+' gameplay renders question + choices + foe', gameState.choices===4 && gameState.foeImg && gameState.q.length>0, `q="${gameState.q}" hearts=${gameState.hearts}`);
