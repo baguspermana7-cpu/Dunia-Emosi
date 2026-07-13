@@ -308,6 +308,8 @@ const S = {
   jumpY: 0,
   jumpVel: 0,
   jumpStartedAt: 0,
+  jumpStartDist: 0,      // P2 — world distance at lift-off (for gap latch-clear)
+  jumpBuffered: false,   // P2 — press while airborne → auto re-jump on land (smoother)
   hp: 3,
   maxHp: 3,
   invincible: 0,
@@ -364,9 +366,10 @@ const GROUND_FILL_COLOR = 0x2e7d32 // grass green
 
 // Physics
 const GRAVITY = 1500              // px/s²
-// A-347: owner "lompatan terlalu tinggi, X pendek" → lower peak + broader forward
-// arc. 880 → peak ≈258px (was 388), airtime ≈1.17s; arc multiplier raised below.
-const JUMP_VELOCITY = 880
+// P2: owner "lompatannya terlalu tinggi + physics kasar". 700 → peak ≈163px,
+// airtime ≈0.93s (~90 world-units forward at ~96 u/s) — still clears the widest
+// gap (≤38) with margin while feeling lower + snappier. (was 880 → peak 258.)
+const JUMP_VELOCITY = 700
 
 // ── INIT ────────────────────────────────────────────────────────────────────
 ;(async () => {
@@ -969,10 +972,11 @@ function g14sTogglePause() {
 
 function g14sJump() {
   if (!S.running || S.paused || S.gameOver) return
-  if (S.jumping) return
+  if (S.jumping) { S.jumpBuffered = true; return }  // P2 — buffer press, fire on land
   S.jumping = true
   S.jumpVel = -JUMP_VELOCITY
   S.jumpStartedAt = S.frame
+  S.jumpStartDist = S.distance
   try { if (typeof playTone === 'function') playTone({ freq: 440, dur: 0.10, vol: 0.10 }) } catch {}
 }
 
@@ -1239,6 +1243,12 @@ function tick(tickerOrDelta) {
       S.jumpVel = 0
       S.jumpingMissed = false
       S.jumping = false
+      // P2 — buffered jump: player pressed mid-air, chain a fresh hop on landing
+      if (S.jumpBuffered) {
+        S.jumpBuffered = false
+        S.jumping = true; S.jumpVel = -JUMP_VELOCITY
+        S.jumpStartedAt = S.frame; S.jumpStartDist = S.distance
+      }
       // v54.90 — Landing dust puff
       spawnLandingDust()
       // A-315 E5 — squash-settle on the landing frame (scale-only; the train's
@@ -1325,20 +1335,27 @@ function tick(tickerOrDelta) {
 
   // B-250 — Gap spawning: trigger a new gap every ~200m after the warm-up zone
   if (S.nextGapAt > 0 && S.distance >= S.nextGapAt && !S.finished) {
-    const gapW = 38 + Math.random() * 20          // 38-58 distance units wide
+    const gapW = 26 + Math.random() * 12          // P2: 26-38 units (was 38-58) — jumpable
     const gapStart = S.distance + 80              // appears 80m ahead (visible on screen)
-    S.gaps.push({ worldStart: gapStart, worldEnd: gapStart + gapW })
+    S.gaps.push({ worldStart: gapStart, worldEnd: gapStart + gapW, cleared: false })
     S.nextGapAt = gapStart + gapW + 200 + Math.random() * 80  // next gap 200-280m later
   }
   // Expire gaps that have fully scrolled past the player
   for (let gi = S.gaps.length - 1; gi >= 0; gi--) {
     if (S.gaps[gi].worldEnd < S.distance - 20) S.gaps.splice(gi, 1)
   }
-  // B-250 — Gap fall detection: if player is over a gap and not airborne → HP loss
-  if (!S.jumping && S.invincible <= 0 && !S.gameOver && !S.finished) {
+  // P2 — Gap fall detection with forgiving latch-clear: if the player is airborne
+  // any time from just before a gap through it, the WHOLE gap counts as cleared
+  // (jump early = safe across — intuitive for kids). Only a fully-grounded pass
+  // over an un-cleared gap costs HP.
+  if (S.invincible <= 0 && !S.gameOver && !S.finished) {
+    const airborne = S.jumping || S.jumpY < -2
     for (const g of S.gaps) {
+      if (!g.cleared && airborne && S.distance > g.worldStart - 24 && S.distance < g.worldEnd) {
+        g.cleared = true   // latch: airborne at/near the gap → cleared for good
+      }
       // 4m tolerance at edges avoids punishing the very boundary of a gap
-      if (S.distance > g.worldStart + 4 && S.distance < g.worldEnd - 4) {
+      if (!g.cleared && !airborne && S.distance > g.worldStart + 4 && S.distance < g.worldEnd - 4) {
         S.hp = Math.max(0, S.hp - 1)
         S.invincible = 2.4  // 2.4s invincibility — enough to cross any gap safely
         try { if (window.SFXEngine && SFXEngine.crash) SFXEngine.crash(); else if (typeof playTone === 'function') playTone({ freq: 200, dur: 0.22, vol: 0.14 }) } catch {}
