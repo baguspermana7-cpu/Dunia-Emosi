@@ -1014,19 +1014,35 @@ function claimDaily(i){
   econ.daily.streak=(econ.daily.streak||0)+1; econ.daily.lastClaim=today;
   saveEcon(); sfx('coin'); refreshHUD(); renderDaily(); toast('+'+(r.c||0)+'🪙'+(r.g?' +'+r.g+'💎':'')+' 🎉'); confetti(30);
 }
-/* Tournament */
+/* Tournament — P5: 2-round knockout bracket (Semifinal → Final) vs AI opponents,
+   each round a timed answer-sprint; win by out-scoring your opponent. */
 var tourn=null;
+var TZ_ROUNDS=[{name:'Semifinal',sec:25},{name:'Final',sec:25}];
 function renderTournamentIntro(){
-  byId('tourn-body').innerHTML='<div class="tourn-run"><p style="font-weight:800;color:var(--ink-soft);margin-bottom:14px">Jawab sebanyak mungkin dalam 60 detik! Dapat 🏆 dari skormu.</p>'+
+  var pool=BOTS.slice().sort(function(){return Math.random()-0.5;});
+  var bots=pool.slice(0,3);
+  tourn={round:0,bots:bots,semiOpp:bots[0],finalOpp:bots[1]};
+  byId('tourn-body').innerHTML='<div class="tourn-run">'+
+    '<p style="font-weight:800;color:var(--ink-soft);margin-bottom:8px">🏆 Turnamen 2 ronde! Menangi tiap ronde dengan skor lebih tinggi dari lawan. Juara dapat 💎 + 🏆 besar!</p>'+
+    '<div style="display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;font-weight:800;color:var(--ink)">'+
+      '<span style="background:linear-gradient(180deg,#a4e07a,#4caf50);color:#fff;border-radius:14px;padding:6px 12px">🧒 '+escapeHtml(econ.name)+'</span>'+
+      '<span style="color:var(--ink-soft)">🆚</span>'+
+      '<span style="background:rgba(20,30,55,.55);color:#fff;border-radius:14px;padding:6px 12px">🤖 '+bots[0]+'</span>'+
+      '<span style="color:var(--ink-soft)">→</span>'+
+      '<span style="background:linear-gradient(180deg,#ffe07a,#ffcf3f);color:#5a3d00;border-radius:14px;padding:6px 12px">🏁 Final</span>'+
+    '</div>'+
     '<button class="clay gold" style="padding:14px 30px;font-size:18px" id="tourn-start">▶ Mulai Turnamen</button></div>';
-  byId('tourn-start').onclick=startTournament;
+  byId('tourn-start').onclick=tzStartRound;
 }
-function startTournament(){
-  tourn={score:0,left:60,q:null};
-  var body=byId('tourn-body');
-  body.innerHTML='<div class="tourn-run"><div class="tourn-timer" id="t-timer">60</div><div class="tourn-score">Skor: <span id="t-score">0</span></div>'+
+function tzStartRound(){
+  var r=TZ_ROUNDS[tourn.round];
+  var opp=tourn.round===0?tourn.semiOpp:tourn.finalOpp;
+  tourn.score=0; tourn.left=r.sec; tourn.q=null;
+  byId('tourn-body').innerHTML='<div class="tourn-run">'+
+    '<div style="font-weight:800;color:var(--purple-d);margin-bottom:4px">'+r.name+' — 🧒 vs 🤖 '+opp+'</div>'+
+    '<div class="tourn-timer" id="t-timer">'+r.sec+'</div><div class="tourn-score">Skor: <span id="t-score">0</span></div>'+
     '<div class="qcard" id="t-card" style="font-size:30px">…</div><div class="choices" id="t-choices" style="margin-top:10px"></div></div>';
-  tourn.iv=setInterval(function(){ tourn.left--; set('t-timer',tourn.left); if(tourn.left<=0) endTournament(); },1000);
+  tourn.iv=setInterval(function(){ tourn.left--; set('t-timer',tourn.left); if(tourn.left<=0) tzEndRound(); },1000);
   tournNext();
 }
 function tournNext(){
@@ -1036,16 +1052,37 @@ function tournNext(){
     b.onclick=function(){ if(String(c)===String(q.ans)){ tourn.score++; set('t-score',tourn.score); sfx('correct'); } else { sfx('wrong'); } tournNext(); };
     ch.appendChild(b); });
 }
-function endTournament(){
+function tzEndRound(){
   clearInterval(tourn.iv);
-  var tr=Math.max(1,Math.floor(tourn.score/3)); econ.trophies+=tr;
-  postLeaderboard(tourn.score); econ.stats.played++; saveEcon(); refreshHUD();
-  byId('tourn-body').innerHTML='<div class="tourn-run"><div class="tourn-timer" style="color:var(--purple-d)">Selesai!</div>'+
-    '<p style="font-weight:800;font-size:18px;margin:8px 0">Skor '+tourn.score+' → '+pkIcon('item/trophy',24)+' +'+tr+' trofi</p>'+
-    '<button class="clay green" style="padding:12px 26px" onclick="MP.openModal(\'rank\')">🏅 Lihat Peringkat</button></div>';
-  sfx('levelup'); confetti(40); tourn=null;
+  var opp=tourn.round===0?tourn.semiOpp:tourn.finalOpp;
+  // AI opponent score: scales with round, small trophy handicap, randomized band.
+  var base=tourn.round===0?6:9;
+  var oppScore=base+Math.floor(Math.random()*5)+Math.min(4,Math.floor(econ.trophies/20));
+  var win=tourn.score>=oppScore;
+  var body=byId('tourn-body');
+  if(win && tourn.round<TZ_ROUNDS.length-1){
+    tourn.round++;
+    body.innerHTML='<div class="tourn-run"><div class="tourn-timer" style="color:var(--green-d)">Menang! ✓</div>'+
+      '<p style="font-weight:800;margin:8px 0">Kamu '+tourn.score+' — 🤖 '+opp+' '+oppScore+'</p>'+
+      '<button class="clay gold" style="padding:12px 26px" id="tz-next">▶ Lanjut ke Final</button></div>';
+    byId('tz-next').onclick=tzStartRound; sfx('correct'); confetti(24);
+  } else if(win){
+    var tr=8+Math.floor(tourn.score/2), gem=3;
+    econ.trophies+=tr; econ.gems+=gem; postLeaderboard(tourn.score); econ.stats.played++; saveEcon(); refreshHUD();
+    body.innerHTML='<div class="tourn-run"><div class="tourn-timer" style="color:var(--gold-d)">🏆 JUARA!</div>'+
+      '<p style="font-weight:800;font-size:18px;margin:8px 0">Skor final '+tourn.score+' → '+pkIcon('item/trophy',22)+' +'+tr+'  +'+gem+' 💎</p>'+
+      '<button class="clay green" style="padding:12px 26px" onclick="MP.openModal(\'rank\')">🏅 Lihat Peringkat</button></div>';
+    sfx('levelup'); confetti(50); tourn=null;
+  } else {
+    var cons=Math.max(1,Math.floor(tourn.score/3));
+    econ.trophies+=cons; postLeaderboard(tourn.score); econ.stats.played++; saveEcon(); refreshHUD();
+    body.innerHTML='<div class="tourn-run"><div class="tourn-timer" style="color:var(--red)">Kalah 😢</div>'+
+      '<p style="font-weight:800;margin:8px 0">Kamu '+tourn.score+' — 🤖 '+opp+' '+oppScore+' · +'+cons+' 🏆 hiburan</p>'+
+      '<button class="clay blue" style="padding:12px 26px" onclick="MP.openModal(\'turnamen\')">🔁 Coba Lagi</button></div>';
+    sfx('wrong'); tourn=null;
+  }
 }
-function closeTournament(){ if(tourn){ clearInterval(tourn.iv); tourn=null; } closeModal(); }
+function closeTournament(){ if(tourn){ if(tourn.iv)clearInterval(tourn.iv); tourn=null; } closeModal(); }
 /* Leaderboard (player + seeded bots) */
 var BOTS=['Andi','Bima','Citra','Dewi','Eka','Fajar','Gita','Hana','Ivan'];
 function postLeaderboard(score){ try{ var b=+localStorage.getItem('mp_best')||0; if(score>b) localStorage.setItem('mp_best',score); }catch(e){} }
