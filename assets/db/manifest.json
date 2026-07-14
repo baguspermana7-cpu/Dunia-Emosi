@@ -638,5 +638,53 @@
       ]
     }
   },
-  "total": 600
+  "total": 600,
+  "words": {
+    "count": 108,
+    "empty": [],
+    "cols": 18,
+    "rows": 6
+  },
+  "count": {
+    "count": 108,
+    "empty": [],
+    "cols": 18,
+    "rows": 6
+  },
+  "breathe": {
+    "count": 108,
+    "empty": [],
+    "cols": 18,
+    "rows": 6
+  },
+  "vehicles2": {
+    "count": 108,
+    "empty": [],
+    "cols": 18,
+    "rows": 6
+  },
+  "science2": {
+    "count": 108,
+    "empty": [],
+    "cols": 18,
+    "rows": 6
+  },
+  "faces2": {
+    "count": 108,
+    "empty": [],
+    "cols": 18,
+    "rows": 6
+  },
+  "faces2b": {
+    "count": 100,
+    "empty": [],
+    "cols": 10,
+    "rows": 10
+  },
+  "letters": {
+    "count": 100,
+    "empty": [],
+    "cols": 10,
+    "rows": 10
+  }
 }
