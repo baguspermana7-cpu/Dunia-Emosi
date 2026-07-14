@@ -1,0 +1,18 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GameShell smoke</title>
+<style>html,body{margin:0;height:100%;background:#222}#host{position:fixed;inset:0}</style>
+</head><body>
+<div id="host"></div>
+<script src="game-shell.js"></script>
+<script>
+  var hud = GameShell.mount(document.getElementById('host'), {
+    title:'HURUF HUTAN', icon:'🔤', theme:'jungle2', level:1, coin:12,
+    mascot:{emoji:'🐸'}, hero:{emoji:'🦊'},
+    onHome:function(){}, onBack:function(){}, onPause:function(){}, onProfile:function(){}
+  })
+  hud.setCombo(3); hud.setProgress(2,6); hud.say('Kata apa ini? Susun hurufnya!')
+  hud.heroCheer('Ayo Hebat! Kamu bisa!')
+  window.__shellReady = true
+</script>
+</body></html>
