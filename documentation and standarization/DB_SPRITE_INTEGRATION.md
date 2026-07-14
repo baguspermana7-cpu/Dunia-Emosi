@@ -56,6 +56,24 @@ were skipped because `benda` already owns `Lampu`/`Pohon`/`Bunga`).
 (objects has no vegetables; `faces` 31–60 is one repeated character), so their
 g5 sub-modes stay on the existing emoji sets. This is intentional.
 
+## Asset-usage optimality (P10 audit, 2026-07-13)
+
+Owner: "pastikan sprite database, vfx database gif dll digunakan se-optimal mungkin."
+State of the pipeline (already optimal where noted):
+- **Formats:** all DB + VFX assets are WebP (A-357); >260KB gate `audit-image-formats.mjs`.
+- **VFX load:** `vfx-engine.js loadTex()` memoizes per-effect (`_tex`/`_pending`) and lazy-loads
+  on first `burst`/`aura` — no re-fetch, no eager preload. Frame counts in the REGISTRY match disk.
+- **DB img decode:** g1/g4/g5/g7/g12 `<img>` carry `decoding="async"` (+ `loading="lazy"` on the
+  off-screen match-grid + bubble sprites); the active g7 question image loads eagerly.
+- **Coverage:** creatures/objects/vehicles/faces/science all rendered (g4/g5/g7/g12). VFX registry
+  effects are all callable presets (incl. `spark1`) — available to games; none is broken.
+
+**Documented reserve / exceptions (not a regression):**
+- `assets/db/elements` (100 sprites) = RPG/economy **UI icons** (coin/gem/heart/star/trophy/chest/…),
+  NOT quiz-able content. Kept as a reserve icon set (alternative to `assets/math/icons`); intentionally
+  not wired into a game. If adopted later for economy theming, un-reserve here.
+- `sayur` / `profesi` stay emoji (no clean DB set) — see above.
+
 ## Gates
 
 - `tools/qa-g12-dbshadow.mjs` — silhouette renders + reveals, 4 name choices, emoji path intact, 0 errors.

@@ -3035,7 +3035,7 @@ function nextG1Round(){
   // games); falls back to the emoji if the sprite is unavailable.
   const _faceSrc = emoFaceSrc(correct.name)
   const _bubble = _faceSrc
-    ? `<img class="g1-emot-bubble" src="${_faceSrc}" alt="" style="object-fit:contain" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'g1-emot-bubble',textContent:'${correct.emoji}'}))">`
+    ? `<img class="g1-emot-bubble" src="${_faceSrc}" alt="" loading="lazy" decoding="async" style="object-fit:contain" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'g1-emot-bubble',textContent:'${correct.emoji}'}))">`
     : `<span class="g1-emot-bubble">${correct.emoji}</span>`
   document.getElementById('g1-animal').innerHTML=`<span class="g1-char ${_emoClass}" style="filter:drop-shadow(0 0 28px ${moodColor}99) drop-shadow(0 8px 16px rgba(0,0,0,0.18));">${correct.animal}</span>${_bubble}`
   document.getElementById('g1-progress-bar').style.width=((roundInSet/g1State.maxRound)*100)+'%'
@@ -3540,9 +3540,9 @@ function renderG5Grid(){
         back=`<span style="font-size:52px;line-height:1">${card.emoji}</span>`
       }
     } else if(g5SubMode==='emosi' && card.faceSrc){
-      back=`<img src="${card.faceSrc}" alt="" style="width:60px;height:60px;object-fit:contain" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'card-emoji',textContent:'${card.emoji}'}))"><span class="card-label" style="font-size:13px">${card.label}</span>`
+      back=`<img src="${card.faceSrc}" alt="" loading="lazy" decoding="async" style="width:60px;height:60px;object-fit:contain" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'card-emoji',textContent:'${card.emoji}'}))"><span class="card-label" style="font-size:13px">${card.label}</span>`
     } else if(card.dbsrc){
-      back=`<img src="${card.dbsrc}" alt="" style="width:64px;height:64px;object-fit:contain">${card.label?`<span class="card-label" style="font-size:12px">${card.label}</span>`:''}`
+      back=`<img src="${card.dbsrc}" alt="" loading="lazy" decoding="async" style="width:64px;height:64px;object-fit:contain">${card.label?`<span class="card-label" style="font-size:12px">${card.label}</span>`:''}`
     } else {
       const isLetter=card.cardSide==='A'&&typeof card.id==='string'&&card.id.startsWith('l')
       const eStyle=isLetter?'font-size:48px;font-weight:900;color:#8B5CF6;font-family:var(--font);line-height:1':''
@@ -4179,7 +4179,7 @@ function nextG7Round() {
   displayEl.classList.remove('anim-correct')
   if(g7State.mode==='img2word'){
     if(correct.dbsrc){
-      displayEl.innerHTML=`<img src="${correct.dbsrc}" alt="" style="height:min(30vh,180px);max-width:80%;object-fit:contain;filter:drop-shadow(0 8px 12px rgba(0,0,0,.25))" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'🖼️',style:'font-size:120px'}))">`
+      displayEl.innerHTML=`<img src="${correct.dbsrc}" alt="" decoding="async" style="height:min(30vh,180px);max-width:80%;object-fit:contain;filter:drop-shadow(0 8px 12px rgba(0,0,0,.25))" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'🖼️',style:'font-size:120px'}))">`
     } else {
       displayEl.innerHTML=`<span style="font-size:min(28vw,min(28vh,140px));line-height:1.1;display:flex;align-items:center;justify-content:center;padding:8%">${correct.emoji}</span>`
     }
