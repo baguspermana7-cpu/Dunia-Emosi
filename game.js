@@ -3232,10 +3232,15 @@ function nextG3Round(){
   document.getElementById('g3-animal').textContent=item.animal
   document.getElementById('g3-progress-bar').style.width=((roundInSet/g3State.maxRound)*100)+'%'
   if(isLetterMode){
-    document.getElementById('g3-word').innerHTML=item.word.split('').map((ch,i)=>i===0?`<span class="g3-letter g3-blank" id="g3-ltr-${i}">_</span>`:`<span class="g3-letter" id="g3-ltr-${i}">${ch}</span>`).join('')
+    // Blank a RANDOM position (was always the first letter → trivially predictable).
+    // Easy stays position 0 for the youngest; medium/hard blank anywhere. Words are
+    // ALL-CAPS so the blanked char already matches the uppercase choice buttons.
+    const _bp=(state.selectedLevel==='easy')?0:Math.floor(Math.random()*item.word.length)
+    g3State.blankPos=_bp; const _ans=item.word[_bp]
+    document.getElementById('g3-word').innerHTML=item.word.split('').map((ch,i)=>i===_bp?`<span class="g3-letter g3-blank" id="g3-ltr-${i}">_</span>`:`<span class="g3-letter" id="g3-ltr-${i}">${ch}</span>`).join('')
     document.getElementById('g3-hint').textContent=`💡 ${item.hint}`
-    const wrongLetters=ALL_LETTERS.split('').filter(l=>l!==item.letter).sort(()=>Math.random()-0.5).slice(0,numChoices-1)
-    renderG3Choices([item.letter,...wrongLetters].sort(()=>Math.random()-0.5),item.letter,false,numChoices)
+    const wrongLetters=ALL_LETTERS.split('').filter(l=>l!==_ans).sort(()=>Math.random()-0.5).slice(0,numChoices-1)
+    renderG3Choices([_ans,...wrongLetters].sort(()=>Math.random()-0.5),_ans,false,numChoices)
   } else {
     const maxNum=state.selectedLevel==='hard'?9:8,displayCount=Math.min(item.num,9)
     document.getElementById('g3-word').textContent=item.animal.repeat(displayCount)
@@ -3269,7 +3274,7 @@ function renderG3Choices(choices,correctVal,isNum,numChoices){
         }
         setTimeout(nextG3Round,2000)
       }else{
-        if(g3State.isLetterMode){const ltr=document.getElementById('g3-ltr-0');if(ltr){ltr.classList.remove('g3-blank');ltr.textContent=g3State.currentItem.word[0];ltr.classList.add('highlight')}}
+        if(g3State.isLetterMode){const bp=g3State.blankPos||0;const ltr=document.getElementById('g3-ltr-'+bp);if(ltr){ltr.classList.remove('g3-blank');ltr.textContent=g3State.currentItem.word[bp];ltr.classList.add('highlight')}}
         playCorrect();spawnCorrectCardJuice(btn);quizStreakHit(btn);addStars(1,btn);flashScreen('green');g3State.correct++
         setTimeout(nextG3Round,1300)
       }
@@ -3778,8 +3783,8 @@ function flipG5Card(idx,el){
   setTimeout(()=>{
     el.classList.remove('tapping')
     card.flipped=true; el.classList.add('flipped'); playClick(); g5State.flipped.push(idx)
-    if(g5State.flipped.length===2){g5State.locked=true;setTimeout(checkG5Match,900)}
-  },130)
+    if(g5State.flipped.length===2){g5State.locked=true;setTimeout(checkG5Match,700)}
+  },70)
 }
 function checkG5Match(){
   const[i1,i2]=g5State.flipped,c1=g5State.cards[i1],c2=g5State.cards[i2]
@@ -4241,7 +4246,9 @@ function answerG7(isCorrect,btn,correct){
     spawnCorrectCardJuice(btn); quizStreakHit(btn); spawnSparkles(btn); flashScreen('green')
     // Pop the display image
     const dispEl=document.getElementById('g7-display')
-    if(dispEl){dispEl.classList.remove('anim-correct');void dispEl.offsetWidth;dispEl.classList.add('anim-correct')}
+    if(dispEl){dispEl.classList.remove('anim-correct');void dispEl.offsetWidth;dispEl.classList.add('anim-correct')
+      if(_quizStreak>=3){try{spawnSparkles(dispEl,_quizStreak>=5?8:5)}catch(e){}}  // combo celebration on the picture
+    }
     // Show syllable breakdown on correct answer
     if(correct.suku && qEl){
       const parts=correct.suku.split('-')
