@@ -7676,6 +7676,18 @@ function initGame11(){
   document.getElementById('g11-progress-bar').style.width='0%'
   g11ShowQuestion()
 }
+// g11 — upgrade the question emoji to a crisp DB sprite when confidently mapped
+// (existing art: science/creatures/objects). Additive; emoji fallback on 404.
+const G11_EMOJI_SPRITE={
+  '☀️':['science',1],'🌙':['science',2],'⭐':['science',3],'🌍':['science',4],'🔭':['science',8],
+  '🧲':['science',10],'🔋':['science',11],'🌋':['science',16],'🏔️':['science',17],'🌈':['science',18],
+  '☁️':['science',19],'❄️':['science',22],'💧':['science',25],'🔥':['science',26],'🧊':['science',27],
+  '🌳':['science',29],'🍃':['science',30],'🌸':['science',31],'🌱':['science',32],'🌵':['science',34],'🍄':['science',35],
+  '🍎':['objects',1],'🍌':['objects',2],
+  '🐔':['creatures',1],'🐣':['creatures',1],'🐕':['creatures',12],'🐶':['creatures',12],'🐘':['creatures',31],
+  '🦁':['creatures',28],'🐄':['creatures',37],'🐒':['creatures',42],'🐟':['creatures',51],'🐬':['creatures',53],
+  '🐢':['creatures',57],'🐸':['creatures',58]
+}
 function g11ShowQuestion(){
   const s=g11State
   // Hide explain/lanjut on each new question
@@ -7685,7 +7697,13 @@ function g11ShowQuestion(){
   if(lanjutEl) lanjutEl.style.display='none'
   if(s.idx>=s.pool.length){endGame(s.stars);return}
   const q=s.pool[s.idx]
-  document.getElementById('g11-emoji').textContent=q.emoji
+  const emEl=document.getElementById('g11-emoji')
+  const spr=G11_EMOJI_SPRITE[q.emoji]
+  if(spr && window.DBSprites){
+    emEl.innerHTML=`<img src="${DBSprites.path(spr[0],spr[1])}" alt="" decoding="async" style="width:92px;height:92px;object-fit:contain;filter:drop-shadow(0 6px 10px rgba(0,0,0,.28))" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'${q.emoji}'}))">`
+  } else {
+    emEl.textContent=q.emoji
+  }
   document.getElementById('g11-question').textContent=q.q
   document.getElementById('g11-progress-bar').style.width=`${(s.idx/s.total)*100}%`
   const ch=document.getElementById('g11-choices')
