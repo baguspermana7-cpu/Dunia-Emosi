@@ -3331,7 +3331,12 @@ function nextG4Round(){
   const wrongs=new Set()
   while(wrongs.size<g4State.choices-1){const r=Math.max(1,Math.min(maxCount,g4State.currentCount+Math.floor(Math.random()*6)-3));if(r!==g4State.currentCount)wrongs.add(r)}
   g4State.currentChoices=[g4State.currentCount,...[...wrongs]].sort(()=>Math.random()-0.5)
-  renderG4Content(); startG4Timer()
+  // Fairness: items animate in staggered (i*55ms). Start the timer only AFTER the
+  // last item has appeared so the kid isn't losing time counting invisible items.
+  renderG4Content()
+  const enterMs=Math.min(1000,(g4State.currentCount||1)*55+220)
+  document.getElementById('g4-timer-text').textContent='Siap… 👀'
+  clearTimeout(state.g4StartTO); state.g4StartTO=setTimeout(startG4Timer,enterMs)
 }
 function renderG4Content(){
   const {currentCount:count,currentAnimal,currentPoke,pokemonMode,choices:numChoices}=g4State
