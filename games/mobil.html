@@ -656,14 +656,17 @@ function buildCar() {
 function tickCar(delta) {
   if (!carContainer) return
 
+  // Frame-rate-independent, spike-safe easing (exp damp) — was dx*0.20*delta which
+  // jittered/overshot on throttled tablets (delta spikes). Smoother lane change.
+  const dtSec = Math.min(delta / 60, 0.05)
   const targetX = laneXs[S.carTargetLane]
   const dx = targetX - carContainer.x
-  carContainer.x += dx * 0.20 * delta
+  carContainer.x = targetX + (carContainer.x - targetX) * Math.exp(-14 * dtSec)
 
-  // Tilt
+  // Tilt (lean into the turn), same exp damp
   if (carSprite) {
-    const targetRot = dx * 0.007
-    carSprite.rotation += (targetRot - carSprite.rotation) * 0.25 * delta
+    const targetRot = Math.max(-0.28, Math.min(0.28, dx * 0.006))
+    carSprite.rotation = targetRot + (carSprite.rotation - targetRot) * Math.exp(-16 * dtSec)
   }
 
   // Glow pulse
@@ -678,8 +681,9 @@ function tickCar(delta) {
     stage.x = Math.sin(S.shakeTimer * 1.4) * 9 * t
     stage.y = Math.cos(S.shakeTimer * 1.1) * 5 * t
   } else {
-    stage.x *= 0.85
-    stage.y *= 0.85
+    const d = Math.pow(0.85, delta)   // frame-rate-independent settle
+    stage.x *= d
+    stage.y *= d
   }
 
   // Invincibility
