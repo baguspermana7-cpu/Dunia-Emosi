@@ -3056,7 +3056,7 @@ function nextG1Round(){
         btn.classList.add('wrong');spawnWrongShake(btn);quizStreakReset();playWrong();flashScreen('red')
         const tipEl=document.getElementById('g1-tip'); tipEl.style.display='block'
         tipEl.innerHTML=`<span class="tip-icon">${correct.emoji}</span><div class="tip-text"><b>${correct.name}:</b> ${correct.scenario||correct.tip}<br><span style="font-size:12px;opacity:0.75">Tubuh: ${correct.bodyCue||''}</span></div>`
-        g1State.round++; setTimeout(nextG1Round,3000)
+        g1State.round++; setTimeout(nextG1Round,1800)
       } else {
         playCorrect();spawnCorrectCardJuice(btn);quizStreakHit(btn);addStars(1,btn);flashScreen('green');g1State.correct++
         const tipEl=document.getElementById('g1-tip'); tipEl.style.display='block'
@@ -3180,20 +3180,25 @@ function runBreathePhase(){
     return
   }
   const phases=state.selectedLevel==='hard'?BREATHE_ADVANCED:BREATHE_BOX,ph=phases[g2PhaseIdx]
-  const startScale=g2PhaseIdx===2?1.55:(g2PhaseIdx===1?1.55:1.0)
   document.getElementById('g2-instruction').textContent=ph.name; document.getElementById('g2-sub').textContent=ph.sub
   g2Speak(ph.name)
   if(g2PhaseIdx===0)playBreathIn(); else if(g2PhaseIdx===2)playBreathOut()
   let sec=ph.dur,elapsed=0; document.getElementById('g2-timer').textContent=sec
-  // v54.9 — Emit particles on inhale (phase 0) AND exhale (phase 2). Mid-phase tick
-  // also spawns a small wave for sustained visual rhythm.
+  // SMOOTHNESS: animate the ring CONTINUOUSLY over the whole phase via one CSS
+  // transition (was setInterval writing scale in 1s steps → 4 discrete jumps).
+  // Hold phase (scaleTarget===current) stays put — that's the "tahan".
+  const isHold = (g2PhaseIdx===1 || (phases.length>2 && g2PhaseIdx===3))
+  const ease = isHold ? 'ease-in-out' : (g2PhaseIdx===0 ? 'cubic-bezier(.42,0,.58,1)' : 'cubic-bezier(.42,0,.58,1)')
+  ;['g2-ring1','g2-ring2','g2-mascot'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.style.transition=`transform ${ph.dur}s ${ease}, box-shadow ${ph.dur}s linear, background ${ph.dur}s ease`
+  })
+  setCircleScale(ph.scaleTarget, ph.color)   // single write → CSS animates smoothly
+  // v54.9 — Emit particles on inhale (phase 0) AND exhale (phase 2).
   if(g2PhaseIdx===0 || g2PhaseIdx===2) g2SpawnBreathParticles(g2PhaseIdx)
   state.breatheInterval=setInterval(()=>{
     elapsed++;sec--;
-    const prog=elapsed/ph.dur,scale=startScale+(ph.scaleTarget-startScale)*prog
-    setCircleScale(scale,ph.color)
     document.getElementById('g2-timer').textContent=Math.max(0,sec)
-    // v54.9 — Mid-phase particle wave (every 2nd second of inhale/exhale).
+    // Mid-phase particle wave (every 2nd second of inhale/exhale).
     if((g2PhaseIdx===0 || g2PhaseIdx===2) && elapsed%2===0 && elapsed<ph.dur) g2SpawnBreathParticles(g2PhaseIdx)
     if(elapsed>=ph.dur){
       clearInterval(state.breatheInterval); g2PhaseIdx++
