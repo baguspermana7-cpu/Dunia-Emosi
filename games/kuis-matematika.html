@@ -534,6 +534,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <script src="data/save-engine.js?v=59.6-20260712a"></script>
 <script src="data/sfx-engine.js?v=59.6-20260712a"></script>
 <script src="vfx-engine.js?v=59.18-20260712a"></script><!-- shared VFX (monster defeat explosion) -->
+<script src="data/math-heroes.js?v=59.29-20260715a"></script><!-- P3b hero roster (sprite changes per op) -->
+<script src="data/math-stories.js?v=59.29-20260715a"></script><!-- P3d per-level story arcs (monster names + banter) -->
 <script>
 (function(){
 'use strict';
@@ -783,7 +785,20 @@ function startGame(ops){  // P8: ops = array of chosen operators, or null = camp
   game={g:g,pool:pool,idx:0,correct:0,wrong:0,streak:0,best:0,hearts:HEARTS_BASE+Math.min(2,econ.extraHearts),foeMax:n,bonus:bonusFor(g),super:0,superReady:false};
   updateSuper();
   curSkill=specific?ops.slice():null;
-  set('foe-name','👾 Monster '+curWorld+'-'+curSub);
+  // P3b — hero sprite changes per chosen operation (Pahlawan + / Ksatria − × ÷). Primary op = first chosen; campur = Pahlawan.
+  try {
+    if(window.MATH_HEROES){
+      var _hero=window.MATH_HEROES.byOp(specific?ops[0]:'+');
+      if(_hero&&_hero.art){
+        var _hb=byId('fh-hero'), _hbimg=_hb&&_hb.querySelector('img.sprite'); if(_hbimg) _hbimg.src=_hero.art;
+        var _brh=document.querySelector('.br-hero'); if(_brh) _brh.src=_hero.art;
+      }
+    }
+  } catch(_){}
+  // P3d — real per-level monster name from the story arc (replaces the "👾 Monster W-S" placeholder)
+  var _arc=null;
+  try { if(window.MATH_STORIES) _arc=window.MATH_STORIES.get(curWorld,curSub); } catch(_){}
+  set('foe-name', (_arc&&_arc.monster) ? ('👾 '+_arc.monster) : ('👾 Monster '+curWorld+'-'+curSub));
   byId('foe-holder').innerHTML='<img class="mon-sprite" src="'+monSrc(g)+'" alt="" onerror="this.outerHTML=\'<span class=&quot;slime&quot;>'+monFallbackEmoji(g)+'</span>\'">';
   byId('foe-hp').style.width='100%';
   show('game'); bgmPlay();
