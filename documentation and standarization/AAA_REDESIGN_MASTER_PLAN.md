@@ -106,6 +106,50 @@ brief + screenshot verification; I review every screenshot vs mockup before comm
 sw bump; gates each (regression 10/10, math 28/28, shared-engines, new qa-game-shell). This is multi-session
 — run under the IMPROVEMENT_LOOP, one game/phase per iteration.
 
+================================================================
+## PROGRESS LOG (autonomous session 2026-07-15)
+SHIPPED + committed on main (gates green throughout: regression 10/10, math 28/28,
+shared-engines OK, shell smoke PASS):
+- **P4 Monster Candy** FIXED — timer subtracted raw PixiJS frame-delta not seconds → game
+  ended (~1s) before first candy spawned. `S.timeLeft -= dt/60`. Drive `tools/qa-monster-candy-drive.mjs`.
+- **P3a math double-monster crop** FIXED — mon-29/30/38 held 2 stacked creatures → re-cropped
+  single-subject via `tools/fix-double-monsters.py` (erode bridge → largest component → full-mask
+  reclaim → outline). mon-9 kitsune false-alarm left as-is.
+- **P1 GameShell** BUILT + verified — `games/game-shell.js` (window.GameShell v1.0.0), smoke gate
+  `tools/qa-shell-smoke.mjs` renders wood HUD + jungle2 bg + frog bubble + fox cheer + star-dots
+  (screenshot matches the g4/g3 mockup chrome near-exactly). NOT yet adopted by any SPA game.
+- **P3b Math hero DB** SHIPPED + WIRED — `games/data/math-heroes.js` (Pahlawan +, Ksatria
+  Pengurangan −, Perkalian ×, Pembagian ÷) + `byOp()`; cropped art `assets/math/heroes/*.webp`
+  (rembg u2net, `tools/crop-math-heroes.py`). `startGame()` now swaps `#fh-hero` + `.br-hero`
+  sprite by chosen op (verified: op `−` → pengurangan.webp).
+- **P3d Math story data** SHIPPED + PARTIALLY WIRED — `games/data/math-stories.js` (100 level
+  arcs: monster name + intro + alternating hero/monster banter + victory; worlds 1-3 hand-authored,
+  4-10 seeded-generated; `get()`/`getByGlobal()` never empty) + `MATH_STORY_STANDARD.md`.
+  `startGame()` now shows real `arc.monster` name (verified: W1-1 → "Si Guruh"). **Banter
+  speech-clouds NOT yet wired** (needs intro-after-countdown + per-answer hero/monster cloud +
+  victory line — integration points pinned in MATH_STORY_STANDARD.md §4-5).
+
+### DEFERRED — needs device-level VISUAL iteration (headless SPA won't verify cleanly)
+Headless can't render g3-g9 (PixiJS jungle world + the real welcome→mode→names→menu→level flow;
+`openLevelSelect`+`startGameWithLevel` alone reverts to welcome / leaves content empty). So these
+were NOT shipped unverified (per "verify before claiming fixed" + "don't break approved"):
+- **P2 g3/g4/g7/g8/g9 mockup redesigns** — g3 ref = `~/Downloads/Gemini_Generated_Image_8t459y…png`
+  (jungle, frog bubble, horse-in-glowing-oval medallion, `_UDA` wood tiles, wood hint plaque,
+  K/G/F hex-gem buttons, boy-hero corner). g4 ref = `…rak2gz….png` (matches GameShell HUD almost
+  exactly). g7 ref `~/Downloads/tebak gambar.png`, g8 `~/Downloads/susun kata.png`. Current g3
+  already has wood word-plank + white hint + clay buttons (base + overrides at style.css 326-335,
+  1518-1620, index.html 118-203) — restyle path = ONE appended `#screen-game3`-scoped block +
+  medallion wrapper; do it WITH live screenshot iteration on the owner's device/localhost user-flow.
+- **P3c Pokémon-style tournament** (design-first), **P3e Supabase 7-slot account** (design-first,
+  reuse RZ pattern), **story-banter clouds** (P3d wiring tail).
+
+### P0 crop label-mapping — DONE (crop) / DEFERRED (wire)
+8 sheets cropped + committed (0fbf597) but the 6 Gemini sheets are 18×6=108 heterogeneous cells
+(count sheet = numbers/dice/dominoes/hands/tally mixed), and `letters` is actually a WORDS sheet.
+Accurate per-cell label-mapping not yet done → DBLabeled groups NOT added, assets UNWIRED (harmless).
+Do the montage→label mapping before wiring (accuracy-first — never teach wrong names).
+
+================================================================
 ## Open questions for owner (only if blocking)
 - Supabase project: reuse the RZ Supabase project or a new one for Dunia? (affects schema/keys)
 - 7 slots = 7 local profiles on one device, or 7 cloud accounts? (assume: 7 local profiles synced to cloud)
