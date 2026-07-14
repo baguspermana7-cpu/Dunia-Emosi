@@ -227,6 +227,21 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   font-weight:800;font-size:26px;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.6);pointer-events:none;
   animation:dmgFly .8s ease forwards}
 @keyframes dmgFly{0%{opacity:0;transform:translate(-50%,0) scale(.5)}30%{opacity:1;transform:translate(-50%,-30px) scale(1.2)}100%{opacity:0;transform:translate(-50%,-70px)}}
+/* P3d — story speech clouds over the fighters (learn math + reading) */
+.mp-cloud{position:absolute;top:2%;z-index:8;max-width:52%;padding:9px 13px;border-radius:16px;
+  font-family:var(--body);font-weight:700;font-size:clamp(11px,3vw,15px);line-height:1.28;color:#3a2a12;
+  background:linear-gradient(180deg,#fffdf5,#fff0cf);border:2.5px solid #d8a24a;
+  box-shadow:0 6px 14px rgba(0,0,0,.28),inset 0 2px 0 rgba(255,255,255,.7);
+  pointer-events:none;opacity:0;transform:translateY(6px) scale(.92);
+  animation:mpCloudIn .28s cubic-bezier(.34,1.56,.64,1) forwards}
+.mp-cloud.hero{left:1%;border-bottom-left-radius:4px}
+.mp-cloud.foe{right:1%;border-bottom-right-radius:4px;background:linear-gradient(180deg,#fff5f5,#ffe0e0);border-color:#e0794a;color:#5a2418}
+.mp-cloud::after{content:'';position:absolute;bottom:-9px;width:0;height:0;border:8px solid transparent}
+.mp-cloud.hero::after{left:18%;border-top-color:#d8a24a;border-bottom:0}
+.mp-cloud.foe::after{right:18%;border-top-color:#e0794a;border-bottom:0}
+.mp-cloud.out{animation:mpCloudOut .25s ease forwards}
+@keyframes mpCloudIn{to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes mpCloudOut{to{opacity:0;transform:translateY(-8px) scale(.95)}}
 .qpanel{position:relative;z-index:4;flex:1;display:flex;flex-direction:column;justify-content:flex-start;
   gap:10px;padding:8px 14px calc(env(safe-area-inset-bottom,0) + 14px);
   background:linear-gradient(180deg,rgba(255,246,223,0),rgba(255,246,223,.0));min-height:0;overflow-y:auto}
@@ -799,11 +814,30 @@ function startGame(ops){  // P8: ops = array of chosen operators, or null = camp
   var _arc=null;
   try { if(window.MATH_STORIES) _arc=window.MATH_STORIES.get(curWorld,curSub); } catch(_){}
   set('foe-name', (_arc&&_arc.monster) ? ('👾 '+_arc.monster) : ('👾 Monster '+curWorld+'-'+curSub));
+  game.arc=_arc||null; game.banterIdx=0;   // P3d story-mode banter cursor
   byId('foe-holder').innerHTML='<img class="mon-sprite" src="'+monSrc(g)+'" alt="" onerror="this.outerHTML=\'<span class=&quot;slime&quot;>'+monFallbackEmoji(g)+'</span>\'">';
   byId('foe-hp').style.width='100%';
   show('game'); bgmPlay();
-  playIntro(function(){ renderQ(); });
+  playIntro(function(){ mpStoryIntro(); renderQ(); });
 }
+// P3d — story speech clouds. One cloud per side at a time; anchored over hero / foe.
+function mpCloud(who,text,ms){
+  try{
+    var arena=document.querySelector('#scr-game .arena'); if(!arena||!text) return;
+    var side=(who==='hero')?'hero':'foe';
+    var old=arena.querySelector('.mp-cloud.'+side); if(old){ try{old.remove();}catch(e){} }
+    var c=document.createElement('div'); c.className='mp-cloud '+side; c.textContent=text; arena.appendChild(c);
+    setTimeout(function(){ if(!c.parentNode) return; c.classList.add('out'); setTimeout(function(){ try{c.remove();}catch(e){} },260); }, ms||2600);
+  }catch(e){}
+}
+function mpStoryIntro(){ var a=game&&game.arc; if(a&&a.intro) mpCloud('foe',a.intro,3000); }
+// advance one banter line per answered question (correct or wrong) — builds the story to the end
+function mpStepBanter(){
+  var a=game&&game.arc; if(!a||!a.banter||!a.banter.length) return;
+  if(game.banterIdx>=a.banter.length) return;
+  var line=a.banter[game.banterIdx++]; if(line&&line.text) mpCloud(line.who==='hero'?'hero':'foe',line.text,2400);
+}
+function mpVictory(){ var a=game&&game.arc; if(a&&a.victory) mpCloud('hero',a.victory,3200); }
 function renderHearts(){
   var h=byId('hearts'); h.innerHTML='';
   var total=HEARTS_BASE+Math.min(2,econ.extraHearts);
@@ -848,13 +882,15 @@ function answer(btn,picked,q){
     var earn=(3+Math.floor(game.streak/2))*mult+superBonus; econ.coins+=earn; saveEcon();
     if(game.bonus&&game.bonus.fever&&game.streak>=3) byId('qcard').style.boxShadow='0 10px 0 rgba(0,0,0,.16),0 0 24px 4px rgba(255,138,61,.6),inset 0 3px 0 rgba(255,255,255,.7)';
     dmgPop('fh-foe','-1'); var foeLeft=Math.max(0,game.foeMax-game.correct); byId('foe-hp').style.width=(foeLeft/game.foeMax*100)+'%';
-    if(foeLeft===0) fxFoe('boom',1.35);   // monster "meledak" when defeated
+    if(foeLeft===0){ fxFoe('boom',1.35); mpVictory(); }   // monster "meledak" + kalimat kemenangan
+    else mpStepBanter();                                   // lanjutkan cerita per jawaban
   }else{
     btn.classList.add('wrongc'); sfx('wrong');
     Array.prototype.forEach.call(byId('choices').children,function(b){ if(String(b.textContent)===String(q.ans)) b.classList.add('right'); });
     game.wrong++; game.streak=0; game.hearts--;
     game.super=0; game.superReady=false; updateSuper();
     foeAttack(); renderHearts(); juiceHit(false,0);
+    mpStepBanter();   // cerita tetap berlanjut walau jawaban salah (latihan membaca)
     if(navigator.vibrate) try{ navigator.vibrate([15,40,15]); }catch(e){}
     if(game.hearts<=0){ setTimeout(function(){ finish(true); },900); return; }
   }
