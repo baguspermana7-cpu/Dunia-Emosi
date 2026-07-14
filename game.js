@@ -14226,7 +14226,7 @@ function initGame22() {
   battleBgmStop()
   const lv = state.selectedLevelNum || 1
   try { sessionStorage.setItem('g22Config', JSON.stringify({ level: lv })) } catch(_) {}
-  window.location.href = 'games/monster-candy.html?v=20260506ae'
+  window.location.href = 'games/monster-candy.html?v=20260714a'
 }
 
 function initGame23() {

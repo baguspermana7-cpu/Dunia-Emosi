@@ -1054,7 +1054,11 @@ function gameLoop(ticker) {
   }
 
   // ── Time-based countdown (2026-05-04 fix) ──
-  S.timeLeft = Math.max(0, S.timeLeft - dt)
+  // dt is PIXI ticker.deltaTime — a FRAME multiplier (~1 at 60fps), NOT seconds.
+  // Convert to seconds (dt/60) like the spawn timer above; subtracting raw dt
+  // drained the whole 60s timer in ~60 frames (~1s) and ended the game before
+  // the first candy ever spawned (spawnInterval ~1.46s) → empty play field.
+  S.timeLeft = Math.max(0, S.timeLeft - dt / 60)
   if (S.timeLeft <= 0 && !S.gameOver) { endGame(); return }
 
   // Update particles
