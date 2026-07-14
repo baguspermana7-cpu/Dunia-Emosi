@@ -193,6 +193,8 @@ const MATCH_PAIRS_WARNA = [
   {id:'wr11',emoji:'🩵',label:'Biru Muda'},
   {id:'wr12',emoji:'🟫',label:'Krem'},
 ]
+// warna → crisp CSS swatch (device-consistent, no emoji rendering variance)
+const WARNA_HEX = {Merah:'#e8503f',Oranye:'#ff8a3d',Kuning:'#ffcf3f',Hijau:'#4caf50',Biru:'#2f6bd8',Ungu:'#7b53c9',Hitam:'#2b2b2b',Putih:'#ffffff',Coklat:'#8a5a2b','Merah Muda':'#ff8fc0','Biru Muda':'#7ec8ff',Krem:'#f0d9a8'}
 const MATCH_PAIRS_BENDA = [
   {id:'bd1',emoji:'📚',label:'Buku'},
   {id:'bd2',emoji:'✏️',label:'Pensil'},
@@ -3466,7 +3468,10 @@ function initG5Visual(){
   const flat=[]
   // illustrated db-sprite cards for hewan/buah/kendaraan (owner); fall through to
   // the emoji sets if the DB isn't available or hasn't enough items.
-  const _g5db=['hewan','buah','kendaraan','makanan','benda'].includes(g5SubMode)?g5DbCards(g5SubMode,totalPairs):[]
+  // Data-driven DB wiring (the "loop" endpoint): ANY DBLabeled group + kendaraan
+  // auto-renders illustrated sprites. Add a group to db-labeled.js → g5 uses it,
+  // no edit here. Falls back to emoji when a mode has no DB set (sayur/profesi/warna…).
+  const _g5db=((window.DBLabeled && DBLabeled.groups().indexOf(g5SubMode)>=0)||g5SubMode==='kendaraan')?g5DbCards(g5SubMode,totalPairs):[]
   if(g5SubMode==='pokemon'){
     // Sprite (A) ↔ Name text (B) — educational matching
     MATCH_PAIRS_POKE.slice(0,totalPairs).forEach(p=>{
@@ -3533,7 +3538,15 @@ function renderG5Grid(){
         const fbSrc2=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${card.id}.png`
         back=`<img class="g5-poke-img" style="width:72px;height:72px;image-rendering:auto;object-fit:contain" src="${hdSrc2}" onerror="this.src='${fbSrc2}'" alt="${card.label}" loading="lazy">`
       }
-    } else if(!card.dbsrc && ['hewan','buah','sayur','kendaraan','warna','benda','profesi','alam','cuaca','makanan','sekolah'].includes(g5SubMode)){
+    } else if(g5SubMode==='warna'){
+      // crisp CSS swatch (side A) ↔ colour name (side B) — no emoji rendering variance
+      const hex=WARNA_HEX[card.label]||'#cccccc'
+      if(card.cardSide==='A'){
+        back=`<span style="display:inline-block;width:56px;height:56px;border-radius:50%;background:${hex};border:3px solid rgba(0,0,0,.14);box-shadow:inset 0 -5px 9px rgba(0,0,0,.18),inset 0 4px 7px rgba(255,255,255,.35),0 3px 7px rgba(0,0,0,.22)"></span>`
+      } else {
+        back=`<span class="card-emoji" style="font-size:30px">🎨</span><span class="card-label">${card.label}</span>`
+      }
+    } else if(!card.dbsrc && ['hewan','buah','sayur','kendaraan','benda','profesi','alam','cuaca','makanan','sekolah'].includes(g5SubMode)){
       if(card.cardSide==='A'){
         back=`<span style="font-size:52px;line-height:1">${card.emoji}</span>`
       } else {
