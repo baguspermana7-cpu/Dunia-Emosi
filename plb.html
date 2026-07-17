@@ -136,6 +136,80 @@ footer{text-align:center;padding:30px 0 46px;color:var(--ink-soft);font-weight:7
     <div class="count-badge"><span class="n" id="totalN">0</span> ide siap dikembangkan</div>
   </div>
 
+  <!-- ============================================================
+       PANDUAN SUPABASE — Akun Math 7 Slot (copy-paste, mudah)
+       ============================================================ -->
+  <section id="sb-guide" style="margin:26px 0;border:2px solid #2b7a4b;border-radius:18px;
+       background:linear-gradient(180deg,#0f2a1c,#0b2016);padding:20px 20px 8px;color:#dff5e6">
+    <h2 style="margin:0 0 4px;font-size:22px;color:#7CFFB0">🗄️ Panduan Supabase — Akun Math 7 Slot</h2>
+    <p style="margin:0 0 14px;font-size:14px;color:#a8d8bd">Ikuti 5 langkah ini sekali saja. Tinggal copy-paste. Setelah selesai, kirim <b>Project URL</b> + <b>anon key</b> ke saya — nanti saya sambungkan ke game (kode client). <b>Jangan</b> bagikan <b>service_role</b> key.</p>
+
+    <ol style="font-size:14px;line-height:1.7;padding-left:20px;margin:0 0 14px">
+      <li><b>Buat project</b>: buka <a href="https://supabase.com/dashboard" target="_blank" rel="noopener" style="color:#7CFFB0">supabase.com/dashboard</a> → <b>New project</b> (atau pakai project yang sudah ada). Tunggu ±2 menit sampai aktif.</li>
+      <li><b>Aktifkan login</b>: menu <b>Authentication → Providers</b> → nyalakan <b>Email</b> (atau <b>Anonymous</b> kalau mau tanpa daftar).</li>
+      <li><b>Jalankan SQL</b>: menu <b>SQL Editor → New query</b> → <b>copy blok SQL</b> di bawah → paste → <b>Run</b>. (Aman diulang; pakai <code>if not exists</code>.)</li>
+      <li><b>Ambil kunci</b>: menu <b>Settings → API</b> → copy <b>Project URL</b> dan <b>anon public</b> key.</li>
+      <li><b>Kirim ke saya</b>: URL + anon key (dua-duanya publik, aman). Saya wire sync 7-slot + leaderboard. Data lokal 7 pemain akan tersimpan ke cloud (stars/level/coins/gems/trophies + unlock kodok slot-7 & gym-pokemon terjaga).</li>
+    </ol>
+
+    <div style="position:relative;margin:0 0 6px">
+      <button onclick="sbCopy(this,'sb-sql')" style="position:absolute;top:8px;right:8px;z-index:2;
+        background:#2b7a4b;color:#fff;border:0;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer">📋 Copy SQL</button>
+      <pre id="sb-sql" style="margin:0;overflow:auto;background:#06140d;border:1px solid #1f5236;border-radius:12px;
+        padding:14px 14px;font-size:12.5px;line-height:1.55;color:#cfeedd;white-space:pre">-- ============ Dunia Emosi · Akun Math 7 Slot ============
+-- 1) Tabel: sampai 7 slot pemain per akun. Tiap slot menyimpan seluruh
+--    progres (stars/level/accuracy/streak/coins/gems/trophies + unlock,
+--    termasuk kodok slot-7 & opsi gym-pokemon) sebagai JSON.
+create table if not exists public.math_players (
+  id         uuid primary key default gen_random_uuid(),
+  owner      uuid not null references auth.users(id) on delete cascade,
+  slot       smallint not null check (slot between 1 and 7),
+  name       text not null default 'Pemain',
+  avatar     text default '🐸',
+  data       jsonb not null default '{}'::jsonb,
+  updated_at timestamptz not null default now(),
+  unique (owner, slot)
+);
+
+-- 2) Row Level Security: tiap user hanya bisa lihat/edit slot MILIKNYA.
+alter table public.math_players enable row level security;
+drop policy if exists "own read"   on public.math_players;
+drop policy if exists "own insert" on public.math_players;
+drop policy if exists "own update" on public.math_players;
+drop policy if exists "own delete" on public.math_players;
+create policy "own read"   on public.math_players for select using (auth.uid() = owner);
+create policy "own insert" on public.math_players for insert with check (auth.uid() = owner);
+create policy "own update" on public.math_players for update using (auth.uid() = owner) with check (auth.uid() = owner);
+create policy "own delete" on public.math_players for delete using (auth.uid() = owner);
+
+-- 3) Auto-update updated_at tiap kali baris diubah.
+create or replace function public.touch_updated_at() returns trigger language plpgsql as $$
+begin new.updated_at = now(); return new; end $$;
+drop trigger if exists trg_touch on public.math_players;
+create trigger trg_touch before update on public.math_players
+  for each row execute function public.touch_updated_at();
+
+-- 4) (Opsional) Leaderboard publik read-only: nama + trophies terbanyak.
+create or replace view public.math_leaderboard as
+  select name, coalesce((data->>'trophies')::int, 0) as trophies, updated_at
+  from public.math_players
+  order by coalesce((data->>'trophies')::int, 0) desc, updated_at desc
+  limit 100;
+grant select on public.math_leaderboard to anon, authenticated;
+
+-- Selesai. Salin Project URL + anon key (Settings -> API), kirim ke dev.</pre>
+    </div>
+    <p style="font-size:12.5px;color:#8fc7a6;margin:8px 0 12px">Catatan: pendekatan ini pakai <b>RLS</b> (bukan service_role) — kunci rahasia tidak pernah masuk repo/browser. Kalau nanti mau anti-cheat lebih ketat (tulis lewat RPC SECURITY DEFINER seperti pola RZ), bisa ditambah belakangan.</p>
+  </section>
+
+  <script>
+  function sbCopy(btn,id){var el=document.getElementById(id);var t=el.innerText;
+    (navigator.clipboard&&navigator.clipboard.writeText(t)||Promise.reject()).then(function(){
+      var o=btn.textContent;btn.textContent='✓ Tersalin!';setTimeout(function(){btn.textContent=o;},1400);
+    }).catch(function(){var r=document.createRange();r.selectNode(el);var s=getSelection();s.removeAllRanges();s.addRange(r);
+      try{document.execCommand('copy');btn.textContent='✓ Tersalin!';setTimeout(function(){btn.textContent='📋 Copy SQL';},1400);}catch(e){}s.removeAllRanges();});}
+  </script>
+
   <h2 class="section-t">✨ Showcase Mockup Interaktif</h2>
   <p class="section-s">Contoh visual hidup dari ide-ide unggulan — satu sorotan per game. Ketuk untuk memainkan.</p>
   <div class="showcase" id="showcase"></div>
