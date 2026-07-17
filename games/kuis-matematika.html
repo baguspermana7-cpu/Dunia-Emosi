@@ -151,7 +151,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .game-top{position:relative;z-index:5;display:flex;align-items:center;gap:8px;
   padding:calc(env(safe-area-inset-top,0) + 8px) 12px 6px}
 .hp-col{flex:1;display:flex;flex-direction:column;gap:3px}
-.hp-name{font-family:var(--disp);font-weight:700;font-size:12px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.hp-name{font-family:var(--disp);font-weight:700;font-size:12px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5);display:flex;flex-direction:column;line-height:1.05}
+.hp-name .foe-en{font-size:13px}
+.hp-name .foe-sub{font-family:var(--body);font-weight:600;font-size:9px;opacity:.85;letter-spacing:.2px}
 .hp-bar{height:12px;border-radius:8px;background:rgba(0,0,0,.4);border:2px solid rgba(255,255,255,.4);overflow:hidden}
 .hp-fill{height:100%;border-radius:6px;transition:width .4s cubic-bezier(.22,.61,.36,1)}
 .hp-fill.foe{background:linear-gradient(90deg,#ff8a6a,var(--red))}
@@ -560,15 +562,18 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <script src="data/sfx-engine.js?v=59.6-20260712a"></script>
 <script src="vfx-engine.js?v=59.18-20260712a"></script><!-- shared VFX (monster defeat explosion) -->
 <script src="data/math-heroes.js?v=59.29-20260715a"></script><!-- P3b hero roster (sprite changes per op) -->
-<script src="data/math-stories.js?v=59.29-20260715a"></script><!-- P3d per-level story arcs (monster names + banter) -->
+<script src="data/math-stories.js?v=59.32-20260717a"></script><!-- P3d per-level story arcs (monster names + banter) -->
 <script>
 (function(){
 'use strict';
 var GAME_ID='g25', WORLDS=10, SUBS=10, MAX_LEVEL=WORLDS*SUBS;
-var A='../assets/math/', IC=A+'icons/', MON=A+'monsters/', MON_COUNT=81;
+var A='../assets/math/', IC=A+'icons/', MON=A+'monsters/', MON_COUNT=281;
+var curMonId=0;   // owner: random monster from the FULL pool (81 old + 200 new) each level
 var PK='../assets/icons/'; // Free Icon Pack v3.1 (@gvesster) — crisp UI/economy icons
 function pkIcon(p,sz){ return '<img src="'+PK+p+'.webp" style="width:'+(sz||20)+'px;height:'+(sz||20)+'px;vertical-align:-4px" alt="" onerror="this.style.display=\'none\'">'; }
 function monSrc(g){ return MON+'mon-'+(((g-1)%MON_COUNT)+1)+'.webp'; }
+function monById(id){ return MON+'mon-'+id+'.webp'; }
+function pickMonId(){ curMonId = 1 + Math.floor(Math.random()*MON_COUNT); return curMonId; }
 function monFallbackEmoji(g){ var e=['👾','👹','🐲','🦊','👻','🧟','🐙','🍄','⭐','🐉']; return e[(g-1)%e.length]; }
 
 /* per-level bonus variety (owner: "bonus berbeda2") — MATH-only modifiers */
@@ -752,7 +757,7 @@ var skillSel=[];  // P8 — multi-select: chosen operators for this level
 function openSkill(sub){
   curSub=sub; var g=(curWorld-1)*SUBS+sub;
   set('skill-lvl','Level '+curWorld+'-'+sub+'  ·  angka ≤'+maxNumFor(g));
-  var mimg=byId('skill-mon'); mimg.style.display=''; mimg.src=monSrc(g);
+  var mimg=byId('skill-mon'); mimg.style.display=''; pickMonId(); mimg.src=monById(curMonId);
   var bn=bonusFor(g); byId('skill-bonus').innerHTML=bn.label?('<span class="bonus-banner">'+bn.label+'</span>'):'';
   var grid=byId('skill-grid'); grid.innerHTML=''; skillSel=[];
   var tier=tierFor(g);
@@ -820,12 +825,18 @@ function startGame(ops){  // P8: ops = array of chosen operators, or null = camp
       }
     }
   } catch(_){}
-  // P3d — real per-level monster name from the story arc (replaces the "👾 Monster W-S" placeholder)
+  // P3d — story arc keyed to the RANDOM monster sprite (curMonId), name+story travel WITH the sprite
+  if(!curMonId) pickMonId();
   var _arc=null;
-  try { if(window.MATH_STORIES) _arc=window.MATH_STORIES.get(curWorld,curSub); } catch(_){}
-  set('foe-name', (_arc&&_arc.monster) ? ('👾 '+_arc.monster) : ('👾 Monster '+curWorld+'-'+curSub));
+  try { if(window.MATH_STORIES && MATH_STORIES.forMonster) _arc=MATH_STORIES.forMonster(curMonId);
+        else if(window.MATH_STORIES) _arc=MATH_STORIES.get(curWorld,curSub); } catch(_){}
+  // English name (big) + small Indonesian subtitle below it
+  var _nm=(_arc&&_arc.name)||(_arc&&_arc.monster)||('Monster '+curMonId);
+  var _sub=(_arc&&_arc.sub)||'';
+  byId('foe-name').innerHTML='<span class="foe-en">👾 '+escapeHtml(_nm)+'</span>'+(_sub?('<span class="foe-sub">'+escapeHtml(_sub)+'</span>'):'');
   game.arc=_arc||null; game.banterIdx=0;   // P3d story-mode banter cursor
-  byId('foe-holder').innerHTML='<img class="mon-sprite" src="'+monSrc(g)+'" alt="" onerror="this.outerHTML=\'<span class=&quot;slime&quot;>'+monFallbackEmoji(g)+'</span>\'">';
+  var _mfb=monFallbackEmoji(curMonId);
+  byId('foe-holder').innerHTML='<img class="mon-sprite" src="'+monById(curMonId)+'" alt="" onerror="this.outerHTML=\'<span class=&quot;slime&quot;>'+_mfb+'</span>\'">';
   byId('foe-hp').style.width='100%';
   show('game'); bgmPlay();
   playIntro(function(){ mpStoryIntro(); renderQ(); });
