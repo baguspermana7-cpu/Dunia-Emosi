@@ -1098,12 +1098,16 @@ function tzOpp(){
   var fm=(window.MATH_STORIES&&MATH_STORIES.forMonster)?MATH_STORIES.forMonster(id):null;
   return {id:id, name:(fm&&fm.name)||('Monster '+id), sub:(fm&&fm.sub)||'', src:MON+'mon-'+id+'.webp'};
 }
-function tzFighter(src,name,cls,fb){
+function tzFighter(src,name,cls,fb,id){
   return '<div style="display:flex;flex-direction:column;align-items:center;gap:2px;min-width:78px">'+
-    '<img src="'+src+'" alt="" onerror="this.replaceWith(Object.assign(document.createElement(\'div\'),{textContent:\''+fb+'\',style:\'font-size:40px\'}))" '+
-    'style="width:64px;height:64px;object-fit:contain;filter:drop-shadow(0 4px 5px rgba(0,0,0,.3))">'+
+    '<img '+(id?('id="'+id+'" '):'')+'src="'+src+'" alt="" onerror="this.replaceWith(Object.assign(document.createElement(\'div\'),{textContent:\''+fb+'\',style:\'font-size:40px\'}))" '+
+    'style="width:64px;height:64px;object-fit:contain;filter:drop-shadow(0 4px 5px rgba(0,0,0,.3));transition:transform .16s ease">'+
     '<span class="'+cls+'" style="font-family:var(--disp);font-weight:800;font-size:12px;border-radius:10px;padding:2px 8px">'+escapeHtml(name)+'</span></div>';
 }
+function tzBump(id,dir){ var e=byId(id); if(!e)return; e.style.transform='translateX('+dir+'px) scale(1.12)'; setTimeout(function(){ if(byId(id))byId(id).style.transform=''; },170); }
+function tzBoard(){ var y=tourn.score, o=tourn.oppScore; var lead=y>o?'var(--green-d)':(y<o?'var(--red)':'var(--ink-soft)');
+  set('t-score', y); var ob=byId('t-oppsc'); if(ob) ob.textContent=o;
+  var lb=byId('t-lead'); if(lb){ lb.textContent=(y>o?'Unggul +'+(y-o):(y<o?'Tertinggal '+(o-y):'Seri')); lb.style.color=lead; } }
 function renderTournamentIntro(){
   // distinct opponents for the 2 rounds
   var a=tzOpp(), b=tzOpp(); var guard=0; while(b.id===a.id && guard++<10) b=tzOpp();
@@ -1124,31 +1128,38 @@ function renderTournamentIntro(){
 function tzStartRound(){
   var r=TZ_ROUNDS[tourn.round];
   var opp=tourn.round===0?tourn.semiOpp:tourn.finalOpp;
-  tourn.score=0; tourn.left=r.sec; tourn.q=null;
+  tourn.score=0; tourn.oppScore=0; tourn.left=r.sec; tourn.q=null;
+  // opponent answers LIVE: avg seconds-per-point (faster in the Final + with more trophies)
+  tourn.spp=Math.max(1.8,(tourn.round===0?3.6:2.7)-Math.min(1.1,econ.trophies/45));
   byId('tourn-body').innerHTML='<div class="tourn-run">'+
     '<div style="font-weight:800;color:var(--purple-d);margin-bottom:6px">'+r.name+'</div>'+
     '<div style="display:flex;justify-content:center;align-items:center;gap:12px;margin-bottom:6px">'+
-      tzFighter(TZ_HERO,econ.name,'clay green','🧒')+
+      tzFighter(TZ_HERO,econ.name,'clay green','🧒','t-hero')+
       '<span style="color:var(--ink-soft);font-weight:800">🆚</span>'+
-      tzFighter(opp.src,opp.name,'clay blue','👾')+'</div>'+
-    '<div class="tourn-timer" id="t-timer">'+r.sec+'</div><div class="tourn-score">Skor: <span id="t-score">0</span></div>'+
+      tzFighter(opp.src,opp.name,'clay blue','👾','t-foe')+'</div>'+
+    '<div class="tourn-timer" id="t-timer">'+r.sec+'</div>'+
+    '<div class="tourn-score" style="display:flex;justify-content:center;gap:14px;align-items:center">'+
+      '<span>🧒 <span id="t-score">0</span></span><span id="t-lead" style="font-size:14px;color:var(--ink-soft)">Seri</span><span>👾 <span id="t-oppsc">0</span></span></div>'+
     '<div class="qcard" id="t-card" style="font-size:30px">…</div><div class="choices" id="t-choices" style="margin-top:10px"></div></div>';
-  tourn.iv=setInterval(function(){ tourn.left--; set('t-timer',tourn.left); if(tourn.left<=0) tzEndRound(); },1000);
-  tournNext();
+  tourn.iv=setInterval(function(){
+    tourn.left--; set('t-timer',tourn.left);
+    // live opponent scoring — a point roughly every spp seconds
+    if(Math.random() < 1/tourn.spp){ tourn.oppScore++; tzBump('t-foe',-6); tzBoard(); }
+    if(tourn.left<=0) tzEndRound();
+  },1000);
+  tzBoard(); tournNext();
 }
 function tournNext(){
   var q=window.makeMathQuestionV2(30,MAX_LEVEL,'medium','standard',{maxNum:30}); tourn.q=q;
   set('t-card',q.q); var ch=byId('t-choices'); ch.innerHTML='';
   q.choices.forEach(function(c,i){ var b=document.createElement('button'); b.className='choice c'+i; b.textContent=String(c);
-    b.onclick=function(){ if(String(c)===String(q.ans)){ tourn.score++; set('t-score',tourn.score); sfx('correct'); } else { sfx('wrong'); } tournNext(); };
+    b.onclick=function(){ if(String(c)===String(q.ans)){ tourn.score++; sfx('correct'); tzBump('t-hero',6); tzBump('t-foe',6); tzBoard(); } else { sfx('wrong'); tzBump('t-foe',-6); tzBoard(); } tournNext(); };
     ch.appendChild(b); });
 }
 function tzEndRound(){
   clearInterval(tourn.iv);
   var opp=tourn.round===0?tourn.semiOpp:tourn.finalOpp;
-  // AI opponent score: scales with round, small trophy handicap, randomized band.
-  var base=tourn.round===0?6:9;
-  var oppScore=base+Math.floor(Math.random()*5)+Math.min(4,Math.floor(econ.trophies/20));
+  var oppScore=tourn.oppScore;   // the LIVE score the opponent racked up this round
   var win=tourn.score>=oppScore;
   var body=byId('tourn-body');
   if(win && tourn.round<TZ_ROUNDS.length-1){
