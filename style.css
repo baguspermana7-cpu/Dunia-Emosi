@@ -8355,3 +8355,358 @@ button:disabled, [aria-disabled="true"] {
 #screen-game3::after{
   background:radial-gradient(120% 90% at 50% 0%, rgba(150,210,120,.18), rgba(60,120,60,.30) 55%, rgba(30,70,40,.42)) !important;
 }
+
+/* ============================================================================
+   G4 Hitung Binatang — mockup-match (cream question card + green/blue toggle
+   pills, animals on a soft green oval podium, 3 glossy candy number gems
+   blue/green/gold, gold timer). #screen-game4-scoped, appended last.
+   ============================================================================ */
+#screen-game4 .g4-question   { order:1 !important; }
+#screen-game4 .g4-mode-toggle{ order:2 !important; }
+#screen-game4 .g4-animals-grid,
+#screen-game4 #g4-animals    { order:3 !important; }
+#screen-game4 .g4-choices    { order:4 !important; }
+#screen-game4 .g4-timer-track{ order:5 !important; }
+#screen-game4 .g4-timer-text { order:6 !important; }
+#screen-game4 .g4-progress   { order:7 !important; }
+#screen-game4 .g4-question{
+  font-family:var(--clay-disp) !important;
+  font-size:clamp(19px,5.2vw,27px) !important; font-weight:900 !important;
+  color:#5a3a12 !important; -webkit-text-fill-color:#5a3a12 !important;
+  background:linear-gradient(180deg,#fffdf6,#fff3d9) !important;
+  background-clip:border-box !important; -webkit-background-clip:border-box !important;
+  text-shadow:0 1px 0 rgba(255,255,255,.8) !important;
+  border:4px solid #ffe6a6 !important; border-radius:22px 22px 8px 8px !important;
+  box-shadow:0 6px 0 rgba(201,131,46,.35), 0 10px 24px rgba(0,0,0,.28), inset 0 2px 0 rgba(255,255,255,.9) !important;
+  width:100% !important; max-width:480px !important; margin:0 auto 0 !important; padding:14px 18px 12px !important;
+  text-align:center !important; line-height:1.2 !important;
+}
+#screen-game4 .g4-mode-toggle{
+  width:100% !important; max-width:480px !important; margin:-2px auto 0 !important; gap:10px !important;
+  background:#fff7e4 !important; border:4px solid #ffe6a6 !important; border-top:0 !important;
+  border-radius:0 0 20px 20px !important;
+  box-shadow:0 6px 0 rgba(201,131,46,.30), 0 10px 20px rgba(0,0,0,.20) !important; padding:10px 12px 12px !important;
+}
+#screen-game4 .g4-mode-btn{
+  flex:1 1 0 !important; border-radius:100px !important; font-family:var(--clay-disp) !important; font-weight:800 !important;
+  font-size:clamp(13px,3.4vw,16px) !important; padding:9px 10px !important; min-height:40px !important;
+  color:#6b5326 !important; -webkit-text-fill-color:#6b5326 !important;
+  background:linear-gradient(180deg,#fffaf0,#efe0c2) !important; border:2px solid #fff6e2 !important;
+  box-shadow:0 3px 0 #c6a35e, inset 0 2px 0 rgba(255,255,255,.7) !important;
+  text-shadow:none !important; transition:transform .12s, box-shadow .12s !important;
+}
+#screen-game4 .g4-mode-btn:active{ transform:translateY(2px) !important; box-shadow:0 1px 0 #c6a35e !important; }
+#screen-game4 #g4-btn-normal.active,
+#screen-game4 .g4-mode-btn.active:not(#g4-btn-poke){
+  color:#fff !important; -webkit-text-fill-color:#fff !important;
+  background:linear-gradient(180deg,#7fd06a,#4caf50 60%,#2f8f43) !important; border-color:#c8f0b6 !important;
+  box-shadow:0 4px 0 #1c6b26, inset 0 2px 0 rgba(255,255,255,.55) !important; text-shadow:0 1px 2px rgba(0,0,0,.28) !important;
+}
+#screen-game4 #g4-btn-poke.active{
+  color:#fff !important; -webkit-text-fill-color:#fff !important;
+  background:linear-gradient(180deg,#5aa8ff,#2f6bd8 58%,#1e4fa8) !important; border-color:#bcd8ff !important;
+  box-shadow:0 4px 0 #163b7e, inset 0 2px 0 rgba(255,255,255,.5) !important; text-shadow:0 1px 2px rgba(0,0,0,.3) !important;
+}
+#screen-game4 .g4-animals-grid{
+  background:
+    radial-gradient(72% 46% at 50% 74%, #bff29a 0%, #8fd86e 46%, #5cb85a 74%, rgba(92,184,90,0) 100%),
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0)) !important;
+  backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
+  border:0 !important; border-radius:26px !important; box-shadow:none !important;
+  padding:14px 14px 22px !important; margin:8px auto 4px !important; width:100% !important; max-width:480px !important;
+  min-height:150px !important; align-content:flex-end !important; overflow:visible !important; gap:2px 6px !important;
+}
+#screen-game4 .g4-animal-item{ font-size:clamp(38px,10.5vw,58px) !important; filter:drop-shadow(0 6px 5px rgba(30,80,30,.35)) !important; }
+#screen-game4 .g4-poke-img{ filter:drop-shadow(0 6px 5px rgba(30,80,30,.35)) !important; }
+#screen-game4 .g4-choices{
+  gap:14px !important; max-width:480px !important; margin:6px auto 0 !important;
+  padding-bottom:16px !important; justify-content:center !important; flex-wrap:nowrap !important;
+}
+#screen-game4 .g4-choice-btn{
+  flex:1 1 0 !important; min-width:0 !important; max-width:130px !important;
+  height:clamp(78px,22vw,96px) !important; padding:0 !important; display:flex !important; align-items:center; justify-content:center;
+  border-radius:24px !important; border:4px solid #fff !important; font-family:var(--clay-disp) !important; font-weight:900 !important;
+  font-size:clamp(30px,9vw,44px) !important; color:#fff !important; text-shadow:0 2px 3px rgba(0,0,0,.28) !important;
+  transition:transform .16s cubic-bezier(.34,1.56,.64,1), box-shadow .16s !important;
+}
+#screen-game4 .g4-choice-btn:nth-child(3n+1){ background:linear-gradient(180deg,#6fb6ff,#2f6bd8 58%,#1e4fa8) !important; border-color:#d6e8ff !important; box-shadow:0 7px 0 #163b7e, inset 0 4px 0 rgba(255,255,255,.55), inset 0 -8px 12px rgba(0,0,0,.18), 0 10px 18px rgba(0,0,0,.22) !important; }
+#screen-game4 .g4-choice-btn:nth-child(3n+2){ background:linear-gradient(180deg,#8fe07a,#4caf50 58%,#2f8f43) !important; border-color:#dcf7cf !important; box-shadow:0 7px 0 #1c6b26, inset 0 4px 0 rgba(255,255,255,.55), inset 0 -8px 12px rgba(0,0,0,.18), 0 10px 18px rgba(0,0,0,.22) !important; }
+#screen-game4 .g4-choice-btn:nth-child(3n+3){ background:linear-gradient(180deg,#ffdc74,#f5b400 56%,#d68f14) !important; border-color:#fff0c2 !important; color:#5a3a12 !important; text-shadow:0 1px 0 rgba(255,255,255,.5) !important; box-shadow:0 7px 0 #a56a0e, inset 0 4px 0 rgba(255,255,255,.6), inset 0 -8px 12px rgba(0,0,0,.14), 0 10px 18px rgba(0,0,0,.22) !important; }
+#screen-game4 .g4-choice-btn:active{ transform:translateY(4px) scale(.96) !important; box-shadow:0 2px 0 rgba(0,0,0,.3), inset 0 3px 0 rgba(255,255,255,.4) !important; }
+#screen-game4 .g4-choice-btn.correct{ background:linear-gradient(180deg,#a9f0c9,#06d6a0 60%,#059669) !important; border-color:#eafff5 !important; color:#0b4f39 !important; -webkit-text-fill-color:#0b4f39 !important; box-shadow:0 7px 0 #047857, 0 0 22px rgba(16,214,160,.6), inset 0 4px 0 rgba(255,255,255,.6) !important; }
+#screen-game4 .g4-choice-btn.wrong{ background:linear-gradient(180deg,#ffb3c1,#f43f5e 60%,#e11d48) !important; border-color:#ffe4ea !important; color:#fff !important; -webkit-text-fill-color:#fff !important; box-shadow:0 7px 0 #9f1239, inset 0 4px 0 rgba(255,255,255,.5) !important; }
+#screen-game4 .g4-timer-track{ max-width:480px !important; height:16px !important; margin:6px auto 6px !important; background:#f3e3bd !important; border:2px solid #fff3d6 !important; border-radius:100px !important; box-shadow:inset 0 2px 4px rgba(0,0,0,.18) !important; }
+#screen-game4 .g4-timer-fill{ background:linear-gradient(90deg,#f5b400,#ffd94d 55%,#ffe89a) !important; border-radius:100px !important; box-shadow:0 0 10px rgba(245,180,0,.6), inset 0 2px 0 rgba(255,255,255,.6) !important; }
+#screen-game4 .g4-timer-text{ max-width:480px !important; color:#7a5010 !important; text-shadow:0 1px 2px rgba(255,255,255,.6) !important; font-weight:800 !important; }
+#screen-game4 .g4-progress{ color:#7a5010 !important; text-shadow:0 1px 2px rgba(255,255,255,.6) !important; font-weight:800 !important; }
+#screen-game4::after{ background:radial-gradient(120% 90% at 50% 0%, rgba(150,210,120,.16), rgba(60,120,60,.28) 55%, rgba(30,70,40,.40)) !important; }
+
+/* ============================================================================
+   G7 Tebak Gambar — mockup-match (sky/cloud stage, animal in glass/gem picture
+   frame, gold-outline question, four glossy 2x2 candy answer buttons).
+   #screen-game7-scoped, appended last.
+   ============================================================================ */
+#screen-game7{
+  background:linear-gradient(180deg,#bfe8ff 0%,#d9f1ff 34%,#eaf7e6 72%,#dff0c9 100%) !important;
+}
+#screen-game7::after{
+  content:'' !important; position:absolute !important; inset:0 !important;
+  pointer-events:none !important; z-index:0 !important;
+  background:
+    radial-gradient(58% 34% at 20% 20%, rgba(255,255,255,.85), transparent 60%),
+    radial-gradient(48% 26% at 82% 14%, rgba(255,255,255,.75), transparent 62%),
+    radial-gradient(70% 30% at 50% 100%, rgba(120,190,90,.28), transparent 70%) !important;
+}
+#screen-game7 > *{ position:relative; z-index:1; }
+#screen-game7 .g7-mode-badge{ display:none !important; }
+#screen-game7 .g7-progress{ display:none !important; }
+#screen-game7 .mg-bubble{
+  background:linear-gradient(180deg,#ffffff,#fff6e6) !important;
+  color:#5a3a12 !important; -webkit-text-fill-color:#5a3a12 !important;
+  border:3px solid #ffe9b8 !important; border-radius:18px !important;
+  box-shadow:0 6px 16px rgba(0,0,0,.18), inset 0 2px 0 rgba(255,255,255,.8) !important;
+  font-weight:800 !important; text-shadow:none !important;
+}
+#screen-game7 .g7-display{
+  width:min(360px,86vw) !important; height:min(300px,72vw) !important;
+  margin:2px auto 14px !important; align-self:center !important;
+  border-radius:30px !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.9), rgba(226,244,255,.86) 60%, rgba(206,236,255,.9)) !important;
+  border:7px solid #fff7e0 !important;
+  box-shadow:
+    0 0 0 6px #e8b24a,
+    0 0 0 10px #c98a2e,
+    0 0 0 13px rgba(255,247,224,.95),
+    0 18px 40px rgba(30,60,90,.42),
+    0 0 34px 10px rgba(255,214,110,.5),
+    inset 0 3px 10px rgba(255,255,255,.9),
+    inset 0 -14px 26px rgba(120,170,210,.28) !important;
+  overflow:hidden !important;
+}
+#screen-game7 .g7-display::before{
+  content:'' !important; position:absolute !important; left:6%; right:6%; top:5%; height:34% !important;
+  border-radius:24px 24px 60% 60% !important; pointer-events:none !important; z-index:2 !important;
+  background:linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,255,255,0)) !important;
+}
+#screen-game7 .g7-display img{
+  height:min(30vh,190px) !important; max-width:82% !important; object-fit:contain !important;
+  position:relative; z-index:1;
+  filter:drop-shadow(0 10px 14px rgba(0,0,0,.3)) !important;
+}
+#screen-game7 .g7-display span{ position:relative; z-index:1; }
+#screen-game7 .g7-display.anim-correct{ animation:g7DisplayPop 0.65s cubic-bezier(0.34,1.56,0.64,1) !important; }
+#screen-game7 .g7-display.anim-wrong{ animation:g7DisplayShake 0.5s ease !important; }
+#screen-game7 .g7-question{
+  font-family:var(--font-display),var(--font) !important;
+  font-size:clamp(26px,7vw,38px) !important; font-weight:900 !important;
+  text-align:center !important; margin:2px auto 14px !important; letter-spacing:.5px !important;
+  color:#ffe9a8 !important; -webkit-text-fill-color:#ffe9a8 !important;
+  background:none !important;
+  text-shadow:
+    -2px 0 #8a5a12, 2px 0 #8a5a12, 0 -2px #8a5a12, 0 2px #8a5a12,
+    -2px -2px #8a5a12, 2px -2px #8a5a12, -2px 2px #8a5a12, 2px 2px #8a5a12,
+    0 5px 0 #6d4310, 0 7px 10px rgba(0,0,0,.35) !important;
+}
+#screen-game7 .g7-question b{ color:#fff2b0 !important; -webkit-text-fill-color:#fff2b0 !important; }
+#screen-game7 .g7-choices{
+  display:grid !important; grid-template-columns:1fr 1fr !important;
+  gap:14px !important; width:100% !important; max-width:440px !important;
+  margin:0 auto !important; align-self:center !important; padding-bottom:22px !important;
+}
+#screen-game7 .g7-choice-btn{
+  position:relative !important; overflow:hidden !important;
+  border:3px solid rgba(255,255,255,.9) !important; border-radius:20px !important;
+  padding:16px 10px !important; min-height:56px !important;
+  display:flex !important; flex-direction:column !important; gap:4px !important;
+  align-items:center !important; justify-content:center !important;
+  color:#fff !important; font-family:var(--font-display),var(--font) !important;
+  font-weight:900 !important; font-size:clamp(15px,4.4vw,19px) !important;
+  cursor:pointer !important;
+  transition:transform .08s cubic-bezier(0.34,1.56,0.64,1), box-shadow .08s !important;
+}
+#screen-game7 .g7-choice-btn::before{
+  content:'' !important; position:absolute !important; top:0; left:0; right:0; height:46% !important;
+  background:linear-gradient(180deg, rgba(255,255,255,.42), rgba(255,255,255,0)) !important;
+  border-radius:17px 17px 40% 40% !important; pointer-events:none !important;
+}
+#screen-game7 .g7-choice-btn .g7-choice-text{
+  position:relative; z-index:1; color:inherit !important; -webkit-text-fill-color:currentColor !important;
+  font-size:inherit !important; font-weight:900 !important;
+  text-shadow:0 2px 3px rgba(0,0,0,.28) !important; letter-spacing:.5px !important;
+}
+#screen-game7 .g7-choice-btn .g7-choice-img{
+  position:relative; z-index:1; font-size:clamp(30px,9vw,44px) !important; line-height:1 !important;
+}
+#screen-game7 .g7-choice-btn:active{
+  transform:scale(0.93) translateY(4px) !important;
+  box-shadow:0 1px 0 rgba(0,0,0,.35) !important;
+}
+#screen-game7 .g7-choice-btn:nth-child(4n+1){
+  background:linear-gradient(180deg,#5aa9ff,#2f7be6 62%,#2461c9) !important;
+  box-shadow:0 6px 0 #1c4ea3, 0 9px 14px rgba(0,0,0,.22) !important;
+}
+#screen-game7 .g7-choice-btn:nth-child(4n+2){
+  background:linear-gradient(180deg,#7ed957,#4caf50 62%,#358a3d) !important;
+  box-shadow:0 6px 0 #276b2c, 0 9px 14px rgba(0,0,0,.22) !important;
+}
+#screen-game7 .g7-choice-btn:nth-child(4n+3){
+  background:linear-gradient(180deg,#ffd772,#f5b52e 60%,#e09314) !important;
+  box-shadow:0 6px 0 #b5710d, 0 9px 14px rgba(0,0,0,.22) !important;
+  color:#4a2c00 !important;
+}
+#screen-game7 .g7-choice-btn:nth-child(4n+3) .g7-choice-text{ text-shadow:0 1px 1px rgba(255,255,255,.4) !important; }
+#screen-game7 .g7-choice-btn:nth-child(4n+4){
+  background:linear-gradient(180deg,#c58bff,#9b5cf0 60%,#7c3aed) !important;
+  box-shadow:0 6px 0 #5b28b5, 0 9px 14px rgba(0,0,0,.22) !important;
+}
+#screen-game7 .g7-choice-btn.correct{
+  background:linear-gradient(180deg,#8ef0a8,#22c55e 60%,#15a34a) !important;
+  box-shadow:0 6px 0 #0f7a37, 0 0 26px rgba(34,197,94,.7) !important;
+  color:#fff !important; animation:correctPulse 0.4s ease !important;
+}
+#screen-game7 .g7-choice-btn.correct .g7-choice-text{ color:#fff !important; -webkit-text-fill-color:#fff !important; }
+#screen-game7 .g7-choice-btn.wrong{
+  background:linear-gradient(180deg,#ff8a8a,#ef4444 60%,#c62f2f) !important;
+  box-shadow:0 6px 0 #9a1f1f !important; color:#fff !important; animation:wrongShake 0.4s ease !important;
+}
+#screen-game7 .g7-choice-btn.wrong .g7-choice-text{ color:#fff !important; -webkit-text-fill-color:#fff !important; }
+@media (max-height:560px) and (orientation:landscape){
+  #screen-game7 .g7-display{ width:min(40vh,60vw) !important; height:min(34vh,50vw) !important; margin-bottom:8px !important; }
+  #screen-game7 .g7-display img{ height:min(26vh,150px) !important; }
+  #screen-game7 .g7-question{ font-size:clamp(20px,4.6vh,30px) !important; margin-bottom:8px !important; }
+  #screen-game7 .g7-choices{ gap:10px !important; padding-bottom:12px !important; }
+  #screen-game7 .g7-choice-btn{ min-height:46px !important; padding:10px 8px !important; }
+}
+@media (max-width:360px){
+  #screen-game7 .g7-choices{ gap:10px !important; }
+  #screen-game7 .g7-choice-btn{ padding:12px 6px !important; font-size:15px !important; }
+}
+
+/* ============================================================================
+   G8 Susun Kata — mockup-match (gem/glass image frame, wood slot tray, glossy
+   candy letter tiles, red candy backspace). #screen-game8-scoped, appended last.
+   ============================================================================ */
+#screen-game8 .g8-hint-img{
+  width:clamp(150px,44vw,220px) !important; height:clamp(150px,44vw,220px) !important;
+  margin:10px auto 12px !important; border-radius:28px !important;
+  background:linear-gradient(160deg, #cfeeff, #a8dbff 52%, #7cc3f2 100%) !important;
+  border:5px solid #fff6e2 !important;
+  box-shadow:0 0 0 4px #e7b968, 0 12px 26px rgba(0,0,0,.4),
+             0 0 30px 6px rgba(150,210,255,.55),
+             inset 0 5px 14px rgba(255,255,255,.9), inset 0 -8px 16px rgba(70,135,200,.45) !important;
+}
+#screen-game8 .g8-hint-text{
+  display:inline-block !important;
+  background:linear-gradient(180deg,#b9803e,#8a5a26 62%,#6d4318) !important;
+  color:#fff6e2 !important; -webkit-text-fill-color:#fff6e2 !important;
+  border:3px solid #ffd98a !important; border-radius:14px !important;
+  box-shadow:0 5px 0 #4e300f, inset 0 2px 0 rgba(255,255,255,.25) !important;
+  text-shadow:0 1px 3px rgba(0,0,0,.5) !important;
+  font-family:var(--font-display) !important; font-weight:800 !important;
+  padding:8px 20px !important; margin:0 auto 16px !important; max-width:90% !important; text-align:center !important;
+}
+#screen-game8 .g8-slots{
+  align-self:center !important; margin:0 auto 20px !important;
+  width:fit-content !important; max-width:min(460px,96vw) !important;
+  gap:10px !important; padding:12px 14px !important; border-radius:18px !important;
+  background:linear-gradient(180deg,#a86c34,#8a5a26 60%,#6b4318) !important;
+  border:3px solid #d9a25a !important;
+  box-shadow:0 6px 0 #4e300f, inset 0 2px 0 rgba(255,255,255,.28), inset 0 -3px 8px rgba(0,0,0,.3) !important;
+}
+#screen-game8 .g8-slot{
+  min-width:clamp(48px,12.5vw,64px) !important; height:clamp(56px,14vw,72px) !important;
+  border-radius:12px !important;
+  background:linear-gradient(180deg,#5f3d1c,#4a2d12) !important;
+  border:3px solid #7a4f26 !important; color:#ffe9c2 !important;
+  -webkit-text-fill-color:#ffe9c2 !important;
+  font-family:var(--font-display) !important; font-weight:900 !important;
+  box-shadow:inset 0 3px 8px rgba(0,0,0,.55), inset 0 -1px 0 rgba(255,255,255,.12) !important;
+}
+#screen-game8 .g8-slot.filled{
+  background:linear-gradient(180deg,#fff3d6,#f4d29a 70%,#e6b76f) !important;
+  border-color:#fff6e2 !important; color:#5a3a12 !important;
+  -webkit-text-fill-color:#5a3a12 !important;
+  box-shadow:0 4px 0 #b07a34, inset 0 2px 0 rgba(255,255,255,.8) !important;
+  text-shadow:0 1px 0 rgba(255,255,255,.6) !important;
+}
+#screen-game8 .g8-slot.active{
+  border-color:#ffe08a !important;
+  box-shadow:inset 0 3px 8px rgba(0,0,0,.55), 0 0 0 3px rgba(255,214,120,.55), 0 0 16px rgba(255,214,120,.6) !important;
+}
+#screen-game8 .g8-slot.celebrate{
+  background:linear-gradient(180deg,#a4e07a,#4caf50 72%,#2f8f36) !important;
+  border-color:#dfffc4 !important; color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  box-shadow:0 4px 0 #1c6b26, 0 0 22px rgba(74,222,128,.7), inset 0 2px 0 rgba(255,255,255,.6) !important;
+}
+#screen-game8 .g8-letters{
+  align-self:center !important; margin:0 auto !important;
+  width:fit-content !important; max-width:min(460px,96vw) !important;
+  gap:12px !important; flex-wrap:wrap !important;
+}
+#screen-game8 .g8-letter-btn{
+  width:clamp(50px,13vw,64px) !important; height:clamp(50px,13vw,64px) !important;
+  min-width:clamp(50px,13vw,64px) !important; border-radius:16px !important;
+  background-image:none !important;
+  background:linear-gradient(180deg,#fff3d6,#f4d29a 70%,#e6b76f) !important;
+  border:3px solid #fff6e2 !important;
+  color:#5a3a12 !important; -webkit-text-fill-color:#5a3a12 !important;
+  font-family:var(--font-display) !important; font-weight:900 !important;
+  font-size:clamp(24px,6.2vw,32px) !important;
+  box-shadow:0 5px 0 #b07a34, inset 0 2px 0 rgba(255,255,255,.85), inset 0 -6px 12px rgba(0,0,0,.12) !important;
+  text-shadow:0 1px 0 rgba(255,255,255,.6) !important;
+}
+#screen-game8 .g8-letter-btn:nth-child(6n+1){ background:linear-gradient(180deg,#f3d9ff,#d9a8f0 72%,#c084e0) !important; box-shadow:0 5px 0 #9d4edd, inset 0 2px 0 rgba(255,255,255,.85), inset 0 -6px 12px rgba(0,0,0,.12) !important; }
+#screen-game8 .g8-letter-btn:nth-child(6n+2){ background:linear-gradient(180deg,#ffe0ec,#ffb3cd 72%,#ff8fb0) !important; box-shadow:0 5px 0 #e0407a, inset 0 2px 0 rgba(255,255,255,.85), inset 0 -6px 12px rgba(0,0,0,.12) !important; }
+#screen-game8 .g8-letter-btn:nth-child(6n+3){ background:linear-gradient(180deg,#fff0d1,#ffd68a 72%,#f5b74f) !important; box-shadow:0 5px 0 #d99420, inset 0 2px 0 rgba(255,255,255,.85), inset 0 -6px 12px rgba(0,0,0,.12) !important; }
+#screen-game8 .g8-letter-btn:nth-child(6n+4){ background:linear-gradient(180deg,#d6f7e0,#a3e9c0 72%,#6fd49b) !important; box-shadow:0 5px 0 #2f9e6b, inset 0 2px 0 rgba(255,255,255,.85), inset 0 -6px 12px rgba(0,0,0,.12) !important; }
+#screen-game8 .g8-letter-btn:nth-child(6n+5){ background:linear-gradient(180deg,#d9ecff,#a8cff5 72%,#7fb0e8) !important; box-shadow:0 5px 0 #3b74c2, inset 0 2px 0 rgba(255,255,255,.85), inset 0 -6px 12px rgba(0,0,0,.12) !important; }
+#screen-game8 .g8-letter-btn:nth-child(6n+6){ background:linear-gradient(180deg,#ffe6d1,#ffc59a 72%,#f5a15f) !important; box-shadow:0 5px 0 #d97030, inset 0 2px 0 rgba(255,255,255,.85), inset 0 -6px 12px rgba(0,0,0,.12) !important; }
+#screen-game8 .g8-letter-btn:active{ transform:scale(.9) translateY(3px) !important; box-shadow:0 2px 0 rgba(0,0,0,.3), inset 0 2px 0 rgba(255,255,255,.7) !important; }
+#screen-game8 .g8-letter-btn.used{ opacity:.28 !important; pointer-events:none !important; }
+#screen-game8 .g8-backspace-btn{
+  background:linear-gradient(180deg,#ff7a6b,#f4463a 60%,#d62828) !important;
+  border:3px solid #ffd0c8 !important; border-radius:16px !important;
+  color:#fff !important; -webkit-text-fill-color:#fff !important;
+  width:min(360px,90%) !important; max-width:360px !important; padding:12px 26px !important;
+  margin:6px auto 0 !important; display:block !important; font-size:22px !important;
+  box-shadow:0 6px 0 #a01f1f, inset 0 2px 0 rgba(255,255,255,.4), inset 0 -6px 12px rgba(0,0,0,.18) !important;
+  text-shadow:0 1px 3px rgba(0,0,0,.35) !important;
+}
+#screen-game8 .g8-backspace-btn:active{ transform:translateY(4px) !important; box-shadow:0 2px 0 #a01f1f, inset 0 2px 0 rgba(255,255,255,.4) !important; }
+
+/* ============================================================================
+   G9 Jejak Huruf — mockup-match (stone-tablet trace surface, gold star guide
+   nodes, clay Huruf/Angka tabs). #screen-game9-scoped, appended last.
+   ============================================================================ */
+#screen-game9 .g9-canvas-wrap{
+  background:linear-gradient(160deg,#d8d0bf,#b3a992 55%,#8f8670) !important;
+  border:6px solid #6f6656 !important; border-radius:22px !important;
+  box-shadow:0 9px 0 #574f3e, inset 0 3px 12px rgba(0,0,0,.30),
+             inset 0 -2px 0 rgba(255,255,255,.30), 0 12px 26px rgba(0,0,0,.3) !important;
+}
+/* gold glowing star-ish guide nodes (were pale green) */
+#screen-game9 .g9-dot{
+  width:18px !important; height:18px !important;
+  background:radial-gradient(circle at 50% 40%, #fff6c9, #ffd452 62%, #e0a221) !important;
+  border:2px solid #fff3cf !important;
+  box-shadow:0 0 10px 3px rgba(255,206,90,.7) !important;
+  animation:g9StarPulse 1.8s ease-in-out infinite !important;
+}
+@keyframes g9StarPulse{0%,100%{box-shadow:0 0 8px 2px rgba(255,206,90,.55)}50%{box-shadow:0 0 16px 5px rgba(255,190,60,.9)}}
+/* carved letter on the tablet */
+#screen-game9 .g9-letter-display{
+  background:none !important; -webkit-text-fill-color:#5a4a2a !important; color:#5a4a2a !important;
+  text-shadow:0 2px 0 rgba(255,255,255,.5), 0 -1px 0 rgba(0,0,0,.25) !important;
+}
+/* Huruf/Angka → glossy clay pills */
+#screen-game9 #g9-mode-tabs .g5-sub-tab{
+  border-radius:999px !important; font-family:var(--clay-disp) !important; font-weight:800 !important;
+  border:2.5px solid rgba(255,255,255,.5) !important;
+  box-shadow:0 4px 0 rgba(0,0,0,.18), inset 0 2px 0 rgba(255,255,255,.4) !important;
+  background:rgba(20,30,55,.5) !important; color:#fff !important;
+}
+#screen-game9 #g9-mode-tabs .g5-sub-tab.active{
+  background:linear-gradient(180deg,#a4e07a,#4caf50 62%,#2f8f36) !important; color:#fff !important;
+}
