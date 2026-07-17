@@ -175,6 +175,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
    so bigger sprites stay grounded. clamp keeps it responsive across tablet/phone. */
 .fighter img.sprite{height:clamp(150px,34vh,300px);max-height:44vh;filter:drop-shadow(0 12px 14px rgba(0,0,0,.45));transform-origin:50% 100%}
 .fighter img.mon-sprite{height:clamp(210px,50vh,420px);max-height:62vh;filter:drop-shadow(0 16px 18px rgba(0,0,0,.5));animation:slimeWob 2.2s ease-in-out infinite;transform-origin:50% 100%}
+.fighter img.mon-sprite.boss-mon{height:clamp(260px,62vh,520px);max-height:74vh;filter:drop-shadow(0 18px 20px rgba(0,0,0,.55)) drop-shadow(0 0 16px rgba(255,80,80,.55));animation:slimeWob 1.7s ease-in-out infinite,bossPulse 1.4s ease-in-out infinite}
+@keyframes bossPulse{0%,100%{filter:drop-shadow(0 18px 20px rgba(0,0,0,.55)) drop-shadow(0 0 14px rgba(255,80,80,.5))}50%{filter:drop-shadow(0 18px 20px rgba(0,0,0,.55)) drop-shadow(0 0 26px rgba(255,60,60,.85))}}
 .fighter .slime{font-size:clamp(150px,42vh,300px);line-height:1;filter:drop-shadow(0 14px 16px rgba(0,0,0,.45));animation:slimeWob 2s ease-in-out infinite;display:inline-block;transform-origin:50% 100%}
 @keyframes slimeWob{0%,100%{transform:scaleY(1) translateY(0)}50%{transform:scaleY(.94) translateY(-6px)}}
 /* subtle background parallax — driven by one cheap rAF loop (no canvas blur) */
@@ -799,6 +801,8 @@ function startGame(ops){  // P8: ops = array of chosen operators, or null = camp
   if(econ.energy<LEVEL_COST){ toast('⚡ Energi habis! Tunggu isi ulang atau beli di Toko.'); openModal('shop'); return; }
   econ.energy-=LEVEL_COST; econ.energyTs=(econ.energy===ENERGY_MAX-1)?Date.now():econ.energyTs; saveEcon(); refreshHUD();
   var g=(curWorld-1)*SUBS+curSub, tier=tierFor(g), n=qCountFor(g), mn=maxNumFor(g);
+  var isBoss=(g%SUBS===0);          // every 10th level = world boss
+  if(isBoss) n=Math.ceil(n*1.5);    // tougher: more HP / longer fight
   var specific=!!(ops&&ops.length);
   // P8: when a specific op-set is chosen, drop the inverse shape — its display flips
   // the operator (+ shown as −, × as ÷) which reads as a different operation and
@@ -833,10 +837,10 @@ function startGame(ops){  // P8: ops = array of chosen operators, or null = camp
   // English name (big) + small Indonesian subtitle below it
   var _nm=(_arc&&_arc.name)||(_arc&&_arc.monster)||('Monster '+curMonId);
   var _sub=(_arc&&_arc.sub)||'';
-  byId('foe-name').innerHTML='<span class="foe-en">👾 '+escapeHtml(_nm)+'</span>'+(_sub?('<span class="foe-sub">'+escapeHtml(_sub)+'</span>'):'');
-  game.arc=_arc||null; game.banterIdx=0;   // P3d story-mode banter cursor
+  byId('foe-name').innerHTML='<span class="foe-en">'+(isBoss?'👑 ':'👾 ')+escapeHtml(_nm)+'</span>'+(_sub?('<span class="foe-sub">'+(isBoss?'BOSS · ':'')+escapeHtml(_sub)+'</span>'):(isBoss?'<span class="foe-sub">BOSS</span>':''));
+  game.arc=_arc||null; game.banterIdx=0; game.isBoss=isBoss;   // P3d story-mode banter cursor
   var _mfb=monFallbackEmoji(curMonId);
-  byId('foe-holder').innerHTML='<img class="mon-sprite" src="'+monById(curMonId)+'" alt="" onerror="this.outerHTML=\'<span class=&quot;slime&quot;>'+_mfb+'</span>\'">';
+  byId('foe-holder').innerHTML='<img class="mon-sprite'+(isBoss?' boss-mon':'')+'" src="'+monById(curMonId)+'" alt="" onerror="this.outerHTML=\'<span class=&quot;slime&quot;>'+_mfb+'</span>\'">';
   byId('foe-hp').style.width='100%';
   show('game'); bgmPlay();
   playIntro(function(){ mpStoryIntro(); renderQ(); });
