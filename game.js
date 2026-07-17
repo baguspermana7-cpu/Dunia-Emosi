@@ -16,16 +16,16 @@ const DIFF = {
 // DATA
 // ================================================================
 const EMOTIONS = [
-  { emoji:'😊',name:'Senang',   color:'#F59E0B',animal:'🦁',tip:'💡 Tunjukkan kesenanganmu dengan senyuman! Ceritakan ke teman.',   scenario:'Kamu dapat hadiah ulang tahun yang kamu impikan!',  bodyCue:'Pipi terasa hangat, ingin melompat-lompat',  safeAction:'Tersenyum dan ceritakan ke teman' },
-  { emoji:'😢',name:'Sedih',    color:'#60A5FA',animal:'🐰',tip:'💡 Tidak apa-apa bersedih. Ceritakan ke Ayah atau Ibu.',           scenario:'Mainan kesayanganmu rusak dan tidak bisa diperbaiki.',bodyCue:'Mata terasa perih, tenggorokan sesak',       safeAction:'Ceritakan ke Ayah atau Ibu, tidak apa-apa menangis' },
-  { emoji:'😠',name:'Marah',    color:'#F87171',animal:'🐯',tip:'💡 Kalau marah, tarik napas 3x. Hitung 1-2-3 pelan-pelan.',       scenario:'Temanmu mengambil mainanmu tanpa izin.',            bodyCue:'Wajah terasa panas, tangan mengepal',        safeAction:'Tarik napas 3x, lalu bilang: aku tidak suka itu' },
-  { emoji:'😨',name:'Takut',    color:'#A78BFA',animal:'🐘',tip:'💡 Kalau takut, pegang tangan orang yang kamu sayang.',           scenario:'Kamu sendirian di ruangan gelap.',                  bodyCue:'Jantung berdebar, badan merinding',          safeAction:'Pegang tangan orang yang kamu sayang, nyalakan lampu' },
-  { emoji:'😲',name:'Terkejut', color:'#34D399',animal:'🦊',tip:'💡 Terkejut itu normal! Tarik napas, lalu tenangkan diri.',       scenario:'Teman-temanmu berteriak "Selamat Ulang Tahun!" tiba-tiba.', bodyCue:'Napas tertahan sejenak, mata melebar', safeAction:'Tarik napas, tersenyum, bilang terima kasih' },
-  { emoji:'😳',name:'Malu',     color:'#F472B6',animal:'🐸',tip:'💡 Semua orang pernah malu. Itu artinya kamu peduli!',            scenario:'Kamu menjawab salah di depan kelas, teman-teman melihat.',  bodyCue:'Pipi memerah, ingin bersembunyi',     safeAction:'Tarik napas dalam, ingat: semua orang pernah salah' },
-  { emoji:'🥰',name:'Bahagia',  color:'#FCD34D',animal:'🐼',tip:'💡 Bagikan kebahagiaanmu! Peluk orang yang kamu sayang.',         scenario:'Kamu bermain bersama sahabat terbaik sepanjang hari.',      bodyCue:'Badan terasa ringan, ingin bernyanyi',safeAction:'Peluk orang yang kamu sayang, ceritakan kebahagiaan' },
-  { emoji:'😑',name:'Bosan',    color:'#94A3B8',animal:'🐨',tip:'💡 Kalau bosan, coba aktivitas baru. Ajak teman bermain!',        scenario:'Tidak ada yang bisa dilakukan di rumah, semua terasa membosankan.',bodyCue:'Badan lesu, sulit fokus',          safeAction:'Coba aktivitas baru: gambar, main lego, atau ajak teman' },
-  { emoji:'😤',name:'Kesal',    color:'#FB923C',animal:'🐺',tip:'💡 Kalau kesal, ceritakan perasaanmu dengan kata-kata.',          scenario:'Adikmu menghancurkan bangunan balok yang kamu buat lama.',  bodyCue:'Rahang mengeras, ingin berteriak',   safeAction:'Ceritakan perasaanmu dengan kata-kata, jangan memukul' },
-  { emoji:'🤩',name:'Kagum',    color:'#22D3EE',animal:'🦄',tip:'💡 Rasa kagum itu indah! Eksplorasi hal baru setiap hari.',       scenario:'Kamu melihat pelangi besar setelah hujan deras.',           bodyCue:'Mata berbinar, mulut terbuka kagum',  safeAction:'Tunjukkan ke orang lain, tanya kenapa bisa terjadi' }
+  { emoji:'😊',name:'Senang',   color:'#F59E0B',animal:'🦁',tip:'💡 Tunjukkan kesenanganmu dengan senyuman! Ceritakan ke teman.',   scenario:'Kamu dapat hadiah ulang tahun yang kamu impikan!',  scenarios:['Kamu dapat hadiah ulang tahun yang kamu impikan!','Kamu berhasil naik sepeda tanpa jatuh untuk pertama kalinya.','Ibu memasak makanan kesukaanmu untuk makan malam.','Kamu mendapat nilai bagus karena rajin belajar.','Besok liburan dan kamu akan bermain seharian bersama teman.'], bodyCue:'Pipi terasa hangat, ingin melompat-lompat',  safeAction:'Tersenyum dan ceritakan ke teman' },
+  { emoji:'😢',name:'Sedih',    color:'#60A5FA',animal:'🐰',tip:'💡 Tidak apa-apa bersedih. Ceritakan ke Ayah atau Ibu.',           scenario:'Mainan kesayanganmu rusak dan tidak bisa diperbaiki.',scenarios:['Mainan kesayanganmu rusak dan tidak bisa diperbaiki.','Sahabatmu pindah rumah ke kota yang jauh.','Balon kesukaanmu terbang tinggi dan hilang di langit.','Kamu tidak bisa ikut bermain karena sedang sakit.','Hewan peliharaanmu sedang sakit dan lemas.'], bodyCue:'Mata terasa perih, tenggorokan sesak',       safeAction:'Ceritakan ke Ayah atau Ibu, tidak apa-apa menangis' },
+  { emoji:'😠',name:'Marah',    color:'#F87171',animal:'🐯',tip:'💡 Kalau marah, tarik napas 3x. Hitung 1-2-3 pelan-pelan.',       scenario:'Temanmu mengambil mainanmu tanpa izin.',            scenarios:['Temanmu mengambil mainanmu tanpa izin.','Gambar yang kamu buat susah payah dicoret orang lain.','Kamu diejek terus-menerus padahal sudah minta berhenti.','Antrianmu diserobot saat menunggu giliran bermain.','Kue milikmu dimakan tanpa bertanya lebih dulu.'], bodyCue:'Wajah terasa panas, tangan mengepal',        safeAction:'Tarik napas 3x, lalu bilang: aku tidak suka itu' },
+  { emoji:'😨',name:'Takut',    color:'#A78BFA',animal:'🐘',tip:'💡 Kalau takut, pegang tangan orang yang kamu sayang.',           scenario:'Kamu sendirian di ruangan gelap.',                  scenarios:['Kamu sendirian di ruangan gelap.','Suara petir menggelegar sangat keras saat hujan.','Kamu tersesat sebentar dan tidak melihat Ibu di keramaian.','Ada anjing besar menggonggong di dekatmu.','Kamu harus tampil bernyanyi di depan banyak orang.'], bodyCue:'Jantung berdebar, badan merinding',          safeAction:'Pegang tangan orang yang kamu sayang, nyalakan lampu' },
+  { emoji:'😲',name:'Terkejut', color:'#34D399',animal:'🦊',tip:'💡 Terkejut itu normal! Tarik napas, lalu tenangkan diri.',       scenario:'Teman-temanmu berteriak "Selamat Ulang Tahun!" tiba-tiba.', scenarios:['Teman-temanmu berteriak "Selamat Ulang Tahun!" tiba-tiba.','Balon meletus keras saat kamu tidak menyangka.','Kamu membuka kotak dan menemukan hadiah tak terduga.','Kucingmu tiba-tiba melompat dari balik pintu.','Teman menepuk pundakmu dari belakang secara mendadak.'], bodyCue:'Napas tertahan sejenak, mata melebar', safeAction:'Tarik napas, tersenyum, bilang terima kasih' },
+  { emoji:'😳',name:'Malu',     color:'#F472B6',animal:'🐸',tip:'💡 Semua orang pernah malu. Itu artinya kamu peduli!',            scenario:'Kamu menjawab salah di depan kelas, teman-teman melihat.',  scenarios:['Kamu menjawab salah di depan kelas, teman-teman melihat.','Kamu terpeleset kecil dan semua orang menoleh ke arahmu.','Namamu salah disebut saat kamu maju ke depan.','Kamu lupa lirik lagu saat bernyanyi di panggung.','Bajumu terkena noda saat sedang berkumpul dengan teman.'], bodyCue:'Pipi memerah, ingin bersembunyi',     safeAction:'Tarik napas dalam, ingat: semua orang pernah salah' },
+  { emoji:'🥰',name:'Bahagia',  color:'#FCD34D',animal:'🐼',tip:'💡 Bagikan kebahagiaanmu! Peluk orang yang kamu sayang.',         scenario:'Kamu bermain bersama sahabat terbaik sepanjang hari.',      scenarios:['Kamu bermain bersama sahabat terbaik sepanjang hari.','Seluruh keluarga berkumpul dan tertawa bersama di rumah.','Kamu memeluk Ibu erat-erat setelah lama tidak bertemu.','Kamu berhasil membantu teman dan ia mengucapkan terima kasih.','Kamu piknik ke taman dan bermain sepuasnya di rumput.'], bodyCue:'Badan terasa ringan, ingin bernyanyi',safeAction:'Peluk orang yang kamu sayang, ceritakan kebahagiaan' },
+  { emoji:'😑',name:'Bosan',    color:'#94A3B8',animal:'🐨',tip:'💡 Kalau bosan, coba aktivitas baru. Ajak teman bermain!',        scenario:'Tidak ada yang bisa dilakukan di rumah, semua terasa membosankan.',scenarios:['Tidak ada yang bisa dilakukan di rumah, semua terasa membosankan.','Hujan turun seharian sehingga kamu tidak bisa keluar bermain.','Kamu menunggu giliran sangat lama dan tidak ada kegiatan.','Kamu sudah menonton semua acara dan tidak tahu harus apa lagi.','Perjalanan di mobil terasa panjang dan tidak ada yang seru.'], bodyCue:'Badan lesu, sulit fokus',          safeAction:'Coba aktivitas baru: gambar, main lego, atau ajak teman' },
+  { emoji:'😤',name:'Kesal',    color:'#FB923C',animal:'🐺',tip:'💡 Kalau kesal, ceritakan perasaanmu dengan kata-kata.',          scenario:'Adikmu menghancurkan bangunan balok yang kamu buat lama.',  scenarios:['Adikmu menghancurkan bangunan balok yang kamu buat lama.','Sepatumu susah dipakai padahal kamu sudah terburu-buru.','Puzzle yang kamu susun berantakan tersenggol orang lain.','Kamu berkali-kali mencoba tetapi belum juga berhasil.','Temanmu terus mengganggu saat kamu ingin fokus bermain.'], bodyCue:'Rahang mengeras, ingin berteriak',   safeAction:'Ceritakan perasaanmu dengan kata-kata, jangan memukul' },
+  { emoji:'🤩',name:'Kagum',    color:'#22D3EE',animal:'🦄',tip:'💡 Rasa kagum itu indah! Eksplorasi hal baru setiap hari.',       scenario:'Kamu melihat pelangi besar setelah hujan deras.',           scenarios:['Kamu melihat pelangi besar setelah hujan deras.','Kamu menyaksikan langit malam penuh bintang berkelip.','Kamu melihat air terjun tinggi yang deras dan megah.','Kamu menonton pesawat besar lepas landas ke angkasa.','Kamu melihat kupu-kupu berwarna-warni hinggap di bunga.'], bodyCue:'Mata berbinar, mulut terbuka kagum',  safeAction:'Tunjukkan ke orang lain, tanya kenapa bisa terjadi' }
 ]
 
 // emotion name → assets/db/faces sprite id (illustrated expression faces, A-356).
@@ -65,17 +65,33 @@ const ANIMAL_LETTERS = [
   {animal:'🐬',word:'LUMBA',     letter:'L',num:12,hint:'Mamalia laut yang sangat cerdas dan suka melompat tinggi di lautan'},
   {animal:'🐒',word:'MONYET',    letter:'M',num:13,hint:'Hewan pandai berlengan panjang yang jago melompat dan memanjat pohon'},
   {animal:'🦜',word:'NURI',      letter:'N',num:14,hint:'Burung berwarna-warni cerah yang bisa menirukan suara percakapan manusia'},
-  {animal:'🦧',word:'ORANG UTAN',letter:'O',num:15,hint:'Kera besar berbulu merah-coklat yang hidup di hutan tropis Kalimantan'},
   {animal:'🐼',word:'PANDA',     letter:'P',num:16,hint:'Hewan berbulu hitam-putih yang sangat gemar memakan batang bambu'},
   {animal:'🦌',word:'RUSA',      letter:'R',num:17,hint:'Hewan berkaki empat yang jantannya memiliki tanduk bercabang-cabang indah'},
   {animal:'🦁',word:'SINGA',     letter:'S',num:18,hint:'Hewan besar berbulu lebat di sekitar kepala yang dijuluki Raja Hutan'},
-  {animal:'🐭',word:'TIKUS',     letter:'T',num:19,hint:'Hewan pengerat kecil berekor panjang yang sangat cepat dan gemar mencuri makanan'},
-  {animal:'🐛',word:'ULAT',      letter:'U',num:20,hint:'Hewan berbadan lunak dan bersegmen yang kelak berubah menjadi kupu-kupu indah'},
-  // W/Y/Z added for fuller alphabet coverage with REAL Indonesian animal names.
-  // Q/V/X skipped — no common Indonesian animal names with those initial letters.
+  {animal:'🐭',word:'TIKUS',     letter:'T',num:19,hint:'Hewan pengerat kecil berekor panjang yang gemar mencuri makanan'},
+  {animal:'🐛',word:'ULAT',      letter:'U',num:20,hint:'Hewan berbadan lunak yang kelak berubah menjadi kupu-kupu indah'},
+  {animal:'🦓',word:'ZEBRA',     letter:'Z',num:23,hint:'Kuda bergaris hitam-putih yang berasal dari padang rumput Afrika'},
+  {animal:'🦢',word:'ANGSA',     letter:'A',num:2, hint:'Unggas air berleher panjang dan berbulu putih yang berenang anggun di kolam'},
+  {animal:'🦏',word:'BADAK',     letter:'B',num:1, hint:'Hewan besar berkulit tebal dengan cula runcing di ujung hidungnya'},
+  {animal:'🐊',word:'BUAYA',     letter:'B',num:3, hint:'Reptil besar bermulut lebar dan bergigi tajam yang hidup di sungai'},
+  {animal:'🦍',word:'GORILA',    letter:'G',num:2, hint:'Kera raksasa berbulu hitam dan sangat kuat yang tinggal di hutan lebat'},
+  {animal:'🐙',word:'GURITA',    letter:'G',num:8, hint:'Hewan laut lunak berlengan delapan yang bisa menyemprotkan tinta hitam'},
+  {animal:'🐹',word:'HAMSTER',   letter:'H',num:5, hint:'Hewan pengerat mungil berpipi tembam yang gemar menyimpan makanan di mulut'},
+  {animal:'🦎',word:'IGUANA',    letter:'I',num:3, hint:'Reptil besar berduri di punggung yang suka berjemur di bawah sinar matahari'},
+  {animal:'🦗',word:'JANGKRIK',  letter:'J',num:7, hint:'Serangga kecil yang mengerik ramai di malam hari dari balik semak'},
+  {animal:'🐐',word:'KAMBING',   letter:'K',num:5, hint:'Hewan berkaki empat bertanduk yang suka memakan rumput dan mengembik'},
+  {animal:'🐰',word:'KELINCI',   letter:'K',num:4, hint:'Hewan berbulu lembut bertelinga panjang yang melompat-lompat memakan wortel'},
+  {animal:'🐞',word:'KEPIK',     letter:'K',num:6, hint:'Kumbang mungil merah berbintik hitam yang dianggap pembawa keberuntungan'},
+  {animal:'🐨',word:'KOALA',     letter:'K',num:2, hint:'Hewan berbulu abu-abu yang suka tidur dan memeluk batang pohon eukaliptus'},
+  {animal:'🦎',word:'KOMODO',    letter:'K',num:1, hint:'Kadal raksasa berlidah bercabang dari Pulau Komodo yang sangat perkasa'},
+  {animal:'🐆',word:'MACAN',     letter:'M',num:4, hint:'Kucing besar berbintik hitam yang pandai memanjat dan bersembunyi'},
+  {animal:'🦚',word:'MERAK',     letter:'M',num:3, hint:'Burung yang mekar ekornya menjadi kipas bulu biru-hijau yang menakjubkan'},
+  {animal:'🐧',word:'PINGUIN',   letter:'P',num:3, hint:'Burung hitam-putih yang tak bisa terbang tetapi jago berenang di air dingin'},
+  {animal:'🐦',word:'PIPIT',     letter:'P',num:9, hint:'Burung mungil coklat yang berkicau ramai di antara padi sawah'},
+  {animal:'🐍',word:'SANCA',     letter:'S',num:2, hint:'Ular besar tak berbisa yang melilit dan hidup di hutan tropis Indonesia'},
+  {animal:'🐿️',word:'TUPAI',     letter:'T',num:5, hint:'Hewan mungil berekor lebat yang lincah melompat di antara ranting pohon'},
   {animal:'🦭',word:'WALRUS',    letter:'W',num:21,hint:'Mamalia laut besar bertaring panjang yang hidup di kutub utara'},
-  {animal:'🦀',word:'YUYU',      letter:'Y',num:22,hint:'Kepiting kecil air tawar yang hidup di sawah dan sungai Indonesia'},
-  {animal:'🦓',word:'ZEBRA',     letter:'Z',num:23,hint:'Kuda bergaris hitam-putih yang berasal dari padang rumput Afrika'}
+  {animal:'🦀',word:'YUYU',      letter:'Y',num:22,hint:'Kepiting kecil air tawar yang hidup di sawah dan sungai Indonesia'}
 ]
 
 const MATCH_PAIRS = [
@@ -1004,7 +1020,10 @@ const LETTER_SEQ_PINTAR = Object.keys(LETTER_GUIDES)
 const WORD_LIST_G9 = [
   'IBU','API','SAPI','BOLA','MEJA','KAKI','MATA','BAJU','SUSU','BUKU',
   'KUDA','NASI','TOPI','ROTI','GIGI','DADU','PAGI','JARI','DUKU','SORE',
-  'AYAM','BEBEK','GAJAH','KUCING','RUMAH','BUNGA','MOBIL','PISANG','APEL','DAUN'
+  'AYAM','BEBEK','GAJAH','KUCING','RUMAH','BUNGA','MOBIL','PISANG','APEL','DAUN',
+  'AIR','RODA','PENA','KURSI','LAMPU','PINTU','SENDOK','GARPU','PIRING','GELAS',
+  'KEBUN','SAWAH','LAUT','GUNUNG','AWAN','HUJAN','BULAN','MADU','TELUR','KEJU',
+  'ADIK','KAKAK','NENEK','PAMAN','TEMAN','ANGSA','ULAR','SEMUT','MANGGA','JAMBU'
 ]
 // Build a whole-word trace layout: each letter's normalized guide dots are packed
 // into its own horizontal slot (i/L .. (i+1)/L) so the dots line up letter-by-letter
@@ -1093,6 +1112,25 @@ function getAgeLetters(tier) {
   if (tier==='tumbuh') return ANIMAL_LETTERS.slice(0,14)
   return ANIMAL_LETTERS
 }
+
+// ── Shared no-repeat "shuffle bag" (owner: questions must be varied, minim pengulangan) ──
+// Draws items so ALL are used once before ANY repeats, persists across levels within a
+// session, and never returns the same item twice in a row on reshuffle. Key groups a bag
+// (e.g. 'g3', 'g8', 'g1'). pickBag returns one item; drawBag returns N distinct items.
+const _qbags = {}
+function _shuffledCopy(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;} return a }
+function pickBag(key, arr){
+  if(!arr || !arr.length) return null
+  let b=_qbags[key]
+  if(!b || b.sig!==arr.length){ b=_qbags[key]={queue:_shuffledCopy(arr), last:null, sig:arr.length} }
+  if(!b.queue.length){ b.queue=_shuffledCopy(arr); if(b.queue.length>1 && b.queue[0]===b.last){ b.queue.push(b.queue.shift()) } }
+  const it=b.queue.shift(); b.last=it; return it
+}
+function drawBag(key, arr, n){ const out=[]; const seen=[]; let guard=0
+  while(out.length<n && guard++<n*6){ const it=pickBag(key,arr); if(seen.indexOf(it)===-1){ seen.push(it); out.push(it) } }
+  return out
+}
+function resetBag(key){ if(key) delete _qbags[key]; else { for(const k in _qbags) delete _qbags[k] } }
 function getAgeMaxCount(tier) {
   if (tier==='cilik')  return 5
   if (tier==='tumbuh') return 10
@@ -3017,12 +3055,14 @@ function nextG1Round(){
   if(state.mode==='duo'&&g1State.round===g1State.maxRound){state.currentPlayer=1;g1State.correct=0;updateGameStarDisplay();showFeedback(true,0,`Giliran ${state.players[1].name}! 🎮`,nextG1Round);return}
   g1State.answered=false; document.getElementById('g1-tip').style.display='none'
   const roundInSet=g1State.round%g1State.maxRound; buildDots('g1-dots',g1State.maxRound,roundInSet)
-  const shuffled=[...EMOTIONS].sort(()=>Math.random()-0.5),correct=shuffled[0],numChoices=g1State.choices
-  // Show scenario context for medium/hard levels
+  const correct=pickBag('g1',EMOTIONS)||EMOTIONS[Math.floor(Math.random()*EMOTIONS.length)]
+  const shuffled=[...EMOTIONS].sort(()=>Math.random()-0.5),numChoices=g1State.choices
+  // Show scenario context for medium/hard levels — rotate through the emotion's scenarios (no repeat)
   const scenEl=document.getElementById('g1-scenario')
   if(scenEl){
     const lv=state.selectedLevelNum||1
-    if(lv>=6 && correct.scenario){ scenEl.style.display='block'; scenEl.textContent='📖 '+correct.scenario }
+    var _scen=(correct.scenarios&&correct.scenarios.length)?pickBag('g1s-'+correct.name,correct.scenarios):correct.scenario
+    if(lv>=6 && _scen){ scenEl.style.display='block'; scenEl.textContent='📖 '+_scen }
     else { scenEl.style.display='none' }
   }
   const pool=shuffled.slice(0,numChoices).sort(()=>Math.random()-0.5)
@@ -3226,7 +3266,7 @@ function nextG3Round(){
   if(state.mode==='duo'&&g3State.round===g3State.maxRound){state.currentPlayer=1;g3State.correct=0;g3State.shuffled=[...ANIMAL_LETTERS].sort(()=>Math.random()-0.5);updateGameStarDisplay();showFeedback(true,0,`Giliran ${state.players[1].name}! 🎮`,nextG3Round);return}
   g3State.answered=false; const roundInSet=g3State.round%g3State.maxRound; buildDots('g3-dots',g3State.maxRound,roundInSet)
   const isLetterMode=(roundInSet/g3State.maxRound)<0.6
-  const item=g3State.shuffled[roundInSet%g3State.shuffled.length],numChoices=g3State.choices
+  const item=pickBag('g3',g3State.shuffled)||g3State.shuffled[roundInSet%g3State.shuffled.length],numChoices=g3State.choices
   g3State.currentItem=item; g3State.isLetterMode=isLetterMode
   document.getElementById('g3-mode-badge').textContent=isLetterMode?'Level: Huruf 🔤':'Level: Angka 🔢'
   document.getElementById('g3-animal').textContent=item.animal
@@ -4302,7 +4342,7 @@ function nextG8Round(){
   }
   g8State.answered=false
   const roundInSet=g8State.round%g8State.shuffled.length
-  const item=g8State.shuffled[roundInSet%g8State.shuffled.length]
+  const item=pickBag('g8',g8State.shuffled)||g8State.shuffled[roundInSet%g8State.shuffled.length]
   g8State.currentWord=item.word; g8State.userInput=[]
   document.getElementById('g8-progress-bar').style.width=((roundInSet/g8State.maxRound)*100)+'%'
   document.getElementById('g8-hint-img').innerHTML=`<span style="font-size:inherit">${item.emoji}</span>`
@@ -4400,7 +4440,8 @@ function initGame9(){
   if(g9TraceMode==='angka'){
     seq=LETTER_SEQ_ANGKA
   } else if(wordMode){
-    seq=WORD_LIST_G9
+    // no-repeat: draw a fresh shuffled set of words each level (cross-level bag)
+    seq=drawBag('g9w',WORD_LIST_G9,Math.min(DIFF[diff].rounds,WORD_LIST_G9.length))
   } else {
     seq=tier==='cilik'?LETTER_SEQ_CILIK:tier==='tumbuh'?LETTER_SEQ_TUMBUH:LETTER_SEQ_PINTAR
   }
