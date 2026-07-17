@@ -917,7 +917,8 @@ function answer(btn,picked,q){
   }
   refreshHUD();
   game.idx++;
-  setTimeout(renderQ,850);
+  // snappier on correct; linger on wrong so the child can read the highlighted right answer
+  setTimeout(renderQ, correct ? 560 : 1250);
 }
 function elCenter(el){ var r=el.getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height/2}; }
 function heroAttack(){ var h=byId('fh-hero'); h.classList.remove('attack-hero'); void h.offsetWidth; h.classList.add('attack-hero');
