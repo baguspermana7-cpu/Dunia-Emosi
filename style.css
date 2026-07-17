@@ -8287,3 +8287,71 @@ button:disabled, [aria-disabled="true"] {
   #screen-game7 .g7-choice-text{ font-size:12px !important; }
   #screen-game7 .g7-progress{ display:none !important; }
 }
+
+/* ============================================================================
+   G3 Huruf Hutan — mockup-match (Gemini ref: animal-in-glowing-oval medallion,
+   individual cream letter tiles, hex-gem candy buttons). Appended last +
+   #screen-game3-scoped so it wins the cascade and can't leak to other games.
+   ============================================================================ */
+/* animal in a glowing golden oval medallion (was a bare floating emoji) */
+#screen-game3 .g3-animal{
+  width:132px !important; height:132px !important; line-height:132px !important;
+  font-size:74px !important; margin:2px auto 10px !important; border-radius:50% !important;
+  background:radial-gradient(circle at 50% 42%, #fff6da 0%, #ffe6a6 42%, #f5c96a 70%, #d69b3c 100%) !important;
+  border:5px solid #fff2cf !important;
+  box-shadow:0 0 0 4px #c9832e, 0 10px 22px rgba(0,0,0,.4), 0 0 26px 6px rgba(255,214,120,.55),
+             inset 0 3px 8px rgba(255,255,255,.7) !important;
+}
+/* individual cream/wood letter tiles instead of one plank */
+#screen-game3 .g3-word{
+  background:none !important; -webkit-text-fill-color:initial !important;
+  border:0 !important; box-shadow:none !important; padding:0 !important;
+  display:flex !important; gap:8px !important; justify-content:center !important;
+  letter-spacing:0 !important; flex-wrap:wrap !important;
+}
+#screen-game3 .g3-letter{
+  display:inline-flex !important; align-items:center; justify-content:center;
+  width:48px; height:56px; border-radius:12px;
+  font-family:var(--clay-disp) !important; font-weight:900; font-size:34px;
+  color:#5a3a12 !important; -webkit-text-fill-color:#5a3a12 !important;
+  background:linear-gradient(180deg,#fff3d6,#f4d29a 70%,#e6b76f) !important;
+  border:3px solid #fff6e2 !important;
+  box-shadow:0 5px 0 #b07a34, inset 0 2px 0 rgba(255,255,255,.8) !important;
+  text-shadow:0 1px 0 rgba(255,255,255,.6);
+}
+#screen-game3 .g3-letter.g3-blank{
+  color:#8a6a3a !important; -webkit-text-fill-color:#8a6a3a !important;
+  background:linear-gradient(180deg,#caa267,#b0854a) !important;
+  box-shadow:0 5px 0 #7d571f, inset 0 4px 8px rgba(0,0,0,.35) !important;
+  border-color:#e6cfa2 !important;
+}
+#screen-game3 .g3-letter.highlight{
+  color:#fff !important; -webkit-text-fill-color:#fff !important;
+  background:linear-gradient(180deg,#a4e07a,#4caf50 72%,#2f8f36) !important;
+  box-shadow:0 5px 0 #1c6b26, 0 0 20px rgba(74,222,128,.7), inset 0 2px 0 rgba(255,255,255,.6) !important;
+}
+/* wood-scroll hint plaque (was a white bubble) */
+#screen-game3 .g3-hint{
+  background:linear-gradient(180deg,#b9803e,#8a5a26 62%,#6d4318) !important;
+  color:#fff6e2 !important; -webkit-text-fill-color:#fff6e2 !important;
+  border:3px solid #ffd98a !important; border-radius:16px !important;
+  box-shadow:0 5px 0 #4e300f, inset 0 2px 0 rgba(255,255,255,.25) !important;
+  text-shadow:0 1px 3px rgba(0,0,0,.5) !important; font-weight:800 !important;
+  padding:9px 18px !important; max-width:90% !important;
+}
+/* hex-gem candy answer buttons (were rounded rectangles) */
+#screen-game3 .g3-choice-btn{
+  clip-path:polygon(25% 4%, 75% 4%, 98% 50%, 75% 96%, 25% 96%, 2% 50%) !important;
+  border-radius:0 !important; border:0 !important;
+  width:96px; height:96px; padding:0 !important; margin:0 auto !important;
+  font-size:38px !important; display:flex; align-items:center; justify-content:center;
+  box-shadow:0 6px 0 rgba(0,0,0,.22), inset 0 4px 0 rgba(255,255,255,.5), inset 0 -8px 12px rgba(0,0,0,.18) !important;
+}
+#screen-game3 .g3-choices{
+  display:flex !important; grid-template-columns:none !important;
+  gap:14px !important; justify-content:center !important; flex-wrap:wrap !important; max-width:none !important;
+}
+/* brighter, warmer jungle wash for g3 (mockup is bright, not the shared navy dusk) */
+#screen-game3::after{
+  background:radial-gradient(120% 90% at 50% 0%, rgba(150,210,120,.18), rgba(60,120,60,.30) 55%, rgba(30,70,40,.42)) !important;
+}
