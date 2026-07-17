@@ -149,7 +149,9 @@ footer{text-align:center;padding:30px 0 46px;color:var(--ink-soft);font-weight:7
       <li><b>Aktifkan login</b>: menu <b>Authentication → Providers</b> → nyalakan <b>Email</b> (atau <b>Anonymous</b> kalau mau tanpa daftar).</li>
       <li><b>Jalankan SQL</b>: menu <b>SQL Editor → New query</b> → <b>copy blok SQL</b> di bawah → paste → <b>Run</b>. (Aman diulang; pakai <code>if not exists</code>.)</li>
       <li><b>Ambil kunci</b>: menu <b>Settings → API</b> → copy <b>Project URL</b> dan <b>anon public</b> key.</li>
-      <li><b>Kirim ke saya</b>: URL + anon key (dua-duanya publik, aman). Saya wire sync 7-slot + leaderboard. Data lokal 7 pemain akan tersimpan ke cloud (stars/level/coins/gems/trophies + unlock kodok slot-7 & gym-pokemon terjaga).</li>
+      <li><b>Aktifkan (1 baris)</b>: sync sudah <b>pre-wired</b> di game. Tambahkan SATU baris ini <b>sebelum</b> <code>&lt;script src="data/math-cloud.js"&gt;</code> di <code>games/kuis-matematika.html</code> (ganti url + anon key kamu):
+        <br><code style="display:inline-block;background:#06140d;border:1px solid #1f5236;border-radius:8px;padding:4px 8px;margin-top:4px;font-size:11.5px;color:#cfeedd">&lt;script&gt;window.MATH_SUPABASE={url:'https://xxx.supabase.co',anonKey:'eyJ...'}&lt;/script&gt;</code>
+        <br>Selesai — sync 7-slot + leaderboard nyala. Tanpa baris ini game tetap 100% lokal (aman). Data lokal (stars/level/coins/gems/trophies + unlock kodok slot-7 & gym-pokemon) tersimpan ke cloud. Kalau ragu, kirim URL+anon key ke saya, saya yang pasang.</li>
     </ol>
 
     <div style="position:relative;margin:0 0 6px">

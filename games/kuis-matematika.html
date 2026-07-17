@@ -565,6 +565,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <script src="vfx-engine.js?v=59.18-20260712a"></script><!-- shared VFX (monster defeat explosion) -->
 <script src="data/math-heroes.js?v=59.29-20260715a"></script><!-- P3b hero roster (sprite changes per op) -->
 <script src="data/math-stories.js?v=59.32-20260717a"></script><!-- P3d per-level story arcs (monster names + banter) -->
+<!-- P3e optional cloud sync — INERT until window.MATH_SUPABASE={url,anonKey} is set (see plb.html) -->
+<script src="data/math-cloud.js?v=59.39-20260718a"></script>
 <script>
 (function(){
 'use strict';
@@ -602,7 +604,7 @@ function loadEcon(){
   econ.stats = econ.stats||{played:0,correct:0,wrong:0,bestStreak:0,cleared:0};
   regenEnergy();
 }
-function saveEcon(){ try{ localStorage.setItem('mp_econ',JSON.stringify(econ)); }catch(e){} }
+function saveEcon(){ try{ localStorage.setItem('mp_econ',JSON.stringify(econ)); }catch(e){} try{ if(window.MathCloud&&MathCloud.isEnabled())MathCloud.schedulePush(); }catch(e){} }
 function regenEnergy(){
   if(econ.energy>=ENERGY_MAX){ econ.energyTs=Date.now(); return; }
   var el=Date.now()-econ.energyTs, gain=Math.floor(el/ENERGY_REGEN_MS);
@@ -1254,6 +1256,8 @@ function goHome(){ window.location.href='../index.html'; }
 
 /* ── boot ── */
 loadEcon(); refreshHUD();
+// P3e — if cloud sync is configured, pull the account save then reload local state (guarded, non-blocking)
+try{ if(window.MathCloud&&MathCloud.isEnabled()){ MathCloud.pull().then(function(changed){ if(changed){ try{ loadEcon(); refreshHUD(); if(typeof renderPeta==='function')renderPeta(); }catch(e){} } }); } }catch(e){}
 // prime audio unlock on first gesture
 document.addEventListener('pointerdown',function armed(){ try{ if(S&&S.cue) S.cue('click',{volume:0}); }catch(e){} document.removeEventListener('pointerdown',armed); },{once:true});
 
