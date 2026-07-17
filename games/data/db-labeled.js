@@ -54,10 +54,45 @@
       [1,'Matahari'],[2,'Bulan'],[3,'Bintang'],[4,'Bumi'],[8,'Teleskop'],[10,'Magnet'],
       [11,'Baterai'],[16,'Gunung Berapi'],[17,'Gunung'],[18,'Pelangi'],[19,'Awan'],
       [22,'Salju'],[26,'Api'],[27,'Es'],[34,'Kaktus'],[35,'Jamur']
+    ]},
+    // ── words2 sheet (owner art, 100 named items) — upgrades emoji-only categories ──
+    sayur: { cat: 'words2', items: [
+      [1,'Wortel'],[2,'Bayam'],[3,'Tomat'],[4,'Kentang'],[5,'Jagung'],[6,'Brokoli'],[7,'Terong'],
+      [8,'Cabai'],[9,'Timun'],[10,'Labu'],[11,'Kol'],[12,'Sawi'],[13,'Buncis'],[14,'Jamur'],[15,'Bawang']
+    ]},
+    profesi: { cat: 'words2', items: [
+      [16,'Dokter'],[17,'Guru'],[18,'Polisi'],[19,'Pemadam'],[20,'Koki'],[21,'Petani'],[22,'Pilot'],
+      [23,'Masinis'],[24,'Nelayan'],[25,'Tentara'],[26,'Perawat'],[27,'Tukang Pos'],[28,'Pelukis'],
+      [29,'Penyanyi'],[30,'Astronaut'],[31,'Ilmuwan']
+    ]},
+    tubuh: { cat: 'words2', items: [
+      [32,'Tangan'],[33,'Kaki'],[34,'Mata'],[35,'Hidung'],[36,'Telinga'],[37,'Mulut'],[38,'Gigi'],
+      [39,'Rambut'],[40,'Jari'],[41,'Lidah']
+    ]},
+    pakaian: { cat: 'words2', items: [
+      [42,'Baju'],[43,'Celana'],[44,'Rok'],[45,'Topi'],[46,'Sepatu'],[47,'Kaus Kaki'],
+      [48,'Sarung Tangan'],[49,'Syal'],[50,'Jaket'],[51,'Dasi']
+    ]},
+    olahraga: { cat: 'words2', items: [
+      [52,'Bola Sepak'],[53,'Bola Basket'],[54,'Raket'],[55,'Sepeda'],[56,'Sepatu Roda'],
+      [57,'Layang-Layang'],[58,'Skateboard'],[59,'Ring Basket']
+    ]},
+    musik: { cat: 'words2', items: [
+      [60,'Gitar'],[61,'Drum'],[62,'Piano'],[63,'Terompet'],[64,'Biola'],[65,'Seruling'],
+      [66,'Angklung'],[67,'Gendang']
+    ]},
+    sekolah: { cat: 'words2', items: [
+      [68,'Buku'],[69,'Pensil'],[70,'Penghapus'],[71,'Penggaris'],[72,'Tas'],[73,'Meja'],
+      [74,'Papan Tulis'],[75,'Krayon'],[76,'Gunting'],[77,'Lem']
+    ]},
+    warna: { cat: 'words2', items: [
+      [78,'Merah'],[79,'Biru'],[80,'Kuning'],[81,'Hijau'],[82,'Oranye'],[83,'Ungu'],
+      [84,'Merah Muda'],[85,'Cokelat'],[86,'Hitam'],[87,'Putih']
     ]}
   }
 
-  var GROUP_LABEL = { hewan: 'Hewan', buah: 'Buah', makanan: 'Makanan', benda: 'Benda', kendaraan: 'Kendaraan', sains: 'Sains' }
+  var GROUP_LABEL = { hewan: 'Hewan', buah: 'Buah', makanan: 'Makanan', benda: 'Benda', kendaraan: 'Kendaraan', sains: 'Sains',
+    sayur: 'Sayur', profesi: 'Profesi', tubuh: 'Anggota Tubuh', pakaian: 'Pakaian', olahraga: 'Olahraga', musik: 'Alat Musik', sekolah: 'Sekolah', warna: 'Warna' }
 
   function groups () { var k = []; for (var g in DATA) if (DATA.hasOwnProperty(g)) k.push(g); return k }
   function label (g) { return GROUP_LABEL[g] || g }
