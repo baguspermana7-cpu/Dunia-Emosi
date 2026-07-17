@@ -1090,18 +1090,33 @@ function claimDaily(i){
    each round a timed answer-sprint; win by out-scoring your opponent. */
 var tourn=null;
 var TZ_ROUNDS=[{name:'Semifinal',sec:25},{name:'Final',sec:25}];
+// P3c — Pokémon-style: your hero vs VISUAL monster opponents (sprite + real name
+// from the 281-monster DB). Visual only; the fight IS the shared answer-sprint.
+var TZ_HERO=(window.MATH_HEROES?MATH_HEROES.byOp('+').art:'../assets/math/hero-mathhero.webp');
+function tzOpp(){
+  var id=1+Math.floor(Math.random()*281);
+  var fm=(window.MATH_STORIES&&MATH_STORIES.forMonster)?MATH_STORIES.forMonster(id):null;
+  return {id:id, name:(fm&&fm.name)||('Monster '+id), sub:(fm&&fm.sub)||'', src:MON+'mon-'+id+'.webp'};
+}
+function tzFighter(src,name,cls,fb){
+  return '<div style="display:flex;flex-direction:column;align-items:center;gap:2px;min-width:78px">'+
+    '<img src="'+src+'" alt="" onerror="this.replaceWith(Object.assign(document.createElement(\'div\'),{textContent:\''+fb+'\',style:\'font-size:40px\'}))" '+
+    'style="width:64px;height:64px;object-fit:contain;filter:drop-shadow(0 4px 5px rgba(0,0,0,.3))">'+
+    '<span class="'+cls+'" style="font-family:var(--disp);font-weight:800;font-size:12px;border-radius:10px;padding:2px 8px">'+escapeHtml(name)+'</span></div>';
+}
 function renderTournamentIntro(){
-  var pool=BOTS.slice().sort(function(){return Math.random()-0.5;});
-  var bots=pool.slice(0,3);
-  tourn={round:0,bots:bots,semiOpp:bots[0],finalOpp:bots[1]};
+  // distinct opponents for the 2 rounds
+  var a=tzOpp(), b=tzOpp(); var guard=0; while(b.id===a.id && guard++<10) b=tzOpp();
+  tourn={round:0,semiOpp:a,finalOpp:b};
   byId('tourn-body').innerHTML='<div class="tourn-run">'+
-    '<p style="font-weight:800;color:var(--ink-soft);margin-bottom:8px">🏆 Turnamen 2 ronde! Menangi tiap ronde dengan skor lebih tinggi dari lawan. Juara dapat 💎 + 🏆 besar!</p>'+
-    '<div style="display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;font-weight:800;color:var(--ink)">'+
-      '<span style="background:linear-gradient(180deg,#a4e07a,#4caf50);color:#fff;border-radius:14px;padding:6px 12px">🧒 '+escapeHtml(econ.name)+'</span>'+
-      '<span style="color:var(--ink-soft)">🆚</span>'+
-      '<span style="background:rgba(20,30,55,.55);color:#fff;border-radius:14px;padding:6px 12px">🤖 '+bots[0]+'</span>'+
-      '<span style="color:var(--ink-soft)">→</span>'+
-      '<span style="background:linear-gradient(180deg,#ffe07a,#ffcf3f);color:#5a3d00;border-radius:14px;padding:6px 12px">🏁 Final</span>'+
+    '<p style="font-weight:800;color:var(--ink-soft);margin-bottom:10px">🏆 Turnamen 2 ronde! Kalahkan lawanmu dengan skor lebih tinggi. Juara dapat 💎 + 🏆 besar!</p>'+
+    '<div style="display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">'+
+      tzFighter(TZ_HERO,econ.name,'clay green','🧒')+
+      '<span style="color:var(--ink-soft);font-weight:800">🆚</span>'+
+      tzFighter(a.src,a.name,'clay blue','👾')+
+      '<span style="color:var(--ink-soft);font-weight:800">→</span>'+
+      tzFighter(b.src,b.name,'clay purple','👾')+
+      '<span style="color:var(--ink-soft);font-weight:800">🏁</span>'+
     '</div>'+
     '<button class="clay gold" style="padding:14px 30px;font-size:18px" id="tourn-start">▶ Mulai Turnamen</button></div>';
   byId('tourn-start').onclick=tzStartRound;
@@ -1111,7 +1126,11 @@ function tzStartRound(){
   var opp=tourn.round===0?tourn.semiOpp:tourn.finalOpp;
   tourn.score=0; tourn.left=r.sec; tourn.q=null;
   byId('tourn-body').innerHTML='<div class="tourn-run">'+
-    '<div style="font-weight:800;color:var(--purple-d);margin-bottom:4px">'+r.name+' — 🧒 vs 🤖 '+opp+'</div>'+
+    '<div style="font-weight:800;color:var(--purple-d);margin-bottom:6px">'+r.name+'</div>'+
+    '<div style="display:flex;justify-content:center;align-items:center;gap:12px;margin-bottom:6px">'+
+      tzFighter(TZ_HERO,econ.name,'clay green','🧒')+
+      '<span style="color:var(--ink-soft);font-weight:800">🆚</span>'+
+      tzFighter(opp.src,opp.name,'clay blue','👾')+'</div>'+
     '<div class="tourn-timer" id="t-timer">'+r.sec+'</div><div class="tourn-score">Skor: <span id="t-score">0</span></div>'+
     '<div class="qcard" id="t-card" style="font-size:30px">…</div><div class="choices" id="t-choices" style="margin-top:10px"></div></div>';
   tourn.iv=setInterval(function(){ tourn.left--; set('t-timer',tourn.left); if(tourn.left<=0) tzEndRound(); },1000);
@@ -1135,7 +1154,7 @@ function tzEndRound(){
   if(win && tourn.round<TZ_ROUNDS.length-1){
     tourn.round++;
     body.innerHTML='<div class="tourn-run"><div class="tourn-timer" style="color:var(--green-d)">Menang! ✓</div>'+
-      '<p style="font-weight:800;margin:8px 0">Kamu '+tourn.score+' — 🤖 '+opp+' '+oppScore+'</p>'+
+      '<p style="font-weight:800;margin:8px 0">Kamu '+tourn.score+' — 👾 '+escapeHtml(opp.name)+' '+oppScore+'</p>'+
       '<button class="clay gold" style="padding:12px 26px" id="tz-next">▶ Lanjut ke Final</button></div>';
     byId('tz-next').onclick=tzStartRound; sfx('correct'); confetti(24);
   } else if(win){
@@ -1149,7 +1168,7 @@ function tzEndRound(){
     var cons=Math.max(1,Math.floor(tourn.score/3));
     econ.trophies+=cons; postLeaderboard(tourn.score); econ.stats.played++; saveEcon(); refreshHUD();
     body.innerHTML='<div class="tourn-run"><div class="tourn-timer" style="color:var(--red)">Kalah 😢</div>'+
-      '<p style="font-weight:800;margin:8px 0">Kamu '+tourn.score+' — 🤖 '+opp+' '+oppScore+' · +'+cons+' 🏆 hiburan</p>'+
+      '<p style="font-weight:800;margin:8px 0">Kamu '+tourn.score+' — 👾 '+escapeHtml(opp.name)+' '+oppScore+' · +'+cons+' 🏆 hiburan</p>'+
       '<button class="clay blue" style="padding:12px 26px" onclick="MP.openModal(\'turnamen\')">🔁 Coba Lagi</button></div>';
     sfx('wrong'); tourn=null;
   }
