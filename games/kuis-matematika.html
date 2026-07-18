@@ -565,11 +565,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <script src="vfx-engine.js?v=59.18-20260712a"></script><!-- shared VFX (monster defeat explosion) -->
 <script src="data/math-heroes.js?v=59.29-20260715a"></script><!-- P3b hero roster (sprite changes per op) -->
 <script src="data/math-stories.js?v=59.32-20260717a"></script><!-- P3d per-level story arcs (monster names + banter) -->
-<!-- P3e cloud sync — INERT. Enable Anonymous auth in Supabase FIRST, then uncomment
-     the config below (publishable/anon key ONLY — NEVER the service_role/secret key).
+<!-- P3e cloud sync — config baked in but STAYS INERT until localStorage 'mp_cloud_on'='1'
+     (a button in plb.html flips it, same origin). publishable/anon key ONLY — the
+     service_role/secret key must NEVER live in the repo/browser. Owner: enable the
+     Anonymous provider in Supabase FIRST, then click "Aktifkan Cloud Sync" in plb.html. -->
 <script>window.MATH_SUPABASE={url:'https://iaiyoazomujscqrpknbq.supabase.co',anonKey:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlhaXlvYXpvbXVqc2NxcnBrbmJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTk0MTYsImV4cCI6MjA5MzI5NTQxNn0.gcYFTOhxS1giqUQGdmsmwYPjueHW6BPe3oYaIPWASlI'}</script>
--->
-<script src="data/math-cloud.js?v=59.41-20260718a"></script>
+<script src="data/math-cloud.js?v=59.43-20260718h"></script>
 <script>
 (function(){
 'use strict';

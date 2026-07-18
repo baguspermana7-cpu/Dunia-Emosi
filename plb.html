@@ -141,18 +141,34 @@ footer{text-align:center;padding:30px 0 46px;color:var(--ink-soft);font-weight:7
        ============================================================ -->
   <section id="sb-guide" style="margin:26px 0;border:2px solid #2b7a4b;border-radius:18px;
        background:linear-gradient(180deg,#0f2a1c,#0b2016);padding:20px 20px 8px;color:#dff5e6">
-    <h2 style="margin:0 0 4px;font-size:22px;color:#7CFFB0">🗄️ Panduan Supabase — Akun Math 7 Slot</h2>
-    <p style="margin:0 0 14px;font-size:14px;color:#a8d8bd">Ikuti 5 langkah ini sekali saja. Tinggal copy-paste. Setelah selesai, kirim <b>Project URL</b> + <b>anon key</b> ke saya — nanti saya sambungkan ke game (kode client). <b>Jangan</b> bagikan <b>service_role</b> key.</p>
+    <h2 style="margin:0 0 4px;font-size:22px;color:#7CFFB0">🗄️ Panduan Supabase — Enable Anonymous Auth + Akun Math 7 Slot</h2>
+    <p style="margin:0 0 12px;font-size:14px;color:#a8d8bd">Config sudah <b>di-wire penuh</b> di game (URL + anon key sudah terpasang). Yang tersisa cuma <b>2 aksi milikmu</b>: (A) nyalakan provider <b>Anonymous</b> di dashboard Supabase, lalu (B) klik tombol <b>Aktifkan Cloud Sync</b> di bawah. Tidak perlu edit kode sama sekali. Selama belum kamu aktifkan, game tetap <b>100% lokal & aman</b> (tidak ada koneksi ke server).</p>
 
+    <div style="background:#06140d;border:1px solid #6b2b2b;border-left:4px solid #e0554e;border-radius:10px;padding:10px 14px;margin:0 0 14px;font-size:12.5px;color:#f0c9c6">
+      🔒 <b>PENTING — keamanan.</b> Yang boleh dipakai di browser cuma <b>Project URL</b> + <b>anon/publishable key</b> (memang publik, dilindungi RLS). Key <b>service_role</b> & <b>secret</b> (<code>sb_secret_…</code>) yang kemarin sempat kamu kirim di chat <b>JANGAN</b> pernah masuk repo/browser — dan sebaiknya <b>di-rotate</b>: Supabase Dashboard → <b>Settings → API → Rotate</b> (untuk service_role) + <b>API Keys → Roll</b> (untuk secret). Aku tidak menaruh key rahasia di mana pun.
+    </div>
+
+    <p style="margin:0 0 6px;font-size:15px;font-weight:800;color:#7CFFB0">Langkah A — Nyalakan Anonymous provider (super detail)</p>
     <ol style="font-size:14px;line-height:1.7;padding-left:20px;margin:0 0 14px">
-      <li><b>Buat project</b>: buka <a href="https://supabase.com/dashboard" target="_blank" rel="noopener" style="color:#7CFFB0">supabase.com/dashboard</a> → <b>New project</b> (atau pakai project yang sudah ada). Tunggu ±2 menit sampai aktif.</li>
-      <li><b>Aktifkan login</b>: menu <b>Authentication → Providers</b> → nyalakan <b>Email</b> (atau <b>Anonymous</b> kalau mau tanpa daftar).</li>
-      <li><b>Jalankan SQL</b>: menu <b>SQL Editor → New query</b> → <b>copy blok SQL</b> di bawah → paste → <b>Run</b>. (Aman diulang; pakai <code>if not exists</code>.)</li>
-      <li><b>Ambil kunci</b>: menu <b>Settings → API</b> → copy <b>Project URL</b> dan <b>anon public</b> key.</li>
-      <li><b>Aktifkan (1 baris)</b>: sync sudah <b>pre-wired</b> di game. Tambahkan SATU baris ini <b>sebelum</b> <code>&lt;script src="data/math-cloud.js"&gt;</code> di <code>games/kuis-matematika.html</code> (ganti url + anon key kamu):
-        <br><code style="display:inline-block;background:#06140d;border:1px solid #1f5236;border-radius:8px;padding:4px 8px;margin-top:4px;font-size:11.5px;color:#cfeedd">&lt;script&gt;window.MATH_SUPABASE={url:'https://xxx.supabase.co',anonKey:'eyJ...'}&lt;/script&gt;</code>
-        <br>Selesai — sync 7-slot + leaderboard nyala. Tanpa baris ini game tetap 100% lokal (aman). Data lokal (stars/level/coins/gems/trophies + unlock kodok slot-7 & gym-pokemon) tersimpan ke cloud. Kalau ragu, kirim URL+anon key ke saya, saya yang pasang.</li>
+      <li>Buka <a href="https://supabase.com/dashboard/project/iaiyoazomujscqrpknbq/auth/providers" target="_blank" rel="noopener" style="color:#7CFFB0">Dashboard → Authentication → Sign In / Providers</a> (project <code>iaiyoazomujscqrpknbq</code>).</li>
+      <li>Scroll ke daftar provider. Cari kartu <b>“Anonymous Sign-ins”</b> (di UI baru ada di bagian bawah, kadang di tab <b>Authentication → Configuration</b>).</li>
+      <li>Klik kartu itu → geser toggle <b>“Enable anonymous sign-ins”</b> ke <b>ON</b> (hijau).</li>
+      <li>Klik <b>Save</b> di pojok kanan bawah. Tunggu notif “saved”.</li>
+      <li>(Kalau tidak ketemu di Providers) buka <b>Authentication → Configuration → General/Settings</b> → cari <b>“Allow anonymous sign-ins”</b> → ON → Save.</li>
+      <li><b>Verifikasi cepat</b>: buka <a href="https://supabase.com/dashboard/project/iaiyoazomujscqrpknbq/auth/users" target="_blank" rel="noopener" style="color:#7CFFB0">Authentication → Users</a>. Nanti setelah Langkah B, akan muncul user baru bertipe <b>anonymous</b> tiap kali game dibuka.</li>
     </ol>
+
+    <p style="margin:0 0 6px;font-size:15px;font-weight:800;color:#7CFFB0">Langkah B — Aktifkan sync (1 klik, tanpa edit kode)</p>
+    <p style="margin:0 0 8px;font-size:13.5px;color:#a8d8bd">Tombol ini menyalakan flag <code>mp_cloud_on</code> (localStorage, origin yang sama dengan game) — game langsung mulai sync ke cloud. Bisa dimatikan lagi kapan saja.</p>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 6px">
+      <button onclick="mpCloud(true)" style="background:#2b7a4b;color:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:800;cursor:pointer;font-size:14px">✅ Aktifkan Cloud Sync</button>
+      <button onclick="mpCloud(false)" style="background:#3a2020;color:#ffd7d2;border:1px solid #6b2b2b;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;font-size:14px">⏻ Matikan (lokal saja)</button>
+      <span id="mp-cloud-status" style="font-size:13px;font-weight:800;padding:6px 12px;border-radius:100px;background:#20321f;color:#a8d8bd">status: …</span>
+    </div>
+    <p style="margin:0 0 14px;font-size:12.5px;color:#8fc7a6">Setelah aktif: buka game Matematika Petualangan → mainkan sebentar → progres (stars/level/coins/gems/trophies + unlock kodok slot-7 & gym-pokemon) otomatis tersimpan ke <b>math_players</b> slot 1. Cek di Supabase <b>Table Editor → math_players</b> harus muncul 1 baris. <b>Urutan wajib:</b> Langkah A dulu (Anonymous ON), baru Langkah B — kalau dibalik, sign-in gagal (422) & sync mati sendiri sampai A selesai.</p>
+
+    <p style="margin:0 0 6px;font-size:15px;font-weight:800;color:#7CFFB0">Langkah C — SQL tabel (sekali saja, kalau belum)</p>
+    <p style="margin:0 0 8px;font-size:13.5px;color:#a8d8bd">Kalau tabel <code>math_players</code> belum ada: <b>SQL Editor → New query</b> → copy blok bawah → paste → <b>Run</b>. Aman diulang (pakai <code>if not exists</code>).</p>
 
     <div style="position:relative;margin:0 0 6px">
       <button onclick="sbCopy(this,'sb-sql')" style="position:absolute;top:8px;right:8px;z-index:2;
@@ -340,6 +356,21 @@ PURE WHITE background, clean grid, generous spacing between cells, no overlap, a
       var o=btn.textContent;btn.textContent='✓ Tersalin!';setTimeout(function(){btn.textContent=o;},1400);
     }).catch(function(){var r=document.createRange();r.selectNode(el);var s=getSelection();s.removeAllRanges();s.addRange(r);
       try{document.execCommand('copy');btn.textContent='✓ Tersalin!';setTimeout(function(){btn.textContent='📋 Copy';},1400);}catch(e){}s.removeAllRanges();});}
+
+  // Cloud-sync toggle (same-origin localStorage flag read by games/data/math-cloud.js)
+  function mpCloudStatus(){
+    var on=false; try{on=localStorage.getItem('mp_cloud_on')==='1'}catch(e){}
+    var el=document.getElementById('mp-cloud-status'); if(!el)return;
+    el.textContent = on ? 'status: AKTIF ✅ (sync nyala)' : 'status: MATI (lokal saja)';
+    el.style.background = on ? '#1c3a22' : '#20321f';
+    el.style.color = on ? '#7CFFB0' : '#a8d8bd';
+  }
+  function mpCloud(on){
+    try{ if(on) localStorage.setItem('mp_cloud_on','1'); else localStorage.removeItem('mp_cloud_on'); }catch(e){ alert('Gagal simpan flag: '+e); }
+    mpCloudStatus();
+    if(on) alert('Cloud sync AKTIF. Pastikan Anonymous provider sudah ON di Supabase (Langkah A) dulu. Buka game Matematika Petualangan untuk mulai sync.');
+  }
+  mpCloudStatus();
   </script>
 
   <h2 class="section-t">✨ Showcase Mockup Interaktif</h2>

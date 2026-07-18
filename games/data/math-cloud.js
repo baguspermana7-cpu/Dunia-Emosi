@@ -35,7 +35,14 @@
   var SLOT = 1                          // account's math save lives in slot 1
   var sb = null, ready = false, booting = null, pushTimer = null
 
-  function enabled () { return !!(CFG && CFG.url && CFG.anonKey) }
+  // Cloud sync stays INERT until the owner flips localStorage 'mp_cloud_on'='1'
+  // (a button in plb.html sets it — same origin, shared storage). This keeps the
+  // config safely baked in without firing any network call (or 422 when the
+  // Anonymous provider is still off) until the owner explicitly turns it on.
+  function toggledOn () {
+    try { return localStorage.getItem('mp_cloud_on') === '1' } catch (_) { return false }
+  }
+  function enabled () { return !!(CFG && CFG.url && CFG.anonKey) && toggledOn() }
 
   function loadSdk () {
     if (global.supabase && global.supabase.createClient) return Promise.resolve()
