@@ -31,7 +31,10 @@ const EMOTIONS = [
 // emotion name → assets/db/faces sprite id (illustrated expression faces, A-356).
 // Hand-verified from the faces montage; used by g1 Aku Merasa + g5 Cocokkan Emosi.
 const EMOTION_FACE = { Senang:1, Sedih:3, Marah:4, Takut:13, Terkejut:12, Malu:14, Bahagia:8, Bosan:20, Kesal:30, Kagum:22 }
-function emoFaceSrc(name){ try{ if(window.DBSprites) return DBSprites.path('faces', EMOTION_FACE[name]||1); }catch(e){} return ''; }
+function emoFaceSrc(name){ try{ if(window.UISprites){ var s=UISprites.path('emo',(name||'').toLowerCase()); if(s) return s; } if(window.DBSprites) return DBSprites.path('faces', EMOTION_FACE[name]||1); }catch(e){} return ''; }
+// owner emo pack: match each emotion's companion animal to a real sprite (emoji fallback)
+const EMO_ANIMAL={'🦁':'singa','🐰':'kelinci','🐯':'harimau','🐘':'gajah','🦊':'rubah','🐸':'katak','🐼':'panda','🐨':'koala','🐺':'serigala','🦄':'unicorn'};
+function emoAnimalSrc(a){ try{ if(window.UISprites){ var s=UISprites.path('emo',EMO_ANIMAL[a]); if(s) return s; } }catch(e){} return ''; }
 // g5 match cards from the illustrated db sprites (hewan→creatures+name, buah→
 // objects+name via DBLabeled; kendaraan→distinct vehicle sprites). [] if unavailable.
 function g5DbCards(mode,k){
@@ -2391,7 +2394,13 @@ function showResult(mascot, title, msg) {
   // SECTION 1: text content (CRITICAL — modal must show this)
   try {
     const mascotEl = document.getElementById('result-mascot')
-    if (mascotEl) mascotEl.textContent = mascot || state.players[state.currentPlayer].animal
+    if (mascotEl) {
+      const _m = mascot || state.players[state.currentPlayer].animal
+      const _ms = emoAnimalSrc(_m)
+      mascotEl.innerHTML = _ms
+        ? `<img src="${_ms}" alt="" decoding="async" style="width:1em;height:1em;object-fit:contain" onerror="this.replaceWith(document.createTextNode('${_m}'))">`
+        : _m
+    }
     const titleEl = document.getElementById('result-title')
     if (titleEl) titleEl.textContent = finalTitle
     const starsEl = document.getElementById('result-stars')
@@ -3079,7 +3088,11 @@ function nextG1Round(){
   const _bubble = _faceSrc
     ? `<img class="g1-emot-bubble" src="${_faceSrc}" alt="" loading="lazy" decoding="async" style="object-fit:contain" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'g1-emot-bubble',textContent:'${correct.emoji}'}))">`
     : `<span class="g1-emot-bubble">${correct.emoji}</span>`
-  document.getElementById('g1-animal').innerHTML=`<span class="g1-char ${_emoClass}" style="filter:drop-shadow(0 0 28px ${moodColor}99) drop-shadow(0 8px 16px rgba(0,0,0,0.18));">${correct.animal}</span>${_bubble}`
+  const _aniSrc=emoAnimalSrc(correct.animal)
+  const _aniInner=_aniSrc
+    ? `<img src="${_aniSrc}" alt="" decoding="async" style="width:1em;height:1em;object-fit:contain;display:inline-block;vertical-align:middle" onerror="this.replaceWith(document.createTextNode('${correct.animal}'))">`
+    : correct.animal
+  document.getElementById('g1-animal').innerHTML=`<span class="g1-char ${_emoClass}" style="filter:drop-shadow(0 0 28px ${moodColor}99) drop-shadow(0 8px 16px rgba(0,0,0,0.18));">${_aniInner}</span>${_bubble}`
   document.getElementById('g1-progress-bar').style.width=((roundInSet/g1State.maxRound)*100)+'%'
   const choicesEl=document.getElementById('g1-choices')
   choicesEl.style.gridTemplateColumns=numChoices<=3?'1fr 1fr 1fr':(numChoices<=4?'1fr 1fr':'1fr 1fr 1fr')
@@ -3087,7 +3100,9 @@ function nextG1Round(){
   choicesEl.innerHTML=''
   choices.forEach(em=>{
     const btn=document.createElement('button'); btn.className='g1-choice-btn'
-    btn.innerHTML=`<span class="choice-emoji">${em.emoji}</span><span class="choice-label">${em.name}</span>`
+    const _cfSrc=emoFaceSrc(em.name)
+    const _cf=_cfSrc?`<img src="${_cfSrc}" alt="" decoding="async" style="width:1em;height:1em;object-fit:contain;vertical-align:middle" onerror="this.replaceWith(document.createTextNode('${em.emoji}'))">`:em.emoji
+    btn.innerHTML=`<span class="choice-emoji">${_cf}</span><span class="choice-label">${em.name}</span>`
     btn.onclick=()=>{
       if(g1State.answered)return; g1State.answered=true
       const isCorrect=em.name===correct.name
