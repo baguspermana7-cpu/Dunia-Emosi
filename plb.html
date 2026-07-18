@@ -205,61 +205,133 @@ grant select on public.math_leaderboard to anon, authenticated;
   </section>
 
   <!-- ============================================================
-       PROMPT GENERATE GAMBAR — sheet sayur/profesi (upgrade emoji → art)
+       SPRITE PACK REQUESTS — prompt siap-copy utk semua sprite UIUX/gameplay
+       (sheet sayur/profesi + maskot LAMA sudah dipakai → dihapus)
        ============================================================ -->
-  <section id="art-guide" style="margin:26px 0;border:2px solid #8a5a26;border-radius:18px;
-       background:linear-gradient(180deg,#241708,#1a1105);padding:20px 20px 8px;color:#f5e6cf">
-    <h2 style="margin:0 0 4px;font-size:22px;color:#ffd98a">🎨 Prompt Generate Gambar — Sheet Sayur/Profesi</h2>
-    <p style="margin:0 0 12px;font-size:14px;color:#d8c3a0">Game sudah jalan penuh dengan art yang ADA (281 monster, hero, background, db creatures/objects/vehicles/science/faces). Yang masih <b>emoji</b> cuma kategori <b>sayur, profesi, tubuh, pakaian, olahraga, musik, sekolah, warna</b> (dipakai g5 sub-mode + g7 + g12). Generate <b>1 sheet</b> ini → kirim PNG ke saya → saya crop + wire jadi gambar asli. Spec lengkap semua sheet ada di <code>documentation and standarization/G1-G12_ENHANCEMENT_ASSETS.md</code>.</p>
-    <div style="position:relative;margin:0 0 6px">
-      <button onclick="sbCopy(this,'art-prompt')" style="position:absolute;top:8px;right:8px;z-index:2;
-        background:#8a5a26;color:#fff;border:0;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer">📋 Copy Prompt</button>
-      <pre id="art-prompt" style="margin:0;overflow:auto;background:#140d06;border:1px solid #4e300f;border-radius:12px;
-        padding:14px 14px;font-size:12.5px;line-height:1.55;color:#f0dcbd;white-space:pre-wrap">Professional high-end 2D mobile-game art, Supercell / Candy-Crush / Duolingo quality. Chunky rounded forms, thick clean dark outlines, rich saturated yet harmonious colors, soft top-down lighting with gentle rim-light and soft ambient occlusion, glossy highlights, crisp readable silhouettes. Each item is a COMPLETE standalone game icon. Consistent scale, lighting, and style across the ENTIRE sheet, cute and child-friendly, high detail.
-
-A 10x10 grid on PURE WHITE background of 100 distinct cute cartoon items, evenly spaced with a tiny label under each, grouped:
-- SAYUR: wortel, bayam, tomat, kentang, jagung, brokoli, terong, cabai, timun, labu, kol, sawi, buncis, jamur, bawang
-- PROFESI (friendly kid characters in uniform): dokter, guru, polisi, pemadam, koki, petani, pilot, masinis, nelayan, tentara, perawat, tukang-pos, pelukis, penyanyi, astronaut, ilmuwan
-- ANGGOTA TUBUH: tangan, kaki, mata, hidung, telinga, mulut, gigi, rambut, jari, lidah
-- PAKAIAN: baju, celana, rok, topi, sepatu, kaus-kaki, sarung-tangan, syal, jaket, dasi
-- OLAHRAGA: bola-sepak, bola-basket, raket, sepeda, sepatu-roda, layang-layang, skateboard, ring-basket
-- ALAT MUSIK: gitar, drum, piano, terompet, biola, seruling, angklung, gendang
-- SEKOLAH: buku, pensil, penghapus, penggaris, tas, meja, papan-tulis, krayon, gunting, lem
-- WARNA (labeled paint/crayon blobs): merah, biru, kuning, hijau, oranye, ungu, merah-muda, cokelat, hitam, putih
-Fill to 100 items. Pure white background, clean 10x10 grid, generous spacing between cells, no overlap.</pre>
-    </div>
-    <p style="font-size:12.5px;color:#c9a878;margin:8px 0 12px">Tips: PURE WHITE background + grid rapi + jarak antar-sel = wajib biar auto-crop bersih. Sheet <code>/1</code> lama heterogen/mislabel makanya belum di-wire; sheet khusus-kategori ini bakal ke-crop rapi.</p>
+  <section style="margin:26px 0 6px;border:2px solid #6d3b8a;border-radius:18px;
+       background:linear-gradient(180deg,#1a1030,#120a22);padding:18px 20px;color:#ecdcf7">
+    <h2 style="margin:0 0 4px;font-size:22px;color:#d6a8ff">🎨 Sprite Pack Requests — Massive UIUX/Gameplay</h2>
+    <p style="margin:0;font-size:14px;color:#c3aad8">Maskot 12-karakter + sheet sayur/profesi <b>sudah di-generate & di-wire</b> (jadi prompt lamanya dihapus biar tak menumpuk). Di bawah ini prompt <b>siap-copy</b> untuk sprite berikutnya yang paling ngangkat tampilan & gameplay. Tiap sheet: <b>PURE WHITE + grid rapi + label kecil</b> = wajib biar auto-crop bersih. Generate → kirim PNG → saya crop (<code>tools/crop-*.py</code>) + wire dengan fallback emoji.</p>
   </section>
-
-  <!-- ============================================================
-       PROMPT GENERATE GAMBAR — maskot + hero pojok (OPSIONAL, ganti emoji)
-       ============================================================ -->
-  <section id="mascot-guide" style="margin:26px 0;border:2px solid #6d3b8a;border-radius:18px;
-       background:linear-gradient(180deg,#1f1030,#160a22);padding:20px 20px 8px;color:#ecdcf7">
-    <h2 style="margin:0 0 4px;font-size:22px;color:#d6a8ff">🧸 Prompt Generate Gambar — Maskot &amp; Hero Pojok (Opsional)</h2>
-    <p style="margin:0 0 12px;font-size:14px;color:#c3aad8">Semua UI game (tombol, bingkai, ubin, medali, tablet) sudah <b>CSS</b> — tak butuh gambar. Yang masih <b>emoji</b> cuma <b>maskot</b> tiap game (kodok/sapi/burung-beo/keong/lebah) + <b>karakter anak-hero</b> di pojok (yang di mockup). Generate <b>1 sheet</b> ini → kirim → saya crop + pasang jadi karakter asli (ganti emoji di balon bicara + tambah hero pojok). <b>Opsional</b> — game sudah bagus tanpa ini.</p>
+  <section id="sp-eco" style="margin:18px 0;border:2px solid #8a6a26;border-radius:16px;
+       background:linear-gradient(180deg,#241d08,#161005);padding:16px 18px 8px;color:#eee">
+    <h3 style="margin:0 0 3px;font-size:18px;color:#ffd98a">🪙 Sheet A — Ekonomi & HUD</h3>
+    <p style="margin:0 0 10px;font-size:13px;color:#c9c2d6">Ganti emoji koin/permata/nyawa/energi/bintang/streak di semua HUD & layar hasil. Dipakai: index HUD, kuis-matematika (toko/turnamen), balapan-kereta.</p>
     <div style="position:relative;margin:0 0 6px">
-      <button onclick="sbCopy(this,'mascot-prompt')" style="position:absolute;top:8px;right:8px;z-index:2;
-        background:#6d3b8a;color:#fff;border:0;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer">📋 Copy Prompt</button>
-      <pre id="mascot-prompt" style="margin:0;overflow:auto;background:#0e0618;border:1px solid #3a1f4e;border-radius:12px;
-        padding:14px 14px;font-size:12.5px;line-height:1.55;color:#e4d2f5;white-space:pre-wrap">Professional high-end 2D mobile-game art, Supercell / Candy-Crush / Duolingo quality. Chunky rounded forms, thick clean dark outlines, rich saturated harmonious colors, soft top-down lighting with gentle rim-light and soft ambient occlusion, glossy highlights, crisp readable silhouettes. Cute, child-friendly, high detail. Consistent scale, lighting and style across the ENTIRE sheet.
+      <button onclick="sbCopy(this,'sp-eco-p')" style="position:absolute;top:8px;right:8px;z-index:2;
+        background:#8a6a26;color:#fff;border:0;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer">📋 Copy</button>
+      <pre id="sp-eco-p" style="margin:0;overflow:auto;background:#0c0c12;border:1px solid #8a6a26;border-radius:10px;
+        padding:14px;font-size:12px;line-height:1.5;color:#e6e2ef;white-space:pre-wrap">Professional high-end 2D mobile-game art, Supercell / Candy-Crush / Duolingo quality. Chunky rounded forms, thick clean dark outlines, rich saturated harmonious colors, soft top-down lighting with gentle rim-light and soft ambient occlusion, glossy highlights, crisp readable silhouettes. Cute, child-friendly, high detail. Each item is a COMPLETE standalone game icon. Consistent scale, lighting and style across the ENTIRE sheet.
 
-A 4x3 grid on PURE WHITE background of 12 friendly cartoon MASCOT characters, each a COMPLETE standalone full-body character, evenly spaced with a tiny label under each, in a happy welcoming pose (waving or pointing, as if speaking to a child):
-1. Kodok  (green frog, teacher vibe)
-2. Sapi   (white-and-pink cow, cheerful)
-3. Burung-Beo  (colorful parrot)
-4. Keong  (cute snail with swirl shell)
-5. Lebah  (round friendly bee)
-6. Burung-Hantu  (owl teacher with tiny glasses)
-7. Hero-Anak  (brave little boy hero, red cape, blue tunic, cheering with fist up)
-8. Hero-Putri (brave little girl hero, star wand, smiling)
-9. Kelinci (white bunny, encouraging)
-10. Rubah  (orange fox, playful)
-11. Panda  (baby panda, gentle)
-12. Bintang (smiling star mascot, gold)
-Pure white background, clean 4x3 grid, generous spacing between cells, no overlap, each character centered in its cell.</pre>
+A 5x4 grid on PURE WHITE background of 20 shiny game UI icons, each a COMPLETE standalone icon:
+- COIN: gold coin front, gold coin stack, gold coin sparkle/bonus
+- GEM: blue gem, blue gem sparkling
+- HEART: full red heart, half red heart, empty heart outline
+- ENERGY: yellow lightning bolt, lightning bolt glowing
+- STAR: empty star outline, 1-filled gold star, 2-filled, gold star full, gold star sparkle
+- STREAK: orange flame small, orange flame big
+- misc: gold key, treasure chest closed, treasure chest open
+Fill to 20.
+PURE WHITE background, clean grid, generous spacing between cells, no overlap, a tiny label under each item — WAJIB biar auto-crop bersih.</pre>
     </div>
-    <p style="font-size:12.5px;color:#b493cf;margin:8px 0 12px">Pakai: maskot ganti emoji di balon bicara (g3 kodok, g4 sapi, g7 beo, g9 keong, g8 lebah), Hero-Anak/Putri jadi karakter pojok penyemangat. Nomor 9-12 cadangan/variasi. PURE WHITE + grid rapi = wajib buat auto-crop.</p>
+  </section>
+  <section id="sp-badge" style="margin:18px 0;border:2px solid #2b7a4b;border-radius:16px;
+       background:linear-gradient(180deg,#08210f,#05160a);padding:16px 18px 8px;color:#eee">
+    <h3 style="margin:0 0 3px;font-size:18px;color:#a8ffca">🏆 Sheet B — Lencana & Medali</h3>
+    <p style="margin:0 0 10px;font-size:13px;color:#c9c2d6">Ganti emoji 🏆🏅👑 di reward, turnamen, peringkat, rank tier. Dipakai: reward screen, math turnamen, gym badges.</p>
+    <div style="position:relative;margin:0 0 6px">
+      <button onclick="sbCopy(this,'sp-badge-p')" style="position:absolute;top:8px;right:8px;z-index:2;
+        background:#2b7a4b;color:#fff;border:0;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer">📋 Copy</button>
+      <pre id="sp-badge-p" style="margin:0;overflow:auto;background:#0c0c12;border:1px solid #2b7a4b;border-radius:10px;
+        padding:14px;font-size:12px;line-height:1.5;color:#e6e2ef;white-space:pre-wrap">Professional high-end 2D mobile-game art, Supercell / Candy-Crush / Duolingo quality. Chunky rounded forms, thick clean dark outlines, rich saturated harmonious colors, soft top-down lighting with gentle rim-light and soft ambient occlusion, glossy highlights, crisp readable silhouettes. Cute, child-friendly, high detail. Each item is a COMPLETE standalone game icon. Consistent scale, lighting and style across the ENTIRE sheet.
+
+A 5x4 grid on PURE WHITE background of 20 achievement badges, each COMPLETE standalone:
+- TROPHY: gold trophy, silver trophy, bronze trophy
+- MEDAL: gold medal ribbon, silver medal ribbon, bronze medal ribbon
+- CROWN: gold crown, jeweled crown
+- SEAL: gold star rosette seal, blue winner rosette
+- RANK CHIP: bronze rank shield, silver rank shield, gold rank shield, diamond rank shield
+- STARS: 1-star badge, 2-star badge, 3-star badge
+- misc: 'JUARA' gold banner ribbon, first-place number-1 badge, sparkle burst
+Fill to 20.
+PURE WHITE background, clean grid, generous spacing between cells, no overlap, a tiny label under each item — WAJIB biar auto-crop bersih.</pre>
+    </div>
+  </section>
+  <section id="sp-fx" style="margin:18px 0;border:2px solid #2b5a8a;border-radius:16px;
+       background:linear-gradient(180deg,#081827,#050f18);padding:16px 18px 8px;color:#eee">
+    <h3 style="margin:0 0 3px;font-size:18px;color:#a8d8ff">✨ Sheet C — Battle-FX Partikel</h3>
+    <p style="margin:0 0 10px;font-size:13px;color:#c9c2d6">Ganti emoji partikel serangan per-tipe Pokémon (game.js TYPE_FX) + percikan umum. Dipakai: gym-pokemon, PvP, quick-fire.</p>
+    <div style="position:relative;margin:0 0 6px">
+      <button onclick="sbCopy(this,'sp-fx-p')" style="position:absolute;top:8px;right:8px;z-index:2;
+        background:#2b5a8a;color:#fff;border:0;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer">📋 Copy</button>
+      <pre id="sp-fx-p" style="margin:0;overflow:auto;background:#0c0c12;border:1px solid #2b5a8a;border-radius:10px;
+        padding:14px;font-size:12px;line-height:1.5;color:#e6e2ef;white-space:pre-wrap">Professional high-end 2D mobile-game art, Supercell / Candy-Crush / Duolingo quality. Chunky rounded forms, thick clean dark outlines, rich saturated harmonious colors, soft top-down lighting with gentle rim-light and soft ambient occlusion, glossy highlights, crisp readable silhouettes. Cute, child-friendly, high detail. Each item is a COMPLETE standalone game icon. Consistent scale, lighting and style across the ENTIRE sheet.
+
+A 5x4 grid on PURE WHITE background of 20 small glowing effect glyphs (particles), each COMPLETE standalone, vivid and simple:
+- fire flame spark, water droplet splash, electric lightning bolt, grass leaf swirl
+- psychic swirl orb, ice crystal shard, dragon energy swirl, fairy heart sparkle
+- bug green sparkle, steel sword gleam, normal impact star, ground rock chunk
+- generic: white sparkle 4-point, gold star twinkle, blue star burst, magic dust cloud
+- confetti puff, shockwave ring, energy orb glow, plus tiny 'hit' star
+Fill to 20. Bright saturated FX colors on pure white.
+PURE WHITE background, clean grid, generous spacing between cells, no overlap, a tiny label under each item — WAJIB biar auto-crop bersih.</pre>
+    </div>
+  </section>
+  <section id="sp-emo" style="margin:18px 0;border:2px solid #8a2b5a;border-radius:16px;
+       background:linear-gradient(180deg,#27081a,#180510);padding:16px 18px 8px;color:#eee">
+    <h3 style="margin:0 0 3px;font-size:18px;color:#ffb8d8">🙂 Sheet D — Emosi & Sahabat Hewan</h3>
+    <p style="margin:0 0 10px;font-size:13px;color:#c9c2d6">Ganti emoji wajah emosi + hewan pendamping di Game 1 (Tebak Perasaan). 10 emosi + 10 hewan = 20.</p>
+    <div style="position:relative;margin:0 0 6px">
+      <button onclick="sbCopy(this,'sp-emo-p')" style="position:absolute;top:8px;right:8px;z-index:2;
+        background:#8a2b5a;color:#fff;border:0;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer">📋 Copy</button>
+      <pre id="sp-emo-p" style="margin:0;overflow:auto;background:#0c0c12;border:1px solid #8a2b5a;border-radius:10px;
+        padding:14px;font-size:12px;line-height:1.5;color:#e6e2ef;white-space:pre-wrap">Professional high-end 2D mobile-game art, Supercell / Candy-Crush / Duolingo quality. Chunky rounded forms, thick clean dark outlines, rich saturated harmonious colors, soft top-down lighting with gentle rim-light and soft ambient occlusion, glossy highlights, crisp readable silhouettes. Cute, child-friendly, high detail. Each item is a COMPLETE standalone game icon. Consistent scale, lighting and style across the ENTIRE sheet.
+
+A 5x4 grid on PURE WHITE background of 20 cute icons, each COMPLETE standalone:
+EMOTION FACES (round expressive kid faces): senang(happy), sedih(sad), marah(angry), takut(scared), terkejut(surprised), malu(shy blushing), bahagia(joyful loving), bosan(bored), kesal(annoyed), kagum(amazed sparkle-eyes)
+ANIMAL COMPANIONS (matching, friendly): singa(lion), kelinci(rabbit), harimau(tiger), gajah(elephant), rubah(fox), katak(frog), panda, koala, serigala(wolf), unicorn
+Fill to 20.
+PURE WHITE background, clean grid, generous spacing between cells, no overlap, a tiny label under each item — WAJIB biar auto-crop bersih.</pre>
+    </div>
+  </section>
+  <section id="sp-deco" style="margin:18px 0;border:2px solid #8a7a26;border-radius:16px;
+       background:linear-gradient(180deg,#211d08,#141005);padding:16px 18px 8px;color:#eee">
+    <h3 style="margin:0 0 3px;font-size:18px;color:#ffe6a8">🌳 Sheet E — Dekorasi & Parallax</h3>
+    <p style="margin:0 0 10px;font-size:13px;color:#c9c2d6">Ganti bentuk CSS (.sun-circle/.firefly/.tree-*/.grass-strip/.moon-crescent) jadi sprite parallax. Layer latar semua game.</p>
+    <div style="position:relative;margin:0 0 6px">
+      <button onclick="sbCopy(this,'sp-deco-p')" style="position:absolute;top:8px;right:8px;z-index:2;
+        background:#8a7a26;color:#fff;border:0;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer">📋 Copy</button>
+      <pre id="sp-deco-p" style="margin:0;overflow:auto;background:#0c0c12;border:1px solid #8a7a26;border-radius:10px;
+        padding:14px;font-size:12px;line-height:1.5;color:#e6e2ef;white-space:pre-wrap">Professional high-end 2D mobile-game art, Supercell / Candy-Crush / Duolingo quality. Chunky rounded forms, thick clean dark outlines, rich saturated harmonious colors, soft top-down lighting with gentle rim-light and soft ambient occlusion, glossy highlights, crisp readable silhouettes. Cute, child-friendly, high detail. Each item is a COMPLETE standalone game icon. Consistent scale, lighting and style across the ENTIRE sheet.
+
+A 5x4 grid on PURE WHITE background of 20 decorative nature/parallax sprites, each COMPLETE standalone:
+- sun bright, sun soft glow, crescent moon, full moon
+- cloud fluffy, cloud small, cloud row
+- tree round green, tree pine, bush, grass tuft, grass strip tile
+- firefly glow, sparkle dot, twinkle star, shooting star
+- rainbow arc, flower pink, flower yellow, mushroom, paw print
+Fill to 20.
+PURE WHITE background, clean grid, generous spacing between cells, no overlap, a tiny label under each item — WAJIB biar auto-crop bersih.</pre>
+    </div>
+  </section>
+  <section id="sp-conf" style="margin:18px 0;border:2px solid #5a3b8a;border-radius:16px;
+       background:linear-gradient(180deg,#160a27,#0d0518);padding:16px 18px 8px;color:#eee">
+    <h3 style="margin:0 0 3px;font-size:18px;color:#c8b8ff">🎉 Sheet F — Confetti & Perayaan</h3>
+    <p style="margin:0 0 10px;font-size:13px;color:#c9c2d6">Ganti emoji perayaan 🎉🎊🥳 saat jawaban benar / naik level / menang. Dipakai: result, correct-answer burst, PvP winner.</p>
+    <div style="position:relative;margin:0 0 6px">
+      <button onclick="sbCopy(this,'sp-conf-p')" style="position:absolute;top:8px;right:8px;z-index:2;
+        background:#5a3b8a;color:#fff;border:0;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer">📋 Copy</button>
+      <pre id="sp-conf-p" style="margin:0;overflow:auto;background:#0c0c12;border:1px solid #5a3b8a;border-radius:10px;
+        padding:14px;font-size:12px;line-height:1.5;color:#e6e2ef;white-space:pre-wrap">Professional high-end 2D mobile-game art, Supercell / Candy-Crush / Duolingo quality. Chunky rounded forms, thick clean dark outlines, rich saturated harmonious colors, soft top-down lighting with gentle rim-light and soft ambient occlusion, glossy highlights, crisp readable silhouettes. Cute, child-friendly, high detail. Each item is a COMPLETE standalone game icon. Consistent scale, lighting and style across the ENTIRE sheet.
+
+A 5x4 grid on PURE WHITE background of 20 celebration sprites, each COMPLETE standalone:
+- confetti pieces: pink strip, blue strip, yellow strip, green strip, purple curl, red curl
+- streamer swirl, party popper burst, balloon red, balloon blue, balloon gold
+- firework burst gold, firework burst pink, sparkler, star spray
+- ribbon bow, gift box small, 'HORE!' comic bubble, gold star shower, rainbow confetti burst
+Fill to 20.
+PURE WHITE background, clean grid, generous spacing between cells, no overlap, a tiny label under each item — WAJIB biar auto-crop bersih.</pre>
+    </div>
   </section>
 
   <script>
@@ -267,7 +339,7 @@ Pure white background, clean 4x3 grid, generous spacing between cells, no overla
     (navigator.clipboard&&navigator.clipboard.writeText(t)||Promise.reject()).then(function(){
       var o=btn.textContent;btn.textContent='✓ Tersalin!';setTimeout(function(){btn.textContent=o;},1400);
     }).catch(function(){var r=document.createRange();r.selectNode(el);var s=getSelection();s.removeAllRanges();s.addRange(r);
-      try{document.execCommand('copy');btn.textContent='✓ Tersalin!';setTimeout(function(){btn.textContent='📋 Copy SQL';},1400);}catch(e){}s.removeAllRanges();});}
+      try{document.execCommand('copy');btn.textContent='✓ Tersalin!';setTimeout(function(){btn.textContent='📋 Copy';},1400);}catch(e){}s.removeAllRanges();});}
   </script>
 
   <h2 class="section-t">✨ Showcase Mockup Interaktif</h2>
