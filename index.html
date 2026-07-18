@@ -2011,7 +2011,7 @@
   <div class="progress-bar-wrap"><div class="progress-bar-fill" id="g1-progress-bar" style="width:0%"></div></div>
   <div class="round-dots" id="g1-dots"></div>
   <div class="mascot-guide">
-    <span class="mg-char">🦉</span>
+    <span class="mg-char" data-mascot="burung-hantu">🦉</span>
     <div class="mg-bubble" id="g1-mg">Pilih perasaan yang tepat! Perhatikan wajah hewannya ya 🤔</div>
   </div>
   <span class="g1-animal-display" id="g1-animal"></span>
@@ -2069,7 +2069,7 @@
   <div class="progress-bar-wrap"><div class="progress-bar-fill" id="g3-progress-bar" style="width:0%"></div></div>
   <div class="round-dots" id="g3-dots"></div>
   <div class="mascot-guide">
-    <span class="mg-char">🐸</span>
+    <span class="mg-char" data-mascot="kodok">🐸</span>
     <div class="mg-bubble" id="g3-mg">Temukan huruf yang hilang! Perhatikan nama hewannya 🔤</div>
   </div>
   <span class="g3-mode-badge" id="g3-mode-badge">Level: Huruf 🔤</span>
@@ -2098,7 +2098,7 @@
   <div class="progress-bar-wrap"><div class="progress-bar-fill" id="g4-progress-bar" style="width:0%"></div></div>
   <div class="round-dots" id="g4-dots"></div>
   <div class="mascot-guide">
-    <span class="mg-char">🐮</span>
+    <span class="mg-char" data-mascot="sapi">🐮</span>
     <div class="mg-bubble" id="g4-mg">Hitung semua binatangnya ya! Jangan sampai ada yang terlewat 🔢</div>
   </div>
   <div class="g4-mode-toggle">
@@ -2149,7 +2149,7 @@
     <button class="g5-sub-tab" onclick="setG5SubMode('pokemon',this)"><span class="g5-pokeball-icon"></span> Pokémon</button>
   </div>
   <div class="mascot-guide">
-    <span class="mg-char">🐙</span>
+    <span class="mg-char" data-mascot="kelinci">🐙</span>
     <div class="mg-bubble" id="g5-mg">Ingat-ingat posisi kartunya ya! Lalu temukan pasangannya 🧠</div>
   </div>
   <!-- Score row (visual mode) -->
@@ -2260,7 +2260,7 @@
   </div>
   <div class="progress-bar-wrap"><div class="progress-bar-fill" id="g7-progress-bar" style="width:0%"></div></div>
   <div class="mascot-guide">
-    <span class="mg-char">🦜</span>
+    <span class="mg-char" data-mascot="burung-beo">🦜</span>
     <div class="mg-bubble" id="g7-mg">Lihat gambarnya baik-baik! Tebak apa itu ya? 🖼️</div>
   </div>
   <div class="g7-mode-badge" id="g7-mode-badge">Mode: Lihat Gambar</div>
@@ -2283,7 +2283,7 @@
   </div>
   <div class="progress-bar-wrap"><div class="progress-bar-fill" id="g8-progress-bar" style="width:0%"></div></div>
   <div class="mascot-guide">
-    <span class="mg-char">🐝</span>
+    <span class="mg-char" data-mascot="lebah">🐝</span>
     <div class="mg-bubble" id="g8-mg">Susun huruf-hurufnya menjadi kata yang tepat! Lihat petunjuk gambarnya 🔡</div>
   </div>
   <div class="g8-hint-img" id="g8-hint-img"></div>
@@ -2306,7 +2306,7 @@
     <span class="gh-stars" id="g9-stars-hdr">⭐ 0</span>
   </div>
   <div class="mascot-guide">
-    <span class="mg-char">🐌</span>
+    <span class="mg-char" data-mascot="keong">🐌</span>
     <div class="mg-bubble" id="g9-mg">Ikuti garis hurufnya dengan jarimu! Pelan-pelan ya ✏️</div>
   </div>
   <div class="g5-sub-tabs" id="g9-mode-tabs" style="margin-bottom:6px;">
@@ -2333,6 +2333,7 @@
 
 <!-- RESULT -->
 <div id="screen-result" class="screen">
+  <span class="result-hero-pojok" data-mascot="hero-anak" aria-hidden="true" style="position:absolute;left:14px;bottom:14px;font-size:56px;line-height:1;filter:drop-shadow(0 6px 10px rgba(0,0,0,.22));pointer-events:none;z-index:3;">🦸</span>
   <span class="result-mascot" id="result-mascot">🦁</span>
   <h2 class="result-title" id="result-title">Bagus sekali!</h2>
   <div class="result-stars" id="result-stars">⭐⭐⭐</div>
@@ -2480,7 +2481,8 @@ function loadPixiJS(cb) {
 <script src="games/data/bg-events.js?v=54.66-20260626bs" defer></script>
 <script src="games/data/db-sprites.js?v=59.28-20260713a" defer></script><!-- A-356 shared asset DB accessor -->
 <script src="games/data/db-labeled.js?v=59.40-20260718a" defer></script><!-- labeled DB subset for Tebak game -->
-<script src="game.js?v=59.42-20260718g" defer></script>
+<script src="games/data/mascot-sprites.js?v=59.43-20260718h" defer></script><!-- 12-char mascot/hero sheet -->
+<script src="game.js?v=59.43-20260718h" defer></script>
 <script>
   // Boot SFXEngine + WeatherFX after page loads — both lazy, never block the game.
   document.addEventListener('DOMContentLoaded', function () {
