@@ -427,6 +427,40 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   .qcard{padding:4px 12px;font-size:clamp(15px,3.4vh,24px)}
   .choice{padding:6px 6px;font-size:clamp(14px,3.2vh,20px)}
 }
+/* ═════ DUEL PvP ═════ */
+#scr-pvp-setup .pvp-hint{color:#5b4a33;font-size:14px;max-width:340px;margin:0 auto 14px;line-height:1.5}
+.pvp-setup{max-width:360px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+.pvp-in-row{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.6);border:2px solid #e6d3a8;border-radius:14px;padding:8px 12px}
+.pvp-in-row .pvp-p{font-weight:900;font-size:13px;color:#fff;border-radius:8px;padding:3px 8px}
+.pvp-p.p0{background:#2f8f4e}.pvp-p.p1{background:#d0453e}
+.pvp-in-row input{flex:1;border:0;background:transparent;font-size:16px;font-weight:800;color:#3a2c14;outline:none}
+.pvp-diff-lbl{font-weight:800;color:#5b4a33;margin-top:6px;font-size:14px}
+.pvp-diff{display:flex;gap:8px}
+.pvp-diff button{flex:1;border:2px solid #e6d3a8;background:rgba(255,255,255,.55);border-radius:12px;padding:9px 4px;font-weight:800;font-size:13px;color:#5b4a33;cursor:pointer}
+.pvp-diff button.on{background:linear-gradient(180deg,#ffe08a,#ffcf3f);border-color:#e0a52a;color:#5b3d0a;box-shadow:0 3px 0 #d99a1f}
+#scr-pvp{overflow:hidden}
+.pvp-side{position:absolute;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:14px;z-index:2}
+.pvp-top{top:calc(env(safe-area-inset-top,0) + 8px);flex-direction:column}
+.pvp-top .pvp-hero{transform:scaleX(-1)}
+.pvp-bot{top:calc(env(safe-area-inset-top,0) + 74px);flex-direction:column}
+.pvp-hero{width:96px;height:96px;object-fit:contain;filter:drop-shadow(0 8px 10px rgba(0,0,0,.3));transition:transform .12s}
+.pvp-hero.hurt{animation:pvpHurt .5s}
+.pvp-hero.atk{transform:translateY(-14px) scale(1.08)}
+@keyframes pvpHurt{0%,100%{transform:none;filter:drop-shadow(0 8px 10px rgba(0,0,0,.3))}25%{transform:translateX(-8px) rotate(-6deg);filter:brightness(1.6) drop-shadow(0 0 12px #ff5a5a)}75%{transform:translateX(8px) rotate(6deg)}}
+.pvp-hchip{display:flex;align-items:center;gap:8px;background:rgba(20,14,30,.55);border-radius:100px;padding:4px 12px}
+.pvp-nm{color:#fff;font-weight:900;font-size:14px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pvp-hearts{display:flex;gap:2px}.pvp-hearts img{width:18px;height:18px}
+.pvp-turn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3;background:rgba(20,14,30,.6);color:#ffe08a;font-weight:900;font-size:15px;padding:6px 18px;border-radius:100px;pointer-events:none}
+.pvp-qpanel{position:absolute;left:0;right:0;bottom:0;z-index:4}
+.pvp-handoff,.pvp-win{position:absolute;inset:0;z-index:8;display:none;align-items:center;justify-content:center;background:rgba(12,8,20,.9);backdrop-filter:blur(3px)}
+.pvp-handoff.show,.pvp-win.show{display:flex}
+.pvp-handoff-card,.pvp-win-card{background:linear-gradient(180deg,#fff7e6,#ffe9bd);border:3px solid #e0a52a;border-radius:22px;padding:24px 28px;text-align:center;max-width:320px;box-shadow:0 12px 0 rgba(0,0,0,.2)}
+.pvp-handoff-txt{font-size:20px;font-weight:900;color:#5b3d0a;margin-bottom:16px;line-height:1.4}
+.pvp-win-trophy{font-size:64px;line-height:1;margin-bottom:6px}.pvp-win-trophy img{width:72px;height:72px;object-fit:contain}
+.pvp-win-txt{font-size:24px;font-weight:900;color:#5b3d0a;margin-bottom:16px}
+.pvp-win-btns{display:flex;gap:10px;justify-content:center}
+.pvp-handoff-card button,.pvp-win-btns button{font-size:16px;padding:11px 20px}
+@media(orientation:landscape){.pvp-hero{width:74px;height:74px}.pvp-bot{top:calc(env(safe-area-inset-top,0) + 60px)}.pvp-qpanel{max-width:520px;left:50%;transform:translateX(-50%)}}
 </style>
 </head>
 <body>
@@ -450,6 +484,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
       <button onclick="MP.openModal('shop')"><img src="../assets/icons/main/cart.webp" alt="" onerror="this.src='../assets/math/icons/cat-practice.webp'">Toko</button>
       <button onclick="MP.openModal('daily')"><img src="../assets/icons/item/calendar.webp" alt="" onerror="this.src='../assets/math/icons/cat-daily.webp'">Harian</button>
       <button onclick="MP.openModal('turnamen')"><img src="../assets/icons/item/trophy.webp" alt="" onerror="this.src='../assets/math/icons/cat-tournament.webp'">Turnamen</button>
+      <button onclick="MP.openPvP()"><img src="../assets/db/badge/004.webp" alt="" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'⚔️',style:'font-size:24px'}))">Duel PvP</button>
       <button onclick="MP.openModal('rank')"><img src="../assets/icons/item/medal.webp" alt="" onerror="this.src='../assets/math/icons/cat-adventure.webp'">Peringkat</button>
       <button onclick="MP.openModal('profil')"><img src="../assets/math/hero-mathhero.webp" alt="" style="border-radius:50%;background:rgba(255,255,255,.25)">Profil</button>
     </div>
@@ -541,6 +576,64 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
     <div class="res-actions">
       <button class="clay green" id="res-next" onclick="MP.nextLevel()">▶ Lanjut</button>
       <button class="clay blue" onclick="MP.backToSub()">🗺️ Peta Sub-Level</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═════ DUEL PvP — SETUP ═════ -->
+<section id="scr-pvp-setup" class="scr">
+  <div class="skill-inner">
+    <button class="icon-btn" style="position:absolute;top:calc(env(safe-area-inset-top,0) + 10px);left:12px" onclick="MP.goHome()">←</button>
+    <h2>⚔️ Duel PvP</h2>
+    <p class="pvp-hint">Dua pemain, satu layar. Jawab lebih cepat &amp; tepat untuk mengalahkan lawan!</p>
+    <div class="pvp-setup">
+      <div class="pvp-in-row"><span class="pvp-p p0">P1</span><input id="pvp-in-0" maxlength="10" value="Pemain 1" aria-label="Nama Pemain 1"></div>
+      <div class="pvp-in-row"><span class="pvp-p p1">P2</span><input id="pvp-in-1" maxlength="10" value="Pemain 2" aria-label="Nama Pemain 2"></div>
+      <div class="pvp-diff-lbl">Tingkat Kesulitan</div>
+      <div class="pvp-diff" id="pvp-diff">
+        <button data-d="easy"   onclick="MP.pvpSetDiff('easy',this)">🌱 Mudah</button>
+        <button data-d="medium" class="on" onclick="MP.pvpSetDiff('medium',this)">⭐ Sedang</button>
+        <button data-d="hard"   onclick="MP.pvpSetDiff('hard',this)">🔥 Sulit</button>
+      </div>
+      <button class="br-play clay gold" onclick="MP.pvpStart()" style="margin-top:14px">Mulai Duel ▶</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═════ DUEL PvP — ARENA ═════ -->
+<section id="scr-pvp" class="scr">
+  <img class="bgimg" src="../assets/math/bg-battle.webp" alt="">
+  <div class="bg-scrim"></div>
+  <button class="icon-btn" style="position:absolute;top:calc(env(safe-area-inset-top,0) + 8px);left:10px;z-index:6" onclick="MP.quitPvp()">←</button>
+  <div class="pvp-side pvp-top">
+    <div class="pvp-hchip"><span class="pvp-nm" id="pvp-name-1">Pemain 2</span><span class="pvp-hearts" id="pvp-hearts-1"></span></div>
+    <img class="pvp-hero" id="pvp-hero-1" src="../assets/math/hero-mathhero.webp" alt="">
+  </div>
+  <div class="pvp-turn" id="pvp-turn">Giliran Pemain 1</div>
+  <div class="pvp-side pvp-bot">
+    <img class="pvp-hero" id="pvp-hero-0" src="../assets/math/hero-mathhero.webp" alt="">
+    <div class="pvp-hchip"><span class="pvp-nm" id="pvp-name-0">Pemain 1</span><span class="pvp-hearts" id="pvp-hearts-0"></span></div>
+  </div>
+  <div class="qpanel pvp-qpanel">
+    <div class="qcard" id="pvp-qcard">…</div>
+    <div class="choices" id="pvp-choices"></div>
+  </div>
+  <!-- anti-peek handoff -->
+  <div class="pvp-handoff" id="pvp-handoff">
+    <div class="pvp-handoff-card">
+      <div class="pvp-handoff-txt" id="pvp-handoff-txt"></div>
+      <button class="clay gold" onclick="MP.pvpReady()">Ketuk kalau Siap ✋</button>
+    </div>
+  </div>
+  <!-- winner -->
+  <div class="pvp-win" id="pvp-win">
+    <div class="pvp-win-card">
+      <div class="pvp-win-trophy" id="pvp-win-trophy">🏆</div>
+      <div class="pvp-win-txt" id="pvp-win-txt"></div>
+      <div class="pvp-win-btns">
+        <button class="clay gold" onclick="MP.pvpStart()">Ulangi 🔁</button>
+        <button class="clay blue" onclick="MP.goHome()">Menu ⌂</button>
+      </div>
     </div>
   </div>
 </section>
@@ -1267,10 +1360,82 @@ try{ if(window.MathCloud&&MathCloud.isEnabled()){ MathCloud.pull().then(function
 // prime audio unlock on first gesture
 document.addEventListener('pointerdown',function armed(){ try{ if(S&&S.cue) S.cue('click',{volume:0}); }catch(e){} document.removeEventListener('pointerdown',armed); },{once:true});
 
+/* ═════ DUEL PvP — local 2-player, turn-based, anti-peek. Self-contained; reuses
+   makeMathQuestionV2 + MATH_HEROES + sfx/confetti. Additive: Adventure untouched. ═════ */
+var PVP_DIFF={ easy:{g:5,tier:'easy',mn:10}, medium:{g:15,tier:'medium',mn:20}, hard:{g:40,tier:'hard',mn:50} };
+var pvpDiff='medium', pvp=null;
+function openPvP(){ sfx('click'); show('pvp-setup'); }
+function pvpSetDiff(d,btn){ pvpDiff=d; sfx('click');
+  Array.prototype.forEach.call(byId('pvp-diff').children,function(b){ b.classList.toggle('on', b===btn); }); }
+function pvpHeroArt(op){ try{ if(window.MATH_HEROES){ var h=MATH_HEROES.byOp(op); if(h&&h.art) return h.art; } }catch(e){} return '../assets/math/hero-mathhero.webp'; }
+function pvpRenderHearts(i){ var el=byId('pvp-hearts-'+i); if(!el||!pvp) return; el.innerHTML='';
+  var max=pvp.players[i].max; for(var k=0;k<max;k++){ var im=document.createElement('img'); im.src=IC+(k<pvp.players[i].hp?'icon-heart.webp':'icon-heart-empty.webp'); el.appendChild(im); } }
+function pvpStart(){
+  var n0=(byId('pvp-in-0')&&byId('pvp-in-0').value||'Pemain 1').trim().slice(0,10)||'Pemain 1';
+  var n1=(byId('pvp-in-1')&&byId('pvp-in-1').value||'Pemain 2').trim().slice(0,10)||'Pemain 2';
+  var HP=5;
+  pvp={ players:[{name:n0,hp:HP,max:HP,op:'+'},{name:n1,hp:HP,max:HP,op:'-'}], turn:0, over:false, answered:false, q:null };
+  byId('pvp-name-0').textContent=n0; byId('pvp-name-1').textContent=n1;
+  byId('pvp-hero-0').src=pvpHeroArt('+'); byId('pvp-hero-1').src=pvpHeroArt('-');
+  pvpRenderHearts(0); pvpRenderHearts(1);
+  byId('pvp-win').classList.remove('show'); byId('pvp-handoff').classList.remove('show');
+  show('pvp'); try{ bgmPlay(); }catch(e){}
+  playIntro(function(){ pvpBeginTurn(); });   // reuse the 3-2-1 overlay
+}
+function pvpBeginTurn(){
+  if(!pvp||pvp.over) return; pvp.answered=false;
+  var p=pvp.players[pvp.turn];
+  byId('pvp-turn').textContent='Giliran '+p.name;
+  byId('pvp-handoff-txt').innerHTML='Giliran <b>'+escapeHtml(p.name)+'</b><br><span style="font-size:14px;font-weight:700;color:#8a6a2a">Jangan diintip lawan ya 🙈</span>';
+  byId('pvp-handoff').classList.add('show');
+}
+function pvpReady(){ if(!pvp) return; sfx('click'); byId('pvp-handoff').classList.remove('show'); pvpRenderQ(); }
+function pvpRenderQ(){
+  if(!pvp||pvp.over) return;
+  var d=PVP_DIFF[pvpDiff]||PVP_DIFF.medium;
+  var shapes=['standard','missingOperator','comparison','word']; var sh=shapes[Math.floor(Math.random()*shapes.length)];
+  var q; try{ q=window.makeMathQuestionV2(d.g,MAX_LEVEL,d.tier,sh,{maxNum:d.mn}); }catch(e){ q={q:'2 + 2',ans:4,choices:[3,4,5,6],shape:'standard'}; }
+  pvp.q=q;
+  var card=byId('pvp-qcard'); card.textContent=q.q; card.classList.toggle('word',q.shape==='word');
+  var ch=byId('pvp-choices'); ch.innerHTML=''; ch.classList.toggle('sym',q.shape==='comparison');
+  q.choices.forEach(function(c,i){ var b=document.createElement('button'); b.className='choice c'+i; b.textContent=String(c);
+    b.onclick=function(){ pvpAnswer(c,b); }; ch.appendChild(b); });
+}
+function pvpAnswer(picked,btn){
+  if(!pvp||pvp.over||pvp.answered) return; pvp.answered=true;
+  var q=pvp.q, correct=String(picked)===String(q.ans), me=pvp.turn, opp=1-me;
+  Array.prototype.forEach.call(byId('pvp-choices').children,function(b){ b.disabled=true; });
+  if(correct){
+    btn.classList.add('right'); sfx('correct');
+    var mh=byId('pvp-hero-'+me), oh=byId('pvp-hero-'+opp);
+    if(mh){ mh.classList.remove('atk'); void mh.offsetWidth; mh.classList.add('atk'); setTimeout(function(){mh.classList.remove('atk');},260); }
+    pvp.players[opp].hp=Math.max(0,pvp.players[opp].hp-1); pvpRenderHearts(opp);
+    if(oh){ oh.classList.remove('hurt'); void oh.offsetWidth; oh.classList.add('hurt'); }
+    if(pvp.players[opp].hp<=0){ setTimeout(function(){ pvpWin(me); },650); return; }
+  }else{
+    btn.classList.add('wrongc'); sfx('wrong');
+    Array.prototype.forEach.call(byId('pvp-choices').children,function(b){ if(String(b.textContent)===String(q.ans)) b.classList.add('right'); });
+    if(navigator.vibrate) try{ navigator.vibrate([15,40,15]); }catch(e){}
+  }
+  pvp.turn=opp;
+  setTimeout(function(){ if(pvp&&!pvp.over) pvpBeginTurn(); }, correct?900:1400);
+}
+function pvpWin(idx){
+  if(!pvp) return; pvp.over=true; sfx('levelup'); try{ confetti(60); }catch(e){}
+  var name=pvp.players[idx].name;
+  var tro=byId('pvp-win-trophy');
+  var th=(window.UISprites&&UISprites.imgHTML('badge','trophy',{style:'width:72px;height:72px;object-fit:contain'}));
+  tro.innerHTML=th||'🏆';
+  byId('pvp-win-txt').innerHTML='🎉 <b>'+escapeHtml(name)+'</b><br>Menang!';
+  byId('pvp-win').classList.add('show');
+}
+function quitPvp(){ sfx('click'); if(pvp) pvp.over=true; try{ bgmStop&&bgmStop(); }catch(e){} goHome(); }
+
 window.MP={ show:show, goHome:goHome, openPeta:openPeta, openSub:openSub, openSkill:openSkill, backToSub:backToSub,
   startGame:startGame, useBomb:useBomb, quitGame:quitGame, nextLevel:nextLevel,
   openModal:openModal, closeModal:closeModal, closeTournament:closeTournament, buy:buy,
-  editName:editName, toggleMute:toggleMute, maxNumFor:maxNumFor };
+  editName:editName, toggleMute:toggleMute, maxNumFor:maxNumFor,
+  openPvP:openPvP, pvpSetDiff:pvpSetDiff, pvpStart:pvpStart, pvpReady:pvpReady, quitPvp:quitPvp };
 })();
 </script>
 </body>
