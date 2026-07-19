@@ -15,7 +15,7 @@ await pg.evaluate(()=>{document.getElementById('pvp-in-0').value='Adi';document.
 // wait for arena + first handoff (after 3-2-1 intro ~2.5s)
 await pg.waitForFunction(()=>document.getElementById('pvp-handoff')&&document.getElementById('pvp-handoff').classList.contains('show'),{timeout:8000}).catch(()=>{});
 let won=false, turns=0, sawChoices=false, heartsSeen=false;
-for(let t=0;t<60&&!won;t++){
+for(let t=0;t<140&&!won;t++){
   const st=await pg.evaluate(()=>({
     scr:(document.querySelector('.scr.active')||{}).id,
     win:document.getElementById('pvp-win').classList.contains('show'),

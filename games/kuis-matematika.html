@@ -434,6 +434,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .pvp-in-row .pvp-p{font-weight:900;font-size:13px;color:#fff;border-radius:8px;padding:3px 8px}
 .pvp-p.p0{background:#2f8f4e}.pvp-p.p1{background:#d0453e}
 .pvp-in-row input{flex:1;border:0;background:transparent;font-size:16px;font-weight:800;color:#3a2c14;outline:none}
+.pvp-hero-pick{display:flex;gap:6px;justify-content:center;margin:-2px 0 4px}
+.pvp-hero-pick button{width:52px;height:52px;border:2px solid #e6d3a8;background:rgba(255,255,255,.5);border-radius:12px;padding:2px;cursor:pointer;flex-shrink:0}
+.pvp-hero-pick button img{width:100%;height:100%;object-fit:contain}
+.pvp-hero-pick button.on{border-color:#e0a52a;background:linear-gradient(180deg,#ffe08a,#ffcf3f);box-shadow:0 3px 0 #d99a1f}
 .pvp-diff-lbl{font-weight:800;color:#5b4a33;margin-top:6px;font-size:14px}
 .pvp-diff{display:flex;gap:8px}
 .pvp-diff button{flex:1;border:2px solid #e6d3a8;background:rgba(255,255,255,.55);border-radius:12px;padding:9px 4px;font-weight:800;font-size:13px;color:#5b4a33;cursor:pointer}
@@ -588,7 +592,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
     <p class="pvp-hint">Dua pemain, satu layar. Jawab lebih cepat &amp; tepat untuk mengalahkan lawan!</p>
     <div class="pvp-setup">
       <div class="pvp-in-row"><span class="pvp-p p0">P1</span><input id="pvp-in-0" maxlength="10" value="Pemain 1" aria-label="Nama Pemain 1"></div>
+      <div class="pvp-hero-pick" id="pvp-hero-pick-0" data-pl="0"></div>
       <div class="pvp-in-row"><span class="pvp-p p1">P2</span><input id="pvp-in-1" maxlength="10" value="Pemain 2" aria-label="Nama Pemain 2"></div>
+      <div class="pvp-hero-pick" id="pvp-hero-pick-1" data-pl="1"></div>
       <div class="pvp-diff-lbl">Tingkat Kesulitan</div>
       <div class="pvp-diff" id="pvp-diff">
         <button data-d="easy"   onclick="MP.pvpSetDiff('easy',this)">🌱 Mudah</button>
@@ -1363,8 +1369,24 @@ document.addEventListener('pointerdown',function armed(){ try{ if(S&&S.cue) S.cu
 /* ═════ DUEL PvP — local 2-player, turn-based, anti-peek. Self-contained; reuses
    makeMathQuestionV2 + MATH_HEROES + sfx/confetti. Additive: Adventure untouched. ═════ */
 var PVP_DIFF={ easy:{g:5,tier:'easy',mn:10}, medium:{g:15,tier:'medium',mn:20}, hard:{g:40,tier:'hard',mn:50} };
-var pvpDiff='medium', pvp=null;
-function openPvP(){ sfx('click'); show('pvp-setup'); }
+var pvpDiff='medium', pvp=null, pvpHero=[0,2];  // hero indices per player (default distinct: Pahlawan vs Perkalian)
+function pvpHeroList(){ return (window.MATH_HEROES&&window.MATH_HEROES.length)?window.MATH_HEROES:[{name:'Pahlawan',art:'../assets/math/hero-mathhero.webp'}]; }
+function pvpRenderHeroPicks(){
+  var list=pvpHeroList();
+  [0,1].forEach(function(pl){
+    var host=byId('pvp-hero-pick-'+pl); if(!host) return; host.innerHTML='';
+    list.forEach(function(h,idx){
+      var b=document.createElement('button'); b.type='button'; b.className=(pvpHero[pl]===idx?'on':''); b.title=h.name;
+      b.innerHTML='<img src="'+h.art+'" alt="'+h.name+'" onerror="this.src=\'../assets/math/hero-mathhero.webp\'">';
+      b.onclick=function(){ pvpPickHero(pl,idx); }; host.appendChild(b);
+    });
+  });
+}
+function pvpPickHero(pl,idx){ sfx('click');
+  var other=1-pl; if(pvpHero[other]===idx){ // keep distinct: swap so both players never share a hero
+    pvpHero[other]=pvpHero[pl]; }
+  pvpHero[pl]=idx; pvpRenderHeroPicks(); }
+function openPvP(){ sfx('click'); pvpRenderHeroPicks(); show('pvp-setup'); }
 function pvpSetDiff(d,btn){ pvpDiff=d; sfx('click');
   Array.prototype.forEach.call(byId('pvp-diff').children,function(b){ b.classList.toggle('on', b===btn); }); }
 function pvpHeroArt(op){ try{ if(window.MATH_HEROES){ var h=MATH_HEROES.byOp(op); if(h&&h.art) return h.art; } }catch(e){} return '../assets/math/hero-mathhero.webp'; }
@@ -1376,7 +1398,9 @@ function pvpStart(){
   var HP=5;
   pvp={ players:[{name:n0,hp:HP,max:HP,op:'+'},{name:n1,hp:HP,max:HP,op:'-'}], turn:0, over:false, answered:false, q:null };
   byId('pvp-name-0').textContent=n0; byId('pvp-name-1').textContent=n1;
-  byId('pvp-hero-0').src=pvpHeroArt('+'); byId('pvp-hero-1').src=pvpHeroArt('-');
+  var _hl=pvpHeroList();
+  if(pvpHero[0]===pvpHero[1]) pvpHero[1]=(pvpHero[0]+1)%_hl.length;  // never share a hero
+  byId('pvp-hero-0').src=(_hl[pvpHero[0]]||_hl[0]).art; byId('pvp-hero-1').src=(_hl[pvpHero[1]]||_hl[0]).art;
   pvpRenderHearts(0); pvpRenderHearts(1);
   byId('pvp-win').classList.remove('show'); byId('pvp-handoff').classList.remove('show');
   show('pvp'); try{ bgmPlay(); }catch(e){}
@@ -1435,7 +1459,7 @@ window.MP={ show:show, goHome:goHome, openPeta:openPeta, openSub:openSub, openSk
   startGame:startGame, useBomb:useBomb, quitGame:quitGame, nextLevel:nextLevel,
   openModal:openModal, closeModal:closeModal, closeTournament:closeTournament, buy:buy,
   editName:editName, toggleMute:toggleMute, maxNumFor:maxNumFor,
-  openPvP:openPvP, pvpSetDiff:pvpSetDiff, pvpStart:pvpStart, pvpReady:pvpReady, quitPvp:quitPvp };
+  openPvP:openPvP, pvpSetDiff:pvpSetDiff, pvpStart:pvpStart, pvpReady:pvpReady, quitPvp:quitPvp, pvpPickHero:pvpPickHero };
 })();
 </script>
 </body>
