@@ -138,7 +138,7 @@
       if (!ok) return null
       return sb.rpc('claim_account', { p_code: code }).then(function (r) {
         var row = r && r.data && r.data[0]
-        if (!row || !row.exists) return { ok: false, name: null }
+        if (!row || !row.hit) return { ok: false, name: null }
         setCode(code)
         return pull().then(function () { return { ok: true, name: row.display_name || null } })
       })

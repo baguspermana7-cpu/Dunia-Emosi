@@ -121,6 +121,7 @@ canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
 <script src="data/save-engine.js?v=20260501h"></script>
 <script src="question-bank.js"></script>
 <script src="data/sfx-engine.js?v=59.9-20260712a"></script><!-- shared coin/answer cues (owner) -->
+<script src="data/ui-sprites.js?v=59.50-20260719f"></script><!-- eco HUD sprites -->
 <script src="vfx-engine.js?v=59.17-20260712a"></script><!-- shared VFX (combo-milestone pop) -->
 <script>
 // ═══════════════════════════════════════════════════════════
@@ -1108,8 +1109,9 @@ function gameLoop(ticker) {
 function updateHUD() {
   const comboText = S.combo >= 3 ? ` 🔥${S.combo}` : ''
   document.getElementById('score-display').textContent = `🍬 ${S.score}${comboText}`
-  const hearts = '❤️'.repeat(Math.max(0, S.lives)) + '🖤'.repeat(Math.max(0, S.maxLives - S.lives))
-  document.getElementById('lives-display').textContent = hearts
+  const _mh = (n,e)=>(window.UISprites&&UISprites.imgHTML('eco',n,{style:'width:1em;height:1em;object-fit:contain;vertical-align:middle',emoji:e}))||e
+  let hearts=''; for(let i=0;i<Math.max(0,S.lives);i++)hearts+=_mh('heart','❤️'); for(let i=0;i<Math.max(0,S.maxLives-S.lives);i++)hearts+=_mh('heart-empty','🖤')
+  document.getElementById('lives-display').innerHTML = hearts
   // Time display: M:SS format, red urgency when <10s
   const t = Math.max(0, Math.ceil(S.timeLeft || 0))
   const mm = Math.floor(t / 60)

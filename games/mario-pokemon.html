@@ -164,7 +164,7 @@ body.shake{animation:screenShake .35s ease}
   </div>
   <div id="hud-stats">
     <div class="hud-stat" style="border-color:rgba(167,139,250,0.55)"><span>🏆</span><span id="score-count">0</span></div>
-    <div class="hud-stat hud-stat-coins"><span>🪙</span><span id="coin-count">0</span></div>
+    <div class="hud-stat hud-stat-coins"><span data-uisprite="eco:coin">🪙</span><span id="coin-count">0</span></div>
     <div class="hud-stat hud-stat-lives"><span id="lives-hearts">❤️❤️❤️</span></div>
   </div>
 </div>
@@ -232,6 +232,7 @@ body.shake{animation:screenShake .35s ease}
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/math-rules.js?v=59.28-20260713a"></script>
 <script src="data/save-engine.js?v=20260502b"></script>
+<script src="data/ui-sprites.js?v=59.50-20260719f"></script><!-- eco HUD sprites -->
 <script src="game-modal.js?v=20260502b"></script>
 <!-- Hotfix #120: sprite fix + picker fix (v=20260502b) -->
 
@@ -2289,11 +2290,12 @@ function updateHUD() {
   const heartsEl = document.getElementById('lives-hearts')
   const full = Math.floor(S.lives)
   const half = (S.lives - full) >= 0.5
+  const mh = (n,e)=>(window.UISprites&&UISprites.imgHTML('eco',n,{style:'width:1em;height:1em;object-fit:contain;vertical-align:middle',emoji:e}))||e
   let html = ''
   for (let i = 0; i < MAX_LIVES; i++) {
-    if (i < full) html += '<span class="life-heart">❤️</span>'
-    else if (i === full && half) html += '<span class="life-heart half">💔</span>'
-    else html += '<span class="life-heart empty">🖤</span>'
+    if (i < full) html += '<span class="life-heart">'+mh('heart','❤️')+'</span>'
+    else if (i === full && half) html += '<span class="life-heart half">'+mh('heart-half','💔')+'</span>'
+    else html += '<span class="life-heart empty">'+mh('heart-empty','🖤')+'</span>'
   }
   heartsEl.innerHTML = html
   // Update difficulty chip active state
