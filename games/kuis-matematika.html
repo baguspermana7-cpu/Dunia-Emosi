@@ -1309,19 +1309,36 @@ var BOTS=['Andi','Bima','Citra','Dewi','Eka','Fajar','Gita','Hana','Ivan'];
 function postLeaderboard(score){ try{ var b=+localStorage.getItem('mp_best')||0; if(score>b) localStorage.setItem('mp_best',score); }catch(e){}
   try{ if(window.DuniaCloud&&DuniaCloud.isEnabled()) DuniaCloud.submitScore('trophies',econ.trophies||0,econ.name); }catch(e){} }
 function myBest(){ try{ return +localStorage.getItem('mp_best')||0; }catch(e){ return 0; } }
-function renderRank(){
+function _rankSeeded(){
   var seed=(econ.trophies*7+13);
   var rows=BOTS.map(function(nm,i){ var sc=8+((seed+i*17)%22)+i*2; return {n:nm,s:sc}; });
-  var me={n:econ.name+' (Kamu)',s:Math.max(myBest(),econ.trophies*3),me:true};
-  rows.push(me); rows.sort(function(a,b){ return b.s-a.s; });
-  var l=byId('rank-list'); l.innerHTML='';
+  rows.push({n:econ.name+' (Kamu)',s:Math.max(myBest(),econ.trophies*3),me:true});
+  return rows;
+}
+function _rankPaint(rows){
+  rows.sort(function(a,b){ return b.s-a.s; });
+  var l=byId('rank-list'); if(!l) return; l.innerHTML='';
   rows.forEach(function(r,i){
     var row=document.createElement('div'); row.className='rank-row'+(r.me?' me':'');
     var medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);
     var _mk=(i<3&&window.UISprites)?UISprites.badgeName(medal):null; var _mh=_mk?UISprites.imgHTML('badge',_mk,{style:'width:1.15em;height:1.15em;object-fit:contain;vertical-align:middle',emoji:medal}):null;
-    row.innerHTML='<span class="rk">'+(_mh||medal)+'</span><span class="rn">'+r.n+'</span><span class="rs">'+pkIcon('item/medal',20)+r.s+'</span>';
+    row.innerHTML='<span class="rk">'+(_mh||medal)+'</span><span class="rn">'+escapeHtml(r.n)+'</span><span class="rs">'+pkIcon('item/medal',20)+r.s+'</span>';
     l.appendChild(row);
   });
+}
+function renderRank(){
+  _rankPaint(_rankSeeded());   // instant local view
+  try{
+    if(window.DuniaCloud && DuniaCloud.isEnabled()){
+      DuniaCloud.leaderboard('trophies',50).then(function(list){
+        if(!list||!list.length) return;
+        var mine=(econ.name||'').toLowerCase();
+        var rows=list.map(function(x){ var isMe=x.name&&x.name.toLowerCase()===mine; return {n:(x.name||'Pemain')+(isMe?' (Kamu)':''),s:x.value|0,me:isMe}; });
+        if(!rows.some(function(r){return r.me;})) rows.push({n:econ.name+' (Kamu)',s:econ.trophies*3,me:true});
+        _rankPaint(rows);   // real cloud leaderboard replaces seeded
+      });
+    }
+  }catch(e){}
 }
 /* Profil */
 function renderProfil(){
