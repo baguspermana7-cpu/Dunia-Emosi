@@ -433,6 +433,8 @@ html.dark #stars{opacity:.55}
   <div class="fps" id="fps">
     <button class="fp on" data-g="all"><div class="fd" style="background:var(--brand)"></div>ALL <span class="fc" id="c-all">0</span></button>
     <button class="fp" data-g="root"><div class="fd" style="background:#8B5CF6"></div>ROOT <span class="fc" id="c-root">0</span></button>
+    <button class="fp" data-g="projects"><div class="fd" style="background:#10B981"></div>PROJECTS <span class="fc" id="c-projects">0</span></button>
+    <button class="fp" data-g="recent" title="Touched in the last 45 days (file mtime, baked at sync)"><div class="fd" style="background:#F59E0B"></div>RECENT <span class="fc" id="c-recent">0</span></button>
     <button class="fp" data-g="architecture"><div class="fd" style="background:#0EA5E9"></div>ARCH <span class="fc" id="c-architecture">0</span></button>
     <button class="fp" data-g="characters"><div class="fd" style="background:#F43F5E"></div>CHARS <span class="fc" id="c-characters">0</span></button>
     <button class="fp" data-g="gameplay"><div class="fd" style="background:#F59E0B"></div>PLAY <span class="fc" id="c-gameplay">0</span></button>
@@ -609,6 +611,7 @@ const BASE='';
 
 /* ── GROUPS (Dreamy Meadow palette) ── */
 const G={
+  projects:    {col:'#10B981',brd:'#047857',sz:20,gl:'rgba(16,185,129,.45)'},
   root:        {col:'#8B5CF6',brd:'#5B21B6',sz:30,gl:'rgba(139,92,246,.55)'},
   architecture:{col:'#0EA5E9',brd:'#0369A1',sz:19,gl:'rgba(14,165,233,.45)'},
   characters:  {col:'#F43F5E',brd:'#BE123C',sz:19,gl:'rgba(244,63,94,.45)'},
@@ -626,84 +629,84 @@ const D='documentation%20and%20standarization/';
 /* ── NODES ── */
 const RAW=[
   /* ─ ROOT ─ */
-  {id:'de',label:'Dunia Emosi',group:'root',url:'index.html',desc:'Dunia Emosi - emotion-learning game suite for kids aged 5 to 10, a single-file Pixi app with 20-plus modules.',tags:['root','game','kids','education'],path:'Dunia-Emosi/index.html'},
+  {id:'de',label:'Dunia Emosi',group:'root',url:'index.html',desc:'Dunia Emosi - emotion-learning game suite for kids aged 5 to 10, a single-file Pixi app with 20-plus modules.',tags:['root','game','kids','education'],path:'Dunia-Emosi/index.html',m:'2026-07-19'},
 
   /* ─ ARCHITECTURE ─ */
-  {id:'arch',label:'Architecture',group:'architecture',url:D+'ARCHITECTURE.md',desc:'High-level file structure and architecture of the single-file game - index.html, assets and prompts.',tags:['architecture','file-structure','overview','assets'],path:'documentation and standarization/ARCHITECTURE.md'},
-  {id:'archidx',label:'Architecture Index',group:'architecture',url:D+'ARCHITECTURE-INDEX.md',desc:'Single entry-point doc map - required reading order, domain specs and operational docs for the codebase.',tags:['index','docs-map','onboarding','specs'],path:'documentation and standarization/ARCHITECTURE-INDEX.md'},
-  {id:'asset',label:'Asset Pipeline',group:'architecture',url:D+'ASSET-PIPELINE.md',desc:'Asset pipeline - where assets live, the loader chain and deployment workflow for sprites, backgrounds and sounds.',tags:['assets','pipeline','sprites','backgrounds'],path:'documentation and standarization/ASSET-PIPELINE.md'},
-  {id:'dynbg',label:'Dynamic BG Engine',group:'architecture',url:D+'DYNAMIC_BG_ENGINE_SPEC.md',desc:'Owner brief for a dynamic train-racing background engine - time of day, weather, location, NPCs and landmarks.',tags:['background','parallax','weather','engine'],path:'documentation and standarization/DYNAMIC_BG_ENGINE_SPEC.md'},
-  {id:'save',label:'Save Engine',group:'architecture',url:D+'SAVE_ENGINE_STANDARD.md',desc:'Avatar-keyed level and badge persistence - every game must use the shared saveLevelProgress helper.',tags:['save','persistence','localstorage','avatar'],path:'documentation and standarization/SAVE_ENGINE_STANDARD.md'},
-  {id:'layout',label:'Game Layout Standard',group:'architecture',url:D+'GAME_LAYOUT_STANDARD.md',desc:'Authoritative battle-screen 2x2 diagonal grid layout and modal / overlay z-index ordering.',tags:['layout','grid','battle','z-index'],path:'documentation and standarization/GAME_LAYOUT_STANDARD.md'},
+  {id:'arch',label:'Architecture',group:'architecture',url:D+'ARCHITECTURE.md',desc:'High-level file structure and architecture of the single-file game - index.html, assets and prompts.',tags:['architecture','file-structure','overview','assets'],path:'documentation and standarization/ARCHITECTURE.md',m:'2026-04-13'},
+  {id:'archidx',label:'Architecture Index',group:'architecture',url:D+'ARCHITECTURE-INDEX.md',desc:'Single entry-point doc map - required reading order, domain specs and operational docs for the codebase.',tags:['index','docs-map','onboarding','specs'],path:'documentation and standarization/ARCHITECTURE-INDEX.md',m:'2026-04-26'},
+  {id:'asset',label:'Asset Pipeline',group:'architecture',url:D+'ASSET-PIPELINE.md',desc:'Asset pipeline - where assets live, the loader chain and deployment workflow for sprites, backgrounds and sounds.',tags:['assets','pipeline','sprites','backgrounds'],path:'documentation and standarization/ASSET-PIPELINE.md',m:'2026-04-26'},
+  {id:'dynbg',label:'Dynamic BG Engine',group:'architecture',url:D+'DYNAMIC_BG_ENGINE_SPEC.md',desc:'Owner brief for a dynamic train-racing background engine - time of day, weather, location, NPCs and landmarks.',tags:['background','parallax','weather','engine'],path:'documentation and standarization/DYNAMIC_BG_ENGINE_SPEC.md',m:'2026-06-26'},
+  {id:'save',label:'Save Engine',group:'architecture',url:D+'SAVE_ENGINE_STANDARD.md',desc:'Avatar-keyed level and badge persistence - every game must use the shared saveLevelProgress helper.',tags:['save','persistence','localstorage','avatar'],path:'documentation and standarization/SAVE_ENGINE_STANDARD.md',m:'2026-05-01'},
+  {id:'layout',label:'Game Layout Standard',group:'architecture',url:D+'GAME_LAYOUT_STANDARD.md',desc:'Authoritative battle-screen 2x2 diagonal grid layout and modal / overlay z-index ordering.',tags:['layout','grid','battle','z-index'],path:'documentation and standarization/GAME_LAYOUT_STANDARD.md',m:'2026-05-01'},
 
   /* ─ CHARACTERS ─ */
-  {id:'chartrain',label:'Character Train Spec',group:'characters',url:D+'CHARACTER-TRAIN-SPEC.md',desc:'Character Train sprite engine spec and calibration for the train games, including critical sprite-load fixes.',tags:['trains','sprites','calibration','characters'],path:'documentation and standarization/CHARACTER-TRAIN-SPEC.md'},
-  {id:'sprite',label:'Sprite Standard',group:'characters',url:D+'SPRITE_STANDARD.md',desc:'Pokemon sprite rendering rules - HD-WebP-first cascade over CDN fallbacks via attachSpriteCascade.',tags:['sprites','pokemon','cascade','hd-webp'],path:'documentation and standarization/SPRITE_STANDARD.md'},
+  {id:'chartrain',label:'Character Train Spec',group:'characters',url:D+'CHARACTER-TRAIN-SPEC.md',desc:'Character Train sprite engine spec and calibration for the train games, including critical sprite-load fixes.',tags:['trains','sprites','calibration','characters'],path:'documentation and standarization/CHARACTER-TRAIN-SPEC.md',m:'2026-06-28'},
+  {id:'sprite',label:'Sprite Standard',group:'characters',url:D+'SPRITE_STANDARD.md',desc:'Pokemon sprite rendering rules - HD-WebP-first cascade over CDN fallbacks via attachSpriteCascade.',tags:['sprites','pokemon','cascade','hd-webp'],path:'documentation and standarization/SPRITE_STANDARD.md',m:'2026-05-02'},
 
   /* ─ GAMEPLAY ─ */
-  {id:'station',label:'Station Journey Spec',group:'gameplay',url:D+'STATION-JOURNEY-SPEC.md',desc:'Balapan Kereta 48-leg west-to-east station journey with data-driven unique per-level parallax backdrops.',tags:['journey','stations','parallax','train'],path:'documentation and standarization/STATION-JOURNEY-SPEC.md'},
-  {id:'city',label:'City Progression Spec',group:'gameplay',url:D+'CITY-PROGRESSION-SPEC.md',desc:'Region to City journey selector replacing random levels, with a sliding-frontier unlock rule.',tags:['progression','regions','cities','unlock'],path:'documentation and standarization/CITY-PROGRESSION-SPEC.md'},
-  {id:'mario',label:'Mario Game Spec',group:'gameplay',url:D+'MARIO_GAME_SPEC.md',desc:'Mario Pokemon Pixi platformer spec with authentic NES SMB1 sprite naming and usage.',tags:['mario','platformer','sprites','pixi'],path:'documentation and standarization/MARIO_GAME_SPEC.md'},
-  {id:'ideas',label:'Train Games 100 Ideas',group:'gameplay',url:D+'TRAIN-GAMES-100-IDEAS-PLAN.md',desc:'130 ranked improvement ideas across four train games organized into eight themed ships.',tags:['planning','trains','backlog','ideas'],path:'documentation and standarization/TRAIN-GAMES-100-IDEAS-PLAN.md'},
-  {id:'math',label:'Math Difficulty Standard',group:'gameplay',url:D+'MATH-DIFFICULTY-STANDARD.md',desc:'Math difficulty rule - Easy default and Hard opt-in driven through a centralized getMathLimits helper.',tags:['math','difficulty','education','standard'],path:'documentation and standarization/MATH-DIFFICULTY-STANDARD.md'},
+  {id:'station',label:'Station Journey Spec',group:'gameplay',url:D+'STATION-JOURNEY-SPEC.md',desc:'Balapan Kereta 48-leg west-to-east station journey with data-driven unique per-level parallax backdrops.',tags:['journey','stations','parallax','train'],path:'documentation and standarization/STATION-JOURNEY-SPEC.md',m:'2026-06-28'},
+  {id:'city',label:'City Progression Spec',group:'gameplay',url:D+'CITY-PROGRESSION-SPEC.md',desc:'Region to City journey selector replacing random levels, with a sliding-frontier unlock rule.',tags:['progression','regions','cities','unlock'],path:'documentation and standarization/CITY-PROGRESSION-SPEC.md',m:'2026-04-25'},
+  {id:'mario',label:'Mario Game Spec',group:'gameplay',url:D+'MARIO_GAME_SPEC.md',desc:'Mario Pokemon Pixi platformer spec with authentic NES SMB1 sprite naming and usage.',tags:['mario','platformer','sprites','pixi'],path:'documentation and standarization/MARIO_GAME_SPEC.md',m:'2026-05-01'},
+  {id:'ideas',label:'Train Games 100 Ideas',group:'gameplay',url:D+'TRAIN-GAMES-100-IDEAS-PLAN.md',desc:'130 ranked improvement ideas across four train games organized into eight themed ships.',tags:['planning','trains','backlog','ideas'],path:'documentation and standarization/TRAIN-GAMES-100-IDEAS-PLAN.md',m:'2026-06-24'},
+  {id:'math',label:'Math Difficulty Standard',group:'gameplay',url:D+'MATH-DIFFICULTY-STANDARD.md',desc:'Math difficulty rule - Easy default and Hard opt-in driven through a centralized getMathLimits helper.',tags:['math','difficulty','education','standard'],path:'documentation and standarization/MATH-DIFFICULTY-STANDARD.md',m:'2026-06-28'},
 
   /* ─ OBSTACLES ─ */
-  {id:'obeng',label:'Obstacle Engine Standard',group:'obstacles',url:D+'OBSTACLE_ENGINE_STANDARD.md',desc:'Modular child-friendly obstacle system with soft-fail, auto-help, big-tap and voice mandates.',tags:['obstacles','engine','kids','accessibility'],path:'documentation and standarization/OBSTACLE_ENGINE_STANDARD.md'},
-  {id:'obvar',label:'Obstacle Variety Spec',group:'obstacles',url:D+'SPEC_OBSTACLE_VARIETY.md',desc:'Owner brief for richer, varied, educational train-racing gameplay for ages four to seven.',tags:['gameplay','obstacles','variety','kids'],path:'documentation and standarization/SPEC_OBSTACLE_VARIETY.md'},
+  {id:'obeng',label:'Obstacle Engine Standard',group:'obstacles',url:D+'OBSTACLE_ENGINE_STANDARD.md',desc:'Modular child-friendly obstacle system with soft-fail, auto-help, big-tap and voice mandates.',tags:['obstacles','engine','kids','accessibility'],path:'documentation and standarization/OBSTACLE_ENGINE_STANDARD.md',m:'2026-06-26'},
+  {id:'obvar',label:'Obstacle Variety Spec',group:'obstacles',url:D+'SPEC_OBSTACLE_VARIETY.md',desc:'Owner brief for richer, varied, educational train-racing gameplay for ages four to seven.',tags:['gameplay','obstacles','variety','kids'],path:'documentation and standarization/SPEC_OBSTACLE_VARIETY.md',m:'2026-06-26'},
 
   /* ─ POKEMON ─ */
-  {id:'pokbal',label:'Pokemon Balance Standard',group:'pokemon',url:D+'POKEMON_BALANCE_STANDARD.md',desc:'Canonical Pokemon damage formula and per-hit cap making species choice meaningful across battle modes.',tags:['balance','pokemon','damage','battle'],path:'documentation and standarization/POKEMON_BALANCE_STANDARD.md'},
-  {id:'typeeff',label:'Type Effectiveness Standard',group:'pokemon',url:D+'TYPE_EFFECTIVENESS_STANDARD.md',desc:'Kid-friendly Pokemon type-matchup system teaching matchups via in-context visual cues and softened multipliers.',tags:['types','pokemon','education','multipliers'],path:'documentation and standarization/TYPE_EFFECTIVENESS_STANDARD.md'},
-  {id:'evo',label:'Evolution Chain Spec',group:'pokemon',url:D+'G13-EVOLUTION-CHAIN-SPEC.md',desc:'G13 evolution-math battle - 44 chains, up to three stages, local-first sprites and Mega overlays.',tags:['evolution','pokemon','chains','sprites'],path:'documentation and standarization/G13-EVOLUTION-CHAIN-SPEC.md'},
+  {id:'pokbal',label:'Pokemon Balance Standard',group:'pokemon',url:D+'POKEMON_BALANCE_STANDARD.md',desc:'Canonical Pokemon damage formula and per-hit cap making species choice meaningful across battle modes.',tags:['balance','pokemon','damage','battle'],path:'documentation and standarization/POKEMON_BALANCE_STANDARD.md',m:'2026-07-04'},
+  {id:'typeeff',label:'Type Effectiveness Standard',group:'pokemon',url:D+'TYPE_EFFECTIVENESS_STANDARD.md',desc:'Kid-friendly Pokemon type-matchup system teaching matchups via in-context visual cues and softened multipliers.',tags:['types','pokemon','education','multipliers'],path:'documentation and standarization/TYPE_EFFECTIVENESS_STANDARD.md',m:'2026-06-20'},
+  {id:'evo',label:'Evolution Chain Spec',group:'pokemon',url:D+'G13-EVOLUTION-CHAIN-SPEC.md',desc:'G13 evolution-math battle - 44 chains, up to three stages, local-first sprites and Mega overlays.',tags:['evolution','pokemon','chains','sprites'],path:'documentation and standarization/G13-EVOLUTION-CHAIN-SPEC.md',m:'2026-04-25'},
 
   /* ─ STANDARDS ─ */
-  {id:'coding',label:'Coding Standards',group:'standards',url:D+'CODING-STANDARDS.md',desc:'Coding standards - centralized math limits, asset-loading rules and CSS variable conventions.',tags:['standards','css','conventions','rde'],path:'documentation and standarization/CODING-STANDARDS.md'},
-  {id:'review',label:'Code Review Checklist',group:'standards',url:D+'CODE-REVIEW-CHECKLIST.md',desc:'Pre-commit blocking checklist preventing regressions across syntax, cross-file integration and state.',tags:['checklist','review','regressions','quality'],path:'documentation and standarization/CODE-REVIEW-CHECKLIST.md'},
-  {id:'gameref',label:'Game References',group:'standards',url:D+'GAME-REFERENCES.md',desc:'Classic game mechanics to adopt per game, from Subway Surfers lane-running to Endless Alphabet.',tags:['references','mechanics','inspiration','design'],path:'documentation and standarization/GAME-REFERENCES.md'},
-  {id:'regress',label:'Regression Checks',group:'standards',url:D+'REGRESSION_CHECKS.md',desc:'Mechanical grep and AST scan catching known bug classes - layout, z-index, HD-sprite and save.',tags:['regression','checks','ci','bug-prevention'],path:'documentation and standarization/REGRESSION_CHECKS.md'},
-  {id:'color',label:'Color Palette',group:'standards',url:D+'COLOR-PALETTE.md',desc:'Dreamy Meadow pastel color palette v2.0 replacing the old orange, green and blue defaults.',tags:['palette','colors','design','branding'],path:'documentation and standarization/COLOR-PALETTE.md'},
+  {id:'coding',label:'Coding Standards',group:'standards',url:D+'CODING-STANDARDS.md',desc:'Coding standards - centralized math limits, asset-loading rules and CSS variable conventions.',tags:['standards','css','conventions','rde'],path:'documentation and standarization/CODING-STANDARDS.md',m:'2026-04-25'},
+  {id:'review',label:'Code Review Checklist',group:'standards',url:D+'CODE-REVIEW-CHECKLIST.md',desc:'Pre-commit blocking checklist preventing regressions across syntax, cross-file integration and state.',tags:['checklist','review','regressions','quality'],path:'documentation and standarization/CODE-REVIEW-CHECKLIST.md',m:'2026-04-26'},
+  {id:'gameref',label:'Game References',group:'standards',url:D+'GAME-REFERENCES.md',desc:'Classic game mechanics to adopt per game, from Subway Surfers lane-running to Endless Alphabet.',tags:['references','mechanics','inspiration','design'],path:'documentation and standarization/GAME-REFERENCES.md',m:'2026-04-11'},
+  {id:'regress',label:'Regression Checks',group:'standards',url:D+'REGRESSION_CHECKS.md',desc:'Mechanical grep and AST scan catching known bug classes - layout, z-index, HD-sprite and save.',tags:['regression','checks','ci','bug-prevention'],path:'documentation and standarization/REGRESSION_CHECKS.md',m:'2026-05-01'},
+  {id:'color',label:'Color Palette',group:'standards',url:D+'COLOR-PALETTE.md',desc:'Dreamy Meadow pastel color palette v2.0 replacing the old orange, green and blue defaults.',tags:['palette','colors','design','branding'],path:'documentation and standarization/COLOR-PALETTE.md',m:'2026-04-11'},
 
   /* ─ AUDITS ─ */
-  {id:'aud425',label:'Audit 2026-04-25',group:'audits',url:D+'AUDIT-2026-04-25.md',desc:'Four-dimension audit (code, perf, UX, architecture) with 29 prioritized issues and a 3-phase roadmap.',tags:['audit','roadmap','performance','tech-debt'],path:'documentation and standarization/AUDIT-2026-04-25.md'},
-  {id:'audload',label:'Audit Load 2026-06-26',group:'audits',url:D+'AUDIT-LOAD-2026-06-26.md',desc:'Read-only audit of every network and async load path with timeouts, retries and prioritized fixes.',tags:['audit','loading','network','reliability'],path:'documentation and standarization/AUDIT-LOAD-2026-06-26.md'},
-  {id:'audsw',label:'Audit SW 2026-06-26',group:'audits',url:D+'AUDIT-SW-2026-06-26.md',desc:'Service-worker audit - lifecycle verdict, network-first HTML timeout gap and version-string drift.',tags:['audit','service-worker','caching','versioning'],path:'documentation and standarization/AUDIT-SW-2026-06-26.md'},
-  {id:'changelog',label:'Changelog',group:'audits',url:D+'CHANGELOG.md',desc:'Per-session change log covering every shipped version and bug fix across the project.',tags:['changelog','versions','history','releases'],path:'documentation and standarization/CHANGELOG.md'},
-  {id:'lessons',label:'Lessons Learned',group:'audits',url:D+'LESSONS-LEARNED.md',desc:'Per-session anti-pattern log with symptom, root-cause, fix and lesson entries from L1 onward.',tags:['lessons','anti-patterns','debugging','postmortem'],path:'documentation and standarization/LESSONS-LEARNED.md'},
+  {id:'aud425',label:'Audit 2026-04-25',group:'audits',url:D+'AUDIT-2026-04-25.md',desc:'Four-dimension audit (code, perf, UX, architecture) with 29 prioritized issues and a 3-phase roadmap.',tags:['audit','roadmap','performance','tech-debt'],path:'documentation and standarization/AUDIT-2026-04-25.md',m:'2026-04-25'},
+  {id:'audload',label:'Audit Load 2026-06-26',group:'audits',url:D+'AUDIT-LOAD-2026-06-26.md',desc:'Read-only audit of every network and async load path with timeouts, retries and prioritized fixes.',tags:['audit','loading','network','reliability'],path:'documentation and standarization/AUDIT-LOAD-2026-06-26.md',m:'2026-06-26'},
+  {id:'audsw',label:'Audit SW 2026-06-26',group:'audits',url:D+'AUDIT-SW-2026-06-26.md',desc:'Service-worker audit - lifecycle verdict, network-first HTML timeout gap and version-string drift.',tags:['audit','service-worker','caching','versioning'],path:'documentation and standarization/AUDIT-SW-2026-06-26.md',m:'2026-06-26'},
+  {id:'changelog',label:'Changelog',group:'audits',url:D+'CHANGELOG.md',desc:'Per-session change log covering every shipped version and bug fix across the project.',tags:['changelog','versions','history','releases'],path:'documentation and standarization/CHANGELOG.md',m:'2026-07-05'},
+  {id:'lessons',label:'Lessons Learned',group:'audits',url:D+'LESSONS-LEARNED.md',desc:'Per-session anti-pattern log with symptom, root-cause, fix and lesson entries from L1 onward.',tags:['lessons','anti-patterns','debugging','postmortem'],path:'documentation and standarization/LESSONS-LEARNED.md',m:'2026-07-05'},
 
   /* ─ GAMES ─ */
-  {id:'balapan',label:'Balapan Kereta',group:'games',emoji:'🚂',url:'games/balapan-kereta.html',desc:'The flagship side-scrolling train race with a moving parallax journey from Jakarta toward Bali.',tags:['game','train','race','pixi'],path:'games/balapan-kereta.html'},
-  {id:'balapanside',label:'Balapan Kereta Side',group:'games',emoji:'🚋',url:'games/balapan-kereta-side.html',desc:'Side-view jump-and-run train race variant with terrain, gaps and a quiz finale.',tags:['game','train','side','jump'],path:'games/balapan-kereta-side.html'},
-  {id:'lokomotif',label:'Lokomotif Pemberani',group:'games',emoji:'🚆',url:'games/lokomotif-pemberani.html',desc:'Brave-locomotive character train adventure with the protected loco roster.',tags:['game','train','characters'],path:'games/lokomotif-pemberani.html'},
-  {id:'museum',label:'Museum Kereta',group:'games',emoji:'🏛️',url:'games/museum-kereta.html',desc:'Standalone Museum Ambarawa train museum with 36 locomotive cards, quiz, gallery and passport.',tags:['game','museum','quiz','trains'],path:'games/museum-kereta.html'},
-  {id:'selamatkan',label:'Selamatkan Kereta',group:'games',emoji:'🚨',url:'games/selamatkan-kereta.html',desc:'Save-the-train obstacle-clearing rescue game built on the obstacle engine.',tags:['game','train','obstacles','rescue'],path:'games/selamatkan-kereta.html'},
-  {id:'mariopok',label:'Mario Pokemon',group:'games',emoji:'🍄',url:'games/mario-pokemon.html',desc:'Platformer crossover pairing NES Mario physics with Pokemon characters.',tags:['game','mario','pokemon','platformer'],path:'games/mario-pokemon.html'},
-  {id:'monster',label:'Monster Candy',group:'games',emoji:'🍬',url:'games/monster-candy.html',desc:'Match-and-battle candy-monster game using the Pokemon balance and type rules.',tags:['game','candy','monster','battle'],path:'games/monster-candy.html'},
-  {id:'gym',label:'Gym Pokemon',group:'games',emoji:'🏆',url:'games/gym-pokemon.html',desc:'Gym-ladder battle adventure with type effectiveness, evolution chains and math combat.',tags:['game','pokemon','battle','gym'],path:'games/gym-pokemon.html'},
-  {id:'pokrun',label:'Pokemon Run',group:'games',emoji:'🏃',url:'games/pokemon-run.html',desc:'Endless runner with evolving Pokemon dodging obstacles.',tags:['game','pokemon','runner','obstacles'],path:'games/pokemon-run.html'},
-  {id:'pokbirds',label:'Pokemon Birds',group:'games',emoji:'🐦',url:'games/pokemon-birds.html',desc:'Flappy-style flying bird Pokemon game with tap-to-fly control.',tags:['game','pokemon','birds','arcade'],path:'games/pokemon-birds.html'},
-  {id:'poksea',label:'Pokemon Bawah Laut',group:'games',emoji:'🐠',url:'games/pokemon-bawah-laut.html',desc:'Underwater Pokemon swimming game with a dynamic ocean backdrop.',tags:['game','pokemon','underwater'],path:'games/pokemon-bawah-laut.html'},
-  {id:'ducky',label:'Ducky Volley',group:'games',emoji:'🏐',url:'games/ducky-volley.html',desc:'Arcade volleyball mini-game with bouncy duck physics.',tags:['game','volley','arcade'],path:'games/ducky-volley.html'},
-  {id:'kuis',label:'Kuis Matematika',group:'games',emoji:'🔢',url:'games/kuis-matematika.html',desc:'Math quiz game driven by the age-scaled math difficulty standard.',tags:['game','math','quiz','education'],path:'games/kuis-matematika.html'},
-  {id:'mobil',label:'Mobil',group:'games',emoji:'🚗',url:'games/mobil.html',desc:'Car driving and obstacle-dodging arcade game.',tags:['game','car','obstacles','arcade'],path:'games/mobil.html'},
+  {id:'balapan',label:'Balapan Kereta',group:'games',emoji:'🚂',url:'games/balapan-kereta.html',desc:'The flagship side-scrolling train race with a moving parallax journey from Jakarta toward Bali.',tags:['game','train','race','pixi'],path:'games/balapan-kereta.html',m:'2026-07-13'},
+  {id:'balapanside',label:'Balapan Kereta Side',group:'games',emoji:'🚋',url:'games/balapan-kereta-side.html',desc:'Side-view jump-and-run train race variant with terrain, gaps and a quiz finale.',tags:['game','train','side','jump'],path:'games/balapan-kereta-side.html',m:'2026-07-13'},
+  {id:'lokomotif',label:'Lokomotif Pemberani',group:'games',emoji:'🚆',url:'games/lokomotif-pemberani.html',desc:'Brave-locomotive character train adventure with the protected loco roster.',tags:['game','train','characters'],path:'games/lokomotif-pemberani.html',m:'2026-07-13'},
+  {id:'museum',label:'Museum Kereta',group:'games',emoji:'🏛️',url:'games/museum-kereta.html',desc:'Standalone Museum Ambarawa train museum with 36 locomotive cards, quiz, gallery and passport.',tags:['game','museum','quiz','trains'],path:'games/museum-kereta.html',m:'2026-07-13'},
+  {id:'selamatkan',label:'Selamatkan Kereta',group:'games',emoji:'🚨',url:'games/selamatkan-kereta.html',desc:'Save-the-train obstacle-clearing rescue game built on the obstacle engine.',tags:['game','train','obstacles','rescue'],path:'games/selamatkan-kereta.html',m:'2026-07-13'},
+  {id:'mariopok',label:'Mario Pokemon',group:'games',emoji:'🍄',url:'games/mario-pokemon.html',desc:'Platformer crossover pairing NES Mario physics with Pokemon characters.',tags:['game','mario','pokemon','platformer'],path:'games/mario-pokemon.html',m:'2026-07-13'},
+  {id:'monster',label:'Monster Candy',group:'games',emoji:'🍬',url:'games/monster-candy.html',desc:'Match-and-battle candy-monster game using the Pokemon balance and type rules.',tags:['game','candy','monster','battle'],path:'games/monster-candy.html',m:'2026-07-14'},
+  {id:'gym',label:'Gym Pokemon',group:'games',emoji:'🏆',url:'games/gym-pokemon.html',desc:'Gym-ladder battle adventure with type effectiveness, evolution chains and math combat.',tags:['game','pokemon','battle','gym'],path:'games/gym-pokemon.html',m:'2026-07-19'},
+  {id:'pokrun',label:'Pokemon Run',group:'games',emoji:'🏃',url:'games/pokemon-run.html',desc:'Endless runner with evolving Pokemon dodging obstacles.',tags:['game','pokemon','runner','obstacles'],path:'games/pokemon-run.html',m:'2026-07-13'},
+  {id:'pokbirds',label:'Pokemon Birds',group:'games',emoji:'🐦',url:'games/pokemon-birds.html',desc:'Flappy-style flying bird Pokemon game with tap-to-fly control.',tags:['game','pokemon','birds','arcade'],path:'games/pokemon-birds.html',m:'2026-07-13'},
+  {id:'poksea',label:'Pokemon Bawah Laut',group:'games',emoji:'🐠',url:'games/pokemon-bawah-laut.html',desc:'Underwater Pokemon swimming game with a dynamic ocean backdrop.',tags:['game','pokemon','underwater'],path:'games/pokemon-bawah-laut.html',m:'2026-07-13'},
+  {id:'ducky',label:'Ducky Volley',group:'games',emoji:'🏐',url:'games/ducky-volley.html',desc:'Arcade volleyball mini-game with bouncy duck physics.',tags:['game','volley','arcade'],path:'games/ducky-volley.html',m:'2026-07-13'},
+  {id:'kuis',label:'Kuis Matematika',group:'games',emoji:'🔢',url:'games/kuis-matematika.html',desc:'Math quiz game driven by the age-scaled math difficulty standard.',tags:['game','math','quiz','education'],path:'games/kuis-matematika.html',m:'2026-07-19'},
+  {id:'mobil',label:'Mobil',group:'games',emoji:'🚗',url:'games/mobil.html',desc:'Car driving and obstacle-dodging arcade game.',tags:['game','car','obstacles','arcade'],path:'games/mobil.html',m:'2026-07-14'},
   /* ─ AUDITS: changelog versions ─ */
-  {id:'cl-v5580',label:'v55.80: Train-games polish & journey cohesion',group:'audits',url:'documentation%20and%20standarization/CHANGELOG.md',desc:'Shared train-journey.js module so all 3 train games name the same 48-leg journey leg the painterly plate shows.',tags:['changelog','v55.80','journey','trains'],path:'documentation and standarization/CHANGELOG.md'},
-  {id:'cl-v5578',label:'v55.78: Backdrop tiers — sharper on tablet',group:'audits',url:'documentation%20and%20standarization/CHANGELOG.md',desc:'Re-tiered painterly backdrops to 640/1024/1600 WebP so hi-dpi 11-inch tablets get a crisp near-source tier.',tags:['changelog','v55.78','backdrop','tiers'],path:'documentation and standarization/CHANGELOG.md'},
-  {id:'cl-v5577',label:'v55.77: Shared painterly-backdrop engine across 3 games',group:'audits',url:'documentation%20and%20standarization/CHANGELOG.md',desc:'Lifted g14 parallax + speed FX into window.TrainBackdrop/TrainSpeedFX, adopted by all three train games.',tags:['changelog','v55.77','engine','parallax'],path:'documentation and standarization/CHANGELOG.md'},
-  {id:'cl-v5575',label:'v55.75: g14 PARALLAX backdrop — the scene MOVES',group:'audits',url:'documentation%20and%20standarization/CHANGELOG.md',desc:'Band-sliced one flat painterly plate into depth bands scrolled at per-band speed for 3D parallax.',tags:['changelog','v55.75','parallax','g14'],path:'documentation and standarization/CHANGELOG.md'},
-  {id:'cl-v5574',label:'v55.74: clean painterly backdrops via LaMa inpaint',group:'audits',url:'documentation%20and%20standarization/CHANGELOG.md',desc:'LaMa object-removal strips the painted train/obstacles/UI from AI mockups, leaving clean scenery + rails.',tags:['changelog','v55.74','inpaint','backdrop'],path:'documentation and standarization/CHANGELOG.md'},
-  {id:'cl-v5572',label:'v55.72: balapan PAINTERLY reskin + 30-station journey',group:'audits',url:'documentation%20and%20standarization/CHANGELOG.md',desc:'Raster painterly backdrops + candy HUD reskin + a 30-station Java west-to-east journey rewrite.',tags:['changelog','v55.72','reskin','journey'],path:'documentation and standarization/CHANGELOG.md'},
-  {id:'cl-v5570',label:'v55.70: Museum loco wheels spin on axle + Diesel',group:'audits',url:'documentation%20and%20standarization/CHANGELOG.md',desc:'Fixed museum locomotive wheels orbiting the SVG centre; new dunWheel spins on a real axle, plus owner Diesel art.',tags:['changelog','v55.70','museum','sprites'],path:'documentation and standarization/CHANGELOG.md'},
+  {id:'cl-v5580',label:'v55.80: Train-games polish & journey cohesion',group:'audits',url:'documentation%20and%20standarization/CHANGELOG.md',desc:'Shared train-journey.js module so all 3 train games name the same 48-leg journey leg the painterly plate shows.',tags:['changelog','v55.80','journey','trains'],path:'documentation and standarization/CHANGELOG.md',m:'2026-07-05'},
+  {id:'cl-v5578',label:'v55.78: Backdrop tiers — sharper on tablet',group:'audits',url:'documentation%20and%20standarization/CHANGELOG.md',desc:'Re-tiered painterly backdrops to 640/1024/1600 WebP so hi-dpi 11-inch tablets get a crisp near-source tier.',tags:['changelog','v55.78','backdrop','tiers'],path:'documentation and standarization/CHANGELOG.md',m:'2026-07-05'},
+  {id:'cl-v5577',label:'v55.77: Shared painterly-backdrop engine across 3 games',group:'audits',url:'documentation%20and%20standarization/CHANGELOG.md',desc:'Lifted g14 parallax + speed FX into window.TrainBackdrop/TrainSpeedFX, adopted by all three train games.',tags:['changelog','v55.77','engine','parallax'],path:'documentation and standarization/CHANGELOG.md',m:'2026-07-05'},
+  {id:'cl-v5575',label:'v55.75: g14 PARALLAX backdrop — the scene MOVES',group:'audits',url:'documentation%20and%20standarization/CHANGELOG.md',desc:'Band-sliced one flat painterly plate into depth bands scrolled at per-band speed for 3D parallax.',tags:['changelog','v55.75','parallax','g14'],path:'documentation and standarization/CHANGELOG.md',m:'2026-07-05'},
+  {id:'cl-v5574',label:'v55.74: clean painterly backdrops via LaMa inpaint',group:'audits',url:'documentation%20and%20standarization/CHANGELOG.md',desc:'LaMa object-removal strips the painted train/obstacles/UI from AI mockups, leaving clean scenery + rails.',tags:['changelog','v55.74','inpaint','backdrop'],path:'documentation and standarization/CHANGELOG.md',m:'2026-07-05'},
+  {id:'cl-v5572',label:'v55.72: balapan PAINTERLY reskin + 30-station journey',group:'audits',url:'documentation%20and%20standarization/CHANGELOG.md',desc:'Raster painterly backdrops + candy HUD reskin + a 30-station Java west-to-east journey rewrite.',tags:['changelog','v55.72','reskin','journey'],path:'documentation and standarization/CHANGELOG.md',m:'2026-07-05'},
+  {id:'cl-v5570',label:'v55.70: Museum loco wheels spin on axle + Diesel',group:'audits',url:'documentation%20and%20standarization/CHANGELOG.md',desc:'Fixed museum locomotive wheels orbiting the SVG centre; new dunWheel spins on a real axle, plus owner Diesel art.',tags:['changelog','v55.70','museum','sprites'],path:'documentation and standarization/CHANGELOG.md',m:'2026-07-05'},
   /* ─ AUDITS: lessons learned ─ */
-  {id:'l108',label:'L108: Pseudo-3D taper changes RENDER geometry only',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'A perspective taper must touch only the rendered rail/sprite layer, never the gameplay coordinates physics reads.',tags:['lessons','L108','pseudo-3d','render'],path:'documentation and standarization/LESSONS-LEARNED.md'},
-  {id:'l109',label:'L109: Parameterize a 40-level journey, do not hand-draw',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Content scale comes from one data table times a few reusable drawers, not N hand-built scenes.',tags:['lessons','L109','journey','data-driven'],path:'documentation and standarization/LESSONS-LEARNED.md'},
-  {id:'l110',label:'L110: SVG wheel spins on its axle only with explicit origin',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Set transform-origin in viewBox units + add spokes; never trust transform-box:fill-box on old webviews.',tags:['lessons','L110','svg','sprites'],path:'documentation and standarization/LESSONS-LEARNED.md'},
-  {id:'l111',label:'L111: vtracer flattens alpha — key-colour + path-strip',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Encode transparency as a sentinel key colour and strip those paths to get a transparent vector cutout.',tags:['lessons','L111','vector','pipeline'],path:'documentation and standarization/LESSONS-LEARNED.md'},
-  {id:'l112',label:'L112: Raster beats vector for painterly backgrounds',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Choose asset format by the art: raster wins for painterly/photographic (smaller AND faithful), vector for flat art.',tags:['lessons','L112','raster','backdrop'],path:'documentation and standarization/LESSONS-LEARNED.md'},
-  {id:'l113',label:'L113: LaMa inpainting strips painted game elements',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Object-removal inpainting cleanly erases painted train/obstacles from AI backdrops; run the torchscript model directly.',tags:['lessons','L113','inpaint','pipeline'],path:'documentation and standarization/LESSONS-LEARNED.md'},
-  {id:'l114',label:'L114: Parallax from one flat image = band-slice + speed',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Slice a flat plate into horizontal depth bands, tile and scroll each at a depth-scaled speed for convincing parallax.',tags:['lessons','L114','parallax','backdrop'],path:'documentation and standarization/LESSONS-LEARNED.md'},
-  {id:'l115',label:'L115: A rail bob must move the WHOLE stage uniformly',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Bob stage.y (backdrop + train children) uniformly so seams never tear and the train stays on the painted rails.',tags:['lessons','L115','parallax','g14'],path:'documentation and standarization/LESSONS-LEARNED.md'},
-  {id:'l116',label:'L116: Extract one verified engine into a shared module',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Migrate the source-of-truth game to the new module first and re-run its probe as the regression gate.',tags:['lessons','L116','engine','refactor'],path:'documentation and standarization/LESSONS-LEARNED.md'},
-  {id:'l117',label:'L117: Hi-dpi cover-fit sharpness = tier near SOURCE width',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Add a backdrop tier near the source width so hi-dpi devices stop upscaling; lowering quality alone will not help.',tags:['lessons','L117','backdrop','tiers'],path:'documentation and standarization/LESSONS-LEARNED.md'},
+  {id:'l108',label:'L108: Pseudo-3D taper changes RENDER geometry only',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'A perspective taper must touch only the rendered rail/sprite layer, never the gameplay coordinates physics reads.',tags:['lessons','L108','pseudo-3d','render'],path:'documentation and standarization/LESSONS-LEARNED.md',m:'2026-07-05'},
+  {id:'l109',label:'L109: Parameterize a 40-level journey, do not hand-draw',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Content scale comes from one data table times a few reusable drawers, not N hand-built scenes.',tags:['lessons','L109','journey','data-driven'],path:'documentation and standarization/LESSONS-LEARNED.md',m:'2026-07-05'},
+  {id:'l110',label:'L110: SVG wheel spins on its axle only with explicit origin',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Set transform-origin in viewBox units + add spokes; never trust transform-box:fill-box on old webviews.',tags:['lessons','L110','svg','sprites'],path:'documentation and standarization/LESSONS-LEARNED.md',m:'2026-07-05'},
+  {id:'l111',label:'L111: vtracer flattens alpha — key-colour + path-strip',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Encode transparency as a sentinel key colour and strip those paths to get a transparent vector cutout.',tags:['lessons','L111','vector','pipeline'],path:'documentation and standarization/LESSONS-LEARNED.md',m:'2026-07-05'},
+  {id:'l112',label:'L112: Raster beats vector for painterly backgrounds',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Choose asset format by the art: raster wins for painterly/photographic (smaller AND faithful), vector for flat art.',tags:['lessons','L112','raster','backdrop'],path:'documentation and standarization/LESSONS-LEARNED.md',m:'2026-07-05'},
+  {id:'l113',label:'L113: LaMa inpainting strips painted game elements',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Object-removal inpainting cleanly erases painted train/obstacles from AI backdrops; run the torchscript model directly.',tags:['lessons','L113','inpaint','pipeline'],path:'documentation and standarization/LESSONS-LEARNED.md',m:'2026-07-05'},
+  {id:'l114',label:'L114: Parallax from one flat image = band-slice + speed',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Slice a flat plate into horizontal depth bands, tile and scroll each at a depth-scaled speed for convincing parallax.',tags:['lessons','L114','parallax','backdrop'],path:'documentation and standarization/LESSONS-LEARNED.md',m:'2026-07-05'},
+  {id:'l115',label:'L115: A rail bob must move the WHOLE stage uniformly',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Bob stage.y (backdrop + train children) uniformly so seams never tear and the train stays on the painted rails.',tags:['lessons','L115','parallax','g14'],path:'documentation and standarization/LESSONS-LEARNED.md',m:'2026-07-05'},
+  {id:'l116',label:'L116: Extract one verified engine into a shared module',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Migrate the source-of-truth game to the new module first and re-run its probe as the regression gate.',tags:['lessons','L116','engine','refactor'],path:'documentation and standarization/LESSONS-LEARNED.md',m:'2026-07-05'},
+  {id:'l117',label:'L117: Hi-dpi cover-fit sharpness = tier near SOURCE width',group:'audits',url:'documentation%20and%20standarization/LESSONS-LEARNED.md',desc:'Add a backdrop tier near the source width so hi-dpi devices stop upscaling; lowering quality alone will not help.',tags:['lessons','L117','backdrop','tiers'],path:'documentation and standarization/LESSONS-LEARNED.md',m:'2026-07-05'},
   /* ─ JOURNEY: 48 train-journey legs ─ */
   {id:'leg-01',label:'L1: Gambir → Bekasi',group:'journey',url:null,desc:'Jakarta leg — Gambir → Bekasi.',tags:['journey','jakarta'],path:null},
   {id:'leg-02',label:'L2: Bekasi → Cikarang',group:'journey',url:null,desc:'Jawa Barat leg — Bekasi → Cikarang.',tags:['journey','jawa-barat'],path:null},
@@ -753,10 +756,20 @@ const RAW=[
   {id:'leg-46',label:'L46: Kyoto → Arashiyama',group:'journey',url:null,desc:'Jepang leg — Kyoto → Arashiyama.',tags:['journey','jepang'],path:null},
   {id:'leg-47',label:'L47: Lhasa → Nyingchi',group:'journey',url:null,desc:'Tibet leg — Lhasa → Nyingchi.',tags:['journey','tibet'],path:null},
   {id:'leg-48',label:'L48: Kalka → Shimla',group:'journey',url:null,desc:'India leg — Kalka → Shimla.',tags:['journey','india'],path:null},
+
+  /* ─ CROSS-PROJECT LAYER (the wider second brain) ─ */
+  {id:'rzsite',label:'ResistanceZero Site',group:'projects',emoji:'⚡',url:'https://resistancezero.com',desc:'The engineering-operations portfolio site: 100+ pages of calculators, virtual labs, articles and cockpits — the sibling universe to Dunia Emosi.',tags:['rz','portfolio','engineering','site'],m:'2026-07-19'},
+  {id:'rzdcos',label:'DC-OS · DCMOC',group:'projects',emoji:'🏭',url:'https://resistancezero.com/dcmoc/',desc:'Data-center intelligence platform: 13 engine pages (requirements to results), value-binding manual, Cx checklists — powered by the shared RZEngine.',tags:['rz','dcmoc','datacenter','engines'],m:'2026-07-19'},
+  {id:'rzengine',label:'RZEngine (shared brain)',group:'projects',emoji:'🧠',url:'https://resistancezero.com/glossary.html',desc:'rz-engine.js — single sourced DATA + models consumed by every RZ calculator, DCMOC and the finance suite; every value carries provenance.',tags:['rz','engine','data','provenance'],m:'2026-07-19'},
+  {id:'rzfin',label:'Finance Suite',group:'projects',emoji:'📈',url:'https://resistancezero.com/finance-terminal.html',desc:'FIN Engine terminal: deterministic value-gate, committee scorecards, portfolio doctor — educational analysis only.',tags:['rz','finance','terminal'],m:'2026-07-19'},
+  {id:'rzbrain',label:'Memory / Claude Brain',group:'projects',emoji:'🗂️',url:'https://resistancezero.com/changelog.html',desc:'Persistent project memory + changelog trail: every shipped version, lesson and gotcha across both universes.',tags:['memory','changelog','lessons'],m:'2026-07-19'},
 ];
 
 /* ── EDGES ── */
+
+
 const E=[
+  ['de','rzsite'],['rzsite','rzdcos'],['rzsite','rzfin'],['rzsite','rzengine'],['rzdcos','rzengine'],['rzfin','rzengine'],['rzsite','rzbrain'],['de','rzbrain'],
   /* root → group anchors */
   ['de','arch'],['de','archidx'],['de','chartrain'],['de','station'],['de','obeng'],
   ['de','pokbal'],['de','coding'],['de','changelog'],['de','balapan'],['de','lokomotif'],
@@ -846,8 +859,10 @@ function isDark(){return document.documentElement.classList.contains('dark');}
 function emo(n){return (n&&n.emoji)?n.emoji:'●';}
 
 function build(){
+  const RECENT_MS=45*864e5;
+  const isRecent=n=>n.m&&(Date.now()-new Date(n.m).getTime())<RECENT_MS;
   let fil=RAW.filter(n=>{
-    const gm=ag==='all'||n.group===ag;
+    const gm=ag==='all'||(ag==='recent'?isRecent(n):n.group===ag);
     const sm=!q||n.label.toLowerCase().includes(q)||n.id.includes(q)||(n.tags||[]).some(t=>t.includes(q));
     return gm&&sm;
   });
@@ -1225,13 +1240,27 @@ document.querySelectorAll('.fp').forEach(b=>{
 });
 
 /* update counts */
-const CK={all:'c-all',root:'c-root',architecture:'c-architecture',characters:'c-characters',
+const CK={all:'c-all',root:'c-root',projects:'c-projects',recent:'c-recent',architecture:'c-architecture',characters:'c-characters',
   gameplay:'c-gameplay',obstacles:'c-obstacles',pokemon:'c-pokemon',standards:'c-standards',
   audits:'c-audits',games:'c-games',journey:'c-journey'};
 Object.entries(CK).forEach(([g,id])=>{
   const el=document.getElementById(id);
-  if(el)el.textContent=g==='all'?RAW.length:RAW.filter(n=>n.group===g).length;
+  if(el)el.textContent=g==='all'?RAW.length:(g==='recent'?RAW.filter(n=>n.m&&(Date.now()-new Date(n.m).getTime())<45*864e5).length:RAW.filter(n=>n.group===g).length);
 });
+
+/* ── HUB STATS (AI3: top connectors, full graph) ── */
+(function(){
+  const dg={};E.forEach(([a,b])=>{dg[a]=(dg[a]||0)+1;dg[b]=(dg[b]||0)+1});
+  const top=Object.entries(dg).sort((a,b)=>b[1]-a[1]).slice(0,5)
+    .map(([id,d])=>{const n=RAW.find(x=>x.id===id);return n?`${emo(n)} ${n.label} (${d})`:null}).filter(Boolean);
+  const leg=document.getElementById('leg');
+  if(leg&&top.length){
+    const div=document.createElement('div');
+    div.style.cssText='margin-top:8px;padding-top:8px;border-top:1px solid rgba(139,92,246,.18);font-size:10px;opacity:.8';
+    div.innerHTML='<b>🏆 Top hubs:</b> '+top.join(' · ');
+    leg.appendChild(div);
+  }
+})();
 
 /* ── SEARCH ── */
 let st;
@@ -1548,7 +1577,7 @@ document.getElementById('zO').addEventListener('click',()=>net&&net.moveTo({scal
 document.getElementById('zR').addEventListener('click',()=>net&&net.fit({animation:{duration:480,easingFunction:'easeInOutQuad'}}));
 
 /* ── KEYBOARD ── */
-const GROUP_KEYS=['all','root','architecture','characters','gameplay','obstacles','pokemon','standards','audits','games','journey'];
+const GROUP_KEYS=['all','root','projects','architecture','characters','gameplay','obstacles','pokemon','standards','audits','games','journey'];
 document.addEventListener('keydown',e=>{
   const inInput=document.activeElement.tagName==='INPUT'||document.activeElement.tagName==='TEXTAREA';
   if(e.key==='Escape'){

@@ -35,6 +35,7 @@ FOLDER_MAP = {
     'audits':       '07-Audits',
     'games':        '08-Games',
     'journey':      '09-Journey',
+    'projects':     '10-Projects',
 }
 
 # ── Parse RAW nodes from secondbrain.html ────────────────────────────────────
