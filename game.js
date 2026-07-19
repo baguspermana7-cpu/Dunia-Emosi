@@ -8193,6 +8193,13 @@ if('serviceWorker' in navigator){
               }
             })
           })
+          // Force an update check whenever the app is FOREGROUNDED. An installed
+          // PWA resumed from background never re-fetches sw.js on its own, so a new
+          // deploy would sit unseen ("kok tidak berubah") until a full relaunch.
+          // Checking on focus/visibility pulls the new SW → auto-reload chain fires.
+          const checkUpdate = () => { try { reg.update() } catch (_) {} }
+          document.addEventListener('visibilitychange', () => { if (!document.hidden) checkUpdate() })
+          window.addEventListener('focus', checkUpdate)
         })
         .catch(() => { /* PWA install will degrade to web app */ })
     })

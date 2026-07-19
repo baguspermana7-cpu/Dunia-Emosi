@@ -6519,21 +6519,60 @@ function applyRdeScaling() {
       for (var i = 0; i < race.players.length; i++) { if (race.players[i].dist < 100 && race.players[i].energy >= BOOST_COST) any = true; }
       medallion.classList.toggle('ready', any);
     }
+    // Self-contained DOM particle burst at an element's screen centre. No PIXI
+    // dependency (PvP is DOM), fully guarded — can never break the race.
+    function pvpBurst (el, kind) {
+      try {
+        if (!el || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+        var r = el.getBoundingClientRect(); if (!r.width) return;
+        var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        var c = kind === 'crash' ? { n: 14, cols: ['#ff5a5a', '#ffaa44', '#ffd34d'], smin: 6, smax: 12, spread: 70, up: 0 }
+              : kind === 'coin'  ? { n: 10, cols: ['#ffd34d', '#fff0a8', '#ffe08a'], smin: 5, smax: 9,  spread: 46, up: 1 }
+              :                    { n: 9,  cols: ['#ffd34d', '#ff8a3d', '#ffffff'], smin: 4, smax: 8,  spread: 40, up: 1 };
+        for (var i = 0; i < c.n; i++) {
+          var p = document.createElement('div');
+          var s = c.smin + Math.random() * (c.smax - c.smin);
+          p.style.cssText = 'position:fixed;left:' + cx + 'px;top:' + cy + 'px;width:' + s + 'px;height:' + s +
+            'px;border-radius:' + (Math.random() > 0.5 ? '50%' : '2px') + ';background:' + c.cols[i % c.cols.length] +
+            ';z-index:9999;pointer-events:none;will-change:transform,opacity';
+          document.body.appendChild(p);
+          var ang = Math.random() * Math.PI * 2, d = c.spread * (0.4 + Math.random() * 0.8);
+          var dx = Math.cos(ang) * d, dy = Math.sin(ang) * d - (c.up ? c.spread * 0.7 : 0);
+          (function (el2, ddx, ddy) {
+            requestAnimationFrame(function () {
+              el2.style.transition = 'transform .55s cubic-bezier(.2,.7,.3,1),opacity .55s';
+              el2.style.transform = 'translate(' + ddx + 'px,' + ddy + 'px) scale(.4)';
+              el2.style.opacity = '0';
+            });
+          })(p, dx, dy);
+          setTimeout((function (el2) { return function () { try { el2.remove(); } catch (e) {} }; })(p), 640);
+        }
+      } catch (_) {}
+    }
+    function pvpTone (a, b, wave, delayMs) {
+      try { playTone(a, 0.09, wave || 'square'); if (b) setTimeout(function () { try { playTone(b, 0.09, wave || 'square'); } catch (e) {} }, delayMs || 60); } catch (_) {}
+    }
     function tryBoost (P) {
       if (P.dist >= 100 || P.energy < BOOST_COST) return;
       P.energy = 0; P.boostUntil = performance.now() + BOOST_MS;
       P.train.classList.remove('boost'); void P.train.offsetWidth; P.train.classList.add('boost');
+      pvpBurst(P.train, 'boost'); pvpTone(520, 760, 'sawtooth');   // whoosh + gold sparks
       refreshFoot(P); refreshMedallion();
     }
     function collectToken (P) {
       P.tokens++; P.energy = Math.min(ENERGY_MAX, P.energy + TOKEN_ENERGY);
       P.train.classList.remove('grab'); void P.train.offsetWidth; P.train.classList.add('grab');
+      pvpBurst(P.train, 'coin'); pvpTone(880, 1180, 'square');     // coin ding + pop
       refreshFoot(P); refreshMedallion();
     }
     function hitHazard (P, now) {
       P.slowUntil = now + SLOW_MS;
       if (P.hearts > 0) { P.hearts--; P.heartsEl.textContent = heartStr(P.hearts); }
       P.train.classList.remove('slow'); void P.train.offsetWidth; P.train.classList.add('slow');
+      pvpBurst(P.train, 'crash');                                  // explosion sparks
+      pvpTone(200, 140, 'sawtooth', 70);                           // crash thud
+      try { screenFlash('rgba(255,70,70,0.26)'); } catch (_) {}
+      if (navigator.vibrate) try { navigator.vibrate([30, 50, 20]); } catch (_) {}
     }
 
     function buildPlayer (sideKey, info, pal) {
