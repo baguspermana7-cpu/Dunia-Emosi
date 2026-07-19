@@ -38,6 +38,11 @@ const GameModal = (() => {
     document.body.appendChild(overlay);
   }
 
+  // UISprites polish (guarded — falls back to emoji when the pack/engine is absent)
+  function _ui(pack,name,emoji,px){ try{ if(window.UISprites&&UISprites.imgHTML){ var h=UISprites.imgHTML(pack,name,{style:'width:'+(px||'1em')+';height:'+(px||'1em')+';object-fit:contain;vertical-align:middle;display:inline-block',emoji:emoji}); if(h) return h; } }catch(e){} return null; }
+  function _emojiSprite(e,px){ if(!window.UISprites) return null; var bn=UISprites.badgeName&&UISprites.badgeName(e); if(bn) return _ui('badge',bn,e,px); var cn=UISprites.confName&&UISprites.confName(e); if(cn) return _ui('conf',cn,e,px); if(e==='⭐'||e==='🌟'||e==='✨') return _ui('eco','star',e,px); return null; }
+  function _starsHtml(f,em){ var fs=_ui('eco','star','⭐','1em'), es=_ui('eco','star-empty','☆','1em'); if(!fs||!es) return null; var o=''; var i; for(i=0;i<f;i++)o+=fs; for(i=0;i<em;i++)o+=es; return o; }
+
   function show({ emoji = '🏆', title = '', stars = 0, msg = '', onNext, onAgain, onBack, onExtra, onAchievements }) {
     init();
     // Coerce contradictory caller inputs: 0-star can never be "Sempurna"/"Hebat"/"Bagus"
@@ -63,9 +68,9 @@ const GameModal = (() => {
       finalTitle = 'Bagus!'
     }
 
-    document.getElementById('gm-emoji').textContent = finalEmoji;
+    { var _es=_emojiSprite(finalEmoji,'56px'); if(_es) document.getElementById('gm-emoji').innerHTML=_es; else document.getElementById('gm-emoji').textContent = finalEmoji; }
     document.getElementById('gm-title').textContent = finalTitle;
-    document.getElementById('gm-stars').textContent = '⭐'.repeat(Math.min(normalizedStars,5)) + '☆'.repeat(Math.max(0,5-normalizedStars));
+    { var _f=Math.min(normalizedStars,5), _e=Math.max(0,5-normalizedStars); var _sh=_starsHtml(_f,_e); if(_sh) document.getElementById('gm-stars').innerHTML=_sh; else document.getElementById('gm-stars').textContent = '⭐'.repeat(_f) + '☆'.repeat(_e); }
     document.getElementById('gm-msg').textContent = finalMsg;
 
     const btns = document.getElementById('gm-btns');
@@ -138,7 +143,8 @@ const GameModal = (() => {
         const dx = (Math.random() - 0.5) * 260 + 'px'
         const rot = Math.random() * 1080 + 'deg'
         if (Math.random() < starChance) {
-          p.textContent = ['⭐','🌟','✨'][Math.floor(Math.random()*3)]
+          const _ss=_ui('eco','star','⭐',size+'px')
+          if(_ss){ p.innerHTML=_ss } else { p.textContent = ['⭐','🌟','✨'][Math.floor(Math.random()*3)] }
           p.style.cssText += `left:${Math.random()*100}vw;font-size:${size}px;--dx:${dx};--rot:${rot};`
         } else {
           p.style.cssText += `left:${Math.random()*100}vw;width:${size}px;height:${size*1.4}px;background:${colors[Math.floor(Math.random()*colors.length)]};border-radius:${Math.random()>0.5?'50%':'3px'};--dx:${dx};--rot:${rot};`
