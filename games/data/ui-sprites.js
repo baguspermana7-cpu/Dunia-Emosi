@@ -72,6 +72,27 @@
   }
   function emoji (pack, name) { return EMOJI[pack + ':' + name] || '' }
 
+  // ---- wiring maps + helpers (emoji -> pack sprite name; unmapped -> null -> keep emoji) ----
+  var FX_TYPE = { fire:'fire', water:'water', electric:'electric', grass:'grass', psychic:'psychic',
+    ice:'ice', dragon:'dragon', fairy:'fairy', bug:'bug', steel:'steel', normal:'normal', ground:'ground' }
+  var BADGE_EMOJI = { '🏆':'trophy', '🥇':'medal', '🥈':'medal-silver', '🥉':'medal-bronze', '👑':'crown', '🏅':'medal' }
+  var CONF_EMOJI = { '🎉':'hore', '🎊':'conf-pink', '🎈':'balloon-red', '🥳':'popper' }
+  function fxName (type) { return FX_TYPE[(type || '').toLowerCase()] || null }
+  function badgeName (e) { return BADGE_EMOJI[e] || null }
+  function confName (e) { return CONF_EMOJI[e] || null }
+
+  // build an <img> HTML string (for innerHTML/template sites). null if pack/name missing.
+  // onerror restores the fallback emoji so a 404 never leaves a blank.
+  function imgHTML (pack, name, opts) {
+    opts = opts || {}
+    var p = path(pack, name); if (!p) return null
+    var fb = opts.emoji || emoji(pack, name) || ''
+    var st = opts.style || 'width:1em;height:1em;object-fit:contain;vertical-align:middle;display:inline-block'
+    var cls = opts.cls || 'ui-sprite'
+    var oe = fb ? " onerror=\"this.onerror=null;this.outerHTML='" + fb + "'\"" : ''
+    return '<img class="' + cls + '" alt="" decoding="async" src="' + p + '" style="' + st + '"' + oe + '>'
+  }
+
   function apply (el) {
     if (!el || el.getAttribute('data-uisprite-done')) return
     var spec = (el.getAttribute('data-uisprite') || '').split(':')
@@ -93,6 +114,7 @@
 
   W.UISprites = {
     path: path, emoji: emoji, apply: apply, applyAll: applyAll,
+    imgHTML: imgHTML, fxName: fxName, badgeName: badgeName, confName: confName,
     packs: function () { var k = []; for (var m in PACK) if (PACK.hasOwnProperty(m)) k.push(m); return k },
     _pack: PACK
   }

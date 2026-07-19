@@ -564,6 +564,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <script src="data/sfx-engine.js?v=59.6-20260712a"></script>
 <script src="vfx-engine.js?v=59.18-20260712a"></script><!-- shared VFX (monster defeat explosion) -->
 <script src="data/math-heroes.js?v=59.29-20260715a"></script><!-- P3b hero roster (sprite changes per op) -->
+<script src="data/ui-sprites.js?v=59.46-20260719b"></script><!-- UIUX/gameplay sprite packs -->
 <script src="data/math-stories.js?v=59.32-20260717a"></script><!-- P3d per-level story arcs (monster names + banter) -->
 <!-- P3e cloud sync — config baked in but STAYS INERT until localStorage 'mp_cloud_on'='1'
      (a button in plb.html flips it, same origin). publishable/anon key ONLY — the
@@ -1209,7 +1210,8 @@ function renderRank(){
   rows.forEach(function(r,i){
     var row=document.createElement('div'); row.className='rank-row'+(r.me?' me':'');
     var medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);
-    row.innerHTML='<span class="rk">'+medal+'</span><span class="rn">'+r.n+'</span><span class="rs">'+pkIcon('item/medal',20)+r.s+'</span>';
+    var _mk=(i<3&&window.UISprites)?UISprites.badgeName(medal):null; var _mh=_mk?UISprites.imgHTML('badge',_mk,{style:'width:1.15em;height:1.15em;object-fit:contain;vertical-align:middle',emoji:medal}):null;
+    row.innerHTML='<span class="rk">'+(_mh||medal)+'</span><span class="rn">'+r.n+'</span><span class="rs">'+pkIcon('item/medal',20)+r.s+'</span>';
     l.appendChild(row);
   });
 }

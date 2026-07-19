@@ -35,6 +35,23 @@ function emoFaceSrc(name){ try{ if(window.UISprites){ var s=UISprites.path('emo'
 // owner emo pack: match each emotion's companion animal to a real sprite (emoji fallback)
 const EMO_ANIMAL={'🦁':'singa','🐰':'kelinci','🐯':'harimau','🐘':'gajah','🦊':'rubah','🐸':'katak','🐼':'panda','🐨':'koala','🐺':'serigala','🦄':'unicorn'};
 function emoAnimalSrc(a){ try{ if(window.UISprites){ var s=UISprites.path('emo',EMO_ANIMAL[a]); if(s) return s; } }catch(e){} return ''; }
+// badge/eco sprite helpers — return <img> HTML for an emoji, or null to keep the emoji.
+function uiBadge(emoji,style){ try{ if(window.UISprites){ var n=UISprites.badgeName(emoji); if(n){ var h=UISprites.imgHTML('badge',n,{style:style||'width:1em;height:1em;object-fit:contain;vertical-align:middle',emoji:emoji}); if(h) return h; } } }catch(e){} return null; }
+function uiEco(name,emoji,style){ try{ if(window.UISprites){ var h=UISprites.imgHTML('eco',name,{style:style||'width:1em;height:1em;object-fit:contain;vertical-align:middle',emoji:emoji}); if(h) return h; } }catch(e){} return null; }
+function uiRepeat(name,emoji,n){ var one=uiEco(name,emoji); if(!one) return emoji.repeat(Math.max(0,n)); var out=''; for(var i=0;i<n;i++)out+=one; return out; }
+// deco pack: repaint the clean single celestial CSS shapes as real sprites (sun/moon).
+// Only 1:1 maps — leaves the tiny particle dots + trees/grass as CSS (scale-safe).
+function decoPaint(){ try{ if(!window.UISprites) return;
+  [['.sun-circle','sun'],['.moon-crescent','moon']].forEach(function(m){
+    var src=UISprites.path('deco',m[1]); if(!src) return;
+    document.querySelectorAll(m[0]).forEach(function(el){
+      el.style.background='none'; el.style.backgroundImage='url("'+src+'")';
+      el.style.backgroundSize='contain'; el.style.backgroundRepeat='no-repeat'; el.style.backgroundPosition='center';
+      el.style.boxShadow='none';
+    });
+  });
+}catch(e){} }
+if(typeof document!=='undefined'){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',decoPaint); else decoPaint(); }
 // g5 match cards from the illustrated db sprites (hewan→creatures+name, buah→
 // objects+name via DBLabeled; kendaraan→distinct vehicle sprites). [] if unavailable.
 function g5DbCards(mode,k){
@@ -2067,7 +2084,7 @@ function buildMenuHeader() {
     const _cs=document.createElement('span'); _cs.className='p-stars'; _cs.textContent='⭐'+p.stars
     const _ct=document.createElement('span'); _ct.style.cssText='font-size:13px;background:rgba(139,92,246,0.12);color:var(--brand);border-radius:100px;padding:2px 8px;font-weight:700'; _ct.textContent=tier.icon
     chip.append(_ca,_cn,_cs,_ct)
-    if(streak>=2){const _sk=document.createElement('span');_sk.className='p-streak';_sk.textContent='🔥'+streak;chip.appendChild(_sk)}
+    if(streak>=2){const _sk=document.createElement('span');_sk.className='p-streak';_sk.innerHTML=(uiEco('streak-big','🔥')||'🔥')+streak;chip.appendChild(_sk)}
     return chip
   }
   header.appendChild(makeChip(0))
@@ -2269,7 +2286,7 @@ function showAchievement(key) {
   const badgeFile=BADGE_MAP[key]
   const iconEl=document.getElementById('at-icon')
   if(badgeFile){iconEl.innerHTML=`<img src="assets/${badgeFile}" style="width:36px;height:36px;object-fit:contain" onerror="this.outerHTML='${ach.icon}'">`}
-  else{iconEl.textContent=ach.icon}
+  else{const _b=uiBadge(ach.icon,'width:36px;height:36px;object-fit:contain'); if(_b)iconEl.innerHTML=_b; else iconEl.textContent=ach.icon}
   document.getElementById('at-name').textContent=ach.name
   // Save title in case showComingSoonToast swapped it; restore here.
   const titleEl=toast.querySelector('.at-title')
@@ -2329,12 +2346,12 @@ function addStars(n, answerEl) {
 function updateGameStarDisplay() {
   const gn=state.currentGame
   const gsEl=document.getElementById('g'+gn+'-stars')||document.getElementById('g'+gn+'-stars-hdr')
-  if(gsEl){gsEl.textContent='⭐ '+state.gameStars[state.currentPlayer];gsEl.classList.remove('pop');void gsEl.offsetWidth;gsEl.classList.add('pop')}
+  if(gsEl){gsEl.innerHTML=(uiEco('star','⭐')||'⭐')+' '+state.gameStars[state.currentPlayer];gsEl.classList.remove('pop');void gsEl.offsetWidth;gsEl.classList.add('pop')}
   const piEl=document.getElementById('g'+gn+'-player-icon')
   if(piEl) piEl.textContent=state.players[state.currentPlayer].animal
   // G6 score mid
   const g6s=document.getElementById('g6-score')
-  if(g6s&&gn===6) g6s.textContent='⭐ '+state.gameStars[state.currentPlayer]
+  if(g6s&&gn===6) g6s.innerHTML=(uiEco('star','⭐')||'⭐')+' '+state.gameStars[state.currentPlayer]
 }
 function flyStarToCounter(srcEl) {
   const gn=state.currentGame
@@ -2624,7 +2641,7 @@ function _endGameFallback(stars, errMsg) {
     <div style="background:linear-gradient(160deg,#f8f0ff,#ede2f6);border-radius:24px;padding:28px 24px;max-width:340px;width:100%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,0.5)">
       <div style="font-size:56px">${emoji}</div>
       <h2 style="font-family:'Fredoka One',cursive;color:#3b2066;margin:8px 0;font-size:24px">${titleText}</h2>
-      <div style="font-size:34px;letter-spacing:4px;margin:8px 0">${'⭐'.repeat(safeStars)}${'☆'.repeat(5-safeStars)}</div>
+      <div style="font-size:34px;letter-spacing:4px;margin:8px 0">${uiRepeat('star','⭐',safeStars)}${uiRepeat('star-empty','☆',5-safeStars)}</div>
       <p style="color:#6b5080;margin:0 0 20px 0;font-size:14px">Kamu dapat ${safeStars} bintang di Level ${curLv}!</p>
       <div style="display:flex;flex-direction:column;gap:8px">${btnsHtml}</div>
       ${diagLink}
@@ -2852,7 +2869,10 @@ function spawnCorrectConfetti(){
   for (let i = 0; i < N; i++) {
     const p = document.createElement('span')
     p.className = 'g-confetti-piece'
-    p.textContent = emojis[Math.floor(Math.random() * emojis.length)]
+    const _em = emojis[Math.floor(Math.random() * emojis.length)]
+    const _cn = window.UISprites && UISprites.confName(_em)
+    const _cs = _cn ? UISprites.path('conf', _cn) : null
+    if (_cs) { p.innerHTML = '<img src="' + _cs + '" alt="" style="width:1em;height:1em;object-fit:contain;display:block">' } else { p.textContent = _em }
     p.style.left = (10 + Math.random() * 80) + '%'
     p.style.animationDelay = (Math.random() * 250) + 'ms'
     p.style.animationDuration = (1300 + Math.random() * 500) + 'ms'
@@ -4025,7 +4045,7 @@ function pickNextWord() {
   g6State.targetWord = word; g6State.collectedIdx = 0; g6State.wrongCount = 0; g6State.penaltyPause = false; g6State.lives = 3
   document.getElementById('g6-start-word').textContent = word.split('').join(' ')
   document.getElementById('g6-target-word').textContent = word.split('').join(' - ')
-  const livesEl = document.getElementById('g6-lives'); if(livesEl) livesEl.textContent = '❤️❤️❤️'
+  const livesEl = document.getElementById('g6-lives'); if(livesEl) livesEl.innerHTML = uiRepeat('heart','❤️',3)
   renderCollectedSlots()
 }
 function renderCollectedSlots() {
@@ -4130,7 +4150,7 @@ function handleDriveCollision(tile) {
 function updateG6Lives() {
   const el = document.getElementById('g6-lives'); if(!el) return
   const lives = g6State.lives || 0
-  el.textContent = '❤️'.repeat(Math.max(0,lives)) + '🤍'.repeat(Math.max(0,3-lives))
+  el.innerHTML = uiRepeat('heart','❤️',Math.max(0,lives)) + uiRepeat('heart-empty','🤍',Math.max(0,3-lives))
   el.classList.remove('hit-flash'); void el.offsetWidth; el.classList.add('hit-flash')
 }
 function g6WrongLetterPenalty(isWrongLetter) {
@@ -6361,7 +6381,7 @@ function g10SpawnTypeHitFX(targetEl, type) {
     const dur = 0.55 + Math.random() * 0.45
     const del = i * 0.055
     p.style.cssText = `position:fixed;font-size:${sz}px;left:${px}px;top:${py}px;z-index:401;pointer-events:none;animation:${cfg.anim} ${dur}s ${del}s ease-out both;filter:drop-shadow(0 0 6px ${cfg.color});`
-    p.textContent = cfg.emojis[i % cfg.emojis.length]
+    { var _fn=(i%2===0?(window.UISprites&&UISprites.fxName(type)):'sparkle'); var _fs=(_fn&&window.UISprites)?UISprites.path('fx',_fn):null; if(_fs){p.innerHTML='<img src="'+_fs+'" alt="" style="width:1em;height:1em;object-fit:contain;display:block">'}else{p.textContent = cfg.emojis[i % cfg.emojis.length]} }
     document.body.appendChild(p)
     setTimeout(() => p.remove(), (dur + del) * 1000 + 100)
   }
@@ -7407,7 +7427,7 @@ function g10TypeFX(type, targetSide){
     const px=xBase+Math.random()*38, py=yBase+Math.random()*38
     const dur=0.65+Math.random()*0.45, del=i*0.055
     p.style.cssText=`position:absolute;font-size:${18+Math.random()*16}px;left:${px}%;top:${py}%;z-index:9;pointer-events:none;animation:${cfg.anim} ${dur}s ${del}s ease-out both;filter:drop-shadow(0 0 5px ${cfg.color});`
-    p.textContent=cfg.emojis[i%cfg.emojis.length]
+    { var _fn=(i%2===0?(window.UISprites&&UISprites.fxName(type)):'sparkle'); var _fs=(_fn&&window.UISprites)?UISprites.path('fx',_fn):null; if(_fs){p.innerHTML='<img src="'+_fs+'" alt="" style="width:1em;height:1em;object-fit:contain;display:block">'}else{p.textContent=cfg.emojis[i%cfg.emojis.length]} }
     field.appendChild(p)
     setTimeout(()=>p.remove(),(dur+del)*1000+100)
   }
@@ -10200,7 +10220,7 @@ function g13TypeHitFX(type, onEnemy) {
     const dur = 0.55 + Math.random() * 0.45
     const del = i * 0.055
     p.style.cssText = `position:absolute;font-size:${sz}px;left:${px}%;top:${py}%;z-index:25;pointer-events:none;animation:${cfg.anim} ${dur}s ${del}s ease-out both;filter:drop-shadow(0 0 6px ${cfg.color});`
-    p.textContent = cfg.emojis[i % cfg.emojis.length]
+    { var _fn=(i%2===0?(window.UISprites&&UISprites.fxName(type)):'sparkle'); var _fs=(_fn&&window.UISprites)?UISprites.path('fx',_fn):null; if(_fs){p.innerHTML='<img src="'+_fs+'" alt="" style="width:1em;height:1em;object-fit:contain;display:block">'}else{p.textContent = cfg.emojis[i % cfg.emojis.length]} }
     field.appendChild(p)
     setTimeout(() => p.remove(), (dur + del) * 1000 + 120)
   }
@@ -11705,9 +11725,9 @@ function showGameResult({ emoji, title, stars, msg, buttons }) {
   // SECTION 1: text content (CRITICAL)
   try {
     const safeStars = Math.min(Math.max(stars||0, 0), 5)
-    const eEl = document.getElementById('gr-emoji'); if (eEl) eEl.textContent = emoji || '🏆'
+    const eEl = document.getElementById('gr-emoji'); if (eEl) { const _ge = emoji || '🏆'; const _gb = uiBadge(_ge, 'width:1em;height:1em;object-fit:contain;vertical-align:middle'); if (_gb) eEl.innerHTML = _gb; else eEl.textContent = _ge }
     const tEl = document.getElementById('gr-title'); if (tEl) tEl.textContent = title || 'Selesai!'
-    const sEl = document.getElementById('gr-stars'); if (sEl) sEl.textContent = '⭐'.repeat(safeStars) + '☆'.repeat(5-safeStars)
+    const sEl = document.getElementById('gr-stars'); if (sEl) sEl.innerHTML = uiRepeat('star','⭐',safeStars) + uiRepeat('star-empty','☆',5-safeStars)
     const mEl = document.getElementById('gr-msg'); if (mEl) mEl.textContent = msg || ''
   } catch(e) { console.error('[showGameResult] text section:', e, e && e.stack) }
 
@@ -12609,7 +12629,7 @@ function g14Loop() {
   const pos = aiAhead + 1
   const medals = ['🥇','🥈','🥉','4️⃣']
   const posEl = document.getElementById('g14-position')
-  if (posEl) posEl.textContent = (medals[pos-1] || pos + '.') + ' POSISI ' + pos
+  if (posEl) { const _m = medals[pos-1]; const _mb = _m ? uiBadge(_m, 'width:1em;height:1em;object-fit:contain;vertical-align:middle') : null; posEl.innerHTML = (_mb || _m || (pos + '.')) + ' POSISI ' + pos }
 
   // Pressure auto-recovery
   if (!s.boosting && s.pressure < 100) {
@@ -14530,7 +14550,7 @@ function g18AddStreak() {
   const pill = document.getElementById('g18-streak-pill')
   if (pill) {
     pill.style.display = 'inline-flex'
-    pill.textContent = '🔥 x' + g18Streak + (g18Streak >= 5 ? ' (2× Bintang!)' : '')
+    pill.innerHTML = (uiEco('streak-big','🔥')||'🔥') + ' x' + g18Streak + (g18Streak >= 5 ? ' (2× Bintang!)' : '')
     pill.style.transform = 'scale(1.25)'; setTimeout(() => { pill.style.transform = 'scale(1)' }, 200)
   }
 }

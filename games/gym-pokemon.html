@@ -585,6 +585,7 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/save-engine.js?v=20260501e"></script>
 <script src="data/math-rules.js?v=59.28-20260713a"></script>
+<script src="data/ui-sprites.js?v=59.46-20260719b"></script><!-- UIUX/gameplay sprite packs -->
 <!-- v55.97 M-303 — SHARED quiz engine (question + answer-choices) for all games -->
 <script src="quiz-engine.js?v=59.28-20260713a"></script>
 <!-- v56.1 A-317 — SHARED battle-presentation engine (field sprites, HP cards,
@@ -1809,7 +1810,7 @@ function spawnProjectile(fromEl, toEl, type, cb){
   // Main projectile
   const proj = document.createElement('div');
   proj.className = 'type-proj';
-  proj.textContent = emoji;
+  { var _pf=window.UISprites&&UISprites.fxName(type); var _ps=_pf?UISprites.path('fx',_pf):null; if(_ps){proj.innerHTML='<img src="'+_ps+'" alt="" style="width:1em;height:1em;object-fit:contain;display:block">'}else{proj.textContent = emoji;} }
   proj.style.left = sx+'px'; proj.style.top = sy+'px';
   proj.style.transform = 'translate(-50%,-50%) scale(0.5)';
   document.body.appendChild(proj);
@@ -1854,7 +1855,7 @@ function spawnTypeHitFX(targetEl, type){
     const dur = 0.55+Math.random()*0.45;
     const del = i*0.055;
     p.style.cssText = `position:fixed;font-size:${sz}px;left:${px}px;top:${py}px;z-index:401;pointer-events:none;animation:${cfg.anim} ${dur}s ${del}s ease-out both;filter:drop-shadow(0 0 6px ${cfg.color});`;
-    p.textContent = cfg.emojis[i%cfg.emojis.length];
+    { var _fn=(i%2===0?(window.UISprites&&UISprites.fxName(type)):'sparkle'); var _fs=(_fn&&window.UISprites)?UISprites.path('fx',_fn):null; if(_fs){p.innerHTML='<img src="'+_fs+'" alt="" style="width:1em;height:1em;object-fit:contain;display:block">'}else{p.textContent = cfg.emojis[i%cfg.emojis.length];} }
     document.body.appendChild(p);
     setTimeout(()=>p.remove(),(dur+del)*1000+100);
   }
