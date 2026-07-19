@@ -427,6 +427,13 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   .qcard{padding:4px 12px;font-size:clamp(15px,3.4vh,24px)}
   .choice{padding:6px 6px;font-size:clamp(14px,3.2vh,20px)}
 }
+/* ═════ Cloud account (Profil) ═════ */
+.prof-account:empty{display:none}
+.prof-account{margin:10px 0 4px;padding:10px 12px;background:rgba(124,111,50,.12);border:2px solid #e6d3a8;border-radius:14px}
+.acc-lbl{font-weight:800;color:#5b4a33;font-size:13px}.acc-lbl small{font-weight:600;color:#8a7a52}
+.acc-code{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:900;font-size:18px;letter-spacing:1px;color:#3a2c14;margin:6px 0;user-select:all}
+.acc-btns{display:flex;gap:8px;justify-content:center}
+.acc-btns button{font-size:13px;padding:8px 14px}
 /* ═════ DUEL PvP ═════ */
 #scr-pvp-setup .pvp-hint{color:#5b4a33;font-size:14px;max-width:340px;margin:0 auto 14px;line-height:1.5}
 .pvp-setup{max-width:360px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
@@ -653,6 +660,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   <div class="prof-hero"><img src="../assets/math/hero-mathhero.webp" alt=""></div>
   <div class="prof-name" id="prof-name" onclick="MP.editName()">Pahlawan ✏️</div>
   <div class="prof-stats" id="prof-stats"></div>
+  <div class="prof-account" id="prof-account"></div>
   <div class="mute-row">Suara: <button id="mute-btn" onclick="MP.toggleMute()">AKTIF 🔊</button></div>
 </div></div>
 
@@ -1298,7 +1306,8 @@ function tzEndRound(){
 function closeTournament(){ if(tourn){ if(tourn.iv)clearInterval(tourn.iv); tourn=null; } closeModal(); }
 /* Leaderboard (player + seeded bots) */
 var BOTS=['Andi','Bima','Citra','Dewi','Eka','Fajar','Gita','Hana','Ivan'];
-function postLeaderboard(score){ try{ var b=+localStorage.getItem('mp_best')||0; if(score>b) localStorage.setItem('mp_best',score); }catch(e){} }
+function postLeaderboard(score){ try{ var b=+localStorage.getItem('mp_best')||0; if(score>b) localStorage.setItem('mp_best',score); }catch(e){}
+  try{ if(window.DuniaCloud&&DuniaCloud.isEnabled()) DuniaCloud.submitScore('trophies',econ.trophies||0,econ.name); }catch(e){} }
 function myBest(){ try{ return +localStorage.getItem('mp_best')||0; }catch(e){ return 0; } }
 function renderRank(){
   var seed=(econ.trophies*7+13);
@@ -1325,9 +1334,31 @@ function renderProfil(){
     stat(pkIcon('currency/coin',15)+' Koin',econ.coins)+stat(pkIcon('item/trophy',15)+' Trofi',econ.trophies);
   byId('mute-btn').textContent=(S&&S.getMute&&S.getMute())?'BISU 🔇':'AKTIF 🔊';
   byId('mute-btn').style.background=(S&&S.getMute&&S.getMute())?'var(--red)':'var(--green)';
+  renderAccount();
 }
 function stat(l,v){ return '<div class="pstat"><b>'+v+'</b><small>'+l+'</small></div>'; }
 function editName(){ var n=prompt('Nama pahlawanmu:',econ.name); if(n&&n.trim()){ econ.name=n.trim().slice(0,16); saveEcon(); renderProfil(); } }
+/* Cloud account (DuniaCloud) — only shows when cloud is enabled; all guarded */
+function renderAccount(){
+  var pa=byId('prof-account'); if(!pa) return;
+  if(!(window.DuniaCloud && DuniaCloud.isEnabled())){ pa.innerHTML=''; return; }
+  var code=DuniaCloud.getCode();
+  if(code){
+    pa.innerHTML='<div class="acc-lbl">☁️ Kode Akun <small>(pakai di HP lain)</small></div>'+
+      '<div class="acc-code" id="acc-code">'+escapeHtml(code)+'</div>'+
+      '<div class="acc-btns"><button class="clay blue" onclick="MP.duCopyCode()">📋 Salin</button>'+
+      '<button class="clay" onclick="MP.duRestore()">↩️ Pulihkan</button></div>';
+  } else {
+    pa.innerHTML='<div class="acc-lbl">☁️ Simpan progres ke cloud</div>'+
+      '<div class="acc-btns"><button class="clay gold" onclick="MP.duCreate()">Buat Akun</button>'+
+      '<button class="clay" onclick="MP.duRestore()">↩️ Punya kode?</button></div>';
+  }
+}
+function duCreate(){ if(!(window.DuniaCloud&&DuniaCloud.isEnabled())) return; toast('Membuat akun…');
+  DuniaCloud.createAccount(econ.name).then(function(c){ if(c){ DuniaCloud.push(); renderAccount(); toast('Akun dibuat ✓'); } else toast('Gagal (cek koneksi/anon auth)'); }); }
+function duCopyCode(){ var c=window.DuniaCloud&&DuniaCloud.getCode(); if(!c)return; try{ (navigator.clipboard&&navigator.clipboard.writeText(c)); }catch(e){} toast('Kode disalin'); }
+function duRestore(){ if(!(window.DuniaCloud&&DuniaCloud.isEnabled())) return; var c=prompt('Masukkan kode akun (DUNIA-XXXX-XXXX):',''); if(!c||!c.trim())return; toast('Memulihkan…');
+  DuniaCloud.restoreAccount(c).then(function(r){ if(r&&r.ok){ try{ loadEcon(); refreshHUD(); if(typeof renderPeta==='function')renderPeta(); }catch(e){} renderProfil(); toast('Dipulihkan ✓ '+(r.name||'')); } else toast('Kode tidak ditemukan'); }); }
 function toggleMute(){ if(S&&S.setMute){ var m=!S.getMute(); S.setMute(m); if(m) bgmStop(); else if(game) bgmPlay(); } renderProfil(); }
 function escapeHtml(s){ return String(s).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 
@@ -1459,7 +1490,8 @@ window.MP={ show:show, goHome:goHome, openPeta:openPeta, openSub:openSub, openSk
   startGame:startGame, useBomb:useBomb, quitGame:quitGame, nextLevel:nextLevel,
   openModal:openModal, closeModal:closeModal, closeTournament:closeTournament, buy:buy,
   editName:editName, toggleMute:toggleMute, maxNumFor:maxNumFor,
-  openPvP:openPvP, pvpSetDiff:pvpSetDiff, pvpStart:pvpStart, pvpReady:pvpReady, quitPvp:quitPvp, pvpPickHero:pvpPickHero };
+  openPvP:openPvP, pvpSetDiff:pvpSetDiff, pvpStart:pvpStart, pvpReady:pvpReady, quitPvp:quitPvp, pvpPickHero:pvpPickHero,
+  duCreate:duCreate, duCopyCode:duCopyCode, duRestore:duRestore };
 })();
 </script>
 </body>
