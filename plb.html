@@ -137,37 +137,34 @@ footer{text-align:center;padding:30px 0 46px;color:var(--ink-soft);font-weight:7
   </div>
 
   <!-- ============================================================
-       SETUP CLOUD v2 + AKSI KAMU (owner steps, detailed)
+       PANDUAN OWNER — Cloud v2 (ikuti urut, jelas)
        ============================================================ -->
   <section style="margin:26px 0;border:2px solid #2b7a4b;border-radius:18px;
        background:linear-gradient(180deg,#0f2a1c,#0b2016);padding:20px 22px;color:#dff5e6">
-    <h2 style="margin:0 0 6px;font-size:22px;color:#7CFFB0">🗄️ Setup Cloud v2 — Akun lintas-HP (langkah kamu)</h2>
-    <p style="margin:0 0 12px;font-size:14px;color:#a8d8bd">Schema baru: <b>akun pakai KODE</b> (DUNIA-XXXX-XXXX, tanpa email), semua akses lewat <b>RPC aman</b> (anti-cheat + leaderboard ber-index). Ikuti urut ya:</p>
+    <h2 style="margin:0 0 4px;font-size:23px;color:#7CFFB0">🗄️ Panduan Setup Cloud (Akun lintas-HP)</h2>
+    <p style="margin:0 0 14px;font-size:14px;color:#a8d8bd">Ikuti dari atas ke bawah. Kalau macet di satu langkah, berhenti di situ.</p>
 
-    <div style="background:#160a0a;border:1px solid #6b2b2b;border-left:4px solid #e0554e;border-radius:10px;padding:10px 14px;margin:0 0 14px;font-size:12.5px;color:#f0c9c6">
-      ⛔ <b>STEP 0 — WAJIB DULU: git push mati.</b> Token GitHub di remote sudah kedaluwarsa (<code>could not read Password</code>), jadi <b>semua update belum sampai ke web</b> (masih commit lokal). Buat <b>Personal Access Token</b> baru di GitHub → Settings → Developer settings → Tokens, lalu update remote-nya (<code>git remote set-url origin https://&lt;TOKEN&gt;@github.com/baguspermana7-cpu/Dunia-Emosi.git</code>) → push. Tanpa ini, langkah lain belum kelihatan online.
+    <!-- STEP 1: PUSH -->
+    <div style="background:#160a0a;border:1px solid #6b2b2b;border-left:5px solid #e0554e;border-radius:12px;padding:12px 16px;margin:0 0 16px">
+      <div style="font-size:16px;font-weight:900;color:#ffb3ab">① Perbaiki "git push" dulu — WAJIB</div>
+      <p style="margin:6px 0 8px;font-size:13.5px;color:#f0c9c6">Token GitHub-nya mati, jadi <b>semua update terbaru (game + panduan ini) belum sampai ke web/HP kamu</b>. Selama ini belum beres, langkah di bawah belum kelihatan online.</p>
+      <ol style="font-size:13.5px;line-height:1.7;color:#f0c9c6;margin:0;padding-left:20px">
+        <li>Buka GitHub → foto profil → <b>Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token</b>. Centang scope <b>repo</b>. Copy tokennya (ghp_…).</li>
+        <li>Di terminal, jalankan (ganti <code>&lt;TOKEN&gt;</code>):
+          <br><code style="display:inline-block;background:#06140d;border:1px solid #4e300f;border-radius:8px;padding:4px 8px;margin-top:4px;font-size:11.5px;color:#ffd7d2;white-space:pre-wrap">git -C ~/rz-work/Dunia-Emosi remote set-url origin https://&lt;TOKEN&gt;@github.com/baguspermana7-cpu/Dunia-Emosi.git
+git -C ~/rz-work/Dunia-Emosi push</code></li>
+        <li>Setelah "push" sukses → Vercel auto-deploy. Refresh web/PWA (tutup app, buka lagi). Panduan ini akan ter-update juga.</li>
+      </ol>
     </div>
 
-    <ol style="font-size:14.5px;line-height:1.8;padding-left:22px;margin:0 0 12px">
-      <li><b>Jalankan SQL v2</b>: Supabase → <b>SQL Editor → New query</b> → klik <b>Copy SQL</b> di bawah → tempel → <b>Run</b>. Idempotent (aman diulang). Bikin tabel <code>profiles/saves/scores</code> + fungsi RPC.</li>
-      <li><b>Anonymous auth ON</b>: Authentication → Providers → <b>Anonymous → Enable → Save</b> (kalau belum).</li>
-      <li><b>Aktifkan cloud</b>: klik tombol <b>Aktifkan Cloud Sync</b> di bawah (set flag <code>mp_cloud_on</code>).</li>
-      <li><b>Buat akun</b>: buka game <b>Matematika Petualangan → Profil → Buat Akun</b> → muncul <b>kode akun</b>. Salin. Di HP/tablet lain: <b>Profil → Pulihkan</b> → tempel kode = progres sama persis.</li>
-      <li><b>Keamanan</b>: rotate kunci <code>service_role</code> + <code>sb_secret_…</code> yang dulu bocor di chat (Settings → API → Rotate/Roll). Kunci anon aman, biarkan.</li>
-      <li><b>Bersih-bersih</b>: hapus baris tes <b>"Bagus Test"</b> (Table Editor) kalau masih ada.</li>
-    </ol>
-
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 10px">
-      <button onclick="mpCloud(true)" style="background:#2b7a4b;color:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:800;cursor:pointer;font-size:14px">✅ Aktifkan Cloud Sync</button>
-      <button onclick="mpCloud(false)" style="background:#3a2020;color:#ffd7d2;border:1px solid #6b2b2b;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;font-size:14px">⏻ Matikan</button>
-      <span id="mp-cloud-status" style="font-size:13px;font-weight:800;padding:6px 12px;border-radius:100px;background:#20321f;color:#a8d8bd">status: …</span>
-    </div>
-
-    <div style="position:relative;margin:0 0 6px">
+    <!-- STEP 2: SQL -->
+    <div style="font-size:16px;font-weight:900;color:#7CFFB0;margin:0 0 4px">② Jalankan SQL di Supabase (sekali saja)</div>
+    <p style="margin:0 0 8px;font-size:13.5px;color:#a8d8bd">Supabase → <b>SQL Editor → New query</b> → klik <b>Copy SQL</b> di bawah → <b>tempel</b> ke editor → klik <b>Run</b>. Aman diulang. (SQL ini sudah diperbaiki — tinggal copy, tak perlu edit tangan.)</p>
+    <div style="position:relative;margin:0 0 14px">
       <button onclick="sbCopy(this,'cloud-sql')" style="position:absolute;top:8px;right:8px;z-index:2;
-        background:#2b7a4b;color:#fff;border:0;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer">📋 Copy SQL</button>
-      <pre id="cloud-sql" style="margin:0;overflow:auto;max-height:340px;background:#06140d;border:1px solid #1f5236;border-radius:12px;
-        padding:14px;font-size:11.5px;line-height:1.5;color:#cfeedd;white-space:pre">-- ============================================================================
+        background:#2b7a4b;color:#fff;border:0;border-radius:8px;padding:6px 12px;font-weight:800;cursor:pointer">📋 Copy SQL</button>
+      <pre id="cloud-sql" style="margin:0;overflow:auto;max-height:300px;background:#06140d;border:1px solid #1f5236;border-radius:12px;
+        padding:14px;font-size:11px;line-height:1.5;color:#cfeedd;white-space:pre">-- ============================================================================
 -- Dunia Emosi · Cloud/Account schema v2 (robust, scalable)
 -- Run ONCE in Supabase → SQL Editor → New query → paste → Run. Idempotent.
 --
@@ -351,7 +348,29 @@ to anon, authenticated;
 -- calls these RPCs with the anon key + an account_code; no other setup needed.
 </pre>
     </div>
-    <p style="font-size:12.5px;color:#8fc7a6;margin:8px 0 0">SQL ini juga tersimpan di repo: <code>supabase/dunia-cloud-v2.sql</code>. Hanya URL + anon key yang dipakai di app — service_role/secret TIDAK PERNAH.</p>
+
+    <!-- STEP 3: AUTH -->
+    <div style="font-size:16px;font-weight:900;color:#7CFFB0;margin:0 0 4px">③ Nyalakan login Anonymous</div>
+    <p style="margin:0 0 14px;font-size:13.5px;color:#a8d8bd">Supabase → <b>Authentication → Providers → Anonymous → Enable → Save</b>.</p>
+
+    <!-- STEP 4: TOGGLE -->
+    <div style="font-size:16px;font-weight:900;color:#7CFFB0;margin:0 0 4px">④ Aktifkan cloud di game (1 klik)</div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:6px 0 14px">
+      <button onclick="mpCloud(true)" style="background:#2b7a4b;color:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:800;cursor:pointer;font-size:14px">✅ Aktifkan Cloud</button>
+      <button onclick="mpCloud(false)" style="background:#3a2020;color:#ffd7d2;border:1px solid #6b2b2b;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;font-size:14px">⏻ Matikan</button>
+      <span id="mp-cloud-status" style="font-size:13px;font-weight:800;padding:6px 12px;border-radius:100px;background:#20321f;color:#a8d8bd">status: …</span>
+    </div>
+
+    <!-- STEP 5: ACCOUNT -->
+    <div style="font-size:16px;font-weight:900;color:#7CFFB0;margin:0 0 4px">⑤ Buat akun + pindah HP</div>
+    <p style="margin:0 0 14px;font-size:13.5px;color:#a8d8bd">Buka game <b>Matematika Petualangan → Profil → Buat Akun</b> → muncul <b>kode akun</b> (DUNIA-XXXX-XXXX). Salin. Di HP/tablet lain: <b>Profil → Pulihkan</b> → tempel kode = progres sama persis.</p>
+
+    <!-- STEP 6: SECURITY -->
+    <div style="font-size:16px;font-weight:900;color:#ffd98a;margin:0 0 4px">⑥ Keamanan + bersih-bersih</div>
+    <p style="margin:0 0 4px;font-size:13.5px;color:#a8d8bd"><b>Rotate</b> kunci <code>service_role</code> + <code>sb_secret_…</code> yang dulu bocor di chat: Supabase → <b>Settings → API → Rotate / Roll</b>. Kunci anon aman, biarkan.</p>
+    <p style="margin:0;font-size:13.5px;color:#a8d8bd"><b>Hapus</b> baris tes <b>"Bagus Test"</b> di Table Editor kalau masih ada.</p>
+
+    <p style="margin:14px 0 0;font-size:12px;color:#8fc7a6">Hanya URL + <b>anon key</b> yang dipakai di app — <b>service_role/secret TIDAK PERNAH</b> masuk repo/browser. SQL lengkap juga tersimpan di <code>supabase/dunia-cloud-v2.sql</code>.</p>
   </section>
 
   <script>
