@@ -225,6 +225,23 @@
 
   function gaps () { return JSON.parse(JSON.stringify(GAPS)) }
 
+  // ── PixiJS canvas helper: build a PIXI.Sprite for an emoji when mapped ──
+  // Returns a sized+anchored sprite (texture loads async, v8 PIXI.Sprite.from),
+  // or null when the emoji has no DB sprite (caller keeps its PIXI.Text fallback).
+  function pixiSprite (ch, size, PIXI) {
+    if (!PIXI || !PIXI.Sprite) return null
+    var sp = W.EmojiMap && W.EmojiMap.spec ? W.EmojiMap.spec(ch) : null
+    if (!sp) { if (W.EmojiMap) { var nk = W.EmojiMap.norm(ch); GAPS[nk] = (GAPS[nk] || 0) + 1 } return null }
+    var src = rawPath(sp.cat, sp.n); if (!src) return null
+    var s
+    try { s = PIXI.Sprite.from(src) } catch (_) { return null }
+    if (size) { s.width = size; s.height = size }
+    // default: keep top-left anchor (matches PIXI.Text) for drop-in position parity;
+    // pass opts.center to anchor at 0.5 for particles positioned by their centre.
+    if (arguments.length > 3 && arguments[3] && arguments[3].center && s.anchor && s.anchor.set) s.anchor.set(0.5)
+    return s
+  }
+
   W.UISprites = {
     path: path, rawPath: rawPath, emoji: emoji, apply: apply, applyAll: applyAll,
     imgHTML: imgHTML, fxName: fxName, badgeName: badgeName, confName: confName,

@@ -158,7 +158,7 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 <body>
 <canvas id="pixi-canvas"></canvas>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v58.6</div>
-<script src="data/emoji-map.js?v=59.54-20260721a"></script><script src="data/ui-sprites.js?v=59.54-20260721a"></script><!-- zero-emoji engine -->
+<script src="data/emoji-map.js?v=59.55-20260721b"></script><script src="data/ui-sprites.js?v=59.55-20260721b"></script><!-- zero-emoji engine -->
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="data/train-world.js?v=55.94"></script><!-- v55.94 — 275 real-sprite world trains -->
@@ -2127,7 +2127,8 @@ function updateAmbient(dt){
     const poleX=120+Math.floor(Math.random()*((WORLD_LENGTH-120)/190))*190+35
     const sparkX=poleX+(Math.random()-0.5)*30
     const sparkY=tY-80
-    const sp=new PIXI.Text({text:'⚡',style:{fontSize: window.RZ ? window.RZ.fontScale(14) : 14,fontFamily:'Arial'}})
+    const _spSz=window.RZ ? window.RZ.fontScale(14) : 14
+    const sp=(window.UISprites && UISprites.pixiSprite('⚡', _spSz, PIXI)) || new PIXI.Text({text:'⚡',style:{fontSize:_spSz,fontFamily:'Arial'}})
     sp.x=sparkX; sp.y=sparkY; sp.alpha=1; sp._life=0.6; sp._vx=0; sp._vy=-15; sp._decay=1.8
     worldContainer.addChild(sp)
     sparkParticles.push(sp)

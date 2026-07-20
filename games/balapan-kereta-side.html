@@ -131,7 +131,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <canvas id="pixi-canvas"></canvas>
 
 <!-- Pixi + shared modules (same versions as balapan-kereta.html for cache reuse) -->
-<script src="data/emoji-map.js?v=59.54-20260721a"></script><script src="data/ui-sprites.js?v=59.54-20260721a"></script><!-- zero-emoji engine -->
+<script src="data/emoji-map.js?v=59.55-20260721b"></script><script src="data/ui-sprites.js?v=59.55-20260721b"></script><!-- zero-emoji engine -->
 <script src="lib/pixi.min.js?v=8"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="train-vfx.js?v=54.56-20260625bi"></script>
@@ -1577,7 +1577,7 @@ function spawnBirds() {
 
 // v54.92 — Heart power-up (gentle bob, restores HP on contact)
 function spawnHeart() {
-  const heart = new PIXI.Text({ text: '❤️', style: { fontSize: 32 } })
+  const heart = (window.UISprites && UISprites.pixiSprite('❤️', 32, PIXI, {center:true})) || new PIXI.Text({ text: '❤️', style: { fontSize: 32 } })
   heart.anchor.set(0.5, 0.5)
   heart.x = W + 40
   const baseY = H * RAIL_Y_FRAC + S.terrainOffset - 30  // B-250: terrain-relative
@@ -1671,7 +1671,7 @@ function spawnLandingDust() {
 }
 
 function spawnCoin() {
-  const coin = new PIXI.Text({ text: '🪙', style: { fontSize: 30 } })
+  const coin = (window.UISprites && UISprites.pixiSprite('🪙', 30, PIXI, {center:true})) || new PIXI.Text({ text: '🪙', style: { fontSize: 30 } })
   coin.anchor.set(0.5, 0.5)
   coin.x = W + 40
   // B-250: terrain-relative Y range so coins stay reachable on hills/valleys

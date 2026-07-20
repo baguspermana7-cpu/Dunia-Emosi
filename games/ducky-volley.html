@@ -144,7 +144,7 @@ if(!('ontouchstart' in window)){
 <script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/save-engine.js?v=20260501h"></script>
 <script src="data/sfx-engine.js?v=59.9-20260712a"></script><!-- shared answer cues (owner) -->
-<script src="data/emoji-map.js?v=59.54-20260721a"></script><script src="data/ui-sprites.js?v=59.54-20260721a"></script><!-- win-screen sprites -->
+<script src="data/emoji-map.js?v=59.55-20260721b"></script><script src="data/ui-sprites.js?v=59.55-20260721b"></script><!-- win-screen sprites -->
 <script src="vfx-engine.js?v=59.17-20260712a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
 <script>
 // ═══════════════════════════════════════════════════════════
@@ -1007,7 +1007,9 @@ function checkHit(dx,dy,dvx,dvy,onGnd,who){
   }
   // Type emoji burst
   const typeEmoji = {set:'🌿', shot:'💧', smash:'⚡'}
-  const te = new PIXI.Text({text:typeEmoji[hitType]||'💥', style:{fontSize: _rz ? _rz.fontScale(20) : 20}})
+  const _tem = typeEmoji[hitType]||'💥'
+  const _tsz = _rz ? _rz.fontScale(20) : 20
+  const te = (window.UISprites && UISprites.pixiSprite(_tem, _tsz, PIXI, {center:true})) || new PIXI.Text({text:_tem, style:{fontSize:_tsz}})
   te.anchor.set(0.5); te.x=S.bx; te.y=S.by-15
   fxLayer.addChild(te)
   particles.push({g:te, vx:0, vy:-2, grav:0, life:1, decay:0.03})

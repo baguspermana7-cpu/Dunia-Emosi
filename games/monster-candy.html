@@ -121,7 +121,7 @@ canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
 <script src="data/save-engine.js?v=20260501h"></script>
 <script src="question-bank.js"></script>
 <script src="data/sfx-engine.js?v=59.9-20260712a"></script><!-- shared coin/answer cues (owner) -->
-<script src="data/emoji-map.js?v=59.54-20260721a"></script><script src="data/ui-sprites.js?v=59.54-20260721a"></script><!-- eco HUD sprites -->
+<script src="data/emoji-map.js?v=59.55-20260721b"></script><script src="data/ui-sprites.js?v=59.55-20260721b"></script><!-- eco HUD sprites -->
 <script src="vfx-engine.js?v=59.17-20260712a"></script><!-- shared VFX (combo-milestone pop) -->
 <script>
 // ═══════════════════════════════════════════════════════════
@@ -446,7 +446,9 @@ function drawBackground() {
 
   // Flowers on ground — 24 varied
   for (let i = 0; i < 24; i++) {
-    const fl = new PIXI.Text({ text: ['🌸', '🌼', '🌺', '🌻', '🌷', '🍄'][i % 6], style: { fontSize: 12 + Math.random() * 12 } })
+    const _fem = ['🌸', '🌼', '🌺', '🌻', '🌷', '🍄'][i % 6]
+    const _fsz = 12 + Math.random() * 12
+    const fl = (window.UISprites && UISprites.pixiSprite(_fem, _fsz, PIXI)) || new PIXI.Text({ text: _fem, style: { fontSize: _fsz } })
     fl.x = Math.random() * W; fl.y = H * 0.76 + Math.random() * H * 0.08
     fl.alpha = 0.55 + Math.random() * 0.35
     bgLayer.addChild(fl)
