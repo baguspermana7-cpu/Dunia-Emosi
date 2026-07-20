@@ -112,15 +112,130 @@
     for (var i = 0; i < els.length; i++) apply(els[i])
   }
 
+  // ── raw path for ANY assets/db category + index (not just named packs) ──
+  function rawPath (cat, n) {
+    if (!cat || !n) return null
+    return base() + 'assets/db/' + cat + '/' + ('00' + n).slice(-3) + '.webp'
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // ZERO-EMOJI universal resolver — walk text nodes app-wide, swap every
+  // pictographic emoji for its DB sprite (via window.EmojiMap). Unmapped
+  // emoji are left in place AND recorded to GAPS for the audit + owner art.
+  // Fallback-safe: a 404 sprite restores the original emoji, never blank.
+  // ══════════════════════════════════════════════════════════════════════
+  var EMO_RE = /([\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{1F1E6}-\u{1F1FF}\u{2300}-\u{23FF}\u{2900}-\u{297F}\u{25A0}-\u{25FF}]️?\u{20E3}?)/gu
+  var GAPS = {}                      // norm-char -> count of unmapped sightings
+  var seenText = (typeof WeakSet !== 'undefined') ? new WeakSet() : null
+  var SKIP_TAG = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1, INPUT: 1, SELECT: 1, OPTION: 1, CANVAS: 1, NOSCRIPT: 1, CODE: 1, PRE: 1 }
+
+  function emojiImgEl (ch) {
+    var spec = W.EmojiMap && W.EmojiMap.spec ? W.EmojiMap.spec(ch) : null
+    if (!spec) {                                     // unmapped → record gap, keep emoji
+      if (W.EmojiMap) { var nk = W.EmojiMap.norm(ch); GAPS[nk] = (GAPS[nk] || 0) + 1 }
+      return null
+    }
+    var src = rawPath(spec.cat, spec.n); if (!src) return null
+    var img = new Image()
+    img.alt = ''; img.decoding = 'async'; img.className = 'ui-sprite emoji-sprite'
+    img.style.cssText = 'width:1em;height:1em;vertical-align:-0.15em;object-fit:contain;display:inline-block'
+    img.onerror = function () { var t = document.createTextNode(ch); if (img.parentNode) img.parentNode.replaceChild(t, img) }
+    img.src = src
+    return img
+  }
+
+  function skipNode (el) {
+    for (var p = el; p; p = p.parentNode) {
+      if (p.nodeType !== 1) continue
+      if (SKIP_TAG[p.tagName]) return true
+      if (p.getAttribute && (p.getAttribute('data-no-emoji') !== null || p.isContentEditable)) return true
+    }
+    return false
+  }
+
+  function deEmojiTextNode (node) {
+    if (!node || node.nodeType !== 3) return
+    if (seenText && seenText.has(node)) return
+    var txt = node.nodeValue
+    if (!txt || !EMO_RE.test(txt)) { if (seenText) seenText.add(node); return }
+    if (!node.parentNode || skipNode(node.parentNode)) { if (seenText) seenText.add(node); return }
+    EMO_RE.lastIndex = 0
+    var frag = document.createDocumentFragment()
+    var last = 0, m, replaced = false
+    while ((m = EMO_RE.exec(txt)) !== null) {
+      var ch = m[1]
+      var el = emojiImgEl(ch)
+      if (last < m.index) frag.appendChild(document.createTextNode(txt.slice(last, m.index)))
+      if (el) { frag.appendChild(el); replaced = true }
+      else frag.appendChild(document.createTextNode(ch))   // unmapped → keep emoji text
+      last = m.index + ch.length
+    }
+    if (last < txt.length) frag.appendChild(document.createTextNode(txt.slice(last)))
+    if (replaced) { node.parentNode.replaceChild(frag, node) }
+    else if (seenText) seenText.add(node)
+  }
+
+  function deEmoji (root) {
+    root = root || (typeof document !== 'undefined' ? document.body : null)
+    if (!root || typeof document === 'undefined') return
+    if (root.nodeType === 3) { deEmojiTextNode(root); return }
+    if (root.nodeType !== 1 && root.nodeType !== 9 && root.nodeType !== 11) return
+    if (root.nodeType === 1 && skipNode(root)) return
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false)
+    var batch = [], n
+    while ((n = walker.nextNode())) batch.push(n)
+    for (var i = 0; i < batch.length; i++) deEmojiTextNode(batch[i])
+  }
+
+  var _observer = null, _pending = null
+  function schedule (nodes) {
+    if (!_pending) _pending = []
+    for (var i = 0; i < nodes.length; i++) _pending.push(nodes[i])
+    if (schedule._t) return
+    var run = function () {
+      schedule._t = null
+      var list = _pending; _pending = null
+      if (!list) return
+      for (var j = 0; j < list.length; j++) {
+        var nd = list[j]
+        if (nd.nodeType === 3) deEmojiTextNode(nd)
+        else if (nd.nodeType === 1) deEmoji(nd)
+      }
+    }
+    schedule._t = (W.requestAnimationFrame ? W.requestAnimationFrame(run) : setTimeout(run, 16))
+  }
+
+  function startObserver () {
+    if (_observer || typeof MutationObserver === 'undefined' || !document.body) return
+    _observer = new MutationObserver(function (muts) {
+      var add = []
+      for (var i = 0; i < muts.length; i++) {
+        var mu = muts[i]
+        if (mu.type === 'characterData') { if (mu.target) add.push(mu.target) }
+        else for (var j = 0; j < mu.addedNodes.length; j++) {
+          var nd = mu.addedNodes[j]
+          if (nd.nodeType === 1 && nd.classList && nd.classList.contains('emoji-sprite')) continue
+          if (nd.nodeType === 1 || nd.nodeType === 3) add.push(nd)
+        }
+      }
+      if (add.length) schedule(add)
+    })
+    _observer.observe(document.body, { childList: true, subtree: true, characterData: true })
+  }
+
+  function gaps () { return JSON.parse(JSON.stringify(GAPS)) }
+
   W.UISprites = {
-    path: path, emoji: emoji, apply: apply, applyAll: applyAll,
+    path: path, rawPath: rawPath, emoji: emoji, apply: apply, applyAll: applyAll,
     imgHTML: imgHTML, fxName: fxName, badgeName: badgeName, confName: confName,
+    deEmoji: deEmoji, emojiImgEl: emojiImgEl, gaps: gaps,
     packs: function () { var k = []; for (var m in PACK) if (PACK.hasOwnProperty(m)) k.push(m); return k },
     _pack: PACK
   }
 
+  function boot () { applyAll(); deEmoji(document.body); startObserver() }
   if (typeof document !== 'undefined') {
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { applyAll() })
-    else applyAll()
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot)
+    else boot()
   }
 })();

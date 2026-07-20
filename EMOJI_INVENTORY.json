@@ -1,0 +1,6083 @@
+{
+  "generated": "emoji-inventory",
+  "total": 5332,
+  "distinct": 631,
+  "items": [
+    {
+      "ch": "🚂",
+      "cp": "U+1F682",
+      "count": 217,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/balapan-kereta.html",
+        "games/lokomotif-pemberani.html",
+        "games/mobil.html",
+        "games/museum-kereta.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "⭐",
+      "cp": "U+2B50",
+      "count": 210,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/balapan-kereta.html",
+        "games/ducky-volley.html",
+        "games/gym-pokemon.html",
+        "games/kuis-matematika.html",
+        "games/lokomotif-pemberani.html",
+        "games/mario-pokemon.html",
+        "games/mobil.html",
+        "games/monster-candy.html",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/pokemon-run.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "⚡",
+      "cp": "U+26A1",
+      "count": 158,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/balapan-kereta.html",
+        "games/ducky-volley.html",
+        "games/gym-pokemon.html",
+        "games/kuis-matematika.html",
+        "games/lokomotif-pemberani.html",
+        "games/mario-pokemon.html",
+        "games/monster-candy.html",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-run.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "✨",
+      "cp": "U+2728",
+      "count": 100,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html",
+        "games/mario-pokemon.html",
+        "games/mobil.html",
+        "games/monster-candy.html",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-run.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🚃",
+      "cp": "U+1F683",
+      "count": 98,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🏆",
+      "cp": "U+1F3C6",
+      "count": 95,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/balapan-kereta.html",
+        "games/ducky-volley.html",
+        "games/gym-pokemon.html",
+        "games/kuis-matematika.html",
+        "games/lokomotif-pemberani.html",
+        "games/mario-pokemon.html",
+        "games/mobil.html",
+        "games/monster-candy.html",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/pokemon-run.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🔥",
+      "cp": "U+1F525",
+      "count": 93,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/balapan-kereta.html",
+        "games/gym-pokemon.html",
+        "games/kuis-matematika.html",
+        "games/lokomotif-pemberani.html",
+        "games/mario-pokemon.html",
+        "games/mobil.html",
+        "games/monster-candy.html",
+        "games/museum-kereta.html",
+        "games/pokemon-run.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "❤",
+      "cp": "U+2764",
+      "count": 69,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/balapan-kereta.html",
+        "games/lokomotif-pemberani.html",
+        "games/mario-pokemon.html",
+        "games/mobil.html",
+        "games/monster-candy.html",
+        "games/museum-kereta.html",
+        "games/pokemon-run.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🌟",
+      "cp": "U+1F31F",
+      "count": 68,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/ducky-volley.html",
+        "games/gym-pokemon.html",
+        "games/kuis-matematika.html",
+        "games/lokomotif-pemberani.html",
+        "games/mario-pokemon.html",
+        "games/mobil.html",
+        "games/monster-candy.html",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/pokemon-run.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🌿",
+      "cp": "U+1F33F",
+      "count": 60,
+      "files": [
+        "game.js",
+        "games/ducky-volley.html",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html",
+        "games/monster-candy.html",
+        "games/museum-kereta.html",
+        "games/pokemon-run.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🌊",
+      "cp": "U+1F30A",
+      "count": 60,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html",
+        "games/mobil.html",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-run.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "⏸",
+      "cp": "U+23F8",
+      "count": 59,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/balapan-kereta.html",
+        "games/ducky-volley.html",
+        "games/lokomotif-pemberani.html",
+        "games/mario-pokemon.html",
+        "games/mobil.html",
+        "games/monster-candy.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/pokemon-run.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "↔",
+      "cp": "U+2194",
+      "count": 53,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/mobil.html",
+        "games/museum-kereta.html",
+        "games/pokemon-run.html"
+      ]
+    },
+    {
+      "ch": "▶",
+      "cp": "U+25B6",
+      "count": 52,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/balapan-kereta.html",
+        "games/ducky-volley.html",
+        "games/gym-pokemon.html",
+        "games/kuis-matematika.html",
+        "games/lokomotif-pemberani.html",
+        "games/mario-pokemon.html",
+        "games/mobil.html",
+        "games/monster-candy.html",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/pokemon-run.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🪨",
+      "cp": "U+1FAA8",
+      "count": 48,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/balapan-kereta.html",
+        "games/gym-pokemon.html",
+        "games/mobil.html",
+        "games/museum-kereta.html",
+        "games/pokemon-run.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "💪",
+      "cp": "U+1F4AA",
+      "count": 45,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/balapan-kereta.html",
+        "games/ducky-volley.html",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html",
+        "games/mario-pokemon.html",
+        "games/mobil.html",
+        "games/monster-candy.html",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/pokemon-run.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🚆",
+      "cp": "U+1F686",
+      "count": 44,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/balapan-kereta.html",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🦁",
+      "cp": "U+1F981",
+      "count": 43,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "💡",
+      "cp": "U+1F4A1",
+      "count": 40,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "🚄",
+      "cp": "U+1F684",
+      "count": 39,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "💨",
+      "cp": "U+1F4A8",
+      "count": 37,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html",
+        "games/mario-pokemon.html",
+        "games/museum-kereta.html",
+        "games/pokemon-run.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "💧",
+      "cp": "U+1F4A7",
+      "count": 36,
+      "files": [
+        "game.js",
+        "games/ducky-volley.html",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html",
+        "games/mobil.html",
+        "games/museum-kereta.html",
+        "games/pokemon-run.html"
+      ]
+    },
+    {
+      "ch": "💥",
+      "cp": "U+1F4A5",
+      "count": 35,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/ducky-volley.html",
+        "games/gym-pokemon.html",
+        "games/mario-pokemon.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-run.html"
+      ]
+    },
+    {
+      "ch": "💫",
+      "cp": "U+1F4AB",
+      "count": 33,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/mobil.html",
+        "games/monster-candy.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-run.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "⚙",
+      "cp": "U+2699",
+      "count": 32,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/balapan-kereta.html",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🦅",
+      "cp": "U+1F985",
+      "count": 31,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/monster-candy.html",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🚀",
+      "cp": "U+1F680",
+      "count": 30,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/lokomotif-pemberani.html",
+        "games/mobil.html",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🐘",
+      "cp": "U+1F418",
+      "count": 30,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "⚠",
+      "cp": "U+26A0",
+      "count": 30,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/mobil.html",
+        "games/museum-kereta.html",
+        "games/pokemon-birds.html",
+        "games/pokemon-run.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🚗",
+      "cp": "U+1F697",
+      "count": 28,
+      "files": [
+        "game.js",
+        "games/mobil.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "⚔",
+      "cp": "U+2694",
+      "count": 28,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/kuis-matematika.html",
+        "games/lokomotif-pemberani.html",
+        "games/pokemon-run.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🗺",
+      "cp": "U+1F5FA",
+      "count": 28,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/gym-pokemon.html",
+        "games/kuis-matematika.html",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🐟",
+      "cp": "U+1F41F",
+      "count": 28,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🎉",
+      "cp": "U+1F389",
+      "count": 27,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/kuis-matematika.html",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "❄",
+      "cp": "U+2744",
+      "count": 27,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-run.html"
+      ]
+    },
+    {
+      "ch": "🏛",
+      "cp": "U+1F3DB",
+      "count": 26,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🐸",
+      "cp": "U+1F438",
+      "count": 26,
+      "files": [
+        "game.js",
+        "games/_shell-smoke.html",
+        "games/gym-pokemon.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🛸",
+      "cp": "U+1F6F8",
+      "count": 26,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/mobil.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "💎",
+      "cp": "U+1F48E",
+      "count": 25,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/kuis-matematika.html",
+        "games/lokomotif-pemberani.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-run.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "📚",
+      "cp": "U+1F4DA",
+      "count": 24,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html",
+        "games/mobil.html",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🎒",
+      "cp": "U+1F392",
+      "count": 24,
+      "files": [
+        "game.js",
+        "games/ducky-volley.html",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html",
+        "games/monster-candy.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/pokemon-run.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🐉",
+      "cp": "U+1F409",
+      "count": 24,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/kuis-matematika.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-run.html"
+      ]
+    },
+    {
+      "ch": "🌍",
+      "cp": "U+1F30D",
+      "count": 23,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/gym-pokemon.html",
+        "games/museum-kereta.html",
+        "games/pokemon-run.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🏁",
+      "cp": "U+1F3C1",
+      "count": 23,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/balapan-kereta.html",
+        "games/kuis-matematika.html",
+        "games/pokemon-run.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🍎",
+      "cp": "U+1F34E",
+      "count": 23,
+      "files": [
+        "game.js",
+        "games/ducky-volley.html",
+        "games/lokomotif-pemberani.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/pokemon-run.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🦊",
+      "cp": "U+1F98A",
+      "count": 23,
+      "files": [
+        "game.js",
+        "games/_shell-smoke.html",
+        "games/gym-pokemon.html",
+        "games/kuis-matematika.html"
+      ]
+    },
+    {
+      "ch": "🍃",
+      "cp": "U+1F343",
+      "count": 22,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html",
+        "games/monster-candy.html",
+        "games/pokemon-run.html"
+      ]
+    },
+    {
+      "ch": "👻",
+      "cp": "U+1F47B",
+      "count": 22,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/kuis-matematika.html",
+        "games/pokemon-run.html"
+      ]
+    },
+    {
+      "ch": "🪙",
+      "cp": "U+1FA99",
+      "count": 22,
+      "files": [
+        "games/balapan-kereta-side.html",
+        "games/balapan-kereta.html",
+        "games/kuis-matematika.html",
+        "games/mario-pokemon.html",
+        "games/pokemon-run.html"
+      ]
+    },
+    {
+      "ch": "🏅",
+      "cp": "U+1F3C5",
+      "count": 21,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/kuis-matematika.html",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "😊",
+      "cp": "U+1F60A",
+      "count": 20,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/balapan-kereta.html",
+        "games/mario-pokemon.html",
+        "games/mobil.html",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🌸",
+      "cp": "U+1F338",
+      "count": 20,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html",
+        "games/monster-candy.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "📅",
+      "cp": "U+1F4C5",
+      "count": 20,
+      "files": [
+        "game.js",
+        "games/kuis-matematika.html",
+        "games/museum-kereta.html",
+        "games/pokemon-run.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🟢",
+      "cp": "U+1F7E2",
+      "count": 20,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/ducky-volley.html",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "👑",
+      "cp": "U+1F451",
+      "count": 19,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/gym-pokemon.html",
+        "games/kuis-matematika.html",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🐝",
+      "cp": "U+1F41D",
+      "count": 19,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "⛰",
+      "cp": "U+26F0",
+      "count": 19,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🐦",
+      "cp": "U+1F426",
+      "count": 18,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/monster-candy.html",
+        "games/pokemon-birds.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "✅",
+      "cp": "U+2705",
+      "count": 18,
+      "files": [
+        "game.js",
+        "games/ducky-volley.html",
+        "games/museum-kereta.html",
+        "games/pokemon-run.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🏔",
+      "cp": "U+1F3D4",
+      "count": 18,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🐯",
+      "cp": "U+1F42F",
+      "count": 18,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🛑",
+      "cp": "U+1F6D1",
+      "count": 18,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/mobil.html",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🔢",
+      "cp": "U+1F522",
+      "count": 17,
+      "files": [
+        "game.js",
+        "games/ducky-volley.html",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🌲",
+      "cp": "U+1F332",
+      "count": 17,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/lokomotif-pemberani.html",
+        "games/mobil.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🌱",
+      "cp": "U+1F331",
+      "count": 17,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/balapan-kereta.html",
+        "games/kuis-matematika.html",
+        "games/lokomotif-pemberani.html",
+        "games/mobil.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🌈",
+      "cp": "U+1F308",
+      "count": 17,
+      "files": [
+        "game.js",
+        "games/pokemon-bawah-laut.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🐰",
+      "cp": "U+1F430",
+      "count": 17,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🐛",
+      "cp": "U+1F41B",
+      "count": 17,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/pokemon-run.html"
+      ]
+    },
+    {
+      "ch": "🦋",
+      "cp": "U+1F98B",
+      "count": 17,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/monster-candy.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🍬",
+      "cp": "U+1F36C",
+      "count": 16,
+      "files": [
+        "game.js",
+        "games/monster-candy.html",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🌳",
+      "cp": "U+1F333",
+      "count": 16,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/mobil.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🔊",
+      "cp": "U+1F50A",
+      "count": 16,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/ducky-volley.html",
+        "games/kuis-matematika.html",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🔄",
+      "cp": "U+1F504",
+      "count": 16,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/mario-pokemon.html",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🟡",
+      "cp": "U+1F7E1",
+      "count": 16,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/ducky-volley.html",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🔮",
+      "cp": "U+1F52E",
+      "count": 16,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-run.html"
+      ]
+    },
+    {
+      "ch": "🎮",
+      "cp": "U+1F3AE",
+      "count": 15,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/balapan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🌑",
+      "cp": "U+1F311",
+      "count": 15,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/pokemon-run.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "☁",
+      "cp": "U+2601",
+      "count": 15,
+      "files": [
+        "game.js",
+        "games/kuis-matematika.html",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "📖",
+      "cp": "U+1F4D6",
+      "count": 15,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🐼",
+      "cp": "U+1F43C",
+      "count": 15,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "🍌",
+      "cp": "U+1F34C",
+      "count": 15,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/pokemon-run.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "👨",
+      "cp": "U+1F468",
+      "count": 15,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🌋",
+      "cp": "U+1F30B",
+      "count": 15,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/gym-pokemon.html",
+        "games/museum-kereta.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🐢",
+      "cp": "U+1F422",
+      "count": 15,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "🌙",
+      "cp": "U+1F319",
+      "count": 14,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "💜",
+      "cp": "U+1F49C",
+      "count": 14,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/pokemon-run.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🔬",
+      "cp": "U+1F52C",
+      "count": 14,
+      "files": [
+        "game.js",
+        "games/mobil.html",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "◀",
+      "cp": "U+25C0",
+      "count": 14,
+      "files": [
+        "game.js",
+        "games/ducky-volley.html",
+        "games/gym-pokemon.html",
+        "games/mario-pokemon.html",
+        "games/monster-candy.html",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/pokemon-run.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🦆",
+      "cp": "U+1F986",
+      "count": 14,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/ducky-volley.html",
+        "games/lokomotif-pemberani.html",
+        "games/monster-candy.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🦒",
+      "cp": "U+1F992",
+      "count": 14,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "✈",
+      "cp": "U+2708",
+      "count": 14,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🔴",
+      "cp": "U+1F534",
+      "count": 14,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/ducky-volley.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/pokemon-run.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🌪",
+      "cp": "U+1F32A",
+      "count": 14,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/pokemon-run.html"
+      ]
+    },
+    {
+      "ch": "🚧",
+      "cp": "U+1F6A7",
+      "count": 14,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/mobil.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🐄",
+      "cp": "U+1F404",
+      "count": 14,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/mobil.html",
+        "games/museum-kereta.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "💢",
+      "cp": "U+1F4A2",
+      "count": 14,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/mario-pokemon.html",
+        "games/pokemon-run.html"
+      ]
+    },
+    {
+      "ch": "🚇",
+      "cp": "U+1F687",
+      "count": 14,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🍄",
+      "cp": "U+1F344",
+      "count": 13,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/kuis-matematika.html",
+        "games/mario-pokemon.html",
+        "games/monster-candy.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "❌",
+      "cp": "U+274C",
+      "count": 13,
+      "files": [
+        "game.js",
+        "games/monster-candy.html",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🦌",
+      "cp": "U+1F98C",
+      "count": 13,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/lokomotif-pemberani.html",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🐊",
+      "cp": "U+1F40A",
+      "count": 13,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🐱",
+      "cp": "U+1F431",
+      "count": 13,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/ducky-volley.html",
+        "games/lokomotif-pemberani.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/pokemon-run.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "👊",
+      "cp": "U+1F44A",
+      "count": 13,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/pokemon-run.html"
+      ]
+    },
+    {
+      "ch": "🏭",
+      "cp": "U+1F3ED",
+      "count": 13,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "😞",
+      "cp": "U+1F61E",
+      "count": 13,
+      "files": [
+        "games/balapan-kereta.html",
+        "games/ducky-volley.html",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html",
+        "games/mobil.html",
+        "games/monster-candy.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🚉",
+      "cp": "U+1F689",
+      "count": 12,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/lokomotif-pemberani.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🌬",
+      "cp": "U+1F32C",
+      "count": 12,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🧠",
+      "cp": "U+1F9E0",
+      "count": 12,
+      "files": [
+        "game.js",
+        "games/pokemon-run.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🏎",
+      "cp": "U+1F3CE",
+      "count": 12,
+      "files": [
+        "game.js",
+        "games/mobil.html",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "📍",
+      "cp": "U+1F4CD",
+      "count": 12,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/mobil.html",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🏙",
+      "cp": "U+1F3D9",
+      "count": 12,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🐍",
+      "cp": "U+1F40D",
+      "count": 12,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "🦀",
+      "cp": "U+1F980",
+      "count": 12,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/ducky-volley.html",
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "🍊",
+      "cp": "U+1F34A",
+      "count": 12,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🔵",
+      "cp": "U+1F535",
+      "count": 12,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/ducky-volley.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/pokemon-run.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🎨",
+      "cp": "U+1F3A8",
+      "count": 12,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🌵",
+      "cp": "U+1F335",
+      "count": 12,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/balapan-kereta.html",
+        "games/gym-pokemon.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "☠",
+      "cp": "U+2620",
+      "count": 12,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/pokemon-run.html"
+      ]
+    },
+    {
+      "ch": "🎖",
+      "cp": "U+1F396",
+      "count": 12,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "➡",
+      "cp": "U+27A1",
+      "count": 11,
+      "files": [
+        "game.js",
+        "games/mobil.html",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🔤",
+      "cp": "U+1F524",
+      "count": 11,
+      "files": [
+        "game.js",
+        "games/_shell-smoke.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "❓",
+      "cp": "U+2753",
+      "count": 11,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/pokemon-run.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🥇",
+      "cp": "U+1F947",
+      "count": 11,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/balapan-kereta.html",
+        "games/kuis-matematika.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🎯",
+      "cp": "U+1F3AF",
+      "count": 11,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/gym-pokemon.html",
+        "games/monster-candy.html",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🏫",
+      "cp": "U+1F3EB",
+      "count": 11,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/mobil.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🐙",
+      "cp": "U+1F419",
+      "count": 11,
+      "files": [
+        "game.js",
+        "games/kuis-matematika.html",
+        "games/pokemon-bawah-laut.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "✏",
+      "cp": "U+270F",
+      "count": 11,
+      "files": [
+        "game.js",
+        "games/kuis-matematika.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🐴",
+      "cp": "U+1F434",
+      "count": 11,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "🍇",
+      "cp": "U+1F347",
+      "count": 11,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/pokemon-bawah-laut.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🖤",
+      "cp": "U+1F5A4",
+      "count": 11,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/mario-pokemon.html",
+        "games/mobil.html",
+        "games/monster-candy.html",
+        "games/pokemon-run.html"
+      ]
+    },
+    {
+      "ch": "🔒",
+      "cp": "U+1F512",
+      "count": 11,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/kuis-matematika.html",
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "🧲",
+      "cp": "U+1F9F2",
+      "count": 11,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "⛏",
+      "cp": "U+26CF",
+      "count": 11,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "👾",
+      "cp": "U+1F47E",
+      "count": 11,
+      "files": [
+        "games/gym-pokemon.html",
+        "games/kuis-matematika.html"
+      ]
+    },
+    {
+      "ch": "🐾",
+      "cp": "U+1F43E",
+      "count": 10,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/monster-candy.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🎭",
+      "cp": "U+1F3AD",
+      "count": 10,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🖼",
+      "cp": "U+1F5BC",
+      "count": 10,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🎵",
+      "cp": "U+1F3B5",
+      "count": 10,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/pokemon-run.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🌉",
+      "cp": "U+1F309",
+      "count": 10,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "☀",
+      "cp": "U+2600",
+      "count": 10,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "😢",
+      "cp": "U+1F622",
+      "count": 10,
+      "files": [
+        "game.js",
+        "games/kuis-matematika.html",
+        "games/pokemon-run.html"
+      ]
+    },
+    {
+      "ch": "🦎",
+      "cp": "U+1F98E",
+      "count": 10,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🐬",
+      "cp": "U+1F42C",
+      "count": 10,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🐒",
+      "cp": "U+1F412",
+      "count": 10,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🌴",
+      "cp": "U+1F334",
+      "count": 10,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🏠",
+      "cp": "U+1F3E0",
+      "count": 10,
+      "files": [
+        "game.js",
+        "games/ducky-volley.html",
+        "games/mario-pokemon.html",
+        "games/monster-candy.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/pokemon-run.html"
+      ]
+    },
+    {
+      "ch": "🌺",
+      "cp": "U+1F33A",
+      "count": 10,
+      "files": [
+        "game.js",
+        "games/ducky-volley.html",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html",
+        "games/monster-candy.html",
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "🌡",
+      "cp": "U+1F321",
+      "count": 10,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🎓",
+      "cp": "U+1F393",
+      "count": 10,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/balapan-kereta.html",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🤝",
+      "cp": "U+1F91D",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "💖",
+      "cp": "U+1F496",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/mario-pokemon.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-run.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "✍",
+      "cp": "U+270D",
+      "count": 9,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🏃",
+      "cp": "U+1F3C3",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/pokemon-run.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🆘",
+      "cp": "U+1F198",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🏖",
+      "cp": "U+1F3D6",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/mobil.html",
+        "games/pokemon-bawah-laut.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🐨",
+      "cp": "U+1F428",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "🐓",
+      "cp": "U+1F413",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/pokemon-birds.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🐑",
+      "cp": "U+1F411",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "🐧",
+      "cp": "U+1F427",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🌷",
+      "cp": "U+1F337",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html",
+        "games/monster-candy.html"
+      ]
+    },
+    {
+      "ch": "🥭",
+      "cp": "U+1F96D",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🚌",
+      "cp": "U+1F68C",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🦑",
+      "cp": "U+1F991",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "🐻",
+      "cp": "U+1F43B",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "⚽",
+      "cp": "U+26BD",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🐶",
+      "cp": "U+1F436",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🐠",
+      "cp": "U+1F420",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "🎩",
+      "cp": "U+1F3A9",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🔩",
+      "cp": "U+1F529",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🧊",
+      "cp": "U+1F9CA",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "🐔",
+      "cp": "U+1F414",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/lokomotif-pemberani.html",
+        "games/mobil.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "💔",
+      "cp": "U+1F494",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/mario-pokemon.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🏗",
+      "cp": "U+1F3D7",
+      "count": 9,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/mobil.html",
+        "games/museum-kereta.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "⏱",
+      "cp": "U+23F1",
+      "count": 8,
+      "files": [
+        "game.js",
+        "games/monster-candy.html",
+        "games/museum-kereta.html",
+        "games/pokemon-run.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🐮",
+      "cp": "U+1F42E",
+      "count": 8,
+      "files": [
+        "games/balapan-kereta-side.html",
+        "games/lokomotif-pemberani.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/pokemon-run.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🥕",
+      "cp": "U+1F955",
+      "count": 8,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "📦",
+      "cp": "U+1F4E6",
+      "count": 8,
+      "files": [
+        "game.js",
+        "games/mobil.html",
+        "games/museum-kereta.html",
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "👩",
+      "cp": "U+1F469",
+      "count": 8,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🚁",
+      "cp": "U+1F681",
+      "count": 8,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🚢",
+      "cp": "U+1F6A2",
+      "count": 8,
+      "files": [
+        "game.js",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🚲",
+      "cp": "U+1F6B2",
+      "count": 8,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🪵",
+      "cp": "U+1FAB5",
+      "count": 8,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/mobil.html",
+        "games/museum-kereta.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🥈",
+      "cp": "U+1F948",
+      "count": 8,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/balapan-kereta.html",
+        "games/kuis-matematika.html"
+      ]
+    },
+    {
+      "ch": "🌏",
+      "cp": "U+1F30F",
+      "count": 8,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🌄",
+      "cp": "U+1F304",
+      "count": 8,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🛤",
+      "cp": "U+1F6E4",
+      "count": 8,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🚦",
+      "cp": "U+1F6A6",
+      "count": 8,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/mobil.html",
+        "games/museum-kereta.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🛢",
+      "cp": "U+1F6E2",
+      "count": 8,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🥚",
+      "cp": "U+1F95A",
+      "count": 7,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🃏",
+      "cp": "U+1F0CF",
+      "count": 7,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "⬆",
+      "cp": "U+2B06",
+      "count": 7,
+      "files": [
+        "games/balapan-kereta-side.html",
+        "games/ducky-volley.html",
+        "games/pokemon-run.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🐋",
+      "cp": "U+1F40B",
+      "count": 7,
+      "files": [
+        "game.js",
+        "games/pokemon-bawah-laut.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🦓",
+      "cp": "U+1F993",
+      "count": 7,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🍍",
+      "cp": "U+1F34D",
+      "count": 7,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🚜",
+      "cp": "U+1F69C",
+      "count": 7,
+      "files": [
+        "game.js",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🚒",
+      "cp": "U+1F692",
+      "count": 7,
+      "files": [
+        "game.js",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🚑",
+      "cp": "U+1F691",
+      "count": 7,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🪟",
+      "cp": "U+1FA9F",
+      "count": 7,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🖊",
+      "cp": "U+1F58A",
+      "count": 7,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🦈",
+      "cp": "U+1F988",
+      "count": 7,
+      "files": [
+        "game.js",
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "💙",
+      "cp": "U+1F499",
+      "count": 7,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🎊",
+      "cp": "U+1F38A",
+      "count": 7,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🐕",
+      "cp": "U+1F415",
+      "count": 7,
+      "files": [
+        "game.js",
+        "games/mobil.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/pokemon-run.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🐚",
+      "cp": "U+1F41A",
+      "count": 7,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/ducky-volley.html",
+        "games/gym-pokemon.html",
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "📜",
+      "cp": "U+1F4DC",
+      "count": 7,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🐣",
+      "cp": "U+1F423",
+      "count": 6,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🔡",
+      "cp": "U+1F521",
+      "count": 6,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🔭",
+      "cp": "U+1F52D",
+      "count": 6,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🧮",
+      "cp": "U+1F9EE",
+      "count": 6,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🤔",
+      "cp": "U+1F914",
+      "count": 6,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🐭",
+      "cp": "U+1F42D",
+      "count": 6,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🐐",
+      "cp": "U+1F410",
+      "count": 6,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🦭",
+      "cp": "U+1F9AD",
+      "count": 6,
+      "files": [
+        "game.js",
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "🍓",
+      "cp": "U+1F353",
+      "count": 6,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🍉",
+      "cp": "U+1F349",
+      "count": 6,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🌽",
+      "cp": "U+1F33D",
+      "count": 6,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🪑",
+      "cp": "U+1FA91",
+      "count": 6,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🧑",
+      "cp": "U+1F9D1",
+      "count": 6,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🐜",
+      "cp": "U+1F41C",
+      "count": 6,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🚓",
+      "cp": "U+1F693",
+      "count": 6,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🎲",
+      "cp": "U+1F3B2",
+      "count": 6,
+      "files": [
+        "game.js",
+        "games/kuis-matematika.html"
+      ]
+    },
+    {
+      "ch": "🦕",
+      "cp": "U+1F995",
+      "count": 6,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html",
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "🕊",
+      "cp": "U+1F54A",
+      "count": 6,
+      "files": [
+        "game.js",
+        "games/monster-candy.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-run.html"
+      ]
+    },
+    {
+      "ch": "⚓",
+      "cp": "U+2693",
+      "count": 6,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🥉",
+      "cp": "U+1F949",
+      "count": 6,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/kuis-matematika.html"
+      ]
+    },
+    {
+      "ch": "🐡",
+      "cp": "U+1F421",
+      "count": 6,
+      "files": [
+        "game.js",
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "🐲",
+      "cp": "U+1F432",
+      "count": 6,
+      "files": [
+        "game.js",
+        "games/kuis-matematika.html",
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "⏳",
+      "cp": "U+23F3",
+      "count": 6,
+      "files": [
+        "game.js",
+        "games/ducky-volley.html",
+        "games/pokemon-bawah-laut.html",
+        "games/pokemon-birds.html",
+        "games/pokemon-run.html"
+      ]
+    },
+    {
+      "ch": "🚋",
+      "cp": "U+1F68B",
+      "count": 6,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/museum-kereta.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "📊",
+      "cp": "U+1F4CA",
+      "count": 5,
+      "files": [
+        "games/gym-pokemon.html",
+        "games/pokemon-run.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🧒",
+      "cp": "U+1F9D2",
+      "count": 5,
+      "files": [
+        "games/kuis-matematika.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🏐",
+      "cp": "U+1F3D0",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/ducky-volley.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "💀",
+      "cp": "U+1F480",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/gym-pokemon.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🚨",
+      "cp": "U+1F6A8",
+      "count": 5,
+      "files": [
+        "games/selamatkan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "⚕",
+      "cp": "U+2695",
+      "count": 5,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🍳",
+      "cp": "U+1F373",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/mobil.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "😲",
+      "cp": "U+1F632",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🦗",
+      "cp": "U+1F997",
+      "count": 5,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🥝",
+      "cp": "U+1F95D",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🍑",
+      "cp": "U+1F351",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🍒",
+      "cp": "U+1F352",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🟠",
+      "cp": "U+1F7E0",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🛏",
+      "cp": "U+1F6CF",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🌧",
+      "cp": "U+1F327",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🌞",
+      "cp": "U+1F31E",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "📏",
+      "cp": "U+1F4CF",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🦦",
+      "cp": "U+1F9A6",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "🎸",
+      "cp": "U+1F3B8",
+      "count": 5,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🚙",
+      "cp": "U+1F699",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🪼",
+      "cp": "U+1FABC",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "☕",
+      "cp": "U+2615",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "💚",
+      "cp": "U+1F49A",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/mario-pokemon.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🛵",
+      "cp": "U+1F6F5",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🚶",
+      "cp": "U+1F6B6",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/mobil.html",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🌀",
+      "cp": "U+1F300",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "😱",
+      "cp": "U+1F631",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "👁",
+      "cp": "U+1F441",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "👆",
+      "cp": "U+1F446",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/ducky-volley.html",
+        "games/monster-candy.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🌻",
+      "cp": "U+1F33B",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html",
+        "games/mobil.html",
+        "games/monster-candy.html"
+      ]
+    },
+    {
+      "ch": "⚖",
+      "cp": "U+2696",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "♂",
+      "cp": "U+2642",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/mobil.html",
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "🏯",
+      "cp": "U+1F3EF",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "♨",
+      "cp": "U+2668",
+      "count": 5,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🧱",
+      "cp": "U+1F9F1",
+      "count": 5,
+      "files": [
+        "games/balapan-kereta.html",
+        "games/mobil.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🔇",
+      "cp": "U+1F507",
+      "count": 5,
+      "files": [
+        "games/balapan-kereta.html",
+        "games/kuis-matematika.html",
+        "games/lokomotif-pemberani.html",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "👤",
+      "cp": "U+1F464",
+      "count": 4,
+      "files": [
+        "games/kuis-matematika.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🔨",
+      "cp": "U+1F528",
+      "count": 4,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🛂",
+      "cp": "U+1F6C2",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "📝",
+      "cp": "U+1F4DD",
+      "count": 4,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🔗",
+      "cp": "U+1F517",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🍜",
+      "cp": "U+1F35C",
+      "count": 4,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🦜",
+      "cp": "U+1F99C",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/monster-candy.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🐌",
+      "cp": "U+1F40C",
+      "count": 4,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🦸",
+      "cp": "U+1F9B8",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🐺",
+      "cp": "U+1F43A",
+      "count": 4,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🦏",
+      "cp": "U+1F98F",
+      "count": 4,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🐞",
+      "cp": "U+1F41E",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "🥒",
+      "cp": "U+1F952",
+      "count": 4,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🍆",
+      "cp": "U+1F346",
+      "count": 4,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "⚪",
+      "cp": "U+26AA",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "🚪",
+      "cp": "U+1F6AA",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "👮",
+      "cp": "U+1F46E",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "💼",
+      "cp": "U+1F4BC",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🌾",
+      "cp": "U+1F33E",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🍚",
+      "cp": "U+1F35A",
+      "count": 4,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "📐",
+      "cp": "U+1F4D0",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🦧",
+      "cp": "U+1F9A7",
+      "count": 4,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🍈",
+      "cp": "U+1F348",
+      "count": 4,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🦠",
+      "cp": "U+1F9A0",
+      "count": 4,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🛺",
+      "cp": "U+1F6FA",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🦐",
+      "cp": "U+1F990",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "🐷",
+      "cp": "U+1F437",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🕌",
+      "cp": "U+1F54C",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🍽",
+      "cp": "U+1F37D",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🏢",
+      "cp": "U+1F3E2",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "😅",
+      "cp": "U+1F605",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🪐",
+      "cp": "U+1FA90",
+      "count": 4,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "📋",
+      "cp": "U+1F4CB",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/kuis-matematika.html"
+      ]
+    },
+    {
+      "ch": "🔁",
+      "cp": "U+1F501",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/kuis-matematika.html"
+      ]
+    },
+    {
+      "ch": "🚚",
+      "cp": "U+1F69A",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🚐",
+      "cp": "U+1F690",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🚕",
+      "cp": "U+1F695",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "↩",
+      "cp": "U+21A9",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/kuis-matematika.html"
+      ]
+    },
+    {
+      "ch": "🌹",
+      "cp": "U+1F339",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "👹",
+      "cp": "U+1F479",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/kuis-matematika.html"
+      ]
+    },
+    {
+      "ch": "🦴",
+      "cp": "U+1F9B4",
+      "count": 4,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🛡",
+      "cp": "U+1F6E1",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🤖",
+      "cp": "U+1F916",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🎡",
+      "cp": "U+1F3A1",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🚡",
+      "cp": "U+1F6A1",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🔀",
+      "cp": "U+1F500",
+      "count": 4,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "👋",
+      "cp": "U+1F44B",
+      "count": 4,
+      "files": [
+        "games/balapan-kereta-side.html",
+        "games/balapan-kereta.html",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "⛄",
+      "cp": "U+26C4",
+      "count": 4,
+      "files": [
+        "games/balapan-kereta.html",
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "🚸",
+      "cp": "U+1F6B8",
+      "count": 4,
+      "files": [
+        "games/balapan-kereta.html",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🐥",
+      "cp": "U+1F425",
+      "count": 3,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "👦",
+      "cp": "U+1F466",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "💗",
+      "cp": "U+1F497",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/pokemon-bawah-laut.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "⛓",
+      "cp": "U+26D3",
+      "count": 3,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🪝",
+      "cp": "U+1FA9D",
+      "count": 3,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🌌",
+      "cp": "U+1F30C",
+      "count": 3,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "✖",
+      "cp": "U+2716",
+      "count": 3,
+      "files": [
+        "games/balapan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🦉",
+      "cp": "U+1F989",
+      "count": 3,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "⛅",
+      "cp": "U+26C5",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "😠",
+      "cp": "U+1F620",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "😨",
+      "cp": "U+1F628",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "😳",
+      "cp": "U+1F633",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🥰",
+      "cp": "U+1F970",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "😤",
+      "cp": "U+1F624",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🦩",
+      "cp": "U+1F9A9",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🐆",
+      "cp": "U+1F406",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🦚",
+      "cp": "U+1F99A",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🥬",
+      "cp": "U+1F96C",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🧅",
+      "cp": "U+1F9C5",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🏍",
+      "cp": "U+1F3CD",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🟣",
+      "cp": "U+1F7E3",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "⚫",
+      "cp": "U+26AB",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🔧",
+      "cp": "U+1F527",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🏞",
+      "cp": "U+1F3DE",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🦔",
+      "cp": "U+1F994",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🐗",
+      "cp": "U+1F417",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🦛",
+      "cp": "U+1F99B",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🥥",
+      "cp": "U+1F965",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🍅",
+      "cp": "U+1F345",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🎈",
+      "cp": "U+1F388",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "⛔",
+      "cp": "U+26D4",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🎃",
+      "cp": "U+1F383",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🪥",
+      "cp": "U+1FAA5",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🪣",
+      "cp": "U+1FAA3",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🍯",
+      "cp": "U+1F36F",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "👀",
+      "cp": "U+1F440",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🦷",
+      "cp": "U+1F9B7",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🌅",
+      "cp": "U+1F305",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html",
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "🌇",
+      "cp": "U+1F307",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/balapan-kereta-side.html"
+      ]
+    },
+    {
+      "ch": "💛",
+      "cp": "U+1F49B",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🤍",
+      "cp": "U+1F90D",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🧡",
+      "cp": "U+1F9E1",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🦇",
+      "cp": "U+1F987",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "📷",
+      "cp": "U+1F4F7",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "🎠",
+      "cp": "U+1F3A0",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🐈",
+      "cp": "U+1F408",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🫒",
+      "cp": "U+1FAD2",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🎴",
+      "cp": "U+1F3B4",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "♻",
+      "cp": "U+267B",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "⚛",
+      "cp": "U+269B",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🕷",
+      "cp": "U+1F577",
+      "count": 3,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🦂",
+      "cp": "U+1F982",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🥊",
+      "cp": "U+1F94A",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "📸",
+      "cp": "U+1F4F8",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/balapan-kereta.html",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🎁",
+      "cp": "U+1F381",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "⛽",
+      "cp": "U+26FD",
+      "count": 3,
+      "files": [
+        "game.js",
+        "games/mobil.html",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🚖",
+      "cp": "U+1F696",
+      "count": 3,
+      "files": [
+        "games/balapan-kereta.html",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "👥",
+      "cp": "U+1F465",
+      "count": 3,
+      "files": [
+        "games/balapan-kereta.html"
+      ]
+    },
+    {
+      "ch": "💣",
+      "cp": "U+1F4A3",
+      "count": 3,
+      "files": [
+        "games/gym-pokemon.html",
+        "games/kuis-matematika.html"
+      ]
+    },
+    {
+      "ch": "💕",
+      "cp": "U+1F495",
+      "count": 2,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "⬇",
+      "cp": "U+2B07",
+      "count": 2,
+      "files": [
+        "games/pokemon-run.html",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🌕",
+      "cp": "U+1F315",
+      "count": 2,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🔍",
+      "cp": "U+1F50D",
+      "count": 2,
+      "files": [
+        "game.js",
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🗑",
+      "cp": "U+1F5D1",
+      "count": 2,
+      "files": [
+        "index.html"
+      ]
+    },
+    {
+      "ch": "😑",
+      "cp": "U+1F611",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🤩",
+      "cp": "U+1F929",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🦄",
+      "cp": "U+1F984",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🦢",
+      "cp": "U+1F9A2",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🦍",
+      "cp": "U+1F98D",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🐿",
+      "cp": "U+1F43F",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🍐",
+      "cp": "U+1F350",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🥦",
+      "cp": "U+1F966",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🥔",
+      "cp": "U+1F954",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🌶",
+      "cp": "U+1F336",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🩷",
+      "cp": "U+1FA77",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "📱",
+      "cp": "U+1F4F1",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🔑",
+      "cp": "U+1F511",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🪞",
+      "cp": "U+1FA9E",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "💻",
+      "cp": "U+1F4BB",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🌫",
+      "cp": "U+1F32B",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🍞",
+      "cp": "U+1F35E",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🍕",
+      "cp": "U+1F355",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🍰",
+      "cp": "U+1F370",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🖍",
+      "cp": "U+1F58D",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🧪",
+      "cp": "U+1F9EA",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🐳",
+      "cp": "U+1F433",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "🦥",
+      "cp": "U+1F9A5",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🫐",
+      "cp": "U+1FAD0",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🍋",
+      "cp": "U+1F34B",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🥑",
+      "cp": "U+1F951",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🥁",
+      "cp": "U+1F941",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🤿",
+      "cp": "U+1F93F",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🥄",
+      "cp": "U+1F944",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "☂",
+      "cp": "U+2602",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🐃",
+      "cp": "U+1F403",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🦨",
+      "cp": "U+1F9A8",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "📄",
+      "cp": "U+1F4C4",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🧼",
+      "cp": "U+1F9FC",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🥛",
+      "cp": "U+1F95B",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🧹",
+      "cp": "U+1F9F9",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🏪",
+      "cp": "U+1F3EA",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "👕",
+      "cp": "U+1F455",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🦵",
+      "cp": "U+1F9B5",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "👟",
+      "cp": "U+1F45F",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🪢",
+      "cp": "U+1FAA2",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "⏰",
+      "cp": "U+23F0",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🧢",
+      "cp": "U+1F9E2",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "👃",
+      "cp": "U+1F443",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "😮",
+      "cp": "U+1F62E",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🧍",
+      "cp": "U+1F9CD",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🎤",
+      "cp": "U+1F3A4",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "👧",
+      "cp": "U+1F467",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🎆",
+      "cp": "U+1F386",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "💝",
+      "cp": "U+1F49D",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🍀",
+      "cp": "U+1F340",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "💍",
+      "cp": "U+1F48D",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "🦟",
+      "cp": "U+1F99F",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🐇",
+      "cp": "U+1F407",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "💊",
+      "cp": "U+1F48A",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🐅",
+      "cp": "U+1F405",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🌆",
+      "cp": "U+1F306",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "💬",
+      "cp": "U+1F4AC",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "👍",
+      "cp": "U+1F44D",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🫀",
+      "cp": "U+1FAC0",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🧬",
+      "cp": "U+1F9EC",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🪴",
+      "cp": "U+1FAB4",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🔋",
+      "cp": "U+1F50B",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🦞",
+      "cp": "U+1F99E",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🏜",
+      "cp": "U+1F3DC",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "📡",
+      "cp": "U+1F4E1",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🍂",
+      "cp": "U+1F342",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "🦖",
+      "cp": "U+1F996",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "😴",
+      "cp": "U+1F634",
+      "count": 2,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🎀",
+      "cp": "U+1F380",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "🥋",
+      "cp": "U+1F94B",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "👒",
+      "cp": "U+1F452",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🦾",
+      "cp": "U+1F9BE",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🎋",
+      "cp": "U+1F38B",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🍭",
+      "cp": "U+1F36D",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "✉",
+      "cp": "U+2709",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "📮",
+      "cp": "U+1F4EE",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "📬",
+      "cp": "U+1F4EC",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🏹",
+      "cp": "U+1F3F9",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🗾",
+      "cp": "U+1F5FE",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🫙",
+      "cp": "U+1FAD9",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "📢",
+      "cp": "U+1F4E2",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🏚",
+      "cp": "U+1F3DA",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "👂",
+      "cp": "U+1F442",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "📯",
+      "cp": "U+1F4EF",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🚝",
+      "cp": "U+1F69D",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🍱",
+      "cp": "U+1F371",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "👔",
+      "cp": "U+1F454",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🚈",
+      "cp": "U+1F688",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🎫",
+      "cp": "U+1F3AB",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🔺",
+      "cp": "U+1F53A",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🖥",
+      "cp": "U+1F5A5",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🏴",
+      "cp": "U+1F3F4",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🚮",
+      "cp": "U+1F6AE",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🎄",
+      "cp": "U+1F384",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🔫",
+      "cp": "U+1F52B",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🔌",
+      "cp": "U+1F50C",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🔚",
+      "cp": "U+1F51A",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "💭",
+      "cp": "U+1F4AD",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "📕",
+      "cp": "U+1F4D5",
+      "count": 2,
+      "files": [
+        "game.js",
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🟨",
+      "cp": "U+1F7E8",
+      "count": 2,
+      "files": [
+        "games/balapan-kereta.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🟩",
+      "cp": "U+1F7E9",
+      "count": 2,
+      "files": [
+        "games/balapan-kereta.html",
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "❗",
+      "cp": "U+2757",
+      "count": 2,
+      "files": [
+        "games/balapan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🆚",
+      "cp": "U+1F19A",
+      "count": 2,
+      "files": [
+        "games/kuis-matematika.html"
+      ]
+    },
+    {
+      "ch": "🚤",
+      "cp": "U+1F6A4",
+      "count": 2,
+      "files": [
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🏊",
+      "cp": "U+1F3CA",
+      "count": 2,
+      "files": [
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "📤",
+      "cp": "U+1F4E4",
+      "count": 1,
+      "files": [
+        "index.html"
+      ]
+    },
+    {
+      "ch": "👫",
+      "cp": "U+1F46B",
+      "count": 1,
+      "files": [
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🔱",
+      "cp": "U+1F531",
+      "count": 1,
+      "files": [
+        "index.html"
+      ]
+    },
+    {
+      "ch": "📳",
+      "cp": "U+1F4F3",
+      "count": 1,
+      "files": [
+        "index.html"
+      ]
+    },
+    {
+      "ch": "🐹",
+      "cp": "U+1F439",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🫑",
+      "cp": "U+1FAD1",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🧄",
+      "cp": "U+1F9C4",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🟤",
+      "cp": "U+1F7E4",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🩵",
+      "cp": "U+1FA75",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🟫",
+      "cp": "U+1F7EB",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "⌚",
+      "cp": "U+231A",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🌁",
+      "cp": "U+1F301",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🌤",
+      "cp": "U+1F324",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "⛈",
+      "cp": "U+26C8",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🌩",
+      "cp": "U+1F329",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🥩",
+      "cp": "U+1F969",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🍣",
+      "cp": "U+1F363",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🍔",
+      "cp": "U+1F354",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🍦",
+      "cp": "U+1F366",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🥗",
+      "cp": "U+1F957",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🍲",
+      "cp": "U+1F372",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🥪",
+      "cp": "U+1F96A",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "📓",
+      "cp": "U+1F4D3",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🦘",
+      "cp": "U+1F998",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🦙",
+      "cp": "U+1F999",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🦝",
+      "cp": "U+1F99D",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🐪",
+      "cp": "U+1F42A",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🍏",
+      "cp": "U+1F34F",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "☄",
+      "cp": "U+2604",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "⛵",
+      "cp": "U+26F5",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🐀",
+      "cp": "U+1F400",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🥜",
+      "cp": "U+1F95C",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "✂",
+      "cp": "U+2702",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🧣",
+      "cp": "U+1F9E3",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🍴",
+      "cp": "U+1F374",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🏦",
+      "cp": "U+1F3E6",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "⬜",
+      "cp": "U+2B1C",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "⬛",
+      "cp": "U+2B1B",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🤒",
+      "cp": "U+1F912",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🌰",
+      "cp": "U+1F330",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🛞",
+      "cp": "U+1F6DE",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🖐",
+      "cp": "U+1F590",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "👶",
+      "cp": "U+1F476",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "💰",
+      "cp": "U+1F4B0",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🧵",
+      "cp": "U+1F9F5",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🪶",
+      "cp": "U+1FAB6",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "👝",
+      "cp": "U+1F45D",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🛋",
+      "cp": "U+1F6CB",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🙋",
+      "cp": "U+1F64B",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🎣",
+      "cp": "U+1F3A3",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "💃",
+      "cp": "U+1F483",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🍵",
+      "cp": "U+1F375",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🥤",
+      "cp": "U+1F964",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🪭",
+      "cp": "U+1FAAD",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🪽",
+      "cp": "U+1FABD",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🪛",
+      "cp": "U+1FA9B",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🤎",
+      "cp": "U+1F90E",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "👄",
+      "cp": "U+1F444",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🤚",
+      "cp": "U+1F91A",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🫃",
+      "cp": "U+1FAC3",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "💇",
+      "cp": "U+1F487",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🧴",
+      "cp": "U+1F9F4",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🏟",
+      "cp": "U+1F3DF",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "📰",
+      "cp": "U+1F4F0",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🛍",
+      "cp": "U+1F6CD",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🤞",
+      "cp": "U+1F91E",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🙏",
+      "cp": "U+1F64F",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🤜",
+      "cp": "U+1F91C",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🧭",
+      "cp": "U+1F9ED",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "💓",
+      "cp": "U+1F493",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🍫",
+      "cp": "U+1F36B",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🕶",
+      "cp": "U+1F576",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🎂",
+      "cp": "U+1F382",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🪲",
+      "cp": "U+1FAB2",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "😡",
+      "cp": "U+1F621",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "➕",
+      "cp": "U+2795",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🥳",
+      "cp": "U+1F973",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🤗",
+      "cp": "U+1F917",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "😄",
+      "cp": "U+1F604",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "😌",
+      "cp": "U+1F60C",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "✔",
+      "cp": "U+2714",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "⚗",
+      "cp": "U+2697",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "☔",
+      "cp": "U+2614",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🔆",
+      "cp": "U+1F506",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🌗",
+      "cp": "U+1F317",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🥶",
+      "cp": "U+1F976",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🌎",
+      "cp": "U+1F30E",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "❔",
+      "cp": "U+2754",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🦡",
+      "cp": "U+1F9A1",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🪂",
+      "cp": "U+1FA82",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "👢",
+      "cp": "U+1F462",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🥿",
+      "cp": "U+1F97F",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "👞",
+      "cp": "U+1F45E",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🫛",
+      "cp": "U+1FADB",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🐖",
+      "cp": "U+1F416",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🎹",
+      "cp": "U+1F3B9",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🎺",
+      "cp": "U+1F3BA",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🍁",
+      "cp": "U+1F341",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🦶",
+      "cp": "U+1F9B6",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🕯",
+      "cp": "U+1F56F",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "♀",
+      "cp": "U+2640",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "💦",
+      "cp": "U+1F4A6",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🍙",
+      "cp": "U+1F359",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🥷",
+      "cp": "U+1F977",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🗡",
+      "cp": "U+1F5E1",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🏺",
+      "cp": "U+1F3FA",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🎪",
+      "cp": "U+1F3AA",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🏰",
+      "cp": "U+1F3F0",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🔶",
+      "cp": "U+1F536",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🚛",
+      "cp": "U+1F69B",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "🗽",
+      "cp": "U+1F5FD",
+      "count": 1,
+      "files": [
+        "game.js"
+      ]
+    },
+    {
+      "ch": "⏮",
+      "cp": "U+23EE",
+      "count": 1,
+      "files": [
+        "games/balapan-kereta.html"
+      ]
+    },
+    {
+      "ch": "👣",
+      "cp": "U+1F463",
+      "count": 1,
+      "files": [
+        "games/ducky-volley.html"
+      ]
+    },
+    {
+      "ch": "💤",
+      "cp": "U+1F4A4",
+      "count": 1,
+      "files": [
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "🦤",
+      "cp": "U+1F9A4",
+      "count": 1,
+      "files": [
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "☯",
+      "cp": "U+262F",
+      "count": 1,
+      "files": [
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "🧗",
+      "cp": "U+1F9D7",
+      "count": 1,
+      "files": [
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "🧚",
+      "cp": "U+1F9DA",
+      "count": 1,
+      "files": [
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "🩸",
+      "cp": "U+1FA78",
+      "count": 1,
+      "files": [
+        "games/gym-pokemon.html"
+      ]
+    },
+    {
+      "ch": "✋",
+      "cp": "U+270B",
+      "count": 1,
+      "files": [
+        "games/kuis-matematika.html"
+      ]
+    },
+    {
+      "ch": "🛒",
+      "cp": "U+1F6D2",
+      "count": 1,
+      "files": [
+        "games/kuis-matematika.html"
+      ]
+    },
+    {
+      "ch": "🧟",
+      "cp": "U+1F9DF",
+      "count": 1,
+      "files": [
+        "games/kuis-matematika.html"
+      ]
+    },
+    {
+      "ch": "🙈",
+      "cp": "U+1F648",
+      "count": 1,
+      "files": [
+        "games/kuis-matematika.html"
+      ]
+    },
+    {
+      "ch": "🍛",
+      "cp": "U+1F35B",
+      "count": 1,
+      "files": [
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🕳",
+      "cp": "U+1F573",
+      "count": 1,
+      "files": [
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "⛴",
+      "cp": "U+26F4",
+      "count": 1,
+      "files": [
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "♥",
+      "cp": "U+2665",
+      "count": 1,
+      "files": [
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🛴",
+      "cp": "U+1F6F4",
+      "count": 1,
+      "files": [
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "💐",
+      "cp": "U+1F490",
+      "count": 1,
+      "files": [
+        "games/lokomotif-pemberani.html"
+      ]
+    },
+    {
+      "ch": "🅿",
+      "cp": "U+1F17F",
+      "count": 1,
+      "files": [
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🌠",
+      "cp": "U+1F320",
+      "count": 1,
+      "files": [
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "⛱",
+      "cp": "U+26F1",
+      "count": 1,
+      "files": [
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🧂",
+      "cp": "U+1F9C2",
+      "count": 1,
+      "files": [
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🦺",
+      "cp": "U+1F9BA",
+      "count": 1,
+      "files": [
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🩶",
+      "cp": "U+1FA76",
+      "count": 1,
+      "files": [
+        "games/mobil.html"
+      ]
+    },
+    {
+      "ch": "🌼",
+      "cp": "U+1F33C",
+      "count": 1,
+      "files": [
+        "games/monster-candy.html"
+      ]
+    },
+    {
+      "ch": "🛠",
+      "cp": "U+1F6E0",
+      "count": 1,
+      "files": [
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "📣",
+      "cp": "U+1F4E3",
+      "count": 1,
+      "files": [
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🚰",
+      "cp": "U+1F6B0",
+      "count": 1,
+      "files": [
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🛳",
+      "cp": "U+1F6F3",
+      "count": 1,
+      "files": [
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🔔",
+      "cp": "U+1F514",
+      "count": 1,
+      "files": [
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "🗂",
+      "cp": "U+1F5C2",
+      "count": 1,
+      "files": [
+        "games/museum-kereta.html"
+      ]
+    },
+    {
+      "ch": "👸",
+      "cp": "U+1F478",
+      "count": 1,
+      "files": [
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "🏮",
+      "cp": "U+1F3EE",
+      "count": 1,
+      "files": [
+        "games/pokemon-bawah-laut.html"
+      ]
+    },
+    {
+      "ch": "🔓",
+      "cp": "U+1F513",
+      "count": 1,
+      "files": [
+        "games/pokemon-run.html"
+      ]
+    },
+    {
+      "ch": "🐏",
+      "cp": "U+1F40F",
+      "count": 1,
+      "files": [
+        "games/selamatkan-kereta.html"
+      ]
+    },
+    {
+      "ch": "🎇",
+      "cp": "U+1F387",
+      "count": 1,
+      "files": [
+        "games/selamatkan-kereta.html"
+      ]
+    }
+  ]
+}
