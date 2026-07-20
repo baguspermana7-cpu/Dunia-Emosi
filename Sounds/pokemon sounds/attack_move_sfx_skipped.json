@@ -1,0 +1,8 @@
+[
+  {
+    "move_name": "Assist",
+    "source_file": "Assist.mp3",
+    "source_bytes": 96617,
+    "error": "Command '['ffmpeg', '-y', '-loglevel', 'error', '-i', '/tmp/tmpnmk8v8jt/Assist.mp3', '-map', '0:a:0', '-vn', '-map_metadata', '-1', '-af', 'atrim=0:0.58,asetpts=PTS-STARTPTS,afade=t=out:st=0.46:d=0.10,volume=1.15', '-ac', '1', '-ar', '16000', '-c:a', 'libopus', '-b:a', '10k', '-vbr', 'on', '-compression_level', '10', '-application', 'audio', '/home/baguspermana7/rz-work/Dunia-Emosi/Sounds/pokemon sounds/attack-move-sfx-compressed/normal/assist.ogg']' returned non-zero exit status 183."
+  }
+]
