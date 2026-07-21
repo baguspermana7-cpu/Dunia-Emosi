@@ -8,8 +8,9 @@
   rAF MutationObserver + `pixiSprite` for canvas) swaps EVERY rendered emoji → DB sprite,
   app-wide, fallback-safe. Loaded on all 16 pages.
 - Owner-generated sprite sheets, cropped + wired into `assets/db/`:
-  `ui` (47) · `misc` (85) · `people` (128) · `extra` (49, incl. the final skull/dice/egg/bird) ·
-  `build` (117, installed). Croppers: `tools/crop-ui-sheet.py`, `tools/crop-emoji-grid.py`
+  `ui` (47) · `misc` (85) · `people` (128) · `extra` (49, incl. the final skull/dice/egg/bird).
+  (The `build` sheet was dropped — all its scenes were covered better by `extra`, so it was
+  100% unreferenced dead weight; removed.) Croppers: `tools/crop-ui-sheet.py`, `tools/crop-emoji-grid.py`
   (dual white/checkerboard bg key), quadrant hand-crop for the last 4.
 - Gap journey: **106 → 61 → 33 → 4 → 0.**
 - A few decorative ambient/no-art emoji mapped to the nearest accurate DB sprite (🦐/🦞→crab,
