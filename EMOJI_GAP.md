@@ -4,12 +4,16 @@ Updated **2026-07-21**. Engine `games/data/emoji-map.js` + `UISprites` resolver 
 every mapped emoji → DB sprite across all 16 pages. Gate: `node tools/audit-no-emoji.mjs`
 = `mapped-left=0` everywhere.
 
-## Progress
-- Owner-generated sheets cropped + wired: **ui (47)**, **misc (85)**, **people (128)**,
-  **build (117, installed)**. Cropper: `tools/crop-ui-sheet.py` (ui, labeled) +
-  `tools/crop-emoji-grid.py` (dense sheets, dual white/checkerboard bg key).
-- Gaps: **106 → 33** (69% closed). Every remaining glyph is low-frequency + decorative;
-  none are quiz content.
+## Progress — 106 → 4 (96% closed)
+- Owner sheets cropped + wired: **ui (47)**, **misc (85)**, **people (128)**, **extra (45)**,
+  **build (117, installed)**. Croppers: `tools/crop-ui-sheet.py` + `tools/crop-emoji-grid.py`
+  (dual white/checkerboard bg key).
+- **Remaining 4** — 💀 skull · 🎲 dice · 🍳 fried-egg · 🐦 bird. These were on the owner's
+  clean sheet but the auto-crop merged/dropped them (adjacent-blob merge). 5 total occurrences
+  in the whole app; stay as emoji fallback. To finish: hand-crop from the sheet OR regen those
+  4 spaced further apart, then append `assets/db/extra/046-049.webp` + map.
+
+### (historical) earlier remainder before the extra sheet
 
 ## Remaining 33 (still emoji — need a clean index or cleaner regen)
 `node tools/audit-no-emoji.mjs` → `tools/qa-out/emoji-gaps.json` for the live list.
