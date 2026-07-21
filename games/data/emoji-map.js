@@ -126,6 +126,19 @@
     '🔤': 'ui/43', '🔡': 'ui/43', '🔠': 'ui/43', '🎵': 'ui/44', '🎶': 'ui/44', '🎮': 'ui/45',
     '🕹': 'ui/45', '📤': 'ui/46', '📥': 'ui/46', '🔗': 'ui/47',
 
+    // ── people pack (assets/db/people, owner sheet 3) — friendly avatars.
+    //    Decorative person chrome (not quiz content) → generic-avatar match is fine. ──
+    '👤': 'people/1', '👥': 'people/1', '🧑': 'people/1', '🙋': 'people/1', '👦': 'people/2',
+    '🧒': 'people/3', '👧': 'people/3', '👨': 'people/4', '👩': 'people/5', '👫': 'people/6',
+    '👪': 'people/6', '👨‍👩‍👧': 'people/6',
+
+    // ── misc pack (assets/db/misc, owner-generated sheet 4) ──
+    '⚔': 'misc/1', '🗡': 'misc/1', '🎒': 'misc/2', '🧮': 'misc/4', '🎨': 'misc/5', '🖼': 'misc/7',
+    '🔬': 'misc/8', '⛏': 'misc/10', '👾': 'misc/15', '🐋': 'misc/18', '🐳': 'misc/18', '🐱': 'misc/19',
+    '🐈': 'misc/19', '🍜': 'misc/21', '🛒': 'misc/24', '📦': 'misc/25', '🗂': 'misc/26', '📁': 'misc/26',
+    '🛸': 'misc/28', '🛂': 'misc/29', '💗': 'misc/30', '💖': 'misc/30', '💕': 'misc/30', '💝': 'misc/30',
+    '🚌': 'misc/31', '🚍': 'misc/31',
+
     // ── extra content emoji that DO have an existing DB sprite (accurate) ──
     '🐥': 'creatures/1', '🐤': 'creatures/1', '🐣': 'creatures/1', '🏐': 'objects/41', '⚾': 'objects/41',
     '🏀': 'objects/41', '🏈': 'objects/41', '🎾': 'objects/41', '💨': 'fx:dust', '💡': 'objects/47',
