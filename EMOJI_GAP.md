@@ -1,51 +1,34 @@
-# EMOJI_GAP — art still needed to reach literal ZERO emoji
+# EMOJI_GAP — art status (zero-emoji program)
 
-Status **2026-07-21**. The zero-emoji engine (`games/data/emoji-map.js` + `UISprites`
-resolver) now swaps **every mapped emoji** for a real DB sprite across all 16 pages —
-gate `node tools/audit-no-emoji.mjs` = `mapped-left=0` everywhere.
+Updated **2026-07-21**. Engine `games/data/emoji-map.js` + `UISprites` resolver swaps
+every mapped emoji → DB sprite across all 16 pages. Gate: `node tools/audit-no-emoji.mjs`
+= `mapped-left=0` everywhere.
 
-The **106 emoji below have NO sprite in `assets/db/`**, so they stay as emoji until you
-generate art. They are almost entirely **UI-control glyphs + scene/building + people** —
-none are quiz content (all animals/fruit/food/vehicles/veg quiz items already resolve to
-sprites). Auto-refresh this list any time: `node tools/audit-no-emoji.mjs` →
-`tools/qa-out/emoji-gaps.json`.
+## Progress
+- Owner-generated sheets cropped + wired: **ui (47)**, **misc (85)**, **people (128)**,
+  **build (117, installed)**. Cropper: `tools/crop-ui-sheet.py` (ui, labeled) +
+  `tools/crop-emoji-grid.py` (dense sheets, dual white/checkerboard bg key).
+- Gaps: **106 → 33** (69% closed). Every remaining glyph is low-frequency + decorative;
+  none are quiz content.
 
-Generate the sheets below (your usual **10×10 dense sheet, transparent PNG, thick kid
-sticker outline, flat pastel, centered per cell**). I crop with
-`tools/crop-monster-sheet.py`, add the cat to `assets/db/`, extend `emoji-map.js`, re-run
-the gate. Each sheet closes a whole group at once.
+## Remaining 33 (still emoji — need a clean index or cleaner regen)
+`node tools/audit-no-emoji.mjs` → `tools/qa-out/emoji-gaps.json` for the live list.
 
----
+**build scenes** (sheet installed at `assets/db/build`, but the sheet is 117 near-identical
+house/building variants → can't index one cell = one concept reliably from it):
+🏛 museum · 🏙 city · 🏖 beach · 🌉 bridge · 🏫 school · 🚧 construction · 🏗 crane ·
+♨ hot-spring · 🌑 new-moon · 🌌 night-sky · 🌬 wind · 🌧 rain
 
-## SHEET 1 — `ui` icon pack  (highest impact — kills ~40 of the gaps, incl. 🔒×128, ⏸×41, ▶×23)
-One cohesive flat-pastel UI icon set, rounded, soft shadow, kid-friendly. 40 cells:
+**people actions** (installed `assets/db/people`, generic avatars already wired; these are
+distinct poses hard to pinpoint in 128 look-alike cells):
+🤝 handshake · 🏃 runner · 🎓 graduate · 💪 muscle · ⚕ medical · 🤔 think · 🧠 brain
 
-`lock`🔒 · `pause`⏸ · `play`▶ · `prev`◀ · `next`⏭ · `rewind`⏮ · `stop` · `sound-on`🔊 · `mute`🔇 ·
-`vibrate`📳 · `settings-gear`⚙ · `home`🏠 · `map`🗺 · `refresh`🔄 · `replay`🔁 · `undo`↩ · `check`✅ ·
-`cross-close`❌✖ · `warning`⚠ · `alarm`🚨 · `sos`🆘 · `search`🔍 · `trash`🗑 · `edit`📝 · `write`✍ ·
-`up`⬆ · `down`⬇ · `left` · `right`➡ · `point-up`👆 · `star-flag-finish`🏁 · `traffic-light`🚦 ·
-`dot-green`🟢 · `dot-red`🔴 · `dot-yellow`🟡 · `timer`⏱ · `hourglass`⏳ · `calendar`📅 · `chart`📊 ·
-`target`🎯 · `question`❓ · `numbers`🔢 · `letters-abc`🔤🔡 · `music-note`🎵 · `game-pad`🎮 · `upload`📤 · `link`🔗
+**misc props** (in `assets/db/misc`, ambiguous cells):
+🎭 masks · 🃏 joker · 💀 skull · 🪝 hook · 🐾 paw · 🛢 oil-drum · ⛓ chain · 🔱 trident ·
+🎲 dice · 🐚 shell · 🍳 fried-egg · 🐦 bird · 🛺 rickshaw · 📍 pin
 
-## SHEET 2 — `build` buildings + scenes
-`home-house`🏠 · `school`🏫 · `museum`🏛 · `city`🏙 · `beach`🏖 · `bridge`🌉 · `construction`🚧 ·
-`crane-build`🏗 · `hot-spring`♨ · `night-sky`🌌 · `new-moon`🌑 · `wind`🌬 · `rain`🌧 · `sunrise-city`🌅
-
-## SHEET 3 — `people` friendly kid characters
-`person`👤 · `boy`👦 · `girl`🧒 · `man`👨 · `woman`👩 · `couple`👫 · `handshake`🤝 · `runner`🏃 ·
-`doctor-cross`⚕ · `graduate`🎓 · `brain-think`🧠🤔 · `muscle`💪
-
-## SHEET 4 — `misc` remaining props
-`sword`⚔ · `bag-backpack`🎒 · `dice`🎲 · `abacus`🧮 · `palette`🎨 · `theater-masks`🎭 · `picture`🖼 ·
-`microscope`🔬 · `hook`🪝 · `pickaxe`⛏ · `chain`⛓ · `trident`🔱 · `card-joker`🃏 · `skull`💀 ·
-`ghost-monster`👾 · `paw`🐾 · `shell`🐚 · `whale`🐋 · `cat`🐱 · `bird`🐦 · `ramen`🍜 · `fried-egg`🍳 ·
-`shopping-cart`🛒 · `box`📦 · `folder`🗂 · `oil-drum`🛢 · `ufo`🛸 · `passport`🛂 · `hearts`💗💖💕 ·
-`bus`🚌 · `auto-rickshaw`🛺 · `pin`📍
-
----
-
-### After you generate
-Drop the sheet(s) in the temp asset folder + tell me the grid. I crop → `assets/db/<cat>/` →
-extend `emoji-map.js` → `node tools/audit-no-emoji.mjs` should then report **0 gaps** and the
-app is literally emoji-free. Until then these ~106 glyphs remain as emoji (safe fallback, no
-blanks) and everything else is already sprite art.
+## To finish the last 33 → literal zero
+Best path = **regenerate these ~33 as ONE clean sheet**: transparent PNG (real alpha, NO
+gray checkerboard), NO text labels, one icon per cell, 6×6 grid, sticker style. Then I crop
+with `crop-emoji-grid.py` + map exactly → audit hits 0 gaps. The current dense multi-variant
+sheets are the blocker to precise indexing, not the engine.
