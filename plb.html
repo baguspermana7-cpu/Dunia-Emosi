@@ -373,6 +373,34 @@ to anon, authenticated;
     <p style="margin:14px 0 0;font-size:12px;color:#8fc7a6">Hanya URL + <b>anon key</b> yang dipakai di app — <b>service_role/secret TIDAK PERNAH</b> masuk repo/browser. SQL lengkap juga tersimpan di <code>supabase/dunia-cloud-v2.sql</code>.</p>
   </section>
 
+  <!-- ════════ ZERO-EMOJI: prompt gen art ikon ════════ -->
+  <section style="margin:26px 0;border:2px solid #7a4b2b;border-radius:18px;
+    padding:18px;background:#1a1410">
+    <h2 style="margin:0 0 4px;font-size:23px;color:#FFD59E">🎨 Prompt Gambar Ikon (biar game NOL emoji)</h2>
+    <p style="margin:6px 0 10px;font-size:13.5px;color:#e8cbb0">Semua emoji yang <b>sudah ada sprite</b> (hewan, buah, kendaraan, bintang/hati/koin, dll) sudah otomatis jadi art asli di semua game. Sisa <b>106 glyph</b> ini <b>ikon UI / gedung / orang</b> yang belum punya gambar. Generate 4 sheet di bawah, kasih aku grid-nya, aku crop + wire → game benar-benar bebas emoji.</p>
+    <p style="margin:0 0 10px;font-size:12.5px;color:#c9a889"><b>Format tiap sheet</b>: 1 gambar PNG transparan, grid <b>10×10</b> rapi, tiap sel 1 ikon di tengah, gaya <b>flat pastel clay, outline stiker tebal ramah anak</b>, konsisten satu set. (Sama seperti sheet aset kamu sebelumnya.)</p>
+
+    <div style="position:relative;margin:0 0 14px">
+      <button onclick="sbCopy(this,'emoji-prompt')" style="position:absolute;top:8px;right:8px;z-index:2;
+        background:#7a4b2b;color:#fff;border:0;border-radius:8px;padding:6px 12px;font-weight:800;cursor:pointer">📋 Copy Prompt</button>
+      <pre id="emoji-prompt" style="margin:0;overflow:auto;max-height:340px;background:#140d06;border:1px solid #52361f;border-radius:12px;
+        padding:14px;font-size:11.5px;line-height:1.55;color:#eeddcf;white-space:pre-wrap">Buatkan sprite sheet ikon game anak. Gaya: flat pastel claymorphism, outline stiker tebal, warna lembut, tiap ikon di TENGAH sel, latar TRANSPARAN (PNG), grid rapi 10×10. Satu set konsisten. Buat 4 sheet terpisah:
+
+SHEET 1 — "ui" (ikon kontrol, PALING penting):
+gembok, jeda(pause), main(play), sebelum, sesudah, mundur-cepat, stop, suara-nyala, bisu, getar, roda-gigi-setelan, rumah, peta, segarkan(refresh), ulangi, undo, centang, silang-tutup, peringatan, alarm, sos, cari, tempat-sampah, edit, tulis, panah-atas, panah-bawah, panah-kiri, panah-kanan, jari-tunjuk, bendera-finish, lampu-lalu-lintas, titik-hijau, titik-merah, titik-kuning, timer, jam-pasir, kalender, grafik, target, tanda-tanya, angka-123, huruf-ABC, not-musik, stik-game, unggah, tautan.
+
+SHEET 2 — "build" (gedung + pemandangan):
+rumah, sekolah, museum, kota, pantai, jembatan, konstruksi, derek-bangun, pemandian-air-panas, langit-malam, bulan-baru, angin, hujan, matahari-terbit.
+
+SHEET 3 — "people" (karakter anak ramah):
+orang, anak-laki, anak-perempuan, pria, wanita, sepasang, jabat-tangan, pelari, dokter, wisudawan, otak-berpikir, otot-kuat.
+
+SHEET 4 — "misc" (properti sisa):
+pedang, ransel, dadu, sempoa, palet-cat, topeng-teater, bingkai-foto, mikroskop, kail, beliung, rantai, trisula, kartu-joker, tengkorak, monster-alien, jejak-kaki, kerang, paus, kucing, burung, ramen, telur-ceplok, kereta-belanja, kotak, folder, drum-minyak, ufo, paspor, hati, bus, bajaj, pin-lokasi.</pre>
+    </div>
+    <p style="margin:0;font-size:12px;color:#b58a63">Daftar teknis lengkap (+ kode emoji) ada di file <code>EMOJI_GAP.md</code> di repo. Sesudah kamu generate: taruh sheet-nya di folder aset + kasih tahu aku susunan grid-nya.</p>
+  </section>
+
   <script>
   function sbCopy(btn,id){var el=document.getElementById(id);var t=el.innerText;
     (navigator.clipboard&&navigator.clipboard.writeText(t)||Promise.reject()).then(function(){
