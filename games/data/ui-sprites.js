@@ -124,7 +124,7 @@
   // emoji are left in place AND recorded to GAPS for the audit + owner art.
   // Fallback-safe: a 404 sprite restores the original emoji, never blank.
   // ══════════════════════════════════════════════════════════════════════
-  var EMO_RE = /([\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{1F1E6}-\u{1F1FF}\u{2300}-\u{23FF}\u{2900}-\u{297F}\u{25A0}-\u{25FF}]️?\u{20E3}?)/gu
+  var EMO_RE = /([\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{1F1E6}-\u{1F1FF}\u{2190}-\u{21FF}\u{2300}-\u{23FF}\u{2900}-\u{297F}\u{25A0}-\u{25FF}]️?\u{20E3}?)/gu
   var GAPS = {}                      // norm-char -> count of unmapped sightings
   var seenText = (typeof WeakSet !== 'undefined') ? new WeakSet() : null
   var SKIP_TAG = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1, INPUT: 1, SELECT: 1, OPTION: 1, CANVAS: 1, NOSCRIPT: 1, CODE: 1, PRE: 1 }
@@ -250,7 +250,13 @@
     _pack: PACK
   }
 
-  function boot () { applyAll(); deEmoji(document.body); startObserver() }
+  function boot () {
+    applyAll(); deEmoji(document.body); startObserver()
+    // safety re-sweeps: heavy game boots can inject/replace static DOM after the
+    // first pass; catch anything the observer's rAF missed during the boot storm.
+    setTimeout(function () { deEmoji(document.body) }, 600)
+    if (W.addEventListener) W.addEventListener('load', function () { deEmoji(document.body) })
+  }
   if (typeof document !== 'undefined') {
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot)
     else boot()
