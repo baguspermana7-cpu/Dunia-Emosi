@@ -133,6 +133,9 @@
     '🤝': 'extra/17', '🏃': 'extra/18', '💪': 'extra/20', '⚕': 'extra/21', '🤔': 'extra/22', '🎓': 'extra/23',
     '🧠': 'extra/25', '🎭': 'extra/26', '🃏': 'extra/28', '🪝': 'extra/30', '🐾': 'extra/31', '🐚': 'extra/34',
     '🛢': 'extra/37', '⛓': 'extra/38', '🔱': 'extra/39', '🛺': 'extra/41', '📍': 'extra/42',
+    '💀': 'extra/46', '☠': 'extra/46', '🎲': 'extra/47', '🍳': 'extra/48', '🐦': 'extra/49', '🕊': 'extra/49',
+    '🦐': 'creatures/55', '🦞': 'creatures/55',   // shrimp/lobster → crab sprite (nearest crustacean, decorative ambient only)
+    '🪼': 'creatures/56', '🦑': 'creatures/54', '🦭': 'creatures/53', '🏊': 'people/1',   // ambient sea decor: jellyfish(exact)/squid→octopus/seal→dolphin/diver→person
 
     // ── people pack (assets/db/people, owner sheet 3) — friendly avatars.
     //    Decorative person chrome (not quiz content) → generic-avatar match is fine. ──

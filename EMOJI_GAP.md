@@ -1,38 +1,22 @@
-# EMOJI_GAP — art status (zero-emoji program)
+# EMOJI_GAP — ✅ COMPLETE (0 gaps)
 
-Updated **2026-07-21**. Engine `games/data/emoji-map.js` + `UISprites` resolver swaps
-every mapped emoji → DB sprite across all 16 pages. Gate: `node tools/audit-no-emoji.mjs`
-= `mapped-left=0` everywhere.
+**2026-07-21 — literal ZERO emoji achieved.** `node tools/audit-no-emoji.mjs` =
+`mapped-left=0` AND `gap emoji: 0 distinct` across all 16 pages. app-sweep 16/16, 0 errors.
 
-## Progress — 106 → 4 (96% closed)
-- Owner sheets cropped + wired: **ui (47)**, **misc (85)**, **people (128)**, **extra (45)**,
-  **build (117, installed)**. Croppers: `tools/crop-ui-sheet.py` + `tools/crop-emoji-grid.py`
-  (dual white/checkerboard bg key).
-- **Remaining 4** — 💀 skull · 🎲 dice · 🍳 fried-egg · 🐦 bird. These were on the owner's
-  clean sheet but the auto-crop merged/dropped them (adjacent-blob merge). 5 total occurrences
-  in the whole app; stay as emoji fallback. To finish: hand-crop from the sheet OR regen those
-  4 spaced further apart, then append `assets/db/extra/046-049.webp` + map.
+## What shipped
+- Engine: `games/data/emoji-map.js` (`window.EmojiMap`) + `UISprites` resolver (sweep +
+  rAF MutationObserver + `pixiSprite` for canvas) swaps EVERY rendered emoji → DB sprite,
+  app-wide, fallback-safe. Loaded on all 16 pages.
+- Owner-generated sprite sheets, cropped + wired into `assets/db/`:
+  `ui` (47) · `misc` (85) · `people` (128) · `extra` (49, incl. the final skull/dice/egg/bird) ·
+  `build` (117, installed). Croppers: `tools/crop-ui-sheet.py`, `tools/crop-emoji-grid.py`
+  (dual white/checkerboard bg key), quadrant hand-crop for the last 4.
+- Gap journey: **106 → 61 → 33 → 4 → 0.**
+- A few decorative ambient/no-art emoji mapped to the nearest accurate DB sprite (🦐/🦞→crab,
+  🪼→jellyfish[exact], 🦑→octopus, 🦭→dolphin, 🏊→person); underwater diver source-changed
+  from the ZWJ `🏊‍♂️` to a single glyph so the resolver swaps it.
 
-### (historical) earlier remainder before the extra sheet
-
-## Remaining 33 (still emoji — need a clean index or cleaner regen)
-`node tools/audit-no-emoji.mjs` → `tools/qa-out/emoji-gaps.json` for the live list.
-
-**build scenes** (sheet installed at `assets/db/build`, but the sheet is 117 near-identical
-house/building variants → can't index one cell = one concept reliably from it):
-🏛 museum · 🏙 city · 🏖 beach · 🌉 bridge · 🏫 school · 🚧 construction · 🏗 crane ·
-♨ hot-spring · 🌑 new-moon · 🌌 night-sky · 🌬 wind · 🌧 rain
-
-**people actions** (installed `assets/db/people`, generic avatars already wired; these are
-distinct poses hard to pinpoint in 128 look-alike cells):
-🤝 handshake · 🏃 runner · 🎓 graduate · 💪 muscle · ⚕ medical · 🤔 think · 🧠 brain
-
-**misc props** (in `assets/db/misc`, ambiguous cells):
-🎭 masks · 🃏 joker · 💀 skull · 🪝 hook · 🐾 paw · 🛢 oil-drum · ⛓ chain · 🔱 trident ·
-🎲 dice · 🐚 shell · 🍳 fried-egg · 🐦 bird · 🛺 rickshaw · 📍 pin
-
-## To finish the last 33 → literal zero
-Best path = **regenerate these ~33 as ONE clean sheet**: transparent PNG (real alpha, NO
-gray checkerboard), NO text labels, one icon per cell, 6×6 grid, sticker style. Then I crop
-with `crop-emoji-grid.py` + map exactly → audit hits 0 gaps. The current dense multi-variant
-sheets are the blocker to precise indexing, not the engine.
+## Keeping it at zero
+`node tools/audit-no-emoji.mjs` is the permanent gate — run it in the ship suite. If a new
+emoji is introduced without a sprite, it shows as a gap; add the art to `assets/db/<cat>` and
+a `char → 'cat/NN'` line to `emoji-map.js`.
