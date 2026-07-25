@@ -456,10 +456,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .pvp-half{flex:1;min-height:0;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:clamp(6px,1.6vh,12px);padding:10px 14px;transition:opacity .22s,filter .22s}
 .pvp-half1{transform:rotate(180deg)}                 /* P2 top — upside-down = upright for the opposite player */
-.pvp-half .pvp-bg{position:absolute;inset:0;background:url(../assets/math/bg-battle.webp) center/cover no-repeat;opacity:.5}
-.pvp-half::after{content:'';position:absolute;inset:0;background:rgba(16,23,37,.28)}
+.pvp-half .pvp-bg{position:absolute;inset:0;background:url(../assets/math/bg-battle.webp) center/cover no-repeat}
+.pvp-half::after{content:'';position:absolute;inset:0;background:transparent;pointer-events:none}   /* no dark overlay; used only for the red hit-flash */
 .pvp-half > *{position:relative;z-index:1}
-.pvp-half.dim{opacity:.4;filter:saturate(.55) brightness(.9)}
+.pvp-half.dim{opacity:.78;filter:saturate(.85)}       /* waiting side: slightly muted, NOT darkened */
 .pvp-half.dim .choice{pointer-events:none}
 .pvp-half.flash::after{background:rgba(255,70,60,.4);transition:none}
 /* HUD (name + hearts) */
