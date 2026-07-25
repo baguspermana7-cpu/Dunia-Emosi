@@ -42,6 +42,8 @@
     '🐪': 'creatures/45', '🐫': 'creatures/45', '🦔': 'creatures/46', '🦌': 'creatures/47',
     '🐟': 'creatures/51', '🐠': 'creatures/51', '🐡': 'creatures/51', '🦈': 'creatures/52',
     '🐬': 'creatures/53', '🐙': 'creatures/54', '🦀': 'creatures/55', '🐸': 'creatures/58',
+    // v59.72 — g14 obstacle/pickup gap-fills so balapan-kereta has ZERO canvas emoji.
+    '⚠️': 'extra/7', '🛑': 'extra/7', '🚸': 'extra/7', '🚖': 'vehicles/4', '❤️': 'eco:heart', '❤': 'eco:heart',
     '🐊': 'creatures/59', '🐌': 'creatures/60', '🐔': 'creatures/1', '🐓': 'creatures/1',
     '🐣': 'creatures/1', '🐤': 'creatures/1', '🦆': 'creatures/2', '🦢': 'creatures/3',
     '🦃': 'creatures/4', '🦉': 'creatures/5', '🦅': 'creatures/6', '🦩': 'creatures/7',

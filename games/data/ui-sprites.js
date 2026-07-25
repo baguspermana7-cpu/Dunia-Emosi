@@ -245,7 +245,7 @@
   W.UISprites = {
     path: path, rawPath: rawPath, emoji: emoji, apply: apply, applyAll: applyAll,
     imgHTML: imgHTML, fxName: fxName, badgeName: badgeName, confName: confName,
-    deEmoji: deEmoji, emojiImgEl: emojiImgEl, gaps: gaps,
+    deEmoji: deEmoji, emojiImgEl: emojiImgEl, gaps: gaps, pixiSprite: pixiSprite,
     packs: function () { var k = []; for (var m in PACK) if (PACK.hasOwnProperty(m)) k.push(m); return k },
     _pack: PACK
   }
