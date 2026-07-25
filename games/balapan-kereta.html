@@ -3857,20 +3857,9 @@ function spawnObstacle() {
     const btn = document.getElementById(_id)
     if (btn) { btn.style.borderColor = '#ef4444'; btn.style.boxShadow = '0 0 12px rgba(239,68,68,0.6)'; setTimeout(() => { btn.style.borderColor = ''; btn.style.boxShadow = '' }, 600) }
   }
-  if (lane === S.lane && L.fx) {
-    try {
-      const bang = new PIXI.Text({ text: '❗', style: { fontSize: Math.round(OBS_SIZE * 0.6), fontFamily: 'Arial' } })
-      bang.anchor.set(0.5, 1)
-      bang.x = c.x - OBS_SIZE * 1.6; bang.y = laneYs[lane] - OBS_SIZE * 0.6
-      bang.alpha = 0.95
-      L.fx.addChild(bang)
-      let _bt = 0
-      const _bi = setInterval(() => {
-        _bt += 90; bang.alpha = (Math.floor(_bt / 180) % 2) ? 0.25 : 0.95
-        if (_bt > 900) { clearInterval(_bi); try { L.fx.removeChild(bang); bang.destroy() } catch (_) {} }
-      }, 90)
-    } catch (_) {}
-  }
+  // v59.71 — the on-rail "❗" chip was a CANVAS emoji (DOM emoji-audit can't see it) and
+  // it floated ABOVE the topmost rail (bottom-anchored, y = laneY − offset). Owner: zero
+  // emoji + it sat off the rail. Removed — the HUD lane-button red-flash above already warns.
 }
 
 // v54.31 I17: per-level obstacle approach multiplier. Computed once.
@@ -4353,20 +4342,9 @@ function g14StationCinema(stationName, sub){
 // B4: Cab window driver wave for character trains. Adds a Pixi Text "👋" hovering
 // next to player on idle (every 4s blink) and on P1 finish.
 function g14ShowCabDriverWave(){
-  if (!S.trainCfg || !S.trainCfg.isCharacter) return
-  if (!L.player) return
-  const txt = new PIXI.Text({ text: '👋', style: { fontSize: 26 } })
-  txt.anchor.set(0.5)
-  txt.x = -28; txt.y = -34
-  L.player.addChild(txt)
-  let t = 0
-  const tickHandle = (ticker) => {
-    t += ticker.deltaTime
-    if (t > 30) { try { L.player.removeChild(txt); app.ticker.remove(tickHandle) } catch(_){} return }
-    txt.rotation = Math.sin(t * 0.4) * 0.3
-    txt.alpha = 1 - t / 30
-  }
-  app.ticker.add(tickHandle)
+  // v59.71 — was a canvas "👋" emoji (DOM emoji-audit blind to it). Owner mandate: zero
+  // emoji anywhere in-game. Neutered to a no-op; the cab-wave was decorative only.
+  return
 }
 
 // B5: Conductor announcer for KM markers — "ting-tong" chime 50m before next station.
