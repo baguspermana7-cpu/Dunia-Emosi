@@ -450,19 +450,47 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .pvp-diff button{flex:1;border:2px solid #e6d3a8;background:rgba(255,255,255,.55);border-radius:12px;padding:9px 4px;font-weight:800;font-size:13px;color:#5b4a33;cursor:pointer}
 .pvp-diff button.on{background:linear-gradient(180deg,#ffe08a,#ffcf3f);border-color:#e0a52a;color:#5b3d0a;box-shadow:0 3px 0 #d99a1f}
 #scr-pvp{overflow:hidden}
-.pvp-side{position:absolute;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:14px;z-index:2}
-.pvp-top{top:calc(env(safe-area-inset-top,0) + 8px);flex-direction:column}
-.pvp-top .pvp-hero{transform:scaleX(-1)}
-.pvp-bot{top:calc(env(safe-area-inset-top,0) + 74px);flex-direction:column}
-.pvp-hero{width:96px;height:96px;object-fit:contain;filter:drop-shadow(0 8px 10px rgba(0,0,0,.3));transition:transform .12s}
-.pvp-hero.hurt{animation:pvpHurt .5s}
-.pvp-hero.atk{transform:translateY(-14px) scale(1.08)}
-@keyframes pvpHurt{0%,100%{transform:none;filter:drop-shadow(0 8px 10px rgba(0,0,0,.3))}25%{transform:translateX(-8px) rotate(-6deg);filter:brightness(1.6) drop-shadow(0 0 12px #ff5a5a)}75%{transform:translateX(8px) rotate(6deg)}}
-.pvp-hchip{display:flex;align-items:center;gap:8px;background:rgba(20,14,30,.55);border-radius:100px;padding:4px 12px}
-.pvp-nm{color:#fff;font-weight:900;font-size:14px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pvp-hearts{display:flex;gap:2px}.pvp-hearts img{width:18px;height:18px}
-.pvp-turn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3;background:rgba(20,14,30,.6);color:#ffe08a;font-weight:900;font-size:15px;padding:6px 18px;border-radius:100px;pointer-events:none}
-.pvp-qpanel{position:absolute;left:0;right:0;bottom:0;z-index:4}
+/* ── corner HP cards (Pokémon-arena style: diagonal, never overlap) ── */
+.pvp-card{position:absolute;top:calc(env(safe-area-inset-top,0) + 10px);z-index:6;display:flex;flex-direction:column;gap:4px;
+  background:linear-gradient(180deg,#fff9ee,#ffe9c2);border:2.5px solid #e0a52a;border-radius:16px;padding:7px 12px;
+  box-shadow:0 5px 0 rgba(120,80,10,.25);max-width:44vw;transition:opacity .22s,transform .22s,box-shadow .22s;transform-origin:top}
+.pvp-card0{left:calc(env(safe-area-inset-left,0) + 10px);border-left:7px solid #2f8f4e}
+.pvp-card1{right:calc(env(safe-area-inset-right,0) + 10px);border-right:7px solid #d0453e;align-items:flex-end}
+.pvp-card .pvp-nm{font-weight:900;font-size:14px;max-width:40vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pvp-card0 .pvp-nm{color:#236b3a}.pvp-card1 .pvp-nm{color:#a5332c}
+.pvp-hearts{display:flex;gap:3px}.pvp-hearts img{width:20px;height:20px}
+.pvp-card.dim{opacity:.5;transform:scale(.9)}
+.pvp-card0.on{box-shadow:0 5px 0 rgba(120,80,10,.25),0 0 0 3px rgba(70,220,120,.9),0 0 16px rgba(60,210,110,.55)}
+.pvp-card1.on{box-shadow:0 5px 0 rgba(120,80,10,.25),0 0 0 3px rgba(255,120,110,.9),0 0 16px rgba(255,90,80,.55)}
+/* ── center VS chip + turn pill ── */
+.pvp-vs{position:absolute;top:calc(env(safe-area-inset-top,0) + 13px);left:50%;transform:translateX(-50%);z-index:6;
+  background:linear-gradient(180deg,#ffe08a,#ffcf3f);color:#5b3d0a;font-weight:900;font-size:14px;letter-spacing:2px;
+  padding:4px 14px;border-radius:100px;border:2px solid #fff;box-shadow:0 4px 0 #d99a1f}
+.pvp-turn{position:absolute;top:calc(env(safe-area-inset-top,0) + 46px);left:50%;transform:translateX(-50%);z-index:6;
+  background:rgba(20,14,30,.6);color:#ffe08a;font-weight:800;font-size:13px;padding:4px 14px;border-radius:100px;pointer-events:none;
+  max-width:56vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}
+/* ── fighters ON the field (wrapper = position+bob, img = facing+atk/hurt) ── */
+.pvp-fighter{position:absolute;z-index:3;will-change:transform;pointer-events:none;transition:opacity .22s,filter .22s}
+.pvp-f0{left:2%;bottom:19%;animation:heroBob 2.6s ease-in-out infinite}
+.pvp-f1{right:2%;bottom:40%;animation:heroBob 2.6s ease-in-out infinite .5s}
+.pvp-fighter.dim{opacity:.55;filter:grayscale(.45) brightness(.92)}
+.pvp-hero{height:clamp(118px,29vh,215px);width:auto;object-fit:contain;transition:transform .18s ease-out;
+  filter:drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff) drop-shadow(0 14px 12px rgba(0,0,0,.35))}
+.pvp-hero1{height:clamp(102px,25vh,188px);transform:scaleX(-1)}
+.pvp-hero0.atk{transform:translate(52px,-12px) scale(1.07)}
+.pvp-hero1.atk{transform:scaleX(-1) translate(52px,-12px) scale(1.07)}
+.pvp-hero0.hurt{animation:pvpHurt .5s}
+.pvp-hero1.hurt{animation:pvpHurtM .5s}
+@keyframes pvpHurt{0%,100%{transform:none}25%{transform:translateX(-8px) rotate(-6deg)}75%{transform:translateX(8px) rotate(6deg)}}
+@keyframes pvpHurtM{0%,100%{transform:scaleX(-1)}25%{transform:scaleX(-1) translateX(-8px) rotate(-6deg)}75%{transform:scaleX(-1) translateX(8px) rotate(6deg)}}
+/* ── attack orb projectile + damage number ── */
+.pvp-orb{position:absolute;z-index:5;width:26px;height:26px;border-radius:50%;pointer-events:none;
+  transition:left .32s cubic-bezier(.4,0,.9,.5),top .32s cubic-bezier(.4,0,.9,.5)}
+.pvp-orb.p0{background:radial-gradient(circle at 35% 35%,#eaffef,#34d058 60%,#1f8f3e);box-shadow:0 0 14px 4px rgba(60,220,110,.8)}
+.pvp-orb.p1{background:radial-gradient(circle at 35% 35%,#fff0ee,#ff5a5a 60%,#c0322c);box-shadow:0 0 14px 4px rgba(255,90,80,.8)}
+.pvp-dmg{position:absolute;z-index:7;font-weight:900;font-size:30px;color:#fff;pointer-events:none;
+  -webkit-text-stroke:2.5px #5b2b0a;text-shadow:0 3px 0 rgba(0,0,0,.3);animation:dmgFly 1s ease-out forwards}
+.pvp-qpanel{position:absolute;left:0;right:0;bottom:0;z-index:4;padding-bottom:calc(env(safe-area-inset-bottom,0) + 6px)}
 .pvp-handoff,.pvp-win{position:absolute;inset:0;z-index:8;display:none;align-items:center;justify-content:center;background:rgba(12,8,20,.9);backdrop-filter:blur(3px)}
 .pvp-handoff.show,.pvp-win.show{display:flex}
 .pvp-handoff-card,.pvp-win-card{background:linear-gradient(180deg,#fff7e6,#ffe9bd);border:3px solid #e0a52a;border-radius:22px;padding:24px 28px;text-align:center;max-width:320px;box-shadow:0 12px 0 rgba(0,0,0,.2)}
@@ -471,7 +499,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .pvp-win-txt{font-size:24px;font-weight:900;color:#5b3d0a;margin-bottom:16px}
 .pvp-win-btns{display:flex;gap:10px;justify-content:center}
 .pvp-handoff-card button,.pvp-win-btns button{font-size:16px;padding:11px 20px}
-@media(orientation:landscape){.pvp-hero{width:74px;height:74px}.pvp-bot{top:calc(env(safe-area-inset-top,0) + 60px)}.pvp-qpanel{max-width:520px;left:50%;transform:translateX(-50%)}}
+@media(orientation:landscape){
+  .pvp-f0{left:5%;bottom:16%}.pvp-f1{right:5%;bottom:34%}
+  .pvp-hero{height:clamp(110px,42vh,210px)}.pvp-hero1{height:clamp(96px,36vh,182px)}
+  .pvp-qpanel{max-width:560px;left:50%;transform:translateX(-50%)}
+}
 </style>
 </head>
 <body>
@@ -618,15 +650,14 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   <img class="bgimg" src="../assets/math/bg-battle.webp" alt="">
   <div class="bg-scrim"></div>
   <button class="icon-btn" style="position:absolute;top:calc(env(safe-area-inset-top,0) + 8px);left:10px;z-index:6" onclick="MP.quitPvp()">←</button>
-  <div class="pvp-side pvp-top">
-    <div class="pvp-hchip"><span class="pvp-nm" id="pvp-name-1">Pemain 2</span><span class="pvp-hearts" id="pvp-hearts-1"></span></div>
-    <img class="pvp-hero" id="pvp-hero-1" src="../assets/math/hero-mathhero.webp" alt="">
-  </div>
+  <!-- corner HP cards (diagonal) -->
+  <div class="pvp-card pvp-card0" id="pvp-card-0"><span class="pvp-nm" id="pvp-name-0">Pemain 1</span><span class="pvp-hearts" id="pvp-hearts-0"></span></div>
+  <div class="pvp-card pvp-card1" id="pvp-card-1"><span class="pvp-nm" id="pvp-name-1">Pemain 2</span><span class="pvp-hearts" id="pvp-hearts-1"></span></div>
+  <div class="pvp-vs">VS</div>
   <div class="pvp-turn" id="pvp-turn">Giliran Pemain 1</div>
-  <div class="pvp-side pvp-bot">
-    <img class="pvp-hero" id="pvp-hero-0" src="../assets/math/hero-mathhero.webp" alt="">
-    <div class="pvp-hchip"><span class="pvp-nm" id="pvp-name-0">Pemain 1</span><span class="pvp-hearts" id="pvp-hearts-0"></span></div>
-  </div>
+  <!-- fighters on the field -->
+  <div class="pvp-fighter pvp-f0"><img class="pvp-hero pvp-hero0" id="pvp-hero-0" src="../assets/math/hero-mathhero.webp" alt=""></div>
+  <div class="pvp-fighter pvp-f1"><img class="pvp-hero pvp-hero1" id="pvp-hero-1" src="../assets/math/hero-mathhero.webp" alt=""></div>
   <div class="qpanel pvp-qpanel">
     <div class="qcard" id="pvp-qcard">…</div>
     <div class="choices" id="pvp-choices"></div>
@@ -1461,7 +1492,30 @@ function pvpBeginTurn(){
   byId('pvp-handoff-txt').innerHTML='Giliran <b>'+escapeHtml(p.name)+'</b><br><span style="font-size:14px;font-weight:700;color:#8a6a2a">Jangan diintip lawan ya 🙈</span>';
   byId('pvp-handoff').classList.add('show');
 }
-function pvpReady(){ if(!pvp) return; sfx('click'); byId('pvp-handoff').classList.remove('show'); pvpRenderQ(); }
+function pvpSpotlight(){
+  if(!pvp) return; var t=pvp.turn;
+  var c0=byId('pvp-card-0'),c1=byId('pvp-card-1'),f0=document.querySelector('.pvp-f0'),f1=document.querySelector('.pvp-f1');
+  if(c0){ c0.classList.toggle('on',t===0); c0.classList.toggle('dim',t!==0); }
+  if(c1){ c1.classList.toggle('on',t===1); c1.classList.toggle('dim',t!==1); }
+  if(f0) f0.classList.toggle('dim',t!==0);
+  if(f1) f1.classList.toggle('dim',t!==1);
+}
+function pvpHit(me,opp){
+  var scr=byId('scr-pvp'); if(!scr) return;
+  var a=byId('pvp-hero-'+me), b=byId('pvp-hero-'+opp); if(!a||!b) return;
+  var R=scr.getBoundingClientRect(), ra=a.getBoundingClientRect(), rb=b.getBoundingClientRect();
+  var ax=ra.left-R.left+ra.width/2, ay=ra.top-R.top+ra.height*0.4;
+  var bx=rb.left-R.left+rb.width/2, by=rb.top-R.top+rb.height*0.4;
+  var orb=document.createElement('div'); orb.className='pvp-orb p'+me;
+  orb.style.left=(ax-13)+'px'; orb.style.top=(ay-13)+'px'; scr.appendChild(orb);
+  void orb.offsetWidth; orb.style.left=(bx-13)+'px'; orb.style.top=(by-13)+'px';
+  setTimeout(function(){ try{orb.remove();}catch(e){}
+    var d=document.createElement('div'); d.className='pvp-dmg'; d.textContent='-1';
+    d.style.left=(bx-14)+'px'; d.style.top=(by-18)+'px'; scr.appendChild(d);
+    setTimeout(function(){ try{d.remove();}catch(e){} },1000);
+  },320);
+}
+function pvpReady(){ if(!pvp) return; sfx('click'); byId('pvp-handoff').classList.remove('show'); pvpSpotlight(); pvpRenderQ(); }
 function pvpRenderQ(){
   if(!pvp||pvp.over) return;
   var d=PVP_DIFF[pvpDiff]||PVP_DIFF.medium;
@@ -1481,8 +1535,9 @@ function pvpAnswer(picked,btn){
     btn.classList.add('right'); sfx('correct');
     var mh=byId('pvp-hero-'+me), oh=byId('pvp-hero-'+opp);
     if(mh){ mh.classList.remove('atk'); void mh.offsetWidth; mh.classList.add('atk'); setTimeout(function(){mh.classList.remove('atk');},260); }
+    try{ pvpHit(me,opp); }catch(e){}
     pvp.players[opp].hp=Math.max(0,pvp.players[opp].hp-1); pvpRenderHearts(opp);
-    if(oh){ oh.classList.remove('hurt'); void oh.offsetWidth; oh.classList.add('hurt'); }
+    if(oh){ oh.classList.remove('hurt'); void oh.offsetWidth; setTimeout(function(){oh.classList.add('hurt');},300); }
     if(pvp.players[opp].hp<=0){ setTimeout(function(){ pvpWin(me); },650); return; }
   }else{
     btn.classList.add('wrongc'); sfx('wrong');
