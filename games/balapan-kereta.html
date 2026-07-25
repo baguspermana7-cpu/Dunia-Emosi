@@ -6159,10 +6159,14 @@ function applyRdeScaling() {
     + '#g14-settings-btn{background:linear-gradient(160deg,#cfe4f8,#bcd8f2)!important;border:0!important;color:#1e3a5f!important;box-shadow:0 4px 0 #8db8de,inset 0 2px 5px rgba(255,255,255,.85)!important}'
     + '#g14-koleksi-btn{background:linear-gradient(160deg,#ffe1bd,#ffd2a3)!important;border:0!important;color:#8a4a12!important;box-shadow:0 4px 0 #eab27a,inset 0 2px 5px rgba(255,255,255,.85)!important}'
     + '#g14-mode-toggle{border:0!important;box-shadow:0 4px 0 rgba(205,185,142,.6),inset 0 2px 5px rgba(255,255,255,.8)!important;border-radius:14px!important}'
-    // lane + boost controls → puffy clay (keep their hue family)
-    + '#btn-up,#btn-dn{border:0!important;color:#1e3a5f!important;background:linear-gradient(160deg,#e6f1fb,#bcd8f2)!important;'
+    // lane + boost controls → puffy clay. UP (blue) ≠ DOWN (mint green) so the two
+    // lane buttons are visually distinct (owner: atas & bawah jangan warna sama).
+    + '#btn-up{border:0!important;color:#1e3a5f!important;background:linear-gradient(160deg,#e6f1fb,#bcd8f2)!important;'
     +   'box-shadow:0 7px 0 #8db8de,inset 0 3px 8px rgba(255,255,255,.9),inset 0 -5px 10px rgba(90,140,190,.14)!important}'
-    + '#btn-up:active,#btn-dn:active{transform:translateY(3px) scale(.98)!important;box-shadow:0 3px 0 #8db8de,inset 0 3px 8px rgba(255,255,255,.9)!important}'
+    + '#btn-dn{border:0!important;color:#1f5b42!important;background:linear-gradient(160deg,#e4f7ec,#bfe8d1)!important;'
+    +   'box-shadow:0 7px 0 #86cca6,inset 0 3px 8px rgba(255,255,255,.9),inset 0 -5px 10px rgba(60,150,110,.14)!important}'
+    + '#btn-up:active{transform:translateY(3px) scale(.98)!important;box-shadow:0 3px 0 #8db8de,inset 0 3px 8px rgba(255,255,255,.9)!important}'
+    + '#btn-dn:active{transform:translateY(3px) scale(.98)!important;box-shadow:0 3px 0 #86cca6,inset 0 3px 8px rgba(255,255,255,.9)!important}'
     + '#btn-boost{border:0!important;color:#8a4a12!important;background:linear-gradient(160deg,#ffe1bd,#ffcf99)!important;'
     +   'box-shadow:0 7px 0 #eab27a,inset 0 3px 8px rgba(255,255,255,.85),inset 0 -5px 10px rgba(210,140,80,.16)!important}'
     + '#btn-boost:active{transform:translateY(3px) scale(.98)!important;box-shadow:0 3px 0 #eab27a,inset 0 3px 8px rgba(255,255,255,.85)!important}';
