@@ -785,7 +785,9 @@ function showCandyQuiz(candy) {
         S.combo = 0
         if (window.SFXEngine && SFXEngine.wrong) { SFXEngine.wrong() } else { sfxWrong() }
         bg.tint = 0xef4444
-        const wrongText = new PIXI.Text({ text: '❌ = ' + correct, style: { fontSize: _rz ? _rz.fontScale(16) : 16, fontWeight: '700', fill: 0xef4444, fontFamily: 'Fredoka One' } })
+        // v59.72 — was a canvas "❌" emoji inline; the red tint + wrong SFX already signal
+        // the miss, so show the correct answer in plain (zero-emoji) Indonesian instead.
+        const wrongText = new PIXI.Text({ text: 'Jawaban: ' + correct, style: { fontSize: _rz ? _rz.fontScale(16) : 16, fontWeight: '700', fill: 0xef4444, fontFamily: 'Fredoka One' } })
         wrongText.anchor.set(0.5); wrongText.x = candy.x; wrongText.y = candy.y - 50
         fxLayer.addChild(wrongText)
         S.particles.push({ g: wrongText, vx: 0, vy: -1, grav: 0, life: 1, decay: 0.02 })

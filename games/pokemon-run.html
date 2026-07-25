@@ -1194,7 +1194,7 @@ function drawObstGfx(type){
     g.poly([-35,0, 0,-18, 35,0]).fill({color:0x1E293B,alpha:0.75})
     g.poly([-22,-4, 0,-20, 22,-4]).fill({color:0x94A3B8,alpha:0.5})
     g.circle(28,-2,5).fill({color:0xFBBF24,alpha:0.6})  // eye
-    const ht=new PIXI.Text({text:'🕊',style:{fontSize:16}})
+    const ht=(window.UISprites&&UISprites.pixiSprite&&UISprites.pixiSprite('🕊',16,PIXI,{center:true}))||new PIXI.Text({text:'🕊',style:{fontSize:16}})
     ht.anchor.set(0.5); ht.x=0; ht.y=-8; g.addChild(ht)
   }
   return g
@@ -1264,7 +1264,7 @@ function spawnQuizGate(){
   g.roundRect(-30,-98,60,92,8).fill({color:0x1E1B4B,alpha:0.95})
   g.circle(0,-74,24).fill({color:0xfbbf24,alpha:0.95})
   g.circle(0,-74,24).stroke({color:0xffffff,width:2,alpha:0.4})
-  const t=new PIXI.Text({text:'❓',style:{fontSize:22}})
+  const t=(window.UISprites&&UISprites.pixiSprite&&UISprites.pixiSprite('❓',22,PIXI,{center:true}))||new PIXI.Text({text:'❓',style:{fontSize:22}})
   t.anchor.set(0.5);t.x=0;t.y=-74;g.addChild(t)
   const ring=new PIXI.Graphics()
   ring.circle(0,-74,32).stroke({color:0xfbbf24,width:2,alpha:0.5})

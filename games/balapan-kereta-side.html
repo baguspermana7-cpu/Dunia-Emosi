@@ -649,12 +649,9 @@ function buildBackground() {
     g.rect(-5, 2, 4, 8).fill(0x424242)  // leg L
     g.rect(1, 2, 4, 8).fill(0x424242)   // leg R
     npc.addChild(g)
-    // Wave hand (Pixi text)
-    const hand = new PIXI.Text({ text: '👋', style: { fontSize: 14 } })
-    hand.anchor.set(0.5, 0.5)
-    hand.x = -10; hand.y = -8
-    npc.addChild(hand)
-    npc._hand = hand
+    // v59.72 — dropped the decorative "👋" canvas emoji (unmapped; zero-emoji mandate).
+    // The wave animation below is null-guarded, so no hand simply = no wave.
+    npc._hand = null
     npc._wavePhase = Math.random() * Math.PI * 2
     npc._baseX = npc.x
     npcLayer.addChild(npc)
@@ -1566,7 +1563,9 @@ function spawnBirds() {
   const count = 3 + Math.floor(Math.random() * 3)
   const baseY = skyH * (0.18 + Math.random() * 0.30)
   for (let i = 0; i < count; i++) {
-    const t = new PIXI.Text({ text: i % 2 === 0 ? '🐦' : 'V', style: { fontSize: 16, fill: 0x424242 } })
+    // v59.72 — near birds as DB sprite (🐦→extra/49), far birds keep the 'V' silhouette.
+    const t = (i % 2 === 0 && window.UISprites && UISprites.pixiSprite && UISprites.pixiSprite('🐦', 16, PIXI, { center: true }))
+      || new PIXI.Text({ text: i % 2 === 0 ? '🐦' : 'V', style: { fontSize: 16, fill: 0x424242 } })
     t.anchor.set(0.5, 0.5)
     t.x = W + 30 + i * 28
     t.y = baseY + i * 12
