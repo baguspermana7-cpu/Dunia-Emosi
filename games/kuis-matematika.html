@@ -475,6 +475,21 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .pvp-ans{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:min(94%,430px)}
 .pvp-ans .choice{font-size:clamp(15px,4.2vw,20px);padding:11px 6px;margin:0}
 .pvp-wait{font-weight:900;color:#e7d8b8;font-size:15px;text-align:center;text-shadow:0 2px 4px rgba(0,0,0,.4)}
+/* mini battle scene inside each half: your hero vs opponent + hearts */
+.pvp-scene{display:flex;align-items:flex-end;justify-content:center;gap:clamp(10px,5vw,46px)}
+.pvp-fc{display:flex;flex-direction:column;align-items:center;gap:3px}
+.pvp-scene .pvp-hero{height:clamp(62px,12.5vh,116px);width:auto;object-fit:contain;transition:transform .18s ease-out;
+  filter:drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff) drop-shadow(0 8px 8px rgba(0,0,0,.35))}
+.pvp-scene .pvp-hero.foe{transform:scaleX(-1)}
+.pvp-scene .pvp-nm{font-size:12px;font-weight:900;background:rgba(255,249,238,.92);padding:1px 9px;border-radius:100px;max-width:30vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pvp-fc[data-side="0"] .pvp-nm{color:#236b3a}.pvp-fc[data-side="1"] .pvp-nm{color:#a5332c}
+.pvp-vsx{align-self:center;font-weight:900;color:#fff;font-size:13px;letter-spacing:1px;text-shadow:0 2px 4px rgba(0,0,0,.6)}
+.pvp-hero.atk{transform:translate(22px,-7px) scale(1.09)}
+.pvp-hero.foe.atk{transform:scaleX(-1) translate(22px,-7px) scale(1.09)}
+.pvp-hero.hurt{animation:pvpHurt .5s}
+.pvp-hero.foe.hurt{animation:pvpHurtM .5s}
+@keyframes pvpHurt{0%,100%{transform:none}25%{transform:translateX(-7px) rotate(-6deg)}75%{transform:translateX(7px) rotate(6deg)}}
+@keyframes pvpHurtM{0%,100%{transform:scaleX(-1)}25%{transform:scaleX(-1) translateX(-7px) rotate(-6deg)}75%{transform:scaleX(-1) translateX(7px) rotate(6deg)}}
 /* center divider strip */
 .pvp-mid{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:10px;padding:4px 8px;
   background:linear-gradient(90deg,#2f8f4e,#e0a52a,#d0453e);color:#fff;font-weight:900;letter-spacing:1px;font-size:13px;
@@ -490,10 +505,13 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .pvp-win-btns{display:flex;gap:10px;justify-content:center}
 .pvp-handoff-card button,.pvp-win-btns button{font-size:16px;padding:11px 20px}
 @media(orientation:landscape){
-  .pvp-half{gap:6px;padding:6px 14px}
-  .pvp-q{font-size:clamp(18px,4vh,26px);padding:7px 16px}
-  .pvp-ans{width:min(70%,520px);gap:7px}.pvp-ans .choice{padding:8px 6px}
-  .pvp-hud{padding:3px 10px}
+  .pvp-half{gap:4px;padding:4px 14px}
+  .pvp-scene{gap:clamp(8px,4vw,40px)}
+  .pvp-scene .pvp-hero{height:clamp(48px,15vh,92px)}
+  .pvp-scene .pvp-nm{font-size:11px}
+  .pvp-q{font-size:clamp(15px,3.4vh,22px);padding:5px 16px;line-height:1.15}
+  .pvp-ans{grid-template-columns:repeat(4,1fr);width:min(96%,760px);gap:6px}
+  .pvp-ans .choice{padding:8px 4px;font-size:clamp(14px,2.6vh,18px)}
 }
 </style>
 </head>
@@ -638,20 +656,29 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
 <!-- ═════ DUEL PvP — ARENA ═════ -->
 <section id="scr-pvp" class="scr">
-  <!-- TOP HALF = Player 2 (rotated 180° → upright for the player sitting opposite) -->
+  <!-- TOP HALF = Player 2 (rotated 180° → upright for the player sitting opposite).
+       Mini-battle: P2's hero (near) vs P1 (foe). -->
   <div class="pvp-half pvp-half1" id="pvp-half-1">
     <div class="pvp-bg"></div>
-    <div class="pvp-hud"><span class="pvp-nm" id="pvp-name-1">Pemain 2</span><span class="pvp-hearts" id="pvp-hearts-1"></span></div>
+    <div class="pvp-scene">
+      <div class="pvp-fc" data-side="1"><span class="pvp-hearts" data-p="1"></span><img class="pvp-hero" data-p="1" src="../assets/math/hero-mathhero.webp" alt=""><span class="pvp-nm" data-name="1">Pemain 2</span></div>
+      <span class="pvp-vsx">VS</span>
+      <div class="pvp-fc" data-side="0"><span class="pvp-hearts" data-p="0"></span><img class="pvp-hero foe" data-p="0" src="../assets/math/hero-mathhero.webp" alt=""><span class="pvp-nm" data-name="0">Pemain 1</span></div>
+    </div>
     <div class="pvp-q" id="pvp-qcard-1">…</div>
     <div class="pvp-ans choices" id="pvp-choices-1"></div>
     <div class="pvp-wait" id="pvp-wait-1">Menunggu giliran…</div>
   </div>
   <!-- CENTER divider -->
   <div class="pvp-mid">VS <span id="pvp-turn">Giliran Pemain 1</span></div>
-  <!-- BOTTOM HALF = Player 1 -->
+  <!-- BOTTOM HALF = Player 1. Mini-battle: P1's hero (near) vs P2 (foe). -->
   <div class="pvp-half pvp-half0" id="pvp-half-0">
     <div class="pvp-bg"></div>
-    <div class="pvp-hud"><span class="pvp-nm" id="pvp-name-0">Pemain 1</span><span class="pvp-hearts" id="pvp-hearts-0"></span></div>
+    <div class="pvp-scene">
+      <div class="pvp-fc" data-side="0"><span class="pvp-hearts" data-p="0"></span><img class="pvp-hero" data-p="0" src="../assets/math/hero-mathhero.webp" alt=""><span class="pvp-nm" data-name="0">Pemain 1</span></div>
+      <span class="pvp-vsx">VS</span>
+      <div class="pvp-fc" data-side="1"><span class="pvp-hearts" data-p="1"></span><img class="pvp-hero foe" data-p="1" src="../assets/math/hero-mathhero.webp" alt=""><span class="pvp-nm" data-name="1">Pemain 2</span></div>
+    </div>
     <div class="pvp-q" id="pvp-qcard-0">…</div>
     <div class="pvp-ans choices" id="pvp-choices-0"></div>
     <div class="pvp-wait" id="pvp-wait-0">Menunggu giliran…</div>
@@ -1464,14 +1491,21 @@ function openPvP(){ sfx('click'); pvpRenderHeroPicks(); show('pvp-setup'); }
 function pvpSetDiff(d,btn){ pvpDiff=d; sfx('click');
   Array.prototype.forEach.call(byId('pvp-diff').children,function(b){ b.classList.toggle('on', b===btn); }); }
 function pvpHeroArt(op){ try{ if(window.MATH_HEROES){ var h=MATH_HEROES.byOp(op); if(h&&h.art) return h.art; } }catch(e){} return '../assets/math/hero-mathhero.webp'; }
-function pvpRenderHearts(i){ var el=byId('pvp-hearts-'+i); if(!el||!pvp) return; el.innerHTML='';
-  var max=pvp.players[i].max; for(var k=0;k<max;k++){ var im=document.createElement('img'); im.src=IC+(k<pvp.players[i].hp?'icon-heart.webp':'icon-heart-empty.webp'); el.appendChild(im); } }
+function pvpRenderHearts(i){ if(!pvp) return;
+  var max=pvp.players[i].max, hp=pvp.players[i].hp, html='';
+  for(var k=0;k<max;k++){ html+='<img src="'+IC+(k<hp?'icon-heart.webp':'icon-heart-empty.webp')+'">'; }
+  var els=document.querySelectorAll('.pvp-hearts[data-p="'+i+'"]'); for(var j=0;j<els.length;j++) els[j].innerHTML=html; }
 function pvpStart(){
   var n0=(byId('pvp-in-0')&&byId('pvp-in-0').value||'Pemain 1').trim().slice(0,10)||'Pemain 1';
   var n1=(byId('pvp-in-1')&&byId('pvp-in-1').value||'Pemain 2').trim().slice(0,10)||'Pemain 2';
   var HP=5;
   pvp={ players:[{name:n0,hp:HP,max:HP,op:'+'},{name:n1,hp:HP,max:HP,op:'-'}], turn:0, over:false, answered:false, q:null };
-  byId('pvp-name-0').textContent=n0; byId('pvp-name-1').textContent=n1;
+  var _hl=pvpHeroList(); if(pvpHero[0]===pvpHero[1]) pvpHero[1]=(pvpHero[0]+1)%_hl.length;   // never share a hero
+  var art=[(_hl[pvpHero[0]]||_hl[0]).art,(_hl[pvpHero[1]]||_hl[0]).art], nm=[n0,n1];
+  [0,1].forEach(function(p){
+    var hs=document.querySelectorAll('.pvp-hero[data-p="'+p+'"]'); for(var a=0;a<hs.length;a++){ hs[a].src=art[p]; }
+    var ns=document.querySelectorAll('.pvp-nm[data-name="'+p+'"]'); for(var b=0;b<ns.length;b++){ ns[b].textContent=nm[p]; }
+  });
   pvpRenderHearts(0); pvpRenderHearts(1);
   byId('pvp-win').classList.remove('show');
   show('pvp'); try{ bgmPlay(); }catch(e){}
@@ -1516,6 +1550,11 @@ function pvpAnswer(picked,btn){
   Array.prototype.forEach.call(byId('pvp-choices-'+me).children,function(b){ b.disabled=true; });
   if(correct){
     btn.classList.add('right'); sfx('correct');
+    // your hero (in the active half) lunges → opponent's heroes (both halves) flinch
+    var myHero=document.querySelector('#pvp-half-'+me+' .pvp-hero[data-p="'+me+'"]');
+    if(myHero){ myHero.classList.remove('atk'); void myHero.offsetWidth; myHero.classList.add('atk'); setTimeout(function(){myHero.classList.remove('atk');},280); }
+    var foes=document.querySelectorAll('.pvp-hero[data-p="'+opp+'"]');
+    setTimeout(function(){ Array.prototype.forEach.call(foes,function(f){ f.classList.remove('hurt'); void f.offsetWidth; f.classList.add('hurt'); setTimeout(function(){f.classList.remove('hurt');},520); }); },170);
     pvp.players[opp].hp=Math.max(0,pvp.players[opp].hp-1); pvpRenderHearts(opp);
     var oh=byId('pvp-half-'+opp);
     if(oh){ oh.classList.remove('flash'); void oh.offsetWidth; oh.classList.add('flash'); setTimeout(function(){oh.classList.remove('flash');},260); }

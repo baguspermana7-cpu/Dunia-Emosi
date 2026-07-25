@@ -23,7 +23,7 @@ for(let t=0;t<140&&!won;t++){
     return {
       win:document.getElementById('pvp-win').classList.contains('show'),
       active: c0>=2?0:(c1>=2?1:-1),
-      heartsHtml:(document.getElementById('pvp-hearts-0').innerHTML.length+document.getElementById('pvp-hearts-1').innerHTML.length)
+      heartsHtml:Array.prototype.reduce.call(document.querySelectorAll('.pvp-hearts'),(n,e)=>n+e.innerHTML.length,0)
     };
   });
   if(st.win){won=true;break;}
