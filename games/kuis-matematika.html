@@ -452,7 +452,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* ═══ SPLIT-SCREEN duel: top half = Player 2 (rotated 180° for the player sitting
    across the table), bottom half = Player 1. Turn-based: only the active half is
    interactive + bright; the waiting half is dimmed. ═══ */
-#scr-pvp{overflow:hidden;display:flex;flex-direction:column;background:#101725}
+#scr-pvp{overflow:hidden;background:#101725}
+#scr-pvp.active{display:flex;flex-direction:column}   /* flex layout ONLY when active — else .scr keeps it hidden (no empty pvp screen on load) */
 .pvp-half{flex:1;min-height:0;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:clamp(6px,1.6vh,12px);padding:10px 14px;transition:opacity .22s,filter .22s}
 .pvp-half1{transform:rotate(180deg)}                 /* P2 top — upside-down = upright for the opposite player */
