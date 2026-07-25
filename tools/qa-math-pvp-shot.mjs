@@ -15,9 +15,7 @@ for(const vp of [{w:390,h:840,tag:'portrait'},{w:840,h:390,tag:'landscape'}]){
   await pg.evaluate(()=>{ try{ MP.openPvP&&MP.openPvP(); }catch(e){} })
   await new Promise(r=>setTimeout(r,300))
   await pg.evaluate(()=>{ try{ MP.pvpStart&&MP.pvpStart(); }catch(e){} })
-  await new Promise(r=>setTimeout(r,4200))          // let 3-2-1 intro finish → handoff
-  await pg.evaluate(()=>{ try{ MP.pvpReady&&MP.pvpReady(); }catch(e){} })  // dismiss handoff → arena+question
-  await new Promise(r=>setTimeout(r,900))
+  await new Promise(r=>setTimeout(r,4600))          // 3-2-1 intro → active half auto-renders (split-screen, no handoff)
   const shot=path.join(out,`math-pvp-${vp.tag}.png`); await pg.screenshot({path:shot})
   console.log(`${vp.tag}: ${shot}  errors=${errs.length}${errs.length?' :: '+errs.slice(0,3).join(' | '):''}`)
   await pg.close()

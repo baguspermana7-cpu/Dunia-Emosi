@@ -12,20 +12,24 @@ const active=()=>pg.evaluate(()=>{const a=document.querySelector('.scr.active');
 await pg.evaluate(()=>MP.openPvP());
 const setupOk=(await active())==='scr-pvp-setup';
 await pg.evaluate(()=>{document.getElementById('pvp-in-0').value='Adi';document.getElementById('pvp-in-1').value='Bela';MP.pvpSetDiff('easy',document.querySelector('#pvp-diff button[data-d=easy]'));MP.pvpStart();});
-// wait for arena + first handoff (after 3-2-1 intro ~2.5s)
-await pg.waitForFunction(()=>document.getElementById('pvp-handoff')&&document.getElementById('pvp-handoff').classList.contains('show'),{timeout:8000}).catch(()=>{});
+// split-screen turn-based: after the 3-2-1 intro the active half auto-shows its
+// question + answers (no handoff). Answer in whichever half has visible choices.
+await new Promise(r=>setTimeout(r,4200));
 let won=false, turns=0, sawChoices=false, heartsSeen=false;
 for(let t=0;t<140&&!won;t++){
-  const st=await pg.evaluate(()=>({
-    scr:(document.querySelector('.scr.active')||{}).id,
-    win:document.getElementById('pvp-win').classList.contains('show'),
-    handoff:document.getElementById('pvp-handoff').classList.contains('show'),
-    choices:document.querySelectorAll('#pvp-choices button').length,
-    heartsHtml:(document.getElementById('pvp-hearts-0').innerHTML.length+document.getElementById('pvp-hearts-1').innerHTML.length)
-  }));
+  const st=await pg.evaluate(()=>{
+    const c0=document.querySelectorAll('#pvp-choices-0 button').length;
+    const c1=document.querySelectorAll('#pvp-choices-1 button').length;
+    return {
+      win:document.getElementById('pvp-win').classList.contains('show'),
+      active: c0>=2?0:(c1>=2?1:-1),
+      heartsHtml:(document.getElementById('pvp-hearts-0').innerHTML.length+document.getElementById('pvp-hearts-1').innerHTML.length)
+    };
+  });
   if(st.win){won=true;break;}
-  if(st.handoff){ await pg.evaluate(()=>MP.pvpReady()); await new Promise(r=>setTimeout(r,120)); continue; }
-  if(st.choices>=2){ sawChoices=true; if(st.heartsHtml>0)heartsSeen=true; turns++; await pg.evaluate(()=>{const b=document.querySelector('#pvp-choices button');if(b)b.click();}); await new Promise(r=>setTimeout(r,1500)); continue; }
+  if(st.active>=0){ sawChoices=true; if(st.heartsHtml>0)heartsSeen=true; turns++;
+    await pg.evaluate((a)=>{const b=document.querySelector('#pvp-choices-'+a+' button');if(b)b.click();},st.active);
+    await new Promise(r=>setTimeout(r,1500)); continue; }
   await new Promise(r=>setTimeout(r,200));
 }
 console.log('setup:',setupOk,'| sawChoices:',sawChoices,'| hearts:',heartsSeen,'| turns:',turns,'| WON:',won);
