@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#141033">
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
+<title>Film Anak — Dunia Emosi</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  :root{--ink:#efe9ff}
+  html,body{width:100%;min-height:100%;min-height:100dvh;font-family:'Fredoka One','Baloo 2',system-ui,sans-serif;color:var(--ink);
+    background:radial-gradient(120% 90% at 50% -10%,#3a2a78 0,#221a52 38%,#141033 72%,#0c0922 100%);overscroll-behavior-y:none}
+  body{padding:calc(env(safe-area-inset-top,0px) + 12px) calc(env(safe-area-inset-right,0px) + 14px) calc(env(safe-area-inset-bottom,0px) + 28px) calc(env(safe-area-inset-left,0px) + 14px)}
+  /* ── header ── */
+  .top{display:flex;align-items:center;gap:12px;max-width:1120px;margin:0 auto 6px}
+  .home{display:flex;align-items:center;gap:6px;min-height:44px;padding:8px 14px 8px 10px;border:0;cursor:pointer;flex-shrink:0;
+    font-family:inherit;font-size:15px;font-weight:800;color:#3a2b12;text-decoration:none;
+    background:linear-gradient(180deg,#fff7de,#ffe9a8);border-radius:16px;
+    box-shadow:0 4px 0 #e3b74e,0 8px 16px rgba(0,0,0,.28),inset 0 2px 5px rgba(255,255,255,.85)}
+  .home:active{transform:translateY(3px);box-shadow:0 1px 0 #e3b74e,inset 0 2px 6px rgba(0,0,0,.12)}
+  .home svg{width:18px;height:18px}
+  .htitle{flex:1;min-width:0}
+  .htitle h1{font-size:clamp(1.5rem,5.5vw,2.4rem);letter-spacing:-.02em;line-height:1;text-shadow:0 3px 0 rgba(0,0,0,.28)}
+  .htitle p{margin-top:4px;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.82rem;color:#c3b8ff;opacity:.9}
+  /* ── group ── */
+  .group{max-width:1120px;margin:20px auto 0}
+  .glabel{display:flex;align-items:center;gap:10px;margin:0 4px 12px;font-size:1.05rem;font-weight:800;color:#ffe08a}
+  .glabel::after{content:"";flex:1;height:3px;border-radius:3px;background:linear-gradient(90deg,rgba(255,224,138,.55),transparent)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:14px}
+  @media(min-width:560px){.grid{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}}
+  /* ── card ── */
+  .card{position:relative;display:block;border:0;cursor:pointer;text-align:left;overflow:hidden;border-radius:20px;
+    background:#1a1440;color:inherit;text-decoration:none;font-family:inherit;padding:0;
+    box-shadow:0 8px 0 #0d0a28,0 16px 30px rgba(0,0,0,.4),inset 0 2px 3px rgba(255,255,255,.12);
+    transition:transform .12s ease,box-shadow .12s ease}
+  .card:active{transform:translateY(4px);box-shadow:0 3px 0 #0d0a28,0 8px 16px rgba(0,0,0,.4),inset 0 2px 3px rgba(255,255,255,.12)}
+  @media(hover:hover){.card:hover{transform:translateY(-4px);box-shadow:0 12px 0 #0d0a28,0 22px 40px rgba(0,0,0,.5),inset 0 2px 3px rgba(255,255,255,.18)}}
+  .card img{display:block;width:100%;aspect-ratio:270/152;object-fit:cover;background:#0a081e}
+  .card .nm{display:flex;align-items:center;min-height:52px;padding:11px 14px;font-size:.98rem;font-weight:800;line-height:1.15}
+  .card .play{position:absolute;top:9px;right:9px;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:rgba(10,8,30,.62);backdrop-filter:blur(3px);box-shadow:0 2px 8px rgba(0,0,0,.4)}
+  .card .play svg{width:16px;height:16px;margin-left:2px}
+  footer{max-width:1120px;margin:26px auto 0;padding:0 4px;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.74rem;color:#8b80c4;opacity:.75;text-align:center}
+</style>
+</head>
+<body>
+  <div class="top">
+    <a class="home" href="../index.html" aria-label="Kembali ke beranda">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#3a2b12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      <span>Beranda</span>
+    </a>
+    <div class="htitle">
+      <h1>Film Anak</h1>
+      <p>Main game dari film & kartun kesukaan</p>
+    </div>
+  </div>
+
+  <div class="group" id="grp-batwheels">
+    <div class="glabel">Batwheels</div>
+    <div class="grid" id="grid-batwheels"></div>
+  </div>
+
+  <div class="group" id="grp-thomas">
+    <div class="glabel">Thomas &amp; Friends</div>
+    <div class="grid" id="grid-thomas"></div>
+  </div>
+
+  <footer>Semua game dimainkan offline dari perangkatmu.</footer>
+
+<script>
+  var PLAY_SVG = '<svg viewBox="0 0 24 24" fill="#ffe08a"><path d="M8 5v14l11-7z"/></svg>';
+  var THOMAS = [
+    { slug:'thomas-rail-muddle', name:'Thomas: Rail Muddle' }
+  ];
+  var BATWHEELS = [
+    { slug:'batwheels-gotham-getaway', name:'Gotham Getaway' },
+    { slug:'batwheels-by-you',         name:'Batwheels by You' },
+    { slug:'batwheels-breakdown',      name:'Batwheels Breakdown' },
+    { slug:'batwheels-playroom',       name:'Batwheels Playroom' },
+    { slug:'batwheels-match-up',       name:'Batwheels Match Up' },
+    { slug:'batwheels-pranking-prank', name:'Pranking Prank' },
+    { slug:'batwheels-toy-trouble',    name:'Toy Trouble' },
+    { slug:'batwheels-jigsaw',         name:'Batwheels Jigsaw' }
+  ];
+  function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function render(id, list){
+    var host = document.getElementById(id), html = '';
+    for (var i=0;i<list.length;i++){
+      var g = list[i];
+      html += '<a class="card" href="film-play.html?g=' + encodeURIComponent(g.slug) + '" title="' + esc(g.name) + '">'
+            +   '<img loading="lazy" decoding="async" src="../assets/film-thumbs/' + g.slug + '.webp" alt="' + esc(g.name) + '">'
+            +   '<span class="play">' + PLAY_SVG + '</span>'
+            +   '<span class="nm">' + esc(g.name) + '</span>'
+            + '</a>';
+    }
+    host.innerHTML = html;
+  }
+  render('grid-thomas', THOMAS);
+  render('grid-batwheels', BATWHEELS);
+</script>
+<script src="sw-reload.js?v=55.69-20260628a"></script>
+</body>
+</html>

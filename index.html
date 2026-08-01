@@ -951,6 +951,38 @@
         </div>
       </div><!-- end zone kereta -->
 
+      <!-- ══════ ZONE 9: FILM ANAK — full width (offline show games: Thomas + Batwheels) ══════ -->
+      <div class="wmap-zone wmap-zone--film" style="grid-column:1/-1;">
+        <div class="wmap-zone-banner" onclick="playClick();location.href='games/film-anak.html'" style="cursor:pointer;">
+          <span class="wmap-zone-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 9h19M7 5l-2 4M12 5l-2 4M17 5l-2 4" stroke-width="1.6"/></svg></span>
+          <span class="wmap-zone-name">Film Anak</span>
+        </div>
+        <div class="wmap-nodes" style="flex-wrap:wrap;justify-content:center;gap:12px 14px;">
+          <!-- Batwheels + Thomas offline games live inside the Film Anak hub -->
+          <div class="wmap-node" id="gtile-film-batwheels" onclick="playClick();location.href='games/film-play.html?g=batwheels-gotham-getaway'" title="Batwheels">
+            <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#1e1b4b,#4338ca);padding:0;overflow:hidden;">
+              <img loading="lazy" decoding="async" class="wn-icon" src="assets/film-thumbs/batwheels-gotham-getaway.webp" alt="Batwheels" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">
+            </div>
+            <div class="wmap-node-name">Batwheels</div>
+            <div class="wmap-node-stars"></div>
+          </div>
+          <div class="wmap-node" id="gtile-film-thomas" onclick="playClick();location.href='games/film-play.html?g=thomas-rail-muddle'" title="Thomas &amp; Friends">
+            <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#0b2335,#2675af);padding:0;overflow:hidden;">
+              <img loading="lazy" decoding="async" class="wn-icon" src="assets/film-thumbs/thomas-rail-muddle.webp" alt="Thomas" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">
+            </div>
+            <div class="wmap-node-name">Thomas &amp; Friends</div>
+            <div class="wmap-node-stars"></div>
+          </div>
+          <div class="wmap-node" id="gtile-film-all" onclick="playClick();location.href='games/film-anak.html'" title="Lihat semua Film Anak">
+            <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#7c2d12,#f59e0b);">
+              <span class="wn-icon" aria-hidden="true" style="color:#fff;"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M10 8.5l4.5 2.5L10 13.5z" fill="currentColor" stroke="none"/></svg></span>
+            </div>
+            <div class="wmap-node-name">Lihat Semua</div>
+            <div class="wmap-node-stars"></div>
+          </div>
+        </div>
+      </div><!-- end zone film -->
+
     </div><!-- end .wmap-canvas -->
 
 

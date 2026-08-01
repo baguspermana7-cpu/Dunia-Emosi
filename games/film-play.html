@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#000000">
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+<title>Film Anak — Main</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:100%;height:100%;height:100dvh;background:#000;overflow:hidden;-webkit-tap-highlight-color:transparent;overscroll-behavior:none;font-family:'Fredoka One','Baloo 2',system-ui,sans-serif}
+  /* Full-bleed game frame — no border, no chrome, no crop (game scales itself) */
+  #frame{position:fixed;inset:0;width:100vw;height:100dvh;border:0;display:block;background:#000}
+  /* Floating back — compact translucent icon-circle at bottom-left (games rarely put UI there;
+     small + see-through so it never blocks a game's own corner controls). Auto-dims when idle. */
+  #back{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);left:calc(env(safe-area-inset-left,0px) + 12px);z-index:10;
+    display:flex;align-items:center;justify-content:center;width:46px;height:46px;padding:0;border:0;cursor:pointer;
+    color:#fff;background:rgba(12,10,32,.5);backdrop-filter:blur(4px);border-radius:50%;
+    box-shadow:0 3px 10px rgba(0,0,0,.45),inset 0 0 0 1.5px rgba(255,255,255,.28);
+    opacity:.9;transition:transform .08s ease,opacity .25s ease}
+  #back:active{transform:scale(.92)}
+  #back svg{width:22px;height:22px;flex-shrink:0}
+  #back span{display:none}
+  /* auto-dim a few seconds into play so it doesn't distract; any pointer wakes it */
+  body.dim #back{opacity:.32}
+  #err{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;color:#fff;text-align:center}
+  #err.show{display:flex}
+  #err a{color:#ffe08a;font-weight:800}
+</style>
+</head>
+<body>
+  <button id="back" onclick="goBack()" aria-label="Kembali ke daftar game">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    <span>Kembali</span>
+  </button>
+  <iframe id="frame" title="Film Anak game" allow="autoplay; fullscreen; gamepad; accelerometer; gyroscope" allowfullscreen></iframe>
+  <div id="err">
+    <div style="font-size:20px;font-weight:900">Game tidak ditemukan</div>
+    <a href="film-anak.html">← Kembali ke daftar Film Anak</a>
+  </div>
+<script>
+  // Whitelist — only these slugs may be framed (no arbitrary iframe injection).
+  var GAMES = {
+    'batwheels-by-you':1,'batwheels-breakdown':1,'batwheels-gotham-getaway':1,
+    'batwheels-playroom':1,'batwheels-match-up':1,'batwheels-pranking-prank':1,
+    'batwheels-jigsaw':1,'batwheels-toy-trouble':1,'thomas-rail-muddle':1
+  };
+  function qs(k){ try{ return new URLSearchParams(location.search).get(k); }catch(e){ return null; } }
+  var slug = (qs('g')||'').replace(/[^a-z0-9-]/g,'');
+  if (GAMES[slug]) {
+    document.getElementById('frame').src = 'film/' + slug + '/index.html';
+    document.title = 'Film Anak — ' + slug;
+  } else {
+    document.getElementById('frame').style.display = 'none';
+    document.getElementById('err').classList.add('show');
+  }
+  function goBack(){ try{ if (history.length>1) history.back(); else location.href='film-anak.html'; }catch(e){ location.href='film-anak.html'; } }
+  // dim the back button after 4s idle; any pointer near top-left re-brightens it
+  var dimT;
+  function wake(){ document.body.classList.remove('dim'); clearTimeout(dimT); dimT=setTimeout(function(){document.body.classList.add('dim')},4000); }
+  window.addEventListener('pointerdown', wake, {passive:true});
+  wake();
+  // Android hardware-back / browser-back stays inside the app (no accidental exit)
+</script>
+<script src="sw-reload.js?v=55.69-20260628a"></script>
+</body>
+</html>
