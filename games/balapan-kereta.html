@@ -220,7 +220,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 <body>
 <canvas id="pixi-canvas"></canvas>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v59.1</div>
-<script src="data/emoji-map.js?v=59.72-20260725a"></script><script src="data/ui-sprites.js?v=59.72-20260725a"></script><!-- zero-emoji engine -->
+<script src="data/emoji-map.js?v=59.74-20260725d"></script><script src="data/ui-sprites.js?v=59.74-20260725d"></script><!-- zero-emoji engine -->
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="data/train-world.js?v=55.89"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
@@ -4381,7 +4381,7 @@ function g14ShowShareButton(){
     btn = document.createElement('button')
     btn.id = 'g14-share-fab'
     btn.className = 'g14-share-fab'
-    btn.textContent = '📸 Tunjukkan Mama'
+    btn.textContent = 'Tunjukkan Mama'   // v59.74 — dropped the unmapped 📸 (zero-emoji)
     btn.onclick = g14HandleShare
     document.body.appendChild(btn)
   }
@@ -4674,7 +4674,7 @@ function startRace() {
       tut.innerHTML = '<div style="max-width:340px;background:linear-gradient(180deg,#fefdf7,#fef3d4);border:4px solid #fde68a;border-radius:24px;padding:20px 22px;text-align:center;font-family:\'Fredoka One\',cursive;color:#5a3a08">'
         + '<div style="font-size:20px;margin-bottom:12px">🚂 Cara Bermain</div>'
         + '<div style="font-size:15px;line-height:2.1;text-align:left">'
-        + '<div>🔵 <b>↑ ↓</b> pindah jalur kereta</div>'
+        + '<div><b>↑ ↓</b> pindah jalur kereta</div>'
         + '<div>⚠️ Hindari rintangan di rel</div>'
         + '<div>🪙 Ambil koin & ⚡ petir</div>'
         + '<div>🔥 Penuh ⚡? Tekan <b>BOOST!</b> + jawab soal</div>'

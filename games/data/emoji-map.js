@@ -44,6 +44,7 @@
     '🐬': 'creatures/53', '🐙': 'creatures/54', '🦀': 'creatures/55', '🐸': 'creatures/58',
     // v59.72 — g14 obstacle/pickup gap-fills so balapan-kereta has ZERO canvas emoji.
     '⚠️': 'extra/7', '🛑': 'extra/7', '🚸': 'extra/7', '🚖': 'vehicles/4', '❤️': 'eco:heart', '❤': 'eco:heart',
+    '💔': 'eco:heart-empty',   // v59.74 — lose-a-life flash (g14) renders as the empty-heart sprite
     '🐊': 'creatures/59', '🐌': 'creatures/60', '🐔': 'creatures/1', '🐓': 'creatures/1',
     '🐣': 'creatures/1', '🐤': 'creatures/1', '🦆': 'creatures/2', '🦢': 'creatures/3',
     '🦃': 'creatures/4', '🦉': 'creatures/5', '🦅': 'creatures/6', '🦩': 'creatures/7',
