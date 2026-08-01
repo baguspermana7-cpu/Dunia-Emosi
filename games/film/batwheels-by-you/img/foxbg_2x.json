@@ -1,0 +1,39 @@
+{
+  "frames": {
+    "bg": {
+      "frame": {
+        "x": 6,
+        "y": 6,
+        "w": 1782,
+        "h": 1522
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 1782,
+        "h": 1522
+      },
+      "sourceSize": {
+        "w": 1782,
+        "h": 1522
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "https://github.com/odrick/gulp-free-tex-packer",
+    "version": "0.5.2",
+    "image": "foxbg_2x.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 2048,
+      "h": 2048
+    },
+    "scale": 1
+  }
+}

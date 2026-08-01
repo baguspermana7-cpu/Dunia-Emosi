@@ -1,0 +1,148 @@
+[
+
+  {
+    "grouped": false,
+    "boolean": null,
+    "style": {
+      "fill": {
+        "color": "#e82a1a",
+        "stroke": false,
+        "enabled": true
+      },
+      "stroke": {
+        "color": "#000000",
+        "width": 5
+      }
+    },
+    "camera": {
+      "zoom": 1
+    }
+  },
+  {
+    "grouped": false,
+    "boolean": "1",
+    "style": {
+      "fill": {
+        "color": "#fbef00",
+        "stroke": false,
+        "enabled": true
+      },
+      "stroke": {
+        "color": "#000000",
+        "width": 5
+      }
+    },
+    "camera": {
+      "zoom": 1
+    }
+  },
+  {
+    "grouped": false,
+    "boolean": "1",
+    "style": {
+      "fill": {
+        "color": "#000000",
+        "stroke": false,
+        "enabled": true
+      },
+      "stroke": {
+        "color": "#000000",
+        "width": 5
+      }
+    },
+    "camera": {
+      "zoom": 1
+    }
+  },
+  {
+    "grouped": false,
+    "boolean": "1",
+    "style": {
+      "fill": {
+        "color": "#805b4a",
+        "stroke": false,
+        "enabled": true
+      },
+      "stroke": {
+        "color": "#000000",
+        "width": 5
+      }
+    },
+    "camera": {
+      "zoom": 1
+    }
+  },
+  {
+    "grouped": false,
+    "boolean": "1",
+    "style": {
+      "fill": {
+        "color": "#1e1516",
+        "stroke": false,
+        "enabled": true
+      },
+      "stroke": {
+        "color": "#none",
+        "width": 5
+      }
+    },
+    "camera": {
+      "zoom": 1
+    }
+  },
+  {
+    "grouped": false,
+    "boolean": null,
+    "style": {
+      "fill": {
+        "color": "#207031",
+        "stroke": false,
+        "enabled": true
+      },
+      "stroke": {
+        "color": "#199933",
+        "width": 5
+      }
+    },
+    "camera": {
+      "zoom": 1
+    }
+  },
+  {
+    "grouped": false,
+    "boolean": null,
+    "style": {
+      "fill": {
+        "color": "#613927",
+        "stroke": false,
+        "enabled": true
+      },
+      "stroke": {
+        "color": "#613927",
+        "width": 5
+      }
+    },
+    "camera": {
+      "zoom": 1
+    }
+  },
+  {
+    "grouped": true,
+    "groupcount": 2,
+    "boolean": null,
+    "style": {
+      "fill": {
+        "color": "#ffffff",
+        "stroke": false,
+        "enabled": true
+      },
+      "stroke": {
+        "color": "#e7e7e7",
+        "width": 5
+      }
+    },
+    "camera": {
+      "zoom": 1
+    }
+  }
+]

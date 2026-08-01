@@ -1,0 +1,551 @@
+{
+  "generatedAt": "2026-08-01T15:54:49.276Z",
+  "entry": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/index.html",
+  "root": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/",
+  "output": "/home/baguspermana7/Documents/temporary/online game to be offline/batwheels/games/batwheels-pranking-prank",
+  "totals": {
+    "files": 84,
+    "bytes": 13085349,
+    "missing": 26,
+    "external": 7,
+    "rejected": 0
+  },
+  "fetched": [
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/scripts/jobworker.js",
+      "file": "scripts/jobworker.js",
+      "bytes": 3127
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/index.html",
+      "file": "index.html",
+      "bytes": 1427
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/scripts/dispatchworker.js",
+      "file": "scripts/dispatchworker.js",
+      "bytes": 3788
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/sw.js",
+      "file": "sw.js",
+      "bytes": 6095
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/data.json",
+      "file": "data.json",
+      "bytes": 318116
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/scripts/c3runtime.js",
+      "file": "scripts/c3runtime.js",
+      "bytes": 1539961
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/appmanifest.json",
+      "file": "appmanifest.json",
+      "bytes": 776
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/scripts/register-sw.js",
+      "file": "scripts/register-sw.js",
+      "bytes": 303
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/icons/icon-256.png",
+      "file": "icons/icon-256.png",
+      "bytes": 22711
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/shared-2-sheet1.png",
+      "file": "images/shared-2-sheet1.png",
+      "bytes": 53246
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/scripts/supportcheck.js",
+      "file": "scripts/supportcheck.js",
+      "bytes": 2432
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/icons/icon-512.png",
+      "file": "icons/icon-512.png",
+      "bytes": 67078
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/scripts/main.js",
+      "file": "scripts/main.js",
+      "bytes": 127421
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/shared-1-sheet4.png",
+      "file": "images/shared-1-sheet4.png",
+      "bytes": 65692
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/offline.json",
+      "file": "offline.json",
+      "bytes": 0
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/icons/icon-128.png",
+      "file": "icons/icon-128.png",
+      "bytes": 6349
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/scripts/offlineclient.js",
+      "file": "scripts/offlineclient.js",
+      "bytes": 603
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/style.css",
+      "file": "style.css",
+      "bytes": 1169
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/shared-2-sheet2.png",
+      "file": "images/shared-2-sheet2.png",
+      "bytes": 4583
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/shared-0-sheet4.png",
+      "file": "images/shared-0-sheet4.png",
+      "bytes": 23515
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/shared-0-sheet8.png",
+      "file": "images/shared-0-sheet8.png",
+      "bytes": 384
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/bkgpreprogressbar-sheet0.png",
+      "file": "images/bkgpreprogressbar-sheet0.png",
+      "bytes": 90
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/shared-0-sheet2.png",
+      "file": "images/shared-0-sheet2.png",
+      "bytes": 68908
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/shared-0-sheet3.png",
+      "file": "images/shared-0-sheet3.png",
+      "bytes": 75496
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/shared-1-sheet2.png",
+      "file": "images/shared-1-sheet2.png",
+      "bytes": 121289
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/shared-1-sheet0.png",
+      "file": "images/shared-1-sheet0.png",
+      "bytes": 273136
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/shared-1-sheet1.png",
+      "file": "images/shared-1-sheet1.png",
+      "bytes": 1363048
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/bkgpreprogressbar2-sheet0.png",
+      "file": "images/bkgpreprogressbar2-sheet0.png",
+      "bytes": 89
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/shared-2-sheet3.png",
+      "file": "images/shared-2-sheet3.png",
+      "bytes": 137
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/shared-1-sheet3.png",
+      "file": "images/shared-1-sheet3.png",
+      "bytes": 164641
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/shared-0-sheet5.png",
+      "file": "images/shared-0-sheet5.png",
+      "bytes": 20942
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/tiletunnelsideb-sheet0.png",
+      "file": "images/tiletunnelsideb-sheet0.png",
+      "bytes": 14717
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/shared-0-sheet10.png",
+      "file": "images/shared-0-sheet10.png",
+      "bytes": 33284
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/tiletunnelborder-sheet0.png",
+      "file": "images/tiletunnelborder-sheet0.png",
+      "bytes": 12573
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/shared-0-sheet6.png",
+      "file": "images/shared-0-sheet6.png",
+      "bytes": 8409
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/tilestreetborder-sheet0.png",
+      "file": "images/tilestreetborder-sheet0.png",
+      "bytes": 4906
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/tiletunnelside-sheet0.png",
+      "file": "images/tiletunnelside-sheet0.png",
+      "bytes": 18402
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/shared-1-sheet5.png",
+      "file": "images/shared-1-sheet5.png",
+      "bytes": 4113
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/shared-0-sheet0.png",
+      "file": "images/shared-0-sheet0.png",
+      "bytes": 738692
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/tiletunnelstreet-sheet0.png",
+      "file": "images/tiletunnelstreet-sheet0.png",
+      "bytes": 322862
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/tilecitystreet-sheet0.png",
+      "file": "images/tilecitystreet-sheet0.png",
+      "bytes": 315735
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/shared-1-sheet6.png",
+      "file": "images/shared-1-sheet6.png",
+      "bytes": 191
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/tiledocksborder-sheet0.png",
+      "file": "images/tiledocksborder-sheet0.png",
+      "bytes": 10310
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/sprmoonreflect-sheet2.png",
+      "file": "images/sprmoonreflect-sheet2.png",
+      "bytes": 2888
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/sprmoonreflect-sheet0.png",
+      "file": "images/sprmoonreflect-sheet0.png",
+      "bytes": 10986
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/sprsmokescreen-sheet3.png",
+      "file": "images/sprsmokescreen-sheet3.png",
+      "bytes": 97900
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/shared-0-sheet1.png",
+      "file": "images/shared-0-sheet1.png",
+      "bytes": 240310
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/sprsmokescreen-sheet0.png",
+      "file": "images/sprsmokescreen-sheet0.png",
+      "bytes": 67010
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/sprsmokescreen-sheet1.png",
+      "file": "images/sprsmokescreen-sheet1.png",
+      "bytes": 367276
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/tiledockstreet-sheet0.png",
+      "file": "images/tiledockstreet-sheet0.png",
+      "bytes": 339824
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/sprsmokescreen-sheet2.png",
+      "file": "images/sprsmokescreen-sheet2.png",
+      "bytes": 410859
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/shared-0-sheet7.png",
+      "file": "images/shared-0-sheet7.png",
+      "bytes": 16638
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/sprmoonreflect-sheet1.png",
+      "file": "images/sprmoonreflect-sheet1.png",
+      "bytes": 11224
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/shared-0-sheet9.png",
+      "file": "images/shared-0-sheet9.png",
+      "bytes": 114735
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/tilesmoke-sheet0.png",
+      "file": "images/tilesmoke-sheet0.png",
+      "bytes": 96
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/sprcarred-sheet2.png",
+      "file": "images/sprcarred-sheet2.png",
+      "bytes": 148376
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/sprcarbam-sheet2.png",
+      "file": "images/sprcarbam-sheet2.png",
+      "bytes": 103526
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/sprcarbuff-sheet0.png",
+      "file": "images/sprcarbuff-sheet0.png",
+      "bytes": 430869
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/sprcarbuff-sheet1.png",
+      "file": "images/sprcarbuff-sheet1.png",
+      "bytes": 458810
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/shared-2-sheet0.png",
+      "file": "images/shared-2-sheet0.png",
+      "bytes": 593533
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/sprcarbam-sheet1.png",
+      "file": "images/sprcarbam-sheet1.png",
+      "bytes": 634420
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/sprcarbuff-sheet2.png",
+      "file": "images/sprcarbuff-sheet2.png",
+      "bytes": 581095
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/sprcarbuff-sheet3.png",
+      "file": "images/sprcarbuff-sheet3.png",
+      "bytes": 219516
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/vfxdustback_brs-sheet0.png",
+      "file": "images/vfxdustback_brs-sheet0.png",
+      "bytes": 35661
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/sprcarbibi-sheet0.png",
+      "file": "images/sprcarbibi-sheet0.png",
+      "bytes": 396786
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/sprcarbam-sheet0.png",
+      "file": "images/sprcarbam-sheet0.png",
+      "bytes": 433505
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/sprcarred-sheet3.png",
+      "file": "images/sprcarred-sheet3.png",
+      "bytes": 72666
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/tilecredits-sheet0.png",
+      "file": "images/tilecredits-sheet0.png",
+      "bytes": 96
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/levels.json",
+      "file": "levels.json",
+      "bytes": 2856
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/localization.json",
+      "file": "localization.json",
+      "bytes": 3911
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/sprcorincar-sheet1.png",
+      "file": "images/sprcorincar-sheet1.png",
+      "bytes": 143590
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/sprcarred-sheet0.png",
+      "file": "images/sprcarred-sheet0.png",
+      "bytes": 581441
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/sprcorincar-sheet2.png",
+      "file": "images/sprcorincar-sheet2.png",
+      "bytes": 82359
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/sprcarred-sheet1.png",
+      "file": "images/sprcarred-sheet1.png",
+      "bytes": 182679
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/bkgorientation-sheet0.png",
+      "file": "images/bkgorientation-sheet0.png",
+      "bytes": 96
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/images/sprcorincar-sheet0.png",
+      "file": "images/sprcorincar-sheet0.png",
+      "bytes": 142894
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/icons/icon-16.png",
+      "file": "icons/icon-16.png",
+      "bytes": 294
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/icons/icon-64.png",
+      "file": "icons/icon-64.png",
+      "bytes": 2080
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/workermain.js",
+      "file": "workermain.js",
+      "bytes": 3558
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/scripts/opus.wasm.js",
+      "file": "scripts/opus.wasm.js",
+      "bytes": 68172
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/scripts/opus.wasm.wasm",
+      "file": "scripts/opus.wasm.wasm",
+      "bytes": 121571
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/icons/icon-32.png",
+      "file": "icons/icon-32.png",
+      "bytes": 721
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/fonts/glory-semibold.ttf",
+      "file": "fonts/glory-semibold.ttf",
+      "bytes": 53432
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/fonts/glory-variablefont_wght.ttf",
+      "file": "fonts/glory-variablefont_wght.ttf",
+      "bytes": 86344
+    }
+  ],
+  "missing": [
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/scripts/objRefTable.js",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/scripts/workermain.js",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/offline.js",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/Glory-VariableFont_wght.ttf",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/.webm",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/scripts/splash-images/splash-poweredby-512.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/scripts/NW.js",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/scripts/splash-images/splash-website-512.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/splash-images/splash-website-512.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/splash-images/splash-poweredby-512.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/splash-images/splash-logo.svg",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/loading-logo.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/Glory-SemiBold.ttf",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/scripts/loading-logo.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/scripts/data.json",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/NW.js",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/scripts/splash-images/splash-logo.svg",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/scripts/sw.js",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/opus.wasm.wasm",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/scripts/scriptsInEvents.js",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/dispatchworker.js",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/scriptsInEvents.js",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/opus.wasm.js",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/jobworker.js",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/opus.wasm.temp.asm.js",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/pranking-prank-v1.1/scripts/opus.wasm.temp.asm.js",
+      "status": 404
+    }
+  ],
+  "external": [
+    "http://play.google.com/store/apps/details",
+    "http://www.construct.net/",
+    "http://www.google.com/chrome",
+    "http://www.mozilla.org/firefox",
+    "https://games.toon-cdn.com/scriptsInEvents.js",
+    "https://games.toon-cdn.com/workermain.js",
+    "https://github.com/kripken/emscripten/wiki/WebAssembly"
+  ],
+  "rejected": []
+}

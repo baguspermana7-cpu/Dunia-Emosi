@@ -1,0 +1,116 @@
+{"frames": {
+
+"bam_chase.png":
+{
+	"frame": {"x":4,"y":906,"w":212,"h":98},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":212,"h":98},
+	"sourceSize": {"w":212,"h":98}
+},
+"batwing_chase.png":
+{
+	"frame": {"x":402,"y":906,"w":164,"h":72},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":164,"h":72},
+	"sourceSize": {"w":164,"h":72}
+},
+"bibi_chase.png":
+{
+	"frame": {"x":866,"y":388,"w":116,"h":58},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":116,"h":58},
+	"sourceSize": {"w":116,"h":58}
+},
+"buff_chase.png":
+{
+	"frame": {"x":750,"y":4,"w":236,"h":196},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":236,"h":196},
+	"sourceSize": {"w":237,"h":197}
+},
+"chase_building_bg.png":
+{
+	"frame": {"x":4,"y":364,"w":538,"h":384},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":538,"h":384},
+	"sourceSize": {"w":538,"h":384}
+},
+"chase_track_bottom.png":
+{
+	"frame": {"x":4,"y":4,"w":740,"h":354},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":6,"w":740,"h":354},
+	"sourceSize": {"w":740,"h":360}
+},
+"chase_track_top.png":
+{
+	"frame": {"x":4,"y":754,"w":740,"h":146},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":740,"h":146},
+	"sourceSize": {"w":740,"h":149}
+},
+"ducky_chase.png":
+{
+	"frame": {"x":690,"y":388,"w":170,"h":162},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":170,"h":162},
+	"sourceSize": {"w":170,"h":162}
+},
+"jestah_chase.png":
+{
+	"frame": {"x":572,"y":906,"w":88,"h":82},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":2,"w":88,"h":82},
+	"sourceSize": {"w":89,"h":87}
+},
+"prank_chase.png":
+{
+	"frame": {"x":548,"y":608,"w":170,"h":116},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":0,"w":170,"h":116},
+	"sourceSize": {"w":174,"h":116}
+},
+"quizz_chase.png":
+{
+	"frame": {"x":548,"y":364,"w":238,"h":136},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":4,"w":238,"h":136},
+	"sourceSize": {"w":240,"h":160}
+},
+"redbird_chase.png":
+{
+	"frame": {"x":222,"y":906,"w":174,"h":104},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":0,"w":174,"h":104},
+	"sourceSize": {"w":177,"h":104}
+},
+"snowy_chase.png":
+{
+	"frame": {"x":750,"y":206,"w":176,"h":194},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":176,"h":194},
+	"sourceSize": {"w":177,"h":194}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.1",
+	"image": "chase_1x.png",
+	"format": "RGBA8888",
+	"size": {"w":990,"h":1014},
+	"scale": "0.5",
+	"smartupdate": "$TexturePacker:SmartUpdate:8b39d4bc6d0ef565504fb90944cd1380:2524c54c9dce82f0984f7670ecbc6456:db9b467fcfd3f5cdfa1a0dae448510b2$"
+}
+}

@@ -1,0 +1,44 @@
+{"frames": {
+
+"bar_black.png":
+{
+	"frame": {"x":4,"y":1000,"w":316,"h":58},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":316,"h":58},
+	"sourceSize": {"w":316,"h":58}
+},
+"bar_yellow.png":
+{
+	"frame": {"x":4,"y":1064,"w":316,"h":58},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":316,"h":58},
+	"sourceSize": {"w":316,"h":58}
+},
+"BatWheels_logo_final.png":
+{
+	"frame": {"x":4,"y":4,"w":990,"h":502},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":0,"w":990,"h":502},
+	"sourceSize": {"w":996,"h":504}
+},
+"bg.png":
+{
+	"frame": {"x":326,"y":1000,"w":64,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+	"sourceSize": {"w":64,"h":64}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.1",
+	"image": "batwheels_preloader_1x.png",
+	"format": "RGBA8888",
+	"size": {"w":510,"h":1126},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:9b172830e5461961ae614d07ccb06052:b25b3b9c3f8d4535431a0d4144d3bbb5:1af1714983ef3ace9a3d51715e680544$"
+}
+}

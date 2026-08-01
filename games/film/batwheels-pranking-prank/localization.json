@@ -1,0 +1,72 @@
+{
+	"language": "en",
+	"en": {
+		"title": "PRANKING PRANK",
+		"produced_by": "Produced by",
+		"developed_by": "Developed by",
+		"messages": {
+			"intro": "Batwheels! We need to stop Prank!\nWho's up to the challenge?",
+			"tutorial1": "Tap to change lanes",
+			"batwingShield1":"Batwing is coming with a Bat-Shield for you!\nPick it up and stay safe.",
+			"batwingShield2":"Batwing, we need another shield quick!",
+			"batwingShield3":"Bat-shield special delivery coming right up!",
+			"help1": "Don't let this stop you. Batwheels, who's next?",
+			"help2": "We need a hand here! Who's coming?",
+			"help3": "We can't let Prank get away. It's up to you now!",
+			"gameOver": "No worries Batwheels. Let's meet back at the Batcave and we can try again later.",
+			"level1intro": "Don't get hit by Prank's confetti bombs! Switch lanes to get out of their way.",
+			"level1end": "Prank is gaining on us. Batwing, we need a distraction!",
+			"level2intro": "Good job! Keep him entertained and avoid his confetti bombs.",
+			"level2end": "Let's take this to the docks. Batwing, do your thing!",
+			"level3intro": "Keep Prank on your tail. We almost got him now!",
+			"level3end": "Excellent job Batwheels! Now let's get him."
+		},
+		"end_message":"CONGRATULATIONS!"
+	},
+	"es": {
+		"title": "BROMEANDO\nA BROMA",
+		"produced_by": "Producido por",
+		"developed_by": "Desarrollado por",
+		"messages": {
+			"intro": "¡Batwheels! Necesitamos detener a Broma.\n¿Quién está listo para la acción?",
+			"tutorial1": "Toca la pantalla para moverte.",
+			"batwingShield1":"Batwing te lanzará un Bati-escudo para ayudarte. ¡Recógelo!",
+			"batwingShield2":"¡Rápido Batwing! Lanza otro escudo.",
+			"batwingShield3":"Un Bati-escudo está en camino.",
+			"help1": "¡Oh no! No se desanimen Batwheels. ¿Quién sigue?",
+			"help2": "Necesitamos ayuda.\n¿Quién se ofrece?",
+			"help3": "No dejemos que Broma se salga con la suya.",
+			"gameOver": "No se preocupen Batwheels.\nPodemos internarlo nuevamente.",
+			"level1intro": "Broma está tirando bombas de confetti.\nEsquívalas moviendote a los lados.",
+			"level1end": "Broma se está acercando. Batwing, necesitamos una distracción.",
+			"level2intro": "Buen trabajo. Ya te has alejado de él. Sigue llevando a Broma a la trampa que le hemos puesto.",
+			"level2end": "Necesitamos distraer a Broma una vez más.\n¡Ayuda Batwing!",
+			"level3intro": "¡Bien! Deja que Broma te siga. ¡Ya casi lo tenemos!",
+			"level3end": "¡Eso es Batwheels!\n¡Son un gran equipo!"
+		},
+		"end_message":"FELICITACIONES"
+	},
+	"pt": {
+		"title": "Zoando\no Zoeiro",
+		"produced_by": "Produzido por",
+		"developed_by": "Desenvuelto por",
+		"messages": {
+			"intro": "Batwheels! Precisamos parar o Zoeiro.\nQuem esté pronto para entrar em ação? ",
+			"tutorial1": "Toque na tela para mover.",
+			"batwingShield1":"Batwing lançará um escudo de morcego para ajudá-lo. Pegue-o!",
+			"batwingShield2":"Rápido Batwing!  Jogue outro escudo!",
+			"batwingShield3":"Um Bati-escudo está a caminho!",
+			"help1": "Ah não! Não desistam, Batwheels.\nQuem é o próximo? ",
+			"help2": "Precisamos de uma mãozinha.\nQue pode ajudar? ",
+			"help3": "Não vamos deixar o Zoeiro sair dessa!",
+			"gameOver": "Não se preocupe, Batwheels!\nPodemos tentar novamente.",
+			"level1intro": "Zoeiro está jogando bombas de confete!\nDesvie delas movendo-se para os lados.",
+			"level1end": "O Zoiero está se aproximando! Batwing, precisamos de uma distração!",
+			"level2intro": "Bom trabalho! Você ficou na frente dele. Continue levando o Zoeiro para a armadilha!",
+			"level2end": "Precisamos distrair o Zoeiro mais uma vez.\nAjude a gente Batwing!",
+			"level3intro": "Booa! Deixe o Zoeiro te seguir. Quase o pegamos!",
+			"level3end": "É isso aí, Batwheels!\nÓtima equipe! "
+		},
+		"end_message":"Parabéns!"
+	}
+}

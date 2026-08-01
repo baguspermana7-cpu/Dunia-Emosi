@@ -1,0 +1,13 @@
+
+path_4.png
+size: 172,140
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+items/guide_pencil
+  rotate: false
+  xy: 1, 1
+  size: 170, 137
+  orig: 182, 148
+  offset: 6, 8
+  index: -1

@@ -1,0 +1,118 @@
+
+moe.png
+size: 1051, 316
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+L_arm_back
+  rotate: false
+  xy: 500, 2
+  size: 96, 38
+  orig: 140, 40
+  offset: 1, 1
+  index: -1
+L_arm_front
+  rotate: false
+  xy: 837, 2
+  size: 144, 54
+  orig: 198, 56
+  offset: 1, 1
+  index: -1
+R_arm_back
+  rotate: true
+  xy: 983, 2
+  size: 221, 64
+  orig: 243, 68
+  offset: 21, 1
+  index: -1
+R_arm_front
+  rotate: true
+  xy: 500, 42
+  size: 272, 67
+  orig: 275, 69
+  offset: 2, 1
+  index: -1
+R_arm_front_nothumb
+  rotate: true
+  xy: 806, 58
+  size: 256, 67
+  orig: 259, 69
+  offset: 2, 1
+  index: -1
+body
+  rotate: true
+  xy: 2, 6
+  size: 308, 496
+  orig: 310, 498
+  offset: 1, 1
+  index: -1
+eyes_01
+  rotate: false
+  xy: 875, 236
+  size: 92, 78
+  orig: 95, 82
+  offset: 2, 2
+  index: -1
+eyes_02
+  rotate: true
+  xy: 983, 225
+  size: 89, 66
+  orig: 92, 70
+  offset: 1, 2
+  index: -1
+eyes_03
+  rotate: false
+  xy: 875, 124
+  size: 84, 43
+  orig: 89, 48
+  offset: 3, 2
+  index: -1
+eyes_04
+  rotate: false
+  xy: 675, 5
+  size: 84, 48
+  orig: 88, 53
+  offset: 2, 2
+  index: -1
+eyes_05
+  rotate: false
+  xy: 875, 169
+  size: 90, 65
+  orig: 93, 69
+  offset: 2, 2
+  index: -1
+mouth_grin
+  rotate: false
+  xy: 598, 3
+  size: 75, 50
+  orig: 80, 55
+  offset: 2, 2
+  index: -1
+mouth_neutral
+  rotate: true
+  xy: 875, 74
+  size: 48, 35
+  orig: 54, 39
+  offset: 3, 2
+  index: -1
+mouth_oh
+  rotate: false
+  xy: 912, 86
+  size: 33, 36
+  orig: 37, 42
+  offset: 2, 3
+  index: -1
+mouth_teeth
+  rotate: false
+  xy: 761, 5
+  size: 74, 48
+  orig: 80, 53
+  offset: 3, 2
+  index: -1
+tyre
+  rotate: false
+  xy: 569, 55
+  size: 235, 259
+  orig: 237, 264
+  offset: 1, 1
+  index: -1

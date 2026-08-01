@@ -1,0 +1,111 @@
+[
+
+  {
+    "grouped": false,
+    "boolean": null,
+    "style": {
+      "fill": {
+        "color": "#e6e6e6",
+        "stroke": false,
+        "enabled": true
+      },
+      "stroke": {
+        "color": "#000000",
+        "width": 5
+      }
+    },
+    "camera": {
+      "zoom": 1
+    }
+  },
+  {
+    "grouped": false,
+    "boolean": null,
+    "style": {
+      "fill": {
+        "color": "#a4e8de",
+        "stroke": false,
+        "enabled": true
+      },
+      "stroke": {
+        "color": "#000000",
+        "width": 5
+      }
+    },
+    "camera": {
+      "zoom": 1
+    }
+  },
+  {
+    "grouped": false,
+    "boolean": null,
+    "style": {
+      "fill": {
+        "color": "#e1f7f9",
+        "stroke": false,
+        "enabled": true
+      },
+      "stroke": {
+        "color": "#000000",
+        "width": 5
+      }
+    },
+    "camera": {
+      "zoom": 1
+    }
+  },
+  {
+    "grouped": false,
+    "boolean": null,
+    "style": {
+      "fill": {
+        "color": "#ff6687",
+        "stroke": false,
+        "enabled": true
+      },
+      "stroke": {
+        "color": "#d8385a",
+        "width": 5
+      }
+    },
+    "camera": {
+      "zoom": 1
+    }
+  },
+  {
+    "grouped": false,
+    "boolean": null,
+    "style": {
+      "fill": {
+        "color": "#d5f1ed",
+        "stroke": false,
+        "enabled": true
+      },
+      "stroke": {
+        "color": "#d5f1ed",
+        "width": 5
+      }
+    },
+    "camera": {
+      "zoom": 1
+    }
+  },
+  {
+    "grouped": false,
+    "boolean": "1",
+    "style": {
+      "fill": {
+        "color": "#fae500",
+        "stroke": false,
+        "enabled": true
+      },
+      "stroke": {
+        "color": "#ec9314",
+        "width": 5
+      }
+    },
+    "camera": {
+      "zoom": 1
+    }
+  }
+]

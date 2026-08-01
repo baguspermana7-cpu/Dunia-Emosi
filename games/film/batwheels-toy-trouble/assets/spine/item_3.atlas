@@ -1,0 +1,48 @@
+
+item_3.png
+size: 292,508
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+3_1
+  rotate: false
+  xy: 1, 134
+  size: 289, 370
+  orig: 305, 386
+  offset: 8, 8
+  index: -1
+3_2
+  rotate: false
+  xy: 110, 60
+  size: 89, 73
+  orig: 105, 89
+  offset: 8, 8
+  index: -1
+3_3
+  rotate: false
+  xy: 200, 62
+  size: 78, 71
+  orig: 94, 87
+  offset: 8, 8
+  index: -1
+3_4
+  rotate: false
+  xy: 200, 1
+  size: 76, 60
+  orig: 92, 76
+  offset: 8, 8
+  index: -1
+3_5
+  rotate: false
+  xy: 1, 44
+  size: 108, 89
+  orig: 124, 105
+  offset: 8, 8
+  index: -1
+3_6
+  rotate: false
+  xy: 110, 37
+  size: 29, 22
+  orig: 45, 38
+  offset: 8, 8
+  index: -1

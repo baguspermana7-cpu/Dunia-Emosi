@@ -1,0 +1,78 @@
+{
+  "enemies": [
+    {
+      "name": "ducky",
+      "image": "ducky",
+      "hitbox": {
+        "x": 0,
+        "y": 0,
+        "width": 350,
+        "height": 425
+      },
+      "sfx_appear": ["sfx_character0_appear"],
+      "sfx_hit": ["sfx_hit_ducky_00", "sfx_hit_ducky_01", "sfx_hit_ducky_02"],
+      "particle": "particle_hit",
+      "particle_color": "#ffffe3"
+    },
+
+    {
+      "name": "jestah",
+      "image": "jestah",
+      "hitbox": {
+        "x": 0,
+        "y": 0,
+        "width": 240,
+        "height": 180
+      },
+      "sfx_appear": ["sfx_character1_appear"],
+      "sfx_hit": ["sfx_hit_jestah_00", "sfx_hit_jestah_01", "sfx_hit_jestah_02", "sfx_hit_jestah_03"],
+      "particle": "particle_hit",
+      "particle_color": "#ff8800"
+    },
+
+    {
+      "name": "prank",
+      "image": "prank",
+      "hitbox": {
+        "x": 0,
+        "y": 0,
+        "width": 410,
+        "height": 250
+      },
+      "sfx_appear": ["sfx_character2_appear"],
+      "sfx_hit": ["sfx_hit_prank_00", "sfx_hit_prank_01", "sfx_hit_prank_02", "sfx_hit_prank_03", "sfx_hit_prank_04"],
+      "particle": "particle_hit",
+      "particle_color": "#ff8800"
+    },
+
+    {
+      "name": "quizz",
+      "image": "quizz",
+      "hitbox": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 300
+      },
+      "sfx_appear": ["sfx_character2_appear"],
+      "sfx_hit": ["sfx_hit_quizz_00", "sfx_hit_quizz_01", "sfx_hit_quizz_02", "sfx_hit_quizz_03", "sfx_hit_quizz_04"],
+      "particle": "particle_hit",
+      "particle_color": "#ff8800"
+    },
+
+    {
+      "name": "snowy",
+      "image": "snowy",
+      "hitbox": {
+        "x": 0,
+        "y": 0,
+        "width": 430,
+        "height": 400
+      },
+      "sfx_appear": ["sfx_character2_appear"],
+      "sfx_hit": ["sfx_hit_snowy_00", "sfx_hit_snowy_01", "sfx_hit_snowy_02"],
+      "particle": "particle_hit",
+      "particle_color": "#ff8800"
+    }
+  ]
+}

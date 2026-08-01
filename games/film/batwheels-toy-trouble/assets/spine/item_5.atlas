@@ -1,0 +1,62 @@
+
+item_5.png
+size: 584,532
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+5_1
+  rotate: false
+  xy: 1, 256
+  size: 299, 273
+  orig: 315, 289
+  offset: 8, 8
+  index: -1
+5_2
+  rotate: false
+  xy: 250, 1
+  size: 154, 254
+  orig: 170, 270
+  offset: 8, 8
+  index: -1
+5_3
+  rotate: false
+  xy: 1, 1
+  size: 248, 254
+  orig: 264, 270
+  offset: 8, 8
+  index: -1
+5_4
+  rotate: false
+  xy: 301, 280
+  size: 230, 249
+  orig: 246, 265
+  offset: 8, 8
+  index: -1
+5_5
+  rotate: false
+  xy: 532, 390
+  size: 48, 42
+  orig: 64, 58
+  offset: 8, 8
+  index: -1
+5_6
+  rotate: false
+  xy: 405, 40
+  size: 172, 85
+  orig: 188, 101
+  offset: 8, 8
+  index: -1
+5_7
+  rotate: false
+  xy: 405, 126
+  size: 136, 153
+  orig: 152, 169
+  offset: 8, 8
+  index: -1
+5_8
+  rotate: false
+  xy: 532, 433
+  size: 48, 96
+  orig: 64, 112
+  offset: 8, 8
+  index: -1

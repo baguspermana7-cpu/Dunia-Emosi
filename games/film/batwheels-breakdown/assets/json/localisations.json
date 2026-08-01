@@ -1,0 +1,53 @@
+{
+  "languages": [
+    "en",
+    "ar",
+    "bg",
+    "da",
+    "nl",
+    "fr",
+    "de",
+    "hu",
+    "it",
+    "no",
+    "pl",
+    "pt",
+    "ro",
+    "ru",
+    "es",
+    "sv",
+    "tr",
+    "pt-br",
+    "es-419",
+    "cz"
+  ],
+  "resources": {
+    "images": {
+      "title": {
+        "texture": "title",
+        "frame": {
+          "en": "title-en.png",
+          "ar": "title-ar.png",
+          "bg": "title-bg.png",
+          "da": "title-da.png",
+          "nl": "title-nl.png",
+          "fr": "title-fr.png",
+          "de": "title-de.png",
+          "hu": "title-hu.png",
+          "it": "title-it.png",
+          "no": "title-no.png",
+          "pl": "title-pl.png",
+          "pt": "title-pt.png",
+          "ro": "title-ro.png",
+          "ru": "title-ru.png",
+          "es": "title-es.png",
+          "sv": "title-sv.png",
+          "tr": "title-tr.png",
+          "pt-br": "title-pt-br.png",
+          "es-419": "title-es-419.png",
+          "cz": "title-cz.png"
+        }
+      }
+    }
+  }
+}

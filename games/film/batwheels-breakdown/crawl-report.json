@@ -1,0 +1,2551 @@
+{
+  "generatedAt": "2026-08-01T15:48:50.888Z",
+  "entry": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/index.html",
+  "root": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/",
+  "output": "/home/baguspermana7/Documents/temporary/online game to be offline/batwheels/games/batwheels-breakdown",
+  "totals": {
+    "files": 40,
+    "bytes": 5056501,
+    "missing": 580,
+    "external": 11,
+    "rejected": 0
+  },
+  "fetched": [
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/index.html",
+      "file": "index.html",
+      "bytes": 534
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/css/main.6a78e98a5a5d2dce36a0.css",
+      "file": "css/main.6a78e98a5a5d2dce36a0.css",
+      "bytes": 672
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/main-5e4fd26d04866355c7fe.bundle.js",
+      "file": "main-5e4fd26d04866355c7fe.bundle.js",
+      "bytes": 107761
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/phaser-af041cbf539c421d7334.bundle.js",
+      "file": "phaser-af041cbf539c421d7334.bundle.js",
+      "bytes": 1393152
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/fonts/Bangers-Regular.woff2",
+      "file": "assets/fonts/Bangers-Regular.woff2",
+      "bytes": 21108
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/images/icon-rotate-device.png",
+      "file": "assets/images/icon-rotate-device.png",
+      "bytes": 28793
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/fonts/Bangers-Regular.ttf",
+      "file": "assets/fonts/Bangers-Regular.ttf",
+      "bytes": 96116
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/asset-pack-title-a2b9968581172bbbd1c3.json",
+      "file": "asset-packs/asset-pack-title-a2b9968581172bbbd1c3.json",
+      "bytes": 343
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/asset-pack-common-a11c1b322f139dff037e.json",
+      "file": "asset-packs/asset-pack-common-a11c1b322f139dff037e.json",
+      "bytes": 457
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/asset-pack-preload-cartoonito-d21ad3c1d2e29247bc8f.json",
+      "file": "asset-packs/asset-pack-preload-cartoonito-d21ad3c1d2e29247bc8f.json",
+      "bytes": 598
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/asset-pack-game-125de8d9c9bc202accef.json",
+      "file": "asset-packs/asset-pack-game-125de8d9c9bc202accef.json",
+      "bytes": 1335
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/puzzles-d2a6de0b41cc44a1f3e3.json",
+      "file": "asset-packs/puzzles-d2a6de0b41cc44a1f3e3.json",
+      "bytes": 11566
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/animations/BC.json",
+      "file": "assets/animations/BC.json",
+      "bytes": 32293
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/animations/moe.atlas",
+      "file": "assets/animations/moe.atlas",
+      "bytes": 1639
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/animations/BC.atlas",
+      "file": "assets/animations/BC.atlas",
+      "bytes": 1496
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/animations/moe.json",
+      "file": "assets/animations/moe.json",
+      "bytes": 15297
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/common.json",
+      "file": "assets/atlasses/common.json",
+      "bytes": 4602
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/preloader-cartoonito.json",
+      "file": "assets/atlasses/preloader-cartoonito.json",
+      "bytes": 3112
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/character-batwing.json",
+      "file": "assets/atlasses/character-batwing.json",
+      "bytes": 4185
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/images/loader_fill.png",
+      "file": "assets/images/loader_fill.png",
+      "bytes": 930
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/animations/preloader.json",
+      "file": "assets/animations/preloader.json",
+      "bytes": 2449
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/character-bam.json",
+      "file": "assets/atlasses/character-bam.json",
+      "bytes": 5234
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/character-buff.json",
+      "file": "assets/atlasses/character-buff.json",
+      "bytes": 4130
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/localisations.json",
+      "file": "assets/json/localisations.json",
+      "bytes": 1010
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/character-bibi.json",
+      "file": "assets/atlasses/character-bibi.json",
+      "bytes": 2983
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/title.json",
+      "file": "assets/atlasses/title.json",
+      "bytes": 4781
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/game.json",
+      "file": "assets/atlasses/game.json",
+      "bytes": 1080
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/puzzles.json",
+      "file": "assets/json/puzzles.json",
+      "bytes": 11566
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/endscreen.json",
+      "file": "assets/atlasses/endscreen.json",
+      "bytes": 902
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/character-redbird.json",
+      "file": "assets/atlasses/character-redbird.json",
+      "bytes": 4185
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/common.png",
+      "file": "assets/atlasses/common.png",
+      "bytes": 77459
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/preloader-cartoonito.png",
+      "file": "assets/atlasses/preloader-cartoonito.png",
+      "bytes": 49375
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/character-batwing.png",
+      "file": "assets/atlasses/character-batwing.png",
+      "bytes": 271564
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/character-bam.png",
+      "file": "assets/atlasses/character-bam.png",
+      "bytes": 449093
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/character-buff.png",
+      "file": "assets/atlasses/character-buff.png",
+      "bytes": 462483
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/character-bibi.png",
+      "file": "assets/atlasses/character-bibi.png",
+      "bytes": 238833
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/title.png",
+      "file": "assets/atlasses/title.png",
+      "bytes": 814920
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/game.png",
+      "file": "assets/atlasses/game.png",
+      "bytes": 539459
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/endscreen.png",
+      "file": "assets/atlasses/endscreen.png",
+      "bytes": 118455
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/character-redbird.png",
+      "file": "assets/atlasses/character-redbird.png",
+      "bytes": 270551
+    }
+  ],
+  "missing": [
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/icon-sound-off.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/icon-sound-on.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/btn-play.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/test.json",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/btn.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/icon-back-arrow.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/confetti-black.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/icon-pause.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/btn-endscreen.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/box-besttime.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/holder-timer.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/confetti-yellow.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/screen.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/confetti-blue.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/box-endtime.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/icon-home.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/icon-replay.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/help-pointer.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/icon-popuppause-music-off.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/icon-popuppause-sound=off.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/preloader_bg.jpg",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/help-hand.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/popup-pause.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/transition-bat.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/icon-popuppause-sound-on.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/loader_bar_blue.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/icon-popuppause-music-on.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/btn-close.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/loader_border.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/jump_01.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/moe.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bg-game.jpg",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bg-title.jpg",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/title-en.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/logo-batwheels.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/character-bam-title.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/item_platform.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/file.json",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bibi-piece-1-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bibi-blur.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bibi-piece-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bibi-piece-1-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bibi-blur.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bibi-piece-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bibi.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bibi.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bibi-piece-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bibi-piece-2-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bibi-slot-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bibi-piece-2-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bibi-slot-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bibi-piece-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bibi-piece-3-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bibi-piece-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bibi-slot-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bibi-piece-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bibi-piece-3-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bibi-slot-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bibi-slot-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bibi-slot-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-blur.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bibi-slot-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bibi-slot-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-blur.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bibi-piece-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bibi-piece-4-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bibi-piece-4-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bibi-piece-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-piece-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-piece-2-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-piece-2-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-slot-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-slot-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-piece-1-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-piece-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-piece-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-slot-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-slot-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-piece-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-piece-1-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-piece-4-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-piece-3-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-piece-3-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-piece-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-piece-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-slot-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-piece-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-slot-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-slot-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-piece-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-piece-4-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-slot-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-piece-6-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-piece-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-piece-5-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-piece-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-piece-6-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-slot-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-piece-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-slot-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-piece-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-slot-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-slot-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-piece-5-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-piece-7.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-piece-7-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-piece-7-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-piece-8.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-piece-8-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-slot-7.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-slot-7.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-piece-7.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-piece-8.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-piece-8-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/bam-slot-8.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/bam-slot-8.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/batwing-piece-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/batwing-slot-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/batwing-piece-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/batwing-blur.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/batwing-piece-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/batwing-slot-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/batwing.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/batwing-piece-1-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/batwing-piece-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/batwing-piece-1-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/batwing.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/batwing-blur.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/batwing-piece-2-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/batwing-piece-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/batwing-slot-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/batwing-piece-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/batwing-slot-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/batwing-piece-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/batwing-piece-3-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/batwing-piece-2-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/batwing-slot-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/batwing-piece-3-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/batwing-piece-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/batwing-slot-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/batwing-piece-5-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/batwing-piece-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/batwing-piece-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/batwing-piece-4-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/batwing-slot-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/batwing-slot-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/batwing-piece-5-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/batwing-piece-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/batwing-piece-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/batwing-piece-4-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/batwing-slot-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/batwing-slot-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/buff.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/buff-blur.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/batwing-piece-6-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/buff-piece-1-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/batwing-slot-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/batwing-piece-6-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/batwing-slot-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/buff.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/buff-blur.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/buff-piece-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/buff-piece-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/buff-piece-1-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/buff-slot-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/buff-piece-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/buff-piece-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/buff-piece-2-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/buff-slot-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/buff-slot-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/buff-piece-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/buff-slot-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/buff-piece-3-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/buff-piece-2-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/buff-piece-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/buff-piece-3-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/buff-piece-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/buff-piece-4-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/buff-piece-5-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/buff-slot-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/buff-piece-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/buff-piece-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/buff-piece-4-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/buff-piece-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/buff-slot-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/buff-slot-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/buff-slot-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/buff-piece-5-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/buff-slot-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/buff-piece-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/redbird-blur.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/buff-slot-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/buff-slot-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/redbird.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/redbird-blur.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/buff-slot-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/buff-piece-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/buff-piece-6-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/buff-piece-6-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/redbird.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/redbird-piece-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/redbird-slot-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/redbird-slot-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/redbird-piece-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/redbird-slot-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/redbird-piece-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/redbird-piece-2-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/redbird-piece-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/redbird-piece-2-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/redbird-slot-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/redbird-piece-1-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/redbird-piece-1-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/redbird-piece-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/redbird-piece-3-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/redbird-piece-4-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/redbird-piece-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/redbird-slot-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/redbird-piece-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/redbird-piece-3-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/redbird-piece-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/redbird-piece-4-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/redbird-slot-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/redbird-slot-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/redbird-slot-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/redbird-piece-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/redbird-piece-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/redbird-piece-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/redbird-piece-5-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/redbird-slot-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/redbird-piece-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/redbird-slot-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/redbird-piece-5-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/redbird-piece-6-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/redbird-slot-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/redbird-piece-6-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/asset-packs/redbird-slot-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/transition-bat.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/common.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/btn.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/popup-pause.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/help-hand.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/confetti-yellow.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/btn-play.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/confetti-blue.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/confetti-black.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/holder-timer.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/btn-endscreen.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/confetti.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/icon-popuppause-sound=off.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/icon-home.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/icon-popuppause-sound-on.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/icon-replay.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/help-pointer.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/icon-back-arrow.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/icon-popuppause-music-off.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/icon-popuppause-music-on.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/icon-sound-off.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/confetti.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/btn-close.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/jump_03.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/preloader_bg.jpg",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/jump_03.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/jump_01.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/preloader-cartoonito.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/icon-sound-on.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/jump_07.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/jump_10.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/icon-pause.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/jump_07.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/jump_10.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/jump_04.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/loader_border.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/jump_09.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/jump_08.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/jump_06.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/jump_08.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/jump_04.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/jump_09.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/jump_06.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/jump_05.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/jump_05.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/loader_bar_pink.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/jump_02.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/loader_fill.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/loader_fill.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/loader_bar_blue.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/batwing.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/batwing-blur.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/character-batwing.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/jump_02.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/batwing-piece-5-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/loader_bar_pink.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/batwing-slot-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/batwing-slot-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/batwing-piece-6-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/batwing-slot-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/batwing-piece-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/batwing-piece-1-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/batwing-piece-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/batwing-piece-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/batwing-piece-2-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/batwing-piece-4-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/batwing-slot-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/batwing-slot-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/batwing-piece-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/batwing-slot-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/batwing-piece-3-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/animations/jump_05.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/batwing-piece-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/batwing-piece-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/animations/jump_06.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/animations/jump_03.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/animations/jump_02.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/animations/jump_08.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/animations/jump_01.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/animations/jump_04.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/animations/jump_07.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/animations/jump_09.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-piece-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/animations/jump_10.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-piece-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/character-bam.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-piece-6-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-piece-1-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-blur.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-slot-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-slot-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-piece-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-piece-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-piece-5-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-piece-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-piece-2-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-piece-3-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-slot-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-slot-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-piece-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-piece-8-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-piece-4-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-piece-7.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-piece-7-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-piece-8.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/buff-blur.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/buff-slot-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-slot-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-slot-7.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-slot-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/buff-piece-3-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bam-slot-8.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/buff.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/character-buff.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/buff-slot-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/buff-piece-5-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/buff-piece-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/buff-piece-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/buff-slot-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/buff-piece-2-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/buff-piece-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/buff-slot-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/buff-piece-1-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/buff-slot-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/buff-piece-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/buff-piece-6-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/buff-piece-4-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/title-ar.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/title-da.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/buff-piece-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/buff-piece-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/buff-slot-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/title-bg.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/title-nl.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/title-en.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/title-ar.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/title-da.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/title-bg.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/title-it.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/title-de.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/title-hu.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/title-nl.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/title-hu.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/title-fr.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/title-no.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/title-de.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/title-it.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/title-no.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/title-pl.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/title-fr.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/title-ru.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/title-sv.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/title-pl.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/title-ru.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/title-es.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/title-ro.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/title-sv.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/title-tr.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/title-pt.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/title-ro.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/title-es.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/title-pt.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/title-pt-br.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bibi-piece-1-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/character-bibi.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/title-cz.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bibi-blur.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/title-tr.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/title-es-419.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/title-es-419.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/title-cz.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/title-pt-br.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bibi-piece-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bibi-piece-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bibi-slot-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bibi-slot-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bibi.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bibi-piece-3-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bibi-piece-4-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bibi-slot-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bibi-piece-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bibi-piece-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bibi-piece-2-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bibi-slot-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/logo-batwheels.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/title-de.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/title-ru.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/character-bam-title.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/title.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bg-title.jpg",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/title-ro.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/character-moe-title.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/title-nl.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/character-moe-title.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/title-ar.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/title-es-419.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/title-en.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/title-pt.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/title-it.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/title-cz.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/title-pt-br.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/title-pl.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/title-es.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/title-hu.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/title-da.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/title-no.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/title-sv.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/title-tr.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/title-fr.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/item_shadow.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bibi.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/item_shadow.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/title-bg.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/bg-game.jpg",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/game.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/item_platform.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bibi-piece-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/moe.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bibi-blur.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bibi-slot-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bibi-piece-4-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bibi-piece-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bibi-piece-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bibi-piece-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bibi-slot-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bibi-piece-1-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bibi-slot-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bibi-piece-2-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bibi-piece-3-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bibi-slot-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-slot-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-piece-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-piece-2-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-piece-1-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-blur.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-piece-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-piece-4-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-piece-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-slot-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-piece-3-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-slot-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-piece-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-piece-7-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-slot-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-piece-7.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-slot-7.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-piece-8.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-slot-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-piece-5-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-piece-6-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-piece-8-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-piece-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-piece-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-slot-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/batwing.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/batwing-blur.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/bam-slot-8.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/batwing-slot-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/batwing-piece-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/batwing-piece-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/batwing-piece-1-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/batwing-piece-3-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/batwing-piece-2-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/batwing-slot-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/batwing-slot-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/batwing-piece-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/batwing-piece-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/buff-blur.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/batwing-slot-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/batwing-slot-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/batwing-piece-5-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/buff.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/batwing-piece-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/batwing-piece-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/batwing-slot-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/batwing-piece-6-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/buff-piece-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/batwing-piece-4-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/buff-piece-4-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/buff-piece-3-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/buff-piece-1-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/buff-slot-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/buff-piece-2-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/buff-slot-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/buff-piece-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/buff-slot-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/buff-slot-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/buff-piece-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/buff-piece-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/buff-piece-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/buff-slot-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/redbird-slot-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/buff-piece-6-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/buff-piece-5-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/redbird-piece-1-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/buff-piece-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/redbird.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/redbird-piece-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/redbird-piece-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/redbird-blur.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/redbird-piece-2-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/buff-slot-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/redbird-piece-3-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/redbird-slot-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/redbird-slot-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/redbird-piece-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/redbird-slot-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/redbird-piece-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/redbird-piece-4-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/redbird-piece-6-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/redbird-slot-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/redbird-piece-5-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/redbird-piece-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/redbird-piece-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/box-besttime.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/redbird-piece-6-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/redbird-blur.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/redbird.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/character-redbird.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/box-endtime.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/redbird-piece-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/endscreen.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/screen.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/json/redbird-slot-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/redbird-piece-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/redbird-piece-1-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/redbird-piece-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/redbird-slot-6.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/redbird-piece-3-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/redbird-piece-2-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/redbird-piece-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/redbird-piece-4-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/redbird-slot-4.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/redbird-piece-5-outline.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/redbird-slot-2.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/redbird-piece-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/redbird-slot-5.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/redbird-slot-1.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/redbird-piece-3.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/274/69906aef-c527-429a-bd8b-7f4bacb0bfae_1677748256/assets/atlasses/redbird-slot-3.png",
+      "status": 404
+    }
+  ],
+  "external": [
+    "http://www.w3.org/1999/xhtml",
+    "http://www.w3.org/2000/svg",
+    "https://f.fontdeck.com/s/css/js/",
+    "https://fast.fonts.net/jsapi",
+    "https://fonts.googleapis.com/css",
+    "https://github.com/zloirock/core-js",
+    "https://github.com/zloirock/core-js/blob/v3.24.0/LICENSE",
+    "https://phaser.io/",
+    "https://phasereditor2d.com/",
+    "https://use.typekit.net/",
+    "https://www.codeandweb.com/texturepacker"
+  ],
+  "rejected": []
+}

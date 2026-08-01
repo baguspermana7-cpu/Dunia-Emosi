@@ -1,0 +1,79 @@
+{
+    "anims": [
+        {
+            "key": "preloader",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "preloader-cartoonito",
+                    "frame": "jump_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "preloader-cartoonito",
+                    "frame": "jump_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "preloader-cartoonito",
+                    "frame": "jump_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "preloader-cartoonito",
+                    "frame": "jump_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "preloader-cartoonito",
+                    "frame": "jump_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "preloader-cartoonito",
+                    "frame": "jump_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "preloader-cartoonito",
+                    "frame": "jump_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "preloader-cartoonito",
+                    "frame": "jump_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "preloader-cartoonito",
+                    "frame": "jump_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "preloader-cartoonito",
+                    "frame": "jump_10.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 12,
+            "skipMissedFrames": true,
+            "repeat": -1,
+            "repeatDelay": 1200
+        }
+    ],
+    "globalTimeScale": 1,
+    "meta": {
+        "app": "Phaser Editor 2D v3",
+        "contentType": "Phaser v3 Animations"
+    }
+}

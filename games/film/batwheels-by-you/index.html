@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,height=device-height,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,shrink-to-fit=no" />
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<link rel="stylesheet" type="text/css" href="fonts/fontloader.css">
+	<title>Batwheels By You</title>
+
+	<!-- Stylesheet for Footer Links -->
+	<style>
+		#footer {
+			position: relative;
+			width: 100%;
+			text-align: center;
+			z-index: 10;
+			background: #000;
+			color: #fff;
+			font-size: 11px;
+			font-family: Tahoma, Arial, Helvetica, sans-serif;
+			padding: 1.5em 0;
+		}
+		@media (min-height: 1000px) and (orientation: portrait) {
+			#footer {
+				position: absolute;
+				bottom: 0;
+			}
+		}
+		@media (min-width: 735px) {
+			#footer {
+				margin-top: 0;
+			}
+		}
+		#footer a {
+			color: #229aff;
+			text-decoration: none;
+		}
+		#footer a:hover {
+			color: #fff;
+			text-transform: underline;
+		}
+		#footer a.external {
+			padding-right: 10px;
+		}
+		#footer a.external::after {
+			position: absolute;
+			margin: 4px 0 0 3px;
+			vertical-align: middle;
+			content: '';
+			width: 7px;
+			height: 7px;
+			-webkit-mask-image: url(/assets/images/icon_external_link.svg);
+			mask-image: url(/assets/images/icon_external_link.svg);
+			-webkit-mask-position: center;
+			mask-position: center;
+			-webkit-mask-size: contain;
+			mask-size: contain;
+			-webkit-mask-repeat: no-repeat;
+			background-color: #229aff;
+		}
+		#footer a.external:hover::after {
+			background-color: #fff;
+		}
+		#ot-sdk-btn.ot-sdk-show-settings,
+		#ot-sdk-btn.optanon-show-settings {
+			color: #229aff !important;
+			border: none !important;
+			height: auto;
+			white-space: normal;
+			word-wrap: break-word;
+			padding: 0 !important;
+			font-size: 11px !important;
+			/* line-height: 1.2; */
+			background: none;
+			text-transform: uppercase;
+			cursor: pointer;
+		}
+		#ot-sdk-btn.ot-sdk-show-settings:hover, #ot-sdk-btn.optanon-show-settings:hover {
+			background-color: transparent !important;
+			background: none;
+			color: #fff !important;
+			text-transform: underline;
+		}
+		#ot-sdk-btn.ot-sdk-show-settings:focus, #ot-sdk-btn.optanon-show-settings:focus {
+			border: 1px solid #fff !important;
+		}
+	</style>
+	<!-- ======================================= -->
+
+	<!-- Chromium may detach an ArrayBuffer passed to decodeAudioData. The
+	     bundled audio loader retries the same buffer, so always decode a copy. -->
+	<script>
+		for (const AudioContextClass of [
+			window.AudioContext,
+			window.webkitAudioContext,
+			window.OfflineAudioContext,
+			window.webkitOfflineAudioContext
+		]) {
+			if (!AudioContextClass || AudioContextClass.prototype.__offlineDecodePatched) continue;
+			const originalDecodeAudioData = AudioContextClass.prototype.decodeAudioData;
+			if (typeof originalDecodeAudioData !== 'function') continue;
+			AudioContextClass.prototype.decodeAudioData = function (audioData, ...args) {
+				let safeAudioData = audioData;
+				try {
+					safeAudioData = audioData.slice(0);
+				} catch (_) {
+					// Let the native implementation report genuinely invalid input.
+				}
+				return originalDecodeAudioData.call(this, safeAudioData, ...args);
+			};
+			AudioContextClass.prototype.__offlineDecodePatched = true;
+		}
+		// pixi-sound 2.x can finish two concurrent decodes for the same media.
+		// Older browsers silently accepted the second assignment; current
+		// Chromium throws. Preserve the legacy behavior for an already-set node.
+		try {
+			const sourcePrototype = window.AudioBufferSourceNode && window.AudioBufferSourceNode.prototype;
+			const bufferDescriptor = sourcePrototype && Object.getOwnPropertyDescriptor(sourcePrototype, 'buffer');
+			if (bufferDescriptor && bufferDescriptor.configurable && bufferDescriptor.get && bufferDescriptor.set) {
+				Object.defineProperty(sourcePrototype, 'buffer', {
+					configurable: true,
+					enumerable: bufferDescriptor.enumerable,
+					get: bufferDescriptor.get,
+					set(value) {
+						if (value && bufferDescriptor.get.call(this)) return;
+						bufferDescriptor.set.call(this, value);
+					}
+				});
+			}
+		} catch (_) {
+			// Continue with the native implementation if it cannot be wrapped.
+		}
+	</script>
+
+	<script>document.write(
+			'<script type="text/javascript" src="js/pixi.js?'+Date.now()+'"\><\/script>' +
+			'<script type="text/javascript" src="js/pixi-heaven.js?'+Date.now()+'"\><\/script>' +
+			'<script type="text/javascript" src="js/libs.js?'+Date.now()+'"\><\/script>' +
+			'<script type="text/javascript" src="js/globalvar.js?'+Date.now()+'"\><\/script>' +
+			'<script type="text/javascript" src="js/fox.js?'+Date.now()+'"\><\/script>' +
+			'<script type="text/javascript" src="js/foxmovieclip.js?'+Date.now()+'"\><\/script>' +
+			'<script type="text/javascript" src="js/common.js?'+Date.now()+'"\><\/script>' +
+			'<script type="text/javascript" src="js/loadingscreen.js?'+Date.now()+'"\><\/script>'
+	);</script>
+
+	<style>
+		body {
+			padding: 0px;
+			margin: 0px;
+			overflow:hidden;
+			background-color: #000000;
+		}
+		header {
+			height: 0px;
+		}
+		footer {
+			height: 150px;
+		}
+		#canvas_div {
+			height: calc(100vh);
+		}
+		canvas {
+			display:block;
+		}
+	</style>
+</head>
+
+<body>
+
+<div id = "canvas_div" align = "center" >
+	<canvas id = "game_canvas"></canvas>
+</div>
+
+<script>document.write('<script type="text/javascript" src="js/main.js?'+Date.now()+'"\><\/script>');</script>
+
+</body>
+</html>

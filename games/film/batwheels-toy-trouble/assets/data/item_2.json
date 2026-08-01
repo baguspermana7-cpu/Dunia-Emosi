@@ -1,0 +1,148 @@
+[
+
+  {
+    "grouped": false,
+    "boolean": null,
+    "style": {
+      "fill": {
+        "color": "#5eb3ff",
+        "stroke": false,
+        "enabled": true
+      },
+      "stroke": {
+        "color": "#000000",
+        "width": 5
+      }
+    },
+    "camera": {
+      "zoom": 1
+    }
+  },
+  {
+    "grouped": false,
+    "boolean": "1",
+    "style": {
+      "fill": {
+        "color": "#d5f1ed",
+        "stroke": false,
+        "enabled": true
+      },
+      "stroke": {
+        "color": "#",
+        "width": 5
+      }
+    },
+    "camera": {
+      "zoom": 1
+    }
+  },
+  {
+    "grouped": false,
+    "boolean": null,
+    "style": {
+      "fill": {
+        "color": "#none",
+        "stroke": false,
+        "enabled": false
+      },
+      "stroke": {
+        "color": "#000000",
+        "width": 5
+      }
+    },
+    "camera": {
+      "zoom": 1
+    }
+  },
+  {
+    "grouped": true,
+    "groupcount": 3,
+    "boolean": null,
+    "style": {
+      "fill": {
+        "color": "#none",
+        "stroke": false,
+        "enabled": false
+      },
+      "stroke": {
+        "color": "#000000",
+        "width": 5
+      }
+    },
+    "camera": {
+      "zoom": 1
+    }
+  },
+  {
+    "grouped": false,
+    "boolean": null,
+    "style": {
+      "fill": {
+        "color": "#000000",
+        "stroke": false,
+        "enabled": true
+      },
+      "stroke": {
+        "color": "#000000",
+        "width": 5
+      }
+    },
+    "camera": {
+      "zoom": 1
+    }
+  },
+  {
+    "grouped": false,
+    "boolean": null,
+    "style": {
+      "fill": {
+        "color": "#5eb3ff",
+        "stroke": false,
+        "enabled": true
+      },
+      "stroke": {
+        "color": "#000000",
+        "width": 5
+      }
+    },
+    "camera": {
+      "zoom": 1
+    }
+  },
+  {
+    "grouped": false,
+    "boolean": null,
+    "style": {
+      "fill": {
+        "color": "#5eb3ff",
+        "stroke": false,
+        "enabled": true
+      },
+      "stroke": {
+        "color": "#000000",
+        "width": 5
+      }
+    },
+    "camera": {
+      "zoom": 1
+    }
+  },
+  {
+    "grouped": false,
+    "boolean": null,
+    "style": {
+      "fill": {
+        "color": "#5eb3ff",
+        "stroke": false,
+        "enabled": true
+      },
+      "stroke": {
+        "color": "#000000",
+        "width": 5
+      }
+    },
+    "camera": {
+      "zoom": 1
+    }
+  }
+]

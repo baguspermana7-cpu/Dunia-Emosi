@@ -1,0 +1,58 @@
+{
+  "languages": [
+    "en",
+    "ar",
+    "bg",
+    "cs",
+    "da",
+    "nl",
+    "fr",
+    "de",
+    "hu",
+    "it",
+    "no",
+    "pl",
+    "pt",
+    "ro",
+    "ru",
+    "es",
+    "sv",
+    "tr",
+    "pt-br",
+    "es-419"
+  ],
+  "resources": {
+    "images": {
+      "title": {
+        "texture": "title",
+        "frame": {
+          "en": "title-en.png",
+          "ar": "title-arabic.png",
+          "bg": "title-bulgarian.png",
+          "cs": "title-czech.png",
+          "da": "title-danish.png",
+          "nl": "title-dutch.png",
+          "fr": "title-french.png",
+          "de": "title-german.png",
+          "hu": "title-hungarian.png",
+          "it": "title-italian.png",
+          "no": "title-norwegian.png",
+          "pl": "title-polish.png",
+          "pt": "title-portuguese.png",
+          "ro": "title-romanian.png",
+          "ru": "title-russian.png",
+          "es": "title-spanish.png",
+          "sv": "title-swedish.png",
+          "tr": "title-turkish.png",
+          "pt-br": "title-portuguese_brazilian.png",
+          "es-419": "title-spanish_latinamerican.png"
+        }
+      }
+    }
+  },
+  "copyFormat": "langCopy",
+  "copy": {
+    "en": {
+    }
+  }
+}

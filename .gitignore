@@ -48,5 +48,3 @@ assets/train/Thomas/
 # Deprecated backdrop reference dump (literally "OLD reference only"; not referenced by app code)
 assets/train/_bg-clean-OLD-reference-only/
 
-# Film Anak raw games — committed at final re-sync after compression (owner still finalizing)
-games/film/

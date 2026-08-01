@@ -1,0 +1,426 @@
+
+characters.png
+size: 1904,1096
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+b/b_body
+  rotate: false
+  xy: 251, 594
+  size: 177, 500
+  orig: 177, 500
+  offset: 0, 0
+  index: -1
+b/b_eye_0
+  rotate: false
+  xy: 1392, 512
+  size: 121, 70
+  orig: 121, 70
+  offset: 0, 0
+  index: -1
+b/b_eye_1
+  rotate: false
+  xy: 1542, 506
+  size: 124, 76
+  orig: 124, 76
+  offset: 0, 0
+  index: -1
+b/b_hair_b
+  rotate: false
+  xy: 503, 538
+  size: 218, 149
+  orig: 218, 149
+  offset: 0, 0
+  index: -1
+b/b_head
+  rotate: false
+  xy: 850, 2
+  size: 246, 169
+  orig: 246, 169
+  offset: 0, 0
+  index: -1
+b/b_tail
+  rotate: false
+  xy: 1, 1
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+bugs/bugs_hair_b
+  rotate: false
+  xy: 1, 1
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+daffy/daffy_hair_b
+  rotate: false
+  xy: 1, 1
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+daffy/daffy_tail
+  rotate: false
+  xy: 1, 1
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+hat
+  rotate: false
+  xy: 1, 1
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+porky/porky_hand2
+  rotate: false
+  xy: 1, 1
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+runner/runner_hand
+  rotate: false
+  xy: 1, 1
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+bugs/bugs_body
+  rotate: false
+  xy: 274, 124
+  size: 287, 410
+  orig: 287, 410
+  offset: 0, 0
+  index: -1
+bugs/bugs_eye_0
+  rotate: false
+  xy: 251, 535
+  size: 76, 58
+  orig: 76, 58
+  offset: 0, 0
+  index: -1
+bugs/bugs_eye_1
+  rotate: false
+  xy: 328, 535
+  size: 76, 58
+  orig: 76, 58
+  offset: 0, 0
+  index: -1
+bugs/bugs_hand
+  rotate: false
+  xy: 1392, 234
+  size: 149, 273
+  orig: 149, 273
+  offset: 0, 0
+  index: -1
+bugs/bugs_head
+  rotate: false
+  xy: 834, 767
+  size: 231, 327
+  orig: 231, 327
+  offset: 0, 0
+  index: -1
+bugs/bugs_tail
+  rotate: false
+  xy: 429, 595
+  size: 73, 92
+  orig: 73, 92
+  offset: 0, 0
+  index: -1
+coyote/coyote_body
+  rotate: false
+  xy: 1, 535
+  size: 249, 559
+  orig: 249, 559
+  offset: 0, 0
+  index: -1
+coyote/coyote_eye_0
+  rotate: false
+  xy: 1104, 176
+  size: 56, 54
+  orig: 56, 54
+  offset: 0, 0
+  index: -1
+coyote/coyote_eye_1
+  rotate: false
+  xy: 1582, 174
+  size: 56, 54
+  orig: 56, 54
+  offset: 0, 0
+  index: -1
+coyote/coyote_hair_b
+  rotate: false
+  xy: 1129, 557
+  size: 168, 212
+  orig: 168, 212
+  offset: 0, 0
+  index: -1
+coyote/coyote_head
+  rotate: false
+  xy: 1670, 922
+  size: 231, 172
+  orig: 231, 172
+  offset: 0, 0
+  index: -1
+coyote/coyote_tail
+  rotate: false
+  xy: 1582, 12
+  size: 132, 161
+  orig: 132, 161
+  offset: 0, 0
+  index: -1
+daffy/daffy_body
+  rotate: false
+  xy: 429, 688
+  size: 404, 406
+  orig: 404, 410
+  offset: 0, 0
+  index: -1
+daffy/daffy_eye_0
+  rotate: false
+  xy: 1715, 24
+  size: 55, 69
+  orig: 55, 69
+  offset: 0, 0
+  index: -1
+daffy/daffy_eye_1
+  rotate: false
+  xy: 1771, 24
+  size: 55, 69
+  orig: 55, 69
+  offset: 0, 0
+  index: -1
+daffy/daffy_head2
+  rotate: false
+  xy: 1669, 508
+  size: 222, 174
+  orig: 222, 174
+  offset: 0, 0
+  index: -1
+elmer/elmer_body
+  rotate: false
+  xy: 1460, 772
+  size: 209, 322
+  orig: 209, 322
+  offset: 0, 0
+  index: -1
+elmer/elmer_eye_0
+  rotate: false
+  xy: 1590, 701
+  size: 78, 70
+  orig: 78, 70
+  offset: 0, 0
+  index: -1
+elmer/elmer_eye_1
+  rotate: false
+  xy: 1590, 630
+  size: 78, 70
+  orig: 78, 70
+  offset: 0, 0
+  index: -1
+elmer/elmer_hand2
+  rotate: false
+  xy: 1715, 94
+  size: 155, 128
+  orig: 155, 128
+  offset: 0, 0
+  index: -1
+elmer/elmer_head
+  rotate: false
+  xy: 1224, 2
+  size: 240, 228
+  orig: 240, 228
+  offset: 0, 0
+  index: -1
+hats/hat_porky
+  rotate: false
+  xy: 274, 4
+  size: 127, 119
+  orig: 127, 119
+  offset: 0, 0
+  index: -1
+hats/hat_tweet
+  rotate: false
+  xy: 525, 18
+  size: 162, 105
+  orig: 172, 112
+  offset: 5, 4
+  index: -1
+porky/porky_body2
+  rotate: false
+  xy: 1104, 231
+  size: 287, 322
+  orig: 287, 322
+  offset: 0, 0
+  index: -1
+porky/porky_eye_0
+  rotate: false
+  xy: 1542, 363
+  size: 113, 97
+  orig: 113, 97
+  offset: 0, 0
+  index: -1
+porky/porky_eye_1
+  rotate: false
+  xy: 1542, 265
+  size: 113, 97
+  orig: 113, 97
+  offset: 0, 0
+  index: -1
+porky/porky_head
+  rotate: false
+  xy: 1670, 683
+  size: 228, 238
+  orig: 228, 238
+  offset: 0, 0
+  index: -1
+runner/runner_body
+  rotate: false
+  xy: 1, 3
+  size: 272, 531
+  orig: 272, 531
+  offset: 0, 0
+  index: -1
+runner/runner_eye_0
+  rotate: false
+  xy: 405, 537
+  size: 43, 56
+  orig: 43, 56
+  offset: 0, 0
+  index: -1
+runner/runner_eye_1
+  rotate: false
+  xy: 449, 538
+  size: 43, 56
+  orig: 43, 56
+  offset: 0, 0
+  index: -1
+runner/runner_hair_b
+  rotate: false
+  xy: 1097, 4
+  size: 126, 167
+  orig: 126, 167
+  offset: 0, 0
+  index: -1
+runner/runner_head
+  rotate: false
+  xy: 402, 4
+  size: 122, 119
+  orig: 122, 119
+  offset: 0, 0
+  index: -1
+runner/runner_tail
+  rotate: false
+  xy: 824, 172
+  size: 279, 379
+  orig: 279, 379
+  offset: 0, 0
+  index: -1
+sylve/sylve_body2
+  rotate: false
+  xy: 562, 152
+  size: 261, 385
+  orig: 261, 385
+  offset: 0, 0
+  index: -1
+sylve/sylve_eye_0
+  rotate: false
+  xy: 834, 713
+  size: 49, 53
+  orig: 49, 53
+  offset: 0, 0
+  index: -1
+sylve/sylve_eye_1
+  rotate: false
+  xy: 1827, 40
+  size: 49, 53
+  orig: 49, 53
+  offset: 0, 0
+  index: -1
+sylve/sylve_head
+  rotate: false
+  xy: 884, 554
+  size: 244, 212
+  orig: 244, 212
+  offset: 0, 0
+  index: -1
+sylve/sylve_tail2
+  rotate: false
+  xy: 1465, 9
+  size: 116, 224
+  orig: 116, 224
+  offset: 0, 0
+  index: -1
+tweet/perch
+  rotate: false
+  xy: 1066, 770
+  size: 393, 324
+  orig: 393, 324
+  offset: 0, 0
+  index: -1
+tweet/tweet_arm_l
+  rotate: false
+  xy: 1542, 461
+  size: 34, 44
+  orig: 40, 48
+  offset: 3, 2
+  index: -1
+tweet/tweet_body
+  rotate: false
+  xy: 1298, 583
+  size: 291, 186
+  orig: 291, 186
+  offset: 0, 0
+  index: -1
+tweet/tweet_eye_0
+  rotate: false
+  xy: 722, 552
+  size: 161, 135
+  orig: 161, 135
+  offset: 0, 0
+  index: -1
+tweet/tweet_eye_1
+  rotate: false
+  xy: 688, 16
+  size: 161, 135
+  orig: 161, 135
+  offset: 0, 0
+  index: -1
+tweet/tweet_hand_r
+  rotate: false
+  xy: 1161, 202
+  size: 62, 28
+  orig: 65, 28
+  offset: 0, 0
+  index: -1
+tweet/tweet_head
+  rotate: false
+  xy: 1667, 223
+  size: 196, 284
+  orig: 196, 284
+  offset: 0, 0
+  index: -1
+tweet/tweet_tail
+  rotate: false
+  xy: 1590, 583
+  size: 67, 46
+  orig: 67, 46
+  offset: 0, 0
+  index: -1
+tweet/wing_l
+  rotate: false
+  xy: 1582, 467
+  size: 81, 38
+  orig: 88, 44
+  offset: 2, 3
+  index: -1
+tweet/wing_r
+  rotate: false
+  xy: 1582, 229
+  size: 73, 35
+  orig: 80, 40
+  offset: 3, 3
+  index: -1

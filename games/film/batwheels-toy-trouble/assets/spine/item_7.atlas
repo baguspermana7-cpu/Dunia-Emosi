@@ -1,0 +1,48 @@
+
+item_7.png
+size: 244,616
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+7_1
+  rotate: false
+  xy: 1, 203
+  size: 240, 411
+  orig: 256, 427
+  offset: 8, 8
+  index: -1
+7_2
+  rotate: false
+  xy: 1, 148
+  size: 230, 54
+  orig: 246, 70
+  offset: 8, 8
+  index: -1
+7_3
+  rotate: false
+  xy: 1, 117
+  size: 227, 30
+  orig: 243, 46
+  offset: 8, 8
+  index: -1
+7_4
+  rotate: false
+  xy: 1, 30
+  size: 137, 86
+  orig: 153, 102
+  offset: 8, 8
+  index: -1
+7_5
+  rotate: false
+  xy: 139, 102
+  size: 37, 14
+  orig: 53, 30
+  offset: 8, 8
+  index: -1
+7_6
+  rotate: false
+  xy: 1, 1
+  size: 122, 28
+  orig: 138, 44
+  offset: 8, 8
+  index: -1

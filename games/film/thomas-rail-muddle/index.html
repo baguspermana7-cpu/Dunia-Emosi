@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Thomas & Friends All Engines Go: Rail Muddle!</title>
+	<meta charset="utf-8">
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.01, minimal-ui" />
+	<style>
+		body {
+			margin: 0px;
+			padding: 0px;
+			width: 100vw;
+			height: 100vh;
+			background-color:black;
+			overflow:hidden
+		}	
+
+		canvas {	
+			-ms-touch-action: none;
+			image-rendering: -o-crisp-edges;           
+			image-rendering: optimize-contrast;        
+			-ms-interpolation-mode: nearest-neighbor;  
+			-webkit-tap-highlight-color: rgba(0,0,0,0);
+			-moz-tap-highlight-color: rgba(0,0,0,0);
+			tap-highlight-color: rgba(0,0,0,0);
+			user-select: none;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+		} 
+	</style>
+	
+	<style type="text/css">	
+		@font-face{
+		font-family:"PeachyKeen";
+		src:url("fonts/PeachyKeen.woff2") format("woff2"),url("fonts/PeachyKeen.woff") format("woff");
+		}	
+		
+		@font-face{
+		font-family:"FranklinGothic";
+		src:url("fonts/Franklin Gothic Book Regular.ttf") format("truetype");
+		}
+		
+						
+		@font-face{
+		font-family:"PT Sans Narrow";
+		src:url("Fonts/PTSansNarrow-Regular.ttf") format("truetype");
+		}
+				
+		@font-face{
+		font-family:"Russo One";
+		src:url("Fonts/RussoOne-Regular.ttf") format("truetype");
+		}
+		
+		@font-face{
+		font-family:"Mada";
+		src:url("Fonts/Mada-Regular.ttf") format("truetype");
+		}
+		
+	</style>
+	
+</head>
+	
+	<body> 
+		<div id="canvas-wrapper" style="overflow:hidden; width:100vw; height:100vh; margin:0; padding:0; position:absolute;">
+		   <canvas id="canvas" moz-opaque></canvas>
+		</div>
+	</body>
+   
+	<script src="gsap.min.js"></script>
+	<script src="Howler.min.js"></script>
+	<script src="VisibilityManager.js"></script>
+	<script src="app.js"></script>
+	<script type="text/javascript">  
+	  loadLang("en");
+	</script>
+</html>

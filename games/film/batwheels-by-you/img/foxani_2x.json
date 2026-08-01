@@ -1,0 +1,207 @@
+{
+  "frames": {
+    "drytowel4": {
+      "frame": {
+        "x": 6,
+        "y": 6,
+        "w": 177,
+        "h": 265
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 5,
+        "y": 0,
+        "w": 177,
+        "h": 265
+      },
+      "sourceSize": {
+        "w": 205,
+        "h": 265
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "drytowel3": {
+      "frame": {
+        "x": 195,
+        "y": 6,
+        "w": 175,
+        "h": 265
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 2,
+        "y": 0,
+        "w": 175,
+        "h": 265
+      },
+      "sourceSize": {
+        "w": 205,
+        "h": 265
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "drytowel2": {
+      "frame": {
+        "x": 382,
+        "y": 6,
+        "w": 172,
+        "h": 265
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 172,
+        "h": 265
+      },
+      "sourceSize": {
+        "w": 205,
+        "h": 265
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "drytowel5": {
+      "frame": {
+        "x": 566,
+        "y": 6,
+        "w": 176,
+        "h": 264
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 11,
+        "y": 0,
+        "w": 176,
+        "h": 264
+      },
+      "sourceSize": {
+        "w": 205,
+        "h": 265
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "drytowel8": {
+      "frame": {
+        "x": 566,
+        "y": 282,
+        "w": 176,
+        "h": 264
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 29,
+        "y": 0,
+        "w": 176,
+        "h": 264
+      },
+      "sourceSize": {
+        "w": 205,
+        "h": 265
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "drytowel6": {
+      "frame": {
+        "x": 6,
+        "y": 283,
+        "w": 174,
+        "h": 264
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 18,
+        "y": 0,
+        "w": 174,
+        "h": 264
+      },
+      "sourceSize": {
+        "w": 205,
+        "h": 265
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "drytowel1": {
+      "frame": {
+        "x": 192,
+        "y": 283,
+        "w": 168,
+        "h": 264
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 168,
+        "h": 264
+      },
+      "sourceSize": {
+        "w": 205,
+        "h": 265
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "drytowel7": {
+      "frame": {
+        "x": 372,
+        "y": 283,
+        "w": 173,
+        "h": 263
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 26,
+        "y": 0,
+        "w": 173,
+        "h": 263
+      },
+      "sourceSize": {
+        "w": 205,
+        "h": 265
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "https://github.com/odrick/gulp-free-tex-packer",
+    "version": "0.5.2",
+    "image": "foxani_2x.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 1024,
+      "h": 1024
+    },
+    "scale": 1
+  }
+}

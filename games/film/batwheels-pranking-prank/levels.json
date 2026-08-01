@@ -1,0 +1,232 @@
+{
+	"levels": {
+		"1": {
+			"steps": [
+				{
+					"message": "intro"
+				},
+				{
+					"characterSelect": 1
+				},
+				{
+					"message": "tutorial1"
+				},
+				{
+					"wait": 1
+				},
+				{
+					"message": "level1intro"
+				},
+				{
+					"obstacle": "left"
+				},
+				{
+					"obstacle": "right"
+				},
+				{
+					"obstacle": "2chain"
+				},
+				{
+					"obstacle": "left"
+				},
+				{
+					"obstacle": "right"
+				},
+				{
+					"obstacle": "2chain"
+				},
+				{
+					"message": "batwingShield1"
+				},
+				{
+					"batwing": "help"
+				},
+				{
+					"wait": 3
+				},
+				{
+					"obstacle": "basic"
+				},
+				{
+					"obstacle": "left"
+				},
+				{
+					"obstacle": "right"
+				},
+				{
+					"obstacle": "2chain"
+				},
+				{
+					"obstacle": "2cross"
+				},
+				{
+					"obstacle": "2chain"
+				},
+				{
+					"obstacle": "2cross"
+				},
+				{
+					"obstacle": "2cross"
+				},
+				{
+					"message": "level1end"
+				},
+				{
+					"batwing": "nextLevel"
+				}
+			]
+		},
+		"2": {
+			"steps": [
+				{
+					"wait": 3
+				},
+				{
+					"message": "level2intro"
+				},
+				{
+					"obstacle": "basic"
+				},
+				{
+					"obstacle": "2cross"
+				},
+				{
+					"obstacle": "2and2"
+				},
+				{
+					"obstacle": "left"
+				},
+				{
+					"obstacle": "right"
+				},
+				{
+					"obstacle": "3cross"
+				},
+				{
+					"message": "batwingShield2"
+				},
+				{
+					"batwing": "help"
+				},
+				{
+					"wait": 2
+				},
+				{
+					"obstacle": "2chain"
+				},
+				{
+					"obstacle": "left"
+				},
+				{
+					"obstacle": "right"
+				},
+				{
+					"obstacle": "2cross"
+				},
+				{
+					"obstacle": "right"
+				},
+				{
+					"obstacle": "left"
+				},
+				{
+					"obstacle": "2chain"
+				},
+				{
+					"obstacle": "3cross"
+				},
+				{
+					"obstacle": "2chain"
+				},
+				{
+					"message": "level2end"
+				},
+				{
+					"batwing": "nextLevel"
+				}
+			]
+		},
+		"3": {
+			"steps": [
+				{
+					"wait": 3
+				},
+				{
+					"message": "level3intro"
+				},
+				{
+					"obstacle": "2and2"
+				},
+				{
+					"obstacle": "2cross"
+				},
+				{
+					"obstacle": "2and2"
+				},
+				{
+					"obstacle": "right"
+				},
+				{
+					"obstacle": "left"
+				},
+				{
+					"obstacle": "3cross"
+				},
+				{
+					"obstacle": "right"
+				},
+				{
+					"obstacle": "left"
+				},
+				{
+					"obstacle": "2cross"
+				},
+				{
+					"message": "batwingShield3"
+				},
+				{
+					"batwing": "help"
+				},
+				{
+					"wait": 2
+				},
+				{
+					"obstacle": "3cross"
+				},
+				{
+					"obstacle": "2chain"
+				},
+				{
+					"obstacle": "2and2"
+				},
+				{
+					"obstacle": "3cross"
+				},
+				{
+					"obstacle": "2cross"
+				},
+				{
+					"obstacle": "3cross"
+				},
+				{
+					"obstacle": "right"
+				},
+				{
+					"obstacle": "left"
+				},
+				{
+					"obstacle": "right"
+				},
+				{
+					"obstacle": "left"
+				},
+				{
+					"message": "level3end"
+				},
+				{
+					"batwing": "nextLevel"
+				}
+			]
+		}
+	}
+}

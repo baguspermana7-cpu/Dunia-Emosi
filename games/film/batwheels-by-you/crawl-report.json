@@ -1,0 +1,577 @@
+{
+  "generatedAt": "2026-08-01T15:44:14.106Z",
+  "entry": "https://games.toon-cdn.com/batwheels/by-you/index.html",
+  "root": "https://games.toon-cdn.com/batwheels/by-you/",
+  "output": "/home/baguspermana7/Documents/temporary/online game to be offline/batwheels/games/batwheels-by-you",
+  "totals": {
+    "files": 50,
+    "bytes": 49984813,
+    "missing": 46,
+    "external": 122,
+    "rejected": 0
+  },
+  "fetched": [
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/img/loadinglogo.png",
+      "file": "img/loadinglogo.png",
+      "bytes": 104186
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/img/loadingbarbg.png",
+      "file": "img/loadingbarbg.png",
+      "bytes": 31855
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/img/loadingbar.png",
+      "file": "img/loadingbar.png",
+      "bytes": 131
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/img/foxbg_2x.json",
+      "file": "img/foxbg_2x.json",
+      "bytes": 680
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/img/foxani_2x.json",
+      "file": "img/foxani_2x.json",
+      "bytes": 3645
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/img/foxclip_2x.json",
+      "file": "img/foxclip_2x.json",
+      "bytes": 2828
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/index.html",
+      "file": "index.html",
+      "bytes": 3520
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/img/foxpic2_2x.json",
+      "file": "img/foxpic2_2x.json",
+      "bytes": 112975
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/img/foxpic1_2x.json",
+      "file": "img/foxpic1_2x.json",
+      "bytes": 67524
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/img/foxpic_hitmap_2x.json",
+      "file": "img/foxpic_hitmap_2x.json",
+      "bytes": 2374
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/jz/z_audio.jz",
+      "file": "jz/z_audio.jz",
+      "bytes": 3948700
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/img/foxjpg_2x.json",
+      "file": "img/foxjpg_2x.json",
+      "bytes": 25301
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/jz/z_animations.jz",
+      "file": "jz/z_animations.jz",
+      "bytes": 6838
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/popsound.js",
+      "file": "js/popsound.js",
+      "bytes": 2429
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/jz/z_foxsvg.jz",
+      "file": "jz/z_foxsvg.jz",
+      "bytes": 129364
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/titlescreen.js",
+      "file": "js/titlescreen.js",
+      "bytes": 3699
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/batcomputer.js",
+      "file": "js/batcomputer.js",
+      "bytes": 2764
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/popconfirm.js",
+      "file": "js/popconfirm.js",
+      "bytes": 1169
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/photo.js",
+      "file": "js/photo.js",
+      "bytes": 4034
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/menubar.js",
+      "file": "js/menubar.js",
+      "bytes": 14417
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/movingbackground.js",
+      "file": "js/movingbackground.js",
+      "bytes": 2874
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/swingingitem.js",
+      "file": "js/swingingitem.js",
+      "bytes": 1364
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/gallery.js",
+      "file": "js/gallery.js",
+      "bytes": 10483
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/popmessage.js",
+      "file": "js/popmessage.js",
+      "bytes": 1593
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/poptutorial.js",
+      "file": "js/poptutorial.js",
+      "bytes": 1630
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/particle.js",
+      "file": "js/particle.js",
+      "bytes": 2467
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/popfigures.js",
+      "file": "js/popfigures.js",
+      "bytes": 3922
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/foxanimation.js",
+      "file": "js/foxanimation.js",
+      "bytes": 13345
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/start.js",
+      "file": "js/start.js",
+      "bytes": 43554
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/img/foxclip_2x.png",
+      "file": "img/foxclip_2x.png",
+      "bytes": 360339
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/img/foxbg_2x.png",
+      "file": "img/foxbg_2x.png",
+      "bytes": 2266534
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/pausescreen.js",
+      "file": "js/pausescreen.js",
+      "bytes": 3114
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/foxlib.js",
+      "file": "js/foxlib.js",
+      "bytes": 6883
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/img/foxani_2x.png",
+      "file": "img/foxani_2x.png",
+      "bytes": 534320
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/fonts/fontloader.css",
+      "file": "fonts/fontloader.css",
+      "bytes": 413
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/main.js",
+      "file": "js/main.js",
+      "bytes": 7658
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/foxmovieclip.js",
+      "file": "js/foxmovieclip.js",
+      "bytes": 5669
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/common.js",
+      "file": "js/common.js",
+      "bytes": 37871
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/globalvar.js",
+      "file": "js/globalvar.js",
+      "bytes": 11853
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/pixi-heaven.js",
+      "file": "js/pixi-heaven.js",
+      "bytes": 61558
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/pixi.js",
+      "file": "js/pixi.js",
+      "bytes": 1719291
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/loadingscreen.js",
+      "file": "js/loadingscreen.js",
+      "bytes": 14717
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/fox.js",
+      "file": "js/fox.js",
+      "bytes": 150679
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/img/foxpic2_2x.png",
+      "file": "img/foxpic2_2x.png",
+      "bytes": 10114739
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/libs.js",
+      "file": "js/libs.js",
+      "bytes": 1007858
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/fonts/fredoka.ttf",
+      "file": "fonts/fredoka.ttf",
+      "bytes": 42452
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/fonts/avenir.ttf",
+      "file": "fonts/avenir.ttf",
+      "bytes": 69048
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/img/foxpic_hitmap_2x.png",
+      "file": "img/foxpic_hitmap_2x.png",
+      "bytes": 1163210
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/img/foxjpg_2x.png",
+      "file": "img/foxjpg_2x.png",
+      "bytes": 17773222
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/img/foxpic1_2x.png",
+      "file": "img/foxpic1_2x.png",
+      "bytes": 10083720
+    }
+  ],
+  "missing": [
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/foxani_2x.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/foxbg_2x.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/foxclip_2x.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/foxjpg_2x.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/foxpic_hitmap_2x.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/foxpic1_2x.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/.jpg",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/.jpg",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/something.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/foxpic2_2x.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/something.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/.json",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/image.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/.json",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/foxpic_2x.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/iamge.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/foxpic_2x.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/iamge.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/z_animations.jz",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/z_audio.jz",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/z_audio.jz",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/image.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/loadingbarbg.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/.js",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/loadingbar.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/z_foxsvg.jz",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/loadingbarbg.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/z_animations.jz",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/loadinglogo.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/loadinglogo.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/.fnt",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/z_foxsvg.jz",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/loadingbar.png",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/.fnt",
+      "status": "FETCH_ERROR",
+      "error": "The operation was aborted due to timeout"
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/AbstractLoader.SVG",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/AbstractLoader.CSS",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/pixi.js",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/level5bg.js",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/AbstractLoader.JSON",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/AbstractLoader.JSON",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/AbstractLoader.SVG",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/level5items.js",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/AbstractLoader.XML",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/AbstractLoader.CSS",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/js/AbstractLoader.XML",
+      "status": 404
+    },
+    {
+      "url": "https://games.toon-cdn.com/batwheels/by-you/.js",
+      "status": 404
+    }
+  ],
+  "external": [
+    "http://.../",
+    "http://a%40b@c/",
+    "http://a@b/",
+    "http://a@b/c@d",
+    "http://byteblacksmith.com/improvements-to-the-canonical-one-liner-glsl-rand-for-opengl-es-2-0/",
+    "http://createjs.com/",
+    "http://foo.com/",
+    "http://paulirish.com/2011/requestanimationframe-for-smart-animating/",
+    "http://pixijs.io/examples/",
+    "http://stackoverflow.com/questions/10046972/msie-returns-status-code-of-1223-for-ajax-request",
+    "http://stackoverflow.com/questions/15786966/xdomainrequest-aborts-post-on-ie-9",
+    "http://stackoverflow.com/questions/8507885/shift-hue-of-an-rgb-color/8510751",
+    "http://tools.ietf.org/html/rfc3492",
+    "http://updates.html5rocks.com/2012/05/requestAnimationFrame-API-now-with-sub-millisecond-precision",
+    "http://www.angelcode.com/products/bmfont/",
+    "http://www.apache.org/licenses/LICENSE-2.0",
+    "http://www.asciitable.com/",
+    "http://www.bmglyph.com/",
+    "http://www.chiark.greenend.org.uk/~sgtatham/algorithms/listsort.html",
+    "http://www.example.com/",
+    "http://www.gnu.org/licenses/",
+    "http://www.opensource.org/licenses/mit-license",
+    "http://www.opensource.org/licenses/mit-license.html",
+    "http://www.pixijs.com/",
+    "https://.../",
+    "https://assets-acc.cartoonnetworkarcade.com/published/696b49256c3fed03da961f9b82ac1e28b970f788_1545410063/fit_max-fm_png-id_109-width_512-height_512.png",
+    "https://assets-acc.cartoonnetworkarcade.com/published/83fc91507864b909a0cca4a612f3d653547e7400_1545410057/fit_max-fm_png-id_108-width_512-height_512.png",
+    "https://assets-acc.cartoonnetworkarcade.com/published/d91707a6f9f386858072a1c57afaa4878fac9cd5_1551282962/fit_crop-50-50-fm_jpg-id_769-width_1184-height_624.jpg",
+    "https://bugs.chromium.org/p/v8/issues/detail",
+    "https://bugs.webkit.org/show_bug.cgi",
+    "https://code.google.com/p/chromium/issues/detail",
+    "https://code.google.com/p/fxcanvas/",
+    "https://developer.mozilla.org/En/Using_XMLHttpRequest",
+    "https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API).",
+    "https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext",
+    "https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent",
+    "https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button",
+    "https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/buttons",
+    "https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent",
+    "https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent/height",
+    "https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent/isPrimary",
+    "https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent/pointerId",
+    "https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent/pointerType",
+    "https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent/pressure",
+    "https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent/tiltX",
+    "https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent/tiltY",
+    "https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent/width",
+    "https://developer.mozilla.org/en-US/docs/Web/API/Touch/rotationAngle",
+    "https://developer.mozilla.org/en-US/docs/Web/API/TouchEvent",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sign",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isInteger",
+    "https://developer.mozilla.org/en/docs/Web/API/HTMLCanvasElement/getContext",
+    "https://developer.mozilla.org/en/docs/Web/CSS/cursor",
+    "https://docs.microsoft.com/en-us/windows/win32/api/dxgiformat/ne-dxgiformat-dxgi_format",
+    "https://docs.microsoft.com/en-us/windows/win32/direct3ddds/dx-graphics-dds-pguide",
+    "https://easystarjs.com/)",
+    "https://en.wikipedia.org/wiki/Dihedral_group",
+    "https://englercj.github.io/resource-loader/classes/resource.html",
+    "https://example.com/api",
+    "https://games.toon-cdn.com/assets/images/icon_external_link.svg",
+    "https://gist.github.com/1579671",
+    "https://gist.github.com/remy/784508",
+    "https://gist.github.com/timhall/4078614",
+    "https://github.com/Financial-Times/polyfill-service/tree/master/polyfills/requestAnimationFrame",
+    "https://github.com/Nazariglez/pixi-keyboard)",
+    "https://github.com/RaumZeit/MarchingSquares.js",
+    "https://github.com/Turfjs/turf/)",
+    "https://github.com/WebReflection/flatted",
+    "https://github.com/bchevalier",
+    "https://github.com/cosmosio/get-closest",
+    "https://github.com/eneko/Array.sortBy)",
+    "https://github.com/englercj/resource-loader",
+    "https://github.com/evanw/glfx.js/blob/58841c23919bd59787effc0333a4897b43835412/src/filters/adjust/huesaturation.js",
+    "https://github.com/evanw/glfx.js/blob/master/src/filters/adjust/noise.js",
+    "https://github.com/joyent/node/issues/1707",
+    "https://github.com/jriecken/sat-js)",
+    "https://github.com/libgdx/libgdx/blob/master/gdx/src/com/badlogic/gdx/graphics/g2d/ParticleBuffer.java",
+    "https://github.com/libgdx/libgdx/blob/master/gdx/src/com/badlogic/gdx/graphics/g2d/ParticleRenderer.java",
+    "https://github.com/mattdesl/",
+    "https://github.com/matthewhudson/current-device",
+    "https://github.com/microsoft/TypeScript/issues/2521",
+    "https://github.com/mitsuhiko/webgl-meincraft",
+    "https://github.com/odrick/gulp-free-tex-packer",
+    "https://github.com/orling/grapheme-splitter",
+    "https://github.com/photonstorm/phaser/issues/1248",
+    "https://github.com/pieroxy/lz-string/issues/126",
+    "https://github.com/pixijs/filters/releases)",
+    "https://github.com/pixijs/pixi-display",
+    "https://github.com/pixijs/pixi-filters",
+    "https://github.com/pixijs/pixi-sound",
+    "https://github.com/pixijs/pixi-sound)",
+    "https://github.com/pixijs/pixi.js/issues/2233",
+    "https://github.com/pixijs/pixi.js/issues/3742",
+    "https://github.com/pixijs/pixi.js/issues/5135",
+    "https://github.com/pixijs/pixi.js/issues/5968).",
+    "https://github.com/pixijs/pixi.js/issues/5996",
+    "https://github.com/pixijs/pixi.js/wiki/v5-Creating-filters",
+    "https://github.com/promises-aplus/promises-spec",
+    "https://github.com/rocket-ua/pixi-tps-loader/blob/master/src/ResourceLoader.js",
+    "https://github.com/substack/point-in-polygon/blob/master/index.js",
+    "https://github.com/tleunen/pixi-multistyle-text)",
+    "https://graphicdesign.stackexchange.com/questions/59018/what-is-a-bevel-join-of-two-lines-exactly-illustrator",
+    "https://mathiasbynens.be/notes/javascript-encoding",
+    "https://mdn.io/encodeURIComponent)",
+    "https://medium.com/@giltayar/iterating-over-emoji-characters-the-es6-way-f06e4589516",
+    "https://mths.be/punycode",
+    "https://npms.io/search",
+    "https://pixijs.github.io/docs/PIXI.Graphics.html",
+    "https://pixijs.io/pixi-text-style).",
+    "https://s3-us-west-2.amazonaws.com/s.cdpn.io/693612/IaUrttj.png",
+    "https://stackoverflow.com/a/2117523/109538",
+    "https://stackoverflow.com/a/5838055/5224246",
+    "https://stackoverflow.com/questions/52532614/total-canvas-memory-use-exceeds-the-maximum-limit-safari-12",
+    "https://stackoverflow.com/questions/785097/how-do-i-implement-a-bezier-curve-in-c",
+    "https://w3c.github.io/pointerevents/",
+    "https://www.ferryhalim.com/tulislog.php",
+    "https://www.geeksforgeeks.org/quickhull-algorithm-convex-hull/",
+    "https://www.khronos.org/opengles/sdk/tools/KTX/file_format_spec/",
+    "https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_compressed_ATC_texture.txt",
+    "https://www.npmjs.com/package/poisson-disk-sampling)",
+    "https://www.w3.org/Submission/pointer-events/",
+    "https://www.w3.org/TR/touch-events/"
+  ],
+  "rejected": []
+}

@@ -1,0 +1,62 @@
+
+item_12.png
+size: 244,896
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+12_1
+  rotate: false
+  xy: 1, 510
+  size: 239, 385
+  orig: 255, 400
+  offset: 8, 8
+  index: -1
+12_2
+  rotate: false
+  xy: 1, 166
+  size: 231, 54
+  orig: 247, 70
+  offset: 8, 8
+  index: -1
+12_3
+  rotate: false
+  xy: 1, 221
+  size: 230, 89
+  orig: 246, 105
+  offset: 8, 8
+  index: -1
+12_4
+  rotate: false
+  xy: 1, 311
+  size: 182, 198
+  orig: 198, 213
+  offset: 8, 8
+  index: -1
+12_5
+  rotate: false
+  xy: 1, 30
+  size: 149, 49
+  orig: 165, 65
+  offset: 8, 8
+  index: -1
+12_6
+  rotate: false
+  xy: 1, 80
+  size: 161, 85
+  orig: 177, 101
+  offset: 8, 8
+  index: -1
+12_7
+  rotate: false
+  xy: 184, 496
+  size: 32, 13
+  orig: 48, 29
+  offset: 8, 8
+  index: -1
+12_8
+  rotate: false
+  xy: 1, 1
+  size: 122, 28
+  orig: 138, 44
+  offset: 8, 8
+  index: -1

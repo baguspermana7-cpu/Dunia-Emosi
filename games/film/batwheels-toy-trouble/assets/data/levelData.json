@@ -1,0 +1,157 @@
+{
+  "objects": [
+    {
+      "texture": "box_foreground",
+      "isItemBox": true,
+      "position": {
+        "x": 827,
+        "y": 769
+      },
+      "enemies": [
+        0
+      ],
+      "enemyScale": 1,
+      "flipped": true
+    },
+    {
+      "texture": "obstacle_back_left_box",
+      "position": {
+        "x": 644,
+        "y": 591
+      },
+      "enemies": [
+        1,
+        2,
+        0
+      ],
+      "flipped": true,
+      "enemyScale": 0.75,
+      "comeOutPoints": [
+        {
+          "x": 200,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "texture": "obstacle_back_right_box",
+      "position": {
+        "x": 1019,
+        "y": 598
+      },
+      "enemies": [
+        1
+      ],
+      "flipped": false,
+      "enemyScale": 0.625,
+      "comeOutPoints": [
+        {
+          "x": -200,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "texture": "obstacle_background",
+      "position": {
+        "x": 831,
+        "y": 384
+      },
+      "enemies": [
+        3
+      ],
+      "flipped": false,
+      "enemyScale": 0.5,
+      "comeOutPoints": [
+        {
+          "x": 160,
+          "y": -200
+        },
+        {
+          "x": -160,
+          "y": -200
+        }
+      ]
+    },
+    {
+      "texture": "obstacle_front_left_box",
+      "position": {
+        "x": 175,
+        "y": 770
+      },
+      "enemies": [
+        2,
+        0
+      ],
+      "flipped": true,
+      "comeOutPoints": [
+        {
+          "x": 300,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "texture": "obstacle_front_right_box",
+      "position": {
+        "x": 1412,
+        "y": 772
+      },
+      "enemies": [
+        4
+      ],
+      "enemyScale": 0.75,
+      "flipped": false,
+      "comeOutPoints": [
+        {
+          "x": -300,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "texture": "obstacle_left_back_tall",
+      "position": {
+        "x": 415,
+        "y": 556
+      },
+      "enemies": [
+        1,
+        4
+      ],
+      "flipped": true,
+      "enemyScale": 1
+    },
+    {
+      "texture": "obstacle_mid_left_box",
+      "position": {
+        "x": 542,
+        "y": 635
+      },
+      "enemies": [
+        0
+      ],
+      "flipped": true,
+      "enemyScale": 1
+    },
+    {
+      "texture": "obstacle_right_back_tall",
+      "position": {
+        "x": 1291,
+        "y": 578
+      },
+      "enemies": [
+        0,
+        2
+      ],
+      "flipped": false,
+      "enemyScale": 1,
+      "comeOutPoints": [
+        {
+          "x": -200,
+          "y": 100
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,489 @@
+{
+  "isRandom": false,
+  "puzzles": {
+    "bibi": {
+      "priority": 1,
+      "background": {
+        "scale": 1.5
+      },
+      "spawnOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "piecesToRemove": {
+        "min": 2,
+        "max": 2
+      },
+      "completePuzzle": "bibi.png",
+      "blurPuzzle": "bibi-blur.png",
+      "onPiecePlacedAudio": [
+        [
+          {
+            "audioId": "SndBibiLaugh1",
+            "config": {
+              "delay": 0
+            }
+          },
+          {
+            "audioId": "SndBibiLaugh2",
+            "config": {
+              "delay": 0
+            }
+          },
+          {
+            "audioId": "SndBibiLaugh3",
+            "config": {
+              "delay": 0
+            }
+          }
+        ],
+        {
+          "audioId": "SndItemPlace",
+          "config": {
+            "delay": 0
+          }
+        }
+      ],
+      "onLastPiecePlacedAudio": [
+        {
+          "audioId": "SndItemPlace",
+          "config": {
+            "delay": 0
+          }
+        }
+      ],
+      "onPuzzleCompleteAudio": [
+        {
+          "audioId": "BibiTakeoff1",
+          "config": {
+            "delay": 0.6
+          }
+        },
+        {
+          "audioId": "SndBibiCheer1",
+          "config": {
+            "delay": 0
+          }
+        }
+      ],
+      "texture": "character-bibi",
+      "pieces": [
+        {
+          "piece": "bibi-piece-1.png",
+          "outline": "bibi-piece-1-outline.png",
+          "slot": "bibi-slot-1.png"
+        },
+        {
+          "piece": "bibi-piece-2.png",
+          "outline": "bibi-piece-2-outline.png",
+          "slot": "bibi-slot-2.png"
+        },
+        {
+          "piece": "bibi-piece-3.png",
+          "outline": "bibi-piece-3-outline.png",
+          "slot": "bibi-slot-3.png"
+        },
+        {
+          "piece": "bibi-piece-4.png",
+          "outline": "bibi-piece-4-outline.png",
+          "slot": "bibi-slot-4.png"
+        }
+      ]
+    },
+    "bam": {
+      "priority": 2,
+      "background": {
+        "scale": 1.5
+      },
+      "spawnOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "piecesToRemove": {
+        "min": 3,
+        "max": 3
+      },
+      "completePuzzle": "bam.png",
+      "blurPuzzle": "bam-blur.png",
+      "onPiecePlacedAudio": [
+        [
+          {
+            "audioId": "SndBamLaugh1",
+            "config": {
+              "delay": 0
+            }
+          },
+          {
+            "audioId": "SndBamLaugh2",
+            "config": {
+              "delay": 0
+            }
+          },
+          {
+            "audioId": "SndBamLaugh3",
+            "config": {
+              "delay": 0
+            }
+          }
+        ],
+        {
+          "audioId": "SndItemPlace",
+          "config": {
+            "delay": 0
+          }
+        }
+      ],
+      "onLastPiecePlacedAudio": [
+        {
+          "audioId": "SndItemPlace",
+          "config": {
+            "delay": 0
+          }
+        }
+      ],
+      "onPuzzleCompleteAudio": [
+        {
+          "audioId": "BamTakeoff1",
+          "delay:": 0.25
+        },
+        {
+          "audioId": "SndBamCheer1",
+          "delay:": 0
+        }
+      ],
+      "texture": "character-bam",
+      "pieces": [
+        {
+          "piece": "bam-piece-1.png",
+          "outline": "bam-piece-1-outline.png",
+          "slot": "bam-slot-1.png",
+          "pieceOffset": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "piece": "bam-piece-2.png",
+          "outline": "bam-piece-2-outline.png",
+          "slot": "bam-slot-2.png"
+        },
+        {
+          "texture": "character-bam",
+          "piece": "bam-piece-3.png",
+          "outline": "bam-piece-3-outline.png",
+          "slot": "bam-slot-3.png"
+        },
+        {
+          "piece": "bam-piece-4.png",
+          "outline": "bam-piece-4-outline.png",
+          "slot": "bam-slot-4.png"
+        },
+        {
+          "piece": "bam-piece-5.png",
+          "outline": "bam-piece-5-outline.png",
+          "slot": "bam-slot-5.png"
+        },
+        {
+          "piece": "bam-piece-6.png",
+          "outline": "bam-piece-6-outline.png",
+          "slot": "bam-slot-6.png"
+        },
+        {
+          "piece": "bam-piece-7.png",
+          "outline": "bam-piece-7-outline.png",
+          "slot": "bam-slot-7.png"
+        },
+        {
+          "piece": "bam-piece-8.png",
+          "outline": "bam-piece-8-outline.png",
+          "slot": "bam-slot-8.png"
+        }
+      ]
+    },
+    "batwing": {
+      "priority": 3,
+      "background": {
+        "scale": 1
+      },
+      "spawnOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "piecesToRemove": {
+        "min": 3,
+        "max": 3
+      },
+      "completePuzzle": "batwing.png",
+      "blurPuzzle": "batwing-blur.png",
+      "onPiecePlacedAudio": [
+        [
+          {
+            "audioId": "SndBatwingLaugh1",
+            "config": {
+              "delay": 0
+            }
+          },
+          {
+            "audioId": "SndBatwingLaugh2",
+            "config": {
+              "delay": 0
+            }
+          },
+          {
+            "audioId": "SndBatwingLaugh3",
+            "config": {
+              "delay": 0
+            }
+          }
+        ],
+        {
+          "audioId": "SndItemPlace",
+          "config": {
+            "delay": 0
+          }
+        }
+      ],
+      "onLastPiecePlacedAudio": [
+        {
+          "audioId": "SndItemPlace",
+          "config": {
+            "delay": 0
+          }
+        }
+      ],
+      "onPuzzleCompleteAudio": [
+        {
+          "audioId": "BatwingTakeoff1",
+          "delay:": 0
+        },
+        {
+          "audioId": "SndBatwingCheer1",
+          "delay:": 0
+        }
+      ],
+      "texture": "character-batwing",
+      "pieces": [
+        {
+          "piece": "batwing-piece-1.png",
+          "outline": "batwing-piece-1-outline.png",
+          "slot": "batwing-slot-1.png"
+        },
+        {
+          "piece": "batwing-piece-2.png",
+          "outline": "batwing-piece-2-outline.png",
+          "slot": "batwing-slot-2.png"
+        },
+        {
+          "piece": "batwing-piece-3.png",
+          "outline": "batwing-piece-3-outline.png",
+          "slot": "batwing-slot-3.png"
+        },
+        {
+          "piece": "batwing-piece-4.png",
+          "outline": "batwing-piece-4-outline.png",
+          "slot": "batwing-slot-4.png"
+        },
+        {
+          "piece": "batwing-piece-5.png",
+          "outline": "batwing-piece-5-outline.png",
+          "slot": "batwing-slot-5.png"
+        },
+        {
+          "piece": "batwing-piece-6.png",
+          "outline": "batwing-piece-6-outline.png",
+          "slot": "batwing-slot-6.png"
+        }
+      ]
+    },
+    "buff": {
+      "priority": 4,
+      "background": {
+        "scale": 1
+      },
+      "spawnOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "piecesToRemove": {
+        "min": 3,
+        "max": 3
+      },
+      "completePuzzle": "buff.png",
+      "blurPuzzle": "buff-blur.png",
+      "onPiecePlacedAudio": [
+        [
+          {
+            "audioId": "SndBuffLaugh1",
+            "config": {
+              "delay": 0
+            }
+          },
+          {
+            "audioId": "SndBuffLaugh2",
+            "config": {
+              "delay": 0
+            }
+          },
+          {
+            "audioId": "SndBuffLaugh3",
+            "config": {
+              "delay": 0
+            }
+          }
+        ],
+        {
+          "audioId": "SndItemPlace",
+          "config": {
+            "delay": 0
+          }
+        }
+      ],
+      "onLastPiecePlacedAudio": [
+        {
+          "audioId": "SndItemPlace",
+          "config": {
+            "delay": 0
+          }
+        }
+      ],
+      "onPuzzleCompleteAudio": [
+        {
+          "audioId": "BuffTakeoff1",
+          "delay:": 0.25
+        },
+        {
+          "audioId": "SndBuffCheer1",
+          "delay:": 0
+        }
+      ],
+      "texture": "character-buff",
+      "pieces": [
+        {
+          "piece": "buff-piece-1.png",
+          "outline": "buff-piece-1-outline.png",
+          "slot": "buff-slot-1.png"
+        },
+        {
+          "piece": "buff-piece-2.png",
+          "outline": "buff-piece-2-outline.png",
+          "slot": "buff-slot-2.png"
+        },
+        {
+          "piece": "buff-piece-3.png",
+          "outline": "buff-piece-3-outline.png",
+          "slot": "buff-slot-3.png"
+        },
+        {
+          "piece": "buff-piece-4.png",
+          "outline": "buff-piece-4-outline.png",
+          "slot": "buff-slot-4.png"
+        },
+        {
+          "piece": "buff-piece-5.png",
+          "outline": "buff-piece-5-outline.png",
+          "slot": "buff-slot-5.png"
+        },
+        {
+          "piece": "buff-piece-6.png",
+          "outline": "buff-piece-6-outline.png",
+          "slot": "buff-slot-6.png"
+        }
+      ]
+    },
+    "redbird": {
+      "priority": 5,
+      "background": {
+        "scale": 1.5
+      },
+      "spawnOffset": {
+        "x": 0,
+        "y": 0
+      },
+      "piecesToRemove": {
+        "min": 3,
+        "max": 3
+      },
+      "completePuzzle": "redbird.png",
+      "blurPuzzle": "redbird-blur.png",
+      "onPiecePlacedAudio": [
+        [
+          {
+            "audioId": "SndRedLaugh1",
+            "config": {
+              "delay": 0
+            }
+          },
+          {
+            "audioId": "SndRedLaugh2",
+            "config": {
+              "delay": 0
+            }
+          },
+          {
+            "audioId": "SndRedLaugh3",
+            "config": {
+              "delay": 0
+            }
+          }
+        ],
+        {
+          "audioId": "SndItemPlace",
+          "config": {
+            "delay": 0
+          }
+        }
+      ],
+      "onLastPiecePlacedAudio": [
+        {
+          "audioId": "SndItemPlace",
+          "config": {
+            "delay": 0
+          }
+        }
+      ],
+      "onPuzzleCompleteAudio": [
+        {
+          "audioId": "RedbirdTakeoff1",
+          "delay:": 0
+        },
+        {
+          "audioId": "SndRedCheer1",
+          "delay:": 0
+        }
+      ],
+      "texture": "character-redbird",
+      "pieces": [
+        {
+          "piece": "redbird-piece-1.png",
+          "outline": "redbird-piece-1-outline.png",
+          "slot": "redbird-slot-1.png"
+        },
+        {
+          "piece": "redbird-piece-2.png",
+          "outline": "redbird-piece-2-outline.png",
+          "slot": "redbird-slot-2.png"
+        },
+        {
+          "piece": "redbird-piece-3.png",
+          "outline": "redbird-piece-3-outline.png",
+          "slot": "redbird-slot-3.png"
+        },
+        {
+          "piece": "redbird-piece-4.png",
+          "outline": "redbird-piece-4-outline.png",
+          "slot": "redbird-slot-4.png"
+        },
+        {
+          "piece": "redbird-piece-5.png",
+          "outline": "redbird-piece-5-outline.png",
+          "slot": "redbird-slot-5.png"
+        },
+        {
+          "piece": "redbird-piece-6.png",
+          "outline": "redbird-piece-6-outline.png",
+          "slot": "redbird-slot-6.png"
+        }
+      ]
+    }
+  }
+}

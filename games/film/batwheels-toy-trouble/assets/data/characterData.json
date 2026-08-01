@@ -1,0 +1,43 @@
+{
+  "characters": [
+    {
+      "name": "bam",
+      "bonnetTexture": "bam_hood",
+      "selectTexture": "bam_select",
+      "chaseTexture": "bam_chase",
+      "chaseSfx": "sfx_chase_hero_bam"
+    },
+
+    {
+      "name": "batwing",
+      "bonnetTexture": "batwing_hood",
+      "selectTexture": "batwing_select",
+      "chaseTexture": "batwing_chase",
+      "chaseSfx": "sfx_chase_hero_batwing"
+    },
+
+    {
+      "name": "bibi",
+      "bonnetTexture": "bibi_hood",
+      "selectTexture": "bibi_select",
+      "chaseTexture": "bibi_chase",
+      "chaseSfx": "sfx_chase_hero_bibi"
+    },
+
+    {
+      "name": "buff",
+      "bonnetTexture": "buff_hood",
+      "selectTexture": "buff_select",
+      "chaseTexture": "buff_chase",
+      "chaseSfx": "sfx_chase_hero_buff"
+    },
+
+    {
+      "name": "redbird",
+      "bonnetTexture": "redbird_hood",
+      "selectTexture": "redbird_select",
+      "chaseTexture": "redbird_chase",
+      "chaseSfx": "sfx_chase_hero_redbird"
+    }
+  ]
+}

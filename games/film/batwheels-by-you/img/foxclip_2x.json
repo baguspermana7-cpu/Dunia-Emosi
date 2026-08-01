@@ -1,0 +1,159 @@
+{
+  "frames": {
+    "waterspray0001": {
+      "frame": {
+        "x": 6,
+        "y": 6,
+        "w": 228,
+        "h": 214
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 32,
+        "y": 2,
+        "w": 228,
+        "h": 214
+      },
+      "sourceSize": {
+        "w": 260,
+        "h": 216
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "waterspray0002": {
+      "frame": {
+        "x": 246,
+        "y": 6,
+        "w": 228,
+        "h": 214
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 32,
+        "y": 2,
+        "w": 228,
+        "h": 214
+      },
+      "sourceSize": {
+        "w": 260,
+        "h": 216
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "waterspray0003": {
+      "frame": {
+        "x": 486,
+        "y": 6,
+        "w": 228,
+        "h": 214
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 32,
+        "y": 2,
+        "w": 228,
+        "h": 214
+      },
+      "sourceSize": {
+        "w": 260,
+        "h": 216
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "waterspray0004": {
+      "frame": {
+        "x": 726,
+        "y": 6,
+        "w": 228,
+        "h": 214
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 32,
+        "y": 2,
+        "w": 228,
+        "h": 214
+      },
+      "sourceSize": {
+        "w": 260,
+        "h": 216
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "waterspray0005": {
+      "frame": {
+        "x": 966,
+        "y": 6,
+        "w": 228,
+        "h": 214
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 32,
+        "y": 2,
+        "w": 228,
+        "h": 214
+      },
+      "sourceSize": {
+        "w": 260,
+        "h": 216
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "waterspray0006": {
+      "frame": {
+        "x": 1206,
+        "y": 6,
+        "w": 228,
+        "h": 214
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 32,
+        "y": 2,
+        "w": 228,
+        "h": 214
+      },
+      "sourceSize": {
+        "w": 260,
+        "h": 216
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "https://github.com/odrick/gulp-free-tex-packer",
+    "version": "0.5.2",
+    "image": "foxclip_2x.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 2048,
+      "h": 256
+    },
+    "scale": 1
+  }
+}

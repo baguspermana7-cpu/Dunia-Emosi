@@ -1,0 +1,233 @@
+{
+  "generatedAt": "2026-08-01T16:06:00.617Z",
+  "entry": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/index.html",
+  "root": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/",
+  "output": "/home/baguspermana7/Documents/temporary/online game to be offline/thomas/game/rail-muddle",
+  "totals": {
+    "files": 37,
+    "bytes": 8545723,
+    "missing": 6,
+    "external": 4,
+    "rejected": 0
+  },
+  "fetched": [
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/logo/en.png",
+      "file": "images/logo/en.png",
+      "bytes": 22304
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/index.html",
+      "file": "index.html",
+      "bytes": 1952
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/title/en.png",
+      "file": "images/title/en.png",
+      "bytes": 75073
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/VisibilityManager.js",
+      "file": "VisibilityManager.js",
+      "bytes": 2601
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/Howler.min.js",
+      "file": "Howler.min.js",
+      "bytes": 59838
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/gsap.min.js",
+      "file": "gsap.min.js",
+      "bytes": 60111
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/fonts/PeachyKeen.woff2",
+      "file": "fonts/PeachyKeen.woff2",
+      "bytes": 39792
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/fonts/PeachyKeen.woff",
+      "file": "fonts/PeachyKeen.woff",
+      "bytes": 49171
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/app.js",
+      "file": "app.js",
+      "bytes": 182648
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/fonts/Franklin%20Gothic%20Book%20Regular.ttf",
+      "file": "fonts/Franklin Gothic Book Regular.ttf",
+      "bytes": 152700
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/loadSpinner.png",
+      "file": "images/loadSpinner.png",
+      "bytes": 2176
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/bgMain0a.jpg",
+      "file": "images/bgMain0a.jpg",
+      "bytes": 39800
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/bgMain1a.jpg",
+      "file": "images/bgMain1a.jpg",
+      "bytes": 38895
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/bgMain1b.jpg",
+      "file": "images/bgMain1b.jpg",
+      "bytes": 44722
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/loader.png",
+      "file": "images/loader.png",
+      "bytes": 107534
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/bgMain2a.jpg",
+      "file": "images/bgMain2a.jpg",
+      "bytes": 65265
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/bgMain0b.jpg",
+      "file": "images/bgMain0b.jpg",
+      "bytes": 80106
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/bgMain2b.jpg",
+      "file": "images/bgMain2b.jpg",
+      "bytes": 50737
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/bgMain3b.jpg",
+      "file": "images/bgMain3b.jpg",
+      "bytes": 67392
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/bgMain3a.jpg",
+      "file": "images/bgMain3a.jpg",
+      "bytes": 50270
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/flare.png",
+      "file": "images/flare.png",
+      "bytes": 32584
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/info.png",
+      "file": "images/info.png",
+      "bytes": 25299
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/uiButs.png",
+      "file": "images/uiButs.png",
+      "bytes": 38812
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/uiBg2.jpg",
+      "file": "images/uiBg2.jpg",
+      "bytes": 109841
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/uiBg0.jpg",
+      "file": "images/uiBg0.jpg",
+      "bytes": 149057
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/titleBg.jpg",
+      "file": "images/titleBg.jpg",
+      "bytes": 177324
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/uiBg1.jpg",
+      "file": "images/uiBg1.jpg",
+      "bytes": 147282
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/railTiles0_154x159.png",
+      "file": "images/railTiles0_154x159.png",
+      "bytes": 593226
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/railTiles3_154x159.png",
+      "file": "images/railTiles3_154x159.png",
+      "bytes": 539644
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/railTiles2_154x159.png",
+      "file": "images/railTiles2_154x159.png",
+      "bytes": 567224
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/railTiles1_154x159.png",
+      "file": "images/railTiles1_154x159.png",
+      "bytes": 637902
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/gameElements.png",
+      "file": "images/gameElements.png",
+      "bytes": 2009460
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/electric_174x59.png",
+      "file": "images/electric_174x59.png",
+      "bytes": 38000
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/json/text.json",
+      "file": "json/text.json",
+      "bytes": 14556
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/uiBg3.jpg",
+      "file": "images/uiBg3.jpg",
+      "bytes": 138105
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/audio/music.mp3",
+      "file": "audio/music.mp3",
+      "bytes": 1341408
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/audio/sound.mp3",
+      "file": "audio/sound.mp3",
+      "bytes": 792912
+    }
+  ],
+  "missing": [
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/Fonts/RussoOne-Regular.ttf",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/Fonts/PTSansNarrow-Regular.ttf",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/Fonts/Mada-Regular.ttf",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/.json",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/images/preloadImage.jpg",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/240/fced2424-f7ef-4d64-a519-172fba79a710_1671043392/.png",
+      "status": 404
+    }
+  ],
+  "external": [
+    "http://www.w3.org/1999/xhtml",
+    "http://www.w3.org/2000/svg",
+    "https://greensock.com/",
+    "https://greensock.com/standard-license"
+  ],
+  "rejected": []
+}

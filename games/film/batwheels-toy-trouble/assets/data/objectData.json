@@ -1,0 +1,87 @@
+{
+  "objects": [
+    {
+      "name": "item_1",
+      "image": "batcup",
+      "active": "item_1_active",
+      "box": "item_1_box"
+    },
+
+    {
+      "name": "item_2",
+      "image": "shark",
+      "active": "item_2_active",
+      "box": "item_2_box"
+    },
+
+    {
+      "name": "item_3",
+      "image": "riddle_merracca",
+      "active": "item_3_active",
+      "box": "item_3_box"
+    },
+
+    {
+      "name": "item_4",
+      "image": "horn",
+      "active": "item_4_active",
+      "box": "item_4_box"
+    },
+
+    {
+      "name": "item_5",
+      "image": "yoyo",
+      "active": "item_5_active",
+      "box": "item_5_box"
+    },
+
+    {
+      "name": "item_6",
+      "image": "megaphone",
+      "active": "item_6_active",
+      "box": "item_6_box"
+    },
+
+    {
+      "name": "item_7",
+      "image": "batman_doll",
+      "active": "item_7_active",
+      "box": "item_7_box"
+    },
+
+    {
+      "name": "item_8",
+      "image": "american_football",
+      "active": "item_8_active",
+      "box": "item_8_box"
+    },
+
+    {
+      "name": "item_9",
+      "image": "dino",
+      "active": "item_9_active",
+      "box": "item_9_box"
+    },
+
+    {
+      "name": "item_10",
+      "image": "yellow_face",
+      "active": "item_10_active",
+      "box": "item_10_box"
+    },
+
+    {
+      "name": "item_11",
+      "image": "batgirl_doll",
+      "active": "item_1_active",
+      "box": "item_11_box"
+    },
+
+    {
+      "name": "item_12",
+      "image": "robin_doll",
+      "active": "item_12_active",
+      "box": "item_12_box"
+    }
+  ]
+}

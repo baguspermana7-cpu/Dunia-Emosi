@@ -1,0 +1,135 @@
+{
+  "generatedAt": "2026-08-01T15:49:34.918Z",
+  "entry": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/index.html",
+  "root": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/",
+  "output": "/home/baguspermana7/Documents/temporary/online game to be offline/batwheels/games/batwheels-jigsaw",
+  "totals": {
+    "files": 18,
+    "bytes": 4205542,
+    "missing": 4,
+    "external": 9,
+    "rejected": 0
+  },
+  "fetched": [
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/index.html",
+      "file": "index.html",
+      "bytes": 1458
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/webfontloader.js",
+      "file": "webfontloader.js",
+      "bytes": 12522
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/VisibilityManager.js",
+      "file": "VisibilityManager.js",
+      "bytes": 2601
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/gsap.min.js",
+      "file": "gsap.min.js",
+      "bytes": 60111
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/Howler.min.js",
+      "file": "Howler.min.js",
+      "bytes": 59838
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/app.js",
+      "file": "app.js",
+      "bytes": 146188
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/images/preloaderElements.png",
+      "file": "images/preloaderElements.png",
+      "bytes": 4718
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/images/bg0.jpg",
+      "file": "images/bg0.jpg",
+      "bytes": 125606
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/images/preloaderAnim_157x230.png",
+      "file": "images/preloaderAnim_157x230.png",
+      "bytes": 17881
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/json/text.json",
+      "file": "json/text.json",
+      "bytes": 1675
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/images/preloadBg.jpg",
+      "file": "images/preloadBg.jpg",
+      "bytes": 34066
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/images/uiButs.png",
+      "file": "images/uiButs.png",
+      "bytes": 52035
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/images/splashLogo.png",
+      "file": "images/splashLogo.png",
+      "bytes": 74394
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/images/bg1.jpg",
+      "file": "images/bg1.jpg",
+      "bytes": 148124
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/audio/sound.mp3",
+      "file": "audio/sound.mp3",
+      "bytes": 689258
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/images/uiElements.png",
+      "file": "images/uiElements.png",
+      "bytes": 1004570
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/images/logo.png",
+      "file": "images/logo.png",
+      "bytes": 67270
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/audio/music.mp3",
+      "file": "audio/music.mp3",
+      "bytes": 1703227
+    }
+  ],
+  "missing": [
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/.json",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/images/preloadImage.jpg",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/.png",
+      "status": 404
+    },
+    {
+      "url": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/550/a3901d6a-e2b1-47a5-a834-77c9fa026ec8_1675329727/.jpg",
+      "status": 404
+    }
+  ],
+  "external": [
+    "http://www.happylander.com/",
+    "http://www.w3.org/1999/xhtml",
+    "http://www.w3.org/2000/svg",
+    "https://f.fontdeck.com/s/css/js/",
+    "https://fast.fonts.net/jsapi",
+    "https://fonts.googleapis.com/css",
+    "https://greensock.com/",
+    "https://greensock.com/standard-license",
+    "https://use.typekit.net/"
+  ],
+  "rejected": []
+}

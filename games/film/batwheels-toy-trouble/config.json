@@ -1,0 +1,44 @@
+{
+  "language": "en",
+  "webfont": false,
+  "save": {
+    "name": "howtodraw_batwheels",
+    "version": "3.1.0"
+  },
+  "items": [
+    "item_1",
+    "item_2",
+    "item_3",
+    "item_4",
+    "item_5",
+    "item_6",
+    "item_7",
+    "item_8",
+    "item_9",
+    "item_10",
+    "item_11",
+    "item_12"
+  ],
+  "colours": [
+    "#916e36",
+    "#ec952f",
+    "#ead85f",
+    "#ffffff",
+    "#8e5cb5",
+    "#cf4c4c",
+    "#59af45",
+    "#365d9d",
+    "#f394b8"
+  ],
+  "characters": [
+    "bugs",
+    "b",
+    "elmer",
+    "porky",
+    "sylve",
+    "tweet",
+    "daffy",
+    "coyote",
+    "runner"
+  ]
+}

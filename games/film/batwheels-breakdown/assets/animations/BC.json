@@ -1,0 +1,1585 @@
+{
+  "skeleton": {
+    "hash": "PPQfNrYSd6E",
+    "spine": "3.8-from-4.0.64",
+    "x": -462.46,
+    "y": 8.3,
+    "width": 916,
+    "height": 474.47,
+    "images": "./images/",
+    "audio": "/Users/dickonwaring/Documents/ScaryBeasties_lockdown/Warner/BATWHEELS/animations /BC"
+  },
+  "bones": [
+    {
+      "name": "root"
+    },
+    {
+      "name": "face",
+      "parent": "root",
+      "y": 219.73
+    },
+    {
+      "name": "eyes",
+      "parent": "face",
+      "y": 104.65
+    },
+    {
+      "name": "mouth",
+      "parent": "face",
+      "y": -54.77
+    },
+    {
+      "name": "screen-dots",
+      "parent": "root"
+    },
+    {
+      "name": "mask",
+      "parent": "root",
+      "y": 219.73
+    }
+  ],
+  "slots": [
+    {
+      "name": "mask",
+      "bone": "mask",
+      "attachment": "mask"
+    },
+    {
+      "name": "face",
+      "bone": "face",
+      "attachment": "face"
+    },
+    {
+      "name": "mouth_int_02",
+      "bone": "mouth",
+      "attachment": "mouth_int_02"
+    },
+    {
+      "name": "mouth_int_01",
+      "bone": "mouth",
+      "attachment": "mouth_int_01"
+    },
+    {
+      "name": "lip_bottom_03",
+      "bone": "mouth",
+      "attachment": "lip_bottom_03"
+    },
+    {
+      "name": "lip_bottom_02",
+      "bone": "mouth",
+      "attachment": "lip_bottom_02"
+    },
+    {
+      "name": "lip_bottom_01",
+      "bone": "mouth",
+      "attachment": "lip_bottom_01"
+    },
+    {
+      "name": "lip_top_02",
+      "bone": "mouth",
+      "attachment": "lip_top_02"
+    },
+    {
+      "name": "lip_top_01",
+      "bone": "mouth"
+    },
+    {
+      "name": "screen-dots",
+      "bone": "screen-dots",
+      "attachment": "screen-dots"
+    },
+    {
+      "name": "eye_L_05",
+      "bone": "eyes",
+      "attachment": "eye_L_05"
+    },
+    {
+      "name": "eye_L_04",
+      "bone": "eyes",
+      "attachment": "eye_L_04"
+    },
+    {
+      "name": "eye_L_03",
+      "bone": "eyes",
+      "attachment": "eye_L_03"
+    },
+    {
+      "name": "eye_L_02",
+      "bone": "eyes",
+      "attachment": "eye_L_02"
+    },
+    {
+      "name": "eye_L_01",
+      "bone": "eyes",
+      "attachment": "eye_L_01"
+    }
+  ],
+  "skins": [
+    {
+      "name": "default",
+      "attachments": {
+        "eye_L_01": {
+          "eye_L_01": {
+            "x": 0.03,
+            "y": 51.06,
+            "rotation": 0.33,
+            "width": 407,
+            "height": 126
+          }
+        },
+        "eye_L_02": {
+          "eye_L_02": {
+            "x": 0.53,
+            "y": 8.06,
+            "rotation": 0.33,
+            "width": 442,
+            "height": 42
+          }
+        },
+        "eye_L_03": {
+          "eye_L_03": {
+            "x": 0.03,
+            "y": 43.06,
+            "rotation": 0.33,
+            "width": 395,
+            "height": 126
+          }
+        },
+        "eye_L_04": {
+          "eye_L_04": {
+            "x": -0.47,
+            "y": 29.56,
+            "rotation": 0.33,
+            "width": 410,
+            "height": 85
+          }
+        },
+        "eye_L_05": {
+          "eye_L_05": {
+            "x": -0.97,
+            "y": 9.06,
+            "rotation": 0.33,
+            "width": 401,
+            "height": 64
+          }
+        },
+        "face": {
+          "face": {
+            "x": 2.03,
+            "y": -36.29,
+            "rotation": 0.33,
+            "width": 477,
+            "height": 268
+          }
+        },
+        "lip_bottom_01": {
+          "lip_bottom_01": {
+            "x": -3.97,
+            "y": -12.51,
+            "rotation": 0.33,
+            "width": 205,
+            "height": 84
+          }
+        },
+        "lip_bottom_02": {
+          "lip_bottom_02": {
+            "x": -4.97,
+            "y": -27.01,
+            "rotation": 0.33,
+            "width": 203,
+            "height": 115
+          }
+        },
+        "lip_bottom_03": {
+          "lip_bottom_03": {
+            "x": -4.97,
+            "y": -15.01,
+            "rotation": 0.33,
+            "width": 203,
+            "height": 91
+          }
+        },
+        "lip_top_01": {
+          "lip_top_01": {
+            "x": -4.97,
+            "y": 21.99,
+            "rotation": 0.33,
+            "width": 205,
+            "height": 55
+          }
+        },
+        "lip_top_02": {
+          "lip_top_02": {
+            "x": -4.97,
+            "y": 27.99,
+            "rotation": 0.33,
+            "width": 205,
+            "height": 43
+          }
+        },
+        "mask": {
+          "mask": {
+            "type": "clipping",
+            "end": "mask",
+            "vertexCount": 4,
+            "vertices": [
+              -467.29,
+              -211.43,
+              463.67,
+              -211.43,
+              467.26,
+              267.18,
+              -466.09,
+              265.98
+            ],
+            "color": "ce3a3aff"
+          }
+        },
+        "mouth_int_01": {
+          "mouth_int_01": {
+            "x": -5.47,
+            "y": -17.01,
+            "rotation": 0.33,
+            "width": 202,
+            "height": 95
+          }
+        },
+        "mouth_int_02": {
+          "mouth_int_02": {
+            "x": -5.47,
+            "y": -5.89,
+            "rotation": 0.33,
+            "width": 202,
+            "height": 75
+          }
+        },
+        "screen-dots": {
+          "screen-dots": {
+            "x": -4.46,
+            "y": 152.27,
+            "width": 916,
+            "height": 661
+          }
+        }
+      }
+    }
+  ],
+  "animations": {
+    "large_blink": {
+      "slots": {
+        "eye_L_01": {
+          "attachment": [
+            {
+              "time": 0.2,
+              "name": null
+            },
+            {
+              "time": 0.3667,
+              "name": "eye_L_01"
+            }
+          ]
+        },
+        "eye_L_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "eye_L_03": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "eye_L_04": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 0.2,
+              "name": "eye_L_04"
+            },
+            {
+              "time": 0.2333,
+              "name": null
+            },
+            {
+              "time": 0.3333,
+              "name": "eye_L_04"
+            },
+            {
+              "time": 0.3667,
+              "name": null
+            }
+          ]
+        },
+        "eye_L_05": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 0.2333,
+              "name": "eye_L_05"
+            },
+            {
+              "time": 0.3333,
+              "name": null
+            }
+          ]
+        },
+        "lip_bottom_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "lip_bottom_03": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "lip_top_01": {
+          "attachment": [
+            {
+              "name": "lip_top_01"
+            }
+          ]
+        },
+        "lip_top_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "mouth_int_01": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "mouth_int_02": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 1,
+              "name": null
+            }
+          ]
+        }
+      },
+      "bones": {
+        "eyes": {
+          "translate": [
+            {
+              "y": -1.42
+            }
+          ]
+        }
+      }
+    },
+    "large_laugh": {
+      "slots": {
+        "eye_L_01": {
+          "attachment": [
+            {
+              "time": 0.0667,
+              "name": null
+            },
+            {
+              "time": 0.8,
+              "name": "eye_L_01"
+            }
+          ]
+        },
+        "eye_L_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "eye_L_03": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 0.0667,
+              "name": "eye_L_03"
+            },
+            {
+              "time": 0.7,
+              "name": null
+            }
+          ]
+        },
+        "eye_L_04": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 0.7667,
+              "name": "eye_L_04"
+            },
+            {
+              "time": 0.8,
+              "name": null
+            }
+          ]
+        },
+        "eye_L_05": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 0.7,
+              "name": "eye_L_05"
+            },
+            {
+              "time": 0.7667,
+              "name": null
+            }
+          ]
+        },
+        "lip_bottom_01": {
+          "attachment": [
+            {
+              "time": 0.1667,
+              "name": null
+            },
+            {
+              "time": 0.7,
+              "name": "lip_bottom_01"
+            }
+          ]
+        },
+        "lip_bottom_02": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 0.1667,
+              "name": "lip_bottom_02"
+            },
+            {
+              "time": 0.7,
+              "name": null
+            }
+          ]
+        },
+        "lip_bottom_03": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "lip_top_01": {
+          "attachment": [
+            {
+              "name": "lip_top_01"
+            }
+          ]
+        },
+        "lip_top_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "mouth_int_01": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 0.1667,
+              "name": "mouth_int_01"
+            },
+            {
+              "time": 0.7,
+              "name": null
+            }
+          ]
+        },
+        "mouth_int_02": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 1,
+              "name": null
+            }
+          ]
+        }
+      },
+      "bones": {
+        "face": {
+          "translate": [
+            {
+              "time": 0.0667
+            },
+            {
+              "time": 0.1,
+              "y": -7.12
+            },
+            {
+              "time": 0.1667,
+              "curve": "stepped"
+            },
+            {
+              "time": 0.6667
+            },
+            {
+              "time": 0.7,
+              "y": -15.67
+            },
+            {
+              "time": 0.8
+            }
+          ],
+          "scale": [
+            {
+              "time": 0.1
+            },
+            {
+              "time": 0.1667,
+              "y": 1.15
+            },
+            {
+              "time": 0.2667,
+              "x": 1.05,
+              "y": 0.9
+            },
+            {
+              "time": 0.3333,
+              "y": 1.15
+            },
+            {
+              "time": 0.5
+            }
+          ]
+        },
+        "eyes": {
+          "translate": [
+            {
+              "y": -1.42
+            }
+          ]
+        }
+      }
+    },
+    "large_pop_up": {
+      "slots": {
+        "eye_L_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "eye_L_03": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "eye_L_04": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "eye_L_05": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "lip_bottom_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "lip_bottom_03": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "lip_top_01": {
+          "attachment": [
+            {
+              "name": "lip_top_01"
+            }
+          ]
+        },
+        "lip_top_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "mouth_int_01": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "mouth_int_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        }
+      },
+      "bones": {
+        "face": {
+          "translate": [
+            {
+              "y": -440.11
+            },
+            {
+              "time": 0.0667,
+              "y": -81.18
+            },
+            {
+              "time": 0.1333,
+              "y": -1.42
+            },
+            {
+              "time": 0.2
+            }
+          ],
+          "scale": [
+            {},
+            {
+              "time": 0.0667,
+              "x": 0.752,
+              "y": 1.5
+            },
+            {
+              "time": 0.1333,
+              "x": 1.1
+            },
+            {
+              "time": 0.2
+            }
+          ]
+        },
+        "eyes": {
+          "translate": [
+            {
+              "y": -1.42
+            },
+            {
+              "time": 0.3333
+            }
+          ]
+        }
+      }
+    },
+    "large_static": {
+      "slots": {
+        "eye_L_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "eye_L_03": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "eye_L_04": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "eye_L_05": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "lip_bottom_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "lip_bottom_03": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "lip_top_01": {
+          "attachment": [
+            {
+              "name": "lip_top_01"
+            }
+          ]
+        },
+        "lip_top_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "mouth_int_01": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "mouth_int_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        }
+      },
+      "bones": {
+        "eyes": {
+          "translate": [
+            {
+              "y": -1.42
+            }
+          ]
+        }
+      }
+    },
+    "shrink": {
+      "slots": {
+        "eye_L_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "eye_L_03": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "eye_L_04": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "eye_L_05": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "lip_bottom_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "lip_bottom_03": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "lip_top_01": {
+          "attachment": [
+            {
+              "name": "lip_top_01"
+            }
+          ]
+        },
+        "lip_top_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "mouth_int_01": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "mouth_int_02": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 0.3333,
+              "name": null
+            }
+          ]
+        }
+      },
+      "bones": {
+        "face": {
+          "translate": [
+            {},
+            {
+              "time": 0.0667,
+              "y": -15.67
+            },
+            {
+              "time": 0.1667,
+              "y": 123.91
+            },
+            {
+              "time": 0.2333,
+              "y": 115.37
+            }
+          ],
+          "scale": [
+            {},
+            {
+              "time": 0.0667,
+              "x": 0.45,
+              "y": 0.8
+            },
+            {
+              "time": 0.1667,
+              "x": 0.55,
+              "y": 0.55
+            }
+          ]
+        },
+        "eyes": {
+          "translate": [
+            {
+              "y": -1.42
+            }
+          ]
+        }
+      }
+    },
+    "small_blink": {
+      "slots": {
+        "eye_L_01": {
+          "attachment": [
+            {
+              "time": 0.2667,
+              "name": null
+            },
+            {
+              "time": 0.4333,
+              "name": "eye_L_01"
+            }
+          ]
+        },
+        "eye_L_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "eye_L_03": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "eye_L_04": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 0.2667,
+              "name": "eye_L_04"
+            },
+            {
+              "time": 0.3,
+              "name": null
+            },
+            {
+              "time": 0.4,
+              "name": "eye_L_04"
+            },
+            {
+              "time": 0.4333,
+              "name": null
+            }
+          ]
+        },
+        "eye_L_05": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 0.3,
+              "name": "eye_L_05"
+            },
+            {
+              "time": 0.4,
+              "name": null
+            }
+          ]
+        },
+        "lip_bottom_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "lip_bottom_03": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "lip_top_01": {
+          "attachment": [
+            {
+              "name": "lip_top_01"
+            }
+          ]
+        },
+        "lip_top_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "mouth_int_01": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "mouth_int_02": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 1,
+              "name": null
+            }
+          ]
+        }
+      },
+      "bones": {
+        "face": {
+          "translate": [
+            {
+              "y": 115.37,
+              "curve": "stepped"
+            },
+            {
+              "time": 0.2333,
+              "y": 115.37
+            },
+            {
+              "time": 0.3,
+              "y": 111.09,
+              "curve": "stepped"
+            },
+            {
+              "time": 0.3667,
+              "y": 111.09
+            },
+            {
+              "time": 0.4333,
+              "y": 115.37
+            }
+          ],
+          "scale": [
+            {
+              "x": 0.55,
+              "y": 0.55
+            }
+          ]
+        },
+        "eyes": {
+          "translate": [
+            {
+              "y": -1.42
+            }
+          ]
+        }
+      }
+    },
+    "small_laugh": {
+      "slots": {
+        "eye_L_01": {
+          "attachment": [
+            {
+              "time": 0.1333,
+              "name": null
+            },
+            {
+              "time": 0.8667,
+              "name": "eye_L_01"
+            }
+          ]
+        },
+        "eye_L_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "eye_L_03": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 0.1333,
+              "name": "eye_L_03"
+            },
+            {
+              "time": 0.7667,
+              "name": null
+            }
+          ]
+        },
+        "eye_L_04": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 0.8333,
+              "name": "eye_L_04"
+            },
+            {
+              "time": 0.8667,
+              "name": null
+            }
+          ]
+        },
+        "eye_L_05": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 0.7667,
+              "name": "eye_L_05"
+            },
+            {
+              "time": 0.8333,
+              "name": null
+            }
+          ]
+        },
+        "lip_bottom_01": {
+          "attachment": [
+            {
+              "time": 0.2333,
+              "name": null
+            },
+            {
+              "time": 0.7667,
+              "name": "lip_bottom_01"
+            }
+          ]
+        },
+        "lip_bottom_02": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 0.2333,
+              "name": "lip_bottom_02"
+            },
+            {
+              "time": 0.7667,
+              "name": null
+            }
+          ]
+        },
+        "lip_bottom_03": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "lip_top_01": {
+          "attachment": [
+            {
+              "name": "lip_top_01"
+            }
+          ]
+        },
+        "lip_top_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "mouth_int_01": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 0.2333,
+              "name": "mouth_int_01"
+            },
+            {
+              "time": 0.7667,
+              "name": null
+            }
+          ]
+        },
+        "mouth_int_02": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 1,
+              "name": null
+            }
+          ]
+        }
+      },
+      "bones": {
+        "face": {
+          "translate": [
+            {
+              "y": 115.37,
+              "curve": "stepped"
+            },
+            {
+              "time": 0.7333,
+              "y": 115.37
+            },
+            {
+              "time": 0.7667,
+              "y": 111.09
+            },
+            {
+              "time": 0.8667,
+              "y": 115.37
+            }
+          ],
+          "scale": [
+            {
+              "x": 0.55,
+              "y": 0.55,
+              "curve": "stepped"
+            },
+            {
+              "time": 0.1667,
+              "x": 0.55,
+              "y": 0.55
+            },
+            {
+              "time": 0.2333,
+              "x": 0.55,
+              "y": 0.65
+            },
+            {
+              "time": 0.3333,
+              "x": 0.57,
+              "y": 0.55
+            },
+            {
+              "time": 0.4,
+              "x": 0.55,
+              "y": 0.65
+            },
+            {
+              "time": 0.5667,
+              "x": 0.55,
+              "y": 0.55
+            }
+          ]
+        },
+        "eyes": {
+          "translate": [
+            {
+              "y": -1.42
+            }
+          ]
+        }
+      }
+    },
+    "small_smile": {
+      "slots": {
+        "eye_L_01": {
+          "attachment": [
+            {
+              "time": 0.1667,
+              "name": null
+            },
+            {
+              "time": 0.8667,
+              "name": "eye_L_01"
+            }
+          ]
+        },
+        "eye_L_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "eye_L_03": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 0.1667,
+              "name": "eye_L_03"
+            },
+            {
+              "time": 0.7667,
+              "name": null
+            }
+          ]
+        },
+        "eye_L_04": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 0.8333,
+              "name": "eye_L_04"
+            },
+            {
+              "time": 0.8667,
+              "name": null
+            }
+          ]
+        },
+        "eye_L_05": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 0.7667,
+              "name": "eye_L_05"
+            },
+            {
+              "time": 0.8333,
+              "name": null
+            }
+          ]
+        },
+        "lip_bottom_01": {
+          "attachment": [
+            {
+              "time": 0.1667,
+              "name": null
+            },
+            {
+              "time": 0.8,
+              "name": "lip_bottom_01"
+            }
+          ]
+        },
+        "lip_bottom_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "lip_bottom_03": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 0.1667,
+              "name": "lip_bottom_03"
+            },
+            {
+              "time": 0.8,
+              "name": null
+            }
+          ]
+        },
+        "lip_top_01": {
+          "attachment": [
+            {
+              "name": "lip_top_01"
+            },
+            {
+              "time": 0.1667,
+              "name": null
+            },
+            {
+              "time": 0.8,
+              "name": "lip_top_01"
+            }
+          ]
+        },
+        "lip_top_02": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 0.1667,
+              "name": "lip_top_02"
+            },
+            {
+              "time": 0.8,
+              "name": null
+            }
+          ]
+        },
+        "mouth_int_01": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "mouth_int_02": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 0.1667,
+              "name": "mouth_int_02"
+            },
+            {
+              "time": 0.8,
+              "name": null
+            },
+            {
+              "time": 1,
+              "name": null
+            }
+          ]
+        }
+      },
+      "bones": {
+        "face": {
+          "rotate": [
+            {
+              "time": 0.1
+            },
+            {
+              "time": 0.2,
+              "angle": -3.93,
+              "curve": "stepped"
+            },
+            {
+              "time": 0.7333,
+              "angle": -3.93
+            },
+            {
+              "time": 0.8
+            }
+          ],
+          "translate": [
+            {
+              "y": 115.37
+            },
+            {
+              "time": 0.0667,
+              "y": 108.66
+            },
+            {
+              "time": 0.2,
+              "x": 3.35,
+              "y": 120.4,
+              "curve": "stepped"
+            },
+            {
+              "time": 0.7333,
+              "x": 3.35,
+              "y": 120.4
+            },
+            {
+              "time": 0.8,
+              "y": 108.66
+            },
+            {
+              "time": 0.8667,
+              "y": 115.37
+            }
+          ],
+          "scale": [
+            {
+              "x": 0.55,
+              "y": 0.55
+            }
+          ]
+        },
+        "eyes": {
+          "translate": [
+            {
+              "y": -1.42
+            }
+          ]
+        }
+      }
+    },
+    "small_static": {
+      "slots": {
+        "eye_L_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "eye_L_03": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "eye_L_04": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "eye_L_05": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "lip_bottom_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "lip_bottom_03": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "lip_top_01": {
+          "attachment": [
+            {
+              "name": "lip_top_01"
+            }
+          ]
+        },
+        "lip_top_02": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "mouth_int_01": {
+          "attachment": [
+            {
+              "name": null
+            }
+          ]
+        },
+        "mouth_int_02": {
+          "attachment": [
+            {
+              "name": null
+            },
+            {
+              "time": 1,
+              "name": null
+            }
+          ]
+        }
+      },
+      "bones": {
+        "face": {
+          "translate": [
+            {
+              "y": 115.37
+            }
+          ],
+          "scale": [
+            {
+              "x": 0.55,
+              "y": 0.55
+            }
+          ]
+        },
+        "eyes": {
+          "translate": [
+            {
+              "y": -1.42
+            }
+          ]
+        }
+      }
+    }
+  }
+}

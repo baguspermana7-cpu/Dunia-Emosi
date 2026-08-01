@@ -1,0 +1,60 @@
+{"frames": {
+
+"bam_select.png":
+{
+	"frame": {"x":418,"y":2,"w":450,"h":300},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":4,"w":450,"h":300},
+	"sourceSize": {"w":454,"h":309}
+},
+"batwing_select.png":
+{
+	"frame": {"x":2,"y":418,"w":456,"h":236},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":456,"h":236},
+	"sourceSize": {"w":458,"h":237}
+},
+"bibi_select.png":
+{
+	"frame": {"x":2,"y":656,"w":388,"h":300},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":2,"w":388,"h":300},
+	"sourceSize": {"w":389,"h":304}
+},
+"buff_select.png":
+{
+	"frame": {"x":460,"y":304,"w":418,"h":362},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":418,"h":362},
+	"sourceSize": {"w":418,"h":362}
+},
+"redbird_select.png":
+{
+	"frame": {"x":392,"y":668,"w":414,"h":294},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":414,"h":294},
+	"sourceSize": {"w":414,"h":294}
+},
+"Yellow_circle_backdrop.png":
+{
+	"frame": {"x":2,"y":2,"w":414,"h":414},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":414,"h":414},
+	"sourceSize": {"w":414,"h":414}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.1",
+	"image": "select_1x.png",
+	"format": "RGBA8888",
+	"size": {"w":880,"h":964},
+	"scale": "0.5",
+	"smartupdate": "$TexturePacker:SmartUpdate:7bd359ea0d07de3e7121c871bc9478e2:d151a0e074ddba481e1af716e6d8378a:8639b14b8b43deb3b13dde81428287aa$"
+}
+}
