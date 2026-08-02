@@ -30,7 +30,7 @@
         pRatio = window.devicePixelRatio || 1
         var xRatio=iw/w, yRatio=ih/h
         sRatio=1;
-        sRatio =yRatio;
+        sRatio = Math.min(xRatio, yRatio);  /* v-fix: FIT (was yRatio = height-controls-width overflow) */
         canvas.width = w * pRatio * sRatio;
         canvas.height = h * pRatio * sRatio;
         this.nWidth = stage.canvas.width;
