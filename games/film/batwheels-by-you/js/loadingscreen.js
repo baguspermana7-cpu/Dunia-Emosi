@@ -16,7 +16,7 @@ loadingscreen.prototype.awaken = function() {
     g.signal.on('userfigureloaded',()=> { t.userfigureloaded = true; t.ceksetup() });
     g.signal.on('specialfigureloaded',()=> { t.specialfigureloaded = true; t.ceksetup() });
     // array of JS files to load
-    t.JSscripts = ['batcomputer','menubar','swingingitem','photo','gallery','titlescreen','movingbackground','popconfirm','popmessage','popsound','poptutorial','popfigures','start','particle','pausescreen','foxanimation','foxlib'];
+    t.JSscripts = ['batcomputer','menubar','swingingitem','photo','gallery','titlescreen','movingbackground','popconfirm','popmessage','popsound','poptutorial','popfigures','start','particle','pausescreen','foxanimation','foxlib','race','racepick'];
     // other JS assets to load
     t.JSassets = ['z_audio.jz','z_animations.jz','z_foxsvg.jz'];
     // preloader assets

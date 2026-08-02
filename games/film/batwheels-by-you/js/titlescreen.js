@@ -20,6 +20,10 @@ titlescreen.prototype.awaken = function() {
     t.buttonshop = fox.attachbutton('button_settings',-140,0,t.buttoncontainer,()=> fox.spawn('popsound',0,84,t.topcontainer));
     t.buttonplay = fox.attachbutton('button_play',0,0,t.buttoncontainer,()=> t.showselection());
     t.buttonsound = fox.attachbutton('button_gallery',140,0,t.buttoncontainer,()=> t.gallery());
+    // BALAPAN (race) entry — programmer-art rounded button (P2). Sits just above
+    // the play row (which hugs the bottom edge). Starts the race flow:
+    // pick vehicle -> paint (skipclean) -> racepick -> race.
+    t.buttonrace = t.makeracebutton('BALAPAN!',0,-104,t.buttoncontainer,()=> t.beginrace());
     // make vehicle selection
     let spacing = 150;
     let sx = -296;
@@ -36,10 +40,32 @@ titlescreen.prototype.awaken = function() {
     t.spawn();
 };
 
+titlescreen.prototype.makeracebutton = function(label,x,y,parent,cb) {
+    let t = this;
+    let bw = 208, bh = 56;
+    let c = fox.makecontainer(x,y,parent);
+    let box = fox.makeroundedbox(-bw/2,-bh/2,bw,bh,16,0xf5a623,1,4,0xffffff,1,c);
+    box.interactive = true;
+    box.buttonMode = true;
+    box.on('pointerdown',()=> { fox.playbuttonsfx(); cb(); });
+    fox.attachtext(label,0,0,c,{fontFamily:'fredoka',fontSize:26,fill:0xffffff,stroke:0x8a4b00,strokeThickness:6},true);
+    return c;
+};
+
+// begin the race flow — reuse the existing vehicle selection, but flag race
+// mode so a picked vehicle jumps straight to paint (skipclean) then racepick.
+titlescreen.prototype.beginrace = function() {
+    let t = this;
+    g.racemode = 1;
+    t.showselection();
+};
+
 titlescreen.prototype.spawn = function() {
     let t = this;
     g.titlescreen = this;
     t.udashow = false;
+    g.racemode = 0;
+    if (t.buttonrace) fox.jiggle(t.buttonrace,700,1500);
 
     fox.bringtotop(t.titletext);
     fox.jiggle(t.titletext,1000,500);
@@ -85,6 +111,8 @@ titlescreen.prototype.gallery = function() {
 titlescreen.prototype.startgame = function(num) {
     g.vehiclenow = num;
     g.showgallery = false;
+    // in race mode, skip the car-wash and jump straight to the paint scene
+    if (g.racemode) g.skipclean = 1;
     fox.playsound('zvo'+num+'start');
     fox.runscene('start');
 }

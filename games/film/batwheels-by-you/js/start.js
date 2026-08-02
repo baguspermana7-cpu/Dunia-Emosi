@@ -192,6 +192,12 @@ start.prototype.init = function() {
 start.prototype.spawn = function() {
     let t = this;
     g.start = this;
+    // clear any leftover BALAPAN button from a previous (pooled) race-mode entry
+    if (t.racebtn) {
+        if (t.racebtn.parent) t.racebtn.parent.removeChild(t.racebtn);
+        t.racebtn.destroy({ children: true });
+        t.racebtn = null;
+    }
     t.state = g.stepnow = t.progressbarcontainer.alpha = 0;
     // hide selection
     t.selectcontainer.visible = false;
@@ -395,7 +401,55 @@ start.prototype.beginstep = function(step) {
             t.finger = fox.spawn('fingertap', g.firsttabposition, g.menucontainer.y+g.menubar.tabpos+20, t.topcontainer);
         })
         t.state = 4;
+        // race mode: offer a BALAPAN button that carries the painted car to the
+        // villain+city picker (additive; guarded so normal paint is untouched).
+        if (g.racemode) t.showracebutton();
     }
+}
+
+// BALAPAN button shown during paint when in race mode. Direct child of t (like
+// buttonback) so it lives in screen-centered coords; repositioned in resize().
+start.prototype.showracebutton = function() {
+    let t = this;
+    if (t.racebtn) return;
+    let bw = 200, bh = 52;
+    let c = t.racebtn = fox.makecontainer(0,0,t);
+    let box = fox.makeroundedbox(-bw/2,-bh/2,bw,bh,15,0xf5a623,1,4,0xffffff,1,c);
+    box.interactive = true;
+    box.buttonMode = true;
+    box.on('pointerdown',()=> { fox.playbuttonsfx(); t.gotorace(); });
+    fox.attachtext('BALAPAN! ▶',0,0,c,{fontFamily:'fredoka',fontSize:24,fill:0xffffff,stroke:0x8a4b00,strokeThickness:6},true);
+    t.positionracebutton();
+    fox.jiggle(c,700,300);
+}
+
+start.prototype.positionracebutton = function() {
+    let t = this;
+    if (!t.racebtn) return;
+    t.racebtn.x = 0;
+    t.racebtn.y = -g.hscreenhei + 44;
+    fox.setscale(t.racebtn, g.ska || 1);
+}
+
+// build the recipe from the current paint selections, persist it, and hand off
+// to the villain+city picker.
+start.prototype.gotorace = function() {
+    let t = this;
+    let p = {
+        vehicle: g.vehiclenow,
+        clr: g.colornow,
+        sclr: g.stickercolornow,
+        hilite: g.hilitenow,
+        sticker: g.stickernow,
+        eyes: g.eyesnow,
+        mouth: g.mouthnow,
+        bg: g.backgroundnow
+    };
+    g.raceRecipe = p;
+    // also persist as the most-recent photo so the recipe survives a reload
+    g.photos.unshift(p);
+    common.savehighscore();
+    fox.runscene('racepick');
 }
 
 start.prototype.flashtool = function() {
@@ -789,5 +843,7 @@ start.prototype.resize = function() {
     fox.setscale(t.buttonback,g.ska);
     // progress bar
     t.progressbarcontainer.y = t.progressbarpos = -g.hscreenhei+60;
+    // race button (race mode only)
+    t.positionracebutton();
     fox.trace('start resized');
 }
