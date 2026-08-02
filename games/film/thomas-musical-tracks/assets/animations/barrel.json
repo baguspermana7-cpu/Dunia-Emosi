@@ -1,0 +1,83 @@
+{
+    "anims": [
+        {
+            "key": "barrel-tap",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "mine_interactable",
+                    "frame": "barrel_00.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "barrel_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "barrel_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "barrel_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "barrel_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "barrel_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "barrel_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "barrel_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "barrel_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "barrel_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "barrel_10.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 24,
+            "skipMissedFrames": true
+        }
+    ],
+    "globalTimeScale": 1,
+    "meta": {
+        "app": "Phaser Editor 2D v3",
+        "contentType": "Phaser v3 Animations"
+    }
+}

@@ -1,0 +1,49 @@
+{
+  "generatedAt": "2026-08-02T00:00:00.000Z",
+  "slug": "thomas-jigsaw",
+  "displayName": "Thomas & Friends \u2014 Jigsaw",
+  "engine": "CreateJS (EaselJS) + GSAP + jQuery",
+  "orientation": "landscape",
+  "designResolution": {
+    "width": 800,
+    "height": 450
+  },
+  "entry": "index.html",
+  "root": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/97/f2260f08-8b98-4229-8df9-1aaefb06facd_1643986633/",
+  "referer": "https://toongo.io/",
+  "totals": {
+    "files": 151,
+    "bytes": 4515011,
+    "externalRequests": 0,
+    "criticalMissing": 0
+  },
+  "assetSource": "Fully enumerable from source JS (138 refs in src/*.js): css/, src/ libs+logic, img/ (19 root + 108 img/jigsaw pieces + a/c/s helpers), sounds/ (9 mp3).",
+  "missingOnOrigin": [
+    {
+      "file": "img/star.png",
+      "note": "referenced in Main.js preload; 404 on origin CDN (all case/ext variants) \u2014 the LIVE game lacks it too. Non-critical (reward star). Left absent to match live behavior."
+    },
+    {
+      "file": "img/animation_resized.png",
+      "note": "referenced in Game.js completion spritesheet; 404 on origin CDN. Non-critical; left absent to match live."
+    }
+  ],
+  "localisation": {
+    "serviceWorker": "none present",
+    "absoluteUrls": "none \u2014 all asset paths already relative",
+    "googleapisJquery": "none \u2014 jQuery is self-hosted src/jquery-3.6.0.min.js"
+  },
+  "postProcess": {
+    "pngquant": [
+      "img/bgd_intro.png",
+      "img/rotate_screen.png"
+    ],
+    "thumbnail": "assets/film-thumbs/thomas-jigsaw.webp (270x152)"
+  },
+  "verify": {
+    "canvas": "renders full title screen (900x520 scaled, 800x450 design)",
+    "externalRequests": 0,
+    "criticalMissing404": 0,
+    "note": "empty.mp3 (443b silent placeholder) throws a benign Web-Audio decode warning; favicon.ico + star.png 404 are ignored per spec"
+  }
+}

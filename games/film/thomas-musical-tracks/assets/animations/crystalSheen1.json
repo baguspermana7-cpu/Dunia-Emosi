@@ -1,0 +1,201 @@
+{
+    "anims": [
+        {
+            "key": "crystalSheen1Tap",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal1_sheen_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal1_sheen_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal1_sheen_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal1_sheen_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal1_sheen_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal1_sheen_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal1_sheen_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal1_sheen_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal1_sheen_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal1_sheen_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 24,
+            "skipMissedFrames": true
+        },
+        {
+            "key": "crystalSheen2Tap",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal2_sheen_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal2_sheen_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal2_sheen_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal2_sheen_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal2_sheen_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal2_sheen_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal2_sheen_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal2_sheen_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal2_sheen_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 24,
+            "skipMissedFrames": true
+        },
+        {
+            "key": "crystalSheen3Tap",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal3_sheen_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal3_sheen_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal3_sheen_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal3_sheen_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal3_sheen_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal3_sheen_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal3_sheen_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal3_sheen_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/crystal3_sheen_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 24,
+            "skipMissedFrames": true
+        }
+    ],
+    "globalTimeScale": 1,
+    "meta": {
+        "app": "Phaser Editor 2D v3",
+        "contentType": "Phaser v3 Animations"
+    }
+}

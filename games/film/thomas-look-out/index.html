@@ -1,0 +1,122 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<!--   <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"> -->
+  <meta http-equiv="Content-Type" name="viewport" content="width=900">
+
+  <title>Look out! They're All About!</title>
+  <meta name="robots" content="noindex, follow">
+  <link rel="canonical" href="https://toongo.io/games/thomas-and-friends-look-out-look-out-theyre-all-about">
+
+
+
+  <style type="text/css">
+    html, body {
+      width: 100%;
+      height: 100%;
+      min-width: 900px;
+      min-height: 450px;
+    }
+    body { 
+      background: #000;
+      position: relative;
+    }
+    body, canvas, div {
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      -khtml-user-select: none;
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+      padding: 0;
+      margin: 0;
+      overflow: hidden;
+    }
+    #game-wrapper {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      margin: -225px 0 0 -450px;
+    }
+    #canvas_holder {
+      position: relative;
+    }
+      #canvas_holder img {
+        display: none;
+      }
+      #canvas_holder video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 900px;
+        height: 450px;
+        background-color: #000;
+/*				    display: none;*/
+        clip: rect(0px, 900px, 450px, 0px);
+      }
+      #canvas_holder #skip_btn {
+        position: absolute;
+        background: url(res/images/btn_skip.png) left top no-repeat;
+        visibility: hidden;
+        z-index: 2;
+        width: 87px;
+        height: 45px;
+        left: 782px;
+        top: 374px;
+      }
+      #canvas_holder #skip_btn:hover {
+        background-position: center;
+      }
+        #canvas_holder #skip_btn:active {
+          background-position: bottom;
+        }
+    #game_canvas {
+      visibility: hidden;
+    }
+    #game-loader {
+      position: absolute;
+      width: 900px;
+      height: 450px;
+      left: 0;
+      top: 0;
+      z-index: 1;
+      background: #4abcf0;
+      background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzRhYmNmMCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwZjdkYjgiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+      background: -moz-linear-gradient(top, #4abcf0 0%, #0f7db8 100%);
+      background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#4abcf0), color-stop(100%,#0f7db8));
+      background: -webkit-linear-gradient(top, #4abcf0 0%,#0f7db8 100%);
+      background: -o-linear-gradient(top, #4abcf0 0%,#0f7db8 100%);
+      background: -ms-linear-gradient(top, #4abcf0 0%,#0f7db8 100%);
+      background: linear-gradient(to bottom, #4abcf0 0%,#0f7db8 100%);
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4abcf0', endColorstr='#0f7db8',GradientType=0 );
+    }
+    #game-loader span {
+      display: block;
+      background: transparent url(res/images/loader.png) no-repeat scroll 0 0;
+      width: 214px;
+      height: 214px;
+      margin: 118px 0 0 343px;
+    }
+  </style>
+  <!--[if gte IE 9]>
+    <style type="text/css">
+      .gradient {
+         filter: none;
+      }
+    </style>
+  <![endif]-->
+</head>
+<body>
+  <div id="game-wrapper">
+    <div id="canvas_holder">
+      <div id="game-loader" class="gradient"><span></span></div>
+      <canvas id="game_canvas" width="900" height="450">
+        Your browser does not support the canvas tag
+      </canvas>
+      <a id="skip_btn"></a>
+    </div>
+  </div>
+  <script type="text/javascript" src="js/frameworks/soundManager/script/soundmanager2-nodebug-jsmin.js"></script>
+  <script src="init.js"></script>
+  <!--<script src="/Resources/js/kids/hideaddressbar_mobile.js"></script>-->
+</body>
+</html>

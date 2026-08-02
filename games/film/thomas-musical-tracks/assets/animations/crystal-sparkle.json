@@ -1,0 +1,71 @@
+{
+    "anims": [
+        {
+            "key": "crystal-tap",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/sparkle_Frame_1.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/sparkle_Frame_2.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/sparkle_Frame_3.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/sparkle_Frame_4.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/sparkle_Frame_5.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/sparkle_Frame_6.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/sparkle_Frame_7.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/sparkle_Frame_8.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_bg",
+                    "frame": "crystal_anims/sparkle_Frame_0.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 12,
+            "skipMissedFrames": true
+        }
+    ],
+    "globalTimeScale": 1,
+    "meta": {
+        "app": "Phaser Editor 2D v3",
+        "contentType": "Phaser v3 Animations"
+    }
+}

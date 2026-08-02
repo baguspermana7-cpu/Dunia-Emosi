@@ -1,0 +1,462 @@
+{
+    "anims": [
+        {
+            "key": "nia-idle",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_00.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_blink_00.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_blink_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_blink_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_blink_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_blink_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_blink_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_blink_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_blink_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_blink_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_blink_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 24,
+            "skipMissedFrames": true,
+            "repeat": -1
+        },
+        {
+            "key": "nia-bop",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_00.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_10.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_11.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_12.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_13.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_14.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_15.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_16.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_17.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_18.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_19.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 24,
+            "skipMissedFrames": true
+        },
+        {
+            "key": "nia-idleblink",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_blink_00.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_blink_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_blink_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_blink_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_blink_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_blink_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_blink_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_blink_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_blink_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-idle_blink_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 24,
+            "skipMissedFrames": true
+        },
+        {
+            "key": "nia-bopblink",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_blink_00.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_blink_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_blink_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_blink_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_blink_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_blink_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_blink_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_blink_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_blink_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_blink_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_blink_10.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_blink_11.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_blink_12.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_blink_13.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_blink_14.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_blink_15.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_blink_16.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_blink_17.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_blink_18.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "nia_2",
+                    "frame": "characters-nia-bop_blink_19.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 24,
+            "skipMissedFrames": true
+        }
+    ],
+    "globalTimeScale": 1,
+    "meta": {
+        "app": "Phaser Editor 2D v3",
+        "contentType": "Phaser v3 Animations"
+    }
+}

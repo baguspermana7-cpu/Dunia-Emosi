@@ -1,0 +1,393 @@
+@media only screen and (max-width: 720px) and (max-height: 480px), only screen and (max-width: 480px) and (max-height: 720px) {
+/* ==========================================================================
+   Navigation
+   ========================================================================== */
+#navigation {
+  width: 95px;
+  height: auto;
+}
+#navigation #nav-logo {
+  width: 113px;
+  height: 60px;
+  margin-top: 7px;
+  margin-left: 4px;
+}
+#navigation #nav-parents {
+  margin-top: 4.21%;
+  font-size: 15px;
+  padding-top: 10px;
+  padding-left: 12px;
+  padding-right: 45px;
+  line-height: 40px;
+  height: 40px;
+}
+#navigation ul {
+  width: 92.63%;
+  padding-top: 4.21%;
+  margin-left: 1px;
+}
+#navigation ul li a {
+  font-size: 15px;
+  line-height: 17px;
+  margin-left: 0;
+  margin-top: 4px;
+}
+#navigation ul li a span {
+  width: 62px;
+  height: 62px;
+}
+
+/* ==========================================================================
+   Details carousel
+   ========================================================================== */
+.carousel.details-carousel.with-controls {
+  padding: 0 29px;
+}
+.carousel.details-carousel .controls span {
+  margin-top: -40px;
+}
+.carousel.details-carousel .controls span.previous {
+  border-width: 20px 20px 20px 0;
+}
+.carousel.details-carousel .controls span.next {
+  border-width: 20px 0 20px 20px;
+}
+.carousel.details-carousel .carousel-item a em.border {
+  border: 4px solid #fff;
+}
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+#page-scroll {
+  font-size: 12px;
+  height: 40px;
+  line-height: 45px;
+  padding-right: 45px;
+  position: relative;
+}
+#page-scroll em {
+  width: 40px;
+  height: 40px;
+}
+#page-scroll.sticky {
+  right: 3.3%;
+}
+#page-scroll.sticky.up {
+  right: 3.75%;
+}
+
+/* ==========================================================================
+   Content
+   ========================================================================== */
+#content {
+}
+#skrollr-body {
+  padding-left: 95px;
+}
+
+/* ==========================================================================
+   Engines landing list
+   ========================================================================== */
+#engines-list #engines-list-column-width {
+  width: 20%;
+}
+
+/* ==========================================================================
+   Kids videos landing
+   ========================================================================== */
+#kids-big-video-wrapper {
+  width: 70%;
+  padding-top: 20px;
+}
+#kids-videos-thumbs-wrapper a.kids-video {
+  width: 31.1%;
+  font-size: 10px;
+  line-height: 13px;
+}
+/*#kids-videos-thumbs-wrapper a.kids-video.active strong em {
+  height: 24px;
+  line-height: 24px;
+}
+#kids-videos-thumbs-wrapper a.kids-video.active strong em:before {
+  width: 20px;
+  height: 24px;
+  right: -20px;
+}*/
+#kids-big-video #kids-video-controls #progress-bar {
+  right: 53px;
+}
+.kidsvideos-scroll-down {
+  width: 30px;
+  padding-bottom: 30px;
+  bottom: 20px;
+  right: 10px;
+}
+#kids-video-logo {
+  width: 20%;
+  height: auto;
+  transform: translate(10%, -50%);
+  -webkit-transform: translate(10%, -50%);
+  -moz-transform: translate(10%, -50%);
+  -o-transform: translate(10%, -50%);
+  -ms-transform: translate(10%, -50%);
+}
+.youtube-link a {
+  font-size: 16px;
+}
+.youtube-link {
+  margin-bottom: 45px;
+}
+.youtube-link span{  
+  width: 60px;
+  height: 25px;  
+  bottom: -36px;  
+  left: 40%;
+}
+/* ==========================================================================
+   Kids engines landing
+   ========================================================================== */
+#bottom.small #bottom-wrapper #bottom-background:before {
+  background-image: none;
+}
+/* ==========================================================================
+   Kids engines details
+   ========================================================================== */
+
+#header-background {
+  bottom: -50px;
+}
+
+.kids-details-back {
+  margin-left: 60px;
+  margin-top: 20px;
+}
+.kids-engine-details {
+  padding-top: 10px;
+}
+.kids-engine-details .badge .name {
+  line-height: 40px;
+}
+.ru-ru .kids-engine-details .badge .name {
+}
+.de-de .kids-engine-details .badge .name {
+    line-height: 15px;
+}
+.kids-engine-details .badge .title + div {
+  transform: scale(0.75);
+}
+.kids-engine-details .read-about {
+  height: 53px;
+  line-height: 57px;
+  min-width: 100%;
+}
+.kids-engine-details .read-about:before {
+  left: -20px;
+  width: 20px;
+}
+
+#engine-detail-animation {
+  -webkit-transition: none;
+  -moz-transition: none;
+  -ms-transition: none;
+  -o-transition: none;
+  transition: none;
+}
+.kids-engine-details {
+  -webkit-transition: none;
+  -moz-transition: none;
+  -ms-transition: none;
+  -o-transition: none;
+  transition: none;
+}
+.kids-engine-more-info {
+  -webkit-transition: none;
+  -moz-transition: none;
+  -ms-transition: none;
+  -o-transition: none;
+  transition: none;
+  font-size: 12px;
+  line-height: 14px;
+}
+.kids-engine-more-info-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 30%;
+  right: 0;
+  overflow-y: scroll;
+}
+
+/* ==========================================================================
+   Kids games landing
+   ========================================================================== */
+.videos-and-games-thumbs a.kids-game, .videos-and-games-thumbs a.kids-video {
+  width: 31.1%;
+  /*padding-bottom: 55%;*/
+}
+.videos-and-games-thumbs a.kids-game span, .videos-and-games-thumbs a.kids-video span, .carousel.details-carousel .carousel-item a span {
+  font-size: 10px;
+  line-height: 100%;
+}
+#kids-games-wrapper .main-game strong {
+  line-height: 8px;
+  font-size: 7px;
+}
+.all-games, .all-videos {
+  font-size: 12px;
+}
+.videos-and-games-thumbs {
+  width: 92%;
+}
+/* ==========================================================================
+   Kids interstitial
+   ========================================================================== */
+#interstitial .interstitial-text h3 {
+  font-size: 20px;
+}  
+#interstitial .interstitial-text {
+  font-size: 12px;
+}
+#interstitial a#go-back {
+  font-size: 20px;
+  line-height: 40px;
+  height: 40px;
+}
+#interstitial a#go-back:before, #interstitial a#go-back:after {
+  height: 40px;
+  width: 10px;
+}
+#interstitial a#go-back:before {
+  left: -10px;
+}
+#interstitial a#go-back:after {
+  right: -10px;
+}
+#interstitial a#continue {
+  font-size: 12px;
+  line-height: 24px;
+  height: 24px;
+}
+#interstitial a#continue:before, #interstitial a#continue:after {
+  height: 24px;
+  width: 6px;  
+}
+#interstitial a#continue:before {
+  left: -6px;
+  background-position: 1px 0;
+}
+#interstitial a#continue:hover:before {
+  background-position: 1px -48px;
+}
+#interstitial a#continue:after {
+  right: -6px;
+  background-position: 0 -25px;
+}
+#interstitial a#continue:hover:after {
+  background-position: 0px -73px;
+}
+}
+
+
+/*================================================================
+play button
+=================================================================*/
+
+#kids-games-wrapper .main-game .carousel-item .play-button {
+  padding-right: 10px;
+  padding-left: 30px;
+}
+#kids-games-wrapper .main-game .carousel-item .play-button .play-caption {
+  font-size: 12px;
+  line-height: 25px; 
+}
+#kids-games-wrapper .main-game .carousel-item .play-button .play-arrow {
+  height: 25px;
+  width: 11px;
+  right: -11px;
+}
+#kids-games-wrapper .main-game .carousel-item .play-button .play-icon {
+  height: 19px; 
+  width: 28px;
+  top: 3px;    
+}
+/*================================================================
+go back button
+=================================================================*/
+.kids-back-button {
+  width: 54px;
+  height: 23px;
+  margin-top: 10px;
+}
+
+
+/* ==========================================================================
+   Drawing Tool page
+   ========================================================================== */
+#drawing-tool-logo {
+  width: 105px;
+  height: 56px;
+  left: 17px;
+  top: 15px;
+}
+#drawing-tool .button#drawing-tool-close-btn {
+  width: 44px;
+  height: 44px;
+  right: 9px;
+  top: 7px;
+}
+#drawing-tool .button#drawing-tool-done-btn {
+  width: 67px;
+  height: 67px;
+  right: 6px;
+  bottom: 10px;
+}
+
+#drawing-tool #palette {
+  width: 396px;
+  left: 19px;
+  top: 129px;
+  -webkit-transform: scale(0.33);
+  -moz-transform: scale(0.33);
+  -ms-transform: scale(0.33);
+  -o-transform: scale(0.33);
+  transform: scale(0.33);
+}
+
+#drawing-tool #tools-wrapper {
+  top: 114px;
+  right: 0;
+  left: auto;
+  bottom: auto;
+  -webkit-transform: scale(0.65);
+  -moz-transform: scale(0.65);
+  -ms-transform: scale(0.65);
+  -o-transform: scale(0.65);
+  transform: scale(0.65);
+}
+#canvas-wrapper {
+  left: 186px;
+  top: 81px;
+  -webkit-transform: scale(0.531187);
+  -moz-transform: scale(0.531187);
+  -ms-transform: scale(0.531187);
+  -o-transform: scale(0.531187);
+  transform: scale(0.531187);
+}
+
+/* ==========================================================================
+   Drawing Tool landing page
+   ========================================================================== */
+#art-shop-banner {    
+  height: 30px;
+}
+#art-shop-banner div {
+  height: 30px;
+}
+#art-shop-banner p {
+  font-size: 25px;
+  line-height: 30px;
+}
+#art-shop-banner span {
+  height: 30px;
+  width: 43px;
+}

@@ -1,0 +1,965 @@
+{
+  "generatedAt": "2026-08-02T11:04:44.657Z",
+  "game": "Thomas & Friends — Sodor Paint Shop",
+  "slug": "thomas-sodor-paint-shop",
+  "engine": "jQuery 2.1.1 / DOM (soundManager2 + skrollr + jcarousel) — canvas-backed drawing tool",
+  "entry": "index.html",
+  "designResolution": "1024x768",
+  "orientation": "landscape",
+  "source": "https://s3.us-west-1.amazonaws.com/assets.play.thomasandfriends.com/Resources/games/sodorpaintshop/thomas.html",
+  "toongoConfig": {
+    "api": 2,
+    "width": 800,
+    "height": 450,
+    "portrait": false
+  },
+  "gotchasHandled": [
+    "jQuery loaded from //ajax.googleapis.com CDN -> repointed to bundled Resources/js/vendor/jquery-2.1.1.min.js (also fetched separately since the CDN path meant the local copy was never auto-mirrored)",
+    "print iframe loaded jQuery from code.jquery.com (with SRI integrity) -> replaced with local vendor jquery, integrity attr removed",
+    "Referer: https://toongo.io/ set on all S3 fetches (hotlink protection)",
+    "audio.js absolute /Resources/js/vendor/soundmanager/swf/ -> relative (SWF fallback dir, never fetched in HTML5 mode)",
+    "external font stylesheets (cloud.typography.com + fonts.googleapis.com x3) removed from index.html + print.html — local ostrich/rex/utility @font-face fonts bundled",
+    "commented-out Google Analytics snippet left inert (inside HTML comment)"
+  ],
+  "totals": {
+    "files": 231,
+    "bytes": 5149978,
+    "missing": 0,
+    "externalBlocked": 0,
+    "errors": 0
+  },
+  "verify": {
+    "rendered": true,
+    "canvas": "800x600",
+    "jQuery": "2.1.1",
+    "consoleErrors": 0,
+    "http404": 0,
+    "offHostRequests": 0
+  },
+  "files": [
+    {
+      "rel": "Images/logo_tcm1399-221494.png",
+      "bytes": 56658
+    },
+    {
+      "rel": "Images/thomas_sodor_tcm1399-224287.png",
+      "bytes": 155176
+    },
+    {
+      "rel": "index.html",
+      "bytes": 7397
+    },
+    {
+      "rel": "Resources/css/carousel.css",
+      "bytes": 6675
+    },
+    {
+      "rel": "Resources/css/fonts.css",
+      "bytes": 6493
+    },
+    {
+      "rel": "Resources/css/kids/footer.css",
+      "bytes": 3916
+    },
+    {
+      "rel": "Resources/css/kids/main-portrait.css",
+      "bytes": 5448
+    },
+    {
+      "rel": "Resources/css/kids/main.css",
+      "bytes": 142331
+    },
+    {
+      "rel": "Resources/css/kids/mobile-portrait.css",
+      "bytes": 5171
+    },
+    {
+      "rel": "Resources/css/kids/mobile.css",
+      "bytes": 9601
+    },
+    {
+      "rel": "Resources/css/normalize.css",
+      "bytes": 9914
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-black-webfont.eot",
+      "bytes": 8203
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-black-webfont.svg",
+      "bytes": 23073
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-black-webfont.ttf",
+      "bytes": 18904
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-black-webfont.woff",
+      "bytes": 9444
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-black-webfont.woff2",
+      "bytes": 7600
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-bold-webfont.eot",
+      "bytes": 13403
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-bold-webfont.svg",
+      "bytes": 38160
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-bold-webfont.ttf",
+      "bytes": 29828
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-bold-webfont.woff",
+      "bytes": 15012
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-bold-webfont.woff2",
+      "bytes": 12420
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-dashed-webfont.eot",
+      "bytes": 50754
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-dashed-webfont.svg",
+      "bytes": 466633
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-dashed-webfont.ttf",
+      "bytes": 227696
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-dashed-webfont.woff",
+      "bytes": 83332
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-dashed-webfont.woff2",
+      "bytes": 45568
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-light-webfont.eot",
+      "bytes": 8421
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-light-webfont.svg",
+      "bytes": 20935
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-light-webfont.ttf",
+      "bytes": 19424
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-light-webfont.woff",
+      "bytes": 9768
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-light-webfont.woff2",
+      "bytes": 7812
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-regular-webfont.eot",
+      "bytes": 8235
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-regular-webfont.svg",
+      "bytes": 21590
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-regular-webfont.ttf",
+      "bytes": 19004
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-regular-webfont.woff",
+      "bytes": 9536
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-regular-webfont.woff2",
+      "bytes": 7588
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-rounded-webfont.eot",
+      "bytes": 9326
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-rounded-webfont.svg",
+      "bytes": 29974
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-rounded-webfont.ttf",
+      "bytes": 22056
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-rounded-webfont.woff",
+      "bytes": 10756
+    },
+    {
+      "rel": "Resources/fonts/ostrich/ostrich-rounded-webfont.woff2",
+      "bytes": 8624
+    },
+    {
+      "rel": "Resources/fonts/rex/Rex Bold Inline.eot",
+      "bytes": 23804
+    },
+    {
+      "rel": "Resources/fonts/rex/Rex Bold Inline.svg",
+      "bytes": 83440
+    },
+    {
+      "rel": "Resources/fonts/rex/Rex Bold Inline.ttf",
+      "bytes": 36312
+    },
+    {
+      "rel": "Resources/fonts/rex/Rex Bold Inline.woff",
+      "bytes": 17832
+    },
+    {
+      "rel": "Resources/fonts/rex/Rex Bold Inline.woff2",
+      "bytes": 20856
+    },
+    {
+      "rel": "Resources/fonts/utility/UtilityComp-Black.eot",
+      "bytes": 23649
+    },
+    {
+      "rel": "Resources/fonts/utility/UtilityComp-Black.svg",
+      "bytes": 113033
+    },
+    {
+      "rel": "Resources/fonts/utility/UtilityComp-Black.ttf",
+      "bytes": 60940
+    },
+    {
+      "rel": "Resources/fonts/utility/UtilityComp-Black.woff",
+      "bytes": 23716
+    },
+    {
+      "rel": "Resources/fonts/utility/UtilityComp-Black.woff2",
+      "bytes": 20428
+    },
+    {
+      "rel": "Resources/fonts/utility/UtilityComp-Bold.eot",
+      "bytes": 60228
+    },
+    {
+      "rel": "Resources/fonts/utility/UtilityComp-Bold.svg",
+      "bytes": 112232
+    },
+    {
+      "rel": "Resources/fonts/utility/UtilityComp-Bold.ttf",
+      "bytes": 59988
+    },
+    {
+      "rel": "Resources/fonts/utility/UtilityComp-Bold.woff",
+      "bytes": 23660
+    },
+    {
+      "rel": "Resources/fonts/utility/UtilityComp-Light.eot",
+      "bytes": 62152
+    },
+    {
+      "rel": "Resources/fonts/utility/UtilityComp-Light.svg",
+      "bytes": 118276
+    },
+    {
+      "rel": "Resources/fonts/utility/UtilityComp-Light.ttf",
+      "bytes": 61908
+    },
+    {
+      "rel": "Resources/fonts/utility/UtilityComp-Light.woff",
+      "bytes": 23932
+    },
+    {
+      "rel": "Resources/fonts/utility/UtilityComp-Medium.eot",
+      "bytes": 61152
+    },
+    {
+      "rel": "Resources/fonts/utility/UtilityComp-Medium.svg",
+      "bytes": 115212
+    },
+    {
+      "rel": "Resources/fonts/utility/UtilityComp-Medium.ttf",
+      "bytes": 60904
+    },
+    {
+      "rel": "Resources/fonts/utility/UtilityComp-Medium.woff",
+      "bytes": 23916
+    },
+    {
+      "rel": "Resources/fonts/utility/UtilityComp.eot",
+      "bytes": 25348
+    },
+    {
+      "rel": "Resources/fonts/utility/UtilityComp.svg",
+      "bytes": 116112
+    },
+    {
+      "rel": "Resources/fonts/utility/UtilityComp.ttf",
+      "bytes": 60632
+    },
+    {
+      "rel": "Resources/fonts/utility/UtilityComp.woff",
+      "bytes": 24096
+    },
+    {
+      "rel": "Resources/img/favicon.ico",
+      "bytes": 5694
+    },
+    {
+      "rel": "Resources/img/ico-external-link-blue.png",
+      "bytes": 225
+    },
+    {
+      "rel": "Resources/img/kids/75/sprite_evergreen_james_wheel_01.png",
+      "bytes": 2161
+    },
+    {
+      "rel": "Resources/img/kids/75/sprite_evergreen_james_wheel_02.png",
+      "bytes": 2156
+    },
+    {
+      "rel": "Resources/img/kids/75/sprite_evergreen_james_wheel_03.png",
+      "bytes": 2202
+    },
+    {
+      "rel": "Resources/img/kids/75/sprite_evergreen_james_wheel_04.png",
+      "bytes": 2135
+    },
+    {
+      "rel": "Resources/img/kids/75/sprite_evergreen_percy_wheel_01.png",
+      "bytes": 4010
+    },
+    {
+      "rel": "Resources/img/kids/75/sprite_evergreen_percy_wheel_02.png",
+      "bytes": 4074
+    },
+    {
+      "rel": "Resources/img/kids/75/sprite_evergreen_percy_wheel_03.png",
+      "bytes": 4011
+    },
+    {
+      "rel": "Resources/img/kids/75/sprite_evergreen_percy_wheel_04.png",
+      "bytes": 4185
+    },
+    {
+      "rel": "Resources/img/kids/75/sprite_evergreen_wheel_01.png",
+      "bytes": 4919
+    },
+    {
+      "rel": "Resources/img/kids/75/sprite_evergreen_wheel_02.png",
+      "bytes": 5234
+    },
+    {
+      "rel": "Resources/img/kids/75/sprite_evergreen_wheel_03.png",
+      "bytes": 5224
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/background.jpg",
+      "bytes": 156053
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/btn-close.png",
+      "bytes": 11703
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/btn-continue.png",
+      "bytes": 17503
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/btn-done.png",
+      "bytes": 18209
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/btn-drawer-handle.png",
+      "bytes": 3319
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/btn-print.png",
+      "bytes": 12951
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/btn-save.png",
+      "bytes": 13184
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/btn-trash.png",
+      "bytes": 19694
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/btn-x.png",
+      "bytes": 16574
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/cursor-brush.png",
+      "bytes": 46680
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/cursor-crayon.png",
+      "bytes": 22959
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/cursor-eraser.png",
+      "bytes": 30503
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/cursor-marker.png",
+      "bytes": 28744
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/done-preview-bg.png",
+      "bytes": 45752
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/done-preview-corner.png",
+      "bytes": 15162
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/done-preview-pin.png",
+      "bytes": 15908
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/head-brush.png",
+      "bytes": 1413
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/head-crayon.png",
+      "bytes": 1068
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/head-eraser.png",
+      "bytes": 2172
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/head-marker.png",
+      "bytes": 1153
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/palette-swatch.png",
+      "bytes": 45751
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/tool-brush.png",
+      "bytes": 103494
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/tool-bucket.png",
+      "bytes": 93366
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/tool-crayon.png",
+      "bytes": 22124
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/tool-eraser.png",
+      "bytes": 18475
+    },
+    {
+      "rel": "Resources/img/kids/art-tool/tool-marker.png",
+      "bytes": 18049
+    },
+    {
+      "rel": "Resources/img/kids/back-to-engines.png",
+      "bytes": 3326
+    },
+    {
+      "rel": "Resources/img/kids/back-to-games.png",
+      "bytes": 4090
+    },
+    {
+      "rel": "Resources/img/kids/btn-fullscreen.png",
+      "bytes": 736
+    },
+    {
+      "rel": "Resources/img/kids/btn-mute.png",
+      "bytes": 664
+    },
+    {
+      "rel": "Resources/img/kids/btn-muted.png",
+      "bytes": 1086
+    },
+    {
+      "rel": "Resources/img/kids/btn-pause.png",
+      "bytes": 125
+    },
+    {
+      "rel": "Resources/img/kids/btn-play.png",
+      "bytes": 598
+    },
+    {
+      "rel": "Resources/img/kids/btn-red.png",
+      "bytes": 429
+    },
+    {
+      "rel": "Resources/img/kids/btn-view-engine.png",
+      "bytes": 7738
+    },
+    {
+      "rel": "Resources/img/kids/btn-white.png",
+      "bytes": 607
+    },
+    {
+      "rel": "Resources/img/kids/carousel-app.png",
+      "bytes": 3122
+    },
+    {
+      "rel": "Resources/img/kids/carousel-engine.png",
+      "bytes": 787
+    },
+    {
+      "rel": "Resources/img/kids/carousel-games.png",
+      "bytes": 968
+    },
+    {
+      "rel": "Resources/img/kids/carousel-video.png",
+      "bytes": 1123
+    },
+    {
+      "rel": "Resources/img/kids/close-icon-white.png",
+      "bytes": 2487
+    },
+    {
+      "rel": "Resources/img/kids/engine-detail-badge-ribbon.png",
+      "bytes": 471
+    },
+    {
+      "rel": "Resources/img/kids/engine-details-read-ribbon.png",
+      "bytes": 470
+    },
+    {
+      "rel": "Resources/img/kids/engine-details-stripes-black.png",
+      "bytes": 16921
+    },
+    {
+      "rel": "Resources/img/kids/engine-title-bg.png",
+      "bytes": 402
+    },
+    {
+      "rel": "Resources/img/kids/footer-background.png",
+      "bytes": 34335
+    },
+    {
+      "rel": "Resources/img/kids/header_footer_bg.gif",
+      "bytes": 41165
+    },
+    {
+      "rel": "Resources/img/kids/header-background.png",
+      "bytes": 33875
+    },
+    {
+      "rel": "Resources/img/kids/img2x106x106-arrow-down.png",
+      "bytes": 5370
+    },
+    {
+      "rel": "Resources/img/kids/kids-dt-landing-flag.png",
+      "bytes": 579
+    },
+    {
+      "rel": "Resources/img/kids/kids-games-action.png",
+      "bytes": 1914
+    },
+    {
+      "rel": "Resources/img/kids/kids-games-art.png",
+      "bytes": 1793
+    },
+    {
+      "rel": "Resources/img/kids/kids-games-memory.png",
+      "bytes": 1853
+    },
+    {
+      "rel": "Resources/img/kids/kids-games-musical.png",
+      "bytes": 1437
+    },
+    {
+      "rel": "Resources/img/kids/kids-games-puzzle.png",
+      "bytes": 1659
+    },
+    {
+      "rel": "Resources/img/kids/kids-menu-bg-horizontal.png",
+      "bytes": 109
+    },
+    {
+      "rel": "Resources/img/kids/kids-menu-bg-vertical.png",
+      "bytes": 99
+    },
+    {
+      "rel": "Resources/img/kids/kids-menu-fg-horizontal.png",
+      "bytes": 2527
+    },
+    {
+      "rel": "Resources/img/kids/kids-menu-fg-vertical.png",
+      "bytes": 4706
+    },
+    {
+      "rel": "Resources/img/kids/kids-nav-logo.png",
+      "bytes": 14872
+    },
+    {
+      "rel": "Resources/img/kids/kids-nav-parents-arrow-left.png",
+      "bytes": 681
+    },
+    {
+      "rel": "Resources/img/kids/kids-nav-parents-ribbon-left.png",
+      "bytes": 658
+    },
+    {
+      "rel": "Resources/img/kids/kids-nav-parents-ribbon-right.png",
+      "bytes": 682
+    },
+    {
+      "rel": "Resources/img/kids/kids-nav-parents-toogle-arrow.png",
+      "bytes": 176
+    },
+    {
+      "rel": "Resources/img/kids/kidsvideos-down-arrow.png",
+      "bytes": 2226
+    },
+    {
+      "rel": "Resources/img/kids/listen-icon.png",
+      "bytes": 3008
+    },
+    {
+      "rel": "Resources/img/kids/loader_small.png",
+      "bytes": 114674
+    },
+    {
+      "rel": "Resources/img/kids/now-playing-stripe-end.png",
+      "bytes": 318
+    },
+    {
+      "rel": "Resources/img/kids/play-button-arrow.png",
+      "bytes": 626
+    },
+    {
+      "rel": "Resources/img/kids/play-button-games.png",
+      "bytes": 6532
+    },
+    {
+      "rel": "Resources/img/kids/read-about-arrow.png",
+      "bytes": 498
+    },
+    {
+      "rel": "Resources/img/kids/side_end.png",
+      "bytes": 84443
+    },
+    {
+      "rel": "Resources/img/kids/side_repeat.jpg",
+      "bytes": 22856
+    },
+    {
+      "rel": "Resources/img/kids/sprite_edward_wheel1_02.png",
+      "bytes": 5809
+    },
+    {
+      "rel": "Resources/img/kids/sprite_edward_wheel1_03.png",
+      "bytes": 5993
+    },
+    {
+      "rel": "Resources/img/kids/sprite_edward_wheel2_02.png",
+      "bytes": 4678
+    },
+    {
+      "rel": "Resources/img/kids/sprite_edward_wheel2_03.png",
+      "bytes": 4674
+    },
+    {
+      "rel": "Resources/img/kids/sprite_emily_wheel1_02.png",
+      "bytes": 3440
+    },
+    {
+      "rel": "Resources/img/kids/sprite_emily_wheel1_03.png",
+      "bytes": 3114
+    },
+    {
+      "rel": "Resources/img/kids/sprite_emily_wheel1_04.png",
+      "bytes": 3256
+    },
+    {
+      "rel": "Resources/img/kids/sprite_emily_wheel2_02.png",
+      "bytes": 4129
+    },
+    {
+      "rel": "Resources/img/kids/sprite_emily_wheel2_03.png",
+      "bytes": 4073
+    },
+    {
+      "rel": "Resources/img/kids/sprite_emily_wheel2_04.png",
+      "bytes": 3568
+    },
+    {
+      "rel": "Resources/img/kids/sprite_evergreen_james_wheel_01.png",
+      "bytes": 2587
+    },
+    {
+      "rel": "Resources/img/kids/sprite_evergreen_james_wheel_02.png",
+      "bytes": 2535
+    },
+    {
+      "rel": "Resources/img/kids/sprite_evergreen_james_wheel_03.png",
+      "bytes": 2479
+    },
+    {
+      "rel": "Resources/img/kids/sprite_evergreen_james_wheel_04.png",
+      "bytes": 2488
+    },
+    {
+      "rel": "Resources/img/kids/sprite_evergreen_percy_wheel_01.png",
+      "bytes": 4588
+    },
+    {
+      "rel": "Resources/img/kids/sprite_evergreen_percy_wheel_02.png",
+      "bytes": 4547
+    },
+    {
+      "rel": "Resources/img/kids/sprite_evergreen_percy_wheel_03.png",
+      "bytes": 4535
+    },
+    {
+      "rel": "Resources/img/kids/sprite_evergreen_percy_wheel_04.png",
+      "bytes": 4747
+    },
+    {
+      "rel": "Resources/img/kids/sprite_evergreen_wheel_01.png",
+      "bytes": 7139
+    },
+    {
+      "rel": "Resources/img/kids/sprite_evergreen_wheel_02.png",
+      "bytes": 7660
+    },
+    {
+      "rel": "Resources/img/kids/sprite_evergreen_wheel_03.png",
+      "bytes": 7311
+    },
+    {
+      "rel": "Resources/img/kids/sprite_gordon_front_wheel1_02.png",
+      "bytes": 5384
+    },
+    {
+      "rel": "Resources/img/kids/sprite_gordon_front_wheel1_03.png",
+      "bytes": 5325
+    },
+    {
+      "rel": "Resources/img/kids/sprite_gordon_front_wheel2_02.png",
+      "bytes": 6044
+    },
+    {
+      "rel": "Resources/img/kids/sprite_gordon_front_wheel2_03.png",
+      "bytes": 5869
+    },
+    {
+      "rel": "Resources/img/kids/sprite_gordon_wheel3_02.png",
+      "bytes": 4443
+    },
+    {
+      "rel": "Resources/img/kids/sprite_gordon_wheel3_03.png",
+      "bytes": 4829
+    },
+    {
+      "rel": "Resources/img/kids/sprite_gordon_wheel4_02.png",
+      "bytes": 1391
+    },
+    {
+      "rel": "Resources/img/kids/sprite_gordon_wheel4_03.png",
+      "bytes": 1437
+    },
+    {
+      "rel": "Resources/img/kids/sprite_henry_wheel1_02.png",
+      "bytes": 4638
+    },
+    {
+      "rel": "Resources/img/kids/sprite_henry_wheel1_03.png",
+      "bytes": 4228
+    },
+    {
+      "rel": "Resources/img/kids/sprite_henry_wheel2_02.png",
+      "bytes": 4515
+    },
+    {
+      "rel": "Resources/img/kids/sprite_henry_wheel2_03.png",
+      "bytes": 4585
+    },
+    {
+      "rel": "Resources/img/kids/sprite_henry_wheel3_02.png",
+      "bytes": 4528
+    },
+    {
+      "rel": "Resources/img/kids/sprite_henry_wheel3_03.png",
+      "bytes": 4451
+    },
+    {
+      "rel": "Resources/img/kids/sprite_james_wheel_02.png",
+      "bytes": 3299
+    },
+    {
+      "rel": "Resources/img/kids/sprite_james_wheel_03.png",
+      "bytes": 3319
+    },
+    {
+      "rel": "Resources/img/kids/sprite_loader.png",
+      "bytes": 18390
+    },
+    {
+      "rel": "Resources/img/kids/sprite_percy_wheel_02.png",
+      "bytes": 2644
+    },
+    {
+      "rel": "Resources/img/kids/sprite_percy_wheel_03.png",
+      "bytes": 2713
+    },
+    {
+      "rel": "Resources/img/kids/sprite_percy_wheel_04.png",
+      "bytes": 2734
+    },
+    {
+      "rel": "Resources/img/kids/sprite_thomas_wheel_02.png",
+      "bytes": 8227
+    },
+    {
+      "rel": "Resources/img/kids/sprite_thomas_wheel_03.png",
+      "bytes": 8281
+    },
+    {
+      "rel": "Resources/img/kids/video-play-buton-big.png",
+      "bytes": 1967
+    },
+    {
+      "rel": "Resources/img/kids/youtube.png",
+      "bytes": 4391
+    },
+    {
+      "rel": "Resources/img/nav-logo-de.png",
+      "bytes": 12849
+    },
+    {
+      "rel": "Resources/img/nav-logo-es.png",
+      "bytes": 15482
+    },
+    {
+      "rel": "Resources/img/nav-logo-fr.png",
+      "bytes": 51848
+    },
+    {
+      "rel": "Resources/img/nav-logo-gr.png",
+      "bytes": 18120
+    },
+    {
+      "rel": "Resources/img/nav-logo-it.png",
+      "bytes": 17902
+    },
+    {
+      "rel": "Resources/img/nav-logo-pl.png",
+      "bytes": 16051
+    },
+    {
+      "rel": "Resources/img/nav-logo-pt.png",
+      "bytes": 21990
+    },
+    {
+      "rel": "Resources/img/nav-logo-ru.png",
+      "bytes": 15256
+    },
+    {
+      "rel": "Resources/img/newsletter-signup.png",
+      "bytes": 5527
+    },
+    {
+      "rel": "Resources/js/kids/audio.js",
+      "bytes": 4831
+    },
+    {
+      "rel": "Resources/js/kids/carousel.js",
+      "bytes": 11823
+    },
+    {
+      "rel": "Resources/js/kids/drawing_tool.js",
+      "bytes": 61702
+    },
+    {
+      "rel": "Resources/js/kids/helpers.js",
+      "bytes": 3495
+    },
+    {
+      "rel": "Resources/js/kids/interstitial.js",
+      "bytes": 4859
+    },
+    {
+      "rel": "Resources/js/kids/navigation.js",
+      "bytes": 4051
+    },
+    {
+      "rel": "Resources/js/kids/parallax.js",
+      "bytes": 2702
+    },
+    {
+      "rel": "Resources/js/kids/responsive-elements-config.js",
+      "bytes": 25396
+    },
+    {
+      "rel": "Resources/js/kids/responsive-elements-setup.js",
+      "bytes": 10352
+    },
+    {
+      "rel": "Resources/js/kids/responsive-images-switch.js",
+      "bytes": 1970
+    },
+    {
+      "rel": "Resources/js/plugins.js",
+      "bytes": 703
+    },
+    {
+      "rel": "Resources/js/thomas/jquery.simplr.smoothscroll.js",
+      "bytes": 2339
+    },
+    {
+      "rel": "Resources/js/thomas/smooth-scroll.js",
+      "bytes": 658
+    },
+    {
+      "rel": "Resources/js/vendor/jquery-2.1.1.min.js",
+      "bytes": 84249
+    },
+    {
+      "rel": "Resources/js/vendor/jquery.event.move.js",
+      "bytes": 15295
+    },
+    {
+      "rel": "Resources/js/vendor/jquery.event.swipe.js",
+      "bytes": 3381
+    },
+    {
+      "rel": "Resources/js/vendor/jquery.jcarousel.js",
+      "bytes": 45843
+    },
+    {
+      "rel": "Resources/js/vendor/jquery.mousewheel.min.js",
+      "bytes": 2784
+    },
+    {
+      "rel": "Resources/js/vendor/jquery.selectbox-0.2.js",
+      "bytes": 15200
+    },
+    {
+      "rel": "Resources/js/vendor/mobile-detect.min.js",
+      "bytes": 33274
+    },
+    {
+      "rel": "Resources/js/vendor/modernizr-2.6.2.min.js",
+      "bytes": 15616
+    },
+    {
+      "rel": "Resources/js/vendor/skrollr.min.js",
+      "bytes": 12553
+    },
+    {
+      "rel": "Resources/js/vendor/soundmanager/soundmanager2-nodebug-jsmin.js",
+      "bytes": 36228
+    },
+    {
+      "rel": "Resources/kidsdrawingtool-print.html",
+      "bytes": 1036
+    }
+  ]
+}

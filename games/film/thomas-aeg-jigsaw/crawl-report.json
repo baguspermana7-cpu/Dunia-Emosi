@@ -1,0 +1,37 @@
+{
+  "generatedAt": "2026-08-02T18:00:00.000Z",
+  "slug": "thomas-aeg-jigsaw",
+  "display": "Thomas & Friends All Engines Go: Jigsaw!",
+  "engine": "custom canvas2d (gsap + Howler, same stack as Rail Muddle)",
+  "orientation": "landscape",
+  "design": { "width": 800, "height": 450, "portrait": false },
+  "entry": "index.html",
+  "embedConfigSrc": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/238/5f9e0268-1c78-4337-8102-7bd4b72f5c8b_1671041727/index.html",
+  "root": "https://des98fz5jsos4.cloudfront.net/cartoonito/dynamic/web_game/00000000/238/5f9e0268-1c78-4337-8102-7bd4b72f5c8b_1671041727/",
+  "totals": { "files": 42, "puzzles": 19 },
+  "offlineFixes": [
+    "Title changed from template 'Bugs Bunny Builders Jigsaw' to 'Thomas & Friends All Engines Go: Jigsaw!'",
+    "WebFont.load google (BenchNine/PT Sans Narrow/Mada) replaced with local custom module -> fonts/benchnine.css (self-hosted BenchNine woff2, weights 300/400/700); no external font requests",
+    "All asset paths already relative; no CDN absolutes, no service worker to neuter"
+  ],
+  "assetGroups": {
+    "js": ["gsap.min.js", "Howler.min.js", "VisibilityManager.js", "webfontloader.js", "app.js"],
+    "images_ui": ["preloadBg.jpg", "preloaderElements.png", "preloaderAnim_157x230.png", "bg0.jpg", "bg1.jpg", "splashLogo.png", "uiButs.png", "uiElements.png", "logo.png", "title/en.png"],
+    "jigsaws": "images/jigsaws/p0.jpg .. p18.jpg (19 puzzles, jigsawCount=19)",
+    "json": ["json/text.json"],
+    "audio": ["audio/music.mp3", "audio/sound.mp3"],
+    "fonts": ["fonts/BenchNine-Regular.woff2", "fonts/BenchNine-Bold.woff2", "fonts/BenchNine-Light.woff2", "fonts/benchnine.css"]
+  },
+  "missing": [
+    { "url": "images/preloadImage.jpg", "status": 404, "note": "referenced by static analysis but never requested at runtime; same non-critical 404 as Rail Muddle" }
+  ],
+  "external": ["http://www.happylander.com (credits hitArea link only, not a resource load)"],
+  "verify": {
+    "method": "local http headless (puppeteer, swiftshader) + gameplay drive to in-puzzle screen",
+    "canvas": { "internal": "1557x900", "display": "900x520" },
+    "criticalErrors": 0,
+    "critical404": 0,
+    "ignored404": ["favicon.ico", "images/preloadImage.jpg"],
+    "result": "PASS - title -> play -> jigsaw board with draggable Thomas/Percy pieces rendered"
+  }
+}

@@ -1,0 +1,147 @@
+
+
+
+
+
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Thomas & Friends - Drawing Tool</title>
+  <meta name="description" content="Get to know all about Thomas & Friends and the benefits of train play, find free activities and browse the collection of trains, toys and railway sets.">
+  <meta name="keywords" content="thomas the tank engine,games,activities,coloring pages,puzzles, postcards,friends" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+     <!--[if lt IE 9]>
+        <script type="text/javascript">
+            window.location = "/en-us/error/BrowserUpdate"
+        </script>
+    <![endif]-->
+  
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+	<link rel="shortcut icon" href="Resources/img/favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" type="text/css" href="Resources/css/normalize.css" />
+  <link rel="stylesheet" type="text/css" href="Resources/css/fonts.css" />
+  <link rel="stylesheet" type="text/css" href="Resources/css/kids/main.css" />
+  <link rel="stylesheet" type="text/css" href="Resources/css/kids/main-portrait.css" media="only screen and (orientation: portrait)" />
+  <link rel="stylesheet" type="text/css" href="Resources/css/kids/mobile.css" media="only screen and (max-width: 720px) and (max-height: 480px), only screen and (max-width: 480px) and (max-height: 720px)" />
+  <link rel="stylesheet" type="text/css" href="Resources/css/kids/mobile-portrait.css" media="only screen and (orientation: portrait) and (max-width: 720px) and (max-height: 480px), only screen and (orientation: portrait) and (max-width: 480px) and (max-height: 720px)" />
+  <link rel="stylesheet" type="text/css" href="Resources/css/kids/footer.css" />
+  <link rel="stylesheet" type="text/css" href="Resources/css/carousel.css" />
+
+
+
+  <script src="Resources/js/vendor/modernizr-2.6.2.min.js"></script>
+</head>
+<body>
+  <!--[if lt IE 7]>
+    <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+  <![endif]-->
+<div>
+  <div id="content">
+      <div id="drawing-tool-loader">
+        <img src="Resources/img/kids/sprite_loader.png" alt="" />
+      </div>
+      <div id="drawing-tool">
+        <div id="drawing-tool-logo" style="background-image: url(Images/logo_tcm1399-221494.png)"></div>
+        <div id="canvas-wrapper"></div>
+        <div id="tools-wrapper">
+          <div id="tools-drawer-handle"></div>
+          <div id="tools">
+            <div id="tool-crayon" class="tool"></div>
+            <div id="tool-marker" class="tool"></div>
+            <div id="tool-brush" class="tool"></div>
+            <div id="tool-eraser" class="tool"></div>
+             <div id="tool-bucket" class="tool disabled"></div>
+          </div>
+        </div>
+        <div id="palette"></div>
+
+        <div class="button" id="drawing-tool-close-btn"></div>
+        <div class="button" id="drawing-tool-done-btn"></div>
+
+        <div id="drawing-tool-confirm-overlay"></div>
+        <div class="drawing-tool-confirm-popup" id="drawing-tool-confirm-exit-popup">
+          <div class="actions">
+            <span class="button continue"></span>
+            <a class="button trash" href="../sodorpaintshop.html"></a>
+          </div>
+        </div>
+        <div class="drawing-tool-confirm-popup" id="drawing-tool-confirm-clear-popup">
+          <div class="actions">
+            <span class="button continue"></span>
+            <span class="button clear-canvas"></span>
+          </div>
+        </div>
+
+        <div id="drawing-tool-done-popup">
+          <div id="drawing-tool-done-preview-pin"></div>
+          <div id="drawing-tool-done-preview-folded-corner"></div>
+          <img id="drawing-tool-preview">
+          <div class="actions">
+            <span class="button continue"></span>
+            <span class="button print"></span>
+            <span class="button save"></span>
+            <a class="button trash" href="../sodorpaintshop.html"></a>
+          </div>
+        </div>
+      </div>
+      
+      <form id="drawing-tool-download-form" action="" method="post" target="drawing-tool-download-frame">
+        <input type="hidden" value="" id="drawing-tool-download-input" name="image" />
+      </form>
+      <iframe id="drawing-tool-download-frame" name="drawing-tool-download-frame"></iframe>
+      <iframe id="drawing-tool-print-frame" src="Resources/kidsdrawingtool-print.html"></iframe>
+    </div>
+
+    <script type="text/javascript">
+        var drawing_tool_config = {
+            line_art: 'Images/thomas_sodor_tcm1399-224287.png',
+            download_script_url: '/Handlers/DownloadImage.ashx',
+            legal_message: '© 2015 Gullane (Thomas) Limited. All Rights Reserved. The Thomas name and character and the Thomas & Friends logo are trademarks of the Gullane (Thomas) Limited and its affiliates and are registered in many jurisdictions around the world.'
+        };
+    </script>
+</div>
+  <script src="Resources/js/vendor/jquery-2.1.1.min.js"></script>
+  <script>window.jQuery || document.write('<script src="Resources/js/vendor/jquery-2.1.1.min.js"><\/script>')</script>
+  <script src="Resources/js/vendor/jquery.mousewheel.min.js"></script>
+  <script src="Resources/js/thomas/jquery.simplr.smoothscroll.js"></script>
+  <script src="Resources/js/vendor/skrollr.min.js"></script>
+  <script src="Resources/js/vendor/jquery.event.move.js"></script>
+  <script src="Resources/js/vendor/jquery.event.swipe.js"></script>
+  <script src="Resources/js/vendor/jquery.jcarousel.js"></script>
+  <script src="Resources/js/vendor/jquery.selectbox-0.2.js"></script>
+  <script src="Resources/js/vendor/soundmanager/soundmanager2-nodebug-jsmin.js"></script>
+  <script src="Resources/js/vendor/mobile-detect.min.js"></script>
+  <script src="Resources/js/plugins.js"></script>
+  <script src="Resources/js/kids/audio.js"></script>
+  <script src="Resources/js/kids/navigation.js"></script>
+  <script src="Resources/js/kids/helpers.js"></script>
+  <script src="Resources/js/thomas/smooth-scroll.js"></script>
+  <script src="Resources/js/kids/responsive-images-switch.js"></script>
+  <script src="Resources/js/kids/carousel.js"></script>
+  <script src="Resources/js/kids/drawing_tool.js"></script>
+  
+  <script src="Resources/js/kids/responsive-elements-setup.js"></script>
+  <script src="Resources/js/kids/responsive-elements-config.js"></script>
+  <script src="Resources/js/kids/parallax.js"></script>
+  <script src="Resources/js/kids/interstitial.js"></script>
+  <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+  <!--
+  <script>
+    (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+    function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+    e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+    e.src='//www.google-analytics.com/analytics.js';
+    r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+    ga('create','UA-XXXXX-X');ga('send','pageview');
+  </script>
+  -->
+
+</body>
+</html>

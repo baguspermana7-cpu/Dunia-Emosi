@@ -1,0 +1,394 @@
+{
+    "anims": [
+        {
+            "key": "carly-idle",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-idle_00.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-idle_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-idle_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-idle_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-idle_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-idle_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-idle_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-idle_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-idle_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-idle_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-idle_blink_00.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-idle_blink_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-idle_blink_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-idle_blink_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-idle_blink_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-idle_blink_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-idle_blink_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-idle_blink_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-idle_blink_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-idle_blink_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 24,
+            "skipMissedFrames": true,
+            "repeat": -1
+        },
+        {
+            "key": "carly-bop",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_00.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_10.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_11.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_12.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_13.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_14.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_15.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_16.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_17.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_18.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_19.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 24,
+            "skipMissedFrames": true
+        },
+        {
+            "key": "carly-bopblink",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_blink_00.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_blink_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_blink_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_blink_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_blink_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_blink_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_blink_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_blink_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_blink_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_blink_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_blink_10.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_blink_11.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_blink_12.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_blink_13.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_blink_14.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_blink_15.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_blink_16.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_blink_17.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_blink_18.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "carly_1",
+                    "frame": "characters-carly-bop_blink_19.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 24,
+            "skipMissedFrames": true
+        }
+    ],
+    "globalTimeScale": 1,
+    "meta": {
+        "app": "Phaser Editor 2D v3",
+        "contentType": "Phaser v3 Animations"
+    }
+}

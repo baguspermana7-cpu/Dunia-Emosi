@@ -1,0 +1,119 @@
+{
+    "anims": [
+        {
+            "key": "sheep-tap",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "generic_interactables",
+                    "frame": "sheep_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "sheep_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "sheep_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "sheep_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "sheep_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "sheep_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "sheep_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "sheep_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "sheep_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "sheep_10.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "sheep_11.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "sheep_12.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "sheep_13.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "sheep_14.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "sheep_15.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "sheep_16.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "sheep_blink.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 24,
+            "skipMissedFrames": true
+        }
+    ],
+    "globalTimeScale": 1,
+    "meta": {
+        "app": "Phaser Editor 2D v3",
+        "contentType": "Phaser v3 Animations"
+    }
+}

@@ -1,0 +1,580 @@
+
+skeleton.png
+size: 1985, 1476
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+diesel imgs/dieselboca01
+  rotate: true
+  xy: 1938, 99
+  size: 36, 29
+  orig: 36, 29
+  offset: 0, 0
+  index: -1
+diesel imgs/dieselboca02
+  rotate: true
+  xy: 609, 326
+  size: 34, 15
+  orig: 34, 15
+  offset: 0, 0
+  index: -1
+diesel imgs/dieselcara
+  rotate: false
+  xy: 561, 82
+  size: 204, 242
+  orig: 225, 271
+  offset: 13, 18
+  index: -1
+diesel imgs/dieselceja
+  rotate: true
+  xy: 1967, 1448
+  size: 26, 13
+  orig: 26, 13
+  offset: 0, 0
+  index: -1
+diesel imgs/dieselcuerpo
+  rotate: false
+  xy: 717, 713
+  size: 638, 385
+  orig: 668, 414
+  offset: 15, 20
+  index: -1
+diesel imgs/dieselcuerpomugre
+  rotate: false
+  xy: 699, 326
+  size: 638, 385
+  orig: 668, 414
+  offset: 15, 20
+  index: -1
+diesel imgs/dieseliris
+  rotate: true
+  xy: 1147, 2
+  size: 31, 36
+  orig: 31, 36
+  offset: 0, 0
+  index: -1
+diesel imgs/dieselnariz
+  rotate: false
+  xy: 1339, 353
+  size: 32, 26
+  orig: 32, 26
+  offset: 0, 0
+  index: -1
+diesel imgs/dieselrueda01
+  rotate: false
+  xy: 1013, 40
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+diesel imgs/dieselrueda02
+  rotate: false
+  xy: 1289, 234
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+diesel imgs/dieselrueda03
+  rotate: false
+  xy: 1302, 142
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+diesel imgs/dieselrueda04
+  rotate: false
+  xy: 1373, 289
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+diesel imgs/dieselrueda05
+  rotate: false
+  xy: 1457, 289
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+diesel imgs/dieselrueda06
+  rotate: false
+  xy: 1541, 289
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+kana imgs/elec1
+  rotate: false
+  xy: 1159, 114
+  size: 141, 93
+  orig: 150, 108
+  offset: 6, 4
+  index: -1
+kana imgs/elec2
+  rotate: false
+  xy: 787, 12
+  size: 134, 108
+  orig: 150, 108
+  offset: 16, 0
+  index: -1
+kana imgs/elec3
+  rotate: false
+  xy: 653, 10
+  size: 132, 70
+  orig: 150, 108
+  offset: 0, 33
+  index: -1
+kana imgs/elec4
+  rotate: true
+  xy: 1916, 630
+  size: 108, 42
+  orig: 150, 108
+  offset: 6, 61
+  index: -1
+kana imgs/kanacara
+  rotate: false
+  xy: 767, 122
+  size: 208, 202
+  orig: 208, 202
+  offset: 0, 0
+  index: -1
+kana imgs/kanaceja
+  rotate: false
+  xy: 561, 336
+  size: 46, 24
+  orig: 46, 24
+  offset: 0, 0
+  index: -1
+kana imgs/kanacuerpo
+  rotate: false
+  xy: 2, 1107
+  size: 713, 367
+  orig: 713, 367
+  offset: 0, 0
+  index: -1
+kana imgs/kanacuerpomugre
+  rotate: false
+  xy: 2, 738
+  size: 713, 367
+  orig: 713, 367
+  offset: 0, 0
+  index: -1
+kana imgs/kanairis
+  rotate: false
+  xy: 1357, 740
+  size: 31, 36
+  orig: 31, 36
+  offset: 0, 0
+  index: -1
+kana imgs/kanamejilla
+  rotate: true
+  xy: 1960, 673
+  size: 65, 23
+  orig: 74, 37
+  offset: 5, 9
+  index: -1
+kana imgs/kanaojo
+  rotate: true
+  xy: 1916, 460
+  size: 73, 64
+  orig: 80, 77
+  offset: 1, 8
+  index: -1
+kana imgs/kanarueda01
+  rotate: false
+  xy: 1625, 289
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+kana imgs/kanarueda02
+  rotate: false
+  xy: 1709, 289
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+kana imgs/kanarueda03
+  rotate: false
+  xy: 1793, 289
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+kana imgs/kanarueda04
+  rotate: false
+  xy: 1877, 289
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+kana imgs/kanarueda05
+  rotate: false
+  xy: 1386, 197
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+kana imgs/kanarueda06
+  rotate: false
+  xy: 1470, 197
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+kana imgs/pestaña
+  rotate: true
+  xy: 1357, 845
+  size: 93, 52
+  orig: 105, 77
+  offset: 7, 18
+  index: -1
+kana imgs/pestaña2
+  rotate: true
+  xy: 1916, 535
+  size: 93, 40
+  orig: 95, 58
+  offset: 1, 13
+  index: -1
+nia imgs/niaboca01
+  rotate: true
+  xy: 1357, 778
+  size: 65, 43
+  orig: 65, 44
+  offset: 0, 0
+  index: -1
+nia imgs/niaboca02
+  rotate: false
+  xy: 1080, 2
+  size: 65, 31
+  orig: 65, 31
+  offset: 0, 0
+  index: -1
+nia imgs/niaboca03
+  rotate: true
+  xy: 1961, 305
+  size: 38, 20
+  orig: 40, 21
+  offset: 2, 1
+  index: -1
+nia imgs/niaceja
+  rotate: false
+  xy: 1938, 175
+  size: 45, 20
+  orig: 45, 20
+  offset: 0, 0
+  index: -1
+nia imgs/niachimenea
+  rotate: false
+  xy: 1159, 209
+  size: 128, 115
+  orig: 130, 120
+  offset: 2, 5
+  index: -1
+nia imgs/niacuerpo
+  rotate: false
+  xy: 2, 362
+  size: 695, 374
+  orig: 698, 386
+  offset: 0, 9
+  index: -1
+nia imgs/niacuerpomugre
+  rotate: false
+  xy: 717, 1100
+  size: 696, 374
+  orig: 698, 386
+  offset: 0, 9
+  index: -1
+nia imgs/niairis
+  rotate: true
+  xy: 1185, 2
+  size: 31, 36
+  orig: 31, 36
+  offset: 0, 0
+  index: -1
+nia imgs/nianariz
+  rotate: true
+  xy: 1960, 630
+  size: 41, 19
+  orig: 48, 24
+  offset: 5, 3
+  index: -1
+nia imgs/niarueda01
+  rotate: false
+  xy: 1890, 197
+  size: 81, 90
+  orig: 81, 90
+  offset: 0, 0
+  index: -1
+nia imgs/niarueda02
+  rotate: true
+  xy: 1386, 114
+  size: 81, 90
+  orig: 81, 90
+  offset: 0, 0
+  index: -1
+nia imgs/niarueda03
+  rotate: true
+  xy: 1478, 114
+  size: 81, 90
+  orig: 81, 90
+  offset: 0, 0
+  index: -1
+nia imgs/niarueda04
+  rotate: true
+  xy: 1570, 114
+  size: 81, 90
+  orig: 81, 90
+  offset: 0, 0
+  index: -1
+nia imgs/niarueda05
+  rotate: true
+  xy: 1662, 114
+  size: 81, 90
+  orig: 81, 90
+  offset: 0, 0
+  index: -1
+nia imgs/niarueda06
+  rotate: true
+  xy: 1754, 114
+  size: 81, 90
+  orig: 81, 90
+  offset: 0, 0
+  index: -1
+nia imgs/pestaña
+  rotate: true
+  xy: 1357, 1020
+  size: 78, 56
+  orig: 80, 65
+  offset: 1, 9
+  index: -1
+percyimgs/percyboca01
+  rotate: false
+  xy: 1218, 74
+  size: 52, 38
+  orig: 52, 38
+  offset: 0, 0
+  index: -1
+percyimgs/percyboca03
+  rotate: false
+  xy: 1097, 43
+  size: 24, 13
+  orig: 31, 24
+  offset: 4, 5
+  index: -1
+percyimgs/percycuerpo
+  rotate: false
+  xy: 1415, 1108
+  size: 550, 366
+  orig: 562, 374
+  offset: 3, 6
+  index: -1
+percyimgs/percycuerpomugre
+  rotate: false
+  xy: 1415, 740
+  size: 550, 366
+  orig: 562, 374
+  offset: 3, 6
+  index: -1
+percyimgs/percyiris
+  rotate: false
+  xy: 1218, 36
+  size: 31, 36
+  orig: 31, 36
+  offset: 0, 0
+  index: -1
+percyimgs/percyojo
+  rotate: false
+  xy: 1916, 395
+  size: 63, 63
+  orig: 71, 75
+  offset: 4, 8
+  index: -1
+percyimgs/percyrueda01
+  rotate: false
+  xy: 1554, 197
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+percyimgs/percyrueda02
+  rotate: false
+  xy: 1638, 197
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+percyimgs/percyrueda03
+  rotate: false
+  xy: 1722, 197
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+percyimgs/percyrueda04
+  rotate: false
+  xy: 1806, 197
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+percyimgs/percyrueda05
+  rotate: true
+  xy: 1846, 113
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+percyimgs/percyrueda06
+  rotate: false
+  xy: 1302, 50
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+thomas imgs/pestaña
+  rotate: true
+  xy: 1357, 940
+  size: 78, 56
+  orig: 80, 65
+  offset: 1, 9
+  index: -1
+thomas imgs/pestaña2
+  rotate: true
+  xy: 1097, 58
+  size: 72, 37
+  orig: 73, 43
+  offset: 1, 0
+  index: -1
+thomas imgs/thomasboca01
+  rotate: false
+  xy: 1013, 2
+  size: 65, 36
+  orig: 65, 36
+  offset: 0, 0
+  index: -1
+thomas imgs/thomasboca02
+  rotate: true
+  xy: 1958, 563
+  size: 65, 25
+  orig: 65, 25
+  offset: 0, 0
+  index: -1
+thomas imgs/thomasboca03
+  rotate: true
+  xy: 1339, 673
+  size: 38, 16
+  orig: 50, 25
+  offset: 7, 4
+  index: -1
+thomas imgs/thomascara
+  rotate: false
+  xy: 977, 132
+  size: 180, 192
+  orig: 180, 192
+  offset: 0, 0
+  index: -1
+thomas imgs/thomasceja
+  rotate: true
+  xy: 767, 91
+  size: 29, 17
+  orig: 29, 17
+  offset: 0, 0
+  index: -1
+thomas imgs/thomaschimenea
+  rotate: false
+  xy: 923, 11
+  size: 88, 109
+  orig: 88, 109
+  offset: 0, 0
+  index: -1
+thomas imgs/thomascuerpo
+  rotate: false
+  xy: 1357, 381
+  size: 557, 357
+  orig: 702, 496
+  offset: 68, 72
+  index: -1
+thomas imgs/thomascuerpomugre
+  rotate: false
+  xy: 2, 2
+  size: 557, 358
+  orig: 702, 496
+  offset: 68, 71
+  index: -1
+thomas imgs/thomasiris
+  rotate: false
+  xy: 1938, 137
+  size: 31, 36
+  orig: 31, 36
+  offset: 0, 0
+  index: -1
+thomas imgs/thomasmejilla
+  rotate: true
+  xy: 1961, 345
+  size: 48, 22
+  orig: 63, 35
+  offset: 7, 8
+  index: -1
+thomas imgs/thomasnariz
+  rotate: false
+  xy: 1958, 535
+  size: 25, 26
+  orig: 30, 28
+  offset: 2, 0
+  index: -1
+thomas imgs/thomasojo
+  rotate: true
+  xy: 1136, 35
+  size: 77, 80
+  orig: 78, 82
+  offset: 1, 1
+  index: -1
+thomas imgs/thomasrueda01
+  rotate: true
+  xy: 1386, 30
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+thomas imgs/thomasrueda02
+  rotate: true
+  xy: 1478, 30
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+thomas imgs/thomasrueda03
+  rotate: true
+  xy: 1570, 30
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+thomas imgs/thomasrueda04
+  rotate: true
+  xy: 1662, 30
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+thomas imgs/thomasrueda05
+  rotate: true
+  xy: 1754, 30
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+thomas imgs/thomasrueda06
+  rotate: true
+  xy: 1846, 29
+  size: 82, 90
+  orig: 82, 90
+  offset: 0, 0
+  index: -1
+thomas imgs/thomasruedafondo
+  rotate: true
+  xy: 561, 2
+  size: 78, 90
+  orig: 78, 90
+  offset: 0, 0
+  index: -1

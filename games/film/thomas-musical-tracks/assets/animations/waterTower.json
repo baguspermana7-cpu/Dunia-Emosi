@@ -1,0 +1,95 @@
+{
+    "anims": [
+        {
+            "key": "waterTower-tap",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "generic_interactables",
+                    "frame": "pipe-gush_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pipe-gush_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pipe-gush_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pipe-gush_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pipe-gush_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pipe-gush_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pipe-gush_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pipe-gush_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pipe-gush_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pipe-gush_10.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pipe-gush_11.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pipe-gush_12.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pipe-gush_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 24,
+            "skipMissedFrames": true
+        }
+    ],
+    "globalTimeScale": 1,
+    "meta": {
+        "app": "Phaser Editor 2D v3",
+        "contentType": "Phaser v3 Animations"
+    }
+}

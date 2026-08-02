@@ -1,0 +1,89 @@
+{
+    "anims": [
+        {
+            "key": "pigs-tap",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "generic_interactables",
+                    "frame": "pig_L_blink.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pig_R_blink.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pigs00.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pigs01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pigs02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pigs03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pigs04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pigs05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pigs06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pigs07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pigs08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "pigs09.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 12,
+            "skipMissedFrames": true
+        }
+    ],
+    "globalTimeScale": 1,
+    "meta": {
+        "app": "Phaser Editor 2D v3",
+        "contentType": "Phaser v3 Animations"
+    }
+}

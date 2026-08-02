@@ -1,0 +1,36 @@
+{
+
+"images": [
+    "assets/images/loader/sprites.png"
+],
+
+"frames": [
+    [2, 2, 960, 11, 0, 0, 0],
+    [2, 15, 838, 49, 0, 0, 0],
+    [2, 66, 312, 439, 0, 0, 0],
+    [316, 66, 297, 431, 0, 0, -2],
+    [615, 66, 425, 298, 0, -2, -2],
+    [615, 366, 397, 109, 0, -7, 0],
+    [1042, 2, 158, 159, 0, -3, -2],
+    [1042, 163, 158, 159, 0, -3, -2],
+    [1042, 324, 158, 159, 0, -3, -2]
+],
+
+"animations": {
+    "track": [0],
+    "train": [1],
+    "thomas/body": [2],
+    "smoke/stack": [3],
+    "smoke/wide": [4],
+    "thomas/shadow": [5],
+    "thomas/face/blink": [6],
+    "thomas/face/happy": [7],
+    "thomas/face/smile": [8]
+},
+
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:792ecfc9f55f86751a05b9752e0f4d89:58186656a853a0568ce45ca97224bcee:1eabdf11f75e3a4fe3147baf7b5be24b$",
+        "Created with TexturePacker (https://www.codeandweb.com/texturepacker) for EaselJS"
+]
+
+}

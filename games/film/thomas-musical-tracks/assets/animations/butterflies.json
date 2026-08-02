@@ -1,0 +1,215 @@
+{
+    "anims": [
+        {
+            "key": "butterfly-tap",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "woods",
+                    "frame": "butterflies_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_10.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_11.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_12.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_13.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_14.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_15.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_16.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_17.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_18.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_19.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_20.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_21.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_22.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_23.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_24.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_25.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_26.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_27.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_28.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_29.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_30.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_31.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_32.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_idle_00.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_idle_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_idle_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_idle_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_idle_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_idle_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_idle_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_idle_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "woods",
+                    "frame": "butterflies_idle_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 24,
+            "skipMissedFrames": true
+        }
+    ],
+    "globalTimeScale": 1,
+    "meta": {
+        "app": "Phaser Editor 2D v3",
+        "contentType": "Phaser v3 Animations"
+    }
+}

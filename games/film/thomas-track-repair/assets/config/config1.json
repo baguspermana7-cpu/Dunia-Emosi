@@ -1,0 +1,8 @@
+{
+	"title": "Track Repair",
+	
+	"dimensions" : {
+		"width" : { "min" : 960, "max" : 960 },
+		"height" : { "min" : 550, "max" : 550 }
+	}
+}

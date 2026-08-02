@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Thomas and Friends: Musical Tracks</title>
+    <link rel="preload" as="font" href="assets/fonts/Knapford-Bold.otf" type="font/otf" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            padding: 0px;
+            margin: 0px;
+            background: #000000;
+            overflow:hidden;
+        }
+
+        @font-face {
+            font-family: Knapford-Bold;
+            src: url('./assets/fonts/Knapford-Bold.ttf'),
+            url('./assets/fonts/Knapford-Bold.otf'),
+            url('./assets/fonts/Knapford-Bold.woff'),
+            url('./assets/fonts/Knapford-Bold.woff2');
+        }
+
+        @font-face {
+            font-family: arial-bold;
+            src: url('./assets/fonts/arial-bold.ttf'),
+            url('./assets/fonts/arial-bold.otf'),
+            url('./assets/fonts/arial-bold.woff'),
+            url('./assets/fonts/arial-bold.woff2');
+        }
+
+        #imageOverlay{
+            left:0;
+            top:0;
+            display:none;
+            position:fixed;
+            margin-left: auto;
+            margin-right: auto;
+            width:100%;
+            height:100%;
+            background-image: url('assets/images/rotate/rotate_device.png');
+            background-color: rgb(114,241,253);
+            background-color: linear-gradient(180deg, rgba(114,241,253,1) 0%, rgba(179,233,242,1) 100%);
+            background-size:  50% auto;
+            background-position: center center;
+            background-repeat: no-repeat;
+
+            } 
+            @media only screen and (max-width:768px)  and (orientation: portrait){
+                #imageOverlay{
+                    display:block;
+                }
+                #game
+                {
+                    display:none;
+                }
+            }
+
+            @media only screen and (max-width:768px) and (-webkit-min-device-pixel-ratio: 2){
+                #imageOverlay{
+                    display: block;
+                }
+                #game
+                {
+                    display:none;
+                }
+            }
+
+            @media only screen and (max-width:766px)  and (orientation: landscape) {
+                #imageOverlay {
+                    display: none;
+                }
+                #game
+                {
+                    display:block;
+                }
+            }
+		
+	
+    </style>
+<script defer src="main-a01099e091b0d0652740.bundle.js"></script></head>
+
+<body>
+    <div><p style="font-family:Knapford-Bold; font-size: 0px; color:black">123</p></div>
+    <div><p style="font-family:arial-bold; font-size: 0px; color:black">123</p></div>
+    <div id="game"></div>
+    <div id="imageOverlay"></div>
+</body>
+
+
+
+<script>
+</script>
+
+</html>

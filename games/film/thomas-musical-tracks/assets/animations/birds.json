@@ -1,0 +1,465 @@
+{
+    "anims": [
+        {
+            "key": "bird2-tap",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_00.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_10.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_11.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_12.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_13.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_14.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_15.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_16.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_17.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_18.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_19.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_20.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_21.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_22.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird2_23.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 24,
+            "skipMissedFrames": true
+        },
+        {
+            "key": "bird1-tap",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_00.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_10.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_11.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_12.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_13.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_14.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_15.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_16.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_17.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_18.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_19.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_20.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_21.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_22.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird1_23.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 24,
+            "skipMissedFrames": true
+        },
+        {
+            "key": "bird3-tap",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_00.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_10.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_11.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_12.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_13.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_14.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_15.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_16.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_17.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_18.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_19.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_20.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_21.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_22.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "bird3_23.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 24,
+            "skipMissedFrames": true
+        }
+    ],
+    "globalTimeScale": 1,
+    "meta": {
+        "app": "Phaser Editor 2D v3",
+        "contentType": "Phaser v3 Animations"
+    }
+}

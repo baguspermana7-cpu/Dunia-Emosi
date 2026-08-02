@@ -1,0 +1,74 @@
+{
+    "anims": [
+        {
+            "key": "cow-tap",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "generic_interactables",
+                    "frame": "cow_Frame_1.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "cow_Frame_2.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "cow_Frame_3.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "cow_Frame_4.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "cow_Frame_5.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "cow_Frame_6.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "generic_interactables",
+                    "frame": "cow_Frame_7.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 12,
+            "skipMissedFrames": true
+        },
+        {
+            "key": "cow-idle",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "generic_interactables",
+                    "frame": "cow_Frame_1.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 12,
+            "skipMissedFrames": true,
+            "repeat": -1
+        }
+    ],
+    "globalTimeScale": 1,
+    "meta": {
+        "app": "Phaser Editor 2D v3",
+        "contentType": "Phaser v3 Animations"
+    }
+}

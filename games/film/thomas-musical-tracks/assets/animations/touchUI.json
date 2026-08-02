@@ -1,0 +1,107 @@
+{
+    "anims": [
+        {
+            "key": "touchUI-tap",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "UIAtlas_1",
+                    "frame": "touch_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "UIAtlas_1",
+                    "frame": "touch_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "UIAtlas_1",
+                    "frame": "touch_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "UIAtlas_1",
+                    "frame": "touch_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "UIAtlas_1",
+                    "frame": "touch_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "UIAtlas_1",
+                    "frame": "touch_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "UIAtlas_1",
+                    "frame": "touch_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "UIAtlas_1",
+                    "frame": "touch_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "UIAtlas_1",
+                    "frame": "touch_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "UIAtlas_1",
+                    "frame": "touch_10.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "UIAtlas_1",
+                    "frame": "touch_11.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "UIAtlas_1",
+                    "frame": "touch_12.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "UIAtlas_1",
+                    "frame": "touch_13.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "UIAtlas_1",
+                    "frame": "touch_14.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "UIAtlas_1",
+                    "frame": "touch_15.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 24,
+            "skipMissedFrames": true
+        }
+    ],
+    "globalTimeScale": 1,
+    "meta": {
+        "app": "Phaser Editor 2D v3",
+        "contentType": "Phaser v3 Animations"
+    }
+}

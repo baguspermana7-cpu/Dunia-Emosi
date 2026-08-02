@@ -1,0 +1,58 @@
+{
+    "tracks":[
+        {
+            "trackName": "Mines",
+            "backgroundPrefab": "BackgroundMines",
+            "assetPack":"track3-asset-pack",
+            "backgroundMusic" : "mine_BG",
+            "trackLength" : 60000,
+            "bpm":800,
+            "characters" :[
+                "Thomas",
+                "Nia",
+                "Percy",
+                "Kana",
+                "Diesel",
+                "Carly",
+                "Sandy"
+            ],
+            "trailer": "MinecartTrailer"
+        },
+        {
+            "trackName": "Woods",
+            "backgroundPrefab": "BackgroundWoods",
+            "assetPack":"track2-asset-pack",
+            "backgroundMusic" : "woods_BG",
+            "trackLength" : 60000,
+            "bpm":940,
+            "characters" :[
+                "Thomas",
+                "Nia",
+                "Percy",
+                "Kana",
+                "Diesel",
+                "Carly",
+                "Sandy"
+            ],
+            "trailer": "Trailer"
+        },
+        {
+            "trackName": "Generic",
+            "backgroundPrefab": "BackgroundGeneric",
+            "assetPack":"track1-asset-pack",
+            "backgroundMusic" : "generic_BG",
+            "trackLength" : 60000,
+            "bpm":1000,
+            "characters" :[
+                "Thomas",
+                "Nia",
+                "Percy",
+                "Kana",
+                "Diesel",
+                "Carly",
+                "Sandy"
+            ],
+            "trailer": "FarmTrailer"
+        }
+    ]
+}

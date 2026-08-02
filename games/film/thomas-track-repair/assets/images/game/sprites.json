@@ -1,0 +1,78 @@
+{
+
+"images": [
+    "assets/images/game/sprites.png"
+],
+
+"frames": [
+    [2, 2, 895, 243, 0, 0, -307],
+    [899, 2, 114, 41, 0, 0, 0],
+    [899, 45, 110, 110, 0, 0, 0],
+    [899, 157, 110, 110, 0, 0, 0],
+    [2, 269, 262, 550, 0, 0, 0],
+    [2, 821, 221, 201, 0, -24, -349],
+    [2, 247, 29, 20, 0, 0, 0],
+    [33, 247, 22, 20, 0, -3, 0],
+    [225, 821, 94, 179, 0, 0, 0],
+    [321, 247, 316, 263, 0, -631, -277],
+    [639, 247, 241, 262, 0, -508, -288],
+    [882, 269, 125, 124, 0, 0, -1],
+    [882, 395, 125, 124, 0, 0, 0],
+    [266, 247, 35, 122, 0, 0, -1],
+    [639, 511, 179, 94, 0, 0, 0],
+    [820, 521, 179, 94, 0, 0, 0],
+    [266, 617, 94, 179, 0, 0, 0],
+    [266, 512, 179, 93, 0, 0, 0],
+    [447, 512, 179, 93, 0, 0, 0],
+    [321, 798, 93, 179, 0, 0, 0],
+    [362, 617, 93, 179, 0, 0, 0],
+    [321, 979, 99, 42, 0, -8, 0],
+    [416, 798, 64, 174, 0, -63, 0],
+    [457, 617, 64, 174, 0, -49, 0],
+    [422, 974, 99, 37, 0, -8, -2],
+    [482, 793, 124, 125, 0, -1, 0],
+    [482, 920, 124, 35, 0, 0, 0],
+    [523, 957, 174, 62, 0, 0, 0],
+    [608, 607, 174, 62, 0, 0, 0],
+    [784, 617, 124, 125, 0, 0, 0]
+],
+
+"animations": {
+    "repair/gravel": [0],
+    "trains/james": [1],
+    "tracks/slant-down": [2],
+    "tracks/slant-up": [3],
+    "scroll-panel": [4],
+    "repair/cement-left": [5],
+    "smoke/1": [6],
+    "smoke/2": [7],
+    "tracks/bend-vertical-bottom-left": [8],
+    "repair/cement-right": [9],
+    "repair/sign": [10],
+    "tracks/curve-bottom-right": [11],
+    "tracks/curve-top-left": [12],
+    "tracks/straight-vertical": [13],
+    "tracks/bend-horizontal-top-left": [14],
+    "tracks/bend-horizontal-top-right": [15],
+    "tracks/bend-vertical-top-left": [16],
+    "tracks/bend-horizontal-bottom-left": [17],
+    "tracks/bend-horizontal-bottom-right": [18],
+    "tracks/bend-vertical-bottom-right": [19],
+    "tracks/bend-vertical-top-right": [20],
+    "trains/percy": [21],
+    "tracks/quarter-left": [22],
+    "tracks/quarter-right": [23],
+    "trains/thomas": [24],
+    "tracks/curve-bottom-left": [25],
+    "tracks/straight-horizontal": [26],
+    "tracks/quarter-bottom": [27],
+    "tracks/quarter-top": [28],
+    "tracks/curve-top-right": [29]
+},
+
+"texturepacker": [
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:51002edb2f831e549ad48762a366ede2:08d9793c810685dabd5b31c4ef9308c9:1eabdf11f75e3a4fe3147baf7b5be24b$",
+        "Created with TexturePacker (https://www.codeandweb.com/texturepacker) for EaselJS"
+]
+
+}

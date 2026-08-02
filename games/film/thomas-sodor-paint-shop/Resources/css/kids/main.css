@@ -1,0 +1,5010 @@
+/*! HTML5 Boilerplate v4.3.0 | MIT License | http://h5bp.com/ */
+
+/*
+ * What follows is the result of much research on cross-browser styling.
+ * Credit left inline and big thanks to Nicolas Gallagher, Jonathan Neal,
+ * Kroc Camen, and the H5BP  dev community and team.
+ */
+
+/* ==========================================================================
+   Base styles: opinionated defaults
+   ========================================================================== */
+html, body {
+  height: 100%;
+}
+body {
+  font-size: 14px;
+  /*line-height: 1.4;*/
+  background: #fff;
+  font-family: Utility, 'Open Sans Condensed', Roboto, 'Russo one', sans-serif;
+  text-rendering: optimizeLegibility !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  overflow-x: hidden;
+}
+/*Font Issue Fix for Poland Site*/
+body.pl-pl{
+    font-family: Utility, Roboto, 'Russo one', sans-serif;  
+}
+html,
+button,
+input,
+select,
+textarea {
+  color: #222;
+}
+
+h3, h2, p {
+  margin: 0;
+}
+
+/*
+ * Remove text-shadow in selection highlight: h5bp.com/i
+ * These selection rule sets have to be separate.
+ * Customize the background color to match your design.
+ */
+
+::-moz-selection {
+  background: #b3d4fc;
+  text-shadow: none;
+}
+
+::selection {
+  background: #b3d4fc;
+  text-shadow: none;
+}
+
+.no-scroll {
+  overflow: hidden;
+}
+
+/*
+ * A better looking default horizontal rule
+ */
+
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid #ccc;
+  margin: 1em 0;
+  padding: 0;
+}
+
+/*
+ * Remove the gap between images, videos, audio and canvas and the bottom of
+ * their containers: h5bp.com/i/440
+ */
+
+audio,
+canvas,
+img,
+video {
+  vertical-align: middle;
+}
+
+/*
+ * Remove default fieldset styles.
+ */
+
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * Allow only vertical resizing of textareas.
+ */
+
+textarea {
+  resize: vertical;
+}
+
+.clear {
+  clear: both;
+}
+
+/* ==========================================================================
+   Browse Happy prompt
+   ========================================================================== */
+
+.browsehappy {
+  margin: 0.2em 0;
+  background: #ccc;
+  color: #000;
+  padding: 0.2em 0;
+}
+
+/* ==========================================================================
+   Generic loader
+   ========================================================================== */
+.loader {
+  width: 116px;
+  height: 116px;
+  background: transparent url(../../img/kids/sprite_loader.png) no-repeat scroll left top;
+  background-size: 100% auto;
+  -webkit-animation: loaderanimation 0.5s steps(10) infinite;
+  -moz-animation: loaderanimation 0.5s steps(10) infinite;
+  -ms-animation: loaderanimation 0.5s steps(10) infinite;
+  animation: loaderanimation 0.5s steps(10) infinite;
+}
+@-webkit-keyframes loaderanimation {100% {background-position: 0 -1160px}}
+@-moz-keyframes loaderanimation {100% {background-position: 0 -1160px}}
+@-ms-keyframes loaderanimation {100% {background-position: 0 -1160px}}
+@keyframes loaderanimation {100% {background-position: 0 -1160px}}
+
+/* ==========================================================================
+   Details carousel
+   ========================================================================== */
+.details-carousel-wrapper {
+  margin: 0 auto;
+  padding-bottom: 1px;
+  margin-bottom: -1px;
+}
+.carousel.details-carousel {
+  margin-bottom: 2.95%;
+}
+.carousel.details-carousel .carousel-root {
+  padding-bottom: 40px;
+}
+.carousel.details-carousel .carousel-item a {
+  display: block;
+  height: 103%;
+  position: relative;
+  text-decoration: none;
+}
+.carousel.details-carousel .carousel-item a img {
+  width: 100%;  
+  -webkit-transition: -webkit-transform .3s;
+  -moz-transition: -moz-transform .3s;
+  -o-transition: -o-transform .3s;
+  transition: transform .3s;
+}
+
+  
+.carousel.details-carousel .carousel-item a:hover img {
+  -webkit-transform: scale(1.1);
+  -moz-transform: scale(1.1);
+  -o-transform: scale(1.1);
+  transform: scale(1.1);
+}
+.carousel.details-carousel .carousel-item a p {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 5px;
+  height: 32px;
+  text-align: center;
+  font-family: Utility, 'Open Sans Condensed', Roboto, 'Russo one', sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 24px;
+  color: #fff;
+  overflow: hidden;
+}
+.carousel.details-carousel .carousel-item a span {
+	display: none;
+}
+/*Font Issue Fix for Poland Site*/
+.pl-pl .carousel.details-carousel .carousel-item a span {
+  font-family: Utility, Roboto, 'Russo one', sans-serif;
+}
+.carousel.details-carousel .carousel-item a span em {
+  background: transparent url(../img/ico-external-link-blue.png) no-repeat scroll left top;
+  width: 14px;
+  height: 14px;
+  margin-left: 6px;
+  display: inline-block;
+  margin-bottom: -2px;
+}
+.carousel.details-carousel .carousel-item a em.border {
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  overflow: hidden;
+  border: 7px solid #fff;
+}
+.carousel.details-carousel .carousel-item a.video.active em.border {
+  border-color: #fbce21;
+}
+.carousel.details-carousel .carousel-item a em.border:after {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+/*.carousel.details-carousel .carousel-item a.engine em.border:after {
+  background: transparent url(../../img/kids/carousel-engine.png) no-repeat scroll right bottom;
+  background-size: 28.7% auto;
+}*/
+.carousel.details-carousel .carousel-item a.video em.border:after {
+  background: transparent url(../../img/kids/carousel-video.png) no-repeat scroll center;
+  background-size: 25.284% auto;
+}
+.carousel.details-carousel .carousel-item a.engine em.border:after {
+  background: transparent url(../../img/kids/carousel-engine.png) no-repeat scroll bottom right;
+  background-size: 25.284% auto;
+}
+.carousel.details-carousel .carousel-item a.games em.border:after {
+  background: transparent url(../../img/kids/carousel-games.png) no-repeat scroll bottom right;
+  background-size: 25.284% auto;
+}
+.carousel.details-carousel .carousel-item a.apps em.border:after {
+  background: transparent url(../../img/kids/carousel-app.png) no-repeat scroll bottom right;
+  background-size: 25.284% auto;
+}
+.carousel.details-carousel .carousel-item a.video.active em.border:after {
+  background: none;
+}
+.carousel.details-carousel.with-controls {
+  padding: 0 43px;
+}
+.carousel.details-carousel .controls span {
+  margin-top: -54px;
+}
+.carousel.details-carousel .controls span.previous {
+  border-width: 34px 34px 34px 0;
+}
+.carousel.details-carousel .controls span.next {
+  border-width: 34px 0 34px 34px;
+}
+
+.carousel.details-carousel .carousel-item a.video em.border strong {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-style: normal;
+  font-size: 13px;
+  background-color: #fbce21;
+  height: 1.75em;
+  line-height: 1.5em;
+  padding: 0 10px;
+  color: #fff;
+}
+.carousel.details-carousel .carousel-item a.video em.border strong:before {
+  content: "";
+  display: block;
+  width: 1.5em;
+  height: 1.75em;
+  position: absolute;
+  top: 0;
+  right: -1.5em;
+  background: url(../../img/kids/now-playing-stripe-end.png) 0 0 no-repeat;
+  background-size: cover;
+}
+.carousel.details-carousel .carousel-item a.video.active em.border strong {
+  display: block;
+}
+
+/* ==========================================================================
+   Navigation
+   ========================================================================== */
+#navigation {
+  position: fixed;
+  z-index: 14;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 110px;
+  background: #013573 url(../../img/kids/kids-menu-bg-vertical.png) repeat-y scroll left top;
+  background-size: 100% auto;
+}
+#navigation:before {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 87.27%;
+  height: 627%;
+  left: 0;
+  top: 0;
+  background: transparent url(../../img/kids/kids-menu-fg-vertical.png) no-repeat scroll left top;
+  background-size: 100% auto;
+}
+#navigation #nav-logo {
+  display: block;
+  margin: 18px 0 0 8px;
+  width: 144px;
+  height: 79px;
+  background: url(../../img/kids/kids-nav-logo.png) no-repeat scroll left top;
+  background-size: 100% auto;
+  -webkit-transition: -webkit-transform .2s;
+  -moz-transition: -moz-transform .2s;
+  -o-transition: -o-transform .2s;
+  transition: transform .2s;
+  position: relative;
+  z-index: 1;
+}
+
+.fr-fr #navigation  #nav-logo {
+  background: url(../../img/nav-logo-fr.png) no-repeat scroll left top;
+  background-size: contain
+}
+
+.ru-ru #navigation  #nav-logo {
+  background: url(../../img/nav-logo-ru.png) no-repeat scroll left top;
+  background-size: contain
+}
+
+.el-gr #navigation  #nav-logo {
+  background: url(../../img/nav-logo-gr.png) no-repeat scroll left top;
+  background-size: contain
+}
+
+.de-de #navigation  #nav-logo {
+  background: url(../../img/nav-logo-de.png) no-repeat scroll left top;
+  background-size: contain
+}
+
+.es-es #navigation  #nav-logo {
+  background: url(../../img/nav-logo-es.png) no-repeat scroll left top;
+  background-size: contain
+}
+
+.it-it #navigation  #nav-logo {
+  background: url(../../img/nav-logo-it.png) no-repeat scroll left top;
+  background-size: contain
+}
+
+.pt-pt #navigation  #nav-logo {
+  background: url(../../img/nav-logo-pt.png) no-repeat scroll left top;
+  background-size: contain
+}
+
+.pl-pl #navigation #nav-logo {
+  background: url(../../img/nav-logo-pl.png) no-repeat scroll left top;
+  background-size: contain
+}
+
+#navigation #nav-parents {
+  display: inline-block;
+  position: absolute;
+  bottom: 5%;
+  padding: 11px 43px 0 19px;
+  height: 52px;
+  line-height: 52px;
+  color: #fff;
+  background: transparent url(../../img/kids/kids-nav-parents-ribbon-right.png) no-repeat scroll right top;
+  background-size: auto 100%;
+  font-size: 14px;
+  font-weight: 900;
+  text-decoration: none;
+  margin-top: 28.3%;
+  white-space: nowrap;
+}
+#navigation #nav-parents:hover {
+  color: #FBCE21;
+}
+#navigation #nav-parents em {
+  display: none;
+}
+#navigation ul {
+  margin: 0;
+  padding: 0;
+  width: 96%;
+  list-style: none;
+}
+#navigation ul li {
+  width: 100%;
+}
+#navigation ul li a {
+  display: block;
+  line-height: 16px;
+  font-size: 14px;
+  font-weight: 900;
+  color: #fff;
+  position: relative;
+  text-decoration: none;
+  text-align: center;
+  margin-top: 12px;
+}
+#navigation ul li a.active {
+  color: #fbce21;
+}
+#navigation ul li a span {
+  display: block;
+  background: transparent no-repeat scroll center top;
+  background-size: 100% auto;
+  width: 94px;
+  height: 94px;
+  margin: 0 auto 1.9% auto;
+}
+#navigation ul li a:hover span {
+  background-position: center bottom;
+}
+#navigation ul li a.active span {
+  background-position: center center;
+}
+
+
+/* ==========================================================================
+   Content
+   ========================================================================== */
+#content {
+  position: relative;
+  overflow: hidden;
+}
+.over-footer {
+  z-index: 13;
+}
+#skrollr-body {
+  padding-left: 110px;
+  padding-top: 0;
+  position: relative;
+}
+/* */
+.touch #skrollr-body {
+  overflow-x: hidden;
+}
+/* ==========================================================================
+   header
+   ========================================================================== */
+#header {
+  position: absolute;
+  z-index: 5;
+  left: 0;
+  right: 0;
+  height: 10%
+}
+#header-background {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: -60px;
+}
+#header-background:before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  max-height: 400px;
+  background: transparent url(../../../Resources/img/kids/header-background.png) no-repeat scroll left bottom;
+  z-index: 1;
+}
+#header-background:after {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 237px;
+  background: #19a2da;
+}
+#header-content {
+  position: relative;
+  z-index: 1;
+}
+.kids-back-button {
+  background-repeat: no-repeat;
+  background-position: top;
+  width: 109px;
+  height: 46px;
+  position: absolute;
+  margin-top: 20px;
+  left: 5%;
+  background-size: 100% 200%;
+}
+  .kids-back-button:hover {
+    background-position: bottom;
+  }
+.kids-back-button.engines {
+  background-image: url(../../../Resources/img/kids/back-to-engines.png);
+}
+.kids-back-button.games {
+  background-image: url(../../../Resources/img/kids/back-to-games.png);
+}
+.truste-messageColumn {
+    font-size: 16px !important;
+    margin: 1.3% 0 1% 11% !important;
+}
+.truste-banner {
+    max-width: 100% !important;
+}
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+/*HITE-514 */
+#bottom, #footer {
+  margin-top: -6%;
+  position: relative;
+  z-index: 12;
+}
+#footer {
+  margin-top: 0%;
+}
+#bottom.sticky,#footer.sticky  {
+  position: fixed;
+  left: 0;
+  right: 0;
+  -webkit-transition: bottom 0.3s ease;
+  -moz-transition: bottom 0.3s ease;
+  -o-transition: bottom 0.3s ease;
+  transition: bottom 0.3s ease;
+}
+#bottom-wrapper, #footer-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 1px;
+}
+#bottom-background {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -32px;
+  bottom: 0;
+  margin-top: -4%;
+  pointer-events:none;
+}
+#bottom-background:before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100%;
+  max-height: 400px;
+  background: transparent url(../../../Resources/img/kids/footer-background.png) no-repeat scroll right top;
+  z-index: 1;
+}
+#bottom-background:after {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 237px;
+  bottom: 0;
+  background: #19a2da;
+}
+#bottom.small #bottom-background, #bottom.small #footer-background {
+  top: -40px;
+  margin-top: 0;
+}
+#bottom-content {
+  text-align: center;
+}
+#bottom-content, #footer-content {
+  position: relative;
+  z-index: 1;
+}
+#bottom-content > *, #footer-content > * {
+  pointer-events: all;
+}
+
+#page-scroll {
+  float: right;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  color: #fff;
+  height: 53px;
+  line-height: 60px;
+  padding-right: 60px;
+  position: relative;
+}
+#page-scroll-wrapper #page-scroll {
+  margin: 0 7px 8px 7px;
+}
+#page-scroll:hover {
+  color: #fbce21;
+}
+#page-scroll span {
+  white-space: nowrap;
+}
+#page-scroll em {
+  content: '';
+  display: block;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 53px;
+  height: 53px;
+  background: transparent url(../../img/kids/img2x106x106-arrow-down.png) no-repeat scroll left top;
+  background-size: 200% auto;
+}
+#page-scroll:hover em {
+  background-position: right top;
+}
+#page-scroll.up em {
+  background-position: left bottom;
+}
+#page-scroll.up:hover em {
+  background-position: right bottom;
+}
+#page-scroll.sticky {
+  position: fixed;
+  z-index: 11;
+  right: 3.3%;
+  bottom: 4%;
+  -webkit-transform: translateX(50%);
+  -moz-transform: translateX(50%);
+  -ms-transform: translateX(50%);
+  -o-transform: translateX(50%);
+  transform: translateX(50%);
+}
+#page-scroll.sticky.up {
+  right: 3.75%;
+}
+
+/* ==========================================================================
+   Engines Landing
+   ========================================================================== */
+#engines-list {
+  margin: 5px;
+  position: relative;
+  padding-bottom: 8%;
+  z-index: 0;
+  height: 1000px;
+}
+#engines-list .use_gpu {
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  -ms-backface-visibility: hidden;
+  -o-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  transform: translateZ(0);
+}
+#engines-list #preload-assets {
+  display: none;
+}
+#engines-list #engines-list-loader {
+  position: fixed;
+  width: 116px;
+  height: 116px;
+  top: 50%;
+  left: 50%;
+  margin: -58px 0 0 -58px;
+  overflow: hidden;
+}
+#engines-list #engines-list-loader img {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  -webkit-animation: engines-loader-animation 0.5s steps(10) infinite;
+  -moz-animation: engines-loader-animation 0.5s steps(10) infinite;
+  -ms-animation: engines-loader-animation 0.5s steps(10) infinite;
+  -o-animation: engines-loader-animation 0.5s steps(10) infinite;
+  animation: engines-loader-animation 0.5s steps(10) infinite;
+}
+@-webkit-keyframes engines-loader-animation {100% {top: -1160px}}
+@-moz-keyframes engines-loader-animation {100% {top: -1160px}}
+@-ms-keyframes engines-loader-animation {100% {top: -1160px}}
+@-o-keyframes engines-loader-animation {100% {top: -1160px}}
+@keyframes engines-loader-animation {100% {top: -1160px}}
+
+#engines-list #engines-list-column-width {
+  width: 16.66%;
+}
+#engines-list .item {
+  display: none;
+  position: absolute;
+  cursor: pointer;
+  opacity: 0;
+  -webkit-transform: scale(0.1);
+  -moz-transform: scale(0.1);
+  -ms-transform: scale(0.1);
+  -o-transform: scale(0.1);
+  transform: scale(0.1);
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -ms-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+}
+#engines-list .item .gutter {
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  top: 5px;
+  bottom: 5px;
+}
+#engines-list .item img.static-engine {
+  width: 100%;
+  opacity: 0;
+  -webkit-transition: opacity 0.5s ease;
+  -moz-transition: opacity 0.5s ease;
+  -ms-transition: opacity 0.5s ease;
+  -o-transition: opacity 0.5s ease;
+  transition: opacity 0.5s ease;
+}
+#engines-list .item .title-wrapper {
+  max-width: 100%;
+  overflow: hidden;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  line-height: 0;
+}
+#engines-list .item .title {
+  display: inline-block;
+  font-family: 'Cyclone Background A', 'Cyclone Background B', 'Rex', sans-serif;
+  font-size: 28px;
+  color: #003f72;
+  background: #fff;
+  padding: 0.18em 1.1em 0 0.18em;
+  line-height: 0.91em;
+  height: 0.91em;
+  background: transparent url(../../img/kids/engine-title-bg.png) no-repeat scroll right top;
+  background-size: auto 100%;
+  white-space: nowrap;
+}
+.pl-pl #engines-list .item .title {
+  display: inline-block;
+  font-family: sans-serif;
+  font-size: 24px;
+}
+#engines-list .item.size-2x2 .title {
+  font-size: 40px;
+  padding-top: 0.09em;
+}
+
+#engines-list .item .animation-background {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  z-index: 0;
+}
+#engines-list .item .animation-wrapper {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  z-index: 1;
+}
+#engines-list .item .animation-wrapper .animation {
+  position: absolute;
+  left: 50%;
+  bottom: 50%;
+}
+#engines-list .item .animation-background .engine-loader {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  -webkit-transform: translate(-50%, -50%) scale(0.25);
+  -moz-transform: translate(-50%, -50%) scale(0.25);
+  -ms-transform: translate(-50%, -50%) scale(0.25);
+  -o-transform: translate(-50%, -50%) scale(0.25);
+  transform: translate(-50%, -50%) scale(0.25);
+  width: 175px;
+  height: 212px;
+  background: transparent url(../../img/kids/loader_small.png) no-repeat scroll 0 0;
+  -webkit-animation: engineloaderanimation 2.9s steps(29) infinite;
+  -moz-animation: engineloaderanimation 2.9s steps(29) infinite;
+  -ms-animation: engineloaderanimation 2.9s steps(29) infinite;
+  -o-animation: engineloaderanimation 2.9s steps(29) infinite;
+  animation: engineloaderanimation 2.9s steps(29) infinite;
+}
+@-webkit-keyframes engineloaderanimation {100% {background-position: 0 -6148px}}
+@-moz-keyframes engineloaderanimation {100% {background-position: 0 -6148px}}
+@-ms-keyframes engineloaderanimation {100% {background-position: 0 -6148px}}
+@-o-keyframes engineloaderanimation {100% {background-position: 0 -6148px}}
+@keyframes engineloaderanimation {100% {background-position: 0 -6148px}}
+
+#engines-list .item .view-engine-btn {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  width: 115px;
+  height: 115px;
+  background: transparent url(../../img/kids/btn-view-engine.png) no-repeat scroll left top;
+  background-size: 100% auto;
+  z-index: 3;
+  opacity: 0;
+}
+#engines-list .item .view-engine-btn.visible {
+  -webkit-animation: engineviewbtnanimation 0.5s ease-in 0s infinite alternate;
+  -moz-animation: engineviewbtnanimation 0.5s ease-in 0s infinite alternate;
+  -ms-animation: engineviewbtnanimation 0.5s ease-in 0s infinite alternate;
+  -o-animation: engineviewbtnanimation 0.5s ease-in 0s infinite alternate;
+  animation: engineviewbtnanimation 0.5s ease-in 0s infinite alternate;
+}
+#engines-list .item .view-engine-btn.visible:hover {
+  background-position: left bottom;
+}
+@-webkit-keyframes engineviewbtnanimation {0% {transform: scale(1.2)} 100% {-webkit-transform: scale(1)}}
+@-moz-keyframes engineviewbtnanimation {0% {transform: scale(1.2)} 100% {-moz-transform: scale(1)}}
+@-ms-keyframes engineviewbtnanimation {0% {transform: scale(1.2)} 100% {-ms-transform: scale(1)}}
+@-o-keyframes engineviewbtnanimation {0% {transform: scale(1.2)} 100% {-o-transform: scale(1)}}
+@keyframes engineviewbtnanimation {0% {transform: scale(1.2)} 100% {transform: scale(1)}}
+
+@-webkit-keyframes engine-burst-animation {
+  from {-webkit-transform: rotate(0deg);}
+  to {-webkit-transform: rotate(360deg);}
+}
+@-moz-keyframes engine-burst-animation {
+  from {-moz-transform: rotate(0deg);}
+  to {-moz-transform: rotate(360deg);}
+}
+@-ms-keyframes engine-burst-animation {
+  from {-ms-transform: rotate(0deg);}
+  to {-ms-transform: rotate(360deg);}
+}
+@-o-keyframes engine-burst-animation {
+  from {-o-transform: rotate(0deg);}
+  to {-o-transform: rotate(360deg);}
+}
+@keyframes engine-burst-animation {
+  from {transform: rotate(0deg);}
+  to {transform: rotate(360deg);}
+}
+
+@-webkit-keyframes engine-moving-scenery {
+  from {width: 1480%; left: -690%; bottom: -48%; z-index: 0}
+  to {width: 50%; left: 25%; bottom: 42%; z-index: 10}
+}
+@-moz-keyframes engine-moving-scenery {
+  from {width: 1480%; left: -690%; bottom: -48%; z-index: 0}
+  to {width: 50%; left: 25%; bottom: 42%; z-index: 10}
+}
+@-ms-keyframes engine-moving-scenery {
+  from {width: 1480%; left: -690%; bottom: -48%; z-index: 0}
+  to {width: 50%; left: 25%; bottom: 42%; z-index: 10}
+}
+@-o-keyframes engine-moving-scenery {
+  from {width: 1480%; left: -690%; bottom: -48%; z-index: 0}
+  to {width: 50%; left: 25%; bottom: 42%; z-index: 10}
+}
+@keyframes engine-moving-scenery {
+  from {width: 1480%; left: -690%; bottom: -48%; z-index: 0}
+  to {width: 50%; left: 25%; bottom: 42%; z-index: 10}
+}
+
+@-webkit-keyframes engine-james-scale-up {
+  from {-webkit-transform: scale(1.3) translateY(3%)}
+  to {-webkit-transform: scale(1.37) translateY(5%)}
+}
+@-moz-keyframes engine-james-scale-up {
+  from {-moz-transform: scale(1.3) translateY(3%)}
+  to {-moz-transform: scale(1.37) translateY(5%)}
+}
+@-ms-keyframes engine-james-scale-up {
+  from {-ms-transform: scale(1.3) translateY(3%)}
+  to {-ms-transform: scale(1.37) translateY(5%)}
+}
+@-o-keyframes engine-james-scale-up {
+  from {-o-transform: scale(1.3) translateY(3%)}
+  to {-o-transform: scale(1.37) translateY(5%)}
+}
+@keyframes engine-james-scale-up {
+  from {transform: scale(1.3) translateY(3%)}
+  to {transform: scale(1.37) translateY(5%)}
+}
+
+@-webkit-keyframes engine-samson-scale-up {
+  from {-webkit-transform: scale(1.2) translateY(-3%)}
+  to {-webkit-transform: scale(1.27) translateY(-1%)}
+}
+@-moz-keyframes engine-samson-scale-up {
+  from {-moz-transform: scale(1.2) translateY(-3%)}
+  to {-moz-transform: scale(1.27) translateY(-1%)}
+}
+@-ms-keyframes engine-samson-scale-up {
+  from {-ms-transform: scale(1.2) translateY(-3%)}
+  to {-ms-transform: scale(1.27) translateY(-1%)}
+}
+@-o-keyframes engine-samson-scale-up {
+  from {-o-transform: scale(1.2) translateY(-3%)}
+  to {-o-transform: scale(1.27) translateY(-1%)}
+}
+@keyframes engine-samson-scale-up {
+  from {transform: scale(1.2) translateY(-3%)}
+  to {transform: scale(1.27) translateY(-1%)}
+}
+
+@-webkit-keyframes engine-harold-rotators {
+  100% {top: -300%}
+}
+@-moz-keyframes engine-harold-rotators {
+  100% {top: -300%}
+}
+@-ms-keyframes engine-harold-rotators {
+  100% {top: -300%}
+}
+@-o-keyframes engine-harold-rotators {
+  100% {top: -300%}
+}
+@keyframes engine-harold-rotators {
+  100% {top: -300%}
+}
+
+/* IE10 cannot handle 0% and generates a jumpy animation */
+@-webkit-keyframes engine-harold-fly {
+  from {-webkit-transform: translateY(0.1%)}
+  to {-webkit-transform: translateY(3%)}
+}
+@-moz-keyframes engine-harold-fly {
+  from {-moz-transform: translateY(0.1%)}
+  to {-moz-transform: translateY(3%)}
+}
+@-ms-keyframes engine-harold-fly {
+  from {-ms-transform: translateY(0.1%)}
+  to {-ms-transform: translateY(3%)}
+}
+@-o-keyframes engine-harold-fly {
+  from {-o-transform: translateY(0.1%)}
+  to {-o-transform: translateY(3%)}
+}
+@keyframes engine-harold-fly {
+  from {transform: translateY(0.1%)}
+  to {transform: translateY(3%)}
+}
+
+@-webkit-keyframes engine-toby-bell {
+  from {-webkit-transform: rotate(-55deg)}
+  to {-webkit-transform: rotate(45deg)}
+}
+@-moz-keyframes engine-toby-bell {
+  from {-moz-transform: rotate(-55deg)}
+  to {-moz-transform: rotate(45deg)}
+}
+@-ms-keyframes engine-toby-bell {
+  from {-ms-transform: rotate(-55deg)}
+  to {-ms-transform: rotate(45deg)}
+}
+@-o-keyframes engine-toby-bell {
+  from {-o-transform: rotate(-55deg)}
+  to {-o-transform: rotate(45deg)}
+}
+@keyframes engine-toby-bell {
+  from {transform: rotate(-55deg)}
+  to {transform: rotate(45deg)}
+}
+
+
+/* ==========================================================================
+   Kids videos landing
+   ========================================================================== */
+
+#kids-videos-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 175%;
+  background: #005696 no-repeat scroll bottom left;
+  background-size: cover;
+}
+#kids-big-video-wrapper, #kids-videos-wrapper {
+  width: 70%;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+  padding-bottom: 50px;
+}
+#kids-big-video-wrapper {
+  padding-top: 50px;
+  padding-bottom: 8%;
+  margin-bottom: 20px;
+  width: 80%;
+  max-width: 920px;
+}
+#kids-videos-wrapper a.kids-video {
+  display: block;
+  width: 23%;
+  margin: 0 1%;
+  text-align: center;
+  float: left;
+  font-size: 11px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  padding-bottom: 10px;
+  margin-top: 2%;
+}
+a.kids-video strong {
+  height: 0;
+  padding-bottom: 53%;
+  display: block;
+  border: 5px solid #fff;
+  position: relative;
+  background-size: cover;
+  margin-bottom: 10px;
+  text-align: left;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: hidden;
+}
+
+
+
+.carousel-item a.kids-video strong {
+  padding: 0;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+a.kids-video strong em {
+  display: none;
+}
+a.kids-video:hover {
+  color: #fbce21;
+}
+a.kids-video:hover strong {
+  border: 5px solid #fbce21;
+}
+#kids-videos-thumbs-wrapper a.kids-video strong:after, a.kids-video strong:after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  content: "";
+  background: transparent url(../../img/kids/video-play-buton-big.png) center center no-repeat;
+  background-size: cover;
+}
+#kids-videos-thumbs-wrapper a.kids-video.active strong, a.kids-video.active strong {
+  border: 5px solid #fbce21;
+}
+a.kids-video.active:hover {
+  color: #fff;
+}
+#kids-videos-thumbs-wrapper a.kids-video.active strong:after {
+  background: none;
+}
+a.kids-video.active strong em {
+  font-style: normal;
+  font-size: 13px;
+  background-color: #fbce21;
+  height: 1.75em;
+  line-height: 1.75em;
+  float: left;
+  padding: 0 10px;
+  position: absolute;
+  display: block;
+  color: #fff;
+  top: 0;
+}
+a.kids-video.active strong em:before {
+  width: 1.5em;
+  height: 1.75em;
+  position: absolute;
+  top: 0;
+  right: -1.5em;
+  content: "";
+  background: url(../../img/kids/now-playing-stripe-end.png) 0 0 no-repeat;
+  background-size: cover;
+}
+a.kids-video p, a.kids-game p {
+  height: 9ex;
+  overflow: hidden;
+  display: inline-block;
+}
+a.kids-video span, a.kids-game span {
+display: none;
+}
+#kids-big-video {
+  position: relative;
+  border: 5px solid #fff;
+}
+#kids-big-video #kids-video-container {
+  background-size: cover;
+  padding-bottom:3%;
+  /*padding-bottom: 56.25%;*/
+  background-color: #fff;
+  position: relative;
+  z-index: 0;
+}
+#kids-big-video #kids-video-container .video_element {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+#kids-big-video #kids-video-controls {
+  position: relative;
+  height: 45px;
+  background-color: #fff;
+  border-bottom: 5px solid #fff;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+}
+#kids-big-video #kids-video-controls.not-yet-active {
+  height: 10px;
+}
+#kids-big-video #kids-video-controls.not-yet-active div {
+  opacity: 0;
+}
+#kids-big-video #kids-video-controls #btn-play {
+  width: 20px;
+  height: 24px;
+  position :absolute;
+  left: 23px;
+  top: 19px;
+  background-image: url(../../img/kids/btn-play.png);
+  background-size: cover;
+  cursor: pointer;
+}
+#kids-big-video #kids-video-controls #btn-play.playing {
+  background-image: url(../../img/kids/btn-pause.png);
+  background-size: cover;
+  height: 20px;
+}
+#kids-big-video #kids-video-controls #btn-mute {
+  position: absolute;
+  top: 16px;
+  left: 58px;
+  width: 22px;
+  height: 25px;
+  background-image: url(../../img/kids/btn-mute.png);
+  background-size: cover;
+  cursor: pointer;
+}
+#kids-big-video #kids-video-controls #btn-mute.muted {
+  background-image: url(../../img/kids/btn-muted.png);
+  background-size: cover;
+  width: 26px;
+  height: 24px;
+  top: 17px;
+}
+#kids-big-video #kids-video-controls #btn-fullscreen {
+  position: absolute;
+  top: 16px;
+  right: 15px;
+  width: 26px;
+  height: 24px;
+  background-image: url(../../img/kids/btn-fullscreen.png);
+  background-size: cover;
+  cursor: pointer;
+}
+#kids-big-video #kids-video-controls.without-fulscreen-button #btn-fullscreen {
+  display: none;
+}
+#kids-big-video #kids-video-controls #progress-bar {
+  right: 70px;
+  left: 105px;
+  top: 25px;
+  position: absolute;
+  height: 8px;
+  background-color: #abddf3;
+  border-radius: 4px;
+}
+#kids-big-video #kids-video-controls.without-fulscreen-button #progress-bar {
+  right: 20px;
+}
+#kids-big-video #kids-video-controls #played-bar {
+  background-color: #fbce51;
+  border-radius: 4px;
+  left: 0;
+  width: 0;
+  top: 0;
+  position: absolute;
+  height: 8px;
+  max-width: 100%;
+}
+#kids-big-video #kids-video-controls #btn-seek {
+  width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  position: absolute;
+  top: -7px;
+  left: 0;
+  background-color: #0091c6;
+  cursor: pointer;
+}
+#btn-play, #btn-play.playing, #btn-mute, #btn-fullscreen {
+  background-position: top;
+  background-repeat: no-repeat;
+}
+  #btn-play:hover, #btn-play.playing:hover, #btn-mute:hover, #btn-mute.muted:hover, #btn-fullscreen:hover {
+    background-position: bottom;
+  }
+  #kids-big-video #kids-video-controls #btn-seek:hover{
+    background-color: #FBCE51;
+  }
+#kids-big-video-wrapper p {
+  background-color: #fff;
+  color: #0091c6;
+  text-align: center;
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: bold;
+  padding: 0 5px 15px;
+}
+.kidsvideos-scroll-down {
+  position: fixed;
+  bottom: 4%;
+  right: 2%;
+  background: url(../../img/kids/kidsvideos-down-arrow.png) 0 0 no-repeat;
+  background-size: contain;
+  pointer-events: auto;
+  width: 45px;
+  padding-bottom: 45px;
+  max-width: 7%;
+}
+#kids-video-logo {
+  width: 30%;
+  max-height: 110px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  transform: translate(30%, -50%);
+  -webkit-transform: translate(30%, -50%);
+  -moz-transform: translate(30%, -50%);
+  -o-transform: translate(30%, -50%);
+  -ms-transform: translate(30%, -50%);
+}
+#kids-video-logo img {
+  max-width: 100%;
+  max-height: 100%;
+}
+.youtube-link {
+  border-top: 2px solid #fff;
+  position: relative;
+  margin-bottom: 90px;
+  margin: auto;
+  width: 70%;
+  padding-top: 10px;
+}
+  .youtube-link:hover a{
+    color: #FBCE21;
+  }
+.youtube-link a {
+  color: #fff;
+  font-size: 20px;
+  text-decoration: none;
+  padding-top: 50px;
+  padding-bottom: 20px;
+  display: block;
+}
+.youtube-link span{
+  position: absolute;
+  width: 81px;
+  height: 34px;
+  background-image: url(../../img/kids/youtube.png);
+  top: 14px;
+  left: 46%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  transition: transform 0.3s ease 0s;
+}
+.youtube-link:hover span {
+  -webkit-transform: scale(1.1) translate3d(0, 0, 0);
+  -moz-transform: scale(1.1) translate3d(0, 0, 0);
+  -o-transform: scale(1.1) translate3d(0, 0, 0);
+  transform: scale(1.1) translate3d(0, 0, 0);
+}
+/* ==========================================================================
+   Kids home page
+   ========================================================================== */
+#home-animation-wrapper {
+/*  width: 100%;
+  height: 0;
+  padding-bottom: 62.3%;
+  position: relative;*/
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+}
+#home-animation {
+/*  position: absolute;
+  z-index: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  overflow: hidden;*/
+  position: relative;
+  left: 0!important;
+
+}
+
+#home-animation-bgm {
+  position: absolute;
+  bottom: 7vw;
+  left: 82%;
+  width: 6.5%;
+  height: 12.7%;
+  background-color: white;
+  z-index: 10;
+  border-top-left-radius: 100px;
+  border-top-right-radius: 100px;
+  border-bottom: 2vw solid white;
+  display: none;
+  -webkit-transform:translateZ(1500px);
+  box-shadow: 0px 8px 0 white;
+}
+#home-animation-bgm:after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 21%;
+  height: 57%;
+  width: 80%;
+  left:10%;
+  background-image: url(../../img/kids/btn-muted.png);
+  background-repeat: no-repeat;
+  background-size: auto 200%;
+  background-position: center top;
+  cursor: pointer;
+}
+#home-animation-bgm:hover:after {
+  background-position: center bottom;
+
+}
+#home-animation-bgm.on:after {
+  left: 6.5%;
+  background-image: url(../../img/kids/btn-mute.png);
+}
+#home-animation,  #home-animation>div>div{
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+#home-animation:after {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 113.6%;
+  width: 27.305214%;
+  height: 140%;
+  content: '';
+  background: url(../../img/kids/side_end.png) top left repeat-y;
+  box-sizing: border-box;
+  background-size: 100% 100%;
+  z-index: 12;
+
+      transform: translateZ(1111px);
+      -webkit-transform: translateZ(1111px);
+      -moz-transform: translateZ(1111px);
+      -o-transform: translateZ(1111px);
+      -ms-transform: translateZ(1111px);
+
+}
+#home-animation:before {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 140.8%;
+  height: 140%;
+  width: 200%;
+  background: url(../../img/kids/side_repeat.jpg) top left repeat;
+  background-size: auto 100%;
+  z-index: 12;
+  content: '';
+      transform: translateZ(1111px);
+      -webkit-transform: translateZ(1111px);
+      -moz-transform: translateZ(1111px);
+      -o-transform: translateZ(1111px);
+      -ms-transform: translateZ(1111px);
+}
+#home-animation img {
+  width: 100%;
+}
+#content img.welcome {
+  display: none;
+}
+#home-animation-pagination {
+  position: absolute;
+  z-index: 100;
+  left: 45vw;
+  bottom: 0;
+  text-align: center;
+  margin-left: -52px;
+  opacity: 1;
+  transform: translateZ(1000px);
+  -webkit-transform: translateZ(1000px);
+  -moz-transform: translateZ(1000px);
+  -o-transform: translateZ(1000px);
+  -ms-transform: translateZ(1000px);
+  -webkit-transition: opacity 0.35s ease;
+  -moz-transition: opacity 0.35s ease;
+  -ms-transition: opacity 0.35s ease;
+  -o-transition: opacity 0.35s ease;
+  transition: opacity 0.35s ease;
+}
+#home-animation-pagination.disabled {
+  opacity: 0;
+}
+#home-animation-pagination span {
+  display: inline-block;
+  height: 18px;
+  width: 18px;
+  border: 6px solid #fff;
+  border-radius: 18px;
+  margin: 0 10px;
+  outline: 0 none;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -ms-user-select: none;
+}
+
+/*Expanding hit boxes*/
+#home-animation-pagination span::before {
+  display: block;
+  content: '';
+  width: 500%;
+  height: 500%;
+  margin-top: -200%;
+  background-color: transparent;
+  margin-left: -200%;
+}
+.carousel.details-carousel .controls span {
+  color: transparent;
+  font-size: 0;
+}
+.carousel.details-carousel .controls span::before {
+  display: block;
+  content: '';
+  width: 130px;
+  height: 143px;
+  margin-top: -65px;
+  background-color: transparent;
+  margin-left: -200%;
+  position: absolute;
+  right: -66px;
+  top: 50%;
+}
+
+
+#home-animation-pagination.disabled span {
+  cursor: default;
+}
+#home-animation-pagination span:hover {
+  border-color: #ffd204;
+}
+#home-animation-pagination span.active {
+  background: #fff;
+}
+#home-animation-pagination span.active:hover {
+  border-color: #fff;
+}
+.homepage-animation-carousel {
+  display: none;
+  -webkit-transition: opacity 0.35s ease;
+  -moz-transition: opacity 0.35s ease;
+  -ms-transition: opacity 0.35s ease;
+  -o-transition: opacity 0.35s ease;
+  transition: opacity 0.35s ease;
+}
+.homepage-animation-carousel.active {
+  display: block;
+}
+#engine-details-carousel {
+  -webkit-transition: opacity 0.35s ease;
+  -moz-transition: opacity 0.35s ease;
+  -ms-transition: opacity 0.35s ease;
+  -o-transition: opacity 0.35s ease;
+  transition: opacity 0.35s ease;
+}
+
+/* ==========================================================================
+   Kids engines details
+   ========================================================================== */
+
+#engine-detail-animation {
+  position: relative;
+  background-color: gray;
+  -webkit-transition: left 0.35s;
+  -moz-transition: left 0.35s;
+  -ms-transition: left 0.35s;
+  -o-transition: left 0.35s;
+  transition: left 0.35s;
+}
+#engine-detail-animation.disable-transition {
+  -webkit-transition: none;
+  -moz-transition: none;
+  -ms-transition: none;
+  -o-transition: none;
+  transition: none;
+}
+div[data-animation-stage="loader"], div[data-animation-stage="sky"] {
+  pointer-events: none;
+}
+.kids-engine-details {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  padding-top: 30px;
+  background: url(../../img/kids/engine-details-stripes-black.png) 0px 130px no-repeat;
+  background-size: 100% auto;
+  text-align: center;
+  z-index: 2;
+  -webkit-transition: right 0.35s, left 0.35s;
+  -moz-transition: right 0.35s, left 0.35s;
+  -ms-transition: right 0.35s, left 0.35s;
+  -o-transition: right 0.35s, left 0.35s;
+  transition: right 0.35s, left 0.35s;
+}
+.kids-engine-details.disable-transition {
+  -webkit-transition: none;
+  -moz-transition: none;
+  -ms-transition: none;
+  -o-transition: none;
+  transition: none;
+}
+.kids-engine-details .badge {
+  width: 100%;
+  text-align: center;
+  z-index: 1;
+  position: relative;
+}
+.kids-engine-details .badge .location {
+  font-family: Utility, 'Open Sans Condensed', Roboto, 'Russo one', sans-serif;
+  font-weight: bold;
+  font-size: 11px;
+  text-align: center;
+}
+.pl-pl .kids-engine-details .badge .location {
+  font-family: Utility,  Roboto, 'Russo one', sans-serif;
+}
+.kids-engine-details .badge .location span.train-number {
+  display: inline-block;
+  height: 40px;
+  line-height: 1.75em;
+  font-size: 27px;
+  border-radius: 100%;
+  position: relative;
+  top: -0.1em;
+}
+.kids-engine-details .badge .location span.train-number span {
+  position: absolute;
+  bottom: 0;
+  font-family: Utility, 'Open Sans Condensed', Roboto, 'Russo one', sans-serif;
+  font-weight: bold;
+  font-size: 11px;
+  text-align: center;
+  line-height: 1em;
+}
+/*Font Issue Fix for Poland Site*/
+.pl-pl .kids-engine-details .badge .location span.train-number span {
+  font-family: Utility,  Roboto, 'Russo one', sans-serif;
+}
+.kids-engine-details .badge .location span.train-number span:first-child {
+  right: 100%;
+}
+.kids-engine-details .badge .location span.train-number span:last-child {
+  left: 100%;
+}
+.kids-engine-details .badge .name {
+  font-family: 'Cyclone A', 'Cyclone B', 'Rex', sans-serif;
+  font-size: 80px;
+  line-height: 1em;
+  color: #fff;
+}
+.pl-pl .kids-engine-details .badge .name {
+    font-family: sans-serif;
+}
+.kids-engine-details .badge .title {
+  position: relative;
+  padding: 0;
+  font-family: Utility, 'Open Sans Condensed', Roboto, 'Russo one', sans-serif;
+  font-weight: bold;
+  font-size: 11px;
+  height: 19px;
+  line-height: 22px;
+  background: transparent url(../../img/kids/engine-detail-badge-ribbon.png) repeat-x scroll left top;
+  margin-top: 1em;
+  display: inline-block;
+}
+/*Font Issue Fix for Poland Site*/
+.pl-pl .kids-engine-details .badge .title {
+ font-family: Utility,  Roboto, 'Russo one', sans-serif;
+}
+.kids-engine-details .badge .title:before, .kids-engine-details .badge .title:after {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: 0;
+  width: 20px;
+  height: 23px;
+  background: transparent url(../../img/kids/engine-detail-badge-ribbon.png) no-repeat;
+}
+.kids-engine-details .badge .title:before {
+  left: -20px;
+  background-position: 0 -20px;
+}
+.kids-engine-details .badge .title:after {
+  right: -20px;
+  background-position: 0 -44px;
+}
+.kids-engine-details .badge .title + div {
+  position: relative;
+}
+.kids-engine-details .badge .star {
+  display: inline-block;
+  margin-top: 10px;
+  position: relative;
+  width: 0px;
+  height: 0px;
+  border-right: 10px solid transparent !important;
+  border-bottom: 7px solid;
+  border-left: 11px solid transparent !important;
+  -moz-transform: rotate(35deg);
+  -webkit-transform: rotate(35deg);
+  -ms-transform: rotate(35deg);
+  -o-transform: rotate(35deg);
+  transform: rotate(35deg);
+}
+.kids-engine-details .badge .star em, .kids-engine-details .badge .star strong {
+  display: block;
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+.kids-engine-details .badge .star em {
+  border-bottom: 8px solid;
+  border-left: 3px solid transparent !important;
+  border-right: 3px solid transparent !important;
+  top: -5px;
+  left: -7px;
+  -webkit-transform: rotate(-35deg);
+  -moz-transform: rotate(-35deg);
+  -ms-transform: rotate(-35deg);
+  -o-transform: rotate(-35deg);
+  transform: rotate(-35deg);
+}
+.kids-engine-details .badge .star strong {
+  top: 0px;
+  left: -11px;
+  border-right: 10px solid transparent !important;
+  border-bottom: 7px solid;
+  border-left: 10px solid transparent !important;
+  -webkit-transform: rotate(-70deg);
+  -moz-transform: rotate(-70deg);
+  -ms-transform: rotate(-70deg);
+  -o-transform: rotate(-70deg);
+  transform: rotate(-70deg);
+}
+.kids-engine-details .read-about {
+  display: block;
+  font-size: 14px;
+  text-align: center;
+  color: #0092c6;
+  font-weight: bold;
+  text-decoration: none;
+  background-color: #fff;
+  position: relative;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.kids-engine-details .read-about:hover {
+  color: #FBCE21;
+}
+.kids-engine-details .read-about span {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #fff;
+  min-width: 100%;
+  box-sizing: border-box;
+  padding: 0 40px;
+  padding-top: 0.2em;
+}
+/*.kids-engine-details .read-about em {
+  width: 26px;
+  height: 20px;
+  background-image: url(../../img/kids/read-about-arrow.png);
+  background-repeat: no-repeat;
+  background-position: top;
+  background-size: cover;
+  position: absolute;
+  right: 1em;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+  .kids-engine-details .read-about:hover em {
+    background-position: bottom;
+  }*/
+.kids-engine-details .read-about span:before {
+  position: absolute;
+  content: '';
+  top: 0;
+  left: -30px;
+  bottom: 0;
+  width: 30px;
+  background: url(../../img/kids/engine-details-read-ribbon.png) top right no-repeat;
+  background-size: auto 100%;
+}
+.kids-engine-details .hear-about {
+  display: inline-block;
+  font-weight: bold;
+  text-decoration: none;
+  color: #fff;
+  font-size: 12px;
+  cursor: pointer;
+}
+.kids-engine-details .hear-about em {
+  width: 64px;
+  border-radius: 100%;
+  background-image: url(../../img/kids/listen-icon.png);
+  background-repeat: no-repeat;
+  background-position: top;
+  background-size: cover;
+  display: inline-block;
+}
+.kids-engine-details .hear-about:hover em {
+  background-position: bottom;
+}
+.kids-engine-details .hear-about span {
+  display: block;
+  margin-top: 10px;
+}
+.kids-engine-details .hear-about:hover span {
+  color: #FACD20;
+}
+.hide-engine-sound {
+  width: 0px;
+  overflow: hidden;
+}
+.kids-engine-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 220px;
+  background-size: cover;
+  background-position: center center;
+  background-position: center -135px;
+}
+#previous-engine,
+#next-engine {
+  position: absolute;
+  top: 50%;
+  margin-top: -25px;
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  cursor: pointer;
+  z-index: 3;
+}
+#previous-engine {
+  left: 15px;
+  border-width: 40px 40px 40px 0;
+  border-color: transparent #fff transparent transparent;
+}
+#previous-engine:hover {
+  border-color: transparent #fbce21 transparent transparent;
+}
+#next-engine {
+  left: -15px;
+  border-width: 40px 0 40px 40px;
+  border-color: transparent transparent transparent #fff;
+}
+#next-engine:hover {
+  border-color: transparent transparent transparent #fbce21;
+}
+.kids-engine-more-info {
+  position: absolute;
+  top: 0;
+  right: -343px;
+  bottom: 0;
+  width: 343px;
+  background-color: #fff;
+  font-size: 17px;
+  line-height: 1.5;
+  color: #0092c6;
+  -webkit-transition: right 0.35s;
+  -moz-transition: right 0.35s;
+  -ms-transition: right 0.35s;
+  -o-transition: right 0.35s;
+  transition: right 0.35s;
+  z-index: 3;
+  box-sizing: border-box;
+}
+.kids-engine-more-info.disable-transition {
+  -webkit-transition: none;
+  -moz-transition: none;
+  -ms-transition: none;
+  -o-transition: none;
+  transition: none;
+}
+.kids-engine-more-info .kids-engine-more-info-wrapper {
+  padding: 11% 13%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 30%;
+  right: 0;
+  overflow-y: auto;
+  height: 100%;
+}
+.kids-engine-more-info .kids-engine-more-info-wrapper p:last-child {
+  padding-bottom: 100%;
+}
+.kids-engine-more-info h2 {
+  margin-top: 25px;
+}
+.kids-engine-more-info h2:first-child {
+  margin-top: 0;
+}
+.carousel .controls span.next:hover{
+  border-color: transparent transparent transparent #fbce21;
+}
+.carousel .controls span.previous:hover {
+   border-color: transparent #fbce21 transparent transparent;
+ }
+/* ==========================================================================
+   Kids games landing
+   ========================================================================== */
+#kids-games-wrapper {
+  height: 100%;
+  width: 100%;
+  padding-bottom: 64%;
+}
+.games-background {
+  background: transparent no-repeat scroll left top;
+  background-size: cover;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+}
+img.games-thomas {
+  width: 140%;
+  margin-left: -20%;
+  position: absolute;
+  left: -100%;
+  bottom: -74%;
+  z-index: 1;
+  pointer-events: none;
+}
+#kids-games-wrapper .main-game {
+  width: 65%;
+  float: right;
+  margin-top: 5%;
+  margin-right: 5%;
+  margin-bottom: 7%;
+  position: relative;
+  padding-bottom: 36.6%;
+  border: 5px solid #fff;
+}
+#kids-games-wrapper .main-game .carousel {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background: #fff;
+}
+#kids-games-wrapper .main-game .pagination {
+  top: 110%;
+}
+#kids-games-wrapper .main-game strong {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 7px 0 0 5%;
+  color: #E77C33;
+  font-size: 19px;
+  line-height: 25px;
+  text-align: left;
+  background-color: #fff;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 1;
+}
+#kids-games-wrapper .main-game .carousel-list,
+#kids-games-wrapper .main-game .carousel-item {
+  background-size: cover;
+}
+#kids-games-wrapper .main-game .carousel-item a {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+#kids-games-wrapper .main-game .carousel-item p {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-size: 100% 100%;
+  background-position: center center;
+  -webkit-transition: all .3s;
+  -moz-transition: all .3s;
+  -o-transition: all .3s;
+  transition: all .3s;
+}
+#kids-games-wrapper .main-game .carousel-item a:hover p {
+  background-size: 105% 105%;
+}
+#kids-games-wrapper .main-game .carousel-item .play-button {
+  display: inline-block;
+  background-color: #fff;
+  position: absolute;
+  right: 30px;
+  bottom: 0;
+  padding-right: 20px;
+  padding-left: 60px;
+  text-decoration: none;
+  z-index: 3;
+}
+#kids-games-wrapper .main-game .carousel-item a:hover .play-button {
+  background-color: #F9CD38;
+}
+#kids-games-wrapper .main-game .carousel-item .play-button .play-arrow {
+  background-image: url(../../img/kids/play-button-arrow.png);
+  background-repeat: no-repeat;
+  background-size: 100% 200%;
+  background-position: top;
+  position: absolute;
+  height: 40px;
+  width: 19px;
+  right: -19px;
+}
+#kids-games-wrapper .main-game .carousel-item a:hover .play-button .play-arrow {
+  background-position: bottom;
+}
+#kids-games-wrapper .main-game .carousel-item .play-button .play-icon {
+  background-image: url(../../img/kids/play-button-games.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 50%;
+  position: absolute;
+  height: 25px;
+  width: 37px;
+  left: 10px;
+  top: 7px;
+}
+
+#kids-games-wrapper .main-game .carousel-item .play-button .play-caption {
+  font-size: 19px;
+  font-weight: bold;
+  line-height: 40px;
+  color: #19A2DA;
+  padding-left: 15px;
+}
+#kids-games-wrapper .main-game span.game-logo {
+  height: 20%;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+}
+#kids-games-wrapper .main-game img.optional-logo,
+#kids-games-detail-wrapper .game-container img.optional-logo {
+  max-width: 40%;
+  max-height: 20%;
+  position: absolute;
+  top: -6%;
+  right: -10%;
+  z-index: 1;
+}
+#kids-games-wrapper .main-game img.optional-logo {
+  opacity: 0;
+  -webkit-transition: opacity 0.2s;
+  -moz-transition: opacity 0.2s;
+  transition: opacity 0.2s;
+}
+#kids-games-wrapper .main-game img.optional-logo.has-logo {
+  opacity: 1;
+}
+
+.slideshow, .slideshow .carousel-root,
+.slideshow .carousel-list, .slideshow .carousel-item {
+  height: 100%;
+}
+.slideshow .carousel-item {
+  background-size: 100%;
+  background-repeat: no-repeat;
+}
+.slideshow .pagination {
+  top: 60%;
+  z-index: 11;
+}
+
+.videos-and-games-thumbs {
+  width: 100%;
+  margin-left: 3%;
+  position: relative;
+  z-index: 10;
+  padding-bottom: 50px;
+  padding-top: 2%;
+}
+
+.videos-and-games-thumbs a.kids-game,
+.videos-and-games-thumbs a.kids-video {
+  float: left;
+  width: 21%;
+  margin: 0 2% 0 0;
+  text-align: center;
+  text-decoration: none;
+  text-decoration: none;
+  font-weight: bold;
+  /*padding-bottom: 10px;*/
+  /*margin-top: 2%;*/
+  color: #fff;
+}
+.videos-and-games-thumbs a.kids-game strong,
+a.kids-game strong,
+.videos-and-games-thumbs a.kids-video strong {
+  display: block;
+  border: 5px solid #fff;
+  margin: auto auto 10px auto;
+  overflow: hidden;
+  position: relative;
+  background-size: cover;
+  background-position: center center;
+}
+.videos-and-games-thumbs a.kids-video strong img,
+.videos-and-games-thumbs div.kids-video strong img {
+   width: 100%;
+  -webkit-transition: -webkit-transform .3s;
+  -moz-transition: -moz-transform .3s;
+  -o-transition: -o-transform .3s;
+  transition: transform .3s;
+}
+#kids-games-thumbs-wrapper a.kids-game strong:after,
+a.kids-game strong:after {
+  content: '';
+  display: block;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 20% 20% 0 0;
+  background: transparent no-repeat scroll right bottom;
+  background-size: 100% 100%;
+}
+
+#kids-games-thumbs-wrapper a.kids-game strong img {
+  width: 100%;
+  height: auto;
+  vertical-align: top;
+  -webkit-transition: -webkit-transform .3s;
+  -moz-transition: -moz-transform .3s;
+  -o-transition: -o-transform .3s;
+  transition: transform .3s;
+}
+#kids-games-thumbs-wrapper a.kids-game:hover strong img {
+  -webkit-transform: scale(1.1);
+  -moz-transform: scale(1.1);
+  -o-transform: scale(1.1);
+  transform: scale(1.1);
+}
+.videos-and-games-thumbs a.kids-video:hover strong img {
+  -webkit-transform: scale(1.1);
+  -moz-transform: scale(1.1);
+  -o-transform: scale(1.1);
+  transform: scale(1.1);
+
+}
+/*#kids-games-thumbs-wrapper a.kids-game span {
+  font-size: 14px;
+  line-height: 1.1em;
+  color: #fff;
+  display: block;
+  overflow: hidden;
+  height: 4.5ex;
+}*/
+
+/* ==========================================================================
+   Animated Elements
+   ========================================================================== */
+
+.anim-container {
+  display: none;
+  position: relative;
+  box-sizing: border-box;
+  margin: 0 auto;
+  height: 100%;
+  padding-bottom: 53.28467153284672%;
+}
+div.animation-transition-state *{
+    pointer-events: none!important;
+}
+div.animation-transition-state #home-animation-pagination {
+  opacity: 0;
+}
+div.animation-transition-state #home-animation {
+  transform-style: flat;
+  -webkit-transform-style: flat;
+}
+
+.anim-container *{
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+.engines-detail-anim-container{
+  padding-bottom: 0;
+}
+#static-engine-stage {
+  padding-bottom: auto;
+}
+.anim-container.static {
+   max-width: 100%;
+   display: block;
+   padding-bottom: 0;
+   z-index:2;
+   top: 0;
+}
+#static-engine-stage.static {
+  max-width: 100%;
+  display: block;
+  padding-bottom: 0;
+  top: 0;
+  height: 100%;
+  position: relative;
+}
+#static-engine-stage{
+  z-index:2;
+}
+.anim-container.static div[data-animation-stage],
+#static-engine-stage.static div[data-animation-stage] {
+  display: none;
+}
+
+div[data-animation-stage], div[data-animation-stage] div {
+  top:0;
+  left:0;
+  background-repeat: no-repeat;
+}
+
+
+
+div[data-animation-stage] {
+  position: absolute;
+  height: 0;
+  padding-top: 53.28467153284672%; /* Keeping aspect ratio */
+  width: 100%;
+}
+div[data-animation-stage="loader"].loader-container {
+  position: absolute;
+  height: 0;
+  padding-top: 63.28467153284672%; /* Keeping aspect ratio */
+  width: 100%;
+  z-index: 4;
+}
+div[data-animation-stage="loader"].loader-container-behind {
+  z-index: 3;
+}
+div[data-animation-attr*="sprite"] {
+  -webkit-animation: sprite .5s steps(10) infinite;
+  -moz-animation: sprite .5s steps(10) infinite;
+  -ms-animation: sprite .5s steps(10) infinite;
+  -o-animation: sprite .5s steps(10) infinite;
+  animation: sprite .5s steps(10) infinite;
+}
+.active_animation 
+div[data-animation-attr*="loop"],
+.sky 
+div[data-animation-attr*="loop"],
+.anim-container >  
+div[data-animation-attr*="loop"] {
+  -webkit-animation: slide 120s linear infinite;
+  -moz-animation: slide 120s linear infinite;
+  -ms-animation: slide 120s linear infinite;
+  -o-animation: slide 120s linear infinite;
+  animation: slide 120s linear infinite;
+}
+.active_animation 
+div[data-animation-attr*="loopbehind"],
+.sky 
+div[data-animation-attr*="loopbehind"],
+.anim-container >  
+div[data-animation-attr*="loopbehind"] {
+  -webkit-animation: slidebehind 120s linear infinite;
+  -moz-animation: slidebehind 120s linear infinite;
+  -ms-animation: slidebehind 120s linear infinite;
+  -o-animation: slidebehind 120s linear infinite;
+  animation: slidebehind 120s linear infinite;
+}
+
+.active_animation 
+div[data-animation-attr*="loop2"],
+.anim-container >  
+div[data-animation-attr*="loop2"] {
+  -webkit-animation: slide2 120s linear infinite;
+  -moz-animation: slide2 120s linear infinite;
+  -ms-animation: slide2 120s linear infinite;
+  -o-animation: slide2 120s linear infinite;
+  animation: slide2 120s linear infinite;
+}
+
+div[data-animation-attr*="hovertoggle"] {
+  opacity: 0;
+}
+
+div[data-animation-attr*="hovertoggle"]:hover {
+  opacity: 1;
+}
+
+.active_animation 
+div[data-animation-attr*="popin"] {
+  -webkit-animation: popin 0.5416666666666667s linear 1 forwards;
+  -moz-animation: popin 0.5416666666666667s linear 1 forwards;
+  -ms-animation: popin 0.5416666666666667s linear 1 forwards;
+  -o-animation: popin 0.5416666666666667s linear 1 forwards;
+  animation: popin 0.5416666666666667s linear 1 forwards;
+}
+
+div[data-animation-attr*="10-frames"] {
+  -webkit-animation-timing-function: steps(9, end);
+  -moz-animation-timing-function: steps(9, end);
+  -ms-animation-timing-function: steps(9, end);
+  -o-animation-timing-function: steps(9, end);
+  animation-timing-function: steps(9, end);
+}
+
+
+[data-animation-attr*="disperse"] {
+  pointer-events: none;
+  -webkit-animation: disperse 4s linear infinite forwards;
+  -moz-animation: disperse 4s linear infinite forwards;
+  -ms-animation: disperse 4s linear infinite forwards;
+  -o-animation: disperse 4s linear infinite forwards;
+  animation: disperse 4s linear infinite forwards;
+}
+
+[data-animation-attr*="disperse-shot-up"] {
+  pointer-events: none;
+  -webkit-animation: disperseshotup 1s linear  1 forwards;
+  -moz-animation: disperseshotup 1s linear  1 forwards;
+  -ms-animation: disperseshotup 1s linear  1 forwards;
+  -o-animation: disperseshotup 1s linear  1 forwards;
+  animation: disperseshotup 1s linear  1 forwards;
+}
+
+[data-animation-attr*="disper-over"] {
+  pointer-events: none;
+  -webkit-animation: disperse 4s linear 1 forwards;
+  -moz-animation: disperse 4s linear 1 forwards;
+  -ms-animation: disperse 4s linear 1 forwards;
+  -o-animation: disperse 4s linear 1 forwards;
+  animation: disperse 4s linear 1 forwards;
+}
+[data-animation-attr*="disper-over-251"] {
+  pointer-events: none;
+  -webkit-animation: disperse251 4s linear 1 forwards;
+  -moz-animation: disperse251 4s linear 1 forwards;
+  -ms-animation: disperse251 4s linear 1 forwards;
+  -o-animation: disperse251 4s linear 1 forwards;
+  animation: disperse251 4s linear 1 forwards;
+}
+[data-animation-attr*="disper-over-252"] {
+  pointer-events: none;
+  -webkit-animation: disperse252 4s linear 1 forwards;
+  -moz-animation: disperse252 4s linear 1 forwards;
+  -ms-animation: disperse252 4s linear 1 forwards;
+  -o-animation: disperse252 4s linear 1 forwards;
+  animation: disperse252 4s linear 1 forwards;
+}
+[data-animation-attr*="disper-over-253"] {
+  pointer-events: none;
+  -webkit-animation: disperse253 4s linear 1 forwards;
+  -moz-animation: disperse253 4s linear 1 forwards;
+  -ms-animation: disperse253 4s linear 1 forwards;
+  -o-animation: disperse253 4s linear 1 forwards;
+  animation: disperse253 4s linear 1 forwards;
+}
+
+
+[data-animation-attr*="rod"] {
+    -webkit-animation: orbit 0.6s linear infinite; /* Chrome, Safari 5 */
+       -moz-animation: orbit 0.6s linear infinite; /* Firefox 5-15 */
+         -ms-animation: orbit 0.6s linear infinite;
+         -o-animation: orbit 0.6s linear infinite; /* Opera 12+ */
+            animation: orbit 0.6s linear infinite; /* Chrome, Firefox 16+, IE 10+, Safari 5 */
+
+    -webkit-transform: rotate(0deg) translateX(6%) rotate(0deg);
+    -moz-transform: rotate(0deg) translateX(6%) rotate(0deg);
+    -ms-transform: rotate(0deg) translateX(6%) rotate(0deg);
+    -o-transform: rotate(0deg) translateX(6%) rotate(0deg);
+    transform: rotate(0deg) translateX(6%) rotate(0deg);
+}
+
+[data-animation-attr*="toprod"] {
+    -webkit-animation: sideorbit 0.6s linear infinite; /* Chrome, Safari 5 */
+       -moz-animation: sideorbit 0.6s linear infinite; /* Firefox 5-15 */
+         -ms-animation: sideorbit 0.6s linear infinite;
+         -o-animation: sideorbit 0.6s linear infinite; /* Opera 12+ */
+            animation: sideorbit 0.6s linear infinite; /* Chrome, Firefox 16+, IE 10+, Safari 5 */
+
+    -webkit-transform: rotate(0deg) translateX(6%) rotate(0deg);
+    -moz-transform: rotate(0deg) translateX(6%) rotate(0deg);
+    -ms-transform: rotate(0deg) translateX(6%) rotate(0deg);
+    -o-transform: rotate(0deg) translateX(6%) rotate(0deg);
+    transform: rotate(0deg) translateX(6%) rotate(0deg);
+}
+
+
+
+
+[data-animation-attr*="rod"][data-animation-attr*="half"] {
+  -webkit-transform: rotate(180deg) translateX(6%) rotate(-180deg);
+  -webkit-animation-direction: reverse;
+  -webkit-animation-delay: -0.3s;
+
+}
+
+@-webkit-keyframes sideorbit {
+   0% { -webkit-transform: translateY(6%) rotate(0deg) translateX(6%) rotate(5.5deg); } /* 0 + 5.5 */
+  25% { -webkit-transform: translateY(0%) rotate(90deg) translateX(6%) rotate(-90deg); } /* -90  + 0 */
+  50% { -webkit-transform: translateY(6%) rotate(180deg) translateX(6%) rotate(-174.5deg); } /* -180 + 5.5 */
+  75% { -webkit-transform: translateY(12%) rotate(270deg) translateX(6%) rotate(-259deg); } /* -270 + 11  */
+  100%   { -webkit-transform: translateY(6%) rotate(360deg) translateX(6%) rotate(-354.5deg); } /* -360 + 5.5 */
+}
+
+@-moz-keyframes sideorbit {
+   0% { -moz-transform: translateY(6%) rotate(0deg) translateX(6%) rotate(5.5deg); } /* 0 + 5.5 */
+  25% { -moz-transform: translateY(0%) rotate(90deg) translateX(6%) rotate(-90deg); } /* -90  + 0 */
+  50% { -moz-transform: translateY(6%) rotate(180deg) translateX(6%) rotate(-174.5deg); } /* -180 + 5.5 */
+  75% { -moz-transform: translateY(12%) rotate(270deg) translateX(6%) rotate(-259deg); } /* -270 + 11  */
+  100%   { -moz-transform: translateY(6%) rotate(360deg) translateX(6%) rotate(-354.5deg); } /* -360 + 5.5 */
+}
+
+@-o-keyframes sideorbit {
+   0% { -o-transform: translateY(6%) rotate(0deg) translateX(6%) rotate(5.5deg); } /* 0 + 5.5 */
+  25% { -o-transform: translateY(0%) rotate(90deg) translateX(6%) rotate(-90deg); } /* -90  + 0 */
+  50% { -o-transform: translateY(6%) rotate(180deg) translateX(6%) rotate(-174.5deg); } /* -180 + 5.5 */
+  75% { -o-transform: translateY(12%) rotate(270deg) translateX(6%) rotate(-259deg); } /* -270 + 11  */
+  100%   { -o-transform: translateY(6%) rotate(360deg) translateX(6%) rotate(-354.5deg); } /* -360 + 5.5 */
+}
+
+@-ms-keyframes sideorbit {
+   0% { -ms-transform: translateY(6%) rotate(0deg) translateX(6%) rotate(5.5deg); } /* 0 + 5.5 */
+  25% { -ms-transform: translateY(0%) rotate(90deg) translateX(6%) rotate(-90deg); } /* -90  + 0 */
+  50% { -ms-transform: translateY(6%) rotate(180deg) translateX(6%) rotate(-174.5deg); } /* -180 + 5.5 */
+  75% { -ms-transform: translateY(12%) rotate(270deg) translateX(6%) rotate(-259deg); } /* -270 + 11  */
+  100%   { -ms-transform: translateY(6%) rotate(360deg) translateX(6%) rotate(-354.5deg); } /* -360 + 5.5 */
+}
+
+@keyframes sideorbit {
+   0% { transform: translateY(6%) rotate(0deg) translateX(6%) rotate(5.5deg); } /* 0 + 5.5 */
+  25% { transform: translateY(0%) rotate(90deg) translateX(6%) rotate(-90deg); } /* -90  + 0 */
+  50% { transform: translateY(6%) rotate(180deg) translateX(6%) rotate(-174.5deg); } /* -180 + 5.5 */
+  75% { transform: translateY(12%) rotate(270deg) translateX(6%) rotate(-259deg); } /* -270 + 11  */
+  100%   { transform: translateY(6%) rotate(360deg) translateX(6%) rotate(-354.5deg); } /* -360 + 5.5 */
+}
+
+
+@-webkit-keyframes orbit {
+  from { -webkit-transform: rotate(0deg) translateX(6%) rotate(0deg); }
+  to   { -webkit-transform: rotate(360deg) translateX(6%) rotate(-360deg); }
+}
+@-moz-keyframes orbit {
+  from { -moz-transform: rotate(0deg) translateX(6%) rotate(0deg); }
+  to   { -moz-transform: rotate(360deg) translateX(6%) rotate(-360deg); }
+}
+@-o-keyframes orbit {
+  from { -o-transform: rotate(0deg) translateX(6%) rotate(0deg); }
+  to   { -o-transform: rotate(360deg) translateX(6%) rotate(-360deg); }
+}
+@-ms-keyframes orbit {
+  from { -ms-transform: rotate(0deg) translateX(6%) rotate(0deg); }
+  to   { -ms-transform: rotate(360deg) translateX(6%) rotate(-360deg); }
+}
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(6%) rotate(0deg); }
+  to   { transform: rotate(360deg) translateX(6%) rotate(-360deg); }
+}
+/**/
+@-webkit-keyframes orbit2 {
+  from { -webkit-transform: rotate(0deg) translateX(10%) rotate(0deg); }
+  to   { -webkit-transform: rotate(360deg) translateX(10%) rotate(-360deg); }
+}
+@-moz-keyframes orbit2 {
+  from { -moz-transform: rotate(0deg) translateX(10%) rotate(0deg); }
+  to   { -moz-transform: rotate(360deg) translateX(10%) rotate(-360deg); }
+}
+@-o-keyframes orbit2 {
+  from { -o-transform: rotate(0deg) translateX(10%) rotate(0deg); }
+  to   { -o-transform: rotate(360deg) translateX(10%) rotate(-360deg); }
+}
+@-ms-keyframes orbit2 {
+  from { -ms-transform: rotate(0deg) translateX(10%) rotate(0deg); }
+  to   { -ms-transform: rotate(360deg) translateX(10%) rotate(-360deg); }
+}
+@keyframes orbittt {
+  from { transform: rotate(0deg) translateX(10%) rotate(0deg); }
+  to   { transform: rotate(360deg) translateX(10%) rotate(-360deg); }
+}
+
+[data-animation-attr*="wheel"] {
+    -webkit-animation: swapwheel .11s step-end infinite; /* Chrome, Safari 5 */
+       -moz-animation: swapwheel .11s step-end infinite; /* Firefox 5-15 */
+         -ms-animation: swapwheel .11s step-end infinite;
+         -o-animation: swapwheel .11s step-end infinite; /* Opera 12+ */
+            animation: swapwheel .11s step-end infinite; /* Chrome, Firefox 16+, IE 10+, Safari 5 */
+
+      background-image: url(../../img/kids/sprite_evergreen_wheel_01.png);
+}
+[data-image-scale="75"] [data-animation-attr*="wheel"] {
+    -webkit-animation: swapwheel75 .11s step-end infinite; /* Chrome, Safari 5 */
+       -moz-animation: swapwheel75 .11s step-end infinite; /* Firefox 5-15 */
+         -ms-animation: swapwheel75 .11s step-end infinite;
+         -o-animation: swapwheel75 .11s step-end infinite; /* Opera 12+ */
+            animation: swapwheel75 .11s step-end infinite; /* Chrome, Firefox 16+, IE 10+, Safari 5 */
+      background-image: url(../../img/kids/75/sprite_evergreen_wheel_01.png);
+}
+[data-animation-attr*="wheel"][data-animation-attr*="green"] {
+    -webkit-animation: swapwheelgreen .11s step-end infinite; /* Chrome, Safari 5 */
+       -moz-animation: swapwheelgreen .11s step-end infinite; /* Firefox 5-15 */
+         -ms-animation: swapwheelgreen .11s step-end infinite;
+         -o-animation: swapwheelgreen .11s step-end infinite; /* Opera 12+ */
+            animation: swapwheelgreen .11s step-end infinite; /* Chrome, Firefox 16+, IE 10+, Safari 5 */
+      background-image: url(../../img/kids/sprite_evergreen_percy_wheel_01.png);
+
+}
+[data-image-scale="75"] [data-animation-attr*="wheel"][data-animation-attr*="green"] {
+    -webkit-animation: swapwheelgreen75 .11s step-end infinite; /* Chrome, Safari 5 */
+       -moz-animation: swapwheelgreen75 .11s step-end infinite; /* Firefox 5-15 */
+         -ms-animation: swapwheelgreen75 .11s step-end infinite;
+         -o-animation: swapwheelgreen75 .11s step-end infinite; /* Opera 12+ */
+            animation: swapwheelgreen75 .11s step-end infinite; /* Chrome, Firefox 16+, IE 10+, Safari 5 */
+      background-image: url(../../img/kids/75/sprite_evergreen_percy_wheel_01.png);
+}
+[data-animation-attr*="wheel"][data-animation-attr*="red"] {
+    -webkit-animation: swapwheelred .11s step-end infinite; /* Chrome, Safari 5 */
+       -moz-animation: swapwheelred .11s step-end infinite; /* Firefox 5-15 */
+         -ms-animation: swapwheelred .11s step-end infinite;
+         -o-animation: swapwheelred .11s step-end infinite; /* Opera 12+ */
+            animation: swapwheelred .11s step-end infinite; /* Chrome, Firefox 16+, IE 10+, Safari 5 */
+      background-image: url(../../img/kids/sprite_evergreen_james_wheel_01.png);
+
+}
+[data-image-scale="75"] [data-animation-attr*="wheel"][data-animation-attr*="red"] {
+    -webkit-animation: swapwheelred75 .11s step-end infinite; /* Chrome, Safari 5 */
+       -moz-animation: swapwheelred75 .11s step-end infinite; /* Firefox 5-15 */
+         -ms-animation: swapwheelred75 .11s step-end infinite;
+         -o-animation: swapwheelred75 .11s step-end infinite; /* Opera 12+ */
+            animation: swapwheelred75 .11s step-end infinite; /* Chrome, Firefox 16+, IE 10+, Safari 5 */
+      background-image: url(../../img/kids/75/sprite_evergreen_james_wheel_01.png);
+}
+
+
+
+
+@-webkit-keyframes swapwheel {
+  66% {background-image: url(../../img/kids/sprite_evergreen_wheel_02.png)}
+  33% {background-image: url(../../img/kids/sprite_evergreen_wheel_03.png)}
+}
+@-moz-keyframes swapwheel {
+  66% {background-image: url(../../img/kids/sprite_evergreen_wheel_02.png)}
+  33% {background-image: url(../../img/kids/sprite_evergreen_wheel_03.png)}
+}
+@-ms-keyframes swapwheel {
+  66% {background-image: url(../../img/kids/sprite_evergreen_wheel_02.png)}
+  33% {background-image: url(../../img/kids/sprite_evergreen_wheel_03.png)}
+}
+@-o-keyframes swapwheel {
+  66% {background-image: url(../../img/kids/sprite_evergreen_wheel_02.png)}
+  33% {background-image: url(../../img/kids/sprite_evergreen_wheel_03.png)}
+}
+@keyframes swapwheel {
+  66% {background-image: url(../../img/kids/sprite_evergreen_wheel_02.png)}
+  33% {background-image: url(../../img/kids/sprite_evergreen_wheel_03.png)}
+}
+
+@-webkit-keyframes swapwheelgreen {
+  66% {background-image: url(../../img/kids/sprite_evergreen_percy_wheel_04.png)}
+  50% {background-image: url(../../img/kids/sprite_evergreen_percy_wheel_03.png)}
+  33% {background-image: url(../../img/kids/sprite_evergreen_percy_wheel_02.png)}
+}
+@-moz-keyframes swapwheelgreen {
+  66% {background-image: url(../../img/kids/sprite_evergreen_percy_wheel_04.png)}
+  50% {background-image: url(../../img/kids/sprite_evergreen_percy_wheel_03.png)}
+  33% {background-image: url(../../img/kids/sprite_evergreen_percy_wheel_02.png)}
+}
+@-ms-keyframes swapwheelgreen {
+  66% {background-image: url(../../img/kids/sprite_evergreen_percy_wheel_04.png)}
+  50% {background-image: url(../../img/kids/sprite_evergreen_percy_wheel_03.png)}
+  33% {background-image: url(../../img/kids/sprite_evergreen_percy_wheel_02.png)}
+}
+@-o-keyframes swapwheelgreen {
+  66% {background-image: url(../../img/kids/sprite_evergreen_percy_wheel_04.png)}
+  50% {background-image: url(../../img/kids/sprite_evergreen_percy_wheel_03.png)}
+  33% {background-image: url(../../img/kids/sprite_evergreen_percy_wheel_02.png)}
+}
+@keyframes swapwheelgreen {
+  66% {background-image: url(../../img/kids/sprite_evergreen_percy_wheel_04.png)}
+  50% {background-image: url(../../img/kids/sprite_evergreen_percy_wheel_03.png)}
+  33% {background-image: url(../../img/kids/sprite_evergreen_percy_wheel_02.png)}
+}
+
+@-webkit-keyframes swapwheelred {
+  66% {background-image: url(../../img/kids/sprite_evergreen_james_wheel_04.png)}
+  50% {background-image: url(../../img/kids/sprite_evergreen_james_wheel_03.png)}
+  33% {background-image: url(../../img/kids/sprite_evergreen_james_wheel_02.png)}
+}
+@-moz-keyframes swapwheelred {
+  66% {background-image: url(../../img/kids/sprite_evergreen_james_wheel_04.png)}
+  50% {background-image: url(../../img/kids/sprite_evergreen_james_wheel_03.png)}
+  33% {background-image: url(../../img/kids/sprite_evergreen_james_wheel_02.png)}
+}
+@-ms-keyframes swapwheelred {
+  66% {background-image: url(../../img/kids/sprite_evergreen_james_wheel_04.png)}
+  50% {background-image: url(../../img/kids/sprite_evergreen_james_wheel_03.png)}
+  33% {background-image: url(../../img/kids/sprite_evergreen_james_wheel_02.png)}
+}
+@-o-keyframes swapwheelred {
+  66% {background-image: url(../../img/kids/sprite_evergreen_james_wheel_04.png)}
+  50% {background-image: url(../../img/kids/sprite_evergreen_james_wheel_03.png)}
+  33% {background-image: url(../../img/kids/sprite_evergreen_james_wheel_02.png)}
+}
+@keyframes swapwheelred {
+  66% {background-image: url(../../img/kids/sprite_evergreen_james_wheel_04.png)}
+  50% {background-image: url(../../img/kids/sprite_evergreen_james_wheel_03.png)}
+  33% {background-image: url(../../img/kids/sprite_evergreen_james_wheel_02.png)}
+}
+
+
+
+@-webkit-keyframes swapwheel75 {
+  66% {background-image: url(../../img/kids/75/sprite_evergreen_wheel_02.png)}
+  33% {background-image: url(../../img/kids/75/sprite_evergreen_wheel_03.png)}
+}
+@-moz-keyframes swapwheel75 {
+  66% {background-image: url(../../img/kids/75/sprite_evergreen_wheel_02.png)}
+  33% {background-image: url(../../img/kids/75/sprite_evergreen_wheel_03.png)}
+}
+@-ms-keyframes swapwheel75 {
+  66% {background-image: url(../../img/kids/75/sprite_evergreen_wheel_02.png)}
+  33% {background-image: url(../../img/kids/75/sprite_evergreen_wheel_03.png)}
+}
+@-o-keyframes swapwheel75 {
+  66% {background-image: url(../../img/kids/75/sprite_evergreen_wheel_02.png)}
+  33% {background-image: url(../../img/kids/75/sprite_evergreen_wheel_03.png)}
+}
+@keyframes swapwheel75 {
+  66% {background-image: url(../../img/kids/75/sprite_evergreen_wheel_02.png)}
+  33% {background-image: url(../../img/kids/75/sprite_evergreen_wheel_03.png)}
+}
+
+@-webkit-keyframes swapwheelgreen75 {
+  66% {background-image: url(../../img/kids/75/sprite_evergreen_percy_wheel_04.png)}
+  50% {background-image: url(../../img/kids/75/sprite_evergreen_percy_wheel_03.png)}
+  33% {background-image: url(../../img/kids/75/sprite_evergreen_percy_wheel_02.png)}
+}
+@-moz-keyframes swapwheelgreen75 {
+  66% {background-image: url(../../img/kids/75/sprite_evergreen_percy_wheel_04.png)}
+  50% {background-image: url(../../img/kids/75/sprite_evergreen_percy_wheel_03.png)}
+  33% {background-image: url(../../img/kids/75/sprite_evergreen_percy_wheel_02.png)}
+}
+@-ms-keyframes swapwheelgreen75 {
+  66% {background-image: url(../../img/kids/75/sprite_evergreen_percy_wheel_04.png)}
+  50% {background-image: url(../../img/kids/75/sprite_evergreen_percy_wheel_03.png)}
+  33% {background-image: url(../../img/kids/75/sprite_evergreen_percy_wheel_02.png)}
+}
+@-o-keyframes swapwheelgreen75 {
+  66% {background-image: url(../../img/kids/75/sprite_evergreen_percy_wheel_04.png)}
+  50% {background-image: url(../../img/kids/75/sprite_evergreen_percy_wheel_03.png)}
+  33% {background-image: url(../../img/kids/75/sprite_evergreen_percy_wheel_02.png)}
+}
+@keyframes swapwheelgreen75 {
+  66% {background-image: url(../../img/kids/75/sprite_evergreen_percy_wheel_04.png)}
+  50% {background-image: url(../../img/kids/75/sprite_evergreen_percy_wheel_03.png)}
+  33% {background-image: url(../../img/kids/75/sprite_evergreen_percy_wheel_02.png)}
+}
+
+@-webkit-keyframes swapwheelred75 {
+  66% {background-image: url(../../img/kids/75/sprite_evergreen_james_wheel_04.png)}
+  50% {background-image: url(../../img/kids/75/sprite_evergreen_james_wheel_03.png)}
+  33% {background-image: url(../../img/kids/75/sprite_evergreen_james_wheel_02.png)}
+}
+@-moz-keyframes swapwheelred75 {
+  66% {background-image: url(../../img/kids/75/sprite_evergreen_james_wheel_04.png)}
+  50% {background-image: url(../../img/kids/75/sprite_evergreen_james_wheel_03.png)}
+  33% {background-image: url(../../img/kids/75/sprite_evergreen_james_wheel_02.png)}
+}
+@-ms-keyframes swapwheelred75 {
+  66% {background-image: url(../../img/kids/75/sprite_evergreen_james_wheel_04.png)}
+  50% {background-image: url(../../img/kids/75/sprite_evergreen_james_wheel_03.png)}
+  33% {background-image: url(../../img/kids/75/sprite_evergreen_james_wheel_02.png)}
+}
+@-o-keyframes swapwheelred75 {
+  66% {background-image: url(../../img/kids/75/sprite_evergreen_james_wheel_04.png)}
+  50% {background-image: url(../../img/kids/75/sprite_evergreen_james_wheel_03.png)}
+  33% {background-image: url(../../img/kids/75/sprite_evergreen_james_wheel_02.png)}
+}
+@keyframes swapwheelred75 {
+  66% {background-image: url(../../img/kids/75/sprite_evergreen_james_wheel_04.png)}
+  50% {background-image: url(../../img/kids/75/sprite_evergreen_james_wheel_03.png)}
+  33% {background-image: url(../../img/kids/75/sprite_evergreen_james_wheel_02.png)}
+}
+
+
+/* Canvas homepage animations */
+#parallax-wrapper {
+    position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+#parallax-wrapper iframe, #parallax-wrapper iframe {
+  width: 100%;
+  height: 100%;
+  border: 0 none;
+
+}
+#parallax-wrapper>div{
+  margin: 0 auto;
+  width: 100%;
+  height: 100%;
+}
+#home-animation-wrapper, #home-animation::before, #home-animation::after, #home-animation-bgm{
+    -webkit-transform:none!important;
+    transform:none!important;
+}
+
+#home-animation-wrapper div[data-animation-stage] {
+  display: none;
+}
+#home-animation-wrapper div[data-animation-stage="loading"] {
+  display: block;
+}
+
+
+/* Thomas' wheel on detail page */
+
+@-webkit-keyframes thwheel1 {
+  33% {background-image: url(../../img/kids/sprite_thomas_wheel_02.png);}
+  66% {background-image: url(../../img/kids/sprite_thomas_wheel_03.png);}
+}
+@-moz-keyframes thwheel1 {
+  33% {background-image: url(../../img/kids/sprite_thomas_wheel_02.png);}
+  66% {background-image: url(../../img/kids/sprite_thomas_wheel_03.png);}
+}
+@-ms-keyframes thwheel1 {
+  33% {background-image: url(../../img/kids/sprite_thomas_wheel_02.png);}
+  66% {background-image: url(../../img/kids/sprite_thomas_wheel_03.png);}
+}
+@-o-keyframes thwheel1 {
+  33% {background-image: url(../../img/kids/sprite_thomas_wheel_02.png);}
+  66% {background-image: url(../../img/kids/sprite_thomas_wheel_03.png);}
+}
+@keyframes thwheel1 {
+  33% {background-image: url(../../img/kids/sprite_thomas_wheel_02.png);}
+  66% {background-image: url(../../img/kids/sprite_thomas_wheel_03.png);}
+}
+
+/* James' wheel */
+
+@-webkit-keyframes jameswheel {
+  33% {background-image: url(../../img/kids/sprite_james_wheel_02.png);}
+  66% {background-image: url(../../img/kids/sprite_james_wheel_03.png);}
+}
+@-moz-keyframes jameswheel {
+  33% {background-image: url(../../img/kids/sprite_james_wheel_02.png);}
+  66% {background-image: url(../../img/kids/sprite_james_wheel_03.png);}
+}
+@-ms-keyframes jameswheel {
+  33% {background-image: url(../../img/kids/sprite_james_wheel_02.png);}
+  66% {background-image: url(../../img/kids/sprite_james_wheel_03.png);}
+}
+@-o-keyframes jameswheel {
+  33% {background-image: url(../../img/kids/sprite_james_wheel_02.png);}
+  66% {background-image: url(../../img/kids/sprite_james_wheel_03.png);}
+}
+@keyframes jameswheel {
+  33% {background-image: url(../../img/kids/sprite_james_wheel_02.png);}
+  66% {background-image: url(../../img/kids/sprite_james_wheel_03.png);}
+}
+
+/* Percy's wheel */
+
+@-webkit-keyframes percywheel {
+  25% {background-image: url(../../img/kids/sprite_percy_wheel_02.png);}
+  50% {background-image: url(../../img/kids/sprite_percy_wheel_03.png);}
+  75% {background-image: url(../../img/kids/sprite_percy_wheel_04.png);}
+}
+@-moz-keyframes percywheel {
+  25% {background-image: url(../../img/kids/sprite_percy_wheel_02.png);}
+  50% {background-image: url(../../img/kids/sprite_percy_wheel_03.png);}
+  75% {background-image: url(../../img/kids/sprite_percy_wheel_04.png);}
+}
+@-ms-keyframes percywheel {
+  25% {background-image: url(../../img/kids/sprite_percy_wheel_02.png);}
+  50% {background-image: url(../../img/kids/sprite_percy_wheel_03.png);}
+  75% {background-image: url(../../img/kids/sprite_percy_wheel_04.png);}
+}
+@-o-keyframes percywheel {
+  25% {background-image: url(../../img/kids/sprite_percy_wheel_02.png);}
+  50% {background-image: url(../../img/kids/sprite_percy_wheel_03.png);}
+  75% {background-image: url(../../img/kids/sprite_percy_wheel_04.png);}
+}
+@keyframes percywheel {
+  25% {background-image: url(../../img/kids/sprite_percy_wheel_02.png);}
+  50% {background-image: url(../../img/kids/sprite_percy_wheel_03.png);}
+  75% {background-image: url(../../img/kids/sprite_percy_wheel_04.png);}
+}
+
+/* Gordon's wheel 1*/
+
+@-webkit-keyframes gordonwheel1 {
+  33% {background-image: url(../../img/kids/sprite_gordon_front_wheel1_02.png);}
+  66% {background-image: url(../../img/kids/sprite_gordon_front_wheel1_03.png);}
+}
+@-moz-keyframes gordonwheel1 {
+  33% {background-image: url(../../img/kids/sprite_gordon_front_wheel1_02.png);}
+  66% {background-image: url(../../img/kids/sprite_gordon_front_wheel1_03.png);}
+}
+@-ms-keyframes gordonwheel1 {
+  33% {background-image: url(../../img/kids/sprite_gordon_front_wheel1_02.png);}
+  66% {background-image: url(../../img/kids/sprite_gordon_front_wheel1_03.png);}
+}
+@-o-keyframes gordonwheel1 {
+  33% {background-image: url(../../img/kids/sprite_gordon_front_wheel1_02.png);}
+  66% {background-image: url(../../img/kids/sprite_gordon_front_wheel1_03.png);}
+}
+@keyframes gordonwheel1 {
+  33% {background-image: url(../../img/kids/sprite_gordon_front_wheel1_02.png);}
+  66% {background-image: url(../../img/kids/sprite_gordon_front_wheel1_03.png);}
+}
+
+/* Gordon's wheel 2*/
+
+@-webkit-keyframes gordonwheel2 {
+  33% {background-image: url(../../img/kids/sprite_gordon_front_wheel2_02.png);}
+  66% {background-image: url(../../img/kids/sprite_gordon_front_wheel2_03.png);}
+}
+@-moz-keyframes gordonwheel2 {
+  33% {background-image: url(../../img/kids/sprite_gordon_front_wheel2_02.png);}
+  66% {background-image: url(../../img/kids/sprite_gordon_front_wheel2_03.png);}
+}
+@-ms-keyframes gordonwheel2 {
+  33% {background-image: url(../../img/kids/sprite_gordon_front_wheel2_02.png);}
+  66% {background-image: url(../../img/kids/sprite_gordon_front_wheel2_03.png);}
+}
+@-o-keyframes gordonwheel2 {
+  33% {background-image: url(../../img/kids/sprite_gordon_front_wheel2_02.png);}
+  66% {background-image: url(../../img/kids/sprite_gordon_front_wheel2_03.png);}
+}
+@keyframes gordonwheel2 {
+  33% {background-image: url(../../img/kids/sprite_gordon_front_wheel2_02.png);}
+  66% {background-image: url(../../img/kids/sprite_gordon_front_wheel2_03.png);}
+}
+
+/* Gordon's wheel 3*/
+
+@-webkit-keyframes gordonwheel3 {
+  33% {background-image: url(../../img/kids/sprite_gordon_wheel3_02.png);}
+  66% {background-image: url(../../img/kids/sprite_gordon_wheel3_03.png);}
+}
+@-moz-keyframes gordonwheel3 {
+  33% {background-image: url(../../img/kids/sprite_gordon_wheel3_02.png);}
+  66% {background-image: url(../../img/kids/sprite_gordon_wheel3_03.png);}
+}
+@-ms-keyframes gordonwheel3 {
+  33% {background-image: url(../../img/kids/sprite_gordon_wheel3_02.png);}
+  66% {background-image: url(../../img/kids/sprite_gordon_wheel3_03.png);}
+}
+@-o-keyframes gordonwheel3 {
+  33% {background-image: url(../../img/kids/sprite_gordon_wheel3_02.png);}
+  66% {background-image: url(../../img/kids/sprite_gordon_wheel3_03.png);}
+}
+@keyframes gordonwheel3 {
+  33% {background-image: url(../../img/kids/sprite_gordon_wheel3_02.png);}
+  66% {background-image: url(../../img/kids/sprite_gordon_wheel3_03.png);}
+}
+
+/* Gordon's wheel 4*/
+
+@-webkit-keyframes gordonwheel4 {
+  33% {background-image: url(../../img/kids/sprite_gordon_wheel4_02.png);}
+  66% {background-image: url(../../img/kids/sprite_gordon_wheel4_03.png);}
+}
+@-moz-keyframes gordonwheel4 {
+  33% {background-image: url(../../img/kids/sprite_gordon_wheel4_02.png);}
+  66% {background-image: url(../../img/kids/sprite_gordon_wheel4_03.png);}
+}
+@-ms-keyframes gordonwheel4 {
+  33% {background-image: url(../../img/kids/sprite_gordon_wheel4_02.png);}
+  66% {background-image: url(../../img/kids/sprite_gordon_wheel4_03.png);}
+}
+@-o-keyframes gordonwheel4 {
+  33% {background-image: url(../../img/kids/sprite_gordon_wheel4_02.png);}
+  66% {background-image: url(../../img/kids/sprite_gordon_wheel4_03.png);}
+}
+@keyframes gordonwheel4 {
+  33% {background-image: url(../../img/kids/sprite_gordon_wheel4_02.png);}
+  66% {background-image: url(../../img/kids/sprite_gordon_wheel4_03.png);}
+}
+
+/* Emily's wheel 1*/
+
+@-webkit-keyframes emilywheel1 {
+  25% {background-image: url(../../img/kids/sprite_emily_wheel1_02.png);}
+  50% {background-image: url(../../img/kids/sprite_emily_wheel1_03.png);}
+  75% {background-image: url(../../img/kids/sprite_emily_wheel1_04.png);}
+}
+@-moz-keyframes emilywheel1 {
+  25% {background-image: url(../../img/kids/sprite_emily_wheel1_02.png);}
+  50% {background-image: url(../../img/kids/sprite_emily_wheel1_03.png);}
+  75% {background-image: url(../../img/kids/sprite_emily_wheel1_04.png);}
+}
+@-ms-keyframes emilywheel1 {
+  25% {background-image: url(../../img/kids/sprite_emily_wheel1_02.png);}
+  50% {background-image: url(../../img/kids/sprite_emily_wheel1_03.png);}
+  75% {background-image: url(../../img/kids/sprite_emily_wheel1_04.png);}
+}
+@-o-keyframes emilywheel1 {
+  25% {background-image: url(../../img/kids/sprite_emily_wheel1_02.png);}
+  50% {background-image: url(../../img/kids/sprite_emily_wheel1_03.png);}
+  75% {background-image: url(../../img/kids/sprite_emily_wheel1_04.png);}
+}
+@keyframes emilywheel1 {
+  25% {background-image: url(../../img/kids/sprite_emily_wheel1_02.png);}
+  50% {background-image: url(../../img/kids/sprite_emily_wheel1_03.png);}
+  75% {background-image: url(../../img/kids/sprite_emily_wheel1_04.png);}
+}
+
+/* Emily's wheel 2*/
+
+@-webkit-keyframes emilywheel2 {
+  25% {background-image: url(../../img/kids/sprite_emily_wheel2_02.png);}
+  50% {background-image: url(../../img/kids/sprite_emily_wheel2_03.png);}
+  75% {background-image: url(../../img/kids/sprite_emily_wheel2_04.png);}
+}
+@-moz-keyframes emilywheel2 {
+  25% {background-image: url(../../img/kids/sprite_emily_wheel2_02.png);}
+  50% {background-image: url(../../img/kids/sprite_emily_wheel2_03.png);}
+  75% {background-image: url(../../img/kids/sprite_emily_wheel2_04.png);}
+}
+@-ms-keyframes emilywheel2 {
+  25% {background-image: url(../../img/kids/sprite_emily_wheel2_02.png);}
+  50% {background-image: url(../../img/kids/sprite_emily_wheel2_03.png);}
+  75% {background-image: url(../../img/kids/sprite_emily_wheel2_04.png);}
+}
+@-o-keyframes emilywheel2 {
+  25% {background-image: url(../../img/kids/sprite_emily_wheel2_02.png);}
+  50% {background-image: url(../../img/kids/sprite_emily_wheel2_03.png);}
+  75% {background-image: url(../../img/kids/sprite_emily_wheel2_04.png);}
+}
+@keyframes emilywheel2 {
+  25% {background-image: url(../../img/kids/sprite_emily_wheel2_02.png);}
+  50% {background-image: url(../../img/kids/sprite_emily_wheel2_03.png);}
+  75% {background-image: url(../../img/kids/sprite_emily_wheel2_04.png);}
+}
+
+/* Edward's wheel 1*/
+
+@-webkit-keyframes edwardwheel1 {
+  33% {background-image: url(../../img/kids/sprite_edward_wheel1_02.png);}
+  66% {background-image: url(../../img/kids/sprite_edward_wheel1_03.png);}
+}
+@-moz-keyframes edwardwheel1 {
+  33% {background-image: url(../../img/kids/sprite_edward_wheel1_02.png);}
+  66% {background-image: url(../../img/kids/sprite_edward_wheel1_03.png);}
+}
+@-ms-keyframes edwardwheel1 {
+  33% {background-image: url(../../img/kids/sprite_edward_wheel1_02.png);}
+  66% {background-image: url(../../img/kids/sprite_edward_wheel1_03.png);}
+}
+@-o-keyframes edwardwheel1 {
+  33% {background-image: url(../../img/kids/sprite_edward_wheel1_02.png);}
+  66% {background-image: url(../../img/kids/sprite_edward_wheel1_03.png);}
+}
+@keyframes edwardwheel1 {
+  33% {background-image: url(../../img/kids/sprite_edward_wheel1_02.png);}
+  66% {background-image: url(../../img/kids/sprite_edward_wheel1_03.png);}
+}
+
+/* Edward's wheel 2*/
+
+@-webkit-keyframes edwardwheel2 {
+  33% {background-image: url(../../img/kids/sprite_edward_wheel2_02.png);}
+  66% {background-image: url(../../img/kids/sprite_edward_wheel2_03.png);}
+}
+@-moz-keyframes edwardwheel2 {
+  33% {background-image: url(../../img/kids/sprite_edward_wheel2_02.png);}
+  66% {background-image: url(../../img/kids/sprite_edward_wheel2_03.png);}
+}
+@-ms-keyframes edwardwheel2 {
+  33% {background-image: url(../../img/kids/sprite_edward_wheel2_02.png);}
+  66% {background-image: url(../../img/kids/sprite_edward_wheel2_03.png);}
+}
+@-o-keyframes edwardwheel2 {
+  33% {background-image: url(../../img/kids/sprite_edward_wheel2_02.png);}
+  66% {background-image: url(../../img/kids/sprite_edward_wheel2_03.png);}
+}
+@keyframes edwardwheel2 {
+  33% {background-image: url(../../img/kids/sprite_edward_wheel2_02.png);}
+  66% {background-image: url(../../img/kids/sprite_edward_wheel2_03.png);}
+}
+
+/* Henry's wheel 1*/
+
+@-webkit-keyframes henrywheel1 {
+  33% {background-image: url(../../img/kids/sprite_henry_wheel1_02.png);}
+  66% {background-image: url(../../img/kids/sprite_henry_wheel1_03.png);}
+}
+@-moz-keyframes henrywheel1 {
+  33% {background-image: url(../../img/kids/sprite_henry_wheel1_02.png);}
+  66% {background-image: url(../../img/kids/sprite_henry_wheel1_03.png);}
+}
+@-ms-keyframes henrywheel1 {
+  33% {background-image: url(../../img/kids/sprite_henry_wheel1_02.png);}
+  66% {background-image: url(../../img/kids/sprite_henry_wheel1_03.png);}
+}
+@-o-keyframes henrywheel1 {
+  33% {background-image: url(../../img/kids/sprite_henry_wheel1_02.png);}
+  66% {background-image: url(../../img/kids/sprite_henry_wheel1_03.png);}
+}
+@keyframes henrywheel1 {
+  33% {background-image: url(../../img/kids/sprite_henry_wheel1_02.png);}
+  66% {background-image: url(../../img/kids/sprite_henry_wheel1_03.png);}
+}
+
+/* Henry's wheel 2*/
+
+@-webkit-keyframes henrywheel2 {
+  33% {background-image: url(../../img/kids/sprite_henry_wheel2_02.png);}
+  66% {background-image: url(../../img/kids/sprite_henry_wheel2_03.png);}
+}
+@-moz-keyframes henrywheel2 {
+  33% {background-image: url(../../img/kids/sprite_henry_wheel2_02.png);}
+  66% {background-image: url(../../img/kids/sprite_henry_wheel2_03.png);}
+}
+@-ms-keyframes henrywheel2 {
+  33% {background-image: url(../../img/kids/sprite_henry_wheel2_02.png);}
+  66% {background-image: url(../../img/kids/sprite_henry_wheel2_03.png);}
+}
+@-o-keyframes henrywheel2 {
+  33% {background-image: url(../../img/kids/sprite_henry_wheel2_02.png);}
+  66% {background-image: url(../../img/kids/sprite_henry_wheel2_03.png);}
+}
+@keyframes henrywheel2 {
+  33% {background-image: url(../../img/kids/sprite_henry_wheel2_02.png);}
+  66% {background-image: url(../../img/kids/sprite_henry_wheel2_03.png);}
+}
+
+/* Henry's wheel 3*/
+
+@-webkit-keyframes henrywheel3 {
+  33% {background-image: url(../../img/kids/sprite_henry_wheel3_02.png);}
+  66% {background-image: url(../../img/kids/sprite_henry_wheel3_03.png);}
+}
+@-moz-keyframes henrywheel3 {
+  33% {background-image: url(../../img/kids/sprite_henry_wheel3_02.png);}
+  66% {background-image: url(../../img/kids/sprite_henry_wheel3_03.png);}
+}
+@-ms-keyframes henrywheel3 {
+  33% {background-image: url(../../img/kids/sprite_henry_wheel3_02.png);}
+  66% {background-image: url(../../img/kids/sprite_henry_wheel3_03.png);}
+}
+@-o-keyframes henrywheel3 {
+  33% {background-image: url(../../img/kids/sprite_henry_wheel3_02.png);}
+  66% {background-image: url(../../img/kids/sprite_henry_wheel3_03.png);}
+}
+@keyframes henrywheel3 {
+  33% {background-image: url(../../img/kids/sprite_henry_wheel3_02.png);}
+  66% {background-image: url(../../img/kids/sprite_henry_wheel3_03.png);}
+}
+
+.done {
+  -webkit-animation-play-state: paused !important;
+  -moz-animation-play-state: paused !important;
+  animation-play-state: paused !important;
+}
+
+/**/
+
+@-webkit-keyframes popin {
+  0%{
+    -webkit-transform: translate3d(0,0,0) scale(0);
+    -webkit-animation-timing-function: ease-out;
+  }
+  54% {
+    -webkit-transform:  translate3d(-32.31806556614741%,41.04669061056952%,0) scale(2.034883720930233);
+    -webkit-animation-timing-function: ease-in;
+  }
+  100%{
+    -webkit-transform: translate3d(0,0,0) scale(1);
+  }
+}
+@-moz-keyframes popin {
+  0%{
+    -moz-transform: translate3d(0,0,175px) scale(0);
+    -moz-animation-timing-function: ease-out;
+  }
+  54% {
+    -moz-transform:  translate3d(-32.31806556614741%,41.04669061056952%,175px) scale(2.034883720930233);
+    -moz-animation-timing-function: ease-in;
+  }
+  100%{
+    -moz-transform: translate3d(0,0,175px) scale(1);
+  }
+}
+@-ms-keyframes popin {
+  0%{
+    -ms-transform: translate3d(0,0,175px) scale(0);
+    -ms-animation-timing-function: ease-out;
+  }
+  54% {
+    -ms-transform:  translate3d(-32.31806556614741%,41.04669061056952%,175px) scale(2.034883720930233);
+    -ms-animation-timing-function: ease-in;
+  }
+  100%{
+    -ms-transform: translate3d(0,0,175px) scale(1);
+  }
+}
+@-o-keyframes popin {
+  0%{
+    -o-transform: translate3d(0,0,175px) scale(0);
+    -o-animation-timing-function: ease-out;
+  }
+  54% {
+    -o-transform:  translate3d(-32.31806556614741%,41.04669061056952%,175px) scale(2.034883720930233);
+    -o-animation-timing-function: ease-in;
+  }
+  100%{
+    -o-transform: translate3d(0,0,175px) scale(1);
+  }
+}
+@keyframes popin {
+  0%{
+    transform: translate3d(0,0,175px) scale(0);
+    animation-timing-function: ease-out;
+  }
+  54% {
+    transform:  translate3d(-32.31806556614741%,41.04669061056952%,175px) scale(2.034883720930233);
+    animation-timing-function: ease-in;
+  }
+  100%{
+    transform: translate3d(0,0,175px) scale(1);
+  }
+}
+
+
+
+
+[data-animation-attr*="delay-1"] {
+  -webkit-animation-delay: -3.2s;
+  -moz-animation-delay: -3.2s;
+  -ms-animation-delay: -3.2s;
+  -o-animation-delay: -3.2s;
+  animation-delay: -3.2s;
+}
+[data-animation-attr*="delay-2"] {
+  -webkit-animation-delay: -3.2s;
+  -moz-animation-delay: -3.2s;
+  -ms-animation-delay: -3.2s;
+  -o-animation-delay: -3.2s;
+  animation-delay: -3.2s;
+}
+[data-animation-attr*="delay-3"] {
+  -webkit-animation-delay: -2.8s;
+  -moz-animation-delay: -2.8s;
+  -ms-animation-delay: -2.8s;
+  -o-animation-delay: -2.8s;
+  animation-delay: -2.8s;
+}
+[data-animation-attr*="delay-4"] {
+  -webkit-animation-delay: -2.4s;
+  -moz-animation-delay: -2.4s;
+  -ms-animation-delay: -2.4s;
+  -o-animation-delay: -2.4s;
+  animation-delay: -2.4s;
+}
+
+[data-animation-attr*="delay-5"] {
+  -webkit-animation-delay: -2s;
+  -moz-animation-delay: -2s;
+  -ms-animation-delay: -2s;
+  -o-animation-delay: -2s;
+  animation-delay: -2s;
+}
+[data-animation-attr*="delay-6"] {
+  -webkit-animation-delay: -1.6s;
+  -moz-animation-delay: -1.6s;
+  -ms-animation-delay: -1.6s;
+  -o-animation-delay: -1.6s;
+  animation-delay: -1.6s;
+}
+[data-animation-attr*="delay-7"] {
+  -webkit-animation-delay: -1.2s;
+  -moz-animation-delay: -1.2s;
+  -ms-animation-delay: -1.2s;
+  -o-animation-delay: -1.2s;
+  animation-delay: -1.2s;
+}
+[data-animation-attr*="delay-8"] {
+  -webkit-animation-delay: -0.8s;
+  -moz-animation-delay: -0.8s;
+  -ms-animation-delay: -0.8s;
+  -o-animation-delay: -0.8s;
+  animation-delay: -0.8s;
+}
+
+
+/********************* disperse ******************************/
+@-webkit-keyframes disperse {
+  0%{
+    -webkit-transform: translateZ(100px) translateY(0%) scale(1);
+    -webkit-animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  2%{
+    opacity: 0.4;
+  }
+  20%{
+    -webkit-transform: translateZ(120px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    -webkit-transform: translateZ(200px) translateY(-200%) scale(3);
+    -webkit-animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+@-moz-keyframes disperse {
+  0%{
+    -moz-transform: translateZ(100px) translateY(0%) scale(1);
+    -moz-animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  2%{
+    opacity: 0.4;
+  }
+  20%{
+    -moz-transform: translateZ(120px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    -moz-transform: translateZ(200px) translateY(-200%) scale(3);
+    -moz-animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+@-ms-keyframes disperse {
+  0%{
+    -ms-transform: translateZ(100px) translateY(0%) scale(1);
+    -ms-animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  2%{
+    opacity: 0.4;
+  }
+  20%{
+    -ms-transform: translateZ(120px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    -ms-transform: translateZ(200px) translateY(-200%) scale(3);
+    -ms-animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+@-o-keyframes disperse {
+  0%{
+    -o-transform: translateZ(100px) translateY(0%) scale(1);
+    -o-animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  2%{
+    opacity: 0.4;
+  }
+  20%{
+    -o-transform: translateZ(120px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    -o-transform: translateZ(200px) translateY(-200%) scale(3);
+    -o-animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+@keyframes disperse {
+  0%{
+    transform: translateZ(100px) translateY(0%) scale(1);
+    animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  2%{
+    opacity: 0.4;
+  }
+  20%{
+    transform: translateZ(120px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    transform: translateZ(200px) translateY(-200%) scale(3);
+    animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+
+/********************* disperseshotup ******************************/
+@-webkit-keyframes disperseshotup {
+  0%{
+    -webkit-transform: translateZ(252.5px) translateY(0%) scale(1);
+    -webkit-animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+
+  66%{
+    -webkit-transform: translateZ(252.5px) translateY(-200%) scale(1.1);
+    opacity: 0.4;
+  }
+
+  100%{
+    -webkit-transform: translateZ(252.5px) translateY(-500%) scale(1.5);
+    -webkit-animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+@-moz-keyframes disperseshotup {
+  0%{
+    -moz-transform: translateZ(252.5px) translateY(0%) scale(1);
+    -moz-animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  2%{
+    opacity: 0.4;
+  }
+  20%{
+    -moz-transform: translateZ(252.5px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    -moz-transform: translateZ(252.5px) translateY(-200%) scale(3);
+    -moz-animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+@-ms-keyframes disperseshotup {
+  0%{
+    -ms-transform: translateZ(252.5px) translateY(0%) scale(1);
+    -ms-animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  2%{
+    opacity: 0.4;
+  }
+  20%{
+    -ms-transform: translateZ(252.5px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    -ms-transform: translateZ(252.5px) translateY(-200%) scale(3);
+    -ms-animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+@-o-keyframes disperseshotup {
+  0%{
+    -o-transform: translateZ(252.5px) translateY(0%) scale(1);
+    -o-animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  2%{
+    opacity: 0.4;
+  }
+  20%{
+    -o-transform: translateZ(252.5px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    -o-transform: translateZ(252.5px) translateY(-200%) scale(3);
+    -o-animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+@keyframes disperseshotup {
+  0%{
+    transform: translateZ(252.5px) translateY(0%) scale(1);
+    animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  2%{
+    opacity: 0.4;
+  }
+  20%{
+    transform: translateZ(252.5px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    transform: translateZ(252.5px) translateY(-200%) scale(3);
+    animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+
+
+/********************* disperse251 ******************************/
+@-webkit-keyframes disperse251 {
+  0%{
+    -webkit-transform: translateZ(250.5px) translateY(0%) scale(1);
+    -webkit-animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  2%{
+    opacity: 0.4;
+  }
+  20%{
+    -webkit-transform: translateZ(250.5px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    -webkit-transform: translateZ(250.5px) translateY(-200%) scale(3);
+    -webkit-animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+@-moz-keyframes disperse251 {
+  0%{
+    -moz-transform: translateZ(250.5px) translateY(0%) scale(1);
+    -moz-animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  2%{
+    opacity: 0.4;
+  }
+  20%{
+    -moz-transform: translateZ(250.5px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    -moz-transform: translateZ(250.5px) translateY(-200%) scale(3);
+    -moz-animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+@-ms-keyframes disperse251 {
+  0%{
+    -ms-transform: translateZ(250.5px) translateY(0%) scale(1);
+    -ms-animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  2%{
+    opacity: 0.4;
+  }
+  20%{
+    -ms-transform: translateZ(250.5px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    -ms-transform: translateZ(250.5px) translateY(-200%) scale(3);
+    -ms-animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+@-o-keyframes disperse251 {
+  0%{
+    -o-transform: translateZ(250.5px) translateY(0%) scale(1);
+    -o-animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  2%{
+    opacity: 0.4;
+  }
+  20%{
+    -o-transform: translateZ(250.5px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    -o-transform: translateZ(250.5px) translateY(-200%) scale(3);
+    -o-animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+@keyframes disperse251 {
+  0%{
+    transform: translateZ(250.5px) translateY(0%) scale(1);
+    animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  2%{
+    opacity: 0.4;
+  }
+  20%{
+    transform: translateZ(250.5px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    transform: translateZ(250.5px) translateY(-200%) scale(3);
+    animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+
+
+/********************* disperse252 ******************************/
+@-webkit-keyframes disperse252 {
+  0%{
+    -webkit-transform: translateZ(251.5px) translateY(0%) scale(1);
+    -webkit-animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  5%{
+      opacity: 0.4;
+  }
+  20%{
+    -webkit-transform: translateZ(251.5px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    -webkit-transform: translateZ(251.5px) translateY(-200%) scale(3);
+    -webkit-animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+@-moz-keyframes disperse252 {
+  0%{
+    -moz-transform: translateZ(251.5px) translateY(0%) scale(1);
+    -moz-animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  5%{
+      opacity: 0.4;
+  }
+  20%{
+    -moz-transform: translateZ(251.5px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    -moz-transform: translateZ(251.5px) translateY(-200%) scale(3);
+    -moz-animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+@-ms-keyframes disperse252 {
+  0%{
+    -ms-transform: translateZ(251.5px) translateY(0%) scale(1);
+    -ms-animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  5%{
+      opacity: 0.4;
+  }
+  20%{
+    -ms-transform: translateZ(251.5px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    -ms-transform: translateZ(251.5px) translateY(-200%) scale(3);
+    -ms-animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+@-o-keyframes disperse252 {
+  0%{
+    -o-transform: translateZ(251.5px) translateY(0%) scale(1);
+    -o-animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  5%{
+      opacity: 0.4;
+  }
+  20%{
+    -o-transform: translateZ(251.5px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    -o-transform: translateZ(251.5px) translateY(-200%) scale(3);
+    -o-animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+@keyframes disperse252 {
+  0%{
+    transform: translateZ(251.5px) translateY(0%) scale(1);
+    animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  5%{
+      opacity: 0.4;
+  }
+  20%{
+    transform: translateZ(251.5px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    transform: translateZ(251.5px) translateY(-200%) scale(3);
+    animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+
+
+/********************* disperse253 ******************************/
+@-webkit-keyframes disperse253 {
+  0%{
+    -webkit-transform: translateZ(252.5px) translateY(0%) scale(1);
+    -webkit-animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  2%{
+    opacity: 0.4;
+  }
+  20%{
+    -webkit-transform: translateZ(252.5px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    -webkit-transform: translateZ(252.5px) translateY(-200%) scale(3);
+    -webkit-animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+@-moz-keyframes disperse253 {
+  0%{
+    -moz-transform: translateZ(252.5px) translateY(0%) scale(1);
+    -moz-animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  2%{
+    opacity: 0.4;
+  }
+  20%{
+    -moz-transform: translateZ(252.5px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    -moz-transform: translateZ(252.5px) translateY(-200%) scale(3);
+    -moz-animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+@-ms-keyframes disperse253 {
+  0%{
+    -ms-transform: translateZ(252.5px) translateY(0%) scale(1);
+    -ms-animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  2%{
+    opacity: 0.4;
+  }
+  20%{
+    -ms-transform: translateZ(252.5px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    -ms-transform: translateZ(252.5px) translateY(-200%) scale(3);
+    -ms-animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+@-o-keyframes disperse253 {
+  0%{
+    -o-transform: translateZ(252.5px) translateY(0%) scale(1);
+    -o-animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  2%{
+    opacity: 0.4;
+  }
+  20%{
+    -o-transform: translateZ(252.5px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    -o-transform: translateZ(252.5px) translateY(-200%) scale(3);
+    -o-animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+@keyframes disperse253 {
+  0%{
+    transform: translateZ(252.5px) translateY(0%) scale(1);
+    animation-timing-function: ease-in;
+    opacity: 0.2;
+  }
+  2%{
+    opacity: 0.4;
+  }
+  20%{
+    transform: translateZ(252.5px) translateY(-10%) scale(1);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100%{
+    transform: translateZ(252.5px) translateY(-200%) scale(3);
+    animation-timing-function: ease-out;
+    opacity: 0;
+  }
+}
+
+
+
+@-webkit-keyframes slide {
+  from {-webkit-transform: translateX(0%)}
+  to {-webkit-transform: translateX(-50%)}
+}
+@-moz-keyframes slide {
+  from {-moz-transform: translateX(0%)}
+  to {-moz-transform: translateX(-50%)}
+}
+@-ms-keyframes slide {
+  from {-ms-transform: translateX(0%)}
+  to {ms-transform: translateX(-50%)}
+}
+@-o-keyframes slide {
+  from {-o-transform: translateX(0%)}
+  to {-o-transform: translateX(-50%)}
+}
+@keyframes slide {
+  from {transform: translateX(0%)}
+  to {transform: translateX(-50%)}
+}
+
+@-webkit-keyframes slidebehind {
+  from {-webkit-transform: translateX(0%) translateZ(-400px)  }
+  to {-webkit-transform: translateX(-50%) translateZ(-400px)  }
+}
+@-moz-keyframes slidebehind {
+  from {-moz-transform: translateX(0%) translateZ(-400px)  }
+  to {-moz-transform: translateX(-50%) translateZ(-400px)  }
+}
+@-ms-keyframes slidebehind {
+  from {-ms-transform: translateX(0%) translateZ(-400px)  }
+  to {ms-transform: translateX(-50%) translateZ(-400px)  }
+}
+@-o-keyframes slidebehind {
+  from {-o-transform: translateX(0%) translateZ(-400px)  }
+  to {-o-transform: translateX(-50%) translateZ(-400px)  }
+}
+@keyframes slidebehind {
+  from {transform: translateX(0%) translateZ(-400px)  }
+  to {transform: translateX(-50%) translateZ(-400px)  }
+}
+
+@-webkit-keyframes slide2 {
+  from {-webkit-transform:  translateZ(20px) translateX(0%)}
+  to {-webkit-transform:  translateZ(20px) translateX(-50%)}
+}
+@-moz-keyframes slide2 {
+  from {-moz-transform:  translateZ(20px) translateX(0%)}
+  to {-moz-transform:  translateZ(20px) translateX(-50%)}
+}
+@-ms-keyframes slide2 {
+  from {-ms-transform:  translateZ(20px) translateX(0%)}
+  to {ms-transform:  translateZ(20px) translateX(-50%)}
+}
+@-o-keyframes slide2 {
+  from {-o-transform:  translateZ(20px) translateX(0%)}
+  to {-o-transform:  translateZ(20px) translateX(-50%)}
+}
+@keyframes slide2 {
+  from {transform:  translateZ(20px) translateX(0%)}
+  to {transform:  translateZ(20px) translateX(-50%)}
+}
+
+
+
+@-webkit-keyframes sprite {
+  100% { background-position: 0 100%; }
+}
+@-moz-keyframes sprite {
+  100% { background-position: 0 100%; }
+}
+@-ms-keyframes sprite {
+  100% { background-position: 0 100%; }
+}
+@-o-keyframes sprite {
+  100% { background-position: 0 100%; }
+}
+@keyframes sprite {
+  100% { background-position: 0 100%; }
+}
+
+
+[data-animation-attr*="once"] {
+ -webkit-animation-iteration-count: 1;
+ -moz-animation-iteration-count: 1;
+ -ms-animation-iteration-count: 1;
+ -o-animation-iteration-count: 1;
+ animation-iteration-count: 1;
+ -webkit-animation-fill-mode: forwards;
+ -moz-animation-fill-mode: forwards;
+ -ms-animation-fill-mode: forwards;
+ -o-animation-fill-mode: forwards;
+ animation-fill-mode: forwards;
+}
+
+[data-animation-attr*="stop"] {
+ -webkit-animation-name: initial!important;
+ -moz-animation-name: initial!important;
+ -ms-animation-name: initial!important;
+ -o-animation-name: initial!important;
+ animation-name: initial!important;
+}
+
+
+
+/* ==========================================================================
+   Image carousel with text under the image
+   ========================================================================== */
+.carousel.images-carousel.with-text .carousel-item a {
+  position: relative;
+  overflow: visible;
+}
+.carousel.images-carousel.with-text .carousel-item a span {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 5px;
+  height: 35px;
+  text-align: center;
+  font-family: Utility, 'Open Sans Condensed', Roboto, 'Russo one', sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 16px;
+  color: #0f6fac;
+}
+/*Font Issue Fix for Poland Site*/
+.pl-pl .carousel.images-carousel.with-text .carousel-item a span {
+  font-family: Utility, Roboto, 'Russo one', sans-serif;
+}
+.carousel.images-carousel.with-text .carousel-item a span em {
+  background: transparent url(../img/ico-external-link-blue.png) no-repeat scroll left top;
+  width: 14px;
+  height: 14px;
+  margin-left: 6px;
+  display: inline-block;
+  margin-bottom: -2px;
+}
+.carousel.images-carousel.with-text .controls span {
+  margin-top: -37px;
+}
+
+/* ==========================================================================
+   Games detail page
+   ========================================================================== */
+#kids-games-detail-wrapper {
+  margin-bottom: 10%;
+  margin-top: 10%;
+  position: relative;
+  z-index: 5;
+}
+#kids-games-detail-wrapper .game-container {
+  border: 10px solid #fff;
+  width: 94%;
+  margin: auto;
+  position: relative;
+}
+img.game-placeholder {
+  width: 100%;
+  display: none;
+}
+#kids-games-detail-wrapper .game-container p {
+  color: #E77C33;
+  font-weight: bold;
+  line-height: 25px;
+  text-align: left;
+  background-color: #fff;
+  font-size: 20px;
+  padding-top: 10px;
+}
+#kids-games-detail-wrapper div.game-logo {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 15%;
+  pointer-events: none;
+}
+#kids-games-detail-wrapper .game-container img.optional-logo {
+  right: -4%;
+  top: -14%;
+}
+
+#games-detail-footer-spacer {
+  height: 25px;
+}
+.kids-game, .kids_game {
+  position: relative;
+}
+
+/* ==========================================================================
+   Games logos
+   ========================================================================== */
+.game-logo {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: right; 
+  position: absolute;
+  width: 100%;
+  bottom: 20%;
+}
+.kids_game .game-logo {
+  top: auto !important;
+  bottom: 0;
+}
+.game-logo.musical {
+  background-image: url(../../img/kids/kids-games-musical.png);
+}
+.game-logo.art {
+  background-image: url(../../img/kids/kids-games-art.png);
+}
+.game-logo.puzzle {
+  background-image: url(../../img/kids/kids-games-puzzle.png);
+}
+.game-logo.action {
+  background-image: url(../../img/kids/kids-games-action.png);
+}
+.game-logo.memory {
+  background-image: url(../../img/kids/kids-games-memory.png);
+}
+
+/* ==========================================================================
+   Interstitial
+   ========================================================================== */
+#interstitial {
+  background-image: url(../../img/kids/header_footer_bg.gif);
+  color: #fff;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: none;
+}
+#interstitial img {
+  max-height: 100%;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+#interstitial .interstitial-text {
+  font-weight: bold;
+  position: absolute;
+  text-align: center;
+  width: 40%;
+  top: 10%;
+  left: 15%;
+  z-index: 1;
+}
+#interstitial .interstitial-text h3{
+  font-size: 40px;
+}
+#interstitial .interstitial-text {
+  font-size: 28px;
+}
+#interstitial a, .all-games, .all-videos {
+  position: relative;
+  text-decoration: none;
+  display: inline-block;
+  padding-left: 30px;
+  padding-right: 30px;
+  margin-top: 30px;
+}
+#interstitial a#go-back {
+  background-color: #DA3129;
+  color: #fff;  
+  height: 103px;
+  line-height: 103px; 
+  font-size: 40px;   
+}
+  #interstitial a#go-back:hover {
+    color: #FBCE21;
+  }
+#interstitial a#go-back:before {
+  background-image: url(../../img/kids/btn-red.png);
+  background-position: left;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 24px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: -24px;
+  bottom: 0;
+  content: ""; 
+}
+#interstitial a#go-back:after {
+  background-image: url(../../img/kids/btn-red.png);
+  background-position: right;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 24px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: -24px;
+  bottom: 0;
+  content: "";
+}
+
+#interstitial a#continue, .all-games, .all-videos {
+  background-color: #fff;
+  color: #0196C0;
+  height: 77px;
+  line-height: 77px;
+}
+  #interstitial a#continue:hover, .all-games:hover, .all-videos:hover {
+    background-color: #FBCE21;
+  }
+#interstitial a#continue:before, .all-games:before, .all-videos:before {
+  background-image: url(../../img/kids/btn-white.png);
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  background-size: auto 400%;
+  width: 17px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: -17px;
+  bottom: 0;
+  content: ""; 
+}
+  #interstitial a#continue:hover:before {
+   background-position: 0 -154px; 
+  }
+#interstitial a#continue:after, .all-games:after, .all-videos:after {
+  background-image: url(../../img/kids/btn-white.png);
+  background-position: 0 -77px;
+  background-repeat: no-repeat;
+  background-size: auto 400%;
+  width: 17px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: -17px;
+  bottom: 0;
+  content: "";
+}
+  #interstitial a#continue:hover:after {
+    background-position: 0 -231px;
+  }
+  .all-games, .all-videos {
+    font-size: 16px;
+    /*margin-left: 50%;
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    transform: translateX(-50%);*/
+    font-weight: bold;
+    line-height: 50px;
+    margin-bottom: 30px;
+    height: 45px;
+    white-space: nowrap;
+  }
+  .all-games:after, .all-videos:after {
+    right: -9px;
+    width: 10px;
+    background-image: url(../../img/kids/btn-white.png);
+    background-position: 0 -45px;
+  }
+  .all-games:before, .all-videos:before {
+    width: 10px;
+    left: -9px;
+  }
+  .all-games:hover:after, .all-videos:hover:after {
+    background-position: 0 -135px;
+  }
+  .all-games:hover:before, .all-videos:hover:before {
+    background-position: 0 -90px;
+  }
+  /* Thomas Adventures Interstitial*/
+#ThomasAdventuresInterstitial {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 30px auto;
+    background: #036;
+    display: none;
+    height: 690px;
+    z-index: 1005;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+#ThomasAdventuresInterstitial .modal-content{
+	    padding: 30px;
+		display: inline-block;
+}
+#ThomasAdventuresInterstitial .modal-content h1{
+      color: #fff;
+	  text-align: center;
+	  font-size: 3em;
+}
+#ThomasAdventuresInterstitial .modal-content p{
+	font-size: 1.5em;
+    color: #fff;
+    text-align: center;
+}
+#ThomasAdventuresInterstitial .modal-content .app-icons{
+    text-align: center;
+    margin: 20px auto;
+    width: 80%;
+}
+
+#ThomasAdventuresInterstitial .modal-content .app-icons img {
+    margin-bottom: 15px;
+	max-width:100%;
+}
+
+#ThomasAdventuresInterstitial .modal-content .app-icons a{
+    width: 28%;
+  /*  margin-right: 15px; */
+}
+#ThomasAdventuresInterstitial .modal-footer{
+	margin-top:-10px;
+	display:inline-block;
+	background: #003366;
+	padding-bottom:20px;
+}
+#ThomasAdventuresInterstitial .modal-footer img{
+	max-width:100%;
+}
+#ThomasAdventuresInterstitial .close-btn{
+	position:absolute;
+	right:30px;
+	top:20px;
+	background: url(../../img/kids/close-icon-white.png);
+    height: 31px;
+    width: 33px;
+	cursor:pointer;
+}
+.modal-background{
+	position:fixed;
+	top:0;
+	right:0;
+	left:0;
+	bottom:0;
+	background:#000;
+	opacity:0.5;
+	z-index:1000;
+	width:100%;
+	height:100%;
+}
+@media screen and (min-width: 768px){
+    #ThomasAdventuresInterstitial .modal-content .app-icons img {
+        margin-right: 15px;
+    }
+}
+
+@media screen and (min-width: 980px) {
+    #ThomasAdventuresInterstitial {
+      width: 900px;
+      height: 500px;
+      margin: 30px auto;
+  }
+  #ThomasAdventuresInterstitial .modal-content{
+       padding: 50px;
+  }
+
+  #ThomasAdventuresInterstitial .modal-content .app-icons a {
+    margin-right: 0px;
+  }
+  #ThomasAdventuresInterstitial .modal-content h1{
+	  font-size:5em;
+  }
+  #ThomasAdventuresInterstitial .modal-content .app-icons{
+	  width:100%;
+  }
+}
+/*=========================games and video landin grid goes from 4 to 3=========================  */
+  
+  @media only screen  and (max-width : 1224px) {
+    .videos-and-games-thumbs a.kids-game, .videos-and-games-thumbs a.kids-video {
+      width: 28%;
+      margin-right: 2%;
+    }
+/*=========================nexux 7 fixes=========================  */
+
+    #kids-games-wrapper .main-game strong {
+      font-size: 14px;
+    }
+
+    #interstitial .interstitial-text h3 {
+      font-size: 20px;
+    }
+    #interstitial .interstitial-text {
+      font-size: 12px;
+    }
+    #interstitial a#go-back {
+      font-size: 20px;
+      line-height: 40px;
+      height: 40px;
+    }
+    #interstitial a#go-back:before, #interstitial a#go-back:after {
+      height: 40px;
+      width: 10px;
+    }
+    #interstitial a#go-back:before {
+      left: -10px;
+    }
+    #interstitial a#go-back:after {
+      right: -10px;
+    }
+    #interstitial a#continue {
+      font-size: 12px;
+      line-height: 24px;
+      height: 24px;
+    }
+    #interstitial a#continue:before, #interstitial a#continue:after {
+      height: 24px;
+      width: 6px;
+    }
+    #interstitial a#continue:before {
+      left: -6px;
+      background-position: 1px 0;
+    }
+    #interstitial a#continue:hover:before {
+      background-position: 1px -48px;
+    }
+    #interstitial a#continue:after {
+      right: -6px;
+      background-position: 0 -25px;
+    }
+    #interstitial a#continue:hover:after {
+      background-position: 0px -73px;
+    }
+    .youtube-link span {
+      left: 40%;
+    }
+    .kids-back-button {
+      height: 36px;
+      width: 83px;
+      margin-top: 15px;
+    }
+}
+
+/* ==========================================================================
+   Drawing Tool page
+   ========================================================================== */
+#drawing-tool-download-form, #drawing-tool-download-frame, #drawing-tool-print-frame {
+  display: none;
+}
+#drawing-tool #canvas-wrapper,
+#drawing-tool #palette,
+/* #drawing-tool #tools-wrapper, the tools wrapper must share the same opacity transition, but since it also has another transition, it must be defined along with that one */
+#drawing-tool #drawing-tool-done-btn,
+#drawing-tool #drawing-tool-close-btn,
+#drawing-tool .drawing-tool-confirm-popup,
+#drawing-tool-done-popup,
+#drawing-tool-confirm-overlay {
+  -webkit-transition: opacity 0.3s ease-in;
+  -moz-transition: opacity 0.3s ease-in;
+  -ms-transition: opacity 0.3s ease-in;
+  -o-transition: opacity 0.3s ease-in;
+  transition: opacity 0.3s ease-in;
+}
+
+#drawing-tool {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #53bae8 url(../../img/kids/art-tool/background.jpg) center center no-repeat;
+  background-size: cover;
+  opacity: 0;
+  visibility: hidden;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+#drawing-tool.loaded {
+  opacity: 1;
+  visibility: visible;
+  -webkit-transition: opacity 0.5s;
+  -moz-transition: opacity 0.5s;
+  -ms-transition: opacity 0.5s;
+  -o-transition: opacity 0.5s;
+  transition: opacity 0.5s;
+}
+#drawing-tool-loader {
+  position: fixed;
+  width: 116px;
+  height: 116px;
+  top: 50%;
+  left: 50%;
+  margin: -58px 0 0 -58px;
+  overflow: hidden;
+  visibility: hidden;
+}
+#drawing-tool-loader img {
+  width: 116px;
+  height: 1160px;
+  top: 0;
+  left: 0;
+  -webkit-animation: drawing-tool-loader-animation 0.5s steps(10) infinite;
+  -moz-animation: drawing-tool-loader-animation 0.5s steps(10) infinite;
+  -ms-animation: drawing-tool-loader-animation 0.5s steps(10) infinite;
+  -o-animation: drawing-tool-loader-animation 0.5s steps(10) infinite;
+  animation: drawing-tool-loader-animation 0.5s steps(10) infinite;
+}
+@-webkit-keyframes drawing-tool-loader-animation {0% {-webkit-transform: translateY(0px)} 100% {-webkit-transform: translateY(-1160px)}}
+@-moz-keyframes drawing-tool-loader-animation {0% {-moz-transform: translateY(0px)} 100% {-moz-transform: translateY(-1160px)}}
+@-ms-keyframes drawing-tool-loader-animation {0% {-ms-transform: translateY(0px)} 100% {-ms-transform: translateY(-1160px)}}
+@-o-keyframes drawing-tool-loader-animation {0% {-o-transform: translateY(0px)} 100% {-o-transform: translateY(-1160px)}}
+@keyframes drawing-tool-loader-animation {0% {transform: translateY(0px)} 100% {transform: translateY(-1160px)}}
+
+#canvas-wrapper {
+  position: absolute;
+  left: 135px;
+  top: 42px;
+  background: #fff;
+  width: 800px;
+  height: 600px;
+  -webkit-transform-origin: top left;
+  -moz-transform-origin: top left;
+  -ms-transform-origin: top left;
+  -o-transform-origin: top left;
+  transform-origin: top left;
+  -webkit-transform: scale(0.97875);
+  -moz-transform: scale(0.97875);
+  -ms-transform: scale(0.97875);
+  -o-transform: scale(0.97875);
+  transform: scale(0.97875);
+  cursor: none;
+}
+#canvas-wrapper canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  tap-highlight-color: rgba(0,0,0,0);
+  -webkit-box-shadow: 1px 1px 3px 2px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 1px 1px 3px 2px rgba(0, 0, 0, 0.2);
+  -ms-box-shadow: 1px 1px 3px 2px rgba(0, 0, 0, 0.2);
+  -o-box-shadow: 1px 1px 3px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 1px 1px 3px 2px rgba(0, 0, 0, 0.2);
+}
+#canvas-wrapper img#canvas-cursor {
+  display: none;
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  -webkit-transform: scale(0.5);
+  -moz-transform: scale(0.5);
+  -ms-transform: scale(0.5);
+  -o-transform: scale(0.5);
+  transform: scale(0.5);
+}
+
+#drawing-tool .tool {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  tap-highlight-color: rgba(0,0,0,0);
+}
+#drawing-tool .tool.disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+#drawing-tool .tool .image {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+#drawing-tool .tool:hover .image {
+  top: -200%;
+}
+#drawing-tool .tool.disabled:hover .image {
+  top: 0;
+}
+#drawing-tool .tool.on .image {
+  top: -100%;
+}
+
+#drawing-tool #tools-wrapper {
+  /* !! if updates are made to the size of this container (width, height, padding), then cdraw.positionUIWrappers needs to be updated as well (in js/kids/drawing_tool) !! */
+  width: 529px;
+  height: 308px;
+  padding: 20px 20px 20px 145px;
+  position: absolute;
+  top: 208px;
+  right: 0;
+  -webkit-transform-origin: right top;
+  -moz-transform-origin: right top;
+  -ms-transform-origin: right top;
+  -o-transform-origin: right top;
+  transform-origin: right top;
+  border-radius: 45px 0 0 45px;
+  background-color: #106cac;
+  -webkit-transform: scale(0.61);
+  -moz-transform: scale(0.61);
+  -ms-transform: scale(0.61);
+  -o-transform: scale(0.61);
+  transform: scale(0.61);
+  -webkit-transition: margin-right 0.3s ease-out, opacity 0.3s ease-in;
+  -moz-transition: margin-right 0.3s ease-out, opacity 0.3s ease-in;
+  -ms-transition: margin-right 0.3s ease-out, opacity 0.3s ease-in;
+  -o-transition: margin-right 0.3s ease-out, opacity 0.3s ease-in;
+  transition: margin-right 0.3s ease-out, opacity 0.3s ease-in;
+}
+#drawing-tool #tools-wrapper.detached {
+  /* !! if updates are made to the size of this container (width, height, padding), then cdraw.positionUIWrappers needs to be updated as well (in js/kids/drawing_tool) !! */
+  padding: 20px 51px 20px 43px;
+  -webkit-transform-origin: left top;
+  -moz-transform-origin: left top;
+  -ms-transform-origin: left top;
+  -o-transform-origin: left top;
+  transform-origin: left top;
+  border-radius: 45px;
+}
+#drawing-tool #tools-wrapper.disable-transition {
+  -webkit-transition: none;
+  -moz-transition: none;
+  -ms-transition: none;
+  -o-transition: none;
+  transition: none;
+}
+#tools-wrapper #tools {
+  position: relative;
+}
+#drawing-tool #tools-wrapper #tools-drawer-handle {
+  position: absolute;
+  left: 21px;
+  top: 141px;
+  width: 100px;
+  height: 65px;
+  background: transparent url(../../img/kids/art-tool/btn-drawer-handle.png) no-repeat scroll left top;
+  background-size: 100% auto;
+  cursor: pointer;
+}
+#drawing-tool #tools-wrapper #tools-drawer-handle:hover {
+  background-position: left bottom;
+}
+
+#drawing-tool #tools-wrapper.detached #tools-drawer-handle {
+  display: none;
+}
+
+#drawing-tool #tools .tool {
+  position: absolute;
+}
+#drawing-tool #tools .tool#tool-crayon {
+  left: 193px;
+  top: 5px;
+  width: 56px;
+  height: 306px;
+}
+#drawing-tool #tools .tool#tool-marker {
+  left: 290px;
+  top: 1px;
+  height: 313px;
+  width: 68px;
+}
+#drawing-tool #tools .tool#tool-brush {
+  left: 398px;
+  top: 1px;
+  width: 124px;
+  height: 309px;
+}
+#drawing-tool #tools .tool#tool-eraser {
+  left: 0;
+  top: 15px;
+  width: 182px;
+  height: 96px;
+}
+#drawing-tool #tools .tool#tool-bucket {
+  left: 15px;
+  top: 103px;
+  width: 158px;
+  height: 194px;
+}
+
+#drawing-tool #palette {
+  position: absolute;
+  left: 31px;
+  top: 74px;
+  width: 132px;
+  padding: 32px;
+  border-radius: 26px;
+  background-color: #fff;
+  -webkit-transform: scale(0.35);
+  -moz-transform: scale(0.35);
+  -ms-transform: scale(0.35);
+  -o-transform: scale(0.35);
+  transform: scale(0.35);
+  -webkit-transform-origin: left top;
+  -moz-transform-origin: left top;
+  -ms-transform-origin: left top;
+  -o-transform-origin: left top;
+  transform-origin: left top;
+}
+#drawing-tool #palette .tool {
+  float: left;
+  width: 126px;
+  height: 126px;
+  margin: 3px;
+}
+
+
+#drawing-tool-logo {
+  position: absolute;
+  width: 110px;
+  height: 59px;
+  left: 10px;
+  top: 10px;
+  background: transparent no-repeat scroll left top;
+  background-size: contain;
+}
+
+#drawing-tool .button {
+  background: transparent no-repeat scroll left top;
+  background-size: 100% auto;
+  cursor: pointer;
+}
+#drawing-tool .button:hover {
+  background-position: left bottom;
+}
+
+#drawing-tool .button#drawing-tool-close-btn {
+  position: absolute;
+  background-image: url(../../img/kids/art-tool/btn-close.png);
+  width: 42px;
+  height: 42px;
+  right: 9px;
+  top: 12px;
+}
+
+#drawing-tool .button#drawing-tool-done-btn {
+  position: absolute;
+  background-image: url(../../img/kids/art-tool/btn-done.png);
+  width: 73px;
+  height: 73px;
+  right: 18px;
+  bottom: 25px;
+}
+
+
+/* ==========================================================================
+   Drawing Tool popups (Done and Confirmation)
+   ========================================================================== */
+#drawing-tool-confirm-overlay {
+  background-color: #106cac;
+  background-color: rgba(16,108,172,0.8);
+  bottom: 0;
+  display: none;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+}
+#drawing-tool .drawing-tool-confirm-popup {
+  background-color: #50b3e0;
+  display: none;
+  width: 1272px;
+  height: 817px;
+  left: 50%;
+  top: 50%;
+  position: absolute;
+  -webkit-transform: translate(-50%,-50%);
+  -moz-transform: translate(-50%,-50%);
+  -ms-transform: translate(-50%,-50%);
+  -o-transform: translate(-50%,-50%);
+  transform: translate(-50%,-50%);
+}
+#drawing-tool .drawing-tool-confirm-popup .button.close {
+  background-image: url(../../img/kids/art-tool/btn-close.png);
+  width: 115px;
+  height: 115px;
+  position: absolute;
+  right: 37px;
+  top: 31px;
+}
+#drawing-tool .drawing-tool-confirm-popup .button.close:hover {
+  background-position: center bottom;
+}
+#drawing-tool .drawing-tool-confirm-popup .actions {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+#drawing-tool .drawing-tool-confirm-popup .actions .button {
+  display: inline-block;
+  width: 306px;
+  height: 306px;
+  margin: 0 61px;
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -o-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+#drawing-tool-done-popup {
+  position: absolute;
+  background: url(../../img/kids/art-tool/done-preview-bg.png) no-repeat scroll center top;
+  background-size: contain;
+  display: none;
+  width: 2195px;
+  height: 2012px;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%,-50%);
+  -moz-transform: translate(-50%,-50%);
+  -ms-transform: translate(-50%,-50%);
+  -o-transform: translate(-50%,-50%);
+  transform: translate(-50%,-50%);
+}
+#drawing-tool-done-popup .actions {
+  position: absolute;
+  height: 306px;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+  text-align: center;
+}
+#drawing-tool-done-popup .actions .button {
+  display: inline-block;
+  width: 306px;
+  height: 306px;
+  margin: 0 42px;
+}
+#drawing-tool-done-popup #drawing-tool-preview {
+  border-top-left-radius: 122px;
+  width: 1984px;
+  height: auto;
+  margin: 81px 0 0 81px;
+}
+#drawing-tool-done-popup #drawing-tool-done-preview-pin {
+  position: absolute;
+  width: 171px;
+  height: 131px;
+  left: 50%;
+  top: -37px;
+  background: url(../../img/kids/art-tool/done-preview-pin.png) no-repeat scroll center center;
+  background-size: contain;
+  -webkit-transform: translateX(-50%);
+  -moz-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  -o-transform: translateX(-50%);
+  transform: translateX(-50%);
+  z-index: 1;
+}
+#drawing-tool-done-popup #drawing-tool-done-preview-folded-corner {
+  position: absolute;
+  background: url(../../img/kids/art-tool/done-preview-corner.png) no-repeat scroll left top;
+  background-size: cover;
+  width: 367px;
+  height: 355px;
+  left: 0;
+  top: 0;
+  z-index: 1;
+}
+
+#drawing-tool .drawing-tool-confirm-popup .button.continue,
+#drawing-tool-done-popup .button.continue {
+  background-image: url(../../img/kids/art-tool/btn-continue.png);
+}
+#drawing-tool .drawing-tool-confirm-popup .button.clear-canvas {
+  background-image: url(../../img/kids/art-tool/btn-trash.png);
+}
+#drawing-tool .drawing-tool-confirm-popup .button.trash,
+#drawing-tool-done-popup .button.trash {
+  background-image: url(../../img/kids/art-tool/btn-x.png);
+}
+#drawing-tool-done-popup .button.save {
+  background-image: url(../../img/kids/art-tool/btn-save.png);
+}
+#drawing-tool-done-popup .button.print {
+  background-image: url(../../img/kids/art-tool/btn-print.png);
+}
+
+
+/* ==========================================================================
+   Drawing Tool landing page
+   ========================================================================== */
+
+#kids-drawingtool-landing-wrapper {
+  width: 100%;
+  height: 100%;
+  padding-bottom: 60%;
+}
+#kids-drawingtool-landing-wrapper .drawing-sample {
+  width: 65%;
+  float: left;
+  margin-top: 10%;
+  margin-left: 5%;
+  margin-bottom: 7%;
+  position: relative;
+  padding-bottom: 36.6%;
+  border: 5px solid #fff;
+}
+#kids-drawingtool-landing-wrapper .drawing-sample .carousel {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background: #fff;
+}
+#kids-drawingtool-landing-wrapper .drawing-sample .pagination {
+  top: 110%;
+}
+#kids-drawingtool-landing-wrapper .drawing-sample strong {
+  color: #E77C33;
+  font-size: 19px;
+  line-height: 25px;
+  text-align: left;
+  padding-top: 7px;
+  width: 100%;
+  background-color: #fff;
+  position: absolute;
+  bottom: 0;
+  z-index: 1;
+}
+#kids-drawingtool-landing-wrapper .drawing-sample .carousel-list,
+#kids-drawingtool-landing-wrapper .drawing-sample .carousel-item {
+  background-size: cover;
+}
+#kids-drawingtool-landing-wrapper .drawing-sample .carousel-item p {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-size: 100% 100%;
+  background-position: center center;
+  -webkit-transition: all .3s;
+  -moz-transition: all .3s;
+  -o-transition: all .3s;
+  transition: all .3s;
+}
+/*#kids-drawingtool-landing-wrapper .drawing-sample .carousel-item p:hover {
+  background-size: 105% 105%;
+  background-position: center center;
+}*/
+img.drawingtool-landing-thomas {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%;
+  z-index: 5;
+  pointer-events: none;
+}
+
+#select-train-box {
+  background-color: #fff;
+  width: 300px;
+  height: 40px;
+  float: right;
+}
+#art-shop-banner {
+  height: 76px;
+  position: relative;
+  float: right;
+  margin-top: 2%;
+  z-index: 1;
+  width: 100%;
+}
+#art-shop-banner div {
+  background-color: #013573;
+  float: right;
+  height: 76px;
+  width: 40%;
+}
+#art-shop-banner p {
+  background-color: #013573;
+  font-family: 'Cyclone A', 'Cyclone B', 'Rex', sans-serif;
+  font-size: 60px;
+  line-height: 76px;
+  color: #FBCE21;
+  float: right;
+  /*padding-left: 1%;*/
+
+}
+/*HITE-895 :RU/PL: Text alignment issues*/
+.ru-ru #art-shop-banner p {
+  font-size: 20px;
+  font-family:'Rex', sans-serif;
+}
+.pl-pl #art-shop-banner p {
+  font-size: 20px;
+  font-family: Utility, Roboto, 'Russo one', sans-serif;
+}
+
+#art-shop-banner span {
+  background-image: url(../../img/kids/kids-dt-landing-flag.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  float: right;
+  width: 109px;
+  height: 76px;
+}
+
+@media only screen  and (max-width : 1281px) {
+  #art-shop-banner {
+    height: 66px;
+  }
+  #art-shop-banner div {
+    height: 66px;
+  }
+  #art-shop-banner p {
+    line-height: 66px;
+    font-size: 50px;
+  }
+  #art-shop-banner span {
+    height: 66px;
+    width: 95px;
+  }
+  .truste-messageColumn {
+		font-size: 16px !important;
+		margin: 1.3% 0 1% 14% !important;
+	}
+}
+
+.ooyala-video-player .innerWrapper {
+z-index: 999 !important;
+}
+
+.player-wrapper {
+
+width: 100%;
+ height: 560px;
+
+}
+@media (max-width: 600px) {
+    .player-wrapper {
+      height: 343px;
+      }
+
+}
+    
+#kids-big-video #kids-video-container {
+
+ background-size: cover;
+ padding-bottom: 1% !important;
+ /* padding-bottom: 56.25%; */
+   background-color: #fff;
+   position: relative;
+   z-index: 0;
+}
+
+.chrome-message {
+    /*font-size: 16px;
+    color: #FFF;
+    text-align: center;
+    position: absolute;
+    z-index: 9999999;
+    margin: 1% 0px !important;
+    width: 100%; */
+    font-size: 16px;
+    color: #FFF;
+    text-align: center;
+    position: absolute;
+    z-index: 9999999;
+    margin: auto 0px !important;
+    width: 69%;
+    background-color: #106cac;
+    border-radius: 5px;
+    padding: 10px;
+    left: 16%;
+}
+
+@media screen and (max-width: 1080px) {
+    .chrome-message {
+        display: none;
+    }
+	.truste-messageColumn, .truste-button1, .truste-button2 {
+		font-size: 13px !important;
+	}
+}
+
+@media screen and (min-width: 1081px) {
+    .chrome-message {
+        display:block !important;
+    }
+}
+/* 1687 , Kids Page: Cranky: "Read About Cranky" text is partially hidden */
+@media only screen and (max-width: 1220px){  
+  .kids-engine-details .read-about{
+  position: absolute;
+  right: 0;
+  width: 100%;
+  margin-top: 0 !important;
+  bottom: 19%;
+  }
+}
+@media only screen and (min-width: 410px) and (max-width: 420px){
+  .kids-engine-details .read-about{
+    bottom: 14%;
+  }
+}
+@media screen and (max-width: 420px){
+	.truste-messageColumn {
+		text-align: center;
+		margin-left: 0 !important;
+	}
+	/*#navigation{
+		margin-top: 130px;
+	}*/
+	#truste-consent-track{
+		height: 130px;
+	}
+}
+@media only screen and (min-width: 421px) and (max-width: 768px){
+	.truste-messageColumn {
+		margin: 1.3% 0 1% 2% !important;
+		font-size: 12px !important;
+	}
+	/*#navigation {
+		margin-top: 75px;
+	}*/
+	#truste-consent-track{
+		height: 75px;
+	}
+}
+@media only screen and (min-width: 421px) and (max-width: 550px){
+	#truste-consent-track{
+		height: 85px;
+	}
+	/*#navigation {
+		margin-top: 85px;
+	}*/
+}
+@media only screen and (max-width: 340px){
+  .kids-engine-details .read-about{
+    bottom: 14%;
+  }
+}
+@media only screen and (max-width: 480px){
+  .kids-engine-details .badge{
+        margin-top: 20px;
+  }
+ .kids-engine-more-info.expanded{
+    margin-top:26px;
+  }
+	.truste-banner {
+		max-height: 130px;
+	}
+}
+@media only screen and (min-width: 480px) and (max-width: 768px){
+  .kids-engine-details .badge{
+        top: 10px;
+  }
+  .kids-engine-more-info.expanded{
+    margin-top:30px;
+  }
+}
+@media screen and (max-width: 1023px) and (min-width: 421px){
+	.truste-messageColumn {
+		margin: 1.3% 0 1% 2% !important;
+		text-align: center !important;
+		font-size: 16px !important;
+		float: inherit !important;
+	}
+	.truste-button1, .truste-button2 {
+		width: 40% !important;
+	}
+	.truste-button1 {
+		margin-right: 10px !important;
+	}
+	.truste-buttonsColumn {
+		margin: 1% 0 1% 14% !important;
+		float: left !important;
+		width: 100% !important;
+	}
+}
+/*HITE-352 fixes*/
+@media screen and (min-width: 1081px) {
+    .kids-engine-more-info .kids-engine-more-info-wrapper p:last-child {
+      padding-bottom: 70%;
+    }
+}
+/*HITE-347 fixes*/
+@media only screen  and (min-width : 1100px) {
+  body.es-es .site-footer-links{
+    font-size: .95em;
+  }
+  .truste-buttonsColumn {
+    margin: 20px 10px 10px 0px !important;
+	}
+}
+@media only screen and (min-width: 767px) and (max-width: 1100px){
+  body.es-es .site-footer-links{
+    font-size: .73em;
+  }
+}
+@media only screen  and (min-width : 767px) {
+  body.es-es .thomas-footer-links{
+    width: 100%;
+  }
+  body.es-es .copyright-text{
+    width: 65%;
+      float: none;
+  }
+  body.es-es .site-footer-links li{
+    font-size: .9em;
+  }
+}

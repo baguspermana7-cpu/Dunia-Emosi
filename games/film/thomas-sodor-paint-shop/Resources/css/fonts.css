@@ -1,0 +1,136 @@
+/* ==========================================================================
+   Fonts
+   ========================================================================== */
+@font-face {
+  font-family: 'Utility';
+  src: url('../fonts/utility/UtilityComp.eot');
+  src: url('../fonts/utility/UtilityComp.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/utility/UtilityComp.woff') format('woff'),
+       url('../fonts/utility/UtilityComp.ttf') format('truetype'),
+       url('../fonts/utility/UtilityComp.svg#UtilityComp') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Utility';
+  src: url('../fonts/utility/UtilityComp-Bold.eot');
+  src: url('../fonts/utility/UtilityComp-Bold.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/utility/UtilityComp-Bold.woff') format('woff'),
+       url('../fonts/utility/UtilityComp-Bold.ttf') format('truetype'),
+       url('../fonts/utility/UtilityComp-Bold.svg#UtilityComp-Bold') format('svg');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Utility';
+  src: url('../fonts/utility/UtilityComp-Black.eot');
+  src: url('../fonts/utility/UtilityComp-Black.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/utility/UtilityComp-Black.woff2') format('woff2'),
+       url('../fonts/utility/UtilityComp-Black.woff') format('woff'),
+       url('../fonts/utility/UtilityComp-Black.ttf') format('truetype'),
+       url('../fonts/utility/UtilityComp-Black.svg#UtilityComp-Black') format('svg');
+  font-weight: 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Utility';
+  src: url('../fonts/utility/UtilityComp-Light.eot');
+  src: url('../fonts/utility/UtilityComp-Light.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/utility/UtilityComp-Light.woff') format('woff'),
+       url('../fonts/utility/UtilityComp-Light.ttf') format('truetype'),
+       url('../fonts/utility/UtilityComp-Light.svg#UtilityComp-Light') format('svg');
+  font-weight: 300;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Utility';
+  src: url('../fonts/utility/UtilityComp-Medium.eot');
+  src: url('../fonts/utility/UtilityComp-Medium.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/utility/UtilityComp-Medium.woff') format('woff'),
+       url('../fonts/utility/UtilityComp-Medium.ttf') format('truetype'),
+       url('../fonts/utility/UtilityComp-Medium.svg#UtilityComp-Medium') format('svg');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Rex';
+  src: url('../fonts/rex/Rex Bold Inline.eot');
+  src: url('../fonts/rex/Rex Bold Inline.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/rex/Rex Bold Inline.woff2') format('woff2'),
+       url('../fonts/rex/Rex Bold Inline.woff') format('woff'),
+       url('../fonts/rex/Rex Bold Inline.ttf') format('truetype'),
+       url('../fonts/rex/Rex Bold Inline.svg#Rex Bold Inlineregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+@font-face {
+  font-family: 'Ostrich';
+  src: url('../fonts/ostrich/ostrich-light-webfont.eot');
+  src: url('../fonts/ostrich/ostrich-light-webfont.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/ostrich/ostrich-light-webfont.woff2') format('woff2'),
+       url('../fonts/ostrich/ostrich-light-webfont.woff') format('woff'),
+       url('../fonts/ostrich/ostrich-light-webfont.ttf') format('truetype'),
+       url('../fonts/ostrich/ostrich-light-webfont.svg#ostrich_sanscondensed_light') format('svg');
+  font-weight: normal;
+  font-style: light;
+}
+
+@font-face {
+  font-family: 'Ostrich';
+  src: url('../fonts/ostrich/ostrich-rounded-webfont.eot');
+  src: url('../fonts/ostrich/ostrich-rounded-webfont.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/ostrich/ostrich-rounded-webfont.woff2') format('woff2'),
+       url('../fonts/ostrich/ostrich-rounded-webfont.woff') format('woff'),
+       url('../fonts/ostrich/ostrich-rounded-webfont.ttf') format('truetype'),
+       url('../fonts/ostrich/ostrich-rounded-webfont.svg#ostrich_sans_roundedmedium') format('svg');
+  font-weight: normal;
+  font-style: rounded;
+}
+@font-face {
+  font-family: 'Ostrich';
+  src: url('../fonts/ostrich/ostrich-black-webfont.eot');
+  src: url('../fonts/ostrich/ostrich-black-webfont.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/ostrich/ostrich-black-webfont.woff2') format('woff2'),
+       url('../fonts/ostrich/ostrich-black-webfont.woff') format('woff'),
+       url('../fonts/ostrich/ostrich-black-webfont.ttf') format('truetype'),
+       url('../fonts/ostrich/ostrich-black-webfont.svg#ostrich_sansblack') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Ostrich';
+  src: url('../fonts/ostrich/ostrich-regular-webfont.eot');
+  src: url('../fonts/ostrich/ostrich-regular-webfont.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/ostrich/ostrich-regular-webfont.woff2') format('woff2'),
+       url('../fonts/ostrich/ostrich-regular-webfont.woff') format('woff'),
+       url('../fonts/ostrich/ostrich-regular-webfont.ttf') format('truetype'),
+       url('../fonts/ostrich/ostrich-regular-webfont.svg#ostrich_sansmedium') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Ostrich';
+  src: url('../fonts/ostrich/ostrich-dashed-webfont.eot');
+  src: url('../fonts/ostrich/ostrich-dashed-webfont.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/ostrich/ostrich-dashed-webfont.woff2') format('woff2'),
+       url('../fonts/ostrich/ostrich-dashed-webfont.woff') format('woff'),
+       url('../fonts/ostrich/ostrich-dashed-webfont.ttf') format('truetype'),
+       url('../fonts/ostrich/ostrich-dashed-webfont.svg#ostrich_sans_dashedmedium') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Ostrich';
+  src: url('../fonts/ostrich/ostrich-bold-webfont.eot');
+  src: url('../fonts/ostrich/ostrich-bold-webfont.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/ostrich/ostrich-bold-webfont.woff2') format('woff2'),
+       url('../fonts/ostrich/ostrich-bold-webfont.woff') format('woff'),
+       url('../fonts/ostrich/ostrich-bold-webfont.ttf') format('truetype'),
+       url('../fonts/ostrich/ostrich-bold-webfont.svg#ostrich_sansbold') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+

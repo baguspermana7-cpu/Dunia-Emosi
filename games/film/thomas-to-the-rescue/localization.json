@@ -1,0 +1,18 @@
+{
+	"language": "en",
+	"en": {
+		"title": "Thomas & Friends To the Rescue",
+		"produced_by": "Produced by",
+		"developed_by": "Developed by"
+	},
+	"es": {
+		"title": "Thomas y Sus Amigos Al Rescate",
+		"produced_by": "Producido por",
+		"developed_by": "Desarrollado por"
+	},
+	"pt": {
+		"title": "Thomas e Seus Amigos Ao Resgate",
+		"produced_by": "Produzido por",
+		"developed_by": "Desenlvolvido por"
+	}
+}

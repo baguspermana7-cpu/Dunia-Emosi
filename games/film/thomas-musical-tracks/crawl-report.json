@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-08-02",
+  "slug": "thomas-musical-tracks",
+  "displayName": "Thomas & Friends: All Engines Go — Musical Tracks",
+  "engine": "Phaser 3 + Spine multiatlas (Phaser Editor 2D asset-pack)",
+  "orientation": "landscape",
+  "designResolution": { "w": 800, "h": 450, "scaleMode": "FIT" },
+  "entry": "index.html",
+  "bundle": "main-a01099e091b0d0652740.bundle.js",
+  "cdnBase": "https://des98fz5jsos4.cloudfront.net/boomerang/dynamic/web_game/00000006/6232/dd293a83-1c30-4d8a-b584-13f36f2710fa_1657210683/",
+  "toongoConfig": { "api": 1, "width": 800, "height": 450, "portrait": false },
+  "referer": "https://toongo.io/",
+  "totals": { "files": 269, "bytes": 24469942, "pngs": 108, "audio": 90, "json": 57 },
+  "recovery": {
+    "assetPacksLoadedAtRuntime": [
+      "asset-packs/asset-pack-*.json (title/select/complete)",
+      "asset-packs/preload-asset-pack-*.json",
+      "asset-packs/track1-asset-pack(1x)-*.json (Generic/Farm)",
+      "asset-packs/track2-asset-pack(1x)-*.json (Woods)",
+      "asset-packs/track3-asset-pack(1x)-*.json (Mine)"
+    ],
+    "multiatlasResolvedTexturePngs": [
+      "assets/spine/Characters/{Carly(3 pages),Diesel,Kana,Nia,Percy,Sandy,Thomas}/*.png",
+      "assets/spine/Characters/Trailers/{farmTrailer,trailer,minecartTrailer}.png",
+      "assets/images/Generic/genericbg_atlas_{1x,2x}.png",
+      "assets/images/Woods/woods_bg_{1x,2x}.png",
+      "assets/images/Mine/mine_bg_{1x,2x}.png",
+      "assets/images/interactiveElements/{harold,generic_interactables,woods,mine_interactable}.png",
+      "assets/images/UI/atlas/UIAtlas-*.png",
+      "assets/images/title/kana_crackle/kana-*.png"
+    ],
+    "dynamicallyConstructedPaths_GOTHAM_TRAP": {
+      "note": "backgroundMusic loaded via string concat 'assets/sounds/'+key — invisible to static grep; only found by probing gameConfig track keys against the CDN",
+      "files": [
+        "assets/sounds/mine_BG.{mp3,ogg}",
+        "assets/sounds/woods_BG.{mp3,ogg}",
+        "assets/sounds/generic_BG.{mp3,ogg}"
+      ]
+    },
+    "audioSpritesFromBundle": "42 stems x (mp3+ogg): UI_click, title_loop, 7 characterSounds sets, 15 interactive sfx",
+    "fontsFromIndexCss": "Knapford-Bold + arial-bold x {otf,ttf,woff,woff2} (8 files, not in any pack)"
+  },
+  "rewrites": "none needed — all paths already relative; no absolute CDN URLs, no service worker",
+  "localFixes": [
+    "index.html @font-face: dropped ../assets/fonts fallback (resolved outside game dir -> 404)"
+  ],
+  "compression": {
+    "tool": "sharp palette quantization (pngquant-equivalent), filenames preserved",
+    "results": [
+      "assets/spine/Characters/Thomas/thomas.png 3386KB -> 782KB (-77%)",
+      "assets/images/UI/atlas/UIAtlas-1.png 535KB -> 159KB (-70%)",
+      "assets/spine/Characters/Diesel/diesel.png 733KB -> 682KB (-7%)",
+      "Nia/Percy skipped (quantized >= original)"
+    ]
+  },
+  "verify": {
+    "method": "local http.server + puppeteer headless (WebGL angle/swiftshader), non-localhost BLOCKED",
+    "canvas": "1920x768 rendering (FIT of 800x450 design)",
+    "gameplayReached": "title -> track select -> Woods track gameplay (character/trailer carousel, interactive cow/windmill)",
+    "offHostRequests": 0,
+    "realErrors": 0,
+    "only404": "favicon.ico (ignored)"
+  }
+}

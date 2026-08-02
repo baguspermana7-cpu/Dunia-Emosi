@@ -1,0 +1,4 @@
+/* Self-hosted BenchNine (Google Fonts v17, latin) for offline play */
+@font-face{font-family:'BenchNine';font-style:normal;font-weight:300;font-display:swap;src:url('BenchNine-Light.woff2') format('woff2');}
+@font-face{font-family:'BenchNine';font-style:normal;font-weight:400;font-display:swap;src:url('BenchNine-Regular.woff2') format('woff2');}
+@font-face{font-family:'BenchNine';font-style:normal;font-weight:700;font-display:swap;src:url('BenchNine-Bold.woff2') format('woff2');}

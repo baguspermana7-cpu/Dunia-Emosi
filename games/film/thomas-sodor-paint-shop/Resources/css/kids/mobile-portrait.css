@@ -1,0 +1,200 @@
+@media only screen and (orientation: portrait) and (max-width: 720px) and (max-height: 480px), only screen and (orientation: portrait) and (max-width: 480px) and (max-height: 720px) {
+/* ==========================================================================
+   Navigation
+   ========================================================================== */
+#navigation {
+  width: auto;
+  height: 95px;
+}
+#navigation:before {
+  right: -16.04%;
+}
+#navigation #nav-logo {
+  width: 113px;
+  height: 60px;
+  margin-left: 10px;
+  margin-top: 15px;
+}
+#navigation #nav-parents {
+  margin-top: 0;
+  font-size: 15px;
+  padding-top: 10px;
+  padding-left: 66px;
+  padding-right: 33px;
+  line-height: 42px;
+  height: 46px;
+  top: 15px;
+  right: auto;
+  left: 100%;
+  margin-left: -48px;
+  background: transparent url(../../img/kids/kids-nav-parents-arrow-left.png) no-repeat scroll left top;
+  background-size: auto 100%;
+}
+#navigation #nav-parents.animate {
+  -webkit-transition: margin-left .3s;
+  -moz-transition: margin-left .3s;
+  -ms-transition: margin-left .3s;
+  -o-transition: margin-left .3s;
+  transition: margin-left .3s;
+}
+#navigation #nav-parents em {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 48px;
+}
+#navigation #nav-parents em:after {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 0;
+  height: 0;
+  right: 0;
+  top: 0;
+  margin: 29.16% 14.58% 0 0;
+  padding: 54.16% 27.08% 0 0;
+  background: transparent url(../../img/kids/kids-nav-parents-toogle-arrow.png) no-repeat scroll left top;
+  background-size: 100% 100%;
+  -webkit-transition: -webkit-transform .3s;
+  -moz-transition: -moz-transform .3s;
+  -ms-transition: -ms-transform .3s;
+  -o-transition: -o-transform .3s;
+  transition: transform .3s;
+}
+#navigation #nav-parents.opened em:after {
+  -moz-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+#navigation ul {
+  width: auto;
+  padding-top: 0;
+  margin-left: -17px;
+}
+#navigation ul li a {
+  font-size: 15px;
+  line-height: 17px;
+  margin-top: 7px;
+  margin-left: 20px;
+}
+#navigation ul li a span {
+  width: 57px;
+  height: 57px;
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+#page-scroll.sticky,
+#page-scroll.sticky.up {
+  right: 7.05%;
+}
+
+/* ==========================================================================
+   Content
+   ========================================================================== */
+#content {
+  
+}
+#skrollr-body {
+  padding-left: 0;
+  padding-top: 95px;
+}
+
+/* ==========================================================================
+   Engines landing list
+   ========================================================================== */
+#engines-list #engines-list-column-width {
+  width: 50%;
+}
+
+
+/* ==========================================================================
+   Kids games and video landing
+   ========================================================================== */
+#kids-big-video-wrapper {
+  width: 90%;
+}
+.videos-and-games-thumbs {
+  width: 100%;
+  /*padding-left: 10%;*/
+  /*padding-right: 14%;*/
+}
+.videos-and-games-thumbs a.kids-game, .videos-and-games-thumbs a.kids-video {
+  width: 40% !important;
+  margin-right: 4%;
+  margin-left: 0;
+}
+}
+
+
+/* ==========================================================================
+   Drawing Tool page
+   ========================================================================== */
+#drawing-tool-logo {
+  width: 85px;
+  height: 46px;
+  left: 6px;
+  top: 14px;
+}
+#drawing-tool .button#drawing-tool-close-btn {
+  width: 52px;
+  height: 52px;
+  right: 11px;
+  top: 12px;
+}
+#drawing-tool .button#drawing-tool-done-btn {
+  width: 79px;
+  height: 79px;
+  right: 11px;
+  bottom: 24px;
+}
+
+#drawing-tool #palette {
+  width: 792px;
+  left: 100px;
+  top: 22px;
+  -webkit-transform: scale(0.36);
+  -moz-transform: scale(0.36);
+  -ms-transform: scale(0.36);
+  -o-transform: scale(0.36);
+  transform: scale(0.36);
+}
+
+#drawing-tool #tools-wrapper {
+  left: 32px;
+  right: auto;
+  top: 507px;
+  -webkit-transform: scale(0.55);
+  -moz-transform: scale(0.55);
+  -ms-transform: scale(0.55);
+  -o-transform: scale(0.55);
+  transform: scale(0.55);
+}
+
+#canvas-wrapper {
+  left: 15px;
+  top: 155px;
+  -webkit-transform: scale(0.5625);
+  -moz-transform: scale(0.5625);
+  -ms-transform: scale(0.5625);
+  -o-transform: scale(0.5625);
+  transform: scale(0.5625);
+}
+/* ==========================================================================
+   Drawing Tool landing page
+   ========================================================================== */
+ #kids-drawingtool-landing-wrapper #art-shop-banner {    
+  height: 30px;
+  margin-top: 2%;  
+  padding-left: 5%;
+}
+#kids-drawingtool-landing-wrapper #art-shop-banner p {
+  font-size: 25px;
+  line-height: 30px;
+  padding-right: 48%;
+}

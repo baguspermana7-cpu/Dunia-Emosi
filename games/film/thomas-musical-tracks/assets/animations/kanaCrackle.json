@@ -1,0 +1,113 @@
+{
+    "anims": [
+        {
+            "key": "kanaCrackle",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "kana_1",
+                    "frame": "kana_crackle_00.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "kana_1",
+                    "frame": "kana_crackle_00.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "kana_1",
+                    "frame": "kana_crackle_00.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "kana_1",
+                    "frame": "kana_crackle_00.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "kana_1",
+                    "frame": "kana_crackle_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "kana_1",
+                    "frame": "kana_crackle_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "kana_1",
+                    "frame": "kana_crackle_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "kana_1",
+                    "frame": "kana_crackle_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "kana_1",
+                    "frame": "kana_crackle_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "kana_1",
+                    "frame": "kana_crackle_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "kana_1",
+                    "frame": "kana_crackle_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "kana_1",
+                    "frame": "kana_crackle_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "kana_1",
+                    "frame": "kana_crackle_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "kana_1",
+                    "frame": "kana_crackle_10.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "kana_1",
+                    "frame": "kana_crackle_11.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "kana_1",
+                    "frame": "kana_crackle_00.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 20,
+            "skipMissedFrames": true
+        }
+    ],
+    "globalTimeScale": 1,
+    "meta": {
+        "app": "Phaser Editor 2D v3",
+        "contentType": "Phaser v3 Animations"
+    }
+}

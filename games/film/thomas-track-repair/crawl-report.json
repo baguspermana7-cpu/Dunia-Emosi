@@ -1,0 +1,348 @@
+{
+  "generatedAt": "2026-08-02T11:05:35.757Z",
+  "game": "Thomas & Friends — Track Repair",
+  "slug": "thomas-track-repair",
+  "engine": "CreateJS / EaselJS (Adobe Animate + SpringRoll export)",
+  "orientation": "landscape",
+  "design": {
+    "width": 960,
+    "height": 550
+  },
+  "entry": "https://games.toon-cdn.com/thomas-and-friends/track-repair/index.html",
+  "root": "https://games.toon-cdn.com/thomas-and-friends/track-repair/",
+  "referer": "https://toongo.io/",
+  "totals": {
+    "files": 61,
+    "bytes": 4549961,
+    "externalDeps": 0,
+    "serviceWorker": false
+  },
+  "verify": {
+    "offline": true,
+    "canvas": {
+      "w": 960,
+      "h": 551
+    },
+    "externalRequestsBlocked": 0,
+    "critical404": 0,
+    "note": "only favicon.ico 404 (ignored)"
+  },
+  "missingUpstream": [
+    {
+      "path": "assets/audio/sfx/track-put-back.ogg",
+      "note": "referenced in config.json sfx list but absent on CDN in all formats (404) — ignorable missing sfx"
+    }
+  ],
+  "notes": [
+    "CDN hosts .ogg audio only (all .mp3 variants 404); CreateJS requests .ogg directly.",
+    "No service worker, no googleapis/jQuery, no @font-face — fully self-contained with relative paths as shipped by origin.",
+    "4 sprite sheets >500KB palette-quantized via sharp/libimagequant (pngquant-equivalent), filenames preserved."
+  ],
+  "fetched": [
+    {
+      "file": "assets/audio/sfx/track-grab.ogg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/audio/sfx/track-grab.ogg",
+      "bytes": 11547
+    },
+    {
+      "file": "assets/audio/sfx/track-set.ogg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/audio/sfx/track-set.ogg",
+      "bytes": 21283
+    },
+    {
+      "file": "assets/audio/vo/choose.ogg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/audio/vo/choose.ogg",
+      "bytes": 27807
+    },
+    {
+      "file": "assets/audio/vo/intro.ogg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/audio/vo/intro.ogg",
+      "bytes": 90767
+    },
+    {
+      "file": "assets/audio/vo/james.ogg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/audio/vo/james.ogg",
+      "bytes": 10539
+    },
+    {
+      "file": "assets/audio/vo/percy.ogg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/audio/vo/percy.ogg",
+      "bytes": 12591
+    },
+    {
+      "file": "assets/audio/vo/play-again.ogg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/audio/vo/play-again.ogg",
+      "bytes": 14128
+    },
+    {
+      "file": "assets/audio/vo/play.ogg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/audio/vo/play.ogg",
+      "bytes": 13911
+    },
+    {
+      "file": "assets/audio/vo/thomas.ogg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/audio/vo/thomas.ogg",
+      "bytes": 10784
+    },
+    {
+      "file": "assets/audio/vo/track-pieces.ogg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/audio/vo/track-pieces.ogg",
+      "bytes": 37010
+    },
+    {
+      "file": "assets/audio/vo/track-repair.ogg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/audio/vo/track-repair.ogg",
+      "bytes": 18990
+    },
+    {
+      "file": "assets/audio/vo/useful.ogg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/audio/vo/useful.ogg",
+      "bytes": 24637
+    },
+    {
+      "file": "assets/audio/vo/you-did-it.ogg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/audio/vo/you-did-it.ogg",
+      "bytes": 147314
+    },
+    {
+      "file": "assets/config/config.json",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/config/config.json",
+      "bytes": 321
+    },
+    {
+      "file": "assets/config/config1.json",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/config/config1.json",
+      "bytes": 136
+    },
+    {
+      "file": "assets/css/libraries.css",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/css/libraries.css",
+      "bytes": 2488
+    },
+    {
+      "file": "assets/css/main.css",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/css/main.css",
+      "bytes": 259
+    },
+    {
+      "file": "assets/images/end/bg/1.jpg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/end/bg/1.jpg",
+      "bytes": 61784
+    },
+    {
+      "file": "assets/images/end/bg/2.jpg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/end/bg/2.jpg",
+      "bytes": 100197
+    },
+    {
+      "file": "assets/images/end/bg/3.jpg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/end/bg/3.jpg",
+      "bytes": 104414
+    },
+    {
+      "file": "assets/images/end/bg/4.jpg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/end/bg/4.jpg",
+      "bytes": 85857
+    },
+    {
+      "file": "assets/images/end/bg/5.jpg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/end/bg/5.jpg",
+      "bytes": 94666
+    },
+    {
+      "file": "assets/images/end/bg/6.jpg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/end/bg/6.jpg",
+      "bytes": 109502
+    },
+    {
+      "file": "assets/images/end/bg/7.jpg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/end/bg/7.jpg",
+      "bytes": 90416
+    },
+    {
+      "file": "assets/images/end/bg/8.jpg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/end/bg/8.jpg",
+      "bytes": 95849
+    },
+    {
+      "file": "assets/images/end/sprites.json",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/end/sprites.json",
+      "bytes": 2135
+    },
+    {
+      "file": "assets/images/end/sprites.png",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/end/sprites.png",
+      "bytes": 383976
+    },
+    {
+      "file": "assets/images/game/bg/1.jpg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/game/bg/1.jpg",
+      "bytes": 183272
+    },
+    {
+      "file": "assets/images/game/bg/10.jpg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/game/bg/10.jpg",
+      "bytes": 86432
+    },
+    {
+      "file": "assets/images/game/bg/2.jpg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/game/bg/2.jpg",
+      "bytes": 86978
+    },
+    {
+      "file": "assets/images/game/bg/3.jpg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/game/bg/3.jpg",
+      "bytes": 93496
+    },
+    {
+      "file": "assets/images/game/bg/4.jpg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/game/bg/4.jpg",
+      "bytes": 85236
+    },
+    {
+      "file": "assets/images/game/bg/5.jpg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/game/bg/5.jpg",
+      "bytes": 88977
+    },
+    {
+      "file": "assets/images/game/bg/6.jpg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/game/bg/6.jpg",
+      "bytes": 89944
+    },
+    {
+      "file": "assets/images/game/bg/7.jpg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/game/bg/7.jpg",
+      "bytes": 96008
+    },
+    {
+      "file": "assets/images/game/bg/8.jpg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/game/bg/8.jpg",
+      "bytes": 86152
+    },
+    {
+      "file": "assets/images/game/bg/9.jpg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/game/bg/9.jpg",
+      "bytes": 90226
+    },
+    {
+      "file": "assets/images/game/sprites.json",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/game/sprites.json",
+      "bytes": 2447
+    },
+    {
+      "file": "assets/images/game/sprites.png",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/game/sprites.png",
+      "bytes": 219401
+    },
+    {
+      "file": "assets/images/loader/bg.jpg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/loader/bg.jpg",
+      "bytes": 256515
+    },
+    {
+      "file": "assets/images/loader/smoke.js",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/loader/smoke.js",
+      "bytes": 8508
+    },
+    {
+      "file": "assets/images/loader/sprites.json",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/loader/sprites.json",
+      "bytes": 898
+    },
+    {
+      "file": "assets/images/loader/sprites.png",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/loader/sprites.png",
+      "bytes": 132073
+    },
+    {
+      "file": "assets/images/localized/choose-an-engine.png",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/localized/choose-an-engine.png",
+      "bytes": 2840
+    },
+    {
+      "file": "assets/images/localized/james.png",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/localized/james.png",
+      "bytes": 15877
+    },
+    {
+      "file": "assets/images/localized/loading.png",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/localized/loading.png",
+      "bytes": 2575
+    },
+    {
+      "file": "assets/images/localized/percy.png",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/localized/percy.png",
+      "bytes": 15814
+    },
+    {
+      "file": "assets/images/localized/play-again.png",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/localized/play-again.png",
+      "bytes": 1905
+    },
+    {
+      "file": "assets/images/localized/play.png",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/localized/play.png",
+      "bytes": 2097
+    },
+    {
+      "file": "assets/images/localized/repair.png",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/localized/repair.png",
+      "bytes": 12402
+    },
+    {
+      "file": "assets/images/localized/skip.png",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/localized/skip.png",
+      "bytes": 1480
+    },
+    {
+      "file": "assets/images/localized/thomas.png",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/localized/thomas.png",
+      "bytes": 16188
+    },
+    {
+      "file": "assets/images/localized/track.png",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/localized/track.png",
+      "bytes": 4561
+    },
+    {
+      "file": "assets/images/misc/bg-intro.jpg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/misc/bg-intro.jpg",
+      "bytes": 292202
+    },
+    {
+      "file": "assets/images/misc/bg-selection.jpg",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/misc/bg-selection.jpg",
+      "bytes": 191949
+    },
+    {
+      "file": "assets/images/misc/sprites.json",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/misc/sprites.json",
+      "bytes": 3094
+    },
+    {
+      "file": "assets/images/misc/sprites.png",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/misc/sprites.png",
+      "bytes": 387506
+    },
+    {
+      "file": "assets/images/misc/tunnel.png",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/images/misc/tunnel.png",
+      "bytes": 22490
+    },
+    {
+      "file": "assets/js/libraries.js",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/js/libraries.js",
+      "bytes": 327029
+    },
+    {
+      "file": "assets/js/main.js",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/assets/js/main.js",
+      "bytes": 69168
+    },
+    {
+      "file": "index.html",
+      "url": "https://games.toon-cdn.com/thomas-and-friends/track-repair/index.html",
+      "bytes": 913
+    }
+  ]
+}

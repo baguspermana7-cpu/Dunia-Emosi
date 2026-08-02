@@ -1,0 +1,112 @@
+{
+  "generatedAt": "2026-08-02T11:08:56.010Z",
+  "slug": "thomas-look-out",
+  "displayName": "Thomas & Friends — Look Out! Look Out! They're All About!",
+  "engine": "cocos2d-html5 v2.2.2 (canvas2d, renderMode:1) + soundManager2 + jQuery 1.11.1 (bundled)",
+  "orientation": "landscape",
+  "designResolution": {
+    "width": 900,
+    "height": 450
+  },
+  "entry": "index.html",
+  "root": "https://games.toon-cdn.com/thomas-and-friends/look-out-theyre-all-about/",
+  "configSource": "https://toongo.io/e/thomas-and-friends-look-out-look-out-theyre-all-about/index.html",
+  "neutered": {
+    "soundManager2": "preferFlash:!0 -> preferFlash:!1 (2 occurrences in src.min.js) — force HTML5 audio, no .swf needed",
+    "analytics": "Tealium $.getScript('//tags.tiqcdn.com/...utag.js') -> (void 0) — no external call offline",
+    "serviceWorker": "none present"
+  },
+  "audio": "base64-embedded (res/sounds/en/base64/mp3.js decoded by cocos WebAudioEngine); NO per-file mp3 fetched (mp3 dir 404s on origin too)",
+  "notes": [
+    "index.html uses relative paths only — no rewrite needed",
+    "video <source> lists mp4+ogv; Chrome/webview picks mp4 first so ogv dropped (~17MB saved)",
+    "song_4mbs.mp4 404s on origin (unused); res/extensions colourPicker plist/png 404 on origin (unused)",
+    "spritesheet.png pngquant 2.95MB -> 792KB (2048x2048 preserved)"
+  ],
+  "totals": {
+    "files": 20,
+    "bytes": 18661015
+  },
+  "fetched": [
+    {
+      "file": "index.html",
+      "bytes": 4162
+    },
+    {
+      "file": "init.js",
+      "bytes": 8596
+    },
+    {
+      "file": "js/frameworks/soundManager/script/soundmanager2-nodebug-jsmin.js",
+      "bytes": 35116
+    },
+    {
+      "file": "main.js",
+      "bytes": 2705
+    },
+    {
+      "file": "res/images/backgrounds/bg_endscreen_en.jpg",
+      "bytes": 138253
+    },
+    {
+      "file": "res/images/backgrounds/bg_level_animals.jpg",
+      "bytes": 63223
+    },
+    {
+      "file": "res/images/backgrounds/bg_level_footprints.jpg",
+      "bytes": 77799
+    },
+    {
+      "file": "res/images/backgrounds/bg_level_scaryfaces.jpg",
+      "bytes": 84610
+    },
+    {
+      "file": "res/images/backgrounds/bg_titlecard_en.jpg",
+      "bytes": 91900
+    },
+    {
+      "file": "res/images/btn_skip.png",
+      "bytes": 18290
+    },
+    {
+      "file": "res/images/loader.png",
+      "bytes": 34086
+    },
+    {
+      "file": "res/images/smoke_particle.plist",
+      "bytes": 12532
+    },
+    {
+      "file": "res/images/spritesheet.plist",
+      "bytes": 34268
+    },
+    {
+      "file": "res/images/spritesheet.png",
+      "bytes": 791987
+    },
+    {
+      "file": "res/sounds/en/base64/mp3.js",
+      "bytes": 1496094
+    },
+    {
+      "file": "res/videos/en/video_rounds_part1.mp4",
+      "bytes": 6222112
+    },
+    {
+      "file": "res/videos/en/video_rounds_part2.mp4",
+      "bytes": 5625861
+    },
+    {
+      "file": "res/videos/en/video_rounds_part3.mp4",
+      "bytes": 2019209
+    },
+    {
+      "file": "res/videos/en/video_rounds_part4.mp4",
+      "bytes": 507504
+    },
+    {
+      "file": "src.min.js",
+      "bytes": 1392708
+    }
+  ]
+}

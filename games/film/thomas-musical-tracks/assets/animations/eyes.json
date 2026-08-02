@@ -1,0 +1,217 @@
+{
+    "anims": [
+        {
+            "key": "eye2-tap",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "mine_interactable",
+                    "frame": "2eyes_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "2eyes_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "2eyes_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "2eyes_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "2eyes_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "2eyes_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "2eyes_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "2eyes_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "2eyes_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "2eyes_10.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "2eyes_11.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "2eyes_12.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "2eyes_13.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "2eyes_14.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "2eyes_15.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "2eyes_16.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 24,
+            "skipMissedFrames": true
+        },
+        {
+            "key": "eye3-tap",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "mine_interactable",
+                    "frame": "3eyes_01.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "3eyes_02.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "3eyes_03.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "3eyes_04.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "3eyes_05.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "3eyes_06.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "3eyes_07.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "3eyes_08.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "3eyes_09.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "3eyes_10.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "3eyes_11.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "3eyes_12.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "3eyes_13.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "3eyes_14.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "3eyes_15.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "mine_interactable",
+                    "frame": "3eyes_16.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 24,
+            "skipMissedFrames": true
+        }
+    ],
+    "globalTimeScale": 1,
+    "meta": {
+        "app": "Phaser Editor 2D v3",
+        "contentType": "Phaser v3 Animations"
+    }
+}

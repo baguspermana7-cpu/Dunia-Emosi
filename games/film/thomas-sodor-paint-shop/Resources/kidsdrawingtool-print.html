@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Thomas &amp; Friends</title>
+  <meta name="description" content="">
+	<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" type="text/css" href="css/normalize.css" />
+  <link rel="stylesheet" type="text/css" href="css/fonts.css" />
+
+
+
+  <style type="text/css">
+    body {
+      background: #fff;
+      text-align: center;
+    }
+    #print-image {
+      display: block;
+      width: 846px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <img id="print-image" alt="" />
+  <script src="js/vendor/jquery-2.1.1.min.js"></script>
+  <script>window.jQuery || document.write('<script src="js/vendor/jquery-2.1.1.min.js"><\/script>')</script>
+
+  <script type="text/javascript">
+    $('#print-image').load(function() {
+      window.focus();
+      window.print();
+    });
+
+    function printImage(image) {
+      $('#print-image').attr('src', image);
+    }
+  </script>
+</body>
+</html>
