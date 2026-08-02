@@ -42,36 +42,6 @@
   #splash .tx{position:relative;color:#fff;font-weight:800;font-size:17px;text-shadow:0 2px 7px rgba(0,0,0,.65)}
   #splash .sub{position:relative;margin-top:-8px;color:#d9cfff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:12px;opacity:.85;text-shadow:0 1px 4px rgba(0,0,0,.6)}
   @keyframes spin{to{transform:rotate(360deg)}}
-  /* ---- Custom-chaser picker (gotham-getaway only): pick hero -> color -> race.
-     Above the splash (z 7), below the Home button. Letterbox-safe, zero-emoji, claymorphism. */
-  #gg-picker{position:fixed;inset:0;z-index:7;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;
-    background:radial-gradient(130% 100% at 50% -10%,#1b2547,#0a0e1c 72%);padding:calc(env(safe-area-inset-top,0px) + 58px) 16px 22px;overflow:auto}
-  #gg-picker.show{display:flex}
-  .gg-step{display:none;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:940px}
-  .gg-step.on{display:flex}
-  .gg-title{color:#ffd968;font-size:clamp(20px,3.6vw,30px);font-weight:800;text-shadow:0 3px 0 rgba(0,0,0,.45);text-align:center;letter-spacing:.4px}
-  .gg-sub{color:#bcd0ff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:13px;margin-top:-10px;text-align:center}
-  .gg-heroes{display:flex;flex-wrap:wrap;gap:13px;justify-content:center}
-  .gg-hero{width:150px;height:132px;border:0;border-radius:22px;cursor:pointer;position:relative;
-    background:linear-gradient(180deg,#28355f,#161d34);box-shadow:0 6px 0 #0b1120,0 10px 20px rgba(0,0,0,.5),inset 0 2px 4px rgba(255,255,255,.14);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:transform .1s ease}
-  .gg-hero:active{transform:translateY(3px)}
-  .gg-hero img{width:112px;height:76px;object-fit:contain;filter:drop-shadow(0 3px 4px rgba(0,0,0,.55))}
-  .gg-hero span{color:#eaf1ff;font-weight:800;font-size:14px;font-family:'Fredoka One',sans-serif}
-  .gg-hero.sel{outline:4px solid #ffd968;box-shadow:0 6px 0 #b9922a,0 0 26px rgba(255,217,104,.55)}
-  .gg-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:4px}
-  .gg-btn{min-height:52px;padding:12px 30px;border:0;border-radius:18px;cursor:pointer;font-weight:800;font-size:17px;color:#3a2b12;
-    font-family:'Fredoka One',sans-serif;background:linear-gradient(180deg,#ffe08a,#ffc531);box-shadow:0 5px 0 #d9a92e,0 9px 18px rgba(0,0,0,.4);transition:transform .08s ease}
-  .gg-btn:active{transform:translateY(3px);box-shadow:0 2px 0 #d9a92e}
-  .gg-btn[disabled]{opacity:.4;pointer-events:none}
-  .gg-btn.ghost{background:linear-gradient(180deg,#3a466e,#28324f);color:#dfe8ff;box-shadow:0 5px 0 #161d34}
-  .gg-preview{position:relative;width:230px;height:156px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 7px 11px rgba(0,0,0,.6))}
-  .gg-preview img{max-width:100%;max-height:100%;object-fit:contain}
-  .gg-preview .tint{position:absolute;inset:0;mix-blend-mode:multiply;pointer-events:none;
-    -webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center}
-  .gg-swatches{display:flex;flex-wrap:wrap;gap:11px;justify-content:center;max-width:540px}
-  .gg-sw{width:46px;height:46px;border-radius:50%;border:3px solid rgba(255,255,255,.7);cursor:pointer;box-shadow:0 4px 8px rgba(0,0,0,.5);transition:transform .1s ease}
-  .gg-sw.sel{outline:4px solid #ffd968;transform:scale(1.12)}
 </style>
 </head>
 <body>
@@ -84,28 +54,6 @@
     <div class="sp"></div>
     <div class="tx">Memuat game…</div>
     <div class="sub">Sebentar ya, lagi disiapin</div>
-  </div>
-  <!-- Custom-chaser picker (only shown for batwheels-gotham-getaway; built by JS) -->
-  <div id="gg-picker">
-    <div class="gg-step on" id="gg-s1">
-      <div class="gg-title">Pilih Pengejarmu</div>
-      <div class="gg-sub">Siapa yang akan mengejar penjahat?</div>
-      <div class="gg-heroes" id="gg-heroes"></div>
-      <div class="gg-row">
-        <button class="gg-btn" id="gg-next" disabled>Lanjut</button>
-        <button class="gg-btn ghost" id="gg-skip">Lewati</button>
-      </div>
-    </div>
-    <div class="gg-step" id="gg-s2">
-      <div class="gg-title">Warnai Mobilmu</div>
-      <div class="gg-sub">Pilih warna untuk pengejarmu</div>
-      <div class="gg-preview"><img id="gg-pimg" alt="pengejar"><div class="tint" id="gg-tint"></div></div>
-      <div class="gg-swatches" id="gg-swatches"></div>
-      <div class="gg-row">
-        <button class="gg-btn" id="gg-start">Mulai Mengejar!</button>
-        <button class="gg-btn ghost" id="gg-back">Kembali</button>
-      </div>
-    </div>
   </div>
   <div id="stage"><iframe id="frame" title="Film Anak game" allow="autoplay; fullscreen; gamepad; accelerometer; gyroscope" allowfullscreen scrolling="no"></iframe></div>
   <div id="err">
@@ -166,51 +114,14 @@
     }, 400);
   }
 
-  // ---- Custom-chaser picker (gotham-getaway only): pick hero -> color -> loadGame(?chaser)
-  var GG_HEROES = [['bam','Bam'],['bibi','Bibi'],['redbird','Redbird'],['batwing','Batwing'],['buff','Buff']];
-  var GG_COLORS = [['Asli','ffffff'],['Merah','ff3b30'],['Oranye','ff9500'],['Kuning','ffd60a'],['Hijau','34c759'],['Toska','30d5c8'],['Biru','0a84ff'],['Ungu','af52de'],['Pink','ff2d92']];
-  var ggHero = null, ggColor = 'ffffff';
-  function ggImg(id){ return 'film/assets/gg-heroes/' + id + '.webp'; }
-  function ggApplyTint(){ var t = document.getElementById('gg-tint'); t.style.background = (ggColor === 'ffffff') ? 'transparent' : ('#' + ggColor); }
-  function showChaserPicker(){
-    var pk = document.getElementById('gg-picker'); pk.classList.add('show');
-    var hc = document.getElementById('gg-heroes');
-    GG_HEROES.forEach(function(h){
-      var btn = document.createElement('button'); btn.className = 'gg-hero';
-      btn.innerHTML = '<img src="' + ggImg(h[0]) + '" alt=""><span>' + h[1] + '</span>';
-      btn.onclick = function(){ ggHero = h[0];
-        [].forEach.call(hc.children, function(c){ c.classList.remove('sel'); }); btn.classList.add('sel');
-        document.getElementById('gg-next').disabled = false; };
-      hc.appendChild(btn);
-    });
-    var sw = document.getElementById('gg-swatches');
-    GG_COLORS.forEach(function(c, i){
-      var d = document.createElement('div'); d.className = 'gg-sw' + (i === 0 ? ' sel' : ''); d.title = c[0];
-      d.style.background = (c[1] === 'ffffff') ? 'linear-gradient(135deg,#fff,#dfe6f5)' : ('#' + c[1]);
-      d.onclick = function(){ ggColor = c[1];
-        [].forEach.call(sw.children, function(x){ x.classList.remove('sel'); }); d.classList.add('sel'); ggApplyTint(); };
-      sw.appendChild(d);
-    });
-    document.getElementById('gg-next').onclick = function(){
-      document.getElementById('gg-s1').classList.remove('on'); document.getElementById('gg-s2').classList.add('on');
-      var pi = document.getElementById('gg-pimg'); pi.src = ggImg(ggHero);
-      var t = document.getElementById('gg-tint'); t.style.webkitMaskImage = "url('" + ggImg(ggHero) + "')"; t.style.maskImage = "url('" + ggImg(ggHero) + "')";
-      ggApplyTint();
-    };
-    document.getElementById('gg-back').onclick = function(){
-      document.getElementById('gg-s2').classList.remove('on'); document.getElementById('gg-s1').classList.add('on'); };
-    document.getElementById('gg-skip').onclick = function(){ document.getElementById('gg-picker').classList.remove('show'); loadGame(''); };
-    document.getElementById('gg-start').onclick = function(){
-      document.getElementById('gg-picker').classList.remove('show');
-      var q = (ggColor && ggColor !== 'ffffff') ? ('?chaser=' + ggHero + ',' + ggColor) : ('?chaser=' + ggHero);
-      loadGame(q);
-    };
-  }
-
   if (GAMES[slug]) {
-    // NOTE: custom-chaser picker temporarily disabled — the in-game auto-advance/override caused
-    // start-screen oscillation + a mid-race hang on device. gotham runs vanilla (race works) until
-    // the feature is rebuilt + device-verified. showChaserPicker() is kept for that rebuild.
+    // NOTE: the custom-chaser picker that used to sit here is gone for good. Driving gotham's
+    // menus from outside auto-tapped a button that was still off-screen mid-transition, which
+    // restarted the transition, left the Title scene running forever (the "screen bolak balik"),
+    // and then crashed WebGL when the next scene unloaded textures Title was still drawing.
+    // It is also unnecessary: gotham's own level select IS a hero picker -- hero and level are
+    // 1:1 (bam/bibi/redbird/batwing/buff), so the child picks their chaser and its city there.
+    // Every game in this wrapper launches vanilla.
     loadGame('');
   } else {
     document.getElementById('frame').style.display = 'none';
