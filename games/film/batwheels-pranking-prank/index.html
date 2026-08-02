@@ -35,7 +35,12 @@ if (location.protocol.substr(0, 4) === "file")
 	<script src="scripts/supportcheck.js"></script>
 	<script src="scripts/offlineclient.js" type="module"></script>
 	<script src="scripts/main.js" type="module"></script>
-	<script src="scripts/register-sw.js" type="module"></script>
+	<!-- Construct 3's own service worker registration REMOVED. Its offline.json ships
+	     0 bytes, so the SW's update check threw on JSON.parse and it never created a
+	     cache -- yet it still activated and took control of this iframe from the second
+	     visit on, and a fetch() issued inside a service worker does not pass through any
+	     other service worker. It was therefore bypassing the Dunia-Emosi PWA cache that
+	     already holds every file this game needs. The parent PWA keeps control instead. -->
 
 </body>
 </html>

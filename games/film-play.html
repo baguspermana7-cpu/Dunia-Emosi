@@ -78,7 +78,10 @@
   var DIM = {
     'batwheels-breakdown':[1920,768], 'batwheels-gotham-getaway':[1920,768], 'batwheels-playroom':[1920,768],
     'batwheels-jigsaw':[1440,900], 'batwheels-match-up':[1440,900],
-    'batwheels-toy-trouble':[1280,800], 'thomas-rail-muddle':[1280,800],
+    // toy-trouble pins its render HEIGHT to exactly 768 and derives width from the frame
+    // aspect, so [1280,800] produced a 1228x768 buffer upscaled to 1280x800 -- permanently
+    // soft. 1366x768 is measured pixel-exact 1:1 (and 16:9, so no pillarbox waste).
+    'batwheels-toy-trouble':[1366,768], 'thomas-rail-muddle':[1280,800],
     'batwheels-by-you':[1280,720], 'batwheels-pranking-prank':[1280,720],
     // new Thomas games (design resolutions measured/verified per crawl)
     'thomas-musical-tracks':[1920,768], 'thomas-to-the-rescue':[800,450], 'thomas-track-repair':[960,550],
