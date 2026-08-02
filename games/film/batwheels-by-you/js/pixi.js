@@ -38359,9 +38359,14 @@ var PIXI = (function (exports) {
 			//    1. Let PIXI get the resolution from 'meta.scale' (PIXI do this by default if no @2x suffix)
 			//    2. We get the resolution from Texturepacker meta.image (filename string such as 'foxpic_2x.png')
 			// Below we use option 2 because it's better.
-			var imagename = this.data.meta.image.slice(0,-5); // remove filename entension & the last 'x'
-			var scale = imagename[imagename.length -1]; // get the last character (number) from filename
-			var resolution = scale !== undefined ? parseFloat(scale) : 1; // fix gue
+			// fix gue - parse the '_2x' suffix out of meta.image WITHOUT assuming how long the
+			// extension is. The original did meta.image.slice(0,-5), which only works for a
+			// 4-char extension ('.png'/'.jpg'); on '.webp' it ate one char too few, left the
+			// 'x', and produced resolution = NaN -- which silently gave EVERY frame in that
+			// atlas a NaN size, so the sprites loaded fine but drew nothing.
+			var imagematch = /_(\d+(?:\.\d+)?)x\.[a-z0-9]+$/i.exec(this.data.meta.image || '');
+			var resolution = imagematch ? parseFloat(imagematch[1]) : parseFloat(this.data.meta.scale);
+			if (!resolution || !isFinite(resolution)) resolution = 1; // never let NaN reach setResolution
 			if (typeof resolutionFilename === "number") resolution = resolutionFilename; // fix gue (if creating spritesheet from internal json)
 
 			/* fix gue - disable getting resolution from URL because of problem with CN Arcade iOS

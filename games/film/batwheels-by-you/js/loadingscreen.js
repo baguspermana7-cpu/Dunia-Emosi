@@ -116,9 +116,9 @@ loadingscreen.prototype.loadJSfiles = function() {
     let t = this;
     let arr = [];
     // add path to t.JSassets
-    for (let i = 0; i < t.JSassets.length; i++) t.JSassets[i] = 'jz/'+t.JSassets[i]+'?'+Date.now();
+    for (let i = 0; i < t.JSassets.length; i++) t.JSassets[i] = 'jz/'+t.JSassets[i];
     // add path to t.JSscripts
-    for (let i = 0; i < t.JSscripts.length; i++) t.JSscripts[i] = 'js/'+t.JSscripts[i]+'.js'+'?'+Date.now();
+    for (let i = 0; i < t.JSscripts.length; i++) t.JSscripts[i] = 'js/'+t.JSscripts[i]+'.js';
     // combine with JSassets & JSscripts arrays
     let allJS = arr.concat(t.JSassets,t.JSscripts);
     fox.loadJS(allJS,(e)=> { t.ceksetup() });

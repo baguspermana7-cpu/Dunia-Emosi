@@ -20,10 +20,11 @@ titlescreen.prototype.awaken = function() {
     t.buttonshop = fox.attachbutton('button_settings',-140,0,t.buttoncontainer,()=> fox.spawn('popsound',0,84,t.topcontainer));
     t.buttonplay = fox.attachbutton('button_play',0,0,t.buttoncontainer,()=> t.showselection());
     t.buttonsound = fox.attachbutton('button_gallery',140,0,t.buttoncontainer,()=> t.gallery());
-    // BALAPAN (race) entry — programmer-art rounded button (P2). Sits just above
-    // the play row (which hugs the bottom edge). Starts the race flow:
+    // BALAPAN (race) entry — programmer-art rounded button (P2). Placed BELOW the
+    // play row; resize() does the real positioning (the logo reaches down to the
+    // row, so anything above it lands on top of the artwork). Starts the race flow:
     // pick vehicle -> paint (skipclean) -> racepick -> race.
-    t.buttonrace = t.makeracebutton('BALAPAN!',0,-104,t.buttoncontainer,()=> t.beginrace());
+    t.buttonrace = t.makeracebutton('BALAPAN!',0,104,t.buttoncontainer,()=> t.beginrace());
     // make vehicle selection
     let spacing = 150;
     let sx = -296;
@@ -126,5 +127,11 @@ titlescreen.prototype.resize = function() {
     t.x = g.hscreenwid;
     t.y = g.hscreenhei;
     t.buttoncontainer.y = Math.min(360,(g.hscreenhei-1.5*g.buttonmargin)/g.ska);
+    // Keep BALAPAN under the play row and inside the bottom edge. The row sits at a
+    // scale-dependent y, so a fixed offset can push the button off-screen.
+    if (t.buttonrace) {
+        let bottomedge = g.hscreenhei/g.ska;
+        t.buttonrace.y = Math.min(t.buttoncontainer.y+104, bottomedge-46) - t.buttoncontainer.y;
+    }
     fox.trace('titlescreen resized');
 }

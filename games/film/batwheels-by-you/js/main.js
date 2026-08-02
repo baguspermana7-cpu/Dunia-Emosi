@@ -91,7 +91,7 @@ function init () {
     // PIXI loader
     g.loader = new PIXI.Loader();
     // force PIXI loader to ignore cache?
-    g.loader.defaultQueryString = ''+Date.now();
+    g.loader.defaultQueryString = ''; // offline build: no cache-buster (see index.html)
 
     // touch events - put all code in common.js
     g.app.renderer.plugins.interaction.on( 'pointerdown', (event) => { common.onpointerdown(event.data.global) } );

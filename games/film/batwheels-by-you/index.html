@@ -133,15 +133,19 @@
 		}
 	</script>
 
+	<!-- The upstream CDN build appended '?'+Date.now() to every one of these. Offline that is
+	     actively harmful: each load asks for a URL the service worker has never cached, so the
+	     game cannot start without a network, and every launch writes ~14 MB of fresh cache keys.
+	     Versioning is handled by sw.js CACHE_VERSION instead. -->
 	<script>document.write(
-			'<script type="text/javascript" src="js/pixi.js?'+Date.now()+'"\><\/script>' +
-			'<script type="text/javascript" src="js/pixi-heaven.js?'+Date.now()+'"\><\/script>' +
-			'<script type="text/javascript" src="js/libs.js?'+Date.now()+'"\><\/script>' +
-			'<script type="text/javascript" src="js/globalvar.js?'+Date.now()+'"\><\/script>' +
-			'<script type="text/javascript" src="js/fox.js?'+Date.now()+'"\><\/script>' +
-			'<script type="text/javascript" src="js/foxmovieclip.js?'+Date.now()+'"\><\/script>' +
-			'<script type="text/javascript" src="js/common.js?'+Date.now()+'"\><\/script>' +
-			'<script type="text/javascript" src="js/loadingscreen.js?'+Date.now()+'"\><\/script>'
+			'<script type="text/javascript" src="js/pixi.js"\><\/script>' +
+			'<script type="text/javascript" src="js/pixi-heaven.js"\><\/script>' +
+			'<script type="text/javascript" src="js/libs.js"\><\/script>' +
+			'<script type="text/javascript" src="js/globalvar.js"\><\/script>' +
+			'<script type="text/javascript" src="js/fox.js"\><\/script>' +
+			'<script type="text/javascript" src="js/foxmovieclip.js"\><\/script>' +
+			'<script type="text/javascript" src="js/common.js"\><\/script>' +
+			'<script type="text/javascript" src="js/loadingscreen.js"\><\/script>'
 	);</script>
 
 	<style>
