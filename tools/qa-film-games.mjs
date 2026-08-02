@@ -28,7 +28,7 @@ for (const slug of slugs){
     // load the game DIRECTLY (not through the film-play iframe wrapper): nesting a PixiJS/WebGL
     // game in an iframe under headless swiftshader breaks its GL context — a headless artifact,
     // not a real fault. The wrapper is a trivial full-bleed iframe, smoke-checked separately.
-    await pg.goto(`http://localhost:${port}/games/film/${slug}/index.html`,{waitUntil:'domcontentloaded',timeout:30000})
+    await pg.goto(`http://localhost:${port}/games/film/${slug}/index.html`,{waitUntil:'domcontentloaded',timeout:60000})
     await sleep(12000)  // base boot
     // poll canvas size over the next ~12s and keep the largest seen — Construct 3 (pranking)
     // sizes its canvas noticeably later than Phaser/Pixi; a single fixed sample is flaky.
