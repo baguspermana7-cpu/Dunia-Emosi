@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Thomas &amp; Friends — Lift, Load and Haul!</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<style>
+		html, body {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+			background: #000;
+		}
+		#container {
+			position: fixed;
+			inset: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: #000;
+		}
+		#game {
+			width: 100%;
+			height: 100%;
+		}
+		ruffle-player {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+</head>
+<body ontouchmove="event.preventDefault()">
+	<div id="container">
+		<div id="game"></div>
+	</div>
+
+	<script>
+		// Ruffle self-hosted config — set BEFORE ruffle.js loads.
+		window.RufflePlayer = window.RufflePlayer || {};
+		window.RufflePlayer.config = {
+			autoplay: "on",
+			unmuteOverlay: "hidden",
+			contextMenu: "off",
+			splashScreen: false,
+			warnOnUnsupportedContent: false,
+			preloader: false,
+			scale: "showAll",     // letterbox — preserve 960x475 aspect
+			forceScale: true,     // always fit to the container (fill viewport)
+			polyfills: false,
+			allowFullscreen: true,
+			logLevel: "error"
+		};
+	</script>
+	<script src="ruffle/ruffle.js"></script>
+	<script>
+		window.addEventListener("DOMContentLoaded", function () {
+			var ruffle = window.RufflePlayer.newest();
+			var player = ruffle.createPlayer();
+			document.getElementById("game").appendChild(player);
+			player.ruffle().load({
+				url: "game/game.swf",
+				base: "game/",            // sibling SWFs / XML / mp3 resolve relative to game/
+				allowNetworking: "all",   // permit local Loader/URLLoader of the game's own assets
+				parameters: ""
+			});
+		});
+	</script>
+</body>
+</html>

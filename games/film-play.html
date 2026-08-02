@@ -119,7 +119,8 @@
     'batwheels-playroom':1,'batwheels-match-up':1,'batwheels-pranking-prank':1,
     'batwheels-jigsaw':1,'batwheels-toy-trouble':1,'thomas-rail-muddle':1,
     'thomas-musical-tracks':1,'thomas-to-the-rescue':1,'thomas-track-repair':1,
-    'thomas-look-out':1,'thomas-jigsaw':1,'thomas-aeg-jigsaw':1,'thomas-sodor-paint-shop':1
+    'thomas-look-out':1,'thomas-jigsaw':1,'thomas-aeg-jigsaw':1,'thomas-sodor-paint-shop':1,
+    'thomas-lift-load-haul':1
   };
   function qs(k){ try{ return new URLSearchParams(location.search).get(k); }catch(e){ return null; } }
   var slug = (qs('g')||'').replace(/[^a-z0-9-]/g,'');
@@ -134,7 +135,7 @@
     // new Thomas games (design resolutions measured/verified per crawl)
     'thomas-musical-tracks':[1920,768], 'thomas-to-the-rescue':[800,450], 'thomas-track-repair':[960,550],
     'thomas-look-out':[900,450], 'thomas-jigsaw':[800,450], 'thomas-aeg-jigsaw':[800,450],
-    'thomas-sodor-paint-shop':[1024,768]
+    'thomas-sodor-paint-shop':[1024,768], 'thomas-lift-load-haul':[960,475]
   };
   function fitStage(){
     var fr = document.getElementById('frame'); if(!fr) return;

@@ -1,0 +1,57 @@
+{
+  "generatedAt": "2026-08-02T12:51:59.190480Z",
+  "slug": "thomas-lift-load-haul",
+  "displayName": "Thomas & Friends \u2014 Lift, Load and Haul!",
+  "engine": "Adobe Flash (SWF, ActionScript 3) via self-hosted Ruffle (WASM)",
+  "ruffleBuild": "nightly-2026-08-02 web-selfhosted",
+  "orientation": "landscape",
+  "stage": {
+    "width": 960,
+    "height": 475,
+    "frameRate": 24
+  },
+  "entry": "index.html",
+  "swfEntry": "game/game.swf",
+  "loaderWrapper": "https://games.toon-cdn.com/flash/index.html?g=thomas-and-friends/lift-load-and-haul/game&r=960/475",
+  "assetBase": "https://games.toon-cdn.com/thomas-and-friends/lift-load-and-haul/",
+  "referer": "https://toongo.io/",
+  "externalSwfsLoaded": [
+    "game/LiftLoadHaulGame.swf",
+    "game/LiftLoadHaulDeliverySequence.swf"
+  ],
+  "xmlData": [
+    "cargoTypes.xml",
+    "missions.xml",
+    "trainyards.xml",
+    "loadingTrackList.xml",
+    "landmarkList.xml",
+    "obstacleList.xml"
+  ],
+  "totals": {
+    "totalBytes": 44113595,
+    "gameBytes": 13483714,
+    "ruffleBytes": 28885673,
+    "gameFiles": 84
+  },
+  "missingUpstream": {
+    "note": "referenced in cargoTypes.xml but 404 on the CDN (live site also lacks them) \u2014 optional cargo/animal SFX",
+    "files": [
+      "bleatGoat.mp3",
+      "bleatSheep.mp3",
+      "lowBubbles.mp3",
+      "moo.mp3",
+      "oink.mp3",
+      "quack.mp3",
+      "splash.mp3"
+    ]
+  },
+  "verify": {
+    "ruffleInstantiated": true,
+    "stageRendered": true,
+    "stageSize": "960x475",
+    "offHostRequests": 0,
+    "criticalNotFound": 0,
+    "interactive": true,
+    "notes": "Title intro animates, live PLAY button appears and responds to clicks; renders full title screen; audio voiceover + theme loaded."
+  }
+}
