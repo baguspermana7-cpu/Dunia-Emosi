@@ -128,10 +128,7 @@
     'batwheels-breakdown':[1920,768], 'batwheels-gotham-getaway':[1920,768], 'batwheels-playroom':[1920,768],
     'batwheels-jigsaw':[1440,900], 'batwheels-match-up':[1440,900],
     'batwheels-toy-trouble':[1280,800], 'thomas-rail-muddle':[1280,800],
-    // by-you is a PORTRAIT phone game (native 320x568) — give it a portrait frame so its own
-    // layout renders correctly (title sized right + the color/sticker menu-bar stays on-screen);
-    // the wrapper then letterboxes it (side bars) into a landscape screen.
-    'batwheels-by-you':[576,1024], 'batwheels-pranking-prank':[1280,720]
+    'batwheels-by-you':[1280,720], 'batwheels-pranking-prank':[1280,720]
   };
   function fitStage(){
     var fr = document.getElementById('frame'); if(!fr) return;
@@ -204,8 +201,10 @@
   }
 
   if (GAMES[slug]) {
-    if (slug === 'batwheels-gotham-getaway') { showChaserPicker(); }  // pick chaser first
-    else { loadGame(''); }
+    // NOTE: custom-chaser picker temporarily disabled — the in-game auto-advance/override caused
+    // start-screen oscillation + a mid-race hang on device. gotham runs vanilla (race works) until
+    // the feature is rebuilt + device-verified. showChaserPicker() is kept for that rebuild.
+    loadGame('');
   } else {
     document.getElementById('frame').style.display = 'none';
     hideSplash();
