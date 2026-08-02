@@ -27,6 +27,18 @@ Games are BIG (~140 MB raw). NOT in the SW SHELL precache — they cache-on-visi
 existing cache-first fetch handler. `games/film/` is git-ignored until the final compressed
 commit (see re-sync).
 
+## GAME EDITS (must RE-APPLY after any re-copy — re-sync wipes them)
+1. **Scale FIT (anti-crop)** — 3 games are fixed 1920×768 and overflow/crop narrow screens:
+   - `batwheels-breakdown` + `batwheels-gotham-getaway` (Phaser): in `main-*.bundle.js`
+     `sed -i 's/Phaser\.Scale\.ScaleModes\.HEIGHT_CONTROLS_WIDTH/Phaser.Scale.ScaleModes.FIT/g'`
+   - `batwheels-playroom` (createjs): in `assets/src/Main.js` change `sRatio =yRatio;` →
+     `sRatio = Math.min(xRatio, yRatio);`
+   The other 6 games are already responsive (canvas = viewport). Verify: canvas ≤ viewport
+   at 4:3 / 16:10 / portrait (no overflow).
+2. **by-you webp** — `img/foxjpg_2x.json` `meta.image` must say `foxjpg_2x.webp` (see compression).
+The player's HOME button + FIT letterbox handle the rest at the shell level (film-play.html,
+NOT wiped by re-sync).
+
 ## RE-SYNC RUNBOOK (owner finalizes games in a parallel session → run this to ship them)
 Source: `/home/baguspermana7/Documents/temporary/online game to be offline` (batwheels/ + thomas/).
 1. Re-copy: `batwheels/games/batwheels-* → games/film/`; `thomas/game/rail-muddle → games/film/thomas-rail-muddle`.
