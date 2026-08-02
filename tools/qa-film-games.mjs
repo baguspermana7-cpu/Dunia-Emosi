@@ -32,7 +32,21 @@ for (const slug of slugs){
     await sleep(12000)  // base boot
     // poll canvas size over the next ~12s and keep the largest seen — Construct 3 (pranking)
     // sizes its canvas noticeably later than Phaser/Pixi; a single fixed sample is flaky.
-    const measure=()=>pg.evaluate(()=>{ const cs=document.querySelectorAll('canvas'); let bw=0,bh=0; cs.forEach(c=>{const r=c.getBoundingClientRect(); if(r.width*r.height>bw*bh){bw=r.width;bh=r.height;}}); return {w:Math.round(bw),h:Math.round(bh),n:cs.length}; });
+    // Walk into open shadow roots too. Ruffle (the Flash games) puts its canvas inside
+    // <ruffle-player>'s shadow DOM, where a plain document.querySelectorAll('canvas')
+    // finds nothing -- that reported 0x0 for a game that was rendering perfectly.
+    const measure=()=>pg.evaluate(()=>{
+      const cs=[];
+      (function walk(root){
+        root.querySelectorAll('*').forEach(el=>{
+          if (el.tagName==='CANVAS') cs.push(el);
+          if (el.shadowRoot) walk(el.shadowRoot);
+        });
+      })(document);
+      let bw=0,bh=0;
+      cs.forEach(c=>{const r=c.getBoundingClientRect(); if(r.width*r.height>bw*bh){bw=r.width;bh=r.height;}});
+      return {w:Math.round(bw),h:Math.round(bh),n:cs.length};
+    });
     for (let k=0;k<8;k++){ const m=await measure(); if(m.w*m.h>canvas.w*canvas.h) canvas=m; if(canvas.w>=200&&canvas.h>=120) break; await sleep(1500); }
   }catch(e){ errs.push('NAV:'+e.message.slice(0,80)); }
   const ok = canvas.n>0 && canvas.w>=200 && canvas.h>=120 && errs.length===0
