@@ -29,6 +29,15 @@
   #err{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;color:#fff;text-align:center}
   #err.show{display:flex}
   #err a{color:#ffe08a;font-weight:800}
+  /* Instant loading splash over the black-before-game gap — thumbnail bg + spinner + text.
+     Fades out as soon as the game's own canvas appears (then the game shows its own loader). */
+  #splash{position:fixed;inset:0;z-index:6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:#0c0922;overflow:hidden;transition:opacity .45s ease}
+  #splash.hide{opacity:0;pointer-events:none}
+  #splash .bg{position:absolute;inset:-10%;background-size:cover;background-position:center;filter:blur(16px) brightness(.42);transform:scale(1.12)}
+  #splash .sp{position:relative;width:54px;height:54px;border-radius:50%;border:6px solid rgba(255,255,255,.16);border-top-color:#ffd968;animation:spin .9s linear infinite}
+  #splash .tx{position:relative;color:#fff;font-weight:800;font-size:17px;text-shadow:0 2px 7px rgba(0,0,0,.65)}
+  #splash .sub{position:relative;margin-top:-8px;color:#d9cfff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:12px;opacity:.85;text-shadow:0 1px 4px rgba(0,0,0,.6)}
+  @keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -36,6 +45,12 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="#3a2b12" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>
     <span>Beranda</span>
   </button>
+  <div id="splash">
+    <div class="bg" id="splashbg"></div>
+    <div class="sp"></div>
+    <div class="tx">Memuat game…</div>
+    <div class="sub">Sebentar ya, lagi disiapin</div>
+  </div>
   <iframe id="frame" title="Film Anak game" allow="autoplay; fullscreen; gamepad; accelerometer; gyroscope" allowfullscreen></iframe>
   <div id="err">
     <div style="font-size:20px;font-weight:900">Game tidak ditemukan</div>
@@ -50,11 +65,24 @@
   };
   function qs(k){ try{ return new URLSearchParams(location.search).get(k); }catch(e){ return null; } }
   var slug = (qs('g')||'').replace(/[^a-z0-9-]/g,'');
+  var splash = document.getElementById('splash');
+  function hideSplash(){ if(splash){ splash.classList.add('hide'); setTimeout(function(){ if(splash) splash.style.display='none'; }, 500); } }
   if (GAMES[slug]) {
-    document.getElementById('frame').src = 'film/' + slug + '/index.html';
+    var thumb = document.getElementById('splashbg');
+    if (thumb) thumb.style.backgroundImage = "url('../assets/film-thumbs/" + slug + ".webp')";
+    var fr = document.getElementById('frame');
+    fr.src = 'film/' + slug + '/index.html';
     document.title = 'Film Anak — ' + slug;
+    // Fade the splash the moment the game's own canvas is up (game then shows its own loader).
+    var tries = 0, poll = setInterval(function(){
+      tries++;
+      var ready = false;
+      try { var d = fr.contentDocument; if (d){ var cs = d.querySelectorAll('canvas'); for (var i=0;i<cs.length;i++){ var r=cs[i].getBoundingClientRect(); if (r.width>40 && r.height>40){ ready=true; break; } } } } catch(e){}
+      if (ready || tries > 120){ clearInterval(poll); hideSplash(); }  // fallback ~48s
+    }, 400);
   } else {
     document.getElementById('frame').style.display = 'none';
+    hideSplash();
     document.getElementById('err').classList.add('show');
   }
   // Always exit straight to the Film Anak hub (not history.back — a game may have pushed
