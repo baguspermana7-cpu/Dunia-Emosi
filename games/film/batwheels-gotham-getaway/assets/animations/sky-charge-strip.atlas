@@ -1,0 +1,13 @@
+
+sky-charge-strip.png
+size: 323, 772
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+sky-charge
+  rotate: false
+  xy: 2, 2
+  size: 319, 768
+  orig: 335, 770
+  offset: 7, 1
+  index: -1

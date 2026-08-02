@@ -1,0 +1,104 @@
+
+ink.png
+size: 1024, 256
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+oil-1
+  rotate: false
+  xy: 510, 21
+  size: 32, 52
+  orig: 34, 54
+  offset: 1, 1
+  index: -1
+oil-10
+  rotate: true
+  xy: 192, 17
+  size: 191, 153
+  orig: 193, 157
+  offset: 1, 1
+  index: -1
+oil-11
+  rotate: false
+  xy: 347, 75
+  size: 205, 139
+  orig: 207, 142
+  offset: 1, 1
+  index: -1
+oil-12
+  rotate: false
+  xy: 605, 136
+  size: 211, 108
+  orig: 213, 111
+  offset: 1, 1
+  index: -1
+oil-13
+  rotate: false
+  xy: 347, 4
+  size: 161, 69
+  orig: 163, 71
+  offset: 1, 1
+  index: -1
+oil-14
+  rotate: false
+  xy: 2, 34
+  size: 146, 15
+  orig: 148, 17
+  offset: 1, 1
+  index: -1
+oil-2
+  rotate: false
+  xy: 721, 44
+  size: 51, 90
+  orig: 53, 92
+  offset: 1, 1
+  index: -1
+oil-3
+  rotate: true
+  xy: 554, 146
+  size: 68, 36
+  orig: 71, 38
+  offset: 1, 1
+  index: -1
+oil-4
+  rotate: false
+  xy: 325, 216
+  size: 278, 28
+  orig: 296, 31
+  offset: 15, 2
+  index: -1
+oil-5
+  rotate: false
+  xy: 2, 210
+  size: 321, 34
+  orig: 323, 36
+  offset: 1, 1
+  index: -1
+oil-6
+  rotate: false
+  xy: 774, 31
+  size: 75, 59
+  orig: 77, 61
+  offset: 1, 1
+  index: -1
+oil-7
+  rotate: false
+  xy: 554, 2
+  size: 165, 132
+  orig: 167, 135
+  offset: 1, 2
+  index: -1
+oil-8
+  rotate: false
+  xy: 818, 92
+  size: 172, 152
+  orig: 176, 157
+  offset: 3, 1
+  index: -1
+oil-9
+  rotate: false
+  xy: 2, 51
+  size: 188, 157
+  orig: 190, 159
+  offset: 1, 1
+  index: -1

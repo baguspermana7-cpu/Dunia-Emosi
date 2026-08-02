@@ -1,0 +1,20 @@
+
+charge_strip.png
+size: 256, 1024
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+charge_strip_00
+  rotate: false
+  xy: 2, 360
+  size: 251, 356
+  orig: 251, 356
+  offset: 0, 0
+  index: -1
+charge_strip_04
+  rotate: false
+  xy: 2, 2
+  size: 251, 356
+  orig: 251, 356
+  offset: 0, 0
+  index: -1

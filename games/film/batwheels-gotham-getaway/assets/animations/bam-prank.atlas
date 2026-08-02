@@ -1,0 +1,321 @@
+
+bam-prank-0.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+bam-blink-1
+  rotate: false
+  xy: 657, 176
+  size: 26, 22
+  orig: 26, 22
+  offset: 0, 0
+  index: -1
+bam-blink-2
+  rotate: false
+  xy: 657, 200
+  size: 25, 21
+  orig: 25, 21
+  offset: 0, 0
+  index: -1
+bam-blink-3
+  rotate: true
+  xy: 1003, 382
+  size: 26, 19
+  orig: 26, 21
+  offset: 0, 0
+  index: -1
+bam-shadow
+  rotate: true
+  xy: 972, 210
+  size: 283, 29
+  orig: 283, 29
+  offset: 0, 0
+  index: -1
+bam-wheel-back
+  rotate: false
+  xy: 188, 951
+  size: 63, 63
+  orig: 63, 63
+  offset: 0, 0
+  index: -1
+bam-wheel-front
+  rotate: false
+  xy: 344, 668
+  size: 53, 53
+  orig: 53, 53
+  offset: 0, 0
+  index: -1
+bam
+  rotate: true
+  xy: 593, 715
+  size: 249, 114
+  orig: 249, 114
+  offset: 0, 0
+  index: -1
+bang_1
+  rotate: true
+  xy: 278, 386
+  size: 81, 92
+  orig: 81, 92
+  offset: 0, 0
+  index: -1
+bang_2
+  rotate: false
+  xy: 277, 537
+  size: 76, 122
+  orig: 76, 122
+  offset: 0, 0
+  index: -1
+bang_3
+  rotate: false
+  xy: 278, 249
+  size: 100, 135
+  orig: 100, 135
+  offset: 0, 0
+  index: -1
+bang_4
+  rotate: false
+  xy: 709, 801
+  size: 110, 158
+  orig: 110, 158
+  offset: 0, 0
+  index: -1
+bang_5
+  rotate: true
+  xy: 1, 885
+  size: 126, 185
+  orig: 126, 185
+  offset: 0, 0
+  index: -1
+charge_up_01
+  rotate: true
+  xy: 431, 718
+  size: 269, 160
+  orig: 269, 160
+  offset: 0, 0
+  index: -1
+charge_up_02
+  rotate: true
+  xy: 276, 727
+  size: 273, 153
+  orig: 273, 153
+  offset: 0, 0
+  index: -1
+charge_up_03
+  rotate: false
+  xy: 686, 166
+  size: 284, 154
+  orig: 284, 154
+  offset: 0, 0
+  index: -1
+charge_up_04
+  rotate: false
+  xy: 1, 401
+  size: 274, 157
+  orig: 274, 157
+  offset: 0, 0
+  index: -1
+charge_up_05
+  rotate: false
+  xy: 1, 238
+  size: 275, 161
+  orig: 275, 162
+  offset: 0, 1
+  index: -1
+charge_up_06
+  rotate: false
+  xy: 381, 176
+  size: 274, 172
+  orig: 274, 172
+  offset: 0, 0
+  index: -1
+charge_up_07
+  rotate: false
+  xy: 386, 1
+  size: 298, 173
+  orig: 298, 173
+  offset: 0, 0
+  index: -1
+charge_up_08
+  rotate: false
+  xy: 380, 350
+  size: 274, 161
+  orig: 274, 161
+  offset: 0, 0
+  index: -1
+charge_up_09
+  rotate: false
+  xy: 1, 71
+  size: 275, 165
+  orig: 275, 165
+  offset: 0, 0
+  index: -1
+charge_up_10
+  rotate: false
+  xy: 368, 513
+  size: 274, 153
+  orig: 274, 153
+  offset: 0, 0
+  index: -1
+charge_up_11
+  rotate: false
+  xy: 1, 560
+  size: 274, 150
+  orig: 274, 150
+  offset: 0, 0
+  index: -1
+charge_up_12
+  rotate: false
+  xy: 656, 490
+  size: 274, 154
+  orig: 274, 154
+  offset: 0, 0
+  index: -1
+charge_up_13
+  rotate: false
+  xy: 657, 322
+  size: 274, 166
+  orig: 274, 166
+  offset: 0, 0
+  index: -1
+charge_up_14
+  rotate: false
+  xy: 1, 712
+  size: 273, 171
+  orig: 273, 171
+  offset: 0, 0
+  index: -1
+charge_up_15
+  rotate: false
+  xy: 686, 1
+  size: 291, 163
+  orig: 291, 163
+  offset: 0, 0
+  index: -1
+mag-cable
+  rotate: true
+  xy: 1013, 105
+  size: 266, 7
+  orig: 266, 7
+  offset: 0, 0
+  index: -1
+mag-mount
+  rotate: false
+  xy: 979, 105
+  size: 32, 77
+  orig: 32, 77
+  offset: 0, 0
+  index: -1
+mag
+  rotate: true
+  xy: 972, 184
+  size: 24, 31
+  orig: 24, 31
+  offset: 0, 0
+  index: -1
+prank-arm
+  rotate: false
+  xy: 1, 1
+  size: 383, 37
+  orig: 383, 37
+  offset: 0, 0
+  index: -1
+prank-glove
+  rotate: false
+  xy: 277, 469
+  size: 89, 66
+  orig: 89, 66
+  offset: 0, 0
+  index: -1
+prank-shadow
+  rotate: false
+  xy: 1, 40
+  size: 283, 29
+  orig: 283, 29
+  offset: 0, 0
+  index: -1
+prank-wheel-back
+  rotate: true
+  xy: 277, 661
+  size: 64, 65
+  orig: 64, 65
+  offset: 0, 0
+  index: -1
+prank-wheel-front
+  rotate: true
+  xy: 188, 885
+  size: 64, 65
+  orig: 64, 65
+  offset: 0, 0
+  index: -1
+prank
+  rotate: false
+  xy: 709, 646
+  size: 248, 153
+  orig: 248, 153
+  offset: 0, 0
+  index: -1
+prank_arm
+  rotate: false
+  xy: 1, 1
+  size: 383, 37
+  orig: 383, 37
+  offset: 0, 0
+  index: -1
+prank_glove
+  rotate: false
+  xy: 277, 469
+  size: 89, 66
+  orig: 89, 66
+  offset: 0, 0
+  index: -1
+screech_1
+  rotate: false
+  xy: 1003, 373
+  size: 20, 7
+  orig: 20, 7
+  offset: 0, 0
+  index: -1
+screech_2
+  rotate: false
+  xy: 979, 1
+  size: 40, 23
+  orig: 40, 23
+  offset: 0, 0
+  index: -1
+screech_3
+  rotate: true
+  xy: 657, 223
+  size: 53, 24
+  orig: 53, 24
+  offset: 0, 0
+  index: -1
+screech_4
+  rotate: true
+  xy: 979, 26
+  size: 77, 36
+  orig: 77, 36
+  offset: 0, 0
+  index: -1
+screech_5
+  rotate: false
+  xy: 510, 668
+  size: 105, 45
+  orig: 105, 45
+  offset: 0, 0
+  index: -1
+screech_6
+  rotate: false
+  xy: 399, 668
+  size: 109, 48
+  orig: 109, 48
+  offset: 0, 0
+  index: -1
+screech_7
+  rotate: true
+  xy: 286, 40
+  size: 207, 93
+  orig: 207, 93
+  offset: 0, 0
+  index: -1

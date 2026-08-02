@@ -1,0 +1,76 @@
+
+snowdrift.png
+size: 2048, 256
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+snow-1
+  rotate: true
+  xy: 1638, 2
+  size: 138, 122
+  orig: 148, 131
+  offset: 5, 4
+  index: -1
+snow-2
+  rotate: true
+  xy: 2, 13
+  size: 241, 196
+  orig: 254, 208
+  offset: 7, 5
+  index: -1
+snow-3
+  rotate: false
+  xy: 200, 34
+  size: 257, 220
+  orig: 270, 232
+  offset: 8, 5
+  index: -1
+snow-4
+  rotate: false
+  xy: 459, 37
+  size: 262, 217
+  orig: 274, 226
+  offset: 6, 4
+  index: -1
+snow-5
+  rotate: false
+  xy: 809, 53
+  size: 294, 201
+  orig: 307, 210
+  offset: 7, 4
+  index: -1
+snow-6
+  rotate: false
+  xy: 1105, 76
+  size: 271, 178
+  orig: 321, 189
+  offset: 11, 4
+  index: -1
+snow-7
+  rotate: false
+  xy: 1378, 87
+  size: 258, 167
+  orig: 291, 179
+  offset: 7, 5
+  index: -1
+snow-8
+  rotate: false
+  xy: 1762, 9
+  size: 271, 131
+  orig: 285, 143
+  offset: 8, 5
+  index: -1
+snow-9
+  rotate: true
+  xy: 723, 40
+  size: 214, 84
+  orig: 227, 97
+  offset: 8, 7
+  index: -1
+snowdrift
+  rotate: false
+  xy: 1638, 142
+  size: 331, 112
+  orig: 335, 117
+  offset: 3, 4
+  index: -1

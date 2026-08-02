@@ -1,0 +1,13 @@
+
+dock-charge-strip.png
+size: 256, 512
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+dock-charge-strip
+  rotate: false
+  xy: 2, 2
+  size: 232, 338
+  orig: 232, 338
+  offset: 0, 0
+  index: -1

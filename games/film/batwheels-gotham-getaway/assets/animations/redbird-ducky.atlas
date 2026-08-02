@@ -1,0 +1,545 @@
+
+redbird-ducky-0.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+bam-wheel-back
+  rotate: false
+  xy: 958, 511
+  size: 52, 52
+  orig: 52, 52
+  offset: 0, 0
+  index: -1
+bam-wheel-front
+  rotate: false
+  xy: 1, 975
+  size: 43, 43
+  orig: 43, 43
+  offset: 0, 0
+  index: -1
+bang_1
+  rotate: true
+  xy: 960, 354
+  size: 72, 63
+  orig: 73, 63
+  offset: 0, 0
+  index: -1
+bang_2
+  rotate: true
+  xy: 963, 220
+  size: 98, 60
+  orig: 98, 60
+  offset: 0, 0
+  index: -1
+bang_3
+  rotate: true
+  xy: 397, 646
+  size: 109, 79
+  orig: 109, 80
+  offset: 0, 0
+  index: -1
+bang_4
+  rotate: true
+  xy: 397, 824
+  size: 128, 89
+  orig: 128, 89
+  offset: 0, 0
+  index: -1
+bang_5
+  rotate: true
+  xy: 1, 824
+  size: 149, 101
+  orig: 149, 101
+  offset: 0, 0
+  index: -1
+blink-1
+  rotate: true
+  xy: 375, 754
+  size: 21, 18
+  orig: 21, 18
+  offset: 0, 0
+  index: -1
+blink-2
+  rotate: false
+  xy: 375, 734
+  size: 19, 18
+  orig: 20, 18
+  offset: 0, 0
+  index: -1
+blink-3
+  rotate: false
+  xy: 210, 651
+  size: 21, 18
+  orig: 21, 18
+  offset: 0, 0
+  index: -1
+charge_up_00
+  rotate: false
+  xy: 1020, 320
+  size: 3, 3
+  orig: 239, 171
+  offset: 0, 168
+  index: -1
+charge_up_01
+  rotate: false
+  xy: 721, 483
+  size: 235, 155
+  orig: 239, 171
+  offset: 2, 0
+  index: -1
+charge_up_02
+  rotate: false
+  xy: 1, 492
+  size: 237, 157
+  orig: 239, 171
+  offset: 2, 0
+  index: -1
+charge_up_03
+  rotate: false
+  xy: 1, 174
+  size: 238, 157
+  orig: 239, 171
+  offset: 1, 0
+  index: -1
+charge_up_04
+  rotate: false
+  xy: 241, 325
+  size: 238, 157
+  orig: 239, 171
+  offset: 1, 0
+  index: -1
+charge_up_05
+  rotate: false
+  xy: 1, 1
+  size: 239, 171
+  orig: 239, 171
+  offset: 0, 0
+  index: -1
+charge_up_06
+  rotate: false
+  xy: 724, 1
+  size: 238, 171
+  orig: 239, 171
+  offset: 1, 0
+  index: -1
+charge_up_07
+  rotate: false
+  xy: 483, 1
+  size: 239, 157
+  orig: 239, 171
+  offset: 0, 0
+  index: -1
+charge_up_08
+  rotate: false
+  xy: 483, 160
+  size: 238, 165
+  orig: 239, 171
+  offset: 1, 0
+  index: -1
+charge_up_09
+  rotate: false
+  xy: 242, 1
+  size: 239, 158
+  orig: 239, 171
+  offset: 0, 0
+  index: -1
+charge_up_10
+  rotate: false
+  xy: 1, 333
+  size: 238, 157
+  orig: 239, 171
+  offset: 1, 0
+  index: -1
+charge_up_11
+  rotate: false
+  xy: 481, 327
+  size: 238, 156
+  orig: 239, 171
+  offset: 1, 1
+  index: -1
+charge_up_12
+  rotate: false
+  xy: 723, 174
+  size: 238, 157
+  orig: 239, 171
+  offset: 1, 0
+  index: -1
+charge_up_13
+  rotate: false
+  xy: 242, 161
+  size: 238, 162
+  orig: 239, 171
+  offset: 1, 0
+  index: -1
+charge_up_14
+  rotate: false
+  xy: 241, 484
+  size: 237, 160
+  orig: 239, 171
+  offset: 2, 0
+  index: -1
+charge_up_15
+  rotate: false
+  xy: 721, 333
+  size: 237, 148
+  orig: 239, 171
+  offset: 0, 7
+  index: -1
+ducky-shadow
+  rotate: false
+  xy: 480, 485
+  size: 233, 24
+  orig: 233, 24
+  offset: 0, 0
+  index: -1
+ducky-wheel-1-popped
+  rotate: true
+  xy: 101, 975
+  size: 40, 31
+  orig: 40, 31
+  offset: 0, 0
+  index: -1
+ducky-wheel-1
+  rotate: false
+  xy: 170, 777
+  size: 38, 38
+  orig: 38, 38
+  offset: 0, 0
+  index: -1
+ducky-wheel-2-popped
+  rotate: true
+  xy: 101, 975
+  size: 40, 31
+  orig: 40, 31
+  offset: 0, 0
+  index: -1
+ducky-wheel-2
+  rotate: false
+  xy: 170, 777
+  size: 38, 38
+  orig: 38, 38
+  offset: 0, 0
+  index: -1
+ducky-wheel-3-popped
+  rotate: true
+  xy: 101, 975
+  size: 40, 31
+  orig: 40, 31
+  offset: 0, 0
+  index: -1
+ducky-wheel-3
+  rotate: false
+  xy: 170, 777
+  size: 38, 38
+  orig: 38, 38
+  offset: 0, 0
+  index: -1
+ducky-wheel-back
+  rotate: false
+  xy: 170, 777
+  size: 38, 38
+  orig: 38, 38
+  offset: 0, 0
+  index: -1
+ducky-wheel-front
+  rotate: false
+  xy: 170, 777
+  size: 38, 38
+  orig: 38, 38
+  offset: 0, 0
+  index: -1
+ducky-wheel-mid
+  rotate: false
+  xy: 170, 777
+  size: 38, 38
+  orig: 38, 38
+  offset: 0, 0
+  index: -1
+ducky-wing-door
+  rotate: false
+  xy: 963, 320
+  size: 55, 32
+  orig: 55, 32
+  offset: 0, 0
+  index: -1
+ducky
+  rotate: false
+  xy: 480, 637
+  size: 211, 185
+  orig: 211, 185
+  offset: 0, 0
+  index: -1
+ducky_ring
+  rotate: false
+  xy: 210, 777
+  size: 37, 38
+  orig: 37, 38
+  offset: 0, 0
+  index: -1
+laser-beam
+  rotate: true
+  xy: 1016, 428
+  size: 216, 7
+  orig: 216, 7
+  offset: 0, 0
+  index: -1
+laser-mount
+  rotate: true
+  xy: 68, 975
+  size: 41, 31
+  orig: 41, 31
+  offset: 0, 0
+  index: -1
+laser
+  rotate: true
+  xy: 964, 1
+  size: 39, 59
+  orig: 39, 59
+  offset: 0, 0
+  index: -1
+Layer 1
+  rotate: true
+  xy: 101, 975
+  size: 40, 31
+  orig: 40, 31
+  offset: 0, 0
+  index: -1
+oil-1
+  rotate: false
+  xy: 375, 646
+  size: 20, 38
+  orig: 20, 38
+  offset: 0, 0
+  index: -1
+oil-2
+  rotate: false
+  xy: 72, 757
+  size: 36, 64
+  orig: 36, 64
+  offset: 0, 0
+  index: -1
+oil-3
+  rotate: true
+  xy: 226, 971
+  size: 50, 27
+  orig: 50, 27
+  offset: 0, 0
+  index: -1
+oil-4
+  rotate: true
+  xy: 702, 511
+  size: 102, 17
+  orig: 102, 17
+  offset: 0, 0
+  index: -1
+oil-6
+  rotate: false
+  xy: 960, 428
+  size: 54, 43
+  orig: 54, 43
+  offset: 0, 0
+  index: -1
+oil-7
+  rotate: false
+  xy: 1, 651
+  size: 117, 95
+  orig: 117, 95
+  offset: 0, 0
+  index: -1
+oil-8
+  rotate: true
+  xy: 488, 824
+  size: 123, 110
+  orig: 123, 110
+  offset: 0, 0
+  index: -1
+oil-9
+  rotate: false
+  xy: 240, 646
+  size: 133, 111
+  orig: 133, 111
+  offset: 0, 0
+  index: -1
+oil-10
+  rotate: true
+  xy: 285, 824
+  size: 135, 110
+  orig: 135, 110
+  offset: 0, 0
+  index: -1
+oil-11
+  rotate: true
+  xy: 184, 824
+  size: 145, 99
+  orig: 145, 99
+  offset: 0, 0
+  index: -1
+oil-12
+  rotate: true
+  xy: 104, 824
+  size: 149, 78
+  orig: 149, 78
+  offset: 0, 0
+  index: -1
+oil-13
+  rotate: true
+  xy: 958, 619
+  size: 114, 50
+  orig: 114, 50
+  offset: 0, 0
+  index: -1
+oil-14
+  rotate: true
+  xy: 1010, 675
+  size: 104, 12
+  orig: 104, 12
+  offset: 0, 0
+  index: -1
+prank-shadow
+  rotate: false
+  xy: 480, 485
+  size: 233, 24
+  orig: 233, 24
+  offset: 0, 0
+  index: -1
+red-tailgate
+  rotate: false
+  xy: 960, 473
+  size: 54, 36
+  orig: 54, 36
+  offset: 0, 0
+  index: -1
+redbird_wheel_back
+  rotate: false
+  xy: 958, 565
+  size: 52, 52
+  orig: 52, 52
+  offset: 0, 0
+  index: -1
+redbird_wheel_front
+  rotate: false
+  xy: 255, 971
+  size: 49, 49
+  orig: 49, 49
+  offset: 0, 0
+  index: -1
+redwing
+  rotate: false
+  xy: 480, 511
+  size: 220, 124
+  orig: 220, 124
+  offset: 0, 0
+  index: -1
+screech_1
+  rotate: false
+  xy: 702, 615
+  size: 16, 6
+  orig: 16, 6
+  offset: 0, 0
+  index: -1
+screech_2
+  rotate: true
+  xy: 375, 699
+  size: 33, 19
+  orig: 33, 19
+  offset: 0, 0
+  index: -1
+screech_3
+  rotate: true
+  xy: 46, 975
+  size: 43, 20
+  orig: 43, 20
+  offset: 0, 0
+  index: -1
+screech_4
+  rotate: true
+  xy: 110, 757
+  size: 64, 29
+  orig: 64, 29
+  offset: 0, 0
+  index: -1
+screech_5
+  rotate: false
+  xy: 249, 777
+  size: 87, 37
+  orig: 87, 37
+  offset: 0, 0
+  index: -1
+screech_6
+  rotate: false
+  xy: 134, 975
+  size: 90, 39
+  orig: 90, 39
+  offset: 0, 0
+  index: -1
+screech_7
+  rotate: true
+  xy: 120, 651
+  size: 92, 38
+  orig: 170, 76
+  offset: 0, 0
+  index: -1
+spark-1
+  rotate: true
+  xy: 1, 757
+  size: 65, 69
+  orig: 66, 69
+  offset: 1, 0
+  index: -1
+spark-2
+  rotate: true
+  xy: 964, 92
+  size: 62, 57
+  orig: 62, 57
+  offset: 0, 0
+  index: -1
+spark-3
+  rotate: true
+  xy: 964, 156
+  size: 62, 57
+  orig: 62, 57
+  offset: 0, 0
+  index: -1
+spark-4
+  rotate: false
+  xy: 964, 42
+  size: 58, 48
+  orig: 59, 48
+  offset: 0, 0
+  index: -1
+squirter-base
+  rotate: true
+  xy: 1010, 646
+  size: 27, 13
+  orig: 27, 13
+  offset: 0, 0
+  index: -1
+squirter-section-1
+  rotate: false
+  xy: 375, 686
+  size: 20, 11
+  orig: 20, 11
+  offset: 0, 0
+  index: -1
+squirter-section-2
+  rotate: true
+  xy: 693, 637
+  size: 85, 7
+  orig: 85, 7
+  offset: 0, 0
+  index: -1
+squirter-section-3
+  rotate: true
+  xy: 702, 623
+  size: 34, 11
+  orig: 34, 11
+  offset: 0, 0
+  index: -1
+squirter
+  rotate: false
+  xy: 141, 777
+  size: 27, 39
+  orig: 27, 39
+  offset: 0, 0
+  index: -1
