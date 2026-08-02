@@ -79,37 +79,85 @@
     log('Phaser.Game wrapped');
   }
 
+  // hero -> its shared pair-spine asset key (each spine holds hero + paired villain skins)
+  var PAIR = { bam: 'bam-prank', bibi: 'bibi-jestah', redbird: 'redbird-ducky', batwing: 'batwing-quizz', buff: 'buff-snowy' };
+
   function hookGame(game, Phaser) {
     var cfg = readConfig();
     log('game captured; config =', cfg);
-    if (!cfg) return;                        // vanilla
+    if (!cfg) return;                        // no config -> 100% vanilla game
     var rgb = hexToRGB01(cfg.color);
 
-    game.events.on('step', function () {
-      var gs;
-      try { gs = game.scene && game.scene.getScene && game.scene.getScene('Game'); } catch (e) { return; }
-      if (!gs) return;
-      var vm = null;
-      try { vm = gs.runManager && gs.runManager.vehicleManager; } catch (e) {}
+    var st = { titleDone: false, introDone: false, loadStarted: false, heroSet: false, tinted: false, lastHV: null };
 
-      // (a) override chaser hero BEFORE the vehicle is spawned
-      if (cfg.hero && gs.level && gs.level.hero && gs.level.hero !== cfg.hero && !gs.__ggHeroSet) {
-        if (!vm || !vm.HeroVehicle) {
-          try { gs.level.hero = cfg.hero; gs.__ggHeroSet = true; log('hero ->', cfg.hero); } catch (e) {}
+    function activeScene(key) {
+      try { var s = game.scene.getScene(key); return (s && s.scene.settings.active) ? s : null; } catch (e) { return null; }
+    }
+    // find the forward button (play on Title / skip on Intro) and emit its pointer flow
+    function tapForward(scene, type) {
+      if (!scene.children) return false;
+      var list = [];
+      scene.children.list.forEach(function (o) {
+        if (o.input && o.input.enabled) { var b = o.getBounds(); list.push({ o: o, x: b.centerX, y: b.centerY, w: b.width }); }
+      });
+      // exclude top-left back + top-right audio corners
+      var cand = list.filter(function (t) { return !(t.x < 380 && t.y < 260) && !(t.x > 1500 && t.y < 200); });
+      var target = null;
+      if (type === 'title') target = cand.filter(function (t) { return t.y > 550; }).sort(function (a, b) { return b.w - a.w; })[0];
+      else if (type === 'intro') target = cand.filter(function (t) { return t.x > 1200 && t.y > 450; }).sort(function (a, b) { return (b.x + b.y) - (a.x + a.y); })[0];
+      if (!target) return false;
+      var P = game.input.activePointer;
+      ['pointerover', 'pointerdown', 'pointerup'].forEach(function (ev) { try { target.o.emit(ev, P, 0, 0, { stopPropagation: function () {} }); } catch (e) {} });
+      return true;
+    }
+    function spineLoaded(scene, key) {
+      try { var c = scene.cache && scene.cache.custom && scene.cache.custom.spine; return !!(c && c.has && c.has(key)); } catch (e) { return false; }
+    }
+
+    var iv = setInterval(function () {
+      try {
+        // ---- D2: after the picker (a hero was chosen), auto-skip gotham's Title + Intro so the
+        //          flow reads picker -> pick villain/city (LevelSelect) -> race. Fail-safe: if the
+        //          button isn't found, the user just sees Title/Intro normally.
+        if (cfg.hero) {
+          var ts = activeScene('Title'); if (ts && !st.titleDone) { if (tapForward(ts, 'title')) st.titleDone = true; }
+          var is = activeScene('Intro'); if (is && !st.introDone) { if (tapForward(is, 'intro')) st.introDone = true; }
         }
-      }
-      // (b) recolor the hero Spine once it exists
-      if (rgb && vm && vm.HeroVehicle && !gs.__ggTinted) {
-        var spine = vm.HeroVehicle.character;
-        var skel = spine && spine.skeleton;
-        if (skel && skel.color) {
-          try {
-            skel.color.r = rgb.r; skel.color.g = rgb.g; skel.color.b = rgb.b;
-            gs.__ggTinted = true; log('hero tinted', cfg.color);
-          } catch (e) { log('tint err', e); }
+
+        var gs = activeScene('Game'); if (!gs) return;
+        var vm = null; try { vm = gs.runManager && gs.runManager.vehicleManager; } catch (e) {}
+        var hv = vm && vm.HeroVehicle;
+
+        // ---- D3: override which hero chases, BEFORE the vehicle spawns. Only swap once the
+        //          chosen hero's pair-spine is loaded (preload it if needed) -> never a blank hero.
+        if (cfg.hero && gs.level && gs.level.hero && !st.heroSet && !hv) {
+          if (gs.level.hero === cfg.hero) {
+            st.heroSet = true;                                   // already the chosen hero
+          } else {
+            var pair = PAIR[cfg.hero];
+            if (pair && spineLoaded(gs, pair)) {
+              gs.level.hero = cfg.hero; st.heroSet = true; log('hero ->', cfg.hero);
+            } else if (pair && !st.loadStarted) {
+              st.loadStarted = true;
+              try {
+                gs.load.spine(pair, 'assets/animations/' + pair + '.json', 'assets/animations/' + pair + '.atlas', true);
+                gs.load.start();                                  // spineLoaded() will pass on a later tick
+                log('preloading spine', pair);
+              } catch (e) { log('spine load err', e); }
+            }
+          }
         }
-      }
-    });
+
+        // ---- D4: recolor the hero Spine. Re-arm when a NEW HeroVehicle spawns (restart/replay).
+        if (hv !== st.lastHV) { st.lastHV = hv; st.tinted = false; }
+        if (rgb && hv && !st.tinted) {
+          var sk = hv.character && hv.character.skeleton;
+          if (sk && sk.color) {
+            try { sk.color.r = rgb.r; sk.color.g = rgb.g; sk.color.b = rgb.b; st.tinted = true; log('hero tinted', cfg.color); } catch (e) {}
+          }
+        }
+      } catch (e) { log('tick err', e); }
+    }, 350);
   }
 
   // push our webpack chunk: runtime fn runs inside webpack with `require`
