@@ -23,9 +23,43 @@ IGNORES headless-only noise (device-OK): crawl 404s, swiftshader WebGL fallback,
 `EncodingError` decode. Uses ANGLE-swiftshader + 16s boot wait. Green = all games functional.
 
 ## SW / size
-Games are BIG (~140 MB raw). NOT in the SW SHELL precache — they cache-on-visit via the
+Games are BIG (~196 MB raw). NOT in the SW SHELL precache — they cache-on-visit via the
 existing cache-first fetch handler. `games/film/` is git-ignored until the final compressed
 commit (see re-sync).
+
+## "Siapkan Offline" — per-game offline installer (v59.89)
+Cache-on-visit is NOT offline capability: several games load assets only when a specific
+level/scene is played (gotham-getaway pulls a per-level theme pack + Spine skeletons per
+level), so a child who played level 1 online got a broken race on levels 2-5 offline. And
+before v59.89 the SW's `activate` deleted every cache that was not the current
+`CACHE_VERSION`, so an app deploy wiped everything the child had downloaded.
+
+- `tools/build-film-manifests.mjs` — **RE-RUN THIS WHENEVER ANY FILE OF ANY FILM GAME
+  CHANGES** (added / removed / edited). It walks the WHOLE folder — deliberately, because
+  whole-folder enumeration is the only guarantee the level-gated assets are covered — and
+  writes `games/film/<slug>/offline-manifest.json` (per-file path + size + content hash)
+  plus the combined `games/film/offline-index.json`. Idempotent; `--check` exits 2 if the
+  manifests are stale. A stale manifest means the hub either misses new files or
+  false-flags an installed game as out of date.
+- `games/film-offline.js` — `window.FilmOffline`: `status / install / remove / estimate /
+  persist`. Downloads a game into its OWN bucket `dunia-film-<slug>` (6 in flight,
+  resumable, cancellable). Install state lives INSIDE that bucket at
+  `__offline-state.json`, so it is atomic with the data it describes. Installer requests
+  carry `X-Dunia-Offline: 1` so the SW steps aside instead of duplicating every byte into
+  `dunia-assets-*`.
+- `sw.js` — `activate` preserves every `dunia-film-*` key across version bumps; `fetch`
+  serves `/games/film/<slug>/**` cache-first from that bucket (`ignoreSearch`, so a game's
+  `?hash` cache-busters still hit). Manifests stay network-first (they are the staleness
+  oracle). A cache miss falls through to the pre-existing strategies unchanged.
+- Invalidation is by CONTENT, never by app version: `manifest.hash !== state.hash` → the
+  card offers "Perbarui".
+
+## Verify offline — `node tools/qa-film-offline.mjs`
+Installs a small game + `batwheels-gotham-getaway`, then **kills the HTTP server** and
+plays them — so one un-cached byte is a hard `ERR_CONNECTION_REFUSED`, not a silently
+served response. Drives gotham through its real UI (Title → PLAY → Intro → SKIP →
+LevelSelect) into a race on levels 1/3/5. Also bumps `CACHE_VERSION`, re-activates the SW
+and proves the install survived and still races offline. 8/8 green as of v59.89.
 
 ## GAME EDITS (must RE-APPLY after any re-copy — re-sync wipes them)
 1. **Scale FIT (anti-crop)** — 3 games are fixed 1920×768 and overflow/crop narrow screens:

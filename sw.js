@@ -15,9 +15,36 @@
  * succeeded. Only cache same-origin assets.
  * ========================================================================== */
 
-const CACHE_VERSION = 'v59.88-20260802m'
+const CACHE_VERSION = 'v59.89-20260802n'
 const HTML_CACHE = `dunia-html-${CACHE_VERSION}`
 const ASSET_CACHE = `dunia-assets-${CACHE_VERSION}`
+
+// ── v59.89 FILM ANAK OFFLINE ────────────────────────────────────────────────
+// Film games the child explicitly installed via "Siapkan Offline" live in their
+// OWN cache buckets, named by slug and NOT by CACHE_VERSION:
+//     dunia-film-<slug>   every file of that game (see games/film-offline.js)
+//     dunia-film-shell    the wrapper pages needed to reach a game offline
+// Because the name has no version in it, an app deploy cannot invalidate them —
+// and activate() below explicitly refuses to delete anything with this prefix.
+// Before this, every version bump wiped ~200MB the child had downloaded.
+const FILM_PREFIX = 'dunia-film-'
+const FILM_SHELL_CACHE = `${FILM_PREFIX}shell`
+
+// Which film bucket (if any) owns this path? null = not a film request.
+function filmCacheFor(pathname) {
+  // A game's own files: /games/film/<slug>/…
+  let m = pathname.match(/\/games\/film\/([A-Za-z0-9._-]+)\//)
+  if (m) return FILM_PREFIX + m[1]
+  // That game's hub thumbnail — installed and freed together with the game.
+  m = pathname.match(/\/assets\/film-thumbs\/([A-Za-z0-9._-]+)\.(?:webp|png|jpg)$/)
+  if (m) return FILM_PREFIX + m[1]
+  // Wrapper shell (film-anak.html / film-play.html / film-offline.js /
+  // sw-reload.js) — shared by every installed game.
+  if (/\/games\/(?:film-(?:anak|play|offline)\.[a-z]+|sw-reload\.js)$/.test(pathname)) {
+    return FILM_SHELL_CACHE
+  }
+  return null
+}
 
 // v55.0 STOP-THE-BLEED — slim SHELL precache (was ~5MB, now ~800KB).
 //
@@ -87,7 +114,11 @@ self.addEventListener('activate', (e) => {
     const keys = await caches.keys()
     await Promise.all(
       keys
-        .filter((k) => k !== HTML_CACHE && k !== ASSET_CACHE)
+        // v59.89 — NEVER delete a `dunia-film-*` bucket. Those hold games the
+        // child deliberately downloaded for offline use; they are invalidated
+        // by their own content hash (offline-manifest.json), never by a
+        // CACHE_VERSION bump. Stale dunia-html-*/dunia-assets-* still go.
+        .filter((k) => k !== HTML_CACHE && k !== ASSET_CACHE && !k.startsWith(FILM_PREFIX))
         .map((k) => caches.delete(k))
     )
     await self.clients.claim()
@@ -95,6 +126,39 @@ self.addEventListener('activate', (e) => {
     clients.forEach((c) => c.postMessage({ type: 'SW_UPDATED', version: CACHE_VERSION }))
   })())
 })
+
+// The two existing strategies, lifted verbatim into named helpers (v59.89) so
+// the film branch below can fall through to EXACTLY the current behaviour on a
+// cache miss. No logic changed — only moved.
+function htmlNetworkFirst(req, offlineFallback) {
+  return fetch(req)
+    .then((res) => {
+      // Update cache in background
+      const clone = res.clone()
+      caches.open(HTML_CACHE).then((c) => c.put(req, clone))
+      return res
+    })
+    .catch(() =>
+      caches.match(req)
+        .then((m) => m || (offlineFallback ? offlineFallback() : null))
+        .then((m) => m || caches.match('./'))
+    )
+}
+
+function assetCacheFirst(req) {
+  // Static assets: CACHE-FIRST with stale-while-revalidate
+  return caches.match(req).then((cached) => {
+    const fetchPromise = fetch(req).then((res) => {
+      // Only cache successful responses
+      if (res && res.status === 200 && res.type === 'basic') {
+        const clone = res.clone()
+        caches.open(ASSET_CACHE).then((c) => c.put(req, clone))
+      }
+      return res
+    }).catch(() => cached)
+    return cached || fetchPromise
+  })
+}
 
 self.addEventListener('fetch', (e) => {
   const req = e.request
@@ -108,17 +172,65 @@ self.addEventListener('fetch', (e) => {
   // HTML / navigation: NETWORK-FIRST (so fresh deploys land immediately)
   const isHTML = req.mode === 'navigate' ||
                  (req.headers.get('accept') || '').includes('text/html')
-  if (isHTML) {
+
+  // ── v59.89 FILM ANAK OFFLINE ─────────────────────────────────────────────
+  // (a) The manifests are the STALENESS ORACLE. Checked FIRST and independently
+  //     of filmCacheFor(): the combined index lives at /games/film/offline-index
+  //     .json — no slug directory — so it does not belong to any film bucket and
+  //     would otherwise fall through to the generic CACHE-FIRST asset strategy.
+  //     A cached-forever index means a changed game is never detected as stale
+  //     and the child keeps playing an outdated copy. Network-first, with the
+  //     cache only as an offline fallback.
+  if (/\/offline-(?:manifest|index)\.json$/.test(url.pathname)) {
+    if (req.headers.get('X-Dunia-Offline')) return
+    e.respondWith(fetch(req).catch(() => caches.match(req)))
+    return
+  }
+
+  const filmCache = filmCacheFor(url.pathname)
+  if (filmCache) {
+    // (b) The installer's own downloads carry this header. Step aside entirely:
+    //     without this the SW would ALSO copy every downloaded byte into
+    //     dunia-assets-*, silently doubling the ~200MB the child just paid for.
+    if (req.headers.get('X-Dunia-Offline')) return
+
+    // (c) The wrapper shell (film-anak/film-play/film-offline/sw-reload) stays
+    //     NETWORK-FIRST so a deploy still lands, but falls back to the film
+    //     shell bucket — which survives version bumps — when there is no net.
+    if (filmCache === FILM_SHELL_CACHE) {
+      // NOTE: caches.match({cacheName}) — NOT caches.open(). open() would
+      // CREATE the bucket, and an empty `dunia-film-*` bucket reads as an
+      // installed game in the hub.
+      const shellFallback = () =>
+        caches.match(req, { cacheName: FILM_SHELL_CACHE, ignoreSearch: true }).catch(() => null)
+      //     sw-reload.js is shared with the OTHER standalone game pages, so its
+      //     non-HTML path keeps the unchanged cache-first strategy and only
+      //     adds the film shell as a LAST-resort fallback — otherwise those
+      //     pages would lose their offline copy of it.
+      e.respondWith(
+        isHTML
+          ? htmlNetworkFirst(req, shellFallback)
+          : assetCacheFirst(req).then((res) => res || shellFallback()).catch(() => shellFallback())
+      )
+      return
+    }
+
+    // (d) An INSTALLED game's own files: TRUE CACHE-FIRST out of its dedicated
+    //     bucket, returned directly with zero network. ignoreSearch so a
+    //     ?v=/?cachebust the game appends still hits the file we stored.
+    //     A miss (game not installed / file not in the manifest) falls through
+    //     to the unchanged behaviour above, so nothing regresses for the 16
+    //     games the child did not install.
     e.respondWith(
-      fetch(req)
-        .then((res) => {
-          // Update cache in background
-          const clone = res.clone()
-          caches.open(HTML_CACHE).then((c) => c.put(req, clone))
-          return res
-        })
-        .catch(() => caches.match(req).then((m) => m || caches.match('./')))
+      caches.match(req, { cacheName: filmCache, ignoreSearch: true })
+        .catch(() => null)   // bucket does not exist = game not installed
+        .then((hit) => hit || (isHTML ? htmlNetworkFirst(req) : assetCacheFirst(req)))
     )
+    return
+  }
+
+  if (isHTML) {
+    e.respondWith(htmlNetworkFirst(req))
     return
   }
 
@@ -141,17 +253,5 @@ self.addEventListener('fetch', (e) => {
   }
 
   // Static assets: CACHE-FIRST with stale-while-revalidate
-  e.respondWith(
-    caches.match(req).then((cached) => {
-      const fetchPromise = fetch(req).then((res) => {
-        // Only cache successful responses
-        if (res && res.status === 200 && res.type === 'basic') {
-          const clone = res.clone()
-          caches.open(ASSET_CACHE).then((c) => c.put(req, clone))
-        }
-        return res
-      }).catch(() => cached)
-      return cached || fetchPromise
-    })
-  )
+  e.respondWith(assetCacheFirst(req))
 })

@@ -17,6 +17,16 @@
   var reloaded = false
   function reloadOnce(tag) {
     if (reloaded) return
+    // v59.89 — never yank the page out from under an in-flight "Siapkan
+    // Offline" download (a 40 MB game takes minutes on a tablet). Re-check
+    // shortly; the deploy still lands, just after the download settles.
+    // No-op on every page that does not load games/film-offline.js.
+    try {
+      if (window.FilmOffline && window.FilmOffline.busy && window.FilmOffline.busy()) {
+        setTimeout(function () { reloadOnce(tag) }, 4000)
+        return
+      }
+    } catch (e) {}
     var flag = 'dunia-sw-reloaded-' + (tag || '')
     if (sessionStorage.getItem(flag)) return
     sessionStorage.setItem(flag, '1')

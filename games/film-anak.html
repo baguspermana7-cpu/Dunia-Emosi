@@ -35,7 +35,10 @@
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:14px}
   @media(min-width:560px){.grid{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}}
   /* ── card ── */
-  .card{position:relative;display:block;border:0;cursor:pointer;text-align:left;overflow:hidden;border-radius:20px;
+  /* flex column + .ofl{margin-top:auto} so every card in a row is the SAME
+     height and the offline strip always sits flush at the bottom, whether the
+     card shows a one-line button or a badge with a note under it */
+  .card{position:relative;display:flex;flex-direction:column;border:0;cursor:pointer;text-align:left;overflow:hidden;border-radius:20px;
     background:#1a1440;color:inherit;text-decoration:none;font-family:inherit;padding:0;
     box-shadow:0 8px 0 #0d0a28,0 16px 30px rgba(0,0,0,.4),inset 0 2px 3px rgba(255,255,255,.12);
     transition:transform .12s ease,box-shadow .12s ease}
@@ -46,6 +49,45 @@
   .card .play{position:absolute;top:9px;right:9px;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
     background:rgba(10,8,30,.62);backdrop-filter:blur(3px);box-shadow:0 2px 8px rgba(0,0,0,.4)}
   .card .play svg{width:16px;height:16px;margin-left:2px}
+  /* the tappable "play the game" area — was the whole card before the offline
+     strip was added below it (a <button> may not live inside an <a>) */
+  .cplay{position:relative;display:block;color:inherit;text-decoration:none;border-radius:20px 20px 0 0;overflow:hidden}
+  /* ── offline strip (v59.89 "Siapkan Offline") ── */
+  .ofl{margin-top:auto;padding:9px 10px 11px;border-top:2px solid rgba(255,255,255,.07);
+    display:flex;flex-direction:column;gap:7px;font-family:'Baloo 2',sans-serif}
+  .ofl:empty{display:none}
+  .obtn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;min-height:44px;padding:8px 12px;
+    border:0;cursor:pointer;font-family:'Baloo 2',sans-serif;font-size:.84rem;font-weight:800;line-height:1.1;
+    color:var(--ink);background:linear-gradient(180deg,#3b2f86,#2b2166);border-radius:14px;
+    box-shadow:0 3px 0 #150f3c,inset 0 1px 2px rgba(255,255,255,.16)}
+  .obtn:active{transform:translateY(2px);box-shadow:0 1px 0 #150f3c,inset 0 2px 5px rgba(0,0,0,.3)}
+  .obtn:focus-visible{outline:3px solid #ffe08a;outline-offset:2px}
+  .obtn svg{width:17px;height:17px;flex-shrink:0}
+  /* gold variant — used for "Perbarui" (an update is waiting) */
+  .obtn.gold{color:#3a2b12;background:linear-gradient(180deg,#fff7de,#ffe9a8);box-shadow:0 3px 0 #e3b74e,inset 0 1px 3px rgba(255,255,255,.85)}
+  .obtn.gold:active{box-shadow:0 1px 0 #e3b74e,inset 0 2px 6px rgba(0,0,0,.12)}
+  /* installed badge — gold like .glabel, plated not filled */
+  .obadge{display:flex;align-items:center;gap:7px;min-height:34px;padding:5px 10px;border-radius:12px;
+    font-size:.82rem;font-weight:800;color:#ffe08a;background:rgba(255,224,138,.09);
+    box-shadow:inset 0 0 0 2px rgba(255,224,138,.28)}
+  .obadge svg{width:16px;height:16px;flex-shrink:0}
+  .orow{display:flex;align-items:center;gap:8px}
+  .orow .obadge{flex:1;min-width:0}
+  .oicon{flex-shrink:0;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border:0;cursor:pointer;
+    border-radius:13px;color:#c3b8ff;background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 2px rgba(255,255,255,.08)}
+  .oicon:active{transform:translateY(2px)}
+  .oicon:focus-visible{outline:3px solid #ffe08a;outline-offset:2px}
+  .oicon svg{width:18px;height:18px}
+  .onote{font-size:.7rem;font-weight:700;line-height:1.3;color:#a99ee0;opacity:.9}
+  .onote.warn{color:#ffc9a3}
+  .pbar{height:10px;border-radius:6px;background:#100c2e;overflow:hidden;box-shadow:inset 0 2px 4px rgba(0,0,0,.6)}
+  .pbar i{display:block;height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,#ffd968,#ffe08a);transition:width .25s ease}
+  /* ── storage summary bar ── */
+  .ofsum{max-width:1120px;margin:14px auto 0;padding:11px 14px;border-radius:18px;background:#1a1440;
+    font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.8rem;line-height:1.4;color:#c3b8ff;
+    box-shadow:0 6px 0 #0d0a28,0 12px 24px rgba(0,0,0,.35),inset 0 2px 3px rgba(255,255,255,.1)}
+  .ofsum b{color:#ffe08a;font-weight:800}
+  .ofsum .sub{display:block;margin-top:3px;font-size:.72rem;color:#8b80c4}
   footer{max-width:1120px;margin:26px auto 0;padding:0 4px;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.74rem;color:#8b80c4;opacity:.75;text-align:center}
 </style>
 </head>
@@ -61,6 +103,8 @@
     </div>
   </div>
 
+  <div class="ofsum" id="ofsum" role="status" aria-live="polite" hidden></div>
+
   <div class="group" id="grp-batwheels">
     <div class="glabel">Batwheels</div>
     <div class="grid" id="grid-batwheels"></div>
@@ -71,7 +115,7 @@
     <div class="grid" id="grid-thomas"></div>
   </div>
 
-  <footer>Semua game dimainkan offline dari perangkatmu.</footer>
+  <footer>Semua game dimainkan langsung dari perangkatmu. Ketuk <b>Siapkan Offline</b> di sebuah game supaya game itu bisa dimainkan walau tidak ada internet sama sekali.</footer>
 
 <script>
   var PLAY_SVG = '<svg viewBox="0 0 24 24" fill="#ffe08a"><path d="M8 5v14l11-7z"/></svg>';
@@ -101,16 +145,246 @@
     var host = document.getElementById(id), html = '';
     for (var i=0;i<list.length;i++){
       var g = list[i];
-      html += '<a class="card" href="film-play.html?g=' + encodeURIComponent(g.slug) + '" title="' + esc(g.name) + '">'
-            +   '<img loading="lazy" decoding="async" src="../assets/film-thumbs/' + g.slug + '.webp" alt="' + esc(g.name) + '">'
-            +   '<span class="play">' + PLAY_SVG + '</span>'
-            +   '<span class="nm">' + esc(g.name) + '</span>'
-            + '</a>';
+      // The card is now a container: an <a> for "play" plus an offline strip
+      // holding a real <button>. (A <button> inside an <a> is invalid HTML and
+      // un-tappable on touch — hence the split.)
+      html += '<div class="card" data-slug="' + esc(g.slug) + '">'
+            +   '<a class="cplay" href="film-play.html?g=' + encodeURIComponent(g.slug) + '" title="' + esc(g.name) + '">'
+            +     '<img loading="lazy" decoding="async" src="../assets/film-thumbs/' + g.slug + '.webp" alt="' + esc(g.name) + '">'
+            +     '<span class="play">' + PLAY_SVG + '</span>'
+            +     '<span class="nm">' + esc(g.name) + '</span>'
+            +   '</a>'
+            +   '<div class="ofl" id="ofl-' + esc(g.slug) + '"></div>'
+            + '</div>';
     }
     host.innerHTML = html;
   }
   render('grid-thomas', THOMAS);
   render('grid-batwheels', BATWHEELS);
+  window.FILM_GAMES = THOMAS.concat(BATWHEELS);
+</script>
+<script src="film-offline.js?v=59.89-20260802a"></script>
+<script>
+/* ===========================================================================
+ * "Siapkan Offline" — per-game offline installer UI
+ * ===========================================================================
+ * State machine per card, driven by FilmOffline.status():
+ *   not-installed → [Siapkan Offline · 18 MB]
+ *   installing    → progress bar + % + [Batal]
+ *   partial       → [Lanjutkan unduhan]           (a cancelled/failed install)
+ *   installed     → "Siap offline" badge + [hapus]
+ *   stale         → "Ada versi baru" + [Perbarui] + [hapus]
+ * Honest by design: the copy says plainly that the game will work with no
+ * internet, how big it is, and whether the system may still delete it.
+ * ======================================================================== */
+(function(){
+  if (!window.FilmOffline) return;
+  var FO = window.FilmOffline;
+  var GAMES = window.FILM_GAMES || [];
+  var NAME = {}; for (var i=0;i<GAMES.length;i++) NAME[GAMES[i].slug] = GAMES[i].name;
+
+  var ICON_DL   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 20h16"/></svg>';
+  var ICON_OK   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>';
+  var ICON_TRASH= '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M10 7V4h4v3"/><path d="M6 7l1 13h10l1-13"/></svg>';
+  var ICON_UPD  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.7-6"/><path d="M20 4v5h-5"/></svg>';
+  var ICON_STOP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></svg>';
+
+  var ST = {};        // slug -> last known status
+  var JOBS = {};      // slug -> running install handle
+  var ARMED = {};     // slug -> true when a low-space warning is awaiting confirm
+  var EST = null;     // last storage estimate
+  var SW_OK = null;   // is a service worker actually controlling this page?
+  FO.swReady().then(function(ok){ SW_OK = ok; paintSummary(); });
+
+  function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function host(slug){ return document.getElementById('ofl-' + slug); }
+  function progressText(p, pct){
+    if (p.cancelling) return 'Membatalkan\u2026';
+    if (p.phase === 'prepare') return 'Menyiapkan\u2026';
+    if (p.phase === 'finalize') return 'Merapikan\u2026';
+    return 'Mengunduh ' + pct + '% \u00b7 ' + mb(p.bytes || 0) + ' dari ' + mb(p.totalBytes || 0);
+  }
+  function mb(n){ return FO.fmtBytes(n); }
+
+  /* ── one card ──────────────────────────────────────────────────────────── */
+  function paint(slug){
+    var el = host(slug); if (!el) return;
+    var s = ST[slug] || { state:'not-installed', bytes:0, files:0 };
+    var nm = NAME[slug] || slug;
+    var job = JOBS[slug];
+
+    if (!FO.supported || s.state === 'unsupported'){ el.innerHTML = ''; return; }
+
+    if (job){
+      var p = job.progress || { done:0, total:s.files||1, bytes:0, totalBytes:s.bytes||1 };
+      var pct = p.totalBytes ? Math.min(100, Math.round(p.bytes / p.totalBytes * 100)) : 0;
+      // The label reports BYTES, same as the bar. Reporting the file count here
+      // reads as a contradiction ("10% - 88/92 berkas") because a handful of
+      // big files carry most of the weight.
+      el.innerHTML =
+        '<div class="pbar"><i style="width:' + pct + '%"></i></div>' +
+        '<div class="onote" role="status" aria-live="polite">' + progressText(p, pct) + '</div>' +
+        '<button type="button" class="obtn" data-act="cancel" data-slug="' + esc(slug) + '">' +
+          ICON_STOP + '<span>Batal</span></button>';
+      return;
+    }
+
+    if (s.state === 'installed'){
+      el.innerHTML =
+        '<div class="orow">' +
+          '<span class="obadge">' + ICON_OK + '<span>Siap offline</span></span>' +
+          '<button type="button" class="oicon" data-act="remove" data-slug="' + esc(slug) + '" ' +
+            'aria-label="Hapus unduhan ' + esc(nm) + ' dan kosongkan ' + mb(s.bytes) + '">' + ICON_TRASH + '</button>' +
+        '</div>' +
+        '<div class="onote">Bisa dimainkan tanpa internet · ' + mb(s.bytes) + '</div>';
+      return;
+    }
+
+    if (s.state === 'stale'){
+      el.innerHTML =
+        '<div class="orow">' +
+          '<button type="button" class="obtn gold" data-act="install" data-slug="' + esc(slug) + '">' +
+            ICON_UPD + '<span>Perbarui</span></button>' +
+          '<button type="button" class="oicon" data-act="remove" data-slug="' + esc(slug) + '" ' +
+            'aria-label="Hapus unduhan ' + esc(nm) + '">' + ICON_TRASH + '</button>' +
+        '</div>' +
+        '<div class="onote">Game ini sudah diperbarui. Unduh lagi (' + mb(s.bytes) + ') biar versi offline-nya ikut baru.</div>';
+      return;
+    }
+
+    if (s.state === 'partial'){
+      var pctP = s.files ? Math.round(s.done / s.files * 100) : 0;
+      el.innerHTML =
+        '<div class="pbar"><i style="width:' + pctP + '%"></i></div>' +
+        '<div class="orow">' +
+          '<button type="button" class="obtn" data-act="install" data-slug="' + esc(slug) + '">' +
+            ICON_DL + '<span>Lanjutkan · ' + pctP + '%</span></button>' +
+          '<button type="button" class="oicon" data-act="remove" data-slug="' + esc(slug) + '" ' +
+            'aria-label="Hapus unduhan ' + esc(nm) + '">' + ICON_TRASH + '</button>' +
+        '</div>' +
+        '<div class="onote">Unduhan belum selesai — lanjutkan biar bisa dimainkan tanpa internet.</div>';
+      return;
+    }
+
+    // not-installed. If the size is unknown (offline-index.json unreachable)
+    // say nothing rather than claiming "0 B".
+    var size = s.bytes ? ' · ' + mb(s.bytes) : '';
+    var warn = ARMED[slug]
+      ? '<div class="onote warn">Ruang perangkat mungkin tidak cukup. Ketuk sekali lagi kalau tetap mau lanjut.</div>'
+      : '';
+    el.innerHTML =
+      '<button type="button" class="obtn" data-act="install" data-slug="' + esc(slug) + '">' +
+        ICON_DL + '<span>Siapkan Offline' + size + '</span></button>' + warn;
+  }
+
+  /* ── summary bar ───────────────────────────────────────────────────────── */
+  function paintSummary(){
+    var box = document.getElementById('ofsum'); if (!box) return;
+    if (!FO.supported){
+      box.hidden = false;
+      box.innerHTML = 'Peramban ini belum mendukung penyimpanan offline, jadi game tetap butuh internet.';
+      return;
+    }
+    var n = 0, bytes = 0, anyPersisted = false;
+    for (var slug in ST){
+      if (!ST.hasOwnProperty(slug)) continue;
+      var s = ST[slug];
+      if (s.state === 'installed' || s.state === 'stale'){ n++; bytes += s.bytes || 0; }
+      if (s.persisted) anyPersisted = true;
+    }
+    var free = EST && EST.supported ? mb(EST.free) : null;
+    var line = n
+      ? 'Tersimpan di perangkat: <b>' + n + ' game</b> · <b>' + mb(bytes) + '</b>'
+      : 'Belum ada game yang disiapkan offline.';
+    if (free) line += ' · Sisa ruang <b>' + free + '</b>';
+    var sub = n
+      ? (anyPersisted
+          ? 'Penyimpanan sudah dikunci — game ini tidak akan dihapus otomatis oleh sistem.'
+          : 'Catatan jujur: kalau ruang perangkat menipis, sistem bisa menghapus unduhan ini. Tinggal ketuk Siapkan Offline lagi kalau itu terjadi.')
+      : 'Ketuk Siapkan Offline di sebuah game untuk mengunduh semua isinya sekali jalan.';
+    if (SW_OK === false){
+      sub = 'Mesin offline belum aktif di halaman ini. Buka aplikasi dari beranda sekali lagi, lalu kembali ke sini.';
+    }
+    box.hidden = false;
+    box.innerHTML = line + '<span class="sub">' + sub + '</span>';
+  }
+
+  /* ── actions ───────────────────────────────────────────────────────────── */
+  function refresh(slugs){
+    return FO.statusAll(slugs || Object.keys(NAME)).then(function(map){
+      for (var slug in map){ if (map.hasOwnProperty(slug)){ ST[slug] = map[slug]; paint(slug); } }
+      return FO.estimate();
+    }).then(function(e){ EST = e; paintSummary(); });
+  }
+
+  function startInstall(slug){
+    var s = ST[slug] || {};
+    // Honest space check BEFORE we start: needs ~10% headroom for overhead.
+    if (!ARMED[slug] && EST && EST.supported && EST.free && s.bytes && EST.free < s.bytes * 1.1){
+      ARMED[slug] = true; paint(slug);
+      return;
+    }
+    ARMED[slug] = false;
+    var job = FO.install(slug, function(p){
+      if (p.phase === 'download' || p.phase === 'prepare' || p.phase === 'finalize'){
+        job.progress = p;
+        // Repaint only the bar + label so the button does not lose focus.
+        var el = host(slug); if (!el) return;
+        var bar = el.querySelector('.pbar i'), note = el.querySelector('.onote');
+        var pct = p.totalBytes ? Math.min(100, Math.round((p.bytes||0) / p.totalBytes * 100)) : 0;
+        if (bar && note){
+          bar.style.width = pct + '%';
+          note.textContent = progressText(p, pct);
+        } else { paint(slug); }
+      }
+    });
+    job.progress = { done:0, total:s.files||0, bytes:0, totalBytes:s.bytes||0 };
+    JOBS[slug] = job;
+    paint(slug);
+    job.promise.then(function(){
+      delete JOBS[slug];
+      return refresh([slug]);
+    }, function(err){
+      delete JOBS[slug];
+      refresh([slug]).then(function(){
+        var el = host(slug);
+        if (el && !JOBS[slug]){
+          var msg = document.createElement('div');
+          msg.className = 'onote warn';
+          msg.setAttribute('role','status');
+          msg.textContent = 'Unduhan belum selesai (' + (err && err.message ? err.message : 'sambungan terputus') + '). Coba lagi ya.';
+          el.appendChild(msg);
+        }
+      });
+    });
+  }
+
+  document.addEventListener('click', function(ev){
+    var btn = ev.target.closest ? ev.target.closest('[data-act]') : null;
+    if (!btn) return;
+    var slug = btn.getAttribute('data-slug');
+    var act = btn.getAttribute('data-act');
+    if (!slug) return;
+    ev.preventDefault();
+    if (act === 'install') startInstall(slug);
+    else if (act === 'cancel'){
+      var j = JOBS[slug];
+      if (j){
+        j.cancel();
+        if (j.progress) j.progress.cancelling = true;
+        btn.disabled = true;
+        var n = host(slug) && host(slug).querySelector('.onote');
+        if (n) n.textContent = 'Membatalkan\u2026';
+      }
+    }
+    else if (act === 'remove'){
+      btn.disabled = true;
+      FO.remove(slug).then(function(){ return refresh([slug]); });
+    }
+  });
+
+  refresh();
+})();
 </script>
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 </body>
