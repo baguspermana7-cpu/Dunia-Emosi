@@ -1,0 +1,477 @@
+[
+  {
+    "slug": "wilson",
+    "source": "chuggington.png#r0c0",
+    "nativeW": 262,
+    "nativeH": 252,
+    "trimmedW": 234,
+    "trimmedH": 148,
+    "outputW": 234,
+    "outputH": 148,
+    "outputBytes": 9378,
+    "archetype": "standard",
+    "suggestedSpriteHeight": 115,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 183.63
+    }
+  },
+  {
+    "slug": "brewster",
+    "source": "chuggington.png#r0c1",
+    "nativeW": 244,
+    "nativeH": 252,
+    "trimmedW": 239,
+    "trimmedH": 142,
+    "outputW": 239,
+    "outputH": 142,
+    "outputBytes": 10210,
+    "archetype": "express",
+    "suggestedSpriteHeight": 125,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 182.1
+    }
+  },
+  {
+    "slug": "koko",
+    "source": "chuggington.png#r0c2",
+    "nativeW": 244,
+    "nativeH": 252,
+    "trimmedW": 230,
+    "trimmedH": 135,
+    "outputW": 230,
+    "outputH": 135,
+    "outputBytes": 7462,
+    "archetype": "standard",
+    "suggestedSpriteHeight": 115,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 180.03
+    }
+  },
+  {
+    "slug": "hoot",
+    "source": "chuggington.png#r0c3",
+    "nativeW": 227,
+    "nativeH": 252,
+    "trimmedW": 192,
+    "trimmedH": 142,
+    "outputW": 192,
+    "outputH": 142,
+    "outputBytes": 7726,
+    "archetype": "standard",
+    "suggestedSpriteHeight": 115,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 181.41
+    }
+  },
+  {
+    "slug": "toot",
+    "source": "chuggington.png#r0c4",
+    "nativeW": 236,
+    "nativeH": 252,
+    "trimmedW": 190,
+    "trimmedH": 140,
+    "outputW": 190,
+    "outputH": 140,
+    "outputBytes": 7578,
+    "archetype": "standard",
+    "suggestedSpriteHeight": 115,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 181.04
+    }
+  },
+  {
+    "slug": "piper",
+    "source": "chuggington.png#r1c0",
+    "nativeW": 262,
+    "nativeH": 239,
+    "trimmedW": 194,
+    "trimmedH": 157,
+    "outputW": 194,
+    "outputH": 157,
+    "outputBytes": 9048,
+    "archetype": "standard",
+    "suggestedSpriteHeight": 115,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 174.9
+    }
+  },
+  {
+    "slug": "action-chugger",
+    "source": "chuggington.png#r1c1",
+    "nativeW": 244,
+    "nativeH": 239,
+    "trimmedW": 237,
+    "trimmedH": 134,
+    "outputW": 237,
+    "outputH": 134,
+    "outputBytes": 9220,
+    "archetype": "express",
+    "suggestedSpriteHeight": 125,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 169.73
+    }
+  },
+  {
+    "slug": "calley",
+    "source": "chuggington.png#r1c2",
+    "nativeW": 244,
+    "nativeH": 239,
+    "trimmedW": 204,
+    "trimmedH": 143,
+    "outputW": 204,
+    "outputH": 143,
+    "outputBytes": 7644,
+    "archetype": "tiny",
+    "suggestedSpriteHeight": 100,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 175.06
+    }
+  },
+  {
+    "slug": "dunbar",
+    "source": "chuggington.png#r1c3",
+    "nativeW": 227,
+    "nativeH": 239,
+    "trimmedW": 210,
+    "trimmedH": 124,
+    "outputW": 210,
+    "outputH": 124,
+    "outputBytes": 7582,
+    "archetype": "standard",
+    "suggestedSpriteHeight": 115,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 172.75
+    }
+  },
+  {
+    "slug": "old-puffer-pete",
+    "source": "chuggington.png#r1c4",
+    "nativeW": 236,
+    "nativeH": 239,
+    "trimmedW": 214,
+    "trimmedH": 157,
+    "outputW": 214,
+    "outputH": 157,
+    "outputBytes": 8510,
+    "archetype": "steam",
+    "suggestedSpriteHeight": 115,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 174.19
+    }
+  },
+  {
+    "slug": "harrison",
+    "source": "chuggington.png#r2c0",
+    "nativeW": 262,
+    "nativeH": 246,
+    "trimmedW": 241,
+    "trimmedH": 138,
+    "outputW": 241,
+    "outputH": 138,
+    "outputBytes": 10642,
+    "archetype": "express",
+    "suggestedSpriteHeight": 125,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 172.78
+    }
+  },
+  {
+    "slug": "emery",
+    "source": "chuggington.png#r2c1",
+    "nativeW": 244,
+    "nativeH": 246,
+    "trimmedW": 233,
+    "trimmedH": 132,
+    "outputW": 233,
+    "outputH": 132,
+    "outputBytes": 7586,
+    "archetype": "long",
+    "suggestedSpriteHeight": 105,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 180.8
+    }
+  },
+  {
+    "slug": "irving",
+    "source": "chuggington.png#r2c2",
+    "nativeW": 244,
+    "nativeH": 246,
+    "trimmedW": 208,
+    "trimmedH": 150,
+    "outputW": 208,
+    "outputH": 150,
+    "outputBytes": 8646,
+    "archetype": "standard",
+    "suggestedSpriteHeight": 115,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 184.3
+    }
+  },
+  {
+    "slug": "frostini",
+    "source": "chuggington.png#r2c3",
+    "nativeW": 227,
+    "nativeH": 246,
+    "trimmedW": 213,
+    "trimmedH": 136,
+    "outputW": 213,
+    "outputH": 136,
+    "outputBytes": 9224,
+    "archetype": "standard",
+    "suggestedSpriteHeight": 115,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 181.19
+    }
+  },
+  {
+    "slug": "zephie",
+    "source": "chuggington.png#r2c4",
+    "nativeW": 236,
+    "nativeH": 246,
+    "trimmedW": 136,
+    "trimmedH": 180,
+    "outputW": 136,
+    "outputH": 180,
+    "outputBytes": 7214,
+    "archetype": "tall",
+    "suggestedSpriteHeight": 140,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 188.75
+    }
+  },
+  {
+    "slug": "mtambo",
+    "source": "chuggington.png#r3c0",
+    "nativeW": 262,
+    "nativeH": 222,
+    "trimmedW": 225,
+    "trimmedH": 145,
+    "outputW": 225,
+    "outputH": 145,
+    "outputBytes": 10200,
+    "archetype": "standard",
+    "suggestedSpriteHeight": 115,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 165.81
+    }
+  },
+  {
+    "slug": "hodge",
+    "source": "chuggington.png#r3c1",
+    "nativeW": 244,
+    "nativeH": 222,
+    "trimmedW": 222,
+    "trimmedH": 134,
+    "outputW": 222,
+    "outputH": 134,
+    "outputBytes": 8034,
+    "archetype": "tiny",
+    "suggestedSpriteHeight": 100,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 166.37
+    }
+  },
+  {
+    "slug": "olwin",
+    "source": "chuggington.png#r3c2",
+    "nativeW": 244,
+    "nativeH": 222,
+    "trimmedW": 226,
+    "trimmedH": 139,
+    "outputW": 226,
+    "outputH": 139,
+    "outputBytes": 8406,
+    "archetype": "steam",
+    "suggestedSpriteHeight": 115,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 160.44
+    }
+  },
+  {
+    "slug": "chatsworth",
+    "source": "chuggington.png#r3c3",
+    "nativeW": 227,
+    "nativeH": 222,
+    "trimmedW": 212,
+    "trimmedH": 124,
+    "outputW": 212,
+    "outputH": 124,
+    "outputBytes": 7156,
+    "archetype": "standard",
+    "suggestedSpriteHeight": 115,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 159.21
+    }
+  },
+  {
+    "slug": "hanzo",
+    "source": "chuggington.png#r3c4",
+    "nativeW": 236,
+    "nativeH": 222,
+    "trimmedW": 219,
+    "trimmedH": 105,
+    "outputW": 219,
+    "outputH": 105,
+    "outputBytes": 7424,
+    "archetype": "express",
+    "suggestedSpriteHeight": 125,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 158.94
+    }
+  },
+  {
+    "slug": "jackman",
+    "source": "chuggington.png#r4c0",
+    "nativeW": 262,
+    "nativeH": 254,
+    "trimmedW": 238,
+    "trimmedH": 139,
+    "outputW": 238,
+    "outputH": 139,
+    "outputBytes": 10196,
+    "archetype": "standard",
+    "suggestedSpriteHeight": 115,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 169.94
+    }
+  },
+  {
+    "slug": "asher",
+    "source": "chuggington.png#r4c1",
+    "nativeW": 244,
+    "nativeH": 254,
+    "trimmedW": 226,
+    "trimmedH": 150,
+    "outputW": 226,
+    "outputH": 150,
+    "outputBytes": 10040,
+    "archetype": "standard",
+    "suggestedSpriteHeight": 115,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 169.5
+    }
+  },
+  {
+    "slug": "zack",
+    "source": "chuggington.png#r4c2",
+    "nativeW": 244,
+    "nativeH": 254,
+    "trimmedW": 217,
+    "trimmedH": 145,
+    "outputW": 217,
+    "outputH": 145,
+    "outputBytes": 10670,
+    "archetype": "standard",
+    "suggestedSpriteHeight": 115,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 166.45
+    }
+  },
+  {
+    "slug": "tyne",
+    "source": "chuggington.png#r4c3",
+    "nativeW": 227,
+    "nativeH": 254,
+    "trimmedW": 209,
+    "trimmedH": 144,
+    "outputW": 209,
+    "outputH": 144,
+    "outputBytes": 9702,
+    "archetype": "standard",
+    "suggestedSpriteHeight": 115,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 170.2
+    }
+  },
+  {
+    "slug": "fletch",
+    "source": "chuggington.png#r4c4",
+    "nativeW": 236,
+    "nativeH": 254,
+    "trimmedW": 219,
+    "trimmedH": 139,
+    "outputW": 219,
+    "outputH": 139,
+    "outputBytes": 8866,
+    "archetype": "standard",
+    "suggestedSpriteHeight": 115,
+    "faces": "right",
+    "mirrored": true,
+    "railCut": {
+      "slope": -0.02022,
+      "intercept": 171.32
+    }
+  }
+]

@@ -1697,6 +1697,56 @@ const G16_CHAR_CONFIGS = {
   })
 })();
 
+// v59.88 — Chuggington pack (25 chars) for g16's picker + roster. Same parallel-structure
+// recipe as the TRAIN_WORLD block above (TRAIN_STYLES card + G16_CHAR_CONFIGS sprite +
+// G16_CARD_META label + G16_PKGS tab). Deliberately NOT added to FACES_LEFT_G16: the crops
+// produced by scripts/process-chuggington-sprites.py are mirrored at build time so the art
+// already points RIGHT (g16's travel direction), so they must render native (scale.x = 1).
+;(function () {
+  if (typeof TRAIN_STYLES === 'undefined' || typeof G16_PKGS === 'undefined') return
+  var CHG = [
+    ['chg_wilson','wilson','Wilson','Trainee Merah 🔴',0xd32f2f,0xeceff1,90,null],
+    ['chg_brewster','brewster','Brewster','Trainee Biru Kuat 💪',0x1d4ed8,0xfbbf24,100,null],
+    ['chg_koko','koko','Koko','Trainee Listrik ⚡',0x7cb342,0x7e57c2,90,null],
+    ['chg_hoot','hoot','Hoot','Si Kembar Biru 👯',0x1e88e5,0xffffff,90,null],
+    ['chg_toot','toot','Toot','Si Kembar Toska 👯',0x00897b,0xffffff,90,null],
+    ['chg_piper','piper','Piper','Chugger Air 💧',0xf57c00,0x689f38,90,null],
+    ['chg_action_chugger','action-chugger','Action Chugger','Pahlawan Super 🦸',0xffb300,0xe53935,100,null],
+    ['chg_calley','calley','Calley','Chugger Perbaikan 🔧',0xef6c00,0x558b2f,78,null],
+    ['chg_dunbar','dunbar','Dunbar','Pelatih Hijau 🎓',0x827717,0xc0ca33,90,null],
+    ['chg_old_puffer_pete','old-puffer-pete','Old Puffer Pete','Lokomotif Uap Tua 🚂',0x212121,0xc62828,90,[25,-100]],
+    ['chg_harrison','harrison','Harrison','Si Cepat Biru 🏎️',0x1565c0,0xfdd835,100,null],
+    ['chg_emery','emery','Emery','Kereta Kota Perak 🚇',0xb0bec5,0xc62828,82,null],
+    ['chg_irving','irving','Irving','Chugger Marun 📦',0x8e1c1c,0xfdd835,90,null],
+    ['chg_frostini','frostini','Frostini','Chugger Es Krim 🍦',0xffca28,0xf48fb1,90,null],
+    ['chg_zephie','zephie','Zephie','Chugger Derek Kecil 🏗️',0x8bc34a,0x6d4c41,110,[-6,-120]],
+    ['chg_mtambo','mtambo','Mtambo','Chugger Petualang 🌍',0xfbc02d,0x6d4c41,90,null],
+    ['chg_hodge','hodge','Hodge','Truk Derek Coklat 🚚',0x795548,0xa1887f,78,null],
+    ['chg_olwin','olwin','Olwin','Uap Hijau Klasik 🚂',0x2e7d32,0xff8f00,90,[45,-100]],
+    ['chg_chatsworth','chatsworth','Chatsworth','Ekspres Putih Merah 🚄',0xeceff1,0xd32f2f,90,null],
+    ['chg_hanzo','hanzo','Hanzo','Peluru Biru 🚄',0x1e40af,0xeceff1,100,null],
+    ['chg_jackman','jackman','Jackman','Chugger Penjaga 🛡️',0x1a237e,0xfdd835,90,null],
+    ['chg_asher','asher','Asher','Chugger Pemadam 🚒',0xd32f2f,0xfdd835,90,null],
+    ['chg_zack','zack','Zack','Chugger Derek Oranye 🏗️',0xef6c00,0xfdd835,90,null],
+    ['chg_tyne','tyne','Tyne','Chugger Kuning Derek 🏗️',0xfbc02d,0x212121,90,null],
+    ['chg_fletch','fletch','Fletch','Chugger Hijau Kuning 🌿',0xcddc39,0xfbc02d,90,null],
+  ]
+  var idxs = []
+  CHG.forEach(function (r) {
+    var key = r[0], slug = r[1], name = r[2], sub = r[3], body = r[4], acc = r[5], h = r[6], smoke = r[7]
+    idxs.push(TRAIN_STYLES.length)
+    TRAIN_STYLES.push({ character: true, characterKey: key,
+      locoBody: body, locoCab: body, locoAccent: acc, carBody: body,
+      carWindow: 0xdbeafe, carStripe: acc, cabColor: body, chimney: 0x212121,
+      wheelRim: acc, caboose: body, cabooseLight: acc, smokeCol: 0xbbbbbb })
+    G16_CHAR_CONFIGS[key] = { spriteUrl: '../assets/train/chuggington/' + slug + '.webp',
+      spriteHeight: h, wheelPositions: [], smokePos: smoke, bottomPaddingOffset: 0 }
+    G16_CARD_META[key] = { name: name, desc: sub }
+  })
+  G16_PKGS.push({ id: 'chuggington', name: '\uD83D\uDE82 Chuggington', color: '#f59e0b',
+    desc: '25 karakter Chuggington!', indices: idxs })
+})();
+
 // A-339 P2 — "Semua" tab at the FRONT: one scrollable grid of EVERY train, so the
 // picker opens on the full roster (owner: "only 4 trains, can't slide"). Lazy canvas
 // previews (TrainPicker) keep 300+ cards smooth. Default the picker to this tab.

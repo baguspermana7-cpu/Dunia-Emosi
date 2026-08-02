@@ -543,7 +543,7 @@ function getCurrentStation(){
 // only the two character packages (Casey dkk + Thomas AEG). Mutate the shared TRAIN_CATS in place.
 ;(function () {
   if (typeof TRAIN_CATS !== 'undefined' && window.TRAIN_WORLD && Array.isArray(window.TRAIN_WORLD.categories)) {
-    const keep = TRAIN_CATS.filter(c => c.key === 'character' || c.key === 'thomas_aeg')
+    const keep = TRAIN_CATS.filter(c => c.key === 'character' || c.key === 'thomas_aeg' || c.key === 'chuggington')  // v59.88 — keep the Chuggington pack too
     TRAIN_CATS.length = 0
     TRAIN_CATS.push.apply(TRAIN_CATS, keep.concat(window.TRAIN_WORLD.categories))
   }
@@ -553,9 +553,9 @@ const TRAIN_MODELS = typeof TRAIN_CATS !== 'undefined'
   ? TRAIN_CATS.flatMap((cat, ci) => cat.trains.map((t, ti) => {
       const hexToInt = s => parseInt((s||'#000').replace('#',''), 16)
       const typeMap = {steam_id:'steam',steam_world:'steam',diesel_id:'diesel',diesel_world:'diesel',emu:'electric',hsr:'highspeed',maglev:'highspeed',character:'character',
-        uap_klasik:'steam',uap_modern:'steam',diesel:'diesel',listrik:'electric',cepat:'highspeed',komuter:'electric',indonesia:'heritage',thomas_aeg:'character'}
+        uap_klasik:'steam',uap_modern:'steam',diesel:'diesel',listrik:'electric',cepat:'highspeed',komuter:'electric',indonesia:'heritage',thomas_aeg:'character',chuggington:'character'}
       const subMap = {steam_id:'classic',steam_world:'pacific',diesel_id:'hood',diesel_world:'boxcab',emu:'krl',hsr:'bullet',maglev:'maglev',character:'featured',
-        uap_klasik:'classic',uap_modern:'pacific',diesel:'hood',listrik:'krl',cepat:'bullet',komuter:'krl',indonesia:'royal',thomas_aeg:'featured'}
+        uap_klasik:'classic',uap_modern:'pacific',diesel:'hood',listrik:'krl',cepat:'bullet',komuter:'krl',indonesia:'royal',thomas_aeg:'featured',chuggington:'featured'}
       const base = {id:t.key, key:t.key, name:t.name, type:typeMap[cat.key]||'heritage', sub:subMap[cat.key]||'royal',
         v:(ti%5)+1, b:hexToInt(t.bodyColor), r:hexToInt(t.accColor), s:hexToInt(t.accColor),
         w:0xdbeafe, k:0x111827 }
