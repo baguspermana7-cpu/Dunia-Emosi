@@ -39,6 +39,19 @@ commit (see re-sync).
 The player's HOME button + FIT letterbox handle the rest at the shell level (film-play.html,
 NOT wiped by re-sync).
 
+## UNIVERSAL FIT WRAPPER (film-play.html — the real fix for stretch/zoom/crop on device)
+Owner's WIDE RETINA tablet showed games zoomed/cropped/stretched: each engine's own scaler,
+fed a huge/odd device viewport at high DPR, over-scales. Fix = **iframe locked to each game's
+fixed DESIGN size** (so the game's scaler sees a sane native window = no internal zoom), then a
+CSS `transform: scale(min(vw/W, vh/H))` centered = letterbox-fit to the real screen. Engine- +
+DPR-agnostic. Aspect always preserved, whole design always visible = zoom/crop/stretch impossible.
+Per-game design map `DIM` in film-play.html (measured via `tools/_qa-dim.mjs`):
+- Phaser 1920×768: breakdown, gotham-getaway, playroom
+- 16:10 1440×900: jigsaw, match-up  ·  1280×800: toy-trouble, thomas-rail-muddle
+- 16:9 1280×720: by-you, pranking-prank  (default 1280×720 for anything unmapped)
+Verify geometry: `node tools/_qa-fit.mjs` (loads player at wide-retina, asserts frame ≤ vp,
+centered, no page-scroll). If a NEW game is added, measure it + add a DIM entry.
+
 ## RE-SYNC RUNBOOK (owner finalizes games in a parallel session → run this to ship them)
 Source: `/home/baguspermana7/Documents/temporary/online game to be offline` (batwheels/ + thomas/).
 1. Re-copy: `batwheels/games/batwheels-* → games/film/`; `thomas/game/rail-muddle → games/film/thomas-rail-muddle`.

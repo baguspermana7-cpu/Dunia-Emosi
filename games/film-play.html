@@ -12,8 +12,12 @@
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{width:100%;height:100%;height:100dvh;background:#000;overflow:hidden;-webkit-tap-highlight-color:transparent;overscroll-behavior:none;font-family:'Fredoka One','Baloo 2',system-ui,sans-serif}
-  /* Full-bleed game frame — no border, no chrome, no crop (game scales itself) */
-  #frame{position:fixed;inset:0;width:100vw;height:100dvh;border:0;display:block;background:#000}
+  /* The game runs in an iframe sized to its FIXED design resolution (so the game's own
+     scaler sees a sane window → no zoom/stretch/crop from a huge/odd device viewport),
+     then we CSS-transform-scale the whole iframe to letterbox-fit the real screen. This is
+     engine-agnostic + DPR-proof — works for every game regardless of its internal scaling. */
+  #stage{position:fixed;inset:0;overflow:hidden;background:#000}
+  #frame{position:absolute;top:0;left:0;border:0;display:block;background:#000;transform-origin:0 0}
   /* Always-visible HOME button — clear claymorphism pill (icon + label), top-left safe-area,
      ABOVE the game (z-index high). Never dims below .72 so a kid can always leave the game. */
   #back{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:calc(env(safe-area-inset-left,0px) + 10px);z-index:2147483000;
@@ -51,7 +55,7 @@
     <div class="tx">Memuat game…</div>
     <div class="sub">Sebentar ya, lagi disiapin</div>
   </div>
-  <iframe id="frame" title="Film Anak game" allow="autoplay; fullscreen; gamepad; accelerometer; gyroscope" allowfullscreen></iframe>
+  <div id="stage"><iframe id="frame" title="Film Anak game" allow="autoplay; fullscreen; gamepad; accelerometer; gyroscope" allowfullscreen scrolling="no"></iframe></div>
   <div id="err">
     <div style="font-size:20px;font-weight:900">Game tidak ditemukan</div>
     <a href="film-anak.html">← Kembali ke daftar Film Anak</a>
@@ -65,9 +69,29 @@
   };
   function qs(k){ try{ return new URLSearchParams(location.search).get(k); }catch(e){ return null; } }
   var slug = (qs('g')||'').replace(/[^a-z0-9-]/g,'');
+  // Each game's fixed DESIGN resolution [w,h] (measured). The iframe is locked to this size so
+  // the game's own scaler renders at native design (no device-viewport zoom/crop), then we
+  // transform-scale the iframe to fit. Default 16:9 for anything unmapped.
+  var DIM = {
+    'batwheels-breakdown':[1920,768], 'batwheels-gotham-getaway':[1920,768], 'batwheels-playroom':[1920,768],
+    'batwheels-jigsaw':[1440,900], 'batwheels-match-up':[1440,900],
+    'batwheels-toy-trouble':[1280,800], 'thomas-rail-muddle':[1280,800],
+    'batwheels-by-you':[1280,720], 'batwheels-pranking-prank':[1280,720]
+  };
+  function fitStage(){
+    var fr = document.getElementById('frame'); if(!fr) return;
+    var d = DIM[slug] || [1280,720], W = d[0], H = d[1];
+    var vw = window.innerWidth, vh = window.innerHeight;
+    var s = Math.min(vw / W, vh / H);
+    fr.style.width = W + 'px'; fr.style.height = H + 'px';
+    fr.style.transform = 'translate(' + Math.round((vw - W*s)/2) + 'px,' + Math.round((vh - H*s)/2) + 'px) scale(' + s + ')';
+  }
+  window.addEventListener('resize', fitStage);
+  window.addEventListener('orientationchange', function(){ setTimeout(fitStage, 60); });
   var splash = document.getElementById('splash');
   function hideSplash(){ if(splash){ splash.classList.add('hide'); setTimeout(function(){ if(splash) splash.style.display='none'; }, 500); } }
   if (GAMES[slug]) {
+    fitStage();  // size the iframe BEFORE the game boots so it sees its design window
     var thumb = document.getElementById('splashbg');
     if (thumb) thumb.style.backgroundImage = "url('../assets/film-thumbs/" + slug + ".webp')";
     var fr = document.getElementById('frame');
