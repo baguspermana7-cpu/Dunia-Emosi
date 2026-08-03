@@ -29,6 +29,36 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      # GitHub Pages has a 1 GB HARD limit on the published site. Tracked content
+      # reached 1.06 GB, i.e. already over it with no headroom -- a silent deploy
+      # failure would have frozen the live site on an old commit.
+      #
+      # This prunes ONLY the checkout used to build the artifact. Nothing is removed
+      # from git. Every path here is dev-only and referenced by no served page
+      # (verified by grep across all html/js): prompt/ alone is 449 MB of raw
+      # source art and AI-generation inputs.
+      #
+      # Do NOT add Sounds/ to this list. It looks like scratch and is not -- the
+      # Pokemon attack sounds, train BGM, mobil.html and monster-candy.html all load
+      # from it at runtime. Excluding it from Vercel cost 3160 audio files and made
+      # 7 games silent or dead. Check the runtime before pruning anything new.
+      - name: Prune dev-only paths from the published artifact
+        run: |
+          set -euo pipefail
+          before=$(du -sm --exclude=.git . | cut -f1)
+          rm -rf "prompt" "Documents" "tools/qa-screenshots" "documentation and standarization" ".claude"
+          after=$(du -sm --exclude=.git . | cut -f1)
+          echo "published payload: ${before} MB -> ${after} MB"
+          # Fail loudly rather than let a silent overflow freeze the site.
+          if [ "$after" -gt 950 ]; then
+            echo "::error::Published site is ${after} MB, at or over the 1 GB Pages limit."
+            exit 1
+          fi
+          # The games must survive the prune.
+          test -f games/film-anak.html
+          test -f games/film/batwheels-by-you/index.html
+          test -f Sounds/train-bgm.mp3
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
