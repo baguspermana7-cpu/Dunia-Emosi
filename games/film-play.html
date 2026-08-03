@@ -117,15 +117,31 @@
     }, 400);
   }
 
+  // Gotham opens straight on its own "pilih pengejar" screen instead of the logo + cutscene.
+  //
+  // We do NOT build our own picker and we do NOT tap the game's menus from outside. That was
+  // tried and it crashed: the auto-tap hit a Play button still parked off-screen mid-entrance,
+  // which re-entered the transition system while it was already transitioning, so the Title
+  // scene never stopped and kept rendering alongside the next one ("screen bolak balik") until
+  // that scene unloaded Title's textures and WebGL died on a null texture (the "hang").
+  //
+  // Instead this uses `?targetScene=`, the engine's OWN entry point (it merges every query
+  // param into its config and swaps the destination of the single PreloadEnd hop). Preload
+  // still runs in full, and that hop uses a plain scene transition with no cover scene -- so
+  // there is nothing to re-enter and the old crash is structurally impossible. Verified on all
+  // five levels: 0 console errors, 0 failed requests, no scene stacking, replay and back intact.
+  //
+  // LevelSelect specifically, rather than jumping into a race, because:
+  //   * hero and level are 1:1 (bam/bibi/redbird/batwing/buff), so that screen already IS a
+  //     chaser picker -- with the show's real art, each hero shown with its villain and city;
+  //   * jumping past it would need the level injected INSIDE the iframe, i.e. editing the
+  //     vendored bundle, and would leave the child on level4 forever otherwise;
+  //   * audio only unlocks on a tap inside the iframe. Landing here means the child's pick IS
+  //     that tap, so the race starts with sound. Deep-linking into the race starts it muted.
+  var SCENE_ENTRY = { 'batwheels-gotham-getaway': '?targetScene=LevelSelect' };
+
   if (GAMES[slug]) {
-    // NOTE: the custom-chaser picker that used to sit here is gone for good. Driving gotham's
-    // menus from outside auto-tapped a button that was still off-screen mid-transition, which
-    // restarted the transition, left the Title scene running forever (the "screen bolak balik"),
-    // and then crashed WebGL when the next scene unloaded textures Title was still drawing.
-    // It is also unnecessary: gotham's own level select IS a hero picker -- hero and level are
-    // 1:1 (bam/bibi/redbird/batwing/buff), so the child picks their chaser and its city there.
-    // Every game in this wrapper launches vanilla.
-    loadGame('');
+    loadGame(SCENE_ENTRY[slug] || '');
   } else {
     document.getElementById('frame').style.display = 'none';
     hideSplash();
