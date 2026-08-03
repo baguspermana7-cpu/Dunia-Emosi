@@ -5,7 +5,23 @@
 # Source-art scratch + AI-generation inputs (never served)
 prompt/
 Documents/
-Sounds/
+
+# DO NOT re-add `Sounds/` here. It was excluded with the note "never served",
+# which was simply wrong, and it cost 3160 audio files on Vercel:
+#   * Root Sounds/ IS runtime content -- game.js loads every Pokemon attack
+#     sound from it, games/train-bgm.js takes its default + Thomas tracks from
+#     it, and mobil.html / monster-candy.html / selamatkan-kereta.html point
+#     <audio> straight at it. That is 2841 files.
+#   * The pattern has NO leading slash, so gitignore semantics match a folder of
+#     that name at ANY depth -- and Vercel matches case-insensitively. So it also
+#     swallowed every lowercase games/film/*/sounds/ directory: 319 more files,
+#     across 7 film games. thomas-look-out lost res/sounds/en/base64/mp3.js,
+#     which its Cocos2d boot list loads as a SCRIPT, so that game died outright.
+# Symptom on the tablet: "banyak berkas tidak bisa di download" -- the offline
+# installer retried forever because those files always 404'd. GitHub Pages was
+# unaffected the whole time, which is why this hid for so long.
+# If deploy weight ever needs trimming, exclude a specific path with a LEADING
+# SLASH and verify against the runtime, e.g. /Documents/, never a bare name.
 
 # Dev tooling + QA artifacts (never served)
 tools/qa-screenshots/
