@@ -226,26 +226,77 @@
   function gaps () { return JSON.parse(JSON.stringify(GAPS)) }
 
   // ── PixiJS canvas helper: build a PIXI.Sprite for an emoji when mapped ──
-  // Returns a sized+anchored sprite (texture loads async, v8 PIXI.Sprite.from),
-  // or null when the emoji has no DB sprite (caller keeps its PIXI.Text fallback).
-  function pixiSprite (ch, size, PIXI) {
-    if (!PIXI || !PIXI.Sprite) return null
+  //
+  // v59.75 INVISIBLE-SPRITE FIX. The old body called `PIXI.Sprite.from(src)`.
+  // In PixiJS v8 that does NOT fetch an un-cached URL — `Texture.from()` is a
+  // pure *cache lookup*, so a never-loaded path silently yields Texture.EMPTY
+  // (1x1, zero pixels). Every canvas sprite built this way drew NOTHING while
+  // still occupying its collision box: g14's obstacles were invisible hazards.
+  // Nothing logged, nothing 404'd — the file was never even requested.
+  //
+  // Now the texture is really loaded through PIXI.Assets: warm ones are applied
+  // synchronously (pixels on the first frame), cold ones stream in and re-fit on
+  // arrival. `opts.onFail` lets the caller draw its own art if the file is
+  // missing or the device is offline, so nothing is ever silently blank again.
+  function texUrlFor (ch) {
     var sp = W.EmojiMap && W.EmojiMap.spec ? W.EmojiMap.spec(ch) : null
     if (!sp) { if (W.EmojiMap) { var nk = W.EmojiMap.norm(ch); GAPS[nk] = (GAPS[nk] || 0) + 1 } return null }
-    var src = rawPath(sp.cat, sp.n); if (!src) return null
+    return rawPath(sp.cat, sp.n)
+  }
+  function cachedTex (src, PIXI) {
+    if (!src || !PIXI || !PIXI.Assets || !PIXI.Assets.get) return null
+    try { var t = PIXI.Assets.get(src); return (t && t.width > 1) ? t : null } catch (_) { return null }
+  }
+  // true when this emoji's texture is ALREADY loaded, i.e. drawing it right now
+  // is guaranteed to produce pixels this frame. Callers that must never show a
+  // blank (obstacles!) branch on this instead of hoping the load wins the race.
+  function pixiReady (ch, PIXI) { return !!cachedTex(texUrlFor(ch), PIXI) }
+  // Warm a batch of emoji textures. Resolves when all have settled; never rejects.
+  function pixiPreload (chars, PIXI) {
+    var urls = [], i, u
+    for (i = 0; i < (chars || []).length; i++) { u = texUrlFor(chars[i]); if (u && urls.indexOf(u) < 0) urls.push(u) }
+    if (!urls.length || !PIXI || !PIXI.Assets || !PIXI.Assets.load) return Promise.resolve([])
+    return Promise.all(urls.map(function (url) {
+      try { return PIXI.Assets.load(url)['catch'](function () { return null }) } catch (_) { return Promise.resolve(null) }
+    }))
+  }
+  // Fit to a `size` box preserving aspect (the old code force-squashed w+h to a
+  // square, which distorted any non-square cell).
+  function fitSprite (s, size) {
+    if (!size || !s) return
+    var t = s.texture, tw = (t && t.width) || 0, th = (t && t.height) || 0
+    if (tw > 1 && th > 1) s.scale.set(size / Math.max(tw, th))
+    else { s.width = size; s.height = size }
+  }
+  function pixiSprite (ch, size, PIXI, opts) {
+    if (!PIXI || !PIXI.Sprite) return null
+    var src = texUrlFor(ch); if (!src) return null
+    opts = opts || {}
+    var warm = cachedTex(src, PIXI)
     var s
-    try { s = PIXI.Sprite.from(src) } catch (_) { return null }
-    if (size) { s.width = size; s.height = size }
+    try { s = new PIXI.Sprite(warm || PIXI.Texture.EMPTY) } catch (_) { return null }
     // default: keep top-left anchor (matches PIXI.Text) for drop-in position parity;
     // pass opts.center to anchor at 0.5 for particles positioned by their centre.
-    if (arguments.length > 3 && arguments[3] && arguments[3].center && s.anchor && s.anchor.set) s.anchor.set(0.5)
+    if (opts.center && s.anchor && s.anchor.set) s.anchor.set(0.5)
+    if (warm) { fitSprite(s, size); return s }
+    fitSprite(s, size)   // provisional box so bounds-reading callers stay sane
+    if (PIXI.Assets && PIXI.Assets.load) {
+      try {
+        PIXI.Assets.load(src).then(function (tex) {
+          if (!tex || s.destroyed) return
+          s.texture = tex
+          fitSprite(s, size)
+        })['catch'](function () { if (typeof opts.onFail === 'function') { try { opts.onFail(s) } catch (_) {} } })
+      } catch (_) { if (typeof opts.onFail === 'function') { try { opts.onFail(s) } catch (_) {} } }
+    } else if (typeof opts.onFail === 'function') { try { opts.onFail(s) } catch (_) {} }
     return s
   }
 
   W.UISprites = {
     path: path, rawPath: rawPath, emoji: emoji, apply: apply, applyAll: applyAll,
     imgHTML: imgHTML, fxName: fxName, badgeName: badgeName, confName: confName,
-    deEmoji: deEmoji, emojiImgEl: emojiImgEl, gaps: gaps, pixiSprite: pixiSprite,
+    deEmoji: deEmoji, emojiImgEl: emojiImgEl, gaps: gaps,
+    pixiSprite: pixiSprite, pixiReady: pixiReady, pixiPreload: pixiPreload,
     packs: function () { var k = []; for (var m in PACK) if (PACK.hasOwnProperty(m)) k.push(m); return k },
     _pack: PACK
   }

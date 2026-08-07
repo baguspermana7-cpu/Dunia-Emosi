@@ -227,7 +227,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 <body>
 <canvas id="pixi-canvas"></canvas>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v59.1</div>
-<script src="data/emoji-map.js?v=59.74-20260725d"></script><script src="data/ui-sprites.js?v=59.74-20260725d"></script><!-- zero-emoji engine -->
+<script src="data/emoji-map.js?v=59.74-20260725d"></script><script src="data/ui-sprites.js?v=59.91-20260804b"></script><!-- zero-emoji engine -->
 <script src="sw-reload.js?v=55.69-20260628a"></script>
 <script src="train-shared.js?v=54.58-20260626bk"></script>
 <script src="data/train-world.js?v=55.89"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
@@ -1687,6 +1687,11 @@ async function initPixi() {
   // (desert), embers (volcano). Level-gated to >=3 so kids see clean biomes first.
   L.weather = new PIXI.Container(); stage.addChild(L.weather)
   if ((cfg.level || 1) >= 3) g14InitWeather()
+
+  // v59.75 — warm every obstacle + pickup texture in the background. Non-blocking:
+  // the race is still several screens away, and anything that has not landed by
+  // spawn time simply renders as the procedural art instead of nothing.
+  try { if (window.UISprites && UISprites.pixiPreload) UISprites.pixiPreload(g14ObstacleEmojiPool(), PIXI) } catch (_) {}
 
   app.ticker.add(loop)
 
@@ -3899,6 +3904,186 @@ function g14PickWeightedObstacle(pool, biome) {
   return pool[pool.length - 1]
 }
 
+// ── v59.75 — PROCEDURAL OBSTACLE ART ────────────────────────────────────────
+// Owner, live on his tablet: "ini ngebug parah, rintangan objectnya tidak kelihatan
+// jadi tiba2 tertabrak tanpa tahu itu apa". Root cause was UISprites.pixiSprite
+// handing back an EMPTY (1x1) texture — see the fix note in games/data/ui-sprites.js.
+// The hazard kept its full collision box while drawing ZERO pixels.
+//
+// The sprite path is repaired at the source, but an obstacle is the one object in
+// this game that may NEVER be invisible: a missing file, a cold cache or an offline
+// PWA must not be able to turn it back into a ghost that hits a 5-year-old out of
+// nowhere. So obstacles are DRAWN — no font coverage, no texture, no network.
+//
+// Art language reused from the sibling side-scroller's v54.99 OBSTACLE_TYPES
+// (games/balapan-kereta-side.html): flat kid-friendly fills, a dark contour, one
+// soft highlight — plus a white sticker edge (same read as the DB sprite art) so
+// the silhouette survives on top of the busy painterly backdrops.
+// Authored in a 44-unit box, base at y = 0, drawn upward; scaled to OBS_SIZE.
+const OBS_ART_KIND = {
+  '🪨': 'rock',   '🧊': 'ice',      '⛄': 'snowman',
+  '🐄': 'cow',    '🐔': 'chicken',  '🦌': 'deer',    '🦀': 'crab',
+  '🌵': 'cactus', '🌲': 'pine',     '🌴': 'palm',    '🍄': 'mushroom',
+  '⚠️': 'warn',   '⚠': 'warn',      '🚸': 'warn',
+  '🛑': 'stop',   '🚧': 'barrier',
+  '🐚': 'shell',  '⚓': 'anchor',   '🚖': 'car',
+  '🔥': 'fire',   '💥': 'fire'
+}
+// White sticker edge first, then the filled shape with its dark contour. `path`
+// is replayed twice — PIXI v8 starts a fresh sub-path after every fill/stroke.
+function _oaInk(g, path, fill, line) {
+  path(g); g.stroke({ color: 0xffffff, width: 5, join: 'round', cap: 'round', alpha: 0.92 })
+  path(g); g.fill(fill).stroke({ color: line == null ? 0x33302c : line, width: 2, join: 'round' })
+}
+const OBS_ART_DRAW = {
+  rock(g) {
+    _oaInk(g, q => q.poly([-19, 0, -21, -13, -15, -28, -4, -37, 11, -34, 19, -24, 21, -11, 15, -2]), 0x9e9e9e, 0x4a4a4a)
+    g.ellipse(-6, -24, 6, 3.5).fill({ color: 0xe8e8e8, alpha: 0.6 })
+  },
+  ice(g) {
+    _oaInk(g, q => q.roundRect(-16, -33, 32, 33, 6), 0x9fd8f5, 0x2f7fa8)
+    g.roundRect(-10, -27, 9, 12, 3).fill({ color: 0xf0fbff, alpha: 0.7 })
+  },
+  snowman(g) {
+    _oaInk(g, q => q.circle(0, -11, 12), 0xfdfdff, 0x8aa4b8)
+    _oaInk(g, q => q.circle(0, -29, 9), 0xfdfdff, 0x8aa4b8)
+    g.rect(-9, -40, 18, 3.5).fill(0x3b3b3b)
+    g.rect(-6, -48, 12, 9).fill(0x3b3b3b)
+    g.circle(-3.2, -31, 1.5).fill(0x2b2b2b); g.circle(3.2, -31, 1.5).fill(0x2b2b2b)
+    g.poly([1, -28, 9, -26, 1, -25]).fill(0xf5883a)
+  },
+  cow(g) {
+    _oaInk(g, q => q.ellipse(-1, -19, 17, 11), 0xfafafa, 0x5d4037)
+    g.ellipse(-7, -22, 6, 4).fill(0x5d4037); g.ellipse(6, -15, 5, 3.5).fill(0x5d4037)
+    _oaInk(g, q => q.circle(15, -29, 8), 0xfafafa, 0x5d4037)
+    g.circle(13, -30, 1.6).fill(0x2b2b2b); g.circle(18.5, -30, 1.6).fill(0x2b2b2b)
+    g.ellipse(16, -24, 4.5, 3).fill(0xf2b3bd)
+    g.poly([9, -35, 6, -41, 12, -37]).fill(0xe8e0d2)
+    g.rect(-12, -8, 4, 8).fill(0x5d4037); g.rect(6, -8, 4, 8).fill(0x5d4037)
+  },
+  chicken(g) {
+    _oaInk(g, q => q.ellipse(-2, -17, 13, 11), 0xfefefe, 0xb98a3c)
+    _oaInk(g, q => q.circle(11, -28, 7.5), 0xfefefe, 0xb98a3c)
+    g.poly([8, -36, 11, -42, 14, -36]).fill(0xe23b3b)
+    g.poly([17, -28, 25, -26, 17, -24]).fill(0xf5a623)
+    g.circle(12, -30, 1.6).fill(0x2b2b2b)
+    g.ellipse(-8, -18, 7, 5).fill({ color: 0xe8e2d4, alpha: 0.9 })
+    g.rect(-5, -6, 3, 6).fill(0xf5a623); g.rect(3, -6, 3, 6).fill(0xf5a623)
+  },
+  deer(g) {
+    _oaInk(g, q => q.ellipse(-3, -20, 15, 10), 0xb07a45, 0x5d3d1f)
+    _oaInk(g, q => q.circle(13, -31, 7), 0xc08a52, 0x5d3d1f)
+    g.rect(9, -44, 2.5, 12).fill(0x6b4a24); g.rect(16, -44, 2.5, 12).fill(0x6b4a24)
+    g.rect(6, -40, 7, 2.2).fill(0x6b4a24); g.rect(15, -41, 6, 2.2).fill(0x6b4a24)
+    g.circle(12, -32, 1.6).fill(0x2b2b2b)
+    g.ellipse(-6, -22, 6, 4).fill({ color: 0xe6cfae, alpha: 0.85 })
+    g.rect(-11, -9, 3.5, 9).fill(0x6b4a24); g.rect(5, -9, 3.5, 9).fill(0x6b4a24)
+  },
+  crab(g) {
+    _oaInk(g, q => q.ellipse(0, -14, 16, 10), 0xe2452f, 0x8c2416)
+    _oaInk(g, q => q.circle(-19, -24, 6), 0xe2452f, 0x8c2416)
+    _oaInk(g, q => q.circle(19, -24, 6), 0xe2452f, 0x8c2416)
+    g.circle(-6, -26, 4).fill(0xfefefe).circle(6, -26, 4).fill(0xfefefe)
+    g.circle(-6, -26, 1.9).fill(0x2b2b2b); g.circle(6, -26, 1.9).fill(0x2b2b2b)
+    g.rect(-14, -6, 3, 6).fill(0x8c2416); g.rect(11, -6, 3, 6).fill(0x8c2416)
+  },
+  cactus(g) {
+    _oaInk(g, q => q.roundRect(-7, -40, 14, 40, 7), 0x4caf50, 0x2b6b2f)
+    _oaInk(g, q => q.roundRect(-19, -30, 12, 8, 4), 0x4caf50, 0x2b6b2f)
+    _oaInk(g, q => q.roundRect(-19, -30, 7, 16, 3.5), 0x4caf50, 0x2b6b2f)
+    _oaInk(g, q => q.roundRect(8, -25, 11, 7, 3.5), 0x4caf50, 0x2b6b2f)
+    _oaInk(g, q => q.roundRect(12, -25, 7, 13, 3.5), 0x4caf50, 0x2b6b2f)
+    g.circle(0, -32, 1.4).fill(0xd8f0bb); g.circle(0, -22, 1.4).fill(0xd8f0bb); g.circle(0, -12, 1.4).fill(0xd8f0bb)
+  },
+  pine(g) {
+    g.rect(-3.5, -14, 7, 14).fill(0x6d4c41).stroke({ color: 0x3e2723, width: 1.6 })
+    _oaInk(g, q => q.poly([0, -44, 13, -26, -13, -26]), 0x2f8f4e, 0x1c5c33)
+    _oaInk(g, q => q.poly([0, -33, 16, -13, -16, -13]), 0x3aa85c, 0x1c5c33)
+  },
+  palm(g) {
+    _oaInk(g, q => { q.moveTo(-4, 0).lineTo(-1, -18).lineTo(4, -33).lineTo(9, -33).lineTo(4, -18).lineTo(2, 0).closePath() }, 0x8d6136, 0x4e3520)
+    const frond = (dx, dy) => q => q.ellipse(6 + dx, -34 + dy, 12, 5)
+    _oaInk(g, frond(-11, -2), 0x3aa85c, 0x1c5c33)
+    _oaInk(g, frond(11, -2), 0x3aa85c, 0x1c5c33)
+    _oaInk(g, q => q.ellipse(6, -43, 6, 9), 0x2f8f4e, 0x1c5c33)
+    g.circle(2, -31, 3).fill(0x8b5a2b); g.circle(9, -31, 3).fill(0x8b5a2b)
+  },
+  mushroom(g) {
+    _oaInk(g, q => q.roundRect(-5, -20, 10, 20, 4), 0xf3e7cf, 0x9c8763)
+    _oaInk(g, q => q.ellipse(0, -21, 18, 12), 0xe23b3b, 0x8c2416)
+    g.circle(-8, -25, 3.4).fill(0xfefefe); g.circle(5, -27, 3).fill(0xfefefe); g.circle(10, -20, 2.6).fill(0xfefefe)
+  },
+  warn(g) {
+    g.rect(-2.5, -20, 5, 20).fill(0x9aa0a6).stroke({ color: 0x5b6066, width: 1.6 })
+    _oaInk(g, q => q.poly([0, -44, 17, -17, -17, -17]), 0xf6c518, 0x3b3b3b)
+    g.rect(-2.4, -34, 4.8, 11).fill(0x2b2b2b)
+    g.circle(0, -20.5, 2.4).fill(0x2b2b2b)
+  },
+  stop(g) {
+    g.rect(-2.5, -18, 5, 18).fill(0x9aa0a6).stroke({ color: 0x5b6066, width: 1.6 })
+    const r = 15, oct = []
+    for (let i = 0; i < 8; i++) { const a = Math.PI / 8 + i * Math.PI / 4; oct.push(Math.cos(a) * r, -29 + Math.sin(a) * r) }
+    _oaInk(g, q => q.poly(oct), 0xd7332a, 0x7d1c16)
+    g.rect(-9, -31, 18, 4.5).fill(0xfefefe)
+  },
+  barrier(g) {
+    g.rect(-21, -34, 5, 34).fill(0x6d4c41).stroke({ color: 0x3e2723, width: 1.4 })
+    g.rect(16, -34, 5, 34).fill(0x6d4c41).stroke({ color: 0x3e2723, width: 1.4 })
+    _oaInk(g, q => q.rect(-22, -32, 44, 15), 0xfafafa, 0x3b3b3b)
+    for (let i = 0; i < 4; i++) g.rect(-22 + i * 11, -32, 5.5, 15).fill(0xe23b3b)
+    g.rect(-22, -32, 44, 15).stroke({ color: 0x3b3b3b, width: 2 })
+  },
+  shell(g) {
+    _oaInk(g, q => { q.moveTo(-17, 0).lineTo(-11, -26).lineTo(0, -34).lineTo(11, -26).lineTo(17, 0).closePath() }, 0xf3a8bd, 0xa8556c)
+    g.rect(-1, -31, 2, 30).fill({ color: 0xa8556c, alpha: 0.5 })
+    g.rect(-9, -27, 2, 26).fill({ color: 0xa8556c, alpha: 0.4 })
+    g.rect(7, -27, 2, 26).fill({ color: 0xa8556c, alpha: 0.4 })
+  },
+  anchor(g) {
+    _oaInk(g, q => q.rect(-3, -36, 6, 32), 0x8d99a6, 0x4b5560)
+    _oaInk(g, q => q.rect(-13, -30, 26, 5), 0x8d99a6, 0x4b5560)
+    _oaInk(g, q => { q.moveTo(-17, -14).lineTo(-14, -2).lineTo(0, 2).lineTo(14, -2).lineTo(17, -14).lineTo(12, -12).lineTo(0, -4).lineTo(-12, -12).closePath() }, 0x8d99a6, 0x4b5560)
+    g.circle(0, -40, 5).stroke({ color: 0x4b5560, width: 3 })
+  },
+  car(g) {
+    _oaInk(g, q => q.roundRect(-22, -19, 44, 15, 5), 0xf6c518, 0x5b4a13)
+    _oaInk(g, q => q.roundRect(-13, -31, 25, 13, 5), 0xf6c518, 0x5b4a13)
+    g.roundRect(-10, -29, 9, 8, 2).fill(0x9fd8f5); g.roundRect(2, -29, 8, 8, 2).fill(0x9fd8f5)
+    g.circle(-13, -4, 6).fill(0x2b2b2b).circle(13, -4, 6).fill(0x2b2b2b)
+    g.circle(-13, -4, 2.4).fill(0xcfd4d8); g.circle(13, -4, 2.4).fill(0xcfd4d8)
+  },
+  fire(g) {
+    _oaInk(g, q => { q.moveTo(-14, 0).lineTo(-11, -18).lineTo(-3, -11).lineTo(1, -38).lineTo(11, -19).lineTo(14, -25).lineTo(15, -6).lineTo(8, 0).closePath() }, 0xf5883a, 0xa8410f)
+    g.poly([-6, 0, -4, -13, 2, -24, 7, -12, 6, 0]).fill(0xf6c518)
+    g.poly([-2, 0, 0, -11, 3, -4]).fill({ color: 0xfff3c4, alpha: 0.9 })
+  }
+}
+// Hazards whose DB sprite shows the WRONG object are always drawn instead: 🛑 STOP
+// resolves to the yellow roadworks triangle that 🚧/⚠️/🚸 already use, ⛄ resolves to
+// the ice-crystal sprite 🧊 already uses, and ⚓ resolves to a passenger SHIP. The
+// second half of the owner's complaint was "tanpa tahu itu apa" — knowing WHAT hit
+// you needs each hazard to be its own recognisable object, not a repeat or a decoy.
+const OBS_ART_FORCE = { '🛑': 1, '⛄': 1, '⚓': 1 }
+// Returns a PIXI.Container drawn to `size` px tall, base ~at the local origin.
+function g14ObstacleArt(emoji, size) {
+  const holder = new PIXI.Container()
+  const g = new PIXI.Graphics()
+  const draw = OBS_ART_DRAW[OBS_ART_KIND[emoji] || ''] || OBS_ART_DRAW.rock
+  try { draw(g) } catch (_) { try { OBS_ART_DRAW.rock(g) } catch (__) {} }
+  holder.addChild(g)
+  holder.scale.set((size || 44) / 44)
+  return holder
+}
+// Every emoji the spawner can pick — warmed once so the DB art (when it exists and
+// loads) is on screen from the very first obstacle instead of streaming in late.
+function g14ObstacleEmojiPool() {
+  const set = {}
+  for (const e of OBS_EMOJIS) set[e] = 1
+  for (const k in OBS_PER_BIOME) for (const e of OBS_PER_BIOME[k]) set[e] = 1
+  for (const t of PICKUP_TYPES) set[t.emoji] = 1
+  return Object.keys(set)
+}
+
 function spawnObstacle() {
   // Spawn uniformly across all 3 lanes (including middle). Player gets reaction
   // buffer from the distance D ahead, not from lane-exclusion. Previous logic
@@ -3920,14 +4105,19 @@ function spawnObstacle() {
   c.addChild(wg)
   // contact shadow (grounds the obstacle on the ballast) — under the emoji.
   g14ContactShadow(c, OBS_SIZE * 1.15)
-  // v59.72 — render the obstacle as its DB SPRITE (zero canvas emoji). pixiSprite
-  // returns null for any unmapped char, so we keep the emoji PIXI.Text fallback —
-  // never blank, never broken. Sprite carries its own white sticker edge (baked in
-  // the art), so the text-only stroke is fine as the fallback path.
-  const spr = (window.UISprites && UISprites.pixiSprite) ? UISprites.pixiSprite(emoji, OBS_SIZE, PIXI) : null
-  const txt = spr || new PIXI.Text({ text: emoji, style: { fontSize: OBS_SIZE, fontFamily: 'Arial', stroke: { color: 0xffffff, width: Math.max(3, OBS_SIZE * 0.09), join: 'round' } } })
-  txt.anchor.set(0.5, 0.85)   // sit the sprite/emoji base near the rail line
-  c.addChild(txt)
+  // v59.75 — the hazard is drawn from art that ALWAYS has pixels. The DB sprite is
+  // used only when its texture is ALREADY loaded (pixiReady), so an obstacle can
+  // never spend a single frame blank waiting on a fetch; anything cold, unmapped,
+  // 404 or offline falls straight through to the procedural art above.
+  // The old code took the sprite unconditionally and, because pixiSprite handed
+  // back a 1x1 EMPTY texture, drew NOTHING while still hitting the player.
+  let art = null
+  if (!OBS_ART_FORCE[emoji] && window.UISprites && UISprites.pixiReady && UISprites.pixiReady(emoji, PIXI)) {
+    art = UISprites.pixiSprite(emoji, OBS_SIZE, PIXI)
+    if (art) art.anchor.set(0.5, 0.85)   // sit the sprite base near the rail line
+  }
+  if (!art) { art = g14ObstacleArt(emoji, OBS_SIZE); art.y = OBS_SIZE * 0.15 }
+  c.addChild(art)
 
   c.x = W + OBS_SIZE
   c.y = laneYs[lane]
@@ -5292,7 +5482,18 @@ window.addEventListener('resize', () => {
   // duplicate sprite risk
   _g14ResizeDebounce = setTimeout(() => {
     if (!app) return
-    app.renderer.resize(Math.min(window.innerWidth, 1400), Math.min(window.innerHeight, 1000))
+    // v59.75 BLACK-BAND FIX. Owner, wide-landscape tablet: "kok sisi kanan ada black
+    // screen game kereta". These clamps were the cause. autoDensity writes the
+    // renderer size straight onto canvas.style, and an inline style beats the
+    // stylesheet's `#pixi-canvas{width:100vw}` — so on any viewport wider than
+    // 1400 CSS px the canvas shrank to 1400px, left-aligned inside a fixed
+    // inset:0 box, leaving (innerWidth - 1400) px of bare page background down the
+    // RIGHT edge. Same for heights over 1000px along the bottom. It only appeared
+    // after the first resize/rotate because initPixi() never clamped — which is
+    // exactly why the menu looked fine and the running race did not.
+    // The viewport is the correct size; devicePixelRatio is already capped at 1.5
+    // in initPixi, so this does not grow the backing store beyond the first paint.
+    app.renderer.resize(window.innerWidth, window.innerHeight)
     const H = app.screen.height, W = app.screen.width
     // v55.72 A-312 — RASTER backdrop: re-cover-fit the painting + re-derive the
     // lane Ys from its rail band (no procedural scenery to rebuild).
