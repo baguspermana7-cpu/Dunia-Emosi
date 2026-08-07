@@ -151,6 +151,14 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 .g16-tab-btn{flex:0 0 auto;min-height:44px;padding:8px 14px;border-radius:16px;border:2px solid rgba(167,139,250,0.30);background:rgba(248,240,255,0.06);color:#c4b5fd;font-family:inherit;font-size:clamp(11px,2.9vw,13px);font-weight:900;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color .15s,background .15s,box-shadow .15s;white-space:nowrap;line-height:1.2;text-align:center}
 .g16-tab-btn:active{transform:scale(.96)}
 .g16-tab-btn.active{background:rgba(139,92,246,0.24);color:#e9d5ff;box-shadow:0 0 10px rgba(139,92,246,0.35)}
+/* v59.x — REAL-TRAIN tab thumbnail. Owner: "saat pemilihan itu jangan pakai emoji,
+   pakai gambar salah satu kereta". The chip labels carried 🚂 and the shared
+   emoji→sprite observer rewrote every one into the SAME generic vehicles/051 picture.
+   Sizing follows g15's idiom (max-w/max-h + object-fit:contain) — sprite aspect
+   ratios span 1.37..7.21, so a fixed box would squash or crop them. */
+.g16-tab-btn{display:inline-flex;align-items:center;gap:8px}
+.g16-tab-thumb{flex:0 0 auto;width:46px;height:26px;display:flex;align-items:center;justify-content:center}
+.g16-tab-thumb img,.g16-tab-thumb canvas{width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;display:block;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45))}
 
 /* Overlays handled by game-modal.js */
 </style>
@@ -661,6 +669,74 @@ function g16RenderCards() {
   if (pkg.indices.length <= 40) { try { g16StartPreviewBob() } catch(_){} }
 }
 
+// v59.x — CATEGORY THUMBNAILS for the picker chip rail. Owner: "saat pemilihan itu
+// jangan pakai emoji, pakai gambar salah satu kereta — misal picker thomas aeg, itu
+// pakai gambar thomas". g16's packages carry NO `emoji` field — the emoji is baked
+// into pkg.name ('🚂 Thomas & Friends'), so the hero is added and the rail glyph is
+// stripped from the label. Hero is looked up inside the package's OWN indices, so a
+// package added later (e.g. Titipo) gets a thumbnail with no extra wiring.
+const G16_TAB_HERO = {
+  characters:'caseyjr', thomas_aeg:'thomas', chuggington:'wilson', titipo:'titipo',
+  uap_klasik:'rocket', uap_modern:'flying scotsman', diesel:'deltic', listrik:'taurus',
+  cepat:'shinkansen 0', komuter:'azuma', indonesia:'cc206'
+};
+// "Semua" has no single hero — use the two-loco art the app already ships (real
+// picture, reads as "all the trains", never collides with another tab's thumbnail).
+const G16_TAB_HERO_SRC = { all: '../assets/train/linus-casey.webp' };
+// Every g16 package name is prefixed with the emoji the thumbnail now replaces
+// ('🚂 Thomas & Friends', '⭐ Karakter', '🎨 Livery Klasik') — drop that prefix, plus
+// any rail glyph elsewhere. A trailing flag (Indonesia 🇮🇩) carries meaning and stays.
+const G16_LEAD_EMOJI = /^(?:\p{Extended_Pictographic}[\u{FE0F}\u{200D}]*\s*)+/u;
+const G16_RAIL_EMOJI = /[\u{1F682}-\u{1F68B}\u{1F69D}\u{1F69E}\u{1F6F2}\u{1F6E4}]\u{FE0F}?/gu;
+function g16TabLabel (pkg) {
+  return String((pkg && pkg.name) || '').replace(G16_LEAD_EMOJI, '').replace(G16_RAIL_EMOJI, '').replace(/\s+/g, ' ').trim()
+}
+function g16TabHeroKey (pkg) {
+  const want = G16_TAB_HERO[pkg && pkg.id];
+  const idxs = (pkg && pkg.indices) || [];
+  let first = null;
+  for (let i = 0; i < idxs.length; i++) {
+    const TS = TRAIN_STYLES[idxs[i]];
+    const k = TS && TS.characterKey;
+    if (!k || !G16_CHAR_CONFIGS[k] || !G16_CHAR_CONFIGS[k].spriteUrl) continue;
+    if (first === null) first = k;
+    if (!want) break;
+    const meta = G16_CARD_META[k] || {};
+    if (((k + ' ' + (meta.name || '')).toLowerCase()).indexOf(want) >= 0) return k;
+  }
+  return first;
+}
+function g16TabThumb (pkg) {
+  const wrap = document.createElement('span');
+  wrap.className = 'g16-tab-thumb';
+  const fixed = G16_TAB_HERO_SRC[pkg && pkg.id];
+  const key = fixed ? null : g16TabHeroKey(pkg);
+  const src = fixed || (key && G16_CHAR_CONFIGS[key].spriteUrl);
+  // Procedural-only package (Livery Klasik has no sprite art): draw the SAME
+  // procedural preview its cards use, at chip size. Keeps the page's own language.
+  const proc = () => {
+    const cv = document.createElement('canvas');
+    cv.width = 116; cv.height = 52;
+    const TS = TRAIN_STYLES[((pkg && pkg.indices) || [])[0]];
+    if (TS) { try { drawPreviewProcedural(cv.getContext('2d'), TS) } catch (_) {} }
+    return cv;
+  };
+  if (!src) { wrap.appendChild(proc()); return wrap }
+  const img = document.createElement('img');
+  img.src = src;
+  img.alt = (key && G16_CARD_META[key] && G16_CARD_META[key].name) || g16TabLabel(pkg);
+  // NOT lazy: the chip rail scrolls horizontally, so off-screen tabs would stay
+  // blank until scrolled into view. 12 small sprites, decoded off the main thread.
+  img.decoding = 'async';
+  // B-229 facing: FACES_LEFT_G16 is THIS game's authority (it disagrees with
+  // trains-db.js / G14_FACES on purpose). World sprites are added to it at load;
+  // Chuggington crops are pre-mirrored at build time and stay OUT of it → native.
+  if (key && typeof FACES_LEFT_G16 !== 'undefined' && FACES_LEFT_G16.has(key)) img.style.transform = 'scaleX(-1)';
+  img.onerror = () => { img.replaceWith(proc()) };   // missing file → procedural, never a broken-image icon
+  wrap.appendChild(img);
+  return wrap;
+}
+
 function g16RenderPicker () {
   // Build tab row (B-269)
   const tabRow = document.getElementById('g16-tab-row');
@@ -671,7 +747,10 @@ function g16RenderPicker () {
       btn.className = 'g16-tab-btn' + (pi === g16ActivePkg ? ' active' : '');
       btn.style.borderColor = pkg.color;
       btn.setAttribute('aria-label', pkg.desc);
-      btn.innerHTML = `<span>${pkg.name}</span>`;
+      btn.appendChild(g16TabThumb(pkg));
+      const lbl = document.createElement('span');
+      lbl.textContent = g16TabLabel(pkg);
+      btn.appendChild(lbl);
       btn.onclick = () => {
         g16ActivePkg = pi;
         document.querySelectorAll('.g16-tab-btn').forEach((b, bi) => {
@@ -1745,6 +1824,58 @@ const G16_CHAR_CONFIGS = {
   })
   G16_PKGS.push({ id: 'chuggington', name: '\uD83D\uDE82 Chuggington', color: '#f59e0b',
     desc: '25 karakter Chuggington!', indices: idxs })
+})();
+
+// v59.89 — Titipo pack (25 chars) for g16's picker + roster. Same parallel-structure
+// recipe as the Chuggington block above (TRAIN_STYLES card + G16_CHAR_CONFIGS sprite +
+// G16_CARD_META label + G16_PKGS tab). Deliberately NOT added to FACES_LEFT_G16: the
+// crops produced by scripts/process-titipo-sprites.py are mirrored at build time so the
+// art already points RIGHT (g16's travel direction), so they must render native
+// (scale.x = 1). Keys are namespaced ttp_* so ttp_diesel / ttp_steam cannot collide
+// with the Thomas `aeg_diesel` character or the `diesel` world category.
+;(function () {
+  if (typeof TRAIN_STYLES === 'undefined' || typeof G16_PKGS === 'undefined') return
+  var TTP = [
+    ['ttp_titipo','titipo','Titipo','Lokomotif Utama 🔴',0xe63946,0xeceff1,90,null],
+    ['ttp_genie','genie','Genie','Trem Merah Muda 💗',0xec4899,0xf8fafc,90,null],
+    ['ttp_diesel','diesel','Diesel','Diesel Hijau Kekar 💚',0x22a04a,0x3f3f46,78,null],
+    ['ttp_eric','eric','Eric','Railcar Biru 🔵',0x1d7ad6,0xeceff1,78,null],
+    ['ttp_xing_xing','xing-xing','Xing-Xing','Peluru Putih 🚄',0xf1f5f9,0xdc2626,100,null],
+    ['ttp_loco','loco','Loco','Diesel Kuning Tua 💛',0xe9b40c,0x6b7280,90,null],
+    ['ttp_manny','manny','Manny','Kembar Oranye 🧡',0x2b2b3f,0xef6c1a,90,null],
+    ['ttp_berny','berny','Berny','Kembar Biru Tua 💙',0x26263a,0xef5a1a,90,null],
+    ['ttp_jenny','jenny','Jenny','Ekspres Krem 🚄',0xe8d5cf,0xc62828,100,null],
+    ['ttp_fix','fix','Fix','Kereta Derek 🏗️',0xe9b40c,0xfbcc0c,110,null],
+    ['ttp_setter','setter','Setter','Langsir Toska 🔧',0x0e9c9c,0xeceff1,90,null],
+    ['ttp_danny','danny','Danny','Diesel Biru 🔷',0x2470b8,0xf5f0e1,90,null],
+    ['ttp_tony','tony','Tony','Diesel Merah Hitam ❤️',0x8b1414,0xfbbf24,90,null],
+    ['ttp_steam','steam','Steam','Lokomotif Uap 🚂',0x2f2f2f,0xc9a227,90,[55,-100]],
+    ['ttp_boom_boom','boom-boom','Boom-Boom','Kotak Oranye 📦',0xd84315,0xf4b400,78,null],
+    ['ttp_super_z','super-z','Super Z','Si Super Cepat ⚡',0xe42424,0xf5c518,90,null],
+    ['ttp_megatrain','megatrain','Megatrain','Raksasa Kuning 💪',0xe9b40c,0x4b5563,90,null],
+    ['ttp_strong','strong','Strong','Penarik Kuat 🛠️',0x8a2f24,0x9ca3af,90,null],
+    ['ttp_green','green','Green','Kotak Hijau 🍀',0x22a04a,0x166534,78,null],
+    ['ttp_pecker','pecker','Pecker','Diesel Toska 🌊',0x3f8a8a,0xe5e7eb,90,null],
+    ['ttp_storm','storm','Storm','Badai Putih 🌪️',0xf1f5f9,0x16a34a,100,null],
+    ['ttp_cheki','cheki','Cheki','Railcar Oranye 🍊',0xe85d10,0xf5efd8,90,null],
+    ['ttp_ella','ella','Ella','Kereta Langit 🩵',0x3fa0d6,0xeceff1,90,null],
+    ['ttp_lord_greener','lord-greener','Lord Greener','Bangsawan Hijau 👑',0x2a4a2a,0xc9a227,90,null],
+    ['ttp_walkie','walkie','Walkie','Railcar Krem 🚌',0xe6ceb4,0x1e3a5f,90,null],
+  ]
+  var idxs = []
+  TTP.forEach(function (r) {
+    var key = r[0], slug = r[1], name = r[2], sub = r[3], body = r[4], acc = r[5], h = r[6], smoke = r[7]
+    idxs.push(TRAIN_STYLES.length)
+    TRAIN_STYLES.push({ character: true, characterKey: key,
+      locoBody: body, locoCab: body, locoAccent: acc, carBody: body,
+      carWindow: 0xdbeafe, carStripe: acc, cabColor: body, chimney: 0x212121,
+      wheelRim: acc, caboose: body, cabooseLight: acc, smokeCol: 0xbbbbbb })
+    G16_CHAR_CONFIGS[key] = { spriteUrl: '../assets/train/titipo/' + slug + '.webp',
+      spriteHeight: h, wheelPositions: [], smokePos: smoke, bottomPaddingOffset: 0 }
+    G16_CARD_META[key] = { name: name, desc: sub }
+  })
+  G16_PKGS.push({ id: 'titipo', name: '\uD83D\uDE82 Titipo', color: '#e63946',
+    desc: '25 karakter Titipo!', indices: idxs })
 })();
 
 // A-339 P2 — "Semua" tab at the FRONT: one scrollable grid of EVERY train, so the

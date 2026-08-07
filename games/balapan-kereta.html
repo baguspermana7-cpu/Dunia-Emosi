@@ -183,6 +183,13 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 .cat-btn{width:100%;display:flex;align-items:center;gap:14px;padding:14px 16px;min-height:44px;border-radius:16px;cursor:pointer;margin-bottom:10px;text-align:left;border:2.5px solid rgba(167,139,250,0.25);transition:transform .08s,border-color .15s,background .15s;background:rgba(248,240,255,0.06);color:#e9d5ff;font-family:inherit;font-weight:700}
 .cat-btn:active{transform:scale(.97);background:rgba(139,92,246,0.18);border-color:#a78bfa}
 .cat-emoji{font-size:32px;flex-shrink:0}
+/* v59.x — CATEGORY THUMBNAIL. Owner: "saat pemilihan itu jangan pakai emoji, pakai
+   gambar salah satu kereta — misal picker thomas aeg, itu pakai gambar thomas".
+   .cat-emoji is a bare text slot with NO width, so the picture needs its own box.
+   Sizing follows g15's idiom (max-width/max-height + object-fit:contain) because
+   sprite aspect ratios span 1.37..7.21 — a fixed w×h would squash or crop them. */
+.cat-thumb{flex-shrink:0;width:84px;height:46px;display:flex;align-items:center;justify-content:center}
+.cat-thumb img,.cat-thumb canvas{width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;display:block;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.45))}
 .cat-info{flex:1;min-width:0}
 .cat-name{font-size:14px;font-weight:900;color:#e9d5ff}
 .cat-desc{font-size:11px;color:rgba(200,180,230,.5);margin-top:2px}
@@ -622,6 +629,47 @@ const TRAIN_CATS = [
     ],
   },
   {
+    // v59.89 — Titipo pack (25 chars), cropped from the owner's character sheet by
+    // scripts/process-titipo-sprites.py. The crops are MIRRORED at build time so the
+    // art already points RIGHT (= g14's travel direction), hence the explicit
+    // faces:'right' on every entry: G14_FACES only fills when `faces` is null, so
+    // these opt out of the mirror and render native. Heights use g14's smaller
+    // ladder (78 / 90 / 100, +110 for Fix's tall crane jib), NOT the shared
+    // trains-db ladder. Keys are namespaced ttp_* so ttp_diesel / ttp_steam cannot
+    // collide with `aeg_diesel` or the `diesel` world category.
+    // Unlike Thomas AEG (aeg_) and Chuggington (chg_), Titipo is deliberately NOT
+    // excluded from NPC_TRAINS below — the owner wants these usable as AI opponents.
+    key:'titipo', name:'Titipo ⭐⭐', emoji:'🚂',
+    color:'#e63946', desc:'25 karakter Titipo — Titipo, Genie, Steam & kawan-kawan!',
+    trains:[
+      {key:'ttp_titipo', name:'Titipo', sub:'Lokomotif Utama 🔴', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/titipo/titipo.webp', faces:'right', spriteHeight:90, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#e63946', accColor:'#eceff1', kmh:66, baseSpeed:1.97, boostMult:1.50, boostDur:1532, desc:'Titipo — lokomotif merah putih yang ceria dan selalu ingin belajar!'},
+      {key:'ttp_genie', name:'Genie', sub:'Trem Merah Muda 💗', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/titipo/genie.webp', faces:'right', spriteHeight:90, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#ec4899', accColor:'#f8fafc', kmh:62, baseSpeed:1.91, boostMult:1.50, boostDur:1524, desc:'Genie — trem merah muda yang gesit keliling kota!'},
+      {key:'ttp_diesel', name:'Diesel', sub:'Diesel Hijau Kekar 💚', emoji:'🚋', isCharacter:true, spriteUrl:'../assets/train/titipo/diesel.webp', faces:'right', spriteHeight:78, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#22a04a', accColor:'#3f3f46', kmh:46, baseSpeed:1.70, boostMult:1.48, boostDur:1488, desc:'Diesel — si hijau kotak yang kuat menarik gerbong barang!'},
+      {key:'ttp_eric', name:'Eric', sub:'Railcar Biru 🔵', emoji:'🚋', isCharacter:true, spriteUrl:'../assets/train/titipo/eric.webp', faces:'right', spriteHeight:78, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#1d7ad6', accColor:'#eceff1', kmh:50, baseSpeed:1.76, boostMult:1.49, boostDur:1497, desc:'Eric — railcar biru putih pengantar penumpang setiap pagi!'},
+      {key:'ttp_xing_xing', name:'Xing-Xing', sub:'Peluru Putih 🚄', emoji:'🚄', isCharacter:true, spriteUrl:'../assets/train/titipo/xing-xing.webp', faces:'right', spriteHeight:100, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#f1f5f9', accColor:'#dc2626', kmh:90, baseSpeed:2.28, boostMult:1.52, boostDur:1585, desc:'Xing-Xing — kereta peluru putih tercepat, secepat kilat!'},
+      {key:'ttp_loco', name:'Loco', sub:'Diesel Kuning Tua 💛', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/titipo/loco.webp', faces:'right', spriteHeight:90, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#e9b40c', accColor:'#6b7280', kmh:54, baseSpeed:1.81, boostMult:1.49, boostDur:1506, desc:'Loco — diesel kuning tua yang berpengalaman dan sabar!'},
+      {key:'ttp_manny', name:'Manny', sub:'Kembar Oranye 🧡', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/titipo/manny.webp', faces:'right', spriteHeight:90, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#2b2b3f', accColor:'#ef6c1a', kmh:58, baseSpeed:1.86, boostMult:1.49, boostDur:1515, desc:'Manny — si kepala oranye yang rajin bekerja bersama Berny!'},
+      {key:'ttp_berny', name:'Berny', sub:'Kembar Biru Tua 💙', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/titipo/berny.webp', faces:'right', spriteHeight:90, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#26263a', accColor:'#ef5a1a', kmh:58, baseSpeed:1.86, boostMult:1.49, boostDur:1515, desc:'Berny — kembaran Manny, selalu kompak menarik gerbong!'},
+      {key:'ttp_jenny', name:'Jenny', sub:'Ekspres Krem 🚄', emoji:'🚄', isCharacter:true, spriteUrl:'../assets/train/titipo/jenny.webp', faces:'right', spriteHeight:100, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#e8d5cf', accColor:'#c62828', kmh:78, baseSpeed:2.13, boostMult:1.51, boostDur:1559, desc:'Jenny — ekspres krem yang anggun dan sangat cepat!'},
+      {key:'ttp_fix', name:'Fix', sub:'Kereta Derek 🏗️', emoji:'🏗️', isCharacter:true, spriteUrl:'../assets/train/titipo/fix.webp', faces:'right', spriteHeight:110, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#e9b40c', accColor:'#fbcc0c', kmh:42, baseSpeed:1.65, boostMult:1.48, boostDur:1480, desc:'Fix — kereta derek kuning yang siap menolong kapan saja!'},
+      {key:'ttp_setter', name:'Setter', sub:'Langsir Toska 🔧', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/titipo/setter.webp', faces:'right', spriteHeight:90, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#0e9c9c', accColor:'#eceff1', kmh:48, baseSpeed:1.73, boostMult:1.48, boostDur:1493, desc:'Setter — lokomotif toska yang rapi menata gerbong di stasiun!'},
+      {key:'ttp_danny', name:'Danny', sub:'Diesel Biru 🔷', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/titipo/danny.webp', faces:'right', spriteHeight:90, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#2470b8', accColor:'#f5f0e1', kmh:56, baseSpeed:1.83, boostMult:1.49, boostDur:1510, desc:'Danny — diesel biru periang yang suka bersiul di terowongan!'},
+      {key:'ttp_tony', name:'Tony', sub:'Diesel Merah Hitam ❤️', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/titipo/tony.webp', faces:'right', spriteHeight:90, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#8b1414', accColor:'#fbbf24', kmh:60, baseSpeed:1.89, boostMult:1.49, boostDur:1519, desc:'Tony — diesel merah hitam yang gagah dan bertenaga besar!'},
+      {key:'ttp_steam', name:'Steam', sub:'Lokomotif Uap 🚂', emoji:'🚂', isCharacter:true, spriteUrl:'../assets/train/titipo/steam.webp', faces:'right', spriteHeight:90, wheelLayout:'aeg', wheelPositions:[], smokePos:[55,-100], bottomPaddingOffset:0, bodyColor:'#2f2f2f', accColor:'#c9a227', kmh:44, baseSpeed:1.68, boostMult:1.48, boostDur:1484, desc:'Steam — lokomotif uap tua yang selalu berasap tebal, puff puff!'},
+      {key:'ttp_boom_boom', name:'Boom-Boom', sub:'Kotak Oranye 📦', emoji:'🚋', isCharacter:true, spriteUrl:'../assets/train/titipo/boom-boom.webp', faces:'right', spriteHeight:78, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#d84315', accColor:'#f4b400', kmh:47, baseSpeed:1.72, boostMult:1.48, boostDur:1491, desc:'Boom-Boom — gerbong oranye kotak yang suka bersuara keras!'},
+      {key:'ttp_super_z', name:'Super Z', sub:'Si Super Cepat ⚡', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/titipo/super-z.webp', faces:'right', spriteHeight:90, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#e42424', accColor:'#f5c518', kmh:84, baseSpeed:2.20, boostMult:1.51, boostDur:1572, desc:'Super Z — lokomotif merah bersayap emas, pahlawan super rel!'},
+      {key:'ttp_megatrain', name:'Megatrain', sub:'Raksasa Kuning 💪', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/titipo/megatrain.webp', faces:'right', spriteHeight:90, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#e9b40c', accColor:'#4b5563', kmh:64, baseSpeed:1.94, boostMult:1.50, boostDur:1528, desc:'Megatrain — raksasa kuning yang kuatnya luar biasa!'},
+      {key:'ttp_strong', name:'Strong', sub:'Penarik Kuat 🛠️', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/titipo/strong.webp', faces:'right', spriteHeight:90, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#8a2f24', accColor:'#9ca3af', kmh:52, baseSpeed:1.78, boostMult:1.49, boostDur:1502, desc:'Strong — penarik cokelat merah yang tak pernah menyerah!'},
+      {key:'ttp_green', name:'Green', sub:'Kotak Hijau 🍀', emoji:'🚋', isCharacter:true, spriteUrl:'../assets/train/titipo/green.webp', faces:'right', spriteHeight:78, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#22a04a', accColor:'#166534', kmh:45, baseSpeed:1.69, boostMult:1.48, boostDur:1486, desc:'Green — gerbong hijau kecil yang ramah dan menggemaskan!'},
+      {key:'ttp_pecker', name:'Pecker', sub:'Diesel Toska 🌊', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/titipo/pecker.webp', faces:'right', spriteHeight:90, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#3f8a8a', accColor:'#e5e7eb', kmh:55, baseSpeed:1.82, boostMult:1.49, boostDur:1508, desc:'Pecker — diesel toska yang tenang membawa penumpang ke pantai!'},
+      {key:'ttp_storm', name:'Storm', sub:'Badai Putih 🌪️', emoji:'🚄', isCharacter:true, spriteUrl:'../assets/train/titipo/storm.webp', faces:'right', spriteHeight:100, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#f1f5f9', accColor:'#16a34a', kmh:92, baseSpeed:2.31, boostMult:1.52, boostDur:1590, desc:'Storm — kereta peluru putih hijau, secepat badai!'},
+      {key:'ttp_cheki', name:'Cheki', sub:'Railcar Oranye 🍊', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/titipo/cheki.webp', faces:'right', spriteHeight:90, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#e85d10', accColor:'#f5efd8', kmh:57, baseSpeed:1.85, boostMult:1.49, boostDur:1513, desc:'Cheki — railcar oranye ceria yang suka bercerita!'},
+      {key:'ttp_ella', name:'Ella', sub:'Kereta Langit 🩵', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/titipo/ella.webp', faces:'right', spriteHeight:90, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#3fa0d6', accColor:'#eceff1', kmh:59, baseSpeed:1.87, boostMult:1.49, boostDur:1517, desc:'Ella — kereta biru langit yang lembut dan penyayang!'},
+      {key:'ttp_lord_greener', name:'Lord Greener', sub:'Bangsawan Hijau 👑', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/titipo/lord-greener.webp', faces:'right', spriteHeight:90, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#2a4a2a', accColor:'#c9a227', kmh:68, baseSpeed:1.99, boostMult:1.50, boostDur:1537, desc:'Lord Greener — lokomotif hijau bangsawan dengan lambang emas!'},
+      {key:'ttp_walkie', name:'Walkie', sub:'Railcar Krem 🚌', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/titipo/walkie.webp', faces:'right', spriteHeight:90, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#e6ceb4', accColor:'#1e3a5f', kmh:53, baseSpeed:1.80, boostMult:1.49, boostDur:1504, desc:'Walkie — railcar krem biru yang santai berkeliling desa!'},
+    ],
+  },
+  {
     key:'steam_id', name:'Uap Indonesia', emoji:'🚂',
     color:'#92400e', desc:'Lokomotif uap klasik koleksi Indonesia',
     trains:[
@@ -846,7 +894,7 @@ const TRAIN_CATS = [
 // 7 categorized world packages (built by tools/build-train-world.py → data/train-world.js).
 ;(function () {
   if (window.TRAIN_WORLD && Array.isArray(window.TRAIN_WORLD.categories)) {
-    const keep = TRAIN_CATS.filter(c => c.key === 'characters' || c.key === 'thomas_aeg' || c.key === 'chuggington')  // v59.88 — keep the Chuggington pack too
+    const keep = TRAIN_CATS.filter(c => c.key === 'characters' || c.key === 'thomas_aeg' || c.key === 'chuggington' || c.key === 'titipo')  // v59.88/.89 — keep the Chuggington + Titipo packs too
     TRAIN_CATS.length = 0
     TRAIN_CATS.push.apply(TRAIN_CATS, keep.concat(window.TRAIN_WORLD.categories))
   }
@@ -5729,9 +5777,74 @@ function g14CloseMap() {
 // ═══════════════════════════════════════════════════════════
 //  TRAIN SELECTOR UI
 // ═══════════════════════════════════════════════════════════
+// v59.x — CATEGORY THUMBNAILS. Owner: "di landing pagenya itu saat pemilihan itu
+// jangan pakai emoji, pakai gambar salah satu kereta — misal picker thomas aeg,
+// itu pakai gambar thomas". The rows used `cat.emoji` and the shared emoji→sprite
+// observer (games/data/ui-sprites.js + emoji-map.js '🚂' → vehicles/051.webp)
+// rewrote EVERY 🚂 into the SAME generic 1em picture, so Thomas AEG, Chuggington,
+// Uap Klasik, Uap Modern, Kereta Cepat and Komuter all looked identical.
+// A real <img> element bypasses the observer cleanly (it only walks TEXT nodes).
+//
+// The hero is picked from the category's OWN roster (key/name substring), so a
+// category added later — e.g. the Titipo pack — gets a correct thumbnail with no
+// extra wiring, and a missing sprite file degrades to the procedural canvas below.
+const G14_CAT_HERO = {
+  characters:'caseyjr', character:'caseyjr', thomas_aeg:'thomas', chuggington:'wilson',
+  titipo:'titipo',
+  uap_klasik:'rocket', uap_modern:'flying scotsman', diesel:'deltic', listrik:'taurus',
+  cepat:'shinkansen 0', komuter:'azuma', indonesia:'cc206'
+}
+function g14CatHero(cat) {
+  const list = (cat && cat.trains) || []
+  const want = G14_CAT_HERO[cat && cat.key]
+  if (want) {
+    for (let i = 0; i < list.length; i++) {
+      const t = list[i]
+      if (!t || !t.spriteUrl) continue
+      if ((((t.key || '') + ' ' + (t.name || '')).toLowerCase()).indexOf(want) >= 0) return t
+    }
+  }
+  for (let i = 0; i < list.length; i++) if (list[i] && list[i].spriteUrl) return list[i]
+  return null
+}
+// Category names bake a train emoji into the LABEL too ("Uap Klasik 🚂"), which the
+// observer turns into a SECOND generic train picture right beside the real thumbnail.
+// Strip only rail glyphs — ⭐ / ⚡ / 🇮🇩 carry meaning and stay.
+const G14_RAIL_EMOJI = /[\u{1F682}-\u{1F68B}\u{1F69D}\u{1F69E}\u{1F6F2}\u{1F6E4}]\u{FE0F}?/gu
+function g14CatLabel(cat) { return String((cat && cat.name) || '').replace(G14_RAIL_EMOJI, '').replace(/\s+/g, ' ').trim() }
+function g14CatThumb(cat) {
+  const wrap = document.createElement('span')
+  wrap.className = 'cat-thumb'
+  const hero = g14CatHero(cat)
+  if (!hero) {                                     // no sprite roster → keep the emoji slot
+    const sp = document.createElement('span')
+    sp.className = 'cat-emoji'
+    sp.textContent = cat.emoji || '🚂'
+    return sp
+  }
+  const img = document.createElement('img')
+  img.src = hero.spriteUrl
+  img.alt = hero.name || cat.name || ''
+  img.loading = 'lazy'
+  img.decoding = 'async'
+  // B-229 facing: resolve through THIS game's authority. G14_FACES is applied onto
+  // the live TRAIN_CATS objects above (and intentionally overrides trains-db.js),
+  // world trains carry faces:'left', Chuggington crops are pre-mirrored (faces:'right')
+  // and must render native. So `hero.faces` is already the g14-correct flag.
+  if (hero.faces === 'left') img.style.transform = 'scaleX(-1)'
+  img.onerror = () => {
+    // Missing/failed sprite → procedural card art, same fallback the train cards use.
+    const fb = document.createElement('canvas')
+    fb.width = 96; fb.height = 48
+    img.replaceWith(fb)
+    try { drawTrainCard2d(fb, hero.bodyColor || '#64748b', hero.accColor || '#cbd5e1', cat.key, 1) } catch (_) {}
+  }
+  wrap.appendChild(img)
+  return wrap
+}
 function showCategories() {
   document.getElementById('sel-crumb').style.display = 'none'
-  document.getElementById('sel-title').textContent = 'Pilih Kereta 🚂'
+  document.getElementById('sel-title').textContent = 'Pilih Kereta'
   document.getElementById('go-btn').style.display = 'none'
   const body = document.getElementById('select-body')
   body.innerHTML = ''
@@ -5739,7 +5852,15 @@ function showCategories() {
     const btn = document.createElement('button')
     btn.className = 'cat-btn'
     btn.style.borderColor = cat.color
-    btn.innerHTML = `<span class="cat-emoji">${cat.emoji}</span><div class="cat-info"><div class="cat-name">${cat.name}</div><div class="cat-desc">${cat.desc}</div></div><span class="cat-arr">›</span>`
+    btn.appendChild(g14CatThumb(cat))
+    const info = document.createElement('div')
+    info.className = 'cat-info'
+    info.innerHTML = `<div class="cat-name">${g14CatLabel(cat)}</div><div class="cat-desc">${cat.desc}</div>`
+    btn.appendChild(info)
+    const arr = document.createElement('span')
+    arr.className = 'cat-arr'
+    arr.textContent = '›'
+    btn.appendChild(arr)
     btn.onclick = () => showTrainsForCat(cat)
     body.appendChild(btn)
   })

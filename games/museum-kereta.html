@@ -75,6 +75,12 @@ html,body{width:100%;min-height:100%;min-height:100svh;background:#1a0e06;font-f
 .g18-tab .g18-tab-count{font-size:10px;font-weight:900;opacity:0.7;background:rgba(0,0,0,0.3);border-radius:100px;padding:1px 6px}
 .g18-tab.active{color:#1a0e06;box-shadow:0 3px 0 rgba(0,0,0,0.3)}
 .g18-tab.active .g18-tab-count{background:rgba(0,0,0,0.18);opacity:0.85}
+/* v59.x — REAL-TRAIN tab thumbnail (owner: "saat pemilihan jangan pakai emoji, pakai
+   gambar salah satu kereta"). Every category tab carried cat.emoji, and the shared
+   emoji→sprite observer rewrote each 🚂 into the SAME generic vehicles/051 picture.
+   max-w/max-h + object-fit:contain (g15 idiom) — world sprite aspects span 1.37..7.21. */
+.g18-tab-thumb{flex:0 0 auto;width:34px;height:20px;display:inline-flex;align-items:center;justify-content:center}
+.g18-tab-thumb img{width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;display:block;transform:scaleX(-1);filter:drop-shadow(0 2px 3px rgba(0,0,0,0.4))}
 .g18-card{--cat:rgba(255,193,100,0.5)}
 .g18-card.g18-cat-accent{border-top:3px solid var(--cat)}
 .g18-star-badge{position:absolute;top:6px;right:6px;font-size:14px;line-height:1;z-index:2;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.6))}
@@ -1408,6 +1414,33 @@ function g18RandomTrain() {
   g18OpenCard(it.idx)
 }
 
+// v59.x — CATEGORY THUMBNAILS. Owner: "saat pemilihan itu jangan pakai emoji, pakai
+// gambar salah satu kereta". Each tab used `cat.emoji` and the shared emoji→sprite
+// observer (games/data/ui-sprites.js + emoji-map.js '🚂' → vehicles/051.webp) turned
+// every one into the SAME generic picture, so Uap Klasik / Uap Modern / Cepat /
+// Komuter were indistinguishable. Hero is matched inside the category's own roster.
+// Facing: g18's authority is "all world sprites face LEFT" — g18WorldImg() hard-codes
+// scaleX(-1), and .g18-tab-thumb img does the same, so the tabs match the gallery.
+const G18_CAT_HERO = {
+  uap_klasik:'rocket', uap_modern:'flying scotsman', diesel:'deltic', listrik:'taurus',
+  cepat:'shinkansen 0', komuter:'azuma', indonesia:'cc206'
+}
+function g18TabThumbHTML(cat) {
+  const list = (cat && cat.trains) || []
+  const want = G18_CAT_HERO[cat && cat.key]
+  let hero = null
+  for (let i = 0; i < list.length; i++) {
+    const t = list[i]
+    if (!t || !t.spriteUrl) continue
+    if (!hero) hero = t
+    if (want && ((t.name || '').toLowerCase()).indexOf(want) >= 0) { hero = t; break }
+  }
+  if (!hero) return `<span>${(cat && cat.emoji) || '🚂'}</span>`
+  // Missing file → fall back to the tab's own emoji instead of a broken-image icon.
+  return `<span class="g18-tab-thumb"><img src="${hero.spriteUrl}" alt="${hero.name || ''}" decoding="async" ` +
+    `onerror="this.parentNode.outerHTML='<span>${(cat && cat.emoji) || '\\u{1F682}'}<\/span>'"><\/span>`
+}
+
 /* category tabs (All + 7 categories + Featured) */
 function g18RenderTabs() {
   const bar = document.getElementById('g18-tabs')
@@ -1417,16 +1450,19 @@ function g18RenderTabs() {
   const catCounts = {}
   items.forEach(x => { catCounts[x.catKey] = (catCounts[x.catKey] || 0) + 1 })
   const cats = (window.TRAIN_WORLD && window.TRAIN_WORLD.categories) || []
-  const tabs = [{ key: 'all', label: 'Semua', emoji: '🗂️', color: '#fbbf24', count: items.length }]
-  cats.forEach(c => tabs.push({ key: c.key, label: G18_TAB_LABELS[c.key] || c.name, emoji: c.emoji || '🚂', color: c.color || '#fbbf24', count: catCounts[c.key] || 0 }))
-  tabs.push({ key: 'featured', label: 'Unggulan', emoji: '⭐', color: '#f59e0b', count: featCount })
+  // 'Semua' (🗂️) + 'Unggulan' (⭐) keep their glyph on purpose: they are not train
+  // categories, so no single loco can stand for them — and neither renders as the
+  // wrong generic train. Only the 7 real categories get a picture.
+  const tabs = [{ key: 'all', label: 'Semua', icon: '<span>🗂️</span>', color: '#fbbf24', count: items.length }]
+  cats.forEach(c => tabs.push({ key: c.key, label: G18_TAB_LABELS[c.key] || c.name, icon: g18TabThumbHTML(c), color: c.color || '#fbbf24', count: catCounts[c.key] || 0 }))
+  tabs.push({ key: 'featured', label: 'Unggulan', icon: '<span>⭐</span>', color: '#f59e0b', count: featCount })
   bar.innerHTML = ''
   tabs.forEach(tb => {
     const btn = document.createElement('button')
     btn.className = 'g18-tab' + (g18Filter === tb.key ? ' active' : '')
     if (g18Filter === tb.key) btn.style.background = tb.color
     else btn.style.background = ''
-    btn.innerHTML = `<span>${tb.emoji}</span><span>${tb.label}</span><span class="g18-tab-count">${tb.count}</span>`
+    btn.innerHTML = `${tb.icon}<span>${tb.label}</span><span class="g18-tab-count">${tb.count}</span>`
     btn.onclick = () => g18SetFilter(tb.key)
     bar.appendChild(btn)
   })
@@ -1486,7 +1522,11 @@ function g18RenderGallery() {
       star + tick +
       `<div style="width:100%;height:56px;display:flex;align-items:center;justify-content:center;margin-bottom:2px;overflow:hidden;">${item.proc ? g18TrainSVG(G18_TRAINS[item.featuredIdx], 108, 50, false) : g18WorldImg(item.idx, 108, 50)}</div>` +
       `<div class="g18-card-name" style="font-size:11px;">${item.name}</div>` +
-      `<span class="g18-cat-chip" style="background:${item.catColor};">${item.catEmoji} ${item.catLabel}</span>` +
+      // v59.x — the chip's catEmoji rendered as the SAME generic train sprite on all
+      // 275 cards (right under the card's own real train picture). The chip already
+      // encodes its category by colour + label, so the duplicate glyph is dropped
+      // rather than replaced — a 1em loco thumbnail here would be illegible anyway.
+      `<span class="g18-cat-chip" style="background:${item.catColor};">${item.catLabel}</span>` +
       `<div style="color:rgba(255,255,255,0.55);font-size:9px;font-weight:700;margin-top:2px;">${item.year || ''}</div>`
     card.onclick = () => g18OpenCard(item.idx)
     grid.appendChild(card)

@@ -910,7 +910,11 @@
           <!-- G14: Balapan Kereta -->
           <div class="wmap-node" id="gtile-14" onclick="playClick();openLevelSelect(14)" title="Balapan Kereta">
             <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#7F1D1D,#E63946);">
-              <span class="wn-icon">🚂</span>
+              <!-- v59.x — owner: "saat pemilihan itu jangan pakai emoji, pakai gambar salah satu
+                   kereta". The 🚂 here rendered as the shared generic emoji-sprite (vehicles/051),
+                   the same picture as several other tiles. Thomas is the game's flagship pack.
+                   Mirrored: G14_FACES marks aeg_thomas 'left', so scaleX(-1) faces it right. -->
+              <img loading="lazy" decoding="async" class="wn-icon" src="assets/train/aeg/thomas.webp" alt="Balapan Kereta" style="width:auto;height:auto;max-width:74px;max-height:52px;object-fit:contain;display:block;transform:scaleX(-1);filter:drop-shadow(0 3px 8px rgba(0,0,0,0.75));" onerror="this.outerHTML='<span class=&quot;wn-icon&quot;>🚂</span>'">
             </div>
             <div class="wmap-node-name">Balapan Kereta</div>
             <div class="wmap-node-stars" id="gstars-14-lbl"></div>
@@ -935,7 +939,10 @@
           <!-- G18: Museum Ambarawa — v55.74 B-272: now its own standalone page -->
           <div class="wmap-node" id="gtile-18" onclick="playClick();location.href='games/museum-kereta.html'" title="Museum Ambarawa">
             <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#4A148C,#AB47BC);">
-              <span class="wn-icon">📚</span>
+              <!-- v59.x — real train instead of 📚. world/252 is the B 25 cog loco the museum
+                   page already uses as its own hero (Ambarawa's signature engine). World
+                   sprites face LEFT — g18WorldImg() hard-codes scaleX(-1); matched here. -->
+              <img loading="lazy" decoding="async" class="wn-icon" src="assets/train/world/252.webp" alt="Museum Ambarawa" style="width:auto;height:auto;max-width:74px;max-height:52px;object-fit:contain;display:block;transform:scaleX(-1);filter:drop-shadow(0 3px 8px rgba(0,0,0,0.75));" onerror="this.outerHTML='<span class=&quot;wn-icon&quot;>📚</span>'">
             </div>
             <div class="wmap-node-name">Museum Ambarawa</div>
             <div class="wmap-node-stars" id="gstars-18-lbl"></div>
