@@ -42,6 +42,79 @@
   #splash .tx{position:relative;color:#fff;font-weight:800;font-size:17px;text-shadow:0 2px 7px rgba(0,0,0,.65)}
   #splash .sub{position:relative;margin-top:-8px;color:#d9cfff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:12px;opacity:.85;text-shadow:0 1px 4px rgba(0,0,0,.6)}
   @keyframes spin{to{transform:rotate(360deg)}}
+  /* ── "Pilih Pengejar" picker (Gotham Getaway only) ──────────────────────────
+     Its own fixed overlay, deliberately a SIBLING of #stage: it is the wrapper's
+     UI, not the game's, so it must render at real device pixels and must never
+     be touched by fitStage() (which sizes #frame to the game's design
+     resolution and transform-scales it). Tokens are lifted verbatim from
+     film-anak.html so this reads as the same app: dark purple claymorphism,
+     chunky bottom shadows, gold #ffe08a, Fredoka One / Baloo 2, zero emoji
+     (inline SVG only, same as the hub). */
+  #pick{position:fixed;inset:0;z-index:8;display:none;flex-direction:column;justify-content:center;color:#efe9ff;overflow:hidden;
+    padding:calc(env(safe-area-inset-top,0px) + 10px) calc(env(safe-area-inset-right,0px) + 16px) calc(env(safe-area-inset-bottom,0px) + 14px) calc(env(safe-area-inset-left,0px) + 16px);
+    background:radial-gradient(120% 90% at 50% -10%,#3a2a78 0,#221a52 38%,#141033 72%,#0c0922 100%)}
+  body.picking #pick{display:flex}
+  /* centred so it never collides with the fixed Beranda pill in the top-left */
+  #pick .phead{flex:0 0 auto;text-align:center;padding:0 clamp(8px,12vw,150px)}
+  #pick .phead h1{font-size:clamp(1.05rem,3.6vh,2rem);line-height:1.05;letter-spacing:-.02em;text-shadow:0 3px 0 rgba(0,0,0,.28)}
+  #pick .phead p{margin-top:5px;font-family:'Baloo 2',sans-serif;font-weight:700;
+    font-size:clamp(.66rem,1.75vh,.92rem);color:#c3b8ff;opacity:.92}
+  /* the 5 chasers. min-height:0 on the track + the cards lets the art shrink
+     instead of pushing the buttons off-screen on a short landscape window. */
+  /* max-height keeps the cards card-shaped on a tall window instead of stretching
+     into thin columns with the art marooned in the middle; the auto margins then
+     absorb the slack so the row stays optically centred. */
+  #pick .pgrid{flex:0 1 auto;min-height:0;width:100%;max-width:1180px;height:min(100%,430px);
+    margin:clamp(10px,2.6vh,26px) auto;display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(7px,1.3vw,15px)}
+  .hcard{position:relative;display:flex;flex-direction:column;min-height:0;min-width:0;overflow:hidden;
+    border:0;cursor:pointer;border-radius:20px;background:#1a1440;color:inherit;text-align:center;
+    font-family:inherit;padding:clamp(6px,1.3vh,13px) 8px clamp(7px,1.4vh,13px);
+    box-shadow:0 8px 0 #0d0a28,0 16px 30px rgba(0,0,0,.4),inset 0 2px 3px rgba(255,255,255,.12);
+    transition:transform .12s ease,box-shadow .12s ease,background .12s ease}
+  .hcard:active{transform:translateY(4px);box-shadow:0 3px 0 #0d0a28,0 8px 16px rgba(0,0,0,.4),inset 0 2px 3px rgba(255,255,255,.12)}
+  @media(hover:hover){.hcard:hover{transform:translateY(-4px);box-shadow:0 12px 0 #0d0a28,0 22px 40px rgba(0,0,0,.5),inset 0 2px 3px rgba(255,255,255,.18)}}
+  .hcard:focus-visible{outline:3px solid #ffe08a;outline-offset:3px}
+  .hcard img{flex:1 1 auto;min-height:0;width:100%;object-fit:contain;
+    filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))}
+  .hcard .hn{margin-top:7px;font-size:clamp(.78rem,2.05vh,1.1rem);font-weight:800;line-height:1.1}
+  .hcard .hs{margin-top:3px;font-family:'Baloo 2',sans-serif;font-weight:700;line-height:1.25;
+    font-size:clamp(.58rem,1.45vh,.79rem);color:#c3b8ff;opacity:.92}
+  /* chosen — gold plate, same language as .obadge on the hub */
+  .hcard[aria-pressed="true"]{background:#241a5c;
+    box-shadow:0 8px 0 #0d0a28,0 16px 30px rgba(0,0,0,.45),inset 0 0 0 3px #ffe08a,inset 0 2px 3px rgba(255,255,255,.16)}
+  .hcard[aria-pressed="true"] .hn{color:#ffe08a}
+  .hcard .tick{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;
+    display:none;align-items:center;justify-content:center;background:#ffe08a;box-shadow:0 2px 7px rgba(0,0,0,.45)}
+  .hcard[aria-pressed="true"] .tick{display:flex}
+  .hcard .tick svg{width:15px;height:15px}
+  /* ── actions ── */
+  #pick .pfoot{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:clamp(9px,1.4vw,16px);flex-wrap:wrap}
+  .pbtn{display:flex;align-items:center;justify-content:center;gap:9px;min-height:52px;padding:10px clamp(20px,3.2vw,34px);
+    border:0;cursor:pointer;font-family:inherit;font-weight:800;font-size:clamp(.92rem,2.2vh,1.2rem);
+    color:#3a2b12;background:linear-gradient(180deg,#fff7de,#ffe9a8);border-radius:18px;
+    box-shadow:0 5px 0 #e3b74e,0 10px 20px rgba(0,0,0,.35),inset 0 2px 5px rgba(255,255,255,.85);
+    transition:transform .1s ease,box-shadow .1s ease,opacity .18s ease}
+  .pbtn:active{transform:translateY(3px);box-shadow:0 2px 0 #e3b74e,inset 0 2px 6px rgba(0,0,0,.12)}
+  .pbtn:focus-visible{outline:3px solid #ffe08a;outline-offset:3px}
+  .pbtn svg{width:19px;height:19px;flex-shrink:0}
+  .pbtn[disabled]{opacity:.42;cursor:default;transform:none;
+    box-shadow:0 5px 0 #e3b74e,inset 0 2px 5px rgba(255,255,255,.6)}
+  /* skip — the purple secondary from the hub's .obtn */
+  .pbtn.alt{min-height:48px;padding:10px clamp(15px,2.4vw,24px);color:#efe9ff;
+    font-family:'Baloo 2',sans-serif;font-size:clamp(.82rem,1.9vh,1rem);
+    background:linear-gradient(180deg,#3b2f86,#2b2166);
+    box-shadow:0 5px 0 #150f3c,0 10px 20px rgba(0,0,0,.3),inset 0 1px 2px rgba(255,255,255,.16)}
+  .pbtn.alt:active{box-shadow:0 2px 0 #150f3c,inset 0 2px 5px rgba(0,0,0,.3)}
+  /* short landscape (e.g. 1024x600): tighten so the buttons always stay on-screen */
+  @media(max-height:460px){
+    #pick .phead p{display:none}
+    #pick .pgrid{margin:7px auto}
+    .hcard .hs{font-size:.56rem}
+  }
+  /* portrait / narrow: 5 across gets too thin, go 3 + 2 (there is height to spare) */
+  @media(max-width:640px) and (orientation:portrait){
+    #pick .pgrid{grid-template-columns:repeat(3,1fr)}
+  }
 </style>
 </head>
 <body>
@@ -56,6 +129,20 @@
     <div class="sub">Sebentar ya, lagi disiapin</div>
   </div>
   <div id="stage"><iframe id="frame" title="Film Anak game" allow="autoplay; fullscreen; gamepad; accelerometer; gyroscope" allowfullscreen scrolling="no"></iframe></div>
+  <div id="pick" role="dialog" aria-labelledby="pickttl">
+    <div class="phead">
+      <h1 id="pickttl">Pilih Pengejarmu</h1>
+      <p>Tiap pengejar punya kota dan penjahatnya sendiri</p>
+    </div>
+    <div class="pgrid" id="pgrid" role="group" aria-labelledby="pickttl"></div>
+    <div class="pfoot">
+      <button type="button" class="pbtn" id="pgo" disabled>
+        <svg viewBox="0 0 24 24" fill="#3a2b12" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+        <span id="pgotx">Pilih dulu ya</span>
+      </button>
+      <button type="button" class="pbtn alt" id="pskip">Langsung main saja</button>
+    </div>
+  </div>
   <div id="err">
     <div style="font-size:20px;font-weight:900">Game tidak ditemukan</div>
     <a href="film-anak.html">← Kembali ke daftar Film Anak</a>
@@ -117,10 +204,10 @@
     }, 400);
   }
 
-  // Gotham opens straight on its own "pilih pengejar" screen instead of the logo + cutscene.
+  // Gotham opens on a "pilih pengejar" screen instead of the logo + cutscene.
   //
-  // We do NOT build our own picker and we do NOT tap the game's menus from outside. That was
-  // tried and it crashed: the auto-tap hit a Play button still parked off-screen mid-entrance,
+  // We NEVER tap the game's menus from outside. That was tried and it crashed: the auto-tap
+  // hit a Play button still parked off-screen mid-entrance,
   // which re-entered the transition system while it was already transitioning, so the Title
   // scene never stopped and kept rendering alongside the next one ("screen bolak balik") until
   // that scene unloaded Title's textures and WebGL died on a null texture (the "hang").
@@ -131,17 +218,73 @@
   // there is nothing to re-enter and the old crash is structurally impossible. Verified on all
   // five levels: 0 console errors, 0 failed requests, no scene stacking, replay and back intact.
   //
-  // LevelSelect specifically, rather than jumping into a race, because:
-  //   * hero and level are 1:1 (bam/bibi/redbird/batwing/buff), so that screen already IS a
-  //     chaser picker -- with the show's real art, each hero shown with its villain and city;
-  //   * jumping past it would need the level injected INSIDE the iframe, i.e. editing the
-  //     vendored bundle, and would leave the child on level4 forever otherwise;
-  //   * audio only unlocks on a tap inside the iframe. Landing here means the child's pick IS
-  //     that tap, so the race starts with sound. Deep-linking into the race starts it muted.
+  // Gotham additionally gets OUR OWN "pilih pengejar" screen (below) in front of it, so the
+  // child picks a whole adventure -- hero, city and villain -- before anything loads. Picking
+  // deep-links to ?targetScene=Game&hero=<hero>; the hero is turned into a level by a small
+  // script inside the game's own index.html (hero and level are 1:1). "Langsung main saja"
+  // keeps the previous behaviour and lands on the game's own level select.
   var SCENE_ENTRY = { 'batwheels-gotham-getaway': '?targetScene=LevelSelect' };
 
+  // ── "Pilih Pengejar" ──────────────────────────────────────────────────────────────────
+  // Five chasers, each with the city and villain that come with it. The ids are the ONLY
+  // values ever put in the URL, and the game re-checks them against its own hard-coded
+  // table, so nothing user-supplied can reach the engine.
+  var HEROES = [
+    { id:'bam',     name:'Bam',     where:'Jalan Seru',       foe:'Prank'  },
+    { id:'bibi',    name:'Bibi',    where:'Tempat Rongsokan', foe:'Jestah' },
+    { id:'redbird', name:'Redbird', where:'Pelabuhan',        foe:'Ducky'  },
+    { id:'batwing', name:'Batwing', where:'Langit Kota',      foe:'Quizz'  },
+    { id:'buff',    name:'Buff',    where:'Jalan Beku',       foe:'Snowy'  }
+  ];
+  var TICK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="#3a2b12" stroke-width="3.4" ' +
+                 'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg>';
+  var chosen = null;
+
+  function showPicker(){
+    var grid = document.getElementById('pgrid');
+    var go = document.getElementById('pgo'), gotx = document.getElementById('pgotx');
+    for (var i = 0; i < HEROES.length; i++){
+      (function(h){
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'hcard';
+        b.setAttribute('aria-pressed','false');
+        b.setAttribute('aria-label', 'Pilih ' + h.name + ', di ' + h.where + ', lawan ' + h.foe);
+        var tick = document.createElement('span'); tick.className = 'tick'; tick.innerHTML = TICK_SVG;
+        var img = document.createElement('img');
+        img.src = 'film/assets/gg-heroes/' + h.id + '.webp';
+        img.alt = ''; img.decoding = 'async';
+        var nm = document.createElement('span'); nm.className = 'hn'; nm.textContent = h.name;
+        var sb = document.createElement('span'); sb.className = 'hs';
+        sb.textContent = h.where + ' · lawan ' + h.foe;
+        b.appendChild(tick); b.appendChild(img); b.appendChild(nm); b.appendChild(sb);
+        b.addEventListener('click', function(){
+          chosen = h.id;
+          var all = grid.querySelectorAll('.hcard');
+          for (var j = 0; j < all.length; j++) all[j].setAttribute('aria-pressed','false');
+          b.setAttribute('aria-pressed','true');
+          go.disabled = false;
+          gotx.textContent = 'Mulai bersama ' + h.name + '!';
+        });
+        grid.appendChild(b);
+      })(HEROES[i]);
+    }
+    go.addEventListener('click', function(){
+      if (!chosen) return;
+      start('?targetScene=Game&hero=' + encodeURIComponent(chosen));
+    });
+    document.getElementById('pskip').addEventListener('click', function(){
+      start(SCENE_ENTRY[slug] || '');
+    });
+    document.body.classList.add('picking');
+  }
+  function start(extra){
+    document.body.classList.remove('picking');
+    loadGame(extra);
+  }
+
   if (GAMES[slug]) {
-    loadGame(SCENE_ENTRY[slug] || '');
+    if (slug === 'batwheels-gotham-getaway') showPicker();
+    else loadGame(SCENE_ENTRY[slug] || '');
   } else {
     document.getElementById('frame').style.display = 'none';
     hideSplash();

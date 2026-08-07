@@ -9,5 +9,201 @@
   <body>
     <div id="rotation-cover"></div>
     <div id="game"></div>
+<script>
+/* ===========================================================================
+ * "?hero=" — start this game on the chaser the child picked in the wrapper.
+ * ===========================================================================
+ * The wrapper (games/film-play.html) shows its own "pilih pengejar" screen and
+ * then opens this page as  index.html?targetScene=Game&hero=bam
+ *
+ *   * `targetScene` is the ENGINE'S OWN entry point (it merges every query param
+ *     into its config and swaps the destination of the single PreloadEnd hop).
+ *     We do not touch it here.
+ *   * the LEVEL is not readable from the URL -- `Game.init` builds
+ *     `runSettings = Object.assign({}, defaults, data.runSettings)` and derives
+ *     hero / villain / theme / dynamic asset-pack from it. So the only thing this
+ *     file does is add `selectedLevel` to the data of the engine's own
+ *     `SceneManager.start('Game', ...)` call. Hero and level are 1:1.
+ *
+ * WHAT THIS DELIBERATELY DOES NOT DO: it never synthesises input into the game's
+ * menus (no clicks, no pointer events, no emit). An earlier build did, tapped a
+ * Title button that was still parked off-screen mid-tween, re-entered the
+ * transition system while it was already transitioning, so Title never stopped
+ * and kept rendering until its textures were unloaded under it and WebGL died on
+ * a null texture. This hook only ever reads a table and copies an object.
+ *
+ * It also mutates nothing: every payload is rebuilt as a fresh object, and
+ * `this.level` in the engine is only ever a READ reference to a shared level
+ * singleton.
+ * ======================================================================== */
+(function () {
+  'use strict';
+
+  /* hero -> level. Hard-coded on purpose: an unknown value must do NOTHING
+     rather than reach the engine (an invalid scene/level silently hangs the
+     loading bar with no error). Anything not in this table is ignored. */
+  var HERO_LEVEL = { bam: 'level1', bibi: 'level2', redbird: 'level3', batwing: 'level4', buff: 'level5' };
+
+  function has(o, k) { return Object.prototype.hasOwnProperty.call(o, k); }
+
+  var hero = null;
+  try { hero = new URLSearchParams(window.location.search).get('hero'); } catch (e) {}
+  var LEVEL = (hero && has(HERO_LEVEL, hero)) ? HERO_LEVEL[hero] : null;
+  if (!LEVEL) return;                      // no hero, or an unknown one -> vanilla game
+
+  var GAME = null;                         // captured Phaser.Game (window.game is the <div>)
+  var owns = true;                         // false once the child picks for themselves
+
+  /* ---- copy-on-write payload builders (never mutate the engine's objects) -- */
+  function copy(src, extra) {
+    var out = {}, k;
+    if (src) { for (k in src) { if (has(src, k)) out[k] = src[k]; } }
+    if (extra) { for (k in extra) { if (has(extra, k)) out[k] = extra[k]; } }
+    return out;
+  }
+
+  /* ---- the one lever: the engine's own scene-start boundary --------------- */
+  function patch(P) {
+    var SM = P && P.Scenes && P.Scenes.SceneManager && P.Scenes.SceneManager.prototype;
+    if (!SM || SM.__ggHeroPatched) return !!SM;
+    SM.__ggHeroPatched = true;
+    var start = SM.start;
+    SM.start = function (key, data) {
+      GAME = this.game;
+      /* The moment the game's OWN level select runs, the child is choosing for
+         themselves -- stop forcing the URL hero, or "back to level select" would
+         silently bounce them to the deep-linked level forever. Replay restarts
+         Game without passing through LevelSelect, so replay still gets the
+         picked hero. */
+      if (key === 'LevelSelect') owns = false;
+      if (key === 'Game') {
+        hideGate();                        // race is starting; never block it
+        if (owns) data = copy(data, { runSettings: copy(data && data.runSettings, { selectedLevel: LEVEL }) });
+      }
+      return start.call(this, key, data);
+    };
+    return true;
+  }
+
+  /* Both bundles are `defer`, so this inline script runs BEFORE Phaser exists.
+     Trap the assignment instead of racing it, with a bounded poll as a fallback
+     in case defineProperty is refused. */
+  if (window.Phaser) {
+    patch(window.Phaser);
+  } else {
+    try {
+      var held;
+      Object.defineProperty(window, 'Phaser', {
+        configurable: true,
+        get: function () { return held; },
+        set: function (v) { held = v; try { patch(v); } catch (e) {} }
+      });
+    } catch (e) {}
+    var tries = 0;
+    var timer = setInterval(function () {
+      if ((window.Phaser && patch(window.Phaser)) || ++tries > 600) clearInterval(timer);
+    }, 50);
+  }
+
+  /* =======================================================================
+   * AUDIO — "Ketuk layar untuk mulai!"
+   * =======================================================================
+   * Deep-linking straight into Game skips the LevelSelect tap that normally
+   * unlocks audio, so the race could start on a suspended AudioContext.
+   *
+   * MEASURED, though: the wrapper serves this game from the SAME ORIGIN, and
+   * Chrome propagates user activation to same-origin documents in the frame
+   * tree -- so the child's tap on the wrapper's picker usually unlocks us
+   * already. Verified with --autoplay-policy=document-user-activation-required:
+   * arriving through the picker gives `sound.locked === false`, while loading
+   * this page directly with no tap anywhere gives `sound.locked === true`.
+   *
+   * So the gate is a FALLBACK, not a toll booth: it is built during preload but
+   * removes itself the moment it sees the sound manager come up already
+   * unlocked. In the normal flow the child never sees it (the wrapper's own
+   * splash still covers the frame at that point). It only ever becomes visible
+   * on a browser that did not inherit the activation -- and then it is a real,
+   * honest "tap to start" rather than a silent race.
+   *
+   * We never synthesise a gesture: browsers ignore untrusted events for autoplay
+   * unlock anyway, and it is the pattern that crashed the old build. It also
+   * auto-dismisses when the race starts, so it can never block gameplay.
+   * ==================================================================== */
+  var gate = null, gateGone = false;
+
+  function unlockAudio() {
+    try {
+      var s = GAME && GAME.sound;
+      if (!s) return;
+      if (s.context && s.context.state === 'suspended' && s.context.resume) s.context.resume();
+      if (s.locked && s.unlock) s.unlock();
+    } catch (e) {}
+  }
+
+  function onGesture() {
+    unlockAudio();
+    /* the sound manager may not exist yet if the tap lands very early */
+    var n = 0, t = setInterval(function () { unlockAudio(); if (++n > 6) clearInterval(t); }, 400);
+    hideGate();
+  }
+
+  function hideGate() {
+    if (gateGone) return;
+    gateGone = true;
+    if (gate && gate.parentNode) gate.parentNode.removeChild(gate);
+    gate = null;
+  }
+
+  function buildGate() {
+    var css = document.createElement('style');
+    css.textContent =
+      '#gg-tap-gate{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;cursor:pointer;' +
+      '-webkit-tap-highlight-color:transparent;text-align:center;color:#efe9ff;' +
+      "font-family:'Fredoka One','Baloo 2',system-ui,sans-serif;" +
+      'background:radial-gradient(120% 90% at 50% 50%,rgba(58,42,120,.93) 0,rgba(34,26,82,.96) 45%,rgba(12,9,34,.98) 100%)}' +
+      '#gg-tap-gate .in{padding:34px 64px;border-radius:34px;background:#1a1440;animation:ggPulse 1.6s ease-in-out infinite;' +
+      'box-shadow:0 12px 0 #0d0a28,0 24px 46px rgba(0,0,0,.5),inset 0 3px 4px rgba(255,255,255,.12)}' +
+      '#gg-tap-gate .t{font-size:58px;font-weight:800;line-height:1.05;color:#ffe08a;text-shadow:0 4px 0 rgba(0,0,0,.32)}' +
+      "#gg-tap-gate .s{margin-top:14px;font-family:'Baloo 2',system-ui,sans-serif;font-weight:700;font-size:26px;color:#c3b8ff}" +
+      '@keyframes ggPulse{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}' +
+      '@media(prefers-reduced-motion:reduce){#gg-tap-gate .in{animation:none}}';
+    document.head.appendChild(css);
+
+    gate = document.createElement('div');
+    gate.id = 'gg-tap-gate';
+    gate.setAttribute('role', 'button');
+    gate.setAttribute('tabindex', '0');
+    gate.setAttribute('aria-label', 'Ketuk untuk mulai balapan');
+    gate.innerHTML = '<div class="in"><div class="t">Ketuk layar untuk mulai!</div>' +
+                     '<div class="s">Biar suara balapannya ikut menyala</div></div>';
+    gate.addEventListener('pointerdown', onGesture);
+    gate.addEventListener('click', onGesture);
+    gate.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter' || ev.key === ' ' || ev.key === 'Spacebar') { ev.preventDefault(); onGesture(); }
+    });
+    document.body.appendChild(gate);
+
+    /* If the sound manager comes up already unlocked (the normal path -- the
+       picker tap propagated into this same-origin frame) then no tap is owed
+       and the gate must get out of the child's way. */
+    var n = 0;
+    var watch = setInterval(function () {
+      var s = GAME && GAME.sound;
+      if (gateGone || (s && !s.locked) || ++n > 150) { clearInterval(watch); hideGate(); }
+    }, 200);
+  }
+
+  if (document.body) buildGate();
+  else document.addEventListener('DOMContentLoaded', buildGate);
+
+  /* Whatever happens, the child's FIRST real touch in this document resumes the
+     context -- a plain listener on real input, nothing synthesised. */
+  document.addEventListener('pointerdown', function once(ev) {
+    if (!ev.isTrusted) return;
+    document.removeEventListener('pointerdown', once, true);
+    unlockAudio();
+  }, true);
+})();
+</script>
   </body>
 </html>
