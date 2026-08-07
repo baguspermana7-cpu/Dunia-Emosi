@@ -172,7 +172,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 #type-filter{display:flex;gap:6px;overflow-x:auto;padding:10px 12px 2px;flex-shrink:0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 #type-filter::-webkit-scrollbar{display:none}
 /* v55.37 B-218 — filter pill harmonized with g14 .cat-btn lavender accent. */
-.tfbtn{flex-shrink:0;padding:12px 18px;min-width:44px;min-height:44px;border-radius:22px;border:2.5px solid rgba(167,139,250,0.30);background:rgba(139,92,246,0.08);color:rgba(196,181,253,0.85);font-size:13px;font-weight:800;cursor:pointer;-webkit-tap-highlight-color:transparent;font-family:inherit;transition:transform .08s,border-color .15s,background .15s;letter-spacing:0.3px;display:inline-flex;align-items:center;justify-content:center}
+.tfbtn{flex-shrink:0;padding:10px 16px;min-width:44px;min-height:44px;border-radius:22px;border:2.5px solid rgba(167,139,250,0.30);background:rgba(139,92,246,0.08);color:rgba(196,181,253,0.85);font-size:13px;font-weight:800;cursor:pointer;-webkit-tap-highlight-color:transparent;font-family:inherit;transition:transform .08s,border-color .15s,background .15s;letter-spacing:0.3px;display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap}
 .tfbtn:active{transform:scale(.95)}
 .tfbtn.active{background:rgba(139,92,246,0.45);border-color:#a78bfa;color:#fff;box-shadow:0 0 14px rgba(139,92,246,0.5)}
 /* Train count badge */
@@ -338,15 +338,9 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
       <div id="g15-journey-info" style="font-size:13px;line-height:1.6;color:#fde68a;opacity:0.85"></div>
     </div>
   </div>
-  <div id="type-filter">
-    <button class="tfbtn active" data-filter="all" onclick="setTrainFilter(this)">🚆 Semua</button>
-    <button class="tfbtn" data-filter="steam" onclick="setTrainFilter(this)">♨️ Steam</button>
-    <button class="tfbtn" data-filter="diesel" onclick="setTrainFilter(this)">🛢️ Diesel</button>
-    <button class="tfbtn" data-filter="electric" onclick="setTrainFilter(this)">⚡ Elektrik</button>
-    <button class="tfbtn" data-filter="highspeed" onclick="setTrainFilter(this)">💨 Highspeed</button>
-    <button class="tfbtn" data-filter="tram" onclick="setTrainFilter(this)">🚃 Tram</button>
-    <button class="tfbtn" data-filter="heritage" onclick="setTrainFilter(this)">👑 Heritage</button>
-  </div>
+  <!-- Built by buildTypeChips() from the catalog. Hand-written chips drifted:
+       "Tram" matched 0 trains and `character` (80) had no chip at all. -->
+  <div id="type-filter"></div>
   <div id="ts-count">100 KERETA TERSEDIA</div>
   <div id="ts-grid-wrap"><div id="train-grid"></div></div>
 </div>
@@ -3170,6 +3164,7 @@ function showTrainSelect() {
   document.getElementById('si-landmark').textContent = station.landmark;
   document.getElementById('train-select').style.display = 'flex';
   document.getElementById('station-chip').style.display = 'none';
+  buildTypeChips();   // derive the filter row from the catalog before the grid
   buildTrainGrid();
   // v54.20 C16: station-themed recommendation ribbon.
   try { g15ApplyStationRibbon() } catch(_){}
@@ -3185,9 +3180,80 @@ function setTrainFilter(btn) {
 }
 
 const TYPE_LABEL = {
-  'steam':'Steam','diesel':'Diesel','electric':'Elektrik',
+  'character':'Karakter','steam':'Steam','diesel':'Diesel','electric':'Elektrik',
   'highspeed':'Highspeed','tram':'Tram','heritage':'Heritage'
 };
+
+// ── Type filter chips, DERIVED FROM THE DATA (not hand-written) ──────────────
+// The old row was seven hardcoded <button>s, and it had drifted away from the
+// catalog in both directions: "Tram" matched 0 of 355 trains (a chip that opens
+// an empty screen), while `character` -- Thomas, Chuggington, Titipo, 80 trains,
+// the ones a child actually looks for -- had no chip at all and was reachable
+// only through "Semua". Building the row from the catalog makes both failures
+// impossible: a type with no trains cannot get a chip, and a type with trains
+// cannot be forgotten.
+//
+// Each chip carries a real train picture instead of an emoji, matching the
+// category rows in balapan-kereta/selamatkan-kereta/museum-kereta. The hero is
+// picked from that type's OWN roster, so it follows the data too.
+const TYPE_ORDER = ['all','character','steam','diesel','electric','highspeed','tram','heritage'];
+
+function g15TypeHero(type) {
+  // "Semua" deliberately skips the character pool: otherwise it picks the same
+  // hero as the Karakter chip and two chips look identical -- the exact sameness
+  // this change exists to remove.
+  const pool = type === 'all' ? [] : (typeof TRAIN_CATALOG !== 'undefined' ? TRAIN_CATALOG : [])
+    .filter(e => e.type === type && e.isCharacter && e.spriteUrl);
+  if (pool.length) {
+    // Prefer a recognisable lead character when the type has one.
+    const lead = pool.find(e => /thomas|wilson|titipo|casey/i.test(e.name || '')) || pool[0];
+    return { src: lead.spriteUrl, faces: lead.faces || 'right' };
+  }
+  // World trains have no spriteUrl on the catalog entry; fall back to the
+  // generated world roster, which g15 already renders elsewhere.
+  const w = (window.TRAIN_WORLD && window.TRAIN_WORLD.categories) || [];
+  for (const c of w) {
+    for (const t of (c.trains || [])) {
+      const m = (typeof TRAIN_CATALOG !== 'undefined' ? TRAIN_CATALOG : []).find(e => e.key === t.key);
+      if (m && (type === 'all' || m.type === type) && t.img) return { src: '../assets/train/world/' + t.img, faces: 'left' };
+    }
+  }
+  return null;
+}
+
+function buildTypeChips() {
+  const row = document.getElementById('type-filter');
+  if (!row) return;
+  const cat = (typeof TRAIN_CATALOG !== 'undefined' ? TRAIN_CATALOG : []);
+  const counts = {};
+  cat.forEach(e => { counts[e.type] = (counts[e.type] || 0) + 1; });
+  row.innerHTML = '';
+  TYPE_ORDER.forEach(type => {
+    const n = type === 'all' ? cat.length : (counts[type] || 0);
+    if (!n) return;                                   // no trains -> no chip
+    const btn = document.createElement('button');
+    btn.className = 'tfbtn' + (type === activeTrainFilter ? ' active' : '');
+    btn.dataset.filter = type;
+    btn.onclick = function () { setTrainFilter(this) };
+    const hero = g15TypeHero(type);
+    if (hero) {
+      const img = document.createElement('img');
+      img.src = hero.src;
+      img.alt = '';
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      // Same mirror rule the per-train cards use (B-229): only 'left' art flips.
+      img.style.cssText = 'width:auto;height:auto;max-width:34px;max-height:20px;object-fit:contain;flex-shrink:0;'
+        + (hero.faces === 'left' ? 'transform:scaleX(-1);' : '');
+      img.onerror = function () { this.remove() };     // degrade to text, never a broken icon
+      btn.appendChild(img);
+    }
+    const label = document.createElement('span');
+    label.textContent = (type === 'all' ? 'Semua' : (TYPE_LABEL[type] || type)) + ' ' + n;
+    btn.appendChild(label);
+    row.appendChild(btn);
+  });
+}
 
 function buildTrainGrid() {
   const grid = document.getElementById('train-grid');
