@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=55.74-20260628a">
+<link rel="stylesheet" href="du-buttons.css?v=59.94-20260808a">
 <title>Museum Kereta Ambarawa</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -166,11 +166,11 @@ html,body{width:100%;min-height:100%;min-height:100svh;background:#1a0e06;font-f
 </head>
 <body>
 <div id="du-build-stamp">v58.7</div>
-<script src="data/emoji-map.js?v=59.74-20260725d"></script><script src="data/ui-sprites.js?v=59.93-20260808b"></script><!-- zero-emoji engine -->
-<script src="sw-reload.js?v=55.69-20260628a"></script>
+<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- zero-emoji engine -->
+<script src="sw-reload.js?v=59.94-20260808a"></script>
 <!-- A-322 — full 275-train world DB + real-fact lore for the expanded museum -->
-<script src="data/train-world.js?v=56.9-20260704c"></script>
-<script src="data/museum-lore.js?v=56.9-20260704c"></script>
+<script src="data/train-world.js?v=59.94-20260808a"></script>
+<script src="data/museum-lore.js?v=59.94-20260808a"></script>
 
 <div id="museum-root">
   <div class="game-header">
@@ -1188,6 +1188,27 @@ let g18Filter = 'all'
 let g18Query = ''
 const G18_TAB_LABELS = { uap_klasik:'Uap Klasik', uap_modern:'Uap Modern', diesel:'Diesel', listrik:'Listrik', cepat:'Cepat', komuter:'Komuter', indonesia:'Indonesia' }
 
+// v59.76 IDENTITY-vs-ART FIX. `G18_ART_MAP` says which world SPRITE best DRAWS a
+// museum exhibit, and several exhibits legitimately share one sprite (w252 is claimed
+// by four different B25-class exhibits). Reversing that art map into an IDENTITY map
+// therefore mis-labels cards: measured 19 name and 16 year disagreements across the
+// 36 featured cards — a child tapping "Shinkansen 100 Series · 1987" was shown
+// "Shinkansen N700 · 2007", and "CC204 · 2003" opened "Argo Bromo Anggrek · 1997".
+// Accept the reverse mapping only when both records really describe the same
+// locomotive. A rejected exhibit is NOT lost: it still appears further down as its
+// own procedural card, carrying its own correct name, year and lore.
+function g18SameLoco(gi, name, year) {
+  if (gi == null || gi < 0) return false
+  const t = (typeof G18_TRAINS !== 'undefined') ? G18_TRAINS[gi] : null
+  if (!t) return false
+  const norm = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+  const a = norm(name), c = norm(t.name)
+  if (!a || !c) return false
+  if (a.indexOf(c) < 0 && c.indexOf(a) < 0) return false          // different loco
+  if (year && t.year && Math.abs(year - t.year) > 2) return false  // visible year contradiction
+  return true
+}
+
 function g18BuildItems() {
   if (MUSEUM_ITEMS) return MUSEUM_ITEMS
   // reverse-map featured sprites: G18_TRAINS name → world sprite number (via G18_ART_MAP)
@@ -1206,10 +1227,19 @@ function g18BuildItems() {
   cats.forEach(cat => {
     (cat.trains || []).forEach(t => {
       const l = lore[String(t.idx)] || {}
+      const _name = l.name || t.name
+      const _year = t.year || l.year || 0
+      // v59.76 — only honour the art-derived mapping when the exhibit it points at is
+      // actually the SAME locomotive as this card (see g18SameLoco above). Otherwise
+      // this card keeps its own identity and opens the light modal, which is built
+      // from this same record and therefore can never contradict the card.
+      const _cand = (WORLD_FEATURED[t.idx] != null) ? WORLD_FEATURED[t.idx] : -1
+      const _fi = g18SameLoco(_cand, _name, _year) ? _cand : -1
+      if (_cand >= 0 && _fi < 0) delete WORLD_FEATURED[t.idx]   // free the exhibit for its own card
       items.push({
         idx: t.idx,
-        name: l.name || t.name,
-        year: t.year || l.year || 0,
+        name: _name,
+        year: _year,
         type: l.type || t.model || '',
         note: l.note || '',
         catKey: cat.key,
@@ -1217,7 +1247,7 @@ function g18BuildItems() {
         catColor: cat.color || '#fbbf24',
         catEmoji: cat.emoji || '🚂',
         spriteUrl: t.spriteUrl,
-        featuredIdx: (WORLD_FEATURED[t.idx] != null) ? WORLD_FEATURED[t.idx] : -1
+        featuredIdx: _fi
       })
     })
   })
@@ -1940,7 +1970,7 @@ function g18ShowTimeline() {
     const pct = ((s.year || 1900) - minY) / Math.max(1, maxY - minY) * 100
     const ring = s.featuredIdx >= 0 ? 'border:1.5px solid rgba(251,191,36,0.7);' : ''
     return `<div style="position:absolute;left:${pct}%;top:50%;transform:translate(-50%,-50%);cursor:pointer" onclick="g18OpenCard(${s.idx})">
-      <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:6px;${ring}">${g18WorldImg(s.idx, 60, 28)}</div>
+      <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:6px;${ring}">${s.proc ? g18TrainSVG(G18_TRAINS[s.featuredIdx], 60, 28, false) : g18WorldImg(s.idx, 60, 28)}</div>
       <div style="color:#fde68a;font-size:9px;text-align:center;margin-top:4px">${s.year || ''}</div>
     </div>`
   }).join('')
@@ -2142,7 +2172,14 @@ function g18FinishQuiz() {
   try {
     if (score === G18_QUIZ_COUNT) {
       const visited = g18PassportGet()
-      if (visited.size >= G18_TRAINS.length) isSarjana = true
+      // v59.76 — this compared the passport against G18_TRAINS.length (36 featured
+      // exhibits), so the game congratulated a child with "kamu kunjungi SEMUA
+      // kereta" after ~13% of the collection. Use the SAME denominator the collection
+      // counter shows him (g18RenderPassport, ~line 1525): world trains idx ≤ 275,
+      // since the synthetic 900+ cards never stamp the passport.
+      const total = g18BuildItems().filter(x => x.idx <= 275).length || 275
+      const seen = [...visited].filter(i => i <= 275).length
+      if (seen >= total) isSarjana = true
     }
   } catch(_){}
   const gradeEmoji = isSarjana ? '🎓' : score === G18_QUIZ_COUNT ? '🏆' : score >= Math.ceil(G18_QUIZ_COUNT * 0.5) ? '⭐' : '📚'

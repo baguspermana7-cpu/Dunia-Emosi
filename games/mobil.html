@@ -132,12 +132,12 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0e244
   </div>
 </div>
 
-<script src="data/freeze-watchdog.js?v=20260428a"></script>
-<script src="data/save-engine.js?v=20260501h"></script>
-<script src="data/emoji-map.js?v=59.74-20260725d"></script><script src="data/ui-sprites.js?v=59.93-20260808b"></script><!-- eco HUD star -->
-<script src="game-modal.js?v=59.52-20260720a"></script>
-<script src="data/sfx-engine.js?v=59.93-20260808b"></script><!-- shared answer cues (owner) -->
-<script src="vfx-engine.js?v=59.93-20260808b"></script><!-- shared VFX (crash boom + win burst) -->
+<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
+<script src="data/save-engine.js?v=59.94-20260808a"></script>
+<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- eco HUD star -->
+<script src="game-modal.js?v=59.94-20260808a"></script>
+<script src="data/sfx-engine.js?v=59.94-20260808a"></script><!-- shared answer cues (owner) -->
+<script src="vfx-engine.js?v=59.94-20260808a"></script><!-- shared VFX (crash boom + win burst) -->
 
 <div id="flash"></div>
 
@@ -198,6 +198,27 @@ const TILE_SZ    = 54
 //  STATE
 // ═══════════════════════════════════════════════════════════════════
 // Vehicle catalog
+// v59.94 — ONE table, and only mappings that are actually TRUE.
+// The picker shows the child a raw emoji (buildVehicleGrid sets btn.textContent = v.e),
+// then this table swapped in a PNG at start. assets/car and vehicle/top-view/ contains
+// TWELVE PASSENGER CARS and nothing else — no truck, bus, van, ambulance or fire engine —
+// so five of the old entries could never be right: 🚚 Truk drew a coupe, 🚐 Bemo a
+// roadster, 🚌 Bis a sedan, 🚑 Ambulan a "track" car, and 🚒 Pemadam drew
+// top_car_red_formula_07.png — THE SAME FILE as 🏎️ Sport, so two different picker
+// choices produced an identical car. A child who chose "Pemadam" drove a Formula-1 car.
+// That is the same defect class as the stop sign that resolved to the roadworks triangle
+// (commit f96820e4). Those five now fall through to the emoji branch that already serves
+// 🚜🚢🚁🚂 — the child sees the vehicle he actually picked. Only genuine cars map to a PNG.
+const EMOJI_TO_CAR_PNG = {
+  '\uD83D\uDE97': 'top_car_cyan_sedan_05.png',    // Sedan  — generic sedan
+  '\uD83C\uDFCE\uFE0F': 'top_car_red_formula_07.png',  // Sport  — red formula (iconic racer)
+  '\uD83D\uDE99': 'top_car_white_gt_01.png',      // Jeep   — white GT (closest SUV silhouette)
+  '\uD83D\uDE93': 'top_car_blue_compact_11.png',  // Polisi — blue compact reads as police blue
+  '\uD83D\uDE95': 'top_car_yellow_sport_02.png',  // Taksi  — yellow sport reads as taxi yellow
+  // Deliberately NO entry for \uD83D\uDE9A \uD83D\uDE90 \uD83D\uDE8C \uD83D\uDE92 \uD83D\uDE91 (truck/van/bus/fire/ambulance)
+  // or \uD83D\uDE9C\uD83D\uDEF5\uD83D\uDEB2\uD83D\uDEFA\uD83D\uDE80\uD83D\uDEA2\uD83D\uDE81\uD83D\uDE82\uD83D\uDEF8\uD83D\uDEA4 — no honest top-view art exists, so they render as themselves.
+}
+
 const VEHICLES = [
   {e:'🚗',n:'Sedan'},{e:'🏎️',n:'Sport'},{e:'🚙',n:'Jeep'},
   {e:'🚚',n:'Truk'},{e:'🚐',n:'Bemo'},{e:'🚓',n:'Polisi'},
@@ -249,12 +270,7 @@ function startFromSelect() {
 // Rebuild car sprite for a new vehicle emoji. Swap PIXI.Text ↔ PIXI.Sprite as needed.
 function rebuildCarSprite(emoji) {
   if (!carContainer) return
-  const EMOJI_TO_CAR_PNG = {
-    '🚗':'top_car_cyan_sedan_05.png','🏎️':'top_car_red_formula_07.png','🚙':'top_car_white_gt_01.png',
-    '🚚':'top_car_white_coupe_09.png','🚐':'top_car_white_roadster_10.png','🚓':'top_car_blue_compact_11.png',
-    '🚕':'top_car_yellow_sport_02.png','🚌':'top_car_silver_sedan_12.png','🚒':'top_car_red_formula_07.png',
-    '🚑':'top_car_white_track_03.png',
-  }
+  // v59.94 — uses the single shared EMOJI_TO_CAR_PNG defined above.
   const png = EMOJI_TO_CAR_PNG[emoji] || null
   if (carSprite && carSprite.parent) carContainer.removeChild(carSprite)
   if (png) {
@@ -601,19 +617,7 @@ function buildCar() {
   // Car sprite — Task #54: pick PNG based on selected vehicle emoji; null = use emoji as sprite.
   // Only car-type emojis get a PNG match. Non-car vehicles (bajaj, motor, sepeda, roket, kapal,
   // heli, kereta, UFO, speedboat, traktor) fall through to emoji since we have no top-view PNG.
-  const EMOJI_TO_CAR_PNG = {
-    '🚗': 'top_car_cyan_sedan_05.png',       // Sedan — generic sedan
-    '🏎️': 'top_car_red_formula_07.png',      // Sport — red formula (iconic racer)
-    '🚙': 'top_car_white_gt_01.png',         // Jeep — white GT (closest SUV-ish silhouette)
-    '🚚': 'top_car_white_coupe_09.png',      // Truk — fallback (no truck PNG; white coupe)
-    '🚐': 'top_car_white_roadster_10.png',   // Bemo/Van — fallback (no van PNG)
-    '🚓': 'top_car_blue_compact_11.png',     // Polisi — blue compact matches police blue
-    '🚕': 'top_car_yellow_sport_02.png',     // Taksi — yellow sport matches taxi yellow
-    '🚌': 'top_car_silver_sedan_12.png',     // Bis — fallback (silver sedan, no bus PNG)
-    '🚒': 'top_car_red_formula_07.png',      // Pemadam — red (fire engine red)
-    '🚑': 'top_car_white_track_03.png',      // Ambulan — white (ambulance white)
-    // No PNG for: 🚜🛵🚲🛺🚀🚢🚁🚂🛸🚤 → emoji fallback (skip PNG load)
-  }
+  // v59.94 — uses the single shared EMOJI_TO_CAR_PNG defined above.
   const selectedEmoji = cfg.playerIcon || '🚗'
   const carPngName = EMOJI_TO_CAR_PNG[selectedEmoji] || null
   const carUrl = carPngName ? `../assets/car%20and%20vehicle/top-view/${carPngName}` : null
@@ -1120,7 +1124,13 @@ function saveG6Progress(stars) {
 function goBack() {
   S.running = false
   try{document.getElementById('game-bgm').pause()}catch(_){}
-  history.back()
+  // v59.94 — B-256, propagated from lokomotif-pemberani.html: reach app home
+  // DETERMINISTICALLY. history.back() has nothing to pop when the game is the first
+  // entry (installed PWA launched at this URL, a deep link, or after the
+  // location.reload() chain every level change uses), so the button silently did
+  // nothing on an already-stopped ticker. Reproduced here: tapping the home button
+  // landed on about:blank -- an empty white screen with no way back.
+  location.href = '../index.html'
 }
 
 function confirmBack() {
@@ -1237,13 +1247,40 @@ function screenFlash(color) {
 
 // Handle resize
 window.addEventListener('resize', () => {
-  // Lightweight resize: recompute lane Xs
+  // v59.94 — this used to recompute the lane maths WITHOUT ever resizing the renderer.
+  // The stage therefore kept whatever size it had at boot while laneXs jumped to the new
+  // window width, so the car drove off the drawn road after any rotate or PWA chrome
+  // toggle. Measured before this fix (load 1280x720, then rotate): the canvas stayed
+  // 1280x720 at every target size -- 320px of bare page right at 1600x900, 1280px right
+  // + 880px bottom at 2560x1600 -- and at 1024x600 the canvas OVERFLOWED the window by
+  // 256x120, cutting off the road edges. Resize for real, then rebuild the static
+  // geometry so the painted road and the lane maths agree again.
   if (!app) return
-  roadLeft  = window.innerWidth * 0.08
-  roadRight = window.innerWidth * 0.92
+  app.renderer.resize(window.innerWidth, window.innerHeight)
+
+  const W = app.screen.width
+  roadLeft  = W * 0.08
+  roadRight = W * 0.92
   roadW = roadRight - roadLeft
   laneW = roadW / LANES
   laneXs = Array.from({length:LANES}, (_,i) => roadLeft + laneW * i + laneW / 2)
+
+  // buildBg/buildRoad/buildMarkings each create a NEW container and addChild it, so they
+  // are not idempotent — drop the old ones first or they stack up every resize.
+  ;['bg','road','marks'].forEach(k => {
+    const c = layers[k]
+    if (!c) return
+    try { if (c.parent) c.parent.removeChild(c); c.destroy({ children: true }) } catch(_){}
+    layers[k] = null
+  })
+  markDashes = []
+  try {
+    buildBg(); buildRoad(); buildMarkings()
+    // Re-added containers land on TOP of stage; push them back under the gameplay layers.
+    ;['bg','road','marks'].forEach((k, i) => {
+      if (layers[k] && layers[k].parent === stage) stage.setChildIndex(layers[k], i)
+    })
+  } catch(e) { console.warn('G6 resize rebuild failed', e) }
 })
 
 // ═══════════════════════════════════════════════════════════════════

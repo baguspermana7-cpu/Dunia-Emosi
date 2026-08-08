@@ -122,13 +122,13 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
   <div id="start-hint">Memuat game... ⏳</div>
 </div>
 
-<script src="data/emoji-map.js?v=59.74-20260725d"></script><script src="data/ui-sprites.js?v=59.93-20260808b"></script><!-- zero-emoji engine -->
-<script src="../shared/rz-responsive.js?v=20260422i"></script>
+<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- zero-emoji engine -->
+<script src="../shared/rz-responsive.js?v=59.94-20260808a"></script>
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="vfx-engine.js?v=59.93-20260808b"></script><!-- A-355 unified shared VFX (correct-answer reward flourish) -->
-<script src="data/freeze-watchdog.js?v=20260428a"></script>
-<script src="data/save-engine.js?v=20260501h"></script>
-<script src="game-modal.js?v=59.52-20260720a"></script>
+<script src="vfx-engine.js?v=59.94-20260808a"></script><!-- A-355 unified shared VFX (correct-answer reward flourish) -->
+<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
+<script src="data/save-engine.js?v=59.94-20260808a"></script>
+<script src="game-modal.js?v=59.94-20260808a"></script>
 <script>
 // ═══════════════════════════════════════════════════════════
 //  CONFIG
@@ -354,11 +354,56 @@ function sfxCorrect() { playTone(800, 200); setTimeout(() => playTone(1000, 150)
 function sfxWrong() { playTone(400, 120, 'sawtooth', 0.1); setTimeout(() => playTone(200, 200, 'sawtooth', 0.1), 80) }
 
 // ═══════════════════════════════════════════════════════════
+//  HONEST FAILURE STATE
+// ═══════════════════════════════════════════════════════════
+// A five-year-old cannot tell a frozen picture from a working game. Every boot
+// failure must SAY so in Indonesian and offer a way out. Never leave a still
+// frame running behind a hint that says "Tap untuk Terbang!".
+let _bootFailed = false
+function showFatal(reason) {
+  if (_bootFailed) return
+  _bootFailed = true
+  try { console.error('[g19] fatal:', reason) } catch (_) {}
+  S.running = false; S.started = false; S.gameOver = true
+  try { if (app && app.ticker) app.ticker.stop() } catch (_) {}
+  try { const bgm = document.getElementById('game-bgm'); bgm.pause() } catch (_) {}
+  const ov = document.getElementById('start-overlay')
+  if (!ov) return
+  ov.classList.remove('hidden')
+  const icon = document.getElementById('start-icon'); if (icon) icon.textContent = '😕'
+  const lvl = document.getElementById('start-level'); if (lvl) lvl.textContent = ''
+  const hint = document.getElementById('start-hint')
+  if (hint) {
+    hint.textContent = 'Game tidak bisa dimuat di perangkat ini.'
+    if (!document.getElementById('fatal-actions')) {
+      const box = document.createElement('div')
+      box.id = 'fatal-actions'
+      box.style.cssText = 'display:flex;gap:12px;margin-top:16px;justify-content:center;flex-wrap:wrap'
+      const mk = (label, fn) => {
+        const btn = document.createElement('button')
+        btn.textContent = label
+        btn.style.cssText = 'padding:12px 22px;border-radius:14px;border:none;background:#7C3AED;color:#fff;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit'
+        btn.addEventListener('click', fn)
+        return btn
+      }
+      box.appendChild(mk('Muat Ulang 🔄', () => location.reload()))
+      box.appendChild(mk('Kembali ◀', () => { try { history.back() } catch (_) { location.href = '../index.html' } }))
+      hint.parentNode.appendChild(box)
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
 //  PIXI INIT
 // ═══════════════════════════════════════════════════════════
 ;(async function initPixi() {
   app = new PIXI.Application()
-  await app.init({
+  // A hung WebGL context request neither resolves NOR rejects, so a bare await
+  // here can hang forever and .catch() never fires — the overlay then pulses
+  // "Memuat game..." for ever and looks alive. Bound it.
+  const _initTimeout = new Promise((_, rej) =>
+    setTimeout(() => rej(new Error('init-timeout')), 12000))
+  await Promise.race([app.init({
     canvas: document.getElementById('pixi-canvas'),
     width: window.innerWidth, height: window.innerHeight,
     backgroundAlpha: 1, backgroundColor: BG.sky,
@@ -366,7 +411,7 @@ function sfxWrong() { playTone(400, 120, 'sawtooth', 0.1); setTimeout(() => play
     resolution: Math.min(window.devicePixelRatio, 1.25),
     preference: 'webgl',
     preferWebGLVersion: 1 // WebGL 1 is more widely supported
-  })
+  }), _initTimeout])
   W = app.screen.width; H = app.screen.height
   GROUND_Y = H * 0.88; BIRD_X = W * 0.22
   S.birdY = H * 0.45
@@ -380,7 +425,11 @@ function sfxWrong() { playTone(400, 120, 'sawtooth', 0.1); setTimeout(() => play
 
   try { drawBackground() } catch(e) { console.error('drawBackground failed:', e) }
   try { drawGround() } catch(e) { console.error('drawGround failed:', e) }
-  try { buildPipes() } catch(e) { console.error('buildPipes failed:', e) }
+  // buildPipes is NOT cosmetic: with no pipes the win check below sees an empty
+  // array, [].every() returns true, and the child is handed "Level Selesai!" with
+  // 3 stars written to disk for a level never played. Fail loudly instead.
+  try { buildPipes() } catch(e) { return showFatal(e) }
+  if (!S.pipes.length) return showFatal(new Error('no pipes built'))
   try { await createBird() } catch(e) { console.error('createBird failed:', e) }
   updateHUD()
 
@@ -403,62 +452,12 @@ function sfxWrong() { playTone(400, 120, 'sawtooth', 0.1); setTimeout(() => play
     }
   }, 500)
 })().catch(e=>{
-  console.error('G19 init failed:',e)
-  // PixiJS failed — hide canvas, show body gradient, use Canvas2D for pipes
-  document.getElementById('pixi-canvas').style.display = 'none'
-  document.getElementById('start-hint').textContent='Tap untuk Terbang!'
-  // Create Canvas2D fallback
-  const c2d = document.createElement('canvas')
-  c2d.id = 'fallback-canvas'
-  c2d.style.cssText = 'position:fixed;inset:0;width:100vw;height:100svh;z-index:1'
-  c2d.width = window.innerWidth; c2d.height = window.innerHeight
-  document.body.insertBefore(c2d, document.body.firstChild)
-  W = c2d.width; H = c2d.height; GROUND_Y = H * 0.88; BIRD_X = W * 0.22
-  S.birdY = H * 0.45; S.totalPipes = PIPE_COUNT; S.questions = pickQuestions(cfg.level)
-  window._useFallback = true
-  // Draw static scene with Canvas2D
-  const ctx = c2d.getContext('2d')
-  // Sky
-  const skyGrad = ctx.createLinearGradient(0, 0, 0, H)
-  skyGrad.addColorStop(0, '#87CEEB'); skyGrad.addColorStop(0.5, '#c8e8f8')
-  skyGrad.addColorStop(0.75, '#22c55e'); skyGrad.addColorStop(1, '#15803d')
-  ctx.fillStyle = skyGrad; ctx.fillRect(0, 0, W, H)
-  // Hills
-  ctx.fillStyle = '#16a34a'
-  ctx.beginPath(); ctx.moveTo(0, H * 0.6)
-  for (let x = 0; x <= W; x += 20) ctx.lineTo(x, H * 0.55 + Math.sin(x * 0.01) * 30)
-  ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.fill()
-  ctx.fillStyle = '#0d7a34'
-  ctx.beginPath(); ctx.moveTo(0, H * 0.65)
-  for (let x = 0; x <= W; x += 20) ctx.lineTo(x, H * 0.62 + Math.sin(x * 0.015) * 25)
-  ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.fill()
-  // Ground
-  ctx.fillStyle = '#15803d'; ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y)
-  ctx.fillStyle = '#22c55e'; ctx.fillRect(0, GROUND_Y, W, 4)
-  // Pipes (static)
-  const pipeColor = '#f59e0b'
-  for (let i = 0; i < PIPE_COUNT; i++) {
-    const px = W + 100 + i * PIPE_SPACING
-    const gy = 100 + Math.random() * (GROUND_Y - 250)
-    ctx.fillStyle = pipeColor
-    ctx.fillRect(px, 0, PIPE_WIDTH, gy - GAP_SIZE / 2) // top
-    ctx.fillRect(px, gy + GAP_SIZE / 2, PIPE_WIDTH, GROUND_Y - gy - GAP_SIZE / 2) // bottom
-  }
-  // Fallback game loop using requestAnimationFrame
-  let fallbackFrame = 0
-  function fallbackLoop() {
-    if (!S.running) { requestAnimationFrame(fallbackLoop); return }
-    fallbackFrame++
-    S.birdVY += GRAVITY; S.birdVY = Math.min(S.birdVY, MAX_FALL)
-    S.birdY += S.birdVY; S.birdY = Math.max(S.birdY, 20)
-    if (S.birdY > GROUND_Y - 10) { S.birdY = GROUND_Y - 10; S.birdVY = FLAP_POWER * 0.6 }
-    // Scroll pipes (shift canvas)
-    ctx.save(); ctx.translate(-fallbackFrame * PIPE_SPEED * 0.3, 0)
-    // Redraw... (simplified)
-    ctx.restore()
-    requestAnimationFrame(fallbackLoop)
-  }
-  requestAnimationFrame(fallbackLoop)
+  // The old rescue here painted the scene ONCE and then ran a 60fps rAF loop
+  // whose entire renderer was the comment "// Redraw... (simplified)" — a frozen
+  // picture with no bird, no pipes and no collisions, that a child cannot
+  // distinguish from a working game, and whose loop survived back-navigation.
+  // An honest, escapable failure card is strictly better than a fake game.
+  showFatal(e)
 })
 
 // ═══════════════════════════════════════════════════════════
@@ -860,8 +859,13 @@ function gameLoop(ticker) {
 
   // Check level completion
   // Win check: all pipes passed/removed/off-screen OR pipesCleared reached total
-  const allDone = S.pipes.every(p => p.passed || p.removing || !p.topGfx.visible || p.x < -200)
-  if (allDone || S.pipesCleared >= S.totalPipes) showWin()
+  // S.pipes.length guard: [].every() returns TRUE, so an empty pipe list (a
+  // buildPipes failure) used to win the level instantly with full stars.
+  // Pipes are never spliced out of S.pipes during play, so this cannot block a
+  // legitimate win. S.totalPipes guard stops a 0/0 level auto-completing.
+  const allDone = S.pipes.length > 0 &&
+    S.pipes.every(p => p.passed || p.removing || !p.topGfx.visible || p.x < -200)
+  if (allDone || (S.totalPipes > 0 && S.pipesCleared >= S.totalPipes)) showWin()
 
   updateHUD()
 
@@ -1158,6 +1162,7 @@ async function triggerEvolution() {
 //  INPUT
 // ═══════════════════════════════════════════════════════════
 function flap() {
+  if (_bootFailed) return   // never let a tap "start" a game that failed to boot
   if (S.gameOver) return
   ensureAudio()
 
@@ -1338,8 +1343,50 @@ function goBack() {
 }
 
 // Resize
+// Resize. The old handler clamped the renderer to 1400x1000 while the stylesheet
+// stretched the canvas to 100vw/100svh — so on a 2560-wide tablet the backing
+// store was displayed 1.83x too wide (squashed art), and because W/H/GROUND_Y/
+// BIRD_X were assigned once at init and never recomputed, every static Graphics
+// still ended at the OLD width: a flat sky-coloured DEAD BAND down the right
+// edge, with the floor off-screen and the bird <img> (positioned in CSS px) no
+// longer where collisions were computed. Resize for real, recompute the world
+// constants, and rebuild the baked layers. Debounced — PWA chrome show/hide and
+// rotation fire this in bursts.
+let _resizeT = null
+function _birdsResize() {
+  if (!app || _bootFailed) return
+  app.renderer.resize(window.innerWidth, window.innerHeight)
+  W = app.screen.width; H = app.screen.height
+  GROUND_Y = H * 0.88; BIRD_X = W * 0.22
+  if (S.birdY > GROUND_Y - 20) S.birdY = GROUND_Y - 20
+  try {
+    // drawBackground/drawGround PUSH into these module arrays. Rebuilding without
+    // emptying them first leaves destroyed nodes in the arrays (gameLoop then
+    // reads .x off a destroyed object) and grows them without bound on every
+    // resize. Empty them in the same breath as the containers.
+    bgContainer.removeChildren().forEach(c => { try { c.destroy({ children: true }) } catch (_) {} })
+    cloudGfx.length = 0; starGfx.length = 0
+    parallaxFarSkyline.length = 0; parallaxFarClouds.length = 0; parallaxNearClouds.length = 0
+    drawBackground()
+    groundContainer.removeChildren().forEach(c => { try { c.destroy({ children: true }) } catch (_) {} })
+    groundTiles.length = 0
+    drawGround()
+  } catch (e) { console.warn('[g19] resize redraw failed:', e) }
+  // Re-bake pipe geometry against the new height, keeping each pipe's x/gap.
+  const minGapY = 100 + GAP_SIZE / 2
+  const maxGapY = GROUND_Y - 60 - GAP_SIZE / 2
+  for (const p of S.pipes) {
+    try {
+      if (maxGapY > minGapY) p.gapY = Math.max(minGapY, Math.min(maxGapY, p.gapY))
+      p.topGfx.clear(); p.bottomGfx.clear()
+      drawPipe(p.topGfx, 0, p.gapY - GAP_SIZE / 2, true)
+      drawPipe(p.bottomGfx, p.gapY + GAP_SIZE / 2, GROUND_Y, false)
+    } catch (_) {}
+  }
+}
 window.addEventListener('resize', () => {
-  if (app) app.renderer.resize(Math.min(window.innerWidth, 1400), Math.min(window.innerHeight, 1000))
+  clearTimeout(_resizeT)
+  _resizeT = setTimeout(_birdsResize, 150)
 })
 </script>
 </body>

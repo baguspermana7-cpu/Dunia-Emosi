@@ -1511,6 +1511,36 @@
     }
     return attempt(1);
   }
+  // v55.0 gave the FETCH an AbortController timeout and retries, which is why
+  // "Memuat Pokedex…" stopped hanging on a dead network. It left the RENDER
+  // unguarded: both call sites were `loadPokeDB().then(draw).catch(() => draw())`,
+  // and the loading text is the container's own innerHTML. So if draw() throws, the
+  // overlay is never replaced, the catch calls the same throwing function again, and
+  // the second throw is unhandled — the child sits on "Memuat Pokedex…" forever.
+  // That is the same symptom the owner filed twice, one layer deeper than the fix.
+  // Guard the render itself, and if it genuinely cannot draw, say so in words a
+  // child's parent can act on instead of leaving a dead screen.
+  function safeDraw (root, draw, retry) {
+    try { draw(); return true } catch (err) {
+      console.warn('[battle-modes] render failed', err)
+      if (!root) return false
+      root.innerHTML =
+        '<div class="bm-prestep" style="padding-top:60px;text-align:center">' +
+        '<div class="bm-prestep-title">Aduh, gagal memuat</div>' +
+        '<div class="bm-prestep-sub">Coba lagi ya, atau kembali dulu.</div>' +
+        '<div style="margin-top:18px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">' +
+        '<button data-bm-retry style="min-height:44px;padding:10px 22px;border:0;border-radius:16px;' +
+        'font:inherit;font-weight:800;cursor:pointer;background:linear-gradient(180deg,#ffe08a,#ffc531);color:#3a2b12">Coba Lagi</button>' +
+        '<button data-bm-home style="min-height:44px;padding:10px 22px;border:0;border-radius:16px;' +
+        'font:inherit;font-weight:800;cursor:pointer;background:rgba(255,255,255,.14);color:#fff">Kembali</button>' +
+        '</div></div>'
+      var r = root.querySelector('[data-bm-retry]')
+      if (r) r.addEventListener('click', function () { if (typeof retry === 'function') retry() })
+      var h = root.querySelector('[data-bm-home]')
+      if (h) h.addEventListener('click', function () { location.href = '../index.html' })
+      return false
+    }
+  }
   function slugToId (slug) {
     if (_slugToId && _slugToId[slug]) return _slugToId[slug];
     if (slug && _slugToId) {
@@ -2110,19 +2140,43 @@
     let _timerRaf = 0;       // RAF handle for tickTimer
     let _timerExpired = false;
 
+    // Never gate × behind confirm(). Some webviews and installed-PWA shells
+    // suppress native dialogs and return false, so the button silently did
+    // nothing -- from a child's seat that is indistinguishable from a frozen
+    // game, and it is the same dead-button class already proven in the math
+    // game. Arm-then-confirm on the button itself: the affordance is the thing
+    // the child already tapped, in Indonesian, with no OS dialog.
+    var _exitArm = 0
     function exitMatch () {
-      if (confirm('Keluar dari match?')) {
-        // v52 (concerns 5+7): silence BGM only when the user truly exits PvP.
-        // Tournament's per-match exit (winner advances) keeps BGM playing.
-        if (!opts._noBgm) bmBgmStop();
-        // v56.9 review #23/#24: kill the per-turn question-timer RAF and the
-        // low-HP heartbeat interval on exit — neither self-stops once the root is
-        // detached, so they leaked one loop / one beeping interval per exit.
-        try { stopQuestionTimer(); } catch (e) {}
-        try { sfxLowHPStop(); } catch (e) {}
-        teardown(root);
-        opts.onCancel && opts.onCancel();
+      var btn = root.querySelector('[data-exit]')
+      var now = Date.now()
+      if (now - _exitArm > 2600) {
+        _exitArm = now
+        if (btn) {
+          btn.textContent = 'Keluar?'
+          btn.style.width = 'auto'
+          btn.style.padding = '0 14px'
+          btn.style.fontSize = '15px'
+          setTimeout(function () {
+            if (!btn.isConnected || Date.now() - _exitArm <= 2600) return
+            btn.textContent = '×'
+            btn.style.width = ''
+            btn.style.padding = ''
+            btn.style.fontSize = ''
+          }, 2700)
+        }
+        return
       }
+      // v52 (concerns 5+7): silence BGM only when the user truly exits PvP.
+      // Tournament's per-match exit (winner advances) keeps BGM playing.
+      if (!opts._noBgm) bmBgmStop();
+      // v56.9 review #23/#24: kill the per-turn question-timer RAF and the
+      // low-HP heartbeat interval on exit — neither self-stops once the root is
+      // detached, so they leaked one loop / one beeping interval per exit.
+      try { stopQuestionTimer(); } catch (e) {}
+      try { sfxLowHPStop(); } catch (e) {}
+      teardown(root);
+      opts.onCancel && opts.onCancel();
     }
 
     // Owner spec: 20vh top q-zone + 60vh shared arena (FIXED) + 20vh bottom q-zone.
@@ -2313,7 +2367,7 @@
         wirePickerHandlers(root, playerIdx, advancePickStep);
       };
       if (wasLoaded) {
-        draw();
+        safeDraw(root, draw, () => location.reload());
       } else {
         // Show a quick loading state while the 19KB pokemon-db fetches.
         root.innerHTML = `
@@ -2338,10 +2392,14 @@
       // v53.2 polish #4: pause button — face-to-face snack-break overlay.
       const _pauseBtn = root.querySelector('[data-pause]');
       if (_pauseBtn) _pauseBtn.addEventListener('click', pauseGame);
-        loadPokeDB().then(draw).catch(err => {
-          console.warn('[battle-modes] pokedex load failed', err);
-          draw();   // render anyway with placeholder sprites
-        });
+        loadPokeDB()
+          .then(() => safeDraw(root, draw, () => location.reload()))
+          .catch(err => {
+            console.warn('[battle-modes] pokedex load failed', err);
+            // Render anyway with placeholder sprites -- but guarded, so a throw
+            // here cannot leave the child on the loading text forever.
+            safeDraw(root, draw, () => location.reload());
+          });
       }
     }
 
@@ -3594,8 +3652,11 @@
       });
     }
 
-    // Boot — go straight to battle, no picker
-    renderRoot();
+    // Boot — go straight to battle, no picker.
+    // Guarded: this render appends a full-screen root BEFORE it paints, so an
+    // uncaught throw here left the child under an empty fixed overlay with no
+    // way out -- worse than the loader hang, because nothing even hinted why.
+    safeDraw(root, renderRoot, () => location.reload());
   }
 
   // CSS for the proper mirror split-screen PvP layout
@@ -5141,7 +5202,7 @@
         });
       };
       if (_pokeDB) {
-        draw();
+        safeDraw(root, draw, () => location.reload());
       } else {
         root.innerHTML = `
           ${header()}
@@ -5151,10 +5212,12 @@
           </div>
         `;
         bindBack();
-        loadPokeDB().then(draw).catch(err => {
-          console.warn('[tournament] pokedex load failed', err);
-          draw();
-        });
+        loadPokeDB()
+          .then(() => safeDraw(root, draw, () => location.reload()))
+          .catch(err => {
+            console.warn('[tournament] pokedex load failed', err);
+            safeDraw(root, draw, () => location.reload());
+          });
       }
     }
 
@@ -5391,6 +5454,7 @@
       });
     }
 
+    let _tourBackArm = 0;
     function bindBack () {
       const b = root.querySelector('[data-tour-back]');
       if (!b) return;
@@ -5406,10 +5470,26 @@
           if (pickingPlayer > 0) { pickingPlayer--; renderTourPick(); }
           else { step = 'size'; renderTourSize(); }
         } else {
-          if (confirm('Keluar dari tournament?')) {
-            teardown(root);
-            opts.onCancel && opts.onCancel();
+          // Same arm-then-confirm as exitMatch -- a suppressed native dialog
+          // returns false, which turned ← into a dead button mid-tournament.
+          const now = Date.now();
+          if (now - _tourBackArm > 2600) {
+            _tourBackArm = now;
+            b.textContent = 'Keluar?';
+            b.style.width = 'auto';
+            b.style.padding = '0 14px';
+            b.style.fontSize = '15px';
+            setTimeout(() => {
+              if (!b.isConnected || Date.now() - _tourBackArm <= 2600) return;
+              b.textContent = '←';
+              b.style.width = '';
+              b.style.padding = '';
+              b.style.fontSize = '';
+            }, 2700);
+            return;
           }
+          teardown(root);
+          opts.onCancel && opts.onCancel();
         }
       });
     }
@@ -5480,9 +5560,11 @@
         renderCount();
       });
     }
+    // Same guard as the PvP boot: the tournament root is already on the page
+    // and full-screen by the time these paint.
     const _existingSave = loadSave();
-    if (_existingSave) renderResumePrompt(_existingSave);
-    else renderCount();
+    if (_existingSave) safeDraw(root, () => renderResumePrompt(_existingSave), () => location.reload());
+    else safeDraw(root, renderCount, () => location.reload());
   }
 
   // ── Mode select modal ───────────────────────────────────────────────

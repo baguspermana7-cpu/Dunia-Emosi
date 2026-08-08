@@ -149,14 +149,14 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
   <div id="start-hint">Memuat... ⏳</div>
 </div>
 
-<script src="data/emoji-map.js?v=59.74-20260725d"></script><script src="data/ui-sprites.js?v=59.93-20260808b"></script><!-- zero-emoji engine -->
-<script src="../shared/rz-responsive.js?v=20260422i"></script>
+<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- zero-emoji engine -->
+<script src="../shared/rz-responsive.js?v=59.94-20260808a"></script>
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="vfx-engine.js?v=59.93-20260808b"></script><!-- A-355 unified shared VFX (correct-answer reward flourish) -->
-<script src="data/freeze-watchdog.js?v=20260428a"></script>
-<script src="data/save-engine.js?v=20260501h"></script>
-<script src="data/g23-question-engine.js?v=20260506m"></script>
-<script src="game-modal.js?v=59.52-20260720a"></script>
+<script src="vfx-engine.js?v=59.94-20260808a"></script><!-- A-355 unified shared VFX (correct-answer reward flourish) -->
+<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
+<script src="data/save-engine.js?v=59.94-20260808a"></script>
+<script src="data/g23-question-engine.js?v=59.94-20260808a"></script>
+<script src="game-modal.js?v=59.94-20260808a"></script>
 <script>
 // ══════════════════════════════════════════════════════════════
 //  CONFIG
@@ -431,18 +431,63 @@ function updateVolumes() {
 }
 
 // ══════════════════════════════════════════════════════════════
+//  HONEST FAILURE STATE
+// ══════════════════════════════════════════════════════════════
+// A five-year-old cannot tell a dead screen from a working game. Every boot
+// failure must SAY so in Indonesian and offer a way out, instead of hiding the
+// canvas and leaving a hint that cheerfully says "Tap untuk Berenang!".
+let _bootFailed = false
+function showFatal(reason) {
+  if (_bootFailed) return
+  _bootFailed = true
+  try { console.error('[g24] fatal:', reason) } catch (_) {}
+  S.running = false; S.started = false; S.gameOver = true
+  try { if (app && app.ticker) app.ticker.stop() } catch (_) {}
+  try { const bgm = document.getElementById('game-bgm'); bgm.pause() } catch (_) {}
+  const ov = document.getElementById('start-overlay')
+  if (!ov) return
+  ov.classList.remove('hidden')
+  const icon = document.getElementById('start-icon'); if (icon) icon.textContent = '😕'
+  const lvl = document.getElementById('start-level'); if (lvl) lvl.textContent = ''
+  const hint = document.getElementById('start-hint')
+  if (hint) {
+    hint.textContent = 'Game tidak bisa dimuat di perangkat ini.'
+    if (!document.getElementById('fatal-actions')) {
+      const box = document.createElement('div')
+      box.id = 'fatal-actions'
+      box.style.cssText = 'display:flex;gap:12px;margin-top:16px;justify-content:center;flex-wrap:wrap'
+      const mk = (label, fn) => {
+        const btn = document.createElement('button')
+        btn.textContent = label
+        btn.style.cssText = 'padding:12px 22px;border-radius:14px;border:none;background:#0891B2;color:#fff;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit'
+        btn.addEventListener('click', fn)
+        return btn
+      }
+      box.appendChild(mk('Muat Ulang 🔄', () => location.reload()))
+      box.appendChild(mk('Kembali ◀', () => { try { history.back() } catch (_) { location.href = '../index.html' } }))
+      hint.parentNode.appendChild(box)
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
 //  PIXI INIT
 // ══════════════════════════════════════════════════════════════
 ;(async function initPixi() {
   app = new PIXI.Application()
-  await app.init({
+  // A hung WebGL context request neither resolves NOR rejects, so a bare await
+  // can hang for ever and .catch() never fires — the overlay then sits on
+  // "Memuat... ⏳" looking alive. Bound it.
+  const _initTimeout = new Promise((_, rej) =>
+    setTimeout(() => rej(new Error('init-timeout')), 12000))
+  await Promise.race([app.init({
     canvas: document.getElementById('pixi-canvas'),
     width: window.innerWidth, height: window.innerHeight,
     backgroundAlpha: 1, backgroundColor: THEME.skyTop,
     antialias: true,
     resolution: Math.min(window.devicePixelRatio, 1.25),
     preference:'webgl'
-  })
+  }), _initTimeout])
   W = app.screen.width; H = app.screen.height
   FLOOR_Y = H * 0.87; SWIM_X = W * 0.22
   S.swimY = H * 0.45
@@ -460,7 +505,11 @@ function updateVolumes() {
   try { initBubbles() }    catch(e) { console.error('Bubble fail',e) }
   try { initSeaweed() }        catch(e) { console.error('Seaweed fail',e) }
   try { initParallaxLayers() } catch(e) { console.error('Parallax fail',e) }
-  try { buildCliffs() }        catch(e) { console.error('Cliff fail',e) }
+  // buildCliffs is NOT cosmetic: with no cliffs the win check sees an empty
+  // array, [].every() returns true, and the child is handed "Level Selesai!"
+  // with full stars written to disk for a level never played. Fail loudly.
+  try { buildCliffs() }        catch(e) { return showFatal(e) }
+  if (!S.cliffs.length) return showFatal(new Error('no cliffs built'))
   try { createSwimmer() }  catch(e) { console.error('Swimmer fail',e) }
 
   updateHUD()
@@ -489,9 +538,9 @@ function updateVolumes() {
     } catch(_){ document.getElementById('pixi-canvas').style.opacity='0' }
   }, 500)
 })().catch(e=>{
-  console.error('G24 init failed:',e)
-  document.getElementById('pixi-canvas').style.display='none'
-  document.getElementById('start-hint').textContent='Tap untuk Berenang!'
+  // Was: hide the canvas and tell the child to "Tap untuk Berenang!" over a
+  // dead screen. Show an honest, escapable failure card instead.
+  showFatal(e)
 })
 
 // ══════════════════════════════════════════════════════════════
@@ -1236,8 +1285,13 @@ function gameLoop(ticker) {
   checkCollisions()
 
   // Win check
-  const allDone = S.cliffs.every(c => c.passed || c.removing || !c.topGfx.visible || c.x < -200)
-  if (allDone || S.cliffsPassed >= S.totalCliffs) showWin()
+  // S.cliffs.length guard: [].every() returns TRUE, so an empty cliff list (a
+  // buildCliffs failure) used to win the level instantly with full stars.
+  // Cliffs are never spliced out of S.cliffs during play, so this cannot block
+  // a legitimate win. S.totalCliffs guard stops a 0/0 level auto-completing.
+  const allDone = S.cliffs.length > 0 &&
+    S.cliffs.every(c => c.passed || c.removing || !c.topGfx.visible || c.x < -200)
+  if (allDone || (S.totalCliffs > 0 && S.cliffsPassed >= S.totalCliffs)) showWin()
 
   updateHUD()
 }
@@ -1481,6 +1535,7 @@ function applyPokemon(evoStage) {
 //  INPUT — tap to swim
 // ══════════════════════════════════════════════════════════════
 function swim() {
+  if (_bootFailed) return   // never let a tap "start" a game that failed to boot
   if (S.gameOver) return
   ensureAudio()
   if (!S.started) {

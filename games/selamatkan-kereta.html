@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=55.45-20260627ea">
+<link rel="stylesheet" href="du-buttons.css?v=59.94-20260808a">
 <title>Selamatkan Kereta 🚂</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -126,7 +126,14 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0d102
 #ts-title{font-size:clamp(20px,5.5vw,28px);font-weight:900;color:#e0e7ff;text-align:center}
 #ts-subtitle{font-size:clamp(9px,2.5vw,12px);color:rgba(196,181,253,0.65);letter-spacing:1.5px;text-align:center}
 /* B-269: explicit width keeps auto-fill at 2-4 cols on all viewports (was missing, causing narrow collapse) */
-#ts-trains{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(116px,28vw),1fr));gap:clamp(6px,2vw,10px);justify-content:center;width:min(720px,96vw);max-width:min(720px,96vw);max-height:58vh;overflow-y:auto;padding:6px 4px;scrollbar-width:thin;scrollbar-color:rgba(129,140,248,0.35) transparent}
+/* v59.94 — align-items:start. Grid items default to align-items:stretch, so each
+   .ts-card was stretched to the row height AND contributed only its min-height:44px
+   to row sizing -- rows came out 44px while the card's own content needed ~88-101px.
+   Every one of the 361 cards therefore spilled its name+description 45-60px BELOW its
+   own box and onto the card underneath: the reported 'card grid overlaps its own
+   name/description text'. Measured at 1600x900, 1024x600 and 2400x1080; with
+   align-items:start the card sizes to its content and spill is 0 at every width. */
+#ts-trains{display:grid;align-items:start;grid-template-columns:repeat(auto-fill,minmax(min(116px,28vw),1fr));gap:clamp(6px,2vw,10px);justify-content:center;width:min(720px,96vw);max-width:min(720px,96vw);max-height:58vh;overflow-y:auto;padding:6px 4px;scrollbar-width:thin;scrollbar-color:rgba(129,140,248,0.35) transparent}
 /* v55.37 B-218 — harmonized with g14 .train-card + g15 .tcard. 2.5px
    lavender border default, purple accent on selected. */
 .ts-card{background:rgba(248,240,255,0.06);border:2.5px solid rgba(167,139,250,0.25);border-radius:14px;padding:clamp(8px,2vh,13px) clamp(6px,1.5vw,12px);min-height:44px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .08s,border-color .15s,background .15s,box-shadow .15s;width:min(116px,30vw);text-align:center;display:flex;flex-direction:column;align-items:center;gap:5px}
@@ -144,7 +151,13 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 #ts-back{background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.18);border-radius:12px;color:#fff;padding:10px 16px;font-size:clamp(12px,3.5vw,14px);cursor:pointer;font-family:inherit;min-height:44px}
 
 /* B-269 — categorised package-tab picker (replaces flat single-column list) */
-#g16-tab-row{display:flex;gap:6px;flex-wrap:nowrap;justify-content:center;width:100%;max-width:min(720px,96vw);overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+/* v59.94 — flex-shrink:0 + min-height. #train-select is a flex COLUMN, so this row is a
+   flex item and was shrinkable; when vertical space got tight flex squeezed it. Because
+   it sets overflow-x:auto, CSS computes overflow-y to auto too, so the squeeze CLIPPED
+   the 44px chips instead of overflowing them. Measured: 48px tall at 1600x900 but only
+   8px at 1024x600 with the chip still 44px -- the owner's exact numbers. Pinning the
+   row keeps the wide layout identical (still 48px at 1600x900) and stops the collapse. */
+#g16-tab-row{display:flex;flex:0 0 auto;min-height:48px;gap:6px;flex-wrap:nowrap;justify-content:center;width:100%;max-width:min(720px,96vw);overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
 #g16-tab-row::-webkit-scrollbar{display:none}
 /* A-339 P2 — flex:0 0 auto so each chip sizes to its FULL label (was flex:1 1 0 →
    10 chips crammed + truncated to "Uap Kla…"). Row scrolls-x (TrainPicker.markSlidable). */
@@ -166,29 +179,29 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 <body>
 <canvas id="pixi-canvas"></canvas>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v58.6</div>
-<script src="data/emoji-map.js?v=59.74-20260725d"></script><script src="data/ui-sprites.js?v=59.93-20260808b"></script><!-- zero-emoji engine -->
-<script src="sw-reload.js?v=55.69-20260628a"></script>
-<script src="train-shared.js?v=54.58-20260626bk"></script>
-<script src="data/train-world.js?v=55.94"></script><!-- v55.94 — 275 real-sprite world trains -->
-<script src="train-picker.js?v=58.6-20260705q"></script><!-- A-339 P2 — shared picker: lazy previews + slidable chip row -->
-<script src="train-vfx.js?v=54.56-20260625bi"></script>
-<script src="motion.js?v=56.6-20260703a"></script><!-- A-315 E4 — shared motion engine (frame-rate-independent easing) -->
-<script src="train-bg-engine.js?v=54.67-20260626bt"></script>
-<script src="data/bg-themes.js?v=54.64-20260626bq"></script>
-<script src="data/bg-renderers.js?v=54.64-20260626bq"></script>
-<script src="data/bg-npcs.js?v=54.64-20260626bq"></script>
-<script src="data/bg-audio.js?v=54.65-20260626br"></script>
-<script src="data/bg-events.js?v=54.67-20260626bt"></script>
+<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- zero-emoji engine -->
+<script src="sw-reload.js?v=59.94-20260808a"></script>
+<script src="train-shared.js?v=59.94-20260808a"></script>
+<script src="data/train-world.js?v=59.94-20260808a"></script><!-- v55.94 — 275 real-sprite world trains -->
+<script src="train-picker.js?v=59.94-20260808a"></script><!-- A-339 P2 — shared picker: lazy previews + slidable chip row -->
+<script src="train-vfx.js?v=59.94-20260808a"></script>
+<script src="motion.js?v=59.94-20260808a"></script><!-- A-315 E4 — shared motion engine (frame-rate-independent easing) -->
+<script src="train-bg-engine.js?v=59.94-20260808a"></script>
+<script src="data/bg-themes.js?v=59.94-20260808a"></script>
+<script src="data/bg-renderers.js?v=59.94-20260808a"></script>
+<script src="data/bg-npcs.js?v=59.94-20260808a"></script>
+<script src="data/bg-audio.js?v=59.94-20260808a"></script>
+<script src="data/bg-events.js?v=59.94-20260808a"></script>
 <!-- v54.83 — ObstacleEngine + Koleksi gallery available from G16 (Practice Mode) -->
-<script src="obstacle-engine.js?v=55.63-20260627eo"></script>
-<script src="data/kids-questions.js?v=54.83-20260626cj"></script>
-<script src="data/obstacles.js?v=55.63-20260627eo"></script>
-<script src="data/routes.js?v=54.83-20260626cj"></script>
-<script src="data/reward-catalog.js?v=54.83-20260626cj"></script>
-<script src="reward-gallery.js?v=54.83-20260626cj"></script>
-<script src="settings-modal.js?v=54.85-20260626cl"></script>
+<script src="obstacle-engine.js?v=59.94-20260808a"></script>
+<script src="data/kids-questions.js?v=59.94-20260808a"></script>
+<script src="data/obstacles.js?v=59.94-20260808a"></script>
+<script src="data/routes.js?v=59.94-20260808a"></script>
+<script src="data/reward-catalog.js?v=59.94-20260808a"></script>
+<script src="reward-gallery.js?v=59.94-20260808a"></script>
+<script src="settings-modal.js?v=59.94-20260808a"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
-<script src="train-bgm.js?v=55.61-20260627em"></script>
+<script src="train-bgm.js?v=59.94-20260808a"></script>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
 <!-- v54.21 D1: READY-SET-GO countdown -->
@@ -256,14 +269,14 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
   <button id="ts-back" onclick="goBack()">◀ Kembali</button>
 </div>
 
-<script src="../shared/rz-responsive.js?v=20260423c"></script>
-<script src="data/freeze-watchdog.js?v=20260428a"></script>
-<script src="data/save-engine.js?v=20260501h"></script>
-<script src="game-modal.js?v=59.52-20260720a"></script>
-<script src="train-character-sprite.js?v=55.67-20260628a"></script>
+<script src="../shared/rz-responsive.js?v=59.94-20260808a"></script>
+<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
+<script src="data/save-engine.js?v=59.94-20260808a"></script>
+<script src="game-modal.js?v=59.94-20260808a"></script>
+<script src="train-character-sprite.js?v=59.94-20260808a"></script>
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="vfx-engine.js?v=59.93-20260808b"></script><!-- A-353/A-354 unified shared VFX (crash burst) -->
+<script src="vfx-engine.js?v=59.94-20260808a"></script><!-- A-353/A-354 unified shared VFX (crash burst) -->
 <script>
 'use strict'
 
@@ -3281,7 +3294,13 @@ function goBack(){
   // Hotfix #102-C (2026-04-27): stop Pixi ticker so 60fps callback doesn't keep
   // firing after game-end. See games/lokomotif-pemberani.html for canonical pattern.
   try { if (app && app.ticker) app.ticker.stop() } catch(_){}
-  history.back()
+  // v59.94 — B-256, propagated from lokomotif-pemberani.html: reach app home
+  // DETERMINISTICALLY. history.back() has nothing to pop when the game is the first
+  // entry (installed PWA launched at this URL, a deep link, or after the
+  // location.reload() chain every level change uses), so the button silently did
+  // nothing on an already-stopped ticker. Reproduced here: tapping the home button
+  // landed on about:blank -- an empty white screen with no way back.
+  location.href = '../index.html'
 }
 function confirmBack(){goBack()}
 function togglePause(){
@@ -3299,7 +3318,7 @@ function togglePause(){
     bgmEl: document.getElementById('game-bgm'),
     onResume: () => { S.paused = false; document.getElementById('btn-pause').textContent = '⏸' },
     onRetry:  () => { location.reload() },
-    onHome:   () => { try{document.getElementById('game-bgm').pause()}catch(_){}; history.back() }
+    onHome:   () => { try{document.getElementById('game-bgm').pause()}catch(_){}; location.href = '../index.html' }  /* v59.94 B-256 — see goBack() */
   });
 })();
 function finishGame(){try{document.getElementById('game-bgm').pause()}catch(_){};goBack()}
@@ -3313,7 +3332,17 @@ window.addEventListener('resize',()=>{
   if (_g16ResizeDebounce) clearTimeout(_g16ResizeDebounce)
   _g16ResizeDebounce = setTimeout(()=>{
     if(!app)return
-    app.renderer.resize(Math.min(window.innerWidth,1400),Math.min(window.innerHeight,1000))
+    // v59.94 — resize to the REAL viewport. This used to clamp to
+    // Math.min(innerWidth,1400) x Math.min(innerHeight,1000); autoDensity then stamps that
+    // onto canvas.style, and an inline style beats the stylesheet's width:100vw;height:100svh,
+    // so above 1400x1000 CSS px the canvas shrank and left bare page down the right/bottom.
+    // initPixi never clamped, which is why the menu looked fine and only a running game broke.
+    // Measured before this fix (load 1280x720, then rotate): 1600x900 -> 200px dead band;
+    // 2400x1080 -> 1000px right + 80px bottom; 2560x1600 -> 1160px right + 600px bottom.
+    // devicePixelRatio is already capped at 1.5 in initPixi, so the backing store cannot grow
+    // past what first paint allocated. On the installed PWA any chrome show/hide or rotate
+    // fires this. Same defect and same fix as balapan-kereta (commit f96820e4).
+    app.renderer.resize(window.innerWidth, window.innerHeight)
     // Recalculate responsive layout for new viewport — TRAIN_SCREEN_X + track Y.
     const newW=app.screen.width, newH=app.screen.height
     // Task #59 — 5% base; per-train clamp happens inside buildTrain via CharacterTrain.computeTrainX

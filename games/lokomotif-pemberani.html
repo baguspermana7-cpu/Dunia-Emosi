@@ -9,8 +9,8 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=55.45-20260627ea">
-<link rel="stylesheet" href="du-hud.css?v=55.81-20260628a">
+<link rel="stylesheet" href="du-buttons.css?v=59.94-20260808a">
+<link rel="stylesheet" href="du-hud.css?v=59.94-20260808a">
 <title>Lokomotif Pemberani 🚂</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -214,32 +214,32 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <body>
 <canvas id="pixi-canvas"></canvas>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.84</div>
-<script src="data/emoji-map.js?v=59.74-20260725d"></script><script src="data/ui-sprites.js?v=59.93-20260808b"></script><!-- zero-emoji engine -->
-<script src="sw-reload.js?v=55.69-20260628a"></script>
-<script src="train-shared.js?v=54.58-20260626bk"></script>
-<script src="train-vfx.js?v=54.56-20260625bi"></script>
-<script src="motion.js?v=56.6-20260703a"></script><!-- A-315 E3 — shared motion engine (frame-rate-independent easing) -->
-<script src="train-bg-engine.js?v=54.67-20260626bt"></script>
-<script src="data/bg-themes.js?v=54.64-20260626bq"></script>
-<script src="data/bg-renderers.js?v=54.64-20260626bq"></script>
-<script src="data/bg-npcs.js?v=54.64-20260626bq"></script>
-<script src="data/bg-audio.js?v=54.65-20260626br"></script>
-<script src="data/bg-events.js?v=54.67-20260626bt"></script>
+<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- zero-emoji engine -->
+<script src="sw-reload.js?v=59.94-20260808a"></script>
+<script src="train-shared.js?v=59.94-20260808a"></script>
+<script src="train-vfx.js?v=59.94-20260808a"></script>
+<script src="motion.js?v=59.94-20260808a"></script><!-- A-315 E3 — shared motion engine (frame-rate-independent easing) -->
+<script src="train-bg-engine.js?v=59.94-20260808a"></script>
+<script src="data/bg-themes.js?v=59.94-20260808a"></script>
+<script src="data/bg-renderers.js?v=59.94-20260808a"></script>
+<script src="data/bg-npcs.js?v=59.94-20260808a"></script>
+<script src="data/bg-audio.js?v=59.94-20260808a"></script>
+<script src="data/bg-events.js?v=59.94-20260808a"></script>
 <!-- v54.83 — ObstacleEngine + Koleksi gallery available from G15 picker (Practice Mode) -->
-<script src="obstacle-engine.js?v=55.63-20260627eo"></script>
-<script src="train-journey.js?v=55.80-20260628a"></script>
-<script src="indo-scene.js?v=2.1.1"></script>
+<script src="obstacle-engine.js?v=59.94-20260808a"></script>
+<script src="train-journey.js?v=59.94-20260808a"></script>
+<script src="indo-scene.js?v=59.94-20260808a"></script>
 <!-- v55.77 — SHARED painterly backdrop + depth-parallax engine + always-on speed overlay (parity with balapan-kereta / g14). Guarded: any miss → procedural bg. -->
-<script src="train-backdrop.js?v=58.4-20260705o"></script>
-<script src="train-speedfx.js?v=55.77-20260628a"></script>
-<script src="data/kids-questions.js?v=54.83-20260626cj"></script>
-<script src="data/obstacles.js?v=55.63-20260627eo"></script>
-<script src="data/routes.js?v=54.83-20260626cj"></script>
-<script src="data/reward-catalog.js?v=54.83-20260626cj"></script>
-<script src="reward-gallery.js?v=54.83-20260626cj"></script>
-<script src="settings-modal.js?v=54.85-20260626cl"></script>
+<script src="train-backdrop.js?v=59.94-20260808a"></script>
+<script src="train-speedfx.js?v=59.94-20260808a"></script>
+<script src="data/kids-questions.js?v=59.94-20260808a"></script>
+<script src="data/obstacles.js?v=59.94-20260808a"></script>
+<script src="data/routes.js?v=59.94-20260808a"></script>
+<script src="data/reward-catalog.js?v=59.94-20260808a"></script>
+<script src="reward-gallery.js?v=59.94-20260808a"></script>
+<script src="settings-modal.js?v=59.94-20260808a"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
-<script src="train-bgm.js?v=55.61-20260627em"></script>
+<script src="train-bgm.js?v=59.94-20260808a"></script>
 <!-- v54.28 I13: loop the train ambient SFX (was one-shot, faded after first cycle, leaving silence). -->
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" loop preload="auto" style="display:none"></audio>
 
@@ -307,9 +307,9 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
   </div>
 </div>
 
-<script src="data/freeze-watchdog.js?v=20260428a"></script>
-<script src="data/save-engine.js?v=20260501h"></script>
-<script src="game-modal.js?v=59.52-20260720a"></script>
+<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
+<script src="data/save-engine.js?v=59.94-20260808a"></script>
+<script src="game-modal.js?v=59.94-20260808a"></script>
 
 <!-- Train Select Screen -->
 <div id="train-select">
@@ -366,10 +366,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 </div>
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="trains-db.js?v=59.90-20260804a"></script>
-<script src="data/train-world.js?v=55.94"></script><!-- v55.94 — 275 real-sprite world trains -->
-<script src="train-character-sprite.js?v=55.67-20260628a"></script>
-<script src="../shared/rz-responsive.js?v=20260423c"></script>
+<script src="trains-db.js?v=59.94-20260808a"></script>
+<script src="data/train-world.js?v=59.94-20260808a"></script><!-- v55.94 — 275 real-sprite world trains -->
+<script src="train-character-sprite.js?v=59.94-20260808a"></script>
+<script src="../shared/rz-responsive.js?v=59.94-20260808a"></script>
 <script>
 'use strict';
 // Polyfill ctx.roundRect for older Android WebViews (Chrome < 99)
@@ -415,7 +415,20 @@ function saveG15Progress(stars) {
 function goBack() { try{document.getElementById('game-bgm').pause()}catch(_){}; location.href = '../index.html'; }  /* v55.61 B-256 — reach app home deterministically (no history.back loop) */
 window.addEventListener('resize',()=>{
   if(typeof app==='undefined' || !app) return;
-  app.renderer.resize(Math.min(window.innerWidth,1400),Math.min(window.innerHeight,1000));
+  // v59.94 — resize to the REAL viewport. This used to clamp to
+  // Math.min(innerWidth,1400) x Math.min(innerHeight,1000); autoDensity then stamps that
+  // onto canvas.style, and an inline style beats the stylesheet's width:100vw;height:100svh,
+  // so above 1400x1000 CSS px the canvas shrank and left bare page down the right/bottom.
+  // initPixi never clamped, which is why the menu looked fine and only a running game broke.
+  // Measured before this fix (load 1280x720, then rotate): 1600x900 -> 200px dead band;
+  // 2400x1080 -> 1000px right + 80px bottom; 2560x1600 -> 1160px right + 600px bottom.
+  // devicePixelRatio is already capped at 1.5 in initPixi, so the backing store cannot grow
+  // past what first paint allocated. On the installed PWA any chrome show/hide or rotate
+  // fires this. Same defect and same fix as balapan-kereta (commit f96820e4).
+  // Extra consequence here: LANE_Y below is derived from H, while the tap-to-lane handler
+  // reads e.clientY in full-viewport CSS pixels -- so the clamp also knocked lane
+  // hit-testing out of registration by exactly the clamped amount.
+  app.renderer.resize(window.innerWidth, window.innerHeight);
   // Recompute responsive layout on device rotation / window resize.
   W = app.screen.width; H = app.screen.height;
   TRAIN_X = Math.max(40, Math.round(W * 0.05));  // Task #59 — 5% base (per-train clamp in buildTrain)
@@ -2546,7 +2559,14 @@ function collectBox(box, idx) {
 // ── Math Quiz ─────────────────────────────────────────────────────────────────
 let mathTimerRaf = null;
 function showMathQuiz() {
-  if (!gameRunning) return;
+  // v59.94 — never leave the iris shut. g15MathIrisIn() blacks the screen out to a 6%
+  // dot and calls back 600ms later; g15MathIrisOut() used to be reachable ONLY from
+  // answerMath(). So if the last life was lost inside that 600ms window this early
+  // return fired and the opaque rgba(15,23,42,0.96) overlay stayed up for good.
+  // Reproduced: --g15iris stuck at 6%, the "🚉 Stasiun" chip stuck visible, and the
+  // whole thing at pointer-events:none so a child taps straight through it and sees
+  // nothing happen. Reopen on every exit instead of only the answered one.
+  if (!gameRunning) { try { g15MathIrisOut() } catch(_){} return; }
   mathQuizActive = true;
   const q = genMathQuestion();
   const allAnswers = genWrongOptions(q.answer, 3);
@@ -3048,6 +3068,8 @@ document.getElementById('pixi-canvas').addEventListener('click', e => {
 // ── Win / Lose ─────────────────────────────────────────────────────────────────
 function showWin() {
   gameRunning = false;
+  // v59.94 — see showMathQuiz: the math iris must never outlive the run.
+  try { g15MathIrisOut() } catch(_){}
   // Hotfix #102-C (2026-04-27): stop the Pixi ticker so it doesn't keep firing
   // 60fps callbacks (with early-return on !gameRunning) after game-end. User
   // reported "no respond hang" — every frame the loop checked the flag, doing
@@ -3058,10 +3080,25 @@ function showWin() {
   // v54.28 I13: stop looped train-sfx so it doesn't bleed into the result modal.
   try { const sfx = document.getElementById('train-sfx'); if (sfx) { sfx.pause(); sfx.currentTime = 0 } } catch(_){}
   const elapsed = (Date.now() - startTime) / 1000;
-  const totalQ = mathCorrect + wrongTaps;
+  // v59.94 — score the objective the child actually plays, not a bonus he cannot reach.
+  // The level's goal is spelling the words; the math box is a BONUS that only spawns on
+  // medium/hard (the spawn at the "Math box" branch is gated on getDifficulty() !== 'easy',
+  // and getDifficulty() is 'easy' for LEVEL <= 7). Scoring on mathCorrect alone therefore
+  // made it STRUCTURALLY impossible to earn a star on levels 1-7: mathCorrect was always 0,
+  // GameScoring.calc returns 0 on correct<=0 ("Zero-correct = FAIL"), so a flawless run —
+  // every word spelled, zero wrong taps — reported "Gagal! Coba Lagi". Reproduced on
+  // level 1: 3/3 words, 16 letters, 0 wrong -> 0 stars. Letters collected and words
+  // completed now carry the score; math stays a bonus when it exists.
+  // NOTE: currentLetterIdx is NOT reset for the final word (onWordComplete returns into
+  // showWin before the reset), so only count it while a word is still in progress.
+  const lettersDone = WORDS_LIST.slice(0, currentWordIdx).reduce((n, w) => n + w.word.length, 0)
+    + (currentWordIdx < WORDS_LIST.length ? currentLetterIdx : 0);
+  const wordsDone = Math.min(currentWordIdx, WORDS_LIST.length);
+  const correctCount = lettersDone + mathCorrect;
+  const totalQ = correctCount + wrongTaps;
   try{document.getElementById('game-bgm').pause()}catch(_){}
   const finalStars = GameScoring.calc({
-    correct: mathCorrect,
+    correct: correctCount,
     total: Math.max(totalQ, 1),
     wrong: wrongTaps,
     time: elapsed,
@@ -3072,13 +3109,17 @@ function showWin() {
   // Msg + title must align with stars — zero correct = fail, not "Sempurna"
   // v54.40: final-level mastery → Lulus Akademi recognition. Parity with G14.
   const isFinalMastery = LEVEL >= 30 && finalStars >= 5 && wrongTaps === 0
+  // v59.94 — messages follow the same objective as the score above. Math is mentioned
+  // only when it actually happened (never on easy), so a level-1 child is no longer told
+  // "Belum ada jawaban benar" after spelling every word correctly.
+  const _bonus = mathCorrect > 0 ? ` Matematika benar: ${mathCorrect}.` : '';
   const msg = isFinalMastery
-    ? `Kamu menyelesaikan semua 30 kata-petualangan! Lulus Akademi Lokomotif! Matematika benar: ${mathCorrect}`
-    : mathCorrect === 0
-      ? `Belum ada jawaban benar. Ayo coba lagi!`
+    ? `Kamu menyelesaikan semua 30 kata-petualangan! Lulus Akademi Lokomotif!${_bonus}`
+    : correctCount === 0
+      ? `Belum ada huruf terkumpul. Ayo coba lagi!`
       : wrongTaps === 0
-        ? `Sempurna! Tidak ada kesalahan! Matematika Benar: ${mathCorrect}`
-        : `${wrongTaps} kesalahan. Matematika benar: ${mathCorrect}. Terus berlatih!`;
+        ? `Sempurna! ${wordsDone} kata, ${lettersDone} huruf, tanpa kesalahan!${_bonus}`
+        : `${wordsDone} kata selesai, ${lettersDone} huruf, ${wrongTaps} kesalahan.${_bonus} Terus berlatih!`;
   const title = isFinalMastery ? '🎓 LULUS AKADEMI LOKOMOTIF!' :
     finalStars >= 5 ? 'Sempurna!' : finalStars >= 4 ? 'Hebat!' : finalStars >= 3 ? 'Bagus!' : finalStars >= 1 ? 'Coba Lagi' : 'Gagal! Coba Lagi';
   const emoji = isFinalMastery ? '🎓' :
@@ -3111,6 +3152,8 @@ function g15FadeReload() {
 
 function showLose() {
   gameRunning = false;
+  // v59.94 — see showMathQuiz: the math iris must never outlive the run.
+  try { g15MathIrisOut() } catch(_){}
   // v54.51: increment per-level death count for adaptive difficulty silent ease.
   try {
     const k = 'dunia-g15-deaths-l' + LEVEL
@@ -3129,22 +3172,38 @@ function showLose() {
 }
 
 function restartGame() {
-  document.getElementById('math-quiz').classList.remove('show');
-  clearTimeout(mathTimerRaf);
-  app.destroy(false, { children: true });
-  playerLane = 1; currentWordIdx = 0; currentLetterIdx = 0;
-  wrongTaps = 0; mathCorrect = 0; invincible = false; mathQuizActive = false;
-  gameRunning = false; gameSpeed = 2 + LEVEL * 0.15;
-  lives = MAX_LIVES;
-  // v54.20 reset hooks
-  g15Streak = 0; g15WrongWordKey = -1; g15AssistOffered = false;
-  try { g15UpdateVignette(); g15StreakReset() } catch(_){}
-  wheels = []; steamPuffs = []; letterBoxes = []; bgStars = []; sleepers = [];
-  bgClouds = []; bgFireflies = []; rainbow = null; LANE_Y = []; g15ParWrap = null; g15Ambient = null;
-  mathBoxTimer = 0; heartBoxTimer = 0; totalBoxSpawned = 0;
-  nextMathAt = MATH_BOX_INTERVAL(); nextHeartAt = HEART_BOX_INTERVAL();
-  WORDS_LIST = pickWords(WORD_COUNT);
-  initPixi();
+  // v59.94 — "Main Lagi" was a HARD FREEZE. Measured, not theorised.
+  //
+  // This used to call app.destroy(false,{children:true}) and then re-run initPixi()
+  // on the SAME <canvas> element. PixiJS v8's destroy explicitly loses the WebGL
+  // context, and a canvas whose context has been lost can never hand out a live one
+  // again. Measured immediately after destroy on this very page:
+  //     getContext('webgl2').isContextLost() === true
+  //     getContext('webgl')  === null
+  // initPixi() then awaited a renderer on a dead canvas and NEVER resolved: a 1s
+  // heartbeat interval logged ZERO ticks in the following 45 seconds — the main
+  // thread was blocked outright, with no exception, no console output and nothing
+  // for the owner to report but "kadang hang". This is spec behaviour for a lost
+  // context, not a quirk of the test GPU, and it fired on the button a child presses
+  // most often. Reachable from BOTH result modals (win and lose).
+  //
+  // A reload is the only way back to a live canvas. It is also what every sibling
+  // already does (selamatkan-kereta's restartGame, monster-candy's onAgain) and what
+  // this file's own "Level Berikutnya" does via g15FadeReload(). As a bonus it gives
+  // the clean slate the old in-place reset kept missing — _g15FXBound/_g15FXPool,
+  // bgSignalPosts, bgBirds and a stranded math iris were all left behind by it.
+  //
+  // LEVEL survives in sessionStorage g15Config, so the child replays the SAME level;
+  // g15Replay remembers the chosen train so he lands straight back on it instead of
+  // re-scrolling 355 cards.
+  try { document.getElementById('math-quiz').classList.remove('show'); } catch(_){}
+  try { clearTimeout(mathTimerRaf); } catch(_){}
+  try { g15MathIrisOut(); } catch(_){}
+  try {
+    var _rt = selectedTrain && (selectedTrain.id || selectedTrain.key);
+    if (_rt) sessionStorage.setItem('g15Replay', _rt);
+  } catch(_){}
+  g15FadeReload();
 }
 
 // ── Utils ──────────────────────────────────────────────────────────────────────
@@ -3168,6 +3227,20 @@ function showTrainSelect() {
   buildTrainGrid();
   // v54.20 C16: station-themed recommendation ribbon.
   try { g15ApplyStationRibbon() } catch(_){}
+  // v59.94 — restartGame() now reloads (the old in-place restart froze the page on a
+  // lost WebGL context). Re-pick the train the child was already using so "Main Lagi"
+  // still drops him straight back into the game instead of the 355-card picker.
+  // Reuses the card's own click handler, so there is no second start path to diverge.
+  try {
+    const _rid = sessionStorage.getItem('g15Replay');
+    if (_rid) {
+      sessionStorage.removeItem('g15Replay');
+      const _cards = document.querySelectorAll('#train-grid .tcard');
+      for (let _i = 0; _i < _cards.length; _i++) {
+        if (_cards[_i].dataset.trainId === _rid) { _cards[_i].click(); break; }
+      }
+    }
+  } catch(_){}
 }
 
 let activeTrainFilter = 'all';
@@ -3265,6 +3338,8 @@ function buildTrainGrid() {
   if (countEl) countEl.textContent = filtered.length + ' KERETA ' + (activeTrainFilter === 'all' ? 'TERSEDIA' : (TYPE_LABEL[activeTrainFilter]||'').toUpperCase());
   filtered.forEach(entry => {
     const card = document.createElement('div');
+    // v59.94 — tag the card so a replay can re-pick the same train (see restartGame).
+    try { card.dataset.trainId = entry.id || entry.key || ''; } catch(_){}
     // v54.46: apply .is-character so PROTECTED chars get the gold treatment (parity with G14).
     card.className = 'tcard'
       + (selectedTrain && selectedTrain.id === entry.id ? ' selected' : '')

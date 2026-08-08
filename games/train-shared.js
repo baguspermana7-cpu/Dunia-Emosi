@@ -794,19 +794,38 @@
         { key:'jz711_dragutin',    emoji:'🚆', name:'JZ 711 Dragutin ⭐' },
         { key:'jz62_malivlak',     emoji:'🚂', name:'Malivlak ⭐' },
       ]
+      // A-305 renamed these pages; the garage kept the pre-rename filenames, so
+      // every button here pointed at a file that no longer exists. Paths are
+      // relative to the games/ directory because that is where every caller
+      // lives -- the old 'games/...' prefix would have resolved to games/games/.
       const games = [
-        { key:'g14', label:'Balapan Kereta', path:'games/g14.html' },
-        { key:'g15', label:'Lokomotif Pemberani', path:'games/g15-pixi.html' },
-        { key:'g16', label:'Selamatkan Kereta', path:'games/g16-pixi.html' },
+        { key:'g14', label:'Balapan Kereta', path:'balapan-kereta.html' },
+        { key:'g15', label:'Lokomotif Pemberani', path:'lokomotif-pemberani.html' },
+        { key:'g16', label:'Selamatkan Kereta', path:'selamatkan-kereta.html' },
       ]
       const trainCards = trains.map(t => `<div onclick="TrainShared._cb.garagePick&&TrainShared._cb.garagePick('${t.key}');document.querySelectorAll('.ts-grg-train').forEach(e=>e.style.borderColor='rgba(255,255,255,0.15)');this.style.borderColor='#fde047';TrainShared._cb._chosen='${t.key}';TrainShared.audio.playHorn('${t.key}')" class="ts-grg-train" style="background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.15);border-radius:14px;padding:14px;text-align:center;cursor:pointer;transition:all 200ms"><div style="font-size:36px">${t.emoji}</div><div style="font-size:11px;margin-top:6px;color:#fde68a">${t.name}</div></div>`).join('')
-      const gameCards = games.map(g => `<button onclick="if(TrainShared._cb._chosen){sessionStorage.setItem('garageTrainKey',TrainShared._cb._chosen);location.href='${g.path}'}else{alert('Pilih kereta dulu!')}" style="background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff;border:0;border-radius:14px;padding:14px;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer">🎮 ${g.label}</button>`).join('')
+      // No alert(): a suppressed native dialog turns the button into a dead
+      // control with no explanation, which is the exact complaint the owner
+      // already filed once (B-206). The hint lives on the page instead.
+      const gameCards = games.map(g => `<button onclick="TrainShared._cb.garageGo('${g.path}')" style="background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff;border:0;border-radius:14px;padding:14px;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer">🎮 ${g.label}</button>`).join('')
       ov.innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span style="font-family:Fredoka One,cursive;font-size:18px;color:#fde68a">🏠 Garasi Kereta</span><button onclick="document.getElementById('ts-garage').remove()" style="padding:8px 14px;border-radius:10px;border:0;background:#fbbf24;color:#451a03;font-family:Fredoka One,cursive;font-weight:900;cursor:pointer">Tutup ✕</button></div>
-        <div style="opacity:0.7;font-size:13px;margin-bottom:14px">1. Pilih kereta favoritmu (klakson akan berbunyi). 2. Pilih game untuk dimainkan.</div>
+        <div id="ts-grg-hint" style="opacity:0.7;font-size:13px;margin-bottom:14px">1. Pilih kereta favoritmu (klakson akan berbunyi). 2. Pilih game untuk dimainkan.</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:18px">${trainCards}</div>
         <div style="display:flex;flex-direction:column;gap:10px">${gameCards}</div>`
       TrainShared._cb.garagePick = onPick
+      TrainShared._cb.garageGo = function (path) {
+        const hint = document.getElementById('ts-grg-hint')
+        if (!TrainShared._cb._chosen) {
+          if (hint) {
+            hint.textContent = 'Pilih keretamu dulu ya, ketuk salah satu di atas.'
+            hint.style.color = '#fca5a5'
+          }
+          return
+        }
+        sessionStorage.setItem('garageTrainKey', TrainShared._cb._chosen)
+        location.href = path
+      }
     },
   }
 

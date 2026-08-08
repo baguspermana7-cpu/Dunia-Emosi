@@ -292,8 +292,18 @@ const GamePause = (() => {
     hide()
     if (_cfg.bgmEl) try { _cfg.bgmEl.pause() } catch(_) {}
     if (_cfg.onHome) _cfg.onHome()
-    else history.back()
+    // history.back() was the default, and in an installed PWA there is nothing
+    // to pop: the child landed on about:blank -- a blank screen with no way
+    // back. Every game page fixed this in its own onHome; the shared default
+    // stayed broken, so any page that forgets to pass one inherits the dead end.
+    else location.href = '../index.html'
   }
 
   return { init, show, hide, _vol, _retry, _home }
 })();
+
+// `const GameModal` is a LEXICAL binding, not a window property, so feature
+// detection has to be `typeof GameModal !== 'undefined'` -- a `window.GameModal`
+// check reads false even when this file is loaded and correctly disables nothing
+// but the modal itself. Publish it so both spellings work.
+if (typeof window !== 'undefined') window.GameModal = GameModal;

@@ -15,7 +15,7 @@
  * succeeded. Only cache same-origin assets.
  * ========================================================================== */
 
-const CACHE_VERSION = 'v59.93-20260808b'
+const CACHE_VERSION = 'v59.94-20260808a'
 const HTML_CACHE = `dunia-html-${CACHE_VERSION}`
 const ASSET_CACHE = `dunia-assets-${CACHE_VERSION}`
 
@@ -75,18 +75,23 @@ const SHELL = [
   './games/lib/pixi.min.js?v=8',
   './games/balapan-kereta-side.html',
   './games/museum-kereta.html',
-  './games/indo-scene.js?v=2.1.1',
-  './games/train-journey.js?v=55.80-20260628a',
-  './games/data/train-wheel-anchors.js?v=55.84-20260628a',
-  './games/train-backdrop.js?v=58.4-20260705o',
-  './games/train-picker.js?v=58.6-20260705q',
-  './games/train-speedfx.js?v=55.77-20260628a',
-  './games/quiz-engine.js?v=55.97-20260630a',
-  './games/motion.js?v=56.6-20260703a',
-  './games/scenery-engine.js?v=55.99-20260630a',
-  './games/sw-reload.js?v=55.69-20260628a',
-  './games/g14-hud.css?v=55.77-20260628a',
-  './games/du-hud.css?v=55.81-20260628a',
+  './games/indo-scene.js?v=59.94-20260808a',
+  './games/train-journey.js?v=59.94-20260808a',
+  './games/data/train-wheel-anchors.js?v=59.94-20260808a',
+  './games/train-backdrop.js?v=59.94-20260808a',
+  './games/train-picker.js?v=59.94-20260808a',
+  './games/train-speedfx.js?v=59.94-20260808a',
+  './games/quiz-engine.js?v=59.94-20260808a',
+  './games/motion.js?v=59.94-20260808a',
+  './games/scenery-engine.js?v=59.94-20260808a',
+  './games/sw-reload.js?v=59.94-20260808a',
+  './games/g14-hud.css?v=59.94-20260808a',
+  './games/du-hud.css?v=59.94-20260808a',
+  // Seven call sites across four games invoke GameModal AFTER stopping the
+  // ticker. Offline with a miss, the ReferenceError landed on a frozen frame
+  // with no result modal and no way out -- so this one belongs in the shell
+  // even though the shell is deliberately slim. It is ~4KB.
+  './games/game-modal.js?v=59.94-20260808a',
 ]
 
 self.addEventListener('install', (e) => {

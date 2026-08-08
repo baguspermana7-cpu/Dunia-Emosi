@@ -398,14 +398,14 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
     const sl=document.getElementById('start-loading'); if(sl) sl.style.opacity='1'
   },600)
 </script>
-<script src="data/emoji-map.js?v=59.74-20260725d"></script><script src="data/ui-sprites.js?v=59.93-20260808b"></script><!-- zero-emoji engine -->
-<script src="../shared/rz-responsive.js?v=20260422i"></script>
+<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- zero-emoji engine -->
+<script src="../shared/rz-responsive.js?v=59.94-20260808a"></script>
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="data/poke-sprite-cdn.js?v=20260506t"></script>
-<script src="data/sfx-engine.js?v=59.93-20260808b"></script>
-<script src="vfx-engine.js?v=59.93-20260808b"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
-<script src="data/weather-fx.js?v=20260621"></script>
-<script src="data/poke-type-chart.js?v=20260506z"></script>
+<script src="data/poke-sprite-cdn.js?v=59.94-20260808a"></script>
+<script src="data/sfx-engine.js?v=59.94-20260808a"></script>
+<script src="vfx-engine.js?v=59.94-20260808a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
+<script src="data/weather-fx.js?v=59.94-20260808a"></script>
+<script src="data/poke-type-chart.js?v=59.94-20260808a"></script>
 <script>
   // Licensed Pokemon SFX + weather — lazy init, silent failure.
   document.addEventListener('DOMContentLoaded', function () {
@@ -422,10 +422,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
     } catch (e) {}
   });
 </script>
-<script src="data/freeze-watchdog.js?v=20260428a"></script>
-<script src="data/save-engine.js?v=20260501h"></script>
-<script src="data/g23-question-engine.js?v=20260506m"></script>
-<script src="game-modal.js?v=59.52-20260720a"></script>
+<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
+<script src="data/save-engine.js?v=59.94-20260808a"></script>
+<script src="data/g23-question-engine.js?v=59.94-20260808a"></script>
+<script src="game-modal.js?v=59.94-20260808a"></script>
 <script>
 'use strict'
 // ═══════════════════════════════════════════════════════════
@@ -722,13 +722,20 @@ function scrollBgLayers(speed){
 const GRAVITY       = 0.54
 const JUMP_POWER    = -15.8
 const DBLJ_POWER    = -13.0
+const DBLJ_FLOOR    = -16.0  // cap for the stacked (additive) double jump
 const MAX_FALL      = 18
 // Player size — 2026-06-21 made responsive (was: const 132 × 110).
 // Now derived from viewport height; recomputed in _g23Resize().
 let PLAYER_H        = Math.max(80, Math.min(130, Math.round(window.innerHeight * 0.16)))
 let PLAYER_W        = Math.round(PLAYER_H * 1.20)
 const SLIDE_H       = 52   // effective hitbox height while sliding
-const HIT_MARGIN    = 12   // X+Y inset for player hitbox; was 20 (crown gap too generous)
+const HIT_MARGIN    = 12   // Y inset for player hitbox; was 20 (crown gap too generous)
+// X inset is decoupled from Y (2026-08-08). The horizontal box drives the OVERLAP
+// DURATION against an obstacle, which is what decides whether a jump can clear it;
+// the vertical inset only decides how tall the player is. At HIT_MARGIN 12 the box
+// was 132px against a 156px sprite that carries transparent padding, and simulation
+// showed EVERY ground obstacle was un-single-jumpable on levels 1-3.
+const HIT_MARGIN_X  = 30   // → 96px box on a 156px sprite (~62%)
 const TOTAL_QUIZ    = Math.min(8 + Math.floor((cfg.level-1) * 0.6), 16)
 const TR_ENCOUNTERS = cfg.level >= 3 ? 2 : 1   // 1 encounter L1-2, 2 encounters L3+
 
@@ -871,14 +878,18 @@ const S = {
 // ═══════════════════════════════════════════════════════════
 ;(async function initPixi(){
   app = new PIXI.Application()
-  await app.init({
+  // A hung WebGL context request neither resolves NOR rejects, so a bare await
+  // leaves the splash on "⏳ Memuat…" for ever with taps rejected by the .ready
+  // guard and no back button above the overlay. Bound it so the catch can run.
+  const _initTimeout = new Promise((_,rej)=>setTimeout(()=>rej(new Error('init-timeout')),12000))
+  await Promise.race([app.init({
     canvas: document.getElementById('pixi-canvas'),
     width: window.innerWidth, height: window.innerHeight,
     backgroundAlpha: 0,           // transparent — real BG is CSS layers
     antialias: true,
     resolution: Math.min(window.devicePixelRatio, 1.5),
     preference:'webgl', preferWebGLVersion:1,
-  })
+  }), _initTimeout])
   W = app.screen.width; H = app.screen.height
   GROUND_Y = H * 0.82; PLAYER_X = W * 0.2
   S.playerY = GROUND_Y
@@ -913,10 +924,27 @@ const S = {
   const sl=document.getElementById('start-loading'); if(sl) sl.style.opacity='0'
 })().catch(e=>{
   console.error('G23 init failed:',e)
+  // The old handler said "Tap utk reload" and then added .ready — so the tap ran
+  // handleJump(), which hid the splash and dropped the child onto a black screen
+  // with a HUD and no ticker. The message was a lie. Give real buttons instead,
+  // and do NOT set .ready (a tap must not be able to "start" a dead game).
+  S.bootFailed = true
   const h=document.getElementById('start-hint')
-  if(h) h.textContent = '⚠ Gagal load — Tap utk reload'
-  const o=document.getElementById('start-overlay')
-  if(o) o.classList.add('ready')
+  if(h) h.textContent = 'Game tidak bisa dimuat.'
+  const sl=document.getElementById('start-loading'); if(sl) sl.style.opacity='0'
+  const host = h && h.parentNode
+  if(host && !document.getElementById('fatal-actions')){
+    const box=document.createElement('div')
+    box.id='fatal-actions'
+    box.style.cssText='display:flex;gap:12px;margin-top:16px;justify-content:center;flex-wrap:wrap'
+    const mk=(label,fn)=>{ const b=document.createElement('button')
+      b.textContent=label
+      b.style.cssText='padding:12px 22px;border-radius:14px;border:none;background:#7C3AED;color:#fff;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit'
+      b.addEventListener('click',fn); return b }
+    box.appendChild(mk('Muat Ulang 🔄',()=>location.reload()))
+    box.appendChild(mk('Kembali ◀',()=>{ try{history.back()}catch(_){ location.href='../index.html' } }))
+    host.appendChild(box)
+  }
 })
 
 // ═══════════════════════════════════════════════════════════
@@ -1230,7 +1258,17 @@ function spawnObstacle(){
   // Enforce same-Y constraint: can't have same lane twice; two action lanes simultaneously forbidden
   if(lane!=='high' && (hasAction || active.some(o=>o.lane===lane))) lane='high'
 
-  const pool = lane==='ground' ? GROUND_OBS : lane==='mid' ? MID_OBS : HIGH_OBS
+  // Per-level ground pool. Overlap duration is (hitboxW + obs.w) / gameSpeed, and
+  // gameSpeed RISES with level — so a wide obstacle is HARDEST on level 1, which
+  // inverted the difficulty curve (L1-3 were provably the hardest levels in the
+  // game). Hold the two widest/tallest templates back until the scroll speed can
+  // carry them. Simulated: with this gate every L1-3 obstacle clears on a SINGLE
+  // jump, and no obstacle at any level fails a rapid double-tap.
+  let pool = lane==='ground' ? GROUND_OBS : lane==='mid' ? MID_OBS : HIGH_OBS
+  if(lane==='ground'){
+    pool = pool.filter(o => o.type==='double' ? cfg.level>=4 : o.type==='tall' ? cfg.level>=3 : true)
+    if(!pool.length) pool = GROUND_OBS
+  }
   const tpl  = pool[Math.floor(Math.random()*pool.length)]
 
   const MID_Y  = GROUND_Y - 55
@@ -1535,8 +1573,8 @@ function checkCollisions(){
   }
   S.powerUpItems=S.powerUpItems.filter(p=>!p.collected)
   if(S.invincible>0){ S.invincible--; return }
-  const px_l=PLAYER_X-PLAYER_W/2+HIT_MARGIN
-  const px_r=PLAYER_X+PLAYER_W/2-HIT_MARGIN
+  const px_l=PLAYER_X-PLAYER_W/2+HIT_MARGIN_X
+  const px_r=PLAYER_X+PLAYER_W/2-HIT_MARGIN_X
   const effH=S.isSliding ? SLIDE_H : PLAYER_H
   const py_t=S.playerY-effH+HIT_MARGIN
   const py_b=S.playerY-6
@@ -2299,6 +2337,7 @@ function showLose(){
 //  INPUT
 // ═══════════════════════════════════════════════════════════
 function handleJump(){
+  if(S.bootFailed) return   // never let a tap "start" a game that failed to boot
   if(S.gameOver) return
   // Block tap until Pixi finished initializing — prevents "stuck on splash" feel
   if(!S.started){
@@ -2322,7 +2361,15 @@ function handleJump(){
   const _coyoteOk = S.coyoteFrames > 0 && S.jumpCount === 0
   if(S.jumpCount<2 || _coyoteOk){
     const isDouble=S.jumpCount===1 && !_coyoteOk
-    S.playerVY=isDouble?DBLJ_POWER:JUMP_POWER
+    // The second jump ADDS to any remaining rise instead of REPLACING it.
+    // Replacing meant a rapid frame-2-to-4 double tap — exactly what a 5yo does —
+    // overwrote -15.8 with -13.0 and produced a LOWER arc than a single tap, so
+    // the child's most natural input was the worst possible one. (Owner: "dengan
+    // 2 loncatan pun itu kurang".) Falling players still get a clean -13.0;
+    // DBLJ_FLOOR caps the stacked case just above JUMP_POWER.
+    S.playerVY = isDouble
+      ? Math.max(DBLJ_FLOOR, Math.min(S.playerVY, 0) + DBLJ_POWER)
+      : JUMP_POWER
     S.jumpCount = isDouble ? 2 : 1
     S.isGrounded=false
     S.coyoteFrames=0     // consumed
@@ -2349,7 +2396,14 @@ function handleSlide(){
   if(!S.started){ handleJump(); return }
   if(!S.running||S.paused||S.gameOver||S.trState==='battle') return
   if(!S.isGrounded||S.isSliding) return
-  S.isSliding=true; S.slideTimer=55
+  // Slide duration must outlast the OVERLAP, not be a magic number. At a flat 55
+  // frames the slide expired underneath the 90px-wide mid-bar on the slow early
+  // levels and the child stood up into it — and jumping it instead is impossible,
+  // so neither input worked. Derive it from the widest mid obstacle and the
+  // current scroll speed, with a margin.
+  const _widestMid = MID_OBS.reduce((m,o)=>Math.max(m,o.w),0)
+  S.isSliding=true
+  S.slideTimer=Math.ceil((PLAYER_W - 2*HIT_MARGIN_X + _widestMid)/gameSpeed) + 8
   playTone(200,100,'sine',0.08)
 }
 

@@ -636,7 +636,24 @@
     var dur = opts.duration || 300
     var start = performance.now()
     var lastTrail = 0
+    // The caller's move-lock is released by onHit, and onHit only runs when this
+    // rAF chain reaches t >= 1. So any way this chain can stop early -- a throw
+    // inside step, or rAF never resuming after the screen sleeps mid-strike --
+    // leaves `battle._moveLock` true and EVERY move button disabled for good:
+    // a frozen battle that still looks alive. Guarantee the ending instead of
+    // hoping for it. finish() is idempotent, so the normal path is unchanged.
+    var done = false
+    function finish () {
+      if (done) return
+      done = true
+      clearTimeout(deadline)
+      try { orb.remove() } catch (_) {}
+      motes.forEach(function (mm) { try { mm.el.remove() } catch (_) {} })
+      if (onHit) onHit()
+    }
+    var deadline = setTimeout(finish, dur + 600)
     function step (now) {
+      if (done) return
       var t = clamp01((now - start) / dur)
       var e = easeOutCubic(t)
       var x = a.x + (b.x - a.x) * e
@@ -656,14 +673,15 @@
         requestAnimationFrame(function () { d.style.opacity = '0'; d.style.width = '4px'; d.style.height = '4px' })
         setTimeout(function () { try { d.remove() } catch (_) {} }, 340)
       }
-      if (t < 1) requestAnimationFrame(step)
-      else {
-        try { orb.remove() } catch (_) {}
-        motes.forEach(function (mm) { try { mm.el.remove() } catch (_) {} })
-        if (onHit) onHit()
-      }
+      if (t < 1) requestAnimationFrame(safeStep)
+      else finish()
     }
-    requestAnimationFrame(step)
+    // A throw anywhere in step() would silently kill the chain and strand the
+    // lock, so the chain never runs unguarded.
+    function safeStep (now) {
+      try { step(now) } catch (e) { console.warn('[battle-arena] orbFly step failed', e); finish() }
+    }
+    requestAnimationFrame(safeStep)
   }
 
   // A-339 P4 — WIND-UP: swirl a type-colored charge ring + a few type-emoji motes

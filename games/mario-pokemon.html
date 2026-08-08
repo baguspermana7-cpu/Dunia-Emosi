@@ -227,13 +227,13 @@ body.shake{animation:screenShake .35s ease}
 
 <!-- Pixi.js 8 -->
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="vfx-engine.js?v=59.93-20260808b"></script><!-- A-355 unified shared VFX (electric bolt muzzle/hit) -->
+<script src="vfx-engine.js?v=59.94-20260808a"></script><!-- A-355 unified shared VFX (electric bolt muzzle/hit) -->
 <!-- Shared modules -->
-<script src="data/freeze-watchdog.js?v=20260428a"></script>
-<script src="data/math-rules.js?v=59.28-20260713a"></script>
-<script src="data/save-engine.js?v=20260502b"></script>
-<script src="data/emoji-map.js?v=59.74-20260725d"></script><script src="data/ui-sprites.js?v=59.93-20260808b"></script><!-- eco HUD sprites -->
-<script src="game-modal.js?v=59.52-20260720a"></script>
+<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
+<script src="data/math-rules.js?v=59.94-20260808a"></script>
+<script src="data/save-engine.js?v=59.94-20260808a"></script>
+<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- eco HUD sprites -->
+<script src="game-modal.js?v=59.94-20260808a"></script>
 <!-- Hotfix #120: sprite fix + picker fix (v=20260502b) -->
 
 <script>
@@ -668,18 +668,20 @@ async function loadAssets() {
     bush:   baseUrl + 'bush.webp' + _v,
   }
   const out = {}
-  for (const [key, url] of Object.entries(manifest)) {
-    try {
-      const tex = await PIXI.Assets.load(url)
-      // Pixi 8: source.scaleMode for smoothing (LINEAR avoids the pixelated
-      // look the user reported on the HD Pikachu sprite).
+  // Load in ONE parallel batch, not 33 sequential awaits. On a 200ms-RTT mobile
+  // link the old loop was 33 serialised round trips (~6.6s) before #loading hid.
+  // Each entry keeps its own catch so one bad sprite still degrades to the
+  // hand-drawn Graphics fallback instead of failing the batch.
+  const entries = Object.entries(manifest)
+  const loaded = await Promise.all(entries.map(([key, url]) =>
+    PIXI.Assets.load(url).then(tex => {
+      // Pixi 8: source.scaleMode. These are 16x16 NES sprites upscaled to 64px,
+      // so 'nearest' is correct (the old comment claiming LINEAR was stale).
       if (tex && tex.source) tex.source.scaleMode = 'nearest'
-      out[key] = tex
-    } catch (e) {
-      console.warn('[g21] sprite load fail:', key, e)
-      out[key] = null  // explicit null — checked before use
-    }
-  }
+      return tex
+    }).catch(e => { console.warn('[g21] sprite load fail:', key, e); return null })
+  ))
+  entries.forEach(([key], i) => { out[key] = loaded[i] })
   // Alias MARIO_TEXTURES for convenience in placeTile / entity renderers
   MARIO_TEXTURES = out
   return out
@@ -2643,9 +2645,20 @@ function fitWorldToCanvas() {
 // ═══════════════════════════════════════════════════════════════════
 //  BOOT
 // ═══════════════════════════════════════════════════════════════════
-initPixi().catch(e => {
+// A hung WebGL context request or a stalled sprite fetch NEVER settles — it
+// neither resolves nor rejects — so a bare initPixi() could leave the child on
+// "Memuat Mario Pokemon..." with a spinning spinner for ever and this .catch
+// would never run. Bound the whole boot so the failure UI below is always
+// reachable. 20s is far above a cold local load and far below a child's patience.
+Promise.race([
+  initPixi(),
+  new Promise((_, rej) => setTimeout(() => rej(new Error('Timeout memuat aset')), 20000))
+]).catch(e => {
   console.error('[g21] init failed:', e)
-  document.getElementById('loading').innerHTML = '<div style="color:#fbbf24">Gagal memuat game.<br><small>'+e.message+'</small><br><button onclick="history.back()" style="margin-top:14px;padding:10px 18px;border-radius:10px;border:none;background:#7C3AED;color:#fff;font-weight:900;cursor:pointer">Kembali</button></div>'
+  const box = document.getElementById('loading')
+  if (!box) return
+  box.classList.remove('hide')
+  box.innerHTML = '<div style="color:#fbbf24;text-align:center">Gagal memuat game.<br><small>'+(e && e.message ? e.message : e)+'</small><br><button onclick="location.reload()" style="margin-top:14px;margin-right:8px;padding:10px 18px;border-radius:10px;border:none;background:#7C3AED;color:#fff;font-weight:900;cursor:pointer">Muat Ulang</button><button onclick="history.back()" style="margin-top:14px;padding:10px 18px;border-radius:10px;border:none;background:#475569;color:#fff;font-weight:900;cursor:pointer">Kembali</button></div>'
 })
 </script>
 

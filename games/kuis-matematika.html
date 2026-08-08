@@ -709,20 +709,20 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <!-- capture runtime errors to localStorage.__freezeLog BEFORE anything else can
      throw, so the next "kadang hang" report on the real tablet ships evidence.
      Inspect with: JSON.parse(localStorage.__freezeLog || '[]') -->
-<script src="data/freeze-watchdog.js?v=20260428a"></script>
-<script src="data/math-rules.js?v=59.28-20260713a"></script>
-<script src="data/save-engine.js?v=59.6-20260712a"></script>
-<script src="data/sfx-engine.js?v=59.93-20260808b"></script>
-<script src="vfx-engine.js?v=59.93-20260808b"></script><!-- shared VFX (monster defeat explosion) -->
-<script src="data/math-heroes.js?v=59.29-20260715a"></script><!-- P3b hero roster (sprite changes per op) -->
-<script src="data/emoji-map.js?v=59.74-20260725d"></script><script src="data/ui-sprites.js?v=59.93-20260808b"></script><!-- UIUX/gameplay sprite packs -->
-<script src="data/math-stories.js?v=59.32-20260717a"></script><!-- P3d per-level story arcs (monster names + banter) -->
+<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
+<script src="data/math-rules.js?v=59.94-20260808a"></script>
+<script src="data/save-engine.js?v=59.94-20260808a"></script>
+<script src="data/sfx-engine.js?v=59.94-20260808a"></script>
+<script src="vfx-engine.js?v=59.94-20260808a"></script><!-- shared VFX (monster defeat explosion) -->
+<script src="data/math-heroes.js?v=59.94-20260808a"></script><!-- P3b hero roster (sprite changes per op) -->
+<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- UIUX/gameplay sprite packs -->
+<script src="data/math-stories.js?v=59.94-20260808a"></script><!-- P3d per-level story arcs (monster names + banter) -->
 <!-- P3e cloud sync — config baked in but STAYS INERT until localStorage 'mp_cloud_on'='1'
      (a button in plb.html flips it, same origin). publishable/anon key ONLY — the
      service_role/secret key must NEVER live in the repo/browser. Owner: enable the
      Anonymous provider in Supabase FIRST, then click "Aktifkan Cloud Sync" in plb.html. -->
 <script>window.MATH_SUPABASE={url:'https://iaiyoazomujscqrpknbq.supabase.co',anonKey:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlhaXlvYXpvbXVqc2NxcnBrbmJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTk0MTYsImV4cCI6MjA5MzI5NTQxNn0.gcYFTOhxS1giqUQGdmsmwYPjueHW6BPe3oYaIPWASlI'}</script>
-<script src="data/math-cloud.js?v=59.49-20260719e"></script>
+<script src="data/math-cloud.js?v=59.94-20260808a"></script>
 <script>
 (function(){
 'use strict';

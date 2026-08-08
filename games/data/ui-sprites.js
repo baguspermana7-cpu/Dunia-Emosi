@@ -285,16 +285,78 @@
     if (opts.center && s.anchor && s.anchor.set) s.anchor.set(0.5)
     if (warm) { fitSprite(s, size); return s }
     fitSprite(s, size)   // provisional box so bounds-reading callers stay sane
+    // Every caller in this codebase writes `pixiSprite(...) || new PIXI.Text(...)`.
+    // That fallback can NEVER fire, because we return a truthy sprite even when its
+    // texture is EMPTY. Offline or on a cold cache the object then keeps its full
+    // size and collision box while drawing ZERO pixels -- the child is hit by
+    // something invisible. That exact bug shipped in balapan-kereta's obstacles and
+    // survived in its pickups. Fixing it per-call-site would be whack-a-mole across
+    // 8+ sites, so the CONTRACT is fixed here instead: this function now guarantees
+    // the sprite ends up drawing something, whatever happens to the network.
+    function rescue () {
+      if (!s || s.destroyed) return
+      var t = s.texture
+      if (t && t.width > 1 && t.height > 1) return   // a real texture arrived
+      var tex = glyphTexture(ch, size, PIXI)
+      if (tex) { s.texture = tex; fitSprite(s, size) }
+      else {
+        // glyphTexture only returns null if canvas/texture creation itself failed,
+        // so this is the last narrow hole in the contract -- and it is the exact
+        // shape of the original bug. The provisional fit scaled a 1x1 EMPTY
+        // texture up to `size`, so the sprite would keep reporting a full-size
+        // box while drawing nothing: an invisible obstacle with real collision.
+        // (Measured: Texture.EMPTY.orig is 1x1, so `s.width = size` yields scale
+        // = size -- no NaN, which is why nothing ever looked wrong in a log.)
+        // Better to occupy nothing than to lie about occupying something.
+        s.scale.set(0)
+        s.renderable = false
+        s.visible = false
+      }
+      if (typeof opts.onFail === 'function') { try { opts.onFail(s) } catch (_) {} }
+    }
     if (PIXI.Assets && PIXI.Assets.load) {
       try {
         PIXI.Assets.load(src).then(function (tex) {
-          if (!tex || s.destroyed) return
+          if (s.destroyed) return
+          if (!tex) return rescue()
           s.texture = tex
           fitSprite(s, size)
-        })['catch'](function () { if (typeof opts.onFail === 'function') { try { opts.onFail(s) } catch (_) {} } })
-      } catch (_) { if (typeof opts.onFail === 'function') { try { opts.onFail(s) } catch (_) {} } }
-    } else if (typeof opts.onFail === 'function') { try { opts.onFail(s) } catch (_) {} }
+        })['catch'](rescue)
+      } catch (_) { rescue() }
+    } else rescue()
     return s
+  }
+
+  // Last-resort texture so a sprite is never blank. Paints the glyph to a canvas,
+  // then MEASURES it -- a device whose font lacks the glyph draws nothing, which is
+  // the same invisible-object failure by another route. If the paint came out empty
+  // we draw a plain disc instead: unlovely, but a child can see and avoid it.
+  var GLYPH_TEX = {}
+  function glyphTexture (ch, size, PIXI) {
+    var px = Math.max(16, size || 32)
+    var key = ch + '@' + px
+    if (GLYPH_TEX[key] !== undefined) return GLYPH_TEX[key]
+    var tex = null
+    try {
+      var c = document.createElement('canvas')
+      c.width = c.height = px
+      var g = c.getContext('2d')
+      g.textAlign = 'center'; g.textBaseline = 'middle'
+      g.font = Math.round(px * 0.82) + 'px system-ui, "Segoe UI Emoji", "Noto Color Emoji", sans-serif'
+      g.fillText(ch, px / 2, px / 2)
+      var data = g.getImageData(0, 0, px, px).data
+      var drawn = 0
+      for (var i = 3; i < data.length; i += 4) if (data[i] > 8) { drawn++; if (drawn > 24) break }
+      if (drawn <= 24) {                       // glyph missing on this device
+        g.clearRect(0, 0, px, px)
+        g.fillStyle = '#ffd968'
+        g.beginPath(); g.arc(px / 2, px / 2, px * 0.36, 0, Math.PI * 2); g.fill()
+        g.lineWidth = Math.max(2, px * 0.08); g.strokeStyle = '#3a2b12'; g.stroke()
+      }
+      tex = PIXI.Texture.from(c)
+    } catch (_) { tex = null }
+    GLYPH_TEX[key] = tex
+    return tex
   }
 
   W.UISprites = {

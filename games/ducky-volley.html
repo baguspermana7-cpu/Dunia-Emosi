@@ -137,15 +137,15 @@ if(!('ontouchstart' in window)){
 </script>
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="game-modal.js?v=59.52-20260720a"></script>
-<script src="../shared/rz-responsive.js?v=20260422i"></script>
-<script src="data/poke-sprite-cdn.js?v=20260427d"></script>
-<script src="data/poke-sprite-loader.js?v=20260502r"></script>
-<script src="data/freeze-watchdog.js?v=20260428a"></script>
-<script src="data/save-engine.js?v=20260501h"></script>
-<script src="data/sfx-engine.js?v=59.93-20260808b"></script><!-- shared answer cues (owner) -->
-<script src="data/emoji-map.js?v=59.74-20260725d"></script><script src="data/ui-sprites.js?v=59.93-20260808b"></script><!-- win-screen sprites -->
-<script src="vfx-engine.js?v=59.93-20260808b"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
+<script src="game-modal.js?v=59.94-20260808a"></script>
+<script src="../shared/rz-responsive.js?v=59.94-20260808a"></script>
+<script src="data/poke-sprite-cdn.js?v=59.94-20260808a"></script>
+<script src="data/poke-sprite-loader.js?v=59.94-20260808a"></script>
+<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
+<script src="data/save-engine.js?v=59.94-20260808a"></script>
+<script src="data/sfx-engine.js?v=59.94-20260808a"></script><!-- shared answer cues (owner) -->
+<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- win-screen sprites -->
+<script src="vfx-engine.js?v=59.94-20260808a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
 <script>
 // ═══════════════════════════════════════════════════════════
 //  CONFIG
@@ -217,11 +217,27 @@ const S = {
   moveL:false, moveR:false, jump:false,
 }
 
+// Top of the duck's reach, derived from the REAL jump integrator (including the
+// pvy *= 0.985 rise damping, which the naive v^2/2g figure misses by ~27%).
+// This is a FIXED pixel value; NET_H used to scale with viewport height, so on
+// any screen taller than ~1000px the child could never play the ball above the
+// net — the game was unwinnable-as-designed on exactly the tablet it ships to.
+function _duckReachPx(){
+  let y=0, vy=JUMP_POWER
+  for(let n=0;n<400;n++){ if(vy<0) vy*=0.985; vy+=GRAVITY; y+=vy; if(vy>=0) break }
+  return (-y) + DUCK_R*0.5 + (BALL_R+DUCK_R+12)
+}
 function randomizePhysics(){
   S.gravMod = 0.95 + Math.random()*0.1 // ±5% (more consistent)
   S.bounceMod = 0.80 + Math.random()*0.08 // 0.80–0.88: always lossy (no energy-gain bug)
-  NET_H = H*0.2 + Math.random()*H*0.06 // slight variation
+  // Keep the net comfortably inside what the duck can actually play over.
+  const _playable = _duckReachPx() * 0.78
+  NET_H = Math.min(H*0.2 + Math.random()*H*0.06, _playable) // slight variation
   NET_TOP = GROUND_Y - NET_H
+  // NET_H is re-rolled EVERY round but drawNet() used to run only once, from
+  // drawCourt() — so the ball bounced off an invisible column above the drawn
+  // net (or sailed through the drawn mesh). Redraw it with the physics.
+  try { if (typeof netGfx !== 'undefined' && netGfx) drawNet() } catch(_){}
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1464,15 +1480,33 @@ function updateG20Vol(){
   // Apply to any future audio elements
   window._g20MasterVol=m
 }
-window.addEventListener('resize',()=>{
+// Resize. The old handler clamped the renderer to 1400x1000 while the stylesheet
+// stretched the canvas to 100vw/100svh (so the art was displayed squashed), and
+// it rebuilt only the parallax — bgLayer (sky/sun/ocean/hills/palms/props) and
+// courtLayer (sand/waves/NET) kept their init-time geometry. The sand strip
+// therefore stayed at the OLD GROUND_Y and OLD width while the physics floor
+// moved: the ducks and the ball walked on an invisible floor, with a dead band
+// down the right edge. Resize for real and rebuild the baked layers too.
+let _duckyResizeT = null
+function _duckyResize(){
   if(!app) return
-  const nw = Math.min(window.innerWidth, 1400), nh = Math.min(window.innerHeight, 1000)
-  app.renderer.resize(nw, nh)
-  // Update layout constants so initParallax() uses fresh W/H
+  app.renderer.resize(window.innerWidth, window.innerHeight)
   W = app.screen.width; H = app.screen.height
   GROUND_Y = H * 0.75; NET_X = W / 2; NET_H = H * 0.2; NET_TOP = GROUND_Y - NET_H
-  // Rebuild parallax so elements cover the new screen dimensions without gaps
+  try {
+    // These draw fns PUSH into module arrays; empty them with the containers or
+    // the arrays keep destroyed nodes and grow on every resize.
+    bgLayer.removeChildren().forEach(c=>{ try{ c.destroy({children:true}) }catch(_){}} )
+    clouds.length = 0; palmTrees.length = 0
+    drawBackground()
+    courtLayer.removeChildren().forEach(c=>{ try{ c.destroy({children:true}) }catch(_){}} )
+    drawCourt()
+  } catch(e){ console.warn('[g20] resize redraw failed:', e) }
   initParallax()
+}
+window.addEventListener('resize',()=>{
+  clearTimeout(_duckyResizeT)
+  _duckyResizeT = setTimeout(_duckyResize, 150)
 })
 </script>
 </body>

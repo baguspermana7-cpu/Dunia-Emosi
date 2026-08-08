@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=55.35-20260627dq">
+<link rel="stylesheet" href="du-buttons.css?v=59.94-20260808a">
 <title>Gym Pokémon ⚔️</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -580,24 +580,24 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
   <div id="badge-gym-text"></div>
 </div>
 
-<script src="data/poke-sprite-cdn.js?v=20260427d"></script>
-<script src="data/poke-sprite-loader.js?v=20260506s"></script>
-<script src="data/freeze-watchdog.js?v=20260428a"></script>
-<script src="data/save-engine.js?v=20260501e"></script>
-<script src="data/math-rules.js?v=59.28-20260713a"></script>
-<script src="data/emoji-map.js?v=59.74-20260725d"></script><script src="data/ui-sprites.js?v=59.93-20260808b"></script><!-- UIUX/gameplay sprite packs -->
+<script src="data/poke-sprite-cdn.js?v=59.94-20260808a"></script>
+<script src="data/poke-sprite-loader.js?v=59.94-20260808a"></script>
+<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
+<script src="data/save-engine.js?v=59.94-20260808a"></script>
+<script src="data/math-rules.js?v=59.94-20260808a"></script>
+<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- UIUX/gameplay sprite packs -->
 <!-- v55.97 M-303 — SHARED quiz engine (question + answer-choices) for all games -->
-<script src="quiz-engine.js?v=59.28-20260713a"></script>
+<script src="quiz-engine.js?v=59.94-20260808a"></script>
 <!-- v56.1 A-317 — SHARED battle-presentation engine (field sprites, HP cards,
      narration pill, floating quiz, lunge/projectile/damage-pop FX) -->
-<script src="battle-arena.js?v=59.15-20260712a"></script>
-<script src="vfx-engine.js?v=59.93-20260808b"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
-<script src="data/move-id-translations.js?v=20260505k"></script>
-<script src="data/sfx-engine.js?v=59.93-20260808b"></script>
-<script src="data/weather-fx.js?v=20260621f"></script>
-<script src="data/poke-packages.js?v=53.9-20260624f"></script>
-<script src="data/battle-modes.js?v=59.28-20260713a"></script>
-<script src="data/poke-type-chart.js?v=20260506z"></script>
+<script src="battle-arena.js?v=59.94-20260808a"></script>
+<script src="vfx-engine.js?v=59.94-20260808a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
+<script src="data/move-id-translations.js?v=59.94-20260808a"></script>
+<script src="data/sfx-engine.js?v=59.94-20260808a"></script>
+<script src="data/weather-fx.js?v=59.94-20260808a"></script>
+<script src="data/poke-packages.js?v=59.94-20260808a"></script>
+<script src="data/battle-modes.js?v=59.94-20260808a"></script>
+<script src="data/poke-type-chart.js?v=59.94-20260808a"></script>
 <script>
   // Licensed Pokemon SFX + battle weather — lazy init, silent failure.
   document.addEventListener('DOMContentLoaded', function () {
@@ -668,8 +668,8 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
     };
   });
 </script>
-<script src="game-modal.js?v=59.52-20260720a"></script>
-<script src="battle-sprite-engine.js?v=20260502p"></script>
+<script src="game-modal.js?v=59.94-20260808a"></script>
+<script src="battle-sprite-engine.js?v=59.94-20260808a"></script>
 
 <script>
 // ─── DATA ───────────────────────────────────────────────────────────────────
@@ -2083,11 +2083,18 @@ function badgeHtml(trainer, size, extraStyle){
 
 // Replace broken trainer img with badge-emoji avatar
 function trainerFallback(img, badge) {
-  // Try remote CDN before falling back to emoji
+  // Try remote CDN before falling back to emoji.
+  // Only 6 trainer slugs ship locally (LOCAL_TRAINER_SET); the other 99 are
+  // served straight from the remote CDN. The old guard only asked "have I
+  // retried?", never "am I already ON the remote URL?" — so for those 99 a CDN
+  // 404 re-requested the IDENTICAL failing URL before giving up. Verified: 6
+  // unique failing URLs produced 12 failed requests per visit. Skip the retry
+  // when the current src is already the remote one.
   const sprite = img.dataset.sprite;
-  if (sprite && !img.dataset.triedRemote) {
+  const remote = sprite ? TRAINER_SPRITE_REMOTE(sprite) : '';
+  if (sprite && !img.dataset.triedRemote && img.src !== remote) {
     img.dataset.triedRemote = '1';
-    img.src = TRAINER_SPRITE_REMOTE(sprite);
+    img.src = remote;
     return;
   }
   const d = document.createElement('div');
@@ -3069,7 +3076,15 @@ function playAttackSound(type){
   const a=_atkCache[src]; a.volume=0.6; a.currentTime=0; a.play().catch(()=>{})
 }
 
-window.addEventListener('resize',()=>{if(app)app.renderer.resize(Math.min(window.innerWidth,1400),Math.min(window.innerHeight,1000))})
+// (removed) A resize listener here read a bare `app` that is declared NOWHERE in
+// this file — the page loads no PixiJS and no shared script defines a global
+// `app`. `if(app)` on an UNDECLARED identifier throws ReferenceError (only
+// `typeof app` would have been safe), so every resize and every rotation raised
+// an uncaught error. On an installed PWA the chrome show/hide fires resize
+// constantly, so this threw constantly and silently. It was this file's ONLY
+// resize listener and it resized nothing: the layout is pure CSS (inset:0 +
+// viewport units). Verified in-browser: 2 dispatched resizes = 2 "app is not
+// defined" errors before removal, 0 after.
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 // v56.1 A-317 — mount the SHARED BattleArena scene once. The painterly gym

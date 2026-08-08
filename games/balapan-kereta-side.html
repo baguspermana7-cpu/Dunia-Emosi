@@ -9,8 +9,8 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=55.35-20260627dq">
-<link rel="stylesheet" href="du-hud.css?v=55.81-20260628a">
+<link rel="stylesheet" href="du-buttons.css?v=59.94-20260808a">
+<link rel="stylesheet" href="du-hud.css?v=59.94-20260808a">
 <title>🏁 Balapan Kereta — Side Race (Beta)</title>
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <style>
@@ -131,37 +131,37 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <canvas id="pixi-canvas"></canvas>
 
 <!-- Pixi + shared modules (same versions as balapan-kereta.html for cache reuse) -->
-<script src="data/emoji-map.js?v=59.74-20260725d"></script><script src="data/ui-sprites.js?v=59.93-20260808b"></script><!-- zero-emoji engine -->
+<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- zero-emoji engine -->
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="train-shared.js?v=54.58-20260626bk"></script>
-<script src="train-vfx.js?v=54.56-20260625bi"></script>
-<script src="motion.js?v=56.6-20260703a"></script><!-- A-315 E5 — shared motion engine (frame-rate-independent easing) -->
-<script src="train-bg-engine.js?v=54.67-20260626bt"></script>
-<script src="data/bg-themes.js?v=54.64-20260626bq"></script>
-<script src="data/bg-renderers.js?v=54.64-20260626bq"></script>
-<script src="data/bg-npcs.js?v=54.64-20260626bq"></script>
-<script src="data/bg-audio.js?v=54.65-20260626br"></script>
+<script src="train-shared.js?v=59.94-20260808a"></script>
+<script src="train-vfx.js?v=59.94-20260808a"></script>
+<script src="motion.js?v=59.94-20260808a"></script><!-- A-315 E5 — shared motion engine (frame-rate-independent easing) -->
+<script src="train-bg-engine.js?v=59.94-20260808a"></script>
+<script src="data/bg-themes.js?v=59.94-20260808a"></script>
+<script src="data/bg-renderers.js?v=59.94-20260808a"></script>
+<script src="data/bg-npcs.js?v=59.94-20260808a"></script>
+<script src="data/bg-audio.js?v=59.94-20260808a"></script>
 <!-- v55.27 — Thomas BGM (silent by default; only fires for aeg_* chars) -->
 <audio id="game-bgm" loop preload="none" style="display:none"></audio>
-<script src="train-bgm.js?v=55.61-20260627em"></script>
-<script src="data/bg-events.js?v=54.67-20260626bt"></script>
-<script src="obstacle-engine.js?v=55.63-20260627eo"></script>
-<script src="data/kids-questions.js?v=54.98-20260626cy"></script>
-<script src="data/obstacles.js?v=55.63-20260627eo"></script>
-<script src="data/routes.js?v=54.98-20260626cy"></script>
-<script src="data/reward-catalog.js?v=54.98-20260626cy"></script>
-<script src="reward-gallery.js?v=54.98-20260626cy"></script>
-<script src="settings-modal.js?v=54.98-20260626cy"></script>
-<script src="trains-db.js?v=59.90-20260804a"></script>
-<script src="data/sfx-engine.js?v=59.93-20260808b"></script><!-- A-347 shared coin/crash cues (owner) -->
-<script src="vfx-engine.js?v=59.93-20260808b"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
-<script src="game-modal.js?v=59.52-20260720a"></script>
+<script src="train-bgm.js?v=59.94-20260808a"></script>
+<script src="data/bg-events.js?v=59.94-20260808a"></script>
+<script src="obstacle-engine.js?v=59.94-20260808a"></script>
+<script src="data/kids-questions.js?v=59.94-20260808a"></script>
+<script src="data/obstacles.js?v=59.94-20260808a"></script>
+<script src="data/routes.js?v=59.94-20260808a"></script>
+<script src="data/reward-catalog.js?v=59.94-20260808a"></script>
+<script src="reward-gallery.js?v=59.94-20260808a"></script>
+<script src="settings-modal.js?v=59.94-20260808a"></script>
+<script src="trains-db.js?v=59.94-20260808a"></script>
+<script src="data/sfx-engine.js?v=59.94-20260808a"></script><!-- A-347 shared coin/crash cues (owner) -->
+<script src="vfx-engine.js?v=59.94-20260808a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
+<script src="game-modal.js?v=59.94-20260808a"></script>
 <!-- v55.99 B-284 — shared rich atmospheric scenery engine (sun + layered mountains + grass) -->
-<script src="scenery-engine.js?v=55.99-20260630a"></script>
+<script src="scenery-engine.js?v=59.94-20260808a"></script>
 <!-- v55.77 — shared painterly backdrop (scenery-only far layer) + speed overlay -->
-<script src="train-backdrop.js?v=58.4-20260705o"></script>
-<script src="train-speedfx.js?v=55.77-20260628a"></script>
-<script src="train-journey.js?v=55.80-20260628a"></script>
+<script src="train-backdrop.js?v=59.94-20260808a"></script>
+<script src="train-speedfx.js?v=59.94-20260808a"></script>
+<script src="train-journey.js?v=59.94-20260808a"></script>
 
 <div id="hud-top">
   <button id="btn-back" class="du-hud-pill" type="button" onclick="goBack()">← Kembali</button>
@@ -387,7 +387,13 @@ const JUMP_VELOCITY = 700
   stage = app.stage
   S.trainCfg = pickTrain()
   // B-248: apply saved difficulty speed from a previous onNext call
-  const _savedSpd = parseFloat(sessionStorage.getItem('g14s-next-speed') || '0')
+  // v59.76 — this read sits INSIDE the top-level boot IIFE and was unguarded. On a
+  // tablet with partitioned or blocked storage (webview, private mode, quota full)
+  // `sessionStorage` THROWS on access, the exception escaped, and the whole boot
+  // aborted: no train, no ticker, no input — the child was left staring at the
+  // "Loading…" HUD forever. Reproduced by making sessionStorage throw SecurityError.
+  let _savedSpd = 0
+  try { _savedSpd = parseFloat(sessionStorage.getItem('g14s-next-speed') || '0') || 0 } catch (_) { _savedSpd = 0 }
   if (_savedSpd > 4.0) { S.speed = _savedSpd; S.baseSpeed = _savedSpd }
   // v54.96 — Hide name badge entirely if no train cfg (instead of fallback "Kereta")
   const trainBadge = document.getElementById('train-badge')
@@ -1919,8 +1925,13 @@ function endRace(title, outcome) {
 
   // B-248: onNext = bump speed 20% for a meaningful "next difficulty" level
   function _onNext() {
-    const curSpd = parseFloat(sessionStorage.getItem('g14s-next-speed') || String(S.baseSpeed))
-    sessionStorage.setItem('g14s-next-speed', String(Math.min(7.0, curSpd + 0.8)))
+    // v59.76 — both calls were unguarded. If storage throws, the exception escaped
+    // the click handler and location.reload() never ran, so the "next" button just
+    // did nothing — which reads as a freeze to a five-year-old. Reload regardless.
+    try {
+      const curSpd = parseFloat(sessionStorage.getItem('g14s-next-speed') || String(S.baseSpeed)) || S.baseSpeed
+      sessionStorage.setItem('g14s-next-speed', String(Math.min(7.0, curSpd + 0.8)))
+    } catch (_) { /* storage unavailable → play the next run at the current speed */ }
     location.reload()
   }
 
