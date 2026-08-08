@@ -46,8 +46,13 @@
 
   function has(o, k) { return Object.prototype.hasOwnProperty.call(o, k); }
 
-  var hero = null;
-  try { hero = new URLSearchParams(window.location.search).get('hero'); } catch (e) {}
+  var hero = null, tintHex = null;
+  try {
+    var q = new URLSearchParams(window.location.search);
+    hero = q.get('hero');
+    var t = q.get('tint');
+    if (t && /^[0-9a-fA-F]{6}$/.test(t)) tintHex = t;   // anything else is simply ignored
+  } catch (e) {}
   var LEVEL = (hero && has(HERO_LEVEL, hero)) ? HERO_LEVEL[hero] : null;
   if (!LEVEL) return;                      // no hero, or an unknown one -> vanilla game
 
@@ -79,10 +84,89 @@
       if (key === 'Game') {
         hideGate();                        // race is starting; never block it
         if (owns) data = copy(data, { runSettings: copy(data && data.runSettings, { selectedLevel: LEVEL }) });
+        armTint();                         // replay / next level rebuild the Spine object
       }
       return start.call(this, key, data);
     };
     return true;
+  }
+
+  /* =======================================================================
+   * "?tint=" — paint the child's car
+   * =======================================================================
+   * Spine multiplies `skeleton.color` into every attachment of that ONE
+   * skeleton instance. Grep confirms this bundle never writes `skeleton.color`
+   * or `setTint` anywhere, so once set, nothing fights the value for the life
+   * of the scene -- but the Spine object is destroyed and rebuilt on replay, on
+   * "next level" and on every trip back through the menus, so it must be
+   * re-applied on EVERY Game create. `armTint()` is therefore called from the
+   * scene-start hook above, not once at boot.
+   *
+   * WHOLE RIG, NOT JUST `chassis`. Tinting only the `chassis` slot was built and
+   * compared side by side: it is a little cleaner on Redbird and Buff, because it
+   * leaves their gold trim and skis gold instead of dragging them toward brown,
+   * and it is indistinguishable on Bam, Bibi and Batwing (whose trim is painted
+   * into the chassis region anyway). It was NOT shipped, because every one of the
+   * five skeletons has a `warning` animation that KEYS THE `chassis` SLOT'S COLOUR.
+   * Measured on a live race: paint the chassis slot magenta (both `slot.color` and
+   * the setup `slot.data.color`), play `warning`, and the live colour goes red and
+   * STAYS red long after the animation is over -- it never falls back to setup. So
+   * a chassis tint is destroyed the first time the game warns the child about an
+   * obstacle, and the child's paint just silently disappears mid-race.
+   * `skeleton.color` has no such interaction: it is per-instance, the bundle never
+   * writes it (grep-verified), and it multiplies UNDERNEATH the warning flash, so
+   * the gameplay signal still reads and the paint always survives it.
+   *
+   * The colour is only ever read from a 6-hex-digit match, and only ever written
+   * to the object whose ACTIVE SKIN is the hero the URL asked for -- so the
+   * villain is never repainted, and an unknown value paints nothing.
+   */
+  var tintTimer = null;
+
+  function tintRGB() {
+    return [parseInt(tintHex.substr(0, 2), 16) / 255,
+            parseInt(tintHex.substr(2, 2), 16) / 255,
+            parseInt(tintHex.substr(4, 2), 16) / 255];
+  }
+
+  /* Walk a display list (containers included) and paint every Spine object whose
+     active skin is our hero and which is still untinted. Returns how many it
+     painted. Depth-capped so a cyclic list can never hang the frame. */
+  function paintList(list, rgb, depth) {
+    if (!list || depth > 8) return 0;
+    var n = 0;
+    for (var i = 0; i < list.length; i++) {
+      var o = list[i];
+      if (!o) continue;
+      try {
+        var sk = o.skeleton;
+        if (sk && sk.skin && sk.skin.name === hero && sk.color &&
+            (sk.color.r === 1 && sk.color.g === 1 && sk.color.b === 1)) {
+          sk.color.r = rgb[0]; sk.color.g = rgb[1]; sk.color.b = rgb[2];
+          n++;
+        }
+      } catch (e) {}
+      if (o.list) n += paintList(o.list, rgb, depth + 1);
+    }
+    return n;
+  }
+
+  function armTint() {
+    if (!tintHex) return;
+    if (tintTimer) clearInterval(tintTimer);
+    var rgb = tintRGB(), tries = 0;
+    tintTimer = setInterval(function () {
+      /* Stop after ~24s. The vehicle is built during the Game scene's create, so
+         this normally lands within the first few ticks; the long tail only
+         covers a slow first-boot on a weak device. Every new Game start re-arms
+         it, so a later replay is never left unpainted. */
+      if (++tries > 200) { clearInterval(tintTimer); tintTimer = null; return; }
+      try {
+        var sc = GAME && GAME.scene && GAME.scene.getScene && GAME.scene.getScene('Game');
+        if (!sc || !sc.sys || !sc.sys.settings.active || !sc.children) return;
+        paintList(sc.children.list, rgb, 0);
+      } catch (e) {}
+    }, 120);
   }
 
   /* Both bundles are `defer`, so this inline script runs BEFORE Phaser exists.

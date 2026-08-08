@@ -42,14 +42,21 @@
   #splash .tx{position:relative;color:#fff;font-weight:800;font-size:17px;text-shadow:0 2px 7px rgba(0,0,0,.65)}
   #splash .sub{position:relative;margin-top:-8px;color:#d9cfff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:12px;opacity:.85;text-shadow:0 1px 4px rgba(0,0,0,.6)}
   @keyframes spin{to{transform:rotate(360deg)}}
-  /* ── "Pilih Pengejar" picker (Gotham Getaway only) ──────────────────────────
+  /* ── "Pilih Petualangan" picker (Gotham Getaway only) ──────────────────────
      Its own fixed overlay, deliberately a SIBLING of #stage: it is the wrapper's
      UI, not the game's, so it must render at real device pixels and must never
      be touched by fitStage() (which sizes #frame to the game's design
      resolution and transform-scales it). Tokens are lifted verbatim from
      film-anak.html so this reads as the same app: dark purple claymorphism,
      chunky bottom shadows, gold #ffe08a, Fredoka One / Baloo 2, zero emoji
-     (inline SVG only, same as the hub). */
+     (inline SVG only, same as the hub).
+
+     TWO STEPS: 1) the ADVENTURE (villain + city, with the Batwheels car that
+     comes with it), 2) the COLOUR. Step 1 leads with the villain on purpose --
+     hero and villain ship welded into ONE Spine skeleton per level (three skins:
+     default + hero + villain), so picking either necessarily picks the other.
+     Framing it as "pick the villain, this is the car that chases him" makes the
+     pairing read as the design it is instead of the app overriding the child. */
   #pick{position:fixed;inset:0;z-index:8;display:none;flex-direction:column;justify-content:center;color:#efe9ff;overflow:hidden;
     padding:calc(env(safe-area-inset-top,0px) + 10px) calc(env(safe-area-inset-right,0px) + 16px) calc(env(safe-area-inset-bottom,0px) + 14px) calc(env(safe-area-inset-left,0px) + 16px);
     background:radial-gradient(120% 90% at 50% -10%,#3a2a78 0,#221a52 38%,#141033 72%,#0c0922 100%)}
@@ -59,34 +66,98 @@
   #pick .phead h1{font-size:clamp(1.05rem,3.6vh,2rem);line-height:1.05;letter-spacing:-.02em;text-shadow:0 3px 0 rgba(0,0,0,.28)}
   #pick .phead p{margin-top:5px;font-family:'Baloo 2',sans-serif;font-weight:700;
     font-size:clamp(.66rem,1.75vh,.92rem);color:#c3b8ff;opacity:.92}
-  /* the 5 chasers. min-height:0 on the track + the cards lets the art shrink
-     instead of pushing the buttons off-screen on a short landscape window. */
-  /* max-height keeps the cards card-shaped on a tall window instead of stretching
-     into thin columns with the art marooned in the middle; the auto margins then
-     absorb the slack so the row stays optically centred. */
-  #pick .pgrid{flex:0 1 auto;min-height:0;width:100%;max-width:1180px;height:min(100%,430px);
-    margin:clamp(10px,2.6vh,26px) auto;display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(7px,1.3vw,15px)}
-  .hcard{position:relative;display:flex;flex-direction:column;min-height:0;min-width:0;overflow:hidden;
+  /* only one step is ever in the layout, so the flex column always fits */
+  #pick .step{display:none}
+  #pick[data-step="1"] .step1{display:grid}
+  #pick[data-step="2"] .step2{display:grid}
+  /* ── step 1: the five adventures ────────────────────────────────────────── */
+  /* min-height:0 on the track + the cards lets the art shrink instead of pushing
+     the buttons off-screen on a short landscape window. max-height keeps the
+     cards card-shaped on a tall window instead of stretching into thin columns
+     with the art marooned in the middle; the auto margins absorb the slack so
+     the row stays optically centred. */
+  /* 356px keeps the art box close to the villain art's own 4:3, so `contain`
+     letterboxes it by a few pixels instead of marooning it in a tall empty card */
+  /* align-items:center, not the default stretch: the card hugs its own content and
+     is centred in the row. Stretching gave a tall card with the art marooned at the
+     top and a hole above the name on a narrow column (5-across at 1024). */
+  #pick .pgrid{flex:0 1 auto;min-height:0;width:100%;max-width:1240px;height:min(100%,356px);
+    margin:clamp(8px,2.2vh,22px) auto;grid-template-columns:repeat(5,1fr);gap:clamp(7px,1.3vw,15px);
+    align-items:center}
+  .acard{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    max-height:100%;min-height:0;min-width:0;overflow:hidden;
     border:0;cursor:pointer;border-radius:20px;background:#1a1440;color:inherit;text-align:center;
-    font-family:inherit;padding:clamp(6px,1.3vh,13px) 8px clamp(7px,1.4vh,13px);
+    font-family:inherit;padding:clamp(6px,1.3vh,13px) 8px clamp(7px,1.3vh,12px);
     box-shadow:0 8px 0 #0d0a28,0 16px 30px rgba(0,0,0,.4),inset 0 2px 3px rgba(255,255,255,.12);
     transition:transform .12s ease,box-shadow .12s ease,background .12s ease}
-  .hcard:active{transform:translateY(4px);box-shadow:0 3px 0 #0d0a28,0 8px 16px rgba(0,0,0,.4),inset 0 2px 3px rgba(255,255,255,.12)}
-  @media(hover:hover){.hcard:hover{transform:translateY(-4px);box-shadow:0 12px 0 #0d0a28,0 22px 40px rgba(0,0,0,.5),inset 0 2px 3px rgba(255,255,255,.18)}}
-  .hcard:focus-visible{outline:3px solid #ffe08a;outline-offset:3px}
-  .hcard img{flex:1 1 auto;min-height:0;width:100%;object-fit:contain;
+  .acard:active{transform:translateY(4px);box-shadow:0 3px 0 #0d0a28,0 8px 16px rgba(0,0,0,.4),inset 0 2px 3px rgba(255,255,255,.12)}
+  @media(hover:hover){.acard:hover{transform:translateY(-4px);box-shadow:0 12px 0 #0d0a28,0 22px 40px rgba(0,0,0,.5),inset 0 2px 3px rgba(255,255,255,.18)}}
+  .acard:focus-visible{outline:3px solid #ffe08a;outline-offset:3px}
+  /* fixed 4:3 (the villain art's own ratio) so the art box never grows past what the
+     art can fill; max-height keeps it inside a short window */
+  .acard .vil{flex:0 1 auto;min-height:0;width:100%;aspect-ratio:4/3;max-height:62%;object-fit:contain;
     filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))}
-  .hcard .hn{margin-top:7px;font-size:clamp(.78rem,2.05vh,1.1rem);font-weight:800;line-height:1.1}
-  .hcard .hs{margin-top:3px;font-family:'Baloo 2',sans-serif;font-weight:700;line-height:1.25;
+  .acard .vn{margin-top:6px;font-size:clamp(.78rem,2.05vh,1.1rem);font-weight:800;line-height:1.1}
+  .acard .vc{margin-top:2px;font-family:'Baloo 2',sans-serif;font-weight:700;line-height:1.2;
     font-size:clamp(.58rem,1.45vh,.79rem);color:#c3b8ff;opacity:.92}
+  /* the paired Batwheels car, shown as a CONSEQUENCE of the adventure */
+  .acard .pair{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;
+    margin-top:clamp(5px,1vh,9px);padding:4px 7px;border-radius:13px;background:rgba(255,255,255,.06);
+    box-shadow:inset 0 0 0 2px rgba(255,255,255,.07)}
+  .acard .pair img{flex:0 0 auto;width:clamp(28px,3.4vh,40px);height:clamp(20px,2.4vh,28px);object-fit:contain}
+  .acard .pair span{font-family:'Baloo 2',sans-serif;font-weight:800;line-height:1.15;
+    font-size:clamp(.56rem,1.35vh,.76rem);color:#efe9ff}
   /* chosen — gold plate, same language as .obadge on the hub */
-  .hcard[aria-pressed="true"]{background:#241a5c;
+  .acard[aria-pressed="true"]{background:#241a5c;
     box-shadow:0 8px 0 #0d0a28,0 16px 30px rgba(0,0,0,.45),inset 0 0 0 3px #ffe08a,inset 0 2px 3px rgba(255,255,255,.16)}
-  .hcard[aria-pressed="true"] .hn{color:#ffe08a}
-  .hcard .tick{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;
-    display:none;align-items:center;justify-content:center;background:#ffe08a;box-shadow:0 2px 7px rgba(0,0,0,.45)}
-  .hcard[aria-pressed="true"] .tick{display:flex}
-  .hcard .tick svg{width:15px;height:15px}
+  .acard[aria-pressed="true"] .vn{color:#ffe08a}
+  .acard .tick{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;
+    display:none;align-items:center;justify-content:center;background:#ffe08a;box-shadow:0 2px 7px rgba(0,0,0,.45);z-index:2}
+  .acard[aria-pressed="true"] .tick{display:flex}
+  .acard .tick svg{width:15px;height:15px}
+  /* ── step 2: the colour ─────────────────────────────────────────────────── */
+  #pick .step2{flex:0 1 auto;min-height:0;width:100%;max-width:1240px;
+    margin:clamp(8px,2.2vh,20px) auto;height:min(100%,438px);
+    grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto;gap:clamp(8px,1.6vh,16px);align-content:center}
+  /* wide landscape (the target): art on the left, swatches on the right, so the
+     whole step stays inside a short window with no scrolling */
+  @media(min-width:860px){
+    #pick[data-step="2"] .step2{grid-template-columns:minmax(0,1fr) minmax(0,1.12fr);
+      grid-template-rows:minmax(0,1fr);align-items:stretch;gap:clamp(10px,1.8vw,22px)}
+  }
+  .cstage{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:0;min-width:0;
+    padding:clamp(8px,1.6vh,16px);border-radius:24px;background:#1a1440;
+    box-shadow:0 8px 0 #0d0a28,0 16px 30px rgba(0,0,0,.4),inset 0 2px 3px rgba(255,255,255,.12)}
+  /* the hero art is only ~200-244px wide (it is the largest that exists offline),
+     so the preview is capped at ~2x rather than blown up to fill a 1920 column */
+  .cstage canvas{flex:1 1 auto;min-height:0;max-width:min(100%,340px);object-fit:contain;
+    filter:drop-shadow(0 10px 16px rgba(0,0,0,.5))}
+  .cstage .cap{flex:0 0 auto;font-family:'Baloo 2',sans-serif;font-weight:800;
+    font-size:clamp(.7rem,1.7vh,.95rem);color:#ffe08a}
+  .cpanel{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(8px,1.6vh,15px);min-height:0;min-width:0}
+  /* every swatch is a MINI PREVIEW of this hero in that colour, not a flat chip:
+     the tint is a MULTIPLY on the whole vehicle, so a flat gold dot would promise
+     gold and deliver amber. Showing the actual result cannot lie. */
+  .swrow{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;
+    max-width:640px;gap:clamp(5px,.8vw,10px)}
+  .sw{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;
+    min-height:44px;border:0;cursor:pointer;font-family:inherit;color:inherit;
+    padding:5px 5px 4px;border-radius:16px;background:#221a52;
+    box-shadow:0 4px 0 #0d0a28,inset 0 1px 2px rgba(255,255,255,.1);
+    transition:transform .1s ease,box-shadow .1s ease,background .1s ease}
+  .sw:active{transform:translateY(2px);box-shadow:0 2px 0 #0d0a28,inset 0 1px 3px rgba(0,0,0,.3)}
+  @media(hover:hover){.sw:hover{background:#2a2064}}
+  .sw:focus-visible{outline:3px solid #ffe08a;outline-offset:2px}
+  .sw canvas{display:block;width:clamp(44px,5.4vw,78px);height:auto}
+  .sw .swn{font-family:'Baloo 2',sans-serif;font-weight:700;line-height:1.1;
+    font-size:clamp(.56rem,1.3vh,.72rem);color:#c3b8ff}
+  .sw[aria-pressed="true"]{background:#2e2270;
+    box-shadow:0 4px 0 #0d0a28,inset 0 0 0 3px #ffe08a,inset 0 1px 2px rgba(255,255,255,.14)}
+  .sw[aria-pressed="true"] .swn{color:#ffe08a}
+  /* the honest one-liner: Gotham does colour, stickers live in Batwheels by You */
+  .cnote{max-width:52ch;font-family:'Baloo 2',sans-serif;font-weight:700;text-align:center;line-height:1.35;
+    font-size:clamp(.6rem,1.5vh,.82rem);color:#a99ee0}
+  .cnote b{color:#ffe08a;font-weight:800}
   /* ── actions ── */
   #pick .pfoot{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:clamp(9px,1.4vw,16px);flex-wrap:wrap}
   .pbtn{display:flex;align-items:center;justify-content:center;gap:9px;min-height:52px;padding:10px clamp(20px,3.2vw,34px);
@@ -99,6 +170,8 @@
   .pbtn svg{width:19px;height:19px;flex-shrink:0}
   .pbtn[disabled]{opacity:.42;cursor:default;transform:none;
     box-shadow:0 5px 0 #e3b74e,inset 0 2px 5px rgba(255,255,255,.6)}
+  /* display:flex above beats the UA sheet's [hidden]{display:none} — say it again */
+  .pbtn[hidden]{display:none}
   /* skip — the purple secondary from the hub's .obtn */
   .pbtn.alt{min-height:48px;padding:10px clamp(15px,2.4vw,24px);color:#efe9ff;
     font-family:'Baloo 2',sans-serif;font-size:clamp(.82rem,1.9vh,1rem);
@@ -106,10 +179,14 @@
     box-shadow:0 5px 0 #150f3c,0 10px 20px rgba(0,0,0,.3),inset 0 1px 2px rgba(255,255,255,.16)}
   .pbtn.alt:active{box-shadow:0 2px 0 #150f3c,inset 0 2px 5px rgba(0,0,0,.3)}
   /* short landscape (e.g. 1024x600): tighten so the buttons always stay on-screen */
-  @media(max-height:460px){
+  @media(max-height:560px){
     #pick .phead p{display:none}
-    #pick .pgrid{margin:7px auto}
-    .hcard .hs{font-size:.56rem}
+    #pick .pgrid,#pick .step2{margin:7px auto}
+    .acard .vc{font-size:.56rem}
+  }
+  @media(max-height:460px){
+    .acard .pair{display:none}
+    .cnote{display:none}
   }
   /* portrait / narrow: 5 across gets too thin, go 3 + 2 (there is height to spare) */
   @media(max-width:640px) and (orientation:portrait){
@@ -129,13 +206,27 @@
     <div class="sub">Sebentar ya, lagi disiapin</div>
   </div>
   <div id="stage"><iframe id="frame" title="Film Anak game" allow="autoplay; fullscreen; gamepad; accelerometer; gyroscope" allowfullscreen scrolling="no"></iframe></div>
-  <div id="pick" role="dialog" aria-labelledby="pickttl">
+  <div id="pick" role="dialog" aria-labelledby="pickttl" data-step="1">
     <div class="phead">
-      <h1 id="pickttl">Pilih Pengejarmu</h1>
-      <p>Tiap pengejar punya kota dan penjahatnya sendiri</p>
+      <h1 id="pickttl">Pilih Petualangan</h1>
+      <p id="picksub">Pilih penjahat yang mau dikejar. Mobil Batwheels-nya sudah menunggu di kotanya.</p>
     </div>
-    <div class="pgrid" id="pgrid" role="group" aria-labelledby="pickttl"></div>
+    <div class="pgrid step step1" id="pgrid" role="group" aria-labelledby="pickttl"></div>
+    <div class="step step2">
+      <div class="cstage">
+        <canvas id="cbig" aria-hidden="true"></canvas>
+        <div class="cap" id="ccap"></div>
+      </div>
+      <div class="cpanel">
+        <div class="swrow" id="swrow" role="group" aria-label="Pilih warna mobil"></div>
+        <p class="cnote">Di Gotham kamu bisa ganti <b>warna</b> mobilnya. Mau pasang stiker dan wajah? Itu serunya di <b>Batwheels by You</b>.</p>
+      </div>
+    </div>
     <div class="pfoot">
+      <button type="button" class="pbtn alt" id="pback" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#efe9ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+        <span>Ganti petualangan</span>
+      </button>
       <button type="button" class="pbtn" id="pgo" disabled>
         <svg viewBox="0 0 24 24" fill="#3a2b12" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
         <span id="pgotx">Pilih dulu ya</span>
@@ -218,63 +309,179 @@
   // there is nothing to re-enter and the old crash is structurally impossible. Verified on all
   // five levels: 0 console errors, 0 failed requests, no scene stacking, replay and back intact.
   //
-  // Gotham additionally gets OUR OWN "pilih pengejar" screen (below) in front of it, so the
-  // child picks a whole adventure -- hero, city and villain -- before anything loads. Picking
-  // deep-links to ?targetScene=Game&hero=<hero>; the hero is turned into a level by a small
-  // script inside the game's own index.html (hero and level are 1:1). "Langsung main saja"
-  // keeps the previous behaviour and lands on the game's own level select.
+  // Gotham additionally gets OUR OWN two-step screen (below) in front of it, so the child
+  // picks a whole adventure -- villain, city and the Batwheels car that chases him -- and
+  // then a colour, before anything loads. Picking deep-links to
+  // ?targetScene=Game&hero=<hero>&tint=<rrggbb>; the hero is turned into a level and the
+  // tint into a Spine skeleton colour by a small script inside the game's own index.html
+  // (hero and level are 1:1). "Langsung main saja" keeps the previous behaviour and lands
+  // on the game's own level select.
   var SCENE_ENTRY = { 'batwheels-gotham-getaway': '?targetScene=LevelSelect' };
 
-  // ── "Pilih Pengejar" ──────────────────────────────────────────────────────────────────
-  // Five chasers, each with the city and villain that come with it. The ids are the ONLY
-  // values ever put in the URL, and the game re-checks them against its own hard-coded
-  // table, so nothing user-supplied can reach the engine.
-  var HEROES = [
-    { id:'bam',     name:'Bam',     where:'Jalan Seru',       foe:'Prank'  },
-    { id:'bibi',    name:'Bibi',    where:'Tempat Rongsokan', foe:'Jestah' },
-    { id:'redbird', name:'Redbird', where:'Pelabuhan',        foe:'Ducky'  },
-    { id:'batwing', name:'Batwing', where:'Langit Kota',      foe:'Quizz'  },
-    { id:'buff',    name:'Buff',    where:'Jalan Beku',       foe:'Snowy'  }
+  // ── "Pilih Petualangan" ───────────────────────────────────────────────────────────────
+  // Five adventures. Each is led by its VILLAIN and city, with the Batwheels car shown as
+  // what comes with it -- because hero and villain are welded into one Spine skeleton per
+  // level (three skins: default + hero + villain), so they genuinely cannot be chosen apart.
+  //
+  // The palettes are PER HERO and hand-checked on that hero's own art, because the tint is a
+  // MULTIPLY on the whole vehicle: it can only darken or shift, never brighten, so a swatch
+  // only reads well where it overlaps the car's own hue. Gold on Bam's navy turns
+  // olive-army-green; every cool tint on Redbird's red collapses to muddy maroon. Those were
+  // measured and dropped. Nothing desaturated or grey is offered at all -- multiply makes
+  // grey read as dirt, never silver.
+  //
+  // The ids and the 6 hex digits are the ONLY values ever put in the URL, and the game
+  // re-checks both against its own hard-coded table / regex, so nothing user-supplied can
+  // reach the engine.
+  var ADV = [
+    { id:'bam', hero:'Bam', foe:'Prank', foeId:'prank', city:'Jalan Seru',
+      pal:[['Langit','#7fc8ff'],['Toska','#5fe0e0'],['Mint','#7ff0c0'],['Ungu','#9f7fff'],['Magenta','#e57fff']] },
+    { id:'bibi', hero:'Bibi', foe:'Jestah', foeId:'jestah', city:'Tempat Rongsokan',
+      pal:[['Langit','#7fc8ff'],['Toska','#5fe0e0'],['Mint','#7ff0c0'],['Pink','#ff9ecf'],['Magenta','#e57fff']] },
+    { id:'redbird', hero:'Redbird', foe:'Ducky', foeId:'ducky', city:'Pelabuhan',
+      pal:[['Kuning','#ffe87f'],['Jingga','#ffb037'],['Oranye','#ff9d5c'],['Pink','#ff85b3'],['Magenta','#e57fff']] },
+    { id:'batwing', hero:'Batwing', foe:'Quizz', foeId:'quizz', city:'Langit Kota',
+      pal:[['Mint','#7ff0c0'],['Langit','#7fc8ff'],['Oranye','#ff9d5c'],['Pink','#ff9ecf'],['Magenta','#e57fff']] },
+    { id:'buff', hero:'Buff', foe:'Snowy', foeId:'snowy', city:'Jalan Beku',
+      pal:[['Langit','#7fc8ff'],['Toska','#5fe0e0'],['Mint','#7ff0c0'],['Ungu','#9f7fff'],['Magenta','#e57fff']] }
   ];
   var TICK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="#3a2b12" stroke-width="3.4" ' +
                  'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg>';
-  var chosen = null;
+  var chosen = null;      // the picked adventure object
+  var tint = null;        // '#rrggbb', or null for "Asli" (no tint at all)
+  var heroImg = null;     // the picked hero's art, loaded once per adventure
+
+  // Paint `img` into `cv` multiplied by `hex`. This is the SAME operation the game does
+  // (Spine multiplies skeleton.color into every attachment), so the swatch cannot promise a
+  // colour the race will not deliver. Multiplying over transparent pixels leaves the flat
+  // fill behind, so the vehicle's own alpha is stamped back with destination-in.
+  function paintTinted(cv, img, hex){
+    var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+    if (!w || !h) return;
+    var S = 2;                                   // backing store at 2x for retina
+    cv.width = w * S; cv.height = h * S;
+    var g = cv.getContext('2d');
+    if (!g) return;
+    g.clearRect(0, 0, cv.width, cv.height);
+    g.drawImage(img, 0, 0, cv.width, cv.height);
+    if (!hex) return;
+    g.globalCompositeOperation = 'multiply';
+    if (g.globalCompositeOperation !== 'multiply') return;   // ancient browser: show untinted
+    g.fillStyle = hex;
+    g.fillRect(0, 0, cv.width, cv.height);
+    g.globalCompositeOperation = 'destination-in';
+    g.drawImage(img, 0, 0, cv.width, cv.height);
+    g.globalCompositeOperation = 'source-over';
+  }
+
+  function setStep(n){
+    var pick = document.getElementById('pick');
+    var h1 = document.getElementById('pickttl'), sub = document.getElementById('picksub');
+    var go = document.getElementById('pgo'), gotx = document.getElementById('pgotx');
+    var back = document.getElementById('pback'), skip = document.getElementById('pskip');
+    pick.setAttribute('data-step', String(n));
+    if (n === 1){
+      h1.textContent = 'Pilih Petualangan';
+      sub.textContent = 'Pilih penjahat yang mau dikejar. Mobil Batwheels-nya sudah menunggu di kotanya.';
+      back.hidden = true; skip.hidden = false;
+      go.disabled = !chosen;
+      gotx.textContent = chosen ? ('Lanjut — cat ' + chosen.hero) : 'Pilih dulu ya';
+    } else {
+      h1.textContent = 'Cat Mobil ' + chosen.hero;
+      sub.textContent = 'Pilih warna kesukaanmu, lalu kejar ' + chosen.foe + ' di ' + chosen.city;
+      back.hidden = false; skip.hidden = true;
+      go.disabled = false;
+      gotx.textContent = 'Mulai balapan!';
+    }
+  }
+
+  // ── step 2: build the swatch row + big preview for the chosen hero ──────────────────
+  function buildColours(){
+    var row = document.getElementById('swrow');
+    var big = document.getElementById('cbig'), cap = document.getElementById('ccap');
+    row.innerHTML = '';
+    tint = null;
+    var opts = [['Asli', null]].concat(chosen.pal);
+    var btns = [];
+    function select(i){
+      tint = opts[i][1];
+      for (var k = 0; k < btns.length; k++) btns[k].setAttribute('aria-pressed', k === i ? 'true' : 'false');
+      paintTinted(big, heroImg, tint);
+      cap.textContent = chosen.hero + ' warna ' + opts[i][0];
+    }
+    for (var i = 0; i < opts.length; i++){
+      (function(o, idx){
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'sw';
+        b.setAttribute('aria-pressed', 'false');
+        b.setAttribute('aria-label', chosen.hero + ' warna ' + o[0]);
+        var cv = document.createElement('canvas');
+        paintTinted(cv, heroImg, o[1]);
+        var nm = document.createElement('span'); nm.className = 'swn'; nm.textContent = o[0];
+        b.appendChild(cv); b.appendChild(nm);
+        b.addEventListener('click', function(){ select(idx); });
+        row.appendChild(b); btns.push(b);
+      })(opts[i], i);
+    }
+    select(0);
+  }
+
+  function goColours(){
+    if (!chosen) return;
+    // the hero art is already in the page (the pair chip), so this is a cache hit
+    var img = new Image();
+    img.decoding = 'sync';
+    img.onload = function(){ heroImg = img; buildColours(); setStep(2); };
+    img.onerror = function(){ start(advQuery()); };   // no art -> just race, never dead-end
+    img.src = 'film/assets/gg-heroes/' + chosen.id + '.webp';
+  }
+
+  function advQuery(){
+    var q = '?targetScene=Game&hero=' + encodeURIComponent(chosen.id);
+    if (tint) q += '&tint=' + tint.slice(1);
+    return q;
+  }
 
   function showPicker(){
     var grid = document.getElementById('pgrid');
-    var go = document.getElementById('pgo'), gotx = document.getElementById('pgotx');
-    for (var i = 0; i < HEROES.length; i++){
-      (function(h){
+    for (var i = 0; i < ADV.length; i++){
+      (function(a){
         var b = document.createElement('button');
-        b.type = 'button'; b.className = 'hcard';
+        b.type = 'button'; b.className = 'acard';
         b.setAttribute('aria-pressed','false');
-        b.setAttribute('aria-label', 'Pilih ' + h.name + ', di ' + h.where + ', lawan ' + h.foe);
+        b.setAttribute('aria-label', 'Kejar ' + a.foe + ' di ' + a.city + ', kamu jadi ' + a.hero);
         var tick = document.createElement('span'); tick.className = 'tick'; tick.innerHTML = TICK_SVG;
-        var img = document.createElement('img');
-        img.src = 'film/assets/gg-heroes/' + h.id + '.webp';
-        img.alt = ''; img.decoding = 'async';
-        var nm = document.createElement('span'); nm.className = 'hn'; nm.textContent = h.name;
-        var sb = document.createElement('span'); sb.className = 'hs';
-        sb.textContent = h.where + ' · lawan ' + h.foe;
-        b.appendChild(tick); b.appendChild(img); b.appendChild(nm); b.appendChild(sb);
+        var vil = document.createElement('img'); vil.className = 'vil';
+        vil.src = 'film/assets/gg-villains/' + a.foeId + '.webp';
+        vil.alt = ''; vil.decoding = 'async';
+        var nm = document.createElement('span'); nm.className = 'vn'; nm.textContent = a.foe;
+        var cy = document.createElement('span'); cy.className = 'vc'; cy.textContent = 'di ' + a.city;
+        var pr = document.createElement('span'); pr.className = 'pair';
+        var ph = document.createElement('img');
+        ph.src = 'film/assets/gg-heroes/' + a.id + '.webp'; ph.alt = ''; ph.decoding = 'async';
+        var pt = document.createElement('span'); pt.textContent = 'Kamu jadi ' + a.hero;
+        pr.appendChild(ph); pr.appendChild(pt);
+        b.appendChild(tick); b.appendChild(vil); b.appendChild(nm); b.appendChild(cy); b.appendChild(pr);
         b.addEventListener('click', function(){
-          chosen = h.id;
-          var all = grid.querySelectorAll('.hcard');
+          chosen = a;
+          var all = grid.querySelectorAll('.acard');
           for (var j = 0; j < all.length; j++) all[j].setAttribute('aria-pressed','false');
           b.setAttribute('aria-pressed','true');
-          go.disabled = false;
-          gotx.textContent = 'Mulai bersama ' + h.name + '!';
+          setStep(1);
         });
         grid.appendChild(b);
-      })(HEROES[i]);
+      })(ADV[i]);
     }
-    go.addEventListener('click', function(){
+    document.getElementById('pgo').addEventListener('click', function(){
       if (!chosen) return;
-      start('?targetScene=Game&hero=' + encodeURIComponent(chosen));
+      var step = document.getElementById('pick').getAttribute('data-step');
+      if (step === '1') goColours(); else start(advQuery());
     });
+    document.getElementById('pback').addEventListener('click', function(){ setStep(1); });
     document.getElementById('pskip').addEventListener('click', function(){
       start(SCENE_ENTRY[slug] || '');
     });
+    setStep(1);
     document.body.classList.add('picking');
   }
   function start(extra){
