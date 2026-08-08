@@ -39,27 +39,61 @@
 (function () {
   'use strict';
 
-  /* hero -> level. Hard-coded on purpose: an unknown value must do NOTHING
-     rather than reach the engine (an invalid scene/level silently hangs the
-     loading bar with no error). Anything not in this table is ignored. */
-  var HERO_LEVEL = { bam: 'level1', bibi: 'level2', redbird: 'level3', batwing: 'level4', buff: 'level5' };
+  /* =====================================================================
+   * KOMPOSISI + CAT
+   * =====================================================================
+   * Yang lama menyimpan tiga anggapan yang ternyata salah, dan ketiganya
+   * jadi keluhan pemilik:
+   *
+   *  1. "hero dan level 1:1". Benar di data aslinya, tapi bukan keharusan.
+   *     Satu level itu (hero, villain, tema) — tiga field terpisah pada satu
+   *     objek. Yang mengunci hanya pemuat aset yang dikunci per-tema.
+   *  2. "cat cukup dengan skeleton.color". Itu MULTIPLY murni: hanya bisa
+   *     menggelapkan. Bodi gelap tidak akan pernah bisa jadi terang. Sekarang
+   *     catnya dipanggang ke tekstur oleh wrapper sebelum Spine memuatnya.
+   *  3. Bendera `owns` dilepas hanya oleh LevelSelect — padahal "Next Level"
+   *     lewat transisi GameReplay, sehingga level yang baru diset justru
+   *     DITIMPA balik: "lanjut" mengulang level yang sama selamanya.
+   *
+   * Aturan sekarang: hero dan villain pilihan anak ditempelkan ke SETIAP
+   * level yang dimasuki, jadi mereka bertahan lewat replay, next-level, dan
+   * level-select — sementara kota tetap maju seperti aslinya. Tidak ada lagi
+   * bendera kepemilikan untuk dilupakan.
+   * =================================================================== */
+
+  var VILLAIN_PAIR = { prank: 'bam-prank', jestah: 'bibi-jestah', ducky: 'redbird-ducky',
+                       quizz: 'batwing-quizz', snowy: 'buff-snowy' };
+  var HERO_PAIR = { bam: 'bam-prank', bibi: 'bibi-jestah', redbird: 'redbird-ducky',
+                    batwing: 'batwing-quizz', buff: 'buff-snowy' };
+  /* Kota -> level. Kota yang memilih catatan level dasar, jadi rintangan,
+     ramp dan penyetelan kesulitan tiap kota tetap seperti aslinya. */
+  var CITY_LEVEL = { funstreet: 'level1', scrapyard: 'level2', docks: 'level3',
+                     citysky: 'level4', frozenstreet: 'level5' };
+  /* VFX senjata villain didorong oleh TEMA di mesin aslinya, bukan oleh
+     villain. Begitu villain bisa muncul di kota mana pun, VFX-nya harus ikut
+     dimuat sendiri atau senjatanya menembak tanpa gambar. */
+  var VILLAIN_FX = { ducky: 'ink', quizz: 'question-cloud', snowy: 'snowdrift' };
 
   function has(o, k) { return Object.prototype.hasOwnProperty.call(o, k); }
 
-  var hero = null, tintHex = null;
+  var cfg = null;
   try {
-    var q = new URLSearchParams(window.location.search);
-    hero = q.get('hero');
-    var t = q.get('tint');
-    if (t && /^[0-9a-fA-F]{6}$/.test(t)) tintHex = t;   // anything else is simply ignored
+    var raw = sessionStorage.getItem('gg_custom');
+    if (raw) {
+      var c = JSON.parse(raw);
+      if (c && has(HERO_PAIR, c.hero) && has(VILLAIN_PAIR, c.villain) && has(CITY_LEVEL, c.city)) {
+        cfg = { hero: c.hero, villain: c.villain, city: c.city,
+                paint: (typeof c.paint === 'string' && c.paint.indexOf('blob:') === 0) ? c.paint : null };
+      }
+    }
   } catch (e) {}
-  var LEVEL = (hero && has(HERO_LEVEL, hero)) ? HERO_LEVEL[hero] : null;
-  if (!LEVEL) return;                      // no hero, or an unknown one -> vanilla game
+  /* Tanpa konfigurasi yang sah, game ini harus persis seperti aslinya.
+     JANGAN `return` di sini: gerbang audio di bawah hidup di IIFE yang sama,
+     dan keluar lebih awal akan ikut mematikannya untuk gotham polos. Cukup
+     lewati bagian komposisinya. */
+  var LEVEL = cfg ? CITY_LEVEL[cfg.city] : null;
+  var GAME = null;
 
-  var GAME = null;                         // captured Phaser.Game (window.game is the <div>)
-  var owns = true;                         // false once the child picks for themselves
-
-  /* ---- copy-on-write payload builders (never mutate the engine's objects) -- */
   function copy(src, extra) {
     var out = {}, k;
     if (src) { for (k in src) { if (has(src, k)) out[k] = src[k]; } }
@@ -67,7 +101,86 @@
     return out;
   }
 
-  /* ---- the one lever: the engine's own scene-start boundary --------------- */
+  /* ---- cat: alihkan halaman atlas hero ke hasil cat wrapper --------------
+     Loader Phaser memuat halaman atlas lewat elemen Image biasa, jadi satu
+     penyetel `src` sudah cukup. Semua UV tetap sah karena yang berubah hanya
+     piksel di dalam region bodi. Hanya URL milik pasangan hero yang dialihkan;
+     apa pun yang lain lewat apa adanya. */
+  if (cfg && cfg.paint) {
+    try {
+      var d = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
+      var want = HERO_PAIR[cfg.hero] + '-0.png';
+      Object.defineProperty(HTMLImageElement.prototype, 'src', {
+        configurable: true,
+        get: function () { return d.get.call(this); },
+        set: function (v) {
+          try { if (typeof v === 'string' && v.indexOf(want) >= 0) v = cfg.paint; } catch (e) {}
+          d.set.call(this, v);
+        }
+      });
+    } catch (e) {}
+  }
+
+  /* ---- komposisi ---------------------------------------------------------
+     Dua sambungan, keduanya API publik Phaser:
+       START  — sebelum `init`, antre kerangka tambahan ke loader scene itu,
+                jadi ia ikut termuat bersama aset tema tanpa perlu gerbang.
+       create — dibungkus supaya hero/villain pilihan ditempelkan ke objek
+                level SESAAT sebelum kendaraan dibuat.
+     Objek level itu singleton bersama, jadi menempelkannya bersifat idempoten
+     dan bertahan lewat SEMUA jalur masuk ke scene Game. */
+  function spineURLs(key) {
+    return ['assets/animations/' + key + '.json', 'assets/animations/' + key + '.atlas'];
+  }
+
+  function queueSpines(scene) {
+    var need = [HERO_PAIR[cfg.hero], VILLAIN_PAIR[cfg.villain]];
+    if (VILLAIN_FX[cfg.villain]) need.push(VILLAIN_FX[cfg.villain]);
+    for (var i = 0; i < need.length; i++) {
+      var k = need[i];
+      try {
+        if (scene.cache && scene.cache.custom && scene.cache.custom.spine &&
+            scene.cache.custom.spine.exists(k)) continue;
+        var u = spineURLs(k);
+        scene.load.spine(k, u[0], u[1], true);
+      } catch (e) {}
+    }
+  }
+
+  function spineReady(scene, key) {
+    try {
+      var c = scene.cache && scene.cache.custom && scene.cache.custom.spine;
+      return !!(c && c.exists && c.exists(key));
+    } catch (e) { return false; }
+  }
+
+  /* Menempelkan hero/villain HANYA kalau kerangka keduanya benar-benar sudah
+     ada di cache. Menempelkannya tanpa itu membuat Spine meledak dengan
+     `skeletonData` null dan balapannya tidak pernah muncul — terukur. Kalau
+     belum siap, biarkan level memakai pasangan aslinya: game tetap jalan,
+     dan catnya tetap terpakai kalau hero pilihan memang hero level itu. */
+  function compose(scene) {
+    try {
+      if (!scene || !scene.level) return;
+      var hp = HERO_PAIR[cfg.hero], vp = VILLAIN_PAIR[cfg.villain];
+      if (spineReady(scene, hp)) scene.level.hero = cfg.hero;
+      if (spineReady(scene, vp)) scene.level.villain = cfg.villain;
+    } catch (e) {}
+  }
+
+  function wireGameScene() {
+    var sc = GAME && GAME.scene && GAME.scene.getScene && GAME.scene.getScene('Game');
+    if (!sc || sc.__ggWired) return;
+    sc.__ggWired = true;
+    try {
+      sc.sys.events.on('start', function () { queueSpines(sc); });
+    } catch (e) {}
+    var origCreate = sc.create;
+    if (typeof origCreate === 'function') {
+      sc.create = function () { compose(this); return origCreate.apply(this, arguments); };
+    }
+  }
+
   function patch(P) {
     var SM = P && P.Scenes && P.Scenes.SceneManager && P.Scenes.SceneManager.prototype;
     if (!SM || SM.__ggHeroPatched) return !!SM;
@@ -75,99 +188,22 @@
     var start = SM.start;
     SM.start = function (key, data) {
       GAME = this.game;
-      /* The moment the game's OWN level select runs, the child is choosing for
-         themselves -- stop forcing the URL hero, or "back to level select" would
-         silently bounce them to the deep-linked level forever. Replay restarts
-         Game without passing through LevelSelect, so replay still gets the
-         picked hero. */
-      if (key === 'LevelSelect') owns = false;
+      if (cfg) wireGameScene();
       if (key === 'Game') {
-        hideGate();                        // race is starting; never block it
-        if (owns) data = copy(data, { runSettings: copy(data && data.runSettings, { selectedLevel: LEVEL }) });
-        armTint();                         // replay / next level rebuild the Spine object
+        hideGate();
+        /* Hanya ronde PERTAMA yang diarahkan ke kota pilihan. Sesudah itu
+           mesinnya sendiri yang menentukan level — itulah yang membuat
+           "Next Level" benar-benar maju alih-alih mengulang. */
+        if (cfg && !SM.__ggSeeded) {
+          SM.__ggSeeded = true;
+          data = copy(data, { runSettings: copy(data && data.runSettings, { selectedLevel: LEVEL }) });
+        }
       }
       return start.call(this, key, data);
     };
     return true;
   }
 
-  /* =======================================================================
-   * "?tint=" — paint the child's car
-   * =======================================================================
-   * Spine multiplies `skeleton.color` into every attachment of that ONE
-   * skeleton instance. Grep confirms this bundle never writes `skeleton.color`
-   * or `setTint` anywhere, so once set, nothing fights the value for the life
-   * of the scene -- but the Spine object is destroyed and rebuilt on replay, on
-   * "next level" and on every trip back through the menus, so it must be
-   * re-applied on EVERY Game create. `armTint()` is therefore called from the
-   * scene-start hook above, not once at boot.
-   *
-   * WHOLE RIG, NOT JUST `chassis`. Tinting only the `chassis` slot was built and
-   * compared side by side: it is a little cleaner on Redbird and Buff, because it
-   * leaves their gold trim and skis gold instead of dragging them toward brown,
-   * and it is indistinguishable on Bam, Bibi and Batwing (whose trim is painted
-   * into the chassis region anyway). It was NOT shipped, because every one of the
-   * five skeletons has a `warning` animation that KEYS THE `chassis` SLOT'S COLOUR.
-   * Measured on a live race: paint the chassis slot magenta (both `slot.color` and
-   * the setup `slot.data.color`), play `warning`, and the live colour goes red and
-   * STAYS red long after the animation is over -- it never falls back to setup. So
-   * a chassis tint is destroyed the first time the game warns the child about an
-   * obstacle, and the child's paint just silently disappears mid-race.
-   * `skeleton.color` has no such interaction: it is per-instance, the bundle never
-   * writes it (grep-verified), and it multiplies UNDERNEATH the warning flash, so
-   * the gameplay signal still reads and the paint always survives it.
-   *
-   * The colour is only ever read from a 6-hex-digit match, and only ever written
-   * to the object whose ACTIVE SKIN is the hero the URL asked for -- so the
-   * villain is never repainted, and an unknown value paints nothing.
-   */
-  var tintTimer = null;
-
-  function tintRGB() {
-    return [parseInt(tintHex.substr(0, 2), 16) / 255,
-            parseInt(tintHex.substr(2, 2), 16) / 255,
-            parseInt(tintHex.substr(4, 2), 16) / 255];
-  }
-
-  /* Walk a display list (containers included) and paint every Spine object whose
-     active skin is our hero and which is still untinted. Returns how many it
-     painted. Depth-capped so a cyclic list can never hang the frame. */
-  function paintList(list, rgb, depth) {
-    if (!list || depth > 8) return 0;
-    var n = 0;
-    for (var i = 0; i < list.length; i++) {
-      var o = list[i];
-      if (!o) continue;
-      try {
-        var sk = o.skeleton;
-        if (sk && sk.skin && sk.skin.name === hero && sk.color &&
-            (sk.color.r === 1 && sk.color.g === 1 && sk.color.b === 1)) {
-          sk.color.r = rgb[0]; sk.color.g = rgb[1]; sk.color.b = rgb[2];
-          n++;
-        }
-      } catch (e) {}
-      if (o.list) n += paintList(o.list, rgb, depth + 1);
-    }
-    return n;
-  }
-
-  function armTint() {
-    if (!tintHex) return;
-    if (tintTimer) clearInterval(tintTimer);
-    var rgb = tintRGB(), tries = 0;
-    tintTimer = setInterval(function () {
-      /* Stop after ~24s. The vehicle is built during the Game scene's create, so
-         this normally lands within the first few ticks; the long tail only
-         covers a slow first-boot on a weak device. Every new Game start re-arms
-         it, so a later replay is never left unpainted. */
-      if (++tries > 200) { clearInterval(tintTimer); tintTimer = null; return; }
-      try {
-        var sc = GAME && GAME.scene && GAME.scene.getScene && GAME.scene.getScene('Game');
-        if (!sc || !sc.sys || !sc.sys.settings.active || !sc.children) return;
-        paintList(sc.children.list, rgb, 0);
-      } catch (e) {}
-    }, 120);
-  }
 
   /* Both bundles are `defer`, so this inline script runs BEFORE Phaser exists.
      Trap the assignment instead of racing it, with a bounded poll as a fallback

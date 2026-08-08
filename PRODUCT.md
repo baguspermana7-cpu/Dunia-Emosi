@@ -105,3 +105,22 @@ Hal-hal yang sudah ditolak pemilik. Menghidupkannya kembali adalah regresi.
   berbeda antar halaman berarti perbaikan hanya sampai di sebagian halaman.
   Gerbangnya: `node tools/normalize-cache-tokens.mjs --check`.
 - 17 halaman permainan + hub film. Daftar lengkap ada di `games/`.
+
+## Kalau ada yang "hang" lagi
+
+Pembekuan yang dilaporkan pemilik **tidak melempar galat apa pun** — penangkap
+`error`/`unhandledrejection` di `games/data/freeze-watchdog.js` tak menangkap
+sebutir pun. Yang membekukan game terparah sejauh ini (Pixi diinisialisasi ulang
+di atas kanvas yang konteks WebGL-nya sudah hilang) memblokir utas utama 45 detik
+tanpa satu pun galat.
+
+Karena itu watchdog sekarang juga **mengukur jeda utas utama**: kalau timer
+1 detik baru berbunyi setelah lebih dari 4 detik, jeda itu dicatat.
+
+- **Buka halaman apa pun dengan `#freezelog` di akhir alamatnya** — misalnya
+  `.../games/kuis-matematika.html#freezelog` — dan catatannya tampil sebagai
+  lapisan biasa. Tidak perlu DevTools, tidak perlu komputer.
+- `stall` = game membeku di tangan anak. `boot-slow` = halaman berat saat mulai;
+  itu biaya awal, bukan hang. Keduanya sengaja tidak dicampur.
+- Sebelum langkah yang berisiko, halaman boleh menulis
+  `window.__freezeContext = 'level 7 restart'` supaya catatannya menyebut lokasi.

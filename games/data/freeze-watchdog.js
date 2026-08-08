@@ -49,6 +49,76 @@
     });
   });
 
+  // ── STALL DETECTOR ────────────────────────────────────────────────────────
+  // The freezes the owner actually reports produce NO error and NO rejection,
+  // so the two handlers above capture nothing at all. The worst one found so
+  // far -- Pixi re-initialised on a canvas whose WebGL context is lost by spec
+  // -- blocked the main thread with zero heartbeats for 45s and never threw.
+  //
+  // A timer cannot fire while the thread is blocked either, but that is exactly
+  // the signal: when it finally does fire, the elapsed time is far larger than
+  // the interval. Record that gap so the next reproduction on the tablet leaves
+  // evidence instead of only a memory of the game "hanging".
+  //
+  // Only while the page is VISIBLE: a backgrounded tab is throttled on purpose
+  // and would otherwise log a stall every time the child switches away.
+  // Boot is measured separately. A heavy page on a 4x-throttled tablet really
+  // does block for seconds while it starts (gym-pokemon: 4.7s, measured), and
+  // that is worth knowing -- but it is a different problem from a mid-play
+  // freeze, and folding the two together makes the log too noisy to act on.
+  var TICK = 1000;
+  var STALL = 4000;            // ~4s of blocked main thread is never legitimate
+  var lastTick = Date.now();
+  var hiddenSince = 0;
+  var settled = false;
+  window.addEventListener('load', function () { setTimeout(function () { settled = true; lastTick = Date.now(); }, 3000); });
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'hidden') hiddenSince = Date.now();
+    else { lastTick = Date.now(); hiddenSince = 0; }
+  });
+  setInterval(function () {
+    var now = Date.now();
+    var gap = now - lastTick;
+    lastTick = now;
+    if (document.visibilityState !== 'visible' || hiddenSince) return;
+    if (gap < STALL) return;
+    push({
+      // 'boot-slow' is a startup cost worth knowing about; 'stall' is a game
+      // that froze under the child's hands. Never conflate them.
+      type: settled ? 'stall' : 'boot-slow',
+      msg: 'main thread blocked ' + Math.round(gap) + 'ms',
+      page: location.pathname.split('/').pop(),
+      // Whatever the page chose to expose about where it was; games can set
+      // window.__freezeContext = 'level 7 restart' before a risky step.
+      ctx: String(window.__freezeContext || '')
+    });
+  }, TICK);
+
+  // Read the log without DevTools -- the owner tests on a tablet and will never
+  // open a console. `window.freezeLog()` returns it, and appending
+  // `#freezelog` to any page URL prints it into a plain overlay.
+  window.freezeLog = function () {
+    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (_) { return []; }
+  };
+  if (location.hash === '#freezelog') {
+    window.addEventListener('load', function () {
+      var log = window.freezeLog();
+      var d = document.createElement('div');
+      d.style.cssText = 'position:fixed;inset:0;z-index:2147483647;background:#1b1430;color:#fff;' +
+        'font:12px/1.5 monospace;padding:16px;overflow:auto;white-space:pre-wrap';
+      d.textContent = log.length
+        ? log.map(function (e) { return new Date(e.t).toLocaleString() + '  ' + e.type + '  ' + (e.page || '') + '  ' + e.msg; }).join('\n')
+        : 'Tidak ada catatan macet.';
+      var b = document.createElement('button');
+      b.textContent = 'Tutup';
+      b.style.cssText = 'position:fixed;right:16px;top:16px;min-height:44px;padding:0 18px;border:0;' +
+        'border-radius:14px;font:inherit;font-weight:700;background:#ffd968;color:#3a2b12';
+      b.addEventListener('click', function () { d.remove(); });
+      d.appendChild(b);
+      document.body.appendChild(d);
+    });
+  }
+
   window.__cleanupHooks = window.__cleanupHooks || [];
   window.registerCleanupHook = function (fn) {
     if (typeof fn === 'function') window.__cleanupHooks.push(fn);

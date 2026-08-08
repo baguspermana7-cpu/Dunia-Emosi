@@ -1,0 +1,282 @@
+{
+ "redbird": [
+  {
+   "id": "logo",
+   "file": "redbird-logo.webp",
+   "w": 42,
+   "h": 39
+  },
+  {
+   "id": "0",
+   "file": "redbird-0.webp",
+   "w": 184,
+   "h": 72
+  },
+  {
+   "id": "1",
+   "file": "redbird-1.webp",
+   "w": 163,
+   "h": 89
+  },
+  {
+   "id": "2",
+   "file": "redbird-2.webp",
+   "w": 165,
+   "h": 88
+  },
+  {
+   "id": "3",
+   "file": "redbird-3.webp",
+   "w": 37,
+   "h": 58
+  },
+  {
+   "id": "4",
+   "file": "redbird-4.webp",
+   "w": 154,
+   "h": 56
+  },
+  {
+   "id": "5",
+   "file": "redbird-5.webp",
+   "w": 86,
+   "h": 49
+  },
+  {
+   "id": "6",
+   "file": "redbird-6.webp",
+   "w": 99,
+   "h": 31
+  },
+  {
+   "id": "7",
+   "file": "redbird-7.webp",
+   "w": 197,
+   "h": 77
+  }
+ ],
+ "bam": [
+  {
+   "id": "logo",
+   "file": "bam-logo.webp",
+   "w": 41,
+   "h": 46
+  },
+  {
+   "id": "0",
+   "file": "bam-0.webp",
+   "w": 186,
+   "h": 64
+  },
+  {
+   "id": "1",
+   "file": "bam-1.webp",
+   "w": 226,
+   "h": 91
+  },
+  {
+   "id": "2",
+   "file": "bam-2.webp",
+   "w": 222,
+   "h": 87
+  },
+  {
+   "id": "3",
+   "file": "bam-3.webp",
+   "w": 116,
+   "h": 38
+  },
+  {
+   "id": "4",
+   "file": "bam-4.webp",
+   "w": 196,
+   "h": 54
+  },
+  {
+   "id": "5",
+   "file": "bam-5.webp",
+   "w": 79,
+   "h": 27
+  },
+  {
+   "id": "6",
+   "file": "bam-6.webp",
+   "w": 144,
+   "h": 45
+  },
+  {
+   "id": "7",
+   "file": "bam-7.webp",
+   "w": 271,
+   "h": 87
+  }
+ ],
+ "bibi": [
+  {
+   "id": "logo",
+   "file": "bibi-logo.webp",
+   "w": 45,
+   "h": 38
+  },
+  {
+   "id": "0",
+   "file": "bibi-0.webp",
+   "w": 55,
+   "h": 44
+  },
+  {
+   "id": "1",
+   "file": "bibi-1.webp",
+   "w": 41,
+   "h": 61
+  },
+  {
+   "id": "2",
+   "file": "bibi-2.webp",
+   "w": 43,
+   "h": 71
+  },
+  {
+   "id": "3",
+   "file": "bibi-3.webp",
+   "w": 29,
+   "h": 40
+  },
+  {
+   "id": "4",
+   "file": "bibi-4.webp",
+   "w": 42,
+   "h": 53
+  },
+  {
+   "id": "5",
+   "file": "bibi-5.webp",
+   "w": 32,
+   "h": 28
+  },
+  {
+   "id": "6",
+   "file": "bibi-6.webp",
+   "w": 48,
+   "h": 31
+  },
+  {
+   "id": "7",
+   "file": "bibi-7.webp",
+   "w": 36,
+   "h": 72
+  }
+ ],
+ "batwing": [
+  {
+   "id": "logo",
+   "file": "batwing-logo.webp",
+   "w": 860,
+   "h": 468
+  },
+  {
+   "id": "0",
+   "file": "batwing-0.webp",
+   "w": 120,
+   "h": 99
+  },
+  {
+   "id": "1",
+   "file": "batwing-1.webp",
+   "w": 115,
+   "h": 108
+  },
+  {
+   "id": "2",
+   "file": "batwing-2.webp",
+   "w": 99,
+   "h": 99
+  },
+  {
+   "id": "3",
+   "file": "batwing-3.webp",
+   "w": 72,
+   "h": 58
+  },
+  {
+   "id": "4",
+   "file": "batwing-4.webp",
+   "w": 86,
+   "h": 75
+  },
+  {
+   "id": "5",
+   "file": "batwing-5.webp",
+   "w": 46,
+   "h": 30
+  },
+  {
+   "id": "6",
+   "file": "batwing-6.webp",
+   "w": 70,
+   "h": 74
+  },
+  {
+   "id": "7",
+   "file": "batwing-7.webp",
+   "w": 96,
+   "h": 124
+  }
+ ],
+ "buff": [
+  {
+   "id": "logo",
+   "file": "buff-logo.webp",
+   "w": 42,
+   "h": 55
+  },
+  {
+   "id": "0",
+   "file": "buff-0.webp",
+   "w": 101,
+   "h": 60
+  },
+  {
+   "id": "1",
+   "file": "buff-1.webp",
+   "w": 75,
+   "h": 62
+  },
+  {
+   "id": "2",
+   "file": "buff-2.webp",
+   "w": 53,
+   "h": 67
+  },
+  {
+   "id": "3",
+   "file": "buff-3.webp",
+   "w": 49,
+   "h": 27
+  },
+  {
+   "id": "4",
+   "file": "buff-4.webp",
+   "w": 61,
+   "h": 51
+  },
+  {
+   "id": "5",
+   "file": "buff-5.webp",
+   "w": 35,
+   "h": 24
+  },
+  {
+   "id": "6",
+   "file": "buff-6.webp",
+   "w": 67,
+   "h": 25
+  },
+  {
+   "id": "7",
+   "file": "buff-7.webp",
+   "w": 48,
+   "h": 62
+  }
+ ]
+}

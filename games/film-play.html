@@ -70,6 +70,21 @@
   #pick .step{display:none}
   #pick[data-step="1"] .step1{display:grid}
   #pick[data-step="2"] .step2{display:grid}
+  #pick[data-step="3"] .step3{display:grid}
+  /* step 3: two free rows -- musuh and kota are chosen INDEPENDENTLY. The game
+     ships them welded per level; the composition is rebuilt in the game's hook. */
+  #pick .step3{flex:0 1 auto;min-height:0;width:100%;max-width:1240px;
+    margin:clamp(8px,2.2vh,20px) auto;grid-template-rows:1fr 1fr;gap:clamp(8px,1.8vh,18px);align-content:center}
+  #pick .prow{display:flex;flex-direction:column;min-height:0;gap:6px}
+  #pick .pstrip{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(6px,1.1vw,13px);min-height:0}
+  #pick .clab{font-family:'Baloo 2',sans-serif;font-weight:800;text-align:center;
+    font-size:clamp(.6rem,1.5vh,.82rem);color:#c3b8ff;letter-spacing:.02em}
+  .strow .sw canvas{max-width:96px}
+  .dotrow{max-width:430px}
+  .dot{width:38px;height:38px;min-height:44px;padding:3px;border:0;cursor:pointer;border-radius:50%;
+    background:transparent;box-shadow:none}
+  .dot i{display:block;width:32px;height:32px;border-radius:50%;box-shadow:0 3px 0 #0d0a28,inset 0 2px 3px rgba(255,255,255,.25)}
+  .dot[aria-pressed="true"] i{box-shadow:0 0 0 3px #ffe08a,0 3px 0 #0d0a28}
   /* ── step 1: the five adventures ────────────────────────────────────────── */
   /* min-height:0 on the track + the cards lets the art shrink instead of pushing
      the buttons off-screen on a short landscape window. max-height keeps the
@@ -116,15 +131,21 @@
   .acard[aria-pressed="true"] .tick{display:flex}
   .acard .tick svg{width:15px;height:15px}
   /* ── step 2: the colour ─────────────────────────────────────────────────── */
-  #pick .step2{flex:0 1 auto;min-height:0;width:100%;max-width:1240px;
-    margin:clamp(8px,2.2vh,20px) auto;height:min(100%,438px);
-    grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto;gap:clamp(8px,1.6vh,16px);align-content:center}
+  /* MENGISI sisa tinggi, bukan tinggi tetap: dengan baris stiker dan warna
+     stiker ikut masuk, tinggi tetap membuat panel menabrak judul di atas dan
+     tombol di bawah. Diukur di 1600x900 -- keduanya tumpang tindih. */
+  #pick .step2{flex:1 1 auto;min-height:0;width:100%;max-width:1240px;
+    margin:clamp(6px,1.4vh,14px) auto;
+    grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto;gap:clamp(8px,1.6vh,16px);align-content:stretch}
   /* wide landscape (the target): art on the left, swatches on the right, so the
      whole step stays inside a short window with no scrolling */
   @media(min-width:860px){
     #pick[data-step="2"] .step2{grid-template-columns:minmax(0,1fr) minmax(0,1.12fr);
       grid-template-rows:minmax(0,1fr);align-items:stretch;gap:clamp(10px,1.8vw,22px)}
   }
+  /* panel menggulir sendiri; tombol di bawah tidak boleh pernah terdorong keluar */
+  .cpanel{overflow-y:auto;overflow-x:hidden;justify-content:flex-start;padding:2px 4px}
+  #pick .step3{flex:1 1 auto}
   .cstage{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:0;min-width:0;
     padding:clamp(8px,1.6vh,16px);border-radius:24px;background:#1a1440;
     box-shadow:0 8px 0 #0d0a28,0 16px 30px rgba(0,0,0,.4),inset 0 2px 3px rgba(255,255,255,.12)}
@@ -218,8 +239,22 @@
         <div class="cap" id="ccap"></div>
       </div>
       <div class="cpanel">
+        <div class="clab">Cat</div>
         <div class="swrow" id="swrow" role="group" aria-label="Pilih warna mobil"></div>
-        <p class="cnote">Di Gotham kamu bisa ganti <b>warna</b> mobilnya. Mau pasang stiker dan wajah? Itu serunya di <b>Batwheels by You</b>.</p>
+        <div class="clab">Stiker</div>
+        <div class="swrow strow" id="strow" role="group" aria-label="Pilih stiker"></div>
+        <div class="clab">Warna stiker</div>
+        <div class="swrow dotrow" id="stcrow" role="group" aria-label="Pilih warna stiker"></div>
+      </div>
+    </div>
+    <div class="step step3" id="step3">
+      <div class="prow">
+        <div class="clab">Siapa yang dikejar?</div>
+        <div class="pstrip" id="foerow" role="group" aria-label="Pilih musuh"></div>
+      </div>
+      <div class="prow">
+        <div class="clab">Di kota mana?</div>
+        <div class="pstrip" id="cityrow" role="group" aria-label="Pilih kota"></div>
       </div>
     </div>
     <div class="pfoot">
@@ -238,6 +273,9 @@
     <div style="font-size:20px;font-weight:900">Game tidak ditemukan</div>
     <a href="film-anak.html">← Kembali ke daftar Film Anak</a>
   </div>
+<!-- Mesin cat: dipakai untuk pratinjau DAN untuk tekstur yang benar-benar
+     dipakai balapan, jadi yang dilihat anak persis yang dia dapat. -->
+<script src="film/gg-paint.js?v=59.94-20260808a"></script>
 <script>
   // Whitelist — only these slugs may be framed (no arbitrary iframe injection).
   var GAMES = {
@@ -318,60 +356,190 @@
   // on the game's own level select.
   var SCENE_ENTRY = { 'batwheels-gotham-getaway': '?targetScene=LevelSelect' };
 
-  // ── "Pilih Petualangan" ───────────────────────────────────────────────────────────────
-  // Five adventures. Each is led by its VILLAIN and city, with the Batwheels car shown as
-  // what comes with it -- because hero and villain are welded into one Spine skeleton per
-  // level (three skins: default + hero + villain), so they genuinely cannot be chosen apart.
-  //
-  // The palettes are PER HERO and hand-checked on that hero's own art, because the tint is a
-  // MULTIPLY on the whole vehicle: it can only darken or shift, never brighten, so a swatch
-  // only reads well where it overlaps the car's own hue. Gold on Bam's navy turns
-  // olive-army-green; every cool tint on Redbird's red collapses to muddy maroon. Those were
-  // measured and dropped. Nothing desaturated or grey is offered at all -- multiply makes
-  // grey read as dirt, never silver.
-  //
-  // The ids and the 6 hex digits are the ONLY values ever put in the URL, and the game
-  // re-checks both against its own hard-coded table / regex, so nothing user-supplied can
-  // reach the engine.
-  var ADV = [
-    { id:'bam', hero:'Bam', foe:'Prank', foeId:'prank', city:'Jalan Seru',
-      pal:[['Langit','#7fc8ff'],['Toska','#5fe0e0'],['Mint','#7ff0c0'],['Ungu','#9f7fff'],['Magenta','#e57fff']] },
-    { id:'bibi', hero:'Bibi', foe:'Jestah', foeId:'jestah', city:'Tempat Rongsokan',
-      pal:[['Langit','#7fc8ff'],['Toska','#5fe0e0'],['Mint','#7ff0c0'],['Pink','#ff9ecf'],['Magenta','#e57fff']] },
-    { id:'redbird', hero:'Redbird', foe:'Ducky', foeId:'ducky', city:'Pelabuhan',
-      pal:[['Kuning','#ffe87f'],['Jingga','#ffb037'],['Oranye','#ff9d5c'],['Pink','#ff85b3'],['Magenta','#e57fff']] },
-    { id:'batwing', hero:'Batwing', foe:'Quizz', foeId:'quizz', city:'Langit Kota',
-      pal:[['Mint','#7ff0c0'],['Langit','#7fc8ff'],['Oranye','#ff9d5c'],['Pink','#ff9ecf'],['Magenta','#e57fff']] },
-    { id:'buff', hero:'Buff', foe:'Snowy', foeId:'snowy', city:'Jalan Beku',
-      pal:[['Langit','#7fc8ff'],['Toska','#5fe0e0'],['Mint','#7ff0c0'],['Ungu','#9f7fff'],['Magenta','#e57fff']] }
+  // ── Pilih pengejar -> cat -> pilih musuh + kota ────────────────────────────────────
+  // Sebelumnya satu catatan mengelas hero + musuh + kota + palet jadi satu, sehingga
+  // memilih salah satunya berarti memilih semuanya -- itu keluhan "terpaku pada pair".
+  // Ketiganya kini daftar terpisah; game menyusun ulang komposisinya di sisi sana.
+  var HEROES = [
+    { id:'bam',     name:'Bam' },
+    { id:'bibi',    name:'Bibi' },
+    { id:'redbird', name:'Redbird' },
+    { id:'batwing', name:'Batwing' },
+    { id:'buff',    name:'Buff' }
   ];
+  var FOES = [
+    { id:'prank',  name:'Prank' },
+    { id:'jestah', name:'Jestah' },
+    { id:'ducky',  name:'Ducky' },
+    { id:'quizz',  name:'Quizz' },
+    { id:'snowy',  name:'Snowy' }
+  ];
+  var CITIES = [
+    { id:'funstreet',    name:'Jalan Seru' },
+    { id:'scrapyard',    name:'Tempat Rongsokan' },
+    { id:'docks',        name:'Pelabuhan' },
+    { id:'citysky',      name:'Langit Kota' },
+    { id:'frozenstreet', name:'Jalan Beku' }
+  ];
+  // Warna stiker: daftar milik Batwheels by You sendiri, bukan palet karangan.
+  var STICKER_TINTS = ['ffffff','fed52f','fb8e0d','e72323','db13d4','a71ad5','4566d1','07bbcc','16ba04'];
+  var GG_BASE = 'film/batwheels-gotham-getaway/assets/animations/';
+
   var TICK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="#3a2b12" stroke-width="3.4" ' +
                  'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg>';
-  var chosen = null;      // the picked adventure object
-  var tint = null;        // '#rrggbb', or null for "Asli" (no tint at all)
-  var heroImg = null;     // the picked hero's art, loaded once per adventure
 
-  // Paint `img` into `cv` multiplied by `hex`. This is the SAME operation the game does
-  // (Spine multiplies skeleton.color into every attachment), so the swatch cannot promise a
-  // colour the race will not deliver. Multiplying over transparent pixels leaves the flat
-  // fill behind, so the vehicle's own alpha is stamped back with destination-in.
-  function paintTinted(cv, img, hex){
-    var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
-    if (!w || !h) return;
-    var S = 2;                                   // backing store at 2x for retina
-    cv.width = w * S; cv.height = h * S;
-    var g = cv.getContext('2d');
-    if (!g) return;
-    g.clearRect(0, 0, cv.width, cv.height);
-    g.drawImage(img, 0, 0, cv.width, cv.height);
-    if (!hex) return;
-    g.globalCompositeOperation = 'multiply';
-    if (g.globalCompositeOperation !== 'multiply') return;   // ancient browser: show untinted
-    g.fillStyle = hex;
-    g.fillRect(0, 0, cv.width, cv.height);
-    g.globalCompositeOperation = 'destination-in';
-    g.drawImage(img, 0, 0, cv.width, cv.height);
-    g.globalCompositeOperation = 'source-over';
+  var pickHero = null, pickFoe = FOES[0], pickCity = CITIES[0];
+  var paintHex = null, stickerFile = null, stickerTint = STICKER_TINTS[0];
+  var stickerCat = null;                 // katalog stiker per hero
+  var painting = 0;                      // penghitung permintaan; hasil basi dibuang
+
+  function stickerOpt(){
+    return stickerFile ? { url:'film/assets/gg-stickers/' + stickerFile, tint:stickerTint } : null;
+  }
+
+  // Satu implementasi cat dipakai DUA KALI: pratinjau di sini, dan tekstur yang
+  // benar-benar dipakai balapan. Anak melihat persis apa yang akan dia dapat.
+  function renderPreview(){
+    if (!window.GGPaint || !pickHero) return Promise.resolve(null);
+    var mine = ++painting;
+    return GGPaint.paintPage(GG_BASE, pickHero.id, paintHex, stickerOpt()).then(function(res){
+      if (mine !== painting) return null;          // pilihan sudah berubah
+      var big = document.getElementById('cbig');
+      var cv = GGPaint.cropBody(res, 680);
+      big.width = cv.width; big.height = cv.height;
+      big.getContext('2d').drawImage(cv, 0, 0);
+      return res;
+    })['catch'](function(){ return null; });
+  }
+
+  function swatchButton(label, onTap){
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'sw';
+    b.setAttribute('aria-pressed','false');
+    b.setAttribute('aria-label', label);
+    b.addEventListener('click', onTap);
+    return b;
+  }
+
+  function markOnly(row, btn){
+    var all = row.querySelectorAll('[aria-pressed]');
+    for (var i=0;i<all.length;i++) all[i].setAttribute('aria-pressed','false');
+    btn.setAttribute('aria-pressed','true');
+  }
+
+  // Setiap swatch adalah pratinjau mini hero ini dalam warna itu, bukan bulatan
+  // datar: cat mengganti rona sambil mempertahankan bayangan, jadi bulatan datar
+  // akan menjanjikan sesuatu yang tidak persis sama dengan hasilnya.
+  function buildPaintRow(){
+    var row = document.getElementById('swrow');
+    row.innerHTML = '';
+    GGPaint.PAINTS.forEach(function(pa){
+      var b = swatchButton(pickHero.name + ' warna ' + pa.name, function(){
+        paintHex = pa.hex; markOnly(row, b); renderPreview();
+        document.getElementById('ccap').textContent = pickHero.name + ' — ' + pa.name;
+      });
+      var cv = document.createElement('canvas');
+      var nm = document.createElement('span'); nm.className = 'swn'; nm.textContent = pa.name;
+      b.appendChild(cv); b.appendChild(nm); row.appendChild(b);
+      GGPaint.paintPage(GG_BASE, pickHero.id, pa.hex, null).then(function(res){
+        var mini = GGPaint.cropBody(res, 120);
+        cv.width = mini.width; cv.height = mini.height;
+        cv.getContext('2d').drawImage(mini, 0, 0);
+      })['catch'](function(){});
+    });
+    row.firstChild.setAttribute('aria-pressed','true');
+  }
+
+  function buildStickerRow(){
+    var row = document.getElementById('strow');
+    row.innerHTML = '';
+    var mine = (stickerCat && stickerCat[pickHero.id]) || [];
+    var opts = [{ id:null, file:null, label:'Polos' }].concat(mine.map(function(sk){
+      return { id:sk.id, file:sk.file, label:'Stiker ' + sk.id };
+    }));
+    opts.forEach(function(o){
+      var b = swatchButton(o.label, function(){
+        stickerFile = o.file; markOnly(row, b); renderPreview();
+      });
+      var cv = document.createElement('canvas');
+      b.appendChild(cv); row.appendChild(b);
+      if (!o.file){
+        cv.width = 96; cv.height = 40;
+        var g = cv.getContext('2d');
+        g.fillStyle = '#efe9ff'; g.font = '700 15px "Baloo 2",sans-serif';
+        g.textAlign = 'center'; g.textBaseline = 'middle';
+        g.fillText('Polos', 48, 21);
+        return;
+      }
+      var im = new Image();
+      im.onload = function(){
+        var sc = Math.min(90/im.width, 40/im.height);
+        cv.width = Math.max(8, Math.round(im.width*sc)); cv.height = Math.max(8, Math.round(im.height*sc));
+        var g = cv.getContext('2d');
+        g.drawImage(im, 0, 0, cv.width, cv.height);
+        g.globalCompositeOperation = 'source-in';
+        g.fillStyle = '#efe9ff'; g.fillRect(0,0,cv.width,cv.height);
+      };
+      im.src = 'film/assets/gg-stickers/' + o.file;
+    });
+    row.firstChild.setAttribute('aria-pressed','true');
+  }
+
+  function buildStickerTints(){
+    var row = document.getElementById('stcrow');
+    row.innerHTML = '';
+    STICKER_TINTS.forEach(function(hex){
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'dot';
+      b.setAttribute('aria-pressed', hex === stickerTint ? 'true' : 'false');
+      b.setAttribute('aria-label','Warna stiker');
+      var i = document.createElement('i'); i.style.background = '#' + hex;
+      b.appendChild(i);
+      b.addEventListener('click', function(){
+        stickerTint = hex; markOnly(row, b); renderPreview();
+      });
+      row.appendChild(b);
+    });
+  }
+
+  function goPaint(){
+    if (!pickHero) return;
+    paintHex = null; stickerFile = null;
+    var after = function(){
+      buildPaintRow(); buildStickerRow(); buildStickerTints();
+      document.getElementById('ccap').textContent = pickHero.name + ' — Asli';
+      renderPreview(); setStep(2);
+    };
+    if (stickerCat) return after();
+    fetch('film/assets/gg-stickers/catalog.json')
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(j){ stickerCat = j || {}; after(); })
+      ['catch'](function(){ stickerCat = {}; after(); });
+  }
+
+  function cardRow(hostId, items, artFor, onPick, current){
+    var host = document.getElementById(hostId);
+    host.innerHTML = '';
+    items.forEach(function(it){
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'acard';
+      b.setAttribute('aria-pressed', current && current.id === it.id ? 'true' : 'false');
+      b.setAttribute('aria-label', it.name);
+      var tick = document.createElement('span'); tick.className = 'tick'; tick.innerHTML = TICK_SVG;
+      b.appendChild(tick);
+      var art = artFor(it);
+      if (art) b.appendChild(art);
+      var nm = document.createElement('span'); nm.className = 'vn'; nm.textContent = it.name;
+      b.appendChild(nm);
+      b.addEventListener('click', function(){ markOnly(host, b); onPick(it); });
+      host.appendChild(b);
+    });
+  }
+
+  function img(src, cls){
+    var e = document.createElement('img'); e.className = cls || 'vil';
+    e.src = src; e.alt = ''; e.decoding = 'async';
+    return e;
   }
 
   function setStep(n){
@@ -381,104 +549,63 @@
     var back = document.getElementById('pback'), skip = document.getElementById('pskip');
     pick.setAttribute('data-step', String(n));
     if (n === 1){
-      h1.textContent = 'Pilih Petualangan';
-      sub.textContent = 'Pilih penjahat yang mau dikejar. Mobil Batwheels-nya sudah menunggu di kotanya.';
+      h1.textContent = 'Pilih Pengejar';
+      sub.textContent = 'Siapa yang mau kamu kendarai?';
       back.hidden = true; skip.hidden = false;
-      go.disabled = !chosen;
-      gotx.textContent = chosen ? ('Lanjut — cat ' + chosen.hero) : 'Pilih dulu ya';
-    } else {
-      h1.textContent = 'Cat Mobil ' + chosen.hero;
-      sub.textContent = 'Pilih warna kesukaanmu, lalu kejar ' + chosen.foe + ' di ' + chosen.city;
+      go.disabled = !pickHero;
+      gotx.textContent = pickHero ? ('Lanjut — cat ' + pickHero.name) : 'Pilih dulu ya';
+    } else if (n === 2){
+      h1.textContent = 'Cat Mobil ' + pickHero.name;
+      sub.textContent = 'Pilih warna dan stikernya. Nanti mobilmu memang jadi begini.';
       back.hidden = false; skip.hidden = true;
+      back.querySelector('span').textContent = 'Ganti pengejar';
+      go.disabled = false;
+      gotx.textContent = 'Lanjut — pilih musuh';
+    } else {
+      h1.textContent = 'Musuh dan Kota';
+      sub.textContent = 'Bebas pilih. Musuh mana pun bisa di kota mana pun.';
+      back.hidden = false; skip.hidden = true;
+      back.querySelector('span').textContent = 'Ganti cat';
       go.disabled = false;
       gotx.textContent = 'Mulai balapan!';
     }
   }
 
-  // ── step 2: build the swatch row + big preview for the chosen hero ──────────────────
-  function buildColours(){
-    var row = document.getElementById('swrow');
-    var big = document.getElementById('cbig'), cap = document.getElementById('ccap');
-    row.innerHTML = '';
-    tint = null;
-    var opts = [['Asli', null]].concat(chosen.pal);
-    var btns = [];
-    function select(i){
-      tint = opts[i][1];
-      for (var k = 0; k < btns.length; k++) btns[k].setAttribute('aria-pressed', k === i ? 'true' : 'false');
-      paintTinted(big, heroImg, tint);
-      cap.textContent = chosen.hero + ' warna ' + opts[i][0];
-    }
-    for (var i = 0; i < opts.length; i++){
-      (function(o, idx){
-        var b = document.createElement('button');
-        b.type = 'button'; b.className = 'sw';
-        b.setAttribute('aria-pressed', 'false');
-        b.setAttribute('aria-label', chosen.hero + ' warna ' + o[0]);
-        var cv = document.createElement('canvas');
-        paintTinted(cv, heroImg, o[1]);
-        var nm = document.createElement('span'); nm.className = 'swn'; nm.textContent = o[0];
-        b.appendChild(cv); b.appendChild(nm);
-        b.addEventListener('click', function(){ select(idx); });
-        row.appendChild(b); btns.push(b);
-      })(opts[i], i);
-    }
-    select(0);
-  }
-
-  function goColours(){
-    if (!chosen) return;
-    // the hero art is already in the page (the pair chip), so this is a cache hit
-    var img = new Image();
-    img.decoding = 'sync';
-    img.onload = function(){ heroImg = img; buildColours(); setStep(2); };
-    img.onerror = function(){ start(advQuery()); };   // no art -> just race, never dead-end
-    img.src = 'film/assets/gg-heroes/' + chosen.id + '.webp';
-  }
-
-  function advQuery(){
-    var q = '?targetScene=Game&hero=' + encodeURIComponent(chosen.id);
-    if (tint) q += '&tint=' + tint.slice(1);
-    return q;
+  // Konfigurasi lewat sessionStorage, bukan query string: halaman cat berada di
+  // origin yang sama dengan iframe, dan blob hasil cat tidak layak jadi URL.
+  function handOff(){
+    return renderPreview().then(function(res){
+      if (!res) return null;
+      return GGPaint.pageBlobURL(res);
+    })['catch'](function(){ return null; }).then(function(blob){
+      try {
+        sessionStorage.setItem('gg_custom', JSON.stringify({
+          hero: pickHero.id, villain: pickFoe.id, city: pickCity.id, paint: blob
+        }));
+      } catch (e) {}
+      start('?targetScene=Game');
+    });
   }
 
   function showPicker(){
-    var grid = document.getElementById('pgrid');
-    for (var i = 0; i < ADV.length; i++){
-      (function(a){
-        var b = document.createElement('button');
-        b.type = 'button'; b.className = 'acard';
-        b.setAttribute('aria-pressed','false');
-        b.setAttribute('aria-label', 'Kejar ' + a.foe + ' di ' + a.city + ', kamu jadi ' + a.hero);
-        var tick = document.createElement('span'); tick.className = 'tick'; tick.innerHTML = TICK_SVG;
-        var vil = document.createElement('img'); vil.className = 'vil';
-        vil.src = 'film/assets/gg-villains/' + a.foeId + '.webp';
-        vil.alt = ''; vil.decoding = 'async';
-        var nm = document.createElement('span'); nm.className = 'vn'; nm.textContent = a.foe;
-        var cy = document.createElement('span'); cy.className = 'vc'; cy.textContent = 'di ' + a.city;
-        var pr = document.createElement('span'); pr.className = 'pair';
-        var ph = document.createElement('img');
-        ph.src = 'film/assets/gg-heroes/' + a.id + '.webp'; ph.alt = ''; ph.decoding = 'async';
-        var pt = document.createElement('span'); pt.textContent = 'Kamu jadi ' + a.hero;
-        pr.appendChild(ph); pr.appendChild(pt);
-        b.appendChild(tick); b.appendChild(vil); b.appendChild(nm); b.appendChild(cy); b.appendChild(pr);
-        b.addEventListener('click', function(){
-          chosen = a;
-          var all = grid.querySelectorAll('.acard');
-          for (var j = 0; j < all.length; j++) all[j].setAttribute('aria-pressed','false');
-          b.setAttribute('aria-pressed','true');
-          setStep(1);
-        });
-        grid.appendChild(b);
-      })(ADV[i]);
-    }
+    cardRow('pgrid', HEROES, function(h){ return img('film/assets/gg-heroes/' + h.id + '.webp'); },
+      function(h){ pickHero = h; setStep(1); }, pickHero);
+    cardRow('foerow', FOES, function(f){ return img('film/assets/gg-villains/' + f.id + '.webp'); },
+      function(f){ pickFoe = f; }, pickFoe);
+    cardRow('cityrow', CITIES, function(){ return null; }, function(c){ pickCity = c; }, pickCity);
+
     document.getElementById('pgo').addEventListener('click', function(){
-      if (!chosen) return;
       var step = document.getElementById('pick').getAttribute('data-step');
-      if (step === '1') goColours(); else start(advQuery());
+      if (step === '1') goPaint();
+      else if (step === '2') setStep(3);
+      else handOff();
     });
-    document.getElementById('pback').addEventListener('click', function(){ setStep(1); });
+    document.getElementById('pback').addEventListener('click', function(){
+      var step = document.getElementById('pick').getAttribute('data-step');
+      setStep(step === '3' ? 2 : 1);
+    });
     document.getElementById('pskip').addEventListener('click', function(){
+      try { sessionStorage.removeItem('gg_custom'); } catch (e) {}
       start(SCENE_ENTRY[slug] || '');
     });
     setStep(1);
@@ -507,6 +634,9 @@
   wake();
   // Android hardware-back / browser-back stays inside the app (no accidental exit)
 </script>
+<!-- The film pages were the only two the child can reach that had no freeze
+     watchdog, so a hang here left no evidence at all. -->
+<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
 <script src="sw-reload.js?v=59.94-20260808a"></script>
 </body>
 </html>
