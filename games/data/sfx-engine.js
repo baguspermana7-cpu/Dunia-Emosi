@@ -186,10 +186,18 @@
     return state.initing
   }
 
+  var _gestureArmed = false
   function attachGestureUnlock () {
     if (state.unlocked || typeof document === 'undefined') return
+    // cue() calls this on EVERY sound. Without this guard each call registered a
+    // fresh pointerdown+keydown pair ({once:true} can't dedupe distinct closures),
+    // so a session that cues before the unlocking gesture piled up 2 document
+    // listeners per sound — all firing in one burst on that first tap.
+    if (_gestureArmed) return
+    _gestureArmed = true
     var unlock = function () {
       state.unlocked = true
+      _gestureArmed = false
       // Touch any cached audio to satisfy iOS autoplay policy
       try {
         var silent = new Audio()
@@ -474,10 +482,16 @@
     var src = CUE_BASE + file
     var vol = (opts.volume == null) ? (CUE_VOL[name] || 0.7) : opts.volume
     var a = playAudio(src, vol)
-    if (a) {
+    // Pooled <audio> elements are long-lived and reused. A fresh {once:true}
+    // 'error' listener per cue never fires on the success path, so it is never
+    // removed: the element accumulates one dead closure per sound played, and a
+    // single later error would fire ALL of them in one tick (hundreds of
+    // _cueSynth() calls = oscillator storm). Hook each element exactly once.
+    if (a && !a.__cueErrHooked) {
+      a.__cueErrHooked = true
       a.addEventListener('error', function () {
         _cueFailed[name] = true; _cueSynth(name)
-      }, { once: true })
+      })
     }
     return a
   }

@@ -104,6 +104,24 @@
   function now () { return (W.performance && performance.now) ? performance.now() : Date.now() }
   function raf (fn) { try { return requestAnimationFrame(fn) } catch (e) { return setTimeout(fn, 16) } }
 
+  // ── DOM frame warm-cache ──────────────────────────────────────────────────
+  // The DOM variants used to do `urls.forEach(u => { var im = new Image(); im.src = u })`
+  // on EVERY call. In a battle game that is ~47 throwaway Image objects per hit
+  // (and ~14k over a session) — pure GC churn on a low-end tablet, since the
+  // bytes are already in the HTTP cache after the first warm. Keep one Image per
+  // URL alive instead, so each frame is fetched + decoded exactly once.
+  var _warmed = {}
+  function warmFrames (urls) {
+    for (var i = 0; i < urls.length; i++) {
+      var u = urls[i]
+      if (_warmed[u]) continue
+      var im = new Image()
+      im.decoding = 'async'
+      im.src = u
+      _warmed[u] = im      // retained on purpose: bounded by REGISTRY frame count
+    }
+  }
+
   // ── PIXI texture cache (lazy, per-fx, shared across all calls) ─────────────
   var _tex = {}, _pending = {}
   function loadTex (fx) {
@@ -279,7 +297,7 @@
     }
     var urls = frameUrls(fx)
     if (!urls.length) { try { el.remove() } catch (e) {} done(); return }
-    urls.forEach(function (u) { var im = new Image(); im.src = u })
+    warmFrames(urls)
     var i = 0, total = urls.length, per = Math.max(28, Math.round(500 / total))
     el.style.backgroundImage = 'url("' + urls[0] + '")'
     var step = function () {
@@ -308,7 +326,7 @@
       } catch (e) {}
       return handle
     }
-    urls.forEach(function (u) { var im = new Image(); im.src = u })
+    warmFrames(urls)
     var rect0 = targetEl.getBoundingClientRect()
     var size = Math.max(90, rect0.width * mult)
     var el = _domEl(fx, size, parent)
@@ -362,7 +380,7 @@
     if (!urls.length || reduced()) {
       dom(to.x, to.y, { fx: fx, size: size }); onHit(); return
     }
-    urls.forEach(function (u) { var im = new Image(); im.src = u })
+    warmFrames(urls)
     var el = _domEl(fx, size, parent)
     // A-355b — thrown fire glows (screen) instead of a flat sticker
     el.style.mixBlendMode = (opts.blend || 'screen')
@@ -370,17 +388,34 @@
     var i = 0, total = urls.length, per = Math.max(28, Math.round(dur / total))
     var t0 = now(), dx = to.x - from.x, dy = to.y - from.y
     var ang = Math.atan2(dy, dx) * 180 / Math.PI
+    var landed = false
+    var land = function (withBurst) {
+      if (landed) return
+      landed = true
+      try { clearTimeout(bail) } catch (e) {}
+      try { el.remove() } catch (e) {}
+      if (withBurst) dom(to.x, to.y, { fx: 'sparks', size: size * 1.2, blend: 'screen' })
+      onHit()
+    }
+    // SAFETY NET (mirrors burst()'s _kill timeout). This is the only VFX path
+    // driven by rAF, which does NOT tick while the tab is hidden — locking the
+    // tablet mid-throw would otherwise strand this fixed-position node on screen
+    // and never fire onHit. setTimeout still runs (clamped) when hidden.
+    var bail = setTimeout(function () { land(true) }, Math.max(1200, dur * 4))
+    var lastFrame = -1
     var step = function () {
-      var k = (now() - t0) / dur
-      if (k >= 1) {
-        try { el.remove() } catch (e) {}
-        dom(to.x, to.y, { fx: 'sparks', size: size * 1.2, blend: 'screen' })
-        onHit(); return
-      }
+      if (landed) return
+      var t = now() - t0, k = t / dur
+      if (k >= 1) { land(true); return }
       var x = from.x + dx * k, y = from.y + dy * k
       el.style.left = (x - size / 2) + 'px'; el.style.top = (y - size / 2) + 'px'
       el.style.transform = 'rotate(' + ang + 'deg)'
-      el.style.backgroundImage = 'url("' + urls[i % total] + '")'; i++
+      // advance the sprite on its own ~`per` ms cadence instead of swapping the
+      // backgroundImage on EVERY rAF (`per` was computed and then ignored — a
+      // 60 Hz repaint storm on a layer that also carries blend + drop-shadow).
+      var f = Math.floor(t / per) % total
+      if (f !== lastFrame) { lastFrame = f; el.style.backgroundImage = 'url("' + urls[f] + '")' }
+      i++
       raf(step)
     }
     raf(step)

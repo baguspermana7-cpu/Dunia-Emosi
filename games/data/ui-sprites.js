@@ -157,6 +157,11 @@
     if (!node || node.nodeType !== 3) return
     if (seenText && seenText.has(node)) return
     var txt = node.nodeValue
+    // EMO_RE is /g/u, so .test() ADVANCES lastIndex. If we return early below
+    // (skipped container) the regex stays mid-string and the NEXT text node is
+    // tested from that offset — an emoji before it is missed, the node is then
+    // added to seenText and is poisoned FOREVER. Always start from 0.
+    EMO_RE.lastIndex = 0
     if (!txt || !EMO_RE.test(txt)) { if (seenText) seenText.add(node); return }
     if (!node.parentNode || skipNode(node.parentNode)) { if (seenText) seenText.add(node); return }
     EMO_RE.lastIndex = 0

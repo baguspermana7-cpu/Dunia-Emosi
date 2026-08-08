@@ -706,12 +706,16 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
 <div class="toast" id="toast"></div>
 
+<!-- capture runtime errors to localStorage.__freezeLog BEFORE anything else can
+     throw, so the next "kadang hang" report on the real tablet ships evidence.
+     Inspect with: JSON.parse(localStorage.__freezeLog || '[]') -->
+<script src="data/freeze-watchdog.js?v=20260428a"></script>
 <script src="data/math-rules.js?v=59.28-20260713a"></script>
 <script src="data/save-engine.js?v=59.6-20260712a"></script>
-<script src="data/sfx-engine.js?v=59.6-20260712a"></script>
-<script src="vfx-engine.js?v=59.18-20260712a"></script><!-- shared VFX (monster defeat explosion) -->
+<script src="data/sfx-engine.js?v=59.93-20260808b"></script>
+<script src="vfx-engine.js?v=59.93-20260808b"></script><!-- shared VFX (monster defeat explosion) -->
 <script src="data/math-heroes.js?v=59.29-20260715a"></script><!-- P3b hero roster (sprite changes per op) -->
-<script src="data/emoji-map.js?v=59.74-20260725d"></script><script src="data/ui-sprites.js?v=59.91-20260804b"></script><!-- UIUX/gameplay sprite packs -->
+<script src="data/emoji-map.js?v=59.74-20260725d"></script><script src="data/ui-sprites.js?v=59.93-20260808b"></script><!-- UIUX/gameplay sprite packs -->
 <script src="data/math-stories.js?v=59.32-20260717a"></script><!-- P3d per-level story arcs (monster names + banter) -->
 <!-- P3e cloud sync — config baked in but STAYS INERT until localStorage 'mp_cloud_on'='1'
      (a button in plb.html flips it, same origin). publishable/anon key ONLY — the
@@ -949,10 +953,46 @@ function backToSub(){ openSub(curWorld); }
 
 /* ── Gameplay ── */
 var game=null;
+/* ── run bookkeeping (freeze hardening, 2026-08) ──────────────────────────────
+   Every level gets a runId. Timers armed by one run refuse to act once the run
+   is superseded (quit / restart / next level), so a stale setTimeout can never
+   repaint or re-finish a level that is already over. `starting` stops a
+   double/triple-tap on "Mulai" from charging energy twice and arming two
+   parallel question loops on the same level. ------------------------------- */
+var runId=0, starting=false, _stuckT=null, _startSafety=null;
+function endRun(){
+  runId++;
+  clearTimeout(_stuckT); _stuckT=null;
+  clearTimeout(_startSafety); _startSafety=null;
+  starting=false;
+  if(game) game.done=true;
+}
+function laterRun(fn,ms){                 // setTimeout that dies with its run
+  var r=runId;
+  return setTimeout(function(){ if(r!==runId||!game||game.done) return; fn(); },ms);
+}
+function logFreeze(where,e){              // evidence for the next real-device report
+  try{
+    var K='__freezeLog', arr=JSON.parse(localStorage.getItem(K)||'[]');
+    arr.push({t:Date.now(),type:'mp',where:where,msg:String((e&&e.message)||e||''),
+              stack:String((e&&e.stack)||'').slice(0,500)});
+    while(arr.length>20) arr.shift();
+    localStorage.setItem(K,JSON.stringify(arr));
+  }catch(_){}
+  try{ console.warn('[MP]',where,e); }catch(_){}
+}
 function startGame(ops){  // P8: ops = array of chosen operators, or null = campur (all)
   if(ops&&!(ops instanceof Array)) ops=[ops];  // tolerate a bare op string
+  if(starting) return;                   // re-entrancy guard (kid double-taps Mulai)
   regenEnergy();
-  if(econ.energy<LEVEL_COST){ toast('⚡ Energi habis! Tunggu isi ulang atau beli di Toko.'); openModal('shop'); return; }
+  if(econ.energy<LEVEL_COST){
+    var _rem=energyTimerStr();
+    toast('⚡ Energi habis! Terisi lagi '+(_rem?('dalam '+_rem):'sebentar lagi')+'.');
+    openModal('shop'); return;
+  }
+  endRun();                              // kill any timer still owned by the last level
+  starting=true;                         // claim the start AFTER endRun (it clears `starting`)
+  _startSafety=setTimeout(function(){ starting=false; },6000);
   econ.energy-=LEVEL_COST; econ.energyTs=(econ.energy===ENERGY_MAX-1)?Date.now():econ.energyTs; saveEcon(); refreshHUD();
   var g=(curWorld-1)*SUBS+curSub, tier=tierFor(g), n=qCountFor(g), mn=maxNumFor(g);
   var isBoss=(g%SUBS===0);          // every 10th level = world boss
@@ -970,7 +1010,7 @@ function startGame(ops){  // P8: ops = array of chosen operators, or null = camp
     var q=window.makeMathQuestionV2(g,MAX_LEVEL,tier,sh,{maxNum:mn,forceOps:specific?ops:null});
     pool.push(q);
   }
-  game={g:g,pool:pool,idx:0,correct:0,wrong:0,streak:0,best:0,hearts:HEARTS_BASE+Math.min(2,econ.extraHearts),foeMax:n,bonus:bonusFor(g),super:0,superReady:false};
+  game={g:g,pool:pool,idx:0,correct:0,wrong:0,streak:0,best:0,hearts:HEARTS_BASE+Math.min(2,econ.extraHearts),foeMax:n,bonus:bonusFor(g),super:0,superReady:false,run:runId,done:false};
   updateSuper();
   curSkill=specific?ops.slice():null;
   // P3b — hero sprite changes per chosen operation (Pahlawan + / Ksatria − × ÷). Primary op = first chosen; campur = Pahlawan.
@@ -997,7 +1037,10 @@ function startGame(ops){  // P8: ops = array of chosen operators, or null = camp
   byId('foe-holder').innerHTML='<img class="mon-sprite'+(isBoss?' boss-mon':'')+'" src="'+monById(curMonId)+'" alt="" onerror="this.outerHTML=\'<span class=&quot;slime&quot;>'+_mfb+'</span>\'">';
   byId('foe-hp').style.width='100%';
   show('game'); bgmPlay();
-  playIntro(function(){ mpStoryIntro(); renderQ(); });
+  playIntro(function(){
+    clearTimeout(_startSafety); _startSafety=null; starting=false;
+    mpStoryIntro(); renderQ();
+  });
 }
 // P3d — story speech clouds. One cloud per side at a time; anchored over hero / foe.
 function mpCloud(who,text,ms){
@@ -1033,20 +1076,65 @@ function playIntro(cb){
     i++; setTimeout(step, i===1?650:450);
   })();
 }
+/* A question the UI cannot paint must NEVER strand the child on a screen of dead
+   buttons. validQ() is the contract renderQ()/answer() rely on; if a pool entry
+   ever breaks it we regenerate on the spot and, failing that, fall back to a
+   trivial sum so play always continues. */
+function validQ(q){
+  return !!(q && typeof q.q==='string' && q.q &&
+            (q.choices instanceof Array) && q.choices.length>=2 &&
+            q.choices.some(function(c){ return String(c)===String(q.ans); }));
+}
+function fallbackQ(){
+  var a=1+Math.floor(Math.random()*5), b=1+Math.floor(Math.random()*4), s=a+b;
+  var cs=[s,s+1,Math.max(0,s-1),s+2];
+  for(var i=cs.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=cs[i]; cs[i]=cs[j]; cs[j]=t; }
+  return {shape:'standard',q:a+' + '+b+' = ?',ans:s,choices:cs,op:'+'};
+}
 function renderQ(){
-  renderHearts();
-  if(game.idx>=game.pool.length) return finish();
-  var q=game.pool[game.idx];
-  byId('qprog').style.width=(game.idx/game.pool.length*100)+'%';
-  var card=byId('qcard'); card.style.boxShadow=''; card.textContent=q.q; card.classList.toggle('word',q.shape==='word');
-  var ch=byId('choices'); ch.innerHTML=''; ch.classList.toggle('sym',q.shape==='comparison');
-  q.choices.forEach(function(c,i){
-    var b=document.createElement('button'); b.className='choice c'+i; b.textContent=String(c);
-    b.onclick=function(){ answer(b,c,q); };
-    ch.appendChild(b);
-  });
+  if(!game||game.done||game.run!==runId) return;   // a superseded run must not repaint
+  try{
+    renderHearts();
+    if(game.idx>=game.pool.length) return finish();
+    var q=game.pool[game.idx];
+    if(!validQ(q)){
+      logFreeze('bad-question','idx '+game.idx+' g '+game.g);
+      try{ q=window.makeMathQuestionV2(game.g,MAX_LEVEL,tierFor(game.g),'standard',
+             {maxNum:maxNumFor(game.g),forceOps:curSkill}); }catch(_){ q=null; }
+      if(!validQ(q)) q=fallbackQ();
+      game.pool[game.idx]=q;
+    }
+    byId('qprog').style.width=(game.idx/game.pool.length*100)+'%';
+    var card=byId('qcard'); card.style.boxShadow=''; card.textContent=q.q; card.classList.toggle('word',q.shape==='word');
+    var ch=byId('choices'); ch.innerHTML=''; ch.classList.toggle('sym',q.shape==='comparison');
+    q.choices.forEach(function(c,i){
+      var b=document.createElement('button'); b.className='choice c'+i; b.textContent=String(c);
+      b.onclick=function(){ answer(b,c,q); };
+      ch.appendChild(b);
+    });
+    clearTimeout(_stuckT); _stuckT=null;      // painted → the recovery net stands down
+  }catch(e){
+    logFreeze('renderQ',e);
+    try{ finish(false); }catch(_){ try{ backToSub(); }catch(__){} }
+  }
+}
+/* LAST-RESORT recovery net. If the next question has not painted well after the
+   scheduled delay and every button is still dead, something broke between
+   answer() and renderQ() — repaint instead of leaving the child on a dead screen. */
+function armStuckGuard(delay){
+  clearTimeout(_stuckT);
+  var r=runId, idx=game.idx;
+  _stuckT=setTimeout(function(){
+    if(r!==runId||!game||game.done) return;
+    if(!byId('scr-game').classList.contains('active')) return;
+    var ch=byId('choices');
+    if(ch&&Array.prototype.some.call(ch.children,function(b){ return !b.disabled; })) return;
+    logFreeze('stuck-guard','no advance after answer at idx '+idx);
+    try{ renderQ(); }catch(e){ logFreeze('stuck-guard-render',e); try{ finish(false); }catch(_){} }
+  }, delay+5000);
 }
 function answer(btn,picked,q){
+  if(!game||game.done||game.run!==runId) return;   // ignore taps from a finished/superseded run
   var correct=String(picked)===String(q.ans);
   Array.prototype.forEach.call(byId('choices').children,function(b){ b.disabled=true; });
   if(correct){
@@ -1071,12 +1159,14 @@ function answer(btn,picked,q){
     foeAttack(); renderHearts(); juiceHit(false,0);
     mpStepBanter();   // cerita tetap berlanjut walau jawaban salah (latihan membaca)
     if(navigator.vibrate) try{ navigator.vibrate([15,40,15]); }catch(e){}
-    if(game.hearts<=0){ setTimeout(function(){ finish(true); },900); return; }
+    if(game.hearts<=0){ laterRun(function(){ finish(true); },900); return; }
   }
   refreshHUD();
   game.idx++;
   // snappier on correct; linger on wrong so the child can read the highlighted right answer
-  setTimeout(renderQ, correct ? 560 : 1250);
+  var _d = correct ? 560 : 1250;
+  laterRun(renderQ,_d);
+  armStuckGuard(_d);
 }
 function elCenter(el){ var r=el.getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height/2}; }
 function heroAttack(){ var h=byId('fh-hero'); h.classList.remove('attack-hero'); void h.offsetWidth; h.classList.add('attack-hero');
@@ -1126,9 +1216,23 @@ function useBomb(){
   wrong.slice(0,2).forEach(function(b){ b.disabled=true; b.style.opacity='.25'; });
   toast('💣 2 jawaban salah dihapus!');
 }
-function quitGame(){ if(game&&game.idx>0&&game.hearts>0&&game.idx<game.pool.length){ if(!confirm('Keluar? Progress level ini hilang.')) return; } bgmStop(); backToSub(); }
+/* NEVER gate the ← button behind confirm(). Some webviews / installed-PWA shells
+   suppress native dialogs and return false, which made ← silently do nothing —
+   from a child's seat that is indistinguishable from a frozen game. A kid-safe
+   double-tap replaces it (and spares a 5-year-old an OS dialog in English). */
+var _quitArm=0;
+function quitGame(){
+  if(game&&!game.done&&game.idx>0&&game.hearts>0&&game.idx<game.pool.length){
+    var t=Date.now();
+    if(t-_quitArm>2600){ _quitArm=t; toast('Ketuk ← lagi untuk keluar'); return; }
+  }
+  _quitArm=0; endRun(); bgmStop(); backToSub();
+}
 
 function finish(failed){
+  if(!game||game.done) return;   // idempotent: a duplicate timer must not double-award
+  game.done=true;
+  clearTimeout(_stuckT); _stuckT=null;
   var total=game.pool.length, ratio=game.correct/total;
   var stars=failed?(ratio>=0.3?1:0):(ratio>=0.85?3:(ratio>=0.6?2:(ratio>=0.3?1:0)));
   persist(game.g,stars);
