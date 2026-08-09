@@ -113,16 +113,16 @@ canvas{position:fixed;inset:0;width:100vw;height:100svh;display:block}
 <img id="monster-img" src="../assets/Pokemon/pokemondb_hd_alt2/0054_psyduck.webp" onerror="this.src='https://img.pokemondb.net/sprites/home/normal/psyduck.png';this.onerror=null" style="position:fixed;z-index:40;pointer-events:none;width:clamp(140px,26vw,220px);height:auto;bottom:0;left:0;transform:translate3d(0,0,0);display:none;image-rendering:auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,0.45))">
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="../shared/rz-responsive.js?v=59.94-20260808a"></script>
-<script src="game-modal.js?v=59.94-20260808a"></script>
-<script src="data/poke-sprite-cdn.js?v=59.94-20260808a"></script>
-<script src="data/poke-sprite-loader.js?v=59.94-20260808a"></script>
-<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
-<script src="data/save-engine.js?v=59.94-20260808a"></script>
+<script src="../shared/rz-responsive.js?v=59.95-20260809a"></script>
+<script src="game-modal.js?v=59.95-20260809a"></script>
+<script src="data/poke-sprite-cdn.js?v=59.95-20260809a"></script>
+<script src="data/poke-sprite-loader.js?v=59.95-20260809a"></script>
+<script src="data/freeze-watchdog.js?v=59.95-20260809a"></script>
+<script src="data/save-engine.js?v=59.95-20260809a"></script>
 <script src="question-bank.js"></script>
-<script src="data/sfx-engine.js?v=59.94-20260808a"></script><!-- shared coin/answer cues (owner) -->
-<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- eco HUD sprites -->
-<script src="vfx-engine.js?v=59.94-20260808a"></script><!-- shared VFX (combo-milestone pop) -->
+<script src="data/sfx-engine.js?v=59.95-20260809a"></script><!-- shared coin/answer cues (owner) -->
+<script src="data/emoji-map.js?v=59.95-20260809a"></script><script src="data/ui-sprites.js?v=59.95-20260809a"></script><!-- eco HUD sprites -->
+<script src="vfx-engine.js?v=59.95-20260809a"></script><!-- shared VFX (combo-milestone pop) -->
 <script>
 // ═══════════════════════════════════════════════════════════
 //  CONFIG
@@ -612,6 +612,8 @@ function spawnCandy() {
     container, q, color, ballType, ballName: bd.name, catName: BALL_CAT_NAMES[ballType] || 'Quiz',
     x: container.x, y: container.y,
     speed: S.fallSpeed * (0.85 + Math.random() * 0.3),
+    // v59.95 — this now spins the BALL, not the whole container. See the loop.
+    ball,
     rotation: (Math.random() - 0.5) * 0.02,
     wobble: Math.random() * Math.PI * 2, // phase for side-to-side sway
     wobbleAmp: 0.3 + Math.random() * 0.4, // sway amplitude
@@ -1021,7 +1023,15 @@ function gameLoop(ticker) {
     c.container.x += Math.sin(c.wobble) * c.wobbleAmp * dt // gentle sway
     c.x = c.container.x
     c.container.y = c.y
-    c.container.rotation += c.rotation * dt
+    // v59.95 — spin the pokéball, leave the question upright.
+    // This used to be `c.container.rotation += c.rotation * dt`, and the container holds
+    // the ball, the white pill AND the question text. The increment is unbounded, so
+    // over a six-second fall the label accumulated up to 171.8 degrees off upright
+    // (measured over 600 frames; a screenshot at t=14s caught two live balls reading at
+    // roughly -70 and +80 degrees, "8-3=?" close to upside-down). The one thing the
+    // child has to decode was illegible for most of its fall. The ball is the part that
+    // reads as tumbling; the question is information, and information stays level.
+    if (c.ball && !c.ball.destroyed) c.ball.rotation += c.rotation * dt
 
     // Warning glow when candy near bottom (last 30%)
     const dangerZone = H * 0.7

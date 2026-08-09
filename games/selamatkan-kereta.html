@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=59.94-20260808a">
+<link rel="stylesheet" href="du-buttons.css?v=59.95-20260809a">
 <title>Selamatkan Kereta 🚂</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -133,7 +133,33 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0d102
    own box and onto the card underneath: the reported 'card grid overlaps its own
    name/description text'. Measured at 1600x900, 1024x600 and 2400x1080; with
    align-items:start the card sizes to its content and spill is 0 at every width. */
-#ts-trains{display:grid;align-items:start;grid-template-columns:repeat(auto-fill,minmax(min(116px,28vw),1fr));gap:clamp(6px,2vw,10px);justify-content:center;width:min(720px,96vw);max-width:min(720px,96vw);max-height:58vh;overflow-y:auto;padding:6px 4px;scrollbar-width:thin;scrollbar-color:rgba(129,140,248,0.35) transparent}
+/* v59.95 — grid-auto-rows:min-content. align-items:start above stopped the card
+   from STRETCHING, but it did not stop the ROW TRACK from collapsing: measured
+   `grid-template-rows` was `44px 44px 44px ...` while every card measured 104.8px,
+   so all 361 cards overlapped the row above -- 657 overlapping card pairs at
+   1600x900, 2400x1080 AND 1024x600, name and description drawn on top of the card
+   above. Root cause: `.ts-preview` is a <canvas> with an intrinsic aspect ratio
+   under `max-width:100%`, so the item's block-axis max-content contribution is
+   indefinite and the auto track falls back to the card's own `min-height:44px`.
+   A/B tested live in-page: `grid-auto-rows:auto` -> still 44px; `.ts-card{min-height:0}`
+   -> 30px (worse); canvas sizing -> 44px. Only `min-content` makes the track ask the
+   card for its real height. Keep `align-items:start` -- it is still what stops a short
+   card stretching inside a taller row. Measured after: 0 overlaps at all three sizes.
+
+   v59.95 — width. Wide landscape is the primary layout (PRODUCT.md), and the picker
+   spent 720px of a 1600-2400px screen: 5 columns and 3999px of scrolling inside a
+   58vh box for 361 trains. Widening at >=1200px raises the column count and cuts the
+   scroll proportionally; below 1200px nothing changes, so the 1024x600 narrow case is
+   untouched. */
+#ts-trains{display:grid;align-items:start;grid-auto-rows:min-content;grid-template-columns:repeat(auto-fill,minmax(min(116px,28vw),1fr));gap:clamp(6px,2vw,10px);justify-content:center;width:min(720px,96vw);max-width:min(720px,96vw);max-height:58vh;overflow-y:auto;padding:6px 4px;scrollbar-width:thin;scrollbar-color:rgba(129,140,248,0.35) transparent}
+@media (min-width:1200px){
+  #ts-trains{width:min(1200px,94vw);max-width:min(1200px,94vw)}
+  #g16-tab-row{max-width:min(1200px,94vw)}
+}
+@media (min-width:1800px){
+  #ts-trains{width:min(1680px,92vw);max-width:min(1680px,92vw)}
+  #g16-tab-row{max-width:min(1680px,92vw)}
+}
 /* v55.37 B-218 — harmonized with g14 .train-card + g15 .tcard. 2.5px
    lavender border default, purple accent on selected. */
 .ts-card{background:rgba(248,240,255,0.06);border:2.5px solid rgba(167,139,250,0.25);border-radius:14px;padding:clamp(8px,2vh,13px) clamp(6px,1.5vw,12px);min-height:44px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .08s,border-color .15s,background .15s,box-shadow .15s;width:min(116px,30vw);text-align:center;display:flex;flex-direction:column;align-items:center;gap:5px}
@@ -179,29 +205,29 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 <body>
 <canvas id="pixi-canvas"></canvas>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v58.6</div>
-<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- zero-emoji engine -->
-<script src="sw-reload.js?v=59.94-20260808a"></script>
-<script src="train-shared.js?v=59.94-20260808a"></script>
-<script src="data/train-world.js?v=59.94-20260808a"></script><!-- v55.94 — 275 real-sprite world trains -->
-<script src="train-picker.js?v=59.94-20260808a"></script><!-- A-339 P2 — shared picker: lazy previews + slidable chip row -->
-<script src="train-vfx.js?v=59.94-20260808a"></script>
-<script src="motion.js?v=59.94-20260808a"></script><!-- A-315 E4 — shared motion engine (frame-rate-independent easing) -->
-<script src="train-bg-engine.js?v=59.94-20260808a"></script>
-<script src="data/bg-themes.js?v=59.94-20260808a"></script>
-<script src="data/bg-renderers.js?v=59.94-20260808a"></script>
-<script src="data/bg-npcs.js?v=59.94-20260808a"></script>
-<script src="data/bg-audio.js?v=59.94-20260808a"></script>
-<script src="data/bg-events.js?v=59.94-20260808a"></script>
+<script src="data/emoji-map.js?v=59.95-20260809a"></script><script src="data/ui-sprites.js?v=59.95-20260809a"></script><!-- zero-emoji engine -->
+<script src="sw-reload.js?v=59.95-20260809a"></script>
+<script src="train-shared.js?v=59.95-20260809a"></script>
+<script src="data/train-world.js?v=59.95-20260809a"></script><!-- v55.94 — 275 real-sprite world trains -->
+<script src="train-picker.js?v=59.95-20260809a"></script><!-- A-339 P2 — shared picker: lazy previews + slidable chip row -->
+<script src="train-vfx.js?v=59.95-20260809a"></script>
+<script src="motion.js?v=59.95-20260809a"></script><!-- A-315 E4 — shared motion engine (frame-rate-independent easing) -->
+<script src="train-bg-engine.js?v=59.95-20260809a"></script>
+<script src="data/bg-themes.js?v=59.95-20260809a"></script>
+<script src="data/bg-renderers.js?v=59.95-20260809a"></script>
+<script src="data/bg-npcs.js?v=59.95-20260809a"></script>
+<script src="data/bg-audio.js?v=59.95-20260809a"></script>
+<script src="data/bg-events.js?v=59.95-20260809a"></script>
 <!-- v54.83 — ObstacleEngine + Koleksi gallery available from G16 (Practice Mode) -->
-<script src="obstacle-engine.js?v=59.94-20260808a"></script>
-<script src="data/kids-questions.js?v=59.94-20260808a"></script>
-<script src="data/obstacles.js?v=59.94-20260808a"></script>
-<script src="data/routes.js?v=59.94-20260808a"></script>
-<script src="data/reward-catalog.js?v=59.94-20260808a"></script>
-<script src="reward-gallery.js?v=59.94-20260808a"></script>
-<script src="settings-modal.js?v=59.94-20260808a"></script>
+<script src="obstacle-engine.js?v=59.95-20260809a"></script>
+<script src="data/kids-questions.js?v=59.95-20260809a"></script>
+<script src="data/obstacles.js?v=59.95-20260809a"></script>
+<script src="data/routes.js?v=59.95-20260809a"></script>
+<script src="data/reward-catalog.js?v=59.95-20260809a"></script>
+<script src="reward-gallery.js?v=59.95-20260809a"></script>
+<script src="settings-modal.js?v=59.95-20260809a"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
-<script src="train-bgm.js?v=59.94-20260808a"></script>
+<script src="train-bgm.js?v=59.95-20260809a"></script>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
 <!-- v54.21 D1: READY-SET-GO countdown -->
@@ -269,14 +295,14 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
   <button id="ts-back" onclick="goBack()">◀ Kembali</button>
 </div>
 
-<script src="../shared/rz-responsive.js?v=59.94-20260808a"></script>
-<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
-<script src="data/save-engine.js?v=59.94-20260808a"></script>
-<script src="game-modal.js?v=59.94-20260808a"></script>
-<script src="train-character-sprite.js?v=59.94-20260808a"></script>
+<script src="../shared/rz-responsive.js?v=59.95-20260809a"></script>
+<script src="data/freeze-watchdog.js?v=59.95-20260809a"></script>
+<script src="data/save-engine.js?v=59.95-20260809a"></script>
+<script src="game-modal.js?v=59.95-20260809a"></script>
+<script src="train-character-sprite.js?v=59.95-20260809a"></script>
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="vfx-engine.js?v=59.94-20260808a"></script><!-- A-353/A-354 unified shared VFX (crash burst) -->
+<script src="vfx-engine.js?v=59.95-20260809a"></script><!-- A-353/A-354 unified shared VFX (crash burst) -->
 <script>
 'use strict'
 

@@ -9,8 +9,8 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=59.94-20260808a">
-<link rel="stylesheet" href="du-hud.css?v=59.94-20260808a">
+<link rel="stylesheet" href="du-buttons.css?v=59.95-20260809a">
+<link rel="stylesheet" href="du-hud.css?v=59.95-20260809a">
 <title>🏁 Balapan Kereta — Side Race (Beta)</title>
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <style>
@@ -44,6 +44,14 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 #btn-jump{pointer-events:all;background:linear-gradient(135deg,#bbf7d0,#22c55e);border:4px solid #166534;border-radius:24px;color:#052e16;padding:18px 56px;font-size:clamp(20px,5vw,28px);font-family:inherit;font-weight:900;cursor:pointer;box-shadow:0 6px 0 #14532d, 0 10px 24px rgba(0,0,0,0.4);text-shadow:0 2px 0 rgba(255,255,255,0.3);transition:transform 0.1s, box-shadow 0.1s;min-width:240px;min-height:84px}
 #btn-jump:active{transform:translateY(4px);box-shadow:0 2px 0 #14532d, 0 6px 14px rgba(0,0,0,0.4)}
 #btn-jump.disabled{opacity:0.5;cursor:not-allowed}
+/* v59.95 — a tap the launch assist is HOLDING (obstacle a little too far for the hop
+   to land on it) still has to answer within one frame, per DESIGN.md. The ring is the
+   answer, and it doubles as the timing lesson: it appears when the child taps early
+   and the hop follows a beat later. Ease-out only — no bounce, no elastic. */
+#btn-jump.armed{animation:g14sArm .34s cubic-bezier(.25,1,.5,1) 1}
+@keyframes g14sArm{0%{box-shadow:0 6px 0 #14532d,0 10px 24px rgba(0,0,0,0.4),0 0 0 0 rgba(253,230,138,.95)}
+100%{box-shadow:0 6px 0 #14532d,0 10px 24px rgba(0,0,0,0.4),0 0 0 18px rgba(253,230,138,0)}}
+@media (prefers-reduced-motion:reduce){#btn-jump.armed{animation:none}}
 /* v55.81 — small phones: the 240px jump button + 6-item top bar must not overflow */
 @media(max-width:480px){
   #btn-jump{min-width:0;width:min(72vw,300px);padding:16px 0}
@@ -131,37 +139,37 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <canvas id="pixi-canvas"></canvas>
 
 <!-- Pixi + shared modules (same versions as balapan-kereta.html for cache reuse) -->
-<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- zero-emoji engine -->
+<script src="data/emoji-map.js?v=59.95-20260809a"></script><script src="data/ui-sprites.js?v=59.95-20260809a"></script><!-- zero-emoji engine -->
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="train-shared.js?v=59.94-20260808a"></script>
-<script src="train-vfx.js?v=59.94-20260808a"></script>
-<script src="motion.js?v=59.94-20260808a"></script><!-- A-315 E5 — shared motion engine (frame-rate-independent easing) -->
-<script src="train-bg-engine.js?v=59.94-20260808a"></script>
-<script src="data/bg-themes.js?v=59.94-20260808a"></script>
-<script src="data/bg-renderers.js?v=59.94-20260808a"></script>
-<script src="data/bg-npcs.js?v=59.94-20260808a"></script>
-<script src="data/bg-audio.js?v=59.94-20260808a"></script>
+<script src="train-shared.js?v=59.95-20260809a"></script>
+<script src="train-vfx.js?v=59.95-20260809a"></script>
+<script src="motion.js?v=59.95-20260809a"></script><!-- A-315 E5 — shared motion engine (frame-rate-independent easing) -->
+<script src="train-bg-engine.js?v=59.95-20260809a"></script>
+<script src="data/bg-themes.js?v=59.95-20260809a"></script>
+<script src="data/bg-renderers.js?v=59.95-20260809a"></script>
+<script src="data/bg-npcs.js?v=59.95-20260809a"></script>
+<script src="data/bg-audio.js?v=59.95-20260809a"></script>
 <!-- v55.27 — Thomas BGM (silent by default; only fires for aeg_* chars) -->
 <audio id="game-bgm" loop preload="none" style="display:none"></audio>
-<script src="train-bgm.js?v=59.94-20260808a"></script>
-<script src="data/bg-events.js?v=59.94-20260808a"></script>
-<script src="obstacle-engine.js?v=59.94-20260808a"></script>
-<script src="data/kids-questions.js?v=59.94-20260808a"></script>
-<script src="data/obstacles.js?v=59.94-20260808a"></script>
-<script src="data/routes.js?v=59.94-20260808a"></script>
-<script src="data/reward-catalog.js?v=59.94-20260808a"></script>
-<script src="reward-gallery.js?v=59.94-20260808a"></script>
-<script src="settings-modal.js?v=59.94-20260808a"></script>
-<script src="trains-db.js?v=59.94-20260808a"></script>
-<script src="data/sfx-engine.js?v=59.94-20260808a"></script><!-- A-347 shared coin/crash cues (owner) -->
-<script src="vfx-engine.js?v=59.94-20260808a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
-<script src="game-modal.js?v=59.94-20260808a"></script>
+<script src="train-bgm.js?v=59.95-20260809a"></script>
+<script src="data/bg-events.js?v=59.95-20260809a"></script>
+<script src="obstacle-engine.js?v=59.95-20260809a"></script>
+<script src="data/kids-questions.js?v=59.95-20260809a"></script>
+<script src="data/obstacles.js?v=59.95-20260809a"></script>
+<script src="data/routes.js?v=59.95-20260809a"></script>
+<script src="data/reward-catalog.js?v=59.95-20260809a"></script>
+<script src="reward-gallery.js?v=59.95-20260809a"></script>
+<script src="settings-modal.js?v=59.95-20260809a"></script>
+<script src="trains-db.js?v=59.95-20260809a"></script>
+<script src="data/sfx-engine.js?v=59.95-20260809a"></script><!-- A-347 shared coin/crash cues (owner) -->
+<script src="vfx-engine.js?v=59.95-20260809a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
+<script src="game-modal.js?v=59.95-20260809a"></script>
 <!-- v55.99 B-284 — shared rich atmospheric scenery engine (sun + layered mountains + grass) -->
-<script src="scenery-engine.js?v=59.94-20260808a"></script>
+<script src="scenery-engine.js?v=59.95-20260809a"></script>
 <!-- v55.77 — shared painterly backdrop (scenery-only far layer) + speed overlay -->
-<script src="train-backdrop.js?v=59.94-20260808a"></script>
-<script src="train-speedfx.js?v=59.94-20260808a"></script>
-<script src="train-journey.js?v=59.94-20260808a"></script>
+<script src="train-backdrop.js?v=59.95-20260809a"></script>
+<script src="train-speedfx.js?v=59.95-20260809a"></script>
+<script src="train-journey.js?v=59.95-20260809a"></script>
 
 <div id="hud-top">
   <button id="btn-back" class="du-hud-pill" type="button" onclick="goBack()">← Kembali</button>
@@ -311,6 +319,7 @@ const S = {
   jumpStartedAt: 0,
   jumpStartDist: 0,      // P2 — world distance at lift-off (for gap latch-clear)
   jumpBuffered: false,   // P2 — press while airborne → auto re-jump on land (smoother)
+  tapGrace: 0,           // v59.95 — seconds an unused tap stays armed for the launch assist
   hp: 3,
   maxHp: 3,
   invincible: 0,
@@ -974,14 +983,94 @@ function g14sTogglePause() {
   }
 }
 
-function g14sJump() {
-  if (!S.running || S.paused || S.gameOver) return
-  if (S.jumping) { S.jumpBuffered = true; return }  // P2 — buffer press, fire on land
+// v59.95 — the launch itself, split out so the launch assist below can fire a hop
+// without re-arming the grace timer (which would turn one tap into permanent
+// auto-jumping).
+function g14sLaunch() {
   S.jumping = true
   S.jumpVel = -JUMP_VELOCITY
   S.jumpStartedAt = S.frame
   S.jumpStartDist = S.distance
   try { if (typeof playTone === 'function') playTone({ freq: 440, dur: 0.10, vol: 0.10 }) } catch {}
+}
+
+// v59.95 — LAUNCH ASSIST, decision half (the firing half is in tick()).
+//
+// The ideal launch distance is physics, not a magic number: the apex is
+// JUMP_VELOCITY/GRAVITY seconds away and the world moves S.speed*60 px/s, so an
+// obstacle about that far out arrives while the train is at the top of its arc.
+// Two multiples of it bracket the band where hopping NOW is actively worse than
+// waiting half a second — the band where the hop ends just before the obstacle
+// arrives and drops the train straight onto it:
+//   dx <= 1.30 x ideal  — the obstacle arrives while the train is still up: hop NOW.
+//   1.30 .. 3.25 x ideal — the hop would land first; hold the tap and let the assist
+//                          fire it at the right distance.
+//   dx  > 3.25 x ideal  — after landing there is still time for a second, properly
+//                          placed hop, so this one is harmless: hop NOW, button
+//                          stays instant on an open stretch.
+// 3.25 is where "time to arrival" exceeds one whole hop (0.93 s) plus the 0.47 s the
+// assist needs to place the next one: (0.93+0.47)/0.467 = 3.0, rounded up for margin.
+// The hold is bounded and speed-independent: the band is 1.95 x ideal wide, ideal is
+// S.speed*28 px and the world closes S.speed px per frame, so the wait is at most
+// 1.95*28 = ~55 frames (~0.91 s) at ANY speed — and the button answers in one frame
+// with the armed ring meanwhile.
+// MEASURED: without the upper half of this band, a tap aimed at the NEXT obstacle
+// fired an instant hop that landed the train on the CURRENT one — 39 of 40 obstacles
+// hit by a child who taps once per obstacle, on HEAD and on the narrow band alike.
+const G14S_ASSIST_NEAR = 1.30
+const G14S_ASSIST_FAR  = 3.25
+// How long an unused tap stays armed. In EASY this has to outlast the trip from
+// "the child can see the obstacle" to "the obstacle is at launch distance": at the
+// slow speed the obstacle appears ~1250 px out and closes 4 px per frame, i.e. 5.2 s.
+// That trip also has to survive the instant hop the SAME tap fires (an obstacle that
+// far away is outside the hold band, so the button still answers immediately), which
+// eats 0.93 s of the arm. At 0.90 s the arm always expired first — one tap the moment
+// an obstacle appeared cleared 0 of 40, on HEAD and on the first attempt alike; at
+// 5.5 s it cleared 1 of 40. The arm can only ever produce ONE hop, and only inside the
+// 0.75-1.30 x ideal band, so a long arm buys precision, not invulnerability — with no
+// taps at all the run still hits 40 of 40. HARD keeps the short arm: that is the
+// difficulty ladder.
+function g14sTapGrace() {
+  const m = (window.ObstacleEngine && window.ObstacleEngine.getMode) ? window.ObstacleEngine.getMode() : 'easy'
+  return m === 'hard' ? 0.35 : 7.0
+}
+function g14sIdealLaunchDx() { return S.speed * 60 * (JUMP_VELOCITY / GRAVITY) }
+function g14sNearestObstacleDx() {
+  let best = Infinity
+  if (!S.obstacles) return best
+  for (const o of S.obstacles) {
+    if (o.isDecoration || !o.sprite) continue
+    const dx = o.sprite.x - trainContainer.x
+    if (dx > 0 && dx < best) best = dx
+  }
+  return best
+}
+function g14sShouldHoldTap() {
+  if (S.finished || S.invincible > 0) return false
+  const ideal = g14sIdealLaunchDx()
+  const dx = g14sNearestObstacleDx()
+  return dx > ideal * G14S_ASSIST_NEAR && dx <= ideal * G14S_ASSIST_FAR
+}
+// DESIGN.md: "Umpan balik ketukan harus muncul dalam satu bingkai." A held tap does
+// not lift the train this frame, so it has to say so some other way in this frame:
+// the button gets the armed treatment and a soft low click, which is also the cue
+// that teaches the timing.
+function g14sTapArmedFeedback() {
+  const btn = document.getElementById('btn-jump')
+  if (btn) { btn.classList.remove('armed'); void btn.offsetWidth; btn.classList.add('armed') }
+  try { if (typeof playTone === 'function') playTone({ freq: 300, dur: 0.06, vol: 0.07 }) } catch {}
+}
+
+function g14sJump() {
+  if (!S.running || S.paused || S.gameOver) return
+  // v59.95 — every press arms the launch assist for a moment, whether or not it can
+  // become a hop right now. Measured on the shipped build: a child tapping every
+  // 250ms was still hit by 20 of 40 obstacles and a single early tap by 40 of 40,
+  // because a press outside an ~88-160px lead window was simply thrown away.
+  S.tapGrace = g14sTapGrace()
+  if (S.jumping) { S.jumpBuffered = true; return }  // P2 — buffer press, fire on land
+  if (g14sShouldHoldTap()) { g14sTapArmedFeedback(); return }
+  g14sLaunch()
 }
 
 // ── TICK ────────────────────────────────────────────────────────────────────
@@ -1174,6 +1263,7 @@ function tick(tickerOrDelta) {
   for (let i = S.hearts.length - 1; i >= 0; i--) {
     const hp = S.hearts[i]
     hp.sprite.x -= scrollDx
+    if (hp.above != null) hp.sprite.y = H * RAIL_Y_FRAC + terrainHeightAt(S.distance + (hp.sprite.x - W * PLAYER_X_FRAC) * 0.4) - hp.above
     hp.sprite.rotation = Math.sin(S.frame * 0.10 + i) * 0.15
     if (hp.sprite.x < -50) {
       particleLayer.removeChild(hp.sprite)
@@ -1210,6 +1300,7 @@ function tick(tickerOrDelta) {
   for (let i = S.coins.length - 1; i >= 0; i--) {
     const c = S.coins[i]
     c.sprite.x -= scrollDx
+    if (c.above != null) c.sprite.y = H * RAIL_Y_FRAC + terrainHeightAt(S.distance + (c.sprite.x - W * PLAYER_X_FRAC) * 0.4) - c.above
     c.sprite.rotation += 0.08 // spin
     if (c.sprite.x < -50) {
       particleLayer.removeChild(c.sprite)
@@ -1247,11 +1338,20 @@ function tick(tickerOrDelta) {
       S.jumpVel = 0
       S.jumpingMissed = false
       S.jumping = false
-      // P2 — buffered jump: player pressed mid-air, chain a fresh hop on landing
+      // P2 — buffered jump: player pressed mid-air, chain a fresh hop on landing.
+      // v59.95 — ...unless the launch assist can place that hop better than "this
+      // instant" can. This branch is why the assist added earlier never fired: it
+      // spent the buffered press on the landing frame, so the train was airborne
+      // again before the assist block below ever saw it grounded.
       if (S.jumpBuffered) {
         S.jumpBuffered = false
-        S.jumping = true; S.jumpVel = -JUMP_VELOCITY
-        S.jumpStartedAt = S.frame; S.jumpStartDist = S.distance
+        if (g14sShouldHoldTap()) {
+          S.tapGrace = Math.max(S.tapGrace, g14sTapGrace())
+          g14sTapArmedFeedback()
+        } else {
+          S.jumping = true; S.jumpVel = -JUMP_VELOCITY
+          S.jumpStartedAt = S.frame; S.jumpStartDist = S.distance
+        }
       }
       // v54.90 — Landing dust puff
       spawnLandingDust()
@@ -1301,6 +1401,24 @@ function tick(tickerOrDelta) {
     }
   }
 
+  // v59.95 — LAUNCH ASSIST. An armed tap that could not become a hop when it was
+  // pressed still counts: while it is armed, the first moment the train is back on
+  // the ground with an obstacle at the ideal launch distance, that tap fires the hop.
+  // The distance is physics, not a magic number — the apex is JUMP_VELOCITY/GRAVITY
+  // seconds away and the world moves S.speed*60 px/s, so the obstacle should be about
+  // that far out for the train to be at the top of the arc when it arrives.
+  if (S.tapGrace > 0) {
+    S.tapGrace = Math.max(0, S.tapGrace - dt)
+    if (!S.jumping && !S.finished && S.invincible <= 0) {
+      const ideal = S.speed * 60 * (JUMP_VELOCITY / GRAVITY)
+      for (const o of S.obstacles) {
+        if (o.isDecoration) continue
+        const dx = o.sprite.x - trainContainer.x
+        if (dx > ideal * 0.75 && dx < ideal * 1.30) { S.tapGrace = 0; g14sLaunch(); break }
+      }
+    }
+  }
+
   // Spawn obstacles
   S.spawnTimer += dt
   if (S.spawnTimer >= S.nextSpawnAt && !S.finished) {
@@ -1314,6 +1432,14 @@ function tick(tickerOrDelta) {
   for (let i = S.obstacles.length - 1; i >= 0; i--) {
     const o = S.obstacles[i]
     o.sprite.x -= scrollDx * (o.speedMul || 1.0)
+    // v59.95 — stand every obstacle on the piece of rail it is actually over.
+    // The rail and the train both follow terrainHeightAt(); obstacles were pinned
+    // to the FLAT rail line at spawn and never moved, so a rock hovered up to 23px
+    // above the sleepers (measured: terrain span -22.9..+22.9px vs a 22px-tall
+    // puddle) or sank into them — and the collision test below compared a
+    // terrain-following train against that flat obstacle. Same world→screen
+    // mapping the rail draw uses a few lines above.
+    o.sprite.y = H * RAIL_Y_FRAC + terrainHeightAt(S.distance + (o.sprite.x - W * PLAYER_X_FRAC) * 0.4)
     if (o.sprite.x < -100) {
       obstacleLayer.removeChild(o.sprite)
       S.obstacles.splice(i, 1)
@@ -1328,8 +1454,12 @@ function tick(tickerOrDelta) {
     if (o.isDecoration) continue
     // Collision: train fixed-X area vs obstacle
     if (S.invincible <= 0 && Math.abs(o.sprite.x - trainContainer.x) < 50) {
-      const trainBottom = H * RAIL_Y_FRAC + S.jumpY
-      const obstacleTop = H * RAIL_Y_FRAC - o.height
+      // v59.95 — both sides now measured in the SAME frame of reference: the train
+      // rides S.terrainOffset, the obstacle stands on its own patch of rail. Before,
+      // the train's terrain offset was dropped from this test only, so on a crest the
+      // child watched his wheels pass above a rock and still lost a heart.
+      const trainBottom = H * RAIL_Y_FRAC + S.terrainOffset + S.jumpY
+      const obstacleTop = o.sprite.y - o.height
       if (trainBottom > obstacleTop + 8) {
         crashOn(o)
         break
@@ -1361,6 +1491,7 @@ function tick(tickerOrDelta) {
       // 4m tolerance at edges avoids punishing the very boundary of a gap
       if (!g.cleared && !airborne && S.distance > g.worldStart + 4 && S.distance < g.worldEnd - 4) {
         S.hp = Math.max(0, S.hp - 1)
+        S.gapFalls = (S.gapFalls || 0) + 1   // v59.95 — for the end-of-race explanation
         S.invincible = 2.4  // 2.4s invincibility — enough to cross any gap safely
         try { if (window.SFXEngine && SFXEngine.crash) SFXEngine.crash(); else if (typeof playTone === 'function') playTone({ freq: 200, dur: 0.22, vol: 0.14 }) } catch {}
         // A-315 E5 — trauma screen shake (applied via Motion.shakeOffset on the
@@ -1535,23 +1666,46 @@ const OBSTACLE_TYPES = [
   },
   {
     id: 'cow', width: 56, height: 46,
+    // v59.95 — was `new PIXI.Text({ text: '🐮', fontFamily: '…Color Emoji…' })`: an
+    // emoji glyph standing in for real art on a GAMEPLAY object, and the one obstacle
+    // that bypassed the sprite contract entirely — on a device whose font lacks the
+    // glyph it paints nothing while keeping its 56×46 collision box, which is the exact
+    // invisible-hazard failure the sprite contract exists to prevent. Now drawn, like
+    // the other four obstacles: always visible, offline-safe, same cartoon language.
     build(c) {
       // Brown shadow specifically for the cow per spec (override default black)
       _g14sAddShadow(c, 56, 0x5d4037)
-      const t = new PIXI.Text({
-        text: '🐮',
-        style: { fontSize: 46, fontFamily: 'Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif' },
+      const cow = new PIXI.Container()
+      const g = new PIXI.Graphics()
+      const HIDE = 0xfafafa, PATCH = 0x5d4037, OUTLINE = 0x3e2723
+      // legs + hooves (drawn first so the body overlaps their tops)
+      ;[-15, -3, 9].forEach((lx) => {
+        g.rect(lx, -15, 6, 15).fill(HIDE).stroke({ color: OUTLINE, width: 1.5 })
+        g.rect(lx, -4, 6, 4).fill(OUTLINE)
       })
-      t.anchor.set(0.5, 1.0)
-      t.x = 0
-      t.y = 0
-      // Mark the emoji child so tick can find it without index gymnastics
-      t._g14sCowEmoji = true
-      c.addChild(t)
+      // tail with a tuft
+      g.rect(19, -33, 3, 16).fill(PATCH)
+      g.circle(20, -15, 3.5).fill(PATCH)
+      // barrel body
+      g.roundRect(-19, -36, 41, 23, 9).fill(HIDE).stroke({ color: OUTLINE, width: 2 })
+      g.ellipse(-5, -29, 8, 6).fill(PATCH)
+      g.ellipse(12, -22, 6, 4).fill(PATCH)
+      // head, facing the oncoming train (left)
+      g.roundRect(-34, -35, 17, 16, 6).fill(HIDE).stroke({ color: OUTLINE, width: 2 })
+      g.ellipse(-31, -21, 7, 4.5).fill(0xf7b7ae).stroke({ color: OUTLINE, width: 1.5 })
+      g.circle(-33, -21, 1.2).fill(OUTLINE)
+      g.circle(-27, -21, 1.2).fill(OUTLINE)
+      g.circle(-24, -30, 2).fill(OUTLINE)                       // eye
+      g.ellipse(-17, -34, 4.5, 3).fill(PATCH)                   // ear
+      g.poly([-31, -35, -28, -42, -25, -35]).fill(0xffe0b2).stroke({ color: OUTLINE, width: 1.2 })  // horn
+      cow.addChild(g)
+      // Mark the child so tick can find it without index gymnastics
+      cow._g14sCowEmoji = true
+      c.addChild(cow)
     },
     tick(c, frame) {
       if (G14S_REDUCED_MOTION) return
-      // Small upward bob: shift the emoji within the container
+      // Small upward bob: shift the cow within the container
       for (let i = 0; i < c.children.length; i++) {
         const ch = c.children[i]
         if (ch && ch._g14sCowEmoji) {
@@ -1585,11 +1739,10 @@ function spawnHeart() {
   const heart = (window.UISprites && UISprites.pixiSprite('❤️', 32, PIXI, {center:true})) || new PIXI.Text({ text: '❤️', style: { fontSize: 32 } })
   heart.anchor.set(0.5, 0.5)
   heart.x = W + 40
-  const baseY = H * RAIL_Y_FRAC + S.terrainOffset - 30  // B-250: terrain-relative
-  const peakY = H * RAIL_Y_FRAC + S.terrainOffset - 90
-  heart.y = baseY - Math.random() * (baseY - peakY)
+  const above = 30 + Math.random() * 60   // v59.95 — height above the rail (see spawnCoin)
+  heart.y = H * RAIL_Y_FRAC + S.terrainOffset - above
   particleLayer.addChild(heart)
-  S.hearts.push({ sprite: heart, scored: false })
+  S.hearts.push({ sprite: heart, scored: false, above: above })
 }
 
 // v54.92 — Finish flag (chequered, spawns at 980m, race ends when it scrolls past train)
@@ -1680,16 +1833,22 @@ function spawnCoin() {
   coin.anchor.set(0.5, 0.5)
   coin.x = W + 40
   // B-250: terrain-relative Y range so coins stay reachable on hills/valleys
-  const baseY = H * RAIL_Y_FRAC + S.terrainOffset - 30
-  const peakY = H * RAIL_Y_FRAC + S.terrainOffset - 100  // slightly higher now (1.5× jump)
-  coin.y = baseY - Math.random() * (baseY - peakY)
+  // v59.95 — store the height ABOVE THE RAIL instead of an absolute Y. The coin now
+  // rides the same undulating terrain as the train, so a coin that looks reachable
+  // stays reachable: the collect test compares against a terrain-aware train Y, and a
+  // spawn-time absolute Y drifted up to 46px away from it by the time it arrived.
+  const above = 30 + Math.random() * 70
+  coin.y = H * RAIL_Y_FRAC + S.terrainOffset - above
   particleLayer.addChild(coin)
-  S.coins.push({ sprite: coin, scored: false })
+  S.coins.push({ sprite: coin, scored: false, above: above })
 }
 
 // v54.89 — Milestone signpost at 200/400/600/800m
 function spawnMilestone(num) {
-  const totalKm = (num * 200) + 'm'
+  // v59.95 — the sign used to read `num * 200`, a leftover from the 1000m race: the
+  // first signpost said "200m" while the HUD counter said 1300m. Read the real
+  // milestone table so the number the child passes matches the number he is shown.
+  const totalKm = (S.milestones[num - 1] || num * 200) + 'm'
   const post = new PIXI.Container()
   post.x = W + 60
   post.y = H * RAIL_Y_FRAC
@@ -1749,9 +1908,19 @@ function g14sFlyToHud(sprite, hudId, arr, item) {
   } catch (_) { drop(); kill() }
 }
 
+// v59.95 — Indonesian names for the five obstacles, so a loss can say WHAT went
+// wrong. "Gagal!" with a sad face tells a child who cannot read nothing at all.
+const G14S_OBSTACLE_NAMES = { rock: 'batu', branch: 'pohon', barrier: 'palang', water: 'genangan air', cow: 'sapi' }
+
 function crashOn(o) {
   S.hp = Math.max(0, S.hp - 1)
   S.invincible = 1.2 // 1.2s grace
+  // remember what hit us, for the end-of-race explanation
+  try {
+    const _id = (o && o.type && o.type.id) || 'rintangan'
+    S.crashLog = S.crashLog || {}
+    S.crashLog[_id] = (S.crashLog[_id] || 0) + 1
+  } catch (_) {}
   // Visual: red shake + flash
   // A-347: owner's shared car-crash cue on "nabrak" (falls back to synth tone if absent)
   try { if (window.SFXEngine && SFXEngine.crash) SFXEngine.crash(); else if (typeof playTone === 'function') playTone({ freq: 220, dur: 0.18, vol: 0.14 }) } catch {}
@@ -1870,7 +2039,9 @@ function showPreRaceBanner(done) {
   const tod = S.timeOfDay
   const todIcon = tod === 'pagi' ? '🌅' : (tod === 'siang' ? '☀️' : '🌇')
   trainEl.textContent = trainName
-  infoEl.innerHTML = `Mode: ${modeLabel} · Usia ${age}<br>${todIcon} ${tod.charAt(0).toUpperCase()+tod.slice(1)} · 🎯 Jarak: 1000m`
+  // v59.95 — "Jarak: 1000m" was hardcoded and had been wrong since the race grew to
+  // 6500m; the banner promised a run six times shorter than the one that started.
+  infoEl.innerHTML = `Mode: ${modeLabel} · Usia ${age}<br>${todIcon} ${tod.charAt(0).toUpperCase()+tod.slice(1)} · 🎯 Jarak: ${S.targetDistance}m`
   overlay.style.display = 'flex'
   setTimeout(() => {
     overlay.style.display = 'none'
@@ -1919,9 +2090,24 @@ function endRace(title, outcome) {
     ? (S.hp >= S.maxHp ? 'Sempurna!' : S.hp >= 2 ? 'Hebat!' : 'Bagus!')
     : 'Hampir!'
 
+  // v59.95 — a loss now names its own cause. It used to read "Jarak: 412m · 3 koin ·
+  // Ayo coba lagi!", which tells a child who cannot read why nothing. The line is
+  // built from what actually took the hearts: the obstacle he hit most, or the gap.
+  function _loseReason() {
+    const log = S.crashLog || {}
+    let top = null, topN = 0
+    for (const k in log) { if (log[k] > topN) { topN = log[k]; top = k } }
+    if ((S.gapFalls || 0) > topN) return 'Kereta jatuh di rel yang putus. Ketuk LOMPAT sebelum sampai ke lubang ya.'
+    if (top) {
+      const nm = G14S_OBSTACLE_NAMES[top] || 'rintangan'
+      return 'Kereta menabrak ' + nm + (topN > 1 ? ' ' + topN + ' kali' : '') + '. Ketuk LOMPAT saat ' + nm + ' sudah dekat ya.'
+    }
+    return 'Kereta kehabisan tenaga. Ayo coba lagi ya.'
+  }
+
   const msg = outcome === 'win'
     ? '🏁 ' + Math.floor(S.distance) + 'm · ❤️ ' + Math.max(0,S.hp) + '/' + S.maxHp + ' · 🪙 ' + S.coinScore + ' koin'
-    : '🌱 Jarak: ' + Math.floor(S.distance) + 'm · 🪙 ' + S.coinScore + ' koin · Ayo coba lagi!'
+    : _loseReason() + ' · Jarak ' + Math.floor(S.distance) + 'm · 🪙 ' + S.coinScore
 
   // B-248: onNext = bump speed 20% for a meaningful "next difficulty" level
   function _onNext() {

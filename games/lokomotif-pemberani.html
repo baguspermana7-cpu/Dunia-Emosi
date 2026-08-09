@@ -9,8 +9,8 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=59.94-20260808a">
-<link rel="stylesheet" href="du-hud.css?v=59.94-20260808a">
+<link rel="stylesheet" href="du-buttons.css?v=59.95-20260809a">
+<link rel="stylesheet" href="du-hud.css?v=59.95-20260809a">
 <title>Lokomotif Pemberani 🚂</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -214,32 +214,32 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <body>
 <canvas id="pixi-canvas"></canvas>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.84</div>
-<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- zero-emoji engine -->
-<script src="sw-reload.js?v=59.94-20260808a"></script>
-<script src="train-shared.js?v=59.94-20260808a"></script>
-<script src="train-vfx.js?v=59.94-20260808a"></script>
-<script src="motion.js?v=59.94-20260808a"></script><!-- A-315 E3 — shared motion engine (frame-rate-independent easing) -->
-<script src="train-bg-engine.js?v=59.94-20260808a"></script>
-<script src="data/bg-themes.js?v=59.94-20260808a"></script>
-<script src="data/bg-renderers.js?v=59.94-20260808a"></script>
-<script src="data/bg-npcs.js?v=59.94-20260808a"></script>
-<script src="data/bg-audio.js?v=59.94-20260808a"></script>
-<script src="data/bg-events.js?v=59.94-20260808a"></script>
+<script src="data/emoji-map.js?v=59.95-20260809a"></script><script src="data/ui-sprites.js?v=59.95-20260809a"></script><!-- zero-emoji engine -->
+<script src="sw-reload.js?v=59.95-20260809a"></script>
+<script src="train-shared.js?v=59.95-20260809a"></script>
+<script src="train-vfx.js?v=59.95-20260809a"></script>
+<script src="motion.js?v=59.95-20260809a"></script><!-- A-315 E3 — shared motion engine (frame-rate-independent easing) -->
+<script src="train-bg-engine.js?v=59.95-20260809a"></script>
+<script src="data/bg-themes.js?v=59.95-20260809a"></script>
+<script src="data/bg-renderers.js?v=59.95-20260809a"></script>
+<script src="data/bg-npcs.js?v=59.95-20260809a"></script>
+<script src="data/bg-audio.js?v=59.95-20260809a"></script>
+<script src="data/bg-events.js?v=59.95-20260809a"></script>
 <!-- v54.83 — ObstacleEngine + Koleksi gallery available from G15 picker (Practice Mode) -->
-<script src="obstacle-engine.js?v=59.94-20260808a"></script>
-<script src="train-journey.js?v=59.94-20260808a"></script>
-<script src="indo-scene.js?v=59.94-20260808a"></script>
+<script src="obstacle-engine.js?v=59.95-20260809a"></script>
+<script src="train-journey.js?v=59.95-20260809a"></script>
+<script src="indo-scene.js?v=59.95-20260809a"></script>
 <!-- v55.77 — SHARED painterly backdrop + depth-parallax engine + always-on speed overlay (parity with balapan-kereta / g14). Guarded: any miss → procedural bg. -->
-<script src="train-backdrop.js?v=59.94-20260808a"></script>
-<script src="train-speedfx.js?v=59.94-20260808a"></script>
-<script src="data/kids-questions.js?v=59.94-20260808a"></script>
-<script src="data/obstacles.js?v=59.94-20260808a"></script>
-<script src="data/routes.js?v=59.94-20260808a"></script>
-<script src="data/reward-catalog.js?v=59.94-20260808a"></script>
-<script src="reward-gallery.js?v=59.94-20260808a"></script>
-<script src="settings-modal.js?v=59.94-20260808a"></script>
+<script src="train-backdrop.js?v=59.95-20260809a"></script>
+<script src="train-speedfx.js?v=59.95-20260809a"></script>
+<script src="data/kids-questions.js?v=59.95-20260809a"></script>
+<script src="data/obstacles.js?v=59.95-20260809a"></script>
+<script src="data/routes.js?v=59.95-20260809a"></script>
+<script src="data/reward-catalog.js?v=59.95-20260809a"></script>
+<script src="reward-gallery.js?v=59.95-20260809a"></script>
+<script src="settings-modal.js?v=59.95-20260809a"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
-<script src="train-bgm.js?v=59.94-20260808a"></script>
+<script src="train-bgm.js?v=59.95-20260809a"></script>
 <!-- v54.28 I13: loop the train ambient SFX (was one-shot, faded after first cycle, leaving silence). -->
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" loop preload="auto" style="display:none"></audio>
 
@@ -307,9 +307,9 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
   </div>
 </div>
 
-<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
-<script src="data/save-engine.js?v=59.94-20260808a"></script>
-<script src="game-modal.js?v=59.94-20260808a"></script>
+<script src="data/freeze-watchdog.js?v=59.95-20260809a"></script>
+<script src="data/save-engine.js?v=59.95-20260809a"></script>
+<script src="game-modal.js?v=59.95-20260809a"></script>
 
 <!-- Train Select Screen -->
 <div id="train-select">
@@ -366,10 +366,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 </div>
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="trains-db.js?v=59.94-20260808a"></script>
-<script src="data/train-world.js?v=59.94-20260808a"></script><!-- v55.94 — 275 real-sprite world trains -->
-<script src="train-character-sprite.js?v=59.94-20260808a"></script>
-<script src="../shared/rz-responsive.js?v=59.94-20260808a"></script>
+<script src="trains-db.js?v=59.95-20260809a"></script>
+<script src="data/train-world.js?v=59.95-20260809a"></script><!-- v55.94 — 275 real-sprite world trains -->
+<script src="train-character-sprite.js?v=59.95-20260809a"></script>
+<script src="../shared/rz-responsive.js?v=59.95-20260809a"></script>
 <script>
 'use strict';
 // Polyfill ctx.roundRect for older Android WebViews (Chrome < 99)

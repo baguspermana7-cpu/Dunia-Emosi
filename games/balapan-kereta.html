@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=59.94-20260808a">
+<link rel="stylesheet" href="du-buttons.css?v=59.95-20260809a">
 <title>Balapan Kereta 🚂</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -177,11 +177,28 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 #sel-back:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(100,60,160,0.2)}
 #sel-title{font-size:16px;font-weight:900;color:#c4b5fd;flex:1;text-align:center}
 #select-body{flex:1;overflow-y:auto;padding:8px 14px 20px;-webkit-overflow-scrolling:touch}
+/* v59.95 — CATEGORY PICKER ON WIDE LANDSCAPE.
+   The 11 category rows were a single stacked column: measured 1572x78 at 1600x900 and
+   2372x78 at 2400x1080 — over two thousand pixels of width spent on one 84px train
+   picture and one line of text, with only 7 of 11 (1600) / 9 of 11 (2400) / 4 of 11
+   (1024x600) inside the scroll box. A child who cannot read scans pictures; the four
+   he cannot see may as well not exist.
+   The columns only apply while the body is showing CATEGORIES (`.cats`, set by
+   showCategories and cleared by showTrainsForCat) — the per-category train list has its
+   own `.train-grid` and must not be re-columned underneath it. */
+#select-body.cats{display:grid;gap:0 12px;align-content:start;grid-template-columns:1fr}
+@media (min-width:1000px){#select-body.cats{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1720px){#select-body.cats{grid-template-columns:repeat(3,1fr)}}
 /* v55.37 B-218 — picker cards harmonized across g14/g15/g16. Dark-mode
    surface, lavender border default, purple accent on selected, same
    active scale + shadow shape. Matches g15 .tcard + g16 .ts-card. */
 .cat-btn{width:100%;display:flex;align-items:center;gap:14px;padding:14px 16px;min-height:44px;border-radius:16px;cursor:pointer;margin-bottom:10px;text-align:left;border:2.5px solid rgba(167,139,250,0.25);transition:transform .08s,border-color .15s,background .15s;background:rgba(248,240,255,0.06);color:#e9d5ff;font-family:inherit;font-weight:700}
 .cat-btn:active{transform:scale(.97);background:rgba(139,92,246,0.18);border-color:#a78bfa}
+/* v59.95 — "you have to pick one of these first", said by the things themselves.
+   Ease-out only, no bounce/elastic (DESIGN.md §Gerak). */
+.cat-btn.needs-pick,.train-card.needs-pick{animation:g14NeedsPick .7s cubic-bezier(.25,1,.5,1) 2}
+@keyframes g14NeedsPick{0%{box-shadow:0 0 0 0 rgba(253,230,138,.9)}100%{box-shadow:0 0 0 14px rgba(253,230,138,0)}}
+@media (prefers-reduced-motion:reduce){.cat-btn.needs-pick,.train-card.needs-pick{animation:none;border-color:#fde68a}}
 .cat-emoji{font-size:32px;flex-shrink:0}
 /* v59.x — CATEGORY THUMBNAIL. Owner: "saat pemilihan itu jangan pakai emoji, pakai
    gambar salah satu kereta — misal picker thomas aeg, itu pakai gambar thomas".
@@ -222,43 +239,43 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 /* Flash */
 #flash{position:fixed;inset:0;z-index:99;pointer-events:none;opacity:0;transition:opacity .05s}
 </style>
-<link rel="stylesheet" href="g14-hud.css?v=59.94-20260808a">
+<link rel="stylesheet" href="g14-hud.css?v=59.95-20260809a">
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v59.1</div>
-<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- zero-emoji engine -->
-<script src="sw-reload.js?v=59.94-20260808a"></script>
-<script src="train-shared.js?v=59.94-20260808a"></script>
-<script src="data/train-world.js?v=59.94-20260808a"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
-<script src="train-vfx.js?v=59.94-20260808a"></script>
-<script src="train-bg-engine.js?v=59.94-20260808a"></script>
-<script src="data/bg-themes.js?v=59.94-20260808a"></script>
-<script src="data/bg-renderers.js?v=59.94-20260808a"></script>
-<script src="data/bg-npcs.js?v=59.94-20260808a"></script>
-<script src="data/bg-audio.js?v=59.94-20260808a"></script>
-<script src="data/bg-events.js?v=59.94-20260808a"></script>
+<script src="data/emoji-map.js?v=59.95-20260809a"></script><script src="data/ui-sprites.js?v=59.95-20260809a"></script><!-- zero-emoji engine -->
+<script src="sw-reload.js?v=59.95-20260809a"></script>
+<script src="train-shared.js?v=59.95-20260809a"></script>
+<script src="data/train-world.js?v=59.95-20260809a"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
+<script src="train-vfx.js?v=59.95-20260809a"></script>
+<script src="train-bg-engine.js?v=59.95-20260809a"></script>
+<script src="data/bg-themes.js?v=59.95-20260809a"></script>
+<script src="data/bg-renderers.js?v=59.95-20260809a"></script>
+<script src="data/bg-npcs.js?v=59.95-20260809a"></script>
+<script src="data/bg-audio.js?v=59.95-20260809a"></script>
+<script src="data/bg-events.js?v=59.95-20260809a"></script>
 <!-- v54.69 — ObstacleEngine foundation (modular obstacle system, soft-fail, kids-friendly) -->
-<script src="obstacle-engine.js?v=59.94-20260808a"></script>
-<script src="data/kids-questions.js?v=59.94-20260808a"></script>
+<script src="obstacle-engine.js?v=59.95-20260809a"></script>
+<script src="data/kids-questions.js?v=59.95-20260809a"></script>
 <!-- v55.97 M-303 — SHARED quiz engine (question + answer-choices) for all games -->
-<script src="quiz-engine.js?v=59.94-20260808a"></script>
+<script src="quiz-engine.js?v=59.95-20260809a"></script>
 <!-- v56.6 M-303/A-315 — SHARED motion/game-feel engine (frame-rate-independent easing) -->
-<script src="motion.js?v=59.94-20260808a"></script>
-<script src="data/obstacles.js?v=59.94-20260808a"></script>
-<script src="data/routes.js?v=59.94-20260808a"></script>
-<script src="data/reward-catalog.js?v=59.94-20260808a"></script>
-<script src="reward-gallery.js?v=59.94-20260808a"></script>
-<script src="settings-modal.js?v=59.94-20260808a"></script>
+<script src="motion.js?v=59.95-20260809a"></script>
+<script src="data/obstacles.js?v=59.95-20260809a"></script>
+<script src="data/routes.js?v=59.95-20260809a"></script>
+<script src="data/reward-catalog.js?v=59.95-20260809a"></script>
+<script src="reward-gallery.js?v=59.95-20260809a"></script>
+<script src="settings-modal.js?v=59.95-20260809a"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
-<script src="train-bgm.js?v=59.94-20260808a"></script>
-<script src="indo-scene.js?v=59.94-20260808a"></script>
-<script src="data/train-wheel-anchors.js?v=59.94-20260808a"></script>
-<script src="train-journey.js?v=59.94-20260808a"></script>
-<script src="train-backdrop.js?v=59.94-20260808a"></script>
-<script src="train-speedfx.js?v=59.94-20260808a"></script>
-<script src="data/sfx-engine.js?v=59.94-20260808a"></script><!-- A-347 shared coin + quiz answer cues (owner) -->
-<script src="data/battle-modes.js?v=59.94-20260808a"></script><!-- A-323b — mode-select + name-entry helpers (train PvP is self-contained below) -->
+<script src="train-bgm.js?v=59.95-20260809a"></script>
+<script src="indo-scene.js?v=59.95-20260809a"></script>
+<script src="data/train-wheel-anchors.js?v=59.95-20260809a"></script>
+<script src="train-journey.js?v=59.95-20260809a"></script>
+<script src="train-backdrop.js?v=59.95-20260809a"></script>
+<script src="train-speedfx.js?v=59.95-20260809a"></script>
+<script src="data/sfx-engine.js?v=59.95-20260809a"></script><!-- A-347 shared coin + quiz answer cues (owner) -->
+<script src="data/battle-modes.js?v=59.95-20260809a"></script><!-- A-323b — mode-select + name-entry helpers (train PvP is self-contained below) -->
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
 <!-- v54.17 A1: 3-2-1-GO countdown overlay -->
@@ -402,9 +419,15 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
   <div id="select-body"></div>
   <div id="go-btn-wrap">
     <button id="go-btn" onclick="g14GoRace()">🚦 Mulai Balapan!</button>
-    <!-- v54.88 — Side Race (Beta) entry -->
-    <button id="g14-side-btn" onclick="g14LaunchSideRace()" style="margin-top:10px;background:linear-gradient(135deg,#bbf7d0,#22c55e);border:3px solid #166534;border-radius:14px;color:#052e16;padding:14px 24px;font-size:15px;cursor:pointer;font-family:inherit;font-weight:900;min-height:48px;box-shadow:0 4px 0 #14532d;width:100%">
-      🏁 Side Race (Beta) — Tampilan Premium!
+    <!-- v54.88 — side-race entry.
+         v59.95 — the label was "🏁 Side Race (Beta) — Tampilan Premium!". Three of those
+         words are English on a screen the child sees (DESIGN.md forbids it outright),
+         "(Beta)" and "Premium" describe the build to an adult rather than the game to a
+         child, and none of it says what happens if he taps. It now names the thing he
+         will do: the train runs and jumps over what is on the rails. -->
+    <button id="g14-side-btn" onclick="g14LaunchSideRace()" style="margin-top:10px;background:linear-gradient(135deg,#bbf7d0,#22c55e);border:3px solid #166534;border-radius:14px;color:#052e16;padding:12px 24px;font-size:15px;cursor:pointer;font-family:inherit;font-weight:900;min-height:48px;box-shadow:0 4px 0 #14532d;width:100%;line-height:1.25">
+      Balapan Lompat
+      <span style="display:block;font-size:11px;font-weight:700;opacity:.85;margin-top:2px">Keretamu berlari dan melompati rintangan</span>
     </button>
   </div>
 </div>
@@ -424,7 +447,25 @@ function g14LaunchSideRace() {
     if (active && active.dataset && active.dataset.trainKey) key = active.dataset.trainKey
   }
   if (!key) {
-    alert('Pilih kereta dulu ya! 🚂')
+    // v59.95 — was `alert('Pilih kereta dulu ya! 🚂')`. PRODUCT.md bans native dialogs
+    // on any path a child touches, and DESIGN.md's language table names this exact
+    // case: an installed-PWA shell can suppress alert() outright, and then the button
+    // is simply silent — a dead end, the worst bug class in this app. The message now
+    // lives on the button itself and the categories it is telling him to open flash
+    // once, so the instruction and the thing to tap are the same object.
+    const _b = document.getElementById('g14-side-btn')
+    if (_b) {
+      if (!_b.dataset.origHtml) _b.dataset.origHtml = _b.innerHTML
+      _b.innerHTML = 'Pilih keretamu dulu ya' +
+        '<span style="display:block;font-size:11px;font-weight:700;opacity:.85;margin-top:2px">Ketuk salah satu kategori di atas</span>'
+      clearTimeout(window._g14SideMsgT)
+      window._g14SideMsgT = setTimeout(function () { if (_b.dataset.origHtml) _b.innerHTML = _b.dataset.origHtml }, 2600)
+    }
+    const _body = document.getElementById('select-body')
+    if (_body) _body.querySelectorAll('.cat-btn, .train-card').forEach(function (c) {
+      c.classList.remove('needs-pick'); void c.offsetWidth; c.classList.add('needs-pick')
+      setTimeout(function () { c.classList.remove('needs-pick') }, 1400)
+    })
     return
   }
   sessionStorage.setItem('g14-side-train', key)
@@ -507,14 +548,14 @@ function g14RefreshHCBadge(){
 }
 </script>
 
-<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
-<script src="data/save-engine.js?v=59.94-20260808a"></script>
-<script src="game-modal.js?v=59.94-20260808a"></script>
+<script src="data/freeze-watchdog.js?v=59.95-20260809a"></script>
+<script src="data/save-engine.js?v=59.95-20260809a"></script>
+<script src="game-modal.js?v=59.95-20260809a"></script>
 
 <div id="flash"></div>
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="../shared/rz-responsive.js?v=59.94-20260808a"></script>
+<script src="../shared/rz-responsive.js?v=59.95-20260809a"></script>
 <script>
 'use strict'
 // ═══════════════════════════════════════════════════════════
@@ -6124,8 +6165,14 @@ function g14CatHero(cat) {
 }
 // Category names bake a train emoji into the LABEL too ("Uap Klasik 🚂"), which the
 // observer turns into a SECOND generic train picture right beside the real thumbnail.
-// Strip only rail glyphs — ⭐ / ⚡ / 🇮🇩 carry meaning and stay.
-const G14_RAIL_EMOJI = /[\u{1F682}-\u{1F68B}\u{1F69D}\u{1F69E}\u{1F6F2}\u{1F6E4}]\u{FE0F}?/gu
+// Strip rail glyphs. v59.95 — and the flag. ⭐ and ⚡ are fine because the shared
+// zero-emoji sweep rewrites them into real sprites (measured: after the sweep the
+// label's textContent no longer contains them). 🇮🇩 is the one label glyph the sweep
+// has no mapping for, so it stayed a raw system glyph on a screen the child sees —
+// and a regional-indicator pair falls back to the bare letters "ID" on any device
+// whose font lacks it. The category already carries a real Indonesian locomotive as
+// its thumbnail, which is the picture that was supposed to be doing this job.
+const G14_RAIL_EMOJI = /[\u{1F682}-\u{1F68B}\u{1F69D}\u{1F69E}\u{1F6F2}\u{1F6E4}]\u{FE0F}?|[\u{1F1E6}-\u{1F1FF}]{2}/gu
 function g14CatLabel(cat) { return String((cat && cat.name) || '').replace(G14_RAIL_EMOJI, '').replace(/\s+/g, ' ').trim() }
 function g14CatThumb(cat) {
   const wrap = document.createElement('span')
@@ -6163,6 +6210,7 @@ function showCategories() {
   document.getElementById('go-btn').style.display = 'none'
   const body = document.getElementById('select-body')
   body.innerHTML = ''
+  body.classList.add('cats')   // v59.95 — multi-column on wide landscape, see CSS
   TRAIN_CATS.forEach(cat => {
     const btn = document.createElement('button')
     btn.className = 'cat-btn'
@@ -6186,6 +6234,7 @@ function showTrainsForCat(cat) {
   document.getElementById('sel-title').textContent = cat.name
   const body = document.getElementById('select-body')
   body.innerHTML = ''
+  body.classList.remove('cats')   // v59.95 — back to the single-column host for .train-grid
   const grid = document.createElement('div')
   grid.className = 'train-grid'
   cat.trains.forEach((t, idx) => {

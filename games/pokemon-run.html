@@ -88,7 +88,13 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 #tr-balloon.exiting{animation:balloonExit 1.6s cubic-bezier(.4,0,.6,1) forwards}
 
 /* ── TR Warning banner ── */
-#tr-warning{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-120px);z-index:80;background:linear-gradient(135deg,rgba(220,38,38,.95),rgba(185,28,28,.98));border:2.5px solid #fca5a5;border-radius:18px;padding:10px 20px;color:#fff;font-size:clamp(13px,3.5vw,18px);font-weight:900;white-space:nowrap;transition:transform .4s cubic-bezier(.34,1.56,.64,1);pointer-events:none;box-shadow:0 8px 24px rgba(220,38,38,.5)}
+/* Parked position: the banner is 46px tall and sat at top:80px, so a fixed
+   -120px hide left 6px of a BRIGHT RED bar permanently stuck to the top of
+   the screen at every viewport (measured 1600x900 / 2400x1080 / 1024x600).
+   A red bar that never goes away is a hazard cue that means nothing — the
+   same mistake as the glowing high-bird. Park it by its own height so it is
+   fully off-screen whatever the font scales it to. */
+#tr-warning{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(calc(-100% - 90px));z-index:80;background:linear-gradient(135deg,rgba(220,38,38,.95),rgba(185,28,28,.98));border:2.5px solid #fca5a5;border-radius:18px;padding:10px 20px;color:#fff;font-size:clamp(13px,3.5vw,18px);font-weight:900;white-space:nowrap;transition:transform .4s cubic-bezier(.34,1.56,.64,1);pointer-events:none;box-shadow:0 8px 24px rgba(220,38,38,.5)}
 #tr-warning.show{transform:translateX(-50%) translateY(0)}
 
 /* ── TR Battle Overlay ── */
@@ -151,6 +157,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 .choice-btn:nth-child(3){background:linear-gradient(160deg,#2DBF7E,#1A9E66);border-color:#50E0A0;box-shadow:0 5px 0 #0A7A48}
 .choice-btn:nth-child(4){background:linear-gradient(160deg,#F59E0B,#D97706);border-color:#FCD34D;box-shadow:0 5px 0 #92400E}
 .choice-btn:active{transform:scale(.91) translateY(4px)}
+.choice-btn.qc-col,.choice-btn.qc-col:nth-child(n){background:var(--qc);border-color:var(--qc-edge);box-shadow:0 5px 0 var(--qc-edge);color:var(--qc-ink);text-shadow:none}
+.q-swatch{display:inline-block;width:1.05em;height:1.05em;border-radius:50%;vertical-align:-0.12em;margin:0 .12em;background:var(--qc);border:2px solid var(--qc-edge);box-shadow:0 0 12px var(--qc)}
 .choice-btn.correct{border-color:#4ade80;background:rgba(74,222,128,.3);animation:correctFlash .4s ease}
 .choice-btn.wrong{border-color:#ef4444;background:rgba(239,68,68,.3);animation:wrongShake .35s ease}
 @keyframes correctFlash{50%{transform:scale(1.12)}}
@@ -398,14 +406,14 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
     const sl=document.getElementById('start-loading'); if(sl) sl.style.opacity='1'
   },600)
 </script>
-<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- zero-emoji engine -->
-<script src="../shared/rz-responsive.js?v=59.94-20260808a"></script>
+<script src="data/emoji-map.js?v=59.95-20260809a"></script><script src="data/ui-sprites.js?v=59.95-20260809a"></script><!-- zero-emoji engine -->
+<script src="../shared/rz-responsive.js?v=59.95-20260809a"></script>
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="data/poke-sprite-cdn.js?v=59.94-20260808a"></script>
-<script src="data/sfx-engine.js?v=59.94-20260808a"></script>
-<script src="vfx-engine.js?v=59.94-20260808a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
-<script src="data/weather-fx.js?v=59.94-20260808a"></script>
-<script src="data/poke-type-chart.js?v=59.94-20260808a"></script>
+<script src="data/poke-sprite-cdn.js?v=59.95-20260809a"></script>
+<script src="data/sfx-engine.js?v=59.95-20260809a"></script>
+<script src="vfx-engine.js?v=59.95-20260809a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
+<script src="data/weather-fx.js?v=59.95-20260809a"></script>
+<script src="data/poke-type-chart.js?v=59.95-20260809a"></script>
 <script>
   // Licensed Pokemon SFX + weather — lazy init, silent failure.
   document.addEventListener('DOMContentLoaded', function () {
@@ -422,10 +430,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
     } catch (e) {}
   });
 </script>
-<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
-<script src="data/save-engine.js?v=59.94-20260808a"></script>
-<script src="data/g23-question-engine.js?v=59.94-20260808a"></script>
-<script src="game-modal.js?v=59.94-20260808a"></script>
+<script src="data/freeze-watchdog.js?v=59.95-20260809a"></script>
+<script src="data/save-engine.js?v=59.95-20260809a"></script>
+<script src="data/g23-question-engine.js?v=59.95-20260809a"></script>
+<script src="game-modal.js?v=59.95-20260809a"></script>
 <script>
 'use strict'
 // ═══════════════════════════════════════════════════════════
@@ -647,6 +655,68 @@ function _getUserDiff(){
   try { return cfg.difficulty || sessionStorage.getItem('g23Difficulty') || 'medium' }
   catch(_) { return 'medium' }
 }
+// ── Colour questions must be answerable WITHOUT reading ─────────────────────
+// The player is five and does not read yet. A colour question is the one item
+// he CAN answer on sight — but only if the picture and the buttons agree.
+// Two things broke that, both verified on this page:
+//   1. The choice buttons were painted by POSITION (.choice-btn:nth-child(2..4)
+//      = red / green / amber) while the options are shuffled every time, so
+//      "HIJAU" landed on the purple button and "MERAH" on the green one.
+//      Matching by colour — the only strategy a non-reader has — produced the
+//      WRONG answer, which is worse than no colour at all.
+//   2. The swatch in the question is an emoji (🔴), and an emoji is not a
+//      picture we ship. A device without that glyph draws nothing, so the
+//      question becomes "Warna ?". DESIGN.md forbids emoji as UI chroma for
+//      exactly this reason.
+// So: paint every colour choice the colour it names, and draw the question's
+// swatch ourselves.
+// NOTE: the question bank this reads from lives in games/data/g23-question-engine.js
+// (and mirrored copies in the sibling game pages) — the emoji is still in the
+// DATA. This transform is applied at render time so it works whichever bank is
+// loaded; the real home for it is that shared file.
+const COLOUR_WORDS = {
+  MERAH:  {fill:'#e23b2e',edge:'#8f1f16',ink:'#fff'},
+  BIRU:   {fill:'#2563eb',edge:'#15357a',ink:'#fff'},
+  HIJAU:  {fill:'#22c55e',edge:'#15803d',ink:'#fff'},
+  KUNING: {fill:'#f5c518',edge:'#b45309',ink:'#3b2a4a'},
+  UNGU:   {fill:'#8B5CF6',edge:'#6d28d9',ink:'#fff'},
+  ORANYE: {fill:'#f97316',edge:'#9a3412',ink:'#fff'},
+  COKLAT: {fill:'#8b5a2b',edge:'#5b3a1a',ink:'#fff'},
+  HITAM:  {fill:'#1f2937',edge:'#0b0f16',ink:'#fff'},
+  PUTIH:  {fill:'#f8fafc',edge:'#94a3b8',ink:'#3b2a4a'},
+  ABU:    {fill:'#9ca3af',edge:'#4b5563',ink:'#1f2937'},
+}
+const COLOUR_EMOJI = {'\u{1F534}':'MERAH','\u{1F535}':'BIRU','\u{1F7E1}':'KUNING','\u{1F7E2}':'HIJAU','\u{1F7E0}':'ORANYE','\u{1F7E3}':'UNGU','\u{1F7E4}':'COKLAT','\u26AB':'HITAM','\u26AA':'PUTIH'}
+function makeColourSwatch(word){
+  const c = COLOUR_WORDS[word] || COLOUR_WORDS.PUTIH
+  const s = document.createElement('span')
+  s.className = 'q-swatch'
+  s.style.setProperty('--qc', c.fill)
+  s.style.setProperty('--qc-edge', c.edge)
+  return s
+}
+// Writes `text` into `el`, swapping any colour-circle emoji for a drawn swatch.
+// Replaces the old `el.textContent = q.q`.
+function renderQuestionText(el, text){
+  el.textContent = ''
+  let buf = ''
+  for(const ch of String(text == null ? '' : text)){
+    const word = COLOUR_EMOJI[ch]
+    if(word){
+      if(buf){ el.appendChild(document.createTextNode(buf)); buf = '' }
+      el.appendChild(makeColourSwatch(word))
+    } else buf += ch
+  }
+  if(buf) el.appendChild(document.createTextNode(buf))
+}
+function paintColourChoice(btn, text){
+  const c = COLOUR_WORDS[text]
+  if(!c) return
+  btn.classList.add('qc-col')
+  btn.style.setProperty('--qc', c.fill)
+  btn.style.setProperty('--qc-edge', c.edge)
+  btn.style.setProperty('--qc-ink', c.ink)
+}
 function pickQ(level){
   // Prefer the new question engine (1000+ questions split by age group);
   // fall back to legacy QUESTIONS bank if engine not loaded.
@@ -719,7 +789,19 @@ function scrollBgLayers(speed){
 // New arc: apex ≈ 140px, horizontal ≈ 240px single / ≈ 420px double.
 // Clears all single obstacles + most doubles with comfortable margin.
 // Was-before-v54.0: GRAVITY 0.62, JUMP_POWER -14.5, DBLJ_POWER -11.5.
-const GRAVITY       = 0.54
+//
+// 2026-08-08, MEASURED against a real tap rather than a held button.
+// handleJumpRelease() used to multiply playerVY by 0.45 on pointerup while the
+// player was still rising ("Mario-style short hop"). A five-year-old's tap is
+// 4-10 frames long, so that cut fired on EVERY jump: measured apex was 90px for
+// a 4-frame tap and 110px for a 6-frame tap, not the 223px a held button gives.
+// Simulated against the live constants, that made every ground obstacle on
+// levels 1-5 IMPOSSIBLE — including with a rapid double tap. The cut is gone
+// (see handleJumpRelease) and gravity is eased so the arc has enough hang time
+// for the widest template at the slowest scroll speed. Apex 223 -> 260px, hang
+// 58 -> 66 frames, horizontal reach +13%; the apex:distance ratio is unchanged
+// (both scale with 1/GRAVITY), so the feel the owner tuned for is preserved.
+const GRAVITY       = 0.48
 const JUMP_POWER    = -15.8
 const DBLJ_POWER    = -13.0
 const DBLJ_FLOOR    = -16.0  // cap for the stacked (additive) double jump
@@ -849,6 +931,9 @@ const S = {
   level:cfg.level, lives:3,
   score:0, distance:0, evoStage:0, evolveTriggered:false,
   correctAnswers:0, wrongAnswers:0, quizDone:0,
+  // Every question actually put in front of the child, gate quizzes AND obstacle
+  // quizzes. quizDone counts gates only and is still what paces gate spawning.
+  quizAsked:0,
   frame:0,
   playerVY:0, playerY:0, jumpCount:0, isGrounded:true, isSliding:false, slideTimer:0,
   // v54.1 — Mario-style variable jump + coyote-time/jump-buffer (standard platformer crutches).
@@ -1242,6 +1327,30 @@ const MID_OBS = [
 const HIGH_OBS = [
   {type:'high-bird',w:70, h:36, lane:'high'},
 ]
+
+// ── Fairness measurement ───────────────────────────────────────────────────
+// How many frames of timing latitude a SINGLE tap gives against one obstacle.
+//   above   = frames the player's lower hitbox edge stays above the obstacle top
+//   overlap = frames the obstacle spends inside the player's horizontal box,
+//             (boxW + obs.w) / gameSpeed
+// window = above - overlap. Zero or less means the obstacle cannot be cleared at
+// all with one tap, however perfectly it is timed; the value is the margin for
+// error the child has. 8 frames is 133 ms at 60 fps.
+const FAIR_WINDOW_F = 8
+function clearWindowFrames(obs){
+  const need = obs.h - 6                 // py_b = playerY - 6 in checkCollisions
+  let y = 0, vy = JUMP_POWER, k1 = -1, k2 = -1
+  for(let k = 0; k < 400; k++){
+    vy += GRAVITY; if(vy > MAX_FALL) vy = MAX_FALL
+    y += vy
+    if(y >= 0) break                     // landed
+    if(-y >= need){ if(k1 < 0) k1 = k; k2 = k }
+    else if(k1 >= 0) break               // arc already came back down
+  }
+  const above = k1 < 0 ? 0 : (k2 - k1 + 1)
+  const overlap = (PLAYER_W - 2*HIT_MARGIN_X + obs.w) / Math.max(0.5, gameSpeed)
+  return above - overlap
+}
 function spawnObstacle(){
   S.obsSpawnedSinceQuiz++
   const isQuiz = S.quizDone<TOTAL_QUIZ && S.obsSpawnedSinceQuiz>=4
@@ -1258,16 +1367,20 @@ function spawnObstacle(){
   // Enforce same-Y constraint: can't have same lane twice; two action lanes simultaneously forbidden
   if(lane!=='high' && (hasAction || active.some(o=>o.lane===lane))) lane='high'
 
-  // Per-level ground pool. Overlap duration is (hitboxW + obs.w) / gameSpeed, and
-  // gameSpeed RISES with level — so a wide obstacle is HARDEST on level 1, which
-  // inverted the difficulty curve (L1-3 were provably the hardest levels in the
-  // game). Hold the two widest/tallest templates back until the scroll speed can
-  // carry them. Simulated: with this gate every L1-3 obstacle clears on a SINGLE
-  // jump, and no obstacle at any level fails a rapid double-tap.
+  // Per-level ground pool. This used to be a hand-written `level>=3 / level>=4`
+  // gate, which is a guess about the real constraint. The real constraint is
+  // measurable: an obstacle is fair iff the arc keeps the player above it for
+  // LONGER than the obstacle spends inside the player's hitbox, and the surplus
+  // is the timing latitude the child actually has. Compute it from the live
+  // physics instead of guessing — it then stays correct if PLAYER_W, gameSpeed
+  // or the jump constants ever move again.
   let pool = lane==='ground' ? GROUND_OBS : lane==='mid' ? MID_OBS : HIGH_OBS
   if(lane==='ground'){
-    pool = pool.filter(o => o.type==='double' ? cfg.level>=4 : o.type==='tall' ? cfg.level>=3 : true)
-    if(!pool.length) pool = GROUND_OBS
+    const fair = pool.filter(o => clearWindowFrames(o) >= FAIR_WINDOW_F)
+    // Never leave the lane empty: fall back to whichever template is currently
+    // the most forgiving rather than to the whole list.
+    pool = fair.length ? fair
+         : [pool.reduce((best,o)=> clearWindowFrames(o) > clearWindowFrames(best) ? o : best, pool[0])]
   }
   const tpl  = pool[Math.floor(Math.random()*pool.length)]
 
@@ -1611,13 +1724,13 @@ function triggerObstacleQuiz(obs){
 }
 
 function showObstacleQuiz(obs){
-  const q=S.questions[S.qIdx%S.questions.length]; S.qIdx++
-  document.getElementById('quiz-question').textContent=q.q
+  const q=S.questions[S.qIdx%S.questions.length]; S.qIdx++; S.quizAsked++
+  renderQuestionText(document.getElementById('quiz-question'), q.q)
   const choicesEl=document.getElementById('quiz-choices'); choicesEl.innerHTML=''
   const choices=shuffle([q.ans,...q.wrong])
   let answered=false
   choices.forEach(c=>{
-    const btn=document.createElement('button'); btn.className='choice-btn'; btn.textContent=c
+    const btn=document.createElement('button'); btn.className='choice-btn'; btn.textContent=c; paintColourChoice(btn, c)
     btn.onclick=()=>{
       if(answered) return; answered=true
       if(c===q.ans){
@@ -1757,13 +1870,13 @@ function destroyObs(obs,withScore){
 //  RUNNER QUIZ
 // ═══════════════════════════════════════════════════════════
 function showRunnerQuiz(gate){
-  const q=S.questions[S.qIdx%S.questions.length]; S.qIdx++
-  document.getElementById('quiz-question').textContent=q.q
+  const q=S.questions[S.qIdx%S.questions.length]; S.qIdx++; S.quizAsked++
+  renderQuestionText(document.getElementById('quiz-question'), q.q)
   const choicesEl=document.getElementById('quiz-choices'); choicesEl.innerHTML=''
   const choices=shuffle([q.ans,...q.wrong])
   let answered=false
   choices.forEach(c=>{
-    const btn=document.createElement('button'); btn.className='choice-btn'; btn.textContent=c
+    const btn=document.createElement('button'); btn.className='choice-btn'; btn.textContent=c; paintColourChoice(btn, c)
     btn.onclick=()=>{
       if(answered) return; answered=true
       if(c===q.ans){
@@ -1775,7 +1888,6 @@ function showRunnerQuiz(gate){
           if(gate) destroyObs(gate,false)
           S.pendingQuizGate=null; spawnFT('Benar! +10',PLAYER_X,S.playerY-PLAYER_H-20,0x4ade80)
           S.paused=false; updateHUD()
-          if(S.quizDone>=TOTAL_QUIZ) setTimeout(()=>showWin(),600)
         },550)
       } else {
         btn.classList.add('wrong'); sfxWrong(); S.wrongAnswers++; S.lives--
@@ -1788,7 +1900,6 @@ function showRunnerQuiz(gate){
           spawnFT('Coba lagi!',PLAYER_X,S.playerY-PLAYER_H-20,0xfbbf24)
           S.paused=false; S.invincible=60; updateHUD()
           if(S.lives<=0){ setTimeout(()=>showLose(),200); return }
-          if(S.quizDone>=TOTAL_QUIZ) setTimeout(()=>showWin(),600)
         },1100)
       }
     }
@@ -2204,10 +2315,27 @@ function updateHUD(){
 // ═══════════════════════════════════════════════════════════
 //  WIN / LOSE
 // ═══════════════════════════════════════════════════════════
-function calcStars(){
-  return typeof GameScoring!=='undefined'
-    ? GameScoring.calc({correct:S.correctAnswers,total:Math.max(1,S.quizDone),wrong:S.wrongAnswers,lives:S.lives,maxLives:3})
-    : Math.max(1, 5-S.wrongAnswers*2)
+// The level is won by SURVIVING the countdown — that is what the HUD shows and
+// what the child is doing for sixty-plus seconds. Stars were computed purely from
+// quiz accuracy over `quizDone`, which counts only the gate quizzes: obstacle
+// quizzes bumped `correctAnswers` but never `quizDone`, so the ratio could exceed
+// 1, and GameScoring.calc() returns 0 when `correct` is 0 — a full clean run that
+// answered one question wrong and none right finished the level and was told
+// "Coba Lagi" with zero stars. Count every question that was actually ASKED, and
+// let a finished level be worth at least one star.
+function calcStars(finished){
+  const asked = S.quizAsked || 0
+  let stars
+  if(typeof GameScoring==='undefined'){
+    stars = Math.max(1, 5-S.wrongAnswers*2)
+  } else if(asked === 0){
+    // Nothing was ever asked (a flawless run past every gate): score the run
+    // itself — lives kept — instead of dividing by a question that never came.
+    stars = GameScoring.calc({correct:Math.max(0,S.lives), total:3, wrong:3-S.lives, lives:S.lives, maxLives:3})
+  } else {
+    stars = GameScoring.calc({correct:S.correctAnswers, total:asked, wrong:S.wrongAnswers, lives:S.lives, maxLives:3})
+  }
+  return finished ? Math.max(1, stars) : stars
 }
 function showWin(){
   if(S.gameOver) return
@@ -2215,7 +2343,7 @@ function showWin(){
   S.running=false; S.gameOver=true
   try{ if(app&&app.ticker) app.ticker.stop() }catch(_){}
   bgmStop()
-  const stars=calcStars()
+  const stars=calcStars(true)
   if(typeof window.saveLevelProgress==='function') window.saveLevelProgress('g23',S.level,stars)
   sfxFanfare()
   // v54.11 — Confetti shower on win. Color-coded by star tier.
@@ -2242,12 +2370,21 @@ function showWin(){
   document.getElementById('status-text').textContent='Level Selesai!'
   setTimeout(()=>{
     // v54.11 — Run summary with rich stats (distance, pickups, top combo, quiz%, top streak).
-    const quizPct = Math.round(100 * S.correctAnswers / Math.max(1,S.quizDone))
-    const info = `🏃 ${Math.floor(S.distance)}m · 🪙 ${S.coinsCollected||0} · 🔥 ${S.coinStreak||0}× · 🧠 ${quizPct}%`
-    const title=stars>=5?'Sempurna!':stars>=4?'Hebat!':stars>=3?'Bagus!':'Coba Lagi'
+    const asked = S.quizAsked || 0
+    const quizPct = asked ? Math.round(100 * S.correctAnswers / asked) : null
+    const info = `${Math.floor(S.distance)} meter · ${S.coinsCollected||0} koin`
+    // The level was FINISHED — the child survived the whole countdown. Never
+    // title that "Coba Lagi"; say what happened, then say the one thing that
+    // would earn more stars next time (DESIGN.md: kekalahan dijelaskan, bukan
+    // dihakimi).
+    const title=stars>=5?'Sempurna!':stars>=4?'Hebat!':stars>=3?'Bagus!':'Selesai!'
     const emoji=stars>=5?'🏆':stars>=4?'🌟':stars>=3?'⭐':'💪'
+    const hint = stars>=4 ? ''
+      : (asked && quizPct < 60) ? ' Lain kali jawab soalnya pelan-pelan ya.'
+      : (S.lives < 3)           ? ' Lain kali coba lompati rintangannya.'
+      : ''
     const next=S.level<30?()=>{ try{sessionStorage.setItem('g23Config',JSON.stringify({level:S.level+1}))}catch(_){} location.reload() }:null
-    GameModal.show({ emoji,title,stars,msg:emoji+' '+info, onNext:next, onAgain:()=>location.reload(), onBack:()=>goBack() })
+    GameModal.show({ emoji,title,stars,msg:`Kamu berlari ${info}.${hint}`, onNext:next, onAgain:()=>location.reload(), onBack:()=>goBack() })
   },700)
 }
 // v54.13 — Daily-streak Pokeball meta currency. Persists totals + per-day count
@@ -2297,7 +2434,11 @@ function g23RenderPokeballChip(){
     if (!el){
       el = document.createElement('div')
       el.id = 'g23-pokeball-chip'
-      el.style.cssText = 'position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:300;background:rgba(0,0,0,0.78);border:1.5px solid rgba(255,255,255,0.28);border-radius:14px;padding:6px 12px;color:#fff;font-family:Fredoka One,sans-serif;font-size:12px;font-weight:700;display:flex;gap:10px;align-items:center;text-shadow:0 1px 2px rgba(0,0,0,0.6);pointer-events:none'
+      // The chip used to sit at top:8px;left:50% — dead centre, i.e. straight on
+      // top of #hud-center, overlapping the level line by a measured 120x20px
+      // at all three viewports. It is meta-currency, not gameplay; move it
+      // clear of the HUD bar instead of stacking two readouts on one spot.
+      el.style.cssText = 'position:fixed;top:calc(66px + 8px);left:50%;transform:translateX(-50%);z-index:300;background:rgba(0,0,0,0.78);border:1.5px solid rgba(255,255,255,0.28);border-radius:14px;padding:6px 12px;color:#fff;font-family:Fredoka One,sans-serif;font-size:12px;font-weight:700;display:flex;gap:10px;align-items:center;text-shadow:0 1px 2px rgba(0,0,0,0.6);pointer-events:none'
       document.body.appendChild(el)
     }
     el.innerHTML = `<span style="color:#fbbf24">🔴 ${lifetime}</span><span style="color:#7dd3fc">📅 ${today}</span><span style="color:#f472b6">🔥 ${streak}d</span>`
@@ -2421,10 +2562,16 @@ document.addEventListener('pointermove',e=>{
   if(e.buttons===0) return
   if(e.clientY-_swipeStartY>55){ _swipeStartY=e.clientY; handleSlide() }
 },{passive:true})
-// v54.1 — variable jump (Mario-style short-hop). On pointerup, if player is still rising
-// (playerVY < -6) AND the tap is still "held", halve upward velocity for a short hop.
+// v54.1 shipped a Mario-style short hop here: on pointerup, if the player was
+// still rising, playerVY *= 0.45. In Mario a short hop is a CHOICE — you hold to
+// go high. A five-year-old cannot hold: a tap is 4-10 frames, so the cut fired on
+// every single jump. Measured apex with the cut: 90px (4-frame tap) / 110px
+// (6-frame tap) / 146px (10-frame tap) against the 223px the constants promise.
+// Simulated against the live geometry, that left EVERY ground obstacle on levels
+// 1-5 unclearable, by single tap and by rapid double tap alike — which is exactly
+// the owner's report ("dia itu loncat tapi secara distance itu kayak kurang, jadi
+// dengan 2 loncatan pun itu kurang"). The tap is now the whole jump.
 function handleJumpRelease(){
-  if(S.jumpHeld && S.playerVY < -6){ S.playerVY *= 0.45 }
   S.jumpHeld = false
 }
 document.addEventListener('pointerup', handleJumpRelease, {passive:true})
@@ -2527,6 +2674,16 @@ window.addEventListener('orientationchange', _g23Resize)
 function updateObstacleEffects(){
   for(const obs of S.obstacles){
     if(obs.hit) continue
+    // The HIGH lane passes overhead and is explicitly skipped by checkCollisions
+    // — it cannot hurt anyone. It was still given the same swelling glow and the
+    // same reddening danger tint as a solid crate, which teaches the child to
+    // dodge scenery and, worse, teaches him that the red cue sometimes means
+    // nothing. Leave it alone: only things that can actually hit him glow red.
+    if(obs.lane==='high'){
+      if(obs.glowRing) obs.glowRing.alpha = 0.12
+      obs.gfx.tint = 0xFFFFFF
+      continue
+    }
     if(obs.glowRing){
       const pulse=0.22+Math.sin(obs.phase*2.6)*0.18
       const dist=obs.x-PLAYER_X
@@ -2620,6 +2777,11 @@ function gameLoop(ticker){
     const _grav = GRAVITY * (S.natureGravMul || 1)
     S.playerVY+=_grav*dt; S.playerVY=Math.min(S.playerVY,MAX_FALL)
     S.playerY+=S.playerVY*dt
+    // Ceiling. A delayed double jump reaches ~436px with the eased gravity; on a
+    // 1024x600 tablet that is above the top of the screen, so the child loses
+    // sight of his own Pokemon behind the HUD. Stop the rise there instead.
+    const _ceilY = Math.max(PLAYER_H + 96, H * 0.22)
+    if(S.playerY < _ceilY){ S.playerY = _ceilY; if(S.playerVY < 0) S.playerVY = 0 }
     // v54.1 — coyote-frames tick down each frame in-air after just-launched (or fell off).
     if(S.coyoteFrames>0) S.coyoteFrames -= dt
     // v54.1 — jump trail particles (3-4 sparks trailing during airtime, type-coloured if PU active).

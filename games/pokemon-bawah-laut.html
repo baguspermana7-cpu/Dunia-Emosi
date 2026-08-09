@@ -38,6 +38,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
 .choice-btn:nth-child(3){background:linear-gradient(160deg,#2DBF7E,#1A9E66);border-color:#50E0A0;box-shadow:0 5px 0 #0A7A48}
 .choice-btn:nth-child(4){background:linear-gradient(160deg,#F59E0B,#D97706);border-color:#FCD34D;box-shadow:0 5px 0 #92400E}
 .choice-btn:active{transform:scale(.91) translateY(4px);box-shadow:0 1px 0 #075985}
+.choice-btn.qc-col,.choice-btn.qc-col:nth-child(n){background:var(--qc);border-color:var(--qc-edge);box-shadow:0 5px 0 var(--qc-edge);color:var(--qc-ink);text-shadow:none}
+.q-swatch{display:inline-block;width:1.05em;height:1.05em;border-radius:50%;vertical-align:-0.12em;margin:0 .12em;background:var(--qc);border:2px solid var(--qc-edge);box-shadow:0 0 12px var(--qc)}
 .choice-btn.correct{border-color:#4ade80;background:rgba(74,222,128,0.3);animation:correctFlash .4s ease}
 .choice-btn.wrong{border-color:#ef4444;background:rgba(239,68,68,0.3);animation:wrongShake .35s ease}
 @keyframes correctFlash{0%{transform:scale(1.1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
@@ -149,14 +151,14 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
   <div id="start-hint">Memuat... ⏳</div>
 </div>
 
-<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- zero-emoji engine -->
-<script src="../shared/rz-responsive.js?v=59.94-20260808a"></script>
+<script src="data/emoji-map.js?v=59.95-20260809a"></script><script src="data/ui-sprites.js?v=59.95-20260809a"></script><!-- zero-emoji engine -->
+<script src="../shared/rz-responsive.js?v=59.95-20260809a"></script>
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="vfx-engine.js?v=59.94-20260808a"></script><!-- A-355 unified shared VFX (correct-answer reward flourish) -->
-<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
-<script src="data/save-engine.js?v=59.94-20260808a"></script>
-<script src="data/g23-question-engine.js?v=59.94-20260808a"></script>
-<script src="game-modal.js?v=59.94-20260808a"></script>
+<script src="vfx-engine.js?v=59.95-20260809a"></script><!-- A-355 unified shared VFX (correct-answer reward flourish) -->
+<script src="data/freeze-watchdog.js?v=59.95-20260809a"></script>
+<script src="data/save-engine.js?v=59.95-20260809a"></script>
+<script src="data/g23-question-engine.js?v=59.95-20260809a"></script>
+<script src="game-modal.js?v=59.95-20260809a"></script>
 <script>
 // ══════════════════════════════════════════════════════════════
 //  CONFIG
@@ -371,6 +373,68 @@ const QUESTIONS = {
 function _getG24UserDiff(){
   try { return cfg.difficulty || sessionStorage.getItem('g24Difficulty') || 'medium' }
   catch(_) { return 'medium' }
+}
+// ── Colour questions must be answerable WITHOUT reading ─────────────────────
+// The player is five and does not read yet. A colour question is the one item
+// he CAN answer on sight — but only if the picture and the buttons agree.
+// Two things broke that, both verified on this page:
+//   1. The choice buttons were painted by POSITION (.choice-btn:nth-child(2..4)
+//      = red / green / amber) while the options are shuffled every time, so
+//      "HIJAU" landed on the purple button and "MERAH" on the green one.
+//      Matching by colour — the only strategy a non-reader has — produced the
+//      WRONG answer, which is worse than no colour at all.
+//   2. The swatch in the question is an emoji (🔴), and an emoji is not a
+//      picture we ship. A device without that glyph draws nothing, so the
+//      question becomes "Warna ?". DESIGN.md forbids emoji as UI chroma for
+//      exactly this reason.
+// So: paint every colour choice the colour it names, and draw the question's
+// swatch ourselves.
+// NOTE: the question bank this reads from lives in games/data/g23-question-engine.js
+// (and mirrored copies in the sibling game pages) — the emoji is still in the
+// DATA. This transform is applied at render time so it works whichever bank is
+// loaded; the real home for it is that shared file.
+const COLOUR_WORDS = {
+  MERAH:  {fill:'#e23b2e',edge:'#8f1f16',ink:'#fff'},
+  BIRU:   {fill:'#2563eb',edge:'#15357a',ink:'#fff'},
+  HIJAU:  {fill:'#22c55e',edge:'#15803d',ink:'#fff'},
+  KUNING: {fill:'#f5c518',edge:'#b45309',ink:'#3b2a4a'},
+  UNGU:   {fill:'#8B5CF6',edge:'#6d28d9',ink:'#fff'},
+  ORANYE: {fill:'#f97316',edge:'#9a3412',ink:'#fff'},
+  COKLAT: {fill:'#8b5a2b',edge:'#5b3a1a',ink:'#fff'},
+  HITAM:  {fill:'#1f2937',edge:'#0b0f16',ink:'#fff'},
+  PUTIH:  {fill:'#f8fafc',edge:'#94a3b8',ink:'#3b2a4a'},
+  ABU:    {fill:'#9ca3af',edge:'#4b5563',ink:'#1f2937'},
+}
+const COLOUR_EMOJI = {'\u{1F534}':'MERAH','\u{1F535}':'BIRU','\u{1F7E1}':'KUNING','\u{1F7E2}':'HIJAU','\u{1F7E0}':'ORANYE','\u{1F7E3}':'UNGU','\u{1F7E4}':'COKLAT','\u26AB':'HITAM','\u26AA':'PUTIH'}
+function makeColourSwatch(word){
+  const c = COLOUR_WORDS[word] || COLOUR_WORDS.PUTIH
+  const s = document.createElement('span')
+  s.className = 'q-swatch'
+  s.style.setProperty('--qc', c.fill)
+  s.style.setProperty('--qc-edge', c.edge)
+  return s
+}
+// Writes `text` into `el`, swapping any colour-circle emoji for a drawn swatch.
+// Replaces the old `el.textContent = q.q`.
+function renderQuestionText(el, text){
+  el.textContent = ''
+  let buf = ''
+  for(const ch of String(text == null ? '' : text)){
+    const word = COLOUR_EMOJI[ch]
+    if(word){
+      if(buf){ el.appendChild(document.createTextNode(buf)); buf = '' }
+      el.appendChild(makeColourSwatch(word))
+    } else buf += ch
+  }
+  if(buf) el.appendChild(document.createTextNode(buf))
+}
+function paintColourChoice(btn, text){
+  const c = COLOUR_WORDS[text]
+  if(!c) return
+  btn.classList.add('qc-col')
+  btn.style.setProperty('--qc', c.fill)
+  btn.style.setProperty('--qc-edge', c.edge)
+  btn.style.setProperty('--qc-ink', c.ink)
 }
 function pickQuestions(lv) {
   // Prefer the shared question engine (1000+ questions split by age group);
@@ -1323,8 +1387,29 @@ function syncSwimmerPos(y) {
 // ══════════════════════════════════════════════════════════════
 //  COLLISION
 // ══════════════════════════════════════════════════════════════
+// Same defect as pokemon-birds: ONE fixed collider circle (r = SWIMMER_SZ/2-8 =
+// 40px) for a sprite drawn at `width: min(SWIMMER_SZ*scale px, scale*16 vw)`,
+// scale 0.7-1.82. Measured at 1600x900, collider vs the box actually rendered:
+// Magikarp 67x67 -> collider is 1.19x its drawn size, Horsea/Shellder/Goldeen/
+// Chinchou/Remoraid/Marill/Feebas/Barboach/Luvdisc/Finneon/Buizel/Mantyke all
+// 1.19x, while Mega Gyarados renders 175x175 and is only 0.46x. The small
+// starters — the ones a child picks first — were struck outside their own body.
+// (Their opaque extent could not be read back: the Showdown GIFs taint the
+// canvas, so these ratios use the RENDERED box and the real over-reach on the
+// small sprites is larger, not smaller.) Clamped to the old radius: forgive only.
+function _swimHalf() {
+  const R = SWIMMER_SZ/2 - 8
+  const img = window._swimImg
+  if (!img || !img.offsetWidth || !img.offsetHeight) return { hx: R, hy: R }
+  return {
+    hx: Math.max(10, Math.min(img.offsetWidth  * 0.42, R)),
+    hy: Math.max(10, Math.min(img.offsetHeight * 0.42, R))
+  }
+}
 function checkCollisions() {
-  const bx=SWIM_X, by=S.swimY, br=SWIMMER_SZ/2-8
+  const bx=SWIM_X, by=S.swimY
+  const { hx, hy } = _swimHalf()
+  const br = hx
   for (const c of S.cliffs) {
     if (c.passed || c.hit || c.removing || !c.topGfx.visible) continue
 
@@ -1348,7 +1433,7 @@ function checkCollisions() {
       const activeGap = S.evolved ? GAP_EVO : GAP_SIZE
       const gapTop = c.gapY - activeGap/2
       const gapBot = c.gapY + activeGap/2
-      if (by-br < gapTop || by+br > gapBot) {
+      if (by-hy < gapTop || by+hy > gapBot) {
         c.hit=true; S.paused=true; sfxHit(); flashScreen('#ef4444')
         S.currentCliff=c; showQuiz(c); return
       }
@@ -1361,12 +1446,12 @@ function checkCollisions() {
 // ══════════════════════════════════════════════════════════════
 function showQuiz(cliff) {
   const q = S.questions[S.qIdx % S.questions.length]; S.qIdx++
-  document.getElementById('quiz-question').textContent = q.q
+  renderQuestionText(document.getElementById('quiz-question'), q.q)
   const ch = [q.ans, ...q.wrong].sort(()=>Math.random()-0.5)
   const el = document.getElementById('quiz-choices'); el.innerHTML=''
   let answered=false
   ch.forEach(c=>{
-    const btn=document.createElement('button'); btn.className='choice-btn'; btn.textContent=c
+    const btn=document.createElement('button'); btn.className='choice-btn'; btn.textContent=c; paintColourChoice(btn, c)
     btn.onclick=()=>{
       if(answered) return; answered=true
       if(c===q.ans) {
@@ -1456,7 +1541,10 @@ function triggerEvolution() {
 //  WIN
 // ══════════════════════════════════════════════════════════════
 function calcStars() {
-  return GameScoring.calc({ correct:S.correctAnswers, total:S.correctAnswers+S.wrongAnswers, wrong:S.wrongAnswers, lives:S.lives, maxLives:3 })
+  // Same as pokemon-birds: there is no lose state, and GameScoring.calc() returns
+  // 0 stars whenever `correct` is 0 — so finishing the whole dive with every
+  // answer wrong printed "Gagal!" and zero stars for a completed level.
+  return Math.max(1, GameScoring.calc({ correct:S.correctAnswers, total:Math.max(1,S.correctAnswers+S.wrongAnswers), wrong:S.wrongAnswers, lives:S.lives, maxLives:3 }))
 }
 function showWin() {
   if (S.gameOver) return
@@ -1479,13 +1567,12 @@ function showWin() {
       try { sessionStorage.setItem('g24Config', JSON.stringify({ level:S.level+1 })) } catch(_){}
       location.reload()
     } : null
-    const info = `${S.cliffsPassed}/${S.totalCliffs} rintangan | ⭐ ${S.correctAnswers} benar`
-    const title = stars>=5?'Sempurna!':stars>=4?'Hebat!':stars>=3?'Bagus!':stars>=1?'Coba Lagi':'Gagal!'
-    const emoji = stars>=5?'🏆':stars>=4?'🌟':stars>=3?'⭐':stars>=1?'💪':'😞'
-    const msg = (stars>=5?`Luar biasa! Kamu penyelam terbaik! ${info}`:
-                 stars>=4?`Kerja bagus! ${info}`:
-                 stars>=3?`Lumayan, terus berlatih! ${info}`:
-                 `Jangan menyerah, ayo coba lagi! ${info}`)
+    // DESIGN.md: never "Gagal!" — the dive was finished.
+    const info = `${S.cliffsPassed} dari ${S.totalCliffs} rintangan`
+    const title = stars>=5?'Sempurna!':stars>=4?'Hebat!':stars>=3?'Bagus!':'Selesai!'
+    const emoji = stars>=5?'🏆':stars>=4?'🌟':stars>=3?'⭐':'💪'
+    const msg = stars>=4 ? `Kamu lewat ${info}.`
+      : `Kamu lewat ${info}. Lain kali coba ambil mutiara di tengah celah ya.`
     GameModal.show({ emoji, title, stars, msg, onNext:nextLevel, onAgain:()=>location.reload(), onBack:()=>goBack() })
   }, 850)
 }

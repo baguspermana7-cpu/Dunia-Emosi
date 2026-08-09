@@ -227,13 +227,13 @@ body.shake{animation:screenShake .35s ease}
 
 <!-- Pixi.js 8 -->
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="vfx-engine.js?v=59.94-20260808a"></script><!-- A-355 unified shared VFX (electric bolt muzzle/hit) -->
+<script src="vfx-engine.js?v=59.95-20260809a"></script><!-- A-355 unified shared VFX (electric bolt muzzle/hit) -->
 <!-- Shared modules -->
-<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
-<script src="data/math-rules.js?v=59.94-20260808a"></script>
-<script src="data/save-engine.js?v=59.94-20260808a"></script>
-<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- eco HUD sprites -->
-<script src="game-modal.js?v=59.94-20260808a"></script>
+<script src="data/freeze-watchdog.js?v=59.95-20260809a"></script>
+<script src="data/math-rules.js?v=59.95-20260809a"></script>
+<script src="data/save-engine.js?v=59.95-20260809a"></script>
+<script src="data/emoji-map.js?v=59.95-20260809a"></script><script src="data/ui-sprites.js?v=59.95-20260809a"></script><!-- eco HUD sprites -->
+<script src="game-modal.js?v=59.95-20260809a"></script>
 <!-- Hotfix #120: sprite fix + picker fix (v=20260502b) -->
 
 <script>
@@ -682,6 +682,41 @@ async function loadAssets() {
     }).catch(e => { console.warn('[g21] sprite load fail:', key, e); return null })
   ))
   entries.forEach(([key], i) => { out[key] = loaded[i] })
+
+  // ── Sheet-bleed trim (2026-08-09, MEASURED) ────────────────────────────────
+  // Three of these WebPs were cut from the sprite sheet with the wrong frame, so
+  // they carry the sheet's OPAQUE BLACK background inside the file. Counted by
+  // rasterising every ref-*.webp and classifying each pixel:
+  //
+  //   ref-brick.webp   32x32, 69% opaque black — the real tile is the top-left
+  //                    16x16 (a perfect SMB1 four-course brick); columns 16-31
+  //                    and rows 16-31 are sheet background.
+  //   ref-qblock.webp  32x32, 74% opaque black — the real '?' block is the
+  //                    top-left 16x16. (ref-qblock-anim0/1 are 11% black and
+  //                    correct, which is why only the STATIC block looked wrong.)
+  //   ref-hill.webp    128x128 — the hill occupies x 0-79, y 0-63; x 80-127 on
+  //                    rows 48-63 is a solid black bar, and rows 64-127 are
+  //                    empty, which also made every hill float half a sprite
+  //                    above the ground because the sprite is bottom-anchored.
+  //
+  // On screen that drew a black slab under every '?' block, black bands through
+  // every brick platform and a black bar beside every hill — the child cannot
+  // tell painted scenery from a solid tile. The .webp files are shared assets
+  // and are not this page's to rewrite, so re-frame the texture instead: a Pixi
+  // sub-frame over the same GPU source, no extra bytes, no extra requests.
+  // Everything else measured clean (castledoor is 95% black because the doorway
+  // IS black in SMB1 — that one is correct art, left alone).
+  const _reframe = (tex, w, h) => {
+    try {
+      if (!tex || !tex.source) return tex
+      if (tex.frame && (tex.frame.width < w || tex.frame.height < h)) return tex
+      return new PIXI.Texture({ source: tex.source, frame: new PIXI.Rectangle(0, 0, w, h) })
+    } catch (_) { return tex }
+  }
+  out.ref_brick  = _reframe(out.ref_brick, 16, 16)
+  out.ref_qblock = _reframe(out.ref_qblock, 16, 16)
+  out.ref_hill   = _reframe(out.ref_hill, 80, 64)
+
   // Alias MARIO_TEXTURES for convenience in placeTile / entity renderers
   MARIO_TEXTURES = out
   return out
@@ -961,9 +996,13 @@ function buildMidLayer(theme, PIXI) {
     for (let i = 0; i < 10; i++) {
       if (hillTex) {
         const h = new PIXI.Sprite(hillTex)
-        // ref-hill.png is 128×128 native — scale for mid parallax bg
+        // The texture is re-framed to the hill's real 80x64 content in
+        // loadAssets() (the rest of the 128x128 file is a black bar plus empty
+        // rows). Keep the same on-screen size — the hill drew 80x64 of a
+        // 128*sc box before — but scale per axis so it is not stretched square,
+        // and it now actually meets the ground it is bottom-anchored to.
         const sc = 2 + (i % 2)
-        h.width = 128 * sc; h.height = 128 * sc
+        h.width = 80 * sc; h.height = 64 * sc
         h.anchor.set(0.5, 1)
         h.x = i * 380 + 150; h.y = groundY
         parallaxMid.addChild(h)
@@ -1188,9 +1227,21 @@ function loadLevel(lvNum) {
   //    Timer-based direction flip — no ground detection needed since mushrooms
   //    are placed at platform/mid-air positions, not ground level.) ──
   const _mushroomTex = MARIO_TEXTURES.ref_mushroom || MARIO_TEXTURES.mushroom
+  // From level 4 on, 12 of the level-data mushrooms sit on the EXACT tile of a
+  // coin (L4 [26,4]; L5 [19,3],[45,3]; L6 [22,3]; L7 [15,2]; L8 [17,1],[54,3];
+  // L9 [20,2],[47,2]; L10 [13,2],[38,2],[63,2]). A mushroom is bottom-anchored
+  // and TILE*0.75 tall, so it is drawn straight over the coin: the reward is
+  // hidden inside the hazard, and reaching for it costs half a life. Slide the
+  // enemy one tile along its own patrol axis — it still guards the same spot,
+  // but the child can now see both objects and tell them apart.
+  const _coinTiles = new Set(levelData.coins.map(c => c[0] + ',' + c[1]))
   for (const m of levelData.mushrooms) {
     let g
-    const _spawnX = m[0] * TILE + TILE/2
+    let _mtx = m[0]
+    if (_coinTiles.has(_mtx + ',' + m[1])) {
+      _mtx = _coinTiles.has((_mtx + 2) + ',' + m[1]) ? _mtx - 2 : _mtx + 2
+    }
+    const _spawnX = _mtx * TILE + TILE/2
     const _spawnY = m[1] * TILE + TILE
     const _mvx = (Math.random() > 0.5 ? 1 : -1) * (0.7 + Math.random() * 0.5)
     if (_mushroomTex) {
@@ -1920,7 +1971,11 @@ function updateCoins() {
     } else {
       c.rotation = Math.sin(c._g21Bob * 0.5) * 0.6
     }
-    if (collides(c, S, 36, 70)) {
+    // Coins are anchor(0.5,0.5) at the tile centre and TILE*0.55 across, so the
+    // drawn box is +-17.6px around c.y. The old collides(c,S,36,70) built its box
+    // UPWARD from c.y — [c.y-36, c.y] — which sat 18px high: the bottom half of
+    // every coin the child could see gave nothing, and empty air above it paid.
+    if (collidesCentered(c, S, TILE*0.275, TILE*0.275, 70, 4)) {
       sfx('sfx-coin')
       S.coins++; S.score += 10
       spawnScorePopup(c.x, c.y, '+10', 'coin')
@@ -1955,7 +2010,7 @@ function updateMushrooms() {
         sfx('sfx-powerup')
         if (S.pikachuState === 'small') {
           S.pikachuState = 'big'
-          showMilestone('GROW! 🍄', '#dc2626')
+          showMilestone('MEMBESAR! 🍄', '#dc2626')
           spawnParticles(S.x, S.y - 50, 'spark', 12)
           const wrap = document.getElementById('pikachu-wrap')
           if (wrap) {
@@ -2011,7 +2066,7 @@ function updateMushrooms() {
     knockback(); sfx('sfx-damage'); screenShake()
     if (S.pikachuState === 'big') {
       S.pikachuState = 'small'
-      showMilestone('SHRINK!', '#f59e0b')
+      showMilestone('MENGECIL!', '#f59e0b')
       const wrap = document.getElementById('pikachu-wrap')
       if (wrap) {
         wrap.style.transition = 'transform 0.4s ease, width 0.4s ease, height 0.4s ease'
@@ -2044,14 +2099,14 @@ function updateStars() {
       S.starMode = 600     // 10s invincibility (existing)
       S.electricMode = 600 // 10s ELECTRIC MODE — can fire bolts
       S.score += 500
-      showMilestone('⚡ ELECTRIC! ⚡', '#fde047')
+      showMilestone('⚡ MODE LISTRIK! ⚡', '#fde047')
       spawnScorePopup(st.x, st.y, '+500', 'heal')
       spawnParticles(st.x, st.y, 'lightning', 14)
       spawnParticles(st.x, st.y, 'spark', 8)
       // Show bolt button on mobile
       const boltBtn = document.getElementById('btn-bolt')
       if (boltBtn) boltBtn.style.display = 'flex'
-      showToast('⚡ ELECTRIC MODE 10s — Tekan ⚡ untuk tembak!', 3500)
+      showToast('⚡ MODE LISTRIK 10 detik — tekan ⚡ untuk menembak!', 3500)
       world.removeChild(st); S.stars.splice(i, 1)
     }
   }
@@ -2100,6 +2155,21 @@ function collides(a, player, aw, ph, looseY) {
   const px = player.x - 18, py = player.y - ph, pw = 36, pheight = ph
   return (ax + awidth > px && ax < px + pw && ay + aheight > py && ay < py + pheight)
 }
+// collides() assumes the thing is BOTTOM-anchored: it builds the box upward from
+// a.y. That is right for goombas / mushrooms / stars (anchor 0.5,1) and WRONG for
+// coins, which are anchor 0.5,0.5 at the tile centre. The coin box therefore sat
+// 18px above the coin: the lower half of every coin the child could see was not
+// collectible, and 18px of empty air above it was. Centre-anchored pickups use
+// this instead — the box is the drawn box, plus a small pad because a reward
+// should be forgiving.
+function collidesCentered(a, player, halfW, halfH, ph, pad) {
+  const p = pad || 0
+  const ax = a.x - halfW - p, ax2 = a.x + halfW + p
+  const ay = a.y - halfH - p, ay2 = a.y + halfH + p
+  const px = player.x - 18, px2 = player.x + 18
+  const py = player.y - ph, py2 = player.y
+  return (ax2 > px && ax < px2 && ay2 > py && ay < py2)
+}
 
 // ═══════════════════════════════════════════════════════════════════
 //  GOOMBA COLLISION — Math quiz on easy
@@ -2118,7 +2188,7 @@ function onGoombaCollide(g) {
     sfx('sfx-stomp')
     spawnScorePopup(g.x, g.y - 40, '+' + bonus, 'coin')
     spawnParticles(g.x, g.y - 20, 'lightning', 6)
-    if (S.comboCount >= 3) showMilestone('CHAIN x' + S.comboCount + '! ⚡', '#fbbf24')
+    if (S.comboCount >= 3) showMilestone('BERUNTUN x' + S.comboCount + '! ⚡', '#fbbf24')
     return
   }
   if (S.starMode > 0) {
@@ -2139,7 +2209,7 @@ function onGoombaCollide(g) {
   // Mushroom shield — Pikachu shrinks back to small instead of losing life
   if (S.pikachuState === 'big') {
     S.pikachuState = 'small'
-    showMilestone('SHRINK!', '#f59e0b')
+    showMilestone('MENGECIL!', '#f59e0b')
     const wrap = document.getElementById('pikachu-wrap')
     if (wrap) {
       wrap.style.transition = 'transform 0.4s ease, width 0.4s ease, height 0.4s ease'
@@ -2453,7 +2523,7 @@ function onWin() {
   setPikachuAnim('happy')
   spawnParticles(S.x, S.y - 50, 'lightning', 18)
   spawnParticles(S.x, S.y - 50, 'spark', 14)
-  showMilestone('LEVEL CLEAR! 🏆', '#10b981')
+  showMilestone('LEVEL SELESAI! 🏆', '#10b981')
   const elapsed = (performance.now() - S.startTime) / 1000
   const totalCoinsInLevel = (levelData.coins || []).length
   const stars = computeStars(totalCoinsInLevel, elapsed)
@@ -2484,7 +2554,7 @@ function showWinModal(stars) {
       emoji: stars >= 5 ? '🏆' : stars >= 4 ? '🌟' : stars >= 3 ? '⭐' : '💪',
       title: stars >= 5 ? 'Sempurna!' : stars >= 4 ? 'Hebat!' : stars >= 3 ? 'Bagus!' : 'Selesai',
       stars,
-      msg: stars >= 4 ? 'Kamu master Mario Pokemon!' : 'Coba kumpulkan lebih banyak koin & hindari musuh.',
+      msg: stars >= 4 ? 'Hebat, kamu jagoannya!' : 'Lain kali kumpulkan lebih banyak koin ya.',
       onNext: nextLv,
       onAgain: () => restartLevel(),
       onBack: () => goBack(),
@@ -2499,7 +2569,7 @@ function onDeath(reason) {
   if (S.gameOver) return
   S.gameOver = true; S.running = false
   sfx('sfx-damage')
-  showMilestone('GAME OVER 💔', '#ef4444')
+  showMilestone('COBA LAGI YA 💔', '#ef4444')
   const wrap = document.getElementById('pikachu-wrap')
   if (wrap) {
     const rect = wrap.getBoundingClientRect()
@@ -2512,9 +2582,9 @@ function onDeath(reason) {
     if (typeof GameModal !== 'undefined' && GameModal.show) {
       GameModal.show({
         emoji: '💔',
-        title: reason === 'pit' ? 'Jatuh ke jurang!' : 'Game Over',
+        title: reason === 'pit' ? 'Jatuh ke jurang!' : 'Coba lagi ya',
         stars: 0,
-        msg: 'Coba lagi, kamu pasti bisa! ⚡',
+        msg: 'Ayo coba lagi, kamu pasti bisa!',
         onAgain: () => restartLevel(),
         onBack: () => goBack(),
       })

@@ -145,15 +145,34 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .skill-card img{width:54px;height:54px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.3))}
 .skill-card .cap{font-family:var(--disp);font-weight:700;font-size:14px}
 .skill-card .mix{font-size:44px;line-height:54px}
+/* v59.95 — "looks locked" without BEING `disabled`, so the tap still reaches JS and
+   can explain itself instead of vanishing. */
+.skill-card.locked{opacity:.55}
+.skill-card[disabled]{opacity:.55}
+/* One pulse on the four skill cards when the child taps Mulai too early — it points at
+   what to tap. Ease-out only, no bounce (DESIGN.md §Gerak). */
+.skill-card.needs-pick{animation:mpNeedsPick .6s cubic-bezier(.25,1,.5,1) 2}
+@keyframes mpNeedsPick{0%{box-shadow:0 0 0 0 rgba(255,255,255,.85)}100%{box-shadow:0 0 0 12px rgba(255,255,255,0)}}
+@media (prefers-reduced-motion:reduce){.skill-card.needs-pick{animation:none;outline:3px solid rgba(255,255,255,.9)}}
 
 /* ═════ GAMEPLAY ═════ */
 #scr-game .bg-scrim{background:linear-gradient(180deg,rgba(8,20,45,0) 40%,rgba(8,20,45,.5))}
+/* v59.95 — TOP SCRIM. `#scr-game .bg-scrim` only darkens from 40% DOWN, so the white
+   monster name and its subtitle sat straight on a bright painted sky. Measured on the
+   rendered frame (5th vs 95th percentile luminance inside the text box, because
+   getComputedStyle cannot see the artwork behind it): contrast 1.83:1 — the child is
+   told which monster he is fighting in text he cannot see. Same idiom as the bottom
+   scrim the page already uses, just at the other end, and only as tall as the HUD row
+   so the artwork below it is untouched. */
 .game-top{position:relative;z-index:5;display:flex;align-items:center;gap:8px;
-  padding:calc(env(safe-area-inset-top,0) + 8px) 12px 6px}
+  padding:calc(env(safe-area-inset-top,0) + 8px) 12px 10px;
+  background:linear-gradient(180deg,rgba(8,20,45,.78) 0%,rgba(8,20,45,.62) 55%,rgba(8,20,45,0) 100%)}
 .hp-col{flex:1;display:flex;flex-direction:column;gap:3px}
 .hp-name{font-family:var(--disp);font-weight:700;font-size:12px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5);display:flex;flex-direction:column;line-height:1.05}
 .hp-name .foe-en{font-size:13px}
-.hp-name .foe-sub{font-family:var(--body);font-weight:600;font-size:9px;opacity:.85;letter-spacing:.2px}
+/* v59.95 — 9px at opacity .85 over a painted sky is decoration, not information.
+   Full opacity, one step larger; the scrim above pays for it. */
+.hp-name .foe-sub{font-family:var(--body);font-weight:600;font-size:10px;letter-spacing:.2px;color:#e6ecff}
 .hp-bar{height:12px;border-radius:8px;background:rgba(0,0,0,.4);border:2px solid rgba(255,255,255,.4);overflow:hidden}
 .hp-fill{height:100%;border-radius:6px;transition:width .4s cubic-bezier(.22,.61,.36,1)}
 .hp-fill.foe{background:linear-gradient(90deg,#ff8a6a,var(--red))}
@@ -704,25 +723,42 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   <div class="mute-row">Suara: <button id="mute-btn" onclick="MP.toggleMute()">AKTIF 🔊</button></div>
 </div></div>
 
+<!-- v59.95 — in-page replacement for the two `prompt()` calls (hero name, account code).
+     PRODUCT.md bans native dialogs on any path a child touches, and names the exact
+     failure: an installed-PWA shell can suppress the dialog and hand back a falsy
+     value, at which point the button is silently dead. Reuses this page's OWN modal
+     (.modal/.sheet, same as Toko/Profil) rather than inventing a second mechanism —
+     re-implementing what a game already has is on the owner's rejected list. It sits
+     after modal-profil in the DOM so it stacks above it and Profil stays open behind. -->
+<div class="modal" id="modal-ask"><div class="sheet"><button class="x" onclick="MP.askCancel()">✕</button>
+  <h3 id="ask-title">…</h3>
+  <input id="ask-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"
+    style="width:100%;box-sizing:border-box;min-height:52px;padding:12px 14px;border-radius:16px;border:3px solid rgba(139,92,246,.35);background:#fff;color:#3b2a4a;font-family:inherit;font-weight:800;font-size:18px;text-align:center">
+  <div class="acc-btns" style="display:flex;gap:10px;justify-content:center;margin-top:14px">
+    <button class="clay gold" id="ask-ok" style="min-height:48px;padding:12px 26px" onclick="MP.askOk()">Simpan</button>
+    <button class="clay" style="min-height:48px;padding:12px 26px" onclick="MP.askCancel()">Batal</button>
+  </div>
+</div></div>
+
 <div class="toast" id="toast"></div>
 
 <!-- capture runtime errors to localStorage.__freezeLog BEFORE anything else can
      throw, so the next "kadang hang" report on the real tablet ships evidence.
      Inspect with: JSON.parse(localStorage.__freezeLog || '[]') -->
-<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
-<script src="data/math-rules.js?v=59.94-20260808a"></script>
-<script src="data/save-engine.js?v=59.94-20260808a"></script>
-<script src="data/sfx-engine.js?v=59.94-20260808a"></script>
-<script src="vfx-engine.js?v=59.94-20260808a"></script><!-- shared VFX (monster defeat explosion) -->
-<script src="data/math-heroes.js?v=59.94-20260808a"></script><!-- P3b hero roster (sprite changes per op) -->
-<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- UIUX/gameplay sprite packs -->
-<script src="data/math-stories.js?v=59.94-20260808a"></script><!-- P3d per-level story arcs (monster names + banter) -->
+<script src="data/freeze-watchdog.js?v=59.95-20260809a"></script>
+<script src="data/math-rules.js?v=59.95-20260809a"></script>
+<script src="data/save-engine.js?v=59.95-20260809a"></script>
+<script src="data/sfx-engine.js?v=59.95-20260809a"></script>
+<script src="vfx-engine.js?v=59.95-20260809a"></script><!-- shared VFX (monster defeat explosion) -->
+<script src="data/math-heroes.js?v=59.95-20260809a"></script><!-- P3b hero roster (sprite changes per op) -->
+<script src="data/emoji-map.js?v=59.95-20260809a"></script><script src="data/ui-sprites.js?v=59.95-20260809a"></script><!-- UIUX/gameplay sprite packs -->
+<script src="data/math-stories.js?v=59.95-20260809a"></script><!-- P3d per-level story arcs (monster names + banter) -->
 <!-- P3e cloud sync — config baked in but STAYS INERT until localStorage 'mp_cloud_on'='1'
      (a button in plb.html flips it, same origin). publishable/anon key ONLY — the
      service_role/secret key must NEVER live in the repo/browser. Owner: enable the
      Anonymous provider in Supabase FIRST, then click "Aktifkan Cloud Sync" in plb.html. -->
 <script>window.MATH_SUPABASE={url:'https://iaiyoazomujscqrpknbq.supabase.co',anonKey:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlhaXlvYXpvbXVqc2NxcnBrbmJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTk0MTYsImV4cCI6MjA5MzI5NTQxNn0.gcYFTOhxS1giqUQGdmsmwYPjueHW6BPe3oYaIPWASlI'}</script>
-<script src="data/math-cloud.js?v=59.94-20260808a"></script>
+<script src="data/math-cloud.js?v=59.95-20260809a"></script>
 <script>
 (function(){
 'use strict';
@@ -924,16 +960,33 @@ function openSkill(sub){
   SKILLS.forEach(function(sk){
     // gate ×/÷ by tier unless the player has reached those worlds
     var locked=(sk.op==='*'&&tier==='easy'&&g<15)||(sk.op==='÷'&&tier!=='hard'&&g<35);
-    var b=document.createElement('button'); b.className='skill-card clay '+(sk.op==='+'?'green':sk.op==='-'?'blue':sk.op==='*'?'orange':'purple');
+    var b=document.createElement('button'); b.className='skill-card op-card clay '+(sk.op==='+'?'green':sk.op==='-'?'blue':sk.op==='*'?'orange':'purple');
     b.innerHTML='<img src="'+sk.img+'" alt=""><span class="cap">'+sk.cap+'</span>';
     if(locked){ b.disabled=true; b.innerHTML+='<span class="cap" style="font-size:10px">🔒 nanti</span>'; }
     else b.onclick=function(){ sfx('click'); toggleSkill(sk.op,b); };
     grid.appendChild(b);
   });
   // P8 — multi-select: pick one or more ops, then Mulai. Campur = all ops.
-  var start=document.createElement('button'); start.id='skill-start'; start.className='skill-card clay gold'; start.style.gridColumn='1 / -1'; start.disabled=true; start.style.opacity='.55';
+  // v59.95 — this button is the widest and most central control on "Pilih Skill", and
+  // a child who cannot read taps the biggest button first. It used to be a real
+  // `disabled` button: the browser swallows the event outright, so the tap produced no
+  // toast, no DOM change, no sound — measured, 0 mutations. From the child's chair that
+  // is indistinguishable from a broken game, which PRODUCT.md calls the worst bug there
+  // is. It now looks locked (aria-disabled + the same dimming) but still receives the
+  // tap, and answers it in the language DESIGN.md's own table specifies.
+  var start=document.createElement('button'); start.id='skill-start'; start.className='skill-card clay gold locked'; start.style.gridColumn='1 / -1'; start.setAttribute('aria-disabled','true');
   start.innerHTML='<span class="mix">▶</span><span class="cap">Pilih skill dulu</span>';
-  start.onclick=function(){ if(!skillSel.length)return; sfx('click'); startGame(skillSel.slice()); };
+  start.onclick=function(){
+    if(!skillSel.length){
+      sfx('click');
+      toast('Pilih skill dulu ya, ketuk salah satu di atas.');
+      // point at what to tap: the four skill cards pulse once.
+      var cards=grid.querySelectorAll('.op-card:not([disabled])');
+      for(var ci=0;ci<cards.length;ci++){ (function(c){ c.classList.remove('needs-pick'); void c.offsetWidth; c.classList.add('needs-pick'); setTimeout(function(){ c.classList.remove('needs-pick'); },1200); })(cards[ci]); }
+      return;
+    }
+    sfx('click'); startGame(skillSel.slice());
+  };
   grid.appendChild(start);
   var mix=document.createElement('button'); mix.className='skill-card clay purple'; mix.style.gridColumn='1 / -1';
   mix.innerHTML='<span class="mix">🎲</span><span class="cap">Campur (Semua)</span>';
@@ -946,8 +999,8 @@ function toggleSkill(op,btn){
   if(i>=0){ skillSel.splice(i,1); btn.style.outline=''; btn.style.boxShadow=''; }
   else { skillSel.push(op); btn.style.outline='3px solid #fff'; btn.style.boxShadow='0 0 0 5px rgba(255,255,255,.35)'; }
   var s=byId('skill-start'); var cap=s.querySelector('.cap');
-  if(skillSel.length){ s.disabled=false; s.style.opacity='1'; cap.textContent='▶ Mulai ('+skillSel.length+' skill)'; }
-  else { s.disabled=true; s.style.opacity='.55'; cap.textContent='Pilih skill dulu'; }
+  if(skillSel.length){ s.classList.remove('locked'); s.setAttribute('aria-disabled','false'); cap.textContent='▶ Mulai ('+skillSel.length+' skill)'; }
+  else { s.classList.add('locked'); s.setAttribute('aria-disabled','true'); cap.textContent='Pilih skill dulu'; }
 }
 function backToSub(){ openSub(curWorld); }
 
@@ -1498,7 +1551,22 @@ function renderProfil(){
   renderAccount();
 }
 function stat(l,v){ return '<div class="pstat"><b>'+v+'</b><small>'+l+'</small></div>'; }
-function editName(){ var n=prompt('Nama pahlawanmu:',econ.name); if(n&&n.trim()){ econ.name=n.trim().slice(0,16); saveEcon(); renderProfil(); } }
+/* v59.95 — in-page ask sheet. Replaces prompt(); see the markup note at #modal-ask. */
+var _askCb=null;
+function askText(title,value,placeholder,okLabel,cb){
+  _askCb=cb;
+  byId('ask-title').textContent=title;
+  byId('ask-ok').textContent=okLabel||'Simpan';
+  var i=byId('ask-input'); i.value=value||''; i.placeholder=placeholder||'';
+  byId('modal-ask').classList.add('open');
+  setTimeout(function(){ try{ i.focus(); i.select(); }catch(e){} },60);
+}
+function askOk(){ var v=byId('ask-input').value; byId('modal-ask').classList.remove('open');
+  var c=_askCb; _askCb=null; sfx('click'); if(c) c(v); }
+function askCancel(){ byId('modal-ask').classList.remove('open'); _askCb=null; sfx('click'); }
+function editName(){ askText('Nama pahlawanmu',econ.name,'Tulis namamu di sini','Simpan',function(n){
+  if(n&&n.trim()){ econ.name=n.trim().slice(0,16); saveEcon(); renderProfil(); toast('Nama disimpan'); }
+}); }
 /* Cloud account (DuniaCloud) — only shows when cloud is enabled; all guarded */
 function renderAccount(){
   var pa=byId('prof-account'); if(!pa) return;
@@ -1518,8 +1586,11 @@ function renderAccount(){
 function duCreate(){ if(!(window.DuniaCloud&&DuniaCloud.isEnabled())) return; toast('Membuat akun…');
   DuniaCloud.createAccount(econ.name).then(function(c){ if(c){ DuniaCloud.push(); renderAccount(); toast('Akun dibuat ✓'); } else toast('Gagal (cek koneksi/anon auth)'); }); }
 function duCopyCode(){ var c=window.DuniaCloud&&DuniaCloud.getCode(); if(!c)return; try{ (navigator.clipboard&&navigator.clipboard.writeText(c)); }catch(e){} toast('Kode disalin'); }
-function duRestore(){ if(!(window.DuniaCloud&&DuniaCloud.isEnabled())) return; var c=prompt('Masukkan kode akun (DUNIA-XXXX-XXXX):',''); if(!c||!c.trim())return; toast('Memulihkan…');
-  DuniaCloud.restoreAccount(c).then(function(r){ if(r&&r.ok){ try{ loadEcon(); refreshHUD(); if(typeof renderPeta==='function')renderPeta(); }catch(e){} renderProfil(); toast('Dipulihkan ✓ '+(r.name||'')); } else toast('Kode tidak ditemukan'); }); }
+function duRestore(){ if(!(window.DuniaCloud&&DuniaCloud.isEnabled())) return;
+  askText('Kode akun','','DUNIA-XXXX-XXXX','Pulihkan',function(c){
+    if(!c||!c.trim())return; toast('Memulihkan…');
+    DuniaCloud.restoreAccount(c).then(function(r){ if(r&&r.ok){ try{ loadEcon(); refreshHUD(); if(typeof renderPeta==='function')renderPeta(); }catch(e){} renderProfil(); toast('Dipulihkan ✓ '+(r.name||'')); } else toast('Kode tidak ditemukan'); });
+  }); }
 function toggleMute(){ if(S&&S.setMute){ var m=!S.getMute(); S.setMute(m); if(m) bgmStop(); else if(game) bgmPlay(); } renderProfil(); }
 function escapeHtml(s){ return String(s).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 
@@ -1675,7 +1746,15 @@ window.MP={ show:show, goHome:goHome, openPeta:openPeta, openSub:openSub, openSk
   openModal:openModal, closeModal:closeModal, closeTournament:closeTournament, buy:buy,
   editName:editName, toggleMute:toggleMute, maxNumFor:maxNumFor,
   openPvP:openPvP, pvpSetDiff:pvpSetDiff, pvpStart:pvpStart, pvpReady:pvpReady, quitPvp:quitPvp, pvpPickHero:pvpPickHero,
-  duCreate:duCreate, duCopyCode:duCopyCode, duRestore:duRestore };
+  duCreate:duCreate, duCopyCode:duCopyCode, duRestore:duRestore,
+  askOk:askOk, askCancel:askCancel };
+/* Enter submits the ask sheet, Escape cancels — the on-screen keyboard's "done" key is
+   how a parent will actually close it. */
+document.addEventListener('keydown',function(e){
+  if(!byId('modal-ask')||!byId('modal-ask').classList.contains('open'))return;
+  if(e.key==='Enter'){ e.preventDefault(); askOk(); }
+  else if(e.key==='Escape'){ e.preventDefault(); askCancel(); }
+});
 })();
 </script>
 </body>

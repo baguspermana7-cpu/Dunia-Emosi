@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=59.94-20260808a">
+<link rel="stylesheet" href="du-buttons.css?v=59.95-20260809a">
 <title>Gym Pokémon ⚔️</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -580,24 +580,24 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
   <div id="badge-gym-text"></div>
 </div>
 
-<script src="data/poke-sprite-cdn.js?v=59.94-20260808a"></script>
-<script src="data/poke-sprite-loader.js?v=59.94-20260808a"></script>
-<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
-<script src="data/save-engine.js?v=59.94-20260808a"></script>
-<script src="data/math-rules.js?v=59.94-20260808a"></script>
-<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- UIUX/gameplay sprite packs -->
+<script src="data/poke-sprite-cdn.js?v=59.95-20260809a"></script>
+<script src="data/poke-sprite-loader.js?v=59.95-20260809a"></script>
+<script src="data/freeze-watchdog.js?v=59.95-20260809a"></script>
+<script src="data/save-engine.js?v=59.95-20260809a"></script>
+<script src="data/math-rules.js?v=59.95-20260809a"></script>
+<script src="data/emoji-map.js?v=59.95-20260809a"></script><script src="data/ui-sprites.js?v=59.95-20260809a"></script><!-- UIUX/gameplay sprite packs -->
 <!-- v55.97 M-303 — SHARED quiz engine (question + answer-choices) for all games -->
-<script src="quiz-engine.js?v=59.94-20260808a"></script>
+<script src="quiz-engine.js?v=59.95-20260809a"></script>
 <!-- v56.1 A-317 — SHARED battle-presentation engine (field sprites, HP cards,
      narration pill, floating quiz, lunge/projectile/damage-pop FX) -->
-<script src="battle-arena.js?v=59.94-20260808a"></script>
-<script src="vfx-engine.js?v=59.94-20260808a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
-<script src="data/move-id-translations.js?v=59.94-20260808a"></script>
-<script src="data/sfx-engine.js?v=59.94-20260808a"></script>
-<script src="data/weather-fx.js?v=59.94-20260808a"></script>
-<script src="data/poke-packages.js?v=59.94-20260808a"></script>
-<script src="data/battle-modes.js?v=59.94-20260808a"></script>
-<script src="data/poke-type-chart.js?v=59.94-20260808a"></script>
+<script src="battle-arena.js?v=59.95-20260809a"></script>
+<script src="vfx-engine.js?v=59.95-20260809a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
+<script src="data/move-id-translations.js?v=59.95-20260809a"></script>
+<script src="data/sfx-engine.js?v=59.95-20260809a"></script>
+<script src="data/weather-fx.js?v=59.95-20260809a"></script>
+<script src="data/poke-packages.js?v=59.95-20260809a"></script>
+<script src="data/battle-modes.js?v=59.95-20260809a"></script>
+<script src="data/poke-type-chart.js?v=59.95-20260809a"></script>
 <script>
   // Licensed Pokemon SFX + battle weather — lazy init, silent failure.
   document.addEventListener('DOMContentLoaded', function () {
@@ -668,8 +668,8 @@ html.eff-viewport-shake{animation:effViewportShake 380ms cubic-bezier(.36,.07,.1
     };
   });
 </script>
-<script src="game-modal.js?v=59.94-20260808a"></script>
-<script src="battle-sprite-engine.js?v=59.94-20260808a"></script>
+<script src="game-modal.js?v=59.95-20260809a"></script>
+<script src="battle-sprite-engine.js?v=59.95-20260809a"></script>
 
 <script>
 // ─── DATA ───────────────────────────────────────────────────────────────────
@@ -1934,7 +1934,18 @@ function advanceMsg(){
 // For form variants (e.g. charizard-mega-x, sprigatito), strip the suffix to get
 // the base-species slug — used as a 3rd-level fallback if both CDN and local 404.
 function baseSpeciesSlug(slug){
-  return slug.replace(/-(mega(-[xy])?|alola|galar|hisui|paldea|therian|origin|primal|crowned|ash|gmax)$/i, '');
+  // Regional forms come in two shapes and only the SUFFIX one was handled, so
+  // 'alolan-vulpix' never reduced to 'vulpix'. It is the only one of the 546
+  // slugs on this page with no offline sprite: no POKE_IDS entry, no local
+  // WebP, no local SVG — the cascade fell through to
+  // img.pokemondb.net/.../alolan-vulpix.png, which 404s online and simply does
+  // not exist offline, leaving Snowy as a painted-glyph placeholder on the very
+  // device this ships to. Strip the PREFIX form too. (games/data/battle-modes.js
+  // already does this; this page carries its own copy of the logic, which is
+  // why the fix reached one and not the other.)
+  return slug
+    .replace(/^(alolan|galarian|hisuian|paldean)-/i, '')
+    .replace(/-(mega(-[xy])?|alola|galar|hisui|paldea|therian|origin|primal|crowned|ash|gmax)$/i, '');
 }
 function setPokeSpriteWithCascade(img, slug){
   const base = baseSpeciesSlug(slug);

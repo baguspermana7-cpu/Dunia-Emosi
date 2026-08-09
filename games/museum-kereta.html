@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=59.94-20260808a">
+<link rel="stylesheet" href="du-buttons.css?v=59.95-20260809a">
 <title>Museum Kereta Ambarawa</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -86,6 +86,29 @@ html,body{width:100%;min-height:100%;min-height:100svh;background:#1a0e06;font-f
 .g18-star-badge{position:absolute;top:6px;right:6px;font-size:14px;line-height:1;z-index:2;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.6))}
 .g18-cat-chip{display:inline-block;font-size:8.5px;font-weight:900;letter-spacing:0.3px;color:#1a0e06;border-radius:100px;padding:1px 7px;margin-top:2px}
 .g18-visited-tick{position:absolute;top:6px;left:6px;font-size:12px;line-height:1;z-index:2;opacity:0.9;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.6))}
+
+/* ===== v59.95 — GALLERY WIDTH =====================================================
+   The 305-card grid was `grid-template-columns:1fr 1fr; max-width:440px` inline, on a
+   page whose primary layout is wide landscape (PRODUCT.md). Measured against HEAD:
+   440px of a 1600px screen (28%) and of a 2400px screen (18%), 2 columns, and only
+   6 / 8 cards inside the scroll box at a time out of 305 — the other 72-82% of the
+   screen was empty brown, and the collection was reachable only by a 25 667px scroll
+   a five-year-old has no reason to believe continues. The search row and the
+   collection header carried the same 440px pin, so the search field was a third of
+   the width available to it.
+   auto-fill/minmax keeps the CARD itself the size it already works at (>=170px, it
+   holds a train sprite plus a name) and simply stops throwing the rest of the screen
+   away. Nothing below 900px changes, so the narrow 1024x600 case is untouched. */
+#g18-card-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:440px;margin:0 auto}
+#g18-collection{max-width:440px}
+@media (min-width:900px){
+  #g18-card-grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));max-width:min(1500px,96vw)}
+  #g18-collection{max-width:min(1500px,96vw)}
+}
+@media (min-width:1800px){
+  #g18-card-grid{max-width:min(2100px,94vw)}
+  #g18-collection{max-width:min(2100px,94vw)}
+}
 
 /* ===== A-322 light modal (non-featured trains) ===== */
 #g18-light-modal{display:none;position:fixed;inset:0;z-index:210;background:rgba(0,0,0,0.88);align-items:center;justify-content:center;padding:20px}
@@ -166,11 +189,11 @@ html,body{width:100%;min-height:100%;min-height:100svh;background:#1a0e06;font-f
 </head>
 <body>
 <div id="du-build-stamp">v58.7</div>
-<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- zero-emoji engine -->
-<script src="sw-reload.js?v=59.94-20260808a"></script>
+<script src="data/emoji-map.js?v=59.95-20260809a"></script><script src="data/ui-sprites.js?v=59.95-20260809a"></script><!-- zero-emoji engine -->
+<script src="sw-reload.js?v=59.95-20260809a"></script>
 <!-- A-322 — full 275-train world DB + real-fact lore for the expanded museum -->
-<script src="data/train-world.js?v=59.94-20260808a"></script>
-<script src="data/museum-lore.js?v=59.94-20260808a"></script>
+<script src="data/train-world.js?v=59.95-20260809a"></script>
+<script src="data/museum-lore.js?v=59.95-20260809a"></script>
 
 <div id="museum-root">
   <div class="game-header">
@@ -190,7 +213,7 @@ html,body{width:100%;min-height:100%;min-height:100svh;background:#1a0e06;font-f
       <div style="color:rgba(255,255,255,0.7);font-size:11px;font-weight:700;margin-top:2px;">Bekas Stasiun Willem I (1873) &middot; Ketuk kartu untuk info! &#128269;</div>
     </div>
     <!-- A-322 collection controls: hero stat + category tabs + search + random -->
-    <div id="g18-collection" style="max-width:440px;margin:0 auto 8px;">
+    <div id="g18-collection" style="margin:0 auto 8px;">
       <div id="g18-hero-stat" style="display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(93,57,34,0.7),rgba(62,39,35,0.85));border:1px solid rgba(255,193,100,0.28);border-radius:14px;padding:9px 12px;margin-bottom:8px;">
         <div style="font-size:26px;line-height:1;flex-shrink:0;">&#127749;</div>
         <div style="flex:1;min-width:0;">
@@ -210,7 +233,7 @@ html,body{width:100%;min-height:100%;min-height:100svh;background:#1a0e06;font-f
       <div id="g18-tabs" style="display:flex;gap:6px;overflow-x:auto;padding:2px 2px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:none;"></div>
       <div id="g18-daily-trivia-slot"></div>
     </div>
-    <div id="g18-card-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:440px;margin:0 auto;"></div>
+    <div id="g18-card-grid"></div>
     <div id="g18-empty-note" style="display:none;text-align:center;color:rgba(255,255,255,0.6);font-size:13px;font-weight:700;padding:24px 12px;">Tidak ada kereta yang cocok. Coba kata lain! &#128269;</div>
     <div style="text-align:center;margin-top:14px;padding-bottom:8px;">
       <button onclick="g18StartQuiz()" style="background:linear-gradient(135deg,#5D3A1A,#8D6E63);color:white;border:none;border-radius:14px;padding:14px 28px;font-size:16px;font-weight:900;font-family:'Fredoka One',cursive;box-shadow:0 4px 0 #3E2723;cursor:pointer;min-height:44px;">&#128221; MULAI KUIS!</button>

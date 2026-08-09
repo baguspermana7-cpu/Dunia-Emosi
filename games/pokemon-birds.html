@@ -38,6 +38,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
 .choice-btn:nth-child(3){background:linear-gradient(160deg,#2DBF7E,#1A9E66);border-color:#50E0A0;box-shadow:0 5px 0 #0A7A48}
 .choice-btn:nth-child(4){background:linear-gradient(160deg,#F59E0B,#D97706);border-color:#FCD34D;box-shadow:0 5px 0 #92400E}
 .choice-btn:active{transform:scale(.91) translateY(4px);box-shadow:0 1px 0 #4C1D95}
+.choice-btn.qc-col,.choice-btn.qc-col:nth-child(n){background:var(--qc);border-color:var(--qc-edge);box-shadow:0 5px 0 var(--qc-edge);color:var(--qc-ink);text-shadow:none}
+.q-swatch{display:inline-block;width:1.05em;height:1.05em;border-radius:50%;vertical-align:-0.12em;margin:0 .12em;background:var(--qc);border:2px solid var(--qc-edge);box-shadow:0 0 12px var(--qc)}
 .choice-btn.correct{border-color:#4ade80;background:rgba(74,222,128,0.3);animation:correctFlash .4s ease}
 .choice-btn.wrong{border-color:#ef4444;background:rgba(239,68,68,0.3);animation:wrongShake .35s ease}
 @keyframes correctFlash{0%{transform:scale(1.1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
@@ -122,13 +124,13 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:linear
   <div id="start-hint">Memuat game... ⏳</div>
 </div>
 
-<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- zero-emoji engine -->
-<script src="../shared/rz-responsive.js?v=59.94-20260808a"></script>
+<script src="data/emoji-map.js?v=59.95-20260809a"></script><script src="data/ui-sprites.js?v=59.95-20260809a"></script><!-- zero-emoji engine -->
+<script src="../shared/rz-responsive.js?v=59.95-20260809a"></script>
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="vfx-engine.js?v=59.94-20260808a"></script><!-- A-355 unified shared VFX (correct-answer reward flourish) -->
-<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
-<script src="data/save-engine.js?v=59.94-20260808a"></script>
-<script src="game-modal.js?v=59.94-20260808a"></script>
+<script src="vfx-engine.js?v=59.95-20260809a"></script><!-- A-355 unified shared VFX (correct-answer reward flourish) -->
+<script src="data/freeze-watchdog.js?v=59.95-20260809a"></script>
+<script src="data/save-engine.js?v=59.95-20260809a"></script>
+<script src="game-modal.js?v=59.95-20260809a"></script>
 <script>
 // ═══════════════════════════════════════════════════════════
 //  CONFIG
@@ -284,6 +286,68 @@ const QUESTIONS = {
   ]
 }
 function getDifficulty(l){return l<=8?'easy':l<=16?'medium':l<=24?'hard':'expert'}
+// ── Colour questions must be answerable WITHOUT reading ─────────────────────
+// The player is five and does not read yet. A colour question is the one item
+// he CAN answer on sight — but only if the picture and the buttons agree.
+// Two things broke that, both verified on this page:
+//   1. The choice buttons were painted by POSITION (.choice-btn:nth-child(2..4)
+//      = red / green / amber) while the options are shuffled every time, so
+//      "HIJAU" landed on the purple button and "MERAH" on the green one.
+//      Matching by colour — the only strategy a non-reader has — produced the
+//      WRONG answer, which is worse than no colour at all.
+//   2. The swatch in the question is an emoji (🔴), and an emoji is not a
+//      picture we ship. A device without that glyph draws nothing, so the
+//      question becomes "Warna ?". DESIGN.md forbids emoji as UI chroma for
+//      exactly this reason.
+// So: paint every colour choice the colour it names, and draw the question's
+// swatch ourselves.
+// NOTE: the question bank this reads from lives in games/data/g23-question-engine.js
+// (and mirrored copies in the sibling game pages) — the emoji is still in the
+// DATA. This transform is applied at render time so it works whichever bank is
+// loaded; the real home for it is that shared file.
+const COLOUR_WORDS = {
+  MERAH:  {fill:'#e23b2e',edge:'#8f1f16',ink:'#fff'},
+  BIRU:   {fill:'#2563eb',edge:'#15357a',ink:'#fff'},
+  HIJAU:  {fill:'#22c55e',edge:'#15803d',ink:'#fff'},
+  KUNING: {fill:'#f5c518',edge:'#b45309',ink:'#3b2a4a'},
+  UNGU:   {fill:'#8B5CF6',edge:'#6d28d9',ink:'#fff'},
+  ORANYE: {fill:'#f97316',edge:'#9a3412',ink:'#fff'},
+  COKLAT: {fill:'#8b5a2b',edge:'#5b3a1a',ink:'#fff'},
+  HITAM:  {fill:'#1f2937',edge:'#0b0f16',ink:'#fff'},
+  PUTIH:  {fill:'#f8fafc',edge:'#94a3b8',ink:'#3b2a4a'},
+  ABU:    {fill:'#9ca3af',edge:'#4b5563',ink:'#1f2937'},
+}
+const COLOUR_EMOJI = {'\u{1F534}':'MERAH','\u{1F535}':'BIRU','\u{1F7E1}':'KUNING','\u{1F7E2}':'HIJAU','\u{1F7E0}':'ORANYE','\u{1F7E3}':'UNGU','\u{1F7E4}':'COKLAT','\u26AB':'HITAM','\u26AA':'PUTIH'}
+function makeColourSwatch(word){
+  const c = COLOUR_WORDS[word] || COLOUR_WORDS.PUTIH
+  const s = document.createElement('span')
+  s.className = 'q-swatch'
+  s.style.setProperty('--qc', c.fill)
+  s.style.setProperty('--qc-edge', c.edge)
+  return s
+}
+// Writes `text` into `el`, swapping any colour-circle emoji for a drawn swatch.
+// Replaces the old `el.textContent = q.q`.
+function renderQuestionText(el, text){
+  el.textContent = ''
+  let buf = ''
+  for(const ch of String(text == null ? '' : text)){
+    const word = COLOUR_EMOJI[ch]
+    if(word){
+      if(buf){ el.appendChild(document.createTextNode(buf)); buf = '' }
+      el.appendChild(makeColourSwatch(word))
+    } else buf += ch
+  }
+  if(buf) el.appendChild(document.createTextNode(buf))
+}
+function paintColourChoice(btn, text){
+  const c = COLOUR_WORDS[text]
+  if(!c) return
+  btn.classList.add('qc-col')
+  btn.style.setProperty('--qc', c.fill)
+  btn.style.setProperty('--qc-edge', c.edge)
+  btn.style.setProperty('--qc-ink', c.ink)
+}
 function pickQuestions(level){
   const pool=[...QUESTIONS[getDifficulty(level)]]
   for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}
@@ -891,8 +955,76 @@ function gameLoop(ticker) {
 // ═══════════════════════════════════════════════════════════
 //  COLLISION
 // ═══════════════════════════════════════════════════════════
+// The collider used to be one FIXED circle, r = BIRD_SIZE/2 - 6 = 46px, for all
+// 42 roster sprites — while the drawn sprite is `width: min(BIRD_SIZE*scale px,
+// scale*15 vw); height: auto`, so it varies with the Pokemon AND the viewport.
+// Measured (1600x900, opaque pixels of each sprite vs the 92x92 collider):
+// Zubat 1.64x wider / 3.05x taller than its body, Tranquill 2.52x wider,
+// Wingull 10.82x taller, Taillow 2.09x / 2.77x. Those birds were struck by a
+// pipe the child could plainly see them clear — "tertabrak tanpa tahu itu apa".
+// Derive the box from the element that is actually on screen, per axis, and
+// never let it grow past the old radius: this change can only ever forgive.
+//
+// 2026-08-09 — the element box was still not the body. A sprite sheet frame is
+// mostly empty air: Tranquill renders 94px wide and its bird is 37px of that, so
+// even 0.42x of the element was still 2.16x the drawn body. Read the OPAQUE
+// bounding box out of the bitmap once per sprite and measure from there instead.
+// PRODUCT.md: "Klaim visual dibuktikan dengan merender lalu menghitung piksel;
+// getBounds() berbohong."
+//
+// The half-extent is the distance from the element's CENTRE (where the collider
+// point sits, the sprite is placed with translate(-50%,-50%)) to the FARTHER
+// opaque edge on that axis — not half the body width — so an off-centre bird is
+// still fully covered. Mirroring (scaleX(-1)) swaps left and right, and the max
+// of the two is symmetric, so it needs no special case.
+const _BIRD_BODY = Object.create(null)   // src -> {fx, fy} | null when unreadable
+function _birdBodyFrac(img) {
+  const key = img.currentSrc || img.src
+  if (key in _BIRD_BODY) return _BIRD_BODY[key]
+  let out = null
+  try {
+    const nw = img.naturalWidth, nh = img.naturalHeight
+    if (nw && nh) {
+      const c = document.createElement('canvas'); c.width = nw; c.height = nh
+      const cx = c.getContext('2d', { willReadFrequently: true })
+      cx.drawImage(img, 0, 0)
+      const d = cx.getImageData(0, 0, nw, nh).data   // throws on a tainted canvas
+      let mnX = nw, mxX = -1, mnY = nh, mxY = -1
+      for (let y = 0; y < nh; y++) {
+        for (let x = 0; x < nw; x++) {
+          if (d[(y*nw + x)*4 + 3] > 24) {
+            if (x < mnX) mnX = x; if (x > mxX) mxX = x
+            if (y < mnY) mnY = y; if (y > mxY) mxY = y
+          }
+        }
+      }
+      if (mxX >= 0) {
+        // farther edge from the element centre, as a fraction of the element box
+        out = {
+          fx: Math.max(nw/2 - mnX, mxX + 1 - nw/2) / nw,
+          fy: Math.max(nh/2 - mnY, mxY + 1 - nh/2) / nh
+        }
+      }
+    }
+  } catch (_) { out = null }   // cross-origin fallback sprite: keep the heuristic
+  _BIRD_BODY[key] = out
+  return out
+}
+function _birdHalf() {
+  const R = BIRD_SIZE / 2 - 6
+  const img = window._birdImg
+  if (!img || !img.offsetWidth || !img.offsetHeight) return { hx: R, hy: R }
+  const f = img.complete ? _birdBodyFrac(img) : null
+  const fx = f ? f.fx : 0.42, fy = f ? f.fy : 0.42
+  return {
+    hx: Math.max(10, Math.min(img.offsetWidth  * fx, R)),
+    hy: Math.max(10, Math.min(img.offsetHeight * fy, R))
+  }
+}
 function checkCollisions() {
-  const bx = BIRD_X, by = S.birdY, br = BIRD_SIZE / 2 - 6
+  const bx = BIRD_X, by = S.birdY
+  const { hx, hy } = _birdHalf()
+  const br = hx   // horizontal half-extent (pass/overlap tests along x)
 
   for (const p of S.pipes) {
     if (p.passed || p.hit || p.removing || !p.topGfx.visible) continue
@@ -931,7 +1063,7 @@ function checkCollisions() {
       const activeGap = S.evolved ? GAP_SIZE_EVO : GAP_SIZE
       const gapTop = p.gapY - activeGap / 2
       const gapBottom = p.gapY + activeGap / 2
-      if (by - br < gapTop || by + br > gapBottom) {
+      if (by - hy < gapTop || by + hy > gapBottom) {
         // HIT!
         p.hit = true
         S.paused = true
@@ -952,7 +1084,7 @@ function showQuiz(pipe) {
   const q = S.questions[S.qIdx % S.questions.length]
   S.qIdx++
 
-  document.getElementById('quiz-question').textContent = q.q
+  renderQuestionText(document.getElementById('quiz-question'), q.q)
   const choicesEl = document.getElementById('quiz-choices')
   choicesEl.innerHTML = ''
   const choices = [q.ans, ...q.wrong]
@@ -967,6 +1099,7 @@ function showQuiz(pipe) {
     const btn = document.createElement('button')
     btn.className = 'choice-btn'
     btn.textContent = c
+    paintColourChoice(btn, c)
     btn.onclick = () => {
       if (answered) return
       answered = true
@@ -1061,13 +1194,17 @@ function updateHUD() {
 //  WIN / LOSE
 // ═══════════════════════════════════════════════════════════
 function calcStars() {
-  return GameScoring.calc({
+  // The level always completes — there is no lose state here. GameScoring.calc()
+  // returns 0 stars whenever `correct` is 0, so a child who flew the whole course
+  // and got every question wrong was shown "Gagal! Coba Lagi" with zero stars for
+  // a level he actually finished. Finishing is worth one star.
+  return Math.max(1, GameScoring.calc({
     correct: S.correctAnswers,
-    total: S.correctAnswers + S.wrongAnswers,
+    total: Math.max(1, S.correctAnswers + S.wrongAnswers),
     wrong: S.wrongAnswers,
     lives: S.lives,
     maxLives: 3
-  })
+  }))
 }
 
 function showWin() {
@@ -1102,14 +1239,13 @@ function showWin() {
       try { sessionStorage.setItem('g19Config', JSON.stringify({ level: S.level + 1 })) } catch(_){}
       location.reload()
     } : null
-    const info = `${S.pipesCleared}/${S.totalPipes} pipa | ⭐ ${S.correctAnswers} benar`
-    const title = stars >= 5 ? 'Sempurna!' : stars >= 4 ? 'Hebat!' : stars >= 3 ? 'Bagus!' : stars >= 1 ? 'Coba Lagi' : 'Gagal! Coba Lagi'
-    const emoji = stars >= 5 ? '🏆' : stars >= 4 ? '🌟' : stars >= 3 ? '⭐' : stars >= 1 ? '💪' : '😞'
-    const msg = stars >= 5 ? `Wow, kamu hebat! ${info}` :
-      stars >= 4 ? `Kerja bagus! ${info}` :
-      stars >= 3 ? `Lumayan, terus berlatih! ${info}` :
-      stars >= 1 ? `Kamu bisa lebih baik lagi! ${info}` :
-      `Jangan menyerah, ayo coba lagi! ${info}`
+    // DESIGN.md: never "Gagal!". The course was flown to the end — say so, then
+    // say the one thing that earns more stars.
+    const info = `${S.pipesCleared} dari ${S.totalPipes} pipa`
+    const title = stars >= 5 ? 'Sempurna!' : stars >= 4 ? 'Hebat!' : stars >= 3 ? 'Bagus!' : 'Selesai!'
+    const emoji = stars >= 5 ? '🏆' : stars >= 4 ? '🌟' : stars >= 3 ? '⭐' : '💪'
+    const msg = stars >= 4 ? `Kamu lewat ${info}.`
+      : `Kamu lewat ${info}. Lain kali coba ambil bintang di tengah pipa ya.`
     GameModal.show({
       emoji, title, stars, msg,
       onNext: nextLevel,

@@ -15,7 +15,7 @@
  * succeeded. Only cache same-origin assets.
  * ========================================================================== */
 
-const CACHE_VERSION = 'v59.94-20260808a'
+const CACHE_VERSION = 'v59.95-20260809a'
 const HTML_CACHE = `dunia-html-${CACHE_VERSION}`
 const ASSET_CACHE = `dunia-assets-${CACHE_VERSION}`
 
@@ -75,23 +75,23 @@ const SHELL = [
   './games/lib/pixi.min.js?v=8',
   './games/balapan-kereta-side.html',
   './games/museum-kereta.html',
-  './games/indo-scene.js?v=59.94-20260808a',
-  './games/train-journey.js?v=59.94-20260808a',
-  './games/data/train-wheel-anchors.js?v=59.94-20260808a',
-  './games/train-backdrop.js?v=59.94-20260808a',
-  './games/train-picker.js?v=59.94-20260808a',
-  './games/train-speedfx.js?v=59.94-20260808a',
-  './games/quiz-engine.js?v=59.94-20260808a',
-  './games/motion.js?v=59.94-20260808a',
-  './games/scenery-engine.js?v=59.94-20260808a',
-  './games/sw-reload.js?v=59.94-20260808a',
-  './games/g14-hud.css?v=59.94-20260808a',
-  './games/du-hud.css?v=59.94-20260808a',
+  './games/indo-scene.js?v=59.95-20260809a',
+  './games/train-journey.js?v=59.95-20260809a',
+  './games/data/train-wheel-anchors.js?v=59.95-20260809a',
+  './games/train-backdrop.js?v=59.95-20260809a',
+  './games/train-picker.js?v=59.95-20260809a',
+  './games/train-speedfx.js?v=59.95-20260809a',
+  './games/quiz-engine.js?v=59.95-20260809a',
+  './games/motion.js?v=59.95-20260809a',
+  './games/scenery-engine.js?v=59.95-20260809a',
+  './games/sw-reload.js?v=59.95-20260809a',
+  './games/g14-hud.css?v=59.95-20260809a',
+  './games/du-hud.css?v=59.95-20260809a',
   // Seven call sites across four games invoke GameModal AFTER stopping the
   // ticker. Offline with a miss, the ReferenceError landed on a frozen frame
   // with no result modal and no way out -- so this one belongs in the shell
   // even though the shell is deliberately slim. It is ~4KB.
-  './games/game-modal.js?v=59.94-20260808a',
+  './games/game-modal.js?v=59.95-20260809a',
 ]
 
 self.addEventListener('install', (e) => {

@@ -67,7 +67,11 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0e244
 /* Vehicle selector overlay */
 #ovl-start .ovl-card{max-height:90svh;overflow-y:auto;max-width:340px}
 .v-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:8px 0 12px}
-.v-btn{font-size:26px;padding:6px 2px;border-radius:12px;border:2px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);cursor:pointer;transition:all .12s;-webkit-tap-highlight-color:transparent}
+.v-btn{font-size:26px;padding:6px 2px 4px;border-radius:12px;border:2px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);cursor:pointer;transition:all .12s;-webkit-tap-highlight-color:transparent;min-height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;line-height:1}
+/* v59.95 — the picker button now carries a picture AND its name. */
+.v-btn-name{font-size:9px;font-weight:800;color:rgba(255,255,255,0.72);letter-spacing:.2px;line-height:1.1;font-family:inherit;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.v-btn.sel .v-btn-name{color:#06280d}
+.v-btn img{width:30px;height:30px;object-fit:contain}
 .v-btn:active{transform:scale(.88)}
 .v-btn.sel{border-color:#a4e07a;background:linear-gradient(180deg,#a4e07a,#4caf50);box-shadow:0 0 12px rgba(76,175,80,.55)}
 .diff-row{display:flex;gap:8px;justify-content:center;margin:8px 0 14px}
@@ -132,12 +136,12 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#0e244
   </div>
 </div>
 
-<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
-<script src="data/save-engine.js?v=59.94-20260808a"></script>
-<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- eco HUD star -->
-<script src="game-modal.js?v=59.94-20260808a"></script>
-<script src="data/sfx-engine.js?v=59.94-20260808a"></script><!-- shared answer cues (owner) -->
-<script src="vfx-engine.js?v=59.94-20260808a"></script><!-- shared VFX (crash boom + win burst) -->
+<script src="data/freeze-watchdog.js?v=59.95-20260809a"></script>
+<script src="data/save-engine.js?v=59.95-20260809a"></script>
+<script src="data/emoji-map.js?v=59.95-20260809a"></script><script src="data/ui-sprites.js?v=59.95-20260809a"></script><!-- eco HUD star -->
+<script src="game-modal.js?v=59.95-20260809a"></script>
+<script src="data/sfx-engine.js?v=59.95-20260809a"></script><!-- shared answer cues (owner) -->
+<script src="vfx-engine.js?v=59.95-20260809a"></script><!-- shared VFX (crash boom + win burst) -->
 
 <div id="flash"></div>
 
@@ -228,6 +232,78 @@ const VEHICLES = [
   {e:'🚢',n:'Kapal'},{e:'🚁',n:'Heli'},{e:'🚂',n:'Kereta'},
   {e:'🛸',n:'UFO'},{e:'🚤',n:'Speedboat'},
 ]
+
+// v59.95 — WHAT THE PICKER SHOWS.
+//
+// The picker used to set `btn.textContent = v.e` and leave the shared emoji→sprite
+// sweep to resolve it. Measured on the shipped build: 20 buttons, **16 distinct
+// pictures**. emoji-map.js collapses 🚗/🚙/🏎 onto vehicles/41, 🚚/🚐 onto
+// vehicles/46 and 🚢/🚤 onto vehicles/55 — so Sedan, Sport and Jeep were the same
+// red car, Truk and Bemo the same box truck, Kapal and Speedboat the same liner. A
+// child who picks by picture (he cannot read the labels) had no way to tell them
+// apart, and no way to discover that they are different vehicles at all.
+//
+// Worse, for the five vehicles that DO drive a top-view PNG the picker showed one
+// picture and the game drove another: agreement was **0 of 5** (Sport previewed a red
+// hatchback and drove top_car_red_formula_07.png). The picture is the promise; the
+// game has to keep it.
+//
+// So: the five PNG cars preview the exact file `EMOJI_TO_CAR_PNG` will drive — derived
+// from that table, so the two can never drift apart again — and the two remaining
+// collided pairs are separated by naming the real drawn art the app already ships.
+// Everything else keeps its emoji and its sweep, which already resolves uniquely.
+// The map itself lives in a shared file and is NOT edited here; reported instead.
+const VEHICLE_PICKER_ART = {
+  '🚐': '../assets/db/vehicles/061.webp',  // Bemo      — the van, not Truk's box truck
+  '🚤': '../assets/db/vehicles/053.webp',  // Speedboat — the motorboat, not Kapal's liner
+}
+function vehiclePickerArt(e) {
+  const png = EMOJI_TO_CAR_PNG[e]
+  if (png) return '../assets/car%20and%20vehicle/top-view/' + png
+  return VEHICLE_PICKER_ART[e] || null
+}
+// The picker art and the big preview under it are the same picture, drawn the same way.
+// v59.95 — the vehicle the GAME draws, for the 15 vehicles with no top-view PNG.
+// It used to be `new PIXI.Text({text: emoji, style:{fontFamily:'Arial'}})` — a raw
+// system emoji glyph as gameplay content, which PRODUCT.md lists by name among the
+// owner's standing rejections and DESIGN.md routes through ui-sprites.js instead.
+// MEASURED on this machine before changing it, by rasterising the car's screen box and
+// counting non-background pixels: 2300-2542 px for 🚜/🚢/🛸/🚂, so the glyph is NOT
+// invisible here and this is a standards fix, not a P0. It is still a real defect for
+// the child, because it is the same picker-promises-one-picture-game-draws-another
+// mismatch as the five PNG cars: the picker showed the drawn tractor from
+// assets/db/vehicles and the game drove the system font's tractor.
+// UISprites.pixiSprite reads the SAME emoji→sprite map the picker's sweep uses, so the
+// two now resolve to one file by construction, and it carries the visible-sprite
+// contract (tools/_qa-spritecontract.mjs) that a bare PIXI.Text does not.
+function makeVehicleSprite(emoji, size) {
+  var s = null
+  try { if (window.UISprites && UISprites.pixiSprite) s = UISprites.pixiSprite(emoji, size, PIXI) } catch (_) { s = null }
+  if (!s) s = new PIXI.Text({ text: emoji, style: { fontSize: size, fontFamily: 'Arial' } })
+  try { s.anchor.set(0.5, 1) } catch (_) {}
+  // The two vehicles whose emoji the shared map collapses onto a NEIGHBOUR's picture
+  // (Bemo→the box truck, Speedboat→the ocean liner) take the same explicit art the
+  // picker shows. It is layered ON TOP of the contract sprite rather than replacing
+  // it, so a failed load leaves a visible — if generic — vehicle instead of the
+  // invisible-object bug the sprite contract exists to prevent.
+  var over = VEHICLE_PICKER_ART[emoji]
+  if (over && PIXI.Sprite && (s instanceof PIXI.Sprite)) {
+    PIXI.Assets.load(over).then(function (tex) {
+      if (!s || s.destroyed || !tex) return
+      s.texture = tex
+      var w = tex.width || size, h = tex.height || size
+      var k = size / Math.max(w, h)
+      s.width = w * k; s.height = h * k
+    }).catch(function () {})
+  }
+  return s
+}
+function vehicleArtHTML(v, px) {
+  const src = vehiclePickerArt(v.e)
+  if (src) return '<img src="' + src + '" alt="' + v.n + '" loading="lazy" decoding="async" ' +
+    'style="width:' + px + 'px;height:' + px + 'px;object-fit:contain;display:block;margin:0 auto;pointer-events:none">'
+  return null
+}
 let selectedVehicle = cfg.playerIcon || '🚗'
 let selectedDiff = 'easy'
 
@@ -239,15 +315,30 @@ function buildVehicleGrid() {
     const btn = document.createElement('button')
     btn.className = 'v-btn' + (v.e === selectedVehicle ? ' sel' : '')
     btn.title = v.n
-    btn.textContent = v.e
+    btn.setAttribute('aria-label', v.n)
+    const art = vehicleArtHTML(v, 30)
+    if (art) btn.innerHTML = art; else btn.textContent = v.e
+    // v59.95 — the name under the picture. The child cannot read it, but the parent
+    // reading over his shoulder can, and it is what makes "these two are different
+    // vehicles" legible at all when two sprites are cousins.
+    const lbl = document.createElement('span')
+    lbl.className = 'v-btn-name'
+    lbl.textContent = v.n
+    btn.appendChild(lbl)
     btn.onclick = () => {
       selectedVehicle = v.e
       document.querySelectorAll('.v-btn').forEach(b => b.classList.remove('sel'))
       btn.classList.add('sel')
-      const p = document.getElementById('v-preview'); if(p) p.textContent = v.e
+      const p = document.getElementById('v-preview')
+      if (p) { const big = vehicleArtHTML(v, 54); if (big) p.innerHTML = big; else p.textContent = v.e }
     }
     grid.appendChild(btn)
   })
+  // v59.95 — the big preview starts on the vehicle that is actually selected, in the
+  // same art as the button (it used to be a hard-coded 🚗 in the markup).
+  const p = document.getElementById('v-preview')
+  const sel = VEHICLES.filter(v => v.e === selectedVehicle)[0] || VEHICLES[0]
+  if (p) { const big = vehicleArtHTML(sel, 54); if (big) p.innerHTML = big; else p.textContent = sel.e }
 }
 
 function setDiff(d) {
@@ -274,9 +365,9 @@ function rebuildCarSprite(emoji) {
   const png = EMOJI_TO_CAR_PNG[emoji] || null
   if (carSprite && carSprite.parent) carContainer.removeChild(carSprite)
   if (png) {
-    // Show emoji immediately, swap to PNG async
-    const placeholder = new PIXI.Text({ text: emoji, style: { fontSize: 52, fontFamily: 'Arial' } })
-    placeholder.anchor.set(0.5, 1)
+    // Show the drawn sprite immediately, swap to the top-view PNG async (v59.95 — the
+    // placeholder was a raw emoji glyph too).
+    const placeholder = makeVehicleSprite(emoji, 52)
     carContainer.addChild(placeholder)
     carSprite = placeholder
     PIXI.Assets.load(`../assets/car%20and%20vehicle/top-view/${png}`).then(tex => {
@@ -290,9 +381,8 @@ function rebuildCarSprite(emoji) {
       carContainer.addChild(carSprite)
     }).catch(() => {})
   } else {
-    // Non-car emoji (🚂🚀🛸🚁🚜🚢 etc.) — render as emoji, no PNG
-    const t = new PIXI.Text({ text: emoji, style: { fontSize: 52, fontFamily: 'Arial' } })
-    t.anchor.set(0.5, 1)
+    // Non-car vehicle (🚂🚀🛸🚁🚜🚢 …) — v59.95 the drawn sprite, not the system glyph.
+    const t = makeVehicleSprite(emoji, 52)
     carContainer.addChild(t)
     carSprite = t
   }
@@ -621,9 +711,9 @@ function buildCar() {
   const selectedEmoji = cfg.playerIcon || '🚗'
   const carPngName = EMOJI_TO_CAR_PNG[selectedEmoji] || null
   const carUrl = carPngName ? `../assets/car%20and%20vehicle/top-view/${carPngName}` : null
-  // Show emoji placeholder immediately (no flash of empty sprite)
-  carSprite = new PIXI.Text({ text: selectedEmoji, style: { fontSize: 52, fontFamily: 'Arial' } })
-  carSprite.anchor.set(0.5, 1)
+  // Show the drawn sprite immediately (no flash of empty sprite).
+  // v59.95 — was a raw system emoji glyph; see makeVehicleSprite.
+  carSprite = makeVehicleSprite(selectedEmoji, 52)
   carContainer.addChild(carSprite)
   // Only attempt PNG load if we have a car-type mapping for this emoji
   if (carUrl) {

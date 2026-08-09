@@ -41,6 +41,8 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#38bdf
 .qbtn:nth-child(2){background:linear-gradient(160deg,#E85A32,#C84020);box-shadow:0 4px 0 #9A2A10}
 .qbtn:nth-child(3){background:linear-gradient(160deg,#2DBF7E,#1A9E66);box-shadow:0 4px 0 #0A7A48}
 .qbtn:nth-child(4){background:linear-gradient(160deg,#F59E0B,#D97706);box-shadow:0 4px 0 #92400E}
+.qbtn.qc-col,.qbtn.qc-col:nth-child(n){background:var(--qc);border-color:var(--qc-edge);box-shadow:0 4px 0 var(--qc-edge);color:var(--qc-ink);text-shadow:none}
+.q-swatch{display:inline-block;width:1.05em;height:1.05em;border-radius:50%;vertical-align:-0.12em;margin:0 .12em;background:var(--qc);border:2px solid var(--qc-edge);box-shadow:0 0 12px var(--qc)}
 .qbtn.correct{border-color:#4ade80;background:rgba(74,222,128,0.3);animation:pop .4s ease}
 .qbtn.wrong{border-color:#ef4444;background:rgba(239,68,68,0.3);animation:shake .35s ease}
 @keyframes pop{0%{transform:scale(1.1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
@@ -137,15 +139,15 @@ if(!('ontouchstart' in window)){
 </script>
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="game-modal.js?v=59.94-20260808a"></script>
-<script src="../shared/rz-responsive.js?v=59.94-20260808a"></script>
-<script src="data/poke-sprite-cdn.js?v=59.94-20260808a"></script>
-<script src="data/poke-sprite-loader.js?v=59.94-20260808a"></script>
-<script src="data/freeze-watchdog.js?v=59.94-20260808a"></script>
-<script src="data/save-engine.js?v=59.94-20260808a"></script>
-<script src="data/sfx-engine.js?v=59.94-20260808a"></script><!-- shared answer cues (owner) -->
-<script src="data/emoji-map.js?v=59.94-20260808a"></script><script src="data/ui-sprites.js?v=59.94-20260808a"></script><!-- win-screen sprites -->
-<script src="vfx-engine.js?v=59.94-20260808a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
+<script src="game-modal.js?v=59.95-20260809a"></script>
+<script src="../shared/rz-responsive.js?v=59.95-20260809a"></script>
+<script src="data/poke-sprite-cdn.js?v=59.95-20260809a"></script>
+<script src="data/poke-sprite-loader.js?v=59.95-20260809a"></script>
+<script src="data/freeze-watchdog.js?v=59.95-20260809a"></script>
+<script src="data/save-engine.js?v=59.95-20260809a"></script>
+<script src="data/sfx-engine.js?v=59.95-20260809a"></script><!-- shared answer cues (owner) -->
+<script src="data/emoji-map.js?v=59.95-20260809a"></script><script src="data/ui-sprites.js?v=59.95-20260809a"></script><!-- win-screen sprites -->
+<script src="vfx-engine.js?v=59.95-20260809a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
 <script>
 // ═══════════════════════════════════════════════════════════
 //  CONFIG
@@ -177,9 +179,73 @@ const QS = [
   {q:'1+1=?',ans:'2',w:['3','4','1']},{q:'3+2=?',ans:'5',w:['4','6','7']},{q:'5-2=?',ans:'3',w:['2','4','1']},
   {q:'4+4=?',ans:'8',w:['7','9','6']},{q:'2+3=?',ans:'5',w:['4','6','3']},{q:'6-3=?',ans:'3',w:['2','4','5']},
   {q:'3x2=?',ans:'6',w:['4','8','5']},{q:'10-4=?',ans:'6',w:['5','7','4']},{q:'7+2=?',ans:'9',w:['8','10','11']},
-  {q:'Warna 🔴?',ans:'MERAH',w:['BIRU','HIJAU','KUNING']},{q:'Warna 🔵?',ans:'BIRU',w:['MERAH','HIJAU','UNGU']},
+  {q:'Warna 🔴?',ans:'MERAH',w:['BIRU','HIJAU','KUNING']},
+  {q:'Warna 🔵?',ans:'BIRU', w:['MERAH','HIJAU','UNGU']},
+  {q:'Warna 🟢?',ans:'HIJAU',w:['MERAH','BIRU','KUNING']},
   {q:'🐱 Huruf awal?',ans:'K',w:['A','M','B']},{q:'🍎 Huruf awal?',ans:'A',w:['I','U','E']},
 ]
+// ── Colour questions must be answerable WITHOUT reading ─────────────────────
+// The player is five and does not read yet. A colour question is the one item
+// he CAN answer on sight — but only if the picture and the buttons agree.
+// Two things broke that, both verified on this page:
+//   1. The choice buttons were painted by POSITION (.qbtn:nth-child(2..4)
+//      = red / green / amber) while the options are shuffled every time, so
+//      "HIJAU" landed on the purple button and "MERAH" on the green one.
+//      Matching by colour — the only strategy a non-reader has — produced the
+//      WRONG answer, which is worse than no colour at all.
+//   2. The swatch in the question is an emoji (🔴), and an emoji is not a
+//      picture we ship. A device without that glyph draws nothing, so the
+//      question becomes "Warna ?". DESIGN.md forbids emoji as UI chroma for
+//      exactly this reason.
+// So: paint every colour choice the colour it names, and draw the question's
+// swatch ourselves.
+// NOTE: the question bank this reads from lives in games/data/g23-question-engine.js
+// (and mirrored copies in the sibling game pages) — the emoji is still in the
+// DATA. This transform is applied at render time so it works whichever bank is
+// loaded; the real home for it is that shared file.
+const COLOUR_WORDS = {
+  MERAH:  {fill:'#e23b2e',edge:'#8f1f16',ink:'#fff'},
+  BIRU:   {fill:'#2563eb',edge:'#15357a',ink:'#fff'},
+  HIJAU:  {fill:'#22c55e',edge:'#15803d',ink:'#fff'},
+  KUNING: {fill:'#f5c518',edge:'#b45309',ink:'#3b2a4a'},
+  UNGU:   {fill:'#8B5CF6',edge:'#6d28d9',ink:'#fff'},
+  ORANYE: {fill:'#f97316',edge:'#9a3412',ink:'#fff'},
+  COKLAT: {fill:'#8b5a2b',edge:'#5b3a1a',ink:'#fff'},
+  HITAM:  {fill:'#1f2937',edge:'#0b0f16',ink:'#fff'},
+  PUTIH:  {fill:'#f8fafc',edge:'#94a3b8',ink:'#3b2a4a'},
+  ABU:    {fill:'#9ca3af',edge:'#4b5563',ink:'#1f2937'},
+}
+const COLOUR_EMOJI = {'\u{1F534}':'MERAH','\u{1F535}':'BIRU','\u{1F7E1}':'KUNING','\u{1F7E2}':'HIJAU','\u{1F7E0}':'ORANYE','\u{1F7E3}':'UNGU','\u{1F7E4}':'COKLAT','\u26AB':'HITAM','\u26AA':'PUTIH'}
+function makeColourSwatch(word){
+  const c = COLOUR_WORDS[word] || COLOUR_WORDS.PUTIH
+  const s = document.createElement('span')
+  s.className = 'q-swatch'
+  s.style.setProperty('--qc', c.fill)
+  s.style.setProperty('--qc-edge', c.edge)
+  return s
+}
+// Writes `text` into `el`, swapping any colour-circle emoji for a drawn swatch.
+// Replaces the old `el.textContent = q.q`.
+function renderQuestionText(el, text){
+  el.textContent = ''
+  let buf = ''
+  for(const ch of String(text == null ? '' : text)){
+    const word = COLOUR_EMOJI[ch]
+    if(word){
+      if(buf){ el.appendChild(document.createTextNode(buf)); buf = '' }
+      el.appendChild(makeColourSwatch(word))
+    } else buf += ch
+  }
+  if(buf) el.appendChild(document.createTextNode(buf))
+}
+function paintColourChoice(btn, text){
+  const c = COLOUR_WORDS[text]
+  if(!c) return
+  btn.classList.add('qc-col')
+  btn.style.setProperty('--qc', c.fill)
+  btn.style.setProperty('--qc-edge', c.edge)
+  btn.style.setProperty('--qc-ink', c.ink)
+}
 function pickQ(){return QS[Math.floor(Math.random()*QS.length)]}
 
 // ═══════════════════════════════════════════════════════════
@@ -1063,10 +1129,15 @@ function predictBallLandingX(){
   return bx
 }
 function updateCPU(dt){
-  // Hotfix #112-I: bot smarter — user "masih bodoh, cuma lompat2 nggak jelas".
-  // Difficulty tier (easy/medium/hard) overrides level scaling for clearer behavior.
-  const _diff = (typeof state !== 'undefined' && state.selectedLevel) || 'easy'
-  const _diffMul = _diff === 'hard' ? 1.4 : _diff === 'medium' ? 1.15 : 1.0
+  // Hotfix #112-I read a difficulty tier from `state.selectedLevel`. There is no
+  // `state` on this page — the identifier is undeclared, `typeof state` is
+  // "undefined", and the expression has therefore evaluated to 'easy' on every
+  // frame since the day it was written; _diffMul has always been exactly 1.0.
+  // That is also the tier the owner asked for in the 2026-06-21 nerf ("lawan
+  // botnya jgan terlalu pintar, jadi no chance"), so the multiplier is kept at
+  // 1.0 deliberately rather than wired up to something that would make the bot
+  // harder than it has ever actually been.
+  const _diffMul = 1.0
   // 2026-06-21 nerf — owner "lawan botnya jgann terlalu pintar. jadi no chance".
   // Cap accuracy at 0.80 (was 0.96), halve speed + jitter scaling,
   // raise hesitation floor 0.04 → 0.08 so bot misreads more often.
@@ -1226,7 +1297,17 @@ function endMatch(){
   S.running=false; S.gameOver=true
   try{document.getElementById('game-bgm').pause()}catch(_){}
   const won=S.pRounds>S.cRounds
-  const stars=GameScoring.calc({correct:S.correctQ,total:S.correctQ+S.wrongQ,wrong:S.wrongQ,bonus:won?1:0})
+  // Stars used to be quiz-only: GameScoring.calc() returns 0 the moment `correct`
+  // is 0, and it returns BEFORE the bonus is added — so winning the match 2-0 and
+  // missing the single between-rounds question scored zero stars and printed
+  // "Gagal!". The match is the game; the quiz is the garnish. Score both.
+  const roundsPlayed = S.pRounds + S.cRounds
+  const stars=GameScoring.calc({
+    correct: S.pRounds + S.correctQ,
+    total:   Math.max(1, roundsPlayed + S.correctQ + S.wrongQ),
+    wrong:   S.cRounds + S.wrongQ,
+    bonus:   won ? 1 : 0
+  })
   try{ if(won && window.SFXEngine && SFXEngine.levelup) SFXEngine.levelup() }catch(_){}
   try{sessionStorage.setItem('g20Result',JSON.stringify({stars,level:cfg.level}))}catch(_){}
   saveG20Progress(stars)
@@ -1240,14 +1321,13 @@ function endMatch(){
       try{sessionStorage.setItem('g20Config',JSON.stringify({level:cfg.level+1}))}catch(_){}
       location.reload()
     }:null
-    const roundInfo = `Rounds: ${S.pRounds}—${S.cRounds} | Quiz: ${S.correctQ}✅`
-    const emoji = stars >= 5 ? '🏆' : stars >= 4 ? '🌟' : stars >= 3 ? '⭐' : stars >= 1 ? '💪' : '😞'
-    const title = stars >= 5 ? 'Sempurna!' : stars >= 4 ? 'Hebat!' : stars >= 3 ? 'Bagus!' : stars >= 1 ? 'Coba Lagi' : 'Gagal! Coba Lagi'
-    const msg = stars >= 5 ? `Wow, kamu hebat! ${roundInfo}` :
-      stars >= 4 ? `Kerja bagus! ${roundInfo}` :
-      stars >= 3 ? `Lumayan, terus berlatih! ${roundInfo}` :
-      stars >= 1 ? `Kamu bisa lebih baik lagi! ${roundInfo}` :
-      `Jangan menyerah, ayo coba lagi! ${roundInfo}`
+    // DESIGN.md: kekalahan dijelaskan, bukan dihakimi. Never "Gagal!".
+    const roundInfo = `Skor ${S.pRounds}—${S.cRounds}`
+    const emoji = stars >= 5 ? '🏆' : stars >= 4 ? '🌟' : stars >= 3 ? '⭐' : '💪'
+    const title = stars >= 5 ? 'Sempurna!' : stars >= 4 ? 'Hebat!' : stars >= 3 ? 'Bagus!' : won ? 'Menang!' : 'Coba lagi ya'
+    const msg = won
+      ? `Kamu menang! ${roundInfo}.`
+      : `${roundInfo}. Dekati bolanya dulu, baru lompat.`
     GameModal.show({
       emoji, title, stars, msg,
       onNext:next, onAgain:()=>location.reload(), onBack:()=>goBack()
@@ -1261,12 +1341,12 @@ function endMatch(){
 function showQuiz(){
   S.quizActive=true
   const q=pickQ()
-  document.getElementById('quiz-question').textContent=q.q
+  renderQuestionText(document.getElementById('quiz-question'), q.q)
   const ch=document.getElementById('quiz-choices'); ch.innerHTML=''
   const opts=[q.ans,...q.w].sort(()=>Math.random()-0.5)
   let done=false
   opts.forEach(c=>{
-    const b=document.createElement('button'); b.className='qbtn'; b.textContent=c
+    const b=document.createElement('button'); b.className='qbtn'; b.textContent=c; paintColourChoice(b, c)
     b.onclick=()=>{
       if(done)return; done=true
       if(c===q.ans){b.classList.add('correct');S.correctQ++;if(window.SFXEngine&&SFXEngine.correct){SFXEngine.correct()}else{sfxScore()}}

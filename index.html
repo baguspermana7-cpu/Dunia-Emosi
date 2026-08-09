@@ -6,7 +6,7 @@
 <title>Dunia Emosi 🐾</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Fredoka+One&family=Baloo+2:wght@600;700;800&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="style.css?v=59.94-20260808a">
+<link rel="stylesheet" href="style.css?v=59.95-20260809a">
 
 <!-- PWA: install-as-app + offline support -->
 <link rel="manifest" href="manifest.json">
@@ -271,6 +271,38 @@
   background:linear-gradient(180deg,#ff9b8f,var(--clay-red) 60%,var(--clay-red-d))!important;
   border:3px solid rgba(255,255,255,.5)!important;color:#fff!important;border-radius:18px!important;
   box-shadow:0 6px 0 rgba(0,0,0,.22)!important;font-family:var(--clay-disp)!important;}
+</style>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     HUB — wide-landscape world map.
+     `.wmap-*` exists ONLY on this page (grep: index.html is the sole user),
+     so this block overrides style.css from the page that owns the markup
+     instead of touching the shared sheet.
+
+     WHY. style.css pins `.wmap-canvas{max-width:700px}` for every viewport
+     >=680px. Measured against HEAD on the primary layout: the picker used
+     700px of 1600px (43%) and 686px of 2400px (29%), and of the 31 game
+     tiles only 9 (1600x900) / 13 (2400x1080) / 6 (1024x600) were inside the
+     viewport. The other 22 were reachable only by scrolling a page a
+     five-year-old has no reason to believe continues. Widening to 3 then 4
+     columns is the whole fix; nothing below 1180px changes.
+     ══════════════════════════════════════════════════════════════════ -->
+<style id="hub-wide-map">
+@media (min-width:1000px){
+  /* align-items:start so a short zone does not stretch to the tallest in its row */
+  .wmap-canvas{max-width:1160px;grid-template-columns:repeat(3,1fr);align-items:start;}
+  /* the dashed vertical "path" is a 2-column ornament; at 3-4 columns it
+     only inserts an empty band between rows. */
+  .wmap-path-vert{display:none;}
+}
+@media (min-width:1720px){
+  .wmap-canvas{max-width:1560px;grid-template-columns:repeat(4,1fr);}
+}
+/* Motion: DESIGN.md bans bounce/elastic. style.css eases the zone lift and the
+   node lift with cubic-bezier(0.34,1.56,0.64,1) — the 1.56 control point
+   overshoots past the target and springs back. Same duration, ease-out-quart. */
+.wmap-zone{transition:transform .2s cubic-bezier(.25,1,.5,1),box-shadow .2s;}
+.wmap-node:hover{transition:transform .18s cubic-bezier(.25,1,.5,1);}
 </style>
 </head>
 <body>
@@ -625,7 +657,18 @@
           <!-- G8: Susun Kata -->
           <div class="wmap-node" id="gtile-8" onclick="playClick();openLevelSelect(8)" title="Susun Kata">
             <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#065F46,#22C55E);">
-              <span class="wn-icon">🔡</span>
+              <!-- v59.94 — this was `🔡`, and Huruf Hutan above is `🔤`. emoji-map.js
+                   collapses 🔤/🔡/🔠 onto ONE sprite (ui/43, the ABC blocks), so the two
+                   games rendered the IDENTICAL picture — measured: both resolved to
+                   /assets/db/ui/043.webp. A child who cannot read has two buttons and
+                   one picture. Susun Kata builds words, so it takes the book
+                   (objects/42) explicitly — a red book is unmistakable next to the
+                   white letter blocks and the white notepad Jejak Huruf already uses;
+                   Huruf Hutan keeps the letter blocks. The shared map itself is not
+                   ours to edit — reported instead. -->
+              <img loading="lazy" decoding="async" class="wn-icon" src="assets/db/objects/042.webp" alt="Susun Kata"
+                   style="width:46px;height:46px;object-fit:contain;display:block"
+                   onerror="this.outerHTML='<span class=&quot;wn-icon&quot;>&#128481;</span>'">
             </div>
             <div class="wmap-node-name">Susun Kata</div>
             <div class="wmap-node-stars" id="gstars-8-lbl"></div>
@@ -765,7 +808,7 @@
           <!-- G21: Mario Pokemon (Pixi platformer with math-quiz mechanic) -->
           <div class="wmap-node" id="gtile-21" onclick="playClick();openLevelSelect(21)" title="Mario Pokemon">
             <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#E8262A,#FBBF24);box-shadow:0 4px 0 #B91C1C,0 8px 16px rgba(232,38,42,0.35);">
-              <img loading="lazy" decoding="async" class="wn-icon" src="assets/mario-pokemon/sprites/ref-mushroom.png" alt="Mario Pokemon" style="width:44px;height:44px;object-fit:contain;display:block;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.5));" onerror="this.outerHTML='<span class=&quot;wn-icon&quot; style=&quot;font-size:32px;line-height:1;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.5));&quot;>🍄</span>'">
+              <img loading="lazy" decoding="async" class="wn-icon" src="assets/mario-pokemon/sprites/ref-mushroom.webp" alt="Mario Pokemon" style="width:44px;height:44px;object-fit:contain;display:block;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.5));" onerror="this.outerHTML='<span class=&quot;wn-icon&quot; style=&quot;font-size:32px;line-height:1;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.5));&quot;>🍄</span>'">
             </div>
             <div class="wmap-node-name">Mario Pokemon</div>
             <div class="wmap-node-stars" id="gstars-21-lbl"></div>
@@ -2402,7 +2445,33 @@
   <div class="dash-achievements" id="dash-achievements"></div>
   <h3 class="dash-section-title">📅 Statistik</h3>
   <div class="dash-stats" id="dash-stats"></div>
-  <button class="btn btn-sm btn-pink" style="margin-top:16px;" onclick="if(confirm('Reset semua data?')){localStorage.clear();location.reload()}">🗑️ Reset Data</button>
+  <!-- v59.95 — was `if(confirm('Reset semua data?')){localStorage.clear();…}`.
+       PRODUCT.md bans native dialogs on any path a child touches and names the exact
+       failure mode: an installed-PWA shell can suppress confirm() and return false, so
+       the button is silently dead. And this is the ONE button on the hub that destroys
+       every star the child has earned, sitting one tap away with only a word he cannot
+       read guarding it. Two-tap arm instead, which is the idiom DESIGN.md's own language
+       table prescribes ("Ketuk lagi tombolnya; labelnya berubah"), and the arm expires
+       by itself after 4 s so a stray tap cannot leave it live. -->
+  <button class="btn btn-sm btn-pink" id="dash-reset-btn" style="margin-top:16px;" onclick="hubArmReset(this)">🗑️ Reset Data</button>
+  <script>
+  function hubArmReset(btn){
+    if (btn.dataset.armed === '1') {
+      clearTimeout(window._hubResetT);
+      try { localStorage.clear(); } catch (e) {}
+      location.reload();
+      return;
+    }
+    btn.dataset.armed = '1';
+    btn.dataset.label = btn.dataset.label || btn.innerHTML;
+    btn.innerHTML = 'Yakin? Ketuk sekali lagi';
+    clearTimeout(window._hubResetT);
+    window._hubResetT = setTimeout(function () {
+      btn.dataset.armed = '0';
+      btn.innerHTML = btn.dataset.label;
+    }, 4000);
+  }
+  </script>
 </div>
 
 <!-- FEEDBACK OVERLAY -->
@@ -2491,38 +2560,38 @@ function loadPixiJS(cb) {
 </div>
 
 <!-- Task #73 (P0-2): defer data scripts — unblock HTML parsing by ~51KB -->
-<script src="games/data/region-meta.js?v=59.94-20260808a" defer></script>
-<script src="games/data/city-progression.js?v=59.94-20260808a" defer></script>
-<script src="games/data/city-pokemon-pack.js?v=59.94-20260808a" defer></script>
+<script src="games/data/region-meta.js?v=59.95-20260809a" defer></script>
+<script src="games/data/city-progression.js?v=59.95-20260809a" defer></script>
+<script src="games/data/city-pokemon-pack.js?v=59.95-20260809a" defer></script>
 <!-- Hotfix 2026-04-28 — sprite cascade + freeze watchdog (must load before game.js).
      poke-sprite-cdn.js is NOT loaded here — game.js declares its own POKE_IDS
      and would collide. Standalone /games/*.html pages still load it.
      Bump 20260428b: picker overhaul, legacy cascade audit, G10 hit FX. -->
-<script src="games/data/poke-sprite-loader.js?v=59.94-20260808a" defer></script>
-<script src="games/data/freeze-watchdog.js?v=59.94-20260808a" defer></script>
-<script src="games/data/cloud-sync.js?v=59.94-20260808a" defer></script>
-<script src="games/data/math-rules.js?v=59.94-20260808a" defer></script>
-<script src="games/data/sfx-engine.js?v=59.94-20260808a" defer></script>
-<script src="games/data/weather-fx.js?v=59.94-20260808a" defer></script>
-<script src="games/data/poke-packages.js?v=59.94-20260808a" defer></script>
-<script src="games/battle-arena.js?v=59.94-20260808a" defer></script>
+<script src="games/data/poke-sprite-loader.js?v=59.95-20260809a" defer></script>
+<script src="games/data/freeze-watchdog.js?v=59.95-20260809a" defer></script>
+<script src="games/data/cloud-sync.js?v=59.95-20260809a" defer></script>
+<script src="games/data/math-rules.js?v=59.95-20260809a" defer></script>
+<script src="games/data/sfx-engine.js?v=59.95-20260809a" defer></script>
+<script src="games/data/weather-fx.js?v=59.95-20260809a" defer></script>
+<script src="games/data/poke-packages.js?v=59.95-20260809a" defer></script>
+<script src="games/battle-arena.js?v=59.95-20260809a" defer></script>
 <!-- v56.5 A-318 — 48-leg journey names for the g14 claymorphism station-map level select -->
-<script src="games/train-journey.js?v=59.94-20260808a" defer></script>
-<script src="games/data/battle-modes.js?v=59.94-20260808a" defer></script>
-<script src="games/data/poke-type-chart.js?v=59.94-20260808a" defer></script>
-<script src="games/train-shared.js?v=59.94-20260808a" defer></script>
-<script src="games/train-vfx.js?v=59.94-20260808a" defer></script>
-<script src="games/train-bg-engine.js?v=59.94-20260808a" defer></script>
-<script src="games/data/bg-themes.js?v=59.94-20260808a" defer></script>
-<script src="games/data/bg-renderers.js?v=59.94-20260808a" defer></script>
-<script src="games/data/bg-npcs.js?v=59.94-20260808a" defer></script>
-<script src="games/data/bg-audio.js?v=59.94-20260808a" defer></script>
-<script src="games/data/bg-events.js?v=59.94-20260808a" defer></script>
-<script src="games/data/db-sprites.js?v=59.94-20260808a" defer></script><!-- A-356 shared asset DB accessor -->
-<script src="games/data/db-labeled.js?v=59.94-20260808a" defer></script><!-- labeled DB subset for Tebak game -->
-<script src="games/data/mascot-sprites.js?v=59.94-20260808a" defer></script><!-- 12-char mascot/hero sheet -->
-<script src="games/data/emoji-map.js?v=59.94-20260808a" defer></script><script src="games/data/ui-sprites.js?v=59.94-20260808a" defer></script><!-- 6 UIUX/gameplay sprite packs -->
-<script src="game.js?v=59.94-20260808a" defer></script>
+<script src="games/train-journey.js?v=59.95-20260809a" defer></script>
+<script src="games/data/battle-modes.js?v=59.95-20260809a" defer></script>
+<script src="games/data/poke-type-chart.js?v=59.95-20260809a" defer></script>
+<script src="games/train-shared.js?v=59.95-20260809a" defer></script>
+<script src="games/train-vfx.js?v=59.95-20260809a" defer></script>
+<script src="games/train-bg-engine.js?v=59.95-20260809a" defer></script>
+<script src="games/data/bg-themes.js?v=59.95-20260809a" defer></script>
+<script src="games/data/bg-renderers.js?v=59.95-20260809a" defer></script>
+<script src="games/data/bg-npcs.js?v=59.95-20260809a" defer></script>
+<script src="games/data/bg-audio.js?v=59.95-20260809a" defer></script>
+<script src="games/data/bg-events.js?v=59.95-20260809a" defer></script>
+<script src="games/data/db-sprites.js?v=59.95-20260809a" defer></script><!-- A-356 shared asset DB accessor -->
+<script src="games/data/db-labeled.js?v=59.95-20260809a" defer></script><!-- labeled DB subset for Tebak game -->
+<script src="games/data/mascot-sprites.js?v=59.95-20260809a" defer></script><!-- 12-char mascot/hero sheet -->
+<script src="games/data/emoji-map.js?v=59.95-20260809a" defer></script><script src="games/data/ui-sprites.js?v=59.95-20260809a" defer></script><!-- 6 UIUX/gameplay sprite packs -->
+<script src="game.js?v=59.95-20260809a" defer></script>
 <script>
   // Boot SFXEngine + WeatherFX after page loads — both lazy, never block the game.
   document.addEventListener('DOMContentLoaded', function () {
