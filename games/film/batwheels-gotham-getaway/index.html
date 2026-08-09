@@ -165,6 +165,11 @@
       var hp = HERO_PAIR[cfg.hero], vp = VILLAIN_PAIR[cfg.villain];
       if (spineReady(scene, hp)) scene.level.hero = cfg.hero;
       if (spineReady(scene, vp)) scene.level.villain = cfg.villain;
+      /* Jejak apa yang BENAR-BENAR tersusun, bukan apa yang diminta. Kanvas
+         WebGL tidak bisa dibaca ulang (buffer gambarnya tidak dipertahankan),
+         jadi tanpa ini komposisinya hanya bisa ditebak dari tangkapan layar. */
+      window.__ggComposed = { minta: cfg, jadi: { hero: scene.level.hero, villain: scene.level.villain },
+                              spine: { hero: spineReady(scene, hp), villain: spineReady(scene, vp) } };
     } catch (e) {}
   }
 
@@ -172,9 +177,17 @@
     var sc = GAME && GAME.scene && GAME.scene.getScene && GAME.scene.getScene('Game');
     if (!sc || sc.__ggWired) return;
     sc.__ggWired = true;
-    try {
-      sc.sys.events.on('start', function () { queueSpines(sc); });
-    } catch (e) {}
+    /* Antre di PRELOAD, bukan di event `start`. `start` menyala sebelum `init`,
+       dan berkas yang diantre di sana tidak ikut termuat -- terukur: Spine
+       melempar `skeletonData` null karena kerangkanya belum ada saat kendaraan
+       dibuat. Membungkus `preload` menaruh antrean kita SESUDAH mesin mengantre
+       asetnya sendiri, jadi semuanya termuat dalam satu putaran loader. */
+    var origPreload = sc.preload;
+    sc.preload = function () {
+      var r = (typeof origPreload === 'function') ? origPreload.apply(this, arguments) : undefined;
+      try { queueSpines(this); } catch (e) {}
+      return r;
+    };
     var origCreate = sc.create;
     if (typeof origCreate === 'function') {
       sc.create = function () { compose(this); return origCreate.apply(this, arguments); };
