@@ -9,8 +9,8 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=v60.2-20260920a">
-<link rel="stylesheet" href="du-hud.css?v=v60.2-20260920a">
+<link rel="stylesheet" href="du-buttons.css?v=v60.3-20260920a">
+<link rel="stylesheet" href="du-hud.css?v=v60.3-20260920a">
 <title>🏁 Balapan Kereta — Side Race (Beta)</title>
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <style>
@@ -139,37 +139,37 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <canvas id="pixi-canvas"></canvas>
 
 <!-- Pixi + shared modules (same versions as balapan-kereta.html for cache reuse) -->
-<script src="data/emoji-map.js?v=v60.2-20260920a"></script><script src="data/ui-sprites.js?v=v60.2-20260920a"></script><!-- zero-emoji engine -->
+<script src="data/emoji-map.js?v=v60.3-20260920a"></script><script src="data/ui-sprites.js?v=v60.3-20260920a"></script><!-- zero-emoji engine -->
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="train-shared.js?v=v60.2-20260920a"></script>
-<script src="train-vfx.js?v=v60.2-20260920a"></script>
-<script src="motion.js?v=v60.2-20260920a"></script><!-- A-315 E5 — shared motion engine (frame-rate-independent easing) -->
-<script src="train-bg-engine.js?v=v60.2-20260920a"></script>
-<script src="data/bg-themes.js?v=v60.2-20260920a"></script>
-<script src="data/bg-renderers.js?v=v60.2-20260920a"></script>
-<script src="data/bg-npcs.js?v=v60.2-20260920a"></script>
-<script src="data/bg-audio.js?v=v60.2-20260920a"></script>
+<script src="train-shared.js?v=v60.3-20260920a"></script>
+<script src="train-vfx.js?v=v60.3-20260920a"></script>
+<script src="motion.js?v=v60.3-20260920a"></script><!-- A-315 E5 — shared motion engine (frame-rate-independent easing) -->
+<script src="train-bg-engine.js?v=v60.3-20260920a"></script>
+<script src="data/bg-themes.js?v=v60.3-20260920a"></script>
+<script src="data/bg-renderers.js?v=v60.3-20260920a"></script>
+<script src="data/bg-npcs.js?v=v60.3-20260920a"></script>
+<script src="data/bg-audio.js?v=v60.3-20260920a"></script>
 <!-- v55.27 — Thomas BGM (silent by default; only fires for aeg_* chars) -->
 <audio id="game-bgm" loop preload="none" style="display:none"></audio>
-<script src="train-bgm.js?v=v60.2-20260920a"></script>
-<script src="data/bg-events.js?v=v60.2-20260920a"></script>
-<script src="obstacle-engine.js?v=v60.2-20260920a"></script>
-<script src="data/kids-questions.js?v=v60.2-20260920a"></script>
-<script src="data/obstacles.js?v=v60.2-20260920a"></script>
-<script src="data/routes.js?v=v60.2-20260920a"></script>
-<script src="data/reward-catalog.js?v=v60.2-20260920a"></script>
-<script src="reward-gallery.js?v=v60.2-20260920a"></script>
-<script src="settings-modal.js?v=v60.2-20260920a"></script>
-<script src="trains-db.js?v=v60.2-20260920a"></script>
-<script src="data/sfx-engine.js?v=v60.2-20260920a"></script><!-- A-347 shared coin/crash cues (owner) -->
-<script src="vfx-engine.js?v=v60.2-20260920a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
-<script src="game-modal.js?v=v60.2-20260920a"></script>
+<script src="train-bgm.js?v=v60.3-20260920a"></script>
+<script src="data/bg-events.js?v=v60.3-20260920a"></script>
+<script src="obstacle-engine.js?v=v60.3-20260920a"></script>
+<script src="data/kids-questions.js?v=v60.3-20260920a"></script>
+<script src="data/obstacles.js?v=v60.3-20260920a"></script>
+<script src="data/routes.js?v=v60.3-20260920a"></script>
+<script src="data/reward-catalog.js?v=v60.3-20260920a"></script>
+<script src="reward-gallery.js?v=v60.3-20260920a"></script>
+<script src="settings-modal.js?v=v60.3-20260920a"></script>
+<script src="trains-db.js?v=v60.3-20260920a"></script>
+<script src="data/sfx-engine.js?v=v60.3-20260920a"></script><!-- A-347 shared coin/crash cues (owner) -->
+<script src="vfx-engine.js?v=v60.3-20260920a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
+<script src="game-modal.js?v=v60.3-20260920a"></script>
 <!-- v55.99 B-284 — shared rich atmospheric scenery engine (sun + layered mountains + grass) -->
-<script src="scenery-engine.js?v=v60.2-20260920a"></script>
+<script src="scenery-engine.js?v=v60.3-20260920a"></script>
 <!-- v55.77 — shared painterly backdrop (scenery-only far layer) + speed overlay -->
-<script src="train-backdrop.js?v=v60.2-20260920a"></script>
-<script src="train-speedfx.js?v=v60.2-20260920a"></script>
-<script src="train-journey.js?v=v60.2-20260920a"></script>
+<script src="train-backdrop.js?v=v60.3-20260920a"></script>
+<script src="train-speedfx.js?v=v60.3-20260920a"></script>
+<script src="train-journey.js?v=v60.3-20260920a"></script>
 
 <div id="hud-top">
   <button id="btn-back" class="du-hud-pill" type="button" onclick="goBack()">← Kembali</button>
@@ -296,6 +296,15 @@ let stage = null
 let bgContainer = null
 let railContainer = null
 let trainContainer = null
+// ── The hit window, drawn ────────────────────────────────────────────────────
+// Same complaint as G15: the art is far longer than the thing that collides, so
+// a child cannot see where the train "is". Here the test is |obstacle.x -
+// train.x| < HIT_HALF_X plus a bottom-edge check, so the guide is a band of
+// exactly that width with a bright line on the contact edge -- not a box, which
+// would imply a top edge the game does not test.
+const HIT_HALF_X = 50
+let hitGuideLayer = null
+let hitGuideGfx = null
 let trainSprite = null
 let obstacleLayer = null
 let particleLayer = null
@@ -535,13 +544,35 @@ function buildLayers() {
   bgContainer = new PIXI.Container()
   railContainer = new PIXI.Container()
   trainContainer = new PIXI.Container()
+  hitGuideLayer = new PIXI.Container()
   obstacleLayer = new PIXI.Container()
   particleLayer = new PIXI.Container()
   stage.addChild(bgContainer)
   stage.addChild(railContainer)
   stage.addChild(trainContainer)
+  stage.addChild(hitGuideLayer)
   stage.addChild(obstacleLayer)
   stage.addChild(particleLayer)
+}
+
+// Redrawn each frame because the band follows the terrain under the train.
+// Quiet on purpose: 2px lines at low alpha, and a brighter line on the contact
+// edge, which is the only edge the collision test actually uses.
+function drawHitGuide() {
+  if (!hitGuideLayer || !trainContainer) return
+  if (!hitGuideGfx) { hitGuideGfx = new PIXI.Graphics(); hitGuideLayer.addChild(hitGuideGfx) }
+  const g = hitGuideGfx
+  const bottom = H * RAIL_Y_FRAC + S.terrainOffset + S.jumpY
+  const top = bottom - 96
+  const x0 = trainContainer.x - HIT_HALF_X, x1 = trainContainer.x + HIT_HALF_X
+  g.clear()
+  g.moveTo(x0, top).lineTo(x0, bottom).moveTo(x1, top).lineTo(x1, bottom)
+   .stroke({ color: 0xFFF3C4, width: 2, alpha: 0.28 })
+  g.moveTo(x0, bottom).lineTo(x1, bottom)
+   .stroke({ color: 0x7DD3FC, width: 2, alpha: 0.45 })
+  // small ticks so the band reads as a boundary rather than scenery
+  g.moveTo(x0, top).lineTo(x0 + 10, top).moveTo(x1 - 10, top).lineTo(x1, top)
+   .stroke({ color: 0xFFD6A0, width: 3, alpha: 0.4 })
 }
 
 function buildBackground() {
@@ -1078,6 +1109,7 @@ function g14sJump() {
 function tick(tickerOrDelta) {
   if (!S.running || S.paused || S.gameOver) return
   S.frame++
+  drawHitGuide()   // one place, every frame: the band follows terrain and jump
 
   // Pixi 8 ticker: get deltaTime from ticker
   let deltaMS = 16.67
@@ -1453,7 +1485,7 @@ function tick(tickerOrDelta) {
     // v54.89 — Skip collision for decoration items (milestone signposts)
     if (o.isDecoration) continue
     // Collision: train fixed-X area vs obstacle
-    if (S.invincible <= 0 && Math.abs(o.sprite.x - trainContainer.x) < 50) {
+    if (S.invincible <= 0 && Math.abs(o.sprite.x - trainContainer.x) < HIT_HALF_X) {
       // v59.95 — both sides now measured in the SAME frame of reference: the train
       // rides S.terrainOffset, the obstacle stands on its own patch of rail. Before,
       // the train's terrain offset was dropped from this test only, so on a crest the
@@ -2180,6 +2212,6 @@ window.addEventListener('keydown', e => {
 </script>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v56.7</div>
 <!-- Freeze recovery net: detects a dead frame chain and offers a way out. -->
-<script src="data/freeze-watchdog.js?v=v60.2-20260920a"></script>
+<script src="data/freeze-watchdog.js?v=v60.3-20260920a"></script>
 </body>
 </html>

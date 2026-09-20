@@ -37,12 +37,12 @@ try {
   // 1. a page's own frames stop
   {
     const page = await open('games/pokemon-birds.html')
-    await sleep(6000)   // the watchdog only arms 3s after load
+    await sleep(11000)  // the watchdog arms 8s after load, then needs two strikes
     await page.evaluate(() => {
       // kill the frame chain the way a thrown callback does, without an error
       window.requestAnimationFrame = function () { return 0 }
     })
-    await page.waitForSelector('#__freezeRecover', { timeout: 15000 }).catch(() => {})
+    await page.waitForSelector('#__freezeRecover', { timeout: 25000 }).catch(() => {})
     const shown = await page.evaluate(() => !!document.getElementById('__freezeRecover'))
     const logged = await page.evaluate(() => (window.freezeLog() || []).some(e => /render-stall/.test(e.type)))
     const buttons = await page.evaluate(() => [...document.querySelectorAll('#__freezeRecover button')].map(b => b.textContent))
@@ -60,7 +60,7 @@ try {
   // 2. the film player notices the GAME's frames dying, not its own
   {
     const page = await open('games/film-play.html?g=thomas-rail-muddle')
-    await sleep(9000)
+    await sleep(12000)
     const attached = await page.evaluate(() => {
       const f = document.getElementById('frame')
       return !!(f && f.contentWindow && f.contentWindow.document)
@@ -70,7 +70,7 @@ try {
       const f = document.getElementById('frame')
       f.contentWindow.requestAnimationFrame = function () { return 0 }   // parent keeps ticking
     })
-    await page.waitForSelector('#__freezeRecover', { timeout: 20000 }).catch(() => {})
+    await page.waitForSelector('#__freezeRecover', { timeout: 30000 }).catch(() => {})
     const shown = await page.evaluate(() => !!document.getElementById('__freezeRecover'))
     const kind = await page.evaluate(() => (window.freezeLog() || []).slice(-1)[0] || null)
     const home = await page.evaluate(() => [...document.querySelectorAll('#__freezeRecover button')].map(b => b.textContent))
@@ -83,12 +83,12 @@ try {
   // 3. recovery, not nagging
   {
     const page = await open('games/pokemon-birds.html')
-    await sleep(6000)
+    await sleep(11000)
     await page.evaluate(() => {
       window.__realRaf = window.requestAnimationFrame.bind(window)
       window.requestAnimationFrame = function () { return 0 }
     })
-    await page.waitForSelector('#__freezeRecover', { timeout: 15000 }).catch(() => {})
+    await page.waitForSelector('#__freezeRecover', { timeout: 25000 }).catch(() => {})
     await page.evaluate(() => { window.requestAnimationFrame = window.__realRaf })
     await sleep(4000)
     const gone = await page.evaluate(() => !document.getElementById('__freezeRecover'))

@@ -129,6 +129,48 @@ try {
 
   await page.screenshot({ path: 'tools/qa-out/g15-hitguide.png' })
   await page.close()
+  // ── the side racer carries the same gap, so it carries the same guide ────
+  {
+    const page = await browser.newPage()
+    const cdp = await page.createCDPSession()
+    await cdp.send('Network.setBypassServiceWorker', { bypass: true })
+    const errors = []
+    page.on('pageerror', e => errors.push(String(e.message).slice(0, 140)))
+    await page.setViewport({ width: 1100, height: 700 })
+    await page.goto((process.env.QA_BASE || 'http://localhost:8081') + '/games/balapan-kereta-side.html',
+      { waitUntil: 'domcontentloaded', timeout: 45000 })
+    await sleep(7000)
+    // dismiss the tutorial the way a child does, then let the race run
+    for (let i = 0; i < 8; i++) {
+      const more = await page.evaluate(() => {
+        const ov = document.getElementById('tutorial-overlay')
+        if (!ov || !ov.classList.contains('show')) return false
+        const b = [...ov.querySelectorAll('button')].pop()
+        if (b) { b.click(); return true }
+        return false
+      })
+      if (!more) break
+      await sleep(600)
+    }
+    await page.evaluate(() => { if (typeof S !== 'undefined' && !S.running && !S.gameOver) { S.paused = false; S.running = true } })
+    // the guide is drawn from the tick, and this page runs at a few frames per
+    // second under swiftshader -- wait for the first draw rather than guessing
+    await page.waitForFunction(() => typeof hitGuideGfx !== 'undefined' && !!hitGuideGfx, { timeout: 25000 }).catch(() => {})
+    await sleep(800)
+    const g = await page.evaluate(() => ({
+      exists: typeof hitGuideGfx !== 'undefined' && !!hitGuideGfx,
+      half: typeof HIT_HALF_X !== 'undefined' ? HIT_HALF_X : null,
+      bounds: (typeof hitGuideGfx !== 'undefined' && hitGuideGfx) ? Math.round(hitGuideGfx.getBounds().width) : null,
+      trainX: Math.round(trainContainer.x),
+      centre: (typeof hitGuideGfx !== 'undefined' && hitGuideGfx) ? Math.round(hitGuideGfx.getBounds().x + hitGuideGfx.getBounds().width / 2) : null,
+    }))
+    check(g.exists, 'the side racer draws its hit window once the race runs')
+    check(g.half === 50, `it is drawn from the same constant the collision uses (${g.half})`)
+    check(g.bounds !== null && Math.abs(g.bounds - g.half * 2) <= 4, `the band is the collider's real width (${g.bounds}px for ±${g.half})`)
+    check(g.centre !== null && Math.abs(g.centre - g.trainX) <= 2, `and centred on the train (${g.centre} vs ${g.trainX})`)
+    check(errors.length === 0, `no page errors while it runs (${errors[0] || 'none'})`)
+    await page.close()
+  }
 } finally {
   await browser.close()
 }

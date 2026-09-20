@@ -71,7 +71,9 @@
   var lastTick = Date.now();
   var hiddenSince = 0;
   var settled = false;
-  window.addEventListener('load', function () { setTimeout(function () { settled = true; lastTick = Date.now(); }, 3000); });
+  // 8s, not 3: these pages finish `load` and then spend seconds building a
+  // WebGL scene. Arming during that window is what produced the false card.
+  window.addEventListener('load', function () { setTimeout(function () { settled = true; lastTick = Date.now(); lastFrame = Date.now(); }, 8000); });
   document.addEventListener('visibilitychange', function () {
     if (document.visibilityState === 'hidden') hiddenSince = Date.now();
     else { lastTick = Date.now(); hiddenSince = 0; }
@@ -134,6 +136,13 @@
   // PARENT's frames keep coming even when the game inside is dead. Its frames
   // are watched separately, through the iframe's own window.
   var RENDER_STALL = 5000;
+  // Two consecutive observations before the card appears. A single one is not
+  // evidence of a freeze on these pages: booting balapan-kereta-side under a
+  // slow renderer blocks the main thread for seconds while it decodes assets,
+  // and the first build of this raised the card over a game that was merely
+  // still loading -- caught in a screenshot, not in theory.
+  var STALL_STRIKES = 2;
+  var strikes = 0;
   var lastFrame = Date.now();
   var lastInnerFrame = 0;
   var innerWin = null;
@@ -254,7 +263,9 @@
   }
 
   setInterval(function () {
-    if (document.visibilityState !== 'visible' || hiddenSince || !settled) return;
+    if (document.visibilityState !== 'visible' || hiddenSince || !settled) { strikes = 0; return; }
+    // A page that has not finished loading is not frozen, it is loading.
+    if (document.readyState !== 'complete') { strikes = 0; return; }
     var outerGap = Date.now() - lastFrame;
     var innerGap = innerWin ? (Date.now() - lastInnerFrame) : 0;
     // Always try to restart a quiet heartbeat before judging it: if the page
@@ -262,8 +273,12 @@
     // recovery card takes itself away.
     if (outerGap > 2000) rearm();
     if (innerWin && innerGap > 2000) rearmInner();
-    if (outerGap > RENDER_STALL) { showRecovery('render-stall', outerGap); return; }
-    if (innerWin && innerGap > RENDER_STALL) showRecovery('render-stall-frame', innerGap);
+    var stalledOuter = outerGap > RENDER_STALL;
+    var stalledInner = innerWin && innerGap > RENDER_STALL;
+    if (!stalledOuter && !stalledInner) { strikes = 0; return; }
+    if (++strikes < STALL_STRIKES) return;
+    if (stalledOuter) showRecovery('render-stall', outerGap);
+    else showRecovery('render-stall-frame', innerGap);
   }, 1000);
 
   window.__cleanupHooks = window.__cleanupHooks || [];
