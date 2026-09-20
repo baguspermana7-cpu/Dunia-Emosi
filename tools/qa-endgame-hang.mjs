@@ -20,12 +20,13 @@
 // The end routines are listed per game rather than guessed, because they are
 // what the source calls right before its result overlay.
 //
-// gym-pokemon is NOT in this list, and that is a limitation rather than a pass:
-// its battle state lives inside a closure, so `startBattle()` called from the
-// outside never reaches the assignment (gym-select stays open, `battle` stays
-// null) and the end routine correctly declines to run. Covering it needs either
-// a test hook in the page or a probe that plays a real battle; until then its
-// end-of-round path is untested here and should not be assumed safe.
+// gym-pokemon needed a seam to be testable at all, and the reason is worth
+// keeping: `startBattle` is wrapped twice on DOMContentLoaded (weather/music,
+// then the Adventure/PvP/Tournament chooser), and because a top-level function
+// declaration IS a window property, those wrappers replace the name itself --
+// so calling it from a test opened a modal instead of starting a fight. The
+// page now captures the raw function before the wrappers install and exposes it
+// as `window.__g13c.startBattleRaw`, which is what this gate arms with.
 import puppeteer from 'puppeteer'
 
 const BASE = process.env.QA_BASE || 'http://localhost:8081'
@@ -35,6 +36,19 @@ const check = (ok, msg) => { console.log(`${ok ? 'PASS' : 'FAIL'}  ${msg}`); if 
 
 // game page → the functions that reach GameModal.show(), with arguments that
 // match how the game itself calls them
+const ARM_GYM = () => {
+  // choose a team (the game opens on its pack picker), then stand a battle up
+  // through the seam -- the wrapped startBattle would only open a mode modal
+  try {
+    const card = document.querySelector('#pkg-overlay .pkg-card[data-unlocked="1"]')
+    if (card) card.click()
+    const ov = document.getElementById('pkg-overlay')
+    if (ov) ov.style.display = 'none'
+    if (window.__g13c && !window.__g13c.battle) window.__g13c.startBattleRaw(window.__g13c.TRAINERS[0].id)
+    else if (window.__g13c && window.__g13c.battle) window.__g13c.battle.ended = false
+  } catch (_) {}
+}
+
 // Some end routines guard on a live round (`if (!S.running) return`,
 // `if (!battle || battle.ended) return`). Calling them cold is not a test of
 // anything, so each game gets an `arm` step that puts it in the state its own
@@ -42,6 +56,7 @@ const check = (ok, msg) => { console.log(`${ok ? 'PASS' : 'FAIL'}  ${msg}`); if 
 const ARM = {
   'balapan-kereta.html': () => { if (typeof S !== 'undefined') { S.running = true; S.gameOver = false } },
   'pokemon-run.html': () => { if (typeof S !== 'undefined') { S.running = true; S.gameOver = false; S.started = true } },
+  'gym-pokemon.html': ARM_GYM,
 }
 
 const GAMES = [
@@ -55,6 +70,7 @@ const GAMES = [
   ['pokemon-birds.html',       [['showWin', []]]],
   ['pokemon-bawah-laut.html',  [['showWin', []]]],
   ['mario-pokemon.html',       [['showWinModal', [3]]]],
+  ['gym-pokemon.html',         [['__g13c.endBattleWin', []], ['__g13c.endBattleLose', []]]],
 ]
 
 const browser = await puppeteer.launch({

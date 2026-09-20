@@ -1322,7 +1322,10 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 
 ### G6 — Petualangan Mobil (REOPENED, not solved)
 - ⬜ **Objects melayang di luar jalan/circuit** — buildings/emojis escape road bounds
-- ⬜ **Vehicle/character images FAIL TO DISPLAY** — URL-encoded path fix from 2026-04-20 not enough, still broken
+- ✅ **Vehicle/character images FAIL TO DISPLAY** — DONE (verified 2026-09-20 by loading the page
+  headless): `games/mobil.html` renders 39 images with ZERO broken ones (`naturalWidth === 0`
+  count is 0) and no request returns 400+. All 20 vehicle thumbnails in "Pilih Kendaraan" draw,
+  screenshot in tools/qa-out/mobil-check.png.
 - ⬜ **Gameplay + animasi + UIUX need deep improvement**
 - **Plan mode**: inspect tile spawn logic, sprite path resolution (check DRIVE_VEHICLES + actual asset files), circuit boundaries CSS, object z-index/positioning
 
@@ -1674,14 +1677,18 @@ User-reported issues NOT yet fixed (queued for next session). Source: same eveni
   `node tools/qa-endgame-hang.mjs` calls each standalone game's own end routine (the function the
   source runs right before its result overlay) and asserts four things — nothing thrown, no page
   error, an end-of-round overlay actually visible, and the page still RESPONSIVE afterwards
-  (timers fire, the thread takes work, the overlay's button accepts a real click). 84 checks
-  across 10 games and 14 end routines, all passing.
+  (timers fire, the thread takes work, the overlay's button accepts a real click). 96 checks
+  across 11 games and 16 end routines, all passing.
   Liveness is deliberately not measured as "frames keep coming": most of these games stop their
   ticker on purpose when the result appears, and counting frames marked correct behaviour as a
   hang — that first attempt gave results that flipped between runs.
-  STILL OPEN: `gym-pokemon` cannot be armed from outside (its battle state lives in a closure, so
-  an external `startBattle()` never reaches the assignment), so its end path is untested here;
-  and this gate exercises the end ROUTINES, not every transition that can reach them.
+  `gym-pokemon` is now covered too (2026-09-20, second pass). It needed a seam, and the reason is
+  worth keeping: `startBattle` is wrapped twice on DOMContentLoaded — weather/music, then the
+  Adventure/PvP/Tournament chooser — and because a top-level function declaration IS a window
+  property, those wrappers REPLACE the name, so calling it from a test opened a modal instead of
+  starting a fight. The page captures the raw function before the wrappers install and exposes it
+  as `window.__g13c.startBattleRaw`; the gate arms a real battle through that.
+  STILL OPEN: this gate exercises the end ROUTINES, not every transition that can reach them.
 
 ---
 

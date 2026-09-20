@@ -15,7 +15,7 @@
  * succeeded. Only cache same-origin assets.
  * ========================================================================== */
 
-const CACHE_VERSION = 'v60.4-20260920a'
+const CACHE_VERSION = 'v60.5-20260920a'
 const HTML_CACHE = `dunia-html-${CACHE_VERSION}`
 const ASSET_CACHE = `dunia-assets-${CACHE_VERSION}`
 
@@ -75,23 +75,23 @@ const SHELL = [
   './games/lib/pixi.min.js?v=8',
   './games/balapan-kereta-side.html',
   './games/museum-kereta.html',
-  './games/indo-scene.js?v=v60.4-20260920a',
-  './games/train-journey.js?v=v60.4-20260920a',
-  './games/data/train-wheel-anchors.js?v=v60.4-20260920a',
-  './games/train-backdrop.js?v=v60.4-20260920a',
-  './games/train-picker.js?v=v60.4-20260920a',
-  './games/train-speedfx.js?v=v60.4-20260920a',
-  './games/quiz-engine.js?v=v60.4-20260920a',
-  './games/motion.js?v=v60.4-20260920a',
-  './games/scenery-engine.js?v=v60.4-20260920a',
-  './games/sw-reload.js?v=v60.4-20260920a',
-  './games/g14-hud.css?v=v60.4-20260920a',
-  './games/du-hud.css?v=v60.4-20260920a',
+  './games/indo-scene.js?v=v60.5-20260920a',
+  './games/train-journey.js?v=v60.5-20260920a',
+  './games/data/train-wheel-anchors.js?v=v60.5-20260920a',
+  './games/train-backdrop.js?v=v60.5-20260920a',
+  './games/train-picker.js?v=v60.5-20260920a',
+  './games/train-speedfx.js?v=v60.5-20260920a',
+  './games/quiz-engine.js?v=v60.5-20260920a',
+  './games/motion.js?v=v60.5-20260920a',
+  './games/scenery-engine.js?v=v60.5-20260920a',
+  './games/sw-reload.js?v=v60.5-20260920a',
+  './games/g14-hud.css?v=v60.5-20260920a',
+  './games/du-hud.css?v=v60.5-20260920a',
   // Seven call sites across four games invoke GameModal AFTER stopping the
   // ticker. Offline with a miss, the ReferenceError landed on a frozen frame
   // with no result modal and no way out -- so this one belongs in the shell
   // even though the shell is deliberately slim. It is ~4KB.
-  './games/game-modal.js?v=v60.4-20260920a',
+  './games/game-modal.js?v=v60.5-20260920a',
 ]
 
 self.addEventListener('install', (e) => {
