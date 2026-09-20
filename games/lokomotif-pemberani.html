@@ -9,8 +9,8 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=59.95-20260809a">
-<link rel="stylesheet" href="du-hud.css?v=59.95-20260809a">
+<link rel="stylesheet" href="du-buttons.css?v=v59.96-20260920a">
+<link rel="stylesheet" href="du-hud.css?v=v59.96-20260920a">
 <title>Lokomotif Pemberani 🚂</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -214,32 +214,32 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <body>
 <canvas id="pixi-canvas"></canvas>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.84</div>
-<script src="data/emoji-map.js?v=59.95-20260809a"></script><script src="data/ui-sprites.js?v=59.95-20260809a"></script><!-- zero-emoji engine -->
-<script src="sw-reload.js?v=59.95-20260809a"></script>
-<script src="train-shared.js?v=59.95-20260809a"></script>
-<script src="train-vfx.js?v=59.95-20260809a"></script>
-<script src="motion.js?v=59.95-20260809a"></script><!-- A-315 E3 — shared motion engine (frame-rate-independent easing) -->
-<script src="train-bg-engine.js?v=59.95-20260809a"></script>
-<script src="data/bg-themes.js?v=59.95-20260809a"></script>
-<script src="data/bg-renderers.js?v=59.95-20260809a"></script>
-<script src="data/bg-npcs.js?v=59.95-20260809a"></script>
-<script src="data/bg-audio.js?v=59.95-20260809a"></script>
-<script src="data/bg-events.js?v=59.95-20260809a"></script>
+<script src="data/emoji-map.js?v=v59.96-20260920a"></script><script src="data/ui-sprites.js?v=v59.96-20260920a"></script><!-- zero-emoji engine -->
+<script src="sw-reload.js?v=v59.96-20260920a"></script>
+<script src="train-shared.js?v=v59.96-20260920a"></script>
+<script src="train-vfx.js?v=v59.96-20260920a"></script>
+<script src="motion.js?v=v59.96-20260920a"></script><!-- A-315 E3 — shared motion engine (frame-rate-independent easing) -->
+<script src="train-bg-engine.js?v=v59.96-20260920a"></script>
+<script src="data/bg-themes.js?v=v59.96-20260920a"></script>
+<script src="data/bg-renderers.js?v=v59.96-20260920a"></script>
+<script src="data/bg-npcs.js?v=v59.96-20260920a"></script>
+<script src="data/bg-audio.js?v=v59.96-20260920a"></script>
+<script src="data/bg-events.js?v=v59.96-20260920a"></script>
 <!-- v54.83 — ObstacleEngine + Koleksi gallery available from G15 picker (Practice Mode) -->
-<script src="obstacle-engine.js?v=59.95-20260809a"></script>
-<script src="train-journey.js?v=59.95-20260809a"></script>
-<script src="indo-scene.js?v=59.95-20260809a"></script>
+<script src="obstacle-engine.js?v=v59.96-20260920a"></script>
+<script src="train-journey.js?v=v59.96-20260920a"></script>
+<script src="indo-scene.js?v=v59.96-20260920a"></script>
 <!-- v55.77 — SHARED painterly backdrop + depth-parallax engine + always-on speed overlay (parity with balapan-kereta / g14). Guarded: any miss → procedural bg. -->
-<script src="train-backdrop.js?v=59.95-20260809a"></script>
-<script src="train-speedfx.js?v=59.95-20260809a"></script>
-<script src="data/kids-questions.js?v=59.95-20260809a"></script>
-<script src="data/obstacles.js?v=59.95-20260809a"></script>
-<script src="data/routes.js?v=59.95-20260809a"></script>
-<script src="data/reward-catalog.js?v=59.95-20260809a"></script>
-<script src="reward-gallery.js?v=59.95-20260809a"></script>
-<script src="settings-modal.js?v=59.95-20260809a"></script>
+<script src="train-backdrop.js?v=v59.96-20260920a"></script>
+<script src="train-speedfx.js?v=v59.96-20260920a"></script>
+<script src="data/kids-questions.js?v=v59.96-20260920a"></script>
+<script src="data/obstacles.js?v=v59.96-20260920a"></script>
+<script src="data/routes.js?v=v59.96-20260920a"></script>
+<script src="data/reward-catalog.js?v=v59.96-20260920a"></script>
+<script src="reward-gallery.js?v=v59.96-20260920a"></script>
+<script src="settings-modal.js?v=v59.96-20260920a"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
-<script src="train-bgm.js?v=59.95-20260809a"></script>
+<script src="train-bgm.js?v=v59.96-20260920a"></script>
 <!-- v54.28 I13: loop the train ambient SFX (was one-shot, faded after first cycle, leaving silence). -->
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" loop preload="auto" style="display:none"></audio>
 
@@ -307,9 +307,9 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
   </div>
 </div>
 
-<script src="data/freeze-watchdog.js?v=59.95-20260809a"></script>
-<script src="data/save-engine.js?v=59.95-20260809a"></script>
-<script src="game-modal.js?v=59.95-20260809a"></script>
+<script src="data/freeze-watchdog.js?v=v59.96-20260920a"></script>
+<script src="data/save-engine.js?v=v59.96-20260920a"></script>
+<script src="game-modal.js?v=v59.96-20260920a"></script>
 
 <!-- Train Select Screen -->
 <div id="train-select">
@@ -366,10 +366,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 </div>
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="trains-db.js?v=59.95-20260809a"></script>
-<script src="data/train-world.js?v=59.95-20260809a"></script><!-- v55.94 — 275 real-sprite world trains -->
-<script src="train-character-sprite.js?v=59.95-20260809a"></script>
-<script src="../shared/rz-responsive.js?v=59.95-20260809a"></script>
+<script src="trains-db.js?v=v59.96-20260920a"></script>
+<script src="data/train-world.js?v=v59.96-20260920a"></script><!-- v55.94 — 275 real-sprite world trains -->
+<script src="train-character-sprite.js?v=v59.96-20260920a"></script>
+<script src="../shared/rz-responsive.js?v=v59.96-20260920a"></script>
 <script>
 'use strict';
 // Polyfill ctx.roundRect for older Android WebViews (Chrome < 99)
@@ -452,12 +452,16 @@ function togglePause() {
   // Task #63 — pause the math-quiz wall-clock timer so it doesn't auto-fail while
   // user is paused. On pause: clearTimeout + record remaining. On resume: restart
   // with remaining time. Timer fill CSS is also frozen/resumed.
+  // The arithmetic runs against _mathTimerTotal, the length THIS quiz was opened
+  // with. It used to assume 8000, which is a length the game never actually uses:
+  // an easy quiz paused after 1.5s resumed with 6.5s instead of 12.5s.
+  // Gate: tools/qa-g15-math-pause.mjs
   if (mathQuizActive && typeof _mathTimerStart === 'number') {
     const fill = document.getElementById('math-timer-fill');
     if (gamePaused) {
       if (mathTimerRaf) { clearTimeout(mathTimerRaf); mathTimerRaf = null; }
       const elapsed = performance.now() - _mathTimerStart;
-      _mathTimerRemaining = Math.max(0, 8000 - elapsed);
+      _mathTimerRemaining = Math.max(0, _mathTimerTotal - elapsed);
       if (fill) {
         // Freeze fill width at current interpolated value (style.width reflects target; use computed)
         const cs = getComputedStyle(fill);
@@ -465,13 +469,14 @@ function togglePause() {
         fill.style.width = cs.width;
       }
     } else {
-      _mathTimerStart = performance.now() - (8000 - (_mathTimerRemaining || 8000));
+      const _left = (_mathTimerRemaining == null) ? _mathTimerTotal : _mathTimerRemaining;
+      _mathTimerStart = performance.now() - (_mathTimerTotal - _left);
       mathTimerRaf = setTimeout(() => {
         if (mathQuizActive) answerMath(false, null, true);
-      }, _mathTimerRemaining || 8000);
+      }, _left);
       if (fill) {
         requestAnimationFrame(() => {
-          fill.style.transition = `width ${(_mathTimerRemaining || 8000)}ms linear`;
+          fill.style.transition = `width ${_left}ms linear`;
           requestAnimationFrame(() => { fill.style.width = '0%'; });
         });
       }
@@ -488,6 +493,9 @@ function togglePause() {
 }
 let _mathTimerStart = null;
 let _mathTimerRemaining = 8000;
+// The quiz length is NOT fixed: g15MathTimerSec() returns 5..14s by difficulty and
+// level. Pause/resume must arithmetic against THAT run's length, not a constant.
+let _mathTimerTotal = 8000;
 
 // Initialize shared pause overlay once game-modal.js loads
 (function setupG15Pause(){
@@ -2593,6 +2601,7 @@ function showMathQuiz() {
 
   _mathTimerStart = performance.now();
   _mathTimerRemaining = _mathMs;
+  _mathTimerTotal = _mathMs;
   let timedOut = false;
   mathTimerRaf = setTimeout(() => {
     if (mathQuizActive) { timedOut = true; answerMath(false, null, true); }

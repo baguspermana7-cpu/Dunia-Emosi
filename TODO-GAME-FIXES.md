@@ -1067,15 +1067,45 @@ Cache bump: `v=20260423a` → `v=20260423b`.
 | G13 / G13b (game.js) | `game.js:1586-1610` | ⚠️ AMBIGUOUS | Turn-based quiz not bypassable by pause BUT `_g13bLegAutoAtk` setInterval (L8106, 14 s) fires legendary wild-hit regardless of `state.paused`. Opened **Task #62**. |
 | G15 | `games/g15-pixi.html:281` | ⚠️ AMBIGUOUS | Main loop gated correctly on `gamePaused||mathQuizActive`, BUT the 8 s math-quiz setTimeout (L1493) is wall-clock, not paused with game. User pausing mid-quiz can auto-fail when overlay closes. Opened **Task #63**. |
 
-### Task #62 — G13b Legendary Auto-Attack Fires During Pause ⬜ OPEN
+### Task #62 — G13b Legendary Auto-Attack Fires During Pause ✅ DONE 2026-09-20
 - **Symptom (from Task #55 audit)**: During a legendary battle in G13b, `_g13bLegAutoAtk` setInterval (`game.js:8106`) fires `g13bWildHitsPlayer()` every 14 seconds. If user opens pauseGame overlay (`state.paused=true`), the interval keeps ticking and the legendary can still deal damage + flinch the player while the game is "paused".
 - **Proposed fix**: Wrap the interval callback with `if (state.paused) return` guard, OR clear the interval in `pauseGame()` and restart it in `resumeGame()`. Prefer the guard — simpler, preserves Chip-in cadence.
 - **Scope**: `game.js` around L8106-8115. 2-line fix.
+- ✅ **Fixed 2026-09-20** (`game.js`, legendary interval in `g13bSpawnWild`): an earlier
+  pass added `if (st.paused) return`, but `g13bState.paused` is set ONLY by the party
+  picker (Task #64) — the pause BUTTON sets `state.paused` via `pauseGame()`. So the
+  case this task was opened for was still live. Guard now covers both flags.
+- ✅ **Gate**: `node tools/qa-g13b-pause.mjs` — captures the real 14s interval callback
+  out of `g13bSpawnWild()` and fires it under each flag. Proven against the unfixed
+  file: 1 hit landed while the pause overlay was up; 0 after the fix, and the legendary
+  still strikes normally while running.
 
-### Task #63 — G15 Math Quiz 8s Timer Leaks Through Pause ⬜ OPEN
+### Task #63 — G15 Math Quiz 8s Timer Leaks Through Pause ✅ DONE 2026-09-20
 - **Symptom (from Task #55 audit)**: `games/g15-pixi.html:1493` sets `mathTimerRaf = setTimeout(..., 8000)` for auto-fail. Wall-clock timer is unaffected by `gamePaused` toggle. User pausing mid-quiz may find it auto-failed when they resume.
 - **Proposed fix**: Replace `setTimeout` with an accumulator that advances by `dt` inside the paused-gated ticker, similar to G16 frame-counter pattern. When accumulator >= 8s, trigger timeout branch. Guarantees timer only ticks while game is running.
 - **Scope**: `games/g15-pixi.html` `showMathQuiz()` / `answerMath()` timer block. Add `quizElapsed` to game state, advance in ticker only when `mathQuizActive && !gamePaused`.
+- ✅ **Fixed 2026-09-20** (`games/lokomotif-pemberani.html`, the renamed G15). Pause/resume
+  had been implemented but did its arithmetic against a hardcoded `8000` — a length the
+  game never uses, since `g15MathTimerSec()` returns 14s (easy), 7-12s (medium) or
+  5-10s (hard). Measured on the pre-fix file: an easy quiz paused after 1.5s resumed
+  with 6.5s instead of 12.5s (6s stolen), and a hard quiz paused near its end fell
+  through `remaining || 8000` and resumed with a fresh 8s. New `_mathTimerTotal` records
+  the length THIS quiz was opened with and every branch uses it.
+- ✅ **Gate**: `node tools/qa-g15-math-pause.mjs` — opens a real quiz at easy and hard,
+  pauses mid-question, asserts remaining vs that run's own length (drift <250ms), and
+  that a pause longer than the whole timer does not auto-fail. 4 FAILED on the old file,
+  ALL PASS on the new one.
+
+### Task #67 — Pause overlay did not stop G16's danger meter or G17's countdown ✅ DONE 2026-09-20
+- **Found while closing #62/#63**: `pauseGame()` only stops the timers it knows by name
+  (`g4Timer`, `breatheInterval`, the G6 rAF). Three more intervals kept running behind
+  the overlay, and two of them can END THE ROUND: G16's danger meter (`+2` per tick and
+  `+1.5` per tick in phase 2 — reaching 100 is a loss) and G17's 30s countdown (reaching
+  0 is a loss). G16's QTE needle also kept sweeping. Both screens do have a ⏸ button.
+- ✅ **Fix**: `if (state && state.paused) return` at the top of each of the four
+  interval callbacks in `game.js`. No `clearInterval`, so cadence survives the pause.
+- ✅ **Gate**: `node tools/qa-pause-leaks.mjs` — captures each real callback and fires
+  it paused and unpaused: 0 movement while paused, normal movement while running.
 
 ### Task #56 — G20 Ducky Volley: missing mobile hint + auto-slide + dumb AI ✅ DONE 2026-04-22
 - **Symptom**:

@@ -11093,7 +11093,15 @@ function g13bSpawnWild() {
       // Task #62 — skip attack while paused. setInterval tick still fires on wall
       // clock (can't easily gate the timer itself), but the callback is a no-op so
       // player is never damaged while the game is paused.
+      //
+      // TWO different flags mean "paused" here and the guard needs both:
+      //   g13bState.paused — set only by the party picker (Task #64);
+      //   state.paused     — set by pauseGame(), i.e. the actual pause overlay.
+      // Guarding on g13bState.paused alone left the pause BUTTON unguarded, which is
+      // the case Task #62 was opened for: the legendary kept striking behind the
+      // overlay. Gate: tools/qa-g13b-pause.mjs
       if (st.paused) return
+      if (typeof state !== 'undefined' && state && state.paused) return
       // Legendary fires an autonomous strike between questions
       st.locked = true
       g13bWildHitsPlayer(() => { st.locked = false })
@@ -13183,6 +13191,10 @@ function g16StartDangerTimer() {
   clearInterval(g16State.dangerInterval)
   g16State.dangerInterval = setInterval(() => {
     if (!g16State.running) { clearInterval(g16State.dangerInterval); return }
+    // The pause overlay blocks input but not this interval: the danger meter kept
+    // filling behind it and could reach 100 (= game over) while the child was away.
+    // Gate: tools/qa-pause-leaks.mjs
+    if (state && state.paused) return
     g16State.danger = Math.min(100, g16State.danger + 2)
     const dfEl = document.getElementById('g16-danger-fill')
     if (dfEl) dfEl.style.width = g16State.danger + '%'
@@ -13222,6 +13234,7 @@ function g16StartPhase1() {
   g16State.needlePos = 0
   g16State.needleDir = 1
   g16State.needleInterval = setInterval(() => {
+    if (state && state.paused) return   // freeze the QTE needle with the game
     g16State.needlePos += g16State.needleDir * g16State.needleSpeed
     if (g16State.needlePos >= 100) { g16State.needlePos = 100; g16State.needleDir = -1 }
     if (g16State.needlePos <= 0)   { g16State.needlePos = 0;   g16State.needleDir = 1  }
@@ -13273,6 +13286,7 @@ function g16ThrowHook() {
     clearInterval(g16State.dangerInterval)
     g16State.dangerInterval = setInterval(() => {
       if (!g16State.running) return
+      if (state && state.paused) return
       g16State.danger = Math.min(100, g16State.danger + 1.5)
       document.getElementById('g16-danger-fill').style.width = g16State.danger + '%'
       if (g16State.danger >= 100) { clearInterval(g16State.dangerInterval); g16EndGame(false) }
@@ -13515,6 +13529,10 @@ function g17StartTimer() {
   clearInterval(g17State.timerInterval)
   g17State.timerInterval = setInterval(() => {
     if (!g17State.running) { clearInterval(g17State.timerInterval); return }
+    // Same leak as G16's danger meter: the 30s countdown ran behind the pause
+    // overlay and could end the round at 0 while the game was "paused".
+    // Gate: tools/qa-pause-leaks.mjs
+    if (state && state.paused) return
     g17State.timer = Math.max(0, g17State.timer - 1)
     const timerText = document.getElementById('g17-timer-text')
     const timerBar = document.getElementById('g17-timer-bar')
