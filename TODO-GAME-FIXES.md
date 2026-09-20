@@ -1321,7 +1321,14 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 > User flagged these as PLAN MODE required — analyze deeply before coding.
 
 ### G6 — Petualangan Mobil (REOPENED, not solved)
-- ⬜ **Objects melayang di luar jalan/circuit** — buildings/emojis escape road bounds
+- ✅ **Objects melayang di luar jalan/circuit** — DONE (verified 2026-09-21 by measuring a live
+  race). `node tools/qa-mobil-bounds.mjs` starts a run and samples every drawn object: nothing
+  is off-canvas, every hazard and collectible sits ON a lane centre (within 2px of `laneXs`, so
+  none can hover between lanes where it could not be dodged), and roadside signs stay outside
+  `roadLeft..roadRight`. 21 objects sampled, including 13 signs.
+  The first version of that gate PASSED on no data — no sign happened to spawn in the window —
+  so it now forces a batch of signs and fails if fewer than six are present. A check with an
+  empty sample is not a pass.
 - ✅ **Vehicle/character images FAIL TO DISPLAY** — DONE (verified 2026-09-20 by loading the page
   headless): `games/mobil.html` renders 39 images with ZERO broken ones (`naturalWidth === 0`
   count is 0) and no request returns 400+. All 20 vehicle thumbnails in "Pilih Kendaraan" draw,
