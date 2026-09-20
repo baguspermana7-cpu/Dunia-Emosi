@@ -965,7 +965,7 @@ Cache bump: `v=20260423a` → `v=20260423b`.
 | Status | Count | Items |
 |--------|-------|-------|
 | ✅ Completed this session | 10 | #48, #49 (v1+v2), #31, #47, #45, #54, #61, #56, #55, #57 |
-| ⬜ Pending | 3 | #44 (P0 modal engine bug), #62 (G13b pause leak), #63 (G15 quiz timer pause leak) |
+| ⬜ Pending | 1 | #44 (P0 modal engine bug) — #62 and #63 closed 2026-09-20, see their entries |
 | **TOTAL OPEN** | **11** | |
 
 **Key achievements**:
@@ -1349,7 +1349,10 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
   - `game.js:11113-11116` — G18 quiz: `calc({correct: score, total})` — pure accuracy mapping replaces the 4-tier ternary.
 - ✅ **Verification**: `grep -c GameScoring.calc game.js` = 9 (up from 0 inline), residual `perfStars =` lines at 9841/9985/10211/10465 are **G14/G15/G16 in-game legacy paths** (standalone versions already migrated — in-game out of scope for this pass) and my new migrated `perfStars = GameScoring.calc(...)` assignments.
 - ✅ **Pattern documented** in `LESSONS-LEARNED.md` — bonus-modifier technique for non-accuracy games (tier/progression scoring). Reusable for any future game where `{correct, total}` doesn't fit cleanly.
-- ⬜ **Not scope, deferred**: G9 tracing (0-3★ scale intentional, not migrated), G1/2/3/4/5/7/8 (emotion/calm/letter/count/memory/picture/word games — check if they use inline star math in a later pass), in-game G14/G15/G16/G17 paths where the standalone is already unified.
+- ⬜ **Not scope, deferred**: G9 tracing (0-3★ scale intentional, not migrated), G3/G4/G7/G8
+  (letter/count/picture/word games — check if they use inline star math in a later pass), in-game
+  G14/G15/G16/G17 paths where the standalone is already unified. G1/G2/G5 dropped from this list
+  on 2026-09-20: those games were retired.
 
 ### RDE Steps 5+6 (Task #29, progress 2026-04-22) 🔧
 - ✅ **Step 5 G1** — `.g1-animal-display`/`.g1-question`/`.g1-choice-btn`/`.choice-emoji/label`/`.g1-progress` consume `--rz-font-*`/`--rz-gap-*`/`--rz-radius-md`. Removed 9 @media override lines.
@@ -1441,8 +1444,13 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 - **Mandate**: HD primary, no regression to 96px PNG. `image-rendering:pixelated` stays banned.
 
 ### G13c — Gym Badge Icons (Task #31, deferred)
-- ⬜ **Real gym badge icons** — user wants TRAINERS[].badge to show actual Pokemon gym badge PNG/SVG (Boulder/Cascade/Thunder/Rainbow/Soul/Marsh/Volcano/Earth for Kanto, + Johto/Hoenn/Sinnoh/Unova/Kalos/Alola/Galar badges). Currently uses emoji (🪨💧⚡🌿🔮 etc).
-- ⬜ **Team Rocket exception** — Giovanni's Team Rocket is NOT a gym → emoji OK for him.
+- ✅ **Real gym badge icons** — DONE (verified 2026-09-20). `assets/gym-badges/` holds 46 badge
+  images and `games/gym-pokemon.html` renders them through `BADGE_IMG_SET` / `badgeImgUrl()`
+  for all 8 Kanto leaders plus Johto/Hoenn/Sinnoh/Unova/Kalos/Galar. The `badge:'🪨'` fields
+  remain only as the fallback for trainers with no canonical badge.
+- ✅ **Team Rocket exception** — RESOLVED differently, and correctly: Giovanni is in
+  `BADGE_IMG_SET` because he IS the Viridian gym leader and owns the Earth Badge; the Rocket
+  grunts/admins are the ones outside the set and fall back to emoji.
 - **Plan**: (1) Source 50+ gym badge assets (Bulbapedia CC-licensed) or user supplies. (2) Drop to `assets/Pokemon/gym-badges/{badge-slug}.png`. (3) Refactor TRAINERS[] to use `badgeIcon` field, update #badge-emoji overlay + trainer cards to render `<img>`. (4) Fallback to generic stone badge image if specific unavailable. **Blocked until assets provided.**
 
 ### G16 — Selamatkan Kereta (Tasks #34, #35, #36, plan mode 2026-04-21)
@@ -1516,7 +1524,9 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 - ✅ **RDE Step 2** (`style.css:893-947`, 2026-04-21 Evening): reusable classes added — `.rz-navbar`, `.rz-navbar__title`, `.rz-letter-row`, `.rz-letter-btn`, `.rz-choice-grid`. Consume Step 1 tokens; opt-in per game.
 - ✅ **RDE Step 3** (`style.css:544-554, 585, 753-754, 849, 882`, 2026-04-21 Evening): G8 Susun Kata migrated via **token composition** (kept `.g8-letter-btn`/`.g8-slot` class names; replaced hard-coded px/em with `var(--rz-btn-sm)` / `var(--rz-radius-sm)` / `var(--rz-font-title)` / `var(--rz-gap-sm/md)` + `min-width:var(--rz-btn-sm)` to prevent sub-1-per-row collapse). Deleted enhancement bumps at former line 587-588 (now a removal comment), plus 6 G8 override lines across 480px/360px/320px `@media` breakpoints. Dark-theme Scrabble wooden-tile overrides at 1691–1756 preserved (selector specificity + `!important` intact). Zero HTML/JS changes. Cache-bust `v=20260421k`.
 - ✅ **RDE Step 4** (`style.css:315-318, 583, 717, 872`, 2026-04-21 Evening): G3 Huruf Hutan migrated via **token composition** (kept `.g3-choice-btn` / `.g3-word` / `.g3-hint` / `.g3-choices` class names; replaced hard-coded px with `var(--rz-font-h1/body/hero)` / `var(--rz-gap-sm/md)` / `var(--rz-radius-md)` / `var(--rz-btn-md)`). Choice-btn padding = `calc(--rz-btn-md * 0.38) var(--rz-gap-sm)` + `min-height:var(--rz-btn-md)` preserves tap target across widths; letter font = `calc(--rz-font-hero * 0.9)` preserves the 42px peak. Deleted enhancement bump at former line 584, removed 4 G3 overrides from `@media(max-width:480px)` and 1 from `@media(max-width:360px)`. AAA dark overhaul at lines 1465–1566 (wooden-plank `.g3-word`, speech-bubble `.g3-hint`, carved-wood-log `.g3-choice-btn`, letter-burst animation, `.g3-letter.highlight` keyframes) preserved — `!important` specificity intact. Zero HTML/JS changes. Same "token composition over class rename" pattern as Step 3.
-- ⬜ **RDE Step 5** — migrate remaining DOM games (G1, G2, G4, G5, G7, G9). Delete 60+ lines of `@media`.
+- ⬜ **RDE Step 5** — migrate remaining DOM games (G4, G7, G9). Delete the leftover `@media`
+  blocks. Scope shrank on 2026-09-20: G1, G2 and G5 were retired with the Pulau Emosi zone, and
+  their `@media` overrides went with them.
 - ⬜ **RDE Step 6** — ship `shared/rz-responsive.js` + wire G14/G15/G16/G19/G20/G22 (Pixi games get runtime scale factor via `window.RZ`).
 - ⬜ **RDE Step 7** — document per-game overrides in CHANGELOG for traceability.
 
@@ -1651,11 +1661,27 @@ User-reported issues NOT yet fixed (queued for next session). Source: same eveni
 ### G15 — Train Letter Game
 - ⬜ **End-of-game error/hang**: "game ini juga error saat permainan usai. No respond hang" — game freezes / no response after victory or game-over screen. Likely missing modal swap / hung `showGameResult` / leftover Pixi tickers.
 - ⬜ **Character/UI overlap**: "Karakter seperti ada bertumpuk" — character train sprite stacks on top of UI elements (HUD, score, life bar). Z-index / layout review needed.
-- ⬜ **Too many filler letters**: "jangan terlalu banyak huruf filler" — letter spawn pool has too many distractor letters; signal-to-noise too low for kids 5-10.
-- ⬜ **Easy-mode life reduction too steep**: "ini easy nabrak huruf 1 bukan kurangi 1 life tapi 1/4 or 1/2" — colliding with one wrong letter on easy should subtract a fraction of life (1/4 or 1/2), not a full life. Difficulty scaling needs tuning.
+- ✅ **Too many filler letters** — DONE (verified 2026-09-20). Hotfix #102-B: on easy
+  `spawnLetterBox()` emits ONE box, the target letter itself (`numBoxes = isEasy ? 1 : ...`),
+  and the math/heart distractor boxes are skipped entirely on easy.
+- ✅ **Easy-mode life reduction too steep** — DONE (verified 2026-09-20). Hotfix #102-A took a
+  different route to the same feeling: `MAX_LIVES = getDifficulty() === 'easy' ? 8 : 3`, so a hit
+  costs an eighth rather than a third, without touching the damage formula or the shield.
 
 ### Cross-game audit
-- ⬜ **All 22 games — crash/hang on game-end transitions**: User mandate "Check semua g1 sampai g22, pastikan g crash hang" — verify every game end-of-round/end-of-game/transition path; confirm `PixiManager.destroyAll()` is called where needed; confirm no monolithic try-catch hiding throws (apply Hotfix #99/#100 section-isolation pattern broadly).
+- 🟡 **All games — crash/hang on game-end transitions**: User mandate "Check semua g1 sampai g22,
+  pastikan g crash hang". PARTLY CLOSED 2026-09-20 by a standing gate rather than a one-off sweep:
+  `node tools/qa-endgame-hang.mjs` calls each standalone game's own end routine (the function the
+  source runs right before its result overlay) and asserts four things — nothing thrown, no page
+  error, an end-of-round overlay actually visible, and the page still RESPONSIVE afterwards
+  (timers fire, the thread takes work, the overlay's button accepts a real click). 84 checks
+  across 10 games and 14 end routines, all passing.
+  Liveness is deliberately not measured as "frames keep coming": most of these games stop their
+  ticker on purpose when the result appears, and counting frames marked correct behaviour as a
+  hang — that first attempt gave results that flipped between runs.
+  STILL OPEN: `gym-pokemon` cannot be armed from outside (its battle state lives in a closure, so
+  an external `startBattle()` never reaches the assignment), so its end path is untested here;
+  and this gate exercises the end ROUTINES, not every transition that can reach them.
 
 ---
 
