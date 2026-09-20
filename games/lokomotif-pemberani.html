@@ -9,8 +9,8 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=v60.5-20260920a">
-<link rel="stylesheet" href="du-hud.css?v=v60.5-20260920a">
+<link rel="stylesheet" href="du-buttons.css?v=v60.6-20260920a">
+<link rel="stylesheet" href="du-hud.css?v=v60.6-20260920a">
 <title>Lokomotif Pemberani 🚂</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -161,7 +161,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 #ts-back:active{transform:translateY(2px);box-shadow:0 1px 0 #b45309}
 #ts-title-wrap{flex:1;text-align:center}
 #ts-title{font-size:16px;font-weight:900;color:#e9d5ff;text-shadow:0 0 20px rgba(139,92,246,0.7);line-height:1}
-#ts-subtitle{font-size:10px;color:rgba(233,213,255,0.4);letter-spacing:1.5px;margin-top:1px}
+#ts-subtitle{font-size:12px;color:rgba(233,213,255,0.55);letter-spacing:1.2px;margin-top:2px}
 #station-intro{display:flex;align-items:center;gap:10px;background:rgba(139,92,246,0.14);border:1.5px solid rgba(139,92,246,0.4);border-radius:14px;margin:8px 12px 0;padding:8px 14px;flex-shrink:0}
 .si-icon{font-size:28px;flex-shrink:0}
 .si-text{text-align:left}
@@ -176,7 +176,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 .tfbtn:active{transform:scale(.95)}
 .tfbtn.active{background:rgba(139,92,246,0.45);border-color:#a78bfa;color:#fff;box-shadow:0 0 14px rgba(139,92,246,0.5)}
 /* Train count badge */
-#ts-count{font-size:9px;color:rgba(196,181,253,0.5);text-align:center;padding:4px 0 2px;letter-spacing:0.8px;flex-shrink:0}
+#ts-count{font-size:12px;color:rgba(196,181,253,0.62);text-align:center;padding:5px 0 2px;letter-spacing:0.6px;flex-shrink:0}
 #ts-grid-wrap{flex:1;overflow-y:auto;padding:10px 16px 24px;-webkit-overflow-scrolling:touch}
 #train-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
 @media(min-width:500px){#train-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}}
@@ -193,8 +193,11 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 .tcard:active{transform:scale(0.95)}
 .tcard canvas{width:100%;aspect-ratio:2.5/1;display:block;image-rendering:pixelated;image-rendering:crisp-edges;padding:4px}
 .tcard-info{padding:4px 6px 5px}
-.tname{font-size:10px;font-weight:700;color:#e9d5ff;display:block;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tsub{font-size:7px;color:rgba(167,139,250,0.5);display:block;margin-top:1px;letter-spacing:0.3px;text-transform:uppercase}
+/* 2026-09-20 — a 10px name over a 7px sub-line is unreadable for the 5-10 year
+   olds this is built for, and the mobile gate measured it at 7.5px on an iPhone
+   SE. Floors of 12px / 11px, still small enough for a 3-across grid. */
+.tname{font-size:12px;font-weight:700;color:#e9d5ff;display:block;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tsub{font-size:11px;color:rgba(167,139,250,0.62);display:block;margin-top:1px;letter-spacing:0.2px;text-transform:uppercase}
 
 /* ── Station Banner (shown at game start) ── */
 #station-banner{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:200;display:none;flex-direction:column;align-items:center;gap:3px;background:rgba(0,0,0,0.88);border:2.5px solid rgba(139,92,246,0.7);border-radius:24px;padding:20px 32px;backdrop-filter:blur(18px);pointer-events:none;opacity:1;transition:opacity .5s,transform .5s}
@@ -214,32 +217,32 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <body>
 <canvas id="pixi-canvas"></canvas>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.84</div>
-<script src="data/emoji-map.js?v=v60.5-20260920a"></script><script src="data/ui-sprites.js?v=v60.5-20260920a"></script><!-- zero-emoji engine -->
-<script src="sw-reload.js?v=v60.5-20260920a"></script>
-<script src="train-shared.js?v=v60.5-20260920a"></script>
-<script src="train-vfx.js?v=v60.5-20260920a"></script>
-<script src="motion.js?v=v60.5-20260920a"></script><!-- A-315 E3 — shared motion engine (frame-rate-independent easing) -->
-<script src="train-bg-engine.js?v=v60.5-20260920a"></script>
-<script src="data/bg-themes.js?v=v60.5-20260920a"></script>
-<script src="data/bg-renderers.js?v=v60.5-20260920a"></script>
-<script src="data/bg-npcs.js?v=v60.5-20260920a"></script>
-<script src="data/bg-audio.js?v=v60.5-20260920a"></script>
-<script src="data/bg-events.js?v=v60.5-20260920a"></script>
+<script src="data/emoji-map.js?v=v60.6-20260920a"></script><script src="data/ui-sprites.js?v=v60.6-20260920a"></script><!-- zero-emoji engine -->
+<script src="sw-reload.js?v=v60.6-20260920a"></script>
+<script src="train-shared.js?v=v60.6-20260920a"></script>
+<script src="train-vfx.js?v=v60.6-20260920a"></script>
+<script src="motion.js?v=v60.6-20260920a"></script><!-- A-315 E3 — shared motion engine (frame-rate-independent easing) -->
+<script src="train-bg-engine.js?v=v60.6-20260920a"></script>
+<script src="data/bg-themes.js?v=v60.6-20260920a"></script>
+<script src="data/bg-renderers.js?v=v60.6-20260920a"></script>
+<script src="data/bg-npcs.js?v=v60.6-20260920a"></script>
+<script src="data/bg-audio.js?v=v60.6-20260920a"></script>
+<script src="data/bg-events.js?v=v60.6-20260920a"></script>
 <!-- v54.83 — ObstacleEngine + Koleksi gallery available from G15 picker (Practice Mode) -->
-<script src="obstacle-engine.js?v=v60.5-20260920a"></script>
-<script src="train-journey.js?v=v60.5-20260920a"></script>
-<script src="indo-scene.js?v=v60.5-20260920a"></script>
+<script src="obstacle-engine.js?v=v60.6-20260920a"></script>
+<script src="train-journey.js?v=v60.6-20260920a"></script>
+<script src="indo-scene.js?v=v60.6-20260920a"></script>
 <!-- v55.77 — SHARED painterly backdrop + depth-parallax engine + always-on speed overlay (parity with balapan-kereta / g14). Guarded: any miss → procedural bg. -->
-<script src="train-backdrop.js?v=v60.5-20260920a"></script>
-<script src="train-speedfx.js?v=v60.5-20260920a"></script>
-<script src="data/kids-questions.js?v=v60.5-20260920a"></script>
-<script src="data/obstacles.js?v=v60.5-20260920a"></script>
-<script src="data/routes.js?v=v60.5-20260920a"></script>
-<script src="data/reward-catalog.js?v=v60.5-20260920a"></script>
-<script src="reward-gallery.js?v=v60.5-20260920a"></script>
-<script src="settings-modal.js?v=v60.5-20260920a"></script>
+<script src="train-backdrop.js?v=v60.6-20260920a"></script>
+<script src="train-speedfx.js?v=v60.6-20260920a"></script>
+<script src="data/kids-questions.js?v=v60.6-20260920a"></script>
+<script src="data/obstacles.js?v=v60.6-20260920a"></script>
+<script src="data/routes.js?v=v60.6-20260920a"></script>
+<script src="data/reward-catalog.js?v=v60.6-20260920a"></script>
+<script src="reward-gallery.js?v=v60.6-20260920a"></script>
+<script src="settings-modal.js?v=v60.6-20260920a"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
-<script src="train-bgm.js?v=v60.5-20260920a"></script>
+<script src="train-bgm.js?v=v60.6-20260920a"></script>
 <!-- v54.28 I13: loop the train ambient SFX (was one-shot, faded after first cycle, leaving silence). -->
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" loop preload="auto" style="display:none"></audio>
 
@@ -307,9 +310,9 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
   </div>
 </div>
 
-<script src="data/freeze-watchdog.js?v=v60.5-20260920a"></script>
-<script src="data/save-engine.js?v=v60.5-20260920a"></script>
-<script src="game-modal.js?v=v60.5-20260920a"></script>
+<script src="data/freeze-watchdog.js?v=v60.6-20260920a"></script>
+<script src="data/save-engine.js?v=v60.6-20260920a"></script>
+<script src="game-modal.js?v=v60.6-20260920a"></script>
 
 <!-- Train Select Screen -->
 <div id="train-select">
@@ -366,10 +369,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 </div>
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="trains-db.js?v=v60.5-20260920a"></script>
-<script src="data/train-world.js?v=v60.5-20260920a"></script><!-- v55.94 — 275 real-sprite world trains -->
-<script src="train-character-sprite.js?v=v60.5-20260920a"></script>
-<script src="../shared/rz-responsive.js?v=v60.5-20260920a"></script>
+<script src="trains-db.js?v=v60.6-20260920a"></script>
+<script src="data/train-world.js?v=v60.6-20260920a"></script><!-- v55.94 — 275 real-sprite world trains -->
+<script src="train-character-sprite.js?v=v60.6-20260920a"></script>
+<script src="../shared/rz-responsive.js?v=v60.6-20260920a"></script>
 <script>
 'use strict';
 // Polyfill ctx.roundRect for older Android WebViews (Chrome < 99)

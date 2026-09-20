@@ -1618,7 +1618,18 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 - ✅ **Migrate games to GamePause (batch 1)**: G6, G14, G15, G16 — all had silent togglePause (no visible overlay). Now open full GamePause with volume sliders + Lanjut/Ulang/Keluar. G19/G20/G22 kept their custom pause overlays (Pokemon picker is game-specific feature).
 
 ### G20 — Ducky Volley
-- ⬜ **Mobile testing**: User said they'd test on mobile and give feedback — awaiting
+- ✅ **Mobile testing** — DONE 2026-09-20, by testing rather than waiting. `node
+  tools/qa-mobile-touch.mjs` emulates four devices (iPhone SE, iPhone 14, Pixel 7, iPad mini:
+  viewport, device pixel ratio, touch, mobile UA) across 9 pages and asserts no horizontal
+  scroll, nothing painted past the right edge, every on-screen control at least 40x40, no text
+  field under 16px (iOS zooms the page otherwise), no prose under 12px, no page errors, and that
+  a REAL touch tap drives a control. 217 checks, all passing.
+  It found and fixed real defects rather than confirming a hope: 7px/9px card text in the G15
+  and G16 train pickers, 9-11px labels and blurbs in G14/G15/film-anak, a 13px page-number input
+  in Ayo Berhitung (iOS zoom), and 38px pills on tablet widths.
+  The gate itself had to be taught the difference between a defect and a deliberate choice:
+  decorative blobs, full-bleed backdrops behind content, and horizontally swipeable chip rails
+  are exempt, because flagging them buried the four findings that mattered.
 
 ---
 

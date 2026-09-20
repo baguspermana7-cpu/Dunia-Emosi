@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=v60.5-20260920a">
+<link rel="stylesheet" href="du-buttons.css?v=v60.6-20260920a">
 <title>Balapan Kereta 🚂</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -209,7 +209,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 .cat-thumb img,.cat-thumb canvas{width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;display:block;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.45))}
 .cat-info{flex:1;min-width:0}
 .cat-name{font-size:14px;font-weight:900;color:#e9d5ff}
-.cat-desc{font-size:11px;color:rgba(200,180,230,.5);margin-top:2px}
+.cat-desc{font-size:12px;color:rgba(200,180,230,.62);margin-top:2px;line-height:1.35}
 .cat-arr{font-size:18px;color:rgba(200,180,230,.3)}
 .train-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
 @media(min-width:480px){.train-grid{grid-template-columns:repeat(4,1fr)}}
@@ -239,43 +239,43 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 /* Flash */
 #flash{position:fixed;inset:0;z-index:99;pointer-events:none;opacity:0;transition:opacity .05s}
 </style>
-<link rel="stylesheet" href="g14-hud.css?v=v60.5-20260920a">
+<link rel="stylesheet" href="g14-hud.css?v=v60.6-20260920a">
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v59.1</div>
-<script src="data/emoji-map.js?v=v60.5-20260920a"></script><script src="data/ui-sprites.js?v=v60.5-20260920a"></script><!-- zero-emoji engine -->
-<script src="sw-reload.js?v=v60.5-20260920a"></script>
-<script src="train-shared.js?v=v60.5-20260920a"></script>
-<script src="data/train-world.js?v=v60.5-20260920a"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
-<script src="train-vfx.js?v=v60.5-20260920a"></script>
-<script src="train-bg-engine.js?v=v60.5-20260920a"></script>
-<script src="data/bg-themes.js?v=v60.5-20260920a"></script>
-<script src="data/bg-renderers.js?v=v60.5-20260920a"></script>
-<script src="data/bg-npcs.js?v=v60.5-20260920a"></script>
-<script src="data/bg-audio.js?v=v60.5-20260920a"></script>
-<script src="data/bg-events.js?v=v60.5-20260920a"></script>
+<script src="data/emoji-map.js?v=v60.6-20260920a"></script><script src="data/ui-sprites.js?v=v60.6-20260920a"></script><!-- zero-emoji engine -->
+<script src="sw-reload.js?v=v60.6-20260920a"></script>
+<script src="train-shared.js?v=v60.6-20260920a"></script>
+<script src="data/train-world.js?v=v60.6-20260920a"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
+<script src="train-vfx.js?v=v60.6-20260920a"></script>
+<script src="train-bg-engine.js?v=v60.6-20260920a"></script>
+<script src="data/bg-themes.js?v=v60.6-20260920a"></script>
+<script src="data/bg-renderers.js?v=v60.6-20260920a"></script>
+<script src="data/bg-npcs.js?v=v60.6-20260920a"></script>
+<script src="data/bg-audio.js?v=v60.6-20260920a"></script>
+<script src="data/bg-events.js?v=v60.6-20260920a"></script>
 <!-- v54.69 — ObstacleEngine foundation (modular obstacle system, soft-fail, kids-friendly) -->
-<script src="obstacle-engine.js?v=v60.5-20260920a"></script>
-<script src="data/kids-questions.js?v=v60.5-20260920a"></script>
+<script src="obstacle-engine.js?v=v60.6-20260920a"></script>
+<script src="data/kids-questions.js?v=v60.6-20260920a"></script>
 <!-- v55.97 M-303 — SHARED quiz engine (question + answer-choices) for all games -->
-<script src="quiz-engine.js?v=v60.5-20260920a"></script>
+<script src="quiz-engine.js?v=v60.6-20260920a"></script>
 <!-- v56.6 M-303/A-315 — SHARED motion/game-feel engine (frame-rate-independent easing) -->
-<script src="motion.js?v=v60.5-20260920a"></script>
-<script src="data/obstacles.js?v=v60.5-20260920a"></script>
-<script src="data/routes.js?v=v60.5-20260920a"></script>
-<script src="data/reward-catalog.js?v=v60.5-20260920a"></script>
-<script src="reward-gallery.js?v=v60.5-20260920a"></script>
-<script src="settings-modal.js?v=v60.5-20260920a"></script>
+<script src="motion.js?v=v60.6-20260920a"></script>
+<script src="data/obstacles.js?v=v60.6-20260920a"></script>
+<script src="data/routes.js?v=v60.6-20260920a"></script>
+<script src="data/reward-catalog.js?v=v60.6-20260920a"></script>
+<script src="reward-gallery.js?v=v60.6-20260920a"></script>
+<script src="settings-modal.js?v=v60.6-20260920a"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
-<script src="train-bgm.js?v=v60.5-20260920a"></script>
-<script src="indo-scene.js?v=v60.5-20260920a"></script>
-<script src="data/train-wheel-anchors.js?v=v60.5-20260920a"></script>
-<script src="train-journey.js?v=v60.5-20260920a"></script>
-<script src="train-backdrop.js?v=v60.5-20260920a"></script>
-<script src="train-speedfx.js?v=v60.5-20260920a"></script>
-<script src="data/sfx-engine.js?v=v60.5-20260920a"></script><!-- A-347 shared coin + quiz answer cues (owner) -->
-<script src="data/battle-modes.js?v=v60.5-20260920a"></script><!-- A-323b — mode-select + name-entry helpers (train PvP is self-contained below) -->
+<script src="train-bgm.js?v=v60.6-20260920a"></script>
+<script src="indo-scene.js?v=v60.6-20260920a"></script>
+<script src="data/train-wheel-anchors.js?v=v60.6-20260920a"></script>
+<script src="train-journey.js?v=v60.6-20260920a"></script>
+<script src="train-backdrop.js?v=v60.6-20260920a"></script>
+<script src="train-speedfx.js?v=v60.6-20260920a"></script>
+<script src="data/sfx-engine.js?v=v60.6-20260920a"></script><!-- A-347 shared coin + quiz answer cues (owner) -->
+<script src="data/battle-modes.js?v=v60.6-20260920a"></script><!-- A-323b — mode-select + name-entry helpers (train PvP is self-contained below) -->
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
 <!-- v54.17 A1: 3-2-1-GO countdown overlay -->
@@ -427,7 +427,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
          will do: the train runs and jumps over what is on the rails. -->
     <button id="g14-side-btn" onclick="g14LaunchSideRace()" style="margin-top:10px;background:linear-gradient(135deg,#bbf7d0,#22c55e);border:3px solid #166534;border-radius:14px;color:#052e16;padding:12px 24px;font-size:15px;cursor:pointer;font-family:inherit;font-weight:900;min-height:48px;box-shadow:0 4px 0 #14532d;width:100%;line-height:1.25">
       Balapan Lompat
-      <span style="display:block;font-size:11px;font-weight:700;opacity:.85;margin-top:2px">Keretamu berlari dan melompati rintangan</span>
+      <span style="display:block;font-size:12.5px;font-weight:700;opacity:.9;margin-top:2px;line-height:1.35">Keretamu berlari dan melompati rintangan</span>
     </button>
   </div>
 </div>
@@ -548,14 +548,14 @@ function g14RefreshHCBadge(){
 }
 </script>
 
-<script src="data/freeze-watchdog.js?v=v60.5-20260920a"></script>
-<script src="data/save-engine.js?v=v60.5-20260920a"></script>
-<script src="game-modal.js?v=v60.5-20260920a"></script>
+<script src="data/freeze-watchdog.js?v=v60.6-20260920a"></script>
+<script src="data/save-engine.js?v=v60.6-20260920a"></script>
+<script src="game-modal.js?v=v60.6-20260920a"></script>
 
 <div id="flash"></div>
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="../shared/rz-responsive.js?v=v60.5-20260920a"></script>
+<script src="../shared/rz-responsive.js?v=v60.6-20260920a"></script>
 <script>
 'use strict'
 // ═══════════════════════════════════════════════════════════

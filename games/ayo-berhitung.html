@@ -79,12 +79,14 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
   box-shadow:0 1px 2px rgba(16,24,40,.18);z-index:0;opacity:0;
   transition:transform .26s cubic-bezier(.22,1,.36,1),width .26s cubic-bezier(.22,1,.36,1),opacity .18s ease}
 .seg button{position:relative;z-index:1}
-.seg button{min-height:38px;padding:0 15px;border-radius:9px;font-weight:800;color:var(--seg-ink);
+/* 44px everywhere, not only on phones: the tablet sizes sat at 38px and a
+   thumb needs the same room on an iPad as on an iPhone. */
+.seg button{min-height:44px;min-width:44px;padding:0 15px;border-radius:9px;font-weight:800;color:var(--seg-ink);
   font-size:14.5px;white-space:nowrap;background:transparent;
   transition:background-color .16s ease,color .16s ease,box-shadow .16s ease,transform .1s ease}
 .seg button:active{transform:scale(.97)}
 .seg button[aria-pressed="true"]{background:transparent;color:var(--seg-ink-active);box-shadow:none}
-.act{min-height:38px;padding:0 16px;border-radius:10px;font-weight:800;font-size:14.5px;color:#fff;
+.act{min-height:44px;padding:0 16px;border-radius:10px;font-weight:800;font-size:14.5px;color:#fff;
   display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
 .act{transition:transform .1s ease,filter .14s ease,box-shadow .14s ease}
 .act:active{transform:scale(.98)}
@@ -169,7 +171,7 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
 .pager .pg[disabled]{opacity:.45;cursor:default}
 .pager .now{font-weight:900;font-variant-numeric:tabular-nums;color:var(--ink-soft)}
 .pager input{width:74px;height:var(--tap);text-align:center;font-weight:900;border:1px solid #dfe3ec;
-  border-radius:10px;font-variant-numeric:tabular-nums}
+  border-radius:10px;font-variant-numeric:tabular-nums;font-size:16px}
 
 /* ── badge sheet ─────────────────────────────────────────────────────────── */
 .modal{position:fixed;inset:0;background:rgba(17,24,39,.55);display:none;align-items:center;justify-content:center;
@@ -203,12 +205,14 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
   .panel .lede{font-size:12.5px}
   .ctrls{gap:8px}
   .seg{flex-wrap:wrap}
-  .seg button{padding:0 12px;font-size:14px}
-  .act{padding:0 13px;font-size:14px}
+  /* 44px is the thumb minimum; below it a child taps the gap between pills */
+  .seg button{padding:0 12px;font-size:14px;min-height:44px;min-width:44px}
+  .act{padding:0 13px;font-size:14px;min-height:44px}
   .row2{gap:8px}
   .sum{font-size:26px;--col:30px}
   .boxes input{height:40px;font-size:18px}
-  .pager input{width:64px}
+  /* iOS zooms the whole page when a text field under 16px takes focus */
+  .pager input{width:64px;font-size:16px}
 }
 
 /* One switch for all of it. Motion is decoration here: every state it conveys
@@ -291,9 +295,9 @@ body[data-motion="off"] *,body[data-motion="off"] *::before,body[data-motion="of
   </div>
 </div>
 
-<script src="data/berhitung-engine.js?v=v60.5-20260920a"></script>
-<script src="data/freeze-watchdog.js?v=v60.5-20260920a"></script>
-<script src="sw-reload.js?v=v60.5-20260920a"></script>
+<script src="data/berhitung-engine.js?v=v60.6-20260920a"></script>
+<script src="data/freeze-watchdog.js?v=v60.6-20260920a"></script>
+<script src="sw-reload.js?v=v60.6-20260920a"></script>
 <script>
 (function () {
   'use strict'
