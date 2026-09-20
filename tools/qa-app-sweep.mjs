@@ -12,6 +12,7 @@ const PAGES = [
   'games/gym-pokemon.html', 'games/mario-pokemon.html', 'games/monster-candy.html',
   'games/pokemon-run.html', 'games/pokemon-birds.html', 'games/pokemon-bawah-laut.html',
   'games/ducky-volley.html', 'games/kuis-matematika.html', 'games/mobil.html',
+  'games/ayo-berhitung.html',
 ]
 const OUT = 'tools/qa-out'
 fs.mkdirSync(OUT, { recursive: true })
