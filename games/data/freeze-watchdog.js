@@ -119,6 +119,132 @@
     });
   }
 
+  // ── RENDER STALL + RECOVERY ───────────────────────────────────────────────
+  // The stall detector above catches a BLOCKED main thread. The freeze the
+  // owner hit in Gotham Getaway is the other kind: the page stays responsive,
+  // timers keep firing, and the picture simply stops -- an exception thrown
+  // inside an engine's update loop takes the rAF chain down with it, and
+  // nothing else notices.
+  //
+  // So: watch requestAnimationFrame itself. If frames stop arriving for
+  // RENDER_STALL ms while the page is visible, the game is frozen whatever the
+  // cause, and the child gets a way out instead of a dead screen.
+  //
+  // For the film player the game runs inside a same-origin <iframe>, so the
+  // PARENT's frames keep coming even when the game inside is dead. Its frames
+  // are watched separately, through the iframe's own window.
+  var RENDER_STALL = 5000;
+  var lastFrame = Date.now();
+  var lastInnerFrame = 0;
+  var innerWin = null;
+  var innerTick = null;
+  var recovering = false;
+
+  function beat() { lastFrame = Date.now(); try { requestAnimationFrame(beat); } catch (_) {} }
+  requestAnimationFrame(beat);
+  // Re-arm the heartbeat whenever it has gone quiet. Without this the detector
+  // is one-shot: whatever killed the frame chain also killed this beat, so even
+  // after the game recovers no frame is ever recorded again and the recovery
+  // card would sit there over a perfectly healthy game.
+  function rearm() { try { requestAnimationFrame(beat); } catch (_) {} }
+
+  // Attach to the film player's game frame when it appears, and re-attach on
+  // every navigation inside it (a new game = a new window).
+  function watchInnerFrame() {
+    var f = document.getElementById('frame');
+    if (!f || !f.contentWindow) return;
+    var w = f.contentWindow;
+    if (w === innerWin) return;
+    try {
+      // cross-origin would throw here; those frames simply go unwatched
+      void w.document;
+    } catch (_) { innerWin = null; return; }
+    innerWin = w;
+    lastInnerFrame = Date.now();
+    var tick = function () {
+      if (f.contentWindow !== w) return;   // frame navigated away
+      lastInnerFrame = Date.now();
+      try { w.requestAnimationFrame(tick); } catch (_) {}
+    };
+    innerTick = tick;
+    try { w.requestAnimationFrame(tick); } catch (_) { innerWin = null; }
+  }
+  function rearmInner() {
+    if (!innerWin || !innerTick) return;
+    try { innerWin.requestAnimationFrame(innerTick); } catch (_) {}
+  }
+  setInterval(watchInnerFrame, 2000);
+  window.addEventListener('load', watchInnerFrame);
+
+  function showRecovery(kind, gap) {
+    if (recovering || document.getElementById('__freezeRecover')) return;
+    recovering = true;
+    push({ type: kind, msg: 'no frames for ' + Math.round(gap) + 'ms',
+           page: location.pathname.split('/').pop(), ctx: String(window.__freezeContext || '') });
+
+    var isFilm = /film-play/.test(location.pathname);
+    var d = document.createElement('div');
+    d.id = '__freezeRecover';
+    d.setAttribute('role', 'alertdialog');
+    d.style.cssText = 'position:fixed;inset:0;z-index:2147483646;display:flex;align-items:center;' +
+      'justify-content:center;background:rgba(12,10,26,0.82);backdrop-filter:blur(6px);' +
+      'font-family:system-ui,-apple-system,"Segoe UI",sans-serif;padding:20px';
+    var card = document.createElement('div');
+    card.style.cssText = 'max-width:340px;width:100%;background:#fff8e7;border:3px solid #ffd6a0;' +
+      'border-radius:24px;box-shadow:0 10px 0 #d4956a;padding:22px 20px;text-align:center;color:#3a2b12';
+    var h = document.createElement('div');
+    h.textContent = 'Permainannya berhenti sebentar';
+    h.style.cssText = 'font-size:19px;font-weight:900;margin-bottom:6px';
+    var p2 = document.createElement('div');
+    p2.textContent = 'Ayo mulai lagi, ya!';
+    p2.style.cssText = 'font-size:14px;font-weight:700;opacity:.75;margin-bottom:16px';
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:10px;justify-content:center;flex-wrap:wrap';
+    function btn(label, bg, shadow, onClick) {
+      var b = document.createElement('button');
+      b.textContent = label;
+      b.style.cssText = 'min-height:48px;padding:0 22px;border:0;border-radius:16px;font:inherit;' +
+        'font-size:15px;font-weight:900;cursor:pointer;color:#3a2b12;background:' + bg +
+        ';box-shadow:0 4px 0 ' + shadow;
+      b.addEventListener('click', onClick);
+      return b;
+    }
+    row.appendChild(btn('Main Lagi', '#ffd968', '#d4a017', function () {
+      if (isFilm) { location.reload(); } else { location.reload(); }
+    }));
+    if (isFilm) {
+      row.appendChild(btn('Beranda', '#bfe3ff', '#7aaddd', function () {
+        location.href = 'film-anak.html';
+      }));
+    }
+    card.appendChild(h); card.appendChild(p2); card.appendChild(row);
+    d.appendChild(card);
+    document.body.appendChild(d);
+
+    // If frames come back on their own (a long GC pause, a slow level load),
+    // take the overlay away rather than making the child reload for nothing.
+    var t0 = Date.now();
+    var watch = setInterval(function () {
+      var alive = (Date.now() - lastFrame) < 1500 &&
+                  (!innerWin || (Date.now() - lastInnerFrame) < 1500);
+      if (alive) { clearInterval(watch); d.remove(); recovering = false; }
+      else if (Date.now() - t0 > 60000) { clearInterval(watch); }
+    }, 700);
+  }
+
+  setInterval(function () {
+    if (document.visibilityState !== 'visible' || hiddenSince || !settled) return;
+    var outerGap = Date.now() - lastFrame;
+    var innerGap = innerWin ? (Date.now() - lastInnerFrame) : 0;
+    // Always try to restart a quiet heartbeat before judging it: if the page
+    // has genuinely recovered, the next beat lands within a frame and the
+    // recovery card takes itself away.
+    if (outerGap > 2000) rearm();
+    if (innerWin && innerGap > 2000) rearmInner();
+    if (outerGap > RENDER_STALL) { showRecovery('render-stall', outerGap); return; }
+    if (innerWin && innerGap > RENDER_STALL) showRecovery('render-stall-frame', innerGap);
+  }, 1000);
+
   window.__cleanupHooks = window.__cleanupHooks || [];
   window.registerCleanupHook = function (fn) {
     if (typeof fn === 'function') window.__cleanupHooks.push(fn);

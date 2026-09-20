@@ -9,8 +9,8 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=v59.97-20260920a">
-<link rel="stylesheet" href="du-hud.css?v=v59.97-20260920a">
+<link rel="stylesheet" href="du-buttons.css?v=v59.98-20260920a">
+<link rel="stylesheet" href="du-hud.css?v=v59.98-20260920a">
 <title>Lokomotif Pemberani 🚂</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -214,32 +214,32 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <body>
 <canvas id="pixi-canvas"></canvas>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.84</div>
-<script src="data/emoji-map.js?v=v59.97-20260920a"></script><script src="data/ui-sprites.js?v=v59.97-20260920a"></script><!-- zero-emoji engine -->
-<script src="sw-reload.js?v=v59.97-20260920a"></script>
-<script src="train-shared.js?v=v59.97-20260920a"></script>
-<script src="train-vfx.js?v=v59.97-20260920a"></script>
-<script src="motion.js?v=v59.97-20260920a"></script><!-- A-315 E3 — shared motion engine (frame-rate-independent easing) -->
-<script src="train-bg-engine.js?v=v59.97-20260920a"></script>
-<script src="data/bg-themes.js?v=v59.97-20260920a"></script>
-<script src="data/bg-renderers.js?v=v59.97-20260920a"></script>
-<script src="data/bg-npcs.js?v=v59.97-20260920a"></script>
-<script src="data/bg-audio.js?v=v59.97-20260920a"></script>
-<script src="data/bg-events.js?v=v59.97-20260920a"></script>
+<script src="data/emoji-map.js?v=v59.98-20260920a"></script><script src="data/ui-sprites.js?v=v59.98-20260920a"></script><!-- zero-emoji engine -->
+<script src="sw-reload.js?v=v59.98-20260920a"></script>
+<script src="train-shared.js?v=v59.98-20260920a"></script>
+<script src="train-vfx.js?v=v59.98-20260920a"></script>
+<script src="motion.js?v=v59.98-20260920a"></script><!-- A-315 E3 — shared motion engine (frame-rate-independent easing) -->
+<script src="train-bg-engine.js?v=v59.98-20260920a"></script>
+<script src="data/bg-themes.js?v=v59.98-20260920a"></script>
+<script src="data/bg-renderers.js?v=v59.98-20260920a"></script>
+<script src="data/bg-npcs.js?v=v59.98-20260920a"></script>
+<script src="data/bg-audio.js?v=v59.98-20260920a"></script>
+<script src="data/bg-events.js?v=v59.98-20260920a"></script>
 <!-- v54.83 — ObstacleEngine + Koleksi gallery available from G15 picker (Practice Mode) -->
-<script src="obstacle-engine.js?v=v59.97-20260920a"></script>
-<script src="train-journey.js?v=v59.97-20260920a"></script>
-<script src="indo-scene.js?v=v59.97-20260920a"></script>
+<script src="obstacle-engine.js?v=v59.98-20260920a"></script>
+<script src="train-journey.js?v=v59.98-20260920a"></script>
+<script src="indo-scene.js?v=v59.98-20260920a"></script>
 <!-- v55.77 — SHARED painterly backdrop + depth-parallax engine + always-on speed overlay (parity with balapan-kereta / g14). Guarded: any miss → procedural bg. -->
-<script src="train-backdrop.js?v=v59.97-20260920a"></script>
-<script src="train-speedfx.js?v=v59.97-20260920a"></script>
-<script src="data/kids-questions.js?v=v59.97-20260920a"></script>
-<script src="data/obstacles.js?v=v59.97-20260920a"></script>
-<script src="data/routes.js?v=v59.97-20260920a"></script>
-<script src="data/reward-catalog.js?v=v59.97-20260920a"></script>
-<script src="reward-gallery.js?v=v59.97-20260920a"></script>
-<script src="settings-modal.js?v=v59.97-20260920a"></script>
+<script src="train-backdrop.js?v=v59.98-20260920a"></script>
+<script src="train-speedfx.js?v=v59.98-20260920a"></script>
+<script src="data/kids-questions.js?v=v59.98-20260920a"></script>
+<script src="data/obstacles.js?v=v59.98-20260920a"></script>
+<script src="data/routes.js?v=v59.98-20260920a"></script>
+<script src="data/reward-catalog.js?v=v59.98-20260920a"></script>
+<script src="reward-gallery.js?v=v59.98-20260920a"></script>
+<script src="settings-modal.js?v=v59.98-20260920a"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
-<script src="train-bgm.js?v=v59.97-20260920a"></script>
+<script src="train-bgm.js?v=v59.98-20260920a"></script>
 <!-- v54.28 I13: loop the train ambient SFX (was one-shot, faded after first cycle, leaving silence). -->
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" loop preload="auto" style="display:none"></audio>
 
@@ -307,9 +307,9 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
   </div>
 </div>
 
-<script src="data/freeze-watchdog.js?v=v59.97-20260920a"></script>
-<script src="data/save-engine.js?v=v59.97-20260920a"></script>
-<script src="game-modal.js?v=v59.97-20260920a"></script>
+<script src="data/freeze-watchdog.js?v=v59.98-20260920a"></script>
+<script src="data/save-engine.js?v=v59.98-20260920a"></script>
+<script src="game-modal.js?v=v59.98-20260920a"></script>
 
 <!-- Train Select Screen -->
 <div id="train-select">
@@ -366,10 +366,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 </div>
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="trains-db.js?v=v59.97-20260920a"></script>
-<script src="data/train-world.js?v=v59.97-20260920a"></script><!-- v55.94 — 275 real-sprite world trains -->
-<script src="train-character-sprite.js?v=v59.97-20260920a"></script>
-<script src="../shared/rz-responsive.js?v=v59.97-20260920a"></script>
+<script src="trains-db.js?v=v59.98-20260920a"></script>
+<script src="data/train-world.js?v=v59.98-20260920a"></script><!-- v55.94 — 275 real-sprite world trains -->
+<script src="train-character-sprite.js?v=v59.98-20260920a"></script>
+<script src="../shared/rz-responsive.js?v=v59.98-20260920a"></script>
 <script>
 'use strict';
 // Polyfill ctx.roundRect for older Android WebViews (Chrome < 99)
@@ -846,6 +846,29 @@ let bgLayer, trackLayer, trainContainer, boxLayer, particleLayer;
 let wheels = [];
 let steamPuffs = [];
 let letterBoxes = [];
+
+// ── Hit box, drawn instead of implied ────────────────────────────────────────
+// The owner could not see how a train this long was ever supposed to fit between
+// two letters: "secara visual itu nggak mungkin menghindar". He was reading the
+// ART, and the art is not what collides. A character sprite renders ~190px long,
+// while the thing that actually hits is a fixed 104x84 box centred on the train.
+// So the game was asking a child to judge a boundary it never drew.
+//
+// Two changes, both from that one cause:
+//   1. HIT_HALF_W/H are now the single source of the collider, and a faint
+//      rounded box plus a contact line are drawn AT those exact numbers -- the
+//      same idea as the thin ring around the bird in Pokemon Birds, which the
+//      owner pointed to as the thing that makes the boundary legible.
+//   2. Spawn spacing is measured against the train's REAL rendered length
+//      (g15TrainLenPx, read off the sprite after it mounts) so consecutive
+//      obstacles can never be closer together than one train plus a margin.
+const HIT_HALF_W = 52;   // collider half-width  (x: TRAIN_X +/- 52)
+const HIT_HALF_H = 42;   // collider half-height (y: train centre +/- 42)
+const HIT_GUIDE_ALPHA = 0.30;
+let hitGuideLayer = null;
+let hitGuideGfx = null;
+let g15TrainLenPx = 0;   // measured in buildTrain(), 0 until the train mounts
+let g15MeasureSettle = 0; // frames left to keep re-measuring after a (re)build
 let bgStars = [];
 let sleepers = [];
 let bgClouds = [];
@@ -941,6 +964,7 @@ async function initPixi() {
   bgLayer       = new PIXI.Container(); stage.addChild(bgLayer);
   trackLayer    = new PIXI.Container(); stage.addChild(trackLayer);
   trainContainer= new PIXI.Container(); stage.addChild(trainContainer);
+  hitGuideLayer = new PIXI.Container(); stage.addChild(hitGuideLayer);
   boxLayer      = new PIXI.Container(); stage.addChild(boxLayer);
   particleLayer = new PIXI.Container(); stage.addChild(particleLayer);
 
@@ -1061,7 +1085,23 @@ async function initPixi() {
     try { return parseInt(localStorage.getItem('dunia-g15-deaths-l' + LEVEL) || '0', 10) || 0 } catch(_){ return 0 }
   })()
   const _g15SpawnEase = _g15LevelDeaths >= 2 ? 1.25 : 1.0
-  const spawnInterval = () => Math.max(45, (90 - LEVEL * 2) * _g15SpawnEase);
+  // Frames between spawns. The level curve is unchanged; what is new is the
+  // floor underneath it. At level 20 the old curve spaced boxes ~250px apart
+  // while a character train renders ~190px long, so the gap a child had to aim
+  // at was smaller than the train they were steering -- "panjang tidak sesuai
+  // dg jarak antar rintangan". The floor keeps at least one train length plus
+  // SPAWN_CLEARANCE_PX of daylight between consecutive boxes at the current
+  // speed, so the dodge is always physically there to be made.
+  const SPAWN_CLEARANCE_PX = 90;
+  const spawnInterval = () => window._g15SpawnIntervalFrames();
+  // Exposed so the gate can assert the RULE at several speeds instead of trying
+  // to observe enough waves through a ~4fps headless renderer.
+  window._g15SpawnIntervalFrames = function () {
+    const curve = Math.max(45, (90 - LEVEL * 2) * _g15SpawnEase);
+    const needPx = (g15TrainLenPx || 120) + SPAWN_CLEARANCE_PX;
+    const needFrames = needPx / Math.max(0.5, gameSpeed);
+    return Math.max(curve, needFrames);
+  };
 
   app.ticker.add((ticker) => {
     if (!gameRunning || gamePaused || mathQuizActive) return;
@@ -1200,8 +1240,8 @@ async function initPixi() {
       }
 
       // Collision: must match lane AND be within Y proximity (fix phantom hit)
-      if (!invincible && b.container.x < TRAIN_X + 52 && b.container.x > TRAIN_X - 52) {
-        if (b.lane === playerLane && Math.abs(b.container.y - trainContainer.y) < 42) {
+      if (!invincible && b.container.x < TRAIN_X + HIT_HALF_W && b.container.x > TRAIN_X - HIT_HALF_W) {
+        if (b.lane === playerLane && Math.abs(b.container.y - trainContainer.y) < HIT_HALF_H) {
           collectBox(b, i);
           continue;
         }
@@ -1234,6 +1274,8 @@ async function initPixi() {
       trainContainer._tweenY += ldy * 0.22 * dt;                // legacy fallback
     }
 
+    if (hitGuideGfx) { hitGuideGfx.x = TRAIN_X; hitGuideGfx.y = trainContainer.y; }
+
     if (trainContainer._bounceT > 0) {
       trainContainer._bounceT -= 0.1 * dt;
       trainContainer.y = trainContainer._tweenY - Math.sin(trainContainer._bounceT * Math.PI) * 6;
@@ -1244,6 +1286,13 @@ async function initPixi() {
       trainContainer._bounceT = 0;
       trainContainer.y = trainContainer._tweenY;
     }
+    // Keep the drawn collider on the collider: written AFTER this frame's y, or
+    // the outline trails the train by a frame during a lane change -- exactly
+    // when a child is looking at it to judge a gap.
+    if (hitGuideGfx) { hitGuideGfx.x = TRAIN_X; hitGuideGfx.y = trainContainer.y; }
+    // A character train's texture arrives asynchronously, so the first measure
+    // after mount reads a placeholder. Re-measure until it settles.
+    if (g15MeasureSettle > 0) { g15MeasureSettle -= dt; g15MeasureTrainLength(); }
     // v54.28 I12: tiny lead-rotation while the lerp is in flight (subtle banking
     // INTO the turn before the body finishes moving). Direction = sign(ldy).
     if (Math.abs(ldy) > 4 && (!trainContainer._leanTimer || trainContainer._leanTimer <= 0)) {
@@ -1728,6 +1777,29 @@ function buildTracks() {
 // Character train instance (Casey JR / Linus Brave) — managed by CharacterTrain module.
 let characterTrainInstance = null;
 
+// Draws the collider once; the tick only moves it. Deliberately quiet: a 2px
+// dashed outline at 30% alpha plus a brighter contact line on the leading edge,
+// the side a letter actually arrives from.
+function g15DrawHitGuide() {
+  if (!hitGuideLayer) return;
+  if (!hitGuideGfx) { hitGuideGfx = new PIXI.Graphics(); hitGuideLayer.addChild(hitGuideGfx); }
+  const g = hitGuideGfx;
+  g.clear();
+  const w = HIT_HALF_W * 2, h = HIT_HALF_H * 2;
+  g.roundRect(-HIT_HALF_W, -HIT_HALF_H, w, h, 12)
+   .stroke({ color: 0xFFF3C4, width: 2, alpha: HIT_GUIDE_ALPHA });
+  // corner ticks: readable at a glance even when the box sits over busy scenery
+  const t = 12;
+  [[-HIT_HALF_W, -HIT_HALF_H, 1, 1], [HIT_HALF_W, -HIT_HALF_H, -1, 1],
+   [-HIT_HALF_W, HIT_HALF_H, 1, -1], [HIT_HALF_W, HIT_HALF_H, -1, -1]].forEach(([x, y, sx, sy]) => {
+    g.moveTo(x, y).lineTo(x + t * sx, y).moveTo(x, y).lineTo(x, y + t * sy)
+     .stroke({ color: 0xFFD6A0, width: 3, alpha: HIT_GUIDE_ALPHA + 0.22 });
+  });
+  // leading edge — where a box enters the hit zone
+  g.moveTo(HIT_HALF_W, -HIT_HALF_H + 4).lineTo(HIT_HALF_W, HIT_HALF_H - 4)
+   .stroke({ color: 0x7DD3FC, width: 2, alpha: HIT_GUIDE_ALPHA + 0.15 });
+}
+
 function buildTrain() {
   if (!selectedTrain) selectedTrain = TRAIN_CATALOG[0];
   trainContainer.x = TRAIN_X;
@@ -1782,6 +1854,9 @@ function buildTrain() {
     trainContainer.scale.x = (_faces === 'left') ? -1 : 1;
     characterTrainInstance = CharacterTrain.mount(trainContainer, scaledCfg);
     if (characterTrainInstance) characterTrainInstance.setSmokeParent(stage);
+    g15MeasureSettle = 180;   // ~3s of re-measuring while the texture loads
+    g15MeasureTrainLength();
+    g15DrawHitGuide();
     return;
   }
 
@@ -1804,6 +1879,24 @@ function buildTrain() {
   // return above). Adds 4 cheap finishing touches per L110 (extracted lesson from G14).
   g15ApplyProceduralPolish(g, c);
   addWheels(c);
+  g15MeasureSettle = 60;
+  g15MeasureTrainLength();
+  g15DrawHitGuide();
+}
+
+// The rendered length of whatever is mounted, in stage pixels. Read from the
+// display object rather than from the catalog: a character sprite's width comes
+// from its own aspect ratio times the live RZ scale, and the procedural trains
+// are drawn, not configured, so no number in the data files knows this.
+function g15MeasureTrainLength() {
+  try {
+    const b = trainContainer.getLocalBounds();
+    const w = Math.max(0, Math.round(b.width * Math.abs(trainContainer.scale.x || 1)));
+    // Never shrink back to a placeholder: the sprite's texture may resolve
+    // between frames and an intermediate bounds read of 0 would drop the spawn
+    // floor to the old, too-tight value for the rest of the run.
+    if (w > g15TrainLenPx) g15TrainLenPx = w;
+  } catch (_) { /* keep the last good measurement */ }
 }
 
 // v54.11 — Procedural train polish overlay for G15. Each train body in G15 spans
