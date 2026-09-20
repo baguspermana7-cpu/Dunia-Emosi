@@ -115,11 +115,11 @@ try {
     await sleep(150)
     const p1 = await page.evaluate(() => __berhitung.session.questions.map(q => q.signature).join('|'))
     await page.evaluate(() => document.getElementById('pg-next').click())
-    await sleep(300)
+    await sleep(650)
     const p2 = await page.evaluate(() => __berhitung.session.questions.map(q => q.signature).join('|'))
     check(p2 !== p1, 'the next page is a different set of questions')
     await page.evaluate(() => document.getElementById('pg-prev').click())
-    await sleep(300)
+    await sleep(650)
     const back = await page.evaluate(() => ({
       sigs: __berhitung.session.questions.map(q => q.signature).join('|'),
       typed: [...document.querySelectorAll('#q0 .boxes input')].map(i => i.value).join(''),
@@ -148,13 +148,13 @@ try {
     await fill(page, 0, await answerOf(page, 0))
     await sleep(150)
     await page.evaluate(() => document.getElementById('btn-repeat').click())
-    await sleep(300)
+    await sleep(650)
     const repeated = await sigs()
     const cleared = await page.evaluate(() => [...document.querySelectorAll('#q0 .boxes input')].map(i => i.value).join(''))
     check(repeated === first, 'Ulangi Halaman gives back the same ten questions')
     check(cleared === '', 'and clears what was written on them')
     await page.evaluate(() => document.getElementById('btn-new').click())
-    await sleep(300)
+    await sleep(650)
     check(await sigs() !== first, 'Soal Baru gives a different ten')
     // and the new set is itself reproducible
     const nw = await sigs()
@@ -169,7 +169,7 @@ try {
     const page = await open()
     for (const [label, word] of [['Kurang', 'pengurangan'], ['Kali', 'perkalian'], ['Bagi', 'pembagian'], ['Cerita', 'cerita']]) {
       await page.evaluate(l => [...document.querySelectorAll('#seg-op button')].find(b => b.textContent.trim() === l).click(), label)
-      await sleep(250)
+      await sleep(500)
       const st = await page.evaluate(() => ({
         lede: document.getElementById('lede').textContent,
         op: __berhitung.session.operation,
@@ -180,7 +180,7 @@ try {
         `${label} loads ten ${word} questions and marks its pill`)
     }
     await page.evaluate(() => [...document.querySelectorAll('#seg-lv button')].find(b => b.textContent.trim() === 'Sulit').click())
-    await sleep(250)
+    await sleep(500)
     check(await page.evaluate(() => __berhitung.session.difficulty) === 'hard', 'the level pill changes the difficulty')
     await page.close()
   }
@@ -206,9 +206,9 @@ try {
   {
     const page = await open()
     await page.evaluate(() => [...document.querySelectorAll('#seg-op button')].find(b => b.textContent.trim() === 'Tambah').click())
-    await sleep(250)
+    await sleep(500)
     await page.evaluate(() => [...document.querySelectorAll('#seg-dg button')].find(b => b.textContent.trim() === '2').click())
-    await sleep(400)
+    await sleep(650)
     const two = await page.evaluate(() => ({
       pressed: document.querySelector('#seg-dg button[aria-pressed="true"]').textContent.trim(),
       lede: document.getElementById('lede').textContent,
@@ -230,7 +230,7 @@ try {
     check(scored === '1' && free.star === '0', `each digit mode keeps its own score (2-digit ${scored}, bebas ${free.star})`)
     check(!/digit/.test(free.lede), 'and "Bebas" goes back to the reference sentence')
     await page.evaluate(() => [...document.querySelectorAll('#seg-dg button')].find(b => b.textContent.trim() === '2').click())
-    await sleep(400)
+    await sleep(650)
     const backAgain = await page.evaluate(() => ({ star: document.getElementById('solved').textContent, typed: [...document.querySelectorAll('#q0 .boxes input')].map(i => i.value).join('') }))
     check(backAgain.star === '1' && backAgain.typed.length > 0, `returning to 2 digit restores that mode's work (⭐ ${backAgain.star})`)
     await page.close()
@@ -240,7 +240,7 @@ try {
   {
     const page = await open()
     await page.evaluate(() => [...document.querySelectorAll('#seg-dg button')].find(b => b.textContent.trim() === '3').click())
-    await sleep(400)
+    await sleep(650)
     const geom = await page.evaluate(() => {
       const card = document.getElementById('q0')
       const grid = card.querySelector('.sum')
@@ -307,6 +307,91 @@ try {
     await page.close()
   }
 
+  // ── the motion itself, measured ──────────────────────────────────────────
+  {
+    const page = await open()
+    // Wait for the first placement instead of racing it: the indicator is sized
+    // from layout, and reading it mid-boot made this gate flaky once.
+    await page.waitForFunction(() => {
+      const el = document.querySelector('#seg-op .ind')
+      return !!el && el.style.opacity === '1' && /translateX/.test(el.style.transform)
+    }, { timeout: 15000 })
+    const ind0 = await page.evaluate(() => {
+      const el = document.querySelector('#seg-op .ind')
+      return el ? { x: el.style.transform, w: el.style.width, trans: getComputedStyle(el).transitionDuration } : null
+    })
+    check(!!ind0, 'each segmented group has a sliding indicator')
+    check(ind0 && /translateX/.test(ind0.x) && parseFloat(ind0.w) > 20,
+      `it is placed on the active pill (${ind0 && ind0.x}, ${ind0 && ind0.w})`)
+    await page.evaluate(() => [...document.querySelectorAll('#seg-op button')].find(b => b.textContent.trim() === 'Bagi').click())
+    await sleep(500)
+    const ind1 = await page.evaluate(() => {
+      const el = document.querySelector('#seg-op .ind')
+      const btn = [...document.querySelectorAll('#seg-op button')].find(b => b.getAttribute('aria-pressed') === 'true')
+      return { x: el.style.transform, w: parseFloat(el.style.width), btnX: btn.offsetLeft, btnW: btn.offsetWidth,
+               indX: parseFloat((el.style.transform.match(/-?[\d.]+/) || [0])[0]) }
+    })
+    check(ind1.x !== ind0.x, 'choosing another option moves it rather than repainting')
+    check(Math.abs(ind1.indX - ind1.btnX) <= 1 && Math.abs(ind1.w - ind1.btnW) <= 1,
+      `and it lands exactly on that pill (${Math.round(ind1.indX)}/${ind1.btnX}, ${Math.round(ind1.w)}/${ind1.btnW})`)
+
+    // cards arrive in sequence, and the stagger is bounded
+    const stagger = await page.evaluate(() => {
+      const cards = [...document.querySelectorAll('#sheet .q')]
+      return {
+        entering: document.getElementById('sheet').classList.contains('enter'),
+        first: getComputedStyle(cards[0]).animationDelay,
+        last: getComputedStyle(cards[cards.length - 1]).animationDelay,
+        dur: getComputedStyle(cards[0]).animationDuration,
+      }
+    })
+    const ms = v => Math.round(parseFloat(v) * 1000)
+    check(stagger.entering, 'a new page animates its cards in')
+    check(ms(stagger.first) === 0 && ms(stagger.last) > 0 && ms(stagger.last) <= 400,
+      `the stagger is sequential and short (${stagger.first} → ${stagger.last}, each ${stagger.dur})`)
+
+    // a digit lands with its own small pop, and it ends
+    const ink = await page.evaluate(async () => {
+      const el = document.querySelector('#q0 .boxes input')
+      el.value = '7'; el.dispatchEvent(new Event('input', { bubbles: true }))
+      const during = el.className
+      await new Promise(r => setTimeout(r, 300))
+      return { during, after: el.className }
+    })
+    check(/ink/.test(ink.during) && !/ink/.test(ink.after), 'a typed digit pops once and the class is cleaned up')
+
+    // a solved card sweeps exactly once
+    const sweep = await page.evaluate(async () => {
+      const i = 1
+      const q = __berhitung.session.questions[i]
+      const ins = [...document.querySelectorAll('#q' + i + ' .boxes input')]
+      String(q.expected).split('').forEach((c, k) => { ins[k].value = c; ins[k].dispatchEvent(new Event('input', { bubbles: true })) })
+      await new Promise(r => setTimeout(r, 60))
+      const during = document.getElementById('q' + i).className
+      await new Promise(r => setTimeout(r, 700))
+      return { during, after: document.getElementById('q' + i).className }
+    })
+    check(/just/.test(sweep.during), 'a solved card sweeps')
+    check(!/just/.test(sweep.after), 'and the sweep is a one-off, not a loop')
+
+    // the page turn is directional
+    const dir = await page.evaluate(async () => {
+      document.getElementById('pg-next').click()
+      await new Promise(r => setTimeout(r, 60))
+      const going = document.getElementById('sheet').className
+      await new Promise(r => setTimeout(r, 700))
+      document.getElementById('pg-prev').click()
+      await new Promise(r => setTimeout(r, 60))
+      const back = document.getElementById('sheet').className
+      await new Promise(r => setTimeout(r, 700))
+      return { going, back, settled: document.getElementById('sheet').className }
+    })
+    check(/out-left/.test(dir.going), 'going forward slides the sheet left')
+    check(/out-right/.test(dir.back), 'going back slides it the other way')
+    check(!/out-/.test(dir.settled), 'and the sheet settles cleanly afterwards')
+    await page.close()
+  }
+
   // ── reduced motion turns the movement off, not the meaning ───────────────
   {
     const page = await open({ reduceMotion: true })
@@ -346,7 +431,7 @@ try {
   {
     const page = await open()
     await page.setViewport({ width: 390, height: 844 })
-    await sleep(400)
+    await sleep(650)
     const m = await page.evaluate(() => ({
       overflow: document.documentElement.scrollWidth > window.innerWidth + 1,
       cols: getComputedStyle(document.getElementById('sheet')).gridTemplateColumns.split(' ').length,

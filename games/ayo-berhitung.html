@@ -61,15 +61,29 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
   transition:width .25s cubic-bezier(.2,.8,.3,1)}
 .star{transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
 .star.bump{transform:scale(1.06)}
+.star i{display:inline-block;transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+.star.bump i{transform:rotate(72deg) scale(1.2)}
+.rail{position:relative;overflow:hidden}
+.rail.shine::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);
+  transform:translateX(-100%);animation:shine .7s ease}
+@keyframes shine{to{transform:translateX(100%)}}
 .ctrls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .ctrl-label{font-size:11px;font-weight:900;letter-spacing:1.2px;opacity:.85}
-.seg{display:inline-flex;background:var(--seg-bg);border-radius:12px;padding:4px;gap:4px}
+/* The active pill is a SLIDING panel, not a background that swaps: the eye
+   follows one object moving instead of two states blinking, which is most of
+   what "smooth" means on a control like this. */
+.seg{position:relative;display:inline-flex;background:var(--seg-bg);border-radius:12px;padding:4px;gap:4px;
+  isolation:isolate}
+.seg .ind{position:absolute;top:4px;left:0;height:calc(100% - 8px);border-radius:9px;background:var(--seg-active);
+  box-shadow:0 1px 2px rgba(16,24,40,.18);z-index:0;opacity:0;
+  transition:transform .26s cubic-bezier(.22,1,.36,1),width .26s cubic-bezier(.22,1,.36,1),opacity .18s ease}
+.seg button{position:relative;z-index:1}
 .seg button{min-height:38px;padding:0 15px;border-radius:9px;font-weight:800;color:var(--seg-ink);
   font-size:14.5px;white-space:nowrap;background:transparent;
   transition:background-color .16s ease,color .16s ease,box-shadow .16s ease,transform .1s ease}
 .seg button:active{transform:scale(.97)}
-.seg button[aria-pressed="true"]{background:var(--seg-active);color:var(--seg-ink-active);
-  box-shadow:0 1px 2px rgba(16,24,40,.18)}
+.seg button[aria-pressed="true"]{background:transparent;color:var(--seg-ink-active);box-shadow:none}
 .act{min-height:38px;padding:0 16px;border-radius:10px;font-weight:800;font-size:14.5px;color:#fff;
   display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
 .act{transition:transform .1s ease,filter .14s ease,box-shadow .14s ease}
@@ -83,14 +97,26 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
 
 /* ── question cards ──────────────────────────────────────────────────────── */
 .sheet{max-width:1360px;margin:0 auto;display:grid;gap:14px;grid-template-columns:repeat(3,1fr)}
-.sheet.turning{opacity:0;transform:translateY(6px)}
-.sheet{transition:opacity .16s ease,transform .16s ease}
+.sheet{transition:opacity .16s ease,transform .18s cubic-bezier(.4,0,1,1)}
+.sheet.out-left{opacity:0;transform:translateX(-26px)}
+.sheet.out-right{opacity:0;transform:translateX(26px)}
 @media (max-width:1000px){ .sheet{grid-template-columns:repeat(2,1fr)} }
 @media (max-width:640px){ .sheet{grid-template-columns:1fr} }
 .q{position:relative;background:var(--card);border:1px solid var(--card-line);border-radius:14px;
   padding:14px 16px 16px;box-shadow:var(--card-shadow);break-inside:avoid;
   transition:background-color .18s ease,border-color .18s ease,box-shadow .22s ease,transform .22s ease}
 .q.ok{transform:translateY(-2px);box-shadow:0 6px 16px rgba(34,125,79,.14)}
+/* a single sweep of light across a card that has just been solved */
+.q.just::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);
+  transform:translateX(-100%);animation:sweep .55s cubic-bezier(.3,.7,.3,1)}
+@keyframes sweep{to{transform:translateX(100%)}}
+.q.no-yet{animation:halo .5s ease}
+@keyframes halo{0%{box-shadow:0 0 0 0 rgba(239,83,80,.35)}100%{box-shadow:0 0 0 12px rgba(239,83,80,0)}}
+/* cards arrive in sequence rather than all at once; --i is set per card */
+.sheet.enter .q{opacity:0;transform:translateY(10px);animation:cardIn .34s cubic-bezier(.22,1,.36,1) forwards;
+  animation-delay:calc(var(--i) * 34ms)}
+@keyframes cardIn{to{opacity:1;transform:none}}
 .q.hunt{animation:hunt .7s ease}
 @keyframes hunt{0%,100%{box-shadow:var(--card-shadow)}
   35%{box-shadow:0 0 0 4px rgba(232,131,58,.35),0 8px 18px rgba(232,131,58,.18)}}
@@ -123,7 +149,10 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
 .boxes input{width:var(--col);height:40px;padding:0;text-align:center;font-size:19px;font-weight:900;
   color:#111827;font-variant-numeric:tabular-nums;background:#fff;border:1px solid #cfd8d2;border-radius:7px;
   transition:border-color .16s ease,background-color .16s ease,box-shadow .16s ease,transform .1s ease}
-.boxes input:focus{outline:none;border-color:var(--panel);box-shadow:0 0 0 3px rgba(76,110,245,.22)}
+.boxes input:focus{outline:none;border-color:var(--panel);box-shadow:0 0 0 3px rgba(76,110,245,.22);
+  transform:translateY(-1px)}
+.boxes input.ink{animation:ink .16s cubic-bezier(.34,1.56,.64,1)}
+@keyframes ink{0%{transform:scale(1.14)}100%{transform:scale(1)}}
 .boxes input:not(:placeholder-shown){border-color:#b9c4bd}
 .q.ok .boxes input{border-color:#9fd3b4;background:#fbfffc}
 .q.no-yet .boxes input{border-color:#eab3ae;background:#fffafa}
@@ -159,10 +188,10 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
   color:var(--ink-soft);background:#fafbfe}
 .bdg.on{background:#fff8e1;border-color:#f3d98b;color:#7a5b00}
 /* toast: says the page is finished without taking the screen away */
-.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,16px);background:#14351f;color:#fff;
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px) scale(.96);background:#14351f;color:#fff;
   font-weight:800;font-size:15px;padding:12px 20px;border-radius:999px;box-shadow:0 10px 24px rgba(0,0,0,.25);
-  opacity:0;pointer-events:none;transition:opacity .2s ease,transform .24s cubic-bezier(.34,1.4,.64,1);z-index:70}
-.toast.show{opacity:1;transform:translate(-50%,0)}
+  opacity:0;pointer-events:none;transition:opacity .2s ease,transform .32s cubic-bezier(.22,1.5,.36,1);z-index:70}
+.toast.show{opacity:1;transform:translate(-50%,0) scale(1)}
 .bdg b{display:block;font-size:22px;margin-bottom:4px}
 
 /* ── phone: the panel keeps its shape, just tighter, and nothing may push the
@@ -186,7 +215,8 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
    is also written in the DOM, so removing it removes nothing but the movement. */
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
-  .sheet.turning{opacity:1;transform:none}
+  .sheet.out-left,.sheet.out-right{opacity:1;transform:none}
+  .sheet.enter .q{opacity:1;transform:none;animation:none}
 }
 body[data-motion="off"] *,body[data-motion="off"] *::before,body[data-motion="off"] *::after{
   animation:none!important;transition:none!important}
@@ -261,9 +291,9 @@ body[data-motion="off"] *,body[data-motion="off"] *::before,body[data-motion="of
   </div>
 </div>
 
-<script src="data/berhitung-engine.js?v=v60.3-20260920a"></script>
-<script src="data/freeze-watchdog.js?v=v60.3-20260920a"></script>
-<script src="sw-reload.js?v=v60.3-20260920a"></script>
+<script src="data/berhitung-engine.js?v=v60.4-20260920a"></script>
+<script src="data/freeze-watchdog.js?v=v60.4-20260920a"></script>
+<script src="sw-reload.js?v=v60.4-20260920a"></script>
 <script>
 (function () {
   'use strict'
@@ -376,10 +406,14 @@ body[data-motion="off"] *,body[data-motion="off"] *::before,body[data-motion="of
     var st = setState(op, level, page)
     var sheet = $('sheet')
     sheet.innerHTML = ''
+    // restart the entrance animation for this page's cards
+    sheet.classList.remove('enter'); void sheet.offsetWidth
+    if (!reduced()) sheet.classList.add('enter')
     session.questions.forEach(function (q, i) {
       var card = document.createElement('div')
       card.className = 'q'
       card.id = 'q' + i
+      card.style.setProperty('--i', String(i))   // staggers the entrance
 
       var no = document.createElement('span')
       no.className = 'no'
@@ -460,16 +494,51 @@ body[data-motion="off"] *,body[data-motion="off"] *::before,body[data-motion="of
     seg($('seg-dg'), DIGITS, digitsMode, function (v) { if (v !== digitsMode) { digitsMode = v; turn(buildPage) } })
   }
   function seg (host, items, current, onPick) {
-    host.innerHTML = ''
-    items.forEach(function (it) {
-      var b = document.createElement('button')
-      b.type = 'button'
-      b.textContent = it.label
-      b.dataset.value = it.key
-      b.setAttribute('aria-pressed', String(it.key === current))
-      b.addEventListener('click', function () { onPick(it.key) })
-      host.appendChild(b)
-    })
+    // Rebuild only when the options themselves change. Rebuilding on every
+    // render would restart the indicator's transition from nothing, and the
+    // slide -- the whole point -- would never be seen.
+    if (host.dataset.built !== String(items.length)) {
+      host.innerHTML = ''
+      var ind = document.createElement('span')
+      ind.className = 'ind'
+      host.appendChild(ind)
+      items.forEach(function (it) {
+        var b = document.createElement('button')
+        b.type = 'button'
+        b.textContent = it.label
+        b.dataset.value = String(it.key)
+        b.addEventListener('click', function () { onPick(it.key) })
+        host.appendChild(b)
+      })
+      host.dataset.built = String(items.length)
+    }
+    var buttons = host.querySelectorAll('button')
+    var active = null
+    for (var i = 0; i < buttons.length; i++) {
+      var on = buttons[i].dataset.value === String(current)
+      buttons[i].setAttribute('aria-pressed', String(on))
+      if (on) active = buttons[i]
+    }
+    moveIndicator(host, active)
+  }
+
+  function moveIndicator (host, active) {
+    var ind = host.querySelector('.ind')
+    if (!ind || !active) return
+    // measured from layout, so it lands exactly on the pill at any font size
+    var place = function () {
+      ind.style.width = active.offsetWidth + 'px'
+      ind.style.transform = 'translateX(' + active.offsetLeft + 'px)'
+      ind.style.opacity = '1'
+    }
+    if (ind.style.opacity !== '1') {
+      // first placement must not animate in from x=0
+      var prev = ind.style.transition
+      ind.style.transition = 'none'
+      place()
+      void ind.offsetWidth
+      ind.style.transition = prev
+    } else place()
   }
 
   function mark (i, correct, complete) {
@@ -489,13 +558,31 @@ body[data-motion="off"] *,body[data-motion="off"] *::before,body[data-motion="of
     if (wrong && !card.classList.contains('shake')) {
       card.classList.add('shake')
       setTimeout(function () { card.classList.remove('shake') }, 240)
+      // put the caret back on the first digit: a wrong answer is retyped from
+      // the left, and making the child reach for it is friction, not feedback
+      var first = card.querySelector('.boxes input')
+      if (first && document.activeElement && document.activeElement.closest('.q') === card) {
+        setTimeout(function () { first.focus({ preventScroll: true }); first.select && first.select() }, 220)
+      }
     }
+    if (correct === true && !card.dataset.celebrated) {
+      card.dataset.celebrated = '1'
+      if (!reduced()) {
+        card.classList.add('just')
+        setTimeout(function () { card.classList.remove('just') }, 600)
+      }
+    }
+    if (correct !== true) delete card.dataset.celebrated
   }
 
   function onInput (e) {
     var el = e.target
     el.value = el.value.replace(/[^0-9]/g, '').slice(-1)
     var i = +el.dataset.q
+    if (el.value && !reduced()) {
+      el.classList.remove('ink'); void el.offsetWidth; el.classList.add('ink')
+      setTimeout(function () { el.classList.remove('ink') }, 180)
+    }
     var nextBox = el.parentNode.children[+el.dataset.c + 1]
     if (el.value && nextBox) nextBox.focus()
     commit(i)
@@ -556,10 +643,11 @@ body[data-motion="off"] *,body[data-motion="off"] *::before,body[data-motion="of
   }
 
   function bumpStar () {
-    var el = document.querySelector('.star')
-    if (!el) return
-    el.classList.add('bump')
-    setTimeout(function () { el.classList.remove('bump') }, 220)
+    var el = document.querySelector('.star'), rail = document.querySelector('.rail')
+    if (reduced()) return
+    if (el) { el.classList.add('bump'); setTimeout(function () { el.classList.remove('bump') }, 320) }
+    if (rail) { rail.classList.remove('shine'); void rail.offsetWidth; rail.classList.add('shine')
+      setTimeout(function () { rail.classList.remove('shine') }, 720) }
   }
 
   var toastT = null
@@ -608,11 +696,16 @@ body[data-motion="off"] *,body[data-motion="off"] *::before,body[data-motion="of
     try { return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) } catch (_) { return false }
   }
   // Fade the sheet out, swap it, fade it back: a page turn that reads as a turn.
-  function turn (fn) {
+  // dir: -1 = going back, +1 = going forward, 0 = swap in place
+  function turn (fn, dir) {
     var sheet = $('sheet')
     if (reduced()) { fn(); return }
-    sheet.classList.add('turning')
-    setTimeout(function () { fn(); sheet.classList.remove('turning') }, 160)
+    var out = dir === -1 ? 'out-right' : dir === 1 ? 'out-left' : 'out-left'
+    sheet.classList.add(out)
+    setTimeout(function () {
+      fn()
+      sheet.classList.remove(out)
+    }, 170)
   }
 
   // ── actions ──────────────────────────────────────────────────────────────
@@ -764,16 +857,19 @@ body[data-motion="off"] *,body[data-motion="off"] *::before,body[data-motion="of
     this.setAttribute('aria-pressed', String(DB.prefs.sound))
     this.textContent = DB.prefs.sound ? '🔊' : '🔇'
   })
-  $('pg-prev').addEventListener('click', function () { if (page > 1) { page--; turn(buildPage); window.scrollTo({ top: 0, behavior: reduced() ? 'auto' : 'smooth' }) } })
-  $('pg-next').addEventListener('click', function () { if (page < PAGES) { page++; turn(buildPage); window.scrollTo({ top: 0, behavior: reduced() ? 'auto' : 'smooth' }) } })
+  $('pg-prev').addEventListener('click', function () { if (page > 1) { page--; turn(buildPage, -1); window.scrollTo({ top: 0, behavior: reduced() ? 'auto' : 'smooth' }) } })
+  $('pg-next').addEventListener('click', function () { if (page < PAGES) { page++; turn(buildPage, 1); window.scrollTo({ top: 0, behavior: reduced() ? 'auto' : 'smooth' }) } })
   $('pg-input').addEventListener('change', function () {
     var n = parseInt(this.value, 10)
     if (!(n >= 1 && n <= PAGES)) { this.value = String(page); return }
-    page = n; turn(buildPage); window.scrollTo({ top: 0, behavior: reduced() ? 'auto' : 'smooth' })
+    var dir = n > page ? 1 : -1
+    page = n; turn(buildPage, dir); window.scrollTo({ top: 0, behavior: reduced() ? 'auto' : 'smooth' })
   })
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && $('modal-badges').hasAttribute('open')) $('modal-badges').removeAttribute('open')
   })
+  window.addEventListener('resize', function () { renderSegments() })
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { renderSegments() })
   window.addEventListener('pagehide', save)
   document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') save() })
 
