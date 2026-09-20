@@ -1,10 +1,9 @@
-// E2E gate for games/ayo-berhitung.html (PRD §17 acceptance criteria).
+// E2E gate for games/ayo-berhitung.html.
 //
-// The engine's own tests prove the arithmetic; this proves the things only a
-// real browser can: that a session survives a refresh, that a rapid double tap
-// cannot count an answer twice, that the keyboard alone finishes a session,
-// that feedback is never colour-only, and that the worksheet's "Ulangi Halaman"
-// really returns the same page rather than a similar-looking new one.
+// The page is laid out to match the reference the owner supplied, so this
+// checks the reference's own promises as well as the usual correctness ones:
+// the panel says "1000 soal ... 10 soal per halaman, 100 halaman. Jawaban
+// tersimpan saat pindah halaman", and every one of those claims is testable.
 import puppeteer from 'puppeteer'
 
 const URL = process.env.QA_URL || 'http://localhost:8081/games/ayo-berhitung.html'
@@ -17,175 +16,207 @@ const browser = await puppeteer.launch({
   args: ['--no-sandbox', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
 })
 
-async function open () {
+async function open (clear = true) {
   const page = await browser.newPage()
   const cdp = await page.createCDPSession()
   await cdp.send('Network.setBypassServiceWorker', { bypass: true })
   page.on('pageerror', e => { throw new Error('page error: ' + e.message) })
-  await page.setViewport({ width: 900, height: 900 })
+  await page.setViewport({ width: 1400, height: 950 })
   await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 30000 })
   await page.waitForFunction(() => !!window.__berhitung, { timeout: 20000 })
+  if (clear) {
+    await page.evaluate(() => localStorage.clear())
+    await page.reload({ waitUntil: 'domcontentloaded' })
+    await page.waitForFunction(() => !!window.__berhitung, { timeout: 20000 })
+  }
   return page
 }
+const fill = (page, i, text) => page.evaluate((i, text) => {
+  const ins = [...document.querySelectorAll('#q' + i + ' .boxes input')]
+  text.split('').forEach((c, k) => { if (ins[k]) { ins[k].value = c; ins[k].dispatchEvent(new Event('input', { bubbles: true })) } })
+}, i, text)
+const answerOf = (page, i) => page.evaluate(i => String(__berhitung.session.questions[i].expected), i)
 
 try {
-  // ── the loop works, and a first-try answer scores as one ──────────────────
+  // ── the panel the owner drew ──────────────────────────────────────────────
   {
     const page = await open()
-    await page.evaluate(() => { localStorage.clear(); __berhitung.startSession({ operation: 'add', difficulty: 'easy', questionCount: 5, mode: 'focus', seed: 'gate-1' }) })
-    await page.waitForSelector('#s-focus:not([hidden])')
-    const answered = await page.evaluate(async () => {
-      const out = []
-      for (let i = 0; i < 5; i++) {
-        const q = __berhitung.session.questions[__berhitung.session.currentIndex]
-        document.getElementById('f-input').value = String(q.expected)
-        __berhitung.submit()
-        out.push(q.expected)
-        await new Promise(r => setTimeout(r, 900))
-      }
-      return { out, screen: __berhitung.screenId(), attempts: __berhitung.attempts.length, xp: __berhitung.db.xp }
-    })
-    check(answered.screen === 's-done', `a five-question session completes (ended on ${answered.screen})`)
-    check(answered.attempts === 5, `every question recorded one attempt (${answered.attempts})`)
-    check(answered.xp === 50, `five first-try answers score 5 x 10 XP (${answered.xp})`)
-    const mastery = await page.evaluate(() => __berhitung.db.skills.add.mastery)
-    check(mastery === 20, `one perfect session moves mastery by the capped step (${mastery})`)
+    const ui = await page.evaluate(() => ({
+      title: document.querySelector('.panel h1').textContent.trim(),
+      lede: document.getElementById('lede').textContent.trim(),
+      ops: [...document.querySelectorAll('#seg-op button')].map(b => b.textContent.trim()),
+      lvls: [...document.querySelectorAll('#seg-lv button')].map(b => b.textContent.trim()),
+      acts: [...document.querySelectorAll('.panel .act')].map(b => b.textContent.trim()),
+      activeOp: document.querySelector('#seg-op button[aria-pressed="true"]').textContent.trim(),
+      activeLv: document.querySelector('#seg-lv button[aria-pressed="true"]').textContent.trim(),
+      cards: document.querySelectorAll('#sheet .q').length,
+      cols: getComputedStyle(document.getElementById('sheet')).gridTemplateColumns.split(' ').length,
+      star: document.querySelector('.star').textContent.replace(/\s+/g, ' ').trim(),
+    }))
+    check(ui.title === 'Ayo Berhitung!', `the title reads as in the reference ("${ui.title}")`)
+    check(/1000 soal penjumlahan — 10 soal per halaman, 100 halaman\. Jawaban tersimpan saat pindah halaman\./.test(ui.lede),
+      `the subtitle is the reference's own line ("${ui.lede.slice(0, 48)}…")`)
+    check(ui.ops.join(',') === 'Tambah,Kurang,Kali,Bagi,Cerita', `OPERASI offers exactly the reference's five (${ui.ops.join(',')})`)
+    check(ui.lvls.join(',') === 'Mudah,Sedang,Sulit', `LEVEL offers exactly the reference's three (${ui.lvls.join(',')})`)
+    check(/Soal Baru/.test(ui.acts.join('|')) && /Ulangi Halaman/.test(ui.acts.join('|')), 'Soal Baru and Ulangi Halaman are on the panel')
+    check(['Cari Salah', 'Cetak Halaman', 'Cetak Rentang', 'Lencana'].every(n => ui.acts.join('|').includes(n)),
+      'the second row carries Cari Salah, Cetak Halaman, Cetak Rentang and Lencana')
+    check(ui.activeOp === 'Tambah' && ui.activeLv === 'Sedang', `it opens on Tambah + Sedang like the reference (${ui.activeOp}/${ui.activeLv})`)
+    check(ui.cards === 10, `ten questions on the page (${ui.cards})`)
+    check(ui.cols === 3, `laid out in three columns (${ui.cols})`)
+    check(/0 \/1000/.test(ui.star.replace('★ ', '')), `the star counter counts toward 1000 ("${ui.star}")`)
     await page.close()
   }
 
-  // ── double submit cannot double count ─────────────────────────────────────
+  // ── answering: tick, counter, and no colour-only state ────────────────────
   {
     const page = await open()
-    const r = await page.evaluate(async () => {
-      localStorage.clear()
-      __berhitung.startSession({ operation: 'multiply', difficulty: 'easy', questionCount: 3, mode: 'focus', seed: 'gate-2' })
-      const q = __berhitung.session.questions[0]
-      document.getElementById('f-input').value = String(q.expected)
-      __berhitung.submit(); __berhitung.submit(); __berhitung.submit()   // rapid taps
-      await new Promise(r => setTimeout(r, 1000))
-      return { attempts: __berhitung.attempts.length, index: __berhitung.session.currentIndex }
-    })
-    check(r.attempts === 1, `three rapid submits record one attempt (${r.attempts})`)
-    check(r.index === 1, `and advance exactly one question (${r.index})`)
+    await fill(page, 0, await answerOf(page, 0))
+    await sleep(200)
+    const good = await page.evaluate(() => ({
+      cls: document.getElementById('q0').className,
+      tick: document.querySelector('#q0 .tick').textContent.trim(),
+      sr: document.getElementById('st0').textContent.trim(),
+      star: document.getElementById('solved').textContent,
+    }))
+    check(/\bok\b/.test(good.cls), 'a correct card is marked')
+    check(good.tick === '✓', `the mark is a glyph, not colour alone ("${good.tick}")`)
+    check(/benar/.test(good.sr), `a screen reader is told which card is right ("${good.sr}")`)
+    check(good.star === '1', `the star counter moved (${good.star})`)
+
+    const wrongAns = await page.evaluate(() => String(__berhitung.session.questions[1].expected + 1).slice(0, String(__berhitung.session.questions[1].expected).length))
+    await fill(page, 1, wrongAns)
+    await sleep(200)
+    const bad = await page.evaluate(() => ({
+      cls: document.getElementById('q1').className,
+      tick: document.querySelector('#q1 .tick').textContent.trim(),
+      sr: document.getElementById('st1').textContent.trim(),
+      star: document.getElementById('solved').textContent,
+    }))
+    check(/no-yet/.test(bad.cls), 'a wrong card is marked too')
+    check(bad.tick === '✕', `and it says so with a glyph ("${bad.tick}")`)
+    check(/belum benar/.test(bad.sr), `with words for a screen reader ("${bad.sr}")`)
+    check(bad.star === '1', `a wrong answer does not score (${bad.star})`)
     await page.close()
   }
 
-  // ── a session survives a refresh ──────────────────────────────────────────
+  // ── "jawaban tersimpan saat pindah halaman" ───────────────────────────────
   {
     const page = await open()
-    await page.evaluate(async () => {
-      localStorage.clear()
-      __berhitung.startSession({ operation: 'subtract', difficulty: 'medium', questionCount: 6, mode: 'focus', seed: 'gate-3' })
-      const q = __berhitung.session.questions[0]
-      document.getElementById('f-input').value = String(q.expected)
-      __berhitung.submit()
-      await new Promise(r => setTimeout(r, 1000))
-    })
-    const before = await page.evaluate(() => ({ idx: __berhitung.session.currentIndex, seed: __berhitung.session.seed }))
+    const a0 = await answerOf(page, 0)
+    await fill(page, 0, a0)
+    await sleep(150)
+    const p1 = await page.evaluate(() => __berhitung.session.questions.map(q => q.signature).join('|'))
+    await page.evaluate(() => document.getElementById('pg-next').click())
+    await sleep(300)
+    const p2 = await page.evaluate(() => __berhitung.session.questions.map(q => q.signature).join('|'))
+    check(p2 !== p1, 'the next page is a different set of questions')
+    await page.evaluate(() => document.getElementById('pg-prev').click())
+    await sleep(300)
+    const back = await page.evaluate(() => ({
+      sigs: __berhitung.session.questions.map(q => q.signature).join('|'),
+      typed: [...document.querySelectorAll('#q0 .boxes input')].map(i => i.value).join(''),
+      ok: /\bok\b/.test(document.getElementById('q0').className),
+    }))
+    check(back.sigs === p1, 'coming back returns the same page, not a new one')
+    check(back.typed === a0 && back.ok, `the answer typed before the page turn is still there ("${back.typed}")`)
+
     await page.reload({ waitUntil: 'domcontentloaded' })
     await page.waitForFunction(() => !!window.__berhitung, { timeout: 20000 })
-    const card = await page.evaluate(() => !document.getElementById('continue-card').hidden)
-    const resumed = await page.evaluate(async () => {
-      document.getElementById('btn-continue').click()
-      await new Promise(r => setTimeout(r, 300))
-      return { idx: __berhitung.session.currentIndex, seed: __berhitung.session.seed, screen: __berhitung.screenId() }
-    })
-    check(card, 'after a refresh the home screen offers Lanjutkan')
-    check(resumed.idx === before.idx && resumed.seed === before.seed,
-      `the resumed session is the same one at the same place (${resumed.idx}/${before.idx})`)
-    check(resumed.screen === 's-focus', 'and it resumes into the question, not the menu')
+    const after = await page.evaluate(() => ({
+      page: __berhitung.page,
+      typed: [...document.querySelectorAll('#q0 .boxes input')].map(i => i.value).join(''),
+      star: document.getElementById('solved').textContent,
+    }))
+    check(after.page === 1 && after.typed === a0 && after.star === '1',
+      `and it survives a reload (halaman ${after.page}, "${after.typed}", ⭐ ${after.star})`)
     await page.close()
   }
 
-  // ── keyboard only ─────────────────────────────────────────────────────────
+  // ── Ulangi Halaman vs Soal Baru ───────────────────────────────────────────
   {
     const page = await open()
-    await page.evaluate(() => { localStorage.clear(); __berhitung.startSession({ operation: 'add', difficulty: 'easy', questionCount: 3, mode: 'focus', seed: 'gate-4' }) })
-    await page.waitForSelector('#s-focus:not([hidden])')
-    for (let i = 0; i < 3; i++) {
-      const expected = await page.evaluate(() => String(__berhitung.session.questions[__berhitung.session.currentIndex].expected))
-      await page.focus('#f-input')
-      await page.keyboard.type(expected)
-      await page.keyboard.press('Enter')
-      await sleep(900)
-    }
-    const done = await page.evaluate(() => __berhitung.screenId())
-    check(done === 's-done', `a session can be finished with the keyboard alone (ended on ${done})`)
-    await page.close()
-  }
-
-  // ── feedback is not colour-only ───────────────────────────────────────────
-  {
-    const page = await open()
-    await page.evaluate(() => { localStorage.clear(); __berhitung.startSession({ operation: 'add', difficulty: 'easy', questionCount: 3, mode: 'focus', seed: 'gate-5' }) })
-    const wrong = await page.evaluate(async () => {
-      const q = __berhitung.session.questions[0]
-      document.getElementById('f-input').value = String(q.expected + 1)
-      __berhitung.submit()
-      await new Promise(r => setTimeout(r, 300))
-      const v = document.getElementById('f-verdict')
-      return { text: v.textContent.trim(), live: v.getAttribute('aria-live'), hint: document.getElementById('f-hint').textContent.trim() }
-    })
-    check(/[A-Za-z]/.test(wrong.text) && wrong.text.length > 4, `a wrong answer says so in words ("${wrong.text.slice(0, 40)}")`)
-    check(wrong.live === 'polite', 'the verdict is an aria-live region, so a screen reader hears it')
-    check(wrong.hint.length > 0, 'a wrong answer also offers a hint')
-    const revealing = await page.evaluate(() => {
-      const q = __berhitung.session.questions[0]
-      return document.getElementById('f-hint').textContent.includes(String(q.expected))
-    })
-    check(!revealing, 'the first hint does not simply give the answer away')
-    await page.close()
-  }
-
-  // ── worksheet: same seed repeats the page, new seed does not ──────────────
-  {
-    const page = await open()
-    await page.evaluate(() => { localStorage.clear(); __berhitung.startSession({ operation: 'add', difficulty: 'easy', questionCount: 10, mode: 'worksheet', seed: 'gate-6' }) })
-    await page.waitForSelector('#s-ws:not([hidden])')
-    const cells = await page.$$eval('#ws-grid .ws-item', els => els.length)
-    check(cells === 10, `the worksheet lays out all ten questions (${cells})`)
-    const sig = () => page.evaluate(() => __berhitung.session.questions.map(q => q.signature).join('|'))
-    const first = await sig()
+    const sigs = () => page.evaluate(() => __berhitung.session.questions.map(q => q.signature).join('|'))
+    const first = await sigs()
+    await fill(page, 0, await answerOf(page, 0))
+    await sleep(150)
     await page.evaluate(() => document.getElementById('btn-repeat').click())
-    await sleep(400)
-    const repeated = await sig()
+    await sleep(300)
+    const repeated = await sigs()
+    const cleared = await page.evaluate(() => [...document.querySelectorAll('#q0 .boxes input')].map(i => i.value).join(''))
+    check(repeated === first, 'Ulangi Halaman gives back the same ten questions')
+    check(cleared === '', 'and clears what was written on them')
     await page.evaluate(() => document.getElementById('btn-new').click())
-    await sleep(400)
-    const fresh = await sig()
-    check(repeated === first, 'Ulangi Halaman returns the same questions')
-    check(fresh !== first, 'Soal Baru returns a different page')
-
-    // typing a correct answer marks the item without colour alone
-    const marked = await page.evaluate(async () => {
-      const q = __berhitung.session.questions[0]
-      const inputs = [...document.querySelectorAll('#ws-0 .ws-ans input')]
-      String(q.expected).split('').forEach((ch, i) => {
-        inputs[i].value = ch
-        inputs[i].dispatchEvent(new Event('input', { bubbles: true }))
-      })
-      await new Promise(r => setTimeout(r, 200))
-      return { state: document.getElementById('ws-state-0').textContent.trim(), cls: document.getElementById('ws-0').className }
-    })
-    check(/benar/.test(marked.state), `a correct worksheet answer is labelled in words ("${marked.state}")`)
-    check(/ok/.test(marked.cls), 'and marked on the card')
-
-    const key = await page.evaluate(() => {
-      document.getElementById('btn-print') // do not actually print in headless
-      const host = document.getElementById('print-key')
-      return { hiddenByDefault: getComputedStyle(host).display === 'none' }
-    })
-    check(key.hiddenByDefault, 'the answer key is not visible on screen')
+    await sleep(300)
+    check(await sigs() !== first, 'Soal Baru gives a different ten')
+    // and the new set is itself reproducible
+    const nw = await sigs()
+    await page.reload({ waitUntil: 'domcontentloaded' })
+    await page.waitForFunction(() => !!window.__berhitung, { timeout: 20000 })
+    check(await sigs() === nw, 'the new set comes back the same after a reload (seeded, not random)')
     await page.close()
   }
 
-  // ── corrupt storage fails safe ────────────────────────────────────────────
+  // ── switching operation and level ─────────────────────────────────────────
   {
     const page = await open()
-    await page.evaluate(() => localStorage.setItem('berhitung-v1', '{not json'))
+    for (const [label, word] of [['Kurang', 'pengurangan'], ['Kali', 'perkalian'], ['Bagi', 'pembagian'], ['Cerita', 'cerita']]) {
+      await page.evaluate(l => [...document.querySelectorAll('#seg-op button')].find(b => b.textContent.trim() === l).click(), label)
+      await sleep(250)
+      const st = await page.evaluate(() => ({
+        lede: document.getElementById('lede').textContent,
+        op: __berhitung.session.operation,
+        cards: document.querySelectorAll('#sheet .q').length,
+        pressed: document.querySelector('#seg-op button[aria-pressed="true"]').textContent.trim(),
+      }))
+      check(st.cards === 10 && st.pressed === label && st.lede.includes(word),
+        `${label} loads ten ${word} questions and marks its pill`)
+    }
+    await page.evaluate(() => [...document.querySelectorAll('#seg-lv button')].find(b => b.textContent.trim() === 'Sulit').click())
+    await sleep(250)
+    check(await page.evaluate(() => __berhitung.session.difficulty) === 'hard', 'the level pill changes the difficulty')
+    await page.close()
+  }
+
+  // ── keyboard alone ────────────────────────────────────────────────────────
+  {
+    const page = await open()
+    const a = await answerOf(page, 0)
+    await page.click('#q0 .boxes input')
+    await page.keyboard.type(a)
+    await sleep(200)
+    const ok = await page.evaluate(() => /\bok\b/.test(document.getElementById('q0').className))
+    check(ok, 'a card can be answered from the keyboard')
+    await page.keyboard.press('Enter')
+    const moved = await page.evaluate(() => document.activeElement.closest('.q') && document.activeElement.closest('.q').id)
+    check(moved === 'q1', `Enter moves to the next question (${moved})`)
+    await page.close()
+  }
+
+  // ── corrupt storage ───────────────────────────────────────────────────────
+  {
+    const page = await open()
+    await page.evaluate(() => localStorage.setItem('berhitung-v2', '{broken'))
     await page.reload({ waitUntil: 'domcontentloaded' })
     await page.waitForFunction(() => !!window.__berhitung, { timeout: 20000 })
-    const ok = await page.evaluate(() => __berhitung.db && __berhitung.db.schemaVersion === 1 && __berhitung.screenId() === 's-home')
-    check(ok, 'corrupt saved data is discarded quietly and the app still opens')
+    const alive = await page.evaluate(() => document.querySelectorAll('#sheet .q').length)
+    check(alive === 10, `corrupt saved data is discarded and the sheet still renders (${alive} cards)`)
+    await page.close()
+  }
+
+  // ── phone width ───────────────────────────────────────────────────────────
+  {
+    const page = await open()
+    await page.setViewport({ width: 390, height: 844 })
+    await sleep(400)
+    const m = await page.evaluate(() => ({
+      overflow: document.documentElement.scrollWidth > window.innerWidth + 1,
+      cols: getComputedStyle(document.getElementById('sheet')).gridTemplateColumns.split(' ').length,
+      tap: Math.min(...[...document.querySelectorAll('.boxes input')].slice(0, 6).map(i => i.getBoundingClientRect().height)),
+    }))
+    check(!m.overflow, 'no horizontal scroll at 390px')
+    check(m.cols === 1, `one column on a phone (${m.cols})`)
+    check(m.tap >= 38, `answer boxes stay big enough to tap (${Math.round(m.tap)}px)`)
     await page.close()
   }
 } finally {

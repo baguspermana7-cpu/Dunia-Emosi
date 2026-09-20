@@ -5,803 +5,628 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
-<meta name="theme-color" content="#2f6bd8">
-<title>🧮 Ayo Berhitung!</title>
+<meta name="theme-color" content="#4c6ef5">
+<title>Ayo Berhitung!</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════════════════════════════════
-   AYO BERHITUNG! — latihan aritmetika bersusun untuk anak SD.
-   Built to the owner's PRD. Two rules shape every choice below:
-     - the domain engine decides every number (data/berhitung-engine.js); this
-       file only renders and records. No answer is computed twice.
-     - nothing is judged by colour alone: every state carries an icon and words
-       as well, so it reads the same to a colour-blind child and to a screen
-       reader.
-   Type is large and tabular; touch targets are 44px; the equation column is a
-   real place-value grid so a carry lines up where a child is taught to write it.
+   AYO BERHITUNG! — laid out to match the reference the owner supplied, screen
+   for screen: the blue panel, the star counter over a progress rail, the
+   OPERASI and LEVEL segmented pills, the coloured action row, and a page of
+   ten bersusun questions on pale cards with per-digit answer boxes and a green
+   tick when a card is right.
+   Nothing here computes an answer: every number comes from
+   data/berhitung-engine.js, which is property-tested separately. This file is
+   layout, input and persistence.
    ═══════════════════════════════════════════════════════════════════════════ */
 :root{
-  --blue:#2f6bd8; --blue-d:#1e4fa8; --sky:#e8f1ff;
-  --green:#2e9e5b; --green-d:#1f7a44; --mint:#e6f8ee;
-  --gold:#ffcf3f; --gold-d:#d9a400; --orange:#f07f2d;
-  --red:#d8402f; --rose:#fdeceb;
-  --cream:#fffdf7; --paper:#ffffff; --line:#e6ddc9;
-  --ink:#2c2418; --ink-soft:#6b5f4c; --ink-faint:#8d8271;
-  --font:'Nunito',system-ui,-apple-system,sans-serif;
-  --disp:'Baloo 2','Nunito',cursive;
-  --r-sm:10px; --r-md:16px; --r-lg:22px;
+  --panel:#4c6ef5; --panel-2:#4263eb; --panel-ink:#ffffff;
+  --seg-bg:#e9edf6; --seg-active:#ffffff; --seg-ink:#4a5568; --seg-ink-active:#1f2937;
+  --red:#ef5350; --red-d:#c62828;
+  --grey:#cfd4de; --grey-ink:#3b4252;
+  --amber:#e8833a; --amber-d:#c96a26;
+  --green:#2fa96b; --green-d:#227d4f;
+  --teal:#2aa9a1; --teal-d:#1d857f;
+  --yellow:#f2b705; --yellow-d:#c99400;
+  --navy:#2b3550;
+  --page-bg:#f6f7fa; --card:#f1f8f3; --card-line:#dfe9e2; --card-shadow:0 1px 2px rgba(16,24,40,.06);
+  --ink:#1f2937; --ink-soft:#5b6472; --ink-faint:#8a93a0;
+  --font:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;
   --tap:44px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{min-height:100%;font-family:var(--font);background:var(--cream);color:var(--ink)}
-body{padding-bottom:env(safe-area-inset-bottom);font-size:16px;line-height:1.45}
-button{font-family:inherit;font-size:16px;cursor:pointer;border:0;background:none;color:inherit}
-:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:6px}
-.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+html,body{min-height:100%}
+body{background:var(--page-bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.4;
+  padding:12px 12px max(18px,env(safe-area-inset-bottom));-webkit-font-smoothing:antialiased}
+button,input{font-family:inherit}
+button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
+:focus-visible{outline:3px solid #1d4ed8;outline-offset:2px;border-radius:8px}
+.sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 
-/* ── shell ───────────────────────────────────────────────────────────────── */
-.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;
-  padding:max(10px,env(safe-area-inset-top)) 14px 10px;background:var(--blue);color:#fff;
-  box-shadow:0 2px 0 rgba(0,0,0,.12)}
-.topbar h1{font-family:var(--disp);font-size:20px;font-weight:800;letter-spacing:.2px;flex:1;min-width:0;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tb-btn{min-width:var(--tap);min-height:var(--tap);border-radius:var(--r-md);background:rgba(255,255,255,.16);
-  color:#fff;font-weight:800;display:inline-flex;align-items:center;justify-content:center;padding:0 12px}
-.tb-btn:active{transform:scale(.97)}
-.wrap{max-width:1080px;margin:0 auto;padding:16px 14px 90px}
-.screen[hidden]{display:none}
+/* ── blue control panel ──────────────────────────────────────────────────── */
+.panel{background:linear-gradient(180deg,var(--panel),var(--panel-2));color:var(--panel-ink);
+  border-radius:16px;padding:16px 18px 14px;margin:0 auto 14px;max-width:1360px;
+  box-shadow:0 4px 14px rgba(66,99,235,.22)}
+.panel h1{font-size:26px;font-weight:900;letter-spacing:.2px;margin-bottom:2px}
+.panel .lede{font-size:13.5px;font-weight:700;opacity:.92;margin-bottom:12px}
+.meter{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.star{display:inline-flex;align-items:center;gap:7px;background:#fff;color:#243056;border-radius:999px;
+  padding:7px 16px;font-weight:900;font-size:15px;font-variant-numeric:tabular-nums;white-space:nowrap;
+  box-shadow:0 2px 0 rgba(0,0,0,.08)}
+.star i{font-style:normal;color:#f0a500}
+.rail{flex:1;height:10px;border-radius:999px;background:rgba(255,255,255,.28);overflow:hidden}
+.rail>i{display:block;height:100%;width:0;background:#fff;border-radius:999px;transition:width .25s}
+.ctrls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ctrl-label{font-size:11px;font-weight:900;letter-spacing:1.2px;opacity:.85}
+.seg{display:inline-flex;background:var(--seg-bg);border-radius:12px;padding:4px;gap:4px}
+.seg button{min-height:38px;padding:0 15px;border-radius:9px;font-weight:800;color:var(--seg-ink);
+  font-size:14.5px;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--seg-active);color:var(--seg-ink-active);
+  box-shadow:0 1px 2px rgba(16,24,40,.18)}
+.act{min-height:38px;padding:0 16px;border-radius:10px;font-weight:800;font-size:14.5px;color:#fff;
+  display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.act:active{transform:translateY(1px)}
+.act.red{background:var(--red)} .act.grey{background:var(--grey);color:var(--grey-ink)}
+.act.amber{background:var(--amber)} .act.green{background:var(--green)}
+.act.teal{background:var(--teal)} .act.yellow{background:var(--yellow);color:#4a3600}
+.act.navy{background:var(--navy);padding:0 12px}
+.row2{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
 
-/* ── cards + buttons ─────────────────────────────────────────────────────── */
-.card{background:var(--paper);border:2px solid var(--line);border-radius:var(--r-lg);padding:16px;margin-bottom:14px}
-.card h2{font-family:var(--disp);font-size:19px;margin-bottom:4px}
-.card p.sub{color:var(--ink-soft);font-size:14px;font-weight:700;margin-bottom:12px}
-.btn{min-height:var(--tap);padding:0 20px;border-radius:var(--r-md);font-weight:800;display:inline-flex;
-  align-items:center;justify-content:center;gap:8px;transition:transform .1s}
-.btn:active{transform:scale(.98)}
-.btn-primary{background:var(--blue);color:#fff;box-shadow:0 4px 0 var(--blue-d)}
-.btn-go{background:var(--green);color:#fff;box-shadow:0 4px 0 var(--green-d)}
-.btn-soft{background:var(--sky);color:var(--blue-d);box-shadow:0 3px 0 #c3d8f5}
-.btn-ghost{background:#f4f0e6;color:var(--ink);box-shadow:0 3px 0 #ddd5c2}
-.btn-wide{width:100%}
-.row{display:flex;gap:10px;flex-wrap:wrap}
+/* ── question cards ──────────────────────────────────────────────────────── */
+.sheet{max-width:1360px;margin:0 auto;display:grid;gap:14px;grid-template-columns:repeat(3,1fr)}
+@media (max-width:1000px){ .sheet{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:640px){ .sheet{grid-template-columns:1fr} }
+.q{position:relative;background:var(--card);border:1px solid var(--card-line);border-radius:14px;
+  padding:14px 16px 16px;box-shadow:var(--card-shadow);break-inside:avoid}
+.q .no{position:absolute;top:10px;left:12px;min-width:22px;height:22px;border-radius:7px;color:#fff;
+  font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;padding:0 6px}
+.q .label{margin-left:30px;font-size:13px;font-weight:800;color:var(--ink-soft);
+  font-variant-numeric:tabular-nums}
+.q .tick{position:absolute;top:8px;right:10px;width:26px;height:26px;border-radius:50%;
+  color:#fff;display:none;align-items:center;justify-content:center;font-size:15px;font-weight:900}
+.q.ok .tick{display:flex;background:var(--green)}
+.q.no-yet .tick{display:flex;background:var(--red)}
+.q.ok{background:#e9f7ef;border-color:#c3e6d0}
+.q.no-yet{background:#fdf0ef;border-color:#f3c8c4}
 
-/* ── skill grid ──────────────────────────────────────────────────────────── */
-.skills{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-.skill{min-height:104px;border-radius:var(--r-lg);border:2px solid var(--line);background:var(--paper);
-  padding:14px;text-align:left;display:flex;flex-direction:column;justify-content:space-between}
-.skill .sym{font-family:var(--disp);font-size:34px;line-height:1;color:var(--blue)}
-.skill .nm{font-weight:900;font-size:17px}
-.skill .ms{font-size:13px;font-weight:800;color:var(--ink-soft)}
-.skill:active{transform:scale(.99)}
-.bar{height:8px;border-radius:99px;background:#eee8d9;overflow:hidden;margin-top:6px}
-.bar>i{display:block;height:100%;background:var(--green);width:0;transition:width .25s}
+/* the bersusun block: one digit per cell, right aligned, operator in its own
+   column so a wide operator never shifts the place values out of line */
+.sum{display:grid;justify-content:end;gap:2px 8px;margin:10px 0 4px;
+  font-variant-numeric:tabular-nums;font-size:30px;font-weight:800;color:#111827;line-height:1.18}
+.sum .op{grid-column:1;text-align:center;color:#111827}
+.sum .d{width:1.05ch;text-align:center}
+.sum .rule{grid-column:1/-1;height:3px;background:#111827;border-radius:2px;margin-top:5px}
+.boxes{display:flex;gap:6px;justify-content:flex-end;margin-top:10px}
+.boxes input{width:34px;height:40px;text-align:center;font-size:19px;font-weight:900;color:#111827;
+  font-variant-numeric:tabular-nums;background:#fff;border:1px solid #cfd8d2;border-radius:7px}
+.boxes input:focus{outline:none;border-color:var(--panel);box-shadow:0 0 0 3px rgba(76,110,245,.22)}
+.q.ok .boxes input{border-color:#9fd3b4;background:#fbfffc}
+.q.no-yet .boxes input{border-color:#eab3ae}
+.story{margin:10px 0 2px;font-size:14.5px;font-weight:700;line-height:1.5;color:#1f2937}
 
-/* ── option chips ────────────────────────────────────────────────────────── */
-.opts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.chip{min-height:var(--tap);padding:0 16px;border-radius:99px;border:2px solid var(--line);background:var(--paper);
-  font-weight:800;color:var(--ink-soft);display:inline-flex;align-items:center;gap:6px}
-.chip[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff}
-.lbl{font-weight:900;font-size:13px;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-faint);margin-bottom:6px}
+/* ── pager ───────────────────────────────────────────────────────────────── */
+/* Not visible in the reference crop, but 100 pages need a way to move between
+   them; styled from the same palette so it reads as part of the panel. */
+.pager{max-width:1360px;margin:16px auto 0;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.pager .pg{min-height:var(--tap);padding:0 18px;border-radius:10px;background:#fff;border:1px solid #dfe3ec;
+  font-weight:800;color:var(--grey-ink)}
+.pager .pg[disabled]{opacity:.45;cursor:default}
+.pager .now{font-weight:900;font-variant-numeric:tabular-nums;color:var(--ink-soft)}
+.pager input{width:74px;height:var(--tap);text-align:center;font-weight:900;border:1px solid #dfe3ec;
+  border-radius:10px;font-variant-numeric:tabular-nums}
 
-/* ── focus mode ──────────────────────────────────────────────────────────── */
-.sess-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.sess-head .count{font-variant-numeric:tabular-nums;font-weight:900;font-size:17px}
-.sess-bar{flex:1;height:10px;border-radius:99px;background:#eee8d9;overflow:hidden}
-.sess-bar>i{display:block;height:100%;background:var(--blue);width:0;transition:width .25s}
-.qcard{background:var(--paper);border:2px solid var(--line);border-radius:var(--r-lg);padding:20px 16px;text-align:center}
-.prompt{font-size:17px;font-weight:800;line-height:1.5;margin-bottom:14px;text-align:left}
-/* real place-value grid: one digit per cell, right-aligned, operator in its own
-   column so a minus sign never squeezes the digits (PRD §15) */
-.vgrid{display:inline-grid;gap:2px 6px;font-variant-numeric:tabular-nums;
-  font-size:clamp(30px,9vw,54px);font-weight:800;line-height:1.1}
-.vgrid .op{grid-column:1;text-align:center;color:var(--blue)}
-.vgrid .d{width:1ch;text-align:center}
-.vgrid .rule{grid-column:1/-1;height:4px;background:var(--ink);border-radius:2px;margin:6px 0 2px}
-.answer{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:14px}
-.answer input{width:min(320px,80vw);min-height:60px;font-size:32px;font-weight:900;text-align:center;
-  font-variant-numeric:tabular-nums;border:3px solid var(--line);border-radius:var(--r-md);background:#fffdf5;color:var(--ink)}
-.answer input:focus{border-color:var(--blue);outline:none}
-.answer input.wrong{border-color:var(--red);animation:shake .22s}
-@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.verdict{min-height:28px;margin-top:10px;font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center;gap:8px}
-.verdict.good{color:var(--green-d)}
-.verdict.bad{color:var(--red)}
-.hintbox{margin-top:12px;background:var(--mint);border:2px solid #bfe6d0;border-radius:var(--r-md);
-  padding:12px 14px;text-align:left;font-weight:700;color:#1d5c3a}
-.hintbox[hidden]{display:none}
-.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:340px;margin:14px auto 0}
-.keypad button{min-height:52px;border-radius:var(--r-md);background:#f4f0e6;font-size:22px;font-weight:900;
-  box-shadow:0 3px 0 #ddd5c2}
-.keypad button.wide{grid-column:span 1}
-.footer-cta{position:sticky;bottom:0;background:linear-gradient(180deg,rgba(255,253,247,0),var(--cream) 30%);
-  padding:14px 0 max(14px,env(safe-area-inset-bottom));display:flex;gap:10px;justify-content:center}
+/* ── badge sheet ─────────────────────────────────────────────────────────── */
+.modal{position:fixed;inset:0;background:rgba(17,24,39,.55);display:none;align-items:center;justify-content:center;
+  padding:18px;z-index:60}
+.modal[open]{display:flex}
+.modal .box{background:#fff;border-radius:16px;max-width:460px;width:100%;padding:18px 18px 16px;
+  box-shadow:0 18px 40px rgba(0,0,0,.25)}
+.modal h2{font-size:19px;font-weight:900;margin-bottom:10px}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:12px}
+.bdg{border:1px solid #e6e9f0;border-radius:12px;padding:10px;text-align:center;font-weight:800;font-size:13px;
+  color:var(--ink-soft);background:#fafbfe}
+.bdg.on{background:#fff8e1;border-color:#f3d98b;color:#7a5b00}
+.bdg b{display:block;font-size:22px;margin-bottom:4px}
 
-/* ── worksheet ───────────────────────────────────────────────────────────── */
-.ws-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
-.ws-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
-.ws-item{position:relative;background:var(--paper);border:2px solid var(--line);border-radius:var(--r-md);
-  padding:12px 12px 14px;break-inside:avoid}
-.ws-item .idx{position:absolute;top:8px;left:10px;font-size:12px;font-weight:900;color:#fff;background:var(--blue);
-  min-width:22px;height:22px;border-radius:99px;display:flex;align-items:center;justify-content:center;padding:0 6px}
-.ws-item .state{position:absolute;top:8px;right:10px;font-size:13px;font-weight:900}
-.ws-item.ok{border-color:#a8dcbd;background:var(--mint)}
-.ws-item.no{border-color:#f0b7b0;background:var(--rose)}
-.ws-head{font-size:13px;font-weight:800;color:var(--ink-soft);text-align:center;margin:6px 0 8px}
-.ws-body{display:flex;justify-content:center}
-.ws-ans{display:flex;gap:4px;justify-content:center;margin-top:8px}
-.ws-ans input{width:2.2ch;min-width:34px;min-height:44px;text-align:center;font-size:22px;font-weight:900;
-  font-variant-numeric:tabular-nums;border:2px dashed #c9bfa6;border-radius:8px;background:#fffdf5;color:var(--ink)}
-.ws-ans input:focus{border-style:solid;border-color:var(--blue);outline:none}
-.ws-word{font-size:14px;font-weight:700;line-height:1.5}
-
-/* ── completion + progress ───────────────────────────────────────────────── */
-.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin:12px 0}
-.stat{background:var(--paper);border:2px solid var(--line);border-radius:var(--r-md);padding:12px;text-align:center}
-.stat b{display:block;font-size:26px;font-variant-numeric:tabular-nums;font-family:var(--disp)}
-.stat span{font-size:12px;font-weight:800;color:var(--ink-soft)}
-.badge{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:#4a3600;font-weight:900;
-  padding:10px 16px;border-radius:99px;box-shadow:0 4px 0 var(--gold-d)}
-
-/* ── reduced motion is a preference, honoured centrally ──────────────────── */
-@media (prefers-reduced-motion: reduce){
-  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+/* ── phone: the panel keeps its shape, just tighter, and nothing may push the
+   page sideways (a child scrolling a worksheet horizontally loses their place) */
+@media (max-width:640px){
+  body{padding:8px 8px max(14px,env(safe-area-inset-bottom));overflow-x:hidden}
+  .panel{padding:14px 12px 12px;border-radius:14px}
+  .panel h1{font-size:22px}
+  .panel .lede{font-size:12.5px}
+  .ctrls{gap:8px}
+  .seg{flex-wrap:wrap}
+  .seg button{padding:0 12px;font-size:14px}
+  .act{padding:0 13px;font-size:14px}
+  .row2{gap:8px}
+  .sum{font-size:26px}
+  .boxes input{width:31px;height:40px;font-size:18px}
+  .pager input{width:64px}
 }
-body[data-motion="off"] *{animation:none!important;transition:none!important}
 
-/* ── print: worksheet only, no chrome, answers on their own page ─────────── */
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+
+/* ── print: the sheet only, key on its own page ──────────────────────────── */
 @media print{
-  @page{size:A4;margin:14mm}
-  body{background:#fff;font-size:12pt}
-  .topbar,.footer-cta,.ws-toolbar,.noprint{display:none!important}
-  .wrap{padding:0;max-width:none}
-  .ws-grid{grid-template-columns:repeat(3,1fr);gap:10mm}
-  .ws-item{border:1px solid #000;background:#fff!important;break-inside:avoid;page-break-inside:avoid}
-  .ws-item .state{display:none}
-  .ws-ans input{border:1px solid #666;background:#fff}
-  #print-key{display:block!important;break-before:page;page-break-before:always}
+  @page{size:A4;margin:12mm}
+  body{background:#fff;padding:0}
+  .panel,.pager,.modal,.noprint{display:none!important}
+  .print-head{display:block!important;margin-bottom:8mm;font-weight:900}
+  .sheet{grid-template-columns:repeat(3,1fr);gap:8mm}
+  .q{background:#fff!important;border:1px solid #111;box-shadow:none;break-inside:avoid;page-break-inside:avoid}
+  .q .tick,.q .state{display:none!important}
+  .boxes input{border:1px solid #666}
+  #answer-key{display:block!important;break-before:page;page-break-before:always}
 }
-#print-key{display:none}
+.print-head,#answer-key{display:none}
 </style>
 </head>
 <body>
-<a class="sr" href="#main">Lewati ke konten</a>
-<header class="topbar">
-  <button class="tb-btn" id="btn-back" aria-label="Kembali">←</button>
-  <h1 id="screen-title">Ayo Berhitung!</h1>
-  <button class="tb-btn" id="btn-sound" aria-pressed="true" aria-label="Suara">🔊</button>
-  <button class="tb-btn" id="btn-progress" aria-label="Progres">📊</button>
-</header>
 
-<main class="wrap" id="main">
-  <!-- ══ HOME ══ -->
-  <section class="screen" id="s-home" aria-labelledby="h-home">
-    <div class="card" id="continue-card" hidden>
-      <h2 id="h-cont">Lanjutkan latihan</h2>
-      <p class="sub" id="cont-desc">—</p>
-      <div class="row">
-        <button class="btn btn-go" id="btn-continue">Lanjutkan</button>
-        <button class="btn btn-ghost" id="btn-discard">Mulai baru</button>
-      </div>
-    </div>
-    <h2 id="h-home" class="sr">Pilih latihan</h2>
-    <div class="skills" id="skill-grid"></div>
-  </section>
+<div class="panel" role="region" aria-label="Pengaturan latihan">
+  <h1>Ayo Berhitung!</h1>
+  <p class="lede" id="lede">1000 soal penjumlahan — 10 soal per halaman, 100 halaman. Jawaban tersimpan saat pindah halaman.</p>
 
-  <!-- ══ SETUP ══ -->
-  <section class="screen" id="s-setup" hidden aria-labelledby="h-setup">
-    <div class="card">
-      <h2 id="h-setup">Atur latihan</h2>
-      <p class="sub" id="setup-skill">—</p>
-      <div class="lbl">Tingkat</div>
-      <div class="opts" id="opt-diff" role="group" aria-label="Tingkat"></div>
-      <div class="lbl">Jumlah soal</div>
-      <div class="opts" id="opt-count" role="group" aria-label="Jumlah soal"></div>
-      <div class="lbl">Cara main</div>
-      <div class="opts" id="opt-mode" role="group" aria-label="Cara main"></div>
-      <div id="adv-wrap">
-        <div class="lbl" id="adv-label">Aturan khusus</div>
-        <div class="opts" id="opt-adv" role="group" aria-labelledby="adv-label"></div>
-      </div>
-      <p class="sub" id="setup-warn" role="status"></p>
-      <button class="btn btn-go btn-wide" id="btn-start">Mulai</button>
-    </div>
-  </section>
+  <div class="meter">
+    <span class="star"><i>★</i> <span id="solved">0</span> /<span id="total">1000</span></span>
+    <span class="rail"><i id="rail-fill"></i></span>
+  </div>
 
-  <!-- ══ FOCUS ══ -->
-  <section class="screen" id="s-focus" hidden aria-labelledby="h-focus">
-    <h2 id="h-focus" class="sr">Latihan</h2>
-    <div class="sess-head">
-      <span class="count" id="f-count">1/10</span>
-      <span class="sess-bar"><i id="f-bar"></i></span>
-      <button class="btn btn-ghost" id="btn-pause">Jeda</button>
-    </div>
-    <div class="qcard">
-      <p class="prompt" id="f-prompt" hidden></p>
-      <div id="f-equation"></div>
-      <div class="answer">
-        <label class="sr" for="f-input">Jawaban</label>
-        <input id="f-input" type="text" inputmode="numeric" autocomplete="off" enterkeyhint="done"
-               aria-describedby="f-verdict" pattern="-?[0-9]*">
-      </div>
-      <p class="verdict" id="f-verdict" role="status" aria-live="polite"></p>
-      <div class="hintbox" id="f-hint" hidden></div>
-      <div class="keypad" id="f-keypad" aria-label="Papan angka"></div>
-    </div>
-    <div class="footer-cta">
-      <button class="btn btn-soft" id="btn-hint">Petunjuk</button>
-      <button class="btn btn-go" id="btn-check">Periksa</button>
-      <button class="btn btn-ghost" id="btn-skip">Lewati</button>
-    </div>
-  </section>
+  <div class="ctrls">
+    <span class="ctrl-label" id="lbl-op">OPERASI</span>
+    <span class="seg" id="seg-op" role="group" aria-labelledby="lbl-op"></span>
+    <span class="ctrl-label" id="lbl-lv">LEVEL</span>
+    <span class="seg" id="seg-lv" role="group" aria-labelledby="lbl-lv"></span>
+    <button class="act red" id="btn-new">Soal Baru</button>
+    <button class="act grey" id="btn-repeat">↺ Ulangi Halaman</button>
+  </div>
 
-  <!-- ══ WORKSHEET ══ -->
-  <section class="screen" id="s-ws" hidden aria-labelledby="h-ws">
-    <h2 id="h-ws" class="sr">Lembar latihan</h2>
-    <div class="ws-toolbar">
-      <span class="count" id="ws-count">0/10 benar</span>
-      <button class="btn btn-soft" id="btn-find">Cari Salah</button>
-      <button class="btn btn-ghost" id="btn-repeat">Ulangi Halaman</button>
-      <button class="btn btn-ghost" id="btn-new">Soal Baru</button>
-      <button class="btn btn-ghost" id="btn-print">Cetak</button>
-      <button class="btn btn-go" id="btn-ws-done">Selesai</button>
-    </div>
-    <div class="ws-grid" id="ws-grid"></div>
-    <div id="print-key"></div>
-  </section>
+  <div class="row2">
+    <button class="act amber" id="btn-find">🔎 Cari Salah</button>
+    <button class="act green" id="btn-print-page">Cetak Halaman</button>
+    <button class="act teal" id="btn-print-range">🖨 Cetak Rentang</button>
+    <button class="act yellow" id="btn-badges">🏅 Lencana</button>
+    <button class="act navy" id="btn-sound" aria-pressed="true" aria-label="Suara">🔊</button>
+  </div>
+</div>
 
-  <!-- ══ DONE ══ -->
-  <section class="screen" id="s-done" hidden aria-labelledby="h-done">
-    <div class="card">
-      <h2 id="h-done">Selesai!</h2>
-      <p class="sub" id="done-line">—</p>
-      <div class="stats" id="done-stats"></div>
-      <p id="done-badge"></p>
-      <div class="row" style="margin-top:12px">
-        <button class="btn btn-go" id="btn-again">Latihan lagi</button>
-        <button class="btn btn-soft" id="btn-review" hidden>Ulangi yang salah</button>
-        <button class="btn btn-ghost" id="btn-home">Beranda</button>
-      </div>
-    </div>
-  </section>
+<p class="print-head" id="print-head"></p>
+<main class="sheet" id="sheet" aria-label="Soal"></main>
+<p class="sr" id="live" role="status" aria-live="polite"></p>
 
-  <!-- ══ PROGRESS ══ -->
-  <section class="screen" id="s-prog" hidden aria-labelledby="h-prog">
-    <div class="card">
-      <h2 id="h-prog">Progres</h2>
-      <p class="sub">Berapa mantap tiap keterampilan, dari latihan terakhir-terakhir.</p>
-      <div id="prog-list"></div>
-      <div class="row" style="margin-top:14px">
-        <button class="btn btn-ghost" id="btn-export">Simpan data</button>
-        <button class="btn btn-ghost" id="btn-reset">Hapus data</button>
-      </div>
-    </div>
-  </section>
-</main>
+<nav class="pager" aria-label="Halaman">
+  <button class="pg" id="pg-prev">← Sebelumnya</button>
+  <span class="now">Halaman</span>
+  <label class="sr" for="pg-input">Nomor halaman</label>
+  <input id="pg-input" type="text" inputmode="numeric" value="1">
+  <span class="now">dari <span id="pg-total">100</span></span>
+  <button class="pg" id="pg-next">Berikutnya →</button>
+</nav>
 
-<script src="data/berhitung-engine.js?v=v59.99-20260920a"></script>
-<script src="data/freeze-watchdog.js?v=v59.99-20260920a"></script>
-<script src="sw-reload.js?v=v59.99-20260920a"></script>
+<div id="answer-key"></div>
+
+<div class="modal" id="modal-badges" role="dialog" aria-modal="true" aria-labelledby="bdg-title">
+  <div class="box">
+    <h2 id="bdg-title">Lencana</h2>
+    <div class="badges" id="badge-grid"></div>
+    <button class="act grey" id="btn-badges-close">Tutup</button>
+  </div>
+</div>
+
+<script src="data/berhitung-engine.js?v=v60.0-20260920a"></script>
+<script src="data/freeze-watchdog.js?v=v60.0-20260920a"></script>
+<script src="sw-reload.js?v=v60.0-20260920a"></script>
 <script>
-/* ═══════════════════════════════════════════════════════════════════════════
-   UI + state. The engine owns the arithmetic; this owns screens, input and
-   persistence. Session transitions go through one reducer-ish `go()` so a stale
-   closure cannot submit an answer for the previous question (PRD §15).
-   ═══════════════════════════════════════════════════════════════════════════ */
 (function () {
   'use strict'
   var B = window.Berhitung
   var $ = function (id) { return document.getElementById(id) }
 
+  var PAGES = 100, PER_PAGE = 10, TOTAL = PAGES * PER_PAGE
+
+  // Labels exactly as the reference prints them.
+  var OPS = [
+    { key: 'add',      label: 'Tambah', word: 'penjumlahan' },
+    { key: 'subtract', label: 'Kurang', word: 'pengurangan' },
+    { key: 'multiply', label: 'Kali',   word: 'perkalian' },
+    { key: 'divide',   label: 'Bagi',   word: 'pembagian' },
+    { key: 'word',     label: 'Cerita', word: 'cerita' }
+  ]
+  var LEVELS = [
+    { key: 'easy',   label: 'Mudah' },
+    { key: 'medium', label: 'Sedang' },
+    { key: 'hard',   label: 'Sulit' }
+  ]
+  var BADGE_COLORS = ['#ef5350','#3b82f6','#22a06b','#7c5cd6','#f08c2e','#ec4899','#0ea5e9','#8b5cf6','#84cc16','#f43f5e']
+  var OPSYM = { add: '+', subtract: '−', multiply: '×', divide: '÷' }
+
   // ── persistence ──────────────────────────────────────────────────────────
-  // localStorage, not IndexedDB: this app already keys every other game's save
-  // off localStorage, and one store means one backup, one export and one reset.
-  // Everything written carries a schema version so a future shape can migrate
-  // instead of crashing (PRD §12).
-  var STORE = 'berhitung-v1'
-  var SCHEMA = 1
+  // One versioned store. The panel promises "jawaban tersimpan saat pindah
+  // halaman", so every keystroke is checkpointed, not just page turns.
+  var STORE = 'berhitung-v2', SCHEMA = 2
+  function fresh () { return { schemaVersion: SCHEMA, prefs: { sound: true }, op: 'add', level: 'medium', page: 1, sets: {}, xp: 0 } }
   function load () {
     try {
       var raw = JSON.parse(localStorage.getItem(STORE) || 'null')
       if (!raw || raw.schemaVersion !== SCHEMA) return fresh()
+      raw.sets = raw.sets || {}
       return raw
-    } catch (_) { return fresh() }   // corrupt data fails safe, never crashes the app
+    } catch (_) { return fresh() }     // corrupt data fails safe
   }
-  function fresh () { return { schemaVersion: SCHEMA, xp: 0, skills: {}, rewards: {}, session: null, prefs: { sound: true, motion: true } } }
   var DB = load()
   function save () { try { localStorage.setItem(STORE, JSON.stringify(DB)) } catch (_) {} }
 
-  // ── screens ──────────────────────────────────────────────────────────────
-  var SCREENS = ['s-home', 's-setup', 's-focus', 's-ws', 's-done', 's-prog']
-  var TITLES = { 's-home': 'Ayo Berhitung!', 's-setup': 'Atur latihan', 's-focus': 'Latihan', 's-ws': 'Lembar latihan', 's-done': 'Selesai', 's-prog': 'Progres' }
-  var screen = 's-home'
-  function go (id) {
-    screen = id
-    SCREENS.forEach(function (s) { $(s).hidden = (s !== id) })
-    $('screen-title').textContent = TITLES[id] || 'Ayo Berhitung!'
-    window.scrollTo(0, 0)
-    if (id === 's-home') renderHome()
-    if (id === 's-prog') renderProgress()
+  // A set is one (operation, level, page). Its answers and its "Soal Baru"
+  // nonce live under that key, so every page keeps its own work and every page
+  // is reproducible from its seed.
+  function setKey (op, lv, page) { return op + '|' + lv + '|' + page }
+  function setState (op, lv, page) {
+    var k = setKey(op, lv, page)
+    if (!DB.sets[k]) DB.sets[k] = { nonce: 0, answers: {}, solved: {} }
+    return DB.sets[k]
   }
+  function seedFor (op, lv, page, nonce) { return 'ayo|' + op + '|' + lv + '|p' + page + '|n' + (nonce || 0) }
 
-  // ── skills ───────────────────────────────────────────────────────────────
-  var SKILLS = [
-    { key: 'add', sym: '+', name: 'Tambah' },
-    { key: 'subtract', sym: '−', name: 'Kurang' },
-    { key: 'multiply', sym: '×', name: 'Kali' },
-    { key: 'divide', sym: '÷', name: 'Bagi' },
-    { key: 'word', sym: '📖', name: 'Cerita' },
-    { key: 'mixed', sym: '🎲', name: 'Campuran' }
-  ]
-  function skillOf (k) { for (var i = 0; i < SKILLS.length; i++) if (SKILLS[i].key === k) return SKILLS[i]; return SKILLS[0] }
-  function progressOf (k) {
-    if (!DB.skills[k]) DB.skills[k] = { mastery: 0, attempts: 0, firstTryCorrect: 0, assistedCorrect: 0, skipped: 0, recentWindow: [] }
-    return DB.skills[k]
-  }
+  // ── current page ─────────────────────────────────────────────────────────
+  var op = DB.op, level = DB.level, page = Math.min(PAGES, Math.max(1, DB.page || 1))
+  var session = null
 
-  function renderHome () {
-    var grid = $('skill-grid')
-    grid.innerHTML = ''
-    SKILLS.forEach(function (s) {
-      var p = progressOf(s.key)
-      var b = document.createElement('button')
-      b.className = 'skill'
-      b.setAttribute('aria-label', s.name + ', ' + B.masteryLabel(p.mastery) + ', ' + p.mastery + ' persen')
-      b.innerHTML = '<span class="sym" aria-hidden="true">' + s.sym + '</span>' +
-        '<span class="nm">' + s.name + '</span>' +
-        '<span class="ms">' + B.masteryLabel(p.mastery) + ' · ' + p.mastery + '%</span>' +
-        '<span class="bar"><i style="width:' + p.mastery + '%"></i></span>'
-      b.addEventListener('click', function () { openSetup(s.key) })
-      grid.appendChild(b)
-    })
-    var c = DB.session
-    $('continue-card').hidden = !c
-    if (c) {
-      $('cont-desc').textContent = skillOf(c.operation).name + ' · ' + c.difficulty + ' · soal ' +
-        Math.min(c.currentIndex + 1, c.questionCount) + ' dari ' + c.questionCount
+  function buildPage () {
+    var st = setState(op, level, page)
+    var cfg = {
+      operation: op, difficulty: level, questionCount: PER_PAGE, mode: 'worksheet',
+      seed: seedFor(op, level, page, st.nonce)
     }
-  }
-
-  // ── setup ────────────────────────────────────────────────────────────────
-  var cfg = { operation: 'add', difficulty: 'easy', questionCount: 10, mode: 'focus', carryPolicy: 'any', borrowPolicy: 'any' }
-  function chips (host, items, current, onPick) {
-    host.innerHTML = ''
-    items.forEach(function (it) {
-      var b = document.createElement('button')
-      b.className = 'chip'
-      b.type = 'button'
-      b.textContent = it.label
-      b.setAttribute('aria-pressed', String(it.value === current))
-      b.addEventListener('click', function () { onPick(it.value) })
-      host.appendChild(b)
-    })
-  }
-  function openSetup (op) {
-    cfg.operation = op
-    $('setup-skill').textContent = skillOf(op).name
-    renderSetup()
-    go('s-setup')
-  }
-  function renderSetup () {
-    chips($('opt-diff'), [{ label: 'Mudah', value: 'easy' }, { label: 'Sedang', value: 'medium' }, { label: 'Sulit', value: 'hard' }],
-      cfg.difficulty, function (v) { cfg.difficulty = v; renderSetup() })
-    chips($('opt-count'), [{ label: '5', value: 5 }, { label: '10', value: 10 }, { label: '20', value: 20 }],
-      cfg.questionCount, function (v) { cfg.questionCount = v; renderSetup() })
-    chips($('opt-mode'), [{ label: 'Satu per satu', value: 'focus' }, { label: 'Lembar 10 soal', value: 'worksheet' }],
-      cfg.mode, function (v) { cfg.mode = v; renderSetup() })
-    var adv = $('opt-adv'), wrap = $('adv-wrap')
-    if (cfg.operation === 'add') {
-      wrap.hidden = false
-      chips(adv, [{ label: 'Bebas', value: 'any' }, { label: 'Tanpa menyimpan', value: 'none' }, { label: 'Sekali menyimpan', value: 'one' }],
-        cfg.carryPolicy, function (v) { cfg.carryPolicy = v; renderSetup() })
-    } else if (cfg.operation === 'subtract') {
-      wrap.hidden = false
-      chips(adv, [{ label: 'Bebas', value: 'any' }, { label: 'Tanpa meminjam', value: 'none' }, { label: 'Sekali meminjam', value: 'one' }],
-        cfg.borrowPolicy, function (v) { cfg.borrowPolicy = v; renderSetup() })
-    } else { wrap.hidden = true }
-    var v = B.validateConfig(cfg)
-    $('setup-warn').textContent = v.ok ? '' : '⚠️ ' + v.reason
-    $('btn-start').disabled = !v.ok
-  }
-
-  // ── session state ────────────────────────────────────────────────────────
-  var S = null            // live session
-  var attempts = []       // one record per question, never mutated once closed
-  var busy = false        // submit mutex: a double tap cannot count twice
-  var hintLevel = 0
-  var tries = 0
-
-  function startSession (opts) {
-    var c = Object.assign({}, cfg, opts || {})
-    c.seed = c.seed || (Date.now().toString(36) + Math.random().toString(36).slice(2, 7))
-    var sess
-    try { sess = B.buildSession(c) } catch (e) { $('setup-warn').textContent = '⚠️ ' + e.message; return }
-    S = sess
-    attempts = []
-    DB.session = sess
+    session = B.buildSession(cfg)
+    DB.op = op; DB.level = level; DB.page = page
     save()
-    if (S.mode === 'worksheet') { renderWorksheet(); go('s-ws') } else { renderQuestion(); go('s-focus') }
+    render()
   }
 
-  function resumeSession () {
-    if (!DB.session) return
-    S = DB.session
-    attempts = S._attempts || []
-    if (S.mode === 'worksheet') { renderWorksheet(); go('s-ws') } else { renderQuestion(); go('s-focus') }
-  }
+  function opInfo () { for (var i = 0; i < OPS.length; i++) if (OPS[i].key === op) return OPS[i]; return OPS[0] }
 
-  function checkpoint () {
-    if (!S) return
-    S._attempts = attempts
-    DB.session = S
-    save()                                  // every transition is persisted (PRD §12)
-  }
-
-  // ── equation rendering ───────────────────────────────────────────────────
-  var OPSYM = { add: '+', subtract: '−', multiply: '×', divide: '÷' }
-  function vertical (q) {
-    // place-value grid: operands right-aligned digit by digit, the operator in
-    // its own left column, a rule underneath. Width = longest operand.
-    var rows = q.operands.map(function (n) { return String(n) })
+  // ── rendering ────────────────────────────────────────────────────────────
+  function sumBlock (q) {
+    var rows = q.operands.map(String)
     var width = Math.max.apply(null, rows.map(function (r) { return r.length }))
     var el = document.createElement('div')
-    el.className = 'vgrid'
-    el.style.gridTemplateColumns = 'auto repeat(' + width + ', 1ch)'
+    el.className = 'sum'
+    el.style.gridTemplateColumns = 'auto repeat(' + width + ', 1.05ch)'
     el.setAttribute('role', 'img')
-    el.setAttribute('aria-label', q.operands.join(' ' + OPSYM[q.operation] + ' ') + ' sama dengan berapa')
+    el.setAttribute('aria-label', rows.join(' ' + OPSYM[q.operation] + ' ') + ' sama dengan berapa')
     rows.forEach(function (r, i) {
-      var op = document.createElement('span')
-      op.className = 'op'
-      op.textContent = (i === rows.length - 1) ? OPSYM[q.operation] : ''
-      el.appendChild(op)
-      var pad = width - r.length
-      for (var k = 0; k < pad; k++) { var s = document.createElement('span'); s.className = 'd'; s.textContent = ''; el.appendChild(s) }
+      var o = document.createElement('span')
+      o.className = 'op'
+      o.textContent = (i === rows.length - 1) ? OPSYM[q.operation] : ''
+      el.appendChild(o)
+      for (var k = 0; k < width - r.length; k++) { var pad = document.createElement('span'); pad.className = 'd'; el.appendChild(pad) }
       r.split('').forEach(function (ch) { var d = document.createElement('span'); d.className = 'd'; d.textContent = ch; el.appendChild(d) })
     })
-    var rule = document.createElement('span')
-    rule.className = 'rule'
-    el.appendChild(rule)
+    var rule = document.createElement('span'); rule.className = 'rule'; el.appendChild(rule)
     return el
   }
 
-  function renderQuestion () {
-    var q = S.questions[S.currentIndex]
-    hintLevel = 0; tries = 0
-    $('f-count').textContent = (S.currentIndex + 1) + '/' + S.questionCount
-    $('f-bar').style.width = (S.currentIndex / S.questionCount * 100) + '%'
-    var eq = $('f-equation')
-    eq.innerHTML = ''
-    if (q.operation === 'word') {
-      $('f-prompt').hidden = false
-      $('f-prompt').textContent = q.prompt
-    } else {
-      $('f-prompt').hidden = true
-      eq.appendChild(vertical(q))
-    }
-    var inp = $('f-input')
-    inp.value = ''
-    inp.classList.remove('wrong')
-    inp.disabled = false
-    $('f-verdict').textContent = ''
-    $('f-verdict').className = 'verdict'
-    $('f-hint').hidden = true
-    $('btn-check').disabled = false
-    inp.focus()
-  }
+  function render () {
+    var st = setState(op, level, page)
+    var sheet = $('sheet')
+    sheet.innerHTML = ''
+    session.questions.forEach(function (q, i) {
+      var card = document.createElement('div')
+      card.className = 'q'
+      card.id = 'q' + i
 
-  function say (msg, good) {
-    var v = $('f-verdict')
-    v.textContent = (good ? '✅ ' : '✏️ ') + msg
-    v.className = 'verdict ' + (good ? 'good' : 'bad')
-  }
+      var no = document.createElement('span')
+      no.className = 'no'
+      no.style.background = BADGE_COLORS[i % BADGE_COLORS.length]
+      no.textContent = String(i + 1)
+      card.appendChild(no)
 
-  function submit () {
-    if (busy || !S) return
-    var q = S.questions[S.currentIndex]
-    var raw = $('f-input').value
-    var p = B.parseAnswer(raw)
-    if (p.empty) { say('Tulis jawabanmu dulu ya.', false); return }
-    if (!p.ok) { say(p.reason || 'Tulis angka saja.', false); return }
-    busy = true
-    tries++
-    var res = B.grade(q, raw)
-    if (res.correct) {
-      $('f-input').disabled = true
-      $('btn-check').disabled = true
-      say('Benar!', true)
-      closeAttempt(q, { attemptNumber: tries, hintLevel: hintLevel, correct: true })
-      setTimeout(next, 750)
-    } else {
-      $('f-input').classList.add('wrong')
-      setTimeout(function () { $('f-input').classList.remove('wrong') }, 260)
-      hintLevel = Math.min(3, hintLevel + (tries >= 2 ? 1 : 0))
-      say('Belum tepat. ' + B.hint(q, hintLevel), false)
-      $('f-hint').hidden = false
-      $('f-hint').textContent = '💡 ' + B.hint(q, hintLevel)
-      busy = false
-      $('f-input').select()
-    }
-  }
+      var tick = document.createElement('span')
+      tick.className = 'tick'; tick.textContent = '✓'
+      tick.setAttribute('aria-hidden', 'true')
+      card.appendChild(tick)
 
-  function closeAttempt (q, rec) {
-    // An attempt is written once and never edited: that is what keeps a revealed
-    // answer from later counting as a first try (PRD §15).
-    attempts.push({
-      id: q.id, questionId: q.id, attemptNumber: rec.attemptNumber || 1,
-      hintLevel: rec.hintLevel || 0, correct: !!rec.correct,
-      skipped: !!rec.skipped, revealed: !!rec.revealed, createdAt: new Date().toISOString()
-    })
-    checkpoint()
-  }
+      var state = document.createElement('span')
+      state.className = 'sr'; state.id = 'st' + i
+      card.appendChild(state)
 
-  function next () {
-    busy = false
-    S.currentIndex++
-    checkpoint()
-    if (S.currentIndex >= S.questionCount) { finish() } else { renderQuestion() }
-  }
-
-  function skip () {
-    if (busy || !S) return
-    var q = S.questions[S.currentIndex]
-    closeAttempt(q, { attemptNumber: tries + 1, hintLevel: hintLevel, skipped: true })
-    next()
-  }
-
-  function showHint () {
-    if (!S) return
-    var q = S.questions[S.currentIndex]
-    $('f-hint').hidden = false
-    $('f-hint').textContent = '💡 ' + B.hint(q, hintLevel)
-    hintLevel = Math.min(3, hintLevel + 1)
-  }
-
-  // ── worksheet ────────────────────────────────────────────────────────────
-  function renderWorksheet () {
-    var grid = $('ws-grid')
-    grid.innerHTML = ''
-    S._ws = S._ws || {}
-    S.questions.forEach(function (q, i) {
-      var item = document.createElement('div')
-      item.className = 'ws-item'
-      item.id = 'ws-' + i
-      var idx = document.createElement('span'); idx.className = 'idx'; idx.textContent = String(i + 1)
-      var state = document.createElement('span'); state.className = 'state'; state.id = 'ws-state-' + i
-      item.appendChild(idx); item.appendChild(state)
       if (q.operation === 'word') {
-        var p = document.createElement('p'); p.className = 'ws-word'; p.textContent = q.prompt
-        item.appendChild(p)
+        var p = document.createElement('p'); p.className = 'story'; p.textContent = q.prompt
+        card.appendChild(p)
       } else {
-        var head = document.createElement('div'); head.className = 'ws-head'
-        head.textContent = q.operands.join(' ' + OPSYM[q.operation] + ' ')
-        var body = document.createElement('div'); body.className = 'ws-body'
-        body.appendChild(vertical(q))
-        item.appendChild(head); item.appendChild(body)
+        var lab = document.createElement('div')
+        lab.className = 'label'
+        lab.textContent = q.operands.join(' ' + OPSYM[q.operation] + ' ')
+        card.appendChild(lab)
+        card.appendChild(sumBlock(q))
       }
-      // one input per digit of the expected answer: a child writes the answer
-      // the way they write it on paper, and the width tells them how many
-      // digits to expect without giving the value away.
+
       var cells = String(Math.abs(q.expected)).length
-      var ans = document.createElement('div'); ans.className = 'ws-ans'
+      var boxes = document.createElement('div')
+      boxes.className = 'boxes'
       for (var c = 0; c < cells; c++) {
         var inp = document.createElement('input')
         inp.type = 'text'; inp.inputMode = 'numeric'; inp.maxLength = 1
-        inp.setAttribute('aria-label', 'Soal ' + (i + 1) + ' digit ' + (c + 1))
         inp.dataset.q = String(i); inp.dataset.c = String(c)
-        inp.addEventListener('input', onWsInput)
-        inp.addEventListener('keydown', onWsKey)
-        ans.appendChild(inp)
+        inp.setAttribute('aria-label', 'Soal ' + (i + 1) + ', angka ke-' + (c + 1))
+        inp.addEventListener('input', onInput)
+        inp.addEventListener('keydown', onKey)
+        boxes.appendChild(inp)
       }
-      item.appendChild(ans)
-      grid.appendChild(item)
-      restoreWs(i)
+      card.appendChild(boxes)
+      sheet.appendChild(card)
+
+      var saved = st.answers[q.id]
+      if (saved) {
+        var ins = card.querySelectorAll('.boxes input')
+        saved.split('').forEach(function (ch, k) { if (ins[k]) ins[k].value = ch })
+        mark(i, B.grade(q, saved).correct, saved.length === ins.length)
+      }
     })
-    updateWsCount()
+    $('lede').textContent = TOTAL + ' soal ' + opInfo().word + ' — ' + PER_PAGE +
+      ' soal per halaman, ' + PAGES + ' halaman. Jawaban tersimpan saat pindah halaman.'
+    $('pg-input').value = String(page)
+    $('pg-prev').disabled = page <= 1
+    $('pg-next').disabled = page >= PAGES
+    $('print-head').textContent = 'Ayo Berhitung! — ' + opInfo().label + ' · ' + levelLabel() +
+      ' · halaman ' + page + ' dari ' + PAGES
+    renderSegments()
+    updateMeter()
   }
 
-  function wsValue (i) {
-    var inputs = document.querySelectorAll('#ws-' + i + ' .ws-ans input')
-    var s = ''
-    for (var k = 0; k < inputs.length; k++) s += inputs[k].value.trim()
-    return { text: s, complete: s.length === inputs.length }
+  function levelLabel () { for (var i = 0; i < LEVELS.length; i++) if (LEVELS[i].key === level) return LEVELS[i].label; return '' }
+
+  function renderSegments () {
+    seg($('seg-op'), OPS, op, function (v) { op = v; page = DB.page || page; buildPage() })
+    seg($('seg-lv'), LEVELS, level, function (v) { level = v; buildPage() })
   }
-  function restoreWs (i) {
-    var saved = (S._ws || {})[i]
-    if (!saved) return
-    var inputs = document.querySelectorAll('#ws-' + i + ' .ws-ans input')
-    saved.text.split('').forEach(function (ch, k) { if (inputs[k]) inputs[k].value = ch })
-    markWs(i, saved.correct)
+  function seg (host, items, current, onPick) {
+    host.innerHTML = ''
+    items.forEach(function (it) {
+      var b = document.createElement('button')
+      b.type = 'button'
+      b.textContent = it.label
+      b.dataset.value = it.key
+      b.setAttribute('aria-pressed', String(it.key === current))
+      b.addEventListener('click', function () { onPick(it.key) })
+      host.appendChild(b)
+    })
   }
-  function markWs (i, correct) {
-    var item = $('ws-' + i), st = $('ws-state-' + i)
-    if (!item) return
-    item.classList.toggle('ok', correct === true)
-    item.classList.toggle('no', correct === false)
-    st.textContent = correct === true ? '✓ benar' : correct === false ? '✗ coba lagi' : ''
+
+  function mark (i, correct, complete) {
+    var card = $('q' + i), st = $('st' + i), tick = card && card.querySelector('.tick')
+    if (!card) return
+    var wrong = complete === true && correct === false
+    card.classList.toggle('ok', correct === true)
+    card.classList.toggle('no-yet', wrong)
+    // The visible signal is the corner disc and the glyph inside it -- a tick or
+    // a cross -- so the state never rests on colour alone. The words go to the
+    // screen reader, which is also why they are not painted over the disc.
+    if (tick) tick.textContent = correct === true ? '✓' : wrong ? '✕' : ''
+    st.textContent = correct === true ? 'Soal ' + (i + 1) + ' benar'
+      : wrong ? 'Soal ' + (i + 1) + ' belum benar' : ''
   }
-  function onWsInput (e) {
+
+  function onInput (e) {
     var el = e.target
     el.value = el.value.replace(/[^0-9]/g, '').slice(-1)
     var i = +el.dataset.q
-    var next = el.parentNode.children[+el.dataset.c + 1]
-    if (el.value && next) next.focus()
-    var v = wsValue(i)
-    if (!v.complete) { S._ws[i] = { text: v.text, correct: null }; markWs(i, null); checkpoint(); updateWsCount(); return }
-    var q = S.questions[i]
-    var correct = B.grade(q, v.text).correct
-    var prev = S._ws[i] || {}
-    S._ws[i] = { text: v.text, correct: correct, tries: (prev.tries || 0) + 1 }
-    markWs(i, correct)
-    if (correct && !prev.closed) {
-      S._ws[i].closed = true
-      closeAttempt(q, { attemptNumber: S._ws[i].tries, hintLevel: 0, correct: true })
-    }
-    checkpoint(); updateWsCount()
+    var nextBox = el.parentNode.children[+el.dataset.c + 1]
+    if (el.value && nextBox) nextBox.focus()
+    commit(i)
   }
-  function onWsKey (e) {
-    var el = e.target
+  function onKey (e) {
+    var el = e.target, i = +el.dataset.q, c = +el.dataset.c
     if (e.key === 'Backspace' && !el.value) {
-      var prev = el.parentNode.children[+el.dataset.c - 1]
+      var prev = el.parentNode.children[c - 1]
       if (prev) { prev.focus(); e.preventDefault() }
+    } else if (e.key === 'ArrowLeft') {
+      var l = el.parentNode.children[c - 1]; if (l) { l.focus(); e.preventDefault() }
+    } else if (e.key === 'ArrowRight') {
+      var r = el.parentNode.children[c + 1]; if (r) { r.focus(); e.preventDefault() }
+    } else if (e.key === 'Enter') {
+      var nc = $('q' + (i + 1))
+      var first = nc && nc.querySelector('.boxes input')
+      if (first) { first.focus(); e.preventDefault() }
     }
   }
-  function updateWsCount () {
-    var done = 0
-    S.questions.forEach(function (_, i) { if ((S._ws[i] || {}).correct) done++ })
-    $('ws-count').textContent = done + '/' + S.questionCount + ' benar'
+
+  function commit (i) {
+    var q = session.questions[i]
+    var st = setState(op, level, page)
+    var ins = document.querySelectorAll('#q' + i + ' .boxes input')
+    var text = ''
+    for (var k = 0; k < ins.length; k++) text += ins[k].value.trim()
+    st.answers[q.id] = text
+    var complete = text.length === ins.length
+    var correct = complete && B.grade(q, text).correct
+    if (correct) {
+      if (!st.solved[q.id]) { st.solved[q.id] = true; DB.xp += 10; chime() }
+    } else if (st.solved[q.id]) {
+      delete st.solved[q.id]                       // an edited-away answer stops counting
+    }
+    mark(i, correct, complete)
+    save()                                          // saved on every keystroke, not just page turns
+    updateMeter()
+  }
+
+  // ── progress across the whole 1000 ───────────────────────────────────────
+  function solvedCount () {
+    var n = 0
+    for (var p = 1; p <= PAGES; p++) {
+      var k = setKey(op, level, p)
+      var s = DB.sets[k]
+      if (s) n += Object.keys(s.solved).length
+    }
+    return n
+  }
+  function updateMeter () {
+    var n = solvedCount()
+    $('solved').textContent = String(n)
+    $('total').textContent = String(TOTAL)
+    $('rail-fill').style.width = (n / TOTAL * 100) + '%'
+  }
+
+  // ── actions ──────────────────────────────────────────────────────────────
+  function newQuestions () {
+    var st = setState(op, level, page)
+    st.nonce = (st.nonce || 0) + 1        // a NEW page, still reproducible from its seed
+    st.answers = {}; st.solved = {}
+    save(); buildPage()
+    announce('Soal baru untuk halaman ' + page)
+  }
+  function repeatPage () {
+    var st = setState(op, level, page)
+    st.answers = {}; st.solved = {}       // same seed, blank sheet
+    save(); buildPage()
+    announce('Halaman ' + page + ' diulang dengan soal yang sama')
   }
   function findWrong () {
-    for (var i = 0; i < S.questionCount; i++) {
-      var w = S._ws[i]
-      if (!w || w.correct !== true) {
-        var el = document.querySelector('#ws-' + i + ' .ws-ans input')
-        if (el) { el.focus(); el.scrollIntoView({ block: 'center', behavior: DB.prefs.motion ? 'smooth' : 'auto' }) }
+    for (var i = 0; i < session.questions.length; i++) {
+      var card = $('q' + i)
+      if (!card.classList.contains('ok')) {
+        var box = card.querySelector('.boxes input')
+        box.focus(); card.scrollIntoView({ block: 'center', behavior: 'smooth' })
+        announce('Soal ' + (i + 1) + ' belum benar')
         return
       }
     }
-    $('ws-count').textContent = 'Semua benar! 🎉'
+    announce('Semua soal di halaman ini sudah benar')
   }
-  function buildPrintKey () {
-    var host = $('print-key')
-    host.innerHTML = '<h2>Kunci jawaban — lembar ' + S.seed + '</h2>'
-    var ol = document.createElement('ol')
-    S.questions.forEach(function (q) {
-      var li = document.createElement('li')
-      li.textContent = (q.operation === 'word' ? q.prompt : q.operands.join(' ' + OPSYM[q.operation] + ' ')) + ' = ' + q.expected
-      ol.appendChild(li)
-    })
-    host.appendChild(ol)
-  }
-
-  // ── completion ───────────────────────────────────────────────────────────
-  function finish () {
-    S.status = 'completed'
-    var first = attempts.filter(function (a) { return B.outcomeOf(a) === 'first' }).length
-    var retry = attempts.filter(function (a) { return B.outcomeOf(a) === 'retry' }).length
-    var assisted = attempts.filter(function (a) { return B.outcomeOf(a) === 'assisted' }).length
-    var skipped = attempts.filter(function (a) { return a.skipped }).length
-    var xp = attempts.reduce(function (s, a) { return s + B.xpFor(a) }, 0)
-    var skillKey = S.operation
-    var p = progressOf(skillKey)
-    var before = p.mastery
-    p.mastery = B.updateMastery(p.mastery, attempts)
-    p.attempts += attempts.length
-    p.firstTryCorrect += first
-    p.assistedCorrect += assisted
-    p.skipped += skipped
-    p.recentWindow = p.recentWindow.concat(attempts.map(B.outcomeOf)).slice(-40)
-    DB.xp += xp
-    DB.session = null
-    save()
-
-    $('done-line').textContent = skillOf(skillKey).name + ' · ' + attempts.length + ' soal'
-    $('done-stats').innerHTML =
-      stat(first, 'Sekali coba') + stat(retry, 'Setelah ulang') + stat(assisted, 'Dibantu') +
-      stat(skipped, 'Dilewati') + stat('+' + xp, 'XP') + stat(p.mastery + '%', 'Mantap (' + (p.mastery - before >= 0 ? '+' : '') + (p.mastery - before) + ')')
-    var badge = ''
-    if (skipped === 0 && first === attempts.length) badge = '🏅 Sempurna — semua benar sekali coba!'
-    else if (B.recommendHarder(p)) badge = '⬆️ Sudah siap tingkat berikutnya!'
-    $('done-badge').innerHTML = badge ? '<span class="badge">' + badge + '</span>' : ''
-    var wrongOnes = attempts.filter(function (a) { return !a.correct }).length
-    $('btn-review').hidden = wrongOnes === 0
-    go('s-done')
-  }
-  function stat (v, l) { return '<div class="stat"><b>' + v + '</b><span>' + l + '</span></div>' }
-
-  // ── progress ─────────────────────────────────────────────────────────────
-  function renderProgress () {
-    var host = $('prog-list')
-    host.innerHTML = '<p class="sub">Total XP: <b>' + DB.xp + '</b></p>'
-    SKILLS.forEach(function (s) {
-      var p = progressOf(s.key)
-      var row = document.createElement('div')
-      row.className = 'card'
-      row.style.marginBottom = '10px'
-      row.innerHTML = '<b>' + s.sym + ' ' + s.name + '</b> — ' + B.masteryLabel(p.mastery) + ' (' + p.mastery + '%)' +
-        '<span class="bar"><i style="width:' + p.mastery + '%"></i></span>' +
-        '<p class="sub" style="margin:6px 0 0">' + p.attempts + ' soal · ' + p.firstTryCorrect + ' sekali coba · ' + p.skipped + ' dilewati</p>'
-      host.appendChild(row)
+  function buildKey (pages) {
+    var host = $('answer-key')
+    host.innerHTML = '<h2>Kunci jawaban</h2>'
+    pages.forEach(function (p) {
+      var st = setState(op, level, p)
+      var s = B.buildSession({ operation: op, difficulty: level, questionCount: PER_PAGE, mode: 'worksheet',
+                               seed: seedFor(op, level, p, st.nonce) })
+      var h = document.createElement('h3'); h.textContent = 'Halaman ' + p
+      var ol = document.createElement('ol')
+      s.questions.forEach(function (q) {
+        var li = document.createElement('li')
+        li.textContent = (q.operation === 'word' ? q.prompt : q.operands.join(' ' + OPSYM[q.operation] + ' ')) + ' = ' + q.expected
+        ol.appendChild(li)
+      })
+      host.appendChild(h); host.appendChild(ol)
     })
   }
+  function printPage () { buildKey([page]); window.print() }
+  function printRange () {
+    var raw = window.prompt('Cetak halaman berapa sampai berapa? Contoh: 1-5', page + '-' + Math.min(PAGES, page + 4))
+    if (!raw) return
+    var m = String(raw).match(/^\s*(\d+)\s*-\s*(\d+)\s*$/)
+    if (!m) { alert('Tulis seperti 1-5 ya.'); return }
+    var a = Math.max(1, Math.min(PAGES, +m[1])), b = Math.max(1, Math.min(PAGES, +m[2]))
+    if (b < a) { var t = a; a = b; b = t }
+    if (b - a > 19) { alert('Maksimal 20 halaman sekali cetak.'); return }
+    // render every page in the range into the sheet, print, then restore
+    var sheet = $('sheet')
+    var keep = sheet.innerHTML, keepPage = page
+    var html = ''
+    for (var p = a; p <= b; p++) { page = p; buildPage(); html += sheet.innerHTML }
+    sheet.innerHTML = html
+    buildKey(rangeArr(a, b))
+    $('print-head').textContent = 'Ayo Berhitung! — ' + opInfo().label + ' · ' + levelLabel() + ' · halaman ' + a + '–' + b
+    window.print()
+    page = keepPage; buildPage(); sheet.innerHTML = sheet.innerHTML || keep
+  }
+  function rangeArr (a, b) { var out = []; for (var i = a; i <= b; i++) out.push(i); return out }
+
+  // ── badges ───────────────────────────────────────────────────────────────
+  var BADGES = [
+    { id: 'first', icon: '⭐', name: 'Soal pertama', test: function (n) { return n >= 1 } },
+    { id: 'ten', icon: '🔟', name: '10 soal benar', test: function (n) { return n >= 10 } },
+    { id: 'page', icon: '📄', name: 'Satu halaman penuh', test: function (n, full) { return full >= 1 } },
+    { id: 'fifty', icon: '🏅', name: '50 soal benar', test: function (n) { return n >= 50 } },
+    { id: 'hundred', icon: '🏆', name: '100 soal benar', test: function (n) { return n >= 100 } },
+    { id: 'fivepages', icon: '📚', name: '5 halaman penuh', test: function (n, full) { return full >= 5 } }
+  ]
+  function fullPages () {
+    var f = 0
+    for (var p = 1; p <= PAGES; p++) {
+      var s = DB.sets[setKey(op, level, p)]
+      if (s && Object.keys(s.solved).length >= PER_PAGE) f++
+    }
+    return f
+  }
+  function openBadges () {
+    var n = solvedCount(), f = fullPages()
+    var host = $('badge-grid')
+    host.innerHTML = ''
+    BADGES.forEach(function (b) {
+      var on = b.test(n, f)
+      var el = document.createElement('div')
+      el.className = 'bdg' + (on ? ' on' : '')
+      el.innerHTML = '<b>' + b.icon + '</b>' + b.name + (on ? '' : ' — belum')
+      host.appendChild(el)
+    })
+    $('modal-badges').setAttribute('open', '')
+    $('btn-badges-close').focus()
+  }
+
+  // ── sound ────────────────────────────────────────────────────────────────
+  var actx = null
+  function chime () {
+    if (!DB.prefs.sound) return
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)()
+      var o = actx.createOscillator(), g = actx.createGain()
+      o.connect(g); g.connect(actx.destination)
+      o.type = 'sine'; o.frequency.value = 880
+      g.gain.setValueAtTime(0.0001, actx.currentTime)
+      g.gain.exponentialRampToValueAtTime(0.08, actx.currentTime + 0.02)
+      g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + 0.18)
+      o.start(); o.stop(actx.currentTime + 0.2)
+    } catch (_) {}
+  }
+
+  function announce (msg) { $('live').textContent = msg }
 
   // ── wiring ───────────────────────────────────────────────────────────────
-  var KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '⌫', '0', '−']
-  KEYS.forEach(function (k) {
-    var b = document.createElement('button')
-    b.type = 'button'; b.textContent = k
-    b.setAttribute('aria-label', k === '⌫' ? 'Hapus' : k === '−' ? 'Tanda minus' : k)
-    b.addEventListener('click', function () {
-      var inp = $('f-input')
-      if (k === '⌫') inp.value = inp.value.slice(0, -1)
-      else if (k === '−') inp.value = inp.value.charAt(0) === '-' ? inp.value.slice(1) : '-' + inp.value
-      else inp.value += k
-      inp.focus()
-    })
-    $('f-keypad').appendChild(b)
-  })
-
-  $('btn-check').addEventListener('click', submit)
-  $('btn-skip').addEventListener('click', skip)
-  $('btn-hint').addEventListener('click', showHint)
-  $('btn-pause').addEventListener('click', function () { checkpoint(); go('s-home') })
-  $('f-input').addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') { e.preventDefault(); if (!busy) submit() }
-  })
-  $('btn-start').addEventListener('click', function () { startSession() })
-  $('btn-continue').addEventListener('click', resumeSession)
-  $('btn-discard').addEventListener('click', function () { DB.session = null; save(); renderHome() })
-  $('btn-again').addEventListener('click', function () { startSession({ seed: null }) })
-  $('btn-review').addEventListener('click', function () { startSession({ seed: null, questionCount: Math.max(5, attempts.filter(function (a) { return !a.correct }).length) }) })
-  $('btn-home').addEventListener('click', function () { go('s-home') })
-  $('btn-ws-done').addEventListener('click', finish)
+  $('btn-new').addEventListener('click', newQuestions)
+  $('btn-repeat').addEventListener('click', repeatPage)
   $('btn-find').addEventListener('click', findWrong)
-  $('btn-repeat').addEventListener('click', function () { startSession({ seed: S.seed, mode: 'worksheet' }) })   // same seed = same page
-  $('btn-new').addEventListener('click', function () { startSession({ seed: null, mode: 'worksheet' }) })
-  $('btn-print').addEventListener('click', function () { buildPrintKey(); window.print() })
-  $('btn-progress').addEventListener('click', function () { go('s-prog') })
-  $('btn-back').addEventListener('click', function () {
-    if (screen === 's-home') { location.href = '../index.html'; return }
-    if (screen === 's-focus' || screen === 's-ws') checkpoint()
-    go('s-home')
-  })
+  $('btn-print-page').addEventListener('click', printPage)
+  $('btn-print-range').addEventListener('click', printRange)
+  $('btn-badges').addEventListener('click', openBadges)
+  $('btn-badges-close').addEventListener('click', function () { $('modal-badges').removeAttribute('open'); $('btn-badges').focus() })
+  $('modal-badges').addEventListener('click', function (e) { if (e.target === this) this.removeAttribute('open') })
   $('btn-sound').addEventListener('click', function () {
     DB.prefs.sound = !DB.prefs.sound; save()
     this.setAttribute('aria-pressed', String(DB.prefs.sound))
     this.textContent = DB.prefs.sound ? '🔊' : '🔇'
   })
-  $('btn-export').addEventListener('click', function () {
-    var blob = new Blob([JSON.stringify(DB, null, 2)], { type: 'application/json' })
-    var a = document.createElement('a')
-    a.href = URL.createObjectURL(blob); a.download = 'ayo-berhitung-data.json'; a.click()
-  })
-  $('btn-reset').addEventListener('click', function () {
-    // destructive, so it is gated behind something a child will not solve by
-    // accident and offers the export first (PRD §10)
-    var a = 7 + Math.floor(Math.random() * 6), b = 8 + Math.floor(Math.random() * 7)
-    var ans = window.prompt('Untuk orang tua: berapa ' + a + ' × ' + b + '? (Data akan dihapus)')
-    if (String(parseInt(ans, 10)) !== String(a * b)) { alert('Jawaban salah — data tidak dihapus.'); return }
-    DB = fresh(); save(); renderHome(); go('s-home')
+  $('pg-prev').addEventListener('click', function () { if (page > 1) { page--; buildPage(); window.scrollTo(0, 0) } })
+  $('pg-next').addEventListener('click', function () { if (page < PAGES) { page++; buildPage(); window.scrollTo(0, 0) } })
+  $('pg-input').addEventListener('change', function () {
+    var n = parseInt(this.value, 10)
+    if (!(n >= 1 && n <= PAGES)) { this.value = String(page); return }
+    page = n; buildPage(); window.scrollTo(0, 0)
   })
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && (screen === 's-focus' || screen === 's-ws')) { checkpoint(); go('s-home') }
+    if (e.key === 'Escape' && $('modal-badges').hasAttribute('open')) $('modal-badges').removeAttribute('open')
   })
-  window.addEventListener('pagehide', checkpoint)
-  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') checkpoint() })
+  window.addEventListener('pagehide', save)
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') save() })
 
-  try {
-    var mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    if (mq.matches) { DB.prefs.motion = false; document.body.dataset.motion = 'off' }
-  } catch (_) {}
+  $('btn-sound').textContent = DB.prefs.sound ? '🔊' : '🔇'
+  $('btn-sound').setAttribute('aria-pressed', String(DB.prefs.sound))
+  $('pg-total').textContent = String(PAGES)
 
-  // expose a tiny surface for the headless gate; nothing here is game logic
+  // a small surface for the headless gate; no game logic lives here
   window.__berhitung = {
-    get db () { return DB }, get session () { return S }, get attempts () { return attempts },
-    go: go, startSession: startSession, submit: submit, skip: skip, screenId: function () { return screen }
+    get db () { return DB }, get session () { return session },
+    get page () { return page }, get op () { return op }, get level () { return level },
+    goPage: function (n) { page = n; buildPage() },
+    setOp: function (v) { op = v; buildPage() },
+    setLevel: function (v) { level = v; buildPage() },
+    solvedCount: solvedCount, newQuestions: newQuestions, repeatPage: repeatPage
   }
 
-  renderHome()
-  go('s-home')
+  buildPage()
 })()
 </script>
 </body>
