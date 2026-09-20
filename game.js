@@ -7,26 +7,14 @@ window.onerror = function(msg, url, line, col, err) {
 // DIFFICULTY CONFIG
 // ================================================================
 const DIFF = {
-  easy:   { rounds: 6,  timer: 20, choices: 3, breatheCycles: 2 },
-  medium: { rounds: 10, timer: 15, choices: 4, breatheCycles: 3 },
-  hard:   { rounds: 15, timer: 10, choices: 6, breatheCycles: 4 }
+  easy:   { rounds: 6,  timer: 20, choices: 3 },
+  medium: { rounds: 10, timer: 15, choices: 4 },
+  hard:   { rounds: 15, timer: 10, choices: 6 }
 }
 
 // ================================================================
 // DATA
 // ================================================================
-const EMOTIONS = [
-  { emoji:'😊',name:'Senang',   color:'#F59E0B',animal:'🦁',tip:'💡 Tunjukkan kesenanganmu dengan senyuman! Ceritakan ke teman.',   scenario:'Kamu dapat hadiah ulang tahun yang kamu impikan!',  scenarios:['Kamu dapat hadiah ulang tahun yang kamu impikan!','Kamu berhasil naik sepeda tanpa jatuh untuk pertama kalinya.','Ibu memasak makanan kesukaanmu untuk makan malam.','Kamu mendapat nilai bagus karena rajin belajar.','Besok liburan dan kamu akan bermain seharian bersama teman.','Kamu menang lomba menggambar di sekolah.','Kakek dan nenek datang berkunjung membawa oleh-oleh.','Kamu berhasil menyelesaikan puzzle yang sulit sendirian.'], bodyCue:'Pipi terasa hangat, ingin melompat-lompat',  safeAction:'Tersenyum dan ceritakan ke teman' },
-  { emoji:'😢',name:'Sedih',    color:'#60A5FA',animal:'🐰',tip:'💡 Tidak apa-apa bersedih. Ceritakan ke Ayah atau Ibu.',           scenario:'Mainan kesayanganmu rusak dan tidak bisa diperbaiki.',scenarios:['Mainan kesayanganmu rusak dan tidak bisa diperbaiki.','Sahabatmu pindah rumah ke kota yang jauh.','Balon kesukaanmu terbang tinggi dan hilang di langit.','Kamu tidak bisa ikut bermain karena sedang sakit.','Hewan peliharaanmu sedang sakit dan lemas.','Es krimmu jatuh ke tanah sebelum sempat dimakan.','Kamu tidak diajak bermain oleh teman-teman.','Gambar kesukaanmu tidak sengaja terkena air dan luntur.'], bodyCue:'Mata terasa perih, tenggorokan sesak',       safeAction:'Ceritakan ke Ayah atau Ibu, tidak apa-apa menangis' },
-  { emoji:'😠',name:'Marah',    color:'#F87171',animal:'🐯',tip:'💡 Kalau marah, tarik napas 3x. Hitung 1-2-3 pelan-pelan.',       scenario:'Temanmu mengambil mainanmu tanpa izin.',            scenarios:['Temanmu mengambil mainanmu tanpa izin.','Gambar yang kamu buat susah payah dicoret orang lain.','Kamu diejek terus-menerus padahal sudah minta berhenti.','Antrianmu diserobot saat menunggu giliran bermain.','Kue milikmu dimakan tanpa bertanya lebih dulu.','Adikmu mencoret buku tulismu tanpa izin.','Kamu dituduh melakukan sesuatu yang tidak kamu lakukan.','Mainan yang kamu pinjamkan dikembalikan dalam keadaan rusak.'], bodyCue:'Wajah terasa panas, tangan mengepal',        safeAction:'Tarik napas 3x, lalu bilang: aku tidak suka itu' },
-  { emoji:'😨',name:'Takut',    color:'#A78BFA',animal:'🐘',tip:'💡 Kalau takut, pegang tangan orang yang kamu sayang.',           scenario:'Kamu sendirian di ruangan gelap.',                  scenarios:['Kamu sendirian di ruangan gelap.','Suara petir menggelegar sangat keras saat hujan.','Kamu tersesat sebentar dan tidak melihat Ibu di keramaian.','Ada anjing besar menggonggong di dekatmu.','Kamu harus tampil bernyanyi di depan banyak orang.','Lampu tiba-tiba mati dan ruangan jadi gelap gulita.','Kamu mendengar suara aneh di malam hari.','Kamu berdiri di tempat yang sangat tinggi dan melihat ke bawah.'], bodyCue:'Jantung berdebar, badan merinding',          safeAction:'Pegang tangan orang yang kamu sayang, nyalakan lampu' },
-  { emoji:'😲',name:'Terkejut', color:'#34D399',animal:'🦊',tip:'💡 Terkejut itu normal! Tarik napas, lalu tenangkan diri.',       scenario:'Teman-temanmu berteriak "Selamat Ulang Tahun!" tiba-tiba.', scenarios:['Teman-temanmu berteriak "Selamat Ulang Tahun!" tiba-tiba.','Balon meletus keras saat kamu tidak menyangka.','Kamu membuka kotak dan menemukan hadiah tak terduga.','Kucingmu tiba-tiba melompat dari balik pintu.','Teman menepuk pundakmu dari belakang secara mendadak.','Buku di rakmu tiba-tiba jatuh berdebum.','Kamu menemukan uang di saku baju yang sudah lama.','Guru memanggil namamu padahal kamu sedang melamun.'], bodyCue:'Napas tertahan sejenak, mata melebar', safeAction:'Tarik napas, tersenyum, bilang terima kasih' },
-  { emoji:'😳',name:'Malu',     color:'#F472B6',animal:'🐸',tip:'💡 Semua orang pernah malu. Itu artinya kamu peduli!',            scenario:'Kamu menjawab salah di depan kelas, teman-teman melihat.',  scenarios:['Kamu menjawab salah di depan kelas, teman-teman melihat.','Kamu terpeleset kecil dan semua orang menoleh ke arahmu.','Namamu salah disebut saat kamu maju ke depan.','Kamu lupa lirik lagu saat bernyanyi di panggung.','Bajumu terkena noda saat sedang berkumpul dengan teman.','Perutmu berbunyi keras saat suasana sedang hening.','Kamu tersandung di depan orang banyak.','Kamu salah memanggil nama temanmu.'], bodyCue:'Pipi memerah, ingin bersembunyi',     safeAction:'Tarik napas dalam, ingat: semua orang pernah salah' },
-  { emoji:'🥰',name:'Bahagia',  color:'#FCD34D',animal:'🐼',tip:'💡 Bagikan kebahagiaanmu! Peluk orang yang kamu sayang.',         scenario:'Kamu bermain bersama sahabat terbaik sepanjang hari.',      scenarios:['Kamu bermain bersama sahabat terbaik sepanjang hari.','Seluruh keluarga berkumpul dan tertawa bersama di rumah.','Kamu memeluk Ibu erat-erat setelah lama tidak bertemu.','Kamu berhasil membantu teman dan ia mengucapkan terima kasih.','Kamu piknik ke taman dan bermain sepuasnya di rumput.','Kamu meniup lilin ulang tahun dikelilingi keluarga.','Kamu dan sahabat membuat istana pasir di pantai.','Kamu memeluk boneka kesayangan sebelum tidur.'], bodyCue:'Badan terasa ringan, ingin bernyanyi',safeAction:'Peluk orang yang kamu sayang, ceritakan kebahagiaan' },
-  { emoji:'😑',name:'Bosan',    color:'#94A3B8',animal:'🐨',tip:'💡 Kalau bosan, coba aktivitas baru. Ajak teman bermain!',        scenario:'Tidak ada yang bisa dilakukan di rumah, semua terasa membosankan.',scenarios:['Tidak ada yang bisa dilakukan di rumah, semua terasa membosankan.','Hujan turun seharian sehingga kamu tidak bisa keluar bermain.','Kamu menunggu giliran sangat lama dan tidak ada kegiatan.','Kamu sudah menonton semua acara dan tidak tahu harus apa lagi.','Perjalanan di mobil terasa panjang dan tidak ada yang seru.','Kamu harus menunggu giliran ke dokter cukup lama.','Hari hujan dan tidak ada teman yang bisa diajak main.','Kamu sudah selesai semua tugas tapi belum boleh keluar.'], bodyCue:'Badan lesu, sulit fokus',          safeAction:'Coba aktivitas baru: gambar, main lego, atau ajak teman' },
-  { emoji:'😤',name:'Kesal',    color:'#FB923C',animal:'🐺',tip:'💡 Kalau kesal, ceritakan perasaanmu dengan kata-kata.',          scenario:'Adikmu menghancurkan bangunan balok yang kamu buat lama.',  scenarios:['Adikmu menghancurkan bangunan balok yang kamu buat lama.','Sepatumu susah dipakai padahal kamu sudah terburu-buru.','Puzzle yang kamu susun berantakan tersenggol orang lain.','Kamu berkali-kali mencoba tetapi belum juga berhasil.','Temanmu terus mengganggu saat kamu ingin fokus bermain.','Sepatumu tidak mau terpasang padahal kamu terburu-buru.','Menara balokmu roboh saat hampir selesai.','Kamu berkali-kali kalah dalam permainan yang sama.'], bodyCue:'Rahang mengeras, ingin berteriak',   safeAction:'Ceritakan perasaanmu dengan kata-kata, jangan memukul' },
-  { emoji:'🤩',name:'Kagum',    color:'#22D3EE',animal:'🦄',tip:'💡 Rasa kagum itu indah! Eksplorasi hal baru setiap hari.',       scenario:'Kamu melihat pelangi besar setelah hujan deras.',           scenarios:['Kamu melihat pelangi besar setelah hujan deras.','Kamu menyaksikan langit malam penuh bintang berkelip.','Kamu melihat air terjun tinggi yang deras dan megah.','Kamu menonton pesawat besar lepas landas ke angkasa.','Kamu melihat kupu-kupu berwarna-warni hinggap di bunga.','Kamu menonton roket meluncur tinggi ke angkasa.','Kamu melihat ikan warna-warni berenang di akuarium besar.','Kamu memandang gunung yang puncaknya tertutup awan.'], bodyCue:'Mata berbinar, mulut terbuka kagum',  safeAction:'Tunjukkan ke orang lain, tanya kenapa bisa terjadi' }
-]
 
 // emotion name → assets/db/faces sprite id (illustrated expression faces, A-356).
 // Hand-verified from the faces montage; used by g1 Aku Merasa + g5 Cocokkan Emosi.
@@ -52,23 +40,6 @@ function decoPaint(){ try{ if(!window.UISprites) return;
   });
 }catch(e){} }
 if(typeof document!=='undefined'){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',decoPaint); else decoPaint(); }
-// g5 match cards from the illustrated db sprites (hewan→creatures+name, buah→
-// objects+name via DBLabeled; kendaraan→distinct vehicle sprites). [] if unavailable.
-function g5DbCards(mode,k){
-  try{
-    // any labeled group (hewan/buah/makanan/benda/kendaraan/sains) → sprite + name
-    if(window.DBLabeled && DBLabeled.groups().indexOf(mode)>=0){
-      const pool=DBLabeled.all().filter(x=>x.group===mode).sort(()=>Math.random()-0.5).slice(0,k);
-      return pool.map(x=>({id:'db-'+x.id,dbsrc:x.src,label:x.name}));
-    }
-    // kendaraan without labels → distinct vehicle sprites (visual match)
-    if(mode==='kendaraan' && window.DBSprites){
-      const srcs=DBSprites.pickN('vehicles',k);
-      return srcs.map((s,i)=>({id:'veh-'+i,dbsrc:s,label:''}));
-    }
-  }catch(e){}
-  return [];
-}
 
 const ANIMAL_LETTERS = [
   {animal:'🐓',word:'AYAM',      letter:'A',num:1, hint:'Unggas yang berkokok saat matahari terbit setiap pagi'},
@@ -359,18 +330,14 @@ const POKEMON_G4 = [
 const ALL_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 const GAME_META = {
-  1:{icon:'🎭',name:'Aku Merasa...'},
-  2:{icon:'🌬️',name:'Napas Pelangi'},
   3:{icon:'🔤',name:'Huruf Hutan'},
   4:{icon:'🔢',name:'Hitung Binatang'},
-  5:{icon:'🃏',name:'Cocokkan Emosi'},
   6:{icon:'🏎️',name:'Petualangan Mobil',iconImg:'assets/car and vehicle/racecar-icon.svg'},
   7:{icon:'🖼️',name:'Tebak Gambar'},
   8:{icon:'🔡',name:'Susun Kata'},
   9:{icon:'✍️',name:'Jejak Huruf'},
   10:{icon:'⚡',name:'Pertarungan Pokemon'},
   11:{icon:'🔬',name:'Kuis Sains'},
-  12:{icon:'🌑',name:'Tebak Bayangan'},
   13:{icon:'🔥',name:'Evolusi Math'},
   14:{icon:'🏁',name:'Balapan Kereta'},
   15:{icon:'🚂',name:'Lokomotif Pemberani',iconImg:'assets/train/linus-casey.webp'},
@@ -549,11 +516,8 @@ const ACHIEVEMENTS = {
   ten_stars:       {icon:'🌟', name:'10 Bintang!',       desc:'Kumpulkan 10 bintang total'},
   fifty_stars:     {icon:'🏆', name:'50 Bintang! Legenda!', desc:'Kumpulkan 50 bintang'},
   hundred_stars:   {icon:'💎', name:'100 Bintang! Juara!', desc:'Kumpulkan 100 bintang'},
-  perfect_emotion: {icon:'🎭', name:'Master Emosi!',     desc:'Selesaikan Aku Merasa'},
-  calm_breath:     {icon:'🌈', name:'Napas Pelangi!',    desc:'Selesaikan Napas Pelangi'},
   letter_master:   {icon:'📚', name:'Master Huruf!',     desc:'Selesaikan Huruf Hutan'},
   count_master:    {icon:'🔢', name:'Master Hitung!',    desc:'Selesaikan Hitung Binatang'},
-  memory_master:   {icon:'🃏', name:'Master Memori!',    desc:'Selesaikan Cocokkan Emosi'},
   driver_master:   {icon:'🚗', name:'Pembalap Handal!',  desc:'Selesaikan Petualangan Mobil'},
   picture_master:  {icon:'🖼️', name:'Mata Elang!',       desc:'Selesaikan Tebak Gambar'},
   word_master:     {icon:'🔡', name:'Penulis Muda!',     desc:'Selesaikan Susun Kata'},
@@ -1178,31 +1142,6 @@ function initFloatingStars() {
     container.appendChild(star)
   }
 }
-function initHeartWorld() {
-  const c = document.getElementById('world-hearts'); if(!c)return; c.innerHTML=''
-  const hearts=['❤️','💖','💕','💗','🩷','💓']
-  function spawnHeart(i) {
-    const s=document.createElement('span')
-    s.textContent=hearts[Math.floor(Math.random()*hearts.length)]
-    s.style.cssText=`left:${5+i*11}%;animation-duration:${6+Math.random()*6}s;animation-delay:${Math.random()*5}s;font-size:${16+Math.random()*16}px;cursor:pointer;pointer-events:auto;`
-    s.addEventListener('click', () => {
-      if(s.classList.contains('popping')) return
-      s.classList.add('popping')
-      playCorrect()
-      setTimeout(() => {
-        s.remove()
-        setTimeout(() => { if(c.isConnected) spawnHeart(i) }, 1500)
-      }, 350)
-    })
-    c.appendChild(s)
-  }
-  for(let i=0;i<8;i++) spawnHeart(i)
-}
-function initCloudWorld() {
-  const c = document.getElementById('world-clouds'); if(!c)return; c.innerHTML=''
-  const clouds=[{w:120,h:40,t:'18%',dur:'18s',delay:'0s'},{w:90,h:30,t:'35%',dur:'24s',delay:'-8s'},{w:70,h:25,t:'55%',dur:'20s',delay:'-14s'}]
-  clouds.forEach(cl=>{const d=document.createElement('div');d.className='cloud';d.style.cssText=`width:${cl.w}px;height:${cl.h}px;top:${cl.t};animation-duration:${cl.dur};animation-delay:${cl.delay};`;d.style.left='-130px';c.appendChild(d)})
-}
 function initJungleWorld() {
   const c = document.getElementById('world-jungle'); if(!c)return; c.innerHTML=''
   const letters='ABCDEFGHIJKLMNOP'.split('')
@@ -1213,12 +1152,6 @@ function initSavannaWorld() {
   const c=document.querySelector('.world-savanna'); if(!c)return
   c.querySelectorAll('.shimmer-dot').forEach(e=>e.remove())
   for(let i=0;i<8;i++){const d=document.createElement('div');d.className='shimmer-dot';d.style.cssText=`left:${Math.random()*90}%;top:${30+Math.random()*40}%;animation-duration:${1+Math.random()*2}s;animation-delay:${Math.random()*2}s;`;c.appendChild(d)}
-}
-function initDreamWorld() {
-  const c=document.getElementById('world-dream'); if(!c)return; c.innerHTML=''
-  for(let i=0;i<12;i++){const s=document.createElement('span');s.className='star-twinkle';s.textContent=['✨','⭐','🌟','💫'][i%4];s.style.cssText=`left:${Math.random()*90}%;top:${Math.random()*80}%;animation-duration:${1.5+Math.random()*2.5}s;animation-delay:${Math.random()*3}s;`;c.appendChild(s)}
-  const colors=['rgba(167,139,250,0.25)','rgba(56,189,248,0.2)','rgba(253,164,175,0.2)']
-  for(let i=0;i<3;i++){const o=document.createElement('div');o.className='glow-orb';const sz=60+Math.random()*60;o.style.cssText=`width:${sz}px;height:${sz}px;background:${colors[i]};left:${10+i*30}%;top:${20+i*20}%;animation-duration:${4+Math.random()*3}s;animation-delay:${Math.random()*2}s;`;c.appendChild(o)}
 }
 
 // ================================================================
@@ -1257,18 +1190,14 @@ function showScreen(id) {
 
 // Game metadata with educational descriptions
 const GAME_INFO = {
-  1:  { desc:'Kenali 10 emosi dasar: senang, sedih, marah, dan lebih banyak lagi!', grad:'rgba(244,63,94,0.35)', glow:'rgba(244,63,94,0.5)' },
-  2:  { desc:'Latih pernapasan dalam dengan panduan animasi pelangi yang menenangkan.', grad:'rgba(139,92,246,0.35)', glow:'rgba(139,92,246,0.5)' },
   3:  { desc:'Pelajari huruf A-Z dengan cara yang seru bersama hewan-hewan hutan!', grad:'rgba(20,184,166,0.35)', glow:'rgba(20,184,166,0.5)' },
   4:  { desc:'Belajar berhitung 1-20 dengan memilih jumlah binatang yang tepat!', grad:'rgba(245,158,11,0.35)', glow:'rgba(245,158,11,0.5)' },
-  5:  { desc:'Cocokkan kartu emosi dan latih ingatan serta konsentrasimu!', grad:'rgba(167,139,250,0.35)', glow:'rgba(167,139,250,0.5)' },
   6:  { desc:'Balap mobil sambil kumpulkan huruf untuk menyusun kata di jalan!', grad:'rgba(14,165,233,0.35)', glow:'rgba(14,165,233,0.5)' },
   7:  { desc:'Lihat gambar dan pilih kata yang tepat — atau sebaliknya!', grad:'rgba(45,212,191,0.35)', glow:'rgba(45,212,191,0.5)' },
   8:  { desc:'Susun huruf-huruf acak menjadi kata yang benar dari gambar!', grad:'rgba(244,63,94,0.35)', glow:'rgba(244,63,94,0.5)' },
   9:  { desc:'Ikuti titik panduan untuk melatih menulis huruf dengan benar!', grad:'rgba(132,204,22,0.35)', glow:'rgba(132,204,22,0.5)' },
   10: { desc:'Kalahkan Pokemon musuh dengan menjawab soal matematika!', grad:'rgba(255,203,5,0.35)', glow:'rgba(255,203,5,0.5)' },
   11: { desc:'Uji pengetahuan sains — tumbuhan, hewan, dan alam semesta!', grad:'rgba(56,189,248,0.35)', glow:'rgba(56,189,248,0.5)' },
-  12: { desc:'Tebak nama hewan dari siluet bayangannya yang tersembunyi!', grad:'rgba(139,92,246,0.35)', glow:'rgba(139,92,246,0.5)' },
   13: { desc:'Kalahkan wild Pokemon dengan menjawab soal matematika — dan evolusi!', grad:'rgba(249,115,22,0.35)', glow:'rgba(249,115,22,0.5)' },
   14: { desc:'Balapan kereta seru! Pilih jalur yang tepat dan jawab soal untuk menang!', grad:'rgba(59,130,246,0.35)', glow:'rgba(59,130,246,0.5)' },
   15: { desc:'Kumpulkan huruf yang beterbangan untuk melatih membaca bersama kereta!', grad:'rgba(16,185,129,0.35)', glow:'rgba(16,185,129,0.5)' },
@@ -1281,6 +1210,50 @@ const GAME_INFO = {
   22: { desc:'Tangkap permen jatuh dan jawab soal untuk skor tinggi!', grad:'rgba(139,92,246,0.35)', glow:'rgba(139,92,246,0.5)' },
   23: { desc:'Lari, lompat, hindari rintangan, dan jawab soal bersama Pokemon favoritmu!', grad:'rgba(239,68,68,0.35)', glow:'rgba(239,68,68,0.5)' },
   24: { desc:'Selami lautan bersama Pokemon air! Hindari stalaktit dan stalagmit gua laut.', grad:'rgba(0,119,182,0.35)', glow:'rgba(0,180,216,0.5)' }
+}
+
+// ── Retired games ────────────────────────────────────────────────────────────
+// 2026-09-20: games 1 (Aku Merasa), 2 (Napas Pelangi), 5 (Cocokkan Emosi) and
+// 12 (Tebak Bayangan) were removed while their replacement mechanics are built.
+// Their saved rows survive in three stores keyed by game id, where they would go
+// on inflating star totals and the played-games tally for a game the child can no
+// longer open. This prunes all three.
+//
+// It runs on every profile load rather than once behind a flag, because cloud
+// sync merges a remote copy of `progress` back in after boot and could otherwise
+// reintroduce the rows. It writes only when something actually changed.
+//
+// Achievements are deliberately NOT touched: a badge a child already earned stays
+// earned, even though the game behind it is gone.
+const RETIRED_GAMES = [1, 2, 5, 12]
+function pruneRetiredGameSaves() {
+  let pruned = 0
+  try {
+    const prog = loadProgress()
+    let progChanged = false
+    for (const n of RETIRED_GAMES) {
+      if (prog['g' + n] !== undefined) { delete prog['g' + n]; progChanged = true; pruned++ }
+    }
+    if (progChanged) saveProgress(prog)
+  } catch (_) {}
+  try {
+    const bs = JSON.parse(localStorage.getItem(pkey('best-stars')) || '{}')
+    let bsChanged = false
+    for (const n of RETIRED_GAMES) {
+      if (bs[n] !== undefined) { delete bs[n]; bsChanged = true; pruned++ }
+    }
+    if (bsChanged) localStorage.setItem(pkey('best-stars'), JSON.stringify(bs))
+  } catch (_) {}
+  try {
+    const played = JSON.parse(localStorage.getItem('dunia-emosi-played-games') || '{}')
+    let playedChanged = false
+    for (const n of RETIRED_GAMES) {
+      if (played[n] !== undefined) { delete played[n]; playedChanged = true; pruned++ }
+    }
+    if (playedChanged) localStorage.setItem('dunia-emosi-played-games', JSON.stringify(played))
+  } catch (_) {}
+  if (pruned) console.debug('[retired] pruned', pruned, 'saved rows for games', RETIRED_GAMES.join(', '))
+  return pruned
 }
 
 // Progress storage
@@ -1881,7 +1854,10 @@ function startGameWithLevel(levelNum) {
   if (!standaloneGames.includes(state.currentGame)) {
     showScreen('screen-game' + state.currentGame)
   }
-  const inits = [null,initGame1,initGame2,initGame3,initGame4,initGame5,initGame6,initGame7,initGame8,initGame9,initGame10,initGame11,initGame12,initGame13,initGame14,initGame15,initGame16,initGame17,initGame18,initGame19,initGame20,initGame21,initGame22,initGame23,initGame24]
+  // Games 1, 2, 5 and 12 were retired on 2026-09-20 (owner is building replacement
+  // mechanics). Their slots stay null so every other game keeps its number, and so
+  // saved progress for games 3, 4, 6.. is not silently re-pointed at a neighbour.
+  const inits = [null,null,null,initGame3,initGame4,null,initGame6,initGame7,initGame8,initGame9,initGame10,initGame11,null,initGame13,initGame14,initGame15,initGame16,initGame17,initGame18,initGame19,initGame20,initGame21,initGame22,initGame23,initGame24]
   if (inits[state.currentGame]) inits[state.currentGame]()
 }
 
@@ -2033,9 +2009,12 @@ function confirmNames() {
   updateStreak()
   state.currentPlayer=0
   _seedKodokProgress() // one-time 25% city preset for frog avatar
+  pruneRetiredGameSaves() // drop saved rows for games 1/2/5/12 (retired 2026-09-20)
   buildMenuHeader()
   showScreen('screen-menu')
-  _syncFromCloud() // pull shared cloud progress in background (non-blocking)
+  // pull shared cloud progress in background (non-blocking), then re-prune: the
+  // merge can bring a retired game's rows back from another device.
+  _syncFromCloud().then(() => { try { pruneRetiredGameSaves() } catch (_) {} })
 }
 function saveStars() {
   try {
@@ -2272,17 +2251,14 @@ function checkAchievements(context) {
   if(totalStars>=10) checkAchievement('ten_stars')
   if(totalStars>=50) checkAchievement('fifty_stars')
   if(totalStars>=100) checkAchievement('hundred_stars')
-  if(context==='perfect_g1') checkAchievement('perfect_emotion')
-  if(context==='done_g2') checkAchievement('calm_breath')
   if(context==='perfect_g3') checkAchievement('letter_master')
   if(context==='perfect_g4') checkAchievement('count_master')
-  if(context==='done_g5') checkAchievement('memory_master')
   if(getStreakCount()>=3) checkAchievement('streak3')
 }
 function showAchievement(key) {
   const ach=ACHIEVEMENTS[key]; if(!ach)return
   const toast=document.getElementById('achievement-toast')
-  const BADGE_MAP={first_star:'badge-first-win.webp',perfect_emotion:'badge-perfect.webp',hard_mode:'badge-perfect.webp',memory_master:'badge-pokemon-master.webp',letter_master:'badge-reader.webp',word_master:'badge-reader.webp',streak3:'badge-streak-7.webp'}
+  const BADGE_MAP={first_star:'badge-first-win.webp',hard_mode:'badge-perfect.webp',letter_master:'badge-reader.webp',word_master:'badge-reader.webp',streak3:'badge-streak-7.webp'}
   const badgeFile=BADGE_MAP[key]
   const iconEl=document.getElementById('at-icon')
   if(badgeFile){iconEl.innerHTML=`<img src="assets/${badgeFile}" style="width:36px;height:36px;object-fit:contain" onerror="this.outerHTML='${ach.icon}'">`}
@@ -2478,7 +2454,7 @@ function showResult(mascot, title, msg) {
 
   // SECTION 5: deferred achievement checks
   try {
-    const gameAchMap = {1:'perfect_emotion',2:'calm_breath',3:'letter_master',4:'count_master',5:'memory_master',6:'driver_master',7:'picture_master',8:'word_master',9:'trace_master'}
+    const gameAchMap = {3:'letter_master',4:'count_master',6:'driver_master',7:'picture_master',8:'word_master',9:'trace_master'}
     setTimeout(() => {
       try {
         if (gameAchMap[state.currentGame]) checkAchievement(gameAchMap[state.currentGame])
@@ -2564,7 +2540,7 @@ function _endGameMain(stars) {
     state.players[state.currentPlayer] = state.players[state.currentPlayer] || {name:'Pemain',animal:'🦁',stars:0,ageTier:'tumbuh'}
   }
   // Normalize raw stars to 5-star scale via unified GameScoring engine
-  const maxRounds = g10State?.totalRounds || g11State?.total || g12State?.total || 5
+  const maxRounds = g10State?.totalRounds || g11State?.total || 5
   const normalizedStars = GameScoring.calc({ correct: stars || 0, total: maxRounds })
   state.maxPossibleStars = 5
   state.gameStars[state.currentPlayer] = normalizedStars
@@ -2595,7 +2571,7 @@ function _endGameFallback(stars, errMsg) {
   try {
     const maxRounds = (typeof g10State !== 'undefined' && g10State?.totalRounds)
                    || (typeof g11State !== 'undefined' && g11State?.total)
-                   || (typeof g12State !== 'undefined' && g12State?.total) || 5
+                   || 5
     if (typeof GameScoring !== 'undefined') {
       normalizedStars = GameScoring.calc({ correct: stars || 0, total: maxRounds })
     } else {
@@ -3069,221 +3045,6 @@ function startAmbient(type){
 }
 
 // ================================================================
-// GAME 1: AKU MERASA
-// ================================================================
-let g1State={}
-function initGame1(){
-  initHeartWorld()
-  const diff=DIFF[state.selectedLevel]
-  g1State={round:0,maxRound:diff.rounds,choices:diff.choices,correct:0,answered:false}
-  state.currentPlayer=0; updateGameStarDisplay(); buildDots('g1-dots',diff.rounds,0); nextG1Round()
-}
-function nextG1Round(){
-  const totalRounds=state.mode==='duo'?g1State.maxRound*2:g1State.maxRound
-  if(g1State.round>=totalRounds){const perfect=g1State.correct>=g1State.maxRound;if(perfect)checkAchievements('perfect_g1');showResult('🎭','Emosi Berhasil!','Kamu mengenal banyak emosi sekarang! 🌟');return}
-  if(state.mode==='duo'&&g1State.round===g1State.maxRound){state.currentPlayer=1;g1State.correct=0;updateGameStarDisplay();showFeedback(true,0,`Giliran ${state.players[1].name}! 🎮`,nextG1Round);return}
-  g1State.answered=false; document.getElementById('g1-tip').style.display='none'
-  const roundInSet=g1State.round%g1State.maxRound; buildDots('g1-dots',g1State.maxRound,roundInSet)
-  const correct=pickBag('g1',EMOTIONS)||EMOTIONS[Math.floor(Math.random()*EMOTIONS.length)]
-  const shuffled=[...EMOTIONS].sort(()=>Math.random()-0.5),numChoices=g1State.choices
-  // Show scenario context for medium/hard levels — rotate through the emotion's scenarios (no repeat)
-  const scenEl=document.getElementById('g1-scenario')
-  if(scenEl){
-    const lv=state.selectedLevelNum||1
-    var _scen=(correct.scenarios&&correct.scenarios.length)?pickBag('g1s-'+correct.name,correct.scenarios):correct.scenario
-    if(lv>=6 && _scen){ scenEl.style.display='block'; scenEl.textContent='📖 '+_scen }
-    else { scenEl.style.display='none' }
-  }
-  const pool=shuffled.slice(0,numChoices).sort(()=>Math.random()-0.5)
-  if(!pool.find(e=>e.name===correct.name))pool[0]=correct
-  const choices=pool.sort(()=>Math.random()-0.5)
-  const moodColor=correct.color||'#F43F5E'
-  // v54.9 — Per-emotion expressive class lets the animal PERFORM the emotion
-  // (cry-droop for sedih, jump-rotate for senang, etc.) so kids learn body-language
-  // association by mirroring instead of just labeling.
-  const _emoClass = 'g1-emo-' + (correct.name||'').toLowerCase()
-  // db/faces illustrated expression in the bubble (owner: wire faces into emotion
-  // games); falls back to the emoji if the sprite is unavailable.
-  const _faceSrc = emoFaceSrc(correct.name)
-  const _bubble = _faceSrc
-    ? `<img class="g1-emot-bubble" src="${_faceSrc}" alt="" loading="lazy" decoding="async" style="object-fit:contain" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'g1-emot-bubble',textContent:'${correct.emoji}'}))">`
-    : `<span class="g1-emot-bubble">${correct.emoji}</span>`
-  const _aniSrc=emoAnimalSrc(correct.animal)
-  const _aniInner=_aniSrc
-    ? `<img src="${_aniSrc}" alt="" decoding="async" style="width:1em;height:1em;object-fit:contain;display:inline-block;vertical-align:middle" onerror="this.replaceWith(document.createTextNode('${correct.animal}'))">`
-    : correct.animal
-  document.getElementById('g1-animal').innerHTML=`<span class="g1-char ${_emoClass}" style="filter:drop-shadow(0 0 28px ${moodColor}99) drop-shadow(0 8px 16px rgba(0,0,0,0.18));">${_aniInner}</span>${_bubble}`
-  document.getElementById('g1-progress-bar').style.width=((roundInSet/g1State.maxRound)*100)+'%'
-  const choicesEl=document.getElementById('g1-choices')
-  choicesEl.style.gridTemplateColumns=numChoices<=3?'1fr 1fr 1fr':(numChoices<=4?'1fr 1fr':'1fr 1fr 1fr')
-  if(numChoices===6)choicesEl.style.gridTemplateColumns='1fr 1fr 1fr'
-  choicesEl.innerHTML=''
-  choices.forEach(em=>{
-    const btn=document.createElement('button'); btn.className='g1-choice-btn'
-    const _cfSrc=emoFaceSrc(em.name)
-    const _cf=_cfSrc?`<img src="${_cfSrc}" alt="" decoding="async" style="width:1em;height:1em;object-fit:contain;vertical-align:middle" onerror="this.replaceWith(document.createTextNode('${em.emoji}'))">`:em.emoji
-    btn.innerHTML=`<span class="choice-emoji">${_cf}</span><span class="choice-label">${em.name}</span>`
-    btn.onclick=()=>{
-      if(g1State.answered)return; g1State.answered=true
-      const isCorrect=em.name===correct.name
-      choicesEl.querySelectorAll('.g1-choice-btn').forEach(b=>{b.style.pointerEvents='none';if(b.querySelector('.choice-label').textContent===correct.name){b.classList.add('correct');if(!isCorrect)spawnCorrectCardJuice(b,{burst:false})}})
-      if(!isCorrect){
-        btn.classList.add('wrong');spawnWrongShake(btn);quizStreakReset();playWrong();flashScreen('red')
-        const tipEl=document.getElementById('g1-tip'); tipEl.style.display='block'
-        tipEl.innerHTML=`<span class="tip-icon">${correct.emoji}</span><div class="tip-text"><b>${correct.name}:</b> ${correct.scenario||correct.tip}<br><span style="font-size:12px;opacity:0.75">Tubuh: ${correct.bodyCue||''}</span></div>`
-        g1State.round++; setTimeout(nextG1Round,1800)
-      } else {
-        playCorrect();spawnCorrectCardJuice(btn);quizStreakHit(btn);addStars(1,btn);flashScreen('green');g1State.correct++
-        const tipEl=document.getElementById('g1-tip'); tipEl.style.display='block'
-        tipEl.innerHTML=`<span class="tip-icon">${correct.animal}</span><div class="tip-text">${correct.tip}<br><span style="font-size:12px;opacity:0.75">👍 Aksi: ${correct.safeAction||''}</span></div>`
-        g1State.round++; setTimeout(nextG1Round,2400)
-      }
-    }
-    choicesEl.appendChild(btn)
-  })
-  if(state.mode==='duo')document.getElementById('g1-progress').textContent=`${state.players[state.currentPlayer].name}`
-  else document.getElementById('g1-progress').textContent=''
-}
-
-// ================================================================
-// GAME 2: NAPAS PELANGI
-// ================================================================
-const BREATHE_BOX=[
-  {name:'Hirup... 🌬️',   sub:'Tarik napas pelan-pelan...',    dur:4,scaleTarget:1.55,color:'#A78BFA'},
-  {name:'Tahan! ⏸️',     sub:'Tahan napasmu sebentar...',     dur:4,scaleTarget:1.55,color:'#8B5CF6'},
-  {name:'Hembuskan! ☁️', sub:'Keluarkan napas pelan-pelan...',dur:4,scaleTarget:1.0, color:'#14B8A6'}
-]
-const BREATHE_ADVANCED=[
-  {name:'Hirup... 🌬️',   sub:'Tarik napas pelan-pelan...',   dur:4,scaleTarget:1.55,color:'#A78BFA'},
-  {name:'Tahan! ⏸️',     sub:'Tahan napasmu...',             dur:6,scaleTarget:1.55,color:'#8B5CF6'},
-  {name:'Hembuskan! ☁️', sub:'Keluarkan napas perlahan...',  dur:8,scaleTarget:1.0, color:'#14B8A6'}
-]
-let g2Cycle=0,g2PhaseIdx=0,g2MaxCycles=3
-function initGame2(){
-  initCloudWorld(); clearTimers()
-  const diff=DIFF[state.selectedLevel]; g2MaxCycles=diff.breatheCycles; g2Cycle=0; g2PhaseIdx=0
-  document.getElementById('g2-instruction').textContent='Siap Bernapas?'
-  document.getElementById('g2-timer').textContent='4'
-  document.getElementById('g2-start-btn').style.display='flex'
-  document.getElementById('g2-mascot').textContent=state.players[state.currentPlayer].animal
-  document.getElementById('g2-player-icon').textContent=state.players[state.currentPlayer].animal
-  document.getElementById('g2-stars').textContent='⭐ 0'
-  const cyclesEl=document.getElementById('g2-cycles'); cyclesEl.innerHTML=''
-  for(let i=0;i<g2MaxCycles;i++){const d=document.createElement('div');d.className='cycle-dot';d.id='cd'+i;cyclesEl.appendChild(d)}
-  setCircleScale(1.0,'#A78BFA')
-}
-function setCircleScale(scale,color){
-  document.getElementById('g2-ring1').style.transform=`scale(${scale})`
-  document.getElementById('g2-ring2').style.transform=`scale(${scale})`
-  document.getElementById('g2-ring1').style.background=`radial-gradient(circle,${color}55,${color}22)`
-  document.getElementById('g2-ring2').style.background=`radial-gradient(circle,${color}99,${color}44)`
-  document.getElementById('g2-mascot').style.transform=`scale(${0.85+scale*0.35})`
-  document.getElementById('g2-ring1').style.boxShadow=`0 0 ${40*scale}px ${color}60`
-}
-function g2Speak(text){
-  if(!window.speechSynthesis) return
-  speechSynthesis.cancel()
-  const u=new SpeechSynthesisUtterance(text)
-  u.lang='id-ID'; u.rate=0.85; u.pitch=1.1; u.volume=0.9
-  speechSynthesis.speak(u)
-}
-function startBreathing(){document.getElementById('g2-start-btn').style.display='none';g2Cycle=0;g2PhaseIdx=0;runBreathePhase()}
-// v54.9 — Mock biofeedback card (cortisol-regulation evidence-base: kids who believe
-// their breathing "worked" engage deeper next time; the numbers are GENERATED, plausible,
-// and stable across the session so the same kid always sees consistent improvement).
-function g2ShowBiofeedbackCard(onDone){
-  const before = { hr: 80 + Math.floor(Math.random()*8), stress: 6 + Math.floor(Math.random()*2) }
-  // After-numbers always show improvement (the WHOLE POINT is therapeutic perception).
-  const after  = { hr: before.hr - (8 + Math.floor(Math.random()*6)), stress: Math.max(2, before.stress - (3 + Math.floor(Math.random()*2))) }
-  const card = document.createElement('div')
-  card.className = 'g2-bio-card'
-  card.innerHTML = `
-    <h3>🫀 Detak Jantung & Stres</h3>
-    <div class="g2-bio-row">
-      <span class="g2-bio-icon">🫀</span>
-      <span class="g2-bio-meta">Detak jantung</span>
-      <span class="g2-bio-num bad">${before.hr} bpm</span>
-      <span class="g2-bio-arrow">→</span>
-      <span class="g2-bio-num">${after.hr} bpm</span>
-    </div>
-    <div class="g2-bio-row">
-      <span class="g2-bio-icon">😌</span>
-      <span class="g2-bio-meta">Tingkat stres</span>
-      <span class="g2-bio-num bad">${before.stress}/10</span>
-      <span class="g2-bio-arrow">→</span>
-      <span class="g2-bio-num">${after.stress}/10</span>
-    </div>
-    <button class="g2-bio-close">Selesai ✨</button>
-  `
-  document.body.appendChild(card)
-  card.querySelector('.g2-bio-close').onclick = () => { card.remove(); if(onDone) onDone() }
-}
-// v54.9 — Particle drift on inhale/exhale. Inhale: particles fly IN toward the ring
-// center (kid "pulls in" calm air). Exhale: particles drift OUT (kid "releases" tension).
-function g2SpawnBreathParticles(phase){
-  const ring = document.getElementById('g2-ring1')
-  if(!ring) return
-  const r = ring.getBoundingClientRect()
-  const cx = r.left + r.width/2, cy = r.top + r.height/2
-  const isExhale = phase === 2
-  for(let i=0; i<6; i++){
-    const p = document.createElement('span')
-    p.className = 'g2-breath-part' + (isExhale ? ' exhale' : '')
-    p.style.left = (cx-5) + 'px'; p.style.top = (cy-5) + 'px'
-    const ang = (Math.PI*2 / 6) * i + Math.random()*0.5
-    const dist = 80 + Math.random()*60
-    p.style.setProperty('--dx', Math.cos(ang) * dist + 'px')
-    p.style.setProperty('--dy', Math.sin(ang) * dist + 'px')
-    document.body.appendChild(p)
-    setTimeout(()=>p.remove(), 1500)
-  }
-}
-function runBreathePhase(){
-  if(g2Cycle>=g2MaxCycles){
-    try{playCorrect()}catch(_){}
-    addStars(3); setCircleScale(1.0,'#14B8A6')
-    document.getElementById('g2-instruction').textContent='Luar biasa! 🌟'
-    document.getElementById('g2-sub').textContent='Napasmu sangat bagus!'
-    document.getElementById('g2-timer').textContent='😊'
-    checkAchievements('done_g2')
-    const doneMsg=state.mode==='duo'?'Kalian bernapas bersama dengan indah! 🌈':'Kamu lebih tenang sekarang! 🌈'
-    // v54.9 — Show mock biofeedback card BEFORE the result, so the kid sees the
-    // therapeutic "your body calmed down" message first, then sees their stars.
-    g2ShowBiofeedbackCard(() => {
-      showFeedback(true,3,doneMsg,()=>showResult('🌬️','Napas Pelangi!',doneMsg))
-    })
-    return
-  }
-  const phases=state.selectedLevel==='hard'?BREATHE_ADVANCED:BREATHE_BOX,ph=phases[g2PhaseIdx]
-  document.getElementById('g2-instruction').textContent=ph.name; document.getElementById('g2-sub').textContent=ph.sub
-  g2Speak(ph.name)
-  if(g2PhaseIdx===0)playBreathIn(); else if(g2PhaseIdx===2)playBreathOut()
-  let sec=ph.dur,elapsed=0; document.getElementById('g2-timer').textContent=sec
-  // SMOOTHNESS: animate the ring CONTINUOUSLY over the whole phase via one CSS
-  // transition (was setInterval writing scale in 1s steps → 4 discrete jumps).
-  // Hold phase (scaleTarget===current) stays put — that's the "tahan".
-  const isHold = (g2PhaseIdx===1 || (phases.length>2 && g2PhaseIdx===3))
-  const ease = isHold ? 'ease-in-out' : (g2PhaseIdx===0 ? 'cubic-bezier(.42,0,.58,1)' : 'cubic-bezier(.42,0,.58,1)')
-  ;['g2-ring1','g2-ring2','g2-mascot'].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.style.transition=`transform ${ph.dur}s ${ease}, box-shadow ${ph.dur}s linear, background ${ph.dur}s ease`
-  })
-  setCircleScale(ph.scaleTarget, ph.color)   // single write → CSS animates smoothly
-  // v54.9 — Emit particles on inhale (phase 0) AND exhale (phase 2).
-  if(g2PhaseIdx===0 || g2PhaseIdx===2) g2SpawnBreathParticles(g2PhaseIdx)
-  state.breatheInterval=setInterval(()=>{
-    elapsed++;sec--;
-    document.getElementById('g2-timer').textContent=Math.max(0,sec)
-    // Mid-phase particle wave (every 2nd second of inhale/exhale).
-    if((g2PhaseIdx===0 || g2PhaseIdx===2) && elapsed%2===0 && elapsed<ph.dur) g2SpawnBreathParticles(g2PhaseIdx)
-    if(elapsed>=ph.dur){
-      clearInterval(state.breatheInterval); g2PhaseIdx++
-      if(g2PhaseIdx>=phases.length){g2PhaseIdx=0;g2Cycle++;const dot=document.getElementById('cd'+(g2Cycle-1));if(dot)dot.classList.add('done')}
-      setTimeout(runBreathePhase,400)
-    }
-  },1000)
-}
-
-// ================================================================
 // GAME 3: HURUF HUTAN
 // ================================================================
 let g3State={}
@@ -3488,411 +3249,6 @@ function startG4Timer(){
     document.getElementById('g4-timer-text').textContent=timeLeft+' detik'
     if(timeLeft<=0){clearInterval(state.g4Timer);if(!g4State.answered){g4State.answered=true;const choicesEl=document.getElementById('g4-choices');choicesEl.querySelectorAll('.g4-choice-btn').forEach(b=>{b.style.pointerEvents='none';if(parseInt(b.textContent)===count)b.classList.add('correct')});playWrong();flashScreen('red');setTimeout(nextG4Round,1300)}}
   },1000)
-}
-
-// ================================================================
-// GAME 5: MEMORY PINTAR (4 modes)
-// ================================================================
-let g5State={}, g5Mode='visual', g5SubMode='emosi'
-
-function setG5Mode(mode,btn){
-  if(g5State && g5State.started && g5State.flipped!==undefined) return
-  g5Mode=mode; playClick(); clearTimers()
-  document.querySelectorAll('.g5-mode-tab').forEach(t=>t.classList.remove('active'))
-  if(btn) btn.classList.add('active')
-  const isVisual=mode==='visual'
-  document.getElementById('g5-sub-tabs').style.display=isVisual?'flex':'none'
-  document.getElementById('g5-scores').style.display=isVisual?'flex':'none'
-  document.getElementById('g5-turn-text').style.display=isVisual?'block':'none'
-  document.getElementById('g5-grid').style.display=isVisual?'grid':'none'
-  document.getElementById('g5-alt-display').style.display=isVisual?'none':'flex'
-  // Route to correct mode init — do NOT call initGame5() which resets g5Mode to 'visual'
-  if(mode==='visual') initG5Visual()
-  else if(mode==='numeric') initG5Numeric()
-  else if(mode==='spatial') initG5Spatial()
-  else if(mode==='sequence') initG5Sequence()
-}
-function setG5SubModeAndOpen(subMode) {
-  g5SubMode = subMode
-  openLevelSelect(5)
-}
-function setG5SubMode(sub,btn){
-  g5SubMode=sub; playClick()
-  document.querySelectorAll('.g5-sub-tab').forEach(t=>t.classList.remove('active'))
-  if(btn) btn.classList.add('active')
-  const scr=document.getElementById('screen-game5')
-  if(scr){
-    scr.classList.remove('theme-hewan','theme-buah','theme-poke')
-    if(sub==='hewan') scr.classList.add('theme-hewan')
-    else if(sub==='buah') scr.classList.add('theme-buah')
-    else if(sub==='pokemon') scr.classList.add('theme-poke')
-  }
-  initG5Visual()
-}
-
-function initGame5(){
-  initDreamWorld(); clearTimers(); g5Mode='visual'; g5SubMode='emosi'
-  // Reset tab UI
-  document.querySelectorAll('.g5-mode-tab').forEach((t,i)=>t.classList.toggle('active',i===0))
-  document.querySelectorAll('.g5-sub-tab').forEach((t,i)=>t.classList.toggle('active',i===0))
-  const scr=document.getElementById('screen-game5')
-  if(scr) scr.classList.remove('theme-hewan','theme-buah','theme-poke')
-  initG5Visual()
-}
-
-// ── Mode 1: Visual (card flip matching) ──
-function initG5Visual(){
-  // Ensure correct DOM visibility for visual mode
-  const sub=document.getElementById('g5-sub-tabs'),sc=document.getElementById('g5-scores'),tt=document.getElementById('g5-turn-text'),gr=document.getElementById('g5-grid'),alt=document.getElementById('g5-alt-display')
-  if(sub) sub.style.display='flex'
-  if(sc) sc.style.display='flex'
-  if(tt) tt.style.display='block'
-  if(gr) gr.style.display='grid'
-  if(alt) alt.style.display='none'
-  const diff=state.selectedLevel
-  let totalPairs,gridClass
-  if(diff==='easy'){totalPairs=6;gridClass='grid-3x4'}
-  else if(diff==='hard'){totalPairs=10;gridClass='grid-4x5'}
-  else{totalPairs=8;gridClass=''}
-  g5State={cards:[],flipped:[],matched:0,totalPairs,scores:[0,0],currentPlayer:state.currentPlayer,locked:false}
-  const flat=[]
-  // illustrated db-sprite cards for hewan/buah/kendaraan (owner); fall through to
-  // the emoji sets if the DB isn't available or hasn't enough items.
-  // Data-driven DB wiring (the "loop" endpoint): ANY DBLabeled group + kendaraan
-  // auto-renders illustrated sprites. Add a group to db-labeled.js → g5 uses it,
-  // no edit here. Falls back to emoji when a mode has no DB set (sayur/profesi/warna…).
-  const _g5db=((window.DBLabeled && DBLabeled.groups().indexOf(g5SubMode)>=0)||g5SubMode==='kendaraan')?g5DbCards(g5SubMode,totalPairs):[]
-  if(g5SubMode==='pokemon'){
-    // Sprite (A) ↔ Name text (B) — educational matching
-    MATCH_PAIRS_POKE.slice(0,totalPairs).forEach(p=>{
-      flat.push({id:p.id,slug:p.slug,label:p.name,flipped:false,matched:false,cardSide:'A'})
-      flat.push({id:p.id,slug:p.slug,label:p.name,flipped:false,matched:false,cardSide:'B'})
-    })
-  } else if(_g5db.length>=totalPairs){
-    _g5db.forEach(it=>{
-      flat.push({...it,flipped:false,matched:false,cardSide:'A'})
-      flat.push({...it,flipped:false,matched:false,cardSide:'B'})
-    })
-  } else if(['hewan','buah','sayur','kendaraan','warna','benda','profesi','alam','cuaca','makanan','sekolah'].includes(g5SubMode)){
-    // Emoji (A) ↔ Name word (B) — educational matching
-    const srcMap={hewan:MATCH_PAIRS_HEWAN,buah:MATCH_PAIRS_BUAH,sayur:MATCH_PAIRS_SAYUR,
-      kendaraan:MATCH_PAIRS_KENDARAAN,warna:MATCH_PAIRS_WARNA,benda:MATCH_PAIRS_BENDA,
-      profesi:MATCH_PAIRS_PROFESI,alam:MATCH_PAIRS_ALAM,cuaca:MATCH_PAIRS_CUACA,
-      makanan:MATCH_PAIRS_MAKANAN,sekolah:MATCH_PAIRS_SEKOLAH}
-    const src=srcMap[g5SubMode]||MATCH_PAIRS_HEWAN
-    src.slice(0,totalPairs).forEach(item=>{
-      flat.push({...item,flipped:false,matched:false,cardSide:'A'})
-      flat.push({...item,flipped:false,matched:false,cardSide:'B'})
-    })
-  } else if(g5SubMode==='emosi' && window.DBSprites){
-    // Emotion faces (illustrated db/faces) + name — match the matching pairs.
-    EMOTIONS.slice().sort(()=>Math.random()-0.5).slice(0,totalPairs).forEach(e=>{
-      const c={id:'emo-'+e.name,label:e.name,faceSrc:emoFaceSrc(e.name),emoji:e.emoji}
-      flat.push({...c,flipped:false,matched:false,cardSide:'A'})
-      flat.push({...c,flipped:false,matched:false,cardSide:'B'})
-    })
-  } else {
-    let pool
-    if(diff==='easy') pool=MATCH_PAIRS.slice(0,totalPairs)
-    else if(diff==='hard') pool=[...MATCH_PAIRS_NUMS.slice(0,5),...MATCH_PAIRS_ALPHA.slice(0,5)]
-    else pool=[...MATCH_PAIRS.slice(0,4),...MATCH_PAIRS_NUMS.slice(0,4)]
-    pool.slice(0,totalPairs).forEach(item=>{
-      const isEdu=!!(item.emoji2)
-      flat.push({...item,flipped:false,matched:false,cardSide:'A'})
-      flat.push({...item,emoji:isEdu?item.emoji2:item.emoji,label:isEdu?item.label2:item.label,flipped:false,matched:false,cardSide:'B'})
-    })
-  }
-  g5State.cards=flat.sort(()=>Math.random()-0.5).map((c,i)=>({...c,idx:i}))
-  const turnTexts={emosi:'Cocokkan semua pasangan! 🃏',hewan:'Cocokkan gambar & nama hewan! 🐾',buah:'Cocokkan gambar & nama buah! 🍎',sayur:'Cocokkan gambar & nama sayur! 🥕',kendaraan:'Cocokkan kendaraan! 🚗',warna:'Cocokkan nama warna! 🌈',benda:'Cocokkan nama benda! 📦',profesi:'Cocokkan nama profesi! 👩‍⚕️',alam:'Cocokkan gambar alam! 🏔️',cuaca:'Cocokkan jenis cuaca! ⛅',makanan:'Cocokkan nama makanan! 🍜',sekolah:'Cocokkan alat sekolah! 🏫',pokemon:'Cocokkan gambar Pokémon yang sama! ⚡'}
-  const scoresEl=document.getElementById('g5-scores')
-  if(state.mode==='duo'){scoresEl.innerHTML=[0,1].map(i=>`<div class="g5-player-score ${i===g5State.currentPlayer?'active':''}" id="g5-ps-${i}"><div class="ps-name">${state.players[i].animal} ${state.players[i].name}</div><div class="ps-val" id="g5-score-${i}">0 pasang</div></div>`).join('');document.getElementById('g5-turn-text').textContent=`Giliran ${state.players[g5State.currentPlayer].name}! 🎮`}
-  else{scoresEl.innerHTML=`<div class="g5-player-score active" style="flex:none;width:100%;max-width:520px;"><div class="ps-name">${state.players[0].animal} ${state.players[0].name}</div><div class="ps-val" id="g5-score-0">0 pasang</div></div>`;document.getElementById('g5-turn-text').textContent=''}
-  const grid=document.getElementById('g5-grid')
-  grid.className='g5-grid'+(gridClass?' '+gridClass:'')
-  renderG5Grid()
-}
-function renderG5Grid(){
-  const grid=document.getElementById('g5-grid'); grid.innerHTML=''
-  g5State.cards.forEach((card,idx)=>{
-    const el=document.createElement('div'); el.className='g5-card'
-    let back
-    if(g5SubMode==='pokemon'){
-      if(card.cardSide==='A'){
-        // Side A: HD artwork
-        const hdSrc=`https://img.pokemondb.net/sprites/home/normal/${card.slug}.png`
-        const fbSrc=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${card.id}.png`
-        back=`<img class="g5-poke-img" style="width:72px;height:72px;image-rendering:auto;object-fit:contain" src="${hdSrc}" onerror="this.src='${fbSrc}'" alt="${card.label}" loading="lazy">`
-      } else {
-        // Side B: same HD HOME sprite — consistent art style
-        const hdSrc2=`https://img.pokemondb.net/sprites/home/normal/${card.slug}.png`
-        const fbSrc2=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${card.id}.png`
-        back=`<img class="g5-poke-img" style="width:72px;height:72px;image-rendering:auto;object-fit:contain" src="${hdSrc2}" onerror="this.src='${fbSrc2}'" alt="${card.label}" loading="lazy">`
-      }
-    } else if(g5SubMode==='warna'){
-      // crisp CSS swatch (side A) ↔ colour name (side B) — no emoji rendering variance
-      const hex=WARNA_HEX[card.label]||'#cccccc'
-      if(card.cardSide==='A'){
-        back=`<span style="display:inline-block;width:56px;height:56px;border-radius:50%;background:${hex};border:3px solid rgba(0,0,0,.14);box-shadow:inset 0 -5px 9px rgba(0,0,0,.18),inset 0 4px 7px rgba(255,255,255,.35),0 3px 7px rgba(0,0,0,.22)"></span>`
-      } else {
-        back=`<span class="card-emoji" style="font-size:30px">🎨</span><span class="card-label">${card.label}</span>`
-      }
-    } else if(!card.dbsrc && ['hewan','buah','sayur','kendaraan','benda','profesi','alam','cuaca','makanan','sekolah'].includes(g5SubMode)){
-      if(card.cardSide==='A'){
-        back=`<span style="font-size:52px;line-height:1">${card.emoji}</span>`
-      } else {
-        back=`<span style="font-size:52px;line-height:1">${card.emoji}</span>`
-      }
-    } else if(g5SubMode==='emosi' && card.faceSrc){
-      back=`<img src="${card.faceSrc}" alt="" loading="lazy" decoding="async" style="width:60px;height:60px;object-fit:contain" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'card-emoji',textContent:'${card.emoji}'}))"><span class="card-label" style="font-size:13px">${card.label}</span>`
-    } else if(card.dbsrc){
-      back=`<img src="${card.dbsrc}" alt="" loading="lazy" decoding="async" style="width:64px;height:64px;object-fit:contain">${card.label?`<span class="card-label" style="font-size:12px">${card.label}</span>`:''}`
-    } else {
-      const isLetter=card.cardSide==='A'&&typeof card.id==='string'&&card.id.startsWith('l')
-      const eStyle=isLetter?'font-size:48px;font-weight:900;color:#8B5CF6;font-family:var(--font);line-height:1':''
-      back=`<span class="card-emoji" style="${eStyle}">${card.emoji}</span><span class="card-label">${card.label}</span>`
-    }
-    el.innerHTML=`<div class="g5-card-front"></div><div class="g5-card-back">${back}</div>`
-    el.onclick=()=>flipG5Card(idx,el); grid.appendChild(el); card.el=el
-  })
-}
-
-// ── Mode 2: Numeric Memory ──
-let g5NumState={}
-function initG5Numeric(){
-  const alt=document.getElementById('g5-alt-display')
-  alt.style.display='flex'; alt.innerHTML=''
-  const diff=state.selectedLevel
-  const count=diff==='easy'?4:diff==='hard'?9:6
-  const cols=diff==='easy'?2:3
-  const nums=Array.from({length:count},(_,i)=>i+1).sort(()=>Math.random()-0.5)
-  g5NumState={numbers:nums,revealed:true,nextToTap:1,round:1,maxRound:5,count,cols}
-  const instr=document.createElement('p'); instr.className='g5-alt-label'; instr.id='g5-num-instr'
-  instr.textContent=`Ingat posisi angka, lalu ketuk dari 1 → ${count}! 🔢`
-  alt.appendChild(instr)
-  const prog=document.createElement('p'); prog.className='g5-alt-sub'; prog.id='g5-num-prog'
-  prog.textContent=`Ronde 1/${g5NumState.maxRound} — Hafalkan dalam 3 detik...`
-  alt.appendChild(prog)
-  const grid=document.createElement('div'); grid.className='g5-num-grid'; grid.id='g5-num-grid'
-  grid.style.gridTemplateColumns=`repeat(${cols},1fr)`
-  nums.forEach((num,i)=>{
-    const cell=document.createElement('div'); cell.className='g5-num-cell'
-    cell.dataset.num=num; cell.dataset.i=i
-    cell.innerHTML=`<div class="ncell-front">${num}</div><div class="ncell-back">${num}</div>`
-    cell.onclick=()=>tapG5NumCell(cell,num)
-    grid.appendChild(cell)
-  })
-  alt.appendChild(grid)
-  setTimeout(()=>{
-    if(g5Mode!=='numeric') return
-    grid.querySelectorAll('.g5-num-cell').forEach(c=>c.classList.add('face-down'))
-    g5NumState.revealed=false
-    const p=document.getElementById('g5-num-prog'); if(p) p.textContent=`Ketuk angka 1 → ${count} secara berurutan!`
-  },3000)
-}
-function tapG5NumCell(cell,num){
-  if(g5NumState.revealed||cell.classList.contains('correct-tap')) return
-  if(num===g5NumState.nextToTap){
-    cell.classList.add('correct-tap'); playCorrect()
-    g5NumState.nextToTap++
-    if(g5NumState.nextToTap>g5NumState.count){
-      addStars(1); spawnSparkles()
-      if(g5NumState.round>=g5NumState.maxRound){
-        setTimeout(()=>showResult('🔢','Memory Angka!',`Kamu ingat semua urutan dalam ${g5NumState.maxRound} ronde! 🧠`),800)
-      } else {
-        g5NumState.round++
-        const p=document.getElementById('g5-num-prog'); if(p) p.textContent=`✨ Ronde ${g5NumState.round}/${g5NumState.maxRound} — Hafalkan!`
-        setTimeout(()=>{ if(g5Mode==='numeric') initG5Numeric() },1200)
-      }
-    }
-  } else {
-    cell.classList.add('wrong-tap'); playWrong(); flashScreen('red')
-    if(navigator.vibrate) navigator.vibrate(200)
-    setTimeout(()=>cell.classList.remove('wrong-tap'),450)
-    // Briefly reveal all as hint
-    const grid=document.getElementById('g5-num-grid'); if(!grid) return
-    grid.querySelectorAll('.g5-num-cell:not(.correct-tap)').forEach(c=>c.classList.remove('face-down'))
-    g5NumState.revealed=true
-    setTimeout(()=>{
-      grid.querySelectorAll('.g5-num-cell:not(.correct-tap)').forEach(c=>c.classList.add('face-down'))
-      g5NumState.revealed=false
-    },1500)
-  }
-}
-
-// ── Mode 3: Spatial Memory ──
-let g5SpatState={}
-function initG5Spatial(){
-  const alt=document.getElementById('g5-alt-display')
-  alt.style.display='flex'; alt.innerHTML=''
-  const diff=state.selectedLevel
-  const sz=diff==='easy'?3:diff==='hard'?5:4
-  const lit=diff==='easy'?3:diff==='hard'?8:5
-  g5SpatState={sz,lit,pattern:[],taps:[],phase:'show',round:1,maxRound:5}
-  const instr=document.createElement('p'); instr.className='g5-alt-label'; instr.id='g5-spat-instr'
-  instr.textContent=`Ingat ${lit} kotak yang menyala! 💡`; alt.appendChild(instr)
-  const prog=document.createElement('p'); prog.className='g5-alt-sub'; prog.id='g5-spat-prog'
-  prog.textContent=`Ronde 1/${g5SpatState.maxRound}`; alt.appendChild(prog)
-  const grid=document.createElement('div'); grid.className='g5-spatial-grid'; grid.id='g5-spat-grid'
-  grid.style.cssText=`grid-template-columns:repeat(${sz},1fr);max-width:${sz*68}px`
-  for(let i=0;i<sz*sz;i++){
-    const c=document.createElement('div'); c.className='g5-spatial-cell'; c.dataset.i=i
-    c.onclick=()=>tapG5SpatCell(i,c); grid.appendChild(c)
-  }
-  alt.appendChild(grid)
-  showG5SpatPattern()
-}
-function showG5SpatPattern(){
-  const {sz,lit}=g5SpatState
-  const total=sz*sz, pat=[]
-  while(pat.length<lit){const r=Math.floor(Math.random()*total);if(!pat.includes(r))pat.push(r)}
-  g5SpatState.pattern=pat; g5SpatState.taps=[]; g5SpatState.phase='show'
-  const grid=document.getElementById('g5-spat-grid'); if(!grid) return
-  const cells=grid.querySelectorAll('.g5-spatial-cell')
-  cells.forEach(c=>c.className='g5-spatial-cell')
-  pat.forEach(i=>{ if(cells[i]) cells[i].classList.add('lit') })
-  const instr=document.getElementById('g5-spat-instr'); if(instr) instr.textContent=`Ingat ${lit} kotak yang menyala! 💡`
-  setTimeout(()=>{
-    if(g5Mode!=='spatial') return
-    cells.forEach(c=>c.classList.remove('lit'))
-    g5SpatState.phase='recall'
-    if(instr) instr.textContent=`Ketuk kotak yang tadi menyala! (0/${lit})`
-  },2200)
-}
-function tapG5SpatCell(idx,cell){
-  if(g5SpatState.phase!=='recall'||g5SpatState.taps.includes(idx)) return
-  g5SpatState.taps.push(idx)
-  const isOk=g5SpatState.pattern.includes(idx)
-  cell.classList.add(isOk?'correct-tap':'wrong-tap')
-  if(isOk) playCorrect(); else { playWrong(); if(navigator.vibrate) navigator.vibrate(150) }
-  const okTaps=g5SpatState.taps.filter(t=>g5SpatState.pattern.includes(t)).length
-  const badTaps=g5SpatState.taps.filter(t=>!g5SpatState.pattern.includes(t)).length
-  const instr=document.getElementById('g5-spat-instr')
-  if(instr) instr.textContent=`Ketuk kotak yang tadi menyala! (${okTaps}/${g5SpatState.lit})`
-  if(okTaps===g5SpatState.lit||badTaps>2){
-    g5SpatState.phase='done'
-    if(okTaps===g5SpatState.lit){ addStars(1); spawnSparkles() } else flashScreen('red')
-    const grid=document.getElementById('g5-spat-grid')
-    if(grid){ const cells=grid.querySelectorAll('.g5-spatial-cell'); g5SpatState.pattern.forEach(i=>{ if(cells[i]) cells[i].classList.add('lit') }) }
-    if(g5SpatState.round>=g5SpatState.maxRound){
-      setTimeout(()=>showResult('📍','Memory Posisi!',`Kamu kuasai ${g5SpatState.maxRound} pola lokasi! 🧠`),1200)
-    } else {
-      g5SpatState.round++
-      const prog=document.getElementById('g5-spat-prog'); if(prog) prog.textContent=`Ronde ${g5SpatState.round}/${g5SpatState.maxRound}`
-      setTimeout(()=>{ if(g5Mode==='spatial') showG5SpatPattern() },1600)
-    }
-  }
-}
-
-// ── Mode 4: Sequence Memory (Simon Says) ──
-let g5SeqState={}
-const G5_SEQ_TONES=[523,659,784,988]
-function initG5Sequence(){
-  const alt=document.getElementById('g5-alt-display')
-  alt.style.display='flex'; alt.innerHTML=''
-  g5SeqState={seq:[],playerSeq:[],length:1,round:0,maxRound:8,playerTurn:false}
-  const status=document.createElement('div'); status.className='g5-alt-label'; status.id='g5-seq-status'
-  status.textContent='Siap? Ikuti urutan warnanya! 🎮'; alt.appendChild(status)
-  const lvl=document.createElement('div'); lvl.className='g5-seq-level'; lvl.id='g5-seq-lvl'
-  lvl.textContent='Level 1'; alt.appendChild(lvl)
-  const grid=document.createElement('div'); grid.className='g5-seq-grid'; grid.id='g5-seq-grid'
-  for(let i=0;i<4;i++){
-    const btn=document.createElement('button'); btn.className='g5-seq-btn'; btn.dataset.c=i
-    btn.onclick=()=>tapG5SeqBtn(i); grid.appendChild(btn)
-  }
-  alt.appendChild(grid)
-  const sub=document.createElement('p'); sub.className='g5-alt-sub'; sub.id='g5-seq-sub'
-  sub.textContent='Ikuti urutan warna yang muncul'; alt.appendChild(sub)
-  setTimeout(()=>nextG5SeqRound(),800)
-}
-function nextG5SeqRound(){
-  if(g5Mode!=='sequence') return
-  g5SeqState.round++; g5SeqState.seq.push(Math.floor(Math.random()*4))
-  g5SeqState.playerSeq=[]; g5SeqState.playerTurn=false
-  const lvl=document.getElementById('g5-seq-lvl'); if(lvl) lvl.textContent=`Level ${g5SeqState.round}`
-  const s=document.getElementById('g5-seq-status'); if(s) s.textContent='Perhatikan... 👀'
-  playG5Seq()
-}
-function playG5Seq(){
-  let i=0
-  const next=()=>{
-    if(g5Mode!=='sequence') return
-    if(i>=g5SeqState.seq.length){
-      g5SeqState.playerTurn=true
-      const s=document.getElementById('g5-seq-status'); if(s) s.textContent='Sekarang giliranmu! 👆'
-      return
-    }
-    const c=g5SeqState.seq[i]
-    flashG5Btn(c,()=>{ i++; setTimeout(next,300) })
-  }
-  setTimeout(next,600)
-}
-function flashG5Btn(c,cb){
-  const btn=document.querySelector(`#g5-seq-grid [data-c="${c}"]`)
-  if(!btn){ cb(); return }
-  btn.classList.add('active'); playTone(G5_SEQ_TONES[c],0.45,'sine',0.12)
-  setTimeout(()=>{ btn.classList.remove('active'); cb() },600)
-}
-function tapG5SeqBtn(c){
-  if(!g5SeqState.playerTurn) return
-  const expected=g5SeqState.seq[g5SeqState.playerSeq.length]
-  g5SeqState.playerSeq.push(c); flashG5Btn(c,()=>{})
-  if(c!==expected){
-    playWrong(); flashScreen('red'); if(navigator.vibrate) navigator.vibrate(250)
-    g5SeqState.playerTurn=false; g5SeqState.playerSeq=[]
-    const s=document.getElementById('g5-seq-status'); if(s) s.textContent='Salah! Ulangi urutan... 🔁'
-    setTimeout(()=>{ if(g5Mode==='sequence') playG5Seq() },1200)
-    return
-  }
-  if(g5SeqState.playerSeq.length===g5SeqState.seq.length){
-    playCorrect(); spawnSparkles(); addStars(1)
-    const s=document.getElementById('g5-seq-status'); if(s) s.textContent='Benar! ✨'
-    if(g5SeqState.round>=g5SeqState.maxRound){
-      setTimeout(()=>showResult('🔗','Memory Urutan!',`Kamu hafal urutan hingga ${g5SeqState.round} langkah! 🧠`),800)
-    } else { setTimeout(()=>nextG5SeqRound(),1200) }
-  }
-}
-function flipG5Card(idx,el){
-  if(g5State.locked)return; const card=g5State.cards[idx]
-  if(card.flipped||card.matched||g5State.flipped.length>=2)return
-  el.classList.add('tapping')
-  setTimeout(()=>{
-    el.classList.remove('tapping')
-    card.flipped=true; el.classList.add('flipped'); playClick(); g5State.flipped.push(idx)
-    if(g5State.flipped.length===2){g5State.locked=true;setTimeout(checkG5Match,700)}
-  },70)
-}
-function checkG5Match(){
-  const[i1,i2]=g5State.flipped,c1=g5State.cards[i1],c2=g5State.cards[i2]
-  if(c1.id===c2.id){
-    c1.matched=c2.matched=true; c1.el.classList.add('matched'); c2.el.classList.add('matched')
-    // Card-anchored juice on both matched cards (no tick — cards already show match visually)
-    spawnCorrectCardJuice(c1.el, { tick:false })
-    spawnCorrectCardJuice(c2.el, { tick:false, burst:false })
-    playCorrect(); spawnSparkles(); flashScreen('green')
-    const cp=g5State.currentPlayer; g5State.scores[cp]++
-    state.players[cp].stars++; state.gameStars[cp]++; saveStars()
-    const scoreEl=document.getElementById('g5-score-'+cp)
-    if(scoreEl){
-      scoreEl.textContent=g5State.scores[cp]+' pasang'
-      scoreEl.classList.remove('g5-score-pop'); void scoreEl.offsetWidth
-      scoreEl.classList.add('g5-score-pop')
-      setTimeout(()=>scoreEl.classList.remove('g5-score-pop'),400)
-    }
-    g5State.matched++; checkAchievements(null)
-    // Show edu tip for educational pairs
-    if(c1.eduTip){
-      const tip=document.createElement('div')
-      tip.style.cssText='position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:rgba(139,92,246,0.95);color:white;padding:10px 20px;border-radius:20px;font-size:15px;font-weight:700;z-index:9999;animation:slideUp 0.3s ease;pointer-events:none;text-align:center;max-width:280px'
-      tip.textContent='✨ '+c1.eduTip
-      document.body.appendChild(tip); setTimeout(()=>tip.remove(),1800)
-    }
-    if(g5State.matched>=g5State.totalPairs){checkAchievements('done_g5');setTimeout(()=>{const w=g5State.scores[0]>g5State.scores[1]?0:(g5State.scores[1]>g5State.scores[0]?1:-1);const msg=state.mode==='duo'?(w>=0?`${state.players[w].name} menang dengan ${g5State.scores[w]} pasang! 🏆`:'Seri! Kalian sama-sama hebat! 🤝'):`Kamu berhasil cocokkan semua ${g5State.matched} pasang! 🌟`;showResult('🃏','Cocok Semua!',msg)},700);return}
-  } else {
-    playWrong(); flashScreen('red'); c1.flipped=c2.flipped=false
-    setTimeout(()=>{c1.el.classList.remove('flipped');c2.el.classList.remove('flipped')},500)
-    if(state.mode==='duo'){g5State.currentPlayer=g5State.currentPlayer===0?1:0;state.currentPlayer=g5State.currentPlayer;document.getElementById('g5-turn-text').textContent=`Giliran ${state.players[g5State.currentPlayer].name}! 🎮`;document.querySelectorAll('.g5-player-score').forEach((el,i)=>el.classList.toggle('active',i===g5State.currentPlayer))}
-  }
-  g5State.flipped=[]; setTimeout(()=>{g5State.locked=false},250)
 }
 
 // ================================================================
@@ -4660,7 +4016,7 @@ function showDashboard() {
     </div>`
   // Achievements
   const unlocked=JSON.parse(localStorage.getItem(pkey('achievements'))||'{}')
-  const BADGE_MAP={first_star:'badge-first-win.webp',perfect_emotion:'badge-perfect.webp',hard_mode:'badge-perfect.webp',memory_master:'badge-pokemon-master.webp',letter_master:'badge-reader.webp',word_master:'badge-reader.webp',streak3:'badge-streak-7.webp'}
+  const BADGE_MAP={first_star:'badge-first-win.webp',hard_mode:'badge-perfect.webp',letter_master:'badge-reader.webp',word_master:'badge-reader.webp',streak3:'badge-streak-7.webp'}
   const achHtml=Object.entries(ACHIEVEMENTS).map(([key,ach])=>{
     const done=!!unlocked[key]
     const badgeFile=BADGE_MAP[key]
@@ -8015,140 +7371,6 @@ function g25Next(){
   if (explainEl) explainEl.style.display = 'none'
   if (lanjutEl)  lanjutEl.style.display = 'none'
   g25ShowQuestion()
-}
-
-// ================================================================
-// GAME 12 — TEBAK BAYANGAN
-// ================================================================
-const SHADOW_ITEMS=[
-  {desc:'Hewan besar berbelalai panjang dan bertelinga lebar', ans:'🐘', wrong:['🦒','🦁','🐊']},
-  {desc:'Raja hutan berbulu lebat di lehernya', ans:'🦁', wrong:['🐯','🦊','🐻']},
-  {desc:'Hewan hitam-putih yang suka makan bambu', ans:'🐼', wrong:['🦨','🦡','🦥']},
-  {desc:'Hewan air yang bisa terbang dengan sayap hitam-putih', ans:'🐧', wrong:['🦆','🕊️','🦅']},
-  {desc:'Hewan berkaki empat dan berbulu yang suka menggonggong', ans:'🐕', wrong:['🐈','🐇','🦊']},
-  {desc:'Hewan yang bisa mengeluarkan sutra dari tubuhnya', ans:'🕷️', wrong:['🐛','🐝','🦗']},
-  {desc:'Buah merah bulat dengan biji kecil di dalamnya', ans:'🍎', wrong:['🍊','🍇','🍓']},
-  {desc:'Buah kuning panjang berbentuk melengkung', ans:'🍌', wrong:['🌽','🥒','🫒']},
-  {desc:'Hewan laut berwarna merah dengan banyak kaki', ans:'🦞', wrong:['🦀','🐙','🦑']},
-  {desc:'Kendaraan yang bisa terbang tinggi di langit', ans:'✈️', wrong:['🚀','🚁','🪂']},
-  {desc:'Benda yang dipakai di kaki saat hujan', ans:'👢', wrong:['👟','🥿','👞']},
-  {desc:'Alat yang digunakan untuk menulis di kertas', ans:'✏️', wrong:['🖍️','📏','📐']},
-  {desc:'Hewan yang punya cangkang dan berjalan lambat', ans:'🐢', wrong:['🦀','🐌','🦔']},
-  {desc:'Buah ungu kecil-kecil yang tumbuh bergerombol', ans:'🍇', wrong:['🫐','🍒','🫛']},
-  {desc:'Kendaraan besar yang bergerak di atas rel', ans:'🚂', wrong:['🚌','🚢','✈️']},
-  {desc:'Hewan berbisa dengan ekor berbentuk panah', ans:'🦂', wrong:['🕷️','🦗','🐝']},
-  {desc:'Bintang laut tinggal di...', ans:'🌊', wrong:['🌲','🏔️','🏜️']},
-  {desc:'Hewan yang bisa berubah warna seperti bunglon', ans:'🦎', wrong:['🐍','🐊','🦕']},
-  {desc:'Buah tropis berduri di luar, manis di dalam', ans:'🍍', wrong:['🥭','🍈','🥥']},
-  {desc:'Hewan berkaki delapan yang membuat jaring', ans:'🕷️', wrong:['🦗','🐜','🐝']},
-  {desc:'Hewan putih bersih yang menghasilkan susu', ans:'🐄', wrong:['🐑','🐐','🐖']},
-  {desc:'Reptil besar yang hidup di sungai Afrika', ans:'🐊', wrong:['🦎','🐢','🐍']},
-  {desc:'Serangga kecil kuning-hitam penghasil madu', ans:'🐝', wrong:['🦗','🐛','🐜']},
-  {desc:'Planet yang punya cincin indah mengelilinginya', ans:'🪐', wrong:['🌙','⭐','🌞']},
-  {desc:'Alat musik petik berdawai banyak', ans:'🎸', wrong:['🥁','🎹','🎺']},
-  {desc:'Hewan malam yang bisa terbang dan hidup di gua', ans:'🦇', wrong:['🦉','🐦','🕊️']},
-  {desc:'Makanan laut yang berbentuk bulat berlengan banyak', ans:'🐙', wrong:['🦑','🦀','🦞']},
-  {desc:'Alat untuk melihat benda jauh di langit', ans:'🔭', wrong:['🔬','📡','🧲']},
-  {desc:'Buah jeruk kecil berwarna hijau dengan rasa asam', ans:'🍋', wrong:['🍊','🫒','🥝']},
-  {desc:'Hewan yang hidup di hutan dan pandai berayun', ans:'🐒', wrong:['🦧','🦁','🐻']},
-]
-let g12State={}
-function initGame12(){
-  const p=state.players[state.currentPlayer]
-  document.getElementById('g12-player-icon').textContent=p.animal
-  document.getElementById('g12-stars').textContent='⭐ 0'
-  const rounds=DIFF[state.selectedLevel].rounds
-  // Mix DB-silhouette picture questions (from DBLabeled) into the emoji shadows —
-  // question shows a black silhouette of real art, choices are readable names.
-  const dbQs=[]
-  try{
-    if(window.DBLabeled){
-      const groups=DBLabeled.groups()
-      const want=Math.max(1,Math.floor(rounds/2)); let guard=0
-      while(dbQs.length<want && guard++<50){
-        const q=DBLabeled.question(groups[Math.floor(Math.random()*groups.length)])
-        if(q) dbQs.push({dbShadow:true,src:q.src,ans:q.answer,choices:q.choices,desc:'Bayangan apa ini?'})
-      }
-    }
-  }catch(e){}
-  const emojiN=Math.max(0,rounds-dbQs.length)
-  const emojiQs=[...SHADOW_ITEMS].sort(()=>Math.random()-0.5).slice(0,emojiN)
-  const pool=[...emojiQs,...dbQs].sort(()=>Math.random()-0.5).slice(0,rounds)
-  g12State={pool,idx:0,stars:0,total:pool.length,locked:false}
-  document.getElementById('g12-progress-bar').style.width='0%'
-  g12ShowQuestion()
-}
-function g12ShowQuestion(){
-  const s=g12State
-  if(s.idx>=s.pool.length){endGame(s.stars);return}
-  const q=s.pool[s.idx]
-  s.locked=false
-  document.getElementById('g12-progress').textContent=`Soal ${s.idx+1}/${s.total}`
-  document.getElementById('g12-progress-bar').style.width=`${(s.idx/s.total)*100}%`
-  const grid=document.getElementById('g12-choices')
-  grid.innerHTML=''
-
-  if(q.dbShadow){
-    // DB-silhouette question: black-out the real sprite in the question area, choices are names.
-    const qEl=document.getElementById('g12-question')
-    qEl.innerHTML=`<div style="margin-bottom:8px">${q.desc}</div><img id="g12-shadow-img" src="${q.src}" alt="" style="height:min(24vh,140px);max-width:70%;object-fit:contain;filter:brightness(0);transition:filter .45s ease" onerror="this.style.display='none'">`
-    q.choices.forEach(name=>{
-      const btn=document.createElement('button')
-      btn.className='shadow-btn'
-      btn.innerHTML=`<span style="filter:none;font-size:15px;font-weight:800;line-height:1.15;padding:2px 4px">${name}</span>`
-      btn.onclick=()=>g12Answer(name===q.ans,btn,grid)
-      grid.appendChild(btn)
-    })
-    return
-  }
-
-  document.getElementById('g12-question').textContent=q.desc
-  const choices=[{emoji:q.ans,correct:true},...q.wrong.slice(0,3).map(e=>({emoji:e,correct:false}))].sort(()=>Math.random()-0.5)
-  choices.forEach(c=>{
-    const btn=document.createElement('button')
-    btn.className='shadow-btn'
-    btn.innerHTML=`<span class="shadow-icon">${c.emoji}</span>`
-    btn.onclick=()=>g12Answer(c.correct,btn,grid)
-    grid.appendChild(btn)
-  })
-}
-function g12Answer(correct,btn,grid){
-  const s=g12State; if(s.locked)return; s.locked=true
-  const q=s.pool[s.idx]  // current question (before idx increment)
-  // DB-silhouette: reveal the real coloured art regardless of answer (learning moment)
-  const simg=document.getElementById('g12-shadow-img'); if(simg) simg.style.filter='none'
-  grid.querySelectorAll('.shadow-btn').forEach(b=>{
-    b.classList.add('revealed')
-    const icon=b.querySelector('.shadow-icon')
-    if((icon?icon.textContent:b.textContent)===q.ans) b.classList.add('correct')
-  })
-  if(!correct) { btn.classList.add('wrong'); spawnWrongShake(btn); quizStreakReset() }
-  correct ? playCorrect() : playWrong()
-  if(correct){
-    // Card-anchored juice (ring + tick + pulse) on the tapped card — stays on card even with transformed ancestors
-    spawnCorrectCardJuice(btn)
-    quizStreakHit(btn)
-    spawnSparkles(btn); flashScreen('green')
-    const rfx = document.getElementById('g12-reveal-fx')
-    if(rfx) { rfx.style.opacity='1'; setTimeout(()=>rfx.style.opacity='0', 700) }
-    s.stars++; state.players[state.currentPlayer].stars++
-    document.getElementById('g12-stars').textContent=`⭐ ${s.stars}`
-  } else {
-    // Highlight correct answer with card juice (no burst — less celebratory for wrong case)
-    const correctBtn = Array.from(grid.querySelectorAll('.shadow-btn.correct'))[0]
-    if (correctBtn && correctBtn !== btn) spawnCorrectCardJuice(correctBtn, { burst:false })
-    // Show clue hint in question area (keep the revealed silhouette img for dbShadow)
-    const qEl=document.getElementById('g12-question')
-    if(qEl){
-      if(q.dbShadow){
-        const cap=qEl.querySelector('div'); if(cap) cap.innerHTML=`Bayangan apa ini? <span style="color:#FBBF24;font-size:12px;font-weight:700">💡 ${q.ans}</span>`
-      } else {
-        qEl.innerHTML=`${q.desc}<br><span style="color:#FBBF24;font-size:12px;font-weight:700">💡 Jawaban: ${q.ans}</span>`
-      }
-    }
-  }
-  s.idx++
-  setTimeout(()=>g12ShowQuestion(),1300)
 }
 
 // Show XP on welcome screen for returning players

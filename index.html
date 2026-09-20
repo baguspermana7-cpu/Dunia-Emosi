@@ -25,7 +25,7 @@
 <!-- ══════════════════════════════════════════════════════════════════
      P6 — Claymorphism reskin for learning games g1-g8 GAMEPLAY screens.
      Matches games/kuis-matematika.html (MATH GAME) theme. ADDITIVE + SCOPED:
-     every rule is nested under #screen-game1 … #screen-game8 so it CANNOT
+     every rule is nested under #screen-game3 … #screen-game8 so it CANNOT
      leak into g9-g12, landing, level-select, or any shared component.
      Landing + level-select are already claymorphism (A-316) — untouched.
      ══════════════════════════════════════════════════════════════════ -->
@@ -45,25 +45,22 @@
 /* ── Soft radial-navy backdrop on every g1-g8 gameplay screen.
       Kept as a translucent overlay ON TOP of the existing bg image so the
       painterly art stays but reads darker/calmer like the math game. ── */
-#screen-game1::after,#screen-game2::after,#screen-game3::after,
-#screen-game4::after,#screen-game5::after,#screen-game6::after,
+#screen-game3::after,
+#screen-game4::after,#screen-game6::after,
 #screen-game7::after,#screen-game8::after{
   content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
   background:
     radial-gradient(120% 90% at 50% 0%,rgba(58,116,216,.30),rgba(14,36,71,.62) 62%,rgba(9,22,50,.78));
 }
 /* keep real content above the wash */
-#screen-game1>*,#screen-game2>*,#screen-game3>*,#screen-game4>*,
-#screen-game5>*,#screen-game6>*,#screen-game7>*,#screen-game8>*{
+#screen-game3>*,#screen-game4>*,#screen-game6>*,#screen-game7>*,#screen-game8>*{
   position:relative;z-index:1;
 }
 
 /* ── Shared HUD/header — translucent dark chips + Baloo title ── */
-#screen-game1 .game-header .gh-back,#screen-game1 .game-header .gh-pause,
-#screen-game2 .game-header .gh-back,#screen-game2 .game-header .gh-pause,
+
 #screen-game3 .game-header .gh-back,#screen-game3 .game-header .gh-pause,
 #screen-game4 .game-header .gh-back,#screen-game4 .game-header .gh-pause,
-#screen-game5 .game-header .gh-back,#screen-game5 .game-header .gh-pause,
 #screen-game6 .game-header .gh-back,#screen-game6 .game-header .gh-pause,
 #screen-game7 .game-header .gh-back,#screen-game7 .game-header .gh-pause,
 #screen-game8 .game-header .gh-back,#screen-game8 .game-header .gh-pause{
@@ -71,20 +68,20 @@
   border:2px solid rgba(255,255,255,.30)!important;border-radius:16px!important;
   box-shadow:inset 0 2px 0 rgba(255,255,255,.2)!important;
 }
-#screen-game1 .gh-title,#screen-game2 .gh-title,#screen-game3 .gh-title,
-#screen-game4 .gh-title,#screen-game5 .gh-title,#screen-game6 .gh-title,
+#screen-game3 .gh-title,
+#screen-game4 .gh-title,#screen-game6 .gh-title,
 #screen-game7 .gh-title,#screen-game8 .gh-title{
   font-family:var(--clay-disp)!important;color:#fff!important;
   text-shadow:0 2px 6px rgba(0,0,0,.45);
 }
-#screen-game1 .gh-level,#screen-game2 .gh-level,#screen-game3 .gh-level,
-#screen-game4 .gh-level,#screen-game5 .gh-level,#screen-game6 .gh-level,
+#screen-game3 .gh-level,
+#screen-game4 .gh-level,#screen-game6 .gh-level,
 #screen-game7 .gh-level,#screen-game8 .gh-level{
   background:rgba(20,30,55,.60)!important;border:2px solid rgba(255,255,255,.30)!important;
   color:#fff!important;font-family:var(--clay-disp)!important;
 }
-#screen-game1 .gh-stars,#screen-game2 .gh-stars,#screen-game3 .gh-stars,
-#screen-game4 .gh-stars,#screen-game5 .gh-stars,#screen-game6 .gh-stars,
+#screen-game3 .gh-stars,
+#screen-game4 .gh-stars,#screen-game6 .gh-stars,
 #screen-game7 .gh-stars,#screen-game8 .gh-stars{
   background:linear-gradient(180deg,#ffe07a,var(--clay-gold) 60%,var(--clay-gold-d))!important;
   color:#5a3d00!important;border:2px solid rgba(255,255,255,.5)!important;
@@ -93,30 +90,29 @@
 }
 
 /* ── Mascot speech bubble → translucent dark chip, white text ── */
-#screen-game1 .mg-bubble,#screen-game2 .mg-bubble,#screen-game3 .mg-bubble,
-#screen-game4 .mg-bubble,#screen-game5 .mg-bubble,#screen-game6 .mg-bubble,
+#screen-game3 .mg-bubble,
+#screen-game4 .mg-bubble,#screen-game6 .mg-bubble,
 #screen-game7 .mg-bubble,#screen-game8 .mg-bubble{
   background:rgba(20,30,55,.62)!important;color:#fff!important;
   border:2px solid rgba(255,255,255,.30)!important;
   box-shadow:0 6px 16px rgba(0,0,0,.30),inset 0 2px 0 rgba(255,255,255,.18)!important;
   font-family:var(--clay-body)!important;
 }
-#screen-game1 .mg-bubble::before,#screen-game2 .mg-bubble::before,
-#screen-game3 .mg-bubble::before,#screen-game4 .mg-bubble::before,
-#screen-game5 .mg-bubble::before,#screen-game6 .mg-bubble::before,
+
+#screen-game3 .mg-bubble::before,#screen-game4 .mg-bubble::before,#screen-game6 .mg-bubble::before,
 #screen-game7 .mg-bubble::before,#screen-game8 .mg-bubble::before{
   border-right-color:rgba(20,30,55,.62)!important;filter:none!important;
 }
 
 /* ── Progress bars / dots → readable on navy ── */
-#screen-game1 .progress-bar-wrap,#screen-game3 .progress-bar-wrap,
+#screen-game3 .progress-bar-wrap,
 #screen-game4 .progress-bar-wrap,#screen-game7 .progress-bar-wrap,
 #screen-game8 .progress-bar-wrap{
   background:rgba(20,30,55,.55)!important;border:1.5px solid rgba(255,255,255,.22);
 }
 
 /* ══ Clay choice-button base (shared look for all g1-g8 answer buttons) ══ */
-#screen-game1 .g1-choice-btn,
+
 #screen-game3 .g3-choice-btn,
 #screen-game4 .g4-choice-btn,
 #screen-game7 .g7-choice-btn{
@@ -126,7 +122,7 @@
   min-height:56px;
   transition:transform .12s cubic-bezier(.34,1.56,.64,1),box-shadow .12s!important;
 }
-#screen-game1 .g1-choice-btn:active,
+
 #screen-game3 .g3-choice-btn:active,
 #screen-game4 .g4-choice-btn:active,
 #screen-game7 .g7-choice-btn:active{
@@ -135,19 +131,19 @@
 }
 
 /* per-position clay colour rotation (blue / green / gold / purple / orange) */
-#screen-game1 .g1-choice-btn:nth-child(4n+1),
+
 #screen-game3 .g3-choice-btn:nth-child(4n+1),
 #screen-game7 .g7-choice-btn:nth-child(4n+1){
   background:linear-gradient(180deg,#8cc4ff,var(--clay-blue) 62%,var(--clay-blue-d))!important;}
-#screen-game1 .g1-choice-btn:nth-child(4n+2),
+
 #screen-game3 .g3-choice-btn:nth-child(4n+2),
 #screen-game7 .g7-choice-btn:nth-child(4n+2){
   background:linear-gradient(180deg,#a4e07a,var(--clay-green) 60%,var(--clay-green-d))!important;}
-#screen-game1 .g1-choice-btn:nth-child(4n+3),
+
 #screen-game3 .g3-choice-btn:nth-child(4n+3),
 #screen-game7 .g7-choice-btn:nth-child(4n+3){
   background:linear-gradient(180deg,#ffe07a,var(--clay-gold) 60%,var(--clay-gold-d))!important;color:#5a3d00!important;text-shadow:0 1px 0 rgba(255,255,255,.5);}
-#screen-game1 .g1-choice-btn:nth-child(4n+4),
+
 #screen-game3 .g3-choice-btn:nth-child(4n+4),
 #screen-game7 .g7-choice-btn:nth-child(4n+4){
   background:linear-gradient(180deg,#c3a6ef,var(--clay-purple) 60%,var(--clay-purple-d))!important;}
@@ -160,37 +156,18 @@
 #screen-game4 .g4-choice-btn:nth-child(5){background:linear-gradient(180deg,#ffc38a,var(--clay-orange) 60%,var(--clay-orange-d))!important;color:#fff!important;border-color:rgba(255,255,255,.55)!important;box-shadow:0 8px 0 rgba(0,0,0,.20),inset 0 3px 0 rgba(255,255,255,.42),inset 0 -6px 10px rgba(0,0,0,.14)!important;}
 
 /* correct/wrong feedback stays legible on clay */
-#screen-game1 .g1-choice-btn.correct,#screen-game3 .g3-choice-btn.correct,
+#screen-game3 .g3-choice-btn.correct,
 #screen-game4 .g4-choice-btn.correct,#screen-game7 .g7-choice-btn.correct{
   background:linear-gradient(180deg,#a4e07a,var(--clay-green) 60%,var(--clay-green-d))!important;
   color:#fff!important;border-color:#eaffd6!important;
   box-shadow:0 8px 0 rgba(0,0,0,.20),0 0 22px rgba(76,175,80,.55),inset 0 3px 0 rgba(255,255,255,.42)!important;}
-#screen-game1 .g1-choice-btn.wrong,#screen-game3 .g3-choice-btn.wrong,
+#screen-game3 .g3-choice-btn.wrong,
 #screen-game4 .g4-choice-btn.wrong,#screen-game7 .g7-choice-btn.wrong{
   background:linear-gradient(180deg,#ff9b8f,var(--clay-red) 60%,var(--clay-red-d))!important;
   color:#fff!important;border-color:#ffd9d3!important;}
-#screen-game1 .g1-choice-btn .choice-label,#screen-game7 .g7-choice-text{color:inherit!important;}
-
-/* ── G1 scenario / tip cards ── */
-#screen-game1 .g1-tip{
-  background:rgba(20,30,55,.62)!important;border-left:6px solid var(--clay-gold)!important;
-  color:#fff!important;border-radius:22px!important;}
-#screen-game1 .g1-tip .tip-text{color:#fff!important;}
-#screen-game1 .g1-question{color:#fff!important;font-family:var(--clay-disp)!important;text-shadow:0 2px 8px rgba(0,0,0,.5);}
-#screen-game1 .g1-progress,#screen-game3 .g3-progress,#screen-game4 .g4-progress,
+#screen-game7 .g7-choice-text{color:inherit!important;}
+#screen-game3 .g3-progress,#screen-game4 .g4-progress,
 #screen-game7 .g7-progress,#screen-game8 .g8-progress{color:rgba(255,255,255,.9)!important;}
-
-/* ── G2 Napas Pelangi ── */
-#screen-game2 .breathe-instruction{color:#fff!important;font-family:var(--clay-disp)!important;text-shadow:0 2px 8px rgba(0,0,0,.5);}
-#screen-game2 .breathe-sub{color:rgba(255,255,255,.85)!important;}
-#screen-game2 .breathe-timer{color:#fff!important;}
-#screen-game2 .breathe-timer-bg{background:rgba(20,30,55,.5)!important;}
-#screen-game2 #g2-start-btn{
-  background:linear-gradient(180deg,#8cc4ff,var(--clay-blue) 62%,var(--clay-blue-d))!important;
-  border:3px solid rgba(255,255,255,.55)!important;border-radius:22px!important;
-  font-family:var(--clay-disp)!important;color:#fff!important;
-  box-shadow:0 8px 0 rgba(0,0,0,.20),inset 0 3px 0 rgba(255,255,255,.42)!important;min-height:56px;}
-#screen-game2 #g2-start-btn:active{transform:translateY(5px)!important;box-shadow:0 3px 0 rgba(0,0,0,.20)!important;}
 
 /* ── G3 Huruf Hutan ── */
 #screen-game3 .g3-word{
@@ -215,13 +192,6 @@
   background:linear-gradient(180deg,#ffe07a,var(--clay-gold) 60%,var(--clay-gold-d))!important;
   color:#5a3d00!important;border-color:rgba(255,255,255,.55)!important;box-shadow:0 4px 0 rgba(0,0,0,.20)!important;
   font-family:var(--clay-disp)!important;}
-
-/* ── G5 Memory Pintar ── */
-#screen-game5 .g5-turn-text{color:#fff!important;}
-#screen-game5 .g5-mode-tab,#screen-game5 .g5-sub-tab{font-family:var(--clay-disp)!important;}
-#screen-game5 .g5-mode-tab.active{
-  background:linear-gradient(180deg,#8cc4ff,var(--clay-blue) 62%,var(--clay-blue-d))!important;
-  border:2px solid rgba(255,255,255,.5)!important;box-shadow:0 4px 0 rgba(0,0,0,.22)!important;color:#fff!important;}
 
 /* ── G6 (legacy SPA screen — real g6 lives in games/mobil.html) ── */
 #screen-game6 .g6-map-btn.active{
@@ -583,46 +553,6 @@
     <!-- 2-column scrollable canvas -->
     <div class="wmap-canvas">
 
-      <!-- ══════ ZONE 1: EMOSI (left) ══════ -->
-      <div class="wmap-zone wmap-zone--emosi">
-        <!-- Floating hearts decoration -->
-        <div class="wmap-heart" style="left:12%;animation-duration:3.4s;animation-delay:0s;">💗</div>
-        <div class="wmap-heart" style="left:35%;animation-duration:4.1s;animation-delay:-1.2s;">💜</div>
-        <div class="wmap-heart" style="left:62%;animation-duration:2.8s;animation-delay:-2.1s;">💖</div>
-        <div class="wmap-heart" style="left:82%;animation-duration:3.7s;animation-delay:-0.7s;">💕</div>
-        <div class="wmap-zone-banner">
-          <span class="wmap-zone-icon">🌸</span>
-          <span class="wmap-zone-name">Pulau Emosi</span>
-          <span class="wmap-zone-stars-total" id="gstars-zone-emosi">⭐</span>
-        </div>
-        <div class="wmap-nodes">
-          <!-- G1: Aku Merasa -->
-          <div class="wmap-node" id="gtile-1" onclick="playClick();openLevelSelect(1)" title="Aku Merasa...">
-            <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#9D174D,#EC4899);">
-              <span class="wn-icon">🎭</span>
-            </div>
-            <div class="wmap-node-name">Aku Merasa</div>
-            <div class="wmap-node-stars" id="gstars-1-lbl"></div>
-          </div>
-          <!-- G2: Napas Pelangi -->
-          <div class="wmap-node" id="gtile-2" onclick="playClick();openLevelSelect(2)" title="Napas Pelangi">
-            <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#5B21B6,#A78BFA);">
-              <span class="wn-icon">🌬️</span>
-            </div>
-            <div class="wmap-node-name">Napas Pelangi</div>
-            <div class="wmap-node-stars" id="gstars-2-lbl"></div>
-          </div>
-          <!-- G5: Cocokkan Emosi -->
-          <div class="wmap-node" id="gtile-5" onclick="playClick();openLevelSelect(5)" title="Cocokkan Emosi">
-            <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#4C1D95,#C084FC);">
-              <span class="wn-icon">🃏</span>
-            </div>
-            <div class="wmap-node-name">Cocokkan Emosi</div>
-            <div class="wmap-node-stars" id="gstars-5-lbl"></div>
-          </div>
-        </div>
-      </div><!-- end zone emosi -->
-
       <!-- ══════ ZONE 2: HURUF (right) ══════ -->
       <div class="wmap-zone wmap-zone--huruf">
         <!-- Forest trees decoration -->
@@ -910,14 +840,6 @@
             <div class="wmap-node-name">Kuis Sains</div>
             <div class="wmap-node-stars" id="gstars-11-lbl"></div>
           </div>
-          <!-- G12: Tebak Bayangan -->
-          <div class="wmap-node" id="gtile-12" onclick="playClick();openLevelSelect(12)" title="Tebak Bayangan">
-            <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#020617,#312E81);">
-              <span class="wn-icon">🌑</span>
-            </div>
-            <div class="wmap-node-name">Tebak Bayangan</div>
-            <div class="wmap-node-stars" id="gstars-12-lbl"></div>
-          </div>
           <!-- G25: Kuis Matematika (2026-06-21, owner-requested) -->
           <div class="wmap-node" id="gtile-25" onclick="playClick();location.href='games/kuis-matematika.html'" title="Matematika Petualangan">
             <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#2f6bd8,#1e4fa8);">
@@ -1195,24 +1117,6 @@
   <div class="mq-choices" id="g25-choices"></div>
   <div id="g25-explain" style="display:none;margin:10px 16px 0;padding:12px 14px;background:rgba(255,255,255,0.08);border-radius:14px;border-left:4px solid #22D3EE;font-size:13px;line-height:1.5;color:rgba(255,255,255,0.9);"></div>
   <button id="g25-lanjut" style="display:none;margin:10px auto 0;padding:10px 32px;background:linear-gradient(135deg,#06B6D4,#0EA5E9);color:#fff;border:none;border-radius:100px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #0369A1;" onclick="g25Next()">Lanjut ▶</button>
-</div>
-
-<!-- GAME 12 — Tebak Bayangan -->
-<div id="screen-game12" class="screen">
-  <div class="game-header" style="display:flex;align-items:center;gap:10px;">
-    <button class="gh-back" onclick="exitGame()">⌂</button>
-    <button class="gh-back" onclick="backToLevelSelect()" title="Pilih level">←</button>
-    <span class="gh-title" style="flex:1;font-size:17px;font-weight:900;font-family:'Fredoka One',cursive;color:white;">🌑 Tebak Bayangan</span>
-    <span class="gh-level" id="g12-level" style="color:rgba(255,255,255,0.9);">Lv.1</span>
-    <span class="gh-player" id="g12-player-icon" style="font-size:26px;"></span>
-    <button class="gh-pause" onclick="pauseGame()">⏸</button>
-    <span class="gh-stars" id="g12-stars" style="background:linear-gradient(135deg,#FCD34D,#F59E0B);border-radius:100px;padding:5px 14px;font-size:16px;font-weight:900;box-shadow:0 3px 0 #B45309;">⭐ 0</span>
-  </div>
-  <div class="progress-bar-wrap" style="margin:0;height:6px;"><div class="progress-bar-fill" id="g12-progress-bar" style="width:0%"></div></div>
-  <p style="font-size:13px;color:rgba(255,255,255,0.55);text-align:center;margin-top:12px;font-weight:700;" id="g12-progress">Soal 1/10</p>
-  <div class="shadow-desc" id="g12-question">Hewan apa ini?</div>
-  <div class="shadow-grid" id="g12-choices"></div>
-  <img loading="lazy" decoding="async" id="g12-reveal-fx" src="assets/shadow-reveal-fx.webp" alt="" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:120px;height:120px;object-fit:contain;opacity:0;transition:opacity 0.15s;pointer-events:none;z-index:10;">
 </div>
 
 <!-- GAME 13 — Evolusi Math Adventure -->
@@ -2078,63 +1982,6 @@
   </div>
 </div>
 
-<!-- GAME 1 -->
-<div id="screen-game1" class="screen">
-  <div class="world-hearts" id="world-hearts"></div>
-  <div class="game-header">
-    <button class="gh-back" onclick="exitGame()">⌂</button>
-    <button class="gh-back gh-level-back" onclick="backToLevelSelect()" title="Pilih level">←</button>
-    <span class="gh-title">🎭 Aku Merasa...</span>
-    <span class="gh-level" id="g1-level">Lv.1</span>
-    <span class="gh-player" id="g1-player-icon"></span>
-    <button class="gh-pause" onclick="pauseGame()">⏸</button>
-    <span class="gh-stars" id="g1-stars">⭐ 0</span>
-  </div>
-  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="g1-progress-bar" style="width:0%"></div></div>
-  <div class="round-dots" id="g1-dots"></div>
-  <div class="mascot-guide">
-    <span class="mg-char" data-mascot="burung-hantu">🦉</span>
-    <div class="mg-bubble" id="g1-mg">Pilih perasaan yang tepat! Perhatikan wajah hewannya ya 🤔</div>
-  </div>
-  <span class="g1-animal-display" id="g1-animal"></span>
-  <div id="g1-scenario" style="display:none;max-width:400px;width:90%;margin:0 auto 10px;padding:10px 14px;background:rgba(244,63,94,0.08);border-radius:14px;border-left:4px solid #F43F5E;font-size:14px;font-weight:700;color:#9F1239;line-height:1.45;text-align:left;"></div>
-  <p class="g1-question">Bagaimana perasaan hewan ini?</p>
-  <div class="g1-choices" id="g1-choices"></div>
-  <div id="g1-tip" class="g1-tip" style="display:none;margin-top:14px;"></div>
-  <p class="g1-progress" id="g1-progress" style="margin-top:8px;"></p>
-</div>
-
-<!-- GAME 2 -->
-<div id="screen-game2" class="screen">
-  <div class="world-clouds" id="world-clouds"></div>
-  <div class="sun-circle"></div>
-  <div class="game-header">
-    <button class="gh-back" onclick="exitGame()">⌂</button>
-    <button class="gh-back gh-level-back" onclick="backToLevelSelect()" title="Pilih level">←</button>
-    <span class="gh-title">🌬️ Napas Pelangi</span>
-    <span class="gh-level" id="g2-level">Lv.1</span>
-    <span class="gh-player" id="g2-player-icon"></span>
-    <button class="gh-pause" onclick="pauseGame()">⏸</button>
-    <span class="gh-stars" id="g2-stars">⭐ 0</span>
-  </div>
-  <div class="mascot-guide" style="margin:0 0 6px;">
-    <span class="mg-char">🐋</span>
-    <div class="mg-bubble">Ikuti lingkarannya... tarik napas perlahan-lahan! 🌬️</div>
-  </div>
-  <div class="breathe-container">
-    <div class="breathe-circle-wrap">
-      <div class="breathe-ring" id="g2-ring1"></div>
-      <div class="breathe-ring ring2" id="g2-ring2"></div>
-      <span class="breathe-animal" id="g2-mascot">🦁</span>
-    </div>
-    <div class="breathe-instruction" id="g2-instruction">Siap Bernapas?</div>
-    <div class="breathe-sub" id="g2-sub">Ikuti lingkaran yang bergerak ya! 😊</div>
-    <div class="breathe-timer-wrap"><div class="breathe-timer-bg"></div><div class="breathe-timer" id="g2-timer">4</div></div>
-    <div class="breathe-cycles" id="g2-cycles"></div>
-    <button class="btn btn-lg btn-blue" id="g2-start-btn" style="margin-top:24px;" onclick="startBreathing()">Mulai Napas! 💨</button>
-  </div>
-</div>
-
 <!-- GAME 3 -->
 <div id="screen-game3" class="screen">
   <div class="world-jungle" id="world-jungle"></div>
@@ -2193,54 +2040,6 @@
   <div class="g4-timer-track"><div class="g4-timer-fill" id="g4-fill" style="width:100%"></div></div>
   <div class="g4-timer-text" id="g4-timer-text">15 detik</div>
   <p class="g4-progress" id="g4-progress" style="margin-top:10px;"></p>
-</div>
-
-<!-- GAME 5 -->
-<div id="screen-game5" class="screen">
-  <div class="world-dream" id="world-dream"></div>
-  <div class="moon-crescent"></div>
-  <div class="game-header">
-    <button class="gh-back" onclick="exitGame()">⌂</button>
-    <button class="gh-back gh-level-back" onclick="backToLevelSelect()" title="Pilih level">←</button>
-    <span class="gh-title">🧠 Memory Pintar</span>
-    <span class="gh-level" id="g5-level">Lv.1</span>
-    <span class="gh-stars" id="g5-stars" style="display:none">⭐ 0</span>
-    <button class="gh-pause" onclick="pauseGame()">⏸</button>
-  </div>
-  <!-- 4 mode tabs -->
-  <div class="g5-mode-tabs">
-    <button class="g5-mode-tab active" data-m="visual"   onclick="setG5Mode('visual',this)">🃏<span>Visual</span></button>
-    <button class="g5-mode-tab"        data-m="numeric"  onclick="setG5Mode('numeric',this)">🔢<span>Angka</span></button>
-    <button class="g5-mode-tab"        data-m="spatial"  onclick="setG5Mode('spatial',this)">📍<span>Posisi</span></button>
-    <button class="g5-mode-tab"        data-m="sequence" onclick="setG5Mode('sequence',this)">🔗<span>Urutan</span></button>
-  </div>
-  <!-- Visual sub-tabs (hidden for other modes) -->
-  <div class="g5-sub-tabs" id="g5-sub-tabs">
-    <button class="g5-sub-tab active" onclick="setG5SubMode('emosi',this)">😊 Emosi</button>
-    <button class="g5-sub-tab" onclick="setG5SubMode('hewan',this)">🐾 Hewan</button>
-    <button class="g5-sub-tab" onclick="setG5SubMode('buah',this)">🍎 Buah</button>
-    <button class="g5-sub-tab" onclick="setG5SubMode('sayur',this)">🥕 Sayur</button>
-    <button class="g5-sub-tab" onclick="setG5SubMode('kendaraan',this)">🚗 Kendaraan</button>
-    <button class="g5-sub-tab" onclick="setG5SubMode('warna',this)">🌈 Warna</button>
-    <button class="g5-sub-tab" onclick="setG5SubMode('benda',this)">📦 Benda</button>
-    <button class="g5-sub-tab" onclick="setG5SubMode('profesi',this)">👩‍⚕️ Profesi</button>
-    <button class="g5-sub-tab" onclick="setG5SubMode('alam',this)">🏔️ Alam</button>
-    <button class="g5-sub-tab" onclick="setG5SubMode('cuaca',this)">⛅ Cuaca</button>
-    <button class="g5-sub-tab" onclick="setG5SubMode('makanan',this)">🍜 Makanan</button>
-    <button class="g5-sub-tab" onclick="setG5SubMode('sekolah',this)">🏫 Sekolah</button>
-    <button class="g5-sub-tab" onclick="setG5SubMode('pokemon',this)"><span class="g5-pokeball-icon"></span> Pokémon</button>
-  </div>
-  <div class="mascot-guide">
-    <span class="mg-char" data-mascot="kelinci">🐙</span>
-    <div class="mg-bubble" id="g5-mg">Ingat-ingat posisi kartunya ya! Lalu temukan pasangannya 🧠</div>
-  </div>
-  <!-- Score row (visual mode) -->
-  <div class="g5-score-row" id="g5-scores"></div>
-  <p class="g5-turn-text" id="g5-turn-text"></p>
-  <!-- Card grid (visual mode) -->
-  <div class="g5-grid" id="g5-grid"></div>
-  <!-- Alt display for numeric/spatial/sequence -->
-  <div id="g5-alt-display" style="display:none;"></div>
 </div>
 
 <!-- GAME 6 -->
