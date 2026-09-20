@@ -9,8 +9,8 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=v59.96-20260920a">
-<link rel="stylesheet" href="du-hud.css?v=v59.96-20260920a">
+<link rel="stylesheet" href="du-buttons.css?v=v59.97-20260920a">
+<link rel="stylesheet" href="du-hud.css?v=v59.97-20260920a">
 <title>Lokomotif Pemberani 🚂</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -214,32 +214,32 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 <body>
 <canvas id="pixi-canvas"></canvas>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v55.84</div>
-<script src="data/emoji-map.js?v=v59.96-20260920a"></script><script src="data/ui-sprites.js?v=v59.96-20260920a"></script><!-- zero-emoji engine -->
-<script src="sw-reload.js?v=v59.96-20260920a"></script>
-<script src="train-shared.js?v=v59.96-20260920a"></script>
-<script src="train-vfx.js?v=v59.96-20260920a"></script>
-<script src="motion.js?v=v59.96-20260920a"></script><!-- A-315 E3 — shared motion engine (frame-rate-independent easing) -->
-<script src="train-bg-engine.js?v=v59.96-20260920a"></script>
-<script src="data/bg-themes.js?v=v59.96-20260920a"></script>
-<script src="data/bg-renderers.js?v=v59.96-20260920a"></script>
-<script src="data/bg-npcs.js?v=v59.96-20260920a"></script>
-<script src="data/bg-audio.js?v=v59.96-20260920a"></script>
-<script src="data/bg-events.js?v=v59.96-20260920a"></script>
+<script src="data/emoji-map.js?v=v59.97-20260920a"></script><script src="data/ui-sprites.js?v=v59.97-20260920a"></script><!-- zero-emoji engine -->
+<script src="sw-reload.js?v=v59.97-20260920a"></script>
+<script src="train-shared.js?v=v59.97-20260920a"></script>
+<script src="train-vfx.js?v=v59.97-20260920a"></script>
+<script src="motion.js?v=v59.97-20260920a"></script><!-- A-315 E3 — shared motion engine (frame-rate-independent easing) -->
+<script src="train-bg-engine.js?v=v59.97-20260920a"></script>
+<script src="data/bg-themes.js?v=v59.97-20260920a"></script>
+<script src="data/bg-renderers.js?v=v59.97-20260920a"></script>
+<script src="data/bg-npcs.js?v=v59.97-20260920a"></script>
+<script src="data/bg-audio.js?v=v59.97-20260920a"></script>
+<script src="data/bg-events.js?v=v59.97-20260920a"></script>
 <!-- v54.83 — ObstacleEngine + Koleksi gallery available from G15 picker (Practice Mode) -->
-<script src="obstacle-engine.js?v=v59.96-20260920a"></script>
-<script src="train-journey.js?v=v59.96-20260920a"></script>
-<script src="indo-scene.js?v=v59.96-20260920a"></script>
+<script src="obstacle-engine.js?v=v59.97-20260920a"></script>
+<script src="train-journey.js?v=v59.97-20260920a"></script>
+<script src="indo-scene.js?v=v59.97-20260920a"></script>
 <!-- v55.77 — SHARED painterly backdrop + depth-parallax engine + always-on speed overlay (parity with balapan-kereta / g14). Guarded: any miss → procedural bg. -->
-<script src="train-backdrop.js?v=v59.96-20260920a"></script>
-<script src="train-speedfx.js?v=v59.96-20260920a"></script>
-<script src="data/kids-questions.js?v=v59.96-20260920a"></script>
-<script src="data/obstacles.js?v=v59.96-20260920a"></script>
-<script src="data/routes.js?v=v59.96-20260920a"></script>
-<script src="data/reward-catalog.js?v=v59.96-20260920a"></script>
-<script src="reward-gallery.js?v=v59.96-20260920a"></script>
-<script src="settings-modal.js?v=v59.96-20260920a"></script>
+<script src="train-backdrop.js?v=v59.97-20260920a"></script>
+<script src="train-speedfx.js?v=v59.97-20260920a"></script>
+<script src="data/kids-questions.js?v=v59.97-20260920a"></script>
+<script src="data/obstacles.js?v=v59.97-20260920a"></script>
+<script src="data/routes.js?v=v59.97-20260920a"></script>
+<script src="data/reward-catalog.js?v=v59.97-20260920a"></script>
+<script src="reward-gallery.js?v=v59.97-20260920a"></script>
+<script src="settings-modal.js?v=v59.97-20260920a"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
-<script src="train-bgm.js?v=v59.96-20260920a"></script>
+<script src="train-bgm.js?v=v59.97-20260920a"></script>
 <!-- v54.28 I13: loop the train ambient SFX (was one-shot, faded after first cycle, leaving silence). -->
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" loop preload="auto" style="display:none"></audio>
 
@@ -307,9 +307,9 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
   </div>
 </div>
 
-<script src="data/freeze-watchdog.js?v=v59.96-20260920a"></script>
-<script src="data/save-engine.js?v=v59.96-20260920a"></script>
-<script src="game-modal.js?v=v59.96-20260920a"></script>
+<script src="data/freeze-watchdog.js?v=v59.97-20260920a"></script>
+<script src="data/save-engine.js?v=v59.97-20260920a"></script>
+<script src="game-modal.js?v=v59.97-20260920a"></script>
 
 <!-- Train Select Screen -->
 <div id="train-select">
@@ -366,10 +366,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
 </div>
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="trains-db.js?v=v59.96-20260920a"></script>
-<script src="data/train-world.js?v=v59.96-20260920a"></script><!-- v55.94 — 275 real-sprite world trains -->
-<script src="train-character-sprite.js?v=v59.96-20260920a"></script>
-<script src="../shared/rz-responsive.js?v=v59.96-20260920a"></script>
+<script src="trains-db.js?v=v59.97-20260920a"></script>
+<script src="data/train-world.js?v=v59.97-20260920a"></script><!-- v55.94 — 275 real-sprite world trains -->
+<script src="train-character-sprite.js?v=v59.97-20260920a"></script>
+<script src="../shared/rz-responsive.js?v=v59.97-20260920a"></script>
 <script>
 'use strict';
 // Polyfill ctx.roundRect for older Android WebViews (Chrome < 99)
@@ -558,7 +558,7 @@ function getCurrentStation(){
 // only the two character packages (Casey dkk + Thomas AEG). Mutate the shared TRAIN_CATS in place.
 ;(function () {
   if (typeof TRAIN_CATS !== 'undefined' && window.TRAIN_WORLD && Array.isArray(window.TRAIN_WORLD.categories)) {
-    const keep = TRAIN_CATS.filter(c => c.key === 'character' || c.key === 'thomas_aeg' || c.key === 'chuggington' || c.key === 'titipo')  // v59.88/.89 — keep the Chuggington + Titipo packs too
+    const keep = TRAIN_CATS.filter(c => c.key === 'character' || c.key === 'thomas_aeg' || c.key === 'chuggington' || c.key === 'titipo' || c.key === 'mighty')  // v59.88/.89/.97 — keep the Chuggington + Titipo + Mighty Express packs too
     TRAIN_CATS.length = 0
     TRAIN_CATS.push.apply(TRAIN_CATS, keep.concat(window.TRAIN_WORLD.categories))
   }
@@ -568,9 +568,9 @@ const TRAIN_MODELS = typeof TRAIN_CATS !== 'undefined'
   ? TRAIN_CATS.flatMap((cat, ci) => cat.trains.map((t, ti) => {
       const hexToInt = s => parseInt((s||'#000').replace('#',''), 16)
       const typeMap = {steam_id:'steam',steam_world:'steam',diesel_id:'diesel',diesel_world:'diesel',emu:'electric',hsr:'highspeed',maglev:'highspeed',character:'character',
-        uap_klasik:'steam',uap_modern:'steam',diesel:'diesel',listrik:'electric',cepat:'highspeed',komuter:'electric',indonesia:'heritage',thomas_aeg:'character',chuggington:'character',titipo:'character'}
+        uap_klasik:'steam',uap_modern:'steam',diesel:'diesel',listrik:'electric',cepat:'highspeed',komuter:'electric',indonesia:'heritage',thomas_aeg:'character',chuggington:'character',titipo:'character',mighty:'character'}
       const subMap = {steam_id:'classic',steam_world:'pacific',diesel_id:'hood',diesel_world:'boxcab',emu:'krl',hsr:'bullet',maglev:'maglev',character:'featured',
-        uap_klasik:'classic',uap_modern:'pacific',diesel:'hood',listrik:'krl',cepat:'bullet',komuter:'krl',indonesia:'royal',thomas_aeg:'featured',chuggington:'featured',titipo:'featured'}
+        uap_klasik:'classic',uap_modern:'pacific',diesel:'hood',listrik:'krl',cepat:'bullet',komuter:'krl',indonesia:'royal',thomas_aeg:'featured',chuggington:'featured',titipo:'featured',mighty:'featured'}
       const base = {id:t.key, key:t.key, name:t.name, type:typeMap[cat.key]||'heritage', sub:subMap[cat.key]||'royal',
         v:(ti%5)+1, b:hexToInt(t.bodyColor), r:hexToInt(t.accColor), s:hexToInt(t.accColor),
         w:0xdbeafe, k:0x111827 }

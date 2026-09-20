@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=v59.96-20260920a">
+<link rel="stylesheet" href="du-buttons.css?v=v59.97-20260920a">
 <title>Selamatkan Kereta 🚂</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -205,29 +205,29 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
 <body>
 <canvas id="pixi-canvas"></canvas>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v58.6</div>
-<script src="data/emoji-map.js?v=v59.96-20260920a"></script><script src="data/ui-sprites.js?v=v59.96-20260920a"></script><!-- zero-emoji engine -->
-<script src="sw-reload.js?v=v59.96-20260920a"></script>
-<script src="train-shared.js?v=v59.96-20260920a"></script>
-<script src="data/train-world.js?v=v59.96-20260920a"></script><!-- v55.94 — 275 real-sprite world trains -->
-<script src="train-picker.js?v=v59.96-20260920a"></script><!-- A-339 P2 — shared picker: lazy previews + slidable chip row -->
-<script src="train-vfx.js?v=v59.96-20260920a"></script>
-<script src="motion.js?v=v59.96-20260920a"></script><!-- A-315 E4 — shared motion engine (frame-rate-independent easing) -->
-<script src="train-bg-engine.js?v=v59.96-20260920a"></script>
-<script src="data/bg-themes.js?v=v59.96-20260920a"></script>
-<script src="data/bg-renderers.js?v=v59.96-20260920a"></script>
-<script src="data/bg-npcs.js?v=v59.96-20260920a"></script>
-<script src="data/bg-audio.js?v=v59.96-20260920a"></script>
-<script src="data/bg-events.js?v=v59.96-20260920a"></script>
+<script src="data/emoji-map.js?v=v59.97-20260920a"></script><script src="data/ui-sprites.js?v=v59.97-20260920a"></script><!-- zero-emoji engine -->
+<script src="sw-reload.js?v=v59.97-20260920a"></script>
+<script src="train-shared.js?v=v59.97-20260920a"></script>
+<script src="data/train-world.js?v=v59.97-20260920a"></script><!-- v55.94 — 275 real-sprite world trains -->
+<script src="train-picker.js?v=v59.97-20260920a"></script><!-- A-339 P2 — shared picker: lazy previews + slidable chip row -->
+<script src="train-vfx.js?v=v59.97-20260920a"></script>
+<script src="motion.js?v=v59.97-20260920a"></script><!-- A-315 E4 — shared motion engine (frame-rate-independent easing) -->
+<script src="train-bg-engine.js?v=v59.97-20260920a"></script>
+<script src="data/bg-themes.js?v=v59.97-20260920a"></script>
+<script src="data/bg-renderers.js?v=v59.97-20260920a"></script>
+<script src="data/bg-npcs.js?v=v59.97-20260920a"></script>
+<script src="data/bg-audio.js?v=v59.97-20260920a"></script>
+<script src="data/bg-events.js?v=v59.97-20260920a"></script>
 <!-- v54.83 — ObstacleEngine + Koleksi gallery available from G16 (Practice Mode) -->
-<script src="obstacle-engine.js?v=v59.96-20260920a"></script>
-<script src="data/kids-questions.js?v=v59.96-20260920a"></script>
-<script src="data/obstacles.js?v=v59.96-20260920a"></script>
-<script src="data/routes.js?v=v59.96-20260920a"></script>
-<script src="data/reward-catalog.js?v=v59.96-20260920a"></script>
-<script src="reward-gallery.js?v=v59.96-20260920a"></script>
-<script src="settings-modal.js?v=v59.96-20260920a"></script>
+<script src="obstacle-engine.js?v=v59.97-20260920a"></script>
+<script src="data/kids-questions.js?v=v59.97-20260920a"></script>
+<script src="data/obstacles.js?v=v59.97-20260920a"></script>
+<script src="data/routes.js?v=v59.97-20260920a"></script>
+<script src="data/reward-catalog.js?v=v59.97-20260920a"></script>
+<script src="reward-gallery.js?v=v59.97-20260920a"></script>
+<script src="settings-modal.js?v=v59.97-20260920a"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
-<script src="train-bgm.js?v=v59.96-20260920a"></script>
+<script src="train-bgm.js?v=v59.97-20260920a"></script>
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
 <!-- v54.21 D1: READY-SET-GO countdown -->
@@ -295,14 +295,14 @@ canvas.ts-preview{border-radius:8px;max-width:100%}
   <button id="ts-back" onclick="goBack()">◀ Kembali</button>
 </div>
 
-<script src="../shared/rz-responsive.js?v=v59.96-20260920a"></script>
-<script src="data/freeze-watchdog.js?v=v59.96-20260920a"></script>
-<script src="data/save-engine.js?v=v59.96-20260920a"></script>
-<script src="game-modal.js?v=v59.96-20260920a"></script>
-<script src="train-character-sprite.js?v=v59.96-20260920a"></script>
+<script src="../shared/rz-responsive.js?v=v59.97-20260920a"></script>
+<script src="data/freeze-watchdog.js?v=v59.97-20260920a"></script>
+<script src="data/save-engine.js?v=v59.97-20260920a"></script>
+<script src="game-modal.js?v=v59.97-20260920a"></script>
+<script src="train-character-sprite.js?v=v59.97-20260920a"></script>
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="vfx-engine.js?v=v59.96-20260920a"></script><!-- A-353/A-354 unified shared VFX (crash burst) -->
+<script src="vfx-engine.js?v=v59.97-20260920a"></script><!-- A-353/A-354 unified shared VFX (crash burst) -->
 <script>
 'use strict'
 
@@ -716,6 +716,7 @@ function g16RenderCards() {
 // package added later (e.g. Titipo) gets a thumbnail with no extra wiring.
 const G16_TAB_HERO = {
   characters:'caseyjr', thomas_aeg:'thomas', chuggington:'wilson', titipo:'titipo',
+  mighty:'freight nate',
   uap_klasik:'rocket', uap_modern:'flying scotsman', diesel:'deltic', listrik:'taurus',
   cepat:'shinkansen 0', komuter:'azuma', indonesia:'cc206'
 };
@@ -1915,6 +1916,54 @@ const G16_CHAR_CONFIGS = {
   })
   G16_PKGS.push({ id: 'titipo', name: '\uD83D\uDE82 Titipo', color: '#e63946',
     desc: '25 karakter Titipo!', indices: idxs })
+})();
+
+// v59.97 — Mighty Express pack (20 chars) for g16's picker + roster. Same
+// parallel-structure recipe as the Chuggington and Titipo blocks above
+// (TRAIN_STYLES card + G16_CHAR_CONFIGS sprite + G16_CARD_META label + G16_PKGS tab).
+// Deliberately NOT added to FACES_LEFT_G16: this art is drawn facing RIGHT in the
+// source, so unlike Titipo it is not mirrored at build time -- either way it must
+// render native (scale.x = 1). Heights are the shared pack's derived heights scaled
+// onto g16's ladder, so a crane stands taller rather than shrinking its chassis.
+// Keys are namespaced mex_* so nothing collides with the aeg_/chg_/ttp_ packs.
+;(function () {
+  if (typeof TRAIN_STYLES === 'undefined' || typeof G16_PKGS === 'undefined') return
+  var MEX = [
+    ['mex_freight_nate','freight-nate','Freight Nate','Lokomotif Barang 🔴',0xb42424,0xe4b40c,85,null],
+    ['mex_mechanic_milo','mechanic-milo','Mechanic Milo','Kereta Bengkel 🔧',0x0c54cc,0xfc6c24,98,null],
+    ['mex_build_it_brock','build-it-brock','Build-It Brock','Kereta Molen 🟡',0xfcb40c,0x1f2937,87,null],
+    ['mex_farmer_faye','farmer-faye','Farmer Faye','Lokomotif Ladang 🌿',0x249c3c,0xfc9c3c,93,null],
+    ['mex_rescue_red','rescue-red','Rescue Red','Kereta Pemadam 🚒',0xb42424,0xe6e6e6,99,null],
+    ['mex_flicker','flicker','Flicker','Lokomotif Sinyal 🚨',0xb42424,0xf5f5f5,99,null],
+    ['mex_peoplemover_penny','peoplemover-penny','Peoplemover Penny','Trem Penumpang 🚋',0x0cb4b4,0xf0e6c8,84,null],
+    ['mex_mandy_mail','mandy-mail','Mandy Mail','Kereta Pos 💌',0x6c3ce4,0xf0e6c8,83,null],
+    ['mex_tricky_ricky','tricky-ricky','Tricky Ricky','Lokomotif Lincah 💚',0x84cc24,0x1f2937,87,null],
+    ['mex_nate_special_mission','nate-special-mission','Nate Misi Khusus','Lokomotif Misi 🔷',0x243c84,0xe4b40c,90,null],
+    ['mex_milo_construction','milo-construction','Milo Konstruksi','Kereta Derek 🏗️',0xfc6c0c,0x1f2937,99,null],
+    ['mex_penny_ice_cream','penny-ice-cream','Penny Es Krim','Trem Es Krim 🍦',0x0c9ce4,0xf7a8c8,95,null],
+    ['mex_brock_wrecking_ball','brock-wrecking-ball','Brock Bola Baja','Kereta Perobohan 🟨',0xfcb40c,0x1f2937,92,null],
+    ['mex_faye_nature','faye-nature','Faye Alam','Lokomotif Kebun 🌱',0x249c54,0xfc9c3c,90,null],
+    ['mex_red_water_rescue','red-water-rescue','Red Tangki Air','Kereta Tangki 💧',0xcc2424,0xc8d8e4,88,null],
+    ['mex_flicker_ladder','flicker-ladder','Flicker Tangga','Kereta Tangga 🪜',0xcc2424,0xe4b40c,91,null],
+    ['mex_mandy_holiday','mandy-holiday','Mandy Natal','Kereta Liburan 🎄',0xcc2424,0x249c3c,87,null],
+    ['mex_ricky_stealth','ricky-stealth','Ricky Siluman','Lokomotif Siluman 🟣',0x6c3ccc,0x1f2937,86,null],
+    ['mex_nate_cargo_hauler','nate-cargo-hauler','Nate Kargo','Lokomotif Kargo 📦',0x9c6c3c,0xcc2424,88,null],
+    ['mex_milo_rescue','milo-rescue','Milo Penyelamat','Kereta Medis ➕',0x0c54e4,0xfc8424,95,null],
+  ]
+  var idxs = []
+  MEX.forEach(function (r) {
+    var key = r[0], slug = r[1], name = r[2], sub = r[3], body = r[4], acc = r[5], h = r[6], smoke = r[7]
+    idxs.push(TRAIN_STYLES.length)
+    TRAIN_STYLES.push({ character: true, characterKey: key,
+      locoBody: body, locoCab: body, locoAccent: acc, carBody: body,
+      carWindow: 0xdbeafe, carStripe: acc, cabColor: body, chimney: 0x212121,
+      wheelRim: acc, caboose: body, cabooseLight: acc, smokeCol: 0xbbbbbb })
+    G16_CHAR_CONFIGS[key] = { spriteUrl: '../assets/train/mighty/' + slug + '.webp',
+      spriteHeight: h, wheelPositions: [], smokePos: smoke, bottomPaddingOffset: 0 }
+    G16_CARD_META[key] = { name: name, desc: sub }
+  })
+  G16_PKGS.push({ id: 'mighty', name: '\uD83D\uDE86 Mighty Express', color: '#0c54cc',
+    desc: '20 karakter Mighty Express!', indices: idxs })
 })();
 
 // A-339 P2 — "Semua" tab at the FRONT: one scrollable grid of EVERY train, so the

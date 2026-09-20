@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=v59.96-20260920a">
+<link rel="stylesheet" href="du-buttons.css?v=v59.97-20260920a">
 <title>Balapan Kereta 🚂</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -239,43 +239,43 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 /* Flash */
 #flash{position:fixed;inset:0;z-index:99;pointer-events:none;opacity:0;transition:opacity .05s}
 </style>
-<link rel="stylesheet" href="g14-hud.css?v=v59.96-20260920a">
+<link rel="stylesheet" href="g14-hud.css?v=v59.97-20260920a">
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v59.1</div>
-<script src="data/emoji-map.js?v=v59.96-20260920a"></script><script src="data/ui-sprites.js?v=v59.96-20260920a"></script><!-- zero-emoji engine -->
-<script src="sw-reload.js?v=v59.96-20260920a"></script>
-<script src="train-shared.js?v=v59.96-20260920a"></script>
-<script src="data/train-world.js?v=v59.96-20260920a"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
-<script src="train-vfx.js?v=v59.96-20260920a"></script>
-<script src="train-bg-engine.js?v=v59.96-20260920a"></script>
-<script src="data/bg-themes.js?v=v59.96-20260920a"></script>
-<script src="data/bg-renderers.js?v=v59.96-20260920a"></script>
-<script src="data/bg-npcs.js?v=v59.96-20260920a"></script>
-<script src="data/bg-audio.js?v=v59.96-20260920a"></script>
-<script src="data/bg-events.js?v=v59.96-20260920a"></script>
+<script src="data/emoji-map.js?v=v59.97-20260920a"></script><script src="data/ui-sprites.js?v=v59.97-20260920a"></script><!-- zero-emoji engine -->
+<script src="sw-reload.js?v=v59.97-20260920a"></script>
+<script src="train-shared.js?v=v59.97-20260920a"></script>
+<script src="data/train-world.js?v=v59.97-20260920a"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
+<script src="train-vfx.js?v=v59.97-20260920a"></script>
+<script src="train-bg-engine.js?v=v59.97-20260920a"></script>
+<script src="data/bg-themes.js?v=v59.97-20260920a"></script>
+<script src="data/bg-renderers.js?v=v59.97-20260920a"></script>
+<script src="data/bg-npcs.js?v=v59.97-20260920a"></script>
+<script src="data/bg-audio.js?v=v59.97-20260920a"></script>
+<script src="data/bg-events.js?v=v59.97-20260920a"></script>
 <!-- v54.69 — ObstacleEngine foundation (modular obstacle system, soft-fail, kids-friendly) -->
-<script src="obstacle-engine.js?v=v59.96-20260920a"></script>
-<script src="data/kids-questions.js?v=v59.96-20260920a"></script>
+<script src="obstacle-engine.js?v=v59.97-20260920a"></script>
+<script src="data/kids-questions.js?v=v59.97-20260920a"></script>
 <!-- v55.97 M-303 — SHARED quiz engine (question + answer-choices) for all games -->
-<script src="quiz-engine.js?v=v59.96-20260920a"></script>
+<script src="quiz-engine.js?v=v59.97-20260920a"></script>
 <!-- v56.6 M-303/A-315 — SHARED motion/game-feel engine (frame-rate-independent easing) -->
-<script src="motion.js?v=v59.96-20260920a"></script>
-<script src="data/obstacles.js?v=v59.96-20260920a"></script>
-<script src="data/routes.js?v=v59.96-20260920a"></script>
-<script src="data/reward-catalog.js?v=v59.96-20260920a"></script>
-<script src="reward-gallery.js?v=v59.96-20260920a"></script>
-<script src="settings-modal.js?v=v59.96-20260920a"></script>
+<script src="motion.js?v=v59.97-20260920a"></script>
+<script src="data/obstacles.js?v=v59.97-20260920a"></script>
+<script src="data/routes.js?v=v59.97-20260920a"></script>
+<script src="data/reward-catalog.js?v=v59.97-20260920a"></script>
+<script src="reward-gallery.js?v=v59.97-20260920a"></script>
+<script src="settings-modal.js?v=v59.97-20260920a"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
-<script src="train-bgm.js?v=v59.96-20260920a"></script>
-<script src="indo-scene.js?v=v59.96-20260920a"></script>
-<script src="data/train-wheel-anchors.js?v=v59.96-20260920a"></script>
-<script src="train-journey.js?v=v59.96-20260920a"></script>
-<script src="train-backdrop.js?v=v59.96-20260920a"></script>
-<script src="train-speedfx.js?v=v59.96-20260920a"></script>
-<script src="data/sfx-engine.js?v=v59.96-20260920a"></script><!-- A-347 shared coin + quiz answer cues (owner) -->
-<script src="data/battle-modes.js?v=v59.96-20260920a"></script><!-- A-323b — mode-select + name-entry helpers (train PvP is self-contained below) -->
+<script src="train-bgm.js?v=v59.97-20260920a"></script>
+<script src="indo-scene.js?v=v59.97-20260920a"></script>
+<script src="data/train-wheel-anchors.js?v=v59.97-20260920a"></script>
+<script src="train-journey.js?v=v59.97-20260920a"></script>
+<script src="train-backdrop.js?v=v59.97-20260920a"></script>
+<script src="train-speedfx.js?v=v59.97-20260920a"></script>
+<script src="data/sfx-engine.js?v=v59.97-20260920a"></script><!-- A-347 shared coin + quiz answer cues (owner) -->
+<script src="data/battle-modes.js?v=v59.97-20260920a"></script><!-- A-323b — mode-select + name-entry helpers (train PvP is self-contained below) -->
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
 <!-- v54.17 A1: 3-2-1-GO countdown overlay -->
@@ -548,14 +548,14 @@ function g14RefreshHCBadge(){
 }
 </script>
 
-<script src="data/freeze-watchdog.js?v=v59.96-20260920a"></script>
-<script src="data/save-engine.js?v=v59.96-20260920a"></script>
-<script src="game-modal.js?v=v59.96-20260920a"></script>
+<script src="data/freeze-watchdog.js?v=v59.97-20260920a"></script>
+<script src="data/save-engine.js?v=v59.97-20260920a"></script>
+<script src="game-modal.js?v=v59.97-20260920a"></script>
 
 <div id="flash"></div>
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="../shared/rz-responsive.js?v=v59.96-20260920a"></script>
+<script src="../shared/rz-responsive.js?v=v59.97-20260920a"></script>
 <script>
 'use strict'
 // ═══════════════════════════════════════════════════════════
@@ -708,6 +708,42 @@ const TRAIN_CATS = [
       {key:'ttp_ella', name:'Ella', sub:'Kereta Langit 🩵', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/titipo/ella.webp', faces:'right', spriteHeight:90, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#3fa0d6', accColor:'#eceff1', kmh:59, baseSpeed:1.87, boostMult:1.49, boostDur:1517, desc:'Ella — kereta biru langit yang lembut dan penyayang!'},
       {key:'ttp_lord_greener', name:'Lord Greener', sub:'Bangsawan Hijau 👑', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/titipo/lord-greener.webp', faces:'right', spriteHeight:90, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#2a4a2a', accColor:'#c9a227', kmh:68, baseSpeed:1.99, boostMult:1.50, boostDur:1537, desc:'Lord Greener — lokomotif hijau bangsawan dengan lambang emas!'},
       {key:'ttp_walkie', name:'Walkie', sub:'Railcar Krem 🚌', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/titipo/walkie.webp', faces:'right', spriteHeight:90, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#e6ceb4', accColor:'#1e3a5f', kmh:53, baseSpeed:1.80, boostMult:1.49, boostDur:1504, desc:'Walkie — railcar krem biru yang santai berkeliling desa!'},
+    ],
+  },
+  {
+    // v59.97 — Mighty Express pack (20 chars), built by
+    // scripts/process-mighty-express-sprites.py from the owner's two sheets. The art
+    // ALREADY FACES RIGHT (unlike Titipo/Chuggington, which are mirrored at build
+    // time), so faces:'right' here means "render native": G14_FACES only fills when
+    // `faces` is null, so these opt out of the mirror either way.
+    // Heights are the shared pack's DERIVED heights scaled by 90/115 onto g14's
+    // smaller ladder, which keeps every body the same size on this track and lets a
+    // crane or ladder stand taller instead of shrinking its chassis.
+    // Like Titipo, this pack is deliberately NOT excluded from NPC_TRAINS: the owner
+    // wants these usable as AI opponents too.
+    key:'mighty', name:'Mighty Express ⭐⭐', emoji:'🚆',
+    color:'#0c54cc', desc:'20 karakter Mighty Express — Nate, Milo, Brock, Faye, Red & kawan-kawan!',
+    trains:[
+      {key:'mex_freight_nate', name:'Freight Nate', sub:'Lokomotif Barang 🔴', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/mighty/freight-nate.webp', faces:'right', spriteHeight:85, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#b42424', accColor:'#e4b40c', kmh:64, baseSpeed:1.94, boostMult:1.50, boostDur:1530, desc:'Nate — lokomotif barang merah kuning yang kuat menarik gerbong berat!'},
+      {key:'mex_mechanic_milo', name:'Mechanic Milo', sub:'Kereta Bengkel 🔧', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/mighty/mechanic-milo.webp', faces:'right', spriteHeight:98, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#0c54cc', accColor:'#fc6c24', kmh:58, baseSpeed:1.86, boostMult:1.49, boostDur:1510, desc:'Milo — kereta bengkel biru dengan lengan kunci yang bisa memperbaiki apa saja!'},
+      {key:'mex_build_it_brock', name:'Build-It Brock', sub:'Kereta Molen 🟡', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/mighty/build-it-brock.webp', faces:'right', spriteHeight:87, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#fcb40c', accColor:'#1f2937', kmh:52, baseSpeed:1.78, boostMult:1.48, boostDur:1480, desc:'Brock — kereta molen kuning pengaduk semen, si tukang bangun!'},
+      {key:'mex_farmer_faye', name:'Farmer Faye', sub:'Lokomotif Ladang 🌿', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/mighty/farmer-faye.webp', faces:'right', spriteHeight:93, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#249c3c', accColor:'#fc9c3c', kmh:55, baseSpeed:1.82, boostMult:1.49, boostDur:1500, desc:'Faye — lokomotif hijau petani yang rajin mengangkut hasil panen!'},
+      {key:'mex_rescue_red', name:'Rescue Red', sub:'Kereta Pemadam 🚒', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/mighty/rescue-red.webp', faces:'right', spriteHeight:99, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#b42424', accColor:'#e6e6e6', kmh:60, baseSpeed:1.90, boostMult:1.51, boostDur:1540, desc:'Red — kereta pemadam merah bertangga tinggi, selalu siap menolong!'},
+      {key:'mex_flicker', name:'Flicker', sub:'Lokomotif Sinyal 🚨', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/mighty/flicker.webp', faces:'right', spriteHeight:99, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#b42424', accColor:'#f5f5f5', kmh:66, baseSpeed:1.96, boostMult:1.50, boostDur:1520, desc:'Flicker — lokomotif merah putih berlampu sinyal yang gesit di rel!'},
+      {key:'mex_peoplemover_penny', name:'Peoplemover Penny', sub:'Trem Penumpang 🚋', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/mighty/peoplemover-penny.webp', faces:'right', spriteHeight:84, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#0cb4b4', accColor:'#f0e6c8', kmh:62, baseSpeed:1.92, boostMult:1.50, boostDur:1515, desc:'Penny — trem toska krem yang ramah mengantar penumpang keliling kota!'},
+      {key:'mex_mandy_mail', name:'Mandy Mail', sub:'Kereta Pos 💌', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/mighty/mandy-mail.webp', faces:'right', spriteHeight:83, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#6c3ce4', accColor:'#f0e6c8', kmh:59, baseSpeed:1.88, boostMult:1.49, boostDur:1505, desc:'Mandy — kereta pos ungu pengantar surat ke seluruh penjuru!'},
+      {key:'mex_tricky_ricky', name:'Tricky Ricky', sub:'Lokomotif Lincah 💚', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/mighty/tricky-ricky.webp', faces:'right', spriteHeight:87, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#84cc24', accColor:'#1f2937', kmh:68, baseSpeed:1.99, boostMult:1.51, boostDur:1545, desc:'Ricky — lokomotif hijau lincah yang suka bercanda dan berlari kencang!'},
+      {key:'mex_nate_special_mission', name:'Nate Misi Khusus', sub:'Lokomotif Misi 🔷', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/mighty/nate-special-mission.webp', faces:'right', spriteHeight:90, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#243c84', accColor:'#e4b40c', kmh:67, baseSpeed:1.97, boostMult:1.51, boostDur:1550, desc:'Nate versi misi khusus — biru emas untuk tugas yang paling penting!'},
+      {key:'mex_milo_construction', name:'Milo Konstruksi', sub:'Kereta Derek 🏗️', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/mighty/milo-construction.webp', faces:'right', spriteHeight:99, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#fc6c0c', accColor:'#1f2937', kmh:54, baseSpeed:1.80, boostMult:1.48, boostDur:1490, desc:'Milo versi konstruksi — derek jingga yang mengangkat beban raksasa!'},
+      {key:'mex_penny_ice_cream', name:'Penny Es Krim', sub:'Trem Es Krim 🍦', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/mighty/penny-ice-cream.webp', faces:'right', spriteHeight:95, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#0c9ce4', accColor:'#f7a8c8', kmh:57, baseSpeed:1.84, boostMult:1.49, boostDur:1500, desc:'Penny versi es krim — trem biru manis pembawa es krim untuk semua!'},
+      {key:'mex_brock_wrecking_ball', name:'Brock Bola Baja', sub:'Kereta Perobohan 🟨', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/mighty/brock-wrecking-ball.webp', faces:'right', spriteHeight:92, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#fcb40c', accColor:'#1f2937', kmh:50, baseSpeed:1.76, boostMult:1.47, boostDur:1470, desc:'Brock versi bola baja — perobohan bangunan tua dengan satu ayunan!'},
+      {key:'mex_faye_nature', name:'Faye Alam', sub:'Lokomotif Kebun 🌱', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/mighty/faye-nature.webp', faces:'right', spriteHeight:90, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#249c54', accColor:'#fc9c3c', kmh:56, baseSpeed:1.83, boostMult:1.49, boostDur:1500, desc:'Faye versi kebun — lokomotif hijau yang membawa taman berjalan!'},
+      {key:'mex_red_water_rescue', name:'Red Tangki Air', sub:'Kereta Tangki 💧', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/mighty/red-water-rescue.webp', faces:'right', spriteHeight:88, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#cc2424', accColor:'#c8d8e4', kmh:58, baseSpeed:1.86, boostMult:1.50, boostDur:1520, desc:'Red versi tangki air — pemadam dengan tangki air raksasa!'},
+      {key:'mex_flicker_ladder', name:'Flicker Tangga', sub:'Kereta Tangga 🪜', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/mighty/flicker-ladder.webp', faces:'right', spriteHeight:91, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#cc2424', accColor:'#e4b40c', kmh:61, baseSpeed:1.91, boostMult:1.50, boostDur:1525, desc:'Flicker versi tangga — menjangkau jendela paling tinggi di kota!'},
+      {key:'mex_mandy_holiday', name:'Mandy Natal', sub:'Kereta Liburan 🎄', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/mighty/mandy-holiday.webp', faces:'right', spriteHeight:87, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#cc2424', accColor:'#249c3c', kmh:60, baseSpeed:1.89, boostMult:1.50, boostDur:1515, desc:'Mandy versi liburan — merah hijau bersalju, pembawa hadiah!'},
+      {key:'mex_ricky_stealth', name:'Ricky Siluman', sub:'Lokomotif Siluman 🟣', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/mighty/ricky-stealth.webp', faces:'right', spriteHeight:86, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#6c3ccc', accColor:'#1f2937', kmh:70, baseSpeed:2.02, boostMult:1.52, boostDur:1560, desc:'Ricky versi siluman — ungu hitam paling senyap dan paling cepat!'},
+      {key:'mex_nate_cargo_hauler', name:'Nate Kargo', sub:'Lokomotif Kargo 📦', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/mighty/nate-cargo-hauler.webp', faces:'right', spriteHeight:88, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#9c6c3c', accColor:'#cc2424', kmh:53, baseSpeed:1.79, boostMult:1.48, boostDur:1485, desc:'Nate versi kargo — peti kayu penuh muatan di punggungnya!'},
+      {key:'mex_milo_rescue', name:'Milo Penyelamat', sub:'Kereta Medis ➕', emoji:'🚆', isCharacter:true, spriteUrl:'../assets/train/mighty/milo-rescue.webp', faces:'right', spriteHeight:95, wheelLayout:'aeg', wheelPositions:[], smokePos:null, bottomPaddingOffset:0, bodyColor:'#0c54e4', accColor:'#fc8424', kmh:63, baseSpeed:1.93, boostMult:1.50, boostDur:1530, desc:'Milo versi penyelamat — biru medis yang datang paling dulu saat darurat!'},
     ],
   },
   {
@@ -935,7 +971,7 @@ const TRAIN_CATS = [
 // 7 categorized world packages (built by tools/build-train-world.py → data/train-world.js).
 ;(function () {
   if (window.TRAIN_WORLD && Array.isArray(window.TRAIN_WORLD.categories)) {
-    const keep = TRAIN_CATS.filter(c => c.key === 'characters' || c.key === 'thomas_aeg' || c.key === 'chuggington' || c.key === 'titipo')  // v59.88/.89 — keep the Chuggington + Titipo packs too
+    const keep = TRAIN_CATS.filter(c => c.key === 'characters' || c.key === 'thomas_aeg' || c.key === 'chuggington' || c.key === 'titipo' || c.key === 'mighty')  // v59.88/.89/.97 — keep the Chuggington + Titipo + Mighty Express packs too
     TRAIN_CATS.length = 0
     TRAIN_CATS.push.apply(TRAIN_CATS, keep.concat(window.TRAIN_WORLD.categories))
   }
@@ -6146,7 +6182,7 @@ function g14CloseMap() {
 // extra wiring, and a missing sprite file degrades to the procedural canvas below.
 const G14_CAT_HERO = {
   characters:'caseyjr', character:'caseyjr', thomas_aeg:'thomas', chuggington:'wilson',
-  titipo:'titipo',
+  titipo:'titipo', mighty:'freight nate',
   uap_klasik:'rocket', uap_modern:'flying scotsman', diesel:'deltic', listrik:'taurus',
   cepat:'shinkansen 0', komuter:'azuma', indonesia:'cc206'
 }
