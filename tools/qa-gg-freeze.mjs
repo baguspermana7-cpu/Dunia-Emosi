@@ -85,6 +85,13 @@ try {
     await page.waitForFunction(() => window.__gg.activeScenes().includes('Game'), { timeout: 45000 }).catch(() => {})
     await sleep(6000)
     const composed = await page.evaluate(() => window.__ggComposed || null)
+    const guard = await page.evaluate(() => ({
+      renderThrows: window.__ggRenderThrows || 0,
+      lastThrow: window.__ggRenderLast || null,
+      installed: !!(window.Phaser && window.Phaser.Renderer && window.Phaser.Renderer.WebGL &&
+        window.Phaser.Renderer.WebGL.WebGLRenderer.prototype.__ggGuarded),
+    }))
+    check(guard.installed, `${tag}: the render net is installed`)
     check(started === 'ok' && (await page.evaluate(() => window.__gg.activeScenes().includes('Game'))),
       `${tag}: the race starts from LevelSelect's own play path (${started})`)
     if (composed && cfg.hero !== 'none') {
@@ -113,6 +120,7 @@ try {
     if (frozenAt !== null) t.frozen++
     if (errors.length) t.errored++
     check(errors.length === 0, `${tag}: no errors while racing${errors.length ? ' — ' + errors[0] : ''}`)
+    if (guard.renderThrows) console.log(`      render swallowed ${guard.renderThrows}x: ${guard.lastThrow}`)
     if (errors.length > 1) console.log('      (+' + (errors.length - 1) + ' more)')
     check(missing.length === 0, `${tag}: every asset the race asked for loaded${missing.length ? ' — ' + [...new Set(missing)][0] : ''}`)
     if (frozenAt !== null || errors.length) {

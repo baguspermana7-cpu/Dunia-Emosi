@@ -1658,8 +1658,43 @@ What is known:
   chain — including inside the film player's iframe — and offers a way out with the error
   printed on the card.
 
-Open: the cause. Next measurement is an A/B on freeze RATE (`RUNS=5`) with and without our
-composition patch, since one pass proves nothing for an intermittent fault.
+**Measured, not argued** (each row is `RUNS` full races on the same machine, same play length):
+
+| build | froze | note |
+|---|---|---|
+| the game exactly as shipped, no composition | **1 / 5** | run #2 died at 8s, `isGLTexture` null |
+| + render net (swallow a throw inside `WebGLRenderer.render`) | **0 / 8** | one run swallowed the null 41x and still drew 22/23 frames |
+| + texture guard widened to "while the Game scene exists", removal deferred to its shutdown | **0 / 8** | but the guard NEVER FIRED once — see below |
+
+So the composition patch is exonerated twice over: the combination that froze is the game's OWN
+pairing, and the plain game with no composition at all froze too.
+
+**The texture-guard hypothesis is DEAD, and was removed rather than kept "just in case".**
+The bundle really does unload via `unloadSpine()` → `textures.remove()` per atlas page, so a
+guard on `TextureManager.remove` looked right. Measured across 18 runs it never intercepted a
+single removal — including the run that threw the null 41 times. Whatever frees that texture
+does not go through `TextureManager.remove`, so the guard was dead weight and is gone. The
+comment in the page records this so nobody re-derives it.
+
+**What is proven and shipped: the render net.** One throw inside `WebGLRenderer.render` kills the
+whole Phaser loop; that is why a null texture becomes a frozen screen instead of a glitch. The
+render step is now wrapped: the throw is counted, the message is handed to `__freezeContext` so
+the recovery card can print it, and it is logged on the 1st, 50th and 500th occurrence. Measured
+effect: a run that threw 41 times still drew 22 of 23 distinct frames and stayed playable.
+
+The asset-manager route was tried first and abandoned: `addDynamicAssets()` exists in the bundle
+but its manager is a module singleton, absent from `window` and unreachable from the scene or
+game objects (walked to depth 3). The `__ggKept` breadcrumb is what exposed that — the guard ran
+and reported `ok:false`, which without the breadcrumb would have looked like a working fix.
+
+Still honest about the limits:
+- 0/8 clean runs is not proof of a cure at a ~20% base rate (p ≈ 0.17 by chance). The mechanism
+  carries the argument; the numbers only have to not contradict it.
+- The underlying null is NOT fixed — its source is still unknown. What changed is that it can no
+  longer take the game down: the loop survives, and if it ever degrades badly the freeze
+  watchdog still offers the child a way out with the error printed on the card.
+- Next lead, if it recurs: instrument the render throw to report WHICH game object and texture
+  key was being drawn, which is the one thing the current message does not say.
 
 ## ⬜ CROSS-GAME ISSUES
 

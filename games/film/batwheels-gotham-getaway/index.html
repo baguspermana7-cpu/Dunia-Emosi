@@ -133,6 +133,56 @@
     return ['assets/animations/' + key + '.json', 'assets/animations/' + key + '.atlas'];
   }
 
+  /* ---- MENCEGAH BEKU ------------------------------------------------------
+     Terukur, dan satu hipotesis sudah GUGUR di sini — dicatat supaya tidak
+     dicoba lagi tanpa bukti baru.
+
+     Gejalanya: balapan berhenti ~8 detik setelah dimulai dengan
+     `Cannot read properties of null (reading 'isGLTexture')`. Phaser membacanya
+     dari `frame.source` saat menggambar, jadi ada frame yang menunjuk tekstur
+     yang sudah lenyap, dan satu lemparan di dalam render mematikan seluruh loop.
+     Terjadi juga pada game APA ADANYA tanpa komposisi kita: 1 dari 5 run.
+
+     Hipotesis yang gugur: bundle ini memang membongkar aset lewat
+     `unloadSpine()` yang memanggil `textures.remove()` per halaman atlas, jadi
+     penjaga pada `TextureManager.remove` tampak masuk akal. Dipasang dan diukur:
+     18 run, penjaga itu TIDAK PERNAH kena sekali pun — termasuk pada run yang
+     melempar null 41 kali. Jadi teksturnya hilang lewat jalan lain, dan penjaga
+     itu dicopot daripada menyimpan kerumitan yang tidak pernah bekerja.
+     (Jalur API mesin juga sudah dicoba: `addDynamicAssets()` ada, tapi
+     manajernya singleton modul — tidak terjangkau dari window, scene, atau
+     objek game sampai kedalaman 3.)
+
+     Yang TERBUKTI bekerja ada di bawah: jaring pada langkah render. */
+
+  /* Jaring terakhir: satu lemparan di dalam render mematikan seluruh loop
+     Phaser. Menelannya berarti satu frame hilang, bukan layar mati — dan
+     kejadiannya dicatat supaya tidak diam-diam jadi kebiasaan. */
+  function guardRender(P) {
+    try {
+      var R = P && P.Renderer && P.Renderer.WebGL && P.Renderer.WebGL.WebGLRenderer &&
+        P.Renderer.WebGL.WebGLRenderer.prototype;
+      if (!R || R.__ggGuarded) return;
+      R.__ggGuarded = true;
+      var origRender = R.render;
+      R.render = function () {
+        try { return origRender.apply(this, arguments); }
+        catch (e) {
+          var n = (window.__ggRenderThrows = (window.__ggRenderThrows || 0) + 1);
+          window.__ggRenderLast = String(e && e.message || e).slice(0, 120);
+          /* Beri tahu watchdog bersama APA yang rusak, supaya kartu pemulihannya
+             membawa barisnya kalau anak sampai perlu menekannya. */
+          try { window.__freezeContext = 'gg-render x' + n + ': ' + window.__ggRenderLast; } catch (_) {}
+          /* Sekali per ledakan, catat ke log macet — menelan diam-diam selamanya
+             akan menyembunyikan cacat ini dari kita sendiri. */
+          if (n === 1 || n === 50 || n === 500) {
+            try { console.error('[gg] render threw (' + n + 'x): ' + window.__ggRenderLast); } catch (_) {}
+          }
+        }
+      };
+    } catch (e) {}
+  }
+
   function queueSpines(scene) {
     var need = [HERO_PAIR[cfg.hero], VILLAIN_PAIR[cfg.villain]];
     if (VILLAIN_FX[cfg.villain]) need.push(VILLAIN_FX[cfg.villain]);
@@ -185,23 +235,32 @@
     var origPreload = sc.preload;
     sc.preload = function () {
       var r = (typeof origPreload === 'function') ? origPreload.apply(this, arguments) : undefined;
-      try { queueSpines(this); } catch (e) {}
+      try { if (cfg) queueSpines(this); } catch (e) {}
       return r;
     };
     var origCreate = sc.create;
     if (typeof origCreate === 'function') {
-      sc.create = function () { compose(this); return origCreate.apply(this, arguments); };
+      sc.create = function () {
+        if (cfg) compose(this);
+        var r = origCreate.apply(this, arguments);
+        /* SESUDAH create, bukan sebelum: `scene.level` baru diisi di dalam
+           create, jadi panggilan lebih awal melihat level kosong dan tidak
+           mendaftarkan apa pun — terdeteksi oleh jejak __ggKept yang kosong
+           pada percobaan pertama. */
+        return r;
+      };
     }
   }
 
   function patch(P) {
+    guardRender(P);
     var SM = P && P.Scenes && P.Scenes.SceneManager && P.Scenes.SceneManager.prototype;
     if (!SM || SM.__ggHeroPatched) return !!SM;
     SM.__ggHeroPatched = true;
     var start = SM.start;
     SM.start = function (key, data) {
       GAME = this.game;
-      if (cfg) wireGameScene();
+      wireGameScene();   /* also without cfg: the unload guard is for the plain game too */
       if (key === 'Game') {
         hideGate();
         /* Hanya ronde PERTAMA yang diarahkan ke kota pilihan. Sesudah itu
