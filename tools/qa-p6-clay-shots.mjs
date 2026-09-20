@@ -1,4 +1,5 @@
-// P6 — screenshot g1-g8 gameplay + proof-unchanged g9/g12/landing/level-select.
+// P6 — screenshot the clay gameplay screens + proof-unchanged g9/landing/level-select.
+// (g1/g2/g5/g12 were retired on 2026-09-20; their shots were removed.)
 // Drives the SPA via game.js entry points. Pass "before" or "after" as argv[2].
 import http from 'http';
 import { readFile } from 'fs/promises';
@@ -88,7 +89,7 @@ for (let n = 1; n <= 8; n++) {
   await sleep(150);
 }
 
-// PROOF-UNCHANGED: g9 (SPA), g12 (SPA), landing (welcome), one level-select.
+// PROOF-UNCHANGED: g9 (SPA), landing (welcome), one level-select.
 async function shotOther(label, fn, expectId) {
   await page.evaluate(fn);
   await sleep(700);
@@ -105,7 +106,6 @@ async function shotOther(label, fn, expectId) {
 }
 await shotOther('g9', () => { window.openLevelSelect(9); window.startGameWithLevel(1); }, 'screen-game9');
 await page.evaluate(() => { try { window.showScreen('screen-menu'); } catch(_){} }); await sleep(150);
-await shotOther('g12', () => { window.openLevelSelect(12); window.startGameWithLevel(1); }, 'screen-game12');
 await page.evaluate(() => { try { window.showScreen('screen-menu'); } catch(_){} }); await sleep(150);
 await shotOther('landing', () => { window.showScreen('screen-welcome'); }, 'screen-welcome');
 await shotOther('levelselect', () => { window.openLevelSelect(1); }, 'screen-level');

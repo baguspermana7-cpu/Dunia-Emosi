@@ -1,4 +1,5 @@
-// READ-ONLY audit driver — screenshots g1-g5,g7 in portrait + landscape.
+// READ-ONLY audit driver — screenshots g3,g4,g7 in portrait + landscape.
+// (g1/g2/g5 were retired on 2026-09-20 and their rows removed.)
 import http from 'http';
 import { readFile, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
@@ -25,7 +26,7 @@ const port = server.address().port;
 await mkdir(OUT, { recursive: true });
 
 const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox','--disable-web-security'] });
-const games = [1,2,3,4,5,7];
+const games = [3,4,7];   // 1/2/5 retired 2026-09-20
 const report = {};
 const ONLY = process.env.VIEW; // 'portrait' | 'landscape' | undefined(both)
 let views = [{n:'portrait',w:412,h:915},{n:'landscape',w:760,h:360}];
@@ -55,22 +56,13 @@ for (const view of views) {
           gameStars:[0,0], currentGame:g
         });
         try { window.showScreen('screen-game'+g); } catch(e){ return {err:'showScreen '+e}; }
-        const inits={1:window.initGame1,2:window.initGame2,3:window.initGame3,4:window.initGame4,5:window.initGame5,7:window.initGame7};
+        const inits={3:window.initGame3,4:window.initGame4,7:window.initGame7};
         try { inits[g](); } catch(e){ return {err:'init '+e}; }
         return { ok:true };
       }, g);
-      // Let one render settle; for g2 press start to reach an active phase.
+      // Let one render settle.
       await new Promise(r=>setTimeout(r,900));
       await page.evaluate(()=>{ try{ var l=document.getElementById('page-loader'); if(l) l.remove(); }catch(_){}});
-      if (g===2) {
-        await page.evaluate(()=>{ try{ window.startBreathing&&window.startBreathing(); }catch(_){}});
-        await new Promise(r=>setTimeout(r,1400)); // land mid-inhale
-      }
-      if (g===5) {
-        // flip two cards to show the flip state
-        await page.evaluate(()=>{ try{ const cards=window.g5State&&window.g5State.cards; if(cards&&cards[0]&&cards[0].el){ window.flipG5Card(0,cards[0].el);} }catch(_){}});
-        await new Promise(r=>setTimeout(r,400));
-      }
       report[`g${g}-${view.n}`] = { ...info, errors: errors.slice(0,6) };
       await page.screenshot({ path: path.join(OUT, `audit-g${g}-${view.n}.png`) });
     } catch (e) {

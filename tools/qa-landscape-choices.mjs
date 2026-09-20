@@ -1,5 +1,5 @@
 // VERIFY: in LANDSCAPE the answer/choice buttons must all be on-screen (not clipped
-// below the overflow-hidden .screen). Drives g1,g2,g3,g4,g5,g7 into gameplay at two
+// below the overflow-hidden .screen). Drives g3,g4,g7 into gameplay at two
 // landscape sizes + a portrait control. Screenshots to tools/qa-out/ls-gN-{before,after}.png
 // and portrait ls-gN-portrait.png. Asserts every choice button's rect.bottom <= screen bottom.
 import http from 'http';
@@ -34,11 +34,8 @@ await mkdir(OUT, { recursive: true });
 
 // Games under test. selector = the choices container(s) whose children are the tappable choices.
 const GAMES = [
-  { n: 1, init: 'initGame1', screen: 'screen-game1', choiceSel: '#g1-choices .g1-choice-btn' },
-  { n: 2, init: 'initGame2', screen: 'screen-game2', choiceSel: '#g2-start-btn' },
   { n: 3, init: 'initGame3', screen: 'screen-game3', choiceSel: '#g3-choices .g3-choice-btn' },
   { n: 4, init: 'initGame4', screen: 'screen-game4', choiceSel: '#g4-choices .g4-choice-btn' },
-  { n: 5, init: 'initGame5', screen: 'screen-game5', choiceSel: '#g5-grid .g5-card' },
   { n: 7, init: 'initGame7', screen: 'screen-game7', choiceSel: '#g7-choices .g7-choice-btn' },
 ];
 
