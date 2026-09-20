@@ -22,7 +22,7 @@
   body{
     background:radial-gradient(120% 90% at 50% -10%, #1a2148 0%, var(--bg) 55%) fixed, var(--bg);
     color:var(--ink);
-    font-family:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+    font-family:"IBM Plex Sans","Segoe UI",system-ui,-apple-system,sans-serif;
     line-height:1.6; -webkit-font-smoothing:antialiased;
     overflow-x:hidden;
   }
@@ -365,7 +365,7 @@ sprite.scale.set(t.scale)
     // funnel
     ctx.fillStyle='#1f2d4a'; roundRect(-46,-80,20,26,5); ctx.fill()
     // boiler face number
-    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(-18,-30,16,0,7); ctx.fill(); ctx.fillStyle='#d23b3b'; ctx.font='800 20px Inter,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('1',-18,-29)
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(-18,-30,16,0,7); ctx.fill(); ctx.fillStyle='#d23b3b'; ctx.font='800 20px "IBM Plex Sans",sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('1',-18,-29)
     // wheels
     ctx.fillStyle='#10131f'; [-34,-6,28].forEach(function(wx){ ctx.beginPath(); ctx.arc(wx,0,13,0,7); ctx.fill(); ctx.strokeStyle='#5b6577'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(wx,0,13,0,7); ctx.stroke() })
     ctx.restore()

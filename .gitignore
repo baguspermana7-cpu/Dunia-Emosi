@@ -48,3 +48,7 @@ assets/train/Thomas/
 # Deprecated backdrop reference dump (literally "OLD reference only"; not referenced by app code)
 assets/train/_bg-clean-OLD-reference-only/
 
+
+# Throwaway one-off QA probes. A probe worth keeping gets a real name
+# (tools/qa-*.mjs) and is committed; _qa-* is scratch from a single session.
+tools/_qa-*.mjs
