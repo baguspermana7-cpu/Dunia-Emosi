@@ -87,6 +87,7 @@ try {
     const composed = await page.evaluate(() => window.__ggComposed || null)
     const guard = await page.evaluate(() => ({
       renderThrows: window.__ggRenderThrows || 0,
+      nullFrames: window.__ggNullFrames || [],
       lastThrow: window.__ggRenderLast || null,
       installed: !!(window.Phaser && window.Phaser.Renderer && window.Phaser.Renderer.WebGL &&
         window.Phaser.Renderer.WebGL.WebGLRenderer.prototype.__ggGuarded),
@@ -97,6 +98,25 @@ try {
     if (composed && cfg.hero !== 'none') {
       check(composed.jadi.hero === cfg.hero && composed.jadi.villain === cfg.villain,
         `${tag}: composed the pair that was asked for (${composed.jadi.hero}/${composed.jadi.villain})`)
+    }
+
+    // CHURN=n cycles race → back → race, because the unload that is suspected
+    // of pulling a live texture runs ON THE TRANSITION. Waiting for it to
+    // happen by itself costs about one occurrence per 30 runs.
+    const CHURN = +(process.env.CHURN || 0)
+    for (let c = 0; c < CHURN; c++) {
+      await sleep(7000)
+      await page.evaluate(() => window.__gg.leaveRace())
+      // wait for LevelSelect AND for the transition scene to get out of the way:
+      // calling playLevel mid-transition throws on 'cutWidth' and the cycle is
+      // silently lost, which would make a churn run look like it churned
+      await page.waitForFunction(() => {
+        const s = window.__gg.activeScenes()
+        return s.includes('LevelSelect') && !s.includes('TransitionLoadScene')
+      }, { timeout: 25000 }).catch(() => {})
+      await sleep(800)
+      await page.evaluate(() => window.__gg.playLevel(0))
+      await page.waitForFunction(() => window.__gg.activeScenes().includes('Game'), { timeout: 25000 }).catch(() => {})
     }
 
     // play, and watch the picture
@@ -120,7 +140,10 @@ try {
     if (frozenAt !== null) t.frozen++
     if (errors.length) t.errored++
     check(errors.length === 0, `${tag}: no errors while racing${errors.length ? ' — ' + errors[0] : ''}`)
-    if (guard.renderThrows) console.log(`      render swallowed ${guard.renderThrows}x: ${guard.lastThrow}`)
+    if (guard.renderThrows) {
+      console.log(`      render swallowed ${guard.renderThrows}x: ${guard.lastThrow}`)
+      console.log(`      objects with a dead frame: ${guard.nullFrames.join(' , ') || 'none found'}`)
+    }
     if (errors.length > 1) console.log('      (+' + (errors.length - 1) + ' more)')
     check(missing.length === 0, `${tag}: every asset the race asked for loaded${missing.length ? ' — ' + [...new Set(missing)][0] : ''}`)
     if (frozenAt !== null || errors.length) {

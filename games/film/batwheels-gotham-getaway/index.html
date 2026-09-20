@@ -158,6 +158,40 @@
   /* Jaring terakhir: satu lemparan di dalam render mematikan seluruh loop
      Phaser. Menelannya berarti satu frame hilang, bukan layar mati — dan
      kejadiannya dicatat supaya tidak diam-diam jadi kebiasaan. */
+  /* Saat render melempar, pesannya hanya bilang APA yang rusak, tidak bilang
+     SIAPA. Ini menyisir daftar tampilan tiap scene yang hidup dan melaporkan
+     objek yang frame-nya sudah kehilangan sumber tekstur — itulah satu hal yang
+     kurang untuk mengejar akarnya. Hanya dihitung pada lemparan pertama supaya
+     tidak menambah beban di tengah kebocoran. */
+  function nullFrameReport() {
+    var out = [];
+    try {
+      var scenes = (GAME && GAME.scene && GAME.scene.getScenes) ? GAME.scene.getScenes(true) : [];
+      var visit = function (arr, key, depth) {
+        if (!arr || depth > 3 || out.length >= 8) return;
+        for (var i = 0; i < arr.length && out.length < 8; i++) {
+          var o = arr[i];
+          if (!o) continue;
+          try {
+            var broken = (o.frame && !o.frame.source) ||
+              (o.texture && o.texture.source && o.texture.source.length === 0);
+            if (broken) {
+              out.push(key + '/' + (o.type || '?') + '/' +
+                ((o.texture && o.texture.key) || (o.frame && o.frame.texture && o.frame.texture.key) || '?') +
+                (o.name ? '#' + o.name : ''));
+            }
+          } catch (e) {}
+          try { if (o.list && o.list.length) visit(o.list, key, depth + 1); } catch (e) {}
+        }
+      };
+      for (var s2 = 0; s2 < scenes.length; s2++) {
+        var sc = scenes[s2];
+        visit(sc.children && sc.children.list, sc.scene.key, 0);
+      }
+    } catch (e) {}
+    return out;
+  }
+
   function guardRender(P) {
     try {
       var R = P && P.Renderer && P.Renderer.WebGL && P.Renderer.WebGL.WebGLRenderer &&
@@ -175,7 +209,13 @@
           try { window.__freezeContext = 'gg-render x' + n + ': ' + window.__ggRenderLast; } catch (_) {}
           /* Sekali per ledakan, catat ke log macet — menelan diam-diam selamanya
              akan menyembunyikan cacat ini dari kita sendiri. */
-          if (n === 1 || n === 50 || n === 500) {
+          if (n === 1) {
+            window.__ggNullFrames = nullFrameReport();
+            try {
+              console.error('[gg] render threw: ' + window.__ggRenderLast +
+                ' | objek bermasalah: ' + (window.__ggNullFrames.join(' , ') || 'tidak ketemu'));
+            } catch (_) {}
+          } else if (n === 50 || n === 500) {
             try { console.error('[gg] render threw (' + n + 'x): ' + window.__ggRenderLast); } catch (_) {}
           }
         }
@@ -332,6 +372,16 @@
         i.btnSkip.emit(ev);
         return 'ok';
       } catch (e) { return String(e && e.message || e); }
+    },
+    /* Keluar dari balapan lewat jalan yang dipakai tombol kembali game ini
+       sendiri (`Game.back()` → GameBack). Dipakai penguji untuk memutar
+       transisi berkali-kali dalam satu run: pembongkaran aset — tersangka
+       utama layar beku — terjadi PADA transisi, jadi memutarnya adalah cara
+       memancing cacat yang kalau ditunggu hanya muncul sekali per ~30 run. */
+    leaveRace: function () {
+      var g = this.scene('Game');
+      if (!g || typeof g.back !== 'function') return 'no Game';
+      try { g.back(); return 'ok'; } catch (e) { return String(e && e.message || e); }
     },
     playLevel: function (idx) {
       var ls = this.scene('LevelSelect');

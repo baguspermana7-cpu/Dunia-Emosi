@@ -1687,6 +1687,16 @@ but its manager is a module singleton, absent from `window` and unreachable from
 game objects (walked to depth 3). The `__ggKept` breadcrumb is what exposed that — the guard ran
 and reported `ok:false`, which without the breadcrumb would have looked like a working fix.
 
+**Two more hypotheses died, and the rate estimate was wrong.**
+- After the render net went in: 30 further runs produced ONE occurrence and ZERO freezes. So the
+  original "1 in 5" was a small-sample fluke; the true rate is nearer one in thirty here, and the
+  earlier claim that 0/8 beat 1/5 was over-confident. What stands is the DIRECT observation: the
+  one occurrence threw 41 times and the game kept drawing 22 of 23 frames instead of dying.
+- "The unload on scene transition is the trigger" — tested by churning transitions on purpose
+  (`CHURN=n` drives race → back → race through the game's own `Game.back()`): 6 runs x 4 cycles,
+  24 transitions, zero occurrences. Verified separately that the cycles really happen, so this is
+  a negative result and not a broken test.
+
 Still honest about the limits:
 - 0/8 clean runs is not proof of a cure at a ~20% base rate (p ≈ 0.17 by chance). The mechanism
   carries the argument; the numbers only have to not contradict it.
