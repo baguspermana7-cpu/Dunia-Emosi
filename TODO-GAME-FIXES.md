@@ -1637,6 +1637,30 @@ Cache-bust: `index.html` v=20260421b (style + game.js).
 - ✅ **Scoring**: G19 migrated to GameScoring.calc(). G10 endGame() correct.
 - ✅ **G13 scoring bug**: showGameResult used `_g13stars` (1-3 tier) instead of `perfStars` (1-5 display). Perfect evolution now shows 5★ correctly.
 
+## 🟡 GOTHAM GETAWAY FREEZE (owner report 2026-09-20)
+
+Owner hit `games/film-play.html?g=batwheels-gotham-getaway` frozen mid-race on the live site.
+
+**Reproduced here** (2026-09-20) with `node tools/qa-gg-freeze.mjs`, which plays the game the
+way a child does — Title → skip Intro → LevelSelect → `showHeroAnimation()` → race — through the
+`window.__gg` seam added to that page. Synthetic clicks never reach the bundle's buttons, and
+forcing `scene.start('Game')` skips where `runSettings` is built, so a probe-made `skeletonData`
+null is NOT this bug.
+
+What is known:
+- The freeze DOES happen: `bam/prank @ funstreet` stopped at 8s, 1 of 5 frames distinct, with
+  `Cannot read properties of null (reading 'isGLTexture')`. Phaser reads that off `frame.source`
+  while drawing, so a frame is pointing at a texture that is no longer there.
+- It is INTERMITTENT: the same combination played 40s clean in an earlier run.
+- It is NOT the cross-pair composition: `bam/prank @ funstreet` is the game's OWN pairing, and
+  `bam/quizz @ frozenstreet` (a cross pair, plus a villain FX) played 60s clean, 30/30 frames.
+- Recovery already ships regardless: `games/data/freeze-watchdog.js` notices the dead frame
+  chain — including inside the film player's iframe — and offers a way out with the error
+  printed on the card.
+
+Open: the cause. Next measurement is an A/B on freeze RATE (`RUNS=5`) with and without our
+composition patch, since one pass proves nothing for an intermittent fault.
+
 ## ⬜ CROSS-GAME ISSUES
 
 ### Unified Scoring Engine

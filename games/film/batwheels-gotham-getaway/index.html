@@ -238,6 +238,54 @@
     }, 50);
   }
 
+  /* ---- seam untuk pengujian ------------------------------------------------
+     Tidak ada cara memulai balapan dari luar halaman ini. Menekan koordinat
+     tebakan tidak mengenai tombol bundle, dan memaksa `scene.start('Game')`
+     melewati LevelSelect — tempat `runSettings` dibangun — sehingga Spine mati
+     dengan `skeletonData` null: itu kerusakan buatan penguji, bukan bug yang
+     dicari.
+
+     Jalur yang benar dipakai anak: pilih level, lalu `showHeroAnimation()` yang
+     membawa LevelSelect ke Game lewat transisi. Pegangan ini memanggil persis
+     itu. Ia tidak menyimpan keadaan dan tidak menambah perilaku; ada hanya
+     supaya tools/qa-gg-freeze.mjs bisa memainkan permainan sungguhan. */
+  window.__gg = {
+    get game() { return GAME; },
+    scene: function (key) { try { return GAME.scene.getScene(key); } catch (e) { return null; } },
+    activeScenes: function () { try { return GAME.scene.getScenes(true).map(function (s) { return s.scene.key; }); } catch (e) { return []; } },
+    /* Title waits for its own play button; emit the event that button emits. */
+    pressTitlePlay: function () {
+      var t = this.scene('Title');
+      if (!t || !t.btnPlay) return 'no Title';
+      try {
+        var ev = (t.btnPlay.constructor && t.btnPlay.constructor.events && t.btnPlay.constructor.events.clicked) || 'clicked';
+        t.btnPlay.emit(ev);
+        return 'ok';
+      } catch (e) { return String(e && e.message || e); }
+    },
+    /* The intro cutscene has its own skip button; press that rather than
+       waiting out the whole sequence on every test run. */
+    skipIntro: function () {
+      var i = this.scene('Intro');
+      if (!i || !i.btnSkip) return 'no Intro';
+      try {
+        var ev = (i.btnSkip.constructor && i.btnSkip.constructor.events && i.btnSkip.constructor.events.clicked) || 'clicked';
+        i.btnSkip.emit(ev);
+        return 'ok';
+      } catch (e) { return String(e && e.message || e); }
+    },
+    playLevel: function (idx) {
+      var ls = this.scene('LevelSelect');
+      if (!ls) return 'no LevelSelect';
+      try {
+        if (typeof ls.selectLevel === 'function') ls.selectLevel(idx || 0);
+        ls.selectedLevel = (idx || 0);
+        ls.showHeroAnimation();
+        return 'ok';
+      } catch (e) { return String(e && e.message || e); }
+    }
+  };
+
   /* =======================================================================
    * AUDIO — "Ketuk layar untuk mulai!"
    * =======================================================================
