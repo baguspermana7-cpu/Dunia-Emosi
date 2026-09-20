@@ -91,6 +91,54 @@ group('carry and borrow constraints')
   ok(wrong === 0, `"satu kali menyimpan" always produces exactly one carry (${wrong}/${oneCarry} wrong)`)
 }
 
+// ── digit-length mode ───────────────────────────────────────────────────────
+group('digit-length mode (the owner\'s "2 digit")')
+{
+  const len = n => String(Math.abs(n)).length
+  let wrong = 0, checked = 0
+  for (const digits of [1, 2, 3]) {
+    for (const operation of ['add', 'subtract']) {
+      for (let run = 0; run < 25; run++) {
+        const s = B.buildSession({ operation, difficulty: 'medium', questionCount: 10, seed: 'dg' + digits + operation + run, digits })
+        for (const q of s.questions) { checked++; for (const o of q.operands) if (len(o) !== digits) wrong++ }
+      }
+    }
+  }
+  ok(wrong === 0, `every operand has exactly the digits asked for (${wrong} wrong of ${checked})`)
+
+  let mulWrong = 0, divWrong = 0, divInexact = 0
+  for (let run = 0; run < 25; run++) {
+    const m = B.buildSession({ operation: 'multiply', difficulty: 'medium', questionCount: 10, seed: 'md' + run, digits: 2 })
+    for (const q of m.questions) if (len(q.operands[1]) !== 2) mulWrong++
+    const d = B.buildSession({ operation: 'divide', difficulty: 'medium', questionCount: 10, seed: 'dd' + run, digits: 2 })
+    for (const q of d.questions) {
+      if (len(q.expected) !== 2) divWrong++
+      if (q.operands[0] % q.operands[1] !== 0) divInexact++
+    }
+  }
+  ok(mulWrong === 0, `2-digit multiplication multiplies a 2-digit number (${mulWrong} wrong)`)
+  ok(divWrong === 0, `2-digit division ANSWERS in two digits (${divWrong} wrong)`)
+  ok(divInexact === 0, `and stays exact -- no remainders sneak in with the digit constraint (${divInexact})`)
+
+  // the digit length must not quietly cancel the other constraints
+  let carried = 0
+  for (let run = 0; run < 25; run++) {
+    const s = B.buildSession({ operation: 'add', difficulty: 'medium', questionCount: 8, seed: 'dc' + run, digits: 2, carryPolicy: 'none' })
+    for (const q of s.questions) if (B.carryColumns(q.operands[0], q.operands[1]).length) carried++
+  }
+  ok(carried === 0, `2 digit + "tanpa menyimpan" still never carries (${carried} violations)`)
+
+  let three = 0
+  for (let run = 0; run < 25; run++) {
+    const s = B.buildSession({ operation: 'add', difficulty: 'hard', questionCount: 10, seed: 'd3' + run, digits: 2 })
+    for (const q of s.questions) if (q.operands.length !== 2) three++
+  }
+  ok(three === 0, `a digit length turns off the three-operand flourish (${three} slipped through)`)
+
+  ok(B.validateConfig({ operation: 'add', difficulty: 'easy', questionCount: 10, digits: 9 }).ok === false, 'an impossible digit length is refused')
+  ok(B.digitRange(2).join('-') === '10-99' && B.digitRange(1).join('-') === '1-9', 'digitRange maps to the ranges a teacher would write')
+}
+
 // ── multiplication tables ───────────────────────────────────────────────────
 group('multiplication tables')
 {

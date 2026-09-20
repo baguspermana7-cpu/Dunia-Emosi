@@ -16,19 +16,26 @@ const browser = await puppeteer.launch({
   args: ['--no-sandbox', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
 })
 
-async function open (clear = true) {
+async function open (opts = {}) {
   const page = await browser.newPage()
   const cdp = await page.createCDPSession()
   await cdp.send('Network.setBypassServiceWorker', { bypass: true })
   page.on('pageerror', e => { throw new Error('page error: ' + e.message) })
+  if (opts.reduceMotion) await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }])
   await page.setViewport({ width: 1400, height: 950 })
+  // Clear BEFORE the first load, not after: the page saves on pagehide, so a
+  // clear-then-reload lets the outgoing page write its state straight back and
+  // the next test starts on the last test's skill. That cost a confusing red run.
+  // Clear ONCE per tab, before the first document: clearing after load lets the
+  // outgoing page's pagehide save write the previous test's state straight back,
+  // and clearing on every document would wipe the reload-persistence tests.
+  await page.evaluateOnNewDocument(() => {
+    try {
+      if (!sessionStorage.getItem('__qaCleared')) { localStorage.clear(); sessionStorage.setItem('__qaCleared', '1') }
+    } catch (_) {}
+  })
   await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 30000 })
   await page.waitForFunction(() => !!window.__berhitung, { timeout: 20000 })
-  if (clear) {
-    await page.evaluate(() => localStorage.clear())
-    await page.reload({ waitUntil: 'domcontentloaded' })
-    await page.waitForFunction(() => !!window.__berhitung, { timeout: 20000 })
-  }
   return page
 }
 const fill = (page, i, text) => page.evaluate((i, text) => {
@@ -187,9 +194,140 @@ try {
     await sleep(200)
     const ok = await page.evaluate(() => /\bok\b/.test(document.getElementById('q0').className))
     check(ok, 'a card can be answered from the keyboard')
+    const auto = await page.evaluate(() => document.activeElement.closest('.q') && document.activeElement.closest('.q').id)
+    check(auto === 'q1', `solving a card moves the caret to the next unsolved one (${auto})`)
     await page.keyboard.press('Enter')
     const moved = await page.evaluate(() => document.activeElement.closest('.q') && document.activeElement.closest('.q').id)
-    check(moved === 'q1', `Enter moves to the next question (${moved})`)
+    check(moved === 'q2', `Enter steps on again from there (${moved})`)
+    await page.close()
+  }
+
+  // ── digit mode (the owner's "2 digit") ───────────────────────────────────
+  {
+    const page = await open()
+    await page.evaluate(() => [...document.querySelectorAll('#seg-op button')].find(b => b.textContent.trim() === 'Tambah').click())
+    await sleep(250)
+    await page.evaluate(() => [...document.querySelectorAll('#seg-dg button')].find(b => b.textContent.trim() === '2').click())
+    await sleep(400)
+    const two = await page.evaluate(() => ({
+      pressed: document.querySelector('#seg-dg button[aria-pressed="true"]').textContent.trim(),
+      lede: document.getElementById('lede').textContent,
+      lens: __berhitung.session.questions.flatMap(q => q.operands.map(o => String(o).length)),
+      cards: document.querySelectorAll('#sheet .q').length,
+    }))
+    check(two.pressed === '2', `the DIGIT pill shows 2 (${two.pressed})`)
+    check(two.lens.every(l => l === 2), `every operand on the page is two digits (${[...new Set(two.lens)].join(',')})`)
+    check(/2 digit/.test(two.lede), `the panel says which mode it is serving ("${two.lede.slice(0, 44)}…")`)
+    check(two.cards === 10, 'still ten questions')
+
+    // a digit mode is its own thousand: work in one must not leak into another
+    await fill(page, 0, await answerOf(page, 0))
+    await sleep(200)
+    const scored = await page.evaluate(() => document.getElementById('solved').textContent)
+    await page.evaluate(() => [...document.querySelectorAll('#seg-dg button')].find(b => b.textContent.trim() === 'Bebas').click())
+    await sleep(500)
+    const free = await page.evaluate(() => ({ star: document.getElementById('solved').textContent, lede: document.getElementById('lede').textContent }))
+    check(scored === '1' && free.star === '0', `each digit mode keeps its own score (2-digit ${scored}, bebas ${free.star})`)
+    check(!/digit/.test(free.lede), 'and "Bebas" goes back to the reference sentence')
+    await page.evaluate(() => [...document.querySelectorAll('#seg-dg button')].find(b => b.textContent.trim() === '2').click())
+    await sleep(400)
+    const backAgain = await page.evaluate(() => ({ star: document.getElementById('solved').textContent, typed: [...document.querySelectorAll('#q0 .boxes input')].map(i => i.value).join('') }))
+    check(backAgain.star === '1' && backAgain.typed.length > 0, `returning to 2 digit restores that mode's work (⭐ ${backAgain.star})`)
+    await page.close()
+  }
+
+  // ── precision: the boxes sit on the place-value columns ──────────────────
+  {
+    const page = await open()
+    await page.evaluate(() => [...document.querySelectorAll('#seg-dg button')].find(b => b.textContent.trim() === '3').click())
+    await sleep(400)
+    const geom = await page.evaluate(() => {
+      const card = document.getElementById('q0')
+      const grid = card.querySelector('.sum')
+      const digitsRow = [...grid.querySelectorAll('.d')].filter(d => d.textContent.trim())
+      const boxes = [...card.querySelectorAll('.boxes input')]
+      const gridOfBox = boxes[0].parentElement.parentElement === grid || boxes[0].closest('.sum') === grid
+      const bx = boxes.map(b => Math.round(b.getBoundingClientRect().right))
+      const dx = digitsRow.map(d => Math.round(d.getBoundingClientRect().right))
+      const unitsDigit = dx[dx.length - 1], unitsBox = bx[bx.length - 1]
+      const widths = new Set(boxes.map(b => Math.round(b.getBoundingClientRect().width)))
+      return { gridOfBox, delta: Math.abs(unitsDigit - unitsBox), widths: [...widths], answerLen: boxes.length,
+               expected: String(__berhitung.session.questions[0].expected).length }
+    })
+    check(geom.gridOfBox, 'the answer boxes live in the same grid as the digits')
+    check(geom.delta <= 1, `the units box is on the units column (off by ${geom.delta}px)`)
+    check(geom.widths.length === 1, `every box is the same width (${geom.widths.join(',')})`)
+    check(geom.answerLen === geom.expected, `there is one box per digit of the answer (${geom.answerLen})`)
+    await page.close()
+  }
+
+  // ── micro-interactions ───────────────────────────────────────────────────
+  {
+    const page = await open()
+    const anim = await page.evaluate(() => {
+      const tick = document.querySelector('#q0 .tick')
+      const card = document.getElementById('q0')
+      return {
+        tickTrans: getComputedStyle(tick).transitionDuration,
+        cardTrans: getComputedStyle(card).transitionDuration,
+        railTrans: getComputedStyle(document.getElementById('rail-fill')).transitionDuration,
+        actTrans: getComputedStyle(document.getElementById('btn-new')).transitionDuration,
+      }
+    })
+    const ms = v => Math.max(...String(v).split(',').map(x => parseFloat(x) * 1000))
+    check(ms(anim.tickTrans) >= 150 && ms(anim.tickTrans) <= 500, `the tick animates in the PRD's 250-450ms band (${anim.tickTrans})`)
+    check(ms(anim.cardTrans) > 0 && ms(anim.railTrans) > 0 && ms(anim.actTrans) > 0, 'cards, rail and buttons all transition rather than snap')
+
+    // wrong answer shakes the boxes, briefly, and only the boxes
+    const wrong = await page.evaluate(async () => {
+      const q = __berhitung.session.questions[0]
+      const s = String(q.expected), bad = String(q.expected + 1).slice(0, s.length)
+      const ins = [...document.querySelectorAll('#q0 .boxes input')]
+      bad.split('').forEach((c, k) => { ins[k].value = c; ins[k].dispatchEvent(new Event('input', { bubbles: true })) })
+      const during = document.getElementById('q0').className
+      await new Promise(r => setTimeout(r, 400))
+      return { during, after: document.getElementById('q0').className }
+    })
+    check(/shake/.test(wrong.during), 'a wrong answer shakes')
+    check(!/shake/.test(wrong.after), 'and stops shaking straight after, so typing is never blocked')
+
+    // finishing the page says so
+    const toastText = await page.evaluate(async () => {
+      for (let i = 0; i < 10; i++) {
+        const q = __berhitung.session.questions[i]
+        const ins = [...document.querySelectorAll('#q' + i + ' .boxes input')]
+        String(q.expected).split('').forEach((c, k) => { ins[k].value = c; ins[k].dispatchEvent(new Event('input', { bubbles: true })) })
+      }
+      await new Promise(r => setTimeout(r, 300))
+      const t = document.getElementById('toast')
+      return { text: t.textContent, shown: t.classList.contains('show'), star: document.getElementById('solved').textContent }
+    })
+    check(toastText.shown && /selesai/i.test(toastText.text), `a finished page is celebrated once ("${toastText.text}")`)
+    check(toastText.star === '10', `and all ten are counted (${toastText.star})`)
+    await page.close()
+  }
+
+  // ── reduced motion turns the movement off, not the meaning ───────────────
+  {
+    const page = await open({ reduceMotion: true })
+    const rm = await page.evaluate(async () => {
+      const q = __berhitung.session.questions[0]
+      const ins = [...document.querySelectorAll('#q0 .boxes input')]
+      String(q.expected).split('').forEach((c, k) => { ins[k].value = c; ins[k].dispatchEvent(new Event('input', { bubbles: true })) })
+      await new Promise(r => setTimeout(r, 150))
+      const tick = document.querySelector('#q0 .tick')
+      return {
+        motionFlag: document.body.dataset.motion,
+        tickDur: getComputedStyle(tick).transitionDuration,
+        tickVisible: getComputedStyle(tick).display !== 'none' && tick.textContent.trim() === '✓',
+        marked: /\bok\b/.test(document.getElementById('q0').className),
+        counter: document.getElementById('solved').textContent,
+      }
+    })
+    check(rm.motionFlag === 'off', 'reduced motion is picked up at boot')
+    check(parseFloat(rm.tickDur) < 0.01, `transitions are switched off (${rm.tickDur})`)
+    check(rm.tickVisible && rm.marked && rm.counter === '1',
+      `but the tick, the marking and the count all still happen (tick ${rm.tickVisible}, mark ${rm.marked}, ⭐ ${rm.counter})`)
     await page.close()
   }
 

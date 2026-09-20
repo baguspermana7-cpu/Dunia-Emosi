@@ -84,6 +84,18 @@
     return cols
   }
 
+  // ── digit-length constraint ───────────────────────────────────────────────
+  // The owner asked for a "2 digit" mode. Digit length is a different axis from
+  // difficulty: a parent may want two-digit numbers that still carry (hard) or
+  // two-digit numbers that never do (easy). So `digits` narrows the operand
+  // RANGE and leaves every other rule -- carry policy, tables, division
+  // exactness -- exactly as the difficulty set it.
+  function digitRange (d) {
+    if (!d) return null
+    d = Math.max(1, Math.min(4, d | 0))
+    return d === 1 ? [1, 9] : [Math.pow(10, d - 1), Math.pow(10, d) - 1]
+  }
+
   // ── constraints ───────────────────────────────────────────────────────────
   var DIFFICULTY = {
     easy:   { add: [0, 99],    sub: [0, 99],    mulTables: [2, 3, 4, 5, 10], divMax: 5,  operands: 2 },
@@ -112,6 +124,13 @@
     if (cfg.operation === 'multiply' && Array.isArray(cfg.tables) && cfg.tables.length === 0) {
       return { ok: false, reason: 'pilih minimal satu tabel perkalian' }
     }
+    if (cfg.digits != null && !(cfg.digits >= 1 && cfg.digits <= 4)) {
+      return { ok: false, reason: 'panjang angka harus 1–4 digit' }
+    }
+    if (cfg.digits === 1 && cfg.operation === 'add' && cfg.carryPolicy === 'none' && n > 20) {
+      // one-digit sums that never carry: only 45 unordered pairs exist at all
+      return { ok: false, reason: 'terlalu banyak soal 1 digit tanpa menyimpan' }
+    }
     return { ok: true }
   }
 
@@ -122,9 +141,12 @@
 
   function genAdd (rand, cfg) {
     var d = DIFFICULTY[cfg.difficulty]
-    var count = cfg.operandCount || (cfg.difficulty === 'hard' && rand() < 0.25 ? 3 : 2)
+    var range = digitRange(cfg.digits) || d.add
+    // A fixed digit length means every operand is that long; the three-operand
+    // flourish would break that promise, so it is off whenever digits is set.
+    var count = cfg.operandCount || (!cfg.digits && cfg.difficulty === 'hard' && rand() < 0.25 ? 3 : 2)
     var ops = []
-    for (var i = 0; i < count; i++) ops.push(randInt(rand, d.add[0], d.add[1]))
+    for (var i = 0; i < count; i++) ops.push(randInt(rand, range[0], range[1]))
     var sum = ops.reduce(function (a, b) { return a + b }, 0)
     var carries = count === 2 ? carryColumns(ops[0], ops[1]) : []
     if (cfg.carryPolicy === 'none' && count === 2 && carries.length) return null
@@ -136,8 +158,9 @@
 
   function genSubtract (rand, cfg) {
     var d = DIFFICULTY[cfg.difficulty]
-    var a = randInt(rand, d.sub[0], d.sub[1])
-    var b = randInt(rand, d.sub[0], d.sub[1])
+    var range = digitRange(cfg.digits) || d.sub
+    var a = randInt(rand, range[0], range[1])
+    var b = randInt(rand, range[0], range[1])
     if (b > a) { var t = a; a = b; b = t }        // default policy: never negative
     if (cfg.allowNegative && rand() < 0.2) { var s = a; a = b; b = s }
     var borrows = borrowColumns(Math.max(a, b), Math.min(a, b))
@@ -151,9 +174,12 @@
     var d = DIFFICULTY[cfg.difficulty]
     var tables = (cfg.tables && cfg.tables.length) ? cfg.tables : d.mulTables
     var table = pick(rand, tables)
-    var other = cfg.difficulty === 'hard' && rand() < 0.35
-      ? randInt(rand, 11, 99)                       // multi-digit x single table
-      : randInt(rand, 2, 12)
+    var range = digitRange(cfg.digits)
+    // With a digit length set, THAT is the number whose length is promised; the
+    // table stays a table, because "2 digit x 2 digit from the 7 times table"
+    // is not something a table drill can honour.
+    var other = range ? randInt(rand, range[0], range[1])
+      : (cfg.difficulty === 'hard' && rand() < 0.35 ? randInt(rand, 11, 99) : randInt(rand, 2, 12))
     return question('multiply', [table, other], table * other, cfg, { table: table })
   }
 
@@ -163,7 +189,12 @@
     // a dividend first and hoping it divides is how remainders and divide-by-
     // zero sneak in (PRD §5, §15).
     var divisor = randInt(rand, 2, d.divMax)
-    var quotient = randInt(rand, 2, cfg.difficulty === 'hard' ? 24 : 12)
+    var qr = digitRange(cfg.digits)
+    // The digit length lands on the ANSWER, not the dividend: fixing the
+    // dividend's length would either force a remainder or quietly change the
+    // divisor set, and exactness is the whole point of this generator.
+    var quotient = qr ? randInt(rand, Math.max(2, qr[0]), qr[1])
+      : randInt(rand, 2, cfg.difficulty === 'hard' ? 24 : 12)
     var dividend = divisor * quotient
     if (divisor === 0) throw new Error('invariant: divisor is zero')
     return question('divide', [dividend, divisor], quotient, cfg, { table: divisor })
@@ -194,13 +225,24 @@
 
   function genWord (rand, cfg) {
     var t = pick(rand, WORD_TEMPLATES)
-    var a = randInt(rand, t.a[0], t.a[1])
-    var b = randInt(rand, t.b[0], t.b[1])
+    // A digit mode has to hold here too, or "2 digit" would quietly mean
+    // "2 digit except in Cerita". The template's own guards still apply below
+    // (a subtraction story cannot take more than it has), so an impossible
+    // draw simply returns null and the caller tries again.
+    var dr = digitRange(cfg.digits)
+    var ra = dr || t.a, rb = dr || t.b
+    var a = randInt(rand, ra[0], ra[1])
+    var b = randInt(rand, rb[0], rb[1])
     var expected, operands
     if (t.op === 'add') { operands = [a, b]; expected = a + b }
     else if (t.op === 'subtract') { if (b >= a) return null; operands = [a, b]; expected = a - b }
     else if (t.op === 'multiply') { operands = [a, b]; expected = a * b }
-    else { operands = [a * b, a]; expected = b }          // divide: built from the answer
+    else {
+      // divide: built from the answer, and with a digit mode the ANSWER is what
+      // carries the length (the same rule the plain division generator uses)
+      if (dr && a > 12) a = randInt(rand, 2, 9)
+      operands = [a * b, a]; expected = b
+    }
     var q = question('word', operands, expected, cfg, { templateId: t.id, unit: t.unit, innerOp: t.op })
     q.prompt = t.text(a, b)
     return q
@@ -383,6 +425,7 @@
     WORD_TEMPLATES: WORD_TEMPLATES,
     rng: rng,
     digits: digits,
+    digitRange: digitRange,
     carryColumns: carryColumns,
     borrowColumns: borrowColumns,
     validateConfig: validateConfig,

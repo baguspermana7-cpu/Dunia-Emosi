@@ -57,17 +57,24 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
   box-shadow:0 2px 0 rgba(0,0,0,.08)}
 .star i{font-style:normal;color:#f0a500}
 .rail{flex:1;height:10px;border-radius:999px;background:rgba(255,255,255,.28);overflow:hidden}
-.rail>i{display:block;height:100%;width:0;background:#fff;border-radius:999px;transition:width .25s}
+.rail>i{display:block;height:100%;width:0;background:#fff;border-radius:999px;
+  transition:width .25s cubic-bezier(.2,.8,.3,1)}
+.star{transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.star.bump{transform:scale(1.06)}
 .ctrls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .ctrl-label{font-size:11px;font-weight:900;letter-spacing:1.2px;opacity:.85}
 .seg{display:inline-flex;background:var(--seg-bg);border-radius:12px;padding:4px;gap:4px}
 .seg button{min-height:38px;padding:0 15px;border-radius:9px;font-weight:800;color:var(--seg-ink);
-  font-size:14.5px;white-space:nowrap}
+  font-size:14.5px;white-space:nowrap;background:transparent;
+  transition:background-color .16s ease,color .16s ease,box-shadow .16s ease,transform .1s ease}
+.seg button:active{transform:scale(.97)}
 .seg button[aria-pressed="true"]{background:var(--seg-active);color:var(--seg-ink-active);
   box-shadow:0 1px 2px rgba(16,24,40,.18)}
 .act{min-height:38px;padding:0 16px;border-radius:10px;font-weight:800;font-size:14.5px;color:#fff;
   display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
-.act:active{transform:translateY(1px)}
+.act{transition:transform .1s ease,filter .14s ease,box-shadow .14s ease}
+.act:active{transform:scale(.98)}
+@media (hover:hover){ .act:hover{filter:brightness(1.05)} .pg:hover{background:#f4f6fb} }
 .act.red{background:var(--red)} .act.grey{background:var(--grey);color:var(--grey-ink)}
 .act.amber{background:var(--amber)} .act.green{background:var(--green)}
 .act.teal{background:var(--teal)} .act.yellow{background:var(--yellow);color:#4a3600}
@@ -76,34 +83,52 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
 
 /* ── question cards ──────────────────────────────────────────────────────── */
 .sheet{max-width:1360px;margin:0 auto;display:grid;gap:14px;grid-template-columns:repeat(3,1fr)}
+.sheet.turning{opacity:0;transform:translateY(6px)}
+.sheet{transition:opacity .16s ease,transform .16s ease}
 @media (max-width:1000px){ .sheet{grid-template-columns:repeat(2,1fr)} }
 @media (max-width:640px){ .sheet{grid-template-columns:1fr} }
 .q{position:relative;background:var(--card);border:1px solid var(--card-line);border-radius:14px;
-  padding:14px 16px 16px;box-shadow:var(--card-shadow);break-inside:avoid}
+  padding:14px 16px 16px;box-shadow:var(--card-shadow);break-inside:avoid;
+  transition:background-color .18s ease,border-color .18s ease,box-shadow .22s ease,transform .22s ease}
+.q.ok{transform:translateY(-2px);box-shadow:0 6px 16px rgba(34,125,79,.14)}
+.q.hunt{animation:hunt .7s ease}
+@keyframes hunt{0%,100%{box-shadow:var(--card-shadow)}
+  35%{box-shadow:0 0 0 4px rgba(232,131,58,.35),0 8px 18px rgba(232,131,58,.18)}}
 .q .no{position:absolute;top:10px;left:12px;min-width:22px;height:22px;border-radius:7px;color:#fff;
   font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;padding:0 6px}
 .q .label{margin-left:30px;font-size:13px;font-weight:800;color:var(--ink-soft);
   font-variant-numeric:tabular-nums}
 .q .tick{position:absolute;top:8px;right:10px;width:26px;height:26px;border-radius:50%;
-  color:#fff;display:none;align-items:center;justify-content:center;font-size:15px;font-weight:900}
-.q.ok .tick{display:flex;background:var(--green)}
-.q.no-yet .tick{display:flex;background:var(--red)}
+  color:#fff;display:none;align-items:center;justify-content:center;font-size:15px;font-weight:900;
+  transform:scale(.4);opacity:0;transition:transform .26s cubic-bezier(.34,1.56,.64,1),opacity .18s ease}
+.q.ok .tick,.q.no-yet .tick{display:flex;transform:scale(1);opacity:1}
+.q.ok .tick{background:var(--green)}
+.q.no-yet .tick{background:var(--red)}
 .q.ok{background:#e9f7ef;border-color:#c3e6d0}
 .q.no-yet{background:#fdf0ef;border-color:#f3c8c4}
 
 /* the bersusun block: one digit per cell, right aligned, operator in its own
    column so a wide operator never shifts the place values out of line */
-.sum{display:grid;justify-content:end;gap:2px 8px;margin:10px 0 4px;
-  font-variant-numeric:tabular-nums;font-size:30px;font-weight:800;color:#111827;line-height:1.18}
+/* One grid holds the operands, the rule AND the answer boxes, all on the same
+   column track, so the units box sits exactly under the units digit. Two grids
+   (one for the sum, one for the boxes) can only ever look nearly aligned --
+   which is what "kurang presisi" was. Column width is a fixed px so a digit and
+   a box are the same width by construction, not by coincidence. */
+.sum{--col:34px;display:grid;justify-content:end;align-items:center;gap:2px 6px;margin:10px 0 2px;
+  font-variant-numeric:tabular-nums;font-size:30px;font-weight:800;color:#111827;line-height:1.16}
 .sum .op{grid-column:1;text-align:center;color:#111827}
-.sum .d{width:1.05ch;text-align:center}
-.sum .rule{grid-column:1/-1;height:3px;background:#111827;border-radius:2px;margin-top:5px}
-.boxes{display:flex;gap:6px;justify-content:flex-end;margin-top:10px}
-.boxes input{width:34px;height:40px;text-align:center;font-size:19px;font-weight:900;color:#111827;
-  font-variant-numeric:tabular-nums;background:#fff;border:1px solid #cfd8d2;border-radius:7px}
+.sum .d{width:var(--col);text-align:center}
+.sum .rule{grid-column:1/-1;height:3px;background:#111827;border-radius:2px;margin:5px 0 3px}
+.boxes{display:contents}
+.boxes input{width:var(--col);height:40px;padding:0;text-align:center;font-size:19px;font-weight:900;
+  color:#111827;font-variant-numeric:tabular-nums;background:#fff;border:1px solid #cfd8d2;border-radius:7px;
+  transition:border-color .16s ease,background-color .16s ease,box-shadow .16s ease,transform .1s ease}
 .boxes input:focus{outline:none;border-color:var(--panel);box-shadow:0 0 0 3px rgba(76,110,245,.22)}
+.boxes input:not(:placeholder-shown){border-color:#b9c4bd}
 .q.ok .boxes input{border-color:#9fd3b4;background:#fbfffc}
-.q.no-yet .boxes input{border-color:#eab3ae}
+.q.no-yet .boxes input{border-color:#eab3ae;background:#fffafa}
+.q.shake .boxes input{animation:boxShake .2s ease}
+@keyframes boxShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 .story{margin:10px 0 2px;font-size:14.5px;font-weight:700;line-height:1.5;color:#1f2937}
 
 /* ── pager ───────────────────────────────────────────────────────────────── */
@@ -120,7 +145,12 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
 /* ── badge sheet ─────────────────────────────────────────────────────────── */
 .modal{position:fixed;inset:0;background:rgba(17,24,39,.55);display:none;align-items:center;justify-content:center;
   padding:18px;z-index:60}
-.modal[open]{display:flex}
+.modal[open]{display:flex;animation:fadeIn .16s ease}
+.modal[open] .box{animation:popIn .22s cubic-bezier(.34,1.56,.64,1)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes popIn{from{opacity:0;transform:scale(.94) translateY(8px)}to{opacity:1;transform:none}}
+.bdg{opacity:0;transform:translateY(6px);animation:bdgIn .26s ease forwards}
+@keyframes bdgIn{to{opacity:1;transform:none}}
 .modal .box{background:#fff;border-radius:16px;max-width:460px;width:100%;padding:18px 18px 16px;
   box-shadow:0 18px 40px rgba(0,0,0,.25)}
 .modal h2{font-size:19px;font-weight:900;margin-bottom:10px}
@@ -128,6 +158,11 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
 .bdg{border:1px solid #e6e9f0;border-radius:12px;padding:10px;text-align:center;font-weight:800;font-size:13px;
   color:var(--ink-soft);background:#fafbfe}
 .bdg.on{background:#fff8e1;border-color:#f3d98b;color:#7a5b00}
+/* toast: says the page is finished without taking the screen away */
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,16px);background:#14351f;color:#fff;
+  font-weight:800;font-size:15px;padding:12px 20px;border-radius:999px;box-shadow:0 10px 24px rgba(0,0,0,.25);
+  opacity:0;pointer-events:none;transition:opacity .2s ease,transform .24s cubic-bezier(.34,1.4,.64,1);z-index:70}
+.toast.show{opacity:1;transform:translate(-50%,0)}
 .bdg b{display:block;font-size:22px;margin-bottom:4px}
 
 /* ── phone: the panel keeps its shape, just tighter, and nothing may push the
@@ -142,12 +177,19 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
   .seg button{padding:0 12px;font-size:14px}
   .act{padding:0 13px;font-size:14px}
   .row2{gap:8px}
-  .sum{font-size:26px}
-  .boxes input{width:31px;height:40px;font-size:18px}
+  .sum{font-size:26px;--col:30px}
+  .boxes input{height:40px;font-size:18px}
   .pager input{width:64px}
 }
 
-@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+/* One switch for all of it. Motion is decoration here: every state it conveys
+   is also written in the DOM, so removing it removes nothing but the movement. */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  .sheet.turning{opacity:1;transform:none}
+}
+body[data-motion="off"] *,body[data-motion="off"] *::before,body[data-motion="off"] *::after{
+  animation:none!important;transition:none!important}
 
 /* ── print: the sheet only, key on its own page ──────────────────────────── */
 @media print{
@@ -180,6 +222,8 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
     <span class="seg" id="seg-op" role="group" aria-labelledby="lbl-op"></span>
     <span class="ctrl-label" id="lbl-lv">LEVEL</span>
     <span class="seg" id="seg-lv" role="group" aria-labelledby="lbl-lv"></span>
+    <span class="ctrl-label" id="lbl-dg">DIGIT</span>
+    <span class="seg" id="seg-dg" role="group" aria-labelledby="lbl-dg"></span>
     <button class="act red" id="btn-new">Soal Baru</button>
     <button class="act grey" id="btn-repeat">↺ Ulangi Halaman</button>
   </div>
@@ -208,6 +252,7 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
 
 <div id="answer-key"></div>
 
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="modal" id="modal-badges" role="dialog" aria-modal="true" aria-labelledby="bdg-title">
   <div class="box">
     <h2 id="bdg-title">Lencana</h2>
@@ -216,9 +261,9 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
   </div>
 </div>
 
-<script src="data/berhitung-engine.js?v=v60.0-20260920a"></script>
-<script src="data/freeze-watchdog.js?v=v60.0-20260920a"></script>
-<script src="sw-reload.js?v=v60.0-20260920a"></script>
+<script src="data/berhitung-engine.js?v=v60.1-20260920a"></script>
+<script src="data/freeze-watchdog.js?v=v60.1-20260920a"></script>
+<script src="sw-reload.js?v=v60.1-20260920a"></script>
 <script>
 (function () {
   'use strict'
@@ -247,7 +292,7 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
   // One versioned store. The panel promises "jawaban tersimpan saat pindah
   // halaman", so every keystroke is checkpointed, not just page turns.
   var STORE = 'berhitung-v2', SCHEMA = 2
-  function fresh () { return { schemaVersion: SCHEMA, prefs: { sound: true }, op: 'add', level: 'medium', page: 1, sets: {}, xp: 0 } }
+  function fresh () { return { schemaVersion: SCHEMA, prefs: { sound: true }, op: 'add', level: 'medium', digits: 0, page: 1, sets: {}, xp: 0 } }
   function load () {
     try {
       var raw = JSON.parse(localStorage.getItem(STORE) || 'null')
@@ -262,16 +307,22 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
   // A set is one (operation, level, page). Its answers and its "Soal Baru"
   // nonce live under that key, so every page keeps its own work and every page
   // is reproducible from its seed.
-  function setKey (op, lv, page) { return op + '|' + lv + '|' + page }
+  // The digit length is part of the KEY as well as the seed: "2 digit" is a
+  // different thousand questions from "bebas", and a child's work on one must
+  // not be mistaken for work on the other.
+  function setKey (op, lv, page) { return op + '|' + lv + '|d' + digitsMode + '|' + page }
   function setState (op, lv, page) {
     var k = setKey(op, lv, page)
     if (!DB.sets[k]) DB.sets[k] = { nonce: 0, answers: {}, solved: {} }
     return DB.sets[k]
   }
-  function seedFor (op, lv, page, nonce) { return 'ayo|' + op + '|' + lv + '|p' + page + '|n' + (nonce || 0) }
+  function seedFor (op, lv, page, nonce) {
+    return 'ayo|' + op + '|' + lv + '|d' + digitsMode + '|p' + page + '|n' + (nonce || 0)
+  }
 
   // ── current page ─────────────────────────────────────────────────────────
   var op = DB.op, level = DB.level, page = Math.min(PAGES, Math.max(1, DB.page || 1))
+  var digitsMode = DB.digits || 0        // 0 = bebas (the difficulty's own range)
   var session = null
 
   function buildPage () {
@@ -280,8 +331,9 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
       operation: op, difficulty: level, questionCount: PER_PAGE, mode: 'worksheet',
       seed: seedFor(op, level, page, st.nonce)
     }
+    if (digitsMode) cfg.digits = digitsMode
     session = B.buildSession(cfg)
-    DB.op = op; DB.level = level; DB.page = page
+    DB.op = op; DB.level = level; DB.page = page; DB.digits = digitsMode
     save()
     render()
   }
@@ -289,12 +341,15 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
   function opInfo () { for (var i = 0; i < OPS.length; i++) if (OPS[i].key === op) return OPS[i]; return OPS[0] }
 
   // ── rendering ────────────────────────────────────────────────────────────
-  function sumBlock (q) {
+  function sumBlock (q, boxes) {
     var rows = q.operands.map(String)
-    var width = Math.max.apply(null, rows.map(function (r) { return r.length }))
+    // The answer can be longer than either operand (825 + 777 = 1602), and the
+    // boxes share this grid, so the track count is the WIDEST of the three.
+    var width = Math.max.apply(null, rows.map(function (r) { return r.length })
+      .concat([String(Math.abs(q.expected)).length]))
     var el = document.createElement('div')
     el.className = 'sum'
-    el.style.gridTemplateColumns = 'auto repeat(' + width + ', 1.05ch)'
+    el.style.gridTemplateColumns = 'auto repeat(' + width + ', var(--col))'
     el.setAttribute('role', 'img')
     el.setAttribute('aria-label', rows.join(' ' + OPSYM[q.operation] + ' ') + ' sama dengan berapa')
     rows.forEach(function (r, i) {
@@ -306,6 +361,14 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
       r.split('').forEach(function (ch) { var d = document.createElement('span'); d.className = 'd'; d.textContent = ch; el.appendChild(d) })
     })
     var rule = document.createElement('span'); rule.className = 'rule'; el.appendChild(rule)
+    if (boxes) {
+      // the answer row: an empty operator cell, then blanks, then the boxes --
+      // each one landing on its own place-value column
+      var spacer = document.createElement('span'); spacer.className = 'op'; el.appendChild(spacer)
+      var ansLen = boxes.childElementCount
+      for (var k = 0; k < width - ansLen; k++) { var pad2 = document.createElement('span'); pad2.className = 'd'; el.appendChild(pad2) }
+      el.appendChild(boxes)        // .boxes is display:contents, so the inputs ARE grid items
+    }
     return el
   }
 
@@ -333,30 +396,35 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
       state.className = 'sr'; state.id = 'st' + i
       card.appendChild(state)
 
-      if (q.operation === 'word') {
-        var p = document.createElement('p'); p.className = 'story'; p.textContent = q.prompt
-        card.appendChild(p)
-      } else {
-        var lab = document.createElement('div')
-        lab.className = 'label'
-        lab.textContent = q.operands.join(' ' + OPSYM[q.operation] + ' ')
-        card.appendChild(lab)
-        card.appendChild(sumBlock(q))
-      }
-
       var cells = String(Math.abs(q.expected)).length
       var boxes = document.createElement('div')
       boxes.className = 'boxes'
       for (var c = 0; c < cells; c++) {
         var inp = document.createElement('input')
         inp.type = 'text'; inp.inputMode = 'numeric'; inp.maxLength = 1
+        inp.placeholder = ' '            // lets :not(:placeholder-shown) style a filled box
         inp.dataset.q = String(i); inp.dataset.c = String(c)
         inp.setAttribute('aria-label', 'Soal ' + (i + 1) + ', angka ke-' + (c + 1))
         inp.addEventListener('input', onInput)
         inp.addEventListener('keydown', onKey)
         boxes.appendChild(inp)
       }
-      card.appendChild(boxes)
+
+      if (q.operation === 'word') {
+        var p = document.createElement('p'); p.className = 'story'; p.textContent = q.prompt
+        card.appendChild(p)
+        var wrapWord = document.createElement('div')
+        wrapWord.className = 'sum'
+        wrapWord.style.gridTemplateColumns = 'repeat(' + cells + ', var(--col))'
+        wrapWord.appendChild(boxes)
+        card.appendChild(wrapWord)
+      } else {
+        var lab = document.createElement('div')
+        lab.className = 'label'
+        lab.textContent = q.operands.join(' ' + OPSYM[q.operation] + ' ')
+        card.appendChild(lab)
+        card.appendChild(sumBlock(q, boxes))   // boxes live INSIDE the place-value grid
+      }
       sheet.appendChild(card)
 
       var saved = st.answers[q.id]
@@ -366,7 +434,11 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
         mark(i, B.grade(q, saved).correct, saved.length === ins.length)
       }
     })
-    $('lede').textContent = TOTAL + ' soal ' + opInfo().word + ' — ' + PER_PAGE +
+    // The reference's sentence, with the digit mode named when one is chosen --
+    // otherwise the panel would promise "1000 soal penjumlahan" while quietly
+    // serving a narrower set.
+    $('lede').textContent = TOTAL + ' soal ' + opInfo().word +
+      (digitsMode ? ' ' + digitsMode + ' digit' : '') + ' — ' + PER_PAGE +
       ' soal per halaman, ' + PAGES + ' halaman. Jawaban tersimpan saat pindah halaman.'
     $('pg-input').value = String(page)
     $('pg-prev').disabled = page <= 1
@@ -379,9 +451,13 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
 
   function levelLabel () { for (var i = 0; i < LEVELS.length; i++) if (LEVELS[i].key === level) return LEVELS[i].label; return '' }
 
+  var DIGITS = [
+    { key: 0, label: 'Bebas' }, { key: 1, label: '1' }, { key: 2, label: '2' }, { key: 3, label: '3' }
+  ]
   function renderSegments () {
-    seg($('seg-op'), OPS, op, function (v) { op = v; page = DB.page || page; buildPage() })
-    seg($('seg-lv'), LEVELS, level, function (v) { level = v; buildPage() })
+    seg($('seg-op'), OPS, op, function (v) { if (v !== op) { op = v; turn(buildPage) } })
+    seg($('seg-lv'), LEVELS, level, function (v) { if (v !== level) { level = v; turn(buildPage) } })
+    seg($('seg-dg'), DIGITS, digitsMode, function (v) { if (v !== digitsMode) { digitsMode = v; turn(buildPage) } })
   }
   function seg (host, items, current, onPick) {
     host.innerHTML = ''
@@ -408,6 +484,12 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
     if (tick) tick.textContent = correct === true ? '✓' : wrong ? '✕' : ''
     st.textContent = correct === true ? 'Soal ' + (i + 1) + ' benar'
       : wrong ? 'Soal ' + (i + 1) + ' belum benar' : ''
+    // The shake belongs to the boxes, not the card: a card that jumps takes the
+    // question with it, and the child is reading the question.
+    if (wrong && !card.classList.contains('shake')) {
+      card.classList.add('shake')
+      setTimeout(function () { card.classList.remove('shake') }, 240)
+    }
   }
 
   function onInput (e) {
@@ -443,14 +525,55 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
     st.answers[q.id] = text
     var complete = text.length === ins.length
     var correct = complete && B.grade(q, text).correct
+    var newlySolved = false
     if (correct) {
-      if (!st.solved[q.id]) { st.solved[q.id] = true; DB.xp += 10; chime() }
+      if (!st.solved[q.id]) { st.solved[q.id] = true; DB.xp += 10; newlySolved = true; chime() }
     } else if (st.solved[q.id]) {
       delete st.solved[q.id]                       // an edited-away answer stops counting
     }
     mark(i, correct, complete)
     save()                                          // saved on every keystroke, not just page turns
     updateMeter()
+    if (newlySolved) {
+      bumpStar()
+      focusNextUnsolved(i)
+      if (Object.keys(st.solved).length >= PER_PAGE) pageComplete()
+    }
+  }
+
+  // After a card is finished the caret should already be where the child is
+  // going next. It moves only on a NEW solve, so correcting an old answer never
+  // yanks the caret away mid-thought.
+  function focusNextUnsolved (from) {
+    for (var step = 1; step <= session.questions.length; step++) {
+      var i = (from + step) % session.questions.length
+      var card = $('q' + i)
+      if (!card || card.classList.contains('ok')) continue
+      var box = card.querySelector('.boxes input')
+      if (box) { box.focus({ preventScroll: true }) }
+      return
+    }
+  }
+
+  function bumpStar () {
+    var el = document.querySelector('.star')
+    if (!el) return
+    el.classList.add('bump')
+    setTimeout(function () { el.classList.remove('bump') }, 220)
+  }
+
+  var toastT = null
+  function toast (msg) {
+    var t = $('toast')
+    t.textContent = msg
+    t.classList.add('show')
+    clearTimeout(toastT)
+    toastT = setTimeout(function () { t.classList.remove('show') }, 2200)
+  }
+
+  function pageComplete () {
+    toast('Halaman ' + page + ' selesai! 🎉')
+    fanfare()
   }
 
   // ── progress across the whole 1000 ───────────────────────────────────────
@@ -463,11 +586,33 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
     }
     return n
   }
+  var shownCount = null, countTimer = null
   function updateMeter () {
     var n = solvedCount()
-    $('solved').textContent = String(n)
     $('total').textContent = String(TOTAL)
-    $('rail-fill').style.width = (n / TOTAL * 100) + '%'
+    // the rail is a plain width transition; the number is interpolated so it
+    // reads as counting rather than snapping
+    $('rail-fill').style.width = (n === 0 ? 0 : Math.max(0.6, n / TOTAL * 100)) + '%'
+    if (shownCount === null || reduced()) { shownCount = n; $('solved').textContent = String(n); return }
+    if (n === shownCount) return
+    clearInterval(countTimer)
+    var from = shownCount, t0 = performance.now(), dur = 280
+    countTimer = setInterval(function () {
+      var k = Math.min(1, (performance.now() - t0) / dur)
+      var v = Math.round(from + (n - from) * (1 - Math.pow(1 - k, 3)))
+      $('solved').textContent = String(v)
+      if (k >= 1) { clearInterval(countTimer); shownCount = n }
+    }, 16)
+  }
+  function reduced () {
+    try { return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) } catch (_) { return false }
+  }
+  // Fade the sheet out, swap it, fade it back: a page turn that reads as a turn.
+  function turn (fn) {
+    var sheet = $('sheet')
+    if (reduced()) { fn(); return }
+    sheet.classList.add('turning')
+    setTimeout(function () { fn(); sheet.classList.remove('turning') }, 160)
   }
 
   // ── actions ──────────────────────────────────────────────────────────────
@@ -475,13 +620,13 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
     var st = setState(op, level, page)
     st.nonce = (st.nonce || 0) + 1        // a NEW page, still reproducible from its seed
     st.answers = {}; st.solved = {}
-    save(); buildPage()
+    save(); turn(buildPage)
     announce('Soal baru untuk halaman ' + page)
   }
   function repeatPage () {
     var st = setState(op, level, page)
     st.answers = {}; st.solved = {}       // same seed, blank sheet
-    save(); buildPage()
+    save(); turn(buildPage)
     announce('Halaman ' + page + ' diulang dengan soal yang sama')
   }
   function findWrong () {
@@ -489,7 +634,10 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
       var card = $('q' + i)
       if (!card.classList.contains('ok')) {
         var box = card.querySelector('.boxes input')
-        box.focus(); card.scrollIntoView({ block: 'center', behavior: 'smooth' })
+        card.scrollIntoView({ block: 'center', behavior: reduced() ? 'auto' : 'smooth' })
+        box.focus({ preventScroll: true })
+        card.classList.remove('hunt'); void card.offsetWidth; card.classList.add('hunt')
+        setTimeout(function () { card.classList.remove('hunt') }, 760)
         announce('Soal ' + (i + 1) + ' belum benar')
         return
       }
@@ -556,10 +704,11 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
     var n = solvedCount(), f = fullPages()
     var host = $('badge-grid')
     host.innerHTML = ''
-    BADGES.forEach(function (b) {
+    BADGES.forEach(function (b, idx) {
       var on = b.test(n, f)
       var el = document.createElement('div')
       el.className = 'bdg' + (on ? ' on' : '')
+      el.style.animationDelay = (reduced() ? 0 : idx * 70) + 'ms'   // reveal, not a wall
       el.innerHTML = '<b>' + b.icon + '</b>' + b.name + (on ? '' : ' — belum')
       host.appendChild(el)
     })
@@ -583,6 +732,22 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
     } catch (_) {}
   }
 
+  function fanfare () {
+    if (!DB.prefs.sound) return
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)()
+      ;[0, 0.12, 0.24].forEach(function (t, i) {
+        var o = actx.createOscillator(), g = actx.createGain()
+        o.connect(g); g.connect(actx.destination)
+        o.type = 'sine'; o.frequency.value = [660, 880, 1175][i]
+        g.gain.setValueAtTime(0.0001, actx.currentTime + t)
+        g.gain.exponentialRampToValueAtTime(0.07, actx.currentTime + t + 0.02)
+        g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + t + 0.16)
+        o.start(actx.currentTime + t); o.stop(actx.currentTime + t + 0.18)
+      })
+    } catch (_) {}
+  }
+
   function announce (msg) { $('live').textContent = msg }
 
   // ── wiring ───────────────────────────────────────────────────────────────
@@ -599,12 +764,12 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
     this.setAttribute('aria-pressed', String(DB.prefs.sound))
     this.textContent = DB.prefs.sound ? '🔊' : '🔇'
   })
-  $('pg-prev').addEventListener('click', function () { if (page > 1) { page--; buildPage(); window.scrollTo(0, 0) } })
-  $('pg-next').addEventListener('click', function () { if (page < PAGES) { page++; buildPage(); window.scrollTo(0, 0) } })
+  $('pg-prev').addEventListener('click', function () { if (page > 1) { page--; turn(buildPage); window.scrollTo({ top: 0, behavior: reduced() ? 'auto' : 'smooth' }) } })
+  $('pg-next').addEventListener('click', function () { if (page < PAGES) { page++; turn(buildPage); window.scrollTo({ top: 0, behavior: reduced() ? 'auto' : 'smooth' }) } })
   $('pg-input').addEventListener('change', function () {
     var n = parseInt(this.value, 10)
     if (!(n >= 1 && n <= PAGES)) { this.value = String(page); return }
-    page = n; buildPage(); window.scrollTo(0, 0)
+    page = n; turn(buildPage); window.scrollTo({ top: 0, behavior: reduced() ? 'auto' : 'smooth' })
   })
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && $('modal-badges').hasAttribute('open')) $('modal-badges').removeAttribute('open')
@@ -612,6 +777,7 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
   window.addEventListener('pagehide', save)
   document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') save() })
 
+  if (reduced()) document.body.dataset.motion = 'off'
   $('btn-sound').textContent = DB.prefs.sound ? '🔊' : '🔇'
   $('btn-sound').setAttribute('aria-pressed', String(DB.prefs.sound))
   $('pg-total').textContent = String(PAGES)
@@ -621,6 +787,8 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
     get db () { return DB }, get session () { return session },
     get page () { return page }, get op () { return op }, get level () { return level },
     goPage: function (n) { page = n; buildPage() },
+    get digits () { return digitsMode },
+    setDigits: function (v) { digitsMode = v; buildPage() },
     setOp: function (v) { op = v; buildPage() },
     setLevel: function (v) { level = v; buildPage() },
     solvedCount: solvedCount, newQuestions: newQuestions, repeatPage: repeatPage
