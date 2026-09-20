@@ -49,6 +49,11 @@ try {
     check(shown, 'a dead rAF chain raises the recovery card')
     check(logged, 'the stall is written to the freeze log')
     check(buttons.includes('Main Lagi'), `the card offers a way out (${buttons.join(', ') || 'none'})`)
+    const note = await page.evaluate(() => {
+      const el = document.getElementById('__freezeNote')
+      return el ? el.textContent.trim() : ''
+    })
+    check(/catatan teknis/.test(note), `the card carries the evidence for a screenshot ("${note.slice(0, 60)}")`)
     await page.close()
   }
 

@@ -218,6 +218,27 @@
       }));
     }
     card.appendChild(h); card.appendChild(p2); card.appendChild(row);
+
+    // Carry the evidence ON the card. A freeze on the owner's tablet is the one
+    // reproduction nobody can rerun, and asking him to open a log later loses
+    // it. The last error line is printed small, under the buttons, so a single
+    // screenshot of the stuck screen is a usable bug report.
+    try {
+      var log = JSON.parse(localStorage.getItem(KEY) || '[]');
+      var last = null;
+      for (var i = log.length - 1; i >= 0; i--) {
+        if (log[i] && log[i].msg && /error|rejection/.test(log[i].type || '')) { last = log[i]; break; }
+      }
+      var note = document.createElement('div');
+      note.id = '__freezeNote';
+      note.style.cssText = 'margin-top:12px;font:11px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;' +
+        'color:#7a6a4a;word-break:break-word;text-align:left';
+      note.textContent = 'catatan teknis: ' + (last ? (last.msg || '').slice(0, 160) : kind) +
+        ' · ' + (location.pathname.split('/').pop() || '') +
+        (window.__freezeContext ? ' · ' + String(window.__freezeContext).slice(0, 40) : '');
+      card.appendChild(note);
+    } catch (_) {}
+
     d.appendChild(card);
     document.body.appendChild(d);
 
