@@ -1769,7 +1769,25 @@ Still honest about the limits:
 User-reported issues NOT yet fixed (queued for next session). Source: same evening session as Hotfix #101.
 
 ### G15 — Train Letter Game
-- ⬜ **End-of-game error/hang**: "game ini juga error saat permainan usai. No respond hang" — game freezes / no response after victory or game-over screen. Likely missing modal swap / hung `showGameResult` / leftover Pixi tickers.
+- ✅ **End-of-game error/hang** ("game ini juga error saat permainan usai. No respond hang") —
+  FIXED, and now PROVEN 2026-09-22. The cure was Hotfix #102-C (`app.ticker.stop()` at the top of
+  `showWin()`/`showLose()`, before the modal's own setTimeout), but until now nothing held it down:
+  a later edit could restart the ticker and the only signal would be the child's tablet going numb
+  again. `tools/qa-endgame-hang.mjs` now ARMS a real G15 round instead of poking a cold page —
+  it picks a train, hides the picker, runs `initPixi()` and waits for `gameRunning` — then asserts
+  three G15-specific things on top of the shared four:
+  `app.ticker.started === false`, `gameRunning === false`, and `letterBoxes.length === 0`.
+  Measured on both endings: ticker stopped, `gameRunning` false, 0 boxes left, overlay visible,
+  its button takes a real click, main thread late by 0-1ms, no page errors. Suite: **103/103 PASS**
+  across 11 games.
+  Hand-checked the natural path too (drain `lives` to 0, let the game call `showLose()` itself
+  rather than the gate calling it): same result — `tickerStarted:false, gameRunning:false,
+  overlay:true, boxesLeft:0, timerLate:2ms`, no errors.
+  Gate hardening that came out of it: a cold navigation on this box can lose the CPU for over 45s
+  when several agent sessions run at once, and that timeout used to throw out of the loop and
+  ABORT the whole sweep on whichever game came next — a contention artefact wearing a hang's
+  clothes. Navigation now retries once at 120s and a genuine failure is recorded against that one
+  page instead of killing the run.
 - ✅ **Character/UI overlap** ("Karakter seperti ada bertumpuk") — FIXED 2026-09-21. Measured with
   `node tools/qa-g15-hud-overlap.mjs` at desktop, phone and landscape-phone: the TRAIN never
   touched the HUD, so the complaint was the HUD stacking on ITSELF, and it did, badly:
@@ -1802,8 +1820,9 @@ User-reported issues NOT yet fixed (queued for next session). Source: same eveni
   `node tools/qa-endgame-hang.mjs` calls each standalone game's own end routine (the function the
   source runs right before its result overlay) and asserts four things — nothing thrown, no page
   error, an end-of-round overlay actually visible, and the page still RESPONSIVE afterwards
-  (timers fire, the thread takes work, the overlay's button accepts a real click). 96 checks
-  across 11 games and 16 end routines, all passing.
+  (timers fire, the thread takes work, the overlay's button accepts a real click). 103 checks
+  across 11 games and 16 end routines, all passing (2026-09-22; was 96 before the G15 ticker
+  assertions were added).
   Liveness is deliberately not measured as "frames keep coming": most of these games stop their
   ticker on purpose when the result appears, and counting frames marked correct behaviour as a
   hang — that first attempt gave results that flipped between runs.

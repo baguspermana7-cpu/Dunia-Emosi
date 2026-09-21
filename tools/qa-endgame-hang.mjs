@@ -56,6 +56,19 @@ const ARM_GYM = () => {
 const ARM = {
   'balapan-kereta.html': () => { if (typeof S !== 'undefined') { S.running = true; S.gameOver = false } },
   'pokemon-run.html': () => { if (typeof S !== 'undefined') { S.running = true; S.gameOver = false; S.started = true } },
+  // G15 must be really RUNNING for its end routines to mean anything: the
+  // ticker assertion below reads app.ticker, which does not exist until
+  // initPixi has built the stage. Calling showWin() on a cold page tested
+  // almost nothing and the ticker check came back null.
+  'lokomotif-pemberani.html': () => {
+    if (typeof gameRunning !== 'undefined' && gameRunning) return
+    try {
+      selectedTrain = TRAIN_CATALOG.find(t => String(t.key).startsWith('mex_')) ||
+                      TRAIN_CATALOG.find(t => t.isCharacter) || TRAIN_CATALOG[0]
+      const sel = document.getElementById('train-select'); if (sel) sel.style.display = 'none'
+      initPixi()
+    } catch (_) {}
+  },
   'gym-pokemon.html': ARM_GYM,
 }
 
@@ -87,7 +100,19 @@ try {
     page.on('pageerror', e => errors.push(String(e.message).slice(0, 120)))
     page.on('console', m => { if (m.type() === 'error' && !/favicon|Failed to load resource|WebGL|swiftshader/i.test(m.text())) errors.push(m.text().slice(0, 120)) })
     await page.setViewport({ width: 1100, height: 720 })
-    await page.goto(`${BASE}/games/${file}`, { waitUntil: 'domcontentloaded', timeout: 45000 })
+    // This box runs several agent sessions at once, so a cold nav can lose the
+    // CPU for a minute. That is contention, not a hang, and it used to abort the
+    // whole sweep on whichever game happened to be next: retry once, longer.
+    let navFailed = null
+    for (const t of [45000, 120000]) {
+      try { await page.goto(`${BASE}/games/${file}`, { waitUntil: 'domcontentloaded', timeout: t }); navFailed = null; break }
+      catch (e) { navFailed = String(e.message).slice(0, 120) }
+    }
+    if (navFailed) {
+      check(false, `${file} · page loads (${navFailed})`)
+      await page.close()
+      continue
+    }
     await sleep(6500)
     // clear anything the page opened on its own (tutorial / daily mission)
     await page.evaluate(() => {
@@ -96,7 +121,14 @@ try {
 
     for (const [fn, args] of routines) {
       const before = errors.length
-      if (ARM[file]) { await page.evaluate(ARM[file]).catch(() => {}); await sleep(900) }
+      if (ARM[file]) {
+        await page.evaluate(ARM[file]).catch(() => {})
+        await sleep(900)
+        if (file === 'lokomotif-pemberani.html') {
+          await page.waitForFunction(() => typeof gameRunning !== 'undefined' && gameRunning, { timeout: 25000 }).catch(() => {})
+          await sleep(1500)
+        }
+      }
       const r = await page.evaluate(async (fn, args) => {
         const out = { exists: false, threw: null }
         const overlaySel = '#gm-overlay, .gm-overlay, [id*="result" i], [id*="modal" i], [class*="overlay" i], [id*="over" i]'
@@ -138,6 +170,20 @@ try {
       check(r.newOverlay.length > 0, `${label} shows an end-of-round overlay${r.newOverlay.length ? ' (' + String(r.newOverlay[0]).slice(0, 26) + ')' : ''}`)
       check(r.timerLateBy < 900 && r.threadWorks, `${label} leaves the page responsive (timer late by ${r.timerLateBy}ms)`)
       check(r.buttonClicked === true || r.buttonClicked === null, `${label} overlay button accepts a click${typeof r.buttonClicked === 'string' ? ' — ' + r.buttonClicked : ''}`)
+      // G15 hung after a round until Hotfix #102-C stopped its Pixi ticker; a
+      // ticker left running is the exact shape of "no respond hang", so the
+      // stop is asserted rather than trusted.
+      if (file === 'lokomotif-pemberani.html') {
+        const t = await page.evaluate(() => ({
+          ticker: (typeof app !== 'undefined' && app.ticker) ? app.ticker.started : null,
+          running: typeof gameRunning !== 'undefined' ? gameRunning : null,
+          boxes: typeof letterBoxes !== 'undefined' ? letterBoxes.length : null,
+        }))
+        check(t.ticker === false, `${label} stops the Pixi ticker (started=${t.ticker})`)
+        check(t.running === false, `${label} clears gameRunning`)
+        check(t.boxes === 0, `${label} clears the letter boxes (${t.boxes} left)`)
+      }
+
       // close the modal before the next routine so the second one is a fresh test
       await page.evaluate(() => { try { GameModal.hide && GameModal.hide() } catch (_) {}
         const ov = document.getElementById('gm-overlay'); if (ov) ov.classList.remove('show') })
