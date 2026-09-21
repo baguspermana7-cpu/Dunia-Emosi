@@ -399,6 +399,21 @@
       wr(KEY.wod, out)
       return out
     },
+    /* Park the banner UNDER whatever HUD the host game has, and keep it there.
+       It used to pin itself to the top of the screen at z-index 58, so in G15
+       at 390px it sat ON the pause, koleksi and settings buttons — measured
+       44x34px of overlap each. It is shared, so that landed on every train
+       game at once. It is also purely informational (its click handler is
+       nulled below), so it must never eat a tap either. */
+    _placeBanner(banner) {
+      try {
+        const hud = document.querySelector('#hud-top, #g14-hud, #hud, .game-header')
+        const safe = 'max(8px, env(safe-area-inset-top))'
+        if (!hud) { banner.style.top = safe; return }
+        const b = hud.getBoundingClientRect()
+        banner.style.top = (b.height > 4 ? Math.round(b.bottom + 6) + 'px' : safe)
+      } catch (_) {}
+    },
     showBanner(opts) {
       opts = opts || {}
       const w = this.today()
@@ -411,6 +426,16 @@
         document.body.appendChild(banner)
       }
       banner.textContent = `📚 Kata Hari Ini: ${w.id} = ${w.en}`
+      banner.style.pointerEvents = 'none'   // informational; never steals a tap
+      this._placeBanner(banner)
+      try {
+        const hud = document.querySelector('#hud-top, #g14-hud, #hud, .game-header')
+        if (hud && !banner._ro && typeof ResizeObserver === 'function') {
+          banner._ro = new ResizeObserver(() => this._placeBanner(banner))
+          banner._ro.observe(hud)   // the HUD grows when its rows wrap
+        }
+      } catch (_) {}
+      window.addEventListener('resize', () => this._placeBanner(banner))
       // v55.74 — TTS disabled (owner request). Banner stays informational, no speech.
       banner.onclick = null
       banner.style.cursor = 'default'

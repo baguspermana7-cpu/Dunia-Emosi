@@ -1770,7 +1770,25 @@ User-reported issues NOT yet fixed (queued for next session). Source: same eveni
 
 ### G15 — Train Letter Game
 - ⬜ **End-of-game error/hang**: "game ini juga error saat permainan usai. No respond hang" — game freezes / no response after victory or game-over screen. Likely missing modal swap / hung `showGameResult` / leftover Pixi tickers.
-- ⬜ **Character/UI overlap**: "Karakter seperti ada bertumpuk" — character train sprite stacks on top of UI elements (HUD, score, life bar). Z-index / layout review needed.
+- ✅ **Character/UI overlap** ("Karakter seperti ada bertumpuk") — FIXED 2026-09-21. Measured with
+  `node tools/qa-g15-hud-overlap.mjs` at desktop, phone and landscape-phone: the TRAIN never
+  touched the HUD, so the complaint was the HUD stacking on ITSELF, and it did, badly:
+  - the shared "Kata Hari Ini" banner (`train-shared.js`, so this hit EVERY train game) pinned
+    itself to the top of the screen over the pause / koleksi / settings buttons — 44x34px each;
+  - at ≤400px `#hud-top` was `flex-wrap:nowrap`, so the word display shared a line with five
+    44px buttons: settings sat on the word emoji, the hearts on the letter slots;
+  - `#station-chip` and the 44px TTS toggle lived in the same top-right corner (44x30px);
+  - the centred "Tiba di Stasiun" announcement reached up into the letter pill on a short
+    landscape screen (135x30px).
+  - **Fixes**: the word display gets its own row on phones; everything that floats under the HUD
+    is now placed by one measured stack (banner → letter pill → side chips) that follows the
+    HUD's real height through a ResizeObserver, because the HUD grows from 66px to 234px as its
+    rows wrap and a one-time measurement parked the banner on the buttons; the shared banner is
+    `pointer-events:none` so it can never eat a tap; the announcement compacts under 520px tall.
+  - The gate itself had to be fixed twice before it could be believed: it first compared only the
+    train against a hand-picked HUD list and passed while the screenshot showed the stacking, and
+    the broader sweep then flagged the play canvas until full-bleed layers and pure containers
+    were excluded.
 - ✅ **Too many filler letters** — DONE (verified 2026-09-20). Hotfix #102-B: on easy
   `spawnLetterBox()` emits ONE box, the target letter itself (`numBoxes = isEasy ? 1 : ...`),
   and the math/heart distractor boxes are skipped entirely on easy.
