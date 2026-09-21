@@ -753,8 +753,20 @@ Cache bump: `v=20260425d` → `v=20260425e`.
 - After viewport-ratio scale shipped, user may still find wheels don't visually touch rail. If so: add `visualOffset: N` per-train in `G16_CHAR_CONFIGS` (`games/g16-pixi.html`).
 - Outline + smoke-follow already shipped; awaiting visual QA.
 
-### ⬜ P6 — G13 perfect run still shows 3★ (potentially — awaits user re-test after today's fix)
-- Today's fix was the inverted progress-star mapping at `game.js:7895`. Display path was already using `perfStars` (5-scale). If user STILL sees 3★ for evolved, it means `s.evolved` flag isn't being set at the right moment during Machop→Machoke evolution. Separate investigation.
+### ✅ P6 — G13 perfect run still shows 3★ — FIXED 2026-09-21 (no re-test needed; the cause was findable in the code)
+- The April note blamed an inverted progress-star mapping and then waited on the owner to look
+  again. Reading the scoring path instead found a second, real cause: stars were docked by
+  ABSOLUTE evolution stage — mega/stage-3 kept 5, one evolution scored 4, none scored 3.
+- So a flawless run was capped by the ROSTER, not by play: a Pokemon whose chain has no
+  evolution, or a level whose `cfg.stages` allows only one, can never reach the top stage. The
+  child was marked down for a choice that was never theirs.
+- **Fix** (`game.js`, new `g13EvoPenalty()`): the penalty is measured against what THIS pairing
+  can actually reach — `min(chain stages, level stages)`. Taking everything available costs
+  nothing; each stage left unclaimed costs one star, floored at −2 so a win never reads as a loss.
+  Measured change: no-evolution Pokemon 3★ → **5★**, one-stage chain evolved 4★ → **5★**, full
+  chain on a one-stage level 4★ → **5★**; a full chain left at one evolution still scores 3★.
+- ✅ **Gate**: `node tools/qa-g13-stars.mjs` drives the shipped function across those pairings
+  (9 checks), including that zero correct answers still scores zero whatever the evolution.d, it means `s.evolved` flag isn't being set at the right moment during Machop→Machoke evolution. Separate investigation.
 
 ---
 

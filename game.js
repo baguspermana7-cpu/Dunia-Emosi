@@ -9288,6 +9288,30 @@ function g13UpdateHpBars() {
   const pn = document.getElementById('g13-phpnums'); if (pn) pn.textContent = `${s.playerHp}/${s.playerMaxHp}`
 }
 
+/**
+ * How many stars to dock for evolution, measured against what THIS pairing can
+ * actually reach — not against the top of the ladder.
+ *
+ * The old rule docked by absolute stage: mega/stage-3 kept 5, one evolution
+ * scored 4, none scored 3. That punished the child for something that was never
+ * their choice. A Pokemon with no evolution in its chain, or a level whose
+ * `stages` allows only one, can never reach the top, so a flawless run was
+ * capped at 3 stars by the roster — the "perfect run still shows 3 stars"
+ * report (P6).
+ *
+ * Reaching everything available costs nothing. Each stage left unclaimed costs
+ * one star, floored at -2 so the result can still say "won, but barely".
+ * Gate: tools/qa-g13-stars.mjs
+ */
+function g13EvoPenalty(s) {
+  const chain = (s && s.chain) || {}
+  const chainStages = (chain.evolved ? 1 : 0) + (chain.evolved2 ? 1 : 0) + (chain.mega ? 1 : 0)
+  const levelStages = (s && s.cfg && typeof s.cfg.stages === 'number') ? s.cfg.stages : chainStages
+  const reachable = Math.min(chainStages, Math.max(0, levelStages))
+  const reached = s && s.megaForm ? 3 : s && s.evolved2 ? 2 : s && s.evolved ? 1 : 0
+  return -Math.max(0, Math.min(2, reachable - Math.min(reached, reachable)))
+}
+
 function g13UpdateEvoBar() {
   const s = g13State
   const pct = Math.min(100, Math.round((s.evoPoints / s.evoNeeded) * 100))
@@ -9871,7 +9895,18 @@ function g13Victory() {
   let perfStars = 3
   let _g13lv = 1
   try {
-    const _g13EvoPenalty = (s.megaForm || s.evolved2) ? 0 : s.evolved ? -1 : -2
+    // Stars were docked by EVOLUTION STAGE alone: mega/stage-3 kept 5, one
+    // evolution scored 4, none scored 3. That punished the child for a choice
+    // that was never theirs — a Pokemon with no evolution in its chain, or a
+    // level that only allows one stage, can NEVER reach the top, so a flawless
+    // run was capped at 3 stars by the roster. That is the "perfect run still
+    // shows 3 stars" report (P6).
+    //
+    // The penalty is now measured against what THIS pairing could actually
+    // reach: how many stages the chain offers, capped by the level's own
+    // `stages`. Reaching everything available costs nothing; each stage left on
+    // the table costs one star, to a floor of -2 as before.
+    const _g13EvoPenalty = g13EvoPenalty(s)
     perfStars = GameScoring.calc({ correct: 1, total: 1, bonus: _g13EvoPenalty })
     _g13lv = s.lv || 1
     // setLevelComplete uses 0-3 star scale for progress persistence; map perfStars (5/4/3 scale) to 3/2/1.
