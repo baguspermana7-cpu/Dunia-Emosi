@@ -745,20 +745,20 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <!-- capture runtime errors to localStorage.__freezeLog BEFORE anything else can
      throw, so the next "kadang hang" report on the real tablet ships evidence.
      Inspect with: JSON.parse(localStorage.__freezeLog || '[]') -->
-<script src="data/freeze-watchdog.js?v=v61.1-20260922a"></script>
-<script src="data/math-rules.js?v=v61.1-20260922a"></script>
-<script src="data/save-engine.js?v=v61.1-20260922a"></script>
-<script src="data/sfx-engine.js?v=v61.1-20260922a"></script>
-<script src="vfx-engine.js?v=v61.1-20260922a"></script><!-- shared VFX (monster defeat explosion) -->
-<script src="data/math-heroes.js?v=v61.1-20260922a"></script><!-- P3b hero roster (sprite changes per op) -->
-<script src="data/emoji-map.js?v=v61.1-20260922a"></script><script src="data/ui-sprites.js?v=v61.1-20260922a"></script><!-- UIUX/gameplay sprite packs -->
-<script src="data/math-stories.js?v=v61.1-20260922a"></script><!-- P3d per-level story arcs (monster names + banter) -->
+<script src="data/freeze-watchdog.js?v=v61.2-20260922a"></script>
+<script src="data/math-rules.js?v=v61.2-20260922a"></script>
+<script src="data/save-engine.js?v=v61.2-20260922a"></script>
+<script src="data/sfx-engine.js?v=v61.2-20260922a"></script>
+<script src="vfx-engine.js?v=v61.2-20260922a"></script><!-- shared VFX (monster defeat explosion) -->
+<script src="data/math-heroes.js?v=v61.2-20260922a"></script><!-- P3b hero roster (sprite changes per op) -->
+<script src="data/emoji-map.js?v=v61.2-20260922a"></script><script src="data/ui-sprites.js?v=v61.2-20260922a"></script><!-- UIUX/gameplay sprite packs -->
+<script src="data/math-stories.js?v=v61.2-20260922a"></script><!-- P3d per-level story arcs (monster names + banter) -->
 <!-- P3e cloud sync — config baked in but STAYS INERT until localStorage 'mp_cloud_on'='1'
      (a button in plb.html flips it, same origin). publishable/anon key ONLY — the
      service_role/secret key must NEVER live in the repo/browser. Owner: enable the
      Anonymous provider in Supabase FIRST, then click "Aktifkan Cloud Sync" in plb.html. -->
 <script>window.MATH_SUPABASE={url:'https://iaiyoazomujscqrpknbq.supabase.co',anonKey:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlhaXlvYXpvbXVqc2NxcnBrbmJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTk0MTYsImV4cCI6MjA5MzI5NTQxNn0.gcYFTOhxS1giqUQGdmsmwYPjueHW6BPe3oYaIPWASlI'}</script>
-<script src="data/math-cloud.js?v=v61.1-20260922a"></script>
+<script src="data/math-cloud.js?v=v61.2-20260922a"></script>
 <script>
 (function(){
 'use strict';
@@ -1748,6 +1748,19 @@ window.MP={ show:show, goHome:goHome, openPeta:openPeta, openSub:openSub, openSk
   openPvP:openPvP, pvpSetDiff:pvpSetDiff, pvpStart:pvpStart, pvpReady:pvpReady, quitPvp:quitPvp, pvpPickHero:pvpPickHero,
   duCreate:duCreate, duCopyCode:duCopyCode, duRestore:duRestore,
   askOk:askOk, askCancel:askCancel };
+
+/* v61.2 — test seam. Everything in this file lives inside an IIFE, so the end
+   routine `finish()` is unreachable from outside and qa-endgame-hang could not
+   cover this game at all; it was one of seven playable pages the gate skipped.
+   `finish()` also returns immediately unless a level is actually in progress,
+   so the seam has to be able to START one, not just call the ending. Exposed
+   deliberately and named `__g25` so it reads as a seam, not public API. */
+window.__g25 = {
+  startLevel: function (g) { openSub(1); game = null; startGame(null); return !!game },
+  finishWin:  function () { if (game) game.correct = game.pool.length; finish(false) },
+  finishLose: function () { finish(true) },
+  inProgress: function () { return !!(game && !game.done) },
+};
 /* Enter submits the ask sheet, Escape cancels — the on-screen keyboard's "done" key is
    how a parent will actually close it. */
 document.addEventListener('keydown',function(e){

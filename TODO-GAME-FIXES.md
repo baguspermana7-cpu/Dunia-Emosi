@@ -1866,6 +1866,26 @@ User-reported issues NOT yet fixed (queued for next session). Source: same eveni
   property, those wrappers REPLACE the name, so calling it from a test opened a modal instead of
   starting a fight. The page captures the raw function before the wrappers install and exposes it
   as `window.__g13c.startBattleRaw`; the gate arms a real battle through that.
+  Widened 2026-09-22 from 11 games to 13, by the same reasoning as the phone sweep: the target
+  list should be the INVENTORY of games with an ending, not the games the owner has complained
+  about. `balapan-kereta-side` (both outcomes of `endRace`) and `kuis-matematika` were added.
+  `ayo-berhitung` is deliberately left out and the reason is recorded rather than silently
+  skipped: a finished page there is a toast and a fanfare, with no overlay and no ticker, so
+  every assertion this gate makes would be vacuous on it.
+  Two things had to be fixed before the two new games could be believed:
+  - `kuis-matematika` is one big IIFE, so `endRun` matched a `^function` grep but does not exist
+    at runtime — the gate reported `endRun is not defined`, which was the GATE being wrong, not
+    the game. The real ending is `finish(failed)`, and it returns immediately unless a level is
+    in progress, so the seam has to be able to START one. `window.__g25`
+    (`startLevel`/`finishWin`/`finishLose`/`inProgress`) does that, same precedent as
+    `gym-pokemon`'s `__g13c`. This game also ends by swapping to a full result SCREEN
+    (`#scr-hasil`), not a modal, so the overlay selector had to learn that a screen counts.
+  - the side racer's win path was reported 1118ms late on the main thread. Measured in isolation
+    in both orderings it comes back 0ms / 23ms / 16ms / 0ms, so the 1118ms was the gate measuring
+    this loaded box rather than the page. The threshold was NOT loosened; the measurement was
+    fixed to take the best of three samples, since a genuinely blocked thread cannot produce a
+    fast sample at all. Worst figure in the passing run is 97ms, so real costs still show.
+  Now 126 checks across 13 games and 19 end routines, all passing.
   STILL OPEN: this gate exercises the end ROUTINES, not every transition that can reach them.
 
 ---

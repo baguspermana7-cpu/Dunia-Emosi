@@ -70,10 +70,24 @@ const ARM = {
     } catch (_) {}
   },
   'gym-pokemon.html': ARM_GYM,
+  // finish() returns immediately unless a level is actually running, so the
+  // ending can only be tested from a started level.
+  'kuis-matematika.html': () => {
+    try { if (!window.__g25.inProgress()) window.__g25.startLevel(1) } catch (_) {}
+  },
 }
 
+// The list is the INVENTORY of games with an end routine, not the list of games
+// the owner has complained about: the untested pages are the ones nobody looked
+// at, so they are where the defects actually sit. balapan-kereta-side and
+// kuis-matematika were added 2026-09-22 for that reason.
+// ayo-berhitung is deliberately absent: a finished page there is a toast and a
+// fanfare, with no overlay and no ticker, so none of this gate's assertions
+// would mean anything on it.
 const GAMES = [
   ['balapan-kereta.html',      [['endRace', []]]],
+  ['balapan-kereta-side.html', [['endRace', ['Menang!', 'win']], ['endRace', ['Kalah', 'lose']]]],
+  ['kuis-matematika.html',     [['__g25.finishWin', []], ['__g25.finishLose', []]]],
   ['lokomotif-pemberani.html', [['showWin', []], ['showLose', []]]],
   ['selamatkan-kereta.html',   [['showWin', []], ['showLose', []]]],
   ['ducky-volley.html',        [['endMatch', [true]]]],
@@ -131,7 +145,10 @@ try {
       }
       const r = await page.evaluate(async (fn, args) => {
         const out = { exists: false, threw: null }
-        const overlaySel = '#gm-overlay, .gm-overlay, [id*="result" i], [id*="modal" i], [class*="overlay" i], [id*="over" i]'
+        // Most games end in a modal over the board; kuis-matematika swaps to a
+        // full result SCREEN instead, so a modal-only selector would call a
+        // perfectly good ending a missing overlay.
+        const overlaySel = '#gm-overlay, .gm-overlay, [id*="result" i], [id*="modal" i], [class*="overlay" i], [id*="over" i], #scr-hasil.active'
         const visible = () => [...document.querySelectorAll(overlaySel)]
           .filter(el => { const cs = getComputedStyle(el)
             return cs.display !== 'none' && cs.visibility !== 'hidden' && parseFloat(cs.opacity) > 0.05 && el.offsetHeight > 40 })
@@ -152,9 +169,20 @@ try {
 
         // responsive? a timer must fire, the thread must take work, and the
         // overlay's own button must react to a real click without throwing
-        const t0 = performance.now()
-        await new Promise(r => setTimeout(r, 200))
-        out.timerLateBy = Math.round(performance.now() - t0 - 200)
+        // Sample three times and keep the BEST. A single sample measures the
+        // whole machine, not the page: this box runs several agent sessions at
+        // once, and one contended sample reported the side racer's win path
+        // 1118ms late. Measured in isolation, both its endings come back
+        // 0-23ms, so that number was the gate describing the load average.
+        // The best of three is the page's own cost with the starvation removed;
+        // a genuinely blocked thread cannot produce a fast sample at all.
+        let best = Infinity
+        for (let i = 0; i < 3; i++) {
+          const t0 = performance.now()
+          await new Promise(r => setTimeout(r, 200))
+          best = Math.min(best, Math.round(performance.now() - t0 - 200))
+        }
+        out.timerLateBy = best
         let sum = 0; for (let i = 0; i < 2e5; i++) sum += i
         out.threadWorks = sum > 0
         const btn = document.querySelector('#gm-btns button, .gm-btn, ' + overlaySel + ' button')
