@@ -35,6 +35,17 @@ const PAGES = [
   'games/ducky-volley.html',
   'games/mobil.html',
   'games/film-anak.html',
+  // The nine below were never phone-tested: the gate shipped with the games the
+  // owner had complained about, which is exactly the set least likely to still
+  // be broken.
+  'games/balapan-kereta-side.html',
+  'games/gym-pokemon.html',
+  'games/mario-pokemon.html',
+  'games/monster-candy.html',
+  'games/museum-kereta.html',
+  'games/pokemon-bawah-laut.html',
+  'games/pokemon-birds.html',
+  'games/pokemon-run.html',
 ]
 const UA = 'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Mobile Safari/537.36'
 
@@ -56,7 +67,19 @@ try {
       })
       const errors = []
       page.on('pageerror', e => errors.push(String(e.message).slice(0, 110)))
-      await page.goto(`${BASE}/${path}`, { waitUntil: 'domcontentloaded', timeout: 45000 })
+      // A cold nav can lose the CPU for over 45s when this box runs several
+      // agent sessions at once. That is contention, not a broken page, and an
+      // uncaught timeout here used to abort every device still to come.
+      let navFailed = null
+      for (const t of [45000, 120000]) {
+        try { await page.goto(`${BASE}/${path}`, { waitUntil: 'domcontentloaded', timeout: t }); navFailed = null; break }
+        catch (e) { navFailed = String(e.message).slice(0, 110) }
+      }
+      if (navFailed) {
+        check(false, `${dev.name} · ${path}: page loads (${navFailed})`)
+        await page.close()
+        continue
+      }
       await sleep(5200)
 
       const r = await page.evaluate(() => {
@@ -116,6 +139,10 @@ try {
         out.tinyText = [...document.querySelectorAll('p, li, span, div')].filter(el => {
           if (!shown(el) || el.children.length) return false
           const txt = el.textContent.trim()
+          // A build stamp is developer chrome, not something a child reads, and
+          // it is named as such rather than left to the length heuristic below:
+          // pokemon-run's stamp is 23 characters and used to slip through as prose.
+          if (el.id === 'du-build-stamp' || el.classList.contains('du-build-stamp')) return false
           if (txt.length < 18) return false                                 // chips, counters, labels
           if (cs(el).textTransform === 'uppercase') return false            // eyebrow labels
           return parseFloat(cs(el).fontSize) < 12 && el.getBoundingClientRect().height > 0

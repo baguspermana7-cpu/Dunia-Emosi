@@ -1733,6 +1733,40 @@ Still honest about the limits:
 - Next lead, if it recurs: instrument the render throw to report WHICH game object and texture
   key was being drawn, which is the one thing the current message does not say.
 
+## ✅ Phone sweep 2026-09-22 — the half of the games that had never been phone-tested
+
+`tools/qa-mobile-touch.mjs` shipped covering 9 pages, and they were the pages the owner had
+already complained about — precisely the set least likely to still be broken. Widened to all 18
+standalone games (`balapan-kereta-side`, `gym-pokemon`, `mario-pokemon`, `monster-candy`,
+`museum-kereta`, `pokemon-bawah-laut`, `pokemon-birds`, `pokemon-run` were added) across
+iPhone SE / iPhone 14 / Pixel 7 / iPad mini with real touch, device pixel ratio and mobile UA.
+The untested half was hiding six defects. All fixed; the suite is **409/409**, was 24 FAIL.
+
+- **`balapan-kereta-side` — the settings button was 31px OFF-SCREEN and could not be tapped.**
+  Measured at 375px: the top row needs 414px (back pill 107 + badge 78 + hearts 57 + three 44px
+  circles + padding and gaps), so `#btn-settings` ran 362→406 against a 375px viewport. The badge
+  is the only item in that row that is information rather than a control, so on ≤430px it now
+  wraps to its own row and row 1 needs 332px. Verified at 375/412/768/1280: no button past the
+  edge at any width, and the HUD still collapses to one 70px row above 430px.
+  Everything pinned under the HUD reads `--g14s-under-hud`, published from a ResizeObserver,
+  because the HUD is 66px on one row and 106px on two and `#hud-mid` used to trust a hard-coded
+  78px — which would have parked the distance readout on top of the newly wrapped badge. Measured
+  after the fix: HUD 106 → readout at 118, HUD 70 → readout at 82, no overlap at any width.
+- **`gym-pokemon` — trial names at 9px** (`.tc-info .tc-gym`), and the in-battle trainer-name
+  pills at the same 9px. Both to 12px.
+- **`museum-kereta`** — the gallery tabs were 38px tall against a 44px thumb target; the search
+  box was 13px, which makes iOS zoom the whole page the moment a child focuses it; and 11 body
+  strings sat at 11px. Now 44px / 16px / 12px.
+- **`balapan-kereta-side`** — the 48-leg journey label was 10px. Now 12px.
+- **`pokemon-run`** — its build stamp was read as prose. The gate already meant to skip stamps,
+  but did it by length, and this one is 23 characters ("v20260506z (vfx-r5+std)") where the other
+  seventeen pages' stamps are five. The stamp now carries the shared `du-build-stamp` class and
+  the gate skips it BY NAME. This is the one exemption in the sweep and it is narrow on purpose:
+  a build stamp is developer chrome, not text a child reads.
+- Gate hardening: this gate had the same fragile navigation as `qa-endgame-hang` — one cold nav
+  losing the CPU to the other agent sessions on this box aborted every device still to come.
+  Retries once at 120s, records a real failure against that one page.
+
 ## ⬜ CROSS-GAME ISSUES
 
 ### Unified Scoring Engine

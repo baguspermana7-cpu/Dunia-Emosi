@@ -9,8 +9,8 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=v61.0-20260921a">
-<link rel="stylesheet" href="du-hud.css?v=v61.0-20260921a">
+<link rel="stylesheet" href="du-buttons.css?v=v61.1-20260922a">
+<link rel="stylesheet" href="du-hud.css?v=v61.1-20260922a">
 <title>🏁 Balapan Kereta — Side Race (Beta)</title>
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <style>
@@ -26,7 +26,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 /* B-257 — distance lifted OUT of the cramped top row (it was starved to ~0px by
    the 6 other nowrap items and overflowed onto the train badge). Now a fixed
    centred pill just under the progress bar, out of the flex flow. */
-#hud-mid{position:fixed;top:max(78px,calc(env(safe-area-inset-top) + 66px));left:50%;transform:translateX(-50%);z-index:49;text-align:center;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.5);pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,0.34);border-radius:13px;padding:3px 14px;backdrop-filter:none}
+#hud-mid{position:fixed;top:var(--g14s-under-hud,max(78px,calc(env(safe-area-inset-top) + 66px)));left:50%;transform:translateX(-50%);z-index:49;text-align:center;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.5);pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,0.34);border-radius:13px;padding:3px 14px;backdrop-filter:none}
 #hud-dist{font-size:clamp(18px,4.8vw,22px);font-weight:900;white-space:nowrap;line-height:1}
 #hud-dist .target{font-size:0.55em;color:#fde047;font-weight:900;opacity:0.9;margin-left:2px}
 #hud-pos{font-size:clamp(10px,2.6vw,12px);color:#fde047;font-weight:900;margin-top:3px;white-space:nowrap;max-width:50vw;overflow:hidden;text-overflow:ellipsis}
@@ -57,6 +57,16 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
   #btn-jump{min-width:0;width:min(72vw,300px);padding:16px 0}
   #hud-top{gap:4px}
   #hud-top button{padding:8px 10px}
+}
+/* v61.1 — measured 2026-09-22 on a 375px iPhone SE: the row needs 414px, so the
+   settings button hung 31px off the right edge and could not be tapped at all.
+   The badge is the only item that is information rather than a control, so it
+   takes its own row and every control stays reachable (row 1 then needs 332px).
+   Anything pinned under the HUD reads the measured height, because the HUD is
+   66px on one row and ~104px on two. */
+@media(max-width:430px){
+  #hud-top{flex-wrap:wrap}
+  #train-badge{order:1;flex:0 0 auto;max-width:calc(100vw - 24px);margin-top:2px}
 }
 
 /* Countdown overlay */
@@ -139,37 +149,37 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
 <canvas id="pixi-canvas"></canvas>
 
 <!-- Pixi + shared modules (same versions as balapan-kereta.html for cache reuse) -->
-<script src="data/emoji-map.js?v=v61.0-20260921a"></script><script src="data/ui-sprites.js?v=v61.0-20260921a"></script><!-- zero-emoji engine -->
+<script src="data/emoji-map.js?v=v61.1-20260922a"></script><script src="data/ui-sprites.js?v=v61.1-20260922a"></script><!-- zero-emoji engine -->
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="train-shared.js?v=v61.0-20260921a"></script>
-<script src="train-vfx.js?v=v61.0-20260921a"></script>
-<script src="motion.js?v=v61.0-20260921a"></script><!-- A-315 E5 — shared motion engine (frame-rate-independent easing) -->
-<script src="train-bg-engine.js?v=v61.0-20260921a"></script>
-<script src="data/bg-themes.js?v=v61.0-20260921a"></script>
-<script src="data/bg-renderers.js?v=v61.0-20260921a"></script>
-<script src="data/bg-npcs.js?v=v61.0-20260921a"></script>
-<script src="data/bg-audio.js?v=v61.0-20260921a"></script>
+<script src="train-shared.js?v=v61.1-20260922a"></script>
+<script src="train-vfx.js?v=v61.1-20260922a"></script>
+<script src="motion.js?v=v61.1-20260922a"></script><!-- A-315 E5 — shared motion engine (frame-rate-independent easing) -->
+<script src="train-bg-engine.js?v=v61.1-20260922a"></script>
+<script src="data/bg-themes.js?v=v61.1-20260922a"></script>
+<script src="data/bg-renderers.js?v=v61.1-20260922a"></script>
+<script src="data/bg-npcs.js?v=v61.1-20260922a"></script>
+<script src="data/bg-audio.js?v=v61.1-20260922a"></script>
 <!-- v55.27 — Thomas BGM (silent by default; only fires for aeg_* chars) -->
 <audio id="game-bgm" loop preload="none" style="display:none"></audio>
-<script src="train-bgm.js?v=v61.0-20260921a"></script>
-<script src="data/bg-events.js?v=v61.0-20260921a"></script>
-<script src="obstacle-engine.js?v=v61.0-20260921a"></script>
-<script src="data/kids-questions.js?v=v61.0-20260921a"></script>
-<script src="data/obstacles.js?v=v61.0-20260921a"></script>
-<script src="data/routes.js?v=v61.0-20260921a"></script>
-<script src="data/reward-catalog.js?v=v61.0-20260921a"></script>
-<script src="reward-gallery.js?v=v61.0-20260921a"></script>
-<script src="settings-modal.js?v=v61.0-20260921a"></script>
-<script src="trains-db.js?v=v61.0-20260921a"></script>
-<script src="data/sfx-engine.js?v=v61.0-20260921a"></script><!-- A-347 shared coin/crash cues (owner) -->
-<script src="vfx-engine.js?v=v61.0-20260921a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
-<script src="game-modal.js?v=v61.0-20260921a"></script>
+<script src="train-bgm.js?v=v61.1-20260922a"></script>
+<script src="data/bg-events.js?v=v61.1-20260922a"></script>
+<script src="obstacle-engine.js?v=v61.1-20260922a"></script>
+<script src="data/kids-questions.js?v=v61.1-20260922a"></script>
+<script src="data/obstacles.js?v=v61.1-20260922a"></script>
+<script src="data/routes.js?v=v61.1-20260922a"></script>
+<script src="data/reward-catalog.js?v=v61.1-20260922a"></script>
+<script src="reward-gallery.js?v=v61.1-20260922a"></script>
+<script src="settings-modal.js?v=v61.1-20260922a"></script>
+<script src="trains-db.js?v=v61.1-20260922a"></script>
+<script src="data/sfx-engine.js?v=v61.1-20260922a"></script><!-- A-347 shared coin/crash cues (owner) -->
+<script src="vfx-engine.js?v=v61.1-20260922a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
+<script src="game-modal.js?v=v61.1-20260922a"></script>
 <!-- v55.99 B-284 — shared rich atmospheric scenery engine (sun + layered mountains + grass) -->
-<script src="scenery-engine.js?v=v61.0-20260921a"></script>
+<script src="scenery-engine.js?v=v61.1-20260922a"></script>
 <!-- v55.77 — shared painterly backdrop (scenery-only far layer) + speed overlay -->
-<script src="train-backdrop.js?v=v61.0-20260921a"></script>
-<script src="train-speedfx.js?v=v61.0-20260921a"></script>
-<script src="train-journey.js?v=v61.0-20260921a"></script>
+<script src="train-backdrop.js?v=v61.1-20260922a"></script>
+<script src="train-speedfx.js?v=v61.1-20260922a"></script>
+<script src="train-journey.js?v=v61.1-20260922a"></script>
 
 <div id="hud-top">
   <button id="btn-back" class="du-hud-pill" type="button" onclick="goBack()">← Kembali</button>
@@ -179,7 +189,7 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#87CEE
     <div id="hud-dist">0m<span class="target"> / 1000m</span></div>
     <div id="hud-pos">Mulai!</div>
     <!-- v55.80 — shared 48-leg journey label (names the painterly backdrop leg) -->
-    <div id="g14s-leg-label" style="display:none;font-size:10px;font-weight:700;color:#fff;opacity:0.92;margin-top:2px;letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60vw;pointer-events:none">🚆 <span id="g14s-leg-name"></span></div>
+    <div id="g14s-leg-label" style="display:none;font-size:12px;font-weight:700;color:#fff;opacity:0.92;margin-top:2px;letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60vw;pointer-events:none">🚆 <span id="g14s-leg-name"></span></div>
   </div>
   <div id="hud-hp">❤️×3</div>
   <button id="btn-pause" class="du-hud-circle is-blue" type="button" onclick="g14sTogglePause()">⏸</button>
@@ -2209,9 +2219,29 @@ function onResize() {
 window.addEventListener('keydown', e => {
   if (e.code === 'Escape') goBack()
 })
+
+// v61.1 — The HUD is 66px tall on a wide screen and about 104px once the train
+// badge wraps to its own row on a phone. Anything pinned under it used to trust
+// a hard-coded 78px, which parks the distance readout ON the badge. Publish the
+// real height instead and let CSS place from it; a ResizeObserver is needed
+// rather than a one-time measure because the row wraps as the badge text grows.
+function g14sSyncHudOffset() {
+  const hud = document.getElementById('hud-top')
+  if (!hud) return
+  const h = Math.round(hud.getBoundingClientRect().height)
+  if (h > 0) document.documentElement.style.setProperty('--g14s-under-hud', (h + 12) + 'px')
+}
+;(function g14sWatchHud() {
+  const hud = document.getElementById('hud-top')
+  if (!hud) return
+  g14sSyncHudOffset()
+  if (typeof ResizeObserver === 'function') new ResizeObserver(g14sSyncHudOffset).observe(hud)
+  window.addEventListener('resize', g14sSyncHudOffset)
+  window.addEventListener('orientationchange', () => setTimeout(g14sSyncHudOffset, 120))
+})()
 </script>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v56.7</div>
 <!-- Freeze recovery net: detects a dead frame chain and offers a way out. -->
-<script src="data/freeze-watchdog.js?v=v61.0-20260921a"></script>
+<script src="data/freeze-watchdog.js?v=v61.1-20260922a"></script>
 </body>
 </html>
