@@ -965,7 +965,7 @@ Cache bump: `v=20260423a` → `v=20260423b`.
 | Status | Count | Items |
 |--------|-------|-------|
 | ✅ Completed this session | 10 | #48, #49 (v1+v2), #31, #47, #45, #54, #61, #56, #55, #57 |
-| ⬜ Pending | 1 | #44 (P0 modal engine bug) — #62 and #63 closed 2026-09-20, see their entries |
+| ✅ Closed | 0 | #44, #62 and #63 all closed — #44 finished 2026-09-21 (its 0-star branch still let a boast through; see its entry) |
 | **TOTAL OPEN** | **11** | |
 
 **Key achievements**:
@@ -1030,6 +1030,14 @@ Cache bump: `v=20260423a` → `v=20260423b`.
   - ✅ 3★ downgrades title if "Sempurna" → "Bagus!"
   - ✅ "Level Berikutnya" button only appears when `normalizedStars >= 3` (passing grade).
 - **Impact**: Every game using shared GameModal now has consistent, truthful result feedback.
+- ⚠️ **Reopened and finished 2026-09-21.** The fix above was incomplete: the 0-star branch kept
+  its OWN, shorter list of success words (`sempurna|hebat|bagus|luar biasa|keren`), so a caller
+  message like "Tidak ada kesalahan! 100% benar semua!" survived under the "Gagal! Coba Lagi"
+  title — the very contradiction this task was opened for, still reachable at the WORST score.
+  All branches now share one `BRAG` pattern.
+- ✅ **Gate**: `node tools/qa-modal-truth.mjs` drives the shipped module at 0/1/2/3/5 stars with a
+  deliberately boastful title and message and asserts the downgrades plus the Level Berikutnya
+  gating (11 checks). It caught the hole above on its first run.
 
 ### Task #54 — G6 Vehicle Picker Disconnected From Sprite ✅ DONE 2026-04-22
 - **Symptom**: User picks vehicle emoji in picker (e.g. bajaj 🛺, ambulan 🚑, taksi 🚕). In-game sprite is always a RANDOM sport car. Picker selection → sprite mapping broken.

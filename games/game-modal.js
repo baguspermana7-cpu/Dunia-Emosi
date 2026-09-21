@@ -49,19 +49,24 @@ const GameModal = (() => {
     // or show a "Level Berikutnya" button. Standardize fail-state messaging.
     const normalizedStars = Math.max(0, Math.min(5, stars|0));
     let finalEmoji = emoji, finalTitle = title, finalMsg = msg, allowNext = !!onNext;
+    // ONE list of boasting phrases for every branch. The 0-star branch used to
+    // carry a shorter list of its own, so a caller saying "Tidak ada kesalahan!
+    // 100% benar semua!" kept that message under a "Gagal! Coba Lagi" title —
+    // the exact contradiction Task #44 was opened for, still reachable at the
+    // worst possible score. Caught by tools/qa-modal-truth.mjs.
+    const BRAG = /sempurna|hebat|luar biasa|keren|tidak ada kesalahan|100%|benar semua|all correct|perfect/i;
     if (normalizedStars === 0) {
       finalEmoji = '😞';
       finalTitle = 'Gagal! Coba Lagi';
-      // Only override msg if caller provided a success-tone message
-      if (/sempurna|hebat|bagus|luar biasa|keren/i.test(finalMsg) || !finalMsg) {
+      if (BRAG.test(finalMsg) || !finalMsg) {
         finalMsg = 'Belum ada jawaban benar. Jangan menyerah, ayo coba lagi!';
       }
       allowNext = false; // no level advance on fail
     } else if (normalizedStars <= 2) {
       // Guard: low stars but caller passed success-tone title OR message — downgrade both.
       // Fixes Task #44 P0: "Selesai!" + 1★ + "Sempurna! Tidak ada kesalahan!" contradiction.
-      if (/sempurna|hebat|luar biasa|keren/i.test(finalTitle)) finalTitle = 'Coba Lagi';
-      if (/sempurna|tidak ada kesalahan|100%|benar semua|all correct/i.test(finalMsg)) {
+      if (BRAG.test(finalTitle)) finalTitle = 'Coba Lagi';
+      if (BRAG.test(finalMsg)) {
         finalMsg = normalizedStars === 1 ? 'Kamu hampir dapat bintang lebih banyak — coba lagi!' : 'Sudah bagus, tapi masih bisa lebih baik!'
       }
     } else if (normalizedStars === 3 && /sempurna|luar biasa/i.test(finalTitle)) {
