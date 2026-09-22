@@ -1918,6 +1918,61 @@ report `FAIL a 1-star replay does NOT erase the 3-star record (1)`. That is the 
 likely to rot silently — a child replaying a cleared level for fun would quietly lose their best
 score, and nothing else in the suite would notice.
 
+## ✅ 2026-09-22 — the service worker could precache NOTHING and still report a clean install
+
+The app is a PWA on a child's tablet, so "works offline" is a real promise. `sw.js` precached
+its SHELL with a single `cache.addAll()` and swallowed the rejection with `.catch(() => {})`.
+`addAll()` is ATOMIC: one stale path and nothing at all is cached — and the swallow meant the
+worker still activated, reporting success, with an empty shell. The cache token moves on every
+ship, so that list is edited constantly. Symptom: a blank page the next time the tablet has no
+wifi, with nothing logged anywhere.
+
+Measured on both arms rather than argued from the spec. `museum-kereta.html` is in SHELL and
+`index.html` never requests it, so it is precache-ONLY and separates precaching from the fetch
+handler's runtime caching:
+
+| | precache-only asset | cache entries |
+|---|---|---|
+| old atomic `addAll` + one stale path | **absent** | 140 (runtime leftovers only) |
+| per-entry (fixed) | present | 160 |
+
+A child who had not already opened a game online would simply not find it offline. Now each
+entry is cached on its own, so one bad path costs one asset, and the failed count is warned.
+
+`tools/qa-app-offline.mjs` — 11/11 with the HTTP server **killed**, so an uncached byte is
+`ERR_CONNECTION_REFUSED` rather than a quietly-served response. It asserts the SHELL list
+resolves on disk, the worker installs AND actually precaches (by the precache-only asset, not a
+count), and that offline `index.html` boots, reaches the menu and names every game, and a game
+page still renders.
+
+Three of my own assertions were wrong before this stood up, and ONLINE was the control each
+time: `.game-tile` on the welcome screen (online is 0 too — the grid is not there),
+`.game-tile` on the menu (that class does not exist in this markup at all), and a raw cache
+COUNT (cannot tell precache from runtime caching).
+
+---
+
+## 🔴 OPEN 2026-09-22 — installed Film games do NOT boot offline (pre-existing, NOT today's work)
+
+`tools/qa-film-offline.mjs` reports **7/10 with 23 console errors**: T1b (`batwheels-match-up`
+boots offline), T2b (gotham races offline) and T3b (still races after a CACHE_VERSION bump) all
+fail with `net::ERR_FAILED` once the server is killed. Installing reports success (T1a/T2a pass),
+so "Siapkan Offline" tells the owner a game is ready when it is not.
+
+**Dated before touching anything**, because the precache change above landed in the same area:
+run against `HEAD` in a clean worktree → identical 7/10, same three failures. Run against
+`7b8d12d5` (yesterday, before today's six cache-token bumps) → identical again. So this is
+older than today's session and NOT caused by the precache fix.
+
+Next step is the failing URLs: the harness logs `Failed to load resource` without naming them,
+so the first job is a probe that captures the request URLs that fail with the server dead.
+
+⚠️ The harness leaves DETRITUS: it rewrites `games/film/offline-index.json` and two
+`offline-manifest.json` files and does not restore them, so the index records a gotham
+hash/byte-count that no longer matches the files on disk. A `git add -A` after running it
+commits a wrong hash, which would make every client consider gotham stale. Revert those three
+files after every run.
+
 ## ⬜ CROSS-GAME ISSUES
 
 ### Unified Scoring Engine
