@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=v61.4-20260922a">
+<link rel="stylesheet" href="du-buttons.css?v=v61.5-20260922a">
 <title>Museum Kereta Ambarawa</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -189,13 +189,17 @@ html,body{width:100%;min-height:100%;min-height:100svh;background:#1a0e06;font-f
 </head>
 <body>
 <div id="du-build-stamp">v58.7</div>
-<script src="data/emoji-map.js?v=v61.4-20260922a"></script><script src="data/ui-sprites.js?v=v61.4-20260922a"></script><!-- zero-emoji engine -->
+<script src="data/emoji-map.js?v=v61.5-20260922a"></script><script src="data/ui-sprites.js?v=v61.5-20260922a"></script><!-- zero-emoji engine -->
 <!-- Freeze recovery net: detects a dead frame chain and offers a way out. -->
-<script src="data/freeze-watchdog.js?v=v61.4-20260922a"></script>
-<script src="sw-reload.js?v=v61.4-20260922a"></script>
+<script src="data/freeze-watchdog.js?v=v61.5-20260922a"></script>
+<!-- v61.5 — the museum keeps per-child collectibles but never loaded the save
+     engine, so avatar scoping was unavailable to it and every child shared one
+     passport. Must load BEFORE the page script that reads them. -->
+<script src="data/save-engine.js?v=v61.5-20260922a"></script>
+<script src="sw-reload.js?v=v61.5-20260922a"></script>
 <!-- A-322 — full 275-train world DB + real-fact lore for the expanded museum -->
-<script src="data/train-world.js?v=v61.4-20260922a"></script>
-<script src="data/museum-lore.js?v=v61.4-20260922a"></script>
+<script src="data/train-world.js?v=v61.5-20260922a"></script>
+<script src="data/museum-lore.js?v=v61.5-20260922a"></script>
 
 <div id="museum-root">
   <div class="game-header">
@@ -1727,8 +1731,20 @@ function g18RevealMoreHistory(total, current) {
 
 /* ---- passport ---- */
 const G18_PASSPORT_KEY = 'dunia-g18-passport'
+/* v61.5 — per-child collectibles. The passport, the master badge, the best-star
+   record, the recently-viewed list and the story-seen flag are things a CHILD
+   earns, but they were kept under one global key, so a second child opened the
+   museum already holding the first child's passport and could never fill it in
+   themselves. These route through the save engine's avatar scoping, which also
+   migrates any existing global data to whoever is playing now (once), so nobody
+   loses what they already collected. Falls back to the global key verbatim when
+   save-engine.js is absent or no avatar has been chosen. */
+const g18Get = (k, d) => (typeof avatarScopedGet === 'function')
+  ? avatarScopedGet(k, d) : (localStorage.getItem(k) === null ? d : localStorage.getItem(k))
+const g18Set = (k, v) => (typeof avatarScopedSet === 'function')
+  ? avatarScopedSet(k, v) : (function(){ try { localStorage.setItem(k, String(v)) } catch(_){} })()
 function g18PassportGet() {
-  try { return new Set(JSON.parse(localStorage.getItem(G18_PASSPORT_KEY) || '[]')) } catch(_){ return new Set() }
+  try { return new Set(JSON.parse(g18Get(G18_PASSPORT_KEY, '[]') || '[]')) } catch(_){ return new Set() }
 }
 function g18PassportStamp(worldIdx) {
   try {
@@ -1736,7 +1752,7 @@ function g18PassportStamp(worldIdx) {
     if (!wi || wi < 1) return                 // featured trains w/o a world sprite: skip
     const set = g18PassportGet()
     set.add(wi)
-    localStorage.setItem(G18_PASSPORT_KEY, JSON.stringify([...set]))
+    g18Set(G18_PASSPORT_KEY, JSON.stringify([...set]))
     g18UpdatePassportChip()
     try { g18UpdateCollectStat() } catch(_){}
   } catch(_){}
@@ -1812,7 +1828,7 @@ function g18Mastery8of8() {
     document.head.appendChild(s)
   }
   try { [523, 659, 784, 988].forEach((f, i) => setTimeout(() => playTone(f, 0.18, 'triangle', 0.18), i * 110)) } catch(_){}
-  try { localStorage.setItem('dunia-g18-master', '1') } catch(_){}
+  try { g18Set('dunia-g18-master', '1') } catch(_){}
 }
 
 /* ---- seeded quiz + no-repeat-last-3 ---- */
@@ -1830,7 +1846,7 @@ function g18SeededShuffle(arr) {
 }
 function g18FilterRecent(arr) {
   try {
-    const recent = JSON.parse(localStorage.getItem('dunia-g18-recent') || '[]')
+    const recent = JSON.parse(g18Get('dunia-g18-recent', '[]') || '[]')
     const recentSet = new Set(recent.flat())
     const out = arr.filter(q => !recentSet.has(q.id || q.q || JSON.stringify(q)))
     return out.length ? out : arr
@@ -1839,10 +1855,10 @@ function g18FilterRecent(arr) {
 function g18RecordRecent(qs) {
   try {
     const keys = qs.map(q => q.id || q.q || JSON.stringify(q))
-    const prior = JSON.parse(localStorage.getItem('dunia-g18-recent') || '[]')
+    const prior = JSON.parse(g18Get('dunia-g18-recent', '[]') || '[]')
     prior.push(keys)
     while (prior.length > 3) prior.shift()
-    localStorage.setItem('dunia-g18-recent', JSON.stringify(prior))
+    g18Set('dunia-g18-recent', JSON.stringify(prior))
   } catch(_){}
 }
 
@@ -1860,7 +1876,7 @@ function g18TintQuizBar() {
 /* ---- first-tap glow on Cerita button ---- */
 function g18MaybeGlowStoryBtn() {
   try {
-    if (localStorage.getItem('dunia-g18-cerita-seen')) return
+    if (g18Get('dunia-g18-cerita-seen', null)) return
     const btn = document.getElementById('g18-story-btn'); if (!btn) return
     btn.style.boxShadow = '0 0 0 4px rgba(251,191,36,0.4)'
     btn.style.animation = 'g18CeritaPulse 1.6s ease-in-out infinite'
@@ -2058,7 +2074,7 @@ function g18ShowDailyTrivia() {
 
 /* ---- child-friendly story panel ---- */
 function g18ShowStory() {
-  try { localStorage.setItem('dunia-g18-cerita-seen', '1') } catch(_){}
+  try { g18Set('dunia-g18-cerita-seen', '1') } catch(_){}
   const sbtn = document.getElementById('g18-story-btn')
   if (sbtn) { sbtn.style.animation = ''; sbtn.style.boxShadow = '' }
   const panel = document.getElementById('g18-story-panel')
@@ -2182,8 +2198,8 @@ function g18FinishQuiz() {
   if (g18StreakBest >= 5) perfStars = Math.min(5, perfStars + 1)
   state.gameStars[state.currentPlayer] = perfStars
   try {
-    const prevBest = parseInt(localStorage.getItem('dunia-g18-best-stars') || '0', 10)
-    if (perfStars > prevBest) localStorage.setItem('dunia-g18-best-stars', String(perfStars))
+    const prevBest = parseInt(g18Get('dunia-g18-best-stars', '0') || '0', 10)
+    if (perfStars > prevBest) g18Set('dunia-g18-best-stars', String(perfStars))
   } catch(_){}
   if (score === G18_QUIZ_COUNT) { try { g18Mastery8of8() } catch(_){} }
   let reviewLine = ''

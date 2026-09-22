@@ -84,9 +84,67 @@
     } catch (_) {}
   }
 
+  /* ── per-child collectibles ────────────────────────────────────────────────
+     Level progress has been avatar-scoped for a long time, and gym-pokemon
+     scopes its badges through activeAvatarBadgeKey(). Several games never got
+     the same treatment and still keep per-child things — a museum passport, a
+     "master" badge, best stars, a daily streak — under ONE global key, so a
+     second child opens the app already holding the first child's collection
+     and can never earn it themselves.
+
+     These two helpers make the scoped form the easy one to write. The read
+     performs a ONE-TIME migration: if the avatar key is absent but the legacy
+     global key exists, that data belonged to whoever was actually playing, so
+     it moves to the ACTIVE avatar and the legacy key is removed. Leaving the
+     legacy key in place would hand the same collection to the next child too,
+     which is the bug being fixed. With no avatar chosen, both helpers use the
+     legacy key unchanged and nothing migrates. */
+  /* Most legacy keys already begin with "dunia-", and prefixing them again
+     gives "dunia-avatar-lion-dunia-g18-master". Strip the duplicate here
+     rather than in activeAvatarBadgeKey(), whose existing caller passes a
+     bare suffix ("g13c_badges") and whose key must not change. */
+  function _scopedKey(suffix) {
+    // No avatar chosen: return the key EXACTLY as given. Stripping the prefix
+    // here would turn "dunia-g18-master" into "g18-master" and orphan the data
+    // of every install that has not picked an avatar.
+    if (!_activeAvatarSlug()) return suffix;
+    return activeAvatarBadgeKey(String(suffix).replace(/^dunia-/, ''));
+  }
+
+  function avatarScopedGet(suffix, fallback) {
+    try {
+      const key = _scopedKey(suffix);
+      const own = localStorage.getItem(key);
+      if (own !== null) return own;
+      if (key === suffix || !_activeAvatarSlug()) return fallback === undefined ? null : fallback;
+      const legacy = localStorage.getItem(suffix);
+      if (legacy === null) return fallback === undefined ? null : fallback;
+      localStorage.setItem(key, legacy);
+      localStorage.removeItem(suffix);
+      return legacy;
+    } catch (_) {
+      return fallback === undefined ? null : fallback;
+    }
+  }
+
+  function avatarScopedSet(suffix, value) {
+    try { localStorage.setItem(_scopedKey(suffix), String(value)); return true }
+    catch (_) { return false }
+  }
+
+  function avatarScopedRemove(suffix) {
+    try {
+      localStorage.removeItem(_scopedKey(suffix));
+      return true;
+    } catch (_) { return false }
+  }
+
   if (typeof window !== 'undefined') {
     window.saveLevelProgress = saveLevelProgress;
     window.activeAvatarBadgeKey = activeAvatarBadgeKey;
+    window.avatarScopedGet = avatarScopedGet;
+    window.avatarScopedSet = avatarScopedSet;
+    window.avatarScopedRemove = avatarScopedRemove;
     window._activeAvatarSlug = _activeAvatarSlug;
   }
 })();

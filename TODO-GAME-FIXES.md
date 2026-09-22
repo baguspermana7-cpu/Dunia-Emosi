@@ -1849,6 +1849,42 @@ Proven in both directions: pointing the write key at `dunia-avatar-<slug>-progre
 makes it report `FAIL avatar: stars earned before reload (0)`, which is exactly the
 write-key/read-key mismatch the gate exists to catch.
 
+## ✅ 2026-09-22 — every child shared one museum passport
+
+Level progress has been avatar-scoped since the save engine landed, and `gym-pokemon` scopes
+its badges through `activeAvatarBadgeKey()`. The museum never got the same treatment: its
+passport, "master" badge, best-star record, recently-viewed list and story-seen flag all lived
+under ONE global key, so a second child opened the museum already holding the first child's
+collection and could never earn it themselves.
+
+It also **never loaded `save-engine.js` at all** — so scoping was not merely unused there, it
+was unavailable. Caught only because the first rewrite would otherwise have been a silent
+no-op: the helpers would have been `undefined` and every call would have fallen back to the
+global key while looking fixed.
+
+- `games/data/save-engine.js` gains `avatarScopedGet/Set/Remove`, so the scoped form is the easy
+  one to write.
+- All 11 museum call sites rewired; the script tag added ahead of its first use.
+- **Migration**: existing global data is not discarded. On the first scoped read it moves to
+  whoever is playing now, exactly once, and the global key is then removed — leaving it would
+  hand the same collection to the next child, which is the bug being fixed.
+
+Two mistakes the gate caught before they shipped, both mine:
+- the composed key double-prefixed to `dunia-avatar-lion-dunia-g18-master`. Normalised, but
+  inside the NEW helpers only, so `gym-pokemon`'s established key could not move.
+- that normalisation then broke the no-avatar path: `dunia-g18-master` became `g18-master`,
+  which would have ORPHANED the data of every install that never picked an avatar. The
+  no-avatar branch now returns the key untouched. This is why the gate asserts the legacy path
+  and not only the happy one.
+
+`tools/qa-avatar-scoped-saves.mjs` — 11/11, including an explicit assertion that
+`activeAvatarBadgeKey('g13c_badges')` still yields `dunia-avatar-<av>-g13c_badges`, since the
+normalisation was the change most likely to move it.
+
+STILL OPEN: `pokemon-run` keeps five `dunia-g23-*` keys (daily streak, pokeballs, endless
+unlock) globally, and `gym-pokemon` keeps `g13c_collapse_*` / `dunia-frog-g13c-seeded-v2`
+globally. Same class, not yet migrated — the helpers now exist for it.
+
 ## ⬜ CROSS-GAME ISSUES
 
 ### Unified Scoring Engine
