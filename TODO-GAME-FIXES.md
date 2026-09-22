@@ -2021,6 +2021,38 @@ design when unreachable — `film-offline.js` fetches the index with `.catch(() 
 `film-anak.html` has an explicit "size is unknown (offline-index.json unreachable)" branch. The
 exemption is by name with that evidence, not a pattern that would also hide a real asset.
 
+## ✅ 2026-09-23 — proof that no Film game reaches the internet (all 17, through the wrapper)
+
+Every Film game was crawled from a vendor CDN and the bundles still carry their original
+absolute URLs — cloudfront, `games.toon-cdn.com`, `fast.fonts.net`, createjs, jQuery docs. A
+grep cannot tell a live request from a leftover constant in a comment or a licence header, so
+`tools/qa-film-no-network.mjs` asks the only question that matters: does the game REACH THE
+INTERNET at runtime? Every request to a non-local origin is ABORTED, then the game must still
+boot and render a sized canvas.
+
+It matters twice: a game that needs an external origin cannot work offline no matter how
+perfectly it was installed, and a children's app should not be phoning third-party CDNs at all.
+
+**34/34 — all 17 games render with the internet cut, and not one asks for an external origin.**
+Cheaper than the offline harness (no 196 MB of installs) and it covers 17 rather than 2.
+
+It also closes a real coverage gap: `qa-film-games` loads each game's `index.html` DIRECTLY,
+bypassing `film-play.html`. That proves the games work standalone, not that a child can reach
+them through the wrapper. This gate drives the wrapper path.
+
+Three of my own assumptions had to be corrected first, and every one produced a false failure
+before it was fixed:
+- request interception routes every request through CDP and slows a boot; a 24s ceiling flagged
+  `thomas-to-the-rescue` at 0x0 when it scores 800x450 given time;
+- `thomas-lift-load-haul` is a **Ruffle** (Flash) game whose canvas lives inside
+  `<ruffle-player>`'s SHADOW ROOT, invisible to `querySelectorAll('canvas')`. `qa-film-games`
+  already walks open shadow roots and its comment names Ruffle explicitly — I wrote a weaker
+  measurement instead of reusing the one that had already hit this, and rediscovered the bug it
+  documented;
+- booting 17 games back to back on this loaded box makes a slow boot look like a broken one: one
+  run flagged a pair that passed individually. One retry per game separates slow from broken —
+  a genuinely broken game fails both attempts.
+
 ## ⬜ CROSS-GAME ISSUES
 
 ### Unified Scoring Engine
