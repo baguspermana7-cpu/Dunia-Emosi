@@ -1894,6 +1894,30 @@ Checked rather than assumed, and deliberately NOT changed:
 - `g13c_collapse_*` and `g13c_lastPackage` are UI preferences, not earned progress, so they
   stay global on purpose.
 
+## ✅ 2026-09-22 — the MAIN APP's save path is now tested too (it was the biggest untested surface)
+
+`qa-save-persistence` covers the standalone games. `index.html` — the thing a child actually
+opens first — was not covered at all, and G3-G11 progress does NOT go through
+`save-engine.js`: it goes through `game.js`'s own `pkey()` / `saveProgress()` /
+`setLevelComplete()`.
+
+Audited first. `pkey()` scopes to `dunia-avatar-<slug>-progress` and falls back to
+`dunia-<slot>-progress`, which is the same legacy key `save-engine.js` uses, so the two systems
+agree today. Nothing asserted that, and a drift between them would silently split one child's
+progress across two keys — the standalone game would save it and the app would not see it.
+
+`tools/qa-app-save-persistence.mjs` writes through the app's OWN functions. **7/7:**
+- a cleared level survives a reload;
+- the key written is the avatar-scoped key `save-engine.js` reads (asserted by name, so a drift
+  between the two systems fails the gate rather than splitting a child's progress);
+- a second child does NOT see the first child's levels, and switching back restores them;
+- **a 1-star replay does not erase a 3-star record**, before or after a reload.
+
+Proven in both directions: removing the `if ((gp.stars[levelNum]||0) < stars)` guard makes it
+report `FAIL a 1-star replay does NOT erase the 3-star record (1)`. That is the assertion most
+likely to rot silently — a child replaying a cleared level for fun would quietly lose their best
+score, and nothing else in the suite would notice.
+
 ## ⬜ CROSS-GAME ISSUES
 
 ### Unified Scoring Engine
