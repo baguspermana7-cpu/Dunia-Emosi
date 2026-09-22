@@ -406,14 +406,14 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
     const sl=document.getElementById('start-loading'); if(sl) sl.style.opacity='1'
   },600)
 </script>
-<script src="data/emoji-map.js?v=v61.5-20260922a"></script><script src="data/ui-sprites.js?v=v61.5-20260922a"></script><!-- zero-emoji engine -->
-<script src="../shared/rz-responsive.js?v=v61.5-20260922a"></script>
+<script src="data/emoji-map.js?v=v61.6-20260922a"></script><script src="data/ui-sprites.js?v=v61.6-20260922a"></script><!-- zero-emoji engine -->
+<script src="../shared/rz-responsive.js?v=v61.6-20260922a"></script>
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="data/poke-sprite-cdn.js?v=v61.5-20260922a"></script>
-<script src="data/sfx-engine.js?v=v61.5-20260922a"></script>
-<script src="vfx-engine.js?v=v61.5-20260922a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
-<script src="data/weather-fx.js?v=v61.5-20260922a"></script>
-<script src="data/poke-type-chart.js?v=v61.5-20260922a"></script>
+<script src="data/poke-sprite-cdn.js?v=v61.6-20260922a"></script>
+<script src="data/sfx-engine.js?v=v61.6-20260922a"></script>
+<script src="vfx-engine.js?v=v61.6-20260922a"></script><!-- A-353/A-354 unified shared VFX engine (window.VFX + ExplosionFX alias) -->
+<script src="data/weather-fx.js?v=v61.6-20260922a"></script>
+<script src="data/poke-type-chart.js?v=v61.6-20260922a"></script>
 <script>
   // Licensed Pokemon SFX + weather — lazy init, silent failure.
   document.addEventListener('DOMContentLoaded', function () {
@@ -430,10 +430,10 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;font-family:'Fred
     } catch (e) {}
   });
 </script>
-<script src="data/freeze-watchdog.js?v=v61.5-20260922a"></script>
-<script src="data/save-engine.js?v=v61.5-20260922a"></script>
-<script src="data/g23-question-engine.js?v=v61.5-20260922a"></script>
-<script src="game-modal.js?v=v61.5-20260922a"></script>
+<script src="data/freeze-watchdog.js?v=v61.6-20260922a"></script>
+<script src="data/save-engine.js?v=v61.6-20260922a"></script>
+<script src="data/g23-question-engine.js?v=v61.6-20260922a"></script>
+<script src="game-modal.js?v=v61.6-20260922a"></script>
 <script>
 'use strict'
 // ═══════════════════════════════════════════════════════════
@@ -2357,8 +2357,8 @@ function showWin(){
   // selector chip on start overlay.
   if (S.level === 10 && stars >= 5) {
     try {
-      if (!localStorage.getItem('dunia-g23-endless-unlocked')) {
-        localStorage.setItem('dunia-g23-endless-unlocked', '1')
+      if (!g23Get('dunia-g23-endless-unlocked', null)) {
+        g23Set('dunia-g23-endless-unlocked', '1')
         const toast = document.createElement('div')
         toast.style.cssText = 'position:fixed;top:30%;left:50%;transform:translateX(-50%);z-index:9099;background:linear-gradient(135deg,#a855f7,#3b82f6);color:#fff;font-family:Fredoka One,sans-serif;font-size:18px;font-weight:900;padding:18px 28px;border-radius:18px;box-shadow:0 16px 48px rgba(168,85,247,0.55);text-shadow:0 1px 3px rgba(0,0,0,0.4);text-align:center;animation:effComboPop 1.6s cubic-bezier(.34,1.56,.64,1) forwards'
         toast.innerHTML = '🔓 MODE TAK TERBATAS<br><span style="font-size:13px;opacity:0.85">Tersedia!</span>'
@@ -2390,6 +2390,16 @@ function showWin(){
 // v54.13 — Daily-streak Pokeball meta currency. Persists totals + per-day count
 // across runs via localStorage. Future v54.13.x will unlock Pikachu re-colors at
 // 50 / 200 / 500 lifetime Pokeballs.
+/* v61.6 — per-child collectibles. Pokeballs, the daily streak and the endless
+   unlock are things a CHILD earns, but they were kept under one global key, so
+   a second child inherited the first child's currency and unlock. These route
+   through the save engine's avatar scoping, which migrates any existing global
+   data to whoever is playing now (once). Falls back to the global key verbatim
+   when save-engine.js is absent or no avatar has been chosen. */
+const g23Get = (k, d) => (typeof avatarScopedGet === 'function')
+  ? avatarScopedGet(k, d) : (localStorage.getItem(k) === null ? d : localStorage.getItem(k))
+const g23Set = (k, v) => (typeof avatarScopedSet === 'function')
+  ? avatarScopedSet(k, v) : (function(){ try { localStorage.setItem(k, String(v)) } catch(_){} })()
 const G23_PB_KEY_LIFETIME = 'dunia-g23-pokeballs'
 const G23_PB_KEY_TODAY    = 'dunia-g23-pokeballs-today'
 const G23_PB_KEY_DATE     = 'dunia-g23-pokeballs-date'
@@ -2401,15 +2411,15 @@ function _g23TodayKey(){
 function g23BankPokeballs(n){
   if (!n || n <= 0) return
   try {
-    const lifetime = parseInt(localStorage.getItem(G23_PB_KEY_LIFETIME) || '0', 10) + n
-    localStorage.setItem(G23_PB_KEY_LIFETIME, String(lifetime))
+    const lifetime = parseInt(g23Get(G23_PB_KEY_LIFETIME, '0') || '0', 10) + n
+    g23Set(G23_PB_KEY_LIFETIME, String(lifetime))
     // Daily counter — reset on date change + bump streak if rolling.
     const today = _g23TodayKey()
-    const lastDate = localStorage.getItem(G23_PB_KEY_DATE)
+    const lastDate = g23Get(G23_PB_KEY_DATE, null)
     let todayN = 0
-    let streak = parseInt(localStorage.getItem(G23_PB_KEY_STREAK) || '0', 10)
+    let streak = parseInt(g23Get(G23_PB_KEY_STREAK, '0') || '0', 10)
     if (lastDate === today){
-      todayN = parseInt(localStorage.getItem(G23_PB_KEY_TODAY) || '0', 10)
+      todayN = parseInt(g23Get(G23_PB_KEY_TODAY, '0') || '0', 10)
     } else {
       // Date rollover. If yesterday had ≥1, streak continues; else reset to 1.
       // (We don't track "yesterday" exactly — but if lastDate is set and today
@@ -2417,19 +2427,19 @@ function g23BankPokeballs(n){
       // prior balance accrued; otherwise streak=1.)
       if (lastDate) streak += 1
       else streak = 1
-      localStorage.setItem(G23_PB_KEY_STREAK, String(streak))
+      g23Set(G23_PB_KEY_STREAK, String(streak))
     }
-    localStorage.setItem(G23_PB_KEY_TODAY, String(todayN + n))
-    localStorage.setItem(G23_PB_KEY_DATE, today)
+    g23Set(G23_PB_KEY_TODAY, String(todayN + n))
+    g23Set(G23_PB_KEY_DATE, today)
     // Render the chip on the HUD if it exists.
     g23RenderPokeballChip()
   } catch(_) {}
 }
 function g23RenderPokeballChip(){
   try {
-    const lifetime = parseInt(localStorage.getItem(G23_PB_KEY_LIFETIME) || '0', 10)
-    const today    = parseInt(localStorage.getItem(G23_PB_KEY_TODAY)    || '0', 10)
-    const streak   = parseInt(localStorage.getItem(G23_PB_KEY_STREAK)   || '0', 10)
+    const lifetime = parseInt(g23Get(G23_PB_KEY_LIFETIME, '0') || '0', 10)
+    const today    = parseInt(g23Get(G23_PB_KEY_TODAY, '0')    || '0', 10)
+    const streak   = parseInt(g23Get(G23_PB_KEY_STREAK, '0')   || '0', 10)
     let el = document.getElementById('g23-pokeball-chip')
     if (!el){
       el = document.createElement('div')

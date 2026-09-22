@@ -1881,9 +1881,18 @@ Two mistakes the gate caught before they shipped, both mine:
 `activeAvatarBadgeKey('g13c_badges')` still yields `dunia-avatar-<av>-g13c_badges`, since the
 normalisation was the change most likely to move it.
 
-STILL OPEN: `pokemon-run` keeps five `dunia-g23-*` keys (daily streak, pokeballs, endless
-unlock) globally, and `gym-pokemon` keeps `g13c_collapse_*` / `dunia-frog-g13c-seeded-v2`
-globally. Same class, not yet migrated — the helpers now exist for it.
+**`pokemon-run` done in the same pass** (v61.6): pokeballs, the daily streak and the endless
+unlock are earned currency and were global too, so a second child inherited the first child's
+wallet. All 14 sites rewired through the same helpers, same one-time migration. The gate now
+covers both games — 18 checks — including the pre-fix migration path on each.
+
+Checked rather than assumed, and deliberately NOT changed:
+- `gym-pokemon`'s `dunia-frog-g13c-seeded-v2` looks like the same bug (its own comment says
+  "one-time per avatar" while the key is global) but is not: the avatar slug IS the animal, so
+  "frog" is a single identity and the global flag coincides with per-avatar. No churn on a
+  non-defect.
+- `g13c_collapse_*` and `g13c_lastPackage` are UI preferences, not earned progress, so they
+  stay global on purpose.
 
 ## ⬜ CROSS-GAME ISSUES
 

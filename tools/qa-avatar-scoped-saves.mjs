@@ -13,7 +13,7 @@
 import puppeteer from 'puppeteer'
 
 const BASE = process.env.QA_BASE || 'http://localhost:8081'
-const URL = `${BASE}/games/museum-kereta.html`
+let URL = `${BASE}/games/museum-kereta.html`
 const sleep = ms => new Promise(r => setTimeout(r, ms))
 const fails = []
 const check = (ok, msg) => { console.log(`${ok ? 'PASS' : 'FAIL'}  ${msg}`); if (!ok) fails.push(msg) }
@@ -94,6 +94,33 @@ try {
   check(await collect() === '1', 'with no avatar chosen the badge still works')
   check((await rawKeys()).join() === 'dunia-g18-master',
     `with no avatar it uses the legacy global key unchanged (${(await rawKeys()).join() || 'none'})`)
+  // ---- pokemon-run: same class, same proof --------------------------------
+  // Pokeballs, the daily streak and the endless unlock are earned currency.
+  // They were global too, so a second child inherited the first child's wallet.
+  URL = `${BASE}/games/pokemon-run.html`
+  const PB = 'dunia-g23-pokeballs'
+  const pbKeys = () => page.evaluate(() => Object.keys(localStorage).filter(k => k.includes('g23-pokeballs')).sort())
+  const pb = () => page.evaluate(k => window.avatarScopedGet(k, null), PB)
+
+  await goto()
+  await page.evaluate(() => { try { localStorage.clear() } catch (_) {} })
+  await setAvatar('\u{1F981}'); await goto()
+  await page.evaluate(k => window.avatarScopedSet(k, '7'), PB)
+  check(await pb() === '7', 'g23: child A earns pokeballs')
+  await setAvatar('\u{1F418}'); await goto()
+  check(await pb() === null, `g23: child B does NOT inherit the wallet (${await pb()})`)
+  await setAvatar('\u{1F981}'); await goto()
+  check(await pb() === '7', `g23: child A still has their pokeballs (${await pb()})`)
+
+  // pre-fix install: a global wallet must move to the child playing, once
+  await page.evaluate(() => { try { localStorage.clear() } catch (_) {} })
+  await setAvatar('\u{1F98A}')
+  await page.evaluate(k => localStorage.setItem(k, '12'), PB)
+  await goto()
+  check(await pb() === '12', 'g23: a pre-existing global wallet is NOT lost')
+  const pbAfter = await pbKeys()
+  check(pbAfter.includes('dunia-avatar-fox-g23-pokeballs'), `g23: it migrated to the child playing (${pbAfter.join() || 'none'})`)
+  check(!pbAfter.includes(PB), 'g23: the old global key is removed')
 } finally {
   await browser.close()
 }
