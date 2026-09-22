@@ -1819,6 +1819,36 @@ failed proves nothing: pointing one page's script tag at a missing file makes it
 `FAIL games/ducky-volley.html: watchdog installed`, and restoring the tag makes it pass again.
 `QA_PAGES=<substring>` narrows the run so that proof costs one page instead of eighteen.
 
+## ✅ 2026-09-22 — save/scoring persistence is now tested, not assumed
+
+Standing owner requirement: "Pertimvangkan semua engine termsuk salah satunya scoring save dll".
+Nothing tested it. Stars that do not survive a reload are the worst kind of bug in a child's
+game — silent, and it destroys the one thing the child was working for.
+
+`games/data/save-engine.js` keys progress by the ACTIVE AVATAR
+(`dunia-avatar-<slug>-progress`) and falls back to a legacy global key (`dunia-0-progress`) when
+no avatar is chosen. That is two code paths plus a switch between them, and a mismatch between
+the write key and the read key loses everything without raising an error.
+
+Audited first, then tested. The audit found one asymmetry worth recording as NOT a defect:
+`allStars()` requires BOTH `window.saveLevelProgress` and `window._activeAvatarSlug` before it
+will read the avatar key, while `persist()` checks only the first. That would lose stars if one
+existed without the other — but both are assigned in the same IIFE export block of
+`save-engine.js`, so either both are present or neither is, and the no-engine case falls back
+consistently on both sides. Reachable only if someone splits that export.
+
+`tools/qa-save-persistence.mjs` then proves the behaviour by earning REAL stars through the
+game's own code and reloading. **9/9 pass:**
+- with an avatar: 3 stars and the unlock both survive a reload;
+- a SECOND avatar sees 0 stars and is locked at level 1 — one child cannot see another's
+  progress;
+- switching back restores the first child's 3 stars intact;
+- with no avatar (legacy key): stars survive a reload too.
+
+Proven in both directions: pointing the write key at `dunia-avatar-<slug>-progress-BROKEN`
+makes it report `FAIL avatar: stars earned before reload (0)`, which is exactly the
+write-key/read-key mismatch the gate exists to catch.
+
 ## ⬜ CROSS-GAME ISSUES
 
 ### Unified Scoring Engine
