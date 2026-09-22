@@ -1952,26 +1952,47 @@ COUNT (cannot tell precache from runtime caching).
 
 ---
 
-## 🔴 OPEN 2026-09-22 — installed Film games do NOT boot offline (pre-existing, NOT today's work)
+## ✅ 2026-09-22 — installed Film games did NOT boot offline (7/10 → 11/11, 23 console errors → 0)
 
-`tools/qa-film-offline.mjs` reports **7/10 with 23 console errors**: T1b (`batwheels-match-up`
-boots offline), T2b (gotham races offline) and T3b (still races after a CACHE_VERSION bump) all
-fail with `net::ERR_FAILED` once the server is killed. Installing reports success (T1a/T2a pass),
-so "Siapkan Offline" tells the owner a game is ready when it is not.
+`tools/qa-film-offline.mjs` reported 7/10: an installed game reported "Siap offline · Bisa
+dimainkan tanpa internet" and then died with no network. Dated first, because the sw.js
+precache fix had just landed in the same area: identical 7/10 at `HEAD` and at `7b8d12d5`
+(yesterday), so it predated this session.
 
-**Dated before touching anything**, because the precache change above landed in the same area:
-run against `HEAD` in a clean worktree → identical 7/10, same three failures. Run against
-`7b8d12d5` (yesterday, before today's six cache-token bumps) → identical again. So this is
-older than today's session and NOT caused by the precache fix.
+**The real defect.** `tools/build-film-manifests.mjs` enumerates `games/film/<slug>/` — its own
+header says whole-folder enumeration is the only guarantee — but the files shared by the
+WRAPPER live outside every slug folder: `games/film/gg-paint.js` and everything under
+`games/film/assets/` (the "Pilih Pengejar" portraits, the stickers), all loaded by
+`film-play.html`. No manifest covered them and no installer downloaded them. match-up died on
+one missing script; gotham on ten missing portraits. The builder now also emits
+`games/film/shared-manifest.json` (57 files, 0.3 MB) on that same whole-folder principle, and
+`film-offline.js` installs it into the shared shell bucket — generated, not hand-listed,
+because a hand-kept list is what rotted in the first place. `sw.js` routes direct `.js`/`.css`
+files under `games/film/` to the shell bucket.
 
-Next step is the failing URLs: the harness logs `Failed to load resource` without naming them,
-so the first job is a probe that captures the request URLs that fail with the server dead.
+**A stale manifest, and it was MINE.** Gotham's `index.html` was edited in `a30a1754` /
+`5ecdebf0` (the freeze instrumentation) without re-running the builder, which its own header
+calls mandatory. While stale, every installed copy compares hashes, never matches, and shows
+"Perbarui" forever. Worse, I then twice reverted the builder's CORRECT regeneration as "harness
+detritus" — once in a commit message. The harness was right; the repo was stale. `--check`
+exits 2 on drift and had always existed, wired into **nothing**, which is exactly how it
+survived. It is now T0 of this gate, verified both ways (stale → exit 2, fresh → 0).
 
-⚠️ The harness leaves DETRITUS: it rewrites `games/film/offline-index.json` and two
-`offline-manifest.json` files and does not restore them, so the index records a gotham
-hash/byte-count that no longer matches the files on disk. A `git add -A` after running it
-commits a wrong hash, which would make every client consider gotham stale. Revert those three
-files after every run.
+**Three stale GATE assumptions, none of them game bugs.** Each was checked against ONLINE
+before touching any game code:
+- the harness predated the "Pilih Pengejar" chooser, which leaves the iframe `src` empty until
+  the child picks — so it measured `canvas 0x0` with zero failed requests and zero errors,
+  because nothing had been asked for yet. The same screen appears online, where
+  "Langsung main saja" yields `canvas 1920x768`;
+- it hooked `Phaser.Game.prototype.boot` through a `window.Phaser` setter and waited for
+  `__ggGame`, which never fired: `drive-err=no __ggGame` while the canvas was healthy. Rewritten
+  onto the page's own `window.__gg` seam, the one `qa-gg-freeze` already uses;
+- it then waited for a Title screen the chooser DEEP-LINKS PAST
+  (`Title never booted active=["LevelSelect"]`). It now starts from wherever the wrapper drops it.
+The report line also discarded the driver's bail-out reason, so every failure read as "0 levels"
+with no explanation; it prints `drive-err` now.
+
+Final: **11/11, 0 console errors**, gotham races on 3 levels offline with the server dead.
 
 ## ⬜ CROSS-GAME ISSUES
 

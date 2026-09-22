@@ -20,7 +20,7 @@
  *   node tools/qa-film-offline.mjs --keep     # leave installs in the profile
  * ========================================================================== */
 import puppeteer from 'puppeteer'
-import { spawn, execSync } from 'node:child_process'
+import { spawn, execSync, spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import net from 'node:net'
@@ -162,6 +162,20 @@ const page = await browser.newPage()
 await page.setViewport({ width: 1600, height: 900, deviceScaleFactor: 2 })  // wide landscape retina tablet
 const hubBag = newBag(); watch(page, hubBag)
 
+// T0 — the manifests must describe the files that are actually on disk. The
+// builder has always had a --check mode that exits 2 when they drift, and it
+// was wired into NOTHING, so the repo carried a stale gotham manifest: its
+// index.html had been edited without a rebuild, which makes every installed
+// copy compare hashes, never match, and show "Perbarui" forever. Costs no
+// browser, so it runs first and fails fast.
+{
+  const r = spawnSync('node', [path.join(ROOT, 'tools', 'build-film-manifests.mjs'), '--check'],
+    { cwd: ROOT, encoding: 'utf8' })
+  const stale = r.status !== 0
+  record('T0 film manifests match the files on disk', !stale,
+    stale ? String(r.stdout || '').trim().split('\n').slice(-1)[0] : 'fresh')
+}
+
 await serverUp()
 await openHub(page)
 await page.screenshot({ path: `${SHOT}/offline-01-hub-before.png` })
@@ -183,7 +197,20 @@ async function playOffline(slug, shotName, driveFn) {
   await p.evaluateOnNewDocument(PHASER_HOOK)
   const bag = newBag(); watch(p, bag)
   await p.goto(BASE + `/games/film-play.html?g=${slug}`, { waitUntil: 'domcontentloaded', timeout: 60000 })
-  await sleep(14000)
+  await sleep(8000)
+  // Gotham shows the "Pilih Pengejar" chooser before it loads the game, and
+  // leaves the iframe src EMPTY until the child picks. This harness predates
+  // that screen, so it measured a 0x0 canvas and reported gotham as broken
+  // offline for months -- with zero failed requests and zero console errors,
+  // because nothing had been asked for yet. Verified the same screen appears
+  // ONLINE, so it is the gate that was stale, not the game. Dismiss it the way
+  // a child in a hurry does.
+  await p.evaluate(async () => {
+    const skip = [...document.querySelectorAll('button, [onclick], a')]
+      .find((b) => /langsung main/i.test(b.textContent || ''))
+    if (skip) { skip.click(); await new Promise((r) => setTimeout(r, 3000)) }
+  }).catch(() => {})
+  await sleep(9000)
   const measure = async () => p.evaluate(() => {
     const fr = document.getElementById('frame')
     let best = { w: 0, h: 0, n: 0 }
@@ -223,68 +250,63 @@ async function driveGothamLevels(p, levels) {
       return fr && fr.contentWindow ? fr.contentWindow : window
     })()
     const sl = (ms) => new Promise((r) => setTimeout(r, ms))
-    let g = null
-    for (let i = 0; i < 90; i++) { g = w.__ggGame; if (g) break; await sl(1000) }
-    if (!g) return { err: 'no __ggGame' }
-    const active = () => g.scene.scenes.filter((s) => s.scene.settings.active).map((s) => s.scene.key)
-    const tap = async (o) => { o.emit('pointerover'); o.emit('pointerdown'); await sl(180); o.emit('pointerup') }
-    const btns = (key) => {
-      const sc = g.scene.getScene(key)
-      return (sc && sc.children ? sc.children.list : []).filter((o) => o.input && o.visible).sort((a, b) => b.y - a.y)
+
+    // Drive the game through ITS OWN seam (window.__gg), the one the page
+    // exposes for exactly this and that qa-gg-freeze already uses. The previous
+    // version hooked Phaser.Game.prototype.boot through a window.Phaser setter
+    // and waited for __ggGame; that never fired here, so this reported "races
+    // on 0 levels" while the canvas was a healthy 1920x768 and nothing had
+    // failed to load. A seam the page maintains beats reaching into engine
+    // internals from outside.
+    let gg = null
+    for (let i = 0; i < 90; i++) { gg = w.__gg; if (gg && gg.activeScenes) break; await sl(1000) }
+    if (!gg) return { err: 'no __gg seam', active: [] }
+    const active = () => { try { return gg.activeScenes() } catch (e) { return [] } }
+
+    // Reach LevelSelect from wherever the wrapper dropped us. Dismissing the
+    // "Pilih Pengejar" chooser deep-links the game straight there (the iframe
+    // src carries a targetScene), so Title and Intro may never appear at all --
+    // waiting for Title reported 'Title never booted' while the game was
+    // already sitting on LevelSelect. Only press what is actually on screen.
+    for (let i = 0; i < 90; i++) {
+      const a = active()
+      if (a.includes('LevelSelect') || a.includes('Title') || a.includes('Intro')) break
+      await sl(1000)
     }
-    // Title -> tap PLAY -> Intro -> tap SKIP -> LevelSelect. Real UI, real taps.
-    for (let i = 0; i < 90 && !active().includes('Title'); i++) await sl(1000)
-    if (!active().includes('Title')) return { err: 'Title never booted', active: active() }
-    await sl(3000)
-    const play = btns('Title')[0]
-    if (!play) return { err: 'no PLAY button' }
-    await tap(play)
-    for (let i = 0; i < 60 && !active().includes('Intro') && !active().includes('LevelSelect'); i++) await sl(1000)
-    if (active().includes('Intro')) {
-      await sl(4000)
-      const skip = btns('Intro')[0]
-      if (skip) await tap(skip)
+    if (active().includes('Title')) {
+      await sl(2500)
+      gg.pressTitlePlay()
+      for (let i = 0; i < 60 && !active().includes('Intro') && !active().includes('LevelSelect'); i++) await sl(1000)
     }
+    if (active().includes('Intro')) { await sl(3000); gg.skipIntro() }
     for (let i = 0; i < 60 && !active().includes('LevelSelect'); i++) await sl(1000)
-    const ls0 = g.scene.getScene('LevelSelect')
-    if (!ls0 || !active().includes('LevelSelect')) return { err: 'no LevelSelect', active: active() }
-    const sceneData = ls0.sceneData
+    if (!active().includes('LevelSelect')) return { err: 'LevelSelect never reached', active: active() }
+
     const out = []
     for (const lvl of levels) {
       if (!active().includes('LevelSelect')) {
-        g.scene.start('LevelSelect', sceneData)
+        // come back for the next level the way the game's own back button does
+        try { gg.leaveRace() } catch (e) {}
         for (let i = 0; i < 40 && !active().includes('LevelSelect'); i++) await sl(1000)
       }
-      await sl(3000)
-      const ls = g.scene.getScene('LevelSelect')
-      if (!ls || !ls.onLevelSelected) { out.push({ lvl, ok: false, why: 'LevelSelect gone' }); continue }
-      try {
-        ls.onLevelSelected({ levelNum: lvl })   // select the level
-        await sl(2500)
-        ls.playLevel()                          // GO — loads that level's theme pack + Spines
-      } catch (e) { out.push({ lvl, ok: false, why: String(e).slice(0, 120) }); continue }
-      let hero = false, spr = 0, chosen = null
+      if (!active().includes('LevelSelect')) { out.push({ lvl, ok: false, why: 'LevelSelect gone' }); continue }
+      await sl(2000)
+      const r = gg.playLevel(lvl)
+      if (r !== 'ok') { out.push({ lvl, ok: false, why: String(r).slice(0, 80) }); continue }
+      let hero = false, spr = 0
       for (let i = 0; i < 60; i++) {
         await sl(1000)
-        const gs = g.scene.getScene('Game')
-        if (gs && active().includes('Game')) {
+        if (active().includes('Game')) {
           try {
-            const vm = gs.runManager && gs.runManager.vehicleManager
+            const gs = gg.scene('Game')
+            const vm = gs && gs.runManager && gs.runManager.vehicleManager
             hero = !!(vm && vm.HeroVehicle)
-            spr = gs.children ? gs.children.list.length : 0
-            chosen = (gs.sceneData && gs.sceneData.runSettings && gs.sceneData.runSettings.selectedLevel) || null
+            spr = gs && gs.children ? gs.children.list.length : 0
           } catch (e) {}
           if (hero) break
         }
       }
-      out.push({ lvl, ok: active().includes('Game') && hero, level: chosen, hero, spr })
-    }
-    // Let the bat-wipe transition finish so the screenshot shows the actual race.
-    for (let i = 0; i < 25; i++) {
-      await sl(1000)
-      const tr = g.scene.getScene('TransitionLoadScene')
-      const vis = tr && tr.children ? tr.children.list.filter((o) => o.visible && (o.alpha === undefined || o.alpha > 0.02)).length : 0
-      if (!vis) break
+      out.push({ lvl, ok: active().includes('Game') && hero, hero, spr })
     }
     await sl(2000)
     return { levels: out }
@@ -296,7 +318,11 @@ const lv = (t2.drive && t2.drive.levels) || []
 const okLevels = lv.filter((l) => l.ok)
 record(`T2b ${HARD} races on ${okLevels.length} levels OFFLINE (server dead)`,
   t2.canvas.w >= 200 && okLevels.length >= 2 && t2.bag.failed.length === 0,
-  `canvas ${t2.canvas.w}x${t2.canvas.h}, levels=${JSON.stringify(lv.map((l) => ({ l: l.lvl, ok: l.ok, spr: l.sprites })))}, failed-requests=${t2.bag.failed.length}${t2.bag.failed.length ? ' :: ' + t2.bag.failed.slice(0, 4).join(' | ') : ''}`)
+  `canvas ${t2.canvas.w}x${t2.canvas.h}, levels=${JSON.stringify(lv.map((l) => ({ l: l.lvl, ok: l.ok, spr: l.sprites })))}` +
+  // The driver computes a REASON on every bail-out and this line used to throw
+  // it away, so a failure read as "0 levels" with no explanation.
+  `${t2.drive && t2.drive.err ? `, drive-err=${t2.drive.err}${t2.drive.active ? ' active=' + JSON.stringify(t2.drive.active) : ''}` : ''}` +
+  `, failed-requests=${t2.bag.failed.length}${t2.bag.failed.length ? ' :: ' + t2.bag.failed.slice(0, 4).join(' | ') : ''}`)
 
 // ── T3: survive a CACHE_VERSION bump ───────────────────────────────────────
 await serverUp()

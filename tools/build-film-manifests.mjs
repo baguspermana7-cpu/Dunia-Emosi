@@ -39,6 +39,7 @@ import crypto from 'node:crypto'
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')
 const FILM_DIR = path.join(ROOT, 'games', 'film')
+const SHARED_MANIFEST_NAME = 'shared-manifest.json'
 const MANIFEST_NAME = 'offline-manifest.json'
 const INDEX_PATH = path.join(FILM_DIR, 'offline-index.json')
 
@@ -72,6 +73,41 @@ function walk(dir, base, out) {
 /** Short content hash — content-based (not mtime) so a git checkout is stable. */
 function fileHash(abs) {
   return crypto.createHash('sha256').update(fs.readFileSync(abs)).digest('hex').slice(0, 12)
+}
+
+/* v61.8 — the SHARED film files. This builder's whole principle is that only
+   whole-folder enumeration guarantees the level-gated assets are covered, but
+   it enumerated `games/film/<slug>/` and nothing else. Files shared by the
+   WRAPPER live outside every slug folder — `games/film/gg-paint.js` and
+   `games/film/assets/**` (the "Pilih Pengejar" hero/villain portraits and the
+   stickers, all loaded by film-play.html) — so they were covered by no
+   manifest at all. Every installed game reported "Siap offline" and then died
+   with no network on files nobody had ever downloaded. */
+function buildSharedManifest() {
+  const assets = []
+  let bytes = 0
+  const add = (abs, rel) => {
+    const s = fs.statSync(abs).size
+    bytes += s
+    assets.push({ p: rel, s, h: fileHash(abs) })
+  }
+  // shared scripts/styles sitting directly in games/film/
+  for (const e of fs.readdirSync(FILM_DIR, { withFileTypes: true }).sort((a, b) => (a.name < b.name ? -1 : 1))) {
+    if (!e.isFile()) continue
+    if (!/\.(?:js|css)$/.test(e.name)) continue
+    add(path.join(FILM_DIR, e.name), e.name)
+  }
+  // everything under games/film/assets/
+  const assetsDir = path.join(FILM_DIR, 'assets')
+  if (fs.existsSync(assetsDir)) {
+    for (const rel of walk(assetsDir, FILM_DIR, []).sort()) add(path.join(FILM_DIR, rel), rel)
+  }
+  const hash = crypto
+    .createHash('sha256')
+    .update(assets.map((a) => a.p + ':' + a.s + ':' + a.h).join('\n'))
+    .digest('hex')
+    .slice(0, 16)
+  return { slug: '_shared', hash, files: assets.length, bytes, assets }
 }
 
 function buildManifest(slug) {
@@ -147,6 +183,21 @@ for (const slug of slugs) {
   const mb = (m.bytes / 1048576).toFixed(1)
   console.log(
     `${isSame ? '=' : '*'} ${slug.padEnd(28)} ${String(m.files).padStart(4)} files  ${mb.padStart(6)} MB  ${m.hash}`
+  )
+}
+
+// The shared wrapper files, written on every full build. Installed into the
+// shared shell bucket by film-offline.js, so one download serves every game.
+if (!only.length) {
+  const sm = buildSharedManifest()
+  const sfile = path.join(FILM_DIR, SHARED_MANIFEST_NAME)
+  const sprev = readExisting(sfile)
+  const ssame = sprev && sprev.hash === sm.hash && sprev.files === sm.files && sprev.bytes === sm.bytes
+  const sgen = ssame ? sprev.generated : new Date().toISOString()
+  if (!ssame) changed++
+  if (!CHECK_ONLY) fs.writeFileSync(sfile, serialize(sm, sgen))
+  console.log(
+    `${ssame ? '=' : '*'} ${'_shared (wrapper)'.padEnd(28)} ${String(sm.files).padStart(4)} files  ${(sm.bytes / 1048576).toFixed(1).padStart(6)} MB  ${sm.hash}`
   )
 }
 
