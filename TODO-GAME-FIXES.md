@@ -1994,6 +1994,33 @@ with no explanation; it prints `drive-err` now.
 
 Final: **11/11, 0 console errors**, gotham races on 3 levels offline with the server dead.
 
+## ✅ 2026-09-23 — gate the uncovered-shared-file CLASS, not just the two instances
+
+`97b9a5f4` fixed two files the offline installer never downloaded. The class is what matters:
+any file the WRAPPER references that lives outside a `<slug>/` folder is invisible to
+`build-film-manifests.mjs`, and the only symptom is a child's game dying with no network while
+the hub still says "Siap offline".
+
+`tools/qa-film-shared-coverage.mjs` is a static scan — no browser, no 196 MB install — that
+asserts every such file is cached by something real (`SHELL_FILES` in `film-offline.js`, or
+`games/film/shared-manifest.json`):
+1. every shared file the wrapper NAMES is cached;
+2. the directories it reads at RUNTIME are cached IN FULL. The portraits are picked by id
+   (`'film/assets/gg-heroes/' + h.id`), so no static scan can ever name them — whole-directory
+   coverage is the only honest assertion, and one uncached file there is one child staring at a
+   gap;
+3. `shared-manifest.json` lists every file actually under `games/film/assets/`.
+
+Proven against the pre-fix state by dropping those entries back out: it reports exactly the two
+original failures — `UNCACHED: gg-paint.js` (match-up's) and the five `gg-heroes` portraits
+(gotham's).
+
+One narrow, NAMED exemption: `offline-index.json` and `shared-manifest.json` are install-time
+CONTROL files, read only to decide what to download, which happens online. Both degrade by
+design when unreachable — `film-offline.js` fetches the index with `.catch(() => null)` and
+`film-anak.html` has an explicit "size is unknown (offline-index.json unreachable)" branch. The
+exemption is by name with that evidence, not a pattern that would also hide a real asset.
+
 ## ⬜ CROSS-GAME ISSUES
 
 ### Unified Scoring Engine
