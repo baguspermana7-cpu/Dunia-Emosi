@@ -1797,6 +1797,28 @@ Two traps it cost to get right, both worth keeping:
 - `finish()` returns immediately unless a level is in progress, so the seam has to be able to
   START one; `window.__g25` grew `finishZero` and `maxUnlocked` for this.
 
+## ✅ 2026-09-22 — the freeze net is now proven INSTALLED, not just present in the repo
+
+`qa-freeze-recovery` proves the recovery net works by actually killing the frames, but it does
+that on two pages. "The net exists in the repo" and "the net is installed on the page a child
+opens" are different claims, and the gap between them fails silently: a script tag that 404s,
+loads too late, or is skipped by the service worker leaves no error and no symptom until
+something actually freezes.
+
+`tools/qa-freeze-armed.mjs` is the cheap half. It walks the FILESYSTEM for every page that
+references the watchdog — not a hand-kept list, so a new game cannot quietly ship without the
+net — loads each one, waits past the 8s arming delay, and asserts
+`window.__freezeWatchdogInstalled === true` and that `freezeLog()` is there for diagnosis.
+
+Result: **18 pages ship the net, 36/36 checks pass.** All 17 standalone game pages plus
+`index.html`; the 17 Film-Anak games are iframes inside `film-play.html`, which the watchdog
+covers through its iframe frame watch.
+
+The gate was proven in BOTH directions before being trusted, because a gate that has never
+failed proves nothing: pointing one page's script tag at a missing file makes it report
+`FAIL games/ducky-volley.html: watchdog installed`, and restoring the tag makes it pass again.
+`QA_PAGES=<substring>` narrows the run so that proof costs one page instead of eighteen.
+
 ## ⬜ CROSS-GAME ISSUES
 
 ### Unified Scoring Engine
