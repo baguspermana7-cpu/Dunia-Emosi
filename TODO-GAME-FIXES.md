@@ -1767,6 +1767,36 @@ The untested half was hiding six defects. All fixed; the suite is **409/409**, w
   losing the CPU to the other agent sessions on this box aborted every device still to come.
   Retries once at 120s, records a real failure against that one page.
 
+## ✅ 2026-09-22 — kuis-matematika offered "Lanjut" into a level it had just refused to unlock
+
+`qa-modal-truth` enforces "0 stars means no way forward" — but it asserts it against
+`games/game-modal.js`, the SHARED module. `kuis-matematika` does not use it: it swaps to a
+hand-rolled result screen (`#scr-hasil`), so the rule had never been applied there, and it was
+broken. Found by checking which games the gate could not see, not by a report.
+
+**Measured before the fix** (real level driven through the page's own code, `localStorage`
+cleared): a round finished with zero correct answers showed three empty stars and the title
+"Coba Lagi!" — honest so far — and then showed the "Lanjut" button anyway, while
+`maxUnlocked()` was still 1. `nextLevel()` routes through `openSkill()`, which gates skills by
+tier but never checks whether the LEVEL is unlocked, so the button walked the child straight
+into a level the map still shows as locked.
+
+The old condition was also `failed ? 'none' : 'none'` — the same branch twice — which is
+probably how the zero-star case was missed in the first place. Now:
+`mayAdvance = !failed && stars >= 1 && game.g < MAX_LEVEL`.
+
+New gate `tools/qa-g25-result-truth.mjs`, 9 checks, and it was **proven against the unfixed
+tree**: with the old condition restored it fails on exactly the right line
+("zero-star round offers NO way forward (next visible=true)") and passes once the fix is back.
+
+Two traps it cost to get right, both worth keeping:
+- the empty star is `☆` but the filled one is `⭐`, and the ZERO-EMOJI engine rewrites the
+  filled glyph into `<img class="emoji-sprite">` a moment AFTER the screen paints. A glyph match
+  therefore races the rewrite: the star assertion passed once and then failed twice on identical
+  code. It now counts star slots that are NOT the empty glyph, which is stable across 3 runs.
+- `finish()` returns immediately unless a level is in progress, so the seam has to be able to
+  START one; `window.__g25` grew `finishZero` and `maxUnlocked` for this.
+
 ## ⬜ CROSS-GAME ISSUES
 
 ### Unified Scoring Engine
