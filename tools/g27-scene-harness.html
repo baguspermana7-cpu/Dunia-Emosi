@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>G27 scene harness</title>
+<!--
+  Test harness for games/g27-scene.js, used by tools/qa-g27-motion.mjs so the
+  living layer can be proven on its own, independent of the game page's
+  layout. Same classes and data-depth contract the game uses:
+    .g27-bg / props / .g27-char-truck / .g27-char-digger carry data-depth;
+    UI (.ui) carries none and must never move.
+-->
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#8FD0F2;font-family:system-ui,sans-serif}
+  .g27-bg{position:fixed;inset:-4%;background:center/cover no-repeat}
+  @media (orientation:portrait){.g27-bg{background-image:url(../assets/spelling/scenes/construction-port.webp)}}
+  @media (orientation:landscape){.g27-bg{background-image:url(../assets/spelling/scenes/construction-land.webp)}}
+  .prop{position:fixed;pointer-events:none}
+  /* owner: characters at 15% of the screen width each in landscape */
+  .g27-char-truck,.g27-char-digger{position:fixed;bottom:3%;pointer-events:none;object-fit:contain;height:auto}
+  @media (orientation:landscape){.g27-char-truck,.g27-char-digger{width:15vw;max-height:30vh;min-width:96px}}
+  @media (orientation:portrait){.g27-char-truck,.g27-char-digger{width:26vw;max-height:22vh;min-width:96px}}
+  .g27-char-truck{left:2%} .g27-char-digger{right:2%}
+  canvas.g27-fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+  .ui{position:fixed;left:50%;transform:translateX(-50%);display:flex;gap:8px}
+  #ui-top{top:12px} #ui-slots{top:40%} #ui-tray{top:55%}
+  .ui b{display:block;width:52px;height:56px;border-radius:12px;background:#fff;border:3px solid #9FC8E8}
+</style></head>
+<body>
+  <div class="g27-bg" data-depth="0.08"></div>
+  <img class="prop" id="p-cone" data-depth="0.35" src="../assets/spelling/prop/cone.webp" style="left:30%;bottom:16%;height:9vh" alt="">
+  <img class="prop" id="p-crate" data-depth="0.35" src="../assets/spelling/prop/crate.webp" style="right:30%;bottom:15%;height:9vh" alt="">
+  <img class="prop" id="p-grass" data-depth="1" src="../assets/spelling/prop/grass.webp" style="left:44%;bottom:1%;height:7vh" alt="">
+  <img class="g27-char-truck" data-depth="0.7" src="../assets/spelling/prop/truck.webp" alt="">
+  <img class="g27-char-digger" data-depth="0.7" src="../assets/spelling/prop/digger.webp" alt="">
+  <canvas class="g27-fx"></canvas>
+  <div class="ui" id="ui-top"><b></b><b></b><b></b></div>
+  <div class="ui" id="ui-slots"><b></b><b></b><b></b><b></b></div>
+  <div class="ui" id="ui-tray"><b></b><b></b><b></b><b></b></div>
+  <script src="../games/motion.js"></script>
+  <script src="../games/parallax-engine.js"></script>
+  <script src="../games/g27-scene.js"></script>
+  <script>
+    var q = new URLSearchParams(location.search)
+    G27Scene.setScene(q.get('scene') || 'construction')
+    G27Scene.start()
+  </script>
+</body></html>

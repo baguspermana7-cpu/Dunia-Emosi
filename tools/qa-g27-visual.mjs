@@ -136,8 +136,13 @@ function measure (fit, modal) {
   out.chars = (celebrating ? ['ok-truck', 'ok-digger'] : ['deco-truck', 'deco-digger']).map(id => {
     const el = document.getElementById(id)
     const cs = getComputedStyle(el), r = el.getBoundingClientRect()
+    // offsetWidth, not the bounding box: the size rule is about the character,
+    // and games/g27-scene.js animates it (suspension breathing, a lean, the
+    // digger's bucket raised up to 14 deg), which widens the transformed box by
+    // a few px — up to 30 px mid-cheer. Motion is gated separately and its
+    // bounds against controls by qa-g27-motion.mjs.
     return { id, shown: cs.display !== 'none' && cs.visibility !== 'hidden' && r.width > 0,
-      w: r.width, depth: el.getAttribute('data-depth'), filter: cs.filter }
+      w: el.offsetWidth, depth: el.getAttribute('data-depth'), filter: cs.filter }
   })
   out.bgFilter = getComputedStyle(document.querySelector('.g27-bg')).filter
   out.portrait = matchMedia('(orientation:portrait)').matches

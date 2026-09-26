@@ -202,7 +202,16 @@
     var a = { left: r.left + r.width * k, right: r.right - r.width * k, top: r.top + r.height * k, bottom: r.bottom - r.height * k }
     return blockers.some(function (b) { return !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top) })
   }
+  // Measure the characters at REST: with the living layer on, a hop or a
+  // sway would otherwise change which side of a control they are on, and the
+  // bubble / no-room decisions flickered with the animation phase.
   function layoutChars () {
+    if (!(window.G27Scene && window.G27Scene.atRest)) return layoutCharsNow()
+    var r = window.G27Scene.atRest(layoutCharsNow)
+    window.G27Scene.refresh()          // layout just changed: re-measure room now
+    return r
+  }
+  function layoutCharsNow () {
     var portrait = window.matchMedia ? matchMedia('(orientation:portrait)').matches : innerHeight > innerWidth
     var scr = document.querySelector('.scr.active'), ok = $('ov-ok')
     var celebrating = ok && ok.classList.contains('show')
@@ -224,6 +233,11 @@
   }
   var placeDecor = layoutChars          // older call sites
 
+  /* ── living layer (games/g27-scene.js) ─────────────────────────────────
+     Guarded: if the module is missing or reduced motion is on, the game runs
+     exactly as before — every call is a no-op. */
+  function scene (fn, a) { try { if (window.G27Scene) window.G27Scene[fn](a) } catch (e) {} }
+
   /* ── screens ───────────────────────────────────────────────────────── */
   function show (id) {
     var all = document.querySelectorAll('.scr')
@@ -232,6 +246,7 @@
     document.body.setAttribute('data-scr', id)
     document.body.setAttribute('data-scene', sceneFor(id))
     layoutChars(); setTimeout(layoutChars, 80)
+    scene('setScene', sceneFor(id)); scene('refresh')
   }
   /* one scene per screen; words + play take their category's scene */
   var CAT_SCENE = { colors: 'park', school: 'classroom', everyday: 'bedroom', mixed: 'town', athome: 'bedroom', quran: 'night' }
@@ -340,7 +355,14 @@
   function fitGrids () {
     if (!S.word || !$('scr-play').classList.contains('active')) return
     var host = LAND.matches ? $('stage-right') : $('stage')
-    var W = Math.min(host.clientWidth || window.innerWidth, 720) - 4
+    // clientWidth INCLUDES padding, and in landscape #stage is padded by
+    // --char-room on both sides precisely to keep the letters out of the
+    // characters' corners. Sizing from clientWidth laid 8 tiles 716 px wide
+    // into a 644 px content box at 1024x768, spilling ~36 px into each
+    // character column (the truck touched the first tile). Use the content box.
+    var hcs = getComputedStyle(host)
+    var inner = host.clientWidth - (parseFloat(hcs.paddingLeft) || 0) - (parseFloat(hcs.paddingRight) || 0)
+    var W = Math.min(inner || window.innerWidth, 720) - 4
     var n = S.word.w.length, small = W < 520
     var sg = small ? 7 : 10, tg = small ? 8 : 12
     function fit (maxSz, gap) {
@@ -431,12 +453,12 @@
       renderSlots(); renderTray()
       var el = $('slots').children[slot]
       if (el) { el.classList.add('good'); setTimeout(function () { el.classList.remove('good') }, 320) }
-      sfx('good')
+      sfx('good'); scene('react', 'right')
       if (opt('voice')) play('letters', letter)
       if (S.placed.every(function (c) { return !!c })) setTimeout(win, 420)
     } else {
       S.wrong++
-      sfx('bad')
+      sfx('bad'); scene('react', 'wrong')
       var bad = $('slots').children[slot]
       if (bad) { bad.classList.add('bad'); setTimeout(function () { bad.classList.remove('bad') }, 340) }
       renderTray()
@@ -514,11 +536,12 @@
     $('next-lbl').textContent = (S.idx + 1 >= S.queue.length) ? 'Finish' : 'Next Word'
     document.body.classList.add('celebrate')
     $('ov-ok').classList.add('show'); fitOk(); layoutChars(); setTimeout(function () { fitOk(); layoutChars() }, 120)
-    confetti(); sfx('win')
+    confetti(); sfx('win'); scene('refresh'); scene('react', 'solved')
     setTimeout(function () { if (S.solved) sayAndSpell(S.word.w) }, 650)
   }
   function closeWin () {
     $('ov-ok').classList.remove('show'); document.body.classList.remove('celebrate'); $('confetti').innerHTML = ''
+    scene('refresh')
     setTimeout(layoutChars, 30)
     stopAudio()
   }
@@ -607,7 +630,7 @@
 
   /* ── wiring ────────────────────────────────────────────────────────── */
   function on (id, fn) { var e = $(id); if (e) e.addEventListener('click', function (ev) { unlock(); fn(ev) }) }
-  on('btn-play', function () { sfx('click'); buildCategories(); show('scr-category') })
+  on('btn-play', function () { sfx('click'); scene('enableTilt'); buildCategories(); show('scr-category') })
   on('btn-open-settings', function () { sfx('click'); syncSwitches(); show('scr-settings') })
   on('btn-open-progress', function () { sfx('click'); buildProgress(); show('scr-progress') })
   on('btn-home-out', function () { stopAudio(); music(false); location.href = '../index.html' })
@@ -709,4 +732,12 @@
     warmed: function () { return warmed },
     warmCount: function () { return D.WORDS.length * 2 + 26 },
   }
+
+  scene('setScene', document.body.getAttribute('data-scene') || 'construction')
+  // Start the living layer when the page is IDLE, not at load. The first
+  // 2-3 s are busy (the offline warm-up fetching every clip and picture, image
+  // and font decode): measured at ~3 fps, then 55-58 fps once settled. Moving
+  // things during that window only shows a child a stutter; standing still
+  // until the page is ready does not.
+  ;(window.requestIdleCallback || function (f) { return setTimeout(f, 1200) })(function () { scene('start') }, { timeout: 3000 })
 })()

@@ -15,7 +15,7 @@
  * succeeded. Only cache same-origin assets.
  * ========================================================================== */
 
-const CACHE_VERSION = 'v62.0-20260927a'
+const CACHE_VERSION = 'v62.1-20260927a'
 const HTML_CACHE = `dunia-html-${CACHE_VERSION}`
 const ASSET_CACHE = `dunia-assets-${CACHE_VERSION}`
 
@@ -82,24 +82,28 @@ const SHELL = [
   './games/lib/pixi.min.js?v=8',
   './games/balapan-kereta-side.html',
   './games/museum-kereta.html',
-  './games/indo-scene.js?v=v62.0-20260927a',
-  './games/train-journey.js?v=v62.0-20260927a',
-  './games/data/train-wheel-anchors.js?v=v62.0-20260927a',
-  './games/train-backdrop.js?v=v62.0-20260927a',
-  './games/train-picker.js?v=v62.0-20260927a',
-  './games/train-speedfx.js?v=v62.0-20260927a',
-  './games/quiz-engine.js?v=v62.0-20260927a',
-  './games/motion.js?v=v62.0-20260927a',
-  './games/scenery-engine.js?v=v62.0-20260927a',
-  './games/sw-reload.js?v=v62.0-20260927a',
-  './games/g14-hud.css?v=v62.0-20260927a',
-  './games/du-hud.css?v=v62.0-20260927a',
+  './games/indo-scene.js?v=v62.1-20260927a',
+  './games/train-journey.js?v=v62.1-20260927a',
+  './games/data/train-wheel-anchors.js?v=v62.1-20260927a',
+  './games/train-backdrop.js?v=v62.1-20260927a',
+  './games/train-picker.js?v=v62.1-20260927a',
+  './games/train-speedfx.js?v=v62.1-20260927a',
+  './games/quiz-engine.js?v=v62.1-20260927a',
+  './games/motion.js?v=v62.1-20260927a',
+  './games/scenery-engine.js?v=v62.1-20260927a',
+  './games/sw-reload.js?v=v62.1-20260927a',
+  './games/g14-hud.css?v=v62.1-20260927a',
+  './games/du-hud.css?v=v62.1-20260927a',
   // G27 Spelling Adventure: page, logic, data, its self-hosted font and the
   // TITLE scene only (both orientation cuts). The other 16 scene images are
   // ~1.2 MB together, so they are cached at runtime on first view instead.
   './games/ejaan-inggris.html',
-  './games/ejaan-inggris.js?v=v62.0-20260927a',
-  './games/data/spelling-data.js?v=v62.0-20260927a',
+  './games/ejaan-inggris.js?v=v62.1-20260927a',
+  // The G27 living layer: without these a tablet installed offline would load a
+  // page whose parallax/particle scripts were never cached.
+  './games/parallax-engine.js?v=v62.1-20260927a',
+  './games/g27-scene.js?v=v62.1-20260927a',
+  './games/data/spelling-data.js?v=v62.1-20260927a',
   './assets/spelling/fonts/fredoka-one.ttf',
   './assets/spelling/scenes/construction-land.webp',
   './assets/spelling/scenes/construction-port.webp',
@@ -107,7 +111,7 @@ const SHELL = [
   // ticker. Offline with a miss, the ReferenceError landed on a frozen frame
   // with no result modal and no way out -- so this one belongs in the shell
   // even though the shell is deliberately slim. It is ~4KB.
-  './games/game-modal.js?v=v62.0-20260927a',
+  './games/game-modal.js?v=v62.1-20260927a',
 ]
 
 self.addEventListener('install', (e) => {

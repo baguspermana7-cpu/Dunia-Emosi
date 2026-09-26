@@ -397,17 +397,22 @@ body.celebrate .scr,body.celebrate .deco,body.celebrate #cheer-bubble{visibility
   #reset-note{margin-top:4px!important;min-height:0!important}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* the living layer's particle canvas */
+canvas.g27-fx{position:fixed;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
 </style>
 </head>
 <body data-scr="scr-title" data-scene="construction">
-<div id="bg" class="g27-bg" aria-hidden="true"></div>
+<div id="bg" class="g27-bg" data-depth="0.08" aria-hidden="true"></div>
+<!-- ambient particles (games/g27-scene.js): above the backdrop, below the
+     characters (z 3) and every screen of controls (z 5) -->
+<canvas class="g27-fx" aria-hidden="true"></canvas>
 <!-- Characters and scenery are SEPARATE absolutely-positioned layers with
      stable classes (.g27-char-*, .g27-prop-*), never baked into a backdrop,
      so a later parallax / micro-movement pass can animate each one. -->
 <img class="deco g27-char g27-char-truck"  id="deco-truck"  data-depth="0.7" src="../assets/spelling/prop/truck.webp"  alt="">
 <img class="deco g27-char g27-char-digger" id="deco-digger" data-depth="0.7" src="../assets/spelling/prop/digger.webp" alt="">
-<div id="title-sign" class="g27-prop g27-prop-sign" aria-hidden="true"><img src="../assets/spelling/prop/sign.webp" alt=""><span>Small Words<br>Big Adventures!</span></div>
-<div id="cheer-bubble" aria-hidden="true">You can do it!</div>
+<div id="title-sign" class="g27-prop g27-prop-sign" data-depth="0.4" aria-hidden="true"><img src="../assets/spelling/prop/sign.webp" alt=""><span>Small Words<br>Big Adventures!</span></div>
+<div id="cheer-bubble" data-depth="0.7" aria-hidden="true">You can do it!</div>
 
 <!-- ══ TITLE ══════════════════════════════════════════════════════════ -->
 <section class="scr active" id="scr-title">
@@ -583,12 +588,15 @@ body.celebrate .scr,body.celebrate .deco,body.celebrate #cheer-bubble{visibility
 
 <div id="du-build-stamp" class="du-build-stamp" style="position:fixed;left:6px;bottom:4px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(60,45,20,.4);pointer-events:none">v27.1</div>
 
-<script src="data/spelling-data.js?v=v62.0-20260927a"></script>
-<script src="data/emoji-map.js?v=v62.0-20260927a"></script>
-<script src="data/save-engine.js?v=v62.0-20260927a"></script>
-<script src="ejaan-inggris.js?v=v62.0-20260927a"></script>
-<script src="data/freeze-watchdog.js?v=v62.0-20260927a"></script>
+<script src="data/spelling-data.js?v=v62.1-20260927a"></script>
+<script src="data/emoji-map.js?v=v62.1-20260927a"></script>
+<script src="data/save-engine.js?v=v62.1-20260927a"></script>
+<script src="motion.js?v=v62.1-20260927a"></script>
+<script src="parallax-engine.js?v=v62.1-20260927a"></script>
+<script src="g27-scene.js?v=v62.1-20260927a"></script>
+<script src="ejaan-inggris.js?v=v62.1-20260927a"></script>
+<script src="data/freeze-watchdog.js?v=v62.1-20260927a"></script>
 <!-- a fresh deploy refreshes an open game page once, like every other standalone game -->
-<script src="sw-reload.js?v=v62.0-20260927a"></script>
+<script src="sw-reload.js?v=v62.1-20260927a"></script>
 </body>
 </html>

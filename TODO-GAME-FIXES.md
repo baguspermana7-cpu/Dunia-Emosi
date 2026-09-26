@@ -2170,6 +2170,65 @@ scale transform (transforms count as scrollable overflow) — fixed at the sourc
 STILL OPEN: At Home + Al-Qur'an word lists (owner to supply); parallax / 3D micro-movement of the
 characters (separate follow-up, layers prepared); Everyday Things has only the owner's 4 words.
 
+## ✅ 2026-09-27 — G27 living layer: parallax 3D, character life, particles
+
+Owner: "karakternya … dibuat parallax ya seolah-olah bergerak tidak static, micromovement",
+"dump truck dan backhoe itu sedikit bergerak-gerak atau parallax 3d", "polish … agar ada
+particle atau detail", and (on seeing it) "saat landscape karakter terlalu kecil … 15% each".
+
+`games/g27-scene.js` (window.G27Scene), built on the EXISTING `games/parallax-engine.js`
+(RZParallax — its first production user) and `games/motion.js`:
+- **depth parallax** from the tablet gyro (Android without permission; iOS asked inside the
+  Play tap), the pointer on desktop, or a slow Lissajous drift when nobody touches anything;
+  backdrop at depth 0.08, trucks at 0.7 — near moves ~12x the far layer;
+- **character life**: engine bob, faint rock, suspension breathing from the wheels, the
+  digger's arm leaning; the two trucks are never in lockstep;
+- **reactions**: hop on a right letter, a wince on a wrong one, cheer + bucket raised on a
+  solved word;
+- **particles** per backdrop (dust, pollen, leaves, sunbeam motes, stars + fireflies,
+  confetti + sparkles), sized to the screen; they stand down under the celebration overlay,
+  which has its own CSS confetti — two systems are never stacked.
+- Characters sized to the owner's rule: 15vw each in landscape (capped at 30vh), measured
+  15.0-15.3% at every landscape size.
+
+Guard rails, all measured by `tools/qa-g27-motion.mjs` (53 checks, harness) and against the
+real game screens (title, play with 8 and 10-letter words, word grid):
+- UI never moves; nothing ever covers a control. Motion is CLAMPED to the room each moving
+  element actually has, measured at rest — a truck parked 1 px under the tiles cannot hop onto
+  them; the digger's bucket rotation is capped by the same headroom.
+- reduced motion → nothing moves; hidden tab → the loop stops;
+- steady state 49-58 fps on a software renderer; frame work 0.3-0.5 ms median at a 4x CPU
+  throttle.
+
+Bugs found and fixed on the way — mine unless stated:
+1. **Android froze on the title**: orientation readings arrive there without permission, so
+   tilt was marked live (drift off, pointer ignored) while nothing moved the look.
+2. **Desktop froze after bindTilt()**, which resolves true with no sensor at all.
+3. **Layout thrash**: measured, wrote, then measured again in one frame — 61 ms per frame.
+4. **A moving filtered backdrop**: `filter:blur` on the full-screen layer while it translated —
+   **5.8 fps**; 43 fps without the filter, 47 with `will-change`. Gate now fails on any filter
+   on a moving layer.
+5. **Measuring inside the frame**: a periodic room measurement forced a synchronous layout —
+   p95 250 ms, 2.7 fps. Now measured only when the layout changes, plus an idle-time safety net.
+6. **The game's own layout measured the trucks mid-hop** — the bubble showed or hid depending
+   on the animation phase. `G27Scene.atRest()` now runs it at rest, synchronously.
+7. **(G27, shipped in 6d98803f) letters spilled into the characters' corners**: `fitGrids` sized
+   tiles from `clientWidth`, which INCLUDES the `--char-room` padding reserved for the trucks —
+   8 tiles laid out 716 px wide in a 644 px content box at 1024x768. Fixed: content box.
+   15/15 size x word combinations clean, smallest tile 44 px (640x360 "calculator").
+8. **Startup stutter**: the first 2-3 s measured ~3 fps (offline warm-up + decode). The layer now
+   starts when the page is idle, so the trucks stand still until the page is ready.
+
+Two false alarms of MINE, recorded so they are not repeated: a diagnostic counted elements the
+game hides with `visibility:hidden` (.no-room) as visible and accused a correct layout; and an
+apostrophe in a comment inside the SW's SHELL array broke `qa-app-offline`'s parser. Also:
+`qa-g27-visual` measured character width from the transformed box — now `offsetWidth`, the size
+rule is about the character, not its animation pose.
+
+Also shipped earlier this session: 18 per-orientation scene backdrops cropped and upscaled x4
+(`tools/spelling_scenes.py`, Real-ESRGAN anime, BSD-3), with a guard for the GPU upscaler's
+silent pure-black outputs (it wrote two).
+
 ## ⬜ CROSS-GAME ISSUES
 
 ### Unified Scoring Engine
