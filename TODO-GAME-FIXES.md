@@ -3288,3 +3288,6 @@ Neither went through `openLevelSelect` where `_applyKodokSlot7Unlock` was placed
 - L113 Level cap expansion needs procedural fallback (defensive against save-state)
 - L114 Centralized totalLevels formula (single source of truth)
 - L115 Toast notifications need ARIA live region (a11y mandate)
+
+### ✅ 2026-09-27 — qa-app-sweep enumerates pages from the filesystem
+The whole-app sweep had a hand-written list of 17 pages and never booted G27 (ejaan-inggris), film-anak or film-play. PAGES is now index + secondbrain + every `games/*.html` except `_`-prefixed fixtures; the script refuses to run if the enumeration loses G27. 20/20 pass. Proved against a temporary broken page (thrown error + 900px overflow): flagged ❌ with both faults, then removed. `QA_ONLY=<regex>` narrows a debugging run only.

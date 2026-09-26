@@ -5,15 +5,16 @@
 import puppeteer from 'puppeteer'
 import fs from 'fs'
 
-const PAGES = [
-  'index.html', 'secondbrain.html',
-  'games/balapan-kereta.html', 'games/balapan-kereta-side.html', 'games/lokomotif-pemberani.html',
-  'games/selamatkan-kereta.html', 'games/museum-kereta.html',
-  'games/gym-pokemon.html', 'games/mario-pokemon.html', 'games/monster-candy.html',
-  'games/pokemon-run.html', 'games/pokemon-birds.html', 'games/pokemon-bawah-laut.html',
-  'games/ducky-volley.html', 'games/kuis-matematika.html', 'games/mobil.html',
-  'games/ayo-berhitung.html',
-]
+// Pages are ENUMERATED from the filesystem, not hand-listed: a hand list silently
+// skipped G27 (ejaan-inggris) for its whole first release. Every games/*.html is
+// swept except `_`-prefixed test fixtures; SKIP names any exemption WITH a reason.
+const SKIP = {}
+const PAGES = ['index.html', 'secondbrain.html'].concat(
+  fs.readdirSync('games').filter(f => f.endsWith('.html') && !f.startsWith('_') && !SKIP[f])
+    .sort().map(f => 'games/' + f))
+// QA_ONLY=<regex> narrows a run (debugging only; the full sweep is the gate).
+if (process.env.QA_ONLY) { const re = new RegExp(process.env.QA_ONLY); PAGES.splice(0, PAGES.length, ...PAGES.filter(p => re.test(p))) }
+else if (!PAGES.includes('games/ejaan-inggris.html')) { console.error('❌ enumeration lost G27'); process.exit(1) }
 const OUT = 'tools/qa-out'
 fs.mkdirSync(OUT, { recursive: true })
 const IGNORE = /favicon|pokemondb|showdown|play\.pokemonshowdown|net::ERR|Failed to load resource|ERR_INTERNET|googleapis|gstatic|unpkg/i
