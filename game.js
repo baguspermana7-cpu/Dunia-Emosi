@@ -1330,10 +1330,11 @@ function _applyKodokSlot7Unlock() {
     const animal = slots && slots[slotIdx] && slots[slotIdx].animal
     const av = animal ? (AVATAR_SLUGS[animal] || String(animal)) : null
     if (av !== 'frog') return
-    // v5 = Kanto 100% + every other region 70%, over the FULL gym roster.
-    // v4 (Kanto + 25%, and only the 77 trainers the gym had in May) is NOT a
-    // reason to skip: a v4 player must be topped up, so only v5 short-circuits.
-    if (localStorage.getItem('dunia-kodok-slot7-v5') === '1') return
+    // v6 = Kanto 100% + every other region 70% rounded to nearest, over the FULL
+    // gym roster = 79/105 (75%). v4 (27 trainers) and v5 (72, shipped earlier on
+    // 2026-09-27) are NOT reasons to skip — those players must be topped up — so
+    // only v6 short-circuits.
+    if (localStorage.getItem('dunia-kodok-slot7-v6') === '1') return
 
     const prog = loadProgress()
 
@@ -1351,7 +1352,9 @@ function _applyKodokSlot7Unlock() {
 
     saveProgress(prog)
 
-    // G13C badge preset: Kanto 100% + every other region 70%.
+    // G13C badge preset: Kanto 100% + every other region 70%, ROUNDED to the
+    // nearest trainer → 79 of 105 = 75%, the figure the owner chose. (Rounding
+    // DOWN gave 72 = 68.6%; rounding UP would give 82 = 78%.)
     //
     // v61.10 (2026-09-27) — the egg had quietly shrunk to 25.7%. This map is a
     // HAND-KEPT copy of games/gym-pokemon.html's TRAINERS, written when the gym
@@ -1383,7 +1386,7 @@ function _applyKodokSlot7Unlock() {
     let allBadges = {}
     try { allBadges = JSON.parse(localStorage.getItem(badgesKey) || '{}') || {} } catch (_) { allBadges = {} }
     for (const [region, ids] of Object.entries(TRAINERS_BY_REGION)) {
-      const count = region === 'kanto' ? ids.length : Math.max(1, Math.floor(ids.length * 0.7))
+      const count = region === 'kanto' ? ids.length : Math.max(1, Math.round(ids.length * 0.7))
       for (let i = 0; i < count; i++) allBadges[ids[i]] = true
     }
     try { localStorage.setItem(badgesKey, JSON.stringify(allBadges)) } catch(_) {}
@@ -1403,7 +1406,7 @@ function _applyKodokSlot7Unlock() {
       }
     }
 
-    localStorage.setItem('dunia-kodok-slot7-v5', '1')
+    localStorage.setItem('dunia-kodok-slot7-v6', '1')
   } catch (_) {}
 }
 

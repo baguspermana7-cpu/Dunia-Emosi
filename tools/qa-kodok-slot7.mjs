@@ -10,7 +10,8 @@
 // Asserts:
 //   1. STATIC: the preset map covers every region and every trainer id of the
 //      live gym roster (so the copy can never go stale again unnoticed)
-//   2. slot 7 + frog: Kanto fully open, overall >= 68% of the real roster
+//   2. slot 7 + frog: Kanto fully open, overall >= 75% of the real roster
+//      (owner, 2026-09-27: "75%")
 //   3. the egg stays hidden: slot 7 with another animal, or a frog elsewhere,
 //      gets nothing
 //   4. it MERGES: badges a child already earned are never taken away, and a
@@ -74,7 +75,7 @@ try {
   const kantoOpen = kanto.filter(id => egg.ids.includes(id)).length
   const pct = 100 * egg.ids.filter(id => Object.values(roster).flat().includes(id)).length / total
   check(kantoOpen === kanto.length, `slot 7 + frog opens ALL of Kanto (${kantoOpen}/${kanto.length})`)
-  check(pct >= 68, `slot 7 + frog opens most of the gym (${egg.ids.length}/${total} = ${pct.toFixed(1)}%, need >= 68%)`)
+  check(pct >= 75, `slot 7 + frog opens most of the gym (${egg.ids.length}/${total} = ${pct.toFixed(1)}%, need >= 75%)`)
   const perRegion = Object.entries(roster).filter(([g]) => !egg.ids.some(id => roster[g].includes(id))).map(([g]) => g)
   check(perRegion.length === 0, `every region gets something${perRegion.length ? ' — NONE in: ' + perRegion.join(', ') : ''}`)
   check(egg.g13b >= 30, `slot 7 + frog also opens all 30 G13B levels (${egg.g13b})`)
@@ -90,10 +91,13 @@ try {
   const kept = await run(6, FROG, { 'dunia-avatar-frog-g13c_badges': JSON.stringify({ [earned]: true }) })
   check(kept.ids.includes(earned), `a badge the child already earned is kept (${earned})`)
 
-  // a player who already got the OLD 27-badge preset must be topped up
-  const old = await run(6, FROG, { 'dunia-kodok-slot7-v4': '1',
-    'dunia-avatar-frog-g13c_badges': JSON.stringify(Object.fromEntries(kanto.map(id => [id, true]))) })
-  check(old.ids.length >= Math.floor(total * 0.68), `a player on the old preset is topped up (${old.ids.length})`)
+  // players who already ran an OLDER preset must be topped up, not skipped:
+  // v4 = the original 27, v5 = the 72 shipped earlier on 2026-09-27
+  for (const flag of ['dunia-kodok-slot7-v4', 'dunia-kodok-slot7-v5']) {
+    const old = await run(6, FROG, { [flag]: '1',
+      'dunia-avatar-frog-g13c_badges': JSON.stringify(Object.fromEntries(kanto.map(id => [id, true]))) })
+    check(old.ids.length >= Math.ceil(total * 0.75), `a player who ran ${flag.slice(-2)} is topped up (${old.ids.length})`)
+  }
 } finally {
   await browser.close()
 }

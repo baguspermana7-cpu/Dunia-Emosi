@@ -2066,17 +2066,20 @@ trainers; Alola (10), Paldea (8), Hisui (5) and Orange Islands (5) were later ad
 that #137 had set the non-Kanto ratio to 25%.
 
 - the four regions added, ids copied from the live roster;
-- ratio Kanto 100% + every other region 70% (`floor`, min 1) → **72 / 105 = 68.6%**;
-- flag `v4` → `v5`, so a child who already got the old 27-badge preset is TOPPED UP;
+- ratio Kanto 100% + every other region 70% rounded to NEAREST, min 1 → **79 / 105 = 75.2%**
+  (owner chose 75%; rounding down gave 72 = 68.6%, rounding up would give 82 = 78%);
+- flag `v4` → `v6` (a `v5` = 72 shipped for an hour first), so a child who ran EITHER older
+  preset is TOPPED UP instead of skipped — the gate caught that a `v5` player would otherwise
+  have stayed stuck;
 - **merge, never wipe**: the old v3→v4 migration reset badges to `{}` first, which also threw
   away badges a child had genuinely earned. Removed.
 
 Verified through the REAL path (map → `openGymGame()` → `gym-pokemon.html`), reading what the
-child sees in each region header: Kanto 12/12, Johto 6/9, Hoenn 5/8, Sinnoh 7/10, Unova 5/8,
-Kalos 4/7, Galar 5/8, **Alola 7/10, Paldea 5/8, Hisui 3/5, Orange 3/5** (all previously 0),
-Rival 2/3, Rocket 1/2, Anime 7/10 = 72/105.
+child sees in each region header: Kanto 12/12, Johto 6/9, Hoenn 6/8, Sinnoh 7/10, Unova 6/8,
+Kalos 5/7, Galar 6/8, **Alola 7/10, Paldea 6/8, Hisui 4/5, Orange 4/5** (all previously 0),
+Rival 2/3, Rocket 1/2, Anime 7/10 = 79/105.
 
-`tools/qa-kodok-slot7.mjs` (11 checks) was written FIRST and was red on exactly the bug —
+`tools/qa-kodok-slot7.mjs` (12 checks) was written FIRST and was red on exactly the bug —
 missing regions, missing ids, 25.7%, four empty regions, old preset not topped up — then green.
 Its static half fails the moment the copy drifts from the roster again, which is the class of
 bug this was. It also asserts the egg stays hidden (slot 7 with another animal, or a frog in
