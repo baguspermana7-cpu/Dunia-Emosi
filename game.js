@@ -1330,8 +1330,10 @@ function _applyKodokSlot7Unlock() {
     const animal = slots && slots[slotIdx] && slots[slotIdx].animal
     const av = animal ? (AVATAR_SLUGS[animal] || String(animal)) : null
     if (av !== 'frog') return
-    // v4 = tiered preset (Kanto 100% + others 25%); v3 = legacy all-77 preset
-    if (localStorage.getItem('dunia-kodok-slot7-v4') === '1') return
+    // v5 = Kanto 100% + every other region 70%, over the FULL gym roster.
+    // v4 (Kanto + 25%, and only the 77 trainers the gym had in May) is NOT a
+    // reason to skip: a v4 player must be topped up, so only v5 short-circuits.
+    if (localStorage.getItem('dunia-kodok-slot7-v5') === '1') return
 
     const prog = loadProgress()
 
@@ -1349,10 +1351,18 @@ function _applyKodokSlot7Unlock() {
 
     saveProgress(prog)
 
-    // Tiered G13C badge preset: Kanto 100% + every other region 25%.
-    // Migration v3→v4: existing players who got the over-broad v3 preset (all 77
-    // badges) get reset to {} first so the new tiered preset takes effect cleanly.
-    // Fresh players merge the tiered preset into existing earned badges.
+    // G13C badge preset: Kanto 100% + every other region 70%.
+    //
+    // v61.10 (2026-09-27) — the egg had quietly shrunk to 25.7%. This map is a
+    // HAND-KEPT copy of games/gym-pokemon.html's TRAINERS, written when the gym
+    // had 77 trainers; Alola, Paldea, Hisui and Orange (28 more) were added to
+    // the gym later and never here, so they were never unlocked, and the ratio
+    // was 25%. Measured before the fix: 27 of 105. Owner: "savenya langsung
+    // terbuka banyak", ~70%. tools/qa-kodok-slot7.mjs now fails if this copy
+    // drifts from the live roster again.
+    //
+    // MERGE, never wipe: the old v3→v4 migration reset badges to {} first, which
+    // would also throw away badges a child had genuinely earned.
     const TRAINERS_BY_REGION = {
       kanto:   ['misty','brock','erika','sabrina','surge','koga','blaine','lorelei','agatha','giovanni','lance','blue'],
       johto:   ['falkner','bugsy','whitney','morty','jasmine','pryce','clair','will','karen'],
@@ -1364,12 +1374,16 @@ function _applyKodokSlot7Unlock() {
       rivals:  ['gary','red','hop'],
       rockets: ['jessie','james'],
       anime:   ['ash','ash_johto','ash_hoenn','ash_sinnoh','ash_unova','ash_kalos','may','dawn','serena','go'],
+      alola:   ['ilima','hala','lana','kiawe','mallow','olivia','sophocles','acerola','nanu','kukui'],
+      paldea:  ['katy','brassius','iono','kofu','larry','ryme','tulip','grusha'],
+      hisui:   ['adaman','irida','volo','akari','rei'],
+      orange:  ['cissy','danny','rudy','luana','drake'],
     }
     const badgesKey = `dunia-avatar-${av}-g13c_badges`
-    const oldDone = localStorage.getItem('dunia-kodok-slot7-v3') === '1'
-    const allBadges = oldDone ? {} : JSON.parse(localStorage.getItem(badgesKey) || '{}')
+    let allBadges = {}
+    try { allBadges = JSON.parse(localStorage.getItem(badgesKey) || '{}') || {} } catch (_) { allBadges = {} }
     for (const [region, ids] of Object.entries(TRAINERS_BY_REGION)) {
-      const count = region === 'kanto' ? ids.length : Math.max(1, Math.floor(ids.length * 0.25))
+      const count = region === 'kanto' ? ids.length : Math.max(1, Math.floor(ids.length * 0.7))
       for (let i = 0; i < count; i++) allBadges[ids[i]] = true
     }
     try { localStorage.setItem(badgesKey, JSON.stringify(allBadges)) } catch(_) {}
@@ -1389,7 +1403,7 @@ function _applyKodokSlot7Unlock() {
       }
     }
 
-    localStorage.setItem('dunia-kodok-slot7-v4', '1')
+    localStorage.setItem('dunia-kodok-slot7-v5', '1')
   } catch (_) {}
 }
 
