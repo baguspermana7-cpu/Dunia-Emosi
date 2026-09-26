@@ -46,6 +46,7 @@ const PAGES = [
   'games/pokemon-bawah-laut.html',
   'games/pokemon-birds.html',
   'games/pokemon-run.html',
+  'games/ejaan-inggris.html',
 ]
 const UA = 'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Mobile Safari/537.36'
 

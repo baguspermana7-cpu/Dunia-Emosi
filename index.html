@@ -6,7 +6,7 @@
 <title>Dunia Emosi 🐾</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Fredoka+One&family=Baloo+2:wght@600;700;800&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="style.css?v=v61.8-20260922a">
+<link rel="stylesheet" href="style.css?v=v62.0-20260927a">
 
 <!-- PWA: install-as-app + offline support -->
 <link rel="manifest" href="manifest.json">
@@ -602,6 +602,18 @@
             </div>
             <div class="wmap-node-name">Susun Kata</div>
             <div class="wmap-node-stars" id="gstars-8-lbl"></div>
+          </div>
+          <!-- G27: Spelling Adventure (ejaan Inggris). Standalone page like
+               G18/G25/G26 — the map only launches it. Placed beside Susun Kata
+               because it is the same skill in English: hear a word, build it
+               from letters. -->
+          <div class="wmap-node" id="gtile-27" onclick="playClick();location.href='games/ejaan-inggris.html'" title="Spelling Adventure">
+            <div class="wmap-node-bldg" style="background:linear-gradient(145deg,#1D4ED8,#38BDF8);">
+              <img loading="lazy" decoding="async" class="wn-icon" src="assets/spelling/obj/pencil.webp" alt="Spelling Adventure"
+                   style="width:46px;height:46px;object-fit:contain;display:block">
+            </div>
+            <div class="wmap-node-name">Spelling Adventure</div>
+            <div class="wmap-node-stars" id="gstars-27-lbl"></div>
           </div>
           <!-- G9: Jejak Huruf -->
           <div class="wmap-node" id="gtile-9" onclick="playClick();openLevelSelect(9)" title="Jejak Huruf">
@@ -2367,38 +2379,38 @@ function loadPixiJS(cb) {
 </div>
 
 <!-- Task #73 (P0-2): defer data scripts — unblock HTML parsing by ~51KB -->
-<script src="games/data/region-meta.js?v=v61.8-20260922a" defer></script>
-<script src="games/data/city-progression.js?v=v61.8-20260922a" defer></script>
-<script src="games/data/city-pokemon-pack.js?v=v61.8-20260922a" defer></script>
+<script src="games/data/region-meta.js?v=v62.0-20260927a" defer></script>
+<script src="games/data/city-progression.js?v=v62.0-20260927a" defer></script>
+<script src="games/data/city-pokemon-pack.js?v=v62.0-20260927a" defer></script>
 <!-- Hotfix 2026-04-28 — sprite cascade + freeze watchdog (must load before game.js).
      poke-sprite-cdn.js is NOT loaded here — game.js declares its own POKE_IDS
      and would collide. Standalone /games/*.html pages still load it.
      Bump 20260428b: picker overhaul, legacy cascade audit, G10 hit FX. -->
-<script src="games/data/poke-sprite-loader.js?v=v61.8-20260922a" defer></script>
-<script src="games/data/freeze-watchdog.js?v=v61.8-20260922a" defer></script>
-<script src="games/data/cloud-sync.js?v=v61.8-20260922a" defer></script>
-<script src="games/data/math-rules.js?v=v61.8-20260922a" defer></script>
-<script src="games/data/sfx-engine.js?v=v61.8-20260922a" defer></script>
-<script src="games/data/weather-fx.js?v=v61.8-20260922a" defer></script>
-<script src="games/data/poke-packages.js?v=v61.8-20260922a" defer></script>
-<script src="games/battle-arena.js?v=v61.8-20260922a" defer></script>
+<script src="games/data/poke-sprite-loader.js?v=v62.0-20260927a" defer></script>
+<script src="games/data/freeze-watchdog.js?v=v62.0-20260927a" defer></script>
+<script src="games/data/cloud-sync.js?v=v62.0-20260927a" defer></script>
+<script src="games/data/math-rules.js?v=v62.0-20260927a" defer></script>
+<script src="games/data/sfx-engine.js?v=v62.0-20260927a" defer></script>
+<script src="games/data/weather-fx.js?v=v62.0-20260927a" defer></script>
+<script src="games/data/poke-packages.js?v=v62.0-20260927a" defer></script>
+<script src="games/battle-arena.js?v=v62.0-20260927a" defer></script>
 <!-- v56.5 A-318 — 48-leg journey names for the g14 claymorphism station-map level select -->
-<script src="games/train-journey.js?v=v61.8-20260922a" defer></script>
-<script src="games/data/battle-modes.js?v=v61.8-20260922a" defer></script>
-<script src="games/data/poke-type-chart.js?v=v61.8-20260922a" defer></script>
-<script src="games/train-shared.js?v=v61.8-20260922a" defer></script>
-<script src="games/train-vfx.js?v=v61.8-20260922a" defer></script>
-<script src="games/train-bg-engine.js?v=v61.8-20260922a" defer></script>
-<script src="games/data/bg-themes.js?v=v61.8-20260922a" defer></script>
-<script src="games/data/bg-renderers.js?v=v61.8-20260922a" defer></script>
-<script src="games/data/bg-npcs.js?v=v61.8-20260922a" defer></script>
-<script src="games/data/bg-audio.js?v=v61.8-20260922a" defer></script>
-<script src="games/data/bg-events.js?v=v61.8-20260922a" defer></script>
-<script src="games/data/db-sprites.js?v=v61.8-20260922a" defer></script><!-- A-356 shared asset DB accessor -->
-<script src="games/data/db-labeled.js?v=v61.8-20260922a" defer></script><!-- labeled DB subset for Tebak game -->
-<script src="games/data/mascot-sprites.js?v=v61.8-20260922a" defer></script><!-- 12-char mascot/hero sheet -->
-<script src="games/data/emoji-map.js?v=v61.8-20260922a" defer></script><script src="games/data/ui-sprites.js?v=v61.8-20260922a" defer></script><!-- 6 UIUX/gameplay sprite packs -->
-<script src="game.js?v=v61.10-20260927a" defer></script>
+<script src="games/train-journey.js?v=v62.0-20260927a" defer></script>
+<script src="games/data/battle-modes.js?v=v62.0-20260927a" defer></script>
+<script src="games/data/poke-type-chart.js?v=v62.0-20260927a" defer></script>
+<script src="games/train-shared.js?v=v62.0-20260927a" defer></script>
+<script src="games/train-vfx.js?v=v62.0-20260927a" defer></script>
+<script src="games/train-bg-engine.js?v=v62.0-20260927a" defer></script>
+<script src="games/data/bg-themes.js?v=v62.0-20260927a" defer></script>
+<script src="games/data/bg-renderers.js?v=v62.0-20260927a" defer></script>
+<script src="games/data/bg-npcs.js?v=v62.0-20260927a" defer></script>
+<script src="games/data/bg-audio.js?v=v62.0-20260927a" defer></script>
+<script src="games/data/bg-events.js?v=v62.0-20260927a" defer></script>
+<script src="games/data/db-sprites.js?v=v62.0-20260927a" defer></script><!-- A-356 shared asset DB accessor -->
+<script src="games/data/db-labeled.js?v=v62.0-20260927a" defer></script><!-- labeled DB subset for Tebak game -->
+<script src="games/data/mascot-sprites.js?v=v62.0-20260927a" defer></script><!-- 12-char mascot/hero sheet -->
+<script src="games/data/emoji-map.js?v=v62.0-20260927a" defer></script><script src="games/data/ui-sprites.js?v=v62.0-20260927a" defer></script><!-- 6 UIUX/gameplay sprite packs -->
+<script src="game.js?v=v62.0-20260927a" defer></script>
 <script>
   // Boot SFXEngine + WeatherFX after page loads — both lazy, never block the game.
   document.addEventListener('DOMContentLoaded', function () {

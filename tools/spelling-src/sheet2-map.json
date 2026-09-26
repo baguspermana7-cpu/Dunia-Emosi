@@ -1,0 +1,342 @@
+{
+"100": [
+"obj",
+"quran"
+],
+"101": [
+"obj",
+"water"
+],
+"102": [
+"obj",
+"bottle"
+],
+"103": [
+"obj",
+"stapler"
+],
+"104": [
+"obj",
+"computer"
+],
+"105": [
+"obj",
+"calculator"
+],
+"106": [
+"obj",
+"book"
+],
+"107": [
+"obj",
+"pencil"
+],
+"108": [
+"obj",
+"pen"
+],
+"109": [
+"obj",
+"eraser"
+],
+"110": [
+"obj",
+"ruler"
+],
+"118": [
+"obj",
+"bag"
+],
+"120": [
+"obj",
+"chair"
+],
+"127": [
+"obj",
+"table"
+],
+"128": [
+"obj",
+"desk"
+],
+"129": [
+"obj",
+"board"
+],
+"130": [
+"obj",
+"door"
+],
+"131": [
+"obj",
+"window"
+],
+"132": [
+"obj",
+"crayon"
+],
+"133": [
+"obj",
+"marker"
+],
+"134": [
+"obj",
+"scissors"
+],
+"124": [
+"obj",
+"glue"
+],
+"77": [
+"color",
+"blue"
+],
+"78": [
+"color",
+"red"
+],
+"79": [
+"color",
+"yellow"
+],
+"80": [
+"color",
+"green"
+],
+"81": [
+"color",
+"orange"
+],
+"82": [
+"color",
+"purple"
+],
+"83": [
+"color",
+"pink"
+],
+"85": [
+"color",
+"white"
+],
+"86": [
+"color",
+"gray"
+],
+"16": [
+"ui",
+"btn-play"
+],
+"17": [
+"ui",
+"btn-start"
+],
+"18": [
+"ui",
+"btn-next"
+],
+"19": [
+"ui",
+"btn-replay"
+],
+"20": [
+"ui",
+"btn-exit"
+],
+"21": [
+"ui",
+"ico-home"
+],
+"22": [
+"ui",
+"ico-back"
+],
+"23": [
+"ui",
+"ico-settings"
+],
+"24": [
+"ui",
+"ico-music"
+],
+"25": [
+"ui",
+"ico-sound"
+],
+"26": [
+"ui",
+"ico-chart"
+],
+"27": [
+"ui",
+"hdr-select-category"
+],
+"28": [
+"ui",
+"hdr-choose-word"
+],
+"29": [
+"ui",
+"hdr-well-done"
+],
+"30": [
+"ui",
+"banner-amazing"
+],
+"31": [
+"ui",
+"banner-good-job"
+],
+"32": [
+"ui",
+"banner-keep-trying"
+],
+"33": [
+"ui",
+"bubble-say-it"
+],
+"57": [
+"ui",
+"btn-listen"
+],
+"58": [
+"ui",
+"bubble-hint"
+],
+"59": [
+"ui",
+"ico-check"
+],
+"60": [
+"ui",
+"ico-cross"
+],
+"61": [
+"ui",
+"ico-info"
+],
+"62": [
+"ui",
+"ico-question"
+],
+"37": [
+"ui",
+"trophy"
+],
+"38": [
+"ui",
+"crown"
+],
+"39": [
+"ui",
+"medal"
+],
+"40": [
+"ui",
+"star"
+],
+"41": [
+"ui",
+"star-empty"
+],
+"42": [
+"ui",
+"stars3"
+],
+"43": [
+"ui",
+"star-burst"
+],
+"0": [
+"ui",
+"title-logo"
+],
+"1": [
+"prop",
+"truck"
+],
+"2": [
+"prop",
+"digger"
+],
+"3": [
+"prop",
+"debris"
+],
+"4": [
+"prop",
+"cone"
+],
+"6": [
+"prop",
+"sign"
+],
+"7": [
+"prop",
+"rocks"
+],
+"8": [
+"prop",
+"tree"
+],
+"9": [
+"prop",
+"lamp"
+],
+"12": [
+"prop",
+"barrier"
+],
+"14": [
+"prop",
+"crate"
+],
+"15": [
+"prop",
+"cloud"
+],
+"167": [
+"prop",
+"bush"
+],
+"168": [
+"prop",
+"grass"
+],
+"147": [
+"fx",
+"sparkle"
+],
+"152": [
+"fx",
+"sparkle2"
+],
+"153": [
+"fx",
+"sparkle3"
+],
+"154": [
+"fx",
+"sparkle-burst"
+],
+"148": [
+"fx",
+"puff"
+],
+"149": [
+"fx",
+"dirt"
+],
+"155": [
+"fx",
+"arrow-red"
+],
+"156": [
+"fx",
+"arrow-green"
+],
+"157": [
+"fx",
+"arrow-blue"
+]
+}

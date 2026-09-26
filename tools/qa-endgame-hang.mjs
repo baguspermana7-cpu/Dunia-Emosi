@@ -75,6 +75,11 @@ const ARM = {
   'kuis-matematika.html': () => {
     try { if (!window.__g25.inProgress()) window.__g25.startLevel(1) } catch (_) {}
   },
+  // G27: the ending is the celebration screen that opens when a word is
+  // spelled, so a word has to be in progress first.
+  'ejaan-inggris.html': () => {
+    try { const s = window.__g27.state(); if (!s.word || s.solved) window.__g27.startWord('blue') } catch (_) {}
+  },
 }
 
 // The list is the INVENTORY of games with an end routine, not the list of games
@@ -88,6 +93,7 @@ const GAMES = [
   ['balapan-kereta.html',      [['endRace', []]]],
   ['balapan-kereta-side.html', [['endRace', ['Menang!', 'win']], ['endRace', ['Kalah', 'lose']]]],
   ['kuis-matematika.html',     [['__g25.finishWin', []], ['__g25.finishLose', []]]],
+  ['ejaan-inggris.html',       [['__g27.solve', []]]],
   ['lokomotif-pemberani.html', [['showWin', []], ['showLose', []]]],
   ['selamatkan-kereta.html',   [['showWin', []], ['showLose', []]]],
   ['ducky-volley.html',        [['endMatch', [true]]]],
@@ -148,7 +154,7 @@ try {
         // Most games end in a modal over the board; kuis-matematika swaps to a
         // full result SCREEN instead, so a modal-only selector would call a
         // perfectly good ending a missing overlay.
-        const overlaySel = '#gm-overlay, .gm-overlay, [id*="result" i], [id*="modal" i], [class*="overlay" i], [id*="over" i], #scr-hasil.active'
+        const overlaySel = '#gm-overlay, .gm-overlay, [id*="result" i], [id*="modal" i], [class*="overlay" i], [id*="over" i], #scr-hasil.active, #ov-ok.show'
         const visible = () => [...document.querySelectorAll(overlaySel)]
           .filter(el => { const cs = getComputedStyle(el)
             return cs.display !== 'none' && cs.visibility !== 'hidden' && parseFloat(cs.opacity) > 0.05 && el.offsetHeight > 40 })

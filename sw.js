@@ -15,7 +15,7 @@
  * succeeded. Only cache same-origin assets.
  * ========================================================================== */
 
-const CACHE_VERSION = 'v61.8-20260922a'
+const CACHE_VERSION = 'v62.0-20260927a'
 const HTML_CACHE = `dunia-html-${CACHE_VERSION}`
 const ASSET_CACHE = `dunia-assets-${CACHE_VERSION}`
 
@@ -82,23 +82,32 @@ const SHELL = [
   './games/lib/pixi.min.js?v=8',
   './games/balapan-kereta-side.html',
   './games/museum-kereta.html',
-  './games/indo-scene.js?v=v61.8-20260922a',
-  './games/train-journey.js?v=v61.8-20260922a',
-  './games/data/train-wheel-anchors.js?v=v61.8-20260922a',
-  './games/train-backdrop.js?v=v61.8-20260922a',
-  './games/train-picker.js?v=v61.8-20260922a',
-  './games/train-speedfx.js?v=v61.8-20260922a',
-  './games/quiz-engine.js?v=v61.8-20260922a',
-  './games/motion.js?v=v61.8-20260922a',
-  './games/scenery-engine.js?v=v61.8-20260922a',
-  './games/sw-reload.js?v=v61.8-20260922a',
-  './games/g14-hud.css?v=v61.8-20260922a',
-  './games/du-hud.css?v=v61.8-20260922a',
+  './games/indo-scene.js?v=v62.0-20260927a',
+  './games/train-journey.js?v=v62.0-20260927a',
+  './games/data/train-wheel-anchors.js?v=v62.0-20260927a',
+  './games/train-backdrop.js?v=v62.0-20260927a',
+  './games/train-picker.js?v=v62.0-20260927a',
+  './games/train-speedfx.js?v=v62.0-20260927a',
+  './games/quiz-engine.js?v=v62.0-20260927a',
+  './games/motion.js?v=v62.0-20260927a',
+  './games/scenery-engine.js?v=v62.0-20260927a',
+  './games/sw-reload.js?v=v62.0-20260927a',
+  './games/g14-hud.css?v=v62.0-20260927a',
+  './games/du-hud.css?v=v62.0-20260927a',
+  // G27 Spelling Adventure: page, logic, data, its self-hosted font and the
+  // TITLE scene only (both orientation cuts). The other 16 scene images are
+  // ~1.2 MB together, so they are cached at runtime on first view instead.
+  './games/ejaan-inggris.html',
+  './games/ejaan-inggris.js?v=v62.0-20260927a',
+  './games/data/spelling-data.js?v=v62.0-20260927a',
+  './assets/spelling/fonts/fredoka-one.ttf',
+  './assets/spelling/scenes/construction-land.webp',
+  './assets/spelling/scenes/construction-port.webp',
   // Seven call sites across four games invoke GameModal AFTER stopping the
   // ticker. Offline with a miss, the ReferenceError landed on a frozen frame
   // with no result modal and no way out -- so this one belongs in the shell
   // even though the shell is deliberately slim. It is ~4KB.
-  './games/game-modal.js?v=v61.8-20260922a',
+  './games/game-modal.js?v=v62.0-20260927a',
 ]
 
 self.addEventListener('install', (e) => {

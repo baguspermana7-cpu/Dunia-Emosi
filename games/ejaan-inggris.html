@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Spelling Adventure — Ejaan Inggris</title>
+<meta name="theme-color" content="#7EC8F0">
+<link rel="manifest" href="../manifest.json">
+<style>
+/* ===========================================================================
+ * G27 Spelling Adventure. Layout follows the owner's mockup (Downloads/uiux.png):
+ * blurred construction-town backdrop, wooden headers, blue square icon
+ * buttons, pastel category cards, white word cards, chunky blue letter tiles,
+ * full-screen celebration. Sprites are cropped from the owner's own asset
+ * sheets (tools/spelling-src) by tools/spelling_assets.py.
+ *
+ * Self-hosted font: the other games pull Google Fonts over the network, so on
+ * an offline tablet they fall back to a thin system face. OFL, see
+ * assets/spelling/fonts/OFL.txt.
+ * ======================================================================== */
+@font-face{font-family:'Fredoka One';src:url('../assets/spelling/fonts/fredoka-one.ttf') format('truetype');
+  font-weight:400;font-style:normal;font-display:swap}
+:root{
+  --ink:#1E3A66; --ink2:#5B4424; --blue:#1F74D6; --blue2:#0F4FA8;
+  --card:#FFFDF6; --line:#CFDCEC; --line2:#A9BFD8; --good:#3FAE4B;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;font-family:'Fredoka One',system-ui,sans-serif;font-weight:400}
+body{background:#8FD0F2;color:var(--ink);user-select:none;-webkit-user-select:none}
+img{-webkit-user-drag:none;user-select:none}
+button{font-family:inherit;color:inherit}
+
+/* ── backdrop: one full-bleed scene per screen, switched by ORIENTATION ──
+   (the owner's scenes come as a landscape and a portrait cut). Its own layer
+   (.g27-bg), overscanned by 4% so a later parallax pass never shows an edge
+   and any corner remnant of the sheet stays off-screen. A sky gradient sits
+   under the image, so a scene that fails to load still looks right. */
+.g27-bg{position:fixed;inset:-4%;z-index:0;pointer-events:none;
+  background-color:#9ED6F3;
+  background-image:var(--bg-l,none),linear-gradient(180deg,#8FD0F2 0%,#C4E8FA 62%,#E8D6A8 100%);
+  background-size:cover,cover;background-position:center,center;background-repeat:no-repeat}
+@media (orientation:portrait){.g27-bg{background-image:var(--bg-p,none),linear-gradient(180deg,#8FD0F2 0%,#C4E8FA 62%,#E8D6A8 100%)}}
+body[data-scene="construction"]{--bg-l:url('../assets/spelling/scenes/construction-land.webp');--bg-p:url('../assets/spelling/scenes/construction-port.webp')}
+body[data-scene="town"]{--bg-l:url('../assets/spelling/scenes/town-land.webp');--bg-p:url('../assets/spelling/scenes/town-port.webp')}
+body[data-scene="park"]{--bg-l:url('../assets/spelling/scenes/park-land.webp');--bg-p:url('../assets/spelling/scenes/park-port.webp')}
+body[data-scene="classroom"]{--bg-l:url('../assets/spelling/scenes/classroom-land.webp');--bg-p:url('../assets/spelling/scenes/classroom-port.webp')}
+body[data-scene="bedroom"]{--bg-l:url('../assets/spelling/scenes/bedroom-land.webp');--bg-p:url('../assets/spelling/scenes/bedroom-port.webp')}
+body[data-scene="sunrise"]{--bg-l:url('../assets/spelling/scenes/sunrise-land.webp');--bg-p:url('../assets/spelling/scenes/sunrise-port.webp')}
+body[data-scene="recycling"]{--bg-l:url('../assets/spelling/scenes/recycling-land.webp');--bg-p:url('../assets/spelling/scenes/recycling-port.webp')}
+body[data-scene="night"]{--bg-l:url('../assets/spelling/scenes/night-land.webp');--bg-p:url('../assets/spelling/scenes/night-port.webp')}
+/* the photo scenes are busy: text that sits straight on them gets a light scrim */
+.title-txt,#prompt,#meaning,#ok-sub{background:rgba(255,255,255,.82);border-radius:16px;padding:2px 16px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+#meaning{padding:1px 12px;margin-top:4px}
+
+.scr{position:fixed;inset:0;z-index:5;display:none;flex-direction:column;align-items:center;
+  padding:max(10px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom));overflow-y:auto;overscroll-behavior:contain}
+.scr.active{display:flex}
+
+/* ── generic controls ─────────────────────────────────────────────────── */
+.sq{width:56px;height:56px;border:0;border-radius:16px;padding:0;cursor:pointer;background:transparent;flex:0 0 auto;
+  display:inline-flex;align-items:center;justify-content:center}
+.sq img{width:56px;height:56px;object-fit:contain;display:block}
+.sq:active,.pill:active,.card:active,.wcard:active{transform:translateY(2px)}
+.pill{border:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  min-height:56px;padding:0 26px;border-radius:999px;font-size:22px;color:#fff;letter-spacing:.3px;
+  text-shadow:0 2px 0 rgba(0,0,0,.25)}
+.pill svg,.pill img{width:28px;height:28px;flex:0 0 auto}
+.p-blue{background:linear-gradient(180deg,#4AA3F5,#1F6FD1);box-shadow:0 5px 0 #13509E,0 10px 18px rgba(0,0,0,.2)}
+.p-purple{background:linear-gradient(180deg,#9A6BF2,#6D3FD6);box-shadow:0 5px 0 #4C2A9E,0 10px 18px rgba(0,0,0,.2)}
+.p-orange{background:linear-gradient(180deg,#FFA83F,#F07A12);box-shadow:0 5px 0 #B9570A,0 10px 18px rgba(0,0,0,.2)}
+.p-green{background:linear-gradient(180deg,#58D35E,#2EA83A);box-shadow:0 5px 0 #1E7A27,0 10px 18px rgba(0,0,0,.2)}
+.p-red{background:linear-gradient(180deg,#F26A5E,#D63A2F);box-shadow:0 5px 0 #9C2319,0 10px 18px rgba(0,0,0,.2)}
+.badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(180deg,#3E8EE8,#1C62C4);color:#fff;
+  border-radius:14px;padding:6px 14px;font-size:20px;box-shadow:0 3px 0 #12488F;min-height:44px}
+.badge img{width:26px;height:26px}
+.plank-img{height:64px;width:auto;display:block;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25))}
+.head{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;max-width:980px;position:relative;min-height:64px;
+  padding:0 var(--head-pad,118px)}
+/* a long title ("School Objects") must never slide under the back button or the star badge */
+.head .title-txt{min-width:0;text-align:center;line-height:1.08;overflow-wrap:normal;word-break:normal}
+.head .left{position:absolute;left:0;top:50%;transform:translateY(-50%)}
+.head .right{position:absolute;right:0;top:50%;transform:translateY(-50%)}
+.title-txt{font-size:clamp(22px,5.4vw,38px);color:var(--ink);text-shadow:0 2px 0 #fff,0 0 12px rgba(255,255,255,.8)}
+
+/* ── the two characters ───────────────────────────────────────────────────
+   Owner: "saat landscape karakter 2 itu terlalu kecil, buat based on % of
+   total screen, misal 15% each". Width is a share of the SCREEN, capped by
+   height so a phone on its side cannot push a character up into the
+   controls, never under 96 px. Truck bottom-left, digger bottom-right. Each
+   is its own positioned element with data-depth for the parallax pass, and
+   NO css filter (a filtered layer that moves re-rasterises every frame). */
+:root{
+  --w-truck:max(96px,min(15vw,calc(30vh * 1.008)));
+  --w-digger:max(96px,min(15vw,calc(30vh * 1.14)));
+  --char-room:calc(max(96px,min(15vw,calc(30vh * 1.14))) + 1vw + 12px);
+}
+@media (orientation:portrait){:root{
+  --w-truck:max(96px,min(26vw,calc(22vh * 1.008)));
+  --w-digger:max(96px,min(26vw,calc(22vh * 1.14)));
+}}
+.g27-char-truck{width:var(--w-truck);height:auto}
+.g27-char-digger{width:var(--w-digger);height:auto}
+.deco{position:fixed;z-index:3;pointer-events:none;display:none;bottom:2vh}
+#deco-truck{left:1vw}#deco-digger{right:1vw}
+body[data-scr="scr-title"] .deco,body[data-scr="scr-play"] .deco{display:block}
+#cheer-bubble{position:fixed;z-index:4;pointer-events:none;display:none;background:#fff;border-radius:18px 18px 18px 4px;
+  padding:7px 14px;font-size:16px;color:var(--ink);box-shadow:0 4px 0 #CFDCEC;white-space:nowrap}
+body[data-scr="scr-play"] #cheer-bubble{display:block}
+/* LANDSCAPE: the screens that show the characters keep their content BETWEEN
+   them, instead of shrinking the characters below the rule. */
+/* `html body #…`: these must outrank the per-screen rules further down, which
+   set padding/max-width with the same id specificity and would otherwise win
+   by coming later (the success screen silently lost its side room that way). */
+/* PORTRAIT, tall phones and tablets: the celebration keeps its two machines
+   by reserving a band for them under the content (small phones cannot spare
+   it; there the characters hide rather than cover a button). */
+@media (orientation:portrait) and (min-height:760px){
+  html body #ov-ok{padding-bottom:calc(var(--w-digger) * .9 + 2vh)}
+}
+@media (orientation:landscape){
+  html body #scr-title,html body #ov-ok{padding-left:var(--char-room);padding-right:var(--char-room)}
+  html body #stage{padding-left:var(--char-room);padding-right:var(--char-room);max-width:none}
+}
+
+/* ── title ────────────────────────────────────────────────────────────── */
+#scr-title{justify-content:center}
+#logo{width:min(64vw,340px);height:auto;filter:drop-shadow(0 10px 16px rgba(0,0,0,.3));margin-bottom:6px}
+#tagline{display:inline-block;background:linear-gradient(180deg,#3E8EE8,#1C62C4);color:#fff;font-size:17px;
+  padding:6px 18px;border-radius:10px;transform:rotate(-2deg);box-shadow:0 3px 0 #12488F;margin:0 0 18px}
+#btn-play{min-height:78px;padding:0 44px;font-size:40px;border-radius:999px}
+#btn-play svg{width:40px;height:40px}
+.title-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:22px;max-width:720px}
+#btn-music{position:fixed;right:14px;top:max(12px,env(safe-area-inset-top));z-index:30}
+#title-sign{position:fixed;right:4vw;bottom:calc(4vh + min(26vw,280px));width:150px;z-index:4;pointer-events:none}
+#title-sign span{position:absolute;inset:18% 14% 40%;display:flex;align-items:center;justify-content:center;text-align:center;
+  font-size:14px;line-height:1.1;color:#5B3A16}
+#title-sign img{width:100%;display:block}
+.no-room{visibility:hidden!important}
+/* NO css filter on the backdrop or on a character/prop layer: the parallax
+   follow-up moves these every frame, and a filtered layer that moves is
+   re-rasterised each frame (measured 5.8 fps with a filter vs 43 without). */
+/* Decor only where it cannot touch a control: title/category/words keep it on
+   the ground band; the play screen and narrow screens hide the big machines. */
+body:not([data-scr="scr-title"]) #title-sign{display:none}
+
+/* ── category ─────────────────────────────────────────────────────────── */
+.grid{display:grid;width:100%;gap:16px;margin-top:16px}
+#cat-grid{grid-template-columns:repeat(3,minmax(0,1fr));max-width:760px}
+.card{border:3px solid rgba(255,255,255,.95);border-radius:22px;padding:16px 10px 12px;display:flex;flex-direction:column;
+  align-items:center;gap:6px;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.12),0 12px 22px rgba(0,0,0,.14);min-height:176px;justify-content:center}
+.card img.cico{width:96px;height:96px;object-fit:contain;filter:drop-shadow(0 4px 6px rgba(0,0,0,.18))}
+.card .cname{font-size:21px;text-align:center;line-height:1.1;color:var(--ink)}
+.card .cmeta{display:inline-flex;align-items:center;gap:5px;font-size:16px;color:#5A4A2A;background:#fff;
+  border-radius:999px;padding:3px 12px;box-shadow:inset 0 0 0 2px #EADFC4}
+.card .cmeta img{width:20px;height:20px}
+.card.locked{filter:grayscale(.7);opacity:.78;cursor:default}
+.card.locked:active{transform:none}
+.cat-colors{background:#FFF6C9}.cat-school{background:#DCEBFF}.cat-everyday{background:#DCF1FF}
+.cat-athome{background:#FFF1DA}.cat-quran{background:#E6F6DF}.cat-mixed{background:#FFE3E3}
+
+/* ── words ────────────────────────────────────────────────────────────── */
+#lvl{display:inline-flex;margin-top:12px;background:#fff;border-radius:999px;padding:5px;box-shadow:0 4px 0 #A9BFD8,0 8px 16px rgba(0,0,0,.14)}
+#lvl button{border:0;cursor:pointer;min-height:48px;min-width:132px;border-radius:999px;font-size:20px;background:transparent;color:#5C7599}
+#lvl button.on{background:linear-gradient(180deg,#4AA3F5,#1F6FD1);color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.25);box-shadow:0 3px 0 #13509E}
+#word-grid{grid-template-columns:repeat(4,minmax(0,1fr));max-width:760px}
+.wcard{background:var(--card);border:4px solid var(--line);border-radius:18px;padding:10px 6px 8px;display:flex;flex-direction:column;
+  align-items:center;gap:4px;cursor:pointer;box-shadow:0 4px 0 var(--line2);min-height:142px;justify-content:center}
+.wcard.done{border-color:#5CC45E;box-shadow:0 4px 0 #3D9A40}
+.wcard img.wpic{width:72px;height:72px;object-fit:contain}
+.wcard .wname{font-size:19px}
+.wcard.soon{background:#E6EBF1;border-color:#D2DAE4;box-shadow:0 4px 0 #BCC7D4;cursor:default;color:#70809A;text-align:center;font-size:15px;line-height:1.15}
+.wcard.soon svg{width:40px;height:40px}
+.stars{display:flex;gap:3px}
+.stars img{width:22px;height:22px}
+
+/* ── play ─────────────────────────────────────────────────────────────── */
+#topbar{display:flex;align-items:center;gap:10px;width:100%;max-width:980px;background:rgba(236,246,255,.94);
+  border-radius:18px;padding:6px 8px;box-shadow:0 4px 0 #B6CBE2,0 8px 16px rgba(0,0,0,.12)}
+.chip{display:inline-flex;align-items:center;gap:8px;font-size:20px;color:var(--ink);min-height:44px;padding:0 6px}
+.chip img{width:34px;height:34px;object-fit:contain}
+#play-count{flex:1;justify-content:center;text-align:center;background:#D6E8FB;border-radius:999px;font-size:21px;padding:6px 10px;min-width:92px}
+#play-stars img{width:30px;height:30px}
+#stage{display:flex;flex-direction:column;align-items:center;width:100%;max-width:720px;flex:1;justify-content:center;padding-bottom:6px}
+#stage-left,#stage-right,#ok-left,#ok-right{display:contents}
+#pic-row{display:flex;align-items:center;justify-content:center;gap:10px;margin:8px 0 2px}
+#word-pic{border-radius:50%;padding:6%;
+  background:radial-gradient(circle,rgba(255,255,255,.92) 0%,rgba(255,255,255,.7) 48%,rgba(255,255,255,0) 71%);
+  width:var(--pic,clamp(110px,26vh,200px));height:var(--pic,clamp(110px,26vh,200px));object-fit:contain;filter:drop-shadow(0 10px 14px rgba(0,0,0,.22))}
+#btn-listen{background:#fff;border:3px solid #BFD6EE;border-radius:24px 24px 24px 6px;min-height:60px;padding:0 20px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:10px;font-size:24px;color:var(--blue);box-shadow:0 5px 0 #B6CBE2}
+#btn-listen svg{width:32px;height:32px}
+#btn-listen.speaking{border-color:#4AA3F5}
+#prompt{font-size:28px;margin:6px 0 4px;color:var(--ink);text-shadow:0 2px 0 #fff}
+#meaning{font-size:16px;color:#4F5F78;margin:0 0 10px}
+#slots,#tray{display:grid;grid-template-columns:repeat(var(--cols,6),var(--sz,64px));gap:var(--gap,10px);justify-content:center}
+#slots{margin:4px 0 16px}
+#slots .slot{width:var(--sz,64px);height:calc(var(--sz,64px) * 1.08);font-size:calc(var(--sz,64px) * .6)}
+#tray .tile{width:var(--tsz,74px);height:calc(var(--tsz,74px) * 1.08);font-size:calc(var(--tsz,74px) * .62)}
+#tray{grid-template-columns:repeat(var(--tcols,6),var(--tsz,74px));gap:var(--tgap,12px)}
+.slot{width:64px;height:70px;border-radius:14px;background:#EEF2F7;border:3px solid #D3DCE8;display:flex;align-items:center;
+  justify-content:center;font-size:40px;color:var(--ink);box-shadow:inset 0 3px 6px rgba(0,0,0,.08)}
+.slot.filled{background:#fff;border-color:#9CC6EE;box-shadow:0 3px 0 #9CC6EE}
+.slot.hot{border-color:#F0A93B;background:#FFF3DE;transform:scale(1.07)}
+.slot.good{border-color:var(--good);background:#E8F8E4}
+.slot.bad{animation:shake .32s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.tile{width:74px;height:80px;border-radius:16px;background:linear-gradient(180deg,#F5FBFF 0%,#CDE6FA 100%);
+  border:3px solid #8DBDE8;color:var(--blue2);font-size:46px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 0 #6FA3D2,0 10px 16px rgba(0,0,0,.14);cursor:grab;touch-action:none}
+.tile.used{visibility:hidden}
+.tile.ghost{position:fixed;z-index:999;pointer-events:none;transform:scale(1.12);box-shadow:0 14px 22px rgba(0,0,0,.3)}
+.tile.picked{outline:4px solid #F0A93B;outline-offset:2px}
+#play-tools{display:flex;gap:12px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+#play-tools .pill{min-height:50px;font-size:19px;padding:0 20px}
+
+/* ── success: full-screen celebration ─────────────────────────────────── */
+#ov-ok{position:fixed;inset:0;z-index:60;display:none;flex-direction:column;align-items:center;justify-content:center;
+  padding:12px 14px;overflow:hidden;background:#FFE9A8}
+/* isolation + z-index:-1: the sunburst paints under EVERY child, including
+   the ones inside the display:contents column wrappers */
+#ov-ok{isolation:isolate}
+/* inset:0 and NO transform: both a negative inset and a scale count as scrollable overflow */
+#ov-ok::before{content:'';position:absolute;inset:0;z-index:-1;
+  background:url('../assets/spelling/scenes/reward-land.webp') center/cover no-repeat,linear-gradient(180deg,#FFF3C4,#FFE08A)}
+@media (orientation:portrait){#ov-ok::before{background-image:url('../assets/spelling/scenes/reward-port.webp'),linear-gradient(180deg,#FFF3C4,#FFE08A)}}
+body.celebrate .scr,body.celebrate .deco,body.celebrate #cheer-bubble{visibility:hidden}
+#ov-ok.show{display:flex}
+#ok-title{font-size:clamp(46px,9vw,84px);margin:0;line-height:1;letter-spacing:1px;
+  background:linear-gradient(180deg,#FFE14D 0%,#FF9F1C 55%,#FF6B1C 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  -webkit-text-stroke:3px #7A3B0A;filter:drop-shadow(0 5px 0 rgba(122,59,10,.35))}
+#ok-pic{width:var(--okpic,clamp(96px,20vh,170px));height:var(--okpic,clamp(96px,20vh,170px));object-fit:contain;margin:8px 0;filter:drop-shadow(0 10px 14px rgba(0,0,0,.25))}
+#ok-word{display:grid;grid-template-columns:repeat(var(--okc,6),var(--oks,58px));gap:8px;justify-content:center}
+#ok-word .slot{width:var(--oks,58px);height:calc(var(--oks,58px) * 1.07);font-size:calc(var(--oks,58px) * .62);background:#fff;border-color:#9CC6EE;box-shadow:0 3px 0 #9CC6EE}
+#ok-stars{display:flex;gap:10px;justify-content:center;margin:10px 0 2px}
+#ok-stars img{width:var(--okstar,62px);height:var(--okstar,62px);filter:drop-shadow(0 4px 4px rgba(0,0,0,.2))}
+#ok-sub{font-size:26px;margin:2px 0 10px;color:var(--ink);text-shadow:0 2px 0 #fff}
+#ok-btns{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+#ok-btns .pill{min-width:176px}
+#say-panel{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.95);border-radius:22px;padding:10px 18px;margin-top:14px;
+  box-shadow:0 5px 0 #CFDCEC,0 10px 18px rgba(0,0,0,.12);min-height:64px}
+#say-panel .lbl{font-size:16px;color:#4F5F78}
+#say-word{font-size:36px;color:var(--blue);line-height:1}
+#btn-say{width:52px;height:52px;border-radius:16px;border:0;background:linear-gradient(180deg,#4AA3F5,#1F6FD1);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 4px 0 #13509E}
+#btn-say svg{width:28px;height:28px}
+.wave{display:flex;align-items:center;gap:3px;height:34px}
+.wave i{display:block;width:4px;height:8px;border-radius:2px;background:#4AA3F5;opacity:.55}
+.wave.on i{animation:wv .7s ease-in-out infinite;opacity:1}
+.wave.on i:nth-child(2n){animation-delay:.12s}.wave.on i:nth-child(3n){animation-delay:.24s}.wave.on i:nth-child(4n){animation-delay:.36s}
+@keyframes wv{0%,100%{height:8px}50%{height:32px}}
+/* under the content: confetti must never cover a letter or a button */
+#confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:-1}
+#confetti i{position:absolute;top:-20px;width:10px;height:18px;border-radius:3px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.ok-machine{position:absolute;bottom:2vh;pointer-events:none;z-index:-1}
+#ok-truck{left:1vw}#ok-digger{right:1vw}
+
+/* ── hint + parents modals ────────────────────────────────────────────── */
+.ov{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;background:rgba(18,30,52,.55);padding:16px}
+.ov.show{display:flex}
+.panel{background:#FFF4DC;border:4px solid #E3C48A;border-radius:24px;padding:14px;max-width:470px;width:100%;box-shadow:0 16px 40px rgba(0,0,0,.35)}
+.panel-head{display:flex;align-items:center;gap:10px;padding:2px 4px 10px}
+.panel-head h2{margin:0;font-size:26px;flex:1;color:var(--ink2)}
+.panel-head svg{width:34px;height:34px}
+.xbtn{width:48px;height:48px;border:0;border-radius:50%;background:linear-gradient(180deg,#F26A5E,#D63A2F);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 3px 0 #9C2319}
+.xbtn svg{width:22px;height:22px}
+.inner{background:#fff;border-radius:18px;padding:14px}
+#hint-body{display:flex;gap:14px;align-items:center}
+#hint-pic{width:96px;height:96px;object-fit:contain;flex:0 0 auto}
+#hint-clue{font-size:18px;line-height:1.35;color:var(--ink)}
+#hint-id{font-size:15px;color:#6B5330;margin-top:6px}
+#hint-slots{display:grid;grid-template-columns:repeat(var(--hc,6),var(--hs,52px));gap:8px;justify-content:center;margin-top:14px}
+#hint-slots .slot{width:var(--hs,52px);height:calc(var(--hs,52px) * 1.08);font-size:calc(var(--hs,52px) * .6)}
+.prow{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:2px solid #F0E6CF;min-height:56px}
+.prow:last-child{border-bottom:0}
+.prow .pname{flex:1;font-size:18px;color:var(--ink)}
+.sw{width:68px;height:44px;background:transparent;position:relative;cursor:pointer;flex:0 0 auto;border:0;padding:0}
+/* the 44 px button is the tap target; the 36 px track is what is drawn */
+.sw::before{content:'';position:absolute;left:2px;right:2px;top:4px;bottom:4px;border-radius:99px;background:#C8D2DE;transition:background .16s}
+.sw i{position:absolute;top:8px;left:6px;width:28px;height:28px;border-radius:50%;background:#fff;transition:left .16s;box-shadow:0 2px 3px rgba(0,0,0,.2);z-index:1}
+.sw.on::before{background:#4FBF63}.sw.on i{left:34px}
+.prow svg.pico{width:30px;height:30px;flex:0 0 auto}
+
+/* ── progress + collection ────────────────────────────────────────────── */
+.sheet{width:100%;max-width:760px;background:rgba(255,255,255,.95);border-radius:22px;padding:14px 16px;margin-top:14px;
+  box-shadow:0 5px 0 #CFDCEC,0 12px 22px rgba(0,0,0,.12)}
+.sheet h3{margin:0 0 8px;font-size:24px;display:flex;align-items:center;gap:10px}
+.sheet h3 img,.sheet h3 svg{width:34px;height:34px}
+#prog-head{display:flex;align-items:center;gap:14px}
+#avatar{width:72px;height:72px;border-radius:18px;background:#E7F2FD;object-fit:contain;border:3px solid #CFDCEC;flex:0 0 auto}
+.bar{height:16px;border-radius:99px;background:#E3EAF3;overflow:hidden;flex:1.3;min-width:90px}
+.bar i{display:block;height:100%;border-radius:99px}
+.cnt{font-size:17px;min-width:58px;text-align:right}
+#great{display:flex;align-items:center;gap:12px;justify-content:center;margin-top:10px;font-size:24px;color:#B7650A}
+#great img{width:64px;height:64px}
+#coll-wrap{display:flex;align-items:center;gap:8px}
+#coll{display:flex;gap:12px;overflow-x:auto;scroll-behavior:smooth;padding:4px 2px 8px;flex:1;scrollbar-width:none}
+#coll::-webkit-scrollbar{display:none}
+#coll .wcard{flex:0 0 112px;min-height:128px;cursor:default}
+#coll .wcard .wname{text-transform:lowercase}
+.arrow{width:48px;height:48px;border:0;border-radius:14px;background:linear-gradient(180deg,#4AA3F5,#1F6FD1);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 3px 0 #13509E;flex:0 0 auto}
+.arrow svg{width:24px;height:24px}
+#coll-empty{font-size:17px;color:#6B7B94;padding:8px 4px}
+
+@media (max-width:640px){
+  #cat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #word-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .title-txt{font-size:30px}
+  .plank-img{height:52px}
+  .head{--head-pad:100px}
+  #play-cat-name{display:none}
+  #topbar{gap:6px;padding:5px 6px}
+  #topbar .sq,#topbar .sq img{width:48px;height:48px}
+  #play-stars img{width:22px;height:22px}
+  #play-count{font-size:18px;min-width:70px}
+  .pill{font-size:19px;padding:0 18px}
+  #btn-play{font-size:34px;padding:0 36px}
+  #lvl button{min-width:110px;font-size:18px}
+  #title-sign{display:none}
+}
+/* ── SHORT LANDSCAPE (phones on their side): a real two-column layout, not a
+   squashed portrait. Play: picture + Listen + tools on the left, slots + tray
+   on the right, all visible at 640x360 without scrolling. */
+@media (orientation:landscape) and (max-height:500px){
+  .scr{padding:max(6px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 8px max(12px,env(safe-area-inset-left))}
+  .head{min-height:48px}
+  .sq,.sq img{width:48px;height:48px}
+  .plank-img{height:46px}
+  .title-txt{font-size:26px}
+  /* title */
+  #scr-title{justify-content:center}
+  #logo{width:auto;height:31vh;margin-bottom:2px}
+  #tagline{font-size:14px;margin:0 0 8px;padding:4px 14px}
+  #btn-play{min-height:52px;font-size:28px;padding:0 30px}
+  #btn-play svg{width:28px;height:28px}
+  .title-row{margin-top:10px;gap:10px}
+  .pill{min-height:46px;font-size:17px;padding:0 16px}
+  /* lists */
+  .grid{gap:10px;margin-top:8px}
+  #cat-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .card{min-height:112px;padding:8px 6px}
+  .card img.cico{width:56px;height:56px}
+  .card .cname{font-size:17px}
+  #lvl{margin-top:6px}
+  #lvl button{min-height:44px;font-size:17px}
+  #word-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .wcard{min-height:108px}
+  .wcard img.wpic{width:52px;height:52px}
+  .wcard .wname{font-size:16px}
+  /* play */
+  #topbar{padding:4px 6px;gap:6px}
+  #stage{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.5fr);grid-template-rows:1fr auto;gap:4px 14px;
+    align-items:center;max-width:980px;justify-content:stretch}
+  #stage-left{display:flex;flex-direction:column;align-items:center;justify-content:center;grid-row:1;grid-column:1;min-width:0}
+  #stage-right{display:flex;flex-direction:column;align-items:center;justify-content:center;grid-row:1 / span 2;grid-column:2;min-width:0}
+  #play-tools{grid-row:2;grid-column:1;margin-top:0;gap:10px;flex-wrap:nowrap}
+  /* icons only here: two labelled pills do not fit side by side in this column */
+  #play-tools .pill{min-height:48px;min-width:48px;width:48px;padding:0;gap:0}
+  #play-tools .pill .lbl{display:none}
+  #play-tools .pill svg{width:26px;height:26px}
+  #pic-row{flex-direction:column;gap:6px;margin:2px 0}
+  #btn-listen{min-height:46px;font-size:18px;padding:0 14px}
+  #btn-listen svg{width:24px;height:24px}
+  #prompt{font-size:19px;margin:2px 0 0}
+  #meaning{font-size:13px;margin:0}
+  #slots{margin:0 0 10px}
+  /* success */
+  /* top/bottom only: the sides carry --char-room, set above for landscape */
+  #ov-ok{display:none;flex-direction:row;gap:18px;padding-top:8px;padding-bottom:8px}
+  #ov-ok.show{display:flex}
+  #ok-left,#ok-right{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0}
+  #ok-left{flex:0 0 34%}
+  #ok-right{flex:1}
+  #ok-title{font-size:40px}
+  #ok-pic{width:min(34vh,130px);height:min(34vh,130px)}
+  #ok-stars{margin:6px 0 0}
+  #ok-stars img{width:40px;height:40px}
+  #ok-sub{font-size:19px;margin:2px 0 6px}
+  #ok-btns{gap:10px}
+  #ok-btns .pill{min-width:0;min-height:46px;font-size:17px;padding:0 16px}
+  #say-panel{margin-top:8px;padding:6px 12px;min-height:52px}
+  #say-word{font-size:26px}
+  #btn-say{width:46px;height:46px}
+  /* modals */
+  .ov{padding:8px;align-items:center;overflow-y:auto}
+  .panel{padding:10px;max-width:560px}
+  .panel-head{padding:0 2px 6px}
+  .panel-head h2{font-size:21px}
+  #hint-pic{width:72px;height:72px}
+  #hint-clue{font-size:16px}
+  .prow{min-height:44px;padding:3px 4px}
+  .inner{padding:10px}
+  #ov-parents .inner p{font-size:14px;margin:0 0 4px!important;line-height:1.25!important}
+  #ov-parents .inner > div{margin-top:6px!important}
+  #reset-note{margin-top:4px!important;min-height:0!important}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body data-scr="scr-title" data-scene="construction">
+<div id="bg" class="g27-bg" aria-hidden="true"></div>
+<!-- Characters and scenery are SEPARATE absolutely-positioned layers with
+     stable classes (.g27-char-*, .g27-prop-*), never baked into a backdrop,
+     so a later parallax / micro-movement pass can animate each one. -->
+<img class="deco g27-char g27-char-truck"  id="deco-truck"  data-depth="0.7" src="../assets/spelling/prop/truck.webp"  alt="">
+<img class="deco g27-char g27-char-digger" id="deco-digger" data-depth="0.7" src="../assets/spelling/prop/digger.webp" alt="">
+<div id="title-sign" class="g27-prop g27-prop-sign" aria-hidden="true"><img src="../assets/spelling/prop/sign.webp" alt=""><span>Small Words<br>Big Adventures!</span></div>
+<div id="cheer-bubble" aria-hidden="true">You can do it!</div>
+
+<!-- ══ TITLE ══════════════════════════════════════════════════════════ -->
+<section class="scr active" id="scr-title">
+  <button class="sq" id="btn-music" type="button" aria-label="Musik latar"><img src="../assets/spelling/ui/ico-music.webp" alt=""></button>
+  <img id="logo" src="../assets/spelling/ui/title-logo.webp" alt="Spelling Adventure">
+  <p id="tagline">See it · Spell it · Say it · Learn it!</p>
+  <button class="pill p-green" id="btn-play" type="button">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z" fill="#fff"/></svg>Play</button>
+  <div class="title-row">
+    <button class="pill p-blue" id="btn-open-settings" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M19.4 13a7.5 7.5 0 0 0 0-2l2.1-1.6-2-3.4-2.5 1a7.6 7.6 0 0 0-1.7-1l-.4-2.6h-4l-.4 2.6a7.6 7.6 0 0 0-1.7 1l-2.5-1-2 3.4L4.6 11a7.5 7.5 0 0 0 0 2l-2.1 1.6 2 3.4 2.5-1a7.6 7.6 0 0 0 1.7 1l.4 2.6h4l.4-2.6a7.6 7.6 0 0 0 1.7-1l2.5 1 2-3.4zM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7z"/></svg>Settings</button>
+    <button class="pill p-purple" id="btn-open-progress" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="12" width="4.2" height="8.5" rx="1.2" fill="#fff"/><rect x="9.9" y="7" width="4.2" height="13.5" rx="1.2" fill="#fff"/><rect x="16.3" y="3.5" width="4.2" height="17" rx="1.2" fill="#fff"/></svg>Progress</button>
+    <button class="pill p-orange" id="btn-parents" type="button" aria-label="Parents: tahan untuk membuka">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4.2" fill="#fff"/><path d="M3.8 21c.6-4.6 4-7.4 8.2-7.4s7.6 2.8 8.2 7.4z" fill="#fff"/></svg>
+      <span id="parents-lbl">Parents</span></button>
+  </div>
+  <button class="sq" id="btn-home-out" type="button" aria-label="Kembali ke Dunia Emosi" style="position:fixed;left:14px;top:max(12px,env(safe-area-inset-top));z-index:30">
+    <img src="../assets/spelling/ui/ico-home.webp" alt=""></button>
+</section>
+
+<!-- ══ CATEGORY ═══════════════════════════════════════════════════════ -->
+<section class="scr" id="scr-category">
+  <div class="head">
+    <button class="sq left" data-back="scr-title" type="button" aria-label="Kembali"><img src="../assets/spelling/ui/ico-back.webp" alt=""></button>
+    <img class="plank-img" src="../assets/spelling/ui/hdr-select-category.webp" alt="Select Category">
+  </div>
+  <div class="grid" id="cat-grid"></div>
+</section>
+
+<!-- ══ WORDS ══════════════════════════════════════════════════════════ -->
+<section class="scr" id="scr-words">
+  <div class="head">
+    <button class="sq left" data-back="scr-category" type="button" aria-label="Kembali"><img src="../assets/spelling/ui/ico-back.webp" alt=""></button>
+    <div class="title-txt" id="words-title">Colors</div>
+    <div class="badge right" id="words-count"><img src="../assets/spelling/ui/star.webp" alt=""><span>0/0</span></div>
+  </div>
+  <div id="lvl" role="tablist" aria-label="Level">
+    <button type="button" id="lv1" role="tab">Level 1</button>
+    <button type="button" id="lv2" role="tab">Level 2</button>
+  </div>
+  <div class="grid" id="word-grid"></div>
+</section>
+
+<!-- ══ PLAY ═══════════════════════════════════════════════════════════ -->
+<section class="scr" id="scr-play">
+  <div id="topbar">
+    <button class="sq" id="btn-play-home" type="button" aria-label="Kembali ke daftar kata"><img src="../assets/spelling/ui/ico-home.webp" alt=""></button>
+    <div class="chip"><img id="play-cat-ico" src="../assets/spelling/cat/colors.webp" alt=""><span id="play-cat-name">Colors</span></div>
+    <div class="chip" id="play-count">1 / 1</div>
+    <div class="stars" id="play-stars"></div>
+    <button class="sq" id="btn-sound" type="button" aria-label="Suara"><img src="../assets/spelling/ui/ico-sound.webp" alt=""></button>
+  </div>
+  <div id="stage">
+   <div id="stage-left">
+    <div id="pic-row">
+      <img id="word-pic" src="../assets/spelling/color/blue.webp" alt="">
+      <button id="btn-listen" type="button" aria-label="Dengarkan kata">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="#1F74D6"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="#1F74D6" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>Listen</button>
+    </div>
+    <p id="prompt">Spell the word!</p>
+    <p id="meaning"></p>
+   </div>
+   <div id="stage-right">
+    <div id="slots" aria-label="Kotak huruf"></div>
+    <div id="tray" aria-label="Huruf yang bisa diseret"></div>
+   </div>
+    <div id="play-tools">
+      <button class="pill p-orange" id="btn-hint" type="button" aria-label="Hint">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5a6.5 6.5 0 0 0-3.9 11.7c.6.5.9 1.1.9 1.8V17h6v-1c0-.7.3-1.3.9-1.8A6.5 6.5 0 0 0 12 2.5z" fill="#fff"/><rect x="9" y="18.2" width="6" height="2.2" rx="1" fill="#fff"/></svg><span class="lbl">Hint</span></button>
+      <button class="pill p-blue" id="btn-clear" type="button" aria-label="Restart">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5a7 7 0 1 1-6.6 4.7" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M4 4v6h6" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lbl">Restart</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SUCCESS (full screen) ══════════════════════════════════════════ -->
+<div id="ov-ok" role="dialog" aria-modal="true">
+  <div id="confetti"></div>
+  <img class="ok-machine g27-char g27-char-truck" id="ok-truck" data-depth="0.7" src="../assets/spelling/prop/truck.webp" alt="">
+  <img class="ok-machine g27-char g27-char-digger" id="ok-digger" data-depth="0.7" src="../assets/spelling/prop/digger.webp" alt="">
+  <div id="ok-left">
+  <h1 id="ok-title">Amazing!</h1>
+  <img id="ok-pic" src="../assets/spelling/color/blue.webp" alt="">
+  </div>
+  <div id="ok-right">
+  <div id="ok-word"></div>
+  <div id="ok-stars"></div>
+  <p id="ok-sub">Well done!</p>
+  <div id="ok-btns">
+    <button class="pill p-green" id="btn-next" type="button"><span id="next-lbl">Next Word</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <button class="pill p-blue" id="btn-again" type="button">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5a7 7 0 1 1-6.6 4.7" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M4 4v6h6" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Replay</button>
+  </div>
+  <div id="say-panel">
+    <button id="btn-say" type="button" aria-label="Ucapkan bersama">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="#fff"/><path d="M16 8.5a5 5 0 0 1 0 7" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg></button>
+    <div><div class="lbl">Say it with me!</div><div id="say-word">Blue</div></div>
+    <div class="wave" id="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  </div>
+  </div>
+</div>
+
+<!-- ══ HINT ═══════════════════════════════════════════════════════════ -->
+<div class="ov" id="ov-hint" role="dialog" aria-modal="true"><div class="panel">
+  <div class="panel-head">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5a6.5 6.5 0 0 0-3.9 11.7c.6.5.9 1.1.9 1.8V17h6v-1c0-.7.3-1.3.9-1.8A6.5 6.5 0 0 0 12 2.5z" fill="#FFC928" stroke="#C98A00"/><rect x="9" y="18.2" width="6" height="2.2" rx="1" fill="#8A93A6"/></svg>
+    <h2>Need a Hint?</h2>
+    <button class="xbtn" data-close="ov-hint" type="button" aria-label="Tutup">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/></svg></button>
+  </div>
+  <div class="inner">
+    <div id="hint-body"><img id="hint-pic" src="../assets/spelling/color/blue.webp" alt="">
+      <div><div id="hint-clue"></div><div id="hint-id"></div></div></div>
+    <div id="hint-slots"></div>
+  </div>
+</div></div>
+
+<!-- ══ PARENTS (grown-up panel, hold to open) ═════════════════════════ -->
+<div class="ov" id="ov-parents" role="dialog" aria-modal="true"><div class="panel">
+  <div class="panel-head"><h2>Parents</h2>
+    <button class="xbtn" data-close="ov-parents" type="button" aria-label="Tutup">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/></svg></button></div>
+  <div class="inner">
+    <p style="margin:0 0 10px;font-size:16px;color:#4F5F78;line-height:1.35">Latihan untuk lomba: semua kata ada di Level 1 dan Level 2, dan setiap level boleh diulang sesering mungkin — tidak ada yang terkunci.</p>
+    <div class="prow"><span class="pname">Bintang terkumpul</span><span id="par-stars" class="cnt">0</span></div>
+    <div class="prow"><span class="pname">Kata dikuasai (3 bintang)</span><span id="par-master" class="cnt">0</span></div>
+    <div style="display:flex;justify-content:center;margin-top:12px">
+      <button class="pill p-red" id="btn-reset" type="button">Hapus kemajuan</button></div>
+    <p id="reset-note" style="margin:10px 0 0;font-size:15px;color:#9C2319;text-align:center;min-height:20px"></p>
+  </div>
+</div></div>
+
+<!-- ══ PROGRESS + WORD COLLECTION ═════════════════════════════════════ -->
+<section class="scr" id="scr-progress">
+  <div class="head">
+    <button class="sq left" data-back="scr-title" type="button" aria-label="Kembali"><img src="../assets/spelling/ui/ico-back.webp" alt=""></button>
+    <div class="title-txt">Progress</div>
+  </div>
+  <div class="sheet">
+    <div id="prog-head"><img id="avatar" src="../assets/spelling/ui/star.webp" alt="">
+      <div style="flex:1"><div style="font-size:24px" id="prog-name">My Progress</div></div>
+      <div class="badge" id="prog-total"><img src="../assets/spelling/ui/star.webp" alt=""><span>0</span></div></div>
+    <div id="prog-list"></div>
+    <div id="great"><img src="../assets/spelling/ui/star-burst.webp" alt=""><span id="great-txt">Great Progress!</span></div>
+  </div>
+  <div class="sheet">
+    <h3><img src="../assets/spelling/cat/school.webp" alt="">Word Collection</h3>
+    <div id="coll-wrap">
+      <button class="arrow" id="coll-l" type="button" aria-label="Geser kiri"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div id="coll"></div>
+      <button class="arrow" id="coll-r" type="button" aria-label="Geser kanan"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SETTINGS ═══════════════════════════════════════════════════════ -->
+<section class="scr" id="scr-settings">
+  <div class="head">
+    <button class="sq left" data-back="scr-title" type="button" aria-label="Kembali"><img src="../assets/spelling/ui/ico-back.webp" alt=""></button>
+    <div class="title-txt">Settings</div>
+  </div>
+  <div class="sheet">
+    <div class="prow"><svg class="pico" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z" fill="#1F74D6"/><path d="M16 8.5a5 5 0 0 1 0 7" stroke="#1F74D6" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>
+      <span class="pname">Sound Effects</span><button class="sw" id="sw-sfx" type="button" aria-label="Sound Effects"><i></i></button></div>
+    <div class="prow"><svg class="pico" viewBox="0 0 24 24"><path d="M9 18V6l11-2v12" stroke="#1F74D6" stroke-width="2.2" fill="none"/><circle cx="6.5" cy="18" r="2.8" fill="#1F74D6"/><circle cx="17.5" cy="16" r="2.8" fill="#1F74D6"/></svg>
+      <span class="pname">Background Music</span><button class="sw" id="sw-music" type="button" aria-label="Background Music"><i></i></button></div>
+    <div class="prow"><svg class="pico" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4" fill="#1F74D6"/><path d="M2 20c.5-4 3.4-6.4 7-6.4s6.5 2.4 7 6.4z" fill="#1F74D6"/><path d="M17 7a4 4 0 0 1 0 6M19.5 4.5a7.5 7.5 0 0 1 0 11" stroke="#1F74D6" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+      <span class="pname">Voice Pronunciation</span><button class="sw" id="sw-voice" type="button" aria-label="Voice Pronunciation"><i></i></button></div>
+    <div class="prow"><svg class="pico" viewBox="0 0 24 24"><path d="M12 2.5a6.5 6.5 0 0 0-3.9 11.7c.6.5.9 1.1.9 1.8V17h6v-1c0-.7.3-1.3.9-1.8A6.5 6.5 0 0 0 12 2.5z" fill="#FFC928"/><rect x="9" y="18.2" width="6" height="2.2" rx="1" fill="#8A93A6"/></svg>
+      <span class="pname">Show Hints</span><button class="sw" id="sw-hint" type="button" aria-label="Show Hints"><i></i></button></div>
+  </div>
+</section>
+
+<div id="du-build-stamp" class="du-build-stamp" style="position:fixed;left:6px;bottom:4px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(60,45,20,.4);pointer-events:none">v27.1</div>
+
+<script src="data/spelling-data.js?v=v62.0-20260927a"></script>
+<script src="data/emoji-map.js?v=v62.0-20260927a"></script>
+<script src="data/save-engine.js?v=v62.0-20260927a"></script>
+<script src="ejaan-inggris.js?v=v62.0-20260927a"></script>
+<script src="data/freeze-watchdog.js?v=v62.0-20260927a"></script>
+<!-- a fresh deploy refreshes an open game page once, like every other standalone game -->
+<script src="sw-reload.js?v=v62.0-20260927a"></script>
+</body>
+</html>

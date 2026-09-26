@@ -2085,6 +2085,91 @@ Its static half fails the moment the copy drifts from the roster again, which is
 bug this was. It also asserts the egg stays hidden (slot 7 with another animal, or a frog in
 another slot, gets nothing) and that a child's earned badge survives.
 
+## ✅ 2026-09-27 — G27 Spelling Adventure (ejaan Inggris), new game in the Hutan Kata zone
+
+Owner brief: "game tambahan samping tebak kata … mengeja huruf dalam kata bahasa Inggris",
+"tampilannya sama persis" as the supplied mockup, drag-drop letters into empty boxes, words for
+lomba practice: "semua kata di level 1 dan level 2, dan bisa diulang2". Page
+`games/ejaan-inggris.html` + `.js`, data `games/data/spelling-data.js`, launched from tile
+`gtile-27` beside Susun Kata.
+
+**Words.** The owner's own list, verbatim: 11 colours, 17 school objects, 4 everyday things
+(32 words), each with a picture cropped from the owner's asset sheets, an Indonesian meaning and a
+short English clue for the hint. Level 1 = words of ≤5 letters, Level 2 = longer; levels are
+DRILLS, never locks — any level can be replayed forever, stars keep only the best score. "At Home"
+and "Al-Qur'an" show "Segera Hadir": the owner deferred the Al-Qur'an words ("nanti aja") and
+none were invented.
+
+**Voice — decided by LICENCE, then measured.** The repo is public, so the audio is redistributed.
+Piper's best en_US voices are not shippable (`hfc_female` CC BY-NC-SA, `lessac` research-only,
+`amy` unclear); VoiceStudio/OmniVoice was assessed at the owner's request and rejected (CC-BY-NC
+weights + Boson Higgs + Meta Llama community terms, 2.45 GB, built for CUDA/MLX on a laptop with
+no GPU). Kokoro-82M (Apache-2.0, permissive training data) renders every clip ONCE, offline, into
+`assets/spelling/audio/` (Opus 32 kbps, normalised, silence-trimmed; 58 clips ≈ 260 KB). Never Web
+Speech: the owner switched TTS off once already because a device voice mangled the text
+(train-shared.js v55.74). Letter names are spelled phonetically for the renderer (`a` → "ay"):
+fed a bare "A", an English TTS reads the article "uh".
+Clarity was MEASURED, not asserted: of four Kokoro voices scored by in-context ASR on the whole
+alphabet, `af_heart` is clearest. Final in-context score **24/26** (with a lead-in silence;
+23/26 without). `tools/spelling_audio_pick.py` tried alternative spellings and slower renders for
+A, E and T — none beat the shipped clips, and near-identical variants swung from 2/26 to 23/26,
+i.e. the ASR is at its resolution limit, not the voice. Isolated-clip ASR was shown to be the
+wrong instrument (it invents articles: "a b", "the da").
+
+**Art pipeline** (`tools/spelling_assets.py`, sources in `tools/spelling-src/`). First export
+painted a WHITE HALO round every sprite (10–35% of the outer rim, black splat worst) — invisible on
+a white test background, glaring on the sky. Fixed by matting only the rim against the nearest
+INTERIOR colour (never a global white key, which hollows white bodies), and by taking alpha from
+RAW ink: morphological closing had bridged the paper between a splat's droplets into white specks.
+A "drop white pockets in dark objects" rule was tried and REMOVED — it hollowed the marker's white
+body, the same trap in another guise. Verified on sky AND dark backgrounds at zoom.
+Backdrops: the owner's scene sheet (`tools/spelling_scenes.py`, 9 scenes × landscape/portrait),
+switched by ORIENTATION, overscanned 4% as their own `.g27-bg` layer with a sky gradient under it.
+Characters/props are separate positioned layers (`.g27-char-*`, `.g27-prop-*`) with NO css filter,
+ready for the parallax follow-up. Font: Fredoka One self-hosted (OFL, licence file alongside) —
+the other games load Google Fonts over the network, which fails offline.
+
+**Characters + orientation.** Owner: "saat landscape karakter 2 itu terlalu kecil, buat based on
+% of total screen, misal 15% each". The dump truck and the backhoe are sized by the SCREEN:
+landscape `min(15vw, 30vh × aspect)`, portrait `min(26vw, 22vh × aspect)`, never under 96 px,
+bottom corners, `data-depth="0.7"`, no css filter. In landscape the title, play and celebration
+screens reserve side room (`--char-room`) so content sits BETWEEN them — the characters are never
+shrunk or hidden there, and qa-g27-visual asserts each is shown at exactly the rule's width.
+Short landscape (under 500 px tall) is a real two-column layout, not a squashed portrait: picture,
+Listen and tools on the left, slots and tray on the right; the celebration likewise; the play
+tools become icon buttons there. Rotating mid-word keeps the placed letters and the drag works
+afterwards (qa-g27-spelling). In PORTRAIT a character may hide where a screen genuinely has no
+room — measured and reported by the gate, not silent: a 10-letter word on a 390×844 phone, and
+play / long word / celebration on a 360×640 phone. Tall portrait celebrations keep both machines by
+reserving a band under the content.
+Two CSS traps cost a round each, both "a later rule with the same id specificity wins": the
+celebration silently lost its reserved side room to its own base padding further down, and the
+short-landscape block would have done the same.
+
+**Offline — a production gap found by reading, then proven.** `<audio>` fetches with a Range
+header; GitHub Pages answers 206, and `sw.js` caches only whole 200s, so a clip that was only ever
+PLAYED online is never cached and the voice goes silent offline. `python -m http.server` ignores
+Range, so a local test passes while production fails. G27 now warms every clip and word picture
+with a plain fetch() once online; `tools/qa-g27-offline.mjs` serves with a Range-honouring server
+and KILLS it: 9/9. With the warm-up disabled (`QA_NO_WARM=1`) it fails exactly as predicted —
+`words/blue` is silent offline although "blue" was played online. The SHELL precaches only the
+page, logic, data, font and the title scene (both cuts); the other scenes cache on first view.
+
+**Gates.** `qa-g27-spelling` (real mouse drag, finger drag, tap-to-place, wrong letter refused,
+stars + reload, Replay, Next Word, Level 2, rotation mid-word keeps letters and the drag still
+works), `qa-g27-visual` (every screen at 390×844, 844×390, 360×640, 640×360, 768×1024,
+1024×768, 1280×800: no horizontal scroll, play/success/modals reachable WITHOUT scrolling, no
+character over a control, no text colliding with a control/badge/text, targets ≥44 px, text
+≥12 px, Fredoka actually in use), `qa-g27-offline`, `qa-spelling-assets`; G27 added to
+`qa-mobile-touch` and `qa-endgame-hang`. Each new gate was proven to FAIL on a deliberately broken
+build first. Two of my own gate checks were wrong before that: the text-overlap check passed on the
+original broken header because the star badge is a `<div>`, not a button — widened to badges,
+chips and text; and a "success overflows 30 px" failure was the backdrop's negative inset, then its
+scale transform (transforms count as scrollable overflow) — fixed at the source.
+
+STILL OPEN: At Home + Al-Qur'an word lists (owner to supply); parallax / 3D micro-movement of the
+characters (separate follow-up, layers prepared); Everyday Things has only the owner's 4 words.
+
 ## ⬜ CROSS-GAME ISSUES
 
 ### Unified Scoring Engine
