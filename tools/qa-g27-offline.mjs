@@ -94,6 +94,8 @@ try {
     // every clip must be playable the way the <audio> element asks for it: WITH a Range header
     const audio = await page.evaluate(async () => {
       const want = ['words/computer', 'words/blue'].concat('computer'.split('').map(c => 'letters/' + c))
+        // the spelling-bee asks for a word never opened online (Ask the Judge)
+        .concat(['definitions/computer', 'sentences/computer', 'pos/noun', 'pos/adjective'])
       const bad = []
       for (const k of want) {
         const u = window.__g27.audioURL(k.split('/')[0], k.split('/')[1])
@@ -106,7 +108,7 @@ try {
       })
       return { bad, decoded }
     })
-    check(audio.bad.length === 0, `OFFLINE: the word clip and all its letter clips are served to a Range request${audio.bad.length ? ' — ' + audio.bad.join(', ') : ''}`)
+    check(audio.bad.length === 0, `OFFLINE: the word clip, its letter clips and its Ask answers are served to a Range request${audio.bad.length ? ' — ' + audio.bad.join(', ') : ''}`)
     check(audio.decoded, 'OFFLINE: an <audio> element really decodes a clip')
     const won = await page.evaluate(async () => { window.__g27.solve(); await new Promise(r => setTimeout(r, 900)); return document.getElementById('ov-ok').classList.contains('show') })
     check(won, 'OFFLINE: the word can be spelled to the celebration')

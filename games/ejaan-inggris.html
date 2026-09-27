@@ -213,6 +213,7 @@ body:not([data-scr="scr-title"]) #title-sign{display:none}
 .tile.ghost{position:fixed;z-index:999;pointer-events:none;transform:scale(1.12);box-shadow:0 14px 22px rgba(0,0,0,.3)}
 .tile.picked{outline:4px solid #F0A93B;outline-offset:2px}
 #play-tools{display:flex;gap:12px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+
 #play-tools .pill{min-height:50px;font-size:19px;padding:0 20px}
 
 /* ── success: full-screen celebration ─────────────────────────────────── */
@@ -268,6 +269,16 @@ body.celebrate .scr,body.celebrate .deco,body.celebrate #cheer-bubble{visibility
   display:flex;align-items:center;justify-content:center;box-shadow:0 3px 0 #9C2319}
 .xbtn svg{width:22px;height:22px}
 .inner{background:#fff;border-radius:18px;padding:14px}
+#ask-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.askb{border:0;cursor:pointer;min-height:64px;border-radius:16px;padding:8px 10px;font-family:inherit;color:#fff;text-align:center;
+  background:linear-gradient(180deg,#9A6BF2,#6D3FD6);box-shadow:0 4px 0 #4C2A9E;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  transition:transform .08s}
+.askb:active{transform:translateY(3px);box-shadow:0 1px 0 #4C2A9E}
+.askb b{font-size:clamp(14px,4.1vw,18px);line-height:1.1;white-space:nowrap}.askb small{font-size:13px;opacity:.9;font-family:system-ui,sans-serif}
+.askb.on{background:linear-gradient(180deg,#FFB547,#F07A12);box-shadow:0 4px 0 #B9570A}
+#ask-answer{margin:12px 2px 0;min-height:48px;font-size:18px;line-height:1.35;color:var(--ink);text-align:center}
+#ask-answer .gap{display:inline-block;width:3.6em;height:1em;border-bottom:3px solid #6D3FD6;margin:0 2px;vertical-align:-2px}
+#ask-answer .nw{white-space:nowrap}
 #hint-body{display:flex;gap:14px;align-items:center}
 #hint-pic{width:96px;height:96px;object-fit:contain;flex:0 0 auto}
 #hint-clue{font-size:18px;line-height:1.35;color:var(--ink)}
@@ -400,6 +411,12 @@ body.celebrate .scr,body.celebrate .deco,body.celebrate #cheer-bubble{visibility
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 /* the living layer's particle canvas */
 canvas.g27-fx{position:fixed;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
+/* three tools on one row on a phone held upright (Ask made Restart wrap at 390px) */
+@media (max-width:640px) and (orientation:portrait){#play-tools{gap:8px;flex-wrap:nowrap;width:100%;max-width:420px}
+  #play-tools .pill{flex:1 1 0;min-width:0;padding:0 8px;gap:5px;font-size:clamp(15px,4.4vw,19px)}#play-tools .pill svg{width:22px;height:22px;flex:0 0 auto}}
+/* phone on its side: the tools column is ~135px; three 48px icons + gaps (164px) ran into the tray */
+@media (orientation:landscape) and (max-height:500px) and (max-width:700px){#play-tools{gap:4px}
+  #play-tools .pill{min-height:44px;min-width:44px;width:44px;height:44px}}
 </style>
 </head>
 <body data-scr="scr-title" data-scene="construction">
@@ -482,6 +499,8 @@ canvas.g27-fx{position:fixed;inset:0;width:100%;height:100%;z-index:2;pointer-ev
     <div id="play-tools">
       <button class="pill p-orange" id="btn-hint" type="button" aria-label="Hint">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5a6.5 6.5 0 0 0-3.9 11.7c.6.5.9 1.1.9 1.8V17h6v-1c0-.7.3-1.3.9-1.8A6.5 6.5 0 0 0 12 2.5z" fill="#fff"/><rect x="9" y="18.2" width="6" height="2.2" rx="1" fill="#fff"/></svg><span class="lbl">Hint</span></button>
+      <button class="pill p-purple" id="btn-ask" type="button" aria-label="Ask: definition, part of speech, sentence">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4h0A2.5 2.5 0 0 1 4 13.5z" fill="#fff"/><path d="M10 8.2a2 2 0 1 1 2.9 1.8c-.6.3-.9.7-.9 1.3v.4" stroke="#6D3FD6" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="12" cy="13.4" r="1" fill="#6D3FD6"/></svg><span class="lbl">Ask</span></button>
       <button class="pill p-blue" id="btn-clear" type="button" aria-label="Restart">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5a7 7 0 1 1-6.6 4.7" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M4 4v6h6" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lbl">Restart</span></button>
     </div>
@@ -528,6 +547,27 @@ canvas.g27-fx{position:fixed;inset:0;width:100%;height:100%;z-index:2;pointer-ev
     <div id="hint-body"><img id="hint-pic" src="../assets/spelling/color/blue.webp" alt="">
       <div><div id="hint-clue"></div><div id="hint-id"></div></div></div>
     <div id="hint-slots"></div>
+  </div>
+</div></div>
+
+<!-- ══ ASK (spelling-bee questions: definition · part of speech · sentence) ═
+     Real bees let a speller ask these three. Answers are SPOKEN; on screen the
+     sentence shows the word as a blank, so the panel never gives the spelling away. -->
+<div class="ov" id="ov-ask" role="dialog" aria-modal="true" aria-labelledby="ask-title"><div class="panel">
+  <div class="panel-head">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4A2.5 2.5 0 0 1 4 13.5z" fill="#9A6BF2" stroke="#4C2A9E"/><path d="M10 8.2a2 2 0 1 1 2.9 1.8c-.6.3-.9.7-.9 1.3v.4" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="12" cy="13.4" r="1" fill="#fff"/></svg>
+    <h2 id="ask-title">Ask the Judge</h2>
+    <button class="xbtn" data-close="ov-ask" type="button" aria-label="Tutup">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/></svg></button>
+  </div>
+  <div class="inner">
+    <div id="ask-btns">
+      <button class="askb" data-ask="definition" type="button"><b>Definition</b><small>Artinya apa?</small></button>
+      <button class="askb" data-ask="pos" type="button"><b>Part of speech</b><small>Jenis kata</small></button>
+      <button class="askb" data-ask="sentence" type="button"><b>Sentence</b><small>Contoh kalimat</small></button>
+      <button class="askb" data-ask="again" type="button"><b>Say it again</b><small>Ulangi kata</small></button>
+    </div>
+    <p id="ask-answer" aria-live="polite">Tap a question. The judge will answer.</p>
   </div>
 </div></div>
 
@@ -589,15 +629,15 @@ canvas.g27-fx{position:fixed;inset:0;width:100%;height:100%;z-index:2;pointer-ev
 
 <div id="du-build-stamp" class="du-build-stamp" style="position:fixed;left:6px;bottom:4px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(60,45,20,.4);pointer-events:none">v27.1</div>
 
-<script src="data/spelling-data.js?v=v62.4-20260927a"></script>
-<script src="data/emoji-map.js?v=v62.4-20260927a"></script>
-<script src="data/save-engine.js?v=v62.4-20260927a"></script>
-<script src="motion.js?v=v62.4-20260927a"></script>
-<script src="parallax-engine.js?v=v62.4-20260927a"></script>
-<script src="g27-scene.js?v=v62.4-20260927a"></script>
-<script src="ejaan-inggris.js?v=v62.4-20260927a"></script>
-<script src="data/freeze-watchdog.js?v=v62.4-20260927a"></script>
+<script src="data/spelling-data.js?v=v62.5-20260927a"></script>
+<script src="data/emoji-map.js?v=v62.5-20260927a"></script>
+<script src="data/save-engine.js?v=v62.5-20260927a"></script>
+<script src="motion.js?v=v62.5-20260927a"></script>
+<script src="parallax-engine.js?v=v62.5-20260927a"></script>
+<script src="g27-scene.js?v=v62.5-20260927a"></script>
+<script src="ejaan-inggris.js?v=v62.5-20260927a"></script>
+<script src="data/freeze-watchdog.js?v=v62.5-20260927a"></script>
 <!-- a fresh deploy refreshes an open game page once, like every other standalone game -->
-<script src="sw-reload.js?v=v62.4-20260927a"></script>
+<script src="sw-reload.js?v=v62.5-20260927a"></script>
 </body>
 </html>

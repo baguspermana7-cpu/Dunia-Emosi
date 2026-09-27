@@ -80,7 +80,8 @@
      A plain fetch() carries no Range header, gets a 200, and the worker caches
      it; the audio element's later Range request then matches it by URL.
      So once the page is open online, warm every clip and word picture
-     (~450 KB, 90 files), a few at a time, when the browser is idle. */
+     (~2.9 MB, ~280 files: words, letters and pictures first, then the Ask
+     answers), a few at a time, when the browser is idle. */
   var warmed = false
   function warmClips () {
     // __G27_NO_WARM: test seam, lets the offline gate prove the gap this closes
@@ -91,6 +92,9 @@
     var urls = D.WORDS.map(function (x) { return url('audio/words/' + x.w + '.webm') })
       .concat('abcdefghijklmnopqrstuvwxyz'.split('').map(function (c) { return url('audio/letters/' + c + '.webm') }))
       .concat(D.WORDS.map(function (x) { return picURL(x) }))
+      .concat(D.WORDS.map(function (x) { return url('audio/definitions/' + x.w + '.webm') }))
+      .concat(D.WORDS.map(function (x) { return url('audio/sentences/' + x.w + '.webm') }))
+      .concat(['noun', 'adjective'].map(function (p) { return url('audio/pos/' + p + '.webm') }))
     var i = 0
     function next () {
       if (i >= urls.length) return
@@ -257,7 +261,7 @@
     return 'town'
   }
   function openOv (id) { $(id).classList.add('show') }
-  function closeOv (id) { $(id).classList.remove('show') }
+  function closeOv (id) { $(id).classList.remove('show'); if (id === 'ov-ask') stopAudio() }
 
   /* ── state ─────────────────────────────────────────────────────────── */
   var S = { cat: 'colors', level: 1, queue: [], idx: 0, word: null, placed: [], wrong: 0, solved: false }
@@ -579,8 +583,36 @@
     hs.style.setProperty('--hc', cols); hs.style.setProperty('--hs', Math.max(34, Math.min(52, sz)) + 'px')
   }
 
+  /* ── ASK: spelling-bee questions ──────────────────────────────────────
+     Scripps rules let a speller ask for the definition, the part of speech and
+     a sentence. Every answer is a pre-rendered, ASR-verified clip (offline); the
+     sentence is shown with the word as a blank so the text never spells it. */
+  var POS_NAME = { noun: 'Noun', adjective: 'Adjective', verb: 'Verb' }
+  function esc (t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;') }
+  function askAnswer (what) {
+    var x = S.word; if (!x) return
+    var el = $('ask-answer')
+    document.querySelectorAll('#ask-btns .askb').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-ask') === what) })
+    stopAudio()
+    if (what === 'definition') { el.textContent = x.clue || ''; play('definitions', x.w) }
+    else if (what === 'pos') { el.textContent = POS_NAME[x.pos] || x.pos || ''; play('pos', x.pos) }
+    else if (what === 'sentence') {
+      // the blank keeps its punctuation on the same line ("with ____.")
+      var re = new RegExp('\\b' + x.w + '\\b([.,!?]?)', 'ig')
+      el.innerHTML = esc(x.say || '').replace(re, '<span class="nw"><span class="gap" aria-label="blank"></span>$1</span>')
+      play('sentences', x.w)
+    } else { el.textContent = 'Listen…'; wave(true); play('words', x.w, function () { wave(false) }) }
+  }
+  function showAsk () {
+    if (!S.word) return
+    stopAudio()
+    $('ask-answer').textContent = 'Tap a question. The judge will answer.'
+    document.querySelectorAll('#ask-btns .askb').forEach(function (b) { b.classList.remove('on') })
+    openOv('ov-ask')
+  }
+
   /* ── progress + collection ─────────────────────────────────────────── */
-  var BAR = { colors: '#58C45E', school: '#3E8EE8', everyday: '#FF9A2E', mixed: '#A66BFF' }
+  var BAR = { colors: '#58C45E', school: '#3E8EE8', everyday: '#FF9A2E', athome: '#E8746A', quran: '#2BAE8E', mixed: '#A66BFF' }
   function avatarSrc () {
     try {
       var a = JSON.parse(localStorage.getItem('dunia-active-slot') || '[0,1]')
@@ -650,6 +682,10 @@
   on('btn-listen', function () { if (S.word) sayAndSpell(S.word.w) })
   on('btn-say', function () { if (S.word) sayAndSpell(S.word.w) })
   on('btn-hint', function () { sfx('click'); showHint() })
+  on('btn-ask', function () { unlock(); sfx('click'); showAsk() })
+  document.querySelectorAll('#ask-btns .askb').forEach(function (b) {
+    b.addEventListener('click', function () { unlock(); askAnswer(b.getAttribute('data-ask')) })
+  })
   on('btn-clear', function () { sfx('click'); restartWord() })
   on('btn-play-home', function () { stopAudio(); openWords(S.level) })
   on('btn-next', function () {
@@ -726,10 +762,10 @@
     startWord: function (w) { var x = D.find(w); if (!x) return 'no word'; startQueue([x], 0); return 'ok' },
     place: function (i, ch) { placeAt(i, ch); return S.placed.slice() },
     solve: function () { if (!S.word) return 'no word'; S.word.w.split('').forEach(function (c, i) { placeAt(i, c) }); return S.placed.slice() },
-    showHint: showHint, buildProgress: buildProgress,
+    showHint: showHint, buildProgress: buildProgress, showAsk: showAsk, ask: askAnswer,
     openParents: function () { buildParents(); openOv('ov-parents'); return 'ok' },
     closeAll: function () {
-      closeOv('ov-hint'); closeOv('ov-parents')
+      closeOv('ov-hint'); closeOv('ov-parents'); closeOv('ov-ask')
       if ($('ov-ok').classList.contains('show')) closeWin()
       stopAudio(); return 'ok'
     },

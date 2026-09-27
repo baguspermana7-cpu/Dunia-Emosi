@@ -3324,3 +3324,10 @@ Owner: "masukkan ke database asset … agar reusable", "crop dg sempurna … web
 - `branded/` + `currency/` (logos, rupiah) excluded by `AssetIndex.safe()`.
 - First integration: 29 emoji GAPs (no sprite before) now resolve to cartoon library sprites through EmojiMap `lib:` values — on every non-Pokémon page; Pokémon pages keep the emoji (checked per page).
 - Gate `tools/qa-asset-index.mjs`; standard in `documentation and standarization/DB_SPRITE_INTEGRATION.md`.
+
+### ✅ 2026-09-27 — G27 "Ask the Judge": real spelling-bee asks (from public-apis)
+Owner handed over public-apis/public-apis with "atur aja yang terbaik". Best fit for the lomba drill: Scripps rules let a speller ask for the **definition, part of speech and a sentence** — G27 had none of it.
+- New **Ask** button on the play screen → panel with Definition / Part of speech / Sentence / Say it again. Every answer is a pre-rendered clip (Kokoro, ASR-verified: ≥ 85% of words heard in order; a sentence must contain its word, a definition must NOT). On screen the sentence shows the word as a blank, so nothing on the panel spells it.
+- Data: 63 kid-written sentences + part of speech in `spelling-data.js`. Part of speech cross-checked by `tools/spelling_bee_check.py` against **Free Dictionary API** (dictionaryapi.dev, on public-apis, no key) with fallback to **Wiktionary REST** (also on the list) — dictionaryapi.dev answered HTTP 522 / ~20 s per request on the day, which is also why the game never calls an API at runtime (offline PWA). Responses cached in ~/.cache, not vendored (Wiktionary text is CC BY-SA; only facts + our own text ship).
+- Warm list includes the new clips so Ask works offline. Progress bars got their own colours for At Home / Al-Qur'an (were falling back to Colors' green).
+- Gates: `qa-g27-ask.mjs` (real taps, 4 sizes: right clip per ask, served + decodes, nothing spells the word, fits, ≥ 44 px, closing stops the voice); `qa-spelling-assets` now requires every definition/sentence/pos clip in the verified manifest and flags a clip whose text changed since render.

@@ -55,12 +55,23 @@ check(soon.length === 0, `no category is still "Segera Hadir"${soon.length ? ' �
 // stayed green, because a gate that checks a file EXISTS cannot hear it.
 const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/spelling/audio/verified.json'), 'utf8'))
 const unverified = []
-for (const [dir, keys] of [['letters', letters], ['words', D.WORDS.map(w => w.w)]]) {
+const POSES = [...new Set(D.WORDS.map(w => w.pos))]
+const missingAsk = D.WORDS.filter(w => !w.pos || !w.say || !w.clue).map(w => w.w)
+check(missingAsk.length === 0, `every word answers the spelling-bee asks (definition, part of speech, sentence)${missingAsk.length ? ' — ' + missingAsk.join(', ') : ''}`)
+const spoil = D.WORDS.filter(w => new RegExp('\\b' + w.w, 'i').test(w.clue)).map(w => w.w)
+check(spoil.length === 0, `no definition says its own word${spoil.length ? ' — ' + spoil.join(', ') : ''}`)
+const noWordInSay = D.WORDS.filter(w => !new RegExp('\\b' + w.w + '\\b', 'i').test(w.say)).map(w => w.w)
+check(noWordInSay.length === 0, `every sentence uses its word${noWordInSay.length ? ' — ' + noWordInSay.join(', ') : ''}`)
+const TEXT = { definitions: w => D.find(w).clue, sentences: w => D.find(w).say }
+for (const [dir, keys] of [['letters', letters], ['words', D.WORDS.map(w => w.w)], ['definitions', D.WORDS.map(w => w.w)],
+  ['sentences', D.WORDS.map(w => w.w)], ['pos', POSES]]) {
   for (const k of keys) {
     const f = path.join(ROOT, `assets/spelling/audio/${dir}/${k}.webm`)
-    if (!fs.existsSync(f)) continue
+    if (!fs.existsSync(f)) { unverified.push(`${dir}/${k} (missing)`); continue }
     const h = crypto.createHash('sha1').update(fs.readFileSync(f)).digest('hex')
-    if (!manifest[`${dir}/${k}`] || manifest[`${dir}/${k}`].sha1 !== h) unverified.push(`${dir}/${k}`)
+    const m = manifest[`${dir}/${k}`]
+    if (!m || m.sha1 !== h) unverified.push(`${dir}/${k}`)
+    else if (TEXT[dir] && m.text !== TEXT[dir](k)) unverified.push(`${dir}/${k} (text changed since render)`)
   }
 }
 check(unverified.length === 0,
@@ -68,7 +79,7 @@ check(unverified.length === 0,
 
 // ---- 4. clips must not be empty or duplicates --------------------------
 const clipDir = p => fs.readdirSync(path.join(ROOT, p)).map(f => path.join(ROOT, p, f))
-const all = [...clipDir('assets/spelling/audio/letters'), ...clipDir('assets/spelling/audio/words')]
+const all = ['letters', 'words', 'definitions', 'sentences', 'pos'].filter(d => fs.existsSync(path.join(ROOT, 'assets/spelling/audio', d))).flatMap(d => clipDir('assets/spelling/audio/' + d))
 const tiny = all.filter(f => fs.statSync(f).size < 700).map(f => path.basename(f))
 check(tiny.length === 0, `no clip is suspiciously small${tiny.length ? ' — ' + tiny.join(', ') : ''}`)
 const byHash = new Map()

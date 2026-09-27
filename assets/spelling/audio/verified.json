@@ -1,4 +1,319 @@
 {
+ "definitions/bag": {
+  "sha1": "1c27f6303d7c97f3bd97411e7acf7d82a92d72d6",
+  "heard": "You carry your books to school in it.",
+  "text": "You carry your books to school in it."
+ },
+ "definitions/basket": {
+  "sha1": "e3566008f6c6cade8780ee37a3b2092e7b9b6d3f",
+  "heard": "You carry fruit or clothes in it.",
+  "text": "You carry fruit or clothes in it."
+ },
+ "definitions/bathtub": {
+  "sha1": "22fa5ef62fad7ce5bd5799ce5bed2991102b9c8a",
+  "heard": "You fill it with water and take a bath in it.",
+  "text": "You fill it with water and take a bath in it."
+ },
+ "definitions/beads": {
+  "sha1": "0b705e20cd6e85d69b5c0ebb8f6ad8b3636a57f6",
+  "heard": "You count them while you say de-hicker.",
+  "text": "You count them while you say dhikr."
+ },
+ "definitions/bed": {
+  "sha1": "aa0f77e95bdd07b3a9888a0cd99e75cd66b66f4a",
+  "heard": "You sleep on it at night.",
+  "text": "You sleep on it at night."
+ },
+ "definitions/black": {
+  "sha1": "6dc63d9ec9d94b821ae74d8f3eb41e5b053d7f22",
+  "heard": "It is a color. The night sky is this color.",
+  "text": "It is a color. The night sky is this color."
+ },
+ "definitions/blue": {
+  "sha1": "be2654a79dd17a06ca837c7d9cf335570cf00758",
+  "heard": "It is a color. The sky is often this color.",
+  "text": "It is a color. The sky is often this color."
+ },
+ "definitions/board": {
+  "sha1": "2fb1974d871695d1eb9c32df90faf3873ca3c697",
+  "heard": "The teacher writes on it at the front of the class.",
+  "text": "The teacher writes on it at the front of the class."
+ },
+ "definitions/book": {
+  "sha1": "5d764672bc3bf8a60867eb2007f1570b23585a94",
+  "heard": "You read it. It has pages and a cover.",
+  "text": "You read it. It has pages and a cover."
+ },
+ "definitions/bottle": {
+  "sha1": "333925874cd696a9e0a0e3760a9fca414b03b302",
+  "heard": "You keep water or juice inside it.",
+  "text": "You keep water or juice inside it."
+ },
+ "definitions/bowl": {
+  "sha1": "ac3113224256a978329451e2a28419a47827eeda",
+  "heard": "A deep brown dish for soup or cereal.",
+  "text": "A deep round dish for soup or cereal."
+ },
+ "definitions/broom": {
+  "sha1": "11d3f82718bffa35c65d918afa6974c951fe1ff0",
+  "heard": "You sweep the floor with it.",
+  "text": "You sweep the floor with it."
+ },
+ "definitions/brown": {
+  "sha1": "efc95fd8b182bd8323de47013d35cb2d61020388",
+  "heard": "It is a color. Chocolate and tree trunks are this color.",
+  "text": "It is a color. Chocolate and tree trunks are this color."
+ },
+ "definitions/bucket": {
+  "sha1": "cd1c147e69c8f3f923afe049e61ab93449bfef4e",
+  "heard": "You carry water in it. It has a handle.",
+  "text": "You carry water in it. It has a handle."
+ },
+ "definitions/calculator": {
+  "sha1": "0a6add26241de7da031384578213e83e44805a6d",
+  "heard": "It helps you add and take away numbers.",
+  "text": "It helps you add and take away numbers."
+ },
+ "definitions/camel": {
+  "sha1": "81194e80e11a611fd2e4f8659878aed96850c7c0",
+  "heard": "A desert animal with a hump on its back.",
+  "text": "A desert animal with a hump on its back."
+ },
+ "definitions/candle": {
+  "sha1": "11f2916e8088a670c5d7edd2c098a55d6b1cc926",
+  "heard": "It gives light when you light it with fire.",
+  "text": "It gives light when you light it with fire."
+ },
+ "definitions/chair": {
+  "sha1": "900b7fff8281857aebe72f68c0d42b0430e34f68",
+  "heard": "You sit on it. It has four legs and a back.",
+  "text": "You sit on it. It has four legs and a back."
+ },
+ "definitions/clock": {
+  "sha1": "e2d3e84c5b778fdc2da82523e3619d03f9e1b84d",
+  "heard": "It tells you the time.",
+  "text": "It tells you the time."
+ },
+ "definitions/computer": {
+  "sha1": "eb2bfd10321f05a60a12e2fee5eeb89f72cac238",
+  "heard": "A machine with a screen and a keyboard.",
+  "text": "A machine with a screen and a keyboard."
+ },
+ "definitions/crayon": {
+  "sha1": "1c8fbed248acd1b8f38880dc11e7fbba756c9843",
+  "heard": "A colored wax stick for drawing pictures.",
+  "text": "A colored wax stick for drawing pictures."
+ },
+ "definitions/desert": {
+  "sha1": "8c85f0a3c1556dc8eb22fc5d3952f84258767161",
+  "heard": "A very hot and dry place with lots of sand.",
+  "text": "A very hot and dry place with lots of sand."
+ },
+ "definitions/desk": {
+  "sha1": "ff83daa7cb061b40fa1e04375bd717c7cf2a5039",
+  "heard": "A table where you study and write at school.",
+  "text": "A table where you study and write at school."
+ },
+ "definitions/door": {
+  "sha1": "2aa01dda982c7d06325f0273dfe1f23e7de9a1c4",
+  "heard": "You open it to go into a room.",
+  "text": "You open it to go into a room."
+ },
+ "definitions/eraser": {
+  "sha1": "5d1f8b96329101b4275f8736e81ca44bd97d5d73",
+  "heard": "It rubs out pencil mistakes.",
+  "text": "It rubs out pencil mistakes."
+ },
+ "definitions/glue": {
+  "sha1": "4d9a4b54a3328a823f92da78edca63e8008799fb",
+  "heard": "It sticks paper together.",
+  "text": "It sticks paper together."
+ },
+ "definitions/gray": {
+  "sha1": "aa63be5df923942d02358a47b7c17ed7ad96a444",
+  "heard": "It is a color. Rain clouds and elephants are this color.",
+  "text": "It is a color. Rain clouds and elephants are this color."
+ },
+ "definitions/green": {
+  "sha1": "d198326a2185af5a7611966adc49bb17a2c4eac5",
+  "heard": "It is a color. Grass and leaves are this color.",
+  "text": "It is a color. Grass and leaves are this color."
+ },
+ "definitions/kaaba": {
+  "sha1": "580709a3b7db1c6a7e86f8cd069b45cb036962be",
+  "heard": "The black cube in Makkah. Muslims face it when they pray.",
+  "text": "The black cube in Makkah. Muslims face it when they pray."
+ },
+ "definitions/key": {
+  "sha1": "2239e7364b4b087b0611360a951b6fdfcb570770",
+  "heard": "You use it to open and lock the door.",
+  "text": "You use it to open and lock the door."
+ },
+ "definitions/marker": {
+  "sha1": "7250dcfbec9d2ecc1156e93c14aa0b95dd42515f",
+  "heard": "A pen with thick color for writing on the board.",
+  "text": "A pen with thick color for writing on the board."
+ },
+ "definitions/mirror": {
+  "sha1": "71fd085b8b6c095fb5e90cca20a9766e537205e6",
+  "heard": "You see yourself in it.",
+  "text": "You see yourself in it."
+ },
+ "definitions/moon": {
+  "sha1": "fc286fdf2c55336ec8619211b301cdabea0768fb",
+  "heard": "It shines at night. A new one starts the month of Ramadan.",
+  "text": "It shines at night. A new one starts the month of Ramadan."
+ },
+ "definitions/mosque": {
+  "sha1": "f09a92bbd4e9c73c39ceb0e01cc076820989b900",
+  "heard": "Muslims go there to pray together.",
+  "text": "Muslims go there to pray together."
+ },
+ "definitions/orange": {
+  "sha1": "0c7f99d97ad3d97eacea6ef265b7cefb074c5433",
+  "heard": "It is a color and a fruit. Carrots are this color.",
+  "text": "It is a color and a fruit. Carrots are this color."
+ },
+ "definitions/palm": {
+  "sha1": "dc5c20a93edbfaeed73c8f9dcf5c86b6985b9f8f",
+  "heard": "A tall tree dates grow on it.",
+  "text": "A tall tree. Dates grow on it."
+ },
+ "definitions/pen": {
+  "sha1": "8728746db80363ef41873e92524a7edf9c5ffa5c",
+  "heard": "You write with it, it uses ink.",
+  "text": "You write with it. It uses ink."
+ },
+ "definitions/pencil": {
+  "sha1": "8d7a09c60a90d51935dcbc30a48901286872b12d",
+  "heard": "You write and draw with it. You can erase it.",
+  "text": "You write and draw with it. You can erase it."
+ },
+ "definitions/pink": {
+  "sha1": "e6d4bd5e893999cafc56808693ec2bce1e8fefc8",
+  "heard": "It is a color. Flamingos and bubble gum are this color.",
+  "text": "It is a color. Flamingos and bubble gum are this color."
+ },
+ "definitions/prayer": {
+  "sha1": "6e0648340778a546a6816b4f3d299cf4fcf6ec11",
+  "heard": "You raise your hands and ask Allah for help.",
+  "text": "You raise your hands and ask Allah for help."
+ },
+ "definitions/purple": {
+  "sha1": "1d982078b1f654c9abd88e91e2fe57d8e1816ac5",
+  "heard": "It is a color. Grapes and eggplants are this color.",
+  "text": "It is a color. Grapes and eggplants are this color."
+ },
+ "definitions/quran": {
+  "sha1": "e37de029780382fc18bc7a81b2b428eefc4a906b",
+  "heard": "The Holy Book that Muslims Read",
+  "text": "The holy book that Muslims read."
+ },
+ "definitions/radio": {
+  "sha1": "65025a940ecd0e68691a33d1f659c08204a8e24b",
+  "heard": "You listen to music and news on it.",
+  "text": "You listen to music and news on it."
+ },
+ "definitions/red": {
+  "sha1": "c9e02393a1d8230e85f3fc7bfa45f7a9d2ae9caf",
+  "heard": "It is a color. Strawberries and fire trucks are this color.",
+  "text": "It is a color. Strawberries and fire trucks are this color."
+ },
+ "definitions/ruler": {
+  "sha1": "9ddbc5ea3bec79168feba8adfb60ff4f0950a8c2",
+  "heard": "You draw straight lines and measure with it.",
+  "text": "You draw straight lines and measure with it."
+ },
+ "definitions/scissors": {
+  "sha1": "572bb8ee71ba275898ffa928f1d7e84884d293e1",
+  "heard": "You cut paper with it. It has two blades.",
+  "text": "You cut paper with it. It has two blades."
+ },
+ "definitions/soap": {
+  "sha1": "91e35acb7ee69efea33f5eac3375fea2a52fc9fb",
+  "heard": "You wash your hands with it. It makes bubbles.",
+  "text": "You wash your hands with it. It makes bubbles."
+ },
+ "definitions/sofa": {
+  "sha1": "7dbd869831e8562f5a9da9a49504157d1f2b106f",
+  "heard": "A soft, long seat in the living room.",
+  "text": "A soft long seat in the living room."
+ },
+ "definitions/sponge": {
+  "sha1": "5fb60eac889c95fabe082bfa3d1762b1e23f1e5b",
+  "heard": "It is soft and soaks up water. You wash dishes with it.",
+  "text": "It is soft and soaks up water. You wash dishes with it."
+ },
+ "definitions/spoon": {
+  "sha1": "bb1026a38453e8563db7497967dcd7261265990d",
+  "heard": "You eat soup and rice with it.",
+  "text": "You eat soup and rice with it."
+ },
+ "definitions/stapler": {
+  "sha1": "c9265c96cc7ccf714a9cc396999bb2de4d6747be",
+  "heard": "It joins sheets of paper with a small metal clip.",
+  "text": "It joins sheets of paper with a small metal clip."
+ },
+ "definitions/star": {
+  "sha1": "46e1a863de1a85e874740531e88ccc290df2bc88",
+  "heard": "It twinkles in the night sky.",
+  "text": "It twinkles in the night sky."
+ },
+ "definitions/sunrise": {
+  "sha1": "2351acf866495ee59e374399a9e242b4ce3bc4f5",
+  "heard": "When the sun comes up, we pray subah before it.",
+  "text": "When the sun comes up. We pray Subuh before it."
+ },
+ "definitions/table": {
+  "sha1": "d80faea7fd6129a7747d5a3b545067e92b7efb8c",
+  "heard": "You eat or work on it. It has a flat top and legs.",
+  "text": "You eat or work on it. It has a flat top and legs."
+ },
+ "definitions/teapot": {
+  "sha1": "2d10ab14022b45e17d8383e69172535007c1258b",
+  "heard": "You pour hot tea from it.",
+  "text": "You pour hot tea from it."
+ },
+ "definitions/television": {
+  "sha1": "2f7a59a5eb8d98e62a6aad9a001b81e52f00ccf6",
+  "heard": "You watch cartoons on it.",
+  "text": "You watch cartoons on it."
+ },
+ "definitions/toilet": {
+  "sha1": "b244fe2e680ccffbd964cc8fa95be7879603a644",
+  "heard": "It is in the bathroom. You flush it.",
+  "text": "It is in the bathroom. You flush it."
+ },
+ "definitions/toothbrush": {
+  "sha1": "336e4906d2ea8805a498655baba5b09583075e1b",
+  "heard": "You clean your teeth with it.",
+  "text": "You clean your teeth with it."
+ },
+ "definitions/umbrella": {
+  "sha1": "3f5b0e9dc89bb1b4c234630b227937d4a5fc6be1",
+  "heard": "It keeps you dry when it rains.",
+  "text": "It keeps you dry when it rains."
+ },
+ "definitions/water": {
+  "sha1": "352a39191b464aecb38934dac1dff52878f2ab24",
+  "heard": "You drink it when you are thirsty.",
+  "text": "You drink it when you are thirsty."
+ },
+ "definitions/white": {
+  "sha1": "181e0a1c1795dbecc84e1bd665121ff5fc32ed2f",
+  "heard": "It is a color. Snow and milk are this color.",
+  "text": "It is a color. Snow and milk are this color."
+ },
+ "definitions/window": {
+  "sha1": "f219d351e9aad504130bfad67dde6e17394b9900",
+  "heard": "You look outside through it. It is made of glass.",
+  "text": "You look outside through it. It is made of glass."
+ },
+ "definitions/yellow": {
+  "sha1": "5fcbcae09c50f025c252045e010b8686052d5ee6",
+  "heard": "It is a color. The sun and bananas are this color.",
+  "text": "It is a color. The sun and bananas are this color."
+ },
  "letters/a": {
   "sha1": "6bcd9511079e45704e0f8ed9c7c4ded416ce2f63",
   "heard": "A.",
@@ -128,6 +443,331 @@
   "sha1": "cf06e87bed0ede789cb03d8bfa52e46abd017666",
   "heard": "z",
   "carrier": "Here is the next letter."
+ },
+ "pos/adjective": {
+  "sha1": "75be8717b9541c5f666b89f9626c16d4ec5967c3",
+  "heard": "Adjective",
+  "carrier": "Here is the next word."
+ },
+ "pos/noun": {
+  "sha1": "07dd9b2a5ec13393c13009d7bf4051421b240e95",
+  "heard": "Noun",
+  "carrier": "Here is the next word."
+ },
+ "sentences/bag": {
+  "sha1": "55c61a75b743f5dc8504dc9ebed91d72720ae743",
+  "heard": "Put your lunch in your bag.",
+  "text": "Put your lunch in your bag."
+ },
+ "sentences/basket": {
+  "sha1": "5d85db7486f2bfae7d1fde491a6fd2d95451289e",
+  "heard": "Put the fruit in the basket.",
+  "text": "Put the fruit in the basket."
+ },
+ "sentences/bathtub": {
+  "sha1": "76a90be42d7bd22beccb208e480731fa819cc209",
+  "heard": "The baby plays in the bathtub.",
+  "text": "The baby plays in the bathtub."
+ },
+ "sentences/beads": {
+  "sha1": "3da08163d0b0632c1604559371d8dcac0b3c2a53",
+  "heard": "Grandpa counts his prayer beads.",
+  "text": "Grandpa counts his prayer beads."
+ },
+ "sentences/bed": {
+  "sha1": "7476f3ad73c4aa7569003779ed45ea1d148e6deb",
+  "heard": "I go to bed at eight o'clock.",
+  "text": "I go to bed at eight o'clock."
+ },
+ "sentences/black": {
+  "sha1": "582c215a5cca059ee9391db8f82d7a4167898eb4",
+  "heard": "The cat has soft black fur.",
+  "text": "The cat has soft black fur."
+ },
+ "sentences/blue": {
+  "sha1": "e0faf30cac84de7fc8f2ca521255679a198e97a0",
+  "heard": "My favorite shirt is blue.",
+  "text": "My favorite shirt is blue."
+ },
+ "sentences/board": {
+  "sha1": "af20a0f339f3798dfd9eb70da8bb7dae03cd06a1",
+  "heard": "The teacher wrote the date on the board.",
+  "text": "The teacher wrote the date on the board."
+ },
+ "sentences/book": {
+  "sha1": "03f7d7892784072c1355e7a395c5a79d99fad657",
+  "heard": "I read a book before bedtime.",
+  "text": "I read a book before bedtime."
+ },
+ "sentences/bottle": {
+  "sha1": "1960d823bba3d0606a2328985da49ee94c9b11ac",
+  "heard": "Fill your bottle with water.",
+  "text": "Fill your bottle with water."
+ },
+ "sentences/bowl": {
+  "sha1": "8f2d637520ada5eaf0af3c9058b20c0f3187ce7b",
+  "heard": "pour the cereal into a bowl.",
+  "text": "Pour the cereal into a bowl."
+ },
+ "sentences/broom": {
+  "sha1": "12c31da0282ce8d5f1adcf3adb9a99a37c240135",
+  "heard": "Mom sweeps the floor with a broom.",
+  "text": "Mom sweeps the floor with a broom."
+ },
+ "sentences/brown": {
+  "sha1": "7bf464bb03a2e30073b5822d6e9356a4b4624817",
+  "heard": "The puppy has big brown eyes.",
+  "text": "The puppy has big brown eyes."
+ },
+ "sentences/bucket": {
+  "sha1": "53801a2b4aff335fb7b5113a9fca47cc811eea40",
+  "heard": "Carry the water in a bucket.",
+  "text": "Carry the water in a bucket."
+ },
+ "sentences/calculator": {
+  "sha1": "002653bfb4f30f444eb10638fc5614b26b2e3494",
+  "heard": "Check your answer with a calculator.",
+  "text": "Check your answer with a calculator."
+ },
+ "sentences/camel": {
+  "sha1": "7bdba1749669b13056707ea946d580e33523d30a",
+  "heard": "The camel walks across the sand.",
+  "text": "The camel walks across the sand."
+ },
+ "sentences/candle": {
+  "sha1": "8c50f7664f933d85aa8b14ee1715499f59479eec",
+  "heard": "Blow out the candle on the cake.",
+  "text": "Blow out the candle on the cake."
+ },
+ "sentences/chair": {
+  "sha1": "ef6c2cfa47735b12f47e0d5adde741799c506272",
+  "heard": "Please sit on the chair.",
+  "text": "Please sit on the chair."
+ },
+ "sentences/clock": {
+  "sha1": "75b584c2e7b80f1f4daaadd7cf53d749373ab6dc",
+  "heard": "The clock says it is time for school.",
+  "text": "The clock says it is time for school."
+ },
+ "sentences/computer": {
+  "sha1": "ee0f4d0eee07801e876ea49e5f493da60dd1e145",
+  "heard": "We type our story on the computer.",
+  "text": "We type our story on the computer."
+ },
+ "sentences/crayon": {
+  "sha1": "5c71e996b6a38f24cf9d3af94a007649f3b4a3d0",
+  "heard": "She drew a rainbow with a crayon.",
+  "text": "She drew a rainbow with a crayon."
+ },
+ "sentences/desert": {
+  "sha1": "5d749623fe1d902825132d3e80fa8868dc770809",
+  "heard": "The desert is hot and full of sand.",
+  "text": "The desert is hot and full of sand."
+ },
+ "sentences/desk": {
+  "sha1": "f370eede2db6be48c58654153a00b23c2fc1fb6d",
+  "heard": "My pencil case is on my desk.",
+  "text": "My pencil case is on my desk."
+ },
+ "sentences/door": {
+  "sha1": "96f42a0715889e412fd841316db446a35e9ba2fa",
+  "heard": "Please close the door quietly.",
+  "text": "Please close the door quietly."
+ },
+ "sentences/eraser": {
+  "sha1": "0b0df0b974c06702e4fd8f428697da16baf44c20",
+  "heard": "I fixed my mistake with an eraser.",
+  "text": "I fixed my mistake with an eraser."
+ },
+ "sentences/glue": {
+  "sha1": "3dd3108e0a824ebddca1ccb77e2b881d506ea2ad",
+  "heard": "Use glue to stick the paper.",
+  "text": "Use glue to stick the paper."
+ },
+ "sentences/gray": {
+  "sha1": "a5a5d63766595523f5ef839a8fb9c531100b0d76",
+  "heard": "The elephant has gray skin.",
+  "text": "The elephant has gray skin."
+ },
+ "sentences/green": {
+  "sha1": "cf5b7f35ca510b9c8a6796212461e0951877a4a4",
+  "heard": "The frog sat on a green leaf.",
+  "text": "The frog sat on a green leaf."
+ },
+ "sentences/kaaba": {
+  "sha1": "d77e08161679e4e83ba3c8eaf00a3e311022027c",
+  "heard": "The Kaaba is in the city of Makka.",
+  "text": "The Kaaba is in the city of Makkah."
+ },
+ "sentences/key": {
+  "sha1": "6d33f62ae64c2c3cae915e92ab4a8aa3ff5c7968",
+  "heard": "Dad opens the door with a key.",
+  "text": "Dad opens the door with a key."
+ },
+ "sentences/marker": {
+  "sha1": "1e4d4e8b20a58178e56de9c3da74c8e8f3417508",
+  "heard": "Write your name with a marker.",
+  "text": "Write your name with a marker."
+ },
+ "sentences/mirror": {
+  "sha1": "5c2cb076a2ea43865ee98f0b864e67e5c5075509",
+  "heard": "I brush my hair in front of the mirror.",
+  "text": "I brush my hair in front of the mirror."
+ },
+ "sentences/moon": {
+  "sha1": "f66e9d93a4fe761f8fbf08e5c2adbb027418dcaa",
+  "heard": "The moon shines at night.",
+  "text": "The moon shines at night."
+ },
+ "sentences/mosque": {
+  "sha1": "0d5b0e277f985ea6b7857566ad36b39c05fb64da",
+  "heard": "We pray together at the mosque.",
+  "text": "We pray together at the mosque."
+ },
+ "sentences/orange": {
+  "sha1": "9a6727ea110f60a8e6c9e728dbb9a3be53b4d386",
+  "heard": "He colored the pumpkin orange.",
+  "text": "He colored the pumpkin orange."
+ },
+ "sentences/palm": {
+  "sha1": "51044e0992cd7291b09a7b4e9b7bcbb43a310319",
+  "heard": "Dates grow on a palm tree.",
+  "text": "Dates grow on a palm tree."
+ },
+ "sentences/pen": {
+  "sha1": "a49d26507a75dda02164143e2458f707ff63967f",
+  "heard": "The teacher writes with a red pen.",
+  "text": "The teacher writes with a red pen."
+ },
+ "sentences/pencil": {
+  "sha1": "b2912e6cc73988ab7b577b6eba5b7db19148b498",
+  "heard": "Sharpen your pencil before the test.",
+  "text": "Sharpen your pencil before the test."
+ },
+ "sentences/pink": {
+  "sha1": "e9b0b1f4e12f5ddfb98f8458aab1156ece50a54f",
+  "heard": "She wore a pink dress to the party.",
+  "text": "She wore a pink dress to the party."
+ },
+ "sentences/prayer": {
+  "sha1": "b4f470efcc0cc32e2efb8b6184168f9fc1aa12a1",
+  "heard": "We say a prayer before we eat.",
+  "text": "We say a prayer before we eat."
+ },
+ "sentences/purple": {
+  "sha1": "4408fbb8936e571f3504795d955b8da21e3d4b8a",
+  "heard": "grapes can be purple or green.",
+  "text": "Grapes can be purple or green."
+ },
+ "sentences/quran": {
+  "sha1": "c7f933f2033818c3b1155d254d205704e732142c",
+  "heard": "We read the Quran every evening.",
+  "text": "We read the Quran every evening."
+ },
+ "sentences/radio": {
+  "sha1": "f69299bac01a459421763bb86aa030bdae129714",
+  "heard": "We listen to songs on the radio.",
+  "text": "We listen to songs on the radio."
+ },
+ "sentences/red": {
+  "sha1": "9dfdf47cfd2667c19b5a000bccc0d1a13d5754b2",
+  "heard": "The apple is red and shiny.",
+  "text": "The apple is red and shiny."
+ },
+ "sentences/ruler": {
+  "sha1": "5e27c9342379bbeed21a836a203ad908653029dd",
+  "heard": "Draw a straight line with a ruler.",
+  "text": "Draw a straight line with a ruler."
+ },
+ "sentences/scissors": {
+  "sha1": "673937f4f4a09def524f75dd64d50d99f95cbbc4",
+  "heard": "Cut the paper carefully with scissors.",
+  "text": "Cut the paper carefully with scissors."
+ },
+ "sentences/soap": {
+  "sha1": "82d3298477ae3e58e113ccd5e798a4e75761938d",
+  "heard": "Wash your hands with soap.",
+  "text": "Wash your hands with soap."
+ },
+ "sentences/sofa": {
+  "sha1": "9d822e949287d789ff7441282bad399aaacae40d",
+  "heard": "Grandma is sitting on the sofa.",
+  "text": "Grandma is sitting on the sofa."
+ },
+ "sentences/sponge": {
+  "sha1": "59cf3543266c9aef8f1f40ad95b5eed0feb65016",
+  "heard": "Wash the plates with a sponge.",
+  "text": "Wash the plates with a sponge."
+ },
+ "sentences/spoon": {
+  "sha1": "77578dfb09d894358537610d8b99704e86a3e316",
+  "heard": "Eat your soup with a spoon.",
+  "text": "Eat your soup with a spoon."
+ },
+ "sentences/stapler": {
+  "sha1": "5141d25f8b871d6623f6263e0339f4dd2cc9933c",
+  "heard": "Join the pages with a stapler.",
+  "text": "Join the pages with a stapler."
+ },
+ "sentences/star": {
+  "sha1": "d12cd8f84501b9a4de9a55858b6aeed61b411c8c",
+  "heard": "I saw a bright star in the sky.",
+  "text": "I saw a bright star in the sky."
+ },
+ "sentences/sunrise": {
+  "sha1": "d96f33859e8abbd5277068012096dca6e2c40d10",
+  "heard": "We wake up early to see the sunrise.",
+  "text": "We wake up early to see the sunrise."
+ },
+ "sentences/table": {
+  "sha1": "3a90cc853831cb8faa1e2a6b178b1b3aada41ecd",
+  "heard": "We eat dinner at the table.",
+  "text": "We eat dinner at the table."
+ },
+ "sentences/teapot": {
+  "sha1": "ac8fc89a1058147a88e377bfe360c6f346c272a6",
+  "heard": "The hot tea is in the teapot.",
+  "text": "The hot tea is in the teapot."
+ },
+ "sentences/television": {
+  "sha1": "96a7b8f75cb03b2677e6c703ee24e973a8aca40b",
+  "heard": "We watch cartoons on the television.",
+  "text": "We watch cartoons on the television."
+ },
+ "sentences/toilet": {
+  "sha1": "5ad63cdad7bbb2d3d8065a92d18faef428bb4bf7",
+  "heard": "Flush the toilet after you use it.",
+  "text": "Flush the toilet after you use it."
+ },
+ "sentences/toothbrush": {
+  "sha1": "03116dd960118a1aa2aed59c1a00397c2d74dc58",
+  "heard": "Brush your teeth with your toothbrush.",
+  "text": "Brush your teeth with your toothbrush."
+ },
+ "sentences/umbrella": {
+  "sha1": "610fac124c5e83f2944ebfbc637ed0b0536ef10e",
+  "heard": "Take an umbrella when it rains.",
+  "text": "Take an umbrella when it rains."
+ },
+ "sentences/water": {
+  "sha1": "7a3473925be5626374836561e34b317a9729e255",
+  "heard": "Drink water when you are thirsty.",
+  "text": "Drink water when you are thirsty."
+ },
+ "sentences/white": {
+  "sha1": "300c743ed28a39490e714007fe8db8c231ee446d",
+  "heard": "The clouds are white and fluffy.",
+  "text": "The clouds are white and fluffy."
+ },
+ "sentences/window": {
+  "sha1": "e7d63a2d30a1f99627b87e832375932339afe4b2",
+  "heard": "I can see the rain through the window.",
+  "text": "I can see the rain through the window."
+ },
+ "sentences/yellow": {
+  "sha1": "fa9436dce18cba0d111617671ac9a5f084cd1d20",
+  "heard": "The sun looks yellow in the sky.",
+  "text": "The sun looks yellow in the sky."
  },
  "words/bag": {
   "sha1": "697c34e24ed46e8ee1925d22636596363caabc53",
