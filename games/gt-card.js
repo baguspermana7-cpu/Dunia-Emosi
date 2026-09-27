@@ -54,7 +54,7 @@
       '<div class="gc-win"><div class="gc-l0"></div><img class="gc-l1" src="' + lib(d.sprite) + '" alt="' + esc(d.name) + '" draggable="false"><div class="gc-l2"></div>' +
       (hp < max ? '<div class="gc-hpbar"><i style="width:' + Math.round(100 * hp / max) + '%"></i></div>' : '') + '</div>' +
       '<div class="gc-atks">' + atk + '</div>' +
-      '<div class="gc-foot"><span>Kuat vs ' + d.strongVs + ' +1</span><span class="gc-r gc-r-' + d.rarity + '">' + stars + '</span></div></div>'
+      '<div class="gc-foot"><span>Kuat vs ' + d.strongVs + ' +2</span><span class="gc-r gc-r-' + d.rarity + '">' + stars + '</span></div></div>'
   }
   // parts / actions / fuel: header icon + name, picture, ribbon label (mockup "PART - TIRE"), rule text
   var HEAD_ICON = { part: 'gt/tool-kit', action: 'gt/lightning', fuel: 'gt/fuel-can' }

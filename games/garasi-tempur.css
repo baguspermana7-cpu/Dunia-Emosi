@@ -602,3 +602,10 @@ body[data-scr=scr-battle] .toast{top:auto;bottom:calc(var(--hf) * 14 + 110px + v
 /* hand truck that is strong vs the opponent's truck (guides "Ganti truk") */
 .hc.strong::after{content:'KUAT!';position:absolute;top:-.9em;left:50%;transform:translateX(-50%);font:900 1.1em/1 'Fredoka One','Nunito',sans-serif;
   color:#3A2300;background:linear-gradient(#FFE15A,#F0A417);border:.12em solid #fff;border-radius:.6em;padding:.15em .5em;white-space:nowrap;box-shadow:0 .2em .4em rgba(0,0,0,.4)}
+
+/* type triangle feedback */
+.fx-float.super{font-size:30px;color:#FFE27A;text-shadow:0 3px 0 #8a2b00,0 0 18px rgba(255,160,0,.9)}
+.fx-float.weak{font-size:18px;padding:2px 10px;border-radius:10px;background:rgba(20,26,40,.88);color:#C9D3E6;text-shadow:none}
+.atk-tag{font-style:normal;font-size:12px;padding:2px 8px;border-radius:8px;flex:none}
+.atk-tag.sup{background:linear-gradient(#FFE15A,#F0A417);color:#3A2300}
+.atk-tag.weak{background:rgba(255,255,255,.18);color:#fff}

@@ -23,7 +23,7 @@
 
   // BENCH_MAX 0 (owner 2026-09-27: "seperti pokemon hanya 1 kartu di arena"): one truck per side;
   // the other trucks wait in the hand/deck and step in when the active one is knocked out.
-  var RULES = { HAND_START: 5, HAND_LIMIT: 7, FUEL_MAX: 4, BENCH_MAX: 0, KO_TO_WIN: 3, FUEL_AUTO: 1, CORRECT_BONUS: 2, NITRO_FULL: 3, NITRO_BONUS: 2 }
+  var RULES = { HAND_START: 5, HAND_LIMIT: 7, FUEL_MAX: 4, BENCH_MAX: 0, KO_TO_WIN: 3, FUEL_AUTO: 1, TYPE_BONUS: 2, TYPE_WEAK: 1, CORRECT_BONUS: 2, NITRO_FULL: 3, NITRO_BONUS: 2 }
 
   /* ── rng (mulberry32, state stored as an int) ─────────────────────────── */
   function rand (st) {
@@ -86,10 +86,12 @@
     var d = def(st, tr.inst), atk = d.attacks[idx]
     var tgt = O.active ? def(st, O.active.inst) : null
     var arena = arenaOf(st)
-    var out = { base: atk.dmg, parts: sum(partsOf(st, tr), 'dmg'), type: tgt && d.strongVs === tgt.type ? 1 : 0,
+    // Type triangle both ways: strong vs the target = SUPER (+2); the target strong vs you = weak (−1)
+    var out = { base: atk.dmg, parts: sum(partsOf(st, tr), 'dmg'), type: tgt && d.strongVs === tgt.type ? RULES.TYPE_BONUS : 0,
+      weak: tgt && tgt.strongVs === d.type ? RULES.TYPE_WEAK : 0,
       arena: (arena.mod && arena.mod[d.type]) || 0, boost: P.boost, nitro: P.nitro >= RULES.NITRO_FULL ? RULES.NITRO_BONUS : 0,
       armor: O.active ? sum(partsOf(st, O.active), 'armor') : 0, fuelNeed: fuelNeed(st, tr, atk), fuel: tr.fuel, correctBonus: RULES.CORRECT_BONUS }
-    out.total = Math.max(0, out.base + out.parts + out.type + out.arena + out.boost + out.nitro - out.armor)
+    out.total = Math.max(1, out.base + out.parts + out.type + out.arena + out.boost + out.nitro - out.armor - out.weak)
     return out
   }
   function arenaOf (st) { for (var i = 0; i < C.ARENAS.length; i++) if (C.ARENAS[i].id === st.arena) return C.ARENAS[i]; return C.ARENAS[0] }
@@ -209,6 +211,8 @@
       discardTruck(st, O, O.active); O.active = null; P.ko++
       ev.push({ t: 'ko', p: 1 - pi, card: ko, byP: pi, koCount: P.ko })
       if (P.ko >= RULES.KO_TO_WIN) return finish(st, ev, pi, 'ko')
+      // a KO earns a card — only while the hand has room (never forces a discard)
+      if (P.hand.length < RULES.HAND_LIMIT - 1) { var bonus = draw1(st, P, pi, ev); if (bonus) ev.push({ t: 'koReward', p: pi, card: bonus }) }
     }
     st.phase = 'garage'
     endTurn(st, ev)                            // an attack ends the turn (TCG convention, keeps turns short)

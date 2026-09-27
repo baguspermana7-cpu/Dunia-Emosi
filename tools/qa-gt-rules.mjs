@@ -202,5 +202,23 @@ const fresh = (seed = 5) => { const st = E.create({ seed, p1: { starter: 'api' }
   check(E.hash(st) === E.hash(r.st), 'save → reload mid-battle ends exactly like the uninterrupted battle')
 }
 pass('edge cases checked')
+// ── type triangle both ways + KO reward (2026-09-27 mechanics pass) ─────────
+{
+  const find = ty => C.TRUCKS.find(t => t.type === ty && t.rarity === 'biasa')
+  const mk = (a, b) => { const st = E.create({ seed: 3, p1: { trucks: [a.id, a.id, a.id] }, p2: { trucks: [b.id, b.id, b.id] } }); return st }
+  const pw = find('POWER'), ar = find('ARMOR')       // POWER is strong vs ARMOR
+  let st = mk(pw, ar); st.players[0].active.fuel = 4
+  const pv = E.preview(st, 0)
+  check(pv.type === E.RULES.TYPE_BONUS && pv.weak === 0, 'strong vs the target = +' + E.RULES.TYPE_BONUS + ' (SUPER)')
+  st = mk(ar, pw); st.players[0].active.fuel = 4      // ARMOR attacking POWER: POWER is strong vs ARMOR → weak
+  const pw2 = E.preview(st, 0)
+  check(pw2.weak === E.RULES.TYPE_WEAK && pw2.total >= 1, 'target strong vs you = −' + E.RULES.TYPE_WEAK + ', never below 1')
+  // KO reward: the attacker draws one extra card
+  st = mk(pw, ar); st.players[0].active.fuel = 4; st.players[1].active.hp = 1
+  const h0 = st.players[0].hand.length
+  let r = E.apply(st, { type: 'attack', attack: 0 }); r = E.apply(r.state, { type: 'answer', correct: true })
+  check(r.events.some(e => e.t === 'koReward' && e.p === 0) && r.state.players[0].hand.length === h0 + 1, 'a KO earns the attacker one card')
+}
+pass('mechanics pass checked')
 console.log(fails.length ? `\n${fails.length} FAILED` : '\nALL PASS')
 process.exit(fails.length ? 1 : 0)

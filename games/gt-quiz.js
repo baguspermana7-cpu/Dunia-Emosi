@@ -69,7 +69,8 @@
     var host = opts.host, lib = opts.lib, r = rng(opts.seed || Date.now())
     var FX = W.GTFx || null, VX = function () { return W.VFX || null }
     var two = opts.players[0].human && opts.players[1].human
-    var res = { right: [0, 0], asked: [0, 0] }
+    // COMBO: 3+ right in a row = every further right answer is worth double (and hits twice as hard)
+    var res = { right: [0, 0], asked: [0, 0], points: [0, 0], best: [0, 0] }, streak = [0, 0]
     var reduced = FX ? FX.reduced() : !!(W.matchMedia && W.matchMedia('(prefers-reduced-motion: reduce)').matches)
     var trucks = (opts.trucks || []).filter(Boolean)
     var mon = opts.monster || { key: 'gt-monster/robo-gorilla', name: 'Monster' }
@@ -127,8 +128,10 @@
       if (!H || !Wd) return
       var land = Wd > H, ar = img.naturalWidth && img.naturalHeight ? img.naturalWidth / img.naturalHeight : 1.06
       var st = stage.getBoundingClientRect(), hb = host.getBoundingClientRect()
-      var maxW = two && land ? Math.min(Wd * 0.96, st.width * 1.45) : Wd   // the cut-outs carry ~3 % transparent margin a side
-      var h = H * (land ? 0.75 : 0.70), w = h * ar
+      // phones held upright are narrow: the monster may spill past both sides (owner: "monster di HP
+      // dibesarkan saja") — the host clips it, a wrecking monster too big for the screen reads right
+      var maxW = two && land ? Math.min(Wd * 0.96, st.width * 1.45) : (land ? Wd : Wd * 1.3)
+      var h = H * (land ? 0.75 : 0.62), w = h * ar
       if (w > maxW) { w = maxW; h = w / ar }
       // centred on the free band between the panels, kept inside the screen
       var cy = (st.top - hb.top) + st.height / 2
@@ -209,21 +212,25 @@
     }
     function score (pi, ok, fromEl) {
       res.asked[pi]++
-      if (ok) res.right[pi]++
-      var s = host.querySelector('#rush-s' + pi)
-      s.textContent = res.right[pi] * RUSH_POINTS
-      if (ok) { pop(s); hitMonster(pi, fromEl || s) }
+      var s = host.querySelector('#rush-s' + pi), mult = 1
+      if (ok) { res.right[pi]++; streak[pi]++; res.best[pi] = Math.max(res.best[pi], streak[pi]); mult = streak[pi] >= 3 ? 2 : 1; res.points[pi] += RUSH_POINTS * mult }
+      else streak[pi] = 0
+      s.textContent = res.points[pi]
+      if (ok) {
+        pop(s); hitMonster(pi, fromEl || s, mult)
+        if (streak[pi] === 3 && FX) { var sb = box(s); FX.floatText(sb.x, sb.y - 30, 'COMBO x2!', 'super') }
+      }
     }
     // 4. a right answer: projectile -> the monster flinches, "+10", it shrinks a little
-    function hitMonster (pi, fromEl) {
-      hits++
+    function hitMonster (pi, fromEl, mult) {
+      mult = mult || 1; hits += mult
       var a = box(fromEl), m = box(img)
       var to = { x: m.x + m.w * (Math.random() * 0.3 - 0.15), y: m.t + m.h * (0.3 + Math.random() * 0.25) }
       var land = function () {
         if (done) return
         A(hitL, [{ transform: 'none' }, { transform: 'translate(' + (pi ? -10 : 10) + 'px,-6px) rotate(' + (pi ? -5 : 5) + 'deg) scale(.92)', offset: 0.3 }, { transform: 'none' }],
           { duration: 300, easing: 'ease-out' })
-        if (FX) FX.floatText(to.x, to.y, '+' + RUSH_POINTS, 'rush-plus')
+        if (FX) FX.floatText(to.x, to.y, '+' + RUSH_POINTS * mult + (mult > 1 ? ' COMBO' : ''), 'rush-plus')
         shrinkTo()
       }
       var V = VX()

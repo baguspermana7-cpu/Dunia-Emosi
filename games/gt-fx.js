@@ -179,6 +179,8 @@
     }).then(function () {
       floatText(cb.x, cb.y - cb.h * 0.15, '−' + o.dmg, 'dmg' + (o.correct ? ' crit' : ''))
       if (o.correct) floatText(cb.x, cb.y + cb.h * 0.12, 'Jawaban benar +2!', 'bonus')
+      if (o.sup) floatText(cb.x, cb.y - cb.h * 0.42, 'SUPER EFEKTIF!', 'super')
+      else if (o.weak) floatText(cb.x, cb.y - cb.h * 0.42, 'kurang efektif…', 'weak')
       var sh = Math.min(14, T.shake + o.dmg)
       return Promise.all([shake(b, sh), shake(o.stage, Math.round(sh / 3)),
         rm ? Promise.resolve() : anim(b, [{ filter: 'brightness(1)' }, { filter: 'brightness(2.2)' }, { filter: 'brightness(1)' }], { duration: 220 })])

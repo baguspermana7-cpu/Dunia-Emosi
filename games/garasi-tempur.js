@@ -344,10 +344,13 @@
       var oType = O.active ? C.get(S.cards[O.active.inst]).type : null
       var strongNow = oType && C.get(S.cards[Pl.active.inst]).strongVs === oType
       var swaps = oType && !strongNow && !Pl.swapped ? has('playTruck').filter(function (c) { return C.get(S.cards[c.card]).strongVs === oType }) : []
+      var oStrong = O.active ? C.get(S.cards[O.active.inst]).strongVs : null
+      var weakNow = oStrong && C.get(S.cards[Pl.active.inst]).type === oStrong
+      if (!swaps.length && weakNow && !Pl.swapped) swaps = has('playTruck').filter(function (c) { return C.get(S.cards[c.card]).type !== oStrong })
       if (!O.active) {
         step = 'end'; msg = 'Lawan belum punya truk. Tekan <b>SELESAI</b> — giliran depan kamu bisa menyerang!'; $('btn-end').classList.add('guide')
       } else if (swaps.length) {
-        step = 'swap'; msg = 'Truk ini <b>KUAT</b> melawan truk lawan! Ketuk, lalu <b>Ganti</b>.'; glowCards(swaps.slice(0, 1))
+        step = 'swap'; msg = strongNow || !weakNow || C.get(S.cards[swaps[0].card]).strongVs === oType ? 'Truk ini <b>KUAT</b> melawan truk lawan! Ketuk, lalu <b>Ganti</b>.' : 'Trukmu <b>LEMAH</b> melawan lawan ini. Ganti dengan truk ini!'; glowCards(swaps.slice(0, 1))
       } else if (parts.length) {
         step = 'part'; msg = 'Pasang <b>ONDERDIL</b> ini ke trukmu biar makin kuat!'; glowCards(parts.slice(0, 1))
       } else if (acts.length) {
@@ -417,7 +420,8 @@
       d.attacks.map(function (a, i) {
         var pv = E.preview(S, i), r = why({ type: 'attack', attack: i })
         var cans = ''; for (var k = 0; k < pv.fuelNeed; k++) cans += '<img src="' + lib('gt/fuel-can') + '" alt="">'
-        return '<button type="button" class="atk-b fk' + (r ? ' off' : ' guide') + '" data-atk="' + i + '"><span class="ac">' + (cans || '—') + '</span>' +
+        var tag = pv.type ? '<em class="atk-tag sup">SUPER!</em>' : (pv.weak ? '<em class="atk-tag weak">lemah</em>' : '')
+        return '<button type="button" class="atk-b fk' + (r ? ' off' : ' guide') + '" data-atk="' + i + '"><span class="ac">' + (cans || '—') + '</span>' + tag +
           '<span class="an">' + esc(a.name) + '<small>' + (r ? (REASON[r] || '') + (r === 'needFuel' ? ' (butuh ' + pv.fuelNeed + ', punya ' + pv.fuel + ')' : '') : 'Butuh ' + pv.fuelNeed + ' bensin · jawab benar +2') + '</small></span>' +
           '<b class="ad">' + pv.total + '</b></button>'
       }).join('')
@@ -545,6 +549,7 @@
       if (e.t === 'action' && e.effect === 'boost') toast('Serangan berikutnya +2!', 'good')
       if (e.t === 'action' && e.effect === 'nitro') toast('Nitro bertambah!', 'good')
       if (e.t === 'switch') toast('Truk ditukar dengan cadangan.', 'good')
+      if (e.t === 'koReward' && human(e.p)) toast('Hadiah KO: +1 kartu!', 'good')
       if (e.t === 'promote') toast(C.get(S.cards[e.card]).name + ' maju ke arena!', '')
       if (e.t === 'reshuffle') toast('Tumpukan dikocok ulang.', '')
     })
@@ -573,7 +578,7 @@
     if (att.correct) M.correct[att.p]++
     var d = C.get(before.cards[att.card])
     var hpEl = to.querySelector('.gc-hp b'), bar = to.querySelector('.gc-hpbar i'), max = before.players[1 - att.p].active.maxHp
-    return FX.attack({ from: from, to: to, type: d.type, dmg: att.dmg, correct: att.correct, hpBefore: att.hpBefore, hpAfter: att.hpAfter, stage: $('table'),
+    return FX.attack({ from: from, to: to, type: d.type, dmg: att.dmg, correct: att.correct, sup: !!(att.breakdown && att.breakdown.type), weak: !!(att.breakdown && att.breakdown.weak), hpBefore: att.hpBefore, hpAfter: att.hpAfter, stage: $('table'),
       setHp: function (v) {
         if (hpEl) hpEl.textContent = v
         if (!bar) { var w = to.querySelector('.gc-win'); if (w) { w.insertAdjacentHTML('beforeend', '<div class="gc-hpbar"><i></i></div>'); bar = w.querySelector('.gc-hpbar i') } }
@@ -598,7 +603,8 @@
     var q = lastQ = Q.make(qrng(), P.level, lastQ)
     var parts = ['Serangan ' + pv.base]
     if (pv.parts) parts.push('onderdil +' + pv.parts)
-    if (pv.type) parts.push('kuat vs tipe +1')
+    if (pv.type) parts.push('SUPER vs tipe +' + pv.type)
+    if (pv.weak) parts.push('lemah vs tipe −' + pv.weak)
     if (pv.arena) parts.push('arena ' + (pv.arena > 0 ? '+' : '') + pv.arena)
     if (pv.boost) parts.push('boost +' + pv.boost)
     if (pv.nitro) parts.push('NITRO +' + pv.nitro)
@@ -704,7 +710,7 @@
     Pl.bench.forEach(function (t) { hp += t.hp })
     return [
       ['Menang', S.winner === pi ? 100 : 0], ['KO truk lawan', Pl.ko * 40], ['Sisa HP truk', hp * 2],
-      ['Jawaban benar saat serang', M.correct[pi] * 5], ['Bonus Monster Rush', Math.min(rush.right[pi], 8) * Q.RUSH_POINTS]
+      ['Jawaban benar saat serang', M.correct[pi] * 5], ['Bonus Monster Rush' + (rush.best && rush.best[pi] >= 3 ? ' (COMBO!)' : ''), Math.min(rush.points ? rush.points[pi] : rush.right[pi] * Q.RUSH_POINTS, 120)]
     ]
   }
   function results (rush) {
@@ -750,7 +756,7 @@
   /* ── tutorial (first battle, and from the pause menu) ──────────────────── */
   var TUT = [
     ['gt/trophy', 'Tujuan', 'Buat <b>3 truk lawan KO</b> (HP jadi 0) untuk menang.'],
-    ['gt/fuel-can', 'Tiap giliran', '<b>Bensin terisi sendiri</b> +1 tiap giliran. Kartumu kebanyakan <b>truk</b>: ganti ke truk yang <b>KUAT</b> melawan lawan! Daftar di kanan dan petunjuk kuning selalu memberi tahu langkah berikutnya.'],
+    ['gt/fuel-can', 'Tiap giliran', '<b>Bensin terisi sendiri</b> +1 tiap giliran. Kartumu kebanyakan <b>truk</b>: ganti ke truk yang <b>KUAT</b> melawan lawan — seranganmu jadi <b>SUPER (+2)</b>! Tiap KO dapat hadiah 1 kartu.'],
     ['gt/q-math', 'Serang!', 'Ketuk <b>trukmu</b>, lalu pilih serangan. Jawab soal matematika — <b>benar = +2 kerusakan</b>. Salah? Serangan tetap jalan.'],
     ['gt/timer', 'Monster Rush', 'Di akhir pertandingan muncul monster! Jawab soal sebanyak-banyaknya dalam <b>15 detik</b> untuk bonus skor.']
   ]

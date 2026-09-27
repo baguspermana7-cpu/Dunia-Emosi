@@ -3,7 +3,7 @@
  * translucent bars docked at the edges so the monster stays the hero of the screen.
  * Layers inside .rush: dim/tint (arena darkening) < monster < panels + ring < banner/end card.
  * Motion is transform/opacity only; the monster image carries the only filter (drop-shadow). */
-#rush-host{position:absolute;inset:0;z-index:95;display:none;overflow:hidden}
+#rush-host{position:absolute;inset:0;z-index:95;display:none;overflow:hidden;overflow:hidden}
 #rush-host.on{display:block}
 
 .rush{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1fr);
@@ -42,7 +42,7 @@
 .rush-score{font-size:28px;color:#FFE08A;text-shadow:0 2px 0 #7a4a00;min-width:48px;text-align:right}
 .rh-1 .rush-score{color:#A9D2FF;text-shadow:0 2px 0 #123a78}
 .rush-qrow{display:flex;flex-direction:column;align-items:stretch;gap:8px}
-.rush-q{font-size:clamp(36px,10vw,52px);line-height:1.05;text-align:center;color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.55)}
+.rush-q{font-size:clamp(36px,10vw,52px);line-height:1.05;height:1.1em;overflow:hidden;white-space:nowrap;text-align:center;color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.55)}
 .rush-ch{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .rush-b{min-height:60px;border:0;border-radius:16px;font-size:30px;background:linear-gradient(#F7F8FC,#D8DFEC);color:#1b2233;
   box-shadow:0 4px 0 #7F8AA1;cursor:pointer;touch-action:manipulation;transition:transform .1s cubic-bezier(.23,1,.32,1)}
