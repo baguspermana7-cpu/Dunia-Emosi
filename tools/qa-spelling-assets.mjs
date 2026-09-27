@@ -43,6 +43,29 @@ const emptyReady = D.CATEGORIES.filter(c => c.ready && D.list(c.key).length === 
 check(emptyReady.length === 0,
   `no category is offered with zero words${emptyReady.length ? ' — EMPTY: ' + emptyReady.join(', ') : ''}`)
 
+// the owner asked for every "Segera Hadir" card to be built: none may remain
+const soon = D.CATEGORIES.filter(c => !c.ready).map(c => c.key)
+check(soon.length === 0, `no category is still "Segera Hadir"${soon.length ? ' — ' + soon.join(', ') : ''}`)
+
+// ---- 3b. every clip on disk is one that PASSED the ASR check -----------
+// tools/spelling_tts.py renders each clip, round-trips it through Whisper and
+// records the sha1 of every clip that came back as the right letter/word. A
+// clip whose bytes are not in that manifest was never verified -- the old
+// clips said "uh-BEE" for B and failed 29 of 58 checks while every gate here
+// stayed green, because a gate that checks a file EXISTS cannot hear it.
+const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/spelling/audio/verified.json'), 'utf8'))
+const unverified = []
+for (const [dir, keys] of [['letters', letters], ['words', D.WORDS.map(w => w.w)]]) {
+  for (const k of keys) {
+    const f = path.join(ROOT, `assets/spelling/audio/${dir}/${k}.webm`)
+    if (!fs.existsSync(f)) continue
+    const h = crypto.createHash('sha1').update(fs.readFileSync(f)).digest('hex')
+    if (!manifest[`${dir}/${k}`] || manifest[`${dir}/${k}`].sha1 !== h) unverified.push(`${dir}/${k}`)
+  }
+}
+check(unverified.length === 0,
+  `every clip passed the ASR pronunciation check${unverified.length ? ' — UNVERIFIED: ' + unverified.join(', ') : ''}`)
+
 // ---- 4. clips must not be empty or duplicates --------------------------
 const clipDir = p => fs.readdirSync(path.join(ROOT, p)).map(f => path.join(ROOT, p, f))
 const all = [...clipDir('assets/spelling/audio/letters'), ...clipDir('assets/spelling/audio/words')]

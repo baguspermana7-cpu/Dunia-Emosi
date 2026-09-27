@@ -74,12 +74,16 @@ body[data-scene="night"]{--bg-l:url('../assets/spelling/scenes/night-land.webp')
   border-radius:14px;padding:6px 14px;font-size:20px;box-shadow:0 3px 0 #12488F;min-height:44px}
 .badge img{width:26px;height:26px}
 .plank-img{height:64px;width:auto;display:block;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25))}
-.head{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;max-width:980px;position:relative;min-height:64px;
-  padding:0 var(--head-pad,118px)}
-/* a long title ("School Objects") must never slide under the back button or the star badge */
-.head .title-txt{min-width:0;text-align:center;line-height:1.08;overflow-wrap:normal;word-break:normal}
-.head .left{position:absolute;left:0;top:50%;transform:translateY(-50%)}
-.head .right{position:absolute;right:0;top:50%;transform:translateY(-50%)}
+/* Three tracks: the side tracks share the spare width EQUALLY (title centred)
+   but never shrink below their own content, so a long title ("Mixed
+   Challenge") can never slide under the back button or the star badge. A fixed
+   side padding did not know how wide the badge was: "0/35" overlapped by 5px. */
+.head{display:grid;grid-template-columns:1fr minmax(0,max-content) 1fr;align-items:center;column-gap:10px;
+  width:100%;max-width:980px;position:relative;min-height:64px}
+.head>*{grid-row:1;grid-column:2;justify-self:center}
+.head .title-txt{min-width:0;justify-self:stretch;text-align:center;line-height:1.08;overflow-wrap:normal;word-break:normal}
+.head .left{grid-column:1;justify-self:start}
+.head .right{grid-column:3;justify-self:end}
 .title-txt{font-size:clamp(22px,5.4vw,38px);color:var(--ink);text-shadow:0 2px 0 #fff,0 0 12px rgba(255,255,255,.8)}
 
 /* ── the two characters ───────────────────────────────────────────────────
@@ -168,8 +172,6 @@ body:not([data-scr="scr-title"]) #title-sign{display:none}
 .wcard.done{border-color:#5CC45E;box-shadow:0 4px 0 #3D9A40}
 .wcard img.wpic{width:72px;height:72px;object-fit:contain}
 .wcard .wname{font-size:19px}
-.wcard.soon{background:#E6EBF1;border-color:#D2DAE4;box-shadow:0 4px 0 #BCC7D4;cursor:default;color:#70809A;text-align:center;font-size:15px;line-height:1.15}
-.wcard.soon svg{width:40px;height:40px}
 .stars{display:flex;gap:3px}
 .stars img{width:22px;height:22px}
 
@@ -309,7 +311,6 @@ body.celebrate .scr,body.celebrate .deco,body.celebrate #cheer-bubble{visibility
   #word-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
   .title-txt{font-size:30px}
   .plank-img{height:52px}
-  .head{--head-pad:100px}
   #play-cat-name{display:none}
   #topbar{gap:6px;padding:5px 6px}
   #topbar .sq,#topbar .sq img{width:48px;height:48px}
@@ -588,15 +589,15 @@ canvas.g27-fx{position:fixed;inset:0;width:100%;height:100%;z-index:2;pointer-ev
 
 <div id="du-build-stamp" class="du-build-stamp" style="position:fixed;left:6px;bottom:4px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(60,45,20,.4);pointer-events:none">v27.1</div>
 
-<script src="data/spelling-data.js?v=v62.1-20260927a"></script>
-<script src="data/emoji-map.js?v=v62.1-20260927a"></script>
-<script src="data/save-engine.js?v=v62.1-20260927a"></script>
-<script src="motion.js?v=v62.1-20260927a"></script>
-<script src="parallax-engine.js?v=v62.1-20260927a"></script>
-<script src="g27-scene.js?v=v62.1-20260927a"></script>
-<script src="ejaan-inggris.js?v=v62.1-20260927a"></script>
-<script src="data/freeze-watchdog.js?v=v62.1-20260927a"></script>
+<script src="data/spelling-data.js?v=v62.2-20260927a"></script>
+<script src="data/emoji-map.js?v=v62.2-20260927a"></script>
+<script src="data/save-engine.js?v=v62.2-20260927a"></script>
+<script src="motion.js?v=v62.2-20260927a"></script>
+<script src="parallax-engine.js?v=v62.2-20260927a"></script>
+<script src="g27-scene.js?v=v62.2-20260927a"></script>
+<script src="ejaan-inggris.js?v=v62.2-20260927a"></script>
+<script src="data/freeze-watchdog.js?v=v62.2-20260927a"></script>
 <!-- a fresh deploy refreshes an open game page once, like every other standalone game -->
-<script src="sw-reload.js?v=v62.1-20260927a"></script>
+<script src="sw-reload.js?v=v62.2-20260927a"></script>
 </body>
 </html>

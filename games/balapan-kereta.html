@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png">
-<link rel="stylesheet" href="du-buttons.css?v=v62.1-20260927a">
+<link rel="stylesheet" href="du-buttons.css?v=v62.2-20260927a">
 <title>Balapan Kereta 🚂</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -239,43 +239,43 @@ html,body{width:100%;height:100%;height:100svh;overflow:hidden;background:#050c0
 /* Flash */
 #flash{position:fixed;inset:0;z-index:99;pointer-events:none;opacity:0;transition:opacity .05s}
 </style>
-<link rel="stylesheet" href="g14-hud.css?v=v62.1-20260927a">
+<link rel="stylesheet" href="g14-hud.css?v=v62.2-20260927a">
 </head>
 <body>
 <canvas id="pixi-canvas"></canvas>
 <div id="du-build-stamp" style="position:fixed;left:6px;bottom:5px;z-index:99999;font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.34);letter-spacing:.04em;pointer-events:none;user-select:none">v59.1</div>
-<script src="data/emoji-map.js?v=v62.1-20260927a"></script><script src="data/ui-sprites.js?v=v62.1-20260927a"></script><!-- zero-emoji engine -->
-<script src="sw-reload.js?v=v62.1-20260927a"></script>
-<script src="train-shared.js?v=v62.1-20260927a"></script>
-<script src="data/train-world.js?v=v62.1-20260927a"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
-<script src="train-vfx.js?v=v62.1-20260927a"></script>
-<script src="train-bg-engine.js?v=v62.1-20260927a"></script>
-<script src="data/bg-themes.js?v=v62.1-20260927a"></script>
-<script src="data/bg-renderers.js?v=v62.1-20260927a"></script>
-<script src="data/bg-npcs.js?v=v62.1-20260927a"></script>
-<script src="data/bg-audio.js?v=v62.1-20260927a"></script>
-<script src="data/bg-events.js?v=v62.1-20260927a"></script>
+<script src="data/emoji-map.js?v=v62.2-20260927a"></script><script src="data/ui-sprites.js?v=v62.2-20260927a"></script><!-- zero-emoji engine -->
+<script src="sw-reload.js?v=v62.2-20260927a"></script>
+<script src="train-shared.js?v=v62.2-20260927a"></script>
+<script src="data/train-world.js?v=v62.2-20260927a"></script><!-- v55.89 — 275 real-sprite world trains (categorized) -->
+<script src="train-vfx.js?v=v62.2-20260927a"></script>
+<script src="train-bg-engine.js?v=v62.2-20260927a"></script>
+<script src="data/bg-themes.js?v=v62.2-20260927a"></script>
+<script src="data/bg-renderers.js?v=v62.2-20260927a"></script>
+<script src="data/bg-npcs.js?v=v62.2-20260927a"></script>
+<script src="data/bg-audio.js?v=v62.2-20260927a"></script>
+<script src="data/bg-events.js?v=v62.2-20260927a"></script>
 <!-- v54.69 — ObstacleEngine foundation (modular obstacle system, soft-fail, kids-friendly) -->
-<script src="obstacle-engine.js?v=v62.1-20260927a"></script>
-<script src="data/kids-questions.js?v=v62.1-20260927a"></script>
+<script src="obstacle-engine.js?v=v62.2-20260927a"></script>
+<script src="data/kids-questions.js?v=v62.2-20260927a"></script>
 <!-- v55.97 M-303 — SHARED quiz engine (question + answer-choices) for all games -->
-<script src="quiz-engine.js?v=v62.1-20260927a"></script>
+<script src="quiz-engine.js?v=v62.2-20260927a"></script>
 <!-- v56.6 M-303/A-315 — SHARED motion/game-feel engine (frame-rate-independent easing) -->
-<script src="motion.js?v=v62.1-20260927a"></script>
-<script src="data/obstacles.js?v=v62.1-20260927a"></script>
-<script src="data/routes.js?v=v62.1-20260927a"></script>
-<script src="data/reward-catalog.js?v=v62.1-20260927a"></script>
-<script src="reward-gallery.js?v=v62.1-20260927a"></script>
-<script src="settings-modal.js?v=v62.1-20260927a"></script>
+<script src="motion.js?v=v62.2-20260927a"></script>
+<script src="data/obstacles.js?v=v62.2-20260927a"></script>
+<script src="data/routes.js?v=v62.2-20260927a"></script>
+<script src="data/reward-catalog.js?v=v62.2-20260927a"></script>
+<script src="reward-gallery.js?v=v62.2-20260927a"></script>
+<script src="settings-modal.js?v=v62.2-20260927a"></script>
 <audio id="game-bgm" src="../Sounds/train-bgm.mp3" loop preload="auto" style="display:none"></audio>
-<script src="train-bgm.js?v=v62.1-20260927a"></script>
-<script src="indo-scene.js?v=v62.1-20260927a"></script>
-<script src="data/train-wheel-anchors.js?v=v62.1-20260927a"></script>
-<script src="train-journey.js?v=v62.1-20260927a"></script>
-<script src="train-backdrop.js?v=v62.1-20260927a"></script>
-<script src="train-speedfx.js?v=v62.1-20260927a"></script>
-<script src="data/sfx-engine.js?v=v62.1-20260927a"></script><!-- A-347 shared coin + quiz answer cues (owner) -->
-<script src="data/battle-modes.js?v=v62.1-20260927a"></script><!-- A-323b — mode-select + name-entry helpers (train PvP is self-contained below) -->
+<script src="train-bgm.js?v=v62.2-20260927a"></script>
+<script src="indo-scene.js?v=v62.2-20260927a"></script>
+<script src="data/train-wheel-anchors.js?v=v62.2-20260927a"></script>
+<script src="train-journey.js?v=v62.2-20260927a"></script>
+<script src="train-backdrop.js?v=v62.2-20260927a"></script>
+<script src="train-speedfx.js?v=v62.2-20260927a"></script>
+<script src="data/sfx-engine.js?v=v62.2-20260927a"></script><!-- A-347 shared coin + quiz answer cues (owner) -->
+<script src="data/battle-modes.js?v=v62.2-20260927a"></script><!-- A-323b — mode-select + name-entry helpers (train PvP is self-contained below) -->
 <audio id="train-sfx" src="../Sounds/train-crossing-sfx.mp3" preload="auto" style="display:none"></audio>
 
 <!-- v54.17 A1: 3-2-1-GO countdown overlay -->
@@ -548,14 +548,14 @@ function g14RefreshHCBadge(){
 }
 </script>
 
-<script src="data/freeze-watchdog.js?v=v62.1-20260927a"></script>
-<script src="data/save-engine.js?v=v62.1-20260927a"></script>
-<script src="game-modal.js?v=v62.1-20260927a"></script>
+<script src="data/freeze-watchdog.js?v=v62.2-20260927a"></script>
+<script src="data/save-engine.js?v=v62.2-20260927a"></script>
+<script src="game-modal.js?v=v62.2-20260927a"></script>
 
 <div id="flash"></div>
 
 <script src="lib/pixi.min.js?v=8"></script>
-<script src="../shared/rz-responsive.js?v=v62.1-20260927a"></script>
+<script src="../shared/rz-responsive.js?v=v62.2-20260927a"></script>
 <script>
 'use strict'
 // ═══════════════════════════════════════════════════════════
@@ -4594,6 +4594,33 @@ function _pickPickupType(){
   for (const t of PICKUP_TYPES) { if ((r -= t.weight) <= 0) return t }
   return PICKUP_TYPES[0]
 }
+// v62.2 — lane geometry for pickups. Body centre = where a train standing on
+// that lane has its body centre (rail + wheel offset + the sprite's own centre
+// offset, measured from the live train so it follows any sprite/scale).
+function _g14LaneBodyY(lane){
+  let off = -20
+  try {
+    if (L.player) {
+      const b = L.player.getBounds()
+      off = (b.y + b.height / 2) - L.player.y + (L.player._wheelOffset || 0)
+    }
+  } catch(_){}
+  return laneYs[lane] + off
+}
+function _g14PickupRadius(lane, pk){
+  let gap = Infinity
+  if (lane > 0) gap = Math.min(gap, Math.abs(laneYs[lane] - laneYs[lane - 1]))
+  if (lane < laneYs.length - 1) gap = Math.min(gap, Math.abs(laneYs[lane + 1] - laneYs[lane]))
+  return isFinite(gap) ? Math.max(12, Math.min(pk, Math.floor(gap * 0.42))) : pk
+}
+// Fraction of a pickup (its bounding square) that lies inside the train's body.
+function _g14PickupOverlap(p, tb){
+  if (!tb) return 0
+  const r = p._pk || 20, gp = p.getGlobalPosition ? p.getGlobalPosition() : p
+  const ix = Math.max(0, Math.min(gp.x + r, tb.x + tb.width) - Math.max(gp.x - r, tb.x))
+  const iy = Math.max(0, Math.min(gp.y + r, tb.y + tb.height) - Math.max(gp.y - r, tb.y))
+  return (ix * iy) / (4 * r * r)
+}
 function spawnPickup(){
   if (!L.fx) return
   const W = app.screen.width, H = app.screen.height
@@ -4602,7 +4629,10 @@ function spawnPickup(){
   // v55.61 B-240 — responsive: derive pickup radius from the viewport (was fixed
   // 22px) so it scales with the device like the train + obstacles. f = scale vs
   // the original 22px design.
-  const PK = Math.round(Math.max(15, Math.min(Math.min(W, H) * 0.05, 26)))
+  // v62.2 — capped by the gap to the neighbouring lanes too: on a phone held
+  // sideways the lanes sit 24-53px apart, and a 20px pickup of one lane read as
+  // belonging to the next (owner: "ada objectnya tapi kok kayak tidak terambil").
+  const PK = _g14PickupRadius(lane, Math.round(Math.max(15, Math.min(Math.min(W, H) * 0.05, 26))))
   const f = PK / 22
   // Halo + emoji text. Halo gives the affordance "this is collectable, not an obstacle."
   const g = new PIXI.Container()
@@ -4637,7 +4667,11 @@ function spawnPickup(){
   // Center-anchored at laneY, half the icon + the ±6 bob dipped BELOW the rail (owner:
   // "petir icon dan coin itu di bawah rail lane"). Base = laneY − (radius + margin);
   // the bob range in tickPickups stays fully above the rail.
-  g._hoverY = laneYs[lane] - (PK + 6)
+  // v62.2 — hover at the train-BODY centre of its own lane (was PK+6 above the
+  // rail, which on compressed lanes put a lower lane's pickup inside the body of
+  // the train one lane up — touched on screen, never taken).
+  g._hoverY = _g14LaneBodyY(lane)
+  g._pk = PK
   g.y = g._hoverY
   g._lane = lane
   g._kind = type.kind
@@ -4650,14 +4684,17 @@ function tickPickups(delta){
   if (!S.pickups || !S.pickups.length) return
   const W = app.screen.width
   const playerX = W * PLAYER_X
+  let tb = null
+  try { tb = L.player ? L.player.getBounds() : null } catch(_){}
   for (let i = S.pickups.length - 1; i >= 0; i--) {
     const p = S.pickups[i]
     if (!p._alive) { L.fx.removeChild(p); S.pickups.splice(i, 1); continue }
+    const _prevX = p.x
     p.x -= S.speed * delta * 0.9
     // v56.3 B-288 — dt-scaled bob (was frame-rate dependent) in a range FULLY ABOVE the
     // rail: hoverY-4 .. hoverY (sin mapped 0..1), never crossing the rail line.
     p._phase += 0.08 * delta
-    p.y = (p._hoverY != null ? p._hoverY : laneYs[p._lane] - 26) - (Math.sin(p._phase) * 0.5 + 0.5) * 4
+    p.y = (p._hoverY != null ? p._hoverY : laneYs[p._lane] - 26) + Math.sin(p._phase) * 2
     // Spin halo subtly
     p.children[0].rotation += 0.04 * delta
     if (p.x < -60) { p._alive = false; continue }
@@ -4673,8 +4710,12 @@ function tickPickups(delta){
       const sc = Math.max(0.55, (p.scale && p.scale.x || 1) - 0.03 * (delta || 1))
       if (p.scale) p.scale.set(sc)
     }
-    // Collection — player must be in same lane + overlapping column.
-    if (p._lane === S.lane && p.x > playerX - 28 && p.x < playerX + 28) {
+    // Collection (v62.2) — what the child SEES decides: taken when it is in the
+    // train's lane and its path this frame crossed the train's column (swept, so a
+    // frame hitch cannot jump over the ±28px window), OR when it visibly sits on
+    // the train's body (>= 40% of it inside) whatever the lane bookkeeping says.
+    const _crossed = Math.min(p.x, _prevX) < playerX + 28 && Math.max(p.x, _prevX) > playerX - 28
+    if ((p._lane === S.lane && _crossed) || _g14PickupOverlap(p, tb) >= 0.4) {
       p._alive = false
       // Apply effect.
       if (p._kind === 'coin') {

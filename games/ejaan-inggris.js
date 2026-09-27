@@ -290,7 +290,10 @@
   function openWords (level) {
     S.level = level
     var cat = catInfo(S.cat)
-    $('words-title').textContent = cat ? cat.name : S.cat
+    // Break between words only: "Al-Qur'an" broke at its hyphen on a phone.
+    // U+2060 WORD JOINER either side of a hyphen forbids that break; it is
+    // default-ignorable, so it draws nothing and needs no font glyph.
+    $('words-title').textContent = String(cat ? cat.name : S.cat).replace(/-/g, '\u2060-\u2060')
     $('lv1').classList.toggle('on', level === 1); $('lv1').setAttribute('aria-selected', level === 1)
     $('lv2').classList.toggle('on', level === 2); $('lv2').setAttribute('aria-selected', level === 2)
     var pool = D.list(S.cat, level)
@@ -306,11 +309,8 @@
       d.addEventListener('click', function () { unlock(); sfx('click'); startQueue(pool, i) })
       g.appendChild(d)
     })
-    var soon = document.createElement('div')
-    soon.className = 'wcard soon'
-    soon.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.4" fill="#F2B632"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" stroke="#B9831A" stroke-width="2.4" fill="none"/></svg><div>More<br>Coming Soon!</div>'
-    g.appendChild(soon)
     show('scr-words')
+    fitTitle()
   }
 
   /* ── play ──────────────────────────────────────────────────────────── */
@@ -352,6 +352,15 @@
      then shrink picture, then cells, until the play screen stops overflowing.
      Cells never go below 44 px. */
   var LAND = window.matchMedia ? matchMedia('(orientation:landscape) and (max-height:500px)') : { matches: false }
+  /* A title word wider than its header track (e.g. "Challenge" on a 320px
+     phone) is shrunk until it fits, never below 18px; CSS alone cannot know. */
+  function fitTitle () {
+    var t = $('words-title'); if (!t || !t.offsetParent) return
+    t.style.fontSize = ''
+    var fs = parseFloat(getComputedStyle(t).fontSize)
+    while (t.scrollWidth > t.clientWidth + 1 && fs > 18) { fs -= 1; t.style.fontSize = fs + 'px' }
+  }
+
   function fitGrids () {
     if (!S.word || !$('scr-play').classList.contains('active')) return
     var host = LAND.matches ? $('stage-right') : $('stage')
@@ -409,7 +418,7 @@
   }
   window.addEventListener('orientationchange', function () { setTimeout(function () { fitGrids(); fitOk(); placeDecor() }, 250) })
   if (LAND.addEventListener) LAND.addEventListener('change', function () { fitGrids(); fitOk() })
-  window.addEventListener('resize', function () { fitGrids(); fitOk(); placeDecor() })
+  window.addEventListener('resize', function () { fitGrids(); fitOk(); fitTitle(); placeDecor() })
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(placeDecor)
   window.addEventListener('load', placeDecor)
 

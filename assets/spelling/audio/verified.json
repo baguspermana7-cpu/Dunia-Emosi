@@ -1,0 +1,447 @@
+{
+ "letters/a": {
+  "sha1": "6bcd9511079e45704e0f8ed9c7c4ded416ce2f63",
+  "heard": "A.",
+  "carrier": "Here is the next letter."
+ },
+ "letters/b": {
+  "sha1": "0fdc9f343044f989246007679bcacca31b80a0b2",
+  "heard": "B.",
+  "carrier": "Here is the next letter."
+ },
+ "letters/c": {
+  "sha1": "7abbf1d2384c3691470d25545de785be865f4d8e",
+  "heard": "C.",
+  "carrier": "Here is the next letter."
+ },
+ "letters/d": {
+  "sha1": "b798f0d7edd4af910f2bf0a04000963cd3b0f644",
+  "heard": "D",
+  "carrier": "Here is the next letter."
+ },
+ "letters/e": {
+  "sha1": "0efbb47eca66c5c5941754f9cafb52c1600032b9",
+  "heard": "E.",
+  "carrier": "Here is the next letter."
+ },
+ "letters/f": {
+  "sha1": "5639766842520fc85356ab914abea4b8bddc817c",
+  "heard": "F.",
+  "carrier": "Here is the next letter."
+ },
+ "letters/g": {
+  "sha1": "92658f32c1243a320e9900c65a218334c58f1512",
+  "heard": "G",
+  "carrier": "Here is the next letter."
+ },
+ "letters/h": {
+  "sha1": "b469feae3f0744eb29396ee08de78e2a141621bf",
+  "heard": "H.",
+  "carrier": "Here is the next letter."
+ },
+ "letters/i": {
+  "sha1": "abaa3c348be504ea638193d9a67334d14641cebd",
+  "heard": "I.",
+  "carrier": "Here is the next letter."
+ },
+ "letters/j": {
+  "sha1": "3c991b19297c3df8c127ef790058046b1b4afbfd",
+  "heard": "J",
+  "carrier": "Here is the next letter."
+ },
+ "letters/k": {
+  "sha1": "ed2b73b7b5d80b037c8f98ec91df4684f0c9bfb9",
+  "heard": "K.",
+  "carrier": "Here is the next letter."
+ },
+ "letters/l": {
+  "sha1": "62a4bc93634a8941063313b023f89de976d5d39b",
+  "heard": "L",
+  "carrier": "Here is the next letter."
+ },
+ "letters/m": {
+  "sha1": "40c0859848d6355844a4abf5ee59387994154de7",
+  "heard": "M.",
+  "carrier": "Here is the next letter."
+ },
+ "letters/n": {
+  "sha1": "ff41cc15afaa8468675913d2b4ecc71f7c2de08b",
+  "heard": "N.",
+  "carrier": "Here is the next letter."
+ },
+ "letters/o": {
+  "sha1": "8125b126bd64082c1cdb1a7db1f39fd0cc62a0a0",
+  "heard": "O.",
+  "carrier": "Here is the next letter."
+ },
+ "letters/p": {
+  "sha1": "e220b974d9f017462ad710a76816c9ed0d9080b4",
+  "heard": "P.",
+  "carrier": "Here is the next letter."
+ },
+ "letters/q": {
+  "sha1": "990afb6f6cfefed4c5bc6930aa0b7b0f09945f8d",
+  "heard": "Q.",
+  "carrier": "Here is the next letter."
+ },
+ "letters/r": {
+  "sha1": "8b251e79bdb225ffdc1e13de119dda7eac16d0d4",
+  "heard": "R.",
+  "carrier": "Here is the next letter."
+ },
+ "letters/s": {
+  "sha1": "d4f8b8340cd560447c0bfd4f41148a3a4cc2c4d0",
+  "heard": "S.",
+  "carrier": "Here is the next letter."
+ },
+ "letters/t": {
+  "sha1": "92e715e7321e089bdd7407f8741cdbcefa13ec3f",
+  "heard": "T.",
+  "carrier": "Here is the next letter."
+ },
+ "letters/u": {
+  "sha1": "2176252499684f8a77c74f42f2f70cf45066c1c6",
+  "heard": "You.",
+  "carrier": "Here is the next letter."
+ },
+ "letters/v": {
+  "sha1": "19e6109f3766d7269682acff9e764e9d0373da51",
+  "heard": "V.",
+  "carrier": "Here is the next letter."
+ },
+ "letters/w": {
+  "sha1": "bbac0247e439cfc3eac33be429bc745331735e84",
+  "heard": "W.",
+  "carrier": "Here is the next letter."
+ },
+ "letters/x": {
+  "sha1": "57ebdbc8c730eabc9210d6f23d233233f56da3b8",
+  "heard": "X.",
+  "carrier": "Here is the next letter."
+ },
+ "letters/y": {
+  "sha1": "78db31a519fe108fa773eec436ace17f61c7195b",
+  "heard": "Why?",
+  "carrier": "Here is the next letter."
+ },
+ "letters/z": {
+  "sha1": "cf06e87bed0ede789cb03d8bfa52e46abd017666",
+  "heard": "z",
+  "carrier": "Here is the next letter."
+ },
+ "words/bag": {
+  "sha1": "697c34e24ed46e8ee1925d22636596363caabc53",
+  "heard": "bag",
+  "carrier": "Here is the next word."
+ },
+ "words/basket": {
+  "sha1": "9f5bf26e93044a32a194e92e7c402afc8d0e2df5",
+  "heard": "basket",
+  "carrier": "Here is the next word."
+ },
+ "words/bathtub": {
+  "sha1": "967cda5c843fdcd95ed364b58104399a9aa3cd49",
+  "heard": "bathtub",
+  "carrier": "Here is the next word."
+ },
+ "words/beads": {
+  "sha1": "25a27654c04113d0bdffb81946b65e593c86f8df",
+  "heard": "beads",
+  "carrier": "Here is the next word."
+ },
+ "words/bed": {
+  "sha1": "df12df2afe93f762c01832a6b820a3ac4be302b8",
+  "heard": "bed",
+  "carrier": "Here is the next word."
+ },
+ "words/black": {
+  "sha1": "35d9bbf8e7e0464459b469f77335f853920efc3f",
+  "heard": "black",
+  "carrier": "Here is the next word."
+ },
+ "words/blue": {
+  "sha1": "454d0b5ca5e52bbe3e828532cbc2e37bb9f2a2b2",
+  "heard": "blue.",
+  "carrier": "Here is the next word."
+ },
+ "words/board": {
+  "sha1": "7a5c38ab120be0f04dbb6b08ea83f508b7b57914",
+  "heard": "Bored",
+  "carrier": "Here is the next word."
+ },
+ "words/book": {
+  "sha1": "2eb2abce91b8e9573b6380b2f1c8ae6688d4201a",
+  "heard": "book",
+  "carrier": "Now spell this word."
+ },
+ "words/bottle": {
+  "sha1": "e4e15b651104b67a573488cc6b2f293bf3922a69",
+  "heard": "Bottle",
+  "carrier": "Here is the next word."
+ },
+ "words/bowl": {
+  "sha1": "964c3fa10ba0503b7d7844bc16277108506aa966",
+  "heard": "bowl",
+  "carrier": "Here is the next word."
+ },
+ "words/broom": {
+  "sha1": "39c1c2341a5793820cc8e19ef017cf5871fb988b",
+  "heard": "Broom.",
+  "carrier": "Here is the next word."
+ },
+ "words/brown": {
+  "sha1": "1da6245b8527219434edc0a878678d95de98f1bf",
+  "heard": "Brown",
+  "carrier": "Here is the next word."
+ },
+ "words/bucket": {
+  "sha1": "198c0936c377457e4b5772d00cd51b2fa11b77e9",
+  "heard": "bucket",
+  "carrier": "Here is the next word."
+ },
+ "words/calculator": {
+  "sha1": "2df8d86344519bbe068283cc1c449aed1aabbde6",
+  "heard": "Calculator",
+  "carrier": "Here is the next word."
+ },
+ "words/camel": {
+  "sha1": "7dbf0592b9daa05c52cbcce220ce5088343e60c3",
+  "heard": "camel",
+  "carrier": "Here is the next word."
+ },
+ "words/candle": {
+  "sha1": "ef153d1ca72dfce5391d1403f6262b9e8d36b45a",
+  "heard": "Candle",
+  "carrier": "Here is the next word."
+ },
+ "words/chair": {
+  "sha1": "08ad457173bf98bc1dd8b36c2cec5955fa323bbb",
+  "heard": "chair",
+  "carrier": "Here is the next word."
+ },
+ "words/clock": {
+  "sha1": "baa273fd5ee3094ab2210e89a669ba242c2a842e",
+  "heard": "clock",
+  "carrier": "Here is the next word."
+ },
+ "words/computer": {
+  "sha1": "9c54527de5fc0206a29ad5f50aa98010d3b9936d",
+  "heard": "Computer.",
+  "carrier": "Here is the next word."
+ },
+ "words/crayon": {
+  "sha1": "6ce900f6544e4dea52b40ecd78d91ef913e845f8",
+  "heard": "crayon",
+  "carrier": "Here is the next word."
+ },
+ "words/desert": {
+  "sha1": "05463dd76fa26ec9f028d9596569a276941c821d",
+  "heard": "desert",
+  "carrier": "Here is the next word."
+ },
+ "words/desk": {
+  "sha1": "03a83d1c7a0ecca020f13a03fc9b173389849830",
+  "heard": "desk",
+  "carrier": "Here is the next word."
+ },
+ "words/door": {
+  "sha1": "57b047e31986326401d878be2444dc2a3c2c03d0",
+  "heard": "door",
+  "carrier": "Here is the next word."
+ },
+ "words/eraser": {
+  "sha1": "2df8fcfe5f8ed81b744baaa6ac65be6d1457b9cf",
+  "heard": "Eraser",
+  "carrier": "Here is the next word."
+ },
+ "words/glue": {
+  "sha1": "3257b22cb0566ee28ad96382ea916490cfe1b1bd",
+  "heard": "glue",
+  "carrier": "Here is the next word."
+ },
+ "words/gray": {
+  "sha1": "801ee1319a6de9098860a8519f5764aaeb0e6a68",
+  "heard": "gray",
+  "carrier": "Here is the next word."
+ },
+ "words/green": {
+  "sha1": "0630a1e35609ab8c74b1c47e08c55bd3d9bd2aa1",
+  "heard": "green",
+  "carrier": "Here is the next word."
+ },
+ "words/kaaba": {
+  "sha1": "d78b3a4a1b8369bf023c15b7374839ad300bf93c",
+  "heard": "Kaaba",
+  "carrier": "Here is the next word."
+ },
+ "words/key": {
+  "sha1": "0c52bef56bd2f60d54481a958e286a3f64f84856",
+  "heard": "key.",
+  "carrier": "Here is the next word."
+ },
+ "words/marker": {
+  "sha1": "7ff82ccf7bc914c7383ced8fef89f02397241357",
+  "heard": "marker",
+  "carrier": "Here is the next word."
+ },
+ "words/mirror": {
+  "sha1": "e9d0d5cdd5a5ed24c67e73b401a9115a766efbb6",
+  "heard": "mirror",
+  "carrier": "Here is the next word."
+ },
+ "words/moon": {
+  "sha1": "1266a7990a06de6e5c1097bf5ccc3899d2db587c",
+  "heard": "Moon",
+  "carrier": "Here is the next word."
+ },
+ "words/mosque": {
+  "sha1": "b199a5341d7f2380ec9e5e7313354c721b24d818",
+  "heard": "Mosque",
+  "carrier": "Here is the next word."
+ },
+ "words/orange": {
+  "sha1": "1ae3f2bb63545bb72b40a23c7dcf5eadf1df6612",
+  "heard": "Orange.",
+  "carrier": "Here is the next word."
+ },
+ "words/palm": {
+  "sha1": "397e4aff2fa9ebd4ed4acd6cfcbc893d19748320",
+  "heard": "palm",
+  "carrier": "Here is the next word."
+ },
+ "words/pen": {
+  "sha1": "fa51d8452e209583eb4dd3db2df02c55e9cab6e7",
+  "heard": "pen",
+  "carrier": "Here is the next word."
+ },
+ "words/pencil": {
+  "sha1": "845ec974b0aa72c3b68e3bc1568a35edf023a7fe",
+  "heard": "pencil",
+  "carrier": "Here is the next word."
+ },
+ "words/pink": {
+  "sha1": "f803aed10ffddd0547467078ae96467233fa5a27",
+  "heard": "pink.",
+  "carrier": "Here is the next word."
+ },
+ "words/prayer": {
+  "sha1": "09c883171acbed883fac7d6074bdfff291e9a9a7",
+  "heard": "prayer",
+  "carrier": "Here is the next word."
+ },
+ "words/purple": {
+  "sha1": "78f093ace84e753336d96fcc04826717ec2d1b80",
+  "heard": "purple",
+  "carrier": "Here is the next word."
+ },
+ "words/quran": {
+  "sha1": "686fd2fd3519901a1bc899ef5a7411d05859c1c5",
+  "heard": "Quran",
+  "carrier": "Here is the next word."
+ },
+ "words/radio": {
+  "sha1": "d4c18ba098892b0c8901dedd45e9f984624863fc",
+  "heard": "radio",
+  "carrier": "Here is the next word."
+ },
+ "words/red": {
+  "sha1": "48e7699c4989e88d87977dc89bafd4ad5aaeac10",
+  "heard": "red",
+  "carrier": "Here is the next word."
+ },
+ "words/ruler": {
+  "sha1": "ac33a5c8147d3b5bc2a3321dcc8aec603556f146",
+  "heard": "ruler",
+  "carrier": "Here is the next word."
+ },
+ "words/scissors": {
+  "sha1": "453a5b43ce41b5b09164f5d57d67b840fa7ffa02",
+  "heard": "scissors.",
+  "carrier": "Here is the next word."
+ },
+ "words/soap": {
+  "sha1": "519533e6a411c796b4fb429726d0f00b5f29de01",
+  "heard": "soap",
+  "carrier": "Here is the next word."
+ },
+ "words/sofa": {
+  "sha1": "2c8fdab445f0be820bf0aba560a19e2b121501bf",
+  "heard": "sofa",
+  "carrier": "Here is the next word."
+ },
+ "words/sponge": {
+  "sha1": "53b2b27feacd1854c5d72410be8706af3f828c87",
+  "heard": "sponge",
+  "carrier": "Here is the next word."
+ },
+ "words/spoon": {
+  "sha1": "1a1b278225dbefaf2868fbe333445b1062c878db",
+  "heard": "spoon",
+  "carrier": "Here is the next word."
+ },
+ "words/stapler": {
+  "sha1": "7b416d8ac640625bcb097ce35412319a9c9ca977",
+  "heard": "stapler",
+  "carrier": "Here is the next word."
+ },
+ "words/star": {
+  "sha1": "f3ebd106c474cfa4faee4eaebf3d78ca9e2bc316",
+  "heard": "Star",
+  "carrier": "Here is the next word."
+ },
+ "words/sunrise": {
+  "sha1": "808398c659d643db7752a93f76b2b75b7177c8f4",
+  "heard": "sunrise",
+  "carrier": "Here is the next word."
+ },
+ "words/table": {
+  "sha1": "b882f4e87ce3cb8918adb3cd293a1d8adb986e2b",
+  "heard": "table",
+  "carrier": "Here is the next word."
+ },
+ "words/teapot": {
+  "sha1": "62cb5c7594f82317d541f37806271db5132a2697",
+  "heard": "teapot",
+  "carrier": "Here is the next word."
+ },
+ "words/television": {
+  "sha1": "3cf24691738977fe6f33b6d606331f247d11ec46",
+  "heard": "television",
+  "carrier": "Here is the next word."
+ },
+ "words/toilet": {
+  "sha1": "21dd6f9f9a4125f463e0161dbb4071c81cd07057",
+  "heard": "Toilet",
+  "carrier": "Here is the next word."
+ },
+ "words/toothbrush": {
+  "sha1": "4d2d568f559711220a7d616809977140a68ec979",
+  "heard": "Toothbrush",
+  "carrier": "Here is the next word."
+ },
+ "words/umbrella": {
+  "sha1": "6a5f6360471ca1bb6f844ee355d82e4b1f811d2f",
+  "heard": "Umbrella",
+  "carrier": "Here is the next word."
+ },
+ "words/water": {
+  "sha1": "282ef5973def24a0277af9483e6b0a9f55304b73",
+  "heard": "Water",
+  "carrier": "Here is the next word."
+ },
+ "words/white": {
+  "sha1": "5543d26eb6e01b3e288037da35e3a5d86996da25",
+  "heard": "white",
+  "carrier": "Here is the next word."
+ },
+ "words/window": {
+  "sha1": "0689e5527edfec316b8d27ee645ca1ef9276d086",
+  "heard": "Window",
+  "carrier": "Here is the next word."
+ },
+ "words/yellow": {
+  "sha1": "ad90d24eeab9686851a62bce0efa5e6399ee0e23",
+  "heard": "yellow",
+  "carrier": "Here is the next word."
+ }
+}
