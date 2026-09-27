@@ -271,3 +271,18 @@ Archived: `~/Documents/temporary/game asset/monster-truck/ui-1-battle-table.png`
 | Landscape | same components re-flowed per §3 | owner requires both orientations |
 
 **Asset note for the next delivery:** trucks as separate cut-outs (right-facing, wheels ideally on a separate layer), card frames empty (no baked text — text is rendered live so it can be translated and read aloud), arena backdrop in layers (§9).
+
+---
+
+## 15. OWNER ADDITIONS (2026-09-27)
+
+**Arenas:** used AS SUPPLIED — owner: "jangan ditutup biarkan aja … sudah dapat izin dan ini utk keperluan testing", "jangan di blur". 9 arenas × landscape/portrait in `assets/db/lib/gt-arena/` (ESRGAN ×4 → 2000 px).
+
+**MONSTER RUSH — bonus round before the final score (owner idea).**
+Near the end of a match — after the deciding KO, before the final score screen — a **monster** bursts into the middle of the table (roar, screen shake, dust). For **15 seconds** BOTH players answer questions as fast as they can, each on their own half of the screen (PvP) or the child vs the AI's simulated pace (Adventure). Every right answer is a hit on the monster (damage number flies at it, the monster flinches); a wrong answer just moves to the next question — no penalty. When time runs out the monster flees or falls, and each player gets **bonus points = right answers × 10** added to the final score. Then the final score is shown.
+- Timer ring 15 → 0, big and friendly (no red flashing).
+- Questions: the Easy pool (math ≤ 20, patterns, vocabulary), 2 big answer buttons per player side so both kids can tap at once without blocking each other (multi-touch: each side listens to its own pointer).
+- Monster pool: 33 monsters from the owner's sheets (`assets/db/lib/gt-monster/`), picked by arena theme (lava → magma golem, ice → yeti, sea → pirate octopus, …).
+- Final score = KO win points + damage dealt + Monster Rush bonus; the win is still decided by KOs (the bonus ranks, it doesn't overturn the winner) — so a child who lost the duel still earns a proud number.
+- Reduced motion: no shake; the monster fades in/out.
+- Gate: a scripted Rush with fixed answers gives the exact bonus; two simultaneous pointers on the two halves both register.

@@ -1640,6 +1640,1652 @@
    "h": 274,
    "psnr": 44.0
   },
+  "gt-arena/bawah-laut-land": {
+   "file": "assets/db/lib/gt-arena/bawah-laut-land.webp",
+   "cat": "gt-arena",
+   "tags": [
+    "bawah-laut",
+    "land",
+    "arena",
+    "background"
+   ],
+   "name": "Kota Bawah Laut",
+   "source": "arena-7-land (as supplied, ESRGAN x4)",
+   "w": 2000,
+   "h": 1447
+  },
+  "gt-arena/bawah-laut-port": {
+   "file": "assets/db/lib/gt-arena/bawah-laut-port.webp",
+   "cat": "gt-arena",
+   "tags": [
+    "bawah-laut",
+    "port",
+    "arena",
+    "background"
+   ],
+   "name": "Kota Bawah Laut",
+   "source": "arena-7-port (as supplied, ESRGAN x4)",
+   "w": 990,
+   "h": 2000
+  },
+  "gt-arena/gunung-api-land": {
+   "file": "assets/db/lib/gt-arena/gunung-api-land.webp",
+   "cat": "gt-arena",
+   "tags": [
+    "gunung-api",
+    "land",
+    "arena",
+    "background"
+   ],
+   "name": "Gunung Api",
+   "source": "arena-8-land (as supplied, ESRGAN x4)",
+   "w": 2000,
+   "h": 1388
+  },
+  "gt-arena/gunung-api-port": {
+   "file": "assets/db/lib/gt-arena/gunung-api-port.webp",
+   "cat": "gt-arena",
+   "tags": [
+    "gunung-api",
+    "port",
+    "arena",
+    "background"
+   ],
+   "name": "Gunung Api",
+   "source": "arena-8-port (as supplied, ESRGAN x4)",
+   "w": 990,
+   "h": 2000
+  },
+  "gt-arena/kanyon-lava-land": {
+   "file": "assets/db/lib/gt-arena/kanyon-lava-land.webp",
+   "cat": "gt-arena",
+   "tags": [
+    "kanyon-lava",
+    "land",
+    "arena",
+    "background"
+   ],
+   "name": "Kanyon Air Terjun",
+   "source": "arena-2-land (as supplied, ESRGAN x4)",
+   "w": 2000,
+   "h": 1384
+  },
+  "gt-arena/kanyon-lava-port": {
+   "file": "assets/db/lib/gt-arena/kanyon-lava-port.webp",
+   "cat": "gt-arena",
+   "tags": [
+    "kanyon-lava",
+    "port",
+    "arena",
+    "background"
+   ],
+   "name": "Kanyon Air Terjun",
+   "source": "arena-2-port (as supplied, ESRGAN x4)",
+   "w": 994,
+   "h": 2000
+  },
+  "gt-arena/kuil-hutan-land": {
+   "file": "assets/db/lib/gt-arena/kuil-hutan-land.webp",
+   "cat": "gt-arena",
+   "tags": [
+    "kuil-hutan",
+    "land",
+    "arena",
+    "background"
+   ],
+   "name": "Kuil Hutan",
+   "source": "arena-5-land (as supplied, ESRGAN x4)",
+   "w": 2000,
+   "h": 1400
+  },
+  "gt-arena/kuil-hutan-port": {
+   "file": "assets/db/lib/gt-arena/kuil-hutan-port.webp",
+   "cat": "gt-arena",
+   "tags": [
+    "kuil-hutan",
+    "port",
+    "arena",
+    "background"
+   ],
+   "name": "Kuil Hutan",
+   "source": "arena-5-port (as supplied, ESRGAN x4)",
+   "w": 998,
+   "h": 2000
+  },
+  "gt-arena/pelabuhan-land": {
+   "file": "assets/db/lib/gt-arena/pelabuhan-land.webp",
+   "cat": "gt-arena",
+   "tags": [
+    "pelabuhan",
+    "land",
+    "arena",
+    "background"
+   ],
+   "name": "Pelabuhan Kapal",
+   "source": "arena-4-land (as supplied, ESRGAN x4)",
+   "w": 2000,
+   "h": 1346
+  },
+  "gt-arena/pelabuhan-port": {
+   "file": "assets/db/lib/gt-arena/pelabuhan-port.webp",
+   "cat": "gt-arena",
+   "tags": [
+    "pelabuhan",
+    "port",
+    "arena",
+    "background"
+   ],
+   "name": "Pelabuhan Kapal",
+   "source": "arena-4-port (as supplied, ESRGAN x4)",
+   "w": 982,
+   "h": 2000
+  },
+  "gt-arena/permen-land": {
+   "file": "assets/db/lib/gt-arena/permen-land.webp",
+   "cat": "gt-arena",
+   "tags": [
+    "permen",
+    "land",
+    "arena",
+    "background"
+   ],
+   "name": "Negeri Permen",
+   "source": "arena-3-land (as supplied, ESRGAN x4)",
+   "w": 2000,
+   "h": 1286
+  },
+  "gt-arena/permen-port": {
+   "file": "assets/db/lib/gt-arena/permen-port.webp",
+   "cat": "gt-arena",
+   "tags": [
+    "permen",
+    "port",
+    "arena",
+    "background"
+   ],
+   "name": "Negeri Permen",
+   "source": "arena-3-port (as supplied, ESRGAN x4)",
+   "w": 990,
+   "h": 2000
+  },
+  "gt-arena/pulau-langit-land": {
+   "file": "assets/db/lib/gt-arena/pulau-langit-land.webp",
+   "cat": "gt-arena",
+   "tags": [
+    "pulau-langit",
+    "land",
+    "arena",
+    "background"
+   ],
+   "name": "Pulau Langit",
+   "source": "arena-6-land (as supplied, ESRGAN x4)",
+   "w": 2000,
+   "h": 1347
+  },
+  "gt-arena/pulau-langit-port": {
+   "file": "assets/db/lib/gt-arena/pulau-langit-port.webp",
+   "cat": "gt-arena",
+   "tags": [
+    "pulau-langit",
+    "port",
+    "arena",
+    "background"
+   ],
+   "name": "Pulau Langit",
+   "source": "arena-6-port (as supplied, ESRGAN x4)",
+   "w": 994,
+   "h": 2000
+  },
+  "gt-arena/salju-land": {
+   "file": "assets/db/lib/gt-arena/salju-land.webp",
+   "cat": "gt-arena",
+   "tags": [
+    "salju",
+    "land",
+    "arena",
+    "background"
+   ],
+   "name": "Gunung Salju",
+   "source": "arena-3-land (as supplied, ESRGAN x4)",
+   "w": 2000,
+   "h": 1409
+  },
+  "gt-arena/salju-port": {
+   "file": "assets/db/lib/gt-arena/salju-port.webp",
+   "cat": "gt-arena",
+   "tags": [
+    "salju",
+    "port",
+    "arena",
+    "background"
+   ],
+   "name": "Gunung Salju",
+   "source": "arena-3-port (as supplied, ESRGAN x4)",
+   "w": 1000,
+   "h": 2000
+  },
+  "gt-arena/stadion-malam-land": {
+   "file": "assets/db/lib/gt-arena/stadion-malam-land.webp",
+   "cat": "gt-arena",
+   "tags": [
+    "stadion-malam",
+    "land",
+    "arena",
+    "background"
+   ],
+   "name": "Stadion Malam",
+   "source": "arena-1-land (as supplied, ESRGAN x4)",
+   "w": 2000,
+   "h": 1378
+  },
+  "gt-arena/stadion-malam-port": {
+   "file": "assets/db/lib/gt-arena/stadion-malam-port.webp",
+   "cat": "gt-arena",
+   "tags": [
+    "stadion-malam",
+    "port",
+    "arena",
+    "background"
+   ],
+   "name": "Stadion Malam",
+   "source": "arena-1-port (as supplied, ESRGAN x4)",
+   "w": 1006,
+   "h": 2000
+  },
+  "gt-el/anchor": {
+   "file": "assets/db/lib/gt-el/anchor.webp",
+   "cat": "gt-el",
+   "tags": [
+    "anchor",
+    "cartoon"
+   ],
+   "source": "elements-c-25#20",
+   "w": 227,
+   "h": 260,
+   "psnr": 44.2
+  },
+  "gt-el/archery-target": {
+   "file": "assets/db/lib/gt-el/archery-target.webp",
+   "cat": "gt-el",
+   "tags": [
+    "archery",
+    "target",
+    "cartoon"
+   ],
+   "source": "elements-b-25#1",
+   "w": 238,
+   "h": 257,
+   "psnr": 44.2
+  },
+  "gt-el/balloon-blue": {
+   "file": "assets/db/lib/gt-el/balloon-blue.webp",
+   "cat": "gt-el",
+   "tags": [
+    "balloon",
+    "blue",
+    "cartoon"
+   ],
+   "source": "elements-c-25#9",
+   "w": 206,
+   "h": 267,
+   "psnr": 44.4
+  },
+  "gt-el/balloon-red": {
+   "file": "assets/db/lib/gt-el/balloon-red.webp",
+   "cat": "gt-el",
+   "tags": [
+    "balloon",
+    "red",
+    "cartoon"
+   ],
+   "source": "elements-a-25#21",
+   "w": 196,
+   "h": 267,
+   "psnr": 41.7
+  },
+  "gt-el/barricade-lamp": {
+   "file": "assets/db/lib/gt-el/barricade-lamp.webp",
+   "cat": "gt-el",
+   "tags": [
+    "barricade",
+    "lamp",
+    "cartoon"
+   ],
+   "source": "elements-a-25#13",
+   "w": 260,
+   "h": 263,
+   "psnr": 44.2
+  },
+  "gt-el/biplane": {
+   "file": "assets/db/lib/gt-el/biplane.webp",
+   "cat": "gt-el",
+   "tags": [
+    "biplane",
+    "cartoon"
+   ],
+   "source": "elements-c-25#8",
+   "w": 265,
+   "h": 201,
+   "psnr": 42.3
+  },
+  "gt-el/bonfire": {
+   "file": "assets/db/lib/gt-el/bonfire.webp",
+   "cat": "gt-el",
+   "tags": [
+    "bonfire",
+    "cartoon"
+   ],
+   "source": "elements-c-25#22",
+   "w": 269,
+   "h": 265,
+   "psnr": 41.7
+  },
+  "gt-el/boulders": {
+   "file": "assets/db/lib/gt-el/boulders.webp",
+   "cat": "gt-el",
+   "tags": [
+    "boulders",
+    "cartoon"
+   ],
+   "source": "elements-a-25#20",
+   "w": 263,
+   "h": 214,
+   "psnr": 44.4
+  },
+  "gt-el/bridge-wood": {
+   "file": "assets/db/lib/gt-el/bridge-wood.webp",
+   "cat": "gt-el",
+   "tags": [
+    "bridge",
+    "wood",
+    "cartoon"
+   ],
+   "source": "elements-a-25#1",
+   "w": 255,
+   "h": 230,
+   "psnr": 44.1
+  },
+  "gt-el/cactus-desert": {
+   "file": "assets/db/lib/gt-el/cactus-desert.webp",
+   "cat": "gt-el",
+   "tags": [
+    "cactus",
+    "desert",
+    "cartoon"
+   ],
+   "source": "elements-b-25#20",
+   "w": 220,
+   "h": 256,
+   "psnr": 43.5
+  },
+  "gt-el/cactus-flower": {
+   "file": "assets/db/lib/gt-el/cactus-flower.webp",
+   "cat": "gt-el",
+   "tags": [
+    "cactus",
+    "flower",
+    "cartoon"
+   ],
+   "source": "elements-a-25#14",
+   "w": 208,
+   "h": 261,
+   "psnr": 43.7
+  },
+  "gt-el/cannon": {
+   "file": "assets/db/lib/gt-el/cannon.webp",
+   "cat": "gt-el",
+   "tags": [
+    "cannon",
+    "cartoon"
+   ],
+   "source": "elements-b-25#6",
+   "w": 261,
+   "h": 246,
+   "psnr": 45.4
+  },
+  "gt-el/crate": {
+   "file": "assets/db/lib/gt-el/crate.webp",
+   "cat": "gt-el",
+   "tags": [
+    "crate",
+    "cartoon"
+   ],
+   "source": "elements-a-25#8",
+   "w": 248,
+   "h": 239,
+   "psnr": 44.6
+  },
+  "gt-el/crown-coin": {
+   "file": "assets/db/lib/gt-el/crown-coin.webp",
+   "cat": "gt-el",
+   "tags": [
+    "crown",
+    "coin",
+    "cartoon"
+   ],
+   "source": "elements-a-25#11",
+   "w": 230,
+   "h": 244,
+   "psnr": 43.7
+  },
+  "gt-el/crystal-cart": {
+   "file": "assets/db/lib/gt-el/crystal-cart.webp",
+   "cat": "gt-el",
+   "tags": [
+    "crystal",
+    "cart",
+    "cartoon"
+   ],
+   "source": "elements-b-25#25",
+   "w": 266,
+   "h": 267,
+   "psnr": 43.4
+  },
+  "gt-el/desert-tree": {
+   "file": "assets/db/lib/gt-el/desert-tree.webp",
+   "cat": "gt-el",
+   "tags": [
+    "desert",
+    "tree",
+    "cartoon"
+   ],
+   "source": "elements-c-25#25",
+   "w": 244,
+   "h": 278,
+   "psnr": 43.2
+  },
+  "gt-el/dino-skull": {
+   "file": "assets/db/lib/gt-el/dino-skull.webp",
+   "cat": "gt-el",
+   "tags": [
+    "dino",
+    "skull",
+    "cartoon"
+   ],
+   "source": "elements-b-25#10",
+   "w": 267,
+   "h": 202,
+   "psnr": 44.5
+  },
+  "gt-el/energy-bottle": {
+   "file": "assets/db/lib/gt-el/energy-bottle.webp",
+   "cat": "gt-el",
+   "tags": [
+    "energy",
+    "bottle",
+    "cartoon"
+   ],
+   "source": "elements-a-25#19",
+   "w": 194,
+   "h": 253,
+   "psnr": 41.7
+  },
+  "gt-el/finish-banner": {
+   "file": "assets/db/lib/gt-el/finish-banner.webp",
+   "cat": "gt-el",
+   "tags": [
+    "finish",
+    "banner",
+    "cartoon"
+   ],
+   "source": "elements-a-25#2",
+   "w": 272,
+   "h": 194,
+   "psnr": 43.6
+  },
+  "gt-el/fuel-barrel-red": {
+   "file": "assets/db/lib/gt-el/fuel-barrel-red.webp",
+   "cat": "gt-el",
+   "tags": [
+    "fuel",
+    "barrel",
+    "red",
+    "cartoon"
+   ],
+   "source": "elements-a-25#7",
+   "w": 227,
+   "h": 250,
+   "psnr": 41.6
+  },
+  "gt-el/gear": {
+   "file": "assets/db/lib/gt-el/gear.webp",
+   "cat": "gt-el",
+   "tags": [
+    "gear",
+    "cartoon"
+   ],
+   "source": "elements-b-25#18",
+   "w": 216,
+   "h": 231,
+   "psnr": 45.4
+  },
+  "gt-el/gold-cart": {
+   "file": "assets/db/lib/gt-el/gold-cart.webp",
+   "cat": "gt-el",
+   "tags": [
+    "gold",
+    "cart",
+    "cartoon"
+   ],
+   "source": "elements-a-25#24",
+   "w": 259,
+   "h": 265,
+   "psnr": 44.2
+  },
+  "gt-el/hang-glider": {
+   "file": "assets/db/lib/gt-el/hang-glider.webp",
+   "cat": "gt-el",
+   "tags": [
+    "hang",
+    "glider",
+    "cartoon"
+   ],
+   "source": "elements-c-25#5",
+   "w": 262,
+   "h": 221,
+   "psnr": 42.4
+  },
+  "gt-el/hanging-bridge": {
+   "file": "assets/db/lib/gt-el/hanging-bridge.webp",
+   "cat": "gt-el",
+   "tags": [
+    "hanging",
+    "bridge",
+    "cartoon"
+   ],
+   "source": "elements-b-25#3",
+   "w": 267,
+   "h": 249,
+   "psnr": 45.3
+  },
+  "gt-el/hay-roll": {
+   "file": "assets/db/lib/gt-el/hay-roll.webp",
+   "cat": "gt-el",
+   "tags": [
+    "hay",
+    "roll",
+    "cartoon"
+   ],
+   "source": "elements-b-25#22",
+   "w": 257,
+   "h": 229,
+   "psnr": 40.8
+  },
+  "gt-el/hover-pad": {
+   "file": "assets/db/lib/gt-el/hover-pad.webp",
+   "cat": "gt-el",
+   "tags": [
+    "hover",
+    "pad",
+    "cartoon"
+   ],
+   "source": "elements-b-25#13",
+   "w": 250,
+   "h": 221,
+   "psnr": 45.9
+  },
+  "gt-el/ice-arch": {
+   "file": "assets/db/lib/gt-el/ice-arch.webp",
+   "cat": "gt-el",
+   "tags": [
+    "ice",
+    "arch",
+    "cartoon"
+   ],
+   "source": "elements-b-25#11",
+   "w": 266,
+   "h": 235,
+   "psnr": 43.3
+  },
+  "gt-el/ice-crystal": {
+   "file": "assets/db/lib/gt-el/ice-crystal.webp",
+   "cat": "gt-el",
+   "tags": [
+    "ice",
+    "crystal",
+    "cartoon"
+   ],
+   "source": "elements-a-25#6",
+   "w": 242,
+   "h": 248,
+   "psnr": 42.8
+  },
+  "gt-el/lantern-post": {
+   "file": "assets/db/lib/gt-el/lantern-post.webp",
+   "cat": "gt-el",
+   "tags": [
+    "lantern",
+    "post",
+    "cartoon"
+   ],
+   "source": "elements-b-25#5",
+   "w": 222,
+   "h": 267,
+   "psnr": 45.0
+  },
+  "gt-el/lighthouse": {
+   "file": "assets/db/lib/gt-el/lighthouse.webp",
+   "cat": "gt-el",
+   "tags": [
+    "lighthouse",
+    "cartoon"
+   ],
+   "source": "elements-a-25#5",
+   "w": 250,
+   "h": 266,
+   "psnr": 43.5
+  },
+  "gt-el/magnet": {
+   "file": "assets/db/lib/gt-el/magnet.webp",
+   "cat": "gt-el",
+   "tags": [
+    "magnet",
+    "cartoon"
+   ],
+   "source": "elements-a-25#18",
+   "w": 249,
+   "h": 240,
+   "psnr": 42.2
+  },
+  "gt-el/mine-entrance": {
+   "file": "assets/db/lib/gt-el/mine-entrance.webp",
+   "cat": "gt-el",
+   "tags": [
+    "mine",
+    "entrance",
+    "cartoon"
+   ],
+   "source": "elements-c-25#4",
+   "w": 278,
+   "h": 262,
+   "psnr": 44.7
+  },
+  "gt-el/moai": {
+   "file": "assets/db/lib/gt-el/moai.webp",
+   "cat": "gt-el",
+   "tags": [
+    "moai",
+    "cartoon"
+   ],
+   "source": "elements-c-25#23",
+   "w": 244,
+   "h": 280,
+   "psnr": 44.1
+  },
+  "gt-el/mushroom": {
+   "file": "assets/db/lib/gt-el/mushroom.webp",
+   "cat": "gt-el",
+   "tags": [
+    "mushroom",
+    "cartoon"
+   ],
+   "source": "elements-b-25#7",
+   "w": 232,
+   "h": 250,
+   "psnr": 42.3
+  },
+  "gt-el/oak-tree": {
+   "file": "assets/db/lib/gt-el/oak-tree.webp",
+   "cat": "gt-el",
+   "tags": [
+    "oak",
+    "tree",
+    "cartoon"
+   ],
+   "source": "elements-a-25#23",
+   "w": 245,
+   "h": 278,
+   "psnr": 43.6
+  },
+  "gt-el/palm-tree": {
+   "file": "assets/db/lib/gt-el/palm-tree.webp",
+   "cat": "gt-el",
+   "tags": [
+    "palm",
+    "tree",
+    "cartoon"
+   ],
+   "source": "elements-a-25#10",
+   "w": 236,
+   "h": 266,
+   "psnr": 44.2
+  },
+  "gt-el/pink-crystal": {
+   "file": "assets/db/lib/gt-el/pink-crystal.webp",
+   "cat": "gt-el",
+   "tags": [
+    "pink",
+    "crystal",
+    "cartoon"
+   ],
+   "source": "elements-c-25#17",
+   "w": 256,
+   "h": 260,
+   "psnr": 40.1
+  },
+  "gt-el/pirate-raft": {
+   "file": "assets/db/lib/gt-el/pirate-raft.webp",
+   "cat": "gt-el",
+   "tags": [
+    "pirate",
+    "raft",
+    "cartoon"
+   ],
+   "source": "elements-b-25#12",
+   "w": 263,
+   "h": 261,
+   "psnr": 44.8
+  },
+  "gt-el/portal-blue": {
+   "file": "assets/db/lib/gt-el/portal-blue.webp",
+   "cat": "gt-el",
+   "tags": [
+    "portal",
+    "blue",
+    "cartoon"
+   ],
+   "source": "elements-c-25#3",
+   "w": 269,
+   "h": 261,
+   "psnr": 42.7
+  },
+  "gt-el/portal-green": {
+   "file": "assets/db/lib/gt-el/portal-green.webp",
+   "cat": "gt-el",
+   "tags": [
+    "portal",
+    "green",
+    "cartoon"
+   ],
+   "source": "elements-b-25#21",
+   "w": 264,
+   "h": 278,
+   "psnr": 43.1
+  },
+  "gt-el/portal-stone": {
+   "file": "assets/db/lib/gt-el/portal-stone.webp",
+   "cat": "gt-el",
+   "tags": [
+    "portal",
+    "stone",
+    "cartoon"
+   ],
+   "source": "elements-a-25#25",
+   "w": 268,
+   "h": 275,
+   "psnr": 42.7
+  },
+  "gt-el/purple-crystal": {
+   "file": "assets/db/lib/gt-el/purple-crystal.webp",
+   "cat": "gt-el",
+   "tags": [
+    "purple",
+    "crystal",
+    "cartoon"
+   ],
+   "source": "elements-b-25#4",
+   "w": 256,
+   "h": 256,
+   "psnr": 42.0
+  },
+  "gt-el/radar-dish": {
+   "file": "assets/db/lib/gt-el/radar-dish.webp",
+   "cat": "gt-el",
+   "tags": [
+    "radar",
+    "dish",
+    "cartoon"
+   ],
+   "source": "elements-c-25#15",
+   "w": 231,
+   "h": 255,
+   "psnr": 44.3
+  },
+  "gt-el/ramp-chevron": {
+   "file": "assets/db/lib/gt-el/ramp-chevron.webp",
+   "cat": "gt-el",
+   "tags": [
+    "ramp",
+    "chevron",
+    "cartoon"
+   ],
+   "source": "elements-a-25#17",
+   "w": 272,
+   "h": 214,
+   "psnr": 45.0
+  },
+  "gt-el/rock-arch": {
+   "file": "assets/db/lib/gt-el/rock-arch.webp",
+   "cat": "gt-el",
+   "tags": [
+    "rock",
+    "arch",
+    "cartoon"
+   ],
+   "source": "elements-c-25#18",
+   "w": 272,
+   "h": 260,
+   "psnr": 43.6
+  },
+  "gt-el/rope-bridge": {
+   "file": "assets/db/lib/gt-el/rope-bridge.webp",
+   "cat": "gt-el",
+   "tags": [
+    "rope",
+    "bridge",
+    "cartoon"
+   ],
+   "source": "elements-a-25#16",
+   "w": 267,
+   "h": 230,
+   "psnr": 44.2
+  },
+  "gt-el/ruin-arch": {
+   "file": "assets/db/lib/gt-el/ruin-arch.webp",
+   "cat": "gt-el",
+   "tags": [
+    "ruin",
+    "arch",
+    "cartoon"
+   ],
+   "source": "elements-b-25#9",
+   "w": 271,
+   "h": 265,
+   "psnr": 44.4
+  },
+  "gt-el/sandcastle": {
+   "file": "assets/db/lib/gt-el/sandcastle.webp",
+   "cat": "gt-el",
+   "tags": [
+    "sandcastle",
+    "cartoon"
+   ],
+   "source": "elements-c-25#14",
+   "w": 276,
+   "h": 258,
+   "psnr": 42.8
+  },
+  "gt-el/shark-jump": {
+   "file": "assets/db/lib/gt-el/shark-jump.webp",
+   "cat": "gt-el",
+   "tags": [
+    "shark",
+    "jump",
+    "cartoon"
+   ],
+   "source": "elements-c-25#11",
+   "w": 263,
+   "h": 244,
+   "psnr": 42.3
+  },
+  "gt-el/signpost-arrow": {
+   "file": "assets/db/lib/gt-el/signpost-arrow.webp",
+   "cat": "gt-el",
+   "tags": [
+    "signpost",
+    "arrow",
+    "cartoon"
+   ],
+   "source": "elements-a-25#4",
+   "w": 213,
+   "h": 256,
+   "psnr": 44.6
+  },
+  "gt-el/signpost-color": {
+   "file": "assets/db/lib/gt-el/signpost-color.webp",
+   "cat": "gt-el",
+   "tags": [
+    "signpost",
+    "color",
+    "cartoon"
+   ],
+   "source": "elements-c-25#6",
+   "w": 211,
+   "h": 262,
+   "psnr": 43.5
+  },
+  "gt-el/signpost-multi": {
+   "file": "assets/db/lib/gt-el/signpost-multi.webp",
+   "cat": "gt-el",
+   "tags": [
+    "signpost",
+    "multi",
+    "cartoon"
+   ],
+   "source": "elements-b-25#8",
+   "w": 194,
+   "h": 262,
+   "psnr": 44.0
+  },
+  "gt-el/snow-pine": {
+   "file": "assets/db/lib/gt-el/snow-pine.webp",
+   "cat": "gt-el",
+   "tags": [
+    "snow",
+    "pine",
+    "cartoon"
+   ],
+   "source": "elements-b-25#23",
+   "w": 240,
+   "h": 276,
+   "psnr": 43.7
+  },
+  "gt-el/snow-pine-2": {
+   "file": "assets/db/lib/gt-el/snow-pine-2.webp",
+   "cat": "gt-el",
+   "tags": [
+    "snow",
+    "pine",
+    "2",
+    "cartoon"
+   ],
+   "source": "elements-c-25#7",
+   "w": 249,
+   "h": 270,
+   "psnr": 43.0
+  },
+  "gt-el/snowman": {
+   "file": "assets/db/lib/gt-el/snowman.webp",
+   "cat": "gt-el",
+   "tags": [
+    "snowman",
+    "cartoon"
+   ],
+   "source": "elements-a-25#22",
+   "w": 248,
+   "h": 262,
+   "psnr": 44.9
+  },
+  "gt-el/spiked-log": {
+   "file": "assets/db/lib/gt-el/spiked-log.webp",
+   "cat": "gt-el",
+   "tags": [
+    "spiked",
+    "log",
+    "cartoon"
+   ],
+   "source": "elements-b-25#24",
+   "w": 265,
+   "h": 232,
+   "psnr": 45.3
+  },
+  "gt-el/spring-pad": {
+   "file": "assets/db/lib/gt-el/spring-pad.webp",
+   "cat": "gt-el",
+   "tags": [
+    "spring",
+    "pad",
+    "cartoon"
+   ],
+   "source": "elements-b-25#17",
+   "w": 267,
+   "h": 187,
+   "psnr": 44.3
+  },
+  "gt-el/star-gold": {
+   "file": "assets/db/lib/gt-el/star-gold.webp",
+   "cat": "gt-el",
+   "tags": [
+    "star",
+    "gold",
+    "cartoon"
+   ],
+   "source": "elements-a-25#3",
+   "w": 216,
+   "h": 220,
+   "psnr": 43.7
+  },
+  "gt-el/street-lantern": {
+   "file": "assets/db/lib/gt-el/street-lantern.webp",
+   "cat": "gt-el",
+   "tags": [
+    "street",
+    "lantern",
+    "cartoon"
+   ],
+   "source": "elements-b-25#15",
+   "w": 187,
+   "h": 267,
+   "psnr": 45.1
+  },
+  "gt-el/tire-stack": {
+   "file": "assets/db/lib/gt-el/tire-stack.webp",
+   "cat": "gt-el",
+   "tags": [
+    "tire",
+    "stack",
+    "cartoon"
+   ],
+   "source": "elements-a-25#9",
+   "w": 251,
+   "h": 205,
+   "psnr": 45.5
+  },
+  "gt-el/tnt-crate": {
+   "file": "assets/db/lib/gt-el/tnt-crate.webp",
+   "cat": "gt-el",
+   "tags": [
+    "tnt",
+    "crate",
+    "cartoon"
+   ],
+   "source": "elements-b-25#14",
+   "w": 254,
+   "h": 247,
+   "psnr": 44.2
+  },
+  "gt-el/torii-gate": {
+   "file": "assets/db/lib/gt-el/torii-gate.webp",
+   "cat": "gt-el",
+   "tags": [
+    "torii",
+    "gate",
+    "cartoon"
+   ],
+   "source": "elements-c-25#24",
+   "w": 254,
+   "h": 257,
+   "psnr": 43.8
+  },
+  "gt-el/toxic-barrel": {
+   "file": "assets/db/lib/gt-el/toxic-barrel.webp",
+   "cat": "gt-el",
+   "tags": [
+    "toxic",
+    "barrel",
+    "cartoon"
+   ],
+   "source": "elements-c-25#13",
+   "w": 233,
+   "h": 256,
+   "psnr": 42.9
+  },
+  "gt-el/traffic-cone": {
+   "file": "assets/db/lib/gt-el/traffic-cone.webp",
+   "cat": "gt-el",
+   "tags": [
+    "traffic",
+    "cone",
+    "cartoon"
+   ],
+   "source": "elements-a-25#12",
+   "w": 239,
+   "h": 259,
+   "psnr": 44.0
+  },
+  "gt-el/traffic-light": {
+   "file": "assets/db/lib/gt-el/traffic-light.webp",
+   "cat": "gt-el",
+   "tags": [
+    "traffic",
+    "light",
+    "cartoon"
+   ],
+   "source": "elements-c-25#16",
+   "w": 146,
+   "h": 260,
+   "psnr": 43.9
+  },
+  "gt-el/treasure-open": {
+   "file": "assets/db/lib/gt-el/treasure-open.webp",
+   "cat": "gt-el",
+   "tags": [
+    "treasure",
+    "open",
+    "cartoon"
+   ],
+   "source": "elements-b-25#2",
+   "w": 246,
+   "h": 239,
+   "psnr": 42.7
+  },
+  "gt-el/trophy-1": {
+   "file": "assets/db/lib/gt-el/trophy-1.webp",
+   "cat": "gt-el",
+   "tags": [
+    "trophy",
+    "1",
+    "cartoon"
+   ],
+   "source": "elements-c-25#1",
+   "w": 253,
+   "h": 248,
+   "psnr": 42.9
+  },
+  "gt-el/viking-ship": {
+   "file": "assets/db/lib/gt-el/viking-ship.webp",
+   "cat": "gt-el",
+   "tags": [
+    "viking",
+    "ship",
+    "cartoon"
+   ],
+   "source": "elements-c-25#12",
+   "w": 248,
+   "h": 253,
+   "psnr": 42.6
+  },
+  "gt-el/watch-tower": {
+   "file": "assets/db/lib/gt-el/watch-tower.webp",
+   "cat": "gt-el",
+   "tags": [
+    "watch",
+    "tower",
+    "cartoon"
+   ],
+   "source": "elements-c-25#10",
+   "w": 229,
+   "h": 270,
+   "psnr": 43.7
+  },
+  "gt-el/water-tower": {
+   "file": "assets/db/lib/gt-el/water-tower.webp",
+   "cat": "gt-el",
+   "tags": [
+    "water",
+    "tower",
+    "cartoon"
+   ],
+   "source": "elements-c-25#21",
+   "w": 238,
+   "h": 280,
+   "psnr": 44.0
+  },
+  "gt-el/water-well": {
+   "file": "assets/db/lib/gt-el/water-well.webp",
+   "cat": "gt-el",
+   "tags": [
+    "water",
+    "well",
+    "cartoon"
+   ],
+   "source": "elements-c-25#2",
+   "w": 244,
+   "h": 266,
+   "psnr": 44.1
+  },
+  "gt-el/water-wheel": {
+   "file": "assets/db/lib/gt-el/water-wheel.webp",
+   "cat": "gt-el",
+   "tags": [
+    "water",
+    "wheel",
+    "cartoon"
+   ],
+   "source": "elements-b-25#19",
+   "w": 272,
+   "h": 253,
+   "psnr": 43.6
+  },
+  "gt-el/windmill": {
+   "file": "assets/db/lib/gt-el/windmill.webp",
+   "cat": "gt-el",
+   "tags": [
+    "windmill",
+    "cartoon"
+   ],
+   "source": "elements-a-25#15",
+   "w": 260,
+   "h": 267,
+   "psnr": 44.3
+  },
+  "gt-el/windsock": {
+   "file": "assets/db/lib/gt-el/windsock.webp",
+   "cat": "gt-el",
+   "tags": [
+    "windsock",
+    "cartoon"
+   ],
+   "source": "elements-b-25#16",
+   "w": 234,
+   "h": 255,
+   "psnr": 43.4
+  },
+  "gt-el/windsock-2": {
+   "file": "assets/db/lib/gt-el/windsock-2.webp",
+   "cat": "gt-el",
+   "tags": [
+    "windsock",
+    "2",
+    "cartoon"
+   ],
+   "source": "elements-c-25#19",
+   "w": 254,
+   "h": 258,
+   "psnr": 43.1
+  },
+  "gt-monster/boiler-bot": {
+   "file": "assets/db/lib/gt-monster/boiler-bot.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "boiler",
+    "bot",
+    "cartoon"
+   ],
+   "source": "monsters-a-16#14",
+   "w": 363,
+   "h": 339,
+   "psnr": 44.3
+  },
+  "gt-monster/bone-dragon": {
+   "file": "assets/db/lib/gt-monster/bone-dragon.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "bone",
+    "dragon",
+    "cartoon"
+   ],
+   "source": "monsters-a-16#16",
+   "w": 365,
+   "h": 331,
+   "psnr": 45.1
+  },
+  "gt-monster/bone-dragon-2": {
+   "file": "assets/db/lib/gt-monster/bone-dragon-2.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "bone",
+    "dragon",
+    "2",
+    "cartoon"
+   ],
+   "source": "monsters-b-16#13",
+   "w": 336,
+   "h": 327,
+   "psnr": 44.0
+  },
+  "gt-monster/cactus-cowboy": {
+   "file": "assets/db/lib/gt-monster/cactus-cowboy.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "cactus",
+    "cowboy",
+    "cartoon"
+   ],
+   "source": "monsters-b-16#16",
+   "w": 336,
+   "h": 330,
+   "psnr": 44.5
+  },
+  "gt-monster/cactus-mech": {
+   "file": "assets/db/lib/gt-monster/cactus-mech.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "cactus",
+    "mech",
+    "cartoon"
+   ],
+   "source": "monsters-a-16#5",
+   "w": 333,
+   "h": 308,
+   "psnr": 44.4
+  },
+  "gt-monster/crystal-spider": {
+   "file": "assets/db/lib/gt-monster/crystal-spider.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "crystal",
+    "spider",
+    "cartoon"
+   ],
+   "source": "monsters-a-16#13",
+   "w": 336,
+   "h": 327,
+   "psnr": 42.2
+  },
+  "gt-monster/crystal-yeti": {
+   "file": "assets/db/lib/gt-monster/crystal-yeti.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "crystal",
+    "yeti",
+    "cartoon"
+   ],
+   "source": "monsters-b-16#6",
+   "w": 350,
+   "h": 307,
+   "psnr": 42.6
+  },
+  "gt-monster/drill-wasp": {
+   "file": "assets/db/lib/gt-monster/drill-wasp.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "drill",
+    "wasp",
+    "cartoon"
+   ],
+   "source": "monsters-a-16#8",
+   "w": 332,
+   "h": 307,
+   "psnr": 44.4
+  },
+  "gt-monster/ghost-ship": {
+   "file": "assets/db/lib/gt-monster/ghost-ship.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "ghost",
+    "ship",
+    "cartoon"
+   ],
+   "source": "monsters-b-16#4",
+   "w": 335,
+   "h": 321,
+   "psnr": 43.5
+  },
+  "gt-monster/gold-rock-golem": {
+   "file": "assets/db/lib/gt-monster/gold-rock-golem.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "gold",
+    "rock",
+    "golem",
+    "cartoon"
+   ],
+   "source": "monsters-b-16#2",
+   "w": 349,
+   "h": 320,
+   "psnr": 43.8
+  },
+  "gt-monster/ice-yeti": {
+   "file": "assets/db/lib/gt-monster/ice-yeti.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "ice",
+    "yeti",
+    "cartoon"
+   ],
+   "source": "monsters-a-16#3",
+   "w": 347,
+   "h": 319,
+   "psnr": 43.2
+  },
+  "gt-monster/island-turtle": {
+   "file": "assets/db/lib/gt-monster/island-turtle.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "island",
+    "turtle",
+    "cartoon"
+   ],
+   "source": "monsters-a-16#11",
+   "w": 452,
+   "h": 318,
+   "psnr": 43.3
+  },
+  "gt-monster/magma-golem": {
+   "file": "assets/db/lib/gt-monster/magma-golem.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "magma",
+    "golem",
+    "cartoon"
+   ],
+   "source": "monsters-a-16#2",
+   "w": 325,
+   "h": 319,
+   "psnr": 43.2
+  },
+  "gt-monster/mimic-chest": {
+   "file": "assets/db/lib/gt-monster/mimic-chest.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "mimic",
+    "chest",
+    "cartoon"
+   ],
+   "source": "monsters-a-16#9",
+   "w": 329,
+   "h": 311,
+   "psnr": 43.4
+  },
+  "gt-monster/mimic-chest-2": {
+   "file": "assets/db/lib/gt-monster/mimic-chest-2.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "mimic",
+    "chest",
+    "2",
+    "cartoon"
+   ],
+   "source": "monsters-b-16#15",
+   "w": 341,
+   "h": 322,
+   "psnr": 42.6
+  },
+  "gt-monster/pirate-octopus": {
+   "file": "assets/db/lib/gt-monster/pirate-octopus.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "pirate",
+    "octopus",
+    "cartoon"
+   ],
+   "source": "monsters-a-16#6",
+   "w": 351,
+   "h": 308,
+   "psnr": 43.5
+  },
+  "gt-monster/plant-chomper": {
+   "file": "assets/db/lib/gt-monster/plant-chomper.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "plant",
+    "chomper",
+    "cartoon"
+   ],
+   "source": "monsters-b-16#3",
+   "w": 338,
+   "h": 320,
+   "psnr": 43.7
+  },
+  "gt-monster/pumpkin-mech": {
+   "file": "assets/db/lib/gt-monster/pumpkin-mech.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "pumpkin",
+    "mech",
+    "cartoon"
+   ],
+   "source": "monsters-b-16#12",
+   "w": 343,
+   "h": 313,
+   "psnr": 42.2
+  },
+  "gt-monster/pumpkin-wraith": {
+   "file": "assets/db/lib/gt-monster/pumpkin-wraith.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "pumpkin",
+    "wraith",
+    "cartoon"
+   ],
+   "source": "monsters-a-16#4",
+   "w": 345,
+   "h": 344,
+   "psnr": 44.7
+  },
+  "gt-monster/robo-crab": {
+   "file": "assets/db/lib/gt-monster/robo-crab.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "robo",
+    "crab",
+    "cartoon"
+   ],
+   "source": "monsters-b-16#5",
+   "w": 346,
+   "h": 299,
+   "psnr": 42.7
+  },
+  "gt-monster/robo-shark": {
+   "file": "assets/db/lib/gt-monster/robo-shark.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "robo",
+    "shark",
+    "cartoon"
+   ],
+   "source": "monsters-a-16#1",
+   "w": 347,
+   "h": 319,
+   "psnr": 44.9
+  },
+  "gt-monster/robo-shark-2": {
+   "file": "assets/db/lib/gt-monster/robo-shark-2.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "robo",
+    "shark",
+    "2",
+    "cartoon"
+   ],
+   "source": "monsters-b-16#1",
+   "w": 345,
+   "h": 307,
+   "psnr": 44.3
+  },
+  "gt-monster/sand-worm": {
+   "file": "assets/db/lib/gt-monster/sand-worm.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "sand",
+    "worm",
+    "cartoon"
+   ],
+   "source": "monsters-b-16#10",
+   "w": 341,
+   "h": 313,
+   "psnr": 43.2
+  },
+  "gt-monster/slime": {
+   "file": "assets/db/lib/gt-monster/slime.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "slime",
+    "monster",
+    "cartoon"
+   ],
+   "source": "monster-slime.png",
+   "w": 536,
+   "h": 434
+  },
+  "gt-monster/steam-octopus": {
+   "file": "assets/db/lib/gt-monster/steam-octopus.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "steam",
+    "octopus",
+    "cartoon"
+   ],
+   "source": "monsters-b-16#8",
+   "w": 347,
+   "h": 310,
+   "psnr": 43.8
+  },
+  "gt-monster/stone-golem": {
+   "file": "assets/db/lib/gt-monster/stone-golem.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "stone",
+    "golem",
+    "cartoon"
+   ],
+   "source": "monsters-a-16#7",
+   "w": 371,
+   "h": 315,
+   "psnr": 44.6
+  },
+  "gt-monster/storm-cloud": {
+   "file": "assets/db/lib/gt-monster/storm-cloud.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "storm",
+    "cloud",
+    "cartoon"
+   ],
+   "source": "monsters-b-16#11",
+   "w": 339,
+   "h": 313,
+   "psnr": 44.8
+  },
+  "gt-monster/tornado": {
+   "file": "assets/db/lib/gt-monster/tornado.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "tornado",
+    "cartoon"
+   ],
+   "source": "monsters-a-16#10",
+   "w": 337,
+   "h": 321,
+   "psnr": 46.0
+  },
+  "gt-monster/tree-ent": {
+   "file": "assets/db/lib/gt-monster/tree-ent.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "tree",
+    "ent",
+    "cartoon"
+   ],
+   "source": "monsters-a-16#15",
+   "w": 336,
+   "h": 336,
+   "psnr": 44.3
+  },
+  "gt-monster/ufo-alien": {
+   "file": "assets/db/lib/gt-monster/ufo-alien.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "ufo",
+    "alien",
+    "cartoon"
+   ],
+   "source": "monsters-a-16#12",
+   "w": 321,
+   "h": 319,
+   "psnr": 44.9
+  },
+  "gt-monster/ufo-alien-2": {
+   "file": "assets/db/lib/gt-monster/ufo-alien-2.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "ufo",
+    "alien",
+    "2",
+    "cartoon"
+   ],
+   "source": "monsters-b-16#9",
+   "w": 329,
+   "h": 314,
+   "psnr": 43.2
+  },
+  "gt-monster/volcano-golem": {
+   "file": "assets/db/lib/gt-monster/volcano-golem.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "volcano",
+    "golem",
+    "cartoon"
+   ],
+   "source": "monsters-b-16#7",
+   "w": 349,
+   "h": 313,
+   "psnr": 41.8
+  },
+  "gt-monster/waterfall-turtle": {
+   "file": "assets/db/lib/gt-monster/waterfall-turtle.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "waterfall",
+    "turtle",
+    "cartoon"
+   ],
+   "source": "monsters-b-16#14",
+   "w": 349,
+   "h": 326,
+   "psnr": 43.3
+  },
   "gt-truck/truck-001": {
    "file": "assets/db/lib/gt-truck/truck-001.webp",
    "cat": "gt-truck",

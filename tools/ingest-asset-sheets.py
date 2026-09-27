@@ -254,6 +254,17 @@ SHEETS = {
     {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True, 'label': 1, 'tyres': True}),
   'trucks-g-25': (5, 5, [('gt-truck', 'truck-%03d' % n) for n in range(150, 175)],
     {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True, 'label': 1, 'tyres': True}),
+  # Garasi Tempur world elements + Monster Rush monsters (owner, 2026-09-27)
+  'elements-a-25': (5, 5, g('gt-el', 'bridge-wood finish-banner star-gold signpost-arrow lighthouse ice-crystal fuel-barrel-red crate tire-stack palm-tree crown-coin traffic-cone barricade-lamp cactus-flower windmill rope-bridge ramp-chevron magnet energy-bottle boulders balloon-red snowman oak-tree gold-cart portal-stone'),
+    {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True}),
+  'elements-b-25': (5, 5, g('gt-el', 'archery-target treasure-open hanging-bridge purple-crystal lantern-post cannon mushroom signpost-multi ruin-arch dino-skull ice-arch pirate-raft hover-pad tnt-crate street-lantern windsock spring-pad gear water-wheel cactus-desert portal-green hay-roll snow-pine spiked-log crystal-cart'),
+    {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True}),
+  'elements-c-25': (5, 5, g('gt-el', 'trophy-1 water-well portal-blue mine-entrance hang-glider signpost-color snow-pine-2 biplane balloon-blue watch-tower shark-jump viking-ship toxic-barrel sandcastle radar-dish traffic-light pink-crystal rock-arch windsock-2 anchor water-tower bonfire moai torii-gate desert-tree'),
+    {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True}),
+  'monsters-a-16': (4, 4, g('gt-monster', 'robo-shark magma-golem ice-yeti pumpkin-wraith cactus-mech pirate-octopus stone-golem drill-wasp mimic-chest tornado island-turtle ufo-alien crystal-spider boiler-bot tree-ent bone-dragon'),
+    {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck')}),
+  'monsters-b-16': (4, 4, g('gt-monster', 'robo-shark-2 gold-rock-golem plant-chomper ghost-ship robo-crab crystal-yeti volcano-golem steam-octopus ufo-alien-2 sand-worm storm-cloud pumpkin-mech bone-dragon-2 waterfall-turtle mimic-chest-2 cactus-cowboy'),
+    {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True}),
 }
 
 # Sprites whose enclosed flat-white pockets are real see-through GAPS -- decided by
