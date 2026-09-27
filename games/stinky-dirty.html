@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#FFF7EA">
+<link rel="icon" href="../assets/db/lib/sd/logo-sd.webp">
+<title>Stinky &amp; Dirty — Petualangan Belajar</title>
+<!--
+  G28 "The Stinky & Dirty Show! — Learning Adventure". PRD: Kids Learning Card
+  Adventure v2 (story -> question). Phase 1: 6 worlds x 12 L1 cards, Bahasa
+  Indonesia. Standalone page like G27; the map only launches it. Offline PWA,
+  per-avatar save, no API calls, playable at volume zero.
+  Look: storybook — cream surfaces, restrained rounding, the story scene is the
+  hero (PRD §9) — deliberately NOT G27's glossy style.
+-->
+<style>
+@font-face{font-family:'Fredoka One';src:url('../assets/spelling/fonts/fredoka-one.ttf') format('truetype');font-display:swap}
+:root{--cream:#FFF7EA;--paper:#FFFDF8;--ink:#2E2A26;--ink2:#5A4E43;--line:#E9DCC6;--line2:#D9C6A6;
+  --green:#3F9B4F;--green2:#2F7D3D;--blue:#2F7FD6;--gold:#F2B632;--shadow:0 6px 18px rgba(70,50,20,.14);
+  --ease-out:cubic-bezier(.23,1,.32,1);--ease-io:cubic-bezier(.77,0,.175,1);
+  --wc:#3F9B4F;--sab:env(safe-area-inset-bottom);--sat:env(safe-area-inset-top)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--cream);color:var(--ink);font-family:'Nunito','Segoe UI',system-ui,sans-serif;overflow:hidden;
+  -webkit-user-select:none;user-select:none;touch-action:manipulation}
+button{font-family:inherit;color:inherit}
+.fk{font-family:'Fredoka One','Nunito',system-ui,sans-serif;font-weight:400;letter-spacing:.2px}
+.scr{position:fixed;inset:0;display:none;flex-direction:column}
+.scr.active{display:flex}
+.hide{display:none!important}
+/* buttons (design sheet ds1: primary = solid, secondary = outline cream) */
+.btn{border:0;cursor:pointer;min-height:56px;padding:0 26px;border-radius:18px;font-size:21px;display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.18),var(--shadow);transition:transform .08s var(--ease-out)}
+.btn:active{transform:scale(.97) translateY(2px)}
+.btn[disabled]{opacity:.45;cursor:default}
+.b-gold{background:#F2A21E;box-shadow:0 4px 0 #B8720A,var(--shadow)}
+.b-green{background:#2F9E48;box-shadow:0 4px 0 #1F7233,var(--shadow)}
+.b-blue{background:#2F7FD6;box-shadow:0 4px 0 #1C5AA2,var(--shadow)}
+.b-purple{background:#7A4FD6;box-shadow:0 4px 0 #52309E,var(--shadow)}
+.b-soft{background:var(--paper);color:var(--ink);border:2px solid var(--line2);box-shadow:0 3px 0 var(--line2)}
+.icon-btn{width:52px;height:52px;border-radius:16px;border:2px solid var(--line2);background:var(--paper);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 3px 0 var(--line2);transition:transform .08s var(--ease-out);flex:0 0 auto}
+.icon-btn:active{transform:scale(.95)}
+.icon-btn svg{width:26px;height:26px}
+.icon-btn.speaking svg{animation:spk 1.2s ease-in-out infinite}
+@keyframes spk{50%{transform:scale(1.12)}}
+
+/* ── HOME ─────────────────────────────────────────────────────────────── */
+#scr-home{align-items:center;justify-content:center;background:#9ED7F2 center/cover no-repeat}
+#scr-home::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,247,234,0) 40%,rgba(255,247,234,.55))}
+#home-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:14px;padding:16px;text-align:center}
+#home-logo{width:min(66vw,420px);height:auto;filter:drop-shadow(0 8px 14px rgba(0,0,0,.25))}
+#home-tag{margin:0;font-size:18px;color:var(--ink2);background:rgba(255,253,248,.9);padding:6px 16px;border-radius:14px}
+#home-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.home-mascot{position:absolute;bottom:3%;z-index:1;height:30vh;max-height:260px;width:auto}
+@media (orientation:portrait){#scr-home{justify-content:flex-start}#home-inner{padding-top:calc(9vh + var(--sat))}.home-mascot{height:20vh;max-width:46vw;object-fit:contain}}
+#hm-stinky{left:2%}#hm-dirty{right:2%}
+#btn-parent{position:absolute;top:calc(10px + var(--sat));right:12px;z-index:3}
+#btn-exit{position:absolute;top:calc(10px + var(--sat));left:12px;z-index:3}
+
+/* ── MAP ──────────────────────────────────────────────────────────────── */
+#scr-map{background:var(--cream)}
+.bar{display:flex;align-items:center;gap:10px;padding:calc(10px + var(--sat)) 12px 10px;flex:0 0 auto}
+.bar h1{margin:0;font-size:26px;flex:1;text-align:center}
+#world-grid{flex:1;overflow:auto;padding:4px 14px calc(18px + var(--sab));display:grid;gap:14px;grid-template-columns:repeat(3,minmax(0,1fr));align-content:start;max-width:1100px;width:100%;margin:0 auto}
+.world{position:relative;border:0;padding:0;cursor:pointer;border-radius:22px;overflow:hidden;background:#ddd;aspect-ratio:4/3;box-shadow:var(--shadow);
+  transition:transform .12s var(--ease-out)}
+.world:active{transform:scale(.98)}
+.world .wbg{position:absolute;inset:0;background:center/cover no-repeat;transform:scale(1.04)}
+.world .wlab{position:absolute;left:10px;right:10px;bottom:10px;background:rgba(255,253,248,.94);border-radius:14px;padding:8px 10px 8px 58px;text-align:left;min-height:56px}
+.world .wlab img{position:absolute;left:8px;top:50%;transform:translateY(-50%);width:44px;height:44px}
+.world .wlab b{display:block;font-size:17px;line-height:1.1}
+.world .wlab small{display:block;font-size:13px;color:var(--ink2)}
+.world .wprog{position:absolute;top:10px;right:10px;background:rgba(255,253,248,.94);border-radius:12px;padding:3px 10px;font-size:14px;font-weight:800;display:flex;align-items:center;gap:5px}
+.world .wprog img{width:18px;height:18px}
+
+/* ── WORLD / INTRO ───────────────────────────────────────────────────── */
+#scr-world,#scr-intro,#scr-done{background:center/cover no-repeat}
+.veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,247,234,.1),rgba(255,247,234,.35) 45%,rgba(255,247,234,.8))}
+.sheet{position:relative;z-index:2;margin:auto;width:min(94vw,560px);background:var(--paper);border:3px solid var(--line);border-radius:26px;padding:18px 18px 20px;box-shadow:0 14px 34px rgba(60,40,10,.25);text-align:center}
+.sheet h2{margin:2px 0 6px;font-size:28px}
+.sheet p{margin:6px 0;font-size:18px;color:var(--ink2);line-height:1.4}
+.focus{display:flex;align-items:center;gap:10px;justify-content:center;margin:10px 0 14px}
+.focus img{width:52px;height:52px}
+.journey{display:flex;justify-content:center;gap:10px;margin:14px 0}
+.stop{width:58px;height:58px;border-radius:50%;border:3px solid var(--line2);background:var(--cream);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:var(--ink2)}
+.stop.done{background:#E6F4E4;border-color:#7BC47F}
+.stop img{width:30px;height:30px}
+.intro-row{display:flex;align-items:flex-end;gap:12px;justify-content:center}
+.intro-row img{height:130px;width:auto}
+.bubble{position:relative;background:var(--cream);border:2px solid var(--line2);border-radius:18px;padding:10px 14px;text-align:left;font-size:18px;line-height:1.35;max-width:300px}
+
+/* ── CARD ─────────────────────────────────────────────────────────────── */
+#scr-card{background:var(--cream)}
+#card-top{display:flex;align-items:center;gap:10px;padding:calc(8px + var(--sat)) 10px 8px;flex:0 0 auto;z-index:5}
+#dots{flex:1;display:flex;justify-content:center;gap:8px}
+.dot{width:16px;height:16px;border-radius:50%;background:#EADFCB;border:2px solid var(--line2);transition:transform .2s ease-out,background .2s ease-out}
+.dot.cur{transform:scale(1.25);border-color:var(--wc);background:#fff}
+.dot.done{background:var(--wc);border-color:var(--wc)}
+#card-body{flex:1;min-height:0;display:flex;flex-direction:column;gap:0}
+#stage{position:relative;flex:0 0 31%;min-height:0;overflow:hidden;background:#BFE3F2;border-radius:0 0 22px 22px;margin:0 8px;box-shadow:inset 0 -2px 0 rgba(0,0,0,.05)}
+#stage-bg{position:absolute;inset:-3%;background:center/cover no-repeat;will-change:transform}
+#stage-layer{position:absolute;inset:0}
+.el{position:absolute;transform:translate(-50%,-50%);will-change:transform,opacity;pointer-events:none}
+.el .in{display:flex;align-items:flex-end;justify-content:center;height:100%;gap:2%}
+.el img{height:100%;width:auto;display:block;object-fit:contain}
+.el.idle .in{animation:breathe 2.6s ease-in-out infinite;transform-origin:50% 100%}
+.el.idle:nth-child(2n) .in{animation-duration:3.1s;animation-delay:-.7s}
+@keyframes breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.025) translateY(-1%)}}
+.el.shadow img{filter:brightness(0) opacity(.8)}
+.el.clipL img{clip-path:inset(0 50% 0 0)}
+.el.target{pointer-events:auto;cursor:pointer}
+.el.target::after{content:'';position:absolute;inset:-16px;border-radius:22px;border:3px dashed rgba(255,255,255,.0);transition:border-color .15s}
+@media (hover:hover) and (pointer:fine){.el.target:hover::after{border-color:rgba(255,255,255,.8)}}
+.el.sel::after{border:4px solid #fff!important;box-shadow:0 0 0 3px var(--wc)}
+.el.halo::before{content:'';position:absolute;inset:-18%;border-radius:50%;box-shadow:0 0 0 4px rgba(255,214,90,.95),0 0 24px 8px rgba(255,214,90,.7);animation:halo 1.4s ease-out 1}
+@keyframes halo{0%{opacity:0;transform:scale(.7)}30%{opacity:1}100%{opacity:1;transform:scale(1)}}
+.el.right::after{border:4px solid #fff!important;box-shadow:0 0 0 4px #2F9E48}
+.cover{position:absolute;inset:-12%;background:url('../assets/db/lib/nature/cloud.webp') center/contain no-repeat;animation:coverIn .35s ease-out}
+@keyframes coverIn{from{opacity:0;transform:scale(.6)}}
+.txt-el{font-family:'Fredoka One',system-ui;color:#fff;-webkit-text-stroke:3px #5A3E1B;paint-order:stroke;display:flex;align-items:center;justify-content:center;height:100%;line-height:1}
+#fx{position:absolute;inset:0;pointer-events:none}
+.drop{position:absolute;top:-10%;width:2px;height:14px;background:rgba(255,255,255,.75);border-radius:2px;animation:rain .8s linear infinite}
+@keyframes rain{to{transform:translateY(130vh)}}
+.flake{position:absolute;top:-6%;width:9px;height:9px;border-radius:50%;background:#fff;opacity:.9;animation:snow 3.6s linear infinite}
+@keyframes snow{to{transform:translate(20px,110vh)}}
+.puff{position:absolute;width:60px;height:60px;border-radius:50%;background:rgba(120,120,120,.45);filter:blur(4px);animation:smoke 2.4s ease-out infinite}
+@keyframes smoke{from{transform:translateY(0) scale(.6);opacity:.8}to{transform:translateY(-120px) scale(1.6);opacity:0}}
+.path{position:absolute;left:18%;right:4%;height:10%;border-top:6px dashed #fff;display:flex;align-items:center}
+.path b{position:absolute;left:-12%;background:#fff;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--ink);box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.path img{position:absolute;left:55%;height:180%;top:-120%}
+/* the story text lives BELOW the scene (portrait) / at the top of the right column
+   (landscape), never on top of it: over the stage it hid the very action it narrates */
+#story{position:relative;flex:0 0 auto;background:var(--paper);border:2px solid var(--line);border-radius:18px;padding:10px 54px 10px 14px;font-size:18px;line-height:1.4;
+  box-shadow:0 3px 0 var(--line);max-height:22vh;overflow:auto;min-height:56px}
+#story .s{opacity:.35;transition:opacity .2s}
+#story .s.on{opacity:1}
+#story .s.now{background:linear-gradient(transparent 62%,rgba(242,182,50,.45) 62%)}
+#story.hint2 .s.key{background:linear-gradient(transparent 55%,rgba(47,158,72,.35) 55%)}
+#btn-replay{position:absolute;right:6px;top:6px;width:44px;height:44px}
+#panel{flex:1;min-height:0;display:flex;flex-direction:column;padding:10px 12px calc(10px + var(--sab));gap:8px}
+#q{margin:0;font-size:22px;line-height:1.25;text-align:center;opacity:0;transform:translateY(12px);transition:opacity .22s var(--ease-out),transform .22s var(--ease-out)}
+#q.on{opacity:1;transform:none}
+#answers{flex:1 1 auto;min-height:0;display:flex;align-items:safe center;justify-content:center;overflow:auto;padding:12px 4px 4px}
+#answers .grid{display:grid;gap:10px;width:100%;max-width:640px}
+.opt{position:relative;border:3px solid var(--line2);background:var(--paper);border-radius:18px;min-height:64px;padding:8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  font-size:19px;font-weight:800;color:var(--ink);box-shadow:0 3px 0 var(--line2);opacity:0;transform:translateY(10px);transition:transform .22s var(--ease-out),opacity .22s var(--ease-out),border-color .15s ease,background-color .15s ease}
+.opt.in{opacity:1;transform:none}
+.opt:active{transform:scale(.97)}
+.opt .pic{height:clamp(44px,8.5vh,88px);display:flex;align-items:flex-end;justify-content:center;gap:2px;max-width:100%}
+.opt .pic img{height:100%;width:auto;max-width:100%;object-fit:contain}
+.opt .pic svg{height:100%;width:auto;aspect-ratio:1;display:block}
+.el.tile .in{background:rgba(255,253,248,.92);border-radius:22%;box-shadow:0 3px 8px rgba(0,0,0,.18);padding:10%;box-sizing:border-box}
+.el .in svg{height:100%;width:auto;aspect-ratio:1}
+.ico{display:inline-block;width:1.25em;height:1.25em;vertical-align:-.28em;margin-right:4px}
+.opt .pic.n img{height:62%}
+.opt.big{font-size:40px;font-family:'Fredoka One',system-ui}
+.opt .sw{width:34px;height:34px;border-radius:50%;border:3px solid rgba(0,0,0,.15)}
+.opt.sel{border-color:var(--wc);background:#fff;box-shadow:0 0 0 3px color-mix(in srgb,var(--wc) 35%,transparent),0 3px 0 var(--line2)}
+.opt .mark{position:absolute;top:-10px;right:-10px;width:30px;height:30px;border-radius:50%;background:var(--wc);color:#fff;display:none;align-items:center;justify-content:center;font-weight:900;font-size:16px;box-shadow:0 2px 4px rgba(0,0,0,.2)}
+.opt.sel .mark,.opt.num .mark,.opt.good .mark{display:flex}
+.opt.good{border-color:#2F9E48;background:#EEF8EE}
+.opt.good .mark{background:#2F9E48}
+.opt.dim{opacity:.35}
+.opt.gone{visibility:hidden}
+.lbl-hide .opt .t{visibility:hidden}
+.lbl-hide.revealed .opt .t{visibility:visible}
+.pad{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;width:100%;max-width:460px}
+.pad .opt{min-height:56px;font-size:28px;font-family:'Fredoka One',system-ui}
+#count-show{grid-column:1/-1;height:60px;border-radius:16px;border:3px solid var(--line2);background:#fff;display:flex;align-items:center;justify-content:center;font-size:40px;font-family:'Fredoka One',system-ui}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:8px 22px;width:100%;max-width:560px}
+.match .opt{min-height:56px;flex-direction:row;gap:8px}.match .opt .pic{height:clamp(36px,6vh,60px)}
+.match .opt.big{font-size:30px}
+.drag-zone{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%}
+.basket{width:min(70%,300px);min-height:110px;border:3px dashed var(--line2);border-radius:22px;background:#fff;display:flex;align-items:flex-end;justify-content:center;padding:6px;gap:4px;position:relative}
+.basket>img{height:96px;width:auto;position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);opacity:.95;pointer-events:none}
+.basket .inb{display:flex;gap:4px;position:relative;z-index:2;margin-bottom:34px}
+.basket .inb img{height:52px}
+.basket.over{border-color:var(--wc);background:#F3FBF3}
+.tray{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.tray .opt{width:110px;touch-action:none}
+.opt.lift{transform:scale(1.04);box-shadow:0 12px 22px rgba(0,0,0,.22);z-index:20}
+#tools{display:flex;gap:10px;justify-content:space-between;align-items:center}
+#tools .btn{min-height:56px}
+#help{flex:0 0 auto;max-height:18vh;overflow:auto;font-size:17px;line-height:1.35;color:var(--ink2);text-align:center;padding:0 4px}
+#help:empty{display:none}
+#help.say{color:var(--ink);font-weight:800}
+/* feedback banner (ds1: "Great Job!" / "Let's Try Again") */
+#banner{position:absolute;left:50%;top:10px;transform:translate(-50%,-20px);opacity:0;z-index:6;display:flex;align-items:center;gap:10px;padding:8px 16px 8px 8px;border-radius:18px;color:#fff;
+  box-shadow:0 6px 16px rgba(0,0,0,.2);transition:opacity .14s ease,transform .14s ease;pointer-events:none;max-width:92%}
+#banner.on{opacity:1;transform:translate(-50%,0);transition:opacity .22s var(--ease-out),transform .22s var(--ease-out)}
+#banner img{width:52px;height:52px}
+#banner b{font-size:22px;display:block;line-height:1.1}
+#banner small{font-size:14px;opacity:.95}
+#banner.good{background:#2F9E48}
+#banner.again{background:#F2A21E}
+.token{position:fixed;width:34px;height:34px;z-index:80;pointer-events:none;transition:transform .55s cubic-bezier(.4,0,.2,1),opacity .55s}
+
+/* landscape: stage left, text/question/answers right (PRD §9) */
+@media (orientation:landscape){
+  #card-body{flex-direction:row;gap:10px;padding:0 10px calc(8px + var(--sab))}
+  #stage{flex:0 0 56%;margin:0;border-radius:22px}
+  #panel{padding:0 4px}
+  #answers .grid.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (orientation:landscape) and (max-height:500px){
+  .btn{min-height:50px;font-size:18px;padding:0 18px}
+  #q{font-size:19px}
+  #story{font-size:15px;padding:6px 48px 6px 10px;max-height:34vh;min-height:48px}
+  .opt{min-height:52px;font-size:16px}
+  .opt .pic{height:clamp(40px,14vh,70px)}
+  #card-top{padding-top:4px;padding-bottom:4px}
+  .icon-btn{width:46px;height:46px}
+  #world-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .world{aspect-ratio:16/9}
+  .home-mascot{height:34vh}
+  #home-logo{width:min(40vw,320px)}
+}
+@media (orientation:portrait){
+  #world-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #answers .grid.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (max-width:380px) and (orientation:portrait){
+  #q{font-size:19px}
+  #story{font-size:16px}
+  .opt{font-size:16px;min-height:58px}
+  .btn{padding:0 16px;font-size:18px}
+  #world-grid{gap:10px}
+}
+
+/* ── overlays ─────────────────────────────────────────────────────────── */
+.ov{position:fixed;inset:0;z-index:90;background:rgba(40,28,10,.5);display:none;align-items:center;justify-content:center;padding:16px}
+.ov.show{display:flex}
+.ov .sheet{max-height:92vh;overflow:auto}
+.gate-shapes{display:flex;gap:14px;justify-content:center;margin:12px 0}
+.gate-shapes button{width:72px;height:72px;border-radius:18px;border:3px solid var(--line2);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.gate-shapes button svg{width:44px;height:44px}
+.gate-shapes button.ok{border-color:#2F9E48;background:#EEF8EE}
+#gate-hold{position:relative;overflow:hidden}
+#gate-hold i{position:absolute;left:0;top:0;bottom:0;width:0;background:rgba(255,255,255,.35)}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line);text-align:left;font-size:17px}
+.seg{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:8px 0}
+.seg button{min-height:48px;border-radius:14px;border:2px solid var(--line2);background:#fff;padding:0 12px;font-size:15px;font-weight:800;cursor:pointer}
+.seg button.on{border-color:var(--green);background:#EEF8EE}
+.sw{width:58px;height:34px;border-radius:20px;border:0;background:#D8CDBA;position:relative;cursor:pointer;flex:0 0 auto}
+.sw i{position:absolute;top:4px;left:4px;width:26px;height:26px;border-radius:50%;background:#fff;transition:left .15s}
+.sw.on{background:#2F9E48}.sw.on i{left:28px}
+.sum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0}
+.sum div{background:var(--cream);border-radius:14px;padding:8px 6px;font-size:13px}
+.sum b{display:block;font-size:22px}
+.done-stars{display:flex;justify-content:center;gap:8px;margin:8px 0}
+.done-stars img{width:52px;height:52px}
+.sticker{width:120px;height:120px;margin:4px auto;display:block;animation:pop .45s ease-out}
+@keyframes pop{from{transform:scale(.6);opacity:0}}
+/* Reduced Motion = fewer, gentler animations, not zero: movement and keyframes go,
+   opacity and colour fades stay (they help comprehension and move nothing). */
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition-property:opacity,background-color,border-color,color!important}}
+html.rm *,html.rm *::before,html.rm *::after{animation:none!important;transition-property:opacity,background-color,border-color,color!important}
+/* phone on its side (<=500px tall): ~330px for story + question + answers + tools.
+   Measured by tools/qa-sd-play.mjs on every card: nothing may scroll or overlap. */
+@media (orientation:landscape) and (max-height:500px){
+  #stage{flex:0 0 47%}
+  #panel{gap:5px}
+  #story{font-size:14px;line-height:1.3;max-height:21vh;min-height:44px;padding:5px 46px 5px 10px}
+  #btn-replay{width:38px;height:38px;top:3px;right:3px}
+  #q{font-size:16px}
+  #answers{padding:10px 2px 2px}
+  #answers .grid{gap:6px}
+  #answers .grid.g4{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .opt{min-height:48px;font-size:13px;padding:3px;border-width:2px;border-radius:14px;gap:2px}
+  .opt .pic{height:clamp(28px,10vh,46px)}
+  .opt.big{font-size:26px}
+  .opt .mark{width:24px;height:24px;font-size:13px;top:-8px;right:-8px}
+  .pad{gap:5px}.pad .opt{min-height:48px;font-size:22px}#count-show{height:44px;font-size:28px}
+  .match{gap:5px 14px}.match .opt{min-height:48px}.match .opt .pic{height:clamp(24px,8vh,40px)}
+  .drag-zone{flex-direction:row;gap:10px;align-items:center}
+  .basket{width:44%;min-height:96px}.basket>img{height:70px}.basket .inb{margin-bottom:26px}.basket .inb img{height:36px}
+  .tray{flex-direction:column;gap:6px}.tray .opt{width:120px;flex-direction:row;min-height:48px}.tray .opt .pic{height:34px}
+  #help{font-size:14px;max-height:14vh}
+  #tools .btn{min-height:48px;font-size:17px;padding:0 14px}
+}
+/* small phones upright (<=700px tall) */
+@media (orientation:portrait) and (max-height:700px){
+  #stage{flex:0 0 27%}
+  #story{font-size:15px;line-height:1.3;max-height:16vh;min-height:44px;padding:6px 48px 6px 10px}
+  #btn-replay{width:40px;height:40px;top:3px;right:3px}
+  #q{font-size:18px}
+  #panel{gap:6px}
+  #answers .grid{gap:8px}
+  .opt{min-height:52px;font-size:15px;padding:5px}
+  .opt .pic{height:clamp(32px,6.5vh,54px)}
+  .match{gap:6px 16px}.match .opt{min-height:48px}.match .opt .pic{height:clamp(26px,5vh,40px)}
+  .basket{min-height:88px}.basket>img{height:62px}.basket .inb{margin-bottom:24px}.basket .inb img{height:36px}
+  .tray .opt{width:96px;min-height:52px}.tray .opt .pic{height:34px}
+  .btn{min-height:52px}
+}
+/* very short landscape (<=400px tall): matching in two rows, drag tray in one row */
+@media (orientation:landscape) and (max-height:400px){
+  #story{max-height:18vh;min-height:40px}
+  .match{grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-flow:row}
+  .match .opt[data-i^="L"]{grid-row:1}.match .opt[data-i^="R"]{grid-row:2}
+  .tray{flex-direction:row}.tray .opt{width:84px;flex-direction:column}
+  .basket{min-height:84px}.basket>img{height:58px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HOME ═══════════════════════════════════════════════════════════════ -->
+<section class="scr active" id="scr-home">
+  <button class="icon-btn" id="btn-exit" type="button" aria-label="Kembali ke menu"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" stroke="#5A4E43" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button class="icon-btn" id="btn-parent" type="button" aria-label="Untuk orang tua"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2.5" fill="#F2B632"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10" stroke="#8A6A1E" stroke-width="2.4" fill="none"/></svg></button>
+  <img class="home-mascot" id="hm-stinky" src="../assets/spelling/prop/truck.webp" alt="">
+  <img class="home-mascot" id="hm-dirty" src="../assets/spelling/prop/digger.webp" alt="">
+  <div id="home-inner">
+    <img id="home-logo" src="../assets/db/lib/sd/logo.webp" alt="The Stinky &amp; Dirty Show! Learning Adventure">
+    <p id="home-tag" class="fk">Langkah kecil, masa depan cerah!</p>
+    <div id="home-btns">
+      <button class="btn b-gold fk" id="btn-start" type="button"><svg viewBox="0 0 24 24" width="26" height="26"><circle cx="12" cy="12" r="11" fill="#fff"/><path d="M10 7.5l6 4.5-6 4.5z" fill="#F2A21E"/></svg>Mulai Petualangan</button>
+      <button class="btn b-purple fk" id="btn-worlds" type="button">Pilih Dunia</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══ MAP ════════════════════════════════════════════════════════════════ -->
+<section class="scr" id="scr-map">
+  <div class="bar">
+    <button class="icon-btn" data-go="scr-home" type="button" aria-label="Kembali"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" stroke="#5A4E43" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <h1 class="fk">Pilih Dunia</h1>
+    <span style="width:52px"></span>
+  </div>
+  <div id="world-grid"></div>
+</section>
+
+<!-- ══ WORLD / JOURNEY ════════════════════════════════════════════════════ -->
+<section class="scr" id="scr-world">
+  <div class="veil"></div>
+  <div class="bar" style="position:relative;z-index:2">
+    <button class="icon-btn" data-go="scr-map" type="button" aria-label="Kembali"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" stroke="#5A4E43" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <span style="flex:1"></span>
+  </div>
+  <div class="sheet" id="world-sheet">
+    <div class="focus"><img id="w-icon" src="" alt=""><div style="text-align:left"><h2 class="fk" id="w-name" style="margin:0"></h2><p id="w-skill" style="margin:0"></p></div></div>
+    <div class="journey" id="w-journey"></div>
+    <p id="w-prog"></p>
+    <button class="btn b-gold fk" id="btn-session" type="button">Mulai Sesi</button>
+  </div>
+</section>
+
+<!-- ══ SESSION INTRO ══════════════════════════════════════════════════════ -->
+<section class="scr" id="scr-intro">
+  <div class="veil"></div>
+  <div class="sheet">
+    <div class="intro-row"><img id="i-guide" src="../assets/db/lib/sd/explorer.webp" alt=""><div class="bubble fk" id="i-say">Ayo petualangan singkat! Kita main 5 kartu bersama.</div></div>
+    <div class="focus"><img id="i-icon" src="" alt=""><div style="text-align:left"><b id="i-world" class="fk" style="font-size:20px"></b><p id="i-skill" style="margin:0"></p></div></div>
+    <button class="btn b-gold fk" id="btn-go" type="button">Mulai Sesi →</button>
+  </div>
+</section>
+
+<!-- ══ CARD ═══════════════════════════════════════════════════════════════ -->
+<section class="scr" id="scr-card">
+  <div id="card-top">
+    <button class="icon-btn" id="btn-quit" type="button" aria-label="Berhenti"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="#5A4E43" stroke-width="3" stroke-linecap="round"/></svg></button>
+    <div id="dots" aria-label="Kartu"></div>
+    <button class="icon-btn" id="btn-voice" type="button" aria-label="Suara narasi"><svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z" fill="#2F7FD6"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="#2F7FD6" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg></button>
+  </div>
+  <div id="card-body">
+    <div id="stage">
+      <div id="stage-bg"></div>
+      <div id="stage-layer"></div>
+      <div id="fx"></div>
+      <div id="banner"><img src="../assets/spelling/prop/digger.webp" alt=""><div><b class="fk" id="banner-t"></b><small id="banner-s"></small></div></div>
+    </div>
+    <div id="panel">
+      <div id="story" aria-live="polite"><button class="icon-btn" id="btn-replay" type="button" aria-label="Ulangi cerita"><svg viewBox="0 0 24 24"><path d="M12 5a7 7 0 1 1-6.6 4.7" stroke="#2F7FD6" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M4 4v6h6" stroke="#2F7FD6" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div id="story-t"></div></div>
+      <p id="q" class="fk"></p>
+      <div id="answers"></div>
+      <div id="help" aria-live="polite"></div>
+      <div id="tools">
+        <button class="btn b-soft fk" id="btn-hint" type="button"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 2.5a6.5 6.5 0 0 0-3.9 11.7c.6.5.9 1.1.9 1.8V17h6v-1c0-.7.3-1.3.9-1.8A6.5 6.5 0 0 0 12 2.5z" fill="#F2B632"/><rect x="9" y="18.2" width="6" height="2.2" rx="1" fill="#8A93A6"/></svg>Petunjuk</button>
+        <button class="btn b-green fk" id="btn-check" type="button" disabled>Periksa</button>
+        <button class="btn b-blue fk hide" id="btn-next" type="button">Lanjut →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SESSION COMPLETE ═══════════════════════════════════════════════════ -->
+<section class="scr" id="scr-done">
+  <div class="veil"></div>
+  <div class="sheet">
+    <h2 class="fk" id="d-title">Petualangan selesai!</h2>
+    <div class="done-stars" id="d-stars"></div>
+    <img class="sticker" id="d-sticker" src="" alt="">
+    <p id="d-sub"></p>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn b-gold fk" id="btn-again" type="button">Main Lagi</button>
+      <button class="btn b-purple fk" data-go="scr-map" type="button">Pilih Dunia</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PARENT GATE ════════════════════════════════════════════════════════ -->
+<div class="ov" id="ov-gate" role="dialog" aria-modal="true" aria-labelledby="gate-t"><div class="sheet">
+  <h2 class="fk" id="gate-t">Khusus Orang Tua</h2>
+  <p>Tekan dan tahan tombol 3 detik, <b>atau</b> ketuk bentuk berurutan: lingkaran, segitiga, persegi.</p>
+  <button class="btn b-blue fk" id="gate-hold" type="button"><i></i>Tahan 3 detik</button>
+  <div class="gate-shapes" id="gate-shapes"></div>
+  <button class="btn b-soft fk" data-close="ov-gate" type="button">Batal</button>
+</div></div>
+
+<!-- ══ PARENT PANEL ═══════════════════════════════════════════════════════ -->
+<div class="ov" id="ov-parent" role="dialog" aria-modal="true" aria-labelledby="par-t"><div class="sheet" style="text-align:left">
+  <h2 class="fk" id="par-t" style="text-align:center">Pengaturan Orang Tua</h2>
+  <div class="sum" id="par-sum"></div>
+  <b>Mode membaca</b>
+  <div class="seg" id="seg-mode"></div>
+  <div class="set-row"><span>Narasi (suara cerita)</span><button class="sw" data-opt="voice" type="button" aria-label="Narasi"><i></i></button></div>
+  <div class="set-row"><span>Efek suara</span><button class="sw" data-opt="sfx" type="button" aria-label="Efek suara"><i></i></button></div>
+  <div class="set-row"><span>Musik</span><button class="sw" data-opt="music" type="button" aria-label="Musik"><i></i></button></div>
+  <div class="set-row"><span>Kurangi gerakan</span><button class="sw" data-opt="rm" type="button" aria-label="Kurangi gerakan"><i></i></button></div>
+  <p id="par-skills" style="font-size:15px;color:var(--ink2)"></p>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px">
+    <button class="btn b-soft fk" id="btn-reset" type="button">Hapus progres</button>
+    <button class="btn b-green fk" data-close="ov-parent" type="button">Selesai</button>
+  </div>
+</div></div>
+
+<div class="ov" id="ov-confirm" role="dialog" aria-modal="true"><div class="sheet">
+  <h2 class="fk">Hapus semua progres?</h2>
+  <p>Bintang, stiker, dan riwayat belajar anak ini akan dihapus. Pengaturan tetap disimpan.</p>
+  <div style="display:flex;gap:10px;justify-content:center"><button class="btn b-soft fk" data-close="ov-confirm" type="button">Batal</button><button class="btn b-gold fk" id="btn-reset-yes" type="button">Ya, hapus</button></div>
+</div></div>
+
+<div class="ov" id="ov-quit" role="dialog" aria-modal="true"><div class="sheet">
+  <h2 class="fk">Berhenti dulu?</h2>
+  <p>Tidak apa-apa. Bintang yang sudah didapat tetap tersimpan.</p>
+  <div style="display:flex;gap:10px;justify-content:center"><button class="btn b-soft fk" data-close="ov-quit" type="button">Lanjut main</button><button class="btn b-gold fk" id="btn-quit-yes" type="button">Berhenti</button></div>
+</div></div>
+
+<script src="data/emoji-map.js?v=v62.7-20260927a"></script>
+<script src="data/asset-index.js?v=v62.7-20260927a"></script>
+<script src="data/save-engine.js?v=v62.7-20260927a"></script>
+<script src="data/sd-cards.js?v=v62.7-20260927a"></script>
+<script src="data/sd-audio.js?v=v62.7-20260927a"></script>
+<script src="sd-session.js?v=v62.7-20260927a"></script>
+<script src="sd-engine.js?v=v62.7-20260927a"></script>
+<script src="stinky-dirty.js?v=v62.7-20260927a"></script>
+<script src="sw-reload.js?v=v62.7-20260927a"></script>
+</body>
+</html>

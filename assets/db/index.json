@@ -5597,6 +5597,376 @@
    "h": 267,
    "psnr": 42.9
   },
+  "sd/adventurer": {
+   "file": "assets/db/lib/sd/adventurer.webp",
+   "cat": "sd",
+   "tags": [
+    "adventurer",
+    "cartoon",
+    "stinky-dirty"
+   ],
+   "source": "ds1-brand-buttons-mascots@(398, 425, 520, 610)",
+   "w": 406,
+   "h": 536,
+   "psnr": 46.2
+  },
+  "sd/cat-language": {
+   "file": "assets/db/lib/sd/cat-language.webp",
+   "cat": "sd",
+   "tags": [
+    "cat",
+    "language",
+    "cartoon",
+    "stinky-dirty"
+   ],
+   "source": "ds1-brand-buttons-mascots@(1245, 628, 1322, 700)",
+   "w": 301,
+   "h": 304,
+   "psnr": 47.2
+  },
+  "sd/cat-listening": {
+   "file": "assets/db/lib/sd/cat-listening.webp",
+   "cat": "sd",
+   "tags": [
+    "cat",
+    "listening",
+    "cartoon",
+    "stinky-dirty"
+   ],
+   "source": "ds1-brand-buttons-mascots@(1000, 628, 1075, 700)",
+   "w": 293,
+   "h": 300,
+   "psnr": 45.9
+  },
+  "sd/cat-logic": {
+   "file": "assets/db/lib/sd/cat-logic.webp",
+   "cat": "sd",
+   "tags": [
+    "cat",
+    "logic",
+    "cartoon",
+    "stinky-dirty"
+   ],
+   "source": "ds1-brand-buttons-mascots@(1080, 628, 1155, 700)",
+   "w": 295,
+   "h": 301,
+   "psnr": 47.7
+  },
+  "sd/cat-math": {
+   "file": "assets/db/lib/sd/cat-math.webp",
+   "cat": "sd",
+   "tags": [
+    "cat",
+    "math",
+    "cartoon",
+    "stinky-dirty"
+   ],
+   "source": "ds1-brand-buttons-mascots@(1328, 628, 1405, 700)",
+   "w": 299,
+   "h": 304,
+   "psnr": 47.2
+  },
+  "sd/cat-memory": {
+   "file": "assets/db/lib/sd/cat-memory.webp",
+   "cat": "sd",
+   "tags": [
+    "cat",
+    "memory",
+    "cartoon",
+    "stinky-dirty"
+   ],
+   "source": "ds1-brand-buttons-mascots@(1160, 628, 1238, 700)",
+   "w": 295,
+   "h": 299,
+   "psnr": 47.4
+  },
+  "sd/cat-observation": {
+   "file": "assets/db/lib/sd/cat-observation.webp",
+   "cat": "sd",
+   "tags": [
+    "cat",
+    "observation",
+    "cartoon",
+    "stinky-dirty"
+   ],
+   "source": "ds1-brand-buttons-mascots@(1413, 628, 1490, 700)",
+   "w": 301,
+   "h": 302,
+   "psnr": 47.8
+  },
+  "sd/explorer": {
+   "file": "assets/db/lib/sd/explorer.webp",
+   "cat": "sd",
+   "tags": [
+    "explorer",
+    "cartoon",
+    "stinky-dirty"
+   ],
+   "source": "ds1-brand-buttons-mascots@(296, 425, 400, 610)",
+   "w": 282,
+   "h": 536,
+   "psnr": 46.4
+  },
+  "sd/koko": {
+   "file": "assets/db/lib/sd/koko.webp",
+   "cat": "sd",
+   "tags": [
+    "koko",
+    "cartoon",
+    "stinky-dirty"
+   ],
+   "source": "ds1-brand-buttons-mascots@(295, 648, 372, 740)",
+   "w": 304,
+   "h": 348,
+   "psnr": 47.9
+  },
+  "sd/logo": {
+   "file": "assets/db/lib/sd/logo.webp",
+   "cat": "sd",
+   "tags": [
+    "logo",
+    "cartoon",
+    "stinky-dirty"
+   ],
+   "source": "ds1-brand-buttons-mascots@(18, 225, 205, 360)",
+   "w": 536,
+   "h": 400,
+   "psnr": 45.0
+  },
+  "sd/logo-sd": {
+   "file": "assets/db/lib/sd/logo-sd.webp",
+   "cat": "sd",
+   "tags": [
+    "logo",
+    "sd",
+    "cartoon",
+    "stinky-dirty"
+   ],
+   "source": "ds1-brand-buttons-mascots@(212, 222, 330, 352)",
+   "w": 450,
+   "h": 469,
+   "psnr": 45.9
+  },
+  "sd/lulu": {
+   "file": "assets/db/lib/sd/lulu.webp",
+   "cat": "sd",
+   "tags": [
+    "lulu",
+    "cartoon",
+    "stinky-dirty"
+   ],
+   "source": "ds1-brand-buttons-mascots@(392, 645, 470, 740)",
+   "w": 285,
+   "h": 366,
+   "psnr": 46.5
+  },
+  "sd/mimi": {
+   "file": "assets/db/lib/sd/mimi.webp",
+   "cat": "sd",
+   "tags": [
+    "mimi",
+    "cartoon",
+    "stinky-dirty"
+   ],
+   "source": "ds1-brand-buttons-mascots@(112, 648, 192, 740)",
+   "w": 277,
+   "h": 330,
+   "psnr": 46.0
+  },
+  "sd/pip": {
+   "file": "assets/db/lib/sd/pip.webp",
+   "cat": "sd",
+   "tags": [
+    "pip",
+    "cartoon",
+    "stinky-dirty"
+   ],
+   "source": "ds1-brand-buttons-mascots@(205, 648, 280, 740)",
+   "w": 262,
+   "h": 335,
+   "psnr": 46.8
+  },
+  "sd/rover": {
+   "file": "assets/db/lib/sd/rover.webp",
+   "cat": "sd",
+   "tags": [
+    "rover",
+    "cartoon",
+    "stinky-dirty"
+   ],
+   "source": "ds1-brand-buttons-mascots@(20, 648, 100, 740)",
+   "w": 295,
+   "h": 326,
+   "psnr": 46.5
+  },
+  "sd/world-detective-city-land": {
+   "file": "assets/db/lib/sd/world-detective-city-land.webp",
+   "cat": "sd",
+   "tags": [
+    "detective",
+    "city",
+    "land",
+    "world",
+    "background"
+   ],
+   "source": "ds3-world-backgrounds@[1033, 586, 1385, 880]",
+   "w": 1352,
+   "h": 968
+  },
+  "sd/world-detective-city-port": {
+   "file": "assets/db/lib/sd/world-detective-city-port.webp",
+   "cat": "sd",
+   "tags": [
+    "detective",
+    "city",
+    "port",
+    "world",
+    "background"
+   ],
+   "source": "ds3-world-backgrounds@[1393, 560, 1523, 876]",
+   "w": 464,
+   "h": 1044
+  },
+  "sd/world-logic-lab-land": {
+   "file": "assets/db/lib/sd/world-logic-lab-land.webp",
+   "cat": "sd",
+   "tags": [
+    "logic",
+    "lab",
+    "land",
+    "world",
+    "background"
+   ],
+   "source": "ds3-world-backgrounds@[518, 195, 875, 498]",
+   "w": 1372,
+   "h": 1000
+  },
+  "sd/world-logic-lab-port": {
+   "file": "assets/db/lib/sd/world-logic-lab-port.webp",
+   "cat": "sd",
+   "tags": [
+    "logic",
+    "lab",
+    "port",
+    "world",
+    "background"
+   ],
+   "source": "ds3-world-backgrounds@[885, 172, 1017, 497]",
+   "w": 472,
+   "h": 1076
+  },
+  "sd/world-memory-mountain-land": {
+   "file": "assets/db/lib/sd/world-memory-mountain-land.webp",
+   "cat": "sd",
+   "tags": [
+    "memory",
+    "mountain",
+    "land",
+    "world",
+    "background"
+   ],
+   "source": "ds3-world-backgrounds@[1033, 194, 1384, 498]",
+   "w": 1348,
+   "h": 1004
+  },
+  "sd/world-memory-mountain-port": {
+   "file": "assets/db/lib/sd/world-memory-mountain-port.webp",
+   "cat": "sd",
+   "tags": [
+    "memory",
+    "mountain",
+    "port",
+    "world",
+    "background"
+   ],
+   "source": "ds3-world-backgrounds@[1393, 165, 1523, 494]",
+   "w": 464,
+   "h": 1092
+  },
+  "sd/world-number-island-land": {
+   "file": "assets/db/lib/sd/world-number-island-land.webp",
+   "cat": "sd",
+   "tags": [
+    "number",
+    "island",
+    "land",
+    "world",
+    "background"
+   ],
+   "source": "ds3-world-backgrounds@[513, 586, 871, 880]",
+   "w": 1376,
+   "h": 968
+  },
+  "sd/world-number-island-port": {
+   "file": "assets/db/lib/sd/world-number-island-port.webp",
+   "cat": "sd",
+   "tags": [
+    "number",
+    "island",
+    "port",
+    "world",
+    "background"
+   ],
+   "source": "ds3-world-backgrounds@[880, 563, 1016, 881]",
+   "w": 488,
+   "h": 1052
+  },
+  "sd/world-story-forest-land": {
+   "file": "assets/db/lib/sd/world-story-forest-land.webp",
+   "cat": "sd",
+   "tags": [
+    "story",
+    "forest",
+    "land",
+    "world",
+    "background"
+   ],
+   "source": "ds3-world-backgrounds@[13, 194, 357, 497]",
+   "w": 1320,
+   "h": 1000
+  },
+  "sd/world-story-forest-port": {
+   "file": "assets/db/lib/sd/world-story-forest-port.webp",
+   "cat": "sd",
+   "tags": [
+    "story",
+    "forest",
+    "port",
+    "world",
+    "background"
+   ],
+   "source": "ds3-world-backgrounds@[366, 171, 499, 498]",
+   "w": 476,
+   "h": 1084
+  },
+  "sd/world-word-village-land": {
+   "file": "assets/db/lib/sd/world-word-village-land.webp",
+   "cat": "sd",
+   "tags": [
+    "word",
+    "village",
+    "land",
+    "world",
+    "background"
+   ],
+   "source": "ds3-world-backgrounds@[15, 585, 358, 877]",
+   "w": 1316,
+   "h": 964
+  },
+  "sd/world-word-village-port": {
+   "file": "assets/db/lib/sd/world-word-village-port.webp",
+   "cat": "sd",
+   "tags": [
+    "word",
+    "village",
+    "port",
+    "world",
+    "background"
+   ],
+   "source": "ds3-world-backgrounds@[367, 564, 496, 880]",
+   "w": 460,
+   "h": 1044
+  },
   "things/alarm-clock": {
    "file": "assets/db/lib/things/alarm-clock.webp",
    "cat": "things",
