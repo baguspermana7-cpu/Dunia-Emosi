@@ -195,6 +195,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .fighter img.sprite{height:clamp(150px,34vh,300px);max-height:44vh;filter:drop-shadow(0 12px 14px rgba(0,0,0,.45));transform-origin:50% 100%}
 .fighter img.mon-sprite{height:clamp(210px,50vh,420px);max-height:62vh;filter:drop-shadow(0 16px 18px rgba(0,0,0,.5));animation:slimeWob 2.2s ease-in-out infinite;transform-origin:50% 100%}
 .fighter img.mon-sprite.boss-mon{height:clamp(260px,62vh,520px);max-height:74vh;filter:drop-shadow(0 18px 20px rgba(0,0,0,.55)) drop-shadow(0 0 16px rgba(255,80,80,.55));animation:slimeWob 1.7s ease-in-out infinite,bossPulse 1.4s ease-in-out infinite}
+/* 2026-09-27 — a WIDE monster (library sprites: island turtle 1.42:1, storm wolf 1.18:1) sized
+   by height alone ran off the right edge of a phone: the boss box is 520px tall on a 390px
+   screen. Cap the width and let object-fit:contain shrink the art inside the box (never
+   stretches), feet kept on the ground line. */
+.fighter img.mon-sprite{max-width:min(60vw,100%);object-fit:contain;object-position:50% 100%}
+#fh-foe{min-width:0;flex:0 1 auto}   /* may shrink to what the knight leaves; the img follows via 100% */
 @keyframes bossPulse{0%,100%{filter:drop-shadow(0 18px 20px rgba(0,0,0,.55)) drop-shadow(0 0 14px rgba(255,80,80,.5))}50%{filter:drop-shadow(0 18px 20px rgba(0,0,0,.55)) drop-shadow(0 0 26px rgba(255,60,60,.85))}}
 .fighter .slime{font-size:clamp(150px,42vh,300px);line-height:1;filter:drop-shadow(0 14px 16px rgba(0,0,0,.45));animation:slimeWob 2s ease-in-out infinite;display:inline-block;transform-origin:50% 100%}
 @keyframes slimeWob{0%,100%{transform:scaleY(1) translateY(0)}50%{transform:scaleY(.94) translateY(-6px)}}
@@ -422,7 +428,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @keyframes conf{0%{opacity:1;transform:translateY(0) rotate(0)}100%{opacity:0;transform:translateY(94vh) rotate(720deg)}}
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001s!important;transition-duration:.05s!important}}
-@media (max-width:420px){.br-hero{height:52%}.fighter img.sprite{height:clamp(120px,26vh,220px)}.fighter img.mon-sprite{height:clamp(170px,38vh,300px)}.fighter .slime{font-size:clamp(120px,32vh,220px)}}
+@media (max-width:420px){.br-hero{height:52%}.fighter img.sprite{height:clamp(120px,26vh,220px)}.fighter img.mon-sprite{height:clamp(170px,38vh,300px)}.fighter img.mon-sprite.boss-mon{height:clamp(200px,44vh,360px)}.fighter .slime{font-size:clamp(120px,32vh,220px)}}
 /* short landscape (tablet): keep fighters big but leave room for the qpanel */
 @media (max-height:560px){.arena{flex:0 0 46%}.fighter img.sprite{height:clamp(140px,40vh,260px)}.fighter img.mon-sprite{height:clamp(190px,58vh,360px)}}
 /* P3 — landscape: fit the whole question + ALL answer choices on-screen (owner:
@@ -745,20 +751,20 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <!-- capture runtime errors to localStorage.__freezeLog BEFORE anything else can
      throw, so the next "kadang hang" report on the real tablet ships evidence.
      Inspect with: JSON.parse(localStorage.__freezeLog || '[]') -->
-<script src="data/freeze-watchdog.js?v=v63.1-20260927a"></script>
-<script src="data/math-rules.js?v=v63.1-20260927a"></script>
-<script src="data/save-engine.js?v=v63.1-20260927a"></script>
-<script src="data/sfx-engine.js?v=v63.1-20260927a"></script>
-<script src="vfx-engine.js?v=v63.1-20260927a"></script><!-- shared VFX (monster defeat explosion) -->
-<script src="data/math-heroes.js?v=v63.1-20260927a"></script><!-- P3b hero roster (sprite changes per op) -->
-<script src="data/emoji-map.js?v=v63.1-20260927a"></script><script src="data/ui-sprites.js?v=v63.1-20260927a"></script><!-- UIUX/gameplay sprite packs -->
-<script src="data/math-stories.js?v=v63.1-20260927a"></script><!-- P3d per-level story arcs (monster names + banter) -->
+<script src="data/freeze-watchdog.js?v=v63.2-20260927a"></script>
+<script src="data/math-rules.js?v=v63.2-20260927a"></script>
+<script src="data/save-engine.js?v=v63.2-20260927a"></script>
+<script src="data/sfx-engine.js?v=v63.2-20260927a"></script>
+<script src="vfx-engine.js?v=v63.2-20260927a"></script><!-- shared VFX (monster defeat explosion) -->
+<script src="data/math-heroes.js?v=v63.2-20260927a"></script><!-- P3b hero roster (sprite changes per op) -->
+<script src="data/emoji-map.js?v=v63.2-20260927a"></script><script src="data/ui-sprites.js?v=v63.2-20260927a"></script><!-- UIUX/gameplay sprite packs -->
+<script src="data/math-stories.js?v=v63.2-20260927a"></script><!-- P3d per-level story arcs (monster names + banter) -->
 <!-- P3e cloud sync — config baked in but STAYS INERT until localStorage 'mp_cloud_on'='1'
      (a button in plb.html flips it, same origin). publishable/anon key ONLY — the
      service_role/secret key must NEVER live in the repo/browser. Owner: enable the
      Anonymous provider in Supabase FIRST, then click "Aktifkan Cloud Sync" in plb.html. -->
 <script>window.MATH_SUPABASE={url:'https://iaiyoazomujscqrpknbq.supabase.co',anonKey:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlhaXlvYXpvbXVqc2NxcnBrbmJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTk0MTYsImV4cCI6MjA5MzI5NTQxNn0.gcYFTOhxS1giqUQGdmsmwYPjueHW6BPe3oYaIPWASlI'}</script>
-<script src="data/math-cloud.js?v=v63.1-20260927a"></script>
+<script src="data/math-cloud.js?v=v63.2-20260927a"></script>
 <script>
 (function(){
 'use strict';
@@ -768,9 +774,36 @@ var curMonId=0;   // owner: random monster from the FULL pool (81 old + 200 new)
 var PK='../assets/icons/'; // Free Icon Pack v3.1 (@gvesster) — crisp UI/economy icons
 function pkIcon(p,sz){ return '<img src="'+PK+p+'.webp" style="width:'+(sz||20)+'px;height:'+(sz||20)+'px;vertical-align:-4px" alt="" onerror="this.style.display=\'none\'">'; }
 function monSrc(g){ return MON+'mon-'+(((g-1)%MON_COUNT)+1)+'.webp'; }
-function monById(id){ return MON+'mon-'+id+'.webp'; }
-function pickMonId(){ curMonId = 1 + Math.floor(Math.random()*MON_COUNT); return curMonId; }
-function monFallbackEmoji(g){ var e=['👾','👹','🐲','🦊','👻','🧟','🐙','🍄','⭐','🐉']; return e[(g-1)%e.length]; }
+/* Library monsters (owner 2026-09-27: "Monster2 ini bisa dipakai juga utk yg monster
+   petualangan matematika"): 97 shared sprites in assets/db/lib/gt-monster/, each pinned
+   to the world whose theme it fits (MATH_STORIES.libForWorld). A library monster's id is
+   its string key 'gt-monster/<name>'; the classic 1..281 pool keeps numeric ids.
+   - world boss (level x-10): ALWAYS one of that world's big library bosses
+   - other levels: LIB_CHANCE of a themed library monster, else the classic random pool */
+var LIB_BASE='../assets/db/lib/', LIB_CHANCE=0.5;
+function libKeys(world,boss){ try{ return (window.MATH_STORIES&&MATH_STORIES.libForWorld)?MATH_STORIES.libForWorld(world,boss):[]; }catch(e){ return []; } }
+function monById(id){ return (typeof id==='string') ? LIB_BASE+id+'.webp' : MON+'mon-'+id+'.webp'; }
+function pickMonId(world,boss){
+  var keys=world?libKeys(world,!!boss):[];
+  if(keys.length && (boss || Math.random()<LIB_CHANCE)){
+    var k=keys[Math.floor(Math.random()*keys.length)];
+    if(keys.length>1 && k===curMonId) k=keys[(keys.indexOf(k)+1)%keys.length];   // no instant repeat
+    curMonId=k; return curMonId;
+  }
+  curMonId = 1 + Math.floor(Math.random()*MON_COUNT); return curMonId;
+}
+/* OFFLINE: the page is not in the sw.js shell and every monster is cached on first view
+   (cache-first). Warm the opened world's library monsters when the browser is idle, so a
+   level started later with no wifi still has its themed monster/boss. Same idiom as G28. */
+var _libWarmed={};
+function warmLibWorld(world){
+  if(_libWarmed[world] || !navigator.onLine || !('serviceWorker' in navigator) || !navigator.serviceWorker.controller) return;
+  _libWarmed[world]=1;
+  var list=libKeys(world,false).concat(libKeys(world,true)), i=0;
+  function next(){ if(i>=list.length) return; fetch(monById(list[i++]),{cache:'no-cache'}).catch(function(){}).then(function(){ setTimeout(next,40); }); }
+  (window.requestIdleCallback||function(f){ setTimeout(f,1200); })(function(){ next(); next(); },{timeout:4000});
+}
+function monFallbackEmoji(g){ var e=['👾','👹','🐲','🦊','👻','🧟','🐙','🍄','⭐','🐉']; if(typeof g==='string') g=g.length; return e[(g-1)%e.length]; }
 
 /* per-level bonus variety (owner: "bonus berbeda2") — MATH-only modifiers */
 function bonusFor(g){
@@ -916,7 +949,7 @@ function starRow(got,max){ var full=Math.round(got/max*3); return '★★★'.sl
 
 function openPeta(){ renderPeta(); show('peta'); }
 function openSub(w){
-  curWorld=w; byId('sub-bg').src=A+'sub-'+w+'.webp';
+  curWorld=w; byId('sub-bg').src=A+'sub-'+w+'.webp'; try{ warmLibWorld(w); }catch(e){}
   set('sub-title','DUNIA '+w); renderSub(); show('sub');
 }
 function renderSub(){
@@ -953,7 +986,7 @@ var skillSel=[];  // P8 — multi-select: chosen operators for this level
 function openSkill(sub){
   curSub=sub; var g=(curWorld-1)*SUBS+sub;
   set('skill-lvl','Level '+curWorld+'-'+sub+'  ·  angka ≤'+maxNumFor(g));
-  var mimg=byId('skill-mon'); mimg.style.display=''; pickMonId(); mimg.src=monById(curMonId);
+  var mimg=byId('skill-mon'); mimg.style.display=''; pickMonId(curWorld, g%SUBS===0); mimg.src=monById(curMonId);
   var bn=bonusFor(g); byId('skill-bonus').innerHTML=bn.label?('<span class="bonus-banner">'+bn.label+'</span>'):'';
   var grid=byId('skill-grid'); grid.innerHTML=''; skillSel=[];
   var tier=tierFor(g);
@@ -1077,12 +1110,12 @@ function startGame(ops){  // P8: ops = array of chosen operators, or null = camp
     }
   } catch(_){}
   // P3d — story arc keyed to the RANDOM monster sprite (curMonId), name+story travel WITH the sprite
-  if(!curMonId) pickMonId();
+  if(!curMonId) pickMonId(curWorld, isBoss);
   var _arc=null;
   try { if(window.MATH_STORIES && MATH_STORIES.forMonster) _arc=MATH_STORIES.forMonster(curMonId);
         else if(window.MATH_STORIES) _arc=MATH_STORIES.get(curWorld,curSub); } catch(_){}
   // English name (big) + small Indonesian subtitle below it
-  var _nm=(_arc&&_arc.name)||(_arc&&_arc.monster)||('Monster '+curMonId);
+  var _nm=(_arc&&_arc.name)||(_arc&&_arc.monster)||'Monster';
   var _sub=(_arc&&_arc.sub)||'';
   byId('foe-name').innerHTML='<span class="foe-en">'+(isBoss?'👑 ':'👾 ')+escapeHtml(_nm)+'</span>'+(_sub?('<span class="foe-sub">'+(isBoss?'BOSS · ':'')+escapeHtml(_sub)+'</span>'):(isBoss?'<span class="foe-sub">BOSS</span>':''));
   game.arc=_arc||null; game.banterIdx=0; game.isBoss=isBoss;   // P3d story-mode banter cursor
@@ -1419,9 +1452,11 @@ var TZ_ROUNDS=[{name:'Semifinal',sec:25},{name:'Final',sec:25}];
 // from the 281-monster DB). Visual only; the fight IS the shared answer-sprint.
 var TZ_HERO=(window.MATH_HEROES?MATH_HEROES.byOp('+').art:'../assets/math/hero-mathhero.webp');
 function tzOpp(){
-  var id=1+Math.floor(Math.random()*281);
+  // half the time a library monster from any world (bosses included — it is a final)
+  var lk=Math.random()<LIB_CHANCE?libKeys(1+Math.floor(Math.random()*WORLDS),Math.random()<0.3):[];
+  var id=lk.length?lk[Math.floor(Math.random()*lk.length)]:1+Math.floor(Math.random()*281);
   var fm=(window.MATH_STORIES&&MATH_STORIES.forMonster)?MATH_STORIES.forMonster(id):null;
-  return {id:id, name:(fm&&fm.name)||('Monster '+id), sub:(fm&&fm.sub)||'', src:MON+'mon-'+id+'.webp'};
+  return {id:id, name:(fm&&fm.name)||'Monster', sub:(fm&&fm.sub)||'', src:monById(id)};
 }
 function tzFighter(src,name,cls,fb,id){
   return '<div style="display:flex;flex-direction:column;align-items:center;gap:2px;min-width:78px">'+

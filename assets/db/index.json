@@ -2854,6 +2854,84 @@
    "h": 258,
    "psnr": 43.1
   },
+  "gt-monster/airship-whale": {
+   "file": "assets/db/lib/gt-monster/airship-whale.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "airship",
+    "whale",
+    "cartoon"
+   ],
+   "source": "monsters-c-16#9",
+   "w": 341,
+   "h": 312,
+   "psnr": 44.7
+  },
+  "gt-monster/amethyst-golem": {
+   "file": "assets/db/lib/gt-monster/amethyst-golem.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "amethyst",
+    "golem",
+    "cartoon"
+   ],
+   "source": "monsters-d-16#7",
+   "w": 348,
+   "h": 312,
+   "psnr": 43.2
+  },
+  "gt-monster/angler-bot": {
+   "file": "assets/db/lib/gt-monster/angler-bot.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "angler",
+    "bot",
+    "cartoon"
+   ],
+   "source": "monsters-e-16#8",
+   "w": 322,
+   "h": 309,
+   "psnr": 42.9
+  },
+  "gt-monster/angler-sub": {
+   "file": "assets/db/lib/gt-monster/angler-sub.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "angler",
+    "sub",
+    "cartoon"
+   ],
+   "source": "monsters-c-16#1",
+   "w": 331,
+   "h": 317,
+   "psnr": 44.1
+  },
+  "gt-monster/autumn-ent": {
+   "file": "assets/db/lib/gt-monster/autumn-ent.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "autumn",
+    "ent",
+    "cartoon"
+   ],
+   "source": "monsters-f-16#14",
+   "w": 335,
+   "h": 342,
+   "psnr": 43.3
+  },
+  "gt-monster/bat-eye": {
+   "file": "assets/db/lib/gt-monster/bat-eye.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "bat",
+    "eye",
+    "cartoon"
+   ],
+   "source": "monsters-e-16#10",
+   "w": 348,
+   "h": 279,
+   "psnr": 43.9
+  },
   "gt-monster/boiler-bot": {
    "file": "assets/db/lib/gt-monster/boiler-bot.webp",
    "cat": "gt-monster",
@@ -2866,6 +2944,19 @@
    "w": 363,
    "h": 339,
    "psnr": 44.3
+  },
+  "gt-monster/bomb-pumpkin": {
+   "file": "assets/db/lib/gt-monster/bomb-pumpkin.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "bomb",
+    "pumpkin",
+    "cartoon"
+   ],
+   "source": "monsters-f-16#8",
+   "w": 318,
+   "h": 321,
+   "psnr": 43.3
   },
   "gt-monster/bone-dragon": {
    "file": "assets/db/lib/gt-monster/bone-dragon.webp",
@@ -2894,6 +2985,60 @@
    "h": 327,
    "psnr": 44.0
   },
+  "gt-monster/bone-unicorn": {
+   "file": "assets/db/lib/gt-monster/bone-unicorn.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "bone",
+    "unicorn",
+    "cartoon"
+   ],
+   "source": "monsters-f-16#11",
+   "w": 331,
+   "h": 325,
+   "psnr": 43.7
+  },
+  "gt-monster/brain-spider-bot": {
+   "file": "assets/db/lib/gt-monster/brain-spider-bot.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "brain",
+    "spider",
+    "bot",
+    "cartoon"
+   ],
+   "source": "monsters-e-16#15",
+   "w": 348,
+   "h": 328,
+   "psnr": 44.3
+  },
+  "gt-monster/brain-ufo": {
+   "file": "assets/db/lib/gt-monster/brain-ufo.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "brain",
+    "ufo",
+    "cartoon"
+   ],
+   "source": "monsters-c-16#14",
+   "w": 335,
+   "h": 335,
+   "psnr": 43.9
+  },
+  "gt-monster/brain-ufo-2": {
+   "file": "assets/db/lib/gt-monster/brain-ufo-2.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "brain",
+    "ufo",
+    "2",
+    "cartoon"
+   ],
+   "source": "monsters-d-16#12",
+   "w": 314,
+   "h": 312,
+   "psnr": 43.9
+  },
   "gt-monster/cactus-cowboy": {
    "file": "assets/db/lib/gt-monster/cactus-cowboy.webp",
    "cat": "gt-monster",
@@ -2919,6 +3064,85 @@
    "w": 333,
    "h": 308,
    "psnr": 44.4
+  },
+  "gt-monster/chain-reaper": {
+   "file": "assets/db/lib/gt-monster/chain-reaper.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "chain",
+    "reaper",
+    "cartoon"
+   ],
+   "source": "monsters-d-16#10",
+   "w": 325,
+   "h": 312,
+   "psnr": 43.4
+  },
+  "gt-monster/clock-owl": {
+   "file": "assets/db/lib/gt-monster/clock-owl.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "clock",
+    "owl",
+    "cartoon"
+   ],
+   "source": "monsters-d-16#6",
+   "w": 349,
+   "h": 303,
+   "psnr": 43.9
+  },
+  "gt-monster/crown-mimic": {
+   "file": "assets/db/lib/gt-monster/crown-mimic.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "crown",
+    "mimic",
+    "cartoon"
+   ],
+   "source": "monsters-c-16#11",
+   "w": 340,
+   "h": 309,
+   "psnr": 42.2
+  },
+  "gt-monster/crystal-crab": {
+   "file": "assets/db/lib/gt-monster/crystal-crab.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "crystal",
+    "crab",
+    "cartoon"
+   ],
+   "source": "monsters-c-16#2",
+   "w": 349,
+   "h": 311,
+   "psnr": 41.7
+  },
+  "gt-monster/crystal-mushroom-golem": {
+   "file": "assets/db/lib/gt-monster/crystal-mushroom-golem.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "crystal",
+    "mushroom",
+    "golem",
+    "cartoon"
+   ],
+   "source": "monsters-e-16#11",
+   "w": 348,
+   "h": 310,
+   "psnr": 42.7
+  },
+  "gt-monster/crystal-rhino": {
+   "file": "assets/db/lib/gt-monster/crystal-rhino.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "crystal",
+    "rhino",
+    "cartoon"
+   ],
+   "source": "monsters-f-16#7",
+   "w": 332,
+   "h": 323,
+   "psnr": 42.4
   },
   "gt-monster/crystal-spider": {
    "file": "assets/db/lib/gt-monster/crystal-spider.webp",
@@ -2946,6 +3170,58 @@
    "h": 307,
    "psnr": 42.6
   },
+  "gt-monster/cupcake-monster": {
+   "file": "assets/db/lib/gt-monster/cupcake-monster.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "cupcake",
+    "monster",
+    "cartoon"
+   ],
+   "source": "monsters-d-16#5",
+   "w": 341,
+   "h": 310,
+   "psnr": 43.2
+  },
+  "gt-monster/cupid-cyclops": {
+   "file": "assets/db/lib/gt-monster/cupid-cyclops.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "cupid",
+    "cyclops",
+    "cartoon"
+   ],
+   "source": "monsters-d-16#15",
+   "w": 324,
+   "h": 323,
+   "psnr": 44.2
+  },
+  "gt-monster/deep-angler": {
+   "file": "assets/db/lib/gt-monster/deep-angler.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "deep",
+    "angler",
+    "cartoon"
+   ],
+   "source": "monsters-d-16#3",
+   "w": 333,
+   "h": 319,
+   "psnr": 42.9
+  },
+  "gt-monster/drill-scorpion": {
+   "file": "assets/db/lib/gt-monster/drill-scorpion.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "drill",
+    "scorpion",
+    "cartoon"
+   ],
+   "source": "monsters-c-16#13",
+   "w": 340,
+   "h": 328,
+   "psnr": 43.0
+  },
   "gt-monster/drill-wasp": {
    "file": "assets/db/lib/gt-monster/drill-wasp.webp",
    "cat": "gt-monster",
@@ -2958,6 +3234,73 @@
    "w": 332,
    "h": 307,
    "psnr": 44.4
+  },
+  "gt-monster/fire-bone-dragon": {
+   "file": "assets/db/lib/gt-monster/fire-bone-dragon.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "fire",
+    "bone",
+    "dragon",
+    "cartoon"
+   ],
+   "source": "monsters-c-16#10",
+   "w": 348,
+   "h": 312,
+   "psnr": 40.6
+  },
+  "gt-monster/flower-chomper": {
+   "file": "assets/db/lib/gt-monster/flower-chomper.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "flower",
+    "chomper",
+    "cartoon"
+   ],
+   "source": "monsters-c-16#5",
+   "w": 344,
+   "h": 312,
+   "psnr": 43.2
+  },
+  "gt-monster/forest-ent": {
+   "file": "assets/db/lib/gt-monster/forest-ent.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "forest",
+    "ent",
+    "cartoon"
+   ],
+   "source": "monsters-d-16#4",
+   "w": 339,
+   "h": 320,
+   "psnr": 43.2
+  },
+  "gt-monster/ghost-pirate-ship": {
+   "file": "assets/db/lib/gt-monster/ghost-pirate-ship.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "ghost",
+    "pirate",
+    "ship",
+    "cartoon"
+   ],
+   "source": "monsters-e-16#3",
+   "w": 342,
+   "h": 319,
+   "psnr": 43.5
+  },
+  "gt-monster/ghost-queen": {
+   "file": "assets/db/lib/gt-monster/ghost-queen.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "ghost",
+    "queen",
+    "cartoon"
+   ],
+   "source": "monsters-f-16#5",
+   "w": 325,
+   "h": 326,
+   "psnr": 44.3
   },
   "gt-monster/ghost-ship": {
    "file": "assets/db/lib/gt-monster/ghost-ship.webp",
@@ -2986,6 +3329,33 @@
    "h": 320,
    "psnr": 43.8
   },
+  "gt-monster/ice-pirate-skeleton": {
+   "file": "assets/db/lib/gt-monster/ice-pirate-skeleton.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "ice",
+    "pirate",
+    "skeleton",
+    "cartoon"
+   ],
+   "source": "monsters-e-16#13",
+   "w": 346,
+   "h": 336,
+   "psnr": 41.8
+  },
+  "gt-monster/ice-walrus": {
+   "file": "assets/db/lib/gt-monster/ice-walrus.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "ice",
+    "walrus",
+    "cartoon"
+   ],
+   "source": "monsters-e-16#4",
+   "w": 348,
+   "h": 312,
+   "psnr": 43.3
+  },
   "gt-monster/ice-yeti": {
    "file": "assets/db/lib/gt-monster/ice-yeti.webp",
    "cat": "gt-monster",
@@ -3012,6 +3382,58 @@
    "h": 318,
    "psnr": 43.3
   },
+  "gt-monster/jester-box": {
+   "file": "assets/db/lib/gt-monster/jester-box.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "jester",
+    "box",
+    "cartoon"
+   ],
+   "source": "monsters-f-16#3",
+   "w": 317,
+   "h": 329,
+   "psnr": 43.8
+  },
+  "gt-monster/lantern-wraith": {
+   "file": "assets/db/lib/gt-monster/lantern-wraith.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "lantern",
+    "wraith",
+    "cartoon"
+   ],
+   "source": "monsters-c-16#4",
+   "w": 341,
+   "h": 316,
+   "psnr": 43.9
+  },
+  "gt-monster/lava-tortoise": {
+   "file": "assets/db/lib/gt-monster/lava-tortoise.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "lava",
+    "tortoise",
+    "cartoon"
+   ],
+   "source": "monsters-c-16#3",
+   "w": 347,
+   "h": 318,
+   "psnr": 42.6
+  },
+  "gt-monster/lava-worm": {
+   "file": "assets/db/lib/gt-monster/lava-worm.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "lava",
+    "worm",
+    "cartoon"
+   ],
+   "source": "monsters-d-16#14",
+   "w": 349,
+   "h": 331,
+   "psnr": 42.2
+  },
   "gt-monster/magma-golem": {
    "file": "assets/db/lib/gt-monster/magma-golem.webp",
    "cat": "gt-monster",
@@ -3024,6 +3446,20 @@
    "w": 325,
    "h": 319,
    "psnr": 43.2
+  },
+  "gt-monster/magma-rock-golem": {
+   "file": "assets/db/lib/gt-monster/magma-rock-golem.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "magma",
+    "rock",
+    "golem",
+    "cartoon"
+   ],
+   "source": "monsters-e-16#2",
+   "w": 322,
+   "h": 369,
+   "psnr": 42.8
   },
   "gt-monster/mimic-chest": {
    "file": "assets/db/lib/gt-monster/mimic-chest.webp",
@@ -3052,6 +3488,84 @@
    "h": 322,
    "psnr": 42.6
   },
+  "gt-monster/mosquito-bot": {
+   "file": "assets/db/lib/gt-monster/mosquito-bot.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "mosquito",
+    "bot",
+    "cartoon"
+   ],
+   "source": "monsters-e-16#1",
+   "w": 342,
+   "h": 316,
+   "psnr": 44.7
+  },
+  "gt-monster/moss-golem": {
+   "file": "assets/db/lib/gt-monster/moss-golem.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "moss",
+    "golem",
+    "cartoon"
+   ],
+   "source": "monsters-c-16#12",
+   "w": 348,
+   "h": 308,
+   "psnr": 43.7
+  },
+  "gt-monster/mushroom-cyclops": {
+   "file": "assets/db/lib/gt-monster/mushroom-cyclops.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "mushroom",
+    "cyclops",
+    "cartoon"
+   ],
+   "source": "monsters-d-16#9",
+   "w": 330,
+   "h": 313,
+   "psnr": 43.4
+  },
+  "gt-monster/oni-samurai": {
+   "file": "assets/db/lib/gt-monster/oni-samurai.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "oni",
+    "samurai",
+    "cartoon"
+   ],
+   "source": "monsters-d-16#8",
+   "w": 337,
+   "h": 303,
+   "psnr": 40.9
+  },
+  "gt-monster/orange-chomper": {
+   "file": "assets/db/lib/gt-monster/orange-chomper.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "orange",
+    "chomper",
+    "cartoon"
+   ],
+   "source": "monsters-e-16#5",
+   "w": 340,
+   "h": 311,
+   "psnr": 42.5
+  },
+  "gt-monster/penguin-king": {
+   "file": "assets/db/lib/gt-monster/penguin-king.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "penguin",
+    "king",
+    "cartoon"
+   ],
+   "source": "monsters-d-16#13",
+   "w": 346,
+   "h": 325,
+   "psnr": 42.4
+  },
   "gt-monster/pirate-octopus": {
    "file": "assets/db/lib/gt-monster/pirate-octopus.webp",
    "cat": "gt-monster",
@@ -3065,6 +3579,20 @@
    "h": 308,
    "psnr": 43.5
   },
+  "gt-monster/pirate-octopus-cannon": {
+   "file": "assets/db/lib/gt-monster/pirate-octopus-cannon.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "pirate",
+    "octopus",
+    "cannon",
+    "cartoon"
+   ],
+   "source": "monsters-c-16#16",
+   "w": 342,
+   "h": 334,
+   "psnr": 43.8
+  },
   "gt-monster/plant-chomper": {
    "file": "assets/db/lib/gt-monster/plant-chomper.webp",
    "cat": "gt-monster",
@@ -3077,6 +3605,33 @@
    "w": 338,
    "h": 320,
    "psnr": 43.7
+  },
+  "gt-monster/portal-rock-golem": {
+   "file": "assets/db/lib/gt-monster/portal-rock-golem.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "portal",
+    "rock",
+    "golem",
+    "cartoon"
+   ],
+   "source": "monsters-f-16#2",
+   "w": 320,
+   "h": 329,
+   "psnr": 44.3
+  },
+  "gt-monster/pumpkin-chomper": {
+   "file": "assets/db/lib/gt-monster/pumpkin-chomper.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "pumpkin",
+    "chomper",
+    "cartoon"
+   ],
+   "source": "monsters-f-16#6",
+   "w": 333,
+   "h": 326,
+   "psnr": 43.5
   },
   "gt-monster/pumpkin-mech": {
    "file": "assets/db/lib/gt-monster/pumpkin-mech.webp",
@@ -3104,6 +3659,46 @@
    "h": 344,
    "psnr": 44.7
   },
+  "gt-monster/pyramid-golem": {
+   "file": "assets/db/lib/gt-monster/pyramid-golem.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "pyramid",
+    "golem",
+    "cartoon"
+   ],
+   "source": "monsters-f-16#10",
+   "w": 331,
+   "h": 325,
+   "psnr": 44.3
+  },
+  "gt-monster/rainbow-crystal-spider": {
+   "file": "assets/db/lib/gt-monster/rainbow-crystal-spider.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "rainbow",
+    "crystal",
+    "spider",
+    "cartoon"
+   ],
+   "source": "monsters-f-16#16",
+   "w": 327,
+   "h": 314,
+   "psnr": 43.4
+  },
+  "gt-monster/rhino-tank": {
+   "file": "assets/db/lib/gt-monster/rhino-tank.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "rhino",
+    "tank",
+    "cartoon"
+   ],
+   "source": "monsters-d-16#2",
+   "w": 344,
+   "h": 310,
+   "psnr": 44.2
+  },
   "gt-monster/robo-crab": {
    "file": "assets/db/lib/gt-monster/robo-crab.webp",
    "cat": "gt-monster",
@@ -3116,6 +3711,19 @@
    "w": 346,
    "h": 299,
    "psnr": 42.7
+  },
+  "gt-monster/robo-gorilla": {
+   "file": "assets/db/lib/gt-monster/robo-gorilla.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "robo",
+    "gorilla",
+    "cartoon"
+   ],
+   "source": "monsters-c-16#6",
+   "w": 349,
+   "h": 310,
+   "psnr": 44.3
   },
   "gt-monster/robo-shark": {
    "file": "assets/db/lib/gt-monster/robo-shark.webp",
@@ -3144,6 +3752,32 @@
    "h": 307,
    "psnr": 44.3
   },
+  "gt-monster/samurai-oni": {
+   "file": "assets/db/lib/gt-monster/samurai-oni.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "samurai",
+    "oni",
+    "cartoon"
+   ],
+   "source": "monsters-f-16#1",
+   "w": 332,
+   "h": 326,
+   "psnr": 43.7
+  },
+  "gt-monster/sand-mummy": {
+   "file": "assets/db/lib/gt-monster/sand-mummy.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "sand",
+    "mummy",
+    "cartoon"
+   ],
+   "source": "monsters-d-16#1",
+   "w": 341,
+   "h": 319,
+   "psnr": 44.1
+  },
   "gt-monster/sand-worm": {
    "file": "assets/db/lib/gt-monster/sand-worm.webp",
    "cat": "gt-monster",
@@ -3157,6 +3791,20 @@
    "h": 313,
    "psnr": 43.2
   },
+  "gt-monster/sand-worm-2": {
+   "file": "assets/db/lib/gt-monster/sand-worm-2.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "sand",
+    "worm",
+    "2",
+    "cartoon"
+   ],
+   "source": "monsters-e-16#9",
+   "w": 346,
+   "h": 310,
+   "psnr": 42.6
+  },
   "gt-monster/slime": {
    "file": "assets/db/lib/gt-monster/slime.webp",
    "cat": "gt-monster",
@@ -3168,6 +3816,73 @@
    "source": "monster-slime.png",
    "w": 536,
    "h": 434
+  },
+  "gt-monster/smoke-lava-tortoise": {
+   "file": "assets/db/lib/gt-monster/smoke-lava-tortoise.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "smoke",
+    "lava",
+    "tortoise",
+    "cartoon"
+   ],
+   "source": "monsters-e-16#14",
+   "w": 335,
+   "h": 316,
+   "psnr": 42.3
+  },
+  "gt-monster/snow-golem": {
+   "file": "assets/db/lib/gt-monster/snow-golem.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "snow",
+    "golem",
+    "cartoon"
+   ],
+   "source": "monsters-c-16#8",
+   "w": 342,
+   "h": 312,
+   "psnr": 43.1
+  },
+  "gt-monster/snow-rabbit": {
+   "file": "assets/db/lib/gt-monster/snow-rabbit.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "snow",
+    "rabbit",
+    "cartoon"
+   ],
+   "source": "monsters-f-16#12",
+   "w": 332,
+   "h": 309,
+   "psnr": 45.1
+  },
+  "gt-monster/spike-snail": {
+   "file": "assets/db/lib/gt-monster/spike-snail.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "spike",
+    "snail",
+    "cartoon"
+   ],
+   "source": "monsters-f-16#4",
+   "w": 332,
+   "h": 317,
+   "psnr": 43.9
+  },
+  "gt-monster/steam-fish-sub": {
+   "file": "assets/db/lib/gt-monster/steam-fish-sub.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "steam",
+    "fish",
+    "sub",
+    "cartoon"
+   ],
+   "source": "monsters-f-16#15",
+   "w": 331,
+   "h": 336,
+   "psnr": 44.7
   },
   "gt-monster/steam-octopus": {
    "file": "assets/db/lib/gt-monster/steam-octopus.webp",
@@ -3208,6 +3923,72 @@
    "h": 313,
    "psnr": 44.8
   },
+  "gt-monster/storm-cloud-2": {
+   "file": "assets/db/lib/gt-monster/storm-cloud-2.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "storm",
+    "cloud",
+    "2",
+    "cartoon"
+   ],
+   "source": "monsters-e-16#16",
+   "w": 333,
+   "h": 334,
+   "psnr": 45.6
+  },
+  "gt-monster/storm-wolf": {
+   "file": "assets/db/lib/gt-monster/storm-wolf.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "storm",
+    "wolf",
+    "cartoon"
+   ],
+   "source": "monsters-e-16#12",
+   "w": 348,
+   "h": 296,
+   "psnr": 43.4
+  },
+  "gt-monster/sun-totem": {
+   "file": "assets/db/lib/gt-monster/sun-totem.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "sun",
+    "totem",
+    "cartoon"
+   ],
+   "source": "monsters-c-16#15",
+   "w": 337,
+   "h": 336,
+   "psnr": 44.2
+  },
+  "gt-monster/tar-blob": {
+   "file": "assets/db/lib/gt-monster/tar-blob.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "tar",
+    "blob",
+    "cartoon"
+   ],
+   "source": "monsters-f-16#13",
+   "w": 333,
+   "h": 329,
+   "psnr": 43.3
+  },
+  "gt-monster/tentacle-angler": {
+   "file": "assets/db/lib/gt-monster/tentacle-angler.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "tentacle",
+    "angler",
+    "cartoon"
+   ],
+   "source": "monsters-f-16#9",
+   "w": 332,
+   "h": 324,
+   "psnr": 44.1
+  },
   "gt-monster/tornado": {
    "file": "assets/db/lib/gt-monster/tornado.webp",
    "cat": "gt-monster",
@@ -3219,6 +4000,45 @@
    "w": 337,
    "h": 321,
    "psnr": 46.0
+  },
+  "gt-monster/tornado-face": {
+   "file": "assets/db/lib/gt-monster/tornado-face.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "tornado",
+    "face",
+    "cartoon"
+   ],
+   "source": "monsters-c-16#7",
+   "w": 306,
+   "h": 313,
+   "psnr": 45.2
+  },
+  "gt-monster/totem-golem": {
+   "file": "assets/db/lib/gt-monster/totem-golem.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "totem",
+    "golem",
+    "cartoon"
+   ],
+   "source": "monsters-d-16#11",
+   "w": 349,
+   "h": 313,
+   "psnr": 44.4
+  },
+  "gt-monster/toxic-spider": {
+   "file": "assets/db/lib/gt-monster/toxic-spider.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "toxic",
+    "spider",
+    "cartoon"
+   ],
+   "source": "monsters-d-16#16",
+   "w": 345,
+   "h": 317,
+   "psnr": 44.5
   },
   "gt-monster/tree-ent": {
    "file": "assets/db/lib/gt-monster/tree-ent.webp",
@@ -3260,6 +4080,19 @@
    "h": 314,
    "psnr": 43.2
   },
+  "gt-monster/void-mage": {
+   "file": "assets/db/lib/gt-monster/void-mage.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "void",
+    "mage",
+    "cartoon"
+   ],
+   "source": "monsters-e-16#6",
+   "w": 326,
+   "h": 312,
+   "psnr": 43.8
+  },
   "gt-monster/volcano-golem": {
    "file": "assets/db/lib/gt-monster/volcano-golem.webp",
    "cat": "gt-monster",
@@ -3272,6 +4105,19 @@
    "w": 349,
    "h": 313,
    "psnr": 41.8
+  },
+  "gt-monster/waterfall-golem": {
+   "file": "assets/db/lib/gt-monster/waterfall-golem.webp",
+   "cat": "gt-monster",
+   "tags": [
+    "waterfall",
+    "golem",
+    "cartoon"
+   ],
+   "source": "monsters-e-16#7",
+   "w": 348,
+   "h": 313,
+   "psnr": 44.0
   },
   "gt-monster/waterfall-turtle": {
    "file": "assets/db/lib/gt-monster/waterfall-turtle.webp",

@@ -502,9 +502,13 @@
     var keepSel = S.locked
     S.storyRun++
     $('story-t').querySelectorAll('.s').forEach(function (x) { x.classList.remove('now') })
-    var i = 0, ss = S.card.story
-    ;(function next () { if (i < ss.length && S.alive) sayLine(i++).then(next) })()
+    // one replay at a time: a newer tap supersedes the older run (returns when this run ends)
+    var i = 0, ss = S.card.story, st = S, my = S.replayRun = (S.replayRun || 0) + 1
     void keepSel
+    return (function next () {
+      if (i >= ss.length || !st.alive || S !== st || st.replayRun !== my) return Promise.resolve()
+      return sayLine(i++).then(next)
+    })()
   }
   function hintNext () { if (!S || S.locked) return; hint(Math.min(2, S.hints + 1)); S.env.sfx('hint') }
   function next () { if (S && S.alive) S.done() }

@@ -41,25 +41,51 @@
 
   /* ── audio: narration clips (pre-rendered, ASR-verified) + synth SFX ─── */
   var AUD = window.SDAudio || { has: function () { return false } }
-  var cur = null
+  var cur = null, curFin = null, tapRun = 0
+  // THE narration gate: every clip (story, question, hints, feedback lines, explanation,
+  // replay) goes through say(), and say() plays only when this says yes. Checked at the
+  // moment a clip would START, so a queued timer that fires after muting stays silent.
+  //   auto: narrate as the story plays; tap: only inside a tap the child made (speaker
+  //   replay run); parent/self or narration OFF: never.
   function voiceActive () { return SET.voice && (SET.mode === 'auto' || SET.mode === 'tap') }
+  function mayNarrate () { return voiceActive() && (SET.mode === 'auto' || tapRun > 0) }
   function say (key) {
-    // auto: narrate as the story plays; tap: only when the child taps the speaker;
-    // parent/self: never. Resolves when the clip ends, fails or is skipped.
+    // Resolves when the clip ends, fails, is skipped — or is stopped by muting.
     return new Promise(function (resolve) {
-      if (!key || !voiceActive() || !AUD.has(key) || (SET.mode === 'tap' && !say.tapOnce)) return resolve()
+      if (!key || !mayNarrate() || !AUD.has(key)) return resolve()
       try {
-        if (cur) { cur.onended = null; cur.pause() }
-        var a = new Audio(BASE + 'assets/sd/audio/' + key.replace(':', '/') + '.webm'); cur = a
-        var done = false, fin = function () { if (done) return; done = true; $('btn-voice').classList.remove('speaking'); resolve() }
+        stopVoice()
+        var a = new Audio(BASE + 'assets/sd/audio/' + key.replace(':', '/') + '.webm'), t = null
+        var done = false, fin = function () {
+          if (done) return; done = true; clearTimeout(t)
+          if (cur === a) { cur = null; curFin = null; $('btn-voice').classList.remove('speaking') }
+          resolve()
+        }
+        cur = a; curFin = fin
         a.onended = fin; a.onerror = fin
         $('btn-voice').classList.add('speaking')
         var p = a.play(); if (p && p.catch) p.catch(fin)
-        setTimeout(fin, 12000)
+        t = setTimeout(fin, 12000)
       } catch (e) { resolve() }
     })
   }
-  function stopVoice () { try { if (cur) { cur.onended = null; cur.pause() } } catch (e) {} $('btn-voice').classList.remove('speaking') }
+  // stop the clip that is playing NOW and release whatever was waiting on it (the story
+  // carries on at reading pace instead of hanging on a clip that will never end)
+  function stopVoice () {
+    var a = cur, f = curFin; cur = null; curFin = null
+    try { if (a) { a.onended = null; a.onerror = null; a.pause(); a.currentTime = 0 } } catch (e) {}
+    $('btn-voice').classList.remove('speaking')
+    if (f) f()
+  }
+  // the speaker on the play screen IS the narration switch: speaker = on, speaker+X = off
+  function paintVoice () {
+    var on = voiceActive(), b = $('btn-voice')
+    b.classList.toggle('muted', !on); b.setAttribute('aria-pressed', on ? 'true' : 'false')
+    b.setAttribute('aria-label', 'Suara narasi: ' + (on ? 'nyala' : 'mati'))
+    document.querySelectorAll('[data-opt="voice"]').forEach(function (x) { x.classList.toggle('on', !!SET.voice); x.setAttribute('aria-pressed', !!SET.voice) })
+  }
+  function applyVoice () { if (!voiceActive()) stopVoice(); paintVoice() }
+  paintVoice()
   function clipKey (card, part) { return card.id + '-' + part }
   var AC = null
   function ctx () { if (!AC) { var C = window.AudioContext || window.webkitAudioContext; if (C) AC = new C() } if (AC && AC.state === 'suspended') AC.resume(); return AC }
@@ -93,6 +119,7 @@
 
   /* ── screens ─────────────────────────────────────────────────────────── */
   function show (id) {
+    if (id === 'scr-card') paintVoice()
     document.querySelectorAll('.scr').forEach(function (s) { s.classList.toggle('active', s.id === id) })
     if (id !== 'scr-card') { E.stop(); stopVoice() }
   }
@@ -235,14 +262,14 @@
     var revisit = D.WORLDS.filter(function (w) { var cs = D.byWorld(w.key); return cs.some(function (c) { return P.hist[c.id] && P.hist[c.id].helped > P.hist[c.id].right }) }).map(function (w) { return w.skill })
     $('par-skills').textContent = (strong.length ? 'Mulai kuat: ' + strong.join(', ') + '. ' : '') + (revisit.length ? 'Bagus untuk diulang bersama: ' + revisit.join(', ') + '.' : cardsDone ? '' : 'Belum ada sesi. Ajak anak bermain satu petualangan singkat.')
     $('seg-mode').innerHTML = MODES.map(function (m) { return '<button type="button" data-m="' + m[0] + '" class="' + (SET.mode === m[0] ? 'on' : '') + '">' + m[1] + '</button>' }).join('')
-    $('seg-mode').querySelectorAll('button').forEach(function (b) { b.addEventListener('click', function () { SET.mode = b.dataset.m; saveSet(); openParent() }) })
+    $('seg-mode').querySelectorAll('button').forEach(function (b) { b.addEventListener('click', function () { SET.mode = b.dataset.m; saveSet(); applyVoice(); openParent() }) })
     document.querySelectorAll('[data-opt]').forEach(function (b) { b.classList.toggle('on', !!SET[b.dataset.opt]); b.setAttribute('aria-pressed', !!SET[b.dataset.opt]) })
     $('ov-parent').classList.add('show')
   }
   document.querySelectorAll('[data-opt]').forEach(function (b) {
     b.addEventListener('click', function () {
       var k = b.dataset.opt; SET[k] = !SET[k]; saveSet(); b.classList.toggle('on', SET[k]); b.setAttribute('aria-pressed', SET[k])
-      if (k === 'rm') applyRM(); if (k === 'music') music(SET.music); if (k === 'voice' && !SET.voice) stopVoice()
+      if (k === 'rm') applyRM(); if (k === 'music') music(SET.music); if (k === 'voice') applyVoice()
     })
   })
   $('btn-reset').addEventListener('click', function () { $('ov-confirm').classList.add('show') })
@@ -262,11 +289,22 @@
   onc('btn-check', function () { E.check() })
   onc('btn-hint', function () { E.hint() })
   onc('btn-next', function () { sfx('tap'); stopVoice(); E.next() })
-  onc('btn-replay', function () { sfx('tap'); say.tapOnce = true; E.replay(); setTimeout(function () { say.tapOnce = false }, 50) })
-  onc('btn-voice', function () {
-    // the speaker reads the current question again (and is how "Ketuk untuk Dengar" works)
+  onc('btn-replay', function () {
+    // replay the story (and then the question); in "Ketuk untuk Dengar" this tap is what
+    // allows the narration, for the whole run — not just its first line
+    sfx('tap'); stopVoice()
     var st = E._state(); if (!st) return
-    say.tapOnce = true; say(clipKey(st.card, 'q')); setTimeout(function () { say.tapOnce = false }, 50)
+    tapRun++
+    var run = E.replay(), my = st.replayRun, end = function () { tapRun = Math.max(0, tapRun - 1) }
+    ;(run && run.then ? run : Promise.resolve()).then(function () { if (E._state() === st && st.alive && st.replayRun === my) return say(clipKey(st.card, 'q')) }).then(end, end)
+  })
+  onc('btn-voice', function () {
+    // narration on/off, right on the play screen (owner: tap the speaker; X = off).
+    // Turning it on from "Dibacakan Orang Tua"/"Baca Sendiri" switches to Baca Otomatis.
+    sfx('tap')
+    if (voiceActive()) SET.voice = false
+    else { SET.voice = true; if (SET.mode !== 'auto' && SET.mode !== 'tap') SET.mode = 'auto' }
+    saveSet(); applyVoice()
   })
   onc('btn-quit', function () { $('ov-quit').classList.add('show') })
   onc('btn-quit-yes', function () { $('ov-quit').classList.remove('show'); E.stop(); stopVoice(); buildMap(); show('scr-map') })
@@ -328,6 +366,6 @@
       $('dots').innerHTML = '<span class="dot"></span>'; show('scr-card'); playCard(); return 'ok'
     },
     progress: function () { return JSON.parse(JSON.stringify(P)) }, settings: function () { return JSON.parse(JSON.stringify(SET)) },
-    reset: function () { P = fill({}); save(); return 'ok' }, warmList: warmList, warmed: function () { return warmed }, set: function (k, v) { SET[k] = v; saveSet(); applyRM(); return SET }
+    reset: function () { P = fill({}); save(); return 'ok' }, warmList: warmList, warmed: function () { return warmed }, set: function (k, v) { SET[k] = v; saveSet(); applyRM(); applyVoice(); return SET }
   }
 })()

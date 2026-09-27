@@ -1370,8 +1370,164 @@ var HAND_ID={
 /* ── build the registry now (needs the KIND pools + pickSub defined above) ── */
 var MONSTERS=buildMonsters();
 
+/* ════════════ LIB MONSTERS — shared library sprites (2026-09-27) ════════════
+   Owner: "Monster2 ini bisa dipakai juga utk yg monster petualangan matematika."
+   97 cut-out monsters in assets/db/lib/gt-monster/<name>.webp (key 'gt-monster/<name>',
+   same keys as window.AssetIndex). Each is pinned to the WORLD whose theme it fits
+   (WORLD_THEMES order below: 1 Hutan Ceria … 10 Istana Bintang); boss:1 = the bigger,
+   grander ones the game uses for the world boss (level x-10). Names are Indonesian and
+   kid-safe; banter reuses the per-KIND pools, `sub` is hand-written per creature.
+   Row: [name-in-library, display name, sub, kind, world, boss]  ── */
+var LIB_ROWS=[
+  /* 1 Hutan Ceria — forest */
+  ['slime','Lendir Gelembung','lendir hijau gembul','slime',1,0],
+  ['spike-snail','Siput Berduri','siput bercangkang besi','snail',1,0],
+  ['flower-chomper','Bunga Pengunyah','bunga lapar yang cerewet','plant',1,0],
+  ['plant-chomper','Tanaman Lapar','tanaman bergigi yang rakus','plant',1,0],
+  ['moss-golem','Golem Lumut','raksasa batu berlumut','rock',1,0],
+  ['mushroom-cyclops','Jamur Mata Satu','jamur hutan bermata besar','mushroom',1,0],
+  ['mimic-chest','Peti Lidah','peti harta yang usil','key',1,0],
+  ['mimic-chest-2','Peti Harta Usil','peti koin yang suka bercanda','key',1,0],
+  ['forest-ent','Raja Pohon','penjaga hutan raksasa','leaf',1,1],
+  ['tree-ent','Pohon Tua Penjaga','pohon bijak yang bisa berjalan','leaf',1,1],
+  /* 2 Padang Bunga — meadow & hidden grove */
+  ['orange-chomper','Bunga Jeruk Lapar','bunga oranye bergigi','plant',2,0],
+  ['pumpkin-chomper','Labu Pengunyah','labu kebun yang lapar','food',2,0],
+  ['bomb-pumpkin','Labu Petasan','labu yang suka meletup','food',2,0],
+  ['cupcake-monster','Kue Mangkuk Galak','kue manis yang pemarah','food',2,0],
+  ['cupid-cyclops','Cupid Mata Satu','peri panah bermata satu','fairy',2,0],
+  ['clock-owl','Burung Hantu Jam','burung hantu penunggu waktu','owl',2,0],
+  ['bat-eye','Kelelawar Mata','bola mata bersayap','eye',2,0],
+  ['toxic-spider','Laba-laba Lendir','laba-laba robot berlendir','spider',2,0],
+  ['robo-gorilla','Gorila Besi','gorila robot yang kuat','robot',2,0],
+  ['autumn-ent','Pohon Musim Gugur','raksasa daun jingga','leaf',2,1],
+  ['pumpkin-mech','Robot Labu','raksasa labu berbaju besi','robot',2,1],
+  /* 3 Gua Kristal — crystal cave */
+  ['crystal-crab','Kepiting Kristal','kepiting berkulit permata','bug',3,0],
+  ['crystal-spider','Laba-laba Kristal','laba-laba es berkilau','spider',3,0],
+  ['rainbow-crystal-spider','Laba-laba Pelangi','laba-laba kristal warna-warni','spider',3,0],
+  ['crystal-mushroom-golem','Golem Jamur Kristal','jamur gua bercahaya','mushroom',3,0],
+  ['stone-golem','Golem Batu','penjaga gua berukir','rock',3,0],
+  ['totem-golem','Golem Totem','totem batu yang melayang','rock',3,0],
+  ['portal-rock-golem','Golem Portal','batu-batu penjaga pintu ajaib','rock',3,0],
+  ['gold-rock-golem','Golem Emas','raksasa batu berisi emas','rock',3,0],
+  ['crystal-rhino','Badak Kristal','badak raksasa berduri permata','horn',3,1],
+  ['amethyst-golem','Golem Kecubung','raksasa kristal ungu','rock',3,1],
+  /* 4 Sungai Riang — river & deep water */
+  ['waterfall-turtle','Kura Air Terjun','kura-kura berpunggung air terjun','turtle',4,0],
+  ['steam-fish-sub','Ikan Kapal Selam','ikan uap yang berbunyi tut-tut','fish',4,0],
+  ['angler-bot','Ikan Lampu Robot','ikan besi berlampu','fish',4,0],
+  ['angler-sub','Kapal Ikan Lampu','kapal selam bergigi','fish',4,0],
+  ['deep-angler','Ikan Lampu Dasar','ikan laut dalam yang bersinar','fish',4,0],
+  ['steam-octopus','Gurita Uap','gurita besi bercerobong','octopus',4,0],
+  ['robo-crab','Kepiting Robot','kepiting mesin bercapit besar','bug',4,0],
+  ['waterfall-golem','Golem Air Terjun','raksasa batu pancuran','water',4,1],
+  ['tentacle-angler','Raja Ikan Lampu','ikan lampu bertentakel','octopus',4,1],
+  /* 5 Bukit Awan — sky & clouds */
+  ['storm-cloud','Awan Petir','awan ungu pemarah','cloud',5,0],
+  ['storm-cloud-2','Awan Gemuruh','awan kelabu yang cemberut','cloud',5,0],
+  ['tornado','Angin Puyuh','pusaran angin yang lincah','cloud',5,0],
+  ['tornado-face','Topan Jahil','topan yang suka menerbangkan rumah','cloud',5,0],
+  ['mosquito-bot','Nyamuk Robot','nyamuk besi berdengung','bug',5,0],
+  ['drill-wasp','Tawon Bor','tawon mesin bersengat bor','bug',5,0],
+  ['jester-box','Badut Kotak','badut per yang suka mengagetkan','hat',5,0],
+  ['storm-wolf','Serigala Badai','serigala batu penuh petir','dog',5,1],
+  ['airship-whale','Paus Balon Udara','paus terbang pembawa kapal','fish',5,1],
+  /* 6 Gurun Emas — desert */
+  ['cactus-cowboy','Kaktus Koboi','kaktus penembak air','cactus',6,0],
+  ['cactus-mech','Kaktus Robot','kaktus berkaki besi','cactus',6,0],
+  ['sand-mummy','Mumi Pasir','mumi gurun yang berdebu','ghost',6,0],
+  ['sand-worm','Cacing Pasir','cacing gurun bermulut bulat','snake',6,0],
+  ['drill-scorpion','Kalajengking Bor','kalajengking besi gurun','bug',6,0],
+  ['sun-totem','Totem Matahari','totem batu penjaga matahari','star',6,0],
+  ['rhino-tank','Badak Tank','badak baja bergaris kuning','horn',6,0],
+  ['sand-worm-2','Cacing Pasir Raksasa','raja cacing di bawah pasir','snake',6,1],
+  ['pyramid-golem','Golem Piramida','piramida emas yang berjalan','rock',6,1],
+  /* 7 Pantai Mutiara — beach & pirate sea */
+  ['pirate-octopus','Gurita Kapten','gurita merah bertopi bajak','pirate',7,0],
+  ['pirate-octopus-cannon','Gurita Meriam','gurita bajak laut bermeriam','pirate',7,0],
+  ['robo-shark','Hiu Besi','hiu robot bersirip tajam','fish',7,0],
+  ['robo-shark-2','Hiu Mesin','hiu baja penjelajah laut','fish',7,0],
+  ['crown-mimic','Peti Mahkota','peti harta bermahkota','key',7,0],
+  ['ghost-ship','Kapal Hantu','kapal tua yang bercahaya biru','pirate',7,0],
+  ['ghost-pirate-ship','Kapal Bajak Hantu','kapal bajak laut berantai','pirate',7,1],
+  ['island-turtle','Kura Pulau','kura-kura raksasa berpunggung pulau','turtle',7,1],
+  /* 8 Negeri Salju — ice & snow */
+  ['ice-yeti','Yeti Es','raksasa salju berbulu','snow',8,0],
+  ['snow-golem','Manusia Salju','boneka salju bertopi tinggi','snow',8,0],
+  ['snow-rabbit','Kelinci Salju','kelinci es yang cemberut','snow',8,0],
+  ['penguin-king','Raja Penguin','penguin bermahkota es','snow',8,0],
+  ['ice-pirate-skeleton','Bajak Laut Es','bajak laut beku yang bercahaya','pirate',8,0],
+  ['crystal-yeti','Yeti Kristal','raja yeti berduri es','snow',8,1],
+  ['ice-walrus','Walrus Es','walrus raksasa bertaring es','snow',8,1],
+  /* 9 Gunung Api — volcano */
+  ['lava-tortoise','Kura Lava','kura-kura bercangkang gunung api','turtle',9,0],
+  ['smoke-lava-tortoise','Kura Asap','kura-kura lava berasap','turtle',9,0],
+  ['lava-worm','Cacing Lava','cacing batu yang membara','snake',9,0],
+  ['magma-golem','Golem Magma','raksasa batu menyala','flame',9,0],
+  ['magma-rock-golem','Golem Batu Panas','batu-batu magma yang melayang','flame',9,0],
+  ['tar-blob','Lendir Aspal','lendir hitam yang panas','slime',9,0],
+  ['boiler-bot','Robot Ketel','robot uap yang mendidih','robot',9,0],
+  ['oni-samurai','Samurai Api','ksatria bertopeng api','knight',9,0],
+  ['volcano-golem','Golem Gunung Api','gunung api yang bisa berjalan','flame',9,1],
+  ['fire-bone-dragon','Naga Tulang Api','naga api bertulang','dragon',9,1],
+  /* 10 Istana Bintang — star castle, space & magic */
+  ['ufo-alien','Alien Piring Terbang','alien hijau di piring terbang','robot',10,0],
+  ['ufo-alien-2','Alien Sinar Hijau','alien bersinar penarik','robot',10,0],
+  ['brain-ufo','UFO Otak','piring terbang berotak besar','eye',10,0],
+  ['brain-ufo-2','UFO Otak Ungu','otak pintar di piring terbang','eye',10,0],
+  ['brain-spider-bot','Robot Laba Otak','robot berkaki delapan berotak','spider',10,0],
+  ['void-mage','Penyihir Kubus','penyihir kubus ungu','hat',10,0],
+  ['lantern-wraith','Hantu Lentera','hantu pembawa lentera','ghost',10,0],
+  ['pumpkin-wraith','Hantu Labu','raja labu yang melayang','ghost',10,0],
+  ['chain-reaper','Hantu Rantai','hantu berjubah berantai','ghost',10,0],
+  ['ghost-queen','Ratu Hantu','ratu hantu bermahkota','ghost',10,0],
+  ['bone-unicorn','Unikorn Tulang','unikorn tulang bercahaya ungu','horn',10,0],
+  ['samurai-oni','Samurai Oni','ksatria bertopeng merah','knight',10,0],
+  ['bone-dragon','Naga Tulang','naga tulang bersayap ungu','dragon',10,1],
+  ['bone-dragon-2','Naga Tulang Ungu','naga tulang penjaga bintang','dragon',10,1]
+];
+var LIB_PREFIX='gt-monster/';
+var LIB={};                 // key → {key,name,sub,kind,world,boss}
+var LIB_BY_WORLD={};        // world → {normal:[keys], boss:[keys]}
+(function(){
+  for(var i=0;i<LIB_ROWS.length;i++){
+    var r=LIB_ROWS[i], key=LIB_PREFIX+r[0];
+    LIB[key]={ key:key, name:r[1], sub:r[2], kind:r[3], world:r[4], boss:!!r[5] };
+    var w=LIB_BY_WORLD[r[4]]||(LIB_BY_WORLD[r[4]]={normal:[],boss:[]});
+    (r[5]?w.boss:w.normal).push(key);
+  }
+})();
+function isLibKey(id){ return typeof id==='string' && !!LIB[id]; }
+/* Arc for a library monster. Same shape as genArcFor(); seeded by the key. */
+function forLib(key){
+  var m=LIB[key]; if(!m) return null;
+  var k=kindOf(m.kind), nm=m.name;
+  function sub(t){ return String(t).replace('{name}', nm); }
+  // these sprites are big creatures — skip pool lines that call them tiny ("mungil"/"kecil")
+  function big(arr){ var o=[]; for(var i=0;i<arr.length;i++){ if(!/mungil|kecil/i.test(arr[i])) o.push(arr[i]); } return o.length?o:arr; }
+  return {
+    name:nm, sub:m.sub, intro:sub(pickN(big(k.intro),key,nm,1)),
+    banter:[
+      {who:'monster', text:pickN(big(k.open),key,nm,2)},
+      {who:'hero',    text:pickN(HERO_ACCEPT,key,nm,5)},
+      {who:'monster', text:pickN(big(k.mid),key,nm,3)},
+      {who:'hero',    text:pickN(HERO_MID,key,nm,6)},
+      {who:'monster', text:pickN(big(k.turn),key,nm,4)},
+      {who:'hero',    text:pickN(HERO_FRIEND,key,nm,8)}
+    ],
+    victory:sub(pickN(big(k.vict),key,nm,9)), monster:nm, kind:m.kind, key:key, boss:m.boss, _lib:true
+  };
+}
+/* Library monster keys for a world (1..10). boss=true → the world's boss pool. */
+function libForWorld(world, boss){
+  var w=LIB_BY_WORLD[parseInt(world,10)]; if(!w) return [];
+  return (boss?w.boss:w.normal).slice();
+}
+
 /* ── forMonster(id) — the primary API the game calls. Never returns empty. ── */
 function forMonster(id){
+  if(typeof id==='string' && isLibKey(id)) return forLib(id);   // library sprite key
   id=parseInt(id,10); if(!id||id<1) id=1; if(id>SPRITES) id=((id-1)%SPRITES)+1;
   var m=MONSTERS[id]; if(!m) return genArcFor(1);
   var hand=HAND_ID[id];
@@ -1432,7 +1588,10 @@ window.MATH_STORIES={
   themes:WORLD_THEMES,
   spriteNameForGlobal:spriteNameForGlobal,
   spriteNameFor:spriteNameFor,
-  forMonster:forMonster,     // PRIMARY API (id 1..281)
+  forMonster:forMonster,     // PRIMARY API (id 1..281, or a 'gt-monster/<name>' library key)
+  lib:LIB,                   // library monsters: key → {key,name,sub,kind,world,boss}
+  isLibKey:isLibKey,
+  libForWorld:libForWorld,   // (world, boss) → keys
   get:get,                   // backward-compat (world,level)
   getByGlobal:getByGlobal    // backward-compat (global 1..100)
 };

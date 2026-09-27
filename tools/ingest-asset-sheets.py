@@ -265,6 +265,14 @@ SHEETS = {
     {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck')}),
   'monsters-b-16': (4, 4, g('gt-monster', 'robo-shark-2 gold-rock-golem plant-chomper ghost-ship robo-crab crystal-yeti volcano-golem steam-octopus ufo-alien-2 sand-worm storm-cloud pumpkin-mech bone-dragon-2 waterfall-turtle mimic-chest-2 cactus-cowboy'),
     {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True}),
+  'monsters-c-16': (4, 4, g('gt-monster', 'angler-sub crystal-crab lava-tortoise lantern-wraith flower-chomper robo-gorilla tornado-face snow-golem airship-whale fire-bone-dragon crown-mimic moss-golem drill-scorpion brain-ufo sun-totem pirate-octopus-cannon'),
+    {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True}),
+  'monsters-d-16': (4, 4, g('gt-monster', 'sand-mummy rhino-tank deep-angler forest-ent cupcake-monster clock-owl amethyst-golem oni-samurai mushroom-cyclops chain-reaper totem-golem brain-ufo-2 penguin-king lava-worm cupid-cyclops toxic-spider'),
+    {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True}),
+  'monsters-e-16': (4, 4, g('gt-monster', 'mosquito-bot magma-rock-golem ghost-pirate-ship ice-walrus orange-chomper void-mage waterfall-golem angler-bot sand-worm-2 bat-eye crystal-mushroom-golem storm-wolf ice-pirate-skeleton smoke-lava-tortoise brain-spider-bot storm-cloud-2'),
+    {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True}),
+  'monsters-f-16': (4, 4, g('gt-monster', 'samurai-oni portal-rock-golem jester-box spike-snail ghost-queen pumpkin-chomper crystal-rhino bomb-pumpkin tentacle-angler pyramid-golem bone-unicorn snow-rabbit tar-blob autumn-ent steam-fish-sub rainbow-crystal-spider'),
+    {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True}),
 }
 
 # Sprites whose enclosed flat-white pockets are real see-through GAPS -- decided by

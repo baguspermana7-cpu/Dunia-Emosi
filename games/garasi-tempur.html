@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0B1020">
+<link rel="icon" href="../assets/db/lib/gt/trophy.webp">
+<title>Garasi Tempur</title>
+<!--
+  G29 "Garasi Tempur" — monster-truck card battle (PRD v2:
+  documentation and standarization/MONSTER_TRUCK_TCG_PRD_v2.md). Standalone page like
+  G27/G28; the map only launches it. Offline PWA, per-avatar save, no API calls.
+  Engine: gt-engine.js (rules) · cards: gt-card.js (frame) · motion: gt-fx.js ·
+  questions + Monster Rush: gt-quiz.js · app: garasi-tempur.js.
+  Look: night-stadium garage — dark steel surfaces, Type colours on the cards only,
+  the arena art is the backdrop (3 parallax layers).
+-->
+<link rel="stylesheet" href="garasi-tempur.css?v=v63.2-20260927a">
+<link rel="stylesheet" href="gt-rush.css?v=v63.2-20260927a">
+</head>
+<body data-scr="scr-home">
+
+<!-- HOME (mockup ui-3 / ui-6) -->
+<section class="scr active" id="scr-home">
+  <div class="px" id="home-scene"></div>
+  <div class="home">
+    <div class="hbar">
+      <div class="pcard glass"><img class="av" src="../assets/db/lib/gt/avatar-player.webp" alt="">
+        <div class="pcard-t"><div class="pcard-n fk">Pembalap Garasi</div><div class="pcard-s" id="home-rank">Pembalap Pemula</div>
+          <div class="bar"><i id="home-bar"></i><b id="home-bar-t"></b></div></div></div>
+      <span class="sp"></span>
+      <button class="ibtn snd" id="btn-sound" type="button" aria-label="Suara: nyala" aria-pressed="true"><svg class="spk" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="w" d="M16 8.5a4.5 4.5 0 0 1 0 7M18.5 6a8 8 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="x" d="M16 9l6 6M22 9l-6 6" fill="none" stroke="#FF5A4E" stroke-width="2.6" stroke-linecap="round"/></svg></button>
+    </div>
+    <div class="logo" aria-label="Garasi Tempur">
+      <div class="logo-bg"></div>
+      <img class="logo-flag l" src="../assets/db/lib/gt/checkered-flag.webp" alt="">
+      <img class="logo-flag r" src="../assets/db/lib/gt/checkered-flag.webp" alt="">
+      <div class="logo-l1 fk">GARASI</div><div class="logo-l2 fk">TEMPUR</div>
+      <span class="logo-rib fk">• PERTARUNGAN KARTU •</span>
+      <span class="logo-tag">TRUK. KARTU. OTAK JUARA!</span>
+    </div>
+    <div class="hero" id="hero">
+      <i class="hdust"></i>
+      <img class="h1" id="hero1" alt=""><img class="h2" id="hero2" alt=""><img class="h0" id="home-hero" alt="Truk jagoanmu">
+    </div>
+    <div class="tiles">
+      <button class="tile t-orange" id="btn-practice" type="button"><img src="../assets/db/lib/gt/start-flag.webp" alt=""><b class="fk">LATIHAN</b><small>Langsung main!</small></button>
+      <button class="tile t-red" id="btn-pvp" type="button"><span class="vs fk">VS</span><b class="fk">2 PEMAIN</b><small>Main bareng teman</small></button>
+      <button class="tile t-blue" id="btn-adv" type="button"><img src="../assets/db/lib/gt/trophy.webp" alt=""><b class="fk">PETUALANGAN</b><small>Arena <span id="home-stage"></span></small></button>
+      <button class="tile t-green row2" id="btn-garage" type="button"><img src="../assets/db/lib/gt/repair.webp" alt=""><span><b class="fk">GARASI</b><small>Atur tim trukmu</small></span></button>
+      <button class="tile t-purple row2" id="btn-col" type="button"><img src="../assets/db/lib/gt/deck.webp" alt=""><span><b class="fk">KARTUKU</b><small><span id="home-got"></span> truk</small></span></button>
+      <button class="tile t-gold row2" id="btn-learn" type="button"><img src="../assets/db/lib/gt/q-knowledge.webp" alt=""><span><b class="fk">CARA MAIN</b><small>Belajar aturannya</small></span></button>
+    </div>
+    <div class="feat">
+      <button class="fbanner" id="btn-feat" type="button"><span class="new fk">BARU!</span>
+        <span class="fbanner-t"><b class="fk" id="feat-name"></b><span id="feat-sub"></span></span><img id="feat-img" alt=""><span class="go fk">LIHAT</span></button>
+      <div class="lvlcard" role="group" aria-label="Tingkat soal"><b class="fk">Tingkat Soal</b>
+        <div class="lvl-b"><button type="button" id="lvl-mudah">Mudah 1–10</button><button type="button" id="lvl-sedang">Sedang 1–20</button></div></div>
+    </div>
+  </div>
+  <div class="sidebtns">
+    <button class="sidebtn" id="side-mis" type="button"><img src="../assets/db/lib/gt/mission-list.webp" alt="">MISI</button>
+    <button class="sidebtn" id="side-resume" type="button"><img src="../assets/db/lib/gt/play-confirm.webp" alt="">LANJUT</button>
+  </div>
+  <button class="league" id="btn-league" type="button"><img src="../assets/db/lib/gt/trophy.webp" alt="">
+    <span class="league-t fk"><span id="league-n">Liga Pemula</span><span class="bar"><i id="league-bar"></i><b id="league-t"></b></span></span><span class="chev">›</span></button>
+  <nav class="nav">
+    <button type="button" class="on" id="nav-home"><img src="../assets/db/lib/gt/garage.webp" alt="">BERANDA</button>
+    <button type="button" id="nav-battle"><img src="../assets/db/lib/gt/attack.webp" alt="">TEMPUR</button>
+    <button type="button" id="nav-garage"><img src="../assets/db/lib/gt/repair.webp" alt="">GARASI</button>
+    <button type="button" id="nav-cards"><img src="../assets/db/lib/gt/deck.webp" alt="">KARTU</button>
+    <button type="button" id="btn-map"><img src="../assets/db/lib/gt/map.webp" alt="">PETA</button>
+  </nav>
+</section>
+
+<!-- ADVENTURE MAP -->
+<section class="scr" id="scr-map">
+  <div class="panel-bg"></div>
+  <div class="topbar"><button class="ibtn" type="button" data-back="home" aria-label="Kembali">←</button><h1 class="fk">Petualangan</h1></div>
+  <div class="sub">Kalahkan juara tiap arena. Menang = arena berikutnya terbuka + truk juara masuk garasimu.</div>
+  <div class="list-wrap" id="map-list"></div>
+</section>
+
+<!-- STAGE INTRO -->
+<section class="scr" id="scr-stage">
+  <div id="si-bg"></div>
+  <div class="topbar" style="z-index:3"><button class="ibtn" type="button" data-back="map" aria-label="Kembali">←</button><h1></h1></div>
+  <div class="si-body">
+    <div id="si-title" class="fk"></div>
+    <div id="si-champ" class="fk"></div>
+    <div id="si-cards"></div>
+    <div class="rule"><b>Aturan arena:</b> <span id="si-rule"></span></div>
+    <button class="btn b-gold fk" id="si-go" type="button">Pilih Tim &amp; Mulai</button>
+  </div>
+</section>
+
+<!-- TEAM PICKER -->
+<section class="scr" id="scr-team">
+  <div class="panel-bg"></div>
+  <div class="topbar"><button class="ibtn" type="button" data-back="home" aria-label="Kembali">←</button><h1 class="fk" id="team-title">Pilih timmu</h1>
+    <button class="btn b-soft fk" id="team-edit" type="button" style="min-height:48px;font-size:16px;padding:0 14px">Atur Tim Saya</button></div>
+  <div class="sub">Tiap tim punya 3 truk + bahan bakar, onderdil, dan kartu aksi (20 kartu).</div>
+  <div class="list-wrap" id="team-list"></div>
+</section>
+
+<!-- CUSTOM TEAM -->
+<section class="scr" id="scr-custom">
+  <div class="panel-bg"></div>
+  <div class="topbar"><button class="ibtn" type="button" data-back="team" aria-label="Kembali">←</button><h1 class="fk">Tim Saya</h1><span id="custom-n" class="sub" style="padding:0"></span></div>
+  <div class="sub">Ketuk 3 truk dari garasimu. Campur tipe agar kuat melawan banyak lawan.</div>
+  <div class="list-wrap"><div class="grid-mini" id="custom-list"></div></div>
+  <div class="foot"><button class="btn b-gold fk" id="custom-ok" type="button" disabled>Pakai Tim Ini</button></div>
+</section>
+
+<!-- COLLECTION -->
+<section class="scr" id="scr-col">
+  <div class="panel-bg"></div>
+  <div class="topbar"><button class="ibtn" type="button" data-back="home" aria-label="Kembali">←</button><h1 class="fk">Koleksi Truk</h1></div>
+  <div class="sub" id="col-n"></div>
+  <div class="chips" id="col-filter"></div>
+  <div class="list-wrap"><div class="grid-mini" id="col-list"></div></div>
+</section>
+
+<!-- BATTLE (mockup ui-1 / ui-5) -->
+<section class="scr" id="scr-battle">
+  <div class="px" id="bt-scene"></div>
+  <div id="table">
+    <div class="ppanel glass" id="op-panel"></div>
+    <div id="op-hand"></div>
+    <div id="op-box"><div class="obox-row"><div class="obox glass"><span>LAWAN</span><div class="kodots" id="op-ko"></div></div>
+      <button class="ibtn" id="btn-pause" type="button" aria-label="Jeda"><svg class="spk" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.4 13a7.5 7.5 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1L15 3.3h-4l-.4 2.6a7.4 7.4 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.5 7.5 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1c.5.4 1.1.7 1.7 1l.4 2.6h4l.4-2.6c.6-.3 1.2-.6 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z" transform="translate(-1 0)"/></svg></button></div>
+      <div class="cnt glass" id="op-cnt"></div></div>
+    <div id="arena-card"></div>
+    <div id="field"><div class="fieldslot" id="op-field"></div><div class="fieldslot" id="me-field"></div></div>
+    <div class="glass" id="turn-panel"></div>
+    <div id="coach" aria-live="polite"></div>
+    <div class="ppanel glass" id="me-panel"></div>
+    <div class="cnt glass" id="me-count"></div>
+    <div id="hand-tray"><div id="hand"></div></div>
+    <div id="bbar">
+    <div class="tile-sm" id="deck"><img src="../assets/db/lib/gt/card-back.webp" alt=""><div><b class="fk">DEK</b><span class="fk" id="deck-n"></span></div></div>
+    <div class="tile-sm glass" id="fuel"><img src="../assets/db/lib/gt/fuel-can.webp" alt=""><div class="fuel-t"><b class="fk">BENSIN</b><div class="fsegs" id="fuel-segs"></div></div><b class="fk" id="fuel-n"></b></div>
+    <button class="btn b-green fk" id="btn-end" type="button"><span>SELESAI</span><span class="chev">›</span></button>
+    </div>
+  </div>
+  <div id="rush-host"></div>
+  <div id="atkbar" class="pop-bar"></div>
+  <div id="actbar" class="pop-bar"><div class="act-t"><b id="act-name" class="fk"></b><span id="act-why"></span></div>
+    <button class="btn b-gold fk" id="act-go" type="button"></button><button id="act-x" type="button" aria-label="Batal">✕</button></div>
+</section>
+
+<!-- MONSTER RUSH -->
+<!-- Monster Rush now plays ON the battle arena (#rush-host inside #scr-battle) -->
+
+<!-- RESULT -->
+<section class="scr" id="scr-result">
+  <div class="res-body">
+    <h2 id="res-title" class="fk"></h2>
+    <p id="res-sub"></p>
+    <div id="res-stars"></div>
+    <div id="res-table"></div>
+    <div id="res-reward"></div>
+    <div class="res-btns">
+      <button class="btn b-gold fk hide" id="res-next" type="button">Arena Berikutnya</button>
+      <button class="btn b-green fk" id="res-again" type="button">Main Lagi</button>
+      <button class="btn b-soft fk" id="res-home" type="button">Menu</button>
+    </div>
+  </div>
+</section>
+
+<div class="chal" id="chal"></div>
+<div class="tut" id="tut"></div>
+<div class="zoom" id="zoom"></div>
+<div class="pause" id="pause"><div class="pause-card"><h2 class="fk">Jeda</h2>
+  <button class="btn b-gold fk" id="p-resume" type="button">Lanjut Main</button>
+  <button class="btn b-soft fk" id="p-help" type="button">Cara Bermain</button>
+  <button class="btn b-soft fk snd" id="p-sound" type="button"><svg class="spk" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="w" d="M16 8.5a4.5 4.5 0 0 1 0 7M18.5 6a8 8 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="x" d="M16 9l6 6M22 9l-6 6" fill="none" stroke="#FF5A4E" stroke-width="2.6" stroke-linecap="round"/></svg><span id="snd-t">Suara</span></button>
+  <button class="btn b-red fk" id="p-quit" type="button">Berhenti</button></div></div>
+<div class="banner" id="banner"></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="data/asset-index.js?v=v63.2-20260927a"></script>
+<script src="data/save-engine.js?v=v63.2-20260927a"></script>
+<script src="data/sfx-engine.js?v=v63.2-20260927a"></script>
+<script src="vfx-engine.js?v=v63.2-20260927a"></script>
+<script src="data/gt-trucks.js?v=v63.2-20260927a"></script>
+<script src="data/gt-cards.js?v=v63.2-20260927a"></script>
+<script src="gt-engine.js?v=v63.2-20260927a"></script>
+<script src="gt-card.js?v=v63.2-20260927a"></script>
+<script src="gt-fx.js?v=v63.2-20260927a"></script>
+<script src="gt-quiz.js?v=v63.2-20260927a"></script>
+<script src="garasi-tempur.js?v=v63.2-20260927a"></script>
+<script src="sw-reload.js?v=v63.2-20260927a"></script>
+</body>
+</html>

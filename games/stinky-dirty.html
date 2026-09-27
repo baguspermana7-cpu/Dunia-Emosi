@@ -44,6 +44,15 @@ button{font-family:inherit;color:inherit}
 .icon-btn svg{width:26px;height:26px}
 .icon-btn.speaking svg{animation:spk 1.2s ease-in-out infinite}
 @keyframes spk{50%{transform:scale(1.12)}}
+/* narration switch on the play screen: speaker = on, speaker + red X = off */
+#btn-voice{width:56px;height:56px}
+#btn-voice svg{width:30px;height:30px}
+#btn-voice .vx{display:none}
+#btn-voice.muted{background:#FDECEA;border-color:#E9A9A3;box-shadow:0 3px 0 #E9A9A3}
+#btn-voice.muted .wv{display:none}
+#btn-voice.muted .vx{display:inline}
+#btn-voice.muted .spk{fill:#8A93A6}
+#btn-voice.muted svg{animation:none}
 
 /* ── HOME ─────────────────────────────────────────────────────────────── */
 #scr-home{align-items:center;justify-content:center;background:#9ED7F2 center/cover no-repeat}
@@ -308,6 +317,7 @@ html.rm *,html.rm *::before,html.rm *::after{animation:none!important;transition
 }
 /* phone on its side: the world/intro/done sheets must fit 360-400px of height */
 @media (orientation:landscape) and (max-height:500px){
+  #btn-voice{width:50px;height:50px}
   .sheet{padding:10px 14px 12px;max-height:calc(100vh - 16px);overflow:auto}
   #scr-world .sheet{margin-top:-40px}
   .sheet h2{font-size:22px}.sheet p{font-size:15px;margin:3px 0}
@@ -387,7 +397,7 @@ html.rm *,html.rm *::before,html.rm *::after{animation:none!important;transition
   <div id="card-top">
     <button class="icon-btn" id="btn-quit" type="button" aria-label="Berhenti"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="#5A4E43" stroke-width="3" stroke-linecap="round"/></svg></button>
     <div id="dots" aria-label="Kartu"></div>
-    <button class="icon-btn" id="btn-voice" type="button" aria-label="Suara narasi"><svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z" fill="#2F7FD6"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="#2F7FD6" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg></button>
+    <button class="icon-btn" id="btn-voice" type="button" aria-pressed="true" aria-label="Suara narasi: nyala"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="spk" d="M4 9h4l5-4v14l-5-4H4z" fill="#2F7FD6"/><path class="wv" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="#2F7FD6" stroke-width="2.2" fill="none" stroke-linecap="round"/><path class="vx" d="M15.5 9l6 6M21.5 9l-6 6" stroke="#E53935" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg></button>
   </div>
   <div id="card-body">
     <div id="stage">
@@ -463,14 +473,14 @@ html.rm *,html.rm *::before,html.rm *::after{animation:none!important;transition
   <div style="display:flex;gap:10px;justify-content:center"><button class="btn b-soft fk" data-close="ov-quit" type="button">Lanjut main</button><button class="btn b-gold fk" id="btn-quit-yes" type="button">Berhenti</button></div>
 </div></div>
 
-<script src="data/emoji-map.js?v=v63.1-20260927a"></script>
-<script src="data/asset-index.js?v=v63.1-20260927a"></script>
-<script src="data/save-engine.js?v=v63.1-20260927a"></script>
-<script src="data/sd-cards.js?v=v63.1-20260927a"></script>
-<script src="data/sd-audio.js?v=v63.1-20260927a"></script>
-<script src="sd-session.js?v=v63.1-20260927a"></script>
-<script src="sd-engine.js?v=v63.1-20260927a"></script>
-<script src="stinky-dirty.js?v=v63.1-20260927a"></script>
-<script src="sw-reload.js?v=v63.1-20260927a"></script>
+<script src="data/emoji-map.js?v=v63.2-20260927a"></script>
+<script src="data/asset-index.js?v=v63.2-20260927a"></script>
+<script src="data/save-engine.js?v=v63.2-20260927a"></script>
+<script src="data/sd-cards.js?v=v63.2-20260927a"></script>
+<script src="data/sd-audio.js?v=v63.2-20260927a"></script>
+<script src="sd-session.js?v=v63.2-20260927a"></script>
+<script src="sd-engine.js?v=v63.2-20260927a"></script>
+<script src="stinky-dirty.js?v=v63.2-20260927a"></script>
+<script src="sw-reload.js?v=v63.2-20260927a"></script>
 </body>
 </html>

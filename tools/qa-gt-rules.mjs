@@ -3,6 +3,7 @@
 import { createRequire } from 'node:module'
 const require = createRequire(import.meta.url)
 globalThis.window = globalThis
+require('../games/data/gt-trucks.js')
 const C = require('../games/data/gt-cards.js')
 const E = require('../games/gt-engine.js')
 const fails = []
@@ -11,12 +12,15 @@ const pass = msg => console.log('✅ ' + msg)
 
 // ── data sanity ──────────────────────────────────────────────────────────
 const banned = /monster\s*jam|grave\s*digger|el\s*toro|max-?d|megalodon/i
-check(C.TRUCKS.length === 12 && Object.keys(C.TYPES).every(t => C.TRUCKS.filter(x => x.type === t).length === 2), '12 trucks, 2 per Type')
-check(C.TRUCKS.every(t => t.hp >= 10 && t.hp <= 20 && t.attacks.length === 2 && t.attacks.every(a => a.dmg >= 1 && a.dmg <= 7 && a.fuel >= 0 && a.fuel <= 3) && C.TYPES[t.strongVs]), 'truck stats inside PRD bands (HP 10–20, dmg 1–7, fuel 0–3)')
+check(C.TRUCKS.length === 174 && Object.keys(C.TYPES).every(t => C.TRUCKS.filter(x => x.type === t).length >= 10), '174 trucks, every Type well represented')
+check(new Set(C.TRUCKS.map(t => t.name)).size === 174, 'every truck has its own name')
+check(C.TRUCKS.every(t => t.sprite && t.hp >= 10 && t.hp <= 20 && t.attacks.length === 2 && t.attacks.every(a => a.dmg >= 1 && a.dmg <= 7 && a.fuel >= 0 && a.fuel <= 3) && C.TYPES[t.strongVs]), 'truck stats inside PRD bands (HP 10–20, dmg 1–7, fuel 0–3)')
 check(!C.TRUCKS.concat(C.PARTS, C.ACTIONS).some(c => banned.test(c.name) || banned.test(c.id)), 'no trademarked truck names (owner decision)')
 for (const [k, s] of Object.entries(C.STARTERS)) {
   check(s.deck.length === 20 && s.deck.every(id => C.get(id)), `starter ${k}: 20 known cards`)
-  check(s.deck.filter(id => C.get(id).cat === 'truck').length === 3, `starter ${k}: 3 trucks`)
+  check(s.deck.filter(id => C.get(id).cat === 'truck').length === 17 && new Set(s.deck).size === 20, `starter ${k}: 17 different trucks + 3 support (owner: support 15%)`)
+  check(!s.deck.some(id => C.get(id).cat === 'fuel'), `starter ${k}: no fuel cards (bensin is automatic)`)
+  check(s.trucks.every(id => s.deck.includes(id)), `starter ${k}: the 3 chosen trucks are in the deck`)
 }
 pass('card data checked')
 
@@ -76,7 +80,30 @@ check(E.hash(play(78).st) !== E.hash(a.st), 'different seed → different battle
 pass('determinism checked')
 
 // ── edge cases (PRD v1 §28) ──────────────────────────────────────────────
-const fresh = (seed = 5) => E.create({ seed, p1: { starter: 'api' }, p2: { starter: 'lumpur' }, arena: 'lumpur' })
+// the edge cases below were written for a hand-held opening truck; `fresh` puts the auto-placed
+// trucks back in hand so each case still starts from "nothing on the field"
+const fresh = (seed = 5) => { const st = E.create({ seed, p1: { starter: 'api' }, p2: { starter: 'lumpur' }, arena: 'lumpur' }); st.players.forEach(P => { if (P.active) { P.hand.push(P.active.inst); P.active = null } }); return st }
+{ // both trucks start on the field; the first player already has 1 bensin (no dead turn 1)
+  let ok = true
+  for (let s = 1; s <= 300; s++) { const st = E.create({ seed: s, p1: { starter: 'api' }, p2: { starter: 'kilat' } }); if (!(st.players.every(P => P.active) && st.players[0].active.fuel === 1)) ok = false }
+  check(ok, 'both trucks start on the field and the first player has 1 bensin (300 seeds)')
+}
+{ // bensin +1 automatically each turn; Ganti Truk once per turn, old truck to the deck bottom with its bensin moving over
+  let st = E.create({ seed: 21, p1: { starter: 'api' }, p2: { starter: 'baja' } })
+  st = E.apply(st, { type: 'endTurn' }).state
+  check(st.players[1].active.fuel === 1 && st.log.some(e => e.t === 'autoFuel' && e.p === 1), 'second player gets +1 bensin at its turn start')
+  st = E.apply(st, { type: 'endTurn' }).state
+  const P = st.players[0]
+  check(P.active.fuel === 2, 'first player has 2 bensin on its second turn')
+  const hand = P.hand.filter(c => C.get(st.cards[c]).cat === 'truck')
+  if (hand.length >= 2) {
+    const old = P.active.inst, r1 = E.apply(st, { type: 'playTruck', card: hand[0] })
+    const Q = r1.state.players[0]
+    check(r1.ok && Q.active.inst === hand[0] && Q.active.fuel === 2 && Q.deck[Q.deck.length - 1] === old, 'Ganti Truk: new truck in, bensin kept, old truck at the deck bottom')
+    const r2 = E.apply(r1.state, { type: 'playTruck', card: hand[1] })
+    check(!r2.ok && r2.reason === 'swapOnce', 'Ganti Truk only once per turn')
+  } else check(false, 'test setup: two trucks in hand')
+}
 { // opening hand always has a truck, for every seed
   let ok = true
   for (let s = 1; s <= 300; s++) { const st = fresh(s); if (!st.players.every(P => P.hand.some(c => C.get(st.cards[c]).cat === 'truck'))) ok = false }

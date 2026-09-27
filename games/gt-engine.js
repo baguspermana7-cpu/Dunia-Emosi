@@ -21,7 +21,9 @@
   var W = (typeof window !== 'undefined' ? window : globalThis)
   var C = W.GTCards || (typeof require === 'function' ? require('./data/gt-cards.js') : null)
 
-  var RULES = { HAND_START: 5, HAND_LIMIT: 7, FUEL_MAX: 4, BENCH_MAX: 2, KO_TO_WIN: 2, CORRECT_BONUS: 2, NITRO_FULL: 3, NITRO_BONUS: 2 }
+  // BENCH_MAX 0 (owner 2026-09-27: "seperti pokemon hanya 1 kartu di arena"): one truck per side;
+  // the other trucks wait in the hand/deck and step in when the active one is knocked out.
+  var RULES = { HAND_START: 5, HAND_LIMIT: 7, FUEL_MAX: 4, BENCH_MAX: 0, KO_TO_WIN: 3, FUEL_AUTO: 1, CORRECT_BONUS: 2, NITRO_FULL: 3, NITRO_BONUS: 2 }
 
   /* ── rng (mulberry32, state stored as an int) ─────────────────────────── */
   function rand (st) {
@@ -43,11 +45,11 @@
     var st = { v: 1, seed: o.seed >>> 0, rng: o.seed | 0, turn: 1, active: 0, phase: 'setup', winner: null, draw: false,
       arena: o.arena || 'lumpur', maxTurns: o.maxTurns || 40, cards: {}, players: [], seen: {}, log: [], pending: null, next: 1 }
     ;[o.p1, o.p2].forEach(function (p, pi) {
-      var starter = C.STARTERS[p.starter]
+      var starter = p.trucks ? { deck: C.makeDeck(p.trucks) } : C.STARTERS[p.starter]
       if (!starter) throw new Error('unknown starter ' + p.starter)
       var deck = starter.deck.map(function (id) { var inst = 'c' + (st.next++); st.cards[inst] = id; return inst })
       st.players.push({ name: p.name || ('Pemain ' + (pi + 1)), deck: deck, hand: [], discard: [], active: null, bench: [], ko: 0,
-        fuelPlayed: false, nitro: 0, boost: 0, reshuffled: false, lastAttack: null })
+        fuelPlayed: false, swapped: false, nitro: 0, boost: 0, reshuffled: false, lastAttack: null })
     })
     var ev = []
     st.players.forEach(function (P, pi) {
@@ -62,7 +64,11 @@
         ev.push({ t: 'mulligan', p: pi })
       }
       ev.push({ t: 'deal', p: pi, n: P.hand.length })
+      // both trucks start on the field (audit: turn 1 was always dead and the AI always swung first)
+      promote(st, pi, ev)
     })
+    // bensin is automatic: the first player starts with 1 (the second gets its +1 at its first turn)
+    if (st.players[0].active) { st.players[0].active.fuel = RULES.FUEL_AUTO; ev.push({ t: 'autoFuel', p: 0, fuel: st.players[0].active.fuel }) }
     st.phase = 'garage'
     ev.push({ t: 'turnStart', p: 0, turn: 1 })
     st.log = ev.slice()
@@ -100,9 +106,9 @@
     if (cmd.type === 'discard') return inHand ? null : 'notInHand'
     if (P.hand.length > RULES.HAND_LIMIT && cmd.type !== 'discard') return 'handLimit'
     switch (cmd.type) {
-      case 'playTruck':
+      case 'playTruck':                       // with a truck already out this is "Ganti Truk" (once per turn)
         if (!inHand || cat(st, cmd.card) !== 'truck') return 'notATruck'
-        if (P.active && P.bench.length >= RULES.BENCH_MAX) return 'benchFull'
+        if (P.active && P.swapped) return 'swapOnce'
         return null
       case 'attachFuel':
         if (!inHand || cat(st, cmd.card) !== 'fuel') return 'notFuel'
@@ -171,7 +177,7 @@
     st.active = 1 - st.active
     if (st.active === 0) st.turn++
     var P = st.players[st.active]
-    P.fuelPlayed = false
+    P.fuelPlayed = false; P.swapped = false
     ev.push({ t: 'turnStart', p: st.active, turn: st.turn })
     if (st.turn > st.maxTurns) {
       var a = st.players[0], b = st.players[1]
@@ -181,6 +187,7 @@
     }
     if (!P.active && !promote(st, st.active, ev)) return finish(st, ev, 1 - st.active, 'noTrucksLeft')
     draw1(st, P, st.active, ev)
+    if (P.active.fuel < RULES.FUEL_MAX) { P.active.fuel = Math.min(RULES.FUEL_MAX, P.active.fuel + RULES.FUEL_AUTO); ev.push({ t: 'autoFuel', p: st.active, fuel: P.active.fuel }) }
   }
 
   function resolveAttack (st, correct, ev) {
@@ -217,8 +224,12 @@
       case 'playTruck': {
         P.hand.splice(P.hand.indexOf(cmd.card), 1)
         var tr = truckState(st, cmd.card)
-        if (!P.active) { P.active = tr; ev.push({ t: 'playTruck', p: pi, card: cmd.card, to: 'active' }) }
-        else { P.bench.push(tr); ev.push({ t: 'playTruck', p: pi, card: cmd.card, to: 'bench' }) }
+        if (!P.active) { P.active = tr; ev.push({ t: 'playTruck', p: pi, card: cmd.card, to: 'active' }); return }
+        // swap: the old truck goes to the bottom of the deck (parts to discard), its bensin moves over
+        var old = P.active
+        ;['tire', 'body', 'engine'].forEach(function (sl) { if (old.parts[sl]) P.discard.push(old.parts[sl]) })
+        P.deck.push(old.inst); tr.fuel = old.fuel; P.active = tr; P.swapped = true
+        ev.push({ t: 'playTruck', p: pi, card: cmd.card, to: 'active', swap: old.inst })
         return
       }
       case 'attachFuel':
@@ -291,7 +302,7 @@
   function ai (st, level) {
     var P = st.players[st.active], O = st.players[1 - st.active], L = legal(st), p = st.active
     var pick = function (t, f) { return L.filter(function (c) { return c.type === t && (!f || f(c)) })[0] }
-    if (st.phase === 'challenge') return { type: 'answer', correct: rand(st) < (level === 'racer' ? 0.8 : 0.6), p: p }
+    if (st.phase === 'challenge') return { type: 'answer', correct: rand(st) < (level === 'racer' ? 0.75 : 0.45), p: p }
     if (P.hand.length > RULES.HAND_LIMIT) {     // keep trucks and fuel, drop the least useful
       var worst = P.hand.slice().sort(function (a, b) { var r = { action: 0, part: 1, fuel: 2, truck: 3 }; return r[cat(st, a)] - r[cat(st, b)] })[0]
       return { type: 'discard', card: worst, p: p }
@@ -300,13 +311,19 @@
     var f = pick('attachFuel'); if (f) return f
     if (level === 'racer' && P.active.hp <= P.active.maxHp / 2) { var h = pick('playAction', function (c) { return def(st, c.card).effect === 'heal' }); if (h) return h }
     var part = pick('attachPart', function (c) { return !P.active.parts[def(st, c.card).slot] })
-    if (part) return part
-    if (P.bench.length < 1) { var bt = pick('playTruck'); if (bt) return bt }
+    // rookie is the child's first opponent: it skips half its upgrades and swings its weaker
+    // attack (measured: a coached child answering 2/3 right won 2 of 26 against the old rookie)
+    if (part && (level === 'racer' || rand(st) < 0.5)) return part
+    if (level === 'racer' && O.active && def(st, P.active.inst).strongVs !== def(st, O.active.inst).type) {
+      var sw = pick('playTruck', function (c) { return def(st, c.card).strongVs === def(st, O.active.inst).type })
+      if (sw) return sw
+    }
     var boost = pick('playAction', function (c) { var e = def(st, c.card).effect; return e === 'boost' || e === 'nitro' || e === 'fuel' || e === 'draw' })
     if (boost && (level === 'racer' || rand(st) < 0.5)) return boost
     var atks = L.filter(function (c) { return c.type === 'attack' })
     if (atks.length) {
       atks.sort(function (a, b) { return preview(st, b.attack).total - preview(st, a.attack).total })
+      if (level !== 'racer') return atks[atks.length - 1]
       if (level === 'racer' && O.active) {        // prefer an attack that KOs even without the bonus
         var ko = atks.filter(function (c) { return preview(st, c.attack).total >= O.active.hp })[0]
         if (ko) return ko
