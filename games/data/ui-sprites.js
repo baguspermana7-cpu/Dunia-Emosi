@@ -113,6 +113,7 @@
   }
 
   // ── raw path for ANY assets/db category + index (not just named packs) ──
+  function specPath (sp) { return !sp ? null : (sp.file ? base() + sp.file : rawPath(sp.cat, sp.n)) }
   function rawPath (cat, n) {
     if (!cat || !n) return null
     return base() + 'assets/db/' + cat + '/' + ('00' + n).slice(-3) + '.webp'
@@ -135,7 +136,7 @@
       if (W.EmojiMap) { var nk = W.EmojiMap.norm(ch); GAPS[nk] = (GAPS[nk] || 0) + 1 }
       return null
     }
-    var src = rawPath(spec.cat, spec.n); if (!src) return null
+    var src = specPath(spec); if (!src) return null
     var img = new Image()
     img.alt = ''; img.decoding = 'async'; img.className = 'ui-sprite emoji-sprite'
     img.style.cssText = 'width:1em;height:1em;vertical-align:-0.15em;object-fit:contain;display:inline-block'
@@ -246,7 +247,7 @@
   function texUrlFor (ch) {
     var sp = W.EmojiMap && W.EmojiMap.spec ? W.EmojiMap.spec(ch) : null
     if (!sp) { if (W.EmojiMap) { var nk = W.EmojiMap.norm(ch); GAPS[nk] = (GAPS[nk] || 0) + 1 } return null }
-    return rawPath(sp.cat, sp.n)
+    return specPath(sp)
   }
   function cachedTex (src, PIXI) {
     if (!src || !PIXI || !PIXI.Assets || !PIXI.Assets.get) return null

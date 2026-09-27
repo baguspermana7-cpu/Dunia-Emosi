@@ -3314,3 +3314,13 @@ Owner: "pvp nggak jelas mekaniknya. Masak selalu kalah yg p1 dan position nya ti
 - Boost cost 4 tokens and was worth ~3% with no visible surge; the centre medallion boosted BOTH players. Now 2 tokens, ×2.2 for 2 s (≈ +5.3 distance, ~8% of the track on screen), per-player only; an early tap shakes + says "⚡ kurang N" instead of a silent dead button.
 - The loop checked [p2, p1] and a tie always went to P2. Now each crossing time is computed inside the frame; a dead heat is "Seri! Hebat berdua!" (Tournament replays a tied match).
 Gate `tools/qa-g14-pvp-fair.mjs` (2 landscape sizes, real taps); `qa-g14-versus-drive` updated to the new layout.
+
+### ✅ 2026-09-27 — Shared named sprite library: 509 sprites from 25 owner sheets
+Owner: "masukkan ke database asset … agar reusable", "crop dg sempurna … webp … tidak pecah", "borderline putih agar tampak smooth nggak patah2 ujung2nya", "game pokemon jangan sentuh".
+- `assets/db/lib/<category>/<name>.webp` (+ `real/` for photo-real sheets), index `assets/db/index.json`, runtime `window.AssetIndex` (`games/data/asset-index.js`); built by `tools/ingest-asset-sheets.py` from sheets archived outside the repo.
+- Crop: whole-sheet marker watershed (sheets overlap with no gutters and sprites touch — the cupcake's cherry sat on the bell pepper); flat-white page flood behind a drawn-edge barrier (white bodies stay opaque); see-through holes only for an eye-reviewed list; soft un-premultiplied edge.
+- Smooth white sticker outline: 4× distance field from a silhouette smoothed at σ 2.5 px (σ 1.2 still traced the grey specks in the sheets' own edges).
+- WebP q95 sharp-YUV + lossless alpha (~16 KB avg, 7.9 MB total); each file decoded and checked (luma PSNR ≥ 38 dB, alpha exact) or the build fails.
+- `branded/` + `currency/` (logos, rupiah) excluded by `AssetIndex.safe()`.
+- First integration: 29 emoji GAPs (no sprite before) now resolve to cartoon library sprites through EmojiMap `lib:` values — on every non-Pokémon page; Pokémon pages keep the emoji (checked per page).
+- Gate `tools/qa-asset-index.mjs`; standard in `documentation and standarization/DB_SPRITE_INTEGRATION.md`.

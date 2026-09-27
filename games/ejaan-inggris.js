@@ -588,6 +588,7 @@
       var players = JSON.parse(localStorage.getItem('dunia-players') || '[]')
       var animal = players && players[slot] && players[slot].animal
       var spec = animal && window.EmojiMap && EmojiMap.spec ? EmojiMap.spec(animal) : null
+      if (spec && spec.file) return BASE + spec.file
       if (spec && spec.cat && spec.n) return BASE + 'assets/db/' + spec.cat + '/' + String(spec.n).padStart(3, '0') + '.webp'
     } catch (e) {}
     return url('ui/star.webp')

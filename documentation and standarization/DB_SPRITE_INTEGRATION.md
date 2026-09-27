@@ -80,3 +80,28 @@ State of the pipeline (already optimal where noted):
 - `tools/qa-regression-sweep.mjs` — 10/10 Pokémon+train games clean (never break the good games).
 - `tools/qa-math-adventure.mjs` — 24/24 (math game unaffected).
 - Path integrity: every `DBLabeled.all()` `src` resolves 200 (137/137 verified on disk).
+
+## Named asset library — `assets/db/lib/` + `window.AssetIndex` (2026-09-27)
+
+Owner: "Elemen2 itu sifatnya shared ya masukkan ke database asset chunk agar reusable",
+"crop dg sempurna … compressed webp … tidak membuat gambar sprite jadi pecah",
+"setiap sprite borderline putih agar tampak smooth nggak patah2 ujung2nya".
+
+- **509 named sprites** from 25 owner sheets (sources archived outside the repo at
+  `~/Documents/temporary/game asset/stinky-dirty/`). Key = `"<category>/<name>"`;
+  realistic-render sheets live under `real/` so a game keeps ONE look.
+- **`branded/` and `currency/`** (real logos, rupiah notes/coin) are excluded by
+  `AssetIndex.safe()` — the default for games. Use only on the owner's say-so.
+- **Pokémon games never use this library** (owner rule): gym-pokemon, mario-pokemon,
+  monster-candy, pokemon-run, pokemon-birds, pokemon-bawah-laut, and the Pokémon flows in game.js.
+- API: `AssetIndex.path(key)` (base-path aware URL), `AssetIndex.find(q)`, `keys()`, `safe()`.
+  Metadata (tags, source sheet#cell, size, PSNR): `assets/db/index.json`.
+- **Build**: `~/.venvs/kokoro/bin/python tools/ingest-asset-sheets.py [sheet …]`. Whole-sheet
+  marker watershed decides which pixels belong to which sprite (sheets overlap, no gutters);
+  page = flat white reachable from the border without crossing a drawn edge; see-through
+  holes only for the by-eye-reviewed `HOLES` set; soft un-premultiplied edge; smooth white
+  sticker outline built at 4× from a distance field; WebP q95 + sharp-YUV, lossless alpha;
+  every file decoded and checked (luma PSNR ≥ 38 dB, alpha exact) or the run fails.
+- **Adding a sheet**: archive it, add `(cols, rows, names)` to `SHEETS` (row-major), add it to
+  `REAL` if photo-real, run, review ALL output on a checkerboard + dark background, then
+  `node tools/qa-asset-index.mjs`.

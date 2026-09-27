@@ -1,0 +1,6430 @@
+{
+ "_note": "Named shared sprites (owner sheets, tools/ingest-asset-sheets.py). Key = \"<category>/<name>\". Reuse before cropping anything new.",
+ "assets": {
+  "animals/bee": {
+   "file": "assets/db/lib/animals/bee.webp",
+   "cat": "animals",
+   "tags": [
+    "bee",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#6",
+   "w": 218,
+   "h": 224,
+   "psnr": 45.1
+  },
+  "animals/blue-tang": {
+   "file": "assets/db/lib/animals/blue-tang.webp",
+   "cat": "animals",
+   "tags": [
+    "blue",
+    "tang",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#19",
+   "w": 263,
+   "h": 214,
+   "psnr": 45.0
+  },
+  "animals/butterfly": {
+   "file": "assets/db/lib/animals/butterfly.webp",
+   "cat": "animals",
+   "tags": [
+    "butterfly",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#8",
+   "w": 263,
+   "h": 226,
+   "psnr": 41.8
+  },
+  "animals/cat": {
+   "file": "assets/db/lib/animals/cat.webp",
+   "cat": "animals",
+   "tags": [
+    "cat",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#2",
+   "w": 219,
+   "h": 268,
+   "psnr": 44.2
+  },
+  "animals/chicken": {
+   "file": "assets/db/lib/animals/chicken.webp",
+   "cat": "animals",
+   "tags": [
+    "chicken",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#5",
+   "w": 214,
+   "h": 277,
+   "psnr": 45.3
+  },
+  "animals/clownfish": {
+   "file": "assets/db/lib/animals/clownfish.webp",
+   "cat": "animals",
+   "tags": [
+    "clownfish",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#4",
+   "w": 269,
+   "h": 194,
+   "psnr": 42.9
+  },
+  "animals/cow": {
+   "file": "assets/db/lib/animals/cow.webp",
+   "cat": "animals",
+   "tags": [
+    "cow",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#4",
+   "w": 265,
+   "h": 267,
+   "psnr": 46.0
+  },
+  "animals/crab": {
+   "file": "assets/db/lib/animals/crab.webp",
+   "cat": "animals",
+   "tags": [
+    "crab",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#16",
+   "w": 262,
+   "h": 232,
+   "psnr": 41.4
+  },
+  "animals/dog": {
+   "file": "assets/db/lib/animals/dog.webp",
+   "cat": "animals",
+   "tags": [
+    "dog",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#1",
+   "w": 246,
+   "h": 265,
+   "psnr": 45.3
+  },
+  "animals/dolphin": {
+   "file": "assets/db/lib/animals/dolphin.webp",
+   "cat": "animals",
+   "tags": [
+    "dolphin",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#2",
+   "w": 242,
+   "h": 237,
+   "psnr": 45.3
+  },
+  "animals/duckling": {
+   "file": "assets/db/lib/animals/duckling.webp",
+   "cat": "animals",
+   "tags": [
+    "duckling",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#3",
+   "w": 198,
+   "h": 265,
+   "psnr": 43.6
+  },
+  "animals/eagle": {
+   "file": "assets/db/lib/animals/eagle.webp",
+   "cat": "animals",
+   "tags": [
+    "eagle",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#14",
+   "w": 230,
+   "h": 266,
+   "psnr": 45.5
+  },
+  "animals/elephant": {
+   "file": "assets/db/lib/animals/elephant.webp",
+   "cat": "animals",
+   "tags": [
+    "elephant",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#4",
+   "w": 270,
+   "h": 261,
+   "psnr": 46.5
+  },
+  "animals/flamingo": {
+   "file": "assets/db/lib/animals/flamingo.webp",
+   "cat": "animals",
+   "tags": [
+    "flamingo",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#12",
+   "w": 190,
+   "h": 275,
+   "psnr": 41.4
+  },
+  "animals/frog": {
+   "file": "assets/db/lib/animals/frog.webp",
+   "cat": "animals",
+   "tags": [
+    "frog",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#9",
+   "w": 227,
+   "h": 223,
+   "psnr": 45.0
+  },
+  "animals/giraffe": {
+   "file": "assets/db/lib/animals/giraffe.webp",
+   "cat": "animals",
+   "tags": [
+    "giraffe",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#8",
+   "w": 183,
+   "h": 270,
+   "psnr": 43.9
+  },
+  "animals/golden-retriever": {
+   "file": "assets/db/lib/animals/golden-retriever.webp",
+   "cat": "animals",
+   "tags": [
+    "golden",
+    "retriever",
+    "cartoon"
+   ],
+   "source": "icons-animals-fruit-home-30#6",
+   "w": 228,
+   "h": 259,
+   "psnr": 44.6
+  },
+  "animals/husky": {
+   "file": "assets/db/lib/animals/husky.webp",
+   "cat": "animals",
+   "tags": [
+    "husky",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#2",
+   "w": 230,
+   "h": 269,
+   "psnr": 46.1
+  },
+  "animals/koala": {
+   "file": "assets/db/lib/animals/koala.webp",
+   "cat": "animals",
+   "tags": [
+    "koala",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#9",
+   "w": 268,
+   "h": 280,
+   "psnr": 44.9
+  },
+  "animals/ladybug": {
+   "file": "assets/db/lib/animals/ladybug.webp",
+   "cat": "animals",
+   "tags": [
+    "ladybug",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#7",
+   "w": 218,
+   "h": 218,
+   "psnr": 43.1
+  },
+  "animals/lion": {
+   "file": "assets/db/lib/animals/lion.webp",
+   "cat": "animals",
+   "tags": [
+    "lion",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#6",
+   "w": 256,
+   "h": 273,
+   "psnr": 44.9
+  },
+  "animals/lobster": {
+   "file": "assets/db/lib/animals/lobster.webp",
+   "cat": "animals",
+   "tags": [
+    "lobster",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#20",
+   "w": 255,
+   "h": 280,
+   "psnr": 41.0
+  },
+  "animals/monkey": {
+   "file": "assets/db/lib/animals/monkey.webp",
+   "cat": "animals",
+   "tags": [
+    "monkey",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#10",
+   "w": 240,
+   "h": 260,
+   "psnr": 45.2
+  },
+  "animals/octopus": {
+   "file": "assets/db/lib/animals/octopus.webp",
+   "cat": "animals",
+   "tags": [
+    "octopus",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#5",
+   "w": 260,
+   "h": 243,
+   "psnr": 41.8
+  },
+  "animals/owl": {
+   "file": "assets/db/lib/animals/owl.webp",
+   "cat": "animals",
+   "tags": [
+    "owl",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#1",
+   "w": 218,
+   "h": 271,
+   "psnr": 45.5
+  },
+  "animals/owl-blue": {
+   "file": "assets/db/lib/animals/owl-blue.webp",
+   "cat": "animals",
+   "tags": [
+    "owl",
+    "blue",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#15",
+   "w": 213,
+   "h": 255,
+   "psnr": 45.0
+  },
+  "animals/panda": {
+   "file": "assets/db/lib/animals/panda.webp",
+   "cat": "animals",
+   "tags": [
+    "panda",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#3",
+   "w": 227,
+   "h": 277,
+   "psnr": 45.9
+  },
+  "animals/parrot": {
+   "file": "assets/db/lib/animals/parrot.webp",
+   "cat": "animals",
+   "tags": [
+    "parrot",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#11",
+   "w": 210,
+   "h": 282,
+   "psnr": 44.4
+  },
+  "animals/penguin": {
+   "file": "assets/db/lib/animals/penguin.webp",
+   "cat": "animals",
+   "tags": [
+    "penguin",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#1",
+   "w": 221,
+   "h": 239,
+   "psnr": 46.4
+  },
+  "animals/pig": {
+   "file": "assets/db/lib/animals/pig.webp",
+   "cat": "animals",
+   "tags": [
+    "pig",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#5",
+   "w": 232,
+   "h": 270,
+   "psnr": 44.5
+  },
+  "animals/pufferfish": {
+   "file": "assets/db/lib/animals/pufferfish.webp",
+   "cat": "animals",
+   "tags": [
+    "pufferfish",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#23",
+   "w": 268,
+   "h": 247,
+   "psnr": 45.1
+  },
+  "animals/rabbit": {
+   "file": "assets/db/lib/animals/rabbit.webp",
+   "cat": "animals",
+   "tags": [
+    "rabbit",
+    "cartoon"
+   ],
+   "source": "icons-animals-fruit-home-30#8",
+   "w": 196,
+   "h": 265,
+   "psnr": 45.0
+  },
+  "animals/sea-turtle": {
+   "file": "assets/db/lib/animals/sea-turtle.webp",
+   "cat": "animals",
+   "tags": [
+    "sea",
+    "turtle",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#3",
+   "w": 277,
+   "h": 231,
+   "psnr": 44.3
+  },
+  "animals/shark": {
+   "file": "assets/db/lib/animals/shark.webp",
+   "cat": "animals",
+   "tags": [
+    "shark",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#22",
+   "w": 258,
+   "h": 280,
+   "psnr": 45.1
+  },
+  "animals/snail": {
+   "file": "assets/db/lib/animals/snail.webp",
+   "cat": "animals",
+   "tags": [
+    "snail",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#10",
+   "w": 228,
+   "h": 194,
+   "psnr": 44.7
+  },
+  "animals/squid": {
+   "file": "assets/db/lib/animals/squid.webp",
+   "cat": "animals",
+   "tags": [
+    "squid",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#24",
+   "w": 246,
+   "h": 286,
+   "psnr": 41.0
+  },
+  "animals/starfish": {
+   "file": "assets/db/lib/animals/starfish.webp",
+   "cat": "animals",
+   "tags": [
+    "starfish",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#17",
+   "w": 243,
+   "h": 240,
+   "psnr": 40.9
+  },
+  "animals/stingray": {
+   "file": "assets/db/lib/animals/stingray.webp",
+   "cat": "animals",
+   "tags": [
+    "stingray",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#25",
+   "w": 280,
+   "h": 287,
+   "psnr": 45.6
+  },
+  "animals/tabby-cat": {
+   "file": "assets/db/lib/animals/tabby-cat.webp",
+   "cat": "animals",
+   "tags": [
+    "tabby",
+    "cat",
+    "cartoon"
+   ],
+   "source": "icons-animals-fruit-home-30#7",
+   "w": 196,
+   "h": 259,
+   "psnr": 45.7
+  },
+  "animals/toucan": {
+   "file": "assets/db/lib/animals/toucan.webp",
+   "cat": "animals",
+   "tags": [
+    "toucan",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#13",
+   "w": 266,
+   "h": 261,
+   "psnr": 44.7
+  },
+  "animals/zebra": {
+   "file": "assets/db/lib/animals/zebra.webp",
+   "cat": "animals",
+   "tags": [
+    "zebra",
+    "cartoon"
+   ],
+   "source": "icons-animals-25#7",
+   "w": 243,
+   "h": 274,
+   "psnr": 45.6
+  },
+  "food/apple": {
+   "file": "assets/db/lib/food/apple.webp",
+   "cat": "food",
+   "tags": [
+    "apple",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#10",
+   "w": 231,
+   "h": 255,
+   "psnr": 45.5
+  },
+  "food/avocado": {
+   "file": "assets/db/lib/food/avocado.webp",
+   "cat": "food",
+   "tags": [
+    "avocado",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#17",
+   "w": 243,
+   "h": 224,
+   "psnr": 45.4
+  },
+  "food/banana": {
+   "file": "assets/db/lib/food/banana.webp",
+   "cat": "food",
+   "tags": [
+    "banana",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#9",
+   "w": 255,
+   "h": 266,
+   "psnr": 45.9
+  },
+  "food/bell-pepper": {
+   "file": "assets/db/lib/food/bell-pepper.webp",
+   "cat": "food",
+   "tags": [
+    "bell",
+    "pepper",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#22",
+   "w": 207,
+   "h": 220,
+   "psnr": 44.1
+  },
+  "food/bread": {
+   "file": "assets/db/lib/food/bread.webp",
+   "cat": "food",
+   "tags": [
+    "bread",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#14",
+   "w": 260,
+   "h": 234,
+   "psnr": 45.2
+  },
+  "food/broccoli": {
+   "file": "assets/db/lib/food/broccoli.webp",
+   "cat": "food",
+   "tags": [
+    "broccoli",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#8",
+   "w": 259,
+   "h": 265,
+   "psnr": 45.6
+  },
+  "food/burger": {
+   "file": "assets/db/lib/food/burger.webp",
+   "cat": "food",
+   "tags": [
+    "burger",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#11",
+   "w": 256,
+   "h": 241,
+   "psnr": 43.9
+  },
+  "food/carrot": {
+   "file": "assets/db/lib/food/carrot.webp",
+   "cat": "food",
+   "tags": [
+    "carrot",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#6",
+   "w": 233,
+   "h": 265,
+   "psnr": 43.6
+  },
+  "food/cauliflower": {
+   "file": "assets/db/lib/food/cauliflower.webp",
+   "cat": "food",
+   "tags": [
+    "cauliflower",
+    "cartoon"
+   ],
+   "source": "icons-animals-fruit-home-30#19",
+   "w": 257,
+   "h": 230,
+   "psnr": 44.7
+  },
+  "food/cheese": {
+   "file": "assets/db/lib/food/cheese.webp",
+   "cat": "food",
+   "tags": [
+    "cheese",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#15",
+   "w": 240,
+   "h": 226,
+   "psnr": 45.5
+  },
+  "food/chili": {
+   "file": "assets/db/lib/food/chili.webp",
+   "cat": "food",
+   "tags": [
+    "chili",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#21",
+   "w": 226,
+   "h": 204,
+   "psnr": 42.3
+  },
+  "food/chocolate": {
+   "file": "assets/db/lib/food/chocolate.webp",
+   "cat": "food",
+   "tags": [
+    "chocolate",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#29",
+   "w": 256,
+   "h": 231,
+   "psnr": 45.2
+  },
+  "food/coconut": {
+   "file": "assets/db/lib/food/coconut.webp",
+   "cat": "food",
+   "tags": [
+    "coconut",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#16",
+   "w": 228,
+   "h": 206,
+   "psnr": 45.7
+  },
+  "food/cookie": {
+   "file": "assets/db/lib/food/cookie.webp",
+   "cat": "food",
+   "tags": [
+    "cookie",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#26",
+   "w": 231,
+   "h": 216,
+   "psnr": 44.0
+  },
+  "food/corn": {
+   "file": "assets/db/lib/food/corn.webp",
+   "cat": "food",
+   "tags": [
+    "corn",
+    "cartoon"
+   ],
+   "source": "icons-wear-snacks-farm-25#24",
+   "w": 252,
+   "h": 304,
+   "psnr": 44.5
+  },
+  "food/cupcake": {
+   "file": "assets/db/lib/food/cupcake.webp",
+   "cat": "food",
+   "tags": [
+    "cupcake",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#27",
+   "w": 206,
+   "h": 236,
+   "psnr": 43.6
+  },
+  "food/donut": {
+   "file": "assets/db/lib/food/donut.webp",
+   "cat": "food",
+   "tags": [
+    "donut",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#13",
+   "w": 251,
+   "h": 232,
+   "psnr": 43.9
+  },
+  "food/eggplant": {
+   "file": "assets/db/lib/food/eggplant.webp",
+   "cat": "food",
+   "tags": [
+    "eggplant",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#20",
+   "w": 231,
+   "h": 218,
+   "psnr": 46.4
+  },
+  "food/french-fries": {
+   "file": "assets/db/lib/food/french-fries.webp",
+   "cat": "food",
+   "tags": [
+    "french",
+    "fries",
+    "cartoon"
+   ],
+   "source": "icons-animals-fruit-home-30#29",
+   "w": 221,
+   "h": 243,
+   "psnr": 43.0
+  },
+  "food/garlic": {
+   "file": "assets/db/lib/food/garlic.webp",
+   "cat": "food",
+   "tags": [
+    "garlic",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#23",
+   "w": 237,
+   "h": 227,
+   "psnr": 45.2
+  },
+  "food/grapes": {
+   "file": "assets/db/lib/food/grapes.webp",
+   "cat": "food",
+   "tags": [
+    "grapes",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#12",
+   "w": 221,
+   "h": 240,
+   "psnr": 44.8
+  },
+  "food/ice-cream": {
+   "file": "assets/db/lib/food/ice-cream.webp",
+   "cat": "food",
+   "tags": [
+    "ice",
+    "cream",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#28",
+   "w": 184,
+   "h": 256,
+   "psnr": 43.9
+  },
+  "food/kiwi": {
+   "file": "assets/db/lib/food/kiwi.webp",
+   "cat": "food",
+   "tags": [
+    "kiwi",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#18",
+   "w": 245,
+   "h": 217,
+   "psnr": 44.8
+  },
+  "food/mango": {
+   "file": "assets/db/lib/food/mango.webp",
+   "cat": "food",
+   "tags": [
+    "mango",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#19",
+   "w": 254,
+   "h": 223,
+   "psnr": 45.9
+  },
+  "food/milk": {
+   "file": "assets/db/lib/food/milk.webp",
+   "cat": "food",
+   "tags": [
+    "milk",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#16",
+   "w": 187,
+   "h": 266,
+   "psnr": 47.5
+  },
+  "food/mug": {
+   "file": "assets/db/lib/food/mug.webp",
+   "cat": "food",
+   "tags": [
+    "mug",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#18",
+   "w": 233,
+   "h": 258,
+   "psnr": 44.4
+  },
+  "food/mug-blue": {
+   "file": "assets/db/lib/food/mug-blue.webp",
+   "cat": "food",
+   "tags": [
+    "mug",
+    "blue",
+    "cartoon"
+   ],
+   "source": "icons-animals-fruit-home-30#26",
+   "w": 231,
+   "h": 226,
+   "psnr": 46.0
+  },
+  "food/mushroom": {
+   "file": "assets/db/lib/food/mushroom.webp",
+   "cat": "food",
+   "tags": [
+    "mushroom",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#25",
+   "w": 243,
+   "h": 220,
+   "psnr": 45.2
+  },
+  "food/onion": {
+   "file": "assets/db/lib/food/onion.webp",
+   "cat": "food",
+   "tags": [
+    "onion",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#24",
+   "w": 214,
+   "h": 229,
+   "psnr": 44.0
+  },
+  "food/orange": {
+   "file": "assets/db/lib/food/orange.webp",
+   "cat": "food",
+   "tags": [
+    "orange",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#13",
+   "w": 246,
+   "h": 237,
+   "psnr": 44.0
+  },
+  "food/orange-juice": {
+   "file": "assets/db/lib/food/orange-juice.webp",
+   "cat": "food",
+   "tags": [
+    "orange",
+    "juice",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#19",
+   "w": 229,
+   "h": 251,
+   "psnr": 44.0
+  },
+  "food/pancakes": {
+   "file": "assets/db/lib/food/pancakes.webp",
+   "cat": "food",
+   "tags": [
+    "pancakes",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#30",
+   "w": 248,
+   "h": 225,
+   "psnr": 43.0
+  },
+  "food/pineapple": {
+   "file": "assets/db/lib/food/pineapple.webp",
+   "cat": "food",
+   "tags": [
+    "pineapple",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#15",
+   "w": 170,
+   "h": 256,
+   "psnr": 42.6
+  },
+  "food/pizza": {
+   "file": "assets/db/lib/food/pizza.webp",
+   "cat": "food",
+   "tags": [
+    "pizza",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#12",
+   "w": 260,
+   "h": 248,
+   "psnr": 42.3
+  },
+  "food/popcorn": {
+   "file": "assets/db/lib/food/popcorn.webp",
+   "cat": "food",
+   "tags": [
+    "popcorn",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#20",
+   "w": 226,
+   "h": 268,
+   "psnr": 43.3
+  },
+  "food/strawberry": {
+   "file": "assets/db/lib/food/strawberry.webp",
+   "cat": "food",
+   "tags": [
+    "strawberry",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#11",
+   "w": 209,
+   "h": 242,
+   "psnr": 41.4
+  },
+  "food/tomato": {
+   "file": "assets/db/lib/food/tomato.webp",
+   "cat": "food",
+   "tags": [
+    "tomato",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#7",
+   "w": 246,
+   "h": 253,
+   "psnr": 45.6
+  },
+  "food/water-bottle": {
+   "file": "assets/db/lib/food/water-bottle.webp",
+   "cat": "food",
+   "tags": [
+    "water",
+    "bottle",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#17",
+   "w": 147,
+   "h": 270,
+   "psnr": 44.9
+  },
+  "food/watermelon": {
+   "file": "assets/db/lib/food/watermelon.webp",
+   "cat": "food",
+   "tags": [
+    "watermelon",
+    "cartoon"
+   ],
+   "source": "icons-sea-fruit-veg-sweets-30#14",
+   "w": 276,
+   "h": 234,
+   "psnr": 44.7
+  },
+  "game/anchor": {
+   "file": "assets/db/lib/game/anchor.webp",
+   "cat": "game",
+   "tags": [
+    "anchor",
+    "cartoon"
+   ],
+   "source": "icons-items-25#16",
+   "w": 241,
+   "h": 265,
+   "psnr": 45.5
+  },
+  "game/barrel": {
+   "file": "assets/db/lib/game/barrel.webp",
+   "cat": "game",
+   "tags": [
+    "barrel",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#4",
+   "w": 209,
+   "h": 236,
+   "psnr": 45.4
+  },
+  "game/bell": {
+   "file": "assets/db/lib/game/bell.webp",
+   "cat": "game",
+   "tags": [
+    "bell",
+    "cartoon"
+   ],
+   "source": "icons-items-25#15",
+   "w": 216,
+   "h": 260,
+   "psnr": 44.6
+  },
+  "game/bomb": {
+   "file": "assets/db/lib/game/bomb.webp",
+   "cat": "game",
+   "tags": [
+    "bomb",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#14",
+   "w": 207,
+   "h": 264,
+   "psnr": 44.9
+  },
+  "game/bomb-skull": {
+   "file": "assets/db/lib/game/bomb-skull.webp",
+   "cat": "game",
+   "tags": [
+    "bomb",
+    "skull",
+    "cartoon"
+   ],
+   "source": "icons-items-25#14",
+   "w": 246,
+   "h": 259,
+   "psnr": 45.4
+  },
+  "game/bridge-rope": {
+   "file": "assets/db/lib/game/bridge-rope.webp",
+   "cat": "game",
+   "tags": [
+    "bridge",
+    "rope",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#24",
+   "w": 292,
+   "h": 265,
+   "psnr": 44.3
+  },
+  "game/bush": {
+   "file": "assets/db/lib/game/bush.webp",
+   "cat": "game",
+   "tags": [
+    "bush",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#20",
+   "w": 260,
+   "h": 245,
+   "psnr": 44.8
+  },
+  "game/cactus": {
+   "file": "assets/db/lib/game/cactus.webp",
+   "cat": "game",
+   "tags": [
+    "cactus",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#22",
+   "w": 236,
+   "h": 271,
+   "psnr": 45.6
+  },
+  "game/chest-dark": {
+   "file": "assets/db/lib/game/chest-dark.webp",
+   "cat": "game",
+   "tags": [
+    "chest",
+    "dark",
+    "cartoon"
+   ],
+   "source": "icons-items-25#3",
+   "w": 270,
+   "h": 241,
+   "psnr": 43.3
+  },
+  "game/chest-red": {
+   "file": "assets/db/lib/game/chest-red.webp",
+   "cat": "game",
+   "tags": [
+    "chest",
+    "red",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#25",
+   "w": 259,
+   "h": 255,
+   "psnr": 42.1
+  },
+  "game/clover": {
+   "file": "assets/db/lib/game/clover.webp",
+   "cat": "game",
+   "tags": [
+    "clover",
+    "cartoon"
+   ],
+   "source": "icons-items-25#19",
+   "w": 245,
+   "h": 253,
+   "psnr": 46.3
+  },
+  "game/coin-star": {
+   "file": "assets/db/lib/game/coin-star.webp",
+   "cat": "game",
+   "tags": [
+    "coin",
+    "star",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#7",
+   "w": 231,
+   "h": 231,
+   "psnr": 42.5
+  },
+  "game/compass": {
+   "file": "assets/db/lib/game/compass.webp",
+   "cat": "game",
+   "tags": [
+    "compass",
+    "cartoon"
+   ],
+   "source": "icons-items-25#5",
+   "w": 225,
+   "h": 265,
+   "psnr": 42.8
+  },
+  "game/conveyor": {
+   "file": "assets/db/lib/game/conveyor.webp",
+   "cat": "game",
+   "tags": [
+    "conveyor",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#13",
+   "w": 294,
+   "h": 214,
+   "psnr": 45.0
+  },
+  "game/crate-wood": {
+   "file": "assets/db/lib/game/crate-wood.webp",
+   "cat": "game",
+   "tags": [
+    "crate",
+    "wood",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#6",
+   "w": 246,
+   "h": 231,
+   "psnr": 44.5
+  },
+  "game/crown": {
+   "file": "assets/db/lib/game/crown.webp",
+   "cat": "game",
+   "tags": [
+    "crown",
+    "cartoon"
+   ],
+   "source": "icons-items-25#1",
+   "w": 265,
+   "h": 243,
+   "psnr": 42.8
+  },
+  "game/crown-jewel": {
+   "file": "assets/db/lib/game/crown-jewel.webp",
+   "cat": "game",
+   "tags": [
+    "crown",
+    "jewel",
+    "cartoon"
+   ],
+   "source": "icons-safety-party-toys-25#13",
+   "w": 277,
+   "h": 229,
+   "psnr": 43.5
+  },
+  "game/crystal-ice": {
+   "file": "assets/db/lib/game/crystal-ice.webp",
+   "cat": "game",
+   "tags": [
+    "crystal",
+    "ice",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#21",
+   "w": 245,
+   "h": 265,
+   "psnr": 41.2
+  },
+  "game/diamond": {
+   "file": "assets/db/lib/game/diamond.webp",
+   "cat": "game",
+   "tags": [
+    "diamond",
+    "cartoon"
+   ],
+   "source": "icons-safety-party-toys-25#12",
+   "w": 236,
+   "h": 214,
+   "psnr": 41.7
+  },
+  "game/flag-red": {
+   "file": "assets/db/lib/game/flag-red.webp",
+   "cat": "game",
+   "tags": [
+    "flag",
+    "red",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#19",
+   "w": 223,
+   "h": 265,
+   "psnr": 43.6
+  },
+  "game/gear": {
+   "file": "assets/db/lib/game/gear.webp",
+   "cat": "game",
+   "tags": [
+    "gear",
+    "cartoon"
+   ],
+   "source": "icons-items-25#7",
+   "w": 255,
+   "h": 253,
+   "psnr": 47.3
+  },
+  "game/gem-blue": {
+   "file": "assets/db/lib/game/gem-blue.webp",
+   "cat": "game",
+   "tags": [
+    "gem",
+    "blue",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#8",
+   "w": 230,
+   "h": 218,
+   "psnr": 41.2
+  },
+  "game/gem-green": {
+   "file": "assets/db/lib/game/gem-green.webp",
+   "cat": "game",
+   "tags": [
+    "gem",
+    "green",
+    "cartoon"
+   ],
+   "source": "icons-items-25#9",
+   "w": 245,
+   "h": 250,
+   "psnr": 42.3
+  },
+  "game/heart": {
+   "file": "assets/db/lib/game/heart.webp",
+   "cat": "game",
+   "tags": [
+    "heart",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#9",
+   "w": 236,
+   "h": 207,
+   "psnr": 44.7
+  },
+  "game/horseshoe-magnet": {
+   "file": "assets/db/lib/game/horseshoe-magnet.webp",
+   "cat": "game",
+   "tags": [
+    "horseshoe",
+    "magnet",
+    "cartoon"
+   ],
+   "source": "icons-safety-party-toys-25#14",
+   "w": 226,
+   "h": 238,
+   "psnr": 43.5
+  },
+  "game/hot-air-balloon": {
+   "file": "assets/db/lib/game/hot-air-balloon.webp",
+   "cat": "game",
+   "tags": [
+    "hot",
+    "air",
+    "balloon",
+    "cartoon"
+   ],
+   "source": "icons-items-25#17",
+   "w": 233,
+   "h": 280,
+   "psnr": 43.8
+  },
+  "game/hourglass": {
+   "file": "assets/db/lib/game/hourglass.webp",
+   "cat": "game",
+   "tags": [
+    "hourglass",
+    "cartoon"
+   ],
+   "source": "icons-items-25#8",
+   "w": 202,
+   "h": 271,
+   "psnr": 44.9
+  },
+  "game/key-ornate": {
+   "file": "assets/db/lib/game/key-ornate.webp",
+   "cat": "game",
+   "tags": [
+    "key",
+    "ornate",
+    "cartoon"
+   ],
+   "source": "icons-items-25#20",
+   "w": 248,
+   "h": 260,
+   "psnr": 42.5
+  },
+  "game/ladder": {
+   "file": "assets/db/lib/game/ladder.webp",
+   "cat": "game",
+   "tags": [
+    "ladder",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#16",
+   "w": 192,
+   "h": 260,
+   "psnr": 45.2
+  },
+  "game/lantern": {
+   "file": "assets/db/lib/game/lantern.webp",
+   "cat": "game",
+   "tags": [
+    "lantern",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#23",
+   "w": 165,
+   "h": 287,
+   "psnr": 45.3
+  },
+  "game/lifebuoy": {
+   "file": "assets/db/lib/game/lifebuoy.webp",
+   "cat": "game",
+   "tags": [
+    "lifebuoy",
+    "cartoon"
+   ],
+   "source": "icons-items-25#6",
+   "w": 251,
+   "h": 252,
+   "psnr": 43.9
+  },
+  "game/magnet": {
+   "file": "assets/db/lib/game/magnet.webp",
+   "cat": "game",
+   "tags": [
+    "magnet",
+    "cartoon"
+   ],
+   "source": "icons-items-25#18",
+   "w": 248,
+   "h": 237,
+   "psnr": 42.9
+  },
+  "game/mine-cart": {
+   "file": "assets/db/lib/game/mine-cart.webp",
+   "cat": "game",
+   "tags": [
+    "mine",
+    "cart",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#17",
+   "w": 262,
+   "h": 231,
+   "psnr": 45.4
+  },
+  "game/mushroom-red": {
+   "file": "assets/db/lib/game/mushroom-red.webp",
+   "cat": "game",
+   "tags": [
+    "mushroom",
+    "red",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#5",
+   "w": 226,
+   "h": 241,
+   "psnr": 43.6
+  },
+  "game/pipe-green": {
+   "file": "assets/db/lib/game/pipe-green.webp",
+   "cat": "game",
+   "tags": [
+    "pipe",
+    "green",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#11",
+   "w": 204,
+   "h": 234,
+   "psnr": 45.7
+  },
+  "game/portal-stone": {
+   "file": "assets/db/lib/game/portal-stone.webp",
+   "cat": "game",
+   "tags": [
+    "portal",
+    "stone",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#2",
+   "w": 267,
+   "h": 248,
+   "psnr": 43.8
+  },
+  "game/potion-purple": {
+   "file": "assets/db/lib/game/potion-purple.webp",
+   "cat": "game",
+   "tags": [
+    "potion",
+    "purple",
+    "cartoon"
+   ],
+   "source": "icons-items-25#10",
+   "w": 242,
+   "h": 262,
+   "psnr": 44.4
+  },
+  "game/question-block": {
+   "file": "assets/db/lib/game/question-block.webp",
+   "cat": "game",
+   "tags": [
+    "question",
+    "block",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#10",
+   "w": 243,
+   "h": 238,
+   "psnr": 45.5
+  },
+  "game/shield-lion": {
+   "file": "assets/db/lib/game/shield-lion.webp",
+   "cat": "game",
+   "tags": [
+    "shield",
+    "lion",
+    "cartoon"
+   ],
+   "source": "icons-items-25#25",
+   "w": 243,
+   "h": 277,
+   "psnr": 42.7
+  },
+  "game/shield-star": {
+   "file": "assets/db/lib/game/shield-star.webp",
+   "cat": "game",
+   "tags": [
+    "shield",
+    "star",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#18",
+   "w": 221,
+   "h": 242,
+   "psnr": 45.7
+  },
+  "game/signpost-arrows": {
+   "file": "assets/db/lib/game/signpost-arrows.webp",
+   "cat": "game",
+   "tags": [
+    "signpost",
+    "arrows",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#1",
+   "w": 218,
+   "h": 256,
+   "psnr": 44.7
+  },
+  "game/signpost-wood": {
+   "file": "assets/db/lib/game/signpost-wood.webp",
+   "cat": "game",
+   "tags": [
+    "signpost",
+    "wood",
+    "cartoon"
+   ],
+   "source": "icons-items-25#12",
+   "w": 237,
+   "h": 266,
+   "psnr": 45.2
+  },
+  "game/spring-pad": {
+   "file": "assets/db/lib/game/spring-pad.webp",
+   "cat": "game",
+   "tags": [
+    "spring",
+    "pad",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#12",
+   "w": 199,
+   "h": 225,
+   "psnr": 45.1
+  },
+  "game/star": {
+   "file": "assets/db/lib/game/star.webp",
+   "cat": "game",
+   "tags": [
+    "star",
+    "cartoon"
+   ],
+   "source": "icons-wear-snacks-farm-25#13",
+   "w": 243,
+   "h": 235,
+   "psnr": 45.5
+  },
+  "game/sword": {
+   "file": "assets/db/lib/game/sword.webp",
+   "cat": "game",
+   "tags": [
+    "sword",
+    "cartoon"
+   ],
+   "source": "icons-items-25#2",
+   "w": 215,
+   "h": 256,
+   "psnr": 44.8
+  },
+  "game/target-arrow": {
+   "file": "assets/db/lib/game/target-arrow.webp",
+   "cat": "game",
+   "tags": [
+    "target",
+    "arrow",
+    "cartoon"
+   ],
+   "source": "icons-items-25#11",
+   "w": 253,
+   "h": 257,
+   "psnr": 41.6
+  },
+  "game/target-board": {
+   "file": "assets/db/lib/game/target-board.webp",
+   "cat": "game",
+   "tags": [
+    "target",
+    "board",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#15",
+   "w": 221,
+   "h": 244,
+   "psnr": 41.1
+  },
+  "game/torch": {
+   "file": "assets/db/lib/game/torch.webp",
+   "cat": "game",
+   "tags": [
+    "torch",
+    "cartoon"
+   ],
+   "source": "icons-items-25#13",
+   "w": 167,
+   "h": 267,
+   "psnr": 43.0
+  },
+  "game/treasure-chest": {
+   "file": "assets/db/lib/game/treasure-chest.webp",
+   "cat": "game",
+   "tags": [
+    "treasure",
+    "chest",
+    "cartoon"
+   ],
+   "source": "icons-safety-party-toys-25#11",
+   "w": 257,
+   "h": 224,
+   "psnr": 44.4
+  },
+  "game/treasure-map": {
+   "file": "assets/db/lib/game/treasure-map.webp",
+   "cat": "game",
+   "tags": [
+    "treasure",
+    "map",
+    "cartoon"
+   ],
+   "source": "icons-items-25#4",
+   "w": 258,
+   "h": 243,
+   "psnr": 45.6
+  },
+  "game/trophy-cup": {
+   "file": "assets/db/lib/game/trophy-cup.webp",
+   "cat": "game",
+   "tags": [
+    "trophy",
+    "cup",
+    "cartoon"
+   ],
+   "source": "icons-safety-party-toys-25#5",
+   "w": 253,
+   "h": 263,
+   "psnr": 44.1
+  },
+  "game/trophy-gold": {
+   "file": "assets/db/lib/game/trophy-gold.webp",
+   "cat": "game",
+   "tags": [
+    "trophy",
+    "gold",
+    "cartoon"
+   ],
+   "source": "icons-platformer-25#3",
+   "w": 240,
+   "h": 245,
+   "psnr": 43.2
+  },
+  "game/windmill": {
+   "file": "assets/db/lib/game/windmill.webp",
+   "cat": "game",
+   "tags": [
+    "windmill",
+    "cartoon"
+   ],
+   "source": "icons-items-25#23",
+   "w": 243,
+   "h": 274,
+   "psnr": 44.0
+  },
+  "nature/cherry-blossom": {
+   "file": "assets/db/lib/nature/cherry-blossom.webp",
+   "cat": "nature",
+   "tags": [
+    "cherry",
+    "blossom",
+    "cartoon"
+   ],
+   "source": "icons-nature-vehicles-25#17",
+   "w": 247,
+   "h": 247,
+   "psnr": 44.9
+  },
+  "nature/cloud": {
+   "file": "assets/db/lib/nature/cloud.webp",
+   "cat": "nature",
+   "tags": [
+    "cloud",
+    "cartoon"
+   ],
+   "source": "icons-nature-vehicles-25#3",
+   "w": 260,
+   "h": 213,
+   "psnr": 46.9
+  },
+  "nature/flower-pink": {
+   "file": "assets/db/lib/nature/flower-pink.webp",
+   "cat": "nature",
+   "tags": [
+    "flower",
+    "pink",
+    "cartoon"
+   ],
+   "source": "icons-outdoor-camping-30#8",
+   "w": 220,
+   "h": 264,
+   "psnr": 42.1
+  },
+  "nature/maple-leaf": {
+   "file": "assets/db/lib/nature/maple-leaf.webp",
+   "cat": "nature",
+   "tags": [
+    "maple",
+    "leaf",
+    "cartoon"
+   ],
+   "source": "icons-nature-vehicles-25#21",
+   "w": 257,
+   "h": 267,
+   "psnr": 43.3
+  },
+  "nature/moon-stars": {
+   "file": "assets/db/lib/nature/moon-stars.webp",
+   "cat": "nature",
+   "tags": [
+    "moon",
+    "stars",
+    "cartoon"
+   ],
+   "source": "icons-nature-vehicles-25#2",
+   "w": 226,
+   "h": 231,
+   "psnr": 44.8
+  },
+  "nature/potted-plant": {
+   "file": "assets/db/lib/nature/potted-plant.webp",
+   "cat": "nature",
+   "tags": [
+    "potted",
+    "plant",
+    "cartoon"
+   ],
+   "source": "icons-nature-vehicles-25#16",
+   "w": 251,
+   "h": 271,
+   "psnr": 45.1
+  },
+  "nature/rainbow": {
+   "file": "assets/db/lib/nature/rainbow.webp",
+   "cat": "nature",
+   "tags": [
+    "rainbow",
+    "cartoon"
+   ],
+   "source": "icons-nature-vehicles-25#4",
+   "w": 296,
+   "h": 213,
+   "psnr": 43.2
+  },
+  "nature/rose": {
+   "file": "assets/db/lib/nature/rose.webp",
+   "cat": "nature",
+   "tags": [
+    "rose",
+    "cartoon"
+   ],
+   "source": "icons-nature-vehicles-25#19",
+   "w": 234,
+   "h": 271,
+   "psnr": 43.1
+  },
+  "nature/sandcastle": {
+   "file": "assets/db/lib/nature/sandcastle.webp",
+   "cat": "nature",
+   "tags": [
+    "sandcastle",
+    "cartoon"
+   ],
+   "source": "icons-nature-vehicles-25#23",
+   "w": 291,
+   "h": 267,
+   "psnr": 44.7
+  },
+  "nature/snowflake": {
+   "file": "assets/db/lib/nature/snowflake.webp",
+   "cat": "nature",
+   "tags": [
+    "snowflake",
+    "cartoon"
+   ],
+   "source": "icons-items-25#21",
+   "w": 230,
+   "h": 259,
+   "psnr": 42.6
+  },
+  "nature/snowman": {
+   "file": "assets/db/lib/nature/snowman.webp",
+   "cat": "nature",
+   "tags": [
+    "snowman",
+    "cartoon"
+   ],
+   "source": "icons-nature-vehicles-25#22",
+   "w": 253,
+   "h": 302,
+   "psnr": 46.1
+  },
+  "nature/sprout": {
+   "file": "assets/db/lib/nature/sprout.webp",
+   "cat": "nature",
+   "tags": [
+    "sprout",
+    "cartoon"
+   ],
+   "source": "icons-items-25#22",
+   "w": 239,
+   "h": 235,
+   "psnr": 45.1
+  },
+  "nature/sun": {
+   "file": "assets/db/lib/nature/sun.webp",
+   "cat": "nature",
+   "tags": [
+    "sun",
+    "cartoon"
+   ],
+   "source": "icons-nature-vehicles-25#1",
+   "w": 256,
+   "h": 257,
+   "psnr": 44.1
+  },
+  "nature/sunflower": {
+   "file": "assets/db/lib/nature/sunflower.webp",
+   "cat": "nature",
+   "tags": [
+    "sunflower",
+    "cartoon"
+   ],
+   "source": "icons-nature-vehicles-25#18",
+   "w": 241,
+   "h": 276,
+   "psnr": 44.3
+  },
+  "park/arrow-sign": {
+   "file": "assets/db/lib/park/arrow-sign.webp",
+   "cat": "park",
+   "tags": [
+    "arrow",
+    "sign",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#24",
+   "w": 251,
+   "h": 275,
+   "psnr": 44.8
+  },
+  "park/bench": {
+   "file": "assets/db/lib/park/bench.webp",
+   "cat": "park",
+   "tags": [
+    "bench",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#15",
+   "w": 270,
+   "h": 214,
+   "psnr": 44.9
+  },
+  "park/campfire": {
+   "file": "assets/db/lib/park/campfire.webp",
+   "cat": "park",
+   "tags": [
+    "campfire",
+    "cartoon"
+   ],
+   "source": "icons-outdoor-camping-30#13",
+   "w": 260,
+   "h": 260,
+   "psnr": 43.2
+  },
+  "park/deck-chair": {
+   "file": "assets/db/lib/park/deck-chair.webp",
+   "cat": "park",
+   "tags": [
+    "deck",
+    "chair",
+    "cartoon"
+   ],
+   "source": "icons-outdoor-camping-30#25",
+   "w": 269,
+   "h": 284,
+   "psnr": 44.5
+  },
+  "park/doghouse": {
+   "file": "assets/db/lib/park/doghouse.webp",
+   "cat": "park",
+   "tags": [
+    "doghouse",
+    "cartoon"
+   ],
+   "source": "icons-outdoor-camping-30#10",
+   "w": 245,
+   "h": 238,
+   "psnr": 43.3
+  },
+  "park/fence": {
+   "file": "assets/db/lib/park/fence.webp",
+   "cat": "park",
+   "tags": [
+    "fence",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#17",
+   "w": 283,
+   "h": 228,
+   "psnr": 44.9
+  },
+  "park/fountain": {
+   "file": "assets/db/lib/park/fountain.webp",
+   "cat": "park",
+   "tags": [
+    "fountain",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#20",
+   "w": 244,
+   "h": 274,
+   "psnr": 43.5
+  },
+  "park/grill": {
+   "file": "assets/db/lib/park/grill.webp",
+   "cat": "park",
+   "tags": [
+    "grill",
+    "cartoon"
+   ],
+   "source": "icons-outdoor-camping-30#20",
+   "w": 211,
+   "h": 266,
+   "psnr": 43.1
+  },
+  "park/lawn-mower": {
+   "file": "assets/db/lib/park/lawn-mower.webp",
+   "cat": "park",
+   "tags": [
+    "lawn",
+    "mower",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#23",
+   "w": 268,
+   "h": 268,
+   "psnr": 44.9
+  },
+  "park/lighthouse": {
+   "file": "assets/db/lib/park/lighthouse.webp",
+   "cat": "park",
+   "tags": [
+    "lighthouse",
+    "cartoon"
+   ],
+   "source": "icons-outdoor-camping-30#5",
+   "w": 208,
+   "h": 277,
+   "psnr": 43.7
+  },
+  "park/potted-cactus": {
+   "file": "assets/db/lib/park/potted-cactus.webp",
+   "cat": "park",
+   "tags": [
+    "potted",
+    "cactus",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#25",
+   "w": 211,
+   "h": 279,
+   "psnr": 45.1
+  },
+  "park/street-lamp": {
+   "file": "assets/db/lib/park/street-lamp.webp",
+   "cat": "park",
+   "tags": [
+    "street",
+    "lamp",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#16",
+   "w": 130,
+   "h": 295,
+   "psnr": 45.0
+  },
+  "park/tent": {
+   "file": "assets/db/lib/park/tent.webp",
+   "cat": "park",
+   "tags": [
+    "tent",
+    "cartoon"
+   ],
+   "source": "icons-outdoor-camping-30#14",
+   "w": 309,
+   "h": 220,
+   "psnr": 45.7
+  },
+  "park/tree": {
+   "file": "assets/db/lib/park/tree.webp",
+   "cat": "park",
+   "tags": [
+    "tree",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#18",
+   "w": 238,
+   "h": 285,
+   "psnr": 45.2
+  },
+  "park/watering-can": {
+   "file": "assets/db/lib/park/watering-can.webp",
+   "cat": "park",
+   "tags": [
+    "watering",
+    "can",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#22",
+   "w": 262,
+   "h": 244,
+   "psnr": 46.7
+  },
+  "park/well": {
+   "file": "assets/db/lib/park/well.webp",
+   "cat": "park",
+   "tags": [
+    "well",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#19",
+   "w": 254,
+   "h": 280,
+   "psnr": 45.4
+  },
+  "park/wheelbarrow": {
+   "file": "assets/db/lib/park/wheelbarrow.webp",
+   "cat": "park",
+   "tags": [
+    "wheelbarrow",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#21",
+   "w": 289,
+   "h": 257,
+   "psnr": 43.4
+  },
+  "people/astronaut": {
+   "file": "assets/db/lib/people/astronaut.webp",
+   "cat": "people",
+   "tags": [
+    "astronaut",
+    "cartoon"
+   ],
+   "source": "icons-home-hobby-25#6",
+   "w": 220,
+   "h": 270,
+   "psnr": 45.5
+  },
+  "real/animals/butterfly": {
+   "file": "assets/db/lib/real/animals/butterfly.webp",
+   "cat": "animals",
+   "tags": [
+    "butterfly",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#2",
+   "w": 256,
+   "h": 238,
+   "psnr": 42.8
+  },
+  "real/animals/cat": {
+   "file": "assets/db/lib/real/animals/cat.webp",
+   "cat": "animals",
+   "tags": [
+    "cat",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia2-25#23",
+   "w": 238,
+   "h": 295,
+   "psnr": 45.0
+  },
+  "real/animals/clownfish": {
+   "file": "assets/db/lib/real/animals/clownfish.webp",
+   "cat": "animals",
+   "tags": [
+    "clownfish",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#14",
+   "w": 293,
+   "h": 207,
+   "psnr": 44.7
+  },
+  "real/animals/cockroach": {
+   "file": "assets/db/lib/real/animals/cockroach.webp",
+   "cat": "animals",
+   "tags": [
+    "cockroach",
+    "realistic"
+   ],
+   "source": "icons-real-home-produce-25#11",
+   "w": 219,
+   "h": 252,
+   "psnr": 44.3
+  },
+  "real/animals/cow": {
+   "file": "assets/db/lib/real/animals/cow.webp",
+   "cat": "animals",
+   "tags": [
+    "cow",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#4",
+   "w": 265,
+   "h": 233,
+   "psnr": 46.1
+  },
+  "real/animals/duck": {
+   "file": "assets/db/lib/real/animals/duck.webp",
+   "cat": "animals",
+   "tags": [
+    "duck",
+    "realistic"
+   ],
+   "source": "icons-real-farm-home-25#9",
+   "w": 258,
+   "h": 256,
+   "psnr": 44.7
+  },
+  "real/animals/frog": {
+   "file": "assets/db/lib/real/animals/frog.webp",
+   "cat": "animals",
+   "tags": [
+    "frog",
+    "realistic"
+   ],
+   "source": "icons-real-home-produce-25#12",
+   "w": 237,
+   "h": 197,
+   "psnr": 44.8
+  },
+  "real/animals/goat": {
+   "file": "assets/db/lib/real/animals/goat.webp",
+   "cat": "animals",
+   "tags": [
+    "goat",
+    "realistic"
+   ],
+   "source": "icons-real-kitchen-outdoor-25#6",
+   "w": 268,
+   "h": 282,
+   "psnr": 45.6
+  },
+  "real/animals/goldfish": {
+   "file": "assets/db/lib/real/animals/goldfish.webp",
+   "cat": "animals",
+   "tags": [
+    "goldfish",
+    "realistic"
+   ],
+   "source": "icons-real-home-produce-25#14",
+   "w": 274,
+   "h": 217,
+   "psnr": 42.5
+  },
+  "real/animals/hen": {
+   "file": "assets/db/lib/real/animals/hen.webp",
+   "cat": "animals",
+   "tags": [
+    "hen",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#2",
+   "w": 223,
+   "h": 259,
+   "psnr": 44.4
+  },
+  "real/animals/iguana": {
+   "file": "assets/db/lib/real/animals/iguana.webp",
+   "cat": "animals",
+   "tags": [
+    "iguana",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#3",
+   "w": 277,
+   "h": 238,
+   "psnr": 44.2
+  },
+  "real/animals/pigeon": {
+   "file": "assets/db/lib/real/animals/pigeon.webp",
+   "cat": "animals",
+   "tags": [
+    "pigeon",
+    "realistic"
+   ],
+   "source": "icons-real-home-produce-25#13",
+   "w": 274,
+   "h": 225,
+   "psnr": 44.9
+  },
+  "real/animals/shrimp": {
+   "file": "assets/db/lib/real/animals/shrimp.webp",
+   "cat": "animals",
+   "tags": [
+    "shrimp",
+    "realistic"
+   ],
+   "source": "icons-real-home-produce-25#15",
+   "w": 278,
+   "h": 244,
+   "psnr": 45.1
+  },
+  "real/animals/tuna": {
+   "file": "assets/db/lib/real/animals/tuna.webp",
+   "cat": "animals",
+   "tags": [
+    "tuna",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#20",
+   "w": 269,
+   "h": 211,
+   "psnr": 45.2
+  },
+  "real/branded/ac-daikin": {
+   "file": "assets/db/lib/real/branded/ac-daikin.webp",
+   "cat": "branded",
+   "tags": [
+    "ac",
+    "daikin",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-office-market-25#25",
+   "w": 292,
+   "h": 196,
+   "psnr": 48.2
+  },
+  "real/branded/aqua-gallon": {
+   "file": "assets/db/lib/real/branded/aqua-gallon.webp",
+   "cat": "branded",
+   "tags": [
+    "aqua",
+    "gallon",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#1",
+   "w": 176,
+   "h": 250,
+   "psnr": 43.4
+  },
+  "real/branded/bus-damri": {
+   "file": "assets/db/lib/real/branded/bus-damri.webp",
+   "cat": "branded",
+   "tags": [
+    "bus",
+    "damri",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia2-25#18",
+   "w": 297,
+   "h": 231,
+   "psnr": 44.5
+  },
+  "real/branded/calculator-casio": {
+   "file": "assets/db/lib/real/branded/calculator-casio.webp",
+   "cat": "branded",
+   "tags": [
+    "calculator",
+    "casio",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#22",
+   "w": 231,
+   "h": 274,
+   "psnr": 46.0
+  },
+  "real/branded/camera-canon": {
+   "file": "assets/db/lib/real/branded/camera-canon.webp",
+   "cat": "branded",
+   "tags": [
+    "camera",
+    "canon",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#23",
+   "w": 271,
+   "h": 255,
+   "psnr": 45.6
+  },
+  "real/branded/camera-canon-eos": {
+   "file": "assets/db/lib/real/branded/camera-canon-eos.webp",
+   "cat": "branded",
+   "tags": [
+    "camera",
+    "canon",
+    "eos",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-kitchen-outdoor-25#5",
+   "w": 255,
+   "h": 256,
+   "psnr": 45.7
+  },
+  "real/branded/car-battery-gs": {
+   "file": "assets/db/lib/real/branded/car-battery-gs.webp",
+   "cat": "branded",
+   "tags": [
+    "car",
+    "battery",
+    "gs",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia3-25#14",
+   "w": 262,
+   "h": 243,
+   "psnr": 46.3
+  },
+  "real/branded/coffee-goodday": {
+   "file": "assets/db/lib/real/branded/coffee-goodday.webp",
+   "cat": "branded",
+   "tags": [
+    "coffee",
+    "goodday",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-daily3-25#22",
+   "w": 217,
+   "h": 248,
+   "psnr": 41.8
+  },
+  "real/branded/container-locklock": {
+   "file": "assets/db/lib/real/branded/container-locklock.webp",
+   "cat": "branded",
+   "tags": [
+    "container",
+    "locklock",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia3-25#25",
+   "w": 282,
+   "h": 216,
+   "psnr": 45.9
+  },
+  "real/branded/cooking-oil-bimoli": {
+   "file": "assets/db/lib/real/branded/cooking-oil-bimoli.webp",
+   "cat": "branded",
+   "tags": [
+    "cooking",
+    "oil",
+    "bimoli",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-daily-branded2-25#20",
+   "w": 140,
+   "h": 276,
+   "psnr": 41.7
+  },
+  "real/branded/detergent-daia": {
+   "file": "assets/db/lib/real/branded/detergent-daia.webp",
+   "cat": "branded",
+   "tags": [
+    "detergent",
+    "daia",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-daily-branded2-25#19",
+   "w": 192,
+   "h": 280,
+   "psnr": 44.0
+  },
+  "real/branded/fan-miyako": {
+   "file": "assets/db/lib/real/branded/fan-miyako.webp",
+   "cat": "branded",
+   "tags": [
+    "fan",
+    "miyako",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-farm-home-25#23",
+   "w": 179,
+   "h": 305,
+   "psnr": 44.9
+  },
+  "real/branded/flashdisk-sandisk": {
+   "file": "assets/db/lib/real/branded/flashdisk-sandisk.webp",
+   "cat": "branded",
+   "tags": [
+    "flashdisk",
+    "sandisk",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-office-market-25#16",
+   "w": 230,
+   "h": 222,
+   "psnr": 45.2
+  },
+  "real/branded/glass-cleaner-windex": {
+   "file": "assets/db/lib/real/branded/glass-cleaner-windex.webp",
+   "cat": "branded",
+   "tags": [
+    "glass",
+    "cleaner",
+    "windex",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#14",
+   "w": 140,
+   "h": 274,
+   "psnr": 41.1
+  },
+  "real/branded/hand-sanitizer-aseptic": {
+   "file": "assets/db/lib/real/branded/hand-sanitizer-aseptic.webp",
+   "cat": "branded",
+   "tags": [
+    "hand",
+    "sanitizer",
+    "aseptic",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-kitchen-outdoor-25#16",
+   "w": 163,
+   "h": 274,
+   "psnr": 45.7
+  },
+  "real/branded/hand-soap-lifebuoy": {
+   "file": "assets/db/lib/real/branded/hand-soap-lifebuoy.webp",
+   "cat": "branded",
+   "tags": [
+    "hand",
+    "soap",
+    "lifebuoy",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#12",
+   "w": 183,
+   "h": 255,
+   "psnr": 41.9
+  },
+  "real/branded/headphones-jbl": {
+   "file": "assets/db/lib/real/branded/headphones-jbl.webp",
+   "cat": "branded",
+   "tags": [
+    "headphones",
+    "jbl",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-daily-branded2-25#25",
+   "w": 236,
+   "h": 265,
+   "psnr": 44.0
+  },
+  "real/branded/helmet-gm": {
+   "file": "assets/db/lib/real/branded/helmet-gm.webp",
+   "cat": "branded",
+   "tags": [
+    "helmet",
+    "gm",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-office-market-25#10",
+   "w": 255,
+   "h": 249,
+   "psnr": 46.5
+  },
+  "real/branded/helmet-gojek": {
+   "file": "assets/db/lib/real/branded/helmet-gojek.webp",
+   "cat": "branded",
+   "tags": [
+    "helmet",
+    "gojek",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia2-25#7",
+   "w": 266,
+   "h": 241,
+   "psnr": 46.2
+  },
+  "real/branded/helmet-ink": {
+   "file": "assets/db/lib/real/branded/helmet-ink.webp",
+   "cat": "branded",
+   "tags": [
+    "helmet",
+    "ink",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-daily3-25#13",
+   "w": 259,
+   "h": 255,
+   "psnr": 46.9
+  },
+  "real/branded/helmet-kyt": {
+   "file": "assets/db/lib/real/branded/helmet-kyt.webp",
+   "cat": "branded",
+   "tags": [
+    "helmet",
+    "kyt",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#8",
+   "w": 244,
+   "h": 255,
+   "psnr": 45.0
+  },
+  "real/branded/indomie": {
+   "file": "assets/db/lib/real/branded/indomie.webp",
+   "cat": "branded",
+   "tags": [
+    "indomie",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#21",
+   "w": 259,
+   "h": 235,
+   "psnr": 43.6
+  },
+  "real/branded/key-yale": {
+   "file": "assets/db/lib/real/branded/key-yale.webp",
+   "cat": "branded",
+   "tags": [
+    "key",
+    "yale",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-office-market-25#6",
+   "w": 179,
+   "h": 260,
+   "psnr": 44.7
+  },
+  "real/branded/le-minerale": {
+   "file": "assets/db/lib/real/branded/le-minerale.webp",
+   "cat": "branded",
+   "tags": [
+    "le",
+    "minerale",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#20",
+   "w": 135,
+   "h": 262,
+   "psnr": 43.6
+  },
+  "real/branded/lpg-bright-gas": {
+   "file": "assets/db/lib/real/branded/lpg-bright-gas.webp",
+   "cat": "branded",
+   "tags": [
+    "lpg",
+    "bright",
+    "gas",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#19",
+   "w": 222,
+   "h": 281,
+   "psnr": 46.6
+  },
+  "real/branded/lpg-elpiji": {
+   "file": "assets/db/lib/real/branded/lpg-elpiji.webp",
+   "cat": "branded",
+   "tags": [
+    "lpg",
+    "elpiji",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#4",
+   "w": 196,
+   "h": 257,
+   "psnr": 46.0
+  },
+  "real/branded/lpg-pertamina": {
+   "file": "assets/db/lib/real/branded/lpg-pertamina.webp",
+   "cat": "branded",
+   "tags": [
+    "lpg",
+    "pertamina",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-office-market-25#24",
+   "w": 203,
+   "h": 273,
+   "psnr": 46.2
+  },
+  "real/branded/mie-sedaap": {
+   "file": "assets/db/lib/real/branded/mie-sedaap.webp",
+   "cat": "branded",
+   "tags": [
+    "mie",
+    "sedaap",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-office-market-25#12",
+   "w": 258,
+   "h": 210,
+   "psnr": 41.5
+  },
+  "real/branded/powerbank-romoss": {
+   "file": "assets/db/lib/real/branded/powerbank-romoss.webp",
+   "cat": "branded",
+   "tags": [
+    "powerbank",
+    "romoss",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-kitchen-outdoor-25#24",
+   "w": 276,
+   "h": 258,
+   "psnr": 48.3
+  },
+  "real/branded/printer-epson": {
+   "file": "assets/db/lib/real/branded/printer-epson.webp",
+   "cat": "branded",
+   "tags": [
+    "printer",
+    "epson",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-home-produce-25#5",
+   "w": 276,
+   "h": 250,
+   "psnr": 47.5
+  },
+  "real/branded/rice-cooker-miyako": {
+   "file": "assets/db/lib/real/branded/rice-cooker-miyako.webp",
+   "cat": "branded",
+   "tags": [
+    "rice",
+    "cooker",
+    "miyako",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#5",
+   "w": 258,
+   "h": 248,
+   "psnr": 46.8
+  },
+  "real/branded/rice-cooker-miyako-white": {
+   "file": "assets/db/lib/real/branded/rice-cooker-miyako-white.webp",
+   "cat": "branded",
+   "tags": [
+    "rice",
+    "cooker",
+    "miyako",
+    "white",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-home-produce-25#23",
+   "w": 251,
+   "h": 270,
+   "psnr": 47.3
+  },
+  "real/branded/sandals-swallow": {
+   "file": "assets/db/lib/real/branded/sandals-swallow.webp",
+   "cat": "branded",
+   "tags": [
+    "sandals",
+    "swallow",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#5",
+   "w": 270,
+   "h": 247,
+   "psnr": 43.9
+  },
+  "real/branded/sandals-swallow-green": {
+   "file": "assets/db/lib/real/branded/sandals-swallow-green.webp",
+   "cat": "branded",
+   "tags": [
+    "sandals",
+    "swallow",
+    "green",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#19",
+   "w": 270,
+   "h": 260,
+   "psnr": 44.7
+  },
+  "real/branded/sandals-swallow-red": {
+   "file": "assets/db/lib/real/branded/sandals-swallow-red.webp",
+   "cat": "branded",
+   "tags": [
+    "sandals",
+    "swallow",
+    "red",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-daily3-25#14",
+   "w": 263,
+   "h": 235,
+   "psnr": 43.6
+  },
+  "real/branded/soap-lux": {
+   "file": "assets/db/lib/real/branded/soap-lux.webp",
+   "cat": "branded",
+   "tags": [
+    "soap",
+    "lux",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#13",
+   "w": 269,
+   "h": 213,
+   "psnr": 48.4
+  },
+  "real/branded/soap-lux-pink": {
+   "file": "assets/db/lib/real/branded/soap-lux-pink.webp",
+   "cat": "branded",
+   "tags": [
+    "soap",
+    "lux",
+    "pink",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-kitchen-outdoor-25#9",
+   "w": 255,
+   "h": 177,
+   "psnr": 43.3
+  },
+  "real/branded/stove-rinnai": {
+   "file": "assets/db/lib/real/branded/stove-rinnai.webp",
+   "cat": "branded",
+   "tags": [
+    "stove",
+    "rinnai",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-kitchen-outdoor-25#1",
+   "w": 288,
+   "h": 154,
+   "psnr": 46.7
+  },
+  "real/branded/switch-panasonic": {
+   "file": "assets/db/lib/real/branded/switch-panasonic.webp",
+   "cat": "branded",
+   "tags": [
+    "switch",
+    "panasonic",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia2-25#25",
+   "w": 237,
+   "h": 230,
+   "psnr": 49.7
+  },
+  "real/branded/tape-daimaru": {
+   "file": "assets/db/lib/real/branded/tape-daimaru.webp",
+   "cat": "branded",
+   "tags": [
+    "tape",
+    "daimaru",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-home-produce-25#20",
+   "w": 231,
+   "h": 214,
+   "psnr": 46.5
+  },
+  "real/branded/tape-measure-stanley": {
+   "file": "assets/db/lib/real/branded/tape-measure-stanley.webp",
+   "cat": "branded",
+   "tags": [
+    "tape",
+    "measure",
+    "stanley",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#23",
+   "w": 293,
+   "h": 250,
+   "psnr": 45.0
+  },
+  "real/branded/thermos": {
+   "file": "assets/db/lib/real/branded/thermos.webp",
+   "cat": "branded",
+   "tags": [
+    "thermos",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-daily-branded2-25#11",
+   "w": 147,
+   "h": 283,
+   "psnr": 47.1
+  },
+  "real/branded/toothpaste-pepsodent": {
+   "file": "assets/db/lib/real/branded/toothpaste-pepsodent.webp",
+   "cat": "branded",
+   "tags": [
+    "toothpaste",
+    "pepsodent",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#16",
+   "w": 298,
+   "h": 173,
+   "psnr": 44.8
+  },
+  "real/branded/train-kai": {
+   "file": "assets/db/lib/real/branded/train-kai.webp",
+   "cat": "branded",
+   "tags": [
+    "train",
+    "kai",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia2-25#6",
+   "w": 266,
+   "h": 256,
+   "psnr": 44.7
+  },
+  "real/branded/ultra-milk": {
+   "file": "assets/db/lib/real/branded/ultra-milk.webp",
+   "cat": "branded",
+   "tags": [
+    "ultra",
+    "milk",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#4",
+   "w": 166,
+   "h": 259,
+   "psnr": 46.0
+  },
+  "real/branded/underwear-hanes": {
+   "file": "assets/db/lib/real/branded/underwear-hanes.webp",
+   "cat": "branded",
+   "tags": [
+    "underwear",
+    "hanes",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#6",
+   "w": 260,
+   "h": 217,
+   "psnr": 45.6
+  },
+  "real/branded/underwear-rider": {
+   "file": "assets/db/lib/real/branded/underwear-rider.webp",
+   "cat": "branded",
+   "tags": [
+    "underwear",
+    "rider",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-daily3-25#5",
+   "w": 268,
+   "h": 199,
+   "psnr": 45.8
+  },
+  "real/branded/wall-clock-seiko": {
+   "file": "assets/db/lib/real/branded/wall-clock-seiko.webp",
+   "cat": "branded",
+   "tags": [
+    "wall",
+    "clock",
+    "seiko",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-farm-home-25#16",
+   "w": 243,
+   "h": 249,
+   "psnr": 46.8
+  },
+  "real/branded/water-tank-penguin": {
+   "file": "assets/db/lib/real/branded/water-tank-penguin.webp",
+   "cat": "branded",
+   "tags": [
+    "water",
+    "tank",
+    "penguin",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-farm-home-25#20",
+   "w": 241,
+   "h": 273,
+   "psnr": 47.3
+  },
+  "real/branded/yogurt-indomilk": {
+   "file": "assets/db/lib/real/branded/yogurt-indomilk.webp",
+   "cat": "branded",
+   "tags": [
+    "yogurt",
+    "indomilk",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-office-market-25#15",
+   "w": 216,
+   "h": 235,
+   "psnr": 44.5
+  },
+  "real/currency/coin-500": {
+   "file": "assets/db/lib/real/currency/coin-500.webp",
+   "cat": "currency",
+   "tags": [
+    "coin",
+    "500",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia3-25#23",
+   "w": 251,
+   "h": 253,
+   "psnr": 45.1
+  },
+  "real/currency/rupiah-100000": {
+   "file": "assets/db/lib/real/currency/rupiah-100000.webp",
+   "cat": "currency",
+   "tags": [
+    "rupiah",
+    "100000",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#3",
+   "w": 329,
+   "h": 216,
+   "psnr": 42.6
+  },
+  "real/currency/rupiah-2000": {
+   "file": "assets/db/lib/real/currency/rupiah-2000.webp",
+   "cat": "currency",
+   "tags": [
+    "rupiah",
+    "2000",
+    "branded",
+    "realistic"
+   ],
+   "source": "icons-daily-branded2-25#3",
+   "w": 321,
+   "h": 213,
+   "psnr": 45.5
+  },
+  "real/food/banana-bunch": {
+   "file": "assets/db/lib/real/food/banana-bunch.webp",
+   "cat": "food",
+   "tags": [
+    "banana",
+    "bunch",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#2",
+   "w": 270,
+   "h": 231,
+   "psnr": 45.5
+  },
+  "real/food/bok-choy": {
+   "file": "assets/db/lib/real/food/bok-choy.webp",
+   "cat": "food",
+   "tags": [
+    "bok",
+    "choy",
+    "realistic"
+   ],
+   "source": "icons-real-home-produce-25#10",
+   "w": 275,
+   "h": 266,
+   "psnr": 44.7
+  },
+  "real/food/broccoli": {
+   "file": "assets/db/lib/real/food/broccoli.webp",
+   "cat": "food",
+   "tags": [
+    "broccoli",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia3-25#15",
+   "w": 255,
+   "h": 249,
+   "psnr": 44.3
+  },
+  "real/food/carrots": {
+   "file": "assets/db/lib/real/food/carrots.webp",
+   "cat": "food",
+   "tags": [
+    "carrots",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia2-25#12",
+   "w": 265,
+   "h": 269,
+   "psnr": 43.4
+  },
+  "real/food/cauliflower": {
+   "file": "assets/db/lib/real/food/cauliflower.webp",
+   "cat": "food",
+   "tags": [
+    "cauliflower",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia2-25#13",
+   "w": 275,
+   "h": 241,
+   "psnr": 44.6
+  },
+  "real/food/chili": {
+   "file": "assets/db/lib/real/food/chili.webp",
+   "cat": "food",
+   "tags": [
+    "chili",
+    "realistic"
+   ],
+   "source": "icons-real-kitchen-outdoor-25#15",
+   "w": 253,
+   "h": 253,
+   "psnr": 42.1
+  },
+  "real/food/chili-red": {
+   "file": "assets/db/lib/real/food/chili-red.webp",
+   "cat": "food",
+   "tags": [
+    "chili",
+    "red",
+    "realistic"
+   ],
+   "source": "icons-real-daily3-25#19",
+   "w": 275,
+   "h": 269,
+   "psnr": 43.2
+  },
+  "real/food/chips": {
+   "file": "assets/db/lib/real/food/chips.webp",
+   "cat": "food",
+   "tags": [
+    "chips",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#23",
+   "w": 212,
+   "h": 222,
+   "psnr": 42.1
+  },
+  "real/food/cookie-jar": {
+   "file": "assets/db/lib/real/food/cookie-jar.webp",
+   "cat": "food",
+   "tags": [
+    "cookie",
+    "jar",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia3-25#4",
+   "w": 218,
+   "h": 250,
+   "psnr": 44.0
+  },
+  "real/food/corn": {
+   "file": "assets/db/lib/real/food/corn.webp",
+   "cat": "food",
+   "tags": [
+    "corn",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#9",
+   "w": 230,
+   "h": 262,
+   "psnr": 42.4
+  },
+  "real/food/donut": {
+   "file": "assets/db/lib/real/food/donut.webp",
+   "cat": "food",
+   "tags": [
+    "donut",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#7",
+   "w": 260,
+   "h": 242,
+   "psnr": 43.8
+  },
+  "real/food/dragon-fruit": {
+   "file": "assets/db/lib/real/food/dragon-fruit.webp",
+   "cat": "food",
+   "tags": [
+    "dragon",
+    "fruit",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia3-25#19",
+   "w": 275,
+   "h": 260,
+   "psnr": 44.2
+  },
+  "real/food/durian": {
+   "file": "assets/db/lib/real/food/durian.webp",
+   "cat": "food",
+   "tags": [
+    "durian",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#17",
+   "w": 245,
+   "h": 270,
+   "psnr": 44.9
+  },
+  "real/food/eggplant": {
+   "file": "assets/db/lib/real/food/eggplant.webp",
+   "cat": "food",
+   "tags": [
+    "eggplant",
+    "realistic"
+   ],
+   "source": "icons-real-home-produce-25#9",
+   "w": 208,
+   "h": 256,
+   "psnr": 45.9
+  },
+  "real/food/eggs": {
+   "file": "assets/db/lib/real/food/eggs.webp",
+   "cat": "food",
+   "tags": [
+    "eggs",
+    "realistic"
+   ],
+   "source": "icons-real-daily3-25#21",
+   "w": 275,
+   "h": 190,
+   "psnr": 45.8
+  },
+  "real/food/es-teh-plastik": {
+   "file": "assets/db/lib/real/food/es-teh-plastik.webp",
+   "cat": "food",
+   "tags": [
+    "es",
+    "teh",
+    "plastik",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#8",
+   "w": 204,
+   "h": 286,
+   "psnr": 45.0
+  },
+  "real/food/garlic": {
+   "file": "assets/db/lib/real/food/garlic.webp",
+   "cat": "food",
+   "tags": [
+    "garlic",
+    "realistic"
+   ],
+   "source": "icons-real-daily3-25#20",
+   "w": 245,
+   "h": 267,
+   "psnr": 45.9
+  },
+  "real/food/ginger": {
+   "file": "assets/db/lib/real/food/ginger.webp",
+   "cat": "food",
+   "tags": [
+    "ginger",
+    "realistic"
+   ],
+   "source": "icons-real-daily3-25#18",
+   "w": 255,
+   "h": 241,
+   "psnr": 44.9
+  },
+  "real/food/grapes": {
+   "file": "assets/db/lib/real/food/grapes.webp",
+   "cat": "food",
+   "tags": [
+    "grapes",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia2-25#24",
+   "w": 231,
+   "h": 269,
+   "psnr": 44.9
+  },
+  "real/food/jackfruit": {
+   "file": "assets/db/lib/real/food/jackfruit.webp",
+   "cat": "food",
+   "tags": [
+    "jackfruit",
+    "realistic"
+   ],
+   "source": "icons-real-kitchen-outdoor-25#13",
+   "w": 283,
+   "h": 276,
+   "psnr": 43.8
+  },
+  "real/food/ketupat": {
+   "file": "assets/db/lib/real/food/ketupat.webp",
+   "cat": "food",
+   "tags": [
+    "ketupat",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia2-25#19",
+   "w": 250,
+   "h": 278,
+   "psnr": 44.6
+  },
+  "real/food/lemongrass": {
+   "file": "assets/db/lib/real/food/lemongrass.webp",
+   "cat": "food",
+   "tags": [
+    "lemongrass",
+    "realistic"
+   ],
+   "source": "icons-real-farm-home-25#4",
+   "w": 257,
+   "h": 255,
+   "psnr": 44.2
+  },
+  "real/food/lemper": {
+   "file": "assets/db/lib/real/food/lemper.webp",
+   "cat": "food",
+   "tags": [
+    "lemper",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#11",
+   "w": 252,
+   "h": 199,
+   "psnr": 45.1
+  },
+  "real/food/lime": {
+   "file": "assets/db/lib/real/food/lime.webp",
+   "cat": "food",
+   "tags": [
+    "lime",
+    "realistic"
+   ],
+   "source": "icons-real-daily3-25#16",
+   "w": 264,
+   "h": 209,
+   "psnr": 44.9
+  },
+  "real/food/long-beans": {
+   "file": "assets/db/lib/real/food/long-beans.webp",
+   "cat": "food",
+   "tags": [
+    "long",
+    "beans",
+    "realistic"
+   ],
+   "source": "icons-real-farm-home-25#10",
+   "w": 249,
+   "h": 276,
+   "psnr": 43.6
+  },
+  "real/food/lychee": {
+   "file": "assets/db/lib/real/food/lychee.webp",
+   "cat": "food",
+   "tags": [
+    "lychee",
+    "realistic"
+   ],
+   "source": "icons-real-kitchen-outdoor-25#3",
+   "w": 287,
+   "h": 270,
+   "psnr": 44.8
+  },
+  "real/food/mango": {
+   "file": "assets/db/lib/real/food/mango.webp",
+   "cat": "food",
+   "tags": [
+    "mango",
+    "realistic"
+   ],
+   "source": "icons-real-home-produce-25#6",
+   "w": 228,
+   "h": 248,
+   "psnr": 45.1
+  },
+  "real/food/mangosteen": {
+   "file": "assets/db/lib/real/food/mangosteen.webp",
+   "cat": "food",
+   "tags": [
+    "mangosteen",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia2-25#11",
+   "w": 255,
+   "h": 248,
+   "psnr": 45.2
+  },
+  "real/food/meat": {
+   "file": "assets/db/lib/real/food/meat.webp",
+   "cat": "food",
+   "tags": [
+    "meat",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#3",
+   "w": 255,
+   "h": 196,
+   "psnr": 41.0
+  },
+  "real/food/mug": {
+   "file": "assets/db/lib/real/food/mug.webp",
+   "cat": "food",
+   "tags": [
+    "mug",
+    "realistic"
+   ],
+   "source": "icons-daily-branded2-25#10",
+   "w": 231,
+   "h": 221,
+   "psnr": 42.4
+  },
+  "real/food/nasi-goreng": {
+   "file": "assets/db/lib/real/food/nasi-goreng.webp",
+   "cat": "food",
+   "tags": [
+    "nasi",
+    "goreng",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#7",
+   "w": 293,
+   "h": 235,
+   "psnr": 44.4
+  },
+  "real/food/orange": {
+   "file": "assets/db/lib/real/food/orange.webp",
+   "cat": "food",
+   "tags": [
+    "orange",
+    "realistic"
+   ],
+   "source": "icons-real-home-produce-25#7",
+   "w": 252,
+   "h": 253,
+   "psnr": 43.9
+  },
+  "real/food/papaya": {
+   "file": "assets/db/lib/real/food/papaya.webp",
+   "cat": "food",
+   "tags": [
+    "papaya",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia3-25#3",
+   "w": 265,
+   "h": 265,
+   "psnr": 44.6
+  },
+  "real/food/parsley": {
+   "file": "assets/db/lib/real/food/parsley.webp",
+   "cat": "food",
+   "tags": [
+    "parsley",
+    "realistic"
+   ],
+   "source": "icons-real-farm-home-25#19",
+   "w": 291,
+   "h": 257,
+   "psnr": 43.2
+  },
+  "real/food/peanuts": {
+   "file": "assets/db/lib/real/food/peanuts.webp",
+   "cat": "food",
+   "tags": [
+    "peanuts",
+    "realistic"
+   ],
+   "source": "icons-real-office-market-25#13",
+   "w": 261,
+   "h": 211,
+   "psnr": 44.8
+  },
+  "real/food/pineapple": {
+   "file": "assets/db/lib/real/food/pineapple.webp",
+   "cat": "food",
+   "tags": [
+    "pineapple",
+    "realistic"
+   ],
+   "source": "icons-real-farm-home-25#2",
+   "w": 184,
+   "h": 268,
+   "psnr": 43.9
+  },
+  "real/food/popcorn": {
+   "file": "assets/db/lib/real/food/popcorn.webp",
+   "cat": "food",
+   "tags": [
+    "popcorn",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#6",
+   "w": 217,
+   "h": 259,
+   "psnr": 41.2
+  },
+  "real/food/rambutan": {
+   "file": "assets/db/lib/real/food/rambutan.webp",
+   "cat": "food",
+   "tags": [
+    "rambutan",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia2-25#10",
+   "w": 259,
+   "h": 238,
+   "psnr": 43.1
+  },
+  "real/food/red-onion": {
+   "file": "assets/db/lib/real/food/red-onion.webp",
+   "cat": "food",
+   "tags": [
+    "red",
+    "onion",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#19",
+   "w": 226,
+   "h": 260,
+   "psnr": 44.7
+  },
+  "real/food/rice-sack": {
+   "file": "assets/db/lib/real/food/rice-sack.webp",
+   "cat": "food",
+   "tags": [
+    "rice",
+    "sack",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia2-25#8",
+   "w": 242,
+   "h": 263,
+   "psnr": 45.2
+  },
+  "real/food/shallots": {
+   "file": "assets/db/lib/real/food/shallots.webp",
+   "cat": "food",
+   "tags": [
+    "shallots",
+    "realistic"
+   ],
+   "source": "icons-real-farm-home-25#18",
+   "w": 270,
+   "h": 230,
+   "psnr": 44.4
+  },
+  "real/food/spinach": {
+   "file": "assets/db/lib/real/food/spinach.webp",
+   "cat": "food",
+   "tags": [
+    "spinach",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia3-25#2",
+   "w": 260,
+   "h": 276,
+   "psnr": 44.4
+  },
+  "real/food/strawberry": {
+   "file": "assets/db/lib/real/food/strawberry.webp",
+   "cat": "food",
+   "tags": [
+    "strawberry",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#13",
+   "w": 216,
+   "h": 260,
+   "psnr": 41.7
+  },
+  "real/food/sugar-jar": {
+   "file": "assets/db/lib/real/food/sugar-jar.webp",
+   "cat": "food",
+   "tags": [
+    "sugar",
+    "jar",
+    "realistic"
+   ],
+   "source": "icons-real-kitchen-outdoor-25#18",
+   "w": 216,
+   "h": 260,
+   "psnr": 46.2
+  },
+  "real/food/tamarind": {
+   "file": "assets/db/lib/real/food/tamarind.webp",
+   "cat": "food",
+   "tags": [
+    "tamarind",
+    "realistic"
+   ],
+   "source": "icons-real-kitchen-outdoor-25#25",
+   "w": 269,
+   "h": 238,
+   "psnr": 44.5
+  },
+  "real/food/tempe": {
+   "file": "assets/db/lib/real/food/tempe.webp",
+   "cat": "food",
+   "tags": [
+    "tempe",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#12",
+   "w": 292,
+   "h": 215,
+   "psnr": 44.7
+  },
+  "real/food/water-spinach": {
+   "file": "assets/db/lib/real/food/water-spinach.webp",
+   "cat": "food",
+   "tags": [
+    "water",
+    "spinach",
+    "realistic"
+   ],
+   "source": "icons-real-daily3-25#17",
+   "w": 277,
+   "h": 269,
+   "psnr": 43.2
+  },
+  "real/food/watermelon": {
+   "file": "assets/db/lib/real/food/watermelon.webp",
+   "cat": "food",
+   "tags": [
+    "watermelon",
+    "realistic"
+   ],
+   "source": "icons-real-farm-home-25#3",
+   "w": 275,
+   "h": 236,
+   "psnr": 44.4
+  },
+  "real/food/young-coconut": {
+   "file": "assets/db/lib/real/food/young-coconut.webp",
+   "cat": "food",
+   "tags": [
+    "young",
+    "coconut",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#6",
+   "w": 222,
+   "h": 264,
+   "psnr": 45.6
+  },
+  "real/game/hourglass": {
+   "file": "assets/db/lib/real/game/hourglass.webp",
+   "cat": "game",
+   "tags": [
+    "hourglass",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#23",
+   "w": 181,
+   "h": 270,
+   "psnr": 45.9
+  },
+  "real/game/trophy-cup": {
+   "file": "assets/db/lib/real/game/trophy-cup.webp",
+   "cat": "game",
+   "tags": [
+    "trophy",
+    "cup",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#9",
+   "w": 235,
+   "h": 257,
+   "psnr": 45.4
+  },
+  "real/indonesia/bakiak": {
+   "file": "assets/db/lib/real/indonesia/bakiak.webp",
+   "cat": "indonesia",
+   "tags": [
+    "bakiak",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia2-25#22",
+   "w": 270,
+   "h": 255,
+   "psnr": 45.2
+  },
+  "real/indonesia/batik-shirt": {
+   "file": "assets/db/lib/real/indonesia/batik-shirt.webp",
+   "cat": "indonesia",
+   "tags": [
+    "batik",
+    "shirt",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia2-25#14",
+   "w": 257,
+   "h": 263,
+   "psnr": 44.0
+  },
+  "real/indonesia/bendera-merah-putih": {
+   "file": "assets/db/lib/real/indonesia/bendera-merah-putih.webp",
+   "cat": "indonesia",
+   "tags": [
+    "bendera",
+    "merah",
+    "putih",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#16",
+   "w": 233,
+   "h": 275,
+   "psnr": 45.9
+  },
+  "real/indonesia/besek": {
+   "file": "assets/db/lib/real/indonesia/besek.webp",
+   "cat": "indonesia",
+   "tags": [
+    "besek",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#1",
+   "w": 242,
+   "h": 241,
+   "psnr": 44.3
+  },
+  "real/indonesia/bola-takraw": {
+   "file": "assets/db/lib/real/indonesia/bola-takraw.webp",
+   "cat": "indonesia",
+   "tags": [
+    "bola",
+    "takraw",
+    "realistic"
+   ],
+   "source": "icons-real-office-market-25#7",
+   "w": 234,
+   "h": 237,
+   "psnr": 44.0
+  },
+  "real/indonesia/caping": {
+   "file": "assets/db/lib/real/indonesia/caping.webp",
+   "cat": "indonesia",
+   "tags": [
+    "caping",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#3",
+   "w": 299,
+   "h": 209,
+   "psnr": 44.9
+  },
+  "real/indonesia/cobek": {
+   "file": "assets/db/lib/real/indonesia/cobek.webp",
+   "cat": "indonesia",
+   "tags": [
+    "cobek",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#10",
+   "w": 243,
+   "h": 237,
+   "psnr": 45.0
+  },
+  "real/indonesia/gayung": {
+   "file": "assets/db/lib/real/indonesia/gayung.webp",
+   "cat": "indonesia",
+   "tags": [
+    "gayung",
+    "realistic"
+   ],
+   "source": "icons-real-office-market-25#22",
+   "w": 256,
+   "h": 240,
+   "psnr": 43.9
+  },
+  "real/indonesia/gerobak-bakso": {
+   "file": "assets/db/lib/real/indonesia/gerobak-bakso.webp",
+   "cat": "indonesia",
+   "tags": [
+    "gerobak",
+    "bakso",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#15",
+   "w": 253,
+   "h": 270,
+   "psnr": 45.0
+  },
+  "real/indonesia/gerobak-cendol": {
+   "file": "assets/db/lib/real/indonesia/gerobak-cendol.webp",
+   "cat": "indonesia",
+   "tags": [
+    "gerobak",
+    "cendol",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia2-25#9",
+   "w": 274,
+   "h": 267,
+   "psnr": 45.8
+  },
+  "real/indonesia/kendang": {
+   "file": "assets/db/lib/real/indonesia/kendang.webp",
+   "cat": "indonesia",
+   "tags": [
+    "kendang",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia3-25#7",
+   "w": 268,
+   "h": 232,
+   "psnr": 44.4
+  },
+  "real/indonesia/keris": {
+   "file": "assets/db/lib/real/indonesia/keris.webp",
+   "cat": "indonesia",
+   "tags": [
+    "keris",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#22",
+   "w": 262,
+   "h": 277,
+   "psnr": 44.4
+  },
+  "real/indonesia/kipas-batik": {
+   "file": "assets/db/lib/real/indonesia/kipas-batik.webp",
+   "cat": "indonesia",
+   "tags": [
+    "kipas",
+    "batik",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia2-25#15",
+   "w": 273,
+   "h": 229,
+   "psnr": 43.9
+  },
+  "real/indonesia/kukusan-bambu": {
+   "file": "assets/db/lib/real/indonesia/kukusan-bambu.webp",
+   "cat": "indonesia",
+   "tags": [
+    "kukusan",
+    "bambu",
+    "realistic"
+   ],
+   "source": "icons-real-kitchen-outdoor-25#2",
+   "w": 249,
+   "h": 243,
+   "psnr": 45.3
+  },
+  "real/indonesia/kursi-rotan": {
+   "file": "assets/db/lib/real/indonesia/kursi-rotan.webp",
+   "cat": "indonesia",
+   "tags": [
+    "kursi",
+    "rotan",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#13",
+   "w": 217,
+   "h": 254,
+   "psnr": 44.7
+  },
+  "real/indonesia/peci": {
+   "file": "assets/db/lib/real/indonesia/peci.webp",
+   "cat": "indonesia",
+   "tags": [
+    "peci",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#23",
+   "w": 261,
+   "h": 218,
+   "psnr": 46.6
+  },
+  "real/indonesia/rumah-joglo": {
+   "file": "assets/db/lib/real/indonesia/rumah-joglo.webp",
+   "cat": "indonesia",
+   "tags": [
+    "rumah",
+    "joglo",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#18",
+   "w": 272,
+   "h": 245,
+   "psnr": 44.5
+  },
+  "real/indonesia/sapu-lidi": {
+   "file": "assets/db/lib/real/indonesia/sapu-lidi.webp",
+   "cat": "indonesia",
+   "tags": [
+    "sapu",
+    "lidi",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#5",
+   "w": 216,
+   "h": 256,
+   "psnr": 44.1
+  },
+  "real/indonesia/tampah": {
+   "file": "assets/db/lib/real/indonesia/tampah.webp",
+   "cat": "indonesia",
+   "tags": [
+    "tampah",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#24",
+   "w": 301,
+   "h": 243,
+   "psnr": 45.0
+  },
+  "real/indonesia/tudung-saji": {
+   "file": "assets/db/lib/real/indonesia/tudung-saji.webp",
+   "cat": "indonesia",
+   "tags": [
+    "tudung",
+    "saji",
+    "realistic"
+   ],
+   "source": "icons-real-farm-home-25#7",
+   "w": 291,
+   "h": 228,
+   "psnr": 43.7
+  },
+  "real/indonesia/wayang": {
+   "file": "assets/db/lib/real/indonesia/wayang.webp",
+   "cat": "indonesia",
+   "tags": [
+    "wayang",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia3-25#5",
+   "w": 244,
+   "h": 298,
+   "psnr": 45.2
+  },
+  "real/nature/rock": {
+   "file": "assets/db/lib/real/nature/rock.webp",
+   "cat": "nature",
+   "tags": [
+    "rock",
+    "realistic"
+   ],
+   "source": "icons-real-kitchen-outdoor-25#10",
+   "w": 253,
+   "h": 218,
+   "psnr": 44.9
+  },
+  "real/nature/seedling-polybag": {
+   "file": "assets/db/lib/real/nature/seedling-polybag.webp",
+   "cat": "nature",
+   "tags": [
+    "seedling",
+    "polybag",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#9",
+   "w": 218,
+   "h": 261,
+   "psnr": 44.5
+  },
+  "real/nature/snowman": {
+   "file": "assets/db/lib/real/nature/snowman.webp",
+   "cat": "nature",
+   "tags": [
+    "snowman",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#12",
+   "w": 236,
+   "h": 273,
+   "psnr": 45.7
+  },
+  "real/nature/sunflower": {
+   "file": "assets/db/lib/real/nature/sunflower.webp",
+   "cat": "nature",
+   "tags": [
+    "sunflower",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#5",
+   "w": 221,
+   "h": 258,
+   "psnr": 44.0
+  },
+  "real/park/bench": {
+   "file": "assets/db/lib/real/park/bench.webp",
+   "cat": "park",
+   "tags": [
+    "bench",
+    "realistic"
+   ],
+   "source": "icons-real-farm-home-25#21",
+   "w": 294,
+   "h": 250,
+   "psnr": 45.1
+  },
+  "real/park/garden-hose": {
+   "file": "assets/db/lib/real/park/garden-hose.webp",
+   "cat": "park",
+   "tags": [
+    "garden",
+    "hose",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#17",
+   "w": 261,
+   "h": 245,
+   "psnr": 43.5
+  },
+  "real/park/potted-cactus": {
+   "file": "assets/db/lib/real/park/potted-cactus.webp",
+   "cat": "park",
+   "tags": [
+    "potted",
+    "cactus",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#15",
+   "w": 188,
+   "h": 258,
+   "psnr": 45.0
+  },
+  "real/park/watering-can": {
+   "file": "assets/db/lib/real/park/watering-can.webp",
+   "cat": "park",
+   "tags": [
+    "watering",
+    "can",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#24",
+   "w": 291,
+   "h": 206,
+   "psnr": 45.3
+  },
+  "real/park/wheelbarrow": {
+   "file": "assets/db/lib/real/park/wheelbarrow.webp",
+   "cat": "park",
+   "tags": [
+    "wheelbarrow",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#6",
+   "w": 277,
+   "h": 235,
+   "psnr": 41.9
+  },
+  "real/school/backpack-black": {
+   "file": "assets/db/lib/real/school/backpack-black.webp",
+   "cat": "school",
+   "tags": [
+    "backpack",
+    "black",
+    "realistic"
+   ],
+   "source": "icons-daily-branded2-25#8",
+   "w": 246,
+   "h": 282,
+   "psnr": 46.5
+  },
+  "real/school/backpack-blue": {
+   "file": "assets/db/lib/real/school/backpack-blue.webp",
+   "cat": "school",
+   "tags": [
+    "backpack",
+    "blue",
+    "realistic"
+   ],
+   "source": "icons-real-home-produce-25#17",
+   "w": 219,
+   "h": 277,
+   "psnr": 45.0
+  },
+  "real/school/backpack-red": {
+   "file": "assets/db/lib/real/school/backpack-red.webp",
+   "cat": "school",
+   "tags": [
+    "backpack",
+    "red",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#13",
+   "w": 224,
+   "h": 243,
+   "psnr": 45.0
+  },
+  "real/school/binder-clip": {
+   "file": "assets/db/lib/real/school/binder-clip.webp",
+   "cat": "school",
+   "tags": [
+    "binder",
+    "clip",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#9",
+   "w": 234,
+   "h": 253,
+   "psnr": 46.6
+  },
+  "real/school/books": {
+   "file": "assets/db/lib/real/school/books.webp",
+   "cat": "school",
+   "tags": [
+    "books",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#21",
+   "w": 272,
+   "h": 238,
+   "psnr": 44.3
+  },
+  "real/school/cutter": {
+   "file": "assets/db/lib/real/school/cutter.webp",
+   "cat": "school",
+   "tags": [
+    "cutter",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia3-25#12",
+   "w": 214,
+   "h": 245,
+   "psnr": 45.2
+  },
+  "real/school/dictionary": {
+   "file": "assets/db/lib/real/school/dictionary.webp",
+   "cat": "school",
+   "tags": [
+    "dictionary",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#13",
+   "w": 207,
+   "h": 254,
+   "psnr": 42.2
+  },
+  "real/school/globe": {
+   "file": "assets/db/lib/real/school/globe.webp",
+   "cat": "school",
+   "tags": [
+    "globe",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#1",
+   "w": 221,
+   "h": 265,
+   "psnr": 45.1
+  },
+  "real/school/glue-stick": {
+   "file": "assets/db/lib/real/school/glue-stick.webp",
+   "cat": "school",
+   "tags": [
+    "glue",
+    "stick",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#8",
+   "w": 123,
+   "h": 269,
+   "psnr": 45.4
+  },
+  "real/school/laptop": {
+   "file": "assets/db/lib/real/school/laptop.webp",
+   "cat": "school",
+   "tags": [
+    "laptop",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#8",
+   "w": 303,
+   "h": 228,
+   "psnr": 45.3
+  },
+  "real/school/notebook-pen": {
+   "file": "assets/db/lib/real/school/notebook-pen.webp",
+   "cat": "school",
+   "tags": [
+    "notebook",
+    "pen",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#6",
+   "w": 260,
+   "h": 255,
+   "psnr": 46.5
+  },
+  "real/school/scissors": {
+   "file": "assets/db/lib/real/school/scissors.webp",
+   "cat": "school",
+   "tags": [
+    "scissors",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#7",
+   "w": 244,
+   "h": 258,
+   "psnr": 44.4
+  },
+  "real/school/stapler": {
+   "file": "assets/db/lib/real/school/stapler.webp",
+   "cat": "school",
+   "tags": [
+    "stapler",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#21",
+   "w": 262,
+   "h": 203,
+   "psnr": 47.2
+  },
+  "real/school/stapler-pink": {
+   "file": "assets/db/lib/real/school/stapler-pink.webp",
+   "cat": "school",
+   "tags": [
+    "stapler",
+    "pink",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia3-25#18",
+   "w": 261,
+   "h": 203,
+   "psnr": 44.6
+  },
+  "real/school/tape": {
+   "file": "assets/db/lib/real/school/tape.webp",
+   "cat": "school",
+   "tags": [
+    "tape",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#10",
+   "w": 252,
+   "h": 236,
+   "psnr": 46.6
+  },
+  "real/school/tape-dispenser": {
+   "file": "assets/db/lib/real/school/tape-dispenser.webp",
+   "cat": "school",
+   "tags": [
+    "tape",
+    "dispenser",
+    "realistic"
+   ],
+   "source": "icons-real-office-market-25#4",
+   "w": 254,
+   "h": 222,
+   "psnr": 45.9
+  },
+  "real/things/air-conditioner": {
+   "file": "assets/db/lib/real/things/air-conditioner.webp",
+   "cat": "things",
+   "tags": [
+    "air",
+    "conditioner",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#3",
+   "w": 290,
+   "h": 217,
+   "psnr": 48.8
+  },
+  "real/things/alarm-clock": {
+   "file": "assets/db/lib/real/things/alarm-clock.webp",
+   "cat": "things",
+   "tags": [
+    "alarm",
+    "clock",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#24",
+   "w": 217,
+   "h": 285,
+   "psnr": 44.2
+  },
+  "real/things/bandage": {
+   "file": "assets/db/lib/real/things/bandage.webp",
+   "cat": "things",
+   "tags": [
+    "bandage",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#25",
+   "w": 260,
+   "h": 221,
+   "psnr": 44.2
+  },
+  "real/things/basin": {
+   "file": "assets/db/lib/real/things/basin.webp",
+   "cat": "things",
+   "tags": [
+    "basin",
+    "realistic"
+   ],
+   "source": "icons-real-office-market-25#21",
+   "w": 272,
+   "h": 215,
+   "psnr": 46.1
+  },
+  "real/things/bed": {
+   "file": "assets/db/lib/real/things/bed.webp",
+   "cat": "things",
+   "tags": [
+    "bed",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#1",
+   "w": 268,
+   "h": 234,
+   "psnr": 46.0
+  },
+  "real/things/binder-clip": {
+   "file": "assets/db/lib/real/things/binder-clip.webp",
+   "cat": "things",
+   "tags": [
+    "binder",
+    "clip",
+    "realistic"
+   ],
+   "source": "icons-real-daily3-25#9",
+   "w": 192,
+   "h": 228,
+   "psnr": 46.3
+  },
+  "real/things/binoculars": {
+   "file": "assets/db/lib/real/things/binoculars.webp",
+   "cat": "things",
+   "tags": [
+    "binoculars",
+    "realistic"
+   ],
+   "source": "icons-real-kitchen-outdoor-25#14",
+   "w": 281,
+   "h": 220,
+   "psnr": 45.9
+  },
+  "real/things/broom": {
+   "file": "assets/db/lib/real/things/broom.webp",
+   "cat": "things",
+   "tags": [
+    "broom",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#15",
+   "w": 192,
+   "h": 276,
+   "psnr": 43.7
+  },
+  "real/things/broom-plastic": {
+   "file": "assets/db/lib/real/things/broom-plastic.webp",
+   "cat": "things",
+   "tags": [
+    "broom",
+    "plastic",
+    "realistic"
+   ],
+   "source": "icons-real-home-produce-25#24",
+   "w": 253,
+   "h": 294,
+   "psnr": 44.5
+  },
+  "real/things/bucket-pink": {
+   "file": "assets/db/lib/real/things/bucket-pink.webp",
+   "cat": "things",
+   "tags": [
+    "bucket",
+    "pink",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia2-25#2",
+   "w": 225,
+   "h": 234,
+   "psnr": 44.2
+  },
+  "real/things/car-keys": {
+   "file": "assets/db/lib/real/things/car-keys.webp",
+   "cat": "things",
+   "tags": [
+    "car",
+    "keys",
+    "realistic"
+   ],
+   "source": "icons-daily-branded2-25#14",
+   "w": 245,
+   "h": 229,
+   "psnr": 45.6
+  },
+  "real/things/cardboard-box": {
+   "file": "assets/db/lib/real/things/cardboard-box.webp",
+   "cat": "things",
+   "tags": [
+    "cardboard",
+    "box",
+    "realistic"
+   ],
+   "source": "icons-real-home-produce-25#16",
+   "w": 263,
+   "h": 240,
+   "psnr": 45.4
+  },
+  "real/things/cargo-shorts": {
+   "file": "assets/db/lib/real/things/cargo-shorts.webp",
+   "cat": "things",
+   "tags": [
+    "cargo",
+    "shorts",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#10",
+   "w": 275,
+   "h": 236,
+   "psnr": 45.8
+  },
+  "real/things/chef-hat": {
+   "file": "assets/db/lib/real/things/chef-hat.webp",
+   "cat": "things",
+   "tags": [
+    "chef",
+    "hat",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#22",
+   "w": 263,
+   "h": 267,
+   "psnr": 47.7
+  },
+  "real/things/clothespin": {
+   "file": "assets/db/lib/real/things/clothespin.webp",
+   "cat": "things",
+   "tags": [
+    "clothespin",
+    "realistic"
+   ],
+   "source": "icons-real-daily3-25#7",
+   "w": 232,
+   "h": 246,
+   "psnr": 43.7
+  },
+  "real/things/compass": {
+   "file": "assets/db/lib/real/things/compass.webp",
+   "cat": "things",
+   "tags": [
+    "compass",
+    "realistic"
+   ],
+   "source": "icons-real-kitchen-outdoor-25#12",
+   "w": 217,
+   "h": 259,
+   "psnr": 45.5
+  },
+  "real/things/cooking-pot": {
+   "file": "assets/db/lib/real/things/cooking-pot.webp",
+   "cat": "things",
+   "tags": [
+    "cooking",
+    "pot",
+    "realistic"
+   ],
+   "source": "icons-daily-branded2-25#21",
+   "w": 271,
+   "h": 233,
+   "psnr": 47.2
+  },
+  "real/things/cotton-buds": {
+   "file": "assets/db/lib/real/things/cotton-buds.webp",
+   "cat": "things",
+   "tags": [
+    "cotton",
+    "buds",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia3-25#10",
+   "w": 249,
+   "h": 157,
+   "psnr": 45.7
+  },
+  "real/things/cutting-board": {
+   "file": "assets/db/lib/real/things/cutting-board.webp",
+   "cat": "things",
+   "tags": [
+    "cutting",
+    "board",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#18",
+   "w": 263,
+   "h": 239,
+   "psnr": 44.4
+  },
+  "real/things/drinking-glass": {
+   "file": "assets/db/lib/real/things/drinking-glass.webp",
+   "cat": "things",
+   "tags": [
+    "drinking",
+    "glass",
+    "realistic"
+   ],
+   "source": "icons-real-office-market-25#8",
+   "w": 196,
+   "h": 247,
+   "psnr": 47.3
+  },
+  "real/things/drying-rack": {
+   "file": "assets/db/lib/real/things/drying-rack.webp",
+   "cat": "things",
+   "tags": [
+    "drying",
+    "rack",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#7",
+   "w": 279,
+   "h": 233,
+   "psnr": 45.2
+  },
+  "real/things/dustpan": {
+   "file": "assets/db/lib/real/things/dustpan.webp",
+   "cat": "things",
+   "tags": [
+    "dustpan",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#16",
+   "w": 251,
+   "h": 260,
+   "psnr": 44.8
+  },
+  "real/things/dustpan-broom": {
+   "file": "assets/db/lib/real/things/dustpan-broom.webp",
+   "cat": "things",
+   "tags": [
+    "dustpan",
+    "broom",
+    "realistic"
+   ],
+   "source": "icons-real-daily3-25#25",
+   "w": 277,
+   "h": 282,
+   "psnr": 45.2
+  },
+  "real/things/electric-fan": {
+   "file": "assets/db/lib/real/things/electric-fan.webp",
+   "cat": "things",
+   "tags": [
+    "electric",
+    "fan",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#2",
+   "w": 194,
+   "h": 257,
+   "psnr": 44.7
+  },
+  "real/things/envelope": {
+   "file": "assets/db/lib/real/things/envelope.webp",
+   "cat": "things",
+   "tags": [
+    "envelope",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#22",
+   "w": 240,
+   "h": 185,
+   "psnr": 46.1
+  },
+  "real/things/face-mask": {
+   "file": "assets/db/lib/real/things/face-mask.webp",
+   "cat": "things",
+   "tags": [
+    "face",
+    "mask",
+    "realistic"
+   ],
+   "source": "icons-real-office-market-25#9",
+   "w": 257,
+   "h": 200,
+   "psnr": 46.4
+  },
+  "real/things/feather-duster": {
+   "file": "assets/db/lib/real/things/feather-duster.webp",
+   "cat": "things",
+   "tags": [
+    "feather",
+    "duster",
+    "realistic"
+   ],
+   "source": "icons-real-kitchen-outdoor-25#20",
+   "w": 261,
+   "h": 275,
+   "psnr": 44.4
+  },
+  "real/things/flashlight": {
+   "file": "assets/db/lib/real/things/flashlight.webp",
+   "cat": "things",
+   "tags": [
+    "flashlight",
+    "realistic"
+   ],
+   "source": "icons-real-kitchen-outdoor-25#23",
+   "w": 263,
+   "h": 207,
+   "psnr": 45.5
+  },
+  "real/things/frying-pan": {
+   "file": "assets/db/lib/real/things/frying-pan.webp",
+   "cat": "things",
+   "tags": [
+    "frying",
+    "pan",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#15",
+   "w": 275,
+   "h": 224,
+   "psnr": 45.7
+  },
+  "real/things/glasses": {
+   "file": "assets/db/lib/real/things/glasses.webp",
+   "cat": "things",
+   "tags": [
+    "glasses",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#24",
+   "w": 296,
+   "h": 174,
+   "psnr": 47.4
+  },
+  "real/things/hand-mirror": {
+   "file": "assets/db/lib/real/things/hand-mirror.webp",
+   "cat": "things",
+   "tags": [
+    "hand",
+    "mirror",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia3-25#24",
+   "w": 188,
+   "h": 270,
+   "psnr": 44.0
+  },
+  "real/things/hanger": {
+   "file": "assets/db/lib/real/things/hanger.webp",
+   "cat": "things",
+   "tags": [
+    "hanger",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#18",
+   "w": 278,
+   "h": 182,
+   "psnr": 47.3
+  },
+  "real/things/hanger-wood": {
+   "file": "assets/db/lib/real/things/hanger-wood.webp",
+   "cat": "things",
+   "tags": [
+    "hanger",
+    "wood",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia3-25#21",
+   "w": 277,
+   "h": 226,
+   "psnr": 44.1
+  },
+  "real/things/house-plant": {
+   "file": "assets/db/lib/real/things/house-plant.webp",
+   "cat": "things",
+   "tags": [
+    "house",
+    "plant",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#5",
+   "w": 255,
+   "h": 252,
+   "psnr": 44.4
+  },
+  "real/things/kitchen-towel": {
+   "file": "assets/db/lib/real/things/kitchen-towel.webp",
+   "cat": "things",
+   "tags": [
+    "kitchen",
+    "towel",
+    "realistic"
+   ],
+   "source": "icons-real-kitchen-outdoor-25#19",
+   "w": 276,
+   "h": 249,
+   "psnr": 44.8
+  },
+  "real/things/laundry-basket": {
+   "file": "assets/db/lib/real/things/laundry-basket.webp",
+   "cat": "things",
+   "tags": [
+    "laundry",
+    "basket",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#19",
+   "w": 261,
+   "h": 222,
+   "psnr": 42.1
+  },
+  "real/things/light-bulb": {
+   "file": "assets/db/lib/real/things/light-bulb.webp",
+   "cat": "things",
+   "tags": [
+    "light",
+    "bulb",
+    "realistic"
+   ],
+   "source": "icons-real-farm-home-25#6",
+   "w": 170,
+   "h": 264,
+   "psnr": 47.7
+  },
+  "real/things/lunch-box": {
+   "file": "assets/db/lib/real/things/lunch-box.webp",
+   "cat": "things",
+   "tags": [
+    "lunch",
+    "box",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#20",
+   "w": 174,
+   "h": 237,
+   "psnr": 41.8
+  },
+  "real/things/magnifier": {
+   "file": "assets/db/lib/real/things/magnifier.webp",
+   "cat": "things",
+   "tags": [
+    "magnifier",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#20",
+   "w": 244,
+   "h": 236,
+   "psnr": 46.4
+  },
+  "real/things/megaphone": {
+   "file": "assets/db/lib/real/things/megaphone.webp",
+   "cat": "things",
+   "tags": [
+    "megaphone",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia2-25#20",
+   "w": 258,
+   "h": 255,
+   "psnr": 46.6
+  },
+  "real/things/mosquito-racket": {
+   "file": "assets/db/lib/real/things/mosquito-racket.webp",
+   "cat": "things",
+   "tags": [
+    "mosquito",
+    "racket",
+    "realistic"
+   ],
+   "source": "icons-real-kitchen-outdoor-25#4",
+   "w": 201,
+   "h": 285,
+   "psnr": 44.4
+  },
+  "real/things/office-chair": {
+   "file": "assets/db/lib/real/things/office-chair.webp",
+   "cat": "things",
+   "tags": [
+    "office",
+    "chair",
+    "realistic"
+   ],
+   "source": "icons-daily-branded2-25#17",
+   "w": 191,
+   "h": 273,
+   "psnr": 45.6
+  },
+  "real/things/pacifier": {
+   "file": "assets/db/lib/real/things/pacifier.webp",
+   "cat": "things",
+   "tags": [
+    "pacifier",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#22",
+   "w": 235,
+   "h": 256,
+   "psnr": 45.6
+  },
+  "real/things/paintbrush": {
+   "file": "assets/db/lib/real/things/paintbrush.webp",
+   "cat": "things",
+   "tags": [
+    "paintbrush",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#24",
+   "w": 219,
+   "h": 270,
+   "psnr": 43.7
+  },
+  "real/things/paper-plane": {
+   "file": "assets/db/lib/real/things/paper-plane.webp",
+   "cat": "things",
+   "tags": [
+    "paper",
+    "plane",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#4",
+   "w": 240,
+   "h": 226,
+   "psnr": 46.8
+  },
+  "real/things/phone-charger": {
+   "file": "assets/db/lib/real/things/phone-charger.webp",
+   "cat": "things",
+   "tags": [
+    "phone",
+    "charger",
+    "realistic"
+   ],
+   "source": "icons-real-daily3-25#23",
+   "w": 194,
+   "h": 270,
+   "psnr": 48.6
+  },
+  "real/things/power-strip": {
+   "file": "assets/db/lib/real/things/power-strip.webp",
+   "cat": "things",
+   "tags": [
+    "power",
+    "strip",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#20",
+   "w": 275,
+   "h": 240,
+   "psnr": 46.0
+  },
+  "real/things/rain-boots": {
+   "file": "assets/db/lib/real/things/rain-boots.webp",
+   "cat": "things",
+   "tags": [
+    "rain",
+    "boots",
+    "realistic"
+   ],
+   "source": "icons-real-farm-home-25#24",
+   "w": 267,
+   "h": 280,
+   "psnr": 46.5
+  },
+  "real/things/raincoat": {
+   "file": "assets/db/lib/real/things/raincoat.webp",
+   "cat": "things",
+   "tags": [
+    "raincoat",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#14",
+   "w": 239,
+   "h": 234,
+   "psnr": 43.3
+  },
+  "real/things/rice-paddle": {
+   "file": "assets/db/lib/real/things/rice-paddle.webp",
+   "cat": "things",
+   "tags": [
+    "rice",
+    "paddle",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia2-25#17",
+   "w": 238,
+   "h": 248,
+   "psnr": 41.2
+  },
+  "real/things/ring": {
+   "file": "assets/db/lib/real/things/ring.webp",
+   "cat": "things",
+   "tags": [
+    "ring",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#25",
+   "w": 220,
+   "h": 279,
+   "psnr": 43.1
+  },
+  "real/things/rope": {
+   "file": "assets/db/lib/real/things/rope.webp",
+   "cat": "things",
+   "tags": [
+    "rope",
+    "realistic"
+   ],
+   "source": "icons-real-office-market-25#20",
+   "w": 255,
+   "h": 230,
+   "psnr": 41.9
+  },
+  "real/things/safety-pin": {
+   "file": "assets/db/lib/real/things/safety-pin.webp",
+   "cat": "things",
+   "tags": [
+    "safety",
+    "pin",
+    "realistic"
+   ],
+   "source": "icons-real-daily3-25#8",
+   "w": 230,
+   "h": 191,
+   "psnr": 46.4
+  },
+  "real/things/shopping-bag": {
+   "file": "assets/db/lib/real/things/shopping-bag.webp",
+   "cat": "things",
+   "tags": [
+    "shopping",
+    "bag",
+    "realistic"
+   ],
+   "source": "icons-daily-branded2-25#23",
+   "w": 217,
+   "h": 262,
+   "psnr": 44.1
+  },
+  "real/things/smartphone": {
+   "file": "assets/db/lib/real/things/smartphone.webp",
+   "cat": "things",
+   "tags": [
+    "smartphone",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#12",
+   "w": 171,
+   "h": 223,
+   "psnr": 43.4
+  },
+  "real/things/soccer-boot": {
+   "file": "assets/db/lib/real/things/soccer-boot.webp",
+   "cat": "things",
+   "tags": [
+    "soccer",
+    "boot",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#1",
+   "w": 265,
+   "h": 207,
+   "psnr": 45.9
+  },
+  "real/things/spoon": {
+   "file": "assets/db/lib/real/things/spoon.webp",
+   "cat": "things",
+   "tags": [
+    "spoon",
+    "realistic"
+   ],
+   "source": "icons-real-daily3-25#11",
+   "w": 240,
+   "h": 251,
+   "psnr": 45.4
+  },
+  "real/things/sport-bottle": {
+   "file": "assets/db/lib/real/things/sport-bottle.webp",
+   "cat": "things",
+   "tags": [
+    "sport",
+    "bottle",
+    "realistic"
+   ],
+   "source": "icons-daily-branded2-25#2",
+   "w": 148,
+   "h": 277,
+   "psnr": 47.1
+  },
+  "real/things/step-ladder": {
+   "file": "assets/db/lib/real/things/step-ladder.webp",
+   "cat": "things",
+   "tags": [
+    "step",
+    "ladder",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#16",
+   "w": 216,
+   "h": 273,
+   "psnr": 45.7
+  },
+  "real/things/suitcase": {
+   "file": "assets/db/lib/real/things/suitcase.webp",
+   "cat": "things",
+   "tags": [
+    "suitcase",
+    "realistic"
+   ],
+   "source": "icons-daily-branded2-25#18",
+   "w": 175,
+   "h": 302,
+   "psnr": 47.2
+  },
+  "real/things/sunglasses": {
+   "file": "assets/db/lib/real/things/sunglasses.webp",
+   "cat": "things",
+   "tags": [
+    "sunglasses",
+    "realistic"
+   ],
+   "source": "icons-daily-branded2-25#13",
+   "w": 289,
+   "h": 160,
+   "psnr": 45.9
+  },
+  "real/things/swim-goggles": {
+   "file": "assets/db/lib/real/things/swim-goggles.webp",
+   "cat": "things",
+   "tags": [
+    "swim",
+    "goggles",
+    "realistic"
+   ],
+   "source": "icons-real-kitchen-outdoor-25#22",
+   "w": 286,
+   "h": 169,
+   "psnr": 45.7
+  },
+  "real/things/syringe": {
+   "file": "assets/db/lib/real/things/syringe.webp",
+   "cat": "things",
+   "tags": [
+    "syringe",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#12",
+   "w": 246,
+   "h": 256,
+   "psnr": 44.5
+  },
+  "real/things/t-shirt": {
+   "file": "assets/db/lib/real/things/t-shirt.webp",
+   "cat": "things",
+   "tags": [
+    "t",
+    "shirt",
+    "realistic"
+   ],
+   "source": "icons-daily-branded2-25#12",
+   "w": 279,
+   "h": 251,
+   "psnr": 48.1
+  },
+  "real/things/table": {
+   "file": "assets/db/lib/real/things/table.webp",
+   "cat": "things",
+   "tags": [
+    "table",
+    "realistic"
+   ],
+   "source": "icons-real-office-market-25#14",
+   "w": 276,
+   "h": 226,
+   "psnr": 46.4
+  },
+  "real/things/tablet": {
+   "file": "assets/db/lib/real/things/tablet.webp",
+   "cat": "things",
+   "tags": [
+    "tablet",
+    "realistic"
+   ],
+   "source": "icons-real-farm-home-25#22",
+   "w": 206,
+   "h": 271,
+   "psnr": 47.9
+  },
+  "real/things/thermos-flask": {
+   "file": "assets/db/lib/real/things/thermos-flask.webp",
+   "cat": "things",
+   "tags": [
+    "thermos",
+    "flask",
+    "realistic"
+   ],
+   "source": "icons-real-daily3-25#12",
+   "w": 158,
+   "h": 273,
+   "psnr": 45.4
+  },
+  "real/things/tissue-box": {
+   "file": "assets/db/lib/real/things/tissue-box.webp",
+   "cat": "things",
+   "tags": [
+    "tissue",
+    "box",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#11",
+   "w": 250,
+   "h": 242,
+   "psnr": 45.9
+  },
+  "real/things/tissue-box-wood": {
+   "file": "assets/db/lib/real/things/tissue-box-wood.webp",
+   "cat": "things",
+   "tags": [
+    "tissue",
+    "box",
+    "wood",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia3-25#17",
+   "w": 280,
+   "h": 209,
+   "psnr": 45.7
+  },
+  "real/things/toilet": {
+   "file": "assets/db/lib/real/things/toilet.webp",
+   "cat": "things",
+   "tags": [
+    "toilet",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#17",
+   "w": 191,
+   "h": 232,
+   "psnr": 47.2
+  },
+  "real/things/toothbrush": {
+   "file": "assets/db/lib/real/things/toothbrush.webp",
+   "cat": "things",
+   "tags": [
+    "toothbrush",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#15",
+   "w": 299,
+   "h": 181,
+   "psnr": 43.8
+  },
+  "real/things/towel": {
+   "file": "assets/db/lib/real/things/towel.webp",
+   "cat": "things",
+   "tags": [
+    "towel",
+    "realistic"
+   ],
+   "source": "icons-daily-branded2-25#22",
+   "w": 272,
+   "h": 210,
+   "psnr": 44.1
+  },
+  "real/things/traffic-cone": {
+   "file": "assets/db/lib/real/things/traffic-cone.webp",
+   "cat": "things",
+   "tags": [
+    "traffic",
+    "cone",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia3-25#16",
+   "w": 217,
+   "h": 272,
+   "psnr": 44.9
+  },
+  "real/things/trash-bin": {
+   "file": "assets/db/lib/real/things/trash-bin.webp",
+   "cat": "things",
+   "tags": [
+    "trash",
+    "bin",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#17",
+   "w": 196,
+   "h": 256,
+   "psnr": 47.3
+  },
+  "real/things/trash-bin-green": {
+   "file": "assets/db/lib/real/things/trash-bin-green.webp",
+   "cat": "things",
+   "tags": [
+    "trash",
+    "bin",
+    "green",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#25",
+   "w": 215,
+   "h": 271,
+   "psnr": 44.9
+  },
+  "real/things/trash-can-steel": {
+   "file": "assets/db/lib/real/things/trash-can-steel.webp",
+   "cat": "things",
+   "tags": [
+    "trash",
+    "can",
+    "steel",
+    "realistic"
+   ],
+   "source": "icons-real-farm-home-25#15",
+   "w": 194,
+   "h": 254,
+   "psnr": 46.6
+  },
+  "real/things/tumbler": {
+   "file": "assets/db/lib/real/things/tumbler.webp",
+   "cat": "things",
+   "tags": [
+    "tumbler",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#2",
+   "w": 144,
+   "h": 248,
+   "psnr": 45.2
+  },
+  "real/things/tv-antenna": {
+   "file": "assets/db/lib/real/things/tv-antenna.webp",
+   "cat": "things",
+   "tags": [
+    "tv",
+    "antenna",
+    "realistic"
+   ],
+   "source": "icons-real-office-market-25#18",
+   "w": 276,
+   "h": 251,
+   "psnr": 45.6
+  },
+  "real/things/tv-remote": {
+   "file": "assets/db/lib/real/things/tv-remote.webp",
+   "cat": "things",
+   "tags": [
+    "tv",
+    "remote",
+    "realistic"
+   ],
+   "source": "icons-real-daily3-25#24",
+   "w": 209,
+   "h": 297,
+   "psnr": 44.8
+  },
+  "real/things/umbrella-black": {
+   "file": "assets/db/lib/real/things/umbrella-black.webp",
+   "cat": "things",
+   "tags": [
+    "umbrella",
+    "black",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#25",
+   "w": 264,
+   "h": 258,
+   "psnr": 46.4
+  },
+  "real/things/umbrella-blue": {
+   "file": "assets/db/lib/real/things/umbrella-blue.webp",
+   "cat": "things",
+   "tags": [
+    "umbrella",
+    "blue",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#9",
+   "w": 300,
+   "h": 232,
+   "psnr": 45.2
+  },
+  "real/things/umbrella-pink": {
+   "file": "assets/db/lib/real/things/umbrella-pink.webp",
+   "cat": "things",
+   "tags": [
+    "umbrella",
+    "pink",
+    "realistic"
+   ],
+   "source": "icons-real-home-produce-25#18",
+   "w": 285,
+   "h": 269,
+   "psnr": 44.3
+  },
+  "real/things/umbrella-yellow": {
+   "file": "assets/db/lib/real/things/umbrella-yellow.webp",
+   "cat": "things",
+   "tags": [
+    "umbrella",
+    "yellow",
+    "realistic"
+   ],
+   "source": "icons-daily-branded2-25#9",
+   "w": 291,
+   "h": 270,
+   "psnr": 44.9
+  },
+  "real/things/underwear": {
+   "file": "assets/db/lib/real/things/underwear.webp",
+   "cat": "things",
+   "tags": [
+    "underwear",
+    "realistic"
+   ],
+   "source": "icons-daily-branded2-25#6",
+   "w": 264,
+   "h": 208,
+   "psnr": 45.8
+  },
+  "real/things/wall-clock": {
+   "file": "assets/db/lib/real/things/wall-clock.webp",
+   "cat": "things",
+   "tags": [
+    "wall",
+    "clock",
+    "realistic"
+   ],
+   "source": "icons-home-office-25#4",
+   "w": 233,
+   "h": 241,
+   "psnr": 45.9
+  },
+  "real/things/wallet": {
+   "file": "assets/db/lib/real/things/wallet.webp",
+   "cat": "things",
+   "tags": [
+    "wallet",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#11",
+   "w": 275,
+   "h": 205,
+   "psnr": 45.4
+  },
+  "real/things/window": {
+   "file": "assets/db/lib/real/things/window.webp",
+   "cat": "things",
+   "tags": [
+    "window",
+    "realistic"
+   ],
+   "source": "icons-real-farm-home-25#14",
+   "w": 244,
+   "h": 240,
+   "psnr": 46.5
+  },
+  "real/toys/basketball": {
+   "file": "assets/db/lib/real/toys/basketball.webp",
+   "cat": "toys",
+   "tags": [
+    "basketball",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#8",
+   "w": 251,
+   "h": 251,
+   "psnr": 44.2
+  },
+  "real/toys/dice": {
+   "file": "assets/db/lib/real/toys/dice.webp",
+   "cat": "toys",
+   "tags": [
+    "dice",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#11",
+   "w": 206,
+   "h": 212,
+   "psnr": 47.4
+  },
+  "real/toys/guitar": {
+   "file": "assets/db/lib/real/toys/guitar.webp",
+   "cat": "toys",
+   "tags": [
+    "guitar",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#10",
+   "w": 272,
+   "h": 275,
+   "psnr": 44.9
+  },
+  "real/toys/jigsaw": {
+   "file": "assets/db/lib/real/toys/jigsaw.webp",
+   "cat": "toys",
+   "tags": [
+    "jigsaw",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#19",
+   "w": 233,
+   "h": 224,
+   "psnr": 46.6
+  },
+  "real/toys/kite": {
+   "file": "assets/db/lib/real/toys/kite.webp",
+   "cat": "toys",
+   "tags": [
+    "kite",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#16",
+   "w": 224,
+   "h": 307,
+   "psnr": 43.6
+  },
+  "real/toys/kite-layangan": {
+   "file": "assets/db/lib/real/toys/kite-layangan.webp",
+   "cat": "toys",
+   "tags": [
+    "kite",
+    "layangan",
+    "realistic"
+   ],
+   "source": "icons-real-daily3-25#15",
+   "w": 257,
+   "h": 296,
+   "psnr": 42.8
+  },
+  "real/toys/kite-white": {
+   "file": "assets/db/lib/real/toys/kite-white.webp",
+   "cat": "toys",
+   "tags": [
+    "kite",
+    "white",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia3-25#8",
+   "w": 256,
+   "h": 260,
+   "psnr": 42.4
+  },
+  "real/toys/rubber-duck": {
+   "file": "assets/db/lib/real/toys/rubber-duck.webp",
+   "cat": "toys",
+   "tags": [
+    "rubber",
+    "duck",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#18",
+   "w": 219,
+   "h": 237,
+   "psnr": 46.0
+  },
+  "real/toys/soccer-ball": {
+   "file": "assets/db/lib/real/toys/soccer-ball.webp",
+   "cat": "toys",
+   "tags": [
+    "soccer",
+    "ball",
+    "realistic"
+   ],
+   "source": "icons-daily-branded2-25#24",
+   "w": 232,
+   "h": 236,
+   "psnr": 46.9
+  },
+  "real/toys/teddy-bear": {
+   "file": "assets/db/lib/real/toys/teddy-bear.webp",
+   "cat": "toys",
+   "tags": [
+    "teddy",
+    "bear",
+    "realistic"
+   ],
+   "source": "icons-real-indonesia3-25#13",
+   "w": 240,
+   "h": 254,
+   "psnr": 44.7
+  },
+  "real/toys/ukulele": {
+   "file": "assets/db/lib/real/toys/ukulele.webp",
+   "cat": "toys",
+   "tags": [
+    "ukulele",
+    "realistic"
+   ],
+   "source": "icons-real-kitchen-outdoor-25#17",
+   "w": 237,
+   "h": 286,
+   "psnr": 44.8
+  },
+  "real/toys/xylophone": {
+   "file": "assets/db/lib/real/toys/xylophone.webp",
+   "cat": "toys",
+   "tags": [
+    "xylophone",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#17",
+   "w": 285,
+   "h": 223,
+   "psnr": 42.9
+  },
+  "real/vehicles/bicycle": {
+   "file": "assets/db/lib/real/vehicles/bicycle.webp",
+   "cat": "vehicles",
+   "tags": [
+    "bicycle",
+    "realistic"
+   ],
+   "source": "icons-daily-branded-25#25",
+   "w": 339,
+   "h": 227,
+   "psnr": 44.7
+  },
+  "real/vehicles/mountain-bike": {
+   "file": "assets/db/lib/real/vehicles/mountain-bike.webp",
+   "cat": "vehicles",
+   "tags": [
+    "mountain",
+    "bike",
+    "realistic"
+   ],
+   "source": "icons-real-home-produce-25#2",
+   "w": 275,
+   "h": 238,
+   "psnr": 45.3
+  },
+  "real/vehicles/sailboat": {
+   "file": "assets/db/lib/real/vehicles/sailboat.webp",
+   "cat": "vehicles",
+   "tags": [
+    "sailboat",
+    "realistic"
+   ],
+   "source": "icons-real-toys-nature-25#10",
+   "w": 233,
+   "h": 273,
+   "psnr": 46.4
+  },
+  "real/vehicles/scooter": {
+   "file": "assets/db/lib/real/vehicles/scooter.webp",
+   "cat": "vehicles",
+   "tags": [
+    "scooter",
+    "realistic"
+   ],
+   "source": "icons-indonesia-branded-25#14",
+   "w": 270,
+   "h": 251,
+   "psnr": 45.2
+  },
+  "real/vehicles/scooter-white": {
+   "file": "assets/db/lib/real/vehicles/scooter-white.webp",
+   "cat": "vehicles",
+   "tags": [
+    "scooter",
+    "white",
+    "realistic"
+   ],
+   "source": "icons-real-kitchen-outdoor-25#8",
+   "w": 275,
+   "h": 249,
+   "psnr": 45.5
+  },
+  "real/vehicles/tyre": {
+   "file": "assets/db/lib/real/vehicles/tyre.webp",
+   "cat": "vehicles",
+   "tags": [
+    "tyre",
+    "realistic"
+   ],
+   "source": "icons-real-household-branded-25#21",
+   "w": 222,
+   "h": 268,
+   "psnr": 45.6
+  },
+  "school/backpack-brown": {
+   "file": "assets/db/lib/school/backpack-brown.webp",
+   "cat": "school",
+   "tags": [
+    "backpack",
+    "brown",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#7",
+   "w": 258,
+   "h": 276,
+   "psnr": 46.0
+  },
+  "school/backpack-green": {
+   "file": "assets/db/lib/school/backpack-green.webp",
+   "cat": "school",
+   "tags": [
+    "backpack",
+    "green",
+    "cartoon"
+   ],
+   "source": "icons-animals-fruit-home-30#5",
+   "w": 226,
+   "h": 233,
+   "psnr": 46.0
+  },
+  "school/backpack-yellow": {
+   "file": "assets/db/lib/school/backpack-yellow.webp",
+   "cat": "school",
+   "tags": [
+    "backpack",
+    "yellow",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#25",
+   "w": 241,
+   "h": 259,
+   "psnr": 45.8
+  },
+  "school/books": {
+   "file": "assets/db/lib/school/books.webp",
+   "cat": "school",
+   "tags": [
+    "books",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#24",
+   "w": 277,
+   "h": 238,
+   "psnr": 44.9
+  },
+  "school/easel": {
+   "file": "assets/db/lib/school/easel.webp",
+   "cat": "school",
+   "tags": [
+    "easel",
+    "cartoon"
+   ],
+   "source": "icons-home-hobby-25#24",
+   "w": 211,
+   "h": 297,
+   "psnr": 46.1
+  },
+  "school/globe": {
+   "file": "assets/db/lib/school/globe.webp",
+   "cat": "school",
+   "tags": [
+    "globe",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#6",
+   "w": 221,
+   "h": 280,
+   "psnr": 44.0
+  },
+  "school/laptop": {
+   "file": "assets/db/lib/school/laptop.webp",
+   "cat": "school",
+   "tags": [
+    "laptop",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#9",
+   "w": 288,
+   "h": 231,
+   "psnr": 46.8
+  },
+  "school/notebook": {
+   "file": "assets/db/lib/school/notebook.webp",
+   "cat": "school",
+   "tags": [
+    "notebook",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#8",
+   "w": 233,
+   "h": 252,
+   "psnr": 45.0
+  },
+  "school/telescope": {
+   "file": "assets/db/lib/school/telescope.webp",
+   "cat": "school",
+   "tags": [
+    "telescope",
+    "cartoon"
+   ],
+   "source": "icons-home-hobby-25#8",
+   "w": 228,
+   "h": 267,
+   "psnr": 42.9
+  },
+  "things/alarm-clock": {
+   "file": "assets/db/lib/things/alarm-clock.webp",
+   "cat": "things",
+   "tags": [
+    "alarm",
+    "clock",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#5",
+   "w": 233,
+   "h": 253,
+   "psnr": 42.5
+  },
+  "things/alarm-clock-black": {
+   "file": "assets/db/lib/things/alarm-clock-black.webp",
+   "cat": "things",
+   "tags": [
+    "alarm",
+    "clock",
+    "black",
+    "cartoon"
+   ],
+   "source": "icons-safety-party-toys-25#8",
+   "w": 224,
+   "h": 277,
+   "psnr": 46.3
+  },
+  "things/battery": {
+   "file": "assets/db/lib/things/battery.webp",
+   "cat": "things",
+   "tags": [
+    "battery",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#4",
+   "w": 158,
+   "h": 248,
+   "psnr": 44.0
+  },
+  "things/beach-umbrella": {
+   "file": "assets/db/lib/things/beach-umbrella.webp",
+   "cat": "things",
+   "tags": [
+    "beach",
+    "umbrella",
+    "cartoon"
+   ],
+   "source": "icons-safety-party-toys-25#19",
+   "w": 277,
+   "h": 256,
+   "psnr": 44.3
+  },
+  "things/binoculars": {
+   "file": "assets/db/lib/things/binoculars.webp",
+   "cat": "things",
+   "tags": [
+    "binoculars",
+    "cartoon"
+   ],
+   "source": "icons-safety-party-toys-25#15",
+   "w": 263,
+   "h": 214,
+   "psnr": 45.0
+  },
+  "things/birthday-cake": {
+   "file": "assets/db/lib/things/birthday-cake.webp",
+   "cat": "things",
+   "tags": [
+    "birthday",
+    "cake",
+    "cartoon"
+   ],
+   "source": "icons-safety-party-toys-25#7",
+   "w": 256,
+   "h": 264,
+   "psnr": 43.7
+  },
+  "things/camera": {
+   "file": "assets/db/lib/things/camera.webp",
+   "cat": "things",
+   "tags": [
+    "camera",
+    "cartoon"
+   ],
+   "source": "icons-nature-vehicles-25#12",
+   "w": 253,
+   "h": 205,
+   "psnr": 46.7
+  },
+  "things/cap": {
+   "file": "assets/db/lib/things/cap.webp",
+   "cat": "things",
+   "tags": [
+    "cap",
+    "cartoon"
+   ],
+   "source": "icons-wear-snacks-farm-25#2",
+   "w": 284,
+   "h": 227,
+   "psnr": 45.2
+  },
+  "things/cardboard-box": {
+   "file": "assets/db/lib/things/cardboard-box.webp",
+   "cat": "things",
+   "tags": [
+    "cardboard",
+    "box",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#14",
+   "w": 250,
+   "h": 246,
+   "psnr": 47.4
+  },
+  "things/cooking-pot": {
+   "file": "assets/db/lib/things/cooking-pot.webp",
+   "cat": "things",
+   "tags": [
+    "cooking",
+    "pot",
+    "cartoon"
+   ],
+   "source": "icons-safety-party-toys-25#23",
+   "w": 287,
+   "h": 234,
+   "psnr": 47.1
+  },
+  "things/cuckoo-clock": {
+   "file": "assets/db/lib/things/cuckoo-clock.webp",
+   "cat": "things",
+   "tags": [
+    "cuckoo",
+    "clock",
+    "cartoon"
+   ],
+   "source": "icons-home-hobby-25#16",
+   "w": 215,
+   "h": 286,
+   "psnr": 44.1
+  },
+  "things/fire-extinguisher": {
+   "file": "assets/db/lib/things/fire-extinguisher.webp",
+   "cat": "things",
+   "tags": [
+    "fire",
+    "extinguisher",
+    "cartoon"
+   ],
+   "source": "icons-safety-party-toys-25#1",
+   "w": 196,
+   "h": 272,
+   "psnr": 43.4
+  },
+  "things/first-aid-kit": {
+   "file": "assets/db/lib/things/first-aid-kit.webp",
+   "cat": "things",
+   "tags": [
+    "first",
+    "aid",
+    "kit",
+    "cartoon"
+   ],
+   "source": "icons-safety-party-toys-25#22",
+   "w": 264,
+   "h": 253,
+   "psnr": 45.1
+  },
+  "things/fishbowl": {
+   "file": "assets/db/lib/things/fishbowl.webp",
+   "cat": "things",
+   "tags": [
+    "fishbowl",
+    "cartoon"
+   ],
+   "source": "icons-home-hobby-25#13",
+   "w": 256,
+   "h": 243,
+   "psnr": 43.9
+  },
+  "things/flashlight": {
+   "file": "assets/db/lib/things/flashlight.webp",
+   "cat": "things",
+   "tags": [
+    "flashlight",
+    "cartoon"
+   ],
+   "source": "icons-safety-party-toys-25#21",
+   "w": 244,
+   "h": 248,
+   "psnr": 44.7
+  },
+  "things/gift": {
+   "file": "assets/db/lib/things/gift.webp",
+   "cat": "things",
+   "tags": [
+    "gift",
+    "cartoon"
+   ],
+   "source": "icons-nature-vehicles-25#25",
+   "w": 258,
+   "h": 272,
+   "psnr": 44.0
+  },
+  "things/hard-hat": {
+   "file": "assets/db/lib/things/hard-hat.webp",
+   "cat": "things",
+   "tags": [
+    "hard",
+    "hat",
+    "cartoon"
+   ],
+   "source": "icons-safety-party-toys-25#2",
+   "w": 274,
+   "h": 219,
+   "psnr": 44.5
+  },
+  "things/house-plant": {
+   "file": "assets/db/lib/things/house-plant.webp",
+   "cat": "things",
+   "tags": [
+    "house",
+    "plant",
+    "cartoon"
+   ],
+   "source": "icons-safety-party-toys-25#4",
+   "w": 276,
+   "h": 268,
+   "psnr": 45.0
+  },
+  "things/key-gold": {
+   "file": "assets/db/lib/things/key-gold.webp",
+   "cat": "things",
+   "tags": [
+    "key",
+    "gold",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#1",
+   "w": 233,
+   "h": 260,
+   "psnr": 42.1
+  },
+  "things/lifebuoy-rope": {
+   "file": "assets/db/lib/things/lifebuoy-rope.webp",
+   "cat": "things",
+   "tags": [
+    "lifebuoy",
+    "rope",
+    "cartoon"
+   ],
+   "source": "icons-safety-party-toys-25#9",
+   "w": 262,
+   "h": 260,
+   "psnr": 44.5
+  },
+  "things/light-bulb": {
+   "file": "assets/db/lib/things/light-bulb.webp",
+   "cat": "things",
+   "tags": [
+    "light",
+    "bulb",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#3",
+   "w": 194,
+   "h": 262,
+   "psnr": 44.5
+  },
+  "things/megaphone": {
+   "file": "assets/db/lib/things/megaphone.webp",
+   "cat": "things",
+   "tags": [
+    "megaphone",
+    "cartoon"
+   ],
+   "source": "icons-outdoor-camping-30#18",
+   "w": 260,
+   "h": 228,
+   "psnr": 43.2
+  },
+  "things/microwave": {
+   "file": "assets/db/lib/things/microwave.webp",
+   "cat": "things",
+   "tags": [
+    "microwave",
+    "cartoon"
+   ],
+   "source": "icons-home-hobby-25#19",
+   "w": 265,
+   "h": 186,
+   "psnr": 47.4
+  },
+  "things/padlock": {
+   "file": "assets/db/lib/things/padlock.webp",
+   "cat": "things",
+   "tags": [
+    "padlock",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#2",
+   "w": 197,
+   "h": 248,
+   "psnr": 46.3
+  },
+  "things/picnic-basket": {
+   "file": "assets/db/lib/things/picnic-basket.webp",
+   "cat": "things",
+   "tags": [
+    "picnic",
+    "basket",
+    "cartoon"
+   ],
+   "source": "icons-safety-party-toys-25#24",
+   "w": 273,
+   "h": 258,
+   "psnr": 43.5
+  },
+  "things/rain-boot": {
+   "file": "assets/db/lib/things/rain-boot.webp",
+   "cat": "things",
+   "tags": [
+    "rain",
+    "boot",
+    "cartoon"
+   ],
+   "source": "icons-outdoor-camping-30#24",
+   "w": 221,
+   "h": 269,
+   "psnr": 46.1
+  },
+  "things/recycle": {
+   "file": "assets/db/lib/things/recycle.webp",
+   "cat": "things",
+   "tags": [
+    "recycle",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#13",
+   "w": 250,
+   "h": 242,
+   "psnr": 44.6
+  },
+  "things/refrigerator": {
+   "file": "assets/db/lib/things/refrigerator.webp",
+   "cat": "things",
+   "tags": [
+    "refrigerator",
+    "cartoon"
+   ],
+   "source": "icons-home-hobby-25#7",
+   "w": 194,
+   "h": 263,
+   "psnr": 48.2
+  },
+  "things/rocking-chair": {
+   "file": "assets/db/lib/things/rocking-chair.webp",
+   "cat": "things",
+   "tags": [
+    "rocking",
+    "chair",
+    "cartoon"
+   ],
+   "source": "icons-home-hobby-25#11",
+   "w": 255,
+   "h": 270,
+   "psnr": 45.0
+  },
+  "things/rubber-glove": {
+   "file": "assets/db/lib/things/rubber-glove.webp",
+   "cat": "things",
+   "tags": [
+    "rubber",
+    "glove",
+    "cartoon"
+   ],
+   "source": "icons-home-hobby-25#22",
+   "w": 203,
+   "h": 282,
+   "psnr": 44.7
+  },
+  "things/shopping-cart": {
+   "file": "assets/db/lib/things/shopping-cart.webp",
+   "cat": "things",
+   "tags": [
+    "shopping",
+    "cart",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#11",
+   "w": 260,
+   "h": 250,
+   "psnr": 41.2
+  },
+  "things/smartphone": {
+   "file": "assets/db/lib/things/smartphone.webp",
+   "cat": "things",
+   "tags": [
+    "smartphone",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#10",
+   "w": 194,
+   "h": 265,
+   "psnr": 45.7
+  },
+  "things/soccer-boot": {
+   "file": "assets/db/lib/things/soccer-boot.webp",
+   "cat": "things",
+   "tags": [
+    "soccer",
+    "boot",
+    "cartoon"
+   ],
+   "source": "icons-animals-fruit-home-30#1",
+   "w": 251,
+   "h": 214,
+   "psnr": 45.8
+  },
+  "things/sunglasses": {
+   "file": "assets/db/lib/things/sunglasses.webp",
+   "cat": "things",
+   "tags": [
+    "sunglasses",
+    "cartoon"
+   ],
+   "source": "icons-wear-snacks-farm-25#3",
+   "w": 290,
+   "h": 153,
+   "psnr": 46.3
+  },
+  "things/toaster": {
+   "file": "assets/db/lib/things/toaster.webp",
+   "cat": "things",
+   "tags": [
+    "toaster",
+    "cartoon"
+   ],
+   "source": "icons-home-hobby-25#14",
+   "w": 248,
+   "h": 263,
+   "psnr": 46.5
+  },
+  "things/toilet-paper": {
+   "file": "assets/db/lib/things/toilet-paper.webp",
+   "cat": "things",
+   "tags": [
+    "toilet",
+    "paper",
+    "cartoon"
+   ],
+   "source": "icons-animals-fruit-home-30#25",
+   "w": 220,
+   "h": 201,
+   "psnr": 46.4
+  },
+  "things/toothbrush": {
+   "file": "assets/db/lib/things/toothbrush.webp",
+   "cat": "things",
+   "tags": [
+    "toothbrush",
+    "cartoon"
+   ],
+   "source": "icons-animals-fruit-home-30#23",
+   "w": 255,
+   "h": 196,
+   "psnr": 39.6
+  },
+  "things/toothpaste": {
+   "file": "assets/db/lib/things/toothpaste.webp",
+   "cat": "things",
+   "tags": [
+    "toothpaste",
+    "cartoon"
+   ],
+   "source": "icons-animals-fruit-home-30#24",
+   "w": 277,
+   "h": 184,
+   "psnr": 45.9
+  },
+  "things/traffic-cone": {
+   "file": "assets/db/lib/things/traffic-cone.webp",
+   "cat": "things",
+   "tags": [
+    "traffic",
+    "cone",
+    "cartoon"
+   ],
+   "source": "icons-safety-party-toys-25#3",
+   "w": 229,
+   "h": 267,
+   "psnr": 46.3
+  },
+  "things/trash-can": {
+   "file": "assets/db/lib/things/trash-can.webp",
+   "cat": "things",
+   "tags": [
+    "trash",
+    "can",
+    "cartoon"
+   ],
+   "source": "icons-everyday-park-25#12",
+   "w": 196,
+   "h": 256,
+   "psnr": 46.5
+  },
+  "things/umbrella-red": {
+   "file": "assets/db/lib/things/umbrella-red.webp",
+   "cat": "things",
+   "tags": [
+    "umbrella",
+    "red",
+    "cartoon"
+   ],
+   "source": "icons-nature-vehicles-25#5",
+   "w": 267,
+   "h": 262,
+   "psnr": 42.4
+  },
+  "toys/basketball": {
+   "file": "assets/db/lib/toys/basketball.webp",
+   "cat": "toys",
+   "tags": [
+    "basketball",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#22",
+   "w": 241,
+   "h": 241,
+   "psnr": 44.0
+  },
+  "toys/beach-ball": {
+   "file": "assets/db/lib/toys/beach-ball.webp",
+   "cat": "toys",
+   "tags": [
+    "beach",
+    "ball",
+    "cartoon"
+   ],
+   "source": "icons-safety-party-toys-25#16",
+   "w": 239,
+   "h": 241,
+   "psnr": 44.4
+  },
+  "toys/drum": {
+   "file": "assets/db/lib/toys/drum.webp",
+   "cat": "toys",
+   "tags": [
+    "drum",
+    "cartoon"
+   ],
+   "source": "icons-home-hobby-25#23",
+   "w": 234,
+   "h": 242,
+   "psnr": 45.6
+  },
+  "toys/gamepad": {
+   "file": "assets/db/lib/toys/gamepad.webp",
+   "cat": "toys",
+   "tags": [
+    "gamepad",
+    "cartoon"
+   ],
+   "source": "icons-animals-food-things-25#23",
+   "w": 275,
+   "h": 222,
+   "psnr": 45.1
+  },
+  "toys/grand-piano": {
+   "file": "assets/db/lib/toys/grand-piano.webp",
+   "cat": "toys",
+   "tags": [
+    "grand",
+    "piano",
+    "cartoon"
+   ],
+   "source": "icons-home-hobby-25#4",
+   "w": 263,
+   "h": 262,
+   "psnr": 46.2
+  },
+  "toys/guitar": {
+   "file": "assets/db/lib/toys/guitar.webp",
+   "cat": "toys",
+   "tags": [
+    "guitar",
+    "cartoon"
+   ],
+   "source": "icons-nature-vehicles-25#11",
+   "w": 234,
+   "h": 292,
+   "psnr": 44.7
+  },
+  "toys/harmonica": {
+   "file": "assets/db/lib/toys/harmonica.webp",
+   "cat": "toys",
+   "tags": [
+    "harmonica",
+    "cartoon"
+   ],
+   "source": "icons-wear-snacks-farm-25#4",
+   "w": 265,
+   "h": 189,
+   "psnr": 44.9
+  },
+  "toys/kite": {
+   "file": "assets/db/lib/toys/kite.webp",
+   "cat": "toys",
+   "tags": [
+    "kite",
+    "cartoon"
+   ],
+   "source": "icons-home-hobby-25#15",
+   "w": 245,
+   "h": 271,
+   "psnr": 42.8
+  },
+  "toys/paint-palette": {
+   "file": "assets/db/lib/toys/paint-palette.webp",
+   "cat": "toys",
+   "tags": [
+    "paint",
+    "palette",
+    "cartoon"
+   ],
+   "source": "icons-wear-snacks-farm-25#12",
+   "w": 248,
+   "h": 248,
+   "psnr": 44.6
+  },
+  "toys/rocking-horse": {
+   "file": "assets/db/lib/toys/rocking-horse.webp",
+   "cat": "toys",
+   "tags": [
+    "rocking",
+    "horse",
+    "cartoon"
+   ],
+   "source": "icons-outdoor-camping-30#23",
+   "w": 287,
+   "h": 275,
+   "psnr": 44.8
+  },
+  "toys/rubber-duck": {
+   "file": "assets/db/lib/toys/rubber-duck.webp",
+   "cat": "toys",
+   "tags": [
+    "rubber",
+    "duck",
+    "cartoon"
+   ],
+   "source": "icons-safety-party-toys-25#17",
+   "w": 235,
+   "h": 253,
+   "psnr": 44.5
+  },
+  "toys/skateboard": {
+   "file": "assets/db/lib/toys/skateboard.webp",
+   "cat": "toys",
+   "tags": [
+    "skateboard",
+    "cartoon"
+   ],
+   "source": "icons-safety-party-toys-25#25",
+   "w": 274,
+   "h": 268,
+   "psnr": 44.8
+  },
+  "toys/soccer-ball": {
+   "file": "assets/db/lib/toys/soccer-ball.webp",
+   "cat": "toys",
+   "tags": [
+    "soccer",
+    "ball",
+    "cartoon"
+   ],
+   "source": "icons-items-25#24",
+   "w": 243,
+   "h": 249,
+   "psnr": 47.3
+  },
+  "toys/soccer-goal": {
+   "file": "assets/db/lib/toys/soccer-goal.webp",
+   "cat": "toys",
+   "tags": [
+    "soccer",
+    "goal",
+    "cartoon"
+   ],
+   "source": "icons-home-hobby-25#1",
+   "w": 268,
+   "h": 236,
+   "psnr": 43.8
+  },
+  "toys/trumpet": {
+   "file": "assets/db/lib/toys/trumpet.webp",
+   "cat": "toys",
+   "tags": [
+    "trumpet",
+    "cartoon"
+   ],
+   "source": "icons-wear-snacks-farm-25#5",
+   "w": 270,
+   "h": 214,
+   "psnr": 42.1
+  },
+  "vehicles/airplane": {
+   "file": "assets/db/lib/vehicles/airplane.webp",
+   "cat": "vehicles",
+   "tags": [
+    "airplane",
+    "cartoon"
+   ],
+   "source": "icons-nature-vehicles-25#6",
+   "w": 252,
+   "h": 199,
+   "psnr": 44.8
+  },
+  "vehicles/bicycle": {
+   "file": "assets/db/lib/vehicles/bicycle.webp",
+   "cat": "vehicles",
+   "tags": [
+    "bicycle",
+    "cartoon"
+   ],
+   "source": "icons-nature-vehicles-25#9",
+   "w": 270,
+   "h": 217,
+   "psnr": 43.3
+  },
+  "vehicles/car-red": {
+   "file": "assets/db/lib/vehicles/car-red.webp",
+   "cat": "vehicles",
+   "tags": [
+    "car",
+    "red",
+    "cartoon"
+   ],
+   "source": "icons-nature-vehicles-25#7",
+   "w": 268,
+   "h": 211,
+   "psnr": 42.5
+  },
+  "vehicles/dump-truck": {
+   "file": "assets/db/lib/vehicles/dump-truck.webp",
+   "cat": "vehicles",
+   "tags": [
+    "dump",
+    "truck",
+    "cartoon"
+   ],
+   "source": "icons-home-hobby-25#5",
+   "w": 268,
+   "h": 221,
+   "psnr": 44.0
+  },
+  "vehicles/excavator": {
+   "file": "assets/db/lib/vehicles/excavator.webp",
+   "cat": "vehicles",
+   "tags": [
+    "excavator",
+    "cartoon"
+   ],
+   "source": "icons-nature-vehicles-25#14",
+   "w": 290,
+   "h": 254,
+   "psnr": 44.1
+  },
+  "vehicles/fire-truck": {
+   "file": "assets/db/lib/vehicles/fire-truck.webp",
+   "cat": "vehicles",
+   "tags": [
+    "fire",
+    "truck",
+    "cartoon"
+   ],
+   "source": "icons-nature-vehicles-25#15",
+   "w": 270,
+   "h": 224,
+   "psnr": 43.7
+  },
+  "vehicles/helicopter": {
+   "file": "assets/db/lib/vehicles/helicopter.webp",
+   "cat": "vehicles",
+   "tags": [
+    "helicopter",
+    "cartoon"
+   ],
+   "source": "icons-home-hobby-25#2",
+   "w": 302,
+   "h": 231,
+   "psnr": 44.0
+  },
+  "vehicles/motorcycle": {
+   "file": "assets/db/lib/vehicles/motorcycle.webp",
+   "cat": "vehicles",
+   "tags": [
+    "motorcycle",
+    "cartoon"
+   ],
+   "source": "icons-animals-fruit-home-30#2",
+   "w": 224,
+   "h": 231,
+   "psnr": 43.7
+  },
+  "vehicles/sailboat": {
+   "file": "assets/db/lib/vehicles/sailboat.webp",
+   "cat": "vehicles",
+   "tags": [
+    "sailboat",
+    "cartoon"
+   ],
+   "source": "icons-nature-vehicles-25#10",
+   "w": 255,
+   "h": 275,
+   "psnr": 44.8
+  },
+  "vehicles/school-bus": {
+   "file": "assets/db/lib/vehicles/school-bus.webp",
+   "cat": "vehicles",
+   "tags": [
+    "school",
+    "bus",
+    "cartoon"
+   ],
+   "source": "icons-nature-vehicles-25#8",
+   "w": 263,
+   "h": 224,
+   "psnr": 44.5
+  }
+ }
+}

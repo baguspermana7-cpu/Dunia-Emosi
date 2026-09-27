@@ -4,6 +4,8 @@
  * Value form (string):
  *   'creatures/28'  → assets/db/creatures/028.webp  (direct DB category/index)
  *   'eco:star'      → resolved via UISprites pack map → assets/db/eco/018.webp
+ *   'lib:animals/dog' → assets/db/lib/animals/dog.webp (named library, tools/ingest-asset-sheets.py;
+ *                      filled GAPs only -- never on a Pokémon page)
  *
  * Only CONFIDENT, kid-recognizable mappings (educational — never a wrong picture).
  * Anything not here returns null → the resolver leaves the emoji AND records it as
@@ -22,6 +24,18 @@
 
   // char → 'cat/index' (assets/db) OR 'pack:name' (UISprites pack)
   var M = {
+    // ── GAP fill from the named library (assets/db/lib, 2026-09-27). Only emoji that had NO
+    //    sprite before; CARTOON sheets only (real/ would clash inside a cartoon game);
+    //    resolved as 'lib:<key>', and never on a Pokémon page. ──
+    '🐝': 'lib:animals/bee', '🦋': 'lib:animals/butterfly', '🐞': 'lib:animals/ladybug', '🍿': 'lib:food/popcorn',
+    '🫑': 'lib:food/bell-pepper', '🧄': 'lib:food/garlic', '🍪': 'lib:food/cookie', '🥞': 'lib:food/pancakes',
+    '🍟': 'lib:food/french-fries', '🌹': 'lib:nature/rose', '🍁': 'lib:nature/maple-leaf', '🪴': 'lib:nature/potted-plant',
+    '🪁': 'lib:toys/kite', '🛹': 'lib:toys/skateboard', '📱': 'lib:things/smartphone', '♻': 'lib:things/recycle',
+    '📷': 'lib:things/camera', '🔦': 'lib:things/flashlight', '🧯': 'lib:things/fire-extinguisher', '⛑': 'lib:things/hard-hat',
+    '💻': 'lib:school/laptop', '📓': 'lib:school/notebook', '🧭': 'lib:game/compass', '🔔': 'lib:game/bell',
+    '💣': 'lib:game/bomb', '⛺': 'lib:park/tent', '🧻': 'lib:things/toilet-paper', '🧢': 'lib:things/cap',
+    '🧤': 'lib:things/rubber-glove',
+
     // ── Trains + vehicles (assets/db/vehicles) ──
     '🚂': 'vehicles/51', '🚃': 'vehicles/51', '🚋': 'vehicles/51', '🚆': 'vehicles/51',
     '🚄': 'vehicles/51', '🚅': 'vehicles/51', '🚈': 'vehicles/51', '🚝': 'vehicles/51',
@@ -170,8 +184,15 @@
 
   function get (ch) { var v = NM[norm(ch)]; return v || null }
   function has (ch) { return !!get(ch) }
+  // Owner rule (2026-09-27): the named library (assets/db/lib, 'lib:<key>' values) is
+  // NEVER used by the Pokémon games -- there a 'lib:' emoji stays an emoji as before.
+  var POKEMON_PAGE = /(gym-pokemon|mario-pokemon|monster-candy|pokemon-run|pokemon-birds|pokemon-bawah-laut)\.html/
+  function libAllowed () { try { return !POKEMON_PAGE.test(W.location.pathname) } catch (e) { return true } }
   function spec (ch) {
     var v = get(ch); if (!v) return null
+    if (v.indexOf('lib:') === 0) {                    // lib:<key> → assets/db/lib/<key>.webp
+      return libAllowed() ? { lib: v.slice(4), file: 'assets/db/lib/' + v.slice(4) + '.webp' } : null
+    }
     if (v.indexOf(':') > -1) {                        // pack:name → resolve index via UISprites
       var pn = v.split(':')
       if (W.UISprites && W.UISprites._pack && W.UISprites._pack[pn[0]]) {
