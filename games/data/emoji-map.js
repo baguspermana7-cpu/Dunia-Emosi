@@ -35,6 +35,7 @@
     '💻': 'lib:school/laptop', '📓': 'lib:school/notebook', '🧭': 'lib:game/compass', '🔔': 'lib:game/bell',
     '💣': 'lib:game/bomb', '⛺': 'lib:park/tent', '🧻': 'lib:things/toilet-paper', '🧢': 'lib:things/cap',
     '🧤': 'lib:things/rubber-glove',
+    '🛡': 'lib:game/shield-star', '🪜': 'lib:game/ladder',
 
     // ── Trains + vehicles (assets/db/vehicles) ──
     '🚂': 'vehicles/51', '🚃': 'vehicles/51', '🚋': 'vehicles/51', '🚆': 'vehicles/51',

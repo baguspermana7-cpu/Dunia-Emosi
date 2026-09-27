@@ -195,6 +195,10 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
   opacity:0;pointer-events:none;transition:opacity .2s ease,transform .32s cubic-bezier(.22,1.5,.36,1);z-index:70}
 .toast.show{opacity:1;transform:translate(-50%,0) scale(1)}
 .bdg b{display:block;font-size:22px;margin-bottom:4px}
+/* every badge the same size as a sprite (the trophy art is smaller in its frame) */
+.bdg b img.emoji-sprite{width:38px!important;height:38px!important;vertical-align:middle!important}
+.bdg b img.emoji-sprite[src*="/assets/db/ui/"]{transform:scale(1.6)}
+.bdg:not(.on) b img.emoji-sprite{filter:grayscale(.85);opacity:.55}
 
 /* ── phone: the panel keeps its shape, just tighter, and nothing may push the
    page sideways (a child scrolling a worksheet horizontally loses their place) */
@@ -225,6 +229,11 @@ button{border:0;background:none;color:inherit;cursor:pointer;font-size:15px}
 body[data-motion="off"] *,body[data-motion="off"] *::before,body[data-motion="off"] *::after{
   animation:none!important;transition:none!important}
 
+/* zero-emoji sprites in the toolbar: 1em was a speck at this font size, and the ui-pack
+   icons (speaker, magnifier) carry ~50% transparent padding, so they are scaled up too */
+.act img.emoji-sprite{width:1.35em!important;height:1.35em!important;vertical-align:-.32em!important;margin-right:2px}
+.act img.emoji-sprite[src*="/assets/db/ui/"]{transform:scale(1.75)}
+#btn-sound img.emoji-sprite{width:1.6em!important;height:1.6em!important}
 /* ── print: the sheet only, key on its own page ──────────────────────────── */
 @media print{
   @page{size:A4;margin:12mm}
@@ -295,9 +304,10 @@ body[data-motion="off"] *,body[data-motion="off"] *::before,body[data-motion="of
   </div>
 </div>
 
-<script src="data/berhitung-engine.js?v=v62.5-20260927a"></script>
-<script src="data/freeze-watchdog.js?v=v62.5-20260927a"></script>
-<script src="sw-reload.js?v=v62.5-20260927a"></script>
+<script src="data/emoji-map.js?v=v62.6-20260927a"></script><script src="data/ui-sprites.js?v=v62.6-20260927a"></script><!-- zero-emoji engine: toolbar + badges draw as the shared sprites -->
+<script src="data/berhitung-engine.js?v=v62.6-20260927a"></script>
+<script src="data/freeze-watchdog.js?v=v62.6-20260927a"></script>
+<script src="sw-reload.js?v=v62.6-20260927a"></script>
 <script>
 (function () {
   'use strict'
@@ -783,8 +793,8 @@ body[data-motion="off"] *,body[data-motion="off"] *::before,body[data-motion="of
   // ── badges ───────────────────────────────────────────────────────────────
   var BADGES = [
     { id: 'first', icon: '⭐', name: 'Soal pertama', test: function (n) { return n >= 1 } },
-    { id: 'ten', icon: '🔟', name: '10 soal benar', test: function (n) { return n >= 10 } },
-    { id: 'page', icon: '📄', name: 'Satu halaman penuh', test: function (n, full) { return full >= 1 } },
+    { id: 'ten', icon: '🎯', name: '10 soal benar', test: function (n) { return n >= 10 } },
+    { id: 'page', icon: '📓', name: 'Satu halaman penuh', test: function (n, full) { return full >= 1 } },
     { id: 'fifty', icon: '🏅', name: '50 soal benar', test: function (n) { return n >= 50 } },
     { id: 'hundred', icon: '🏆', name: '100 soal benar', test: function (n) { return n >= 100 } },
     { id: 'fivepages', icon: '📚', name: '5 halaman penuh', test: function (n, full) { return full >= 5 } }
