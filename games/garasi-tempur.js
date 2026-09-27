@@ -610,7 +610,7 @@
         '<div class="chal-atk"><img src="' + lib(d.sprite) + '" alt=""><span>' + esc(atk.name) + '</span></div>' +
         '<div class="chal-q fk">' + q.text + '</div>' +
         '<div class="chal-ch">' + q.choices.map(function (v) { return '<button class="chal-b fk" type="button" data-v="' + v + '"' + (human(pi) ? '' : ' disabled') + '>' + v + '</button>' }).join('') + '</div>' +
-        '<div class="chal-sum">' + parts.join(' · ') + ' = ' + pv.total + '</div></div>' +
+        '<div class="chal-sum">' + (parts.length > 1 ? parts.join(' · ') + ' = ' + pv.total : 'Serangan ' + pv.total) + '</div></div>' +
       '<div class="chal-r"><div><span>Kalau benar:</span><b><i class="y">✓</i>' + (pv.total + 2) + ' kerusakan</b></div>' +
         '<div><span>Kalau salah:</span><b><i class="n">✕</i>' + pv.total + ' kerusakan</b></div></div></div>' +
       '<div class="chal-fb" id="chal-fb"></div></div>'

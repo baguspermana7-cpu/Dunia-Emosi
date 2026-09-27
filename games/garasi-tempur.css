@@ -111,6 +111,11 @@ img{-webkit-user-drag:none}
 .tile::after{content:'›';position:absolute;right:8px;bottom:10px;font-size:26px;font-weight:900;opacity:.9}
 .tile.row2{min-height:96px}
 .tile.row2 img{width:44px;height:44px}
+@media (orientation:portrait) and (min-width:500px){
+  .tile.row2{min-height:78px;flex-direction:row;justify-content:flex-start;align-items:center;gap:8px;text-align:left;padding:8px 10px}
+  .tile.row2 img{width:44px;height:44px;margin:0;flex:none}
+  .tile.row2 span{align-items:flex-start}
+}
 .tile span{display:flex;flex-direction:column;align-items:center}
 .t-orange{background:linear-gradient(#FFB43A,#E97A10)}.t-red{background:linear-gradient(#EF4A3C,#B11A1A)}.t-blue{background:linear-gradient(#3AA2FF,#1459C9)}
 .t-green{background:linear-gradient(#35C267,#157D3A)}.t-purple{background:linear-gradient(#9B5CF0,#5A26B8)}.t-gold{background:linear-gradient(#E8B64A,#A8741A)}
@@ -170,7 +175,7 @@ img{-webkit-user-drag:none}
 .mini.locked{background:#1a2030;border-color:#333d52}
 .mini.sel{outline:4px solid var(--gold);outline-offset:1px;transform:translateY(-3px)}
 .grid-mini{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:10px;justify-items:center}
-.chips{display:flex;gap:8px;overflow:auto;padding:0 14px 8px;position:relative;z-index:2}
+.chips{display:flex;gap:8px;overflow:auto;padding:0 14px 8px;position:relative;z-index:2;-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}
 .chip{flex:none;display:flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border-radius:22px;border:2px solid var(--line);background:rgba(255,255,255,.06);cursor:pointer;font-weight:800}
 .chip img{width:22px;height:22px}
 .chip.on{background:var(--gold);color:#3A2300;border-color:var(--gold)}
@@ -414,7 +419,7 @@ body[data-scr=scr-battle] .toast{top:auto;bottom:calc(var(--hf) * 14 + 110px + v
 .chal-b.pick{outline:5px solid var(--gold);outline-offset:2px}
 .chal-b[disabled]{cursor:default}
 .chal-r i{font-style:normal}
-@media (max-width:520px){.chal-body{grid-template-columns:1fr}.chal-r{flex-direction:row;min-width:0;padding:8px 10px}.chal-r div{flex:1}.chal-ch{gap:6px}.chal-b{min-height:58px}}
+@media (max-width:520px){.chal-body{grid-template-columns:1fr 34%}.chal-r{min-width:0;padding:8px;font-size:12px;gap:8px}.chal-r b{font-size:14px;flex-wrap:wrap;gap:4px}.chal-ch{grid-template-columns:1fr 1fr;gap:6px}.chal-b{min-height:58px}.chal-q{font-size:40px}}
 .chal-r{background:linear-gradient(#1E3D8F,#132A66);color:#fff;padding:10px 12px;display:flex;flex-direction:column;justify-content:center;gap:10px;font-size:13px;min-width:130px}
 .chal-r div{display:flex;flex-direction:column;gap:3px}
 .chal-r span{color:#BFD8FF}
@@ -513,8 +518,9 @@ body[data-scr=scr-battle] .toast{top:auto;bottom:calc(var(--hf) * 14 + 110px + v
     grid-template-areas:"hbar hbar" "logo hero" "tiles tiles" "feat feat";padding-left:96px}
   .logo{margin-top:0;align-self:center}
   .tiles{grid-template-columns:repeat(6,1fr)}
-  .tile.row2{min-height:112px}
-  .tile.row2 img{width:54px;height:54px}
+  .tile.row2{min-height:112px;flex-direction:column;justify-content:flex-end;text-align:center}
+  .tile.row2 img{width:54px;height:54px;margin-bottom:auto}
+  .tile.row2 span{align-items:center}
   .tile b{font-size:clamp(12px,1.65vw,18px)}
   .sidebtns{top:calc(86px + var(--sat))}
   .league{top:calc(10px + var(--sat));right:80px}
@@ -569,6 +575,12 @@ body[data-scr=scr-battle] .toast{top:auto;bottom:calc(var(--hf) * 14 + 110px + v
 }
 /* tall landscape (tablet/desktop): whole hand cards, like the mockup */
 @media (orientation:landscape) and (min-height:600px){
+  #table{grid-template-areas:"mep ohand opp" "arena field turn" "fuel field turn" "deck hand end"}
+  #op-hand{display:flex}#op-hand img{width:clamp(28px,3.4vw,54px)}
+  #coach{grid-area:field;align-self:center;justify-self:center;z-index:8;max-width:min(46vw,560px)}
+  #field{flex-direction:column;gap:clamp(64px,9vh,110px)}
+  #op-field{order:1}#me-field{order:2}
+  #scr-battle{--cf:clamp(8px,min(1.35vw,1.75vh),16px)}
   .hc{bottom:0}
   #hand{height:calc(var(--hf) * 14 + 6px)}
   .hc.sel{transform:translateX(-50%) translateX(var(--x,0)) translateY(-26%) rotate(0) scale(1.22)}

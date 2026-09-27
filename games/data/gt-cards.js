@@ -47,8 +47,7 @@
     { id: 'kru-bengkel',   name: 'Kru Bengkel',     effect: 'draw', value: 1 },
     { id: 'jeriken-extra', name: 'Jeriken Ekstra',  effect: 'fuel', value: 1 },
     { id: 'tantangan-hitung', name: 'Tantangan Hitung', effect: 'boost', value: 2 },
-    { id: 'setel-sempurna', name: 'Setel Sempurna', effect: 'nitro', value: 2 },
-    { id: 'derek',         name: 'Derek',           effect: 'switch', value: 0 }
+    { id: 'setel-sempurna', name: 'Setel Sempurna', effect: 'nitro', value: 2 }
   ]
 
   var FUEL = { id: 'bahan-bakar', name: 'Bensin' }
