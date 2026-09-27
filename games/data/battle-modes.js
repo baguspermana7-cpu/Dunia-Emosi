@@ -1945,12 +1945,12 @@
       questionStartedAt: 0,
       lastAnswerElapsed: [null, null],
       comboCount: [0, 0],
-      // v56.9 A-323 balance: DYNAMIC per-round initiative. roundActed tracks who
-      // has acted in the current round; when both have, the next round's leader is
-      // re-decided by the ACTIVE Pokemon's Speed (decideRoundLead) instead of a
-      // blind alternation — breaking the permanent first-mover advantage.
-      roundActed: [],
-      _lastLead: null
+      // STRICT ALTERNATION (replaces the v56.9 A-323 per-round Speed lead, which
+      // handed the faster side a double turn after every wrong answer, timeout,
+      // voluntary switch or KO). Every action hands the turn to the OTHER
+      // player via passTurn(); Speed only decides who opens the match.
+      // _lastActor = the player whose action most recently ended a turn.
+      _lastActor: null
     };
     // v54.30 balance: PvP HP floor — every Pokemon in PvP/Tournament has
     // hpMax ≥ 95 so a Kalos-random team never towers over a Hoenn-Starter
@@ -1987,40 +1987,55 @@
       t.forEach(p => { if (p) { hp += Math.max(0, p.hp || 0); mx += (p.hpMax || 0); } });
       return mx > 0 ? hp / mx : 1;
     }
-    // decideRoundLead — who leads the NEXT round: faster ACTIVE Pokemon first
-    // (rewards Speed + smart switching). Speed tie → the side BEHIND on team HP
-    // leads (comeback); still tied → alternate via tiebreakLast.
-    function decideRoundLead () {
-      const a0 = activePoke(0), a1 = activePoke(1);
-      const s0 = (a0 && typeof a0.speed === 'number') ? a0.speed : 70;
-      const s1 = (a1 && typeof a1.speed === 'number') ? a1.speed : 70;
-      if (s0 > s1) return 0;
-      if (s1 > s0) return 1;
-      const h0 = teamHpFrac(0), h1 = teamHpFrac(1);
-      if (h0 < h1 - 0.001) return 0;
-      if (h1 < h0 - 0.001) return 1;
-      state.tiebreakLast = (state.tiebreakLast === 0) ? 1 : 0;
-      return state.tiebreakLast;
+    // passTurn — the ONE place a turn changes hands. actorIdx just used their
+    // turn (hit, wrong answer, timeout or voluntary switch); the other player
+    // opens their turn at the action menu. Kids share one tablet, so the turn
+    // order must be strictly P1, P2, P1, P2 — no Speed-based double turns.
+    function passTurn (actorIdx) {
+      state._lastActor = actorIdx;
+      state.turn = 1 - actorIdx;
+      root._questions = null;
+      root._switchOpen = null;
+      state._moveLock = false;  // v53.4: release move-spam guard for next turn
+      state.phase = 'action';
     }
-    // announceRoundLead — brief pill when the round leader CHANGES (reuses the
-    // .bm-init-banner styling). Skipped on the very first round (the VS/initiative
-    // banner already covers it) and when the leader is unchanged (no spam).
-    function announceRoundLead (leaderIdx) {
-      if (state._lastLead === leaderIdx) return;
-      state._lastLead = leaderIdx;
-      if (!state._initiativeShown) return; // round 1 handled by the initiative banner
-      try {
-        const host = document.querySelector('.bm-pvp-real, .bm-tour');
-        if (!host) return;
-        const who = activePoke(leaderIdx);
-        const nm = (who && who.name) || (opts.players && opts.players[leaderIdx] && opts.players[leaderIdx].name) || ('P' + (leaderIdx + 1));
-        const b = document.createElement('div');
-        b.className = 'bm-init-banner bm-round-lead';
-        b.innerHTML = '<span>⚡</span> <b>' + escapeHtml(nm) + '</b> duluan!';
-        host.appendChild(b);
-        setTimeout(() => { try { b.classList.add('out'); } catch (e) {} }, 1100);
-        setTimeout(() => { try { b.remove(); } catch (e) {} }, 1600);
-      } catch (e) {}
+    // Belt-and-braces: the player who just acted must never open the next action
+    // menu. Runs right before the battle screen paints. A forced switch after a
+    // faint is a free action and is not a turn, so it is exempt.
+    function guardAlternation () {
+      if (state.phase !== 'action' || state.switchForced != null) return;
+      if (state._lastActor == null || state._lastActor !== state.turn) return;
+      if (root._switchOpen === state.turn) return;
+      try { console.warn('[pvp] double turn prevented', { player: state.turn + 1 }); } catch (e) {}
+      passTurn(state._lastActor);
+    }
+    // Pending turn-change timer (wrong answer 1400 ms, timeout 1200 ms, hit 850 ms).
+    // pauseGame parks it; resumeGame re-arms it with the time that was left, so a
+    // turn can never change hands while the pause overlay is up.
+    let _turnTimer = null;
+    function scheduleTurnChange (fn, ms) {
+      cancelTurnChange();
+      const t = { id: 0, due: 0, left: ms, run: null };
+      t.run = () => { if (_turnTimer === t) _turnTimer = null; fn(); };
+      if (!state.paused) { t.due = Date.now() + ms; t.id = setTimeout(t.run, ms); }
+      _turnTimer = t;
+    }
+    function parkTurnChange () {
+      const t = _turnTimer;
+      if (!t || !t.id) return;
+      clearTimeout(t.id);
+      t.id = 0;
+      t.left = Math.max(0, t.due - Date.now());
+    }
+    function rearmTurnChange () {
+      const t = _turnTimer;
+      if (!t || t.id) return;
+      t.due = Date.now() + t.left;
+      t.id = setTimeout(t.run, t.left);
+    }
+    function cancelTurnChange () {
+      if (_turnTimer && _turnTimer.id) clearTimeout(_turnTimer.id);
+      _turnTimer = null;
     }
 
     // v53.0 (concern 4): reveal who acts first based on Speed, with a brief
@@ -2028,11 +2043,18 @@
     // direct-to-battle and PvP picker's advancePickStep).
     function revealInitiative () {
       const p1 = activePoke(0), p2 = activePoke(1);
+      // Speed decides ONLY who opens the match; after that turns strictly
+      // alternate (passTurn). Nobody has acted yet → clear _lastActor.
       state.turn = decideTurnOrder(p1, p2, state);
-      // v56.9 A-323: seed round-1 leader + clear round tracking so the round-lead
-      // pill only fires when the leader actually CHANGES on later rounds.
-      state.roundActed = [];
-      state._lastLead = state.turn;
+      state._lastActor = null;
+      // The opener always starts at the action menu (discard anything begun
+      // under the VS card before the opener was known).
+      if (state.switchForced == null) {
+        root._questions = null;
+        root._switchOpen = null;
+        state._moveLock = false;
+        state.phase = 'action';
+      }
       // v53.4 bug fix: re-render so the active q-zone matches the new turn.
       // Previously the initial renderRoot painted with the default turn=0;
       // when Speed flipped the turn to 1 the DOM stayed stale until the next
@@ -2175,6 +2197,7 @@
       // detached, so they leaked one loop / one beeping interval per exit.
       try { stopQuestionTimer(); } catch (e) {}
       try { sfxLowHPStop(); } catch (e) {}
+      cancelTurnChange();
       teardown(root);
       opts.onCancel && opts.onCancel();
     }
@@ -2189,6 +2212,7 @@
       if (state.preStep === 'size') { renderSizeStep(); return; }
       if (state.preStep === 'pick') { renderPickStep(); return; }
 
+      guardAlternation();
       const p1 = activePoke(0);
       const p2 = activePoke(1);
 
@@ -2451,6 +2475,7 @@
       state.paused = true;
       state.pausedAt = Date.now();
       stopQuestionTimer();
+      parkTurnChange();   // no turn may change hands while paused
       try { if (_bmBgmEl) _bmBgmEl.pause(); } catch (e) {}
       try { sfxLowHPStop(); } catch (e) {}
       showPauseOverlay();
@@ -2466,6 +2491,7 @@
       state.pausedAt = 0;
       try { if (_bmBgmEl && !bmBgmIsMuted()) { const p = _bmBgmEl.play(); if (p && p.catch) p.catch(() => {}); } } catch (e) {}
       hidePauseOverlay();
+      rearmTurnChange();
       if (state.phase === 'question' && !state.switchForced) startQuestionTimer();
     }
     function showPauseOverlay () {
@@ -2500,10 +2526,11 @@
           if (q && b.getAttribute('data-c') === String(q.ans)) b.classList.add('correct');
         });
       }
-      setTimeout(() => {
-        root._questions = null;
-        state.turn = 1 - state.turn;
-        state.phase = 'question';
+      // A timeout costs the turn exactly like a wrong answer: the other player
+      // opens their turn at the action menu (was: straight to 'question').
+      const actor = state.turn;
+      scheduleTurnChange(() => {
+        passTurn(actor);
         renderRoot();
       }, 1200);
     }
@@ -2783,11 +2810,8 @@
         btn.parentElement.querySelectorAll('.bm-choice').forEach(b => {
           if (b.getAttribute('data-c') === String(q.ans)) b.classList.add('correct');
         });
-        setTimeout(() => {
-          root._questions = null;
-          state.turn = 1 - state.turn;
-          state._moveLock = false;  // v53.4: release move-spam guard for next turn
-          state.phase = 'action';   // next turn starts at action menu
+        scheduleTurnChange(() => {
+          passTurn(playerIdx);      // next turn starts at the other player's action menu
           renderRoot();
         }, 1400);
       }
@@ -2813,27 +2837,23 @@
         // 5-10yo PvP game it snowballs unfairly. The NEXT natural round (after
         // the replacement acts) still flows through decideTurnOrder normally;
         // only this single post-faint action is overridden.
+        // Strict alternation: the attacker already used its turn (passTurn on the
+        // KO), so the fainted side picking a replacement is a FREE action and its
+        // own turn follows — _lastActor stays the attacker.
         root._questions = null;
         state._moveLock = false;  // v53.4: forced switch → next turn re-enables moves
         state.phase = 'action';
         state.turn = playerIdx;
       } else {
-        // Voluntary mid-turn switch — costs the turn, passes to opponent.
-        // v53.0: opponent acts next, but Speed still has the final say on who
-        // gets the FOLLOWING strike (handled by the standard 1-state.turn
-        // flip + revealInitiative on the new active pair next round).
-        root._questions = null;
-        state._moveLock = false;  // v53.4: voluntary switch → opponent's moves re-enable
-        state.phase = 'action';
-        state.turn = 1 - playerIdx;
-        // Re-evaluate Speed on the new pair so the next "round" flips correctly.
-        // The opponent goes next this beat (turn = 1-playerIdx) but their reply
-        // ordering hinges on Speed of the new swap-in.
+        // Voluntary switch — costs the turn, passes to the opponent (strict
+        // alternation; Speed of the swap-in does not grant extra turns).
+        passTurn(playerIdx);
       }
       renderRoot();
     }
 
     function executeMove (move) {
+      const attackerIdx = state.turn;
       const atk = activePoke(state.turn);
       const def = activePoke(1 - state.turn);
       // A5: time-mult derived from the answer elapsed captured in onAnswer.
@@ -2856,7 +2876,7 @@
         try { sfxAttackByType(move.type); } catch (e) {}
         // Update HP bars + texts in BOTH halves (both views show both HPs)
         updateHpDisplays();
-        setTimeout(() => {
+        scheduleTurnChange(() => {
           if (def.hp <= 0) {
             const defIdx = 1 - state.turn;
             const aliveCount = state.teams[defIdx].filter(p => p.hp > 0).length;
@@ -2882,37 +2902,16 @@
               }
               // A1: force defender to pick next Pokemon. After they pick, they
               // start their next turn at the action menu with the new Pokemon.
+              // The attacker's hit ends its turn → passTurn hands it to the
+              // defender (strict alternation, no round reset).
+              passTurn(attackerIdx);
               state.switchForced = defIdx;
-              state.turn = defIdx;
-              state._moveLock = false;  // v53.4: defender's switch-then-attack moves re-enable
-              state.phase = 'action';
-              // v56.9 A-323: a faint restarts round tracking — the defender's
-              // forced switch+turn begins a fresh initiative round.
-              state.roundActed = [];
-              state._lastLead = defIdx;
               renderRoot();
             });
             return;
           }
-          // Turn passes — next player starts at action menu.
-          root._questions = null;
-          state._moveLock = false;  // v53.4: opponent's moves re-enable next turn
-          // v56.9 A-323: DYNAMIC per-round initiative. Mark this attacker as having
-          // acted; if the other player still owes an action this round, they go
-          // now; once BOTH have acted the round closes and the next leader is
-          // re-decided by active-Pokemon Speed (decideRoundLead) — no permanent
-          // first-mover lock.
-          if (!Array.isArray(state.roundActed)) state.roundActed = [];
-          if (state.roundActed.indexOf(state.turn) < 0) state.roundActed.push(state.turn);
-          const _other = 1 - state.turn;
-          if (state.roundActed.indexOf(_other) < 0) {
-            state.turn = _other;                 // finish this round with the other player
-          } else {
-            state.roundActed = [];               // round complete → new initiative
-            state.turn = decideRoundLead();
-            announceRoundLead(state.turn);
-          }
-          state.phase = 'action';
+          // Turn passes — the OTHER player starts at the action menu.
+          passTurn(attackerIdx);
           // v53.3 polish: turn counter drives win-predictor visibility.
           state.turnsPlayed = (state.turnsPlayed | 0) + 1;
           renderRoot();
@@ -3975,6 +3974,12 @@
         font-size: 18px; line-height: 1; cursor: pointer;
         display: flex; align-items: center; justify-content: center;
         transition: background 150ms ease, transform 120ms ease;
+      }
+      /* portrait 2-player: the top-right corner is Player 2's (upside-down) answer area —
+         a child tapping an answer there hit Jeda instead. Park it on the divider, left edge. */
+      @media (orientation: portrait) {
+        .bm-pause-btn { top: 50%; right: auto; left: 6px; transform: translateY(-50%); }
+        .bm-pause-btn:active { transform: translateY(-50%) scale(0.92); }
       }
       .bm-pause-btn:hover  { background: rgba(0,0,0,0.88); }
       .bm-pause-btn:active { transform: scale(0.92); }
