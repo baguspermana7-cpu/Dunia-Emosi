@@ -3346,3 +3346,6 @@ Owner PRD "Kids Learning Card Adventure" v2 + 25 design sheets; "semua harus per
 
 ### ✅ 2026-09-27 — No "Segera Hadir" tiles on the map
 Owner's screenshot showed a locked "Segera Hadir" tile in Menara Memori (owner rule since G27: no coming-soon placeholders). Two existed (Menara Memori, Kota Kereta), both original-migration placeholders. Menara Memori's now opens **Gunung Ingatan** — the 12 memory cards of G28 — via `stinky-dirty.html?world=memory` (new deep link); the train-zone one is removed (that zone already holds real games). 0 locked tiles remain.
+
+### ✅ 2026-09-27 — G28 journey stops were ovals
+Owner screenshot: "Bulatan progressnya aneh". 12 fixed-size stops in one non-wrapping row were squeezed horizontally on a phone. Now two rows of six true circles (`aspect-ratio:1`), numbered 1–12, the next one highlighted, completed ones starred; one row of 12 when the phone is on its side, and the world/intro/done sheets fit 360-px-tall screens. `qa-sd-play` now fails on any non-round stop or overflowing world sheet (proven against the old CSS).

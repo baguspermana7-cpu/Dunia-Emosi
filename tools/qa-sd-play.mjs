@@ -69,6 +69,14 @@ try {
     const tag = `${w}x${h}`
     const { p, errs } = await open(w, h)
     const cards = await p.evaluate(() => SDCards.CARDS)
+    // journey stops are true circles and every sheet screen fits (owner: "bulatan progressnya aneh" — ovals)
+    for (const w of ['listening', 'math']) {
+      await p.evaluate(k => __sd.openWorld(k), w); await sleep(250)
+      const j = await p.evaluate(() => ({ round: [...document.querySelectorAll('.stop')].every(e => { const b = e.getBoundingClientRect(); return Math.abs(b.width - b.height) < 1.5 && b.width >= 24 }),
+        n: document.querySelectorAll('.stop').length, fits: (() => { const b = document.getElementById('world-sheet').getBoundingClientRect(); return b.top >= -1 && b.bottom <= innerHeight + 1 })() }))
+      check(j.n === 12 && j.round, `${tag} ${w}: 12 journey stops, all true circles`)
+      check(j.fits, `${tag} ${w}: world sheet fits the screen`)
+    }
     let n = 0
     for (const card of cards) {
       if (ONLY && !ONLY.test(card.id)) continue

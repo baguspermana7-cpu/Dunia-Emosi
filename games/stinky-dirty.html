@@ -82,10 +82,14 @@ button{font-family:inherit;color:inherit}
 .sheet p{margin:6px 0;font-size:18px;color:var(--ink2);line-height:1.4}
 .focus{display:flex;align-items:center;gap:10px;justify-content:center;margin:10px 0 14px}
 .focus img{width:52px;height:52px}
-.journey{display:flex;justify-content:center;gap:10px;margin:14px 0}
-.stop{width:58px;height:58px;border-radius:50%;border:3px solid var(--line2);background:var(--cream);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:var(--ink2)}
-.stop.done{background:#E6F4E4;border-color:#7BC47F}
-.stop img{width:30px;height:30px}
+/* 12 stops as TWO rows of six true circles (one row of 12 fixed-size stops was
+   squeezed into ovals on a phone). Numbered, so the journey reads left to right. */
+.journey{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(6px,2vw,12px);margin:14px auto;max-width:420px}
+.stop{aspect-ratio:1;width:100%;max-width:56px;justify-self:center;border-radius:50%;border:3px solid var(--line2);background:var(--cream);display:flex;align-items:center;justify-content:center;
+  font-family:'Fredoka One',system-ui;font-size:clamp(14px,4vw,18px);color:var(--ink2);box-shadow:0 2px 0 var(--line2)}
+.stop.done{background:#E6F4E4;border-color:#7BC47F;box-shadow:0 2px 0 #7BC47F}
+.stop img{width:62%;height:62%;object-fit:contain}
+.stop.next{border-color:var(--wc);color:var(--ink);background:#fff;box-shadow:0 0 0 3px color-mix(in srgb,var(--wc) 30%,transparent)}
 .intro-row{display:flex;align-items:flex-end;gap:12px;justify-content:center}
 .intro-row img{height:130px;width:auto}
 .bubble{position:relative;background:var(--cream);border:2px solid var(--line2);border-radius:18px;padding:10px 14px;text-align:left;font-size:18px;line-height:1.35;max-width:300px}
@@ -302,6 +306,16 @@ html.rm *,html.rm *::before,html.rm *::after{animation:none!important;transition
   .tray{flex-direction:row}.tray .opt{width:84px;flex-direction:column}
   .basket{min-height:84px}.basket>img{height:58px}
 }
+/* phone on its side: the world/intro/done sheets must fit 360-400px of height */
+@media (orientation:landscape) and (max-height:500px){
+  .sheet{padding:10px 14px 12px;max-height:calc(100vh - 16px);overflow:auto}
+  #scr-world .sheet{margin-top:-40px}
+  .sheet h2{font-size:22px}.sheet p{font-size:15px;margin:3px 0}
+  .focus{margin:4px 0 6px}.focus img{width:42px;height:42px}
+  .journey{grid-template-columns:repeat(12,minmax(0,1fr));max-width:560px;margin:8px auto}
+  .intro-row img{height:92px}.bubble{font-size:15px}
+  .done-stars img{width:40px;height:40px}.sticker{width:84px;height:84px}
+}
 </style>
 </head>
 <body>
@@ -438,14 +452,14 @@ html.rm *,html.rm *::before,html.rm *::after{animation:none!important;transition
   <div style="display:flex;gap:10px;justify-content:center"><button class="btn b-soft fk" data-close="ov-quit" type="button">Lanjut main</button><button class="btn b-gold fk" id="btn-quit-yes" type="button">Berhenti</button></div>
 </div></div>
 
-<script src="data/emoji-map.js?v=v62.8-20260927a"></script>
-<script src="data/asset-index.js?v=v62.8-20260927a"></script>
-<script src="data/save-engine.js?v=v62.8-20260927a"></script>
-<script src="data/sd-cards.js?v=v62.8-20260927a"></script>
-<script src="data/sd-audio.js?v=v62.8-20260927a"></script>
-<script src="sd-session.js?v=v62.8-20260927a"></script>
-<script src="sd-engine.js?v=v62.8-20260927a"></script>
-<script src="stinky-dirty.js?v=v62.8-20260927a"></script>
-<script src="sw-reload.js?v=v62.8-20260927a"></script>
+<script src="data/emoji-map.js?v=v62.9-20260927a"></script>
+<script src="data/asset-index.js?v=v62.9-20260927a"></script>
+<script src="data/save-engine.js?v=v62.9-20260927a"></script>
+<script src="data/sd-cards.js?v=v62.9-20260927a"></script>
+<script src="data/sd-audio.js?v=v62.9-20260927a"></script>
+<script src="sd-session.js?v=v62.9-20260927a"></script>
+<script src="sd-engine.js?v=v62.9-20260927a"></script>
+<script src="stinky-dirty.js?v=v62.9-20260927a"></script>
+<script src="sw-reload.js?v=v62.9-20260927a"></script>
 </body>
 </html>

@@ -121,9 +121,12 @@
     $('w-icon').src = lib(WORLD.icon); $('w-name').textContent = WORLD.id; $('w-skill').textContent = WORLD.skill
     var cs = D.byWorld(WORLD.key)
     // the journey shows ONLY what can be played (no "coming soon" stones — owner rule)
-    $('w-journey').innerHTML = cs.map(function (c) {
+    var firstOpen = -1
+    $('w-journey').innerHTML = cs.map(function (c, k) {
       var ok = P.hist[c.id] && P.hist[c.id].right
-      return '<span class="stop' + (ok ? ' done' : '') + '" title="' + c.family + '">' + (ok ? '<img src="' + lib('game/star') + '" alt="">' : '') + '</span>'
+      if (!ok && firstOpen < 0) firstOpen = k
+      return '<span class="stop' + (ok ? ' done' : (k === firstOpen ? ' next' : '')) + '" title="' + c.family + '" aria-label="' + (k + 1) + (ok ? ' selesai' : '') + '">' +
+        (ok ? '<img src="' + lib('game/star') + '" alt="">' : String(k + 1)) + '</span>'
     }).slice(0, 12).join('')
     var n = doneIn(WORLD)
     $('w-prog').textContent = n === 12 ? 'Semua 12 petualangan selesai! Main lagi untuk berlatih.' : n + ' dari 12 petualangan selesai.'
