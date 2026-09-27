@@ -1,4 +1,4 @@
-# MONSTER TRUCK TCG — PRD v2.0 (Dunia Emosi edition)
+# GARASI TEMPUR — Monster Truck TCG PRD v2.0 (Dunia Emosi edition)
 
 **Working title:** Monster Truck Arena: Garage Clash — *"Garasi Tempur"* in-app (Bahasa Indonesia default)
 **Status:** v2.0 draft · 2026-09-27 · supersedes the owner's v1.0 (kept verbatim in `~/Documents/temporary/game asset/monster-truck/PRD-original.md`)
@@ -237,11 +237,12 @@ Splash (engine rev, logo slam with dust) → pick a starter truck (POWER / SPEED
 
 ---
 
-## 13. OPEN DECISIONS FOR THE OWNER
-1. **Name** on the tile: *Garasi Tempur* (proposed) / *Monster Truck Arena* / other.
-2. **Hand visibility** default: open hands (recommended for 5–8) vs hidden.
-3. **Phase 1 size** as in §10 (12 trucks, 3 arenas) — or all 18 trucks at once.
-4. **Sound set**: OK to source CC0 engine/crowd sounds (Kenney etc.), or will you supply sounds?
+## 13. OWNER DECISIONS (2026-09-27: "ok setuju semua saran, nama Garasi Tempur")
+1. **Name: Garasi Tempur.** Page `games/garasi-tempur.html`, tile in Kota Balapan beside Petualangan Mobil.
+2. **Open hands** by default (Hidden Hand as an option later).
+3. **Phase 1 = §10**: 12 trucks (2 per Type), 3 arenas, Latihan + Petualangan + PvP.
+4. **Sounds: CC0 sources** (Kenney / similar), licence recorded per file. The same CC0 set will later replace Gym Pokémon's `Sounds/Attack/*` Pokémon rips.
+5. **Original trucks** (look-alike colours/silhouettes, own names, no Monster Jam logos); **no coins/gems/shop/daily reward**; Bahasa Indonesia; "Berhenti" in the pause menu (§14).
 
 ---
 
