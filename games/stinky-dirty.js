@@ -270,6 +270,11 @@
   document.querySelectorAll('[data-go]').forEach(function (b) { b.addEventListener('click', function () { sfx('tap'); if (b.dataset.go === 'scr-map') buildMap(); show(b.dataset.go) }) })
   document.querySelectorAll('[data-close]').forEach(function (b) { b.addEventListener('click', function () { $(b.dataset.close).classList.remove('show') }) })
   $('scr-home').style.backgroundImage = 'url("' + BASE + 'assets/db/lib/sd/world-story-forest-' + orient() + '.webp")'
+  // deep link from the map (e.g. Menara Memori -> ?world=memory): open that world directly
+  ;(function () {
+    var m = /[?&]world=([a-z]+)/.exec(location.search)
+    if (m && D.WORLDS.some(function (w) { return w.key === m[1] })) { buildMap(); openWorld(m[1]) }
+  })()
   window.addEventListener('resize', function () {
     var a = document.querySelector('.scr.active'); if (!a) return
     if (a.id === 'scr-home') a.style.backgroundImage = 'url("' + BASE + 'assets/db/lib/sd/world-story-forest-' + orient() + '.webp")'
