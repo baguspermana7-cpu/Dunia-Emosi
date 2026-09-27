@@ -242,3 +242,31 @@ Splash (engine rev, logo slam with dust) → pick a starter truck (POWER / SPEED
 2. **Hand visibility** default: open hands (recommended for 5–8) vs hidden.
 3. **Phase 1 size** as in §10 (12 trucks, 3 arenas) — or all 18 trucks at once.
 4. **Sound set**: OK to source CC0 engine/crowd sounds (Kenney etc.), or will you supply sounds?
+
+---
+
+## 14. UI/UX REFERENCE — owner mockups (2026-09-27)
+
+Archived: `~/Documents/temporary/game asset/monster-truck/ui-1-battle-table.png`, `ui-2-math-challenge.png`, `ui-3-home.png`. They confirm the portrait POV table of §3 and set the visual style.
+
+**Kept exactly (matches the plan):**
+- Portrait table: opponent profile + 5 face-down cards top, **opponent truck card centre-top**, arena "MONSTER TRUCK" mat with 2 empty slots each side (Part/bench slots, "+" = legal drop), **my truck centre-bottom**, my hand of 5 at the bottom, DECK / DISCARD / FUEL bar (3/4) / big green END TURN.
+- Truck card: Type icon, name, HP top-right, art, two attacks with damage on the right, Type-coloured frame.
+- **Arena card** on the left edge ("Car Stack Arena — Crush attacks deal +2 damage") = §19 arena rule shown as icon + one sentence.
+- **Phase checklist** (Draw / Garage / Action / End) on the right — the turn loop taught by highlighting, not text.
+- Math challenge **over the table, arena still visible**, 4 big coloured answers, a side panel "If correct: +2 · If wrong: normal damage" — exactly §5.6 (right answer adds bonus, wrong loses only the bonus).
+- Home: 6 big mode tiles; Quick Battle / Local PvP / Championship / Garage / My Cards / Learn Mode map to §2 (Latihan, PvP, Petualangan, Garasi, Koleksi, Belajar).
+
+**Adjusted, with reasons:**
+| Mockup | Build | Why |
+|---|---|---|
+| Real trucks & logos: *Grave Digger, El Toro Loco, Max-D, Megalodon*, "MONSTER JAM" banners | **Original look-alike trucks** with our own names (e.g. *Kuburan Hijau*, *Banteng Api*, *Duri Emas*, *Hiu Biru*), no Monster Jam logo | These are registered trademarks of Feld Motor Sports; Dunia is a **public repo on a public site**. v1 PRD's own IP note says the same. Same colours/silhouettes are fine, names/logos are not. |
+| Coins 1,250 / gems 50 / "+" buy, SHOP tab, DAILY REWARD, "Starter Pack — VIEW", Missions badge "!" | **Removed.** Rewards = Part cards, stickers, trophies earned by playing | §34 + Dunia rule: no purchases, no pressure loops for children; a red "!" and daily-login rewards are engagement pressure. |
+| "Math Challenge" as a card in the hand | Kept as an **Action card** that arms +2 on the next attack | fits §6 Action/Crew; the question appears when the attack is confirmed |
+| Trophy score 320 vs 280 | Kept as a friendly **level/trophy** count, never a leaderboard | §33/§35: no public ranking of children |
+| "SURRENDER" | "**Berhenti**" in the pause menu, not on the table | a child should not be one tap from quitting mid-attack |
+| English labels | Bahasa Indonesia default ("Giliranmu!", "SELESAI", "Bahan Bakar"), English optional | Dunia's language |
+| Turn 3/20 ring | Kept only in Petualangan; PvP has no turn limit | |
+| Landscape | same components re-flowed per §3 | owner requires both orientations |
+
+**Asset note for the next delivery:** trucks as separate cut-outs (right-facing, wheels ideally on a separate layer), card frames empty (no baked text — text is rendered live so it can be translated and read aloud), arena backdrop in layers (§9).
