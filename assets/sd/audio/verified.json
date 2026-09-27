@@ -1,0 +1,2348 @@
+{
+ "LIS-01-h1": {
+  "sha1": "2c90c1497f545ed15baec7f8e6c83e8eeec5e3ff",
+  "text": "Lihat siapa yang ada di atas dahan.",
+  "heard": "lihat siapa yang ada di atas dahan.",
+  "score": 1.0
+ },
+ "LIS-01-h2": {
+  "sha1": "10194a2e04449aed1812fff2bb2ec13b19714335",
+  "text": "Yang bernyanyi adalah burung biru. Mana yang burung?",
+  "heard": "yang bernyanyi adalah burung biru mana yang burung",
+  "score": 1.0
+ },
+ "LIS-01-q": {
+  "sha1": "5e6d0d72b6112b567bc04e7f887a653c40853195",
+  "text": "Siapa yang bernyanyi?",
+  "heard": "Siapa yang bernyanyi?",
+  "score": 1.0
+ },
+ "LIS-01-s0": {
+  "sha1": "079f547ff23cb7db1bb301ba67760263f90f3ac1",
+  "text": "Di hutan, Pip si burung biru hinggap di dahan.",
+  "heard": "di hutan pip si burung biru hinghab didahan.",
+  "score": 0.939
+ },
+ "LIS-01-s1": {
+  "sha1": "f5ffd812e961d055484d4e05102bb681a24b429b",
+  "text": "Pip bernyanyi riang untuk teman-temannya.",
+  "heard": "tapi bernyanyi riang untuk teman-temannya.",
+  "score": 0.941
+ },
+ "LIS-01-x": {
+  "sha1": "f19b2796242856fbddc7f8885c456ed671b022bb",
+  "text": "Pip si burung biru yang bernyanyi di atas dahan.",
+  "heard": "Pidsi burung biru yang bernyanyi di atas dahan.",
+  "score": 0.96
+ },
+ "LIS-02-h1": {
+  "sha1": "379965c078dfd8dc0901f7417de734979bb26f34",
+  "text": "Dengar lagi: Lala mau memotret bunga.",
+  "heard": "dengar lagi lalammau memotret bunga",
+  "score": 0.939
+ },
+ "LIS-02-h2": {
+  "sha1": "060cfb402b6e80953514e11e161c0cc4477293f0",
+  "text": "Untuk memotret kita pakai benda apa?",
+  "heard": "Untuk memotret kita pakai benda apa?",
+  "score": 1.0
+ },
+ "LIS-02-s0": {
+  "sha1": "af30ad803750c8e6e9136c34a71f405f640dcbb9",
+  "text": "Lala mengunjungi Nenek setelah makan siang.",
+  "heard": "Lalam mengunjungi nenek setelah makan siang.",
+  "score": 1.0
+ },
+ "LIS-02-s1": {
+  "sha1": "aa30e6ec4dd07506ac4f64628acc07db4a487bf0",
+  "text": "Lala membawa kamera kecil untuk memotret bunga Nenek yang cantik.",
+  "heard": "Lala membawa kamera kecil untuk memotret bungannya Nik yang cantik.",
+  "score": 0.942
+ },
+ "LIS-02-x": {
+  "sha1": "58aa72b57ae55087ad3aff4e3ec592f91a030a1d",
+  "text": "Lala membawa kamera untuk memotret bunga Nenek.",
+  "heard": "Lala membawa kamera untuk memotret bunga internet.",
+  "score": 0.933
+ },
+ "LIS-03-h1": {
+  "sha1": "8a35ed3c5a2b7cd8362fdfadb7129bd13a6201ed",
+  "text": "Perhatikan Rover bergerak ke mana.",
+  "heard": "Perhatikan Rohir bergerak kemana.",
+  "score": 0.906
+ },
+ "LIS-03-h2": {
+  "sha1": "69c8dc32ca8a3700c3a338df98e706b510c2ed0c",
+  "text": "Rover bergerak cepat mengikuti bola.",
+  "heard": "Roher bergerak cepat mengikuti bola.",
+  "score": 0.912
+ },
+ "LIS-03-q": {
+  "sha1": "4a5f713cfa03c66439015636a42b0cbd2e3962d1",
+  "text": "Apa yang dilakukan Rover?",
+  "heard": "Apa yang dilakukan rover?",
+  "score": 1.0
+ },
+ "LIS-03-s1": {
+  "sha1": "a4bcea2ffed78a305f861d971bca47bdb3c7aac2",
+  "text": "Rover berlari cepat mengejar bola itu.",
+  "heard": "Rohir berlari cepat mengejar bola itu.",
+  "score": 0.915
+ },
+ "LIS-03-x": {
+  "sha1": "104b041f09f93525f423452b6437b8bcc3bdfc40",
+  "text": "Rover berlari cepat mengejar bola.",
+  "heard": "Roher berlari cepat mengejar bola.",
+  "score": 0.906
+ },
+ "LIS-04-h1": {
+  "sha1": "317ab63964c436bf60322cae9ee9f7cdc7fbb732",
+  "text": "Lihat ke mana Koko berjalan.",
+  "heard": "Jihat kemana Koko berjalan.",
+  "score": 0.947
+ },
+ "LIS-04-h2": {
+  "sha1": "b69e14d85af11b1b3717f0f06d64fbe08e8c9d6a",
+  "text": "Cerita bilang: tempatnya teduh dan besar.",
+  "heard": "Cerita bilang tempatnya teduh dan besar.",
+  "score": 1.0
+ },
+ "LIS-04-q": {
+  "sha1": "43aa7adb45e381524e387a78ad6cf251f0c3c6bc",
+  "text": "Di mana Koko tidur?",
+  "heard": "Dimana Koko tidur?",
+  "score": 1.0
+ },
+ "LIS-04-s0": {
+  "sha1": "707d1deb48f6691b3c00882cf23fd61fe8cc9ae0",
+  "text": "Koko si panda mengantuk.",
+  "heard": "Kokosi Panda mengantuk.",
+  "score": 0.933
+ },
+ "LIS-04-s1": {
+  "sha1": "c55d0fdfe2946066afe50b8f07fd493dff4df4ed",
+  "text": "Koko tidur di bawah pohon besar yang teduh.",
+  "heard": "Koko tidur di bawah pohon besar yang terduh.",
+  "score": 0.984
+ },
+ "LIS-04-x": {
+  "sha1": "42b10ececd44c63a8d23e53d9d9b7be38ffa5713",
+  "text": "Koko tidur di bawah pohon besar yang teduh.",
+  "heard": "Koko tidur di bawah pohon besar yang terduh.",
+  "score": 0.984
+ },
+ "LIS-05-h1": {
+  "sha1": "30f345526d137acd6fd4b07cd9df43e5448efd40",
+  "text": "Lihat benda yang muncul di dekat Raka.",
+  "heard": "lihat benda yang muncul di dekat Raka.",
+  "score": 1.0
+ },
+ "LIS-05-h2": {
+  "sha1": "632790cb7203722470ec1d1013fd0f0d27b6c1d7",
+  "text": "Kalimat kedua dimulai dengan \"Setelah bangun...\".",
+  "heard": "Kalimat kedua dimulai dengan setelah bangun.",
+  "score": 1.0
+ },
+ "LIS-05-q": {
+  "sha1": "adebc4384a643c1095287c10e66c11d686f8e42f",
+  "text": "Apa yang Raka lakukan setelah bangun?",
+  "heard": "Apa yang raka lakukan setelah bangun?",
+  "score": 1.0
+ },
+ "LIS-05-s0": {
+  "sha1": "8b7a0f440605d89a7a65cb687c719c7286855917",
+  "text": "Pagi hari, Raka bangun tidur.",
+  "heard": "pagi hari raka bangun tidung",
+  "score": 0.923
+ },
+ "LIS-06-h1": {
+  "sha1": "19e5d54a492e791c82e1a1a26c28f92929862dab",
+  "text": "Lihat payung yang ditemukan Lulu.",
+  "heard": "Lihat payung yang ditemukan lulu.",
+  "score": 1.0
+ },
+ "LIS-06-h2": {
+  "sha1": "2aa672ff2d0ba168633a5ef1830a9facdbe27f14",
+  "text": "Warnanya sama dengan warna apel.",
+  "heard": "warnanya sama dengan warna apal.",
+  "score": 0.963
+ },
+ "LIS-06-q": {
+  "sha1": "7e07c516ff24a5477aa4fcf09f898f907618711d",
+  "text": "Apa warna payung yang ditemukan Lulu?",
+  "heard": "Apa warna payung yang ditemukan lulu?",
+  "score": 1.0
+ },
+ "LIS-06-s0": {
+  "sha1": "52445b35094ff45d029685eab59b92d5b990a3c4",
+  "text": "Lulu si kelinci berjalan-jalan.",
+  "heard": "Lulu si Kelinci berjalan-jalan.",
+  "score": 1.0
+ },
+ "LIS-06-s1": {
+  "sha1": "3ab6570857982bd6b598164e7405974cd63061ef",
+  "text": "Lulu menemukan payung berwarna merah di jalan.",
+  "heard": "Mulu menemukan payung berwarna merah di jalan.",
+  "score": 0.946
+ },
+ "LIS-06-x": {
+  "sha1": "edd453357bd75c1d763ace692ee8024a32c9878f",
+  "text": "Payung yang ditemukan Lulu berwarna merah.",
+  "heard": "Payung yang ditemukan lulu berwarna merah.",
+  "score": 1.0
+ },
+ "LIS-07-h2": {
+  "sha1": "096d165d63a89efd1076a6b9f992952413bee6b5",
+  "text": "Cari benda kecil berwarna emas di samping bangku.",
+  "heard": "Cari benda kecil berwanak kemas di samping bangku.",
+  "score": 0.964
+ },
+ "LIS-07-s1": {
+  "sha1": "8a3e2b75ca283686150920a43ba2120a90aa50c5",
+  "text": "Stinky berkata: \"Tolong ambilkan kunci di dekat bangku!\"",
+  "heard": "Stinky berkata, tolong ambilkan kunci di dekat banku.",
+  "score": 0.987
+ },
+ "LIS-07-x": {
+  "sha1": "f8eada957b8ab0a47560b3e679de1d941c298ad9",
+  "text": "Kuncinya ada di dekat bangku. Terima kasih sudah menolong Stinky!",
+  "heard": "Kuncinya ada di dekat banku terima kasih sudah menolong stinti.",
+  "score": 0.931
+ },
+ "LIS-08-h1": {
+  "sha1": "0e938a3349a7575424fbcfcb2edb331e0056baaa",
+  "text": "Apa yang Mimi lakukan paling awal?",
+  "heard": "Apa yang Mimi lakukan paling awal?",
+  "score": 1.0
+ },
+ "LIS-08-h2": {
+  "sha1": "c84bc2e4969736b570c01d0e685fde0377e5a953",
+  "text": "Menyiram dulu, lalu tunas, lalu bunga.",
+  "heard": "Menyeram dulu lalu tunas lalu bunga.",
+  "score": 0.967
+ },
+ "LIS-08-q": {
+  "sha1": "088f42b4dbe70e4a4097ecbcf4ada66710dd6eca",
+  "text": "Urutkan ceritanya: ketuk dari yang pertama.",
+  "heard": "urutkan ceritanya ketuk dari yang pertama.",
+  "score": 1.0
+ },
+ "LIS-08-s0": {
+  "sha1": "58b5ef24f400c7abd4a2b93d8bb06f49988b2564",
+  "text": "Mimi menyiram tanah di kebun.",
+  "heard": "Mimi menyeram tanah di kebun.",
+  "score": 0.95
+ },
+ "LIS-08-s1": {
+  "sha1": "ef94059b1473bc2d722828f22debf01df19b5823",
+  "text": "Lalu tunas kecil tumbuh.",
+  "heard": "lalu tunas kecil tumbuh.",
+  "score": 1.0
+ },
+ "LIS-08-s2": {
+  "sha1": "0f2cfb88ccb34af82979ec2b1f73e4864a9f2a4a",
+  "text": "Akhirnya bunga matahari mekar.",
+  "heard": "Akhirnya bunga matahari meka.",
+  "score": 0.98
+ },
+ "LIS-08-x": {
+  "sha1": "c37e4064bb86d54fc5a711435afb43a959ce3c62",
+  "text": "Mimi menyiram dulu, lalu tunas tumbuh, akhirnya bunga mekar.",
+  "heard": "Mimi menyeram dulu, lalu tunas tumbuh akhirnya bunga meka.",
+  "score": 0.966
+ },
+ "LIS-09-h1": {
+  "sha1": "137a656d8cf7797f6128452bf0342d7a95923655",
+  "text": "Apa yang terjadi di langit?",
+  "heard": "Apa yang terjadi di langit?",
+  "score": 1.0
+ },
+ "LIS-09-h2": {
+  "sha1": "949f6ef607645ae5db71d8badb8d3b0206e0c078",
+  "text": "Payung dipakai supaya tidak basah.",
+  "heard": "Palung dipakai supaya tidak basah.",
+  "score": 0.966
+ },
+ "LIS-09-q": {
+  "sha1": "c34708cb7ce6552f2a966d7174b17822819438a3",
+  "text": "Kenapa Lala membuka payung?",
+  "heard": "Kenapa lala membuka payum?",
+  "score": 0.919
+ },
+ "LIS-09-s0": {
+  "sha1": "87e802c5a6d159d502c8d85cf63cfb183f88252a",
+  "text": "Awan gelap datang dan hujan turun.",
+  "heard": "Awan gelap datang dan hujan turun.",
+  "score": 1.0
+ },
+ "LIS-09-s1": {
+  "sha1": "3caf1b568159cd3ae7f991a0f9f1444b09bd4431",
+  "text": "Lala cepat-cepat membuka payungnya.",
+  "heard": "Lala cepat-cepat membuka payungnya.",
+  "score": 1.0
+ },
+ "LIS-09-x": {
+  "sha1": "e2e8b8bc912d3824c91eb64c767b055d6899b525",
+  "text": "Lala membuka payung karena hujan turun.",
+  "heard": "Lala membuka payung karena hujan turun.",
+  "score": 1.0
+ },
+ "LIS-10-h1": {
+  "sha1": "cb248180836978901bddac30b48ee74128d649b5",
+  "text": "Lihat apa yang Rover lakukan di akhir.",
+  "heard": "Lihat apa yang Rover lakukan di akhir.",
+  "score": 1.0
+ },
+ "LIS-10-h2": {
+  "sha1": "99c2499eeee684bc376290e74ac50183d05c235e",
+  "text": "Bolanya kembali dan Rover melompat-lompat.",
+  "heard": "Bolanya kembali dan roger melompat lompat.",
+  "score": 0.925
+ },
+ "LIS-10-q": {
+  "sha1": "ac7c8e08f8642df1155648fc17d8723682c36e2b",
+  "text": "Bagaimana perasaan Rover di akhir cerita?",
+  "heard": "bagaimana perasaan runner di akhir cerita?",
+  "score": 0.909
+ },
+ "LIS-10-s0": {
+  "sha1": "56d529cc750c66596e790f6f905cd58f55291a0b",
+  "text": "Rover kehilangan bolanya dan sedih.",
+  "heard": "Roter kehilangan bolanya, dan sedih.",
+  "score": 0.909
+ },
+ "LIS-10-s1": {
+  "sha1": "edbcf5b44cf4ed9dce3201bcf92f827c37b03ba8",
+  "text": "Pip menemukan bola itu dan mengembalikannya.",
+  "heard": "Pip menemukan bola itu dan mengembalikannya.",
+  "score": 1.0
+ },
+ "LIS-10-x": {
+  "sha1": "bc564dff0b1c6d25b0d846fd666bb3fbf6af25e0",
+  "text": "Rover senang karena bolanya kembali.",
+  "heard": "Roder senang karena bolanya kembali.",
+  "score": 0.912
+ },
+ "LIS-11-h1": {
+  "sha1": "8b01b7f13de80c86a579b0778284a7d9646e25f9",
+  "text": "Lihat apa yang turun dari langit.",
+  "heard": "Lihat apa yang turun dari langit.",
+  "score": 1.0
+ },
+ "LIS-11-h2": {
+  "sha1": "30ec89d32bf0aa4858e215bc2e2a9b190811f8fe",
+  "text": "Salju hanya ada kalau udaranya...",
+  "heard": "Salju hanya ada kalau udaranya.",
+  "score": 1.0
+ },
+ "LIS-11-q": {
+  "sha1": "7e0883d2a7c89edff94e4d43135635419c3c6b41",
+  "text": "Bagaimana cuaca di luar?",
+  "heard": "Bagaimana cuaca di luar?",
+  "score": 1.0
+ },
+ "LIS-11-s0": {
+  "sha1": "802bb049a964f2c07656af1272a11c3dc7117909",
+  "text": "Raka memakai jaket tebal dan topi hangat.",
+  "heard": "Raka memakai jaket tebal dan topi hangat.",
+  "score": 1.0
+ },
+ "LIS-11-s1": {
+  "sha1": "e22d49b72fd37c6710b65ba7aa3ceebeeb34c40a",
+  "text": "Di luar, ada manusia salju dan kepingan salju turun.",
+  "heard": "Di luar ada manusia salju dan kepigen salju turun.",
+  "score": 0.964
+ },
+ "LIS-11-x": {
+  "sha1": "1a8b6527cf6ca53eda88609312b8e420dd8a5620",
+  "text": "Ada salju dan Raka memakai jaket tebal, jadi cuacanya dingin.",
+  "heard": "Ada salju dan raka memakai jaket tebal jadi cuacanya dingin.",
+  "score": 1.0
+ },
+ "LIS-12-h1": {
+  "sha1": "7560f01a12a1557ce313a0584e8c3b91aa8e9429",
+  "text": "Koko melihat banyak hal, tapi apa yang ia BELI?",
+  "heard": "Coco melihat banyak hal tapi apa yang ia beli",
+  "score": 0.943
+ },
+ "LIS-12-h2": {
+  "sha1": "b4b1366b98458708c28f5c6ce265294f98da7894",
+  "text": "Kalimat terakhir: Koko membeli tiga buah...",
+  "heard": "Kalimat terakhir, Coco membeli 3 buah.",
+  "score": 0.938
+ },
+ "LIS-12-q": {
+  "sha1": "ad9adddda181d1054b4aca26687c7662a3514bbc",
+  "text": "Apa yang dibeli Koko?",
+  "heard": "Apa yang dibeli koko?",
+  "score": 1.0
+ },
+ "LIS-12-x": {
+  "sha1": "d6e8bc162e9a4f7eb5c7758dbec99197c7049814",
+  "text": "Koko hanya melihat layang-layang dan kucing. Yang dibeli Koko adalah apel.",
+  "heard": "Coco hanya melihat layang-layang dan kucing yang diberi Coco adalah apel.",
+  "score": 0.912
+ },
+ "LNG-01-h1": {
+  "sha1": "6d83885ad3c4c0ae00ab114786e3ee57d959f0aa",
+  "text": "Jam punya angka dan jarum.",
+  "heard": "Jampunya angka dan jarum.",
+  "score": 1.0
+ },
+ "LNG-01-h2": {
+  "sha1": "a9dd8551e242242fc323639b3dc00856a592dcf8",
+  "text": "Cari benda bulat dengan angka di dalamnya.",
+  "heard": "Cari benda bulat dengan angka didalam ga.",
+  "score": 0.957
+ },
+ "LNG-01-q": {
+  "sha1": "28aace9bd47ad2c94d441213326491fdf9a99187",
+  "text": "Mana yang namanya JAM?",
+  "heard": "mana yang namanya Jim?",
+  "score": 0.944
+ },
+ "LNG-01-s1": {
+  "sha1": "0cfcabd736ea61ea7f8ebca4268472a3f3e245d1",
+  "text": "Jam dipakai untuk melihat waktu.",
+  "heard": "Jam dipakai untuk melihat waktu.",
+  "score": 1.0
+ },
+ "LNG-01-x": {
+  "sha1": "ed2b537c187556dbd63d961439ed624424ac4e67",
+  "text": "Ini jam. Jam punya angka dan jarum untuk menunjukkan waktu.",
+  "heard": "ini jam jam punya angka dan jarum untuk menunjukkan waktu.",
+  "score": 1.0
+ },
+ "LNG-02-h2": {
+  "sha1": "671dc1ae846b0d3be77ac9fae883445d5f481c80",
+  "text": "Bergerak cepat dengan kaki disebut...",
+  "heard": "bergerak cepat dengan kaki disebu.",
+  "score": 0.983
+ },
+ "LNG-02-s1": {
+  "sha1": "4391f4a1a22308d36b2f346525ca70b48aecc96f",
+  "text": "Rover bergerak cepat dari ujung ke ujung.",
+  "heard": "Poder bergerak cepat dari ujung ke ujung.",
+  "score": 0.921
+ },
+ "LNG-02-x": {
+  "sha1": "f8d14fb5fc14660dcd1d78605cde510cc3a16ab2",
+  "text": "Rover sedang berlari di taman.",
+  "heard": "Roer sedang berlari di taman.",
+  "score": 0.909
+ },
+ "LNG-03-h1": {
+  "sha1": "2db2f103951dc73892b1f0886505cf9268e788ba",
+  "text": "Salju dan es krim itu dingin.",
+  "heard": "Salju dan kek scrim itu dingin.",
+  "score": 0.917
+ },
+ "LNG-03-h2": {
+  "sha1": "c34dc4ac1acbbc5fef01345eeb6e1080484fd1d5",
+  "text": "Benda yang ada apinya terasa panas.",
+  "heard": "Benda yang ada apinya, rasa panas.",
+  "score": 0.964
+ },
+ "LNG-03-q": {
+  "sha1": "5505f6ccd7d4511f5b74760e31560cb61e1e3fb4",
+  "text": "Mana yang PANAS?",
+  "heard": "mana yang panas?",
+  "score": 1.0
+ },
+ "LNG-03-s0": {
+  "sha1": "618964fdbb62e8d688d06cb2f70be22291ff007b",
+  "text": "Lala bertanya pada teman-temannya.",
+  "heard": "Lala bertanya pada teman-temannya",
+  "score": 1.0
+ },
+ "LNG-03-s1": {
+  "sha1": "d4288643a6727c7fc777cb541d2ca1d39bd90b77",
+  "text": "Benda mana yang terasa PANAS?",
+  "heard": "Benda mana yang terasa panas?",
+  "score": 1.0
+ },
+ "LNG-03-x": {
+  "sha1": "8b44178ff36cab4be70f3f2c5d707aeb58403b7d",
+  "text": "Api unggun terasa panas. Manusia salju dan es krim terasa dingin.",
+  "heard": "Api kumun terasa panas manusia salju dan kas krim terasa dingin.",
+  "score": 0.925
+ },
+ "LNG-04-h1": {
+  "sha1": "17387709991473273903096a136b09c2ec63aae6",
+  "text": "Lihat kepiknya. Ukurannya bagaimana?",
+  "heard": "Lihat kepiknya ukurannya bagaimana.",
+  "score": 1.0
+ },
+ "LNG-04-h2": {
+  "sha1": "2490cbb74793d562cc06a9beed39b1a408ec4341",
+  "text": "Kebalikan besar adalah...",
+  "heard": "kebalikan besarak adalah",
+  "score": 0.952
+ },
+ "LNG-04-q": {
+  "sha1": "e4b9f67897774566a15ef3f3523b37b8a26797c9",
+  "text": "Lawan kata BESAR adalah...",
+  "heard": "Lawan kata besar adalah",
+  "score": 1.0
+ },
+ "LNG-04-s1": {
+  "sha1": "2636940e0fe0b2c0f16cce74ce61ccc1c545221f",
+  "text": "Kepik itu... kebalikannya!",
+  "heard": "kepik itu kebalikannya",
+  "score": 1.0
+ },
+ "LNG-04-x": {
+  "sha1": "1eb7ac5e5d298381460d262ca6e6864382bb7db6",
+  "text": "Lawan kata besar adalah kecil.",
+  "heard": "Lawan kata besar adalah kecil.",
+  "score": 1.0
+ },
+ "LNG-05-h1": {
+  "sha1": "6905eb7830127187156d947d611fef3ed1f25c9e",
+  "text": "Kendaraan dipakai untuk bepergian.",
+  "heard": "kendaraan dipakai untuk bepergian.",
+  "score": 1.0
+ },
+ "LNG-05-h2": {
+  "sha1": "01e386a381143bef647e545f6d5404454d09fe0d",
+  "text": "Ada satu yang bisa dimakan. Itu bukan kendaraan.",
+  "heard": "Ada satu yang bisa dimakan itu bukan kendaraan.",
+  "score": 1.0
+ },
+ "LNG-05-q": {
+  "sha1": "052b23b02c1a7b1877599f1c7cbe5ed678bb3c15",
+  "text": "Pilih SEMUA kendaraan.",
+  "heard": "Pilih semua kendaraan.",
+  "score": 1.0
+ },
+ "LNG-05-s0": {
+  "sha1": "564c64af0975ea3053414554bfbc5e624903f8ed",
+  "text": "Stinky dan teman-temannya lewat di jalan desa.",
+  "heard": "Stinggi dan teman-temannya lewat di jalan desa.",
+  "score": 0.901
+ },
+ "LNG-05-s1": {
+  "sha1": "0a94a427e4d264197abf393d29cc9421669a1f6e",
+  "text": "Stinky bertanya: siapa saja yang kendaraan?",
+  "heard": "Stinti bertanya siapa saja yang kendaraan?",
+  "score": 0.909
+ },
+ "LNG-05-x": {
+  "sha1": "5ab4f218e01f37ab4e79bdc44e08201554515761",
+  "text": "Mobil, bus, dan sepeda adalah kendaraan. Apel bukan kendaraan.",
+  "heard": "Mobil bus dan sepeda adalah kendaraan apa bukan kendaraan.",
+  "score": 0.97
+ },
+ "LNG-06-h1": {
+  "sha1": "e006726580d3b5679ec5b5f74361d348e990c135",
+  "text": "Benda itu kita pakai di dalam mulut.",
+  "heard": "Benda itu kita pakai di dalam mulu.",
+  "score": 0.982
+ },
+ "LNG-06-h2": {
+  "sha1": "b9726372a7f4aa4a9291c8b976b68237f2e60337",
+  "text": "Namanya ada kata \"gigi\"-nya.",
+  "heard": "lamanya ada kata giginya",
+  "score": 0.952
+ },
+ "LNG-06-q": {
+  "sha1": "a852716b2c8cad4ce56243e8258e08f1f84bd126",
+  "text": "Benda apa untuk membersihkan gigi?",
+  "heard": "Benda apa untuk membersihkan gigi?",
+  "score": 1.0
+ },
+ "LNG-06-s0": {
+  "sha1": "66a13ca446efa9ae299930fd3ca43e9686c413a6",
+  "text": "Malam hari, Raka mau tidur.",
+  "heard": "Malam Hari Raka Maltidu",
+  "score": 0.909
+ },
+ "LNG-06-s1": {
+  "sha1": "13222c9ecda528dc675b62666dff6ea1783d6aee",
+  "text": "Sebelum tidur, Raka membersihkan giginya.",
+  "heard": "Sebelum tidur raka membersihkan giginya.",
+  "score": 1.0
+ },
+ "LNG-07-h1": {
+  "sha1": "b239e535aa6bd24965b8bab3d2954a03c5871683",
+  "text": "Lihat kotaknya dulu.",
+  "heard": "lihat kotaknya dulu",
+  "score": 1.0
+ },
+ "LNG-07-h2": {
+  "sha1": "5b3c541e4de6b5499e71b76a56e4159f5887da1e",
+  "text": "\"Di atas\" artinya lebih tinggi, menempel pada kotak.",
+  "heard": "di atas atinya lebih tinggi menempel pada kotak",
+  "score": 0.988
+ },
+ "LNG-07-q": {
+  "sha1": "127f224de2a73057b0531703ddb9cedb51f5343e",
+  "text": "Ketuk hewan yang ada DI ATAS kotak.",
+  "heard": "ketuk hewan yang ada di atas kota.",
+  "score": 0.982
+ },
+ "LNG-07-s0": {
+  "sha1": "da61c1246d226c451039116d83ca20b911365509",
+  "text": "Tiga hewan bermain dengan sebuah kotak.",
+  "heard": "tidak hewan bermain dengan sebuah kota.",
+  "score": 0.939
+ },
+ "LNG-07-s1": {
+  "sha1": "162baee624d7c478eb6c62fc5bc1f8f87f1af89b",
+  "text": "Mimi duduk DI ATAS kotak.",
+  "heard": "Mimi duduk di atas kota.",
+  "score": 0.968
+ },
+ "LNG-07-x": {
+  "sha1": "450dd8dd2a73ba6637ef08489293efa1f6eed509",
+  "text": "Mimi ada di atas kotak. Rover dan Lulu ada di samping kotak.",
+  "heard": "Mimi ada di atas kota Kroler dan Lulu ada di samping kota.",
+  "score": 0.917
+ },
+ "LNG-08-h1": {
+  "sha1": "1433dccadf0fbf9bae4e1392d629d43c8fa191e1",
+  "text": "Banyak artinya lebih dari satu.",
+  "heard": "banyak atinya lebih dari satu.",
+  "score": 0.98
+ },
+ "LNG-08-h2": {
+  "sha1": "80c47234fcd9663c3c225fcf423b66fb145896df",
+  "text": "Cari kotak yang apelnya lebih dari satu.",
+  "heard": "Cari kotak yang apelnya lebih dari 1.",
+  "score": 1.0
+ },
+ "LNG-08-s0": {
+  "sha1": "858a6b1a7558c03db329890d5dcc75a2b9381a5d",
+  "text": "Koko punya keranjang buah.",
+  "heard": "OO punya keranjang buah.",
+  "score": 0.947
+ },
+ "LNG-08-s1": {
+  "sha1": "d60de2d22fe8c0c32084f97da47fdd19621a6da3",
+  "text": "Koko bertanya: mana yang apelnya BANYAK?",
+  "heard": "Koko bertanya mana yang apengnya banyak?",
+  "score": 0.949
+ },
+ "LNG-08-x": {
+  "sha1": "b41ea63b162faa5fa08ff4c6bb204c0c994a1180",
+  "text": "Empat apel itu banyak. Satu apel itu satu.",
+  "heard": "4 apel itu banyak satu apel itu satu",
+  "score": 1.0
+ },
+ "LNG-09-h1": {
+  "sha1": "5dbf47cf02730bf79edf51491ff605b89ad297a9",
+  "text": "Kalau haus, kita perlu minum.",
+  "heard": "kalau harus kita perlu minum",
+  "score": 0.979
+ },
+ "LNG-09-h2": {
+  "sha1": "44e49f26f9511d8fa630a4d08e147f2e2f34709d",
+  "text": "Mana yang bisa diminum?",
+  "heard": "Mana yang bisa diminum?",
+  "score": 1.0
+ },
+ "LNG-09-q": {
+  "sha1": "6c0013116a5adac30652ea60bad02fc18b0b476f",
+  "text": "Karena haus, Lala minum ...",
+  "heard": "Karena haus lala minum.",
+  "score": 1.0
+ },
+ "LNG-09-s0": {
+  "sha1": "e0213f3dcf559f6e8ad5b19cdbbe39616b1e1eb5",
+  "text": "Lala bermain lama di taman.",
+  "heard": "Lala bermain lama ditaman.",
+  "score": 1.0
+ },
+ "LNG-09-x": {
+  "sha1": "4238341acbf7e9fe543c851cba1ba7409dda0a12",
+  "text": "Karena haus, Lala minum air.",
+  "heard": "karena haus lalu minum air",
+  "score": 0.9
+ },
+ "LNG-10-h2": {
+  "sha1": "61fdbbf79949af0399199d98b16fe7a92a1da8f1",
+  "text": "Kalau menguap dan mata berat, kita ingin...",
+  "heard": "kalau menguap dan mata berat kita ingin",
+  "score": 1.0
+ },
+ "LNG-10-q": {
+  "sha1": "839341aef19b6e41c0c8b5fa1c3d8625eeb5c8d9",
+  "text": "Mengantuk artinya...",
+  "heard": "mengantuk hatinya.",
+  "score": 0.938
+ },
+ "LNG-10-s0": {
+  "sha1": "102f5ad6c3caca3b2ac2bb9bec24a35e5383f457",
+  "text": "Pip menguap. Matanya terasa berat.",
+  "heard": "Pip memuap matanya terasa berat.",
+  "score": 0.939
+ },
+ "LNG-10-x": {
+  "sha1": "58a39258fa15d25417b9cf5e1874d5a88f991d6a",
+  "text": "Mengantuk artinya ingin tidur.",
+  "heard": "mengantuk artinya ingin tidung.",
+  "score": 0.943
+ },
+ "LNG-11-h1": {
+  "sha1": "f8cac60070302970fb7e979424a8e082587f33e3",
+  "text": "Dengan peta, Koko tahu arah ke peti harta.",
+  "heard": "dengan petako otahu arah kepetihatan.",
+  "score": 0.918
+ },
+ "LNG-11-h2": {
+  "sha1": "61179f22337690c37adb4532a32b8a04969e2901",
+  "text": "Peta menunjukkan jalan.",
+  "heard": "Bata menunjukkan jalan.",
+  "score": 0.9
+ },
+ "LNG-11-s0": {
+  "sha1": "0ec1fb1c7ae6ffe2d5a56fe05846268f34e312dc",
+  "text": "Koko menemukan PETA harta karun.",
+  "heard": "Koko menemukan petaharta karun.",
+  "score": 1.0
+ },
+ "LNG-11-s1": {
+  "sha1": "16fe62ae0bd491716807735557157e237b0e2804",
+  "text": "Dengan peta itu, Koko tahu jalan ke peti harta.",
+  "heard": "dengan peta itu ko otahu jalan ke Petiharta.",
+  "score": 0.957
+ },
+ "LNG-11-x": {
+  "sha1": "04fa12f14456854d4d00c802aa69194c5280dcb7",
+  "text": "Peta dipakai untuk mencari jalan.",
+  "heard": "Bata dipakai untuk mencari jalan.",
+  "score": 0.929
+ },
+ "LNG-12-h1": {
+  "sha1": "a76e3afa175ccc49d9d99a9fba80b232b8da7308",
+  "text": "Lihat di mana Pip berada.",
+  "heard": "Lihat dimana piberada.",
+  "score": 0.944
+ },
+ "LNG-12-h2": {
+  "sha1": "ae1c1f5aee5162712c74000dea0f1015aa0a46be",
+  "text": "Pip ada di atas, di tempat awan berada.",
+  "heard": "Pip ada di atas di tempat awan berada.",
+  "score": 1.0
+ },
+ "LNG-12-q": {
+  "sha1": "6a712ae5da604f9fecfcc061d504361a17a554a8",
+  "text": "Burung terbang di...",
+  "heard": "burung terbangdi",
+  "score": 1.0
+ },
+ "LNG-12-s0": {
+  "sha1": "e8e46c30b876a392b0b952d148f31c649fc82695",
+  "text": "Ikan hidup di air.",
+  "heard": "dikanhidup di air.",
+  "score": 0.966
+ },
+ "LNG-12-s1": {
+  "sha1": "8d0c5aaace606570a6d2cbe21c720c3d74310ccf",
+  "text": "Burung terbang di mana?",
+  "heard": "Burum terbang dimana?",
+  "score": 0.919
+ },
+ "LNG-12-x": {
+  "sha1": "41f31d93dccb5e09c70759950a9c5c43f2d91e4f",
+  "text": "Ikan hidup di air, burung terbang di langit.",
+  "heard": "ikan hidup di air burung terbang dilangit.",
+  "score": 1.0
+ },
+ "LOG-01-h1": {
+  "sha1": "607f6ee1f62ff52a765dba1cf61f70a3f1e49773",
+  "text": "Lihat baik-baik buah yang dipegang Dirty.",
+  "heard": "lihat baik-baik buah yang dipegang diti",
+  "score": 0.935
+ },
+ "LOG-01-h2": {
+  "sha1": "4dae9636d5738a1998b3acd5b3f8d19722a0d669",
+  "text": "Cari buah bulat berwarna merah.",
+  "heard": "Cari buah bulat berwarna merah.",
+  "score": 1.0
+ },
+ "LOG-01-s1": {
+  "sha1": "b696c5ba832a22ddbfe91cf45d67a43988b64d17",
+  "text": "Dirty mencari apel yang sama untuk temannya.",
+  "heard": "Dinti mencari apel yang sama untuk temannya.",
+  "score": 0.928
+ },
+ "LOG-01-x": {
+  "sha1": "85770d6cd314ad763370bad1bc7db5149003bd03",
+  "text": "Apel sama dengan buah yang dipegang Dirty.",
+  "heard": "Apel sama dengan buah yang dipegang dinti.",
+  "score": 0.923
+ },
+ "LOG-02-h1": {
+  "sha1": "2a673c91f63dbb4de981ee8685609a0f3a2a8f2d",
+  "text": "Salad buah hanya berisi buah.",
+  "heard": "Salat buah hanya berisi buah.",
+  "score": 0.958
+ },
+ "LOG-02-h2": {
+  "sha1": "618fa5c44323a0eaa3edf33c284a55cf0c9e9401",
+  "text": "Ada satu benda yang bukan makanan. Jangan pilih itu.",
+  "heard": "Ada satu benda yang bukan makanan, jangan pilih itu.",
+  "score": 1.0
+ },
+ "LOG-02-q": {
+  "sha1": "893de1959dad823cf083eab877e73d5d2ecd82d9",
+  "text": "Pilih SEMUA yang buah.",
+  "heard": "pilih semua yang buah",
+  "score": 1.0
+ },
+ "LOG-02-x": {
+  "sha1": "854b4e153f826b319d35e0c825146d073589b217",
+  "text": "Apel, pisang, dan anggur adalah buah. Mobil bukan buah.",
+  "heard": "Apel pisang dan anggur adalah buah mobil bukan buah.",
+  "score": 1.0
+ },
+ "LOG-03-h1": {
+  "sha1": "dcf8137a51cca5a1e52c3e01750fe478ab5cc1d7",
+  "text": "Tiga di antaranya bisa berjalan dan makan.",
+  "heard": "tidak di antaranya bisa berjalan dan makan.",
+  "score": 0.958
+ },
+ "LOG-03-h2": {
+  "sha1": "9441a57f4d9b5be5c548921a602ddfb78e12112d",
+  "text": "Mana yang bukan hewan?",
+  "heard": "Mana yang bukan hewan?",
+  "score": 1.0
+ },
+ "LOG-03-q": {
+  "sha1": "1cac02f8a49b3632e62690610c85b9b9234e767b",
+  "text": "Mana yang BERBEDA?",
+  "heard": "Mana yang berbeda?",
+  "score": 1.0
+ },
+ "LOG-03-s0": {
+  "sha1": "0744741c1f91e8011c58ee3415e5c70e71aba965",
+  "text": "Di Lab Logika ada barisan teman-teman.",
+  "heard": "Dilapnogika ada barisan teman-teman.",
+  "score": 0.935
+ },
+ "LOG-03-s1": {
+  "sha1": "1a5ff6bdbfb5d84fa82ea3e2ba4fe6d458a20e18",
+  "text": "Ada satu yang bukan hewan. Siapa ya?",
+  "heard": "Ada satu yang bukan hewan siapa ya?",
+  "score": 1.0
+ },
+ "LOG-03-x": {
+  "sha1": "537aaf83d3ed2654ae8fd4379bb642fbd322dca8",
+  "text": "Anjing, kucing, dan kelinci adalah hewan. Mobil bukan hewan.",
+  "heard": "Anjing kucing dan kelinci adalah hewan mobil bukan hewan.",
+  "score": 1.0
+ },
+ "LOG-04-h1": {
+  "sha1": "d24a0158ed9ee7682eb3b540a9ea35cf95a28410",
+  "text": "Lihat bentuk terakhir sebelum tanda tanya.",
+  "heard": "Lihat bentuk terakhir sebelum tanda tanya",
+  "score": 1.0
+ },
+ "LOG-04-h2": {
+  "sha1": "e51f856611d43227787e740ef45c8036bd26b206",
+  "text": "Polanya bergantian: lingkaran, segitiga, lingkaran, segitiga, ...",
+  "heard": "Polanya bergantian lingkaran segitiga lingkaran segitiga.",
+  "score": 1.0
+ },
+ "LOG-04-q": {
+  "sha1": "38bff7e457876aece9201db265bc2437bce80f4e",
+  "text": "Apa selanjutnya?",
+  "heard": "Apa selanjutnya?",
+  "score": 1.0
+ },
+ "LOG-04-s0": {
+  "sha1": "f56b1128ba2d6b4f96a50da39e9cc7f6da095244",
+  "text": "Mesin Lab Logika mengeluarkan bentuk: lingkaran, segitiga, lingkaran, segitiga...",
+  "heard": "Masin lap logika mengeluarkan bentuk lingkaran sedi-tida lingkaran sedi-tiga.",
+  "score": 0.924
+ },
+ "LOG-04-s1": {
+  "sha1": "ae1fbb8881c0f32b2283e4e459002f2cb92553d2",
+  "text": "Bentuk apa yang keluar berikutnya?",
+  "heard": "Bentuk apa yang keluar berikutnya?",
+  "score": 1.0
+ },
+ "LOG-04-x": {
+  "sha1": "de98d0e20410fb409e8bb2fe401614a6bf979f04",
+  "text": "Polanya bergantian, jadi setelah segitiga datang lingkaran.",
+  "heard": "Olanya bergantian, jadi setelah segi 3 datang lingkaran.",
+  "score": 0.99
+ },
+ "LOG-05-h1": {
+  "sha1": "12d181f3f9377d91957ed86ba63dee4a0f67b04a",
+  "text": "Hitung ada berapa matahari sebelum bulan.",
+  "heard": "Kitung ada berapa matahari sebelum bulan.",
+  "score": 0.971
+ },
+ "LOG-05-h2": {
+  "sha1": "c2bde9d2f3a40e82ae632bf82a108da89df5d517",
+  "text": "Dua matahari, lalu satu bulan. Sesudah dua matahari datang...",
+  "heard": "2 matahari, lalu 1 bulan sesudah 2 matahari datang.",
+  "score": 1.0
+ },
+ "LOG-05-q": {
+  "sha1": "c250ce4c596776e3ff6d54b69aaa32dbc7ba0d16",
+  "text": "Apa selanjutnya?",
+  "heard": "Apa selanjutnya?",
+  "score": 1.0
+ },
+ "LOG-05-s0": {
+  "sha1": "753a960fc031fff8e783d05c0432221d47badffa",
+  "text": "Pip menyusun gambar: matahari, matahari, bulan, matahari, matahari...",
+  "heard": "pit menyusun gambar matahari matahari bulan matahari matahari",
+  "score": 0.971
+ },
+ "LOG-05-s1": {
+  "sha1": "568ba0d169a5d705e9c9cac2fb65ce02a827b04c",
+  "text": "Gambar apa berikutnya?",
+  "heard": "gambar apa berikutnya",
+  "score": 1.0
+ },
+ "LOG-05-x": {
+  "sha1": "617ef3a37f211bb88bac037b0618166b0a48e277",
+  "text": "Polanya dua matahari lalu satu bulan, jadi berikutnya bulan.",
+  "heard": "Polanya dua matahari lalu satu bulan, jadi berikutnya bulan.",
+  "score": 1.0
+ },
+ "LOG-06-h1": {
+  "sha1": "9f3db39c04c08e3232bcabad4e3da3a40ae238ab",
+  "text": "Semua tanaman mulai dari yang kecil.",
+  "heard": "semua tanaman mulai dari yang kecil.",
+  "score": 1.0
+ },
+ "LOG-06-h2": {
+  "sha1": "8f4c13f5f462bf84fee9f4eed90680e55d1b3791",
+  "text": "Tunas, lalu tanaman, lalu pohon.",
+  "heard": "tunas lalu tanaman lalu pohom",
+  "score": 0.96
+ },
+ "LOG-06-q": {
+  "sha1": "020b3e7319627b92d1373030568e8904dd0e406b",
+  "text": "Urutkan dari yang paling kecil: ketuk dari yang pertama.",
+  "heard": "kurutkan dari yang paling kecil, ketuk dari yang pertama.",
+  "score": 0.989
+ },
+ "LOG-06-s0": {
+  "sha1": "85f03b4cb7557455a09c2b53f557f8f9c8b5381f",
+  "text": "Di lab ada tanaman ajaib.",
+  "heard": "Dilap ada tanaman ajain.",
+  "score": 0.9
+ },
+ "LOG-06-s1": {
+  "sha1": "295fb1cf9ea12f61dd472d57b2e15fb09469cd00",
+  "text": "Tanaman itu tumbuh dari tunas kecil, jadi tanaman, lalu jadi pohon besar.",
+  "heard": "Tanaman itu tumbuh dari tunas kecil jadi tanaman, lalu jadi pohon besang.",
+  "score": 0.975
+ },
+ "LOG-06-x": {
+  "sha1": "c7c8aae4e37ee54880b7315d260c5c2d04786454",
+  "text": "Tunas tumbuh jadi tanaman, lalu jadi pohon besar.",
+  "heard": "Tunas tumbuh jadi tanaman lalu jadi pohon besar.",
+  "score": 1.0
+ },
+ "LOG-07-h1": {
+  "sha1": "5797caf58fb0a2c64e4b156b0f0dadb0cd9dcd82",
+  "text": "Apa yang terjadi paling awal di pagi hari?",
+  "heard": "Apa yang terjadi paling awal di pagi hari?",
+  "score": 1.0
+ },
+ "LOG-07-h2": {
+  "sha1": "a1a4af20619dce96c42b0b8de770da43e6cf349f",
+  "text": "Bangun, gosok gigi, lalu berangkat.",
+  "heard": "bangun gosok didi lalu berangka",
+  "score": 0.909
+ },
+ "LOG-07-q": {
+  "sha1": "f0558a2056e5a22140935c2fea7a43717a21a721",
+  "text": "Urutkan pagi Raka: ketuk dari yang pertama.",
+  "heard": "kurutkan pagi raka ketuk dari yang pertama.",
+  "score": 0.984
+ },
+ "LOG-07-s2": {
+  "sha1": "2b4de04836a1bf7a0cf2beb6f5eb7b084ffe3efb",
+  "text": "Raka memakai tas lalu berangkat sekolah.",
+  "heard": "Raka memakai tas, lalu berangkat sekolah.",
+  "score": 1.0
+ },
+ "LOG-07-x": {
+  "sha1": "e9248e5e1c16651b49a1f965c61e2d1864069db3",
+  "text": "Raka bangun, menggosok gigi, lalu berangkat sekolah.",
+  "heard": "Raka, bangun mengusok digi, lalu berangkat sekolah.",
+  "score": 0.935
+ },
+ "LOG-08-h1": {
+  "sha1": "69d3d272d7b8a65ce4290aa7b1cd4a49e62e178d",
+  "text": "Bandingkan tinggi ketiga hewan.",
+  "heard": "Bandingkan tinggi ketidak hewan.",
+  "score": 0.945
+ },
+ "LOG-08-h2": {
+  "sha1": "a82a621aa1332e48063c8203e52ddeacf3bd6977",
+  "text": "Hewan yang paling tinggi dan besar badannya adalah...",
+  "heard": "Kewan yang paling tinggi dan besar badannya adalah",
+  "score": 0.977
+ },
+ "LOG-08-q": {
+  "sha1": "2b45ffba048fc1cfea04aa5748d6eaeb7d15a58a",
+  "text": "Mana yang PALING BESAR?",
+  "heard": "Mana yang paling besar?",
+  "score": 1.0
+ },
+ "LOG-08-s1": {
+  "sha1": "6964eba3fbf4002d0d6003017d8c621b210e7c12",
+  "text": "Mereka ingin tahu siapa yang paling besar.",
+  "heard": "Mereka ingin tahu siapa yang paling besar.",
+  "score": 1.0
+ },
+ "LOG-08-x": {
+  "sha1": "8ceb3c635dd5c3045f13d04f5368b570d56d71e9",
+  "text": "Gajah adalah hewan yang paling besar.",
+  "heard": "Kaja adalah hewan yang paling besar.",
+  "score": 0.951
+ },
+ "LOG-09-h1": {
+  "sha1": "a21e850f8f0b03ffd69bc87ccc9563fdb841700e",
+  "text": "Kita perlu benda supaya tidak basah.",
+  "heard": "Kita perlu benda supaya tidak basah.",
+  "score": 1.0
+ },
+ "LOG-09-h2": {
+  "sha1": "e8b5c516a322acd6fb8a302b9a95645d97aef1ae",
+  "text": "Benda itu dipegang di atas kepala saat hujan.",
+  "heard": "Benda itu dipegang di atas kepala saat hujan.",
+  "score": 1.0
+ },
+ "LOG-09-q": {
+  "sha1": "36781e0346cfc23488479565ce8fb0a150ca4b1d",
+  "text": "Jika hujan, kita memakai...",
+  "heard": "Jika hujan kita memakai.",
+  "score": 1.0
+ },
+ "LOG-09-s0": {
+  "sha1": "31e2a510900ceaaaf06d0ab89e2cd820ac50f623",
+  "text": "Stinky berkata: \"Jika hujan turun, kita perlu sesuatu supaya tidak basah.\"",
+  "heard": "Stinghi berkata, jika hujan turun, kita perlu sesuatu supaya tidak basah.",
+  "score": 0.938
+ },
+ "LOG-09-s1": {
+  "sha1": "dc53b4be42730e52ecf4f6ea5471b9af873cb558",
+  "text": "Lihat, awan mulai gelap!",
+  "heard": "Lihat awan mulai gelap.",
+  "score": 1.0
+ },
+ "LOG-09-x": {
+  "sha1": "5d015512769ddac28e647703e1ee80a9d0f471d6",
+  "text": "Jika hujan, kita memakai payung supaya tidak basah.",
+  "heard": "Jika hujan kita memakai payung supaya tidak basah.",
+  "score": 1.0
+ },
+ "LOG-10-h1": {
+  "sha1": "7ad750641d40a380fd6acb219c1f22919f4d336b",
+  "text": "Es krim itu dingin. Matahari itu panas.",
+  "heard": "Reskrim itu, dingin matahari itu panas",
+  "score": 0.984
+ },
+ "LOG-10-h2": {
+  "sha1": "df5aa4081cd4fffbe49ba5cb14991080d4ebd86e",
+  "text": "Es yang kena panas akan berubah jadi cair.",
+  "heard": "guys yang kena panas akan berubah jadi cahil",
+  "score": 0.901
+ },
+ "LOG-10-q": {
+  "sha1": "f02717bbfd8966aaacfd86e97f02de3ff5bc43b0",
+  "text": "Apa yang terjadi pada es krim?",
+  "heard": "Apa yang terjadi pada esklin?",
+  "score": 0.917
+ },
+ "LOG-10-s0": {
+  "sha1": "6fecc7c10e142a45dd60541fe280cf5c8c0b1b78",
+  "text": "Dirty meninggalkan es krim di bawah matahari yang panas.",
+  "heard": "dirti meninggalkan ke skrim dibawah matahari yang panas.",
+  "score": 0.933
+ },
+ "LOG-10-s1": {
+  "sha1": "b45183326de1b3b6ebf46816c25d11afa4b779c1",
+  "text": "Matahari bersinar terik sekali.",
+  "heard": "Matahari bersinar trik sekali.",
+  "score": 0.981
+ },
+ "LOG-10-x": {
+  "sha1": "fba81ec4a395c97aff7669bebd1ce7f17ddb113e",
+  "text": "Es krim meleleh karena kena panas matahari.",
+  "heard": "iskrim meleleh karena kena panas mata hali.",
+  "score": 0.944
+ },
+ "LOG-11-h1": {
+  "sha1": "f22361298c3c7744ec24735f68af27a6c844d93b",
+  "text": "Pip bilang: bukan kucing.",
+  "heard": "Pip bilang bukan kucing.",
+  "score": 1.0
+ },
+ "LOG-11-h2": {
+  "sha1": "68fb92882a1914e1fb0e3161f137770cd9d31506",
+  "text": "Bukan kucing, bukan anjing. Tinggal satu.",
+  "heard": "Bukan kucing bukan anjing tinggal satu.",
+  "score": 1.0
+ },
+ "LOG-11-q": {
+  "sha1": "8b16b85f6aff9c96c053a30e819604ab6c3150c4",
+  "text": "Hewan rahasia Pip adalah...",
+  "heard": "Hewan rahasia Pip adalah",
+  "score": 1.0
+ },
+ "LOG-11-s0": {
+  "sha1": "4407f202a92dfc7f68a3b38016c9b46441948d49",
+  "text": "Pip punya hewan rahasia.",
+  "heard": "Pi punya hewan rahasia.",
+  "score": 0.944
+ },
+ "LOG-11-s1": {
+  "sha1": "dc21c8b6840519489d9be7e4a740afc2d4dca716",
+  "text": "Hewannya bukan kucing, dan bukan anjing.",
+  "heard": "Hewannya bukan kucing dan bukan anjin.",
+  "score": 0.985
+ },
+ "LOG-11-x": {
+  "sha1": "e49f4a978b99ebf386a671c5b0c1b95dbf94c0d8",
+  "text": "Bukan kucing dan bukan anjing, jadi hewannya kelinci.",
+  "heard": "Bukan kucing dan bukan anjing jadi hewanya, kelinci.",
+  "score": 0.989
+ },
+ "LOG-12-h1": {
+  "sha1": "c5536ef09ef60d42261381d9826488cf8d3378ec",
+  "text": "Sepatu dipakai di bagian tubuh paling bawah.",
+  "heard": "sepatu dipakai di bagian tubuh paling bawah.",
+  "score": 1.0
+ },
+ "LOG-12-h2": {
+  "sha1": "4cc92015a85c5a709e89ad7d83bfecc15b6f2ce8",
+  "text": "Topi dipakai di bagian tubuh paling atas.",
+  "heard": "tapi dipakai di bagian tubuh paling atas",
+  "score": 0.971
+ },
+ "LOG-12-q": {
+  "sha1": "631d54cc26f022976941a9a4582a1f74ea251a1e",
+  "text": "Topi dipakai di...",
+  "heard": "tobi dipakai di",
+  "score": 0.923
+ },
+ "LOG-12-s0": {
+  "sha1": "55e3e1933b048448060e71e99b6971e68a456019",
+  "text": "Sepatu dipakai di kaki.",
+  "heard": "sepatu dipakai di kati.",
+  "score": 0.947
+ },
+ "LOG-12-x": {
+  "sha1": "2dce18193b56e4432478c2480845cfeea568b387",
+  "text": "Sepatu dipakai di kaki, topi dipakai di kepala.",
+  "heard": "sepatu dipakai di kaki topi, dipakai di kepala.",
+  "score": 1.0
+ },
+ "MAT-01-h1": {
+  "sha1": "b1fe18988999e1bc80d4b9bf2c70831e12461a50",
+  "text": "Mulai dari ikan paling kiri.",
+  "heard": "Mulai dari ikan paling kiri.",
+  "score": 1.0
+ },
+ "MAT-01-h2": {
+  "sha1": "0a40f8caf172298916c12a9f5e72be0d8b4d63af",
+  "text": "Tunjuk satu per satu: satu, dua, tiga...",
+  "heard": "Tunjuk satu per satu satu dua tiga.",
+  "score": 1.0
+ },
+ "MAT-01-q": {
+  "sha1": "a1afda02984258317e24bbd86d704092efba45bf",
+  "text": "Ada berapa ikan?",
+  "heard": "Ada berapa ikan?",
+  "score": 1.0
+ },
+ "MAT-01-s0": {
+  "sha1": "75f96687778798fc1e73565767bb74c7a91a5013",
+  "text": "Ikan-ikan berenang di dekat Pulau Angka.",
+  "heard": "ikan-ikan berenang di dekat pulau Angka.",
+  "score": 1.0
+ },
+ "MAT-01-x": {
+  "sha1": "0f7089395e9447dc1e57ea0a030cc2b2be91a3fb",
+  "text": "Ada 4 ikan: satu, dua, tiga, empat.",
+  "heard": "Ada empat ikan satu dua tidak empah.",
+  "score": 0.912
+ },
+ "MAT-02-h1": {
+  "sha1": "c7f1681e5d992312cb3b78d0e50224d876a11abc",
+  "text": "Angka tiga bentuknya seperti dua lengkungan.",
+  "heard": "angka 3 bentuknya seperti 2 lengkungan",
+  "score": 1.0
+ },
+ "MAT-02-h2": {
+  "sha1": "ebae21f8b5102c031b1994c39ca7afd8387ee5ff",
+  "text": "Hitung: satu, dua, TIGA.",
+  "heard": "Hitung 1-2-3",
+  "score": 1.0
+ },
+ "MAT-02-q": {
+  "sha1": "ebf74ac1a7d5015bea71920484c7b000871cc72c",
+  "text": "Ketuk angka TIGA.",
+  "heard": "Ketuk angkatia.",
+  "score": 0.963
+ },
+ "MAT-03-h1": {
+  "sha1": "7f3fa73947a0bd46d53cd1754a2a1e3382da4212",
+  "text": "Mulai dari angka 1: cari satu bintang.",
+  "heard": "Mulai dari angka satu cari satu bintang.",
+  "score": 1.0
+ },
+ "MAT-03-h2": {
+  "sha1": "0f35cba3e1a73388e0b3b9ab7c94a8aa739d37cd",
+  "text": "Hitung bintang di setiap kotak.",
+  "heard": "Hitung bintang di setiap kota.",
+  "score": 0.98
+ },
+ "MAT-03-q": {
+  "sha1": "bbb8de9703d7adffdee159e6a5af182b88ccd066",
+  "text": "Cocokkan angka dengan gambarnya.",
+  "heard": "Cocokkan angka dengan gambarnya.",
+  "score": 1.0
+ },
+ "MAT-03-s0": {
+  "sha1": "08bd4a55a0fff7b5c644bffd602ada98ce9a2c25",
+  "text": "Pip menemukan kelompok bintang di pantai.",
+  "heard": "Pip menemukan kelompok bintang di pantai.",
+  "score": 1.0
+ },
+ "MAT-03-s1": {
+  "sha1": "5e845a7001e9784c4a66c7c899c7e66ab5591e3d",
+  "text": "Cocokkan angkanya dengan banyak bintang.",
+  "heard": "cocokkan angkanya dengan banyak bintang.",
+  "score": 1.0
+ },
+ "MAT-03-x": {
+  "sha1": "4feab6dfdcedf3aacd2c25b65d2349dd115358bc",
+  "text": "1 dengan satu bintang, 2 dengan dua bintang, 3 dengan tiga bintang.",
+  "heard": "1 dengan 1 bintang, 2 dengan 2 bintang, 3 dengan 3 bintang.",
+  "score": 1.0
+ },
+ "MAT-04-h1": {
+  "sha1": "c39b06a51193ebe28ed7433ad0972695a5b303fa",
+  "text": "Hitung pisang di setiap kotak.",
+  "heard": "Hitung pisang di setiap kota.",
+  "score": 0.98
+ },
+ "MAT-04-h2": {
+  "sha1": "b518b0217729f1c1f0637ed21a8014ca101780f3",
+  "text": "Dua atau lima, mana yang lebih banyak?",
+  "heard": "dua atau lima mana yang lebih banyak?",
+  "score": 1.0
+ },
+ "MAT-04-q": {
+  "sha1": "9b52ec8ded7bcfdfac81b4dc5c33fa3d2d01d370",
+  "text": "Mana yang LEBIH BANYAK?",
+  "heard": "Mana yang lebih banyak?",
+  "score": 1.0
+ },
+ "MAT-04-s1": {
+  "sha1": "280fb1f271a250a8eb9ce17a632a7c7c69e121eb",
+  "text": "Siapa yang pisangnya lebih banyak?",
+  "heard": "Siapa yang pisannya lebih banyak?",
+  "score": 0.982
+ },
+ "MAT-04-x": {
+  "sha1": "4a74be5d565e6530e83d9ac2ad556ea5c80a8c12",
+  "text": "Lima lebih banyak dari dua. Pisang Mimi lebih banyak.",
+  "heard": "5 lebih banyak dari 2 pisang mimi lebih banyak.",
+  "score": 1.0
+ },
+ "MAT-05-h1": {
+  "sha1": "c97e8f4f6359ccb84d9516a6005ee0e0afb4449c",
+  "text": "Angka terkecil adalah satu.",
+  "heard": "Angka terkecil adalah satu.",
+  "score": 1.0
+ },
+ "MAT-05-h2": {
+  "sha1": "4131923fba01fdf1b1d86a8978398e77ff4449e0",
+  "text": "Satu, dua, tiga, empat.",
+  "heard": "1 2 3 4",
+  "score": 1.0
+ },
+ "MAT-05-q": {
+  "sha1": "6daba8ad9404dbac57c4f185ddf91c3d983f5ee7",
+  "text": "Ketuk angka dari yang terkecil.",
+  "heard": "Ketuk angka dari yang terkecil.",
+  "score": 1.0
+ },
+ "MAT-05-s0": {
+  "sha1": "ff1bc1ddda0fbbff306c624a273b3f76e0a3fa41",
+  "text": "Jembatan Pulau Angka punya papan bernomor.",
+  "heard": "jembatan pulau angka punya papan bermomong.",
+  "score": 0.932
+ },
+ "MAT-05-s1": {
+  "sha1": "74de422869c8350a2cb0e65a04afd2ecae1e6550",
+  "text": "Susun papannya dari angka terkecil.",
+  "heard": "Susun papanya dari angka terkecil.",
+  "score": 0.983
+ },
+ "MAT-05-x": {
+  "sha1": "163b3c0696dd9d335f21f06c713c6191631e42dc",
+  "text": "Urutannya 1, 2, 3, 4.",
+  "heard": "urutannya 1 2 3 4",
+  "score": 1.0
+ },
+ "MAT-06-h1": {
+  "sha1": "822b59e9edfd5ea1e508bf2ed6f97d160d8bd5e5",
+  "text": "Setelah 2, angka apa?",
+  "heard": "Setelah dua angka apa?",
+  "score": 1.0
+ },
+ "MAT-06-h2": {
+  "sha1": "a86a95371402666e9ba81b4f810934df5b58f328",
+  "text": "Satu, dua, ..., empat.",
+  "heard": "1 2 ke 4",
+  "score": 0.923
+ },
+ "MAT-06-q": {
+  "sha1": "197810a548f1369e58c5b35075c25426e24da813",
+  "text": "Angka berapa yang hilang?",
+  "heard": "Angka berapa yang hilang?",
+  "score": 1.0
+ },
+ "MAT-06-s0": {
+  "sha1": "d04e0a4f956f731022657ad8abe46f5d276ec389",
+  "text": "Ombak menghapus satu angka di pasir!",
+  "heard": "Ombak menghapus satu angka di pasil.",
+  "score": 0.967
+ },
+ "MAT-06-s1": {
+  "sha1": "af5245e56b897bc963e6094f3ca81c947b47d873",
+  "text": "1, 2, ..., 4. Angka berapa yang hilang?",
+  "heard": "1,2,4 angka berapa yang hilang?",
+  "score": 1.0
+ },
+ "MAT-06-x": {
+  "sha1": "872cc0da3640b959043136c7de48b1f6f08d7110",
+  "text": "Satu, dua, TIGA, empat. Angka yang hilang adalah 3.",
+  "heard": "1 2 3 4, angka yang hilang adalah tiga.",
+  "score": 1.0
+ },
+ "MAT-07-h1": {
+  "sha1": "53198ffb37ede415b9702e1741365dc8f2570458",
+  "text": "Angkanya bergantian.",
+  "heard": "Angkannya bergantian.",
+  "score": 0.973
+ },
+ "MAT-07-h2": {
+  "sha1": "a14e7866068b7be5f9dc7ebc6d8d62d0d5c4a6f5",
+  "text": "Setelah 1 selalu datang...",
+  "heard": "Setelah satu selalu datang.",
+  "score": 1.0
+ },
+ "MAT-07-q": {
+  "sha1": "a87ee1ee940f0f138173e5de2f56feb87e044f44",
+  "text": "Angka berikutnya?",
+  "heard": "Angka berikutnya",
+  "score": 1.0
+ },
+ "MAT-07-s0": {
+  "sha1": "5880073c53df6f0b93f32f6a79f6dec34fba053c",
+  "text": "Pip melompat di batu: 1, 2, 1, 2, 1...",
+  "heard": "aktif melompat dibatuh 1 2 1 2 1",
+  "score": 0.914
+ },
+ "MAT-07-s1": {
+  "sha1": "61622ce7950e557d0f72bd7b0143d7be086da20c",
+  "text": "Batu berikutnya angka berapa?",
+  "heard": "Batu berikutnya anggap berapa?",
+  "score": 0.941
+ },
+ "MAT-07-x": {
+  "sha1": "b1573fe0961362cb5376d49c5d94d41a95c25781",
+  "text": "Polanya 1, 2, 1, 2... jadi setelah 1 datang 2.",
+  "heard": "Polanya 1 2 1 2 jadi setelah 1 datang 2.",
+  "score": 1.0
+ },
+ "MAT-08-h1": {
+  "sha1": "5472814b159984c60ae11ff16ef180360baa5f80",
+  "text": "Lihat semua apel di keranjang.",
+  "heard": "lihat semua apel di kerenjan",
+  "score": 0.939
+ },
+ "MAT-08-h2": {
+  "sha1": "789495e96bb46cb1f36519894c329da9f1ac80b7",
+  "text": "Hitung tiga apel, lalu tambah dua lagi.",
+  "heard": "Hitung 3 apal lalu tambah 2 lagi.",
+  "score": 0.968
+ },
+ "MAT-08-q": {
+  "sha1": "3da108cf101f957ab0e02917a22e8feb52310ff2",
+  "text": "Berapa apel Lala sekarang?",
+  "heard": "Berapa apel nala sekarang?",
+  "score": 0.9
+ },
+ "MAT-08-s0": {
+  "sha1": "49cc2740dd880da66411b314b20e8b1623501606",
+  "text": "Lala punya tiga apel di keranjang.",
+  "heard": "Lala punya 3 apel di keranjang.",
+  "score": 1.0
+ },
+ "MAT-08-s1": {
+  "sha1": "f2d4bf99ae501c8b8acad5ce73c46ecd14932540",
+  "text": "Nenek memberi dua apel lagi.",
+  "heard": "nenek memberi dua apa lagi?",
+  "score": 0.933
+ },
+ "MAT-08-x": {
+  "sha1": "39937d52ed31d8f0b0cc316f4d9c862b6fc9b31b",
+  "text": "Tiga apel ditambah dua apel jadi lima apel.",
+  "heard": "3 apel ditambah 2 apel, jadi 5 apel.",
+  "score": 1.0
+ },
+ "MAT-09-h1": {
+  "sha1": "8c3b10236a6db6391b21e355c3de7eb487972881",
+  "text": "Lihat kue yang masih ada di piring.",
+  "heard": "Lihatku yang masih ada di Pirin.",
+  "score": 0.963
+ },
+ "MAT-09-h2": {
+  "sha1": "dc20484d27642df1ddfd32dc4b301109dbf139ef",
+  "text": "Lima dikurangi dua. Hitung yang tersisa.",
+  "heard": "5 dikurangi 2 hitung yang tersisa.",
+  "score": 1.0
+ },
+ "MAT-09-q": {
+  "sha1": "8d186d6894b0bcbd3e18fafcf7faebea1f6d875c",
+  "text": "Berapa kue yang tersisa?",
+  "heard": "Berapaku yang tersisa?",
+  "score": 0.974
+ },
+ "MAT-09-s1": {
+  "sha1": "c6a83bf1a4f96f432743448a78b838e8f4b8572d",
+  "text": "Rover makan dua kue.",
+  "heard": "rover makan dua kue",
+  "score": 1.0
+ },
+ "MAT-09-x": {
+  "sha1": "d09c26b8f18669cbcf5425aaa7467a1ef016ac13",
+  "text": "Lima kue, dimakan dua, tersisa tiga kue.",
+  "heard": "5 kue dimakan 2 tersisa 3 kue.",
+  "score": 1.0
+ },
+ "MAT-10-h1": {
+  "sha1": "2201beeec05a71899420bad89de47de4b9768bd5",
+  "text": "Lingkaran tidak punya sudut.",
+  "heard": "Ningkaran tidak punya suduk.",
+  "score": 0.917
+ },
+ "MAT-10-h2": {
+  "sha1": "ebcd43c7872f6f01c5156c57fbd57a7b2e566245",
+  "text": "Bentuknya bulat seperti bola.",
+  "heard": "Bentuknya bulat seperti bola.",
+  "score": 1.0
+ },
+ "MAT-10-q": {
+  "sha1": "f16666378f24e3c4a09ff21d3686e85aa15e0390",
+  "text": "Mana yang LINGKARAN?",
+  "heard": "Mana yang linggaran?",
+  "score": 0.941
+ },
+ "MAT-10-s0": {
+  "sha1": "7aa6c4331381234e89dc3f8f3098f7b2f948afc7",
+  "text": "Koko menggambar bentuk-bentuk di pasir.",
+  "heard": "Coco menggambar bentuk-bentuk di pasil.",
+  "score": 0.903
+ },
+ "MAT-10-s1": {
+  "sha1": "d90b3d8eb638d0f0e771b4afe736ef87db34cb96",
+  "text": "Koko mencari bentuk yang bulat seperti bola.",
+  "heard": "Coco mencari bentuk yang bulat seperti bola.",
+  "score": 0.943
+ },
+ "MAT-10-x": {
+  "sha1": "9d1f6e4be0e058971c4acf04aef1673b10e18ceb",
+  "text": "Lingkaran bentuknya bulat dan tidak punya sudut.",
+  "heard": "lingkaran bentuknya bula dan tidak punya sudut.",
+  "score": 0.988
+ },
+ "MAT-11-h1": {
+  "sha1": "b1a0079ec82ecaa55a6b65c9186d4df8bf295c6c",
+  "text": "Bandingkan ujung kanan setiap garis.",
+  "heard": "Bandingkan ujung, kanan setiap garis.",
+  "score": 1.0
+ },
+ "MAT-11-h2": {
+  "sha1": "5887864bef352e5d672d642a60e79e83b3490306",
+  "text": "Garis yang paling jauh ujungnya adalah yang paling panjang.",
+  "heard": "Garis yang paling jauh kujungnya adalah yang paling panjan.",
+  "score": 0.98
+ },
+ "MAT-11-q": {
+  "sha1": "ec930307a2042494849fdb96c224362791cc40a0",
+  "text": "Mana yang PALING PANJANG?",
+  "heard": "Mana yang paling panjang?",
+  "score": 1.0
+ },
+ "MAT-11-s1": {
+  "sha1": "48ac4362a3629ea0416fb922115ba76c82c1a7b7",
+  "text": "Dirty ingin tahu mana yang paling panjang.",
+  "heard": "Ditingin tau mana yang paling panjang.",
+  "score": 0.935
+ },
+ "MAT-11-x": {
+  "sha1": "e34b7f6ccce9f6b837a266a33ed512d3be1e480e",
+  "text": "Parit B paling panjang.",
+  "heard": "Parit paling panjang.",
+  "score": 0.973
+ },
+ "MAT-12-h1": {
+  "sha1": "885106706ba9ee9df60f1048fff6ae9fe8cbe9eb",
+  "text": "Dua kaki dan empat kaki.",
+  "heard": "2 kaki dan 4 kati",
+  "score": 0.947
+ },
+ "MAT-12-h2": {
+  "sha1": "1057ae89116f00ea547926071861b7d5eef560e1",
+  "text": "Empat lebih banyak dari dua.",
+  "heard": "keempat lebih banyak dari dua.",
+  "score": 0.958
+ },
+ "MAT-12-q": {
+  "sha1": "34e63d2a17d9c9a093b7d221d074691d23597d6b",
+  "text": "Siapa yang kakinya LEBIH BANYAK?",
+  "heard": "Siapa yang kakinya lebih banyak?",
+  "score": 1.0
+ },
+ "MAT-12-x": {
+  "sha1": "b88e832897cba09c85e81966779d6c27d32fadf3",
+  "text": "Rover punya empat kaki, lebih banyak dari dua kaki Pip.",
+  "heard": "Rogar punya 4, kaki lebih banyak dari 2 kakiti.",
+  "score": 0.911
+ },
+ "MEM-01-h1": {
+  "sha1": "c718edb5f2d36b63063027dfbb3603f6ba27d2de",
+  "text": "Pip terbang tinggi bersama benda itu.",
+  "heard": "Pip terbang tinggi bersama benda itu.",
+  "score": 1.0
+ },
+ "MEM-01-h2": {
+  "sha1": "269ca73aa55567d0211a057e133a0f6a917ba142",
+  "text": "Bendanya bisa terbang dengan angin.",
+  "heard": "Bendanya bisa terbang dengan angin.",
+  "score": 1.0
+ },
+ "MEM-01-q": {
+  "sha1": "6764868933e13d7d772b92a98f8a35783af99b2f",
+  "text": "Apa yang dibawa Pip?",
+  "heard": "Apa yang dibawati?",
+  "score": 0.929
+ },
+ "MEM-01-s0": {
+  "sha1": "1a82205b5fdafdb0d19a1c19dfe0a4ad97c3343a",
+  "text": "Pip terbang membawa sesuatu.",
+  "heard": "Pete terbang membawa sesuatu.",
+  "score": 0.913
+ },
+ "MEM-01-s1": {
+  "sha1": "4675eedeee05eae6bab8ee8fcc158a44135d8fe9",
+  "text": "Perhatikan baik-baik... Pip sudah pergi!",
+  "heard": "Perhatikan baik baik, Pip sudah pergi.",
+  "score": 1.0
+ },
+ "MEM-01-x": {
+  "sha1": "c531a3fc9a13b4f110a4c0e5cfe27f2f2f6fbb32",
+  "text": "Pip membawa layang-layang.",
+  "heard": "Pip membawa mayang layang.",
+  "score": 0.947
+ },
+ "MEM-02-h1": {
+  "sha1": "d872ecf677c07934cdd5eb9e4d46c0bdfae4f320",
+  "text": "Coba ingat payung yang tadi dibuka Lulu.",
+  "heard": "coba ingat payung yang tadi dibuka lulu",
+  "score": 1.0
+ },
+ "MEM-02-h2": {
+  "sha1": "0fdd9772efe7b3b9957678307de27d0694c52a53",
+  "text": "Warnanya sama seperti tomat.",
+  "heard": "Warnanya sama seperti tomat.",
+  "score": 1.0
+ },
+ "MEM-02-q": {
+  "sha1": "3a7390ee33833187e956bbd5bc7513ede361333b",
+  "text": "Apa warna payung Lulu?",
+  "heard": "apa wanapayung lulu?",
+  "score": 0.963
+ },
+ "MEM-02-s0": {
+  "sha1": "c4f802a7a6dd2842b067aa7f5b1f56b1b79a071c",
+  "text": "Lulu membuka payung sebentar.",
+  "heard": "Lulu membuka payu sebentar.",
+  "score": 0.95
+ },
+ "MEM-02-s1": {
+  "sha1": "d243a4cbbdb24934053e6f25aa0dc21e22d246bf",
+  "text": "Lalu Lulu menutup dan menyimpannya.",
+  "heard": "lalu lulu menutup dan menyimpannya",
+  "score": 1.0
+ },
+ "MEM-02-x": {
+  "sha1": "9eed4a6136b9aeda8537d6095442b7bd2af81fac",
+  "text": "Payung Lulu berwarna merah.",
+  "heard": "Payung lulu berwarna merah.",
+  "score": 1.0
+ },
+ "MEM-03-h1": {
+  "sha1": "767fe9b4defbdfe62566ca4e7fdfa41dc0aae261",
+  "text": "Bentuknya punya ujung yang runcing.",
+  "heard": "bentuknya punya ujung yang runtin",
+  "score": 0.949
+ },
+ "MEM-03-h2": {
+  "sha1": "eca64b5f41a43088507cbbba17f03e70bc141bc7",
+  "text": "Bentuknya punya tiga sisi.",
+  "heard": "Bentuknya punya tidak sisi.",
+  "score": 0.933
+ },
+ "MEM-03-q": {
+  "sha1": "f97fece34a2a3d24b5d4ab89fdce46e4af4a8062",
+  "text": "Bentuk apa yang ditunjukkan Koko?",
+  "heard": "Bentuk apa yang ditunjukkan Koko?",
+  "score": 1.0
+ },
+ "MEM-03-s0": {
+  "sha1": "6dc83f3f4d0ad474193d734921a1a7e60d2844de",
+  "text": "Koko menunjukkan sebuah kartu bentuk.",
+  "heard": "Kau menunjukkan sebuah katu bentuk.",
+  "score": 0.931
+ },
+ "MEM-03-s1": {
+  "sha1": "1613db77e93061404226cd87a53be23ca9455a8b",
+  "text": "Kartunya dibalik! Ingat bentuknya?",
+  "heard": "Kartunya dibalik ingat bentuknya.",
+  "score": 1.0
+ },
+ "MEM-03-x": {
+  "sha1": "85949d14d5223bff420cc6dacedb785035c06fff",
+  "text": "Koko menunjukkan segitiga: bentuk dengan tiga sisi.",
+  "heard": "Koko menunjukkan segitiga bentuk dengan tidak sisi.",
+  "score": 0.962
+ },
+ "MEM-04-h1": {
+  "sha1": "4c9cdc5e81f2db6bd47d539879754b246017cf38",
+  "text": "Bintangnya bergerak ke arah kanan.",
+  "heard": "Dintangnya bergerah ke arah kanan.",
+  "score": 0.931
+ },
+ "MEM-04-h2": {
+  "sha1": "4e1040ddee64b2fc3e9f59ce36b56ee0915aad82",
+  "text": "Bintangnya masuk ke kotak paling kanan.",
+  "heard": "Bintannya masuk ke kotak paling kanan.",
+  "score": 0.985
+ },
+ "MEM-04-q": {
+  "sha1": "dffd5287c5e2c5fc5d564e89681f3ec7e66df579",
+  "text": "Ketuk kotak yang menyimpan bintang.",
+  "heard": "Ketuk otak yang menyimpan bintang.",
+  "score": 0.983
+ },
+ "MEM-04-s0": {
+  "sha1": "106b848e0b5a544e514a2a3349c90cf24f61da8d",
+  "text": "Koko menyembunyikan bintang di bawah salah satu kotak.",
+  "heard": "Coco menyembunyikan bintang di bawah salah satu kota.",
+  "score": 0.943
+ },
+ "MEM-04-s1": {
+  "sha1": "e23989b4ac7bcd73cef4209b0c6a935cc56fde0e",
+  "text": "Kotak mana yang menyimpan bintang?",
+  "heard": "kotak mana yang menyimpan bintang?",
+  "score": 1.0
+ },
+ "MEM-04-x": {
+  "sha1": "787dcb73d4b925f1659646db7fb0f4516db533c6",
+  "text": "Bintangnya disembunyikan di kotak paling kanan.",
+  "heard": "Dintangnya disembunyikan di kotak paling kanan.",
+  "score": 0.976
+ },
+ "MEM-05-h1": {
+  "sha1": "657223f4d175fc8aa066b34c3d9ea9109223650c",
+  "text": "Yang pertama datang adalah anjing.",
+  "heard": "Yang pertama datang adalah anjin.",
+  "score": 0.982
+ },
+ "MEM-05-q": {
+  "sha1": "7dd869d6368478477f94f88eceac9f726b92fb3d",
+  "text": "Urutkan yang datang: ketuk dari yang pertama.",
+  "heard": "kurutkan yang datang ketuk dari yang pertama.",
+  "score": 0.987
+ },
+ "MEM-05-s0": {
+  "sha1": "adece6d53e8cefd37983abc4eb709c8d41767463",
+  "text": "Teman-teman datang ke gunung satu per satu.",
+  "heard": "Teman-teman datang ke gunung satu per satu.",
+  "score": 1.0
+ },
+ "MEM-05-s1": {
+  "sha1": "b5bce7987fdfa3aab634c70f3006529b65dca68f",
+  "text": "Siapa yang datang pertama, kedua, dan ketiga?",
+  "heard": "Siapa yang datang pertama kedua dan ketiga?",
+  "score": 1.0
+ },
+ "MEM-05-x": {
+  "sha1": "669b9aa46edc51a6d6fe7cd0236f28c6ccc9f900",
+  "text": "Rover datang pertama, lalu Mimi, lalu Lulu.",
+  "heard": "Roer datang pertama lalu mimi lalu lulu.",
+  "score": 0.913
+ },
+ "MEM-06-h1": {
+  "sha1": "2a388ab3848cf5a49f75a5606badbc5adf5759f0",
+  "text": "Mulai dari Pip: benda Pip bisa dimakan.",
+  "heard": "Mulai dari pip benda pip bisa dimakan.",
+  "score": 1.0
+ },
+ "MEM-06-q": {
+  "sha1": "9da16ba7f843f515deefa666471dee72f72c0fc1",
+  "text": "Cocokkan tokoh dengan bendanya.",
+  "heard": "cocokkan toko dengan bendanya",
+  "score": 0.981
+ },
+ "MEM-06-s0": {
+  "sha1": "25405ff1cdcb200d6412f9d932c314a4b5fcf502",
+  "text": "Pip membawa apel. Mimi membawa susu. Rover membawa bola.",
+  "heard": "Pip membawa apel mimi membawa susu roher membawa bola.",
+  "score": 0.93
+ },
+ "MEM-06-s1": {
+  "sha1": "56ece740e7a4e674b0776979e5e4efb958de993c",
+  "text": "Semua bendanya disimpan. Ingat pasangannya?",
+  "heard": "Semua bendanya disimpan ingat pasangannya.",
+  "score": 1.0
+ },
+ "MEM-06-x": {
+  "sha1": "270a33666830db32faece2c4b1fcc6812ea019fa",
+  "text": "Pip membawa apel, Mimi membawa susu, dan Rover membawa bola.",
+  "heard": "Pip membawa apel mimi membawa susu dan roher membawa bola.",
+  "score": 0.935
+ },
+ "MEM-07-h1": {
+  "sha1": "8dbe60b33484e9c63e7c2c6ee4f6c123dad5f3f9",
+  "text": "Dengarkan lagi kalimat kedua.",
+  "heard": "dengarkan lagi kalimat kedua",
+  "score": 1.0
+ },
+ "MEM-07-h2": {
+  "sha1": "f9d31d1a1262dcd3be27dfa7a3c5b599bae92bb5",
+  "text": "Lulu makan... wortel. Angkanya setelah \"satu\".",
+  "heard": "Lulu makan kotel angkanya setelah satu.",
+  "score": 0.949
+ },
+ "MEM-07-q": {
+  "sha1": "ab88e3522e0d5affa1d2e3a4eb97d4741b623b27",
+  "text": "Berapa wortel yang dimakan Lulu?",
+  "heard": "Berapa hotel yang dimakan lulu?",
+  "score": 0.933
+ },
+ "MEM-07-s0": {
+  "sha1": "0db5ec6059a6c38fdf7995aa190ff39231411f5d",
+  "text": "Lulu lapar setelah mendaki gunung.",
+  "heard": "Lulu lapar setelah mendakit kunung.",
+  "score": 0.941
+ },
+ "MEM-07-s1": {
+  "sha1": "17d18b32eac2178ea1b181045ba56207b236715b",
+  "text": "Lulu makan dua wortel yang segar.",
+  "heard": "Lulu makan dua hotel yang segar.",
+  "score": 0.933
+ },
+ "MEM-08-h1": {
+  "sha1": "8891b10ee2cd2ae28dc9bd1bd5bf6e0b702e0ce3",
+  "text": "Ada tiga bekal. Satu pilihan tidak ada tadi.",
+  "heard": "Ada 3 bekal 1 pilihan tidak ada tadi.",
+  "score": 1.0
+ },
+ "MEM-08-q": {
+  "sha1": "8b247ccd1afa84e5c94f578bcc610674def93393",
+  "text": "Pilih SEMUA bekal yang tadi kamu lihat.",
+  "heard": "Pilih semua bekal yang tadi kamu lihat.",
+  "score": 1.0
+ },
+ "MEM-08-s0": {
+  "sha1": "80c470eae18c69ee67c2ef731d27bff70fa5eb88",
+  "text": "Dirty membawa bekal ke puncak gunung.",
+  "heard": "Dia ti membawa bekal kepuncak gunung.",
+  "score": 0.912
+ },
+ "MEM-08-s1": {
+  "sha1": "38c875563a28ebbf4cb72678cf56fa2151f7cab9",
+  "text": "Ada apel, pisang, dan kue. Bekalnya ditutup!",
+  "heard": "Ada apa pisang dan kul bekalnya ditutup?",
+  "score": 0.925
+ },
+ "MEM-09-h1": {
+  "sha1": "37d42a412ba25d9adf2826172ab0a50f52911848",
+  "text": "Yang pertama muncul paling terang.",
+  "heard": "yang pertama muncul paling terang.",
+  "score": 1.0
+ },
+ "MEM-09-h2": {
+  "sha1": "450fd615ba0a3ec23bd29376c77236126e4f8647",
+  "text": "Matahari, awan, lalu bulan.",
+  "heard": "Matahari awan lalu bulan.",
+  "score": 1.0
+ },
+ "MEM-09-q": {
+  "sha1": "3e80f8413bfea9489c7f7c9890c715fbde4b9f6d",
+  "text": "Ulangi urutannya: ketuk dari yang pertama.",
+  "heard": "Kulangi urutannya ketuk dari yang pertama.",
+  "score": 0.986
+ },
+ "MEM-09-s0": {
+  "sha1": "b3879fd81eac9d8e97a78283d54a7621cc62c1a8",
+  "text": "Di langit gunung muncul: matahari, lalu awan, lalu bulan.",
+  "heard": "Dilangit kunung muncul matahari lalu awan lalu bulan.",
+  "score": 0.978
+ },
+ "MEM-09-s1": {
+  "sha1": "8289a01f2536994c69693cb833da7c2d3486c8ca",
+  "text": "Bisakah kamu mengulang urutannya?",
+  "heard": "Bisakah kamu mengulang urutannya?",
+  "score": 1.0
+ },
+ "MEM-09-x": {
+  "sha1": "4aefeceaae8b491dfeb876782a655d7cba5d314c",
+  "text": "Urutannya matahari, awan, lalu bulan.",
+  "heard": "Urutannya matahari awan lalu bulan.",
+  "score": 1.0
+ },
+ "MEM-10-h1": {
+  "sha1": "fe023297c94eb17a0806a125a58329f1a4ca3cdc",
+  "text": "Abaikan anjingnya. Lihat kucingnya saja.",
+  "heard": "Abaikan anjingnya lihat kucingnya saja.",
+  "score": 1.0
+ },
+ "MEM-10-h2": {
+  "sha1": "ec7e29ceecddc70ba3076a799c615c76986fb809",
+  "text": "Tunjuk setiap kucing satu per satu sambil menghitung.",
+  "heard": "Tunjuk setiap ucing satu per satu sambil menghitung.",
+  "score": 0.989
+ },
+ "MEM-10-q": {
+  "sha1": "667938c4e2c3ea3508f89b68839533c21741a1e7",
+  "text": "Ada berapa kucing?",
+  "heard": "ada berapa kucing",
+  "score": 1.0
+ },
+ "MEM-10-s0": {
+  "sha1": "ac71c1d64963e6ed70250ceb506a03b40692f8b8",
+  "text": "Banyak hewan bermain di salju.",
+  "heard": "banyak hewan bermain di salju",
+  "score": 1.0
+ },
+ "MEM-10-s1": {
+  "sha1": "68273b8e88ab2c2f4898ba264a5b0695d2e33533",
+  "text": "Hitung KUCING saja, ya!",
+  "heard": "Hitung kucing saja.",
+  "score": 0.941
+ },
+ "MEM-10-x": {
+  "sha1": "0c270a4e39fc75d39a32a6ea8297fdbbd59c0407",
+  "text": "Ada 3 kucing. Anjingnya tidak dihitung.",
+  "heard": "Ada 3 kucing anjingnya tidak dihitung.",
+  "score": 1.0
+ },
+ "MEM-11-h1": {
+  "sha1": "5b896f3ea877433910b1ed6cc1bc743cc7468060",
+  "text": "Ingat kalimat paling awal.",
+  "heard": "Ingat kalimat paling awal.",
+  "score": 1.0
+ },
+ "MEM-11-h2": {
+  "sha1": "52f706ec6b2e66d83f59be72ff051023862e16ac",
+  "text": "Raka memakai sesuatu berwarna biru di kepala.",
+  "heard": "Raka memakai sesuatu berwarna biru di kepala.",
+  "score": 1.0
+ },
+ "MEM-11-q": {
+  "sha1": "34c266086984747f87d45c0393f7ec85a3193a48",
+  "text": "Apa yang dipakai Raka pagi ini?",
+  "heard": "Apa yang dipakai raka pagi ini?",
+  "score": 1.0
+ },
+ "MEM-11-s0": {
+  "sha1": "c1a369e48006823eb0dba4e159c208a8c453c837",
+  "text": "Pagi ini Raka memakai topi biru.",
+  "heard": "Pagi ini raka memakai topi bimu.",
+  "score": 0.955
+ },
+ "MEM-11-s1": {
+  "sha1": "e1b88b5ad31e1d6887f00cf65cb52cd2b5ce4f5f",
+  "text": "Raka mendaki gunung dan bermain salju.",
+  "heard": "Raka mendaki gunung dan bermain salju.",
+  "score": 1.0
+ },
+ "MEM-11-x": {
+  "sha1": "9d2dd0c29e108e527eaba8af2037546b59afa015",
+  "text": "Pagi ini Raka memakai topi biru.",
+  "heard": "Pagi ini raka memakai topi bimu.",
+  "score": 0.955
+ },
+ "MEM-12-h1": {
+  "sha1": "dbfe96fbbeb8a42434d543d84d8910f20da5621c",
+  "text": "Koin dan permata hanya lewat saja.",
+  "heard": "oin dan permata hanya lewat saja.",
+  "score": 0.982
+ },
+ "MEM-12-h2": {
+  "sha1": "fd7d4bb58210761b45bf0b6f38bdc9599e2b2799",
+  "text": "Benda Koko punya lima ujung.",
+  "heard": "Benda kokok punya 5 ujung.",
+  "score": 1.0
+ },
+ "MEM-12-q": {
+  "sha1": "fb8aef5c9c1c6cef96ec7be3c5e38c7e923695b2",
+  "text": "Apa yang dibawa Koko?",
+  "heard": "Kapai yang dibawa koko.",
+  "score": 0.929
+ },
+ "MEM-12-s0": {
+  "sha1": "ec35aa2a54a9b8cb0621374405b1e5dab7994758",
+  "text": "Koko membawa sebuah bintang emas.",
+  "heard": "Koko membawa sebuah bintang emas.",
+  "score": 1.0
+ },
+ "MEM-12-s1": {
+  "sha1": "c97fb98268e5d93c0b21a2cef7c1ba422e6c5f5c",
+  "text": "Tiba-tiba banyak benda lain lewat!",
+  "heard": "tiba-tiba banyak benda lain ngewa",
+  "score": 0.929
+ },
+ "MEM-12-x": {
+  "sha1": "1426661e0935861dbe5e8bdfe7df3b13ca01bc23",
+  "text": "Koko membawa bintang emas. Koin dan permata hanya lewat.",
+  "heard": "Koko membawa bintang mas koin dan permata hanya newak.",
+  "score": 0.94
+ },
+ "OBS-01-h1": {
+  "sha1": "5e6a61bdc05916cf8d6c032f85758e577a52c9bb",
+  "text": "Lihat di balik semak-semak.",
+  "heard": "lihat dibalik semaksama",
+  "score": 0.93
+ },
+ "OBS-01-h2": {
+  "sha1": "ee52c3965951f8f48dc6019e813a49b2b7be182e",
+  "text": "Ada telinga oranye yang mengintip.",
+  "heard": "Ada telinga orangnya yang mengintit.",
+  "score": 0.9
+ },
+ "OBS-01-q": {
+  "sha1": "e41878ff3d3cef42fd776f0a94a2b530b88853a7",
+  "text": "Ketuk Mimi yang bersembunyi.",
+  "heard": "ketuk mimi yang bersembunyi.",
+  "score": 1.0
+ },
+ "OBS-01-s1": {
+  "sha1": "2e53ea30c8734faac1b211af1b9213ba144ffb0b",
+  "text": "Mimi bersembunyi di kota. Bisa kamu temukan?",
+  "heard": "Mimi bersembunyi di kota Bisa Kamu Temukan.",
+  "score": 1.0
+ },
+ "OBS-01-x": {
+  "sha1": "52b1797cc4064a0719f8cbaf39a8989c5613bd04",
+  "text": "Mimi bersembunyi di balik semak. Kamu detektif hebat!",
+  "heard": "Mimi bersembunyi dibalik semua, kamu detitis hebat.",
+  "score": 0.911
+ },
+ "OBS-02-h1": {
+  "sha1": "812d36f50e681bc9de1709c792171ff728622d00",
+  "text": "Bandingkan buah di ujung kanan.",
+  "heard": "Bandingkan puah di kujung kanan.",
+  "score": 0.943
+ },
+ "OBS-02-h2": {
+  "sha1": "718c19bfeb8d5a385a6bd4dd493096e628b7d142",
+  "text": "Di atas anggur, di bawah...",
+  "heard": "di atas angur di bawah",
+  "score": 0.973
+ },
+ "OBS-02-q": {
+  "sha1": "4125e1da698254e7d80d8614046147c340848eff",
+  "text": "Buah mana di baris bawah yang BERBEDA?",
+  "heard": "Buah mana di baris, bawah yang berbeda.",
+  "score": 1.0
+ },
+ "OBS-02-s0": {
+  "sha1": "ded2370d9530054a04bd2dd44a1eecd428c09502",
+  "text": "Di etalase ada dua baris buah.",
+  "heard": "di etalah seada dua baris buah.",
+  "score": 0.98
+ },
+ "OBS-02-s1": {
+  "sha1": "0815663357901c74bdd00a258250af26ee8da2bf",
+  "text": "Satu buah di baris bawah berbeda dari baris atas.",
+  "heard": "Satu buah di baris bawah berbeda dari baris atas.",
+  "score": 1.0
+ },
+ "OBS-02-x": {
+  "sha1": "bbebdd5a27a1603ee98e75650bd7e223ffa3274f",
+  "text": "Di atas ada anggur, di bawah ada stroberi. Itu bedanya.",
+  "heard": "Di atas ada ampur di bawah ada stroberi itu bedanya.",
+  "score": 0.941
+ },
+ "OBS-03-h1": {
+  "sha1": "d76487438f32a999730b3afce8fec3c7c2ecc5d3",
+  "text": "Lihat bentuk telinganya.",
+  "heard": "lihat bentuk telinganya",
+  "score": 1.0
+ },
+ "OBS-03-h2": {
+  "sha1": "5ba2a76cc54427457939b438415587b9ad9dfc22",
+  "text": "Telinganya panjang dan terkulai ke bawah.",
+  "heard": "Telingannya panjang dan terkulai ke bawah.",
+  "score": 0.986
+ },
+ "OBS-03-q": {
+  "sha1": "0f9ae55f8308b2f3fa8ad88a8bb9ea4636bf3761",
+  "text": "Itu bayangan siapa?",
+  "heard": "Itu bayangan siapa?",
+  "score": 1.0
+ },
+ "OBS-03-s0": {
+  "sha1": "23c41c4d952a56b97035dadceb1497eff369c896",
+  "text": "Di tembok ada bayangan misterius.",
+  "heard": "Di tembok ada bayangan misterius.",
+  "score": 1.0
+ },
+ "OBS-03-s1": {
+  "sha1": "53ba03a777e363e0d7acdbaddad5f88a9726fa45",
+  "text": "Bayangan siapa ya?",
+  "heard": "Bayangan siapa ya?",
+  "score": 1.0
+ },
+ "OBS-03-x": {
+  "sha1": "9d2843ab1693822058f50b76fd54c55d79e97fbf",
+  "text": "Itu bayangan Rover: telinganya terkulai ke bawah.",
+  "heard": "Itu, bayangan rover telinganya terkulai ke bawah.",
+  "score": 1.0
+ },
+ "OBS-04-h1": {
+  "sha1": "61f946d7f71a7b8a3e1c66b0b2871b6cbae01492",
+  "text": "Lihat bagian kepala setiap teman.",
+  "heard": "Lihat bagian kepala setiap teman.",
+  "score": 1.0
+ },
+ "OBS-04-h2": {
+  "sha1": "e5ea80474f3f29df9a11d050c3ffdea8ca6824c2",
+  "text": "Mahkotanya kuning emas, di atas kepala panda.",
+  "heard": "Mahkotannya kuning emas di atas kepala panda.",
+  "score": 0.987
+ },
+ "OBS-04-q": {
+  "sha1": "91d051ba81047a93160fc57e9952418cc85f8b1d",
+  "text": "Siapa yang memakai mahkota?",
+  "heard": "Siapa yang memakai mahkota?",
+  "score": 1.0
+ },
+ "OBS-04-s0": {
+  "sha1": "f3ea0acce9cd4fd730ea21804f5f85c5a5d7ca7e",
+  "text": "Empat teman berfoto bersama.",
+  "heard": "keempat teman bersoto bersama.",
+  "score": 0.92
+ },
+ "OBS-04-s1": {
+  "sha1": "3b547e1fb692037b89100857927ec090f7d1b2f5",
+  "text": "Salah satunya memakai mahkota!",
+  "heard": "salah satunya memakai mahkota",
+  "score": 1.0
+ },
+ "OBS-04-x": {
+  "sha1": "296bbd7dfd03950bd90c7cf50c5f4c708bce207a",
+  "text": "Koko si panda memakai mahkota.",
+  "heard": "Kokosi Panda memakai Mahkota.",
+  "score": 0.95
+ },
+ "OBS-05-h1": {
+  "sha1": "86fd9eedf7778cca43d298f6f80471d3b287fcfb",
+  "text": "Mulai dari pohonnya.",
+  "heard": "Mulai dari pohonnya.",
+  "score": 1.0
+ },
+ "OBS-05-h2": {
+  "sha1": "3dc14624351a5538ce0290728c72461a83c108b5",
+  "text": "Kiri adalah sisi tangan yang biasa dipakai... lihat panah di layar.",
+  "heard": "Kiri adalah sisi tangan yang biasa dipakai kelihat panah di layah.",
+  "score": 0.963
+ },
+ "OBS-05-q": {
+  "sha1": "83cab7a01590753fb5e6de924bbc62c8b3ba179c",
+  "text": "Ketuk benda di SEBELAH KIRI pohon.",
+  "heard": "Ketuk benda di sebelah kiri pohon.",
+  "score": 1.0
+ },
+ "OBS-05-s0": {
+  "sha1": "c2156b78a6078d99e59174705a31f93da4da158c",
+  "text": "Ada sebuah pohon di tengah taman.",
+  "heard": "ada sebuah pohon di tengah taman.",
+  "score": 1.0
+ },
+ "OBS-05-s1": {
+  "sha1": "f961391ca2abe1762268b6da62ba28ff4650f101",
+  "text": "Detektif Stinky mencari benda di SEBELAH KIRI pohon.",
+  "heard": "Detektis, Stinti mencari benda di sebelah kiri pohon.",
+  "score": 0.902
+ },
+ "OBS-05-x": {
+  "sha1": "172c0a92afa8966526a9d32209a8590546f97d0c",
+  "text": "Bola ada di sebelah kiri pohon, apel di sebelah kanan.",
+  "heard": "Wola ada di sebelah kiri pohon apel di sebelah kanan.",
+  "score": 0.977
+ },
+ "OBS-06-h1": {
+  "sha1": "e35f357d710d2632f735ac23b11aef7ac6accd5d",
+  "text": "Lihat penghalang merah-putih di jalan.",
+  "heard": "Lihat penghalang merah putih di jalan.",
+  "score": 1.0
+ },
+ "OBS-06-h2": {
+  "sha1": "7a39f7cfac53a580f6f1b2be2b3065259cb08a22",
+  "text": "Cari jalan yang tidak ada penghalangnya.",
+  "heard": "Cari jalan yang tidak ada penghalangnya.",
+  "score": 1.0
+ },
+ "OBS-06-s1": {
+  "sha1": "c617c2fbb954f27199f109331dc75d8a53c2548f",
+  "text": "Ada tiga jalan. Dua jalan tertutup penghalang.",
+  "heard": "Ada tidak jalan dua jalan tertutup penghalang.",
+  "score": 0.961
+ },
+ "OBS-06-x": {
+  "sha1": "861ea180c7ffe800dee47a8aa7886dacf64738ef",
+  "text": "Jalan 2 tidak ada penghalangnya, jadi Stinky bisa lewat.",
+  "heard": "Jalan dua tidak ada penghalangnya, jadi sting di bisa lewat.",
+  "score": 0.923
+ },
+ "OBS-07-h1": {
+  "sha1": "d5b4cd4f081836c84afc7fff8468dec7faa0efb0",
+  "text": "Lihat warna kulit dan isinya.",
+  "heard": "Lihat warna kulit dan isinya.",
+  "score": 1.0
+ },
+ "OBS-07-h2": {
+  "sha1": "c948556d5c046bbdfab329ec61e053b05c99d74f",
+  "text": "Kulitnya hijau bergaris, isinya merah.",
+  "heard": "kulitnya hijau bergaris isinya merah",
+  "score": 1.0
+ },
+ "OBS-07-q": {
+  "sha1": "c868b2bb95d14019317f4c68cf2c0fb8ccf56bb0",
+  "text": "Potongan mana yang cocok?",
+  "heard": "potongan mana yang chok-chok",
+  "score": 0.933
+ },
+ "OBS-07-s0": {
+  "sha1": "45d771fccbd194d700ad0e79f1ba3328044cd82b",
+  "text": "Gambar semangka ini robek!",
+  "heard": "gambar semangka ini robot",
+  "score": 0.909
+ },
+ "OBS-07-s1": {
+  "sha1": "3cd6f659b593f7915c153ecf12a815df8c753a9f",
+  "text": "Potongan mana yang melengkapinya?",
+  "heard": "Potongan manah yang melengkapinya.",
+  "score": 0.983
+ },
+ "OBS-07-x": {
+  "sha1": "6b516b950c2850c2349379d6706b58846809beb0",
+  "text": "Potongan semangka melengkapi gambar semangka.",
+  "heard": "Otongan semangka melengkapi gambar semangka.",
+  "score": 0.987
+ },
+ "OBS-08-h1": {
+  "sha1": "ef2b6db354252493045024161f73634c4593d22c",
+  "text": "Keranjangnya hanya untuk buah.",
+  "heard": "Kerenjangnya hanya untuk buah.",
+  "score": 0.962
+ },
+ "OBS-08-h2": {
+  "sha1": "72eefe31252e2bfa6d45e41ea803c159da2e8f5f",
+  "text": "Mobil bukan buah. Biarkan mobil di luar.",
+  "heard": "Mobil bukan buah biarkan mobil dinual.",
+  "score": 0.938
+ },
+ "OBS-08-q": {
+  "sha1": "6bc1c8baae77ff1496a4564ffa1be113228bd2a4",
+  "text": "Seret SEMUA buah ke keranjang.",
+  "heard": "Serit semua buah kekeranjang.",
+  "score": 0.96
+ },
+ "OBS-08-s0": {
+  "sha1": "5e36bf1b604f373d21f8cf80f4b91d12719bb027",
+  "text": "Detektif Dirty merapikan meja.",
+  "heard": "Detektis di merapikan meja.",
+  "score": 0.909
+ },
+ "OBS-08-s1": {
+  "sha1": "304ce97a52c29cfa4680f184043d8c62b183060e",
+  "text": "Semua buah harus masuk ke keranjang.",
+  "heard": "Semua buah harus masuk ke kranjang.",
+  "score": 0.983
+ },
+ "OBS-08-x": {
+  "sha1": "801bd5fba9aec097512201899ad51289d6197b4d",
+  "text": "Apel dan pisang masuk keranjang. Mobil bukan buah.",
+  "heard": "apal dan bisa masuk keranjang mobil bukan buah.",
+  "score": 0.925
+ },
+ "OBS-09-h1": {
+  "sha1": "1422dd1216be38a3d6b4cf2bd4deadb18cad9a6d",
+  "text": "Di pantai cuacanya panas dan ada pasir.",
+  "heard": "di pantai cuacanya panas dan ada pasing.",
+  "score": 0.954
+ },
+ "OBS-09-h2": {
+  "sha1": "d035eb942627501ec84484da9179095f1d17a84f",
+  "text": "Benda itu dipakai bermain di pantai.",
+  "heard": "Benda itu dipakai bermain di pantai.",
+  "score": 1.0
+ },
+ "OBS-09-q": {
+  "sha1": "3773bfae841083d87b642b37c29e202a2c7da636",
+  "text": "Apa yang cocok untuk ke pantai?",
+  "heard": "Apa yang cocok untuk kepantai?",
+  "score": 1.0
+ },
+ "OBS-09-s0": {
+  "sha1": "c15725df43b82bf261a4c8953c46042916f9d1e6",
+  "text": "Lala dan Raka pergi ke pantai.",
+  "heard": "Lala dan Raka pergi ke pantai.",
+  "score": 1.0
+ },
+ "OBS-09-s1": {
+  "sha1": "69d82976681d1754f054ac37aae08d0fd107ef50",
+  "text": "Benda apa yang cocok dibawa ke pantai?",
+  "heard": "Benda apa yang cocok dibawa ke pantai?",
+  "score": 1.0
+ },
+ "OBS-09-x": {
+  "sha1": "32e8ee617e7d13a3119cd0e0cccd4ff57cfadc8c",
+  "text": "Bola pantai cocok dibawa ke pantai.",
+  "heard": "bola pantai cocok dibawa ke pantai",
+  "score": 1.0
+ },
+ "OBS-10-h1": {
+  "sha1": "b1a4eee095933cbdbe1e96f42899cc8d69f0eb75",
+  "text": "Lihat kotak paling atas.",
+  "heard": "Lihat kotak paling atas.",
+  "score": 1.0
+ },
+ "OBS-10-h2": {
+  "sha1": "eeeaa6bc8f967f2bcfbb0e55955babec92a68ca3",
+  "text": "Benda yang miring terus lama-lama akan...",
+  "heard": "Benda yang miring terus lama-lama akan.",
+  "score": 1.0
+ },
+ "OBS-10-q": {
+  "sha1": "7ff6e302245cf8598d3918dbdf34efc8d07979cd",
+  "text": "Apa yang akan terjadi?",
+  "heard": "Apa yang akan terjadi?",
+  "score": 1.0
+ },
+ "OBS-10-s1": {
+  "sha1": "42c4b6c2d36a91aac77e3d511827fb47468a3709",
+  "text": "Menaranya mulai miring... miring...",
+  "heard": "menaranya mulai miring-miring",
+  "score": 1.0
+ },
+ "OBS-10-x": {
+  "sha1": "232e97d24a8f76d52ea842be764a63601c6ff00d",
+  "text": "Menara yang miring akan jatuh. Menumpuk harus lurus!",
+  "heard": "Menara yang miring akan jatuh menumpuk harus lurus.",
+  "score": 1.0
+ },
+ "OBS-11-h1": {
+  "sha1": "07425ca218af0bcd7927f7f7f0dc668af3cf178f",
+  "text": "Asap bisa berbahaya.",
+  "heard": "Asap bisa berbahaya.",
+  "score": 1.0
+ },
+ "OBS-11-h2": {
+  "sha1": "aa7bc730fbdcf9a597ef5b2e5fdf8bf5a3e86d88",
+  "text": "Anak-anak minta tolong kepada siapa kalau ada bahaya?",
+  "heard": "Anak-anak minta tolong kepada siapa kalau ada bahaya.",
+  "score": 1.0
+ },
+ "OBS-11-q": {
+  "sha1": "5e3b9d649de876d8a6ab42c194f6f26b4e867898",
+  "text": "Apa yang harus Mimi lakukan?",
+  "heard": "Apa yang harus Mimi lakukan?",
+  "score": 1.0
+ },
+ "OBS-11-s0": {
+  "sha1": "46022bee20453cbb70f4cfa4debf0ed00d0648e4",
+  "text": "Mimi melihat asap keluar dari dapur.",
+  "heard": "Mimi melihat asap keluar dari dapur.",
+  "score": 1.0
+ },
+ "OBS-11-s1": {
+  "sha1": "8a84e8297589b10098211e65b93ecb47c099dc15",
+  "text": "Mimi harus bagaimana?",
+  "heard": "Mimi harus bagaimana?",
+  "score": 1.0
+ },
+ "OBS-11-x": {
+  "sha1": "dc6eda8d7aad078101933bd1cf0b7ef9b7ea1762",
+  "text": "Kalau ada asap atau api, segera panggil orang dewasa.",
+  "heard": "kalau ada asap atau api segera panggim orang dewasa",
+  "score": 0.977
+ },
+ "OBS-12-h1": {
+  "sha1": "cfc466d45abba041d52240947c0821cda1b0308c",
+  "text": "Ikan tidak punya bulu.",
+  "heard": "ikan tidak punya bulu.",
+  "score": 1.0
+ },
+ "OBS-12-h2": {
+  "sha1": "1cd368bdfe7b20095e745a3b18d5102e5c405a32",
+  "text": "Hewan berbulu yang telinganya panjang dan suka wortel...",
+  "heard": "Hewan berbulu yang telinganya panjang dan suka warthong.",
+  "score": 0.915
+ },
+ "OBS-12-q": {
+  "sha1": "3f9e887bae41577d0c5118f880376f29da5bb23d",
+  "text": "Hewan apa itu?",
+  "heard": "Hewan apa itu?",
+  "score": 1.0
+ },
+ "OBS-12-s0": {
+  "sha1": "81ef10419304cbb913b00fc144d5f8c030c6eb40",
+  "text": "Petunjuk 1: bulunya lembut.",
+  "heard": "bertunjuk 1 bulunya lembu.",
+  "score": 0.92
+ },
+ "OBS-12-s1": {
+  "sha1": "e1c45c124d48ea9aa431fe3b0d66bfca927ed08c",
+  "text": "Petunjuk 2: suka makan wortel.",
+  "heard": "betunjuk 2 suka makan wortel",
+  "score": 0.962
+ },
+ "OBS-12-s2": {
+  "sha1": "931486a1a6fee8801964db4bbfac456a7a800d49",
+  "text": "Petunjuk 3: telinganya panjang.",
+  "heard": "Bertunjuk 3 telinganya panjang.",
+  "score": 0.949
+ },
+ "OBS-12-x": {
+  "sha1": "e178a87c605419a1f00ec1fac199c90621d44127",
+  "text": "Kelinci: berbulu lembut, suka wortel, dan telinganya panjang.",
+  "heard": "Kelinci berbulu nebut suka warthell, dan telingannya panjang.",
+  "score": 0.922
+ },
+ "line:hebat": {
+  "sha1": "53e560791e60ba613d1ea19b56d60ccf60bed283",
+  "text": "Hebat! Jawabanmu benar.",
+  "heard": "hebat jawabanmu benang",
+  "score": 0.923
+ },
+ "line:lihat-lagi": {
+  "sha1": "a2e96e362849771d579e8765daea350df9f90b26",
+  "text": "Ayo lihat lagi.",
+  "heard": "ayo lihat lagi",
+  "score": 1.0
+ }
+}

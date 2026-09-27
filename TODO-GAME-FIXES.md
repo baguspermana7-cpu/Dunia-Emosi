@@ -3352,3 +3352,8 @@ Owner screenshot: "Bulatan progressnya aneh". 12 fixed-size stops in one non-wra
 
 ### ✅ 2026-09-27 — G28 feedback layout polish
 Reviewed every remaining screen by eye at 412×915. After answering, the explanation sat alone at the bottom with a big empty gap above it. Now answers sit right under the question, the teaching text is a card under the answers (green + star when right, warm yellow when the scaffold showed the answer, yellow for hints), Lanjut is full-width in the thumb zone. Camera in LIS-02 moved into Lala's hands (was floating over the lamp post). qa-sd-play all pass at 3 sizes.
+
+### ✅ 2026-09-27 — G28 narration + Garasi Tempur foundations
+- **G28 Indonesian narration**: 391 of 440 lines voiced (89%), each ASR-verified (Meta MMS-TTS, CC BY-NC, licence in assets/sd/audio/LICENSE.txt); the 49 that never passed stay text-only by design. Gate `qa-sd-voice`.
+- **Garasi Tempur rules engine** (`games/gt-engine.js`, `games/data/gt-cards.js`): 12 original trucks, parts, actions, arenas, 4 starter decks; deterministic, idempotent commands, AI rookie/racer. Gate `qa-gt-rules`: 500 seeded battles (no soft-lock, all end by KO, fair seats 187/400), determinism, save/resume, PRD §28 edge cases; mutation-tested (5 planted bugs caught).
+- **Shared sprite DB**: +123 Garasi Tempur UI/world icons (`assets/db/lib/gt/`), +174 monster-truck cut-outs (`assets/db/lib/gt-truck/truck-001..174`, neutral ids, brand logo blocks cut away). Ingest learned per-sheet grid detection (uneven grids), label/logo removal by tyre-band detection.

@@ -1640,6 +1640,3823 @@
    "h": 274,
    "psnr": 44.0
   },
+  "gt-truck/truck-001": {
+   "file": "assets/db/lib/gt-truck/truck-001.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "001",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#1",
+   "w": 271,
+   "h": 178,
+   "psnr": 42.1
+  },
+  "gt-truck/truck-002": {
+   "file": "assets/db/lib/gt-truck/truck-002.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "002",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#2",
+   "w": 272,
+   "h": 183,
+   "psnr": 44.4
+  },
+  "gt-truck/truck-003": {
+   "file": "assets/db/lib/gt-truck/truck-003.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "003",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#3",
+   "w": 271,
+   "h": 191,
+   "psnr": 40.8
+  },
+  "gt-truck/truck-004": {
+   "file": "assets/db/lib/gt-truck/truck-004.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "004",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#4",
+   "w": 271,
+   "h": 192,
+   "psnr": 43.9
+  },
+  "gt-truck/truck-005": {
+   "file": "assets/db/lib/gt-truck/truck-005.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "005",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#5",
+   "w": 271,
+   "h": 175,
+   "psnr": 44.4
+  },
+  "gt-truck/truck-006": {
+   "file": "assets/db/lib/gt-truck/truck-006.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "006",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#6",
+   "w": 270,
+   "h": 184,
+   "psnr": 44.2
+  },
+  "gt-truck/truck-007": {
+   "file": "assets/db/lib/gt-truck/truck-007.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "007",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#7",
+   "w": 269,
+   "h": 188,
+   "psnr": 42.5
+  },
+  "gt-truck/truck-008": {
+   "file": "assets/db/lib/gt-truck/truck-008.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "008",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#8",
+   "w": 271,
+   "h": 187,
+   "psnr": 44.2
+  },
+  "gt-truck/truck-009": {
+   "file": "assets/db/lib/gt-truck/truck-009.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "009",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#9",
+   "w": 271,
+   "h": 192,
+   "psnr": 44.4
+  },
+  "gt-truck/truck-010": {
+   "file": "assets/db/lib/gt-truck/truck-010.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "010",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#10",
+   "w": 271,
+   "h": 196,
+   "psnr": 44.6
+  },
+  "gt-truck/truck-011": {
+   "file": "assets/db/lib/gt-truck/truck-011.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "011",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#11",
+   "w": 270,
+   "h": 178,
+   "psnr": 43.3
+  },
+  "gt-truck/truck-012": {
+   "file": "assets/db/lib/gt-truck/truck-012.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "012",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#12",
+   "w": 271,
+   "h": 199,
+   "psnr": 44.4
+  },
+  "gt-truck/truck-013": {
+   "file": "assets/db/lib/gt-truck/truck-013.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "013",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#13",
+   "w": 271,
+   "h": 199,
+   "psnr": 43.4
+  },
+  "gt-truck/truck-014": {
+   "file": "assets/db/lib/gt-truck/truck-014.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "014",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#14",
+   "w": 271,
+   "h": 190,
+   "psnr": 43.9
+  },
+  "gt-truck/truck-015": {
+   "file": "assets/db/lib/gt-truck/truck-015.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "015",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#15",
+   "w": 272,
+   "h": 184,
+   "psnr": 44.3
+  },
+  "gt-truck/truck-016": {
+   "file": "assets/db/lib/gt-truck/truck-016.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "016",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#16",
+   "w": 270,
+   "h": 184,
+   "psnr": 44.1
+  },
+  "gt-truck/truck-017": {
+   "file": "assets/db/lib/gt-truck/truck-017.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "017",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#17",
+   "w": 271,
+   "h": 186,
+   "psnr": 43.2
+  },
+  "gt-truck/truck-018": {
+   "file": "assets/db/lib/gt-truck/truck-018.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "018",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#18",
+   "w": 271,
+   "h": 189,
+   "psnr": 40.9
+  },
+  "gt-truck/truck-019": {
+   "file": "assets/db/lib/gt-truck/truck-019.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "019",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#19",
+   "w": 271,
+   "h": 185,
+   "psnr": 43.3
+  },
+  "gt-truck/truck-020": {
+   "file": "assets/db/lib/gt-truck/truck-020.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "020",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#20",
+   "w": 271,
+   "h": 197,
+   "psnr": 43.0
+  },
+  "gt-truck/truck-021": {
+   "file": "assets/db/lib/gt-truck/truck-021.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "021",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#21",
+   "w": 270,
+   "h": 195,
+   "psnr": 43.9
+  },
+  "gt-truck/truck-022": {
+   "file": "assets/db/lib/gt-truck/truck-022.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "022",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#22",
+   "w": 271,
+   "h": 194,
+   "psnr": 44.9
+  },
+  "gt-truck/truck-023": {
+   "file": "assets/db/lib/gt-truck/truck-023.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "023",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#23",
+   "w": 271,
+   "h": 186,
+   "psnr": 44.5
+  },
+  "gt-truck/truck-024": {
+   "file": "assets/db/lib/gt-truck/truck-024.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "024",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#24",
+   "w": 271,
+   "h": 189,
+   "psnr": 42.9
+  },
+  "gt-truck/truck-025": {
+   "file": "assets/db/lib/gt-truck/truck-025.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "025",
+    "cartoon"
+   ],
+   "source": "trucks-a-25#25",
+   "w": 271,
+   "h": 183,
+   "psnr": 43.3
+  },
+  "gt-truck/truck-026": {
+   "file": "assets/db/lib/gt-truck/truck-026.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "026",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#1",
+   "w": 267,
+   "h": 194,
+   "psnr": 44.4
+  },
+  "gt-truck/truck-027": {
+   "file": "assets/db/lib/gt-truck/truck-027.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "027",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#2",
+   "w": 270,
+   "h": 201,
+   "psnr": 44.5
+  },
+  "gt-truck/truck-028": {
+   "file": "assets/db/lib/gt-truck/truck-028.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "028",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#3",
+   "w": 271,
+   "h": 188,
+   "psnr": 43.9
+  },
+  "gt-truck/truck-029": {
+   "file": "assets/db/lib/gt-truck/truck-029.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "029",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#4",
+   "w": 272,
+   "h": 191,
+   "psnr": 43.9
+  },
+  "gt-truck/truck-030": {
+   "file": "assets/db/lib/gt-truck/truck-030.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "030",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#5",
+   "w": 270,
+   "h": 185,
+   "psnr": 43.7
+  },
+  "gt-truck/truck-031": {
+   "file": "assets/db/lib/gt-truck/truck-031.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "031",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#6",
+   "w": 270,
+   "h": 178,
+   "psnr": 42.2
+  },
+  "gt-truck/truck-032": {
+   "file": "assets/db/lib/gt-truck/truck-032.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "032",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#7",
+   "w": 270,
+   "h": 184,
+   "psnr": 44.6
+  },
+  "gt-truck/truck-033": {
+   "file": "assets/db/lib/gt-truck/truck-033.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "033",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#8",
+   "w": 271,
+   "h": 180,
+   "psnr": 43.1
+  },
+  "gt-truck/truck-034": {
+   "file": "assets/db/lib/gt-truck/truck-034.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "034",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#9",
+   "w": 272,
+   "h": 191,
+   "psnr": 44.5
+  },
+  "gt-truck/truck-035": {
+   "file": "assets/db/lib/gt-truck/truck-035.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "035",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#10",
+   "w": 270,
+   "h": 187,
+   "psnr": 44.2
+  },
+  "gt-truck/truck-036": {
+   "file": "assets/db/lib/gt-truck/truck-036.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "036",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#11",
+   "w": 270,
+   "h": 178,
+   "psnr": 43.5
+  },
+  "gt-truck/truck-037": {
+   "file": "assets/db/lib/gt-truck/truck-037.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "037",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#12",
+   "w": 270,
+   "h": 179,
+   "psnr": 40.8
+  },
+  "gt-truck/truck-038": {
+   "file": "assets/db/lib/gt-truck/truck-038.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "038",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#13",
+   "w": 272,
+   "h": 178,
+   "psnr": 43.4
+  },
+  "gt-truck/truck-039": {
+   "file": "assets/db/lib/gt-truck/truck-039.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "039",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#14",
+   "w": 272,
+   "h": 177,
+   "psnr": 43.5
+  },
+  "gt-truck/truck-040": {
+   "file": "assets/db/lib/gt-truck/truck-040.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "040",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#15",
+   "w": 270,
+   "h": 189,
+   "psnr": 44.0
+  },
+  "gt-truck/truck-041": {
+   "file": "assets/db/lib/gt-truck/truck-041.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "041",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#16",
+   "w": 270,
+   "h": 188,
+   "psnr": 42.7
+  },
+  "gt-truck/truck-042": {
+   "file": "assets/db/lib/gt-truck/truck-042.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "042",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#17",
+   "w": 270,
+   "h": 183,
+   "psnr": 42.9
+  },
+  "gt-truck/truck-043": {
+   "file": "assets/db/lib/gt-truck/truck-043.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "043",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#18",
+   "w": 273,
+   "h": 183,
+   "psnr": 44.6
+  },
+  "gt-truck/truck-044": {
+   "file": "assets/db/lib/gt-truck/truck-044.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "044",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#19",
+   "w": 272,
+   "h": 180,
+   "psnr": 44.1
+  },
+  "gt-truck/truck-045": {
+   "file": "assets/db/lib/gt-truck/truck-045.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "045",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#20",
+   "w": 270,
+   "h": 176,
+   "psnr": 44.4
+  },
+  "gt-truck/truck-046": {
+   "file": "assets/db/lib/gt-truck/truck-046.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "046",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#21",
+   "w": 270,
+   "h": 182,
+   "psnr": 43.1
+  },
+  "gt-truck/truck-047": {
+   "file": "assets/db/lib/gt-truck/truck-047.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "047",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#22",
+   "w": 270,
+   "h": 188,
+   "psnr": 44.5
+  },
+  "gt-truck/truck-048": {
+   "file": "assets/db/lib/gt-truck/truck-048.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "048",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#23",
+   "w": 272,
+   "h": 178,
+   "psnr": 42.8
+  },
+  "gt-truck/truck-049": {
+   "file": "assets/db/lib/gt-truck/truck-049.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "049",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#24",
+   "w": 272,
+   "h": 183,
+   "psnr": 42.7
+  },
+  "gt-truck/truck-050": {
+   "file": "assets/db/lib/gt-truck/truck-050.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "050",
+    "cartoon"
+   ],
+   "source": "trucks-b-25#25",
+   "w": 270,
+   "h": 179,
+   "psnr": 43.6
+  },
+  "gt-truck/truck-051": {
+   "file": "assets/db/lib/gt-truck/truck-051.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "051",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#2",
+   "w": 272,
+   "h": 190,
+   "psnr": 43.3
+  },
+  "gt-truck/truck-052": {
+   "file": "assets/db/lib/gt-truck/truck-052.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "052",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#3",
+   "w": 270,
+   "h": 192,
+   "psnr": 44.8
+  },
+  "gt-truck/truck-053": {
+   "file": "assets/db/lib/gt-truck/truck-053.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "053",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#4",
+   "w": 272,
+   "h": 186,
+   "psnr": 43.3
+  },
+  "gt-truck/truck-054": {
+   "file": "assets/db/lib/gt-truck/truck-054.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "054",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#5",
+   "w": 269,
+   "h": 192,
+   "psnr": 43.6
+  },
+  "gt-truck/truck-055": {
+   "file": "assets/db/lib/gt-truck/truck-055.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "055",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#6",
+   "w": 269,
+   "h": 198,
+   "psnr": 43.9
+  },
+  "gt-truck/truck-056": {
+   "file": "assets/db/lib/gt-truck/truck-056.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "056",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#7",
+   "w": 272,
+   "h": 187,
+   "psnr": 43.5
+  },
+  "gt-truck/truck-057": {
+   "file": "assets/db/lib/gt-truck/truck-057.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "057",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#8",
+   "w": 270,
+   "h": 192,
+   "psnr": 43.9
+  },
+  "gt-truck/truck-058": {
+   "file": "assets/db/lib/gt-truck/truck-058.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "058",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#9",
+   "w": 272,
+   "h": 197,
+   "psnr": 43.5
+  },
+  "gt-truck/truck-059": {
+   "file": "assets/db/lib/gt-truck/truck-059.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "059",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#10",
+   "w": 271,
+   "h": 184,
+   "psnr": 44.5
+  },
+  "gt-truck/truck-060": {
+   "file": "assets/db/lib/gt-truck/truck-060.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "060",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#11",
+   "w": 268,
+   "h": 193,
+   "psnr": 43.7
+  },
+  "gt-truck/truck-061": {
+   "file": "assets/db/lib/gt-truck/truck-061.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "061",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#12",
+   "w": 272,
+   "h": 186,
+   "psnr": 43.0
+  },
+  "gt-truck/truck-062": {
+   "file": "assets/db/lib/gt-truck/truck-062.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "062",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#13",
+   "w": 270,
+   "h": 192,
+   "psnr": 43.2
+  },
+  "gt-truck/truck-063": {
+   "file": "assets/db/lib/gt-truck/truck-063.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "063",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#14",
+   "w": 273,
+   "h": 198,
+   "psnr": 43.0
+  },
+  "gt-truck/truck-064": {
+   "file": "assets/db/lib/gt-truck/truck-064.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "064",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#15",
+   "w": 271,
+   "h": 202,
+   "psnr": 44.4
+  },
+  "gt-truck/truck-065": {
+   "file": "assets/db/lib/gt-truck/truck-065.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "065",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#16",
+   "w": 269,
+   "h": 196,
+   "psnr": 44.0
+  },
+  "gt-truck/truck-066": {
+   "file": "assets/db/lib/gt-truck/truck-066.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "066",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#17",
+   "w": 272,
+   "h": 198,
+   "psnr": 43.6
+  },
+  "gt-truck/truck-067": {
+   "file": "assets/db/lib/gt-truck/truck-067.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "067",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#18",
+   "w": 270,
+   "h": 190,
+   "psnr": 43.4
+  },
+  "gt-truck/truck-068": {
+   "file": "assets/db/lib/gt-truck/truck-068.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "068",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#19",
+   "w": 272,
+   "h": 199,
+   "psnr": 44.1
+  },
+  "gt-truck/truck-069": {
+   "file": "assets/db/lib/gt-truck/truck-069.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "069",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#20",
+   "w": 271,
+   "h": 198,
+   "psnr": 43.8
+  },
+  "gt-truck/truck-070": {
+   "file": "assets/db/lib/gt-truck/truck-070.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "070",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#21",
+   "w": 269,
+   "h": 194,
+   "psnr": 44.0
+  },
+  "gt-truck/truck-071": {
+   "file": "assets/db/lib/gt-truck/truck-071.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "071",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#22",
+   "w": 272,
+   "h": 205,
+   "psnr": 44.2
+  },
+  "gt-truck/truck-072": {
+   "file": "assets/db/lib/gt-truck/truck-072.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "072",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#23",
+   "w": 270,
+   "h": 187,
+   "psnr": 44.1
+  },
+  "gt-truck/truck-073": {
+   "file": "assets/db/lib/gt-truck/truck-073.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "073",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#24",
+   "w": 272,
+   "h": 187,
+   "psnr": 43.9
+  },
+  "gt-truck/truck-074": {
+   "file": "assets/db/lib/gt-truck/truck-074.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "074",
+    "cartoon"
+   ],
+   "source": "trucks-c-25#25",
+   "w": 271,
+   "h": 189,
+   "psnr": 43.8
+  },
+  "gt-truck/truck-075": {
+   "file": "assets/db/lib/gt-truck/truck-075.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "075",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#1",
+   "w": 270,
+   "h": 171,
+   "psnr": 44.4
+  },
+  "gt-truck/truck-076": {
+   "file": "assets/db/lib/gt-truck/truck-076.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "076",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#2",
+   "w": 272,
+   "h": 186,
+   "psnr": 43.3
+  },
+  "gt-truck/truck-077": {
+   "file": "assets/db/lib/gt-truck/truck-077.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "077",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#3",
+   "w": 273,
+   "h": 189,
+   "psnr": 44.8
+  },
+  "gt-truck/truck-078": {
+   "file": "assets/db/lib/gt-truck/truck-078.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "078",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#4",
+   "w": 272,
+   "h": 190,
+   "psnr": 44.1
+  },
+  "gt-truck/truck-079": {
+   "file": "assets/db/lib/gt-truck/truck-079.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "079",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#5",
+   "w": 270,
+   "h": 183,
+   "psnr": 44.0
+  },
+  "gt-truck/truck-080": {
+   "file": "assets/db/lib/gt-truck/truck-080.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "080",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#6",
+   "w": 270,
+   "h": 194,
+   "psnr": 43.5
+  },
+  "gt-truck/truck-081": {
+   "file": "assets/db/lib/gt-truck/truck-081.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "081",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#7",
+   "w": 272,
+   "h": 180,
+   "psnr": 43.5
+  },
+  "gt-truck/truck-082": {
+   "file": "assets/db/lib/gt-truck/truck-082.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "082",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#8",
+   "w": 272,
+   "h": 194,
+   "psnr": 41.3
+  },
+  "gt-truck/truck-083": {
+   "file": "assets/db/lib/gt-truck/truck-083.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "083",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#9",
+   "w": 272,
+   "h": 186,
+   "psnr": 41.4
+  },
+  "gt-truck/truck-084": {
+   "file": "assets/db/lib/gt-truck/truck-084.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "084",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#10",
+   "w": 270,
+   "h": 175,
+   "psnr": 43.2
+  },
+  "gt-truck/truck-085": {
+   "file": "assets/db/lib/gt-truck/truck-085.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "085",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#11",
+   "w": 270,
+   "h": 185,
+   "psnr": 44.4
+  },
+  "gt-truck/truck-086": {
+   "file": "assets/db/lib/gt-truck/truck-086.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "086",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#12",
+   "w": 273,
+   "h": 187,
+   "psnr": 43.6
+  },
+  "gt-truck/truck-087": {
+   "file": "assets/db/lib/gt-truck/truck-087.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "087",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#13",
+   "w": 272,
+   "h": 189,
+   "psnr": 43.0
+  },
+  "gt-truck/truck-088": {
+   "file": "assets/db/lib/gt-truck/truck-088.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "088",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#14",
+   "w": 273,
+   "h": 190,
+   "psnr": 42.3
+  },
+  "gt-truck/truck-089": {
+   "file": "assets/db/lib/gt-truck/truck-089.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "089",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#15",
+   "w": 270,
+   "h": 176,
+   "psnr": 43.9
+  },
+  "gt-truck/truck-090": {
+   "file": "assets/db/lib/gt-truck/truck-090.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "090",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#16",
+   "w": 270,
+   "h": 175,
+   "psnr": 43.7
+  },
+  "gt-truck/truck-091": {
+   "file": "assets/db/lib/gt-truck/truck-091.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "091",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#17",
+   "w": 272,
+   "h": 182,
+   "psnr": 44.6
+  },
+  "gt-truck/truck-092": {
+   "file": "assets/db/lib/gt-truck/truck-092.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "092",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#18",
+   "w": 272,
+   "h": 177,
+   "psnr": 43.8
+  },
+  "gt-truck/truck-093": {
+   "file": "assets/db/lib/gt-truck/truck-093.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "093",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#19",
+   "w": 273,
+   "h": 186,
+   "psnr": 42.3
+  },
+  "gt-truck/truck-094": {
+   "file": "assets/db/lib/gt-truck/truck-094.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "094",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#20",
+   "w": 270,
+   "h": 196,
+   "psnr": 43.0
+  },
+  "gt-truck/truck-095": {
+   "file": "assets/db/lib/gt-truck/truck-095.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "095",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#21",
+   "w": 270,
+   "h": 176,
+   "psnr": 42.3
+  },
+  "gt-truck/truck-096": {
+   "file": "assets/db/lib/gt-truck/truck-096.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "096",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#22",
+   "w": 270,
+   "h": 178,
+   "psnr": 43.5
+  },
+  "gt-truck/truck-097": {
+   "file": "assets/db/lib/gt-truck/truck-097.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "097",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#23",
+   "w": 272,
+   "h": 184,
+   "psnr": 41.9
+  },
+  "gt-truck/truck-098": {
+   "file": "assets/db/lib/gt-truck/truck-098.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "098",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#24",
+   "w": 273,
+   "h": 170,
+   "psnr": 44.3
+  },
+  "gt-truck/truck-099": {
+   "file": "assets/db/lib/gt-truck/truck-099.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "099",
+    "cartoon"
+   ],
+   "source": "trucks-d-25#25",
+   "w": 270,
+   "h": 186,
+   "psnr": 43.3
+  },
+  "gt-truck/truck-100": {
+   "file": "assets/db/lib/gt-truck/truck-100.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "100",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#1",
+   "w": 268,
+   "h": 184,
+   "psnr": 43.1
+  },
+  "gt-truck/truck-101": {
+   "file": "assets/db/lib/gt-truck/truck-101.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "101",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#2",
+   "w": 272,
+   "h": 185,
+   "psnr": 44.4
+  },
+  "gt-truck/truck-102": {
+   "file": "assets/db/lib/gt-truck/truck-102.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "102",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#3",
+   "w": 271,
+   "h": 190,
+   "psnr": 44.3
+  },
+  "gt-truck/truck-103": {
+   "file": "assets/db/lib/gt-truck/truck-103.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "103",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#4",
+   "w": 271,
+   "h": 186,
+   "psnr": 43.9
+  },
+  "gt-truck/truck-104": {
+   "file": "assets/db/lib/gt-truck/truck-104.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "104",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#5",
+   "w": 271,
+   "h": 184,
+   "psnr": 44.2
+  },
+  "gt-truck/truck-105": {
+   "file": "assets/db/lib/gt-truck/truck-105.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "105",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#6",
+   "w": 265,
+   "h": 174,
+   "psnr": 41.4
+  },
+  "gt-truck/truck-106": {
+   "file": "assets/db/lib/gt-truck/truck-106.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "106",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#7",
+   "w": 272,
+   "h": 181,
+   "psnr": 44.7
+  },
+  "gt-truck/truck-107": {
+   "file": "assets/db/lib/gt-truck/truck-107.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "107",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#8",
+   "w": 271,
+   "h": 181,
+   "psnr": 44.4
+  },
+  "gt-truck/truck-108": {
+   "file": "assets/db/lib/gt-truck/truck-108.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "108",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#9",
+   "w": 271,
+   "h": 173,
+   "psnr": 44.0
+  },
+  "gt-truck/truck-109": {
+   "file": "assets/db/lib/gt-truck/truck-109.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "109",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#10",
+   "w": 269,
+   "h": 179,
+   "psnr": 43.5
+  },
+  "gt-truck/truck-110": {
+   "file": "assets/db/lib/gt-truck/truck-110.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "110",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#11",
+   "w": 269,
+   "h": 182,
+   "psnr": 43.5
+  },
+  "gt-truck/truck-111": {
+   "file": "assets/db/lib/gt-truck/truck-111.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "111",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#12",
+   "w": 272,
+   "h": 178,
+   "psnr": 42.1
+  },
+  "gt-truck/truck-112": {
+   "file": "assets/db/lib/gt-truck/truck-112.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "112",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#13",
+   "w": 271,
+   "h": 176,
+   "psnr": 44.4
+  },
+  "gt-truck/truck-113": {
+   "file": "assets/db/lib/gt-truck/truck-113.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "113",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#14",
+   "w": 270,
+   "h": 182,
+   "psnr": 44.3
+  },
+  "gt-truck/truck-114": {
+   "file": "assets/db/lib/gt-truck/truck-114.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "114",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#15",
+   "w": 271,
+   "h": 182,
+   "psnr": 43.8
+  },
+  "gt-truck/truck-115": {
+   "file": "assets/db/lib/gt-truck/truck-115.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "115",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#16",
+   "w": 269,
+   "h": 181,
+   "psnr": 43.4
+  },
+  "gt-truck/truck-116": {
+   "file": "assets/db/lib/gt-truck/truck-116.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "116",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#17",
+   "w": 272,
+   "h": 169,
+   "psnr": 42.9
+  },
+  "gt-truck/truck-117": {
+   "file": "assets/db/lib/gt-truck/truck-117.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "117",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#18",
+   "w": 271,
+   "h": 184,
+   "psnr": 45.0
+  },
+  "gt-truck/truck-118": {
+   "file": "assets/db/lib/gt-truck/truck-118.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "118",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#19",
+   "w": 271,
+   "h": 170,
+   "psnr": 42.9
+  },
+  "gt-truck/truck-119": {
+   "file": "assets/db/lib/gt-truck/truck-119.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "119",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#20",
+   "w": 271,
+   "h": 182,
+   "psnr": 43.5
+  },
+  "gt-truck/truck-120": {
+   "file": "assets/db/lib/gt-truck/truck-120.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "120",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#21",
+   "w": 269,
+   "h": 188,
+   "psnr": 40.6
+  },
+  "gt-truck/truck-121": {
+   "file": "assets/db/lib/gt-truck/truck-121.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "121",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#22",
+   "w": 272,
+   "h": 183,
+   "psnr": 42.7
+  },
+  "gt-truck/truck-122": {
+   "file": "assets/db/lib/gt-truck/truck-122.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "122",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#23",
+   "w": 271,
+   "h": 184,
+   "psnr": 42.6
+  },
+  "gt-truck/truck-123": {
+   "file": "assets/db/lib/gt-truck/truck-123.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "123",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#24",
+   "w": 271,
+   "h": 187,
+   "psnr": 42.5
+  },
+  "gt-truck/truck-124": {
+   "file": "assets/db/lib/gt-truck/truck-124.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "124",
+    "cartoon"
+   ],
+   "source": "trucks-e-25#25",
+   "w": 271,
+   "h": 189,
+   "psnr": 42.4
+  },
+  "gt-truck/truck-125": {
+   "file": "assets/db/lib/gt-truck/truck-125.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "125",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#1",
+   "w": 270,
+   "h": 193,
+   "psnr": 43.2
+  },
+  "gt-truck/truck-126": {
+   "file": "assets/db/lib/gt-truck/truck-126.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "126",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#2",
+   "w": 272,
+   "h": 196,
+   "psnr": 41.9
+  },
+  "gt-truck/truck-127": {
+   "file": "assets/db/lib/gt-truck/truck-127.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "127",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#3",
+   "w": 272,
+   "h": 188,
+   "psnr": 44.8
+  },
+  "gt-truck/truck-128": {
+   "file": "assets/db/lib/gt-truck/truck-128.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "128",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#4",
+   "w": 273,
+   "h": 190,
+   "psnr": 42.8
+  },
+  "gt-truck/truck-129": {
+   "file": "assets/db/lib/gt-truck/truck-129.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "129",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#5",
+   "w": 270,
+   "h": 196,
+   "psnr": 44.8
+  },
+  "gt-truck/truck-130": {
+   "file": "assets/db/lib/gt-truck/truck-130.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "130",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#6",
+   "w": 271,
+   "h": 200,
+   "psnr": 43.1
+  },
+  "gt-truck/truck-131": {
+   "file": "assets/db/lib/gt-truck/truck-131.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "131",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#7",
+   "w": 272,
+   "h": 189,
+   "psnr": 43.4
+  },
+  "gt-truck/truck-132": {
+   "file": "assets/db/lib/gt-truck/truck-132.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "132",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#8",
+   "w": 273,
+   "h": 187,
+   "psnr": 43.7
+  },
+  "gt-truck/truck-133": {
+   "file": "assets/db/lib/gt-truck/truck-133.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "133",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#9",
+   "w": 272,
+   "h": 209,
+   "psnr": 43.1
+  },
+  "gt-truck/truck-134": {
+   "file": "assets/db/lib/gt-truck/truck-134.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "134",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#10",
+   "w": 270,
+   "h": 186,
+   "psnr": 43.1
+  },
+  "gt-truck/truck-135": {
+   "file": "assets/db/lib/gt-truck/truck-135.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "135",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#11",
+   "w": 271,
+   "h": 202,
+   "psnr": 42.9
+  },
+  "gt-truck/truck-136": {
+   "file": "assets/db/lib/gt-truck/truck-136.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "136",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#12",
+   "w": 273,
+   "h": 200,
+   "psnr": 43.0
+  },
+  "gt-truck/truck-137": {
+   "file": "assets/db/lib/gt-truck/truck-137.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "137",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#13",
+   "w": 273,
+   "h": 187,
+   "psnr": 44.5
+  },
+  "gt-truck/truck-138": {
+   "file": "assets/db/lib/gt-truck/truck-138.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "138",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#14",
+   "w": 273,
+   "h": 192,
+   "psnr": 43.5
+  },
+  "gt-truck/truck-139": {
+   "file": "assets/db/lib/gt-truck/truck-139.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "139",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#15",
+   "w": 270,
+   "h": 193,
+   "psnr": 42.8
+  },
+  "gt-truck/truck-140": {
+   "file": "assets/db/lib/gt-truck/truck-140.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "140",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#16",
+   "w": 271,
+   "h": 197,
+   "psnr": 43.8
+  },
+  "gt-truck/truck-141": {
+   "file": "assets/db/lib/gt-truck/truck-141.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "141",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#17",
+   "w": 271,
+   "h": 196,
+   "psnr": 43.6
+  },
+  "gt-truck/truck-142": {
+   "file": "assets/db/lib/gt-truck/truck-142.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "142",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#18",
+   "w": 273,
+   "h": 184,
+   "psnr": 42.9
+  },
+  "gt-truck/truck-143": {
+   "file": "assets/db/lib/gt-truck/truck-143.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "143",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#19",
+   "w": 273,
+   "h": 192,
+   "psnr": 43.2
+  },
+  "gt-truck/truck-144": {
+   "file": "assets/db/lib/gt-truck/truck-144.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "144",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#20",
+   "w": 270,
+   "h": 180,
+   "psnr": 43.3
+  },
+  "gt-truck/truck-145": {
+   "file": "assets/db/lib/gt-truck/truck-145.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "145",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#21",
+   "w": 270,
+   "h": 209,
+   "psnr": 43.3
+  },
+  "gt-truck/truck-146": {
+   "file": "assets/db/lib/gt-truck/truck-146.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "146",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#22",
+   "w": 273,
+   "h": 184,
+   "psnr": 44.6
+  },
+  "gt-truck/truck-147": {
+   "file": "assets/db/lib/gt-truck/truck-147.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "147",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#23",
+   "w": 272,
+   "h": 200,
+   "psnr": 42.8
+  },
+  "gt-truck/truck-148": {
+   "file": "assets/db/lib/gt-truck/truck-148.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "148",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#24",
+   "w": 273,
+   "h": 194,
+   "psnr": 42.1
+  },
+  "gt-truck/truck-149": {
+   "file": "assets/db/lib/gt-truck/truck-149.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "149",
+    "cartoon"
+   ],
+   "source": "trucks-f-25#25",
+   "w": 270,
+   "h": 202,
+   "psnr": 43.2
+  },
+  "gt-truck/truck-150": {
+   "file": "assets/db/lib/gt-truck/truck-150.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "150",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#1",
+   "w": 270,
+   "h": 211,
+   "psnr": 43.0
+  },
+  "gt-truck/truck-151": {
+   "file": "assets/db/lib/gt-truck/truck-151.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "151",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#2",
+   "w": 271,
+   "h": 196,
+   "psnr": 45.0
+  },
+  "gt-truck/truck-152": {
+   "file": "assets/db/lib/gt-truck/truck-152.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "152",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#3",
+   "w": 271,
+   "h": 201,
+   "psnr": 42.6
+  },
+  "gt-truck/truck-153": {
+   "file": "assets/db/lib/gt-truck/truck-153.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "153",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#4",
+   "w": 271,
+   "h": 202,
+   "psnr": 43.2
+  },
+  "gt-truck/truck-154": {
+   "file": "assets/db/lib/gt-truck/truck-154.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "154",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#5",
+   "w": 271,
+   "h": 214,
+   "psnr": 44.0
+  },
+  "gt-truck/truck-155": {
+   "file": "assets/db/lib/gt-truck/truck-155.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "155",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#6",
+   "w": 270,
+   "h": 194,
+   "psnr": 43.9
+  },
+  "gt-truck/truck-156": {
+   "file": "assets/db/lib/gt-truck/truck-156.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "156",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#7",
+   "w": 271,
+   "h": 191,
+   "psnr": 43.4
+  },
+  "gt-truck/truck-157": {
+   "file": "assets/db/lib/gt-truck/truck-157.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "157",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#8",
+   "w": 271,
+   "h": 197,
+   "psnr": 41.9
+  },
+  "gt-truck/truck-158": {
+   "file": "assets/db/lib/gt-truck/truck-158.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "158",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#9",
+   "w": 271,
+   "h": 197,
+   "psnr": 43.8
+  },
+  "gt-truck/truck-159": {
+   "file": "assets/db/lib/gt-truck/truck-159.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "159",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#10",
+   "w": 271,
+   "h": 205,
+   "psnr": 42.8
+  },
+  "gt-truck/truck-160": {
+   "file": "assets/db/lib/gt-truck/truck-160.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "160",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#11",
+   "w": 270,
+   "h": 196,
+   "psnr": 44.6
+  },
+  "gt-truck/truck-161": {
+   "file": "assets/db/lib/gt-truck/truck-161.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "161",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#12",
+   "w": 271,
+   "h": 198,
+   "psnr": 43.4
+  },
+  "gt-truck/truck-162": {
+   "file": "assets/db/lib/gt-truck/truck-162.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "162",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#13",
+   "w": 271,
+   "h": 188,
+   "psnr": 44.0
+  },
+  "gt-truck/truck-163": {
+   "file": "assets/db/lib/gt-truck/truck-163.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "163",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#14",
+   "w": 271,
+   "h": 183,
+   "psnr": 43.1
+  },
+  "gt-truck/truck-164": {
+   "file": "assets/db/lib/gt-truck/truck-164.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "164",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#15",
+   "w": 271,
+   "h": 189,
+   "psnr": 42.7
+  },
+  "gt-truck/truck-165": {
+   "file": "assets/db/lib/gt-truck/truck-165.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "165",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#16",
+   "w": 270,
+   "h": 193,
+   "psnr": 43.2
+  },
+  "gt-truck/truck-166": {
+   "file": "assets/db/lib/gt-truck/truck-166.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "166",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#17",
+   "w": 270,
+   "h": 193,
+   "psnr": 44.2
+  },
+  "gt-truck/truck-167": {
+   "file": "assets/db/lib/gt-truck/truck-167.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "167",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#18",
+   "w": 271,
+   "h": 187,
+   "psnr": 43.2
+  },
+  "gt-truck/truck-168": {
+   "file": "assets/db/lib/gt-truck/truck-168.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "168",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#19",
+   "w": 271,
+   "h": 186,
+   "psnr": 43.5
+  },
+  "gt-truck/truck-169": {
+   "file": "assets/db/lib/gt-truck/truck-169.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "169",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#20",
+   "w": 271,
+   "h": 182,
+   "psnr": 43.4
+  },
+  "gt-truck/truck-170": {
+   "file": "assets/db/lib/gt-truck/truck-170.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "170",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#21",
+   "w": 270,
+   "h": 201,
+   "psnr": 42.4
+  },
+  "gt-truck/truck-171": {
+   "file": "assets/db/lib/gt-truck/truck-171.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "171",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#22",
+   "w": 271,
+   "h": 201,
+   "psnr": 43.6
+  },
+  "gt-truck/truck-172": {
+   "file": "assets/db/lib/gt-truck/truck-172.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "172",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#23",
+   "w": 271,
+   "h": 201,
+   "psnr": 43.9
+  },
+  "gt-truck/truck-173": {
+   "file": "assets/db/lib/gt-truck/truck-173.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "173",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#24",
+   "w": 271,
+   "h": 205,
+   "psnr": 43.8
+  },
+  "gt-truck/truck-174": {
+   "file": "assets/db/lib/gt-truck/truck-174.webp",
+   "cat": "gt-truck",
+   "tags": [
+    "truck",
+    "174",
+    "cartoon"
+   ],
+   "source": "trucks-g-25#25",
+   "w": 271,
+   "h": 191,
+   "psnr": 44.2
+  },
+  "gt/air-filter": {
+   "file": "assets/db/lib/gt/air-filter.webp",
+   "cat": "gt",
+   "tags": [
+    "air",
+    "filter",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#9",
+   "w": 236,
+   "h": 218,
+   "psnr": 44.2
+  },
+  "gt/alien": {
+   "file": "assets/db/lib/gt/alien.webp",
+   "cat": "gt",
+   "tags": [
+    "alien",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#7",
+   "w": 209,
+   "h": 231,
+   "psnr": 44.9
+  },
+  "gt/announcement": {
+   "file": "assets/db/lib/gt/announcement.webp",
+   "cat": "gt",
+   "tags": [
+    "announcement",
+    "cartoon"
+   ],
+   "source": "icons-world-25#4",
+   "w": 258,
+   "h": 238,
+   "psnr": 41.8
+  },
+  "gt/armor-plate": {
+   "file": "assets/db/lib/gt/armor-plate.webp",
+   "cat": "gt",
+   "tags": [
+    "armor",
+    "plate",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#13",
+   "w": 253,
+   "h": 229,
+   "psnr": 45.8
+  },
+  "gt/asteroid": {
+   "file": "assets/db/lib/gt/asteroid.webp",
+   "cat": "gt",
+   "tags": [
+    "asteroid",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#11",
+   "w": 236,
+   "h": 218,
+   "psnr": 45.7
+  },
+  "gt/attack": {
+   "file": "assets/db/lib/gt/attack.webp",
+   "cat": "gt",
+   "tags": [
+    "attack",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#18",
+   "w": 241,
+   "h": 222,
+   "psnr": 42.2
+  },
+  "gt/auto-battle": {
+   "file": "assets/db/lib/gt/auto-battle.webp",
+   "cat": "gt",
+   "tags": [
+    "auto",
+    "battle",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#4",
+   "w": 227,
+   "h": 177,
+   "psnr": 44.7
+  },
+  "gt/avatar-opponent": {
+   "file": "assets/db/lib/gt/avatar-opponent.webp",
+   "cat": "gt",
+   "tags": [
+    "avatar",
+    "opponent",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#2",
+   "w": 259,
+   "h": 248,
+   "psnr": 45.2
+  },
+  "gt/avatar-player": {
+   "file": "assets/db/lib/gt/avatar-player.webp",
+   "cat": "gt",
+   "tags": [
+    "avatar",
+    "player",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#1",
+   "w": 246,
+   "h": 248,
+   "psnr": 42.9
+  },
+  "gt/barn": {
+   "file": "assets/db/lib/gt/barn.webp",
+   "cat": "gt",
+   "tags": [
+    "barn",
+    "cartoon"
+   ],
+   "source": "icons-world-25#19",
+   "w": 269,
+   "h": 223,
+   "psnr": 43.4
+  },
+  "gt/binoculars": {
+   "file": "assets/db/lib/gt/binoculars.webp",
+   "cat": "gt",
+   "tags": [
+    "binoculars",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#21",
+   "w": 256,
+   "h": 219,
+   "psnr": 43.9
+  },
+  "gt/bull-bumper": {
+   "file": "assets/db/lib/gt/bull-bumper.webp",
+   "cat": "gt",
+   "tags": [
+    "bull",
+    "bumper",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#6",
+   "w": 253,
+   "h": 224,
+   "psnr": 45.7
+  },
+  "gt/bush": {
+   "file": "assets/db/lib/gt/bush.webp",
+   "cat": "gt",
+   "tags": [
+    "bush",
+    "cartoon"
+   ],
+   "source": "icons-world-25#21",
+   "w": 255,
+   "h": 213,
+   "psnr": 43.6
+  },
+  "gt/cactus": {
+   "file": "assets/db/lib/gt/cactus.webp",
+   "cat": "gt",
+   "tags": [
+    "cactus",
+    "cartoon"
+   ],
+   "source": "icons-world-25#14",
+   "w": 201,
+   "h": 230,
+   "psnr": 43.3
+  },
+  "gt/campfire": {
+   "file": "assets/db/lib/gt/campfire.webp",
+   "cat": "gt",
+   "tags": [
+    "campfire",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#23",
+   "w": 263,
+   "h": 248,
+   "psnr": 41.8
+  },
+  "gt/car-crush-stack": {
+   "file": "assets/db/lib/gt/car-crush-stack.webp",
+   "cat": "gt",
+   "tags": [
+    "car",
+    "crush",
+    "stack",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#23",
+   "w": 265,
+   "h": 233,
+   "psnr": 43.1
+  },
+  "gt/card-back": {
+   "file": "assets/db/lib/gt/card-back.webp",
+   "cat": "gt",
+   "tags": [
+    "card",
+    "back",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#9",
+   "w": 219,
+   "h": 268,
+   "psnr": 45.1
+  },
+  "gt/checkered-flag": {
+   "file": "assets/db/lib/gt/checkered-flag.webp",
+   "cat": "gt",
+   "tags": [
+    "checkered",
+    "flag",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#25",
+   "w": 243,
+   "h": 233,
+   "psnr": 46.5
+  },
+  "gt/coin": {
+   "file": "assets/db/lib/gt/coin.webp",
+   "cat": "gt",
+   "tags": [
+    "coin",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#4",
+   "w": 226,
+   "h": 230,
+   "psnr": 44.2
+  },
+  "gt/coin-stack": {
+   "file": "assets/db/lib/gt/coin-stack.webp",
+   "cat": "gt",
+   "tags": [
+    "coin",
+    "stack",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#7",
+   "w": 248,
+   "h": 237,
+   "psnr": 41.9
+  },
+  "gt/compass": {
+   "file": "assets/db/lib/gt/compass.webp",
+   "cat": "gt",
+   "tags": [
+    "compass",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#20",
+   "w": 228,
+   "h": 232,
+   "psnr": 42.2
+  },
+  "gt/crown": {
+   "file": "assets/db/lib/gt/crown.webp",
+   "cat": "gt",
+   "tags": [
+    "crown",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#18",
+   "w": 269,
+   "h": 224,
+   "psnr": 42.3
+  },
+  "gt/crystal": {
+   "file": "assets/db/lib/gt/crystal.webp",
+   "cat": "gt",
+   "tags": [
+    "crystal",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#12",
+   "w": 214,
+   "h": 231,
+   "psnr": 38.5
+  },
+  "gt/deck": {
+   "file": "assets/db/lib/gt/deck.webp",
+   "cat": "gt",
+   "tags": [
+    "deck",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#7",
+   "w": 255,
+   "h": 263,
+   "psnr": 43.8
+  },
+  "gt/defense": {
+   "file": "assets/db/lib/gt/defense.webp",
+   "cat": "gt",
+   "tags": [
+    "defense",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#19",
+   "w": 196,
+   "h": 218,
+   "psnr": 46.4
+  },
+  "gt/direction-sign": {
+   "file": "assets/db/lib/gt/direction-sign.webp",
+   "cat": "gt",
+   "tags": [
+    "direction",
+    "sign",
+    "cartoon"
+   ],
+   "source": "icons-world-25#12",
+   "w": 233,
+   "h": 228,
+   "psnr": 44.5
+  },
+  "gt/discard": {
+   "file": "assets/db/lib/gt/discard.webp",
+   "cat": "gt",
+   "tags": [
+    "discard",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#8",
+   "w": 236,
+   "h": 251,
+   "psnr": 46.7
+  },
+  "gt/driver-helmet": {
+   "file": "assets/db/lib/gt/driver-helmet.webp",
+   "cat": "gt",
+   "tags": [
+    "driver",
+    "helmet",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#1",
+   "w": 236,
+   "h": 237,
+   "psnr": 42.8
+  },
+  "gt/eco-fuel": {
+   "file": "assets/db/lib/gt/eco-fuel.webp",
+   "cat": "gt",
+   "tags": [
+    "eco",
+    "fuel",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#17",
+   "w": 217,
+   "h": 226,
+   "psnr": 43.5
+  },
+  "gt/end-turn": {
+   "file": "assets/db/lib/gt/end-turn.webp",
+   "cat": "gt",
+   "tags": [
+    "end",
+    "turn",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#2",
+   "w": 221,
+   "h": 225,
+   "psnr": 43.3
+  },
+  "gt/energy-orb": {
+   "file": "assets/db/lib/gt/energy-orb.webp",
+   "cat": "gt",
+   "tags": [
+    "energy",
+    "orb",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#13",
+   "w": 254,
+   "h": 227,
+   "psnr": 42.4
+  },
+  "gt/extra-turn": {
+   "file": "assets/db/lib/gt/extra-turn.webp",
+   "cat": "gt",
+   "tags": [
+    "extra",
+    "turn",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#21",
+   "w": 206,
+   "h": 235,
+   "psnr": 43.7
+  },
+  "gt/finish-gate": {
+   "file": "assets/db/lib/gt/finish-gate.webp",
+   "cat": "gt",
+   "tags": [
+    "finish",
+    "gate",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#21",
+   "w": 270,
+   "h": 209,
+   "psnr": 47.1
+  },
+  "gt/flame-decal": {
+   "file": "assets/db/lib/gt/flame-decal.webp",
+   "cat": "gt",
+   "tags": [
+    "flame",
+    "decal",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#5",
+   "w": 257,
+   "h": 241,
+   "psnr": 38.6
+  },
+  "gt/force-field": {
+   "file": "assets/db/lib/gt/force-field.webp",
+   "cat": "gt",
+   "tags": [
+    "force",
+    "field",
+    "cartoon"
+   ],
+   "source": "icons-world-25#8",
+   "w": 268,
+   "h": 209,
+   "psnr": 39.8
+  },
+  "gt/fuel-can": {
+   "file": "assets/db/lib/gt/fuel-can.webp",
+   "cat": "gt",
+   "tags": [
+    "fuel",
+    "can",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#6",
+   "w": 219,
+   "h": 253,
+   "psnr": 41.5
+  },
+  "gt/fx-dust": {
+   "file": "assets/db/lib/gt/fx-dust.webp",
+   "cat": "gt",
+   "tags": [
+    "fx",
+    "dust",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#18",
+   "w": 259,
+   "h": 215,
+   "psnr": 46.2
+  },
+  "gt/fx-fire": {
+   "file": "assets/db/lib/gt/fx-fire.webp",
+   "cat": "gt",
+   "tags": [
+    "fx",
+    "fire",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#17",
+   "w": 247,
+   "h": 223,
+   "psnr": 38.8
+  },
+  "gt/fx-impact": {
+   "file": "assets/db/lib/gt/fx-impact.webp",
+   "cat": "gt",
+   "tags": [
+    "fx",
+    "impact",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#20",
+   "w": 251,
+   "h": 225,
+   "psnr": 40.0
+  },
+  "gt/fx-mud": {
+   "file": "assets/db/lib/gt/fx-mud.webp",
+   "cat": "gt",
+   "tags": [
+    "fx",
+    "mud",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#16",
+   "w": 261,
+   "h": 221,
+   "psnr": 45.1
+  },
+  "gt/fx-skid": {
+   "file": "assets/db/lib/gt/fx-skid.webp",
+   "cat": "gt",
+   "tags": [
+    "fx",
+    "skid",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#19",
+   "w": 259,
+   "h": 197,
+   "psnr": 44.8
+  },
+  "gt/garage": {
+   "file": "assets/db/lib/gt/garage.webp",
+   "cat": "gt",
+   "tags": [
+    "garage",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#2",
+   "w": 236,
+   "h": 228,
+   "psnr": 41.8
+  },
+  "gt/gem": {
+   "file": "assets/db/lib/gt/gem.webp",
+   "cat": "gt",
+   "tags": [
+    "gem",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#5",
+   "w": 229,
+   "h": 211,
+   "psnr": 41.9
+  },
+  "gt/gem-stack": {
+   "file": "assets/db/lib/gt/gem-stack.webp",
+   "cat": "gt",
+   "tags": [
+    "gem",
+    "stack",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#8",
+   "w": 233,
+   "h": 232,
+   "psnr": 40.2
+  },
+  "gt/hay-bale": {
+   "file": "assets/db/lib/gt/hay-bale.webp",
+   "cat": "gt",
+   "tags": [
+    "hay",
+    "bale",
+    "cartoon"
+   ],
+   "source": "icons-world-25#17",
+   "w": 259,
+   "h": 219,
+   "psnr": 43.4
+  },
+  "gt/hp": {
+   "file": "assets/db/lib/gt/hp.webp",
+   "cat": "gt",
+   "tags": [
+    "hp",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#17",
+   "w": 211,
+   "h": 197,
+   "psnr": 43.3
+  },
+  "gt/ice-nitro": {
+   "file": "assets/db/lib/gt/ice-nitro.webp",
+   "cat": "gt",
+   "tags": [
+    "ice",
+    "nitro",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#18",
+   "w": 243,
+   "h": 225,
+   "psnr": 41.4
+  },
+  "gt/key": {
+   "file": "assets/db/lib/gt/key.webp",
+   "cat": "gt",
+   "tags": [
+    "key",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#15",
+   "w": 226,
+   "h": 229,
+   "psnr": 40.8
+  },
+  "gt/lantern": {
+   "file": "assets/db/lib/gt/lantern.webp",
+   "cat": "gt",
+   "tags": [
+    "lantern",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#22",
+   "w": 199,
+   "h": 250,
+   "psnr": 44.0
+  },
+  "gt/level-up": {
+   "file": "assets/db/lib/gt/level-up.webp",
+   "cat": "gt",
+   "tags": [
+    "level",
+    "up",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#10",
+   "w": 202,
+   "h": 241,
+   "psnr": 44.0
+  },
+  "gt/lightning": {
+   "file": "assets/db/lib/gt/lightning.webp",
+   "cat": "gt",
+   "tags": [
+    "lightning",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#4",
+   "w": 199,
+   "h": 246,
+   "psnr": 44.1
+  },
+  "gt/lock": {
+   "file": "assets/db/lib/gt/lock.webp",
+   "cat": "gt",
+   "tags": [
+    "lock",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#16",
+   "w": 217,
+   "h": 233,
+   "psnr": 43.7
+  },
+  "gt/log": {
+   "file": "assets/db/lib/gt/log.webp",
+   "cat": "gt",
+   "tags": [
+    "log",
+    "cartoon"
+   ],
+   "source": "icons-world-25#24",
+   "w": 270,
+   "h": 178,
+   "psnr": 44.5
+  },
+  "gt/magnet-powerup": {
+   "file": "assets/db/lib/gt/magnet-powerup.webp",
+   "cat": "gt",
+   "tags": [
+    "magnet",
+    "powerup",
+    "cartoon"
+   ],
+   "source": "icons-world-25#7",
+   "w": 239,
+   "h": 219,
+   "psnr": 43.5
+  },
+  "gt/map": {
+   "file": "assets/db/lib/gt/map.webp",
+   "cat": "gt",
+   "tags": [
+    "map",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#23",
+   "w": 260,
+   "h": 233,
+   "psnr": 45.7
+  },
+  "gt/map-scroll": {
+   "file": "assets/db/lib/gt/map-scroll.webp",
+   "cat": "gt",
+   "tags": [
+    "map",
+    "scroll",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#19",
+   "w": 261,
+   "h": 234,
+   "psnr": 45.0
+  },
+  "gt/mission-list": {
+   "file": "assets/db/lib/gt/mission-list.webp",
+   "cat": "gt",
+   "tags": [
+    "mission",
+    "list",
+    "cartoon"
+   ],
+   "source": "icons-world-25#5",
+   "w": 216,
+   "h": 247,
+   "psnr": 44.1
+  },
+  "gt/moon": {
+   "file": "assets/db/lib/gt/moon.webp",
+   "cat": "gt",
+   "tags": [
+    "moon",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#1",
+   "w": 241,
+   "h": 240,
+   "psnr": 45.9
+  },
+  "gt/mud-puddle": {
+   "file": "assets/db/lib/gt/mud-puddle.webp",
+   "cat": "gt",
+   "tags": [
+    "mud",
+    "puddle",
+    "cartoon"
+   ],
+   "source": "icons-world-25#23",
+   "w": 258,
+   "h": 217,
+   "psnr": 45.0
+  },
+  "gt/mystery-box": {
+   "file": "assets/db/lib/gt/mystery-box.webp",
+   "cat": "gt",
+   "tags": [
+    "mystery",
+    "box",
+    "cartoon"
+   ],
+   "source": "icons-world-25#10",
+   "w": 237,
+   "h": 222,
+   "psnr": 43.6
+  },
+  "gt/nitrous-tank": {
+   "file": "assets/db/lib/gt/nitrous-tank.webp",
+   "cat": "gt",
+   "tags": [
+    "nitrous",
+    "tank",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#7",
+   "w": 255,
+   "h": 232,
+   "psnr": 42.9
+  },
+  "gt/oil-barrel": {
+   "file": "assets/db/lib/gt/oil-barrel.webp",
+   "cat": "gt",
+   "tags": [
+    "oil",
+    "barrel",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#24",
+   "w": 234,
+   "h": 240,
+   "psnr": 46.8
+  },
+  "gt/part-bumper": {
+   "file": "assets/db/lib/gt/part-bumper.webp",
+   "cat": "gt",
+   "tags": [
+    "part",
+    "bumper",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#22",
+   "w": 261,
+   "h": 216,
+   "psnr": 45.9
+  },
+  "gt/part-engine": {
+   "file": "assets/db/lib/gt/part-engine.webp",
+   "cat": "gt",
+   "tags": [
+    "part",
+    "engine",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#23",
+   "w": 260,
+   "h": 232,
+   "psnr": 42.8
+  },
+  "gt/part-nitro": {
+   "file": "assets/db/lib/gt/part-nitro.webp",
+   "cat": "gt",
+   "tags": [
+    "part",
+    "nitro",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#24",
+   "w": 251,
+   "h": 243,
+   "psnr": 42.5
+  },
+  "gt/part-tire": {
+   "file": "assets/db/lib/gt/part-tire.webp",
+   "cat": "gt",
+   "tags": [
+    "part",
+    "tire",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#21",
+   "w": 243,
+   "h": 238,
+   "psnr": 45.1
+  },
+  "gt/pine-tree": {
+   "file": "assets/db/lib/gt/pine-tree.webp",
+   "cat": "gt",
+   "tags": [
+    "pine",
+    "tree",
+    "cartoon"
+   ],
+   "source": "icons-world-25#20",
+   "w": 203,
+   "h": 238,
+   "psnr": 42.1
+  },
+  "gt/planet": {
+   "file": "assets/db/lib/gt/planet.webp",
+   "cat": "gt",
+   "tags": [
+    "planet",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#10",
+   "w": 270,
+   "h": 207,
+   "psnr": 42.4
+  },
+  "gt/play-confirm": {
+   "file": "assets/db/lib/gt/play-confirm.webp",
+   "cat": "gt",
+   "tags": [
+    "play",
+    "confirm",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#3",
+   "w": 230,
+   "h": 228,
+   "psnr": 44.7
+  },
+  "gt/portal": {
+   "file": "assets/db/lib/gt/portal.webp",
+   "cat": "gt",
+   "tags": [
+    "portal",
+    "cartoon"
+   ],
+   "source": "icons-world-25#9",
+   "w": 253,
+   "h": 228,
+   "psnr": 40.6
+  },
+  "gt/q-english": {
+   "file": "assets/db/lib/gt/q-english.webp",
+   "cat": "gt",
+   "tags": [
+    "q",
+    "english",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#12",
+   "w": 259,
+   "h": 232,
+   "psnr": 43.6
+  },
+  "gt/q-islamic": {
+   "file": "assets/db/lib/gt/q-islamic.webp",
+   "cat": "gt",
+   "tags": [
+    "q",
+    "islamic",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#15",
+   "w": 246,
+   "h": 237,
+   "psnr": 45.0
+  },
+  "gt/q-knowledge": {
+   "file": "assets/db/lib/gt/q-knowledge.webp",
+   "cat": "gt",
+   "tags": [
+    "q",
+    "knowledge",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#13",
+   "w": 212,
+   "h": 238,
+   "psnr": 45.8
+  },
+  "gt/q-math": {
+   "file": "assets/db/lib/gt/q-math.webp",
+   "cat": "gt",
+   "tags": [
+    "q",
+    "math",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#11",
+   "w": 241,
+   "h": 237,
+   "psnr": 43.6
+  },
+  "gt/q-science": {
+   "file": "assets/db/lib/gt/q-science.webp",
+   "cat": "gt",
+   "tags": [
+    "q",
+    "science",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#14",
+   "w": 202,
+   "h": 238,
+   "psnr": 43.4
+  },
+  "gt/race-flag": {
+   "file": "assets/db/lib/gt/race-flag.webp",
+   "cat": "gt",
+   "tags": [
+    "race",
+    "flag",
+    "cartoon"
+   ],
+   "source": "icons-world-25#3",
+   "w": 240,
+   "h": 245,
+   "psnr": 45.8
+  },
+  "gt/rain-cloud": {
+   "file": "assets/db/lib/gt/rain-cloud.webp",
+   "cat": "gt",
+   "tags": [
+    "rain",
+    "cloud",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#3",
+   "w": 248,
+   "h": 245,
+   "psnr": 44.8
+  },
+  "gt/rainbow": {
+   "file": "assets/db/lib/gt/rainbow.webp",
+   "cat": "gt",
+   "tags": [
+    "rainbow",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#5",
+   "w": 270,
+   "h": 204,
+   "psnr": 42.0
+  },
+  "gt/rank1-badge": {
+   "file": "assets/db/lib/gt/rank1-badge.webp",
+   "cat": "gt",
+   "tags": [
+    "rank1",
+    "badge",
+    "cartoon"
+   ],
+   "source": "icons-world-25#1",
+   "w": 248,
+   "h": 233,
+   "psnr": 42.6
+  },
+  "gt/repair": {
+   "file": "assets/db/lib/gt/repair.webp",
+   "cat": "gt",
+   "tags": [
+    "repair",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#20",
+   "w": 214,
+   "h": 216,
+   "psnr": 44.9
+  },
+  "gt/repair-kit": {
+   "file": "assets/db/lib/gt/repair-kit.webp",
+   "cat": "gt",
+   "tags": [
+    "repair",
+    "kit",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#19",
+   "w": 241,
+   "h": 207,
+   "psnr": 40.4
+  },
+  "gt/reward-chest": {
+   "file": "assets/db/lib/gt/reward-chest.webp",
+   "cat": "gt",
+   "tags": [
+    "reward",
+    "chest",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#6",
+   "w": 256,
+   "h": 228,
+   "psnr": 42.6
+  },
+  "gt/road-barrier": {
+   "file": "assets/db/lib/gt/road-barrier.webp",
+   "cat": "gt",
+   "tags": [
+    "road",
+    "barrier",
+    "cartoon"
+   ],
+   "source": "icons-world-25#11",
+   "w": 239,
+   "h": 220,
+   "psnr": 43.2
+  },
+  "gt/rock": {
+   "file": "assets/db/lib/gt/rock.webp",
+   "cat": "gt",
+   "tags": [
+    "rock",
+    "cartoon"
+   ],
+   "source": "icons-world-25#15",
+   "w": 259,
+   "h": 222,
+   "psnr": 45.3
+  },
+  "gt/rocket": {
+   "file": "assets/db/lib/gt/rocket.webp",
+   "cat": "gt",
+   "tags": [
+    "rocket",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#9",
+   "w": 228,
+   "h": 236,
+   "psnr": 41.4
+  },
+  "gt/roll-cage": {
+   "file": "assets/db/lib/gt/roll-cage.webp",
+   "cat": "gt",
+   "tags": [
+    "roll",
+    "cage",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#10",
+   "w": 270,
+   "h": 216,
+   "psnr": 39.8
+  },
+  "gt/safety-barrel": {
+   "file": "assets/db/lib/gt/safety-barrel.webp",
+   "cat": "gt",
+   "tags": [
+    "safety",
+    "barrel",
+    "cartoon"
+   ],
+   "source": "icons-world-25#13",
+   "w": 213,
+   "h": 230,
+   "psnr": 43.5
+  },
+  "gt/satellite": {
+   "file": "assets/db/lib/gt/satellite.webp",
+   "cat": "gt",
+   "tags": [
+    "satellite",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#8",
+   "w": 238,
+   "h": 148,
+   "psnr": 43.9
+  },
+  "gt/scout": {
+   "file": "assets/db/lib/gt/scout.webp",
+   "cat": "gt",
+   "tags": [
+    "scout",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#22",
+   "w": 252,
+   "h": 217,
+   "psnr": 44.5
+  },
+  "gt/sharp-turn-sign": {
+   "file": "assets/db/lib/gt/sharp-turn-sign.webp",
+   "cat": "gt",
+   "tags": [
+    "sharp",
+    "turn",
+    "sign",
+    "cartoon"
+   ],
+   "source": "icons-world-25#25",
+   "w": 230,
+   "h": 221,
+   "psnr": 45.1
+  },
+  "gt/shield-boost": {
+   "file": "assets/db/lib/gt/shield-boost.webp",
+   "cat": "gt",
+   "tags": [
+    "shield",
+    "boost",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#20",
+   "w": 214,
+   "h": 224,
+   "psnr": 44.1
+  },
+  "gt/shock-absorber": {
+   "file": "assets/db/lib/gt/shock-absorber.webp",
+   "cat": "gt",
+   "tags": [
+    "shock",
+    "absorber",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#4",
+   "w": 216,
+   "h": 244,
+   "psnr": 42.4
+  },
+  "gt/signpost": {
+   "file": "assets/db/lib/gt/signpost.webp",
+   "cat": "gt",
+   "tags": [
+    "signpost",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#25",
+   "w": 221,
+   "h": 257,
+   "psnr": 41.4
+  },
+  "gt/spike-bumper": {
+   "file": "assets/db/lib/gt/spike-bumper.webp",
+   "cat": "gt",
+   "tags": [
+    "spike",
+    "bumper",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#14",
+   "w": 266,
+   "h": 201,
+   "psnr": 42.4
+  },
+  "gt/spoiler": {
+   "file": "assets/db/lib/gt/spoiler.webp",
+   "cat": "gt",
+   "tags": [
+    "spoiler",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#12",
+   "w": 268,
+   "h": 195,
+   "psnr": 43.7
+  },
+  "gt/spot-lights": {
+   "file": "assets/db/lib/gt/spot-lights.webp",
+   "cat": "gt",
+   "tags": [
+    "spot",
+    "lights",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#11",
+   "w": 268,
+   "h": 181,
+   "psnr": 44.2
+  },
+  "gt/star-collectible": {
+   "file": "assets/db/lib/gt/star-collectible.webp",
+   "cat": "gt",
+   "tags": [
+    "star",
+    "collectible",
+    "cartoon"
+   ],
+   "source": "icons-world-25#6",
+   "w": 226,
+   "h": 224,
+   "psnr": 44.8
+  },
+  "gt/start-flag": {
+   "file": "assets/db/lib/gt/start-flag.webp",
+   "cat": "gt",
+   "tags": [
+    "start",
+    "flag",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#1",
+   "w": 270,
+   "h": 204,
+   "psnr": 43.3
+  },
+  "gt/start-light": {
+   "file": "assets/db/lib/gt/start-light.webp",
+   "cat": "gt",
+   "tags": [
+    "start",
+    "light",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#24",
+   "w": 170,
+   "h": 242,
+   "psnr": 44.5
+  },
+  "gt/sun": {
+   "file": "assets/db/lib/gt/sun.webp",
+   "cat": "gt",
+   "tags": [
+    "sun",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#2",
+   "w": 250,
+   "h": 239,
+   "psnr": 41.8
+  },
+  "gt/teleport-gate": {
+   "file": "assets/db/lib/gt/teleport-gate.webp",
+   "cat": "gt",
+   "tags": [
+    "teleport",
+    "gate",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#14",
+   "w": 252,
+   "h": 233,
+   "psnr": 41.5
+  },
+  "gt/tent": {
+   "file": "assets/db/lib/gt/tent.webp",
+   "cat": "gt",
+   "tags": [
+    "tent",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#24",
+   "w": 271,
+   "h": 210,
+   "psnr": 44.5
+  },
+  "gt/timer": {
+   "file": "assets/db/lib/gt/timer.webp",
+   "cat": "gt",
+   "tags": [
+    "timer",
+    "cartoon"
+   ],
+   "source": "icons-world-25#2",
+   "w": 210,
+   "h": 247,
+   "psnr": 45.4
+  },
+  "gt/tire-barrier": {
+   "file": "assets/db/lib/gt/tire-barrier.webp",
+   "cat": "gt",
+   "tags": [
+    "tire",
+    "barrier",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#25",
+   "w": 255,
+   "h": 215,
+   "psnr": 45.5
+  },
+  "gt/tool-kit": {
+   "file": "assets/db/lib/gt/tool-kit.webp",
+   "cat": "gt",
+   "tags": [
+    "tool",
+    "kit",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#16",
+   "w": 260,
+   "h": 215,
+   "psnr": 40.9
+  },
+  "gt/traffic-cone": {
+   "file": "assets/db/lib/gt/traffic-cone.webp",
+   "cat": "gt",
+   "tags": [
+    "traffic",
+    "cone",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#22",
+   "w": 213,
+   "h": 229,
+   "psnr": 43.8
+  },
+  "gt/treasure-chest": {
+   "file": "assets/db/lib/gt/treasure-chest.webp",
+   "cat": "gt",
+   "tags": [
+    "treasure",
+    "chest",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#17",
+   "w": 267,
+   "h": 223,
+   "psnr": 42.4
+  },
+  "gt/trophy": {
+   "file": "assets/db/lib/gt/trophy.webp",
+   "cat": "gt",
+   "tags": [
+    "trophy",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#3",
+   "w": 249,
+   "h": 240,
+   "psnr": 43.4
+  },
+  "gt/turbo": {
+   "file": "assets/db/lib/gt/turbo.webp",
+   "cat": "gt",
+   "tags": [
+    "turbo",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#8",
+   "w": 236,
+   "h": 227,
+   "psnr": 44.3
+  },
+  "gt/type-armor": {
+   "file": "assets/db/lib/gt/type-armor.webp",
+   "cat": "gt",
+   "tags": [
+    "type",
+    "armor",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#14",
+   "w": 223,
+   "h": 224,
+   "psnr": 44.3
+  },
+  "gt/type-mud": {
+   "file": "assets/db/lib/gt/type-mud.webp",
+   "cat": "gt",
+   "tags": [
+    "type",
+    "mud",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#12",
+   "w": 224,
+   "h": 223,
+   "psnr": 46.2
+  },
+  "gt/type-power": {
+   "file": "assets/db/lib/gt/type-power.webp",
+   "cat": "gt",
+   "tags": [
+    "type",
+    "power",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#11",
+   "w": 224,
+   "h": 224,
+   "psnr": 44.5
+  },
+  "gt/type-speed": {
+   "file": "assets/db/lib/gt/type-speed.webp",
+   "cat": "gt",
+   "tags": [
+    "type",
+    "speed",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#13",
+   "w": 221,
+   "h": 222,
+   "psnr": 45.4
+  },
+  "gt/type-stunt": {
+   "file": "assets/db/lib/gt/type-stunt.webp",
+   "cat": "gt",
+   "tags": [
+    "type",
+    "stunt",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#15",
+   "w": 223,
+   "h": 226,
+   "psnr": 45.1
+  },
+  "gt/type-tech": {
+   "file": "assets/db/lib/gt/type-tech.webp",
+   "cat": "gt",
+   "tags": [
+    "type",
+    "tech",
+    "cartoon"
+   ],
+   "source": "icons-ui-25#16",
+   "w": 224,
+   "h": 225,
+   "psnr": 43.6
+  },
+  "gt/ufo": {
+   "file": "assets/db/lib/gt/ufo.webp",
+   "cat": "gt",
+   "tags": [
+    "ufo",
+    "cartoon"
+   ],
+   "source": "icons-sky-25#6",
+   "w": 263,
+   "h": 231,
+   "psnr": 43.2
+  },
+  "gt/undo": {
+   "file": "assets/db/lib/gt/undo.webp",
+   "cat": "gt",
+   "tags": [
+    "undo",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#5",
+   "w": 223,
+   "h": 220,
+   "psnr": 42.5
+  },
+  "gt/upgrade-tire": {
+   "file": "assets/db/lib/gt/upgrade-tire.webp",
+   "cat": "gt",
+   "tags": [
+    "upgrade",
+    "tire",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#3",
+   "w": 241,
+   "h": 237,
+   "psnr": 45.0
+  },
+  "gt/water-puddle": {
+   "file": "assets/db/lib/gt/water-puddle.webp",
+   "cat": "gt",
+   "tags": [
+    "water",
+    "puddle",
+    "cartoon"
+   ],
+   "source": "icons-world-25#22",
+   "w": 262,
+   "h": 199,
+   "psnr": 43.0
+  },
+  "gt/winch": {
+   "file": "assets/db/lib/gt/winch.webp",
+   "cat": "gt",
+   "tags": [
+    "winch",
+    "cartoon"
+   ],
+   "source": "icons-parts-25#15",
+   "w": 270,
+   "h": 224,
+   "psnr": 42.6
+  },
+  "gt/windmill": {
+   "file": "assets/db/lib/gt/windmill.webp",
+   "cat": "gt",
+   "tags": [
+    "windmill",
+    "cartoon"
+   ],
+   "source": "icons-world-25#18",
+   "w": 175,
+   "h": 237,
+   "psnr": 42.8
+  },
+  "gt/wood-ramp": {
+   "file": "assets/db/lib/gt/wood-ramp.webp",
+   "cat": "gt",
+   "tags": [
+    "wood",
+    "ramp",
+    "cartoon"
+   ],
+   "source": "icons-world-25#16",
+   "w": 262,
+   "h": 206,
+   "psnr": 43.7
+  },
+  "gt/xp": {
+   "file": "assets/db/lib/gt/xp.webp",
+   "cat": "gt",
+   "tags": [
+    "xp",
+    "cartoon"
+   ],
+   "source": "icons-ui2-25#9",
+   "w": 233,
+   "h": 239,
+   "psnr": 43.6
+  },
   "nature/cherry-blossom": {
    "file": "assets/db/lib/nature/cherry-blossom.webp",
    "cat": "nature",

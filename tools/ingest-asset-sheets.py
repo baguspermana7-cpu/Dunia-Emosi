@@ -199,6 +199,61 @@ SHEETS = {
     + g('things', 'bandage compass') + g('food', 'jackfruit') + g('things', 'binoculars') + g('food', 'chili')
     + g('branded', 'hand-sanitizer-aseptic') + g('toys', 'ukulele') + g('food', 'sugar-jar') + g('things', 'kitchen-towel feather-duster')
     + g('food', 'young-coconut') + g('things', 'swim-goggles flashlight') + g('branded', 'powerbank-romoss') + g('food', 'tamarind')),
+  # Garasi Tempur UI icons (owner sheet, 2026-09-27): labelled 5x5 on a grid. #25 (ramp) carries
+  # a "MONSTER JAM" trademark on its side, so it is skipped. The card frame (#10) is NOT used:
+  # frames are drawn in code (games/gt-card.js) so text is live, translatable and read aloud.
+  'icons-ui-25': (5, 5,
+    g('gt', 'avatar-player avatar-opponent trophy coin gem')
+    + g('gt', 'fuel-can deck discard card-back SKIP-frame')
+    + g('gt', 'type-power type-mud type-speed type-armor type-stunt')
+    + g('gt', 'type-tech hp attack defense repair')
+    + g('gt', 'part-tire part-bumper part-engine part-nitro SKIP-ramp'),
+    {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True, 'label': 1}),
+  'icons-ui2-25': (5, 5,
+    g('gt', 'start-flag end-turn play-confirm auto-battle undo')
+    + g('gt', 'reward-chest coin-stack gem-stack xp level-up')
+    + g('gt', 'q-math q-english q-knowledge q-science q-islamic')
+    + g('gt', 'fx-mud fx-fire fx-dust fx-skid fx-impact')
+    + g('gt', 'finish-gate traffic-cone car-crush-stack oil-barrel tire-barrier'),
+    {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True, 'label': 1}),
+  'icons-parts-25': (5, 5,
+    g('gt', 'driver-helmet garage upgrade-tire shock-absorber flame-decal')
+    + g('gt', 'bull-bumper nitrous-tank turbo air-filter roll-cage')
+    + g('gt', 'spot-lights spoiler armor-plate spike-bumper winch')
+    + g('gt', 'tool-kit eco-fuel ice-nitro repair-kit shield-boost')
+    + g('gt', 'extra-turn scout map start-light checkered-flag'),
+    {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True, 'label': 1}),
+  'icons-world-25': (5, 5,
+    g('gt', 'rank1-badge timer race-flag announcement mission-list')
+    + g('gt', 'star-collectible magnet-powerup force-field portal mystery-box')
+    + g('gt', 'road-barrier direction-sign safety-barrel cactus rock')
+    + g('gt', 'wood-ramp hay-bale windmill barn pine-tree')
+    + g('gt', 'bush water-puddle mud-puddle log sharp-turn-sign'),
+    {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True, 'label': 1}),
+  'icons-sky-25': (5, 5,
+    g('gt', 'moon sun rain-cloud lightning rainbow')
+    + g('gt', 'ufo alien satellite rocket planet')
+    + g('gt', 'asteroid crystal energy-orb teleport-gate key')
+    + g('gt', 'lock treasure-chest crown map-scroll compass')
+    + g('gt', 'binoculars lantern campfire tent signpost'),
+    {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True, 'label': 1}),
+  # Monster-truck art (owner, 2026-09-27). Stored under NEUTRAL ids: the sheet's names/logos
+  # are Feld Monster Jam trademarks (and a Warner Bros character) — the logo block under each
+  # truck is cut away, the game gives every truck an original name (games/data/gt-trucks.js).
+  'trucks-a-25': (5, 5, [('gt-truck', 'truck-%03d' % n) for n in range(1, 26)],
+    {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True, 'label': 1, 'tyres': True}),
+  'trucks-b-25': (5, 5, [('gt-truck', 'truck-%03d' % n) for n in range(26, 51)],
+    {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True, 'label': 1, 'tyres': True}),
+  'trucks-c-25': (5, 5, [('gt-truck', 'SKIP-logo')] + [('gt-truck', 'truck-%03d' % n) for n in range(51, 75)],
+    {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True, 'label': 1, 'tyres': True}),
+  'trucks-d-25': (5, 5, [('gt-truck', 'truck-%03d' % n) for n in range(75, 100)],
+    {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True, 'label': 1, 'tyres': True}),
+  'trucks-e-25': (5, 5, [('gt-truck', 'truck-%03d' % n) for n in range(100, 125)],
+    {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True, 'label': 1, 'tyres': True}),
+  'trucks-f-25': (5, 5, [('gt-truck', 'truck-%03d' % n) for n in range(125, 150)],
+    {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True, 'label': 1, 'tyres': True}),
+  'trucks-g-25': (5, 5, [('gt-truck', 'truck-%03d' % n) for n in range(150, 175)],
+    {'src': os.path.expanduser('~/Documents/temporary/game asset/monster-truck'), 'grid': True, 'label': 1, 'tyres': True}),
 }
 
 # Sprites whose enclosed flat-white pockets are real see-through GAPS -- decided by
@@ -243,7 +298,23 @@ def page_mask(rgb):
     return np.isin(lbl, list(edge)), cand, d
 
 
-def segment_sheet(im, cols, rows):
+def detect_grid(im, cols, rows):
+    """Cell boxes from the grid lines actually drawn on a sheet (lines are not evenly spaced:
+    one row of the owner's icon sheet is 278 px, the others ~235)."""
+    a = im.astype(np.int32); g = a.mean(2); sat = a.max(2) - a.min(2)
+    line = (g < 236) & (g > 120) & (sat < 25)
+    def lines(frac, n):
+        v = np.where(frac > 0.55)[0]
+        grp = [s_ for s_ in np.split(v, np.where(np.diff(v) > 2)[0] + 1) if len(s_)]
+        pos = [int(s_.mean()) for s_ in grp]
+        return pos if len(pos) == n + 1 else None
+    ys, xs = lines(line.mean(1), rows), lines(line.mean(0), cols)
+    if not ys or not xs:
+        return None
+    return [(xs[c], ys[r], xs[c + 1], ys[r + 1]) for r in range(rows) for c in range(cols)]
+
+
+def segment_sheet(im, cols, rows, boxes=None, loose=True):
     """Label map: 0 = page, k = sprite of cell k-1. WHOLE-SHEET marker watershed.
     Sheets are not a clean grid -- rows overlap with no gutter, a banknote is wider than
     its cell, the cupcake's cherry TOUCHES the bell pepper, an alarm clock's bell pokes
@@ -261,6 +332,16 @@ def segment_sheet(im, cols, rows):
     markers = np.zeros(fg.shape, np.int32)
     for r in range(rows):
         for c in range(cols):
+            if boxes:
+                bx0, by0, bx1, by1 = boxes[r * cols + c]
+                y0, y1 = int(by0 + 0.15 * (by1 - by0)), int(by0 + 0.75 * (by1 - by0))
+                x0, x1 = int(bx0 + 0.15 * (bx1 - bx0)), int(bx0 + 0.85 * (bx1 - bx0))
+                sub = core[y0:y1, x0:x1] & (markers[y0:y1, x0:x1] == 0)
+                l, n = ndimage.label(sub)
+                if n:
+                    k = int(np.argmax(ndimage.sum(np.ones_like(l), l, range(1, n + 1)))) + 1
+                    markers[y0:y1, x0:x1][l == k] = r * cols + c + 1
+                continue
             # seed = largest core piece inside the cell's CENTRAL 70%: two sprites that
             # touch still get one seed each (a merged core used to leave a cell seedless)
             y0, y1 = int((r + 0.15) * ch), int((r + 0.85) * ch)
@@ -272,12 +353,12 @@ def segment_sheet(im, cols, rows):
             k = int(np.argmax(ndimage.sum(np.ones_like(l), l, range(1, n + 1)))) + 1
             markers[y0:y1, x0:x1][l == k] = r * cols + c + 1
     ws = watershed(-ndimage.distance_transform_edt(fg), markers, mask=fg)
-    loose, ln = ndimage.label(fg & (ws == 0))
-    if ln:
+    loose_, ln = ndimage.label(fg & (ws == 0))
+    if ln and loose:
         _, (iy, ix) = ndimage.distance_transform_edt(ws == 0, return_indices=True)
         nearest = ws[iy, ix]
         for k in range(1, ln + 1):
-            part = loose == k
+            part = loose_ == k
             if part.sum() >= 40:
                 ws[part] = np.bincount(nearest[part]).argmax()
     return ws
@@ -413,15 +494,88 @@ def main():
     index = json.load(open(INDEX)) if os.path.exists(INDEX) else {'_note': '', 'assets': {}}
     assets = index['assets']
     dups, bad, made = [], [], 0
-    for sheet, (cols, rows, names) in SHEETS.items():
+    for sheet, spec in SHEETS.items():
+        cols, rows, names = spec[:3]
+        opts = spec[3] if len(spec) > 3 else {}
         if only and sheet not in only:
             continue
         assert len(names) == cols * rows, f'{sheet}: {len(names)} names for {cols * rows} cells'
-        im = np.asarray(Image.open(os.path.join(SRC, sheet + '.png')).convert('RGB'))
+        im = np.asarray(Image.open(os.path.join(opts.get('src', SRC), sheet + '.png')).convert('RGB')).copy()
         H, W = im.shape[:2]
         cw, ch = W / cols, H / rows
-        seg = segment_sheet(im, cols, rows)
+        boxes = detect_grid(im, cols, rows) if opts.get('grid') else None
+        if opts.get('grid') and not boxes:
+            bad.append(f'{sheet}: grid lines not found'); continue
+        if boxes:
+            # blank the drawn grid lines and every cell's label band to page white, so
+            # neither ever joins a sprite (measured per cell, the grid is uneven)
+            for (x0, y0, x1, y1) in boxes:
+                im[max(0, y0 - 3):y0 + 4, x0:x1] = 255; im[max(0, y1 - 3):y1 + 4, x0:x1] = 255
+                im[y0:y1, max(0, x0 - 3):x0 + 4] = 255; im[y0:y1, max(0, x1 - 3):x1 + 4] = 255
+                if opts.get('label'):
+                    # the label is the ink block at the bottom of the cell, separated from the
+                    # art by white rows: walk up from the bottom, through the text, to the first
+                    # clear gap (>= 4 white rows), and blank everything below that gap. A fixed
+                    # band missed labels that sit higher and cut art that sits lower.
+                    ink = (im[y0:y1, x0 + 6:x1 - 6].min(axis=2) < 200).any(axis=1)
+                    h = y1 - y0; y = h - 1
+                    while y > 0 and not ink[y]: y -= 1                  # blank rows under the text
+                    top_text = y
+                    while y > int(h * 0.55):
+                        if ink[y]: top_text = y; y -= 1; continue
+                        gap = 0
+                        while y > int(h * 0.55) and not ink[y]: gap += 1; y -= 1
+                        if gap >= 4: break
+                    if opts.get('tyres'):
+                        # truck sheets: a brand logo sits right under the tyres, often touching
+                        # them, so walking gaps cuts the wheels off. The tyres are the lowest rows
+                        # that are dense in near-black pixels; everything below them is text.
+                        cell = im[y0:y1, x0 + 6:x1 - 6].astype(np.int16)
+                        dark = ((cell.max(axis=2) < 70) & (cell.max(axis=2) - cell.min(axis=2) < 30)).mean(axis=1)
+                        dense = dark > 0.30
+                        runs, start = [], None
+                        for yy in range(h):
+                            if dense[yy] and start is None: start = yy
+                            if (not dense[yy] or yy == h - 1) and start is not None:
+                                end = yy if not dense[yy] else yy + 1
+                                if end - start >= 10: runs.append((start, end))
+                                start = None
+                        if runs:
+                            wb = max(runs, key=lambda r_: r_[1] - r_[0])[1]   # the TALLEST dark band is the tyres (a bold logo is thinner)
+                            # tyre undersides fade out below the dense band: follow ink down
+                            # until the first fully white row, capped at 6% of the cell
+                            ink2 = (im[y0:y1, x0 + 6:x1 - 6].min(axis=2) < 200).any(axis=1)
+                            lim = min(h, wb + int(h * 0.04))
+                            band_bottom = wb
+                            while wb < lim and ink2[wb]: wb += 1
+                            # under the tyre band only the dark tyre rubber may stay: colourful
+                            # logo tops that touch the tyres are blanked pixel by pixel
+                            win = im[y0 + band_bottom:y0 + wb, x0:x1].astype(np.int16)
+                            dk = win.max(axis=2) < 95
+                            # thin logo outlines touching the tyres survive a colour test, so only
+                            # THICK dark areas that connect to the tyre band above are kept
+                            dk = ndimage.binary_opening(dk, iterations=3)
+                            lbl_, n_ = ndimage.label(dk)
+                            top = set(np.unique(lbl_[0])) - {0}
+                            dk = np.isin(lbl_, list(top))
+                            win_im = im[y0 + band_bottom:y0 + wb, x0:x1]
+                            win_im[~dk] = 255
+                            im[y0 + wb:y1, x0:x1] = 255
+                        continue
+                    # a truck sheet has TWO blocks under the art (brand logo, then caption):
+                    # label = n blocks walks up past each one
+                    for _blk in range(int(opts.get('label', 1)) - 1):
+                        while y > int(h * 0.45) and not ink[y]: y -= 1
+                        while y > int(h * 0.45):
+                            if ink[y]: top_text = y; y -= 1; continue
+                            gap = 0
+                            while y > int(h * 0.45) and not ink[y]: gap += 1; y -= 1
+                            if gap >= 3: break
+                    im[y0 + max(0, top_text - 2):y1, x0:x1] = 255
+        seg = segment_sheet(im, cols, rows, boxes, loose=not opts.get('tyres'))
         for i, (cat, name) in enumerate(names):
+            if name.startswith('SKIP'):
+                continue
             key = ('real/' if sheet in REAL else '') + f'{cat}/{name}'
             if key in assets and assets[key].get('source') != f'{sheet}#{i + 1}':
                 dups.append(f'{key} (again on {sheet}#{i + 1}; kept {assets[key]["source"]})')
