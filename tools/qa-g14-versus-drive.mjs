@@ -1,7 +1,7 @@
 // A-323b/A-327/v57.3 probe — drives the SHARED-SCENE Balapan Kereta PvP redesign.
 // Landscape 1024x600 + 900x500 + portrait 390x844. Asserts ONE shared scene
 // (zero .gvs-band, zero .qz-pill), bg plate, 2 non-tiny trains, P2 HUD+controls
-// LEFT/blue, P1 RIGHT/green, top-center "PVP MODE" + a DYNAMIC leg name (proved
+// (v62.2: P1 LEFT/green, P2 RIGHT/blue), top-center "PVP MODE" + a DYNAMIC leg name (proved
 // by booting level 1 AND level 5), bottom-center BOOST, per-side ENERGY+TOKEN,
 // NAIK moves the train, spawnToken raises energy, boost surges only that train,
 // dist→99 shows the win banner, 0 console errors. Screenshots every state.
@@ -119,14 +119,14 @@ let leg1 = ''
     return { h0, h1, ok: h1 > 0 }
   })
   check(refit.ok, 'train re-fits on resize (h ' + Math.round(refit.h0) + '→' + Math.round(refit.h1) + 'px)')
-  check(scene.hud2Left, 'P2 HUD is LEFT of P1 HUD')
+  check(!scene.hud2Left, 'P1 HUD is LEFT of P2 HUD (v62.2: reading order — Pemain 1 sits left)')
   check(scene.hud2E === '#2a7fd4', 'P2 HUD is BLUE (--e #2a7fd4) — got ' + scene.hud2E)
   check(scene.hud1E === '#12b866', 'P1 HUD is GREEN (--e #12b866) — got ' + scene.hud1E)
-  check(scene.side2Left, 'P2 side controls on far-LEFT, P1 far-RIGHT')
+  check(!scene.side2Left, 'P1 side controls on far-LEFT, P2 far-RIGHT')
   check(scene.side2W >= 44, 'side lane buttons ≥44px (' + Math.round(scene.side2W) + 'px)')
-  check(scene.boost && scene.boostCenter && scene.boostBottom, 'BOOST medallion bottom-CENTER')
-  check(scene.foot2Left && scene.foot2Energy && scene.foot2Token, 'bottom-LEFT foot: P2 ENERGY + TOKEN')
-  check(scene.foot1Energy && scene.foot1Token, 'bottom-RIGHT foot: P1 ENERGY + TOKEN')
+  check(!scene.boost, 'NO shared centre BOOST medallion (v62.2: it boosted both players)')
+  check(!scene.foot2Left && scene.foot2Energy && scene.foot2Token, 'bottom-RIGHT foot: P2 ENERGY + TOKEN')
+  check(scene.foot1Energy && scene.foot1Token, 'bottom-LEFT foot: P1 ENERGY + TOKEN')
   await page.screenshot({ path: `${OUT}/pvp-2-scene-1024.png` })
 
   leg1 = await legText(page)
@@ -237,7 +237,7 @@ console.log('\n[portrait 390x844]')
     boost: !!document.querySelector('.gvs-boost')
   }))
   check(ov.hasScene && ov.trains === 2, 'shared scene + 2 trains render in portrait')
-  check(ov.banner && ov.boost, 'banner + BOOST medallion present in portrait')
+  check(ov.banner && !ov.boost, 'banner present, no shared medallion, in portrait')
   check(!ov.overflow, 'no horizontal overflow at 390px')
   await page.screenshot({ path: `${OUT}/pvp-6-portrait.png` })
   check(errs.length === 0, 'no console/page errors (portrait) — ' + JSON.stringify(errs.slice(0, 4)))

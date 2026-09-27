@@ -3305,3 +3305,12 @@ Owner: "saat adventure ada 2 background sound. Ada suara efek kecil berulang". T
 
 ### ✅ 2026-09-27 — Balapan Kereta (Adventure): pickups that touch the train are taken
 Owner: "kadang ada objectnya tapi kok kayak tidak terambil". Measured on a real race: on a phone held sideways the lanes are 24–53 px apart and pickups hovered PK+6 above their own rail, so a lower lane's pickup sat inside the middle-lane train's body — touched on screen, wrong lane in code. Fix: pickups hover at the train-body centre of their lane, radius capped at 0.42 × the lane gap; collection = same lane with a SWEPT column test (frame hitches can't tunnel), OR ≥ 40% of the pickup visibly on the train. Gate `tools/qa-g14-pickups.mjs` (4 viewports × every lane pair + a 250 ms hitch) fails 6 checks on the old code, passes on the fix. PvP redesign (visible race, P1 left, shared tokens, boost you can feel, fair finish) is the next step of the approved plan.
+
+### ✅ 2026-09-27 — Balapan Kereta PvP: a race a child can read
+Owner: "pvp nggak jelas mekaniknya. Masak selalu kalah yg p1 dan position nya tidak sama saat mulai. Boostnya tidak bisa." Measured first (4 real no-input races: P1 won 3/4 — the sim was fair, the READING was not):
+- Trains were pinned at x 33% / 18% and never moved relative to each other; progress lived only in HUD bars. Now both start at the same x on separate lanes (top / bottom) and screen x follows distance (leader visibly ahead).
+- P1 sat on the RIGHT. Now PEMAIN 1 is left (green), PEMAIN 2 right (blue), each control column labelled.
+- Tokens/hazards were per-player pools on shared lanes (a token passed through the other train untouched). Now shared: the train that reaches it first takes it ("rebut token").
+- Boost cost 4 tokens and was worth ~3% with no visible surge; the centre medallion boosted BOTH players. Now 2 tokens, ×2.2 for 2 s (≈ +5.3 distance, ~8% of the track on screen), per-player only; an early tap shakes + says "⚡ kurang N" instead of a silent dead button.
+- The loop checked [p2, p1] and a tie always went to P2. Now each crossing time is computed inside the frame; a dead heat is "Seri! Hebat berdua!" (Tournament replays a tied match).
+Gate `tools/qa-g14-pvp-fair.mjs` (2 landscape sizes, real taps); `qa-g14-versus-drive` updated to the new layout.
