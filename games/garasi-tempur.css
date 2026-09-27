@@ -340,11 +340,15 @@ img{-webkit-user-drag:none}
 #btn-end{flex:none;min-height:58px;padding:0 30px 0 16px;font-size:19px;border-radius:16px;clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%)}
 #btn-end .chev{font-size:24px}
 /* guide glow — the ONE next useful thing */
-.guide .gc,.gc-atk.guide,#btn-end.guide{animation:glow 1.3s ease-in-out infinite}
+.guide .gc{box-shadow:inset 0 0 0 .08em rgba(255,255,255,.7),0 0 0 .22em rgba(255,210,70,.95)}
+/* glow pulses = a static halo on a pseudo-element whose OPACITY animates (compositor only);
+   animating box-shadow/filter repainted the card every frame (profiled: ~16% CPU idle) */
+.guide .gc::before,.my-turn #me-field .field-card.can-atk .gc::before{content:'';position:absolute;inset:-.1em;border-radius:.8em;pointer-events:none;z-index:-1;
+  box-shadow:0 0 0 .34em rgba(255,210,70,1),0 0 1.6em .3em rgba(255,210,70,.9);animation:glowop 1.3s ease-in-out infinite;will-change:opacity}
+@keyframes glowop{0%,100%{opacity:.25}50%{opacity:1}}
 .hc.guide{--y:-8px}
-@keyframes glow{0%,100%{box-shadow:inset 0 0 0 .08em rgba(255,255,255,.7),0 0 0 .2em rgba(255,210,70,.9),0 0 .6em rgba(255,210,70,.6)}50%{box-shadow:inset 0 0 0 .08em rgba(255,255,255,.7),0 0 0 .32em rgba(255,210,70,1),0 0 1.6em rgba(255,210,70,.9)}}
-#btn-end.guide{animation:endglow 1.3s ease-in-out infinite}
-@keyframes endglow{50%{filter:brightness(1.25) drop-shadow(0 0 12px rgba(120,255,160,.9))}}
+#btn-end.guide::after,.atk-b.guide::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:rgba(255,255,255,.28);opacity:0;animation:glowop 1.3s ease-in-out infinite;will-change:opacity}
+#btn-end,.atk-b{position:relative}
 .gc-atk.guide{box-shadow:0 0 0 .15em var(--gold)}
 .drop-ok{box-shadow:0 0 0 4px rgba(57,192,107,.9),0 0 26px rgba(57,192,107,.6);border-radius:14px}
 .drop-hover{transform:scale(1.04)}
@@ -366,9 +370,8 @@ img{-webkit-user-drag:none}
 .atk-b .ad{font-size:28px}
 .atk-b .ac{display:flex}
 .atk-b .ac img{width:22px;height:22px;margin-right:-4px}
-.atk-b.guide{animation:endglow 1.3s ease-in-out infinite}
 #me-field .field-card{cursor:pointer}
-.my-turn #me-field .field-card.can-atk .gc{animation:glow 1.3s ease-in-out infinite}
+.my-turn #me-field .field-card.can-atk .gc{box-shadow:inset 0 0 0 .08em rgba(255,255,255,.7),0 0 0 .22em rgba(255,210,70,.95)}
 #act-name{font-size:17px;display:block}
 #act-why{font-size:13px;color:var(--ink2);display:block;line-height:1.2}
 #act-go{min-height:52px;font-size:17px;padding:0 16px}
@@ -588,7 +591,7 @@ body[data-scr=scr-battle] .toast{top:auto;bottom:calc(var(--hf) * 14 + 110px + v
 /* reduced motion: same meaning, no travel */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
-  .guide .gc,.gc-atk.guide{animation:none;box-shadow:0 0 0 .12em #fff,0 0 0 .35em rgba(255,210,70,1)!important}
+  .guide .gc::before,.field-card.can-atk .gc::before{animation:none;opacity:1}
 }
 
 /* sound toggle: speaker, crossed with a red X when off (owner: "logo coret X saat di disable") */
@@ -609,3 +612,5 @@ body[data-scr=scr-battle] .toast{top:auto;bottom:calc(var(--hf) * 14 + 110px + v
 .atk-tag{font-style:normal;font-size:12px;padding:2px 8px;border-radius:8px;flex:none}
 .atk-tag.sup{background:linear-gradient(#FFE15A,#F0A417);color:#3A2300}
 .atk-tag.weak{background:rgba(255,255,255,.18);color:#fff}
+
+.fx-flash{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:9;opacity:0;background:radial-gradient(circle at 50% 45%,rgba(255,255,255,.95),rgba(255,255,255,.35) 60%,transparent 80%)}

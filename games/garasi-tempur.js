@@ -578,7 +578,7 @@
     if (att.correct) M.correct[att.p]++
     var d = C.get(before.cards[att.card])
     var hpEl = to.querySelector('.gc-hp b'), bar = to.querySelector('.gc-hpbar i'), max = before.players[1 - att.p].active.maxHp
-    return FX.attack({ from: from, to: to, type: d.type, dmg: att.dmg, correct: att.correct, sup: !!(att.breakdown && att.breakdown.type), weak: !!(att.breakdown && att.breakdown.weak), hpBefore: att.hpBefore, hpAfter: att.hpAfter, stage: $('table'),
+    return FX.attack({ from: from, to: to, type: d.type, dmg: att.dmg, correct: att.correct, sup: !!(att.breakdown && att.breakdown.type), weak: !!(att.breakdown && att.breakdown.weak), hpBefore: att.hpBefore, hpAfter: att.hpAfter, stage: $('bt-scene'),
       setHp: function (v) {
         if (hpEl) hpEl.textContent = v
         if (!bar) { var w = to.querySelector('.gc-win'); if (w) { w.insertAdjacentHTML('beforeend', '<div class="gc-hpbar"><i></i></div>'); bar = w.querySelector('.gc-hpbar i') } }

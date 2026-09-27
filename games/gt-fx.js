@@ -182,8 +182,12 @@
       if (o.sup) floatText(cb.x, cb.y - cb.h * 0.42, 'SUPER EFEKTIF!', 'super')
       else if (o.weak) floatText(cb.x, cb.y - cb.h * 0.42, 'kurang efektif…', 'weak')
       var sh = Math.min(14, T.shake + o.dmg)
+      // impact flash = an opacity-only overlay (animating `filter` on the card repainted it every
+      // frame: 20 fps on a 4x-throttled phone); the camera shake moves the composited arena layers
+      var flash = null
+      if (!rm) { flash = document.createElement('i'); flash.className = 'fx-flash'; b.appendChild(flash) }
       return Promise.all([shake(b, sh), shake(o.stage, Math.round(sh / 3)),
-        rm ? Promise.resolve() : anim(b, [{ filter: 'brightness(1)' }, { filter: 'brightness(2.2)' }, { filter: 'brightness(1)' }], { duration: 220 })])
+        flash ? anim(flash, [{ opacity: 0 }, { opacity: 0.85 }, { opacity: 0 }], { duration: 220 }).then(function () { flash.remove() }) : Promise.resolve()])
     }).then(function () {
       // 4 drain: tick HP down
       return drain(o.hpBefore, o.hpAfter, o.setHp)
