@@ -449,6 +449,7 @@
   function teach (right) {
     var c = S.card
     S.locked = true; S.right = right
+    $('panel').classList.add('taught'); $('panel').classList.toggle('missed', !right)
     showAnswer()
     $('btn-check').classList.add('hide'); $('btn-hint').classList.add('hide'); $('btn-next').classList.remove('hide')
     if (right) {
@@ -478,6 +479,7 @@
         attempts: 0, hints: 0, dimmed: [], sel: null, locked: true, stageW: stage.clientWidth || 1, stageH: stage.clientHeight || 1 }
       S.done = function () { S.alive = false; resolve({ correct: S.right === true, attempts: S.attempts, hints: S.hints, helped: S.hints > 0 || S.right === false }) }
       $('q').classList.remove('on'); $('q').textContent = card.q
+      $('panel').classList.remove('taught', 'missed')
       $('answers').innerHTML = ''; help('')
       $('story').classList.remove('hint2')
       $('btn-check').classList.remove('hide'); $('btn-check').disabled = true

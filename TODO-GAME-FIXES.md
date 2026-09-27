@@ -3349,3 +3349,6 @@ Owner's screenshot showed a locked "Segera Hadir" tile in Menara Memori (owner r
 
 ### ✅ 2026-09-27 — G28 journey stops were ovals
 Owner screenshot: "Bulatan progressnya aneh". 12 fixed-size stops in one non-wrapping row were squeezed horizontally on a phone. Now two rows of six true circles (`aspect-ratio:1`), numbered 1–12, the next one highlighted, completed ones starred; one row of 12 when the phone is on its side, and the world/intro/done sheets fit 360-px-tall screens. `qa-sd-play` now fails on any non-round stop or overflowing world sheet (proven against the old CSS).
+
+### ✅ 2026-09-27 — G28 feedback layout polish
+Reviewed every remaining screen by eye at 412×915. After answering, the explanation sat alone at the bottom with a big empty gap above it. Now answers sit right under the question, the teaching text is a card under the answers (green + star when right, warm yellow when the scaffold showed the answer, yellow for hints), Lanjut is full-width in the thumb zone. Camera in LIS-02 moved into Lala's hands (was floating over the lamp post). qa-sd-play all pass at 3 sizes.

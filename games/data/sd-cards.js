@@ -45,7 +45,7 @@
     objective: 'Mengingat benda yang disebut dalam cerita.',
     story: ['Lala mengunjungi Nenek setelah makan siang.', 'Lala membawa kamera kecil untuk memotret bunga Nenek yang cantik.'],
     beats: [{ t: 'show', id: 'lala', s: 'sd/adventurer', x: 34, y: 62, h: 52, from: 'left' }, { t: 'say', i: 0 },
-      { t: 'show', id: 'cam', s: 'things/camera', x: 50, y: 58, h: 18, from: 'fade' }, { t: 'show', id: 'flw', s: 'nature/sunflower', x: 78, y: 70, h: 34, from: 'fade' },
+      { t: 'show', id: 'cam', s: 'things/camera', x: 45, y: 66, h: 15, from: 'fade' }, { t: 'show', id: 'flw', s: 'nature/sunflower', x: 78, y: 70, h: 34, from: 'fade' },
       { t: 'say', i: 1 }, { t: 'hop', id: 'cam' }],
     q: 'Apa yang dibawa Lala?', options: [{ s: 'things/camera', l: 'Kamera' }, { s: 'things/umbrella-red', l: 'Payung' }, { s: 'toys/soccer-ball', l: 'Bola' }], answer: 0,
     hintTarget: 'cam', hints: ['Dengar lagi: Lala mau memotret bunga.', 'Untuk memotret kita pakai benda apa?'],
